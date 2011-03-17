@@ -1,12 +1,10 @@
 package bigBang.module.clientModule.shared;
 
 import java.io.Serializable;
-import java.util.HashMap;
+
+import bigBang.library.shared.Process;
 
 import com.google.gwt.core.client.GWT;
-
-import bigBang.library.shared.Operation;
-import bigBang.library.shared.Process;
 
 public class ClientProcess extends Process implements Serializable {
 

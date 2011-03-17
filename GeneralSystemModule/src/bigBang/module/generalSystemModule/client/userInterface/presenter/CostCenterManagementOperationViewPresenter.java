@@ -1,7 +1,5 @@
 package bigBang.module.generalSystemModule.client.userInterface.presenter;
 
-import java.util.ArrayList;
-
 import org.gwt.mosaic.ui.client.MessageBox.ConfirmationCallback;
 
 import com.google.gwt.core.client.GWT;
@@ -19,7 +17,6 @@ import bigBang.library.shared.EventBus;
 import bigBang.library.shared.Operation;
 import bigBang.library.shared.Service;
 import bigBang.library.shared.userInterface.presenter.OperationViewPresenter;
-import bigBang.library.shared.userInterface.presenter.ViewPresenter;
 import bigBang.library.shared.userInterface.view.View;
 import bigBang.module.generalSystemModule.client.CostCenterServiceAsync;
 import bigBang.module.generalSystemModule.shared.CostCenter;

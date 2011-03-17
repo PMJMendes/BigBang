@@ -1,19 +1,15 @@
 package bigBang.library.shared.userInterface;
 
-import com.google.gwt.core.client.GWT;
+import bigBang.library.shared.FieldValidator;
+import bigBang.library.shared.FormField;
+
 import com.google.gwt.dom.client.Style.Unit;
-import com.google.gwt.event.logical.shared.ValueChangeHandler;
-import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.HasVerticalAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
-import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
-
-import bigBang.library.shared.FieldValidator;
-import bigBang.library.shared.FormField;
 
 public class TextBoxFormField extends FormField<String> {
 	

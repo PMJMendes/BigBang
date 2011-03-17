@@ -1,8 +1,6 @@
 package bigBang.module.generalSystemModule.client.userInterface;
 
 import bigBang.library.shared.userInterface.List;
-import bigBang.module.generalSystemModule.shared.User;
-import bigBang.module.generalSystemModule.shared.UserRole;
 
 public class UserList extends List<String> {
 	

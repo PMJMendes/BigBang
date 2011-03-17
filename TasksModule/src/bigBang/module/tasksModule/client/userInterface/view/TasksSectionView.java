@@ -7,13 +7,11 @@ import bigBang.module.tasksModule.client.userInterface.TaskList;
 import bigBang.module.tasksModule.client.userInterface.presenter.TasksSectionViewPresenter;
 import bigBang.module.tasksModule.shared.Task;
 
-import com.google.gwt.event.logical.shared.HasValueChangeHandlers;
 import com.google.gwt.user.client.ui.HasValue;
 import com.google.gwt.user.client.ui.HasWidgets;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.SplitLayoutPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
-import com.google.gwt.user.client.ui.Widget;
 
 public class TasksSectionView extends View implements TasksSectionViewPresenter.Display {
 	

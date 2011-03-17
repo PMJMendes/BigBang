@@ -1,13 +1,11 @@
 package bigBang.module.clientModule.client.userInterface;
 
+import bigBang.library.shared.userInterface.ContextMenu;
+import bigBang.library.shared.userInterface.SearchPanelListEntry;
+
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.Event;
 import com.google.gwt.user.client.ui.Image;
-import com.google.gwt.user.client.ui.TextBox;
-
-import bigBang.library.shared.userInterface.ContextMenu;
-import bigBang.library.shared.userInterface.SearchPanelListEntry;
-import bigBang.library.shared.userInterface.view.PopupPanel;
 
 public class ClientSearchPanelListEntry extends SearchPanelListEntry {
 

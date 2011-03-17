@@ -7,9 +7,7 @@ import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.user.client.ui.HasValue;
-import com.google.gwt.user.client.ui.HasWidgets;
 import com.google.gwt.user.client.ui.Label;
-import com.google.gwt.user.client.ui.UIObject;
 import com.google.gwt.user.client.ui.Widget;
 
 public abstract class FormField<T> extends View implements HasValue<T>, Validatable {
@@ -55,7 +53,7 @@ public abstract class FormField<T> extends View implements HasValue<T>, Validata
 	
 	public abstract boolean isReadOnly();
 	
-	public <T> boolean validate() {
+	public boolean validate() {
 		if(validator == null){
 			GWT.log("Validator for form field is null");
 			return false;

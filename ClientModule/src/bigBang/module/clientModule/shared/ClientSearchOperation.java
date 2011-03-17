@@ -4,7 +4,6 @@ import bigBang.library.shared.Operation;
 import bigBang.library.shared.userInterface.presenter.ViewPresenter;
 import bigBang.library.shared.userInterface.view.View;
 import bigBang.module.clientModule.client.userInterface.presenter.ClientSearchOperationViewPresenter;
-import bigBang.module.clientModule.client.userInterface.presenter.ClientSearchOperationViewPresenter.Display;
 import bigBang.module.clientModule.client.userInterface.view.ClientSearchOperationView;
 
 import com.google.gwt.user.client.ui.AbstractImagePrototype;

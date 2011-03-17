@@ -1,7 +1,5 @@
 package bigBang.library.shared.userInterface;
 
-import bigBang.library.shared.EventBus;
-
 import com.google.gwt.dom.client.Style.Display;
 import com.google.gwt.event.shared.EventHandler;
 import com.google.gwt.event.shared.GwtEvent;

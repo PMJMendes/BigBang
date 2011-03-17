@@ -6,7 +6,6 @@ import bigBang.library.shared.EventBus;
 import bigBang.library.shared.LoginModule;
 import bigBang.library.shared.MainModule;
 import bigBang.library.shared.Module;
-import bigBang.library.shared.ProcessModule;
 
 public class ModuleManager {
 

@@ -8,7 +8,6 @@ import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
 
 import bigBang.library.shared.userInterface.List;
-import bigBang.module.generalSystemModule.shared.CostCenter;
 
 public class CostCenterList extends List<String> {
 

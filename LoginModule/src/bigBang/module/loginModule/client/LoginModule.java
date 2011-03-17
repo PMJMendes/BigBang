@@ -2,15 +2,8 @@ package bigBang.module.loginModule.client;
 
 import bigBang.library.shared.Domain;
 import bigBang.library.shared.EventBus;
-import bigBang.library.shared.Service;
-import bigBang.library.shared.userInterface.MenuSection;
 import bigBang.library.shared.userInterface.presenter.SectionViewPresenter;
 import bigBang.library.shared.userInterface.presenter.ViewPresenter;
-import bigBang.module.loginModule.client.userInterface.presenter.LoginViewPresenter;
-import bigBang.module.loginModule.client.userInterface.view.LoginView;
-import bigBang.module.loginModule.shared.AuthenticationService;
-
-import com.google.gwt.core.client.GWT;
 
 public class LoginModule implements bigBang.library.shared.LoginModule {
 

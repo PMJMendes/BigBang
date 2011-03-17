@@ -1,13 +1,8 @@
 package bigBang.module.clientModule.shared;
 
-import com.google.gwt.user.client.ui.AbstractImagePrototype;
-
 import bigBang.library.shared.Operation;
-import bigBang.library.shared.userInterface.presenter.ViewPresenter;
-import bigBang.library.shared.userInterface.view.View;
-import bigBang.module.clientModule.client.userInterface.presenter.ClientMergeOperationViewPresenter;
-import bigBang.module.clientModule.client.userInterface.presenter.ClientMergeOperationViewPresenter.Display;
-import bigBang.module.clientModule.client.userInterface.view.ClientMergeOperationView;
+
+import com.google.gwt.user.client.ui.AbstractImagePrototype;
 
 public class ClientMergeOperation implements Operation {
 

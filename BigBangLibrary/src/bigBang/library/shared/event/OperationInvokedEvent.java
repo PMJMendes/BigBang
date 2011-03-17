@@ -3,7 +3,6 @@ package bigBang.library.shared.event;
 import bigBang.library.shared.userInterface.presenter.ViewPresenterManager;
 
 import com.google.gwt.event.shared.GwtEvent;
-import com.google.gwt.user.client.ui.HasWidgets;
 
 public class OperationInvokedEvent extends GwtEvent<OperationInvokedEventHandler> {
 

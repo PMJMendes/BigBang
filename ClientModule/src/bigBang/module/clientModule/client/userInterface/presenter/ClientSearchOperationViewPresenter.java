@@ -8,8 +8,6 @@ import bigBang.library.shared.event.OperationInvokedEvent;
 import bigBang.library.shared.event.OperationInvokedEventHandler;
 import bigBang.library.shared.userInterface.presenter.OperationViewPresenter;
 import bigBang.library.shared.userInterface.view.View;
-import bigBang.module.clientModule.client.userInterface.ClientSearchPanel;
-import bigBang.module.clientModule.client.userInterface.view.ClientPreviewPanel;
 import bigBang.module.clientModule.shared.ClientProcess;
 import bigBang.module.clientModule.shared.ClientSearchOperation;
 

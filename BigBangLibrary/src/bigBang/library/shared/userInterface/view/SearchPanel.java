@@ -34,13 +34,11 @@ import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.HasVerticalAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
-import com.google.gwt.user.client.ui.Panel;
-import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
-public class SearchPanel extends List<String> {
+public class SearchPanel<T> extends List<T> {
 
 	private final String DEFAULT_TEXT = "Termos de pesquisa";
 	
@@ -164,8 +162,8 @@ public class SearchPanel extends List<String> {
 
 	public void setMultipleSelection(boolean multiple) {
 		this.multipleSelection = multiple;
-		for(ListEntry<String> e : this.getListEntries())
-			((SearchPanelListEntry)e).setCheckable(multiple);
+		for(ListEntry<T> e : this.getListEntries())
+			((SearchPanelListEntry<T>)e).setCheckable(multiple);
 	}
 	
 	public void showFilters(boolean show) {
@@ -200,10 +198,10 @@ public class SearchPanel extends List<String> {
 	}
 	
 	@SuppressWarnings("unchecked")
-	public void setResults(ArrayList <SearchPanelListEntry> results){
+	public void setResults(ArrayList <SearchPanelListEntry<String>> results){
 		this.clear();
 		Collection <?> col = results;
-		setListEntries((Collection<ListEntry<String>>) col);		
+		setListEntries((Collection<ListEntry<T>>) col);		
 		updateFooterText();
 	}
 

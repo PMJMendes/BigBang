@@ -1,13 +1,11 @@
 package bigBang.module.generalSystemModule.client.userInterface;
 
+import bigBang.library.shared.userInterface.List;
+
 import com.google.gwt.event.dom.client.HasClickHandlers;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.HasVerticalAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
-
-import bigBang.library.shared.userInterface.List;
-import bigBang.module.generalSystemModule.shared.User;
-import bigBang.module.generalSystemModule.shared.UserRole;
 
 public class CostCenterMemberList extends List<String> {
 

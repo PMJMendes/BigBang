@@ -1,12 +1,13 @@
 package bigBang.library.shared.userInterface;
-import com.google.gwt.core.client.GWT;
+import bigBang.library.shared.event.CheckedStateChangedEvent;
+import bigBang.library.shared.event.CheckedStateChangedEventHandler;
+import bigBang.library.shared.userInterface.view.View;
+
 import com.google.gwt.dom.client.Style.Cursor;
 import com.google.gwt.dom.client.Style.FontWeight;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
-import com.google.gwt.user.client.DOM;
-import com.google.gwt.user.client.Event;
 import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.HasValue;
@@ -15,16 +16,9 @@ import com.google.gwt.user.client.ui.HasWidgets;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
-import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.SimplePanel;
-import com.google.gwt.user.client.ui.TextArea;
-import com.google.gwt.user.client.ui.UIObject;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
-
-import bigBang.library.shared.event.CheckedStateChangedEvent;
-import bigBang.library.shared.event.CheckedStateChangedEventHandler;
-import bigBang.library.shared.userInterface.view.View;
 
 public class ListEntry<T> extends View implements HasValue <T> {
 

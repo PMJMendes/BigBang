@@ -4,19 +4,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 
-import org.apache.tools.ant.taskdefs.Parallel.TaskList;
-
-import com.google.gwt.core.client.GWT;
-import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.event.logical.shared.HasValueChangeHandlers;
-import com.google.gwt.event.logical.shared.ValueChangeEvent;
-import com.google.gwt.event.logical.shared.ValueChangeHandler;
-import com.google.gwt.user.client.rpc.AsyncCallback;
-import com.google.gwt.user.client.ui.HasValue;
-import com.google.gwt.user.client.ui.HasWidgets;
-import com.google.gwt.user.client.ui.Widget;
-
 import bigBang.library.shared.EventBus;
 import bigBang.library.shared.Service;
 import bigBang.library.shared.event.OperationInvokedEvent;
@@ -28,8 +15,15 @@ import bigBang.library.shared.userInterface.presenter.ViewPresenterManager;
 import bigBang.library.shared.userInterface.view.View;
 import bigBang.module.tasksModule.client.TasksSection;
 import bigBang.module.tasksModule.shared.Task;
-import bigBang.module.tasksModule.shared.TasksService;
 import bigBang.module.tasksModule.shared.TasksServiceAsync;
+
+import com.google.gwt.core.client.GWT;
+import com.google.gwt.event.logical.shared.ValueChangeEvent;
+import com.google.gwt.event.logical.shared.ValueChangeHandler;
+import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.google.gwt.user.client.ui.HasValue;
+import com.google.gwt.user.client.ui.HasWidgets;
+import com.google.gwt.user.client.ui.Widget;
 
 public class TasksSectionViewPresenter implements SectionViewPresenter, ViewPresenterManager {
 

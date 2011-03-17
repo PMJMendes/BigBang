@@ -1,19 +1,14 @@
 package bigBang.module.clientModule.client;
 
-import java.util.Collection;
 import java.util.HashMap;
 
 import bigBang.library.shared.EventBus;
-import bigBang.library.shared.Operation;
 import bigBang.library.shared.userInterface.MenuSection;
 import bigBang.library.shared.userInterface.TextBadge;
 import bigBang.library.shared.userInterface.presenter.OperationViewPresenter;
-import bigBang.library.shared.userInterface.presenter.SectionViewPresenter;
 import bigBang.library.shared.userInterface.presenter.ViewPresenter;
-import bigBang.library.shared.userInterface.view.View;
 import bigBang.module.clientModule.client.userInterface.presenter.ClientMergeOperationViewPresenter;
 import bigBang.module.clientModule.client.userInterface.presenter.ClientSearchOperationViewPresenter;
-import bigBang.module.clientModule.client.userInterface.presenter.ClientSectionViewPresenter;
 import bigBang.module.clientModule.client.userInterface.view.ClientMergeOperationView;
 import bigBang.module.clientModule.client.userInterface.view.ClientSearchOperationView;
 import bigBang.module.clientModule.shared.ClientMergeOperation;

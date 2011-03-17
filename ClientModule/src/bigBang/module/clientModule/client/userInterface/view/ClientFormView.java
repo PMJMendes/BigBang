@@ -3,13 +3,11 @@ package bigBang.module.clientModule.client.userInterface.view;
 import bigBang.library.shared.userInterface.TextBoxFormField;
 import bigBang.library.shared.userInterface.view.FormView;
 import bigBang.module.clientModule.shared.ClientFormValidator;
-import bigBang.module.clientModule.shared.ClientFormValidator.ClientNameValidator;
 import bigBang.module.clientModule.shared.ClientProcess;
 
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.Button;
-import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 

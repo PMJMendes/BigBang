@@ -1,8 +1,6 @@
 package bigBang.module.tasksModule.client;
 
 import bigBang.library.shared.EventBus;
-import bigBang.library.shared.event.NewNotificationEvent;
-import bigBang.library.shared.event.NewNotificationEventHandler;
 import bigBang.library.shared.userInterface.MenuSection;
 import bigBang.library.shared.userInterface.TextBadge;
 import bigBang.library.shared.userInterface.view.View;

@@ -1,6 +1,5 @@
 package bigBang.module.tasksModule.client.userInterface;
 
-import java.util.ArrayList;
 import java.util.Collection;
 
 import bigBang.library.shared.userInterface.List;
@@ -12,7 +11,6 @@ import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.HorizontalPanel;
-import com.google.gwt.user.client.ui.ToggleButton;
 
 public class TaskList extends List<Task> {
 

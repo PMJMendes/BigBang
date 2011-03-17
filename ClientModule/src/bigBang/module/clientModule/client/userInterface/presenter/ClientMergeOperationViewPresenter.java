@@ -1,18 +1,16 @@
 package bigBang.module.clientModule.client.userInterface.presenter;
 
-import com.google.gwt.core.client.GWT;
-import com.google.gwt.user.client.ui.HasWidgets;
-import com.google.gwt.user.client.ui.Widget;
-
 import bigBang.library.shared.EventBus;
 import bigBang.library.shared.Operation;
 import bigBang.library.shared.Service;
 import bigBang.library.shared.event.OperationInvokedEvent;
 import bigBang.library.shared.event.OperationInvokedEventHandler;
 import bigBang.library.shared.userInterface.presenter.OperationViewPresenter;
-import bigBang.library.shared.userInterface.presenter.ViewPresenter;
 import bigBang.library.shared.userInterface.view.View;
-import bigBang.module.clientModule.shared.ClientMergeOperation;
+
+import com.google.gwt.core.client.GWT;
+import com.google.gwt.user.client.ui.HasWidgets;
+import com.google.gwt.user.client.ui.Widget;
 
 public class ClientMergeOperationViewPresenter implements OperationViewPresenter {
 	

@@ -1,9 +1,6 @@
 package bigBang.library.shared.userInterface;
 
 import bigBang.library.shared.EventBus;
-import bigBang.library.shared.userInterface.presenter.SectionViewPresenter;
-import bigBang.library.shared.userInterface.presenter.ViewPresenter;
-import bigBang.library.shared.userInterface.view.View;
 
 public interface MenuSection {
 	

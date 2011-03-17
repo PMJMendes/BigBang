@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import bigBang.library.shared.FormField;
 import bigBang.library.shared.Validatable;
 
-import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Float;
 import com.google.gwt.dom.client.Style.FontStyle;
 import com.google.gwt.dom.client.Style.FontWeight;

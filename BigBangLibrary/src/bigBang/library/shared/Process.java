@@ -2,8 +2,6 @@ package bigBang.library.shared;
 
 import java.util.HashMap;
 
-import bigBang.library.shared.event.NewNotificationEvent;
-import bigBang.library.shared.event.NewNotificationEventHandler;
 import bigBang.library.shared.userInterface.TextBadge;
 
 public abstract class Process implements Identifiable {
