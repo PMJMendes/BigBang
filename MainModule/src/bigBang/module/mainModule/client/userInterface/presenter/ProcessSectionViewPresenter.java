@@ -8,9 +8,6 @@ import bigBang.library.shared.event.OperationInvokedEventHandler;
 import bigBang.library.shared.userInterface.presenter.ViewPresenter;
 import bigBang.library.shared.userInterface.view.View;
 
-import com.google.gwt.core.client.GWT;
-import com.google.gwt.event.logical.shared.ValueChangeEvent;
-import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.user.client.ui.HasValue;
 import com.google.gwt.user.client.ui.HasWidgets;
 import com.google.gwt.user.client.ui.Widget;

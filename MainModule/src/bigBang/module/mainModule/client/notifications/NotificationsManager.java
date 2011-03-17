@@ -4,8 +4,6 @@ import bigBang.library.shared.EventBus;
 import bigBang.library.shared.Notification;
 import bigBang.library.shared.event.NewNotificationEvent;
 import bigBang.library.shared.event.NewNotificationEventHandler;
-import bigBang.library.shared.event.OperationInvokedEvent;
-import bigBang.library.shared.userInterface.TextBadge;
 import bigBang.module.mainModule.client.userInterface.InfoPanel;
 import bigBang.module.mainModule.client.userInterface.InfoPanel.InfoPanelType;
 

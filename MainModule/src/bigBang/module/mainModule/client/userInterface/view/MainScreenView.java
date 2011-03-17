@@ -6,8 +6,6 @@ import org.gwt.mosaic.ui.client.SheetPanel.Resources;
 
 import bigBang.library.shared.userInterface.MenuSection;
 import bigBang.library.shared.userInterface.presenter.SectionViewPresenter;
-import bigBang.library.shared.userInterface.presenter.ViewPresenter;
-import bigBang.library.shared.userInterface.presenter.ViewPresenterManager;
 import bigBang.library.shared.userInterface.view.View;
 import bigBang.module.mainModule.client.userInterface.presenter.MainScreenViewPresenter;
 

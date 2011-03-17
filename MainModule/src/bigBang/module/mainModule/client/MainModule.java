@@ -4,8 +4,6 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.RootPanel;
 
 import bigBang.library.shared.EventBus;
-import bigBang.library.shared.Process;
-import bigBang.library.shared.userInterface.MenuSection;
 import bigBang.library.shared.userInterface.presenter.SectionViewPresenter;
 import bigBang.library.shared.userInterface.presenter.ViewPresenter;
 

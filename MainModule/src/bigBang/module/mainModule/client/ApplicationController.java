@@ -3,7 +3,6 @@ package bigBang.module.mainModule.client;
 import bigBang.library.shared.EventBus;
 import bigBang.library.shared.event.LoginSuccessEvent;
 import bigBang.library.shared.event.LoginSuccessEventHandler;
-import bigBang.library.shared.userInterface.MenuSection;
 import bigBang.library.shared.userInterface.presenter.SectionViewPresenter;
 import bigBang.library.shared.userInterface.presenter.ViewPresenter;
 import bigBang.module.mainModule.client.notifications.NotificationsManager;
