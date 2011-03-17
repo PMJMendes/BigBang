@@ -1,0 +1,8 @@
+<servlet>
+	<servlet-name>SearchService</servlet-name>
+	<servlet-class>bigBang.library.server.SearchServiceImpl</servlet-class>
+</servlet>
+<servlet-mapping>
+	<servlet-name>SearchService</servlet-name>
+	<url-pattern>/bigbang/SearchService</url-pattern>
+</servlet-mapping>

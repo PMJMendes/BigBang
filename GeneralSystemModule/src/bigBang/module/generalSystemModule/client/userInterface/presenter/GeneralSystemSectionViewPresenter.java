@@ -1,0 +1,101 @@
+package bigBang.module.generalSystemModule.client.userInterface.presenter;
+
+import com.google.gwt.event.logical.shared.ValueChangeEvent;
+import com.google.gwt.event.logical.shared.ValueChangeHandler;
+import com.google.gwt.user.client.ui.HasValue;
+import com.google.gwt.user.client.ui.HasWidgets;
+import com.google.gwt.user.client.ui.Widget;
+
+import bigBang.library.shared.EventBus;
+import bigBang.library.shared.Service;
+import bigBang.library.shared.userInterface.MenuSection;
+import bigBang.library.shared.userInterface.presenter.OperationViewPresenter;
+import bigBang.library.shared.userInterface.presenter.SectionViewPresenter;
+import bigBang.library.shared.userInterface.presenter.ViewPresenter;
+import bigBang.library.shared.userInterface.view.View;
+import bigBang.module.generalSystemModule.client.GeneralSystemSection;
+import bigBang.module.generalSystemModule.client.userInterface.view.GeneralSystemSectionView;
+
+public class GeneralSystemSectionViewPresenter implements SectionViewPresenter {
+
+	public interface Display {
+		HasValue <Object> getOperationNavigationPanel();
+		HasWidgets getOperationViewContainer();
+		void selectOperation(OperationViewPresenter p);
+		
+		void createOperationNavigationItem(OperationViewPresenter operationPresenter);
+		Widget asWidget();
+	}
+
+	private GeneralSystemSection section;
+	private Display view;
+	private boolean hasRegisteredOperations = false;
+	private EventBus eventBus;
+	
+	public GeneralSystemSectionViewPresenter(EventBus eventBus, Service service,
+			GeneralSystemSectionView view) {
+		this.setEventBus(eventBus);
+		this.setService(service);
+		this.setView(view);
+		
+	}
+
+	public void registerOperation(OperationViewPresenter operationPresenter) {
+		this.view.createOperationNavigationItem(operationPresenter);
+		if(!hasRegisteredOperations) { //TO SHOW THE FIRST OPERATION BY DEFAULT
+			this.view.selectOperation(operationPresenter);
+			operationPresenter.go(this.view.getOperationViewContainer()); 
+			hasRegisteredOperations = true;
+		}
+	}
+	
+	public void setService(Service service) {
+		// TODO Auto-generated method stub
+	}
+
+	public void setEventBus(final EventBus eventBus) {
+		this.eventBus = eventBus;
+		if(eventBus != null)
+			registerEventHandlers(eventBus);
+	}
+
+	public void setView(View view) {
+		this.view = (Display) view;
+	}
+	
+	public void setSection(MenuSection s) {
+		this.section = (GeneralSystemSection) s;
+		OperationViewPresenter[] operationPresenters = this.section.getOperationPresenters();
+		for(int i = 0; i < operationPresenters.length; i++)
+			registerOperation(operationPresenters[i]);
+	}
+	
+	public MenuSection getSection() {
+		return this.section;
+	}
+
+	public void go(HasWidgets container) {
+		this.bind();
+		container.clear();
+		container.add(this.view.asWidget());
+	}
+	
+	//TODO ERASE
+	public void setTarget(String targetId) {
+		
+	}
+
+	public void bind() {
+		this.view.getOperationNavigationPanel().addValueChangeHandler(new ValueChangeHandler<Object>() {
+			
+			public void onValueChange(ValueChangeEvent<Object> event) {
+				((ViewPresenter)event.getValue()).go(view.getOperationViewContainer());
+			}
+		});
+	}
+	
+	public void registerEventHandlers(final EventBus eventBus){
+
+	}
+
+}

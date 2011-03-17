@@ -1,0 +1,9 @@
+  <servlet>
+  	<servlet-name>AuthenticationService</servlet-name>
+  	<servlet-class>bigBang.module.loginModule.server.AuthenticationServiceImpl</servlet-class>
+  </servlet>
+  <servlet-mapping>
+  	<servlet-name>AuthenticationService</servlet-name>
+  	<url-pattern>/bigbang/AuthenticationService</url-pattern>
+  </servlet-mapping>
+

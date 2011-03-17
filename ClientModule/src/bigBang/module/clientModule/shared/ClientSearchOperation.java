@@ -1,0 +1,61 @@
+package bigBang.module.clientModule.shared;
+
+import bigBang.library.shared.Operation;
+import bigBang.library.shared.userInterface.presenter.ViewPresenter;
+import bigBang.library.shared.userInterface.view.View;
+import bigBang.module.clientModule.client.userInterface.presenter.ClientSearchOperationViewPresenter;
+import bigBang.module.clientModule.client.userInterface.presenter.ClientSearchOperationViewPresenter.Display;
+import bigBang.module.clientModule.client.userInterface.view.ClientSearchOperationView;
+
+import com.google.gwt.user.client.ui.AbstractImagePrototype;
+
+public class ClientSearchOperation implements Operation {
+
+	public static final String ID = "clientSearchOperation";
+	private final String DESCRIPTION = "A operação de pesquisa de clientes";
+	private final String SHORT_DESCRIPTION = "Pesquisa";
+	private final String OWNER_PROCESS_ID = ClientProcess.ID;
+	
+	private View view;
+	private ViewPresenter presenter;
+	
+	public void init() {
+
+	}
+
+	public String getId() {
+		return ID;
+	}
+
+	public AbstractImagePrototype getIcon() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public String getDescription() {
+		return DESCRIPTION;
+	}
+
+	public String getShortDescription() {
+		return SHORT_DESCRIPTION;
+	}
+
+	public ViewPresenter getPresenter() {
+		if(this.presenter == null){
+			this.presenter = (ViewPresenter) new ClientSearchOperationViewPresenter(null, null, this.getView());
+			((ClientSearchOperationViewPresenter)this.presenter).setOperation(this);
+		}
+		return this.presenter;
+	}
+
+	public View getView() {
+		if(this.view == null)
+			this.view = new ClientSearchOperationView();
+		return this.view;
+	}
+
+	public String getOwnerProcessId() {
+		return this.OWNER_PROCESS_ID;
+	}
+
+}

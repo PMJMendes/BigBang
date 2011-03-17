@@ -1,0 +1,212 @@
+/** Add css rules here for your application. */
+	/** Example rules used by the template application (remove for your app) */
+h1 {
+	font-size: 2em;
+	font-weight: bold;
+	color: #777777;
+	margin: 40px 0px 70px;
+	text-align: center;
+}
+
+.sendButton {
+	display: block;
+	font-size: 16pt;
+}
+
+/** Most GWT widgets already have a style name defined */
+.gwt-DialogBox {
+	width: 400px;
+}
+
+.dialogVPanel {
+	margin: 5px;
+}
+
+.serverResponseLabelError {
+	color: red;
+}
+
+/** Set ids using widget.getElement().setId("idOfElement") */
+#closeButton {
+	margin: 15px 6px 6px;
+}
+
+/** DockPanel */
+.dockPanelBackground {
+	border: solid gray;
+	border-width: 3px 1px 1px 1px;
+	background-image: url("images/metalTexture1.png");
+}
+
+.gwt-TextBox {
+	border: 1px solid black;
+	padding: 0px !important;
+	height: 20px;
+}
+
+.dockPanelItemsWrapper {
+	border-right: 1px solid gray;
+}
+
+.dockItemButton {
+	text-align: center;
+	margin: 0 auto;
+}
+
+/* stackPanel */
+.gwt-StackPanel .gwt-StackPanelItem { 
+	height: 40px !important;
+	background: url("images/listHeaderBackground1.png") repeat-x !important;
+	margin: 0px !important;
+	padding: 0px 0px 0px 10px !important;
+	font-family: sans-serif;
+	font-size: 14px !important;
+	font-weight: normal !important;
+	border: none !important;
+}
+.gwt-StackPanel .gwt-StackPanelItem-selected {
+	color: black;
+	font-weight: bold !important;
+}
+
+.gwt-StackPanel .gwt-StackPanelContent {
+	padding: 0 !important;
+}
+
+/*Search Form*/
+.searchFormResult {
+	background-image: url("images/SearchResultBackground1.png");
+	background-color: fff6e8;
+	background-position: bottom;
+	padding: 5px 0px 5px 0px;
+}
+
+.searchFormResultTitle {
+	font-size: 13px;
+	color: black;
+}
+
+.searchFormResultSubtitle {
+	font-size: 11px;
+	font-style: italic;
+	color: black;
+}
+
+/* Loading */
+.loadingPanel {
+	position: relative !important;
+	background-image: url("images/loading.gif");
+	background-color: white;
+	border: 1px solid #92C1F0;
+	margin: auto auto;
+	margin-top: 50%;
+	vertical-align: middle;
+}
+
+.whiteGlassPanel {
+	background-color: white !important;
+}
+
+.emptyContainer {
+	background-image: url('images/EmptyContainerBackground.png');
+}
+
+.loadingPanelWrapper { //
+	display: none;
+}
+
+/* FORM */
+.formPanel {
+	background-color: #f6f6f6;
+}
+
+.formTitle {
+	font-size: 14px;
+}
+
+.formSubtitle {
+	font-size: 12px;
+	font-style: italic;
+}
+
+.formSection {
+	border-bottom: 1px solid #e0e0e0;
+	padding: 5px 0 5px 0;
+}
+
+.formDisclosureSectionHeader {
+	background: url("images/formSectionTitleBackground.png") repeat-x;
+}
+
+.formDisclosureSectionHeader :hover{
+	background: url("images/formSectionTitleBackgroundHover.png") repeat-x;
+}
+
+.invalidFormField {
+	background-color: #FFDADA;
+}
+
+/* Badge */
+.badge {
+	
+}
+
+.badge-left {
+	background: url("images/badge-left.png") no-repeat;
+	position: absolute;
+	left: 0;
+	height: 15px;
+	width: 8px;
+}
+
+.badge-middle {
+	background: url("images/badge-middle.png") repeat-x;
+	height: 15px;
+	left: 8px;
+	right: 7px;
+	position: absolute;
+}
+
+.badge-right {
+	background: url("images/badge-right.png") no-repeat;
+	position: absolute;
+	right: 0;
+	height: 15px;
+	width: 7px;
+}
+
+.badge-label {
+	font-family: sans-serif;
+	font-weight: bold;
+	color: white;
+	position: relative;
+	padding: 0px 5px 0px 5px;
+}
+
+.badge-cell {
+	position:absolute;
+	min-width:15px;
+}
+
+/* lists */
+.listItemEven {
+	font-weight: bold;
+}
+
+.listItemOdd {
+	font-weight: bold;
+}
+
+.listItem :hover {
+	font-weight: bold;
+}
+
+.listItem-selected {
+	color:white;
+	font-weight: bold;
+}
+
+.listItem {
+	background-color: #f6f6f6;
+	border-bottom: 1px solid #e0e0e0;
+}

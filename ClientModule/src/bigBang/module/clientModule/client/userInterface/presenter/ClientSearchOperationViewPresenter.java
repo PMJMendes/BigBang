@@ -1,0 +1,122 @@
+package bigBang.module.clientModule.client.userInterface.presenter;
+
+import bigBang.library.shared.EventBus;
+import bigBang.library.shared.Operation;
+import bigBang.library.shared.SearchService;
+import bigBang.library.shared.Service;
+import bigBang.library.shared.event.OperationInvokedEvent;
+import bigBang.library.shared.event.OperationInvokedEventHandler;
+import bigBang.library.shared.userInterface.presenter.OperationViewPresenter;
+import bigBang.library.shared.userInterface.view.View;
+import bigBang.module.clientModule.client.userInterface.ClientSearchPanel;
+import bigBang.module.clientModule.client.userInterface.view.ClientPreviewPanel;
+import bigBang.module.clientModule.shared.ClientProcess;
+import bigBang.module.clientModule.shared.ClientSearchOperation;
+
+import com.google.gwt.core.client.GWT;
+import com.google.gwt.event.logical.shared.ValueChangeEvent;
+import com.google.gwt.event.logical.shared.ValueChangeHandler;
+import com.google.gwt.user.client.ui.HasValue;
+import com.google.gwt.user.client.ui.HasWidgets;
+import com.google.gwt.user.client.ui.Widget;
+
+public class ClientSearchOperationViewPresenter implements OperationViewPresenter {
+
+	public interface Display {
+		HasValue<String> getClientSearchList();
+		HasValue<ClientProcess> getPreviewWidget();
+		
+		Widget asWidget();
+		View getInstance();
+	}
+
+	protected Display view;
+	private EventBus eventBus;
+	private SearchService service;
+	private ClientSearchOperation operation;
+	
+	public ClientSearchOperationViewPresenter(EventBus eventBus, SearchService service, View view){
+		this.setService((Service) service);
+		this.setView(view);
+		this.setEventBus(eventBus);
+	}
+
+	public void setService(Service service) {
+		this.service = (SearchService) service;
+	}
+
+	public void setEventBus(final EventBus eventBus) {
+		this.eventBus = eventBus;
+		if(this.eventBus == null)
+			return;
+		registerEventHandlers(eventBus);
+	}
+
+	public void setView(View view) {
+		this.view = (Display) view;
+	}
+
+	public void go(HasWidgets container) {
+		this.bind();
+		container.clear();
+		container.add(this.view.asWidget());
+	}
+	
+	//The compact version of the operation view
+	public void goCompact(HasWidgets container){
+		go(container);
+		/*this.bind();
+		container.clear();
+		container.add((Widget)this.view.getSearchPreviewPanelContainer());*/
+	}
+
+	public void bind() {
+		this.view.getClientSearchList().addValueChangeHandler(new ValueChangeHandler<String>() {
+			
+			public void onValueChange(ValueChangeEvent<String> event) {
+				fetchClientProcess(event.getValue());
+			}
+		});
+	}
+
+	public void setOperation(final ClientSearchOperation operation) {
+		this.operation = operation;
+	}
+
+	public void registerEventHandlers(final EventBus eventBus) {
+		eventBus.addHandler(OperationInvokedEvent.TYPE,	new OperationInvokedEventHandler() {
+
+			public void onOperationInvoked(OperationInvokedEvent event) {
+				if(getOperation() == null || !event.getOperationId().equals(getOperation().getId()))
+					return;
+				if(event.goToScreen())
+					GWT.log("GOTO SCREEN");
+				else {
+					View tempView  = view.getInstance();
+					ClientSearchOperationViewPresenter presenter = new ClientSearchOperationViewPresenter(eventBus, null, tempView);
+					event.getViewPresenterManager().managePresenter(getOperation().getId(), presenter);
+					//presenter.setTarget(event.getTargetId());
+				}
+			}
+		});
+	}
+
+	private void fetchClientProcess(String processId){
+		ClientProcess process = new ClientProcess();
+		this.view.getPreviewWidget().setValue(process);
+	}
+	
+	public void setOperation(Operation o) {
+		this.operation = (ClientSearchOperation)o;
+	}
+
+	public Operation getOperation() {
+		return this.operation;
+	}
+
+	public String setTargetEntity(String id) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+}

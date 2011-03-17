@@ -1,0 +1,10 @@
+
+<servlet>
+	<servlet-name>TasksService</servlet-name>
+	<servlet-class>bigBang.module.tasksModule.server.TasksServiceImpl</servlet-class>
+</servlet>
+<servlet-mapping>
+	<servlet-name>TasksService</servlet-name>
+	<url-pattern>/bigbang/TasksService</url-pattern>
+</servlet-mapping>
+
