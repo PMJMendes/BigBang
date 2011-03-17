@@ -19,4 +19,10 @@ public interface AuthenticationService extends RemoteService {
 	
 	public String login(String username, String password);
 	
+	public String login();
+	
+	public String logout();
+	
+	public String changePassword(String oldPassword, String newPassword);
+	
 }
