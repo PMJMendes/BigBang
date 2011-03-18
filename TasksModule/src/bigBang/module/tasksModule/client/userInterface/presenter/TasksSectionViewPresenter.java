@@ -5,7 +5,6 @@ import java.util.Arrays;
 import java.util.HashMap;
 
 import bigBang.library.client.EventBus;
-import bigBang.library.client.Service;
 import bigBang.library.client.event.OperationInvokedEvent;
 import bigBang.library.client.userInterface.MenuSection;
 import bigBang.library.client.userInterface.presenter.OperationViewPresenter;
@@ -13,6 +12,7 @@ import bigBang.library.client.userInterface.presenter.SectionViewPresenter;
 import bigBang.library.client.userInterface.presenter.ViewPresenter;
 import bigBang.library.client.userInterface.presenter.ViewPresenterManager;
 import bigBang.library.client.userInterface.view.View;
+import bigBang.library.interfaces.Service;
 import bigBang.module.tasksModule.client.TasksSection;
 import bigBang.module.tasksModule.shared.Task;
 import bigBang.module.tasksModule.interfaces.TasksServiceAsync;
