@@ -1,12 +1,12 @@
 package bigBang.module.clientModule.client.userInterface.presenter;
 
 import bigBang.library.client.EventBus;
-import bigBang.library.client.Service;
 import bigBang.library.client.userInterface.MenuSection;
 import bigBang.library.client.userInterface.presenter.OperationViewPresenter;
 import bigBang.library.client.userInterface.presenter.SectionViewPresenter;
 import bigBang.library.client.userInterface.presenter.ViewPresenter;
 import bigBang.library.client.userInterface.view.View;
+import bigBang.library.interfaces.Service;
 import bigBang.module.clientModule.client.ClientSection;
 
 import com.google.gwt.event.logical.shared.ValueChangeEvent;

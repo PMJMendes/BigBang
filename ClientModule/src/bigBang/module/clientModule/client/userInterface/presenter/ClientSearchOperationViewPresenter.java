@@ -2,12 +2,12 @@ package bigBang.module.clientModule.client.userInterface.presenter;
 
 import bigBang.library.client.EventBus;
 import bigBang.library.client.Operation;
-import bigBang.library.client.Service;
 import bigBang.library.client.event.OperationInvokedEvent;
 import bigBang.library.client.event.OperationInvokedEventHandler;
 import bigBang.library.client.userInterface.presenter.OperationViewPresenter;
 import bigBang.library.client.userInterface.view.View;
 import bigBang.library.interfaces.SearchService;
+import bigBang.library.interfaces.Service;
 import bigBang.module.clientModule.shared.ClientProcess;
 import bigBang.module.clientModule.shared.ClientSearchOperation;
 
