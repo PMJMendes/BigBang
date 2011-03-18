@@ -84,8 +84,8 @@ HasValueChangeHandlers<T> {
 		shadowBottom.getElement().getStyle().setBackgroundImage("url(images/listBottomShadow1.png)");
 		listWrapper.add(shadowBottom);
 
-		scrollPanel.getElement().setAttribute("overflow-y", "scroll");
-		scrollPanel.getElement().setAttribute("overflow-x", "hidden");
+		scrollPanel.getElement().getStyle().setProperty("overflowY", "scroll");
+		scrollPanel.getElement().getStyle().setProperty("overflowX", "hidden");
 
 		scrollPanelWrapper.add(scrollPanel, 0 , 0);
 
@@ -433,4 +433,14 @@ HasValueChangeHandlers<T> {
 		for(ListEntry<T> entry : this.listEntries)
 			entry.setCheckable(checkable);
 	}
+	
+	public ArrayList<ListEntry<T>> getCheckedEntries(){
+		ArrayList<ListEntry<T>> result = new ArrayList<ListEntry<T>>();
+		for(ListEntry<T> e : this.listEntries){
+			if(e.isChecked())
+				result.add(e);
+		}
+		return result;
+	}
+
 }

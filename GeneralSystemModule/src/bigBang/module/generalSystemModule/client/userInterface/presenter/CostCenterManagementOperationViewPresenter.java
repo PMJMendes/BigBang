@@ -1,5 +1,7 @@
 package bigBang.module.generalSystemModule.client.userInterface.presenter;
 
+import java.util.ArrayList;
+
 import org.gwt.mosaic.ui.client.MessageBox.ConfirmationCallback;
 
 import com.google.gwt.core.client.GWT;
@@ -42,6 +44,9 @@ OperationViewPresenter {
 		void setCostCenterEntries(CostCenter[] result);
 
 		void showUsersForMembership(String costCenterId, User[] availableUsers);
+		HasClickHandlers getAddMemberSubmitButton();
+		String[] getSelectedUsersForMembership();
+		void updateCostCenterInfo(CostCenter result);
 	}
 
 	private CostCenterServiceAsync service;
@@ -113,7 +118,51 @@ OperationViewPresenter {
 				removeMembers(view.getCostCenterList().getValue(), view.getSelectedMembers());
 			}
 		});
+		this.view.getAddMemberSubmitButton().addClickHandler(new ClickHandler() {
+			
+			@Override
+			public void onClick(ClickEvent event) {
+				associateUsersToCostCenter(view.getCostCenterList().getValue(), view.getSelectedUsersForMembership());
+			}
+		});
 
+	}
+	
+	public void associateUsersToCostCenter(final String costCenterId, String[] userIds){
+		service.addMembers(costCenterId, userIds, new AsyncCallback<String>() {
+
+			@Override
+			public void onFailure(Throwable caught) {
+				GWT.log("Could not associate users");
+			}
+
+			@Override
+			public void onSuccess(String result) {
+				updateCostCenter(costCenterId);
+			}
+			
+		});
+	}
+	
+	private void updateCostCenter(String id){
+		service.getCostCenter(id, new AsyncCallback<CostCenter>() {
+
+			@Override
+			public void onFailure(Throwable caught) {
+				GWT.log("Could not update cost center");
+			}
+
+			@Override
+			public void onSuccess(CostCenter result) {
+				for(int i = 0; i < costCenterCache.length; i++) {
+					if(costCenterCache[i].id.equals(result.id)){
+						costCenterCache[i] = result;
+						break;
+					}
+				}
+				view.updateCostCenterInfo(result);
+			}
+		});
 	}
 
 	private void addMember(final String costCenterId){

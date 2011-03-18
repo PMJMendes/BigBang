@@ -32,7 +32,7 @@ public interface CostCenterService extends RemoteService {
 	
 	public String deleteCostCenter(String id);
 
-	public String addMember(String costCenterId, String userId);
+	public String addMembers(String costCenterId, String[] userIds);
 	
 	public String removeMember(String costCenterId, String[] memberIds);
 

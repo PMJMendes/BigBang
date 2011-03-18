@@ -83,7 +83,7 @@ public class CostCenterServiceImpl extends RemoteServiceServlet implements CostC
 		return users;
 	}
 	
-	public String addMember(String costcenterId, String userId) {
+	public String addMembers(String costcenterId, String[] userIds) {
 		return "";
 	}
 

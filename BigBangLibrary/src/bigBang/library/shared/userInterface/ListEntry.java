@@ -6,6 +6,7 @@ import bigBang.library.shared.userInterface.view.View;
 import com.google.gwt.dom.client.Style.Cursor;
 import com.google.gwt.dom.client.Style.FontWeight;
 import com.google.gwt.dom.client.Style.Unit;
+import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.user.client.ui.AbsolutePanel;
@@ -94,8 +95,17 @@ public class ListEntry<T> extends View implements HasValue <T> {
 		this.setSelected(false);
 		
 		this.checkBox = new CheckBox();
-	}
+		this.checkBox.addValueChangeHandler(new ValueChangeHandler<Boolean>() {
 
+			@Override
+			public void onValueChange(ValueChangeEvent<Boolean> event) {
+				setCheckable(event.getValue());
+			}
+		});
+	}
+	
+	public <I extends Object> void setInfo(I info){}
+	
 	public T getValue() {
 		return value;
 	}
@@ -208,6 +218,10 @@ public class ListEntry<T> extends View implements HasValue <T> {
 		}
 	}
 	
+	public void setChecked(boolean checked) {
+		setChecked(checked, true);
+	}
+	
 	public void setChecked(boolean checked, boolean fireEvents) {
 		if(checked != this.checkBox.getValue()){
 			this.checkBox.setValue(checked);
@@ -218,6 +232,10 @@ public class ListEntry<T> extends View implements HasValue <T> {
 	
 	public boolean isCheckable(){
 		return this.checkBox != null && this.checkBox.isEnabled();
+	}
+
+	public boolean isChecked() {
+		return this.isCheckable() && this.checkBox.getValue();
 	}
 	
 }

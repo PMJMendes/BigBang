@@ -74,10 +74,8 @@ public class FormView extends View implements Validatable {
 		mainWrapper.add(w);
 	}
 	
-	public void addSubmitButton(){
-		int width = 100;
+	public void addSubmitButton(Button submit){
 		int height = 30;
-		Button submit = new Button("Submeter");
 		HorizontalPanel submitWrapper = new HorizontalPanel();
 		submitWrapper.setSize("100%", "0px");
 		SimplePanel filler = new SimplePanel();
@@ -86,15 +84,13 @@ public class FormView extends View implements Validatable {
 		submitWrapper.setCellWidth(filler, "100%");
 		submitWrapper.setCellHeight(filler, "0px");
 				
-		submit.setSize(width + "px", height + "px");
+		submit.setHeight(height + "px");
 		submit.getElement().getStyle().setRight(20, Unit.PX);
 		submit.getElement().getStyle().setPosition(Position.ABSOLUTE);
 		submitWrapper.add(submit);
 		
 		mainWrapper.add(submitWrapper, 0, 0);//, , (mainWrapper.getOffsetHeight() - height));
 		submit.getElement().getStyle().setFloat(Float.RIGHT);
-		//mainWrapper.s
-		
 	}
 	
 	public void addSection(String title){

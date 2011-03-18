@@ -10,20 +10,32 @@ import bigBang.module.generalSystemModule.shared.CostCenter;
 
 public class CostCenterListEntry extends ListEntry<String> {
 
+	private Label nMembersLabel;
+	
 	public CostCenterListEntry(CostCenter costCenter) {
 		super(costCenter.id);
-		setTitle(costCenter.name);
 		HorizontalPanel labelWrapper = new HorizontalPanel();
 		labelWrapper.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_RIGHT);
 		labelWrapper.setSize("150px", "100%");
-		String text = (costCenter.members.length == 1 ? " membro" : " membros");
-		if(costCenter.members.length == 0)
-			text = "Sem membros";
 		
-		Label label = new Label(costCenter.members.length + text);
-		label.getElement().getStyle().setFontWeight(FontWeight.NORMAL);		
-		labelWrapper.add(label);
+		nMembersLabel = new Label();
+		labelWrapper.add(nMembersLabel);
 		setRightWidget(labelWrapper);
+		
+		setInfo(costCenter);
+	}
+	
+	@Override
+	public <I extends Object> void setInfo(I infoGeneric){
+		CostCenter info	= (CostCenter) infoGeneric;
+		setTitle(info.name);
+		
+		String text = (info.members.length == 1 ? " membro" : " membros");
+		if(info.members.length == 0)
+			text = "Sem membros";
+		nMembersLabel.setText(info.members.length + text);
+		
+		nMembersLabel.getElement().getStyle().setFontWeight(FontWeight.NORMAL);		
 	}
 
 }

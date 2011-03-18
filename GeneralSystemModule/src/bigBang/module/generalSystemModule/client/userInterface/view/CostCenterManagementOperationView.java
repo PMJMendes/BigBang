@@ -19,9 +19,12 @@ import bigBang.module.generalSystemModule.client.userInterface.presenter.CostCen
 import bigBang.module.generalSystemModule.shared.CostCenter;
 import bigBang.module.generalSystemModule.shared.User;
 
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.HasClickHandlers;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
+import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.HasValue;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.SplitLayoutPanel;
@@ -34,6 +37,10 @@ public class CostCenterManagementOperationView extends View implements CostCente
 	private CostCenterList costCenterList;
 	private CostCenterMemberList memberList;
 	private CostCenterForm form;
+
+	private Button addMemberSubmitButton;
+
+	private UserList usersForMembershipList;
 
 	public CostCenterManagementOperationView() {
 		SplitLayoutPanel wrapper = new SplitLayoutPanel();
@@ -58,6 +65,8 @@ public class CostCenterManagementOperationView extends View implements CostCente
 		wrapper.add(previewWrapper);
 
 		initWidget(wrapper);
+		
+		this.addMemberSubmitButton = new Button("Associar Membro(s)");
 	}
 
 	public HasValue<String> getCostCenterList() {
@@ -124,13 +133,18 @@ public class CostCenterManagementOperationView extends View implements CostCente
 		}
 
 	}
+	
+	public HasClickHandlers getAddMemberSubmitButton(){
+		return this.addMemberSubmitButton;
+	}
 
 	public void showUsersForMembership(String costCenterId, final User[] availableUsers) {
-		PopupPanel popup = new PopupPanel("Associar membros a Centro de Custo");
+		final PopupPanel popup = new PopupPanel("Associar membros a Centro de Custo");
 		HorizontalPanel wrapper = new HorizontalPanel();
 		wrapper.setSize("100%", "500px");
 		//popup.setSize("400px", "400px");
 		UserList list = new UserList();
+		this.usersForMembershipList = list;
 		list.setHeaderText("Utilizadores");
 		list.setWidth("300px");
 		
@@ -142,7 +156,14 @@ public class CostCenterManagementOperationView extends View implements CostCente
 		wrapper.add(list);
 		
 		final UserForm form = new UserForm();
-		form.addSubmitButton();
+		addMemberSubmitButton.addClickHandler(new ClickHandler() {
+			
+			@Override
+			public void onClick(ClickEvent event) {
+				popup.hide();
+			}
+		});
+		form.addSubmitButton(this.addMemberSubmitButton);
 		wrapper.add(form);
 		wrapper.setCellWidth(form, "600px");
 		
@@ -165,8 +186,31 @@ public class CostCenterManagementOperationView extends View implements CostCente
 		popup.center();
 	}
 	
+	public String[] getSelectedUsersForMembership(){
+		ArrayList<ListEntry<String>> entries =this.usersForMembershipList.getCheckedEntries();
+		int size = entries.size();
+		String[] result = new String[size];
+		
+		for(int i = 0; i < size; i++) {
+			result[i] = entries.get(i).getValue();
+		}
+		
+		return result;
+	}
+	
 	public void showConfirmRemoveMember(ConfirmationCallback callback){
 		MessageBox.confirm("Confirmar remoção", "Tem certeza que pretende remover o(s) membro(s) seleccionado(s)?", callback);
+	}
+
+	public void updateCostCenterInfo(CostCenter result) {
+		for(ListEntry<String> e : this.costCenterList.getListEntries()){
+			if(e.getValue().equals(result.id)){
+				e.setInfo(result);
+				if(this.costCenterList.getSelectedEntry() == e)
+					this.showDetailsForCostCenter(result);
+				break;
+			}
+		}
 	}
 
 }
