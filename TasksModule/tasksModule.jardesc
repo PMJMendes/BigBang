@@ -11,6 +11,11 @@
         </sealing>
     </manifest>
     <selectedElements exportClassFiles="true" exportJavaFiles="false" exportOutputFolder="false">
-        <folder path="/TasksModule/war/WEB-INF/classes/bigBang/module/tasksModule"/>
+        <javaElement handleIdentifier="=TasksModule/src&lt;bigBang.module.tasksModule.shared{TasksServiceAsync.java"/>
+        <folder path="/TasksModule/bin"/>
+        <javaElement handleIdentifier="=TasksModule/src&lt;bigBang.module.tasksModule.interfaces"/>
+        <javaElement handleIdentifier="=TasksModule/src&lt;bigBang.module.tasksModule.shared{TasksService.java"/>
+        <javaElement handleIdentifier="=TasksModule/src&lt;bigBang.module.tasksModule.server{TasksServiceImpl.java"/>
+        <javaElement handleIdentifier="=TasksModule/src&lt;bigBang.module.tasksModule.shared{Task.java"/>
     </selectedElements>
 </jardesc>
