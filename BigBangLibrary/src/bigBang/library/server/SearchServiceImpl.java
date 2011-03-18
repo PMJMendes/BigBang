@@ -2,8 +2,9 @@ package bigBang.library.server;
 
 import java.util.HashMap;
 
-import bigBang.library.shared.SearchResult;
-import bigBang.library.shared.SearchService;
+import bigBang.library.client.SearchResult;
+import bigBang.library.interfaces.SearchService;
+
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 
 public class SearchServiceImpl extends RemoteServiceServlet implements SearchService {
