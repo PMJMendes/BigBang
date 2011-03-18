@@ -2,10 +2,10 @@ package bigBang.module.tasksModule.client;
 
 import com.google.gwt.core.client.GWT;
 
-import bigBang.library.shared.EventBus;
-import bigBang.library.shared.Module;
-import bigBang.library.shared.userInterface.TextBadge;
-import bigBang.library.shared.userInterface.presenter.SectionViewPresenter;
+import bigBang.library.client.EventBus;
+import bigBang.library.client.Module;
+import bigBang.library.client.userInterface.TextBadge;
+import bigBang.library.client.userInterface.presenter.SectionViewPresenter;
 import bigBang.module.tasksModule.client.event.NumberOfTasksUpdateEvent;
 import bigBang.module.tasksModule.client.event.NumberOfTasksUpdateEventHandler;
 import bigBang.module.tasksModule.client.userInterface.presenter.TasksSectionViewPresenter;

@@ -1,10 +1,10 @@
 package bigBang.module.mainModule.client;
 
-import bigBang.library.shared.EventBus;
-import bigBang.library.shared.event.LoginSuccessEvent;
-import bigBang.library.shared.event.LoginSuccessEventHandler;
-import bigBang.library.shared.userInterface.presenter.SectionViewPresenter;
-import bigBang.library.shared.userInterface.presenter.ViewPresenter;
+import bigBang.library.client.EventBus;
+import bigBang.library.client.event.LoginSuccessEvent;
+import bigBang.library.client.event.LoginSuccessEventHandler;
+import bigBang.library.client.userInterface.presenter.SectionViewPresenter;
+import bigBang.library.client.userInterface.presenter.ViewPresenter;
 import bigBang.module.mainModule.client.notifications.NotificationsManager;
 import bigBang.module.mainModule.client.userInterface.presenter.MainScreenViewPresenter;
 import bigBang.module.mainModule.client.userInterface.view.MainScreenView;

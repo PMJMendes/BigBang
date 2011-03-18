@@ -1,6 +1,6 @@
 package bigBang.client;
 
-import bigBang.library.shared.EventBus;
+import bigBang.library.client.EventBus;
 import bigBang.module.loginModule.client.LoginModule;
 import bigBang.module.mainModule.client.MainModule;
 import bigBang.module.tasksModule.client.TasksModule;

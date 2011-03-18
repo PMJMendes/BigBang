@@ -6,9 +6,9 @@ import java.util.Collection;
 import org.gwt.mosaic.ui.client.MessageBox;
 import org.gwt.mosaic.ui.client.MessageBox.ConfirmationCallback;
 
-import bigBang.library.shared.userInterface.ListEntry;
-import bigBang.library.shared.userInterface.view.PopupPanel;
-import bigBang.library.shared.userInterface.view.View;
+import bigBang.library.client.userInterface.ListEntry;
+import bigBang.library.client.userInterface.view.PopupPanel;
+import bigBang.library.client.userInterface.view.View;
 import bigBang.module.generalSystemModule.client.userInterface.CostCenterList;
 import bigBang.module.generalSystemModule.client.userInterface.CostCenterListEntry;
 import bigBang.module.generalSystemModule.client.userInterface.CostCenterMemberList;

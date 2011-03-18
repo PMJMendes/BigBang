@@ -1,7 +1,7 @@
 package bigBang.module.clientModule.client.userInterface.view;
 
-import bigBang.library.shared.userInterface.TextBoxFormField;
-import bigBang.library.shared.userInterface.view.FormView;
+import bigBang.library.client.userInterface.TextBoxFormField;
+import bigBang.library.client.userInterface.view.FormView;
 import bigBang.module.clientModule.shared.ClientFormValidator;
 import bigBang.module.clientModule.shared.ClientProcess;
 

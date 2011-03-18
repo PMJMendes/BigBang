@@ -2,7 +2,7 @@ package bigBang.module.tasksModule.client.userInterface;
 
 import java.util.Collection;
 
-import bigBang.library.shared.userInterface.List;
+import bigBang.library.client.userInterface.List;
 import bigBang.module.tasksModule.shared.Task;
 
 import com.google.gwt.core.client.GWT;

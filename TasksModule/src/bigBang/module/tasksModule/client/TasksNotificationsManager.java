@@ -1,8 +1,8 @@
 package bigBang.module.tasksModule.client;
 
-import bigBang.library.shared.EventBus;
-import bigBang.library.shared.Notification;
-import bigBang.library.shared.event.NewNotificationEvent;
+import bigBang.library.client.EventBus;
+import bigBang.library.client.Notification;
+import bigBang.library.client.event.NewNotificationEvent;
 import bigBang.module.tasksModule.client.event.NumberOfTasksUpdateEvent;
 
 import com.google.gwt.user.client.Timer;

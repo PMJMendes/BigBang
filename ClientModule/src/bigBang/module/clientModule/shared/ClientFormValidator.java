@@ -1,7 +1,7 @@
 package bigBang.module.clientModule.shared;
 
-import bigBang.library.shared.FieldValidator;
-import bigBang.library.shared.FormValidator;
+import bigBang.library.client.FieldValidator;
+import bigBang.library.client.FormValidator;
 
 public class ClientFormValidator implements FormValidator {
 

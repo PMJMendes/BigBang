@@ -1,8 +1,8 @@
 package bigBang.module.generalSystemModule.client;
 
-import bigBang.library.shared.EventBus;
-import bigBang.library.shared.Module;
-import bigBang.library.shared.userInterface.presenter.SectionViewPresenter;
+import bigBang.library.client.EventBus;
+import bigBang.library.client.Module;
+import bigBang.library.client.userInterface.presenter.SectionViewPresenter;
 import bigBang.module.generalSystemModule.client.userInterface.presenter.GeneralSystemSectionViewPresenter;
 import bigBang.module.generalSystemModule.client.userInterface.view.GeneralSystemSectionView;
 

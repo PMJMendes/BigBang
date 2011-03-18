@@ -2,10 +2,10 @@ package bigBang.module.clientModule.client.userInterface.view;
 
 import org.gwt.mosaic.ui.client.MessageBox;
 
-import bigBang.library.shared.userInterface.DockItem;
-import bigBang.library.shared.userInterface.DockPanel;
-import bigBang.library.shared.userInterface.presenter.OperationViewPresenter;
-import bigBang.library.shared.userInterface.view.View;
+import bigBang.library.client.userInterface.DockItem;
+import bigBang.library.client.userInterface.DockPanel;
+import bigBang.library.client.userInterface.presenter.OperationViewPresenter;
+import bigBang.library.client.userInterface.view.View;
 import bigBang.module.clientModule.client.userInterface.presenter.ClientSectionViewPresenter;
 
 import com.google.gwt.user.client.ui.HasValue;

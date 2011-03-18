@@ -1,6 +1,6 @@
 package bigBang.module.clientModule.shared;
 
-import bigBang.library.shared.Operation;
+import bigBang.library.client.Operation;
 
 import com.google.gwt.user.client.ui.AbstractImagePrototype;
 

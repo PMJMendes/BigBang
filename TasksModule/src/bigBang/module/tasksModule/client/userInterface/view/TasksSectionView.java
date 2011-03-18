@@ -2,7 +2,7 @@ package bigBang.module.tasksModule.client.userInterface.view;
 
 import java.util.ArrayList;
 
-import bigBang.library.shared.userInterface.view.View;
+import bigBang.library.client.userInterface.view.View;
 import bigBang.module.tasksModule.client.userInterface.TaskList;
 import bigBang.module.tasksModule.client.userInterface.presenter.TasksSectionViewPresenter;
 import bigBang.module.tasksModule.shared.Task;

@@ -2,7 +2,7 @@ package bigBang.module.clientModule.shared;
 
 import java.io.Serializable;
 
-import bigBang.library.shared.Process;
+import bigBang.library.client.Process;
 
 import com.google.gwt.core.client.GWT;
 

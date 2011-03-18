@@ -3,8 +3,8 @@ package bigBang.module.mainModule.client;
 import java.util.Collection;
 import java.util.HashMap;
 
-import bigBang.library.shared.Operation;
-import bigBang.library.shared.Process;
+import bigBang.library.client.Operation;
+import bigBang.library.client.Process;
 
 public class ProcessManager {
 

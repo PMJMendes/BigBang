@@ -1,9 +1,9 @@
 package bigBang.module.mainModule.client.notifications;
 
-import bigBang.library.shared.EventBus;
-import bigBang.library.shared.Notification;
-import bigBang.library.shared.event.NewNotificationEvent;
-import bigBang.library.shared.event.NewNotificationEventHandler;
+import bigBang.library.client.EventBus;
+import bigBang.library.client.Notification;
+import bigBang.library.client.event.NewNotificationEvent;
+import bigBang.library.client.event.NewNotificationEventHandler;
 import bigBang.module.mainModule.client.userInterface.InfoPanel;
 import bigBang.module.mainModule.client.userInterface.InfoPanel.InfoPanelType;
 

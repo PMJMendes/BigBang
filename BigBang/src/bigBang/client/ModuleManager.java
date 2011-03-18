@@ -2,10 +2,10 @@ package bigBang.client;
 
 import java.util.ArrayList;
 
-import bigBang.library.shared.EventBus;
-import bigBang.library.shared.LoginModule;
-import bigBang.library.shared.MainModule;
-import bigBang.library.shared.Module;
+import bigBang.library.client.EventBus;
+import bigBang.library.client.LoginModule;
+import bigBang.library.client.MainModule;
+import bigBang.library.client.Module;
 
 public class ModuleManager {
 

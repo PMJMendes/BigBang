@@ -1,7 +1,7 @@
 package bigBang.module.clientModule.client.userInterface;
 
-import bigBang.library.shared.userInterface.ContextMenu;
-import bigBang.library.shared.userInterface.SearchPanelListEntry;
+import bigBang.library.client.userInterface.ContextMenu;
+import bigBang.library.client.userInterface.SearchPanelListEntry;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.Event;

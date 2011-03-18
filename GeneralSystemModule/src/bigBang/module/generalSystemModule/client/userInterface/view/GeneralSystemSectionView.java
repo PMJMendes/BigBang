@@ -7,10 +7,10 @@ import com.google.gwt.user.client.ui.HasWidgets;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
-import bigBang.library.shared.userInterface.DockItem;
-import bigBang.library.shared.userInterface.DockPanel;
-import bigBang.library.shared.userInterface.presenter.OperationViewPresenter;
-import bigBang.library.shared.userInterface.view.View;
+import bigBang.library.client.userInterface.DockItem;
+import bigBang.library.client.userInterface.DockPanel;
+import bigBang.library.client.userInterface.presenter.OperationViewPresenter;
+import bigBang.library.client.userInterface.view.View;
 import bigBang.module.generalSystemModule.client.userInterface.presenter.GeneralSystemSectionViewPresenter;;
 
 public class GeneralSystemSectionView extends View implements GeneralSystemSectionViewPresenter.Display {

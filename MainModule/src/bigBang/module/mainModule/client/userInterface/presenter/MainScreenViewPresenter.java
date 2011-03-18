@@ -1,11 +1,11 @@
 package bigBang.module.mainModule.client.userInterface.presenter;
 
-import bigBang.library.shared.EventBus;
-import bigBang.library.shared.Service;
-import bigBang.library.shared.userInterface.MenuSection;
-import bigBang.library.shared.userInterface.presenter.SectionViewPresenter;
-import bigBang.library.shared.userInterface.presenter.ViewPresenter;
-import bigBang.library.shared.userInterface.view.View;
+import bigBang.library.client.EventBus;
+import bigBang.library.client.Service;
+import bigBang.library.client.userInterface.MenuSection;
+import bigBang.library.client.userInterface.presenter.SectionViewPresenter;
+import bigBang.library.client.userInterface.presenter.ViewPresenter;
+import bigBang.library.client.userInterface.view.View;
 
 import com.google.gwt.user.client.ui.HasWidgets;
 import com.google.gwt.user.client.ui.Widget;

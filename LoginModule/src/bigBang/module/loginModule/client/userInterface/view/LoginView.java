@@ -1,6 +1,6 @@
 package bigBang.module.loginModule.client.userInterface.view;
 
-import bigBang.library.shared.userInterface.view.View;
+import bigBang.library.client.userInterface.view.View;
 import bigBang.module.loginModule.client.userInterface.presenter.LoginViewPresenter;
 
 import com.google.gwt.event.dom.client.HasClickHandlers;

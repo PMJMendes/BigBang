@@ -1,9 +1,9 @@
 package bigBang.module.generalSystemModule.client.userInterface.view;
 
-import bigBang.library.shared.FormField;
-import bigBang.library.shared.userInterface.TextBoxFormField;
-import bigBang.library.shared.userInterface.view.FormView;
-import bigBang.library.shared.userInterface.view.FormViewSection;
+import bigBang.library.client.FormField;
+import bigBang.library.client.userInterface.TextBoxFormField;
+import bigBang.library.client.userInterface.view.FormView;
+import bigBang.library.client.userInterface.view.FormViewSection;
 
 import com.google.gwt.user.client.ui.HasValue;
 

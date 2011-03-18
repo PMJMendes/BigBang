@@ -4,11 +4,11 @@ import java.util.HashMap;
 
 import com.google.gwt.core.client.GWT;
 
-import bigBang.library.shared.EventBus;
-import bigBang.library.shared.Service;
-import bigBang.library.shared.userInterface.MenuSection;
-import bigBang.library.shared.userInterface.TextBadge;
-import bigBang.library.shared.userInterface.presenter.OperationViewPresenter;
+import bigBang.library.client.EventBus;
+import bigBang.library.client.Service;
+import bigBang.library.client.userInterface.MenuSection;
+import bigBang.library.client.userInterface.TextBadge;
+import bigBang.library.client.userInterface.presenter.OperationViewPresenter;
 import bigBang.module.generalSystemModule.client.userInterface.presenter.CostCenterManagementOperationViewPresenter;
 import bigBang.module.generalSystemModule.client.userInterface.view.CostCenterManagementOperationView;
 import bigBang.module.generalSystemModule.shared.CostCenterManagementOperation;

@@ -2,7 +2,7 @@ package bigBang.module.generalSystemModule.shared;
 
 import com.google.gwt.user.client.ui.AbstractImagePrototype;
 
-import bigBang.library.shared.Operation;
+import bigBang.library.client.Operation;
 
 public class CostCenterManagementOperation implements Operation {
 

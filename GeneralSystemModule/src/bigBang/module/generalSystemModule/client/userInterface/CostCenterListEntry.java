@@ -5,7 +5,7 @@ import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
 
-import bigBang.library.shared.userInterface.ListEntry;
+import bigBang.library.client.userInterface.ListEntry;
 import bigBang.module.generalSystemModule.shared.CostCenter;
 
 public class CostCenterListEntry extends ListEntry<String> {

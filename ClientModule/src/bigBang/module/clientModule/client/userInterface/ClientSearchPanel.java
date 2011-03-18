@@ -1,7 +1,7 @@
 package bigBang.module.clientModule.client.userInterface;
 
-import bigBang.library.shared.SearchResult;
-import bigBang.library.shared.userInterface.view.SearchPanel;
+import bigBang.library.client.SearchResult;
+import bigBang.library.client.userInterface.view.SearchPanel;
 
 public class ClientSearchPanel extends SearchPanel {
 

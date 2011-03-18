@@ -1,9 +1,9 @@
 package bigBang.module.tasksModule.client;
 
-import bigBang.library.shared.EventBus;
-import bigBang.library.shared.userInterface.MenuSection;
-import bigBang.library.shared.userInterface.TextBadge;
-import bigBang.library.shared.userInterface.view.View;
+import bigBang.library.client.EventBus;
+import bigBang.library.client.userInterface.MenuSection;
+import bigBang.library.client.userInterface.TextBadge;
+import bigBang.library.client.userInterface.view.View;
 
 public class TasksSection implements MenuSection {
 

@@ -3,12 +3,12 @@ package bigBang.module.mainModule.client;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.RootPanel;
 
-import bigBang.library.shared.EventBus;
-import bigBang.library.shared.userInterface.presenter.SectionViewPresenter;
-import bigBang.library.shared.userInterface.presenter.ViewPresenter;
+import bigBang.library.client.EventBus;
+import bigBang.library.client.userInterface.presenter.SectionViewPresenter;
+import bigBang.library.client.userInterface.presenter.ViewPresenter;
 
 
-public class MainModule implements bigBang.library.shared.MainModule {
+public class MainModule implements bigBang.library.client.MainModule {
 
 	private static EventBus eventBus; //Where app events are posted
 	private static ApplicationController applicationController; //Top level control of the application

@@ -1,11 +1,11 @@
 package bigBang.module.loginModule.client;
 
-import bigBang.library.shared.Domain;
-import bigBang.library.shared.EventBus;
-import bigBang.library.shared.userInterface.presenter.SectionViewPresenter;
-import bigBang.library.shared.userInterface.presenter.ViewPresenter;
+import bigBang.library.client.Domain;
+import bigBang.library.client.EventBus;
+import bigBang.library.client.userInterface.presenter.SectionViewPresenter;
+import bigBang.library.client.userInterface.presenter.ViewPresenter;
 
-public class LoginModule implements bigBang.library.shared.LoginModule {
+public class LoginModule implements bigBang.library.client.LoginModule {
 
 	public void initialize(EventBus eventBus) {
 		// TODO Auto-generated method stub

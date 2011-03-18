@@ -1,8 +1,8 @@
 package bigBang.module.generalSystemModule.client.userInterface.view;
 
-import bigBang.library.shared.userInterface.ListBoxFormField;
-import bigBang.library.shared.userInterface.TextBoxFormField;
-import bigBang.library.shared.userInterface.view.FormView;
+import bigBang.library.client.userInterface.ListBoxFormField;
+import bigBang.library.client.userInterface.TextBoxFormField;
+import bigBang.library.client.userInterface.view.FormView;
 import bigBang.module.generalSystemModule.shared.User;
 
 public class UserForm extends FormView {

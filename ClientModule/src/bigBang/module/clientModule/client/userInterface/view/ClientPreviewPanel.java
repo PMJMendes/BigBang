@@ -1,6 +1,6 @@
 package bigBang.module.clientModule.client.userInterface.view;
 
-import bigBang.library.shared.userInterface.view.PreviewPanel;
+import bigBang.library.client.userInterface.view.PreviewPanel;
 import bigBang.module.clientModule.shared.ClientProcess;
 
 public class ClientPreviewPanel extends PreviewPanel<ClientProcess> {

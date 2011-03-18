@@ -4,9 +4,9 @@ import java.util.HashMap;
 
 import org.gwt.mosaic.ui.client.SheetPanel.Resources;
 
-import bigBang.library.shared.userInterface.MenuSection;
-import bigBang.library.shared.userInterface.presenter.SectionViewPresenter;
-import bigBang.library.shared.userInterface.view.View;
+import bigBang.library.client.userInterface.MenuSection;
+import bigBang.library.client.userInterface.presenter.SectionViewPresenter;
+import bigBang.library.client.userInterface.view.View;
 import bigBang.module.mainModule.client.userInterface.presenter.MainScreenViewPresenter;
 
 import com.google.gwt.core.client.GWT;

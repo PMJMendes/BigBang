@@ -1,8 +1,8 @@
 package bigBang.module.clientModule.shared;
 
-import bigBang.library.shared.Operation;
-import bigBang.library.shared.userInterface.presenter.ViewPresenter;
-import bigBang.library.shared.userInterface.view.View;
+import bigBang.library.client.Operation;
+import bigBang.library.client.userInterface.presenter.ViewPresenter;
+import bigBang.library.client.userInterface.view.View;
 import bigBang.module.clientModule.client.userInterface.presenter.ClientSearchOperationViewPresenter;
 import bigBang.module.clientModule.client.userInterface.view.ClientSearchOperationView;
 

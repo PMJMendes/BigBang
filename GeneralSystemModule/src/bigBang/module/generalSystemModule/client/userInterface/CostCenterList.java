@@ -7,7 +7,7 @@ import com.google.gwt.user.client.ui.HasVerticalAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
 
-import bigBang.library.shared.userInterface.List;
+import bigBang.library.client.userInterface.List;
 
 public class CostCenterList extends List<String> {
 

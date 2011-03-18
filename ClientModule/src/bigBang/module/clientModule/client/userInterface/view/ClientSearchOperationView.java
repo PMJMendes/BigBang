@@ -1,6 +1,6 @@
 package bigBang.module.clientModule.client.userInterface.view;
 
-import bigBang.library.shared.userInterface.view.View;
+import bigBang.library.client.userInterface.view.View;
 import bigBang.module.clientModule.client.userInterface.ClientSearchPanel;
 import bigBang.module.clientModule.client.userInterface.presenter.ClientSearchOperationViewPresenter;
 import bigBang.module.clientModule.shared.ClientProcess;

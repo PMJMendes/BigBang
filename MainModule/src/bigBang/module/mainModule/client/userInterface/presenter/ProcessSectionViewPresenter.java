@@ -1,12 +1,12 @@
 package bigBang.module.mainModule.client.userInterface.presenter;
 
-import bigBang.library.shared.EventBus;
-import bigBang.library.shared.Operation;
-import bigBang.library.shared.Service;
-import bigBang.library.shared.event.OperationInvokedEvent;
-import bigBang.library.shared.event.OperationInvokedEventHandler;
-import bigBang.library.shared.userInterface.presenter.ViewPresenter;
-import bigBang.library.shared.userInterface.view.View;
+import bigBang.library.client.EventBus;
+import bigBang.library.client.Operation;
+import bigBang.library.client.Service;
+import bigBang.library.client.event.OperationInvokedEvent;
+import bigBang.library.client.event.OperationInvokedEventHandler;
+import bigBang.library.client.userInterface.presenter.ViewPresenter;
+import bigBang.library.client.userInterface.view.View;
 
 import com.google.gwt.user.client.ui.HasValue;
 import com.google.gwt.user.client.ui.HasWidgets;
