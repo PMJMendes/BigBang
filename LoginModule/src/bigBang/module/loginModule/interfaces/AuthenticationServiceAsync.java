@@ -1,6 +1,6 @@
 package bigBang.module.loginModule.interfaces;
 
-import bigBang.library.client.Service;
+import bigBang.library.interfaces.Service;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
