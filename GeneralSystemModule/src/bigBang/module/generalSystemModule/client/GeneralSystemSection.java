@@ -5,7 +5,7 @@ import java.util.HashMap;
 import com.google.gwt.core.client.GWT;
 
 import bigBang.library.client.EventBus;
-import bigBang.library.client.Service;
+import bigBang.library.interfaces.Service;
 import bigBang.library.client.userInterface.MenuSection;
 import bigBang.library.client.userInterface.TextBadge;
 import bigBang.library.client.userInterface.presenter.OperationViewPresenter;

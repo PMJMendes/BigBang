@@ -17,7 +17,7 @@ import com.google.gwt.user.client.ui.Widget;
 
 import bigBang.library.client.EventBus;
 import bigBang.library.client.Operation;
-import bigBang.library.client.Service;
+import bigBang.library.interfaces.Service;
 import bigBang.library.client.userInterface.presenter.OperationViewPresenter;
 import bigBang.library.client.userInterface.view.View;
 import bigBang.module.generalSystemModule.interfaces.CostCenterServiceAsync;
