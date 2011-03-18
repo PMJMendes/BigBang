@@ -3,7 +3,7 @@ package bigBang.library.interfaces;
 import java.util.HashMap;
 
 import bigBang.library.client.SearchResult;
-import bigBang.library.client.Service;
+
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.rpc.RemoteService;
 import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;

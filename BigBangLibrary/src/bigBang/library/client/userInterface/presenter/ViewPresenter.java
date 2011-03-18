@@ -1,8 +1,8 @@
 package bigBang.library.client.userInterface.presenter;
 
 import bigBang.library.client.EventBus;
-import bigBang.library.client.Service;
 import bigBang.library.client.userInterface.view.View;
+import bigBang.library.interfaces.Service;
 
 import com.google.gwt.user.client.ui.HasWidgets;
 
