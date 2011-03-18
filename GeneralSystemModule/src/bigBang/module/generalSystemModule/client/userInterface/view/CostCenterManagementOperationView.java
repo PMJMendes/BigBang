@@ -160,7 +160,7 @@ public class CostCenterManagementOperationView extends View implements CostCente
 			
 			@Override
 			public void onClick(ClickEvent event) {
-				popup.hide();
+				popup.hidePopup();
 			}
 		});
 		form.addSubmitButton(this.addMemberSubmitButton);
