@@ -1,6 +1,7 @@
 package bigBang.module.loginModule.server;
 
-import bigBang.module.loginModule.shared.AuthenticationService;
+import bigBang.module.loginModule.interfaces.AuthenticationService;
+
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 
 public class AuthenticationServiceImpl extends RemoteServiceServlet implements AuthenticationService {

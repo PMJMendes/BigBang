@@ -5,7 +5,7 @@ import bigBang.library.client.Service;
 import bigBang.library.client.event.LoginSuccessEvent;
 import bigBang.library.client.userInterface.presenter.ViewPresenter;
 import bigBang.library.client.userInterface.view.View;
-import bigBang.module.loginModule.shared.AuthenticationServiceAsync;
+import bigBang.module.loginModule.interfaces.AuthenticationServiceAsync;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
