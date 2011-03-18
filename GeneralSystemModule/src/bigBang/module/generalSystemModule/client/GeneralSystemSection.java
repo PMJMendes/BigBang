@@ -11,6 +11,8 @@ import bigBang.library.client.userInterface.TextBadge;
 import bigBang.library.client.userInterface.presenter.OperationViewPresenter;
 import bigBang.module.generalSystemModule.client.userInterface.presenter.CostCenterManagementOperationViewPresenter;
 import bigBang.module.generalSystemModule.client.userInterface.view.CostCenterManagementOperationView;
+import bigBang.module.generalSystemModule.interfaces.CostCenterService;
+import bigBang.module.generalSystemModule.interfaces.CostCenterServiceAsync;
 import bigBang.module.generalSystemModule.shared.CostCenterManagementOperation;
 
 public class GeneralSystemSection implements MenuSection {

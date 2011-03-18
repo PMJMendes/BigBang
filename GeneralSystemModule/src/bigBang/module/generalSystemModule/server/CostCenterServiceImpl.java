@@ -1,6 +1,6 @@
 package bigBang.module.generalSystemModule.server;
 
-import bigBang.module.generalSystemModule.client.CostCenterService;
+import bigBang.module.generalSystemModule.interfaces.CostCenterService;
 import bigBang.module.generalSystemModule.shared.CostCenter;
 import bigBang.module.generalSystemModule.shared.User;
 import bigBang.module.generalSystemModule.shared.UserRole;

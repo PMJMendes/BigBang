@@ -20,7 +20,7 @@ import bigBang.library.client.Operation;
 import bigBang.library.client.Service;
 import bigBang.library.client.userInterface.presenter.OperationViewPresenter;
 import bigBang.library.client.userInterface.view.View;
-import bigBang.module.generalSystemModule.client.CostCenterServiceAsync;
+import bigBang.module.generalSystemModule.interfaces.CostCenterServiceAsync;
 import bigBang.module.generalSystemModule.shared.CostCenter;
 import bigBang.module.generalSystemModule.shared.CostCenterManagementOperation;
 import bigBang.module.generalSystemModule.shared.User;

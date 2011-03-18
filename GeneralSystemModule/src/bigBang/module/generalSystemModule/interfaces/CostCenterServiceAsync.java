@@ -1,4 +1,4 @@
-package bigBang.module.generalSystemModule.client;
+package bigBang.module.generalSystemModule.interfaces;
 
 import bigBang.library.client.Service;
 import bigBang.module.generalSystemModule.shared.CostCenter;
