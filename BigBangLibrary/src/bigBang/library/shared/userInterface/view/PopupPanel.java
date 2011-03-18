@@ -55,7 +55,7 @@ public class PopupPanel extends View implements HasWidgets {
 			popup.center();
 	}
 
-	public void hide() {
+	public void hidePopup() {
 		this.popup.hide();
 	}
 

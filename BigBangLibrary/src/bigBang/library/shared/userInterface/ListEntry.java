@@ -9,6 +9,7 @@ import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
+import com.google.gwt.user.client.Event;
 import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.HasValue;
@@ -206,6 +207,7 @@ public class ListEntry<T> extends View implements HasValue <T> {
 	}
 
 	public void setCheckable(boolean checkable) {
+		setDoubleClickable(checkable);
 		if(checkable) {
 			this.setLeftWidget(this.checkBox);
 			this.checkBox.setEnabled(true);
@@ -236,6 +238,14 @@ public class ListEntry<T> extends View implements HasValue <T> {
 
 	public boolean isChecked() {
 		return this.isCheckable() && this.checkBox.getValue();
+	}
+	
+	@Override
+	public void onDoubleClick(Event event){
+		super.onDoubleClick(event);
+		if(this.isCheckable()){
+			this.setChecked(!this.isChecked());
+		}
 	}
 	
 }
