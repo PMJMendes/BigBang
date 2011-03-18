@@ -1,7 +1,7 @@
 package bigBang.module.tasksModule.server;
 
+import bigBang.module.tasksModule.interfaces.TasksService;
 import bigBang.module.tasksModule.shared.Task;
-import bigBang.module.tasksModule.shared.TasksService;
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 
 public class TasksServiceImpl extends RemoteServiceServlet implements TasksService {

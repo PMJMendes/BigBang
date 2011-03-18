@@ -15,7 +15,7 @@ import bigBang.library.shared.userInterface.presenter.ViewPresenterManager;
 import bigBang.library.shared.userInterface.view.View;
 import bigBang.module.tasksModule.client.TasksSection;
 import bigBang.module.tasksModule.shared.Task;
-import bigBang.module.tasksModule.shared.TasksServiceAsync;
+import bigBang.module.tasksModule.interfaces.TasksServiceAsync;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;

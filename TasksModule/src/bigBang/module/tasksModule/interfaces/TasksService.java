@@ -1,4 +1,6 @@
-package bigBang.module.tasksModule.shared;
+package bigBang.module.tasksModule.interfaces;
+
+import bigBang.module.tasksModule.shared.Task;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.rpc.RemoteService;

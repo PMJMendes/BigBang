@@ -10,8 +10,8 @@ import bigBang.module.tasksModule.client.event.NumberOfTasksUpdateEvent;
 import bigBang.module.tasksModule.client.event.NumberOfTasksUpdateEventHandler;
 import bigBang.module.tasksModule.client.userInterface.presenter.TasksSectionViewPresenter;
 import bigBang.module.tasksModule.client.userInterface.view.TasksSectionView;
-import bigBang.module.tasksModule.shared.TasksService;
-import bigBang.module.tasksModule.shared.TasksServiceAsync;
+import bigBang.module.tasksModule.interfaces.TasksService;
+import bigBang.module.tasksModule.interfaces.TasksServiceAsync;
 
 public class TasksModule implements Module {
 
