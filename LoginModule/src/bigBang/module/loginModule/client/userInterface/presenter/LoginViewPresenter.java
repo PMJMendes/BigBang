@@ -1,10 +1,10 @@
 package bigBang.module.loginModule.client.userInterface.presenter;
 
 import bigBang.library.client.EventBus;
-import bigBang.library.client.Service;
 import bigBang.library.client.event.LoginSuccessEvent;
 import bigBang.library.client.userInterface.presenter.ViewPresenter;
 import bigBang.library.client.userInterface.view.View;
+import bigBang.library.interfaces.Service;
 import bigBang.module.loginModule.interfaces.AuthenticationServiceAsync;
 
 import com.google.gwt.core.client.GWT;
