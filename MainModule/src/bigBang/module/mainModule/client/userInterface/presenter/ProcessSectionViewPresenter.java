@@ -2,11 +2,11 @@ package bigBang.module.mainModule.client.userInterface.presenter;
 
 import bigBang.library.client.EventBus;
 import bigBang.library.client.Operation;
-import bigBang.library.client.Service;
 import bigBang.library.client.event.OperationInvokedEvent;
 import bigBang.library.client.event.OperationInvokedEventHandler;
 import bigBang.library.client.userInterface.presenter.ViewPresenter;
 import bigBang.library.client.userInterface.view.View;
+import bigBang.library.interfaces.Service;
 
 import com.google.gwt.user.client.ui.HasValue;
 import com.google.gwt.user.client.ui.HasWidgets;
