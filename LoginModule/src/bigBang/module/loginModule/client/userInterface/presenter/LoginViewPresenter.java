@@ -27,6 +27,7 @@ public class LoginViewPresenter implements ViewPresenter {
 
 	private Display view;
 	private EventBus eventBus;
+	private HasWidgets tmpContainer;
 	
 	private AuthenticationServiceAsync service;
 
@@ -52,9 +53,11 @@ public class LoginViewPresenter implements ViewPresenter {
 	}
 
 	public void go(HasWidgets container) {
-		bind();
-		container.clear();
-		container.add(this.view.asWidget());
+		tmpContainer = container;
+		checkIntegrated();
+//		bind();
+//		container.clear();
+//		container.add(this.view.asWidget());
 	}
 
 	public void bind() {
@@ -62,6 +65,27 @@ public class LoginViewPresenter implements ViewPresenter {
 			
 			public void onClick(ClickEvent event) {
 				checkLogin();
+			}
+		});
+	}
+	
+	private void checkIntegrated(){
+		service.login(new AsyncCallback<String>() {
+			
+			public void onSuccess(String username) {
+				if(username == null){
+					bind();
+					tmpContainer.clear();
+					tmpContainer.add(view.asWidget());
+					tmpContainer = null;
+				} else {				
+					eventBus.fireEvent(new LoginSuccessEvent(username));
+					GWT.log("Authentication success for " + username);
+				}
+			}
+			
+			public void onFailure(Throwable caught) {
+				GWT.log("Authentication service failure : " + caught.getMessage());
 			}
 		});
 	}

@@ -1,9 +1,15 @@
 package bigBang.module.loginModule.client;
 
+import com.google.gwt.core.client.GWT;
+
 import bigBang.library.client.Domain;
 import bigBang.library.client.EventBus;
 import bigBang.library.client.userInterface.presenter.SectionViewPresenter;
 import bigBang.library.client.userInterface.presenter.ViewPresenter;
+import bigBang.library.interfaces.Service;
+import bigBang.module.loginModule.client.userInterface.presenter.LoginViewPresenter;
+import bigBang.module.loginModule.client.userInterface.view.LoginView;
+import bigBang.module.loginModule.interfaces.AuthenticationService;
 
 public class LoginModule implements bigBang.library.client.LoginModule {
 
@@ -43,12 +49,10 @@ public class LoginModule implements bigBang.library.client.LoginModule {
 	}
 
 	public ViewPresenter getLoginViewPresenter() {
-		return null;
-		/*
+		//return null;
 		LoginViewPresenter presenter = new LoginViewPresenter(null, new LoginView());
 		presenter.setService((Service) GWT.create(AuthenticationService.class));
 		return presenter;
-		*/
 	}
 
 	public SectionViewPresenter[] getMainMenuSectionPresenters() {

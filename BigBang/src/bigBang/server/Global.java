@@ -2,6 +2,8 @@ package bigBang.server;
 
 import javax.servlet.*;
 
+import bigBang.library.server.EngineImplementor;
+
 import Jewel.Engine.*;
 import Jewel.Engine.SysObjects.*;
 

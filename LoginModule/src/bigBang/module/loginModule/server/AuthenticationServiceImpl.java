@@ -1,32 +1,31 @@
 package bigBang.module.loginModule.server;
 
+import bigBang.library.server.EngineImplementor;
 import bigBang.module.loginModule.interfaces.AuthenticationService;
 
-import com.google.gwt.user.server.rpc.RemoteServiceServlet;
-
-public class AuthenticationServiceImpl extends RemoteServiceServlet implements AuthenticationService {
-	
+public class AuthenticationServiceImpl
+	extends EngineImplementor
+	implements AuthenticationService
+{
 	private static final long serialVersionUID = 1L;
 
-	public String login(String username, String password) {
-		return "client login ok";
+	public String login(String username, String password)
+	{
+		return username;
 	}
 
-	@Override
-	public String login() {
-		// TODO Auto-generated method stub
+	public String login()
+	{
+		return getThreadLocalRequest().getRemoteUser();
+	}
+
+	public String logout()
+	{
 		return null;
 	}
 
-	@Override
-	public String logout() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public String changePassword(String oldPassword, String newPassword) {
-		// TODO Auto-generated method stub
+	public String changePassword(String oldPassword, String newPassword)
+	{
 		return null;
 	}
 }
