@@ -54,5 +54,23 @@ public class ClientFormView extends FormView {
 		VerticalPanel contactWrapper = new VerticalPanel();
 		return contactWrapper;
 	}
+
+	@Override
+	public Object getInfo() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void setInfo(Object info) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void clearInfo() {
+		// TODO Auto-generated method stub
+		
+	}
 	
 }

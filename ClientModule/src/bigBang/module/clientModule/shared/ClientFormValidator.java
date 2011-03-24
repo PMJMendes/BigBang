@@ -5,11 +5,11 @@ import bigBang.library.client.FormValidator;
 
 public class ClientFormValidator implements FormValidator {
 
-	public static final class ClientNameValidator implements FieldValidator {
+	public static final class ClientNameValidator implements FieldValidator<String> {
 		
 		private static String errorMessage;
 		
-		public <T> boolean isValid(T value) {
+		public boolean isValid(String value) {
 			String name = (String) value;
 			if(!(name.length() > 0 && name.length() < 100)){
 				errorMessage = "O nome do cliente não é válido";
