@@ -10,7 +10,7 @@ public class CoverageManagementOperation implements Operation {
 
 	public static final String ID = "COVERAGES_MANAGEMENT_OPERATION";
 	public static final String DESCRIPTION = "Gestão de Ramos e Coberturas";
-	public static final String SHORT_DESCRIPTION = "Ramos e coberturas";
+	public static final String SHORT_DESCRIPTION = "Coberturas";
 	public static final String OWNER_PROCESS_ID = "PROCESS_GENERAL_SYSTEM";
 	
 	public void init() {

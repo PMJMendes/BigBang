@@ -1,4 +1,4 @@
-package bigBang.module.generalSystemModule.client.userInterface;
+package bigBang.module.generalSystemModule.shared.formValidator;
 
 import bigBang.library.client.FieldValidator;
 import bigBang.library.client.FormValidator;

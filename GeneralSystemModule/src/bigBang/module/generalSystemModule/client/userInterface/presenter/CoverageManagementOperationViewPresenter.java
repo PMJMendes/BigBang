@@ -8,35 +8,36 @@ import bigBang.library.client.Operation;
 import bigBang.library.client.userInterface.presenter.OperationViewPresenter;
 import bigBang.library.client.userInterface.view.View;
 import bigBang.library.interfaces.Service;
-import bigBang.module.generalSystemModule.shared.operation.InsuranceAgencyManagementOperation;
+import bigBang.module.generalSystemModule.client.userInterface.view.CoverageManagementOperationView;
+import bigBang.module.generalSystemModule.shared.operation.CoverageManagementOperation;
 
-public class InsuranceAgencyManagementOperationViewPresenter implements
+public class CoverageManagementOperationViewPresenter implements
 		OperationViewPresenter {
-
+	
 	public interface Display {
 		Widget asWidget();
 	}
-	
+
 	private EventBus eventBus;
-	private Display view;
 	private Service service;
+	private Display view;
 	
-	private InsuranceAgencyManagementOperation operation;
+	private CoverageManagementOperation operation;
 	
-	public InsuranceAgencyManagementOperationViewPresenter(EventBus eventBus, Service service, View view) {
-		setView(view);
-		setEventBus(eventBus);
-		setService(service);
+	public CoverageManagementOperationViewPresenter(EventBus eventBus, Service service, Display view) {
+		setView((View) view);
 	}
-	
+
 	@Override
 	public void setService(Service service) {
-		
+		// TODO Auto-generated method stub
+
 	}
 
 	@Override
 	public void setEventBus(EventBus eventBus) {
-		this.eventBus = eventBus;
+		// TODO Auto-generated method stub
+
 	}
 
 	@Override
@@ -65,7 +66,7 @@ public class InsuranceAgencyManagementOperationViewPresenter implements
 
 	@Override
 	public void setOperation(Operation o) {
-		operation = (InsuranceAgencyManagementOperation) o;
+		operation = (CoverageManagementOperation) o;
 	}
 
 	@Override
@@ -84,9 +85,5 @@ public class InsuranceAgencyManagementOperationViewPresenter implements
 		// TODO Auto-generated method stub
 		return null;
 	}
-	
-	
-	//Methods that require services
-	
 
 }

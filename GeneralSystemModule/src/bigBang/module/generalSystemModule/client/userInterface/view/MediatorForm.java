@@ -6,9 +6,9 @@ import bigBang.library.client.userInterface.AddressFormField;
 import bigBang.library.client.userInterface.ListBoxFormField;
 import bigBang.library.client.userInterface.TextBoxFormField;
 import bigBang.library.client.userInterface.view.FormView;
-import bigBang.module.generalSystemModule.client.userInterface.MediatorFormValidator;
 import bigBang.module.generalSystemModule.shared.ComissionProfile;
 import bigBang.module.generalSystemModule.shared.Mediator;
+import bigBang.module.generalSystemModule.shared.formValidator.MediatorFormValidator;
 
 public class MediatorForm extends FormView {
 

@@ -4,8 +4,8 @@ import bigBang.library.client.FormField;
 import bigBang.library.client.userInterface.TextBoxFormField;
 import bigBang.library.client.userInterface.view.FormView;
 import bigBang.library.client.userInterface.view.FormViewSection;
-import bigBang.module.generalSystemModule.client.userInterface.CostCenterFormValidator;
 import bigBang.module.generalSystemModule.shared.CostCenter;
+import bigBang.module.generalSystemModule.shared.formValidator.CostCenterFormValidator;
 
 import com.google.gwt.user.client.ui.HasValue;
 

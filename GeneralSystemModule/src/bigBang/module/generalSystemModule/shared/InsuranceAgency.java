@@ -12,7 +12,7 @@ public class InsuranceAgency implements Serializable {
 	public String name;
 	public String acronym; 
 	public String ISPNumber;
-	public String ownMediatorCode;
+	public String[] ownMediatorCodes;
 	public String taxNumber;
 	public String NIB;
 	public Address address; //includes zip code
