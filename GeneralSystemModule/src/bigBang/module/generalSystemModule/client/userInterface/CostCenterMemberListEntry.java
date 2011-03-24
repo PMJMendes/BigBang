@@ -19,13 +19,13 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 
 import bigBang.module.generalSystemModule.shared.User;
 
-public class CostCenterMemberListEntry extends ListEntry<String> {
+public class CostCenterMemberListEntry extends ListEntry<User> {
 
 	private Resources resources;
 	private Panel viewIconWrapper;
 	
 	public CostCenterMemberListEntry(User user) {
-		super(user.id);
+		super(user);
 		resources = GWT.create(Resources.class);
 		viewIconWrapper = new VerticalPanel();
 		viewIconWrapper.addDomHandler(new ClickHandler() {
@@ -59,7 +59,7 @@ public class CostCenterMemberListEntry extends ListEntry<String> {
 		
 		HorizontalPanel rightWidgetWrapper = new HorizontalPanel();
 		rightWidgetWrapper.setSize("100px", "100%");
-		Label label = new Label(user.role.name);
+		Label label = new Label(user.roleId);
 		label.getElement().getStyle().setFontWeight(FontWeight.NORMAL);		
 		rightWidgetWrapper.add(label);
 		setRightWidget(rightWidgetWrapper);

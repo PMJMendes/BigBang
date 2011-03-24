@@ -1,7 +1,5 @@
 package bigBang.module.generalSystemModule.client.userInterface.presenter;
 
-import java.util.ArrayList;
-
 import org.gwt.mosaic.ui.client.MessageBox.ConfirmationCallback;
 
 import com.google.gwt.core.client.GWT;
@@ -22,23 +20,21 @@ import bigBang.library.client.userInterface.presenter.OperationViewPresenter;
 import bigBang.library.client.userInterface.view.View;
 import bigBang.module.generalSystemModule.interfaces.CostCenterServiceAsync;
 import bigBang.module.generalSystemModule.shared.CostCenter;
-import bigBang.module.generalSystemModule.shared.CostCenterManagementOperation;
 import bigBang.module.generalSystemModule.shared.User;
+import bigBang.module.generalSystemModule.shared.operation.CostCenterManagementOperation;
 
 public class CostCenterManagementOperationViewPresenter implements
 OperationViewPresenter {
 
 	public interface Display {
-		HasValue<String> getCostCenterList();
-		String[] getSelectedMembers();
-		void removeMembers(String[] memberIds);
+		HasValue<CostCenter> getCostCenterList();
+		String[] getSelectedMemberIds();
+		void removeMembers(CostCenter costCenter, String[] memberIds);
 		void showConfirmRemoveMember(ConfirmationCallback callback);
 
 		HasClickHandlers getAddMemberButton();
 		HasClickHandlers getremoveMemberButton();
 
-		HasValue<String> getName();
-		HasValue<String> getCode();
 		void showDetailsForCostCenter(CostCenter costCenter);
 		Widget asWidget();
 		void setCostCenterEntries(CostCenter[] result);
@@ -47,6 +43,12 @@ OperationViewPresenter {
 		HasClickHandlers getAddMemberSubmitButton();
 		String[] getSelectedUsersForMembership();
 		void updateCostCenterInfo(CostCenter result);
+		HasClickHandlers getNewCostCenterButton();
+		HasClickHandlers getSubmitNewCostCenterButton();
+		CostCenter getNewCostCenter();
+		void showNewCostCenterForm(boolean show);
+		
+		boolean isNewCostCenterFormValid();
 	}
 
 	private CostCenterServiceAsync service;
@@ -100,32 +102,64 @@ OperationViewPresenter {
 	}
 
 	public void bind() {
-		this.view.getCostCenterList().addValueChangeHandler(new ValueChangeHandler<String>() {
+		this.view.getCostCenterList().addValueChangeHandler(new ValueChangeHandler<CostCenter>() {
 
-			public void onValueChange(ValueChangeEvent<String> event) {
-				showCostCenterDetails(event.getValue());
+			public void onValueChange(ValueChangeEvent<CostCenter> event) {
+				showCostCenterDetails(event.getValue().id);
 			}
 		});
 		this.view.getAddMemberButton().addClickHandler(new ClickHandler() {
 
 			public void onClick(ClickEvent event) {
-				addMember(view.getCostCenterList().getValue());
+				addMember(view.getCostCenterList().getValue().id);
 			}
 		});
 		this.view.getremoveMemberButton().addClickHandler(new ClickHandler() {
 
 			public void onClick(ClickEvent event) {
-				removeMembers(view.getCostCenterList().getValue(), view.getSelectedMembers());
+				removeMembers(view.getCostCenterList().getValue().id, view.getSelectedMemberIds());
 			}
 		});
 		this.view.getAddMemberSubmitButton().addClickHandler(new ClickHandler() {
 			
 			@Override
 			public void onClick(ClickEvent event) {
-				associateUsersToCostCenter(view.getCostCenterList().getValue(), view.getSelectedUsersForMembership());
+				associateUsersToCostCenter(view.getCostCenterList().getValue().id, view.getSelectedUsersForMembership());
+			}
+		});
+		this.view.getNewCostCenterButton().addClickHandler(new ClickHandler() {
+			
+			@Override
+			public void onClick(ClickEvent event) {
+				view.showNewCostCenterForm(true);
+			}
+		});
+		this.view.getSubmitNewCostCenterButton().addClickHandler(new ClickHandler() {
+			
+			@Override
+			public void onClick(ClickEvent event) {
+				if(view.isNewCostCenterFormValid())
+					createNewCostCenter(view.getNewCostCenter());
 			}
 		});
 
+	}
+	
+	public void createNewCostCenter(CostCenter c) {
+		service.createCostCenter(c, new AsyncCallback<String>() {
+
+			@Override
+			public void onFailure(Throwable caught) {
+				GWT.log("Could not create new cost center");
+			}
+
+			@Override
+			public void onSuccess(String result) {
+				view.showNewCostCenterForm(false);
+				GWT.log("cost center created");
+			}
+			
+		});
 	}
 	
 	public void associateUsersToCostCenter(final String costCenterId, String[] userIds){
@@ -191,13 +225,21 @@ OperationViewPresenter {
 						}
 
 						public void onSuccess(String result) {
-							view.removeMembers(memberIds);
+							view.removeMembers(getCostCenterForId(costCenterId), memberIds);
 						}
 
 					});
 				}
 			}
 		});
+	}
+	
+	private CostCenter getCostCenterForId(String id) {
+		for(int i = 0; i < this.costCenterCache.length; i++) {
+			if(this.costCenterCache[i].id.equals(id))
+				return this.costCenterCache[i];
+		}
+		return null;
 	}
 
 	private void showCostCenterDetails(String costCenterId) {

@@ -9,8 +9,9 @@ public class User implements Serializable {
 	public String id;
 	public String name;
 	public String username;
-	//public String password
-	public UserRole role;
-	//TODO cost center
+	public String password; //Filled only for the current user
+	public String roleId;
+	public String costCenterId;
 	public String email;
+
 }

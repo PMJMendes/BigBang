@@ -1,13 +1,14 @@
 package bigBang.module.generalSystemModule.client.userInterface;
 
 import bigBang.library.client.userInterface.List;
+import bigBang.module.generalSystemModule.shared.User;
 
 import com.google.gwt.event.dom.client.HasClickHandlers;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.HasVerticalAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 
-public class CostCenterMemberList extends List<String> {
+public class CostCenterMemberList extends List<User> {
 
 	private Button addButton;
 	private Button removeButton;
@@ -32,7 +33,7 @@ public class CostCenterMemberList extends List<String> {
 	}
 	
 	@Override
-	public void setValue(String value, boolean fireEvents) {
+	public void setValue(User value, boolean fireEvents) {
 		super.setValue(value, fireEvents);
 		this.removeButton.setEnabled(getSelectedEntry() != null);
 	}

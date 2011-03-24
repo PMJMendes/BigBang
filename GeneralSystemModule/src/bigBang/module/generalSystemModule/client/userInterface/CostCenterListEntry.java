@@ -8,12 +8,12 @@ import com.google.gwt.user.client.ui.Label;
 import bigBang.library.client.userInterface.ListEntry;
 import bigBang.module.generalSystemModule.shared.CostCenter;
 
-public class CostCenterListEntry extends ListEntry<String> {
+public class CostCenterListEntry extends ListEntry<CostCenter> {
 
 	private Label nMembersLabel;
 	
 	public CostCenterListEntry(CostCenter costCenter) {
-		super(costCenter.id);
+		super(costCenter);
 		HorizontalPanel labelWrapper = new HorizontalPanel();
 		labelWrapper.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_RIGHT);
 		labelWrapper.setSize("150px", "100%");

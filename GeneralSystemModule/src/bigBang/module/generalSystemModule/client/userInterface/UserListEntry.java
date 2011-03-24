@@ -16,7 +16,7 @@ public class UserListEntry extends ListEntry<String> {
 		
 		HorizontalPanel rightWidgetWrapper = new HorizontalPanel();
 		rightWidgetWrapper.setSize("100px", "100%");
-		Label label = new Label(user.role.name);
+		Label label = new Label(user.roleId);
 		label.getElement().getStyle().setFontWeight(FontWeight.NORMAL);		
 		rightWidgetWrapper.add(label);
 		setRightWidget(rightWidgetWrapper);

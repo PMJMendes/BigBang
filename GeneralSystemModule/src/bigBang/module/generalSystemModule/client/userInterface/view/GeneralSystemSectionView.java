@@ -1,7 +1,9 @@
 package bigBang.module.generalSystemModule.client.userInterface.view;
 
 import org.gwt.mosaic.ui.client.MessageBox;
+import org.gwt.mosaic.ui.client.MessageBoxImages;
 
+import com.google.gwt.user.client.ui.AbstractImagePrototype;
 import com.google.gwt.user.client.ui.HasValue;
 import com.google.gwt.user.client.ui.HasWidgets;
 import com.google.gwt.user.client.ui.SimplePanel;
@@ -34,7 +36,10 @@ public class GeneralSystemSectionView extends View implements GeneralSystemSecti
 	}
 	
 	public void createOperationNavigationItem(OperationViewPresenter p) {
-		DockItem item = new DockItem(p.getOperation().getShortDescription(), MessageBox.MESSAGEBOX_IMAGES.dialogInformation(), null, p);
+		AbstractImagePrototype icon = p.getOperation().getIcon();
+		if(icon == null)
+			icon = MessageBox.MESSAGEBOX_IMAGES.dialogInformation();
+		DockItem item = new DockItem(p.getOperation().getShortDescription(), icon, null, p);
 		item.setSize("100px", "52px");
 		this.operationDock.addItem(item);
 	}

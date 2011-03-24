@@ -23,9 +23,7 @@ public class CostCenterServiceImpl extends RemoteServiceServlet implements CostC
 				User user = new User();
 				user.id = "id" + j;
 				user.name = "name" + j;
-				user.role = new UserRole();
-				user.role.id = "roleId";
-				user.role.name = "Administrador";
+				user.roleId = "roleId";
 				user.email = "email@email.com" + j;
 				user.username = "username" + j;
 				instance.members[j] = user;
@@ -45,9 +43,7 @@ public class CostCenterServiceImpl extends RemoteServiceServlet implements CostC
 			User user = new User();
 			user.id = "id" + j;
 			user.name = "name" + j;
-			user.role = new UserRole();
-			user.role.id = "roleId";
-			user.role.name = "Administrador";
+			user.roleId = "roleId";
 			user.email = "email@email.com" + j;
 			user.username = "username" + j;
 			instance.members[j] = user;
@@ -73,9 +69,7 @@ public class CostCenterServiceImpl extends RemoteServiceServlet implements CostC
 			User user = new User();
 			user.id = "id" + j;
 			user.name = "name" + j;
-			user.role = new UserRole();
-			user.role.id = "roleId";
-			user.role.name = "Administrador";
+			user.roleId = "roleId";
 			user.email = "email@email.com" + j;
 			user.username = "username" + j;
 			users[j] = user;

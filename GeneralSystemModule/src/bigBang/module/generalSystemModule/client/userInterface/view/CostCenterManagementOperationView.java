@@ -3,6 +3,7 @@ package bigBang.module.generalSystemModule.client.userInterface.view;
 import java.util.ArrayList;
 import java.util.Collection;
 
+import org.apache.tools.ant.taskdefs.condition.IsReference;
 import org.gwt.mosaic.ui.client.MessageBox;
 import org.gwt.mosaic.ui.client.MessageBox.ConfirmationCallback;
 
@@ -39,8 +40,13 @@ public class CostCenterManagementOperationView extends View implements CostCente
 	private CostCenterForm form;
 
 	private Button addMemberSubmitButton;
+	private PopupPanel availableUsersPopup;
 
 	private UserList usersForMembershipList;
+	private Button newCostCenterButton;
+	private PopupPanel newCostCenterPopup;
+	private Button submitNewCostCenterButton;
+	private CostCenterForm newCostCenterForm;
 
 	public CostCenterManagementOperationView() {
 		SplitLayoutPanel wrapper = new SplitLayoutPanel();
@@ -54,7 +60,18 @@ public class CostCenterManagementOperationView extends View implements CostCente
 		VerticalPanel previewWrapper = new VerticalPanel();
 		previewWrapper.setSize("100%", "100%");
 
+		this.newCostCenterButton = new Button("Novo");
+		this.submitNewCostCenterButton = new Button("Submeter");
+		Button editCostCenterButton = new Button("Editar");		
+		
 		form = new CostCenterForm();
+		form.addButton(this.newCostCenterButton);
+		form.addButton(editCostCenterButton);
+		
+		newCostCenterForm = new CostCenterForm();
+		newCostCenterForm.addButton(this.submitNewCostCenterButton);
+		newCostCenterForm.setReadOnly(false);
+
 		previewWrapper.add(form.getNonScrollableContent());
 
 		memberList = new CostCenterMemberList();
@@ -65,16 +82,24 @@ public class CostCenterManagementOperationView extends View implements CostCente
 		wrapper.add(previewWrapper);
 
 		initWidget(wrapper);
+
+		editCostCenterButton.addClickHandler(new ClickHandler() {
+			
+			@Override
+			public void onClick(ClickEvent event) {
+				form.setReadOnly(!form.isReadOnly());
+			}
+		});
+		
+		newCostCenterPopup = new PopupPanel();
+		newCostCenterPopup.add(newCostCenterForm.getNonScrollableContent());
 		
 		this.addMemberSubmitButton = new Button("Associar Membro(s)");
+		this.availableUsersPopup = new PopupPanel("Associar membros a Centro de Custo");
 	}
 
-	public HasValue<String> getCostCenterList() {
+	public HasValue<CostCenter> getCostCenterList() {
 		return this.costCenterList;
-	}
-
-	public HasValue<String> getMembersList() {
-		return this.memberList;
 	}
 
 	public void showDetailsForCostCenter(CostCenter costCenter) {
@@ -87,6 +112,7 @@ public class CostCenterManagementOperationView extends View implements CostCente
 	}
 
 	public void setCostCenterEntries(CostCenter[] entries) {
+		costCenterList.clear();
 		for(int i = 0; i < entries.length; i++) {
 			CostCenterListEntry listEntry = new CostCenterListEntry(entries[i]);
 			costCenterList.addListEntry(listEntry);
@@ -103,11 +129,11 @@ public class CostCenterManagementOperationView extends View implements CostCente
 		return form.getCodeField();
 	}
 
-	public String[] getSelectedMembers() {
-		ArrayList<ListEntry<String>> entries = this.memberList.getMultipleSelectionEntries();
+	public String[] getSelectedMemberIds() {
+		ArrayList<ListEntry<User>> entries = this.memberList.getMultipleSelectionEntries();
 		String[] result = new String[entries.size()];
 		for(int i = 0; i < result.length; i++){
-			result[i] = entries.get(i).getValue();
+			result[i] = entries.get(i).getValue().id;
 		}
 		return result;
 	}
@@ -120,13 +146,14 @@ public class CostCenterManagementOperationView extends View implements CostCente
 		return this.memberList.getRemoveButton();
 	}
 
-	public void removeMembers(String[] memberIds) {
-		Collection<ListEntry<String>> entries = memberList.getListEntries();
+	public void removeMembers(CostCenter costCenter, String[] memberIds) {
+		Collection<ListEntry<User>> entries = memberList.getListEntries();
 
 		for(int i = 0; i < memberIds.length; i++){
-			for(ListEntry<String> e : entries) {
-				if(e.getValue().equals(memberIds[i])){
+			for(ListEntry<User> e : entries) {
+				if(e.getValue().id.equals(memberIds[i])){
 					memberList.removeListEntry(e);
+					costCenterList.getSelectedEntry().setValue(costCenter);
 					break;
 				}
 			}
@@ -139,7 +166,7 @@ public class CostCenterManagementOperationView extends View implements CostCente
 	}
 
 	public void showUsersForMembership(String costCenterId, final User[] availableUsers) {
-		final PopupPanel popup = new PopupPanel("Associar membros a Centro de Custo");
+		availableUsersPopup.clear();
 		HorizontalPanel wrapper = new HorizontalPanel();
 		wrapper.setSize("100%", "500px");
 		//popup.setSize("400px", "400px");
@@ -155,12 +182,12 @@ public class CostCenterManagementOperationView extends View implements CostCente
 		
 		wrapper.add(list);
 		
-		final UserForm form = new UserForm();
+		final UserForm form = new UserForm(null, null);
 		addMemberSubmitButton.addClickHandler(new ClickHandler() {
 			
 			@Override
 			public void onClick(ClickEvent event) {
-				popup.hidePopup();
+				availableUsersPopup.hidePopup();
 			}
 		});
 		form.addSubmitButton(this.addMemberSubmitButton);
@@ -182,8 +209,8 @@ public class CostCenterManagementOperationView extends View implements CostCente
 		if(list.size() > 0)
 			list.select(0);
 		
-		popup.add(wrapper);
-		popup.center();
+		availableUsersPopup.add(wrapper);
+		availableUsersPopup.center();
 	}
 	
 	public String[] getSelectedUsersForMembership(){
@@ -203,7 +230,7 @@ public class CostCenterManagementOperationView extends View implements CostCente
 	}
 
 	public void updateCostCenterInfo(CostCenter result) {
-		for(ListEntry<String> e : this.costCenterList.getListEntries()){
+		for(ListEntry<CostCenter> e : this.costCenterList.getListEntries()){
 			if(e.getValue().equals(result.id)){
 				e.setInfo(result);
 				if(this.costCenterList.getSelectedEntry() == e)
@@ -211,6 +238,36 @@ public class CostCenterManagementOperationView extends View implements CostCente
 				break;
 			}
 		}
+	}
+
+	@Override
+	public HasClickHandlers getNewCostCenterButton() {
+		return this.newCostCenterButton;
+	}
+
+	@Override
+	public HasClickHandlers getSubmitNewCostCenterButton() {
+		return this.submitNewCostCenterButton;
+	}
+
+	@Override
+	public CostCenter getNewCostCenter() {
+		return (CostCenter) this.newCostCenterForm.getInfo();
+	}
+
+	@Override
+	public void showNewCostCenterForm(boolean show) {
+		if(show){
+			this.newCostCenterForm.clearInfo();
+			this.newCostCenterPopup.setSize("650px", "200px");
+			this.newCostCenterPopup.center();
+		}else
+			this.newCostCenterPopup.hidePopup();
+	}
+
+	@Override
+	public boolean isNewCostCenterFormValid() {
+		return this.newCostCenterForm.validate();
 	}
 
 }

@@ -5,15 +5,30 @@ import java.util.HashMap;
 import com.google.gwt.core.client.GWT;
 
 import bigBang.library.client.EventBus;
+import bigBang.library.client.Operation;
 import bigBang.library.interfaces.Service;
 import bigBang.library.client.userInterface.MenuSection;
 import bigBang.library.client.userInterface.TextBadge;
 import bigBang.library.client.userInterface.presenter.OperationViewPresenter;
 import bigBang.module.generalSystemModule.client.userInterface.presenter.CostCenterManagementOperationViewPresenter;
+import bigBang.module.generalSystemModule.client.userInterface.presenter.InsuranceAgencyManagementOperationViewPresenter;
+import bigBang.module.generalSystemModule.client.userInterface.presenter.MediatorManagementOperationViewPresenter;
+import bigBang.module.generalSystemModule.client.userInterface.presenter.TaxesAndMultipliersManagementOperationViewPresenter;
+import bigBang.module.generalSystemModule.client.userInterface.presenter.UserManagementOperationViewPresenter;
 import bigBang.module.generalSystemModule.client.userInterface.view.CostCenterManagementOperationView;
+import bigBang.module.generalSystemModule.client.userInterface.view.MediatorManagementOperationView;
+import bigBang.module.generalSystemModule.client.userInterface.view.UserManagementOperationView;
 import bigBang.module.generalSystemModule.interfaces.CostCenterService;
 import bigBang.module.generalSystemModule.interfaces.CostCenterServiceAsync;
-import bigBang.module.generalSystemModule.shared.CostCenterManagementOperation;
+import bigBang.module.generalSystemModule.interfaces.MediatorService;
+import bigBang.module.generalSystemModule.interfaces.MediatorServiceAsync;
+import bigBang.module.generalSystemModule.interfaces.UserService;
+import bigBang.module.generalSystemModule.interfaces.UserServiceAsync;
+import bigBang.module.generalSystemModule.shared.operation.CostCenterManagementOperation;
+import bigBang.module.generalSystemModule.shared.operation.InsuranceAgencyManagementOperation;
+import bigBang.module.generalSystemModule.shared.operation.MediatorManagementOperation;
+import bigBang.module.generalSystemModule.shared.operation.TaxesAndMultipliersManagementOperation;
+import bigBang.module.generalSystemModule.shared.operation.UserManagementOperation;
 
 public class GeneralSystemSection implements MenuSection {
 
@@ -33,15 +48,36 @@ public class GeneralSystemSection implements MenuSection {
 		costCenterManagementOperationPresenter.setOperation(costCenterManagementOperation);
 		this.sectionOperationPresenters.put(CostCenterManagementOperation.ID, (OperationViewPresenter)costCenterManagementOperationPresenter);
 
+		/* USERS MANAGEMENT */
+		UserManagementOperation userManagementOperation = (UserManagementOperation)GWT.create(UserManagementOperation.class);
+		UserManagementOperationView userManagementOperationView = new UserManagementOperationView();
+		UserServiceAsync userService = UserService.Util.getInstance();
+		UserManagementOperationViewPresenter userManagementOperationPresenter = new UserManagementOperationViewPresenter(null, userService, userManagementOperationView);
+		userManagementOperationPresenter.setOperation(userManagementOperation);
+		this.sectionOperationPresenters.put(UserManagementOperation.ID, (OperationViewPresenter)userManagementOperationPresenter);
+		
 		/* CLIENT GROUP MANAGEMENT */
 
 		/* MEDIATORS MANAGEMENT */
+		MediatorManagementOperation mediatorManagementOperation = (MediatorManagementOperation)GWT.create(MediatorManagementOperation.class);
+		MediatorManagementOperationView mediatorManagementOperationView = new MediatorManagementOperationView();
+		MediatorServiceAsync mediatorService = MediatorService.Util.getInstance();
+		MediatorManagementOperationViewPresenter mediatorManagementOperationPresenter = new MediatorManagementOperationViewPresenter(null, mediatorService, mediatorManagementOperationView);
+		mediatorManagementOperationPresenter.setOperation(mediatorManagementOperation);
+		this.sectionOperationPresenters.put(MediatorManagementOperation.ID, (OperationViewPresenter)mediatorManagementOperationPresenter);
 		
 		/* INSURANCE AGENCIES MANAGEMENT */
-		
-		/* USERS MANAGEMENT */
+		InsuranceAgencyManagementOperation insuranceAgencyManagementOperation = (InsuranceAgencyManagementOperation)GWT.create(InsuranceAgencyManagementOperation.class);
+		InsuranceAgencyManagementOperationViewPresenter insuranceAgencyManagementOperationPresenter = (InsuranceAgencyManagementOperationViewPresenter) GWT.create(InsuranceAgencyManagementOperationViewPresenter.class);
+		insuranceAgencyManagementOperationPresenter.setOperation(insuranceAgencyManagementOperation);
+		this.sectionOperationPresenters.put(insuranceAgencyManagementOperation.ID, (OperationViewPresenter)insuranceAgencyManagementOperationPresenter);
 		
 		/* TAXES AND MULTIPLIERS MANAGEMENT */
+		TaxesAndMultipliersManagementOperation taxesAndMultipliersManagementOperation = (TaxesAndMultipliersManagementOperation)GWT.create(TaxesAndMultipliersManagementOperation.class);
+		TaxesAndMultipliersManagementOperationViewPresenter taxesAndMultipliersManagementOperationPresenter = (TaxesAndMultipliersManagementOperationViewPresenter) GWT.create(TaxesAndMultipliersManagementOperationViewPresenter.class);
+		taxesAndMultipliersManagementOperationPresenter.setOperation(taxesAndMultipliersManagementOperation);
+		this.sectionOperationPresenters.put(taxesAndMultipliersManagementOperation.ID, (OperationViewPresenter)taxesAndMultipliersManagementOperationPresenter);
+
 		
 		/* COVERAGES MANAGEMENT */
 		
