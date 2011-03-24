@@ -44,6 +44,19 @@ h1 {
 	height: 20px;
 }
 
+.gwt-TextBox-readonly {
+	border: 1px solid transparent !important;
+	background-color: transparent !important;
+	padding: 0px !important;
+	height: 20px;
+}
+
+.gwt-PasswordTextBox {
+	border: 1px solid black;
+	padding: 0px !important;
+	height: 20px;
+}
+
 .dockPanelItemsWrapper {
 	border-right: 1px solid gray;
 }
