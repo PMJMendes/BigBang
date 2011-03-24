@@ -45,7 +45,6 @@ public class ListEntry<T> extends View implements HasValue <T> {
 	
 	
 	public ListEntry(T value) {
-		setValue(value);
 		AbsolutePanel panel = new AbsolutePanel();
 		this.widgetContainer = new SimplePanel();
 		((Widget)this.widgetContainer).setSize("100%", "100%");
@@ -103,6 +102,8 @@ public class ListEntry<T> extends View implements HasValue <T> {
 				setCheckable(event.getValue());
 			}
 		});
+		
+		setValue(value);
 	}
 	
 	public <I extends Object> void setInfo(I info){}

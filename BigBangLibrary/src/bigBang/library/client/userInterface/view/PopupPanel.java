@@ -11,6 +11,8 @@ import org.gwt.mosaic.ui.client.WindowPanel.WindowStateListener;
 
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.logical.shared.ResizeEvent;
+import com.google.gwt.event.logical.shared.ResizeHandler;
 import com.google.gwt.user.client.ui.HasWidgets;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.Widget;
@@ -88,6 +90,13 @@ public class PopupPanel extends View implements HasWidgets {
 	
 	public void add(Widget w) {
 		this.panel.add(w);
+		w.addHandler(new ResizeHandler() {
+			
+			@Override
+			public void onResize(ResizeEvent event) {
+				setSize(event.getWidth()+"px", event.getHeight()+"px");
+			}
+		}, ResizeEvent.getType());
 	}
 
 	public void clear() {

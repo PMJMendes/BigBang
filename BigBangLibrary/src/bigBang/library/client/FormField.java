@@ -14,13 +14,15 @@ public abstract class FormField<T> extends View implements HasValue<T>, Validata
 
 	protected HasValue<T> field;
 	protected Label errorMessageLabel;
-	protected FieldValidator validator;
+	protected FieldValidator<T> validator;
+	protected Label mandatoryIndicatorLabel;
 	
 	private HandlerRegistration handlerRegistration;
 	
 	public FormField(){
 		errorMessageLabel = new Label();
 		errorMessageLabel.setVisible(false);
+		mandatoryIndicatorLabel = new Label("*");
 	}
 	
 	public HandlerRegistration addValueChangeHandler(
@@ -41,7 +43,7 @@ public abstract class FormField<T> extends View implements HasValue<T>, Validata
 		field.setValue(value);
 	}
 	
-	public void setValidator(FieldValidator validator) {
+	public void setValidator(FieldValidator<T> validator) {
 		this.validator = validator;
 	}
 	

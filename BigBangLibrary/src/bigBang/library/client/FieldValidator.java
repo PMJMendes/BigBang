@@ -1,8 +1,8 @@
 package bigBang.library.client;
 
-public interface FieldValidator {
+public interface FieldValidator<T> {
 		
-	public <T> boolean isValid(T value);
+	public boolean isValid(T value);
 	
 	public String getErrorMessage();
 	

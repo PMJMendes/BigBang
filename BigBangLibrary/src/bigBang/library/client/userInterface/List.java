@@ -155,6 +155,9 @@ HasValueChangeHandlers<T> {
 
 	public void setValue(T value, boolean fireEvents) {
 		List<T> list = this;
+		
+		if(value == null && this.getValue() != null)
+			ValueChangeEvent.fire(list, null);
 
 		for(ListEntry<T> e : listEntries) {
 			if(e.getValue().equals(value)){

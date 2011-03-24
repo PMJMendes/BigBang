@@ -94,8 +94,6 @@ public class FormViewSection extends View {
 		this.fields.add(field);
 		HorizontalPanel wrapper = new HorizontalPanel();
 		wrapper.add(field);
-		if(field.isMandatory())
-			wrapper.add(new Label("*"));
 		addWidget(wrapper);
 	}
 	

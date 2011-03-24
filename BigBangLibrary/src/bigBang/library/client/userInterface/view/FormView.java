@@ -5,11 +5,17 @@ import java.util.ArrayList;
 import bigBang.library.client.FormField;
 import bigBang.library.client.Validatable;
 
+import com.gargoylesoftware.htmlunit.Page;
+import com.gargoylesoftware.htmlunit.attachment.AttachmentHandler;
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Float;
 import com.google.gwt.dom.client.Style.FontStyle;
 import com.google.gwt.dom.client.Style.FontWeight;
 import com.google.gwt.dom.client.Style.Position;
 import com.google.gwt.dom.client.Style.Unit;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.logical.shared.AttachEvent;
 import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.google.gwt.user.client.ui.AbstractImagePrototype;
 import com.google.gwt.user.client.ui.Button;
@@ -20,12 +26,15 @@ import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
-public class FormView extends View implements Validatable {
+public abstract class FormView extends View implements Validatable {
 
 	protected AbsolutePanel mainWrapper;
 	protected VerticalPanel panel;
 	protected FormViewSection currentSection = null;
 	protected ArrayList<FormViewSection> sections;
+	
+	protected HorizontalPanel topButtonWrapper;
+	protected HorizontalPanel topToolbar;
 
 	private boolean isReadOnly;
 
@@ -45,6 +54,24 @@ public class FormView extends View implements Validatable {
 		wrapper.setStyleName("formPanel");
 
 		mainWrapper.add(wrapper, 0, 0);
+		
+		topToolbar = new HorizontalPanel();
+		topToolbar.setSize("100%", "0px");
+		
+		topButtonWrapper = new HorizontalPanel();
+		topButtonWrapper.getElement().getStyle().setRight(20, Unit.PX);
+		topButtonWrapper.getElement().getStyle().setPosition(Position.ABSOLUTE);
+		topButtonWrapper.getElement().getStyle().setFloat(Float.RIGHT);
+	
+		SimplePanel filler = new SimplePanel();
+		////filler.setSize("100%", "0px");
+		//topToolbar.add(filler);
+		//topToolbar.setCellWidth(filler, "100%");
+		//topToolbar.setCellHeight(filler, "0px");
+		topToolbar.add(topButtonWrapper);
+		
+		mainWrapper.add(topToolbar, 0, 0);
+		
 		initWidget(mainWrapper);
 	}
 
@@ -75,22 +102,20 @@ public class FormView extends View implements Validatable {
 	}
 	
 	public void addSubmitButton(Button submit){
-		int height = 30;
-		HorizontalPanel submitWrapper = new HorizontalPanel();
-		submitWrapper.setSize("100%", "0px");
-		SimplePanel filler = new SimplePanel();
-		filler.setSize("100%", "0px");
-		submitWrapper.add(filler);
-		submitWrapper.setCellWidth(filler, "100%");
-		submitWrapper.setCellHeight(filler, "0px");
-				
-		submit.setHeight(height + "px");
-		submit.getElement().getStyle().setRight(20, Unit.PX);
-		submit.getElement().getStyle().setPosition(Position.ABSOLUTE);
-		submitWrapper.add(submit);
-		
-		mainWrapper.add(submitWrapper, 0, 0);//, , (mainWrapper.getOffsetHeight() - height));
-		submit.getElement().getStyle().setFloat(Float.RIGHT);
+		addButton(submit);
+		submit.addClickHandler(new ClickHandler() {
+			
+			@Override
+			public void onClick(ClickEvent event) {
+				validate();
+				//TODO
+			}
+		});
+	}
+	
+	public void addButton(final Button button) {
+		button.setHeight("30px");
+		topButtonWrapper.add(button);
 	}
 	
 	public void addSection(String title){
@@ -143,7 +168,7 @@ public class FormView extends View implements Validatable {
 		this.isReadOnly = readOnly;
 		for(FormViewSection s : sections){
 			for(FormField<?> f : s.getFields())
-				f.setReadOnly(!readOnly);
+				f.setReadOnly(readOnly);
 		}
 	}
 
@@ -162,8 +187,8 @@ public class FormView extends View implements Validatable {
 			boolean sectionHasErrors = false;
 			for(FormField<?> f : s.getFields()){
 				boolean fieldHasErrors = !f.validate();
-				hasErrors = fieldHasErrors ? hasErrors : true;
-				sectionHasErrors = true;
+				hasErrors = !fieldHasErrors ? hasErrors : true;
+				sectionHasErrors = !fieldHasErrors ? sectionHasErrors : true;
 				if(fieldHasErrors)
 					s.addErrorMessage(f.getErrorMessage());
 			}
@@ -177,7 +202,31 @@ public class FormView extends View implements Validatable {
 	}
 
 	public Widget getNonScrollableContent(){
-		return this.panel;
+		final VerticalPanel wrapper = new VerticalPanel();
+		wrapper.setSize("100%", "100%");
+		
+		final AbsolutePanel absolutePanel = new AbsolutePanel();
+		absolutePanel.setSize("100%", "100%");
+		absolutePanel.add(this.panel, 0, 0);
+		absolutePanel.add(this.topToolbar, 0, 0);
+
+		wrapper.add(absolutePanel);
+
+		wrapper.addAttachHandler(new AttachEvent.Handler() {
+			
+			@Override
+			public void onAttachOrDetach(AttachEvent event) {
+				wrapper.setCellHeight(absolutePanel, panel.getOffsetHeight() + "px");
+			}
+		});
+
+		return wrapper;
 	}
+	
+	public abstract Object getInfo();
+	
+	public abstract void setInfo(Object info);
+	
+	public abstract void clearInfo();
 }
 
