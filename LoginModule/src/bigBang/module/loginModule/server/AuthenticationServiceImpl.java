@@ -121,6 +121,9 @@ public class AuthenticationServiceImpl
 	        lrs.close();
 	        ldb.Disconnect();
 
+	        if ( larrParams[1] == null )
+	            throw new BigBangException("User restricted to integrated logon!");
+
 	        getSession().setAttribute("UserID", lidUser);
 	        getSession().setAttribute("UserNSpace", Constants.WSpace_BigBang);
 
