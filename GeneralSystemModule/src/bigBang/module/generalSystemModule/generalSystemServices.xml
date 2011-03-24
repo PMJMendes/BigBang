@@ -2,8 +2,23 @@
 		<servlet-name>CostCenterService</servlet-name>
 		<servlet-class>bigBang.module.generalSystemModule.server.CostCenterServiceImpl</servlet-class>
 	</servlet>
-
+	<servlet>
+		<servlet-name>UserService</servlet-name>
+		<servlet-class>bigBang.module.generalSystemModule.server.UserServiceImpl</servlet-class>
+	</servlet>
+	<servlet>
+		<servlet-name>MediatorService</servlet-name>
+		<servlet-class>bigBang.module.generalSystemModule.server.MediatorServiceImpl</servlet-class>
+	</servlet>
 	<servlet-mapping>
 		<servlet-name>CostCenterService</servlet-name>
 		<url-pattern>/bigbang/CostCenterService</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>UserService</servlet-name>
+		<url-pattern>/bigbang/UserService</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>MediatorService</servlet-name>
+		<url-pattern>/bigbang/MediatorService</url-pattern>
 	</servlet-mapping>
