@@ -1,10 +1,9 @@
+	<servlet>
+		<servlet-name>CostCenterService</servlet-name>
+		<servlet-class>bigBang.module.generalSystemModule.server.CostCenterServiceImpl</servlet-class>
+	</servlet>
 
-  <servlet>
-  	<servlet-name>CostCenterService</servlet-name>
-  	<servlet-class>bigBang.module.generalSystemModule.server.CostCenterServiceImpl</servlet-class>
-  </servlet>
-  <servlet-mapping>
-  	<servlet-name>CostCenterService</servlet-name>
-  	<url-pattern>/bigbang/CostCenterService</url-pattern>
-  </servlet-mapping>
-
+	<servlet-mapping>
+		<servlet-name>CostCenterService</servlet-name>
+		<url-pattern>/bigbang/CostCenterService</url-pattern>
+	</servlet-mapping>

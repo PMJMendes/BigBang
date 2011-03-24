@@ -3,10 +3,11 @@
     PUBLIC "-//Sun Microsystems, Inc.//DTD Web Application 2.3//EN"
     "http://java.sun.com/dtd/web-app_2_3.dtd"
     [ 
-    	<!ENTITY  authenticationServices SYSTEM "authenticationServices.xml" >
+    	<!ENTITY  loginServices SYSTEM "loginServices.xml" >
+    	<!ENTITY  libraryServices SYSTEM "libraryServices.xml" > 
     	<!ENTITY  taskServices SYSTEM "taskServices.xml" > 
-    	<!ENTITY  searchServices SYSTEM "searchServices.xml" > 
     	<!ENTITY  generalSystemServices SYSTEM "generalSystemServices.xml" > 
+    	<!ENTITY  clientServices SYSTEM "clientServices.xml" > 
     ]  >
 
 <web-app>
@@ -15,19 +16,20 @@
 		<listener-class>bigBang.server.Global</listener-class>
 	</listener>
 	<listener>
-    	<listener-class>org.apache.commons.fileupload.servlet.FileCleanerCleanup</listener-class>
+		<listener-class>org.apache.commons.fileupload.servlet.FileCleanerCleanup</listener-class>
 	</listener>
+
+	<!-- Servlets -->
+	&loginServices;
+	&libraryServices;
+	&taskServices;
+	&generalSystemServices;
+	&clientServices;
   
-  <!-- Servlets -->
-  &authenticationServices;
-  &taskServices;
-  &searchServices;
-  &generalSystemServices;
-  
-  <!-- Default page to serve -->
-  <welcome-file-list>
-    <welcome-file>BigBang.html</welcome-file>
-  </welcome-file-list>
+	<!-- Default page to serve -->
+	<welcome-file-list>
+		<welcome-file>BigBang.html</welcome-file>
+	</welcome-file-list>
 
 	<!-- Forcing SSL -->
 	<!--
@@ -41,4 +43,60 @@
 		</user-data-constraint> 
 	</security-constraint>
 	-->
+
+	<!-- SBENEGO Kerberos Stuff -->
+	<filter>
+		<filter-name>SpnegoHttpFilter</filter-name>
+		<filter-class>net.sourceforge.spnego.SpnegoHttpFilter</filter-class>
+		<init-param>
+			<param-name>spnego.allow.basic</param-name>
+			<param-value>true</param-value>
+		</init-param>
+		<init-param>
+			<param-name>spnego.allow.localhost</param-name>
+			<param-value>true</param-value>
+		</init-param>
+		<init-param>
+			<param-name>spnego.allow.unsecure.basic</param-name>
+			<param-value>true</param-value>
+		</init-param>
+		<init-param>
+			<param-name>spnego.login.client.module</param-name>
+			<param-value>spnego-client</param-value>
+		</init-param>
+		<init-param>
+			<param-name>spnego.krb5.conf</param-name>
+			<param-value>krb5.conf</param-value>
+		</init-param>
+		<init-param>
+			<param-name>spnego.login.conf</param-name>
+			<param-value>login.conf</param-value>
+		</init-param>
+		<init-param>
+			<param-name>spnego.preauth.username</param-name>
+			<param-value>Zeus</param-value>
+		</init-param>
+		<init-param>
+			<param-name>spnego.preauth.password</param-name>
+			<param-value>Z3usP@55</param-value>
+		</init-param>
+		<init-param>
+			<param-name>spnego.login.server.module</param-name>
+			<param-value>spnego-server</param-value>
+		</init-param>
+		<init-param>
+			<param-name>spnego.prompt.ntlm</param-name>
+			<param-value>true</param-value>
+		</init-param>
+		<init-param>
+			<param-name>spnego.logger.level</param-name>
+			<param-value>1</param-value>
+		</init-param>
+	</filter>
+
+	<filter-mapping>
+		<filter-name>SpnegoHttpFilter</filter-name>
+		<url-pattern>*</url-pattern>
+	</filter-mapping>
+
 </web-app>
