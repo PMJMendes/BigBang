@@ -28,11 +28,11 @@ public class TextBoxFormField extends FormField<String> {
 	
 	public TextBoxFormField(String label) {
 		this();
-		setLabel(label + ":");
+		setLabel(label);
 	}
 	
 	private void setLabel(String label) {
-		this.label.setText(label);
+		this.label.setText(label + ":");
 	}
 	
 	public TextBoxFormField(){
@@ -54,7 +54,11 @@ public class TextBoxFormField extends FormField<String> {
 
 	@Override
 	public void setReadOnly(boolean readOnly) {
-		TextBox field = ((TextBox)this.field); 
+		TextBox field = ((TextBox)this.field);
+		if(field.isReadOnly() != readOnly){
+			if(field.getValue().equals("")) field.setValue("-"); else
+			if(field.getValue().equals("-")) field.setValue(""); 
+		}
 		field.setReadOnly(readOnly);
 		field.getElement().getStyle().setBorderColor(readOnly ? "transparent" : "black");
 		field.getElement().getStyle().setBackgroundColor(readOnly ? "transparent" : "white");

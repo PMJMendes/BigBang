@@ -41,9 +41,9 @@ public class AddressFormField extends FormField<Address> {
 		street2.setWidth("100%");
 		country.setText(COUNTRY_DEFAULT_VALUE);
 		zipCode1.setMaxLength(4);
-		zipCode1.setWidth("50px");
+		zipCode1.setVisibleLength(3);
 		zipCode2.setMaxLength(3);
-		zipCode2.setWidth("30px");
+		zipCode2.setVisibleLength(2);
 		
 		Grid wrapper = new Grid(4, 3);
 		wrapper.getColumnFormatter().setWidth(0, "100px");
@@ -73,7 +73,24 @@ public class AddressFormField extends FormField<Address> {
 	}
 
 	@Override
-	public void setReadOnly(boolean readOnly) {
+	public void setReadOnly(boolean readOnly) {		
+		if(street1.isReadOnly() != readOnly){
+			if(street1.getValue().equals("")) street1.setValue("-"); else
+			if(street1.getValue().equals("-")) street1.setValue(""); 
+		}
+		if(street2.isReadOnly() != readOnly){
+			if(street2.getValue().equals("")) street2.setValue("-"); else
+			if(street2.getValue().equals("-")) street2.setValue(""); 
+		}
+		if(zipCode1.isReadOnly() != readOnly){
+			if(zipCode1.getValue().equals("")) zipCode1.setValue("-"); else
+			if(zipCode1.getValue().equals("-")) zipCode1.setValue(""); 
+		}
+		if(zipCode2.isReadOnly() != readOnly){
+			if(zipCode2.getValue().equals("")) zipCode2.setValue("-"); else
+			if(zipCode2.getValue().equals("-")) zipCode2.setValue(""); 
+		}
+		
 		street1.setReadOnly(readOnly);
 		street2.setReadOnly(readOnly);
 		zipCode1.setReadOnly(readOnly);

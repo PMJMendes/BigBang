@@ -21,7 +21,7 @@ public class ListBoxFormField extends FormField<String> {
 	public ListBoxFormField(String label,FieldValidator<String> validator){
 		this();
 		setValidator(validator);
-		this.label.setText(label);
+		setLabel(label);
 	}
 	
 	public ListBoxFormField(FieldValidator<String> validator) {
@@ -31,7 +31,7 @@ public class ListBoxFormField extends FormField<String> {
 	
 	public ListBoxFormField(String label){
 		this();
-		this.label.setText(label + ":");
+		setLabel(label);
 	}
 	
 	public ListBoxFormField(){
@@ -53,6 +53,10 @@ public class ListBoxFormField extends FormField<String> {
 		wrapper.add(mandatoryIndicatorLabel);
 		initWidget(wrapper);
 		setFieldWidth("150px");
+	}
+	
+	private void setLabel(String label) {
+		this.label.setText(label + ":");
 	}
 	
 	@Override

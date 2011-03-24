@@ -97,6 +97,13 @@ public class FormViewSection extends View {
 		addWidget(wrapper);
 	}
 	
+	public void clear(){
+		this.fields.clear();
+		this.errorMessagePanel.clear();
+		this.content.clear();
+		this.errorMessages.clear();
+	}
+	
 	public void addWidget(Widget w){
 		content.add(w);
 	}
