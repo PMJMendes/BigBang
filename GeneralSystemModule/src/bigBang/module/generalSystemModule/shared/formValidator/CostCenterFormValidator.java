@@ -13,7 +13,7 @@ public class CostCenterFormValidator implements FormValidator {
 		public boolean isValid(String value) {
 			boolean valid = value.length() > 0;
 			if(!valid)
-				errorMessage = "Deve preencher o nome para o centro de custo";
+				errorMessage = "Deve preencher o nome para o centro de custo.";
 			return valid;
 		}
 
@@ -37,7 +37,7 @@ public class CostCenterFormValidator implements FormValidator {
 		public boolean isValid(String value) {
 			boolean valid = value.length() > 0;
 			if(!valid)
-				errorMessage = "Deve preencher um código par ao centro de custo";
+				errorMessage = "Deve preencher um código para o centro de custo.";
 			return valid;
 		}
 
