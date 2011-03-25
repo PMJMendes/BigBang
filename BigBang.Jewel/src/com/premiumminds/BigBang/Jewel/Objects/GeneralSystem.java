@@ -1,9 +1,11 @@
 package com.premiumminds.BigBang.Jewel.Objects;
 
-import java.io.*;
+import Jewel.Engine.SysObjects.*;
 
 public class GeneralSystem
-	implements Serializable
+	extends ObjectBase
 {
-	private static final long serialVersionUID = 1L;
+	public void Initialize() throws JewelEngineException
+	{
+	}
 }

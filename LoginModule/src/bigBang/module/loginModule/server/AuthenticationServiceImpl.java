@@ -142,15 +142,19 @@ public class AuthenticationServiceImpl
 	}
 
 	public String logout()
+		throws BigBangException
 	{
 		getSession().invalidate();
 		return null;
 	}
 
 	public String changePassword(String oldPassword, String newPassword)
-		throws BigBangException
+		throws BigBangException, SessionExpiredException
 	{
 		java.lang.Object[] larrParams;
+
+		if ( Engine.getCurrentUser() == null )
+			throw new SessionExpiredException();
 
 		try
 		{

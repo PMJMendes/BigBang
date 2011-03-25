@@ -1,41 +1,38 @@
 package bigBang.module.generalSystemModule.interfaces;
 
+import bigBang.library.shared.BigBangException;
+import bigBang.library.shared.SessionExpiredException;
 import bigBang.module.generalSystemModule.shared.CostCenter;
-import bigBang.module.generalSystemModule.shared.User;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.rpc.RemoteService;
 import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 
 @RemoteServiceRelativePath("CostCenterService")
-public interface CostCenterService extends RemoteService {
+public interface CostCenterService
+	extends RemoteService
+{
 	/**
 	 * Utility class for simplifying access to the instance of async service.
 	 */
-	public static class Util {
+	public static class Util
+	{
 		private static CostCenterServiceAsync instance;
-		public static CostCenterServiceAsync getInstance(){
-			if (instance == null) {
+		public static CostCenterServiceAsync getInstance()
+		{
+			if (instance == null)
+			{
 				instance = GWT.create(CostCenterService.class);
 			}
 			return instance;
 		}
 	}
 	
-	public CostCenter[] getCostCenterList();
-	
-	public CostCenter getCostCenter(String id);
-
-	public String createCostCenter(CostCenter costCenter);
-	
-	public String saveCostCenter(CostCenter costCenter);
-	
-	public String deleteCostCenter(String id);
-
-	public String addMembers(String costCenterId, String[] userIds);
-	
-	public String removeMember(String costCenterId, String[] memberIds);
-
-	public User[] getAvailableUsersForMembership(String costCenterId);
-
+	public CostCenter[] getCostCenterList() throws SessionExpiredException, BigBangException;
+	public String createCostCenter(CostCenter costCenter) throws SessionExpiredException, BigBangException;
+	public void saveCostCenter(CostCenter costCenter) throws SessionExpiredException, BigBangException;
+	public void deleteCostCenter(String id) throws SessionExpiredException, BigBangException;
+//	public String addMembers(String costCenterId, String[] userIds) throws BigBangException;
+//	public String removeMember(String costCenterId, String[] memberIds) throws BigBangException;
+//	public User[] getAvailableUsersForMembership(String costCenterId) throws BigBangException;
 }
