@@ -5,7 +5,6 @@ import bigBang.module.generalSystemModule.shared.User;
 
 import com.google.gwt.event.dom.client.HasClickHandlers;
 import com.google.gwt.user.client.ui.Button;
-import com.google.gwt.user.client.ui.HasVerticalAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 
 public class CostCenterMemberList extends List<User> {
@@ -17,31 +16,14 @@ public class CostCenterMemberList extends List<User> {
 		super();
 		
 		HorizontalPanel toolbar = new HorizontalPanel();
-		toolbar.setVerticalAlignment(HasVerticalAlignment.ALIGN_MIDDLE);
-		toolbar.setHeight("30px");
-		
-		addButton = new Button("Adicionar");
-		removeButton = new Button("Remover");
-		
-		toolbar.add(addButton);
-		toolbar.add(removeButton);
-		removeButton.setEnabled(false);
 		
 		setHeaderWidget(toolbar);
 		updateFooterLabel();
-		setMultipleSelectEnabled(true);
-	}
-	
-	@Override
-	public void setValue(User value, boolean fireEvents) {
-		super.setValue(value, fireEvents);
-		this.removeButton.setEnabled(getSelectedEntry() != null);
 	}
 	
 	@Override
 	protected void onSizeChanged(){
 		updateFooterLabel();
-		this.removeButton.setEnabled(getSelectedEntry() != null);
 	}
 	
 	private void updateFooterLabel(){

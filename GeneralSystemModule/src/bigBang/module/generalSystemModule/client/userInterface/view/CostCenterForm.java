@@ -52,6 +52,10 @@ public class CostCenterForm extends FormView {
 
 	@Override
 	public void setInfo(Object info) {
+		if(info == null){
+			clearInfo();
+			return;
+		}
 		this.info = (CostCenter) info;
 		this.nameField.setValue(this.info.name);
 		this.codeField.setValue(this.info.code);

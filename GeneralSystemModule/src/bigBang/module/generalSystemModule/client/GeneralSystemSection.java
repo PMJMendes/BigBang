@@ -10,6 +10,8 @@ import bigBang.library.interfaces.Service;
 import bigBang.library.client.userInterface.MenuSection;
 import bigBang.library.client.userInterface.TextBadge;
 import bigBang.library.client.userInterface.presenter.OperationViewPresenter;
+import bigBang.library.client.userInterface.presenter.ViewPresenter;
+import bigBang.library.client.userInterface.presenter.ViewPresenterManager;
 import bigBang.module.generalSystemModule.client.userInterface.presenter.CostCenterManagementOperationViewPresenter;
 import bigBang.module.generalSystemModule.client.userInterface.presenter.CoverageManagementOperationViewPresenter;
 import bigBang.module.generalSystemModule.client.userInterface.presenter.InsuranceAgencyManagementOperationViewPresenter;
@@ -121,8 +123,9 @@ public class GeneralSystemSection implements MenuSection {
 	}
 
 	public void registerEventHandlers(EventBus eventBus) {
-		// TODO Auto-generated method stub
-
+		for(ViewPresenter p : this.getOperationPresenters()) {
+			p.setEventBus(eventBus);
+		}
 	}
 
 }
