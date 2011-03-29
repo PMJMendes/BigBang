@@ -3,6 +3,7 @@ package bigBang.module.mainModule.client;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.RootPanel;
 
+import bigBang.library.client.BigBangPermissionManager;
 import bigBang.library.client.EventBus;
 import bigBang.library.client.userInterface.presenter.SectionViewPresenter;
 import bigBang.library.client.userInterface.presenter.ViewPresenter;
@@ -18,6 +19,10 @@ public class MainModule implements bigBang.library.client.MainModule {
 	public MainModule() {
 	}
 
+	public void initialize(EventBus eventBus, BigBangPermissionManager permissionManager) {
+		initialize(eventBus);
+	}
+	
 	public void initialize(EventBus eventBus) {
 		MainModule.eventBus = eventBus;
 		historyManager = GWT.create(HistoryManager.class);

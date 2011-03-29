@@ -25,6 +25,8 @@ public class ApplicationController {
 	private ViewPresenter loginPresenter;
 	private MainScreenViewPresenter mainScreenViewPresenter;
 	private HasWidgets mainContainer;
+	
+	private String username;
 
 	public ApplicationController(final EventBus eventBus, HistoryManager historyManager, ProcessManager processManager) {
 		this.eventBus = eventBus;
@@ -58,7 +60,7 @@ public class ApplicationController {
 
 	public void showMainScreen(){
 		RootPanel.get().setSize(Window.getClientWidth() + "px", Window.getClientHeight() + "px");
-
+		mainScreenViewPresenter.setUsername(this.username);
 		mainScreenViewPresenter.go(mainContainer);
 		startNotificationsManager();
 	}
@@ -86,6 +88,7 @@ public class ApplicationController {
 		eventBus.addHandler(LoginSuccessEvent.TYPE, new LoginSuccessEventHandler() {
 			public void onLoginSuccess(LoginSuccessEvent event) {
 				GWT.log("login ok for " + event.getUsername());
+				username = event.getUsername();
 				showMainScreen();
 			}
 		});

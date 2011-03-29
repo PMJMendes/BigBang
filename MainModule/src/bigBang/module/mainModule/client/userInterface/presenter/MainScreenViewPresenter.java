@@ -1,13 +1,20 @@
 package bigBang.module.mainModule.client.userInterface.presenter;
 
 import bigBang.library.client.EventBus;
+import bigBang.library.client.event.LogoutEvent;
 import bigBang.library.client.userInterface.MenuSection;
 import bigBang.library.client.userInterface.presenter.SectionViewPresenter;
 import bigBang.library.client.userInterface.presenter.ViewPresenter;
 import bigBang.library.client.userInterface.view.View;
 import bigBang.library.interfaces.Service;
 
+import com.google.gwt.core.client.GWT;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.dom.client.HasClickHandlers;
+import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.ui.HasWidgets;
+import com.google.gwt.user.client.ui.MenuItem;
 import com.google.gwt.user.client.ui.Widget;
 
 public class MainScreenViewPresenter implements ViewPresenter {
@@ -16,6 +23,9 @@ public class MainScreenViewPresenter implements ViewPresenter {
 		Widget asWidget();
 		void createMenuSection(SectionViewPresenter sectionPresenter);
 		void showSection(MenuSection section) throws Exception;
+		void setUsername(String username);
+		
+		MenuItem getLogoutButton();
 	}
 	
 	private Display view;
@@ -49,12 +59,21 @@ public class MainScreenViewPresenter implements ViewPresenter {
 	}
 
 	public void bind() {
-		
+		view.getLogoutButton().setCommand(new Command() {
+			
+			@Override
+			public void execute() {
+				eventBus.fireEvent(new LogoutEvent());
+			}
+		});
 	}
 
 	public void registerEventHandlers(EventBus eventBus) {
-		// TODO Auto-generated method stub
-		
+		setEventBus(eventBus);
+	}
+
+	public void setUsername(String username) {
+		view.setUsername(username);
 	}
 
 }

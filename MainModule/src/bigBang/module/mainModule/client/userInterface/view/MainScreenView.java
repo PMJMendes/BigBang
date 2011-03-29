@@ -12,6 +12,7 @@ import bigBang.module.mainModule.client.userInterface.presenter.MainScreenViewPr
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Position;
 import com.google.gwt.dom.client.Style.Unit;
+import com.google.gwt.event.dom.client.HasClickHandlers;
 import com.google.gwt.event.logical.shared.ResizeEvent;
 import com.google.gwt.event.logical.shared.ResizeHandler;
 import com.google.gwt.user.client.Command;
@@ -32,6 +33,9 @@ public class MainScreenView extends View implements MainScreenViewPresenter.Disp
 	private VerticalPanel panel;
 	private TabPanel mainTabPanel;
 	private HashMap <String, Integer> processSectionIndexes;
+	
+	private MenuItem usernameMenuItem;
+	private MenuItem logoutMenuItem;
 
 	public MainScreenView(){
 		this.processSectionIndexes = new HashMap <String, Integer>();
@@ -50,12 +54,13 @@ public class MainScreenView extends View implements MainScreenViewPresenter.Disp
 		final MenuBar menuBar = new MenuBar();
 		menuBar.setAnimationEnabled(true);
 
-		menuBar.addItem(new MenuItem("username", new Command() {
+		usernameMenuItem = new MenuItem("", new Command() {
 
 			public void execute() {
 				
 			}
-		}));
+		});
+		menuBar.addItem(usernameMenuItem);
 		menuBar.addSeparator();
 		menuBar.addItem(new MenuItem("Preferências", new Command() {
 
@@ -91,12 +96,13 @@ public class MainScreenView extends View implements MainScreenViewPresenter.Disp
 		menuItem.setSubMenu(subMenu);
 		menuBar.addItem(menuItem);
 		menuBar.addSeparator();
-		menuBar.addItem(new MenuItem("Sair", new Command() {
+		logoutMenuItem = new MenuItem("Sair", new Command() {
 
 			public void execute() {
 
 			}
-		}));
+		});
+		menuBar.addItem(logoutMenuItem);
 
 		panel.add(menuBar);
 		panel.setCellHorizontalAlignment(menuBar, HasHorizontalAlignment.ALIGN_RIGHT);
@@ -147,6 +153,16 @@ public class MainScreenView extends View implements MainScreenViewPresenter.Disp
 		if(index == -1)
 			throw new Exception("Could not select the menu section. it does not exist.");
 		this.mainTabPanel.selectTab(index);
+	}
+
+	@Override
+	public void setUsername(String username) {
+		usernameMenuItem.setText(username);
+	}
+
+	@Override
+	public MenuItem getLogoutButton() {
+		return logoutMenuItem;
 	}
 
 }
