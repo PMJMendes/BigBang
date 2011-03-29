@@ -2,21 +2,18 @@ package bigBang.module.generalSystemModule.client;
 
 import java.util.HashMap;
 
-import com.google.gwt.core.client.GWT;
-
+import bigBang.library.client.BigBangAsyncCallback;
+import bigBang.library.client.BigBangPermissionManager;
 import bigBang.library.client.EventBus;
-import bigBang.library.client.Operation;
-import bigBang.library.interfaces.Service;
 import bigBang.library.client.userInterface.MenuSection;
 import bigBang.library.client.userInterface.TextBadge;
 import bigBang.library.client.userInterface.presenter.OperationViewPresenter;
 import bigBang.library.client.userInterface.presenter.ViewPresenter;
-import bigBang.library.client.userInterface.presenter.ViewPresenterManager;
+import bigBang.library.interfaces.Service;
 import bigBang.module.generalSystemModule.client.userInterface.presenter.CostCenterManagementOperationViewPresenter;
 import bigBang.module.generalSystemModule.client.userInterface.presenter.CoverageManagementOperationViewPresenter;
 import bigBang.module.generalSystemModule.client.userInterface.presenter.InsuranceAgencyManagementOperationViewPresenter;
 import bigBang.module.generalSystemModule.client.userInterface.presenter.MediatorManagementOperationViewPresenter;
-import bigBang.module.generalSystemModule.client.userInterface.presenter.TaxesAndMultipliersManagementOperationViewPresenter;
 import bigBang.module.generalSystemModule.client.userInterface.presenter.UserManagementOperationViewPresenter;
 import bigBang.module.generalSystemModule.client.userInterface.view.CostCenterManagementOperationView;
 import bigBang.module.generalSystemModule.client.userInterface.view.CoverageManagementOperationView;
@@ -33,8 +30,9 @@ import bigBang.module.generalSystemModule.shared.operation.CostCenterManagementO
 import bigBang.module.generalSystemModule.shared.operation.CoverageManagementOperation;
 import bigBang.module.generalSystemModule.shared.operation.InsuranceAgencyManagementOperation;
 import bigBang.module.generalSystemModule.shared.operation.MediatorManagementOperation;
-import bigBang.module.generalSystemModule.shared.operation.TaxesAndMultipliersManagementOperation;
 import bigBang.module.generalSystemModule.shared.operation.UserManagementOperation;
+
+import com.google.gwt.core.client.GWT;
 
 public class GeneralSystemSection implements MenuSection {
 
@@ -43,9 +41,9 @@ public class GeneralSystemSection implements MenuSection {
 	private static final String SHORT_DESCRIPTION = "Sist. Geral";
 	private HashMap<String, OperationViewPresenter> sectionOperationPresenters; 
 	
-	public GeneralSystemSection(){
+	public GeneralSystemSection(BigBangPermissionManager permissionManager){
 		this.sectionOperationPresenters = new HashMap<String, OperationViewPresenter>();
-
+		
 		/* COST CENTER MANAGEMENT */
 		CostCenterManagementOperation costCenterManagementOperation = (CostCenterManagementOperation)GWT.create(CostCenterManagementOperation.class);
 		CostCenterManagementOperationView costCenterManagementOperationView = new CostCenterManagementOperationView();
@@ -79,12 +77,6 @@ public class GeneralSystemSection implements MenuSection {
 		insuranceAgencyManagementOperationPresenter.setOperation(insuranceAgencyManagementOperation);
 		this.sectionOperationPresenters.put(insuranceAgencyManagementOperation.ID, (OperationViewPresenter)insuranceAgencyManagementOperationPresenter);
 		
-		/* TAXES AND MULTIPLIERS MANAGEMENT */
-		TaxesAndMultipliersManagementOperation taxesAndMultipliersManagementOperation = (TaxesAndMultipliersManagementOperation)GWT.create(TaxesAndMultipliersManagementOperation.class);
-		TaxesAndMultipliersManagementOperationViewPresenter taxesAndMultipliersManagementOperationPresenter = (TaxesAndMultipliersManagementOperationViewPresenter) GWT.create(TaxesAndMultipliersManagementOperationViewPresenter.class);
-		taxesAndMultipliersManagementOperationPresenter.setOperation(taxesAndMultipliersManagementOperation);
-		this.sectionOperationPresenters.put(taxesAndMultipliersManagementOperation.ID, (OperationViewPresenter)taxesAndMultipliersManagementOperationPresenter);
-
 		/* COVERAGES MANAGEMENT */
 		CoverageManagementOperation coverageManagementOperation = (CoverageManagementOperation)GWT.create(CoverageManagementOperation.class);
 		CoverageManagementOperationView coverageManagementOperationView = (CoverageManagementOperationView) GWT.create(CoverageManagementOperationView.class);
@@ -92,6 +84,19 @@ public class GeneralSystemSection implements MenuSection {
 		coverageManagementOperationPresenter.setOperation(coverageManagementOperation);
 		this.sectionOperationPresenters.put(coverageManagementOperation.ID, (OperationViewPresenter)coverageManagementOperationPresenter);
 
+		initPermissions(permissionManager);
+	}
+	
+	private void initPermissions(final BigBangPermissionManager permissionManager){ //TODO
+		permissionManager.getProcessPermissionContext("GENERAL_SYSTEM_PROCESS", new BigBangAsyncCallback<Void>() {
+
+			@Override
+			public void onSuccess(Void result) {
+				for(OperationViewPresenter p : sectionOperationPresenters.values()) {
+					p.setOperationPermission(permissionManager.hasPermissionForOperation(p.getOperation().getId()));
+				}
+			}
+		});	
 	}
 	
 	public String getId() {
