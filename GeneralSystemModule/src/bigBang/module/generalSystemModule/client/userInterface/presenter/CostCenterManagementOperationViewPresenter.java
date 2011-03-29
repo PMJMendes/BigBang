@@ -154,10 +154,10 @@ OperationViewPresenter {
 	}
 	
 	private void saveCostCenter(final CostCenter costCenter) {
-		service.saveCostCenter(costCenter, new BigBangAsyncCallback<String>(eventBus) {
+		service.saveCostCenter(costCenter, new BigBangAsyncCallback<Void>(eventBus) {
 
 			@Override
-			public void onSuccess(String result) {
+			public void onSuccess(Void result) {
 				view.setCostCenterFormEditable(false);
 				view.updateCostCenterInfo(costCenter);
 			}
@@ -165,10 +165,10 @@ OperationViewPresenter {
 	}
 	
 	private void deleteCostCenter(final CostCenter costCenter) {
-		service.deleteCostCenter(costCenter.id, new BigBangAsyncCallback<String>(eventBus) {
+		service.deleteCostCenter(costCenter.id, new BigBangAsyncCallback<Void>(eventBus) {
 
 			@Override
-			public void onSuccess(String result) {
+			public void onSuccess(Void result) {
 				view.removeCostCenter(costCenter.id);
 			}
 		});
