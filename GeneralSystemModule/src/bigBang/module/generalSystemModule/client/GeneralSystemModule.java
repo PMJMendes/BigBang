@@ -1,5 +1,6 @@
 package bigBang.module.generalSystemModule.client;
 
+import bigBang.library.client.BigBangPermissionManager;
 import bigBang.library.client.EventBus;
 import bigBang.library.client.Module;
 import bigBang.library.client.userInterface.presenter.SectionViewPresenter;
@@ -14,15 +15,20 @@ public class GeneralSystemModule implements Module {
 		
 	}
 
-	public void initialize(EventBus eventBus) {
+	@Override
+	public void initialize(EventBus eventBus, BigBangPermissionManager permissionManager) {
 		sectionPresenters = new SectionViewPresenter[1];
 		//GeneralSystem section
-		GeneralSystemSection generalSystemSection = new GeneralSystemSection();
+		GeneralSystemSection generalSystemSection = new GeneralSystemSection(permissionManager);
 		GeneralSystemSectionView generalSystemSectionView = new GeneralSystemSectionView();
 		GeneralSystemSectionViewPresenter generalSystemSectionPresenter = new GeneralSystemSectionViewPresenter(eventBus, null, generalSystemSectionView);
 		generalSystemSectionPresenter.setSection(generalSystemSection);
 		generalSystemSection.registerEventHandlers(eventBus);
 		sectionPresenters[0] = generalSystemSectionPresenter;
+	}
+	
+	public void initialize(EventBus eventBus) {
+		this.initialize(eventBus, null);
 	}
 
 	public boolean isInitialized() {
