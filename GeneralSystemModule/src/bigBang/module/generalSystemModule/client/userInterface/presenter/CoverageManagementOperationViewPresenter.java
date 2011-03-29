@@ -8,7 +8,6 @@ import bigBang.library.client.Operation;
 import bigBang.library.client.userInterface.presenter.OperationViewPresenter;
 import bigBang.library.client.userInterface.view.View;
 import bigBang.library.interfaces.Service;
-import bigBang.module.generalSystemModule.client.userInterface.view.CoverageManagementOperationView;
 import bigBang.module.generalSystemModule.shared.operation.CoverageManagementOperation;
 
 public class CoverageManagementOperationViewPresenter implements
@@ -26,18 +25,18 @@ public class CoverageManagementOperationViewPresenter implements
 	
 	public CoverageManagementOperationViewPresenter(EventBus eventBus, Service service, Display view) {
 		setView((View) view);
+		setEventBus(eventBus);
+		setService(service);
 	}
 
 	@Override
 	public void setService(Service service) {
-		// TODO Auto-generated method stub
-
+		this.service = service;
 	}
 
 	@Override
 	public void setEventBus(EventBus eventBus) {
-		// TODO Auto-generated method stub
-
+		this.eventBus = eventBus;
 	}
 
 	@Override
@@ -84,6 +83,17 @@ public class CoverageManagementOperationViewPresenter implements
 	public String setTargetEntity(String id) {
 		// TODO Auto-generated method stub
 		return null;
+	}
+	
+	@Override
+	public void setOperationPermission(boolean result) {
+		this.operation.setPermission(result);
+		setReadOnly(result);
+	}
+
+	private void setReadOnly(boolean result) {
+		// TODO Auto-generated method stub
+		
 	}
 
 }
