@@ -2,6 +2,7 @@ package bigBang.module.loginModule.client;
 
 import com.google.gwt.core.client.GWT;
 
+import bigBang.library.client.BigBangPermissionManager;
 import bigBang.library.client.Domain;
 import bigBang.library.client.EventBus;
 import bigBang.library.client.userInterface.presenter.SectionViewPresenter;
@@ -13,9 +14,14 @@ import bigBang.module.loginModule.interfaces.AuthenticationService;
 
 public class LoginModule implements bigBang.library.client.LoginModule {
 
+	private EventBus eventBus;
+	
+	public void initialize(EventBus eventBus, BigBangPermissionManager permissionManager) {
+		this.eventBus = eventBus;
+	}
+	
 	public void initialize(EventBus eventBus) {
-		// TODO Auto-generated method stub
-		
+		this.eventBus = eventBus;
 	}
 
 	public boolean isInitialized() {
@@ -50,7 +56,7 @@ public class LoginModule implements bigBang.library.client.LoginModule {
 
 	public ViewPresenter getLoginViewPresenter() {
 		//return null;
-		LoginViewPresenter presenter = new LoginViewPresenter(null, new LoginView());
+		LoginViewPresenter presenter = new LoginViewPresenter(eventBus, new LoginView());
 		presenter.setService((Service) GWT.create(AuthenticationService.class));
 		return presenter;
 	}

@@ -20,8 +20,8 @@ public interface AuthenticationService extends RemoteService {
 		}
 	}
 	
-	public String login() throws BigBangException;
-	public String login(String username, String password) throws BigBangException;
+	public String login(String domain) throws BigBangException;
+	public String login(String username, String password, String domain) throws BigBangException;
 	public String logout() throws BigBangException;
 	public String changePassword(String oldPassword, String newPassword) throws BigBangException, SessionExpiredException;
 }

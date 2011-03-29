@@ -21,7 +21,7 @@ public class AuthenticationServiceImpl
 {
 	private static final long serialVersionUID = 1L;
 
-	public String login()
+	public String login(String domain)
 		throws BigBangException
 	{
 		String lstrUsername;
@@ -79,7 +79,7 @@ public class AuthenticationServiceImpl
         }
 	}
 
-	public String login(String username, String password)
+	public String login(String username, String password, String domain)
 		throws BigBangException
 	{
         IEntity lrefUser;

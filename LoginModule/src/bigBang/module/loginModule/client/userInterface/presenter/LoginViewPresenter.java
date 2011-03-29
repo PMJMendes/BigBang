@@ -1,7 +1,10 @@
 package bigBang.module.loginModule.client.userInterface.presenter;
 
+import bigBang.library.client.BigBangAsyncCallback;
 import bigBang.library.client.EventBus;
 import bigBang.library.client.event.LoginSuccessEvent;
+import bigBang.library.client.event.LogoutEvent;
+import bigBang.library.client.event.LogoutEventHandler;
 import bigBang.library.client.userInterface.presenter.ViewPresenter;
 import bigBang.library.client.userInterface.view.View;
 import bigBang.library.interfaces.Service;
@@ -11,6 +14,7 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.HasClickHandlers;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.HasValue;
 import com.google.gwt.user.client.ui.HasWidgets;
@@ -21,8 +25,11 @@ public class LoginViewPresenter implements ViewPresenter {
 	public interface Display {
 		HasClickHandlers getSubmitButton();
 		HasValue<String> getUsername();
+		String getDomain();
 		HasValue<String> getPassword();
+		void setDomains(String[] domains);
 		Widget asWidget();
+		void setSelectedDomain(String domain);
 	}
 
 	private Display view;
@@ -46,6 +53,7 @@ public class LoginViewPresenter implements ViewPresenter {
 
 	public void setEventBus(EventBus eventBus) {
 		this.eventBus = eventBus;
+		registerEventHandlers(eventBus);
 	}
 	
 	public void setView(View view) {
@@ -59,6 +67,18 @@ public class LoginViewPresenter implements ViewPresenter {
 //		container.clear();
 //		container.add(this.view.asWidget());
 	}
+	
+	private void finishGo(){
+		bind();
+		view.setDomains(new String[]{"CrediteEGS", "AMartins"});
+		final String domain = Window.Location.getParameter("domain");
+		if(domain != null)
+			view.setSelectedDomain(domain);
+
+		tmpContainer.clear();
+		tmpContainer.add(view.asWidget());
+		tmpContainer = null;
+	}
 
 	public void bind() {
 		view.getSubmitButton().addClickHandler(new ClickHandler() {
@@ -70,14 +90,18 @@ public class LoginViewPresenter implements ViewPresenter {
 	}
 	
 	private void checkIntegrated(){
-		service.login(new AsyncCallback<String>() {
+		final String domain = Window.Location.getParameter("domain");
+		if(domain == null){
+			finishGo();
+			return;
+		}
+					
+		service.login(domain, new AsyncCallback<String>() {
 			
 			public void onSuccess(String username) {
 				if(username == null){
-					bind();
-					tmpContainer.clear();
-					tmpContainer.add(view.asWidget());
-					tmpContainer = null;
+					view.setSelectedDomain(domain);
+					finishGo();
 				} else {				
 					eventBus.fireEvent(new LoginSuccessEvent(username));
 					GWT.log("Authentication success for " + username);
@@ -90,8 +114,8 @@ public class LoginViewPresenter implements ViewPresenter {
 		});
 	}
 	
-	private void checkLogin(){		
-		service.login(view.getUsername().getValue(), view.getPassword().getValue(), new AsyncCallback<String>() {
+	private void checkLogin(){	
+		service.login(view.getUsername().getValue(), view.getPassword().getValue(), view.getDomain(), new AsyncCallback<String>() {
 			
 			public void onSuccess(String username) {
 				eventBus.fireEvent(new LoginSuccessEvent(username));
@@ -106,8 +130,20 @@ public class LoginViewPresenter implements ViewPresenter {
 	}
 
 	public void registerEventHandlers(EventBus eventBus) {
-		// TODO Auto-generated method stub
-		
+		eventBus.addHandler(LogoutEvent.TYPE, new LogoutEventHandler() {
+			
+			@Override
+			public void onLogout(LogoutEvent event) {
+				service.logout(new BigBangAsyncCallback<String>() {
+
+					@Override
+					public void onSuccess(String result) {
+						GWT.log("logout");
+						Window.Location.reload(); //TODO
+					}
+				});
+			}
+		});
 	}
 
 }

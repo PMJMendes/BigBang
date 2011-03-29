@@ -5,9 +5,9 @@ import bigBang.library.interfaces.Service;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 public interface AuthenticationServiceAsync extends Service {
-	void login(String username, String password, AsyncCallback<String> callback);
+	void login(String username, String password, String domain, AsyncCallback<String> callback);
 
-	void login(AsyncCallback<String> callback);
+	void login(String domain, AsyncCallback<String> callback);
 
 	void logout(AsyncCallback<String> callback);
 

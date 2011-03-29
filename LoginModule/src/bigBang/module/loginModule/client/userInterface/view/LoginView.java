@@ -8,6 +8,7 @@ import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.HasValue;
 import com.google.gwt.user.client.ui.HasVerticalAlignment;
+import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.PasswordTextBox;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.TextBox;
@@ -20,6 +21,7 @@ public class LoginView extends View implements LoginViewPresenter.Display {
 	private TextBox usernameField;
 	private PasswordTextBox passwordField;
 	private Button submitButton;
+	private ListBox domainList;
 	
 	public LoginView(){		
 		this.panel = new VerticalPanel();
@@ -30,10 +32,12 @@ public class LoginView extends View implements LoginViewPresenter.Display {
 		this.usernameField = new TextBox();
 		this.passwordField = new PasswordTextBox();
 		this.submitButton = new Button("Entrar");
+		this.domainList = new ListBox();
 		
 		VerticalPanel loginFormPanel = new VerticalPanel();
 		loginFormPanel.add(this.usernameField);
 		loginFormPanel.add(this.passwordField);
+		loginFormPanel.add(this.domainList);
 		loginFormPanel.add(this.submitButton);
 		
 		SimplePanel fillerTop = new SimplePanel();
@@ -46,7 +50,7 @@ public class LoginView extends View implements LoginViewPresenter.Display {
 		
 		initWidget(this.panel);
 	}
-
+	
 	public HasClickHandlers getSubmitButton() {
 		return submitButton;
 	}
@@ -57,6 +61,30 @@ public class LoginView extends View implements LoginViewPresenter.Display {
 
 	public HasValue<String> getPassword() {
 		return passwordField;
+	}
+
+	@Override
+	public String getDomain() {
+		return domainList.getValue(domainList.getSelectedIndex());
+	}
+
+	@Override
+	public void setDomains(String[] domains) {
+		domainList.clear();
+		for(int i = 0; i < domains.length; i++) {
+			domainList.addItem(domains[i], domains[i]);
+		}
+	}
+
+	@Override
+	public void setSelectedDomain(String domain) {
+		int nDomains = domainList.getItemCount();
+		for(int i = 0; i < nDomains; i++) {
+			if(domain.equals(domainList.getValue(i))){
+				domainList.setItemSelected(i, true);
+				return;
+			}
+		}
 	}
 	
 }
