@@ -9,8 +9,8 @@ public interface CostCenterServiceAsync
 	extends Service
 {
 	void getCostCenterList(AsyncCallback<CostCenter[]> callback);
-	void createCostCenter(CostCenter costCenter, AsyncCallback<String> callback);
-	void saveCostCenter(CostCenter costCenter, AsyncCallback<Void> callback);
+	void createCostCenter(CostCenter costCenter, AsyncCallback<CostCenter> callback);
+	void saveCostCenter(CostCenter costCenter, AsyncCallback<CostCenter> callback);
 	void deleteCostCenter(String id, AsyncCallback<Void> callback);
 //	void addMembers(String costCenterId, String[] userIds, AsyncCallback<String> callback);
 //	void removeMember(String costCenterId, String[] memberIds, AsyncCallback<String> callback);

@@ -102,7 +102,7 @@ public class CostCenterServiceImpl
 		return larrAux.toArray(new CostCenter[larrAux.size()]);
 	}
 
-	public String createCostCenter(CostCenter costCenter)
+	public CostCenter createCostCenter(CostCenter costCenter)
 		throws SessionExpiredException, BigBangException
 	{
 		ManageCostCenters lobjMCC;
@@ -129,10 +129,15 @@ public class CostCenterServiceImpl
 			throw new BigBangException(e.getMessage(), e);
 		}
 
-		return lobjMCC.marrNewIDs[0].toString();
+		costCenter.id = lobjMCC.marrNewIDs[0].toString();
+		costCenter.code = lobjMCC.marrCreate[0].mstrCode;
+		costCenter.name = lobjMCC.marrCreate[0].mstrName;
+		costCenter.members = new User[0];
+
+		return costCenter;
 	}
 
-	public void saveCostCenter(CostCenter costCenter)
+	public CostCenter saveCostCenter(CostCenter costCenter)
 		throws SessionExpiredException, BigBangException
 	{
 		ManageCostCenters lobjMCC;
@@ -158,6 +163,13 @@ public class CostCenterServiceImpl
 		{
 			throw new BigBangException(e.getMessage(), e);
 		}
+
+		costCenter.id = lobjMCC.marrModify[0].mid.toString();
+		costCenter.code = lobjMCC.marrModify[0].mstrCode;
+		costCenter.name = lobjMCC.marrModify[0].mstrName;
+		costCenter.members = new User[0];
+
+		return costCenter;
 	}
 
 	public void deleteCostCenter(String id)

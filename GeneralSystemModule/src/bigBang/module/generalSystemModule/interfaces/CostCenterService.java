@@ -29,8 +29,8 @@ public interface CostCenterService
 	}
 	
 	public CostCenter[] getCostCenterList() throws SessionExpiredException, BigBangException;
-	public String createCostCenter(CostCenter costCenter) throws SessionExpiredException, BigBangException;
-	public void saveCostCenter(CostCenter costCenter) throws SessionExpiredException, BigBangException;
+	public CostCenter createCostCenter(CostCenter costCenter) throws SessionExpiredException, BigBangException;
+	public CostCenter saveCostCenter(CostCenter costCenter) throws SessionExpiredException, BigBangException;
 	public void deleteCostCenter(String id) throws SessionExpiredException, BigBangException;
 //	public String addMembers(String costCenterId, String[] userIds) throws BigBangException;
 //	public String removeMember(String costCenterId, String[] memberIds) throws BigBangException;
