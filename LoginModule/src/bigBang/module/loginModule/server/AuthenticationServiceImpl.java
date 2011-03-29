@@ -10,7 +10,7 @@ import Jewel.Engine.Extensions.*;
 import Jewel.Engine.Implementation.*;
 import Jewel.Engine.Interfaces.*;
 import Jewel.Engine.Security.*;
-import Jewel.Engine.SysObjects.JewelEngineException;
+import Jewel.Engine.SysObjects.*;
 import bigBang.library.server.*;
 import bigBang.library.shared.*;
 import bigBang.module.loginModule.interfaces.*;
@@ -25,6 +25,7 @@ public class AuthenticationServiceImpl
 		throws BigBangException
 	{
 		String lstrUsername;
+		UUID lidNSpace;
         IEntity lrefUser;
         MasterDB ldb;
         ResultSet lrs;
@@ -37,6 +38,13 @@ public class AuthenticationServiceImpl
         	return null;
         lidUser = null;
 
+        if ( domain.equals("AMartins") )
+        	lidNSpace = Constants.WSpace_AMartins;
+        else if ( domain.equals("CrediteEGS") )
+        	lidNSpace = Constants.WSpace_CredEGS;
+        else
+            throw new BigBangException("Invalid login domain.");
+
         larrMembers = new int[1];
         larrMembers[0] = Miscellaneous.Username_In_User;
         larrParams = new java.lang.Object[1];
@@ -44,7 +52,7 @@ public class AuthenticationServiceImpl
 
         try
         {
-	        lrefUser = Entity.GetInstance(Engine.FindEntity(Constants.WSpace_BigBang, ObjectGUIDs.O_User));
+	        lrefUser = Entity.GetInstance(Engine.FindEntity(lidNSpace, ObjectGUIDs.O_User));
 
 	        ldb = new MasterDB();
 	        lrs = lrefUser.SelectByMembers(ldb, larrMembers, larrParams, new int[0]);
@@ -63,11 +71,11 @@ public class AuthenticationServiceImpl
 	        	return null;
 
 	        getSession().setAttribute("UserID", lidUser);
-	        getSession().setAttribute("UserNSpace", Constants.WSpace_BigBang);
+	        getSession().setAttribute("UserNSpace", lidNSpace);
 
-	        NameSpace.GetInstance(Constants.WSpace_BigBang).DoLogin(lidUser);
+	        NameSpace.GetInstance(lidNSpace).DoLogin(lidUser);
 
-	        return User.GetInstance(Constants.WSpace_BigBang, lidUser).getDisplayName();
+	        return User.GetInstance(lidNSpace, lidUser).getDisplayName();
         }
         catch (BigBangException e)
         {
@@ -82,6 +90,7 @@ public class AuthenticationServiceImpl
 	public String login(String username, String password, String domain)
 		throws BigBangException
 	{
+		UUID lidNSpace;
         IEntity lrefUser;
         MasterDB ldb;
         ResultSet lrs;
@@ -90,6 +99,13 @@ public class AuthenticationServiceImpl
         UUID lidUser;
 
         lidUser = null;
+
+        if ( domain.equals("AMartins") )
+        	lidNSpace = Constants.WSpace_AMartins;
+        else if ( domain.equals("CrediteEGS") )
+        	lidNSpace = Constants.WSpace_CredEGS;
+        else
+            throw new BigBangException("Invalid login domain.");
 
         larrMembers = new int[2];
         larrMembers[0] = Miscellaneous.Username_In_User;
@@ -104,7 +120,7 @@ public class AuthenticationServiceImpl
 	        else
 	            larrParams[1] = new Password(password, false);
 
-	        lrefUser = Entity.GetInstance(Engine.FindEntity(Constants.WSpace_BigBang, ObjectGUIDs.O_User));
+	        lrefUser = Entity.GetInstance(Engine.FindEntity(lidNSpace, ObjectGUIDs.O_User));
 
 	        ldb = new MasterDB();
 	        lrs = lrefUser.SelectByMembers(ldb, larrMembers, larrParams, new int[0]);
@@ -125,11 +141,11 @@ public class AuthenticationServiceImpl
 	            throw new BigBangException("User restricted to integrated logon!");
 
 	        getSession().setAttribute("UserID", lidUser);
-	        getSession().setAttribute("UserNSpace", Constants.WSpace_BigBang);
+	        getSession().setAttribute("UserNSpace", lidNSpace);
 
-	        NameSpace.GetInstance(Constants.WSpace_BigBang).DoLogin(lidUser);
+	        NameSpace.GetInstance(lidNSpace).DoLogin(lidUser);
 
-	        return User.GetInstance(Constants.WSpace_BigBang, lidUser).getDisplayName();
+	        return User.GetInstance(lidNSpace, lidUser).getDisplayName();
         }
         catch (BigBangException e)
         {
@@ -164,7 +180,7 @@ public class AuthenticationServiceImpl
 			larrParams[1] = new Password(newPassword, false);
 			larrParams[2] = larrParams[1];
 
-			User_Manager.ChangePassword(Constants.WSpace_BigBang, larrParams);
+			User_Manager.ChangePassword(Engine.getCurrentNameSpace(), larrParams);
 		}
 		catch (JewelEngineException e)
 		{
