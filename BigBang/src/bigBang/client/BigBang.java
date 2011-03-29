@@ -1,5 +1,7 @@
 package bigBang.client;
 
+import bigBang.library.client.BigBangAsyncCallback;
+import bigBang.library.client.BigBangPermissionManager;
 import bigBang.library.client.EventBus;
 import bigBang.module.loginModule.client.LoginModule;
 import bigBang.module.mainModule.client.MainModule;
@@ -14,11 +16,15 @@ public class BigBang implements EntryPoint {
 
 	public static ModuleManager moduleManager;
 	public static EventBus eventBus;
+	public static BigBangPermissionManager permissionManager;
 
 	public void onModuleLoad() {
 		eventBus = GWT.create(EventBus.class);
 		moduleManager = GWT.create(ModuleManager.class);
-
+		permissionManager = new BigBangPermissionManager();
+		BigBangAsyncCallback.setEventBus(eventBus);
+		
+		
 		try {
 			/*
 			 * Load modules in the following order
@@ -31,6 +37,7 @@ public class BigBang implements EntryPoint {
 			 */
 			
 			moduleManager.setEventBus(eventBus);
+			moduleManager.setPermissionManager(permissionManager);
 			moduleManager.registerMainModule((MainModule) GWT.create(bigBang.module.mainModule.client.MainModule.class));
 			moduleManager.registerLoginModule((LoginModule) GWT.create(bigBang.module.loginModule.client.LoginModule.class));
 			

@@ -2,6 +2,7 @@ package bigBang.client;
 
 import java.util.ArrayList;
 
+import bigBang.library.client.BigBangPermissionManager;
 import bigBang.library.client.EventBus;
 import bigBang.library.client.LoginModule;
 import bigBang.library.client.MainModule;
@@ -10,6 +11,7 @@ import bigBang.library.client.Module;
 public class ModuleManager {
 
 	private EventBus eventBus;
+	private BigBangPermissionManager permissionManager;
 	private static MainModule mainModule;
 	private static LoginModule loginModule;
 	private ArrayList <Module> modules;
@@ -33,6 +35,7 @@ public class ModuleManager {
 		if(!isMainModuleInitialized())
 			throw new Exception("The main module must be initialized before registering any otherprocessModules.");
 		loginModule = module;
+		loginModule.initialize(eventBus);
 		mainModule.setLoginPresenter(loginModule.getLoginViewPresenter());
 	}
 	
@@ -58,7 +61,7 @@ public class ModuleManager {
 		int length = modules.size();
 		for(int i = 0; i < length; i++){
 			Module module = modules.get(i);
-			module.initialize(eventBus);
+			module.initialize(eventBus, permissionManager);
 			mainModule.includeMainMenuSectionPresenters(module.getMainMenuSectionPresenters());
 		}
 	}
@@ -71,6 +74,10 @@ public class ModuleManager {
 
 	public void setEventBus(EventBus eventBus) {
 		this.eventBus = eventBus;
+	}
+
+	public void setPermissionManager(BigBangPermissionManager permissionManager) {
+		this.permissionManager = permissionManager;
 	}
 
 }
