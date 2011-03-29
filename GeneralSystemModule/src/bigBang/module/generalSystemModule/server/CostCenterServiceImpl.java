@@ -96,6 +96,7 @@ public class CostCenterServiceImpl
 		{
 			throw new BigBangException(e.getMessage(), e);
 		}
+
 		return larrAux.toArray(new CostCenter[larrAux.size()]);
 	}
 

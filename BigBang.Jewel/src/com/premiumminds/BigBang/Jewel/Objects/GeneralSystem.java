@@ -8,4 +8,9 @@ public class GeneralSystem
 	public void Initialize() throws JewelEngineException
 	{
 	}
+
+    public String getLabel()
+    {
+    	return "(Default)";
+    }
 }
