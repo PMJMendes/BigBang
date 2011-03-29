@@ -1,8 +1,5 @@
 package bigBang.module.generalSystemModule.client.userInterface.presenter;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-
 import bigBang.library.client.EventBus;
 import bigBang.library.client.Operation;
 import bigBang.library.client.userInterface.presenter.OperationViewPresenter;
@@ -28,7 +25,7 @@ public class UserManagementOperationViewPresenter implements OperationViewPresen
 	public interface Display {
 		Widget asWidget();
 		void setUsers(User[] users);
-		HasValue<String> getUserList();
+		HasValue<User> getUserList();
 		void selectFirstElementInUserList();
 		void showDetailsForUser(User u);
 		HasClickHandlers getNewUserButton();
@@ -104,10 +101,10 @@ public class UserManagementOperationViewPresenter implements OperationViewPresen
 				view.showNewUserForm();
 			}
 		});
-		this.view.getUserList().addValueChangeHandler(new ValueChangeHandler<String>() {
+		this.view.getUserList().addValueChangeHandler(new ValueChangeHandler<User>() {
 			
 			@Override
-			public void onValueChange(ValueChangeEvent<String> event) {
+			public void onValueChange(ValueChangeEvent<User> event) {
 				for(User user : userCache){
 					if(user.id.equals(event.getValue())){
 						view.showDetailsForUser(user);
@@ -137,7 +134,7 @@ public class UserManagementOperationViewPresenter implements OperationViewPresen
 			@Override
 			public void onSuccess(String result) {
 				view.setUsers(userCache);
-				view.getUserList().setValue(user.id);
+				view.getUserList().setValue(user);
 			}
 		});
 	}
@@ -169,6 +166,17 @@ public class UserManagementOperationViewPresenter implements OperationViewPresen
 		// TODO Auto-generated method stub
 		return null;
 	}
+	
+	@Override
+	public void setOperationPermission(boolean result) {
+		this.operation.setPermission(result);
+		setReadOnly(result);
+	}
 
+
+	private void setReadOnly(boolean result) {
+		// TODO Auto-generated method stub
+		
+	}
 
 }

@@ -23,7 +23,7 @@ public class GeneralSystemSectionViewPresenter implements SectionViewPresenter {
 		HasWidgets getOperationViewContainer();
 		void selectOperation(OperationViewPresenter p);
 		
-		void createOperationNavigationItem(OperationViewPresenter operationPresenter);
+		void createOperationNavigationItem(OperationViewPresenter operationPresenter, boolean enabled);
 		Widget asWidget();
 	}
 
@@ -41,7 +41,7 @@ public class GeneralSystemSectionViewPresenter implements SectionViewPresenter {
 	}
 
 	public void registerOperation(OperationViewPresenter operationPresenter) {
-		this.view.createOperationNavigationItem(operationPresenter);
+		this.view.createOperationNavigationItem(operationPresenter, true);
 		if(!hasRegisteredOperations) { //TO SHOW THE FIRST OPERATION BY DEFAULT
 			this.view.selectOperation(operationPresenter);
 			operationPresenter.go(this.view.getOperationViewContainer()); 
