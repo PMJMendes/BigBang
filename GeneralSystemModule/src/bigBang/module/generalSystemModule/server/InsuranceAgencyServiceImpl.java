@@ -7,6 +7,8 @@ import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 
 public class InsuranceAgencyServiceImpl extends RemoteServiceServlet implements InsuranceAgencyService {
 
+	private static final long serialVersionUID = 1L;
+
 	@Override
 	public InsuranceAgency[] getInsuranceAgencies() {
 		// TODO Auto-generated method stub
