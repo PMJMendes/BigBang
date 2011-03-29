@@ -141,12 +141,12 @@ public class CostCenterServiceImpl
 			throw new SessionExpiredException();
 
 		lobjMCC = new ManageCostCenters();
-		lobjMCC.marrCreate = new ManageCostCenters.CostCenterData[1];
-		lobjMCC.marrCreate[0] = lobjMCC.new CostCenterData();
-		lobjMCC.marrCreate[0].mid = UUID.fromString(costCenter.id);
-		lobjMCC.marrCreate[0].mstrCode = costCenter.code;
-		lobjMCC.marrCreate[0].mstrName = costCenter.name;
-		lobjMCC.marrModify = null;
+		lobjMCC.marrModify = new ManageCostCenters.CostCenterData[1];
+		lobjMCC.marrModify[0] = lobjMCC.new CostCenterData();
+		lobjMCC.marrModify[0].mid = UUID.fromString(costCenter.id);
+		lobjMCC.marrModify[0].mstrCode = costCenter.code;
+		lobjMCC.marrModify[0].mstrName = costCenter.name;
+		lobjMCC.marrCreate = null;
 		lobjMCC.marrDelete = null;
 		lobjMCC.marrNewIDs = null;
 
@@ -169,13 +169,13 @@ public class CostCenterServiceImpl
 			throw new SessionExpiredException();
 
 		lobjMCC = new ManageCostCenters();
-		lobjMCC.marrCreate = new ManageCostCenters.CostCenterData[1];
-		lobjMCC.marrCreate[0] = lobjMCC.new CostCenterData();
-		lobjMCC.marrCreate[0].mid = UUID.fromString(id);
-		lobjMCC.marrCreate[0].mstrCode = null;
-		lobjMCC.marrCreate[0].mstrName = null;
+		lobjMCC.marrDelete = new ManageCostCenters.CostCenterData[1];
+		lobjMCC.marrDelete[0] = lobjMCC.new CostCenterData();
+		lobjMCC.marrDelete[0].mid = UUID.fromString(id);
+		lobjMCC.marrDelete[0].mstrCode = null;
+		lobjMCC.marrDelete[0].mstrName = null;
+		lobjMCC.marrCreate = null;
 		lobjMCC.marrModify = null;
-		lobjMCC.marrDelete = null;
 		lobjMCC.marrNewIDs = null;
 
 		try
