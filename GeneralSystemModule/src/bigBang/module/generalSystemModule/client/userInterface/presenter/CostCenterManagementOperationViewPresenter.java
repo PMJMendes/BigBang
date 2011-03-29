@@ -1,5 +1,15 @@
 package bigBang.module.generalSystemModule.client.userInterface.presenter;
 
+import bigBang.library.client.BigBangAsyncCallback;
+import bigBang.library.client.EventBus;
+import bigBang.library.client.Operation;
+import bigBang.library.client.userInterface.presenter.OperationViewPresenter;
+import bigBang.library.client.userInterface.view.View;
+import bigBang.library.interfaces.Service;
+import bigBang.module.generalSystemModule.interfaces.CostCenterServiceAsync;
+import bigBang.module.generalSystemModule.shared.CostCenter;
+import bigBang.module.generalSystemModule.shared.operation.CostCenterManagementOperation;
+
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
@@ -9,16 +19,6 @@ import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.user.client.ui.HasValue;
 import com.google.gwt.user.client.ui.HasWidgets;
 import com.google.gwt.user.client.ui.Widget;
-
-import bigBang.library.client.BigBangAsyncCallback;
-import bigBang.library.client.EventBus;
-import bigBang.library.client.Operation;
-import bigBang.library.interfaces.Service;
-import bigBang.library.client.userInterface.presenter.OperationViewPresenter;
-import bigBang.library.client.userInterface.view.View;
-import bigBang.module.generalSystemModule.interfaces.CostCenterServiceAsync;
-import bigBang.module.generalSystemModule.shared.CostCenter;
-import bigBang.module.generalSystemModule.shared.operation.CostCenterManagementOperation;
 
 public class CostCenterManagementOperationViewPresenter implements
 OperationViewPresenter {
@@ -52,7 +52,7 @@ OperationViewPresenter {
 	private CostCenterServiceAsync service;
 	private Display view;
 	private EventBus eventBus;
-
+	
 	private CostCenterManagementOperation operation;
 
 	public CostCenterManagementOperationViewPresenter(EventBus eventBus, Service service, View view){
@@ -84,7 +84,7 @@ OperationViewPresenter {
 
 	private void fetchCostCenterList() {
 		try{
-			this.service.getCostCenterList(new BigBangAsyncCallback<CostCenter[]>(eventBus) {
+			this.service.getCostCenterList(new BigBangAsyncCallback<CostCenter[]>() {
 				public void onSuccess(CostCenter[] result) {
 					view.setCostCenterEntries(result);
 				}
@@ -143,7 +143,7 @@ OperationViewPresenter {
 	}
 	
 	public void createNewCostCenter(CostCenter c) {
-		service.createCostCenter(c, new BigBangAsyncCallback<String>(this.eventBus) {
+		service.createCostCenter(c, new BigBangAsyncCallback<String>() {
 
 			@Override
 			public void onSuccess(String result) {
@@ -154,7 +154,7 @@ OperationViewPresenter {
 	}
 	
 	private void saveCostCenter(final CostCenter costCenter) {
-		service.saveCostCenter(costCenter, new BigBangAsyncCallback<Void>(eventBus) {
+		service.saveCostCenter(costCenter, new BigBangAsyncCallback<Void>() {
 
 			@Override
 			public void onSuccess(Void result) {
@@ -165,7 +165,7 @@ OperationViewPresenter {
 	}
 	
 	private void deleteCostCenter(final CostCenter costCenter) {
-		service.deleteCostCenter(costCenter.id, new BigBangAsyncCallback<Void>(eventBus) {
+		service.deleteCostCenter(costCenter.id, new BigBangAsyncCallback<Void>() {
 
 			@Override
 			public void onSuccess(Void result) {
@@ -195,6 +195,17 @@ OperationViewPresenter {
 	public String setTargetEntity(String id) {
 		// TODO Auto-generated method stub
 		return null;
+	}
+
+	@Override
+	public void setOperationPermission(boolean permission) {
+		this.operation.setPermission(permission);
+		this.setReadOnly(permission);
+	}
+
+	private void setReadOnly(boolean permission) {
+		// TODO Auto-generated method stub
+		
 	}
 
 }
