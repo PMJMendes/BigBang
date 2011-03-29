@@ -2,6 +2,7 @@ package bigBang.module.tasksModule.client;
 
 import com.google.gwt.core.client.GWT;
 
+import bigBang.library.client.BigBangPermissionManager;
 import bigBang.library.client.EventBus;
 import bigBang.library.client.Module;
 import bigBang.library.client.userInterface.TextBadge;
@@ -16,6 +17,10 @@ import bigBang.module.tasksModule.interfaces.TasksServiceAsync;
 public class TasksModule implements Module {
 
 	private SectionViewPresenter[] mainMenuSectionPresenters;
+	
+	public void initialize(EventBus eventBus, BigBangPermissionManager permissionManager) {
+		initialize(eventBus);
+	}
 	
 	public void initialize(EventBus eventBus) {
 		mainMenuSectionPresenters = new SectionViewPresenter[1];
