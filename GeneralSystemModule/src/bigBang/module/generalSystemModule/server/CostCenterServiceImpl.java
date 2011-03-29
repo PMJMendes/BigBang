@@ -13,6 +13,7 @@ import bigBang.library.shared.BigBangException;
 import bigBang.library.shared.SessionExpiredException;
 import bigBang.module.generalSystemModule.interfaces.CostCenterService;
 import bigBang.module.generalSystemModule.shared.CostCenter;
+import bigBang.module.generalSystemModule.shared.User;
 
 import com.premiumminds.BigBang.Jewel.Constants;
 import com.premiumminds.BigBang.Jewel.Operations.ManageCostCenters;
@@ -67,6 +68,7 @@ public class CostCenterServiceImpl
 	        	lobjTmp.id = lobjAux.getKey().toString();
 	        	lobjTmp.code = (String)lobjAux.getAt(0);
 	        	lobjTmp.name = (String)lobjAux.getAt(1);
+	        	lobjTmp.members = new User[0];
 	        	larrAux.add(lobjTmp);
 	        }
 
