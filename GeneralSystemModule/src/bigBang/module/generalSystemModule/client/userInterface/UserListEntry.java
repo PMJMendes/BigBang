@@ -7,10 +7,10 @@ import com.google.gwt.user.client.ui.Label;
 import bigBang.library.client.userInterface.ListEntry;
 import bigBang.module.generalSystemModule.shared.User;
 
-public class UserListEntry extends ListEntry<String> {
+public class UserListEntry extends ListEntry<User> {
 
 	public UserListEntry(User user) {
-		super(user.id);
+		super(user);
 		setTitle(user.name);
 		setText(user.username);
 		

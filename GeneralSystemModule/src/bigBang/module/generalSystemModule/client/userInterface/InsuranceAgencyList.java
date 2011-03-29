@@ -1,13 +1,16 @@
 package bigBang.module.generalSystemModule.client.userInterface;
 
 import bigBang.library.client.userInterface.List;
+import bigBang.library.client.userInterface.ListHeader;
 import bigBang.module.generalSystemModule.shared.InsuranceAgency;
 
 public class InsuranceAgencyList extends List<InsuranceAgency> {
 
 	public InsuranceAgencyList(){
 		super();
-		setHeaderText("Seguradoras");
+		ListHeader header = new ListHeader();
+		header.setText("Seguadoras");
+		setHeaderWidget(header);
 		updateFooterLabel();
 	}
 	
@@ -28,4 +31,5 @@ public class InsuranceAgencyList extends List<InsuranceAgency> {
 		
 		setFooterText(text);
 	}
+
 }

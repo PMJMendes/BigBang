@@ -1,8 +1,12 @@
 package bigBang.module.generalSystemModule.client.userInterface;
 
-import bigBang.library.client.userInterface.List;
+import bigBang.library.client.userInterface.FilterableList;
+import bigBang.library.client.userInterface.ListEntry;
+import bigBang.module.generalSystemModule.shared.User;
 
-public class UserList extends List<String> {
+public class UserList extends FilterableList<User> {
+	
+	protected String filterText;
 	
 	public UserList(){
 		super();
@@ -25,6 +29,20 @@ public class UserList extends List<String> {
 		}
 		
 		setFooterText(text);
+	}
+
+	@Override
+	public boolean filterOutListEntry(ListEntry<User> entry) {
+		UserListEntry e = (UserListEntry) entry;
+		if(filterText == null || filterText.equals(""))
+			return false;
+		return !e.getValue().name.contains(filterText) && !e.getValue().username.contains(filterText);
+	}
+
+	@Override
+	public void filterTextChanged(String text) {
+		this.filterText = text;
+		filterEntries();
 	}
 
 }
