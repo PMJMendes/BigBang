@@ -1,5 +1,6 @@
 package bigBang.module.clientModule.client;
 
+import bigBang.library.client.BigBangPermissionManager;
 import bigBang.library.client.EventBus;
 import bigBang.library.client.Module;
 import bigBang.library.client.Process;
@@ -12,6 +13,10 @@ public class ClientModule implements Module {
 	private SectionViewPresenter[] sectionPresenters;
 	
 	public ClientModule(){
+	}
+	
+	public void initialize(EventBus eventBus, BigBangPermissionManager permissionManager) {
+		initialize(eventBus); 
 	}
 	
 	public void initialize(EventBus eventBus) {

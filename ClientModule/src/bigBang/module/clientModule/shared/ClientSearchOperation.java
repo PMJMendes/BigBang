@@ -15,6 +15,8 @@ public class ClientSearchOperation implements Operation {
 	private final String SHORT_DESCRIPTION = "Pesquisa";
 	private final String OWNER_PROCESS_ID = ClientProcess.ID;
 	
+	private boolean permission;
+	
 	private View view;
 	private ViewPresenter presenter;
 	
@@ -55,6 +57,16 @@ public class ClientSearchOperation implements Operation {
 
 	public String getOwnerProcessId() {
 		return this.OWNER_PROCESS_ID;
+	}
+	
+	@Override
+	public boolean getPermission() {
+		return permission;
+	}
+	
+	@Override
+	public void setPermission(boolean p) {
+		this.permission = p;
 	}
 
 }

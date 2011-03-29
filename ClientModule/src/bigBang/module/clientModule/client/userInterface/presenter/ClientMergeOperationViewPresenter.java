@@ -93,4 +93,15 @@ public class ClientMergeOperationViewPresenter implements OperationViewPresenter
 		return null;
 	}
 
+	@Override
+	public void setOperationPermission(boolean result) {
+		this.operation.setPermission(result);
+		setReadOnly(result);
+	}
+
+	private void setReadOnly(boolean result) {
+		// TODO Auto-generated method stub
+		
+	}
+	
 }

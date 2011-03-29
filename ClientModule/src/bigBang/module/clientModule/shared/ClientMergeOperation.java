@@ -10,6 +10,7 @@ public class ClientMergeOperation implements Operation {
 	public static final String ID = "clientMergeOperation";
 	private final String DESCRIPTION = "A operação de fusão de clientes";
 	private final String SHORT_DESCRIPTION = "Fusão";
+	private boolean permission;
 	
 	public void init() {
 		// TODO Auto-generated method stub
@@ -35,6 +36,16 @@ public class ClientMergeOperation implements Operation {
 
 	public String getOwnerProcessId() {
 		return OWNER_PROCESS_ID;
+	}
+
+	@Override
+	public boolean getPermission() {
+		return permission;
+	}
+	
+	@Override
+	public void setPermission(boolean p) {
+		this.permission = p;
 	}
 
 }
