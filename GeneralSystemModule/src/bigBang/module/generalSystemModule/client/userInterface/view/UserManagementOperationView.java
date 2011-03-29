@@ -1,5 +1,6 @@
 package bigBang.module.generalSystemModule.client.userInterface.view;
 
+import bigBang.library.client.userInterface.ListHeader;
 import bigBang.library.client.userInterface.view.PopupPanel;
 import bigBang.library.client.userInterface.view.View;
 import bigBang.module.generalSystemModule.client.userInterface.UserList;
@@ -8,6 +9,8 @@ import bigBang.module.generalSystemModule.client.userInterface.presenter.UserMan
 import bigBang.module.generalSystemModule.shared.User;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.HasClickHandlers;
 import com.google.gwt.event.logical.shared.AttachEvent;
 import com.google.gwt.user.client.ui.Button;
@@ -32,7 +35,23 @@ public class UserManagementOperationView extends View implements UserManagementO
 		wrapper.setSize("100%", "100%");
 		
 		userList = new UserList();
-		userList.setHeaderText("Utilizadores");
+		ListHeader header = new ListHeader();
+		header.setText("Utilizadores");
+		header.showNewButton("Novo", new ClickHandler() {
+			
+			@Override
+			public void onClick(ClickEvent event) {
+				GWT.log("novo");
+			}
+		});
+		header.showRefreshButton(new ClickHandler() {
+			
+			@Override
+			public void onClick(ClickEvent event) {
+				GWT.log("refresh");
+			}
+		});
+		userList.setHeaderWidget(header);
 		wrapper.addWest(userList, USER_LIST_WIDTH);
 		
 		newUserButton = new Button("Novo Utilizador");
@@ -58,7 +77,7 @@ public class UserManagementOperationView extends View implements UserManagementO
 	}
 
 	@Override
-	public HasValue<String> getUserList() {
+	public HasValue<User> getUserList() {
 		return this.userList;
 	}
 

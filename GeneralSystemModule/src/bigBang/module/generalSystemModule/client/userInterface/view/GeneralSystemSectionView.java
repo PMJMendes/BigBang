@@ -35,11 +35,13 @@ public class GeneralSystemSectionView extends View implements GeneralSystemSecti
 		initWidget(panel);
 	}
 	
-	public void createOperationNavigationItem(OperationViewPresenter p) {
+	public void createOperationNavigationItem(OperationViewPresenter p, boolean enabled) {
 		AbstractImagePrototype icon = p.getOperation().getIcon();
 		if(icon == null)
 			icon = MessageBox.MESSAGEBOX_IMAGES.dialogInformation();
 		DockItem item = new DockItem(p.getOperation().getShortDescription(), icon, null, p);
+		item.setEnabled(enabled);
+		item.setTitle(p.getOperation().getDescription());
 		item.setSize("100px", "52px");
 		this.operationDock.addItem(item);
 	}
