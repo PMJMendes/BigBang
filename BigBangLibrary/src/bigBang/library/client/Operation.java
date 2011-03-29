@@ -16,4 +16,8 @@ public interface Operation extends Identifiable {
 	
 	public String getOwnerProcessId();
 	
+	public boolean getPermission();
+	
+	public void setPermission(boolean p);
+	
 }

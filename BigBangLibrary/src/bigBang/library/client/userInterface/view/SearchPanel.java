@@ -237,6 +237,6 @@ public class SearchPanel<T> extends List<T> {
 	protected void renderResults(SearchResult[] results){
 		for(int i = 0; i < results.length; i++)
 			addListEntry(new SearchPanelListEntry(i+""));
-	}	
-	
+	}
+
 }

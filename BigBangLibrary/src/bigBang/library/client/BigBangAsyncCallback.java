@@ -5,10 +5,10 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 
 public abstract class BigBangAsyncCallback<T> implements AsyncCallback<T> {
 	
-	private EventBus eventBus;
+	private static EventBus eventBus;
 	
-	public BigBangAsyncCallback(EventBus eventBus){
-		this.eventBus = eventBus;
+	public static void setEventBus(EventBus eventBus) {
+		BigBangAsyncCallback.eventBus = eventBus;
 	}
 	
 	@Override

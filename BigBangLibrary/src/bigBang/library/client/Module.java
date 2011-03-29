@@ -10,4 +10,7 @@ public interface Module {
 	
 	public SectionViewPresenter[] getMainMenuSectionPresenters();
 
+	public void initialize(EventBus eventBus,
+			BigBangPermissionManager permissionManager);
+
 }

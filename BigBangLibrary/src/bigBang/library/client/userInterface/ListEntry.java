@@ -248,5 +248,5 @@ public class ListEntry<T> extends View implements HasValue <T> {
 			this.setChecked(!this.isChecked());
 		}
 	}
-	
+
 }

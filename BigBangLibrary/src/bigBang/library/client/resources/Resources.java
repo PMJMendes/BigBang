@@ -17,4 +17,10 @@ public interface Resources extends ClientBundle {
 	@Source("images/viewIcon1MediumWhite.png")
 	ImageResource viewIconMediumWhite();
 	
+	@Source("images/listRefreshIcon1.png")
+	ImageResource listRefreshIcon();
+	
+	@Source("images/listNewIcon1.png")
+	ImageResource listNewIcon();
+	
 }
