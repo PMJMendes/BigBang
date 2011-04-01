@@ -39,7 +39,7 @@ h1 {
 }
 
 .gwt-TextBox {
-	border: 1px solid black;
+	border: 1px solid gray;
 	padding: 0px !important;
 	margin: 0px !important;
 	height: 20px;
