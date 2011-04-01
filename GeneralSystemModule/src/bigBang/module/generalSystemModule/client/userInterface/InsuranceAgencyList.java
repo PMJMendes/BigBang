@@ -1,10 +1,10 @@
 package bigBang.module.generalSystemModule.client.userInterface;
 
-import bigBang.library.client.userInterface.List;
+import bigBang.library.client.userInterface.FilterableList;
 import bigBang.library.client.userInterface.ListHeader;
 import bigBang.module.generalSystemModule.shared.InsuranceAgency;
 
-public class InsuranceAgencyList extends List<InsuranceAgency> {
+public class InsuranceAgencyList extends FilterableList<InsuranceAgency> {
 
 	public InsuranceAgencyList(){
 		super();

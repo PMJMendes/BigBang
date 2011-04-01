@@ -31,18 +31,4 @@ public class UserList extends FilterableList<User> {
 		setFooterText(text);
 	}
 
-	@Override
-	public boolean filterOutListEntry(ListEntry<User> entry) {
-		UserListEntry e = (UserListEntry) entry;
-		if(filterText == null || filterText.equals(""))
-			return false;
-		return !e.getValue().name.contains(filterText) && !e.getValue().username.contains(filterText);
-	}
-
-	@Override
-	public void filterTextChanged(String text) {
-		this.filterText = text;
-		filterEntries();
-	}
-
 }

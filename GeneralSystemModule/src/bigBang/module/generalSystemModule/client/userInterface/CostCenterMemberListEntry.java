@@ -2,6 +2,7 @@ package bigBang.module.generalSystemModule.client.userInterface;
 
 import bigBang.library.client.resources.Resources;
 import bigBang.library.client.userInterface.ListEntry;
+import bigBang.module.generalSystemModule.shared.User;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.FontWeight;
@@ -16,8 +17,6 @@ import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.VerticalPanel;
-
-import bigBang.module.generalSystemModule.shared.User;
 
 public class CostCenterMemberListEntry extends ListEntry<User> {
 

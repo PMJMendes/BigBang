@@ -25,8 +25,8 @@ public class UserManagementOperationViewPresenter implements OperationViewPresen
 	public interface Display {
 		Widget asWidget();
 		void setUsers(User[] users);
-		HasValue<User> getUserList();
-		void selectFirstElementInUserList();
+		//HasValue<User> getUserList();
+		//void selectFirstElementInUserList();
 		void showDetailsForUser(User u);
 		HasClickHandlers getNewUserButton();
 		void showNewUserForm();
@@ -86,7 +86,7 @@ public class UserManagementOperationViewPresenter implements OperationViewPresen
 	public void go(HasWidgets container) {
 		bind();
 		
-		this.view.selectFirstElementInUserList();
+		//this.view.selectFirstElementInUserList();
 		
 		container.clear();
 		container.add(this.view.asWidget());
@@ -101,7 +101,7 @@ public class UserManagementOperationViewPresenter implements OperationViewPresen
 				view.showNewUserForm();
 			}
 		});
-		this.view.getUserList().addValueChangeHandler(new ValueChangeHandler<User>() {
+		/*this.view.getUserList().addValueChangeHandler(new ValueChangeHandler<User>() {
 			
 			@Override
 			public void onValueChange(ValueChangeEvent<User> event) {
@@ -112,7 +112,7 @@ public class UserManagementOperationViewPresenter implements OperationViewPresen
 					}
 				}
 			}
-		});
+		});*/
 		view.getSubmitNewUserButton().addClickHandler(new ClickHandler() {
 			
 			@Override
@@ -124,7 +124,10 @@ public class UserManagementOperationViewPresenter implements OperationViewPresen
 	}
 	
 	public void createUser(final User user){
+		/*service.addUser(user, new AsyncCallback<String>() {
+=======
 		service.addUser(user, new AsyncCallback<User>() {
+>>>>>>> .r142
 
 			@Override
 			public void onFailure(Throwable caught) {
@@ -134,9 +137,13 @@ public class UserManagementOperationViewPresenter implements OperationViewPresen
 			@Override
 			public void onSuccess(User result) {
 				view.setUsers(userCache);
+<<<<<<< .mine
+				//view.getUserList().setValue(user);
+=======
 				view.getUserList().setValue(result);
+>>>>>>> .r142
 			}
-		});
+		});*/
 	}
 
 	@Override

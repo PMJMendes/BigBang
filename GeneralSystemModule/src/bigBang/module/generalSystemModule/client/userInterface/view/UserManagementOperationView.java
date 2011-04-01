@@ -37,20 +37,8 @@ public class UserManagementOperationView extends View implements UserManagementO
 		userList = new UserList();
 		ListHeader header = new ListHeader();
 		header.setText("Utilizadores");
-		header.showNewButton("Novo", new ClickHandler() {
-			
-			@Override
-			public void onClick(ClickEvent event) {
-				GWT.log("novo");
-			}
-		});
-		header.showRefreshButton(new ClickHandler() {
-			
-			@Override
-			public void onClick(ClickEvent event) {
-				GWT.log("refresh");
-			}
-		});
+		header.showNewButton("Novo");
+		header.showRefreshButton();
 		userList.setHeaderWidget(header);
 		wrapper.addWest(userList, USER_LIST_WIDTH);
 		
@@ -73,12 +61,7 @@ public class UserManagementOperationView extends View implements UserManagementO
 	public void setUsers(User[] users) {
 		userList.clear();
 		for(int i = 0; i < users.length; i++)
-			userList.addListEntry(new UserListEntry(users[i]));
-	}
-
-	@Override
-	public HasValue<User> getUserList() {
-		return this.userList;
+			userList.add(new UserListEntry(users[i]));
 	}
 
 	@Override
@@ -86,11 +69,6 @@ public class UserManagementOperationView extends View implements UserManagementO
 		this.userForm.setUser(u);
 	}
 
-	@Override
-	public void selectFirstElementInUserList() {
-		if(userList.size() > 0)
-			userList.select(0);
-	}
 
 	@Override
 	public HasClickHandlers getNewUserButton() {

@@ -3,18 +3,15 @@ package bigBang.module.generalSystemModule.client.userInterface.view;
 import bigBang.library.client.FormField;
 import bigBang.library.client.userInterface.TextBoxFormField;
 import bigBang.library.client.userInterface.view.FormView;
-import bigBang.library.client.userInterface.view.FormViewSection;
 import bigBang.module.generalSystemModule.shared.CostCenter;
 import bigBang.module.generalSystemModule.shared.formValidator.CostCenterFormValidator;
 
 import com.google.gwt.user.client.ui.HasValue;
 
-public class CostCenterForm extends FormView {
+public class CostCenterForm extends FormView<CostCenter> {
 
 	private FormField<String> nameField;
 	private FormField<String> codeField;
-
-	private CostCenter info;
 
 	public CostCenterForm(){
 		super();
@@ -28,9 +25,6 @@ public class CostCenterForm extends FormView {
 		addFormField(codeField);
 
 		clearInfo();
-		
-		FormViewSection section = new FormViewSection("Membros");
-		panel.add(section.getHeader());
 
 		setReadOnly(true);
 	}
@@ -44,28 +38,34 @@ public class CostCenterForm extends FormView {
 	}
 
 	@Override
-	public Object getInfo() {
+	public CostCenter getInfo() {
+		CostCenter info = new CostCenter();
 		info.name = this.nameField.getValue();
 		info.code = this.codeField.getValue();
 		return info;
 	}
 
 	@Override
-	public void setInfo(Object info) {
+	public void setInfo(CostCenter info) {
 		if(info == null){
 			clearInfo();
 			return;
 		}
-		this.info = (CostCenter) info;
-		this.nameField.setValue(this.info.name);
-		this.codeField.setValue(this.info.code);
+		this.nameField.setValue(info.name == null ? "" : info.name);
+		this.codeField.setValue(info.code == null ? "" : info.code);
 	}
 
 	@Override
 	public void clearInfo() {
-		this.info = new CostCenter();
+		setValue(new CostCenter());
 		this.nameField.setValue("");
 		this.codeField.setValue("");
+	}
+
+	@Override
+	public boolean validate() {
+		// TODO Auto-generated method stub
+		return false;
 	}
 
 }

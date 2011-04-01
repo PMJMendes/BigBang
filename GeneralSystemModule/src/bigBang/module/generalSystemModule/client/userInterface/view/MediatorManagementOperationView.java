@@ -8,6 +8,8 @@ import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.HasValue;
 import com.google.gwt.user.client.ui.SplitLayoutPanel;
 
+import bigBang.library.client.HasSelectables;
+import bigBang.library.client.Selectable;
 import bigBang.library.client.userInterface.ListEntry;
 import bigBang.library.client.userInterface.view.PopupPanel;
 import bigBang.library.client.userInterface.view.View;
@@ -63,11 +65,6 @@ public class MediatorManagementOperationView extends View implements MediatorMan
 		newMediatorFormPopupPanel.add(newMediatorForm);
 		
 		initWidget(wrapper);
-	}
-	
-	@Override
-	public HasValue<Mediator> getMediatorList() {
-		return this.mediatorList;
 	}
 
 	@Override
@@ -133,7 +130,7 @@ public class MediatorManagementOperationView extends View implements MediatorMan
 	public void setMediatorListValues(Mediator[] values) {
 		this.mediatorList.clear();
 		for(int i = 0; i < values.length; i++){
-			this.mediatorList.addListEntry(new MediatorListEntry(values[i]));
+			this.mediatorList.add(new MediatorListEntry(values[i]));
 		}
 	}
 
@@ -148,9 +145,9 @@ public class MediatorManagementOperationView extends View implements MediatorMan
 	@Override
 	public void removeMediatorListValues(Mediator[] values) {
 		for(int i = 0; i < values.length; i++) {
-			for(ListEntry<Mediator> e : mediatorList.getListEntries()){
+			for(ListEntry<Mediator> e : mediatorList){
 				if(values[i].id.equals(e.getValue().id)){
-					mediatorList.removeListEntry(e);
+					mediatorList.remove(e);
 					break;
 				}
 			}

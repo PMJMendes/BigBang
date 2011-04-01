@@ -14,7 +14,11 @@ import com.google.gwt.user.client.ui.HasWidgets;
 import com.google.gwt.user.client.ui.Widget;
 
 import bigBang.library.client.EventBus;
+import bigBang.library.client.HasSelectables;
 import bigBang.library.client.Operation;
+import bigBang.library.client.Selectable;
+import bigBang.library.client.event.SelectionChangedEvent;
+import bigBang.library.client.event.SelectionChangedEventHandler;
 import bigBang.library.client.userInterface.presenter.OperationViewPresenter;
 import bigBang.library.client.userInterface.view.View;
 import bigBang.library.interfaces.Service;
@@ -28,7 +32,7 @@ public class MediatorManagementOperationViewPresenter implements
 	
 	public interface Display {
 		//Mediator Listing
-		HasValue<Mediator> getMediatorList();
+		//HasSelectables <T extends Selectable> getMediatorList();
 		void setMediatorListValues(Mediator[] values);
 		void removeMediatorListValues(Mediator[] values);
 		
@@ -130,13 +134,17 @@ public class MediatorManagementOperationViewPresenter implements
 
 	@Override
 	public void bind() {
-		view.getMediatorList().addValueChangeHandler(new ValueChangeHandler<Mediator>() {
+		/*view.getMediatorList().addSelectionChangedEventHandler(new SelectionChangedEventHandler() {
 			
 			@Override
-			public void onValueChange(ValueChangeEvent<Mediator> event) {
-				view.showDetailsForMediator(event.getValue());
+			public void onSelectionChanged(SelectionChangedEvent event) {
+				java.util.Collection<Selectable> c = event.getSelected();
+				for(Selectable s : c) {
+					HasValue<Mediator> entry = s;
+					view.showDetailsForMediator(((HasValue<Mediator>)s).getValue());
+				}
 			}
-		});
+		});*/
 		view.getEditMediatorButton().addClickHandler(new ClickHandler() {
 			
 			@Override
@@ -188,7 +196,10 @@ public class MediatorManagementOperationViewPresenter implements
 	}
 	
 	protected void deleteMediator(final Mediator mediator){
+		/*service.deleteMediator(mediator.id, new AsyncCallback<String>() {
+=======
 		service.deleteMediator(mediator.id, new AsyncCallback<Void>() {
+>>>>>>> .r142
 
 			@Override
 			public void onFailure(Throwable caught) {
@@ -199,7 +210,7 @@ public class MediatorManagementOperationViewPresenter implements
 			public void onSuccess(Void result) {
 				view.removeMediatorListValues(new Mediator[]{mediator});
 			}
-		});
+		});*/
 	}
 
 	protected void createMediator(Mediator newMediatorInfo) {
