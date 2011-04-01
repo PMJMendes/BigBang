@@ -24,7 +24,6 @@ public class BigBang implements EntryPoint {
 		permissionManager = new BigBangPermissionManager();
 		BigBangAsyncCallback.setEventBus(eventBus);
 		
-		
 		try {
 			/*
 			 * Load modules in the following order
