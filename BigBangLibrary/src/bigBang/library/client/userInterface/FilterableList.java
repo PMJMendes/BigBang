@@ -1,9 +1,5 @@
 package bigBang.library.client.userInterface;
 
-import java.util.Collections;
-import java.util.Comparator;
-
-import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.KeyUpEvent;
 import com.google.gwt.event.dom.client.KeyUpHandler;
 import com.google.gwt.user.client.ui.HasVerticalAlignment;
@@ -12,14 +8,13 @@ import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
-import com.google.gwt.user.client.ui.Widget;
 
-public abstract class FilterableList<T> extends SortableList<T> {
+public class FilterableList<T> extends SortableList<T> {
 
 	protected TextBox textBoxFilter;
 	
 	public FilterableList() {
-		super(null);
+		super();
 		
 		VerticalPanel headerWrapper = new VerticalPanel();
 		SimplePanel newHeaderContainer = new SimplePanel();
@@ -27,21 +22,22 @@ public abstract class FilterableList<T> extends SortableList<T> {
 		headerWrapper.setWidth("100%");
 		headerWrapper.add(newHeaderContainer);
 		
-		final TextBox textBoxFilter = new TextBox();
+		textBoxFilter = new TextBox();
 		textBoxFilter.setWidth("100%");
 
 		textBoxFilter.addKeyUpHandler(new KeyUpHandler() {
 			
 			@Override
 			public void onKeyUp(KeyUpEvent event) {
-				filterTextChanged(textBoxFilter.getValue());
+				onFilterTextChanged(textBoxFilter.getValue());
 			}
 		});
 		
 		HorizontalPanel textFilterContainer = new HorizontalPanel();
+		textFilterContainer.setVerticalAlignment(HasVerticalAlignment.ALIGN_MIDDLE);
 		textFilterContainer.setWidth("100%");
 		textFilterContainer.setSpacing(5);
-		textFilterContainer.getElement().getStyle().setProperty("borderTop", "1px solid black");;
+		textFilterContainer.getElement().getStyle().setProperty("borderTop", "1px solid gray");
 		textFilterContainer.add(new Label("Filtrar"));
 		textFilterContainer.add(textBoxFilter);
 		textFilterContainer.setCellWidth(textBoxFilter, "100%");
@@ -53,15 +49,26 @@ public abstract class FilterableList<T> extends SortableList<T> {
 
 	
 	public void filterEntries() {
-		for (ListEntry<T> entry : listEntries) {
+		for (ListEntry<T> entry : this.entries) {
 			entry.setVisible(!filterOutListEntry(entry));
 		}
 	}
 	
-	public void filterTextChanged(String text){
-		
+	public void onFilterTextChanged(String text){
+		sortListEntries();
+		filterEntries();
 	}
 
-	public abstract boolean filterOutListEntry(ListEntry<T> entry);
+	public boolean filterOutListEntry(ListEntry<T> entry) {
+		String text = entry.getText().toUpperCase();
+		String title = entry.getTitle().toUpperCase();
+		String token = textBoxFilter.getValue().toUpperCase();
+		return !((text != null && text.contains(token)) || (title != null && title.contains(token)));
+	}
+	
+	public void clearFilters(){
+		textBoxFilter.setValue("");
+		filterEntries();
+	}
 
 }

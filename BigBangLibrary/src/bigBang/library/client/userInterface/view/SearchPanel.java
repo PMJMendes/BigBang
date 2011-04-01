@@ -162,7 +162,7 @@ public class SearchPanel<T> extends List<T> {
 
 	public void setMultipleSelection(boolean multiple) {
 		this.multipleSelection = multiple;
-		for(ListEntry<T> e : this.getListEntries())
+		for(ListEntry<T> e : this.entries)
 			((SearchPanelListEntry<T>)e).setCheckable(multiple);
 	}
 	
@@ -201,7 +201,8 @@ public class SearchPanel<T> extends List<T> {
 	public void setResults(ArrayList <SearchPanelListEntry<String>> results){
 		this.clear();
 		Collection <?> col = results;
-		setListEntries((Collection<ListEntry<T>>) col);		
+		clear();
+		//addAll((Collection<ListEntry<T>>) col);		
 		updateFooterText();
 	}
 
@@ -236,7 +237,7 @@ public class SearchPanel<T> extends List<T> {
 	
 	protected void renderResults(SearchResult[] results){
 		for(int i = 0; i < results.length; i++)
-			addListEntry(new SearchPanelListEntry(i+""));
+			add(new SearchPanelListEntry(i+""));
 	}
 
 }

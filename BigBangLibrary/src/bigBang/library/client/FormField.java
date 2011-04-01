@@ -3,6 +3,8 @@ package bigBang.library.client;
 import bigBang.library.client.userInterface.view.View;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.dom.client.Style.FontStyle;
+import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
@@ -16,21 +18,25 @@ public abstract class FormField<T> extends View implements HasValue<T>, Validata
 	protected Label errorMessageLabel;
 	protected FieldValidator<T> validator;
 	protected Label mandatoryIndicatorLabel;
-	
+
 	private HandlerRegistration handlerRegistration;
-	
+
 	public FormField(){
 		errorMessageLabel = new Label();
+		errorMessageLabel.getElement().getStyle().setMarginLeft(5, Unit.PX);
+		errorMessageLabel.getElement().getStyle().setColor("#F00");
+		errorMessageLabel.getElement().getStyle().setFontStyle(FontStyle.ITALIC);
+		errorMessageLabel.getElement().getStyle().setFontSize(12, Unit.PX);
 		errorMessageLabel.setVisible(false);
 		mandatoryIndicatorLabel = new Label("*");
 	}
-	
+
 	public HandlerRegistration addValueChangeHandler(
 			ValueChangeHandler<T> handler) {
 		handlerRegistration = addHandler(handler, ValueChangeEvent.getType());
 		return handlerRegistration;
 	}
-	
+
 	public T getValue() {
 		return field.getValue();
 	}
@@ -42,19 +48,19 @@ public abstract class FormField<T> extends View implements HasValue<T>, Validata
 	public void setValue(T value, boolean fireEvents) {
 		field.setValue(value);
 	}
-	
+
 	public void setValidator(FieldValidator<T> validator) {
 		this.validator = validator;
 	}
-	
+
 	public void setFieldWidth(String width) {
 		((Widget)this.field).setWidth(width);
 	}
-	
+
 	public abstract void setReadOnly(boolean readonly);
-	
+
 	public abstract boolean isReadOnly();
-	
+
 	public boolean validate() {
 		if(validator == null){
 			GWT.log("Validator for form field is null");
@@ -64,20 +70,24 @@ public abstract class FormField<T> extends View implements HasValue<T>, Validata
 		setInvalid(!isValid);
 		return isValid;
 	}
-	
-	protected void setInvalid(boolean invalid){
-		if(invalid)
-			((Widget)field).addStyleName("invalidFormField");
-		else
-			((Widget)field).removeStyleName("invalidFormField");
-		this.errorMessageLabel.setText(this.validator.getErrorMessage());
+
+	public void setInvalid(boolean invalid){
+		if(field != null){
+			if(invalid)
+				((Widget)field).addStyleName("invalidFormField");
+			else
+				((Widget)field).removeStyleName("invalidFormField");
+		}
+		FieldValidator<?> validator = this.validator;
+		String message =  validator == null ? null : validator.getErrorMessage();
+		this.errorMessageLabel.setText(message == null ? "Valor inválido" : message);
 		this.errorMessageLabel.setVisible(invalid);
 	}
-	
+
 	public String getErrorMessage(){
 		return this.validator.getErrorMessage();
 	}
-	
+
 	public boolean isMandatory(){
 		return this.validator == null ? false : this.validator.isMandatory();
 	}

@@ -57,7 +57,7 @@ public class PasswordTextBoxFormField extends FormField<String> {
 	public void setReadOnly(boolean readOnly) {
 		PasswordTextBox field = ((PasswordTextBox)this.field); 
 		field.setReadOnly(readOnly);
-		field.getElement().getStyle().setBorderColor(readOnly ? "transparent" : "black");
+		field.getElement().getStyle().setBorderColor(readOnly ? "transparent" : "gray");
 		field.getElement().getStyle().setBackgroundColor(readOnly ? "transparent" : "white");
 		mandatoryIndicatorLabel.setVisible(!readOnly);
 	}

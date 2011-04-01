@@ -5,9 +5,6 @@ import java.util.ArrayList;
 import bigBang.library.client.FormField;
 import bigBang.library.client.Validatable;
 
-import com.gargoylesoftware.htmlunit.Page;
-import com.gargoylesoftware.htmlunit.attachment.AttachmentHandler;
-import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Float;
 import com.google.gwt.dom.client.Style.FontStyle;
 import com.google.gwt.dom.client.Style.FontWeight;
@@ -16,9 +13,13 @@ import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.logical.shared.AttachEvent;
+import com.google.gwt.event.logical.shared.ValueChangeEvent;
+import com.google.gwt.event.logical.shared.ValueChangeHandler;
+import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.google.gwt.user.client.ui.AbstractImagePrototype;
 import com.google.gwt.user.client.ui.Button;
+import com.google.gwt.user.client.ui.HasValue;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ScrollPanel;
@@ -26,7 +27,7 @@ import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
-public abstract class FormView extends View implements Validatable {
+public abstract class FormView<T> extends View implements Validatable, HasValue<T> {
 
 	protected AbsolutePanel mainWrapper;
 	protected VerticalPanel panel;
@@ -37,6 +38,9 @@ public abstract class FormView extends View implements Validatable {
 	protected HorizontalPanel topToolbar;
 
 	private boolean isReadOnly;
+	
+	private T value;
+	private boolean valueChangeHandlerInitialized;
 
 
 	public FormView(){
@@ -63,7 +67,7 @@ public abstract class FormView extends View implements Validatable {
 		topButtonWrapper.getElement().getStyle().setPosition(Position.ABSOLUTE);
 		topButtonWrapper.getElement().getStyle().setFloat(Float.RIGHT);
 	
-		SimplePanel filler = new SimplePanel();
+		//SimplePanel filler = new SimplePanel();
 		////filler.setSize("100%", "0px");
 		//topToolbar.add(filler);
 		//topToolbar.setCellWidth(filler, "100%");
@@ -167,8 +171,11 @@ public abstract class FormView extends View implements Validatable {
 	public void setReadOnly(boolean readOnly) {
 		this.isReadOnly = readOnly;
 		for(FormViewSection s : sections){
-			for(FormField<?> f : s.getFields())
+			for(FormField<?> f : s.getFields()){
 				f.setReadOnly(readOnly);
+				if(readOnly)
+					f.setInvalid(false);
+			}
 		}
 	}
 
@@ -176,23 +183,23 @@ public abstract class FormView extends View implements Validatable {
 		return this.isReadOnly;
 	}
 
-	public <T> boolean validate() {
+	public boolean validate() {
 		return validate(true);
 	}
 
-	public <T> boolean validate(boolean showErrors) {
+	public boolean validate(boolean showErrors) {
 		boolean hasErrors = false;
 		for(FormViewSection s : sections){
-			s.clearErrorMessages();
+			//s.clearErrorMessages();
 			boolean sectionHasErrors = false;
 			for(FormField<?> f : s.getFields()){
 				boolean fieldHasErrors = !f.validate();
 				hasErrors = !fieldHasErrors ? hasErrors : true;
 				sectionHasErrors = !fieldHasErrors ? sectionHasErrors : true;
 				if(fieldHasErrors)
-					s.addErrorMessage(f.getErrorMessage());
+					f.validate();//s.addErrorMessage(f.getErrorMessage());
 			}
-			s.showErrorMessages(sectionHasErrors && showErrors);
+			//s.showErrorMessages(sectionHasErrors && showErrors);
 		}
 		return !hasErrors;
 	}
@@ -223,10 +230,39 @@ public abstract class FormView extends View implements Validatable {
 		return wrapper;
 	}
 	
-	public abstract Object getInfo();
+	public abstract T getInfo();
 	
-	public abstract void setInfo(Object info);
+	public abstract void setInfo(T info);
 	
 	public abstract void clearInfo();
+
+	public HandlerRegistration addValueChangeHandler(
+			ValueChangeHandler<T> handler) {
+
+		if (!valueChangeHandlerInitialized)
+			valueChangeHandlerInitialized = true;
+
+		return addHandler(handler, ValueChangeEvent.getType());
+	}
+
+	public T getValue() {
+		//setValue(getInfo(), false);
+		return value;
+	}
+
+	public void setValue(T value) {
+		setValue(value, true);
+	}
+
+	public void setValue(T value, boolean fireEvents) {
+		if (value == null && this.getValue() != null)
+			return;
+
+		if(getValue() != value)
+			ValueChangeEvent.fire(this, value);
+		
+		this.value = value;
+		setInfo(value);
+	}
 }
 

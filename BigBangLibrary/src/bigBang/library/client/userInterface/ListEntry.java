@@ -1,18 +1,23 @@
 package bigBang.library.client.userInterface;
+import bigBang.library.client.HasMetaData;
+import bigBang.library.client.ValueSelectable;
 import bigBang.library.client.event.CheckedStateChangedEvent;
 import bigBang.library.client.event.CheckedStateChangedEventHandler;
+import bigBang.library.client.event.SelectedStateChangedEvent;
+import bigBang.library.client.event.SelectedStateChangedEventHandler;
 import bigBang.library.client.userInterface.view.View;
 
 import com.google.gwt.dom.client.Style.Cursor;
 import com.google.gwt.dom.client.Style.FontWeight;
 import com.google.gwt.dom.client.Style.Unit;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.user.client.Event;
 import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.google.gwt.user.client.ui.CheckBox;
-import com.google.gwt.user.client.ui.HasValue;
 import com.google.gwt.user.client.ui.HasVerticalAlignment;
 import com.google.gwt.user.client.ui.HasWidgets;
 import com.google.gwt.user.client.ui.HorizontalPanel;
@@ -22,16 +27,17 @@ import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
-public class ListEntry<T> extends View implements HasValue <T> {
+public class ListEntry<T> extends View implements ValueSelectable<T>, HasMetaData<String> {
 
 
 	private T value;
-	private boolean even = false;
+	//private boolean even = false;
 	private boolean isSelected = false;
+	protected String[] metaData;
 	
-	private final String defaultBackgroundImageUrl = ""; //images/listBackground1Even.png";
+	//private final String defaultBackgroundImageUrl = ""; //images/listBackground1Even.png";
 	private final String selectedBackgroundImageUrl = "images/listBackground1Selected.png";
-	private final String hoverBackgroundImageUrl = "images/listBackground1Hover.png";
+	//private final String hoverBackgroundImageUrl = "images/listBackground1Hover.png";
 	
 	private Image backgroundImage;
 	
@@ -42,6 +48,8 @@ public class ListEntry<T> extends View implements HasValue <T> {
 	private HasWidgets widgetContainer;
 	private HasWidgets rightWidgetContainer;
 	private CheckBox checkBox;
+	private boolean valueChangeHandlerInitialized;
+	private boolean selectionStateChangedHandlerInitialized;
 	
 	
 	public ListEntry(T value) {
@@ -103,6 +111,14 @@ public class ListEntry<T> extends View implements HasValue <T> {
 			}
 		});
 		
+		panel.addDomHandler(new ClickHandler() {
+			
+			@Override
+			public void onClick(ClickEvent event) {
+				setSelected(true);
+			}
+		}, ClickEvent.getType());
+		
 		setValue(value);
 	}
 	
@@ -117,10 +133,19 @@ public class ListEntry<T> extends View implements HasValue <T> {
 	}
 
 	public void setValue(T value, boolean fireEvents) {
+		if(this.value == value)
+			return;
 		this.value = value;
+		if(fireEvents)
+			ValueChangeEvent.fire(this, this.value);
 	}
 	
 	public void setSelected(boolean selected) {
+		setSelected(selected, true);
+	}
+	
+	public void setSelected(boolean selected, boolean fireEvents) {
+		boolean initSelected = this.isSelected;
 		if(selected){
 			backgroundImage.setUrl(selectedBackgroundImageUrl);
 			backgroundImage.setVisible(true);
@@ -133,6 +158,8 @@ public class ListEntry<T> extends View implements HasValue <T> {
 			this.addStyleName("listItemEven");
 			this.isSelected = false;
 		}
+		if(initSelected != selected && fireEvents)
+			fireEvent(new SelectedStateChangedEvent(this.isSelected));
 	}
 	
 	public boolean isSelected(){
@@ -151,7 +178,7 @@ public class ListEntry<T> extends View implements HasValue <T> {
 	}
 	
 	public String getTitle(){
-		return this.titleLabel.isVisible() ? getText() : null;
+		return this.titleLabel.isVisible() ? this.titleLabel.getText() : null;
 	}
 	
 	public void setText(String text) {
@@ -166,7 +193,7 @@ public class ListEntry<T> extends View implements HasValue <T> {
 	}
 	
 	public String getText() {
-		return this.textLabel.isVisible() ? getText() : null;
+		return this.textLabel.isVisible() ? this.textLabel.getText() : null;
 	}
 	
 	public void setWidget(Widget w){
@@ -198,8 +225,10 @@ public class ListEntry<T> extends View implements HasValue <T> {
 
 	public HandlerRegistration addValueChangeHandler(
 			ValueChangeHandler<T> handler) {
-		// TODO Auto-generated method stub
-		return null;
+		if (!valueChangeHandlerInitialized)
+			valueChangeHandlerInitialized = true;
+
+		return addHandler(handler, ValueChangeEvent.getType());
 	}
 	
 	public HandlerRegistration addCheckedStateChangedHandler(
@@ -247,6 +276,25 @@ public class ListEntry<T> extends View implements HasValue <T> {
 		if(this.isCheckable()){
 			this.setChecked(!this.isChecked());
 		}
+	}
+
+	@Override
+	public void setMetaData(String[] data) {
+		this.metaData = data;
+	}
+
+	@Override
+	public String[] getMetaData() {
+		return metaData;
+	}
+
+	@Override
+	public HandlerRegistration addSelectedStateChangedEventHandler(
+			SelectedStateChangedEventHandler handler) {
+		if (!selectionStateChangedHandlerInitialized)
+			selectionStateChangedHandlerInitialized = true;
+
+		return addHandler(handler, SelectedStateChangedEvent.TYPE);
 	}
 
 }

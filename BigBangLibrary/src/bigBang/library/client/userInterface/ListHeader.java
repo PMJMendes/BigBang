@@ -7,7 +7,7 @@ import org.gwt.mosaic.ui.client.util.ButtonHelper.ButtonLabelType;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.FontWeight;
 import com.google.gwt.dom.client.Style.Unit;
-import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.dom.client.HasClickHandlers;
 import com.google.gwt.user.client.ui.AbstractImagePrototype;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.HasVerticalAlignment;
@@ -27,6 +27,9 @@ public class ListHeader extends View {
 	private Label headerLabel;
 	private HasWidgets rightWidgetContainer;
 	private HasWidgets leftWidgetContainer;
+	
+	private PushButton refreshButton;
+	private ToolButton newButton;
 
 	public ListHeader(){
 		HorizontalPanel headerWrapper = new HorizontalPanel();
@@ -69,22 +72,28 @@ public class ListHeader extends View {
 		leftWidgetContainer.add(w);
 	}
 	
-	public void showRefreshButton(ClickHandler h){
+	public void showRefreshButton(){
 		Resources r = GWT.create(Resources.class);
-		PushButton b = new PushButton(new Image(r.listRefreshIcon()));
-		b.addClickHandler(h);
-		b.setTitle("Refrescar");
-		setLeftWidget(b);
+		refreshButton = new PushButton(new Image(r.listRefreshIcon()));
+		refreshButton.setTitle("Refrescar");
+		setLeftWidget(refreshButton);
 	}
 	
-	public void showNewButton(String text, ClickHandler h){
+	public HasClickHandlers getRefreshButton() {
+		return refreshButton;
+	}
+	
+	public void showNewButton(String text){
 		Resources r = GWT.create(Resources.class);
-		ToolButton b = new ToolButton(ButtonHelper.createButtonLabel(
+		newButton = new ToolButton(ButtonHelper.createButtonLabel(
 				AbstractImagePrototype.create(r.listNewIcon()), text,
 		        ButtonLabelType.TEXT_ON_LEFT));
 		
-		b.addClickHandler(h);
-		setRightWidget(b);
+		setRightWidget(newButton);
+	}
+	
+	public HasClickHandlers getNewButton() {
+		return newButton;
 	}
 
 }

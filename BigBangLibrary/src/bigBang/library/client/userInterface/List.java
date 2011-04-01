@@ -2,23 +2,22 @@ package bigBang.library.client.userInterface;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Iterator;
+import java.util.ListIterator;
 
+import bigBang.library.client.HasValueSelectables;
+import bigBang.library.client.Selectable;
+import bigBang.library.client.ValueSelectable;
+import bigBang.library.client.event.SelectedStateChangedEvent;
+import bigBang.library.client.event.SelectedStateChangedEventHandler;
+import bigBang.library.client.event.SelectionChangedEvent;
+import bigBang.library.client.event.SelectionChangedEventHandler;
 import bigBang.library.client.userInterface.view.View;
 
-import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.FontStyle;
 import com.google.gwt.dom.client.Style.Unit;
-import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.event.dom.client.KeyCodes;
-import com.google.gwt.event.logical.shared.HasValueChangeHandlers;
-import com.google.gwt.event.logical.shared.ValueChangeEvent;
-import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
-import com.google.gwt.user.client.DOM;
-import com.google.gwt.user.client.Event;
 import com.google.gwt.user.client.ui.AbsolutePanel;
-import com.google.gwt.user.client.ui.HasValue;
 import com.google.gwt.user.client.ui.HasVerticalAlignment;
 import com.google.gwt.user.client.ui.HasWidgets;
 import com.google.gwt.user.client.ui.Label;
@@ -28,30 +27,28 @@ import com.google.gwt.user.client.ui.UIObject;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
-public abstract class List<T> extends View implements HasValue<T>,
-		HasValueChangeHandlers<T> {
+public class List<T> extends View implements HasValueSelectables<T>, java.util.List<ListEntry<T>> {
 
-	protected ListEntry<T> selectedEntry;
-	protected ArrayList<ListEntry<T>> selectedListEntries;
-	protected ArrayList<ListEntry<T>> listEntries;
+	protected java.util.List<ListEntry<T>> entries;
+	protected boolean multipleSelection = false;
+	private boolean valueChangeHandlerInitialized;
 
-	protected boolean isMultipleSelect = false;
-
+	//UI
 	protected HasWidgets headerContainer;
 	protected VerticalPanel listPanel;
 	protected Label footerLabel;
 	protected HasWidgets footer;
-
-	protected boolean valueChangeHandlerInitialized = false;
+	protected ScrollPanel scrollPanel;
+	protected SelectedStateChangedEventHandler entrySelectionHandler;
 
 	public List(){
-		this.listEntries = new ArrayList<ListEntry<T>>();
-		this.selectedListEntries = new ArrayList<ListEntry<T>>();
+		this.entries = new ArrayList<ListEntry<T>>();
+
 		VerticalPanel mainWrapper = new VerticalPanel();
 		mainWrapper.setVerticalAlignment(HasVerticalAlignment.ALIGN_MIDDLE);
 		mainWrapper.setSize("100%", "100%");
 		mainWrapper.setStyleName("emptyContainer");
-		
+
 		headerContainer = new SimplePanel();
 		((UIObject) headerContainer).setSize("100%", "100%");
 		((UIObject) headerContainer).getElement().getStyle().setBackgroundImage("url(images/listHeaderBackground1.png)");
@@ -59,11 +56,11 @@ public abstract class List<T> extends View implements HasValue<T>,
 
 		mainWrapper.add((Widget) headerContainer);
 		this.setHeaderWidget(null);
-		
+
 		AbsolutePanel scrollPanelWrapper = new AbsolutePanel();
 		scrollPanelWrapper.setSize("100%", "100%");
 
-		final ScrollPanel scrollPanel = new ScrollPanel();
+		scrollPanel = new ScrollPanel();
 		scrollPanel.setSize("100%", "100%");
 
 		VerticalPanel listWrapper = new VerticalPanel();
@@ -103,185 +100,59 @@ public abstract class List<T> extends View implements HasValue<T>,
 		((UIObject) footer).getElement().getStyle().setBackgroundColor("#CCC");
 		((UIObject) footer).getElement().getStyle().setProperty("borderTop", "1px solid #BBB");
 		mainWrapper.add((Widget) footer);
-		
+
+		clear();
+
 		initWidget(mainWrapper);
-		
+
 		disableTextSelection(true);
 	}
 
-	@Override
-	public void onBrowserEvent(Event event) {
-		GWT.log("event");
-		super.onBrowserEvent(event);
 
-		int type = DOM.eventGetType(event);
-		if (type != Event.ONKEYPRESS)
-			return;
-		GWT.log("keypress");
-		if (event.getKeyCode() == KeyCodes.KEY_DOWN)
-			selectNext();
-		if (event.getKeyCode() == KeyCodes.KEY_UP)
-			selectPrevious();
+	//Listing Methods
+
+	protected void render() {
+		this.listPanel.clear();
+		for(ListEntry<T> e : this.entries)
+			this.listPanel.add(e);			
 	}
 
-	public void setMultipleSelectEnabled(boolean enabled) {
-		this.isMultipleSelect = enabled;
-	}
-
-	public boolean isMultipleSelectionEnabled() {
-		return this.isMultipleSelect;
-	}
-
-	public HandlerRegistration addValueChangeHandler(
-			ValueChangeHandler<T> handler) {
-
-		if (!valueChangeHandlerInitialized)
-			valueChangeHandlerInitialized = true;
-
-		return addHandler(handler, ValueChangeEvent.getType());
-	}
-
-	public T getValue() {
-		return selectedEntry == null ? null : selectedEntry.getValue();
-	}
-
-	public void setValue(T value) {
-		setValue(value, true);
-	}
-
-	public void setValue(T value, boolean fireEvents) {
-		List<T> list = this;
-
-		if (value == null && this.getValue() != null)
-			ValueChangeEvent.fire(list, null);
-
-		for (ListEntry<T> e : listEntries) {
-			if (e.getValue().equals(value)) {
-				if (e.equals(selectedEntry))
-					return;
-				this.selectedEntry = e;
-				if (fireEvents && valueChangeHandlerInitialized) {
-					ValueChangeEvent.fire(list, e.getValue());
-				}
-				return;
-			}
-		}
-	}
-
-	public void select(ListEntry<T> entry) {
-		entry.setSelected(true);
-		if (this.selectedEntry == entry)
-			return;
-		if (this.selectedEntry != null)
-			this.selectedEntry.setSelected(false);
-		this.selectedListEntries.add(entry);
-		this.setValue(entry.getValue(), true);
-	}
-
-	public void select(int index) {
-		ListEntry<T> entry = this.listEntries.get(index);
-		select(entry);
+	protected HandlerRegistration bindEntry(ListEntry<T> e){
+		return e.addHandler(this.entrySelectionHandler, SelectedStateChangedEvent.TYPE);
 	}
 
 	public void selectNext() {
-		if (this.selectedEntry == null && this.listEntries.isEmpty())
+		if (this.entries.isEmpty())
 			return;
-		if (this.selectedEntry == null) {
-			this.select(0);
-			return;
-		}
 
-		int selectedIndex = this.listEntries.indexOf(this.selectedEntry);
-		if (this.listEntries.size() >= selectedIndex)
-			select(selectedIndex + 1);
+		int size = this.entries.size();
+		int selectedIndex = 0;
+		for(int i = 0; i < size; i++){
+			if(entries.get(i).isSelected())
+				selectedIndex = i;
+		}
+		if (size >= selectedIndex)
+			entries.get(selectedIndex).setSelected(true);
 	}
 
 	public void selectPrevious() {
-		if (this.selectedEntry == null && this.listEntries.isEmpty())
-			return;
-		if (this.selectedEntry == null) {
-			this.select(0);
-			return;
-		}
-
-		int selectedIndex = this.listEntries.indexOf(this.selectedEntry);
-		if (this.listEntries.size() > 0)
-			select(selectedIndex - 1);
-	}
-
-	public void setEntries(Collection<T> entries) {
-		clear();
-		for (T t : entries) {
-			ListEntry<T> listEntry = new ListEntry<T>(t);
-			this.listEntries.add(listEntry);
-		}
-		onSizeChanged();
-		render();
-	}
-
-	public void setListEntries(Collection<ListEntry<T>> entries) {
-		this.clear();
-		this.addListEntries(entries);
-	}
-
-	public void clear() {
-		for (ListEntry<?> e : this.listEntries) {
-			e.removeFromParent();
-			this.selectedEntry = null;
-			this.setValue(null);
-		}
-		this.selectedListEntries.clear();
-		this.listEntries.clear();
-		onSizeChanged();
-	}
-
-	public void addListEntries(Collection<ListEntry<T>> listEntries) {
-		if (listEntries == null)
-			return;
-		for (ListEntry<T> e : listEntries)
-			addListEntry(e);
-	}
-
-	public void addListEntry(final ListEntry<T> e) {
-		if (e == null)
+		if (this.entries.isEmpty())
 			return;
 
-		this.listEntries.add(e);
-		this.listPanel.add(e);
-		e.addDomHandler(new ClickHandler() {
-
-			public void onClick(ClickEvent event) {
-				if (isMultipleSelect && event.isControlKeyDown())
-					addToSelection(e, true);
-				else if (isMultipleSelect && event.isShiftKeyDown()) {
-					clearMultipleSelection();
-					selectTo(e);
-				} else {
-					select(e);
-					clearMultipleSelection();
-				}
-			}
-		}, ClickEvent.getType());
-		onSizeChanged();
-	}
-
-	protected void clearMultipleSelection() {
-		for (ListEntry<?> entry : this.listEntries) {
-			if (entry != selectedEntry) {
-				if (entry.isSelected())
-					entry.setSelected(false);
+		int size = this.entries.size();
+		int selectedIndex = 0;
+		for(int i = 0; i < size; i++){
+			if(entries.get(i).isSelected()){
+				selectedIndex = i;
+				break;
 			}
 		}
-		this.selectedListEntries.clear();
-		this.selectedListEntries.add(this.selectedEntry);
-	}
-
-	protected void selectTo(ListEntry<T> e) {
-		selectTo(this.listEntries.indexOf(e));
+		if (size > 0)
+			entries.get(selectedIndex).setSelected(true);
 	}
 
 	protected void selectTo(int index) {
-		if (this.selectedEntry == null) {
+		/*	if (this.selectedEntry == null) {
 			select(index);
 			return;
 		}
@@ -294,99 +165,7 @@ public abstract class List<T> extends View implements HasValue<T>,
 		} else if (index > selectedIndex) {
 			for (int i = index; i > selectedIndex; i--)
 				addToSelection(i, false);
-		}
-	}
-
-	protected void addToSelection(ListEntry<T> e, boolean swapSelectedEntry) {
-		if (this.selectedListEntries.contains(e))
-			return;
-		this.selectedListEntries.add(e);
-		e.setSelected(true);
-		if (swapSelectedEntry)
-			this.selectedEntry = e;
-	}
-
-	protected void addToSelection(int index, boolean swapSelectedEntry) {
-		addToSelection(this.listEntries.get(index), swapSelectedEntry);
-	}
-
-	protected void removeFromSelection(ListEntry<T> e) {
-		if (!inSelection(e) || this.selectedEntry == null
-				|| selectedListEntries.size() == 1)
-			return;
-
-		this.selectedListEntries.remove(e);
-		if (this.selectedEntry == e) {
-			this.selectedEntry = this.selectedListEntries.get(0);
-		}
-	}
-
-	protected void removeFromSelection(int index) {
-		removeFromSelection(this.listEntries.get(index));
-	}
-
-	protected boolean inSelection(ListEntry<?> entry) {
-		return this.selectedListEntries.contains(entry);
-	}
-
-	protected boolean inSelection(int index) {
-		return inSelection(this.listEntries.get(index));
-	}
-
-	public ListEntry<T> getSelectedEntry() {
-		return this.selectedEntry;
-	}
-
-	public int getSelectedEntryIndex() {
-		if (this.selectedEntry == null)
-			return -1;
-		return this.listEntries.indexOf(this.selectedEntry);
-	}
-
-	public ArrayList<ListEntry<T>> getMultipleSelectionEntries() {
-		return this.selectedListEntries;
-	}
-
-	public int[] getMultipleSelectionEntriesIndexes() {
-		int nSelectedEntries = this.selectedListEntries.size();
-		int[] result = new int[nSelectedEntries];
-		for (int i = 0; i < nSelectedEntries; i++)
-			result[i] = this.listEntries.indexOf(this.selectedListEntries
-					.get(i));
-		return result;
-	}
-
-	public Collection<ListEntry<T>> getListEntries() {
-		return this.listEntries;
-	}
-
-	public void removeListEntry(ListEntry<T> entry) {
-		int index = this.listEntries.indexOf(entry);
-		removeListEntry(index);
-	}
-
-	public void removeListEntry(int index) {
-		final ListEntry<T> entry = this.listEntries.get(index);
-		if (entry == this.selectedEntry
-				&& index < (this.listEntries.size() - 1))
-			this.select(index + 1);
-		else if (entry == this.selectedEntry && index > 0)
-			this.select(index - 1);
-		else {
-			setValue(null);
-			this.selectedEntry = null;
-		}
-		entry.removeFromParent();
-		this.selectedListEntries.remove(entry);
-		this.listEntries.remove(index);
-		onSizeChanged();
-	}
-
-	public void render() {
-		this.listPanel.clear();
-		for (ListEntry<T> e : this.listEntries) {
-			addListEntry(e);
-		}
+		}*/ //TODO
 	}
 
 	public void setHeaderWidget(Widget w) {
@@ -412,25 +191,276 @@ public abstract class List<T> extends View implements HasValue<T>,
 	protected void updateFooterText() {
 	};
 
-	public int size() {
-		return this.listEntries.size();
-	}
-
 	protected void onSizeChanged() {
 	}
 
 	public void setCheckable(boolean checkable) {
-		for (ListEntry<T> entry : this.listEntries)
+		for (ListEntry<T> entry : this.entries)
 			entry.setCheckable(checkable);
 	}
 
 	public ArrayList<ListEntry<T>> getCheckedEntries() {
 		ArrayList<ListEntry<T>> result = new ArrayList<ListEntry<T>>();
-		for (ListEntry<T> e : this.listEntries) {
+		for (ListEntry<T> e : this.entries) {
 			if (e.isChecked())
 				result.add(e);
 		}
 		return result;
 	}
+
+	private void selectableStateChanged(Selectable source) {
+		if(multipleSelection){
+			//TODO throw
+		}else{
+			for(ListEntry<T> e : entries){
+				if(source != e)
+					e.setSelected(false, false);
+			}
+		}
+	}
+
+
+	//HasSelectables Methods
+	
+	@Override
+	public Collection<ValueSelectable<T>> getSelected() {
+		Collection<ValueSelectable<T>> result = new ArrayList<ValueSelectable<T>>();
+		for(ListEntry<T> s : this.entries) {
+			if(s.isSelected())
+				result.add(s);
+		}		
+		return result;
+	}
+
+	/*@Override
+	public void setSelected(Collection<ListEntry<T>> selectables,
+			boolean selected) {
+		setSelected(selectables, selected, true);
+	}
+
+	@Override
+	public void setSelected(Collection<ListEntry<T>> selectables,
+			boolean selected, boolean fireEvents) {
+		if(!entries.containsAll(selectables))
+			throw new RuntimeException("Some selectables are not part of the list");
+
+		boolean hasChanges = false;
+		for(Selectable s : selectables) {
+			if(s.isSelected() != selected){
+				hasChanges = true;
+				s.setSelected(selected);
+			}
+			if(this.multipleSelection == false)
+				break;
+		}
+		if(hasChanges && fireEvents)
+			fireEvent(new SelectionChangedEvent(new ArrayList<Selectable>(entries)));
+	}
+
+	@Override
+	public void setSelected(ListEntry<T> selectable, boolean selected) {
+		setSelected(selectable, selected, true);
+	}
+
+	@Override
+	public void setSelected(ListEntry<T> selectable, boolean selected,
+			boolean fireEvents) {
+		if(!entries.contains(selectable))
+			throw new RuntimeException("Some selectables are not part of the list");
+		if(!multipleSelection)
+			clearSelection();
+		if(selectable.isSelected() != selected){
+			selectable.setSelected(selected);
+			if(fireEvents)
+				fireEvent(new SelectionChangedEvent(new ArrayList<Selectable>(entries)));
+		}
+
+	}*/
+
+	@Override
+	public void clearSelection() {
+		for(ValueSelectable<T> s : this.getSelected())
+			s.setSelected(false);
+	}
+
+	@Override
+	public void setMultipleSelectability(boolean multi) {
+		this.multipleSelection = multi;
+	}
+
+	@Override
+	public boolean isMultipleSelectabilityActive() {
+		return this.multipleSelection;
+	}
+
+	@Override
+	public HandlerRegistration addSelectionChangedEventHandler(
+			SelectionChangedEventHandler handler) {
+		if (!valueChangeHandlerInitialized)
+			valueChangeHandlerInitialized = true;
+
+		return addHandler(handler, SelectionChangedEvent.TYPE);
+	}
+
+	@Override
+	public boolean add(ListEntry<T> e) {
+		boolean result = entries.add(e);
+		if(result){
+			this.bindEntry(e);
+			this.listPanel.add(e);
+		}
+		return result;
+	}
+
+	@Override
+	public void add(int index, ListEntry<T> element) {
+		bindEntry(element);
+		entries.add(index, element);
+		render();
+	}
+
+	@Override
+	public boolean addAll(Collection<? extends ListEntry<T>> c) {
+		boolean result = entries.addAll(c);
+		if(result){
+			for(ListEntry<T> l : this.entries){
+				bindEntry(l);
+				this.listPanel.add(l);
+			}
+		}
+		return result;
+	}
+
+	@Override
+	public boolean addAll(int index, Collection<? extends ListEntry<T>> c) {
+		boolean result = this.entries.addAll(index, c);
+		if(result){
+			for(ListEntry<T> e : c)
+				bindEntry(e);
+			render();
+		}
+		return result;
+	}
+
+	@Override
+	public void clear() {
+		this.entrySelectionHandler = new SelectedStateChangedEventHandler() {
+
+			@Override
+			public void onSelectedStateChanged(SelectedStateChangedEvent event) {
+				selectableStateChanged((Selectable) event.getSource());
+			}
+		};
+		this.listPanel.clear();
+		this.entries.clear();
+	}
+
+	@Override
+	public boolean contains(Object o) {
+		return entries.contains(o);
+	}
+
+	@Override
+	public boolean containsAll(Collection<?> c) {
+		return entries.containsAll(c);
+	}
+
+	@Override
+	public ListEntry<T> get(int index) {
+		return entries.get(index);
+	}
+
+	@Override
+	public int indexOf(Object o) {
+		return entries.indexOf(o);
+	}
+
+	@Override
+	public boolean isEmpty() {
+		return entries.isEmpty();
+	}
+
+	@Override
+	public Iterator<ListEntry<T>> iterator() {
+		return entries.iterator();
+	}
+
+	@Override
+	public int lastIndexOf(Object o) {
+		return entries.lastIndexOf(o);
+	}
+
+	@Override
+	public ListIterator<ListEntry<T>> listIterator() {
+		return entries.listIterator();
+	}
+
+	@Override
+	public ListIterator<ListEntry<T>> listIterator(int index) {
+		return entries.listIterator(index);
+	}
+
+	@Override
+	public boolean remove(Object o) {
+		ListEntry<?> entry = (ListEntry<?>) o;
+		boolean result = this.entries.remove(o);
+		if(result)
+			entry.removeFromParent();
+		return result;
+	}
+
+	@Override
+	public ListEntry<T> remove(int index) {
+		ListEntry<T> result = this.entries.remove(index);
+		result.removeFromParent();
+		return result;
+	}
+
+	@Override
+	public boolean removeAll(Collection<?> c) {
+		boolean result = this.entries.removeAll(c);
+		if(result){
+			for(Object e : c)
+				((ListEntry<?>)e).removeFromParent();
+		}
+		return result;
+	}
+
+	@Override
+	public boolean retainAll(Collection<?> c) {
+		boolean result = this.entries.retainAll(c);
+		if(result)
+			render();
+		return result;
+	}
+
+	@Override
+	public ListEntry<T> set(int index, ListEntry<T> element) {
+		ListEntry<T> result = this.entries.set(index, element);
+		result.removeFromParent();
+		this.listPanel.insert(element, index + 1);
+		return result;
+	}
+
+	@Override
+	public int size() {
+		return this.entries.size();
+	}
+
+	@Override
+	public java.util.List<ListEntry<T>> subList(int fromIndex, int toIndex) {
+		return this.entries.subList(fromIndex, toIndex);
+	}
+
+	@Override
+	public Object[] toArray() {
+		return this.entries.toArray();
+	}
+
+	@Override
+	public <U extends Object> U[] toArray(U[] a) {
+		return this.entries.toArray(a);
+	}
+
 
 }

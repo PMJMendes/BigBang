@@ -47,6 +47,7 @@ public class TextBoxFormField extends FormField<String> {
 		this.field = new TextBox();
 		wrapper.add((Widget) this.field);
 		wrapper.add(mandatoryIndicatorLabel);
+		wrapper.add(errorMessageLabel);
 		initWidget(wrapper);
 		
 		setFieldWidth("400px");
@@ -60,7 +61,7 @@ public class TextBoxFormField extends FormField<String> {
 			if(field.getValue().equals("-")) field.setValue(""); 
 		}
 		field.setReadOnly(readOnly);
-		field.getElement().getStyle().setBorderColor(readOnly ? "transparent" : "black");
+		field.getElement().getStyle().setBorderColor(readOnly ? "transparent" : "gray");
 		field.getElement().getStyle().setBackgroundColor(readOnly ? "transparent" : "white");
 		mandatoryIndicatorLabel.setVisible(!readOnly);
 	}
