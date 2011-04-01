@@ -9,8 +9,8 @@ import Jewel.Engine.DataAccess.MasterDB;
 import Jewel.Engine.Implementation.Entity;
 import Jewel.Engine.Implementation.User;
 import Jewel.Engine.Security.Password;
-import Jewel.Petri.JewelPetriException;
-import Jewel.Petri.Operation;
+import Jewel.Petri.SysObjects.JewelPetriException;
+import Jewel.Petri.SysObjects.Operation;
 
 import com.premiumminds.BigBang.Jewel.BigBangJewelException;
 import com.premiumminds.BigBang.Jewel.Constants;
@@ -41,9 +41,9 @@ public class ManageUsers
 
 	public UUID[] marrNewIDs;
 
-	public ManageUsers()
+	public ManageUsers(UUID pidProcess)
 	{
-		super(null);
+		super(pidProcess);
 	}
 
 	protected UUID OpID()

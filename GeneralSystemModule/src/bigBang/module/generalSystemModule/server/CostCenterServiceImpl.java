@@ -8,7 +8,6 @@ import Jewel.Engine.Engine;
 import Jewel.Engine.DataAccess.MasterDB;
 import Jewel.Engine.Implementation.Entity;
 import Jewel.Engine.Interfaces.IEntity;
-import Jewel.Engine.SysObjects.ObjectBase;
 import bigBang.library.server.EngineImplementor;
 import bigBang.library.shared.BigBangException;
 import bigBang.library.shared.SessionExpiredException;
@@ -17,6 +16,7 @@ import bigBang.module.generalSystemModule.shared.CostCenter;
 import bigBang.module.generalSystemModule.shared.User;
 
 import com.premiumminds.BigBang.Jewel.Constants;
+import com.premiumminds.BigBang.Jewel.Objects.GeneralSystem;
 import com.premiumminds.BigBang.Jewel.Objects.UserDecoration;
 import com.premiumminds.BigBang.Jewel.Operations.ManageCostCenters;
 
@@ -29,12 +29,10 @@ public class CostCenterServiceImpl
 	public CostCenter[] getCostCenterList()
 		throws SessionExpiredException, BigBangException
 	{
-		UUID lidCenters;
-		UUID lidUsers;
         MasterDB ldb;
         ResultSet lrsCenters;
 		ArrayList<CostCenter> larrAux;
-		ObjectBase lobjAux;
+		com.premiumminds.BigBang.Jewel.Objects.CostCenter lobjAux;
 		CostCenter lobjTmp;
 		CostCenter[] larrResult;
 		int i;
@@ -53,9 +51,7 @@ public class CostCenterServiceImpl
 
 		try
 		{
-        	lidCenters = Engine.FindEntity(Engine.getCurrentNameSpace(), Constants.ObjID_CostCenter);
-        	lidUsers = Engine.FindEntity(Engine.getCurrentNameSpace(), Constants.ObjID_Decorations);
-        	lrefUserDecs = Entity.GetInstance(lidUsers);
+        	lrefUserDecs = Entity.GetInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), Constants.ObjID_Decorations));
 			ldb = new MasterDB();
 		}
 		catch (Throwable e)
@@ -65,7 +61,8 @@ public class CostCenterServiceImpl
 
         try
         {
-	        lrsCenters = Entity.GetInstance(lidCenters).SelectAll(ldb);
+	        lrsCenters = Entity.GetInstance(Engine.FindEntity(Engine.getCurrentNameSpace(),
+	        		Constants.ObjID_CostCenter)).SelectAll(ldb);
 		}
 		catch (Throwable e)
 		{
@@ -77,7 +74,8 @@ public class CostCenterServiceImpl
 		{
 	        while (lrsCenters.next())
 	        {
-	        	lobjAux = Engine.GetWorkInstance(lidCenters, lrsCenters);
+	        	lobjAux = com.premiumminds.BigBang.Jewel.Objects.CostCenter.GetInstance(Engine.getCurrentNameSpace(),
+	        			lrsCenters);
 	        	lobjTmp = new CostCenter();
 	        	lobjTmp.id = lobjAux.getKey().toString();
 	        	lobjTmp.code = (String)lobjAux.getAt(0);
@@ -139,7 +137,7 @@ public class CostCenterServiceImpl
 			{
 				while ( lrsUsers.next() )
 				{
-					lobjUser = (UserDecoration)Engine.GetWorkInstance(lidUsers, lrsUsers);
+					lobjUser = UserDecoration.GetInstance(Engine.getCurrentNameSpace(), lrsUsers);
 					lobjTmpUser = new User();
 					lobjTmpUser.id = lobjUser.getKey().toString();
 					lobjTmpUser.name = lobjUser.getBaseUser().getDisplayName();
@@ -182,18 +180,18 @@ public class CostCenterServiceImpl
 		if ( Engine.getCurrentUser() == null )
 			throw new SessionExpiredException();
 
-		lopMCC = new ManageCostCenters();
-		lopMCC.marrCreate = new ManageCostCenters.CostCenterData[1];
-		lopMCC.marrCreate[0] = lopMCC.new CostCenterData();
-		lopMCC.marrCreate[0].mid = null;
-		lopMCC.marrCreate[0].mstrCode = costCenter.code;
-		lopMCC.marrCreate[0].mstrName = costCenter.name;
-		lopMCC.marrModify = null;
-		lopMCC.marrDelete = null;
-		lopMCC.marrNewIDs = null;
-
 		try
 		{
+			lopMCC = new ManageCostCenters(GeneralSystem.GetAnyInstance(Engine.getCurrentNameSpace()).GetProcessID());
+			lopMCC.marrCreate = new ManageCostCenters.CostCenterData[1];
+			lopMCC.marrCreate[0] = lopMCC.new CostCenterData();
+			lopMCC.marrCreate[0].mid = null;
+			lopMCC.marrCreate[0].mstrCode = costCenter.code;
+			lopMCC.marrCreate[0].mstrName = costCenter.name;
+			lopMCC.marrModify = null;
+			lopMCC.marrDelete = null;
+			lopMCC.marrNewIDs = null;
+
 			lopMCC.Execute();
 		}
 		catch (Throwable e)
@@ -217,18 +215,18 @@ public class CostCenterServiceImpl
 		if ( Engine.getCurrentUser() == null )
 			throw new SessionExpiredException();
 
-		lopMCC = new ManageCostCenters();
-		lopMCC.marrModify = new ManageCostCenters.CostCenterData[1];
-		lopMCC.marrModify[0] = lopMCC.new CostCenterData();
-		lopMCC.marrModify[0].mid = UUID.fromString(costCenter.id);
-		lopMCC.marrModify[0].mstrCode = costCenter.code;
-		lopMCC.marrModify[0].mstrName = costCenter.name;
-		lopMCC.marrCreate = null;
-		lopMCC.marrDelete = null;
-		lopMCC.marrNewIDs = null;
-
 		try
 		{
+			lopMCC = new ManageCostCenters(GeneralSystem.GetAnyInstance(Engine.getCurrentNameSpace()).GetProcessID());
+			lopMCC.marrModify = new ManageCostCenters.CostCenterData[1];
+			lopMCC.marrModify[0] = lopMCC.new CostCenterData();
+			lopMCC.marrModify[0].mid = UUID.fromString(costCenter.id);
+			lopMCC.marrModify[0].mstrCode = costCenter.code;
+			lopMCC.marrModify[0].mstrName = costCenter.name;
+			lopMCC.marrCreate = null;
+			lopMCC.marrDelete = null;
+			lopMCC.marrNewIDs = null;
+
 			lopMCC.Execute();
 		}
 		catch (Throwable e)
@@ -252,18 +250,18 @@ public class CostCenterServiceImpl
 		if ( Engine.getCurrentUser() == null )
 			throw new SessionExpiredException();
 
-		lopMCC = new ManageCostCenters();
-		lopMCC.marrDelete = new ManageCostCenters.CostCenterData[1];
-		lopMCC.marrDelete[0] = lopMCC.new CostCenterData();
-		lopMCC.marrDelete[0].mid = UUID.fromString(id);
-		lopMCC.marrDelete[0].mstrCode = null;
-		lopMCC.marrDelete[0].mstrName = null;
-		lopMCC.marrCreate = null;
-		lopMCC.marrModify = null;
-		lopMCC.marrNewIDs = null;
-
 		try
 		{
+			lopMCC = new ManageCostCenters(GeneralSystem.GetAnyInstance(Engine.getCurrentNameSpace()).GetProcessID());
+			lopMCC.marrDelete = new ManageCostCenters.CostCenterData[1];
+			lopMCC.marrDelete[0] = lopMCC.new CostCenterData();
+			lopMCC.marrDelete[0].mid = UUID.fromString(id);
+			lopMCC.marrDelete[0].mstrCode = null;
+			lopMCC.marrDelete[0].mstrName = null;
+			lopMCC.marrCreate = null;
+			lopMCC.marrModify = null;
+			lopMCC.marrNewIDs = null;
+
 			lopMCC.Execute();
 		}
 		catch (Throwable e)

@@ -1,5 +1,6 @@
 package com.premiumminds.BigBang.Jewel.Objects;
 
+import java.sql.ResultSet;
 import java.util.UUID;
 
 import Jewel.Engine.Engine;
@@ -18,6 +19,19 @@ public class CostCenter
 	    try
 	    {
 			return (CostCenter)Engine.GetWorkInstance(Engine.FindEntity(pidNameSpace, Constants.ObjID_CostCenter), pidKey);
+		}
+	    catch (Throwable e)
+	    {
+	    	throw new BigBangJewelException(e.getMessage(), e);
+		}
+	}
+
+    public static CostCenter GetInstance(UUID pidNameSpace, ResultSet prsObject)
+		throws BigBangJewelException
+	{
+	    try
+	    {
+			return (CostCenter)Engine.GetWorkInstance(Engine.FindEntity(pidNameSpace, Constants.ObjID_CostCenter), prsObject);
 		}
 	    catch (Throwable e)
 	    {

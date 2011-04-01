@@ -6,8 +6,8 @@ import java.util.UUID;
 import Jewel.Engine.Engine;
 import Jewel.Engine.DataAccess.MasterDB;
 import Jewel.Engine.Implementation.Entity;
-import Jewel.Petri.JewelPetriException;
-import Jewel.Petri.Operation;
+import Jewel.Petri.SysObjects.JewelPetriException;
+import Jewel.Petri.SysObjects.Operation;
 
 import com.premiumminds.BigBang.Jewel.Constants;
 import com.premiumminds.BigBang.Jewel.Objects.CostCenter;
@@ -33,9 +33,9 @@ public class ManageCostCenters
 
 	public UUID[] marrNewIDs;
 
-	public ManageCostCenters()
+	public ManageCostCenters(UUID pidProcess)
 	{
-		super(null);
+		super(pidProcess);
 	}
 
 	protected UUID OpID()

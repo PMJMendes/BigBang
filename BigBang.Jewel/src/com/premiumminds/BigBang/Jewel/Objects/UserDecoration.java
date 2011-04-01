@@ -1,5 +1,6 @@
 package com.premiumminds.BigBang.Jewel.Objects;
 
+import java.sql.ResultSet;
 import java.util.UUID;
 
 import Jewel.Engine.Engine;
@@ -22,6 +23,19 @@ public class UserDecoration
     	try
     	{
     		return (UserDecoration)Engine.GetWorkInstance(Engine.FindEntity(pidNameSpace, Constants.ObjID_Decorations), pidKey);
+		}
+	    catch (Throwable e)
+	    {
+	    	throw new BigBangJewelException(e.getMessage(), e);
+		}
+	}
+
+    public static UserDecoration GetInstance(UUID pidNameSpace, ResultSet prsObject)
+		throws BigBangJewelException
+	{
+		try
+		{
+			return (UserDecoration)Engine.GetWorkInstance(Engine.FindEntity(pidNameSpace, Constants.ObjID_Decorations), prsObject);
 		}
 	    catch (Throwable e)
 	    {

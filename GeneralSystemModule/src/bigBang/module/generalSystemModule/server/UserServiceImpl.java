@@ -18,6 +18,7 @@ import bigBang.module.generalSystemModule.shared.User;
 import bigBang.module.generalSystemModule.shared.UserProfile;
 
 import com.premiumminds.BigBang.Jewel.Constants;
+import com.premiumminds.BigBang.Jewel.Objects.GeneralSystem;
 import com.premiumminds.BigBang.Jewel.Objects.UserDecoration;
 import com.premiumminds.BigBang.Jewel.Operations.ManageUsers;
 
@@ -66,7 +67,7 @@ public class UserServiceImpl
 		{
 	        while (lrsUsers.next())
 	        {
-	        	lobjUser = (UserDecoration)Engine.GetWorkInstance(lidUsers, lrsUsers);
+	        	lobjUser = UserDecoration.GetInstance(Engine.getCurrentNameSpace(), lrsUsers);
 	        	lobjTmp = new User();
 	        	lobjTmp.id = lobjUser.getKey().toString();
 	        	lobjTmp.name = lobjUser.getBaseUser().getDisplayName();
@@ -148,7 +149,7 @@ public class UserServiceImpl
 
 		try
 		{
-			lopMU = new ManageUsers();
+			lopMU = new ManageUsers(GeneralSystem.GetAnyInstance(Engine.getCurrentNameSpace()).GetProcessID());
 			lopMU.marrModify = new ManageUsers.UserData[1];
 			lopMU.marrModify[0] = lopMU.new UserData();
 			lopMU.marrModify[0].mid = UUID.fromString(user.id);
@@ -190,7 +191,7 @@ public class UserServiceImpl
 
 		try
 		{
-			lopMU = new ManageUsers();
+			lopMU = new ManageUsers(GeneralSystem.GetAnyInstance(Engine.getCurrentNameSpace()).GetProcessID());
 			lopMU.marrCreate = new ManageUsers.UserData[1];
 			lopMU.marrCreate[0] = lopMU.new UserData();
 			lopMU.marrCreate[0].mid = null;
@@ -230,22 +231,22 @@ public class UserServiceImpl
 			if ( Engine.getCurrentUser() == null )
 				throw new SessionExpiredException();
 
-			lopMU = new ManageUsers();
-			lopMU.marrDelete = new ManageUsers.UserData[1];
-			lopMU.marrDelete[0] = lopMU.new UserData();
-			lopMU.marrDelete[0].mid = UUID.fromString(id);
-			lopMU.marrDelete[0].mstrFullName = null;
-			lopMU.marrDelete[0].mstrUsername = null;
-			lopMU.marrDelete[0].mobjPassword = null;
-			lopMU.marrDelete[0].midProfile = null;
-			lopMU.marrDelete[0].midCostCenter = null;
-			lopMU.marrDelete[0].mstrEmail = null;
-			lopMU.marrCreate = null;
-			lopMU.marrModify = null;
-			lopMU.marrNewIDs = null;
-
 			try
 			{
+				lopMU = new ManageUsers(GeneralSystem.GetAnyInstance(Engine.getCurrentNameSpace()).GetProcessID());
+				lopMU.marrDelete = new ManageUsers.UserData[1];
+				lopMU.marrDelete[0] = lopMU.new UserData();
+				lopMU.marrDelete[0].mid = UUID.fromString(id);
+				lopMU.marrDelete[0].mstrFullName = null;
+				lopMU.marrDelete[0].mstrUsername = null;
+				lopMU.marrDelete[0].mobjPassword = null;
+				lopMU.marrDelete[0].midProfile = null;
+				lopMU.marrDelete[0].midCostCenter = null;
+				lopMU.marrDelete[0].mstrEmail = null;
+				lopMU.marrCreate = null;
+				lopMU.marrModify = null;
+				lopMU.marrNewIDs = null;
+
 				lopMU.Execute();
 			}
 			catch (Throwable e)
