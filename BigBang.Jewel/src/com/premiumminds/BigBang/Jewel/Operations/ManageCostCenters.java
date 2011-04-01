@@ -107,7 +107,6 @@ public class ManageCostCenters
 					lrefCostCenters.Delete(ldb, marrDelete[i].mid);
 				}
 			}
-
 		}
 		catch (Throwable e)
 		{

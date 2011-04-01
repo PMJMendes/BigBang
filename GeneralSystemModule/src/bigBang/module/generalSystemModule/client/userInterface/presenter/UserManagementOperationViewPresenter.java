@@ -124,7 +124,7 @@ public class UserManagementOperationViewPresenter implements OperationViewPresen
 	}
 	
 	public void createUser(final User user){
-		service.addUser(user, new AsyncCallback<String>() {
+		service.addUser(user, new AsyncCallback<User>() {
 
 			@Override
 			public void onFailure(Throwable caught) {
@@ -132,9 +132,9 @@ public class UserManagementOperationViewPresenter implements OperationViewPresen
 			}
 
 			@Override
-			public void onSuccess(String result) {
+			public void onSuccess(User result) {
 				view.setUsers(userCache);
-				view.getUserList().setValue(user);
+				view.getUserList().setValue(result);
 			}
 		});
 	}

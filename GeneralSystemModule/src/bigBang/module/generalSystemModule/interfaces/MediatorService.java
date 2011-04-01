@@ -1,5 +1,7 @@
 package bigBang.module.generalSystemModule.interfaces;
 
+import bigBang.library.shared.BigBangException;
+import bigBang.library.shared.SessionExpiredException;
 import bigBang.module.generalSystemModule.shared.ComissionProfile;
 import bigBang.module.generalSystemModule.shared.Mediator;
 
@@ -8,7 +10,8 @@ import com.google.gwt.user.client.rpc.RemoteService;
 import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 
 @RemoteServiceRelativePath("MediatorService")
-public interface MediatorService extends RemoteService {
+public interface MediatorService extends RemoteService
+{
 	/**
 	 * Utility class for simplifying access to the instance of async service.
 	 */
@@ -22,16 +25,11 @@ public interface MediatorService extends RemoteService {
 		}
 	}
 	
-	public Mediator[] getMediators();
-	
-	public Mediator getMediator(String id);
-	
-	public String saveMediator(Mediator mediator);
-	
-	public Mediator createMediator(Mediator mediator);
-	
-	public String deleteMediator(String id);
-	
-	public ComissionProfile[] getComissionProfiles();
+	public Mediator[] getMediators() throws SessionExpiredException, BigBangException;
+//	public Mediator getMediator(String id) throws SessionExpiredException, BigBangException;
+	public Mediator saveMediator(Mediator mediator) throws SessionExpiredException, BigBangException;
+	public Mediator createMediator(Mediator mediator) throws SessionExpiredException, BigBangException;
+	public void deleteMediator(String id) throws SessionExpiredException, BigBangException;
+	public ComissionProfile[] getComissionProfiles() throws SessionExpiredException, BigBangException;
 	
 }

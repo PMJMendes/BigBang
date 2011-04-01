@@ -7,6 +7,7 @@ import java.util.UUID;
 import Jewel.Engine.Engine;
 import Jewel.Engine.DataAccess.MasterDB;
 import Jewel.Engine.Implementation.Entity;
+import Jewel.Engine.Interfaces.IEntity;
 import Jewel.Engine.SysObjects.ObjectBase;
 import bigBang.library.server.EngineImplementor;
 import bigBang.library.shared.BigBangException;
@@ -16,6 +17,7 @@ import bigBang.module.generalSystemModule.shared.CostCenter;
 import bigBang.module.generalSystemModule.shared.User;
 
 import com.premiumminds.BigBang.Jewel.Constants;
+import com.premiumminds.BigBang.Jewel.Objects.UserDecoration;
 import com.premiumminds.BigBang.Jewel.Operations.ManageCostCenters;
 
 public class CostCenterServiceImpl
@@ -27,12 +29,22 @@ public class CostCenterServiceImpl
 	public CostCenter[] getCostCenterList()
 		throws SessionExpiredException, BigBangException
 	{
-		UUID lidStates;
+		UUID lidCenters;
+		UUID lidUsers;
         MasterDB ldb;
-        ResultSet lrsStates;
+        ResultSet lrsCenters;
 		ArrayList<CostCenter> larrAux;
 		ObjectBase lobjAux;
 		CostCenter lobjTmp;
+		CostCenter[] larrResult;
+		int i;
+        ResultSet lrsUsers;
+        ArrayList<User> larrAuxUsers;
+		int[] larrMembers;
+		IEntity lrefUserDecs;
+		java.lang.Object[] larrParams;
+		UserDecoration lobjUser;
+		User lobjTmpUser;
 
 		if ( Engine.getCurrentUser() == null )
 			throw new SessionExpiredException();
@@ -41,7 +53,9 @@ public class CostCenterServiceImpl
 
 		try
 		{
-        	lidStates = Engine.FindEntity(Engine.getCurrentNameSpace(), Constants.ObjID_CostCenter);
+        	lidCenters = Engine.FindEntity(Engine.getCurrentNameSpace(), Constants.ObjID_CostCenter);
+        	lidUsers = Engine.FindEntity(Engine.getCurrentNameSpace(), Constants.ObjID_Decorations);
+        	lrefUserDecs = Entity.GetInstance(lidUsers);
 			ldb = new MasterDB();
 		}
 		catch (Throwable e)
@@ -51,7 +65,7 @@ public class CostCenterServiceImpl
 
         try
         {
-	        lrsStates = Entity.GetInstance(lidStates).SelectAll(ldb);
+	        lrsCenters = Entity.GetInstance(lidCenters).SelectAll(ldb);
 		}
 		catch (Throwable e)
 		{
@@ -61,28 +75,28 @@ public class CostCenterServiceImpl
 
 		try
 		{
-	        while (lrsStates.next())
+	        while (lrsCenters.next())
 	        {
-	        	lobjAux = Engine.GetWorkInstance(lidStates, lrsStates);
+	        	lobjAux = Engine.GetWorkInstance(lidCenters, lrsCenters);
 	        	lobjTmp = new CostCenter();
 	        	lobjTmp.id = lobjAux.getKey().toString();
 	        	lobjTmp.code = (String)lobjAux.getAt(0);
 	        	lobjTmp.name = (String)lobjAux.getAt(1);
-	        	lobjTmp.members = new User[0];
+	        	lobjTmp.members = null;
 	        	larrAux.add(lobjTmp);
 	        }
 
         }
         catch (Throwable e)
         {
-			try { lrsStates.close(); } catch (Throwable e1) {}
+			try { lrsCenters.close(); } catch (Throwable e1) {}
 			try { ldb.Disconnect(); } catch (Throwable e1) {}
         	throw new BigBangException(e.getMessage(), e);
         }
 
         try
         {
-        	lrsStates.close();
+        	lrsCenters.close();
         }
 		catch (Throwable e)
 		{
@@ -90,6 +104,8 @@ public class CostCenterServiceImpl
 			throw new BigBangException(e.getMessage(), e);
 		}
 
+		larrResult = larrAux.toArray(new CostCenter[larrAux.size()]);
+		
 		try
 		{
 			ldb.Disconnect();
@@ -99,39 +115,95 @@ public class CostCenterServiceImpl
 			throw new BigBangException(e.getMessage(), e);
 		}
 
-		return larrAux.toArray(new CostCenter[larrAux.size()]);
+		larrMembers = new int[1];
+		larrMembers[0] = Constants.FKCostCenter_In_UserDecoration;
+		larrParams = new java.lang.Object[1];
+
+		for ( i = 0; i < larrResult.length; i++ )
+		{
+			larrAuxUsers = new ArrayList<User>();
+
+			larrParams[0] = UUID.fromString(larrResult[i].id);
+
+			try
+			{
+				lrsUsers = lrefUserDecs.SelectByMembers(ldb, larrMembers, larrParams, new int[0]);
+			}
+			catch (Throwable e)
+			{
+				try { ldb.Disconnect(); } catch (Throwable e1) {}
+				throw new BigBangException(e.getMessage(), e);
+			}
+
+			try
+			{
+				while ( lrsUsers.next() )
+				{
+					lobjUser = (UserDecoration)Engine.GetWorkInstance(lidUsers, lrsUsers);
+					lobjTmpUser = new User();
+					lobjTmpUser.id = lobjUser.getKey().toString();
+					lobjTmpUser.name = lobjUser.getBaseUser().getDisplayName();
+					lobjTmpUser.username = lobjUser.getBaseUser().getUserName();
+					lobjTmpUser.password = null; //JMMM: No way!
+					lobjTmpUser.profileId = lobjUser.getBaseUser().getProfile().getKey().toString();
+					lobjTmpUser.costCenterId = ((UUID)lobjUser.getAt(2)).toString();
+					lobjTmpUser.email = (String)lobjUser.getAt(3);
+					larrAuxUsers.add(lobjTmpUser);
+				}
+			}
+	        catch (Throwable e)
+	        {
+				try { lrsUsers.close(); } catch (Throwable e1) {}
+				try { ldb.Disconnect(); } catch (Throwable e1) {}
+	        	throw new BigBangException(e.getMessage(), e);
+	        }
+
+	        try
+	        {
+	        	lrsUsers.close();
+	        }
+			catch (Throwable e)
+			{
+				try { ldb.Disconnect(); } catch (Throwable e1) {}
+				throw new BigBangException(e.getMessage(), e);
+			}
+
+			larrResult[i].members = larrAuxUsers.toArray(new User[larrAuxUsers.size()]);
+		}
+
+		return larrResult;
 	}
 
 	public CostCenter createCostCenter(CostCenter costCenter)
 		throws SessionExpiredException, BigBangException
 	{
-		ManageCostCenters lobjMCC;
+		ManageCostCenters lopMCC;
 
 		if ( Engine.getCurrentUser() == null )
 			throw new SessionExpiredException();
 
-		lobjMCC = new ManageCostCenters();
-		lobjMCC.marrCreate = new ManageCostCenters.CostCenterData[1];
-		lobjMCC.marrCreate[0] = lobjMCC.new CostCenterData();
-		lobjMCC.marrCreate[0].mid = null;
-		lobjMCC.marrCreate[0].mstrCode = costCenter.code;
-		lobjMCC.marrCreate[0].mstrName = costCenter.name;
-		lobjMCC.marrModify = null;
-		lobjMCC.marrDelete = null;
-		lobjMCC.marrNewIDs = null;
+		lopMCC = new ManageCostCenters();
+		lopMCC.marrCreate = new ManageCostCenters.CostCenterData[1];
+		lopMCC.marrCreate[0] = lopMCC.new CostCenterData();
+		lopMCC.marrCreate[0].mid = null;
+		lopMCC.marrCreate[0].mstrCode = costCenter.code;
+		lopMCC.marrCreate[0].mstrName = costCenter.name;
+		lopMCC.marrModify = null;
+		lopMCC.marrDelete = null;
+		lopMCC.marrNewIDs = null;
 
 		try
 		{
-			lobjMCC.Execute();
+			lopMCC.Execute();
 		}
 		catch (Throwable e)
 		{
 			throw new BigBangException(e.getMessage(), e);
 		}
 
-		costCenter.id = lobjMCC.marrNewIDs[0].toString();
-		costCenter.code = lobjMCC.marrCreate[0].mstrCode;
-		costCenter.name = lobjMCC.marrCreate[0].mstrName;
+		costCenter.id = lopMCC.marrNewIDs[0].toString();
+		costCenter.code = lopMCC.marrCreate[0].mstrCode;
+		costCenter.name = lopMCC.marrCreate[0].mstrName;
 		costCenter.members = new User[0];
 
 		return costCenter;
@@ -140,33 +212,33 @@ public class CostCenterServiceImpl
 	public CostCenter saveCostCenter(CostCenter costCenter)
 		throws SessionExpiredException, BigBangException
 	{
-		ManageCostCenters lobjMCC;
+		ManageCostCenters lopMCC;
 
 		if ( Engine.getCurrentUser() == null )
 			throw new SessionExpiredException();
 
-		lobjMCC = new ManageCostCenters();
-		lobjMCC.marrModify = new ManageCostCenters.CostCenterData[1];
-		lobjMCC.marrModify[0] = lobjMCC.new CostCenterData();
-		lobjMCC.marrModify[0].mid = UUID.fromString(costCenter.id);
-		lobjMCC.marrModify[0].mstrCode = costCenter.code;
-		lobjMCC.marrModify[0].mstrName = costCenter.name;
-		lobjMCC.marrCreate = null;
-		lobjMCC.marrDelete = null;
-		lobjMCC.marrNewIDs = null;
+		lopMCC = new ManageCostCenters();
+		lopMCC.marrModify = new ManageCostCenters.CostCenterData[1];
+		lopMCC.marrModify[0] = lopMCC.new CostCenterData();
+		lopMCC.marrModify[0].mid = UUID.fromString(costCenter.id);
+		lopMCC.marrModify[0].mstrCode = costCenter.code;
+		lopMCC.marrModify[0].mstrName = costCenter.name;
+		lopMCC.marrCreate = null;
+		lopMCC.marrDelete = null;
+		lopMCC.marrNewIDs = null;
 
 		try
 		{
-			lobjMCC.Execute();
+			lopMCC.Execute();
 		}
 		catch (Throwable e)
 		{
 			throw new BigBangException(e.getMessage(), e);
 		}
 
-		costCenter.id = lobjMCC.marrModify[0].mid.toString();
-		costCenter.code = lobjMCC.marrModify[0].mstrCode;
-		costCenter.name = lobjMCC.marrModify[0].mstrName;
+		costCenter.id = lopMCC.marrModify[0].mid.toString();
+		costCenter.code = lopMCC.marrModify[0].mstrCode;
+		costCenter.name = lopMCC.marrModify[0].mstrName;
 		costCenter.members = new User[0];
 
 		return costCenter;
@@ -175,24 +247,24 @@ public class CostCenterServiceImpl
 	public void deleteCostCenter(String id)
 		throws SessionExpiredException, BigBangException
 	{
-		ManageCostCenters lobjMCC;
+		ManageCostCenters lopMCC;
 
 		if ( Engine.getCurrentUser() == null )
 			throw new SessionExpiredException();
 
-		lobjMCC = new ManageCostCenters();
-		lobjMCC.marrDelete = new ManageCostCenters.CostCenterData[1];
-		lobjMCC.marrDelete[0] = lobjMCC.new CostCenterData();
-		lobjMCC.marrDelete[0].mid = UUID.fromString(id);
-		lobjMCC.marrDelete[0].mstrCode = null;
-		lobjMCC.marrDelete[0].mstrName = null;
-		lobjMCC.marrCreate = null;
-		lobjMCC.marrModify = null;
-		lobjMCC.marrNewIDs = null;
+		lopMCC = new ManageCostCenters();
+		lopMCC.marrDelete = new ManageCostCenters.CostCenterData[1];
+		lopMCC.marrDelete[0] = lopMCC.new CostCenterData();
+		lopMCC.marrDelete[0].mid = UUID.fromString(id);
+		lopMCC.marrDelete[0].mstrCode = null;
+		lopMCC.marrDelete[0].mstrName = null;
+		lopMCC.marrCreate = null;
+		lopMCC.marrModify = null;
+		lopMCC.marrNewIDs = null;
 
 		try
 		{
-			lobjMCC.Execute();
+			lopMCC.Execute();
 		}
 		catch (Throwable e)
 		{

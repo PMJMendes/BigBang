@@ -6,18 +6,13 @@ import bigBang.library.interfaces.Service;
 import bigBang.module.generalSystemModule.shared.ComissionProfile;
 import bigBang.module.generalSystemModule.shared.Mediator;
 
-public interface MediatorServiceAsync extends Service {
-
+public interface MediatorServiceAsync
+	extends Service
+{
 	void createMediator(Mediator mediator, AsyncCallback<Mediator> callback);
-
-	void deleteMediator(String id, AsyncCallback<String> callback);
-
+	void deleteMediator(String id, AsyncCallback<Void> callback);
 	void getComissionProfiles(AsyncCallback<ComissionProfile[]> callback);
-
-	void getMediator(String id, AsyncCallback<Mediator> callback);
-
+//	void getMediator(String id, AsyncCallback<Mediator> callback);
 	void getMediators(AsyncCallback<Mediator[]> callback);
-
-	void saveMediator(Mediator mediator, AsyncCallback<String> callback);
-
+	void saveMediator(Mediator mediator, AsyncCallback<Mediator> callback);
 }

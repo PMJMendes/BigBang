@@ -1,8 +1,9 @@
 package bigBang.module.generalSystemModule.interfaces;
 
+import bigBang.library.shared.BigBangException;
 import bigBang.library.shared.SessionExpiredException;
 import bigBang.module.generalSystemModule.shared.User;
-import bigBang.module.generalSystemModule.shared.UserRole;
+import bigBang.module.generalSystemModule.shared.UserProfile;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.rpc.RemoteService;
@@ -28,11 +29,11 @@ public interface UserService
 		}
 	}
 
-	public User[] getUsers() throws SessionExpiredException;
-	public User getUser(String id) throws SessionExpiredException;
-	public String saveUser(User user) throws SessionExpiredException;
-	public String addUser(User user) throws SessionExpiredException;
-	public String deleteUser(User user) throws SessionExpiredException;
-	public User[] getUsersForCostCenterAssignment() throws SessionExpiredException;
-	public UserRole[] getUserRoles() throws SessionExpiredException;
+	public User[] getUsers() throws SessionExpiredException, BigBangException;
+//	public User getUser(String id) throws SessionExpiredException, BigBangException;
+	public User saveUser(User user) throws SessionExpiredException, BigBangException;
+	public User addUser(User user) throws SessionExpiredException, BigBangException;
+	public void deleteUser(String id) throws SessionExpiredException, BigBangException;
+//	public User[] getUsersForCostCenterAssignment() throws SessionExpiredException, BigBangException;
+	public UserProfile[] getUserProfiles() throws SessionExpiredException, BigBangException;
 }

@@ -188,7 +188,7 @@ public class MediatorManagementOperationViewPresenter implements
 	}
 	
 	protected void deleteMediator(final Mediator mediator){
-		service.deleteMediator(mediator.id, new AsyncCallback<String>() {
+		service.deleteMediator(mediator.id, new AsyncCallback<Void>() {
 
 			@Override
 			public void onFailure(Throwable caught) {
@@ -196,7 +196,7 @@ public class MediatorManagementOperationViewPresenter implements
 			}
 
 			@Override
-			public void onSuccess(String result) {
+			public void onSuccess(Void result) {
 				view.removeMediatorListValues(new Mediator[]{mediator});
 			}
 		});

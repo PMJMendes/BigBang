@@ -6,7 +6,7 @@ import bigBang.library.client.userInterface.TextBoxFormField;
 import bigBang.library.client.userInterface.view.FormView;
 import bigBang.module.generalSystemModule.shared.CostCenter;
 import bigBang.module.generalSystemModule.shared.User;
-import bigBang.module.generalSystemModule.shared.UserRole;
+import bigBang.module.generalSystemModule.shared.UserProfile;
 
 public class UserForm extends FormView {
 
@@ -21,7 +21,7 @@ public class UserForm extends FormView {
 	
 	private User user;
 
-	public UserForm(UserRole[] userRoles, CostCenter[] costCenters){
+	public UserForm(UserProfile[] userRoles, CostCenter[] costCenters){
 		super();
 		addSection("Informação Geral");
 		name = new TextBoxFormField("Nome");
@@ -90,8 +90,8 @@ public class UserForm extends FormView {
 		name.setValue(user.name);
 		username.setValue(user.username);
 		email.setValue(user.email);
-		if(user.roleId != null){
-			role.setValue(user.roleId);
+		if(user.profileId != null){
+			role.setValue(user.profileId);
 		}else{
 			this.role.setValue(EMPTY_VALUE);
 		}

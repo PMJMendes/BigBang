@@ -143,10 +143,10 @@ OperationViewPresenter {
 	}
 	
 	public void createNewCostCenter(CostCenter c) {
-		service.createCostCenter(c, new BigBangAsyncCallback<String>() {
+		service.createCostCenter(c, new BigBangAsyncCallback<CostCenter>() {
 
 			@Override
-			public void onSuccess(String result) {
+			public void onSuccess(CostCenter result) {
 				view.showNewCostCenterForm(false);
 				GWT.log("cost center created");
 			}
@@ -154,16 +154,16 @@ OperationViewPresenter {
 	}
 	
 	private void saveCostCenter(final CostCenter costCenter) {
-		service.saveCostCenter(costCenter, new BigBangAsyncCallback<Void>() {
+		service.saveCostCenter(costCenter, new BigBangAsyncCallback<CostCenter>() {
 
 			@Override
-			public void onSuccess(Void result) {
+			public void onSuccess(CostCenter result) {
 				view.setCostCenterFormEditable(false);
-				view.updateCostCenterInfo(costCenter);
+				view.updateCostCenterInfo(result);
 			}
 		});
 	}
-	
+
 	private void deleteCostCenter(final CostCenter costCenter) {
 		service.deleteCostCenter(costCenter.id, new BigBangAsyncCallback<Void>() {
 
