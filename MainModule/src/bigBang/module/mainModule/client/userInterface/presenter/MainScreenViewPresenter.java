@@ -8,10 +8,6 @@ import bigBang.library.client.userInterface.presenter.ViewPresenter;
 import bigBang.library.client.userInterface.view.View;
 import bigBang.library.interfaces.Service;
 
-import com.google.gwt.core.client.GWT;
-import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.event.dom.client.HasClickHandlers;
 import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.ui.HasWidgets;
 import com.google.gwt.user.client.ui.MenuItem;
@@ -26,6 +22,7 @@ public class MainScreenViewPresenter implements ViewPresenter {
 		void setUsername(String username);
 		
 		MenuItem getLogoutButton();
+		void setDomain(String domain);
 	}
 	
 	private Display view;
@@ -74,6 +71,10 @@ public class MainScreenViewPresenter implements ViewPresenter {
 
 	public void setUsername(String username) {
 		view.setUsername(username);
+	}
+	
+	public void setDomain(String domain) {
+		view.setDomain(domain);
 	}
 
 }

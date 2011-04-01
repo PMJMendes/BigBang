@@ -12,7 +12,6 @@ import bigBang.module.mainModule.client.userInterface.presenter.MainScreenViewPr
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Position;
 import com.google.gwt.dom.client.Style.Unit;
-import com.google.gwt.event.dom.client.HasClickHandlers;
 import com.google.gwt.event.logical.shared.ResizeEvent;
 import com.google.gwt.event.logical.shared.ResizeHandler;
 import com.google.gwt.user.client.Command;
@@ -35,6 +34,7 @@ public class MainScreenView extends View implements MainScreenViewPresenter.Disp
 	private HashMap <String, Integer> processSectionIndexes;
 	
 	private MenuItem usernameMenuItem;
+	private MenuItem domainMenuItem;
 	private MenuItem logoutMenuItem;
 
 	public MainScreenView(){
@@ -62,6 +62,16 @@ public class MainScreenView extends View implements MainScreenViewPresenter.Disp
 		});
 		menuBar.addItem(usernameMenuItem);
 		menuBar.addSeparator();
+				
+		domainMenuItem = new MenuItem("", new Command() {
+
+			public void execute() {
+
+			}
+		});
+		menuBar.addItem(domainMenuItem);		
+		
+		menuBar.addSeparator();
 		menuBar.addItem(new MenuItem("Preferências", new Command() {
 
 			public void execute() {
@@ -70,32 +80,6 @@ public class MainScreenView extends View implements MainScreenViewPresenter.Disp
 		}));
 		menuBar.addSeparator();
 		
-		MenuBar subMenu = new MenuBar(true);
-		final MenuItem menuItem = new MenuItem("", subMenu);
-		menuItem.setWidth("80px");
-		menuItem.getElement().getStyle().setProperty("textAlign", "center");
-		
-		final MenuItem crediteItem, aMartinsItem;
-		Command command = new Command() {
-
-			public void execute() {
-				menuItem.setText("CrediteEgs");
-
-			}
-		};
-		crediteItem =new MenuItem("CrediteEGS", command);
-		subMenu.addItem(crediteItem);
-		
-		aMartinsItem = new MenuItem("AMartins", new Command() {
-
-			public void execute() {
-				menuItem.setText("AMartins");
-			}
-		});
-		subMenu.addItem(aMartinsItem);
-		menuItem.setSubMenu(subMenu);
-		menuBar.addItem(menuItem);
-		menuBar.addSeparator();
 		logoutMenuItem = new MenuItem("Sair", new Command() {
 
 			public void execute() {
@@ -163,6 +147,11 @@ public class MainScreenView extends View implements MainScreenViewPresenter.Disp
 	@Override
 	public MenuItem getLogoutButton() {
 		return logoutMenuItem;
+	}
+
+	@Override
+	public void setDomain(String domain) {
+		domainMenuItem.setText(domain);
 	}
 
 }
