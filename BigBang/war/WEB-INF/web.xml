@@ -66,11 +66,11 @@
 		</init-param>
 		<init-param>
 			<param-name>spnego.krb5.conf</param-name>
-			<param-value>krb5.conf</param-value>
+			<param-value>webapps/bigbang/krb5.conf</param-value>
 		</init-param>
 		<init-param>
 			<param-name>spnego.login.conf</param-name>
-			<param-value>login.conf</param-value>
+			<param-value>webapps/bigbang/login.conf</param-value>
 		</init-param>
 		<init-param>
 			<param-name>spnego.preauth.username</param-name>
