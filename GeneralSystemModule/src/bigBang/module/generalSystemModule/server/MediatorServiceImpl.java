@@ -16,7 +16,7 @@ public class MediatorServiceImpl
 	public Mediator[] getMediators()
 		throws SessionExpiredException, BigBangException
 	{
-		return null;
+		return new Mediator[0];
 	}
 
 //	public Mediator getMediator(String id)
@@ -44,6 +44,6 @@ public class MediatorServiceImpl
 	public ComissionProfile[] getComissionProfiles()
 		throws SessionExpiredException, BigBangException
 	{
-		return null;
+		return new ComissionProfile[0];
 	}
 }
