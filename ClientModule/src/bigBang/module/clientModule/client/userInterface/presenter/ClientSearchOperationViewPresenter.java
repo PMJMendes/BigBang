@@ -1,7 +1,9 @@
 package bigBang.module.clientModule.client.userInterface.presenter;
 
 import bigBang.library.client.EventBus;
+import bigBang.library.client.HasSelectables;
 import bigBang.library.client.Operation;
+import bigBang.library.client.Selectable;
 import bigBang.library.client.event.OperationInvokedEvent;
 import bigBang.library.client.event.OperationInvokedEventHandler;
 import bigBang.library.client.userInterface.presenter.OperationViewPresenter;
@@ -21,7 +23,7 @@ import com.google.gwt.user.client.ui.Widget;
 public class ClientSearchOperationViewPresenter implements OperationViewPresenter {
 
 	public interface Display {
-		HasValue<String> getClientSearchList();
+		HasSelectables<Selectable> getClientSearchList();
 		HasValue<ClientProcess> getPreviewWidget();
 		
 		Widget asWidget();
@@ -69,12 +71,12 @@ public class ClientSearchOperationViewPresenter implements OperationViewPresente
 	}
 
 	public void bind() {
-		this.view.getClientSearchList().addValueChangeHandler(new ValueChangeHandler<String>() {
+		/*this.view.getClientSearchList().addValueChangeHandler(new ValueChangeHandler<String>() {
 			
 			public void onValueChange(ValueChangeEvent<String> event) {
 				fetchClientProcess(event.getValue());
 			}
-		});
+		});*/
 	}
 
 	public void setOperation(final ClientSearchOperation operation) {

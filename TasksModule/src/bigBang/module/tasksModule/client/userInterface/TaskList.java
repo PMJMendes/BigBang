@@ -37,7 +37,7 @@ public class TaskList extends List<Task> {
 		updateFooterLabel();
 	}
 	
-	@Override
+	/*@Override
 	public void setEntries(Collection<Task> entries) {
 		for(Task o : entries){
 			final TaskListEntry entry = new TaskListEntry((Task)o);
@@ -51,7 +51,7 @@ public class TaskList extends List<Task> {
 			}, ClickEvent.getType());
 		}
 		this.updateFooterLabel();
-	}
+	}*/
 	
 	private void updateFooterLabel() {
 		int nEntries = size();

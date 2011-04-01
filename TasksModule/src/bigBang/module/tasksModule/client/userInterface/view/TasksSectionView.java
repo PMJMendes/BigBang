@@ -55,10 +55,7 @@ public class TasksSectionView extends View implements TasksSectionViewPresenter.
 	}
 
 	public void setListEntries(ArrayList<Task> tasks) {
-		tasksList.setEntries(tasks);
+		//tasksList.setEntries(tasks);
 	}
 
-	public HasValue<Task> getTaskList() {
-		return this.tasksList;
-	}
 }

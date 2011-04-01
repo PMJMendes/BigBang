@@ -3,7 +3,7 @@ package bigBang.module.clientModule.client.userInterface;
 import bigBang.library.client.SearchResult;
 import bigBang.library.client.userInterface.view.SearchPanel;
 
-public class ClientSearchPanel extends SearchPanel {
+public class ClientSearchPanel<T> extends SearchPanel<T> {
 
 	public ClientSearchPanel(){
 		super();
@@ -16,7 +16,7 @@ public class ClientSearchPanel extends SearchPanel {
 			ClientSearchPanelListEntry entry = new ClientSearchPanelListEntry(i+"");
 			entry.setTitle("Premium Minds Lda.");
 			entry.setText("nº 132356497");
-			addListEntry(entry);
+			add(entry);
 		}
 	}
 	

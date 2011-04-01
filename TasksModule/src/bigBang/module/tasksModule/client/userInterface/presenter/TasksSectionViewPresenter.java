@@ -29,7 +29,7 @@ public class TasksSectionViewPresenter implements SectionViewPresenter, ViewPres
 
 	public interface Display {
 		void setListEntries(ArrayList<Task> tasks);
-		HasValue<Task> getTaskList();
+		//HasValue<Task> getTaskList();
 
 		HasWidgets getOperationViewContainer();
 		Widget asWidget();
@@ -96,7 +96,7 @@ public class TasksSectionViewPresenter implements SectionViewPresenter, ViewPres
 	public void bind() {
 		final ViewPresenterManager presenterManager = this;
 
-		this.view.getTaskList().addValueChangeHandler(new ValueChangeHandler<Task>() {
+		/*this.view.getTaskList().addValueChangeHandler(new ValueChangeHandler<Task>() {
 			
 			public void onValueChange(ValueChangeEvent<Task> event) {
 				if(viewPresenterCache.containsKey(((Task)event.getValue()).operationId)){
@@ -104,7 +104,7 @@ public class TasksSectionViewPresenter implements SectionViewPresenter, ViewPres
 				}else
 					eventBus.fireEvent(new OperationInvokedEvent(((Task)event.getValue()).operationId, ((Task)event.getValue()).operationInstanceId, presenterManager));
 			}
-		});
+		});*/
 	}
 
 	public void registerEventHandlers(EventBus eventBus) {
@@ -114,7 +114,7 @@ public class TasksSectionViewPresenter implements SectionViewPresenter, ViewPres
 	public void managePresenter(String presenterId, ViewPresenter presenter) {
 		this.viewPresenterCache.put(presenterId, presenter);
 		((OperationViewPresenter)presenter).goCompact(this.view.getOperationViewContainer());
-		((OperationViewPresenter)presenter).setTargetEntity(((Task)this.view.getTaskList().getValue()).targetId);
+		//((OperationViewPresenter)presenter).setTargetEntity(((Task)this.view.getTaskList().getValue()).targetId);
 	}
 
 }

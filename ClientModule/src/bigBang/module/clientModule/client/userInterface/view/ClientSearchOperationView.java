@@ -1,5 +1,6 @@
 package bigBang.module.clientModule.client.userInterface.view;
 
+import bigBang.library.client.HasSelectables;
 import bigBang.library.client.userInterface.view.View;
 import bigBang.module.clientModule.client.userInterface.ClientSearchPanel;
 import bigBang.module.clientModule.client.userInterface.presenter.ClientSearchOperationViewPresenter;
@@ -31,7 +32,7 @@ public class ClientSearchOperationView extends View implements ClientSearchOpera
 		initWidget(wrapper);
 	}
 	
-	public HasValue<String> getClientSearchList() {
+	public HasSelectables getClientSearchList() {
 		return this.searchPanel;
 	}
 
