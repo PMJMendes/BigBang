@@ -103,7 +103,7 @@ public class LoginViewPresenter implements ViewPresenter {
 					view.setSelectedDomain(domain);
 					finishGo();
 				} else {				
-					eventBus.fireEvent(new LoginSuccessEvent(username));
+					eventBus.fireEvent(new LoginSuccessEvent(username, domain));
 					GWT.log("Authentication success for " + username);
 				}
 			}
@@ -118,7 +118,7 @@ public class LoginViewPresenter implements ViewPresenter {
 		service.login(view.getUsername().getValue(), view.getPassword().getValue(), view.getDomain(), new AsyncCallback<String>() {
 			
 			public void onSuccess(String username) {
-				eventBus.fireEvent(new LoginSuccessEvent(username));
+				eventBus.fireEvent(new LoginSuccessEvent(username, view.getDomain()));
 				GWT.log("Authentication success for " + username);
 			}
 			
