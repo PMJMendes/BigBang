@@ -157,16 +157,16 @@ public class CostCenterServiceImpl
 				throw new BigBangException(e.getMessage(), e);
 			}
 
-			try
-			{
-				ldb.Disconnect();
-			}
-			catch (Throwable e)
-			{
-				throw new BigBangException(e.getMessage(), e);
-			}
-
 			larrResult[i].members = larrAuxUsers.toArray(new User[larrAuxUsers.size()]);
+		}
+
+		try
+		{
+			ldb.Disconnect();
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangException(e.getMessage(), e);
 		}
 
 		return larrResult;
