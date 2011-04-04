@@ -14,19 +14,19 @@ public class TipifiedListServiceImpl extends RemoteServiceServlet implements Tip
 	}
 
 	@Override
-	public String[] createListItem(String[] item) {
+	public String[] createListItem(String listId, String[] item) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public String[] saveListItem(String[] item) {
+	public String[] saveListItem(String listId, String[] item) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public void deleteListItem(String itemId) {
+	public void deleteListItem(String listId, String itemId) {
 		// TODO Auto-generated method stub
 		
 	}
