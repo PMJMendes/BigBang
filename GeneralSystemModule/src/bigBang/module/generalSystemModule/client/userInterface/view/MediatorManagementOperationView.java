@@ -16,7 +16,7 @@ import bigBang.library.client.userInterface.view.View;
 import bigBang.module.generalSystemModule.client.userInterface.MediatorList;
 import bigBang.module.generalSystemModule.client.userInterface.MediatorListEntry;
 import bigBang.module.generalSystemModule.client.userInterface.presenter.MediatorManagementOperationViewPresenter;
-import bigBang.module.generalSystemModule.shared.ComissionProfile;
+import bigBang.module.generalSystemModule.shared.CommissionProfile;
 import bigBang.module.generalSystemModule.shared.Mediator;
 
 public class MediatorManagementOperationView extends View implements MediatorManagementOperationViewPresenter.Display {
@@ -165,12 +165,12 @@ public class MediatorManagementOperationView extends View implements MediatorMan
 	}
 
 	@Override
-	public void setMediatorComissionProfiles(ComissionProfile[] profiles) {
+	public void setMediatorComissionProfiles(CommissionProfile[] profiles) {
 		this.mediatorForm.setComissionProfiles(profiles);
 	}
 
 	@Override
-	public void setNewMediatorComissionProfiles(ComissionProfile[] profiles) {
+	public void setNewMediatorComissionProfiles(CommissionProfile[] profiles) {
 		this.newMediatorForm.setComissionProfiles(profiles);
 	}
 

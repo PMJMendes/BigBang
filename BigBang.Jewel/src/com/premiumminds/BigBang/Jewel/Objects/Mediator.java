@@ -3,22 +3,22 @@ package com.premiumminds.BigBang.Jewel.Objects;
 import java.sql.ResultSet;
 import java.util.UUID;
 
+import com.premiumminds.BigBang.Jewel.BigBangJewelException;
+import com.premiumminds.BigBang.Jewel.Constants;
+
 import Jewel.Engine.Engine;
 import Jewel.Engine.SysObjects.JewelEngineException;
 import Jewel.Engine.SysObjects.ObjectBase;
 
-import com.premiumminds.BigBang.Jewel.BigBangJewelException;
-import com.premiumminds.BigBang.Jewel.Constants;
-
-public class CostCenter
+public class Mediator
 	extends ObjectBase
 {
-    public static CostCenter GetInstance(UUID pidNameSpace, UUID pidKey)
+    public static Mediator GetInstance(UUID pidNameSpace, UUID pidKey)
 		throws BigBangJewelException
 	{
 	    try
 	    {
-			return (CostCenter)Engine.GetWorkInstance(Engine.FindEntity(pidNameSpace, Constants.ObjID_CostCenter), pidKey);
+			return (Mediator)Engine.GetWorkInstance(Engine.FindEntity(pidNameSpace, Constants.ObjID_Mediator), pidKey);
 		}
 	    catch (Throwable e)
 	    {
@@ -26,12 +26,12 @@ public class CostCenter
 		}
 	}
 
-    public static CostCenter GetInstance(UUID pidNameSpace, ResultSet prsObject)
+	public static Mediator GetInstance(UUID pidNameSpace, ResultSet prsObject)
 		throws BigBangJewelException
 	{
 	    try
 	    {
-			return (CostCenter)Engine.GetWorkInstance(Engine.FindEntity(pidNameSpace, Constants.ObjID_CostCenter), prsObject);
+			return (Mediator)Engine.GetWorkInstance(Engine.FindEntity(pidNameSpace, Constants.ObjID_Mediator), prsObject);
 		}
 	    catch (Throwable e)
 	    {

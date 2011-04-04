@@ -23,7 +23,7 @@ import bigBang.library.client.userInterface.presenter.OperationViewPresenter;
 import bigBang.library.client.userInterface.view.View;
 import bigBang.library.interfaces.Service;
 import bigBang.module.generalSystemModule.interfaces.MediatorServiceAsync;
-import bigBang.module.generalSystemModule.shared.ComissionProfile;
+import bigBang.module.generalSystemModule.shared.CommissionProfile;
 import bigBang.module.generalSystemModule.shared.Mediator;
 import bigBang.module.generalSystemModule.shared.operation.MediatorManagementOperation;
 
@@ -43,7 +43,7 @@ public class MediatorManagementOperationViewPresenter implements
 		Mediator getMediatorInfo();
 		boolean isMediatorFormValid();
 		void showDetailsForMediator(Mediator mediator);
-		void setMediatorComissionProfiles(ComissionProfile[] profiles);
+		void setMediatorComissionProfiles(CommissionProfile[] profiles);
 		
 		//Mediator Creation
 		HasClickHandlers getNewMediatorButton();
@@ -52,7 +52,7 @@ public class MediatorManagementOperationViewPresenter implements
 		boolean isNewMediatorFormValid();
 		Mediator getNewMediatorInfo();
 		void showNewMediatorForm(boolean show);
-		void setNewMediatorComissionProfiles(ComissionProfile[] profiles);
+		void setNewMediatorComissionProfiles(CommissionProfile[] profiles);
 		
 		//Mediator Deletion
 		HasClickHandlers getDeleteMediatorButton();
@@ -68,7 +68,7 @@ public class MediatorManagementOperationViewPresenter implements
 	private MediatorManagementOperation operation;
 	
 	private Mediator[] mediatorCache;
-	private ComissionProfile[] comissionProfiles;
+	private CommissionProfile[] comissionProfiles;
 	
 	public MediatorManagementOperationViewPresenter(EventBus eventBus, MediatorServiceAsync service, Display view) {
 		this.setEventBus(eventBus);

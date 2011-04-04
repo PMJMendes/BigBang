@@ -38,8 +38,8 @@ public class CostCenterServiceImpl
 		int i;
         ResultSet lrsUsers;
         ArrayList<User> larrAuxUsers;
-		int[] larrMembers;
 		IEntity lrefUserDecs;
+		int[] larrMembers;
 		java.lang.Object[] larrParams;
 		UserDecoration lobjUser;
 		User lobjTmpUser;

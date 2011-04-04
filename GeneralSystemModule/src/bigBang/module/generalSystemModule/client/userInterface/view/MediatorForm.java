@@ -6,7 +6,7 @@ import bigBang.library.client.userInterface.AddressFormField;
 import bigBang.library.client.userInterface.ListBoxFormField;
 import bigBang.library.client.userInterface.TextBoxFormField;
 import bigBang.library.client.userInterface.view.FormView;
-import bigBang.module.generalSystemModule.shared.ComissionProfile;
+import bigBang.module.generalSystemModule.shared.CommissionProfile;
 import bigBang.module.generalSystemModule.shared.Mediator;
 import bigBang.module.generalSystemModule.shared.formValidator.MediatorFormValidator;
 
@@ -42,7 +42,7 @@ public class MediatorForm extends FormView {
 		addFormField(address);
 	}
 	
-	public void setComissionProfiles(ComissionProfile[] comissionProfiles) {
+	public void setComissionProfiles(CommissionProfile[] comissionProfiles) {
 		comissionProfile.addItem("Não atribuído", "");
 		for(int i = 0; i < comissionProfiles.length; i++) {
 			//comissionProfile.addItem(comissionProfiles[i].name, comissionProfiles[i].id);

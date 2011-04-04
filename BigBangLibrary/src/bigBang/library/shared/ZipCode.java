@@ -2,10 +2,14 @@ package bigBang.library.shared;
 
 import java.io.Serializable;
 
-public class ZipCode implements Serializable {
-
+public class ZipCode
+	implements Serializable
+{
 	private static final long serialVersionUID = 1L;
 
-	public String zip1;
-	public String zip2;
+	public String code;
+	public String city;
+	public String county;
+	public String district;
+	public String country;
 }
