@@ -104,15 +104,6 @@ public class CostCenterServiceImpl
 
 		larrResult = larrAux.toArray(new CostCenter[larrAux.size()]);
 		
-		try
-		{
-			ldb.Disconnect();
-		}
-		catch (Throwable e)
-		{
-			throw new BigBangException(e.getMessage(), e);
-		}
-
 		larrMembers = new int[1];
 		larrMembers[0] = Constants.FKCostCenter_In_UserDecoration;
 		larrParams = new java.lang.Object[1];
@@ -163,6 +154,15 @@ public class CostCenterServiceImpl
 			catch (Throwable e)
 			{
 				try { ldb.Disconnect(); } catch (Throwable e1) {}
+				throw new BigBangException(e.getMessage(), e);
+			}
+
+			try
+			{
+				ldb.Disconnect();
+			}
+			catch (Throwable e)
+			{
 				throw new BigBangException(e.getMessage(), e);
 			}
 
