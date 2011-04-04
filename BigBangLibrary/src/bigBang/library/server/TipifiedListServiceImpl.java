@@ -1,6 +1,8 @@
 package bigBang.library.server;
 
 import bigBang.library.interfaces.TipifiedListService;
+import bigBang.library.shared.TipifiedListItem;
+
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 
 public class TipifiedListServiceImpl extends RemoteServiceServlet implements TipifiedListService {
@@ -8,19 +10,19 @@ public class TipifiedListServiceImpl extends RemoteServiceServlet implements Tip
 	private static final long serialVersionUID = 1L;
 
 	@Override
-	public String[] getListItems(String listId) {
+	public TipifiedListItem[] getListItems(String listId) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public String[] createListItem(String listId, String[] item) {
+	public TipifiedListItem createListItem(String listId, TipifiedListItem item) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public String[] saveListItem(String listId, String[] item) {
+	public TipifiedListItem saveListItem(String listId, TipifiedListItem item) {
 		// TODO Auto-generated method stub
 		return null;
 	}

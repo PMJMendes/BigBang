@@ -1,5 +1,7 @@
 package bigBang.library.interfaces;
 
+import bigBang.library.shared.TipifiedListItem;
+
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.rpc.RemoteService;
 import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
@@ -23,11 +25,11 @@ public interface TipifiedListService extends RemoteService {
 	//v[0] = item id
 	//v[1] = item description
 	
-	public String[] getListItems(String listId);
+	public TipifiedListItem[] getListItems(String listId);
 	
-	public String[] createListItem(String listId, String[] item);
+	public TipifiedListItem createListItem(String listId, TipifiedListItem item);
 	
-	public String[] saveListItem(String listId, String[] item);
+	public TipifiedListItem saveListItem(String listId, TipifiedListItem item);
 	
 	public void deleteListItem(String listId, String itemId);
 

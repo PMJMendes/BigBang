@@ -1,15 +1,17 @@
 package bigBang.library.interfaces;
 
+import bigBang.library.shared.TipifiedListItem;
+
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 public interface TipifiedListServiceAsync {
 
 	void deleteListItem(String listId, String itemId, AsyncCallback<Void> callback);
 
-	void createListItem(String listId, String[] item, AsyncCallback<String[]> callback);
+	void createListItem(String listId, TipifiedListItem item, AsyncCallback<TipifiedListItem> callback);
 
-	void getListItems(String listId, AsyncCallback<String[]> callback);
+	void getListItems(String listId, AsyncCallback<TipifiedListItem[]> callback);
 
-	void saveListItem(String listId, String[] item, AsyncCallback<String[]> callback);
+	void saveListItem(String listId, TipifiedListItem item, AsyncCallback<TipifiedListItem> callback);
 
 }
