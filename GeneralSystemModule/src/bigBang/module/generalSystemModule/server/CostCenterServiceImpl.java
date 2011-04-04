@@ -211,6 +211,14 @@ public class CostCenterServiceImpl
 		throws SessionExpiredException, BigBangException
 	{
 		ManageCostCenters lopMCC;
+        ResultSet lrsUsers;
+        ArrayList<User> larrAuxUsers;
+        MasterDB ldb;
+		IEntity lrefUserDecs;
+		int[] larrMembers;
+		java.lang.Object[] larrParams;
+		UserDecoration lobjUser;
+		User lobjTmpUser;
 
 		if ( Engine.getCurrentUser() == null )
 			throw new SessionExpiredException();
@@ -234,10 +242,79 @@ public class CostCenterServiceImpl
 			throw new BigBangException(e.getMessage(), e);
 		}
 
+		larrMembers = new int[1];
+		larrMembers[0] = Constants.FKCostCenter_In_UserDecoration;
+		larrParams = new java.lang.Object[1];
+		larrParams[0] = UUID.fromString(costCenter.id);
+
+		larrAuxUsers = new ArrayList<User>();
+
+		try
+		{
+        	lrefUserDecs = Entity.GetInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), Constants.ObjID_Decorations));
+			ldb = new MasterDB();
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangException(e.getMessage(), e);
+		}
+
+		try
+		{
+			lrsUsers = lrefUserDecs.SelectByMembers(ldb, larrMembers, larrParams, new int[0]);
+		}
+		catch (Throwable e)
+		{
+			try { ldb.Disconnect(); } catch (Throwable e1) {}
+			throw new BigBangException(e.getMessage(), e);
+		}
+
+		try
+		{
+			while ( lrsUsers.next() )
+			{
+				lobjUser = UserDecoration.GetInstance(Engine.getCurrentNameSpace(), lrsUsers);
+				lobjTmpUser = new User();
+				lobjTmpUser.id = lobjUser.getKey().toString();
+				lobjTmpUser.name = lobjUser.getBaseUser().getDisplayName();
+				lobjTmpUser.username = lobjUser.getBaseUser().getUserName();
+				lobjTmpUser.password = null; //JMMM: No way!
+				lobjTmpUser.profileId = lobjUser.getBaseUser().getProfile().getKey().toString();
+				lobjTmpUser.costCenterId = ((UUID)lobjUser.getAt(2)).toString();
+				lobjTmpUser.email = (String)lobjUser.getAt(3);
+				larrAuxUsers.add(lobjTmpUser);
+			}
+		}
+        catch (Throwable e)
+        {
+			try { lrsUsers.close(); } catch (Throwable e1) {}
+			try { ldb.Disconnect(); } catch (Throwable e1) {}
+        	throw new BigBangException(e.getMessage(), e);
+        }
+
+        try
+        {
+        	lrsUsers.close();
+        }
+		catch (Throwable e)
+		{
+			try { ldb.Disconnect(); } catch (Throwable e1) {}
+			throw new BigBangException(e.getMessage(), e);
+		}
+
+		try
+		{
+			ldb.Disconnect();
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangException(e.getMessage(), e);
+		}
+
 		costCenter.id = lopMCC.marrModify[0].mid.toString();
 		costCenter.code = lopMCC.marrModify[0].mstrCode;
 		costCenter.name = lopMCC.marrModify[0].mstrName;
-		costCenter.members = new User[0];
+		costCenter.members = larrAuxUsers.toArray(new User[larrAuxUsers.size()]);
 
 		return costCenter;
 	}
