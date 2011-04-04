@@ -1,5 +1,7 @@
 package bigBang.library.interfaces;
 
+import bigBang.library.shared.BigBangException;
+import bigBang.library.shared.SessionExpiredException;
 import bigBang.library.shared.TipifiedListItem;
 
 import com.google.gwt.core.client.GWT;
@@ -21,16 +23,8 @@ public interface TipifiedListService extends RemoteService {
 		}
 	}
 	
-	//List item is a 2 position vector
-	//v[0] = item id
-	//v[1] = item description
-	
-	public TipifiedListItem[] getListItems(String listId);
-	
-	public TipifiedListItem createListItem(String listId, TipifiedListItem item);
-	
-	public TipifiedListItem saveListItem(String listId, TipifiedListItem item);
-	
-	public void deleteListItem(String listId, String itemId);
-
+	public TipifiedListItem[] getListItems(String listId) throws SessionExpiredException, BigBangException;
+	public TipifiedListItem createListItem(String listId, TipifiedListItem item) throws SessionExpiredException, BigBangException;
+	public TipifiedListItem saveListItem(String listId, TipifiedListItem item) throws SessionExpiredException, BigBangException;
+	public void deleteListItem(String listId, String itemId) throws SessionExpiredException, BigBangException;
 }

@@ -1,35 +1,225 @@
 package bigBang.library.server;
 
+import java.sql.ResultSet;
+import java.util.ArrayList;
+import java.util.UUID;
+
+import Jewel.Engine.Engine;
+import Jewel.Engine.DataAccess.MasterDB;
+import Jewel.Engine.Implementation.Entity;
+import Jewel.Engine.Interfaces.IEntity;
+import Jewel.Engine.SysObjects.ObjectBase;
 import bigBang.library.interfaces.TipifiedListService;
+import bigBang.library.shared.BigBangException;
+import bigBang.library.shared.SessionExpiredException;
 import bigBang.library.shared.TipifiedListItem;
 
-import com.google.gwt.user.server.rpc.RemoteServiceServlet;
-
-public class TipifiedListServiceImpl extends RemoteServiceServlet implements TipifiedListService {
-
+public class TipifiedListServiceImpl
+	extends EngineImplementor
+	implements TipifiedListService
+{
 	private static final long serialVersionUID = 1L;
 
-	@Override
-	public TipifiedListItem[] getListItems(String listId) {
-		// TODO Auto-generated method stub
-		return null;
+	public TipifiedListItem[] getListItems(String listId)
+		throws SessionExpiredException, BigBangException
+	{
+		UUID lidListRef;
+        MasterDB ldb;
+        ResultSet lrsItems;
+		ArrayList<TipifiedListItem> larrAux;
+		ObjectBase lobjItem;
+		TipifiedListItem lobjAux;
+
+		if ( Engine.getCurrentUser() == null )
+			throw new SessionExpiredException();
+
+		larrAux = new ArrayList<TipifiedListItem>();
+
+		try
+		{
+			lidListRef = Engine.FindEntity(Engine.getCurrentNameSpace(), UUID.fromString(listId));
+			ldb = new MasterDB();
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangException(e.getMessage(), e);
+		}
+
+        try
+        {
+	        lrsItems = Entity.GetInstance(lidListRef).SelectAll(ldb);
+		}
+		catch (Throwable e)
+		{
+			try { ldb.Disconnect(); } catch (Throwable e1) {}
+			throw new BigBangException(e.getMessage(), e);
+		}
+
+		try
+		{
+	        while (lrsItems.next())
+	        {
+	        	lobjItem = Engine.GetWorkInstance(lidListRef, lrsItems);
+	        	lobjAux = new TipifiedListItem();
+	        	lobjAux.id = lobjItem.getKey().toString();
+	        	lobjAux.value = (String) lobjItem.getAt(0);
+	        	larrAux.add(lobjAux);
+	        }
+        }
+        catch (Throwable e)
+        {
+			try { lrsItems.close(); } catch (Throwable e1) {}
+			try { ldb.Disconnect(); } catch (Throwable e1) {}
+        	throw new BigBangException(e.getMessage(), e);
+        }
+
+        try
+        {
+        	lrsItems.close();
+        }
+		catch (Throwable e)
+		{
+			try { ldb.Disconnect(); } catch (Throwable e1) {}
+			throw new BigBangException(e.getMessage(), e);
+		}
+
+		try
+		{
+			ldb.Disconnect();
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangException(e.getMessage(), e);
+		}
+
+		return larrAux.toArray(new TipifiedListItem[larrAux.size()]);
 	}
 
-	@Override
-	public TipifiedListItem createListItem(String listId, TipifiedListItem item) {
-		// TODO Auto-generated method stub
-		return null;
+	public TipifiedListItem createListItem(String listId, TipifiedListItem item)
+		throws SessionExpiredException, BigBangException
+	{
+		UUID lidListRef;
+        MasterDB ldb;
+		ObjectBase lobjItem;
+
+		if ( Engine.getCurrentUser() == null )
+			throw new SessionExpiredException();
+
+		try
+		{
+			lidListRef = Engine.FindEntity(Engine.getCurrentNameSpace(), UUID.fromString(listId));
+			lobjItem = Engine.GetWorkInstance(lidListRef, (UUID)null);
+			lobjItem.setAt(0, item.value);
+			ldb = new MasterDB();
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangException(e.getMessage(), e);
+		}
+
+		try
+		{
+			lobjItem.SaveToDb(ldb);
+		}
+		catch (Throwable e)
+		{
+			try { ldb.Disconnect(); } catch (Throwable e1) {}
+			throw new BigBangException(e.getMessage(), e);
+		}
+
+		try
+		{
+			ldb.Disconnect();
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangException(e.getMessage(), e);
+		}
+
+		item.id = lobjItem.getKey().toString();
+		return item;
 	}
 
-	@Override
-	public TipifiedListItem saveListItem(String listId, TipifiedListItem item) {
-		// TODO Auto-generated method stub
-		return null;
+	public TipifiedListItem saveListItem(String listId, TipifiedListItem item)
+		throws SessionExpiredException, BigBangException
+	{
+		UUID lidListRef;
+        MasterDB ldb;
+		ObjectBase lobjItem;
+
+		if ( Engine.getCurrentUser() == null )
+			throw new SessionExpiredException();
+
+		try
+		{
+			lidListRef = Engine.FindEntity(Engine.getCurrentNameSpace(), UUID.fromString(listId));
+			lobjItem = Engine.GetWorkInstance(lidListRef, UUID.fromString(item.id));
+			lobjItem.setAt(0, item.value);
+			ldb = new MasterDB();
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangException(e.getMessage(), e);
+		}
+
+		try
+		{
+			lobjItem.SaveToDb(ldb);
+		}
+		catch (Throwable e)
+		{
+			try { ldb.Disconnect(); } catch (Throwable e1) {}
+			throw new BigBangException(e.getMessage(), e);
+		}
+
+		try
+		{
+			ldb.Disconnect();
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangException(e.getMessage(), e);
+		}
+
+		return item;
 	}
 
-	@Override
-	public void deleteListItem(String listId, String itemId) {
-		// TODO Auto-generated method stub
-		
+	public void deleteListItem(String listId, String itemId)
+		throws SessionExpiredException, BigBangException
+	{
+		IEntity lrefList;
+        MasterDB ldb;
+
+		if ( Engine.getCurrentUser() == null )
+			throw new SessionExpiredException();
+
+		try
+		{
+			lrefList = Entity.GetInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), UUID.fromString(listId)));
+			ldb = new MasterDB();
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangException(e.getMessage(), e);
+		}
+
+		try
+		{
+			lrefList.Delete(ldb, UUID.fromString(itemId));
+		}
+		catch (Throwable e)
+		{
+			try { ldb.Disconnect(); } catch (Throwable e1) {}
+			throw new BigBangException(e.getMessage(), e);
+		}
+
+		try
+		{
+			ldb.Disconnect();
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangException(e.getMessage(), e);
+		}
 	}
 }
