@@ -121,9 +121,9 @@ public class AddressFormField extends FormField<Address> {
 	public void setValue(Address address){
 		street1.setValue(address.street1);
 		street2.setValue(address.street2);
-		zipCode1.setValue(address.zipCode.zip1);
-		zipCode2.setValue(address.zipCode.zip2);
-		country.setValue(address.country);
+		/*zipCode1.setValue(address.zipCode.zip1);
+		zipCode2.setValue(address.zipCode.zip2); //TODO
+		country.setValue(address.country);*/
 	}
 	
 	@Override
@@ -131,9 +131,9 @@ public class AddressFormField extends FormField<Address> {
 		Address result = new Address();
 		result.street1 = street1.getValue();
 		result.street2 = street2.getValue();
-		result.zipCode.zip1 = zipCode1.getValue();
+		/*result.zipCode.zip1 = zipCode1.getValue();
 		result.zipCode.zip2 = zipCode2.getValue();
-		result.country = country.getValue();
+		result.country = country.getValue();*/
 		return result;
 	}
 	
