@@ -1,11 +1,9 @@
 package bigBang.module.generalSystemModule.shared;
 
-import java.io.Serializable;
+import bigBang.library.shared.TipifiedListItem;
 
-public class ComissionProfile implements Serializable {
+public class ComissionProfile extends TipifiedListItem {
 
 	private static final long serialVersionUID = 1L;
 
-	public String id;
-	public String name;
 }

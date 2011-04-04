@@ -45,7 +45,7 @@ public class MediatorForm extends FormView {
 	public void setComissionProfiles(ComissionProfile[] comissionProfiles) {
 		comissionProfile.addItem("Não atribuído", "");
 		for(int i = 0; i < comissionProfiles.length; i++) {
-			comissionProfile.addItem(comissionProfiles[i].name, comissionProfiles[i].id);
+			//comissionProfile.addItem(comissionProfiles[i].name, comissionProfiles[i].id);
 		}
 	}
 	
@@ -55,7 +55,7 @@ public class MediatorForm extends FormView {
 		mediator.ISPNumber = ISPNumber.getValue();
 		mediator.taxNumber = taxNumber.getValue();
 		mediator.comissionProfile.id = comissionProfile.getValue();
-		mediator.comissionProfile.name = comissionProfile.getSelectedItemText();
+		//mediator.comissionProfile.name = comissionProfile.getSelectedItemText();
 		mediator.address = address.getValue();
 		mediator.NIB = NIB.getValue();
 		return mediator;

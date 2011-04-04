@@ -104,7 +104,7 @@ public class MediatorManagementOperationViewPresenter implements
 	}
 	
 	private void loadData(){
-		service.getComissionProfiles(new AsyncCallback<ComissionProfile[]>() {
+		/*service.getComissionProfiles(new AsyncCallback<ComissionProfile[]>() {
 
 			@Override
 			public void onFailure(Throwable caught) {
@@ -129,7 +129,7 @@ public class MediatorManagementOperationViewPresenter implements
 					}
 				});
 			}
-		});
+		});/
 	}
 
 	@Override
@@ -259,6 +259,13 @@ public class MediatorManagementOperationViewPresenter implements
 
 
 	private void setReadOnly(boolean result) {
+		// TODO Auto-generated method stub
+		
+	}
+
+
+	@Override
+	public void bind() {
 		// TODO Auto-generated method stub
 		
 	}

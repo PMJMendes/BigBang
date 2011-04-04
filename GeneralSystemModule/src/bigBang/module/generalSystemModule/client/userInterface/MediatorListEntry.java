@@ -33,7 +33,7 @@ public class MediatorListEntry extends ListEntry<Mediator> {
 		Mediator mediator = (Mediator) info;
 		setTitle(mediator.name);
 		setText(mediator.taxNumber);
-		comissioningProfileLabel.setText(mediator.comissionProfile.name);
+		//comissioningProfileLabel.setText(mediator.comissionProfile.name);
 	}
 	
 }
