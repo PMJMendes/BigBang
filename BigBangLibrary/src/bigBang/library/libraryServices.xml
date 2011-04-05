@@ -8,6 +8,11 @@
 	<servlet-class>bigBang.library.server.BigBangPermissionServiceImpl
 	</servlet-class>
 </servlet>
+<servlet>
+	<servlet-name>TipifiedListService</servlet-name>
+	<servlet-class>bigBang.library.server.TipifiedListServiceImpl
+	</servlet-class>
+</servlet>
 
 <servlet-mapping>
 	<servlet-name>SearchService</servlet-name>
@@ -16,4 +21,8 @@
 <servlet-mapping>
 	<servlet-name>BigBangPermissionService</servlet-name>
 	<url-pattern>/bigbang/BigBangPermissionService</url-pattern>
+</servlet-mapping>
+<servlet-mapping>
+	<servlet-name>TipifiedListService</servlet-name>
+	<url-pattern>/bigbang/TipifiedListService</url-pattern>
 </servlet-mapping>

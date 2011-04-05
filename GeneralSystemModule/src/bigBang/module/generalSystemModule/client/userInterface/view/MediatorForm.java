@@ -1,6 +1,8 @@
 package bigBang.module.generalSystemModule.client.userInterface.view;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.event.dom.client.HasClickHandlers;
+import com.google.gwt.user.client.ui.Button;
 
 import bigBang.library.client.userInterface.AddressFormField;
 import bigBang.library.client.userInterface.ListBoxFormField;
@@ -10,7 +12,7 @@ import bigBang.module.generalSystemModule.shared.CommissionProfile;
 import bigBang.module.generalSystemModule.shared.Mediator;
 import bigBang.module.generalSystemModule.shared.formValidator.MediatorFormValidator;
 
-public class MediatorForm extends FormView {
+public class MediatorForm extends FormView<Mediator> {
 
 	private Mediator mediator;
 	
@@ -20,6 +22,10 @@ public class MediatorForm extends FormView {
 	private ListBoxFormField comissionProfile;
 	private AddressFormField address;
 	private TextBoxFormField NIB;
+	
+	private Button editCostCenterButton;
+	private Button saveCostCenterButton;
+	private Button deleteCostCenterButton;
 	
 	public MediatorForm() {
 		addSection("Informação geral");
@@ -36,6 +42,14 @@ public class MediatorForm extends FormView {
 		addFormField(ISPNumber);
 		addFormField(comissionProfile);
 		
+		this.editCostCenterButton = new Button("Editar");	
+		this.saveCostCenterButton = new Button("Guardar");
+		this.deleteCostCenterButton = new Button("Apagar");
+		
+		this.addButton(editCostCenterButton);
+		this.addButton(saveCostCenterButton);
+		this.addButton(deleteCostCenterButton);
+		
 		addSection("Morada");
 		
 		address = new AddressFormField(new MediatorFormValidator.AddressValidator());
@@ -43,27 +57,27 @@ public class MediatorForm extends FormView {
 	}
 	
 	public void setComissionProfiles(CommissionProfile[] comissionProfiles) {
-		comissionProfile.addItem("Não atribuído", "");
+		comissionProfile.clearValues();
 		for(int i = 0; i < comissionProfiles.length; i++) {
-			//comissionProfile.addItem(comissionProfiles[i].name, comissionProfiles[i].id);
+			comissionProfile.addItem(comissionProfiles[i].value, comissionProfiles[i].id);
 		}
 	}
 	
 	@Override
-	public Object getInfo() {
+	public Mediator getInfo() {
 		mediator.name = name.getValue();
 		mediator.ISPNumber = ISPNumber.getValue();
 		mediator.taxNumber = taxNumber.getValue();
 		mediator.comissionProfile.id = comissionProfile.getValue();
-		//mediator.comissionProfile.name = comissionProfile.getSelectedItemText();
+		mediator.comissionProfile.value = comissionProfile.getSelectedItemText();
 		mediator.address = address.getValue();
 		mediator.NIB = NIB.getValue();
 		return mediator;
 	}
-
+	
 	@Override
-	public void setInfo(Object info) {
-		this.mediator = (Mediator) info;
+	public void setInfo(Mediator info) {
+		this.mediator =  info != null ? (Mediator) info : new Mediator();
 		name.setValue(mediator.name);
 		ISPNumber.setValue(mediator.ISPNumber);
 		taxNumber.setValue(mediator.taxNumber);
@@ -71,16 +85,24 @@ public class MediatorForm extends FormView {
 		address.setValue(mediator.address);
 		NIB.setValue(mediator.NIB);
 	}
-
+	
+	public HasClickHandlers getSaveButton() {
+		return saveCostCenterButton;
+	}
+	
+	public HasClickHandlers getEditButton() {
+		return editCostCenterButton;
+	}
+	
+	public HasClickHandlers getDeleteButton() {
+		return deleteCostCenterButton;
+	}
+	
 	@Override
-	public void clearInfo() {
-		this.mediator = new Mediator();
-		name.setValue("");
-		ISPNumber.setValue("");
-		taxNumber.setValue("");
-		comissionProfile.setValue("");
-		address.clear();
-		NIB.setValue("");
+	public void setReadOnly(boolean readOnly) {
+		super.setReadOnly(readOnly);
+		saveCostCenterButton.setVisible(!readOnly);
+		editCostCenterButton.setVisible(readOnly);
 	}
 	
 }

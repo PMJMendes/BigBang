@@ -9,6 +9,10 @@ public class Mediator
 {
 	private static final long serialVersionUID = 1L;
 
+	public Mediator(){
+		comissionProfile = new CommissionProfile();
+	}
+	
 	public String id;
 	public String name;
 	public String ISPNumber;

@@ -16,9 +16,6 @@ import bigBang.library.client.userInterface.view.View;
 
 import com.google.gwt.dom.client.Style.FontStyle;
 import com.google.gwt.dom.client.Style.Unit;
-import com.google.gwt.event.dom.client.HasScrollHandlers;
-import com.google.gwt.event.dom.client.ScrollEvent;
-import com.google.gwt.event.dom.client.ScrollHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.google.gwt.user.client.ui.HasVerticalAlignment;
@@ -34,7 +31,6 @@ public class List<T> extends View implements HasValueSelectables<T>, java.util.L
 
 	protected java.util.List<ListEntry<T>> entries;
 	protected boolean multipleSelection = false;
-	private boolean valueChangeHandlerInitialized;
 
 	//UI
 	protected HasWidgets headerContainer;
@@ -370,8 +366,11 @@ public class List<T> extends View implements HasValueSelectables<T>, java.util.L
 			}
 		};
 		fireEvent(new SelectionChangedEvent(getSelected()));
+		boolean hadElements = !entries.isEmpty();
 		this.listPanel.clear();
 		this.entries.clear();
+		if(hadElements)
+			onSizeChanged();
 	}
 
 	@Override

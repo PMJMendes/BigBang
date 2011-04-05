@@ -6,22 +6,18 @@ import com.google.gwt.user.client.ui.Label;
 
 import bigBang.library.client.userInterface.ListEntry;
 import bigBang.module.generalSystemModule.shared.User;
-import bigBang.module.generalSystemModule.shared.UserProfile;
 
 public class UserListEntry extends ListEntry<User> {
 
-	private UserProfile[] userProfiles;
-	
 	private Label userProfileLabel;
 	
-	public UserListEntry(User user, UserProfile[] profiles) {
+	public UserListEntry(User user) {
 		super(user);
 	
-		userProfiles = profiles;
-		
 		HorizontalPanel rightWidgetWrapper = new HorizontalPanel();
 		rightWidgetWrapper.setSize("100px", "100%");
-		userProfileLabel = new Label();
+		if(userProfileLabel == null)
+			userProfileLabel = new Label();
 		userProfileLabel.getElement().getStyle().setFontWeight(FontWeight.NORMAL);		
 		rightWidgetWrapper.add(userProfileLabel);
 		setRightWidget(rightWidgetWrapper);
@@ -31,20 +27,20 @@ public class UserListEntry extends ListEntry<User> {
 		setInfo(user);
 	}
 	
-	public void setInfo(User info) {
+	@Override
+	public <I extends Object> void setInfo(I infoIn) {
+		User info = (User) infoIn;
 		if(info.id == null){
 			setTitle("Novo Utilizador");
 			return;
 		}
 		
+		if(userProfileLabel == null)
+			userProfileLabel = new Label();
+		
 		setTitle(info.name);
 		setText(info.username);
-		for(int i = 0; i < userProfiles.length; i++){
-			if(userProfiles[i].id.equals(info.profile.name)){
-				userProfileLabel.setText(userProfiles[i].name);
-				break;
-			}
-		}
-	}
+		userProfileLabel.setText(info.profile.name);
+	};
 
 }

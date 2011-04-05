@@ -60,23 +60,23 @@ public class UserForm extends FormView<User> {
 	}
 	
 	public void setUserProfiles(UserProfile[] profiles){
-		this.role.clear();
-		addRoleItem("Não atribuído", EMPTY_VALUE);
+		this.role.clearValues();
 		if(profiles != null){
 			for(int i = 0; i < profiles.length; i++) {
 				addRoleItem(profiles[i].name, profiles[i].id);
 			}
 		}
+		this.role.clear();
 	}
 	
 	public void setCostCenters(CostCenter[] costCenters) {
-		this.role.clear();
-		addRoleItem("Não atribuído", EMPTY_VALUE);
+		this.role.clearValues();
 		if(costCenters != null){
 			for(int i = 0; i < costCenters.length; i++) {
 				addCostCenterItem(costCenters[i].name, costCenters[i].id);
 			}
 		}
+		this.role.clear();
 	}
 
 	public void showPasswordField(boolean show){
@@ -104,6 +104,8 @@ public class UserForm extends FormView<User> {
 		info.username = this.username.getValue();
 		info.password = this.password.getValue();
 		info.email = this.email.getValue();
+		if(info.profile == null)
+			info.profile = new UserProfile();
 		info.profile.id = this.role.getValue();
 		info.profile.name = this.role.getSelectedItemText();
 		info.costCenterId = this.costCenter.getValue();

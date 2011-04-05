@@ -1,275 +1,298 @@
 package bigBang.module.generalSystemModule.client.userInterface.presenter;
 
-import org.gwt.mosaic.ui.client.MessageBox.ConfirmationCallback;
+import java.util.Collection;
 
-import com.google.gwt.core.client.GWT;
-import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.event.dom.client.HasClickHandlers;
-import com.google.gwt.event.logical.shared.ValueChangeEvent;
-import com.google.gwt.event.logical.shared.ValueChangeHandler;
-import com.google.gwt.user.client.rpc.AsyncCallback;
-import com.google.gwt.user.client.ui.HasValue;
-import com.google.gwt.user.client.ui.HasWidgets;
-import com.google.gwt.user.client.ui.Widget;
-
+import bigBang.library.client.BigBangAsyncCallback;
 import bigBang.library.client.EventBus;
-import bigBang.library.client.HasSelectables;
+import bigBang.library.client.HasEditableValue;
+import bigBang.library.client.HasValueSelectables;
 import bigBang.library.client.Operation;
 import bigBang.library.client.Selectable;
+import bigBang.library.client.ValueSelectable;
 import bigBang.library.client.event.SelectionChangedEvent;
 import bigBang.library.client.event.SelectionChangedEventHandler;
 import bigBang.library.client.userInterface.presenter.OperationViewPresenter;
 import bigBang.library.client.userInterface.view.View;
 import bigBang.library.interfaces.Service;
+import bigBang.library.interfaces.TipifiedListService;
+import bigBang.library.shared.TipifiedListItem;
 import bigBang.module.generalSystemModule.interfaces.MediatorServiceAsync;
 import bigBang.module.generalSystemModule.shared.CommissionProfile;
 import bigBang.module.generalSystemModule.shared.Mediator;
+import bigBang.module.generalSystemModule.shared.ModuleConstants;
+import bigBang.module.generalSystemModule.shared.formValidator.MediatorFormValidator.ComissionProfileValidator;
 import bigBang.module.generalSystemModule.shared.operation.MediatorManagementOperation;
+
+import com.google.gwt.core.client.GWT;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.dom.client.HasClickHandlers;
+import com.google.gwt.user.client.ui.HasWidgets;
+import com.google.gwt.user.client.ui.Widget;
 
 public class MediatorManagementOperationViewPresenter implements
 		OperationViewPresenter {
 	
 	public interface Display {
-		//Mediator Listing
-		//HasSelectables <T extends Selectable> getMediatorList();
-		void setMediatorListValues(Mediator[] values);
-		void removeMediatorListValues(Mediator[] values);
+		//List
+		HasValueSelectables<Mediator> getList();
+		void clearList();
+		void addValuesToList(Mediator[] result);
+		void removeMediatorFromList(Mediator c);
 		
-		//MediatorInfo
-		HasClickHandlers getEditMediatorButton();
-		HasClickHandlers getSaveMediatorButton();
-		void setMediatorFormEditable(boolean editable);
-		Mediator getMediatorInfo();
-		boolean isMediatorFormValid();
-		void showDetailsForMediator(Mediator mediator);
-		void setMediatorComissionProfiles(CommissionProfile[] profiles);
+		//Form
+		HasEditableValue<Mediator> getForm();
+		HasClickHandlers getSaveButton();
+		HasClickHandlers getEditButton();
+		HasClickHandlers getDeleteButton();
+		boolean isFormValid();
+		void lockForm(boolean lock);
 		
-		//Mediator Creation
-		HasClickHandlers getNewMediatorButton();
-		HasClickHandlers getSubmitNewMediatorButton();
-		void setNewMediatorFormEditable(boolean editable);
-		boolean isNewMediatorFormValid();
-		Mediator getNewMediatorInfo();
-		void showNewMediatorForm(boolean show);
-		void setNewMediatorComissionProfiles(CommissionProfile[] profiles);
+		//General
+		HasClickHandlers getNewButton();
+		HasClickHandlers getRefreshButton();
 		
-		//Mediator Deletion
-		HasClickHandlers getDeleteMediatorButton();
-		void showConfirmDelete(ConfirmationCallback callback);
-		
+		void prepareNewMediator();
+		void removeNewMediatorPreparation();
+		void setCommissionProfiles(CommissionProfile[] profiles);
+
 		Widget asWidget();
 	}
 
 	private MediatorServiceAsync service;
-	private EventBus eventBus;
 	private Display view;
+	private EventBus eventBus;
 	
 	private MediatorManagementOperation operation;
 	
-	private Mediator[] mediatorCache;
+	private boolean bound = false;
+	
+	private Mediator[] mediators;
 	private CommissionProfile[] comissionProfiles;
-	
-	public MediatorManagementOperationViewPresenter(EventBus eventBus, MediatorServiceAsync service, Display view) {
-		this.setEventBus(eventBus);
-		this.setService(service);
-		this.setView((View)view);
-	}
-	
-	
-	@Override
-	public void setService(Service service) {
-		this.service = (MediatorServiceAsync) service;
+
+	public MediatorManagementOperationViewPresenter(EventBus eventBus, Service service, View view){
+		setEventBus(eventBus);
+		setService(service);
+		setView(view);
 	}
 
-	@Override
+	public void setService(Service service) {
+		this.service = (MediatorServiceAsync)service;
+	}
+
 	public void setEventBus(EventBus eventBus) {
 		this.eventBus = eventBus;
 	}
 
-	@Override
 	public void setView(View view) {
 		this.view = (Display)view;
 	}
 
-	@Override
 	public void go(HasWidgets container) {
 		bind();
+		bound = true;
 		
-		this.loadData();
-		view.setMediatorFormEditable(false);
+		view.getList().setMultipleSelectability(false);
+		view.getForm().setReadOnly(true);
+		
+		setup();
 		
 		container.clear();
 		container.add(this.view.asWidget());
 	}
 	
-	private void loadData(){
-		/*service.getComissionProfiles(new AsyncCallback<ComissionProfile[]>() {
-
-			@Override
-			public void onFailure(Throwable caught) {
-				GWT.log("Could not fetch the comission profiles");
+	private void setup(){
+		this.service.getMediators(new BigBangAsyncCallback<Mediator[]>() {
+			public void onSuccess(Mediator[] result) {
+				mediators = result;
+				setupGo();
 			}
+		});
+		TipifiedListService.Util.getInstance().getListItems(ModuleConstants.ListIDs.CommissionProfiles, new BigBangAsyncCallback<TipifiedListItem[]>() {
 
 			@Override
-			public void onSuccess(ComissionProfile[] result) {
-				view.setMediatorComissionProfiles(result);
-				view.setNewMediatorComissionProfiles(result);
-				service.getMediators(new AsyncCallback<Mediator[]>() {
-					
-					@Override
-					public void onSuccess(Mediator[] result) {
-						mediatorCache = result;
-						view.setMediatorListValues(result);
-					}
-					
-					@Override
-					public void onFailure(Throwable caught) {
-						GWT.log("Could not fetch the mediator list");
-					}
-				});
-			}
-		});/
-	}
-
-	@Override
-	public void bind() {
-		/*view.getMediatorList().addSelectionChangedEventHandler(new SelectionChangedEventHandler() {
-			
-			@Override
-			public void onSelectionChanged(SelectionChangedEvent event) {
-				java.util.Collection<Selectable> c = event.getSelected();
-				for(Selectable s : c) {
-					HasValue<Mediator> entry = s;
-					view.showDetailsForMediator(((HasValue<Mediator>)s).getValue());
+			public void onSuccess(TipifiedListItem[] result) {
+				comissionProfiles = new CommissionProfile[result.length];
+				for(int i = 0; i < result.length; i++) {
+					comissionProfiles[i] = new CommissionProfile();
+					comissionProfiles[i].id = result[i].id;
+					comissionProfiles[i].value = result[i]. value;
 				}
-			}
-		});*/
-		view.getEditMediatorButton().addClickHandler(new ClickHandler() {
-			
-			@Override
-			public void onClick(ClickEvent event) {
-				//TODO PERMISSIONS
-				view.setMediatorFormEditable(true);
-			}
-		});
-		view.getSaveMediatorButton().addClickHandler(new ClickHandler() {
-			
-			@Override
-			public void onClick(ClickEvent event) {
-				if(view.isMediatorFormValid()){
-					saveMediator(view.getMediatorInfo());
-					view.setMediatorFormEditable(false);
-				}
-			}
-		});
-		view.getNewMediatorButton().addClickHandler(new ClickHandler() {
-			
-			@Override
-			public void onClick(ClickEvent event) {
-				view.showNewMediatorForm(true);
-				view.setNewMediatorFormEditable(true);
-			}
-		});
-		view.getSubmitNewMediatorButton().addClickHandler(new ClickHandler() {
-			
-			@Override
-			public void onClick(ClickEvent event) {
-				if(view.isNewMediatorFormValid())
-					createMediator(view.getNewMediatorInfo());
-			}
-		});
-		view.getDeleteMediatorButton().addClickHandler(new ClickHandler() {
-			
-			@Override
-			public void onClick(ClickEvent event) {
-				view.showConfirmDelete(new ConfirmationCallback() {
-					
-					@Override
-					public void onResult(boolean result) {
-						if(result)
-							deleteMediator(view.getMediatorInfo());
-					}
-				});
+				setupGo();
 			}
 		});
 	}
 	
-	protected void deleteMediator(final Mediator mediator){
-		/*service.deleteMediator(mediator.id, new AsyncCallback<String>() {
-=======
-		service.deleteMediator(mediator.id, new AsyncCallback<Void>() {
->>>>>>> .r142
+	private void setupGo(){
+		if(this.comissionProfiles == null || this.mediators == null)
+			return;
+		
+		view.clearList();
+		view.getForm().setValue(null);
+		view.setCommissionProfiles(this.comissionProfiles);
+		view.lockForm(true);
+		view.addValuesToList(this.mediators);
+		
+		this.comissionProfiles = null;
+		this.mediators = null;
+	}
+
+	public void bind() {
+		if(bound)
+			return;
+		view.getList().addSelectionChangedEventHandler(new SelectionChangedEventHandler() {
+			
+			@Override
+			public void onSelectionChanged(SelectionChangedEvent event) {
+				GWT.log("selection changed");
+				
+				Collection<? extends Selectable> selected = event.getSelected();
+				if(selected.size() == 0){
+					view.getForm().setValue(null);
+					return;
+				}			
+				
+				for(Selectable s : selected) {
+					@SuppressWarnings("unchecked")
+					ValueSelectable<Mediator> vs = (ValueSelectable<Mediator>) s;
+					Mediator value = vs.getValue();
+					view.getForm().setValue(value);
+					view.getForm().setReadOnly(true);
+					view.lockForm(value == null);
+					if(value.id != null){
+						view.removeNewMediatorPreparation();
+					}
+				}
+			}
+		});
+		view.getNewButton().addClickHandler(new ClickHandler() {
+			
+			@Override
+			public void onClick(ClickEvent event) {
+				view.prepareNewMediator();
+				for(Selectable s : view.getList().getSelected()) {
+					@SuppressWarnings("unchecked")
+					ValueSelectable<Mediator> vs = (ValueSelectable<Mediator>) s;
+					Mediator value = vs.getValue();
+					view.getForm().setValue(value);
+					view.getForm().setReadOnly(false);
+					break;
+				}
+			}
+		});
+		view.getEditButton().addClickHandler(new ClickHandler() {
+			
+			@Override
+			public void onClick(ClickEvent event) {
+				//TODO checkPermission
+				view.getForm().setReadOnly(false);
+			}
+		});
+		view.getSaveButton().addClickHandler(new ClickHandler() {
+			
+			@Override
+			public void onClick(ClickEvent event) {
+				if(!view.isFormValid())
+					return;
+				Mediator value = view.getForm().getValue();
+				if(value.id == null)
+					createMediator(value);
+				else
+					saveMediator(value);
+			}
+		});
+		view.getDeleteButton().addClickHandler(new ClickHandler() {
+			
+			@Override
+			public void onClick(ClickEvent event) {
+				if(view.getForm().getValue().id == null)
+					view.removeNewMediatorPreparation();
+				else
+					deleteMediator(view.getForm().getValue());
+			}
+		});
+		view.getRefreshButton().addClickHandler(new ClickHandler() {
+			
+			@Override
+			public void onClick(ClickEvent event) {
+				setup();
+			}
+		});
+	}
+	public void createMediator(Mediator c) {
+		service.createMediator(c, new BigBangAsyncCallback<Mediator>() {
 
 			@Override
-			public void onFailure(Throwable caught) {
-				GWT.log("Could not delete the mediator");
+			public void onSuccess(Mediator result) {
+				for(ValueSelectable<Mediator> s : view.getList().getSelected()){
+					s.setValue(result);
+					view.getForm().setValue(result);
+					view.getForm().setReadOnly(true);
+					break;
+				}
 			}
+		});
+	}
+	public void saveMediator(Mediator c) {
+		service.saveMediator(c, new BigBangAsyncCallback<Mediator>() {
+
+			@Override
+			public void onSuccess(Mediator result) {
+				for(ValueSelectable<Mediator> s : view.getList().getSelected()){
+					s.setValue(result);
+					view.getForm().setValue(result);
+					view.getForm().setReadOnly(true);
+					break;
+				}
+			}
+		});
+	}
+	
+	public void deleteMediator(final Mediator c) {
+		//TODO alert
+		service.deleteMediator(c.id, new BigBangAsyncCallback<Void>() {
 
 			@Override
 			public void onSuccess(Void result) {
-				view.removeMediatorListValues(new Mediator[]{mediator});
+				view.removeMediatorFromList(c);
+				view.getList().clearSelection();
+				view.getForm().setValue(null);
 			}
-		});*/
-	}
+		});
+	}	
 
-	protected void createMediator(Mediator newMediatorInfo) {
-		view.showNewMediatorForm(false);
-	}
-
-
-	protected void saveMediator(Mediator mediatorInfo) {
-		view.setMediatorFormEditable(false);
-	}
-
-
-	@Override
 	public void registerEventHandlers(EventBus eventBus) {
 		// TODO Auto-generated method stub
 
 	}
 
-	@Override
 	public void setOperation(Operation o) {
 		this.operation = (MediatorManagementOperation) o;
 	}
 
-	@Override
 	public Operation getOperation() {
-		return this.operation;
+		return operation;
 	}
 
-	@Override
 	public void goCompact(HasWidgets container) {
 		// TODO Auto-generated method stub
 
 	}
 
-	@Override
 	public String setTargetEntity(String id) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public void setOperationPermission(boolean result) {
-		this.operation.setPermission(result);
-		setReadOnly(result);
+	public void setOperationPermission(boolean permission) {
+		this.operation.setPermission(permission);
+		this.setReadOnly(permission);
 	}
 
-
-	private void setReadOnly(boolean result) {
+	private void setReadOnly(boolean permission) {
 		// TODO Auto-generated method stub
 		
 	}
-
-
-	@Override
-	public void bind() {
-		// TODO Auto-generated method stub
-		
-	}
-	
-	
 	
 }

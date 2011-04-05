@@ -1,17 +1,9 @@
 package bigBang.module.generalSystemModule.client.userInterface.view;
 
-import org.gwt.mosaic.ui.client.MessageBox;
-import org.gwt.mosaic.ui.client.MessageBox.ConfirmationCallback;
-
-import com.google.gwt.event.dom.client.HasClickHandlers;
-import com.google.gwt.user.client.ui.Button;
-import com.google.gwt.user.client.ui.HasValue;
-import com.google.gwt.user.client.ui.SplitLayoutPanel;
-
-import bigBang.library.client.HasSelectables;
-import bigBang.library.client.Selectable;
+import bigBang.library.client.HasEditableValue;
+import bigBang.library.client.HasValueSelectables;
+import bigBang.library.client.ValueSelectable;
 import bigBang.library.client.userInterface.ListEntry;
-import bigBang.library.client.userInterface.view.PopupPanel;
 import bigBang.library.client.userInterface.view.View;
 import bigBang.module.generalSystemModule.client.userInterface.MediatorList;
 import bigBang.module.generalSystemModule.client.userInterface.MediatorListEntry;
@@ -19,159 +11,131 @@ import bigBang.module.generalSystemModule.client.userInterface.presenter.Mediato
 import bigBang.module.generalSystemModule.shared.CommissionProfile;
 import bigBang.module.generalSystemModule.shared.Mediator;
 
+import com.google.gwt.event.dom.client.HasClickHandlers;
+import com.google.gwt.user.client.ui.SplitLayoutPanel;
+import com.google.gwt.user.client.ui.VerticalPanel;
+
 public class MediatorManagementOperationView extends View implements MediatorManagementOperationViewPresenter.Display {
 
-	private final int LIST_WIDTH = 400; //px
-	
+	private static final int LIST_WIDTH = 400; //px
+
 	private MediatorList mediatorList;
 	private MediatorForm mediatorForm;
-	private MediatorForm newMediatorForm;
-
-	private Button editMediatorButton;
-	private Button saveMediatorButton;
-	private Button newMediatorButton;
-	private Button deleteMediatorButton;
-	private Button submitNewMediatorButton;
 	
-	private PopupPanel newMediatorFormPopupPanel; 
-	
-	public MediatorManagementOperationView(){
+	public MediatorManagementOperationView() {
 		SplitLayoutPanel wrapper = new SplitLayoutPanel();
 		wrapper.setSize("100%", "100%");
-		
+
 		mediatorList = new MediatorList();
-		mediatorForm = new MediatorForm();
-		
+		mediatorList.setSize("100%", "100%");
 		wrapper.addWest(mediatorList, LIST_WIDTH);
 		wrapper.setWidgetMinSize(mediatorList, LIST_WIDTH);
-		wrapper.add(mediatorForm);
-		
-		editMediatorButton = new Button("Editar");
-		saveMediatorButton = new Button("Guardar");
-		deleteMediatorButton = new Button("Apagar");
-		newMediatorButton = new Button("Novo");
 
-		mediatorForm.addButton(editMediatorButton);
-		mediatorForm.addButton(saveMediatorButton);
-		mediatorForm.addButton(deleteMediatorButton);
-		mediatorForm.addButton(newMediatorButton);
+		final VerticalPanel previewWrapper = new VerticalPanel();
+		previewWrapper.setSize("100%", "100%");
+		
+		mediatorForm = new MediatorForm();
 
+		previewWrapper.add(mediatorForm);
 		
-		submitNewMediatorButton = new Button("Submeter");
-		newMediatorForm = new MediatorForm();
-		newMediatorForm.addButton(submitNewMediatorButton);
-		
-		newMediatorFormPopupPanel = new PopupPanel();
-		newMediatorFormPopupPanel.add(newMediatorForm);
-		
+		wrapper.add(previewWrapper);
+
 		initWidget(wrapper);
 	}
 
 	@Override
-	public HasClickHandlers getEditMediatorButton() {
-		return editMediatorButton;
+	public HasValueSelectables<Mediator> getList() {
+		return (HasValueSelectables<Mediator>)this.mediatorList;
 	}
-
+	
 	@Override
-	public HasClickHandlers getSaveMediatorButton() {
-		return saveMediatorButton;
-	}
-
-	@Override
-	public void setMediatorFormEditable(boolean editable) {
-		this.mediatorForm.setReadOnly(!editable);
-	}
-
-	@Override
-	public Mediator getMediatorInfo() {
-		return (Mediator)mediatorForm.getInfo();
-	}
-
-	@Override
-	public boolean isMediatorFormValid() {
-		return mediatorForm.validate();
-	}
-
-	@Override
-	public HasClickHandlers getNewMediatorButton() {
-		return newMediatorButton;
-	}
-
-	@Override
-	public HasClickHandlers getSubmitNewMediatorButton() {
-		return submitNewMediatorButton;
-	}
-
-	@Override
-	public void setNewMediatorFormEditable(boolean editable) {
-		newMediatorForm.setReadOnly(!editable);
-	}
-
-	@Override
-	public boolean isNewMediatorFormValid() {
-		return this.newMediatorForm.validate();
-	}
-
-	@Override
-	public Mediator getNewMediatorInfo() {
-		return (Mediator)newMediatorForm.getInfo();
-	}
-
-	@Override
-	public void showNewMediatorForm(boolean show) {
-		if(show){
-			newMediatorForm.setSize("600px", "450px");
-			newMediatorFormPopupPanel.center();
-		}else
-			newMediatorFormPopupPanel.hidePopup();
-	}
-
-	@Override
-	public void setMediatorListValues(Mediator[] values) {
+	public void clearList(){
 		this.mediatorList.clear();
-		for(int i = 0; i < values.length; i++){
-			this.mediatorList.add(new MediatorListEntry(values[i]));
+	}
+	
+	@Override
+	public void addValuesToList(Mediator[] result) {
+		for(int i = 0; i < result.length; i++)
+			this.mediatorList.add(new MediatorListEntry(result[i]));
+	}
+
+	@Override
+	public void removeMediatorFromList(Mediator c) {
+		for(ListEntry<Mediator> e : this.mediatorList){
+			if(e.getValue() == c || e.getValue().id.equals(c.id)){
+				this.mediatorList.remove(e);
+				break;
+			}
 		}
 	}
-
+	
 	@Override
-	public void showDetailsForMediator(Mediator mediator) {
-		if(mediator == null)
-			this.mediatorForm.clearInfo();
-		else
-			this.mediatorForm.setInfo(mediator);
+	public HasEditableValue<Mediator> getForm() {
+		return this.mediatorForm;
 	}
 
 	@Override
-	public void removeMediatorListValues(Mediator[] values) {
-		for(int i = 0; i < values.length; i++) {
-			for(ListEntry<Mediator> e : mediatorList){
-				if(values[i].id.equals(e.getValue().id)){
-					mediatorList.remove(e);
-					break;
-				}
+	public void prepareNewMediator() {
+		for(ValueSelectable<Mediator> s : this.mediatorList){
+			if(s.getValue().id == null){
+				s.setSelected(true, true);
+				return;
+			}
+		}
+		MediatorListEntry entry = new MediatorListEntry(new Mediator());
+		this.mediatorList.add(entry);
+		this.mediatorList.getScrollable().scrollToBottom();
+		entry.setSelected(true, true);
+	}
+	
+	@Override
+	public void removeNewMediatorPreparation(){
+		for(ValueSelectable<Mediator> s : this.mediatorList){
+			if(s.getValue().id == null){
+				this.removeMediatorFromList(s.getValue());
+				break;
 			}
 		}
 	}
 
 	@Override
-	public HasClickHandlers getDeleteMediatorButton() {
-		return this.deleteMediatorButton;
-	}
-
-	@Override
-	public void showConfirmDelete(ConfirmationCallback callback) {
-		MessageBox.confirm("Confirmação de remoção", "Pretende realmente remover o mediador", callback);
-	}
-
-	@Override
-	public void setMediatorComissionProfiles(CommissionProfile[] profiles) {
+	public void setCommissionProfiles(CommissionProfile[] profiles) {
 		this.mediatorForm.setComissionProfiles(profiles);
 	}
+	
+	@Override
+	public HasClickHandlers getNewButton() {
+		return this.mediatorList.newButton;
+	}
 
 	@Override
-	public void setNewMediatorComissionProfiles(CommissionProfile[] profiles) {
-		this.newMediatorForm.setComissionProfiles(profiles);
+	public HasClickHandlers getRefreshButton() {
+		return this.mediatorList.refreshButton;
+	}
+	
+	@Override
+	public HasClickHandlers getSaveButton() {
+		return this.mediatorForm.getSaveButton();
+	}
+
+	@Override
+	public HasClickHandlers getEditButton() {
+		return this.mediatorForm.getEditButton();
+	}
+	
+	@Override
+	public HasClickHandlers getDeleteButton() {
+		return this.mediatorForm.getDeleteButton();
+	}
+
+	@Override
+	public boolean isFormValid() {
+		return this.mediatorForm.validate();
+	}
+
+	@Override
+	public void lockForm(boolean lock) {
+		this.mediatorForm.lock(lock);
 	}
 
 }

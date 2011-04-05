@@ -53,9 +53,9 @@ public class UserManagementOperationView extends View implements UserManagementO
 	}
 	
 	@Override
-	public void addValuesToList(User[] result, UserProfile[] profiles) {
+	public void addValuesToList(User[] result) {
 		for(int i = 0; i < result.length; i++)
-			this.userList.add(new UserListEntry(result[i], profiles));
+			this.userList.add(new UserListEntry(result[i]));
 	}
 
 	@Override
@@ -81,7 +81,7 @@ public class UserManagementOperationView extends View implements UserManagementO
 				return;
 			}
 		}
-		UserListEntry entry = new UserListEntry(new User(), null);
+		UserListEntry entry = new UserListEntry(new User());
 		this.userList.add(entry);
 		this.userList.getScrollable().scrollToBottom();
 		entry.setSelected(true, true);

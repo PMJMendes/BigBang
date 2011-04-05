@@ -35,7 +35,7 @@ OperationViewPresenter {
 		//List
 		HasValueSelectables<User> getList();
 		void clearList();
-		void addValuesToList(User[] result, UserProfile[] profiles);
+		void addValuesToList(User[] result);
 		void removeUserFromList(User c);
 
 		//Form
@@ -138,7 +138,7 @@ OperationViewPresenter {
 		
 		view.clearList();
 		view.getForm().setValue(null);
-		view.addValuesToList(users, profiles);
+		view.addValuesToList(users);
 	}
 
 	public void bind() {

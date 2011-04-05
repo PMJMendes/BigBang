@@ -8,8 +8,6 @@ import bigBang.module.generalSystemModule.shared.User;
 
 public class UserList extends FilterableList<User> {
 	
-	protected String filterText;
-	
 	public HasClickHandlers refreshButton;
 	public HasClickHandlers newButton;
 	

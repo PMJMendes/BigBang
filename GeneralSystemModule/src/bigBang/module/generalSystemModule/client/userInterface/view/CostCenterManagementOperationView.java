@@ -9,7 +9,7 @@ import bigBang.library.client.userInterface.view.View;
 import bigBang.module.generalSystemModule.client.userInterface.CostCenterList;
 import bigBang.module.generalSystemModule.client.userInterface.CostCenterListEntry;
 import bigBang.module.generalSystemModule.client.userInterface.CostCenterMemberList;
-import bigBang.module.generalSystemModule.client.userInterface.CostCenterMemberListEntry;
+import bigBang.module.generalSystemModule.client.userInterface.UserListEntry;
 import bigBang.module.generalSystemModule.client.userInterface.presenter.CostCenterManagementOperationViewPresenter;
 import bigBang.module.generalSystemModule.shared.CostCenter;
 import bigBang.module.generalSystemModule.shared.User;
@@ -92,7 +92,7 @@ public class CostCenterManagementOperationView extends View implements CostCente
 	@Override
 	public void addValuesToMembersList(User[] result) {
 		for(int i = 0; i < result.length; i++)
-			this.memberList.add(new CostCenterMemberListEntry(result[i]));
+			this.memberList.add(new UserListEntry(result[i]));
 	}
 
 	@Override

@@ -52,6 +52,8 @@ public class ListBoxFormField extends FormField<String> {
 		wrapper.add(mandatoryIndicatorLabel);
 		initWidget(wrapper);
 		setFieldWidth("150px");
+		
+		clearValues();
 	}
 	
 	private void setLabel(String label) {
@@ -118,8 +120,12 @@ public class ListBoxFormField extends FormField<String> {
 
 	@Override
 	public void clear() {
-		// TODO Auto-generated method stub
-		
+		setValue("");
+	}
+	
+	public void clearValues() {
+		this.listBox.clear();
+		this.addItem("-", "");
 	}
 
 }
