@@ -136,7 +136,7 @@ public class CostCenterServiceImpl
 					lobjTmpUser.password = null; //JMMM: No way!
 					lobjTmpUser.profileId = lobjUser.getBaseUser().getProfile().getKey().toString();
 					lobjTmpUser.costCenterId = ((UUID)lobjUser.getAt(2)).toString();
-					lobjTmpUser.email = (String)lobjUser.getAt(3);
+					lobjTmpUser.email = (String)lobjUser.getAt(1);
 					larrAuxUsers.add(lobjTmpUser);
 				}
 			}
