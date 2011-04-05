@@ -46,14 +46,6 @@ public class UserDecoration
 	public void Initialize()
 		throws JewelEngineException
 	{
-		try
-		{
-			mrefUser = (IUser)User.GetInstance(getNameSpace(), (UUID)getAt(0));
-		}
-		catch (Throwable e)
-		{
-			throw new JewelEngineException(e.getMessage(), e);
-		}
 	}
 
     public String getLabel()
@@ -62,7 +54,20 @@ public class UserDecoration
     }
 
     public IUser getBaseUser()
+    	throws BigBangJewelException
     {
+    	if ( mrefUser == null )
+    	{
+    		try
+			{
+				mrefUser = (IUser)User.GetInstance(getNameSpace(), (UUID)getAt(0));
+			}
+			catch (Throwable e)
+			{
+				throw new BigBangJewelException(e.getMessage(), e);
+			}
+    	}
+
     	return mrefUser;
     }
 }
