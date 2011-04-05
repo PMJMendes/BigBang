@@ -58,7 +58,7 @@ public class CostCenterMemberListEntry extends ListEntry<User> {
 		
 		HorizontalPanel rightWidgetWrapper = new HorizontalPanel();
 		rightWidgetWrapper.setSize("100px", "100%");
-		Label label = new Label(user.profileId);
+		Label label = new Label(user.profile.name);
 		label.getElement().getStyle().setFontWeight(FontWeight.NORMAL);		
 		rightWidgetWrapper.add(label);
 		setRightWidget(rightWidgetWrapper);

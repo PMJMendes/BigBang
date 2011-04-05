@@ -1,99 +1,146 @@
 package bigBang.module.generalSystemModule.client.userInterface.view;
 
-import bigBang.library.client.userInterface.ListHeader;
-import bigBang.library.client.userInterface.view.PopupPanel;
+import bigBang.library.client.HasEditableValue;
+import bigBang.library.client.HasValueSelectables;
+import bigBang.library.client.ValueSelectable;
+import bigBang.library.client.userInterface.ListEntry;
 import bigBang.library.client.userInterface.view.View;
 import bigBang.module.generalSystemModule.client.userInterface.UserList;
 import bigBang.module.generalSystemModule.client.userInterface.UserListEntry;
 import bigBang.module.generalSystemModule.client.userInterface.presenter.UserManagementOperationViewPresenter;
+import bigBang.module.generalSystemModule.shared.CostCenter;
 import bigBang.module.generalSystemModule.shared.User;
+import bigBang.module.generalSystemModule.shared.UserProfile;
 
-import com.google.gwt.core.client.GWT;
-import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.HasClickHandlers;
-import com.google.gwt.event.logical.shared.AttachEvent;
-import com.google.gwt.user.client.ui.Button;
-import com.google.gwt.user.client.ui.HasValue;
 import com.google.gwt.user.client.ui.SplitLayoutPanel;
+import com.google.gwt.user.client.ui.VerticalPanel;
 
 public class UserManagementOperationView extends View implements UserManagementOperationViewPresenter.Display {
-
-	private final int USER_LIST_WIDTH = 400; //px
 	
+	private static final int LIST_WIDTH = 400; //px
+
 	private UserList userList;
 	private UserForm userForm;
 	
-	private PopupPanel newUserPopup;
-	private UserForm newUserForm;
-	
-	private Button newUserButton;
-	private Button submitNewUserButton;
-	
-	public UserManagementOperationView(){
+	public UserManagementOperationView() {
 		SplitLayoutPanel wrapper = new SplitLayoutPanel();
 		wrapper.setSize("100%", "100%");
-		
+
 		userList = new UserList();
-		ListHeader header = new ListHeader();
-		header.setText("Utilizadores");
-		header.showNewButton("Novo");
-		header.showRefreshButton();
-		userList.setHeaderWidget(header);
-		wrapper.addWest(userList, USER_LIST_WIDTH);
-		
-		newUserButton = new Button("Novo Utilizador");
+		userList.setSize("100%", "100%");
+		wrapper.addWest(userList, LIST_WIDTH);
+		wrapper.setWidgetMinSize(userList, LIST_WIDTH);
 
-		userForm = new UserForm(null, null);		
-		userForm.addButton(newUserButton);
+		final VerticalPanel previewWrapper = new VerticalPanel();
+		previewWrapper.setSize("100%", "100%");
 		
-		wrapper.add(userForm);
-		
+		userForm = new UserForm();
+		previewWrapper.add(userForm);
+		wrapper.add(previewWrapper);
+
 		initWidget(wrapper);
-		
-		submitNewUserButton = new Button("Submeter");
-		newUserForm = new UserForm(null, null);
-		newUserPopup = new PopupPanel("Criação de Utilizador");
-		newUserPopup.add(newUserForm.getNonScrollableContent());
 	}
 
 	@Override
-	public void setUsers(User[] users) {
-		userList.clear();
-		for(int i = 0; i < users.length; i++)
-			userList.add(new UserListEntry(users[i]));
-	}
-
-	@Override
-	public void showDetailsForUser(User u) {
-		this.userForm.setUser(u);
-	}
-
-
-	@Override
-	public HasClickHandlers getNewUserButton() {
-		return this.newUserButton;
-	}
-
-	@Override
-	public void showNewUserForm() {
-		newUserForm.clearInfo();
-		newUserForm.showPasswordField(true);
-		newUserForm.setReadOnly(false);
-
-		newUserPopup.center();
-		
-		newUserPopup.setWidth("600px");
-	}
-
-	@Override
-	public HasClickHandlers getSubmitNewUserButton() {
-		return this.submitNewUserButton;
-	}
-
-	@Override
-	public User getNewUserInfo() {
-		return (User) this.newUserForm.getInfo();
+	public HasValueSelectables<User> getList() {
+		return (HasValueSelectables<User>)this.userList;
 	}
 	
+	@Override
+	public void clearList(){
+		this.userList.clear();
+	}
+	
+	@Override
+	public void addValuesToList(User[] result, UserProfile[] profiles) {
+		for(int i = 0; i < result.length; i++)
+			this.userList.add(new UserListEntry(result[i], profiles));
+	}
+
+	@Override
+	public void removeUserFromList(User c) {
+		for(ListEntry<User> e : this.userList){
+			if(e.getValue() == c || e.getValue().id.equals(c.id)){
+				this.userList.remove(e);
+				break;
+			}
+		}
+	}
+
+	@Override
+	public HasEditableValue<User> getForm() {
+		return this.userForm;
+	}
+
+	@Override
+	public void prepareNewUser() {
+		for(ValueSelectable<User> s : this.userList){
+			if(s.getValue().id == null){
+				s.setSelected(true, true);
+				return;
+			}
+		}
+		UserListEntry entry = new UserListEntry(new User(), null);
+		this.userList.add(entry);
+		this.userList.getScrollable().scrollToBottom();
+		entry.setSelected(true, true);
+	}
+	
+	@Override
+	public void removeNewUserPreparation(){
+		for(ValueSelectable<User> s : this.userList){
+			if(s.getValue().id == null){
+				this.removeUserFromList(s.getValue());
+				break;
+			}
+		}
+	}
+
+	@Override
+	public HasClickHandlers getNewButton() {
+		return this.userList.newButton;
+	}
+
+	@Override
+	public HasClickHandlers getRefreshButton() {
+		return this.userList.refreshButton;
+	}
+	
+	@Override
+	public HasClickHandlers getSaveButton() {
+		return this.userForm.getSaveButton();
+	}
+
+	@Override
+	public HasClickHandlers getEditButton() {
+		return this.userForm.getEditButton();
+	}
+	
+	@Override
+	public HasClickHandlers getDeleteButton() {
+		return this.userForm.getDeleteButton();
+	}
+
+	@Override
+	public boolean isFormValid() {
+		return this.userForm.validate();
+	}
+
+	@Override
+	public void setUserProfiles(UserProfile[] profiles) {
+		userForm.setUserProfiles(profiles);
+	}
+
+	@Override
+	public void setCostCenters(CostCenter[] costCenters) {
+		userForm.setCostCenters(costCenters);
+	}
+
+	@Override
+	public void lockForm(boolean lock) {
+		this.userForm.setReadOnly(true);
+		this.userForm.lock(lock);
+	}
+
 }

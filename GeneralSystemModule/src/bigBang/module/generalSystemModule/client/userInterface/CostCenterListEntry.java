@@ -30,6 +30,11 @@ public class CostCenterListEntry extends ListEntry<CostCenter> {
 	public <I extends Object> void setInfo(I infoGeneric){
 		CostCenter info	= (CostCenter) infoGeneric;
 		
+		if(info.id == null && (info.name == null || info.code == null || info.members == null)) {
+			setTitle("Novo Centro de Custo");
+			return;
+		}
+
 		setTitle(info.name);
 		setText(info.code);
 		
@@ -38,6 +43,8 @@ public class CostCenterListEntry extends ListEntry<CostCenter> {
 			text = "Sem membros";
 		else
 			text = info.members.length + text;
+		if(nMembersLabel == null)
+			nMembersLabel = new Label();
 		nMembersLabel.setText(text);
 		
 		nMembersLabel.getElement().getStyle().setFontWeight(FontWeight.NORMAL);		

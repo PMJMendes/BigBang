@@ -1,5 +1,8 @@
 package bigBang.module.generalSystemModule.client.userInterface.view;
 
+import com.google.gwt.event.dom.client.HasClickHandlers;
+import com.google.gwt.user.client.ui.Button;
+
 import bigBang.library.client.userInterface.ListBoxFormField;
 import bigBang.library.client.userInterface.PasswordTextBoxFormField;
 import bigBang.library.client.userInterface.TextBoxFormField;
@@ -7,8 +10,9 @@ import bigBang.library.client.userInterface.view.FormView;
 import bigBang.module.generalSystemModule.shared.CostCenter;
 import bigBang.module.generalSystemModule.shared.User;
 import bigBang.module.generalSystemModule.shared.UserProfile;
+import bigBang.module.generalSystemModule.shared.formValidator.UserFormValidator;
 
-public class UserForm extends FormView {
+public class UserForm extends FormView<User> {
 
 	private TextBoxFormField name;
 	private TextBoxFormField username;
@@ -17,19 +21,21 @@ public class UserForm extends FormView {
 	private PasswordTextBoxFormField password;
 	private ListBoxFormField costCenter;
 	
+	private Button editCostCenterButton;
+	private Button saveCostCenterButton;
+	private Button deleteCostCenterButton;
+	
 	private final String EMPTY_VALUE = "";
 	
-	private User user;
-
-	public UserForm(UserProfile[] userRoles, CostCenter[] costCenters){
+	public UserForm(){
 		super();
 		addSection("Informação Geral");
-		name = new TextBoxFormField("Nome");
-		username = new TextBoxFormField("Nome de Utilizador");
-		password = new PasswordTextBoxFormField("Palavra-passe");
-		email = new TextBoxFormField("E-mail");
-		role = new ListBoxFormField("Perfil");
-		costCenter = new ListBoxFormField("Centro de Custo");
+		name = new TextBoxFormField("Nome", new UserFormValidator.NameValidator());
+		username = new TextBoxFormField("Nome de Utilizador", new UserFormValidator.UsernameValidator());
+		password = new PasswordTextBoxFormField("Palavra-passe", new UserFormValidator.PasswordValidator());
+		email = new TextBoxFormField("E-mail", new UserFormValidator.EmailValidator());
+		role = new ListBoxFormField("Perfil", new UserFormValidator.UserProfileValidator());
+		costCenter = new ListBoxFormField("Centro de Custo", new UserFormValidator.UserCostCenterValidator());
 
 		addFormField(name);
 		addFormField(username);
@@ -38,22 +44,39 @@ public class UserForm extends FormView {
 		addFormField(role);
 		addFormField(costCenter);
 
-		addRoleItem("Não atribuído", EMPTY_VALUE);
-		if(userRoles != null){
-			for(int i = 0; i < userRoles.length; i++) {
-				addRoleItem(userRoles[i].name, userRoles[i].id);
-			}
-		}
-
-		addCostCenterItem("Não atribuído", EMPTY_VALUE);
-		if(costCenters != null) {
-			for(int i = 0; i < costCenters.length; i++) {
-				addRoleItem(costCenters[i].name, costCenters[i].id);
-			}
-		}
-		
 		showPasswordField(false);
+		
+		this.editCostCenterButton = new Button("Editar");	
+		this.saveCostCenterButton = new Button("Guardar");
+		this.deleteCostCenterButton = new Button("Apagar");
+		
+		this.addButton(editCostCenterButton);
+		this.addButton(saveCostCenterButton);
+		this.addButton(deleteCostCenterButton);
+		
+		clearInfo();
+		
 		setReadOnly(true);
+	}
+	
+	public void setUserProfiles(UserProfile[] profiles){
+		this.role.clear();
+		addRoleItem("Não atribuído", EMPTY_VALUE);
+		if(profiles != null){
+			for(int i = 0; i < profiles.length; i++) {
+				addRoleItem(profiles[i].name, profiles[i].id);
+			}
+		}
+	}
+	
+	public void setCostCenters(CostCenter[] costCenters) {
+		this.role.clear();
+		addRoleItem("Não atribuído", EMPTY_VALUE);
+		if(costCenters != null){
+			for(int i = 0; i < costCenters.length; i++) {
+				addCostCenterItem(costCenters[i].name, costCenters[i].id);
+			}
+		}
 	}
 
 	public void showPasswordField(boolean show){
@@ -74,42 +97,73 @@ public class UserForm extends FormView {
 		role.setValue(value);
 	}
 
-	public void setUser(User user) {
+	@Override
+	public User getInfo() {
+		User info = value == null ? new User() : value;
+		info.name = this.name.getValue();
+		info.username = this.username.getValue();
+		info.password = this.password.getValue();
+		info.email = this.email.getValue();
+		info.profile.id = this.role.getValue();
+		info.profile.name = this.role.getSelectedItemText();
+		info.costCenterId = this.costCenter.getValue();
+		return info;
+	}
+
+	@Override
+	public void setInfo(User user) {
+		if(user == null){
+			clearInfo();
+			return;
+		}
+		if(user.name == null)
+			name.clear();
+		else
+			this.name.setValue(user.name);
 		
+		if(user.username == null)
+			username.clear();
+		else
+			this.username.setValue(user.username);
+		
+		if(user.password == null)
+			password.clear();
+		else
+			this.password.setValue(user.password);
+		
+		if(user.email == null)
+			email.clear();
+		else
+			this.email.setValue(user.email);
+		
+		if(user.profile == null || user.profile.id == null)
+			role.clear();
+		else
+			this.role.setValue(user.profile.id);
+		
+		if(user.costCenterId == null)
+			costCenter.clear();
+		else
+			this.costCenter.setValue(user.costCenterId);
 	}
-
-	@Override
-	public Object getInfo() {
-		//TODO
-		return this.user;
+	
+	public HasClickHandlers getSaveButton() {
+		return saveCostCenterButton;
 	}
-
-	@Override
-	public void setInfo(Object info) {
-		user = (User) info;
-		name.setValue(user.name);
-		username.setValue(user.username);
-		email.setValue(user.email);
-		if(user.profileId != null){
-			role.setValue(user.profileId);
-		}else{
-			this.role.setValue(EMPTY_VALUE);
-		}
-		if(user.costCenterId != null){
-			costCenter.setValue(user.costCenterId);
-		}else{
-			this.costCenter.setValue(EMPTY_VALUE);
-		}
+	
+	public HasClickHandlers getEditButton() {
+		return editCostCenterButton;
 	}
-
+	
+	public HasClickHandlers getDeleteButton() {
+		return deleteCostCenterButton;
+	}
+	
 	@Override
-	public void clearInfo() {
-		user = new User();
-		name.setValue("");
-		username.setValue("");
-		email.setValue("");
-		role.setValue(EMPTY_VALUE);
-		costCenter.setValue(EMPTY_VALUE);
+	public void setReadOnly(boolean readOnly) {
+		super.setReadOnly(readOnly);
+		saveCostCenterButton.setVisible(!readOnly);
+		editCostCenterButton.setVisible(readOnly);
 	}
 
 }
