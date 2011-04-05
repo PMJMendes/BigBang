@@ -75,7 +75,7 @@ public class UserServiceImpl
 	        	lobjTmp.password = null; //JMMM: No way!
 	        	lobjTmp.profileId = lobjUser.getBaseUser().getProfile().getKey().toString();
 	        	lobjTmp.costCenterId = ((UUID)lobjUser.getAt(2)).toString();
-	        	lobjTmp.email = (String)lobjUser.getAt(3);
+	        	lobjTmp.email = (String)lobjUser.getAt(1);
 	        	larrAux.add(lobjTmp);
 	        }
         }
@@ -107,37 +107,6 @@ public class UserServiceImpl
 
 		return larrAux.toArray(new User[larrAux.size()]);
 	}
-
-//	public User getUser(String id)
-//		throws SessionExpiredException, BigBangException
-//	{
-//		UUID lidUsers;
-//		UserDecoration lobjUser;
-//		User lobjTmp;
-
-//		if ( Engine.getCurrentUser() == null )
-//			throw new SessionExpiredException();
-
-//		try
-//		{
-//			lidUsers = Engine.FindEntity(Engine.getCurrentNameSpace(), Constants.ObjID_Decorations);
-//			lobjUser = (UserDecoration)Engine.GetWorkInstance(lidUsers, UUID.fromString(id));
-//			lobjTmp = new User();
-//			lobjTmp.id = lobjUser.getKey().toString();
-//			lobjTmp.name = lobjUser.getBaseUser().getDisplayName();
-//			lobjTmp.username = lobjUser.getBaseUser().getUserName();
-//			lobjTmp.password = null; //JMMM: No way!
-//			lobjTmp.profileId = lobjUser.getBaseUser().getProfile().getKey().toString();
-//			lobjTmp.costCenterId = ((UUID)lobjUser.getAt(2)).toString();
-//			lobjTmp.email = (String)lobjUser.getAt(3);
-//		}
-//		catch (Throwable e)
-//		{
-//			throw new BigBangException(e.getMessage(), e);
-//		}
-
-//		return lobjTmp;
-//	}
 
 	public User saveUser(User user)
 		throws SessionExpiredException, BigBangException
