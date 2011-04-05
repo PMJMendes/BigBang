@@ -120,7 +120,8 @@ public class ManageUsers
 					if ( marrModify[i].midProfile.equals(Constants.ProfID_Root) &&
 							!lobjAuxCurrent.getProfile().getKey().equals(Constants.ProfID_Root) )
 						throw new BigBangJewelException("Sem permissão: Só um utilizador Root pode definir outros utilizadores Root.");
-					if ( lobjAuxCurrent.getProfile().getKey().equals(Constants.ProfID_Root) &&
+					if ( lobjAuxCurrent.getKey().equals(marrModify[i].mid) &&
+							lobjAuxCurrent.getProfile().getKey().equals(Constants.ProfID_Root) &&
 							!marrModify[i].midProfile.equals(Constants.ProfID_Root) )
 						throw new BigBangJewelException("Sem permissão: Não pode remover o seu próprio privilégio de Root.");
 
