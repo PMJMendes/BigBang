@@ -14,6 +14,7 @@ import bigBang.library.shared.SessionExpiredException;
 import bigBang.module.generalSystemModule.interfaces.CostCenterService;
 import bigBang.module.generalSystemModule.shared.CostCenter;
 import bigBang.module.generalSystemModule.shared.User;
+import bigBang.module.generalSystemModule.shared.UserProfile;
 
 import com.premiumminds.BigBang.Jewel.Constants;
 import com.premiumminds.BigBang.Jewel.Objects.GeneralSystem;
@@ -134,6 +135,7 @@ public class CostCenterServiceImpl
 					lobjTmpUser.name = lobjUser.getBaseUser().getDisplayName();
 					lobjTmpUser.username = lobjUser.getBaseUser().getUserName();
 					lobjTmpUser.password = null; //JMMM: No way!
+					lobjTmpUser.profile = new UserProfile();
 					lobjTmpUser.profile.id = lobjUser.getBaseUser().getProfile().getKey().toString();
 					lobjTmpUser.profile.name = lobjUser.getBaseUser().getProfile().getLabel();
 					lobjTmpUser.costCenterId = ((UUID)lobjUser.getAt(2)).toString();
@@ -280,6 +282,7 @@ public class CostCenterServiceImpl
 				lobjTmpUser.name = lobjUser.getBaseUser().getDisplayName();
 				lobjTmpUser.username = lobjUser.getBaseUser().getUserName();
 				lobjTmpUser.password = null; //JMMM: No way!
+				lobjTmpUser.profile = new UserProfile();
 				lobjTmpUser.profile.id = lobjUser.getBaseUser().getProfile().getKey().toString();
 				lobjTmpUser.profile.name = lobjUser.getBaseUser().getProfile().getLabel();
 				lobjTmpUser.costCenterId = ((UUID)lobjUser.getAt(2)).toString();
