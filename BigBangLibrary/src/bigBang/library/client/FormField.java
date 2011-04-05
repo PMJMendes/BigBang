@@ -56,6 +56,8 @@ public abstract class FormField<T> extends View implements HasValue<T>, Validata
 	public void setFieldWidth(String width) {
 		((Widget)this.field).setWidth(width);
 	}
+	
+	public abstract void clear();
 
 	public abstract void setReadOnly(boolean readonly);
 

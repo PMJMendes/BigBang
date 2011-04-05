@@ -3,6 +3,7 @@ package bigBang.library.client.userInterface.view;
 import java.util.ArrayList;
 
 import bigBang.library.client.FormField;
+import bigBang.library.client.HasEditableValue;
 import bigBang.library.client.Validatable;
 
 import com.google.gwt.dom.client.Style.Float;
@@ -19,7 +20,6 @@ import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.google.gwt.user.client.ui.AbstractImagePrototype;
 import com.google.gwt.user.client.ui.Button;
-import com.google.gwt.user.client.ui.HasValue;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ScrollPanel;
@@ -27,7 +27,7 @@ import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
-public abstract class FormView<T> extends View implements Validatable, HasValue<T> {
+public abstract class FormView<T> extends View implements Validatable, HasEditableValue<T> {
 
 	protected AbsolutePanel mainWrapper;
 	protected VerticalPanel panel;
@@ -39,7 +39,7 @@ public abstract class FormView<T> extends View implements Validatable, HasValue<
 
 	private boolean isReadOnly;
 	
-	private T value;
+	protected T value;
 	private boolean valueChangeHandlerInitialized;
 
 
@@ -234,7 +234,13 @@ public abstract class FormView<T> extends View implements Validatable, HasValue<
 	
 	public abstract void setInfo(T info);
 	
-	public abstract void clearInfo();
+	public void clearInfo() {
+		for(FormViewSection s : sections){
+			for(FormField<?> f : s.getFields()){
+				f.clear();
+			}
+		}
+	}
 
 	public HandlerRegistration addValueChangeHandler(
 			ValueChangeHandler<T> handler) {
@@ -246,7 +252,7 @@ public abstract class FormView<T> extends View implements Validatable, HasValue<
 	}
 
 	public T getValue() {
-		//setValue(getInfo(), false);
+		setValue(getInfo(), false);
 		return value;
 	}
 
@@ -255,14 +261,19 @@ public abstract class FormView<T> extends View implements Validatable, HasValue<
 	}
 
 	public void setValue(T value, boolean fireEvents) {
-		if (value == null && this.getValue() != null)
-			return;
-
-		if(getValue() != value)
+		if(value == null)
+			clearInfo();
+		else
+			setInfo(value);
+		if(this.value != value)
 			ValueChangeEvent.fire(this, value);
-		
 		this.value = value;
-		setInfo(value);
 	}
+	
+	public void lock(boolean lock) {
+		setReadOnly(true);
+		topToolbar.setVisible(!lock);
+	}
+
 }
 

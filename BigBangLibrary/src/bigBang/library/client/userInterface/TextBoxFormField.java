@@ -14,6 +14,7 @@ import com.google.gwt.user.client.ui.Widget;
 public class TextBoxFormField extends FormField<String> {
 	
 	private Label label;
+	private boolean hasDummyValue = false;
 	
 	public TextBoxFormField(String label,FieldValidator<String> validator){
 		this();
@@ -57,8 +58,17 @@ public class TextBoxFormField extends FormField<String> {
 	public void setReadOnly(boolean readOnly) {
 		TextBox field = ((TextBox)this.field);
 		if(field.isReadOnly() != readOnly){
-			if(field.getValue().equals("")) field.setValue("-"); else
-			if(field.getValue().equals("-")) field.setValue(""); 
+			if(readOnly){
+				if(field.getValue().equals("")){
+					field.setValue("-");
+					hasDummyValue = true;
+				}
+			}else{
+				if(hasDummyValue){
+					field.setValue("");
+					hasDummyValue = false;
+				}
+			}
 		}
 		field.setReadOnly(readOnly);
 		field.getElement().getStyle().setBorderColor(readOnly ? "transparent" : "gray");
@@ -67,8 +77,22 @@ public class TextBoxFormField extends FormField<String> {
 	}
 	
 	@Override
+	public void setValue(String value, boolean fireEvents) {
+		hasDummyValue = false;
+		super.setValue(value, fireEvents);
+	}
+	
+	@Override
 	public boolean isReadOnly() {
 		return ((TextBox)this.field).isReadOnly();
+	}
+
+	@Override
+	public void clear() {
+		TextBox field = ((TextBox)this.field);
+		field.setValue(field.isReadOnly() ? "-" : "");
+		if(field.isReadOnly())
+			hasDummyValue = true;
 	}
 
 }

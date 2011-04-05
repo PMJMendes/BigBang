@@ -133,11 +133,14 @@ public class ListEntry<T> extends View implements ValueSelectable<T>, HasMetaDat
 	}
 
 	public void setValue(T value, boolean fireEvents) {
-		if(this.value == value)
+		if(this.value == value){
+			setInfo(value);
 			return;
+		}
 		this.value = value;
 		if(fireEvents)
 			ValueChangeEvent.fire(this, this.value);
+		setInfo(value);
 	}
 	
 	public void setSelected(boolean selected) {

@@ -17,7 +17,6 @@ public class ListBoxFormField extends FormField<String> {
 	private ListBox listBox;
 	private Label label;
 	
-	
 	public ListBoxFormField(String label,FieldValidator<String> validator){
 		this();
 		setValidator(validator);
@@ -115,6 +114,12 @@ public class ListBoxFormField extends FormField<String> {
 			}
 		}
 		GWT.log("Could not select list box value because value does not exist.");
+	}
+
+	@Override
+	public void clear() {
+		// TODO Auto-generated method stub
+		
 	}
 
 }

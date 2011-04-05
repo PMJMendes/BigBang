@@ -16,6 +16,9 @@ import bigBang.library.client.userInterface.view.View;
 
 import com.google.gwt.dom.client.Style.FontStyle;
 import com.google.gwt.dom.client.Style.Unit;
+import com.google.gwt.event.dom.client.HasScrollHandlers;
+import com.google.gwt.event.dom.client.ScrollEvent;
+import com.google.gwt.event.dom.client.ScrollHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.google.gwt.user.client.ui.HasVerticalAlignment;
@@ -40,6 +43,7 @@ public class List<T> extends View implements HasValueSelectables<T>, java.util.L
 	protected HasWidgets footer;
 	protected ScrollPanel scrollPanel;
 	protected SelectedStateChangedEventHandler entrySelectionHandler;
+	private boolean selectionChangeHandlerInitialized;
 
 	public List(){
 		this.entries = new ArrayList<ListEntry<T>>();
@@ -217,6 +221,7 @@ public class List<T> extends View implements HasValueSelectables<T>, java.util.L
 					e.setSelected(false, false);
 			}
 		}
+		fireEvent(new SelectionChangedEvent(this.getSelected()));
 	}
 
 
@@ -279,8 +284,14 @@ public class List<T> extends View implements HasValueSelectables<T>, java.util.L
 
 	@Override
 	public void clearSelection() {
-		for(ValueSelectable<T> s : this.getSelected())
+		boolean hasChanges = false;
+		Collection<ValueSelectable<T>> selected = this.getSelected();
+		for(ValueSelectable<T> s : selected){
+			hasChanges |= s.isSelected();
 			s.setSelected(false);
+		}
+		if(hasChanges && selectionChangeHandlerInitialized)
+			fireEvent(new SelectionChangedEvent(selected));	
 	}
 
 	@Override
@@ -296,18 +307,22 @@ public class List<T> extends View implements HasValueSelectables<T>, java.util.L
 	@Override
 	public HandlerRegistration addSelectionChangedEventHandler(
 			SelectionChangedEventHandler handler) {
-		if (!valueChangeHandlerInitialized)
-			valueChangeHandlerInitialized = true;
+		if (!selectionChangeHandlerInitialized)
+			selectionChangeHandlerInitialized = true;
 
 		return addHandler(handler, SelectionChangedEvent.TYPE);
 	}
 
+	
+	//LISTING
+	
 	@Override
 	public boolean add(ListEntry<T> e) {
 		boolean result = entries.add(e);
 		if(result){
 			this.bindEntry(e);
 			this.listPanel.add(e);
+			onSizeChanged();
 		}
 		return result;
 	}
@@ -316,6 +331,7 @@ public class List<T> extends View implements HasValueSelectables<T>, java.util.L
 	public void add(int index, ListEntry<T> element) {
 		bindEntry(element);
 		entries.add(index, element);
+		onSizeChanged();
 		render();
 	}
 
@@ -328,6 +344,7 @@ public class List<T> extends View implements HasValueSelectables<T>, java.util.L
 				this.listPanel.add(l);
 			}
 		}
+		onSizeChanged();
 		return result;
 	}
 
@@ -339,6 +356,7 @@ public class List<T> extends View implements HasValueSelectables<T>, java.util.L
 				bindEntry(e);
 			render();
 		}
+		onSizeChanged();
 		return result;
 	}
 
@@ -351,6 +369,7 @@ public class List<T> extends View implements HasValueSelectables<T>, java.util.L
 				selectableStateChanged((Selectable) event.getSource());
 			}
 		};
+		fireEvent(new SelectionChangedEvent(getSelected()));
 		this.listPanel.clear();
 		this.entries.clear();
 	}
@@ -404,15 +423,22 @@ public class List<T> extends View implements HasValueSelectables<T>, java.util.L
 	public boolean remove(Object o) {
 		ListEntry<?> entry = (ListEntry<?>) o;
 		boolean result = this.entries.remove(o);
-		if(result)
+		if(result){
+			if(((Selectable) o).isSelected())
+				selectNext();
 			entry.removeFromParent();
+		}
+		onSizeChanged();
 		return result;
 	}
 
 	@Override
 	public ListEntry<T> remove(int index) {
 		ListEntry<T> result = this.entries.remove(index);
+		if(result.isSelected())
+			selectNext();
 		result.removeFromParent();
+		onSizeChanged();
 		return result;
 	}
 
@@ -423,6 +449,7 @@ public class List<T> extends View implements HasValueSelectables<T>, java.util.L
 			for(Object e : c)
 				((ListEntry<?>)e).removeFromParent();
 		}
+		onSizeChanged();
 		return result;
 	}
 
@@ -439,6 +466,7 @@ public class List<T> extends View implements HasValueSelectables<T>, java.util.L
 		ListEntry<T> result = this.entries.set(index, element);
 		result.removeFromParent();
 		this.listPanel.insert(element, index + 1);
+		onSizeChanged();
 		return result;
 	}
 
@@ -462,5 +490,8 @@ public class List<T> extends View implements HasValueSelectables<T>, java.util.L
 		return this.entries.toArray(a);
 	}
 
-
+	public ScrollPanel getScrollable(){
+		return scrollPanel;
+	}
+	
 }

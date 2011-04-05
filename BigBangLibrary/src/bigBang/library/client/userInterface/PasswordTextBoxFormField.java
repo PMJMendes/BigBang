@@ -67,5 +67,10 @@ public class PasswordTextBoxFormField extends FormField<String> {
 		return ((PasswordTextBox)this.field).isReadOnly();
 	}
 
+	@Override
+	public void clear() {
+		this.setValue("");
+	}
+
 }
 
