@@ -32,12 +32,8 @@ public class UserManagementOperationView extends View implements UserManagementO
 		wrapper.addWest(userList, LIST_WIDTH);
 		wrapper.setWidgetMinSize(userList, LIST_WIDTH);
 
-		final VerticalPanel previewWrapper = new VerticalPanel();
-		previewWrapper.setSize("100%", "100%");
-		
 		userForm = new UserForm();
-		previewWrapper.add(userForm);
-		wrapper.add(previewWrapper);
+		wrapper.add(userForm);
 
 		initWidget(wrapper);
 	}

@@ -31,14 +31,8 @@ public class MediatorManagementOperationView extends View implements MediatorMan
 		wrapper.addWest(mediatorList, LIST_WIDTH);
 		wrapper.setWidgetMinSize(mediatorList, LIST_WIDTH);
 
-		final VerticalPanel previewWrapper = new VerticalPanel();
-		previewWrapper.setSize("100%", "100%");
-		
 		mediatorForm = new MediatorForm();
-
-		previewWrapper.add(mediatorForm);
-		
-		wrapper.add(previewWrapper);
+		wrapper.add(mediatorForm);
 
 		initWidget(wrapper);
 	}
