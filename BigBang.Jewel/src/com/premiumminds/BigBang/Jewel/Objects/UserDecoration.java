@@ -48,7 +48,7 @@ public class UserDecoration
 	{
 		try
 		{
-			mrefUser = (IUser)User.GetInstance(Engine.getCurrentNameSpace(), (UUID)getAt(0));
+			mrefUser = (IUser)User.GetInstance(getNameSpace(), (UUID)getAt(0));
 		}
 		catch (Throwable e)
 		{
