@@ -134,7 +134,8 @@ public class CostCenterServiceImpl
 					lobjTmpUser.name = lobjUser.getBaseUser().getDisplayName();
 					lobjTmpUser.username = lobjUser.getBaseUser().getUserName();
 					lobjTmpUser.password = null; //JMMM: No way!
-					lobjTmpUser.profileId = lobjUser.getBaseUser().getProfile().getKey().toString();
+					lobjTmpUser.profile.id = lobjUser.getBaseUser().getProfile().getKey().toString();
+					lobjTmpUser.profile.name = lobjUser.getBaseUser().getProfile().getLabel();
 					lobjTmpUser.costCenterId = ((UUID)lobjUser.getAt(2)).toString();
 					lobjTmpUser.email = (String)lobjUser.getAt(1);
 					larrAuxUsers.add(lobjTmpUser);
@@ -279,9 +280,10 @@ public class CostCenterServiceImpl
 				lobjTmpUser.name = lobjUser.getBaseUser().getDisplayName();
 				lobjTmpUser.username = lobjUser.getBaseUser().getUserName();
 				lobjTmpUser.password = null; //JMMM: No way!
-				lobjTmpUser.profileId = lobjUser.getBaseUser().getProfile().getKey().toString();
+				lobjTmpUser.profile.id = lobjUser.getBaseUser().getProfile().getKey().toString();
+				lobjTmpUser.profile.name = lobjUser.getBaseUser().getProfile().getLabel();
 				lobjTmpUser.costCenterId = ((UUID)lobjUser.getAt(2)).toString();
-				lobjTmpUser.email = (String)lobjUser.getAt(3);
+				lobjTmpUser.email = (String)lobjUser.getAt(1);
 				larrAuxUsers.add(lobjTmpUser);
 			}
 		}

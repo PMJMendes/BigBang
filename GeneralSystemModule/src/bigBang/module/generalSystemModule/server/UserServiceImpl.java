@@ -73,7 +73,9 @@ public class UserServiceImpl
 	        	lobjTmp.name = lobjUser.getBaseUser().getDisplayName();
 	        	lobjTmp.username = lobjUser.getBaseUser().getUserName();
 	        	lobjTmp.password = null; //JMMM: No way!
-	        	lobjTmp.profileId = lobjUser.getBaseUser().getProfile().getKey().toString();
+	        	lobjTmp.profile = new UserProfile();
+	        	lobjTmp.profile.id = lobjUser.getBaseUser().getProfile().getKey().toString();
+	        	lobjTmp.profile.name = lobjUser.getBaseUser().getProfile().getLabel();
 	        	lobjTmp.costCenterId = ((UUID)lobjUser.getAt(2)).toString();
 	        	lobjTmp.email = (String)lobjUser.getAt(1);
 	        	larrAux.add(lobjTmp);
@@ -125,7 +127,7 @@ public class UserServiceImpl
 			lopMU.marrModify[0].mstrFullName = user.name;
 			lopMU.marrModify[0].mstrUsername = user.username;
 			lopMU.marrModify[0].mobjPassword = new Password(user.password, false);
-			lopMU.marrModify[0].midProfile = UUID.fromString(user.profileId);
+			lopMU.marrModify[0].midProfile = UUID.fromString(user.profile.id);
 			lopMU.marrModify[0].midCostCenter = UUID.fromString(user.costCenterId);
 			lopMU.marrModify[0].mstrEmail = user.email;
 			lopMU.marrCreate = null;
@@ -139,13 +141,7 @@ public class UserServiceImpl
 			throw new BigBangException(e.getMessage(), e);
 		}
 
-		user.id = lopMU.marrModify[0].mid.toString();
-		user.name = lopMU.marrModify[0].mstrFullName;
-		user.username = lopMU.marrModify[0].mstrUsername;
 		user.password = null;
-		user.profileId = lopMU.marrModify[0].midProfile.toString();
-		user.costCenterId = lopMU.marrModify[0].midCostCenter.toString();
-		user.email = lopMU.marrModify[0].mstrEmail;
 
 		return user;
 	}
@@ -167,7 +163,7 @@ public class UserServiceImpl
 			lopMU.marrCreate[0].mstrFullName = user.name;
 			lopMU.marrCreate[0].mstrUsername = user.username;
 			lopMU.marrCreate[0].mobjPassword = new Password(user.password, false);
-			lopMU.marrCreate[0].midProfile = UUID.fromString(user.profileId);
+			lopMU.marrCreate[0].midProfile = UUID.fromString(user.profile.id);
 			lopMU.marrCreate[0].midCostCenter = UUID.fromString(user.costCenterId);
 			lopMU.marrCreate[0].mstrEmail = user.email;
 			lopMU.marrModify = null;
@@ -182,12 +178,7 @@ public class UserServiceImpl
 		}
 
 		user.id = lopMU.marrNewIDs[0].toString();
-		user.name = lopMU.marrCreate[0].mstrFullName;
-		user.username = lopMU.marrCreate[0].mstrUsername;
 		user.password = null;
-		user.profileId = lopMU.marrCreate[0].midProfile.toString();
-		user.costCenterId = lopMU.marrCreate[0].midCostCenter.toString();
-		user.email = lopMU.marrCreate[0].mstrEmail;
 
 		return user;
 	}

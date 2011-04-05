@@ -10,7 +10,7 @@ public class User implements Serializable
 	public String name;
 	public String username;
 	public String password; //Filled only for the current user
-	public String profileId;
+	public UserProfile profile;
 	public String costCenterId;
 	public String email;
 }
