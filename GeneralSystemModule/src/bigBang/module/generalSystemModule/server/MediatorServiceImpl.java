@@ -36,7 +36,7 @@ public class MediatorServiceImpl
 		UUID lidProfiles;
 		UUID lidZipCodes;
         MasterDB ldb;
-        ResultSet lrsCenters;
+        ResultSet lrsMediators;
 		ArrayList<Mediator> larrAux;
 		ObjectBase lobjAux, lobjProfile, lobjZipCode;
 		Mediator lobjTmp;
@@ -60,7 +60,7 @@ public class MediatorServiceImpl
 
         try
         {
-	        lrsCenters = Entity.GetInstance(lidMediators).SelectAll(ldb);
+	        lrsMediators = Entity.GetInstance(lidMediators).SelectAll(ldb);
 		}
 		catch (Throwable e)
 		{
@@ -70,9 +70,9 @@ public class MediatorServiceImpl
 
 		try
 		{
-	        while (lrsCenters.next())
+	        while (lrsMediators.next())
 	        {
-	        	lobjAux = Engine.GetWorkInstance(lidMediators, lrsCenters);
+	        	lobjAux = Engine.GetWorkInstance(lidMediators, lrsMediators);
 	        	lobjProfile = Engine.GetWorkInstance(lidProfiles, (UUID)lobjAux.getAt(4));
 	        	lobjZipCode = Engine.GetWorkInstance(lidZipCodes, (UUID)lobjAux.getAt(7));
 	        	lobjTmp = new Mediator();
@@ -98,14 +98,14 @@ public class MediatorServiceImpl
         }
         catch (Throwable e)
         {
-			try { lrsCenters.close(); } catch (Throwable e1) {}
+			try { lrsMediators.close(); } catch (Throwable e1) {}
 			try { ldb.Disconnect(); } catch (Throwable e1) {}
         	throw new BigBangException(e.getMessage(), e);
         }
 
         try
         {
-        	lrsCenters.close();
+        	lrsMediators.close();
         }
 		catch (Throwable e)
 		{

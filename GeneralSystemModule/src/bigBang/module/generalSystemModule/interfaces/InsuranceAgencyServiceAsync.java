@@ -5,18 +5,11 @@ import bigBang.module.generalSystemModule.shared.InsuranceAgency;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
-public interface InsuranceAgencyServiceAsync extends Service {
-
-	void createInsuranceAgency(InsuranceAgency agency,
-			AsyncCallback<InsuranceAgency> callback);
-
-	void deleteInsuranceAgency(String id, AsyncCallback<String> callback);
-
+public interface InsuranceAgencyServiceAsync
+	extends Service
+{
 	void getInsuranceAgencies(AsyncCallback<InsuranceAgency[]> callback);
-
-	void getInsuranceAgency(AsyncCallback<InsuranceAgency> callback);
-
-	void saveInsuranceAgency(InsuranceAgency agency,
-			AsyncCallback<String> callback);
-
+	void createInsuranceAgency(InsuranceAgency agency, AsyncCallback<InsuranceAgency> callback);
+	void saveInsuranceAgency(InsuranceAgency agency, AsyncCallback<InsuranceAgency> callback);
+	void deleteInsuranceAgency(String id, AsyncCallback<Void> callback);
 }

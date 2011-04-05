@@ -4,8 +4,9 @@ import java.io.Serializable;
 
 import bigBang.library.shared.Address;
 
-public class InsuranceAgency implements Serializable {
-
+public class InsuranceAgency
+	implements Serializable
+{
 	private static final long serialVersionUID = 1L;
 
 	public String id;
@@ -15,6 +16,5 @@ public class InsuranceAgency implements Serializable {
 	public String[] ownMediatorCodes;
 	public String taxNumber;
 	public String NIB;
-	public Address address; //includes zip code
-	
+	public Address address;
 }

@@ -1,5 +1,7 @@
 package bigBang.module.generalSystemModule.interfaces;
 
+import bigBang.library.shared.BigBangException;
+import bigBang.library.shared.SessionExpiredException;
 import bigBang.module.generalSystemModule.shared.InsuranceAgency;
 
 import com.google.gwt.core.client.GWT;
@@ -7,7 +9,9 @@ import com.google.gwt.user.client.rpc.RemoteService;
 import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 
 @RemoteServiceRelativePath("InsuranceAgencyService")
-public interface InsuranceAgencyService extends RemoteService {
+public interface InsuranceAgencyService
+	extends RemoteService
+{
 	/**
 	 * Utility class for simplifying access to the instance of async service.
 	 */
@@ -21,14 +25,8 @@ public interface InsuranceAgencyService extends RemoteService {
 		}
 	}
 	
-	public InsuranceAgency[] getInsuranceAgencies();
-	
-	public InsuranceAgency getInsuranceAgency();
-	
-	public InsuranceAgency createInsuranceAgency(InsuranceAgency agency);
-	
-	public String deleteInsuranceAgency(String id);
-	
-	public String saveInsuranceAgency(InsuranceAgency agency);
-
+	public InsuranceAgency[] getInsuranceAgencies() throws SessionExpiredException, BigBangException;
+	public InsuranceAgency createInsuranceAgency(InsuranceAgency agency) throws SessionExpiredException, BigBangException;
+	public InsuranceAgency saveInsuranceAgency(InsuranceAgency agency) throws SessionExpiredException, BigBangException;
+	public void deleteInsuranceAgency(String id) throws SessionExpiredException, BigBangException;
 }

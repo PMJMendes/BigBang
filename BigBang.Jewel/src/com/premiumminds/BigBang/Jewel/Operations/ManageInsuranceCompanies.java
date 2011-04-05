@@ -10,43 +10,44 @@ import Jewel.Petri.SysObjects.JewelPetriException;
 import Jewel.Petri.SysObjects.Operation;
 
 import com.premiumminds.BigBang.Jewel.Constants;
-import com.premiumminds.BigBang.Jewel.Objects.Mediator;
+import com.premiumminds.BigBang.Jewel.Objects.Company;
 
-public class ManageMediators
+public class ManageInsuranceCompanies
 	extends Operation
 {
 	private static final long serialVersionUID = 1L;
 
-	public class MediatorData
+	public class CompanyData
 		implements Serializable
 	{
 		private static final long serialVersionUID = 1L;
-
+	
 		public UUID mid;
 		public String mstrName;
+		public String mstrAcronym;
 		public String mstrISPNumber;
+		public String mstrMedCode;
 		public String mstrFiscalNumber;
 		public String mstrBankID;
-		public UUID midProfile;
 		public String mstrAddress1;
 		public String mstrAddress2;
 		public UUID midZipCode;
 	}
 
-	public MediatorData[] marrCreate;
-	public MediatorData[] marrModify;
-	public MediatorData[] marrDelete;
+	public CompanyData[] marrCreate;
+	public CompanyData[] marrModify;
+	public CompanyData[] marrDelete;
 
 	public UUID[] marrNewIDs;
 
-	public ManageMediators(UUID pidProcess)
+	public ManageInsuranceCompanies(UUID pidProcess)
 	{
 		super(pidProcess);
 	}
 
 	protected UUID OpID()
 	{
-		return Constants.OPID_ManageMediators;
+		return Constants.OPID_ManageCompanies;
 	}
 
 	protected void Run()
@@ -54,7 +55,7 @@ public class ManageMediators
 	{
 		int i;
 		MasterDB ldb;
-		Mediator lobjAux;
+		Company lobjAux;
 		Entity lrefCostCenters;
 
 		try
@@ -84,15 +85,16 @@ public class ManageMediators
 
 				for ( i = 0; i < marrCreate.length; i++ )
 				{
-					lobjAux = Mediator.GetInstance(Engine.getCurrentNameSpace(), (UUID)null);
+					lobjAux = Company.GetInstance(Engine.getCurrentNameSpace(), (UUID)null);
 					lobjAux.setAt(0, marrCreate[i].mstrName);
-					lobjAux.setAt(1, marrCreate[i].mstrISPNumber);
-					lobjAux.setAt(2, marrCreate[i].mstrFiscalNumber);
-					lobjAux.setAt(3, marrCreate[i].mstrBankID);
-					lobjAux.setAt(4, marrCreate[i].midProfile);
-					lobjAux.setAt(5, marrCreate[i].mstrAddress1);
-					lobjAux.setAt(6, marrCreate[i].mstrAddress2);
-					lobjAux.setAt(7, marrCreate[i].midZipCode);
+					lobjAux.setAt(1, marrCreate[i].mstrAcronym);
+					lobjAux.setAt(2, marrCreate[i].mstrISPNumber);
+					lobjAux.setAt(3, marrCreate[i].mstrMedCode);
+					lobjAux.setAt(4, marrCreate[i].mstrFiscalNumber);
+					lobjAux.setAt(5, marrCreate[i].mstrBankID);
+					lobjAux.setAt(6, marrCreate[i].mstrAddress1);
+					lobjAux.setAt(7, marrCreate[i].mstrAddress2);
+					lobjAux.setAt(8, marrCreate[i].midZipCode);
 					lobjAux.SaveToDb(ldb);
 					marrNewIDs[i] = lobjAux.getKey();
 				}
@@ -102,15 +104,16 @@ public class ManageMediators
 			{
 				for ( i = 0; i < marrModify.length; i++ )
 				{
-					lobjAux = Mediator.GetInstance(Engine.getCurrentNameSpace(), marrModify[i].mid);
+					lobjAux = Company.GetInstance(Engine.getCurrentNameSpace(), marrModify[i].mid);
 					lobjAux.setAt(0, marrModify[i].mstrName);
-					lobjAux.setAt(1, marrModify[i].mstrISPNumber);
-					lobjAux.setAt(2, marrModify[i].mstrFiscalNumber);
-					lobjAux.setAt(3, marrModify[i].mstrBankID);
-					lobjAux.setAt(4, marrModify[i].midProfile);
-					lobjAux.setAt(5, marrModify[i].mstrAddress1);
-					lobjAux.setAt(6, marrModify[i].mstrAddress2);
-					lobjAux.setAt(7, marrModify[i].midZipCode);
+					lobjAux.setAt(1, marrModify[i].mstrAcronym);
+					lobjAux.setAt(2, marrModify[i].mstrISPNumber);
+					lobjAux.setAt(3, marrModify[i].mstrMedCode);
+					lobjAux.setAt(4, marrModify[i].mstrFiscalNumber);
+					lobjAux.setAt(5, marrModify[i].mstrBankID);
+					lobjAux.setAt(6, marrModify[i].mstrAddress1);
+					lobjAux.setAt(7, marrModify[i].mstrAddress2);
+					lobjAux.setAt(8, marrModify[i].midZipCode);
 					lobjAux.SaveToDb(ldb);
 				}
 			}
@@ -118,7 +121,7 @@ public class ManageMediators
 			if ( marrDelete != null )
 			{
 				lrefCostCenters = Entity.GetInstance(Engine.FindEntity(Engine.getCurrentNameSpace(),
-						Constants.ObjID_Mediator));
+						Constants.ObjID_Company));
 
 				for ( i = 0; i < marrDelete.length; i++ )
 				{
