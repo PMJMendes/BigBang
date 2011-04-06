@@ -7,6 +7,8 @@ import bigBang.library.client.EventBus;
 import bigBang.library.client.LoginModule;
 import bigBang.library.client.MainModule;
 import bigBang.library.client.Module;
+import bigBang.library.client.event.LoginSuccessEvent;
+import bigBang.library.client.event.LoginSuccessEventHandler;
 
 public class ModuleManager {
 
@@ -37,6 +39,14 @@ public class ModuleManager {
 		loginModule = module;
 		loginModule.initialize(eventBus);
 		mainModule.setLoginPresenter(loginModule.getLoginViewPresenter());
+		
+		eventBus.addHandler(LoginSuccessEvent.TYPE, new LoginSuccessEventHandler() {
+			
+			@Override
+			public void onLoginSuccess(LoginSuccessEvent event) {
+				initializeModules();
+			}
+		});
 	}
 	
 	public void registerModule(Module module) throws Exception {
