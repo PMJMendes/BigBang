@@ -44,7 +44,6 @@
 	</security-constraint>
 	-->
 
-	<!-- SBENEGO Kerberos Stuff -->
 	<filter>
 		<filter-name>SpnegoHttpFilter</filter-name>
 		<filter-class>net.sourceforge.spnego.SpnegoHttpFilter</filter-class>
@@ -66,21 +65,19 @@
 		</init-param>
 		<init-param>
 			<param-name>spnego.krb5.conf</param-name>
-<!--			<param-value>webapps/bigbang/krb5.conf</param-value>	-->
-			<param-value>/home/francisco/workspaces/CrediteEGS/BigBang/war/krb5.conf</param-value>
+			<param-value>krb5.conf</param-value>
 		</init-param>
 		<init-param>
 			<param-name>spnego.login.conf</param-name>
-<!--			<param-value>webapps/bigbang/login.conf</param-value>	-->
-			<param-value>/home/francisco/workspaces/CrediteEGS/BigBang/war/login.conf</param-value>
+			<param-value>login.conf</param-value>
 		</init-param>
 		<init-param>
 			<param-name>spnego.preauth.username</param-name>
-			<param-value>Zeus</param-value>
+			<param-value>jmmtomcat</param-value>
 		</init-param>
 		<init-param>
 			<param-name>spnego.preauth.password</param-name>
-			<param-value>Z3usP@55</param-value>
+			<param-value>jmm.000</param-value>
 		</init-param>
 		<init-param>
 			<param-name>spnego.login.server.module</param-name>
