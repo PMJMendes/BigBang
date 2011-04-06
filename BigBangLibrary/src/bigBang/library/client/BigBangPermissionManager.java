@@ -2,11 +2,12 @@ package bigBang.library.client;
 
 import bigBang.library.interfaces.BigBangPermissionService;
 import bigBang.library.interfaces.BigBangPermissionServiceAsync;
+import bigBang.library.shared.Permission;
 
 public class BigBangPermissionManager {
 
 	private BigBangPermissionServiceAsync service;
-	private String[] operationPermissions;
+	private Permission[] operationPermissions;
 	private String currentProcess;
 	
 	public BigBangPermissionManager(){
@@ -15,10 +16,10 @@ public class BigBangPermissionManager {
 	
 	public void getProcessPermissionContext(String processId, final BigBangAsyncCallback<Void> callback){
 		currentProcess = processId;
-		service.getProcessPermissions(processId, new BigBangAsyncCallback<String[]>() {
+		service.getProcessPermissions(processId, new BigBangAsyncCallback<Permission[]>() {
 
 			@Override
-			public void onSuccess(String[] result) {
+			public void onSuccess(Permission[] result) {
 				operationPermissions = result;
 				callback.onSuccess(null);
 			}
