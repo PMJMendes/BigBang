@@ -1,8 +1,8 @@
-package bigBang.library.shared;
+package bigBang.library.interfaces;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
-import bigBang.library.interfaces.Service;
+import bigBang.library.shared.Contact;
 
 public interface ContactsServiceAsync extends Service {
 

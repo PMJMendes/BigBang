@@ -1,5 +1,6 @@
-package bigBang.library.shared;
+package bigBang.library.interfaces;
 
+import bigBang.library.shared.Document;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.rpc.RemoteService;
 import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;

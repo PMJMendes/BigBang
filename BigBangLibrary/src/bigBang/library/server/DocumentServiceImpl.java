@@ -1,7 +1,7 @@
 package bigBang.library.server;
 
+import bigBang.library.interfaces.DocumentService;
 import bigBang.library.shared.Document;
-import bigBang.library.shared.DocumentService;
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 
 public class DocumentServiceImpl extends RemoteServiceServlet implements DocumentService {

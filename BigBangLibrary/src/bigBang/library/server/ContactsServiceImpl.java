@@ -1,7 +1,7 @@
 package bigBang.library.server;
 
+import bigBang.library.interfaces.ContactsService;
 import bigBang.library.shared.Contact;
-import bigBang.library.shared.ContactsService;
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 
 public class ContactsServiceImpl extends RemoteServiceServlet implements ContactsService {
