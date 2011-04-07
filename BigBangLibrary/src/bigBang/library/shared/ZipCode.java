@@ -12,4 +12,8 @@ public class ZipCode
 	public String county;
 	public String district;
 	public String country;
+	
+	public ZipCode(){
+		code = city = county = district = country = "";
+	}
 }

@@ -8,7 +8,7 @@ public class AddressFieldValidator implements FieldValidator<Address> {
 	@Override
 	public boolean isValid(Address value) {
 		// TODO Auto-generated method stub
-		return false;
+		return true;
 	}
 
 	@Override
