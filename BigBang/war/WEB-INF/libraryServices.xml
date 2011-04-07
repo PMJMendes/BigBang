@@ -13,6 +13,21 @@
 	<servlet-class>bigBang.library.server.TipifiedListServiceImpl
 	</servlet-class>
 </servlet>
+<servlet>
+	<servlet-name>ContactsService</servlet-name>
+	<servlet-class>bigBang.library.server.ContactsServiceImpl
+	</servlet-class>
+</servlet>
+<servlet>
+	<servlet-name>DocumentService</servlet-name>
+	<servlet-class>bigBang.library.server.DocumentServiceImpl
+	</servlet-class>
+</servlet>
+<servlet>
+	<servlet-name>ZipCodeService</servlet-name>
+	<servlet-class>bigBang.library.server.ZipCodeServiceImpl
+	</servlet-class>
+</servlet>
 
 <servlet-mapping>
 	<servlet-name>SearchService</servlet-name>
@@ -25,4 +40,16 @@
 <servlet-mapping>
 	<servlet-name>TipifiedListService</servlet-name>
 	<url-pattern>/bigbang/TipifiedListService</url-pattern>
+</servlet-mapping>
+<servlet-mapping>
+	<servlet-name>ContactsService</servlet-name>
+	<url-pattern>/bigbang/ContactsService</url-pattern>
+</servlet-mapping>
+<servlet-mapping>
+	<servlet-name>DocumentService</servlet-name>
+	<url-pattern>/bigbang/DocumentService</url-pattern>
+</servlet-mapping>
+<servlet-mapping>
+	<servlet-name>ZipCodeService</servlet-name>
+	<url-pattern>/bigbang/ZipCodeService</url-pattern>
 </servlet-mapping>
