@@ -6,6 +6,8 @@ import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 
 public class ContactsServiceImpl extends RemoteServiceServlet implements ContactsService {
 
+	private static final long serialVersionUID = 1L;
+
 	@Override
 	public Contact[] getContacts(String entityTypeId, String entityId) {
 		// TODO Auto-generated method stub
