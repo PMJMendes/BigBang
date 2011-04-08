@@ -1,0 +1,25 @@
+package bigBang.library.interfaces;
+
+import bigBang.library.shared.BigBangProcess;
+
+import com.google.gwt.core.client.GWT;
+import com.google.gwt.user.client.rpc.RemoteService;
+import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
+
+@RemoteServiceRelativePath("BigBangProcessService")
+public interface BigBangProcessService extends RemoteService {
+	/**
+	 * Utility class for simplifying access to the instance of async service.
+	 */
+	public static class Util {
+		private static BigBangProcessServiceAsync instance;
+		public static BigBangProcessServiceAsync getInstance(){
+			if (instance == null) {
+				instance = GWT.create(BigBangProcessService.class);
+			}
+			return instance;
+		}
+	}
+	
+	public BigBangProcess[] getProcesses(String processTypeId);
+}

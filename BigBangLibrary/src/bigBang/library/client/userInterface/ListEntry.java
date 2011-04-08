@@ -50,6 +50,7 @@ public class ListEntry<T> extends View implements ValueSelectable<T>, HasMetaDat
 	private CheckBox checkBox;
 	private boolean valueChangeHandlerInitialized;
 	private boolean selectionStateChangedHandlerInitialized;
+	private boolean selectable = true;
 	
 	
 	public ListEntry(T value) {
@@ -148,6 +149,9 @@ public class ListEntry<T> extends View implements ValueSelectable<T>, HasMetaDat
 	}
 	
 	public void setSelected(boolean selected, boolean fireEvents) {
+		if(selected && !this.selectable)
+			return;
+		
 		boolean initSelected = this.isSelected;
 		if(selected){
 			backgroundImage.setUrl(selectedBackgroundImageUrl);
@@ -167,6 +171,11 @@ public class ListEntry<T> extends View implements ValueSelectable<T>, HasMetaDat
 	
 	public boolean isSelected(){
 		return this.isSelected;
+	}
+	
+	public void setSelectable(boolean selectable) {
+		this.setSelected(false, false);
+		this.selectable = selectable;
 	}
 	
 	public void setTitle(String title){

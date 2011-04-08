@@ -3,7 +3,6 @@ package bigBang.library.client.userInterface;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.user.client.ui.Grid;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
-import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.TextBox;
 
@@ -16,10 +15,12 @@ public class AddressFormField extends FormField<Address> {
 	private final String COUNTRY_DEFAULT_VALUE = "Portugal";
 	
 	private TextBox street1;
-	private TextBox street2;
+	private TextBox street2;	
+	private TextBox code;
+	private TextBox city;
+	private TextBox county;
+	private TextBox district;
 	private TextBox country;
-	private TextBox zipCode1;
-	private TextBox zipCode2;
 
 	public AddressFormField(FieldValidator<Address> validator) {
 		this();
@@ -33,38 +34,45 @@ public class AddressFormField extends FormField<Address> {
 	public AddressFormField(){
 		street1 = new TextBox();
 		street2 = new TextBox();
+		code = new TextBox();
+		city = new TextBox();
+		county = new TextBox();
+		district = new TextBox();
 		country = new TextBox();
-		zipCode1 = new TextBox();
-		zipCode2 = new TextBox();
 		
+		code.setMaxLength(8);
+		code.setVisibleLength(8);
 		street1.setWidth("100%");
 		street2.setWidth("100%");
 		country.setText(COUNTRY_DEFAULT_VALUE);
-		zipCode1.setMaxLength(4);
-		zipCode1.setVisibleLength(3);
-		zipCode2.setMaxLength(3);
-		zipCode2.setVisibleLength(2);
 		
-		Grid wrapper = new Grid(4, 3);
+		Grid wrapper = new Grid(7, 3);
 		wrapper.getColumnFormatter().setWidth(0, "100px");
 		
 		wrapper.setWidget(0, 0, new Label("Rua:"));
 		wrapper.getCellFormatter().setHorizontalAlignment(0, 0, HasHorizontalAlignment.ALIGN_RIGHT);
 		wrapper.setWidget(0, 1, street1);
-		
 		wrapper.setWidget(1, 1, street2);
 		
 		wrapper.setWidget(2, 0, new Label("Código postal:"));
 		wrapper.getCellFormatter().setHorizontalAlignment(2, 0, HasHorizontalAlignment.ALIGN_RIGHT);
-		HorizontalPanel zipCodeWrapper = new HorizontalPanel();
-		zipCodeWrapper.add(zipCode1);
-		zipCodeWrapper.add(new Label("-"));
-		zipCodeWrapper.add(zipCode2);
-		wrapper.setWidget(2, 1, zipCodeWrapper);
+		wrapper.setWidget(2, 1, code);
 		
-		wrapper.setWidget(3, 0, new Label("País:"));
+		wrapper.setWidget(3, 0, new Label("Cidade:"));
 		wrapper.getCellFormatter().setHorizontalAlignment(3, 0, HasHorizontalAlignment.ALIGN_RIGHT);
-		wrapper.setWidget(3, 1, country);
+		wrapper.setWidget(3, 1, city);
+		
+		wrapper.setWidget(4, 0, new Label("Concelho:"));
+		wrapper.getCellFormatter().setHorizontalAlignment(4, 0, HasHorizontalAlignment.ALIGN_RIGHT);
+		wrapper.setWidget(4, 1, county);
+		
+		wrapper.setWidget(5, 0, new Label("Distrito:"));
+		wrapper.getCellFormatter().setHorizontalAlignment(5, 0, HasHorizontalAlignment.ALIGN_RIGHT);
+		wrapper.setWidget(5, 1, district);
+		
+		wrapper.setWidget(6, 0, new Label("País:"));
+		wrapper.getCellFormatter().setHorizontalAlignment(6, 0, HasHorizontalAlignment.ALIGN_RIGHT);
+		wrapper.setWidget(6, 1, country);
 		country.getElement().getStyle().setMargin(0, Unit.PX);
 		
 		wrapper.setWidth("550px");
@@ -73,41 +81,30 @@ public class AddressFormField extends FormField<Address> {
 	}
 
 	@Override
-	public void setReadOnly(boolean readOnly) {		
-		if(street1.isReadOnly() != readOnly){
-			if(street1.getValue().equals("")) street1.setValue("-"); else
-			if(street1.getValue().equals("-")) street1.setValue(""); 
-		}
-		if(street2.isReadOnly() != readOnly){
-			if(street2.getValue().equals("")) street2.setValue("-"); else
-			if(street2.getValue().equals("-")) street2.setValue(""); 
-		}
-		if(zipCode1.isReadOnly() != readOnly){
-			if(zipCode1.getValue().equals("")) zipCode1.setValue("-"); else
-			if(zipCode1.getValue().equals("-")) zipCode1.setValue(""); 
-		}
-		if(zipCode2.isReadOnly() != readOnly){
-			if(zipCode2.getValue().equals("")) zipCode2.setValue("-"); else
-			if(zipCode2.getValue().equals("-")) zipCode2.setValue(""); 
-		}
-		
+	public void setReadOnly(boolean readOnly) {				
 		street1.setReadOnly(readOnly);
 		street2.setReadOnly(readOnly);
-		zipCode1.setReadOnly(readOnly);
-		zipCode2.setReadOnly(readOnly);
+		code.setReadOnly(readOnly);
+		city.setReadOnly(readOnly);
+		county.setReadOnly(readOnly);
+		district.setReadOnly(readOnly);
 		country.setReadOnly(readOnly);
 		
 		if(readOnly){
 			street1.addStyleName("readonly");
 			street2.addStyleName("readonly");
-			zipCode1.addStyleName("readonly");
-			zipCode2.addStyleName("readonly");
+			code.addStyleName("readonly");
+			city.addStyleName("readonly");
+			county.addStyleName("readonly");
+			district.addStyleName("readonly");
 			country.addStyleName("readonly");
 		}else{
 			street1.removeStyleName("readonly");
 			street2.removeStyleName("readonly");
-			zipCode1.removeStyleName("readonly");
-			zipCode2.removeStyleName("readonly");
+			code.removeStyleName("readonly");
+			city.removeStyleName("readonly");
+			county.removeStyleName("readonly");
+			district.removeStyleName("readonly");
 			country.removeStyleName("readonly");
 		}
 	}
@@ -119,11 +116,17 @@ public class AddressFormField extends FormField<Address> {
 	
 	@Override
 	public void setValue(Address address){
+		if(address == null){
+			clear();
+			return;
+		}
 		street1.setValue(address.street1);
 		street2.setValue(address.street2);
-		/*zipCode1.setValue(address.zipCode.zip1);
-		zipCode2.setValue(address.zipCode.zip2); //TODO
-		country.setValue(address.country);*/
+		code.setValue(address.zipCode.code);
+		city.setValue(address.zipCode.city);
+		county.setValue(address.zipCode.county);
+		district.setValue(address.zipCode.district);
+		country.setValue(address.zipCode.country);
 	}
 	
 	@Override
@@ -131,18 +134,23 @@ public class AddressFormField extends FormField<Address> {
 		Address result = new Address();
 		result.street1 = street1.getValue();
 		result.street2 = street2.getValue();
-		/*result.zipCode.zip1 = zipCode1.getValue();
-		result.zipCode.zip2 = zipCode2.getValue();
-		result.country = country.getValue();*/
+		result.zipCode.code = code.getValue();
+		result.zipCode.city = city.getValue();
+		result.zipCode.county = county.getValue();
+		result.zipCode.district = district.getValue();
+		result.zipCode.country = country.getValue();
 		return result;
 	}
 	
 	public void clear(){
 		street1.setValue("");
 		street2.setValue("");
-		zipCode1.setValue("");
-		zipCode2.setValue("");
+		code.setValue("");
+		city.setValue("");
+		county.setValue("");
+		district.setValue("");
 		country.setValue(COUNTRY_DEFAULT_VALUE);
+		getValue();
 	}
 
 }

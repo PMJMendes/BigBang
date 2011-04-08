@@ -14,8 +14,9 @@ import com.google.gwt.user.client.ui.Widget;
 
 public class ListBoxFormField extends FormField<String> {
 	
-	private ListBox listBox;
-	private Label label;
+	protected ListBox listBox;
+	protected Label label;
+	protected HorizontalPanel wrapper;
 	
 	public ListBoxFormField(String label,FieldValidator<String> validator){
 		this();
@@ -41,7 +42,7 @@ public class ListBoxFormField extends FormField<String> {
 		
 		//this.field = new MockField();
 		
-		HorizontalPanel wrapper = new HorizontalPanel();
+		wrapper = new HorizontalPanel();
 		wrapper.setVerticalAlignment(HasVerticalAlignment.ALIGN_MIDDLE);
 		this.label = new Label();
 		this.label.getElement().getStyle().setMarginRight(5, Unit.PX);

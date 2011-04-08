@@ -23,4 +23,13 @@ public interface Resources extends ClientBundle {
 	@Source("images/listNewIcon1.png")
 	ImageResource listNewIcon();
 	
+	@Source("images/listDeleteSmallWhite.png")
+	ImageResource listDeleteIconSmallWhite();
+	
+	@Source("images/listDeleteSmallBlack.png")
+	ImageResource listDeleteIconSmallBlack();
+	
+	@Source("images/listExpandIcon1.png")
+	ImageResource listExpandIcon();
+	
 }

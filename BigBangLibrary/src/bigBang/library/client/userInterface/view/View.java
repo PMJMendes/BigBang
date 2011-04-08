@@ -1,6 +1,7 @@
 package bigBang.library.client.userInterface.view;
 
 import bigBang.library.client.RightClickable;
+import bigBang.library.client.event.DoubleClickEvent;
 
 import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.Element;
@@ -80,7 +81,7 @@ public class View extends Composite implements RightClickable {
 	}
 
 	public void onDoubleClick(Event event){
-
+		fireEvent(new DoubleClickEvent());
 	}
 
 	public void reset(){

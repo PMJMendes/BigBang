@@ -31,6 +31,7 @@ public class List<T> extends View implements HasValueSelectables<T>, java.util.L
 
 	protected java.util.List<ListEntry<T>> entries;
 	protected boolean multipleSelection = false;
+	protected boolean selectableEntriesEnabled = true;
 
 	//UI
 	protected HasWidgets headerContainer;
@@ -132,7 +133,7 @@ public class List<T> extends View implements HasValueSelectables<T>, java.util.L
 				selectedIndex = i;
 		}
 		if (size >= selectedIndex)
-			entries.get(selectedIndex).setSelected(true);
+			entries.get(selectedIndex).setSelected(true, true);
 	}
 
 	public void selectPrevious() {
@@ -148,7 +149,13 @@ public class List<T> extends View implements HasValueSelectables<T>, java.util.L
 			}
 		}
 		if (size > 0)
-			entries.get(selectedIndex).setSelected(true);
+			entries.get(selectedIndex).setSelected(true, true);
+	}
+	
+	protected void setSelectableEntries(boolean selectable) {
+		this.selectableEntriesEnabled = selectable;
+		for(ListEntry<T> e : this.entries)
+			e.setSelectable(selectable);
 	}
 
 	protected void selectTo(int index) {
@@ -284,7 +291,7 @@ public class List<T> extends View implements HasValueSelectables<T>, java.util.L
 		Collection<ValueSelectable<T>> selected = this.getSelected();
 		for(ValueSelectable<T> s : selected){
 			hasChanges |= s.isSelected();
-			s.setSelected(false);
+			s.setSelected(false, true);
 		}
 		if(hasChanges && selectionChangeHandlerInitialized)
 			fireEvent(new SelectionChangedEvent(selected));	
@@ -317,6 +324,7 @@ public class List<T> extends View implements HasValueSelectables<T>, java.util.L
 		boolean result = entries.add(e);
 		if(result){
 			this.bindEntry(e);
+			e.setSelectable(this.selectableEntriesEnabled);
 			this.listPanel.add(e);
 			onSizeChanged();
 		}
@@ -326,6 +334,7 @@ public class List<T> extends View implements HasValueSelectables<T>, java.util.L
 	@Override
 	public void add(int index, ListEntry<T> element) {
 		bindEntry(element);
+		element.setSelectable(this.selectableEntriesEnabled);
 		entries.add(index, element);
 		onSizeChanged();
 		render();
@@ -337,6 +346,7 @@ public class List<T> extends View implements HasValueSelectables<T>, java.util.L
 		if(result){
 			for(ListEntry<T> l : this.entries){
 				bindEntry(l);
+				l.setSelectable(this.selectableEntriesEnabled);
 				this.listPanel.add(l);
 			}
 		}
@@ -348,8 +358,10 @@ public class List<T> extends View implements HasValueSelectables<T>, java.util.L
 	public boolean addAll(int index, Collection<? extends ListEntry<T>> c) {
 		boolean result = this.entries.addAll(index, c);
 		if(result){
-			for(ListEntry<T> e : c)
+			for(ListEntry<T> e : c){
 				bindEntry(e);
+				e.setSelectable(this.selectableEntriesEnabled);
+			}
 			render();
 		}
 		onSizeChanged();

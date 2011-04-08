@@ -3,15 +3,18 @@ package bigBang.library.client.userInterface;
 import com.google.gwt.event.dom.client.KeyUpEvent;
 import com.google.gwt.event.dom.client.KeyUpHandler;
 import com.google.gwt.user.client.ui.HasVerticalAlignment;
+import com.google.gwt.user.client.ui.HasWidgets;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.TextBox;
+import com.google.gwt.user.client.ui.UIObject;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
 public class FilterableList<T> extends SortableList<T> {
 
 	protected TextBox textBoxFilter;
+	protected HasWidgets filtersContainer;
 	
 	public FilterableList() {
 		super();
@@ -41,6 +44,7 @@ public class FilterableList<T> extends SortableList<T> {
 		textFilterContainer.add(new Label("Filtrar"));
 		textFilterContainer.add(textBoxFilter);
 		textFilterContainer.setCellWidth(textBoxFilter, "100%");
+		filtersContainer = textFilterContainer;
 		headerWrapper.add(textFilterContainer);
 		
 		setHeaderWidget(headerWrapper);
@@ -69,6 +73,10 @@ public class FilterableList<T> extends SortableList<T> {
 	public void clearFilters(){
 		textBoxFilter.setValue("");
 		filterEntries();
+	}
+	
+	public void showFilterField(boolean show) {
+		((UIObject) this.filtersContainer).setVisible(show);
 	}
 
 }
