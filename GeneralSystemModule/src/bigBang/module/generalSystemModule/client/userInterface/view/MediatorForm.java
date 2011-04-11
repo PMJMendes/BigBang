@@ -1,16 +1,16 @@
 package bigBang.module.generalSystemModule.client.userInterface.view;
 
-import com.google.gwt.core.client.GWT;
-import com.google.gwt.event.dom.client.HasClickHandlers;
-import com.google.gwt.user.client.ui.Button;
-
 import bigBang.library.client.userInterface.AddressFormField;
-import bigBang.library.client.userInterface.ListBoxFormField;
+import bigBang.library.client.userInterface.ExpandableListBoxFormField;
 import bigBang.library.client.userInterface.TextBoxFormField;
 import bigBang.library.client.userInterface.view.FormView;
 import bigBang.module.generalSystemModule.shared.CommissionProfile;
 import bigBang.module.generalSystemModule.shared.Mediator;
+import bigBang.module.generalSystemModule.shared.ModuleConstants;
 import bigBang.module.generalSystemModule.shared.formValidator.MediatorFormValidator;
+
+import com.google.gwt.event.dom.client.HasClickHandlers;
+import com.google.gwt.user.client.ui.Button;
 
 public class MediatorForm extends FormView<Mediator> {
 
@@ -19,7 +19,7 @@ public class MediatorForm extends FormView<Mediator> {
 	private TextBoxFormField name;
 	private TextBoxFormField ISPNumber;
 	private TextBoxFormField taxNumber;
-	private ListBoxFormField comissionProfile;
+	private ExpandableListBoxFormField comissionProfile;
 	private AddressFormField address;
 	private TextBoxFormField NIB;
 	
@@ -32,9 +32,9 @@ public class MediatorForm extends FormView<Mediator> {
 		
 		name = new TextBoxFormField("Nome", new MediatorFormValidator.NameValidator());
 		ISPNumber = new TextBoxFormField("Número do ISP", new MediatorFormValidator.ISPNumberValidator());
-		taxNumber = new TextBoxFormField("Número de contribuinte", new MediatorFormValidator.TaxNumberValidator());
-		comissionProfile = new ListBoxFormField("Perfil de comissão", new MediatorFormValidator.ComissionProfileValidator());
-		NIB = new TextBoxFormField("NIB", new MediatorFormValidator.NIBValidator());
+		taxNumber = new TextBoxFormField("NIF/NIPC", new MediatorFormValidator.TaxNumberValidator());
+		comissionProfile = new ExpandableListBoxFormField(ModuleConstants.ListIDs.CommissionProfiles, "Perfil de comissão", new MediatorFormValidator.ComissionProfileValidator());
+		NIB = new TextBoxFormField("NIB/IBAN", new MediatorFormValidator.NIBValidator());
 		
 		addFormField(name);
 		addFormField(taxNumber);

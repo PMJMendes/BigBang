@@ -3,6 +3,7 @@ package bigBang.module.clientModule.client;
 import java.util.HashMap;
 
 import bigBang.library.client.EventBus;
+import bigBang.library.client.MenuSections;
 import bigBang.library.client.userInterface.MenuSection;
 import bigBang.library.client.userInterface.TextBadge;
 import bigBang.library.client.userInterface.presenter.OperationViewPresenter;
@@ -81,6 +82,11 @@ public class ClientSection implements MenuSection {
 	public void registerEventHandlers(EventBus eventBus) {
 		for(ViewPresenter p : sectionOperationPresenters.values())
 			p.setEventBus(eventBus);	
+	}
+
+	@Override
+	public MenuSections getMenuIndex() {
+		return MenuSections.CLIENT_SECTION;
 	}
 
 }

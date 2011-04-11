@@ -2,14 +2,18 @@ package bigBang.module.generalSystemModule.client.userInterface.view;
 
 import java.util.ArrayList;
 
+import com.google.gwt.event.dom.client.HasClickHandlers;
+import com.google.gwt.user.client.ui.Button;
+
 import bigBang.library.client.userInterface.AddressFormField;
 import bigBang.library.client.userInterface.TextBoxFormField;
 import bigBang.library.client.userInterface.view.FormView;
 import bigBang.library.client.userInterface.view.FormViewSection;
+import bigBang.library.shared.validator.AddressFieldValidator;
 import bigBang.module.generalSystemModule.shared.InsuranceAgency;
 import bigBang.module.generalSystemModule.shared.formValidator.InsuranceAgencyFormValidator;
 
-public class InsuranceAgencyForm extends FormView {
+public class InsuranceAgencyForm extends FormView<InsuranceAgency> {
 
 	private TextBoxFormField name;
 	private TextBoxFormField acronym;
@@ -21,7 +25,11 @@ public class InsuranceAgencyForm extends FormView {
 	
 	private FormViewSection ownMediatorCodeSection;
 	
-	private InsuranceAgency info;
+	private Button editCostCenterButton;
+	private Button saveCostCenterButton;
+	private Button deleteCostCenterButton;
+	
+	private InsuranceAgency insuranceAgency;
 	
 	public InsuranceAgencyForm(){
 		ownMediatorCodeList = new ArrayList<TextBoxFormField>();
@@ -38,7 +46,16 @@ public class InsuranceAgencyForm extends FormView {
 		addFormField(name);
 		addFormField(acronym);
 		addFormField(taxNumber);
+		addFormField(ISPNumber);
 		addFormField(NIB);
+		
+		this.editCostCenterButton = new Button("Editar");	
+		this.saveCostCenterButton = new Button("Guardar");
+		this.deleteCostCenterButton = new Button("Apagar");
+		
+		this.addButton(editCostCenterButton);
+		this.addButton(saveCostCenterButton);
+		this.addButton(deleteCostCenterButton);
 		
 		addSection("Códigos de Mediador");
 		ownMediatorCodeSection = currentSection;		
@@ -51,39 +68,37 @@ public class InsuranceAgencyForm extends FormView {
 	}
 	
 	@Override
-	public Object getInfo() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public void setInfo(Object info) {
-		clearInfo();
-		InsuranceAgency agency = (InsuranceAgency) info;
-		name.setValue(agency.name);
-		acronym.setValue(agency.acronym);
-		taxNumber.setValue(agency.taxNumber);
-		NIB.setValue(agency.NIB);
-		address.setValue(agency.address);
-		for(int i = 0; i < agency.ownMediatorCodes.length; i++) {
-			addOwnMediatorCodeField(agency.ownMediatorCodes[i]);
-		}		
-	}
-
-	@Override
-	public void clearInfo() {
-		name.setValue("");
-		acronym.setValue("");
-		taxNumber.setValue("");
-		NIB.setValue("");
-		address.clear();
-		ownMediatorCodeSection.clear();
-		ownMediatorCodeList.clear();
-		addOwnMediatorCodeField();
+	public InsuranceAgency getInfo() {
+		insuranceAgency.name = name.getValue();
+		insuranceAgency.acronym = acronym.getValue();
+		insuranceAgency.ISPNumber = ISPNumber.getValue();
+		insuranceAgency.taxNumber = taxNumber.getValue();
+		insuranceAgency.address = address.getValue();
+		insuranceAgency.NIB = NIB.getValue();
+		insuranceAgency.address = address.getValue();
+		insuranceAgency.ownMediatorCodes = new String[this.ownMediatorCodeList.size()];
+		for(int i = 0; i < insuranceAgency.ownMediatorCodes.length; i++)
+			insuranceAgency.ownMediatorCodes[i] = this.ownMediatorCodeList.get(i).getValue();			
+		return insuranceAgency;
 	}
 	
-	public void addOwnMediatorCodeField(){
-		addOwnMediatorCodeField(null);
+	@Override
+	public void setInfo(InsuranceAgency info) {
+		this.insuranceAgency = info != null ? (InsuranceAgency) info : new InsuranceAgency();
+		name.setValue(insuranceAgency.name);
+		acronym.setValue(insuranceAgency.acronym);
+		ISPNumber.setValue(insuranceAgency.ISPNumber);
+		taxNumber.setValue(insuranceAgency.taxNumber);
+		address.setValue(insuranceAgency.address);
+		NIB.setValue(insuranceAgency.NIB);
+		address.setValue(info.address);
+		
+		this.ownMediatorCodeSection.clear();
+		this.ownMediatorCodeList.clear();
+		
+		for(int i = 0; i < info.ownMediatorCodes.length; i++) {
+			addOwnMediatorCodeField(info.ownMediatorCodes[i]);
+		}
 	}
 	
 	public void addOwnMediatorCodeField(String value) {
@@ -94,4 +109,44 @@ public class InsuranceAgencyForm extends FormView {
 		ownMediatorCodeSection.addFormField(ownMediatorCode);
 	}
 
+	public HasClickHandlers getSaveButton() {
+		return saveCostCenterButton;
+	}
+	
+	public HasClickHandlers getEditButton() {
+		return editCostCenterButton;
+	}
+	
+	public HasClickHandlers getDeleteButton() {
+		return deleteCostCenterButton;
+	}
+	
+	@Override
+	public void setReadOnly(boolean readOnly) {
+		super.setReadOnly(readOnly);
+		if(insuranceAgency == null || insuranceAgency.ownMediatorCodes == null || insuranceAgency.ownMediatorCodes.length == 0){
+			if(!isReadOnly()){
+				TextBoxFormField field = new TextBoxFormField("1", new InsuranceAgencyFormValidator.OwnMediatorCodeValidator());
+				this.ownMediatorCodeList.add(field);
+				this.ownMediatorCodeSection.addFormField(field);
+			}else
+				this.ownMediatorCodeSection.clear();
+		}
+		saveCostCenterButton.setVisible(!readOnly);
+		editCostCenterButton.setVisible(readOnly);
+	}
+
+	@Override
+	public void clearInfo() {
+		super.clearInfo();
+		this.ownMediatorCodeList.clear();
+		if(insuranceAgency == null || insuranceAgency.ownMediatorCodes == null || insuranceAgency.ownMediatorCodes.length == 0){
+			if(!isReadOnly()){
+				TextBoxFormField field = new TextBoxFormField("1", new InsuranceAgencyFormValidator.OwnMediatorCodeValidator());
+				this.ownMediatorCodeList.add(field);
+				this.ownMediatorCodeSection.addFormField(field);
+			}else
+				this.ownMediatorCodeSection.clear();
+		}
+	}
 }

@@ -5,6 +5,7 @@ import com.google.gwt.core.client.GWT;
 import bigBang.library.client.BigBangPermissionManager;
 import bigBang.library.client.EventBus;
 import bigBang.library.client.Module;
+import bigBang.library.client.event.ModuleInitializedEvent;
 import bigBang.library.client.userInterface.TextBadge;
 import bigBang.library.client.userInterface.presenter.SectionViewPresenter;
 import bigBang.module.tasksModule.client.event.NumberOfTasksUpdateEvent;
@@ -43,6 +44,7 @@ public class TasksModule implements Module {
 				badge.setText(event.getValue() + "");
 			}
 		});
+		eventBus.fireEvent(new ModuleInitializedEvent(this));
 	}
 
 	public boolean isInitialized() {

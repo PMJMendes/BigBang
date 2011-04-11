@@ -37,11 +37,11 @@ public class GeneralSystemSectionViewPresenter implements SectionViewPresenter {
 		this.setEventBus(eventBus);
 		this.setService(service);
 		this.setView(view);
-		
 	}
 
 	public void registerOperation(OperationViewPresenter operationPresenter) {
-		this.view.createOperationNavigationItem(operationPresenter, true);
+		this.view.createOperationNavigationItem(operationPresenter, 
+				section.permissionManager.hasPermissionForOperation(operationPresenter.getOperation().getId()));
 		if(!hasRegisteredOperations) { //TO SHOW THE FIRST OPERATION BY DEFAULT
 			this.view.selectOperation(operationPresenter);
 			operationPresenter.go(this.view.getOperationViewContainer()); 

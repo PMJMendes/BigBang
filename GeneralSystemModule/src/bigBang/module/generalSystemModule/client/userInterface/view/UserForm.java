@@ -25,8 +25,6 @@ public class UserForm extends FormView<User> {
 	private Button saveCostCenterButton;
 	private Button deleteCostCenterButton;
 	
-	private final String EMPTY_VALUE = "";
-	
 	public UserForm(){
 		super();
 		addSection("Informação Geral");

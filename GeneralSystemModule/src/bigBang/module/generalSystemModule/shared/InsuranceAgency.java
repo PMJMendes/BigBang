@@ -17,4 +17,8 @@ public class InsuranceAgency
 	public String taxNumber;
 	public String NIB;
 	public Address address;
+	
+	public InsuranceAgency(){
+		ownMediatorCodes = new String[0];
+	}
 }

@@ -13,7 +13,9 @@ public class MediatorListEntry extends ListEntry<Mediator> {
 	
 	public MediatorListEntry(Mediator value) {
 		super(value);
-		comissioningProfileLabel = new Label();
+		if(comissioningProfileLabel == null)
+			comissioningProfileLabel = new Label();
+		comissioningProfileLabel.getElement().getStyle().setProperty("whiteSpace", "nowrap");
 		HorizontalPanel labelWrapper = new HorizontalPanel();
 		labelWrapper.setHeight("100%");
 		labelWrapper.setVerticalAlignment(HasVerticalAlignment.ALIGN_MIDDLE);
@@ -31,9 +33,16 @@ public class MediatorListEntry extends ListEntry<Mediator> {
 	@Override
 	public <I extends Object> void setInfo(I info){
 		Mediator mediator = (Mediator) info;
+		if(mediator.id == null){
+			setTitle("Novo Mediador");
+			return;
+		}
+			
 		setTitle(mediator.name);
 		setText(mediator.taxNumber);
-		//comissioningProfileLabel.setText(mediator.comissionProfile.name);
+		if(comissioningProfileLabel == null)
+			comissioningProfileLabel = new Label();
+		comissioningProfileLabel.setText(mediator.comissionProfile.value);
 	}
 	
 }

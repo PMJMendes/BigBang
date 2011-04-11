@@ -1,10 +1,13 @@
 package bigBang.library.client.userInterface;
 
 import bigBang.library.client.EventBus;
+import bigBang.library.client.MenuSections;
 
 public interface MenuSection {
 	
 	public String getId();
+	
+	public MenuSections getMenuIndex();
 	
 	public String getDescription();
 	

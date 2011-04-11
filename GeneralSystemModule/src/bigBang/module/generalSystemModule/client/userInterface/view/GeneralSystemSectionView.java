@@ -1,7 +1,6 @@
 package bigBang.module.generalSystemModule.client.userInterface.view;
 
 import org.gwt.mosaic.ui.client.MessageBox;
-import org.gwt.mosaic.ui.client.MessageBoxImages;
 
 import com.google.gwt.user.client.ui.AbstractImagePrototype;
 import com.google.gwt.user.client.ui.HasValue;

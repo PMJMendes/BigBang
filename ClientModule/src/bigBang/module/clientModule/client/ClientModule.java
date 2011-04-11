@@ -4,6 +4,7 @@ import bigBang.library.client.BigBangPermissionManager;
 import bigBang.library.client.EventBus;
 import bigBang.library.client.Module;
 import bigBang.library.client.Process;
+import bigBang.library.client.event.ModuleInitializedEvent;
 import bigBang.library.client.userInterface.presenter.SectionViewPresenter;
 import bigBang.module.clientModule.client.userInterface.presenter.ClientSectionViewPresenter;
 import bigBang.module.clientModule.client.userInterface.view.ClientSectionView;
@@ -29,6 +30,8 @@ public class ClientModule implements Module {
 		clientSectionPresenter.setSection(clientSection);
 		clientSection.registerEventHandlers(eventBus);
 		sectionPresenters[0] = clientSectionPresenter;
+		
+		eventBus.fireEvent(new ModuleInitializedEvent(this));
 	}
 
 	public boolean isInitialized() {

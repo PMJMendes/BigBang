@@ -1,13 +1,14 @@
 package bigBang.module.tasksModule.client;
 
 import bigBang.library.client.EventBus;
+import bigBang.library.client.MenuSections;
 import bigBang.library.client.userInterface.MenuSection;
 import bigBang.library.client.userInterface.TextBadge;
 import bigBang.library.client.userInterface.view.View;
 
 public class TasksSection implements MenuSection {
 
-	private static final String ID = "TASKS_SECTION";
+	public static final String ID = "TASKS_SECTION";
 	private final String DESCRIPTION = "Agenda";
 	private final String SHORT_DESCRIPTION = "Agenda";
 	
@@ -25,7 +26,7 @@ public class TasksSection implements MenuSection {
 	public String getId() {
 		return ID;
 	}
-
+	
 	public String getDescription() {
 		return DESCRIPTION;
 	}
@@ -48,6 +49,11 @@ public class TasksSection implements MenuSection {
 	
 	public void registerEventHandlers(EventBus eventBus) {
 		
+	}
+
+	@Override
+	public MenuSections getMenuIndex() {
+		return MenuSections.TASKS_SECTION;
 	}
 
 }

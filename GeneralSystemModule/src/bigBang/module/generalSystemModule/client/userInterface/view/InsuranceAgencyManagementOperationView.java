@@ -1,57 +1,131 @@
 package bigBang.module.generalSystemModule.client.userInterface.view;
 
+import com.google.gwt.event.dom.client.HasClickHandlers;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.SplitLayoutPanel;
 
+import bigBang.library.client.HasEditableValue;
+import bigBang.library.client.HasValueSelectables;
+import bigBang.library.client.ValueSelectable;
+import bigBang.library.client.userInterface.ListEntry;
 import bigBang.library.client.userInterface.view.PopupPanel;
 import bigBang.library.client.userInterface.view.View;
 import bigBang.module.generalSystemModule.client.userInterface.InsuranceAgencyList;
+import bigBang.module.generalSystemModule.client.userInterface.InsuranceAgencyListEntry;
 import bigBang.module.generalSystemModule.client.userInterface.presenter.InsuranceAgencyManagementOperationViewPresenter;
+import bigBang.module.generalSystemModule.shared.CommissionProfile;
+import bigBang.module.generalSystemModule.shared.InsuranceAgency;
 
 public class InsuranceAgencyManagementOperationView extends View implements InsuranceAgencyManagementOperationViewPresenter.Display {
+	
+	private static final int LIST_WIDTH = 400; //px
 
-	private final int AGENCIES_LIST_WIDTH = 400; //px
-	
 	private InsuranceAgencyList insuranceAgencyList;
-	private InsuranceAgencyForm insuranceAgencyform;
-	private InsuranceAgencyForm newInsuranceAgencyForm;
-	private PopupPanel newInsuranceAgencyPopup;
+	private InsuranceAgencyForm insuranceAgencyForm;
 	
-	private Button editInsuranceAgencyButton;
-	private Button saveInsuranceAgencyButton;
-	private Button deleteInsuranceAgencyButton;
-	private Button newInsuranceAgencyButton;
-	private Button submitNewInsuranceAgencyButton;
-		
-	public InsuranceAgencyManagementOperationView(){
+	public InsuranceAgencyManagementOperationView() {
 		SplitLayoutPanel wrapper = new SplitLayoutPanel();
 		wrapper.setSize("100%", "100%");
-		
+
 		insuranceAgencyList = new InsuranceAgencyList();
-		insuranceAgencyform = new InsuranceAgencyForm();
-		newInsuranceAgencyForm = new InsuranceAgencyForm();
-		newInsuranceAgencyPopup = new PopupPanel("Criação de Seguradora");
-		
-		editInsuranceAgencyButton = new Button("Editar");
-		saveInsuranceAgencyButton = new Button("Guardar");
-		deleteInsuranceAgencyButton = new Button("Apagar");
-		newInsuranceAgencyButton = new Button("Novo");
-		submitNewInsuranceAgencyButton = new Button("Submeter");
-		
-		insuranceAgencyform.addButton(editInsuranceAgencyButton);
-		insuranceAgencyform.addButton(saveInsuranceAgencyButton);
-		insuranceAgencyform.addButton(newInsuranceAgencyButton);
-		insuranceAgencyform.addButton(deleteInsuranceAgencyButton);
-		
-		newInsuranceAgencyForm.addButton(submitNewInsuranceAgencyButton);
-		newInsuranceAgencyPopup.add(newInsuranceAgencyForm);
-		
-		wrapper.addWest(insuranceAgencyList, AGENCIES_LIST_WIDTH);
-		wrapper.setWidgetMinSize(insuranceAgencyList, AGENCIES_LIST_WIDTH);
-		
-		wrapper.add(insuranceAgencyform);
-		
+		insuranceAgencyList.setSize("100%", "100%");
+		wrapper.addWest(insuranceAgencyList, LIST_WIDTH);
+		wrapper.setWidgetMinSize(insuranceAgencyList, LIST_WIDTH);
+
+		insuranceAgencyForm = new InsuranceAgencyForm();
+		wrapper.add(insuranceAgencyForm);
+
 		initWidget(wrapper);
+	}
+
+	@Override
+	public HasValueSelectables<InsuranceAgency> getList() {
+		return (HasValueSelectables<InsuranceAgency>)this.insuranceAgencyList;
+	}
+	
+	@Override
+	public void clearList(){
+		this.insuranceAgencyList.clear();
+	}
+	
+	@Override
+	public void addValuesToList(InsuranceAgency[] result) {
+		for(int i = 0; i < result.length; i++)
+			this.insuranceAgencyList.add(new InsuranceAgencyListEntry(result[i]));
+	}
+
+	@Override
+	public void removeInsuranceAgencyFromList(InsuranceAgency c) {
+		for(ListEntry<InsuranceAgency> e : this.insuranceAgencyList){
+			if(e.getValue() == c || e.getValue().id.equals(c.id)){
+				this.insuranceAgencyList.remove(e);
+				break;
+			}
+		}
+	}
+	
+	@Override
+	public HasEditableValue<InsuranceAgency> getForm() {
+		return this.insuranceAgencyForm;
+	}
+
+	@Override
+	public void prepareNewInsuranceAgency() {
+		for(ValueSelectable<InsuranceAgency> s : this.insuranceAgencyList){
+			if(s.getValue().id == null){
+				s.setSelected(true, true);
+				return;
+			}
+		}
+		InsuranceAgencyListEntry entry = new InsuranceAgencyListEntry(new InsuranceAgency());
+		this.insuranceAgencyList.add(entry);
+		this.insuranceAgencyList.getScrollable().scrollToBottom();
+		entry.setSelected(true, true);
+	}
+	
+	@Override
+	public void removeNewInsuranceAgencyPreparation(){
+		for(ValueSelectable<InsuranceAgency> s : this.insuranceAgencyList){
+			if(s.getValue().id == null){
+				this.removeInsuranceAgencyFromList(s.getValue());
+				break;
+			}
+		}
+	}
+	
+	@Override
+	public HasClickHandlers getNewButton() {
+		return this.insuranceAgencyList.newButton;
+	}
+
+	@Override
+	public HasClickHandlers getRefreshButton() {
+		return this.insuranceAgencyList.refreshButton;
+	}
+	
+	@Override
+	public HasClickHandlers getSaveButton() {
+		return this.insuranceAgencyForm.getSaveButton();
+	}
+
+	@Override
+	public HasClickHandlers getEditButton() {
+		return this.insuranceAgencyForm.getEditButton();
+	}
+	
+	@Override
+	public HasClickHandlers getDeleteButton() {
+		return this.insuranceAgencyForm.getDeleteButton();
+	}
+
+	@Override
+	public boolean isFormValid() {
+		return this.insuranceAgencyForm.validate();
+	}
+
+	@Override
+	public void lockForm(boolean lock) {
+		this.insuranceAgencyForm.lock(lock);
 	}
 	
 }

@@ -2,6 +2,8 @@ package bigBang.client;
 
 import java.util.ArrayList;
 
+import com.google.gwt.core.client.GWT;
+
 import bigBang.library.client.BigBangPermissionManager;
 import bigBang.library.client.EventBus;
 import bigBang.library.client.LoginModule;
@@ -9,6 +11,8 @@ import bigBang.library.client.MainModule;
 import bigBang.library.client.Module;
 import bigBang.library.client.event.LoginSuccessEvent;
 import bigBang.library.client.event.LoginSuccessEventHandler;
+import bigBang.library.client.event.ModuleInitializedEvent;
+import bigBang.library.client.event.ModuleInitializedEventHandler;
 
 public class ModuleManager {
 
@@ -30,6 +34,15 @@ public class ModuleManager {
 		if(mainModule == null)
 			throw new Exception("Cannot initialize main module");
 
+		eventBus.addHandler(ModuleInitializedEvent.TYPE, new ModuleInitializedEventHandler() {
+			
+			@Override
+			public void onModuleInitialized(ModuleInitializedEvent event) {
+				GWT.log("module initialized : " + event.getModule().getClass().toString());
+				mainModule.includeMainMenuSectionPresenters(event.getModule().getMainMenuSectionPresenters());
+			}
+		});
+		
 		mainModule.initialize(this.eventBus);
 	}
 
@@ -55,7 +68,7 @@ public class ModuleManager {
 
 		if(modules.contains(module))
 			return;
-
+		
 		modules.add(module);
 	}
 
@@ -71,8 +84,7 @@ public class ModuleManager {
 		int length = modules.size();
 		for(int i = 0; i < length; i++){
 			Module module = modules.get(i);
-			module.initialize(eventBus, permissionManager);
-			mainModule.includeMainMenuSectionPresenters(module.getMainMenuSectionPresenters());
+			module.initialize(eventBus, permissionManager);			
 		}
 	}
 

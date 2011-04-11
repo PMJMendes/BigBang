@@ -119,8 +119,6 @@ OperationViewPresenter {
 			
 			@Override
 			public void onSelectionChanged(SelectionChangedEvent event) {
-				GWT.log("selection changed");
-				
 				Collection<? extends Selectable> selected = event.getSelected();
 				if(selected.size() == 0){
 					view.getForm().setValue(null);

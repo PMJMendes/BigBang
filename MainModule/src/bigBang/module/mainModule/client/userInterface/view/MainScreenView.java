@@ -1,9 +1,15 @@
 package bigBang.module.mainModule.client.userInterface.view;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 
 import org.gwt.mosaic.ui.client.SheetPanel.Resources;
 
+import bigBang.library.client.MenuSections;
 import bigBang.library.client.userInterface.MenuSection;
 import bigBang.library.client.userInterface.presenter.SectionViewPresenter;
 import bigBang.library.client.userInterface.view.View;
@@ -31,14 +37,16 @@ public class MainScreenView extends View implements MainScreenViewPresenter.Disp
 
 	private VerticalPanel panel;
 	private TabPanel mainTabPanel;
-	private HashMap <String, Integer> processSectionIndexes;
+	private HashMap<MenuSection, Widget> sectionWrappers;
+	private ArrayList<SectionViewPresenter> sectionIndexes;
 	
 	private MenuItem usernameMenuItem;
 	private MenuItem domainMenuItem;
 	private MenuItem logoutMenuItem;
 
 	public MainScreenView(){
-		this.processSectionIndexes = new HashMap <String, Integer>();
+		this.sectionWrappers = new HashMap<MenuSection, Widget>();
+		this.sectionIndexes = new ArrayList<SectionViewPresenter>();
 		panel = new VerticalPanel();
 		panel.setVerticalAlignment(HasVerticalAlignment.ALIGN_TOP);
 		panel.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_LEFT);
@@ -102,28 +110,48 @@ public class MainScreenView extends View implements MainScreenViewPresenter.Disp
 		initWidget(panel);
 	}
 
-	public void createMenuSection(SectionViewPresenter sectionPresenter) {
-		AbsolutePanel tabPanelWidget = new AbsolutePanel();
-		tabPanelWidget.setSize("100px", "35px");
+	public void createMenuSection(SectionViewPresenter sectionPresenter, int index) {
+		sectionIndexes.add(sectionPresenter);
+		rearrangeTabs();
+	}
+	
+	public void rearrangeTabs(){
+		Collections.sort(this.sectionIndexes, new Comparator<SectionViewPresenter>() {
 
-		MenuSection section = sectionPresenter.getSection();
+			@Override
+			public int compare(SectionViewPresenter o1, SectionViewPresenter o2) {
+				return o1.getSection().getMenuIndex().compareTo(o2.getSection().getMenuIndex());
+			}
+		});
 		
-		Label label = new Label(section.getDescription());
-		label.getElement().getStyle().setMarginTop(12, Unit.PX);
-		label.setWidth("100%");
-		tabPanelWidget.add(label, 0, 0);
+		this.mainTabPanel.clear();
+		sectionWrappers.clear();
+		
+		for(SectionViewPresenter sectionPresenter : this.sectionIndexes){
+			MenuSection section = sectionPresenter.getSection();
+			AbsolutePanel tabPanelWidget = new AbsolutePanel();
+			tabPanelWidget.setSize("100px", "35px");
 
-		if(section.hasBadge()){
-			section.getBadge().getElement().getStyle().setPosition(Position.ABSOLUTE);
-			tabPanelWidget.add(section.getBadge());
-			section.getBadge().getElement().getStyle().setRight(30, Unit.PX);
+			Label label = new Label(section.getDescription());
+			label.getElement().getStyle().setMarginTop(12, Unit.PX);
+			label.setWidth("100%");
+			tabPanelWidget.add(label, 0, 0);
+
+			if(section.hasBadge()){
+				section.getBadge().getElement().getStyle().setPosition(Position.ABSOLUTE);
+				tabPanelWidget.add(section.getBadge());
+				section.getBadge().getElement().getStyle().setRight(30, Unit.PX);
+			}
+
+			SimplePanel wrapper = new SimplePanel();
+			wrapper.setSize("100%", "100%");
+			
+			this.mainTabPanel.add(wrapper, tabPanelWidget);
+			
+			sectionPresenter.go(wrapper);
+			
+			sectionWrappers.put(section, wrapper);
 		}
-
-		SimplePanel wrapper = new SimplePanel();
-		wrapper.setSize("100%", "100%");
-		this.mainTabPanel.add(wrapper, tabPanelWidget);
-		sectionPresenter.go(wrapper);
-		
 		this.mainTabPanel.selectTab(0);
 	}
 
@@ -133,7 +161,7 @@ public class MainScreenView extends View implements MainScreenViewPresenter.Disp
 	}
 
 	public void showSection(MenuSection section) throws Exception {
-		int index = this.mainTabPanel.getDeckPanel().getWidgetIndex((Widget) section);
+		int index = this.mainTabPanel.getDeckPanel().getWidgetIndex(sectionWrappers.get(section));
 		if(index == -1)
 			throw new Exception("Could not select the menu section. it does not exist.");
 		this.mainTabPanel.selectTab(index);

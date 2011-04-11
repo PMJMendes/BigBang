@@ -14,6 +14,15 @@
 		<servlet-name>InsuranceAgencyService</servlet-name>
 		<servlet-class>bigBang.module.generalSystemModule.server.InsuranceAgencyServiceImpl</servlet-class>
 	</servlet>
+	<servlet>
+		<servlet-name>GeneralSystemService</servlet-name>
+		<servlet-class>bigBang.module.generalSystemModule.server.GeneralSystemServiceImpl</servlet-class>
+	</servlet>
+	<servlet>
+		<servlet-name>CoveragesService</servlet-name>
+		<servlet-class>bigBang.module.generalSystemModule.server.CoveragesServiceImpl</servlet-class>
+	</servlet>
+	
 	<servlet-mapping>
 		<servlet-name>CostCenterService</servlet-name>
 		<url-pattern>/bigbang/CostCenterService</url-pattern>
@@ -29,4 +38,12 @@
 	<servlet-mapping>
 		<servlet-name>InsuranceAgencyService</servlet-name>
 		<url-pattern>/bigbang/InsuranceAgencyService</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>GeneralSystemService</servlet-name>
+		<url-pattern>/bigbang/GeneralSystemService</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>CoveragesService</servlet-name>
+		<url-pattern>/bigbang/CoveragesService</url-pattern>
 	</servlet-mapping>

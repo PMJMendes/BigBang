@@ -5,6 +5,7 @@ import bigBang.library.client.HasValueSelectables;
 import bigBang.library.client.ValueSelectable;
 import bigBang.library.client.userInterface.ListEntry;
 import bigBang.library.client.userInterface.view.FormViewSection;
+import bigBang.library.client.userInterface.view.PopupPanel;
 import bigBang.library.client.userInterface.view.View;
 import bigBang.module.generalSystemModule.client.userInterface.CostCenterList;
 import bigBang.module.generalSystemModule.client.userInterface.CostCenterListEntry;
@@ -13,7 +14,10 @@ import bigBang.module.generalSystemModule.client.userInterface.UserListEntry;
 import bigBang.module.generalSystemModule.client.userInterface.presenter.CostCenterManagementOperationViewPresenter;
 import bigBang.module.generalSystemModule.shared.CostCenter;
 import bigBang.module.generalSystemModule.shared.User;
+import bigBang.module.generalSystemModule.shared.UserProfile;
 
+import com.google.gwt.event.dom.client.DoubleClickEvent;
+import com.google.gwt.event.dom.client.DoubleClickHandler;
 import com.google.gwt.event.dom.client.HasClickHandlers;
 import com.google.gwt.user.client.ui.SplitLayoutPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
@@ -91,8 +95,18 @@ public class CostCenterManagementOperationView extends View implements CostCente
 
 	@Override
 	public void addValuesToMembersList(User[] result) {
-		for(int i = 0; i < result.length; i++)
-			this.memberList.add(new UserListEntry(result[i]));
+		for(int i = 0; i < result.length; i++){
+			final UserListEntry entry = new UserListEntry(result[i]);
+			entry.setDoubleClickable(true);
+			entry.addHandler(new DoubleClickHandler() {
+				
+				@Override
+				public void onDoubleClick(DoubleClickEvent event) {
+					showUserDetails(entry.getValue());
+				}
+			}, DoubleClickEvent.getType());
+			this.memberList.add(entry);
+		}
 	}
 
 	@Override
@@ -159,4 +173,16 @@ public class CostCenterManagementOperationView extends View implements CostCente
 		this.costCenterForm.lock(lock);
 	}
 
+	public void showUserDetails(User user) {
+		PopupPanel popup = new PopupPanel();
+		popup.setWidth("400px");
+		UserForm form = new UserForm();
+		CostCenter current = this.costCenterForm.getValue();
+		form.setCostCenters(new CostCenter[]{current});
+		form.setUserProfiles(new UserProfile[]{user.profile});
+		form.setInfo(user);
+		form.lock(true);
+		popup.add(form.getNonScrollableContent());
+		popup.center();
+	}
 }

@@ -23,7 +23,7 @@ public class ModuleInitializedEvent extends GwtEvent<ModuleInitializedEventHandl
 	}
 
 	@Override
-	protected void dispatch(ModuleInitializedEventHandler handler) {
+	public void dispatch(ModuleInitializedEventHandler handler) {
 		handler.onModuleInitialized(this);
 	}
 

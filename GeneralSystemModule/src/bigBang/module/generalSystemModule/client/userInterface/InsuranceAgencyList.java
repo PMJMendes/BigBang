@@ -1,20 +1,30 @@
 package bigBang.module.generalSystemModule.client.userInterface;
 
+import com.google.gwt.event.dom.client.HasClickHandlers;
+
 import bigBang.library.client.userInterface.FilterableList;
 import bigBang.library.client.userInterface.ListHeader;
 import bigBang.module.generalSystemModule.shared.InsuranceAgency;
 
 public class InsuranceAgencyList extends FilterableList<InsuranceAgency> {
 
+	public HasClickHandlers refreshButton;
+	public HasClickHandlers newButton;
+	
 	public InsuranceAgencyList(){
 		super();
 		ListHeader header = new ListHeader();
-		header.setText("Seguadoras");
+		header.setText("Seguradoras");
+		header.showNewButton("Novo");
+		header.showRefreshButton();
+		refreshButton = header.getRefreshButton();
+		newButton = header.getNewButton();
 		setHeaderWidget(header);
-		updateFooterLabel();
+		onSizeChanged();
 	}
 	
-	private void updateFooterLabel(){
+	@Override
+	protected void onSizeChanged(){
 		int size = this.size();
 		String text;
 		switch(size){

@@ -21,7 +21,6 @@ import bigBang.module.generalSystemModule.shared.User;
 import bigBang.module.generalSystemModule.shared.UserProfile;
 import bigBang.module.generalSystemModule.shared.operation.UserManagementOperation;
 
-import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.HasClickHandlers;
@@ -148,8 +147,6 @@ OperationViewPresenter {
 
 			@Override
 			public void onSelectionChanged(SelectionChangedEvent event) {
-				GWT.log("selection changed");
-
 				Collection<? extends Selectable> selected = event.getSelected();
 				if(selected.size() == 0){
 					view.getForm().setValue(null);
