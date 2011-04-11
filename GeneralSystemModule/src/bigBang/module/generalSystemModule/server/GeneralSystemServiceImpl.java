@@ -1,14 +1,32 @@
 package bigBang.module.generalSystemModule.server;
 
+import com.premiumminds.BigBang.Jewel.Objects.GeneralSystem;
+
+import Jewel.Engine.Engine;
+import bigBang.library.server.EngineImplementor;
+import bigBang.library.shared.BigBangException;
+import bigBang.library.shared.SessionExpiredException;
 import bigBang.module.generalSystemModule.interfaces.GeneralSystemService;
-import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 
-public class GeneralSystemServiceImpl extends RemoteServiceServlet implements GeneralSystemService {
-
+public class GeneralSystemServiceImpl
+	extends EngineImplementor
+	implements GeneralSystemService
+{
 	private static final long serialVersionUID = 1L;
 
-	@Override
-	public String getGeneralSystemProcessId() {
-		return "49153B77-1391-4E3A-81D2-9EB800CB68B7";
+	public String getGeneralSystemProcessId()
+		throws SessionExpiredException, BigBangException
+	{
+		if ( Engine.getCurrentUser() == null )
+			throw new SessionExpiredException();
+
+		try
+		{
+			return GeneralSystem.GetAnyInstance(Engine.getCurrentNameSpace()).getKey().toString();
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangException(e.getMessage(), e);
+		}
 	}
 }

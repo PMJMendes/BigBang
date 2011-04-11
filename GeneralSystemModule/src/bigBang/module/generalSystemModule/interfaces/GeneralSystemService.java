@@ -1,11 +1,16 @@
 package bigBang.module.generalSystemModule.interfaces;
 
+import bigBang.library.shared.BigBangException;
+import bigBang.library.shared.SessionExpiredException;
+
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.rpc.RemoteService;
 import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 
 @RemoteServiceRelativePath("GeneralSystemService")
-public interface GeneralSystemService extends RemoteService {
+public interface GeneralSystemService
+	extends RemoteService
+{
 	/**
 	 * Utility class for simplifying access to the instance of async service.
 	 */
@@ -19,6 +24,5 @@ public interface GeneralSystemService extends RemoteService {
 		}
 	}
 	
-	public String getGeneralSystemProcessId();
-	
+	public String getGeneralSystemProcessId() throws SessionExpiredException, BigBangException;
 }
