@@ -172,12 +172,17 @@ public class AuthenticationServiceImpl
 		if ( Engine.getCurrentUser() == null )
 			throw new SessionExpiredException();
 
+		if ( "".equals(oldPassword) )
+			oldPassword = null;
+		if ( "".equals(newPassword) )
+			newPassword = null;
+
 		try
 		{
 			larrParams = new java.lang.Object[3];
 
-			larrParams[0] = new Password(oldPassword, false);
-			larrParams[1] = new Password(newPassword, false);
+			larrParams[0] = (oldPassword == null ? null : new Password(oldPassword, false));
+			larrParams[1] = (newPassword == null ? null : new Password(newPassword, false));
 			larrParams[2] = larrParams[1];
 
 			User_Manager.ChangePassword(Engine.getCurrentNameSpace(), larrParams);

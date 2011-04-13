@@ -32,13 +32,14 @@ public class ManageInsuranceCompanies
 		public String mstrAddress1;
 		public String mstrAddress2;
 		public UUID midZipCode;
+		public ContactOps mobjContactOps;
+		public CompanyData mobjPrevValues;
 	}
 
 	public CompanyData[] marrCreate;
 	public CompanyData[] marrModify;
 	public CompanyData[] marrDelete;
-
-	public UUID[] marrNewIDs;
+	public ContactOps mobjContactOps;
 
 	public ManageInsuranceCompanies(UUID pidProcess)
 	{
@@ -81,8 +82,6 @@ public class ManageInsuranceCompanies
 		{
 			if ( marrCreate != null )
 			{
-				marrNewIDs = new UUID[marrCreate.length];
-
 				for ( i = 0; i < marrCreate.length; i++ )
 				{
 					lobjAux = Company.GetInstance(Engine.getCurrentNameSpace(), (UUID)null);
@@ -96,7 +95,10 @@ public class ManageInsuranceCompanies
 					lobjAux.setAt(7, marrCreate[i].mstrAddress2);
 					lobjAux.setAt(8, marrCreate[i].midZipCode);
 					lobjAux.SaveToDb(ldb);
-					marrNewIDs[i] = lobjAux.getKey();
+					if ( marrCreate[i].mobjContactOps != null )
+						marrCreate[i].mobjContactOps.RunSubOp(ldb, Constants.ObjID_Company, lobjAux.getKey());
+					marrCreate[i].mid = lobjAux.getKey();
+					marrCreate[i].mobjPrevValues = null;
 				}
 			}
 
@@ -105,6 +107,19 @@ public class ManageInsuranceCompanies
 				for ( i = 0; i < marrModify.length; i++ )
 				{
 					lobjAux = Company.GetInstance(Engine.getCurrentNameSpace(), marrModify[i].mid);
+					marrModify[i].mobjPrevValues = new CompanyData();
+					marrModify[i].mobjPrevValues.mid = lobjAux.getKey();
+					marrModify[i].mobjPrevValues.mstrName = (String)lobjAux.getAt(0);
+					marrModify[i].mobjPrevValues.mstrAcronym = (String)lobjAux.getAt(1);
+					marrModify[i].mobjPrevValues.mstrISPNumber = (String)lobjAux.getAt(2);
+					marrModify[i].mobjPrevValues.mstrMedCode = (String)lobjAux.getAt(3);
+					marrModify[i].mobjPrevValues.mstrFiscalNumber = (String)lobjAux.getAt(4);
+					marrModify[i].mobjPrevValues.mstrBankID = (String)lobjAux.getAt(5);
+					marrModify[i].mobjPrevValues.mstrAddress1 = (String)lobjAux.getAt(6);
+					marrModify[i].mobjPrevValues.mstrAddress2 = (String)lobjAux.getAt(7);
+					marrModify[i].mobjPrevValues.midZipCode = (UUID)lobjAux.getAt(8);
+					marrModify[i].mobjPrevValues.mobjContactOps = null;
+					marrModify[i].mobjPrevValues.mobjPrevValues = null;
 					lobjAux.setAt(0, marrModify[i].mstrName);
 					lobjAux.setAt(1, marrModify[i].mstrAcronym);
 					lobjAux.setAt(2, marrModify[i].mstrISPNumber);
@@ -125,9 +140,24 @@ public class ManageInsuranceCompanies
 
 				for ( i = 0; i < marrDelete.length; i++ )
 				{
+					lobjAux = Company.GetInstance(Engine.getCurrentNameSpace(), marrDelete[i].mid);
+					marrDelete[i].mstrName = (String)lobjAux.getAt(0);
+					marrDelete[i].mstrAcronym = (String)lobjAux.getAt(1);
+					marrDelete[i].mstrISPNumber = (String)lobjAux.getAt(2);
+					marrDelete[i].mstrMedCode = (String)lobjAux.getAt(3);
+					marrDelete[i].mstrFiscalNumber = (String)lobjAux.getAt(4);
+					marrDelete[i].mstrBankID = (String)lobjAux.getAt(5);
+					marrDelete[i].mstrAddress1 = (String)lobjAux.getAt(6);
+					marrDelete[i].mstrAddress2 = (String)lobjAux.getAt(7);
+					marrDelete[i].midZipCode = (UUID)lobjAux.getAt(8);
+					marrDelete[i].mobjContactOps = null;
+					marrDelete[i].mobjPrevValues = null;
 					lrefCostCenters.Delete(ldb, marrDelete[i].mid);
 				}
 			}
+
+			if ( mobjContactOps != null )
+				mobjContactOps.RunSubOp(ldb, Constants.ObjID_Company, null);
 		}
 		catch (Throwable e)
 		{

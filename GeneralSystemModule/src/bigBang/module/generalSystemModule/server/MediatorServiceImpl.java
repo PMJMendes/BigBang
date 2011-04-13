@@ -12,15 +12,18 @@ import Jewel.Engine.SysObjects.ObjectBase;
 import bigBang.library.server.EngineImplementor;
 import bigBang.library.shared.Address;
 import bigBang.library.shared.BigBangException;
+import bigBang.library.shared.Contact;
 import bigBang.library.shared.SessionExpiredException;
 import bigBang.library.shared.ZipCode;
 import bigBang.module.generalSystemModule.interfaces.MediatorService;
 import bigBang.module.generalSystemModule.shared.CommissionProfile;
 import bigBang.module.generalSystemModule.shared.Mediator;
 
+import com.premiumminds.BigBang.Jewel.BigBangJewelException;
 import com.premiumminds.BigBang.Jewel.Constants;
 import com.premiumminds.BigBang.Jewel.ZipCodeBridge;
 import com.premiumminds.BigBang.Jewel.Objects.GeneralSystem;
+import com.premiumminds.BigBang.Jewel.Operations.ContactOps;
 import com.premiumminds.BigBang.Jewel.Operations.ManageMediators;
 
 public class MediatorServiceImpl
@@ -166,7 +169,7 @@ public class MediatorServiceImpl
 			}
 			lopMM.marrCreate = null;
 			lopMM.marrDelete = null;
-			lopMM.marrNewIDs = null;
+			lopMM.mobjContactOps = null;
 
 			lopMM.Execute();
 		}
@@ -217,9 +220,17 @@ public class MediatorServiceImpl
 				lopMM.marrCreate[0].mstrAddress2 = null;
 				lopMM.marrCreate[0].midZipCode = null;
 			}
+			if ( (mediator.contacts != null) && (mediator.contacts.length > 0) )
+			{
+				lopMM.marrCreate[0].mobjContactOps = new ContactOps();
+				lopMM.marrCreate[0].mobjContactOps.marrCreate = BuildContactTree(lopMM.marrCreate[0].mobjContactOps,
+						mediator.contacts);
+			}
+			else
+				lopMM.marrCreate[0].mobjContactOps = null;
 			lopMM.marrModify = null;
 			lopMM.marrDelete = null;
-			lopMM.marrNewIDs = null;
+			lopMM.mobjContactOps = null;
 
 			lopMM.Execute();
 		}
@@ -228,7 +239,9 @@ public class MediatorServiceImpl
 			throw new BigBangException(e.getMessage(), e);
 		}
 
-		mediator.id = lopMM.marrNewIDs[0].toString();
+		mediator.id = lopMM.marrCreate[0].mid.toString();
+		if ( (mediator.contacts != null) && (mediator.contacts.length > 0) )
+			WalkContactTree(lopMM.marrCreate[0].mobjContactOps.marrCreate, mediator.contacts);
 
 		return mediator;
 	}
@@ -257,13 +270,65 @@ public class MediatorServiceImpl
 			lopMM.marrDelete[0].midZipCode = null;
 			lopMM.marrCreate = null;
 			lopMM.marrModify = null;
-			lopMM.marrNewIDs = null;
+			lopMM.mobjContactOps = null;
 
 			lopMM.Execute();
 		}
 		catch (Throwable e)
 		{
 			throw new BigBangException(e.getMessage(), e);
+		}
+	}
+
+	private ContactOps.ContactData[] BuildContactTree(ContactOps prefAux, Contact[] parrContacts)
+		throws BigBangJewelException
+	{
+		ContactOps.ContactData[] larrResult;
+		int i, j;
+
+		if ( (parrContacts == null) || (parrContacts.length == 0) )
+			return null;
+
+		larrResult = new ContactOps.ContactData[parrContacts.length];
+		for ( i = 0; i < parrContacts.length; i++ )
+		{
+			larrResult[i] = prefAux.new ContactData();
+			larrResult[i].mid = null;
+			larrResult[i].mstrName = parrContacts[i].name;
+			larrResult[i].midOwnerType = UUID.fromString(parrContacts[i].entityTypeId);
+			larrResult[i].midOwnerId = UUID.fromString(parrContacts[i].entityId);
+			larrResult[i].mstrAddress1 = parrContacts[i].address.street1;
+			larrResult[i].mstrAddress2 = parrContacts[i].address.street2;
+			larrResult[i].midZipCode = ZipCodeBridge.GetZipCode(parrContacts[i].address.zipCode.code,
+					parrContacts[i].address.zipCode.city, parrContacts[i].address.zipCode.county,
+					parrContacts[i].address.zipCode.district, parrContacts[i].address.zipCode.country);
+			if ( parrContacts[i].info != null )
+			{
+				larrResult[i].marrInfo = new ContactOps.ContactData.ContactInfoData[parrContacts[i].info.length];
+				for ( j = 0; j < parrContacts[i].info.length; j++ )
+				{
+					larrResult[i].marrInfo[j] = larrResult[i].new ContactInfoData();
+					larrResult[i].marrInfo[j].midType = UUID.fromString(parrContacts[i].info[j].typeId);
+					larrResult[i].marrInfo[j].mstrValue = parrContacts[i].info[j].value;
+				}
+			}
+			else
+				larrResult[i].marrInfo = null;
+			larrResult[i].marrSubContacts = BuildContactTree(prefAux, parrContacts[i].subContacts);
+		}
+			
+		return larrResult;
+	}
+
+	private void WalkContactTree(ContactOps.ContactData[] parrResults, Contact[] parrContacts)
+	{
+		int i;
+		
+		for ( i = 0; i < parrResults.length; i++ )
+		{
+			parrContacts[i].id = parrResults[i].mid.toString();
+			if ( (parrContacts[i].subContacts != null) && (parrResults[i].marrSubContacts != null) )
+				WalkContactTree(parrResults[i].marrSubContacts, parrContacts[i].subContacts);
 		}
 	}
 }

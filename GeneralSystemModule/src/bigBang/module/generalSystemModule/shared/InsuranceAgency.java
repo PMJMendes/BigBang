@@ -3,6 +3,7 @@ package bigBang.module.generalSystemModule.shared;
 import java.io.Serializable;
 
 import bigBang.library.shared.Address;
+import bigBang.library.shared.Contact;
 
 public class InsuranceAgency
 	implements Serializable
@@ -17,8 +18,11 @@ public class InsuranceAgency
 	public String taxNumber;
 	public String NIB;
 	public Address address;
-	
-	public InsuranceAgency(){
+	public Contact[] contacts;
+
+	public InsuranceAgency()
+	{
 		ownMediatorCodes = new String[0];
+		contacts = new Contact[0];
 	}
 }

@@ -29,17 +29,16 @@ public class ManageUsers
 		public UUID mid;
 		public String mstrFullName;
 		public String mstrUsername;
-		public Password mobjPassword; //Filled only for the current user
+		public Password mobjPassword;
 		public UUID midProfile;
 		public UUID midCostCenter;
 		public String mstrEmail;
+		public UserData mobjPrevValues;
 	}
 
 	public UserData[] marrCreate;
 	public UserData[] marrModify;
 	public UserData[] marrDelete;
-
-	public UUID[] marrNewIDs;
 
 	public ManageUsers(UUID pidProcess)
 	{
@@ -88,8 +87,6 @@ public class ManageUsers
 		{
 			if ( marrCreate != null )
 			{
-				marrNewIDs = new UUID[marrCreate.length];
-
 				for ( i = 0; i < marrCreate.length; i++ )
 				{
 					if ( marrCreate[i].midProfile.equals(Constants.ProfID_Root) &&
@@ -109,7 +106,9 @@ public class ManageUsers
 					lobjAuxOuter.setAt(2, marrCreate[i].midCostCenter);
 					lobjAuxOuter.SaveToDb(ldb);
 
-					marrNewIDs[i] = lobjAuxOuter.getKey();
+					marrCreate[i].mid = lobjAuxOuter.getKey();
+					marrCreate[i].mobjPassword = null;
+					marrCreate[i].mobjPrevValues = null;
 				}
 			}
 
@@ -131,6 +130,16 @@ public class ManageUsers
 					if ( lobjAuxBase.getProfile().getKey().equals(Constants.ProfID_Root) &&
 							!lobjAuxCurrent.getProfile().getKey().equals(Constants.ProfID_Root) )
 						throw new BigBangJewelException("Sem permissão: Só um utilizador Root pode modificar outros utilizadores Root.");
+
+					marrModify[i].mobjPrevValues = new UserData();
+					marrModify[i].mobjPrevValues.mid =  lobjAuxOuter.getKey();
+					marrModify[i].mobjPrevValues.mstrFullName = (String)lobjAuxBase.getAt(0);
+					marrModify[i].mobjPrevValues.mstrUsername = (String)lobjAuxBase.getAt(1);
+					marrModify[i].mobjPrevValues.mobjPassword = null;
+					marrModify[i].mobjPrevValues.midProfile = (UUID)lobjAuxBase.getAt(3);
+					marrModify[i].mobjPrevValues.midCostCenter = (UUID)lobjAuxOuter.getAt(1);
+					marrModify[i].mobjPrevValues.mstrEmail = (String)lobjAuxOuter.getAt(2);
+					marrModify[i].mobjPrevValues.mobjPrevValues = null;
 
 					lobjAuxBase.setAt(0, marrModify[i].mstrFullName);
 					lobjAuxBase.setAt(1, marrModify[i].mstrUsername);
@@ -160,6 +169,14 @@ public class ManageUsers
 					if ( lobjAuxBase.getProfile().getKey().equals(Constants.ProfID_Root) &&
 							!lobjAuxCurrent.getProfile().getKey().equals(Constants.ProfID_Root) )
 						throw new BigBangJewelException("Sem permissão: Só um utilizador Root pode apagar outros utilizadores Root.");
+
+					marrDelete[i].mstrFullName = (String)lobjAuxBase.getAt(0);
+					marrDelete[i].mstrUsername = (String)lobjAuxBase.getAt(1);
+					marrDelete[i].mobjPassword = null;
+					marrDelete[i].midProfile = (UUID)lobjAuxBase.getAt(3);
+					marrDelete[i].midCostCenter = (UUID)lobjAuxOuter.getAt(1);
+					marrDelete[i].mstrEmail = (String)lobjAuxOuter.getAt(2);
+					marrDelete[i].mobjPrevValues = null;
 
 					lrefDecorations.Delete(ldb, lobjAuxOuter.getKey());
 					lrefUsers.Delete(ldb, lobjAuxBase.getKey());

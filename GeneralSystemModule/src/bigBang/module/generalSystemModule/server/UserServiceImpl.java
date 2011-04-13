@@ -118,6 +118,9 @@ public class UserServiceImpl
 		if ( Engine.getCurrentUser() == null )
 			throw new SessionExpiredException();
 
+		if ( "".equals(user.password) )
+			user.password = null;
+
 		try
 		{
 			lopMU = new ManageUsers(GeneralSystem.GetAnyInstance(Engine.getCurrentNameSpace()).GetProcessID());
@@ -126,13 +129,12 @@ public class UserServiceImpl
 			lopMU.marrModify[0].mid = UUID.fromString(user.id);
 			lopMU.marrModify[0].mstrFullName = user.name;
 			lopMU.marrModify[0].mstrUsername = user.username;
-			lopMU.marrModify[0].mobjPassword = new Password(user.password, false);
+			lopMU.marrModify[0].mobjPassword = (user.password == null ? null : new Password(user.password, false));
 			lopMU.marrModify[0].midProfile = UUID.fromString(user.profile.id);
 			lopMU.marrModify[0].midCostCenter = UUID.fromString(user.costCenterId);
 			lopMU.marrModify[0].mstrEmail = user.email;
 			lopMU.marrCreate = null;
 			lopMU.marrDelete = null;
-			lopMU.marrNewIDs = null;
 
 			lopMU.Execute();
 		}
@@ -154,6 +156,9 @@ public class UserServiceImpl
 		if ( Engine.getCurrentUser() == null )
 			throw new SessionExpiredException();
 
+		if ( "".equals(user.password) )
+			user.password = null;
+
 		try
 		{
 			lopMU = new ManageUsers(GeneralSystem.GetAnyInstance(Engine.getCurrentNameSpace()).GetProcessID());
@@ -162,13 +167,12 @@ public class UserServiceImpl
 			lopMU.marrCreate[0].mid = null;
 			lopMU.marrCreate[0].mstrFullName = user.name;
 			lopMU.marrCreate[0].mstrUsername = user.username;
-			lopMU.marrCreate[0].mobjPassword = new Password(user.password, false);
+			lopMU.marrCreate[0].mobjPassword = (user.password == null ? null : new Password(user.password, false));
 			lopMU.marrCreate[0].midProfile = UUID.fromString(user.profile.id);
 			lopMU.marrCreate[0].midCostCenter = UUID.fromString(user.costCenterId);
 			lopMU.marrCreate[0].mstrEmail = user.email;
 			lopMU.marrModify = null;
 			lopMU.marrDelete = null;
-			lopMU.marrNewIDs = null;
 
 			lopMU.Execute();
 		}
@@ -177,7 +181,7 @@ public class UserServiceImpl
 			throw new BigBangException(e.getMessage(), e);
 		}
 
-		user.id = lopMU.marrNewIDs[0].toString();
+		user.id = lopMU.marrCreate[0].mid.toString();
 		user.password = null;
 
 		return user;
@@ -205,7 +209,6 @@ public class UserServiceImpl
 				lopMU.marrDelete[0].mstrEmail = null;
 				lopMU.marrCreate = null;
 				lopMU.marrModify = null;
-				lopMU.marrNewIDs = null;
 
 				lopMU.Execute();
 			}

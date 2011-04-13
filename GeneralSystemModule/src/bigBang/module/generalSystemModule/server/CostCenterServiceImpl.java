@@ -193,7 +193,6 @@ public class CostCenterServiceImpl
 			lopMCC.marrCreate[0].mstrName = costCenter.name;
 			lopMCC.marrModify = null;
 			lopMCC.marrDelete = null;
-			lopMCC.marrNewIDs = null;
 
 			lopMCC.Execute();
 		}
@@ -202,7 +201,7 @@ public class CostCenterServiceImpl
 			throw new BigBangException(e.getMessage(), e);
 		}
 
-		costCenter.id = lopMCC.marrNewIDs[0].toString();
+		costCenter.id = lopMCC.marrCreate[0].mid.toString();
 		costCenter.code = lopMCC.marrCreate[0].mstrCode;
 		costCenter.name = lopMCC.marrCreate[0].mstrName;
 		costCenter.members = new User[0];
@@ -236,7 +235,6 @@ public class CostCenterServiceImpl
 			lopMCC.marrModify[0].mstrName = costCenter.name;
 			lopMCC.marrCreate = null;
 			lopMCC.marrDelete = null;
-			lopMCC.marrNewIDs = null;
 
 			lopMCC.Execute();
 		}
@@ -342,7 +340,6 @@ public class CostCenterServiceImpl
 			lopMCC.marrDelete[0].mstrName = null;
 			lopMCC.marrCreate = null;
 			lopMCC.marrModify = null;
-			lopMCC.marrNewIDs = null;
 
 			lopMCC.Execute();
 		}

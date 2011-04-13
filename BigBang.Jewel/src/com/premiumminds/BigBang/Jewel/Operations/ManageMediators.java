@@ -31,13 +31,14 @@ public class ManageMediators
 		public String mstrAddress1;
 		public String mstrAddress2;
 		public UUID midZipCode;
+		public ContactOps mobjContactOps;
+		public MediatorData mobjPrevValues;
 	}
 
 	public MediatorData[] marrCreate;
 	public MediatorData[] marrModify;
 	public MediatorData[] marrDelete;
-
-	public UUID[] marrNewIDs;
+	public ContactOps mobjContactOps;
 
 	public ManageMediators(UUID pidProcess)
 	{
@@ -55,7 +56,7 @@ public class ManageMediators
 		int i;
 		MasterDB ldb;
 		Mediator lobjAux;
-		Entity lrefCostCenters;
+		Entity lrefMediators;
 
 		try
 		{
@@ -80,8 +81,6 @@ public class ManageMediators
 		{
 			if ( marrCreate != null )
 			{
-				marrNewIDs = new UUID[marrCreate.length];
-
 				for ( i = 0; i < marrCreate.length; i++ )
 				{
 					lobjAux = Mediator.GetInstance(Engine.getCurrentNameSpace(), (UUID)null);
@@ -94,7 +93,10 @@ public class ManageMediators
 					lobjAux.setAt(6, marrCreate[i].mstrAddress2);
 					lobjAux.setAt(7, marrCreate[i].midZipCode);
 					lobjAux.SaveToDb(ldb);
-					marrNewIDs[i] = lobjAux.getKey();
+					if ( marrCreate[i].mobjContactOps != null )
+						marrCreate[i].mobjContactOps.RunSubOp(ldb, Constants.ObjID_Mediator, lobjAux.getKey());
+					marrCreate[i].mid = lobjAux.getKey();
+					marrCreate[i].mobjPrevValues = null;
 				}
 			}
 
@@ -103,6 +105,18 @@ public class ManageMediators
 				for ( i = 0; i < marrModify.length; i++ )
 				{
 					lobjAux = Mediator.GetInstance(Engine.getCurrentNameSpace(), marrModify[i].mid);
+					marrModify[i].mobjPrevValues = new MediatorData();
+					marrModify[i].mobjPrevValues.mid = lobjAux.getKey();
+					marrModify[i].mobjPrevValues.mstrName = (String)lobjAux.getAt(0);
+					marrModify[i].mobjPrevValues.mstrISPNumber = (String)lobjAux.getAt(1);
+					marrModify[i].mobjPrevValues.mstrFiscalNumber = (String)lobjAux.getAt(2);
+					marrModify[i].mobjPrevValues.mstrBankID = (String)lobjAux.getAt(3);
+					marrModify[i].mobjPrevValues.midProfile = (UUID)lobjAux.getAt(4);
+					marrModify[i].mobjPrevValues.mstrAddress1 = (String)lobjAux.getAt(5);
+					marrModify[i].mobjPrevValues.mstrAddress2 = (String)lobjAux.getAt(6);
+					marrModify[i].mobjPrevValues.midZipCode = (UUID)lobjAux.getAt(7);
+					marrModify[i].mobjPrevValues.mobjContactOps = null;
+					marrModify[i].mobjPrevValues.mobjPrevValues = null;
 					lobjAux.setAt(0, marrModify[i].mstrName);
 					lobjAux.setAt(1, marrModify[i].mstrISPNumber);
 					lobjAux.setAt(2, marrModify[i].mstrFiscalNumber);
@@ -117,12 +131,23 @@ public class ManageMediators
 
 			if ( marrDelete != null )
 			{
-				lrefCostCenters = Entity.GetInstance(Engine.FindEntity(Engine.getCurrentNameSpace(),
+				lrefMediators = Entity.GetInstance(Engine.FindEntity(Engine.getCurrentNameSpace(),
 						Constants.ObjID_Mediator));
 
 				for ( i = 0; i < marrDelete.length; i++ )
 				{
-					lrefCostCenters.Delete(ldb, marrDelete[i].mid);
+					lobjAux = Mediator.GetInstance(Engine.getCurrentNameSpace(), marrDelete[i].mid);
+					marrDelete[i].mstrName = (String)lobjAux.getAt(0);
+					marrDelete[i].mstrISPNumber = (String)lobjAux.getAt(1);
+					marrDelete[i].mstrFiscalNumber = (String)lobjAux.getAt(2);
+					marrDelete[i].mstrBankID = (String)lobjAux.getAt(3);
+					marrDelete[i].midProfile = (UUID)lobjAux.getAt(4);
+					marrDelete[i].mstrAddress1 = (String)lobjAux.getAt(5);
+					marrDelete[i].mstrAddress2 = (String)lobjAux.getAt(6);
+					marrDelete[i].midZipCode = (UUID)lobjAux.getAt(7);
+					marrDelete[i].mobjContactOps = null;
+					marrDelete[i].mobjPrevValues = null;
+					lrefMediators.Delete(ldb, marrDelete[i].mid);
 				}
 			}
 		}

@@ -3,24 +3,22 @@ package com.premiumminds.BigBang.Jewel.Objects;
 import java.sql.ResultSet;
 import java.util.UUID;
 
-import Jewel.Engine.Engine;
-import Jewel.Engine.Implementation.User;
-import Jewel.Engine.Interfaces.IUser;
-import Jewel.Engine.SysObjects.JewelEngineException;
-import Jewel.Engine.SysObjects.ObjectBase;
-
 import com.premiumminds.BigBang.Jewel.BigBangJewelException;
 import com.premiumminds.BigBang.Jewel.Constants;
 
-public class UserDecoration
+import Jewel.Engine.Engine;
+import Jewel.Engine.SysObjects.JewelEngineException;
+import Jewel.Engine.SysObjects.ObjectBase;
+
+public class ContactInfo
 	extends ObjectBase
 {
-    public static UserDecoration GetInstance(UUID pidNameSpace, UUID pidKey)
+    public static ContactInfo GetInstance(UUID pidNameSpace, UUID pidKey)
 		throws BigBangJewelException
 	{
-    	try
-    	{
-    		return (UserDecoration)Engine.GetWorkInstance(Engine.FindEntity(pidNameSpace, Constants.ObjID_Decorations), pidKey);
+	    try
+	    {
+			return (ContactInfo)Engine.GetWorkInstance(Engine.FindEntity(pidNameSpace, Constants.ObjID_ContactInfo), pidKey);
 		}
 	    catch (Throwable e)
 	    {
@@ -28,12 +26,12 @@ public class UserDecoration
 		}
 	}
 
-    public static UserDecoration GetInstance(UUID pidNameSpace, ResultSet prsObject)
+    public static ContactInfo GetInstance(UUID pidNameSpace, ResultSet prsObject)
 		throws BigBangJewelException
 	{
-		try
-		{
-			return (UserDecoration)Engine.GetWorkInstance(Engine.FindEntity(pidNameSpace, Constants.ObjID_Decorations), prsObject);
+	    try
+	    {
+			return (ContactInfo)Engine.GetWorkInstance(Engine.FindEntity(pidNameSpace, Constants.ObjID_ContactInfo), prsObject);
 		}
 	    catch (Throwable e)
 	    {
@@ -41,7 +39,7 @@ public class UserDecoration
 		}
 	}
 
-	private IUser mrefUser;
+	private Contact mrefOwner;
 
 	public void Initialize()
 		throws JewelEngineException
@@ -52,7 +50,7 @@ public class UserDecoration
     {
     	try
     	{
-			return getBaseUser().getLabel() + " *";
+			return (String)getAt(1) + " for " + getOwner().getLabel();
 		}
     	catch (Throwable e)
     	{
@@ -60,14 +58,14 @@ public class UserDecoration
 		}
     }
 
-    public IUser getBaseUser()
+    public Contact getOwner()
     	throws BigBangJewelException
     {
-    	if ( mrefUser == null )
+    	if ( mrefOwner == null )
     	{
     		try
 			{
-				mrefUser = (IUser)User.GetInstance(getNameSpace(), (UUID)getAt(0));
+    			mrefOwner = Contact.GetInstance(getNameSpace(), (UUID)getAt(0));
 			}
 			catch (Throwable e)
 			{
@@ -75,6 +73,6 @@ public class UserDecoration
 			}
     	}
 
-    	return mrefUser;
+    	return mrefOwner;
     }
 }

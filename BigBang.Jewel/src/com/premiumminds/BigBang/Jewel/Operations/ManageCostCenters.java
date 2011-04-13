@@ -25,13 +25,12 @@ public class ManageCostCenters
 		public UUID mid;
 		public String mstrCode;
 		public String mstrName;
+		public CostCenterData mobjPrevValues;
 	}
 
 	public CostCenterData[] marrCreate;
 	public CostCenterData[] marrModify;
 	public CostCenterData[] marrDelete;
-
-	public UUID[] marrNewIDs;
 
 	public ManageCostCenters(UUID pidProcess)
 	{
@@ -74,15 +73,14 @@ public class ManageCostCenters
 		{
 			if ( marrCreate != null )
 			{
-				marrNewIDs = new UUID[marrCreate.length];
-
 				for ( i = 0; i < marrCreate.length; i++ )
 				{
 					lobjAux = CostCenter.GetInstance(Engine.getCurrentNameSpace(), (UUID)null);
 					lobjAux.setAt(0, marrCreate[i].mstrCode);
 					lobjAux.setAt(1, marrCreate[i].mstrName);
 					lobjAux.SaveToDb(ldb);
-					marrNewIDs[i] = lobjAux.getKey();
+					marrCreate[i].mid = lobjAux.getKey();
+					marrCreate[i].mobjPrevValues = null;
 				}
 			}
 
@@ -91,6 +89,11 @@ public class ManageCostCenters
 				for ( i = 0; i < marrModify.length; i++ )
 				{
 					lobjAux = CostCenter.GetInstance(Engine.getCurrentNameSpace(), marrModify[i].mid);
+					marrModify[i].mobjPrevValues = new CostCenterData();
+					marrModify[i].mobjPrevValues.mid = lobjAux.getKey();
+					marrModify[i].mobjPrevValues.mstrCode = (String)lobjAux.getAt(0);
+					marrModify[i].mobjPrevValues.mstrName = (String)lobjAux.getAt(1);
+					marrModify[i].mobjPrevValues.mobjPrevValues = null;
 					lobjAux.setAt(0, marrModify[i].mstrCode);
 					lobjAux.setAt(1, marrModify[i].mstrName);
 					lobjAux.SaveToDb(ldb);
@@ -104,6 +107,10 @@ public class ManageCostCenters
 
 				for ( i = 0; i < marrDelete.length; i++ )
 				{
+					lobjAux = CostCenter.GetInstance(Engine.getCurrentNameSpace(), marrDelete[i].mid);
+					marrDelete[i].mstrCode = (String)lobjAux.getAt(0);
+					marrDelete[i].mstrName = (String)lobjAux.getAt(1);
+					marrDelete[i].mobjPrevValues = null;
 					lrefCostCenters.Delete(ldb, marrDelete[i].mid);
 				}
 			}

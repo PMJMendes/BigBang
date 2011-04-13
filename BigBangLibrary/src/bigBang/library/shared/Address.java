@@ -10,10 +10,9 @@ public class Address
 	public String street1;
 	public String street2;
 	public ZipCode zipCode;
-	
+
 	public Address(){
 		street1 = street2 = "";
 		zipCode = new ZipCode();
 	}
-	
 }
