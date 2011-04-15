@@ -40,8 +40,8 @@ public class BigBang implements EntryPoint {
 			moduleManager.registerMainModule((MainModule) GWT.create(bigBang.module.mainModule.client.MainModule.class));
 			moduleManager.registerLoginModule((LoginModule) GWT.create(bigBang.module.loginModule.client.LoginModule.class));
 			
-			moduleManager.registerModule((TasksModule) GWT.create(bigBang.module.tasksModule.client.TasksModule.class));
-			moduleManager.registerModule((GeneralSystemModule) GWT.create(bigBang.module.generalSystemModule.client.GeneralSystemModule.class));
+			//moduleManager.registerModule((TasksModule) GWT.create(bigBang.module.tasksModule.client.TasksModule.class));
+			//moduleManager.registerModule((GeneralSystemModule) GWT.create(bigBang.module.generalSystemModule.client.GeneralSystemModule.class));
 			moduleManager.registerModule((ClientModule) GWT.create(bigBang.module.clientModule.client.ClientModule.class));
 			
 			moduleManager.runMainModule();

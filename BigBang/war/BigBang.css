@@ -59,6 +59,13 @@ h1 {
 	height: 20px;
 }
 
+.gwt-DateBox {
+	border: 1px solid gray;
+	padding: 0px !important;
+	margin: 0px !important;
+	height: 20px;
+}
+
 .dockPanelItemsWrapper {
 	border-right: 1px solid gray;
 }
