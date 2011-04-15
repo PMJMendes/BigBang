@@ -20,7 +20,7 @@ public class BigBangPermissionServiceImpl
 	public Permission[] getProcessPermissions(String id)
 		throws SessionExpiredException, BigBangException
 	{
-		UUID lidProcess;
+		IProcess lrefProcess;
 		IOperation[] larrOps;
 		Permission[] larrResult;
 		int i;
@@ -28,17 +28,16 @@ public class BigBangPermissionServiceImpl
 		if ( Engine.getCurrentUser() == null )
 			throw new SessionExpiredException();
 
-		lidProcess = UUID.fromString(id);
-
 		try
 		{
-			larrOps = ((IProcess)PNProcess.GetInstance(Engine.getCurrentNameSpace(), lidProcess)).GetScript().getOperations();
+			lrefProcess = (IProcess)PNProcess.GetInstance(Engine.getCurrentNameSpace(), UUID.fromString(id));
+			larrOps = lrefProcess.GetScript().getOperations();
 			larrResult = new Permission[larrOps.length];
 			for ( i = 0; i < larrOps.length; i++ )
 			{
 				larrResult[i] = new Permission();
 				larrResult[i].id = larrOps[i].getKey().toString();
-				larrResult[i].instanceId = larrOps[i].GetStepInProcess(lidProcess).getKey().toString();
+				larrResult[i].instanceId = lrefProcess.GetOperation(larrOps[i].getKey()).getKey().toString();
 			}
 		}
 		catch (Throwable e)
