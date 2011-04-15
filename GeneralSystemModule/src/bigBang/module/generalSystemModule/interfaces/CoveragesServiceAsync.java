@@ -1,31 +1,27 @@
 package bigBang.module.generalSystemModule.interfaces;
 
-import com.google.gwt.user.client.rpc.AsyncCallback;
-
 import bigBang.library.interfaces.Service;
-import bigBang.module.generalSystemModule.shared.CoverageBranch;
-import bigBang.module.generalSystemModule.shared.CoverageCategory;
-import bigBang.module.generalSystemModule.shared.CoverageModality;
-import bigBang.module.generalSystemModule.shared.CoverageTax;
+import bigBang.module.generalSystemModule.shared.Coverage;
+import bigBang.module.generalSystemModule.shared.Line;
+import bigBang.module.generalSystemModule.shared.SubLine;
+
+import com.google.gwt.user.client.rpc.AsyncCallback;
 
 public interface CoveragesServiceAsync extends Service {
 
-	void createBranch(CoverageBranch b, AsyncCallback<String> callback);
+	void deleteCoverage(String id, AsyncCallback<Void> callback);
 
-	void createCategory(CoverageCategory c, AsyncCallback<String> callback);
+	void deleteLine(String id, AsyncCallback<Void> callback);
 
-	void createModality(CoverageModality m, AsyncCallback<String> callback);
+	void deleteSubLine(String id, AsyncCallback<Void> callback);
+
+	void createBranch(Line b, AsyncCallback<Line> callback);
+
+	void createModality(SubLine m, AsyncCallback<SubLine> callback);
+
+	void createCoverage(Coverage b, AsyncCallback<Coverage> callback);
+
+	void getLines(AsyncCallback<Line[]> callback);
+
 	
-	void createTax(CoverageTax t, AsyncCallback<String> callback);
-
-	void deleteBranch(String id, AsyncCallback<Void> callback);
-
-	void deleteCategory(String id, AsyncCallback<Void> callback);
-
-	void deleteModality(String id, AsyncCallback<Void> callback);
-
-	void deleteTax(String id, AsyncCallback<Void> callback);
-
-	void getCoverages(AsyncCallback<CoverageCategory[]> callback);
-
 }

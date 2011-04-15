@@ -44,11 +44,11 @@ public class ClientSection implements MenuSection {
 		this.sectionOperationPresenters.put(ClientSearchOperation.ID, (OperationViewPresenter)clientSearchOperationPresenter);
 		
 		/* MERGE */
-		ClientMergeOperation clientMergeOperation = (ClientMergeOperation)GWT.create(ClientMergeOperation.class);
+		/*ClientMergeOperation clientMergeOperation = (ClientMergeOperation)GWT.create(ClientMergeOperation.class);
 		ClientMergeOperationView clientMergeOperationView = new ClientMergeOperationView();
 		ClientMergeOperationViewPresenter clientMergeOperationPresenter = new ClientMergeOperationViewPresenter(null, null, clientMergeOperationView);
 		clientMergeOperationPresenter.setOperation(clientMergeOperation);
-		this.sectionOperationPresenters.put(ClientMergeOperation.ID, (OperationViewPresenter)clientMergeOperationPresenter);
+		this.sectionOperationPresenters.put(ClientMergeOperation.ID, (OperationViewPresenter)clientMergeOperationPresenter);*/
 	}
 	
 	public String getId() {

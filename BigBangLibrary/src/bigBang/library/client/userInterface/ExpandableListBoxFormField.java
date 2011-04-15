@@ -13,8 +13,6 @@ import bigBang.library.shared.TipifiedListItem;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Cursor;
-import com.google.gwt.event.dom.client.ChangeEvent;
-import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
@@ -26,11 +24,29 @@ public class ExpandableListBoxFormField extends ListBoxFormField {
 
 	protected Image expandImage;
 	protected TypifiedListManagementPanel list;
+	
+	protected boolean hasServices;
 
+	public ExpandableListBoxFormField(String description) {
+		this("", description);
+	}
+	
+	public ExpandableListBoxFormField(String listId, FieldValidator<String> validator) {
+		this(listId, "");
+		setValidator(validator);
+	}
+
+	public ExpandableListBoxFormField(String listId, String description, FieldValidator<String> validator) {
+		this(listId, description);
+		setValidator(validator);
+	}
+	
 	public ExpandableListBoxFormField(final String listId, final String listDescription){
 		super();
 
-		label.setText(listDescription);
+		hasServices = listId != null && !listId.equals("");
+		
+		label.setText(listDescription + ":");
 
 		wrapper.clear();
 		wrapper.setVerticalAlignment(HasVerticalAlignment.ALIGN_MIDDLE);
@@ -81,12 +97,27 @@ public class ExpandableListBoxFormField extends ListBoxFormField {
 				}
 			}
 		});
+		list.setReadOnly(!this.hasServices);
 
 		wrapper.add(expandImage);
 		wrapper.add(mandatoryIndicatorLabel);
 		setFieldWidth("150px");
+		
+		if(!hasServices)
+			synchronizeToList();
 
 		clearValues();
+	}
+
+	private void synchronizeToList() {
+		int size = this.listBox.getItemCount();
+		for(int i = 0; i < size; i++) {
+			TipifiedListItem item = new TipifiedListItem();
+			item.id = listBox.getValue(i);
+			item.value = listBox.getItemText(i);
+			if(!item.id.equals(""))
+				this.list.add(new TypifiedListManagementPanel.TypifiedListEntry(item));
+		}
 	}
 
 	protected void synchronizeToListBox(){
@@ -104,19 +135,11 @@ public class ExpandableListBoxFormField extends ListBoxFormField {
 	@Override
 	public void setReadOnly(boolean readonly) {
 		super.setReadOnly(readonly);
-		expandImage.setVisible(!readonly);
+		//expandImage.setVisible(!readonly);
+		list.setReadOnly(readonly);
+		list.setSelectableEntries(!readonly);
 	}
 
-	public ExpandableListBoxFormField(String listId, FieldValidator<String> validator) {
-		this(listId, "");
-		setValidator(validator);
-	}
-
-	public ExpandableListBoxFormField(String listId, String description, FieldValidator<String> validator) {
-		this(listId, description);
-		setValidator(validator);
-	}
-	
 	@Override
 	public void clear() {
 		list.clearSelection();

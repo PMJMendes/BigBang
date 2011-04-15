@@ -7,7 +7,6 @@ import bigBang.library.shared.TipifiedListItem;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Cursor;
-import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.KeyUpEvent;
@@ -22,7 +21,7 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 
 public class TypifiedListManagementPanel extends FilterableList<TipifiedListItem> {
 
-	private class TypifiedListEntry extends ListEntry<TipifiedListItem> {
+	public static class TypifiedListEntry extends ListEntry<TipifiedListItem> {
 
 		public Image deleteButton;
 
@@ -208,6 +207,11 @@ public class TypifiedListManagementPanel extends FilterableList<TipifiedListItem
 	
 	private boolean isEditModeEnabled(){
 		return this.editModeEnabled;
+	}
+
+	public void setReadOnly(boolean readonly) {
+		this.setEditModeEnabled(false);
+		this.editButton.setVisible(!readonly);
 	}
 	
 }

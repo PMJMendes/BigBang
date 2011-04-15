@@ -56,6 +56,7 @@ OperationViewPresenter {
 		void prepareNewCostCenter();
 		void removeNewCostCenterPreparation();
 
+		void setReadOnly(boolean readOnly);
 		Widget asWidget();
 	}
 
@@ -267,9 +268,8 @@ OperationViewPresenter {
 		this.setReadOnly(permission);
 	}
 
-	private void setReadOnly(boolean permission) {
-		// TODO Auto-generated method stub
-		
+	private void setReadOnly(boolean result) {
+		view.setReadOnly(result);
 	}
 
 }

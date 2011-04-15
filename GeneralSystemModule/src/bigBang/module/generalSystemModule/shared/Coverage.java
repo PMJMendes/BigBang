@@ -2,13 +2,15 @@ package bigBang.module.generalSystemModule.shared;
 
 import java.io.Serializable;
 
-public class CoverageModality implements Serializable {
+public class Coverage implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 
 	public String id;
 	public String name;
+	public Tax[] taxes;
 	
-	public CoverageTax[] taxes;
-	
+	public Coverage() {
+		taxes = new Tax[0];
+	}
 }

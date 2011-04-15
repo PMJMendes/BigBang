@@ -1,16 +1,17 @@
 package bigBang.library.client.userInterface;
 
 import bigBang.library.client.resources.Resources;
-import bigBang.library.shared.TipifiedListItem;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Cursor;
 import com.google.gwt.user.client.ui.Image;
+import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.Widget;
 
 public class SimpleEditableListEntry <T> extends ListEntry<T> {
 
 	public Image deleteButton;
+	public Image editButton;
 	public Widget rightWidget;
 
 	public SimpleEditableListEntry(T value) {
@@ -19,6 +20,10 @@ public class SimpleEditableListEntry <T> extends ListEntry<T> {
 			deleteButton = new Image();
 		deleteButton.getElement().getStyle().setCursor(Cursor.POINTER);
 		deleteButton.setTitle("Apagar");
+		if(editButton == null)
+			editButton = new Image();
+		editButton.getElement().getStyle().setCursor(Cursor.POINTER);
+		editButton.setTitle("Editar");
 		setEditable(false);
 	}
 	
@@ -36,6 +41,9 @@ public class SimpleEditableListEntry <T> extends ListEntry<T> {
 		if(deleteButton == null)
 			deleteButton = new Image();
 		deleteButton.setResource(isSelected() ? r.listDeleteIconSmallWhite() : r.listDeleteIconSmallBlack());
+		if(editButton == null)
+			editButton = new Image();
+		editButton.setResource(isSelected() ? r.listEditIconSmallWhite() : r.listEditIconSmallBlack());
 	}
 	
 	public void setEditable(boolean editable){
@@ -44,7 +52,10 @@ public class SimpleEditableListEntry <T> extends ListEntry<T> {
 		}else {
 			if(this.rightWidget != null)
 				this.setRightWidget(this.rightWidget);
+			else
+				this.setRightWidget(new SimplePanel());
 		}
+		this.setLeftWidget(editable ? this.editButton : new SimplePanel());
 	}
 
 }

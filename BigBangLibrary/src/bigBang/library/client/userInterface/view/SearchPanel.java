@@ -1,12 +1,7 @@
 package bigBang.library.client.userInterface.view;
 
-import java.util.ArrayList;
-import java.util.Collection;
-
 import bigBang.library.client.SearchResult;
-import bigBang.library.client.userInterface.List;
-import bigBang.library.client.userInterface.ListEntry;
-import bigBang.library.client.userInterface.SearchPanelListEntry;
+import bigBang.library.client.userInterface.FilterableList;
 import bigBang.library.interfaces.SearchService;
 import bigBang.library.interfaces.SearchServiceAsync;
 
@@ -34,23 +29,17 @@ import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.HasVerticalAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
-import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
-public class SearchPanel<T> extends List<T> {
+public abstract class SearchPanel<T> extends FilterableList<T> {
 
 	private final String DEFAULT_TEXT = "Termos de pesquisa";
 	
-	private boolean multipleSelection = true;
 	private boolean liveSearch = false;
-	private boolean hasSearchTerms = false;
-
-	private TextBox searchField;
+	private boolean hasSearchTerms;
 	private Button searchButton;
-	
 	private Widget filtersWidget;
-	
 	private HandlerRegistration liveSearchKeyUpHandlerRegistration;
 	
 	private SearchServiceAsync service;
@@ -63,16 +52,12 @@ public class SearchPanel<T> extends List<T> {
 		super();
 		
 		this.service = service;
-		
-		this.searchField = new TextBox();
-		this.searchField.setText(DEFAULT_TEXT);
-		this.searchField.setWidth("100%");
-
+	
 		this.searchButton = new Button("Pesquisar");
 		this.searchButton.setSize("80px", "22px");
 		this.setLiveSearch(this.liveSearch);
 
-		this.searchField.addBlurHandler(new BlurHandler() {
+		textBoxFilter.addBlurHandler(new BlurHandler() {
 
 			public void onBlur(BlurEvent event) {
 				if(!hasSearchTerms){
@@ -80,31 +65,31 @@ public class SearchPanel<T> extends List<T> {
 				}
 			}
 		});
-		this.searchField.addFocusHandler(new FocusHandler() {
+		this.textBoxFilter.addFocusHandler(new FocusHandler() {
 
 			public void onFocus(FocusEvent event) {
 				if(!hasSearchTerms){
 					setStandBy(false);
-					searchField.setText("");
+					textBoxFilter.setText("");
 				}
 				searchButton.setEnabled(hasSearchTerms);
 			}
 		});
-		this.searchField.addKeyUpHandler(new KeyUpHandler() {
+		this.textBoxFilter.addKeyUpHandler(new KeyUpHandler() {
 			
 			public void onKeyUp(KeyUpEvent event) {
-				hasSearchTerms = !searchField.getText().equals("");
+				hasSearchTerms = !textBoxFilter.getText().equals("");
 				searchButton.setEnabled(hasSearchTerms);
 			}
 		});
-		this.searchField.addKeyPressHandler(new KeyPressHandler() {
+		this.textBoxFilter.addKeyPressHandler(new KeyPressHandler() {
 			
 			public void onKeyPress(KeyPressEvent event) {
 				if(event.getNativeEvent().getKeyCode() == KeyCodes.KEY_ENTER)
 					doSearch();
 			}
 		});
-		this.searchField.addHandler(new ValueChangeHandler<String>() {
+		this.textBoxFilter.addHandler(new ValueChangeHandler<String>() {
 
 			public void onValueChange(ValueChangeEvent<String> event) {
 				doSearch();
@@ -122,8 +107,8 @@ public class SearchPanel<T> extends List<T> {
 		searchFieldWrapper.setSize("100%", "40px");
 		searchFieldWrapper.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
 		searchFieldWrapper.setVerticalAlignment(HasVerticalAlignment.ALIGN_MIDDLE);
-		searchFieldWrapper.add(searchField);
-		searchFieldWrapper.setCellWidth(searchField, "100%");
+		searchFieldWrapper.add(textBoxFilter);
+		searchFieldWrapper.setCellWidth(textBoxFilter, "100%");
 		searchFieldWrapper.add(searchButton);
 		searchFieldWrapper.setCellWidth(searchButton, "100px");
 		searchFieldWrapper.setSpacing(5);
@@ -152,22 +137,9 @@ public class SearchPanel<T> extends List<T> {
 		filtersWrapper.getElement().getStyle().setBackgroundColor("#F6F6F6");
 		
 		this.filtersWidget = (Widget)filtersWrapper;
-		this.showFilters(false);
 		
 		headerWidgetWrapper.add(filtersWrapper);
 		this.setHeaderWidget(headerWidgetWrapper);
-
-		setResults(null);
-	}
-
-	public void setMultipleSelection(boolean multiple) {
-		this.multipleSelection = multiple;
-		for(ListEntry<T> e : this.entries)
-			((SearchPanelListEntry<T>)e).setCheckable(multiple);
-	}
-	
-	public void showFilters(boolean show) {
-		this.filtersWidget.setVisible(show);
 	}
 
 	public void setLiveSearch(boolean liveSearch) {
@@ -184,26 +156,17 @@ public class SearchPanel<T> extends List<T> {
 		if(this.liveSearchKeyUpHandlerRegistration != null)
 			return;
 
-		this.liveSearchKeyUpHandlerRegistration = this.searchField.addKeyUpHandler(new KeyUpHandler() {
+		this.liveSearchKeyUpHandlerRegistration = this.textBoxFilter.addKeyUpHandler(new KeyUpHandler() {
 			
 			public void onKeyUp(KeyUpEvent event) {
-				ValueChangeEvent.fire(searchField, searchField.getText());
+				ValueChangeEvent.fire(textBoxFilter, textBoxFilter.getText());
 			}
 		});
 	}
 
 	private void setStandBy(boolean standBy){
-		searchField.setText(DEFAULT_TEXT);
+		textBoxFilter.setText(DEFAULT_TEXT);
 		searchButton.setEnabled(false);
-	}
-	
-	@SuppressWarnings("unchecked")
-	public void setResults(ArrayList <SearchPanelListEntry<String>> results){
-		this.clear();
-		Collection <?> col = results;
-		clear();
-		//addAll((Collection<ListEntry<T>>) col);		
-		updateFooterText();
 	}
 
 	@Override
@@ -221,23 +184,20 @@ public class SearchPanel<T> extends List<T> {
 
 			public void onSuccess(SearchResult[] result) {
 				clear();
-				renderResults(result);
+				onResults(result);
 				updateFooterText();
 			}
 			
 		};		
 		
 		try{
-			this.service.search(null, null, this.searchField.getText(), callback);
+			this.service.search(null, null, this.textBoxFilter.getText(), callback);
 		}catch(Exception e){
 			GWT.log(e.getMessage());
 		}
 
 	}
 	
-	protected void renderResults(SearchResult[] results){
-		for(int i = 0; i < results.length; i++)
-			add(new SearchPanelListEntry(i+""));
-	}
+	public abstract void onResults(SearchResult[] results);
 
 }

@@ -7,11 +7,10 @@ public class ClientSearchPanel<T> extends SearchPanel<T> {
 
 	public ClientSearchPanel(){
 		super();
-		showFilters(true);
 	}
 	
 	@Override
-	protected void renderResults(SearchResult[] results) {
+	public void onResults(SearchResult[] results) {
 		for(int i = 0; i < results.length; i++){
 			ClientSearchPanelListEntry entry = new ClientSearchPanelListEntry(i+"");
 			entry.setTitle("Premium Minds Lda.");

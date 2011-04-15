@@ -13,8 +13,8 @@ import bigBang.module.generalSystemModule.shared.User;
 import bigBang.module.generalSystemModule.shared.UserProfile;
 
 import com.google.gwt.event.dom.client.HasClickHandlers;
+import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.SplitLayoutPanel;
-import com.google.gwt.user.client.ui.VerticalPanel;
 
 public class UserManagementOperationView extends View implements UserManagementOperationViewPresenter.Display {
 	
@@ -137,6 +137,12 @@ public class UserManagementOperationView extends View implements UserManagementO
 	public void lockForm(boolean lock) {
 		this.userForm.setReadOnly(true);
 		this.userForm.lock(lock);
+	}
+
+	@Override
+	public void setReadOnly(boolean readOnly) {
+		((Button)this.userList.newButton).setEnabled(!readOnly);
+		this.userForm.setReadOnly(readOnly);
 	}
 
 }

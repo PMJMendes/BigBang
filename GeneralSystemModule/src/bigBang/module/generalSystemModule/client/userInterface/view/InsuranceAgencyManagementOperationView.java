@@ -1,20 +1,18 @@
 package bigBang.module.generalSystemModule.client.userInterface.view;
 
-import com.google.gwt.event.dom.client.HasClickHandlers;
-import com.google.gwt.user.client.ui.Button;
-import com.google.gwt.user.client.ui.SplitLayoutPanel;
-
 import bigBang.library.client.HasEditableValue;
 import bigBang.library.client.HasValueSelectables;
 import bigBang.library.client.ValueSelectable;
 import bigBang.library.client.userInterface.ListEntry;
-import bigBang.library.client.userInterface.view.PopupPanel;
 import bigBang.library.client.userInterface.view.View;
 import bigBang.module.generalSystemModule.client.userInterface.InsuranceAgencyList;
 import bigBang.module.generalSystemModule.client.userInterface.InsuranceAgencyListEntry;
 import bigBang.module.generalSystemModule.client.userInterface.presenter.InsuranceAgencyManagementOperationViewPresenter;
-import bigBang.module.generalSystemModule.shared.CommissionProfile;
 import bigBang.module.generalSystemModule.shared.InsuranceAgency;
+
+import com.google.gwt.event.dom.client.HasClickHandlers;
+import com.google.gwt.user.client.ui.Button;
+import com.google.gwt.user.client.ui.SplitLayoutPanel;
 
 public class InsuranceAgencyManagementOperationView extends View implements InsuranceAgencyManagementOperationViewPresenter.Display {
 	
@@ -126,6 +124,12 @@ public class InsuranceAgencyManagementOperationView extends View implements Insu
 	@Override
 	public void lockForm(boolean lock) {
 		this.insuranceAgencyForm.lock(lock);
+	}
+
+	@Override
+	public void setReadOnly(boolean readOnly) {
+		((Button)this.insuranceAgencyList.newButton).setEnabled(!readOnly);
+		this.insuranceAgencyForm.setReadOnly(readOnly);
 	}
 	
 }

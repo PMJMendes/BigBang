@@ -56,6 +56,7 @@ public class MediatorManagementOperationViewPresenter implements
 		void removeNewMediatorPreparation();
 		void setCommissionProfiles(CommissionProfile[] profiles);
 
+		void setReadOnly(boolean readOnly);
 		Widget asWidget();
 	}
 
@@ -283,14 +284,13 @@ public class MediatorManagementOperationViewPresenter implements
 	}
 
 	@Override
-	public void setOperationPermission(boolean permission) {
-		this.operation.setPermission(permission);
-		this.setReadOnly(permission);
+	public void setOperationPermission(boolean result) {
+		this.operation.setPermission(result);
+		setReadOnly(result);
 	}
 
-	private void setReadOnly(boolean permission) {
-		// TODO Auto-generated method stub
-		
+	private void setReadOnly(boolean result) {
+		view.setReadOnly(result);
 	}
 	
 }

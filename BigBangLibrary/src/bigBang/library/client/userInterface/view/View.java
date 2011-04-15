@@ -31,10 +31,10 @@ public class View extends Composite implements RightClickable {
 
 	public void setRightClickable(boolean rightClickable) {
 		this.rightClickable = rightClickable;
-		if(rightClickable)
-			sinkEvents(Event.ONCONTEXTMENU);
-		else
-			unsinkEvents(Event.ONCONTEXTMENU);
+		//if(rightClickable)
+			sinkEvents(Event.ONCONTEXTMENU | Event.MOUSEEVENTS);
+		//else
+			//unsinkEvents(Event.ONCONTEXTMENU);
 	}
 
 	public boolean isRightClickable(){
@@ -59,16 +59,16 @@ public class View extends Composite implements RightClickable {
 		switch (DOM.eventGetType(event)) {
 		case Event.ONMOUSEUP:
 			if (DOM.eventGetButton(event) == Event.BUTTON_RIGHT) {
-				if(this.rightClickable)
+				//if(this.rightClickable)
 					onRightClick(event);
 			}
 			break;
 		case Event.ONDBLCLICK:
-			if(this.doubleClickable)
+			//if(this.doubleClickable)
 				onDoubleClick(event);
 			break;
 		case Event.ONCONTEXTMENU:
-			if(this.rightClickable)
+			//if(this.rightClickable)
 				onRightClick(event);
 			break;
 
@@ -78,9 +78,12 @@ public class View extends Composite implements RightClickable {
 	}
 
 	public void onRightClick(Event event){
+		event.stopPropagation();
+		event.preventDefault();
 	}
 
 	public void onDoubleClick(Event event){
+		event.preventDefault();
 		fireEvent(new DoubleClickEvent());
 	}
 

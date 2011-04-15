@@ -1,9 +1,8 @@
 package bigBang.module.generalSystemModule.interfaces;
 
-import bigBang.module.generalSystemModule.shared.CoverageBranch;
-import bigBang.module.generalSystemModule.shared.CoverageCategory;
-import bigBang.module.generalSystemModule.shared.CoverageModality;
-import bigBang.module.generalSystemModule.shared.CoverageTax;
+import bigBang.module.generalSystemModule.shared.Coverage;
+import bigBang.module.generalSystemModule.shared.Line;
+import bigBang.module.generalSystemModule.shared.SubLine;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.rpc.RemoteService;
@@ -24,21 +23,19 @@ public interface CoveragesService extends RemoteService {
 		}
 	}
 	
-	public CoverageCategory[] getCoverages();
+	public Line[] getLines();
 	
-	public String createCategory(CoverageCategory c);
+	public Coverage createCoverage(Coverage b);
 	
-	public String createModality(CoverageModality m);
+	public SubLine createModality(SubLine m);
 	
-	public String createBranch(CoverageBranch b);
+	public Line createBranch(Line b);
 	
-	public String createTax(CoverageTax t);
+	public void deleteCoverage(String id);
 	
-	public void deleteCategory(String id);
+	public void deleteLine(String id);
 	
-	public void deleteModality(String id);
+	public void deleteSubLine(String id);
 	
-	public void deleteBranch(String id);
-	
-	public void deleteTax(String id);
+	//public void deleteTax(String id);
 }

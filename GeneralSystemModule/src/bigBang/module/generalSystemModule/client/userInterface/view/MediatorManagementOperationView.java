@@ -12,8 +12,8 @@ import bigBang.module.generalSystemModule.shared.CommissionProfile;
 import bigBang.module.generalSystemModule.shared.Mediator;
 
 import com.google.gwt.event.dom.client.HasClickHandlers;
+import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.SplitLayoutPanel;
-import com.google.gwt.user.client.ui.VerticalPanel;
 
 public class MediatorManagementOperationView extends View implements MediatorManagementOperationViewPresenter.Display {
 
@@ -130,6 +130,12 @@ public class MediatorManagementOperationView extends View implements MediatorMan
 	@Override
 	public void lockForm(boolean lock) {
 		this.mediatorForm.lock(lock);
+	}
+
+	@Override
+	public void setReadOnly(boolean readOnly) {
+		((Button)this.mediatorList.newButton).setEnabled(!readOnly);
+		this.mediatorForm.setReadOnly(readOnly);
 	}
 
 }

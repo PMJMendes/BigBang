@@ -29,6 +29,7 @@ import com.google.gwt.event.logical.shared.CloseHandler;
 import com.google.gwt.event.logical.shared.ResizeEvent;
 import com.google.gwt.event.logical.shared.ResizeHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
+import com.google.gwt.user.client.Event;
 import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.DecoratedPopupPanel;
@@ -350,6 +351,37 @@ ResizeHandler, CloseHandler<PopupPanel> {
 			resizeHandlerRegistration.removeHandler();
 		}
 		glassPanel.removeFromParent();
+	}
+	
+	@Override
+	public void onBrowserEvent(Event event) {
+		super.onBrowserEvent(event);
+
+		switch (DOM.eventGetType(event)) {
+		case Event.ONMOUSEUP:
+			if (DOM.eventGetButton(event) == Event.BUTTON_RIGHT) {
+				onRightClick(event);
+			}
+			break;
+		case Event.ONCONTEXTMENU:
+				onRightClick(event);
+			break;
+
+		default:
+			break;
+		}
+	}
+
+	public void onRightClick(Event event){
+		event.stopPropagation();
+		event.preventDefault();
+		this.hide();
+	}
+	
+	@Override
+	public void show() {
+		sinkEvents(Event.ONCONTEXTMENU | Event.MOUSEEVENTS);
+		super.show();
 	}
 
 }

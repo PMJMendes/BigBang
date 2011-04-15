@@ -14,7 +14,7 @@ public class InsuranceAgencyFormValidator implements FormValidator {
 		public boolean isValid(String value) {
 			boolean valid = value.length() > 0;
 			if(!valid)
-				errorMessage = "Deve preencher o nome para a seguradora";
+				errorMessage = MANDATORY_FIELD_MESSAGE;
 			return valid;
 		}
 
@@ -38,7 +38,7 @@ public class InsuranceAgencyFormValidator implements FormValidator {
 		public boolean isValid(String value) {
 			boolean valid = value.length() > 0 && value.length() <= 3;
 			if(!valid)
-				errorMessage = "Deve preencher a sigla para a seguradora";
+				errorMessage = MANDATORY_FIELD_MESSAGE;
 			return valid;
 		}
 
@@ -62,7 +62,7 @@ public class InsuranceAgencyFormValidator implements FormValidator {
 		public boolean isValid(String value) {
 			boolean valid = value.length() > 0;
 			if(!valid)
-				errorMessage = "Deve preencher o número do ISP";
+				errorMessage = MANDATORY_FIELD_MESSAGE;
 			return valid;
 		}
 
@@ -86,7 +86,7 @@ public class InsuranceAgencyFormValidator implements FormValidator {
 		public boolean isValid(String value) {
 			boolean valid = value.length() > 0;
 			if(!valid)
-				errorMessage = "Deve preencher o código nesta organização na seguradora";
+				errorMessage = MANDATORY_FIELD_MESSAGE;
 			return valid;
 		}
 
@@ -110,7 +110,7 @@ public class InsuranceAgencyFormValidator implements FormValidator {
 		public boolean isValid(String value) {
 			boolean valid = value.length() > 0;
 			if(!valid)
-				errorMessage = "Deve preencher o número de contribuínte ou NIPC";
+				errorMessage = MANDATORY_FIELD_MESSAGE;
 			return valid;
 		}
 
@@ -134,7 +134,7 @@ public class InsuranceAgencyFormValidator implements FormValidator {
 		public boolean isValid(String value) {
 			boolean valid = value.length() > 0;
 			if(!valid)
-				errorMessage = "Deve preencher o NIB da seguradora";
+				errorMessage = MANDATORY_FIELD_MESSAGE;
 			return valid;
 		}
 

@@ -51,6 +51,7 @@ public class ListEntry<T> extends View implements ValueSelectable<T>, HasMetaDat
 	private boolean valueChangeHandlerInitialized;
 	private boolean selectionStateChangedHandlerInitialized;
 	private boolean selectable = true;
+	protected boolean toggleable = false;
 	
 	
 	public ListEntry(T value) {
@@ -116,7 +117,7 @@ public class ListEntry<T> extends View implements ValueSelectable<T>, HasMetaDat
 			
 			@Override
 			public void onClick(ClickEvent event) {
-				setSelected(true);
+				setSelected(toggleable ? !isSelected() : true);
 			}
 		}, ClickEvent.getType());
 		
@@ -307,6 +308,14 @@ public class ListEntry<T> extends View implements ValueSelectable<T>, HasMetaDat
 			selectionStateChangedHandlerInitialized = true;
 
 		return addHandler(handler, SelectedStateChangedEvent.TYPE);
+	}
+	
+	public void setToggleable(boolean t) {
+		this.toggleable = t;
+	}
+	
+	public boolean isToggleable(){
+		return this.toggleable;
 	}
 
 }

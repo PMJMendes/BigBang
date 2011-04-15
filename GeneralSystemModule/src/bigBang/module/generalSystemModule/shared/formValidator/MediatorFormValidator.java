@@ -14,7 +14,7 @@ public class MediatorFormValidator implements FormValidator {
 		public boolean isValid(String value) {
 			boolean result = value.length() > 0;
 			if(!result)
-				errorMessage = "Por favor preencha o nome do mediador";
+				errorMessage = MANDATORY_FIELD_MESSAGE;
 			return result;
 		}
 
@@ -38,7 +38,7 @@ public class MediatorFormValidator implements FormValidator {
 		public boolean isValid(String value) {
 			boolean result = value.length() > 0;
 			if(!result)
-				errorMessage = "Por favor preencha o número do ISP";
+				errorMessage = MANDATORY_FIELD_MESSAGE;
 			return result;
 		}
 
@@ -62,7 +62,7 @@ public class MediatorFormValidator implements FormValidator {
 		public boolean isValid(String value) {
 			boolean result = value.length() > 0;
 			if(!result)
-				errorMessage = "Por favor preencha o número de contribuinte";
+				errorMessage = MANDATORY_FIELD_MESSAGE;
 			return result;
 		}
 
@@ -107,7 +107,7 @@ public class MediatorFormValidator implements FormValidator {
 		public boolean isValid(String value) {
 			boolean result = value.length() > 0;
 			if(!result)
-				errorMessage = "Por favor indique o perfil de comissionamento";
+				errorMessage = MANDATORY_FIELD_MESSAGE;
 			return result; 
 		}
 
@@ -131,7 +131,7 @@ public class MediatorFormValidator implements FormValidator {
 		public boolean isValid(Address value) {
 			boolean result = value.street1.length() > 0; //TODO
 			if(!result)
-				errorMessage = "Por favor indique o perfil de comissionamento";
+				errorMessage = MANDATORY_FIELD_MESSAGE;
 			return result; 
 		}
 

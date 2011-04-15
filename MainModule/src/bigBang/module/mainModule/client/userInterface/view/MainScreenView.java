@@ -28,6 +28,7 @@ import com.google.gwt.user.client.ui.HasVerticalAlignment;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.MenuBar;
 import com.google.gwt.user.client.ui.MenuItem;
+import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.TabPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
@@ -108,6 +109,8 @@ public class MainScreenView extends View implements MainScreenViewPresenter.Disp
 		panel.setCellHeight(mainTabPanel, "100%");
 
 		initWidget(panel);
+		
+		disableTextSelection(true);
 	}
 
 	public void createMenuSection(SectionViewPresenter sectionPresenter, int index) {

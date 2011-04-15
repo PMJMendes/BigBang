@@ -19,6 +19,7 @@ import bigBang.module.generalSystemModule.shared.UserProfile;
 import com.google.gwt.event.dom.client.DoubleClickEvent;
 import com.google.gwt.event.dom.client.DoubleClickHandler;
 import com.google.gwt.event.dom.client.HasClickHandlers;
+import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.SplitLayoutPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
@@ -184,5 +185,11 @@ public class CostCenterManagementOperationView extends View implements CostCente
 		form.lock(true);
 		popup.add(form.getNonScrollableContent());
 		popup.center();
+	}
+
+	@Override
+	public void setReadOnly(boolean readOnly) {
+		((Button)this.costCenterList.newButton).setEnabled(!readOnly);
+		this.costCenterForm.setReadOnly(readOnly);
 	}
 }

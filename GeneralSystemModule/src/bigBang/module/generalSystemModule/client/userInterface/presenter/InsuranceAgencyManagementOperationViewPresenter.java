@@ -50,6 +50,7 @@ public class InsuranceAgencyManagementOperationViewPresenter implements
 		void prepareNewInsuranceAgency();
 		void removeNewInsuranceAgencyPreparation();
 
+		void setReadOnly(boolean readOnly);
 		Widget asWidget();
 	}
 
@@ -261,14 +262,13 @@ public class InsuranceAgencyManagementOperationViewPresenter implements
 	}
 
 	@Override
-	public void setOperationPermission(boolean permission) {
-		this.operation.setPermission(permission);
-		this.setReadOnly(permission);
+	public void setOperationPermission(boolean result) {
+		this.operation.setPermission(result);
+		setReadOnly(result);
 	}
 
-	private void setReadOnly(boolean permission) {
-		// TODO Auto-generated method stub
-		
+	private void setReadOnly(boolean result) {
+		view.setReadOnly(result);
 	}
 
 }

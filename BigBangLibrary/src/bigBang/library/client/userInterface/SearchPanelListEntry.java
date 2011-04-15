@@ -11,39 +11,6 @@ public class SearchPanelListEntry<T> extends ListEntry<T> {
 	
 	public SearchPanelListEntry(T value) {
 		super(value);
-		
-		this.checkBox = new CheckBox();
-		this.checkBox.addClickHandler(new ClickHandler() {
-			
-			public void onClick(ClickEvent event) {
-				event.stopPropagation();
-			}
-		});
-
-		this.checkBox.setTitle("Seleccionar");
-		this.setLeftWidget(this.checkBox);
-		
-		this.setDoubleClickable(true);
-	}
-	
-	public void setCheckable(boolean checkable){
-		this.checkBox.setVisible(checkable);
-		this.checkBox.setEnabled(checkable);
-	}
-	
-	public void setChecked(boolean checked) {
-		this.checkBox.setValue(checked);
-	}
-	
-	public boolean isChecked(){
-		return this.checkBox.getValue();
-	}
-	
-	@Override
-	public void onDoubleClick(Event event){
-		this.setChecked(!isChecked());
-		event.stopPropagation();
-		event.preventDefault();
 	}
 
 }

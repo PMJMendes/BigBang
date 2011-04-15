@@ -3,9 +3,11 @@ package bigBang.module.clientModule.shared;
 import bigBang.library.client.Operation;
 import bigBang.library.client.userInterface.presenter.ViewPresenter;
 import bigBang.library.client.userInterface.view.View;
+import bigBang.module.clientModule.client.resources.Resources;
 import bigBang.module.clientModule.client.userInterface.presenter.ClientSearchOperationViewPresenter;
 import bigBang.module.clientModule.client.userInterface.view.ClientSearchOperationView;
 
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.AbstractImagePrototype;
 
 public class ClientSearchOperation implements Operation {
@@ -29,8 +31,8 @@ public class ClientSearchOperation implements Operation {
 	}
 
 	public AbstractImagePrototype getIcon() {
-		// TODO Auto-generated method stub
-		return null;
+		Resources r = GWT.create(Resources.class);
+		return AbstractImagePrototype.create(r.searchIcon());
 	}
 
 	public String getDescription() {

@@ -8,27 +8,29 @@ import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.HasVerticalAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.TextArea;
 import com.google.gwt.user.client.ui.TextBox;
+import com.google.gwt.user.client.ui.UIObject;
 import com.google.gwt.user.client.ui.Widget;
 
-public class TextBoxFormField extends FormField<String> {
-	
+public class TextAreaFormField extends FormField<String> {
+
 	protected Label label;
 	protected boolean hasDummyValue = false;
 	protected HorizontalPanel wrapper;
 	
-	public TextBoxFormField(String label,FieldValidator<String> validator){
+	public TextAreaFormField(String label,FieldValidator<String> validator){
 		this();
 		setLabel(label);
 		setValidator(validator);
 	}
 	
-	public TextBoxFormField(FieldValidator<String> validator) {
+	public TextAreaFormField(FieldValidator<String> validator) {
 		this();
 		setValidator(validator);
 	}
 	
-	public TextBoxFormField(String label) {
+	public TextAreaFormField(String label) {
 		this();
 		setLabel(label);
 	}
@@ -44,7 +46,7 @@ public class TextBoxFormField extends FormField<String> {
 		}
 	}
 	
-	public TextBoxFormField(){
+	public TextAreaFormField(){
 		super();
 		wrapper = new HorizontalPanel();
 		wrapper.setVerticalAlignment(HasVerticalAlignment.ALIGN_MIDDLE);
@@ -52,7 +54,7 @@ public class TextBoxFormField extends FormField<String> {
 		this.label.getElement().getStyle().setMarginRight(5, Unit.PX);
 		wrapper.add(this.label);
 		wrapper.setCellHorizontalAlignment(this.label, HasHorizontalAlignment.ALIGN_RIGHT);
-		this.field = new TextBox();
+		this.field = new TextArea();
 		wrapper.add((Widget) this.field);
 		wrapper.add(mandatoryIndicatorLabel);
 		wrapper.add(errorMessageLabel);
@@ -63,7 +65,7 @@ public class TextBoxFormField extends FormField<String> {
 
 	@Override
 	public void setReadOnly(boolean readOnly) {
-		TextBox field = ((TextBox)this.field);
+		TextArea field = ((TextArea)this.field);
 		if(field.isReadOnly() != readOnly){
 			if(readOnly){
 				if(field.getValue().equals("")){
@@ -83,6 +85,10 @@ public class TextBoxFormField extends FormField<String> {
 		mandatoryIndicatorLabel.setVisible(!readOnly);
 	}
 	
+	public void setFieldHeight(String height){
+		((UIObject) this.field).setHeight(height);
+	}
+	
 	@Override
 	public void setValue(String value, boolean fireEvents) {
 		hasDummyValue = false;
@@ -91,12 +97,12 @@ public class TextBoxFormField extends FormField<String> {
 	
 	@Override
 	public boolean isReadOnly() {
-		return ((TextBox)this.field).isReadOnly();
+		return ((TextArea)this.field).isReadOnly();
 	}
 
 	@Override
 	public void clear() {
-		TextBox field = ((TextBox)this.field);
+		TextArea field = ((TextArea)this.field);
 		field.setValue(field.isReadOnly() ? "-" : "");
 		if(field.isReadOnly())
 			hasDummyValue = true;

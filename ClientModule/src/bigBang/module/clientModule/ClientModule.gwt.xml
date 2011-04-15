@@ -19,5 +19,6 @@
   <source path='client'/>
   <source path='interfaces'/>
   <source path='shared'/>
+  <inherits name="com.google.gwt.gen2.datepicker.client.DatePicker"/>
 
 </module>

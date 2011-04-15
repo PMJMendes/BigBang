@@ -1,5 +1,8 @@
 package bigBang.module.generalSystemModule.client.userInterface.presenter;
 
+import java.util.Collection;
+
+import com.google.gwt.user.client.ui.HasValue;
 import com.google.gwt.user.client.ui.HasWidgets;
 import com.google.gwt.user.client.ui.Widget;
 
@@ -15,10 +18,10 @@ import bigBang.library.client.userInterface.presenter.OperationViewPresenter;
 import bigBang.library.client.userInterface.view.View;
 import bigBang.library.interfaces.Service;
 import bigBang.module.generalSystemModule.interfaces.CoveragesServiceAsync;
-import bigBang.module.generalSystemModule.shared.CoverageBranch;
-import bigBang.module.generalSystemModule.shared.CoverageCategory;
-import bigBang.module.generalSystemModule.shared.CoverageModality;
-import bigBang.module.generalSystemModule.shared.CoverageTax;
+import bigBang.module.generalSystemModule.shared.Coverage;
+import bigBang.module.generalSystemModule.shared.Line;
+import bigBang.module.generalSystemModule.shared.SubLine;
+import bigBang.module.generalSystemModule.shared.Tax;
 import bigBang.module.generalSystemModule.shared.operation.CoverageManagementOperation;
 
 public class CoverageManagementOperationViewPresenter implements
@@ -26,16 +29,21 @@ public class CoverageManagementOperationViewPresenter implements
 	
 	public interface Display {
 		//Lists
-		HasValueSelectables<CoverageCategory> getCategoryList();
-		HasValueSelectables<CoverageBranch> getBranchList();
-		HasValueSelectables<CoverageModality> getModalityList();
-		HasValueSelectables<CoverageTax> getTaxList();		
+		HasValueSelectables<Line> getLineList();
+		HasValueSelectables<SubLine> getSubLineList();
+		HasValueSelectables<Coverage> getCoverageList();		
+		void setLines(Line[] lines);
+		void setSubLines(SubLine[] subLines);
+		void setCoverages(Coverage[] coverages);
 		
-		void setCategories(CoverageCategory[] c);
-		void setBranches(CoverageBranch[] b);
-		void setModalities(CoverageModality[] m);
-		void setTaxes(CoverageTax[] t);
+		//Forms
+		HasValue<Line> getLineform();
+		HasValue<SubLine> getSubLineForm();
+		HasValue<Coverage> getCoverageForm();
 		
+		//General
+		void setReadOnly(boolean readonly);
+		void clear();
 		Widget asWidget();
 	}
 
@@ -81,50 +89,37 @@ public class CoverageManagementOperationViewPresenter implements
 	}
 	
 	public void setup(){
-		this.service.getCoverages(new BigBangAsyncCallback<CoverageCategory[]>() {
+		this.service.getLines(new BigBangAsyncCallback<Line[]>() {
 
 			@Override
-			public void onSuccess(CoverageCategory[] categories) {
-				view.setCategories(categories);
+			public void onSuccess(Line[] result) {
+				view.clear();
+				view.setLines(result);
 			}
 		});
 	}
 
 	@Override
 	public void bind() {
-		view.getCategoryList().addSelectionChangedEventHandler(new SelectionChangedEventHandler() {
+		view.getLineList().addSelectionChangedEventHandler(new SelectionChangedEventHandler() {
 			
 			@SuppressWarnings("unchecked")
 			@Override
 			public void onSelectionChanged(SelectionChangedEvent event) {
-				java.util.Collection<? extends Selectable> selected = event.getSelected();
+				Collection<? extends Selectable> selected = event.getSelected();
 				for(Selectable s : selected) {
-					view.setBranches(((ValueSelectable<CoverageCategory>) s).getValue().branches);
-					break;
+					view.setSubLines(((ValueSelectable<Line>) s).getValue().subLines);
 				}
 			}
 		});
-		view.getBranchList().addSelectionChangedEventHandler(new SelectionChangedEventHandler() {
+		view.getSubLineList().addSelectionChangedEventHandler(new SelectionChangedEventHandler() {
 			
 			@SuppressWarnings("unchecked")
 			@Override
 			public void onSelectionChanged(SelectionChangedEvent event) {
-				java.util.Collection<? extends Selectable> selected = event.getSelected();
+				Collection<? extends Selectable> selected = event.getSelected();
 				for(Selectable s : selected) {
-					view.setModalities(((ValueSelectable<CoverageBranch>) s).getValue().modalities);
-					break;
-				}
-			}
-		});
-		view.getModalityList().addSelectionChangedEventHandler(new SelectionChangedEventHandler() {
-			
-			@SuppressWarnings("unchecked")
-			@Override
-			public void onSelectionChanged(SelectionChangedEvent event) {
-				java.util.Collection<? extends Selectable> selected = event.getSelected();
-				for(Selectable s : selected) {
-					view.setTaxes(((ValueSelectable<CoverageModality>) s).getValue().taxes);
-					break;
+					view.setCoverages(((ValueSelectable<SubLine>) s).getValue().coverages);
 				}
 			}
 		});
@@ -165,8 +160,7 @@ public class CoverageManagementOperationViewPresenter implements
 	}
 
 	private void setReadOnly(boolean result) {
-		// TODO Auto-generated method stub
-		
+		view.setReadOnly(result);
 	}
 
 }
