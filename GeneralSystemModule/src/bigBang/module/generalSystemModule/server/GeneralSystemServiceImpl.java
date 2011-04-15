@@ -22,7 +22,7 @@ public class GeneralSystemServiceImpl
 
 		try
 		{
-			return GeneralSystem.GetAnyInstance(Engine.getCurrentNameSpace()).getKey().toString();
+			return GeneralSystem.GetAnyInstance(Engine.getCurrentNameSpace()).GetProcessID().toString();
 		}
 		catch (Throwable e)
 		{
