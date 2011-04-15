@@ -4,7 +4,7 @@ import java.io.Serializable;
 import java.util.UUID;
 
 import Jewel.Engine.Engine;
-import Jewel.Engine.DataAccess.MasterDB;
+import Jewel.Engine.DataAccess.SQLServer;
 import Jewel.Engine.Implementation.Entity;
 import Jewel.Petri.SysObjects.JewelPetriException;
 import Jewel.Petri.SysObjects.Operation;
@@ -51,32 +51,12 @@ public class ManageInsuranceCompanies
 		return Constants.OPID_ManageCompanies;
 	}
 
-	protected void Run()
+	protected void Run(SQLServer pdb)
 		throws JewelPetriException
 	{
 		int i;
-		MasterDB ldb;
 		Company lobjAux;
 		Entity lrefCostCenters;
-
-		try
-		{
-			ldb = new MasterDB();
-		}
-		catch (Throwable e)
-		{
-			throw new JewelPetriException(e.getMessage(), e);
-		}
-
-		try
-		{
-			ldb.BeginTrans();
-		}
-		catch (Throwable e)
-		{
-			try { ldb.Disconnect(); } catch (Throwable e1) {}
-			throw new JewelPetriException(e.getMessage(), e);
-		}
 
 		try
 		{
@@ -94,9 +74,9 @@ public class ManageInsuranceCompanies
 					lobjAux.setAt(6, marrCreate[i].mstrAddress1);
 					lobjAux.setAt(7, marrCreate[i].mstrAddress2);
 					lobjAux.setAt(8, marrCreate[i].midZipCode);
-					lobjAux.SaveToDb(ldb);
+					lobjAux.SaveToDb(pdb);
 					if ( marrCreate[i].mobjContactOps != null )
-						marrCreate[i].mobjContactOps.RunSubOp(ldb, Constants.ObjID_Company, lobjAux.getKey());
+						marrCreate[i].mobjContactOps.RunSubOp(pdb, Constants.ObjID_Company, lobjAux.getKey());
 					marrCreate[i].mid = lobjAux.getKey();
 					marrCreate[i].mobjPrevValues = null;
 				}
@@ -129,7 +109,7 @@ public class ManageInsuranceCompanies
 					lobjAux.setAt(6, marrModify[i].mstrAddress1);
 					lobjAux.setAt(7, marrModify[i].mstrAddress2);
 					lobjAux.setAt(8, marrModify[i].midZipCode);
-					lobjAux.SaveToDb(ldb);
+					lobjAux.SaveToDb(pdb);
 				}
 			}
 
@@ -152,33 +132,12 @@ public class ManageInsuranceCompanies
 					marrDelete[i].midZipCode = (UUID)lobjAux.getAt(8);
 					marrDelete[i].mobjContactOps = null;
 					marrDelete[i].mobjPrevValues = null;
-					lrefCostCenters.Delete(ldb, marrDelete[i].mid);
+					lrefCostCenters.Delete(pdb, marrDelete[i].mid);
 				}
 			}
 
 			if ( mobjContactOps != null )
-				mobjContactOps.RunSubOp(ldb, Constants.ObjID_Company, null);
-		}
-		catch (Throwable e)
-		{
-			try { ldb.Rollback(); } catch (Throwable e1) {}
-			try { ldb.Disconnect(); } catch (Throwable e1) {}
-			throw new JewelPetriException(e.getMessage(), e);
-		}
-
-		try
-		{
-			ldb.Commit();
-		}
-		catch (Throwable e)
-		{
-			try { ldb.Disconnect(); } catch (Throwable e1) {}
-			throw new JewelPetriException(e.getMessage(), e);
-		}
-
-		try
-		{
-			ldb.Disconnect();
+				mobjContactOps.RunSubOp(pdb, Constants.ObjID_Company, null);
 		}
 		catch (Throwable e)
 		{

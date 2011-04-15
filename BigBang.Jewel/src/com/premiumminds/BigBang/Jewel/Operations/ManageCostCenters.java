@@ -4,7 +4,7 @@ import java.io.Serializable;
 import java.util.UUID;
 
 import Jewel.Engine.Engine;
-import Jewel.Engine.DataAccess.MasterDB;
+import Jewel.Engine.DataAccess.SQLServer;
 import Jewel.Engine.Implementation.Entity;
 import Jewel.Petri.SysObjects.JewelPetriException;
 import Jewel.Petri.SysObjects.Operation;
@@ -42,32 +42,12 @@ public class ManageCostCenters
 		return Constants.OPID_ManageCostCenters;
 	}
 
-	protected void Run()
+	protected void Run(SQLServer pdb)
 		throws JewelPetriException
 	{
 		int i;
-		MasterDB ldb;
 		CostCenter lobjAux;
 		Entity lrefCostCenters;
-
-		try
-		{
-			ldb = new MasterDB();
-		}
-		catch (Throwable e)
-		{
-			throw new JewelPetriException(e.getMessage(), e);
-		}
-
-		try
-		{
-			ldb.BeginTrans();
-		}
-		catch (Throwable e)
-		{
-			try { ldb.Disconnect(); } catch (Throwable e1) {}
-			throw new JewelPetriException(e.getMessage(), e);
-		}
 
 		try
 		{
@@ -78,7 +58,7 @@ public class ManageCostCenters
 					lobjAux = CostCenter.GetInstance(Engine.getCurrentNameSpace(), (UUID)null);
 					lobjAux.setAt(0, marrCreate[i].mstrCode);
 					lobjAux.setAt(1, marrCreate[i].mstrName);
-					lobjAux.SaveToDb(ldb);
+					lobjAux.SaveToDb(pdb);
 					marrCreate[i].mid = lobjAux.getKey();
 					marrCreate[i].mobjPrevValues = null;
 				}
@@ -96,7 +76,7 @@ public class ManageCostCenters
 					marrModify[i].mobjPrevValues.mobjPrevValues = null;
 					lobjAux.setAt(0, marrModify[i].mstrCode);
 					lobjAux.setAt(1, marrModify[i].mstrName);
-					lobjAux.SaveToDb(ldb);
+					lobjAux.SaveToDb(pdb);
 				}
 			}
 
@@ -111,30 +91,9 @@ public class ManageCostCenters
 					marrDelete[i].mstrCode = (String)lobjAux.getAt(0);
 					marrDelete[i].mstrName = (String)lobjAux.getAt(1);
 					marrDelete[i].mobjPrevValues = null;
-					lrefCostCenters.Delete(ldb, marrDelete[i].mid);
+					lrefCostCenters.Delete(pdb, marrDelete[i].mid);
 				}
 			}
-		}
-		catch (Throwable e)
-		{
-			try { ldb.Rollback(); } catch (Throwable e1) {}
-			try { ldb.Disconnect(); } catch (Throwable e1) {}
-			throw new JewelPetriException(e.getMessage(), e);
-		}
-
-		try
-		{
-			ldb.Commit();
-		}
-		catch (Throwable e)
-		{
-			try { ldb.Disconnect(); } catch (Throwable e1) {}
-			throw new JewelPetriException(e.getMessage(), e);
-		}
-
-		try
-		{
-			ldb.Disconnect();
 		}
 		catch (Throwable e)
 		{

@@ -9,7 +9,7 @@ import com.premiumminds.BigBang.Jewel.Objects.Contact;
 import com.premiumminds.BigBang.Jewel.Objects.ContactInfo;
 
 import Jewel.Engine.Engine;
-import Jewel.Engine.DataAccess.MasterDB;
+import Jewel.Engine.DataAccess.SQLServer;
 import Jewel.Engine.Implementation.Entity;
 
 public class ContactOps
@@ -47,7 +47,7 @@ public class ContactOps
 	public ContactData[] marrModify;
 	public ContactData[] marrDelete;
 
-	public void RunSubOp(MasterDB pdb, UUID pidOwnerType, UUID pidOwner)
+	public void RunSubOp(SQLServer pdb, UUID pidOwnerType, UUID pidOwner)
 		throws BigBangJewelException
 	{
 		int i;
@@ -76,13 +76,13 @@ public class ContactOps
 		}
 	}
 
-	private void CreateContact(MasterDB pdb, ContactData pobjData)
+	private void CreateContact(SQLServer pdb, ContactData pobjData)
 		throws BigBangJewelException
 	{
 		CreateContact(pdb, pobjData, pobjData.midOwnerType, pobjData.midOwnerId);
 	}
 
-	private void CreateContact(MasterDB pdb, ContactData pobjData, UUID pidOwnerType, UUID pidOwner)
+	private void CreateContact(SQLServer pdb, ContactData pobjData, UUID pidOwnerType, UUID pidOwner)
 		throws BigBangJewelException
 	{
 		Contact lobjAux;
@@ -136,7 +136,7 @@ public class ContactOps
 		pobjData.mobjPrevValues = null;
 	}
 
-	private void ModifyContact(MasterDB pdb, ContactData pobjData)
+	private void ModifyContact(SQLServer pdb, ContactData pobjData)
 		throws BigBangJewelException
 	{
 		Contact lobjAux;
@@ -220,7 +220,7 @@ public class ContactOps
 		}
 	}
 
-	private void DeleteContact(MasterDB pdb, ContactData pobjData)
+	private void DeleteContact(SQLServer pdb, ContactData pobjData)
 		throws BigBangJewelException
 	{
 		Contact lobjAux;

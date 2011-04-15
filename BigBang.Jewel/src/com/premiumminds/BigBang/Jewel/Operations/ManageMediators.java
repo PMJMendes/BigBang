@@ -4,7 +4,7 @@ import java.io.Serializable;
 import java.util.UUID;
 
 import Jewel.Engine.Engine;
-import Jewel.Engine.DataAccess.MasterDB;
+import Jewel.Engine.DataAccess.SQLServer;
 import Jewel.Engine.Implementation.Entity;
 import Jewel.Petri.SysObjects.JewelPetriException;
 import Jewel.Petri.SysObjects.Operation;
@@ -50,32 +50,12 @@ public class ManageMediators
 		return Constants.OPID_ManageMediators;
 	}
 
-	protected void Run()
+	protected void Run(SQLServer pdb)
 		throws JewelPetriException
 	{
 		int i;
-		MasterDB ldb;
 		Mediator lobjAux;
 		Entity lrefMediators;
-
-		try
-		{
-			ldb = new MasterDB();
-		}
-		catch (Throwable e)
-		{
-			throw new JewelPetriException(e.getMessage(), e);
-		}
-
-		try
-		{
-			ldb.BeginTrans();
-		}
-		catch (Throwable e)
-		{
-			try { ldb.Disconnect(); } catch (Throwable e1) {}
-			throw new JewelPetriException(e.getMessage(), e);
-		}
 
 		try
 		{
@@ -92,9 +72,9 @@ public class ManageMediators
 					lobjAux.setAt(5, marrCreate[i].mstrAddress1);
 					lobjAux.setAt(6, marrCreate[i].mstrAddress2);
 					lobjAux.setAt(7, marrCreate[i].midZipCode);
-					lobjAux.SaveToDb(ldb);
+					lobjAux.SaveToDb(pdb);
 					if ( marrCreate[i].mobjContactOps != null )
-						marrCreate[i].mobjContactOps.RunSubOp(ldb, Constants.ObjID_Mediator, lobjAux.getKey());
+						marrCreate[i].mobjContactOps.RunSubOp(pdb, Constants.ObjID_Mediator, lobjAux.getKey());
 					marrCreate[i].mid = lobjAux.getKey();
 					marrCreate[i].mobjPrevValues = null;
 				}
@@ -125,7 +105,7 @@ public class ManageMediators
 					lobjAux.setAt(5, marrModify[i].mstrAddress1);
 					lobjAux.setAt(6, marrModify[i].mstrAddress2);
 					lobjAux.setAt(7, marrModify[i].midZipCode);
-					lobjAux.SaveToDb(ldb);
+					lobjAux.SaveToDb(pdb);
 				}
 			}
 
@@ -147,30 +127,9 @@ public class ManageMediators
 					marrDelete[i].midZipCode = (UUID)lobjAux.getAt(7);
 					marrDelete[i].mobjContactOps = null;
 					marrDelete[i].mobjPrevValues = null;
-					lrefMediators.Delete(ldb, marrDelete[i].mid);
+					lrefMediators.Delete(pdb, marrDelete[i].mid);
 				}
 			}
-		}
-		catch (Throwable e)
-		{
-			try { ldb.Rollback(); } catch (Throwable e1) {}
-			try { ldb.Disconnect(); } catch (Throwable e1) {}
-			throw new JewelPetriException(e.getMessage(), e);
-		}
-
-		try
-		{
-			ldb.Commit();
-		}
-		catch (Throwable e)
-		{
-			try { ldb.Disconnect(); } catch (Throwable e1) {}
-			throw new JewelPetriException(e.getMessage(), e);
-		}
-
-		try
-		{
-			ldb.Disconnect();
 		}
 		catch (Throwable e)
 		{

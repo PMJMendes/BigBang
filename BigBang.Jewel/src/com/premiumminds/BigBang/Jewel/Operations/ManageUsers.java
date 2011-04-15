@@ -5,7 +5,7 @@ import java.util.UUID;
 
 import Jewel.Engine.Engine;
 import Jewel.Engine.Constants.ObjectGUIDs;
-import Jewel.Engine.DataAccess.MasterDB;
+import Jewel.Engine.DataAccess.SQLServer;
 import Jewel.Engine.Implementation.Entity;
 import Jewel.Engine.Implementation.User;
 import Jewel.Engine.Security.Password;
@@ -50,11 +50,10 @@ public class ManageUsers
 		return Constants.OPID_ManageUsers;
 	}
 
-	protected void Run()
+	protected void Run(SQLServer pdb)
 		throws JewelPetriException
 	{
 		UUID lidUsers;
-		MasterDB ldb;
 		int i;
 		UserDecoration lobjAuxOuter;
 		User lobjAuxBase;
@@ -66,25 +65,7 @@ public class ManageUsers
 		{
         	lidUsers = Engine.FindEntity(Engine.getCurrentNameSpace(), ObjectGUIDs.O_User);
 			lobjAuxCurrent = User.GetInstance(Engine.getCurrentNameSpace(), Engine.getCurrentUser());
-			ldb = new MasterDB();
-		}
-		catch (Throwable e)
-		{
-			throw new JewelPetriException(e.getMessage(), e);
-		}
 
-		try
-		{
-			ldb.BeginTrans();
-		}
-		catch (Throwable e)
-		{
-			try { ldb.Disconnect(); } catch (Throwable e1) {}
-			throw new JewelPetriException(e.getMessage(), e);
-		}
-
-		try
-		{
 			if ( marrCreate != null )
 			{
 				for ( i = 0; i < marrCreate.length; i++ )
@@ -98,13 +79,13 @@ public class ManageUsers
 					lobjAuxBase.setAt(1, marrCreate[i].mstrUsername);
 					lobjAuxBase.setAt(2, marrCreate[i].mobjPassword);
 					lobjAuxBase.setAt(3, marrCreate[i].midProfile);
-					lobjAuxBase.SaveToDb(ldb);
+					lobjAuxBase.SaveToDb(pdb);
 
 					lobjAuxOuter = UserDecoration.GetInstance(Engine.getCurrentNameSpace(), (UUID)null);
 					lobjAuxOuter.setAt(0, lobjAuxBase.getKey());
 					lobjAuxOuter.setAt(1, marrCreate[i].mstrEmail);
 					lobjAuxOuter.setAt(2, marrCreate[i].midCostCenter);
-					lobjAuxOuter.SaveToDb(ldb);
+					lobjAuxOuter.SaveToDb(pdb);
 
 					marrCreate[i].mid = lobjAuxOuter.getKey();
 					marrCreate[i].mobjPassword = null;
@@ -145,11 +126,11 @@ public class ManageUsers
 					lobjAuxBase.setAt(1, marrModify[i].mstrUsername);
 					lobjAuxBase.setAt(2, marrModify[i].mobjPassword);
 					lobjAuxBase.setAt(3, marrModify[i].midProfile);
-					lobjAuxBase.SaveToDb(ldb);
+					lobjAuxBase.SaveToDb(pdb);
 
 					lobjAuxOuter.setAt(1, marrModify[i].mstrEmail);
 					lobjAuxOuter.setAt(2, marrModify[i].midCostCenter);
-					lobjAuxOuter.SaveToDb(ldb);
+					lobjAuxOuter.SaveToDb(pdb);
 				}
 			}
 
@@ -178,31 +159,10 @@ public class ManageUsers
 					marrDelete[i].mstrEmail = (String)lobjAuxOuter.getAt(2);
 					marrDelete[i].mobjPrevValues = null;
 
-					lrefDecorations.Delete(ldb, lobjAuxOuter.getKey());
-					lrefUsers.Delete(ldb, lobjAuxBase.getKey());
+					lrefDecorations.Delete(pdb, lobjAuxOuter.getKey());
+					lrefUsers.Delete(pdb, lobjAuxBase.getKey());
 				}
 			}
-		}
-		catch (Throwable e)
-		{
-			try { ldb.Rollback(); } catch (Throwable e1) {}
-			try { ldb.Disconnect(); } catch (Throwable e1) {}
-			throw new JewelPetriException(e.getMessage(), e);
-		}
-
-		try
-		{
-			ldb.Commit();
-		}
-		catch (Throwable e)
-		{
-			try { ldb.Disconnect(); } catch (Throwable e1) {}
-			throw new JewelPetriException(e.getMessage(), e);
-		}
-
-		try
-		{
-			ldb.Disconnect();
 		}
 		catch (Throwable e)
 		{
