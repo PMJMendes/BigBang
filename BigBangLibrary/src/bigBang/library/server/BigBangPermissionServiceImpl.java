@@ -5,6 +5,7 @@ import java.util.UUID;
 import Jewel.Engine.Engine;
 import Jewel.Petri.Interfaces.IOperation;
 import Jewel.Petri.Interfaces.IProcess;
+import Jewel.Petri.Interfaces.IStep;
 import Jewel.Petri.Objects.PNProcess;
 import bigBang.library.interfaces.BigBangPermissionService;
 import bigBang.library.shared.BigBangException;
@@ -23,6 +24,7 @@ public class BigBangPermissionServiceImpl
 		IProcess lrefProcess;
 		IOperation[] larrOps;
 		Permission[] larrResult;
+		IStep lobjStep;
 		int i;
 
 		if ( Engine.getCurrentUser() == null )
@@ -37,7 +39,8 @@ public class BigBangPermissionServiceImpl
 			{
 				larrResult[i] = new Permission();
 				larrResult[i].id = larrOps[i].getKey().toString();
-				larrResult[i].instanceId = lrefProcess.GetOperation(larrOps[i].getKey()).getKey().toString();
+				lobjStep = lrefProcess.GetOperation(larrOps[i].getKey());
+				larrResult[i].instanceId = (lobjStep == null ? null : lobjStep.getKey().toString());
 			}
 		}
 		catch (Throwable e)
