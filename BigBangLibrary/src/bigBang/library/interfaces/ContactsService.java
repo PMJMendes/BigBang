@@ -25,7 +25,7 @@ public interface ContactsService
 		}
 	}
 
-	public Contact[] getContacts(String entityTypeId, String entityId) throws SessionExpiredException, BigBangException;
+	public Contact[] getContacts(String ownerId) throws SessionExpiredException, BigBangException;
 	public Contact createContact(String opInstanceId, Contact contact) throws SessionExpiredException, BigBangException;
 	public Contact saveContact(String opInstanceId, Contact contact) throws SessionExpiredException, BigBangException;
 	public void deleteContact(String opInstanceId, Contact contact) throws SessionExpiredException, BigBangException;
