@@ -9,6 +9,7 @@ public class Tax
 
 	public String id;
 	public String name;
-	public double value;
+	public String coverageId;
 	public String currencyId;
+	public double value;
 }

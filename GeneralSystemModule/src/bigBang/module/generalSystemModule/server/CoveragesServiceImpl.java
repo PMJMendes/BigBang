@@ -1,13 +1,25 @@
 package bigBang.module.generalSystemModule.server;
 
+import java.math.BigDecimal;
+import java.sql.ResultSet;
+import java.util.ArrayList;
 import java.util.UUID;
 
+import Jewel.Engine.Engine;
+import Jewel.Engine.DataAccess.MasterDB;
+import Jewel.Engine.Implementation.Entity;
 import bigBang.library.server.EngineImplementor;
+import bigBang.library.shared.BigBangException;
+import bigBang.library.shared.SessionExpiredException;
 import bigBang.module.generalSystemModule.interfaces.CoveragesService;
 import bigBang.module.generalSystemModule.shared.Coverage;
 import bigBang.module.generalSystemModule.shared.Line;
 import bigBang.module.generalSystemModule.shared.SubLine;
 import bigBang.module.generalSystemModule.shared.Tax;
+
+import com.premiumminds.BigBang.Jewel.Constants;
+import com.premiumminds.BigBang.Jewel.Objects.GeneralSystem;
+import com.premiumminds.BigBang.Jewel.Operations.ManageLines;
 
 public class CoveragesServiceImpl
 	extends EngineImplementor
@@ -16,64 +28,609 @@ public class CoveragesServiceImpl
 	private static final long serialVersionUID = 1L;
 
 	public Line[] getLines()
+		throws SessionExpiredException, BigBangException
 	{
-		return null;
+		UUID lidUsers;
+        MasterDB ldb;
+        ResultSet lrsUsers;
+		ArrayList<Line> larrAux;
+		com.premiumminds.BigBang.Jewel.Objects.Line lobjLine;
+		Line lobjTmp;
+
+		if ( Engine.getCurrentUser() == null )
+			throw new SessionExpiredException();
+
+		larrAux = new ArrayList<Line>();
+
+		try
+		{
+        	lidUsers = Engine.FindEntity(Engine.getCurrentNameSpace(), Constants.ObjID_Decorations);
+			ldb = new MasterDB();
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangException(e.getMessage(), e);
+		}
+
+        try
+        {
+	        lrsUsers = Entity.GetInstance(lidUsers).SelectAll(ldb);
+		}
+		catch (Throwable e)
+		{
+			try { ldb.Disconnect(); } catch (Throwable e1) {}
+			throw new BigBangException(e.getMessage(), e);
+		}
+
+		try
+		{
+	        while (lrsUsers.next())
+	        {
+	        	lobjLine = com.premiumminds.BigBang.Jewel.Objects.Line.GetInstance(Engine.getCurrentNameSpace(), lrsUsers);
+	        	lobjTmp = new Line();
+	        	lobjTmp.id = lobjLine.getKey().toString();
+	        	lobjTmp.name = (String)lobjLine.getAt(0);
+	        	lobjTmp.categoryId = ((UUID)lobjLine.getAt(1)).toString();
+	        	lobjTmp.subLines = getSubLinesForLine(lobjLine);
+	        	larrAux.add(lobjTmp);
+	        }
+        }
+		catch (BigBangException e)
+        {
+			try { lrsUsers.close(); } catch (Throwable e1) {}
+			try { ldb.Disconnect(); } catch (Throwable e1) {}
+        	throw e;
+        }
+        catch (Throwable e)
+        {
+			try { lrsUsers.close(); } catch (Throwable e1) {}
+			try { ldb.Disconnect(); } catch (Throwable e1) {}
+        	throw new BigBangException(e.getMessage(), e);
+        }
+
+        try
+        {
+        	lrsUsers.close();
+        }
+		catch (Throwable e)
+		{
+			try { ldb.Disconnect(); } catch (Throwable e1) {}
+			throw new BigBangException(e.getMessage(), e);
+		}
+
+		try
+		{
+			ldb.Disconnect();
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangException(e.getMessage(), e);
+		}
+
+		return larrAux.toArray(new Line[larrAux.size()]);
 	}
 
 	public Line createLine(Line b)
+		throws SessionExpiredException, BigBangException
 	{
-		return null;
+		Line[] larrAux;
+		ManageLines lopML;
+
+		if ( Engine.getCurrentUser() == null )
+			throw new SessionExpiredException();
+
+		larrAux = new Line[1];
+		larrAux[0] = b;
+
+		try
+		{
+			lopML = new ManageLines(GeneralSystem.GetAnyInstance(Engine.getCurrentNameSpace()).GetProcessID());
+
+			lopML.marrCreateLines = BuildLineArray(lopML, larrAux, true);
+
+			lopML.marrModifyLines = null;
+			lopML.marrDeleteLines = null;
+			lopML.marrCreateSubLines = null;
+			lopML.marrModifySubLines = null;
+			lopML.marrDeleteSubLines = null;
+			lopML.marrCreateCoverages = null;
+			lopML.marrModifyCoverages = null;
+			lopML.marrDeleteCoverages = null;
+
+			lopML.Execute();
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangException(e.getMessage(), e);
+		}
+
+		TagLines(lopML.marrCreateLines, larrAux);
+
+		return b;
 	}
 
 	public Line saveLine(Line b)
+		throws SessionExpiredException, BigBangException
 	{
-		return null;
+		Line[] larrAux;
+		ManageLines lopML;
+
+		if ( Engine.getCurrentUser() == null )
+			throw new SessionExpiredException();
+
+		larrAux = new Line[1];
+		larrAux[0] = b;
+
+		try
+		{
+			lopML = new ManageLines(GeneralSystem.GetAnyInstance(Engine.getCurrentNameSpace()).GetProcessID());
+
+			lopML.marrModifyLines = BuildLineArray(lopML, larrAux, false);
+
+			lopML.marrCreateLines = null;
+			lopML.marrDeleteLines = null;
+			lopML.marrCreateSubLines = null;
+			lopML.marrModifySubLines = null;
+			lopML.marrDeleteSubLines = null;
+			lopML.marrCreateCoverages = null;
+			lopML.marrModifyCoverages = null;
+			lopML.marrDeleteCoverages = null;
+
+			lopML.Execute();
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangException(e.getMessage(), e);
+		}
+
+		return b;
 	}
 
 	public void deleteLine(String id)
+		throws SessionExpiredException, BigBangException
 	{
+		Line[] larrAux;
+		ManageLines lopML;
+
+		if ( Engine.getCurrentUser() == null )
+			throw new SessionExpiredException();
+
+		larrAux = new Line[1];
+		larrAux[0] = new Line();
+		larrAux[0].id = id;
+
+		try
+		{
+			lopML = new ManageLines(GeneralSystem.GetAnyInstance(Engine.getCurrentNameSpace()).GetProcessID());
+
+			lopML.marrDeleteLines = BuildLineArray(lopML, larrAux, false);
+
+			lopML.marrCreateLines = null;
+			lopML.marrModifyLines = null;
+			lopML.marrCreateSubLines = null;
+			lopML.marrModifySubLines = null;
+			lopML.marrDeleteSubLines = null;
+			lopML.marrCreateCoverages = null;
+			lopML.marrModifyCoverages = null;
+			lopML.marrDeleteCoverages = null;
+
+			lopML.Execute();
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangException(e.getMessage(), e);
+		}
 	}
 
 	public SubLine createSubLine(SubLine m)
+		throws SessionExpiredException, BigBangException
 	{
-		return null;
+		SubLine[] larrAux;
+		ManageLines lopML;
+
+		if ( Engine.getCurrentUser() == null )
+			throw new SessionExpiredException();
+
+		larrAux = new SubLine[1];
+		larrAux[0] = m;
+
+		try
+		{
+			lopML = new ManageLines(GeneralSystem.GetAnyInstance(Engine.getCurrentNameSpace()).GetProcessID());
+
+			lopML.marrCreateSubLines = BuildSubLineArray(lopML, larrAux, UUID.fromString(m.lineId), true);
+
+			lopML.marrCreateLines = null;
+			lopML.marrModifyLines = null;
+			lopML.marrDeleteLines = null;
+			lopML.marrModifySubLines = null;
+			lopML.marrDeleteSubLines = null;
+			lopML.marrCreateCoverages = null;
+			lopML.marrModifyCoverages = null;
+			lopML.marrDeleteCoverages = null;
+
+			lopML.Execute();
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangException(e.getMessage(), e);
+		}
+
+		TagSubLines(lopML.marrCreateSubLines, larrAux);
+
+		return m;
 	}
 
 	public SubLine saveSubLine(SubLine m)
+		throws SessionExpiredException, BigBangException
 	{
-		return null;
+		SubLine[] larrAux;
+		ManageLines lopML;
+
+		if ( Engine.getCurrentUser() == null )
+			throw new SessionExpiredException();
+
+		larrAux = new SubLine[1];
+		larrAux[0] = m;
+
+		try
+		{
+			lopML = new ManageLines(GeneralSystem.GetAnyInstance(Engine.getCurrentNameSpace()).GetProcessID());
+
+			lopML.marrModifySubLines = BuildSubLineArray(lopML, larrAux, UUID.fromString(m.lineId), false);
+
+			lopML.marrCreateLines = null;
+			lopML.marrModifyLines = null;
+			lopML.marrDeleteLines = null;
+			lopML.marrCreateSubLines = null;
+			lopML.marrDeleteSubLines = null;
+			lopML.marrCreateCoverages = null;
+			lopML.marrModifyCoverages = null;
+			lopML.marrDeleteCoverages = null;
+
+			lopML.Execute();
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangException(e.getMessage(), e);
+		}
+
+		return m;
 	}
 
 	public void deleteSubLine(String id)
+		throws SessionExpiredException, BigBangException
 	{
+		SubLine[] larrAux;
+		ManageLines lopML;
+
+		if ( Engine.getCurrentUser() == null )
+			throw new SessionExpiredException();
+
+		larrAux = new SubLine[1];
+		larrAux[0] = new SubLine();
+		larrAux[0].id = id;
+
+		try
+		{
+			lopML = new ManageLines(GeneralSystem.GetAnyInstance(Engine.getCurrentNameSpace()).GetProcessID());
+
+			lopML.marrDeleteSubLines = BuildSubLineArray(lopML, larrAux, null, false);
+
+			lopML.marrCreateLines = null;
+			lopML.marrModifyLines = null;
+			lopML.marrDeleteLines = null;
+			lopML.marrCreateSubLines = null;
+			lopML.marrModifySubLines = null;
+			lopML.marrCreateCoverages = null;
+			lopML.marrModifyCoverages = null;
+			lopML.marrDeleteCoverages = null;
+
+			lopML.Execute();
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangException(e.getMessage(), e);
+		}
 	}
 
 	public Coverage createCoverage(Coverage b)
+		throws SessionExpiredException, BigBangException
 	{
-		return null;
+		Coverage[] larrAux;
+		ManageLines lopML;
+
+		if ( Engine.getCurrentUser() == null )
+			throw new SessionExpiredException();
+
+		larrAux = new Coverage[1];
+		larrAux[0] = b;
+
+		try
+		{
+			lopML = new ManageLines(GeneralSystem.GetAnyInstance(Engine.getCurrentNameSpace()).GetProcessID());
+
+			lopML.marrCreateCoverages = BuildCoverageArray(lopML, larrAux, UUID.fromString(b.subLineId));
+
+			lopML.marrCreateLines = null;
+			lopML.marrModifyLines = null;
+			lopML.marrDeleteLines = null;
+			lopML.marrCreateSubLines = null;
+			lopML.marrModifySubLines = null;
+			lopML.marrDeleteSubLines = null;
+			lopML.marrModifyCoverages = null;
+			lopML.marrDeleteCoverages = null;
+
+			lopML.Execute();
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangException(e.getMessage(), e);
+		}
+
+		TagCoverages(lopML.marrCreateCoverages, larrAux);
+
+		return b;
 	}
 
 	public Coverage saveCoverage(Coverage b)
+		throws SessionExpiredException, BigBangException
 	{
-		return null;
+		Coverage[] larrAux;
+		ManageLines lopML;
+
+		if ( Engine.getCurrentUser() == null )
+			throw new SessionExpiredException();
+
+		larrAux = new Coverage[1];
+		larrAux[0] = b;
+
+		try
+		{
+			lopML = new ManageLines(GeneralSystem.GetAnyInstance(Engine.getCurrentNameSpace()).GetProcessID());
+
+			lopML.marrModifyCoverages = BuildCoverageArray(lopML, larrAux, UUID.fromString(b.subLineId));
+
+			lopML.marrCreateLines = null;
+			lopML.marrModifyLines = null;
+			lopML.marrDeleteLines = null;
+			lopML.marrCreateSubLines = null;
+			lopML.marrModifySubLines = null;
+			lopML.marrDeleteSubLines = null;
+			lopML.marrCreateCoverages = null;
+			lopML.marrDeleteCoverages = null;
+
+			lopML.Execute();
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangException(e.getMessage(), e);
+		}
+
+		return b;
 	}
 
 	public void deleteCoverage(String id)
+		throws SessionExpiredException, BigBangException
 	{
+		Coverage[] larrAux;
+		ManageLines lopML;
+
+		if ( Engine.getCurrentUser() == null )
+			throw new SessionExpiredException();
+
+		larrAux = new Coverage[1];
+		larrAux[0] = new Coverage();
+		larrAux[0].id = id;
+
+		try
+		{
+			lopML = new ManageLines(GeneralSystem.GetAnyInstance(Engine.getCurrentNameSpace()).GetProcessID());
+
+			lopML.marrDeleteCoverages = BuildCoverageArray(lopML, larrAux, null);
+
+			lopML.marrCreateLines = null;
+			lopML.marrModifyLines = null;
+			lopML.marrDeleteLines = null;
+			lopML.marrCreateSubLines = null;
+			lopML.marrModifySubLines = null;
+			lopML.marrDeleteSubLines = null;
+			lopML.marrCreateCoverages = null;
+			lopML.marrModifyCoverages = null;
+
+			lopML.Execute();
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangException(e.getMessage(), e);
+		}
 	}
 
-	private SubLine[] getSubLinesForLine(UUID pidLine)
+	private SubLine[] getSubLinesForLine(com.premiumminds.BigBang.Jewel.Objects.Line pobjLine)
+		throws BigBangException
 	{
-		return null;
-	}
-	
-	private Coverage[] getCoveragesForSubLine(UUID pidSubLine)
-	{
-		return null;
+		com.premiumminds.BigBang.Jewel.Objects.SubLine[] larrSubLines;
+		SubLine[] larrResult;
+		int i;
+
+		try
+		{
+			larrSubLines = pobjLine.GetCurrentSubLines();
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangException(e.getMessage(), e);
+		}
+
+		if ( larrSubLines == null )
+			return new SubLine[0];
+
+		larrResult = new SubLine[larrSubLines.length];
+		for ( i = 0; i < larrSubLines.length; i++ )
+		{
+			larrResult[i] = new SubLine();
+			larrResult[i].id = larrSubLines[i].getKey().toString();
+			larrResult[i].name = (String)larrSubLines[i].getAt(0);
+			larrResult[i].lineId = ((UUID)larrSubLines[i].getAt(1)).toString();
+			larrResult[i].coverages = getCoveragesForSubLine(larrSubLines[i]);
+		}
+
+		return larrResult;
 	}
 
-	private Tax[] getTaxesForCoverage(UUID pidCoverage)
+	private Coverage[] getCoveragesForSubLine(com.premiumminds.BigBang.Jewel.Objects.SubLine pobjSubLine)
+		throws BigBangException
 	{
-		return null;
+		com.premiumminds.BigBang.Jewel.Objects.Coverage[] larrCoverages;
+		Coverage[] larrResult;
+		int i;
+
+		try
+		{
+			larrCoverages = pobjSubLine.GetCurrentCoverages();
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangException(e.getMessage(), e);
+		}
+
+		if ( larrCoverages == null )
+			return new Coverage[0];
+
+		larrResult = new Coverage[larrCoverages.length];
+		for ( i = 0; i < larrCoverages.length; i++ )
+		{
+			larrResult[i] = new Coverage();
+			larrResult[i].id = larrCoverages[i].getKey().toString();
+			larrResult[i].name = (String)larrCoverages[i].getAt(0);
+			larrResult[i].subLineId = ((UUID)larrCoverages[i].getAt(1)).toString();
+			larrResult[i].taxes = getTaxesForCoverage(larrCoverages[i]);
+		}
+
+		return larrResult;
+	}
+
+	private Tax[] getTaxesForCoverage(com.premiumminds.BigBang.Jewel.Objects.Coverage pobjCoverage)
+		throws BigBangException
+	{
+		com.premiumminds.BigBang.Jewel.Objects.Tax[] larrTaxes;
+		Tax[] larrResult;
+		int i;
+
+		try
+		{
+			larrTaxes = pobjCoverage.GetCurrentTaxes();
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangException(e.getMessage(), e);
+		}
+
+		if ( larrTaxes == null )
+			return new Tax[0];
+
+		larrResult = new Tax[larrTaxes.length];
+		for ( i = 0; i < larrTaxes.length; i++ )
+		{
+			larrResult[i] = new Tax();
+			larrResult[i].id = larrTaxes[i].getKey().toString();
+			larrResult[i].name = (String)larrTaxes[i].getAt(0);
+			larrResult[i].coverageId = ((UUID)larrTaxes[i].getAt(1)).toString();
+			larrResult[i].currencyId = ((UUID)larrTaxes[i].getAt(2)).toString();
+			larrResult[i].value = ((BigDecimal)larrTaxes[i].getAt(3)).doubleValue();
+		}
+
+		return larrResult;
+	}
+
+	private ManageLines.LineData[] BuildLineArray(ManageLines prefOp, Line[] parrLines, boolean pbRecurse)
+	{
+		ManageLines.LineData[] larrResult;
+		int i;
+
+		larrResult = new ManageLines.LineData[parrLines.length];
+		for ( i = 0; i < parrLines.length; i++ )
+		{
+			larrResult[i] = prefOp.new LineData();
+			larrResult[i].mid = (parrLines[i].id == null ? null : UUID.fromString(parrLines[i].id));
+			larrResult[i].mstrName = parrLines[i].name;
+			larrResult[i].midCategory = UUID.fromString(parrLines[i].categoryId);
+			larrResult[i].marrSubLines = (pbRecurse && parrLines[i].subLines != null ?
+					BuildSubLineArray(prefOp, parrLines[i].subLines, larrResult[i].mid, pbRecurse) : null);
+			larrResult[i].mobjPrevValues = null;
+		}
+
+		return larrResult;
+	}
+
+	private ManageLines.SubLineData[] BuildSubLineArray(ManageLines prefOp, SubLine[] parrSubLines, UUID pidParent, 
+			boolean pbRecurse)
+	{
+		ManageLines.SubLineData[] larrResult;
+		int i;
+
+		larrResult = new ManageLines.SubLineData[parrSubLines.length];
+		for ( i = 0; i < parrSubLines.length; i++ )
+		{
+			larrResult[i] = prefOp.new SubLineData();
+			larrResult[i].mid = (parrSubLines[i].id == null ? null : UUID.fromString(parrSubLines[i].id));
+			larrResult[i].mstrName = parrSubLines[i].name;
+			larrResult[i].midLine = pidParent;
+			larrResult[i].marrCoverages = (pbRecurse && parrSubLines[i].coverages != null ?
+					BuildCoverageArray(prefOp, parrSubLines[i].coverages, larrResult[i].mid) : null);
+			larrResult[i].mobjPrevValues = null;
+		}
+
+		return larrResult;
+	}
+
+	private ManageLines.CoverageData[] BuildCoverageArray(ManageLines prefOp, Coverage[] parrCoverages, UUID pidParent)
+	{
+		ManageLines.CoverageData[] larrResult;
+		int i;
+
+		larrResult = new ManageLines.CoverageData[parrCoverages.length];
+		for ( i = 0; i < parrCoverages.length; i++ )
+		{
+			larrResult[i] = prefOp.new CoverageData();
+			larrResult[i].mid = (parrCoverages[i].id == null ? null : UUID.fromString(parrCoverages[i].id));
+			larrResult[i].mstrName = parrCoverages[i].name;
+			larrResult[i].midSubLine = pidParent;
+			larrResult[i].mobjPrevValues = null;
+		}
+
+		return larrResult;
+	}
+
+	private void TagLines(ManageLines.LineData[] parrSource, Line[] parrLines)
+	{
+		int i;
+
+		for ( i = 0; i < parrSource.length; i++ )
+		{
+			parrLines[i].id = parrSource[i].mid.toString();
+			if ( (parrSource[i].marrSubLines != null) && (parrLines[i].subLines != null) )
+				TagSubLines(parrSource[i].marrSubLines, parrLines[i].subLines);
+		}
+	}
+
+	private void TagSubLines(ManageLines.SubLineData[] parrSource, SubLine[] parrSubLines)
+	{
+		int i;
+
+		for ( i = 0; i < parrSource.length; i++ )
+		{
+			parrSubLines[i].id = parrSource[i].mid.toString();
+			if ( (parrSource[i].marrCoverages != null) && (parrSubLines[i].coverages != null) )
+				TagCoverages(parrSource[i].marrCoverages, parrSubLines[i].coverages);
+		}
+	}
+
+	private void TagCoverages(ManageLines.CoverageData[] parrIDs, Coverage[] parrCoverages)
+	{
+		int i;
+
+		for ( i = 0; i < parrIDs.length; i++ )
+			parrCoverages[i].id = parrIDs[i].mid.toString();
 	}
 }

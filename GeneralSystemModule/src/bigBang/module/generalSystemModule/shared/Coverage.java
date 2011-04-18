@@ -9,6 +9,7 @@ public class Coverage
 
 	public String id;
 	public String name;
+	public String subLineId;
 	public Tax[] taxes;
 
 	public Coverage()

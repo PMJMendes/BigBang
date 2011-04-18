@@ -1,12 +1,8 @@
 package com.premiumminds.BigBang.Jewel.Objects;
 
 import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.UUID;
-
-import com.premiumminds.BigBang.Jewel.BigBangJewelException;
-import com.premiumminds.BigBang.Jewel.Constants;
 
 import Jewel.Engine.Engine;
 import Jewel.Engine.DataAccess.MasterDB;
@@ -14,6 +10,9 @@ import Jewel.Engine.Implementation.Entity;
 import Jewel.Engine.Interfaces.IEntity;
 import Jewel.Engine.SysObjects.JewelEngineException;
 import Jewel.Engine.SysObjects.ObjectBase;
+
+import com.premiumminds.BigBang.Jewel.BigBangJewelException;
+import com.premiumminds.BigBang.Jewel.Constants;
 
 public class Contact
 	extends ObjectBase
@@ -102,7 +101,7 @@ public class Contact
 		}
 		catch (Throwable e)
 		{
-			try { ldb.Disconnect(); } catch (SQLException e1) {}
+			try { ldb.Disconnect(); } catch (Throwable e1) {}
 			throw new BigBangJewelException(e.getMessage(), e);
 		}
 
@@ -113,14 +112,14 @@ public class Contact
 		}
 		catch (BigBangJewelException e)
 		{
-			try { lrsInfo.close(); } catch (SQLException e1) {}
-			try { ldb.Disconnect(); } catch (SQLException e1) {}
+			try { lrsInfo.close(); } catch (Throwable e1) {}
+			try { ldb.Disconnect(); } catch (Throwable e1) {}
 			throw e;
 		}
 		catch (Throwable e)
 		{
-			try { lrsInfo.close(); } catch (SQLException e1) {}
-			try { ldb.Disconnect(); } catch (SQLException e1) {}
+			try { lrsInfo.close(); } catch (Throwable e1) {}
+			try { ldb.Disconnect(); } catch (Throwable e1) {}
 			throw new BigBangJewelException(e.getMessage(), e);
 		}
 
@@ -130,7 +129,7 @@ public class Contact
 		}
 		catch (Throwable e)
 		{
-			try { ldb.Disconnect(); } catch (SQLException e1) {}
+			try { ldb.Disconnect(); } catch (Throwable e1) {}
 			throw new BigBangJewelException(e.getMessage(), e);
 		}
 
@@ -181,7 +180,7 @@ public class Contact
 		}
 		catch (Throwable e)
 		{
-			try { ldb.Disconnect(); } catch (SQLException e1) {}
+			try { ldb.Disconnect(); } catch (Throwable e1) {}
 			throw new BigBangJewelException(e.getMessage(), e);
 		}
 
@@ -192,14 +191,14 @@ public class Contact
 		}
 		catch (BigBangJewelException e)
 		{
-			try { lrsInfo.close(); } catch (SQLException e1) {}
-			try { ldb.Disconnect(); } catch (SQLException e1) {}
+			try { lrsInfo.close(); } catch (Throwable e1) {}
+			try { ldb.Disconnect(); } catch (Throwable e1) {}
 			throw e;
 		}
 		catch (Throwable e)
 		{
-			try { lrsInfo.close(); } catch (SQLException e1) {}
-			try { ldb.Disconnect(); } catch (SQLException e1) {}
+			try { lrsInfo.close(); } catch (Throwable e1) {}
+			try { ldb.Disconnect(); } catch (Throwable e1) {}
 			throw new BigBangJewelException(e.getMessage(), e);
 		}
 
@@ -209,7 +208,7 @@ public class Contact
 		}
 		catch (Throwable e)
 		{
-			try { ldb.Disconnect(); } catch (SQLException e1) {}
+			try { ldb.Disconnect(); } catch (Throwable e1) {}
 			throw new BigBangJewelException(e.getMessage(), e);
 		}
 

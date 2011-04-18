@@ -10,6 +10,10 @@ public class Constants
 	public static final UUID ObjID_Mediator    = UUID.fromString("8A33B9DD-001A-401F-AA7E-9EBB00E9D24F");
 	public static final UUID ObjID_Contact     = UUID.fromString("2085F9FD-7FCE-46C0-99FD-9EC400FFBA5C");
 	public static final UUID ObjID_ContactInfo = UUID.fromString("069434F6-8EE7-4DFE-96C9-9EC401014608");
+	public static final UUID ObjID_Line        = UUID.fromString("A9A1CE62-06A1-4761-A1FC-9EC900F234B0");
+	public static final UUID ObjID_SubLine     = UUID.fromString("FBCD74E1-A280-4443-9BB4-9EC900F4A4B9");
+	public static final UUID ObjID_Coverage    = UUID.fromString("007022A0-6DFA-498B-9DC4-9EC900F5219F");
+	public static final UUID ObjID_Tax         = UUID.fromString("43644146-07C4-4E63-9E87-9EC900F6EB73");
 
 	public static final UUID ObjID_CInfoType   = UUID.fromString("03C5B78E-D71C-49F2-A079-9EC40111DCC0");
 	public static final UUID ObjID_CommProfile = UUID.fromString("5F40713C-1FE7-4715-AC24-9EBB00E53392");
@@ -31,4 +35,7 @@ public class Constants
 	public static final int FKOwner_In_ContactInfo = 0;
 	public static final int FKOwnerType_In_Contact = 1;
 	public static final int FKOwner_In_Contact = 2;
+	public static final int FKCoverage_In_Tax = 1;
+	public static final int FKSubLine_In_Coverage = 1;
+	public static final int FKLine_In_SubLine = 1;
 }

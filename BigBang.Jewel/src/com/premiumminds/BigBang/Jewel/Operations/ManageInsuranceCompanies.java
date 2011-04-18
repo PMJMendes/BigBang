@@ -11,6 +11,7 @@ import Jewel.Petri.SysObjects.Operation;
 
 import com.premiumminds.BigBang.Jewel.Constants;
 import com.premiumminds.BigBang.Jewel.Objects.Company;
+import com.premiumminds.BigBang.Jewel.Objects.Contact;
 
 public class ManageInsuranceCompanies
 	extends Operation
@@ -57,6 +58,8 @@ public class ManageInsuranceCompanies
 		int i;
 		Company lobjAux;
 		Entity lrefCostCenters;
+		Contact[] larrContacts;
+		int j;
 
 		try
 		{
@@ -130,7 +133,20 @@ public class ManageInsuranceCompanies
 					marrDelete[i].mstrAddress1 = (String)lobjAux.getAt(6);
 					marrDelete[i].mstrAddress2 = (String)lobjAux.getAt(7);
 					marrDelete[i].midZipCode = (UUID)lobjAux.getAt(8);
-					marrDelete[i].mobjContactOps = null;
+					larrContacts = lobjAux.GetCurrentContacts();
+					if ( (larrContacts == null) || (larrContacts.length == 0) )
+						marrDelete[i].mobjContactOps = null;
+					else
+					{
+						marrDelete[i].mobjContactOps = new ContactOps();
+						marrDelete[i].mobjContactOps.marrDelete = new ContactOps.ContactData[larrContacts.length];
+						for ( j = 0; j < larrContacts.length; j++ )
+						{
+							marrDelete[i].mobjContactOps.marrDelete[j] = marrDelete[i].mobjContactOps.new ContactData();
+							marrDelete[i].mobjContactOps.marrDelete[j].mid = larrContacts[j].getKey();
+						}
+						marrDelete[i].mobjContactOps.RunSubOp(pdb, null, null);
+					}
 					marrDelete[i].mobjPrevValues = null;
 					lrefCostCenters.Delete(pdb, marrDelete[i].mid);
 				}

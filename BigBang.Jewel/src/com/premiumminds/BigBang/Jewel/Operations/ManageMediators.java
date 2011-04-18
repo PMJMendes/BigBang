@@ -10,6 +10,7 @@ import Jewel.Petri.SysObjects.JewelPetriException;
 import Jewel.Petri.SysObjects.Operation;
 
 import com.premiumminds.BigBang.Jewel.Constants;
+import com.premiumminds.BigBang.Jewel.Objects.Contact;
 import com.premiumminds.BigBang.Jewel.Objects.Mediator;
 
 public class ManageMediators
@@ -56,6 +57,8 @@ public class ManageMediators
 		int i;
 		Mediator lobjAux;
 		Entity lrefMediators;
+		Contact[] larrContacts;
+		int j;
 
 		try
 		{
@@ -95,7 +98,7 @@ public class ManageMediators
 					marrModify[i].mobjPrevValues.mstrAddress1 = (String)lobjAux.getAt(5);
 					marrModify[i].mobjPrevValues.mstrAddress2 = (String)lobjAux.getAt(6);
 					marrModify[i].mobjPrevValues.midZipCode = (UUID)lobjAux.getAt(7);
-					marrModify[i].mobjPrevValues.mobjContactOps = null;
+					marrModify[i].mobjContactOps = null;
 					marrModify[i].mobjPrevValues.mobjPrevValues = null;
 					lobjAux.setAt(0, marrModify[i].mstrName);
 					lobjAux.setAt(1, marrModify[i].mstrISPNumber);
@@ -125,11 +128,27 @@ public class ManageMediators
 					marrDelete[i].mstrAddress1 = (String)lobjAux.getAt(5);
 					marrDelete[i].mstrAddress2 = (String)lobjAux.getAt(6);
 					marrDelete[i].midZipCode = (UUID)lobjAux.getAt(7);
-					marrDelete[i].mobjContactOps = null;
+					larrContacts = lobjAux.GetCurrentContacts();
+					if ( (larrContacts == null) || (larrContacts.length == 0) )
+						marrDelete[i].mobjContactOps = null;
+					else
+					{
+						marrDelete[i].mobjContactOps = new ContactOps();
+						marrDelete[i].mobjContactOps.marrDelete = new ContactOps.ContactData[larrContacts.length];
+						for ( j = 0; j < larrContacts.length; j++ )
+						{
+							marrDelete[i].mobjContactOps.marrDelete[j] = marrDelete[i].mobjContactOps.new ContactData();
+							marrDelete[i].mobjContactOps.marrDelete[j].mid = larrContacts[j].getKey();
+						}
+						marrDelete[i].mobjContactOps.RunSubOp(pdb, null, null);
+					}
 					marrDelete[i].mobjPrevValues = null;
 					lrefMediators.Delete(pdb, marrDelete[i].mid);
 				}
 			}
+
+			if ( mobjContactOps != null )
+				mobjContactOps.RunSubOp(pdb, Constants.ObjID_Company, null);
 		}
 		catch (Throwable e)
 		{

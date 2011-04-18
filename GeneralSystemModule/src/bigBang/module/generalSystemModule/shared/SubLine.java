@@ -9,6 +9,7 @@ public class SubLine
 
 	public String id;
 	public String name;
+	public String lineId;
 	public Coverage[] coverages;
 
 	public SubLine()
