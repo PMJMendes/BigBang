@@ -37,7 +37,7 @@ public class ContactsServiceImpl
 {
 	private static final long serialVersionUID = 1L;
 
-	public Contact[] getContacts(String entityTypeId, String entityId)
+	public Contact[] getContacts(String ownerId)
 		throws SessionExpiredException, BigBangException
 	{
 		ArrayList<Contact> larrAux;
@@ -52,12 +52,10 @@ public class ContactsServiceImpl
 
 		larrAux = new ArrayList<Contact>();
 
-		larrMembers = new int[2];
-		larrMembers[0] = Constants.FKOwnerType_In_Contact;
-		larrMembers[1] = Constants.FKOwner_In_Contact;
-		larrParams = new java.lang.Object[2];
-		larrParams[0] = UUID.fromString(entityTypeId);
-		larrParams[1] = UUID.fromString(entityId);
+		larrMembers = new int[1];
+		larrMembers[0] = Constants.FKOwner_In_Contact;
+		larrParams = new java.lang.Object[1];
+		larrParams[0] = UUID.fromString(ownerId);
 
 		try
 		{
