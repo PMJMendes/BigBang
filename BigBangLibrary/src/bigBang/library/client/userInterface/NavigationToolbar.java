@@ -43,16 +43,12 @@ public class NavigationToolbar extends ListHeader {
 		}
 	}
 	
+	protected Button nextButton, prevButton;
+	
 	public NavigationToolbar(){
 		super();
-	}
-	
-	public void showNext(boolean show) {
-		if(!show){
-			setRightWidget(new SimplePanel());
-			return;
-		}
-		Button nextButton = new Button("Próximo");
+		
+		nextButton = new Button("Próximo");
 		nextButton.addClickHandler(new ClickHandler() {
 			
 			@Override
@@ -60,6 +56,24 @@ public class NavigationToolbar extends ListHeader {
 				fireEvent(new NavigationEvent(Navigation.NEXT));
 			}
 		});
+
+		prevButton = new Button("Anterior");
+		prevButton.addClickHandler(new ClickHandler() {
+			
+			@Override
+			public void onClick(ClickEvent event) {
+				fireEvent(new NavigationEvent(Navigation.PREVIOUS));
+			}
+		});
+		showNext(true);
+		showPrevious(true);
+	}
+	
+	public void showNext(boolean show) {
+		if(!show){
+			setRightWidget(new SimplePanel());
+			return;
+		}
 		setRightWidget(nextButton);
 	}
 	
@@ -68,14 +82,6 @@ public class NavigationToolbar extends ListHeader {
 			setLeftWidget(new SimplePanel());
 			return;
 		}
-		Button prevButton = new Button("Anterior");
-		prevButton.addClickHandler(new ClickHandler() {
-			
-			@Override
-			public void onClick(ClickEvent event) {
-				fireEvent(new NavigationEvent(Navigation.PREVIOUS));
-			}
-		});
 		setLeftWidget(prevButton);
 	}
 	

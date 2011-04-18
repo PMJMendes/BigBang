@@ -27,7 +27,7 @@ import bigBang.library.shared.Contact;
 
 public class ContactsPreviewList extends List<Contact> {
 
-	protected class ContactPreviewPanel extends View {
+	protected class ContactPreviewPanel extends NavigationPanel {
 		
 		protected Label nameLabel;
 		protected Label valueLabel;
@@ -40,59 +40,25 @@ public class ContactsPreviewList extends List<Contact> {
 		}
 		
 		public ContactPreviewPanel(boolean slideAble){
+			super();
+			ContactForm form = new ContactForm();
+			setHomeWidget(form);
 			
-			VerticalPanel wrapper = new VerticalPanel();
-			
-			navToolbar = new NavigationToolbar();
-			navToolbar.showNext(true);
-			navToolbar.addNavigationEventHandler(new NavigationEventHandler() {
+			Button goButton = new Button("GO");
+			goButton.addClickHandler(new ClickHandler() {
 				
 				@Override
-				public void onNavigationEvent(Navigation n) {
-					if(n == Navigation.NEXT){
-						slideToContact(null);
-					}
+				public void onClick(ClickEvent event) {
+					navigateTo(new ContactForm());
 				}
 			});
-			wrapper.add(navToolbar);
-			ContactForm form = new ContactForm();
-			wrapper.add(form);
-			wrapper.setCellHeight(form, "100%");
-			
-			if(slideAble){
-				slide = new SlidePanel();
-				wrapper.setSize("100%", "100%");
-				slide.setSize("350px", "400px");
-				slide.add(wrapper);
-				initWidget(slide);
-			}else{
-				wrapper.setSize("350px", "400px");
-				initWidget(wrapper);
-			}
+			form.addWidget(goButton);
 		}
 		
 		public void setContact(Contact contact) {
+			
 			//nameLabel.setText(contact.name);
 			//valueLabel.setText(contact.info[0].value);
-		}
-		
-		private void slideToContact(Contact contact) {
-			final ContactPreviewPanel current = this;
-			final ContactPreviewPanel newPanel = new ContactPreviewPanel(false);
-			newPanel.slide = slide;
-			newPanel.setContact(contact);
-			newPanel.navToolbar.showPrevious(true);
-			newPanel.navToolbar.addNavigationEventHandler(new NavigationEventHandler() {
-				
-				@Override
-				public void onNavigationEvent(Navigation n) {
-					if(n == Navigation.PREVIOUS) {
-						newPanel.slide.slideInto(current, Direction.RIGHT);
-					}
-				}
-			});
-			
-			slide.slideInto(newPanel, Direction.LEFT);
 		}
 	}
 	
@@ -134,7 +100,7 @@ public class ContactsPreviewList extends List<Contact> {
 					contactPopupPanel.hide();
 					((ListEntry<?>) event.getSource()).setSelected(false);
 				}else{
-					preview.setContact(((ListEntry<Contact>) event.getSource()).getValue());
+					//preview.setContact(((ListEntry<Contact>) event.getSource()).getValue());
 					contactPopupPanel.setPopupPositionAndShow(new PositionCallback() {
 
 						@Override
