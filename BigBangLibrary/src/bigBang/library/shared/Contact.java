@@ -9,8 +9,8 @@ public class Contact
 
 	public String id;
 	public String name;
-	public String entityTypeId;
-	public String entityId;
+	public boolean isSubContact;
+	public String ownerId;
 	public Address address;
 	public ContactInfo[] info;
 	public Contact[] subContacts;

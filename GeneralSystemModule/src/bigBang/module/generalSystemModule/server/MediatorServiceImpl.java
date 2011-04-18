@@ -224,7 +224,7 @@ public class MediatorServiceImpl
 			{
 				lopMM.marrCreate[0].mobjContactOps = new ContactOps();
 				lopMM.marrCreate[0].mobjContactOps.marrCreate = BuildContactTree(lopMM.marrCreate[0].mobjContactOps,
-						mediator.contacts);
+						mediator.contacts, Constants.ObjID_Mediator);
 			}
 			else
 				lopMM.marrCreate[0].mobjContactOps = null;
@@ -280,7 +280,7 @@ public class MediatorServiceImpl
 		}
 	}
 
-	private ContactOps.ContactData[] BuildContactTree(ContactOps prefAux, Contact[] parrContacts)
+	private ContactOps.ContactData[] BuildContactTree(ContactOps prefAux, Contact[] parrContacts, UUID pidParentType)
 		throws BigBangJewelException
 	{
 		ContactOps.ContactData[] larrResult;
@@ -295,8 +295,8 @@ public class MediatorServiceImpl
 			larrResult[i] = prefAux.new ContactData();
 			larrResult[i].mid = null;
 			larrResult[i].mstrName = parrContacts[i].name;
-			larrResult[i].midOwnerType = UUID.fromString(parrContacts[i].entityTypeId);
-			larrResult[i].midOwnerId = UUID.fromString(parrContacts[i].entityId);
+			larrResult[i].midOwnerType = pidParentType;
+			larrResult[i].midOwnerId = UUID.fromString(parrContacts[i].ownerId);
 			larrResult[i].mstrAddress1 = parrContacts[i].address.street1;
 			larrResult[i].mstrAddress2 = parrContacts[i].address.street2;
 			larrResult[i].midZipCode = ZipCodeBridge.GetZipCode(parrContacts[i].address.zipCode.code,
@@ -314,7 +314,7 @@ public class MediatorServiceImpl
 			}
 			else
 				larrResult[i].marrInfo = null;
-			larrResult[i].marrSubContacts = BuildContactTree(prefAux, parrContacts[i].subContacts);
+			larrResult[i].marrSubContacts = BuildContactTree(prefAux, parrContacts[i].subContacts, Constants.ObjID_Contact);
 		}
 			
 		return larrResult;

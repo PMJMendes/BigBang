@@ -24,6 +24,7 @@ public class Constants
 	public static final UUID OPID_ManageUsers       = UUID.fromString("03F5BBC1-5AB5-45DF-BAEF-9EB500A043FD");
 	public static final UUID OPID_ManageMediators   = UUID.fromString("EDA3659D-4BE9-4779-B0C9-9EB500A07726");
 	public static final UUID OPID_ManageCompanies   = UUID.fromString("83081039-C3C0-4BAC-8B24-9EB500A0A3EB");
+	public static final UUID OPID_ManageLines       = UUID.fromString("7CE5A4B8-9E13-4F14-BDDA-9EB500A0D171");
 
 	public static final int FKCostCenter_In_UserDecoration = 2;
 	public static final int ZipCode_In_PostalCode = 0;

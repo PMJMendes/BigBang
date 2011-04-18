@@ -9,7 +9,9 @@ import com.google.gwt.user.client.rpc.RemoteService;
 import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 
 @RemoteServiceRelativePath("CoveragesService")
-public interface CoveragesService extends RemoteService {
+public interface CoveragesService
+	extends RemoteService
+{
 	/**
 	 * Utility class for simplifying access to the instance of async service.
 	 */
@@ -22,20 +24,17 @@ public interface CoveragesService extends RemoteService {
 			return instance;
 		}
 	}
-	
+
 	public Line[] getLines();
-	
-	public Coverage createCoverage(Coverage b);
-	
-	public SubLine createModality(SubLine m);
-	
-	public Line createBranch(Line b);
-	
-	public void deleteCoverage(String id);
-	
+	public Line createLine(Line b);
+	public Line saveLine(Line b);
 	public void deleteLine(String id);
-	
+
+	public SubLine createSubLine(SubLine m);
+	public SubLine saveSubLine(SubLine m);
 	public void deleteSubLine(String id);
-	
-	//public void deleteTax(String id);
+
+	public Coverage createCoverage(Coverage b);
+	public Coverage saveCoverage(Coverage b);
+	public void deleteCoverage(String id);
 }

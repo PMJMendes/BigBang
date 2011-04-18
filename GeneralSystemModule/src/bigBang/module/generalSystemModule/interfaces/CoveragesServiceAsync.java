@@ -7,21 +7,19 @@ import bigBang.module.generalSystemModule.shared.SubLine;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
-public interface CoveragesServiceAsync extends Service {
-
-	void deleteCoverage(String id, AsyncCallback<Void> callback);
-
+public interface CoveragesServiceAsync
+	extends Service
+{
+	void getLines(AsyncCallback<Line[]> callback);
+	void createLine(Line b, AsyncCallback<Line> callback);
+	void saveLine(Line b, AsyncCallback<Line> callback);
 	void deleteLine(String id, AsyncCallback<Void> callback);
 
+	void createSubLine(SubLine m, AsyncCallback<SubLine> callback);
+	void saveSubLine(SubLine m, AsyncCallback<SubLine> callback);
 	void deleteSubLine(String id, AsyncCallback<Void> callback);
 
-	void createBranch(Line b, AsyncCallback<Line> callback);
-
-	void createModality(SubLine m, AsyncCallback<SubLine> callback);
-
 	void createCoverage(Coverage b, AsyncCallback<Coverage> callback);
-
-	void getLines(AsyncCallback<Line[]> callback);
-
-	
+	void saveCoverage(Coverage b, AsyncCallback<Coverage> callback);
+	void deleteCoverage(String id, AsyncCallback<Void> callback);
 }

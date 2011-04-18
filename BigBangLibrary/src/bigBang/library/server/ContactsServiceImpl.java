@@ -133,7 +133,8 @@ public class ContactsServiceImpl
 		lopCOps = new ContactOps();
 		try
 		{
-			lopCOps.marrCreate = BuildContactTree(lopCOps, larrAux);
+			lopCOps.marrCreate = BuildContactTree(lopCOps, larrAux, (contact.isSubContact ? Constants.ObjID_Contact :
+					GetParentType(UUID.fromString(opInstanceId))));
 			lopCOps.marrModify = null;
 			lopCOps.marrDelete = null;
 
@@ -162,7 +163,8 @@ public class ContactsServiceImpl
 		lopCOps = new ContactOps();
 		try
 		{
-			lopCOps.marrModify = BuildContactTree(lopCOps, larrAux);
+			lopCOps.marrModify = BuildContactTree(lopCOps, larrAux, (contact.isSubContact ? Constants.ObjID_Contact :
+					GetParentType(UUID.fromString(opInstanceId))));
 			lopCOps.marrCreate = null;
 			lopCOps.marrDelete = null;
 
@@ -190,7 +192,8 @@ public class ContactsServiceImpl
 		lopCOps = new ContactOps();
 		try
 		{
-			lopCOps.marrDelete = BuildContactTree(lopCOps, larrAux);
+			lopCOps.marrDelete = BuildContactTree(lopCOps, larrAux, (contact.isSubContact ? Constants.ObjID_Contact :
+					GetParentType(UUID.fromString(opInstanceId))));
 			lopCOps.marrCreate = null;
 			lopCOps.marrModify = null;
 
@@ -216,8 +219,8 @@ public class ContactsServiceImpl
 
 		lobjAux.id = pobjContact.getKey().toString();
 		lobjAux.name = (String)pobjContact.getAt(0);
-		lobjAux.entityTypeId = ((UUID)pobjContact.getAt(1)).toString();
-		lobjAux.entityId = ((UUID)pobjContact.getAt(2)).toString();
+		lobjAux.isSubContact = ((UUID)pobjContact.getAt(2)).equals(Constants.ObjID_Contact);
+		lobjAux.ownerId = ((UUID)pobjContact.getAt(2)).toString();
 		lobjAux.address = new Address();
 		lobjAux.address.street1 = (String)pobjContact.getAt(3);
 		lobjAux.address.street2 = (String)pobjContact.getAt(4);
@@ -280,7 +283,7 @@ public class ContactsServiceImpl
 		return lobjAux;
 	}
 
-	private ContactOps.ContactData[] BuildContactTree(ContactOps prefAux, Contact[] parrContacts)
+	private ContactOps.ContactData[] BuildContactTree(ContactOps prefAux, Contact[] parrContacts, UUID pidParentType)
 		throws BigBangJewelException
 	{
 		ContactOps.ContactData[] larrResult;
@@ -295,8 +298,8 @@ public class ContactsServiceImpl
 			larrResult[i] = prefAux.new ContactData();
 			larrResult[i].mid = null;
 			larrResult[i].mstrName = parrContacts[i].name;
-			larrResult[i].midOwnerType = UUID.fromString(parrContacts[i].entityTypeId);
-			larrResult[i].midOwnerId = UUID.fromString(parrContacts[i].entityId);
+			larrResult[i].midOwnerType = pidParentType;
+			larrResult[i].midOwnerId = UUID.fromString(parrContacts[i].ownerId);
 			larrResult[i].mstrAddress1 = parrContacts[i].address.street1;
 			larrResult[i].mstrAddress2 = parrContacts[i].address.street2;
 			larrResult[i].midZipCode = ZipCodeBridge.GetZipCode(parrContacts[i].address.zipCode.code,
@@ -314,9 +317,9 @@ public class ContactsServiceImpl
 			}
 			else
 				larrResult[i].marrInfo = null;
-			larrResult[i].marrSubContacts = BuildContactTree(prefAux, parrContacts[i].subContacts);
+			larrResult[i].marrSubContacts = BuildContactTree(prefAux, parrContacts[i].subContacts, Constants.ObjID_Contact);
 		}
-			
+
 		return larrResult;
 	}
 
@@ -332,7 +335,33 @@ public class ContactsServiceImpl
 		}
 	}
 
-	private Operation BuildOuterOp(UUID pidOpInstance, ContactOps lobjInner)
+	private UUID GetParentType(UUID pidOpInstance)
+		throws JewelPetriException
+	{
+		IStep lobjStep;
+		IOperation lobjOp;
+		Operation lobjAux;
+		UUID lidResult;
+
+		lobjStep = (IStep)PNStep.GetInstance(Engine.getCurrentNameSpace(), pidOpInstance);
+		lobjOp = lobjStep.GetOperation();
+		lobjAux = lobjOp.GetNewInstance();
+
+		lidResult = null;
+
+		if ( lobjAux instanceof ManageInsuranceCompanies )
+			lidResult = Constants.ObjID_Company;
+
+		if ( lobjAux instanceof ManageMediators )
+			lidResult = Constants.ObjID_Mediator;
+
+		if ( lidResult == null )
+			throw new JewelPetriException("Erro: A operação pretendida não permite movimentos de Contactos.");
+
+		return lidResult;
+	}
+
+	private Operation BuildOuterOp(UUID pidOpInstance, ContactOps pobjInner)
 		throws JewelPetriException
 	{
 		IStep lobjStep;
@@ -351,7 +380,7 @@ public class ContactsServiceImpl
 			((ManageInsuranceCompanies)lobjResult).marrCreate = null;
 			((ManageInsuranceCompanies)lobjResult).marrModify = null;
 			((ManageInsuranceCompanies)lobjResult).marrDelete = null;
-			((ManageInsuranceCompanies)lobjResult).mobjContactOps = lobjInner;
+			((ManageInsuranceCompanies)lobjResult).mobjContactOps = pobjInner;
 			lbFound = true;
 		}
 
@@ -360,7 +389,7 @@ public class ContactsServiceImpl
 			((ManageMediators)lobjResult).marrCreate = null;
 			((ManageMediators)lobjResult).marrModify = null;
 			((ManageMediators)lobjResult).marrDelete = null;
-			((ManageMediators)lobjResult).mobjContactOps = lobjInner;
+			((ManageMediators)lobjResult).mobjContactOps = pobjInner;
 			lbFound = true;
 		}
 
