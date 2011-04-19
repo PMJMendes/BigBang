@@ -66,7 +66,7 @@ public class SubLine
 
 		try
 		{
-			lrefCoverages = Entity.GetInstance(Engine.FindEntity(getNameSpace(), Constants.ObjID_Coverage)); 
+			lrefCoverages = Entity.GetInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), Constants.ObjID_Coverage)); 
 			ldb = new MasterDB();
 		}
 		catch (Throwable e)
