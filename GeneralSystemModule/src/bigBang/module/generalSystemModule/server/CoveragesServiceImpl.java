@@ -30,10 +30,10 @@ public class CoveragesServiceImpl
 	public Line[] getLines()
 		throws SessionExpiredException, BigBangException
 	{
-		UUID lidUsers;
-        MasterDB ldb;
-        ResultSet lrsUsers;
 		ArrayList<Line> larrAux;
+		Entity lrefLines;
+        MasterDB ldb;
+        ResultSet lrsLines;
 		com.premiumminds.BigBang.Jewel.Objects.Line lobjLine;
 		Line lobjTmp;
 
@@ -44,7 +44,7 @@ public class CoveragesServiceImpl
 
 		try
 		{
-        	lidUsers = Engine.FindEntity(Engine.getCurrentNameSpace(), Constants.ObjID_Decorations);
+			lrefLines = Entity.GetInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), Constants.ObjID_Line));
 			ldb = new MasterDB();
 		}
 		catch (Throwable e)
@@ -54,7 +54,7 @@ public class CoveragesServiceImpl
 
         try
         {
-	        lrsUsers = Entity.GetInstance(lidUsers).SelectAll(ldb);
+	        lrsLines = lrefLines.SelectAll(ldb);
 		}
 		catch (Throwable e)
 		{
@@ -64,9 +64,9 @@ public class CoveragesServiceImpl
 
 		try
 		{
-	        while (lrsUsers.next())
+	        while (lrsLines.next())
 	        {
-	        	lobjLine = com.premiumminds.BigBang.Jewel.Objects.Line.GetInstance(Engine.getCurrentNameSpace(), lrsUsers);
+	        	lobjLine = com.premiumminds.BigBang.Jewel.Objects.Line.GetInstance(Engine.getCurrentNameSpace(), lrsLines);
 	        	lobjTmp = new Line();
 	        	lobjTmp.id = lobjLine.getKey().toString();
 	        	lobjTmp.name = (String)lobjLine.getAt(0);
@@ -77,20 +77,20 @@ public class CoveragesServiceImpl
         }
 		catch (BigBangException e)
         {
-			try { lrsUsers.close(); } catch (Throwable e1) {}
+			try { lrsLines.close(); } catch (Throwable e1) {}
 			try { ldb.Disconnect(); } catch (Throwable e1) {}
         	throw e;
         }
         catch (Throwable e)
         {
-			try { lrsUsers.close(); } catch (Throwable e1) {}
+			try { lrsLines.close(); } catch (Throwable e1) {}
 			try { ldb.Disconnect(); } catch (Throwable e1) {}
         	throw new BigBangException(e.getMessage(), e);
         }
 
         try
         {
-        	lrsUsers.close();
+        	lrsLines.close();
         }
 		catch (Throwable e)
 		{
