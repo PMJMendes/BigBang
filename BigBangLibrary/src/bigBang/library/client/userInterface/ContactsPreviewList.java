@@ -1,5 +1,19 @@
 package bigBang.library.client.userInterface;
 
+import bigBang.library.client.BigBangAsyncCallback;
+import bigBang.library.client.Selectable;
+import bigBang.library.client.ValueSelectable;
+import bigBang.library.client.event.SelectedStateChangedEvent;
+import bigBang.library.client.event.SelectedStateChangedEventHandler;
+import bigBang.library.client.event.SelectionChangedEvent;
+import bigBang.library.client.event.SelectionChangedEventHandler;
+import bigBang.library.client.resources.Resources;
+import bigBang.library.client.userInterface.view.ContactForm;
+import bigBang.library.interfaces.ContactsService;
+import bigBang.library.shared.Contact;
+import bigBang.library.shared.ContactInfo;
+import bigBang.library.shared.ModuleConstants;
+
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Overflow;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -12,18 +26,6 @@ import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.PopupPanel.PositionCallback;
 import com.google.gwt.user.client.ui.UIObject;
-import com.google.gwt.user.client.ui.VerticalPanel;
-
-import bigBang.library.client.event.SelectedStateChangedEvent;
-import bigBang.library.client.event.SelectedStateChangedEventHandler;
-import bigBang.library.client.resources.Resources;
-import bigBang.library.client.userInterface.NavigationToolbar.NavigationEvent.Navigation;
-import bigBang.library.client.userInterface.NavigationToolbar.NavigationEventHandler;
-import bigBang.library.client.userInterface.SlidePanel.Direction;
-import bigBang.library.client.userInterface.view.ContactForm;
-import bigBang.library.client.userInterface.view.View;
-import bigBang.library.interfaces.ContactsServiceAsync;
-import bigBang.library.shared.Contact;
 
 public class ContactsPreviewList extends List<Contact> {
 
@@ -32,42 +34,58 @@ public class ContactsPreviewList extends List<Contact> {
 		protected Label nameLabel;
 		protected Label valueLabel;
 		protected ExpandableListBoxFormField type;
-		protected NavigationToolbar navToolbar;
-		protected SlidePanel slide;
-		
+
 		public ContactPreviewPanel(){
-			this(true);
-		}
-		
-		public ContactPreviewPanel(boolean slideAble){
 			super();
-			ContactForm form = new ContactForm();
-			setHomeWidget(form);
-			
-			Button goButton = new Button("GO");
-			goButton.addClickHandler(new ClickHandler() {
-				
-				@Override
-				public void onClick(ClickEvent event) {
-					navigateTo(new ContactForm());
-				}
-			});
-			form.addWidget(goButton);
+			setSize("100%", "100%");
+			navBar.setText("Contacto");
 		}
 		
 		public void setContact(Contact contact) {
+			ContactForm form = new ContactForm();
+			form.setValue(contact);
 			
-			//nameLabel.setText(contact.name);
-			//valueLabel.setText(contact.info[0].value);
+			if(!hasHomeWidget())
+				setHomeWidget(form);
+			else
+				navigateTo(form);
+			
+			form.getSubContactsList().addSelectionChangedEventHandler(new SelectionChangedEventHandler() {
+				
+				@Override
+				public void onSelectionChanged(SelectionChangedEvent event) {
+					for(Selectable s : event.getSelected()){
+						@SuppressWarnings("unchecked")
+						Contact contact = ((ValueSelectable<Contact>)s).getValue();
+						setContact(contact);
+						break;						
+					}
+				}
+			});
+			
+			form.getNewButton().addClickHandler(new ClickHandler() {
+				
+				@Override
+				public void onClick(ClickEvent event) {
+					setContact(new Contact());
+				}
+			});
 		}
 	}
 	
-	Resources resources;
-	PopupPanel contactPopupPanel;
-	SelectedStateChangedEventHandler contactSelectedStateChangedHandler;
+	protected Resources resources;
+	protected PopupPanel contactPopupPanel;
+	protected SelectedStateChangedEventHandler contactSelectedStateChangedHandler;
+	
+	protected String entityInstanceId;
 
 	public ContactsPreviewList(){
+		this(null, null);
+	}
+	
+	public ContactsPreviewList(String entityTypeId, String entityInstanceId){
 		super();
+
 		this.scrollPanel.getElement().getStyle().setOverflow(Overflow.AUTO);
 		resources = GWT.create(Resources.class);
 		ListHeader header = new ListHeader();
@@ -75,10 +93,7 @@ public class ContactsPreviewList extends List<Contact> {
 		header.setHeight("25px");
 		header.setLeftWidget(new Image(resources.contactsIcon()));
 
-		Button newButton = new Button("Novo");
-		header.setRightWidget(newButton);
-
-		setHeaderWidget(header);		
+		setHeaderWidget(header);
 
 		setSize("100%", "145px");
 
@@ -86,9 +101,6 @@ public class ContactsPreviewList extends List<Contact> {
 
 		contactPopupPanel = new PopupPanel();
 		contactPopupPanel.setAutoHideEnabled(true);
-		final ContactPreviewPanel preview = new ContactPreviewPanel();
-		
-		contactPopupPanel.setWidget(preview);
 		contactPopupPanel.setSize("350px", "400px");
 		
 		contactSelectedStateChangedHandler = new SelectedStateChangedEventHandler() {
@@ -100,7 +112,9 @@ public class ContactsPreviewList extends List<Contact> {
 					contactPopupPanel.hide();
 					((ListEntry<?>) event.getSource()).setSelected(false);
 				}else{
-					//preview.setContact(((ListEntry<Contact>) event.getSource()).getValue());
+					ContactPreviewPanel contactPreviewPanel = new ContactPreviewPanel();
+					contactPreviewPanel.setContact(((ValueSelectable<Contact>)event.getSource()).getValue());
+					contactPopupPanel.setWidget(contactPreviewPanel);
 					contactPopupPanel.setPopupPositionAndShow(new PositionCallback() {
 
 						@Override
@@ -111,6 +125,7 @@ public class ContactsPreviewList extends List<Contact> {
 					});
 				}
 			}
+			
 		};
 		
 		contactPopupPanel.addCloseHandler(new CloseHandler<PopupPanel>() {
@@ -124,13 +139,21 @@ public class ContactsPreviewList extends List<Contact> {
 			}
 		});
 		
-		for(int i = 0; i < 3; i++) {
-			addEntryForContact(null);
-		}
-		ListEntry<Contact> moreEntry = new ListEntry<Contact>(null);
-		moreEntry.setHeight("25px");
-		moreEntry.setText("ver+");
-		add(moreEntry);
+		Button newButton = new Button("Novo");
+		newButton.addClickHandler(new ClickHandler() {
+			
+			@Override
+			public void onClick(ClickEvent event) {
+				bigBang.library.client.userInterface.view.PopupPanel popup = new bigBang.library.client.userInterface.view.PopupPanel();
+				ContactPreviewPanel contactPreviewPanel = new ContactPreviewPanel();
+				contactPreviewPanel.setContact(new Contact());
+				popup.add(contactPreviewPanel);
+				popup.setSize("600px", "400px");
+				popup.center();
+			}
+		});
+		header.setRightWidget(newButton);
+		setEntityInfo(entityInstanceId);
 	}
 
 	private void addEntryForContact(Contact c){
@@ -150,6 +173,61 @@ public class ContactsPreviewList extends List<Contact> {
 		e.setToggleable(true);
 		e.addSelectedStateChangedEventHandler(contactSelectedStateChangedHandler);
 		e.setHeight("25px");
+		c.subContacts = new Contact[1];
+		c.subContacts[0] = new Contact();
 		add(e);
+	}
+
+	public void setEntityInfo(String entityInstanceId) {
+		this.entityInstanceId = entityInstanceId;
+		if(entityInstanceId != null){
+			fetchContacts();
+			
+			/** TODO
+			 * Contact c = new Contact();
+			
+			c.name = "novo contacto";
+			c.info = new ContactInfo[2];
+			c.info[0] = new ContactInfo();
+			c.info[0].typeId = "";
+			c.info[0].value = "telefone";
+			
+			c.info[1] = new ContactInfo();
+			c.info[1].typeId = "";
+			c.info[1].value = "email";
+			
+			ContactsService.Util.getInstance().createContact(, c, new BigBangAsyncCallback<Contact>() {
+
+				@Override
+				public void onSuccess(Contact result) {
+					GWT.log("success");
+				}
+			});*/
+		}		
+	}
+	
+	protected void fetchContacts(){
+		if(this.entityInstanceId == null)
+			return;
+		ContactsService.Util.getInstance().getContacts(entityInstanceId, new BigBangAsyncCallback<Contact[]>() {
+
+			@Override
+			public void onSuccess(Contact[] result) {
+				clear();
+				for(int i = 0; i < result.length; i++){
+					addEntryForContact(result[i]);
+				}
+			}
+		});
+	}
+
+	public Contact[] getContacts() {
+		Contact[] result = new Contact[size()];
+		int i = 0;
+		for(ValueSelectable<Contact> s : entries){
+			result[i] = s.getValue();
+			i++;
+		}
+		return result;
 	}
 }

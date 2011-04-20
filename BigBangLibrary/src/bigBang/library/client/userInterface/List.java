@@ -505,4 +505,7 @@ public class List<T> extends View implements HasValueSelectables<T>, java.util.L
 		return scrollPanel;
 	}
 	
+	public VerticalPanel getListContent(){
+		return this.listPanel;
+	}
 }

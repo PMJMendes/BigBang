@@ -92,7 +92,7 @@ public class ListHeader extends View {
 		setRightWidget(newButton);
 	}
 	
-	public HasClickHandlers getNewButton() {
+	public ToolButton getNewButton() {
 		return newButton;
 	}
 

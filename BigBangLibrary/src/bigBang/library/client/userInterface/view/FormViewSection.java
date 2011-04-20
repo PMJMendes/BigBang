@@ -91,10 +91,14 @@ public class FormViewSection extends View {
 	}
 
 	public void addFormField(FormField<?> field) {
-		this.fields.add(field);
+		registerFormField(field);
 		HorizontalPanel wrapper = new HorizontalPanel();
 		wrapper.add(field);
 		addWidget(wrapper);
+	}
+	
+	public void registerFormField(FormField<?> field) {
+		this.fields.add(field);
 	}
 	
 	public void clear(){
@@ -153,6 +157,10 @@ public class FormViewSection extends View {
 
 	public Widget getHeader() {
 		return this.header;
+	}
+	
+	public HasWidgets getContentWrapper() {
+		return this.content;
 	}
 
 }

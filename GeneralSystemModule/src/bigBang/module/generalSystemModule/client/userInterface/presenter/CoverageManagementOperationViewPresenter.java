@@ -2,6 +2,10 @@ package bigBang.module.generalSystemModule.client.userInterface.presenter;
 
 import java.util.Collection;
 
+import com.google.gwt.core.client.GWT;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.dom.client.HasClickHandlers;
 import com.google.gwt.user.client.ui.HasValue;
 import com.google.gwt.user.client.ui.HasWidgets;
 import com.google.gwt.user.client.ui.Widget;
@@ -32,16 +36,11 @@ public class CoverageManagementOperationViewPresenter implements
 		HasValueSelectables<Line> getLineList();
 		HasValueSelectables<SubLine> getSubLineList();
 		HasValueSelectables<Coverage> getCoverageList();		
-		void setLines(Line[] lines);
-		void setSubLines(SubLine[] subLines);
-		void setCoverages(Coverage[] coverages);
-		
-		//Forms
-		HasValue<Line> getLineform();
-		HasValue<SubLine> getSubLineForm();
-		HasValue<Coverage> getCoverageForm();
+		void showSubLinesFor(Line line);
+		void showCoveragesFor(SubLine subLine);
 		
 		//General
+		void refresh();
 		void setReadOnly(boolean readonly);
 		void clear();
 		Widget asWidget();
@@ -89,14 +88,7 @@ public class CoverageManagementOperationViewPresenter implements
 	}
 	
 	public void setup(){
-		this.service.getLines(new BigBangAsyncCallback<Line[]>() {
-
-			@Override
-			public void onSuccess(Line[] result) {
-				view.clear();
-				view.setLines(result);
-			}
-		});
+		view.refresh();
 	}
 
 	@Override
@@ -107,8 +99,14 @@ public class CoverageManagementOperationViewPresenter implements
 			@Override
 			public void onSelectionChanged(SelectionChangedEvent event) {
 				Collection<? extends Selectable> selected = event.getSelected();
+				if(selected.size() == 0){
+					view.showSubLinesFor(null);
+					return;
+				}
+					
 				for(Selectable s : selected) {
-					view.setSubLines(((ValueSelectable<Line>) s).getValue().subLines);
+					view.showSubLinesFor(((ValueSelectable<Line>)s).getValue());
+					break;
 				}
 			}
 		});
@@ -118,13 +116,19 @@ public class CoverageManagementOperationViewPresenter implements
 			@Override
 			public void onSelectionChanged(SelectionChangedEvent event) {
 				Collection<? extends Selectable> selected = event.getSelected();
+				if(selected.size() == 0){
+					view.showCoveragesFor(null);
+					return;
+				}
+				
 				for(Selectable s : selected) {
-					view.setCoverages(((ValueSelectable<SubLine>) s).getValue().coverages);
+					view.showCoveragesFor(((ValueSelectable<SubLine>)s).getValue());
+					break;
 				}
 			}
 		});
 	}
-
+	
 	@Override
 	public void registerEventHandlers(EventBus eventBus) {
 		// TODO Auto-generated method stub
@@ -156,7 +160,7 @@ public class CoverageManagementOperationViewPresenter implements
 	@Override
 	public void setOperationPermission(boolean result) {
 		this.operation.setPermission(result);
-		setReadOnly(result);
+		setReadOnly(!result);
 	}
 
 	private void setReadOnly(boolean result) {

@@ -207,6 +207,10 @@ public abstract class FormView<T> extends View implements Validatable, HasEditab
 	public void addFormField(FormField<?> field) {
 		currentSection.addFormField(field);
 	}
+	
+	public void registerFormField(FormField<?> field) {
+		currentSection.registerFormField(field);
+	}
 
 	public Widget getNonScrollableContent(){
 		final VerticalPanel wrapper = new VerticalPanel();

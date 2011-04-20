@@ -118,7 +118,7 @@ public class SlidePanel extends View {
 			public void onAttachOrDetach(AttachEvent event) {
 				if(!event.isAttached())
 					return;
-				setSize(w.getOffsetWidth()+"px", w.getOffsetHeight()+"px");
+				//setSize(w.getOffsetWidth()+"px", w.getOffsetHeight()+"px");
 			}
 		});
 

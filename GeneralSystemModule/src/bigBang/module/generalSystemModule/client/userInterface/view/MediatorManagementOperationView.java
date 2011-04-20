@@ -3,8 +3,10 @@ package bigBang.module.generalSystemModule.client.userInterface.view;
 import bigBang.library.client.HasEditableValue;
 import bigBang.library.client.HasValueSelectables;
 import bigBang.library.client.ValueSelectable;
+import bigBang.library.client.userInterface.ContactsPreviewList;
 import bigBang.library.client.userInterface.ListEntry;
 import bigBang.library.client.userInterface.view.View;
+import bigBang.library.shared.Contact;
 import bigBang.module.generalSystemModule.client.userInterface.MediatorList;
 import bigBang.module.generalSystemModule.client.userInterface.MediatorListEntry;
 import bigBang.module.generalSystemModule.client.userInterface.presenter.MediatorManagementOperationViewPresenter;
@@ -21,6 +23,9 @@ public class MediatorManagementOperationView extends View implements MediatorMan
 
 	private MediatorList mediatorList;
 	private MediatorForm mediatorForm;
+	private ContactsPreviewList contactsList;
+	
+	private String mediatorInstanceId;
 	
 	public MediatorManagementOperationView() {
 		SplitLayoutPanel wrapper = new SplitLayoutPanel();
@@ -31,10 +36,30 @@ public class MediatorManagementOperationView extends View implements MediatorMan
 		wrapper.addWest(mediatorList, LIST_WIDTH);
 		wrapper.setWidgetMinSize(mediatorList, LIST_WIDTH);
 
+		SplitLayoutPanel formWrapper = new SplitLayoutPanel();
+		
+		contactsList = new ContactsPreviewList();
+		contactsList.setSize("100%", "100%");
+		
+		formWrapper.addEast(contactsList, 250);
+		
 		mediatorForm = new MediatorForm();
-		wrapper.add(mediatorForm);
+		formWrapper.add(mediatorForm);
+		
+		wrapper.add(formWrapper);
 
 		initWidget(wrapper);
+	}
+
+	@Override
+	public void setIds(String mediatorInstanceId) {
+		this.mediatorInstanceId = mediatorInstanceId;
+		this.contactsList.setEntityInfo(this.mediatorInstanceId);
+	}
+	
+	@Override
+	public Contact[] getContacts() {
+		return this.contactsList.getContacts();
 	}
 
 	@Override
@@ -137,5 +162,4 @@ public class MediatorManagementOperationView extends View implements MediatorMan
 		((Button)this.mediatorList.newButton).setEnabled(!readOnly);
 		this.mediatorForm.setReadOnly(readOnly);
 	}
-
 }

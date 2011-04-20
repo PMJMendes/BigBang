@@ -1,43 +1,124 @@
 package bigBang.library.client.userInterface.view;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
+
+import com.google.gwt.dom.client.Style.Unit;
+import com.google.gwt.event.dom.client.HasClickHandlers;
+import com.google.gwt.user.client.ui.Button;
+import com.google.gwt.user.client.ui.CellPanel;
+import com.google.gwt.user.client.ui.HasWidgets;
+import com.google.gwt.user.client.ui.UIObject;
+import com.google.gwt.user.client.ui.VerticalPanel;
+import com.google.gwt.user.client.ui.Widget;
+
+import bigBang.library.client.FormField;
 import bigBang.library.client.userInterface.AddressFormField;
 import bigBang.library.client.userInterface.ExpandableListBoxFormField;
 import bigBang.library.client.userInterface.List;
+import bigBang.library.client.userInterface.ListEntry;
+import bigBang.library.client.userInterface.ListHeader;
 import bigBang.library.client.userInterface.TextBoxFormField;
+import bigBang.library.shared.Address;
 import bigBang.library.shared.Contact;
+import bigBang.library.shared.ContactInfo;
+import bigBang.library.shared.ModuleConstants;
 
 public class ContactForm extends FormView<Contact> {
 
+	public static class SubContactListEntry extends ListEntry<Contact> {
+
+		public SubContactListEntry(Contact value) {
+			super(value);
+			setText("sub contacto");
+			setHeight("30px");
+		}
+	}
+	
+	public static class ContactInfoListEntry extends ListEntry<ContactInfo> {
+
+		public ExpandableListBoxFormField typeField;
+		public TextBoxFormField valueField;
+		
+		public ContactInfoListEntry(ContactInfo value) {
+			super(value);
+			VerticalPanel wrapper = new VerticalPanel();
+			wrapper.setSize("100%", "100%");
+			
+			typeField = new ExpandableListBoxFormField(ModuleConstants.ListIDs.ContactInfoTypes, "Tipo");
+			valueField = new TextBoxFormField("Valor");
+			
+			wrapper.add(typeField);
+			wrapper.add(valueField);
+		}
+		
+	}
+	
+	private static class Tuple <T1, T2> {
+		public T1 type;
+		public T2 value;
+	}
+	
 	protected TextBoxFormField name;
-	protected TextBoxFormField value;
 	protected AddressFormField address;
-	protected ExpandableListBoxFormField type;
+	protected HasClickHandlers newButton;
+	
+	protected ArrayList<Tuple<FormField<?>, FormField<?>>> infoFields;
 	
 	protected List<Contact> subContactsList;
+	protected List<ContactInfo> contactInfoList;
+	
 	
 	public ContactForm(){
+		infoFields = new ArrayList<Tuple<FormField<?>, FormField<?>>>();
+		
 		addSection("Informação do Contacto");
 		name = new TextBoxFormField("Nome");
-		value = new TextBoxFormField("Valor");
-		address = new AddressFormField();
-		type = new ExpandableListBoxFormField("Tipo");
-		
-		addFormField(type);
 		addFormField(name);
-		addFormField(value);
 		
+		addSection("Detalhes");
+		((CellPanel) this.currentSection.getContentWrapper()).setSpacing(0);
+		((UIObject) this.currentSection.getContentWrapper()).getElement().getStyle().setMargin(0, Unit.PX);
+		this.contactInfoList = new List<ContactInfo>();
+		this.contactInfoList.setSize("100%", "100%");
+		addWidget(this.contactInfoList.getListContent());
+		
+		address = new AddressFormField();
 		name.setFieldWidth("200px");
-		value.setFieldWidth("200px");
 		
 		addSection("Morada");
 		addFormField(address);
 		
 		addSection("Contactos associados");
+		
 		subContactsList = new List<Contact> ();
-		subContactsList.setSize("100%", "100%");
+		subContactsList.setSize("100%", "200px");
+		subContactsList.setMultipleSelectability(false);
+		
+		ListHeader header = new ListHeader();
+		this.newButton = new Button("Criar novo");
+		((UIObject) newButton).setWidth("100px");
+		header.setLeftWidget((Widget) this.newButton);
+		subContactsList.setHeaderWidget(header);
+		
+		HasWidgets listWrapper = currentSection.getContentWrapper();
+		((VerticalPanel) listWrapper).setSpacing(0);
+		((UIObject) listWrapper).getElement().getStyle().setPadding(0, Unit.PX);
+		currentSection.setContent(subContactsList);
+		subContactsList.setSize("100%", "200px");
+		
 		addWidget(subContactsList);
 	}
 
+	public List<Contact> getSubContactsList() {
+		return this.subContactsList;
+	}
+	
+	public HasClickHandlers getNewButton(){
+		return this.newButton;
+	}
+	
 	@Override
 	public Contact getInfo() {
 		// TODO Auto-generated method stub
@@ -46,8 +127,28 @@ public class ContactForm extends FormView<Contact> {
 
 	@Override
 	public void setInfo(Contact info) {
-		// TODO Auto-generated method stub
+		this.infoFields.clear();
 		
+		name.setTitle(info.name == null ? "" : info.name);
+		address.setValue(info.address == null ? new Address() : info.address);
+
+		Arrays.sort(info.info, new Comparator<ContactInfo>() {
+
+			@Override
+			public int compare(ContactInfo arg0, ContactInfo arg1) {
+				return arg0.typeId.compareTo(arg1.typeId);
+			}
+		});
+		
+		this.contactInfoList.clear();
+		for(int i = 0; i < info.info.length; i++) {
+			ContactInfoListEntry e = new ContactInfoListEntry(info.info[i]);
+			this.contactInfoList.add(e);
+		}
+		
+		this.subContactsList.clear();
+		for(int i = 0; i < info.subContacts.length; i++)
+			this.subContactsList.add(new SubContactListEntry(info.subContacts[i]));
 	}
 
 }

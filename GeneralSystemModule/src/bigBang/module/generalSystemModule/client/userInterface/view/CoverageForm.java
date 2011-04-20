@@ -9,26 +9,26 @@ import bigBang.module.generalSystemModule.shared.Coverage;
 
 public class CoverageForm extends FormView<Coverage> {
 
-	private Button editCostCenterButton;
-	private Button saveCostCenterButton;
-	private Button deleteCostCenterButton;
-
-
 	private TextBoxFormField name;
-
+	private Button saveButton;
+	
 	private Coverage coverage;
-
+	
 	public CoverageForm(){
 		addSection("Informação Geral");
+		
 		name = new TextBoxFormField("Nome");
 		
-		this.editCostCenterButton = new Button("Editar");	
-		this.saveCostCenterButton = new Button("Guardar");
-		this.deleteCostCenterButton = new Button("Apagar");
+		addFormField(name);
+		
+		saveButton = new Button("Guardar");
+		addButton(saveButton);
 	}
-
+	
 	@Override
 	public Coverage getInfo() {
+		if(this.coverage == null)
+			this.coverage = new Coverage();
 		coverage.name = name.getValue();
 		return coverage;
 	}
@@ -39,23 +39,13 @@ public class CoverageForm extends FormView<Coverage> {
 		this.name.setValue(info.name);
 	}
 
-	public HasClickHandlers getSaveButton() {
-		return saveCostCenterButton;
-	}
-
-	public HasClickHandlers getEditButton() {
-		return editCostCenterButton;
-	}
-
-	public HasClickHandlers getDeleteButton() {
-		return deleteCostCenterButton;
-	}
-
 	@Override
-	public void setReadOnly(boolean readOnly) {
-		super.setReadOnly(readOnly);
-		saveCostCenterButton.setVisible(!readOnly);
-		editCostCenterButton.setVisible(readOnly);
+	public void clearInfo() {
+		coverage = new Coverage();
+		super.clearInfo();
 	}
 
+	public HasClickHandlers getSaveButton() {
+		return saveButton;
+	}
 }

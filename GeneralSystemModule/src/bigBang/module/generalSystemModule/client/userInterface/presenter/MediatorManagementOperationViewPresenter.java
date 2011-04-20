@@ -15,6 +15,7 @@ import bigBang.library.client.userInterface.presenter.OperationViewPresenter;
 import bigBang.library.client.userInterface.view.View;
 import bigBang.library.interfaces.Service;
 import bigBang.library.interfaces.TipifiedListService;
+import bigBang.library.shared.Contact;
 import bigBang.library.shared.TipifiedListItem;
 import bigBang.module.generalSystemModule.interfaces.MediatorServiceAsync;
 import bigBang.module.generalSystemModule.shared.CommissionProfile;
@@ -47,6 +48,10 @@ public class MediatorManagementOperationViewPresenter implements
 		HasClickHandlers getDeleteButton();
 		boolean isFormValid();
 		void lockForm(boolean lock);
+		
+		//Contacts
+		void setIds(String mediatorInstanceId);
+		Contact[] getContacts();
 		
 		//General
 		HasClickHandlers getNewButton();
@@ -157,6 +162,7 @@ public class MediatorManagementOperationViewPresenter implements
 					Mediator value = vs.getValue();
 					view.getForm().setValue(value);
 					view.getForm().setReadOnly(true);
+					view.setIds(value.id);
 					view.lockForm(value == null);
 					if(value.id != null){
 						view.removeNewMediatorPreparation();

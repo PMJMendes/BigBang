@@ -6,6 +6,8 @@ import java.util.ListIterator;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
+import bigBang.library.client.userInterface.NavigationToolbar.NavigationEvent.Navigation;
+import bigBang.library.client.userInterface.NavigationToolbar.NavigationEventHandler;
 import bigBang.library.client.userInterface.SlidePanel.Direction;
 import bigBang.library.client.userInterface.view.View;
 
@@ -26,6 +28,23 @@ public class NavigationPanel extends View {
 
 		navBar = new NavigationToolbar(); 
 		wrapper.add(navBar);
+		
+		navBar.addNavigationEventHandler(new NavigationEventHandler() {
+			
+			@Override
+			public void onNavigationEvent(Navigation n) {
+				switch(n) {
+				case NEXT:
+					navigateForward();
+					break;
+				case PREVIOUS:
+					navigateBack();
+					break;
+				default:
+					break;
+				}
+			}
+		});
 
 		slide = new SlidePanel();
 		slide.setSize("100%", "100%");
@@ -53,6 +72,10 @@ public class NavigationPanel extends View {
 		iterator.add(w);
 		checkToolbarItems();
 	}
+	
+	public boolean hasHomeWidget(){
+		return this.navigatables.size() > 0;
+	}
 
 	public void navigateTo(Widget w){
 		while(iterator.hasNext()){
@@ -60,7 +83,8 @@ public class NavigationPanel extends View {
 			iterator.remove();
 		}
 		iterator.add(w);
-		navigateToLast();
+		this.slide.slideInto(w, Direction.LEFT);
+		checkToolbarItems();
 	}
 
 	public boolean navigateForward(){
@@ -74,12 +98,18 @@ public class NavigationPanel extends View {
 	}
 
 	public boolean navigateBack(){
-		if(!iterator.hasPrevious()){
-			checkToolbarItems();
-			return false;
+		if(iterator.hasPrevious()) {
+			iterator.previous();
+			if(!iterator.hasPrevious()){
+				iterator.next();
+				checkToolbarItems();
+				return false;
+			}else{
+				this.slide.slideInto(iterator.previous(), Direction.RIGHT);
+				iterator.next();
+				checkToolbarItems();
+			}
 		}
-		this.slide.slideInto(iterator.previous(), Direction.RIGHT);
-		checkToolbarItems();
 		return true;
 	}
 
@@ -87,7 +117,9 @@ public class NavigationPanel extends View {
 		Widget w = null;
 		while(iterator.hasPrevious())
 			w = iterator.previous();
-		this.slide.slideInto(w, Direction.RIGHT);
+		if(w != null)
+			this.slide.slideInto(w, Direction.RIGHT);
+		iterator.next();
 		checkToolbarItems();
 	}
 
@@ -95,12 +127,20 @@ public class NavigationPanel extends View {
 		Widget w = null;
 		while(iterator.hasNext())
 			w = iterator.next();
-		this.slide.slideInto(w, Direction.LEFT);
+		if(w != null)
+			this.slide.slideInto(w, Direction.LEFT);
 		checkToolbarItems();
 	}
 
 	private void checkToolbarItems(){
-		navBar.prevButton.setVisible(iterator.hasPrevious());
+		boolean hasPrevious = false;
+		if(iterator.hasPrevious()){
+			iterator.previous();
+			if(iterator.hasPrevious())
+				hasPrevious = true;
+			iterator.next();
+		}
+		navBar.prevButton.setVisible(hasPrevious);
 		navBar.nextButton.setVisible(iterator.hasNext());
 	}
 }

@@ -14,11 +14,13 @@ import bigBang.module.generalSystemModule.client.userInterface.presenter.CostCen
 import bigBang.module.generalSystemModule.client.userInterface.presenter.CoverageManagementOperationViewPresenter;
 import bigBang.module.generalSystemModule.client.userInterface.presenter.InsuranceAgencyManagementOperationViewPresenter;
 import bigBang.module.generalSystemModule.client.userInterface.presenter.MediatorManagementOperationViewPresenter;
+import bigBang.module.generalSystemModule.client.userInterface.presenter.TaxManagementOperationViewPresenter;
 import bigBang.module.generalSystemModule.client.userInterface.presenter.UserManagementOperationViewPresenter;
 import bigBang.module.generalSystemModule.client.userInterface.view.CostCenterManagementOperationView;
 import bigBang.module.generalSystemModule.client.userInterface.view.CoverageManagementOperationView;
 import bigBang.module.generalSystemModule.client.userInterface.view.InsuranceAgencyManagementOperationView;
 import bigBang.module.generalSystemModule.client.userInterface.view.MediatorManagementOperationView;
+import bigBang.module.generalSystemModule.client.userInterface.view.TaxManagementOperationView;
 import bigBang.module.generalSystemModule.client.userInterface.view.UserManagementOperationView;
 import bigBang.module.generalSystemModule.interfaces.CostCenterService;
 import bigBang.module.generalSystemModule.interfaces.CostCenterServiceAsync;
@@ -35,6 +37,7 @@ import bigBang.module.generalSystemModule.shared.operation.CostCenterManagementO
 import bigBang.module.generalSystemModule.shared.operation.CoverageManagementOperation;
 import bigBang.module.generalSystemModule.shared.operation.InsuranceAgencyManagementOperation;
 import bigBang.module.generalSystemModule.shared.operation.MediatorManagementOperation;
+import bigBang.module.generalSystemModule.shared.operation.TaxManagementOperation;
 import bigBang.module.generalSystemModule.shared.operation.UserManagementOperation;
 
 import com.google.gwt.core.client.GWT;
@@ -92,6 +95,13 @@ public class GeneralSystemSection implements MenuSection {
 		CoverageManagementOperationViewPresenter coverageManagementOperationPresenter = new CoverageManagementOperationViewPresenter(null, coveragesService, coverageManagementOperationView);
 		coverageManagementOperationPresenter.setOperation(coverageManagementOperation);
 		this.sectionOperationPresenters.put(CoverageManagementOperation.ID, (OperationViewPresenter)coverageManagementOperationPresenter);
+		
+		/* TAXES MANAGEMENT */
+		TaxManagementOperation taxManagementOperation = (TaxManagementOperation)GWT.create(TaxManagementOperation.class);
+		TaxManagementOperationView taxManagementOperationView = (TaxManagementOperationView) GWT.create(TaxManagementOperationView.class);
+		TaxManagementOperationViewPresenter taxManagementOperationPresenter = new TaxManagementOperationViewPresenter(null, coveragesService, taxManagementOperationView);
+		taxManagementOperationPresenter.setOperation(taxManagementOperation);
+		this.sectionOperationPresenters.put(TaxManagementOperation.ID, (OperationViewPresenter)taxManagementOperationPresenter);
 	}
 	
 	public String getId() {
