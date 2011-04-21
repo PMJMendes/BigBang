@@ -88,7 +88,7 @@ public class SubLine
 		try
 		{
 			while ( lrsCoverages.next() )
-				larrAux.add(Coverage.GetInstance(getNameSpace(), lrsCoverages));
+				larrAux.add(Coverage.GetInstance(Engine.getCurrentNameSpace(), lrsCoverages));
 		}
 		catch (Throwable e)
 		{
