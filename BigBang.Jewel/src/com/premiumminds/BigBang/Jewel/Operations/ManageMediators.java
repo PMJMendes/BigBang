@@ -11,6 +11,7 @@ import Jewel.Petri.SysObjects.Operation;
 
 import com.premiumminds.BigBang.Jewel.Constants;
 import com.premiumminds.BigBang.Jewel.Objects.Contact;
+import com.premiumminds.BigBang.Jewel.Objects.Document;
 import com.premiumminds.BigBang.Jewel.Objects.Mediator;
 
 public class ManageMediators
@@ -33,6 +34,7 @@ public class ManageMediators
 		public String mstrAddress2;
 		public UUID midZipCode;
 		public ContactOps mobjContactOps;
+		public DocOps mobjDocOps;
 		public MediatorData mobjPrevValues;
 	}
 
@@ -40,6 +42,7 @@ public class ManageMediators
 	public MediatorData[] marrModify;
 	public MediatorData[] marrDelete;
 	public ContactOps mobjContactOps;
+	public DocOps mobjDocOps;
 
 	public ManageMediators(UUID pidProcess)
 	{
@@ -58,6 +61,7 @@ public class ManageMediators
 		Mediator lobjAux;
 		Entity lrefMediators;
 		Contact[] larrContacts;
+		Document[] larrDocs;
 		int j;
 
 		try
@@ -77,7 +81,9 @@ public class ManageMediators
 					lobjAux.setAt(7, marrCreate[i].midZipCode);
 					lobjAux.SaveToDb(pdb);
 					if ( marrCreate[i].mobjContactOps != null )
-						marrCreate[i].mobjContactOps.RunSubOp(pdb, Constants.ObjID_Mediator, lobjAux.getKey());
+						marrCreate[i].mobjContactOps.RunSubOp(pdb, lobjAux.getKey());
+					if ( marrCreate[i].mobjDocOps != null )
+						marrCreate[i].mobjDocOps.RunSubOp(pdb, lobjAux.getKey());
 					marrCreate[i].mid = lobjAux.getKey();
 					marrCreate[i].mobjPrevValues = null;
 				}
@@ -140,7 +146,21 @@ public class ManageMediators
 							marrDelete[i].mobjContactOps.marrDelete[j] = marrDelete[i].mobjContactOps.new ContactData();
 							marrDelete[i].mobjContactOps.marrDelete[j].mid = larrContacts[j].getKey();
 						}
-						marrDelete[i].mobjContactOps.RunSubOp(pdb, null, null);
+						marrDelete[i].mobjContactOps.RunSubOp(pdb, null);
+					}
+					larrDocs = lobjAux.GetCurrentDocs();
+					if ( (larrDocs == null) || (larrDocs.length == 0) )
+						marrDelete[i].mobjDocOps = null;
+					else
+					{
+						marrDelete[i].mobjDocOps = new DocOps();
+						marrDelete[i].mobjDocOps.marrDelete = new DocOps.DocumentData[larrDocs.length];
+						for ( j = 0; j < larrDocs.length; j++ )
+						{
+							marrDelete[i].mobjDocOps.marrDelete[j] = marrDelete[i].mobjDocOps.new DocumentData();
+							marrDelete[i].mobjDocOps.marrDelete[j].mid = larrDocs[j].getKey();
+						}
+						marrDelete[i].mobjDocOps.RunSubOp(pdb, null);
 					}
 					marrDelete[i].mobjPrevValues = null;
 					lrefMediators.Delete(pdb, marrDelete[i].mid);
@@ -148,7 +168,10 @@ public class ManageMediators
 			}
 
 			if ( mobjContactOps != null )
-				mobjContactOps.RunSubOp(pdb, Constants.ObjID_Company, null);
+				mobjContactOps.RunSubOp(pdb, null);
+
+			if ( mobjDocOps != null )
+				mobjDocOps.RunSubOp(pdb, null);
 		}
 		catch (Throwable e)
 		{

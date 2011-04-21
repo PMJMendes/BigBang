@@ -4,6 +4,7 @@ import java.io.Serializable;
 
 import bigBang.library.shared.Address;
 import bigBang.library.shared.Contact;
+import bigBang.library.shared.Document;
 
 public class Mediator
 	implements Serializable
@@ -18,6 +19,7 @@ public class Mediator
 	public CommissionProfile comissionProfile;
 	public Address address;
 	public Contact[] contacts;
+	public Document[] documents;
 
 	public Mediator()
 	{

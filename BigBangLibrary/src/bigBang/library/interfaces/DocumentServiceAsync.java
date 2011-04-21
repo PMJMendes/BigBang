@@ -4,16 +4,11 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 
 import bigBang.library.shared.Document;
 
-public interface DocumentServiceAsync extends Service {
-
-	void createDocument(String entityTypeId, String entityId,
-			Document document, AsyncCallback<Document> callback);
-
-	void deleteDocument(String id, AsyncCallback<Void> callback);
-
-	void getDocuments(String entityTypeId, String entityId,
-			AsyncCallback<Document[]> callback);
-
-	void saveDocument(Document document, AsyncCallback<Document> callback);
-
+public interface DocumentServiceAsync
+	extends Service
+{
+	void getDocuments(String ownerId, AsyncCallback<Document[]> callback);
+	void createDocument(String opInstanceId, Document document, AsyncCallback<Document> callback);
+	void saveDocument(String opInstanceId, Document document, AsyncCallback<Document> callback);
+	void deleteDocument(String opInstanceId, String id, AsyncCallback<Void> callback);
 }

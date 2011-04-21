@@ -141,7 +141,7 @@ public class FileServiceImpl
 		resp.getOutputStream().write(lbuffer.getData());
     }
 
-	public String Discard(String pstrID)
+	public void Discard(String pstrID)
 		throws SessionExpiredException, BigBangException 
 	{
 		if ( Engine.getCurrentUser() == null )
@@ -155,7 +155,20 @@ public class FileServiceImpl
 		{
 			throw new BigBangException(e.getMessage(), e);
 		}
+	}
 
-		return "";
+	public void Discard(String[] parrIDs)
+		throws SessionExpiredException, BigBangException
+	{
+		int i;
+
+		if ( Engine.getCurrentUser() == null )
+			throw new SessionExpiredException();
+
+		if ( parrIDs == null )
+			return;
+
+		for ( i = 0; i < parrIDs.length; i++ )
+			Discard(parrIDs[i]);
 	}
 }

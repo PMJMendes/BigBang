@@ -1,12 +1,17 @@
 package bigBang.library.interfaces;
 
+import bigBang.library.shared.BigBangException;
 import bigBang.library.shared.Document;
+import bigBang.library.shared.SessionExpiredException;
+
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.rpc.RemoteService;
 import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 
 @RemoteServiceRelativePath("DocumentService")
-public interface DocumentService extends RemoteService {
+public interface DocumentService
+	extends RemoteService
+{
 	/**
 	 * Utility class for simplifying access to the instance of async service.
 	 */
@@ -20,11 +25,8 @@ public interface DocumentService extends RemoteService {
 		}
 	}
 	
-	public Document[] getDocuments(String entityTypeId, String entityId);
-	
-	public Document createDocument(String entityTypeId, String entityId, Document document);
-	
-	public Document saveDocument(Document document);
-	
-	public void deleteDocument(String id);
+	public Document[] getDocuments(String ownerId) throws SessionExpiredException, BigBangException;
+	public Document createDocument(String opInstanceId, Document document) throws SessionExpiredException, BigBangException;
+	public Document saveDocument(String opInstanceId, Document document) throws SessionExpiredException, BigBangException;
+	public void deleteDocument(String opInstanceId, String id) throws SessionExpiredException, BigBangException;
 }

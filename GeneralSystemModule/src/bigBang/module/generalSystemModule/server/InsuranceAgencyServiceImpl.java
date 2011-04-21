@@ -10,9 +10,11 @@ import Jewel.Engine.DataAccess.MasterDB;
 import Jewel.Engine.Implementation.Entity;
 import Jewel.Engine.SysObjects.ObjectBase;
 import bigBang.library.server.EngineImplementor;
+import bigBang.library.server.FileServiceImpl;
 import bigBang.library.shared.Address;
 import bigBang.library.shared.BigBangException;
 import bigBang.library.shared.Contact;
+import bigBang.library.shared.Document;
 import bigBang.library.shared.SessionExpiredException;
 import bigBang.library.shared.ZipCode;
 import bigBang.module.generalSystemModule.interfaces.InsuranceAgencyService;
@@ -23,6 +25,7 @@ import com.premiumminds.BigBang.Jewel.Constants;
 import com.premiumminds.BigBang.Jewel.ZipCodeBridge;
 import com.premiumminds.BigBang.Jewel.Objects.GeneralSystem;
 import com.premiumminds.BigBang.Jewel.Operations.ContactOps;
+import com.premiumminds.BigBang.Jewel.Operations.DocOps;
 import com.premiumminds.BigBang.Jewel.Operations.ManageInsuranceCompanies;
 
 public class InsuranceAgencyServiceImpl
@@ -173,9 +176,18 @@ public class InsuranceAgencyServiceImpl
 			}
 			else
 				lopMIC.marrCreate[0].mobjContactOps = null;
+			if ( (agency.documents != null) && (agency.documents.length > 0) )
+			{
+				lopMIC.marrCreate[0].mobjDocOps = new DocOps();
+				lopMIC.marrCreate[0].mobjDocOps.marrCreate = BuildDocTree(lopMIC.marrCreate[0].mobjDocOps,
+						agency.documents, Constants.ObjID_Company);
+			}
+			else
+				lopMIC.marrCreate[0].mobjDocOps = null;
 			lopMIC.marrModify = null;
 			lopMIC.marrDelete = null;
 			lopMIC.mobjContactOps = null;
+			lopMIC.mobjDocOps = null;
 
 			lopMIC.Execute();
 		}
@@ -187,6 +199,8 @@ public class InsuranceAgencyServiceImpl
 		agency.id = lopMIC.marrCreate[0].mid.toString();
 		if ( (agency.contacts != null) && (agency.contacts.length > 0) )
 			WalkContactTree(lopMIC.marrCreate[0].mobjContactOps.marrCreate, agency.contacts);
+		if ( (agency.documents != null) && (agency.documents.length > 0) )
+			WalkDocTree(lopMIC.marrCreate[0].mobjDocOps.marrCreate, agency.documents);
 
 		return agency;
 	}
@@ -234,6 +248,7 @@ public class InsuranceAgencyServiceImpl
 			lopMIC.marrCreate = null;
 			lopMIC.marrDelete = null;
 			lopMIC.mobjContactOps = null;
+			lopMIC.mobjDocOps = null;
 
 			lopMIC.Execute();
 		}
@@ -271,6 +286,7 @@ public class InsuranceAgencyServiceImpl
 			lopMIC.marrCreate = null;
 			lopMIC.marrModify = null;
 			lopMIC.mobjContactOps = null;
+			lopMIC.mobjDocOps = null;
 
 			lopMIC.Execute();
 		}
@@ -296,12 +312,21 @@ public class InsuranceAgencyServiceImpl
 			larrResult[i].mid = null;
 			larrResult[i].mstrName = parrContacts[i].name;
 			larrResult[i].midOwnerType = pidParentType;
-			larrResult[i].midOwnerId = UUID.fromString(parrContacts[i].ownerId);
-			larrResult[i].mstrAddress1 = parrContacts[i].address.street1;
-			larrResult[i].mstrAddress2 = parrContacts[i].address.street2;
-			larrResult[i].midZipCode = ZipCodeBridge.GetZipCode(parrContacts[i].address.zipCode.code,
-					parrContacts[i].address.zipCode.city, parrContacts[i].address.zipCode.county,
-					parrContacts[i].address.zipCode.district, parrContacts[i].address.zipCode.country);
+			larrResult[i].midOwnerId = null;
+			if ( parrContacts[i].address != null )
+			{
+				larrResult[i].mstrAddress1 = parrContacts[i].address.street1;
+				larrResult[i].mstrAddress2 = parrContacts[i].address.street2;
+				larrResult[i].midZipCode = ZipCodeBridge.GetZipCode(parrContacts[i].address.zipCode.code,
+						parrContacts[i].address.zipCode.city, parrContacts[i].address.zipCode.county,
+						parrContacts[i].address.zipCode.district, parrContacts[i].address.zipCode.country);
+			}
+			else
+			{
+				larrResult[i].mstrAddress1 = null;
+				larrResult[i].mstrAddress2 = null;
+				larrResult[i].midZipCode = null;
+			}
 			if ( parrContacts[i].info != null )
 			{
 				larrResult[i].marrInfo = new ContactOps.ContactData.ContactInfoData[parrContacts[i].info.length];
@@ -320,6 +345,47 @@ public class InsuranceAgencyServiceImpl
 		return larrResult;
 	}
 
+	private DocOps.DocumentData[] BuildDocTree(DocOps prefAux, Document[] parrDocuments, UUID pidParentType)
+		throws BigBangJewelException
+	{
+		DocOps.DocumentData[] larrResult;
+		int i, j;
+
+		if ( (parrDocuments == null) || (parrDocuments.length == 0) )
+			return null;
+
+		larrResult = new DocOps.DocumentData[parrDocuments.length];
+		for ( i = 0; i < parrDocuments.length; i++ )
+		{
+			larrResult[i] = prefAux.new DocumentData();
+			larrResult[i].mid = null;
+			larrResult[i].mstrName = parrDocuments[i].name;
+			larrResult[i].midOwnerType = pidParentType;
+			larrResult[i].midOwnerId = null;
+			larrResult[i].midDocType = (parrDocuments[i].docTypeId == null ? null : UUID.fromString(parrDocuments[i].docTypeId));
+			larrResult[i].mstrText = parrDocuments[i].text;
+			if ( parrDocuments[i].fileStorageId != null )
+				larrResult[i].mobjFile = FileServiceImpl.GetFileXferStorage().
+						get(UUID.fromString(parrDocuments[i].fileStorageId)).GetVarData();
+			else
+				larrResult[i].mobjFile = null;
+			if ( parrDocuments[i].parameters != null )
+			{
+				larrResult[i].marrInfo = new DocOps.DocumentData.DocInfoData[parrDocuments[i].parameters.length];
+				for ( j = 0; j < parrDocuments[i].parameters.length; j++ )
+				{
+					larrResult[i].marrInfo[j] = larrResult[i].new DocInfoData();
+					larrResult[i].marrInfo[j].mstrType = parrDocuments[i].parameters[j].name;
+					larrResult[i].marrInfo[j].mstrValue = parrDocuments[i].parameters[j].value;
+				}
+			}
+			else
+				larrResult[i].marrInfo = null;
+		}
+
+		return larrResult;
+	}
+
 	private void WalkContactTree(ContactOps.ContactData[] parrResults, Contact[] parrContacts)
 	{
 		int i;
@@ -330,5 +396,13 @@ public class InsuranceAgencyServiceImpl
 			if ( (parrContacts[i].subContacts != null) && (parrResults[i].marrSubContacts != null) )
 				WalkContactTree(parrResults[i].marrSubContacts, parrContacts[i].subContacts);
 		}
+	}
+
+	private void WalkDocTree(DocOps.DocumentData[] parrResults, Document[] parrDocuments)
+	{
+		int i;
+		
+		for ( i = 0; i < parrResults.length; i++ )
+			parrDocuments[i].id = parrResults[i].mid.toString();
 	}
 }

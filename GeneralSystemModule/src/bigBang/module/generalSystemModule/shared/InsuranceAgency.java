@@ -4,6 +4,7 @@ import java.io.Serializable;
 
 import bigBang.library.shared.Address;
 import bigBang.library.shared.Contact;
+import bigBang.library.shared.Document;
 
 public class InsuranceAgency
 	implements Serializable
@@ -19,6 +20,7 @@ public class InsuranceAgency
 	public String NIB;
 	public Address address;
 	public Contact[] contacts;
+	public Document[] documents;
 
 	public InsuranceAgency()
 	{

@@ -10,9 +10,11 @@ import Jewel.Engine.DataAccess.MasterDB;
 import Jewel.Engine.Implementation.Entity;
 import Jewel.Engine.SysObjects.ObjectBase;
 import bigBang.library.server.EngineImplementor;
+import bigBang.library.server.FileServiceImpl;
 import bigBang.library.shared.Address;
 import bigBang.library.shared.BigBangException;
 import bigBang.library.shared.Contact;
+import bigBang.library.shared.Document;
 import bigBang.library.shared.SessionExpiredException;
 import bigBang.library.shared.ZipCode;
 import bigBang.module.generalSystemModule.interfaces.MediatorService;
@@ -24,6 +26,7 @@ import com.premiumminds.BigBang.Jewel.Constants;
 import com.premiumminds.BigBang.Jewel.ZipCodeBridge;
 import com.premiumminds.BigBang.Jewel.Objects.GeneralSystem;
 import com.premiumminds.BigBang.Jewel.Operations.ContactOps;
+import com.premiumminds.BigBang.Jewel.Operations.DocOps;
 import com.premiumminds.BigBang.Jewel.Operations.ManageMediators;
 
 public class MediatorServiceImpl
@@ -128,59 +131,6 @@ public class MediatorServiceImpl
 		return larrAux.toArray(new Mediator[larrAux.size()]);
 	}
 
-	public Mediator saveMediator(Mediator mediator)
-		throws SessionExpiredException, BigBangException
-	{
-		ManageMediators lopMM;
-
-		if ( Engine.getCurrentUser() == null )
-			throw new SessionExpiredException();
-
-		try
-		{
-			lopMM = new ManageMediators(GeneralSystem.GetAnyInstance(Engine.getCurrentNameSpace()).GetProcessID());
-			lopMM.marrModify = new ManageMediators.MediatorData[1];
-			lopMM.marrModify[0] = lopMM.new MediatorData();
-			lopMM.marrModify[0].mid = UUID.fromString(mediator.id);
-			lopMM.marrModify[0].mstrName = mediator.name;
-			lopMM.marrModify[0].mstrISPNumber = mediator.ISPNumber;
-			lopMM.marrModify[0].mstrFiscalNumber = mediator.taxNumber;
-			lopMM.marrModify[0].mstrBankID = mediator.NIB;
-			if ( mediator.comissionProfile != null )
-				lopMM.marrModify[0].midProfile = UUID.fromString(mediator.comissionProfile.id);
-			else
-				lopMM.marrModify[0].midProfile = null;
-			if ( mediator.address != null )
-			{
-				lopMM.marrModify[0].mstrAddress1 = mediator.address.street1;
-				lopMM.marrModify[0].mstrAddress2 = mediator.address.street2;
-				if ( mediator.address.zipCode != null )
-					lopMM.marrModify[0].midZipCode = ZipCodeBridge.GetZipCode(mediator.address.zipCode.code,
-							mediator.address.zipCode.city, mediator.address.zipCode.county, mediator.address.zipCode.district,
-							mediator.address.zipCode.country);
-				else
-					lopMM.marrModify[0].midZipCode = null;
-			}
-			else
-			{
-				lopMM.marrModify[0].mstrAddress1 = null;
-				lopMM.marrModify[0].mstrAddress2 = null;
-				lopMM.marrModify[0].midZipCode = null;
-			}
-			lopMM.marrCreate = null;
-			lopMM.marrDelete = null;
-			lopMM.mobjContactOps = null;
-
-			lopMM.Execute();
-		}
-		catch (Throwable e)
-		{
-			throw new BigBangException(e.getMessage(), e);
-		}
-
-		return mediator;
-	}
-
 	public Mediator createMediator(Mediator mediator)
 		throws SessionExpiredException, BigBangException
 	{
@@ -228,9 +178,18 @@ public class MediatorServiceImpl
 			}
 			else
 				lopMM.marrCreate[0].mobjContactOps = null;
+			if ( (mediator.documents != null) && (mediator.documents.length > 0) )
+			{
+				lopMM.marrCreate[0].mobjDocOps = new DocOps();
+				lopMM.marrCreate[0].mobjDocOps.marrCreate = BuildDocTree(lopMM.marrCreate[0].mobjDocOps,
+						mediator.documents, Constants.ObjID_Mediator);
+			}
+			else
+				lopMM.marrCreate[0].mobjDocOps = null;
 			lopMM.marrModify = null;
 			lopMM.marrDelete = null;
 			lopMM.mobjContactOps = null;
+			lopMM.mobjDocOps = null;
 
 			lopMM.Execute();
 		}
@@ -242,6 +201,62 @@ public class MediatorServiceImpl
 		mediator.id = lopMM.marrCreate[0].mid.toString();
 		if ( (mediator.contacts != null) && (mediator.contacts.length > 0) )
 			WalkContactTree(lopMM.marrCreate[0].mobjContactOps.marrCreate, mediator.contacts);
+		if ( (mediator.documents != null) && (mediator.documents.length > 0) )
+			WalkDocTree(lopMM.marrCreate[0].mobjDocOps.marrCreate, mediator.documents);
+
+		return mediator;
+	}
+
+	public Mediator saveMediator(Mediator mediator)
+		throws SessionExpiredException, BigBangException
+	{
+		ManageMediators lopMM;
+
+		if ( Engine.getCurrentUser() == null )
+			throw new SessionExpiredException();
+
+		try
+		{
+			lopMM = new ManageMediators(GeneralSystem.GetAnyInstance(Engine.getCurrentNameSpace()).GetProcessID());
+			lopMM.marrModify = new ManageMediators.MediatorData[1];
+			lopMM.marrModify[0] = lopMM.new MediatorData();
+			lopMM.marrModify[0].mid = UUID.fromString(mediator.id);
+			lopMM.marrModify[0].mstrName = mediator.name;
+			lopMM.marrModify[0].mstrISPNumber = mediator.ISPNumber;
+			lopMM.marrModify[0].mstrFiscalNumber = mediator.taxNumber;
+			lopMM.marrModify[0].mstrBankID = mediator.NIB;
+			if ( mediator.comissionProfile != null )
+				lopMM.marrModify[0].midProfile = UUID.fromString(mediator.comissionProfile.id);
+			else
+				lopMM.marrModify[0].midProfile = null;
+			if ( mediator.address != null )
+			{
+				lopMM.marrModify[0].mstrAddress1 = mediator.address.street1;
+				lopMM.marrModify[0].mstrAddress2 = mediator.address.street2;
+				if ( mediator.address.zipCode != null )
+					lopMM.marrModify[0].midZipCode = ZipCodeBridge.GetZipCode(mediator.address.zipCode.code,
+							mediator.address.zipCode.city, mediator.address.zipCode.county, mediator.address.zipCode.district,
+							mediator.address.zipCode.country);
+				else
+					lopMM.marrModify[0].midZipCode = null;
+			}
+			else
+			{
+				lopMM.marrModify[0].mstrAddress1 = null;
+				lopMM.marrModify[0].mstrAddress2 = null;
+				lopMM.marrModify[0].midZipCode = null;
+			}
+			lopMM.marrCreate = null;
+			lopMM.marrDelete = null;
+			lopMM.mobjContactOps = null;
+			lopMM.mobjDocOps = null;
+
+			lopMM.Execute();
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangException(e.getMessage(), e);
+		}
 
 		return mediator;
 	}
@@ -271,6 +286,7 @@ public class MediatorServiceImpl
 			lopMM.marrCreate = null;
 			lopMM.marrModify = null;
 			lopMM.mobjContactOps = null;
+			lopMM.mobjDocOps = null;
 
 			lopMM.Execute();
 		}
@@ -296,12 +312,21 @@ public class MediatorServiceImpl
 			larrResult[i].mid = null;
 			larrResult[i].mstrName = parrContacts[i].name;
 			larrResult[i].midOwnerType = pidParentType;
-			larrResult[i].midOwnerId = UUID.fromString(parrContacts[i].ownerId);
-			larrResult[i].mstrAddress1 = parrContacts[i].address.street1;
-			larrResult[i].mstrAddress2 = parrContacts[i].address.street2;
-			larrResult[i].midZipCode = ZipCodeBridge.GetZipCode(parrContacts[i].address.zipCode.code,
-					parrContacts[i].address.zipCode.city, parrContacts[i].address.zipCode.county,
-					parrContacts[i].address.zipCode.district, parrContacts[i].address.zipCode.country);
+			larrResult[i].midOwnerId = null;
+			if ( parrContacts[i].address != null )
+			{
+				larrResult[i].mstrAddress1 = parrContacts[i].address.street1;
+				larrResult[i].mstrAddress2 = parrContacts[i].address.street2;
+				larrResult[i].midZipCode = ZipCodeBridge.GetZipCode(parrContacts[i].address.zipCode.code,
+						parrContacts[i].address.zipCode.city, parrContacts[i].address.zipCode.county,
+						parrContacts[i].address.zipCode.district, parrContacts[i].address.zipCode.country);
+			}
+			else
+			{
+				larrResult[i].mstrAddress1 = null;
+				larrResult[i].mstrAddress2 = null;
+				larrResult[i].midZipCode = null;
+			}
 			if ( parrContacts[i].info != null )
 			{
 				larrResult[i].marrInfo = new ContactOps.ContactData.ContactInfoData[parrContacts[i].info.length];
@@ -320,6 +345,47 @@ public class MediatorServiceImpl
 		return larrResult;
 	}
 
+	private DocOps.DocumentData[] BuildDocTree(DocOps prefAux, Document[] parrDocuments, UUID pidParentType)
+		throws BigBangJewelException
+	{
+		DocOps.DocumentData[] larrResult;
+		int i, j;
+
+		if ( (parrDocuments == null) || (parrDocuments.length == 0) )
+			return null;
+
+		larrResult = new DocOps.DocumentData[parrDocuments.length];
+		for ( i = 0; i < parrDocuments.length; i++ )
+		{
+			larrResult[i] = prefAux.new DocumentData();
+			larrResult[i].mid = null;
+			larrResult[i].mstrName = parrDocuments[i].name;
+			larrResult[i].midOwnerType = pidParentType;
+			larrResult[i].midOwnerId = null;
+			larrResult[i].midDocType = (parrDocuments[i].docTypeId == null ? null : UUID.fromString(parrDocuments[i].docTypeId));
+			larrResult[i].mstrText = parrDocuments[i].text;
+			if ( parrDocuments[i].fileStorageId != null )
+				larrResult[i].mobjFile = FileServiceImpl.GetFileXferStorage().
+						get(UUID.fromString(parrDocuments[i].fileStorageId)).GetVarData();
+			else
+				larrResult[i].mobjFile = null;
+			if ( parrDocuments[i].parameters != null )
+			{
+				larrResult[i].marrInfo = new DocOps.DocumentData.DocInfoData[parrDocuments[i].parameters.length];
+				for ( j = 0; j < parrDocuments[i].parameters.length; j++ )
+				{
+					larrResult[i].marrInfo[j] = larrResult[i].new DocInfoData();
+					larrResult[i].marrInfo[j].mstrType = parrDocuments[i].parameters[j].name;
+					larrResult[i].marrInfo[j].mstrValue = parrDocuments[i].parameters[j].value;
+				}
+			}
+			else
+				larrResult[i].marrInfo = null;
+		}
+
+		return larrResult;
+	}
+
 	private void WalkContactTree(ContactOps.ContactData[] parrResults, Contact[] parrContacts)
 	{
 		int i;
@@ -330,5 +396,13 @@ public class MediatorServiceImpl
 			if ( (parrContacts[i].subContacts != null) && (parrResults[i].marrSubContacts != null) )
 				WalkContactTree(parrResults[i].marrSubContacts, parrContacts[i].subContacts);
 		}
+	}
+
+	private void WalkDocTree(DocOps.DocumentData[] parrResults, Document[] parrDocuments)
+	{
+		int i;
+		
+		for ( i = 0; i < parrResults.length; i++ )
+			parrDocuments[i].id = parrResults[i].mid.toString();
 	}
 }

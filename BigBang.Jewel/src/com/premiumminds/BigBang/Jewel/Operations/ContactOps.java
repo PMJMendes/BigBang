@@ -47,7 +47,7 @@ public class ContactOps
 	public ContactData[] marrModify;
 	public ContactData[] marrDelete;
 
-	public void RunSubOp(SQLServer pdb, UUID pidOwnerType, UUID pidOwner)
+	public void RunSubOp(SQLServer pdb, UUID pidOwner)
 		throws BigBangJewelException
 	{
 		int i;
@@ -57,9 +57,9 @@ public class ContactOps
 			for ( i = 0; i < marrCreate.length; i++ )
 			{
 				if ( pidOwner == null )
-					CreateContact(pdb, marrCreate[i]);
+					CreateContact(pdb, marrCreate[i], marrCreate[i].midOwnerId);
 				else
-					CreateContact(pdb, marrCreate[i], pidOwnerType, pidOwner);
+					CreateContact(pdb, marrCreate[i], pidOwner);
 			}
 		}
 
@@ -76,13 +76,7 @@ public class ContactOps
 		}
 	}
 
-	private void CreateContact(SQLServer pdb, ContactData pobjData)
-		throws BigBangJewelException
-	{
-		CreateContact(pdb, pobjData, pobjData.midOwnerType, pobjData.midOwnerId);
-	}
-
-	private void CreateContact(SQLServer pdb, ContactData pobjData, UUID pidOwnerType, UUID pidOwner)
+	private void CreateContact(SQLServer pdb, ContactData pobjData, UUID pidOwner)
 		throws BigBangJewelException
 	{
 		Contact lobjAux;
@@ -93,7 +87,7 @@ public class ContactOps
 		try
 		{
 			lobjAux.setAt(0, pobjData.mstrName);
-			lobjAux.setAt(1, pidOwnerType);
+			lobjAux.setAt(1, pobjData.midOwnerType);
 			lobjAux.setAt(2, pidOwner);
 			lobjAux.setAt(3, pobjData.mstrAddress1);
 			lobjAux.setAt(4, pobjData.mstrAddress2);
@@ -127,11 +121,10 @@ public class ContactOps
 		if ( pobjData.marrSubContacts != null )
 		{
 			for ( i = 0; i < pobjData.marrSubContacts.length; i++ )
-				CreateContact(pdb, pobjData.marrSubContacts[i], Constants.ObjID_Contact, lobjAux.getKey());
+				CreateContact(pdb, pobjData.marrSubContacts[i], lobjAux.getKey());
 		}
 
 		pobjData.mid = lobjAux.getKey();
-		pobjData.midOwnerType = pidOwnerType;
 		pobjData.midOwnerId = pidOwner;
 		pobjData.mobjPrevValues = null;
 	}

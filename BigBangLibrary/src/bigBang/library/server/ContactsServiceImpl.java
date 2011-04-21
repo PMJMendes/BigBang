@@ -43,9 +43,9 @@ public class ContactsServiceImpl
 		ArrayList<Contact> larrAux;
 		int[] larrMembers;
 		java.lang.Object[] larrParams;
-		IEntity lrefContactInfo;
+		IEntity lrefContact;
         MasterDB ldb;
-        ResultSet lrsInfo;
+        ResultSet lrsContacts;
 
 		if ( Engine.getCurrentUser() == null )
 			throw new SessionExpiredException();
@@ -59,7 +59,7 @@ public class ContactsServiceImpl
 
 		try
 		{
-			lrefContactInfo = Entity.GetInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), Constants.ObjID_Contact)); 
+			lrefContact = Entity.GetInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), Constants.ObjID_Contact)); 
 			ldb = new MasterDB();
 		}
 		catch (Throwable e)
@@ -69,7 +69,7 @@ public class ContactsServiceImpl
 
 		try
 		{
-			lrsInfo = lrefContactInfo.SelectByMembers(ldb, larrMembers, larrParams, new int[0]);
+			lrsContacts = lrefContact.SelectByMembers(ldb, larrMembers, larrParams, new int[0]);
 		}
 		catch (Throwable e)
 		{
@@ -79,26 +79,26 @@ public class ContactsServiceImpl
 
 		try
 		{
-			while ( lrsInfo.next() )
+			while ( lrsContacts.next() )
 				larrAux.add(fromServer(com.premiumminds.BigBang.Jewel.Objects.Contact
-						.GetInstance(Engine.getCurrentNameSpace(), lrsInfo)));
+						.GetInstance(Engine.getCurrentNameSpace(), lrsContacts)));
 		}
 		catch (BigBangException e)
 		{
-			try { lrsInfo.close(); } catch (SQLException e1) {}
+			try { lrsContacts.close(); } catch (SQLException e1) {}
 			try { ldb.Disconnect(); } catch (SQLException e1) {}
 			throw e;
 		}
 		catch (Throwable e)
 		{
-			try { lrsInfo.close(); } catch (SQLException e1) {}
+			try { lrsContacts.close(); } catch (SQLException e1) {}
 			try { ldb.Disconnect(); } catch (SQLException e1) {}
 			throw new BigBangException(e.getMessage(), e);
 		}
 
 		try
 		{
-			lrsInfo.close();
+			lrsContacts.close();
 		}
 		catch (Throwable e)
 		{
@@ -294,15 +294,24 @@ public class ContactsServiceImpl
 		for ( i = 0; i < parrContacts.length; i++ )
 		{
 			larrResult[i] = prefAux.new ContactData();
-			larrResult[i].mid = null;
+			larrResult[i].mid = (parrContacts[i].id == null ? null : UUID.fromString(parrContacts[i].id));
 			larrResult[i].mstrName = parrContacts[i].name;
 			larrResult[i].midOwnerType = pidParentType;
-			larrResult[i].midOwnerId = UUID.fromString(parrContacts[i].ownerId);
-			larrResult[i].mstrAddress1 = parrContacts[i].address.street1;
-			larrResult[i].mstrAddress2 = parrContacts[i].address.street2;
-			larrResult[i].midZipCode = ZipCodeBridge.GetZipCode(parrContacts[i].address.zipCode.code,
-					parrContacts[i].address.zipCode.city, parrContacts[i].address.zipCode.county,
-					parrContacts[i].address.zipCode.district, parrContacts[i].address.zipCode.country);
+			larrResult[i].midOwnerId = (parrContacts[i].ownerId == null ? null : UUID.fromString(parrContacts[i].ownerId));
+			if ( parrContacts[i].address != null )
+			{
+				larrResult[i].mstrAddress1 = parrContacts[i].address.street1;
+				larrResult[i].mstrAddress2 = parrContacts[i].address.street2;
+				larrResult[i].midZipCode = ZipCodeBridge.GetZipCode(parrContacts[i].address.zipCode.code,
+						parrContacts[i].address.zipCode.city, parrContacts[i].address.zipCode.county,
+						parrContacts[i].address.zipCode.district, parrContacts[i].address.zipCode.country);
+			}
+			else
+			{
+				larrResult[i].mstrAddress1 = null;
+				larrResult[i].mstrAddress2 = null;
+				larrResult[i].midZipCode = null;
+			}
 			if ( parrContacts[i].info != null )
 			{
 				larrResult[i].marrInfo = new ContactOps.ContactData.ContactInfoData[parrContacts[i].info.length];
@@ -379,6 +388,7 @@ public class ContactsServiceImpl
 			((ManageInsuranceCompanies)lobjResult).marrModify = null;
 			((ManageInsuranceCompanies)lobjResult).marrDelete = null;
 			((ManageInsuranceCompanies)lobjResult).mobjContactOps = pobjInner;
+			((ManageInsuranceCompanies)lobjResult).mobjDocOps = null;
 			lbFound = true;
 		}
 
@@ -388,6 +398,7 @@ public class ContactsServiceImpl
 			((ManageMediators)lobjResult).marrModify = null;
 			((ManageMediators)lobjResult).marrDelete = null;
 			((ManageMediators)lobjResult).mobjContactOps = pobjInner;
+			((ManageMediators)lobjResult).mobjDocOps = null;
 			lbFound = true;
 		}
 

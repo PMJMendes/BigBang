@@ -12,6 +12,7 @@ import Jewel.Petri.SysObjects.Operation;
 import com.premiumminds.BigBang.Jewel.Constants;
 import com.premiumminds.BigBang.Jewel.Objects.Company;
 import com.premiumminds.BigBang.Jewel.Objects.Contact;
+import com.premiumminds.BigBang.Jewel.Objects.Document;
 
 public class ManageInsuranceCompanies
 	extends Operation
@@ -22,7 +23,7 @@ public class ManageInsuranceCompanies
 		implements Serializable
 	{
 		private static final long serialVersionUID = 1L;
-	
+
 		public UUID mid;
 		public String mstrName;
 		public String mstrAcronym;
@@ -34,6 +35,7 @@ public class ManageInsuranceCompanies
 		public String mstrAddress2;
 		public UUID midZipCode;
 		public ContactOps mobjContactOps;
+		public DocOps mobjDocOps;
 		public CompanyData mobjPrevValues;
 	}
 
@@ -41,6 +43,7 @@ public class ManageInsuranceCompanies
 	public CompanyData[] marrModify;
 	public CompanyData[] marrDelete;
 	public ContactOps mobjContactOps;
+	public DocOps mobjDocOps;
 
 	public ManageInsuranceCompanies(UUID pidProcess)
 	{
@@ -57,8 +60,9 @@ public class ManageInsuranceCompanies
 	{
 		int i;
 		Company lobjAux;
-		Entity lrefCostCenters;
+		Entity lrefCompanies;
 		Contact[] larrContacts;
+		Document[] larrDocs;
 		int j;
 
 		try
@@ -79,7 +83,9 @@ public class ManageInsuranceCompanies
 					lobjAux.setAt(8, marrCreate[i].midZipCode);
 					lobjAux.SaveToDb(pdb);
 					if ( marrCreate[i].mobjContactOps != null )
-						marrCreate[i].mobjContactOps.RunSubOp(pdb, Constants.ObjID_Company, lobjAux.getKey());
+						marrCreate[i].mobjContactOps.RunSubOp(pdb, lobjAux.getKey());
+					if ( marrCreate[i].mobjDocOps != null )
+						marrCreate[i].mobjDocOps.RunSubOp(pdb, lobjAux.getKey());
 					marrCreate[i].mid = lobjAux.getKey();
 					marrCreate[i].mobjPrevValues = null;
 				}
@@ -118,7 +124,7 @@ public class ManageInsuranceCompanies
 
 			if ( marrDelete != null )
 			{
-				lrefCostCenters = Entity.GetInstance(Engine.FindEntity(Engine.getCurrentNameSpace(),
+				lrefCompanies = Entity.GetInstance(Engine.FindEntity(Engine.getCurrentNameSpace(),
 						Constants.ObjID_Company));
 
 				for ( i = 0; i < marrDelete.length; i++ )
@@ -145,15 +151,32 @@ public class ManageInsuranceCompanies
 							marrDelete[i].mobjContactOps.marrDelete[j] = marrDelete[i].mobjContactOps.new ContactData();
 							marrDelete[i].mobjContactOps.marrDelete[j].mid = larrContacts[j].getKey();
 						}
-						marrDelete[i].mobjContactOps.RunSubOp(pdb, null, null);
+						marrDelete[i].mobjContactOps.RunSubOp(pdb, null);
+					}
+					larrDocs = lobjAux.GetCurrentDocs();
+					if ( (larrDocs == null) || (larrDocs.length == 0) )
+						marrDelete[i].mobjDocOps = null;
+					else
+					{
+						marrDelete[i].mobjDocOps = new DocOps();
+						marrDelete[i].mobjDocOps.marrDelete = new DocOps.DocumentData[larrDocs.length];
+						for ( j = 0; j < larrDocs.length; j++ )
+						{
+							marrDelete[i].mobjDocOps.marrDelete[j] = marrDelete[i].mobjDocOps.new DocumentData();
+							marrDelete[i].mobjDocOps.marrDelete[j].mid = larrDocs[j].getKey();
+						}
+						marrDelete[i].mobjDocOps.RunSubOp(pdb, null);
 					}
 					marrDelete[i].mobjPrevValues = null;
-					lrefCostCenters.Delete(pdb, marrDelete[i].mid);
+					lrefCompanies.Delete(pdb, marrDelete[i].mid);
 				}
 			}
 
 			if ( mobjContactOps != null )
-				mobjContactOps.RunSubOp(pdb, Constants.ObjID_Company, null);
+				mobjContactOps.RunSubOp(pdb, null);
+
+			if ( mobjDocOps != null )
+				mobjDocOps.RunSubOp(pdb, null);
 		}
 		catch (Throwable e)
 		{
