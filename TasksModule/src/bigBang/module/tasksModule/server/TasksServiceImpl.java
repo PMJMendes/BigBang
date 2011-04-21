@@ -1,14 +1,17 @@
 package bigBang.module.tasksModule.server;
 
+import bigBang.library.server.EngineImplementor;
 import bigBang.module.tasksModule.interfaces.TasksService;
 import bigBang.module.tasksModule.shared.Task;
-import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 
-public class TasksServiceImpl extends RemoteServiceServlet implements TasksService {
-
+public class TasksServiceImpl
+	extends EngineImplementor
+	implements TasksService
+{
 	private static final long serialVersionUID = 1L;
 
-	public Task[] getTasks() {
+	public Task[] getTasks()
+	{
 		Task[] result = new Task[20];
 		
 		for(int i = 0; i < 20; i++){
@@ -24,8 +27,8 @@ public class TasksServiceImpl extends RemoteServiceServlet implements TasksServi
 		return result;
 	}
 
-	public boolean isSolved(String taskId) {
-		// TODO Auto-generated method stub
+	public boolean isSolved(String taskId)
+	{
 		return false;
 	}
 }
