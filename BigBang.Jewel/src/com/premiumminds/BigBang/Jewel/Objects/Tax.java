@@ -13,6 +13,19 @@ import Jewel.Engine.SysObjects.ObjectBase;
 public class Tax
 	extends ObjectBase
 {
+    public static Tax GetInstance(UUID pidNameSpace, UUID pidKey)
+		throws BigBangJewelException
+	{
+	    try
+	    {
+			return (Tax)Engine.GetWorkInstance(Engine.FindEntity(pidNameSpace, Constants.ObjID_Tax), pidKey);
+		}
+	    catch (Throwable e)
+	    {
+	    	throw new BigBangJewelException(e.getMessage(), e);
+		}
+	}
+
     public static Tax GetInstance(UUID pidNameSpace, ResultSet prsObject)
 		throws BigBangJewelException
 	{
