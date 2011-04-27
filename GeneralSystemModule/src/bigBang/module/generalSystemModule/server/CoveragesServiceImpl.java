@@ -20,6 +20,7 @@ import bigBang.module.generalSystemModule.shared.Tax;
 import com.premiumminds.BigBang.Jewel.Constants;
 import com.premiumminds.BigBang.Jewel.Objects.GeneralSystem;
 import com.premiumminds.BigBang.Jewel.Operations.ManageLines;
+import com.premiumminds.BigBang.Jewel.Operations.ManageTaxes;
 
 public class CoveragesServiceImpl
 	extends EngineImplementor
@@ -446,6 +447,100 @@ public class CoveragesServiceImpl
 		}
 	}
 
+	public Tax createTax(Tax b)
+		throws SessionExpiredException, BigBangException
+	{
+		Tax[] larrAux;
+		ManageTaxes lopMT;
+
+		if ( Engine.getCurrentUser() == null )
+			throw new SessionExpiredException();
+
+		larrAux = new Tax[1];
+		larrAux[0] = b;
+
+		try
+		{
+			lopMT = new ManageTaxes(GeneralSystem.GetAnyInstance(Engine.getCurrentNameSpace()).GetProcessID());
+
+			lopMT.marrCreateTaxes = BuildTaxArray(lopMT, larrAux);
+
+			lopMT.marrModifyTaxes = null;
+			lopMT.marrDeleteTaxes = null;
+
+			lopMT.Execute();
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangException(e.getMessage(), e);
+		}
+
+		TagTaxes(lopMT.marrCreateTaxes, larrAux);
+
+		return b;
+	}
+
+	public Tax saveTax(Tax b)
+		throws SessionExpiredException, BigBangException
+	{
+		Tax[] larrAux;
+		ManageTaxes lopMT;
+
+		if ( Engine.getCurrentUser() == null )
+			throw new SessionExpiredException();
+
+		larrAux = new Tax[1];
+		larrAux[0] = b;
+
+		try
+		{
+			lopMT = new ManageTaxes(GeneralSystem.GetAnyInstance(Engine.getCurrentNameSpace()).GetProcessID());
+
+			lopMT.marrModifyTaxes = BuildTaxArray(lopMT, larrAux);
+
+			lopMT.marrCreateTaxes = null;
+			lopMT.marrModifyTaxes = null;
+
+			lopMT.Execute();
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangException(e.getMessage(), e);
+		}
+
+		return b;
+	}
+
+	public void deleteTax(String id)
+		throws SessionExpiredException, BigBangException
+	{
+		Tax[] larrAux;
+		ManageTaxes lopMT;
+
+		if ( Engine.getCurrentUser() == null )
+			throw new SessionExpiredException();
+
+		larrAux = new Tax[1];
+		larrAux[0] = new Tax();
+		larrAux[0].id = id;
+
+		try
+		{
+			lopMT = new ManageTaxes(GeneralSystem.GetAnyInstance(Engine.getCurrentNameSpace()).GetProcessID());
+
+			lopMT.marrDeleteTaxes = BuildTaxArray(lopMT, larrAux);
+
+			lopMT.marrCreateTaxes = null;
+			lopMT.marrModifyTaxes = null;
+
+			lopMT.Execute();
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangException(e.getMessage(), e);
+		}
+	}
+
 	private SubLine[] getSubLinesForLine(com.premiumminds.BigBang.Jewel.Objects.Line pobjLine)
 		throws BigBangException
 	{
@@ -602,6 +697,26 @@ public class CoveragesServiceImpl
 		return larrResult;
 	}
 
+	private ManageTaxes.TaxData[] BuildTaxArray(ManageTaxes prefOp, Tax[] parrTaxes)
+	{
+		ManageTaxes.TaxData[] larrResult;
+		int i;
+
+		larrResult = new ManageTaxes.TaxData[parrTaxes.length];
+		for ( i = 0; i < parrTaxes.length; i++ )
+		{
+			larrResult[i] = prefOp.new TaxData();
+			larrResult[i].mid = (parrTaxes[i].id == null ? null : UUID.fromString(parrTaxes[i].id));
+			larrResult[i].mstrName = parrTaxes[i].name;
+			larrResult[i].midCoverage = (parrTaxes[i].coverageId == null ? null : UUID.fromString(parrTaxes[i].coverageId));
+			larrResult[i].midCurrency = (parrTaxes[i].currencyId == null ? null : UUID.fromString(parrTaxes[i].currencyId));
+			larrResult[i].mdblValue = parrTaxes[i].value;
+			larrResult[i].mobjPrevValues = null;
+		}
+
+		return larrResult;
+	}
+
 	private void TagLines(ManageLines.LineData[] parrSource, Line[] parrLines)
 	{
 		int i;
@@ -634,23 +749,11 @@ public class CoveragesServiceImpl
 			parrCoverages[i].id = parrIDs[i].mid.toString();
 	}
 
-	@Override
-	public Tax createTax(Tax b) throws SessionExpiredException,
-			BigBangException {
-		// TODO Auto-generated method stub
-		return null;
-	}
+	private void TagTaxes(ManageTaxes.TaxData[] parrIDs, Tax[] parrTaxes)
+	{
+		int i;
 
-	@Override
-	public Tax saveTax(Tax b) throws SessionExpiredException, BigBangException {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public void deleteTax(String id) throws SessionExpiredException,
-			BigBangException {
-		// TODO Auto-generated method stub
-		
+		for ( i = 0; i < parrIDs.length; i++ )
+			parrTaxes[i].id = parrIDs[i].mid.toString();
 	}
 }
