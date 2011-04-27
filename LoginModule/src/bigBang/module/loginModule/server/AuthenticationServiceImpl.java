@@ -160,6 +160,7 @@ public class AuthenticationServiceImpl
 	public String logout()
 		throws BigBangException
 	{
+		DocuShareServiceImpl.LogOff();
 		getSession().invalidate();
 		return null;
 	}

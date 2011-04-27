@@ -2,8 +2,9 @@ package bigBang.library.shared;
 
 import java.io.Serializable;
 
-public class ProcessUndoItem implements Serializable {
-
+public class ProcessUndoItem
+	implements Serializable
+{
 	private static final long serialVersionUID = 1L;
 
 	public String id;
@@ -14,5 +15,4 @@ public class ProcessUndoItem implements Serializable {
 	public String undoDescription;
 	
 	public boolean canUndo;
-	
 }

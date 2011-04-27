@@ -10,33 +10,31 @@
 </servlet>
 <servlet>
 	<servlet-name>TipifiedListService</servlet-name>
-	<servlet-class>bigBang.library.server.TipifiedListServiceImpl
-	</servlet-class>
+	<servlet-class>bigBang.library.server.TipifiedListServiceImpl</servlet-class>
 </servlet>
 <servlet>
 	<servlet-name>ContactsService</servlet-name>
-	<servlet-class>bigBang.library.server.ContactsServiceImpl
-	</servlet-class>
+	<servlet-class>bigBang.library.server.ContactsServiceImpl</servlet-class>
 </servlet>
 <servlet>
 	<servlet-name>DocumentService</servlet-name>
-	<servlet-class>bigBang.library.server.DocumentServiceImpl
-	</servlet-class>
+	<servlet-class>bigBang.library.server.DocumentServiceImpl</servlet-class>
+</servlet>
+<servlet>
+	<servlet-name>DocuShareService</servlet-name>
+	<servlet-class>bigBang.library.server.DocuShareServiceImpl</servlet-class>
 </servlet>
 <servlet>
 	<servlet-name>ZipCodeService</servlet-name>
-	<servlet-class>bigBang.library.server.ZipCodeServiceImpl
-	</servlet-class>
+	<servlet-class>bigBang.library.server.ZipCodeServiceImpl</servlet-class>
 </servlet>
 <servlet>
 	<servlet-name>FileService</servlet-name>
-	<servlet-class>bigBang.library.server.FileServiceImpl
-	</servlet-class>
+	<servlet-class>bigBang.library.server.FileServiceImpl</servlet-class>
 </servlet>
 <servlet>
 	<servlet-name>BigBangProcessService</servlet-name>
-	<servlet-class>bigBang.library.server.BigBangProcessServiceImpl
-	</servlet-class>
+	<servlet-class>bigBang.library.server.BigBangProcessServiceImpl</servlet-class>
 </servlet>
 
 <servlet-mapping>
@@ -58,6 +56,10 @@
 <servlet-mapping>
 	<servlet-name>DocumentService</servlet-name>
 	<url-pattern>/bigbang/DocumentService</url-pattern>
+</servlet-mapping>
+<servlet-mapping>
+	<servlet-name>DocuShareService</servlet-name>
+	<url-pattern>/bigbang/DocuShareService</url-pattern>
 </servlet-mapping>
 <servlet-mapping>
 	<servlet-name>ZipCodeService</servlet-name>
