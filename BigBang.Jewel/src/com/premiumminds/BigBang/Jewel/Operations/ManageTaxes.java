@@ -80,7 +80,7 @@ public class ManageTaxes
 				lobjAuxTax.setAt(0, parrData[i].mstrName);
 				lobjAuxTax.setAt(1, parrData[i].midCoverage);
 				lobjAuxTax.setAt(2, parrData[i].midCurrency);
-				lobjAuxTax.setAt(3, parrData[i].mdblValue);
+				lobjAuxTax.setAt(3, BigDecimal.valueOf(parrData[i].mdblValue));
 				lobjAuxTax.SaveToDb(pdb);
 			}
 			catch (Throwable e)
@@ -115,7 +115,7 @@ public class ManageTaxes
 				lobjAuxTax.setAt(0, parrData[i].mstrName);
 				lobjAuxTax.setAt(1, parrData[i].midCoverage);
 				lobjAuxTax.setAt(2, parrData[i].midCurrency);
-				lobjAuxTax.setAt(3, parrData[i].mdblValue);
+				lobjAuxTax.setAt(3, BigDecimal.valueOf(parrData[i].mdblValue));
 				lobjAuxTax.SaveToDb(pdb);
 			}
 			catch (Throwable e)
