@@ -60,6 +60,7 @@ OperationViewPresenter {
 
 	private UserServiceAsync service;
 	private Display view;
+	@SuppressWarnings("unused")
 	private EventBus eventBus;
 	
 	private UserProfile[] profiles;

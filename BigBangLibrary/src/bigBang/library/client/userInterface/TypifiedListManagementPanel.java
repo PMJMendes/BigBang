@@ -12,6 +12,7 @@ import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.KeyUpEvent;
 import com.google.gwt.event.dom.client.KeyUpHandler;
 import com.google.gwt.event.logical.shared.AttachEvent;
+import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.HasVerticalAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
@@ -214,4 +215,10 @@ public class TypifiedListManagementPanel extends FilterableList<TipifiedListItem
 		this.editButton.setVisible(!readonly);
 	}
 	
+	@Override
+	protected HandlerRegistration bindEntry(ListEntry<TipifiedListItem> e) {
+		e.setDoubleClickable(true);
+		return super.bindEntry(e);
+	}
+
 }

@@ -1,6 +1,7 @@
 package bigBang.module.generalSystemModule.client.userInterface;
 
-import com.google.gwt.event.dom.client.HasClickHandlers;
+import org.gwt.mosaic.ui.client.ToolButton;
+
 import com.google.gwt.user.client.ui.Label;
 
 import bigBang.library.client.userInterface.FilterableList;
@@ -29,16 +30,17 @@ public class TaxList extends FilterableList<Tax> {
 		};
 	}
 	
-	private HasClickHandlers newButton;
+	private ToolButton newButton;
 	
 	public TaxList(){
 		ListHeader header  = new ListHeader();
 		header.setText("Impostos e Coeficientes");
 		header.showNewButton("Novo");
 		this.newButton = header.getNewButton();
+		setHeaderWidget(header);
 	}
 	
-	public HasClickHandlers getNewButton(){
+	public ToolButton getNewButton(){
 		return this.newButton;
 	}
 	

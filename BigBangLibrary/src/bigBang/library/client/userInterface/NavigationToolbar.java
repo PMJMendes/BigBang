@@ -20,7 +20,10 @@ public class NavigationToolbar extends ListHeader {
 		
 		public enum Navigation {
 			NEXT,
-			PREVIOUS
+			PREVIOUS, 
+			FIRST,
+			LAST,
+			HOME
 		} 
 		
 		private Navigation navigation; 

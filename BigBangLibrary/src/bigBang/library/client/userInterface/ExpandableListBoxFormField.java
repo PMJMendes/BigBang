@@ -59,11 +59,13 @@ public class ExpandableListBoxFormField extends ListBoxFormField {
 		expandImage = new Image(r.listExpandIcon());
 		expandImage.getElement().getStyle().setCursor(Cursor.POINTER);
 
+		final PopupPanel popup = new PopupPanel(true, "Listagem");
+		
 		expandImage.addClickHandler(new ClickHandler() {
 
 			@Override
 			public void onClick(ClickEvent event) {
-				PopupPanel popup = new PopupPanel(true, "Listagem");
+				popup.clear();
 				popup.add(list);
 				list.clearFilters();
 				list.setEditModeEnabled(false);
@@ -76,6 +78,11 @@ public class ExpandableListBoxFormField extends ListBoxFormField {
 			@Override
 			protected void onSizeChanged() {
 				synchronizeToListBox();
+			};
+			
+			public void onCellDoubleClicked(bigBang.library.client.userInterface.ListEntry<TipifiedListItem> entry) {
+				super.onCellDoubleClicked(entry);
+				popup.hidePopup();
 			};
 		};
 		list.addSelectionChangedEventHandler(new SelectionChangedEventHandler() {

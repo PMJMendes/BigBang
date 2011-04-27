@@ -1,8 +1,11 @@
 package bigBang.library.client.userInterface;
 
 import com.google.gwt.animation.client.Animation;
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.logical.shared.AttachEvent;
+import com.google.gwt.event.shared.HandlerRegistration;
+import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
@@ -19,8 +22,10 @@ public class SlidePanel extends View {
 		RIGHT
 	}
 
-	protected AbsolutePanel canvas;	
-
+	protected AbsolutePanel canvas;
+	protected Widget mainWidget;
+	protected HandlerRegistration widgetAttachHandler;
+	
 	public SlidePanel(){
 		canvas = new AbsolutePanel();
 		canvas.setSize("100%", "100%");
@@ -30,35 +35,65 @@ public class SlidePanel extends View {
 		initWidget(wrapper);
 	}
 
-	public void slideInto(final Widget w, final Direction d){
-		final Widget currentChild = canvas.getWidget(0);
+	public void slideInto(Widget w, Direction d){
+		slideInto(w, d, null);
+	}
+	
+	public boolean slideInto(final Widget w, final Direction d, final AsyncCallback<Void> callback){
+		if(w == this.mainWidget)
+			return false;
+
+		final Widget currentChild = mainWidget;
 		final int currentChildWidth = getOffsetWidth();
 		final int currentChildHeight = getOffsetHeight();
 
 		final int runTime = 500;
-
-		w.addAttachHandler(new AttachEvent.Handler() {
+		
+		AttachEvent.Handler attachHandler = new AttachEvent.Handler() {
 
 			@Override
 			public void onAttachOrDetach(AttachEvent event) {
-				if(!event.isAttached())
+				if(!event.isAttached() || w.getParent().getElement() != canvas.getElement()){
+					widgetAttachHandler.removeHandler();
 					return;
+				}
+				
 				Animation animation = new Animation() {
 					
 					private SimplePanel cover;
 					
 					@Override
 					protected void onStart() {
-						cover = new SimplePanel();
-						cover.setSize("100%", "100%");
-						canvas.add(cover, 0, 0);
 						super.onStart();
+						if(widgetAttachHandler != null){
+							widgetAttachHandler.removeHandler();
+							widgetAttachHandler = null;
+						}
+						cover = new SimplePanel();
+						cover.setSize(getOffsetWidth() + "px", getOffsetHeight() + "px");
+						canvas.add(cover, 0, 0);
+					}
+					
+					@Override
+					protected void onCancel() {
+						super.onCancel();
 					}
 					
 					@Override
 					protected void onComplete() {
-						cover.removeFromParent();
 						super.onComplete();
+						if(callback != null)
+							callback.onSuccess(null);
+						if(mainWidget != null && mainWidget.isAttached() && mainWidget.getParent() != null){
+							try{
+								mainWidget.removeFromParent();
+							}catch(Exception e){
+								
+							}
+						}
+						if(cover != null)
+							cover.removeFromParent();
+						mainWidget = w;
 					}
 					
 					@Override
@@ -97,35 +132,25 @@ public class SlidePanel extends View {
 						default:
 							break;
 						}
-						if(progress == 1)
-							currentChild.removeFromParent();
 					}
 				};
-
-
-
 				animation.run(runTime);
 			}
-		});
+		};
+		widgetAttachHandler = w.addAttachHandler(attachHandler);
 		canvas.add(w);
+		return true;
 	}
 
 	public void add(final Widget w) {
-		canvas.clear();
-		w.addAttachHandler(new AttachEvent.Handler() {
-
-			@Override
-			public void onAttachOrDetach(AttachEvent event) {
-				if(!event.isAttached())
-					return;
-				//setSize(w.getOffsetWidth()+"px", w.getOffsetHeight()+"px");
-			}
-		});
-
+		clear();
+		mainWidget = w;
 		canvas.add(w, 0, 0);
 	}
 	
 	public void clear(){
+		if(this.widgetAttachHandler != null)
+			this.widgetAttachHandler.removeHandler();
 		this.canvas.clear();
 	}
 }

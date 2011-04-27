@@ -1,9 +1,6 @@
 package bigBang.module.generalSystemModule.client.userInterface.view;
 
 import bigBang.library.client.HasValueSelectables;
-import bigBang.library.client.ValueSelectable;
-import bigBang.library.client.userInterface.ListEntry;
-import bigBang.library.client.userInterface.view.PopupPanel;
 import bigBang.library.client.userInterface.view.View;
 import bigBang.module.generalSystemModule.client.userInterface.CoverageList;
 import bigBang.module.generalSystemModule.client.userInterface.LineList;
@@ -13,18 +10,13 @@ import bigBang.module.generalSystemModule.shared.Coverage;
 import bigBang.module.generalSystemModule.shared.Line;
 import bigBang.module.generalSystemModule.shared.SubLine;
 
-import com.google.gwt.event.dom.client.HasClickHandlers;
-import com.google.gwt.user.client.ui.HasValue;
 import com.google.gwt.user.client.ui.HorizontalPanel;
-import com.google.gwt.user.client.ui.Label;
 
 public class CoverageManagementOperationView extends View implements CoverageManagementOperationViewPresenter.Display {
 
 	private LineList lineList;
 	private SubLineList subLineList;
 	private CoverageList coverageList;
-	
-	private PopupPanel popup;
 	
 	public CoverageManagementOperationView(){
 		lineList = new LineList();

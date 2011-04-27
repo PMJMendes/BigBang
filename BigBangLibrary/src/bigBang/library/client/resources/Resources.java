@@ -48,6 +48,12 @@ public interface Resources extends ClientBundle {
 	
 	@Source("images/phoneSmallIconWhite.png")
 	ImageResource phoneSmallIconWhite();
+
+	@Source("images/listNextIconWhite.png")
+	ImageResource listNextIconWhite();
+	
+	@Source("images/listNextIconBlack.png")
+	ImageResource listNextIconBlack();
 	
 	
 	

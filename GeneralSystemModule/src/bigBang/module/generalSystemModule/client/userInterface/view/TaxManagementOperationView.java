@@ -1,22 +1,25 @@
 package bigBang.module.generalSystemModule.client.userInterface.view;
 
-import com.google.gwt.core.client.GWT;
-import com.google.gwt.event.logical.shared.AttachEvent;
-import com.google.gwt.user.client.ui.SimplePanel;
-import com.google.gwt.user.client.ui.SplitLayoutPanel;
-import com.google.gwt.user.client.ui.VerticalPanel;
-
+import bigBang.library.client.Selectable;
+import bigBang.library.client.ValueSelectable;
 import bigBang.library.client.event.SelectionChangedEvent;
 import bigBang.library.client.event.SelectionChangedEventHandler;
 import bigBang.library.client.userInterface.FilterableList;
 import bigBang.library.client.userInterface.ListEntry;
+import bigBang.library.client.userInterface.NavigationListEntry;
 import bigBang.library.client.userInterface.NavigationPanel;
+import bigBang.library.client.userInterface.view.PopupPanel;
 import bigBang.library.client.userInterface.view.View;
+import bigBang.module.generalSystemModule.client.userInterface.TaxList;
+import bigBang.module.generalSystemModule.client.userInterface.presenter.TaxManagementOperationViewPresenter;
 import bigBang.module.generalSystemModule.shared.Coverage;
 import bigBang.module.generalSystemModule.shared.Line;
 import bigBang.module.generalSystemModule.shared.SubLine;
-import bigBang.module.generalSystemModule.client.userInterface.TaxList;
-import bigBang.module.generalSystemModule.client.userInterface.presenter.TaxManagementOperationViewPresenter;
+import bigBang.module.generalSystemModule.shared.Tax;
+
+import com.google.gwt.event.dom.client.HasClickHandlers;
+import com.google.gwt.user.client.ui.HasValue;
+import com.google.gwt.user.client.ui.SplitLayoutPanel;
 
 public class TaxManagementOperationView extends View implements TaxManagementOperationViewPresenter.Display {
 
@@ -26,6 +29,12 @@ public class TaxManagementOperationView extends View implements TaxManagementOpe
 	private FilterableList<SubLine> subLineList;
 	private FilterableList<Coverage> coverageList;
 	
+	private boolean readOnly = false;
+	
+	private NavigationPanel navPanel;
+	
+	private PopupPanel popup;
+	
 	private TaxList taxList;
 	
 	private TaxForm form;
@@ -34,36 +43,75 @@ public class TaxManagementOperationView extends View implements TaxManagementOpe
 		SplitLayoutPanel wrapper = new SplitLayoutPanel();
 		wrapper.setSize("100%", "100%");
 		
-		final NavigationPanel navPanel = new NavigationPanel();
+		navPanel = new NavigationPanel();
 		navPanel.setSize("100%", "100%");
 		
-		lineList = new FilterableList<Line>();
+		lineList = new FilterableList<Line>() {
+			protected void onAttach() {
+				clearSelection();
+				super.onAttach();
+			};
+		};
 		lineList.setSize("100%", "100%");
 		
-		lineList.add(new ListEntry<Line>(null));
-		
-		subLineList = new FilterableList<SubLine>();
+		subLineList = new FilterableList<SubLine>() {
+			protected void onAttach() {
+				clearSelection();
+				super.onAttach();
+			};
+		};
 		subLineList.setSize("100%", "100%");
-		
-		subLineList.add(new ListEntry<SubLine>(null));
 		
 		subLineList.addSelectionChangedEventHandler(new SelectionChangedEventHandler() {
 			
 			@Override
 			public void onSelectionChanged(SelectionChangedEvent event) {
-				navPanel.navigateTo(coverageList);
+				for(Selectable s : event.getSelected()) {
+					@SuppressWarnings("unchecked")
+					SubLine subLine = ((ValueSelectable<SubLine>) s).getValue();
+					setCoverages(subLine.coverages);
+					navPanel.navigateTo(coverageList);
+				}
 			}
 		});
 		
-		coverageList = new FilterableList<Coverage>();
+		coverageList = new FilterableList<Coverage>() {
+			protected void onAttach() {
+				clearSelection();
+				if(!readOnly)
+					taxList.getNewButton().setEnabled(true);
+				super.onAttach();
+			};
+			
+			protected void onUnload() {
+				taxList.getNewButton().setEnabled(false);
+				super.onUnload();
+			};
+		};
 		coverageList.setSize("100%", "100%");
 		
 		lineList.addSelectionChangedEventHandler(new SelectionChangedEventHandler() {
 			
 			@Override
 			public void onSelectionChanged(SelectionChangedEvent event) {
-				
-				navPanel.navigateTo(subLineList);
+				for(Selectable s : event.getSelected()) {
+					@SuppressWarnings("unchecked")
+					Line line = ((ValueSelectable<Line>) s).getValue();
+					setSubLines(line.subLines);
+					navPanel.navigateTo(subLineList);
+				}
+			}
+		});
+		
+		coverageList.addSelectionChangedEventHandler(new SelectionChangedEventHandler() {
+			
+			@Override
+			public void onSelectionChanged(SelectionChangedEvent event) {
+				for(Selectable s : event.getSelected()) {
+					@SuppressWarnings("unchecked")
+					Coverage coverage = ((ValueSelectable<Coverage>) s).getValue();
+					setTaxes(coverage.taxes);
+				}
 			}
 		});
 		
@@ -72,25 +120,13 @@ public class TaxManagementOperationView extends View implements TaxManagementOpe
 		
 		form = new TaxForm();
 		taxList = new TaxList();
+		taxList.getNewButton().setEnabled(false);
+
+		popup = new PopupPanel("Imposto/Coeficiente");
+		popup.add(form.getNonScrollableContent());
+		popup.setWidth("650px");
 		
-		final VerticalPanel formWrapper = new VerticalPanel();
-		formWrapper.setSize("100%", "100%");
-		formWrapper.add(form.getNonScrollableContent());
-		formWrapper.add(this.taxList);
-		formWrapper.setCellHeight(this.taxList, "100%");
-		
-		form.addAttachHandler(new AttachEvent.Handler() {
-			
-			@Override
-			public void onAttachOrDetach(AttachEvent event) {
-				if(event.isAttached()){
-					formWrapper.setCellHeight(form, form.getOffsetHeight()+"px");
-					GWT.log(form.getOffsetHeight() + "px");
-				}
-			}
-		});
-		
-		wrapper.add(formWrapper);
+		wrapper.add(taxList);
 		
 		initWidget(wrapper);
 	}
@@ -98,8 +134,140 @@ public class TaxManagementOperationView extends View implements TaxManagementOpe
 
 	@Override
 	public void setReadOnly(boolean readOnly) {
-		// TODO Auto-generated method stub
+		this.readOnly = readOnly;
+	}
+
+
+	@Override
+	public void setLines(Line[] lines) {
+		this.navPanel.navigateToFirst();
+		this.lineList.clear();
 		
+		for(int i = 0; i < lines.length; i++){
+			Line line = lines[i];
+			ListEntry<Line> lineEntry = (line.subLines == null || line.subLines.length == 0)
+										? new ListEntry<Line>(line) : new NavigationListEntry<Line>(line);
+			lineEntry.setTitle(line.name);
+			this.lineList.add(lineEntry);
+			if(line.subLines == null || line.subLines.length == 0){
+				lineEntry.setSelectable(false);
+				//lineEntry.setRightWidget(new Label("sem modalidades"));
+			}
+		}
 	}
 	
+	private void setSubLines(SubLine[] subLines) {
+		this.subLineList.clear();
+		
+		for(int j = 0; j < subLines.length; j++) {
+			SubLine subLine = subLines[j];
+			ListEntry<SubLine> subLineEntry = (subLine.coverages == null || subLine.coverages.length == 0)
+			? new ListEntry<SubLine>(subLine) : new NavigationListEntry<SubLine>(subLine);
+			subLineEntry.setTitle(subLine.name);
+			this.subLineList.add(subLineEntry);
+			if(subLine.coverages == null || subLine.coverages.length == 0){
+				subLineEntry.setSelectable(false);
+			}
+		}
+	}
+	
+	private void setCoverages(Coverage[] coverages) {
+		this.coverageList.clear();
+		
+		for(int k = 0; k < coverages.length; k++) {
+			Coverage coverage = coverages[k];
+			ListEntry<Coverage> coverageEntry = new ListEntry<Coverage>(coverage);
+			coverageEntry.setTitle(coverage.name);
+			this.coverageList.add(coverageEntry);
+		}
+	}
+	
+	private void setTaxes(Tax[] taxes) {
+		this.taxList.clear();
+		for(int k = 0; k < taxes.length; k++) {
+			Tax tax = taxes[k];
+			addTaxToList(tax);
+		}
+	}
+
+	@Override
+	public void showForm(boolean show) {
+		if(!show){
+			this.popup.hidePopup();
+			this.form.clearInfo();
+		}else{
+			this.form.clearInfo();
+			this.popup.center();
+		}
+	}
+
+
+	@Override
+	public HasClickHandlers getNewButton() {
+		return taxList.getNewButton();
+	}
+	
+	@Override
+	public HasClickHandlers getSaveButton() {
+		return form.getSaveButton();
+	}
+
+
+	@Override
+	public HasClickHandlers getDeleteButton() {
+		return form.getDeleteButton();
+	}
+
+
+	@Override
+	public HasValue<Tax> getTaxForm() {
+		return form;
+	}
+
+
+	@Override
+	public String getCurrentCoverageId() {
+		for(ValueSelectable<Coverage> c : this.coverageList.getSelected())
+			return c.getValue().id;
+		return null; 
+	}
+
+
+	@Override
+	public void lockForm(boolean lock) {
+		this.form.setReadOnly(lock);
+	}
+
+
+	@Override
+	public void removeTaxFromList(Tax tax) {
+		for(ValueSelectable<Tax> s : this.taxList) {
+			if(s.getValue().id.equals(tax.id))
+				taxList.remove(s);
+		}
+	}
+
+
+	@Override
+	public void addTaxToList(Tax tax) {
+		ListEntry<Tax> taxEntry = new ListEntry<Tax>(tax){
+			public <I extends Object> void setInfo(I info) {
+				Tax tax = (Tax) info;
+				setTitle(tax.name);
+			};
+		};
+		taxEntry.setTitle(tax.name);
+		this.taxList.add(taxEntry);
+		taxList.getScrollable().scrollToBottom();
+	}
+
+
+	@Override
+	public void updateTaxInList(Tax tax) {
+		for(ValueSelectable<Tax> s : this.taxList) {
+			if(s.getValue().id.equals(tax.id))
+				s.setValue(tax);
+		}
+	}
+
 }

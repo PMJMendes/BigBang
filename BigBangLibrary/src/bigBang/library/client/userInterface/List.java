@@ -16,6 +16,8 @@ import bigBang.library.client.userInterface.view.View;
 
 import com.google.gwt.dom.client.Style.FontStyle;
 import com.google.gwt.dom.client.Style.Unit;
+import com.google.gwt.event.dom.client.DoubleClickEvent;
+import com.google.gwt.event.dom.client.DoubleClickHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.google.gwt.user.client.ui.HasVerticalAlignment;
@@ -40,6 +42,7 @@ public class List<T> extends View implements HasValueSelectables<T>, java.util.L
 	protected HasWidgets footer;
 	protected ScrollPanel scrollPanel;
 	protected SelectedStateChangedEventHandler entrySelectionHandler;
+	protected DoubleClickHandler cellDoubleClickHandler;
 	private boolean selectionChangeHandlerInitialized;
 
 	public List(){
@@ -102,6 +105,16 @@ public class List<T> extends View implements HasValueSelectables<T>, java.util.L
 		((UIObject) footer).getElement().getStyle().setProperty("borderTop", "1px solid #BBB");
 		mainWrapper.add((Widget) footer);
 
+		cellDoubleClickHandler = new DoubleClickHandler() {
+			
+			@SuppressWarnings("unchecked")
+			@Override
+			public void onDoubleClick(DoubleClickEvent event) {
+				if(entries.contains(event.getSource()))
+					onCellDoubleClicked((ListEntry<T>) event.getSource());
+			}
+		};
+		
 		clear();
 
 		initWidget(mainWrapper);
@@ -119,6 +132,7 @@ public class List<T> extends View implements HasValueSelectables<T>, java.util.L
 	}
 
 	protected HandlerRegistration bindEntry(ListEntry<T> e){
+		e.addHandler(this.cellDoubleClickHandler, DoubleClickEvent.getType());
 		return e.addHandler(this.entrySelectionHandler, SelectedStateChangedEvent.TYPE);
 	}
 
@@ -294,7 +308,7 @@ public class List<T> extends View implements HasValueSelectables<T>, java.util.L
 			s.setSelected(false, true);
 		}
 		if(hasChanges && selectionChangeHandlerInitialized)
-			fireEvent(new SelectionChangedEvent(selected));	
+			fireEvent(new SelectionChangedEvent(this.getSelected()));	
 	}
 
 	@Override
@@ -507,5 +521,8 @@ public class List<T> extends View implements HasValueSelectables<T>, java.util.L
 	
 	public VerticalPanel getListContent(){
 		return this.listPanel;
+	}
+	
+	public void onCellDoubleClicked(ListEntry<T> entry) {
 	}
 }

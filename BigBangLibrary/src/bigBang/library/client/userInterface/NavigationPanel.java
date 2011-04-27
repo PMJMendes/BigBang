@@ -3,6 +3,8 @@ package bigBang.library.client.userInterface;
 import java.util.ArrayList;
 import java.util.ListIterator;
 
+import com.google.gwt.core.client.GWT;
+import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
@@ -28,9 +30,9 @@ public class NavigationPanel extends View {
 
 		navBar = new NavigationToolbar(); 
 		wrapper.add(navBar);
-		
+
 		navBar.addNavigationEventHandler(new NavigationEventHandler() {
-			
+
 			@Override
 			public void onNavigationEvent(Navigation n) {
 				switch(n) {
@@ -72,19 +74,37 @@ public class NavigationPanel extends View {
 		iterator.add(w);
 		checkToolbarItems();
 	}
-	
+
 	public boolean hasHomeWidget(){
 		return this.navigatables.size() > 0;
 	}
 
 	public void navigateTo(Widget w){
+		//Removes all the next items
 		while(iterator.hasNext()){
 			iterator.next();
 			iterator.remove();
 		}
+
+		//if(this.navigatables.contains(w))
+		//	throw new RuntimeException("The navigation item is already inserted in the flow.");
+
 		iterator.add(w);
-		this.slide.slideInto(w, Direction.LEFT);
-		checkToolbarItems();
+
+		disableToolbarItems(true);
+		this.slide.slideInto(w, Direction.LEFT, new AsyncCallback<Void>() {
+
+			@Override
+			public void onFailure(Throwable caught) {
+				GWT.log("The animation has failed");
+			}
+
+			@Override
+			public void onSuccess(Void result) {
+				disableToolbarItems(false);
+				checkToolbarItems();
+			}
+		});
 	}
 
 	public boolean navigateForward(){
@@ -92,8 +112,20 @@ public class NavigationPanel extends View {
 			checkToolbarItems();
 			return false;
 		}
-		this.slide.slideInto(iterator.next(), Direction.LEFT);
-		checkToolbarItems();
+		disableToolbarItems(true);
+		this.slide.slideInto(iterator.next(), Direction.LEFT, new AsyncCallback<Void>() {
+
+			@Override
+			public void onFailure(Throwable caught) {
+				GWT.log("The animation has failed");
+			}
+
+			@Override
+			public void onSuccess(Void result) {
+				disableToolbarItems(false);
+				checkToolbarItems();
+			}
+		});
 		return true;
 	}
 
@@ -105,30 +137,64 @@ public class NavigationPanel extends View {
 				checkToolbarItems();
 				return false;
 			}else{
-				this.slide.slideInto(iterator.previous(), Direction.RIGHT);
+				disableToolbarItems(true);
+				this.slide.slideInto(iterator.previous(), Direction.RIGHT, new AsyncCallback<Void>() {
+
+					@Override
+					public void onFailure(Throwable caught) {
+						GWT.log("The animation has failed");
+					}
+
+					@Override
+					public void onSuccess(Void result) {
+						disableToolbarItems(false);
+						checkToolbarItems();
+					}
+				});
 				iterator.next();
-				checkToolbarItems();
 			}
-		}
+		}else
+			throw new RuntimeException("Cannot navigate back : iterator is on an illegal index");
 		return true;
 	}
 
 	public void navigateToFirst(){
-		Widget w = null;
 		while(iterator.hasPrevious())
-			w = iterator.previous();
-		if(w != null)
-			this.slide.slideInto(w, Direction.RIGHT);
-		iterator.next();
-		checkToolbarItems();
+			iterator.previous();
+		disableToolbarItems(true);
+		this.slide.slideInto(iterator.next(), Direction.RIGHT, new AsyncCallback<Void>() {
+
+			@Override
+			public void onFailure(Throwable caught) {
+				GWT.log("The animation has failed");
+			}
+
+			@Override
+			public void onSuccess(Void result) {
+				disableToolbarItems(false);
+				checkToolbarItems();
+			}
+		});
 	}
 
 	public void navigateToLast(){
-		Widget w = null;
 		while(iterator.hasNext())
-			w = iterator.next();
-		if(w != null)
-			this.slide.slideInto(w, Direction.LEFT);
+			iterator.next();
+		iterator.previous();
+		disableToolbarItems(true);
+		this.slide.slideInto(iterator.next(), Direction.LEFT, new AsyncCallback<Void>() {
+
+			@Override
+			public void onFailure(Throwable caught) {
+				GWT.log("The animation has failed");
+			}
+
+			@Override
+			public void onSuccess(Void result) {
+				disableToolbarItems(false);
+				checkToolbarItems();
+			}
+		});
 		checkToolbarItems();
 	}
 
@@ -142,5 +208,10 @@ public class NavigationPanel extends View {
 		}
 		navBar.prevButton.setVisible(hasPrevious);
 		navBar.nextButton.setVisible(iterator.hasNext());
+	}
+
+	private void disableToolbarItems(boolean disable) {
+		navBar.nextButton.setEnabled(!disable);
+		navBar.prevButton.setEnabled(!disable);
 	}
 }

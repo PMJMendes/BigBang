@@ -1,6 +1,7 @@
 package bigBang.module.generalSystemModule.client.userInterface.view;
 
-import com.google.gwt.user.client.ui.HorizontalPanel;
+import com.google.gwt.event.dom.client.HasClickHandlers;
+import com.google.gwt.user.client.ui.Button;
 
 import bigBang.library.client.userInterface.ExpandableListBoxFormField;
 import bigBang.library.client.userInterface.TextBoxFormField;
@@ -12,6 +13,9 @@ public class TaxForm extends FormView<Tax> {
 	
 	private ExpandableListBoxFormField unit;
 	private TextBoxFormField name, value;
+	
+	private Button saveButton;
+	private Button deleteButton;
 	
 	private Tax tax;
 	
@@ -25,6 +29,12 @@ public class TaxForm extends FormView<Tax> {
 		addFormField(name);
 		addFormField(value);
 		addFormField(unit);
+		
+		saveButton = new Button("Guardar");
+		deleteButton = new Button("Apagar");
+		
+		addButton(saveButton);
+		addButton(deleteButton);
 	}
 
 	@Override
@@ -38,13 +48,26 @@ public class TaxForm extends FormView<Tax> {
 	@Override
 	public void setInfo(Tax info) {
 		if(info == null)
-			tax = new Tax();
+			clearInfo();
+		else
+			tax = (Tax) info;
+		this.name.setValue(tax.name);
+		this.value.setValue(tax.value + "");
+		this.unit.setValue(tax.currencyId);
 	}
-	
+
 	@Override
 	public void clearInfo() {
 		this.tax = new Tax();
 		super.clearInfo();
+	}
+	
+	public HasClickHandlers getSaveButton(){
+		return saveButton;
+	}
+	
+	public HasClickHandlers getDeleteButton(){
+		return deleteButton;
 	}
 
 }
