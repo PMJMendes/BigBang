@@ -4,6 +4,7 @@ import bigBang.library.interfaces.Service;
 import bigBang.module.generalSystemModule.shared.Coverage;
 import bigBang.module.generalSystemModule.shared.Line;
 import bigBang.module.generalSystemModule.shared.SubLine;
+import bigBang.module.generalSystemModule.shared.Tax;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
@@ -22,4 +23,8 @@ public interface CoveragesServiceAsync
 	void createCoverage(Coverage b, AsyncCallback<Coverage> callback);
 	void saveCoverage(Coverage b, AsyncCallback<Coverage> callback);
 	void deleteCoverage(String id, AsyncCallback<Void> callback);
+	
+	void createTax(Tax b, AsyncCallback<Tax> callback);
+	void saveTax(Tax b, AsyncCallback<Tax> callback);
+	void deleteTax(String id, AsyncCallback<Void> callback);
 }

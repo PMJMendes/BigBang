@@ -633,4 +633,24 @@ public class CoveragesServiceImpl
 		for ( i = 0; i < parrIDs.length; i++ )
 			parrCoverages[i].id = parrIDs[i].mid.toString();
 	}
+
+	@Override
+	public Tax createTax(Tax b) throws SessionExpiredException,
+			BigBangException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Tax saveTax(Tax b) throws SessionExpiredException, BigBangException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void deleteTax(String id) throws SessionExpiredException,
+			BigBangException {
+		// TODO Auto-generated method stub
+		
+	}
 }
