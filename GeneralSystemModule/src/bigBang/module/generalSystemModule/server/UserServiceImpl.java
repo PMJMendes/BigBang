@@ -131,8 +131,8 @@ public class UserServiceImpl
 			lopMU.marrModify[0].mstrUsername = user.username;
 			lopMU.marrModify[0].mobjPassword = (user.password == null ? null : new Password(user.password, false));
 			lopMU.marrModify[0].midProfile = UUID.fromString(user.profile.id);
-			lopMU.marrModify[0].midCostCenter = UUID.fromString(user.costCenterId);
 			lopMU.marrModify[0].mstrEmail = user.email;
+			lopMU.marrModify[0].midCostCenter = UUID.fromString(user.costCenterId);
 			lopMU.marrCreate = null;
 			lopMU.marrDelete = null;
 
@@ -169,8 +169,8 @@ public class UserServiceImpl
 			lopMU.marrCreate[0].mstrUsername = user.username;
 			lopMU.marrCreate[0].mobjPassword = (user.password == null ? null : new Password(user.password, false));
 			lopMU.marrCreate[0].midProfile = UUID.fromString(user.profile.id);
-			lopMU.marrCreate[0].midCostCenter = UUID.fromString(user.costCenterId);
 			lopMU.marrCreate[0].mstrEmail = user.email;
+			lopMU.marrCreate[0].midCostCenter = UUID.fromString(user.costCenterId);
 			lopMU.marrModify = null;
 			lopMU.marrDelete = null;
 
@@ -205,8 +205,8 @@ public class UserServiceImpl
 				lopMU.marrDelete[0].mstrUsername = null;
 				lopMU.marrDelete[0].mobjPassword = null;
 				lopMU.marrDelete[0].midProfile = null;
-				lopMU.marrDelete[0].midCostCenter = null;
 				lopMU.marrDelete[0].mstrEmail = null;
+				lopMU.marrDelete[0].midCostCenter = null;
 				lopMU.marrCreate = null;
 				lopMU.marrModify = null;
 

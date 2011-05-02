@@ -31,8 +31,8 @@ public class ManageUsers
 		public String mstrUsername;
 		public Password mobjPassword;
 		public UUID midProfile;
-		public UUID midCostCenter;
 		public String mstrEmail;
+		public UUID midCostCenter;
 		public UserData mobjPrevValues;
 	}
 
@@ -118,8 +118,8 @@ public class ManageUsers
 					marrModify[i].mobjPrevValues.mstrUsername = (String)lobjAuxBase.getAt(1);
 					marrModify[i].mobjPrevValues.mobjPassword = null;
 					marrModify[i].mobjPrevValues.midProfile = (UUID)lobjAuxBase.getAt(3);
-					marrModify[i].mobjPrevValues.midCostCenter = (UUID)lobjAuxOuter.getAt(1);
-					marrModify[i].mobjPrevValues.mstrEmail = (String)lobjAuxOuter.getAt(2);
+					marrModify[i].mobjPrevValues.mstrEmail = (String)lobjAuxOuter.getAt(1);
+					marrModify[i].mobjPrevValues.midCostCenter = (UUID)lobjAuxOuter.getAt(2);
 					marrModify[i].mobjPrevValues.mobjPrevValues = null;
 
 					lobjAuxBase.setAt(0, marrModify[i].mstrFullName);
@@ -155,8 +155,8 @@ public class ManageUsers
 					marrDelete[i].mstrUsername = (String)lobjAuxBase.getAt(1);
 					marrDelete[i].mobjPassword = null;
 					marrDelete[i].midProfile = (UUID)lobjAuxBase.getAt(3);
-					marrDelete[i].midCostCenter = (UUID)lobjAuxOuter.getAt(1);
-					marrDelete[i].mstrEmail = (String)lobjAuxOuter.getAt(2);
+					marrDelete[i].mstrEmail = (String)lobjAuxOuter.getAt(1);
+					marrDelete[i].midCostCenter = (UUID)lobjAuxOuter.getAt(2);
 					marrDelete[i].mobjPrevValues = null;
 
 					lrefDecorations.Delete(pdb, lobjAuxOuter.getKey());
