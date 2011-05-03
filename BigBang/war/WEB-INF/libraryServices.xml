@@ -36,6 +36,10 @@
 	<servlet-name>BigBangProcessService</servlet-name>
 	<servlet-class>bigBang.library.server.BigBangProcessServiceImpl</servlet-class>
 </servlet>
+<servlet>
+	<servlet-name>UndoService</servlet-name>
+	<servlet-class>bigBang.library.server.UndoServiceImpl</servlet-class>
+</servlet>
 
 <servlet-mapping>
 	<servlet-name>SearchService</servlet-name>
@@ -72,4 +76,8 @@
 <servlet-mapping>
 	<servlet-name>BigBangProcessService</servlet-name>
 	<url-pattern>/bigbang/BigBangProcessService</url-pattern>
+</servlet-mapping>
+<servlet-mapping>
+	<servlet-name>UndoService</servlet-name>
+	<url-pattern>/bigbang/UndoService</url-pattern>
 </servlet-mapping>
