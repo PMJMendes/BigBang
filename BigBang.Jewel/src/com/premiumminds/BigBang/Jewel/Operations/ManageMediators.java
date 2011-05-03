@@ -4,8 +4,10 @@ import java.io.Serializable;
 import java.util.UUID;
 
 import Jewel.Engine.Engine;
+import Jewel.Engine.Constants.ObjectGUIDs;
 import Jewel.Engine.DataAccess.SQLServer;
 import Jewel.Engine.Implementation.Entity;
+import Jewel.Engine.SysObjects.ObjectBase;
 import Jewel.Petri.SysObjects.JewelPetriException;
 import Jewel.Petri.SysObjects.Operation;
 
@@ -47,6 +49,179 @@ public class ManageMediators
 	public ManageMediators(UUID pidProcess)
 	{
 		super(pidProcess);
+	}
+
+	public String ShortDesc()
+	{
+		return "Gestão de Mediadores"; 
+	}
+
+	public String LongDesc(String pstrLineBreak)
+	{
+		StringBuilder lstrResult;
+		int i;
+
+		lstrResult = new StringBuilder();
+
+		if ( (marrCreate != null) && (marrCreate.length > 0) )
+		{
+			if ( marrCreate.length == 1 )
+			{
+				lstrResult.append("Foi criado 1 mediador:");
+				lstrResult.append(pstrLineBreak);
+				Describe(lstrResult, marrCreate[0], pstrLineBreak);
+				if ( marrCreate[0].mobjContactOps != null )
+					marrCreate[0].mobjContactOps.LongDesc(lstrResult, pstrLineBreak);
+				if ( marrCreate[0].mobjDocOps != null )
+					marrCreate[0].mobjDocOps.LongDesc(lstrResult, pstrLineBreak);
+			}
+			else
+			{
+				lstrResult.append("Foram criadas ");
+				lstrResult.append(marrCreate.length);
+				lstrResult.append(" mediadores:");
+				lstrResult.append(pstrLineBreak);
+				for ( i = 0; i < marrCreate.length; i++ )
+				{
+					lstrResult.append("Mediador ");
+					lstrResult.append(i + 1);
+					lstrResult.append(":");
+					lstrResult.append(pstrLineBreak);
+					Describe(lstrResult, marrCreate[i], pstrLineBreak);
+					if ( marrCreate[i].mobjContactOps != null )
+						marrCreate[i].mobjContactOps.LongDesc(lstrResult, pstrLineBreak);
+					if ( marrCreate[i].mobjDocOps != null )
+						marrCreate[i].mobjDocOps.LongDesc(lstrResult, pstrLineBreak);
+				}
+			}
+		}
+
+		if ( (marrModify != null) && (marrModify.length > 0) )
+		{
+			if ( marrModify.length == 1 )
+			{
+				lstrResult.append("Foi modificado 1 mediador:");
+				lstrResult.append(pstrLineBreak);
+				Describe(lstrResult, marrModify[0], pstrLineBreak);
+			}
+			else
+			{
+				lstrResult.append("Foram modificados ");
+				lstrResult.append(marrModify.length);
+				lstrResult.append(" mediadores:");
+				lstrResult.append(pstrLineBreak);
+				for ( i = 0; i < marrModify.length; i++ )
+				{
+					lstrResult.append("Mediador ");
+					lstrResult.append(i + 1);
+					lstrResult.append(":");
+					lstrResult.append(pstrLineBreak);
+					Describe(lstrResult, marrModify[i], pstrLineBreak);
+				}
+			}
+		}
+
+		if ( (marrDelete != null) && (marrDelete.length > 0) )
+		{
+			if ( marrDelete.length == 1 )
+			{
+				lstrResult.append("Foi apagado 1 mediador:");
+				lstrResult.append(pstrLineBreak);
+				Describe(lstrResult, marrDelete[0], pstrLineBreak);
+				if ( marrDelete[0].mobjContactOps != null )
+					marrDelete[0].mobjContactOps.LongDesc(lstrResult, pstrLineBreak);
+				if ( marrDelete[0].mobjDocOps != null )
+					marrDelete[0].mobjDocOps.LongDesc(lstrResult, pstrLineBreak);
+			}
+			else
+			{
+				lstrResult.append("Foram apagados ");
+				lstrResult.append(marrDelete.length);
+				lstrResult.append(" mediadores:");
+				lstrResult.append(pstrLineBreak);
+				for ( i = 0; i < marrDelete.length; i++ )
+				{
+					lstrResult.append("Mediador ");
+					lstrResult.append(i + 1);
+					lstrResult.append(":");
+					lstrResult.append(pstrLineBreak);
+					Describe(lstrResult, marrDelete[i], pstrLineBreak);
+					if ( marrDelete[i].mobjContactOps != null )
+						marrDelete[i].mobjContactOps.LongDesc(lstrResult, pstrLineBreak);
+					if ( marrDelete[i].mobjDocOps != null )
+						marrDelete[i].mobjDocOps.LongDesc(lstrResult, pstrLineBreak);
+				}
+			}
+		}
+
+		if ( mobjContactOps != null )
+		{
+			lstrResult.append("Operações sobre contactos de mediadores:");
+			lstrResult.append(pstrLineBreak);
+			mobjContactOps.LongDesc(lstrResult, pstrLineBreak);
+		}
+
+		if ( mobjDocOps  != null )
+		{
+			lstrResult.append("Operações sobre documentos de mediadores:");
+			lstrResult.append(pstrLineBreak);
+			mobjDocOps.LongDesc(lstrResult, pstrLineBreak);
+		}
+
+		return lstrResult.toString();
+	}
+
+	public String UndoDesc(String pstrLineBreak)
+	{
+		StringBuilder lstrResult;
+		int i;
+
+		lstrResult = new StringBuilder();
+
+		if ( (marrCreate != null) && (marrCreate.length > 0) )
+		{
+			if ( marrCreate.length == 1 )
+				lstrResult.append("O mediador criado será apagado.");
+			else
+				lstrResult.append("Os mediadores criados serão apagados.");
+			lstrResult.append(pstrLineBreak);
+		}
+
+		if ( (marrModify != null) && (marrModify.length > 0) )
+		{
+			lstrResult.append("Serão repostos os valores anteriores:");
+			lstrResult.append(pstrLineBreak);
+			if ( marrModify.length == 1 )
+				Describe(lstrResult, marrModify[0].mobjPrevValues, pstrLineBreak);
+			else
+			{
+				for ( i = 0; i < marrModify.length; i++ )
+				{
+					lstrResult.append("Mediador ");
+					lstrResult.append(i + 1);
+					lstrResult.append(":");
+					lstrResult.append(pstrLineBreak);
+					Describe(lstrResult, marrModify[i].mobjPrevValues, pstrLineBreak);
+				}
+			}
+		}
+
+		if ( (marrDelete != null) && (marrDelete.length > 0) )
+		{
+			if ( marrDelete.length == 1 )
+				lstrResult.append("O mediador apagado será reposto.");
+			else
+				lstrResult.append("Os mediadores apagados serão repostos.");
+			lstrResult.append(pstrLineBreak);
+		}
+
+		if ( mobjContactOps != null )
+			mobjContactOps.UndoDesc(lstrResult, pstrLineBreak);
+
+		if ( mobjDocOps  != null )
+			mobjDocOps.UndoDesc(lstrResult, pstrLineBreak);
+
+		return lstrResult.toString();
 	}
 
 	protected UUID OpID()
@@ -177,5 +352,62 @@ public class ManageMediators
 		{
 			throw new JewelPetriException(e.getMessage(), e);
 		}
+	}
+
+	private void Describe(StringBuilder pstrString, MediatorData pobjData, String pstrLineBreak)
+	{
+		ObjectBase lobjProfile;
+		ObjectBase lobjZipCode;
+
+		pstrString.append("Nome: ");
+		pstrString.append(pobjData.mstrName);
+		pstrString.append(pstrLineBreak);
+		pstrString.append("Número no ISP: ");
+		pstrString.append(pobjData.mstrISPNumber);
+		pstrString.append(pstrLineBreak);
+		pstrString.append("NIFC: ");
+		pstrString.append(pobjData.mstrFiscalNumber);
+		pstrString.append(pstrLineBreak);
+		pstrString.append("NIB: ");
+		pstrString.append(pobjData.mstrBankID);
+		pstrString.append(pstrLineBreak);
+		pstrString.append("Perfil de Comissionamento: ");
+
+		try
+		{
+			lobjProfile = Engine.GetWorkInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), Constants.ObjID_CommProfile), pobjData.midProfile);
+			pstrString.append((String)lobjProfile.getAt(0));
+		}
+		catch (Throwable e)
+		{
+			pstrString.append("(Erro a obter o perfil de comissionamento.)");
+		}
+		pstrString.append(pstrLineBreak);
+
+		pstrString.append("Morada:");
+		pstrString.append(pstrLineBreak);
+		pstrString.append("- ");
+		pstrString.append(pobjData.mstrAddress1);
+		pstrString.append(pstrLineBreak);
+		pstrString.append("- ");
+		pstrString.append(pobjData.mstrAddress2);
+		pstrString.append(pstrLineBreak);
+		pstrString.append("- ");
+
+		try
+		{
+			lobjZipCode = Engine.GetWorkInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), ObjectGUIDs.O_PostalCode), pobjData.midZipCode);
+			pstrString.append((String)lobjZipCode.getAt(0));
+			pstrString.append(" ");
+			pstrString.append((String)lobjZipCode.getAt(1));
+			pstrString.append(pstrLineBreak);
+			pstrString.append("- ");
+        	pstrString.append((String)lobjZipCode.getAt(4));
+		}
+		catch (Throwable e)
+		{
+			pstrString.append("(Erro a obter o código postal.)");
+		}
+		pstrString.append(pstrLineBreak);
 	}
 }

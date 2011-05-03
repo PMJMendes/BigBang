@@ -463,10 +463,10 @@ public class CoveragesServiceImpl
 		{
 			lopMT = new ManageTaxes(GeneralSystem.GetAnyInstance(Engine.getCurrentNameSpace()).GetProcessID());
 
-			lopMT.marrCreateTaxes = BuildTaxArray(lopMT, larrAux);
+			lopMT.marrCreate = BuildTaxArray(lopMT, larrAux);
 
-			lopMT.marrModifyTaxes = null;
-			lopMT.marrDeleteTaxes = null;
+			lopMT.marrModify = null;
+			lopMT.marrDelete = null;
 
 			lopMT.Execute();
 		}
@@ -475,7 +475,7 @@ public class CoveragesServiceImpl
 			throw new BigBangException(e.getMessage(), e);
 		}
 
-		TagTaxes(lopMT.marrCreateTaxes, larrAux);
+		TagTaxes(lopMT.marrCreate, larrAux);
 
 		return b;
 	}
@@ -496,10 +496,10 @@ public class CoveragesServiceImpl
 		{
 			lopMT = new ManageTaxes(GeneralSystem.GetAnyInstance(Engine.getCurrentNameSpace()).GetProcessID());
 
-			lopMT.marrModifyTaxes = BuildTaxArray(lopMT, larrAux);
+			lopMT.marrModify = BuildTaxArray(lopMT, larrAux);
 
-			lopMT.marrCreateTaxes = null;
-			lopMT.marrModifyTaxes = null;
+			lopMT.marrCreate = null;
+			lopMT.marrModify = null;
 
 			lopMT.Execute();
 		}
@@ -528,10 +528,10 @@ public class CoveragesServiceImpl
 		{
 			lopMT = new ManageTaxes(GeneralSystem.GetAnyInstance(Engine.getCurrentNameSpace()).GetProcessID());
 
-			lopMT.marrDeleteTaxes = BuildTaxArray(lopMT, larrAux);
+			lopMT.marrDelete = BuildTaxArray(lopMT, larrAux);
 
-			lopMT.marrCreateTaxes = null;
-			lopMT.marrModifyTaxes = null;
+			lopMT.marrCreate = null;
+			lopMT.marrModify = null;
 
 			lopMT.Execute();
 		}

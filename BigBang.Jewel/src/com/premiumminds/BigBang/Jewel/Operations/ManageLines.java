@@ -6,6 +6,7 @@ import java.util.UUID;
 import Jewel.Engine.Engine;
 import Jewel.Engine.DataAccess.SQLServer;
 import Jewel.Engine.Implementation.Entity;
+import Jewel.Engine.SysObjects.ObjectBase;
 import Jewel.Petri.SysObjects.JewelPetriException;
 import Jewel.Petri.SysObjects.Operation;
 
@@ -68,6 +69,367 @@ public class ManageLines
 	public ManageLines(UUID pidProcess)
 	{
 		super(pidProcess);
+	}
+
+	public String ShortDesc()
+	{
+		return "Gestão de Ramos, Modalidades e Coberturas"; 
+	}
+
+	public String LongDesc(String pstrLineBreak)
+	{
+		StringBuilder lstrResult;
+		int i;
+
+		lstrResult = new StringBuilder();
+
+		if ( (marrCreateLines != null) && (marrCreateLines.length > 0) )
+		{
+			if ( marrCreateLines.length == 1 )
+			{
+				lstrResult.append("Foi criado 1 ramo:");
+				lstrResult.append(pstrLineBreak);
+				DescribeLine(lstrResult, marrCreateLines[0], pstrLineBreak, true);
+			}
+			else
+			{
+				lstrResult.append("Foram criados ");
+				lstrResult.append(marrCreateLines.length);
+				lstrResult.append(" ramos:");
+				lstrResult.append(pstrLineBreak);
+				for ( i = 0; i < marrCreateLines.length; i++ )
+				{
+					lstrResult.append("Ramo ");
+					lstrResult.append(i + 1);
+					lstrResult.append(":");
+					lstrResult.append(pstrLineBreak);
+					DescribeLine(lstrResult, marrCreateLines[i], pstrLineBreak, true);
+				}
+			}
+		}
+
+		if ( (marrModifyLines != null) && (marrModifyLines.length > 0) )
+		{
+			if ( marrModifyLines.length == 1 )
+			{
+				lstrResult.append("Foi modificado 1 ramo:");
+				lstrResult.append(pstrLineBreak);
+				DescribeLine(lstrResult, marrModifyLines[0], pstrLineBreak, false);
+			}
+			else
+			{
+				lstrResult.append("Foram modificados ");
+				lstrResult.append(marrModifyLines.length);
+				lstrResult.append(" ramos:");
+				lstrResult.append(pstrLineBreak);
+				for ( i = 0; i < marrModifyLines.length; i++ )
+				{
+					lstrResult.append("Ramo ");
+					lstrResult.append(i + 1);
+					lstrResult.append(":");
+					lstrResult.append(pstrLineBreak);
+					DescribeLine(lstrResult, marrModifyLines[i], pstrLineBreak, false);
+				}
+			}
+		}
+
+		if ( (marrDeleteLines != null) && (marrDeleteLines.length > 0) )
+		{
+			if ( marrDeleteLines.length == 1 )
+			{
+				lstrResult.append("Foi apagado 1 ramo:");
+				lstrResult.append(pstrLineBreak);
+				DescribeLine(lstrResult, marrDeleteLines[0], pstrLineBreak, true);
+			}
+			else
+			{
+				lstrResult.append("Foram apagados ");
+				lstrResult.append(marrDeleteLines.length);
+				lstrResult.append(" ramos:");
+				lstrResult.append(pstrLineBreak);
+				for ( i = 0; i < marrDeleteLines.length; i++ )
+				{
+					lstrResult.append("Ramo ");
+					lstrResult.append(i + 1);
+					lstrResult.append(":");
+					lstrResult.append(pstrLineBreak);
+					DescribeLine(lstrResult, marrDeleteLines[i], pstrLineBreak, true);
+				}
+			}
+		}
+
+		if ( (marrCreateSubLines != null) && (marrCreateSubLines.length > 0) )
+		{
+			if ( marrCreateSubLines.length == 1 )
+			{
+				lstrResult.append("Foi criada 1 modalidade:");
+				lstrResult.append(pstrLineBreak);
+				DescribeSubLine(lstrResult, marrCreateSubLines[0], pstrLineBreak, null, true);
+			}
+			else
+			{
+				lstrResult.append("Foram criadas ");
+				lstrResult.append(marrCreateSubLines.length);
+				lstrResult.append(" modalidades:");
+				lstrResult.append(pstrLineBreak);
+				for ( i = 0; i < marrCreateSubLines.length; i++ )
+				{
+					lstrResult.append("Modalidade ");
+					lstrResult.append(i + 1);
+					lstrResult.append(":");
+					lstrResult.append(pstrLineBreak);
+					DescribeSubLine(lstrResult, marrCreateSubLines[i], pstrLineBreak, null, true);
+				}
+			}
+		}
+
+		if ( (marrModifySubLines != null) && (marrModifySubLines.length > 0) )
+		{
+			if ( marrModifySubLines.length == 1 )
+			{
+				lstrResult.append("Foi modificada 1 modalidade:");
+				lstrResult.append(pstrLineBreak);
+				DescribeSubLine(lstrResult, marrModifySubLines[0], pstrLineBreak, null, false);
+			}
+			else
+			{
+				lstrResult.append("Foram modificadas ");
+				lstrResult.append(marrModifySubLines.length);
+				lstrResult.append(" modalidades:");
+				lstrResult.append(pstrLineBreak);
+				for ( i = 0; i < marrModifySubLines.length; i++ )
+				{
+					lstrResult.append("Modalidade ");
+					lstrResult.append(i + 1);
+					lstrResult.append(":");
+					lstrResult.append(pstrLineBreak);
+					DescribeSubLine(lstrResult, marrModifySubLines[i], pstrLineBreak, null, false);
+				}
+			}
+		}
+
+		if ( (marrDeleteSubLines != null) && (marrDeleteSubLines.length > 0) )
+		{
+			if ( marrDeleteSubLines.length == 1 )
+			{
+				lstrResult.append("Foi apagada 1 modalidade:");
+				lstrResult.append(pstrLineBreak);
+				DescribeSubLine(lstrResult, marrDeleteSubLines[0], pstrLineBreak, null, true);
+			}
+			else
+			{
+				lstrResult.append("Foram apagadas ");
+				lstrResult.append(marrDeleteSubLines.length);
+				lstrResult.append(" modalidades:");
+				lstrResult.append(pstrLineBreak);
+				for ( i = 0; i < marrDeleteSubLines.length; i++ )
+				{
+					lstrResult.append("Modalidade ");
+					lstrResult.append(i + 1);
+					lstrResult.append(":");
+					lstrResult.append(pstrLineBreak);
+					DescribeSubLine(lstrResult, marrDeleteSubLines[i], pstrLineBreak, null, true);
+				}
+			}
+		}
+
+		if ( (marrCreateCoverages != null) && (marrCreateCoverages.length > 0) )
+		{
+			if ( marrCreateCoverages.length == 1 )
+			{
+				lstrResult.append("Foi criada 1 cobertura:");
+				lstrResult.append(pstrLineBreak);
+				DescribeCoverage(lstrResult, marrCreateCoverages[0], pstrLineBreak, null);
+			}
+			else
+			{
+				lstrResult.append("Foram criadas ");
+				lstrResult.append(marrCreateCoverages.length);
+				lstrResult.append(" coberturas:");
+				lstrResult.append(pstrLineBreak);
+				for ( i = 0; i < marrCreateCoverages.length; i++ )
+				{
+					lstrResult.append("Cobertura ");
+					lstrResult.append(i + 1);
+					lstrResult.append(":");
+					lstrResult.append(pstrLineBreak);
+					DescribeCoverage(lstrResult, marrCreateCoverages[i], pstrLineBreak, null);
+				}
+			}
+		}
+
+		if ( (marrModifyCoverages != null) && (marrModifyCoverages.length > 0) )
+		{
+			if ( marrModifyCoverages.length == 1 )
+			{
+				lstrResult.append("Foi modificada 1 cobertura:");
+				lstrResult.append(pstrLineBreak);
+				DescribeCoverage(lstrResult, marrModifyCoverages[0], pstrLineBreak, null);
+			}
+			else
+			{
+				lstrResult.append("Foram modificadas ");
+				lstrResult.append(marrModifyCoverages.length);
+				lstrResult.append(" coberturas:");
+				lstrResult.append(pstrLineBreak);
+				for ( i = 0; i < marrModifyCoverages.length; i++ )
+				{
+					lstrResult.append("Cobertura ");
+					lstrResult.append(i + 1);
+					lstrResult.append(":");
+					lstrResult.append(pstrLineBreak);
+					DescribeCoverage(lstrResult, marrModifyCoverages[i], pstrLineBreak, null);
+				}
+			}
+		}
+
+		if ( (marrDeleteCoverages != null) && (marrDeleteCoverages.length > 0) )
+		{
+			if ( marrDeleteCoverages.length == 1 )
+			{
+				lstrResult.append("Foi apagada 1 cobertura:");
+				lstrResult.append(pstrLineBreak);
+				DescribeCoverage(lstrResult, marrDeleteCoverages[0], pstrLineBreak, null);
+			}
+			else
+			{
+				lstrResult.append("Foram apagadas ");
+				lstrResult.append(marrDeleteCoverages.length);
+				lstrResult.append(" coberturas:");
+				lstrResult.append(pstrLineBreak);
+				for ( i = 0; i < marrDeleteCoverages.length; i++ )
+				{
+					lstrResult.append("Cobertura ");
+					lstrResult.append(i + 1);
+					lstrResult.append(":");
+					lstrResult.append(pstrLineBreak);
+					DescribeCoverage(lstrResult, marrDeleteCoverages[i], pstrLineBreak, null);
+				}
+			}
+		}
+
+		return lstrResult.toString();
+	}
+
+	public String UndoDesc(String pstrLineBreak)
+	{
+		StringBuilder lstrResult;
+		int i;
+
+		lstrResult = new StringBuilder();
+
+		if ( (marrCreateLines != null) && (marrCreateLines.length > 0) )
+		{
+			if ( marrCreateLines.length == 1 )
+				lstrResult.append("O ramo criado será apagado.");
+			else
+				lstrResult.append("Os ramos criados serão apagados.");
+			lstrResult.append(pstrLineBreak);
+		}
+
+		if ( (marrModifyLines != null) && (marrModifyLines.length > 0) )
+		{
+			lstrResult.append("Serão repostos os valores anteriores:");
+			lstrResult.append(pstrLineBreak);
+			if ( marrModifyLines.length == 1 )
+				DescribeLine(lstrResult, marrModifyLines[0].mobjPrevValues, pstrLineBreak, false);
+			else
+			{
+				for ( i = 0; i < marrModifyLines.length; i++ )
+				{
+					lstrResult.append("Ramo ");
+					lstrResult.append(i + 1);
+					lstrResult.append(":");
+					lstrResult.append(pstrLineBreak);
+					DescribeLine(lstrResult, marrModifyLines[i].mobjPrevValues, pstrLineBreak, false);
+				}
+			}
+		}
+
+		if ( (marrDeleteLines != null) && (marrDeleteLines.length > 0) )
+		{
+			if ( marrDeleteLines.length == 1 )
+				lstrResult.append("O ramo apagado será reposto.");
+			else
+				lstrResult.append("Os ramos apagados serão repostos.");
+			lstrResult.append(pstrLineBreak);
+		}
+
+		if ( (marrCreateSubLines != null) && (marrCreateSubLines.length > 0) )
+		{
+			if ( marrCreateSubLines.length == 1 )
+				lstrResult.append("A modalidade criada será apagada.");
+			else
+				lstrResult.append("As modalidades criadas serão apagadas.");
+			lstrResult.append(pstrLineBreak);
+		}
+
+		if ( (marrModifySubLines != null) && (marrModifySubLines.length > 0) )
+		{
+			lstrResult.append("Serão repostos os valores anteriores:");
+			lstrResult.append(pstrLineBreak);
+			if ( marrModifySubLines.length == 1 )
+				DescribeSubLine(lstrResult, marrModifySubLines[0].mobjPrevValues, pstrLineBreak, null, false);
+			else
+			{
+				for ( i = 0; i < marrModifySubLines.length; i++ )
+				{
+					lstrResult.append("Modalidade ");
+					lstrResult.append(i + 1);
+					lstrResult.append(":");
+					lstrResult.append(pstrLineBreak);
+					DescribeSubLine(lstrResult, marrModifySubLines[i].mobjPrevValues, pstrLineBreak, null, false);
+				}
+			}
+		}
+
+		if ( (marrDeleteSubLines != null) && (marrDeleteSubLines.length > 0) )
+		{
+			if ( marrDeleteSubLines.length == 1 )
+				lstrResult.append("A modalidade apagada será reposta.");
+			else
+				lstrResult.append("As modalidades apagadas serão repostas.");
+			lstrResult.append(pstrLineBreak);
+		}
+
+		if ( (marrCreateCoverages != null) && (marrCreateCoverages.length > 0) )
+		{
+			if ( marrCreateCoverages.length == 1 )
+				lstrResult.append("A cobertura criada será apagada.");
+			else
+				lstrResult.append("As coberturas criadas serão apagadas.");
+			lstrResult.append(pstrLineBreak);
+		}
+
+		if ( (marrModifyCoverages != null) && (marrModifyCoverages.length > 0) )
+		{
+			lstrResult.append("Serão repostos os valores anteriores:");
+			lstrResult.append(pstrLineBreak);
+			if ( marrModifyCoverages.length == 1 )
+				DescribeCoverage(lstrResult, marrModifyCoverages[0].mobjPrevValues, pstrLineBreak, null);
+			else
+			{
+				for ( i = 0; i < marrModifyCoverages.length; i++ )
+				{
+					lstrResult.append("Cobertura ");
+					lstrResult.append(i + 1);
+					lstrResult.append(":");
+					lstrResult.append(pstrLineBreak);
+					DescribeCoverage(lstrResult, marrModifyCoverages[i].mobjPrevValues, pstrLineBreak, null);
+				}
+			}
+		}
+
+		if ( (marrDeleteCoverages != null) && (marrDeleteCoverages.length > 0) )
+		{
+			if ( marrDeleteCoverages.length == 1 )
+				lstrResult.append("A cobertura apagada será reposta.");
+			else
+				lstrResult.append("As coberturas apagadas serão repostas.");
+			lstrResult.append(pstrLineBreak);
+		}
+
+		return lstrResult.toString();
 	}
 
 	protected UUID OpID()
@@ -419,5 +781,115 @@ public class ManageLines
 				throw new BigBangJewelException(e.getMessage(), e);
 			}
 		}
+	}
+
+	private void DescribeLine(StringBuilder pstrString, LineData pobjData, String pstrLineBreak, boolean pbRecurse)
+	{
+		ObjectBase lobjCategory;
+		int i;
+
+		pstrString.append("Categoria: ");
+
+		try
+		{
+			lobjCategory = Engine.GetWorkInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), Constants.ObjID_LineCategory), pobjData.midCategory);
+			pstrString.append((String)lobjCategory.getAt(0));
+		}
+		catch (Throwable e)
+		{
+			pstrString.append("(Erro a obter a categoria.)");
+		}
+		pstrString.append(pstrLineBreak);
+
+		pstrString.append("Ramo: ");
+		pstrString.append(pobjData.mstrName);
+		pstrString.append(pstrLineBreak);
+
+		if ( pbRecurse && (pobjData.marrSubLines != null) && (pobjData.marrSubLines.length > 0) )
+		{
+			pstrString.append("Modalidades:");
+			pstrString.append(pstrLineBreak);
+			for ( i = 0; i < pobjData.marrSubLines.length; i++ )
+				DescribeSubLine(pstrString, pobjData.marrSubLines[i], pstrLineBreak, ">", true);
+		}
+	}
+
+	private void DescribeSubLine(StringBuilder pstrString, SubLineData pobjData, String pstrLineBreak, String pstrPrefix, boolean pbRecurse)
+	{
+		Line lobjOwner;
+		String lstrSubs;
+		int i;
+
+		if ( pstrPrefix == null )
+		{
+			pstrString.append("Ramo: ");
+			try
+			{
+				lobjOwner = Line.GetInstance(Engine.getCurrentNameSpace(), pobjData.midLine);
+				pstrString.append(lobjOwner.getLabel());
+			}
+			catch (Throwable e)
+			{
+				pstrString.append("(Erro a obter o ramo.)");
+			}
+			pstrString.append(pstrLineBreak);
+			pstrPrefix = "Modalidade:";
+			lstrSubs = ">";
+		}
+		else
+			lstrSubs = ">>";
+
+		pstrString.append(pstrPrefix);
+		pstrString.append(" ");
+		pstrString.append(pobjData.mstrName);
+		pstrString.append(pstrLineBreak);
+
+		if ( pbRecurse && (pobjData.marrCoverages != null) && (pobjData.marrCoverages.length > 0) )
+		{
+			pstrString.append(lstrSubs);
+			pstrString.append(" ");
+			pstrString.append("Coberturas:");
+			pstrString.append(pstrLineBreak);
+			for ( i = 0; i < pobjData.marrCoverages.length; i++ )
+				DescribeCoverage(pstrString, pobjData.marrCoverages[i], pstrLineBreak, lstrSubs);
+		}
+	}
+
+	private void DescribeCoverage(StringBuilder pstrString, CoverageData pobjData, String pstrLineBreak, String pstrPrefix)
+	{
+		SubLine lobjOwner;
+		Line lobjOwnerOwner;
+
+		if ( pstrPrefix == null )
+		{
+			try
+			{
+				pstrString.append("Ramo: ");
+				lobjOwner = SubLine.GetInstance(Engine.getCurrentNameSpace(), pobjData.midSubLine);
+				try
+				{
+					lobjOwnerOwner = Line.GetInstance(Engine.getCurrentNameSpace(), (UUID)lobjOwner.getAt(1));
+					pstrString.append(lobjOwnerOwner.getLabel());
+				}
+				catch (Throwable e)
+				{
+					pstrString.append(" (Erro a obter o ramo.)");
+				}
+				pstrString.append(pstrLineBreak);
+				pstrString.append("Modalidade: ");
+				pstrString.append(lobjOwner.getLabel());
+			}
+			catch (Throwable e)
+			{
+				pstrString.append("(Erro a obter a modalidade.)");
+			}
+			pstrString.append(pstrLineBreak);
+			pstrPrefix = "Cobertura:";
+		}
+
+		pstrString.append(pstrPrefix);
+		pstrString.append(" ");
+		pstrString.append(pobjData.mstrName);
+		pstrString.append(pstrLineBreak);
 	}
 }

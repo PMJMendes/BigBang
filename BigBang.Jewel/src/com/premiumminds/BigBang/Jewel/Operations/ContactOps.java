@@ -3,17 +3,21 @@ package com.premiumminds.BigBang.Jewel.Operations;
 import java.io.Serializable;
 import java.util.UUID;
 
+import Jewel.Engine.Engine;
+import Jewel.Engine.Constants.ObjectGUIDs;
+import Jewel.Engine.DataAccess.SQLServer;
+import Jewel.Engine.Implementation.Entity;
+import Jewel.Engine.SysObjects.ObjectBase;
+import Jewel.Petri.SysObjects.JewelPetriException;
+import Jewel.Petri.SysObjects.SubOperation;
+
 import com.premiumminds.BigBang.Jewel.BigBangJewelException;
 import com.premiumminds.BigBang.Jewel.Constants;
 import com.premiumminds.BigBang.Jewel.Objects.Contact;
 import com.premiumminds.BigBang.Jewel.Objects.ContactInfo;
 
-import Jewel.Engine.Engine;
-import Jewel.Engine.DataAccess.SQLServer;
-import Jewel.Engine.Implementation.Entity;
-
 public class ContactOps
-	implements Serializable
+	extends SubOperation
 {
 	private static final long serialVersionUID = 1L;
 
@@ -47,32 +51,161 @@ public class ContactOps
 	public ContactData[] marrModify;
 	public ContactData[] marrDelete;
 
-	public void RunSubOp(SQLServer pdb, UUID pidOwner)
-		throws BigBangJewelException
+	public void LongDesc(StringBuilder pstrResult, String pstrLineBreak)
 	{
 		int i;
 
-		if ( marrCreate != null )
+		if ( (marrCreate != null) && (marrCreate.length > 0) )
 		{
-			for ( i = 0; i < marrCreate.length; i++ )
+			if ( marrCreate.length == 1 )
 			{
-				if ( pidOwner == null )
-					CreateContact(pdb, marrCreate[i], marrCreate[i].midOwnerId);
-				else
-					CreateContact(pdb, marrCreate[i], pidOwner);
+				pstrResult.append("Foi criado 1 contacto:");
+				pstrResult.append(pstrLineBreak);
+				Describe(pstrResult, marrCreate[0], pstrLineBreak, true);
+			}
+			else
+			{
+				pstrResult.append("Foram criados ");
+				pstrResult.append(marrCreate.length);
+				pstrResult.append(" contactos:");
+				pstrResult.append(pstrLineBreak);
+				for ( i = 0; i < marrCreate.length; i++ )
+				{
+					pstrResult.append("Contacto ");
+					pstrResult.append(i + 1);
+					pstrResult.append(":");
+					pstrResult.append(pstrLineBreak);
+					Describe(pstrResult, marrCreate[i], pstrLineBreak, true);
+				}
 			}
 		}
 
-		if ( marrModify != null )
+		if ( (marrModify != null) && (marrModify.length > 0) )
 		{
-			for ( i = 0; i < marrModify.length; i++ )
-				ModifyContact(pdb, marrModify[i]);
+			if ( marrModify.length == 1 )
+			{
+				pstrResult.append("Foi modificado 1 contacto:");
+				pstrResult.append(pstrLineBreak);
+				Describe(pstrResult, marrModify[0], pstrLineBreak, false);
+			}
+			else
+			{
+				pstrResult.append("Foram modificados ");
+				pstrResult.append(marrModify.length);
+				pstrResult.append(" contactos:");
+				pstrResult.append(pstrLineBreak);
+				for ( i = 0; i < marrModify.length; i++ )
+				{
+					pstrResult.append("Contacto ");
+					pstrResult.append(i + 1);
+					pstrResult.append(":");
+					pstrResult.append(pstrLineBreak);
+					Describe(pstrResult, marrModify[i], pstrLineBreak, false);
+				}
+			}
 		}
 
-		if ( marrDelete != null )
+		if ( (marrDelete != null) && (marrDelete.length > 0) )
 		{
-			for ( i = 0; i < marrDelete.length; i++ )
-				DeleteContact(pdb, marrDelete[i]);
+			if ( marrDelete.length == 1 )
+			{
+				pstrResult.append("Foi apagado 1 contacto:");
+				pstrResult.append(pstrLineBreak);
+				Describe(pstrResult, marrDelete[0], pstrLineBreak, true);
+			}
+			else
+			{
+				pstrResult.append("Foram apagados ");
+				pstrResult.append(marrDelete.length);
+				pstrResult.append(" contactos:");
+				pstrResult.append(pstrLineBreak);
+				for ( i = 0; i < marrDelete.length; i++ )
+				{
+					pstrResult.append("Contacto ");
+					pstrResult.append(i + 1);
+					pstrResult.append(":");
+					pstrResult.append(pstrLineBreak);
+					Describe(pstrResult, marrDelete[i], pstrLineBreak, true);
+				}
+			}
+		}
+	}
+
+	public void UndoDesc(StringBuilder pstrResult, String pstrLineBreak)
+	{
+		int i;
+
+		if ( (marrCreate != null) && (marrCreate.length > 0) )
+		{
+			if ( marrCreate.length == 1 )
+				pstrResult.append("O contacto criado será apagado.");
+			else
+				pstrResult.append("Os contactos criados serão apagados.");
+			pstrResult.append(pstrLineBreak);
+		}
+
+		if ( (marrModify != null) && (marrModify.length > 0) )
+		{
+			pstrResult.append("Serão repostos os valores anteriores:");
+			pstrResult.append(pstrLineBreak);
+			if ( marrModify.length == 1 )
+				Describe(pstrResult, marrModify[0].mobjPrevValues, pstrLineBreak, false);
+			else
+			{
+				for ( i = 0; i < marrModify.length; i++ )
+				{
+					pstrResult.append("Contacto ");
+					pstrResult.append(i + 1);
+					pstrResult.append(":");
+					pstrResult.append(pstrLineBreak);
+					Describe(pstrResult, marrModify[i].mobjPrevValues, pstrLineBreak, false);
+				}
+			}
+		}
+
+		if ( (marrDelete != null) && (marrDelete.length > 0) )
+		{
+			if ( marrDelete.length == 1 )
+				pstrResult.append("O contacto apagado será reposto.");
+			else
+				pstrResult.append("Os contactos apagados serão repostos.");
+			pstrResult.append(pstrLineBreak);
+		}
+	}
+
+	public void RunSubOp(SQLServer pdb, UUID pidOwner)
+		throws JewelPetriException
+	{
+		int i;
+
+		try
+		{
+			if ( marrCreate != null )
+			{
+				for ( i = 0; i < marrCreate.length; i++ )
+				{
+					if ( pidOwner == null )
+						CreateContact(pdb, marrCreate[i], marrCreate[i].midOwnerId);
+					else
+						CreateContact(pdb, marrCreate[i], pidOwner);
+				}
+			}
+
+			if ( marrModify != null )
+			{
+				for ( i = 0; i < marrModify.length; i++ )
+					ModifyContact(pdb, marrModify[i]);
+			}
+
+			if ( marrDelete != null )
+			{
+				for ( i = 0; i < marrDelete.length; i++ )
+					DeleteContact(pdb, marrDelete[i]);
+			}
+		}
+		catch (Throwable e)
+		{
+			throw new JewelPetriException(e.getMessage(), e);
 		}
 	}
 
@@ -263,6 +396,83 @@ public class ContactOps
 		catch (Throwable e)
 		{
 			throw new BigBangJewelException(e.getMessage(), e);
+		}
+	}
+
+	private void Describe(StringBuilder pstrString, ContactData pobjData, String pstrLineBreak, boolean pbRecurse)
+	{
+		ObjectBase lobjOwner;
+		ObjectBase lobjZipCode;
+		ObjectBase lobjInfoType;
+		int i;
+
+		pstrString.append("Contacto para: ");
+		try
+		{
+			lobjOwner = Engine.GetWorkInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), pobjData.midOwnerType), pobjData.midOwnerId);
+			pstrString.append(lobjOwner.getLabel());
+		}
+		catch (Throwable e)
+		{
+			pstrString.append("(Erro a obter o dono do contacto.)");
+		}
+		pstrString.append(pstrLineBreak);
+
+		pstrString.append("Nome: ");
+		pstrString.append(pobjData.mstrName);
+		pstrString.append(pstrLineBreak);
+		pstrString.append("Morada:");
+		pstrString.append(pstrLineBreak);
+		pstrString.append("- ");
+		pstrString.append(pobjData.mstrAddress1);
+		pstrString.append(pstrLineBreak);
+		pstrString.append("- ");
+		pstrString.append(pobjData.mstrAddress2);
+		pstrString.append(pstrLineBreak);
+		pstrString.append("- ");
+
+		try
+		{
+			lobjZipCode = Engine.GetWorkInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), ObjectGUIDs.O_PostalCode), pobjData.midZipCode);
+			pstrString.append((String)lobjZipCode.getAt(0));
+			pstrString.append(" ");
+			pstrString.append((String)lobjZipCode.getAt(1));
+			pstrString.append(pstrLineBreak);
+			pstrString.append("- ");
+        	pstrString.append((String)lobjZipCode.getAt(4));
+		}
+		catch (Throwable e)
+		{
+			pstrString.append("(Erro a obter o código postal.)");
+		}
+		pstrString.append(pstrLineBreak);
+
+		if ( pobjData.marrInfo != null )
+		{
+			for ( i = 0; i < pobjData.marrInfo.length; i++ )
+			{
+				try
+				{
+					lobjInfoType = Engine.GetWorkInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), Constants.ObjID_CInfoType),
+							pobjData.marrInfo[i].midType);
+					pstrString.append((String)lobjInfoType.getAt(0));
+				}
+				catch (Throwable e)
+				{
+					pstrString.append("(Erro a obter o tipo de informação de contacto.)");
+				}
+				pstrString.append(": ");
+				pstrString.append(pobjData.marrInfo[i].mstrValue);
+				pstrString.append(pstrLineBreak);
+			}
+		}
+
+		if ( pbRecurse && (pobjData.marrSubContacts != null) )
+		{
+			pstrString.append("Sub-Contactos: ");
+			pstrString.append(pstrLineBreak);
+			for ( i = 0; i < pobjData.marrSubContacts.length; i++ )
+				Describe(pstrString, pobjData.marrSubContacts[i], pstrLineBreak, true);
 		}
 	}
 }

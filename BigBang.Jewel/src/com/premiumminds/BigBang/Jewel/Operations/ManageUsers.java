@@ -9,11 +9,13 @@ import Jewel.Engine.DataAccess.SQLServer;
 import Jewel.Engine.Implementation.Entity;
 import Jewel.Engine.Implementation.User;
 import Jewel.Engine.Security.Password;
+import Jewel.Engine.SysObjects.ObjectBase;
 import Jewel.Petri.SysObjects.JewelPetriException;
 import Jewel.Petri.SysObjects.Operation;
 
 import com.premiumminds.BigBang.Jewel.BigBangJewelException;
 import com.premiumminds.BigBang.Jewel.Constants;
+import com.premiumminds.BigBang.Jewel.Objects.CostCenter;
 import com.premiumminds.BigBang.Jewel.Objects.UserDecoration;
 
 public class ManageUsers
@@ -43,6 +45,143 @@ public class ManageUsers
 	public ManageUsers(UUID pidProcess)
 	{
 		super(pidProcess);
+	}
+
+	public String ShortDesc()
+	{
+		return "Gestão de Utilizadores"; 
+	}
+
+	public String LongDesc(String pstrLineBreak)
+	{
+		StringBuilder lstrResult;
+		int i;
+
+		lstrResult = new StringBuilder();
+
+		if ( (marrCreate != null) && (marrCreate.length > 0) )
+		{
+			if ( marrCreate.length == 1 )
+			{
+				lstrResult.append("Foi criado 1 utilizador:");
+				lstrResult.append(pstrLineBreak);
+				Describe(lstrResult, marrCreate[0], pstrLineBreak);
+			}
+			else
+			{
+				lstrResult.append("Foram criados ");
+				lstrResult.append(marrCreate.length);
+				lstrResult.append(" utilizadores:");
+				lstrResult.append(pstrLineBreak);
+				for ( i = 0; i < marrCreate.length; i++ )
+				{
+					lstrResult.append("Utilizador ");
+					lstrResult.append(i + 1);
+					lstrResult.append(":");
+					lstrResult.append(pstrLineBreak);
+					Describe(lstrResult, marrCreate[i], pstrLineBreak);
+				}
+			}
+		}
+
+		if ( (marrModify != null) && (marrModify.length > 0) )
+		{
+			if ( marrModify.length == 1 )
+			{
+				lstrResult.append("Foi modificado 1 utilizador:");
+				lstrResult.append(pstrLineBreak);
+				Describe(lstrResult, marrModify[0], pstrLineBreak);
+			}
+			else
+			{
+				lstrResult.append("Foram modificados ");
+				lstrResult.append(marrModify.length);
+				lstrResult.append(" utilizadores:");
+				lstrResult.append(pstrLineBreak);
+				for ( i = 0; i < marrModify.length; i++ )
+				{
+					lstrResult.append("Utilizador ");
+					lstrResult.append(i + 1);
+					lstrResult.append(":");
+					lstrResult.append(pstrLineBreak);
+					Describe(lstrResult, marrModify[i], pstrLineBreak);
+				}
+			}
+		}
+
+		if ( (marrDelete != null) && (marrDelete.length > 0) )
+		{
+			if ( marrDelete.length == 1 )
+			{
+				lstrResult.append("Foi apagado 1 utilizador:");
+				lstrResult.append(pstrLineBreak);
+				Describe(lstrResult, marrDelete[0], pstrLineBreak);
+			}
+			else
+			{
+				lstrResult.append("Foram apagados ");
+				lstrResult.append(marrDelete.length);
+				lstrResult.append(" utilizadores:");
+				lstrResult.append(pstrLineBreak);
+				for ( i = 0; i < marrDelete.length; i++ )
+				{
+					lstrResult.append("Utilizador ");
+					lstrResult.append(i + 1);
+					lstrResult.append(":");
+					lstrResult.append(pstrLineBreak);
+					Describe(lstrResult, marrDelete[i], pstrLineBreak);
+				}
+			}
+		}
+
+		return lstrResult.toString();
+	}
+
+	public String UndoDesc(String pstrLineBreak)
+	{
+		StringBuilder lstrResult;
+		int i;
+
+		lstrResult = new StringBuilder();
+
+		if ( (marrCreate != null) && (marrCreate.length > 0) )
+		{
+			if ( marrCreate.length == 1 )
+				lstrResult.append("O utilizador criado será apagado.");
+			else
+				lstrResult.append("Os utilizadores criados serão apagados.");
+			lstrResult.append(pstrLineBreak);
+		}
+
+		if ( (marrModify != null) && (marrModify.length > 0) )
+		{
+			lstrResult.append("Serão repostos os valores anteriores:");
+			lstrResult.append(pstrLineBreak);
+			if ( marrModify.length == 1 )
+				Describe(lstrResult, marrModify[0].mobjPrevValues, pstrLineBreak);
+			else
+			{
+				for ( i = 0; i < marrModify.length; i++ )
+				{
+					lstrResult.append("Utilizador ");
+					lstrResult.append(i + 1);
+					lstrResult.append(":");
+					lstrResult.append(pstrLineBreak);
+					Describe(lstrResult, marrModify[i].mobjPrevValues, pstrLineBreak);
+				}
+			}
+		}
+
+		if ( (marrDelete != null) && (marrDelete.length > 0) )
+		{
+			if ( marrDelete.length == 1 )
+				lstrResult.append("O utilizador apagado será reposto.");
+			else
+				lstrResult.append("Os utilizadores apagados serão repostos.");
+			lstrResult.append(pstrLineBreak);
+		}
+
+		return lstrResult.toString();
 	}
 
 	protected UUID OpID()
@@ -168,5 +307,48 @@ public class ManageUsers
 		{
 			throw new JewelPetriException(e.getMessage(), e);
 		}
+	}
+
+	private void Describe(StringBuilder pstrString, UserData pobjData, String pstrLineBreak)
+	{
+		ObjectBase lobjProfile;
+		CostCenter lobjCostCenter;
+
+		pstrString.append("Nome: ");
+		pstrString.append(pobjData.mstrFullName);
+		pstrString.append(pstrLineBreak);
+		pstrString.append("Username: ");
+		pstrString.append(pobjData.mstrUsername);
+		pstrString.append(pstrLineBreak);
+		pstrString.append("Password: *****");
+		pstrString.append(pstrLineBreak);
+		pstrString.append("Perfil: ");
+
+		try
+		{
+			lobjProfile = Engine.GetWorkInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), ObjectGUIDs.O_Profile), pobjData.midProfile);
+			pstrString.append((String)lobjProfile.getAt(0));
+		}
+		catch (Throwable e)
+		{
+			pstrString.append("(Erro a obter o perfil.)");
+		}
+		pstrString.append(pstrLineBreak);
+
+		pstrString.append("Email: ");
+		pstrString.append(pobjData.mstrEmail);
+		pstrString.append(pstrLineBreak);
+		pstrString.append("Centro de Custo: ");
+
+		try
+		{
+			lobjCostCenter = CostCenter.GetInstance(Engine.getCurrentNameSpace(), pobjData.midCostCenter);
+			pstrString.append((String)lobjCostCenter.getAt(1));
+		}
+		catch (Throwable e)
+		{
+			pstrString.append("(Erro a obter o centro de custo.)");
+		}
+		pstrString.append(pstrLineBreak);
 	}
 }

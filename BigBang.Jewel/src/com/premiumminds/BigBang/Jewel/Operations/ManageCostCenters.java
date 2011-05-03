@@ -37,6 +37,143 @@ public class ManageCostCenters
 		super(pidProcess);
 	}
 
+	public String ShortDesc()
+	{
+		return "Gestão de Centros de Custo"; 
+	}
+
+	public String LongDesc(String pstrLineBreak)
+	{
+		StringBuilder lstrResult;
+		int i;
+
+		lstrResult = new StringBuilder();
+
+		if ( (marrCreate != null) && (marrCreate.length > 0) )
+		{
+			if ( marrCreate.length == 1 )
+			{
+				lstrResult.append("Foi criado 1 centro de custo:");
+				lstrResult.append(pstrLineBreak);
+				Describe(lstrResult, marrCreate[0], pstrLineBreak);
+			}
+			else
+			{
+				lstrResult.append("Foram criados ");
+				lstrResult.append(marrCreate.length);
+				lstrResult.append(" centros de custo:");
+				lstrResult.append(pstrLineBreak);
+				for ( i = 0; i < marrCreate.length; i++ )
+				{
+					lstrResult.append("Centro de custo ");
+					lstrResult.append(i + 1);
+					lstrResult.append(":");
+					lstrResult.append(pstrLineBreak);
+					Describe(lstrResult, marrCreate[i], pstrLineBreak);
+				}
+			}
+		}
+
+		if ( (marrModify != null) && (marrModify.length > 0) )
+		{
+			if ( marrModify.length == 1 )
+			{
+				lstrResult.append("Foi modificado 1 centro de custo:");
+				lstrResult.append(pstrLineBreak);
+				Describe(lstrResult, marrModify[0], pstrLineBreak);
+			}
+			else
+			{
+				lstrResult.append("Foram modificados ");
+				lstrResult.append(marrModify.length);
+				lstrResult.append(" centros de custo:");
+				lstrResult.append(pstrLineBreak);
+				for ( i = 0; i < marrModify.length; i++ )
+				{
+					lstrResult.append("Centro de custo ");
+					lstrResult.append(i + 1);
+					lstrResult.append(":");
+					lstrResult.append(pstrLineBreak);
+					Describe(lstrResult, marrModify[i], pstrLineBreak);
+				}
+			}
+		}
+
+		if ( (marrDelete != null) && (marrDelete.length > 0) )
+		{
+			if ( marrDelete.length == 1 )
+			{
+				lstrResult.append("Foi apagado 1 centro de custo:");
+				lstrResult.append(pstrLineBreak);
+				Describe(lstrResult, marrDelete[0], pstrLineBreak);
+			}
+			else
+			{
+				lstrResult.append("Foram apagados ");
+				lstrResult.append(marrDelete.length);
+				lstrResult.append(" centros de custo:");
+				lstrResult.append(pstrLineBreak);
+				for ( i = 0; i < marrDelete.length; i++ )
+				{
+					lstrResult.append("Centro de custo ");
+					lstrResult.append(i + 1);
+					lstrResult.append(":");
+					lstrResult.append(pstrLineBreak);
+					Describe(lstrResult, marrDelete[i], pstrLineBreak);
+				}
+			}
+		}
+
+		return lstrResult.toString();
+	}
+
+	public String UndoDesc(String pstrLineBreak)
+	{
+		StringBuilder lstrResult;
+		int i;
+
+		lstrResult = new StringBuilder();
+
+		if ( (marrCreate != null) && (marrCreate.length > 0) )
+		{
+			if ( marrCreate.length == 1 )
+				lstrResult.append("O centro de custo criado será apagado.");
+			else
+				lstrResult.append("Os centros de custo criados serão apagados.");
+			lstrResult.append(pstrLineBreak);
+		}
+
+		if ( (marrModify != null) && (marrModify.length > 0) )
+		{
+			lstrResult.append("Serão repostos os valores anteriores:");
+			lstrResult.append(pstrLineBreak);
+			if ( marrModify.length == 1 )
+				Describe(lstrResult, marrModify[0].mobjPrevValues, pstrLineBreak);
+			else
+			{
+				for ( i = 0; i < marrModify.length; i++ )
+				{
+					lstrResult.append("Centro de custo ");
+					lstrResult.append(i + 1);
+					lstrResult.append(":");
+					lstrResult.append(pstrLineBreak);
+					Describe(lstrResult, marrModify[i].mobjPrevValues, pstrLineBreak);
+				}
+			}
+		}
+
+		if ( (marrDelete != null) && (marrDelete.length > 0) )
+		{
+			if ( marrDelete.length == 1 )
+				lstrResult.append("O centro de custo apagado será reposto.");
+			else
+				lstrResult.append("Os centros de custo apagados serão repostos.");
+			lstrResult.append(pstrLineBreak);
+		}
+
+		return lstrResult.toString();
+	}
+
 	protected UUID OpID()
 	{
 		return Constants.OPID_ManageCostCenters;
@@ -99,5 +236,15 @@ public class ManageCostCenters
 		{
 			throw new JewelPetriException(e.getMessage(), e);
 		}
+	}
+
+	private void Describe(StringBuilder pstrString, CostCenterData pobjData, String pstrLineBreak)
+	{
+		pstrString.append("Código: ");
+		pstrString.append(pobjData.mstrCode);
+		pstrString.append(pstrLineBreak);
+		pstrString.append("Nome: ");
+		pstrString.append(pobjData.mstrName);
+		pstrString.append(pstrLineBreak);
 	}
 }

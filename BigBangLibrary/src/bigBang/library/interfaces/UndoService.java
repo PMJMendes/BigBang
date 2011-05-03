@@ -1,6 +1,8 @@
 package bigBang.library.interfaces;
 
+import bigBang.library.shared.BigBangException;
 import bigBang.library.shared.ProcessUndoItem;
+import bigBang.library.shared.SessionExpiredException;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.rpc.RemoteService;
@@ -21,6 +23,6 @@ public interface UndoService
 		}
 	}
 
-	public ProcessUndoItem[] getProcessUndoItems(String processId);
-	public ProcessUndoItem undo(String undoItemId);
+	public ProcessUndoItem[] getProcessUndoItems(String processId) throws SessionExpiredException, BigBangException;
+	public ProcessUndoItem undo(String undoItemId) throws SessionExpiredException, BigBangException;
 }
