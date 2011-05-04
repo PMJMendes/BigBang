@@ -3,6 +3,7 @@ package bigBang.module.generalSystemModule.client.userInterface.view;
 import com.google.gwt.event.dom.client.HasClickHandlers;
 import com.google.gwt.user.client.ui.Button;
 
+import bigBang.library.client.userInterface.ExpandableListBoxFormField;
 import bigBang.library.client.userInterface.ListBoxFormField;
 import bigBang.library.client.userInterface.PasswordTextBoxFormField;
 import bigBang.library.client.userInterface.TextBoxFormField;
@@ -32,8 +33,8 @@ public class UserForm extends FormView<User> {
 		username = new TextBoxFormField("Nome de Utilizador", new UserFormValidator.UsernameValidator());
 		password = new PasswordTextBoxFormField("Palavra-passe", new UserFormValidator.PasswordValidator());
 		email = new TextBoxFormField("E-mail", new UserFormValidator.EmailValidator());
-		role = new ListBoxFormField("Perfil", new UserFormValidator.UserProfileValidator());
-		costCenter = new ListBoxFormField("Centro de Custo", new UserFormValidator.UserCostCenterValidator());
+		role = new ExpandableListBoxFormField(null, "Perfil", new UserFormValidator.UserProfileValidator());
+		costCenter = new ExpandableListBoxFormField(null, "Centro de Custo", new UserFormValidator.UserCostCenterValidator());
 
 		addFormField(name);
 		addFormField(username);

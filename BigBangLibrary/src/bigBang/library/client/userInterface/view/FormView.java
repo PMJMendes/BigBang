@@ -159,7 +159,7 @@ public abstract class FormView<T> extends View implements Validatable, HasEditab
 	public void addRuler(){
 		SimplePanel p = new SimplePanel();
 		p.setSize("100%", "20px");
-		//p.setStyleName("formSection");
+		p.setStyleName("formSection");
 		this.panel.add(p);
 	}
 
@@ -227,7 +227,15 @@ public abstract class FormView<T> extends View implements Validatable, HasEditab
 			
 			@Override
 			public void onAttachOrDetach(AttachEvent event) {
-				wrapper.setCellHeight(absolutePanel, panel.getOffsetHeight() + "px");
+				if(event.isAttached()){
+					absolutePanel.addAttachHandler(new AttachEvent.Handler() {
+						
+						@Override
+						public void onAttachOrDetach(AttachEvent event) {
+							wrapper.setCellHeight(absolutePanel, panel.getOffsetHeight() + "px");
+						}
+					});
+				}
 			}
 		});
 
@@ -274,10 +282,13 @@ public abstract class FormView<T> extends View implements Validatable, HasEditab
 		this.value = value;
 	}
 	
+	public Widget getContentPanel(){
+		return this.panel;
+	}
+	
 	public void lock(boolean lock) {
 		setReadOnly(true);
 		topToolbar.setVisible(!lock);
 	}
-
 }
 

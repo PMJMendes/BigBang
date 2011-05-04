@@ -8,6 +8,7 @@ import bigBang.library.client.userInterface.FilterableList;
 import bigBang.library.client.userInterface.ListEntry;
 import bigBang.library.client.userInterface.ListHeader;
 import bigBang.library.client.userInterface.view.PopupPanel;
+import bigBang.module.generalSystemModule.client.userInterface.LineList.Entry;
 import bigBang.module.generalSystemModule.client.userInterface.view.CoverageForm;
 import bigBang.module.generalSystemModule.interfaces.CoveragesService;
 import bigBang.module.generalSystemModule.shared.Coverage;
@@ -137,7 +138,9 @@ public class CoverageList extends FilterableList<Coverage> {
 
 			@Override
 			public void onSuccess(Coverage result) {
-				add(new Entry(result));
+				Entry entry = new Entry(result);
+				add(entry);
+				entry.setSelected(true);
 				showForm(false);
 			}
 		});

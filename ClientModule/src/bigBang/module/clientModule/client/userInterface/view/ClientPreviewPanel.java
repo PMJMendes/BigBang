@@ -118,7 +118,7 @@ public class ClientPreviewPanel extends PreviewPanel<ClientProcess> {
 			documentsPanel.add(e);
 		}*/
 		
-		rightBar.add(new ContactsPreviewList());
+		//rightBar.add(new ContactsPreviewList());
 		
 		
 		

@@ -22,21 +22,21 @@ public class GeneralSystemModule implements Module {
 		GeneralSystemService.Util.getInstance().getGeneralSystemProcessId(new BigBangAsyncCallback<String>() {
 
 			@Override
-			public void onSuccess(String result) {
+			public void onSuccess(final String result) {
 				permissionManager.getProcessPermissionContext(result, new BigBangAsyncCallback<Void>() {
 
 					@Override
-					public void onSuccess(Void result) {
-						setup(eventBus, permissionManager);
+					public void onSuccess(Void result2) {
+						setup(eventBus, permissionManager, result);
 					}
 				});	
 			}
 		});
 	}
 
-	private void setup(EventBus eventBus, BigBangPermissionManager permissionManager) {
+	private void setup(EventBus eventBus, BigBangPermissionManager permissionManager, String processId) {
 		//GeneralSystem section
-		GeneralSystemSection generalSystemSection = new GeneralSystemSection(permissionManager);
+		GeneralSystemSection generalSystemSection = new GeneralSystemSection(permissionManager, processId);
 		GeneralSystemSectionView generalSystemSectionView = new GeneralSystemSectionView();
 		GeneralSystemSectionViewPresenter generalSystemSectionPresenter = new GeneralSystemSectionViewPresenter(eventBus, null, generalSystemSectionView);
 		generalSystemSectionPresenter.setSection(generalSystemSection);

@@ -115,9 +115,10 @@ public class TaxManagementOperationViewPresenter implements
 			@Override
 			public void onClick(ClickEvent event) {
 				Tax value = view.getTaxForm().getValue();
-				if(value.id == null)
+				if(value.id == null){
+					value.coverageId = view.getCurrentCoverageId();
 					createTax(value);
-				else 
+				}else 
 					saveTax(value);
 			}
 		});

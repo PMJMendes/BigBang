@@ -1,12 +1,12 @@
 package bigBang.module.generalSystemModule.client.userInterface.view;
 
+import bigBang.library.client.ContactManager;
 import bigBang.library.client.HasEditableValue;
 import bigBang.library.client.HasValueSelectables;
 import bigBang.library.client.ValueSelectable;
 import bigBang.library.client.userInterface.ContactsPreviewList;
 import bigBang.library.client.userInterface.ListEntry;
 import bigBang.library.client.userInterface.view.View;
-import bigBang.library.shared.Contact;
 import bigBang.module.generalSystemModule.client.userInterface.MediatorList;
 import bigBang.module.generalSystemModule.client.userInterface.MediatorListEntry;
 import bigBang.module.generalSystemModule.client.userInterface.presenter.MediatorManagementOperationViewPresenter;
@@ -19,13 +19,12 @@ import com.google.gwt.user.client.ui.SplitLayoutPanel;
 
 public class MediatorManagementOperationView extends View implements MediatorManagementOperationViewPresenter.Display {
 
-	private static final int LIST_WIDTH = 400; //px
+	private static final int LIST_WIDTH = 300; //px
 
 	private MediatorList mediatorList;
 	private MediatorForm mediatorForm;
 	private ContactsPreviewList contactsList;
-	
-	private String mediatorInstanceId;
+	private ContactManager contactManager;
 	
 	public MediatorManagementOperationView() {
 		SplitLayoutPanel wrapper = new SplitLayoutPanel();
@@ -38,7 +37,8 @@ public class MediatorManagementOperationView extends View implements MediatorMan
 
 		SplitLayoutPanel formWrapper = new SplitLayoutPanel();
 		
-		contactsList = new ContactsPreviewList();
+		contactManager = new ContactManager();
+		contactsList = new ContactsPreviewList(contactManager);
 		contactsList.setSize("100%", "100%");
 		
 		formWrapper.addEast(contactsList, 250);
@@ -49,17 +49,6 @@ public class MediatorManagementOperationView extends View implements MediatorMan
 		wrapper.add(formWrapper);
 
 		initWidget(wrapper);
-	}
-
-	@Override
-	public void setIds(String mediatorInstanceId) {
-		this.mediatorInstanceId = mediatorInstanceId;
-		this.contactsList.setEntityInfo(this.mediatorInstanceId);
-	}
-	
-	@Override
-	public Contact[] getContacts() {
-		return this.contactsList.getContacts();
 	}
 
 	@Override
@@ -162,4 +151,10 @@ public class MediatorManagementOperationView extends View implements MediatorMan
 		((Button)this.mediatorList.newButton).setEnabled(!readOnly);
 		this.mediatorForm.setReadOnly(readOnly);
 	}
+
+	@Override
+	public void setContactManager(ContactManager contactManager) {
+		this.contactManager = contactManager;
+	}
+
 }

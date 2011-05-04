@@ -8,6 +8,7 @@ import bigBang.library.client.userInterface.TextBoxFormField;
 import bigBang.library.client.userInterface.view.FormView;
 import bigBang.module.generalSystemModule.shared.ModuleConstants;
 import bigBang.module.generalSystemModule.shared.Tax;
+import bigBang.module.generalSystemModule.shared.formValidator.TaxFormValidator;
 
 public class TaxForm extends FormView<Tax> {
 	
@@ -20,9 +21,9 @@ public class TaxForm extends FormView<Tax> {
 	private Tax tax;
 	
 	public TaxForm() {
-		name = new TextBoxFormField("Designação");
-		value = new TextBoxFormField("Valor");
-		unit = new ExpandableListBoxFormField(ModuleConstants.ListIDs.ValueUnits, "Unidade");
+		name = new TextBoxFormField("Designação", new TaxFormValidator.NameValidator());
+		value = new TextBoxFormField("Valor", new TaxFormValidator.ValueValidator());
+		unit = new ExpandableListBoxFormField(ModuleConstants.ListIDs.ValueUnits, "Unidade", new TaxFormValidator.UnitValidator());
 		
 		addSection("Informação Geral");
 		
@@ -40,7 +41,12 @@ public class TaxForm extends FormView<Tax> {
 	@Override
 	public Tax getInfo() {
 		tax.name = name.getValue();
-		tax.value = Double.parseDouble(value.getValue());
+		tax.value = 0;
+		try{
+			tax.value = Double.parseDouble(value.getValue());
+		}catch(NumberFormatException e){
+			tax.value = 0;
+		}
 		tax.currencyId = unit.getValue();
 		return tax;
 	}

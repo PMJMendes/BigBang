@@ -71,6 +71,7 @@ public class List<T> extends View implements HasValueSelectables<T>, java.util.L
 		listWrapper.setSize("100%", "100%");
 		this.listPanel = new VerticalPanel();
 		this.listPanel.setSize("100%", "100%");
+		this.listPanel.setStyleName("emptyContainer");
 		listWrapper.add(this.listPanel);
 
 		scrollPanel.add(listWrapper);

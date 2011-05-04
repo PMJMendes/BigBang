@@ -4,8 +4,10 @@ import bigBang.library.client.Selectable;
 import bigBang.library.client.ValueSelectable;
 import bigBang.library.client.event.SelectionChangedEvent;
 import bigBang.library.client.event.SelectionChangedEventHandler;
+import bigBang.library.client.resources.Resources;
 import bigBang.library.client.userInterface.FilterableList;
 import bigBang.library.client.userInterface.ListEntry;
+import bigBang.library.client.userInterface.ListHeader;
 import bigBang.library.client.userInterface.NavigationListEntry;
 import bigBang.library.client.userInterface.NavigationPanel;
 import bigBang.library.client.userInterface.view.PopupPanel;
@@ -17,8 +19,12 @@ import bigBang.module.generalSystemModule.shared.Line;
 import bigBang.module.generalSystemModule.shared.SubLine;
 import bigBang.module.generalSystemModule.shared.Tax;
 
+import com.google.gwt.core.client.GWT;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.HasClickHandlers;
 import com.google.gwt.user.client.ui.HasValue;
+import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.SplitLayoutPanel;
 
 public class TaxManagementOperationView extends View implements TaxManagementOperationViewPresenter.Display {
@@ -32,11 +38,9 @@ public class TaxManagementOperationView extends View implements TaxManagementOpe
 	private boolean readOnly = false;
 	
 	private NavigationPanel navPanel;
-	
 	private PopupPanel popup;
 	
 	private TaxList taxList;
-	
 	private TaxForm form;
 	
 	public TaxManagementOperationView(){
@@ -48,6 +52,10 @@ public class TaxManagementOperationView extends View implements TaxManagementOpe
 		
 		lineList = new FilterableList<Line>() {
 			protected void onAttach() {
+				ListHeader header = new ListHeader();
+				header.setText("Ramos");
+				header.setHeight("25px");
+				setHeaderWidget(header);
 				clearSelection();
 				super.onAttach();
 			};
@@ -56,6 +64,10 @@ public class TaxManagementOperationView extends View implements TaxManagementOpe
 		
 		subLineList = new FilterableList<SubLine>() {
 			protected void onAttach() {
+				ListHeader header = new ListHeader();
+				header.setText("Modalidades");
+				header.setHeight("25px");
+				setHeaderWidget(header);
 				clearSelection();
 				super.onAttach();
 			};
@@ -77,6 +89,10 @@ public class TaxManagementOperationView extends View implements TaxManagementOpe
 		
 		coverageList = new FilterableList<Coverage>() {
 			protected void onAttach() {
+				ListHeader header = new ListHeader();
+				header.setText("Coberturas");
+				header.setHeight("25px");
+				setHeaderWidget(header);
 				clearSelection();
 				if(!readOnly)
 					taxList.getNewButton().setEnabled(true);
@@ -127,7 +143,6 @@ public class TaxManagementOperationView extends View implements TaxManagementOpe
 		popup.setWidth("650px");
 		
 		wrapper.add(taxList);
-		
 		initWidget(wrapper);
 	}
 
@@ -186,7 +201,7 @@ public class TaxManagementOperationView extends View implements TaxManagementOpe
 		this.taxList.clear();
 		for(int k = 0; k < taxes.length; k++) {
 			Tax tax = taxes[k];
-			addTaxToList(tax);
+			addTaxToList(tax, false);
 		}
 	}
 
@@ -227,8 +242,13 @@ public class TaxManagementOperationView extends View implements TaxManagementOpe
 
 	@Override
 	public String getCurrentCoverageId() {
+		Coverage c = getCurrentCoverage();
+		return c == null ? null : c.id; 
+	}
+	
+	private Coverage getCurrentCoverage(){
 		for(ValueSelectable<Coverage> c : this.coverageList.getSelected())
-			return c.getValue().id;
+			return c.getValue();
 		return null; 
 	}
 
@@ -249,15 +269,37 @@ public class TaxManagementOperationView extends View implements TaxManagementOpe
 
 
 	@Override
-	public void addTaxToList(Tax tax) {
+	public void addTaxToList(Tax tax){
+		addTaxToList(tax, true);
+	}
+	
+
+	public void addTaxToList(Tax tax, boolean insertInArray) {
 		ListEntry<Tax> taxEntry = new ListEntry<Tax>(tax){
 			public <I extends Object> void setInfo(I info) {
 				Tax tax = (Tax) info;
 				setTitle(tax.name);
 			};
+			
+			@Override
+			public void setSelected(boolean selected, boolean fireEvents) {
+				super.setSelected(selected, fireEvents);
+				Resources r = GWT.create(Resources.class);
+				setLeftWidget(new Image(selected ? r.listEditIconSmallWhite() : r.listEditIconSmallBlack()));
+			}
 		};
+		
 		taxEntry.setTitle(tax.name);
 		this.taxList.add(taxEntry);
+		if(insertInArray){
+			Coverage c = this.getCurrentCoverage();
+			Tax[] newArray = new Tax[c.taxes.length + 1];
+			for(int i = 0; i < c.taxes.length; i++){
+				newArray[i] = c.taxes[i];
+			}
+			newArray[c.taxes.length == 0 ? 0 : c.taxes.length - 1] = tax;
+			c.taxes = newArray;
+		}
 		taxList.getScrollable().scrollToBottom();
 	}
 

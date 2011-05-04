@@ -69,7 +69,10 @@ public class ExpandableListBoxFormField extends ListBoxFormField {
 				popup.add(list);
 				list.clearFilters();
 				list.setEditModeEnabled(false);
-				synchronizeToListBox();
+				if(hasServices)
+					synchronizeToListBox();
+				else
+					synchronizeToList();
 				popup.center();
 			}
 		});
@@ -77,7 +80,8 @@ public class ExpandableListBoxFormField extends ListBoxFormField {
 		list = new TypifiedListManagementPanel(listId, listDescription) {
 			@Override
 			protected void onSizeChanged() {
-				synchronizeToListBox();
+				if(hasServices)
+					synchronizeToListBox();
 			};
 			
 			public void onCellDoubleClicked(bigBang.library.client.userInterface.ListEntry<TipifiedListItem> entry) {
@@ -110,13 +114,14 @@ public class ExpandableListBoxFormField extends ListBoxFormField {
 		wrapper.add(mandatoryIndicatorLabel);
 		setFieldWidth("150px");
 		
-		if(!hasServices)
-			synchronizeToList();
+		/*if(!hasServices)
+			synchronizeToList();*/
 
 		clearValues();
 	}
 
 	private void synchronizeToList() {
+		this.list.clear();
 		int size = this.listBox.getItemCount();
 		for(int i = 0; i < size; i++) {
 			TipifiedListItem item = new TipifiedListItem();

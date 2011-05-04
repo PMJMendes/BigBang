@@ -1,8 +1,10 @@
 package bigBang.module.generalSystemModule.client.userInterface.view;
 
+import bigBang.library.client.ContactManager;
 import bigBang.library.client.HasEditableValue;
 import bigBang.library.client.HasValueSelectables;
 import bigBang.library.client.ValueSelectable;
+import bigBang.library.client.userInterface.ContactsPreviewList;
 import bigBang.library.client.userInterface.ListEntry;
 import bigBang.library.client.userInterface.view.View;
 import bigBang.module.generalSystemModule.client.userInterface.InsuranceAgencyList;
@@ -20,6 +22,8 @@ public class InsuranceAgencyManagementOperationView extends View implements Insu
 
 	private InsuranceAgencyList insuranceAgencyList;
 	private InsuranceAgencyForm insuranceAgencyForm;
+	private ContactsPreviewList contactsPreviewList;
+	private ContactManager contactsManager;
 	
 	public InsuranceAgencyManagementOperationView() {
 		SplitLayoutPanel wrapper = new SplitLayoutPanel();
@@ -31,7 +35,17 @@ public class InsuranceAgencyManagementOperationView extends View implements Insu
 		wrapper.setWidgetMinSize(insuranceAgencyList, LIST_WIDTH);
 
 		insuranceAgencyForm = new InsuranceAgencyForm();
-		wrapper.add(insuranceAgencyForm);
+		
+		SplitLayoutPanel formWrapper = new SplitLayoutPanel();
+		
+		contactsManager = new ContactManager();
+		contactsPreviewList = new ContactsPreviewList(contactsManager);
+		contactsPreviewList.setSize("100%", "100%");
+		
+		formWrapper.addEast(contactsPreviewList, 250);
+		formWrapper.add(insuranceAgencyForm);
+		
+		wrapper.add(formWrapper);
 
 		initWidget(wrapper);
 	}

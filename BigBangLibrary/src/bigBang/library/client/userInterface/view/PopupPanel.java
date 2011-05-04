@@ -110,5 +110,9 @@ public class PopupPanel extends View implements HasWidgets {
 	public boolean remove(Widget w) {
 		return panel.remove(w);
 	}
+	
+	public void setAutoHideEnabled(boolean hide) {
+		this.popup.setAutoHideEnabled(hide);
+	}
 
 }

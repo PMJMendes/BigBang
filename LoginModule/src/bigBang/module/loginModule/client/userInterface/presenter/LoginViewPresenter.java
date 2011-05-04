@@ -1,15 +1,20 @@
 package bigBang.module.loginModule.client.userInterface.presenter;
 
+import org.gwt.mosaic.ui.client.MessageBox;
+
 import bigBang.library.client.BigBangAsyncCallback;
 import bigBang.library.client.EventBus;
 import bigBang.library.client.event.LoginSuccessEvent;
 import bigBang.library.client.event.LogoutEvent;
 import bigBang.library.client.event.LogoutEventHandler;
+import bigBang.library.client.event.SessionExpiredEvent;
+import bigBang.library.client.event.SessionExpiredEventHandler;
 import bigBang.library.client.userInterface.presenter.ViewPresenter;
 import bigBang.library.client.userInterface.view.View;
 import bigBang.library.interfaces.Service;
 import bigBang.module.loginModule.interfaces.AuthenticationServiceAsync;
 
+import com.gargoylesoftware.htmlunit.AlertHandler;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
@@ -139,9 +144,18 @@ public class LoginViewPresenter implements ViewPresenter {
 					@Override
 					public void onSuccess(String result) {
 						GWT.log("logout");
-						Window.Location.reload(); //TODO
+						Window.Location.reload();
 					}
 				});
+			}
+		});
+		eventBus.addHandler(SessionExpiredEvent.TYPE, new SessionExpiredEventHandler() {
+			
+			@Override
+			public void onSessionExpired() {
+				GWT.log("A sessão expirou");
+				MessageBox.alert("", "A sessão expirou.");
+				Window.Location.reload();
 			}
 		});
 	}

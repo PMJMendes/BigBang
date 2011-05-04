@@ -33,6 +33,7 @@ public class TypifiedListManagementPanel extends FilterableList<TipifiedListItem
 			deleteButton.getElement().getStyle().setCursor(Cursor.POINTER);
 			deleteButton.setTitle("Apagar");
 			setRightWidget(deleteButton);
+			deleteButton.setVisible(false);
 		}
 
 		@Override
@@ -40,7 +41,7 @@ public class TypifiedListManagementPanel extends FilterableList<TipifiedListItem
 			TipifiedListItem item = (TipifiedListItem) info;
 			setTitle(item.value);
 		};
-		
+
 		@Override
 		public void setSelected(boolean selected, boolean fireEvents) {
 			super.setSelected(selected, fireEvents);
@@ -51,12 +52,12 @@ public class TypifiedListManagementPanel extends FilterableList<TipifiedListItem
 		}
 
 	}
-	
+
 
 	private String listId;
 	private TextBox valueTextBox;
-	private boolean editModeEnabled;
-	
+	private boolean editModeEnabled, hasService, editable;
+
 	//UI
 	private Button editButton;
 	private HorizontalPanel toolBar;
@@ -64,27 +65,28 @@ public class TypifiedListManagementPanel extends FilterableList<TipifiedListItem
 	public TypifiedListManagementPanel(String listId, String listName){
 		super();
 		this.listId = listId;
+		hasService = editable = listId != null && !listId.equals("");
 		this.setSize("300px", "400px");
-		
+
 		this.editButton = new Button();
 		this.editButton.setSize("80px", "27px");
-		
+
 		VerticalPanel headerWrapper = new VerticalPanel();
 		headerWrapper.setSize("100%", "100%");
-		
+
 		ListHeader header = new ListHeader();
 		header.setText(listName);
 		header.setRightWidget(editButton);
 		editButton.addClickHandler(new ClickHandler() {
-			
+
 			@Override
 			public void onClick(ClickEvent event) {
 				setEditModeEnabled(!isEditModeEnabled());
 			}
 		});
-		
+
 		headerWrapper.add(header);
-		
+
 		toolBar = new HorizontalPanel();
 		toolBar.getElement().getStyle().setProperty("borderTop", "1px solid gray");
 		toolBar.setVerticalAlignment(HasVerticalAlignment.ALIGN_MIDDLE);
@@ -100,9 +102,9 @@ public class TypifiedListManagementPanel extends FilterableList<TipifiedListItem
 		toolBar.add(valueTextBox);
 		toolBar.add(addButton);
 		toolBar.setCellWidth(valueTextBox, "100%");
-		
+
 		headerWrapper.add(toolBar);
-		
+
 		setHeaderWidget(headerWrapper);
 
 		addButton.setEnabled(false);
@@ -122,25 +124,26 @@ public class TypifiedListManagementPanel extends FilterableList<TipifiedListItem
 			}
 		});
 
-		TipifiedListService.Util.getInstance().getListItems(this.listId, new BigBangAsyncCallback<TipifiedListItem[]>() {
+		if(hasService){
+			TipifiedListService.Util.getInstance().getListItems(this.listId, new BigBangAsyncCallback<TipifiedListItem[]>() {
 
-			@Override
-			public void onSuccess(TipifiedListItem[] result) {
-				for(int i = 0; i < result.length; i++) {
-					final TypifiedListEntry entry = new TypifiedListEntry(result[i]);
-					entry.deleteButton.addClickHandler(new ClickHandler() {
+				@Override
+				public void onSuccess(TipifiedListItem[] result) {
+					for(int i = 0; i < result.length; i++) {
+						final TypifiedListEntry entry = new TypifiedListEntry(result[i]);
+						entry.deleteButton.addClickHandler(new ClickHandler() {
 
-						@Override
-						public void onClick(ClickEvent event) {
-							deleteEntry(entry);
-						}
-					});
-					add(entry);
+							@Override
+							public void onClick(ClickEvent event) {
+								deleteEntry(entry);
+							}
+						});
+						add(entry);
+					}
+					setEditModeEnabled(isEditModeEnabled());
 				}
-				setEditModeEnabled(isEditModeEnabled());
-			}
-		});
-
+			});
+		}
 		this.addAttachHandler(new AttachEvent.Handler() {
 
 			@Override
@@ -149,11 +152,13 @@ public class TypifiedListManagementPanel extends FilterableList<TipifiedListItem
 					getElement().getStyle().setBackgroundColor("white");
 			}
 		});
-		
+
 		setEditModeEnabled(false);
 	}
 
 	private void addNew(){
+		if(!hasService)
+			return;
 		String value = valueTextBox.getValue();
 		TipifiedListItem item = new TipifiedListItem();
 		item.value = value;
@@ -162,6 +167,7 @@ public class TypifiedListManagementPanel extends FilterableList<TipifiedListItem
 			@Override
 			public void onSuccess(TipifiedListItem result) {
 				final TypifiedListEntry entry = new TypifiedListEntry(result);
+				entry.deleteButton.setVisible(isEditModeEnabled());
 				entry.deleteButton.addClickHandler(new ClickHandler() {
 
 					@Override
@@ -179,6 +185,8 @@ public class TypifiedListManagementPanel extends FilterableList<TipifiedListItem
 	}
 
 	private void deleteEntry(final TypifiedListEntry e){
+		if(!hasService)
+			return;
 		TipifiedListService.Util.getInstance().deleteListItem(this.listId, e.getValue().id,
 				new BigBangAsyncCallback<Void>() {
 
@@ -190,12 +198,12 @@ public class TypifiedListManagementPanel extends FilterableList<TipifiedListItem
 
 			@Override
 			public void onFailure(Throwable caught) {
-				
+
 				super.onFailure(caught);
 			}
 		});
 	}
-	
+
 	public void setEditModeEnabled(boolean enabled){
 		this.editModeEnabled = enabled;
 		this.editButton.setText(enabled ? "Cancelar" : "Editar");
@@ -205,16 +213,21 @@ public class TypifiedListManagementPanel extends FilterableList<TipifiedListItem
 			((TypifiedListEntry) e).deleteButton.setVisible(enabled);
 		}
 	}
-	
+
 	private boolean isEditModeEnabled(){
 		return this.editModeEnabled;
 	}
 
-	public void setReadOnly(boolean readonly) {
-		this.setEditModeEnabled(false);
-		this.editButton.setVisible(!readonly);
+	public void setEditable(boolean editable) {
+		this.editable = editable;
+		this.editButton.setVisible(!editable);
 	}
 	
+	public void setReadOnly(boolean readonly) {
+		this.setEditModeEnabled(false);
+		this.editButton.setVisible(!readonly && editable);
+	}
+
 	@Override
 	protected HandlerRegistration bindEntry(ListEntry<TipifiedListItem> e) {
 		e.setDoubleClickable(true);

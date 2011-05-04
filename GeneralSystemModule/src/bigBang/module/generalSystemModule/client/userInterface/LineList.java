@@ -141,7 +141,9 @@ public class LineList extends FilterableList<Line> {
 
 			@Override
 			public void onSuccess(Line result) {
-				add(new Entry(result));
+				Entry entry = new Entry(result);
+				add(entry);
+				entry.setSelected(true);
 				showForm(false);
 			}
 		});

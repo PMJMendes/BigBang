@@ -22,6 +22,7 @@ import com.google.gwt.event.dom.client.HasClickHandlers;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.SplitLayoutPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
+import com.google.gwt.user.client.ui.Widget;
 
 public class CostCenterManagementOperationView extends View implements CostCenterManagementOperationViewPresenter.Display {
 
@@ -44,15 +45,18 @@ public class CostCenterManagementOperationView extends View implements CostCente
 		previewWrapper.setSize("100%", "100%");
 		
 		costCenterForm = new CostCenterForm();
-
-		previewWrapper.add(costCenterForm.getNonScrollableContent());
+		Widget costCenterFormContent = costCenterForm.getNonScrollableContent();
+		previewWrapper.add(costCenterFormContent);
+		previewWrapper.setCellHeight(costCenterFormContent, "100px");		
 		
-		previewWrapper.add(new FormViewSection("Membros").getHeader());
+		Widget sectionHeader = new FormViewSection("Membros").getHeader();
+		previewWrapper.add(sectionHeader);
+		previewWrapper.setCellHeight(sectionHeader, "22px");
 		
 		memberList = new CostCenterMemberList();
+		memberList.setSize("100%", "100%");
 		previewWrapper.add(memberList);
 		previewWrapper.setCellHeight(memberList, "100%");
-
 		wrapper.add(previewWrapper);
 
 		initWidget(wrapper);

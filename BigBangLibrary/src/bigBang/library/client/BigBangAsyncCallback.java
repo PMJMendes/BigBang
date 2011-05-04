@@ -1,5 +1,8 @@
 package bigBang.library.client;
 
+import bigBang.library.client.event.SessionExpiredEvent;
+import bigBang.library.shared.SessionExpiredException;
+
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
@@ -13,14 +16,20 @@ public abstract class BigBangAsyncCallback<T> implements AsyncCallback<T> {
 	
 	@Override
 	public void onFailure(Throwable caught) {
-		onSessionExpiredException();
+		try{
+			throw(caught);
+		}catch(SessionExpiredException see){
+			onSessionExpiredException();
+		} catch (Throwable e) {
+			System.err.println("Erro: " + e.getMessage());
+		}
 	}
 
 	@Override
 	public abstract void onSuccess(T result);
 	
 	protected void onSessionExpiredException(){
-		GWT.log("SESSION EXPIRED");
+		eventBus.fireEvent(new SessionExpiredEvent());
 	}
 
 }

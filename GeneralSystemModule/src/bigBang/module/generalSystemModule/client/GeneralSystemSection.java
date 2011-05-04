@@ -1,5 +1,6 @@
 package bigBang.module.generalSystemModule.client;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 
 import bigBang.library.client.BigBangPermissionManager;
@@ -8,8 +9,13 @@ import bigBang.library.client.MenuSections;
 import bigBang.library.client.userInterface.MenuSection;
 import bigBang.library.client.userInterface.TextBadge;
 import bigBang.library.client.userInterface.presenter.OperationViewPresenter;
+import bigBang.library.client.userInterface.presenter.UndoOperationViewPresenter;
 import bigBang.library.client.userInterface.presenter.ViewPresenter;
+import bigBang.library.client.userInterface.view.UndoOperationView;
 import bigBang.library.interfaces.Service;
+import bigBang.library.interfaces.UndoService;
+import bigBang.library.interfaces.UndoServiceAsync;
+import bigBang.library.shared.operation.UndoOperation;
 import bigBang.module.generalSystemModule.client.userInterface.presenter.CostCenterManagementOperationViewPresenter;
 import bigBang.module.generalSystemModule.client.userInterface.presenter.CoverageManagementOperationViewPresenter;
 import bigBang.module.generalSystemModule.client.userInterface.presenter.InsuranceAgencyManagementOperationViewPresenter;
@@ -43,15 +49,15 @@ import bigBang.module.generalSystemModule.shared.operation.UserManagementOperati
 import com.google.gwt.core.client.GWT;
 
 public class GeneralSystemSection implements MenuSection {
-
+	
 	private static final String ID = ModuleConstants.ProcessTypeIDs.GENERAL_SYSTEM;
 	private static final String DESCRIPTION = "Sistema Geral";
 	private static final String SHORT_DESCRIPTION = "Sist. Geral";
-	private HashMap<String, OperationViewPresenter> sectionOperationPresenters;
+	private ArrayList<OperationViewPresenter> sectionOperationPresenters;
 	public BigBangPermissionManager permissionManager;
 	
-	public GeneralSystemSection(BigBangPermissionManager permissionManager){
-		this.sectionOperationPresenters = new HashMap<String, OperationViewPresenter>();
+	public GeneralSystemSection(BigBangPermissionManager permissionManager, String processId){
+		this.sectionOperationPresenters = new ArrayList<OperationViewPresenter>();
 		this.permissionManager = permissionManager;
 		
 		/* COST CENTER MANAGEMENT */
@@ -60,7 +66,7 @@ public class GeneralSystemSection implements MenuSection {
 		CostCenterServiceAsync costCenterService = CostCenterService.Util.getInstance();
 		CostCenterManagementOperationViewPresenter costCenterManagementOperationPresenter = new CostCenterManagementOperationViewPresenter(null, (Service)costCenterService, costCenterManagementOperationView);
 		costCenterManagementOperationPresenter.setOperation(costCenterManagementOperation);
-		this.sectionOperationPresenters.put(CostCenterManagementOperation.ID, (OperationViewPresenter)costCenterManagementOperationPresenter);
+		this.sectionOperationPresenters.add((OperationViewPresenter)costCenterManagementOperationPresenter);
 
 		/* USERS MANAGEMENT */
 		UserManagementOperation userManagementOperation = (UserManagementOperation)GWT.create(UserManagementOperation.class);
@@ -68,7 +74,7 @@ public class GeneralSystemSection implements MenuSection {
 		UserServiceAsync userService = UserService.Util.getInstance();
 		UserManagementOperationViewPresenter userManagementOperationPresenter = new UserManagementOperationViewPresenter(null, userService, userManagementOperationView);
 		userManagementOperationPresenter.setOperation(userManagementOperation);
-		this.sectionOperationPresenters.put(UserManagementOperation.ID, (OperationViewPresenter)userManagementOperationPresenter);
+		this.sectionOperationPresenters.add((OperationViewPresenter)userManagementOperationPresenter);
 		
 		/* CLIENT GROUP MANAGEMENT */
 
@@ -78,7 +84,7 @@ public class GeneralSystemSection implements MenuSection {
 		MediatorServiceAsync mediatorService = MediatorService.Util.getInstance();
 		MediatorManagementOperationViewPresenter mediatorManagementOperationPresenter = new MediatorManagementOperationViewPresenter(null, mediatorService, mediatorManagementOperationView);
 		mediatorManagementOperationPresenter.setOperation(mediatorManagementOperation);
-		this.sectionOperationPresenters.put(MediatorManagementOperation.ID, (OperationViewPresenter)mediatorManagementOperationPresenter);
+		this.sectionOperationPresenters.add((OperationViewPresenter)mediatorManagementOperationPresenter);
 		
 		/* INSURANCE AGENCIES MANAGEMENT */
 		InsuranceAgencyManagementOperation insuranceAgencyManagementOperation = (InsuranceAgencyManagementOperation)GWT.create(InsuranceAgencyManagementOperation.class);
@@ -86,7 +92,7 @@ public class GeneralSystemSection implements MenuSection {
 		InsuranceAgencyServiceAsync insuranceAgencyService = InsuranceAgencyService.Util.getInstance();
 		InsuranceAgencyManagementOperationViewPresenter insuranceAgencyManagementOperationPresenter = new InsuranceAgencyManagementOperationViewPresenter(null, insuranceAgencyService, insuranceAgencyManagementOperationView);
 		insuranceAgencyManagementOperationPresenter.setOperation(insuranceAgencyManagementOperation);
-		this.sectionOperationPresenters.put(InsuranceAgencyManagementOperation.ID, (OperationViewPresenter)insuranceAgencyManagementOperationPresenter);
+		this.sectionOperationPresenters.add((OperationViewPresenter)insuranceAgencyManagementOperationPresenter);
 		
 		/* COVERAGES MANAGEMENT */
 		CoverageManagementOperation coverageManagementOperation = (CoverageManagementOperation)GWT.create(CoverageManagementOperation.class);
@@ -94,14 +100,22 @@ public class GeneralSystemSection implements MenuSection {
 		CoveragesServiceAsync coveragesService = CoveragesService.Util.getInstance();
 		CoverageManagementOperationViewPresenter coverageManagementOperationPresenter = new CoverageManagementOperationViewPresenter(null, coveragesService, coverageManagementOperationView);
 		coverageManagementOperationPresenter.setOperation(coverageManagementOperation);
-		this.sectionOperationPresenters.put(CoverageManagementOperation.ID, (OperationViewPresenter)coverageManagementOperationPresenter);
+		this.sectionOperationPresenters.add((OperationViewPresenter)coverageManagementOperationPresenter);
 		
 		/* TAXES MANAGEMENT */
 		TaxManagementOperation taxManagementOperation = (TaxManagementOperation)GWT.create(TaxManagementOperation.class);
 		TaxManagementOperationView taxManagementOperationView = (TaxManagementOperationView) GWT.create(TaxManagementOperationView.class);
 		TaxManagementOperationViewPresenter taxManagementOperationPresenter = new TaxManagementOperationViewPresenter(null, coveragesService, taxManagementOperationView);
 		taxManagementOperationPresenter.setOperation(taxManagementOperation);
-		this.sectionOperationPresenters.put(TaxManagementOperation.ID, (OperationViewPresenter)taxManagementOperationPresenter);
+		this.sectionOperationPresenters.add((OperationViewPresenter)taxManagementOperationPresenter);
+	
+		/* UNDO */
+		UndoOperation undoOperation = (UndoOperation)GWT.create(UndoOperation.class);
+		UndoOperationView undoOperationView = (UndoOperationView) GWT.create(UndoOperationView.class);
+		UndoServiceAsync undoService = UndoService.Util.getInstance();
+		UndoOperationViewPresenter undoOperationViewPresenter = new UndoOperationViewPresenter(null, undoService, undoOperationView, processId);
+		undoOperationViewPresenter.setOperation(undoOperation);
+		this.sectionOperationPresenters.add((OperationViewPresenter) undoOperationViewPresenter);
 	}
 	
 	public String getId() {
@@ -125,10 +139,10 @@ public class GeneralSystemSection implements MenuSection {
 	}
 	
 	public OperationViewPresenter[] getOperationPresenters(){
-		int nOps = this.sectionOperationPresenters.size();
-		OperationViewPresenter[] result = new OperationViewPresenter[nOps];
-		for(int i = 0; i < nOps; i++)
-			result[i] = (OperationViewPresenter)this.sectionOperationPresenters.values().toArray()[i];
+		OperationViewPresenter[] result = new OperationViewPresenter[this.sectionOperationPresenters.size()];
+		for(int i = 0; i < result.length; i++) {
+			result[i] = this.sectionOperationPresenters.get(i);
+		}
 		return result;
 	}
 

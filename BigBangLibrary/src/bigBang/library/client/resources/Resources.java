@@ -38,6 +38,9 @@ public interface Resources extends ClientBundle {
 	@Source("images/editIcon1White.png")
 	ImageResource listEditIconSmallWhite();
 	
+	@Source("images/undoIcon.png")
+	ImageResource undoIcon();
+	
 
 	//CONTACTS
 	@Source("images/contactsIcon.png")

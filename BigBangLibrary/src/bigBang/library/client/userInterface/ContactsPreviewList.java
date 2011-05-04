@@ -1,6 +1,6 @@
 package bigBang.library.client.userInterface;
 
-import bigBang.library.client.BigBangAsyncCallback;
+import bigBang.library.client.ContactManager;
 import bigBang.library.client.Selectable;
 import bigBang.library.client.ValueSelectable;
 import bigBang.library.client.event.SelectedStateChangedEvent;
@@ -9,15 +9,13 @@ import bigBang.library.client.event.SelectionChangedEvent;
 import bigBang.library.client.event.SelectionChangedEventHandler;
 import bigBang.library.client.resources.Resources;
 import bigBang.library.client.userInterface.view.ContactForm;
-import bigBang.library.interfaces.ContactsService;
 import bigBang.library.shared.Contact;
-import bigBang.library.shared.ContactInfo;
-import bigBang.library.shared.ModuleConstants;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Overflow;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.logical.shared.AttachEvent;
 import com.google.gwt.event.logical.shared.CloseEvent;
 import com.google.gwt.event.logical.shared.CloseHandler;
 import com.google.gwt.user.client.ui.Button;
@@ -34,15 +32,25 @@ public class ContactsPreviewList extends List<Contact> {
 		protected Label nameLabel;
 		protected Label valueLabel;
 		protected ExpandableListBoxFormField type;
+		protected ContactManager contactManager;
 
-		public ContactPreviewPanel(){
+		public ContactPreviewPanel(ContactManager contactManager){
 			super();
 			setSize("100%", "100%");
 			navBar.setText("Contacto");
+			this.contactManager = contactManager;
 		}
 		
 		public void setContact(Contact contact) {
-			ContactForm form = new ContactForm();
+			final ContactForm form = new ContactForm();
+			form.addAttachHandler(new AttachEvent.Handler() {
+				
+				@Override
+				public void onAttachOrDetach(AttachEvent event) {
+					if(event.isAttached())
+						setSize(form.getOffsetWidth() + "px", "500px");
+				}
+			});
 			form.setValue(contact);
 			
 			if(!hasHomeWidget())
@@ -76,15 +84,12 @@ public class ContactsPreviewList extends List<Contact> {
 	protected Resources resources;
 	protected PopupPanel contactPopupPanel;
 	protected SelectedStateChangedEventHandler contactSelectedStateChangedHandler;
-	
-	protected String entityInstanceId;
+	protected ContactManager manager;
 
-	public ContactsPreviewList(){
-		this(null, null);
-	}
-	
-	public ContactsPreviewList(String entityTypeId, String entityInstanceId){
+	public ContactsPreviewList(ContactManager manager){
 		super();
+
+		this.manager = manager;
 
 		this.scrollPanel.getElement().getStyle().setOverflow(Overflow.AUTO);
 		resources = GWT.create(Resources.class);
@@ -112,7 +117,7 @@ public class ContactsPreviewList extends List<Contact> {
 					contactPopupPanel.hide();
 					((ListEntry<?>) event.getSource()).setSelected(false);
 				}else{
-					ContactPreviewPanel contactPreviewPanel = new ContactPreviewPanel();
+					ContactPreviewPanel contactPreviewPanel = new ContactPreviewPanel(ContactsPreviewList.this.manager);
 					contactPreviewPanel.setContact(((ValueSelectable<Contact>)event.getSource()).getValue());
 					contactPopupPanel.setWidget(contactPreviewPanel);
 					contactPopupPanel.setPopupPositionAndShow(new PositionCallback() {
@@ -125,7 +130,6 @@ public class ContactsPreviewList extends List<Contact> {
 					});
 				}
 			}
-			
 		};
 		
 		contactPopupPanel.addCloseHandler(new CloseHandler<PopupPanel>() {
@@ -145,89 +149,40 @@ public class ContactsPreviewList extends List<Contact> {
 			@Override
 			public void onClick(ClickEvent event) {
 				bigBang.library.client.userInterface.view.PopupPanel popup = new bigBang.library.client.userInterface.view.PopupPanel();
-				ContactPreviewPanel contactPreviewPanel = new ContactPreviewPanel();
+				ContactPreviewPanel contactPreviewPanel = new ContactPreviewPanel(ContactsPreviewList.this.manager);
 				contactPreviewPanel.setContact(new Contact());
 				popup.add(contactPreviewPanel);
-				popup.setSize("600px", "400px");
+				popup.setSize("600px", "600px");
 				popup.center();
 			}
 		});
 		header.setRightWidget(newButton);
-		setEntityInfo(entityInstanceId);
+		refresh();
+	}
+	
+	public void refresh(){
+		for(Contact c : this.manager.getContacts()){
+			addEntryForContact(c);
+		}
 	}
 
-	private void addEntryForContact(Contact c){
+	protected void addEntryForContact(Contact c){
 		ListEntry<Contact> e = new ListEntry<Contact>(c) {
 			@Override
 			public void setSelected(boolean selected, boolean fireEvents) {
 				super.setSelected(selected, fireEvents);
 				if(selected) {
-					setLeftWidget(new Image(resources.phoneSmallIconWhite()));
+					//setLeftWidget(new Image(resources.phoneSmallIconWhite()));
 				}else{
-					setLeftWidget(new Image(resources.phoneSmallIconBlack()));
+					//setLeftWidget(new Image(resources.phoneSmallIconBlack()));
 				}
 			}
 		};
-		e.setLeftWidget(new Image(resources.phoneSmallIconBlack()));
-		e.setText("94545678");
+		//e.setLeftWidget(new Image(resources.phoneSmallIconBlack()));
+		e.setText(c.name);
 		e.setToggleable(true);
 		e.addSelectedStateChangedEventHandler(contactSelectedStateChangedHandler);
 		e.setHeight("25px");
-		c.subContacts = new Contact[1];
-		c.subContacts[0] = new Contact();
 		add(e);
-	}
-
-	public void setEntityInfo(String entityInstanceId) {
-		this.entityInstanceId = entityInstanceId;
-		if(entityInstanceId != null){
-			fetchContacts();
-			
-			/** TODO
-			 * Contact c = new Contact();
-			
-			c.name = "novo contacto";
-			c.info = new ContactInfo[2];
-			c.info[0] = new ContactInfo();
-			c.info[0].typeId = "";
-			c.info[0].value = "telefone";
-			
-			c.info[1] = new ContactInfo();
-			c.info[1].typeId = "";
-			c.info[1].value = "email";
-			
-			ContactsService.Util.getInstance().createContact(, c, new BigBangAsyncCallback<Contact>() {
-
-				@Override
-				public void onSuccess(Contact result) {
-					GWT.log("success");
-				}
-			});*/
-		}		
-	}
-	
-	protected void fetchContacts(){
-		if(this.entityInstanceId == null)
-			return;
-		ContactsService.Util.getInstance().getContacts(entityInstanceId, new BigBangAsyncCallback<Contact[]>() {
-
-			@Override
-			public void onSuccess(Contact[] result) {
-				clear();
-				for(int i = 0; i < result.length; i++){
-					addEntryForContact(result[i]);
-				}
-			}
-		});
-	}
-
-	public Contact[] getContacts() {
-		Contact[] result = new Contact[size()];
-		int i = 0;
-		for(ValueSelectable<Contact> s : entries){
-			result[i] = s.getValue();
-			i++;
-		}
-		return result;
 	}
 }

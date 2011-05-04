@@ -10,7 +10,7 @@ import com.google.gwt.user.client.Timer;
 
 public class TasksNotificationsManager extends Timer {
 	
-	final int DELAY = 1000 * 10; //miliseconds
+	final int DELAY = 1000 * 60; //miliseconds
 	private EventBus eventBus;
 
 	public TasksNotificationsManager(EventBus eventBus){

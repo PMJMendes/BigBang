@@ -8,6 +8,7 @@ import bigBang.library.client.userInterface.FilterableList;
 import bigBang.library.client.userInterface.ListEntry;
 import bigBang.library.client.userInterface.ListHeader;
 import bigBang.library.client.userInterface.view.PopupPanel;
+import bigBang.module.generalSystemModule.client.userInterface.LineList.Entry;
 import bigBang.module.generalSystemModule.client.userInterface.view.SubLineForm;
 import bigBang.module.generalSystemModule.interfaces.CoveragesService;
 import bigBang.module.generalSystemModule.shared.SubLine;
@@ -142,8 +143,10 @@ public class SubLineList extends FilterableList<SubLine> {
 
 			@Override
 			public void onSuccess(SubLine result) {
-				add(new Entry(result));
-				showForm(false);
+				Entry entry = new Entry(result);
+				add(entry);
+				entry.setSelected(true);
+				showForm(false);;
 			}
 		});
 	}

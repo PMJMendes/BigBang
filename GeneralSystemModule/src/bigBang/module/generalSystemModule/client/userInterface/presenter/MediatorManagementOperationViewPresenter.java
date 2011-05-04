@@ -3,6 +3,7 @@ package bigBang.module.generalSystemModule.client.userInterface.presenter;
 import java.util.Collection;
 
 import bigBang.library.client.BigBangAsyncCallback;
+import bigBang.library.client.ContactManager;
 import bigBang.library.client.EventBus;
 import bigBang.library.client.HasEditableValue;
 import bigBang.library.client.HasValueSelectables;
@@ -21,13 +22,12 @@ import bigBang.module.generalSystemModule.interfaces.MediatorServiceAsync;
 import bigBang.module.generalSystemModule.shared.CommissionProfile;
 import bigBang.module.generalSystemModule.shared.Mediator;
 import bigBang.module.generalSystemModule.shared.ModuleConstants;
-import bigBang.module.generalSystemModule.shared.formValidator.MediatorFormValidator.ComissionProfileValidator;
 import bigBang.module.generalSystemModule.shared.operation.MediatorManagementOperation;
 
-import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.HasClickHandlers;
+import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.HasWidgets;
 import com.google.gwt.user.client.ui.Widget;
 
@@ -50,8 +50,7 @@ public class MediatorManagementOperationViewPresenter implements
 		void lockForm(boolean lock);
 		
 		//Contacts
-		void setIds(String mediatorInstanceId);
-		Contact[] getContacts();
+		void setContactManager(ContactManager contactManager);
 		
 		//General
 		HasClickHandlers getNewButton();
@@ -67,7 +66,9 @@ public class MediatorManagementOperationViewPresenter implements
 
 	private MediatorServiceAsync service;
 	private Display view;
+	@SuppressWarnings("unused")
 	private EventBus eventBus;
+	private ContactManager contactManager;
 	
 	private MediatorManagementOperation operation;
 	
@@ -80,6 +81,7 @@ public class MediatorManagementOperationViewPresenter implements
 		setEventBus(eventBus);
 		setService(service);
 		setView(view);
+		contactManager = new ContactManager();
 	}
 
 	public void setService(Service service) {
@@ -153,19 +155,28 @@ public class MediatorManagementOperationViewPresenter implements
 				Collection<? extends Selectable> selected = event.getSelected();
 				if(selected.size() == 0){
 					view.getForm().setValue(null);
+					contactManager.setOfflineMode(true);
 					return;
 				}			
 				
+				contactManager.setOfflineMode(false);
 				for(Selectable s : selected) {
 					@SuppressWarnings("unchecked")
 					ValueSelectable<Mediator> vs = (ValueSelectable<Mediator>) s;
 					Mediator value = vs.getValue();
 					view.getForm().setValue(value);
 					view.getForm().setReadOnly(true);
-					view.setIds(value.id);
 					view.lockForm(value == null);
 					if(value.id != null){
 						view.removeNewMediatorPreparation();
+						contactManager.setEntityInfo(value.id, null, new AsyncCallback<Void>() { //TODO
+							
+							@Override
+							public void onSuccess(Void result) {}
+							
+							@Override
+							public void onFailure(Throwable caught) {}
+						});
 					}
 				}
 			}
@@ -200,6 +211,7 @@ public class MediatorManagementOperationViewPresenter implements
 				if(!view.isFormValid())
 					return;
 				Mediator value = view.getForm().getValue();
+				value.contacts = contactManager.getContactsArray();
 				if(value.id == null)
 					createMediator(value);
 				else

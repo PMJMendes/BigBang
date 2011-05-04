@@ -8,6 +8,7 @@ import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.HasClickHandlers;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.CellPanel;
+import com.google.gwt.user.client.ui.HasVerticalAlignment;
 import com.google.gwt.user.client.ui.HasWidgets;
 import com.google.gwt.user.client.ui.UIObject;
 import com.google.gwt.user.client.ui.VerticalPanel;
@@ -44,7 +45,7 @@ public class ContactForm extends FormView<Contact> {
 		public ContactInfoListEntry(ContactInfo value) {
 			super(value);
 			VerticalPanel wrapper = new VerticalPanel();
-			wrapper.setSize("100%", "100%");
+			wrapper.setSize("100%", "500px");
 			
 			typeField = new ExpandableListBoxFormField(ModuleConstants.ListIDs.ContactInfoTypes, "Tipo");
 			valueField = new TextBoxFormField("Valor");
@@ -100,15 +101,23 @@ public class ContactForm extends FormView<Contact> {
 		this.newButton = new Button("Criar novo");
 		((UIObject) newButton).setWidth("100px");
 		header.setLeftWidget((Widget) this.newButton);
-		subContactsList.setHeaderWidget(header);
 		
+		VerticalPanel subContactListWrapper = new VerticalPanel();
+		subContactListWrapper.setVerticalAlignment(HasVerticalAlignment.ALIGN_TOP);
+		subContactListWrapper.setSize("100%", "100%");
+		
+		subContactListWrapper.add(header);
+		subContactListWrapper.add(subContactsList.getListContent());
+		subContactListWrapper.setCellHeight(subContactsList.getListContent(), "100%");
+		subContactsList.getListContent().setHeight("150px");
 		HasWidgets listWrapper = currentSection.getContentWrapper();
 		((VerticalPanel) listWrapper).setSpacing(0);
 		((UIObject) listWrapper).getElement().getStyle().setPadding(0, Unit.PX);
-		currentSection.setContent(subContactsList);
-		subContactsList.setSize("100%", "200px");
+		currentSection.setContent(subContactListWrapper);
+		currentSection.setStyleName("emptyContainer");
+		//currentSection.setHeight("200px");
 		
-		addWidget(subContactsList);
+		addWidget(subContactListWrapper);
 	}
 
 	public List<Contact> getSubContactsList() {
