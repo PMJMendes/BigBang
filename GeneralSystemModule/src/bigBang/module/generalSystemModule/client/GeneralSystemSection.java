@@ -59,6 +59,14 @@ public class GeneralSystemSection implements MenuSection {
 	public GeneralSystemSection(BigBangPermissionManager permissionManager, String processId){
 		this.sectionOperationPresenters = new ArrayList<OperationViewPresenter>();
 		this.permissionManager = permissionManager;
+
+		/* UNDO */
+		UndoOperation undoOperation = (UndoOperation)GWT.create(UndoOperation.class);
+		UndoOperationView undoOperationView = (UndoOperationView) GWT.create(UndoOperationView.class);
+		UndoServiceAsync undoService = UndoService.Util.getInstance();
+		UndoOperationViewPresenter undoOperationViewPresenter = new UndoOperationViewPresenter(null, undoService, undoOperationView, processId);
+		undoOperationViewPresenter.setOperation(undoOperation);
+		this.sectionOperationPresenters.add((OperationViewPresenter) undoOperationViewPresenter);
 		
 		/* COST CENTER MANAGEMENT */
 		CostCenterManagementOperation costCenterManagementOperation = (CostCenterManagementOperation)GWT.create(CostCenterManagementOperation.class);
@@ -108,14 +116,6 @@ public class GeneralSystemSection implements MenuSection {
 		TaxManagementOperationViewPresenter taxManagementOperationPresenter = new TaxManagementOperationViewPresenter(null, coveragesService, taxManagementOperationView);
 		taxManagementOperationPresenter.setOperation(taxManagementOperation);
 		this.sectionOperationPresenters.add((OperationViewPresenter)taxManagementOperationPresenter);
-	
-		/* UNDO */
-		UndoOperation undoOperation = (UndoOperation)GWT.create(UndoOperation.class);
-		UndoOperationView undoOperationView = (UndoOperationView) GWT.create(UndoOperationView.class);
-		UndoServiceAsync undoService = UndoService.Util.getInstance();
-		UndoOperationViewPresenter undoOperationViewPresenter = new UndoOperationViewPresenter(null, undoService, undoOperationView, processId);
-		undoOperationViewPresenter.setOperation(undoOperation);
-		this.sectionOperationPresenters.add((OperationViewPresenter) undoOperationViewPresenter);
 	}
 	
 	public String getId() {
