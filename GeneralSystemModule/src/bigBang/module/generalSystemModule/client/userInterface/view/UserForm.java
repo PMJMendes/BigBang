@@ -69,13 +69,13 @@ public class UserForm extends FormView<User> {
 	}
 	
 	public void setCostCenters(CostCenter[] costCenters) {
-		this.role.clearValues();
+		this.costCenter.clearValues();
 		if(costCenters != null){
 			for(int i = 0; i < costCenters.length; i++) {
 				addCostCenterItem(costCenters[i].name, costCenters[i].id);
 			}
 		}
-		this.role.clear();
+		this.costCenter.clear();
 	}
 
 	public void showPasswordField(boolean show){

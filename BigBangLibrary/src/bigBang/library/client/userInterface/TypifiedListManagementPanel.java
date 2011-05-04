@@ -13,6 +13,7 @@ import com.google.gwt.event.dom.client.KeyUpEvent;
 import com.google.gwt.event.dom.client.KeyUpHandler;
 import com.google.gwt.event.logical.shared.AttachEvent;
 import com.google.gwt.event.shared.HandlerRegistration;
+import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.HasVerticalAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
@@ -125,24 +126,7 @@ public class TypifiedListManagementPanel extends FilterableList<TipifiedListItem
 		});
 
 		if(hasService){
-			TipifiedListService.Util.getInstance().getListItems(this.listId, new BigBangAsyncCallback<TipifiedListItem[]>() {
-
-				@Override
-				public void onSuccess(TipifiedListItem[] result) {
-					for(int i = 0; i < result.length; i++) {
-						final TypifiedListEntry entry = new TypifiedListEntry(result[i]);
-						entry.deleteButton.addClickHandler(new ClickHandler() {
-
-							@Override
-							public void onClick(ClickEvent event) {
-								deleteEntry(entry);
-							}
-						});
-						add(entry);
-					}
-					setEditModeEnabled(isEditModeEnabled());
-				}
-			});
+			refresh(null);
 		}
 		this.addAttachHandler(new AttachEvent.Handler() {
 
@@ -184,6 +168,29 @@ public class TypifiedListManagementPanel extends FilterableList<TipifiedListItem
 		});
 	}
 
+	public void refresh(final AsyncCallback<Void> done){
+		TipifiedListService.Util.getInstance().getListItems(this.listId, new BigBangAsyncCallback<TipifiedListItem[]>() {
+
+			@Override
+			public void onSuccess(TipifiedListItem[] result) {
+				for(int i = 0; i < result.length; i++) {
+					final TypifiedListEntry entry = new TypifiedListEntry(result[i]);
+					entry.deleteButton.addClickHandler(new ClickHandler() {
+
+						@Override
+						public void onClick(ClickEvent event) {
+							deleteEntry(entry);
+						}
+					});
+					add(entry);
+				}
+				setEditModeEnabled(isEditModeEnabled());
+				if(done != null)
+					done.onSuccess(null);
+			}
+		});
+	}
+	
 	private void deleteEntry(final TypifiedListEntry e){
 		if(!hasService)
 			return;

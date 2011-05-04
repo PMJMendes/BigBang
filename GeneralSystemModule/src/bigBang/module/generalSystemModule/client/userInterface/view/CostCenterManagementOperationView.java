@@ -46,6 +46,7 @@ public class CostCenterManagementOperationView extends View implements CostCente
 		
 		costCenterForm = new CostCenterForm();
 		Widget costCenterFormContent = costCenterForm.getNonScrollableContent();
+		costCenterFormContent.setSize("100%", "100%");
 		previewWrapper.add(costCenterFormContent);
 		previewWrapper.setCellHeight(costCenterFormContent, "100px");		
 		
@@ -187,7 +188,9 @@ public class CostCenterManagementOperationView extends View implements CostCente
 		form.setUserProfiles(new UserProfile[]{user.profile});
 		form.setInfo(user);
 		form.lock(true);
-		popup.add(form.getNonScrollableContent());
+		Widget formContent = form.getNonScrollableContent();
+		formContent.setHeight("240px");
+		popup.add(formContent);
 		popup.center();
 	}
 

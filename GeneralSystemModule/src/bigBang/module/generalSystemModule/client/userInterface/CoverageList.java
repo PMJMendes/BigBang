@@ -18,6 +18,7 @@ import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.HasClickHandlers;
 import com.google.gwt.user.client.ui.Image;
+import com.google.gwt.user.client.ui.Widget;
 
 public class CoverageList extends FilterableList<Coverage> {
 
@@ -85,7 +86,9 @@ public class CoverageList extends FilterableList<Coverage> {
 			}
 		});
 		this.popup = new PopupPanel("Cobertura");
-		popup.add(form.getNonScrollableContent());
+		Widget formContent = form.getNonScrollableContent();
+		formContent.setHeight("80px");
+		popup.add(formContent);
 		popup.setWidth("650px");
 
 		setHeaderWidget(header);
@@ -111,7 +114,6 @@ public class CoverageList extends FilterableList<Coverage> {
 		if(parentId == null){
 			clear();
 		}
-			
 	}
 	
 	public boolean add(Entry e) {

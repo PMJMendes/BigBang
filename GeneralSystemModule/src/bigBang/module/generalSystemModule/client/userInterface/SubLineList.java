@@ -19,6 +19,7 @@ import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.HasClickHandlers;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.Widget;
 
 public class SubLineList extends FilterableList<SubLine> {
 
@@ -91,7 +92,9 @@ public class SubLineList extends FilterableList<SubLine> {
 			}
 		});
 		this.popup = new PopupPanel("Modalidade");
-		popup.add(form.getNonScrollableContent());
+		Widget formContent = form.getNonScrollableContent();
+		formContent.setHeight("80px");
+		popup.add(formContent);
 		popup.setWidth("650px");
 
 		setHeaderWidget(header);

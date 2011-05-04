@@ -18,6 +18,7 @@ import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.HasClickHandlers;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.Widget;
 
 public class LineList extends FilterableList<Line> {
 
@@ -88,7 +89,9 @@ public class LineList extends FilterableList<Line> {
 			}
 		});
 		this.popup = new PopupPanel("Ramo");
-		popup.add(form.getNonScrollableContent());
+		Widget formContent = form.getNonScrollableContent();
+		formContent.setHeight("120px");
+		popup.add(formContent);
 		popup.setWidth("650px");
 
 		header.showRefreshButton();

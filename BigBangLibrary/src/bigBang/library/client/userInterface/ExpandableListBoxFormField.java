@@ -15,6 +15,7 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Cursor;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.HasVerticalAlignment;
 import com.google.gwt.user.client.ui.Image;
@@ -69,9 +70,22 @@ public class ExpandableListBoxFormField extends ListBoxFormField {
 				popup.add(list);
 				list.clearFilters();
 				list.setEditModeEnabled(false);
-				if(hasServices)
-					synchronizeToListBox();
-				else
+				if(hasServices){
+					list.refresh(new AsyncCallback<Void>(){
+
+						@Override
+						public void onFailure(Throwable caught) {
+							// TODO Auto-generated method stub
+							
+						}
+
+						@Override
+						public void onSuccess(Void result) {
+							synchronizeToListBox();
+						}
+						
+					});
+				}else
 					synchronizeToList();
 				popup.center();
 			}
