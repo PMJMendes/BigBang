@@ -3,6 +3,8 @@ package bigBang.module.generalSystemModule.client.userInterface;
 import org.gwt.mosaic.ui.client.ToolButton;
 
 import bigBang.library.client.BigBangAsyncCallback;
+import bigBang.library.client.Selectable;
+import bigBang.library.client.ValueSelectable;
 import bigBang.library.client.resources.Resources;
 import bigBang.library.client.userInterface.FilterableList;
 import bigBang.library.client.userInterface.ListEntry;
@@ -12,6 +14,8 @@ import bigBang.module.generalSystemModule.client.userInterface.LineList.Entry;
 import bigBang.module.generalSystemModule.client.userInterface.view.CoverageForm;
 import bigBang.module.generalSystemModule.interfaces.CoveragesService;
 import bigBang.module.generalSystemModule.shared.Coverage;
+import bigBang.module.generalSystemModule.shared.Line;
+import bigBang.module.generalSystemModule.shared.SubLine;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -56,8 +60,10 @@ public class CoverageList extends FilterableList<Coverage> {
 	private ClickHandler editHandler;
 	
 	private String parentId;
+	private SubLineList parentList;
 
-	public CoverageList(){
+	public CoverageList(SubLineList parentList){
+		this.parentList = parentList;
 		ListHeader header = new ListHeader();
 		header.setText("Coberturas");
 		header.showNewButton("Novo");
@@ -88,6 +94,7 @@ public class CoverageList extends FilterableList<Coverage> {
 		this.popup = new PopupPanel("Cobertura");
 		Widget formContent = form.getNonScrollableContent();
 		formContent.setHeight("80px");
+		formContent.setWidth("650px");
 		popup.add(formContent);
 		popup.setWidth("650px");
 
@@ -142,6 +149,7 @@ public class CoverageList extends FilterableList<Coverage> {
 			public void onSuccess(Coverage result) {
 				Entry entry = new Entry(result);
 				add(entry);
+				bindUp();
 				entry.setSelected(true);
 				showForm(false);
 			}
@@ -174,6 +182,20 @@ public class CoverageList extends FilterableList<Coverage> {
 		this.newButton.setEnabled(!readonly);
 		for(ListEntry<Coverage> e : entries){
 			((Entry) e).setEditable(!readonly);
+		}
+	}
+	
+	private void bindUp() {
+		for(Selectable s : parentList.getSelected()) {
+			@SuppressWarnings("unchecked")
+			ValueSelectable<SubLine> vs = (ValueSelectable<SubLine>) s;
+			
+			Coverage[] newArray = new Coverage[size()];
+			for(int i = 0; i < newArray.length; i++) {
+				newArray[i] = get(i).getValue();
+			}
+			vs.getValue().coverages = newArray;
+				break;
 		}
 	}
 }

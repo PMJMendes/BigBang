@@ -173,6 +173,7 @@ public class TypifiedListManagementPanel extends FilterableList<TipifiedListItem
 
 			@Override
 			public void onSuccess(TipifiedListItem[] result) {
+				clear();
 				for(int i = 0; i < result.length; i++) {
 					final TypifiedListEntry entry = new TypifiedListEntry(result[i]);
 					entry.deleteButton.addClickHandler(new ClickHandler() {

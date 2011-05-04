@@ -19,7 +19,7 @@ import com.google.gwt.user.client.ui.SplitLayoutPanel;
 
 public class MediatorManagementOperationView extends View implements MediatorManagementOperationViewPresenter.Display {
 
-	private static final int LIST_WIDTH = 300; //px
+	private static final int LIST_WIDTH = 400; //px
 
 	private MediatorList mediatorList;
 	private MediatorForm mediatorForm;

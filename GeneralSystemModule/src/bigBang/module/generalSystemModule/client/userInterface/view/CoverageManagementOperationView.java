@@ -1,6 +1,8 @@
 package bigBang.module.generalSystemModule.client.userInterface.view;
 
 import bigBang.library.client.HasValueSelectables;
+import bigBang.library.client.Selectable;
+import bigBang.library.client.ValueSelectable;
 import bigBang.library.client.userInterface.view.View;
 import bigBang.module.generalSystemModule.client.userInterface.CoverageList;
 import bigBang.module.generalSystemModule.client.userInterface.LineList;
@@ -20,8 +22,8 @@ public class CoverageManagementOperationView extends View implements CoverageMan
 	
 	public CoverageManagementOperationView(){
 		lineList = new LineList();
-		subLineList = new SubLineList();
-		coverageList = new CoverageList();
+		subLineList = new SubLineList(lineList);
+		coverageList = new CoverageList(subLineList);
 
 		HorizontalPanel wrapper = new HorizontalPanel();
 		wrapper.setSize("100%", "100%");

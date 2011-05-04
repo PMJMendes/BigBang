@@ -30,6 +30,7 @@ import bigBang.library.client.userInterface.ExpandableButton;
 import bigBang.library.client.userInterface.FilterableList;
 import bigBang.library.client.userInterface.List;
 import bigBang.library.client.userInterface.ListEntry;
+import bigBang.library.client.userInterface.ListHeader;
 import bigBang.library.client.userInterface.view.PreviewPanel;
 import bigBang.module.clientModule.shared.ClientProcess;
 
@@ -57,11 +58,13 @@ public class ClientPreviewPanel extends PreviewPanel<ClientProcess> {
 		wrapper.addEast(rightBar, this.RIGHT_PANEL_WIDTH);
 		
 		//Contacts
-		/*VerticalPanel contactsPanel = new VerticalPanel();
+		VerticalPanel contactsPanel = new VerticalPanel();
 		contactsPanel.setWidth("100%");
-		contactsPanel.add(new Label("Contactos"));
+		ListHeader contactsHeader = new ListHeader();
+		contactsHeader.setText("Contactos");
+		contactsPanel.add(contactsHeader);
 		
-		/*final PopupPanel contactPopupPanel = new PopupPanel();
+		final PopupPanel contactPopupPanel = new PopupPanel();
 		contactPopupPanel.setAutoHideEnabled(true);
 		
 		final FilterableList<String> contactsList = new FilterableList<String>();

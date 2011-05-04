@@ -29,7 +29,7 @@ import com.google.gwt.user.client.ui.SplitLayoutPanel;
 
 public class TaxManagementOperationView extends View implements TaxManagementOperationViewPresenter.Display {
 
-	private static final int LIST_WIDTH = 300; //PX
+	private static final int LIST_WIDTH = 400; //PX
 	
 	private FilterableList<Line> lineList;
 	private FilterableList<SubLine> subLineList;

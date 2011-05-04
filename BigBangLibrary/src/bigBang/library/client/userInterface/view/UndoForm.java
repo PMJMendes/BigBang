@@ -15,11 +15,12 @@ public class UndoForm extends FormView<ProcessUndoItem> {
 		beforeDescription = new Label();
 		afterDescription = new Label();
 		
+		beforeDescription.setWordWrap(true);
+		afterDescription.setWordWrap(false);
+		
 		addSection("Informação da Operação");
-		beforeDescription.setSize("100%", "150px");
 		addWidget(beforeDescription);
 		addSection("Desfazer");
-		afterDescription.setSize("100%", "150px");
 		addWidget(afterDescription);
 		
 		undoButton = new Button("Desfazer operação");

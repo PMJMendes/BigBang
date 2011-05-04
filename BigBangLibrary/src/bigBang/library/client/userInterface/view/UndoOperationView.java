@@ -23,7 +23,7 @@ public class UndoOperationView extends View implements UndoOperationViewPresente
 		
 		public UndoItemList(){
 			ListHeader header = new ListHeader();
-			header.setTitle("Operações desfazíveis");
+			header.setText("Histórico");
 			setHeaderWidget(header);
 		}
 	}
@@ -33,12 +33,14 @@ public class UndoOperationView extends View implements UndoOperationViewPresente
 		public UndoItemListEntry(ProcessUndoItem value) {
 			super(value);
 			setTitle(value.shortDescription);
+			setText(value.username + " (" + value.timeStamp.substring(0, 16) + ")");
+			setHeight("40px");
 			setMetaData(new String[]{value.shortDescription, value.description});
 		}
 		
 	}
 	
-	private static final int LIST_WIDTH = 300; //PX 
+	private static final int LIST_WIDTH = 400; //PX 
 	private UndoItemList list;
 	private UndoForm form;
 	

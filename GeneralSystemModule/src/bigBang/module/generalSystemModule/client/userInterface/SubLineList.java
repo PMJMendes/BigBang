@@ -3,6 +3,8 @@ package bigBang.module.generalSystemModule.client.userInterface;
 import org.gwt.mosaic.ui.client.ToolButton;
 
 import bigBang.library.client.BigBangAsyncCallback;
+import bigBang.library.client.Selectable;
+import bigBang.library.client.ValueSelectable;
 import bigBang.library.client.resources.Resources;
 import bigBang.library.client.userInterface.FilterableList;
 import bigBang.library.client.userInterface.ListEntry;
@@ -11,6 +13,7 @@ import bigBang.library.client.userInterface.view.PopupPanel;
 import bigBang.module.generalSystemModule.client.userInterface.LineList.Entry;
 import bigBang.module.generalSystemModule.client.userInterface.view.SubLineForm;
 import bigBang.module.generalSystemModule.interfaces.CoveragesService;
+import bigBang.module.generalSystemModule.shared.Line;
 import bigBang.module.generalSystemModule.shared.SubLine;
 
 import com.google.gwt.core.client.GWT;
@@ -26,7 +29,7 @@ public class SubLineList extends FilterableList<SubLine> {
 	public static class Entry extends ListEntry<SubLine> {
 		private Label nChildrenLabel;
 		protected Image editImage;
-
+		
 		public Entry(SubLine subLine){
 			super(subLine);
 			setRightWidget(nChildrenLabel);
@@ -62,8 +65,11 @@ public class SubLineList extends FilterableList<SubLine> {
 	private ClickHandler editHandler;
 	
 	private String parentId;
+	
+	private LineList parentList;
 
-	public SubLineList(){
+	public SubLineList(LineList parentList){
+		this.parentList = parentList;
 		ListHeader header = new ListHeader();
 		header.setText("Modalidades");
 		header.showNewButton("Novo");
@@ -94,6 +100,7 @@ public class SubLineList extends FilterableList<SubLine> {
 		this.popup = new PopupPanel("Modalidade");
 		Widget formContent = form.getNonScrollableContent();
 		formContent.setHeight("80px");
+		formContent.setWidth("650px");
 		popup.add(formContent);
 		popup.setWidth("650px");
 
@@ -149,7 +156,22 @@ public class SubLineList extends FilterableList<SubLine> {
 				Entry entry = new Entry(result);
 				add(entry);
 				entry.setSelected(true);
-				showForm(false);;
+				
+				
+				for(Selectable s : parentList.getSelected()) {
+					@SuppressWarnings("unchecked")
+					ValueSelectable<Line> vs = (ValueSelectable<Line>) s;
+					
+					SubLine[] newArray = new SubLine[size()];
+					for(int i = 0; i < newArray.length; i++) {
+						newArray[i] = get(i).getValue();
+					}
+					vs.getValue().subLines = newArray;
+ 					break;
+				}
+				
+				
+				showForm(false);
 			}
 		});
 	}

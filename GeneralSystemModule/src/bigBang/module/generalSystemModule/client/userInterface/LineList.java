@@ -91,6 +91,7 @@ public class LineList extends FilterableList<Line> {
 		this.popup = new PopupPanel("Ramo");
 		Widget formContent = form.getNonScrollableContent();
 		formContent.setHeight("120px");
+		formContent.setWidth("650px");
 		popup.add(formContent);
 		popup.setWidth("650px");
 
