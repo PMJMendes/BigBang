@@ -14,7 +14,6 @@ import bigBang.library.client.userInterface.view.View;
 import bigBang.library.interfaces.Service;
 import bigBang.module.loginModule.interfaces.AuthenticationServiceAsync;
 
-import com.gargoylesoftware.htmlunit.AlertHandler;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
@@ -153,8 +152,8 @@ public class LoginViewPresenter implements ViewPresenter {
 			
 			@Override
 			public void onSessionExpired() {
-				GWT.log("A sessão expirou");
-				MessageBox.alert("", "A sessão expirou.");
+				GWT.log("A sessï¿½o expirou");
+				MessageBox.alert("", "A sessï¿½o expirou.");
 				Window.Location.reload();
 			}
 		});
