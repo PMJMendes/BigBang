@@ -34,6 +34,7 @@ public class HistoryManager implements ValueChangeHandler<String> {
 	}
 	
 	private ArrayList <HistoryItem> historyStack;
+	@SuppressWarnings("unused")
 	private int currentIndex;
 	
 	public HistoryManager(){

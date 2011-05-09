@@ -18,8 +18,10 @@ import com.google.gwt.user.client.ui.RootPanel;
 public class ApplicationController {
 
 	private EventBus eventBus;
+	@SuppressWarnings("unused")
 	private HistoryManager historyManager;
 	private NotificationsManager notificationsManager;
+	@SuppressWarnings("unused")
 	private ProcessManager processManager;
 
 	private ViewPresenter loginPresenter;
