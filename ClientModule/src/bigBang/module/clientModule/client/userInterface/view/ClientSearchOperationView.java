@@ -12,7 +12,7 @@ import com.google.gwt.user.client.ui.SplitLayoutPanel;
 public class ClientSearchOperationView extends View implements ClientSearchOperationViewPresenter.Display {
 	
 	private final int SEARCH_PANEL_WIDTH = 400; //minimum and starting width (px)
-	private final int SEARCH_PREVIEW_PANEL_WIDTH = 400;
+	//private final int SEARCH_PREVIEW_PANEL_WIDTH = 400;
 	
 	private ClientSearchPanel searchPanel;
 	private ClientPreviewPanel previewPanel;

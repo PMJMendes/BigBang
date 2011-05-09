@@ -29,6 +29,7 @@ public class ClientSectionViewPresenter implements SectionViewPresenter {
 	private ClientSection clientSection;
 	
 	private boolean hasRegisteredOperations = false;	
+	@SuppressWarnings("unused")
 	private EventBus eventBus;
 	private Display view;
 	

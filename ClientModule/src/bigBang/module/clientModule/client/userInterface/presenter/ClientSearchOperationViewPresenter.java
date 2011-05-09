@@ -11,11 +11,9 @@ import bigBang.library.client.userInterface.view.View;
 import bigBang.library.interfaces.SearchService;
 import bigBang.library.interfaces.Service;
 import bigBang.module.clientModule.shared.ClientProcess;
-import bigBang.module.clientModule.shared.ClientSearchOperation;
+import bigBang.module.clientModule.shared.operation.ClientSearchOperation;
 
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.event.logical.shared.ValueChangeEvent;
-import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.user.client.ui.HasValue;
 import com.google.gwt.user.client.ui.HasWidgets;
 import com.google.gwt.user.client.ui.Widget;
@@ -32,6 +30,7 @@ public class ClientSearchOperationViewPresenter implements OperationViewPresente
 
 	protected Display view;
 	private EventBus eventBus;
+	@SuppressWarnings("unused")
 	private SearchService service;
 	private ClientSearchOperation operation;
 	
@@ -101,6 +100,7 @@ public class ClientSearchOperationViewPresenter implements OperationViewPresente
 		});
 	}
 
+	@SuppressWarnings("unused")
 	private void fetchClientProcess(String processId){
 		ClientProcess process = new ClientProcess();
 		this.view.getPreviewWidget().setValue(process);

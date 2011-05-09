@@ -8,12 +8,9 @@ import bigBang.library.client.userInterface.MenuSection;
 import bigBang.library.client.userInterface.TextBadge;
 import bigBang.library.client.userInterface.presenter.OperationViewPresenter;
 import bigBang.library.client.userInterface.presenter.ViewPresenter;
-import bigBang.module.clientModule.client.userInterface.presenter.ClientMergeOperationViewPresenter;
 import bigBang.module.clientModule.client.userInterface.presenter.ClientSearchOperationViewPresenter;
-import bigBang.module.clientModule.client.userInterface.view.ClientMergeOperationView;
 import bigBang.module.clientModule.client.userInterface.view.ClientSearchOperationView;
-import bigBang.module.clientModule.shared.ClientMergeOperation;
-import bigBang.module.clientModule.shared.ClientSearchOperation;
+import bigBang.module.clientModule.shared.operation.ClientSearchOperation;
 
 import com.google.gwt.core.client.GWT;
 

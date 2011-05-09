@@ -20,6 +20,7 @@ public class ClientMergeOperationViewPresenter implements OperationViewPresenter
 		View getInstance();
 	}
 	
+	@SuppressWarnings("unused")
 	private EventBus eventBus;
 	private Display view;
 	private Operation operation;

@@ -3,6 +3,8 @@ package bigBang.module.clientModule.shared;
 import java.io.Serializable;
 
 import bigBang.library.client.Process;
+import bigBang.module.clientModule.shared.operation.ClientMergeOperation;
+import bigBang.module.clientModule.shared.operation.ClientSearchOperation;
 
 import com.google.gwt.core.client.GWT;
 

@@ -8,21 +8,15 @@ import bigBang.library.client.userInterface.TextAreaFormField;
 import bigBang.library.client.userInterface.TextBoxFormField;
 import bigBang.library.client.userInterface.view.FormView;
 import bigBang.library.client.userInterface.view.FormViewSection;
-import bigBang.module.clientModule.shared.ClientFormValidator;
-import bigBang.module.clientModule.shared.ClientProcess;
+import bigBang.module.clientModule.shared.ClientProxy;
 
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.logical.shared.AttachEvent;
-import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.RadioButton;
-import com.google.gwt.user.client.ui.VerticalPanel;
-import com.google.gwt.user.client.ui.Widget;
-import com.google.gwt.user.datepicker.client.DateBox;
-import com.google.gwt.user.datepicker.client.DatePicker;
 
-public class ClientFormView extends FormView  {
+public class ClientFormView extends FormView<ClientProxy> {
 	
 	private TextBoxFormField name;
 	private TextBoxFormField taxNumber;
@@ -70,6 +64,7 @@ public class ClientFormView extends FormView  {
 		addSection("Informação Geral");
 	
 		addFormField(name);
+		addFormField(email);
 		addFormField(taxNumber);
 		addFormField(NIB);
 		addFormField(group);
@@ -130,16 +125,8 @@ public class ClientFormView extends FormView  {
 		radioWrapper.add(radioButtonC);
 		addWidget(radioWrapper);
 		
-		radioButtonI.addAttachHandler(new AttachEvent.Handler() {
-			
-			@Override
-			public void onAttachOrDetach(AttachEvent event) {
-				if(!event.isAttached())
-					return;
-				radioButtonI.setValue(true);
-				setIndividualMode();
-			}
-		});
+		radioButtonI.setValue(true);
+		setIndividualMode();
 			
 		specificSection = new FormViewSection("Informação Específica");
 		addSection(specificSection);
@@ -177,13 +164,13 @@ public class ClientFormView extends FormView  {
 	}
 	
 	@Override
-	public Object getInfo() {
+	public ClientProxy getInfo() {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public void setInfo(Object info) {
+	public void setInfo(ClientProxy info) {
 		// TODO Auto-generated method stub
 		
 	}
