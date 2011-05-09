@@ -74,6 +74,7 @@ public class CoverageManagementOperationView extends View implements CoverageMan
 	@Override
 	public void showSubLinesFor(Line line) {
 		subLineList.clear();
+		coverageList.clear();
 		if(line == null)
 			return;
 		this.subLineList.setParentId(line.id);
