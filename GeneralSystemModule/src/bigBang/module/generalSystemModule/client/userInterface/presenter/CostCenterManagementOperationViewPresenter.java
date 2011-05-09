@@ -62,6 +62,7 @@ OperationViewPresenter {
 
 	private CostCenterServiceAsync service;
 	private Display view;
+	@SuppressWarnings("unused")
 	private EventBus eventBus;
 	
 	private CostCenterManagementOperation operation;

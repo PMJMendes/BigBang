@@ -18,7 +18,6 @@ import bigBang.module.generalSystemModule.interfaces.InsuranceAgencyServiceAsync
 import bigBang.module.generalSystemModule.shared.InsuranceAgency;
 import bigBang.module.generalSystemModule.shared.operation.InsuranceAgencyManagementOperation;
 
-import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.HasClickHandlers;
@@ -56,6 +55,7 @@ public class InsuranceAgencyManagementOperationViewPresenter implements
 
 	private InsuranceAgencyServiceAsync service;
 	private Display view;
+	@SuppressWarnings("unused")
 	private EventBus eventBus;
 	
 	private InsuranceAgencyManagementOperation operation;

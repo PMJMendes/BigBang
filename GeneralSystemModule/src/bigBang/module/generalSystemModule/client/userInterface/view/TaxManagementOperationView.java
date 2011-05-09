@@ -20,8 +20,6 @@ import bigBang.module.generalSystemModule.shared.SubLine;
 import bigBang.module.generalSystemModule.shared.Tax;
 
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.HasClickHandlers;
 import com.google.gwt.user.client.ui.HasValue;
 import com.google.gwt.user.client.ui.Image;

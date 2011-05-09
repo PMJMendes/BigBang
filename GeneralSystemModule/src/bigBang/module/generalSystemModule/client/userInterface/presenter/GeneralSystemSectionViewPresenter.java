@@ -2,6 +2,8 @@ package bigBang.module.generalSystemModule.client.userInterface.presenter;
 
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
+import com.google.gwt.requestfactory.shared.EntityProxy;
+import com.google.gwt.requestfactory.shared.EntityProxyId;
 import com.google.gwt.user.client.ui.HasValue;
 import com.google.gwt.user.client.ui.HasWidgets;
 import com.google.gwt.user.client.ui.Widget;
@@ -30,6 +32,7 @@ public class GeneralSystemSectionViewPresenter implements SectionViewPresenter {
 	private GeneralSystemSection section;
 	private Display view;
 	private boolean hasRegisteredOperations = false;
+	@SuppressWarnings("unused")
 	private EventBus eventBus;
 	
 	public GeneralSystemSectionViewPresenter(EventBus eventBus, Service service,
@@ -95,7 +98,7 @@ public class GeneralSystemSectionViewPresenter implements SectionViewPresenter {
 	}
 	
 	public void registerEventHandlers(final EventBus eventBus){
-
+		
 	}
 
 }

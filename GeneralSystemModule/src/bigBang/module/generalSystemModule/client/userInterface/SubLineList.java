@@ -9,8 +9,8 @@ import bigBang.library.client.resources.Resources;
 import bigBang.library.client.userInterface.FilterableList;
 import bigBang.library.client.userInterface.ListEntry;
 import bigBang.library.client.userInterface.ListHeader;
+import bigBang.library.client.userInterface.NavigationListEntry;
 import bigBang.library.client.userInterface.view.PopupPanel;
-import bigBang.module.generalSystemModule.client.userInterface.LineList.Entry;
 import bigBang.module.generalSystemModule.client.userInterface.view.SubLineForm;
 import bigBang.module.generalSystemModule.interfaces.CoveragesService;
 import bigBang.module.generalSystemModule.shared.Line;
@@ -19,29 +19,26 @@ import bigBang.module.generalSystemModule.shared.SubLine;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.dom.client.DoubleClickEvent;
+import com.google.gwt.event.dom.client.DoubleClickHandler;
 import com.google.gwt.event.dom.client.HasClickHandlers;
 import com.google.gwt.user.client.ui.Image;
-import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Widget;
 
 public class SubLineList extends FilterableList<SubLine> {
 
-	public static class Entry extends ListEntry<SubLine> {
-		private Label nChildrenLabel;
+	public static class Entry extends NavigationListEntry<SubLine> {
 		protected Image editImage;
 		
 		public Entry(SubLine subLine){
 			super(subLine);
-			setRightWidget(nChildrenLabel);
 			setLeftWidget(editImage);
 		}
 
 		public <I extends Object> void setInfo(I info) {
-			if(nChildrenLabel == null)
-				nChildrenLabel = new Label();
 			SubLine subLine = (SubLine) info;
 			setTitle(subLine.name);
-			nChildrenLabel.setText((subLine.coverages == null || subLine.coverages.length == 0) ? "-" : subLine.coverages.length + "");
+			setNavigatable(subLine.coverages != null && subLine.coverages.length > 0);
 		};
 
 		public void setEditable(boolean editable) {
@@ -63,6 +60,7 @@ public class SubLineList extends FilterableList<SubLine> {
 	private PopupPanel popup;
 	private boolean readonly;
 	private ClickHandler editHandler;
+	private DoubleClickHandler doubleClickHandler; 
 	
 	private String parentId;
 	
@@ -118,6 +116,20 @@ public class SubLineList extends FilterableList<SubLine> {
 				}
 			}
 		};
+		doubleClickHandler = new DoubleClickHandler() {
+			
+			@Override
+			public void onDoubleClick(DoubleClickEvent event) {
+				for(ListEntry<SubLine> e : entries) {
+					if(event.getSource() == e){
+						form.setValue(((Entry)e).getValue());
+						showForm(true);
+					}
+				}
+			}
+		};
+		
+		setDoubleClickable(true);
 		
 		setReadOnly(true);
 	}
@@ -132,6 +144,8 @@ public class SubLineList extends FilterableList<SubLine> {
 	public boolean add(Entry e) {
 		e.setEditable(!readonly);
 		e.editImage.addClickHandler(this.editHandler);
+		e.setDoubleClickable(true);
+		e.addHandler(doubleClickHandler, DoubleClickEvent.getType());
 		return super.add(e);
 	}
 

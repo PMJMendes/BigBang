@@ -1,7 +1,6 @@
 package bigBang.module.generalSystemModule.client;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 
 import bigBang.library.client.BigBangPermissionManager;
 import bigBang.library.client.EventBus;

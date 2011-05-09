@@ -10,16 +10,16 @@ import bigBang.library.client.userInterface.FilterableList;
 import bigBang.library.client.userInterface.ListEntry;
 import bigBang.library.client.userInterface.ListHeader;
 import bigBang.library.client.userInterface.view.PopupPanel;
-import bigBang.module.generalSystemModule.client.userInterface.LineList.Entry;
 import bigBang.module.generalSystemModule.client.userInterface.view.CoverageForm;
 import bigBang.module.generalSystemModule.interfaces.CoveragesService;
 import bigBang.module.generalSystemModule.shared.Coverage;
-import bigBang.module.generalSystemModule.shared.Line;
 import bigBang.module.generalSystemModule.shared.SubLine;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.dom.client.DoubleClickEvent;
+import com.google.gwt.event.dom.client.DoubleClickHandler;
 import com.google.gwt.event.dom.client.HasClickHandlers;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Widget;
@@ -58,7 +58,8 @@ public class CoverageList extends FilterableList<Coverage> {
 	private PopupPanel popup;
 	private boolean readonly;
 	private ClickHandler editHandler;
-	
+	private DoubleClickHandler doubleClickHandler;
+
 	private String parentId;
 	private SubLineList parentList;
 
@@ -77,7 +78,7 @@ public class CoverageList extends FilterableList<Coverage> {
 				showForm(true);
 			}
 		});
-		
+
 		this.form = new CoverageForm();
 		form.getSaveButton().addClickHandler(new ClickHandler() {
 
@@ -101,7 +102,7 @@ public class CoverageList extends FilterableList<Coverage> {
 		setHeaderWidget(header);
 
 		editHandler = new ClickHandler() {
-			
+
 			@Override
 			public void onClick(ClickEvent event) {
 				for(ListEntry<Coverage> e : entries) {
@@ -112,20 +113,36 @@ public class CoverageList extends FilterableList<Coverage> {
 				}
 			}
 		};
-		
+		doubleClickHandler = new DoubleClickHandler() {
+
+			@Override
+			public void onDoubleClick(DoubleClickEvent event) {
+				for(ListEntry<Coverage> e : entries) {
+					if(event.getSource() == e){
+						form.setValue(((Entry)e).getValue());
+						showForm(true);
+					}
+				}
+			}
+		};
+
+		setDoubleClickable(true);
+
 		setReadOnly(true);
 	}
-	
+
 	public void setParentId(String id) {
 		this.parentId = id;
 		if(parentId == null){
 			clear();
 		}
 	}
-	
+
 	public boolean add(Entry e) {
 		e.setEditable(!readonly);
 		e.editImage.addClickHandler(this.editHandler);
+		e.setDoubleClickable(true);
+		e.addHandler(doubleClickHandler, DoubleClickEvent.getType());
 		return super.add(e);
 	}
 
@@ -184,18 +201,18 @@ public class CoverageList extends FilterableList<Coverage> {
 			((Entry) e).setEditable(!readonly);
 		}
 	}
-	
+
 	private void bindUp() {
 		for(Selectable s : parentList.getSelected()) {
 			@SuppressWarnings("unchecked")
 			ValueSelectable<SubLine> vs = (ValueSelectable<SubLine>) s;
-			
+
 			Coverage[] newArray = new Coverage[size()];
 			for(int i = 0; i < newArray.length; i++) {
 				newArray[i] = get(i).getValue();
 			}
 			vs.getValue().coverages = newArray;
-				break;
+			break;
 		}
 	}
 }

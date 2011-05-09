@@ -1,8 +1,6 @@
 package bigBang.module.generalSystemModule.client.userInterface.view;
 
 import bigBang.library.client.HasValueSelectables;
-import bigBang.library.client.Selectable;
-import bigBang.library.client.ValueSelectable;
 import bigBang.library.client.userInterface.view.View;
 import bigBang.module.generalSystemModule.client.userInterface.CoverageList;
 import bigBang.module.generalSystemModule.client.userInterface.LineList;
@@ -68,6 +66,8 @@ public class CoverageManagementOperationView extends View implements CoverageMan
 
 	@Override
 	public void refresh() {
+		this.subLineList.clear();
+		this.coverageList.clear();
 		this.lineList.refresh();
 	}
 

@@ -2,15 +2,6 @@ package bigBang.module.generalSystemModule.client.userInterface.presenter;
 
 import java.util.Collection;
 
-import com.google.gwt.core.client.GWT;
-import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.event.dom.client.HasClickHandlers;
-import com.google.gwt.user.client.ui.HasValue;
-import com.google.gwt.user.client.ui.HasWidgets;
-import com.google.gwt.user.client.ui.Widget;
-
-import bigBang.library.client.BigBangAsyncCallback;
 import bigBang.library.client.EventBus;
 import bigBang.library.client.HasValueSelectables;
 import bigBang.library.client.Operation;
@@ -25,8 +16,10 @@ import bigBang.module.generalSystemModule.interfaces.CoveragesServiceAsync;
 import bigBang.module.generalSystemModule.shared.Coverage;
 import bigBang.module.generalSystemModule.shared.Line;
 import bigBang.module.generalSystemModule.shared.SubLine;
-import bigBang.module.generalSystemModule.shared.Tax;
 import bigBang.module.generalSystemModule.shared.operation.CoverageManagementOperation;
+
+import com.google.gwt.user.client.ui.HasWidgets;
+import com.google.gwt.user.client.ui.Widget;
 
 public class CoverageManagementOperationViewPresenter implements
 		OperationViewPresenter {
@@ -46,7 +39,9 @@ public class CoverageManagementOperationViewPresenter implements
 		Widget asWidget();
 	}
 
+	@SuppressWarnings("unused")
 	private EventBus eventBus;
+	@SuppressWarnings("unused")
 	private CoveragesServiceAsync service;
 	private Display view;
 	

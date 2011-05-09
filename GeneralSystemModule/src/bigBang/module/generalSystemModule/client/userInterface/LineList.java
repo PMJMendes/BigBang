@@ -7,6 +7,7 @@ import bigBang.library.client.resources.Resources;
 import bigBang.library.client.userInterface.FilterableList;
 import bigBang.library.client.userInterface.ListEntry;
 import bigBang.library.client.userInterface.ListHeader;
+import bigBang.library.client.userInterface.NavigationListEntry;
 import bigBang.library.client.userInterface.view.PopupPanel;
 import bigBang.module.generalSystemModule.client.userInterface.view.LineForm;
 import bigBang.module.generalSystemModule.interfaces.CoveragesService;
@@ -15,29 +16,28 @@ import bigBang.module.generalSystemModule.shared.Line;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.dom.client.DoubleClickEvent;
+import com.google.gwt.event.dom.client.DoubleClickHandler;
 import com.google.gwt.event.dom.client.HasClickHandlers;
 import com.google.gwt.user.client.ui.Image;
-import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Widget;
 
 public class LineList extends FilterableList<Line> {
 
-	public static class Entry extends ListEntry<Line> {
-		private Label nChildrenLabel;
+	public static class Entry extends NavigationListEntry<Line> {
 		protected Image editImage;
 
 		public Entry(Line line){
 			super(line);
-			setRightWidget(nChildrenLabel);
 			setLeftWidget(editImage);
+			setHeight("40px");
 		}
 
 		public <I extends Object> void setInfo(I info) {
-			if(nChildrenLabel == null)
-				nChildrenLabel = new Label();
 			Line line = (Line) info;
 			setTitle(line.name);
-			nChildrenLabel.setText((line.subLines == null || line.subLines.length == 0) ? "-" : line.subLines.length + "");
+			setText(line.categoryId);
+			setNavigatable(line.subLines != null && line.subLines.length > 0);
 		};
 
 		public void setEditable(boolean editable) {
@@ -59,6 +59,7 @@ public class LineList extends FilterableList<Line> {
 	private PopupPanel popup;
 	private boolean readonly;
 	private ClickHandler editHandler;
+	private DoubleClickHandler doubleClickHandler;
 
 	public LineList(){
 		ListHeader header = new ListHeader();
@@ -118,13 +119,28 @@ public class LineList extends FilterableList<Line> {
 				}
 			}
 		};
+		doubleClickHandler = new DoubleClickHandler() {
+			
+			@Override
+			public void onDoubleClick(DoubleClickEvent event) {
+				for(ListEntry<Line> e : entries) {
+					if(event.getSource() == e){
+						form.setValue(((Entry)e).getValue());
+						showForm(true);
+					}
+				}
+			}
+		};
 		
+		setDoubleClickable(true);
 		setReadOnly(true);
 	}
 	
 	public boolean add(Entry e) {
 		e.setEditable(!readonly);
 		e.editImage.addClickHandler(this.editHandler);
+		e.setDoubleClickable(true);
+		e.addHandler(doubleClickHandler, DoubleClickEvent.getType());
 		return super.add(e);
 	}
 

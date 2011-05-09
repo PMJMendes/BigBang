@@ -16,7 +16,6 @@ import bigBang.library.client.userInterface.presenter.OperationViewPresenter;
 import bigBang.library.client.userInterface.view.View;
 import bigBang.library.interfaces.Service;
 import bigBang.library.interfaces.TipifiedListService;
-import bigBang.library.shared.Contact;
 import bigBang.library.shared.TipifiedListItem;
 import bigBang.module.generalSystemModule.interfaces.MediatorServiceAsync;
 import bigBang.module.generalSystemModule.shared.CommissionProfile;
