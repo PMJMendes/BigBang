@@ -1,14 +1,9 @@
 package bigBang.module.tasksModule.client.userInterface;
 
-import java.util.Collection;
-
 import bigBang.library.client.userInterface.List;
 import bigBang.module.tasksModule.shared.Task;
 
-import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Unit;
-import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 

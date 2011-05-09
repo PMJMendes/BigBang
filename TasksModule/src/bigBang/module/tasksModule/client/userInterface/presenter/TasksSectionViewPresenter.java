@@ -5,7 +5,6 @@ import java.util.Arrays;
 import java.util.HashMap;
 
 import bigBang.library.client.EventBus;
-import bigBang.library.client.event.OperationInvokedEvent;
 import bigBang.library.client.userInterface.MenuSection;
 import bigBang.library.client.userInterface.presenter.OperationViewPresenter;
 import bigBang.library.client.userInterface.presenter.SectionViewPresenter;
@@ -14,14 +13,11 @@ import bigBang.library.client.userInterface.presenter.ViewPresenterManager;
 import bigBang.library.client.userInterface.view.View;
 import bigBang.library.interfaces.Service;
 import bigBang.module.tasksModule.client.TasksSection;
-import bigBang.module.tasksModule.shared.Task;
 import bigBang.module.tasksModule.interfaces.TasksServiceAsync;
+import bigBang.module.tasksModule.shared.Task;
 
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.event.logical.shared.ValueChangeEvent;
-import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.user.client.rpc.AsyncCallback;
-import com.google.gwt.user.client.ui.HasValue;
 import com.google.gwt.user.client.ui.HasWidgets;
 import com.google.gwt.user.client.ui.Widget;
 
@@ -94,7 +90,7 @@ public class TasksSectionViewPresenter implements SectionViewPresenter, ViewPres
 	}
 
 	public void bind() {
-		final ViewPresenterManager presenterManager = this;
+		//final ViewPresenterManager presenterManager = this;
 
 		/*this.view.getTaskList().addValueChangeHandler(new ValueChangeHandler<Task>() {
 			
