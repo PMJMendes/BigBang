@@ -9,7 +9,6 @@ import bigBang.library.client.userInterface.view.View;
 
 import com.google.gwt.dom.client.Style.Cursor;
 import com.google.gwt.dom.client.Style.FontWeight;
-import com.google.gwt.dom.client.Style.Overflow;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
@@ -122,6 +121,7 @@ public class ListEntry<T> extends View implements ValueSelectable<T>, HasMetaDat
 			}
 		}, ClickEvent.getType());
 		
+		disableTextSelection(true);
 		setValue(value);
 	}
 	

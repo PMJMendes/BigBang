@@ -1,6 +1,5 @@
 package bigBang.library.client.userInterface;
 
-import java.text.DateFormat;
 import java.util.Date;
 
 import com.google.gwt.dom.client.Style.Unit;
@@ -11,7 +10,6 @@ import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.UIObject;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.user.datepicker.client.DateBox;
-import com.google.gwt.user.datepicker.client.DatePicker;
 
 import bigBang.library.client.FormField;
 
@@ -21,6 +19,7 @@ public class DatePickerFormField extends FormField<Date> {
 	private static final String DEFAULT_PATTERN = "d-M-y";
 	
 	private Label label;
+	@SuppressWarnings("unused")
 	private String datePattern;
 	private boolean readonly;
 	

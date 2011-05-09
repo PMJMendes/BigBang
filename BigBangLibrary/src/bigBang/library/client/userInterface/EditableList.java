@@ -3,7 +3,7 @@ package bigBang.library.client.userInterface;
 import com.google.gwt.event.shared.EventHandler;
 import com.google.gwt.event.shared.GwtEvent;
 
-public class EditableList<T> extends List {
+public class EditableList<T> extends List<T> {
 
 	public class EntryCreatedEvent extends GwtEvent<EntryCreatedEventHandler> {
 

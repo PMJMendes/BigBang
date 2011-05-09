@@ -61,6 +61,7 @@ public class PopupPanel extends View implements HasWidgets {
 		this.popup.hide();
 	}
 
+	@SuppressWarnings("unused")
 	private void addMaximizeButton(final WindowPanel windowPanel,
 			CaptionRegion captionRegion) {
 		final ImageButton maximizeBtn = new ImageButton(

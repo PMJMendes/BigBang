@@ -3,7 +3,6 @@ package bigBang.library.client;
 import bigBang.library.client.event.SessionExpiredEvent;
 import bigBang.library.shared.SessionExpiredException;
 
-import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 public abstract class BigBangAsyncCallback<T> implements AsyncCallback<T> {

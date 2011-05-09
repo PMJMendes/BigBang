@@ -3,7 +3,6 @@ package bigBang.library.client.userInterface.presenter;
 import com.google.gwt.user.client.ui.HasWidgets;
 
 import bigBang.library.client.Operation;
-import bigBang.library.shared.Permission;
 
 public interface OperationViewPresenter extends ViewPresenter {
 

@@ -39,6 +39,7 @@ public abstract class SearchPanel<T> extends FilterableList<T> {
 	private boolean liveSearch = false;
 	private boolean hasSearchTerms;
 	private Button searchButton;
+	@SuppressWarnings("unused")
 	private Widget filtersWidget;
 	private HandlerRegistration liveSearchKeyUpHandlerRegistration;
 	

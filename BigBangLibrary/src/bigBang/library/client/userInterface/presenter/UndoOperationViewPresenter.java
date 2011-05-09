@@ -17,7 +17,6 @@ import bigBang.library.client.Selectable;
 import bigBang.library.client.ValueSelectable;
 import bigBang.library.client.event.SelectionChangedEvent;
 import bigBang.library.client.event.SelectionChangedEventHandler;
-import bigBang.library.client.userInterface.view.UndoOperationView;
 import bigBang.library.client.userInterface.view.View;
 import bigBang.library.interfaces.Service;
 import bigBang.library.interfaces.UndoServiceAsync;
@@ -45,6 +44,7 @@ public class UndoOperationViewPresenter implements OperationViewPresenter {
 		Widget asWidget();
 	}
 	
+	@SuppressWarnings("unused")
 	private EventBus eventBus;
 	private UndoServiceAsync service;
 	private Display view;

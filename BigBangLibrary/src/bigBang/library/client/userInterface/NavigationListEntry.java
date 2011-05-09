@@ -7,9 +7,11 @@ import com.google.gwt.user.client.ui.Image;
 
 public class NavigationListEntry<T> extends ListEntry<T> implements NavigationItem {
 
+	protected Image nextImage;
+	
 	public NavigationListEntry(T value) {
 		super(value);
-		
+		setRightWidget(nextImage);
 	}
 
 	@SuppressWarnings("unchecked")
@@ -22,11 +24,17 @@ public class NavigationListEntry<T> extends ListEntry<T> implements NavigationIt
 	public Object getRepresentedValue() {
 		return getValue();
 	}
+	
+	public void setNavigatable(boolean navigatable) {
+		nextImage.setVisible(navigatable);
+	}
 
 	@Override
 	public void setSelected(boolean selected, boolean fireEvents) {
 		super.setSelected(selected, fireEvents);
+		if(nextImage == null)
+			nextImage = new Image();
 		Resources r = GWT.create(Resources.class);
-		setRightWidget(new Image(selected ? r.listNextIconWhite() : r.listNextIconBlack()));
+		nextImage.setResource(selected ? r.listNextIconWhite(): r.listNextIconBlack());
 	}
 }

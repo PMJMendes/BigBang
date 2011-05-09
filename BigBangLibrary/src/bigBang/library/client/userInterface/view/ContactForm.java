@@ -56,7 +56,7 @@ public class ContactForm extends FormView<Contact> {
 		
 	}
 	
-	private static class Tuple <T1, T2> {
+	protected static class Tuple <T1, T2> {
 		public T1 type;
 		public T2 value;
 	}
