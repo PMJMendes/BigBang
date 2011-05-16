@@ -1,5 +1,6 @@
 package bigBang.library.client.userInterface;
 
+import bigBang.library.client.BigBangAsyncCallback;
 import bigBang.library.client.ContactManager;
 import bigBang.library.client.Selectable;
 import bigBang.library.client.ValueSelectable;
@@ -35,9 +36,17 @@ public class ContactsPreviewList extends List<Contact> {
 		protected ContactManager contactManager;
 
 		public ContactPreviewPanel(ContactManager contactManager){
+			this();
+			setContactManager(contactManager);
+		}
+		
+		public ContactPreviewPanel(){
 			super();
 			setSize("100%", "100%");
 			navBar.setText("Contacto");
+		}
+		
+		public void setContactManager(ContactManager contactManager) {
 			this.contactManager = contactManager;
 		}
 		
@@ -78,6 +87,31 @@ public class ContactsPreviewList extends List<Contact> {
 					setContact(new Contact());
 				}
 			});
+			
+			form.getSaveButton().addClickHandler(new ClickHandler() {
+				
+				@Override
+				public void onClick(ClickEvent event) {
+					Contact c = form.getValue();
+					if(c.id == null || c.id.equals("")){
+						contactManager.addContact(c, new BigBangAsyncCallback<Contact>() {
+
+							@Override
+							public void onSuccess(Contact result) {
+								form.setReadOnly(true);
+							}
+						});
+					}else{
+						contactManager.updateContact(c, new BigBangAsyncCallback<Contact>() {
+
+							@Override
+							public void onSuccess(Contact result) {
+								form.setReadOnly(true);
+							}
+						});
+					}
+				}
+			});
 		}
 	}
 	
@@ -85,11 +119,10 @@ public class ContactsPreviewList extends List<Contact> {
 	protected PopupPanel contactPopupPanel;
 	protected SelectedStateChangedEventHandler contactSelectedStateChangedHandler;
 	protected ContactManager manager;
+	protected Button newButton;
 
-	public ContactsPreviewList(ContactManager manager){
+	public ContactsPreviewList(){
 		super();
-
-		this.manager = manager;
 
 		this.scrollPanel.getElement().getStyle().setOverflow(Overflow.AUTO);
 		resources = GWT.create(Resources.class);
@@ -108,7 +141,7 @@ public class ContactsPreviewList extends List<Contact> {
 		contactPopupPanel.setAutoHideEnabled(true);
 		contactPopupPanel.setSize("350px", "400px");
 		
-		contactSelectedStateChangedHandler = new SelectedStateChangedEventHandler() {
+		/*contactSelectedStateChangedHandler = new SelectedStateChangedEventHandler() {
 
 			@SuppressWarnings("unchecked")
 			@Override
@@ -141,9 +174,9 @@ public class ContactsPreviewList extends List<Contact> {
 						e.setSelected(false);
 				}
 			}
-		});
+		});*/
 		
-		Button newButton = new Button("Novo");
+		newButton = new Button("Novo");
 		newButton.addClickHandler(new ClickHandler() {
 			
 			@Override
@@ -157,6 +190,15 @@ public class ContactsPreviewList extends List<Contact> {
 			}
 		});
 		header.setRightWidget(newButton);
+	}
+	
+	public ContactsPreviewList(ContactManager contactManager) {
+		this();
+		setManager(contactManager);
+	}
+	
+	public void setManager(ContactManager manager) {
+		this.manager = manager;
 		refresh();
 	}
 	
@@ -184,5 +226,9 @@ public class ContactsPreviewList extends List<Contact> {
 		e.addSelectedStateChangedEventHandler(contactSelectedStateChangedHandler);
 		e.setHeight("25px");
 		add(e);
+	}
+	
+	public void setReadOnly(boolean readOnly) {
+		this.newButton.setEnabled(!readOnly);
 	}
 }

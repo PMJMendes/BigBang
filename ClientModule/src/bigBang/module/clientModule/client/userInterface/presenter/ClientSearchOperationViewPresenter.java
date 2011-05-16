@@ -1,5 +1,7 @@
 package bigBang.module.clientModule.client.userInterface.presenter;
 
+import java.util.List;
+
 import bigBang.library.client.EventBus;
 import bigBang.library.client.HasSelectables;
 import bigBang.library.client.Operation;
@@ -10,13 +12,18 @@ import bigBang.library.client.userInterface.presenter.OperationViewPresenter;
 import bigBang.library.client.userInterface.view.View;
 import bigBang.library.interfaces.SearchService;
 import bigBang.library.interfaces.Service;
+import bigBang.module.clientModule.server.Client;
 import bigBang.module.clientModule.shared.ClientProcess;
+import bigBang.module.clientModule.shared.ClientProxy;
+import bigBang.module.clientModule.shared.ClientRequest;
+import bigBang.module.clientModule.shared.ClientRequestFactory;
 import bigBang.module.clientModule.shared.operation.ClientSearchOperation;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.HasValue;
 import com.google.gwt.user.client.ui.HasWidgets;
 import com.google.gwt.user.client.ui.Widget;
+import com.google.web.bindery.requestfactory.shared.Receiver;
 
 public class ClientSearchOperationViewPresenter implements OperationViewPresenter {
 

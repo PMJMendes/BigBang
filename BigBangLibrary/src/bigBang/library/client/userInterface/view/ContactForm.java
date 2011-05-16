@@ -5,6 +5,8 @@ import java.util.Arrays;
 import java.util.Comparator;
 
 import com.google.gwt.dom.client.Style.Unit;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.HasClickHandlers;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.CellPanel;
@@ -61,6 +63,8 @@ public class ContactForm extends FormView<Contact> {
 		public T2 value;
 	}
 	
+	protected Button saveButton, deleteButton;
+	
 	protected TextBoxFormField name;
 	protected AddressFormField address;
 	protected HasClickHandlers newButton;
@@ -70,6 +74,10 @@ public class ContactForm extends FormView<Contact> {
 	protected List<Contact> subContactsList;
 	protected List<ContactInfo> contactInfoList;
 	
+	protected TextBoxFormField infoValue;
+	protected ExpandableListBoxFormField infoType;
+	
+	protected Contact contact;
 	
 	public ContactForm(){
 		infoFields = new ArrayList<Tuple<FormField<?>, FormField<?>>>();
@@ -79,17 +87,47 @@ public class ContactForm extends FormView<Contact> {
 		addFormField(name);
 		
 		addSection("Detalhes");
-		((CellPanel) this.currentSection.getContentWrapper()).setSpacing(0);
-		((UIObject) this.currentSection.getContentWrapper()).getElement().getStyle().setMargin(0, Unit.PX);
+		//((CellPanel) this.currentSection.getContentWrapper()).setSpacing(0);
+		//((UIObject) this.currentSection.getContentWrapper()).getElement().getStyle().setMargin(0, Unit.PX);
 		this.contactInfoList = new List<ContactInfo>();
-		this.contactInfoList.setSize("100%", "100%");
-		addWidget(this.contactInfoList.getListContent());
+		//this.contactInfoList.setSize("100%", "100%");
+		//addWidget(this.contactInfoList.getListContent());
+		
+		infoType = new ExpandableListBoxFormField(ModuleConstants.ListIDs.ContactInfoTypes, "Tipo");
+		infoValue = new TextBoxFormField("Valor");
+		
+		addFormField(infoType);
+		addFormField(infoValue);
 		
 		address = new AddressFormField();
 		name.setFieldWidth("200px");
 		
 		addSection("Morada");
-		addFormField(address);
+		final FormViewSection addressSection = currentSection;
+		
+		final Button removeAddressButton = new Button("Remover morada");
+		final Button newAddressButton = new Button("Nova morada");
+		
+		removeAddressButton.addClickHandler(new ClickHandler() {
+			
+			@Override
+			public void onClick(ClickEvent event) {
+				addressSection.clear();
+				addressSection.addWidget(newAddressButton);
+			}
+		});
+		
+		newAddressButton.addClickHandler(new ClickHandler() {
+			
+			@Override
+			public void onClick(ClickEvent event) {
+				addressSection.clear();
+				addressSection.addFormField(address);
+				addressSection.addWidget(removeAddressButton);
+			}
+		});
+		
+		addressSection.addWidget(newAddressButton);
 		
 		addSection("Contactos associados");
 		
@@ -118,6 +156,16 @@ public class ContactForm extends FormView<Contact> {
 		//currentSection.setHeight("200px");
 		
 		addWidget(subContactListWrapper);
+		
+		saveButton = new Button("Guardar");
+		deleteButton = new Button("Apagar");
+		
+		addButton(saveButton);
+		addButton(deleteButton);
+		
+		this.contact = new Contact();
+		
+		setReadOnly(false);
 	}
 
 	public List<Contact> getSubContactsList() {
@@ -130,8 +178,14 @@ public class ContactForm extends FormView<Contact> {
 	
 	@Override
 	public Contact getInfo() {
-		// TODO Auto-generated method stub
-		return null;
+		this.contact.name = this.name.getValue();
+		this.contact.address = this.address.getValue();
+		this.contact.info = new ContactInfo[1];
+		ContactInfo i = new ContactInfo();
+		i.typeId = this.infoType.getValue();
+		i.value = this.infoValue.getValue();
+		this.contact.info[0] = i;
+		return this.contact;
 	}
 
 	@Override
@@ -160,4 +214,12 @@ public class ContactForm extends FormView<Contact> {
 			this.subContactsList.add(new SubContactListEntry(info.subContacts[i]));
 	}
 
+	public HasClickHandlers getSaveButton() {
+		return this.saveButton;
+	}
+	
+	public HasClickHandlers getDeleteButton() {
+		return this.deleteButton;
+	}
+	
 }

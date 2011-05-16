@@ -109,6 +109,8 @@ public class MediatorManagementOperationViewPresenter implements
 	}
 	
 	private void setup(){
+		view.setContactManager(this.contactManager);
+		
 		this.service.getMediators(new BigBangAsyncCallback<Mediator[]>() {
 			public void onSuccess(Mediator[] result) {
 				mediators = result;
@@ -168,7 +170,7 @@ public class MediatorManagementOperationViewPresenter implements
 					view.lockForm(value == null);
 					if(value.id != null){
 						view.removeNewMediatorPreparation();
-						contactManager.setEntityInfo(value.id, null, new AsyncCallback<Void>() { //TODO
+						contactManager.setEntityInfo(value.id, new AsyncCallback<Void>() { //TODO
 							
 							@Override
 							public void onSuccess(Void result) {}

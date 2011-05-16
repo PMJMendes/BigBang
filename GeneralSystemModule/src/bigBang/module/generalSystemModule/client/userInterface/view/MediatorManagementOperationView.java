@@ -37,8 +37,7 @@ public class MediatorManagementOperationView extends View implements MediatorMan
 
 		SplitLayoutPanel formWrapper = new SplitLayoutPanel();
 		
-		contactManager = new ContactManager();
-		contactsList = new ContactsPreviewList(contactManager);
+		contactsList = new ContactsPreviewList();
 		contactsList.setSize("100%", "100%");
 		
 		formWrapper.addEast(contactsList, 250);
@@ -155,6 +154,7 @@ public class MediatorManagementOperationView extends View implements MediatorMan
 	@Override
 	public void setContactManager(ContactManager contactManager) {
 		this.contactManager = contactManager;
+		this.contactsList.setManager(contactManager);
 	}
 
 }

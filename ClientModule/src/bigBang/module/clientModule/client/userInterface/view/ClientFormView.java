@@ -117,7 +117,6 @@ public class ClientFormView extends FormView<ClientProxy> {
 			}
 		});
 		
-		
 		HorizontalPanel radioWrapper = new HorizontalPanel();
 		radioWrapper.setSpacing(5);
 		radioWrapper.add(radioButtonI);
@@ -125,11 +124,11 @@ public class ClientFormView extends FormView<ClientProxy> {
 		radioWrapper.add(radioButtonC);
 		addWidget(radioWrapper);
 		
-		radioButtonI.setValue(true);
-		setIndividualMode();
-			
 		specificSection = new FormViewSection("Informação Específica");
 		addSection(specificSection);
+		
+		radioButtonI.setValue(true);
+		setIndividualMode();
 		
 		addSection("Morada");
 		addFormField(address);

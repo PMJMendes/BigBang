@@ -61,7 +61,6 @@ public class InsuranceAgencyManagementOperationViewPresenter implements
 	private InsuranceAgencyManagementOperation operation;
 	
 	private boolean bound = false;
-	
 	private InsuranceAgency[] insuranceAgencies;
 
 	public InsuranceAgencyManagementOperationViewPresenter(EventBus eventBus, Service service, View view){

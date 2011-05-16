@@ -13,7 +13,7 @@ public class ContactManager {
 
 	protected ContactsServiceAsync service;
 	protected ArrayList<Contact> contacts;
-	protected String entityId, entityTypeId;
+	protected String entityId;
 	protected boolean offlineMode = false;
 
 
@@ -22,10 +22,9 @@ public class ContactManager {
 		contacts = new ArrayList<Contact>();
 	}
 
-	public void setEntityInfo(String instanceId, String typeId, AsyncCallback<Void> doneCallback) {
+	public void setEntityInfo(String instanceId, AsyncCallback<Void> doneCallback) {
 		this.entityId = instanceId;
-		this.entityTypeId = typeId;
-		if(instanceId == null || typeId == null){
+		if(instanceId == null){
 			contacts = null;
 			doneCallback.onFailure(null);
 		}else {
@@ -34,6 +33,7 @@ public class ContactManager {
 	}
 
 	public void addContact(final Contact c, final AsyncCallback<Contact> callBack) {
+		c.ownerId = this.entityId;
 		if(offlineMode) {
 			this.contacts.add(c);
 			callBack.onSuccess(c);
@@ -50,6 +50,7 @@ public class ContactManager {
 	}
 
 	public void updateContact(final Contact c, final AsyncCallback<Contact> callBack) {
+		c.ownerId = this.entityId;
 		if(offlineMode) {
 			for(Contact ct : contacts) {
 				if(ct.id.equals(c.id)){
@@ -76,6 +77,7 @@ public class ContactManager {
 	}
 
 	public void deleteContact(final Contact c, final AsyncCallback<Void> callback){
+		c.ownerId = this.entityId;
 		if(offlineMode) {
 			contacts.remove(c);
 			callback.onSuccess(null);
