@@ -1,9 +1,8 @@
 package bigBang.library.server;
 
-import java.util.HashMap;
-
-import bigBang.library.client.SearchResult;
 import bigBang.library.interfaces.SearchService;
+import bigBang.library.shared.SearchParameter;
+import bigBang.library.shared.SearchResult;
 
 public class SearchServiceImpl
 	extends EngineImplementor
@@ -11,12 +10,10 @@ public class SearchServiceImpl
 {
 	private static final long serialVersionUID = 1L;
 
-	public SearchResult[] search(HashMap<String, String> filters, String[] requiredFields, String searchTerms)
-	{
-		SearchResult[] result = new SearchResult[15];
-		for(int i = 0; i  < result.length; i++){
-			result[i] = new SearchResult();
-		}
-		return result;
+	@Override
+	public SearchResult[] search(String workspaceId, SearchParameter parameter,
+			int size) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }

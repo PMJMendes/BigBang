@@ -1,8 +1,7 @@
 package bigBang.library.interfaces;
 
-import java.util.HashMap;
-
-import bigBang.library.client.SearchResult;
+import bigBang.library.shared.SearchParameter;
+import bigBang.library.shared.SearchResult;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.rpc.RemoteService;
@@ -23,6 +22,6 @@ public interface SearchService extends RemoteService, Service {
 		}
 	}
 
-	SearchResult[] search(HashMap<String, String> filters, String[] requiredFields, String searchTerms);
+	SearchResult[] search(String workspaceId, SearchParameter parameter, int size);
 
 }

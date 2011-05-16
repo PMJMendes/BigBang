@@ -1,9 +1,9 @@
 package bigBang.library.client.userInterface.view;
 
-import bigBang.library.client.SearchResult;
 import bigBang.library.client.userInterface.FilterableList;
 import bigBang.library.interfaces.SearchService;
 import bigBang.library.interfaces.SearchServiceAsync;
+import bigBang.library.shared.SearchResult;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.FontWeight;
@@ -32,7 +32,7 @@ import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
-public abstract class SearchPanel<T> extends FilterableList<T> {
+public abstract class SearchPanel extends FilterableList<SearchResult> {
 
 	private final String DEFAULT_TEXT = "Termos de pesquisa";
 	
@@ -192,7 +192,7 @@ public abstract class SearchPanel<T> extends FilterableList<T> {
 		};		
 		
 		try{
-			this.service.search(null, null, this.textBoxFilter.getText(), callback);
+			this.service.search(null, null, 0, callback);
 		}catch(Exception e){
 			GWT.log(e.getMessage());
 		}

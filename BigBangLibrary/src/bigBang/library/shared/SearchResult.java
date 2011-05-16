@@ -1,4 +1,4 @@
-package bigBang.library.client;
+package bigBang.library.shared;
 
 import java.io.Serializable;
 import java.util.HashMap;
