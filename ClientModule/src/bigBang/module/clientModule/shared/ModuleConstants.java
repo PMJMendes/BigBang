@@ -30,11 +30,14 @@ public class ModuleConstants
 	public class ProcessTypeIDs
 	{
 		public static final String GENERAL_SYSTEM = "628f5da6-434f-46a8-9c88-9eb1008a689a";
+		public static final String CLIENT         = "";
 	}
 
 	public class OpTypeIDs
 	{
 		public static final String ManageClientGroups = "08E5A828-0AF2-4347-A57A-9EB500A11526";
 		public static final String CreateClient       = "214118B8-C43C-4941-9D1E-9EB500A1381C";
+
+		public static final String ChangeClientData   = "";
 	}
 }
