@@ -9,6 +9,7 @@ import bigBang.library.shared.SessionExpiredException;
 import bigBang.module.clientModule.interfaces.ClientService;
 import bigBang.module.clientModule.shared.Client;
 import bigBang.module.clientModule.shared.ClientGroup;
+import bigBang.module.clientModule.shared.ClientSearchParameter;
 
 public class ClientServiceImpl
 	extends EngineImplementor
@@ -19,6 +20,7 @@ public class ClientServiceImpl
 	public NewSearchResult openSearch(SearchParameter[] parameters, int size)
 		throws SessionExpiredException, BigBangException
 	{
+		ClientSearchParameter lparam;
 		return null;
 	}
 
