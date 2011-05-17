@@ -9,10 +9,10 @@ import bigBang.library.client.userInterface.TextBoxFormField;
 import bigBang.library.client.userInterface.view.FormView;
 import bigBang.library.client.userInterface.view.FormViewSection;
 import bigBang.module.clientModule.shared.Client;
+import bigBang.module.clientModule.shared.ModuleConstants;
 
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.event.logical.shared.AttachEvent;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.RadioButton;
 
@@ -36,6 +36,7 @@ public class ClientFormView extends FormView<Client> {
 	private ExpandableListBoxFormField maritalStatus;
 	private ExpandableListBoxFormField profession;
 	private TextAreaFormField notes;
+	private ExpandableListBoxFormField otherClientType;
 	
 	private FormViewSection specificSection;
 	
@@ -47,18 +48,21 @@ public class ClientFormView extends FormView<Client> {
 		address = new AddressFormField();
 		group = new ListBoxFormField("Grupo");
 		NIB = new TextBoxFormField("NIB");
-		mediator = new ExpandableListBoxFormField("", "Mediador");
+		mediator = new ExpandableListBoxFormField("Mediador");
 		clientManager = new ExpandableListBoxFormField("Gestor de Cliente");
-		profile = new ExpandableListBoxFormField("", "Perfil Operacional");
+		profile = new ExpandableListBoxFormField(ModuleConstants.ListIDs.OperationalProfiles, "Perfil Operacional");
 		email = new TextBoxFormField("Email");
-		CAE = new ExpandableListBoxFormField("", "CAE");
+		CAE = new ExpandableListBoxFormField(ModuleConstants.ListIDs.CAEs, "CAE");
+		CAE.setPopupWidth("600px");
+		CAE.setReadOnly(true);
 		activityObservations = new TextBoxFormField("Observações sobre actividade");
-		numberOfWorkers = new ExpandableListBoxFormField("", "Número de trabalhadores");
-		gender = new ExpandableListBoxFormField("", "Sexo");
+		numberOfWorkers = new ExpandableListBoxFormField(ModuleConstants.ListIDs.CompanySizes, "Número de trabalhadores");
+		gender = new ExpandableListBoxFormField(ModuleConstants.ListIDs.Sexes, "Sexo");
 		birthDate = new DatePickerFormField();
-		maritalStatus = new ExpandableListBoxFormField("", "Estado Civil");
-		profession = new ExpandableListBoxFormField("", "Profissão");
-		revenue = new ExpandableListBoxFormField("", "Facturação");
+		maritalStatus = new ExpandableListBoxFormField(ModuleConstants.ListIDs.MaritalStatuses, "Estado Civil");
+		profession = new ExpandableListBoxFormField(ModuleConstants.ListIDs.Professions, "Profissão");
+		revenue = new ExpandableListBoxFormField(ModuleConstants.ListIDs.SalesVolumes, "Facturação");
+		otherClientType = new ExpandableListBoxFormField(ModuleConstants.ListIDs.ClientSubtypes, "Tipo");
 		notes = new TextAreaFormField();
 		
 		addSection("Informação Geral");
@@ -76,7 +80,7 @@ public class ClientFormView extends FormView<Client> {
 		
 		final RadioButton radioButtonI = new RadioButton("clientType", "Indivíduo");
 		final RadioButton radioButtonE = new RadioButton("clientType", "Empresa");
-		final RadioButton radioButtonC = new RadioButton("clientType", "Condomínio");
+		final RadioButton radioButtonC = new RadioButton("clientType", "Outro");
 		
 		radioButtonI.addClickHandler(new ClickHandler() {
 			
@@ -87,7 +91,7 @@ public class ClientFormView extends FormView<Client> {
 				else if(radioButtonI.getValue())
 					setIndividualMode();
 				else if(radioButtonC.getValue())
-					setCondominiumMode();
+					setOtherMode();
 			}
 		});
 
@@ -100,7 +104,7 @@ public class ClientFormView extends FormView<Client> {
 				else if(radioButtonI.getValue())
 					setIndividualMode();
 				else if(radioButtonC.getValue())
-					setCondominiumMode();
+					setOtherMode();
 			}
 		});
 		
@@ -113,7 +117,7 @@ public class ClientFormView extends FormView<Client> {
 				else if(radioButtonI.getValue())
 					setIndividualMode();
 				else if(radioButtonC.getValue())
-					setCondominiumMode();
+					setOtherMode();
 			}
 		});
 		
@@ -157,9 +161,10 @@ public class ClientFormView extends FormView<Client> {
 		specificSection.addFormField(revenue);
 	}
 	
-	public void setCondominiumMode() {
+	public void setOtherMode() {
+		specificSection.setVisible(true);
 		specificSection.clear();
-		specificSection.setVisible(false);
+		specificSection.addFormField(otherClientType);
 	}
 	
 	@Override

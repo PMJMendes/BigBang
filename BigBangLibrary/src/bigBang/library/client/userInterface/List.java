@@ -239,7 +239,7 @@ public class List<T> extends View implements HasValueSelectables<T>, java.util.L
 					e.setSelected(false, false);
 			}
 		}
-		fireEvent(new SelectionChangedEvent(this.getSelected()));
+		selectionChangedEventFireBypass(new SelectionChangedEvent(this.getSelected()));
 	}
 
 
@@ -309,7 +309,7 @@ public class List<T> extends View implements HasValueSelectables<T>, java.util.L
 			s.setSelected(false, true);
 		}
 		if(hasChanges && selectionChangeHandlerInitialized)
-			fireEvent(new SelectionChangedEvent(this.getSelected()));	
+			selectionChangedEventFireBypass(new SelectionChangedEvent(this.getSelected()));	
 	}
 
 	@Override
@@ -392,7 +392,7 @@ public class List<T> extends View implements HasValueSelectables<T>, java.util.L
 				selectableStateChanged((Selectable) event.getSource());
 			}
 		};
-		fireEvent(new SelectionChangedEvent(getSelected()));
+		selectionChangedEventFireBypass(new SelectionChangedEvent(getSelected()));
 		boolean hadElements = !entries.isEmpty();
 		this.listPanel.clear();
 		this.entries.clear();
@@ -525,5 +525,9 @@ public class List<T> extends View implements HasValueSelectables<T>, java.util.L
 	}
 	
 	public void onCellDoubleClicked(ListEntry<T> entry) {
+	}
+	
+	protected void selectionChangedEventFireBypass(SelectionChangedEvent e){
+		fireEvent(e);
 	}
 }

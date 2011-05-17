@@ -25,13 +25,13 @@ public class ExpandableListBoxFormField extends ListBoxFormField {
 
 	protected Image expandImage;
 	protected TypifiedListManagementPanel list;
-	
+
 	protected boolean hasServices;
 
 	public ExpandableListBoxFormField(String description) {
 		this("", description);
 	}
-	
+
 	public ExpandableListBoxFormField(String listId, FieldValidator<String> validator) {
 		this(listId, "");
 		setValidator(validator);
@@ -41,12 +41,12 @@ public class ExpandableListBoxFormField extends ListBoxFormField {
 		this(listId, description);
 		setValidator(validator);
 	}
-	
+
 	public ExpandableListBoxFormField(final String listId, final String listDescription){
 		super();
 
 		hasServices = listId != null && !listId.equals("");
-		
+
 		label.setText(listDescription + ":");
 
 		wrapper.clear();
@@ -61,7 +61,7 @@ public class ExpandableListBoxFormField extends ListBoxFormField {
 		expandImage.getElement().getStyle().setCursor(Cursor.POINTER);
 
 		final PopupPanel popup = new PopupPanel(true, "Listagem");
-		
+
 		expandImage.addClickHandler(new ClickHandler() {
 
 			@Override
@@ -76,14 +76,14 @@ public class ExpandableListBoxFormField extends ListBoxFormField {
 						@Override
 						public void onFailure(Throwable caught) {
 							// TODO Auto-generated method stub
-							
+
 						}
 
 						@Override
 						public void onSuccess(Void result) {
 							synchronizeToListBox();
 						}
-						
+
 					});
 				}else
 					synchronizeToList();
@@ -97,7 +97,7 @@ public class ExpandableListBoxFormField extends ListBoxFormField {
 				if(hasServices)
 					synchronizeToListBox();
 			};
-			
+
 			public void onCellDoubleClicked(bigBang.library.client.userInterface.ListEntry<TipifiedListItem> entry) {
 				super.onCellDoubleClicked(entry);
 				popup.hidePopup();
@@ -127,7 +127,7 @@ public class ExpandableListBoxFormField extends ListBoxFormField {
 		wrapper.add(expandImage);
 		wrapper.add(mandatoryIndicatorLabel);
 		setFieldWidth("150px");
-		
+
 		/*if(!hasServices)
 			synchronizeToList();*/
 
@@ -170,6 +170,14 @@ public class ExpandableListBoxFormField extends ListBoxFormField {
 	public void clear() {
 		list.clearSelection();
 		super.clear();
+	}
+
+	public void setPopupWidth(String width) {
+		list.setWidth(width);
+	}
+
+	public void setPopupHeight(String height) {
+		list.setHeight(height);
 	}
 
 }

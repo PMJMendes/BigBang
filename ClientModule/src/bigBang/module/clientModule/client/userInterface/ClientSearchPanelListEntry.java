@@ -1,47 +1,39 @@
 package bigBang.module.clientModule.client.userInterface;
 
-import bigBang.library.client.userInterface.ContextMenu;
+import com.google.gwt.event.logical.shared.ValueChangeEvent;
+import com.google.gwt.event.logical.shared.ValueChangeHandler;
+
+import bigBang.library.client.ValueWrapper;
 import bigBang.library.client.userInterface.SearchPanelListEntry;
+import bigBang.library.shared.SearchResult;
 import bigBang.module.clientModule.shared.ClientStub;
 
-import com.google.gwt.core.client.GWT;
-import com.google.gwt.user.client.Event;
-import com.google.gwt.user.client.ui.Image;
+public class ClientSearchPanelListEntry extends SearchPanelListEntry<SearchResult> {
 
-public class ClientSearchPanelListEntry extends SearchPanelListEntry<ClientStub> {
-
-	private String rightWidgetImageDefaultUrl = "images/clientListIcon1.png";
-	private String rightWidgetImageSelectedUrl = "images/clientListIcon1Selected.png";
+	protected ValueWrapper<ClientStub> wrapper;
 	
-	public ClientSearchPanelListEntry(ClientStub value) {
-		super(value);
-		Image rightImage = new Image("images/clientListIcon1.png");
-		rightImage.setSize("20px", "20px");
-		rightImage.setTitle("Cliente");
-		this.setRightWidget(rightImage);
+	public ClientSearchPanelListEntry(ValueWrapper<ClientStub> valueWrapper) {
+		super(valueWrapper.getValue());
+		wrapper = valueWrapper;
 		this.setHeight("40px");
-		
-		this.setRightClickable(true);
+		valueWrapper.addValueChangeHandler(new ValueChangeHandler<ClientStub>() {
+			
+			@Override
+			public void onValueChange(ValueChangeEvent<ClientStub> event) {
+				setInfo(event.getValue());
+			}
+		});
 	}
+	
+	public <I extends Object> void setInfo(I info) {
+		ClientStub value = (ClientStub)info;
+		setTitle(value.name);
+		setText(value.clientNumber);
+	};
 	
 	@Override
 	public void setSelected(boolean selected) {
 		super.setSelected(selected);
-		this.setRightWidget(new Image(selected ? rightWidgetImageSelectedUrl : rightWidgetImageDefaultUrl));
-	}
-	
-	@Override
-	public void onRightClick(Event event){
-		GWT.log("click");
-		super.onRightClick(event);
-		event.stopPropagation();
-		event.preventDefault();
-		ContextMenu contextMenu = new ContextMenu();
-		contextMenu.show(event.getClientX(), event.getClientY());
-		
-		//PopupPanel popup = new PopupPanel();
-		//popup.setSize("300px", "250px");
-		//popup.center();
 	}
 	
 }

@@ -1,8 +1,9 @@
 package bigBang.library.client.userInterface.view;
 
+import bigBang.library.client.BigBangAsyncCallback;
 import bigBang.library.client.userInterface.FilterableList;
-import bigBang.library.interfaces.SearchService;
 import bigBang.library.interfaces.SearchServiceAsync;
+import bigBang.library.shared.NewSearchResult;
 import bigBang.library.shared.SearchParameter;
 import bigBang.library.shared.SearchResult;
 
@@ -23,7 +24,6 @@ import com.google.gwt.event.dom.client.KeyUpHandler;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
-import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.DisclosurePanel;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
@@ -36,6 +36,7 @@ import com.google.gwt.user.client.ui.Widget;
 public abstract class SearchPanel extends FilterableList<SearchResult> {
 
 	private final String DEFAULT_TEXT = "Termos de pesquisa";
+	protected final int DEFAULT_PAGE_SIZE = 50;
 	
 	private boolean liveSearch = false;
 	private boolean hasSearchTerms;
@@ -45,10 +46,8 @@ public abstract class SearchPanel extends FilterableList<SearchResult> {
 	private HandlerRegistration liveSearchKeyUpHandlerRegistration;
 	
 	private SearchServiceAsync service;
-
-	public SearchPanel(){
-		this(SearchService.Util.getInstance());
-	}
+	private String workspaceId;
+	protected int pageSize = DEFAULT_PAGE_SIZE;
 	
 	public SearchPanel(SearchServiceAsync service){
 		super();
@@ -179,30 +178,46 @@ public abstract class SearchPanel extends FilterableList<SearchResult> {
 
 	public void doSearch(SearchParameter[] parameters) {
 		
-		AsyncCallback<SearchResult[]> callback = new AsyncCallback<SearchResult[]>() {
-
-			public void onFailure(Throwable caught) {
-				GWT.log("Search service has failed");
-			}
-
-			public void onSuccess(SearchResult[] result) {
-				clear();
-				onResults(result);
-				updateFooterText();
-			}
-			
-		};		
-		
 		try{
-			this.service.search(null, parameters, 0, callback);
+			if(workspaceId == null){
+				BigBangAsyncCallback<NewSearchResult> callback = new BigBangAsyncCallback<NewSearchResult>() {
+
+					public void onSuccess(NewSearchResult result) {
+						workspaceId = result.workspaceId;
+						clear();
+						onResults(result.results);
+						updateFooterText();
+					}
+					
+				};		
+				this.service.openSearch(parameters, this.pageSize, callback);
+			}else{
+				BigBangAsyncCallback<SearchResult[]> callback = new BigBangAsyncCallback<SearchResult[]>() {
+
+					public void onSuccess(SearchResult[] result) {
+						clear();
+						onResults(result);
+						updateFooterText();
+					}
+					
+				};		
+				this.service.search(null, parameters, this.pageSize, callback);
+			}
 		}catch(Exception e){
 			GWT.log(e.getMessage());
 		}
 
 	}
 	
-	public abstract void doSearch();
+	public void setPageSize(int size){
+		this.pageSize = size;
+		this.workspaceId = null;
+	}
 	
+	public int getPageSize(){return this.pageSize;}
+
+	public abstract void doSearch();
+
 	public abstract void onResults(SearchResult[] results);
 
 }

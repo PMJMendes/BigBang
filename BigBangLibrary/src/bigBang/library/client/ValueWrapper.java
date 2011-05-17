@@ -1,6 +1,7 @@
 package bigBang.library.client;
 
 import com.google.gwt.event.logical.shared.HasValueChangeHandlers;
+import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.event.shared.GwtEvent;
 import com.google.gwt.event.shared.HandlerRegistration;
@@ -37,11 +38,16 @@ public class ValueWrapper <T> implements HasValue<T>, HasValueChangeHandlers<T> 
 	@Override
 	public void setValue(T value) {
 		setValue(value, true);
+		fireChanges();
 	}
 
 	@Override
 	public void setValue(T value, boolean fireEvents) {
 		this.value = value;
+	}
+	
+	public void fireChanges(){
+		ValueChangeEvent.fire(this, getValue());
 	}
 
 }
