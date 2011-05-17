@@ -178,7 +178,7 @@ public abstract class SearchPanel extends FilterableList<SearchResult> {
 	}
 
 	public void doSearch() {
-		SearchParameter parameter = new SearchParameter();
+//		SearchParameter parameter = new SearchParameter();
 		
 		
 		
