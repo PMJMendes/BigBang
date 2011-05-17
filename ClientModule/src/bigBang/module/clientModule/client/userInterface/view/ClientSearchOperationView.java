@@ -1,10 +1,11 @@
 package bigBang.module.clientModule.client.userInterface.view;
 
 import bigBang.library.client.HasSelectables;
+import bigBang.library.client.Selectable;
 import bigBang.library.client.userInterface.view.View;
 import bigBang.module.clientModule.client.userInterface.ClientSearchPanel;
 import bigBang.module.clientModule.client.userInterface.presenter.ClientSearchOperationViewPresenter;
-import bigBang.module.clientModule.shared.ClientProcess;
+import bigBang.module.clientModule.shared.Client;
 
 import com.google.gwt.user.client.ui.HasValue;
 import com.google.gwt.user.client.ui.SplitLayoutPanel;
@@ -32,11 +33,11 @@ public class ClientSearchOperationView extends View implements ClientSearchOpera
 		initWidget(wrapper);
 	}
 	
-	public HasSelectables getClientSearchList() {
-		return this.searchPanel;
+	public HasSelectables<Selectable> getClientSearchList() {
+		return null; //this.searchPanel;
 	}
 
-	public HasValue<ClientProcess> getPreviewWidget() {
+	public HasValue<Client> getPreviewWidget() {
 		return this.previewPanel;
 	}
 	

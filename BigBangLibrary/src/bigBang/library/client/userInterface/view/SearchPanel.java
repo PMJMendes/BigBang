@@ -3,6 +3,7 @@ package bigBang.library.client.userInterface.view;
 import bigBang.library.client.userInterface.FilterableList;
 import bigBang.library.interfaces.SearchService;
 import bigBang.library.interfaces.SearchServiceAsync;
+import bigBang.library.shared.SearchParameter;
 import bigBang.library.shared.SearchResult;
 
 import com.google.gwt.core.client.GWT;
@@ -177,6 +178,10 @@ public abstract class SearchPanel extends FilterableList<SearchResult> {
 	}
 
 	public void doSearch() {
+		SearchParameter parameter = new SearchParameter();
+		
+		
+		
 		AsyncCallback<SearchResult[]> callback = new AsyncCallback<SearchResult[]>() {
 
 			public void onFailure(Throwable caught) {

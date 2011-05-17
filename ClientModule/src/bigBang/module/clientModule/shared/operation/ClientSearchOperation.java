@@ -6,7 +6,6 @@ import bigBang.library.client.userInterface.view.View;
 import bigBang.module.clientModule.client.resources.Resources;
 import bigBang.module.clientModule.client.userInterface.presenter.ClientSearchOperationViewPresenter;
 import bigBang.module.clientModule.client.userInterface.view.ClientSearchOperationView;
-import bigBang.module.clientModule.shared.ClientProcess;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.AbstractImagePrototype;
@@ -16,7 +15,7 @@ public class ClientSearchOperation implements Operation {
 	public static final String ID = "clientSearchOperation";
 	private final String DESCRIPTION = "A operação de pesquisa de clientes";
 	private final String SHORT_DESCRIPTION = "Pesquisa";
-	private final String OWNER_PROCESS_ID = ClientProcess.ID;
+	private final String OWNER_PROCESS_ID = "";// ClientProcess.ID;
 	
 	private boolean permission;
 	

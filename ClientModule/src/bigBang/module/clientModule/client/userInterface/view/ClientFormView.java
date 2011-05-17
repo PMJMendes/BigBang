@@ -8,7 +8,7 @@ import bigBang.library.client.userInterface.TextAreaFormField;
 import bigBang.library.client.userInterface.TextBoxFormField;
 import bigBang.library.client.userInterface.view.FormView;
 import bigBang.library.client.userInterface.view.FormViewSection;
-import bigBang.module.clientModule.shared.ClientProxy;
+import bigBang.module.clientModule.shared.Client;
 
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
@@ -16,7 +16,7 @@ import com.google.gwt.event.logical.shared.AttachEvent;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.RadioButton;
 
-public class ClientFormView extends FormView<ClientProxy> {
+public class ClientFormView extends FormView<Client> {
 	
 	private TextBoxFormField name;
 	private TextBoxFormField taxNumber;
@@ -163,13 +163,13 @@ public class ClientFormView extends FormView<ClientProxy> {
 	}
 	
 	@Override
-	public ClientProxy getInfo() {
+	public Client getInfo() {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public void setInfo(ClientProxy info) {
+	public void setInfo(Client info) {
 		// TODO Auto-generated method stub
 		
 	}

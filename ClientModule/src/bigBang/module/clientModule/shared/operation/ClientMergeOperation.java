@@ -1,13 +1,12 @@
 package bigBang.module.clientModule.shared.operation;
 
 import bigBang.library.client.Operation;
-import bigBang.module.clientModule.shared.ClientProcess;
 
 import com.google.gwt.user.client.ui.AbstractImagePrototype;
 
 public class ClientMergeOperation implements Operation {
 
-	public static final String OWNER_PROCESS_ID = ClientProcess.ID;
+	public static final String OWNER_PROCESS_ID = ""; //ClientProcess.ID;
 	public static final String ID = "clientMergeOperation";
 	private final String DESCRIPTION = "A operação de fusão de clientes";
 	private final String SHORT_DESCRIPTION = "Fusão";

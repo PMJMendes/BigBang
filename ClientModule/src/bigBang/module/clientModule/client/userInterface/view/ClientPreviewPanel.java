@@ -6,7 +6,7 @@ import bigBang.library.client.userInterface.FilterableList;
 import bigBang.library.client.userInterface.ListEntry;
 import bigBang.library.client.userInterface.ListHeader;
 import bigBang.library.client.userInterface.view.PreviewPanel;
-import bigBang.module.clientModule.shared.ClientProcess;
+import bigBang.module.clientModule.shared.Client;
 
 import com.google.gwt.event.logical.shared.CloseEvent;
 import com.google.gwt.event.logical.shared.CloseHandler;
@@ -18,7 +18,7 @@ import com.google.gwt.user.client.ui.UIObject;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
-public class ClientPreviewPanel extends PreviewPanel<ClientProcess> {
+public class ClientPreviewPanel extends PreviewPanel<Client> {
 
 	private int RIGHT_PANEL_WIDTH = 200;//PX
 	
@@ -128,7 +128,7 @@ public class ClientPreviewPanel extends PreviewPanel<ClientProcess> {
 	}
 	
 	@Override
-	public void setValue(ClientProcess value, boolean fireEvents) {
+	public void setValue(Client value, boolean fireEvents) {
 		super.setValue(value, fireEvents);
 		render();
 	}

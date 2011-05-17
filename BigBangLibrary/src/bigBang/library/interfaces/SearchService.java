@@ -1,5 +1,6 @@
 package bigBang.library.interfaces;
 
+import bigBang.library.shared.NewSearchResult;
 import bigBang.library.shared.SearchParameter;
 import bigBang.library.shared.SearchResult;
 
@@ -22,6 +23,9 @@ public interface SearchService extends RemoteService, Service {
 		}
 	}
 
+	NewSearchResult openSearch(String[] entityTypeIds, SearchParameter parameter, int size);
 	SearchResult[] search(String workspaceId, SearchParameter parameter, int size);
+	SearchResult[] getResults(String workspaceId, int from, int size);
+	void closeSearch(String workspaceId);
 
 }

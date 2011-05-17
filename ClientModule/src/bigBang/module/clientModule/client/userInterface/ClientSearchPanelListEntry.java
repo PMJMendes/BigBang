@@ -2,18 +2,18 @@ package bigBang.module.clientModule.client.userInterface;
 
 import bigBang.library.client.userInterface.ContextMenu;
 import bigBang.library.client.userInterface.SearchPanelListEntry;
-import bigBang.module.clientModule.shared.ClientProxy;
+import bigBang.module.clientModule.shared.ClientStub;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.Event;
 import com.google.gwt.user.client.ui.Image;
 
-public class ClientSearchPanelListEntry extends SearchPanelListEntry<ClientProxy> {
+public class ClientSearchPanelListEntry extends SearchPanelListEntry<ClientStub> {
 
 	private String rightWidgetImageDefaultUrl = "images/clientListIcon1.png";
 	private String rightWidgetImageSelectedUrl = "images/clientListIcon1Selected.png";
 	
-	public ClientSearchPanelListEntry(ClientProxy value) {
+	public ClientSearchPanelListEntry(ClientStub value) {
 		super(value);
 		Image rightImage = new Image("images/clientListIcon1.png");
 		rightImage.setSize("20px", "20px");
