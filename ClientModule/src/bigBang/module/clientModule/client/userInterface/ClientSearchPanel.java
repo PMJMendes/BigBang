@@ -32,5 +32,11 @@ public class ClientSearchPanel extends SearchPanel {
 		}
 	}
 
+	@Override
+	public void doSearch() {
+		// TODO Auto-generated method stub
+		
+	}
+
 
 }
