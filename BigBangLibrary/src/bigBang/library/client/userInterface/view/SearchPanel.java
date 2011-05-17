@@ -177,10 +177,7 @@ public abstract class SearchPanel extends FilterableList<SearchResult> {
 		this.setFooterText((nEntries == 0 ? "Sem" : nEntries) + " resultados");
 	}
 
-	public void doSearch() {
-//		SearchParameter parameter = new SearchParameter();
-		
-		
+	public void doSearch(SearchParameter[] parameters) {
 		
 		AsyncCallback<SearchResult[]> callback = new AsyncCallback<SearchResult[]>() {
 
@@ -197,12 +194,14 @@ public abstract class SearchPanel extends FilterableList<SearchResult> {
 		};		
 		
 		try{
-			this.service.search(null, null, 0, callback);
+			this.service.search(null, parameters, 0, callback);
 		}catch(Exception e){
 			GWT.log(e.getMessage());
 		}
 
 	}
+	
+	public abstract void doSearch();
 	
 	public abstract void onResults(SearchResult[] results);
 

@@ -1,9 +1,11 @@
 package bigBang.library.server;
 
 import bigBang.library.interfaces.SearchService;
+import bigBang.library.shared.BigBangException;
 import bigBang.library.shared.NewSearchResult;
 import bigBang.library.shared.SearchParameter;
 import bigBang.library.shared.SearchResult;
+import bigBang.library.shared.SessionExpiredException;
 
 public class SearchServiceImpl
 	extends EngineImplementor
@@ -12,7 +14,7 @@ public class SearchServiceImpl
 	private static final long serialVersionUID = 1L;
 
 	@Override
-	public SearchResult[] search(String workspaceId, SearchParameter parameter,
+	public SearchResult[] search(String workspaceId, SearchParameter[] parameters,
 			int size) {
 		// TODO Auto-generated method stub
 		return null;
@@ -20,19 +22,22 @@ public class SearchServiceImpl
 
 	@Override
 	public NewSearchResult openSearch(String[] entityTypeIds,
-			SearchParameter parameter, int size) {
+			SearchParameter[] parameters, int size)
+			throws SessionExpiredException, BigBangException {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public SearchResult[] getResults(String workspaceId, int from, int size) {
+	public SearchResult[] getResults(String workspaceId, int from, int size)
+			throws SessionExpiredException, BigBangException {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public void closeSearch(String workspaceId) {
+	public void closeSearch(String workspaceId) throws SessionExpiredException,
+			BigBangException {
 		// TODO Auto-generated method stub
 		
 	}

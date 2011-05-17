@@ -27,8 +27,8 @@ public interface SearchService
 		}
 	}
 
-	NewSearchResult openSearch(String[] entityTypeIds, SearchParameter parameter, int size) throws SessionExpiredException, BigBangException;
-	SearchResult[] search(String workspaceId, SearchParameter parameter, int size) throws SessionExpiredException, BigBangException;
+	NewSearchResult openSearch(String[] entityTypeIds, SearchParameter[] parameters, int size) throws SessionExpiredException, BigBangException;
+	SearchResult[] search(String workspaceId, SearchParameter[] parameters, int size) throws SessionExpiredException, BigBangException;
 	SearchResult[] getResults(String workspaceId, int from, int size) throws SessionExpiredException, BigBangException;
 	void closeSearch(String workspaceId) throws SessionExpiredException, BigBangException;
 }
