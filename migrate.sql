@@ -75,9 +75,10 @@ insert into bigbang.tblContactInfoType (PK, TypeName) values ('01C8D0CA-074E-45A
 insert into bigbang.tblContactInfoType (PK, TypeName) values ('60414F28-49E7-43AD-ACD9-9EDF00F41E76', N'Telemóvel');
 insert into bigbang.tblContactInfoType (PK, TypeName) values ('172EC088-AA55-433B-BBC3-9EDF00F42266', N'Fax');
 insert into bigbang.tblContactTypes (PK, ContactType) values ('07367032-3A5D-499D-88BD-9EEE013357C9', N'Ao Cuidado');
-insert into bigbang.tblContactTypes (PK, ContactType) values ('BA706479-AE31-4E69-A7F0-9EEE01336CA4', N'Dev. Recibos');
+insert into bigbang.tblContactTypes (PK, ContactType) values ('BA706479-AE31-4E69-A7F0-9EEE01336CA4', N'Devolução de Recibos');
 insert into bigbang.tblContactTypes (PK, ContactType) values ('04F6BC3C-0283-47F0-9670-9EEE013350D9', N'Geral');
-insert into bigbang.tblContactTypes (PK, ContactType) values ('CF3019C6-8A9C-495C-B9D0-9EEE01335BC6', N'Sede');
+insert into bigbang.tblContactTypes (PK, ContactType) values ('CF3019C6-8A9C-495C-B9D0-9EEE01335BC6', N'Local');
+insert into bigbang.tblContactTypes (PK, ContactType) values ('88AF4A7C-DAB2-4E7F-B85D-9EEE01467E91', N'Tesouraria');
 insert into bigbang.tblOpProfiles (PK, OpProfileName) values ('63114D11-6087-4EFE-9A7E-9EE600BE52DA', N'VIP');
 insert into bigbang.tblOpProfiles (PK, OpProfileName) values ('9F871430-9BBC-449F-B125-9EE600BE5A9A', N'Normal');
 
@@ -294,7 +295,102 @@ insert into credite_egs.tblCompanies (PK, CompName, ShortName, FiscalNumber, Add
 select CAST(CAST(NEWID() AS BINARY(10)) + CAST(GETDATE() AS BINARY(6)) AS UNIQUEIDENTIFIER) PK,
 s.NOME CompName, s.SIGLA ShortName, s.NIFC FiscalNulber, s.MORADA Address1, c.PK FKZipCode, s.COMPANHIA MigrationID
 from credegs..empresa.companhi s
-left outer join bigbang.tblPostalCodes c on c.PostalCode=s.CODPOSTAL COLLATE DATABASE_DEFAULT;
+left outer join bigbang.tblPostalCodes c on c.PostalCode=s.CODPOSTAL COLLATE DATABASE_DEFAULT
+where s.companhia <> 61;
+
+insert into credite_egs.tblCompanies (PK, CompName, ShortName, FiscalNumber, Address1, FKZipCode, MigrationID)
+select CAST(CAST(NEWID() AS BINARY(10)) + CAST(GETDATE() AS BINARY(6)) AS UNIQUEIDENTIFIER) PK,
+s.NOME CompName, 'GPCV' ShortName, s.NIFC FiscalNulber, s.MORADA Address1, c.PK FKZipCode, s.COMPANHIA MigrationID
+from credegs..empresa.companhi s
+left outer join bigbang.tblPostalCodes c on c.PostalCode=s.CODPOSTAL COLLATE DATABASE_DEFAULT
+where s.companhia = 61;
+
+insert into credite_egs.tblContacts (PK, ContactName, FKOwnerType, FKOwner, FKContactType)
+select CAST(CAST(NEWID() AS BINARY(10)) + CAST(GETDATE() AS BINARY(6)) AS UNIQUEIDENTIFIER) PK,
+N'Sede' ContactName, '7B203DCA-FFAC-46B2-B849-9EBC009DB127' FKOwnerType, l.PK FKOwner, 'CF3019C6-8A9C-495C-B9D0-9EEE01335BC6' FKContactType
+from credite_egs.tblCompanies l
+inner join credegs..empresa.companhi r on r.COMPANHIA=l.MigrationID
+where r.fax is not null and r.fax<>'';
+
+insert into credite_egs.tblContactInfo (PK, FKContact, FKInfoType, InfoValue)
+select CAST(CAST(NEWID() AS BINARY(10)) + CAST(GETDATE() AS BINARY(6)) AS UNIQUEIDENTIFIER) PK,
+c.PK FKContact, '172EC088-AA55-433B-BBC3-9EDF00F42266' FKInfoType, r.fax InfoValue
+from credite_egs.tblCompanies l
+inner join credegs..empresa.companhi r on r.COMPANHIA=l.MigrationID
+inner join credite_egs.tblContacts c on c.FKOwner=l.PK
+where c.FKContactType='CF3019C6-8A9C-495C-B9D0-9EEE01335BC6' and ContactName=N'Sede';
+
+insert into credite_egs.tblContacts (PK, ContactName, FKOwnerType, FKOwner, FKContactType)
+select CAST(CAST(NEWID() AS BINARY(10)) + CAST(GETDATE() AS BINARY(6)) AS UNIQUEIDENTIFIER) PK,
+r.AOCUIDADO ContactName, '7B203DCA-FFAC-46B2-B849-9EBC009DB127' FKOwnerType, l.PK FKOwner, '07367032-3A5D-499D-88BD-9EEE013357C9' FKContactType
+from credite_egs.tblCompanies l
+inner join credegs..empresa.companhi r on r.COMPANHIA=l.MigrationID
+where r.AOCUIDADO is not null and r.AOCUIDADO<>'';
+
+insert into bigbang.tblPostalCodes (PK, PostalCode, PostalCity)
+select CAST(CAST(NEWID() AS BINARY(10)) + CAST(GETDATE() AS BINARY(6)) AS UNIQUEIDENTIFIER) PK, * from
+(select distinct codpostal PostalCode, rtrim(ltrim(upper(locpostal))) PostalCity
+from credegs..empresa.contactoscomseg s left outer join bigbang.tblpostalcodes c on ltrim(s.codpostal)=c.postalcode COLLATE DATABASE_DEFAULT
+where c.postalcode is null and s.codpostal is not null and s.codpostal <>'') z;
+
+insert into credite_egs.tblContacts (PK, ContactName, FKOwnerType, FKOwner, Address1, FKZipCode, FKContactType, MigrationID)
+select CAST(CAST(NEWID() AS BINARY(10)) + CAST(GETDATE() AS BINARY(6)) AS UNIQUEIDENTIFIER) PK,
+N'Outro' ContactName, '7B203DCA-FFAC-46B2-B849-9EBC009DB127' FKOwnerType, l.PK FKOwner,
+r.Morada Address1, c.PK FKZipCode, 'CF3019C6-8A9C-495C-B9D0-9EEE01335BC6' FKContactType, r.IDContacto MigrationID
+from credite_egs.tblCompanies l
+inner join credegs..empresa.ContactosComseg r on r.FKCompanhia=l.MigrationID
+left outer join bigbang.tblPostalCodes c on c.PostalCode=r.CodPostal COLLATE DATABASE_DEFAULT
+where r.Nome is null or r.Nome='';
+
+insert into credite_egs.tblContacts (PK, ContactName, FKOwnerType, FKOwner, Address1, FKZipCode, FKContactType, MigrationID)
+select CAST(CAST(NEWID() AS BINARY(10)) + CAST(GETDATE() AS BINARY(6)) AS UNIQUEIDENTIFIER) PK,
+r.Nome ContactName, '7B203DCA-FFAC-46B2-B849-9EBC009DB127' FKOwnerType, l.PK FKOwner,
+r.Morada Address1, c.PK FKZipCode, '88AF4A7C-DAB2-4E7F-B85D-9EEE01467E91' FKContactType, r.IDContacto MigrationID
+from credite_egs.tblCompanies l
+inner join credegs..empresa.ContactosComseg r on r.FKCompanhia=l.MigrationID
+left outer join bigbang.tblPostalCodes c on c.PostalCode=r.CodPostal COLLATE DATABASE_DEFAULT
+where r.Nome is not null and r.Nome<>'' and r.Assunto='Tesouraria';
+
+insert into credite_egs.tblContacts (PK, ContactName, FKOwnerType, FKOwner, Address1, FKZipCode, FKContactType, MigrationID)
+select CAST(CAST(NEWID() AS BINARY(10)) + CAST(GETDATE() AS BINARY(6)) AS UNIQUEIDENTIFIER) PK,
+r.Nome ContactName, '7B203DCA-FFAC-46B2-B849-9EBC009DB127' FKOwnerType, l.PK FKOwner,
+r.Morada Address1, c.PK FKZipCode, 'BA706479-AE31-4E69-A7F0-9EEE01336CA4' FKContactType, r.IDContacto MigrationID
+from credite_egs.tblCompanies l
+inner join credegs..empresa.ContactosComseg r on r.FKCompanhia=l.MigrationID
+left outer join bigbang.tblPostalCodes c on c.PostalCode=r.CodPostal COLLATE DATABASE_DEFAULT
+where r.Nome is not null and r.Nome<>'' and r.Assunto like '%recibo%';
+
+insert into credite_egs.tblContacts (PK, ContactName, FKOwnerType, FKOwner, Address1, FKZipCode, FKContactType, MigrationID)
+select CAST(CAST(NEWID() AS BINARY(10)) + CAST(GETDATE() AS BINARY(6)) AS UNIQUEIDENTIFIER) PK,
+r.Nome ContactName, '7B203DCA-FFAC-46B2-B849-9EBC009DB127' FKOwnerType, l.PK FKOwner,
+r.Morada Address1, c.PK FKZipCode, '04F6BC3C-0283-47F0-9670-9EEE013350D9' FKContactType, r.IDContacto MigrationID
+from credite_egs.tblCompanies l
+inner join credegs..empresa.ContactosComseg r on r.FKCompanhia=l.MigrationID
+left outer join bigbang.tblPostalCodes c on c.PostalCode=r.CodPostal COLLATE DATABASE_DEFAULT
+where r.Nome is not null and r.Nome<>'' and (r.Assunto is null or r.Assunto='' or r.Assunto='Geral');
+
+insert into credite_egs.tblContactInfo (PK, FKContact, FKInfoType, InfoValue)
+select CAST(CAST(NEWID() AS BINARY(10)) + CAST(GETDATE() AS BINARY(6)) AS UNIQUEIDENTIFIER) PK,
+l.PK FKContact, '01C8D0CA-074E-45AA-8A17-9EDF00F41586' FKInfoType, r.Telefone InfoValue
+from credegs..empresa.ContactosComseg r
+inner join credite_egs.tblContacts l on l.MigrationID=r.IDContacto
+where r.Telefone is not null and r.Telefone<>'';
+
+insert into credite_egs.tblContactInfo (PK, FKContact, FKInfoType, InfoValue)
+select CAST(CAST(NEWID() AS BINARY(10)) + CAST(GETDATE() AS BINARY(6)) AS UNIQUEIDENTIFIER) PK,
+l.PK FKContact, '172EC088-AA55-433B-BBC3-9EDF00F42266' FKInfoType, r.Fax InfoValue
+from credegs..empresa.ContactosComseg r
+inner join credite_egs.tblContacts l on l.MigrationID=r.IDContacto
+where r.Fax is not null and r.Fax<>'';
+
+insert into credite_egs.tblContactInfo (PK, FKContact, FKInfoType, InfoValue)
+select CAST(CAST(NEWID() AS BINARY(10)) + CAST(GETDATE() AS BINARY(6)) AS UNIQUEIDENTIFIER) PK,
+l.PK FKContact, '96467849-6FE1-4113-928C-9EDF00F40FB9' FKInfoType, r.Email InfoValue
+from credegs..empresa.ContactosComseg r
+inner join credite_egs.tblContacts l on l.MigrationID=r.IDContacto
+where r.Email is not null and r.Email<>'';
+
+
 
 insert into amartins.tblPNProcesses (PK, FKScript, FKData, FKManager, IsRunning) values ('FDF0DBAA-22BD-4679-AF72-9EB800CB024D', '37A989E2-9D1F-470C-A59E-9EB1008A97A5', '8E5E3504-875A-4313-91A9-9EB500C6295C', '091B8442-B7B0-40FA-B517-9EB00068A390', 1);
 insert into amartins.tblPNSteps (PK, FKProcess, FKOperation, FKLevel) select CAST(CAST(NEWID() AS BINARY(10)) + CAST(GETDATE() AS BINARY(6)) AS UNIQUEIDENTIFIER) PK, 'FDF0DBAA-22BD-4679-AF72-9EB800CB024D' FKProcess, PK FKOperation, FKDefaultLevel FKLevel from bigbang.tblPNOperations;
@@ -311,4 +407,97 @@ insert into amartins.tblCompanies (PK, CompName, ShortName, FiscalNumber, Addres
 select CAST(CAST(NEWID() AS BINARY(10)) + CAST(GETDATE() AS BINARY(6)) AS UNIQUEIDENTIFIER) PK,
 s.NOME CompName, s.SIGLA ShortName, s.NIFC FiscalNulber, s.MORADA Address1, c.PK FKZipCode, s.COMPANHIA MigrationID
 from amartins..empresa.companhi s
-left outer join bigbang.tblPostalCodes c on c.PostalCode=s.CODPOSTAL COLLATE DATABASE_DEFAULT;
+left outer join bigbang.tblPostalCodes c on c.PostalCode=s.CODPOSTAL COLLATE DATABASE_DEFAULT
+where s.companhia <> 61;
+
+insert into amartins.tblCompanies (PK, CompName, ShortName, FiscalNumber, Address1, FKZipCode, MigrationID)
+select CAST(CAST(NEWID() AS BINARY(10)) + CAST(GETDATE() AS BINARY(6)) AS UNIQUEIDENTIFIER) PK,
+s.NOME CompName, 'GPCV' ShortName, s.NIFC FiscalNulber, s.MORADA Address1, c.PK FKZipCode, s.COMPANHIA MigrationID
+from amartins..empresa.companhi s
+left outer join bigbang.tblPostalCodes c on c.PostalCode=s.CODPOSTAL COLLATE DATABASE_DEFAULT
+where s.companhia = 61;
+
+insert into amartins.tblContacts (PK, ContactName, FKOwnerType, FKOwner, FKContactType)
+select CAST(CAST(NEWID() AS BINARY(10)) + CAST(GETDATE() AS BINARY(6)) AS UNIQUEIDENTIFIER) PK,
+N'Sede' ContactName, '7B203DCA-FFAC-46B2-B849-9EBC009DB127' FKOwnerType, l.PK FKOwner, 'CF3019C6-8A9C-495C-B9D0-9EEE01335BC6' FKContactType
+from amartins.tblCompanies l
+inner join amartins..empresa.companhi r on r.COMPANHIA=l.MigrationID
+where r.fax is not null and r.fax<>'';
+
+insert into amartins.tblContactInfo (PK, FKContact, FKInfoType, InfoValue)
+select CAST(CAST(NEWID() AS BINARY(10)) + CAST(GETDATE() AS BINARY(6)) AS UNIQUEIDENTIFIER) PK,
+c.PK FKContact, '172EC088-AA55-433B-BBC3-9EDF00F42266' FKInfoType, r.fax InfoValue
+from amartins.tblCompanies l
+inner join amartins..empresa.companhi r on r.COMPANHIA=l.MigrationID
+inner join amartins.tblContacts c on c.FKOwner=l.PK
+where c.FKContactType='CF3019C6-8A9C-495C-B9D0-9EEE01335BC6' and ContactName=N'Sede';
+
+insert into amartins.tblContacts (PK, ContactName, FKOwnerType, FKOwner, FKContactType)
+select CAST(CAST(NEWID() AS BINARY(10)) + CAST(GETDATE() AS BINARY(6)) AS UNIQUEIDENTIFIER) PK,
+r.AOCUIDADO ContactName, '7B203DCA-FFAC-46B2-B849-9EBC009DB127' FKOwnerType, l.PK FKOwner, '07367032-3A5D-499D-88BD-9EEE013357C9' FKContactType
+from amartins.tblCompanies l
+inner join amartins..empresa.companhi r on r.COMPANHIA=l.MigrationID
+where r.AOCUIDADO is not null and r.AOCUIDADO<>'';
+
+insert into bigbang.tblPostalCodes (PK, PostalCode, PostalCity)
+select CAST(CAST(NEWID() AS BINARY(10)) + CAST(GETDATE() AS BINARY(6)) AS UNIQUEIDENTIFIER) PK, * from
+(select distinct codpostal PostalCode, rtrim(ltrim(upper(locpostal))) PostalCity
+from amartins..empresa.contactoscomseg s left outer join bigbang.tblpostalcodes c on ltrim(s.codpostal)=c.postalcode COLLATE DATABASE_DEFAULT
+where c.postalcode is null and s.codpostal is not null and s.codpostal <>'') z;
+
+insert into amartins.tblContacts (PK, ContactName, FKOwnerType, FKOwner, Address1, FKZipCode, FKContactType, MigrationID)
+select CAST(CAST(NEWID() AS BINARY(10)) + CAST(GETDATE() AS BINARY(6)) AS UNIQUEIDENTIFIER) PK,
+N'Outro' ContactName, '7B203DCA-FFAC-46B2-B849-9EBC009DB127' FKOwnerType, l.PK FKOwner,
+r.Morada Address1, c.PK FKZipCode, 'CF3019C6-8A9C-495C-B9D0-9EEE01335BC6' FKContactType, r.IDContacto MigrationID
+from amartins.tblCompanies l
+inner join amartins..empresa.ContactosComseg r on r.FKCompanhia=l.MigrationID
+left outer join bigbang.tblPostalCodes c on c.PostalCode=r.CodPostal COLLATE DATABASE_DEFAULT
+where r.Nome is null or r.Nome='';
+
+insert into amartins.tblContacts (PK, ContactName, FKOwnerType, FKOwner, Address1, FKZipCode, FKContactType, MigrationID)
+select CAST(CAST(NEWID() AS BINARY(10)) + CAST(GETDATE() AS BINARY(6)) AS UNIQUEIDENTIFIER) PK,
+r.Nome ContactName, '7B203DCA-FFAC-46B2-B849-9EBC009DB127' FKOwnerType, l.PK FKOwner,
+r.Morada Address1, c.PK FKZipCode, '88AF4A7C-DAB2-4E7F-B85D-9EEE01467E91' FKContactType, r.IDContacto MigrationID
+from amartins.tblCompanies l
+inner join amartins..empresa.ContactosComseg r on r.FKCompanhia=l.MigrationID
+left outer join bigbang.tblPostalCodes c on c.PostalCode=r.CodPostal COLLATE DATABASE_DEFAULT
+where r.Nome is not null and r.Nome<>'' and r.Assunto='Tesouraria';
+
+insert into amartins.tblContacts (PK, ContactName, FKOwnerType, FKOwner, Address1, FKZipCode, FKContactType, MigrationID)
+select CAST(CAST(NEWID() AS BINARY(10)) + CAST(GETDATE() AS BINARY(6)) AS UNIQUEIDENTIFIER) PK,
+r.Nome ContactName, '7B203DCA-FFAC-46B2-B849-9EBC009DB127' FKOwnerType, l.PK FKOwner,
+r.Morada Address1, c.PK FKZipCode, 'BA706479-AE31-4E69-A7F0-9EEE01336CA4' FKContactType, r.IDContacto MigrationID
+from amartins.tblCompanies l
+inner join amartins..empresa.ContactosComseg r on r.FKCompanhia=l.MigrationID
+left outer join bigbang.tblPostalCodes c on c.PostalCode=r.CodPostal COLLATE DATABASE_DEFAULT
+where r.Nome is not null and r.Nome<>'' and r.Assunto like '%recibo%';
+
+insert into amartins.tblContacts (PK, ContactName, FKOwnerType, FKOwner, Address1, FKZipCode, FKContactType, MigrationID)
+select CAST(CAST(NEWID() AS BINARY(10)) + CAST(GETDATE() AS BINARY(6)) AS UNIQUEIDENTIFIER) PK,
+r.Nome ContactName, '7B203DCA-FFAC-46B2-B849-9EBC009DB127' FKOwnerType, l.PK FKOwner,
+r.Morada Address1, c.PK FKZipCode, '04F6BC3C-0283-47F0-9670-9EEE013350D9' FKContactType, r.IDContacto MigrationID
+from amartins.tblCompanies l
+inner join amartins..empresa.ContactosComseg r on r.FKCompanhia=l.MigrationID
+left outer join bigbang.tblPostalCodes c on c.PostalCode=r.CodPostal COLLATE DATABASE_DEFAULT
+where r.Nome is not null and r.Nome<>'' and (r.Assunto is null or r.Assunto='' or r.Assunto='Geral');
+
+insert into amartins.tblContactInfo (PK, FKContact, FKInfoType, InfoValue)
+select CAST(CAST(NEWID() AS BINARY(10)) + CAST(GETDATE() AS BINARY(6)) AS UNIQUEIDENTIFIER) PK,
+l.PK FKContact, '01C8D0CA-074E-45AA-8A17-9EDF00F41586' FKInfoType, r.Telefone InfoValue
+from amartins..empresa.ContactosComseg r
+inner join amartins.tblContacts l on l.MigrationID=r.IDContacto
+where r.Telefone is not null and r.Telefone<>'';
+
+insert into amartins.tblContactInfo (PK, FKContact, FKInfoType, InfoValue)
+select CAST(CAST(NEWID() AS BINARY(10)) + CAST(GETDATE() AS BINARY(6)) AS UNIQUEIDENTIFIER) PK,
+l.PK FKContact, '172EC088-AA55-433B-BBC3-9EDF00F42266' FKInfoType, r.Fax InfoValue
+from amartins..empresa.ContactosComseg r
+inner join amartins.tblContacts l on l.MigrationID=r.IDContacto
+where r.Fax is not null and r.Fax<>'';
+
+insert into amartins.tblContactInfo (PK, FKContact, FKInfoType, InfoValue)
+select CAST(CAST(NEWID() AS BINARY(10)) + CAST(GETDATE() AS BINARY(6)) AS UNIQUEIDENTIFIER) PK,
+l.PK FKContact, '96467849-6FE1-4113-928C-9EDF00F40FB9' FKInfoType, r.Email InfoValue
+from amartins..empresa.ContactosComseg r
+inner join amartins.tblContacts l on l.MigrationID=r.IDContacto
+where r.Email is not null and r.Email<>'';
