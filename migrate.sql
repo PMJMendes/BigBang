@@ -50,6 +50,7 @@ delete from bigbang.tblBBCompanySizes;
 delete from bigbang.tblBBSalesVolumes;
 delete from bigbang.tblCommissionProfiles;
 delete from bigbang.tblContactInfoType;
+delete from bigbang.tblContactType;
 delete from bigbang.tblDocTypes;
 delete from bigbang.tblMaritalStatuses;
 delete from bigbang.tblOpProfiles;
@@ -60,6 +61,11 @@ delete from bigbang.tblUnits;
 delete from bigbang.tblCAE;
 delete from bigbang.tblPostalCodes;
 
+insert into bigbang.tblPostalCodes (PK, PostalCode, PostalCity, PostalCounty, PostalDistrict, PostalCountry)
+select CAST(CAST(NEWID() AS BINARY(10)) + CAST(GETDATE() AS BINARY(6)) AS UNIQUEIDENTIFIER) PK, * from
+(select distinct CodPostal PostalCode, LocPostal PostalCity, Concelho PostalCounty, Distrito PostalDistrict, Pais PostalCountry
+from codigospostaisSQL.dbo.CodPostais) z;
+
 insert into bigbang.tblBBClientTypes (PK, EntityType) values ('462096E4-68A2-408A-963A-9EE600C9556A', N'Individual');
 insert into bigbang.tblBBClientTypes (PK, EntityType) values ('C5B4F500-BB57-4BFD-8248-9EE600C95ABA', N'Empresa');
 insert into bigbang.tblBBClientTypes (PK, EntityType) values ('4098CF7A-B5EE-4C3F-973F-9EE600C961AA', N'Outros');
@@ -68,13 +74,18 @@ insert into bigbang.tblContactInfoType (PK, TypeName) values ('96467849-6FE1-411
 insert into bigbang.tblContactInfoType (PK, TypeName) values ('01C8D0CA-074E-45AA-8A17-9EDF00F41586', N'Telefone');
 insert into bigbang.tblContactInfoType (PK, TypeName) values ('60414F28-49E7-43AD-ACD9-9EDF00F41E76', N'Telemóvel');
 insert into bigbang.tblContactInfoType (PK, TypeName) values ('172EC088-AA55-433B-BBC3-9EDF00F42266', N'Fax');
+insert into bigbang.tblContactType (PK, ContactType) values ('Ao Cuidado', N'');
+/*insert into bigbang.tblContactType (PK, ContactType) values ('', N'');
+insert into bigbang.tblContactType (PK, ContactType) values ('', N'');
+insert into bigbang.tblContactType (PK, ContactType) values ('', N'');
+insert into bigbang.tblContactType (PK, ContactType) values ('', N'');*/
 insert into bigbang.tblOpProfiles (PK, OpProfileName) values ('63114D11-6087-4EFE-9A7E-9EE600BE52DA', N'VIP');
 insert into bigbang.tblOpProfiles (PK, OpProfileName) values ('9F871430-9BBC-449F-B125-9EE600BE5A9A', N'Normal');
 
 insert into bigbang.tblProfiles (PK, PfName) values ('061388D9-16A6-443F-A69E-9EB000685026', N'Root');
 insert into bigbang.tblProfiles (PK, PfName) values ('258A1C88-C916-40CB-8CD5-9EB8007F2AEB', N'Sem Perfil');
 insert into bigbang.tblWorkspaces (PK, FKProfile, FKNameSpace) values ('28A44306-131C-4A18-BCF2-9EB000685EEA', '061388D9-16A6-443F-A69E-9EB000685026', 'C37B81F0-860F-4868-9177-9E15008B3EFD');
-insert into bigbang.tblUsers (PK, FullName, Username, FKProfile) values ('091B8442-B7B0-40FA-B517-9EB00068A390', N'Administrator', N'root', '061388D9-16A6-443F-A69E-9EB000685026');
+insert into bigbang.tblUsers (PK, FullName, Username, Passwd, FKProfile) values ('091B8442-B7B0-40FA-B517-9EB00068A390', N'Administrator', N'root', 'C5-06-09-A7-D7-96-23-72-F0-C6-F4-F3-10-DD-88-CA', '061388D9-16A6-443F-A69E-9EB000685026');
 insert into bigbang.tblBBCostCenters (PK, CCCode, CCName, MigrationID) values ('FC6BB26D-90E2-46C9-9C79-9ED900C124AE', N'INF', N'Informática', 13);
 insert into bigbang.tblUser2 (PK, FKUser, FKCostCenter, MigrationID) values ('ABD75E9E-FB45-4E47-A261-9ED900C2ABBD', '091B8442-B7B0-40FA-B517-9EB00068A390', 'FC6BB26D-90E2-46C9-9C79-9ED900C124AE', 91);
 
@@ -274,7 +285,19 @@ insert into credite_egs.tblPNSteps (PK, FKProcess, FKOperation, FKLevel) select 
 
 insert into credite_egs.tblProcGeneralSystem (PK, FKProcess) values ('1822E9C1-700F-49A5-AB6F-9EB500C632D2', '49153B77-1391-4E3A-81D2-9EB800CB68B7');
 
+insert into bigbang.tblPostalCodes (PK, PostalCode, PostalCity)
+select CAST(CAST(NEWID() AS BINARY(10)) + CAST(GETDATE() AS BINARY(6)) AS UNIQUEIDENTIFIER) PK, * from
+(select distinct codpostal PostalCode, rtrim(ltrim(upper(locpostal))) PostalCity
+from credegs..empresa.companhi s left outer join bigbang.tblpostalcodes c on ltrim(s.codpostal)=c.postalcode COLLATE DATABASE_DEFAULT
+where c.postalcode is null and s.codpostal is not null and s.codpostal <>'') z;
+
 insert into amartins.tblPNProcesses (PK, FKScript, FKData, FKManager, IsRunning) values ('FDF0DBAA-22BD-4679-AF72-9EB800CB024D', '37A989E2-9D1F-470C-A59E-9EB1008A97A5', '8E5E3504-875A-4313-91A9-9EB500C6295C', '091B8442-B7B0-40FA-B517-9EB00068A390', 1);
 insert into amartins.tblPNSteps (PK, FKProcess, FKOperation, FKLevel) select CAST(CAST(NEWID() AS BINARY(10)) + CAST(GETDATE() AS BINARY(6)) AS UNIQUEIDENTIFIER) PK, 'FDF0DBAA-22BD-4679-AF72-9EB800CB024D' FKProcess, PK FKOperation, FKDefaultLevel FKLevel from bigbang.tblPNOperations;
 
 insert into amartins.tblProcGeneralSystem (PK, FKProcess) values ('8E5E3504-875A-4313-91A9-9EB500C6295C', 'FDF0DBAA-22BD-4679-AF72-9EB800CB024D');
+
+insert into bigbang.tblPostalCodes (PK, PostalCode, PostalCity)
+select CAST(CAST(NEWID() AS BINARY(10)) + CAST(GETDATE() AS BINARY(6)) AS UNIQUEIDENTIFIER) PK, * from
+(select distinct codpostal PostalCode, rtrim(ltrim(upper(locpostal))) PostalCity
+from amartins..empresa.companhi s left outer join bigbang.tblpostalcodes c on ltrim(s.codpostal)=c.postalcode COLLATE DATABASE_DEFAULT
+where c.postalcode is null and s.codpostal is not null and s.codpostal <>'') z;

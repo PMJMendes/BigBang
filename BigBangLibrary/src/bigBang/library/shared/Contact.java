@@ -12,6 +12,7 @@ public class Contact
 	public boolean isSubContact;
 	public String ownerId;
 	public Address address;
+	public String typeId;
 	public ContactInfo[] info;
 	public Contact[] subContacts;
 

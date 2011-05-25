@@ -42,6 +42,7 @@ public class ContactOps
 		public String mstrAddress1;
 		public String mstrAddress2;
 		public UUID midZipCode;
+		public UUID midContactType;
 		public ContactInfoData[] marrInfo;
 		public ContactData[] marrSubContacts;
 		public ContactData mobjPrevValues;
@@ -225,6 +226,7 @@ public class ContactOps
 			lobjAux.setAt(3, pobjData.mstrAddress1);
 			lobjAux.setAt(4, pobjData.mstrAddress2);
 			lobjAux.setAt(5, pobjData.midZipCode);
+			lobjAux.setAt(6, pobjData.midContactType);
 			lobjAux.SaveToDb(pdb);
 		}
 		catch (Throwable e)
@@ -292,6 +294,7 @@ public class ContactOps
 		pobjData.mobjPrevValues.mstrAddress1 = (String)lobjAux.getAt(3);
 		pobjData.mobjPrevValues.mstrAddress2 = (String)lobjAux.getAt(4);
 		pobjData.mobjPrevValues.midZipCode = (UUID)lobjAux.getAt(5);
+		pobjData.mobjPrevValues.midContactType = (UUID)lobjAux.getAt(6);
 		pobjData.mobjPrevValues.marrSubContacts = null;
 		pobjData.mobjPrevValues.mobjPrevValues = null;
 
@@ -319,6 +322,7 @@ public class ContactOps
 			lobjAux.setAt(3, pobjData.mstrAddress1);
 			lobjAux.setAt(4, pobjData.mstrAddress2);
 			lobjAux.setAt(5, pobjData.midZipCode);
+			lobjAux.setAt(6, pobjData.midContactType);
 			lobjAux.SaveToDb(pdb);
 		}
 		catch (Throwable e)
@@ -389,6 +393,7 @@ public class ContactOps
 			pobjData.mstrAddress1 = (String)lobjAux.getAt(3);
 			pobjData.mstrAddress2 = (String)lobjAux.getAt(4);
 			pobjData.midZipCode = (UUID)lobjAux.getAt(5);
+			pobjData.midContactType = (UUID)lobjAux.getAt(6);
 			pobjData.mobjPrevValues = null;
 
 			lrefContacts.Delete(pdb, lobjAux.getKey());
@@ -403,6 +408,7 @@ public class ContactOps
 	{
 		ObjectBase lobjOwner;
 		ObjectBase lobjZipCode;
+		ObjectBase lobjContactType;
 		ObjectBase lobjInfoType;
 		int i;
 
@@ -421,6 +427,20 @@ public class ContactOps
 		pstrString.append("Nome: ");
 		pstrString.append(pobjData.mstrName);
 		pstrString.append(pstrLineBreak);
+
+		pstrString.append("Tipo: ");
+		try
+		{
+			lobjContactType = Engine.GetWorkInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), Constants.ObjID_ContactType),
+					pobjData.midContactType);
+			pstrString.append((String)lobjContactType.getAt(0));
+		}
+		catch (Throwable e)
+		{
+			pstrString.append("(Erro a obter o tipo de contacto.)");
+		}
+		pstrString.append(pstrLineBreak);
+
 		pstrString.append("Morada:");
 		pstrString.append(pstrLineBreak);
 		pstrString.append("- ");
@@ -430,7 +450,6 @@ public class ContactOps
 		pstrString.append(pobjData.mstrAddress2);
 		pstrString.append(pstrLineBreak);
 		pstrString.append("- ");
-
 		try
 		{
 			lobjZipCode = Engine.GetWorkInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), ObjectGUIDs.O_PostalCode), pobjData.midZipCode);

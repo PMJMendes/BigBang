@@ -312,6 +312,7 @@ public class ContactsServiceImpl
 				larrResult[i].mstrAddress2 = null;
 				larrResult[i].midZipCode = null;
 			}
+			larrResult[i].midContactType = (parrContacts[i].typeId == null ? null : UUID.fromString(parrContacts[i].typeId));
 			if ( parrContacts[i].info != null )
 			{
 				larrResult[i].marrInfo = new ContactOps.ContactData.ContactInfoData[parrContacts[i].info.length];

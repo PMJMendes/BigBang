@@ -17,6 +17,7 @@ public class Constants
 	public static final UUID ObjID_Coverage     = UUID.fromString("007022A0-6DFA-498B-9DC4-9EC900F5219F");
 	public static final UUID ObjID_Tax          = UUID.fromString("43644146-07C4-4E63-9E87-9EC900F6EB73");
 
+	public static final UUID ObjID_ContactType  = UUID.fromString("228F6A73-1335-4C99-8DD0-9EEE012964BA");
 	public static final UUID ObjID_CInfoType    = UUID.fromString("03C5B78E-D71C-49F2-A079-9EC40111DCC0");
 	public static final UUID ObjID_DocType      = UUID.fromString("B4DBEE18-FA81-471D-A9F5-9ECC012A028D");
 	public static final UUID ObjID_CommProfile  = UUID.fromString("5F40713C-1FE7-4715-AC24-9EBB00E53392");
