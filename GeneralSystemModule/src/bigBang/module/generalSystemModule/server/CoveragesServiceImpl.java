@@ -8,6 +8,7 @@ import java.util.UUID;
 import Jewel.Engine.Engine;
 import Jewel.Engine.DataAccess.MasterDB;
 import Jewel.Engine.Implementation.Entity;
+import Jewel.Engine.SysObjects.ObjectBase;
 import bigBang.library.server.EngineImplementor;
 import bigBang.library.shared.BigBangException;
 import bigBang.library.shared.SessionExpiredException;
@@ -33,10 +34,12 @@ public class CoveragesServiceImpl
 	{
 		ArrayList<Line> larrAux;
 		Entity lrefLines;
+		UUID lidLineCats;
         MasterDB ldb;
         ResultSet lrsLines;
 		com.premiumminds.BigBang.Jewel.Objects.Line lobjLine;
 		Line lobjTmp;
+		ObjectBase lobjLineCat;
 
 		if ( Engine.getCurrentUser() == null )
 			throw new SessionExpiredException();
@@ -46,6 +49,7 @@ public class CoveragesServiceImpl
 		try
 		{
 			lrefLines = Entity.GetInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), Constants.ObjID_Line));
+			lidLineCats = Engine.FindEntity(Engine.getCurrentNameSpace(), Constants.ObjID_LineCategory);
 			ldb = new MasterDB();
 		}
 		catch (Throwable e)
@@ -72,6 +76,10 @@ public class CoveragesServiceImpl
 	        	lobjTmp.id = lobjLine.getKey().toString();
 	        	lobjTmp.name = (String)lobjLine.getAt(0);
 	        	lobjTmp.categoryId = ((UUID)lobjLine.getAt(1)).toString();
+
+	        	lobjLineCat = Engine.GetWorkInstance(lidLineCats, (UUID)lobjLine.getAt(1));
+	        	lobjTmp.categoryName = (String)lobjLineCat.getAt(0);
+
 	        	lobjTmp.subLines = getSubLinesForLine(lobjLine);
 	        	larrAux.add(lobjTmp);
 	        }

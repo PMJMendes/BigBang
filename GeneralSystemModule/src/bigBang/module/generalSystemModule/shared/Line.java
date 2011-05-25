@@ -10,6 +10,7 @@ public class Line
 	public String id;
 	public String name;
 	public String categoryId;
+	public String categoryName;
 	public SubLine[] subLines;
 
 	public Line()
