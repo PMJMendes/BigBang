@@ -5,6 +5,7 @@ public class ModuleConstants
 	public class EntityIDs
 	{
 		public static final String CostCenters        = "4AF891C6-707B-43AE-98C3-9EB100C0419E";
+		public static final String UserProfiles       = "53B25831-4028-4BF6-98B3-9F30EC6B32B9";
 	}
 
 	public class ListIDs
