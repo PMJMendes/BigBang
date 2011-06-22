@@ -66,6 +66,11 @@ select CAST(CAST(NEWID() AS BINARY(10)) + CAST(GETDATE() AS BINARY(6)) AS UNIQUE
 (select distinct CodPostal PostalCode, LocPostal PostalCity, Concelho PostalCounty, Distrito PostalDistrict, Pais PostalCountry
 from codigospostaisSQL.dbo.CodPostais) z;
 
+insert into bigbang.tblCAE (PK, CAEText)
+select CAST(CAST(NEWID() AS BINARY(10)) + CAST(GETDATE() AS BINARY(6)) AS UNIQUEIDENTIFIER) PK,
+Codigo + ' - ' + Texto CAEText
+from caeSQL.dbo.CAEs where Nivel=5;
+
 insert into bigbang.tblBBClientTypes (PK, EntityType) values ('462096E4-68A2-408A-963A-9EE600C9556A', N'Individual');
 insert into bigbang.tblBBClientTypes (PK, EntityType) values ('C5B4F500-BB57-4BFD-8248-9EE600C95ABA', N'Empresa');
 insert into bigbang.tblBBClientTypes (PK, EntityType) values ('4098CF7A-B5EE-4C3F-973F-9EE600C961AA', N'Outros');
@@ -79,8 +84,19 @@ insert into bigbang.tblContactTypes (PK, ContactType) values ('BA706479-AE31-4E6
 insert into bigbang.tblContactTypes (PK, ContactType) values ('04F6BC3C-0283-47F0-9670-9EEE013350D9', N'Geral');
 insert into bigbang.tblContactTypes (PK, ContactType) values ('CF3019C6-8A9C-495C-B9D0-9EEE01335BC6', N'Local');
 insert into bigbang.tblContactTypes (PK, ContactType) values ('88AF4A7C-DAB2-4E7F-B85D-9EEE01467E91', N'Tesouraria');
+insert into bigbang.tblCommissionProfiles (PK, ProfileName) values ('F60BB994-3E08-47C2-9CC3-9EFC013D35BE', N'Sem Comissões');
+insert into bigbang.tblCommissionProfiles (PK, ProfileName) values ('CECC8014-200C-4C4F-9F47-9EFC01368139', N'Percentagem');
+insert into bigbang.tblCommissionProfiles (PK, ProfileName) values ('C5BE51A9-7E0F-4970-962A-9EFC0135E9E1', N'Angariação');
+insert into bigbang.tblCommissionProfiles (PK, ProfileName) values ('071CE678-956B-4D41-94DE-9EFC013688B5', N'Especial');
+insert into bigbang.tblCommissionProfiles (PK, ProfileName) values ('C7236BA7-73AD-40ED-B6DC-9EFC013691C8', N'Negociado');
+insert into bigbang.tblMaritalStatuses (PK, StatusText) values ('9ED463DB-ABC5-46EE-82A7-9F0300C6D631', N'Casado');
+insert into bigbang.tblMaritalStatuses (PK, StatusText) values ('BFB58864-4B91-4078-AF9F-9F0300C6E52D', N'Divorciado');
+insert into bigbang.tblMaritalStatuses (PK, StatusText) values ('BE742798-9D7F-4B23-BFBA-9F0300C6CFA5', N'Solteiro');
+insert into bigbang.tblMaritalStatuses (PK, StatusText) values ('DB379F5C-9343-403B-B28A-9F0300C6DDFB', N'Viúvo');
 insert into bigbang.tblOpProfiles (PK, OpProfileName) values ('63114D11-6087-4EFE-9A7E-9EE600BE52DA', N'VIP');
 insert into bigbang.tblOpProfiles (PK, OpProfileName) values ('9F871430-9BBC-449F-B125-9EE600BE5A9A', N'Normal');
+insert into bigbang.tblSex (PK, SexName) values ('77E22CFB-CA90-4918-B9B2-9F0300C39AE2', N'Feminino');
+insert into bigbang.tblSex (PK, SexName) values ('E86BA460-B499-4254-84F5-9F0300C3A256', N'Masculino');
 
 insert into bigbang.tblProfiles (PK, PfName) values ('061388D9-16A6-443F-A69E-9EB000685026', N'Root');
 insert into bigbang.tblProfiles (PK, PfName) values ('258A1C88-C916-40CB-8CD5-9EB8007F2AEB', N'Sem Perfil');
@@ -280,8 +296,14 @@ inner join bigbang.tblUsers u on u.Username=g.username COLLATE DATABASE_DEFAULT
 inner join bigbang.tblBBCostCenters c on c.MigrationID=g.FKEquipa
 where gestor not in (91, 98, 99);
 
+
+
 insert into credite_egs.tblPNProcesses (PK, FKScript, FKData, FKManager, IsRunning) values ('49153B77-1391-4E3A-81D2-9EB800CB68B7', '37A989E2-9D1F-470C-A59E-9EB1008A97A5', '1822E9C1-700F-49A5-AB6F-9EB500C632D2', '091B8442-B7B0-40FA-B517-9EB00068A390', 1);
-insert into credite_egs.tblPNSteps (PK, FKProcess, FKOperation, FKLevel) select CAST(CAST(NEWID() AS BINARY(10)) + CAST(GETDATE() AS BINARY(6)) AS UNIQUEIDENTIFIER) PK, '49153B77-1391-4E3A-81D2-9EB800CB68B7' FKProcess, PK FKOperation, FKDefaultLevel FKLevel from bigbang.tblPNOperations;
+insert into credite_egs.tblPNSteps (PK, FKProcess, FKOperation, FKLevel)
+select CAST(CAST(NEWID() AS BINARY(10)) + CAST(GETDATE() AS BINARY(6)) AS UNIQUEIDENTIFIER) PK,
+'49153B77-1391-4E3A-81D2-9EB800CB68B7' FKProcess, PK FKOperation, FKDefaultLevel FKLevel
+from bigbang.tblPNOperations
+where FKScript='37A989E2-9D1F-470C-A59E-9EB1008A97A5';
 
 insert into credite_egs.tblProcGeneralSystem (PK, FKProcess) values ('1822E9C1-700F-49A5-AB6F-9EB500C632D2', '49153B77-1391-4E3A-81D2-9EB800CB68B7');
 
@@ -390,10 +412,123 @@ from credegs..empresa.ContactosComseg r
 inner join credite_egs.tblContacts l on l.MigrationID=r.IDContacto
 where r.Email is not null and r.Email<>'';
 
+insert into bigbang.tblPostalCodes (PK, PostalCode, PostalCity)
+select CAST(CAST(NEWID() AS BINARY(10)) + CAST(GETDATE() AS BINARY(6)) AS UNIQUEIDENTIFIER) PK, * from
+(select distinct codpostal PostalCode, rtrim(ltrim(upper(localidade))) PostalCity
+from credegs..empresa.agente s left outer join bigbang.tblpostalcodes c on ltrim(s.codpostal)=c.postalcode COLLATE DATABASE_DEFAULT
+where c.postalcode is null and s.codpostal is not null and s.codpostal <>'') z;
+
+insert into credite_egs.tblMediators (PK, MediatorName, FiscalNumber, FKProfile, Address1, FKZipCode, MigrationID)
+select CAST(CAST(NEWID() AS BINARY(10)) + CAST(GETDATE() AS BINARY(6)) AS UNIQUEIDENTIFIER) PK,
+a.NOME MediatorName, a.NUMCONTR FiscalNulber, 'F60BB994-3E08-47C2-9CC3-9EFC013D35BE' FKProfile, a.MORADA Address1, c.PK FKZipCode, a.AGENTE MigrationID
+from credegs..empresa.agente a
+left outer join bigbang.tblPostalCodes c on c.PostalCode=CAST(a.CODPOSTAL AS VARCHAR(20)) COLLATE DATABASE_DEFAULT
+where a.NUMINSTI=0 and a.SpecialCalc!=1;
+
+insert into credite_egs.tblMediators (PK, MediatorName, FiscalNumber, FKProfile, Address1, FKZipCode, MigrationID)
+select CAST(CAST(NEWID() AS BINARY(10)) + CAST(GETDATE() AS BINARY(6)) AS UNIQUEIDENTIFIER) PK,
+a.NOME MediatorName, a.NUMCONTR FiscalNulber, '071CE678-956B-4D41-94DE-9EFC013688B5' FKProfile, a.MORADA Address1, c.PK FKZipCode, a.AGENTE MigrationID
+from credegs..empresa.agente a
+left outer join bigbang.tblPostalCodes c on c.PostalCode=CAST(a.CODPOSTAL AS VARCHAR(20)) COLLATE DATABASE_DEFAULT
+where a.SpecialCalc=1;
+
+insert into credite_egs.tblMediators (PK, MediatorName, FiscalNumber, FKProfile, Address1, FKZipCode, MigrationID)
+select CAST(CAST(NEWID() AS BINARY(10)) + CAST(GETDATE() AS BINARY(6)) AS UNIQUEIDENTIFIER) PK,
+a.NOME MediatorName, a.NUMCONTR FiscalNulber, 'CECC8014-200C-4C4F-9F47-9EFC01368139' FKProfile, a.MORADA Address1, c.PK FKZipCode, a.AGENTE MigrationID
+from credegs..empresa.agente a
+left outer join bigbang.tblPostalCodes c on c.PostalCode=CAST(a.CODPOSTAL AS VARCHAR(20)) COLLATE DATABASE_DEFAULT
+where a.NUMINSTI!=0 and a.SpecialCalc!=1 and a.PERCEM!=0;
+
+insert into credite_egs.tblMediators (PK, MediatorName, FiscalNumber, FKProfile, Address1, FKZipCode, MigrationID)
+select CAST(CAST(NEWID() AS BINARY(10)) + CAST(GETDATE() AS BINARY(6)) AS UNIQUEIDENTIFIER) PK,
+a.NOME MediatorName, a.NUMCONTR FiscalNulber, 'C5BE51A9-7E0F-4970-962A-9EFC0135E9E1' FKProfile, a.MORADA Address1, c.PK FKZipCode, a.AGENTE MigrationID
+from credegs..empresa.agente a
+left outer join bigbang.tblPostalCodes c on c.PostalCode=CAST(a.CODPOSTAL AS VARCHAR(20)) COLLATE DATABASE_DEFAULT
+where a.NUMINSTI!=0 and a.SpecialCalc!=1 and (a.PERCEM is null or a.PERCEM=0);
+
+insert into credite_egs.tblBBGroups (PK, GroupName, MigrationID)
+select CAST(CAST(NEWID() AS BINARY(10)) + CAST(GETDATE() AS BINARY(6)) AS UNIQUEIDENTIFIER) PK,
+g.nome GroupName, g.grupo MigrationID
+from credegs..empresa.grupos g
+where g.grupo != '';
+
+insert into bigbang.tblPostalCodes (PK, PostalCode, PostalCity)
+select CAST(CAST(NEWID() AS BINARY(10)) + CAST(GETDATE() AS BINARY(6)) AS UNIQUEIDENTIFIER) PK, * from
+(select PostalCode, min(PostalCity) PostalCity from
+(select distinct codpostal PostalCode, rtrim(ltrim(upper(locpostal))) PostalCity
+from credegs..empresa.cliente s left outer join bigbang.tblpostalcodes c on ltrim(s.codpostal)=c.postalcode COLLATE DATABASE_DEFAULT
+where c.postalcode is null and s.codpostal is not null and s.codpostal <>'' and s.codpostal not like '%[^-0123456789]%' and s.locpostal is not null and s.locpostal <>'') z
+group by PostalCode) y;
+
+insert into bigbang.tblProfessions (PK, ProfessionName)
+select CAST(CAST(NEWID() AS BINARY(10)) + CAST(GETDATE() AS BINARY(6)) AS UNIQUEIDENTIFIER) PK, * from
+(select distinct ltrim(rtrim(Profissao)) ProfessionName from credegs..empresa.cliente c
+left outer join bigbang.tblProfessions p on p.ProfessionName=ltrim(rtrim(c.Profissao)) COLLATE DATABASE_DEFAULT
+where p.PK is null and c.Profissao is not null and ltrim(rtrim(c.Profissao))<>'') z;
+
+insert into bigbang.tblCAE (PK, CAEText)
+select CAST(CAST(NEWID() AS BINARY(10)) + CAST(GETDATE() AS BINARY(6)) AS UNIQUEIDENTIFIER) PK, * from
+(select distinct CAST(c.CODCAE AS VARCHAR(5)) + ' - ?' CAEText from credegs..empresa.cliente c
+left outer join bigbang.tblCAE x on left(x.CAEText, 5) = CAST(c.CODCAE AS VARCHAR(5)) COLLATE DATABASE_DEFAULT
+where c.CODCAE like '_____' and x.PK is null) z;
+
+insert into credite_egs.tblBBClients (PK, ClientNumber, ClientName, Address1, Address2, FKZipCode, FiscalNumber, FKEntityType, FKEntitySubType, FKManager, FKMediator,
+FKProfile, FKGroup, DateOfBirth, FKSex, FKMaritalStatus, FKProfession, FKCAE, ClientNotes, MigrationID)
+select CAST(CAST(NEWID() AS BINARY(10)) + CAST(GETDATE() AS BINARY(6)) AS UNIQUEIDENTIFIER) PK,
+row_number() over (order by c.CLIENTE) ClientNumber, c.NOME ClientName, c.MORADA Address1, c.LOCALIDADE Address2, p.PK FKZipCode, c.NCONTRIB FiscalNumber,
+CASE c.TIPO_C WHEN 'I' THEN '462096E4-68A2-408A-963A-9EE600C9556A' WHEN 'E' THEN 'C5B4F500-BB57-4BFD-8248-9EE600C95ABA' ELSE '4098CF7A-B5EE-4C3F-973F-9EE600C961AA' END FKEntityType,
+CASE c.TIPO_C WHEN 'C' THEN '5C7A0424-126B-467B-977A-9EE600CC13A4' ELSE NULL END FKEntitySubType,
+u.FKUser FKManager, m.PK FKMediator,
+CASE c.ClienteVIP WHEN 1 THEN '63114D11-6087-4EFE-9A7E-9EE600BE52DA' ELSE '9F871430-9BBC-449F-B125-9EE600BE5A9A' END FKProfile,
+g.PK FKGroup, c.DataNascimento DateOfBirth, s.PK FKSex, t.PK FKMaritalStatus, f.PK FKProfession, x.PK FKCAE, CAST(c.OBSERV AS VARCHAR(250)) ClientNotes,
+c.CLIENTE MigrationID
+from credegs..empresa.cliente c
+left outer join bigbang.tblPostalCodes p on p.PostalCode=CAST(c.CODPOSTAL AS VARCHAR(20)) COLLATE DATABASE_DEFAULT
+left outer join bigbang.tblUser2 u on u.MigrationID=c.GESTORCLI
+left outer join credite_egs.tblMediators m on m.MigrationID=c.MEDIACLI
+left outer join credite_egs.tblBBGroups g on g.MigrationID=c.grupo COLLATE DATABASE_DEFAULT
+left outer join bigbang.tblSex s on left(s.SexName, 1)=c.Sexo COLLATE DATABASE_DEFAULT
+left outer join bigbang.tblMaritalStatuses t on upper(left(t.StatusText, 1))=upper(left(c.EstadoCivil, 1)) COLLATE DATABASE_DEFAULT
+left outer join bigbang.tblProfessions f on f.ProfessionName=ltrim(rtrim(c.Profissao)) COLLATE DATABASE_DEFAULT
+left outer join bigbang.tblCAE x on left(x.CAEText, 5)=CAST(c.CODCAE AS VARCHAR(5)) COLLATE DATABASE_DEFAULT
+where c.NOME<>'' and c.GESTORCLI not in (91, 98, 99);
+
+insert into bigbang.tblPostalCodes (PK, PostalCode, PostalCity)
+select CAST(CAST(NEWID() AS BINARY(10)) + CAST(GETDATE() AS BINARY(6)) AS UNIQUEIDENTIFIER) PK, * from
+(select PostalCode, min(PostalCity) PostalCity from
+(select distinct profcodpostal PostalCode, rtrim(ltrim(upper(proflocpostal))) PostalCity
+from credegs..empresa.cliente s left outer join bigbang.tblpostalcodes c on ltrim(s.profcodpostal)=c.postalcode COLLATE DATABASE_DEFAULT
+where c.postalcode is null
+and s.profcodpostal is not null and s.profcodpostal <>'' and s.profcodpostal not like '%[^-0123456789]%' and s.proflocpostal is not null and s.proflocpostal <>'') z
+group by PostalCode) y;
+
+insert into credite_egs.tblPNProcesses (PK, FKScript, FKData, FKManager, IsRunning)
+select CAST(CAST(NEWID() AS BINARY(10)) + CAST(GETDATE() AS BINARY(6)) AS UNIQUEIDENTIFIER) PK,
+'100E701A-EDC5-4D9C-A221-9F09013D7954' FKScript, PK FKData, FKManager FKManager, 1 IsRunning
+from credite_egs.tblBBClients;
+
+update credite_egs.tblBBClients set FKProcess=p.PK
+from credite_egs.tblBBClients c inner join credite_egs.tblPNProcesses p on p.FKData=c.PK;
+
+insert into credite_egs.tblPNSteps (PK, FKProcess, FKOperation, FKLevel)
+select CAST(CAST(NEWID() AS BINARY(10)) + CAST(GETDATE() AS BINARY(6)) AS UNIQUEIDENTIFIER) PK,
+p.PK FKProcess, o.PK FKOperation, o.FKDefaultLevel FKLevel
+from credite_egs.tblPNProcesses p, bigbang.tblPNOperations o
+where p.FKScript='100E701A-EDC5-4D9C-A221-9F09013D7954' and o.PK in ('A9A8F4ED-74C2-473C-873C-9F0901435C1C', 'A99DCEF5-91BA-4CFA-9E70-9F090146FAE4');
+
+insert into credite_egs.tblPNNodes (PK, FKProcess, FKController, NodeCount)
+select CAST(CAST(NEWID() AS BINARY(10)) + CAST(GETDATE() AS BINARY(6)) AS UNIQUEIDENTIFIER) PK,
+p.PK FKProcess, c.PK FKController, c.StartCount NodeCount
+from credite_egs.tblPNProcesses p inner join bigbang.tblPNControllers c on c.FKScript=p.FKScript;
+
 
 
 insert into amartins.tblPNProcesses (PK, FKScript, FKData, FKManager, IsRunning) values ('FDF0DBAA-22BD-4679-AF72-9EB800CB024D', '37A989E2-9D1F-470C-A59E-9EB1008A97A5', '8E5E3504-875A-4313-91A9-9EB500C6295C', '091B8442-B7B0-40FA-B517-9EB00068A390', 1);
-insert into amartins.tblPNSteps (PK, FKProcess, FKOperation, FKLevel) select CAST(CAST(NEWID() AS BINARY(10)) + CAST(GETDATE() AS BINARY(6)) AS UNIQUEIDENTIFIER) PK, 'FDF0DBAA-22BD-4679-AF72-9EB800CB024D' FKProcess, PK FKOperation, FKDefaultLevel FKLevel from bigbang.tblPNOperations;
+insert into amartins.tblPNSteps (PK, FKProcess, FKOperation, FKLevel)
+select CAST(CAST(NEWID() AS BINARY(10)) + CAST(GETDATE() AS BINARY(6)) AS UNIQUEIDENTIFIER) PK,
+'FDF0DBAA-22BD-4679-AF72-9EB800CB024D' FKProcess, PK FKOperation, FKDefaultLevel FKLevel
+from bigbang.tblPNOperations
+where FKScript='37A989E2-9D1F-470C-A59E-9EB1008A97A5';
 
 insert into amartins.tblProcGeneralSystem (PK, FKProcess) values ('8E5E3504-875A-4313-91A9-9EB500C6295C', 'FDF0DBAA-22BD-4679-AF72-9EB800CB024D');
 
@@ -501,3 +636,98 @@ l.PK FKContact, '96467849-6FE1-4113-928C-9EDF00F40FB9' FKInfoType, r.Email InfoV
 from amartins..empresa.ContactosComseg r
 inner join amartins.tblContacts l on l.MigrationID=r.IDContacto
 where r.Email is not null and r.Email<>'';
+
+insert into bigbang.tblPostalCodes (PK, PostalCode, PostalCity)
+select CAST(CAST(NEWID() AS BINARY(10)) + CAST(GETDATE() AS BINARY(6)) AS UNIQUEIDENTIFIER) PK, * from
+(select distinct codpostal PostalCode, rtrim(ltrim(upper(localidade))) PostalCity
+from amartins..empresa.agente s left outer join bigbang.tblpostalcodes c on ltrim(s.codpostal)=c.postalcode COLLATE DATABASE_DEFAULT
+where c.postalcode is null and s.codpostal is not null and s.codpostal <>'') z;
+
+insert into amartins.tblMediators (PK, MediatorName, FiscalNumber, FKProfile, Address1, FKZipCode, MigrationID)
+select CAST(CAST(NEWID() AS BINARY(10)) + CAST(GETDATE() AS BINARY(6)) AS UNIQUEIDENTIFIER) PK,
+a.NOME MediatorName, a.NUMCONTR FiscalNulber, 'F60BB994-3E08-47C2-9CC3-9EFC013D35BE' FKProfile, a.MORADA Address1, c.PK FKZipCode, a.AGENTE MigrationID
+from amartins..empresa.agente a
+left outer join bigbang.tblPostalCodes c on c.PostalCode=CAST(a.CODPOSTAL AS VARCHAR(20)) COLLATE DATABASE_DEFAULT
+where a.NUMINSTI=0 or a.NUMCONTR=0;
+
+insert into amartins.tblMediators (PK, MediatorName, FiscalNumber, FKProfile, Address1, FKZipCode, MigrationID)
+select CAST(CAST(NEWID() AS BINARY(10)) + CAST(GETDATE() AS BINARY(6)) AS UNIQUEIDENTIFIER) PK,
+a.NOME MediatorName, a.NUMCONTR FiscalNulber, 'C7236BA7-73AD-40ED-B6DC-9EFC013691C8' FKProfile, a.MORADA Address1, c.PK FKZipCode, a.AGENTE MigrationID
+from amartins..empresa.agente a
+left outer join bigbang.tblPostalCodes c on c.PostalCode=CAST(a.CODPOSTAL AS VARCHAR(20)) COLLATE DATABASE_DEFAULT
+where a.NUMINSTI!=0 and (a.NUMCONTR is null or a.NUMCONTR!=0);
+
+insert into amartins.tblBBGroups (PK, GroupName, MigrationID)
+select CAST(CAST(NEWID() AS BINARY(10)) + CAST(GETDATE() AS BINARY(6)) AS UNIQUEIDENTIFIER) PK,
+g.nome GroupName, g.grupo MigrationID
+from amartins..empresa.grupos g
+where g.grupo != '';
+
+insert into bigbang.tblPostalCodes (PK, PostalCode, PostalCity)
+select CAST(CAST(NEWID() AS BINARY(10)) + CAST(GETDATE() AS BINARY(6)) AS UNIQUEIDENTIFIER) PK, * from
+(select PostalCode, min(PostalCity) PostalCity from
+(select distinct codpostal PostalCode, rtrim(ltrim(upper(locpostal))) PostalCity
+from credegs..empresa.cliente s left outer join bigbang.tblpostalcodes c on ltrim(s.codpostal)=c.postalcode COLLATE DATABASE_DEFAULT
+where c.postalcode is null and s.codpostal is not null and s.codpostal <>'' and s.codpostal not like '%[^-0123456789]%' and s.locpostal is not null and s.locpostal <>'') z
+group by PostalCode) y;
+
+insert into bigbang.tblProfessions (PK, ProfessionName)
+select CAST(CAST(NEWID() AS BINARY(10)) + CAST(GETDATE() AS BINARY(6)) AS UNIQUEIDENTIFIER) PK, * from
+(select distinct ltrim(rtrim(Profissao)) ProfessionName from amartins..empresa.cliente c
+left outer join bigbang.tblProfessions p on p.ProfessionName=ltrim(rtrim(c.Profissao)) COLLATE DATABASE_DEFAULT
+where p.PK is null and c.Profissao is not null and ltrim(rtrim(c.Profissao))<>'') z;
+
+insert into bigbang.tblCAE (PK, CAEText)
+select CAST(CAST(NEWID() AS BINARY(10)) + CAST(GETDATE() AS BINARY(6)) AS UNIQUEIDENTIFIER) PK, * from
+(select distinct CAST(c.CODCAE AS VARCHAR(5)) + ' - ?' CAEText from amartins..empresa.cliente c
+left outer join bigbang.tblCAE x on left(x.CAEText, 5) = CAST(c.CODCAE AS VARCHAR(5)) COLLATE DATABASE_DEFAULT
+where c.CODCAE like '_____' and x.PK is null) z;
+
+insert into amartins.tblBBClients (PK, ClientNumber, ClientName, Address1, Address2, FKZipCode, FiscalNumber, FKEntityType, FKEntitySubType, FKManager, FKMediator,
+FKProfile, FKGroup, DateOfBirth, FKSex, FKMaritalStatus, FKProfession, FKCAE, ClientNotes, MigrationID)
+select CAST(CAST(NEWID() AS BINARY(10)) + CAST(GETDATE() AS BINARY(6)) AS UNIQUEIDENTIFIER) PK,
+row_number() over (order by c.CLIENTE) ClientNumber, c.NOME ClientName, c.MORADA Address1, c.LOCALIDADE Address2, p.PK FKZipCode, c.NCONTRIB FiscalNumber,
+CASE c.TIPO_C WHEN 'I' THEN '462096E4-68A2-408A-963A-9EE600C9556A' WHEN 'E' THEN 'C5B4F500-BB57-4BFD-8248-9EE600C95ABA' ELSE '4098CF7A-B5EE-4C3F-973F-9EE600C961AA' END FKEntityType,
+CASE c.TIPO_C WHEN 'C' THEN '5C7A0424-126B-467B-977A-9EE600CC13A4' ELSE NULL END FKEntitySubType,
+u.FKUser FKManager, m.PK FKMediator,
+CASE c.ClienteVIP WHEN 1 THEN '63114D11-6087-4EFE-9A7E-9EE600BE52DA' ELSE '9F871430-9BBC-449F-B125-9EE600BE5A9A' END FKProfile,
+g.PK FKGroup, c.DataNascimento DateOfBirth, s.PK FKSex, t.PK FKMaritalStatus, f.PK FKProfession, x.PK FKCAE, CAST(c.OBSERV AS VARCHAR(250)) ClientNotes,
+c.CLIENTE MigrationID
+from amartins..empresa.cliente c
+left outer join bigbang.tblPostalCodes p on p.PostalCode=CAST(c.CODPOSTAL AS VARCHAR(20)) COLLATE DATABASE_DEFAULT
+left outer join bigbang.tblUser2 u on u.MigrationID=c.GESTORCLI
+left outer join amartins.tblMediators m on m.MigrationID=c.MEDIACLI
+left outer join amartins.tblBBGroups g on g.MigrationID=c.grupo COLLATE DATABASE_DEFAULT
+left outer join bigbang.tblSex s on left(s.SexName, 1)=c.Sexo COLLATE DATABASE_DEFAULT
+left outer join bigbang.tblMaritalStatuses t on upper(left(t.StatusText, 1))=upper(left(c.EstadoCivil, 1)) COLLATE DATABASE_DEFAULT
+left outer join bigbang.tblProfessions f on f.ProfessionName=ltrim(rtrim(c.Profissao)) COLLATE DATABASE_DEFAULT
+left outer join bigbang.tblCAE x on left(x.CAEText, 5)=CAST(c.CODCAE AS VARCHAR(5)) COLLATE DATABASE_DEFAULT
+where c.NOME<>'' and c.GESTORCLI not in (91, 98, 99);
+
+insert into bigbang.tblPostalCodes (PK, PostalCode, PostalCity)
+select CAST(CAST(NEWID() AS BINARY(10)) + CAST(GETDATE() AS BINARY(6)) AS UNIQUEIDENTIFIER) PK, * from
+(select PostalCode, min(PostalCity) PostalCity from
+(select distinct profcodpostal PostalCode, rtrim(ltrim(upper(proflocpostal))) PostalCity
+from amartins..empresa.cliente s left outer join bigbang.tblpostalcodes c on ltrim(s.profcodpostal)=c.postalcode COLLATE DATABASE_DEFAULT
+where c.postalcode is null
+and s.profcodpostal is not null and s.profcodpostal <>'' and s.profcodpostal not like '%[^-0123456789]%' and s.proflocpostal is not null and s.proflocpostal <>'') z
+group by PostalCode) y;
+
+insert into amartins.tblPNProcesses (PK, FKScript, FKData, FKManager, IsRunning)
+select CAST(CAST(NEWID() AS BINARY(10)) + CAST(GETDATE() AS BINARY(6)) AS UNIQUEIDENTIFIER) PK,
+'100E701A-EDC5-4D9C-A221-9F09013D7954' FKScript, PK FKData, FKManager FKManager, 1 IsRunning
+from amartins.tblBBClients;
+
+update amartins.tblBBClients set FKProcess=p.PK
+from amartins.tblBBClients c inner join amartins.tblPNProcesses p on p.FKData=c.PK;
+
+insert into amartins.tblPNSteps (PK, FKProcess, FKOperation, FKLevel)
+select CAST(CAST(NEWID() AS BINARY(10)) + CAST(GETDATE() AS BINARY(6)) AS UNIQUEIDENTIFIER) PK,
+p.PK FKProcess, o.PK FKOperation, o.FKDefaultLevel FKLevel
+from amartins.tblPNProcesses p, bigbang.tblPNOperations o
+where p.FKScript='100E701A-EDC5-4D9C-A221-9F09013D7954' and o.PK in ('A9A8F4ED-74C2-473C-873C-9F0901435C1C', 'A99DCEF5-91BA-4CFA-9E70-9F090146FAE4');
+
+insert into amartins.tblPNNodes (PK, FKProcess, FKController, NodeCount)
+select CAST(CAST(NEWID() AS BINARY(10)) + CAST(GETDATE() AS BINARY(6)) AS UNIQUEIDENTIFIER) PK,
+p.PK FKProcess, c.PK FKController, c.StartCount NodeCount
+from amartins.tblPNProcesses p inner join bigbang.tblPNControllers c on c.FKScript=p.FKScript;
