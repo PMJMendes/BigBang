@@ -89,6 +89,7 @@ insert into bigbang.tblCommissionProfiles (PK, ProfileName) values ('CECC8014-20
 insert into bigbang.tblCommissionProfiles (PK, ProfileName) values ('C5BE51A9-7E0F-4970-962A-9EFC0135E9E1', N'Angariação');
 insert into bigbang.tblCommissionProfiles (PK, ProfileName) values ('071CE678-956B-4D41-94DE-9EFC013688B5', N'Especial');
 insert into bigbang.tblCommissionProfiles (PK, ProfileName) values ('C7236BA7-73AD-40ED-B6DC-9EFC013691C8', N'Negociado');
+insert into bigbang.tblDocTypes (PK, DocType) values ('5ABB972E-9E7E-4733-9C1E-9F1300B4EB3A', N'Carta de Condução');
 insert into bigbang.tblMaritalStatuses (PK, StatusText) values ('9ED463DB-ABC5-46EE-82A7-9F0300C6D631', N'Casado');
 insert into bigbang.tblMaritalStatuses (PK, StatusText) values ('BFB58864-4B91-4078-AF9F-9F0300C6E52D', N'Divorciado');
 insert into bigbang.tblMaritalStatuses (PK, StatusText) values ('BE742798-9D7F-4B23-BFBA-9F0300C6CFA5', N'Solteiro');
@@ -493,6 +494,47 @@ left outer join bigbang.tblProfessions f on f.ProfessionName=ltrim(rtrim(c.Profi
 left outer join bigbang.tblCAE x on left(x.CAEText, 5)=CAST(c.CODCAE AS VARCHAR(5)) COLLATE DATABASE_DEFAULT
 where c.NOME<>'' and c.GESTORCLI not in (91, 98, 99);
 
+insert into credite_egs.tblContacts (PK, ContactName, FKOwnerType, FKOwner, FKContactType)
+select CAST(CAST(NEWID() AS BINARY(10)) + CAST(GETDATE() AS BINARY(6)) AS UNIQUEIDENTIFIER) PK,
+N'Geral' ContactName, 'D535A99E-149F-44DC-A28B-9EE600B240F5' FKOwnerType, l.PK FKOwner, '04F6BC3C-0283-47F0-9670-9EEE013350D9' FKContactType
+from credite_egs.tblBBClients l
+inner join credegs..empresa.cliente r on r.CLIENTE=l.MigrationID
+where r.NOME<>'' and ((r.TELEFONE is not null and r.TELEFONE<>'') or (r.fax is not null and r.fax<>'') or (r.Telemovel is not null and r.Telemovel<>''));
+
+insert into credite_egs.tblContactInfo (PK, FKContact, FKInfoType, InfoValue)
+select CAST(CAST(NEWID() AS BINARY(10)) + CAST(GETDATE() AS BINARY(6)) AS UNIQUEIDENTIFIER) PK,
+c.PK FKContact, '01C8D0CA-074E-45AA-8A17-9EDF00F41586' FKInfoType, r.TELEFONE InfoValue
+from credite_egs.tblBBClients l
+inner join credegs..empresa.cliente r on r.CLIENTE=l.MigrationID
+inner join credite_egs.tblContacts c on c.FKOwner=l.PK
+where c.FKContactType='04F6BC3C-0283-47F0-9670-9EEE013350D9' and ContactName=N'Geral'
+and r.TELEFONE is not null and r.TELEFONE<>'';
+
+insert into credite_egs.tblContactInfo (PK, FKContact, FKInfoType, InfoValue)
+select CAST(CAST(NEWID() AS BINARY(10)) + CAST(GETDATE() AS BINARY(6)) AS UNIQUEIDENTIFIER) PK,
+c.PK FKContact, '172EC088-AA55-433B-BBC3-9EDF00F42266' FKInfoType, r.fax InfoValue
+from credite_egs.tblBBClients l
+inner join credegs..empresa.cliente r on r.CLIENTE=l.MigrationID
+inner join credite_egs.tblContacts c on c.FKOwner=l.PK
+where c.FKContactType='04F6BC3C-0283-47F0-9670-9EEE013350D9' and ContactName=N'Geral'
+and r.fax is not null and r.fax<>'';
+
+insert into credite_egs.tblContactInfo (PK, FKContact, FKInfoType, InfoValue)
+select CAST(CAST(NEWID() AS BINARY(10)) + CAST(GETDATE() AS BINARY(6)) AS UNIQUEIDENTIFIER) PK,
+c.PK FKContact, '60414F28-49E7-43AD-ACD9-9EDF00F41E76' FKInfoType, r.Telemovel InfoValue
+from credite_egs.tblBBClients l
+inner join credegs..empresa.cliente r on r.CLIENTE=l.MigrationID
+inner join credite_egs.tblContacts c on c.FKOwner=l.PK
+where c.FKContactType='04F6BC3C-0283-47F0-9670-9EEE013350D9' and ContactName=N'Geral'
+and r.Telemovel is not null and r.Telemovel<>'';
+
+insert into credite_egs.tblContacts (PK, ContactName, FKOwnerType, FKOwner, FKContactType)
+select CAST(CAST(NEWID() AS BINARY(10)) + CAST(GETDATE() AS BINARY(6)) AS UNIQUEIDENTIFIER) PK,
+r.CONTACTO ContactName, 'D535A99E-149F-44DC-A28B-9EE600B240F5' FKOwnerType, l.PK FKOwner, '04F6BC3C-0283-47F0-9670-9EEE013350D9' FKContactType
+from credite_egs.tblBBClients l
+inner join credegs..empresa.cliente r on r.CLIENTE=l.MigrationID
+where r.NOME<>'' and r.CONTACTO is not null and r.CONTACTO<>'';
+
 insert into bigbang.tblPostalCodes (PK, PostalCode, PostalCity)
 select CAST(CAST(NEWID() AS BINARY(10)) + CAST(GETDATE() AS BINARY(6)) AS UNIQUEIDENTIFIER) PK, * from
 (select PostalCode, min(PostalCity) PostalCity from
@@ -501,6 +543,49 @@ from credegs..empresa.cliente s left outer join bigbang.tblpostalcodes c on ltri
 where c.postalcode is null
 and s.profcodpostal is not null and s.profcodpostal <>'' and s.profcodpostal not like '%[^-0123456789]%' and s.proflocpostal is not null and s.proflocpostal <>'') z
 group by PostalCode) y;
+
+insert into credite_egs.tblContacts (PK, ContactName, FKOwnerType, FKOwner, Address1, Address2, FKZipCode, FKContactType)
+select CAST(CAST(NEWID() AS BINARY(10)) + CAST(GETDATE() AS BINARY(6)) AS UNIQUEIDENTIFIER) PK,
+N'Profissional' ContactName, 'D535A99E-149F-44DC-A28B-9EE600B240F5' FKOwnerType, l.PK FKOwner,
+r.ProfMorada Address1, r.ProfLocalidade Address2, c.PK FKZipCode, '04F6BC3C-0283-47F0-9670-9EEE013350D9' FKContactType
+from credite_egs.tblBBClients l
+inner join credegs..empresa.cliente r on r.CLIENTE=l.MigrationID
+left outer join bigbang.tblPostalCodes c on c.PostalCode=r.CodPostal COLLATE DATABASE_DEFAULT
+where r.NOME<>'' and ((r.ProfMorada is not null and r.ProfMorada<>'') or (r.ProfLocalidade is not null and r.ProfLocalidade<>'') or (r.ProfCodPostal is not null and r.ProfCodPostal<>'') or (r.ProfTelefone is not null and r.ProfTelefone<>''));
+
+insert into credite_egs.tblContactInfo (PK, FKContact, FKInfoType, InfoValue)
+select CAST(CAST(NEWID() AS BINARY(10)) + CAST(GETDATE() AS BINARY(6)) AS UNIQUEIDENTIFIER) PK,
+c.PK FKContact, '01C8D0CA-074E-45AA-8A17-9EDF00F41586' FKInfoType, r.ProfTelefone InfoValue
+from credite_egs.tblBBClients l
+inner join credegs..empresa.cliente r on r.CLIENTE=l.MigrationID
+inner join credite_egs.tblContacts c on c.FKOwner=l.PK
+where c.FKContactType='04F6BC3C-0283-47F0-9670-9EEE013350D9' and ContactName=N'Profissional'
+and r.ProfTelefone is not null and r.ProfTelefone<>'';
+
+insert into credite_egs.tblBBDocuments (PK, DocName, FKOwnerType, FKOwner, FKDocType)
+select CAST(CAST(NEWID() AS BINARY(10)) + CAST(GETDATE() AS BINARY(6)) AS UNIQUEIDENTIFIER) PK,
+N'Carta de Condução' DocName, 'D535A99E-149F-44DC-A28B-9EE600B240F5' FKOwnerType, l.PK FKOwner, '5ABB972E-9E7E-4733-9C1E-9F1300B4EB3A' FKDocType
+from credite_egs.tblBBClients l
+inner join credegs..empresa.cliente r on r.CLIENTE=l.MigrationID
+where r.NOME<>'' and ((r.CartaCondNum is not null and r.CartaCondNum<>'') or (r.CartaCondData is not null and r.CartaCondData<>''));
+
+insert into credite_egs.tblDocInfo (PK, FKOwner, InfoName, InfoValue)
+select CAST(CAST(NEWID() AS BINARY(10)) + CAST(GETDATE() AS BINARY(6)) AS UNIQUEIDENTIFIER) PK,
+d.PK FKOwner, N'Número' InfoName, r.CartaCondNum InfoValue
+from credite_egs.tblBBClients l
+inner join credegs..empresa.cliente r on r.CLIENTE=l.MigrationID
+inner join credite_egs.tblBBDocuments d on d.FKOwner=l.PK
+where d.FKDocType='5ABB972E-9E7E-4733-9C1E-9F1300B4EB3A' and d.DocName=N'Carta de Condução'
+and r.CartaCondNum is not null and r.CartaCondNum<>'';
+
+insert into credite_egs.tblDocInfo (PK, FKOwner, InfoName, InfoValue)
+select CAST(CAST(NEWID() AS BINARY(10)) + CAST(GETDATE() AS BINARY(6)) AS UNIQUEIDENTIFIER) PK,
+d.PK FKOwner, N'Data' InfoName, r.CartaCondData InfoValue
+from credite_egs.tblBBClients l
+inner join credegs..empresa.cliente r on r.CLIENTE=l.MigrationID
+inner join credite_egs.tblBBDocuments d on d.FKOwner=l.PK
+where d.FKDocType='5ABB972E-9E7E-4733-9C1E-9F1300B4EB3A' and d.DocName=N'Carta de Condução'
+and r.CartaCondData is not null and r.CartaCondData<>'';
 
 insert into credite_egs.tblPNProcesses (PK, FKScript, FKData, FKManager, IsRunning)
 select CAST(CAST(NEWID() AS BINARY(10)) + CAST(GETDATE() AS BINARY(6)) AS UNIQUEIDENTIFIER) PK,
@@ -704,6 +789,47 @@ left outer join bigbang.tblProfessions f on f.ProfessionName=ltrim(rtrim(c.Profi
 left outer join bigbang.tblCAE x on left(x.CAEText, 5)=CAST(c.CODCAE AS VARCHAR(5)) COLLATE DATABASE_DEFAULT
 where c.NOME<>'' and c.GESTORCLI not in (91, 98, 99);
 
+insert into amartins.tblContacts (PK, ContactName, FKOwnerType, FKOwner, FKContactType)
+select CAST(CAST(NEWID() AS BINARY(10)) + CAST(GETDATE() AS BINARY(6)) AS UNIQUEIDENTIFIER) PK,
+N'Geral' ContactName, 'D535A99E-149F-44DC-A28B-9EE600B240F5' FKOwnerType, l.PK FKOwner, '04F6BC3C-0283-47F0-9670-9EEE013350D9' FKContactType
+from amartins.tblBBClients l
+inner join amartins..empresa.cliente r on r.CLIENTE=l.MigrationID
+where r.NOME<>'' and ((r.TELEFONE is not null and r.TELEFONE<>'') or (r.fax is not null and r.fax<>'') or (r.Telemovel is not null and r.Telemovel<>''));
+
+insert into amartins.tblContactInfo (PK, FKContact, FKInfoType, InfoValue)
+select CAST(CAST(NEWID() AS BINARY(10)) + CAST(GETDATE() AS BINARY(6)) AS UNIQUEIDENTIFIER) PK,
+c.PK FKContact, '01C8D0CA-074E-45AA-8A17-9EDF00F41586' FKInfoType, r.TELEFONE InfoValue
+from amartins.tblBBClients l
+inner join amartins..empresa.cliente r on r.CLIENTE=l.MigrationID
+inner join amartins.tblContacts c on c.FKOwner=l.PK
+where c.FKContactType='04F6BC3C-0283-47F0-9670-9EEE013350D9' and ContactName=N'Geral'
+and r.TELEFONE is not null and r.TELEFONE<>'';
+
+insert into amartins.tblContactInfo (PK, FKContact, FKInfoType, InfoValue)
+select CAST(CAST(NEWID() AS BINARY(10)) + CAST(GETDATE() AS BINARY(6)) AS UNIQUEIDENTIFIER) PK,
+c.PK FKContact, '172EC088-AA55-433B-BBC3-9EDF00F42266' FKInfoType, r.fax InfoValue
+from amartins.tblBBClients l
+inner join amartins..empresa.cliente r on r.CLIENTE=l.MigrationID
+inner join amartins.tblContacts c on c.FKOwner=l.PK
+where c.FKContactType='04F6BC3C-0283-47F0-9670-9EEE013350D9' and ContactName=N'Geral'
+and r.fax is not null and r.fax<>'';
+
+insert into amartins.tblContactInfo (PK, FKContact, FKInfoType, InfoValue)
+select CAST(CAST(NEWID() AS BINARY(10)) + CAST(GETDATE() AS BINARY(6)) AS UNIQUEIDENTIFIER) PK,
+c.PK FKContact, '60414F28-49E7-43AD-ACD9-9EDF00F41E76' FKInfoType, r.Telemovel InfoValue
+from amartins.tblBBClients l
+inner join amartins..empresa.cliente r on r.CLIENTE=l.MigrationID
+inner join amartins.tblContacts c on c.FKOwner=l.PK
+where c.FKContactType='04F6BC3C-0283-47F0-9670-9EEE013350D9' and ContactName=N'Geral'
+and r.Telemovel is not null and r.Telemovel<>'';
+
+insert into amartins.tblContacts (PK, ContactName, FKOwnerType, FKOwner, FKContactType)
+select CAST(CAST(NEWID() AS BINARY(10)) + CAST(GETDATE() AS BINARY(6)) AS UNIQUEIDENTIFIER) PK,
+r.CONTACTO ContactName, 'D535A99E-149F-44DC-A28B-9EE600B240F5' FKOwnerType, l.PK FKOwner, '04F6BC3C-0283-47F0-9670-9EEE013350D9' FKContactType
+from amartins.tblBBClients l
+inner join amartins..empresa.cliente r on r.CLIENTE=l.MigrationID
+where r.NOME<>'' and r.CONTACTO is not null and r.CONTACTO<>'';
+
 insert into bigbang.tblPostalCodes (PK, PostalCode, PostalCity)
 select CAST(CAST(NEWID() AS BINARY(10)) + CAST(GETDATE() AS BINARY(6)) AS UNIQUEIDENTIFIER) PK, * from
 (select PostalCode, min(PostalCity) PostalCity from
@@ -712,6 +838,49 @@ from amartins..empresa.cliente s left outer join bigbang.tblpostalcodes c on ltr
 where c.postalcode is null
 and s.profcodpostal is not null and s.profcodpostal <>'' and s.profcodpostal not like '%[^-0123456789]%' and s.proflocpostal is not null and s.proflocpostal <>'') z
 group by PostalCode) y;
+
+insert into amartins.tblContacts (PK, ContactName, FKOwnerType, FKOwner, Address1, Address2, FKZipCode, FKContactType)
+select CAST(CAST(NEWID() AS BINARY(10)) + CAST(GETDATE() AS BINARY(6)) AS UNIQUEIDENTIFIER) PK,
+N'Profissional' ContactName, 'D535A99E-149F-44DC-A28B-9EE600B240F5' FKOwnerType, l.PK FKOwner,
+r.ProfMorada Address1, r.ProfLocalidade Address2, c.PK FKZipCode, '04F6BC3C-0283-47F0-9670-9EEE013350D9' FKContactType
+from amartins.tblBBClients l
+inner join amartins..empresa.cliente r on r.CLIENTE=l.MigrationID
+left outer join bigbang.tblPostalCodes c on c.PostalCode=r.CodPostal COLLATE DATABASE_DEFAULT
+where r.NOME<>'' and ((r.ProfMorada is not null and r.ProfMorada<>'') or (r.ProfLocalidade is not null and r.ProfLocalidade<>'') or (r.ProfCodPostal is not null and r.ProfCodPostal<>'') or (r.ProfTelefone is not null and r.ProfTelefone<>''));
+
+insert into amartins.tblContactInfo (PK, FKContact, FKInfoType, InfoValue)
+select CAST(CAST(NEWID() AS BINARY(10)) + CAST(GETDATE() AS BINARY(6)) AS UNIQUEIDENTIFIER) PK,
+c.PK FKContact, '01C8D0CA-074E-45AA-8A17-9EDF00F41586' FKInfoType, r.ProfTelefone InfoValue
+from amartins.tblBBClients l
+inner join amartins..empresa.cliente r on r.CLIENTE=l.MigrationID
+inner join amartins.tblContacts c on c.FKOwner=l.PK
+where c.FKContactType='04F6BC3C-0283-47F0-9670-9EEE013350D9' and ContactName=N'Profissional'
+and r.ProfTelefone is not null and r.ProfTelefone<>'';
+
+insert into amartins.tblBBDocuments (PK, DocName, FKOwnerType, FKOwner, FKDocType)
+select CAST(CAST(NEWID() AS BINARY(10)) + CAST(GETDATE() AS BINARY(6)) AS UNIQUEIDENTIFIER) PK,
+N'Carta de Condução' DocName, 'D535A99E-149F-44DC-A28B-9EE600B240F5' FKOwnerType, l.PK FKOwner, '5ABB972E-9E7E-4733-9C1E-9F1300B4EB3A' FKDocType
+from amartins.tblBBClients l
+inner join amartins..empresa.cliente r on r.CLIENTE=l.MigrationID
+where r.NOME<>'' and ((r.CartaCondNum is not null and r.CartaCondNum<>'') or (r.CartaCondData is not null and r.CartaCondData<>''));
+
+insert into amartins.tblDocInfo (PK, FKOwner, InfoName, InfoValue)
+select CAST(CAST(NEWID() AS BINARY(10)) + CAST(GETDATE() AS BINARY(6)) AS UNIQUEIDENTIFIER) PK,
+d.PK FKOwner, N'Número' InfoName, r.CartaCondNum InfoValue
+from amartins.tblBBClients l
+inner join amartins..empresa.cliente r on r.CLIENTE=l.MigrationID
+inner join amartins.tblBBDocuments d on d.FKOwner=l.PK
+where d.FKDocType='5ABB972E-9E7E-4733-9C1E-9F1300B4EB3A' and d.DocName=N'Carta de Condução'
+and r.CartaCondNum is not null and r.CartaCondNum<>'';
+
+insert into amartins.tblDocInfo (PK, FKOwner, InfoName, InfoValue)
+select CAST(CAST(NEWID() AS BINARY(10)) + CAST(GETDATE() AS BINARY(6)) AS UNIQUEIDENTIFIER) PK,
+d.PK FKOwner, N'Data' InfoName, r.CartaCondData InfoValue
+from amartins.tblBBClients l
+inner join amartins..empresa.cliente r on r.CLIENTE=l.MigrationID
+inner join amartins.tblBBDocuments d on d.FKOwner=l.PK
+where d.FKDocType='5ABB972E-9E7E-4733-9C1E-9F1300B4EB3A' and d.DocName=N'Carta de Condução'
+and r.CartaCondData is not null and r.CartaCondData<>'';
 
 insert into amartins.tblPNProcesses (PK, FKScript, FKData, FKManager, IsRunning)
 select CAST(CAST(NEWID() AS BINARY(10)) + CAST(GETDATE() AS BINARY(6)) AS UNIQUEIDENTIFIER) PK,
