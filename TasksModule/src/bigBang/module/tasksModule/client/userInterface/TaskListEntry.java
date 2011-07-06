@@ -24,5 +24,4 @@ public class TaskListEntry extends ListEntry<Task> {
 		//this.setRightClickable(true);
 	}
 
-
 }
