@@ -6,8 +6,8 @@
 	<!-- Inherit the default GWT style sheet. You can change -->
 	<!-- the theme of your GWT application by uncommenting -->
 	<!-- any one of the following lines. -->
-	<inherits name='com.google.gwt.user.theme.standard.Standard' />
-	<!-- <inherits name='com.google.gwt.user.theme.chrome.Chrome'/> -->
+	<!-- <inherits name='com.google.gwt.user.theme.standard.Standard' /> -->
+	 <inherits name='com.google.gwt.user.theme.chrome.Chrome'/>
 	<!-- <inherits name='com.google.gwt.user.theme.dark.Dark'/> -->
 
 	<!-- Other module inherits -->
@@ -27,5 +27,12 @@
 	<inherits name="bigBang.module.tasksModule.TasksModule" />
 	<inherits name="bigBang.module.generalSystemModule.GeneralSystemModule"/>
 	<inherits name="bigBang.module.clientModule.ClientModule"/>
+	<inherits name="bigBang.module.insurancePolicyModule.InsurancePolicyModule"/>
+	<inherits name="bigBang.module.receiptModule.ReceiptModule"/>
+	<inherits name="bigBang.module.expenseModule.ExpenseModule"/>
+	<inherits name="bigBang.module.complaintModule.ComplaintModule"/>
+	<inherits name="bigBang.module.casualtyModule.CasualtyModule"/>
+	<inherits name="bigBang.module.quoteRequestModule.QuoteRequestModule"/>
+	<inherits name="bigBang.module.riskAnalisysModule.RiskAnalisysModule"/>
 
 </module>
