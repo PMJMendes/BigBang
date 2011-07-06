@@ -131,7 +131,7 @@ public class MainScreenView extends View implements MainScreenViewPresenter.Disp
 			AbsolutePanel tabPanelWidget = new AbsolutePanel();
 			tabPanelWidget.setSize("100px", "35px");
 
-			Label label = new Label(section.getDescription());
+			Label label = new Label(section.getShortDescription());
 			label.getElement().getStyle().setMarginTop(12, Unit.PX);
 			label.setWidth("100%");
 			tabPanelWidget.add(label, 0, 0);

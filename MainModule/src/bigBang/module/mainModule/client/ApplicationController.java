@@ -11,9 +11,7 @@ import bigBang.module.mainModule.client.userInterface.view.MainScreenView;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.RunAsyncCallback;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.HasWidgets;
-import com.google.gwt.user.client.ui.RootPanel;
 
 public class ApplicationController {
 
@@ -62,7 +60,6 @@ public class ApplicationController {
 	}
 
 	public void showMainScreen(){
-		RootPanel.get().setSize(Window.getClientWidth() + "px", Window.getClientHeight() + "px");
 		mainScreenViewPresenter.setUsername(this.username);
 		mainScreenViewPresenter.setDomain(this.domain);
 		mainScreenViewPresenter.go(mainContainer);
