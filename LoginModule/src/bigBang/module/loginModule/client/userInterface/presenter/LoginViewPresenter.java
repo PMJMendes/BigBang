@@ -32,8 +32,13 @@ public class LoginViewPresenter implements ViewPresenter {
 		String getDomain();
 		HasValue<String> getPassword();
 		void setDomains(String[] domains);
+		
+		void showErrorMessage(String message);
+		void hideErrorMessage();
+		
 		Widget asWidget();
 		void setSelectedDomain(String domain);
+		public void showLoading(boolean show);
 	}
 
 	private Display view;
@@ -106,7 +111,8 @@ public class LoginViewPresenter implements ViewPresenter {
 				if(username == null){
 					view.setSelectedDomain(domain);
 					finishGo();
-				} else {				
+					LoginViewPresenter.this.view.showErrorMessage("Não foi possível autenticar automaticamente.");
+				} else {		
 					eventBus.fireEvent(new LoginSuccessEvent(username, domain));
 					GWT.log("Authentication success for " + username);
 				}
@@ -118,19 +124,23 @@ public class LoginViewPresenter implements ViewPresenter {
 		});
 	}
 	
-	private void checkLogin(){	
+	private void checkLogin(){
+		view.showLoading(true);
 		service.login(view.getUsername().getValue(), view.getPassword().getValue(), view.getDomain(), new AsyncCallback<String>() {
 			
 			public void onSuccess(String username) {
 				eventBus.fireEvent(new LoginSuccessEvent(username, view.getDomain()));
 				GWT.log("Authentication success for " + username);
+				LoginViewPresenter.this.view.showLoading(false);
 			}
 			
 			public void onFailure(Throwable caught) {
 				GWT.log("Authentication service failure : " + caught.getMessage());
+				LoginViewPresenter.this.view.showLoading(false);
+				LoginViewPresenter.this.view.showErrorMessage("Não foi possível autenticar. Verifique se as credenciais de acesso inseridas são as correctas");
 			}
 		});
-		
+		view.getPassword().setValue("");
 	}
 
 	public void registerEventHandlers(EventBus eventBus) {
