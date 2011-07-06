@@ -3,6 +3,7 @@ package bigBang.module.generalSystemModule.client.userInterface.presenter;
 import java.util.Collection;
 
 import bigBang.library.client.BigBangAsyncCallback;
+import bigBang.library.client.ContactManager;
 import bigBang.library.client.EventBus;
 import bigBang.library.client.HasEditableValue;
 import bigBang.library.client.HasValueSelectables;
@@ -21,6 +22,7 @@ import bigBang.module.generalSystemModule.shared.operation.InsuranceAgencyManage
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.HasClickHandlers;
+import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.HasWidgets;
 import com.google.gwt.user.client.ui.Widget;
 
@@ -45,10 +47,13 @@ public class InsuranceAgencyManagementOperationViewPresenter implements
 		//General
 		HasClickHandlers getNewButton();
 		HasClickHandlers getRefreshButton();
+		void clear();
 		
 		void prepareNewInsuranceAgency();
 		void removeNewInsuranceAgencyPreparation();
-
+		
+		void setContactManager(ContactManager contactManager);
+		
 		void setReadOnly(boolean readOnly);
 		Widget asWidget();
 	}
@@ -62,11 +67,13 @@ public class InsuranceAgencyManagementOperationViewPresenter implements
 	
 	private boolean bound = false;
 	private InsuranceAgency[] insuranceAgencies;
+	private ContactManager contactManager;
 
 	public InsuranceAgencyManagementOperationViewPresenter(EventBus eventBus, Service service, View view){
 		setEventBus(eventBus);
 		setService(service);
 		setView(view);
+		this.contactManager = new ContactManager();
 	}
 
 	public void setService(Service service) {
@@ -88,6 +95,7 @@ public class InsuranceAgencyManagementOperationViewPresenter implements
 		view.getList().setMultipleSelectability(false);
 		view.getForm().setReadOnly(true);
 		
+		view.clear();
 		setup();
 		
 		container.clear();
@@ -118,6 +126,9 @@ public class InsuranceAgencyManagementOperationViewPresenter implements
 	public void bind() {
 		if(bound)
 			return;
+		
+		view.setContactManager(this.contactManager);
+		
 		view.getList().addSelectionChangedEventHandler(new SelectionChangedEventHandler() {
 			
 			@Override
@@ -125,6 +136,7 @@ public class InsuranceAgencyManagementOperationViewPresenter implements
 				Collection<? extends Selectable> selected = event.getSelected();
 				if(selected.size() == 0){
 					view.getForm().setValue(null);
+					contactManager.setOfflineMode(true);
 					return;
 				}			
 				
@@ -136,8 +148,26 @@ public class InsuranceAgencyManagementOperationViewPresenter implements
 					view.getForm().setReadOnly(true);
 					view.lockForm(value == null);
 					if(value.id != null){
+						contactManager.setEntityInfo(value.id, new AsyncCallback<Void>(){
+
+							@Override
+							public void onFailure(Throwable caught) {
+								// TODO Auto-generated method stub
+								
+							}
+
+							@Override
+							public void onSuccess(Void result) {
+								// TODO Auto-generated method stub
+								
+							}
+							
+						});
 						view.removeNewInsuranceAgencyPreparation();
+					}else{
+						contactManager.setOfflineMode(true);
 					}
+					
 				}
 			}
 		});

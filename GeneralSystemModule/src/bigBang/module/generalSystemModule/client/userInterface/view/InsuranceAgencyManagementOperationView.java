@@ -23,7 +23,6 @@ public class InsuranceAgencyManagementOperationView extends View implements Insu
 	private InsuranceAgencyList insuranceAgencyList;
 	private InsuranceAgencyForm insuranceAgencyForm;
 	private ContactsPreviewList contactsPreviewList;
-	private ContactManager contactsManager;
 	
 	public InsuranceAgencyManagementOperationView() {
 		SplitLayoutPanel wrapper = new SplitLayoutPanel();
@@ -38,8 +37,7 @@ public class InsuranceAgencyManagementOperationView extends View implements Insu
 		
 		SplitLayoutPanel formWrapper = new SplitLayoutPanel();
 		
-		contactsManager = new ContactManager();
-		contactsPreviewList = new ContactsPreviewList(contactsManager);
+		contactsPreviewList = new ContactsPreviewList();
 		contactsPreviewList.setSize("100%", "100%");
 		
 		formWrapper.addEast(contactsPreviewList, 250);
@@ -146,4 +144,17 @@ public class InsuranceAgencyManagementOperationView extends View implements Insu
 		this.insuranceAgencyForm.setReadOnly(readOnly);
 	}
 	
+	@Override
+	public void clear(){
+		this.contactsPreviewList.clear();
+		this.insuranceAgencyForm.clearInfo();
+		this.insuranceAgencyList.clear();
+		this.insuranceAgencyList.clearFilters();
+	}
+
+	@Override
+	public void setContactManager(ContactManager contactManager) {
+		this.contactsPreviewList.setManager(contactManager);
+	}
+
 }

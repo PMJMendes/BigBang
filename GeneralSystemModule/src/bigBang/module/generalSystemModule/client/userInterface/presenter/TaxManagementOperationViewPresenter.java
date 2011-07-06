@@ -37,6 +37,9 @@ public class TaxManagementOperationViewPresenter implements
 		void showForm(boolean show);
 		void lockForm(boolean lock);
 		
+		//GENERAL
+		void clear();
+		
 		//List
 		void removeTaxFromList(Tax tax);
 		void addTaxToList(Tax tax);
@@ -83,6 +86,7 @@ public class TaxManagementOperationViewPresenter implements
 			bind();
 		bound = true;
 
+		view.clear();
 		setup();
 		
 		container.clear();

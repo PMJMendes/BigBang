@@ -14,7 +14,6 @@ import bigBang.module.generalSystemModule.client.userInterface.UserListEntry;
 import bigBang.module.generalSystemModule.client.userInterface.presenter.CostCenterManagementOperationViewPresenter;
 import bigBang.module.generalSystemModule.shared.CostCenter;
 import bigBang.module.generalSystemModule.shared.User;
-import bigBang.module.generalSystemModule.shared.UserProfile;
 
 import com.google.gwt.event.dom.client.DoubleClickEvent;
 import com.google.gwt.event.dom.client.DoubleClickHandler;
@@ -31,6 +30,7 @@ public class CostCenterManagementOperationView extends View implements CostCente
 	private CostCenterList costCenterList;
 	private CostCenterMemberList memberList;
 	private CostCenterForm costCenterForm;
+	private UserForm userForm;
 	
 	public CostCenterManagementOperationView() {
 		SplitLayoutPanel wrapper = new SplitLayoutPanel();
@@ -60,6 +60,8 @@ public class CostCenterManagementOperationView extends View implements CostCente
 		previewWrapper.setCellHeight(memberList, "100%");
 		wrapper.add(previewWrapper);
 
+		userForm = new UserForm();
+		
 		initWidget(wrapper);
 	}
 
@@ -182,13 +184,10 @@ public class CostCenterManagementOperationView extends View implements CostCente
 	public void showUserDetails(User user) {
 		PopupPanel popup = new PopupPanel();
 		popup.setWidth("400px");
-		UserForm form = new UserForm();
-		CostCenter current = this.costCenterForm.getValue();
-		form.setCostCenters(new CostCenter[]{current});
-		form.setUserProfiles(new UserProfile[]{user.profile});
-		form.setInfo(user);
-		form.lock(true);
-		Widget formContent = form.getNonScrollableContent();
+		userForm.clearInfo();
+		userForm.setInfo(user);
+		userForm.lock(true);
+		Widget formContent = userForm.getNonScrollableContent();
 		formContent.setHeight("240px");
 		popup.add(formContent);
 		popup.center();
@@ -198,5 +197,14 @@ public class CostCenterManagementOperationView extends View implements CostCente
 	public void setReadOnly(boolean readOnly) {
 		((Button)this.costCenterList.newButton).setEnabled(!readOnly);
 		this.costCenterForm.setReadOnly(readOnly);
+	}
+	
+	@Override
+	public void clear(){
+		this.costCenterForm.clearInfo();
+		this.costCenterList.clear();
+		this.costCenterList.clearFilters();
+		this.memberList.clear();
+		this.userForm.clearInfo();
 	}
 }

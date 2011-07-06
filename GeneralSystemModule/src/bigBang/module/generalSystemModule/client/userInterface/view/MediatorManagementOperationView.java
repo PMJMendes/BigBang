@@ -156,5 +156,13 @@ public class MediatorManagementOperationView extends View implements MediatorMan
 		this.contactManager = contactManager;
 		this.contactsList.setManager(contactManager);
 	}
+	
+	@Override
+	public void clear(){
+		this.contactsList.clear();
+		this.mediatorForm.clearInfo();
+		this.mediatorList.clear();
+		this.mediatorList.clearFilters();
+	}
 
 }

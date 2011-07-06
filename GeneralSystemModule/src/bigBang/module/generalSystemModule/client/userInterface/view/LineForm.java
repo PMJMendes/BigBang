@@ -21,7 +21,7 @@ public class LineForm extends FormView<Line> {
 		addSection("Informação Geral");
 		
 		name = new TextBoxFormField("Nome");
-		category = new ExpandableListBoxFormField(ModuleConstants.ListIDs.LineCategories, "Categoria", null);
+		category = new ExpandableListBoxFormField(ModuleConstants.ListIDs.LineCategories, "Categoria");
 		
 		addFormField(name);
 		addFormField(category);
@@ -36,6 +36,7 @@ public class LineForm extends FormView<Line> {
 			this.line = new Line();
 		line.name = name.getValue();
 		line.categoryId = category.getValue();
+		line.categoryName = category.getSelectedItemText();
 		return line;
 	}
 

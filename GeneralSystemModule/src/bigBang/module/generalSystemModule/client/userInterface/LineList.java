@@ -14,6 +14,8 @@ import bigBang.module.generalSystemModule.interfaces.CoveragesService;
 import bigBang.module.generalSystemModule.shared.Line;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.dom.client.Style.FontWeight;
+import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.DoubleClickEvent;
@@ -29,14 +31,19 @@ public class LineList extends FilterableList<Line> {
 
 		public Entry(Line line){
 			super(line);
+			this.textLabel.getElement().getStyle().setFontWeight(FontWeight.BOLD);
+			this.textLabel.getElement().getStyle().setFontSize(14, Unit.PX);
+			
+			this.titleLabel.getElement().getStyle().setFontWeight(FontWeight.BOLD);
+			this.titleLabel.getElement().getStyle().setFontSize(11, Unit.PX);
 			setLeftWidget(editImage);
 			setHeight("40px");
 		}
 
 		public <I extends Object> void setInfo(I info) {
 			Line line = (Line) info;
-			setTitle(line.name);
-			setText(line.categoryId);
+			setTitle(line.categoryName);
+			setText(line.name);
 			setNavigatable(line.subLines != null && line.subLines.length > 0);
 		};
 

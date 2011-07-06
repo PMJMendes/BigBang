@@ -60,8 +60,11 @@ public class CoverageManagementOperationView extends View implements CoverageMan
 	@Override
 	public void clear() {
 		this.coverageList.clear();
+		this.coverageList.clearFilters();
 		this.lineList.clear();
+		this.lineList.clearFilters();
 		this.subLineList.clear();
+		this.subLineList.clearFilters();
 	}
 
 	@Override

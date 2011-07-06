@@ -60,7 +60,7 @@ public class GeneralSystemSection implements MenuSection {
 		this.permissionManager = permissionManager;
 
 		/* UNDO */
-		/*UndoOperation undoOperation = (UndoOperation)GWT.create(UndoOperation.class);
+		UndoOperation undoOperation = (UndoOperation)GWT.create(UndoOperation.class);
 		UndoOperationView undoOperationView = (UndoOperationView) GWT.create(UndoOperationView.class);
 		UndoServiceAsync undoService = UndoService.Util.getInstance();
 		UndoOperationViewPresenter undoOperationViewPresenter = new UndoOperationViewPresenter(null, undoService, undoOperationView, processId);
@@ -68,7 +68,7 @@ public class GeneralSystemSection implements MenuSection {
 		this.sectionOperationPresenters.add((OperationViewPresenter) undoOperationViewPresenter);
 		
 		/* COST CENTER MANAGEMENT */
-		/*CostCenterManagementOperation costCenterManagementOperation = (CostCenterManagementOperation)GWT.create(CostCenterManagementOperation.class);
+		CostCenterManagementOperation costCenterManagementOperation = (CostCenterManagementOperation)GWT.create(CostCenterManagementOperation.class);
 		CostCenterManagementOperationView costCenterManagementOperationView = new CostCenterManagementOperationView();
 		CostCenterServiceAsync costCenterService = CostCenterService.Util.getInstance();
 		CostCenterManagementOperationViewPresenter costCenterManagementOperationPresenter = new CostCenterManagementOperationViewPresenter(null, (Service)costCenterService, costCenterManagementOperationView);
@@ -76,17 +76,15 @@ public class GeneralSystemSection implements MenuSection {
 		this.sectionOperationPresenters.add((OperationViewPresenter)costCenterManagementOperationPresenter);
 
 		/* USERS MANAGEMENT */
-		/*UserManagementOperation userManagementOperation = (UserManagementOperation)GWT.create(UserManagementOperation.class);
+		UserManagementOperation userManagementOperation = (UserManagementOperation)GWT.create(UserManagementOperation.class);
 		UserManagementOperationView userManagementOperationView = new UserManagementOperationView();
 		UserServiceAsync userService = UserService.Util.getInstance();
 		UserManagementOperationViewPresenter userManagementOperationPresenter = new UserManagementOperationViewPresenter(null, userService, userManagementOperationView);
 		userManagementOperationPresenter.setOperation(userManagementOperation);
 		this.sectionOperationPresenters.add((OperationViewPresenter)userManagementOperationPresenter);
 		
-		/* CLIENT GROUP MANAGEMENT */
-
 		/* MEDIATORS MANAGEMENT */
-		/*MediatorManagementOperation mediatorManagementOperation = (MediatorManagementOperation)GWT.create(MediatorManagementOperation.class);
+		MediatorManagementOperation mediatorManagementOperation = (MediatorManagementOperation)GWT.create(MediatorManagementOperation.class);
 		MediatorManagementOperationView mediatorManagementOperationView = new MediatorManagementOperationView();
 		MediatorServiceAsync mediatorService = MediatorService.Util.getInstance();
 		MediatorManagementOperationViewPresenter mediatorManagementOperationPresenter = new MediatorManagementOperationViewPresenter(null, mediatorService, mediatorManagementOperationView);
@@ -102,7 +100,7 @@ public class GeneralSystemSection implements MenuSection {
 		this.sectionOperationPresenters.add((OperationViewPresenter)insuranceAgencyManagementOperationPresenter);
 		
 		/* COVERAGES MANAGEMENT */
-		/*CoverageManagementOperation coverageManagementOperation = (CoverageManagementOperation)GWT.create(CoverageManagementOperation.class);
+		CoverageManagementOperation coverageManagementOperation = (CoverageManagementOperation)GWT.create(CoverageManagementOperation.class);
 		CoverageManagementOperationView coverageManagementOperationView = (CoverageManagementOperationView) GWT.create(CoverageManagementOperationView.class);
 		CoveragesServiceAsync coveragesService = CoveragesService.Util.getInstance();
 		CoverageManagementOperationViewPresenter coverageManagementOperationPresenter = new CoverageManagementOperationViewPresenter(null, coveragesService, coverageManagementOperationView);
@@ -110,11 +108,11 @@ public class GeneralSystemSection implements MenuSection {
 		this.sectionOperationPresenters.add((OperationViewPresenter)coverageManagementOperationPresenter);
 		
 		/* TAXES MANAGEMENT */
-		/*TaxManagementOperation taxManagementOperation = (TaxManagementOperation)GWT.create(TaxManagementOperation.class);
+		TaxManagementOperation taxManagementOperation = (TaxManagementOperation)GWT.create(TaxManagementOperation.class);
 		TaxManagementOperationView taxManagementOperationView = (TaxManagementOperationView) GWT.create(TaxManagementOperationView.class);
 		TaxManagementOperationViewPresenter taxManagementOperationPresenter = new TaxManagementOperationViewPresenter(null, coveragesService, taxManagementOperationView);
 		taxManagementOperationPresenter.setOperation(taxManagementOperation);
-		this.sectionOperationPresenters.add((OperationViewPresenter)taxManagementOperationPresenter);*/
+		this.sectionOperationPresenters.add((OperationViewPresenter)taxManagementOperationPresenter);
 	}
 	
 	public String getId() {

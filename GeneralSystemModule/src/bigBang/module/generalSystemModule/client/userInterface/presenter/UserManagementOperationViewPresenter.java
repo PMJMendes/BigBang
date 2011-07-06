@@ -14,11 +14,8 @@ import bigBang.library.client.event.SelectionChangedEventHandler;
 import bigBang.library.client.userInterface.presenter.OperationViewPresenter;
 import bigBang.library.client.userInterface.view.View;
 import bigBang.library.interfaces.Service;
-import bigBang.module.generalSystemModule.interfaces.CostCenterService;
 import bigBang.module.generalSystemModule.interfaces.UserServiceAsync;
-import bigBang.module.generalSystemModule.shared.CostCenter;
 import bigBang.module.generalSystemModule.shared.User;
-import bigBang.module.generalSystemModule.shared.UserProfile;
 import bigBang.module.generalSystemModule.shared.operation.UserManagementOperation;
 
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -42,14 +39,13 @@ OperationViewPresenter {
 		HasClickHandlers getSaveButton();
 		HasClickHandlers getEditButton();
 		HasClickHandlers getDeleteButton();
-		void setUserProfiles(UserProfile[] profiles);
-		void setCostCenters(CostCenter[] costCenters);
 		boolean isFormValid();
 		void lockForm(boolean lock);
 
 		//General
 		HasClickHandlers getNewButton();
 		HasClickHandlers getRefreshButton();
+		void clear();
 
 		void prepareNewUser();
 		void removeNewUserPreparation();
@@ -63,8 +59,6 @@ OperationViewPresenter {
 	@SuppressWarnings("unused")
 	private EventBus eventBus;
 	
-	private UserProfile[] profiles;
-	private CostCenter[] costCenters;
 	private User[] users;
 
 	private UserManagementOperation operation;
@@ -93,6 +87,7 @@ OperationViewPresenter {
 		bind();
 		bound = true;
 
+		view.clear();
 		view.getList().setMultipleSelectability(false);
 		view.getForm().setReadOnly(true);
 		setup();
@@ -103,40 +98,16 @@ OperationViewPresenter {
 
 	private void setup(){
 		users = null;
-		costCenters = null;
-		profiles = null;
 		
 		this.service.getUsers(new BigBangAsyncCallback<User[]>() {
 			public void onSuccess(User[] result) {
 				users = result;
-				if(users != null && costCenters!= null && profiles != null)
-					doSetup();
-			}
-		});
-		this.service.getUserProfiles(new BigBangAsyncCallback<UserProfile[]>() {
-
-			@Override
-			public void onSuccess(UserProfile[] result) {
-				profiles = result;
-				if(users != null && costCenters!= null && profiles != null)
-					doSetup();
-			}
-		});
-		CostCenterService.Util.getInstance().getCostCenterList(new BigBangAsyncCallback<CostCenter[]>() {
-
-			@Override
-			public void onSuccess(CostCenter[] result) {
-				costCenters = result;
-				if(users != null && costCenters!= null && profiles != null)
 					doSetup();
 			}
 		});
 	}
 
 	private void doSetup(){
-		view.setCostCenters(costCenters);
-		view.setUserProfiles(profiles);
-		
 		view.clearList();
 		view.getForm().setValue(null);
 		view.addValuesToList(users);

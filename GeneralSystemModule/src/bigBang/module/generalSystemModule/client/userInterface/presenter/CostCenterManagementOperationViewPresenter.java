@@ -53,6 +53,8 @@ OperationViewPresenter {
 		HasClickHandlers getNewButton();
 		HasClickHandlers getRefreshButton();
 		
+		void clear();
+		
 		void prepareNewCostCenter();
 		void removeNewCostCenterPreparation();
 
@@ -90,6 +92,8 @@ OperationViewPresenter {
 	public void go(HasWidgets container) {
 		bind();
 		bound = true;
+		
+		view.clear();
 		
 		view.getList().setMultipleSelectability(false);
 		view.getForm().setReadOnly(true);

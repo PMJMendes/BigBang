@@ -54,6 +54,7 @@ public class MediatorManagementOperationViewPresenter implements
 		//General
 		HasClickHandlers getNewButton();
 		HasClickHandlers getRefreshButton();
+		void clear();
 		
 		void prepareNewMediator();
 		void removeNewMediatorPreparation();
@@ -102,6 +103,7 @@ public class MediatorManagementOperationViewPresenter implements
 		view.getList().setMultipleSelectability(false);
 		view.getForm().setReadOnly(true);
 		
+		view.clear();
 		setup();
 		
 		container.clear();

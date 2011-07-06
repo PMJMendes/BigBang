@@ -8,9 +8,7 @@ import bigBang.library.client.userInterface.view.View;
 import bigBang.module.generalSystemModule.client.userInterface.UserList;
 import bigBang.module.generalSystemModule.client.userInterface.UserListEntry;
 import bigBang.module.generalSystemModule.client.userInterface.presenter.UserManagementOperationViewPresenter;
-import bigBang.module.generalSystemModule.shared.CostCenter;
 import bigBang.module.generalSystemModule.shared.User;
-import bigBang.module.generalSystemModule.shared.UserProfile;
 
 import com.google.gwt.event.dom.client.HasClickHandlers;
 import com.google.gwt.user.client.ui.Button;
@@ -124,16 +122,6 @@ public class UserManagementOperationView extends View implements UserManagementO
 	}
 
 	@Override
-	public void setUserProfiles(UserProfile[] profiles) {
-		userForm.setUserProfiles(profiles);
-	}
-
-	@Override
-	public void setCostCenters(CostCenter[] costCenters) {
-		userForm.setCostCenters(costCenters);
-	}
-
-	@Override
 	public void lockForm(boolean lock) {
 		this.userForm.setReadOnly(true);
 		this.userForm.lock(lock);
@@ -143,6 +131,13 @@ public class UserManagementOperationView extends View implements UserManagementO
 	public void setReadOnly(boolean readOnly) {
 		((Button)this.userList.newButton).setEnabled(!readOnly);
 		this.userForm.setReadOnly(readOnly);
+	}
+	
+	@Override
+	public void clear(){
+		this.userForm.clearInfo();
+		this.userList.clear();
+		this.userList.clearFilters();
 	}
 
 }

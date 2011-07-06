@@ -4,11 +4,11 @@ import com.google.gwt.event.dom.client.HasClickHandlers;
 import com.google.gwt.user.client.ui.Button;
 
 import bigBang.library.client.userInterface.ExpandableListBoxFormField;
-import bigBang.library.client.userInterface.ListBoxFormField;
 import bigBang.library.client.userInterface.PasswordTextBoxFormField;
 import bigBang.library.client.userInterface.TextBoxFormField;
 import bigBang.library.client.userInterface.view.FormView;
 import bigBang.module.generalSystemModule.shared.CostCenter;
+import bigBang.module.generalSystemModule.shared.ModuleConstants;
 import bigBang.module.generalSystemModule.shared.User;
 import bigBang.module.generalSystemModule.shared.UserProfile;
 import bigBang.module.generalSystemModule.shared.formValidator.UserFormValidator;
@@ -18,9 +18,9 @@ public class UserForm extends FormView<User> {
 	private TextBoxFormField name;
 	private TextBoxFormField username;
 	private TextBoxFormField email;
-	private ListBoxFormField role;
+	private ExpandableListBoxFormField role;
 	private PasswordTextBoxFormField password;
-	private ListBoxFormField costCenter;
+	private ExpandableListBoxFormField costCenter;
 	
 	private Button editCostCenterButton;
 	private Button saveCostCenterButton;
@@ -33,9 +33,12 @@ public class UserForm extends FormView<User> {
 		username = new TextBoxFormField("Nome de Utilizador", new UserFormValidator.UsernameValidator());
 		password = new PasswordTextBoxFormField("Palavra-passe", new UserFormValidator.PasswordValidator());
 		email = new TextBoxFormField("E-mail", new UserFormValidator.EmailValidator());
-		role = new ExpandableListBoxFormField(null, "Perfil", new UserFormValidator.UserProfileValidator());
-		costCenter = new ExpandableListBoxFormField(null, "Centro de Custo", new UserFormValidator.UserCostCenterValidator());
+		role = new ExpandableListBoxFormField(ModuleConstants.EntityIDs.UserProfiles, "Perfil", new UserFormValidator.UserProfileValidator());
+		costCenter = new ExpandableListBoxFormField(ModuleConstants.EntityIDs.CostCenters, "Centro de Custo", new UserFormValidator.UserCostCenterValidator());
 
+		role.setEditable(false);
+		costCenter.setEditable(false);		
+		
 		addFormField(name);
 		addFormField(username);
 		addFormField(password);
@@ -137,8 +140,8 @@ public class UserForm extends FormView<User> {
 		else
 			this.email.setValue(user.email);
 		
-		if(user.profile == null || user.profile.id == null)
-			role.clear();
+		if(user.profile == null)
+			this.role.clear();
 		else
 			this.role.setValue(user.profile.id);
 		

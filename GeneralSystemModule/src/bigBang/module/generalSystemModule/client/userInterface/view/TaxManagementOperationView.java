@@ -310,4 +310,17 @@ public class TaxManagementOperationView extends View implements TaxManagementOpe
 		}
 	}
 
+	@Override
+	public void clear(){
+		this.coverageList.clear();
+		this.coverageList.clearFilters();
+		this.form.clearInfo();
+		this.lineList.clear();
+		this.lineList.clearFilters();
+		this.subLineList.clear();
+		this.subLineList.clearFilters();
+		this.taxList.clear();
+		this.taxList.clearFilters();
+	}
+	
 }

@@ -76,6 +76,7 @@ public class CoverageManagementOperationViewPresenter implements
 			bind();
 		bound = true;
 		
+		view.clear();
 		setup();
 		
 		container.clear();
