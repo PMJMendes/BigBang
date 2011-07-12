@@ -62,8 +62,7 @@ public class CostCenterServiceImpl
 
         try
         {
-	        lrsCenters = Entity.GetInstance(Engine.FindEntity(Engine.getCurrentNameSpace(),
-	        		Constants.ObjID_CostCenter)).SelectAll(ldb);
+	        lrsCenters = Entity.GetInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), Constants.ObjID_CostCenter)).SelectAll(ldb);
 		}
 		catch (Throwable e)
 		{
@@ -84,7 +83,6 @@ public class CostCenterServiceImpl
 	        	lobjTmp.members = null;
 	        	larrAux.add(lobjTmp);
 	        }
-
         }
         catch (Throwable e)
         {

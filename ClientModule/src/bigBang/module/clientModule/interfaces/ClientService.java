@@ -4,7 +4,6 @@ import bigBang.library.interfaces.SearchService;
 import bigBang.library.shared.BigBangException;
 import bigBang.library.shared.SessionExpiredException;
 import bigBang.module.clientModule.shared.Client;
-import bigBang.module.clientModule.shared.ClientGroup;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
@@ -26,18 +25,8 @@ public interface ClientService
 		}
 	}
 
-	//CLIENT GROUP
-	public ClientGroup[] getAllClientGroups() throws SessionExpiredException, BigBangException;
-	public ClientGroup getClientGroup(String id) throws SessionExpiredException, BigBangException;
-	public ClientGroup createClientGroup(ClientGroup clientGroup) throws SessionExpiredException, BigBangException;
-	public ClientGroup editClientGroup(ClientGroup clientGroup) throws SessionExpiredException, BigBangException;
-	public void deleteClientGroup(String id) throws SessionExpiredException, BigBangException;
-
-	//CLIENT
 	public Client getClient(String clientId) throws SessionExpiredException, BigBangException;
 	public Client createClient(Client client) throws SessionExpiredException, BigBangException;
 	public Client editClient(Client client) throws SessionExpiredException, BigBangException;
-
-
 	public void deleteClient(String clientId) throws SessionExpiredException, BigBangException;
 }
