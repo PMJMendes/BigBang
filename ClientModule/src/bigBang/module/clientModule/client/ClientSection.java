@@ -1,6 +1,6 @@
 package bigBang.module.clientModule.client;
 
-import java.util.HashMap;
+import java.util.ArrayList;
 
 import bigBang.library.client.EventBus;
 import bigBang.library.client.MenuSections;
@@ -8,8 +8,17 @@ import bigBang.library.client.userInterface.MenuSection;
 import bigBang.library.client.userInterface.TextBadge;
 import bigBang.library.client.userInterface.presenter.OperationViewPresenter;
 import bigBang.library.client.userInterface.presenter.ViewPresenter;
+import bigBang.module.clientModule.client.userInterface.presenter.ClientGroupManagementOperationViewPresenter;
+import bigBang.module.clientModule.client.userInterface.presenter.ClientManagerTransferOperationViewPresenter;
+import bigBang.module.clientModule.client.userInterface.presenter.ClientMergeOperationViewPresenter;
 import bigBang.module.clientModule.client.userInterface.presenter.ClientSearchOperationViewPresenter;
+import bigBang.module.clientModule.client.userInterface.view.ClientGroupManagementOperationView;
+import bigBang.module.clientModule.client.userInterface.view.ClientManagerTransferOperationView;
+import bigBang.module.clientModule.client.userInterface.view.ClientMergeOperationView;
 import bigBang.module.clientModule.client.userInterface.view.ClientSearchOperationView;
+import bigBang.module.clientModule.shared.operation.ClientGroupManagementOperation;
+import bigBang.module.clientModule.shared.operation.ClientManagerTransferOperation;
+import bigBang.module.clientModule.shared.operation.ClientMergeOperation;
 import bigBang.module.clientModule.shared.operation.ClientSearchOperation;
 
 import com.google.gwt.core.client.GWT;
@@ -21,7 +30,7 @@ public class ClientSection implements MenuSection {
 	private static final String SHORT_DESCRIPTION = "Cliente";
 	
 	private TextBadge badge;
-	private HashMap<String, OperationViewPresenter> sectionOperationPresenters; 
+	private ArrayList<OperationViewPresenter> sectionOperationPresenters; 
 	
 	public ClientSection(){
 		init();
@@ -29,7 +38,7 @@ public class ClientSection implements MenuSection {
 	
 	private void init(){
 		this.badge = null;
-		this.sectionOperationPresenters = new HashMap<String, OperationViewPresenter>();
+		this.sectionOperationPresenters = new ArrayList<OperationViewPresenter>();
 		
 		/*Init the operations available for this process section*/
 		
@@ -38,14 +47,28 @@ public class ClientSection implements MenuSection {
 		ClientSearchOperationView clientSearchOperationView = new ClientSearchOperationView();
 		ClientSearchOperationViewPresenter clientSearchOperationPresenter = new ClientSearchOperationViewPresenter(null, null, clientSearchOperationView);
 		clientSearchOperationPresenter.setOperation(clientSearchOperation);
-		this.sectionOperationPresenters.put(ClientSearchOperation.ID, (OperationViewPresenter)clientSearchOperationPresenter);
+		this.sectionOperationPresenters.add((OperationViewPresenter)clientSearchOperationPresenter);
+		
+		/* GRUPOS DE CLIENTES */
+		ClientGroupManagementOperation clientGroupManagementOperation = (ClientGroupManagementOperation)GWT.create(ClientGroupManagementOperation.class);
+		ClientGroupManagementOperationView clientGroupManagementOperationView = new ClientGroupManagementOperationView();
+		ClientGroupManagementOperationViewPresenter clientGroupManagementOperationViewPresenter = new ClientGroupManagementOperationViewPresenter(null, null, clientGroupManagementOperationView);
+		clientGroupManagementOperationViewPresenter.setOperation(clientGroupManagementOperation);
+		this.sectionOperationPresenters.add((OperationViewPresenter)clientGroupManagementOperationViewPresenter);
+		
+		/* TRANSFERENCIA DE GESTOR */
+		ClientManagerTransferOperation clientManagerTransferOperation = (ClientManagerTransferOperation)GWT.create(ClientManagerTransferOperation.class);
+		ClientManagerTransferOperationView clientManagerTransferOperationView = new ClientManagerTransferOperationView();
+		ClientManagerTransferOperationViewPresenter clientManagerTransferOperationViewPresenter = new ClientManagerTransferOperationViewPresenter(null, null, clientManagerTransferOperationView);
+		clientManagerTransferOperationViewPresenter.setOperation(clientManagerTransferOperation);
+		this.sectionOperationPresenters.add((OperationViewPresenter)clientManagerTransferOperationViewPresenter);
 		
 		/* MERGE */
-		/*ClientMergeOperation clientMergeOperation = (ClientMergeOperation)GWT.create(ClientMergeOperation.class);
+		ClientMergeOperation clientMergeOperation = (ClientMergeOperation)GWT.create(ClientMergeOperation.class);
 		ClientMergeOperationView clientMergeOperationView = new ClientMergeOperationView();
 		ClientMergeOperationViewPresenter clientMergeOperationPresenter = new ClientMergeOperationViewPresenter(null, null, clientMergeOperationView);
 		clientMergeOperationPresenter.setOperation(clientMergeOperation);
-		this.sectionOperationPresenters.put(ClientMergeOperation.ID, (OperationViewPresenter)clientMergeOperationPresenter);*/
+		this.sectionOperationPresenters.add((OperationViewPresenter)clientMergeOperationPresenter);
 	}
 	
 	public String getId() {
@@ -72,12 +95,12 @@ public class ClientSection implements MenuSection {
 		int nOps = this.sectionOperationPresenters.size();
 		OperationViewPresenter[] result = new OperationViewPresenter[nOps];
 		for(int i = 0; i < nOps; i++)
-			result[i] = (OperationViewPresenter)this.sectionOperationPresenters.values().toArray()[i];
+			result[i] = (OperationViewPresenter)this.sectionOperationPresenters.toArray()[i];
 		return result;
 	}
 
 	public void registerEventHandlers(EventBus eventBus) {
-		for(ViewPresenter p : sectionOperationPresenters.values())
+		for(ViewPresenter p : sectionOperationPresenters)
 			p.setEventBus(eventBus);	
 	}
 
