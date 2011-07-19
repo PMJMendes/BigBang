@@ -17,6 +17,7 @@ public class Constants
 	public static final UUID ObjID_Coverage     = UUID.fromString("007022A0-6DFA-498B-9DC4-9EC900F5219F");
 	public static final UUID ObjID_Tax          = UUID.fromString("43644146-07C4-4E63-9E87-9EC900F6EB73");
 
+	public static final UUID ObjID_ClientGroup  = UUID.fromString("DC89D454-CCCC-441E-BCE3-9EE600AFCCCD");
 	public static final UUID ObjID_Client       = UUID.fromString("D535A99E-149F-44DC-A28B-9EE600B240F5");
 
 	public static final UUID ObjID_ContactType  = UUID.fromString("228F6A73-1335-4C99-8DD0-9EEE012964BA");
@@ -38,6 +39,7 @@ public class Constants
 	public static final UUID OPID_ManageCompanies    = UUID.fromString("83081039-C3C0-4BAC-8B24-9EB500A0A3EB");
 	public static final UUID OPID_ManageLines        = UUID.fromString("7CE5A4B8-9E13-4F14-BDDA-9EB500A0D171");
 	public static final UUID OPID_ManageCoefficients = UUID.fromString("BF76CE8C-C9A7-408B-B623-9EB500A0F07F");
+	public static final UUID OPID_ManageGroups       = UUID.fromString("08E5A828-0AF2-4347-A57A-9EB500A11526");
 
 	public static final int FKCostCenter_In_UserDecoration = 2;
 	public static final int ZipCode_In_PostalCode = 0;
@@ -50,4 +52,5 @@ public class Constants
 	public static final int FKCoverage_In_Tax = 1;
 	public static final int FKSubLine_In_Coverage = 1;
 	public static final int FKLine_In_SubLine = 1;
+	public static final int FKParent_In_Group = 1;
 }

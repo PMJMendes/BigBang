@@ -74,7 +74,6 @@ public class Line
 			throw new BigBangJewelException(e.getMessage(), e);
 		}
 
-
 		try
 		{
 			lrsSubLines = lrefSubLines.SelectByMembers(ldb, larrMembers, larrParams, new int[0]);

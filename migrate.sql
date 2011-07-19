@@ -193,9 +193,9 @@ insert into bigbang.tblBBSubLines (PK, SubLineName, FKLine) values ('68ED97FA-B9
 insert into bigbang.tblBBSubLines (PK, SubLineName, FKLine) values ('BB0E78F2-3817-45C6-94C7-9EE90118BA82', N'Prémio Fixo', '1F781304-924F-4DE8-B0DE-9EE9010DEEA5');
 insert into bigbang.tblBBSubLines (PK, SubLineName, FKLine) values ('34E19434-6106-4359-93FE-9EE90118CEE0', N'Construção Civil', 'CFBC796D-1F64-4646-A964-9EE9010DF63E');
 insert into bigbang.tblBBSubLines (PK, SubLineName, FKLine) values ('FE18F5ED-F87C-4595-B9AC-9EE90118D568', N'Agrícola', 'CFBC796D-1F64-4646-A964-9EE9010DF63E');
-insert into bigbang.tblBBSubLines (PK, SubLineName, FKLine) values ('3C85B935-B33E-4C86-AD0C-9EE90118E58F', N'Grupo', '8C3A644D-A4D7-451E-8858-9EE9010E04E4');
-insert into bigbang.tblBBSubLines (PK, SubLineName, FKLine) values ('3DD40BED-A453-453F-8F0D-9EE90118EFAB', N'Grupo', '04B1DE96-A737-4EA4-88E0-9EE9010E0D26');
-insert into bigbang.tblBBSubLines (PK, SubLineName, FKLine) values ('264279D9-A946-4209-AE35-9EE90118F78B', N'Grupo', '1AC7ECE9-11D5-4A70-A19D-9EE9010E13F6');
+insert into bigbang.tblBBSubLines (PK, SubLineName, FKLine) values ('3C85B935-B33E-4C86-AD0C-9EE90118E58F', N'Única', '8C3A644D-A4D7-451E-8858-9EE9010E04E4');
+insert into bigbang.tblBBSubLines (PK, SubLineName, FKLine) values ('3DD40BED-A453-453F-8F0D-9EE90118EFAB', N'Única', '04B1DE96-A737-4EA4-88E0-9EE9010E0D26');
+insert into bigbang.tblBBSubLines (PK, SubLineName, FKLine) values ('264279D9-A946-4209-AE35-9EE90118F78B', N'Única', '1AC7ECE9-11D5-4A70-A19D-9EE9010E13F6');
 insert into bigbang.tblBBSubLines (PK, SubLineName, FKLine) values ('D59C9892-A19F-429A-A462-9EE9011900E1', N'Individual', 'CE91A9A2-57F4-420E-8FFD-9EE9010E20FB');
 insert into bigbang.tblBBSubLines (PK, SubLineName, FKLine) values ('7A545EC7-36AC-4228-9D36-9EE90119060F', N'Grupo', 'CE91A9A2-57F4-420E-8FFD-9EE9010E20FB');
 insert into bigbang.tblBBSubLines (PK, SubLineName, FKLine) values ('23D97FAD-8137-48B9-8BEB-9EE9011914F8', N'Individual', '0714501A-73FF-4EA8-B921-9EE9010E29EA');
@@ -234,6 +234,7 @@ insert into bigbang.tblBBSubLines (PK, SubLineName, FKLine) values ('C6D519C6-71
 insert into bigbang.tblBBSubLines (PK, SubLineName, FKLine) values ('900B6EA1-D4BE-4645-93B7-9EE9011A916A', N'Única', '0AF6AF10-6879-4D23-B4FC-9EE901118E86');
 insert into bigbang.tblBBSubLines (PK, SubLineName, FKLine) values ('22FE8580-E680-4EC7-9ABB-9EE9011AA269', N'Individual', '59A58D39-F445-4CF5-8B6B-9EE901119B65');
 insert into bigbang.tblBBSubLines (PK, SubLineName, FKLine) values ('E08BDBD3-4F59-45B9-975E-9EE9011AA8AC', N'Frota', '59A58D39-F445-4CF5-8B6B-9EE901119B65');
+insert into bigbang.tblBBSubLines (PK, SubLineName, FKLine) values ('F61FCBEE-62D0-459B-B2A8-9F250122F59B', N'Carta', '59A58D39-F445-4CF5-8B6B-9EE901119B65');
 insert into bigbang.tblBBSubLines (PK, SubLineName, FKLine) values ('C6EC530E-8C28-4EDB-BCE3-9EE9011AC699', N'Única', '846652EE-1711-4869-8290-9EE90111A853');
 insert into bigbang.tblBBSubLines (PK, SubLineName, FKLine) values ('7CC94668-25FC-47E7-ADB4-9EE9011ACA6B', N'Única', '7DF2A66C-1200-430D-848A-9EE90111AF93');
 insert into bigbang.tblBBSubLines (PK, SubLineName, FKLine) values ('533DA89B-1BEC-474B-B615-9EE9011ACF4F', N'Única', '4C475D8E-47D9-4ABC-8FB1-9EE90111B67A');
