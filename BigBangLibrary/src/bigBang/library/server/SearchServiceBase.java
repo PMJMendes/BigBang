@@ -351,8 +351,8 @@ public abstract class SearchServiceBase
 		larrResult = new SearchResult[size];
 		for ( i = 0; i < size; i++ )
 		{
-			lobjAux = lrefWSpace.GetRow(i);
-			larrResult[from + i] = buildResult(lobjAux.getKey(), lobjAux.GetValues());
+			lobjAux = lrefWSpace.GetRow(i + from);
+			larrResult[i] = buildResult(lobjAux.getKey(), lobjAux.GetValues());
 		}
 
 		return larrResult;
