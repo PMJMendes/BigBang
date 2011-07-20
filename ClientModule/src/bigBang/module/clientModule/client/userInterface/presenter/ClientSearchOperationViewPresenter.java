@@ -4,25 +4,28 @@ import bigBang.library.client.EventBus;
 import bigBang.library.client.HasSelectables;
 import bigBang.library.client.Operation;
 import bigBang.library.client.Selectable;
+import bigBang.library.client.ValueSelectable;
 import bigBang.library.client.event.OperationInvokedEvent;
 import bigBang.library.client.event.OperationInvokedEventHandler;
+import bigBang.library.client.event.SelectionChangedEvent;
+import bigBang.library.client.event.SelectionChangedEventHandler;
 import bigBang.library.client.userInterface.presenter.OperationViewPresenter;
 import bigBang.library.client.userInterface.view.View;
 import bigBang.library.interfaces.SearchService;
 import bigBang.library.interfaces.Service;
 import bigBang.module.clientModule.shared.Client;
+import bigBang.module.clientModule.shared.ClientGroup;
 import bigBang.module.clientModule.shared.operation.ClientSearchOperation;
 
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.user.client.ui.HasValue;
 import com.google.gwt.user.client.ui.HasWidgets;
 import com.google.gwt.user.client.ui.Widget;
 
 public class ClientSearchOperationViewPresenter implements OperationViewPresenter {
 
 	public interface Display {
-		HasSelectables<Selectable> getClientSearchList();
-		HasValue<Client> getPreviewWidget();
+		HasSelectables<?> getClientSearchList();
+		void setClient(Client client);
 		
 		Widget asWidget();
 		View getInstance();
@@ -70,12 +73,20 @@ public class ClientSearchOperationViewPresenter implements OperationViewPresente
 	}
 
 	public void bind() {
-		/*this.view.getClientSearchList().addValueChangeHandler(new ValueChangeHandler<String>() {
+		this.view.getClientSearchList().addSelectionChangedEventHandler(new SelectionChangedEventHandler() {
 			
-			public void onValueChange(ValueChangeEvent<String> event) {
-				fetchClientProcess(event.getValue());
+			@Override
+			public void onSelectionChanged(SelectionChangedEvent event) {
+				for(Selectable s : event.getSelected()){
+					ValueSelectable<?> vs = (ValueSelectable<?>) s;
+					if(vs.getValue() instanceof Client){
+						GWT.log("Client selected");
+					}else if(vs.getValue() instanceof ClientGroup) {
+						GWT.log("Group selected");
+					}
+				}
 			}
-		});*/
+		});
 	}
 
 	public void setOperation(final ClientSearchOperation operation) {
@@ -103,7 +114,7 @@ public class ClientSearchOperationViewPresenter implements OperationViewPresente
 	@SuppressWarnings("unused")
 	private void fetchClientProcess(String processId){
 		Client process = new Client();
-		this.view.getPreviewWidget().setValue(process);
+		this.view.setClient(process);
 	}
 	
 	public void setOperation(Operation o) {

@@ -11,18 +11,27 @@ import bigBang.module.clientModule.shared.ClientStub;
 public class ClientSearchPanelListEntry extends SearchPanelListEntry<SearchResult> {
 
 	protected ValueWrapper<ClientStub> wrapper;
+	protected static ValueChangeHandler<ClientStub> valueChangeHandler;
 	
 	public ClientSearchPanelListEntry(ValueWrapper<ClientStub> valueWrapper) {
 		super(valueWrapper.getValue());
+		
+		if(valueChangeHandler == null) {
+			valueChangeHandler = new ValueChangeHandler<ClientStub>() {
+
+				@SuppressWarnings("unchecked")
+				@Override
+				public void onValueChange(ValueChangeEvent<ClientStub> event) {
+					if(ClientSearchPanelListEntry.this.wrapper.getValue() == ((ValueWrapper<ClientStub>)event.getSource()).getValue()){
+						ClientSearchPanelListEntry.this.setInfo(event.getValue());
+					}
+				}
+			};
+		}
+		
 		wrapper = valueWrapper;
 		this.setHeight("40px");
-		valueWrapper.addValueChangeHandler(new ValueChangeHandler<ClientStub>() {
-			
-			@Override
-			public void onValueChange(ValueChangeEvent<ClientStub> event) {
-				setInfo(event.getValue());
-			}
-		});
+		valueWrapper.addValueChangeHandler(valueChangeHandler);
 	}
 	
 	public <I extends Object> void setInfo(I info) {
@@ -30,10 +39,5 @@ public class ClientSearchPanelListEntry extends SearchPanelListEntry<SearchResul
 		setTitle(value.name);
 		setText(value.clientNumber);
 	};
-	
-	@Override
-	public void setSelected(boolean selected) {
-		super.setSelected(selected);
-	}
 	
 }

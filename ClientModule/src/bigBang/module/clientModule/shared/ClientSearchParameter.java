@@ -22,4 +22,10 @@ public class ClientSearchParameter
 	public String birthDateTo;
 	public String activityNotes;
 	public String notes;
+	
+	public ClientSearchParameter(){
+		this.postalCodes = new String[0];
+		this.CAEs = new String[0];
+		this.professionIds = new String[0];		
+	}
 }

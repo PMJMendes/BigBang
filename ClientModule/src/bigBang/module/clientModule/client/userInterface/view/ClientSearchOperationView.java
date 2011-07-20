@@ -1,22 +1,25 @@
 package bigBang.module.clientModule.client.userInterface.view;
 
 import bigBang.library.client.HasSelectables;
-import bigBang.library.client.Selectable;
+import bigBang.library.client.userInterface.ContactsPreviewList;
 import bigBang.library.client.userInterface.view.View;
+import bigBang.module.clientModule.client.userInterface.ClientProcessToolBar;
 import bigBang.module.clientModule.client.userInterface.ClientSearchPanel;
 import bigBang.module.clientModule.client.userInterface.presenter.ClientSearchOperationViewPresenter;
 import bigBang.module.clientModule.shared.Client;
 
-import com.google.gwt.user.client.ui.HasValue;
 import com.google.gwt.user.client.ui.SplitLayoutPanel;
+import com.google.gwt.user.client.ui.VerticalPanel;
 
 public class ClientSearchOperationView extends View implements ClientSearchOperationViewPresenter.Display {
 	
-	private final int SEARCH_PANEL_WIDTH = 400; //minimum and starting width (px)
-	//private final int SEARCH_PREVIEW_PANEL_WIDTH = 400;
+	protected final int SEARCH_PANEL_WIDTH = 400; //minimum and starting width (px)
+	//protected final int SEARCH_PREVIEW_PANEL_WIDTH = 400;
 	
-	private ClientSearchPanel searchPanel;
-	private ClientPreviewPanel previewPanel;
+	protected ClientSearchPanel searchPanel;
+	protected ClientFormView form;
+	protected ContactsPreviewList contactsList;
+	protected ClientProcessToolBar operationsToolbar;  
 	
 	public ClientSearchOperationView(){
 		SplitLayoutPanel wrapper = new SplitLayoutPanel();
@@ -27,22 +30,46 @@ public class ClientSearchOperationView extends View implements ClientSearchOpera
 		wrapper.addWest(searchPanel, SEARCH_PANEL_WIDTH);
 		wrapper.setWidgetMinSize(searchPanel, SEARCH_PANEL_WIDTH);
 
-		previewPanel = new ClientPreviewPanel();
-		wrapper.add(previewPanel);
+		SplitLayoutPanel contentWrapper = new SplitLayoutPanel();
+		contentWrapper.setSize("100%", "100%");
+		
+		this.contactsList = new ContactsPreviewList();
+		this.contactsList.setSize("100%", "100%");
+		
+		contentWrapper.addEast(contactsList, 250);
+		
+		VerticalPanel formWrapper = new VerticalPanel();
+		formWrapper.setSize("100%", "100%");
+		
+		operationsToolbar = new ClientProcessToolBar();
+
+		
+		this.form = new ClientFormView();
+		this.form.setSize("100%", "100%");
+		
+		formWrapper.add(operationsToolbar);
+		formWrapper.setCellHeight(operationsToolbar, "21px");
+		formWrapper.add(form);
+		
+		contentWrapper.add(formWrapper);
+		
+		wrapper.add(contentWrapper);
 		
 		initWidget(wrapper);
 	}
 	
-	public HasSelectables<Selectable> getClientSearchList() {
-		return null; //this.searchPanel;
+	public HasSelectables<?> getClientSearchList() {
+		return this.searchPanel;
 	}
 
-	public HasValue<Client> getPreviewWidget() {
-		return this.previewPanel;
-	}
-	
 	public View getInstance() {
 		return new ClientSearchOperationView();
 	}
-	
+
+	@Override
+	public void setClient(Client client) {
+		// TODO Auto-generated method stub
+		
+	}
+
 }

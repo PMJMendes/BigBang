@@ -1,21 +1,21 @@
 package bigBang.module.clientModule.shared.operation;
 
+import com.google.gwt.core.client.GWT;
+import com.google.gwt.user.client.ui.AbstractImagePrototype;
+
 import bigBang.library.client.Operation;
 import bigBang.library.client.userInterface.presenter.ViewPresenter;
 import bigBang.library.client.userInterface.view.View;
 import bigBang.module.clientModule.client.resources.Resources;
-import bigBang.module.clientModule.client.userInterface.presenter.ClientMergeOperationViewPresenter;
-import bigBang.module.clientModule.client.userInterface.view.ClientMergeOperationView;
+import bigBang.module.clientModule.client.userInterface.presenter.ClientGroupManagementOperationViewPresenter;
+import bigBang.module.clientModule.client.userInterface.view.ClientGroupManagementOperationView;
 
-import com.google.gwt.core.client.GWT;
-import com.google.gwt.user.client.ui.AbstractImagePrototype;
-
-public class ClientMergeOperation implements Operation {
+public class ClientGroupManagementOperation implements Operation {
 
 	public static final String OWNER_PROCESS_ID = ""; //ClientProcess.ID;
-	public static final String ID = "clientMergeOperation";
-	private final String DESCRIPTION = "A operação de fusão de clientes";
-	private final String SHORT_DESCRIPTION = "Fusão";
+	public static final String ID = "clientGroupManagementOperation";
+	private final String DESCRIPTION = "A operação de gestão de Grupos de Clientes";
+	private final String SHORT_DESCRIPTION = "Grupos";
 	private boolean permission;
 	
 	private View view;
@@ -31,7 +31,7 @@ public class ClientMergeOperation implements Operation {
 
 	public AbstractImagePrototype getIcon() {
 		Resources r = GWT.create(Resources.class);
-		return AbstractImagePrototype.create(r.mergeIcon());
+		return AbstractImagePrototype.create(r.clientGroupIcon());
 	}
 
 	public String getDescription() {
@@ -44,15 +44,15 @@ public class ClientMergeOperation implements Operation {
 
 	public ViewPresenter getPresenter() {
 		if(this.presenter == null){
-			this.presenter = (ViewPresenter) new ClientMergeOperationViewPresenter(null, null, this.getView());
-			((ClientMergeOperationViewPresenter)this.presenter).setOperation(this);
+			this.presenter = (ViewPresenter) new ClientGroupManagementOperationViewPresenter(null, null, this.getView());
+			((ClientGroupManagementOperationViewPresenter)this.presenter).setOperation(this);
 		}
 		return this.presenter;
 	}
 
 	public View getView() {
 		if(this.view == null)
-			this.view = new ClientMergeOperationView();
+			this.view = new ClientGroupManagementOperationView();
 		return this.view;
 	}
 
@@ -69,4 +69,5 @@ public class ClientMergeOperation implements Operation {
 	public void setPermission(boolean p) {
 		this.permission = p;
 	}
+
 }

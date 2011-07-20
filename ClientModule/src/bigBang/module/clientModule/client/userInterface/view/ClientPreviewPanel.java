@@ -5,8 +5,11 @@ import bigBang.library.client.event.SelectedStateChangedEventHandler;
 import bigBang.library.client.userInterface.FilterableList;
 import bigBang.library.client.userInterface.ListEntry;
 import bigBang.library.client.userInterface.ListHeader;
+import bigBang.library.client.userInterface.TypifiedListManagementPanel;
 import bigBang.library.client.userInterface.view.PreviewPanel;
+import bigBang.library.client.userInterface.view.View;
 import bigBang.module.clientModule.shared.Client;
+import bigBang.module.clientModule.shared.ModuleConstants;
 
 import com.google.gwt.event.logical.shared.CloseEvent;
 import com.google.gwt.event.logical.shared.CloseHandler;
@@ -18,7 +21,7 @@ import com.google.gwt.user.client.ui.UIObject;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
-public class ClientPreviewPanel extends PreviewPanel<Client> {
+public class ClientPreviewPanel extends View {
 
 	private int RIGHT_PANEL_WIDTH = 200;//PX
 	
@@ -26,10 +29,6 @@ public class ClientPreviewPanel extends PreviewPanel<Client> {
 	
 	public ClientPreviewPanel(){
 		super();
-		showIndividualSection(true);
-		setIndividualSectionContent(getIndividualSectionContent());
-		
-		showMultipleSection(true);
 	}
 	
 	public Widget getIndividualSectionContent(){
@@ -122,19 +121,10 @@ public class ClientPreviewPanel extends PreviewPanel<Client> {
 		this.form = new ClientFormView();
 		this.form.setSize("100%", "100%");
 
-		wrapper.add(this.form);
+		wrapper.add(form);
+		
 		
 		return wrapper;
-	}
-	
-	@Override
-	public void setValue(Client value, boolean fireEvents) {
-		super.setValue(value, fireEvents);
-		render();
-	}
-	
-	public void render(){
-		//this.form.showProcess(getValue());
 	}
 
 }
