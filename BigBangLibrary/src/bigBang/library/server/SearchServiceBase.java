@@ -130,6 +130,7 @@ public abstract class SearchServiceBase
 	    			lstrSQL.append(") [Aux0])");
 	        	}
 	        	lstrSQL.append(pstrCriteria);
+	        	lstrSQL.append(" ORDER BY ");
 	        	lstrSQL.append(mstrSort);
 	        	lrsRows = ldb.OpenRecordset(lstrSQL.toString());
 			}
