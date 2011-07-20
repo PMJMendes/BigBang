@@ -1,0 +1,9 @@
+<servlet>
+	<servlet-name>CasualtyService</servlet-name>
+	<servlet-class>bigBang.module.casualtyModule.server.CasualtyServiceImpl</servlet-class>
+</servlet>
+
+<servlet-mapping>
+	<servlet-name>CasualtyService</servlet-name>
+	<url-pattern>/bigbang/CasualtyService</url-pattern>
+</servlet-mapping>
