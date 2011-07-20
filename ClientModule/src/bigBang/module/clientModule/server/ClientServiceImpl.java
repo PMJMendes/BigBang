@@ -266,6 +266,11 @@ public class ClientServiceImpl
 		return new String[] {"[:Name]", "[:Number]", "[:Group:Name]"};
 	}
 
+	protected String getSort()
+	{
+		return "[:Name]";
+	}
+
 	protected SearchResult buildResult(UUID pid, java.lang.Object[] parrValues)
 	{
 		ClientStub lobjResult;

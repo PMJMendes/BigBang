@@ -59,16 +59,18 @@ public abstract class SearchServiceBase
         private UUID midObject;
 		private UUID midOp;
         private String[] marrColumns;
+        private String mstrSort;
         private ArrayList<Row> marrData;
         private int mlngColCount;
 
-		public SearchWSpace(UUID pidObject, UUID pidOp, String[] parrColumns)
+		public SearchWSpace(UUID pidObject, UUID pidOp, String[] parrColumns, String pstrSort)
 			throws BigBangException
 		{
 			mid = UUID.randomUUID();
 			midObject = pidObject;
 			midOp = pidOp;
 			marrColumns = parrColumns;
+			mstrSort = pstrSort;
 		}
 		
 		public UUID GetID()
@@ -128,6 +130,7 @@ public abstract class SearchServiceBase
 	    			lstrSQL.append(") [Aux0])");
 	        	}
 	        	lstrSQL.append(pstrCriteria);
+	        	lstrSQL.append(mstrSort);
 	        	lrsRows = ldb.OpenRecordset(lstrSQL.toString());
 			}
 			catch (Throwable e)
@@ -232,7 +235,7 @@ public abstract class SearchServiceBase
 		for ( i = 0; i < parameters.length; i++ )
 			buildFilter(lstrBuffer, parameters[i]);
 
-		lrefWSpace = new SearchWSpace(getObjectID(), null, getColumns());
+		lrefWSpace = new SearchWSpace(getObjectID(), null, getColumns(), getSort());
 		lidAux = lrefWSpace.GetID();
 		GetSearchWSStorage().put(lidAux, lrefWSpace);
 		lrefWSpace.OpenSearch(lstrBuffer.toString());
@@ -269,7 +272,7 @@ public abstract class SearchServiceBase
 		for ( i = 0; i < parameters.length; i++ )
 			buildFilter(lstrBuffer, parameters[i]);
 
-		lrefWSpace = new SearchWSpace(getObjectID(), UUID.fromString(opId), getColumns());
+		lrefWSpace = new SearchWSpace(getObjectID(), UUID.fromString(opId), getColumns(), getSort());
 		lidAux = lrefWSpace.GetID();
 		GetSearchWSStorage().put(lidAux, lrefWSpace);
 		lrefWSpace.OpenSearch(lstrBuffer.toString());
@@ -366,5 +369,6 @@ public abstract class SearchServiceBase
 	protected abstract UUID getObjectID();
 	protected abstract void buildFilter(StringBuilder pstrBuffer, SearchParameter pParam) throws BigBangException;
 	protected abstract String[] getColumns();
+	protected abstract String getSort();
 	protected abstract SearchResult buildResult(UUID pid, java.lang.Object[] parrValues);
 }
