@@ -27,4 +27,6 @@ public class Client
 	public String notes;
 
 	public String processId;
+
+//JMMM: Até ver, o email primário irá para dentro dos contactos.
 }
