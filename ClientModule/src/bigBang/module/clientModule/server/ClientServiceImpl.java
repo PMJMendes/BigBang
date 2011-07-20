@@ -10,6 +10,7 @@ import Jewel.Engine.Engine;
 import Jewel.Engine.Implementation.Entity;
 import Jewel.Engine.Interfaces.IEntity;
 import bigBang.library.server.SearchServiceBase;
+import bigBang.library.shared.Address;
 import bigBang.library.shared.BigBangException;
 import bigBang.library.shared.SearchParameter;
 import bigBang.library.shared.SearchResult;
@@ -30,7 +31,29 @@ public class ClientServiceImpl
 	{
 		if ( Engine.getCurrentUser() == null )
 			throw new SessionExpiredException();
-
+/*
+	public String id;
+	public String name;
+	public String clientNumber;
+	public String groupName;
+	public String groupId;
+	public String taxNumber;
+	public Address address;
+	public String NIB;
+	public String typeId;
+	public String mediatorId;
+	public String managerId;
+	public String operationalProfileId;
+	public String email;
+	public String caeId;
+	public String activityNotes;
+	public String revenueId;
+	public String birthDate;
+	public String genderId;
+	public String maritalStatusId;
+	public String professionId;
+	public String notes;
+*/
 		return null;
 	}
 
