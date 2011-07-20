@@ -44,7 +44,7 @@ public class FormViewSection extends View {
 		//String minHeight = "30px";
 		//p.setSize("100%", minHeight);
 		p.setStyleName("formSection");
-		p.setSpacing(10);
+		p.setSpacing(5);
 		wrapper.add(p);
 		
 		content = p;

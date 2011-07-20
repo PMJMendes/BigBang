@@ -18,8 +18,9 @@ public abstract class FormField<T> extends View implements HasValue<T>, Validata
 	protected Label errorMessageLabel;
 	protected FieldValidator<T> validator;
 	protected Label mandatoryIndicatorLabel;
-
-	private HandlerRegistration handlerRegistration;
+	protected boolean editable = true;
+	
+	protected HandlerRegistration handlerRegistration;
 
 	public FormField(){
 		errorMessageLabel = new Label();
@@ -47,6 +48,8 @@ public abstract class FormField<T> extends View implements HasValue<T>, Validata
 
 	public void setValue(T value, boolean fireEvents) {
 		field.setValue(value);
+		if(fireEvents)
+			ValueChangeEvent.fire(this, value);
 	}
 
 	public void setValidator(FieldValidator<T> validator) {
@@ -92,5 +95,14 @@ public abstract class FormField<T> extends View implements HasValue<T>, Validata
 
 	public boolean isMandatory(){
 		return this.validator == null ? false : this.validator.isMandatory();
+	}
+	
+	/**
+	 * Sets whether or not this field can be edited at all by the user
+	 * @param editable if true, the field can be edited
+	 */
+	public void setEditable(boolean editable) {
+		setReadOnly(true);
+		this.editable = editable;
 	}
 }

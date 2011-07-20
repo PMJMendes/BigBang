@@ -55,6 +55,8 @@ public class DatePickerFormField extends FormField<Date> {
 
 	@Override
 	public void setReadOnly(boolean readonly) {
+		if(!editable)
+			return;
 		((DateBox)this.field).setEnabled(!readonly);
 		this.readonly = readonly;
 		mandatoryIndicatorLabel.setVisible(!readonly);

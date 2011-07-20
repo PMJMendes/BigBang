@@ -30,28 +30,30 @@ import com.google.gwt.user.client.ui.Widget;
 public class ListEntry<T> extends View implements ValueSelectable<T>, HasMetaData<String> {
 
 
-	private T value;
-	//private boolean even = false;
-	private boolean isSelected = false;
+	protected T value;
+	//protected boolean even = false;
+	protected boolean isSelected = false;
 	protected String[] metaData;
 	
-	//private final String defaultBackgroundImageUrl = ""; //images/listBackground1Even.png";
-	private final String selectedBackgroundImageUrl = "images/listBackground1Selected.png";
-	//private final String hoverBackgroundImageUrl = "images/listBackground1Hover.png";
+	//protected final String defaultBackgroundImageUrl = ""; //images/listBackground1Even.png";
+	protected final String selectedBackgroundImageUrl = "images/listBackground1Selected.png";
+	//protected final String hoverBackgroundImageUrl = "images/listBackground1Hover.png";
 	
-	private Image backgroundImage;
+	protected Image backgroundImage;
 	
 	
-	private Label titleLabel;
-	private Label textLabel;
-	private HasWidgets leftWidgetContainer;
-	private HasWidgets widgetContainer;
-	private HasWidgets rightWidgetContainer;
-	private CheckBox checkBox;
-	private boolean valueChangeHandlerInitialized;
-	private boolean selectionStateChangedHandlerInitialized;
-	private boolean selectable = true;
+	protected Label titleLabel;
+	protected Label textLabel;
+	protected HasWidgets leftWidgetContainer;
+	protected HasWidgets widgetContainer;
+	protected HasWidgets rightWidgetContainer;
+	protected CheckBox checkBox;
+	protected Widget dragHandle;
+	protected boolean valueChangeHandlerInitialized;
+	protected boolean selectionStateChangedHandlerInitialized;
+	protected boolean selectable = true;
 	protected boolean toggleable = false;
+	protected boolean checkable;
 	
 	
 	public ListEntry(T value) {
@@ -122,6 +124,7 @@ public class ListEntry<T> extends View implements ValueSelectable<T>, HasMetaDat
 		}, ClickEvent.getType());
 		
 		disableTextSelection(true);
+		setDragHandle(this);
 		setValue(value);
 	}
 	
@@ -208,7 +211,7 @@ public class ListEntry<T> extends View implements ValueSelectable<T>, HasMetaDat
 	}
 	
 	public String getText() {
-		return this.textLabel.isVisible() ? this.textLabel.getText() : null;
+		return this.textLabel.isVisible() ? this.textLabel.getText() : "";
 	}
 	
 	public void setWidget(Widget w){
@@ -263,6 +266,7 @@ public class ListEntry<T> extends View implements ValueSelectable<T>, HasMetaDat
 				this.checkBox.setValue(false);
 			}
 		}
+		this.checkable = checkable;
 	}
 	
 	public void setChecked(boolean checked) {
@@ -278,7 +282,7 @@ public class ListEntry<T> extends View implements ValueSelectable<T>, HasMetaDat
 	}
 	
 	public boolean isCheckable(){
-		return this.checkBox != null && this.checkBox.isEnabled();
+		return checkable;
 	}
 
 	public boolean isChecked() {
@@ -319,5 +323,12 @@ public class ListEntry<T> extends View implements ValueSelectable<T>, HasMetaDat
 	public boolean isToggleable(){
 		return this.toggleable;
 	}
+	
+	public Widget getDragHandler(){
+		return dragHandle;
+	}
 
+	protected void setDragHandle(Widget w){
+		this.dragHandle = w;
+	}
 }

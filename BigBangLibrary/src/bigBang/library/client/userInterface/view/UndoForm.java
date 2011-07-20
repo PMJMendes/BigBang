@@ -1,6 +1,8 @@
 package bigBang.library.client.userInterface.view;
 
 import com.google.gwt.user.client.ui.Button;
+import com.google.gwt.user.client.ui.HasHorizontalAlignment;
+import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
 
 import bigBang.library.shared.ProcessUndoItem;
@@ -24,7 +26,11 @@ public class UndoForm extends FormView<ProcessUndoItem> {
 		addWidget(afterDescription);
 		
 		undoButton = new Button("Desfazer operação");
-		addWidget(undoButton);
+		HorizontalPanel buttonWrapper = new HorizontalPanel();
+		buttonWrapper.setWidth("100%");
+		buttonWrapper.add(undoButton);
+		buttonWrapper.setCellHorizontalAlignment(undoButton, HasHorizontalAlignment.ALIGN_RIGHT);
+		addWidget(buttonWrapper);
 		
 		clearInfo();
 	}

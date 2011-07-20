@@ -1,30 +1,19 @@
 package bigBang.library.client.userInterface;
 
-import bigBang.library.client.BigBangAsyncCallback;
 import bigBang.library.client.ContactManager;
-import bigBang.library.client.Selectable;
-import bigBang.library.client.ValueSelectable;
-import bigBang.library.client.event.SelectedStateChangedEvent;
 import bigBang.library.client.event.SelectedStateChangedEventHandler;
-import bigBang.library.client.event.SelectionChangedEvent;
-import bigBang.library.client.event.SelectionChangedEventHandler;
 import bigBang.library.client.resources.Resources;
-import bigBang.library.client.userInterface.view.ContactForm;
 import bigBang.library.shared.Contact;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Overflow;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.event.logical.shared.AttachEvent;
-import com.google.gwt.event.logical.shared.CloseEvent;
-import com.google.gwt.event.logical.shared.CloseHandler;
+import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.PopupPanel;
-import com.google.gwt.user.client.ui.PopupPanel.PositionCallback;
-import com.google.gwt.user.client.ui.UIObject;
 
 public class ContactsPreviewList extends List<Contact> {
 
@@ -51,9 +40,9 @@ public class ContactsPreviewList extends List<Contact> {
 		}
 		
 		public void setContact(Contact contact) {
-			final ContactForm form = new ContactForm();
+			/*final ContactForm form = new ContactForm();
 			form.addAttachHandler(new AttachEvent.Handler() {
-				
+
 				@Override
 				public void onAttachOrDetach(AttachEvent event) {
 					if(event.isAttached())
@@ -61,12 +50,12 @@ public class ContactsPreviewList extends List<Contact> {
 				}
 			});
 			form.setValue(contact);
-			
+
 			if(!hasHomeWidget())
 				setHomeWidget(form);
 			else
 				navigateTo(form);
-			
+
 			form.getSubContactsList().addSelectionChangedEventHandler(new SelectionChangedEventHandler() {
 				
 				@Override
@@ -111,7 +100,7 @@ public class ContactsPreviewList extends List<Contact> {
 						});
 					}
 				}
-			});
+			});*/
 		}
 	}
 	
@@ -119,6 +108,7 @@ public class ContactsPreviewList extends List<Contact> {
 	protected PopupPanel contactPopupPanel;
 	protected SelectedStateChangedEventHandler contactSelectedStateChangedHandler;
 	protected ContactManager manager;
+	protected HandlerRegistration managerHandlerRegistration;
 	protected Button newButton;
 
 	public ContactsPreviewList(){
@@ -181,12 +171,12 @@ public class ContactsPreviewList extends List<Contact> {
 			
 			@Override
 			public void onClick(ClickEvent event) {
-				bigBang.library.client.userInterface.view.PopupPanel popup = new bigBang.library.client.userInterface.view.PopupPanel();
+				/*bigBang.library.client.userInterface.view.PopupPanel popup = new bigBang.library.client.userInterface.view.PopupPanel();
 				ContactPreviewPanel contactPreviewPanel = new ContactPreviewPanel(ContactsPreviewList.this.manager);
 				contactPreviewPanel.setContact(new Contact());
 				popup.add(contactPreviewPanel);
 				popup.setSize("600px", "600px");
-				popup.center();
+				popup.center();*/
 			}
 		});
 		header.setRightWidget(newButton);
@@ -199,6 +189,8 @@ public class ContactsPreviewList extends List<Contact> {
 	
 	public void setManager(ContactManager manager) {
 		this.manager = manager;
+		//if(this.managerHandlerRegistration != null)
+		//	this.managerHandlerRegistration = this.manager.
 		refresh();
 	}
 	

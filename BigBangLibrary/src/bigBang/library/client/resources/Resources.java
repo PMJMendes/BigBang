@@ -41,6 +41,9 @@ public interface Resources extends ClientBundle {
 	@Source("images/undoIcon.png")
 	ImageResource undoIcon();
 	
+	@Source("images/arrowDown1.png")
+	ImageResource arrowDown();
+	
 
 	//CONTACTS
 	@Source("images/contactsIcon.png")
@@ -59,5 +62,8 @@ public interface Resources extends ClientBundle {
 	ImageResource listNextIconBlack();
 	
 	
+	//DOCUMENTS
+	@Source("images/documentsIcon.png")
+	ImageResource documentsIcon();
 	
 }

@@ -25,6 +25,7 @@ import bigBang.library.client.userInterface.view.View;
 public class ListHeader extends View {
 
 	private Label headerLabel;
+	private HasWidgets centralWidgetContainer;
 	private HasWidgets rightWidgetContainer;
 	private HasWidgets leftWidgetContainer;
 	
@@ -32,21 +33,29 @@ public class ListHeader extends View {
 	private ToolButton newButton;
 
 	public ListHeader(){
+		this("");
+	}
+	
+	public ListHeader(String text){
 		HorizontalPanel headerWrapper = new HorizontalPanel();
 		headerLabel = new Label();
+		headerLabel.setText(text);
 		headerWrapper.setSize("100%", "40px");
 		headerWrapper.setSpacing(5);
 		headerWrapper.getElement().getStyle().setBackgroundImage("url(images/listHeaderBackground1.png)");
 		headerWrapper.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
 		headerWrapper.setVerticalAlignment(HasVerticalAlignment.ALIGN_MIDDLE);
 		
+		centralWidgetContainer = new SimplePanel();
 		rightWidgetContainer = new SimplePanel();
 		leftWidgetContainer = new SimplePanel();
 		
 		headerWrapper.add((Widget) leftWidgetContainer);
-		headerWrapper.add(headerLabel);
-		headerWrapper.setCellWidth(headerLabel, "100%");
+		headerWrapper.add((Widget) centralWidgetContainer);
+		headerWrapper.setCellWidth((Widget) centralWidgetContainer, "100%");
 		headerWrapper.add((Widget) rightWidgetContainer);
+		
+		centralWidgetContainer.add(headerLabel);
 
 		headerLabel.getElement().getStyle().setFontSize(14, Unit.PX);
 		headerLabel.getElement().getStyle().setFontWeight(FontWeight.BOLD);
@@ -55,7 +64,14 @@ public class ListHeader extends View {
 	}
 
 	public void setText(String text){
+		this.centralWidgetContainer.clear();
+		this.centralWidgetContainer.add(this.headerLabel);
 		headerLabel.setText(text);
+	}
+	
+	public void setWidget(Widget w) {
+		this.centralWidgetContainer.clear();
+		this.centralWidgetContainer.add(w);
 	}
 	
 	public void setRightWidget(Widget w){

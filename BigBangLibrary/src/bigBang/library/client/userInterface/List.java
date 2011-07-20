@@ -14,6 +14,7 @@ import bigBang.library.client.event.SelectionChangedEvent;
 import bigBang.library.client.event.SelectionChangedEventHandler;
 import bigBang.library.client.userInterface.view.View;
 
+import com.allen_sauer.gwt.dnd.client.PickupDragController;
 import com.google.gwt.dom.client.Style.FontStyle;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.DoubleClickEvent;
@@ -23,19 +24,29 @@ import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.google.gwt.user.client.ui.HasVerticalAlignment;
 import com.google.gwt.user.client.ui.HasWidgets;
 import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.UIObject;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
+/**
+ * 
+ * @author Premium-Minds (Francisco Cabrita)
+ *
+ * Implements a list, able to hold entries inside a scrollable panel 
+ * @param <T> The type of the value held by the list entries
+ */
 public class List<T> extends View implements HasValueSelectables<T>, java.util.List<ListEntry<T>> {
 
 	protected java.util.List<ListEntry<T>> entries;
 	protected boolean multipleSelection = false;
 	protected boolean selectableEntriesEnabled = true;
+	protected boolean checkable;
 
 	//UI
+	protected VerticalPanel mainWrapper;
 	protected HasWidgets headerContainer;
 	protected VerticalPanel listPanel;
 	protected Label footerLabel;
@@ -43,12 +54,18 @@ public class List<T> extends View implements HasValueSelectables<T>, java.util.L
 	protected ScrollPanel scrollPanel;
 	protected SelectedStateChangedEventHandler entrySelectionHandler;
 	protected DoubleClickHandler cellDoubleClickHandler;
-	private boolean selectionChangeHandlerInitialized;
+	protected boolean selectionChangeHandlerInitialized;
+	protected PickupDragController dragController;
+	protected boolean draggable = false;
 
+	/**
+	 * The list constructor
+	 */
 	public List(){
 		this.entries = new ArrayList<ListEntry<T>>();
+		dragController = new PickupDragController(RootPanel.get(), false);
 
-		VerticalPanel mainWrapper = new VerticalPanel();
+		mainWrapper = new VerticalPanel();
 		mainWrapper.setVerticalAlignment(HasVerticalAlignment.ALIGN_MIDDLE);
 		mainWrapper.setSize("100%", "100%");
 		mainWrapper.setStyleName("emptyContainer");
@@ -107,7 +124,7 @@ public class List<T> extends View implements HasValueSelectables<T>, java.util.L
 		mainWrapper.add((Widget) footer);
 
 		cellDoubleClickHandler = new DoubleClickHandler() {
-			
+
 			@SuppressWarnings("unchecked")
 			@Override
 			public void onDoubleClick(DoubleClickEvent event) {
@@ -115,7 +132,7 @@ public class List<T> extends View implements HasValueSelectables<T>, java.util.L
 					onCellDoubleClicked((ListEntry<T>) event.getSource());
 			}
 		};
-		
+
 		clear();
 
 		initWidget(mainWrapper);
@@ -126,17 +143,31 @@ public class List<T> extends View implements HasValueSelectables<T>, java.util.L
 
 	//Listing Methods
 
+	/**
+	 * Renders the current list state
+	 */
 	protected void render() {
 		this.listPanel.clear();
 		for(ListEntry<T> e : this.entries)
 			this.listPanel.add(e);			
 	}
 
+	/**
+	 * Binds an entry to the list.
+	 * @param e The list entry
+	 * @return the handler registration for a SelectedStateChangeEvent on the entry
+	 */
 	protected HandlerRegistration bindEntry(ListEntry<T> e){
+		if(draggable)
+			dragController.makeDraggable(e, e.getDragHandler());
 		e.addHandler(this.cellDoubleClickHandler, DoubleClickEvent.getType());
 		return e.addHandler(this.entrySelectionHandler, SelectedStateChangedEvent.TYPE);
 	}
 
+	/**
+	 * Selects the entry following the currently selected one.
+	 * If no entries are selected, the first available entry is selected.
+	 */
 	public void selectNext() {
 		if (this.entries.isEmpty())
 			return;
@@ -151,6 +182,10 @@ public class List<T> extends View implements HasValueSelectables<T>, java.util.L
 			entries.get(selectedIndex).setSelected(true, true);
 	}
 
+	/**
+	 * Selects the entry previous to the currently selected entry.
+	 * If no entries are selected, the last available entry is selected.
+	 */
 	public void selectPrevious() {
 		if (this.entries.isEmpty())
 			return;
@@ -166,13 +201,21 @@ public class List<T> extends View implements HasValueSelectables<T>, java.util.L
 		if (size > 0)
 			entries.get(selectedIndex).setSelected(true, true);
 	}
-	
-	protected void setSelectableEntries(boolean selectable) {
+
+	/**
+	 * Sets whether or not the list entries can be selected.
+	 * @param selectable If true, the entries can be selected
+	 */
+	public void setSelectableEntries(boolean selectable) {
 		this.selectableEntriesEnabled = selectable;
 		for(ListEntry<T> e : this.entries)
 			e.setSelectable(selectable);
 	}
 
+	/**
+	 * Selects all entries from the currently selected entry to the one at the given index
+	 * @param index the index up to which entries will be selected 
+	 */
 	protected void selectTo(int index) {
 		/*	if (this.selectedEntry == null) {
 			select(index);
@@ -190,12 +233,20 @@ public class List<T> extends View implements HasValueSelectables<T>, java.util.L
 		}*/ //TODO
 	}
 
+	/**
+	 * Sets the widget that will be placed at the list's header placeholder.
+	 * @param w the widget to place
+	 */
 	public void setHeaderWidget(Widget w) {
 		this.headerContainer.clear();
 		if (w != null)
 			this.headerContainer.add(w);
 	}
 
+	/**
+	 * Sets the widget that will be placed at the list's footer placeholder.
+	 * @param w the widget to place
+	 */
 	public void setFooterWidget(Widget w) {
 		this.footer.clear();
 		((UIObject) this.footer).setHeight("");
@@ -203,6 +254,10 @@ public class List<T> extends View implements HasValueSelectables<T>, java.util.L
 			this.footer.add(w);
 	}
 
+	/**
+	 * Sets the text to be placed in the footer placeholder.
+	 * @param text the footer text
+	 */
 	public void setFooterText(String text) {
 		this.footer.clear();
 		((UIObject) this.footer).setHeight("20px");
@@ -210,17 +265,32 @@ public class List<T> extends View implements HasValueSelectables<T>, java.util.L
 		this.footer.add(this.footerLabel);
 	}
 
+	/**
+	 * Invoked when there is a change to the list's main state.
+	 */
 	protected void updateFooterText() {
 	};
 
+	/**
+	 * Invoked when the list size is changed.
+	 */
 	protected void onSizeChanged() {
 	}
 
+	/**
+	 * Sets whether or not the list entries have checkable capabilities.
+	 * @param checkable If true, the list entries acquire checkable capabilities.
+	 */
 	public void setCheckable(boolean checkable) {
+		this.checkable = checkable;
 		for (ListEntry<T> entry : this.entries)
 			entry.setCheckable(checkable);
 	}
 
+	/**
+	 * Returns all the checked entries
+	 * @return the checked entries
+	 */
 	public ArrayList<ListEntry<T>> getCheckedEntries() {
 		ArrayList<ListEntry<T>> result = new ArrayList<ListEntry<T>>();
 		for (ListEntry<T> e : this.entries) {
@@ -230,7 +300,8 @@ public class List<T> extends View implements HasValueSelectables<T>, java.util.L
 		return result;
 	}
 
-	private void selectableStateChanged(Selectable source) {
+
+	protected void selectableStateChanged(Selectable source) {
 		if(multipleSelection){
 			//TODO throw
 		}else{
@@ -244,7 +315,7 @@ public class List<T> extends View implements HasValueSelectables<T>, java.util.L
 
 
 	//HasSelectables Methods
-	
+
 	@Override
 	public Collection<ValueSelectable<T>> getSelected() {
 		Collection<ValueSelectable<T>> result = new ArrayList<ValueSelectable<T>>();
@@ -331,15 +402,16 @@ public class List<T> extends View implements HasValueSelectables<T>, java.util.L
 		return addHandler(handler, SelectionChangedEvent.TYPE);
 	}
 
-	
+
 	//LISTING
-	
+
 	@Override
 	public boolean add(ListEntry<T> e) {
 		boolean result = entries.add(e);
 		if(result){
 			this.bindEntry(e);
 			e.setSelectable(this.selectableEntriesEnabled);
+			e.setCheckable(checkable);
 			this.listPanel.add(e);
 			onSizeChanged();
 		}
@@ -349,6 +421,7 @@ public class List<T> extends View implements HasValueSelectables<T>, java.util.L
 	@Override
 	public void add(int index, ListEntry<T> element) {
 		bindEntry(element);
+		element.setCheckable(checkable);
 		element.setSelectable(this.selectableEntriesEnabled);
 		entries.add(index, element);
 		onSizeChanged();
@@ -361,6 +434,7 @@ public class List<T> extends View implements HasValueSelectables<T>, java.util.L
 		if(result){
 			for(ListEntry<T> l : this.entries){
 				bindEntry(l);
+				l.setCheckable(checkable);
 				l.setSelectable(this.selectableEntriesEnabled);
 				this.listPanel.add(l);
 			}
@@ -375,6 +449,7 @@ public class List<T> extends View implements HasValueSelectables<T>, java.util.L
 		if(result){
 			for(ListEntry<T> e : c){
 				bindEntry(e);
+				e.setCheckable(checkable);
 				e.setSelectable(this.selectableEntriesEnabled);
 			}
 			render();
@@ -519,15 +594,27 @@ public class List<T> extends View implements HasValueSelectables<T>, java.util.L
 	public ScrollPanel getScrollable(){
 		return scrollPanel;
 	}
-	
+
 	public VerticalPanel getListContent(){
 		return this.listPanel;
 	}
-	
+
 	public void onCellDoubleClicked(ListEntry<T> entry) {
 	}
-	
+
 	protected void selectionChangedEventFireBypass(SelectionChangedEvent e){
 		fireEvent(e);
+	}
+
+	public void makeCellsDraggable(boolean draggable) {
+		dragController.unregisterDropControllers();
+		
+		if(draggable) {
+			for(ListEntry<T> e : this.entries) {
+				dragController.makeDraggable(e);
+			}
+		}
+
+		this.draggable = draggable;
 	}
 }

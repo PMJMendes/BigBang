@@ -1,82 +1,181 @@
 package bigBang.library.client.userInterface;
 
+import java.util.HashMap;
+import java.util.Map;
+
+import bigBang.library.client.ListFilter;
+import bigBang.library.client.resources.Resources;
+
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.KeyUpEvent;
 import com.google.gwt.event.dom.client.KeyUpHandler;
-import com.google.gwt.user.client.ui.HasVerticalAlignment;
+import com.google.gwt.event.logical.shared.CloseEvent;
+import com.google.gwt.event.logical.shared.CloseHandler;
+import com.google.gwt.event.logical.shared.OpenEvent;
+import com.google.gwt.event.logical.shared.OpenHandler;
+import com.google.gwt.user.client.ui.DisclosurePanel;
 import com.google.gwt.user.client.ui.HasWidgets;
 import com.google.gwt.user.client.ui.HorizontalPanel;
+import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.UIObject;
 import com.google.gwt.user.client.ui.VerticalPanel;
+import com.google.gwt.user.client.ui.Widget;
 
+/**
+ * @author Premium-Minds (Francisco Cabrita)
+ *
+ * A class that implements a list with filtering capabilities.
+ * @param <T> The type of value held by the list entries
+ */
 public class FilterableList<T> extends SortableList<T> {
 
 	protected TextBox textBoxFilter;
 	protected HasWidgets filtersContainer;
-	
+	protected Map<String, ListFilter<?>> filters;
+
+	/**
+	 * The FilterableList constructor
+	 */
 	public FilterableList() {
 		super();
+
+		this.filters = new HashMap<String, ListFilter<?>>();
+		Resources resources = GWT.create(Resources.class);		
 		
-		VerticalPanel headerWrapper = new VerticalPanel();
+		final VerticalPanel headerWrapper = new VerticalPanel();
 		SimplePanel newHeaderContainer = new SimplePanel();
 		newHeaderContainer.setWidth("100%");
 		headerWrapper.setWidth("100%");
 		headerWrapper.add(newHeaderContainer);
-		
+
 		textBoxFilter = new TextBox();
 		textBoxFilter.setWidth("100%");
 
 		textBoxFilter.addKeyUpHandler(new KeyUpHandler() {
-			
+
 			@Override
 			public void onKeyUp(KeyUpEvent event) {
 				onFilterTextChanged(textBoxFilter.getValue());
 			}
 		});
+
+		DisclosurePanel filterContainer = new DisclosurePanel();
+		filterContainer.getElement().getStyle().setBackgroundColor("#DDD");
+		filterContainer.setAnimationEnabled(true);
+		filterContainer.setSize("100%", "100%");
+		filterContainer.getElement().getStyle().setProperty("borderTop", "1px solid gray");
 		
-		HorizontalPanel textFilterContainer = new HorizontalPanel();
-		textFilterContainer.setVerticalAlignment(HasVerticalAlignment.ALIGN_MIDDLE);
-		textFilterContainer.setWidth("100%");
-		textFilterContainer.setSpacing(5);
-		textFilterContainer.getElement().getStyle().setProperty("borderTop", "1px solid gray");
-		textFilterContainer.add(new Label("Filtrar"));
-		textFilterContainer.add(textBoxFilter);
-		textFilterContainer.setCellWidth(textBoxFilter, "100%");
-		filtersContainer = textFilterContainer;
-		headerWrapper.add(textFilterContainer);
+		HorizontalPanel filterHeaderWrapper = new HorizontalPanel();
+		filterHeaderWrapper.setSize("100%", "100%");
+		filterHeaderWrapper.add(new Image(resources.arrowDown()));
+		filterHeaderWrapper.add(new Label("Filtros"));
+		filterContainer.setHeader(filterHeaderWrapper);
+		
+		filtersContainer = filterContainer;
+		headerWrapper.add(textBoxFilter);
+		headerWrapper.add(filterContainer);
+
+		filterContainer.addOpenHandler(new OpenHandler<DisclosurePanel>() {
+			
+			@Override
+			public void onOpen(OpenEvent<DisclosurePanel> event) {
+				((DisclosurePanel) filtersContainer).getContent().setHeight(scrollPanel.getOffsetHeight() + "px");
+			}
+		});
+		
+		filterContainer.addCloseHandler(new CloseHandler<DisclosurePanel>() {
+			
+			@Override
+			public void onClose(CloseEvent<DisclosurePanel> event) {
+				headerWrapper.setCellHeight((Widget) filtersContainer, "auto");
+			}
+		});
+		
+		filterContainer.setContent(new SimplePanel());
 		
 		setHeaderWidget(headerWrapper);
 		headerContainer = newHeaderContainer;
 	}
 
-	
+	/**
+	 * Matches the list entries to the defined filters and hides/shows them accordingly
+	 */
 	public void filterEntries() {
 		for (ListEntry<T> entry : this.entries) {
 			entry.setVisible(!filterOutListEntry(entry));
 		}
 	}
 	
-	public void onFilterTextChanged(String text){
+	/**
+	 * Invoked when the freetext filter value is changed
+	 * @param text the current freetext value
+	 */
+	protected void onFilterTextChanged(String text){
 		sortListEntries();
 		filterEntries();
 	}
 
-	public boolean filterOutListEntry(ListEntry<T> entry) {
+	/**
+	 * Filters a specific list entry. If it does not meet the filters criteria, the entry is hidden 
+	 * @param entry The entry to which the filters are applied
+	 * @return true if the entry does not match the filters
+	 */
+	protected boolean filterOutListEntry(ListEntry<T> entry) {
 		String text = entry.getText().toUpperCase();
 		String title = entry.getTitle().toUpperCase();
 		String token = textBoxFilter.getValue().toUpperCase();
 		return !((text != null && text.contains(token)) || (title != null && title.contains(token)));
 	}
 	
+	/**
+	 * Clears all the filters values for the current list
+	 */
 	public void clearFilters(){
 		textBoxFilter.setValue("");
+		for(ListFilter<?> f : this.filters.values()) {
+			f.clearValue();
+		}
 		filterEntries();
 	}
 	
+	/**
+	 * shows or hides the filter disclosure panel
+	 * @param show if true, shows the filter disclosure panel
+	 */
 	public void showFilterField(boolean show) {
 		((UIObject) this.filtersContainer).setVisible(show);
 	}
 
+	/**
+	 * returns the panel wrapping the filters
+	 * @return
+	 */
+	protected HasWidgets getFiltersPanel(){
+		VerticalPanel panel = new VerticalPanel();
+		panel.setSize("100%", "100%");
+		
+		return panel;
+	}
+	
+	/**
+	 * Adds a filter to the list
+	 * @param filter the filter to add
+	 */
+	public void addFilter(ListFilter<?> filter) {
+		this.filters.put(filter.getName(), filter);
+	}
+	
+	public void removeFilter(ListFilter<?> filter){
+		this.filters.remove(filter);
+	}
+	
+	/**
+	 * @return The map with the current list's filters
+	 */
+	public Map<String, ListFilter<?>> getFilters(){
+		return this.filters;
+	}
 }

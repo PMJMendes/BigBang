@@ -5,6 +5,7 @@ import bigBang.library.client.FormField;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Unit;
+import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.HasVerticalAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
@@ -63,6 +64,8 @@ public class ListBoxFormField extends FormField<String> {
 	
 	@Override
 	public void setReadOnly(boolean readonly) {
+		if(!editable)
+			return;
 		this.listBox.setEnabled(!readonly);
 		mandatoryIndicatorLabel.setVisible(!readonly);
 	}
@@ -94,6 +97,16 @@ public class ListBoxFormField extends FormField<String> {
 		return false;
 	}
 	
+	public int getItemIndex(String item, String value) {
+		int count = this.listBox.getItemCount();
+		
+		for(int i = 0; i < count; i++) {
+			if(this.listBox.getValue(i).equals(value) && this.listBox.getItemText(i).equals(item))
+				return i;
+		}
+		throw new RuntimeException("The item does not exist in the listbox.");
+	}
+	
 	public int getSelectedIndex(){
 		return this.listBox.getSelectedIndex();
 	}
@@ -109,14 +122,24 @@ public class ListBoxFormField extends FormField<String> {
 	}
 	
 	@Override
-	public void setValue(String value){
+	public void setValue(String value, boolean fireEvents){
+		if(value == null){
+			clear();
+			return;
+		}
+		
+		boolean hasValue = false;
 		for(int i = 0; i < this.listBox.getItemCount(); i++) {
 			if(this.listBox.getValue(i).equals(value)){
 				this.listBox.setSelectedIndex(i);
-				return;
+				hasValue = true;
+				break;
 			}
 		}
-		GWT.log("Could not select list box value because value does not exist.");
+		if(!hasValue)
+			GWT.log("Could not select list box value because value does not exist.");
+		else if(fireEvents)
+			ValueChangeEvent.fire(this, value);
 	}
 
 	@Override

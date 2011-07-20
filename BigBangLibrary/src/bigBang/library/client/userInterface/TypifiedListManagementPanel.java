@@ -1,8 +1,14 @@
 package bigBang.library.client.userInterface;
 
-import bigBang.library.client.BigBangAsyncCallback;
+import java.util.Collection;
+
+import bigBang.library.client.BigBangTypifiedListBroker;
+import bigBang.library.client.TypifiedListBroker;
+import bigBang.library.client.TypifiedListClient;
+import bigBang.library.client.ValueSelectable;
 import bigBang.library.client.resources.Resources;
-import bigBang.library.interfaces.TipifiedListService;
+import bigBang.library.client.response.ResponseError;
+import bigBang.library.client.response.ResponseHandler;
 import bigBang.library.shared.TipifiedListItem;
 
 import com.google.gwt.core.client.GWT;
@@ -13,7 +19,6 @@ import com.google.gwt.event.dom.client.KeyUpEvent;
 import com.google.gwt.event.dom.client.KeyUpHandler;
 import com.google.gwt.event.logical.shared.AttachEvent;
 import com.google.gwt.event.shared.HandlerRegistration;
-import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.HasVerticalAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
@@ -21,7 +26,7 @@ import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
-public class TypifiedListManagementPanel extends FilterableList<TipifiedListItem> {
+public class TypifiedListManagementPanel extends FilterableList<TipifiedListItem> implements TypifiedListClient {
 
 	public static class TypifiedListEntry extends ListEntry<TipifiedListItem> {
 
@@ -54,10 +59,11 @@ public class TypifiedListManagementPanel extends FilterableList<TipifiedListItem
 
 	}
 
-
 	private String listId;
 	private TextBox valueTextBox;
-	private boolean editModeEnabled, hasService, editable;
+	private boolean editModeEnabled, editable;
+	private int typifiedListDataVersion;
+	protected TypifiedListBroker listBroker;
 
 	//UI
 	private Button editButton;
@@ -65,8 +71,9 @@ public class TypifiedListManagementPanel extends FilterableList<TipifiedListItem
 
 	public TypifiedListManagementPanel(String listId, String listName){
 		super();
+		this.listBroker = BigBangTypifiedListBroker.Util.getInstance();
 		this.listId = listId;
-		hasService = editable = listId != null && !listId.equals("");
+		editable = listId != null && !listId.equals("");
 		this.setSize("300px", "400px");
 
 		this.editButton = new Button();
@@ -124,10 +131,6 @@ public class TypifiedListManagementPanel extends FilterableList<TipifiedListItem
 				addButton.setEnabled(valueTextBox.getValue().length() > 0);
 			}
 		});
-
-		if(hasService){
-			refresh(null);
-		}
 		this.addAttachHandler(new AttachEvent.Handler() {
 
 			@Override
@@ -138,76 +141,45 @@ public class TypifiedListManagementPanel extends FilterableList<TipifiedListItem
 		});
 
 		setEditModeEnabled(false);
+		this.listBroker.registerClient(listId, this);
+		this.listBroker.getListItems(listId);
 	}
 
-	private void addNew(){
-		if(!hasService)
-			return;
+	private void addNew(){	
 		String value = valueTextBox.getValue();
 		TipifiedListItem item = new TipifiedListItem();
 		item.value = value;
-		TipifiedListService.Util.getInstance().createListItem(this.listId, item, new BigBangAsyncCallback<TipifiedListItem>() {
-
+		
+		this.listBroker.createListItem(this.listId, item, new ResponseHandler<TipifiedListItem>() {
+			
 			@Override
-			public void onSuccess(TipifiedListItem result) {
-				final TypifiedListEntry entry = new TypifiedListEntry(result);
-				entry.deleteButton.setVisible(isEditModeEnabled());
-				entry.deleteButton.addClickHandler(new ClickHandler() {
-
-					@Override
-					public void onClick(ClickEvent event) {
-						deleteEntry(entry);
+			public void onResponse(TipifiedListItem response) {
+				for(ListEntry<TipifiedListItem> e : TypifiedListManagementPanel.this){
+					if(e.getValue() == response){
+						e.setSelected(true);
+						break;
 					}
-				});
-				add(entry);
-				valueTextBox.setValue("");
-				clearSelection();
-				entry.setSelected(true);
-				getScrollable().scrollToBottom();
-			}
-		});
-	}
-
-	public void refresh(final AsyncCallback<Void> done){
-		TipifiedListService.Util.getInstance().getListItems(this.listId, new BigBangAsyncCallback<TipifiedListItem[]>() {
-
-			@Override
-			public void onSuccess(TipifiedListItem[] result) {
-				clear();
-				for(int i = 0; i < result.length; i++) {
-					final TypifiedListEntry entry = new TypifiedListEntry(result[i]);
-					entry.deleteButton.addClickHandler(new ClickHandler() {
-
-						@Override
-						public void onClick(ClickEvent event) {
-							deleteEntry(entry);
-						}
-					});
-					add(entry);
 				}
-				setEditModeEnabled(isEditModeEnabled());
-				if(done != null)
-					done.onSuccess(null);
+			}
+			
+			@Override
+			public void onError(Collection<ResponseError> errors) {
+				GWT.log("Recebi erro");
 			}
 		});
 	}
-	
+
 	private void deleteEntry(final TypifiedListEntry e){
-		if(!hasService)
-			return;
-		TipifiedListService.Util.getInstance().deleteListItem(this.listId, e.getValue().id,
-				new BigBangAsyncCallback<Void>() {
+		this.listBroker.removeListItem(this.listId, e.getValue().id, new ResponseHandler<TipifiedListItem>() {
 
 			@Override
-			public void onSuccess(Void result) {
-				clearSelection();
-				remove(e);
+			public void onResponse(TipifiedListItem response) {
+				GWT.log("Recebi resposta");
 			}
-
+			
 			@Override
-			public void onFailure(Throwable caught) {
-
-				super.onFailure(caught);
+			public void onError(Collection<ResponseError> errors) {
+				GWT.log("Recebi erro");
 			}
 		});
 	}
@@ -236,10 +208,87 @@ public class TypifiedListManagementPanel extends FilterableList<TipifiedListItem
 		this.editButton.setVisible(!readonly && editable);
 	}
 
+	
+	//TypifiedListClient methods
+	
 	@Override
 	protected HandlerRegistration bindEntry(ListEntry<TipifiedListItem> e) {
 		e.setDoubleClickable(true);
 		return super.bindEntry(e);
+	}
+	
+	public void onChanged(){
+		
+	}
+
+	@Override
+	public int getTypifiedDataVersionNumber() {
+		return typifiedListDataVersion;
+	}
+
+	@Override
+	public void setTypifiedDataVersionNumber(int number) {
+		this.typifiedListDataVersion = number;
+	}
+
+	@Override
+	public void setTypifiedListItems(java.util.List<TipifiedListItem> items) {
+		Collection<ValueSelectable<TipifiedListItem>> selected = getSelected();
+		clear();
+		for(int i = 0; i < items.size(); i++) {
+			TypifiedListEntry entry = addEntry(items.get(i));
+			for(ValueSelectable<TipifiedListItem> s : selected){
+				if(entry.getValue().id.equals(s.getValue().id)){
+					entry.setSelected(true);
+					break;
+				}
+			}
+		}
+		setEditModeEnabled(isEditModeEnabled());
+		onChanged();	
+	}
+	
+	protected TypifiedListEntry addEntry(TipifiedListItem item){
+		final TypifiedListEntry entry = new TypifiedListEntry(item);
+		entry.deleteButton.addClickHandler(new ClickHandler() {
+
+			@Override
+			public void onClick(ClickEvent event) {
+				deleteEntry(entry);
+			}
+		});
+		add(entry);
+		setEditModeEnabled(this.editModeEnabled);
+		return entry;
+	}
+	
+	
+	//TypifiedListClient methods
+
+	@Override
+	public void removeItem(TipifiedListItem item) {
+		for(ValueSelectable<TipifiedListItem> i : this) {
+			if(i.getValue() == item){
+				this.remove(i);
+				break;
+			}
+		}
+	}
+
+	@Override
+	public void addItem(TipifiedListItem item) {
+		addEntry(item);
+	}
+
+	@Override
+	public void updateItem(TipifiedListItem item) {
+		for(ValueSelectable<TipifiedListItem> i : this) {
+			if(i.getValue().id == item.id){
+				i.setValue(item);
+				((TypifiedListEntry)i).setInfo(item);
+				break;
+			}
+		}
 	}
 
 }

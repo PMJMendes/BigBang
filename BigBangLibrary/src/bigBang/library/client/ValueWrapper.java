@@ -11,6 +11,7 @@ public class ValueWrapper <T> implements HasValue<T>, HasValueChangeHandlers<T> 
 
 	protected T value;
 	protected boolean valueChangeHandlerInitialized;
+	//protected Collection<ValueChangeHandler<T>> valueChangeHandlers;
 	
 	public ValueWrapper(T value){
 		setValue(value);

@@ -20,8 +20,16 @@ public class NavigationPanel extends View {
 
 	protected ArrayList<Widget> navigatables;
 	protected ListIterator<Widget> iterator;
+	
+	protected boolean showPreviousButton, showNextButton;
 
-	public NavigationPanel(){
+	public NavigationPanel() {
+		this("");
+	}
+	
+	public NavigationPanel(String navBarTitle){
+		showPreviousButton = showNextButton = true;
+		
 		navigatables = new ArrayList<Widget>();
 		iterator = navigatables.listIterator();
 
@@ -29,6 +37,7 @@ public class NavigationPanel extends View {
 		wrapper.setSize("100%", "100%");
 
 		navBar = new NavigationToolbar(); 
+		navBar.setText(navBarTitle);
 		wrapper.add(navBar);
 
 		navBar.addNavigationEventHandler(new NavigationEventHandler() {
@@ -62,6 +71,16 @@ public class NavigationPanel extends View {
 		this.navBar.setVisible(show);
 	}
 
+	public void showPreviousButton(boolean show) {
+		this.showPreviousButton = show;
+		this.checkToolbarItems();
+	}
+	
+	public void showNextButton(boolean show) {
+		this.showNextButton = show;
+		this.checkToolbarItems();
+	}
+	
 	/**
 	 * Clears the navigation data and places the widget
 	 * in the argument as the first navigation item
@@ -206,8 +225,8 @@ public class NavigationPanel extends View {
 				hasPrevious = true;
 			iterator.next();
 		}
-		navBar.prevButton.setVisible(hasPrevious);
-		navBar.nextButton.setVisible(iterator.hasNext());
+		navBar.prevButton.setVisible(hasPrevious && showPreviousButton);
+		navBar.nextButton.setVisible(iterator.hasNext() && showNextButton);
 	}
 
 	private void disableToolbarItems(boolean disable) {

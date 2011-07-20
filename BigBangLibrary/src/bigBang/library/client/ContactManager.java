@@ -3,19 +3,42 @@ package bigBang.library.client;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.google.gwt.user.client.rpc.AsyncCallback;
-
 import bigBang.library.interfaces.ContactsService;
 import bigBang.library.interfaces.ContactsServiceAsync;
 import bigBang.library.shared.Contact;
 
-public class ContactManager {
+import com.google.gwt.event.shared.EventHandler;
+import com.google.gwt.event.shared.GwtEvent;
+import com.google.gwt.event.shared.HasHandlers;
+import com.google.gwt.user.client.rpc.AsyncCallback;
+
+public class ContactManager implements HasHandlers {
+
+	public static class EntityChangedEvent extends GwtEvent<EntityChangedEventHandler>{
+
+		public static Type<EntityChangedEventHandler> TYPE = new Type<EntityChangedEventHandler>();
+		
+		@Override
+		public com.google.gwt.event.shared.GwtEvent.Type<EntityChangedEventHandler> getAssociatedType() {
+			return TYPE;
+		}
+
+		@Override
+		protected void dispatch(EntityChangedEventHandler handler) {
+			handler.onEntityChanged(this);
+		}
+		
+	}
+	
+	public interface EntityChangedEventHandler extends EventHandler {
+		void onEntityChanged(EntityChangedEvent e);
+	}
+
 
 	protected ContactsServiceAsync service;
 	protected ArrayList<Contact> contacts;
 	protected String entityId;
 	protected boolean offlineMode = false;
-
 
 	public ContactManager(){
 		service = ContactsService.Util.getInstance();
@@ -122,6 +145,13 @@ public class ContactManager {
 				}
 				callback.onSuccess(null);
 			}
+			
+			@Override
+			public void onFailure(Throwable caught) {
+				super.onFailure(caught);
+				callback.onFailure(null);
+			}
+			
 		});
 	}
 
@@ -129,4 +159,13 @@ public class ContactManager {
 		this.offlineMode = offline;
 	}
 
+	public void addEntityChangedEventHandler(EntityChangedEventHandler h){
+		
+	}
+
+	@Override
+	public void fireEvent(GwtEvent<?> event) {
+		
+	}
+	
 }
