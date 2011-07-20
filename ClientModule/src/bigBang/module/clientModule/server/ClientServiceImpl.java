@@ -4,21 +4,24 @@ import java.sql.Timestamp;
 import java.util.Calendar;
 import java.util.UUID;
 
-import com.premiumminds.BigBang.Jewel.Constants;
-
 import Jewel.Engine.Engine;
+import Jewel.Engine.Constants.ObjectGUIDs;
 import Jewel.Engine.Implementation.Entity;
 import Jewel.Engine.Interfaces.IEntity;
+import Jewel.Engine.SysObjects.ObjectBase;
 import bigBang.library.server.SearchServiceBase;
 import bigBang.library.shared.Address;
 import bigBang.library.shared.BigBangException;
 import bigBang.library.shared.SearchParameter;
 import bigBang.library.shared.SearchResult;
 import bigBang.library.shared.SessionExpiredException;
+import bigBang.library.shared.ZipCode;
 import bigBang.module.clientModule.interfaces.ClientService;
 import bigBang.module.clientModule.shared.Client;
 import bigBang.module.clientModule.shared.ClientSearchParameter;
 import bigBang.module.clientModule.shared.ClientStub;
+
+import com.premiumminds.BigBang.Jewel.Constants;
 
 public class ClientServiceImpl
 	extends SearchServiceBase
@@ -29,32 +32,70 @@ public class ClientServiceImpl
 	public Client getClient(String clientId)
 		throws SessionExpiredException, BigBangException
 	{
+		UUID lid;
+		com.premiumminds.BigBang.Jewel.Objects.Client lobjClient;
+		ObjectBase lobjZipCode;
+		Client lobjResult;
+
 		if ( Engine.getCurrentUser() == null )
 			throw new SessionExpiredException();
-/*
-	public String id;
-	public String name;
-	public String clientNumber;
-	public String groupName;
-	public String groupId;
-	public String taxNumber;
-	public Address address;
-	public String NIB;
-	public String typeId;
-	public String mediatorId;
-	public String managerId;
-	public String operationalProfileId;
-	public String email;
-	public String caeId;
-	public String activityNotes;
-	public String revenueId;
-	public String birthDate;
-	public String genderId;
-	public String maritalStatusId;
-	public String professionId;
-	public String notes;
-*/
-		return null;
+
+		lid = UUID.fromString(clientId);
+		try
+		{
+			lobjClient = com.premiumminds.BigBang.Jewel.Objects.Client.GetInstance(Engine.getCurrentNameSpace(), lid);
+			if ( lobjClient.getAt(4) == null )
+				lobjZipCode = null;
+			else
+				lobjZipCode = Engine.GetWorkInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), ObjectGUIDs.O_PostalCode),
+						(UUID)lobjClient.getAt(4));
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangException(e.getMessage(), e);
+		}
+
+		lobjResult = new Client();
+
+		lobjResult.id = lid.toString();
+		lobjResult.name = (String)lobjClient.getAt(1);
+		lobjResult.clientNumber = lobjClient.getAt(0).toString();
+		lobjResult.groupName = null;
+		lobjResult.groupId = (lobjClient.getAt(11) == null ? null : lobjClient.getAt(11).toString());
+		lobjResult.taxNumber = (String)lobjClient.getAt(5);
+		lobjResult.address = new Address();
+		lobjResult.address.street1 = (String)lobjClient.getAt(2);
+		lobjResult.address.street2 = (String)lobjClient.getAt(3);
+		if ( lobjZipCode == null )
+			lobjResult.address.zipCode = null;
+		else
+		{
+			lobjResult.address.zipCode = new ZipCode();
+			lobjResult.address.zipCode.code = (String)lobjZipCode.getAt(0);
+			lobjResult.address.zipCode.city = (String)lobjZipCode.getAt(1);
+			lobjResult.address.zipCode.county = (String)lobjZipCode.getAt(2);
+			lobjResult.address.zipCode.district = (String)lobjZipCode.getAt(3);
+			lobjResult.address.zipCode.country = (String)lobjZipCode.getAt(4);
+		}
+		lobjResult.NIB = (String)lobjClient.getAt(12);
+		lobjResult.typeId = lobjClient.getAt(6).toString();
+		lobjResult.subtypeId = (lobjClient.getAt(7) == null ? null : lobjClient.getAt(7).toString());
+		lobjResult.mediatorId = lobjClient.getAt(9).toString();
+		lobjResult.managerId = lobjClient.getAt(8).toString();
+		lobjResult.operationalProfileId = lobjClient.getAt(10).toString();
+		lobjResult.caeId = (lobjClient.getAt(17) == null ? null : lobjClient.getAt(17).toString());
+		lobjResult.activityNotes = (String)lobjClient.getAt(18);
+		lobjResult.sizeId = (lobjClient.getAt(19) == null ? null : lobjClient.getAt(19).toString());
+		lobjResult.revenueId = (lobjClient.getAt(20) == null ? null : lobjClient.getAt(20).toString());
+		lobjResult.birthDate = (lobjClient.getAt(13) == null ? null : ((Timestamp)lobjClient.getAt(13)).toString());
+		lobjResult.genderId = (lobjClient.getAt(14) == null ? null : lobjClient.getAt(14).toString());
+		lobjResult.maritalStatusId = (lobjClient.getAt(15) == null ? null : lobjClient.getAt(15).toString());
+		lobjResult.professionId = (lobjClient.getAt(16) == null ? null : lobjClient.getAt(16).toString());
+		lobjResult.notes = (String)lobjClient.getAt(21);
+
+		lobjResult.processId = (lobjClient.getAt(22) == null ? null : lobjClient.getAt(22).toString());
+
+		return lobjResult;
 	}
 
 	public Client createClient(Client client)
