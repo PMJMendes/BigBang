@@ -293,14 +293,14 @@ public abstract class SearchServiceBase
 		return lobjResult;
 	}
 
-	public SearchResult[] search(String workspaceId, SearchParameter[] parameters, int size)
+	public NewSearchResult search(String workspaceId, SearchParameter[] parameters, int size)
 		throws SessionExpiredException, BigBangException
 	{
 		SearchWSpace lrefWSpace;
 		StringBuilder lstrBuffer;
 		int i;
 		int llngCount;
-		SearchResult[] larrResult;
+		NewSearchResult lobjResult;
 		SearchWSpace.Row lobjAux;
 
 		if ( Engine.getCurrentUser() == null )
@@ -316,17 +316,20 @@ public abstract class SearchServiceBase
 
 		lrefWSpace.OpenSearch(lstrBuffer.toString());
 
+		lobjResult = new NewSearchResult();
+		lobjResult.workspaceId = workspaceId;
+		lobjResult.totalCount = lrefWSpace.GetRowCount();
 		llngCount = lrefWSpace.GetRowCount();
 		if ( llngCount < size )
 			size = llngCount;
-		larrResult = new SearchResult[size];
+		lobjResult.results = new SearchResult[size];
 		for ( i = 0; i < size; i++ )
 		{
 			lobjAux = lrefWSpace.GetRow(i);
-			larrResult[i] = buildResult(lobjAux.getKey(), lobjAux.GetValues());
+			lobjResult.results[i] = buildResult(lobjAux.getKey(), lobjAux.GetValues());
 		}
 
-		return larrResult;
+		return lobjResult;
 	}
 
 	public SearchResult[] getResults(String workspaceId, int from, int size)

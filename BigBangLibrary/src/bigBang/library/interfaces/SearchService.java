@@ -13,7 +13,7 @@ public interface SearchService
 {
 	NewSearchResult openSearch(SearchParameter[] parameters, int size) throws SessionExpiredException, BigBangException;
 	NewSearchResult openForOperation(String opId, SearchParameter[] parameters, int size) throws SessionExpiredException, BigBangException;
-	SearchResult[] search(String workspaceId, SearchParameter[] parameters, int size) throws SessionExpiredException, BigBangException;
+	NewSearchResult search(String workspaceId, SearchParameter[] parameters, int size) throws SessionExpiredException, BigBangException;
 	SearchResult[] getResults(String workspaceId, int from, int size) throws SessionExpiredException, BigBangException;
 	void closeSearch(String workspaceId) throws SessionExpiredException, BigBangException;
 }

@@ -11,7 +11,7 @@ public interface SearchServiceAsync
 {
 	void openSearch(SearchParameter[] parameter, int size, AsyncCallback<NewSearchResult> callback);
 	void openForOperation(String opId, SearchParameter[] parameters, int size, AsyncCallback<NewSearchResult> callback);
-	void search(String workspaceId, SearchParameter[] parameter, int size, AsyncCallback<SearchResult[]> callback);
+	void search(String workspaceId, SearchParameter[] parameter, int size, AsyncCallback<NewSearchResult> callback);
 	void getResults(String workspaceId, int from, int size, AsyncCallback<SearchResult[]> callback);
 	void closeSearch(String workspaceId, AsyncCallback<Void> callback);
 }
