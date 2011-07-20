@@ -57,6 +57,7 @@ public abstract class SearchPanel extends FilterableList<SearchResult> {
 	protected int pageSize = DEFAULT_PAGE_SIZE;
 	protected int nextResultIndex = 0;
 	protected int numberOfResults = 0;
+	protected boolean requestedNextPage = false;
 
 	/**
 	 * The class constructor
@@ -106,7 +107,7 @@ public abstract class SearchPanel extends FilterableList<SearchResult> {
 		this.textBoxFilter.addHandler(new ValueChangeHandler<String>() {
 
 			public void onValueChange(ValueChangeEvent<String> event) {
-				doSearch();
+				//doSearch(); TODO
 			}
 
 		}, ValueChangeEvent.getType());
@@ -123,8 +124,8 @@ public abstract class SearchPanel extends FilterableList<SearchResult> {
 			@Override
 			public void onScroll(ScrollEvent event) {
 				if ((scroll.getMaximumVerticalScrollPosition() - scroll
-						.getVerticalScrollPosition()) < 300) {
-
+						.getVerticalScrollPosition()) < 100) {
+					SearchPanel.this.fetchNextPage();
 				}
 			}
 		});
@@ -280,6 +281,7 @@ public abstract class SearchPanel extends FilterableList<SearchResult> {
 				nextResultIndex += result.length;
 				onResults(result);
 				updateFooterText();
+				requestedNextPage = false;
 			}
 		});
 	}
