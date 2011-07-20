@@ -14,7 +14,6 @@ import bigBang.library.client.userInterface.view.View;
 import bigBang.library.interfaces.SearchService;
 import bigBang.library.interfaces.Service;
 import bigBang.module.clientModule.shared.Client;
-import bigBang.module.clientModule.shared.ClientGroup;
 import bigBang.module.clientModule.shared.operation.ClientSearchOperation;
 
 import com.google.gwt.core.client.GWT;
@@ -81,8 +80,6 @@ public class ClientSearchOperationViewPresenter implements OperationViewPresente
 					ValueSelectable<?> vs = (ValueSelectable<?>) s;
 					if(vs.getValue() instanceof Client){
 						GWT.log("Client selected");
-					}else if(vs.getValue() instanceof ClientGroup) {
-						GWT.log("Group selected");
 					}
 				}
 			}

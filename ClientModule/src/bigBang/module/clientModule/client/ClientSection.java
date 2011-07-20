@@ -8,15 +8,12 @@ import bigBang.library.client.userInterface.MenuSection;
 import bigBang.library.client.userInterface.TextBadge;
 import bigBang.library.client.userInterface.presenter.OperationViewPresenter;
 import bigBang.library.client.userInterface.presenter.ViewPresenter;
-import bigBang.module.clientModule.client.userInterface.presenter.ClientGroupManagementOperationViewPresenter;
 import bigBang.module.clientModule.client.userInterface.presenter.ClientManagerTransferOperationViewPresenter;
 import bigBang.module.clientModule.client.userInterface.presenter.ClientMergeOperationViewPresenter;
 import bigBang.module.clientModule.client.userInterface.presenter.ClientSearchOperationViewPresenter;
-import bigBang.module.clientModule.client.userInterface.view.ClientGroupManagementOperationView;
 import bigBang.module.clientModule.client.userInterface.view.ClientManagerTransferOperationView;
 import bigBang.module.clientModule.client.userInterface.view.ClientMergeOperationView;
 import bigBang.module.clientModule.client.userInterface.view.ClientSearchOperationView;
-import bigBang.module.clientModule.shared.operation.ClientGroupManagementOperation;
 import bigBang.module.clientModule.shared.operation.ClientManagerTransferOperation;
 import bigBang.module.clientModule.shared.operation.ClientMergeOperation;
 import bigBang.module.clientModule.shared.operation.ClientSearchOperation;
@@ -48,13 +45,6 @@ public class ClientSection implements MenuSection {
 		ClientSearchOperationViewPresenter clientSearchOperationPresenter = new ClientSearchOperationViewPresenter(null, null, clientSearchOperationView);
 		clientSearchOperationPresenter.setOperation(clientSearchOperation);
 		this.sectionOperationPresenters.add((OperationViewPresenter)clientSearchOperationPresenter);
-		
-		/* GRUPOS DE CLIENTES */
-		ClientGroupManagementOperation clientGroupManagementOperation = (ClientGroupManagementOperation)GWT.create(ClientGroupManagementOperation.class);
-		ClientGroupManagementOperationView clientGroupManagementOperationView = new ClientGroupManagementOperationView();
-		ClientGroupManagementOperationViewPresenter clientGroupManagementOperationViewPresenter = new ClientGroupManagementOperationViewPresenter(null, null, clientGroupManagementOperationView);
-		clientGroupManagementOperationViewPresenter.setOperation(clientGroupManagementOperation);
-		this.sectionOperationPresenters.add((OperationViewPresenter)clientGroupManagementOperationViewPresenter);
 		
 		/* TRANSFERENCIA DE GESTOR */
 		ClientManagerTransferOperation clientManagerTransferOperation = (ClientManagerTransferOperation)GWT.create(ClientManagerTransferOperation.class);

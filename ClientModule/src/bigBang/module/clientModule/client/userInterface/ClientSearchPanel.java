@@ -10,7 +10,6 @@ import bigBang.library.shared.SearchParameter;
 import bigBang.library.shared.SearchResult;
 import bigBang.module.clientModule.interfaces.ClientService;
 import bigBang.module.clientModule.shared.Client;
-import bigBang.module.clientModule.shared.ClientGroupStub;
 import bigBang.module.clientModule.shared.ClientSearchParameter;
 import bigBang.module.clientModule.shared.ClientStub;
 

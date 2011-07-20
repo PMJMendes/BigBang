@@ -16,7 +16,7 @@ public class Client
 
 	public String taxNumber;
 	public Address address;
-	public ClientGroupStub group;
+	public String groupId;
 	public String NIB;
 	public ClientType type;
 	public String mediatorId;
