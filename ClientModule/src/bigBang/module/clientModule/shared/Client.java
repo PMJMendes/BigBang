@@ -10,10 +10,6 @@ public class Client
 	public String groupId;
 	public String taxNumber;
 	public Address address;
-<<<<<<< .mine
-=======
-	public String groupId;
->>>>>>> .r276
 	public String NIB;
 	public String typeId;
 	public String mediatorId;
