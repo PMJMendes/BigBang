@@ -7,18 +7,15 @@ public class Client
 {
 	private static final long serialVersionUID = 1L;
 
-	public static enum ClientType
-	{
-		INDIVIDUAL,
-		COMPANY,
-		CONDOMINIUM
-	}
-
+	public String groupId;
 	public String taxNumber;
 	public Address address;
+<<<<<<< .mine
+=======
 	public String groupId;
+>>>>>>> .r276
 	public String NIB;
-	public ClientType type;
+	public String typeId;
 	public String mediatorId;
 	public String managerId;
 	public String operationalProfileId;
