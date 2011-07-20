@@ -210,7 +210,7 @@ public class ClientServiceImpl
 		lobjResult.id = pid.toString();
 		lobjResult.name = (String)parrValues[0];
 		lobjResult.clientNumber = parrValues[1].toString();
-		lobjResult.groupName = parrValues[2].toString();
+		lobjResult.groupName = (parrValues[2] == null ? null : parrValues[2].toString());
 
 		return lobjResult;
 	}
