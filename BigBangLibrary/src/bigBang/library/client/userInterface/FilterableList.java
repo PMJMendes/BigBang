@@ -7,6 +7,7 @@ import bigBang.library.client.ListFilter;
 import bigBang.library.client.resources.Resources;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.KeyUpEvent;
 import com.google.gwt.event.dom.client.KeyUpHandler;
 import com.google.gwt.event.logical.shared.CloseEvent;
@@ -34,7 +35,9 @@ public class FilterableList<T> extends SortableList<T> {
 
 	protected TextBox textBoxFilter;
 	protected HasWidgets filtersContainer;
+	protected HorizontalPanel searchFieldContainer;
 	protected Map<String, ListFilter<?>> filters;
+	protected boolean liveSearch = true;
 
 	/**
 	 * The FilterableList constructor
@@ -46,6 +49,7 @@ public class FilterableList<T> extends SortableList<T> {
 		Resources resources = GWT.create(Resources.class);		
 		
 		final VerticalPanel headerWrapper = new VerticalPanel();
+
 		SimplePanel newHeaderContainer = new SimplePanel();
 		newHeaderContainer.setWidth("100%");
 		headerWrapper.setWidth("100%");
@@ -58,7 +62,8 @@ public class FilterableList<T> extends SortableList<T> {
 
 			@Override
 			public void onKeyUp(KeyUpEvent event) {
-				onFilterTextChanged(textBoxFilter.getValue());
+				if(FilterableList.this.liveSearch)
+					onFilterTextChanged(textBoxFilter.getValue());
 			}
 		});
 
@@ -70,12 +75,21 @@ public class FilterableList<T> extends SortableList<T> {
 		
 		HorizontalPanel filterHeaderWrapper = new HorizontalPanel();
 		filterHeaderWrapper.setSize("100%", "100%");
-		filterHeaderWrapper.add(new Image(resources.arrowDown()));
+		Image filterHeaderImage = new Image(resources.arrowDown());
+		filterHeaderImage.getElement().getStyle().setMarginLeft(5, Unit.PX);
+		filterHeaderWrapper.add(filterHeaderImage);
+		filterHeaderWrapper.setCellWidth(filterHeaderImage, "20px");
 		filterHeaderWrapper.add(new Label("Filtros"));
 		filterContainer.setHeader(filterHeaderWrapper);
 		
 		filtersContainer = filterContainer;
-		headerWrapper.add(textBoxFilter);
+		
+		this.searchFieldContainer = new HorizontalPanel();
+		searchFieldContainer.setSize("100%", "100%");
+		searchFieldContainer.setSpacing(5);
+		searchFieldContainer.add(textBoxFilter);
+	
+		headerWrapper.add(searchFieldContainer);
 		headerWrapper.add(filterContainer);
 
 		filterContainer.addOpenHandler(new OpenHandler<DisclosurePanel>() {
@@ -142,6 +156,14 @@ public class FilterableList<T> extends SortableList<T> {
 	}
 	
 	/**
+	 * shows or hides the text field
+	 * @param show if true, shows the text field
+	 */
+	public void showSearchField(boolean show) {
+		((UIObject) this.searchFieldContainer).setVisible(show);
+	}
+	
+	/**
 	 * shows or hides the filter disclosure panel
 	 * @param show if true, shows the filter disclosure panel
 	 */
@@ -177,5 +199,13 @@ public class FilterableList<T> extends SortableList<T> {
 	 */
 	public Map<String, ListFilter<?>> getFilters(){
 		return this.filters;
+	}
+	
+	/**
+	 * Sets whether or not the list is filtered in real time
+	 * @param liveSearch if true, live search is turned on
+	 */
+	public void setLiveSearch(boolean liveSearch){
+		this.liveSearch = liveSearch;
 	}
 }

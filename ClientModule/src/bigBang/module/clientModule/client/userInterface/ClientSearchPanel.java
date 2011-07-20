@@ -57,22 +57,23 @@ public class ClientSearchPanel extends SearchPanel {
 
 	@Override
 	protected void selectionChangedEventFireBypass(final SelectionChangedEvent e) {
+		//TODO FJVC IMPORTANT
 		for(Selectable s : e.getSelected()){
-			@SuppressWarnings("unchecked")
-			ValueSelectable<ValueWrapper<?>> vs = (ValueSelectable<ValueWrapper<?>>)s;
-			ValueWrapper<?> result = vs.getValue();
-			if(result.getValue() instanceof ClientStub){
-				@SuppressWarnings("unchecked")
-				final ValueWrapper<ClientStub> clientWrapper = (ValueWrapper<ClientStub>) result;
-				ClientService.Util.getInstance().getClient(clientWrapper.getValue().id, new BigBangAsyncCallback<Client>() {
-
-					@Override
-					public void onSuccess(Client result) {
-						clientWrapper.setValue(result, true);
-						fireEvent(e);
-					}
-				});
-			}
+//			@SuppressWarnings("unchecked")
+//			ValueSelectable<ValueWrapper<?>> vs = (ValueSelectable<ValueWrapper<?>>)s;
+//			ValueWrapper<?> result = vs.getValue();
+//			if(result.getValue() instanceof ClientStub){
+//				@SuppressWarnings("unchecked")
+//				final ValueWrapper<ClientStub> clientWrapper = (ValueWrapper<ClientStub>) result;
+//				ClientService.Util.getInstance().getClient(clientWrapper.getValue().id, new BigBangAsyncCallback<Client>() {
+//
+//					@Override
+//					public void onSuccess(Client result) {
+//						clientWrapper.setValue(result, true);
+//						fireEvent(e);
+//					}
+//				});
+//			}
 		}
 	}
 

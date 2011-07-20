@@ -27,15 +27,16 @@ public class DatePickerFormField extends FormField<Date> {
 		this(DEFAULT_PATTERN);
 	}
 	
-	public DatePickerFormField(String pattern){
+	public DatePickerFormField(String label){
 		super();
 		
-		this.datePattern = pattern;
+		this.datePattern = DEFAULT_PATTERN; //TODO
 		this.field = new DateBox();
 		
 		HorizontalPanel wrapper = new HorizontalPanel();
 		wrapper.setVerticalAlignment(HasVerticalAlignment.ALIGN_MIDDLE);
 		this.label = new Label();
+		this.label.setText(label);
 		this.label.getElement().getStyle().setMarginRight(5, Unit.PX);
 		wrapper.add(this.label);
 		wrapper.setCellWidth(this.label, "100px");

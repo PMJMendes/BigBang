@@ -66,6 +66,7 @@ public abstract class SearchPanel extends FilterableList<SearchResult> {
 	public SearchPanel(SearchServiceAsync service) {
 		super();
 
+		super.liveSearch = false;
 		this.service = service;
 
 		this.searchButton = new Button("Pesquisar");
@@ -107,7 +108,7 @@ public abstract class SearchPanel extends FilterableList<SearchResult> {
 		this.textBoxFilter.addHandler(new ValueChangeHandler<String>() {
 
 			public void onValueChange(ValueChangeEvent<String> event) {
-				//doSearch(); TODO
+				doSearch();
 			}
 
 		}, ValueChangeEvent.getType());
@@ -123,14 +124,16 @@ public abstract class SearchPanel extends FilterableList<SearchResult> {
 
 			@Override
 			public void onScroll(ScrollEvent event) {
-				if ((scroll.getMaximumVerticalScrollPosition() - scroll
-						.getVerticalScrollPosition()) < 100) {
+				if (((scroll.getMaximumVerticalScrollPosition() - scroll
+						.getVerticalScrollPosition()) < 300) && !SearchPanel.this.requestedNextPage) {
 					SearchPanel.this.fetchNextPage();
 				}
 			}
 		});
 
 		ListHeader header = new ListHeader();
+		
+		Widget textFieldOldParent = textBoxFilter.getParent();
 		
 		HorizontalPanel searchFieldWrapper = new HorizontalPanel();
 		searchFieldWrapper.setSize("100%", "40px");
@@ -152,6 +155,8 @@ public abstract class SearchPanel extends FilterableList<SearchResult> {
 		
 		header.setWidget(headerWidgetWrapper);
 
+		textFieldOldParent.removeFromParent();
+		
 		/*DisclosurePanel filtersWrapper = new DisclosurePanel();
 		filtersWrapper.setSize("100%", "100%");
 		Label headerLabel = new Label("Filtros");
@@ -243,12 +248,13 @@ public abstract class SearchPanel extends FilterableList<SearchResult> {
 				};
 				this.service.openSearch(parameters, this.pageSize, callback);
 			} else {
-				BigBangAsyncCallback<SearchResult[]> callback = new BigBangAsyncCallback<SearchResult[]>() {
+				BigBangAsyncCallback<NewSearchResult> callback = new BigBangAsyncCallback<NewSearchResult>() {
 
-					public void onSuccess(SearchResult[] result) {
+					public void onSuccess(NewSearchResult result) {
 						clear();
-						nextResultIndex += result.length;
-						onResults(result);
+						nextResultIndex += result.results.length;
+						SearchPanel.this.numberOfResults = result.totalCount;
+						onResults(result.results);
 						updateFooterText();
 					}
 
@@ -274,6 +280,9 @@ public abstract class SearchPanel extends FilterableList<SearchResult> {
 	 * Queries the search service for the next page of results
 	 */
 	protected void fetchNextPage() {
+		if(this.nextResultIndex > this.numberOfResults)
+			return;
+		requestedNextPage = true;
 		this.service.getResults(this.workspaceId, this.nextResultIndex, this.pageSize, new BigBangAsyncCallback<SearchResult[]>() {
 
 			@Override
@@ -282,6 +291,12 @@ public abstract class SearchPanel extends FilterableList<SearchResult> {
 				onResults(result);
 				updateFooterText();
 				requestedNextPage = false;
+			}
+			
+			@Override
+			public void onFailure(Throwable caught) {
+				requestedNextPage = false;
+				super.onFailure(caught);
 			}
 		});
 	}

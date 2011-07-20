@@ -53,12 +53,13 @@ public class ClientSection implements MenuSection {
 		clientManagerTransferOperationViewPresenter.setOperation(clientManagerTransferOperation);
 		this.sectionOperationPresenters.add((OperationViewPresenter)clientManagerTransferOperationViewPresenter);
 		
-		/* MERGE */
-		ClientMergeOperation clientMergeOperation = (ClientMergeOperation)GWT.create(ClientMergeOperation.class);
-		ClientMergeOperationView clientMergeOperationView = new ClientMergeOperationView();
-		ClientMergeOperationViewPresenter clientMergeOperationPresenter = new ClientMergeOperationViewPresenter(null, null, clientMergeOperationView);
-		clientMergeOperationPresenter.setOperation(clientMergeOperation);
-		this.sectionOperationPresenters.add((OperationViewPresenter)clientMergeOperationPresenter);
+//TODO IMPORTANT
+		/* MERGE */ 
+//		ClientMergeOperation clientMergeOperation = (ClientMergeOperation)GWT.create(ClientMergeOperation.class);
+//		ClientMergeOperationView clientMergeOperationView = new ClientMergeOperationView();
+//		ClientMergeOperationViewPresenter clientMergeOperationPresenter = new ClientMergeOperationViewPresenter(null, null, clientMergeOperationView);
+//		clientMergeOperationPresenter.setOperation(clientMergeOperation);
+//		this.sectionOperationPresenters.add((OperationViewPresenter)clientMergeOperationPresenter);
 	}
 	
 	public String getId() {

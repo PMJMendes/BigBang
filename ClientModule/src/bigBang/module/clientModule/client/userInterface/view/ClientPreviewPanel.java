@@ -23,7 +23,7 @@ import com.google.gwt.user.client.ui.Widget;
 
 public class ClientPreviewPanel extends View {
 
-	private int RIGHT_PANEL_WIDTH = 200;//PX
+	private int RIGHT_PANEL_WIDTH = 400;//PX
 	
 	private ClientFormView form;
 	

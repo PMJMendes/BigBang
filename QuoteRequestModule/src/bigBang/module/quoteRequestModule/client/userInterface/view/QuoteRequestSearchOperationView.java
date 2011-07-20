@@ -16,7 +16,7 @@ import bigBang.module.quoteRequestModule.shared.SecuredObject;
 
 public class QuoteRequestSearchOperationView extends View implements QuoteRequestSearchOperationViewPresenter.Display {
 
-	protected static final int SEARCH_PANEL_WIDTH = 300; //PX 
+	protected static final int SEARCH_PANEL_WIDTH = 400; //PX 
 	
 	protected QuoteRequestSearchPanel searchPanel;
 	protected QuoteRequestForm form;

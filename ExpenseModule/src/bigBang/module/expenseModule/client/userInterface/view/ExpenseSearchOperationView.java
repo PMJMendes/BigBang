@@ -9,7 +9,7 @@ import bigBang.module.expenseModule.client.userInterface.presenter.ExpenseSearch
 
 public class ExpenseSearchOperationView extends View implements ExpenseSearchOperationViewPresenter.Display {
 
-	protected static final int SEARCH_PANEL_WIDTH = 300; //PX 
+	protected static final int SEARCH_PANEL_WIDTH = 400; //PX 
 	
 	protected ExpenseSearchPanel searchPanel;
 	protected ExpenseForm form;

@@ -14,7 +14,7 @@ public class ClientManagerTransferOperationView extends View implements ClientMa
 		
 	}
 	
-	protected static final int SEARCH_PANEL_WIDTH = 300; //PX
+	protected static final int SEARCH_PANEL_WIDTH = 400; //PX
 	
 	protected ClientSearchPanel searchPanel;
 	protected SelectedList selectedList; 

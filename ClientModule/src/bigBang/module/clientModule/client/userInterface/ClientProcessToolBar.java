@@ -8,9 +8,7 @@ import bigBang.library.client.userInterface.OperationsToolBar;
 
 public class ClientProcessToolBar extends OperationsToolBar {
 	public ClientProcessToolBar(){
-		MenuBar clientSubMenu = new MenuBar(true);
-		MenuItem clientMenuItem = new MenuItem("Apólice", clientSubMenu);
-		clientSubMenu.addItem("Desfazer Alterações", new Command() {
+		addItem("Operações", new Command() {
 
 			@Override
 			public void execute() {
@@ -18,17 +16,8 @@ public class ClientProcessToolBar extends OperationsToolBar {
 
 			}
 		});
-		clientSubMenu.addItem("Eliminar", new Command() {
+		addSeparator();
 
-			@Override
-			public void execute() {
-				// TODO Auto-generated method stub
-
-			}
-		});
-		
-		addItem(clientMenuItem);
-		
 		MenuBar newSubMenu = new MenuBar(true);
 		MenuItem newMenuItem = new MenuItem("Criar", newSubMenu);
 		newSubMenu.addItem("Análise de Risco", new Command() {
@@ -63,7 +52,7 @@ public class ClientProcessToolBar extends OperationsToolBar {
 
 			}
 		});
-		
+
 		MenuBar executeSubMenu = new MenuBar(true);
 		MenuItem executeMenuItem = new MenuItem("Executar", executeSubMenu);
 		executeSubMenu.addItem("Pedir Informação/Documento", new Command() {
@@ -74,7 +63,28 @@ public class ClientProcessToolBar extends OperationsToolBar {
 
 			}
 		});
-		
+		executeSubMenu.addItem("Fundir com Outro Cliente", new Command() {
+
+			@Override
+			public void execute() {
+				// TODO Auto-generated method stub
+
+			}
+		});
+
 		addItem(executeMenuItem);
+		
+		MenuBar clientSubMenu = new MenuBar(true);
+		MenuItem clientMenuItem = new MenuItem("Outras", clientSubMenu);
+		clientSubMenu.addItem("Eliminar", new Command() {
+
+			@Override
+			public void execute() {
+				// TODO Auto-generated method stub
+
+			}
+		});
+
+		addItem(clientMenuItem);
 	}
 }

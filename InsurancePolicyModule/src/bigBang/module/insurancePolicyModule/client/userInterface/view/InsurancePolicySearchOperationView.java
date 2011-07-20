@@ -17,7 +17,7 @@ import bigBang.module.insurancePolicyModule.shared.SecuredObject;
 
 public class InsurancePolicySearchOperationView extends View implements InsurancePolicySearchOperationViewPresenter.Display {
 
-	protected static final int SEARCH_PANEL_WIDTH = 300; //PX
+	protected static final int SEARCH_PANEL_WIDTH = 400; //PX
 	
 	protected InsurancePolicySearchPanel searchPanel;
 	protected InsurancePolicyForm form;

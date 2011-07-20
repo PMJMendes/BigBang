@@ -115,6 +115,8 @@ public class TypifiedListManagementPanel extends FilterableList<TipifiedListItem
 
 		setHeaderWidget(headerWrapper);
 
+		showFilterField(false);
+		
 		addButton.setEnabled(false);
 
 		addButton.addClickHandler(new ClickHandler() {
@@ -143,6 +145,7 @@ public class TypifiedListManagementPanel extends FilterableList<TipifiedListItem
 		setEditModeEnabled(false);
 		this.listBroker.registerClient(listId, this);
 		this.listBroker.getListItems(listId);
+		showFilterField(false);
 	}
 
 	private void addNew(){	
@@ -187,7 +190,7 @@ public class TypifiedListManagementPanel extends FilterableList<TipifiedListItem
 	public void setEditModeEnabled(boolean enabled){
 		this.editModeEnabled = enabled;
 		this.editButton.setText(enabled ? "Cancelar" : "Editar");
-		showFilterField(!enabled);
+		showSearchField(!enabled);
 		this.toolBar.setVisible(enabled);
 		for(ListEntry<TipifiedListItem> e : entries) {
 			((TypifiedListEntry) e).deleteButton.setVisible(enabled);

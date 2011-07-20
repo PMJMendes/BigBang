@@ -20,7 +20,7 @@ public class QuoteRequestServiceImpl extends RemoteServiceServlet implements Quo
 	}
 
 	@Override
-	public SearchResult[] search(String workspaceId,
+	public NewSearchResult search(String workspaceId,
 			SearchParameter[] parameters, int size)
 			throws SessionExpiredException, BigBangException {
 		// TODO Auto-generated method stub

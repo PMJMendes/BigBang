@@ -9,9 +9,7 @@ import bigBang.library.client.userInterface.OperationsToolBar;
 public class InsurancePolicyOperationsToolBar extends OperationsToolBar {
 
 	public InsurancePolicyOperationsToolBar(){
-		MenuBar policySubMenu = new MenuBar(true);
-		MenuItem policyMenuItem = new MenuItem("Apólice", policySubMenu);
-		policySubMenu.addItem("Desfazer Alterações", new Command() {
+		addItem("Operações", new Command() {
 
 			@Override
 			public void execute() {
@@ -19,24 +17,7 @@ public class InsurancePolicyOperationsToolBar extends OperationsToolBar {
 
 			}
 		});
-		policySubMenu.addItem("Anular", new Command() {
-
-			@Override
-			public void execute() {
-				// TODO Auto-generated method stub
-
-			}
-		});
-		policySubMenu.addItem("Eliminar", new Command() {
-
-			@Override
-			public void execute() {
-				// TODO Auto-generated method stub
-
-			}
-		});
-		
-		addItem(policyMenuItem);
+		addSeparator();
 		
 		MenuBar executeSubMenu = new MenuBar(true);
 		MenuItem executeMenuItem = new MenuItem("Executar", executeSubMenu);
@@ -164,5 +145,34 @@ public class InsurancePolicyOperationsToolBar extends OperationsToolBar {
 		});
 
 		this.addItem(insertMenuItem);
+		
+		MenuBar policySubMenu = new MenuBar(true);
+		MenuItem policyMenuItem = new MenuItem("Outras", policySubMenu);
+		policySubMenu.addItem("Desfazer Alterações", new Command() {
+
+			@Override
+			public void execute() {
+				// TODO Auto-generated method stub
+
+			}
+		});
+		policySubMenu.addItem("Anular", new Command() {
+
+			@Override
+			public void execute() {
+				// TODO Auto-generated method stub
+
+			}
+		});
+		policySubMenu.addItem("Eliminar", new Command() {
+
+			@Override
+			public void execute() {
+				// TODO Auto-generated method stub
+
+			}
+		});
+		
+		addItem(policyMenuItem);
 	}
 }

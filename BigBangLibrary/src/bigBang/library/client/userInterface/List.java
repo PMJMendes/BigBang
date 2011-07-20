@@ -469,6 +469,7 @@ public class List<T> extends View implements HasValueSelectables<T>, java.util.L
 		};
 		selectionChangedEventFireBypass(new SelectionChangedEvent(getSelected()));
 		boolean hadElements = !entries.isEmpty();
+		this.clearSelection();
 		this.listPanel.clear();
 		this.entries.clear();
 		if(hadElements)

@@ -71,16 +71,16 @@ public class BigBangTypifiedListBroker implements TypifiedListBroker {
 
 	@Override
 	public void refreshListData(final String listId) {
-//		this.service.getListItems(listId, new BigBangAsyncCallback<TipifiedListItem[]>() { //TODO IMPORTANT
-//
-//			@Override
-//			public void onSuccess(TipifiedListItem[] result) {
-//				GWT.log("recebeu" + listId);
-//				BigBangTypifiedListBroker.this.lists.put(listId, new ArrayList<TipifiedListItem>(Arrays.asList(result)));
-//				incrementListDataVersion(listId);
-//				updateListClients(listId);
-//			}
-//		});
+		this.service.getListItems(listId, new BigBangAsyncCallback<TipifiedListItem[]>() {
+
+			@Override
+			public void onSuccess(TipifiedListItem[] result) {
+				GWT.log("recebeu" + listId);
+				BigBangTypifiedListBroker.this.lists.put(listId, new ArrayList<TipifiedListItem>(Arrays.asList(result)));
+				incrementListDataVersion(listId);
+				updateListClients(listId);
+			}
+		});
 	}
 
 	@Override

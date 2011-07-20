@@ -9,7 +9,7 @@ import bigBang.module.complaintModule.client.userInterface.presenter.ComplaintSe
 
 public class ComplaintSearchOperationView extends View implements ComplaintSearchOperationViewPresenter.Display {
 
-	protected static final int SEARCH_PANEL_WIDTH = 300; //PX
+	protected static final int SEARCH_PANEL_WIDTH = 400; //PX
 	protected ComplaintSearchPanel searchPanel;
 	protected ComplaintForm form;
 	

@@ -5,7 +5,7 @@ import bigBang.module.generalSystemModule.client.userInterface.presenter.ClientG
 
 public class ClientGroupManagementOperationView extends View implements ClientGroupManagementOperationViewPresenter.Display{
 
-	protected static final int SEARCH_PANEL_WIDTH = 300; //PX
+	protected static final int SEARCH_PANEL_WIDTH = 400; //PX
 	
 	protected ClientGroupFormView groupForm;
 	

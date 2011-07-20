@@ -9,9 +9,7 @@ import bigBang.library.client.userInterface.OperationsToolBar;
 public class QuoteRequestProcessToolBar extends OperationsToolBar {
 
 	public QuoteRequestProcessToolBar(){
-		MenuBar quoteRequestSubMenu = new MenuBar(true);
-		MenuItem quoteRequestMenuItem = new MenuItem("Consulta de Mercado", quoteRequestSubMenu);
-		quoteRequestSubMenu.addItem("Desfazer Alterações", new Command() {
+		addItem("Operações", new Command() {
 
 			@Override
 			public void execute() {
@@ -19,24 +17,7 @@ public class QuoteRequestProcessToolBar extends OperationsToolBar {
 
 			}
 		});
-		quoteRequestSubMenu.addItem("Fechar Processo", new Command() {
-
-			@Override
-			public void execute() {
-				// TODO Auto-generated method stub
-
-			}
-		});
-		quoteRequestSubMenu.addItem("Eliminar", new Command() {
-
-			@Override
-			public void execute() {
-				// TODO Auto-generated method stub
-
-			}
-		});
-		
-		addItem(quoteRequestMenuItem);
+		addSeparator();
 		
 		MenuBar newSubMenu = new MenuBar(true);
 		MenuItem newMenuItem = new MenuItem("Criar", newSubMenu);
@@ -92,6 +73,35 @@ public class QuoteRequestProcessToolBar extends OperationsToolBar {
 		});
 		
 		addItem(executeMenuItem);
+		
+		MenuBar quoteRequestSubMenu = new MenuBar(true);
+		MenuItem quoteRequestMenuItem = new MenuItem("Outras", quoteRequestSubMenu);
+		quoteRequestSubMenu.addItem("Desfazer Alterações", new Command() {
+
+			@Override
+			public void execute() {
+				// TODO Auto-generated method stub
+
+			}
+		});
+		quoteRequestSubMenu.addItem("Fechar Processo", new Command() {
+
+			@Override
+			public void execute() {
+				// TODO Auto-generated method stub
+
+			}
+		});
+		quoteRequestSubMenu.addItem("Eliminar", new Command() {
+
+			@Override
+			public void execute() {
+				// TODO Auto-generated method stub
+
+			}
+		});
+		
+		addItem(quoteRequestMenuItem);
 	}
 	
 }
