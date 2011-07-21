@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="WINDOWS-1252" standalone="no"?>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <jardesc>
     <jar path="BigBang/war/WEB-INF/lib/bigBang-jewel.jar"/>
     <options buildIfNeeded="true" compress="true" descriptionLocation="/BigBang.Jewel/BigBang.Jewel.jardesc" exportErrors="true" exportWarnings="true" includeDirectoryEntries="false" overwrite="true" saveDescription="true" storeRefactorings="false" useSourceFolders="false"/>
@@ -11,6 +11,13 @@
         </sealing>
     </manifest>
     <selectedElements exportClassFiles="true" exportJavaFiles="false" exportOutputFolder="false">
-        <javaElement handleIdentifier="=BigBang.Jewel/src"/>
+        <javaElement handleIdentifier="=BigBang.Jewel/src&lt;com.premiumminds.BigBang.Jewel.Operations"/>
+        <javaElement handleIdentifier="=BigBang.Jewel/src&lt;com.premiumminds.BigBang.Jewel.Forms"/>
+        <javaElement handleIdentifier="=BigBang.Jewel/src&lt;com.premiumminds.BigBang"/>
+        <javaElement handleIdentifier="=BigBang.Jewel/src&lt;com.premiumminds"/>
+        <javaElement handleIdentifier="=BigBang.Jewel/src&lt;com"/>
+        <javaElement handleIdentifier="=BigBang.Jewel/src&lt;com.premiumminds.BigBang.Jewel.Processes"/>
+        <javaElement handleIdentifier="=BigBang.Jewel/src&lt;com.premiumminds.BigBang.Jewel"/>
+        <javaElement handleIdentifier="=BigBang.Jewel/src&lt;com.premiumminds.BigBang.Jewel.Objects"/>
     </selectedElements>
 </jardesc>

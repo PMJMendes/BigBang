@@ -2,7 +2,7 @@ package bigBang.module.insurancePolicyModule.client.userInterface;
 
 import bigBang.library.client.userInterface.view.SearchPanel;
 import bigBang.library.shared.SearchResult;
-import bigBang.module.insurancePolicyModule.client.interfaces.InsurancePolicyService;
+import bigBang.module.insurancePolicyModule.interfaces.InsurancePolicyService;
 
 public class InsurancePolicySearchPanel extends SearchPanel {
 

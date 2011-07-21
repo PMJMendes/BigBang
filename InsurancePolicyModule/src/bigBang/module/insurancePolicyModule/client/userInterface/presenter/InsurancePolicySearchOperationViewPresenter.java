@@ -8,7 +8,7 @@ import bigBang.library.client.Operation;
 import bigBang.library.client.userInterface.presenter.OperationViewPresenter;
 import bigBang.library.client.userInterface.view.View;
 import bigBang.library.interfaces.Service;
-import bigBang.module.insurancePolicyModule.client.interfaces.InsurancePolicyServiceAsync;
+import bigBang.module.insurancePolicyModule.interfaces.InsurancePolicyServiceAsync;
 import bigBang.module.insurancePolicyModule.shared.operation.InsurancePolicySearchOperation;
 
 public class InsurancePolicySearchOperationViewPresenter implements

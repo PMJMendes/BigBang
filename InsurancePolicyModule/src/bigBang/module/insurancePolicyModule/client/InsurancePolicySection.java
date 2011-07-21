@@ -12,10 +12,10 @@ import bigBang.library.client.userInterface.MenuSection;
 import bigBang.library.client.userInterface.TextBadge;
 import bigBang.library.client.userInterface.presenter.OperationViewPresenter;
 import bigBang.library.client.userInterface.presenter.ViewPresenter;
-import bigBang.module.insurancePolicyModule.client.interfaces.InsurancePolicyService;
-import bigBang.module.insurancePolicyModule.client.interfaces.InsurancePolicyServiceAsync;
 import bigBang.module.insurancePolicyModule.client.userInterface.presenter.InsurancePolicySearchOperationViewPresenter;
 import bigBang.module.insurancePolicyModule.client.userInterface.view.InsurancePolicySearchOperationView;
+import bigBang.module.insurancePolicyModule.interfaces.InsurancePolicyService;
+import bigBang.module.insurancePolicyModule.interfaces.InsurancePolicyServiceAsync;
 import bigBang.module.insurancePolicyModule.shared.ModuleConstants;
 import bigBang.module.insurancePolicyModule.shared.operation.InsurancePolicySearchOperation;
 
