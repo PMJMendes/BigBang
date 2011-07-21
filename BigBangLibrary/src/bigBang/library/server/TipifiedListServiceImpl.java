@@ -27,7 +27,7 @@ public class TipifiedListServiceImpl
         MasterDB ldb;
         ResultSet lrsItems;
 		ArrayList<TipifiedListItem> larrAux;
-		ObjectBase lobjItem;
+//		ObjectBase lobjItem;
 		TipifiedListItem lobjAux;
 
 		if ( Engine.getCurrentUser() == null )
@@ -59,10 +59,12 @@ public class TipifiedListServiceImpl
 		{
 	        while (lrsItems.next())
 	        {
-	        	lobjItem = Engine.GetWorkInstance(lidListRef, lrsItems);
+//	        	lobjItem = Engine.GetWorkInstance(lidListRef, lrsItems);
 	        	lobjAux = new TipifiedListItem();
-	        	lobjAux.id = lobjItem.getKey().toString();
-	        	lobjAux.value = (String) lobjItem.getAt(0);
+//	        	lobjAux.id = lobjItem.getKey().toString();
+//	        	lobjAux.value = (String) lobjItem.getAt(0);
+	        	lobjAux.id = lrsItems.getString(1);
+	        	lobjAux.id = lrsItems.getString(2);
 	        	larrAux.add(lobjAux);
 	        }
         }
