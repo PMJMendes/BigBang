@@ -22,8 +22,8 @@ import bigBang.module.insurancePolicyModule.shared.operation.InsurancePolicySear
 public class InsurancePolicySection implements MenuSection {
 
 	private static final String ID = ModuleConstants.ProcessTypeIDs.INSURANCE_POLICY;
-	private static final String DESCRIPTION = "Apólice";
-	private static final String SHORT_DESCRIPTION = "Apólice";
+	private static final String DESCRIPTION = "Apólices";
+	private static final String SHORT_DESCRIPTION = "Apólices";
 	private ArrayList<OperationViewPresenter> sectionOperationPresenters;
 	public BigBangPermissionManager permissionManager;
 	

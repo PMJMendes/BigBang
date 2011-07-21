@@ -22,8 +22,8 @@ import bigBang.module.casualtyModule.shared.operation.CasualtySearchOperation;
 public class CasualtySection implements MenuSection {
 
 	private static final String ID = ModuleConstants.ProcessTypeIDs.CASUALTY;
-	private static final String DESCRIPTION = "Sinistro";
-	private static final String SHORT_DESCRIPTION = "Sinistro";
+	private static final String DESCRIPTION = "Sinistros";
+	private static final String SHORT_DESCRIPTION = "Sinistros";
 	private ArrayList<OperationViewPresenter> sectionOperationPresenters;
 	public BigBangPermissionManager permissionManager;
 	

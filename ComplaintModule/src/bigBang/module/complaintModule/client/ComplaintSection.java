@@ -23,8 +23,8 @@ public class ComplaintSection implements MenuSection {
 
 
 	private static final String ID = ModuleConstants.ProcessTypeIDs.COMPLAINT;
-	private static final String DESCRIPTION = "Reclamação";
-	private static final String SHORT_DESCRIPTION = "Reclamação";
+	private static final String DESCRIPTION = "Reclamações";
+	private static final String SHORT_DESCRIPTION = "Reclamações";
 	private ArrayList<OperationViewPresenter> sectionOperationPresenters;
 	public BigBangPermissionManager permissionManager;
 	

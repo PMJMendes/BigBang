@@ -23,8 +23,8 @@ import com.google.gwt.core.client.GWT;
 public class ClientSection implements MenuSection {
 
 	private static final String ID = "CLIENT_SECTION";
-	private static final String DESCRIPTION = "Cliente";
-	private static final String SHORT_DESCRIPTION = "Cliente";
+	private static final String DESCRIPTION = "Clientes";
+	private static final String SHORT_DESCRIPTION = "Clientes";
 	
 	private TextBadge badge;
 	private ArrayList<OperationViewPresenter> sectionOperationPresenters; 

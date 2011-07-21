@@ -22,8 +22,8 @@ import bigBang.module.receiptModule.shared.operation.ReceiptSearchOperation;
 public class ReceiptSection implements MenuSection {
 
 	private static final String ID = ModuleConstants.ProcessTypeIDs.RECEIPT;
-	private static final String DESCRIPTION = "Recibo";
-	private static final String SHORT_DESCRIPTION = "Recibo";
+	private static final String DESCRIPTION = "Recibos";
+	private static final String SHORT_DESCRIPTION = "Recibos";
 	private ArrayList<OperationViewPresenter> sectionOperationPresenters;
 	public BigBangPermissionManager permissionManager;
 	
