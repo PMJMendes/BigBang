@@ -64,7 +64,7 @@ public class TipifiedListServiceImpl
 //	        	lobjAux.id = lobjItem.getKey().toString();
 //	        	lobjAux.value = (String) lobjItem.getAt(0);
 	        	lobjAux.id = lrsItems.getString(1);
-	        	lobjAux.id = lrsItems.getString(2);
+	        	lobjAux.value = lrsItems.getString(2);
 	        	larrAux.add(lobjAux);
 	        }
         }
