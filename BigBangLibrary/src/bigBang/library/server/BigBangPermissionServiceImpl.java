@@ -1,8 +1,10 @@
 package bigBang.library.server;
 
+import java.util.ArrayList;
 import java.util.UUID;
 
 import Jewel.Engine.Engine;
+import Jewel.Engine.Implementation.User;
 import Jewel.Petri.Interfaces.IOperation;
 import Jewel.Petri.Interfaces.IProcess;
 import Jewel.Petri.Interfaces.IStep;
@@ -21,26 +23,35 @@ public class BigBangPermissionServiceImpl
 	public Permission[] getProcessPermissions(String id)
 		throws SessionExpiredException, BigBangException
 	{
+		UUID lidUser;
+		UUID lidProfile;
 		IProcess lrefProcess;
 		IOperation[] larrOps;
-		Permission[] larrResult;
+		ArrayList<Permission> larrResult;
+		Permission lobjAux;
 		IStep lobjStep;
 		int i;
 
-		if ( Engine.getCurrentUser() == null )
+		lidUser = Engine.getCurrentUser();
+		if ( lidUser == null )
 			throw new SessionExpiredException();
 
 		try
 		{
+			lidProfile = User.GetInstance(Engine.getCurrentNameSpace(), lidUser).getProfile().getKey();
 			lrefProcess = (IProcess)PNProcess.GetInstance(Engine.getCurrentNameSpace(), UUID.fromString(id));
 			larrOps = lrefProcess.GetScript().getOperations();
-			larrResult = new Permission[larrOps.length];
+			larrResult = new ArrayList<Permission>();
 			for ( i = 0; i < larrOps.length; i++ )
 			{
-				larrResult[i] = new Permission();
-				larrResult[i].id = larrOps[i].getKey().toString();
+				if ( !larrOps[i].checkPermission(lidProfile) )
+					continue;
+
+				lobjAux = new Permission();
+				lobjAux.id = larrOps[i].getKey().toString();
 				lobjStep = lrefProcess.GetOperation(larrOps[i].getKey());
-				larrResult[i].instanceId = (lobjStep == null ? null : lobjStep.getKey().toString());
+				lobjAux.instanceId = (lobjStep == null ? null : lobjStep.getKey().toString());
+				larrResult.add(lobjAux);
 			}
 		}
 		catch (Throwable e)
@@ -48,6 +59,6 @@ public class BigBangPermissionServiceImpl
 			throw new BigBangException(e.getMessage(), e);
 		}
 
-		return larrResult;
+		return larrResult.toArray(new Permission[larrResult.size()]);
 	}
 }
