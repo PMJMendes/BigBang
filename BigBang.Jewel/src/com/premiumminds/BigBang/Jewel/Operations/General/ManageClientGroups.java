@@ -1,4 +1,4 @@
-package com.premiumminds.BigBang.Jewel.Operations;
+package com.premiumminds.BigBang.Jewel.Operations.General;
 
 import java.io.Serializable;
 import java.util.UUID;

@@ -1,4 +1,4 @@
-package com.premiumminds.BigBang.Jewel.Operations;
+package com.premiumminds.BigBang.Jewel.Operations.General;
 
 import java.io.Serializable;
 import java.util.UUID;
@@ -12,48 +12,51 @@ import Jewel.Petri.SysObjects.JewelPetriException;
 import Jewel.Petri.SysObjects.Operation;
 
 import com.premiumminds.BigBang.Jewel.Constants;
+import com.premiumminds.BigBang.Jewel.Objects.Company;
 import com.premiumminds.BigBang.Jewel.Objects.Contact;
 import com.premiumminds.BigBang.Jewel.Objects.Document;
-import com.premiumminds.BigBang.Jewel.Objects.Mediator;
+import com.premiumminds.BigBang.Jewel.Operations.ContactOps;
+import com.premiumminds.BigBang.Jewel.Operations.DocOps;
 
-public class ManageMediators
+public class ManageInsuranceCompanies
 	extends Operation
 {
 	private static final long serialVersionUID = 1L;
 
-	public class MediatorData
+	public class CompanyData
 		implements Serializable
 	{
 		private static final long serialVersionUID = 1L;
 
 		public UUID mid;
 		public String mstrName;
+		public String mstrAcronym;
 		public String mstrISPNumber;
+		public String mstrMedCode;
 		public String mstrFiscalNumber;
 		public String mstrBankID;
-		public UUID midProfile;
 		public String mstrAddress1;
 		public String mstrAddress2;
 		public UUID midZipCode;
 		public ContactOps mobjContactOps;
 		public DocOps mobjDocOps;
-		public MediatorData mobjPrevValues;
+		public CompanyData mobjPrevValues;
 	}
 
-	public MediatorData[] marrCreate;
-	public MediatorData[] marrModify;
-	public MediatorData[] marrDelete;
+	public CompanyData[] marrCreate;
+	public CompanyData[] marrModify;
+	public CompanyData[] marrDelete;
 	public ContactOps mobjContactOps;
 	public DocOps mobjDocOps;
 
-	public ManageMediators(UUID pidProcess)
+	public ManageInsuranceCompanies(UUID pidProcess)
 	{
 		super(pidProcess);
 	}
 
 	public String ShortDesc()
 	{
-		return "Gestão de Mediadores"; 
+		return "Gestão de Seguradoras"; 
 	}
 
 	public String LongDesc(String pstrLineBreak)
@@ -67,7 +70,7 @@ public class ManageMediators
 		{
 			if ( marrCreate.length == 1 )
 			{
-				lstrResult.append("Foi criado 1 mediador:");
+				lstrResult.append("Foi criada 1 seguradora:");
 				lstrResult.append(pstrLineBreak);
 				Describe(lstrResult, marrCreate[0], pstrLineBreak);
 				if ( marrCreate[0].mobjContactOps != null )
@@ -79,11 +82,11 @@ public class ManageMediators
 			{
 				lstrResult.append("Foram criadas ");
 				lstrResult.append(marrCreate.length);
-				lstrResult.append(" mediadores:");
+				lstrResult.append(" seguradoras:");
 				lstrResult.append(pstrLineBreak);
 				for ( i = 0; i < marrCreate.length; i++ )
 				{
-					lstrResult.append("Mediador ");
+					lstrResult.append("Seguradora ");
 					lstrResult.append(i + 1);
 					lstrResult.append(":");
 					lstrResult.append(pstrLineBreak);
@@ -100,19 +103,19 @@ public class ManageMediators
 		{
 			if ( marrModify.length == 1 )
 			{
-				lstrResult.append("Foi modificado 1 mediador:");
+				lstrResult.append("Foi modificada 1 seguradora:");
 				lstrResult.append(pstrLineBreak);
 				Describe(lstrResult, marrModify[0], pstrLineBreak);
 			}
 			else
 			{
-				lstrResult.append("Foram modificados ");
+				lstrResult.append("Foram modificadas ");
 				lstrResult.append(marrModify.length);
-				lstrResult.append(" mediadores:");
+				lstrResult.append(" seguradoras:");
 				lstrResult.append(pstrLineBreak);
 				for ( i = 0; i < marrModify.length; i++ )
 				{
-					lstrResult.append("Mediador ");
+					lstrResult.append("Seguradora ");
 					lstrResult.append(i + 1);
 					lstrResult.append(":");
 					lstrResult.append(pstrLineBreak);
@@ -125,7 +128,7 @@ public class ManageMediators
 		{
 			if ( marrDelete.length == 1 )
 			{
-				lstrResult.append("Foi apagado 1 mediador:");
+				lstrResult.append("Foi apagada 1 seguradora:");
 				lstrResult.append(pstrLineBreak);
 				Describe(lstrResult, marrDelete[0], pstrLineBreak);
 				if ( marrDelete[0].mobjContactOps != null )
@@ -135,13 +138,13 @@ public class ManageMediators
 			}
 			else
 			{
-				lstrResult.append("Foram apagados ");
+				lstrResult.append("Foram apagadas ");
 				lstrResult.append(marrDelete.length);
-				lstrResult.append(" mediadores:");
+				lstrResult.append(" seguradoras:");
 				lstrResult.append(pstrLineBreak);
 				for ( i = 0; i < marrDelete.length; i++ )
 				{
-					lstrResult.append("Mediador ");
+					lstrResult.append("Seguradora ");
 					lstrResult.append(i + 1);
 					lstrResult.append(":");
 					lstrResult.append(pstrLineBreak);
@@ -156,14 +159,14 @@ public class ManageMediators
 
 		if ( mobjContactOps != null )
 		{
-			lstrResult.append("Operações sobre contactos de mediadores:");
+			lstrResult.append("Operações sobre contactos de seguradoras:");
 			lstrResult.append(pstrLineBreak);
 			mobjContactOps.LongDesc(lstrResult, pstrLineBreak);
 		}
 
 		if ( mobjDocOps  != null )
 		{
-			lstrResult.append("Operações sobre documentos de mediadores:");
+			lstrResult.append("Operações sobre documentos de seguradoras:");
 			lstrResult.append(pstrLineBreak);
 			mobjDocOps.LongDesc(lstrResult, pstrLineBreak);
 		}
@@ -181,9 +184,9 @@ public class ManageMediators
 		if ( (marrCreate != null) && (marrCreate.length > 0) )
 		{
 			if ( marrCreate.length == 1 )
-				lstrResult.append("O mediador criado será apagado.");
+				lstrResult.append("A seguradora criada será apagada.");
 			else
-				lstrResult.append("Os mediadores criados serão apagados.");
+				lstrResult.append("As seguradoras criadas serão apagadas.");
 			lstrResult.append(pstrLineBreak);
 		}
 
@@ -197,7 +200,7 @@ public class ManageMediators
 			{
 				for ( i = 0; i < marrModify.length; i++ )
 				{
-					lstrResult.append("Mediador ");
+					lstrResult.append("Seguradora ");
 					lstrResult.append(i + 1);
 					lstrResult.append(":");
 					lstrResult.append(pstrLineBreak);
@@ -209,9 +212,9 @@ public class ManageMediators
 		if ( (marrDelete != null) && (marrDelete.length > 0) )
 		{
 			if ( marrDelete.length == 1 )
-				lstrResult.append("O mediador apagado será reposto.");
+				lstrResult.append("A seguradora apagada será reposta.");
 			else
-				lstrResult.append("Os mediadores apagados serão repostos.");
+				lstrResult.append("As seguradoras apagadas serão repostas.");
 			lstrResult.append(pstrLineBreak);
 		}
 
@@ -226,15 +229,15 @@ public class ManageMediators
 
 	protected UUID OpID()
 	{
-		return Constants.OPID_ManageMediators;
+		return Constants.OPID_ManageCompanies;
 	}
 
 	protected void Run(SQLServer pdb)
 		throws JewelPetriException
 	{
 		int i;
-		Mediator lobjAux;
-		Entity lrefMediators;
+		Company lobjAux;
+		Entity lrefCompanies;
 		Contact[] larrContacts;
 		Document[] larrDocs;
 		int j;
@@ -245,15 +248,16 @@ public class ManageMediators
 			{
 				for ( i = 0; i < marrCreate.length; i++ )
 				{
-					lobjAux = Mediator.GetInstance(Engine.getCurrentNameSpace(), (UUID)null);
+					lobjAux = Company.GetInstance(Engine.getCurrentNameSpace(), (UUID)null);
 					lobjAux.setAt(0, marrCreate[i].mstrName);
-					lobjAux.setAt(1, marrCreate[i].mstrISPNumber);
-					lobjAux.setAt(2, marrCreate[i].mstrFiscalNumber);
-					lobjAux.setAt(3, marrCreate[i].mstrBankID);
-					lobjAux.setAt(4, marrCreate[i].midProfile);
-					lobjAux.setAt(5, marrCreate[i].mstrAddress1);
-					lobjAux.setAt(6, marrCreate[i].mstrAddress2);
-					lobjAux.setAt(7, marrCreate[i].midZipCode);
+					lobjAux.setAt(1, marrCreate[i].mstrAcronym);
+					lobjAux.setAt(2, marrCreate[i].mstrISPNumber);
+					lobjAux.setAt(3, marrCreate[i].mstrMedCode);
+					lobjAux.setAt(4, marrCreate[i].mstrFiscalNumber);
+					lobjAux.setAt(5, marrCreate[i].mstrBankID);
+					lobjAux.setAt(6, marrCreate[i].mstrAddress1);
+					lobjAux.setAt(7, marrCreate[i].mstrAddress2);
+					lobjAux.setAt(8, marrCreate[i].midZipCode);
 					lobjAux.SaveToDb(pdb);
 					if ( marrCreate[i].mobjContactOps != null )
 						marrCreate[i].mobjContactOps.RunSubOp(pdb, lobjAux.getKey());
@@ -268,47 +272,50 @@ public class ManageMediators
 			{
 				for ( i = 0; i < marrModify.length; i++ )
 				{
-					lobjAux = Mediator.GetInstance(Engine.getCurrentNameSpace(), marrModify[i].mid);
-					marrModify[i].mobjPrevValues = new MediatorData();
+					lobjAux = Company.GetInstance(Engine.getCurrentNameSpace(), marrModify[i].mid);
+					marrModify[i].mobjPrevValues = new CompanyData();
 					marrModify[i].mobjPrevValues.mid = lobjAux.getKey();
 					marrModify[i].mobjPrevValues.mstrName = (String)lobjAux.getAt(0);
-					marrModify[i].mobjPrevValues.mstrISPNumber = (String)lobjAux.getAt(1);
-					marrModify[i].mobjPrevValues.mstrFiscalNumber = (String)lobjAux.getAt(2);
-					marrModify[i].mobjPrevValues.mstrBankID = (String)lobjAux.getAt(3);
-					marrModify[i].mobjPrevValues.midProfile = (UUID)lobjAux.getAt(4);
-					marrModify[i].mobjPrevValues.mstrAddress1 = (String)lobjAux.getAt(5);
-					marrModify[i].mobjPrevValues.mstrAddress2 = (String)lobjAux.getAt(6);
-					marrModify[i].mobjPrevValues.midZipCode = (UUID)lobjAux.getAt(7);
-					marrModify[i].mobjContactOps = null;
+					marrModify[i].mobjPrevValues.mstrAcronym = (String)lobjAux.getAt(1);
+					marrModify[i].mobjPrevValues.mstrISPNumber = (String)lobjAux.getAt(2);
+					marrModify[i].mobjPrevValues.mstrMedCode = (String)lobjAux.getAt(3);
+					marrModify[i].mobjPrevValues.mstrFiscalNumber = (String)lobjAux.getAt(4);
+					marrModify[i].mobjPrevValues.mstrBankID = (String)lobjAux.getAt(5);
+					marrModify[i].mobjPrevValues.mstrAddress1 = (String)lobjAux.getAt(6);
+					marrModify[i].mobjPrevValues.mstrAddress2 = (String)lobjAux.getAt(7);
+					marrModify[i].mobjPrevValues.midZipCode = (UUID)lobjAux.getAt(8);
+					marrModify[i].mobjPrevValues.mobjContactOps = null;
 					marrModify[i].mobjPrevValues.mobjPrevValues = null;
 					lobjAux.setAt(0, marrModify[i].mstrName);
-					lobjAux.setAt(1, marrModify[i].mstrISPNumber);
-					lobjAux.setAt(2, marrModify[i].mstrFiscalNumber);
-					lobjAux.setAt(3, marrModify[i].mstrBankID);
-					lobjAux.setAt(4, marrModify[i].midProfile);
-					lobjAux.setAt(5, marrModify[i].mstrAddress1);
-					lobjAux.setAt(6, marrModify[i].mstrAddress2);
-					lobjAux.setAt(7, marrModify[i].midZipCode);
+					lobjAux.setAt(1, marrModify[i].mstrAcronym);
+					lobjAux.setAt(2, marrModify[i].mstrISPNumber);
+					lobjAux.setAt(3, marrModify[i].mstrMedCode);
+					lobjAux.setAt(4, marrModify[i].mstrFiscalNumber);
+					lobjAux.setAt(5, marrModify[i].mstrBankID);
+					lobjAux.setAt(6, marrModify[i].mstrAddress1);
+					lobjAux.setAt(7, marrModify[i].mstrAddress2);
+					lobjAux.setAt(8, marrModify[i].midZipCode);
 					lobjAux.SaveToDb(pdb);
 				}
 			}
 
 			if ( marrDelete != null )
 			{
-				lrefMediators = Entity.GetInstance(Engine.FindEntity(Engine.getCurrentNameSpace(),
-						Constants.ObjID_Mediator));
+				lrefCompanies = Entity.GetInstance(Engine.FindEntity(Engine.getCurrentNameSpace(),
+						Constants.ObjID_Company));
 
 				for ( i = 0; i < marrDelete.length; i++ )
 				{
-					lobjAux = Mediator.GetInstance(Engine.getCurrentNameSpace(), marrDelete[i].mid);
+					lobjAux = Company.GetInstance(Engine.getCurrentNameSpace(), marrDelete[i].mid);
 					marrDelete[i].mstrName = (String)lobjAux.getAt(0);
-					marrDelete[i].mstrISPNumber = (String)lobjAux.getAt(1);
-					marrDelete[i].mstrFiscalNumber = (String)lobjAux.getAt(2);
-					marrDelete[i].mstrBankID = (String)lobjAux.getAt(3);
-					marrDelete[i].midProfile = (UUID)lobjAux.getAt(4);
-					marrDelete[i].mstrAddress1 = (String)lobjAux.getAt(5);
-					marrDelete[i].mstrAddress2 = (String)lobjAux.getAt(6);
-					marrDelete[i].midZipCode = (UUID)lobjAux.getAt(7);
+					marrDelete[i].mstrAcronym = (String)lobjAux.getAt(1);
+					marrDelete[i].mstrISPNumber = (String)lobjAux.getAt(2);
+					marrDelete[i].mstrMedCode = (String)lobjAux.getAt(3);
+					marrDelete[i].mstrFiscalNumber = (String)lobjAux.getAt(4);
+					marrDelete[i].mstrBankID = (String)lobjAux.getAt(5);
+					marrDelete[i].mstrAddress1 = (String)lobjAux.getAt(6);
+					marrDelete[i].mstrAddress2 = (String)lobjAux.getAt(7);
+					marrDelete[i].midZipCode = (UUID)lobjAux.getAt(8);
 					larrContacts = lobjAux.GetCurrentContacts();
 					if ( (larrContacts == null) || (larrContacts.length == 0) )
 						marrDelete[i].mobjContactOps = null;
@@ -338,7 +345,7 @@ public class ManageMediators
 						marrDelete[i].mobjDocOps.RunSubOp(pdb, null);
 					}
 					marrDelete[i].mobjPrevValues = null;
-					lrefMediators.Delete(pdb, marrDelete[i].mid);
+					lrefCompanies.Delete(pdb, marrDelete[i].mid);
 				}
 			}
 
@@ -354,16 +361,21 @@ public class ManageMediators
 		}
 	}
 
-	private void Describe(StringBuilder pstrString, MediatorData pobjData, String pstrLineBreak)
+	private void Describe(StringBuilder pstrString, CompanyData pobjData, String pstrLineBreak)
 	{
-		ObjectBase lobjProfile;
 		ObjectBase lobjZipCode;
 
 		pstrString.append("Nome: ");
 		pstrString.append(pobjData.mstrName);
 		pstrString.append(pstrLineBreak);
+		pstrString.append("Código: ");
+		pstrString.append(pobjData.mstrAcronym);
+		pstrString.append(pstrLineBreak);
 		pstrString.append("Número no ISP: ");
 		pstrString.append(pobjData.mstrISPNumber);
+		pstrString.append(pstrLineBreak);
+		pstrString.append("Nosso código de mediador: ");
+		pstrString.append(pobjData.mstrMedCode);
 		pstrString.append(pstrLineBreak);
 		pstrString.append("NIFC: ");
 		pstrString.append(pobjData.mstrFiscalNumber);
@@ -371,19 +383,6 @@ public class ManageMediators
 		pstrString.append("NIB: ");
 		pstrString.append(pobjData.mstrBankID);
 		pstrString.append(pstrLineBreak);
-		pstrString.append("Perfil de Comissionamento: ");
-
-		try
-		{
-			lobjProfile = Engine.GetWorkInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), Constants.ObjID_CommProfile), pobjData.midProfile);
-			pstrString.append((String)lobjProfile.getAt(0));
-		}
-		catch (Throwable e)
-		{
-			pstrString.append("(Erro a obter o perfil de comissionamento.)");
-		}
-		pstrString.append(pstrLineBreak);
-
 		pstrString.append("Morada:");
 		pstrString.append(pstrLineBreak);
 		pstrString.append("- ");

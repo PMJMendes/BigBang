@@ -20,7 +20,7 @@ import bigBang.module.generalSystemModule.shared.UserProfile;
 import com.premiumminds.BigBang.Jewel.Constants;
 import com.premiumminds.BigBang.Jewel.Objects.GeneralSystem;
 import com.premiumminds.BigBang.Jewel.Objects.UserDecoration;
-import com.premiumminds.BigBang.Jewel.Operations.ManageUsers;
+import com.premiumminds.BigBang.Jewel.Operations.General.ManageUsers;
 
 public class UserServiceImpl
 	extends EngineImplementor
@@ -136,7 +136,7 @@ public class UserServiceImpl
 			lopMU.marrCreate = null;
 			lopMU.marrDelete = null;
 
-			lopMU.Execute();
+			lopMU.Execute(null);
 		}
 		catch (Throwable e)
 		{
@@ -174,7 +174,7 @@ public class UserServiceImpl
 			lopMU.marrModify = null;
 			lopMU.marrDelete = null;
 
-			lopMU.Execute();
+			lopMU.Execute(null);
 		}
 		catch (Throwable e)
 		{
@@ -210,7 +210,7 @@ public class UserServiceImpl
 				lopMU.marrCreate = null;
 				lopMU.marrModify = null;
 
-				lopMU.Execute();
+				lopMU.Execute(null);
 			}
 			catch (Throwable e)
 			{

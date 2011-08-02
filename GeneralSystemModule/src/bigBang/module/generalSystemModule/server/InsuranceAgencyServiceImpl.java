@@ -26,7 +26,7 @@ import com.premiumminds.BigBang.Jewel.ZipCodeBridge;
 import com.premiumminds.BigBang.Jewel.Objects.GeneralSystem;
 import com.premiumminds.BigBang.Jewel.Operations.ContactOps;
 import com.premiumminds.BigBang.Jewel.Operations.DocOps;
-import com.premiumminds.BigBang.Jewel.Operations.ManageInsuranceCompanies;
+import com.premiumminds.BigBang.Jewel.Operations.General.ManageInsuranceCompanies;
 
 public class InsuranceAgencyServiceImpl
 	extends EngineImplementor
@@ -189,7 +189,7 @@ public class InsuranceAgencyServiceImpl
 			lopMIC.mobjContactOps = null;
 			lopMIC.mobjDocOps = null;
 
-			lopMIC.Execute();
+			lopMIC.Execute(null);
 		}
 		catch (Throwable e)
 		{
@@ -250,7 +250,7 @@ public class InsuranceAgencyServiceImpl
 			lopMIC.mobjContactOps = null;
 			lopMIC.mobjDocOps = null;
 
-			lopMIC.Execute();
+			lopMIC.Execute(null);
 		}
 		catch (Throwable e)
 		{
@@ -288,7 +288,7 @@ public class InsuranceAgencyServiceImpl
 			lopMIC.mobjContactOps = null;
 			lopMIC.mobjDocOps = null;
 
-			lopMIC.Execute();
+			lopMIC.Execute(null);
 		}
 		catch (Throwable e)
 		{

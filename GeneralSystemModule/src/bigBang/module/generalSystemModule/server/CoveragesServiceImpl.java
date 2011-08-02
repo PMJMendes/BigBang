@@ -20,8 +20,8 @@ import bigBang.module.generalSystemModule.shared.Tax;
 
 import com.premiumminds.BigBang.Jewel.Constants;
 import com.premiumminds.BigBang.Jewel.Objects.GeneralSystem;
-import com.premiumminds.BigBang.Jewel.Operations.ManageLines;
-import com.premiumminds.BigBang.Jewel.Operations.ManageTaxes;
+import com.premiumminds.BigBang.Jewel.Operations.General.ManageLines;
+import com.premiumminds.BigBang.Jewel.Operations.General.ManageTaxes;
 
 public class CoveragesServiceImpl
 	extends EngineImplementor
@@ -146,7 +146,7 @@ public class CoveragesServiceImpl
 			lopML.marrModifyCoverages = null;
 			lopML.marrDeleteCoverages = null;
 
-			lopML.Execute();
+			lopML.Execute(null);
 		}
 		catch (Throwable e)
 		{
@@ -185,7 +185,7 @@ public class CoveragesServiceImpl
 			lopML.marrModifyCoverages = null;
 			lopML.marrDeleteCoverages = null;
 
-			lopML.Execute();
+			lopML.Execute(null);
 		}
 		catch (Throwable e)
 		{
@@ -223,7 +223,7 @@ public class CoveragesServiceImpl
 			lopML.marrModifyCoverages = null;
 			lopML.marrDeleteCoverages = null;
 
-			lopML.Execute();
+			lopML.Execute(null);
 		}
 		catch (Throwable e)
 		{
@@ -258,7 +258,7 @@ public class CoveragesServiceImpl
 			lopML.marrModifyCoverages = null;
 			lopML.marrDeleteCoverages = null;
 
-			lopML.Execute();
+			lopML.Execute(null);
 		}
 		catch (Throwable e)
 		{
@@ -297,7 +297,7 @@ public class CoveragesServiceImpl
 			lopML.marrModifyCoverages = null;
 			lopML.marrDeleteCoverages = null;
 
-			lopML.Execute();
+			lopML.Execute(null);
 		}
 		catch (Throwable e)
 		{
@@ -335,7 +335,7 @@ public class CoveragesServiceImpl
 			lopML.marrModifyCoverages = null;
 			lopML.marrDeleteCoverages = null;
 
-			lopML.Execute();
+			lopML.Execute(null);
 		}
 		catch (Throwable e)
 		{
@@ -370,7 +370,7 @@ public class CoveragesServiceImpl
 			lopML.marrModifyCoverages = null;
 			lopML.marrDeleteCoverages = null;
 
-			lopML.Execute();
+			lopML.Execute(null);
 		}
 		catch (Throwable e)
 		{
@@ -409,7 +409,7 @@ public class CoveragesServiceImpl
 			lopML.marrCreateCoverages = null;
 			lopML.marrDeleteCoverages = null;
 
-			lopML.Execute();
+			lopML.Execute(null);
 		}
 		catch (Throwable e)
 		{
@@ -447,7 +447,7 @@ public class CoveragesServiceImpl
 			lopML.marrCreateCoverages = null;
 			lopML.marrModifyCoverages = null;
 
-			lopML.Execute();
+			lopML.Execute(null);
 		}
 		catch (Throwable e)
 		{
@@ -476,7 +476,7 @@ public class CoveragesServiceImpl
 			lopMT.marrModify = null;
 			lopMT.marrDelete = null;
 
-			lopMT.Execute();
+			lopMT.Execute(null);
 		}
 		catch (Throwable e)
 		{
@@ -509,7 +509,7 @@ public class CoveragesServiceImpl
 			lopMT.marrCreate = null;
 			lopMT.marrModify = null;
 
-			lopMT.Execute();
+			lopMT.Execute(null);
 		}
 		catch (Throwable e)
 		{
@@ -541,7 +541,7 @@ public class CoveragesServiceImpl
 			lopMT.marrCreate = null;
 			lopMT.marrModify = null;
 
-			lopMT.Execute();
+			lopMT.Execute(null);
 		}
 		catch (Throwable e)
 		{

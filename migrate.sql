@@ -42,7 +42,7 @@ delete from bigbang.tblUser2;
 delete from bigbang.tblBBCostCenters;
 delete from bigbang.tblUsers;
 delete from bigbang.tblWorkspaces;
-delete from bigbang.tblProfiles;
+/*delete from bigbang.tblProfiles;*/
 
 delete from bigbang.tblBBClientSubTypes;
 delete from bigbang.tblBBClientTypes;
@@ -99,8 +99,8 @@ insert into bigbang.tblOpProfiles (PK, OpProfileName) values ('9F871430-9BBC-449
 insert into bigbang.tblSex (PK, SexName) values ('77E22CFB-CA90-4918-B9B2-9F0300C39AE2', N'Feminino');
 insert into bigbang.tblSex (PK, SexName) values ('E86BA460-B499-4254-84F5-9F0300C3A256', N'Masculino');
 
-insert into bigbang.tblProfiles (PK, PfName) values ('061388D9-16A6-443F-A69E-9EB000685026', N'Root');
-insert into bigbang.tblProfiles (PK, PfName) values ('258A1C88-C916-40CB-8CD5-9EB8007F2AEB', N'Sem Perfil');
+/*insert into bigbang.tblProfiles (PK, PfName) values ('061388D9-16A6-443F-A69E-9EB000685026', N'Root');*/
+/*insert into bigbang.tblProfiles (PK, PfName) values ('258A1C88-C916-40CB-8CD5-9EB8007F2AEB', N'Sem Perfil');*/
 insert into bigbang.tblWorkspaces (PK, FKProfile, FKNameSpace) values ('28A44306-131C-4A18-BCF2-9EB000685EEA', '061388D9-16A6-443F-A69E-9EB000685026', 'C37B81F0-860F-4868-9177-9E15008B3EFD');
 insert into bigbang.tblUsers (PK, FullName, Username, Passwd, FKProfile) values ('091B8442-B7B0-40FA-B517-9EB00068A390', N'Administrator', N'root', 'C5-06-09-A7-D7-96-23-72-F0-C6-F4-F3-10-DD-88-CA', '061388D9-16A6-443F-A69E-9EB000685026');
 insert into bigbang.tblBBCostCenters (PK, CCCode, CCName, MigrationID) values ('FC6BB26D-90E2-46C9-9C79-9ED900C124AE', N'INF', N'Informática', 13);
@@ -301,11 +301,18 @@ where gestor not in (91, 98, 99);
 
 
 insert into credite_egs.tblPNProcesses (PK, FKScript, FKData, FKManager, IsRunning) values ('49153B77-1391-4E3A-81D2-9EB800CB68B7', '37A989E2-9D1F-470C-A59E-9EB1008A97A5', '1822E9C1-700F-49A5-AB6F-9EB500C632D2', '091B8442-B7B0-40FA-B517-9EB00068A390', 1);
+
 insert into credite_egs.tblPNSteps (PK, FKProcess, FKOperation, FKLevel)
 select CAST(CAST(NEWID() AS BINARY(10)) + CAST(GETDATE() AS BINARY(6)) AS UNIQUEIDENTIFIER) PK,
 '49153B77-1391-4E3A-81D2-9EB800CB68B7' FKProcess, PK FKOperation, FKDefaultLevel FKLevel
 from bigbang.tblPNOperations
-where FKScript='37A989E2-9D1F-470C-A59E-9EB1008A97A5';
+where FKScript='37A989E2-9D1F-470C-A59E-9EB1008A97A5'  and (OpName like 'Manage%' or OpName like 'Create%');
+
+insert into credite_egs.tblPNNodes (PK, FKProcess, FKController, NodeCount)
+select CAST(CAST(NEWID() AS BINARY(10)) + CAST(GETDATE() AS BINARY(6)) AS UNIQUEIDENTIFIER) PK,
+p.PK FKProcess, c.PK FKController, c.StartCount NodeCount
+from credite_egs.tblPNProcesses p inner join bigbang.tblPNControllers c on c.FKScript=p.FKScript
+where p.FKScript='37A989E2-9D1F-470C-A59E-9EB1008A97A5';
 
 insert into credite_egs.tblProcGeneralSystem (PK, FKProcess) values ('1822E9C1-700F-49A5-AB6F-9EB500C632D2', '49153B77-1391-4E3A-81D2-9EB800CB68B7');
 
@@ -605,16 +612,24 @@ where p.FKScript='100E701A-EDC5-4D9C-A221-9F09013D7954' and o.PK in ('A9A8F4ED-7
 insert into credite_egs.tblPNNodes (PK, FKProcess, FKController, NodeCount)
 select CAST(CAST(NEWID() AS BINARY(10)) + CAST(GETDATE() AS BINARY(6)) AS UNIQUEIDENTIFIER) PK,
 p.PK FKProcess, c.PK FKController, c.StartCount NodeCount
-from credite_egs.tblPNProcesses p inner join bigbang.tblPNControllers c on c.FKScript=p.FKScript;
+from credite_egs.tblPNProcesses p inner join bigbang.tblPNControllers c on c.FKScript=p.FKScript
+where p.FKScript='100E701A-EDC5-4D9C-A221-9F09013D7954';
 
 
 
 insert into amartins.tblPNProcesses (PK, FKScript, FKData, FKManager, IsRunning) values ('FDF0DBAA-22BD-4679-AF72-9EB800CB024D', '37A989E2-9D1F-470C-A59E-9EB1008A97A5', '8E5E3504-875A-4313-91A9-9EB500C6295C', '091B8442-B7B0-40FA-B517-9EB00068A390', 1);
+
 insert into amartins.tblPNSteps (PK, FKProcess, FKOperation, FKLevel)
 select CAST(CAST(NEWID() AS BINARY(10)) + CAST(GETDATE() AS BINARY(6)) AS UNIQUEIDENTIFIER) PK,
 'FDF0DBAA-22BD-4679-AF72-9EB800CB024D' FKProcess, PK FKOperation, FKDefaultLevel FKLevel
 from bigbang.tblPNOperations
-where FKScript='37A989E2-9D1F-470C-A59E-9EB1008A97A5';
+where FKScript='37A989E2-9D1F-470C-A59E-9EB1008A97A5'  and (OpName like 'Manage%' or OpName like 'Create%');
+
+insert into amartins.tblPNNodes (PK, FKProcess, FKController, NodeCount)
+select CAST(CAST(NEWID() AS BINARY(10)) + CAST(GETDATE() AS BINARY(6)) AS UNIQUEIDENTIFIER) PK,
+p.PK FKProcess, c.PK FKController, c.StartCount NodeCount
+from amartins.tblPNProcesses p inner join bigbang.tblPNControllers c on c.FKScript=p.FKScript
+where p.FKScript='37A989E2-9D1F-470C-A59E-9EB1008A97A5';
 
 insert into amartins.tblProcGeneralSystem (PK, FKProcess) values ('8E5E3504-875A-4313-91A9-9EB500C6295C', 'FDF0DBAA-22BD-4679-AF72-9EB800CB024D');
 
@@ -900,4 +915,5 @@ where p.FKScript='100E701A-EDC5-4D9C-A221-9F09013D7954' and o.PK in ('A9A8F4ED-7
 insert into amartins.tblPNNodes (PK, FKProcess, FKController, NodeCount)
 select CAST(CAST(NEWID() AS BINARY(10)) + CAST(GETDATE() AS BINARY(6)) AS UNIQUEIDENTIFIER) PK,
 p.PK FKProcess, c.PK FKController, c.StartCount NodeCount
-from amartins.tblPNProcesses p inner join bigbang.tblPNControllers c on c.FKScript=p.FKScript;
+from amartins.tblPNProcesses p inner join bigbang.tblPNControllers c on c.FKScript=p.FKScript
+where p.FKScript='100E701A-EDC5-4D9C-A221-9F09013D7954';

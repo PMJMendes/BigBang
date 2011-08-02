@@ -24,8 +24,8 @@ import bigBang.library.shared.SessionExpiredException;
 import com.premiumminds.BigBang.Jewel.BigBangJewelException;
 import com.premiumminds.BigBang.Jewel.Constants;
 import com.premiumminds.BigBang.Jewel.Operations.DocOps;
-import com.premiumminds.BigBang.Jewel.Operations.ManageInsuranceCompanies;
-import com.premiumminds.BigBang.Jewel.Operations.ManageMediators;
+import com.premiumminds.BigBang.Jewel.Operations.General.ManageInsuranceCompanies;
+import com.premiumminds.BigBang.Jewel.Operations.General.ManageMediators;
 
 public class DocumentServiceImpl
 	extends EngineImplementor
@@ -132,7 +132,7 @@ public class DocumentServiceImpl
 			lopDOps.marrDelete = null;
 
 			lobjOp = BuildOuterOp(UUID.fromString(opInstanceId), lopDOps);
-			lobjOp.Execute();
+			lobjOp.Execute(null);
 		}
 		catch (Throwable e)
 		{
@@ -161,7 +161,7 @@ public class DocumentServiceImpl
 			lopDOps.marrDelete = null;
 
 			lobjOp = BuildOuterOp(UUID.fromString(opInstanceId), lopDOps);
-			lobjOp.Execute();
+			lobjOp.Execute(null);
 		}
 		catch (Throwable e)
 		{
@@ -190,7 +190,7 @@ public class DocumentServiceImpl
 			lopDOps.marrModify = null;
 
 			lobjOp = BuildOuterOp(UUID.fromString(opInstanceId), lopDOps);
-			lobjOp.Execute();
+			lobjOp.Execute(null);
 		}
 		catch (Throwable e)
 		{
@@ -318,7 +318,7 @@ public class DocumentServiceImpl
 
 		lobjStep = (IStep)PNStep.GetInstance(Engine.getCurrentNameSpace(), pidOpInstance);
 		lobjOp = lobjStep.GetOperation();
-		lobjAux = lobjOp.GetNewInstance();
+		lobjAux = lobjOp.GetNewInstance(lobjStep.GetProcessID());
 
 		lidResult = null;
 
@@ -344,7 +344,7 @@ public class DocumentServiceImpl
 
 		lobjStep = (IStep)PNStep.GetInstance(Engine.getCurrentNameSpace(), pidOpInstance);
 		lobjOp = lobjStep.GetOperation();
-		lobjResult = lobjOp.GetNewInstance();
+		lobjResult = lobjOp.GetNewInstance(lobjStep.GetProcessID());
 
 		lbFound = false;
 

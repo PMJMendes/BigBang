@@ -12,10 +12,10 @@ import Jewel.Engine.Implementation.Entity;
 import Jewel.Engine.Implementation.User;
 import Jewel.Engine.Interfaces.IEntity;
 import Jewel.Engine.Interfaces.IUser;
-import Jewel.Engine.SysObjects.FileXfer;
 import Jewel.Petri.Constants;
 import Jewel.Petri.Objects.PNLog;
 import Jewel.Petri.SysObjects.Operation;
+import Jewel.Petri.SysObjects.UndoOperation;
 import bigBang.library.interfaces.UndoService;
 import bigBang.library.shared.BigBangException;
 import bigBang.library.shared.ProcessUndoItem;
@@ -38,7 +38,6 @@ public class UndoServiceImpl
         ResultSet lrsLogs;
         ProcessUndoItem lobjAux;
         PNLog lobjLog;
-        FileXfer lrefFile;
         Operation lobjOp;
 
 		if ( Engine.getCurrentUser() == null )
@@ -77,8 +76,7 @@ public class UndoServiceImpl
 			{
 				lobjAux = new ProcessUndoItem();
 				lobjLog = PNLog.GetInstance(Engine.getCurrentNameSpace(), lrsLogs);
-				lrefFile = (lobjLog.getAt(6) instanceof FileXfer ? (FileXfer)lobjLog.getAt(6) : new FileXfer((byte[])lobjLog.getAt(6)));
-				lobjOp = Operation.getOperation(lrefFile);
+				lobjOp = lobjLog.GetOperationData();
 
 				lobjAux.id = lobjLog.getKey().toString();
 				lobjAux.username = ((IUser)User.GetInstance(Engine.getCurrentNameSpace(), (UUID)lobjLog.getAt(3))).getUserName();
@@ -86,6 +84,7 @@ public class UndoServiceImpl
 				lobjAux.shortDescription = lobjOp.ShortDesc();
 				lobjAux.description = lobjOp.LongDesc("<br />");
 				lobjAux.undoDescription = lobjOp.UndoDesc("<br />");
+				lobjAux.canUndo = (lobjLog.GetOperation().GetUndoOp() != null);
 
 				larrAux.add(lobjAux);
 			}
@@ -122,8 +121,24 @@ public class UndoServiceImpl
 	public ProcessUndoItem undo(String undoItemId)
 		throws SessionExpiredException, BigBangException
 	{
+        PNLog lobjLog;
+        UndoOperation lobjRunnable;
+
 		if ( Engine.getCurrentUser() == null )
 			throw new SessionExpiredException();
+
+		try
+		{
+			lobjLog = PNLog.GetInstance(Engine.getCurrentNameSpace(), UUID.fromString(undoItemId));
+			lobjRunnable = (UndoOperation)lobjLog.GetOperation().GetUndoOp().GetNewInstance(lobjLog.GetProcessID());
+			lobjRunnable.mobjSourceOp = lobjLog.GetOperationData();
+			lobjRunnable.mrefLog = lobjLog;
+			lobjRunnable.Execute(lobjLog.getKey());
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangException(e.getMessage(), e);
+		}
 
 		return null;
 	}

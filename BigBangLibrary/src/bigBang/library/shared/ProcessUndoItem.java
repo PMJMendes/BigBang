@@ -13,6 +13,6 @@ public class ProcessUndoItem
 	public String shortDescription;
 	public String description;
 	public String undoDescription;
-	
+
 	public boolean canUndo;
 }

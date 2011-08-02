@@ -19,7 +19,7 @@ import bigBang.module.generalSystemModule.shared.UserProfile;
 import com.premiumminds.BigBang.Jewel.Constants;
 import com.premiumminds.BigBang.Jewel.Objects.GeneralSystem;
 import com.premiumminds.BigBang.Jewel.Objects.UserDecoration;
-import com.premiumminds.BigBang.Jewel.Operations.ManageCostCenters;
+import com.premiumminds.BigBang.Jewel.Operations.General.ManageCostCenters;
 
 public class CostCenterServiceImpl
 	extends EngineImplementor
@@ -192,7 +192,7 @@ public class CostCenterServiceImpl
 			lopMCC.marrModify = null;
 			lopMCC.marrDelete = null;
 
-			lopMCC.Execute();
+			lopMCC.Execute(null);
 		}
 		catch (Throwable e)
 		{
@@ -234,7 +234,7 @@ public class CostCenterServiceImpl
 			lopMCC.marrCreate = null;
 			lopMCC.marrDelete = null;
 
-			lopMCC.Execute();
+			lopMCC.Execute(null);
 		}
 		catch (Throwable e)
 		{
@@ -339,7 +339,7 @@ public class CostCenterServiceImpl
 			lopMCC.marrCreate = null;
 			lopMCC.marrModify = null;
 
-			lopMCC.Execute();
+			lopMCC.Execute(null);
 		}
 		catch (Throwable e)
 		{

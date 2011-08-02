@@ -9,8 +9,8 @@ import com.premiumminds.BigBang.Jewel.BigBangJewelException;
 import com.premiumminds.BigBang.Jewel.Constants;
 import com.premiumminds.BigBang.Jewel.ZipCodeBridge;
 import com.premiumminds.BigBang.Jewel.Operations.ContactOps;
-import com.premiumminds.BigBang.Jewel.Operations.ManageInsuranceCompanies;
-import com.premiumminds.BigBang.Jewel.Operations.ManageMediators;
+import com.premiumminds.BigBang.Jewel.Operations.General.ManageInsuranceCompanies;
+import com.premiumminds.BigBang.Jewel.Operations.General.ManageMediators;
 
 import Jewel.Engine.Engine;
 import Jewel.Engine.Constants.ObjectGUIDs;
@@ -137,7 +137,7 @@ public class ContactsServiceImpl
 			lopCOps.marrDelete = null;
 
 			lobjOp = BuildOuterOp(UUID.fromString(opInstanceId), lopCOps);
-			lobjOp.Execute();
+			lobjOp.Execute(null);
 		}
 		catch (Throwable e)
 		{
@@ -167,7 +167,7 @@ public class ContactsServiceImpl
 			lopCOps.marrDelete = null;
 
 			lobjOp = BuildOuterOp(UUID.fromString(opInstanceId), lopCOps);
-			lobjOp.Execute();
+			lobjOp.Execute(null);
 		}
 		catch (Throwable e)
 		{
@@ -196,7 +196,7 @@ public class ContactsServiceImpl
 			lopCOps.marrModify = null;
 
 			lobjOp = BuildOuterOp(UUID.fromString(opInstanceId), lopCOps);
-			lobjOp.Execute();
+			lobjOp.Execute(null);
 		}
 		catch (Throwable e)
 		{
@@ -353,7 +353,7 @@ public class ContactsServiceImpl
 
 		lobjStep = (IStep)PNStep.GetInstance(Engine.getCurrentNameSpace(), pidOpInstance);
 		lobjOp = lobjStep.GetOperation();
-		lobjAux = lobjOp.GetNewInstance();
+		lobjAux = lobjOp.GetNewInstance(lobjStep.GetProcessID());
 
 		lidResult = null;
 
@@ -379,7 +379,7 @@ public class ContactsServiceImpl
 
 		lobjStep = (IStep)PNStep.GetInstance(Engine.getCurrentNameSpace(), pidOpInstance);
 		lobjOp = lobjStep.GetOperation();
-		lobjResult = lobjOp.GetNewInstance();
+		lobjResult = lobjOp.GetNewInstance(lobjStep.GetProcessID());
 
 		lbFound = false;
 

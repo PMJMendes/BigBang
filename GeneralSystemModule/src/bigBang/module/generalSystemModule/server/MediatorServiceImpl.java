@@ -27,7 +27,7 @@ import com.premiumminds.BigBang.Jewel.ZipCodeBridge;
 import com.premiumminds.BigBang.Jewel.Objects.GeneralSystem;
 import com.premiumminds.BigBang.Jewel.Operations.ContactOps;
 import com.premiumminds.BigBang.Jewel.Operations.DocOps;
-import com.premiumminds.BigBang.Jewel.Operations.ManageMediators;
+import com.premiumminds.BigBang.Jewel.Operations.General.ManageMediators;
 
 public class MediatorServiceImpl
 	extends EngineImplementor
@@ -191,7 +191,7 @@ public class MediatorServiceImpl
 			lopMM.mobjContactOps = null;
 			lopMM.mobjDocOps = null;
 
-			lopMM.Execute();
+			lopMM.Execute(null);
 		}
 		catch (Throwable e)
 		{
@@ -251,7 +251,7 @@ public class MediatorServiceImpl
 			lopMM.mobjContactOps = null;
 			lopMM.mobjDocOps = null;
 
-			lopMM.Execute();
+			lopMM.Execute(null);
 		}
 		catch (Throwable e)
 		{
@@ -288,7 +288,7 @@ public class MediatorServiceImpl
 			lopMM.mobjContactOps = null;
 			lopMM.mobjDocOps = null;
 
-			lopMM.Execute();
+			lopMM.Execute(null);
 		}
 		catch (Throwable e)
 		{

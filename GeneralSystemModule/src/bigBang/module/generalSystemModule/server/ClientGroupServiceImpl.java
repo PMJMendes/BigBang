@@ -15,7 +15,7 @@ import bigBang.module.generalSystemModule.shared.ClientGroup;
 
 import com.premiumminds.BigBang.Jewel.Constants;
 import com.premiumminds.BigBang.Jewel.Objects.GeneralSystem;
-import com.premiumminds.BigBang.Jewel.Operations.ManageClientGroups;
+import com.premiumminds.BigBang.Jewel.Operations.General.ManageClientGroups;
 
 public class ClientGroupServiceImpl
 	extends EngineImplementor
@@ -128,7 +128,7 @@ public class ClientGroupServiceImpl
 			lopMCG.marrModifyGroups = null;
 			lopMCG.marrDeleteGroups = null;
 
-			lopMCG.Execute();
+			lopMCG.Execute(null);
 		}
 		catch (Throwable e)
 		{
@@ -161,7 +161,7 @@ public class ClientGroupServiceImpl
 			lopMCG.marrCreateGroups = null;
 			lopMCG.marrDeleteGroups = null;
 
-			lopMCG.Execute();
+			lopMCG.Execute(null);
 		}
 		catch (Throwable e)
 		{
@@ -193,7 +193,7 @@ public class ClientGroupServiceImpl
 			lopMCG.marrCreateGroups = null;
 			lopMCG.marrModifyGroups = null;
 
-			lopMCG.Execute();
+			lopMCG.Execute(null);
 		}
 		catch (Throwable e)
 		{
