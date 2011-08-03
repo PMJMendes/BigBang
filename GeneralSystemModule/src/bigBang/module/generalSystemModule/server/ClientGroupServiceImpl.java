@@ -66,7 +66,7 @@ public class ClientGroupServiceImpl
 	        	lobjTmp = new ClientGroup();
 	        	lobjTmp.id = lobjGroup.getKey().toString();
 	        	lobjTmp.name = (String)lobjGroup.getAt(0);
-	        	lobjTmp.parentGroupId = ((UUID)lobjGroup.getAt(1)).toString();
+	        	lobjTmp.parentGroupId = (lobjGroup.getAt(1) == null ? null : ((UUID)lobjGroup.getAt(1)).toString());
 //	        	lobjTmp.subGroups = getSubGroupsForGroup(lobjGroup);
 	        	lobjTmp.subGroups = null;
 	        	larrAux.add(lobjTmp);
