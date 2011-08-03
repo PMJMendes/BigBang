@@ -3,14 +3,19 @@ package bigBang.module.generalSystemModule.client.userInterface;
 import java.util.ArrayList;
 import java.util.Collection;
 
+import com.google.gwt.dom.client.Style.FontWeight;
 import com.google.gwt.event.dom.client.HasClickHandlers;
 import com.google.gwt.event.logical.shared.AttachEvent;
 import com.google.gwt.event.shared.HandlerRegistration;
+import com.google.gwt.user.client.ui.HasHorizontalAlignment;
+import com.google.gwt.user.client.ui.HorizontalPanel;
+import com.google.gwt.user.client.ui.Label;
 
 import bigBang.definitions.client.BigBangConstants;
 import bigBang.definitions.client.broker.ClientGroupBroker;
 import bigBang.definitions.client.brokerClient.ClientGroupDataBrokerClient;
 import bigBang.definitions.client.types.ClientGroup;
+import bigBang.definitions.client.types.CostCenter;
 import bigBang.library.client.HasNavigationHandlers;
 import bigBang.library.client.ValueSelectable;
 import bigBang.library.client.dataAccess.DataBrokerManager;
@@ -27,9 +32,27 @@ public class ClientGroupList extends FilterableList<ClientGroup> implements
 
 	public static class ClientGroupListEntry extends ListEntry<ClientGroup> {
 
-		public ClientGroupListEntry(ClientGroup value) {
-			super(value);
-			// TODO Auto-generated constructor stub
+		public ClientGroupListEntry(ClientGroup group) {
+			super(group);
+			setHeight("40px");
+			HorizontalPanel labelWrapper = new HorizontalPanel();
+			labelWrapper.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_RIGHT);
+			labelWrapper.setSize("150px", "100%");
+			setRightWidget(labelWrapper);
+			
+			setInfo(group);
+		}
+		
+		@Override
+		public <I extends Object> void setInfo(I infoGeneric){
+			ClientGroup info	= (ClientGroup) infoGeneric;
+			
+			if(info.id == null) {
+				setTitle("Novo Centro de Custo");
+				return;
+			}
+
+			setTitle(info.name);
 		}
 		
 	}

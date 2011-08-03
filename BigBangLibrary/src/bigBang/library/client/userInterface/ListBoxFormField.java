@@ -113,7 +113,8 @@ public class ListBoxFormField extends FormField<String> {
 	
 	@Override
 	public String getValue(){
-		return this.listBox.getValue(this.listBox.getSelectedIndex());
+		String value = this.listBox.getValue(this.listBox.getSelectedIndex());
+		return value.isEmpty() ? null : value;
 	}
 	
 	
