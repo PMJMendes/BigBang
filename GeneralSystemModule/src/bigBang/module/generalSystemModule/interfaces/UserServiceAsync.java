@@ -2,9 +2,9 @@ package bigBang.module.generalSystemModule.interfaces;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
+import bigBang.definitions.client.types.User;
+import bigBang.definitions.client.types.UserProfile;
 import bigBang.library.interfaces.Service;
-import bigBang.module.generalSystemModule.shared.User;
-import bigBang.module.generalSystemModule.shared.UserProfile;
 
 public interface UserServiceAsync
 	extends Service

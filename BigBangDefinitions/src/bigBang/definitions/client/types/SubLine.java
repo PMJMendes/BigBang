@@ -1,4 +1,4 @@
-package bigBang.module.generalSystemModule.shared;
+package bigBang.definitions.client.types;
 
 import java.io.Serializable;
 
@@ -15,5 +15,12 @@ public class SubLine
 	public SubLine()
 	{
 		coverages = new Coverage[0];
+	}
+	
+	public SubLine(SubLine original) {
+		this.id = original.id;
+		this.name = original.name;
+		this.lineId = original.lineId;
+		this.coverages = original.coverages;
 	}
 }

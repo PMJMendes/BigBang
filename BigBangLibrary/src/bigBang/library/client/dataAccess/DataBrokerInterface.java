@@ -1,0 +1,45 @@
+package bigBang.library.client.dataAccess;
+
+public interface DataBrokerInterface <T> {
+
+	/**
+	 * Sets the current data version to the next possible and valid value.
+	 */
+	abstract void incrementDataVersion();
+	
+	/**
+	 * Checks if all registered clients have the correct version number.
+	 * @return true if all clients have the correct data version and false otherwise.
+	 */
+	abstract boolean checkClientDataVersions();
+	
+	/**
+	 * Gets the current data version being held by the broker
+	 * @return The data version number
+	 */
+	abstract int getCurrentDataVersion();
+	
+	/**
+	 * Registers a client for this data broker.
+	 * @param client The client to be registered
+	 */
+	public void registerClient(DataBrokerClient<T> client);
+	
+	/**
+	 * Voids the client registration
+	 * @param client The client to be unregistered
+	 */
+	public void unregisterClient(DataBrokerClient<T> client);
+	
+	/**
+	 * Gets the if of the data element being managed by the broker
+	 * @return The data element id
+	 */
+	public String getDataElementId();
+	
+	/**
+	 * Requires que data broker to refresh its currently held data
+	 */
+	public void requireDataRefresh();
+	
+}

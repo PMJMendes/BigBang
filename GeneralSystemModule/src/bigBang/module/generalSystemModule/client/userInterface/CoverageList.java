@@ -2,6 +2,8 @@ package bigBang.module.generalSystemModule.client.userInterface;
 
 import org.gwt.mosaic.ui.client.ToolButton;
 
+import bigBang.definitions.client.types.Coverage;
+import bigBang.definitions.client.types.SubLine;
 import bigBang.library.client.BigBangAsyncCallback;
 import bigBang.library.client.Selectable;
 import bigBang.library.client.ValueSelectable;
@@ -12,8 +14,6 @@ import bigBang.library.client.userInterface.ListHeader;
 import bigBang.library.client.userInterface.view.PopupPanel;
 import bigBang.module.generalSystemModule.client.userInterface.view.CoverageForm;
 import bigBang.module.generalSystemModule.interfaces.CoveragesService;
-import bigBang.module.generalSystemModule.shared.Coverage;
-import bigBang.module.generalSystemModule.shared.SubLine;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;

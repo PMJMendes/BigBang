@@ -2,66 +2,68 @@ package bigBang.module.generalSystemModule.client.userInterface.presenter;
 
 import java.util.Collection;
 
-import bigBang.library.client.BigBangAsyncCallback;
+import bigBang.definitions.client.BigBangConstants;
+import bigBang.definitions.client.broker.UserBroker;
+import bigBang.definitions.client.types.User;
 import bigBang.library.client.EventBus;
 import bigBang.library.client.HasEditableValue;
 import bigBang.library.client.HasValueSelectables;
 import bigBang.library.client.Operation;
 import bigBang.library.client.Selectable;
 import bigBang.library.client.ValueSelectable;
+import bigBang.library.client.dataAccess.DataBrokerManager;
+import bigBang.library.client.event.ActionInvokedEvent;
+import bigBang.library.client.event.ActionInvokedEventHandler;
 import bigBang.library.client.event.SelectionChangedEvent;
 import bigBang.library.client.event.SelectionChangedEventHandler;
+import bigBang.library.client.response.ResponseError;
+import bigBang.library.client.response.ResponseHandler;
 import bigBang.library.client.userInterface.presenter.OperationViewPresenter;
 import bigBang.library.client.userInterface.view.View;
 import bigBang.library.interfaces.Service;
-import bigBang.module.generalSystemModule.interfaces.UserServiceAsync;
-import bigBang.module.generalSystemModule.shared.User;
 import bigBang.module.generalSystemModule.shared.operation.UserManagementOperation;
 
-import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.event.dom.client.HasClickHandlers;
 import com.google.gwt.user.client.ui.HasWidgets;
 import com.google.gwt.user.client.ui.Widget;
 
 public class UserManagementOperationViewPresenter implements
 OperationViewPresenter {
 
+	public static enum Action{
+		NEW,
+		REFRESH,
+		EDIT,
+		SAVE,
+		CANCEL_EDIT,
+		DELETE
+	}
+
 	public interface Display {
 		//List
 		HasValueSelectables<User> getList();
-		void clearList();
-		void addValuesToList(User[] result);
-		void removeUserFromList(User c);
 
 		//Form
 		HasEditableValue<User> getForm();
-		HasClickHandlers getSaveButton();
-		HasClickHandlers getEditButton();
-		HasClickHandlers getDeleteButton();
 		boolean isFormValid();
 		void lockForm(boolean lock);
 
 		//General
-		HasClickHandlers getNewButton();
-		HasClickHandlers getRefreshButton();
 		void clear();
-
+		void registerActionInvokedHandler(ActionInvokedEventHandler<Action> handler);
 		void prepareNewUser();
 		void removeNewUserPreparation();
+		void setSaveModeEnabled(boolean enabled);
 
 		void setReadOnly(boolean readOnly);
 		Widget asWidget();
 	}
 
-	private UserServiceAsync service;
 	private Display view;
 	@SuppressWarnings("unused")
 	private EventBus eventBus;
-	
-	private User[] users;
 
 	private UserManagementOperation operation;
+	protected UserBroker userBroker;
 
 	private boolean bound = false;
 
@@ -69,11 +71,11 @@ OperationViewPresenter {
 		setEventBus(eventBus);
 		setService(service);
 		setView(view);
+
+		this.userBroker = (UserBroker) DataBrokerManager.Util.getInstance().getBroker(BigBangConstants.EntityIds.USER);
 	}
 
-	public void setService(Service service) {
-		this.service = (UserServiceAsync)service;
-	}
+	public void setService(Service service) {}
 
 	public void setEventBus(EventBus eventBus) {
 		this.eventBus = eventBus;
@@ -90,27 +92,10 @@ OperationViewPresenter {
 		view.clear();
 		view.getList().setMultipleSelectability(false);
 		view.getForm().setReadOnly(true);
-		setup();
-
+		fetchUserList();
+			
 		container.clear();
 		container.add(this.view.asWidget());
-	}
-
-	private void setup(){
-		users = null;
-		
-		this.service.getUsers(new BigBangAsyncCallback<User[]>() {
-			public void onSuccess(User[] result) {
-				users = result;
-					doSetup();
-			}
-		});
-	}
-
-	private void doSetup(){
-		view.clearList();
-		view.getForm().setValue(null);
-		view.addValuesToList(users);
 	}
 
 	public void bind() {
@@ -120,117 +105,135 @@ OperationViewPresenter {
 
 			@Override
 			public void onSelectionChanged(SelectionChangedEvent event) {
-				Collection<? extends Selectable> selected = event.getSelected();
-				if(selected.size() == 0){
+				@SuppressWarnings("unchecked")
+				ValueSelectable<User> selected = (ValueSelectable<User>) event.getFirstSelected();
+				User selectedValue = selected == null ? null : selected.getValue();
+				if(selectedValue == null){
 					view.getForm().setValue(null);
-					return;
-				}			
-
-				for(Selectable s : selected) {
-					@SuppressWarnings("unchecked")
-					ValueSelectable<User> vs = (ValueSelectable<User>) s;
-					User value = vs.getValue();
-					view.getForm().setValue(value);
-					view.getForm().setReadOnly(true);
-					if(value.id != null){
+					view.lockForm(true);
+				}else{
+					if(selectedValue.id != null){
 						view.removeNewUserPreparation();
+						userBroker.getUser(selectedValue.id, new ResponseHandler<User>() {
+
+							@Override
+							public void onResponse(User value) {
+								view.getForm().setValue(value);
+								view.lockForm(value == null);
+							}
+
+							@Override
+							public void onError(Collection<ResponseError> errors) {}
+						});
 					}
+					
 				}
 			}
 		});
-		view.getNewButton().addClickHandler(new ClickHandler() {
+		view.registerActionInvokedHandler(new ActionInvokedEventHandler<UserManagementOperationViewPresenter.Action>() {
 
 			@Override
-			public void onClick(ClickEvent event) {
-				view.prepareNewUser();
-				for(Selectable s : view.getList().getSelected()) {
-					@SuppressWarnings("unchecked")
-					ValueSelectable<User> vs = (ValueSelectable<User>) s;
-					User value = vs.getValue();
-					view.getForm().setValue(value);
+			public void onActionInvoked(ActionInvokedEvent<Action> action) {
+				switch(action.getAction()){
+				case NEW:
+					view.prepareNewUser();
+					for(Selectable s : view.getList().getSelected()) {
+						@SuppressWarnings("unchecked")
+						ValueSelectable<User> vs = (ValueSelectable<User>) s;
+						User value = vs.getValue();
+						view.getForm().setValue(value);
+						view.getForm().setReadOnly(false);
+						break;
+					}
+					break;
+				case REFRESH:
+					fetchUserList();
+					break;
+				case DELETE:
+					if(view.getForm().getValue().id == null)
+						view.removeNewUserPreparation();
+					else
+						deleteUser(view.getForm().getValue());
+					break;
+				case EDIT:
 					view.getForm().setReadOnly(false);
+					view.setSaveModeEnabled(true);
+					break;
+				case SAVE:
+					if(!view.isFormValid())
+						return;
+					User info = view.getForm().getInfo();
+					if(info.id == null)
+						createUser(info);
+					else
+						saveUser(info);
+					break;
+				case CANCEL_EDIT:
+					if(view.getForm().getInfo().id == null){
+						view.removeNewUserPreparation();
+					}else{
+						view.getForm().revert();
+						view.getForm().setReadOnly(true);
+					}
+					break;
+				default:
 					break;
 				}
 			}
 		});
-		view.getEditButton().addClickHandler(new ClickHandler() {
-
-			@Override
-			public void onClick(ClickEvent event) {
-				//TODO checkPermission
-				view.getForm().setReadOnly(false);
-			}
-		});
-		view.getSaveButton().addClickHandler(new ClickHandler() {
-
-			@Override
-			public void onClick(ClickEvent event) {
-				if(!view.isFormValid())
-					return;
-				User value = view.getForm().getValue();
-				if(value.id == null)
-					createUser(value);
-				else
-					saveUser(value);
-			}
-		});
-		view.getDeleteButton().addClickHandler(new ClickHandler() {
-
-			@Override
-			public void onClick(ClickEvent event) {
-				if(view.getForm().getValue().id == null)
-					view.removeNewUserPreparation();
-				else
-					deleteUser(view.getForm().getValue());
-			}
-		});
-		view.getRefreshButton().addClickHandler(new ClickHandler() {
-
-			@Override
-			public void onClick(ClickEvent event) {
-				setup();
-			}
-		});
 	}
+	
+	private void fetchUserList() {
+		//Refreshes The users data (Info automatically propagated to the broker clients)
+		this.userBroker.requireDataRefresh();
+		this.userBroker.getUsers(new ResponseHandler<User[]>() {
+
+			@Override
+			public void onResponse(User[] response) {}
+
+			@Override
+			public void onError(Collection<ResponseError> errors) {}
+		});
+	} 
+
 	public void createUser(User c) {
-		service.addUser(c, new BigBangAsyncCallback<User>() {
+		this.userBroker.addUser(c, new ResponseHandler<User>() {
 
 			@Override
-			public void onSuccess(User result) {
-				for(ValueSelectable<User> s : view.getList().getSelected()){
-					s.setValue(result);
-					view.getForm().setValue(result);
-					view.getForm().setReadOnly(true);
-					break;
-				}
+			public void onResponse(User response) {
+				view.getForm().setValue(response);
+				view.getForm().setReadOnly(true);
 			}
+
+			@Override
+			public void onError(Collection<ResponseError> errors) {}
 		});
 	}
+
 	public void saveUser(User c) {
-		service.saveUser(c, new BigBangAsyncCallback<User>() {
+		this.userBroker.updateUser(c, new ResponseHandler<User>() {
 
 			@Override
-			public void onSuccess(User result) {
-				for(ValueSelectable<User> s : view.getList().getSelected()){
-					s.setValue(result);
-					view.getForm().setValue(result);
-					view.getForm().setReadOnly(true);
-					break;
-				}
+			public void onResponse(User response) {
+				view.getForm().setValue(response);
+				view.getForm().setReadOnly(true);
 			}
+
+			@Override
+			public void onError(Collection<ResponseError> errors) {}
 		});
 	}
 
 	public void deleteUser(final User c) {
-		//TODO alert
-		service.deleteUser(c.id, new BigBangAsyncCallback<Void>() {
+		this.userBroker.removeUser(c.id, new ResponseHandler<User>() {
 
 			@Override
-			public void onSuccess(Void result) {
-				view.removeUserFromList(c);
-				view.getList().clearSelection();
+			public void onResponse(User response) {
 				view.getForm().setValue(null);
 			}
+
+			@Override
+			public void onError(Collection<ResponseError> errors) {}
 		});
 	}	
 

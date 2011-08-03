@@ -8,13 +8,13 @@ import Jewel.Engine.Engine;
 import Jewel.Engine.DataAccess.MasterDB;
 import Jewel.Engine.Implementation.Entity;
 import Jewel.Engine.Interfaces.IEntity;
+import bigBang.definitions.client.types.CostCenter;
+import bigBang.definitions.client.types.User;
+import bigBang.definitions.client.types.UserProfile;
 import bigBang.library.server.EngineImplementor;
 import bigBang.library.shared.BigBangException;
 import bigBang.library.shared.SessionExpiredException;
 import bigBang.module.generalSystemModule.interfaces.CostCenterService;
-import bigBang.module.generalSystemModule.shared.CostCenter;
-import bigBang.module.generalSystemModule.shared.User;
-import bigBang.module.generalSystemModule.shared.UserProfile;
 
 import com.premiumminds.BigBang.Jewel.Constants;
 import com.premiumminds.BigBang.Jewel.Objects.GeneralSystem;

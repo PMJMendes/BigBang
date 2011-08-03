@@ -1,5 +1,9 @@
 package bigBang.module.generalSystemModule.client.userInterface.view;
 
+import bigBang.definitions.client.types.Coverage;
+import bigBang.definitions.client.types.Line;
+import bigBang.definitions.client.types.SubLine;
+import bigBang.definitions.client.types.Tax;
 import bigBang.library.client.Selectable;
 import bigBang.library.client.ValueSelectable;
 import bigBang.library.client.event.SelectionChangedEvent;
@@ -14,10 +18,6 @@ import bigBang.library.client.userInterface.view.PopupPanel;
 import bigBang.library.client.userInterface.view.View;
 import bigBang.module.generalSystemModule.client.userInterface.TaxList;
 import bigBang.module.generalSystemModule.client.userInterface.presenter.TaxManagementOperationViewPresenter;
-import bigBang.module.generalSystemModule.shared.Coverage;
-import bigBang.module.generalSystemModule.shared.Line;
-import bigBang.module.generalSystemModule.shared.SubLine;
-import bigBang.module.generalSystemModule.shared.Tax;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.HasClickHandlers;

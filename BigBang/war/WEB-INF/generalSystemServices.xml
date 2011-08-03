@@ -22,6 +22,10 @@
 		<servlet-name>CoveragesService</servlet-name>
 		<servlet-class>bigBang.module.generalSystemModule.server.CoveragesServiceImpl</servlet-class>
 	</servlet>
+	<servlet>
+		<servlet-name>ClientGroupService</servlet-name>
+		<servlet-class>bigBang.module.generalSystemModule.server.ClientGroupServiceImpl</servlet-class>
+	</servlet>
 	
 	<servlet-mapping>
 		<servlet-name>CostCenterService</servlet-name>
@@ -46,4 +50,8 @@
 	<servlet-mapping>
 		<servlet-name>CoveragesService</servlet-name>
 		<url-pattern>/bigbang/CoveragesService</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>ClientGroupService</servlet-name>
+		<url-pattern>/bigbang/ClientGroupService</url-pattern>
 	</servlet-mapping>

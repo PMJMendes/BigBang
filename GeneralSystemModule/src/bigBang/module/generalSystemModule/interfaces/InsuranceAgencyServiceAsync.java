@@ -1,7 +1,7 @@
 package bigBang.module.generalSystemModule.interfaces;
 
+import bigBang.definitions.client.types.InsuranceAgency;
 import bigBang.library.interfaces.Service;
-import bigBang.module.generalSystemModule.shared.InsuranceAgency;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
 

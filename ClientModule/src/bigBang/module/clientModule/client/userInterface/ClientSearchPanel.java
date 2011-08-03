@@ -1,25 +1,25 @@
 package bigBang.module.clientModule.client.userInterface;
 
-import bigBang.library.client.BigBangAsyncCallback;
-import bigBang.library.client.Selectable;
+import bigBang.definitions.client.brokerClient.ClientProcessDataBrokerClient;
+import bigBang.definitions.client.types.Client;
+import bigBang.definitions.client.types.ClientStub;
 import bigBang.library.client.ValueSelectable;
 import bigBang.library.client.ValueWrapper;
-import bigBang.library.client.event.SelectionChangedEvent;
 import bigBang.library.client.userInterface.view.SearchPanel;
 import bigBang.library.shared.SearchParameter;
 import bigBang.library.shared.SearchResult;
 import bigBang.module.clientModule.interfaces.ClientService;
-import bigBang.module.clientModule.shared.Client;
 import bigBang.module.clientModule.shared.ClientSearchParameter;
-import bigBang.module.clientModule.shared.ClientStub;
 
 /**
  * @author Premium-Minds (Francisco Cabrita)
  *
  * A SearchPanel for clients and client groups
  */
-public class ClientSearchPanel extends SearchPanel {
-
+public class ClientSearchPanel extends SearchPanel implements ClientProcessDataBrokerClient {
+	
+	protected int clientDataVersionNumber;
+	
 	public ClientSearchPanel(){
 		super(ClientService.Util.getInstance());
 	}
@@ -56,24 +56,37 @@ public class ClientSearchPanel extends SearchPanel {
 	}
 
 	@Override
-	protected void selectionChangedEventFireBypass(final SelectionChangedEvent e) {
-		//TODO FJVC IMPORTANT
-		for(Selectable s : e.getSelected()){
-//			@SuppressWarnings("unchecked")
-//			ValueSelectable<ValueWrapper<?>> vs = (ValueSelectable<ValueWrapper<?>>)s;
-//			ValueWrapper<?> result = vs.getValue();
-//			if(result.getValue() instanceof ClientStub){
-//				@SuppressWarnings("unchecked")
-//				final ValueWrapper<ClientStub> clientWrapper = (ValueWrapper<ClientStub>) result;
-//				ClientService.Util.getInstance().getClient(clientWrapper.getValue().id, new BigBangAsyncCallback<Client>() {
-//
-//					@Override
-//					public void onSuccess(Client result) {
-//						clientWrapper.setValue(result, true);
-//						fireEvent(e);
-//					}
-//				});
-//			}
+	public void setDataVersionNumber(String dataElementId, int number) {
+		this.clientDataVersionNumber = number;
+	}
+
+	@Override
+	public int getDataVersion(String dataElementId) {
+		return clientDataVersionNumber;
+	}
+
+	@Override
+	public void addClient(Client client) {
+		addSearchResult(client);
+	}
+
+	@Override
+	public void updateClient(Client client) {
+		for(ValueSelectable<SearchResult> vs : this) {
+			if(vs.getValue().id.equals(client.id)){
+				vs.setValue(client);
+				break;
+			}
+		}
+	}
+
+	@Override
+	public void removeClient(String clientId) {
+		for(ValueSelectable<SearchResult> vs : this) {
+			if(vs.getValue().id.equals(clientId)){
+				remove(vs);
+				break;
+			}
 		}
 	}
 

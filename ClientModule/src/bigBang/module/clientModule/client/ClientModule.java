@@ -1,11 +1,14 @@
 package bigBang.module.clientModule.client;
 
+import bigBang.definitions.client.BigBangConstants;
 import bigBang.library.client.BigBangPermissionManager;
 import bigBang.library.client.EventBus;
 import bigBang.library.client.Module;
 import bigBang.library.client.Process;
+import bigBang.library.client.dataAccess.DataBroker;
 import bigBang.library.client.event.ModuleInitializedEvent;
 import bigBang.library.client.userInterface.presenter.SectionViewPresenter;
+import bigBang.module.clientModule.client.dataAccess.ClientProcessBrokerImpl;
 import bigBang.module.clientModule.client.userInterface.presenter.ClientSectionViewPresenter;
 import bigBang.module.clientModule.client.userInterface.view.ClientSectionView;
 
@@ -45,6 +48,20 @@ public class ClientModule implements Module {
 
 	public Process[] getProcesses() {
 		return null;
+	}
+
+	@Override
+	public DataBroker<?>[] getBrokerImplementations() {
+		return new DataBroker<?>[]{
+			new ClientProcessBrokerImpl()
+		};
+	}
+
+	@Override
+	public String[] getBrokerDependencies() {
+		return new String[]{
+			BigBangConstants.EntityIds.CLIENT
+		};
 	}
 	
 }

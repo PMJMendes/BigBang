@@ -1,37 +1,100 @@
 package bigBang.module.generalSystemModule.client.userInterface.view;
 
+import bigBang.definitions.client.types.User;
 import bigBang.library.client.HasEditableValue;
 import bigBang.library.client.HasValueSelectables;
 import bigBang.library.client.ValueSelectable;
-import bigBang.library.client.userInterface.ListEntry;
+import bigBang.library.client.event.ActionInvokedEvent;
+import bigBang.library.client.event.ActionInvokedEventHandler;
+import bigBang.library.client.userInterface.BigBangOperationsToolBar;
+import bigBang.library.client.userInterface.BigBangOperationsToolBar.SUB_MENU;
 import bigBang.library.client.userInterface.view.View;
 import bigBang.module.generalSystemModule.client.userInterface.UserList;
 import bigBang.module.generalSystemModule.client.userInterface.UserListEntry;
 import bigBang.module.generalSystemModule.client.userInterface.presenter.UserManagementOperationViewPresenter;
-import bigBang.module.generalSystemModule.shared.User;
+import bigBang.module.generalSystemModule.client.userInterface.presenter.UserManagementOperationViewPresenter.Action;
 
-import com.google.gwt.event.dom.client.HasClickHandlers;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.ui.Button;
+import com.google.gwt.user.client.ui.MenuItem;
 import com.google.gwt.user.client.ui.SplitLayoutPanel;
+import com.google.gwt.user.client.ui.VerticalPanel;
 
 public class UserManagementOperationView extends View implements UserManagementOperationViewPresenter.Display {
-	
+
 	private static final int LIST_WIDTH = 400; //px
 
 	private UserList userList;
 	private UserForm userForm;
-	
+	protected BigBangOperationsToolBar toolbar;
+	protected ActionInvokedEventHandler<UserManagementOperationViewPresenter.Action> actionHandler;
+
 	public UserManagementOperationView() {
 		SplitLayoutPanel wrapper = new SplitLayoutPanel();
 		wrapper.setSize("100%", "100%");
 
 		userList = new UserList();
+		userList.getNewButton().addClickHandler(new ClickHandler() {
+
+			@Override
+			public void onClick(ClickEvent event) {
+				actionHandler.onActionInvoked(new ActionInvokedEvent<UserManagementOperationViewPresenter.Action>(Action.NEW));
+			}
+		});
+		userList.getRefreshButton().addClickHandler(new ClickHandler() {
+
+			@Override
+			public void onClick(ClickEvent event) {
+				actionHandler.onActionInvoked(new ActionInvokedEvent<UserManagementOperationViewPresenter.Action>(Action.REFRESH));
+			}
+		});
+
 		userList.setSize("100%", "100%");
 		wrapper.addWest(userList, LIST_WIDTH);
 		wrapper.setWidgetMinSize(userList, LIST_WIDTH);
 
+		VerticalPanel formWrapper = new VerticalPanel();
+		formWrapper.setSize("100%", "100%");
+
+		this.toolbar = new BigBangOperationsToolBar() {
+
+			@Override
+			public void onSaveRequest() {
+				actionHandler.onActionInvoked(new ActionInvokedEvent<UserManagementOperationViewPresenter.Action>(Action.SAVE));
+			}
+
+			@Override
+			public void onEditRequest() {
+				actionHandler.onActionInvoked(new ActionInvokedEvent<UserManagementOperationViewPresenter.Action>(Action.EDIT));
+			}
+
+			@Override
+			public void onCancelRequest() {
+				actionHandler.onActionInvoked(new ActionInvokedEvent<UserManagementOperationViewPresenter.Action>(Action.CANCEL_EDIT));
+			}
+		};
+		toolbar.hideAll();
+		toolbar.showItem(SUB_MENU.EDIT, true);
+		toolbar.showItem(SUB_MENU.ADMIN, true);
+		toolbar.addItem(SUB_MENU.ADMIN, new MenuItem("Apagar", new Command() {
+
+			@Override
+			public void execute() {
+				actionHandler.onActionInvoked(new ActionInvokedEvent<UserManagementOperationViewPresenter.Action>(Action.DELETE));
+			}
+		}));
+
+		formWrapper.add(toolbar);
+		formWrapper.setCellHeight(toolbar, "21px");
+
 		userForm = new UserForm();
-		wrapper.add(userForm);
+		formWrapper.add(userForm);
+
+
+
+		wrapper.add(formWrapper);
 
 		initWidget(wrapper);
 	}
@@ -39,27 +102,6 @@ public class UserManagementOperationView extends View implements UserManagementO
 	@Override
 	public HasValueSelectables<User> getList() {
 		return (HasValueSelectables<User>)this.userList;
-	}
-	
-	@Override
-	public void clearList(){
-		this.userList.clear();
-	}
-	
-	@Override
-	public void addValuesToList(User[] result) {
-		for(int i = 0; i < result.length; i++)
-			this.userList.add(new UserListEntry(result[i]));
-	}
-
-	@Override
-	public void removeUserFromList(User c) {
-		for(ListEntry<User> e : this.userList){
-			if(e.getValue() == c || e.getValue().id.equals(c.id)){
-				this.userList.remove(e);
-				break;
-			}
-		}
 	}
 
 	@Override
@@ -80,40 +122,15 @@ public class UserManagementOperationView extends View implements UserManagementO
 		this.userList.getScrollable().scrollToBottom();
 		entry.setSelected(true, true);
 	}
-	
+
 	@Override
 	public void removeNewUserPreparation(){
 		for(ValueSelectable<User> s : this.userList){
 			if(s.getValue().id == null){
-				this.removeUserFromList(s.getValue());
+				this.userList.remove(s);
 				break;
 			}
 		}
-	}
-
-	@Override
-	public HasClickHandlers getNewButton() {
-		return this.userList.newButton;
-	}
-
-	@Override
-	public HasClickHandlers getRefreshButton() {
-		return this.userList.refreshButton;
-	}
-	
-	@Override
-	public HasClickHandlers getSaveButton() {
-		return this.userForm.getSaveButton();
-	}
-
-	@Override
-	public HasClickHandlers getEditButton() {
-		return this.userForm.getEditButton();
-	}
-	
-	@Override
-	public HasClickHandlers getDeleteButton() {
-		return this.userForm.getDeleteButton();
 	}
 
 	@Override
@@ -129,15 +146,26 @@ public class UserManagementOperationView extends View implements UserManagementO
 
 	@Override
 	public void setReadOnly(boolean readOnly) {
-		((Button)this.userList.newButton).setEnabled(!readOnly);
+		((Button)this.userList.getNewButton()).setEnabled(!readOnly);
 		this.userForm.setReadOnly(readOnly);
 	}
-	
+
 	@Override
 	public void clear(){
 		this.userForm.clearInfo();
 		this.userList.clear();
 		this.userList.clearFilters();
+	}
+
+	@Override
+	public void registerActionInvokedHandler(
+			ActionInvokedEventHandler<Action> handler) {
+		this.actionHandler = handler;
+	}
+
+	@Override
+	public void setSaveModeEnabled(boolean enabled) {
+		this.toolbar.setSaveModeEnabled(enabled);
 	}
 
 }

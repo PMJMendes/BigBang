@@ -1,8 +1,8 @@
 package bigBang.module.generalSystemModule.interfaces;
 
+import bigBang.definitions.client.types.ClientGroup;
 import bigBang.library.shared.BigBangException;
 import bigBang.library.shared.SessionExpiredException;
-import bigBang.module.generalSystemModule.shared.ClientGroup;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.rpc.RemoteService;

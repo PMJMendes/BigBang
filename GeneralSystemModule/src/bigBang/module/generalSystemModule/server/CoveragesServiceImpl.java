@@ -9,14 +9,14 @@ import Jewel.Engine.Engine;
 import Jewel.Engine.DataAccess.MasterDB;
 import Jewel.Engine.Implementation.Entity;
 import Jewel.Engine.SysObjects.ObjectBase;
+import bigBang.definitions.client.types.Coverage;
+import bigBang.definitions.client.types.Line;
+import bigBang.definitions.client.types.SubLine;
+import bigBang.definitions.client.types.Tax;
 import bigBang.library.server.EngineImplementor;
 import bigBang.library.shared.BigBangException;
 import bigBang.library.shared.SessionExpiredException;
 import bigBang.module.generalSystemModule.interfaces.CoveragesService;
-import bigBang.module.generalSystemModule.shared.Coverage;
-import bigBang.module.generalSystemModule.shared.Line;
-import bigBang.module.generalSystemModule.shared.SubLine;
-import bigBang.module.generalSystemModule.shared.Tax;
 
 import com.premiumminds.BigBang.Jewel.Constants;
 import com.premiumminds.BigBang.Jewel.Objects.GeneralSystem;

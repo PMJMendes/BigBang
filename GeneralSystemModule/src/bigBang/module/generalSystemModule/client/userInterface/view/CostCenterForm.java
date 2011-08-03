@@ -1,22 +1,18 @@
 package bigBang.module.generalSystemModule.client.userInterface.view;
 
+import bigBang.definitions.client.brokerClient.CostCenterDataBrokerClient;
+import bigBang.definitions.client.types.CostCenter;
 import bigBang.library.client.FormField;
 import bigBang.library.client.userInterface.TextBoxFormField;
 import bigBang.library.client.userInterface.view.FormView;
-import bigBang.module.generalSystemModule.shared.CostCenter;
 import bigBang.module.generalSystemModule.shared.formValidator.CostCenterFormValidator;
 
-import com.google.gwt.event.dom.client.HasClickHandlers;
-import com.google.gwt.user.client.ui.Button;
-
-public class CostCenterForm extends FormView<CostCenter> {
+public class CostCenterForm extends FormView<CostCenter> implements CostCenterDataBrokerClient {
 
 	private FormField<String> nameField;
 	private FormField<String> codeField;
 	
-	private Button editCostCenterButton;
-	private Button saveCostCenterButton;
-	private Button deleteCostCenterButton;
+	protected int dataVersionNumber;
 
 	public CostCenterForm(){
 		super();
@@ -29,14 +25,6 @@ public class CostCenterForm extends FormView<CostCenter> {
 		addFormField(nameField);
 		addFormField(codeField);
 
-		this.editCostCenterButton = new Button("Editar");	
-		this.saveCostCenterButton = new Button("Guardar");
-		this.deleteCostCenterButton = new Button("Apagar");
-		
-		this.addButton(editCostCenterButton);
-		this.addButton(saveCostCenterButton);
-		this.addButton(deleteCostCenterButton);
-
 		clearInfo();
 
 		setReadOnly(true);
@@ -44,7 +32,7 @@ public class CostCenterForm extends FormView<CostCenter> {
 
 	@Override
 	public CostCenter getInfo() {
-		CostCenter info = value == null ? new CostCenter() : value;
+		CostCenter info = value == null ? new CostCenter() : new CostCenter(value);
 		info.name = this.nameField.getValue();
 		info.code = this.codeField.getValue();
 		return info;
@@ -66,23 +54,40 @@ public class CostCenterForm extends FormView<CostCenter> {
 			this.codeField.setValue(info.code);
 	}
 
-	public HasClickHandlers getSaveButton() {
-		return saveCostCenterButton;
-	}
-	
-	public HasClickHandlers getEditButton() {
-		return editCostCenterButton;
-	}
-	
-	public HasClickHandlers getDeleteButton() {
-		return deleteCostCenterButton;
-	}
-	
 	@Override
 	public void setReadOnly(boolean readOnly) {
 		super.setReadOnly(readOnly);
-		saveCostCenterButton.setVisible(!readOnly);
-		editCostCenterButton.setVisible(readOnly);
+	}
+
+	@Override
+	public void setDataVersionNumber(String dataElementId, int number) {
+		this.dataVersionNumber = number;
+	}
+
+	@Override
+	public int getDataVersion(String dataElementId) {
+		return dataVersionNumber;
+	}
+
+	@Override
+	public void setCostCenters(CostCenter[] costCenters) {}
+
+	@Override
+	public void addCostCenter(CostCenter costCenter) {}
+
+	@Override
+	public void updateCostCenter(CostCenter costCenter) {
+		if(this.value != null && this.value.id.equals(costCenter.id)) {
+			this.setValue(costCenter);
+		}
+	}
+
+	@Override
+	public void removeCostCenter(String costCenterId) {
+		if(this.value != null && this.value.id.equals(costCenterId)) {
+			this.clearInfo();
+			this.setValue(null);
+		}
 	}
 
 }

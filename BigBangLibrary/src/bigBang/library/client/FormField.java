@@ -69,7 +69,7 @@ public abstract class FormField<T> extends View implements HasValue<T>, Validata
 	public boolean validate() {
 		if(validator == null){
 			GWT.log("Validator for form field is null");
-			return false;
+			return true;
 		}
 		boolean isValid = validator.isValid(getValue());
 		setInvalid(!isValid);

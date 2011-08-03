@@ -1,11 +1,11 @@
 package bigBang.module.generalSystemModule.interfaces;
 
+import bigBang.definitions.client.types.Coverage;
+import bigBang.definitions.client.types.Line;
+import bigBang.definitions.client.types.SubLine;
+import bigBang.definitions.client.types.Tax;
 import bigBang.library.shared.BigBangException;
 import bigBang.library.shared.SessionExpiredException;
-import bigBang.module.generalSystemModule.shared.Coverage;
-import bigBang.module.generalSystemModule.shared.Line;
-import bigBang.module.generalSystemModule.shared.SubLine;
-import bigBang.module.generalSystemModule.shared.Tax;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.rpc.RemoteService;

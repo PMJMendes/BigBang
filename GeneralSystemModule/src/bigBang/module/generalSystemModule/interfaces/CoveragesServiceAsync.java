@@ -1,10 +1,10 @@
 package bigBang.module.generalSystemModule.interfaces;
 
+import bigBang.definitions.client.types.Coverage;
+import bigBang.definitions.client.types.Line;
+import bigBang.definitions.client.types.SubLine;
+import bigBang.definitions.client.types.Tax;
 import bigBang.library.interfaces.Service;
-import bigBang.module.generalSystemModule.shared.Coverage;
-import bigBang.module.generalSystemModule.shared.Line;
-import bigBang.module.generalSystemModule.shared.SubLine;
-import bigBang.module.generalSystemModule.shared.Tax;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
 

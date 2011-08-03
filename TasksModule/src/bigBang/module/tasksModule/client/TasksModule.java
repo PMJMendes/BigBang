@@ -5,6 +5,7 @@ import com.google.gwt.core.client.GWT;
 import bigBang.library.client.BigBangPermissionManager;
 import bigBang.library.client.EventBus;
 import bigBang.library.client.Module;
+import bigBang.library.client.dataAccess.DataBroker;
 import bigBang.library.client.event.ModuleInitializedEvent;
 import bigBang.library.client.userInterface.TextBadge;
 import bigBang.library.client.userInterface.presenter.SectionViewPresenter;
@@ -54,6 +55,18 @@ public class TasksModule implements Module {
 
 	public SectionViewPresenter[] getMainMenuSectionPresenters() {
 		return mainMenuSectionPresenters;
+	}
+
+	@Override
+	public DataBroker<?>[] getBrokerImplementations() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public String[] getBrokerDependencies() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

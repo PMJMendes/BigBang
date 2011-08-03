@@ -1,7 +1,7 @@
 package bigBang.module.generalSystemModule.client.userInterface;
 
+import bigBang.definitions.client.types.CostCenter;
 import bigBang.library.client.userInterface.ListEntry;
-import bigBang.module.generalSystemModule.shared.CostCenter;
 
 import com.google.gwt.dom.client.Style.FontWeight;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;

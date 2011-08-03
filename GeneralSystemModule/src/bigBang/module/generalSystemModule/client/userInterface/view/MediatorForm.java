@@ -1,31 +1,22 @@
 package bigBang.module.generalSystemModule.client.userInterface.view;
 
+import bigBang.definitions.client.types.CommissionProfile;
+import bigBang.definitions.client.types.Mediator;
 import bigBang.library.client.userInterface.AddressFormField;
 import bigBang.library.client.userInterface.ExpandableListBoxFormField;
 import bigBang.library.client.userInterface.TextBoxFormField;
 import bigBang.library.client.userInterface.view.FormView;
-import bigBang.module.generalSystemModule.shared.CommissionProfile;
-import bigBang.module.generalSystemModule.shared.Mediator;
 import bigBang.module.generalSystemModule.shared.ModuleConstants;
 import bigBang.module.generalSystemModule.shared.formValidator.MediatorFormValidator;
 
-import com.google.gwt.event.dom.client.HasClickHandlers;
-import com.google.gwt.user.client.ui.Button;
-
 public class MediatorForm extends FormView<Mediator> {
 
-	private Mediator mediator;
-	
 	private TextBoxFormField name;
 	private TextBoxFormField ISPNumber;
 	private TextBoxFormField taxNumber;
 	private ExpandableListBoxFormField comissionProfile;
 	private AddressFormField address;
 	private TextBoxFormField NIB;
-	
-	private Button editCostCenterButton;
-	private Button saveCostCenterButton;
-	private Button deleteCostCenterButton;
 	
 	public MediatorForm() {
 		addSection("Informação geral");
@@ -42,14 +33,6 @@ public class MediatorForm extends FormView<Mediator> {
 		addFormField(ISPNumber);
 		addFormField(comissionProfile);
 		
-		this.editCostCenterButton = new Button("Editar");	
-		this.saveCostCenterButton = new Button("Guardar");
-		this.deleteCostCenterButton = new Button("Apagar");
-		
-		this.addButton(editCostCenterButton);
-		this.addButton(saveCostCenterButton);
-		this.addButton(deleteCostCenterButton);
-		
 		addSection("Morada");
 		
 		address = new AddressFormField(new MediatorFormValidator.AddressValidator());
@@ -65,44 +48,29 @@ public class MediatorForm extends FormView<Mediator> {
 	
 	@Override
 	public Mediator getInfo() {
-		mediator.name = name.getValue();
-		mediator.ISPNumber = ISPNumber.getValue();
-		mediator.taxNumber = taxNumber.getValue();
-		mediator.comissionProfile.id = comissionProfile.getValue();
-		mediator.comissionProfile.value = comissionProfile.getSelectedItemText();
-		mediator.address = address.getValue();
-		mediator.NIB = NIB.getValue();
-		return mediator;
+		Mediator info = this.value == null ? new Mediator() : new Mediator(value);
+		info.name = name.getValue();
+		info.ISPNumber = ISPNumber.getValue();
+		info.taxNumber = taxNumber.getValue();
+		info.comissionProfile.id = comissionProfile.getValue();
+		info.comissionProfile.value = comissionProfile.getSelectedItemText();
+		info.address = address.getValue();
+		info.NIB = NIB.getValue();
+		return info;
 	}
 	
 	@Override
 	public void setInfo(Mediator info) {
-		this.mediator =  info != null ? (Mediator) info : new Mediator();
-		name.setValue(mediator.name);
-		ISPNumber.setValue(mediator.ISPNumber);
-		taxNumber.setValue(mediator.taxNumber);
-		comissionProfile.setValue(mediator.comissionProfile.id);
-		address.setValue(mediator.address);
-		NIB.setValue(mediator.NIB);
-	}
-	
-	public HasClickHandlers getSaveButton() {
-		return saveCostCenterButton;
-	}
-	
-	public HasClickHandlers getEditButton() {
-		return editCostCenterButton;
-	}
-	
-	public HasClickHandlers getDeleteButton() {
-		return deleteCostCenterButton;
-	}
-	
-	@Override
-	public void setReadOnly(boolean readOnly) {
-		super.setReadOnly(readOnly);
-		saveCostCenterButton.setVisible(!readOnly);
-		editCostCenterButton.setVisible(readOnly);
+		if(info == null){
+			clearInfo();
+			return;
+		}
+		name.setValue(info.name);
+		ISPNumber.setValue(info.ISPNumber);
+		taxNumber.setValue(info.taxNumber);
+		comissionProfile.setValue(info.comissionProfile.id);
+		address.setValue(info.address);
+		NIB.setValue(info.NIB);
 	}
 	
 }

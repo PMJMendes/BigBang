@@ -4,10 +4,10 @@ import org.gwt.mosaic.ui.client.ToolButton;
 
 import com.google.gwt.user.client.ui.Label;
 
+import bigBang.definitions.client.types.Tax;
 import bigBang.library.client.userInterface.FilterableList;
 import bigBang.library.client.userInterface.ListEntry;
 import bigBang.library.client.userInterface.ListHeader;
-import bigBang.module.generalSystemModule.shared.Tax;
 
 public class TaxList extends FilterableList<Tax> {
 

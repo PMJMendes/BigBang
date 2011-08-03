@@ -9,6 +9,8 @@ import Jewel.Engine.Constants.ObjectGUIDs;
 import Jewel.Engine.DataAccess.MasterDB;
 import Jewel.Engine.Implementation.Entity;
 import Jewel.Engine.SysObjects.ObjectBase;
+import bigBang.definitions.client.types.CommissionProfile;
+import bigBang.definitions.client.types.Mediator;
 import bigBang.library.server.EngineImplementor;
 import bigBang.library.server.FileServiceImpl;
 import bigBang.library.shared.Address;
@@ -18,8 +20,6 @@ import bigBang.library.shared.Document;
 import bigBang.library.shared.SessionExpiredException;
 import bigBang.library.shared.ZipCode;
 import bigBang.module.generalSystemModule.interfaces.MediatorService;
-import bigBang.module.generalSystemModule.shared.CommissionProfile;
-import bigBang.module.generalSystemModule.shared.Mediator;
 
 import com.premiumminds.BigBang.Jewel.BigBangJewelException;
 import com.premiumminds.BigBang.Jewel.Constants;

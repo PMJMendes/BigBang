@@ -1,49 +1,110 @@
 package bigBang.module.generalSystemModule.client.userInterface.view;
 
-import bigBang.library.client.ContactManager;
+import bigBang.definitions.client.types.InsuranceAgency;
 import bigBang.library.client.HasEditableValue;
 import bigBang.library.client.HasValueSelectables;
 import bigBang.library.client.ValueSelectable;
+import bigBang.library.client.event.ActionInvokedEvent;
+import bigBang.library.client.event.ActionInvokedEventHandler;
+import bigBang.library.client.userInterface.BigBangOperationsToolBar;
 import bigBang.library.client.userInterface.ContactsPreviewList;
-import bigBang.library.client.userInterface.ListEntry;
+import bigBang.library.client.userInterface.BigBangOperationsToolBar.SUB_MENU;
 import bigBang.library.client.userInterface.view.View;
 import bigBang.module.generalSystemModule.client.userInterface.InsuranceAgencyList;
 import bigBang.module.generalSystemModule.client.userInterface.InsuranceAgencyListEntry;
 import bigBang.module.generalSystemModule.client.userInterface.presenter.InsuranceAgencyManagementOperationViewPresenter;
-import bigBang.module.generalSystemModule.shared.InsuranceAgency;
+import bigBang.module.generalSystemModule.client.userInterface.presenter.InsuranceAgencyManagementOperationViewPresenter.Action;
 
-import com.google.gwt.event.dom.client.HasClickHandlers;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.ui.Button;
+import com.google.gwt.user.client.ui.MenuItem;
 import com.google.gwt.user.client.ui.SplitLayoutPanel;
+import com.google.gwt.user.client.ui.VerticalPanel;
 
 public class InsuranceAgencyManagementOperationView extends View implements InsuranceAgencyManagementOperationViewPresenter.Display {
-	
+
 	private static final int LIST_WIDTH = 400; //px
 
 	private InsuranceAgencyList insuranceAgencyList;
 	private InsuranceAgencyForm insuranceAgencyForm;
 	private ContactsPreviewList contactsPreviewList;
-	
+	protected ActionInvokedEventHandler<InsuranceAgencyManagementOperationViewPresenter.Action> actionHandler;
+	protected BigBangOperationsToolBar toolbar;
+
 	public InsuranceAgencyManagementOperationView() {
 		SplitLayoutPanel wrapper = new SplitLayoutPanel();
 		wrapper.setSize("100%", "100%");
 
 		insuranceAgencyList = new InsuranceAgencyList();
+		insuranceAgencyList.getNewButton().addClickHandler(new ClickHandler() {
+
+			@Override
+			public void onClick(ClickEvent event) {
+				actionHandler.onActionInvoked(new ActionInvokedEvent<InsuranceAgencyManagementOperationViewPresenter.Action>(Action.NEW));
+			}
+		});	
+		insuranceAgencyList.getRefreshButton().addClickHandler(new ClickHandler() {
+
+			@Override
+			public void onClick(ClickEvent event) {
+				actionHandler.onActionInvoked(new ActionInvokedEvent<InsuranceAgencyManagementOperationViewPresenter.Action>(Action.REFRESH));
+			}
+		});
+
 		insuranceAgencyList.setSize("100%", "100%");
 		wrapper.addWest(insuranceAgencyList, LIST_WIDTH);
 		wrapper.setWidgetMinSize(insuranceAgencyList, LIST_WIDTH);
 
 		insuranceAgencyForm = new InsuranceAgencyForm();
-		
-		SplitLayoutPanel formWrapper = new SplitLayoutPanel();
-		
+
+		SplitLayoutPanel contentWrapper = new SplitLayoutPanel();
+
 		contactsPreviewList = new ContactsPreviewList();
 		contactsPreviewList.setSize("100%", "100%");
-		
-		formWrapper.addEast(contactsPreviewList, 250);
+
+		VerticalPanel formWrapper = new VerticalPanel();
+		formWrapper.setSize("100%", "100%");
+
+		this.toolbar = new BigBangOperationsToolBar() {
+
+			@Override
+			public void onSaveRequest() {
+				actionHandler.onActionInvoked(new ActionInvokedEvent<InsuranceAgencyManagementOperationViewPresenter.Action>(Action.SAVE));
+			}
+
+			@Override
+			public void onEditRequest() {
+				actionHandler.onActionInvoked(new ActionInvokedEvent<InsuranceAgencyManagementOperationViewPresenter.Action>(Action.EDIT));
+			}
+
+			@Override
+			public void onCancelRequest() {
+				actionHandler.onActionInvoked(new ActionInvokedEvent<InsuranceAgencyManagementOperationViewPresenter.Action>(Action.CANCEL_EDIT));
+			}
+		};
+		toolbar.hideAll();
+		toolbar.showItem(SUB_MENU.EDIT, true);
+		toolbar.showItem(SUB_MENU.ADMIN, true);
+		toolbar.addItem(SUB_MENU.ADMIN, new MenuItem("Apagar", new Command() {
+
+			@Override
+			public void execute() {
+				actionHandler.onActionInvoked(new ActionInvokedEvent<InsuranceAgencyManagementOperationViewPresenter.Action>(Action.DELETE));
+			}
+		}));
+
+		formWrapper.add(this.toolbar);
+		formWrapper.setCellHeight(this.toolbar, "21px");
+
 		formWrapper.add(insuranceAgencyForm);
-		
-		wrapper.add(formWrapper);
+		formWrapper.setCellHeight(insuranceAgencyForm, "100%");
+
+		contentWrapper.addEast(contactsPreviewList, 250);
+		contentWrapper.add(formWrapper);
+
+		wrapper.add(contentWrapper);
 
 		initWidget(wrapper);
 	}
@@ -52,28 +113,7 @@ public class InsuranceAgencyManagementOperationView extends View implements Insu
 	public HasValueSelectables<InsuranceAgency> getList() {
 		return (HasValueSelectables<InsuranceAgency>)this.insuranceAgencyList;
 	}
-	
-	@Override
-	public void clearList(){
-		this.insuranceAgencyList.clear();
-	}
-	
-	@Override
-	public void addValuesToList(InsuranceAgency[] result) {
-		for(int i = 0; i < result.length; i++)
-			this.insuranceAgencyList.add(new InsuranceAgencyListEntry(result[i]));
-	}
 
-	@Override
-	public void removeInsuranceAgencyFromList(InsuranceAgency c) {
-		for(ListEntry<InsuranceAgency> e : this.insuranceAgencyList){
-			if(e.getValue() == c || e.getValue().id.equals(c.id)){
-				this.insuranceAgencyList.remove(e);
-				break;
-			}
-		}
-	}
-	
 	@Override
 	public HasEditableValue<InsuranceAgency> getForm() {
 		return this.insuranceAgencyForm;
@@ -92,40 +132,15 @@ public class InsuranceAgencyManagementOperationView extends View implements Insu
 		this.insuranceAgencyList.getScrollable().scrollToBottom();
 		entry.setSelected(true, true);
 	}
-	
+
 	@Override
 	public void removeNewInsuranceAgencyPreparation(){
 		for(ValueSelectable<InsuranceAgency> s : this.insuranceAgencyList){
 			if(s.getValue().id == null){
-				this.removeInsuranceAgencyFromList(s.getValue());
+				this.insuranceAgencyList.remove(s);
 				break;
 			}
 		}
-	}
-	
-	@Override
-	public HasClickHandlers getNewButton() {
-		return this.insuranceAgencyList.newButton;
-	}
-
-	@Override
-	public HasClickHandlers getRefreshButton() {
-		return this.insuranceAgencyList.refreshButton;
-	}
-	
-	@Override
-	public HasClickHandlers getSaveButton() {
-		return this.insuranceAgencyForm.getSaveButton();
-	}
-
-	@Override
-	public HasClickHandlers getEditButton() {
-		return this.insuranceAgencyForm.getEditButton();
-	}
-	
-	@Override
-	public HasClickHandlers getDeleteButton() {
-		return this.insuranceAgencyForm.getDeleteButton();
 	}
 
 	@Override
@@ -140,10 +155,10 @@ public class InsuranceAgencyManagementOperationView extends View implements Insu
 
 	@Override
 	public void setReadOnly(boolean readOnly) {
-		((Button)this.insuranceAgencyList.newButton).setEnabled(!readOnly);
+		((Button)this.insuranceAgencyList.getNewButton()).setEnabled(!readOnly);
 		this.insuranceAgencyForm.setReadOnly(readOnly);
 	}
-	
+
 	@Override
 	public void clear(){
 		this.contactsPreviewList.clear();
@@ -153,8 +168,14 @@ public class InsuranceAgencyManagementOperationView extends View implements Insu
 	}
 
 	@Override
-	public void setContactManager(ContactManager contactManager) {
-		this.contactsPreviewList.setManager(contactManager);
+	public void registerActionInvokedHandler(
+			ActionInvokedEventHandler<Action> handler) {
+		this.actionHandler = handler;
+	}
+
+	@Override
+	public void setSaveModeEnabled(boolean enabled) {
+		this.toolbar.setSaveModeEnabled(enabled);
 	}
 
 }

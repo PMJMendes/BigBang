@@ -2,7 +2,9 @@ package bigBang.module.generalSystemModule.client.userInterface.presenter;
 
 import java.util.Collection;
 
-import bigBang.library.client.BigBangAsyncCallback;
+import bigBang.definitions.client.BigBangConstants;
+import bigBang.definitions.client.broker.InsuranceAgencyBroker;
+import bigBang.definitions.client.types.InsuranceAgency;
 import bigBang.library.client.ContactManager;
 import bigBang.library.client.EventBus;
 import bigBang.library.client.HasEditableValue;
@@ -10,55 +12,53 @@ import bigBang.library.client.HasValueSelectables;
 import bigBang.library.client.Operation;
 import bigBang.library.client.Selectable;
 import bigBang.library.client.ValueSelectable;
+import bigBang.library.client.dataAccess.DataBrokerManager;
+import bigBang.library.client.event.ActionInvokedEvent;
+import bigBang.library.client.event.ActionInvokedEventHandler;
 import bigBang.library.client.event.SelectionChangedEvent;
 import bigBang.library.client.event.SelectionChangedEventHandler;
+import bigBang.library.client.response.ResponseError;
+import bigBang.library.client.response.ResponseHandler;
 import bigBang.library.client.userInterface.presenter.OperationViewPresenter;
 import bigBang.library.client.userInterface.view.View;
 import bigBang.library.interfaces.Service;
-import bigBang.module.generalSystemModule.interfaces.InsuranceAgencyServiceAsync;
-import bigBang.module.generalSystemModule.shared.InsuranceAgency;
 import bigBang.module.generalSystemModule.shared.operation.InsuranceAgencyManagementOperation;
 
-import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.event.dom.client.HasClickHandlers;
-import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.HasWidgets;
 import com.google.gwt.user.client.ui.Widget;
 
 public class InsuranceAgencyManagementOperationViewPresenter implements
 		OperationViewPresenter {
 
+	public static enum Action{
+		NEW,
+		REFRESH,
+		EDIT,
+		SAVE,
+		CANCEL_EDIT,
+		DELETE
+	}
+
 	public interface Display {
 		//List
 		HasValueSelectables<InsuranceAgency> getList();
-		void clearList();
-		void addValuesToList(InsuranceAgency[] result);
-		void removeInsuranceAgencyFromList(InsuranceAgency c);
-		
+
 		//Form
 		HasEditableValue<InsuranceAgency> getForm();
-		HasClickHandlers getSaveButton();
-		HasClickHandlers getEditButton();
-		HasClickHandlers getDeleteButton();
 		boolean isFormValid();
 		void lockForm(boolean lock);
-		
+
 		//General
-		HasClickHandlers getNewButton();
-		HasClickHandlers getRefreshButton();
 		void clear();
-		
+		void registerActionInvokedHandler(ActionInvokedEventHandler<Action> handler);
 		void prepareNewInsuranceAgency();
 		void removeNewInsuranceAgencyPreparation();
-		
-		void setContactManager(ContactManager contactManager);
-		
+		void setSaveModeEnabled(boolean enabled);
+
 		void setReadOnly(boolean readOnly);
 		Widget asWidget();
 	}
 
-	private InsuranceAgencyServiceAsync service;
 	private Display view;
 	@SuppressWarnings("unused")
 	private EventBus eventBus;
@@ -66,19 +66,18 @@ public class InsuranceAgencyManagementOperationViewPresenter implements
 	private InsuranceAgencyManagementOperation operation;
 	
 	private boolean bound = false;
-	private InsuranceAgency[] insuranceAgencies;
-	private ContactManager contactManager;
+	private ContactManager contactManager; //TODO
+	protected InsuranceAgencyBroker insuranceAgencyBroker;
 
 	public InsuranceAgencyManagementOperationViewPresenter(EventBus eventBus, Service service, View view){
 		setEventBus(eventBus);
 		setService(service);
 		setView(view);
 		this.contactManager = new ContactManager();
+		this.insuranceAgencyBroker = (InsuranceAgencyBroker) DataBrokerManager.Util.getInstance().getBroker(BigBangConstants.EntityIds.INSURANCE_AGENCY);
 	}
 
-	public void setService(Service service) {
-		this.service = (InsuranceAgencyServiceAsync)service;
-	}
+	public void setService(Service service) {}
 
 	public void setEventBus(EventBus eventBus) {
 		this.eventBus = eventBus;
@@ -91,179 +90,160 @@ public class InsuranceAgencyManagementOperationViewPresenter implements
 	public void go(HasWidgets container) {
 		bind();
 		bound = true;
-		
+		view.clear();
+
 		view.getList().setMultipleSelectability(false);
 		view.getForm().setReadOnly(true);
-		
-		view.clear();
-		setup();
-		
+		fetchInsuranceAgencies();
+
 		container.clear();
 		container.add(this.view.asWidget());
 	}
 	
-	private void setup(){
-		this.service.getInsuranceAgencies(new BigBangAsyncCallback<InsuranceAgency[]>() {
-			public void onSuccess(InsuranceAgency[] result) {
-				insuranceAgencies = result;
-				setupGo();
-			}
+	private void fetchInsuranceAgencies(){
+		this.insuranceAgencyBroker.getInsuranceAgencies(new ResponseHandler<InsuranceAgency[]>() {
+			
+			@Override
+			public void onResponse(InsuranceAgency[] response) {}
+			
+			@Override
+			public void onError(Collection<ResponseError> errors) {}
 		});
 	}
 	
-	private void setupGo(){
-		if(this.insuranceAgencies == null)
-			return;
-		
-		view.clearList();
-		view.getForm().setValue(null);
-		view.lockForm(true);
-		view.addValuesToList(this.insuranceAgencies);
-		
-		this.insuranceAgencies = null;
-	}
-
 	public void bind() {
 		if(bound)
 			return;
-		
-		view.setContactManager(this.contactManager);
-		
 		view.getList().addSelectionChangedEventHandler(new SelectionChangedEventHandler() {
-			
+
 			@Override
 			public void onSelectionChanged(SelectionChangedEvent event) {
-				Collection<? extends Selectable> selected = event.getSelected();
-				if(selected.size() == 0){
+				@SuppressWarnings("unchecked")
+				ValueSelectable<InsuranceAgency> selected = (ValueSelectable<InsuranceAgency>) event.getFirstSelected();
+				InsuranceAgency selectedValue = selected == null ? null : selected.getValue();
+				if(selectedValue == null){
 					view.getForm().setValue(null);
-					contactManager.setOfflineMode(true);
-					return;
-				}			
-				
-				for(Selectable s : selected) {
-					@SuppressWarnings("unchecked")
-					ValueSelectable<InsuranceAgency> vs = (ValueSelectable<InsuranceAgency>) s;
-					InsuranceAgency value = vs.getValue();
-					view.getForm().setValue(value);
-					view.getForm().setReadOnly(true);
-					view.lockForm(value == null);
-					if(value.id != null){
-						contactManager.setEntityInfo(value.id, new AsyncCallback<Void>(){
-
-							@Override
-							public void onFailure(Throwable caught) {
-								// TODO Auto-generated method stub
-								
-							}
-
-							@Override
-							public void onSuccess(Void result) {
-								// TODO Auto-generated method stub
-								
-							}
-							
-						});
+					view.lockForm(true);
+				}else{
+					if(selectedValue.id != null){
 						view.removeNewInsuranceAgencyPreparation();
-					}else{
-						contactManager.setOfflineMode(true);
+						insuranceAgencyBroker.getInsuranceAgency(selectedValue.id, new ResponseHandler<InsuranceAgency>() {
+
+							@Override
+							public void onResponse(InsuranceAgency value) {
+								view.getForm().setValue(value);
+								view.lockForm(value == null);
+							}
+
+							@Override
+							public void onError(Collection<ResponseError> errors) {}
+						});
 					}
 					
 				}
 			}
 		});
-		view.getNewButton().addClickHandler(new ClickHandler() {
-			
+		view.registerActionInvokedHandler(new ActionInvokedEventHandler<InsuranceAgencyManagementOperationViewPresenter.Action>() {
+
 			@Override
-			public void onClick(ClickEvent event) {
-				view.prepareNewInsuranceAgency();
-				for(Selectable s : view.getList().getSelected()) {
-					@SuppressWarnings("unchecked")
-					ValueSelectable<InsuranceAgency> vs = (ValueSelectable<InsuranceAgency>) s;
-					InsuranceAgency value = vs.getValue();
-					view.getForm().setValue(value);
+			public void onActionInvoked(ActionInvokedEvent<Action> action) {
+				switch(action.getAction()){
+				case NEW:
+					view.prepareNewInsuranceAgency();
+					for(Selectable s : view.getList().getSelected()) {
+						@SuppressWarnings("unchecked")
+						ValueSelectable<InsuranceAgency> vs = (ValueSelectable<InsuranceAgency>) s;
+						InsuranceAgency value = vs.getValue();
+						view.getForm().setValue(value);
+						view.getForm().setReadOnly(false);
+						break;
+					}
+					break;
+				case REFRESH:
+					fetchInsuranceAgencies();
+					break;
+				case DELETE:
+					if(view.getForm().getValue().id == null)
+						view.removeNewInsuranceAgencyPreparation();
+					else
+						deleteInsuranceAgency(view.getForm().getValue());
+					break;
+				case EDIT:
 					view.getForm().setReadOnly(false);
+					view.setSaveModeEnabled(true);
+					break;
+				case SAVE:
+					if(!view.isFormValid())
+						return;
+					InsuranceAgency info = view.getForm().getInfo();
+					if(info.id == null)
+						createInsuranceAgency(info);
+					else
+						saveInsuranceAgency(info);
+					break;
+				case CANCEL_EDIT:
+					if(view.getForm().getInfo().id == null){
+						view.removeNewInsuranceAgencyPreparation();
+					}else{
+						view.getForm().revert();
+						view.getForm().setReadOnly(true);
+					}
+					break;
+				default:
 					break;
 				}
 			}
 		});
-		view.getEditButton().addClickHandler(new ClickHandler() {
-			
-			@Override
-			public void onClick(ClickEvent event) {
-				//TODO checkPermission
-				view.getForm().setReadOnly(false);
-			}
-		});
-		view.getSaveButton().addClickHandler(new ClickHandler() {
-			
-			@Override
-			public void onClick(ClickEvent event) {
-				if(!view.isFormValid())
-					return;
-				InsuranceAgency value = view.getForm().getValue();
-				if(value.id == null)
-					createInsuranceAgency(value);
-				else
-					saveInsuranceAgency(value);
-			}
-		});
-		view.getDeleteButton().addClickHandler(new ClickHandler() {
-			
-			@Override
-			public void onClick(ClickEvent event) {
-				if(view.getForm().getValue().id == null)
-					view.removeNewInsuranceAgencyPreparation();
-				else
-					deleteInsuranceAgency(view.getForm().getValue());
-			}
-		});
-		view.getRefreshButton().addClickHandler(new ClickHandler() {
-			
-			@Override
-			public void onClick(ClickEvent event) {
-				setup();
-			}
-		});
 	}
+
 	public void createInsuranceAgency(InsuranceAgency c) {
-		service.createInsuranceAgency(c, new BigBangAsyncCallback<InsuranceAgency>() {
+		this.insuranceAgencyBroker.addInsuranceAgency(c, new ResponseHandler<InsuranceAgency>() {
 
 			@Override
-			public void onSuccess(InsuranceAgency result) {
+			public void onResponse(InsuranceAgency response) {
 				for(ValueSelectable<InsuranceAgency> s : view.getList().getSelected()){
-					s.setValue(result);
-					view.getForm().setValue(result);
+					s.setValue(response);
+					view.getForm().setValue(response);
 					view.getForm().setReadOnly(true);
 					break;
 				}
 			}
+
+			@Override
+			public void onError(Collection<ResponseError> errors) {}
 		});
 	}
+
 	public void saveInsuranceAgency(InsuranceAgency c) {
-		service.saveInsuranceAgency(c, new BigBangAsyncCallback<InsuranceAgency>() {
+		
+		this.insuranceAgencyBroker.updateInsuranceAgency(c, new ResponseHandler<InsuranceAgency>() {
 
 			@Override
-			public void onSuccess(InsuranceAgency result) {
+			public void onResponse(InsuranceAgency response) {
 				for(ValueSelectable<InsuranceAgency> s : view.getList().getSelected()){
-					s.setValue(result);
-					view.getForm().setValue(result);
+					s.setValue(response);
+					view.getForm().setValue(response);
 					view.getForm().setReadOnly(true);
 					break;
 				}
 			}
+
+			@Override
+			public void onError(Collection<ResponseError> errors) {}
 		});
 	}
 	
-	public void deleteInsuranceAgency(final InsuranceAgency c) {
-		//TODO alert
-		service.deleteInsuranceAgency(c.id, new BigBangAsyncCallback<Void>() {
+	public void deleteInsuranceAgency(InsuranceAgency c) {
+		this.insuranceAgencyBroker.removeInsuranceAgency(c.id, new ResponseHandler<InsuranceAgency>() {
 
 			@Override
-			public void onSuccess(Void result) {
-				view.removeInsuranceAgencyFromList(c);
+			public void onResponse(InsuranceAgency response) {
 				view.getList().clearSelection();
 				view.getForm().setValue(null);
 			}
+
+			@Override
+			public void onError(Collection<ResponseError> errors) {}
 		});
 	}	
 

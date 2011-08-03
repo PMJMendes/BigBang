@@ -2,84 +2,82 @@ package bigBang.module.generalSystemModule.client.userInterface.presenter;
 
 import java.util.Collection;
 
-import bigBang.library.client.BigBangAsyncCallback;
+import bigBang.definitions.client.BigBangConstants;
+import bigBang.definitions.client.broker.CostCenterBroker;
+import bigBang.definitions.client.types.CostCenter;
 import bigBang.library.client.EventBus;
 import bigBang.library.client.HasEditableValue;
 import bigBang.library.client.HasValueSelectables;
 import bigBang.library.client.Operation;
 import bigBang.library.client.Selectable;
 import bigBang.library.client.ValueSelectable;
+import bigBang.library.client.dataAccess.DataBrokerManager;
+import bigBang.library.client.event.ActionInvokedEvent;
+import bigBang.library.client.event.ActionInvokedEventHandler;
 import bigBang.library.client.event.SelectionChangedEvent;
 import bigBang.library.client.event.SelectionChangedEventHandler;
+import bigBang.library.client.response.ResponseError;
+import bigBang.library.client.response.ResponseHandler;
 import bigBang.library.client.userInterface.presenter.OperationViewPresenter;
 import bigBang.library.client.userInterface.view.View;
 import bigBang.library.interfaces.Service;
-import bigBang.module.generalSystemModule.interfaces.CostCenterServiceAsync;
-import bigBang.module.generalSystemModule.shared.CostCenter;
-import bigBang.module.generalSystemModule.shared.User;
 import bigBang.module.generalSystemModule.shared.operation.CostCenterManagementOperation;
 
-import com.google.gwt.core.client.GWT;
-import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.event.dom.client.HasClickHandlers;
 import com.google.gwt.user.client.ui.HasWidgets;
 import com.google.gwt.user.client.ui.Widget;
 
 public class CostCenterManagementOperationViewPresenter implements
 OperationViewPresenter {
 
+	public static enum Action{
+		NEW,
+		REFRESH,
+		EDIT,
+		SAVE,
+		CANCEL_EDIT,
+		DELETE
+	}
+
 	public interface Display {
 		//List
 		HasValueSelectables<CostCenter> getList();
-		void clearList();
-		void addValuesToList(CostCenter[] result);
-		void removeCostCenterFromList(CostCenter c);
-		
+
 		//Form
 		HasEditableValue<CostCenter> getForm();
-		HasClickHandlers getSaveButton();
-		HasClickHandlers getEditButton();
-		HasClickHandlers getDeleteButton();
 		boolean isFormValid();
 		void lockForm(boolean lock);
-		
+
 		//Members list
-		HasValueSelectables<User> getMembersList();
+		void showUsersForCostCenterWithId(String costCenterId);
 		void clearMembersList();
-		void addValuesToMembersList(User[] result);
-		
+
 		//General
-		HasClickHandlers getNewButton();
-		HasClickHandlers getRefreshButton();
-		
 		void clear();
-		
+		void registerActionInvokedHandler(ActionInvokedEventHandler<Action> handler);
 		void prepareNewCostCenter();
 		void removeNewCostCenterPreparation();
+		void setSaveModeEnabled(boolean enabled);
 
 		void setReadOnly(boolean readOnly);
 		Widget asWidget();
 	}
 
-	private CostCenterServiceAsync service;
 	private Display view;
 	@SuppressWarnings("unused")
 	private EventBus eventBus;
-	
+	protected CostCenterBroker costCenterBroker;
+
 	private CostCenterManagementOperation operation;
-	
+
 	private boolean bound = false;
 
 	public CostCenterManagementOperationViewPresenter(EventBus eventBus, Service service, View view){
 		setEventBus(eventBus);
-		setService(service);
 		setView(view);
+		this.costCenterBroker = (CostCenterBroker) DataBrokerManager.Util.getInstance().getBroker(BigBangConstants.EntityIds.COST_CENTER);
 	}
 
-	public void setService(Service service) {
-		this.service = (CostCenterServiceAsync)service;
-	}
+	public void setService(Service service) {}
 
 	public void setEventBus(EventBus eventBus) {
 		this.eventBus = eventBus;
@@ -92,155 +90,166 @@ OperationViewPresenter {
 	public void go(HasWidgets container) {
 		bind();
 		bound = true;
-		
 		view.clear();
-		
+
 		view.getList().setMultipleSelectability(false);
 		view.getForm().setReadOnly(true);
 		fetchCostCenterList();
-		
+
 		container.clear();
 		container.add(this.view.asWidget());
 	}
 
 	private void fetchCostCenterList() {
-		try{
-			this.service.getCostCenterList(new BigBangAsyncCallback<CostCenter[]>() {
-				public void onSuccess(CostCenter[] result) {
-					view.clearList();
-					view.getForm().setValue(null);
-					view.lockForm(true);
-					view.addValuesToList(result);
-				}
-			});
-		}catch(Exception e){
-			GWT.log("Error while fetching cost center list");
-		}
+		//Refreshes The cost centers data (Info automatically propagated to the broker clients)
+		this.costCenterBroker.requireDataRefresh();
+		this.costCenterBroker.getCostCenters(new ResponseHandler<CostCenter[]>() {
+
+			@Override
+			public void onResponse(CostCenter[] response) {}
+
+			@Override
+			public void onError(Collection<ResponseError> errors) {}
+		});
 	}
 
 	public void bind() {
 		if(bound)
 			return;
 		view.getList().addSelectionChangedEventHandler(new SelectionChangedEventHandler() {
-			
+
 			@Override
 			public void onSelectionChanged(SelectionChangedEvent event) {
-				Collection<? extends Selectable> selected = event.getSelected();
-				if(selected.size() == 0){
+				@SuppressWarnings("unchecked")
+				ValueSelectable<CostCenter> selected = (ValueSelectable<CostCenter>) event.getFirstSelected();
+				CostCenter selectedValue = selected == null ? null : selected.getValue();
+				if(selectedValue == null){
 					view.getForm().setValue(null);
-					return;
-				}			
-				
-				for(Selectable s : selected) {
-					@SuppressWarnings("unchecked")
-					ValueSelectable<CostCenter> vs = (ValueSelectable<CostCenter>) s;
-					CostCenter value = vs.getValue();
-					view.getForm().setValue(value);
-					view.getForm().setReadOnly(true);
-					view.clearMembersList();
-					view.addValuesToMembersList(value.members);
-					view.lockForm(value == null);
-					if(value.id != null){
+					view.showUsersForCostCenterWithId(null);
+					view.lockForm(true);
+				}else{
+					if(selectedValue.id != null){
 						view.removeNewCostCenterPreparation();
+						costCenterBroker.getCostCenter(selectedValue.id, new ResponseHandler<CostCenter>() {
+
+							@Override
+							public void onResponse(CostCenter value) {
+								view.getForm().setValue(value);
+								view.showUsersForCostCenterWithId(value.id);
+								view.lockForm(value == null);
+							}
+
+							@Override
+							public void onError(Collection<ResponseError> errors) {}
+						});
 					}
 				}
+
 			}
 		});
-		view.getNewButton().addClickHandler(new ClickHandler() {
-			
+		view.registerActionInvokedHandler(new ActionInvokedEventHandler<CostCenterManagementOperationViewPresenter.Action>() {
+
 			@Override
-			public void onClick(ClickEvent event) {
-				view.prepareNewCostCenter();
-				for(Selectable s : view.getList().getSelected()) {
-					@SuppressWarnings("unchecked")
-					ValueSelectable<CostCenter> vs = (ValueSelectable<CostCenter>) s;
-					CostCenter value = vs.getValue();
-					view.getForm().setValue(value);
+			public void onActionInvoked(ActionInvokedEvent<Action> action) {
+				switch(action.getAction()){
+				case NEW:
+					view.prepareNewCostCenter();
+					for(Selectable s : view.getList().getSelected()) {
+						@SuppressWarnings("unchecked")
+						ValueSelectable<CostCenter> vs = (ValueSelectable<CostCenter>) s;
+						CostCenter value = vs.getValue();
+						view.getForm().setValue(value);
+						view.getForm().setReadOnly(false);
+						view.clearMembersList();
+
+						break;
+					}
+					break;
+				case REFRESH:
+					fetchCostCenterList();
+					break;
+				case DELETE:
+					if(view.getForm().getValue().id == null)
+						view.removeNewCostCenterPreparation();
+					else
+						deleteCostCenter(view.getForm().getValue());
+					break;
+				case EDIT:
 					view.getForm().setReadOnly(false);
-					view.clearMembersList();
+					view.setSaveModeEnabled(true);
+					break;
+				case SAVE:
+					if(!view.isFormValid())
+						return;
+					CostCenter info = view.getForm().getInfo();
+					if(info.id == null)
+						createCostCenter(info);
+					else
+						saveCostCenter(info);
+					break;
+				case CANCEL_EDIT:
+					if(view.getForm().getValue().id == null){
+						view.removeNewCostCenterPreparation();
+					}else{
+						view.getForm().revert();
+						view.getForm().setReadOnly(true);
+					}
+					break;
+				default:
 					break;
 				}
-			}
-		});
-		view.getEditButton().addClickHandler(new ClickHandler() {
-			
-			@Override
-			public void onClick(ClickEvent event) {
-				//TODO checkPermission
-				view.getForm().setReadOnly(false);
-			}
-		});
-		view.getSaveButton().addClickHandler(new ClickHandler() {
-			
-			@Override
-			public void onClick(ClickEvent event) {
-				if(!view.isFormValid())
-					return;
-				CostCenter value = view.getForm().getValue();
-				if(value.id == null)
-					createCostCenter(value);
-				else
-					saveCostCenter(value);
-			}
-		});
-		view.getDeleteButton().addClickHandler(new ClickHandler() {
-			
-			@Override
-			public void onClick(ClickEvent event) {
-				if(view.getForm().getValue().id == null)
-					view.removeNewCostCenterPreparation();
-				else
-					deleteCostCenter(view.getForm().getValue());
-			}
-		});
-		view.getRefreshButton().addClickHandler(new ClickHandler() {
-			
-			@Override
-			public void onClick(ClickEvent event) {
-				fetchCostCenterList();
 			}
 		});
 	}
 	public void createCostCenter(CostCenter c) {
-		service.createCostCenter(c, new BigBangAsyncCallback<CostCenter>() {
+		costCenterBroker.addCostCenter(c, new ResponseHandler<CostCenter>() {
 
 			@Override
-			public void onSuccess(CostCenter result) {
+			public void onResponse(CostCenter response) {
 				for(ValueSelectable<CostCenter> s : view.getList().getSelected()){
-					s.setValue(result);
-					view.getForm().setValue(result);
+					s.setValue(response);
+					view.getForm().setValue(response);
 					view.getForm().setReadOnly(true);
+					view.setSaveModeEnabled(false);
 					break;
 				}
 			}
+
+			@Override
+			public void onError(Collection<ResponseError> errors) {}
 		});
 	}
 	public void saveCostCenter(CostCenter c) {
-		service.saveCostCenter(c, new BigBangAsyncCallback<CostCenter>() {
+		costCenterBroker.updateCostCenter(c, new ResponseHandler<CostCenter>() {
 
 			@Override
-			public void onSuccess(CostCenter result) {
+			public void onResponse(CostCenter response) {
 				for(ValueSelectable<CostCenter> s : view.getList().getSelected()){
-					s.setValue(result);
-					view.getForm().setValue(result);
+					s.setValue(response);
+					view.getForm().setValue(response);
 					view.getForm().setReadOnly(true);
+					view.setSaveModeEnabled(false);
 					break;
 				}
 			}
-		});
-	}
-	
-	public void deleteCostCenter(final CostCenter c) {
-		//TODO alert
-		service.deleteCostCenter(c.id, new BigBangAsyncCallback<Void>() {
 
 			@Override
-			public void onSuccess(Void result) {
-				view.removeCostCenterFromList(c);
+			public void onError(Collection<ResponseError> errors) {}
+		});
+	}
+
+	public void deleteCostCenter(final CostCenter c) {
+		costCenterBroker.removeCostCenter(c.id, new ResponseHandler<CostCenter>() {
+
+			@Override
+			public void onResponse(CostCenter response) {
 				view.getList().clearSelection();
 				view.clearMembersList();
 				view.getForm().setValue(null);
 			}
+
+			@Override
+			public void onError(Collection<ResponseError> errors) {}
 		});
 	}	
 

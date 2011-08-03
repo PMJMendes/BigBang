@@ -1,4 +1,4 @@
-package bigBang.module.generalSystemModule.shared;
+package bigBang.definitions.client.types;
 
 import java.io.Serializable;
 
@@ -15,5 +15,12 @@ public class Coverage
 	public Coverage()
 	{
 		taxes = new Tax[0];
+	}
+	
+	public Coverage(Coverage original){
+		this.id = original.id;
+		this.name = original.name;
+		this.subLineId = original.subLineId;
+		this.taxes = original.taxes;
 	}
 }

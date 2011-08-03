@@ -2,6 +2,7 @@ package bigBang.module.generalSystemModule.client.userInterface;
 
 import org.gwt.mosaic.ui.client.ToolButton;
 
+import bigBang.definitions.client.types.Line;
 import bigBang.library.client.BigBangAsyncCallback;
 import bigBang.library.client.resources.Resources;
 import bigBang.library.client.userInterface.FilterableList;
@@ -11,7 +12,6 @@ import bigBang.library.client.userInterface.NavigationListEntry;
 import bigBang.library.client.userInterface.view.PopupPanel;
 import bigBang.module.generalSystemModule.client.userInterface.view.LineForm;
 import bigBang.module.generalSystemModule.interfaces.CoveragesService;
-import bigBang.module.generalSystemModule.shared.Line;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.FontWeight;

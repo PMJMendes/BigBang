@@ -14,6 +14,8 @@ import bigBang.module.clientModule.client.userInterface.presenter.ClientSearchOp
 import bigBang.module.clientModule.client.userInterface.view.ClientManagerTransferOperationView;
 import bigBang.module.clientModule.client.userInterface.view.ClientMergeOperationView;
 import bigBang.module.clientModule.client.userInterface.view.ClientSearchOperationView;
+import bigBang.module.clientModule.interfaces.ClientService;
+import bigBang.module.clientModule.interfaces.ClientServiceAsync;
 import bigBang.module.clientModule.shared.operation.ClientManagerTransferOperation;
 import bigBang.module.clientModule.shared.operation.ClientMergeOperation;
 import bigBang.module.clientModule.shared.operation.ClientSearchOperation;
@@ -39,17 +41,19 @@ public class ClientSection implements MenuSection {
 		
 		/*Init the operations available for this process section*/
 		
+		ClientServiceAsync clientService = ClientService.Util.getInstance();
+		
 		/* SEARCH */
 		ClientSearchOperation clientSearchOperation = (ClientSearchOperation)GWT.create(ClientSearchOperation.class);
 		ClientSearchOperationView clientSearchOperationView = new ClientSearchOperationView();
-		ClientSearchOperationViewPresenter clientSearchOperationPresenter = new ClientSearchOperationViewPresenter(null, null, clientSearchOperationView);
+		ClientSearchOperationViewPresenter clientSearchOperationPresenter = new ClientSearchOperationViewPresenter(null, clientService, clientSearchOperationView);
 		clientSearchOperationPresenter.setOperation(clientSearchOperation);
 		this.sectionOperationPresenters.add((OperationViewPresenter)clientSearchOperationPresenter);
 		
 		/* TRANSFERENCIA DE GESTOR */
 		ClientManagerTransferOperation clientManagerTransferOperation = (ClientManagerTransferOperation)GWT.create(ClientManagerTransferOperation.class);
 		ClientManagerTransferOperationView clientManagerTransferOperationView = new ClientManagerTransferOperationView();
-		ClientManagerTransferOperationViewPresenter clientManagerTransferOperationViewPresenter = new ClientManagerTransferOperationViewPresenter(null, null, clientManagerTransferOperationView);
+		ClientManagerTransferOperationViewPresenter clientManagerTransferOperationViewPresenter = new ClientManagerTransferOperationViewPresenter(null, clientService, clientManagerTransferOperationView);
 		clientManagerTransferOperationViewPresenter.setOperation(clientManagerTransferOperation);
 		this.sectionOperationPresenters.add((OperationViewPresenter)clientManagerTransferOperationViewPresenter);
 		

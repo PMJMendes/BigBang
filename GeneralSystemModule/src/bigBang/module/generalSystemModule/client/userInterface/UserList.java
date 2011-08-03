@@ -2,25 +2,32 @@ package bigBang.module.generalSystemModule.client.userInterface;
 
 import com.google.gwt.event.dom.client.HasClickHandlers;
 
+import bigBang.definitions.client.BigBangConstants;
+import bigBang.definitions.client.broker.UserBroker;
+import bigBang.definitions.client.brokerClient.UserDataBrokerClient;
+import bigBang.definitions.client.types.User;
+import bigBang.library.client.ValueSelectable;
+import bigBang.library.client.dataAccess.DataBrokerManager;
 import bigBang.library.client.userInterface.FilterableList;
 import bigBang.library.client.userInterface.ListHeader;
-import bigBang.module.generalSystemModule.shared.User;
 
-public class UserList extends FilterableList<User> {
+public class UserList extends FilterableList<User> implements UserDataBrokerClient {
 	
-	public HasClickHandlers refreshButton;
-	public HasClickHandlers newButton;
+	protected int userDataVersion;
+	protected UserBroker userBroker;
+	protected ListHeader header;
 	
 	public UserList(){
 		super();
-		ListHeader header = new ListHeader();
+		header = new ListHeader();
 		header.setText("Utilizadores");
 		header.showNewButton("Novo");
 		header.showRefreshButton();
-		refreshButton = header.getRefreshButton();
-		newButton = header.getNewButton();
 		setHeaderWidget(header);
 		onSizeChanged();
+		
+		this.userBroker = (UserBroker) DataBrokerManager.Util.getInstance().getBroker(BigBangConstants.EntityIds.USER);
+		this.userBroker.registerClient(this);
 	}
 
 	@Override
@@ -42,4 +49,68 @@ public class UserList extends FilterableList<User> {
 		setFooterText(text);
 	}
 
+	@Override
+	public void setDataVersionNumber(String dataElementId, int number) {
+		if(dataElementId.equals(BigBangConstants.EntityIds.USER)){
+			this.userDataVersion = number;
+		}
+	}
+
+	@Override
+	public int getDataVersion(String dataElementId) {
+		if(dataElementId.equals(BigBangConstants.EntityIds.USER)){
+			return this.userDataVersion;
+		}
+		return -1;
+	}
+
+	@Override
+	public void setUsers(User[] users) {
+		this.clear();
+		for(int i = 0; i < users.length; i++) {
+			addUser(users[i]);
+		}
+	}
+
+	@Override
+	public void addUser(User user) {
+		add(new UserListEntry(user));
+	}
+
+	@Override
+	public void updateUser(User user) {
+		for(ValueSelectable<User> s : this) {
+			if(s.getValue().id.equals(user.id)){
+				s.setValue(user);
+				break;
+			}
+		}
+	}
+
+	@Override
+	public void removeUser(String userId) {
+		for(ValueSelectable<User> s : this) {
+			if(s.getValue().id.equals(userId)){
+				remove(s);
+				break;
+			}
+		}
+	}
+
+	/**
+	 * Gets a reference to the 'new' button
+	 * @return The reference to the 'new' button
+	 */
+	public HasClickHandlers getNewButton(){
+		return header.getNewButton();
+	}
+	
+	/**
+	 * Gets a reference to the 'refresh' button
+	 * @return The reference to the 'refresh' button
+	 */
+	public HasClickHandlers getRefreshButton(){
+		return header.getRefreshButton();
+	}
+	
 }

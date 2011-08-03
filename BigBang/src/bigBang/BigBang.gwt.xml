@@ -14,6 +14,7 @@
 
 	<!-- BigBang Application modules -->
 	<inherits name="bigBang.library.BigBangLibrary" />
+	<inherits name="bigBang.definitions.BigBangDefinitions" />
 	<inherits name="bigBang.module.mainModule.MainModule" />
 
 	<!-- Specify the app entry point class. -->

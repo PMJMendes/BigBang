@@ -9,6 +9,8 @@ import Jewel.Engine.Constants.ObjectGUIDs;
 import Jewel.Engine.Implementation.Entity;
 import Jewel.Engine.Interfaces.IEntity;
 import Jewel.Engine.SysObjects.ObjectBase;
+import bigBang.definitions.client.types.Client;
+import bigBang.definitions.client.types.ClientStub;
 import bigBang.library.server.SearchServiceBase;
 import bigBang.library.shared.Address;
 import bigBang.library.shared.BigBangException;
@@ -17,9 +19,7 @@ import bigBang.library.shared.SearchResult;
 import bigBang.library.shared.SessionExpiredException;
 import bigBang.library.shared.ZipCode;
 import bigBang.module.clientModule.interfaces.ClientService;
-import bigBang.module.clientModule.shared.Client;
 import bigBang.module.clientModule.shared.ClientSearchParameter;
-import bigBang.module.clientModule.shared.ClientStub;
 
 import com.premiumminds.BigBang.Jewel.Constants;
 

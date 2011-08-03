@@ -2,6 +2,8 @@ package bigBang.module.generalSystemModule.client.userInterface;
 
 import org.gwt.mosaic.ui.client.ToolButton;
 
+import bigBang.definitions.client.types.Line;
+import bigBang.definitions.client.types.SubLine;
 import bigBang.library.client.BigBangAsyncCallback;
 import bigBang.library.client.Selectable;
 import bigBang.library.client.ValueSelectable;
@@ -13,8 +15,6 @@ import bigBang.library.client.userInterface.NavigationListEntry;
 import bigBang.library.client.userInterface.view.PopupPanel;
 import bigBang.module.generalSystemModule.client.userInterface.view.SubLineForm;
 import bigBang.module.generalSystemModule.interfaces.CoveragesService;
-import bigBang.module.generalSystemModule.shared.Line;
-import bigBang.module.generalSystemModule.shared.SubLine;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;

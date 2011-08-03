@@ -2,11 +2,11 @@ package bigBang.module.clientModule.client.userInterface.view;
 
 import com.google.gwt.user.client.ui.SplitLayoutPanel;
 
+import bigBang.definitions.client.types.Client;
 import bigBang.library.client.userInterface.FilterableList;
 import bigBang.library.client.userInterface.view.View;
 import bigBang.module.clientModule.client.userInterface.ClientSearchPanel;
 import bigBang.module.clientModule.client.userInterface.presenter.ClientManagerTransferOperationViewPresenter;
-import bigBang.module.clientModule.shared.Client;
 
 public class ClientManagerTransferOperationView extends View implements ClientManagerTransferOperationViewPresenter.Display {
 
@@ -27,6 +27,7 @@ public class ClientManagerTransferOperationView extends View implements ClientMa
 		
 		this.searchPanel = new ClientSearchPanel();
 		mainWrapper.addWest(searchPanel, SEARCH_PANEL_WIDTH);
+		this.searchPanel.setCheckable(true);
 		
 		SplitLayoutPanel contentWrapper = new SplitLayoutPanel();
 		contentWrapper.setSize("100%", "100%");

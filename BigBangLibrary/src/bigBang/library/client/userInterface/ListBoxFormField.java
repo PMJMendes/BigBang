@@ -130,7 +130,8 @@ public class ListBoxFormField extends FormField<String> {
 		
 		boolean hasValue = false;
 		for(int i = 0; i < this.listBox.getItemCount(); i++) {
-			if(this.listBox.getValue(i).equals(value)){
+			String itemValue = this.listBox.getValue(i);
+			if(itemValue.equalsIgnoreCase(value)){
 				this.listBox.setSelectedIndex(i);
 				hasValue = true;
 				break;

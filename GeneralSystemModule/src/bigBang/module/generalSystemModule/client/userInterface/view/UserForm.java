@@ -1,16 +1,13 @@
 package bigBang.module.generalSystemModule.client.userInterface.view;
 
-import com.google.gwt.event.dom.client.HasClickHandlers;
-import com.google.gwt.user.client.ui.Button;
-
+import bigBang.definitions.client.BigBangConstants;
+import bigBang.definitions.client.types.CostCenter;
+import bigBang.definitions.client.types.User;
+import bigBang.definitions.client.types.UserProfile;
 import bigBang.library.client.userInterface.ExpandableListBoxFormField;
 import bigBang.library.client.userInterface.PasswordTextBoxFormField;
 import bigBang.library.client.userInterface.TextBoxFormField;
 import bigBang.library.client.userInterface.view.FormView;
-import bigBang.module.generalSystemModule.shared.CostCenter;
-import bigBang.module.generalSystemModule.shared.ModuleConstants;
-import bigBang.module.generalSystemModule.shared.User;
-import bigBang.module.generalSystemModule.shared.UserProfile;
 import bigBang.module.generalSystemModule.shared.formValidator.UserFormValidator;
 
 public class UserForm extends FormView<User> {
@@ -22,10 +19,6 @@ public class UserForm extends FormView<User> {
 	private PasswordTextBoxFormField password;
 	private ExpandableListBoxFormField costCenter;
 	
-	private Button editCostCenterButton;
-	private Button saveCostCenterButton;
-	private Button deleteCostCenterButton;
-	
 	public UserForm(){
 		super();
 		addSection("Informação Geral");
@@ -33,8 +26,8 @@ public class UserForm extends FormView<User> {
 		username = new TextBoxFormField("Nome de Utilizador", new UserFormValidator.UsernameValidator());
 		password = new PasswordTextBoxFormField("Palavra-passe", new UserFormValidator.PasswordValidator());
 		email = new TextBoxFormField("E-mail", new UserFormValidator.EmailValidator());
-		role = new ExpandableListBoxFormField(ModuleConstants.EntityIDs.UserProfiles, "Perfil", new UserFormValidator.UserProfileValidator());
-		costCenter = new ExpandableListBoxFormField(ModuleConstants.EntityIDs.CostCenters, "Centro de Custo", new UserFormValidator.UserCostCenterValidator());
+		role = new ExpandableListBoxFormField(BigBangConstants.EntityIds.USER_PROFILE, "Perfil", new UserFormValidator.UserProfileValidator());
+		costCenter = new ExpandableListBoxFormField(BigBangConstants.EntityIds.COST_CENTER, "Centro de Custo", new UserFormValidator.UserCostCenterValidator());
 
 		role.setEditable(false);
 		costCenter.setEditable(false);		
@@ -47,14 +40,6 @@ public class UserForm extends FormView<User> {
 		addFormField(costCenter);
 
 		showPasswordField(false);
-		
-		this.editCostCenterButton = new Button("Editar");	
-		this.saveCostCenterButton = new Button("Guardar");
-		this.deleteCostCenterButton = new Button("Apagar");
-		
-		this.addButton(editCostCenterButton);
-		this.addButton(saveCostCenterButton);
-		this.addButton(deleteCostCenterButton);
 		
 		clearInfo();
 		
@@ -95,13 +80,9 @@ public class UserForm extends FormView<User> {
 			costCenter.addItem(item, value);
 	}
 
-	public void selectRoleValue(String value) {
-		role.setValue(value);
-	}
-
 	@Override
 	public User getInfo() {
-		User info = value == null ? new User() : value;
+		User info = value == null ? new User() : new User(value);
 		info.name = this.name.getValue();
 		info.username = this.username.getValue();
 		info.password = this.password.getValue();
@@ -151,23 +132,4 @@ public class UserForm extends FormView<User> {
 			this.costCenter.setValue(user.costCenterId);
 	}
 	
-	public HasClickHandlers getSaveButton() {
-		return saveCostCenterButton;
-	}
-	
-	public HasClickHandlers getEditButton() {
-		return editCostCenterButton;
-	}
-	
-	public HasClickHandlers getDeleteButton() {
-		return deleteCostCenterButton;
-	}
-	
-	@Override
-	public void setReadOnly(boolean readOnly) {
-		super.setReadOnly(readOnly);
-		saveCostCenterButton.setVisible(!readOnly);
-		editCostCenterButton.setVisible(readOnly);
-	}
-
 }

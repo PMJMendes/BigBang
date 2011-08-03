@@ -1,5 +1,6 @@
 package bigBang.library.client.userInterface;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
@@ -208,6 +209,15 @@ public class ExpandableListBoxFormField extends ListBoxFormField implements
 				break;
 			}
 		}
+	}
+	
+	/**
+	 * Gets all the typified list item entries
+	 * @return A collection of list items wrapped in value selectables
+	 */
+	public Collection<ValueSelectable<TipifiedListItem>> getListItems(){
+		ArrayList<ValueSelectable<TipifiedListItem>> result = new ArrayList<ValueSelectable<TipifiedListItem>>(this.list);
+		return result;
 	}
 
 }

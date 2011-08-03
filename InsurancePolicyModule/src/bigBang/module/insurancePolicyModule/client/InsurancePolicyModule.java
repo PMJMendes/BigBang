@@ -4,6 +4,7 @@ import bigBang.library.client.BigBangPermissionManager;
 import bigBang.library.client.EventBus;
 import bigBang.library.client.Module;
 import bigBang.library.client.Process;
+import bigBang.library.client.dataAccess.DataBroker;
 import bigBang.library.client.event.ModuleInitializedEvent;
 import bigBang.library.client.userInterface.presenter.SectionViewPresenter;
 import bigBang.module.insurancePolicyModule.client.userInterface.presenter.InsurancePolicySectionViewPresenter;
@@ -46,6 +47,18 @@ public class InsurancePolicyModule implements Module {
 	}
 
 	public Process[] getProcesses() {
+		return null;
+	}
+
+	@Override
+	public DataBroker<?>[] getBrokerImplementations() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public String[] getBrokerDependencies() {
+		// TODO Auto-generated method stub
 		return null;
 	}
 

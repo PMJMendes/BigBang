@@ -7,6 +7,8 @@ import com.google.gwt.user.client.ui.HasValue;
 import com.google.gwt.user.client.ui.HasWidgets;
 import com.google.gwt.user.client.ui.Widget;
 
+import bigBang.definitions.client.types.Line;
+import bigBang.definitions.client.types.Tax;
 import bigBang.library.client.BigBangAsyncCallback;
 import bigBang.library.client.EventBus;
 import bigBang.library.client.Operation;
@@ -15,8 +17,6 @@ import bigBang.library.client.userInterface.view.View;
 import bigBang.library.interfaces.Service;
 import bigBang.module.generalSystemModule.client.userInterface.view.TaxManagementOperationView;
 import bigBang.module.generalSystemModule.interfaces.CoveragesServiceAsync;
-import bigBang.module.generalSystemModule.shared.Line;
-import bigBang.module.generalSystemModule.shared.Tax;
 import bigBang.module.generalSystemModule.shared.operation.TaxManagementOperation;
 
 public class TaxManagementOperationViewPresenter implements

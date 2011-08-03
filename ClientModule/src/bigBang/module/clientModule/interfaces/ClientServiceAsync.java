@@ -1,7 +1,7 @@
 package bigBang.module.clientModule.interfaces;
 
+import bigBang.definitions.client.types.Client;
 import bigBang.library.interfaces.SearchServiceAsync;
-import bigBang.module.clientModule.shared.Client;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 public interface ClientServiceAsync

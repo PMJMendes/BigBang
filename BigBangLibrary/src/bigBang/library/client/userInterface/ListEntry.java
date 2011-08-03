@@ -187,6 +187,8 @@ public class ListEntry<T> extends View implements ValueSelectable<T>, HasMetaDat
 		if(title == null){
 			this.titleLabel.setText("");
 			this.titleLabel.getElement().getStyle().setProperty("textOverflow", "ellipsis");
+			this.titleLabel.getElement().getStyle().setProperty("whiteSpace", "nowrap");
+			//this.textLabel.getElement().getStyle().setProperty("whiteSpace", "nowrap");
 			this.titleLabel.setVisible(false);
 			return;
 		}

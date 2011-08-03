@@ -135,27 +135,6 @@ public abstract class FormView<T> extends View implements Validatable, HasEditab
 		//this.panel.setCellHeight(currentSection, minHeight);
 	}
 
-	/*public void addDisclosureSection(String title, Widget widget){
-		DisclosurePanel p = new DisclosurePanel();
-		p.setSize("100%", "100%");
-		SimplePanel wrapper = new SimplePanel();
-
-		p.setHeader(getSectionHeader(title));
-
-		SimplePanel contentWrapper = new SimplePanel();
-
-		wrapper.setWidth("100%");
-		contentWrapper.setWidget(widget);
-		p.setContent(contentWrapper);
-
-		p.getContent().getElement().getStyle().setPaddingLeft(10, Unit.PX);
-		p.getContent().getElement().getStyle().setPaddingTop(10, Unit.PX);
-		p.getContent().getElement().getStyle().setPaddingBottom(10, Unit.PX);
-		wrapper.add(p);
-		this.currentSection = wrapper;
-		this.panel.add(wrapper);
-	}*/
-
 	public void addRuler(){
 		SimplePanel p = new SimplePanel();
 		p.setSize("100%", "20px");
@@ -242,8 +221,10 @@ public abstract class FormView<T> extends View implements Validatable, HasEditab
 		return wrapper;
 	}
 	
+	@Override
 	public abstract T getInfo();
 	
+	@Override
 	public abstract void setInfo(T info);
 	
 	public void clearInfo() {
@@ -253,6 +234,17 @@ public abstract class FormView<T> extends View implements Validatable, HasEditab
 			}
 		}
 	}
+	
+	@Override
+	public void revert(){
+		this.setValue(this.value, false);
+	}
+	
+	@Override
+	public void commit(){
+		this.setValue(this.getInfo());
+	}
+	
 
 	public HandlerRegistration addValueChangeHandler(
 			ValueChangeHandler<T> handler) {
@@ -264,7 +256,6 @@ public abstract class FormView<T> extends View implements Validatable, HasEditab
 	}
 
 	public T getValue() {
-		setValue(getInfo(), false);
 		return value;
 	}
 

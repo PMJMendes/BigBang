@@ -44,6 +44,9 @@ public interface Resources extends ClientBundle {
 	@Source("images/arrowDown1.png")
 	ImageResource arrowDown();
 	
+	@Source("images/arrowUp2.png")
+	ImageResource arrowUpExpand();
+	
 
 	//CONTACTS
 	@Source("images/contactsIcon.png")

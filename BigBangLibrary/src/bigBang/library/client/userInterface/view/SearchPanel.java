@@ -9,12 +9,8 @@ import bigBang.library.shared.SearchParameter;
 import bigBang.library.shared.SearchResult;
 
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.event.dom.client.BlurEvent;
-import com.google.gwt.event.dom.client.BlurHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.event.dom.client.FocusEvent;
-import com.google.gwt.event.dom.client.FocusHandler;
 import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.event.dom.client.KeyPressEvent;
 import com.google.gwt.event.dom.client.KeyPressHandler;
@@ -42,11 +38,9 @@ import com.google.gwt.user.client.ui.Widget;
  */
 public abstract class SearchPanel extends FilterableList<SearchResult> {
 
-	private final String DEFAULT_TEXT = "Termos de pesquisa";
 	protected final int DEFAULT_PAGE_SIZE = 50;
 
 	private boolean liveSearch = false;
-	private boolean hasSearchTerms;
 	private Button searchButton;
 	@SuppressWarnings("unused")
 	private Widget filtersWidget;
@@ -73,31 +67,6 @@ public abstract class SearchPanel extends FilterableList<SearchResult> {
 		this.searchButton.setSize("80px", "100%");
 		this.setLiveSearch(this.liveSearch);
 
-		textBoxFilter.addBlurHandler(new BlurHandler() {
-
-			public void onBlur(BlurEvent event) {
-				if (!hasSearchTerms) {
-					setStandBy(true);
-				}
-			}
-		});
-		this.textBoxFilter.addFocusHandler(new FocusHandler() {
-
-			public void onFocus(FocusEvent event) {
-				if (!hasSearchTerms) {
-					setStandBy(false);
-					textBoxFilter.setText("");
-				}
-				searchButton.setEnabled(hasSearchTerms);
-			}
-		});
-		this.textBoxFilter.addKeyUpHandler(new KeyUpHandler() {
-
-			public void onKeyUp(KeyUpEvent event) {
-				hasSearchTerms = !textBoxFilter.getText().equals("");
-				searchButton.setEnabled(hasSearchTerms);
-			}
-		});
 		this.textBoxFilter.addKeyPressHandler(new KeyPressHandler() {
 
 			public void onKeyPress(KeyPressEvent event) {
@@ -154,32 +123,8 @@ public abstract class SearchPanel extends FilterableList<SearchResult> {
 		headerWidgetWrapper.add(searchFieldWrapper);
 		
 		header.setWidget(headerWidgetWrapper);
-
 		textFieldOldParent.removeFromParent();
 		
-		/*DisclosurePanel filtersWrapper = new DisclosurePanel();
-		filtersWrapper.setSize("100%", "100%");
-		Label headerLabel = new Label("Filtros");
-		headerLabel.getElement().getStyle().setMarginLeft(10, Unit.PX);
-		headerLabel.getElement().getStyle().setFontWeight(FontWeight.BOLD);
-		VerticalPanel header = new VerticalPanel();
-		header.setSize("100%", "100%");
-		header.setVerticalAlignment(HasVerticalAlignment.ALIGN_MIDDLE);
-		header.add(headerLabel);*/
-		/*filtersWrapper.setHeader(header);
-		filtersWrapper.getHeader().getElement().getStyle()
-				.setBackgroundImage("url(images/listHeaderBackground1.png)");
-		filtersWrapper.getHeader().getElement().getStyle()
-				.setProperty("borderTop", "1px solid gray");
-		filtersWrapper.getHeader().setHeight("20px");
-		filtersWrapper.setOpen(false);
-		filtersWrapper.setAnimationEnabled(true);
-		filtersWrapper.setContent(new Label("Isto é um filtro"));
-		filtersWrapper.getElement().getStyle().setBackgroundColor("#F6F6F6");
-
-		this.filtersWidget = (Widget) filtersWrapper;
-
-		headerWidgetWrapper.add(filtersWrapper);*/
 		this.setHeaderWidget(headerWidgetWrapper);
 	}
 	
@@ -211,15 +156,6 @@ public abstract class SearchPanel extends FilterableList<SearchResult> {
 				});
 	}
 
-	/**
-	 * Shows a loading panel
-	 * @param standBy shows a loading panel if true
-	 */
-	private void setStandBy(boolean standBy) {
-		textBoxFilter.setText(DEFAULT_TEXT);
-		searchButton.setEnabled(false);
-	}
-
 	@Override
 	protected void updateFooterText() {
 		int nEntries = this.numberOfResults;
@@ -239,6 +175,7 @@ public abstract class SearchPanel extends FilterableList<SearchResult> {
 					public void onSuccess(NewSearchResult result) {
 						workspaceId = result.workspaceId;
 						clear();
+						scrollPanel.scrollToTop();
 						nextResultIndex += result.results.length;
 						SearchPanel.this.numberOfResults = result.totalCount;
 						onResults(result.results);
@@ -252,6 +189,7 @@ public abstract class SearchPanel extends FilterableList<SearchResult> {
 
 					public void onSuccess(NewSearchResult result) {
 						clear();
+						scrollPanel.scrollToTop();
 						nextResultIndex += result.results.length;
 						SearchPanel.this.numberOfResults = result.totalCount;
 						onResults(result.results);

@@ -1,4 +1,4 @@
-package bigBang.module.generalSystemModule.shared;
+package bigBang.definitions.client.types;
 
 import java.io.Serializable;
 
@@ -26,5 +26,18 @@ public class InsuranceAgency
 	{
 		ownMediatorCodes = new String[0];
 		contacts = new Contact[0];
+	}
+	
+	public InsuranceAgency(InsuranceAgency original){
+		this.id = original.id;
+		this.name = original.name;
+		this.acronym = original.acronym;
+		this.ISPNumber = original.ISPNumber;
+		this.ownMediatorCodes = original.ownMediatorCodes;
+		this.taxNumber = original.taxNumber;
+		this.NIB = original.NIB;
+		this.address = original.address;
+		this.contacts = original.contacts;
+		this.documents = original.documents;
 	}
 }

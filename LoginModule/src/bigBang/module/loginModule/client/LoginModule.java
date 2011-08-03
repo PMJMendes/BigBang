@@ -5,6 +5,7 @@ import com.google.gwt.core.client.GWT;
 import bigBang.library.client.BigBangPermissionManager;
 import bigBang.library.client.Domain;
 import bigBang.library.client.EventBus;
+import bigBang.library.client.dataAccess.DataBroker;
 import bigBang.library.client.userInterface.presenter.SectionViewPresenter;
 import bigBang.library.client.userInterface.presenter.ViewPresenter;
 import bigBang.library.interfaces.Service;
@@ -62,6 +63,18 @@ public class LoginModule implements bigBang.library.client.LoginModule {
 	}
 
 	public SectionViewPresenter[] getMainMenuSectionPresenters() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public DataBroker<?>[] getBrokerImplementations() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public String[] getBrokerDependencies() {
 		// TODO Auto-generated method stub
 		return null;
 	}

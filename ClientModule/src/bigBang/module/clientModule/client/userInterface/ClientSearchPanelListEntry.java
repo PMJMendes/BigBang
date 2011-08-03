@@ -1,12 +1,13 @@
 package bigBang.module.clientModule.client.userInterface;
 
+import com.google.gwt.dom.client.Style.FontStyle;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 
+import bigBang.definitions.client.types.ClientStub;
 import bigBang.library.client.ValueWrapper;
 import bigBang.library.client.userInterface.SearchPanelListEntry;
 import bigBang.library.shared.SearchResult;
-import bigBang.module.clientModule.shared.ClientStub;
 
 public class ClientSearchPanelListEntry extends SearchPanelListEntry<SearchResult> {
 
@@ -37,7 +38,19 @@ public class ClientSearchPanelListEntry extends SearchPanelListEntry<SearchResul
 	public <I extends Object> void setInfo(I info) {
 		ClientStub value = (ClientStub)info;
 		setTitle(value.name);
-		setText(value.clientNumber);
+		setText("nº"+value.clientNumber);
+		this.textLabel.getElement().getStyle().setFontStyle(FontStyle.OBLIQUE);
 	};
+	
+	@Override
+	public void setValue(SearchResult value) {
+		super.setValue(value);
+		if(this.wrapper != null)
+			this.wrapper.setValue((ClientStub) value, false);
+	}
+	
+	public ValueWrapper<ClientStub> getValueWrapper(){
+		return this.wrapper;
+	}
 	
 }

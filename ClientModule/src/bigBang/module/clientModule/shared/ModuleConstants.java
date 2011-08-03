@@ -14,12 +14,6 @@ public class ModuleConstants
 		public static final String SalesVolumes        = "5C4E267C-B306-482F-8636-9EE600C586B6";
 	}
 
-	public class EntityIDs
-	{
-		public static final String Groups  = "DC89D454-CCCC-441E-BCE3-9EE600AFCCCD";
-		public static final String Clients = "D535A99E-149F-44DC-A28B-9EE600B240F5";
-	}
-
 	public class ClientTypeIDs
 	{
 		public static final String Person  = "462096E4-68A2-408A-963A-9EE600C9556A";

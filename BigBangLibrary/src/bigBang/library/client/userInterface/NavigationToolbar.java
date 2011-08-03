@@ -1,50 +1,16 @@
 package bigBang.library.client.userInterface;
 
-import bigBang.library.client.userInterface.NavigationToolbar.NavigationEvent.Navigation;
+import bigBang.library.client.event.NavigationEvent;
+import bigBang.library.client.event.NavigationEvent.Navigation;
+import bigBang.library.client.event.NavigationEventHandler;
 
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.event.shared.EventHandler;
-import com.google.gwt.event.shared.GwtEvent;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.SimplePanel;
 
 public class NavigationToolbar extends ListHeader {
-	
-	public interface NavigationEventHandler extends EventHandler {
-		public void onNavigationEvent(Navigation n);
-	}
-	
-	public static class NavigationEvent extends GwtEvent<NavigationEventHandler> {
-		
-		public enum Navigation {
-			NEXT,
-			PREVIOUS, 
-			FIRST,
-			LAST,
-			HOME
-		} 
-		
-		private Navigation navigation; 
-		
-		public NavigationEvent(Navigation n){
-			this.navigation = n;
-		}
-		
-		public static final Type<NavigationEventHandler> TYPE = new Type<NavigationEventHandler>(); 
-		
-
-		@Override
-		public com.google.gwt.event.shared.GwtEvent.Type<NavigationEventHandler> getAssociatedType() {
-			return TYPE;
-		}
-
-		@Override
-		protected void dispatch(NavigationEventHandler handler) {
-			handler.onNavigationEvent(navigation);
-		}
-	}
 	
 	protected Button nextButton, prevButton;
 	

@@ -1,31 +1,27 @@
 package bigBang.module.generalSystemModule.client.userInterface;
 
-import bigBang.library.client.resources.Resources;
+import bigBang.definitions.client.types.User;
 import bigBang.library.client.userInterface.ListEntry;
-import bigBang.module.generalSystemModule.shared.User;
 
-import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.FontWeight;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.user.client.Event;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.HasVerticalAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
-import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
 public class CostCenterMemberListEntry extends ListEntry<User> {
 
-	private Resources resources;
+	//private Resources resources;
 	private Panel viewIconWrapper;
 	
 	public CostCenterMemberListEntry(User user) {
 		super(user);
-		resources = GWT.create(Resources.class);
+		//resources = GWT.create(Resources.class);
 		viewIconWrapper = new VerticalPanel();
 		viewIconWrapper.addDomHandler(new ClickHandler() {
 			
@@ -39,8 +35,16 @@ public class CostCenterMemberListEntry extends ListEntry<User> {
 		HorizontalPanel content = new HorizontalPanel();
 		content.setVerticalAlignment(HasVerticalAlignment.ALIGN_MIDDLE);
 		content.setSize("100%", "100%");
-		Label nameLabel = new Label(user.name);
-		Label usernameLabel = new Label("("+user.username+")");
+		Label nameLabel = new Label();
+		Label usernameLabel = new Label();
+		
+		nameLabel.getElement().getStyle().setProperty("whiteSpace", "nowrap");
+		
+		titleLabel = nameLabel;
+		textLabel = usernameLabel;
+		
+		setTitle(user.name);
+		setText("("+user.username+")");
 		
 		nameLabel.getElement().getStyle().setFontWeight(FontWeight.BOLD);
 		nameLabel.getElement().getStyle().setFontSize(14, Unit.PX);
@@ -65,6 +69,7 @@ public class CostCenterMemberListEntry extends ListEntry<User> {
 		
 		setHeight("30px");
 		setSelected(isSelected());
+		
 		setDoubleClickable(true);
 	}
 	
@@ -74,13 +79,7 @@ public class CostCenterMemberListEntry extends ListEntry<User> {
 		if(this.viewIconWrapper == null)
 			return;
 		this.viewIconWrapper.clear();
-		this.viewIconWrapper.add(new Image(selected ? resources.viewIconSmallWhite() : resources.viewIconSmallBlack()));
-	}
-	
-	@Override
-	public void onDoubleClick(Event event){
-		super.onDoubleClick(event);
-		
+		//this.viewIconWrapper.add(new Image(selected ? resources.viewIconSmallWhite() : resources.viewIconSmallBlack()));
 	}
 
 }

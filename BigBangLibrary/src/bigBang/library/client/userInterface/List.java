@@ -600,7 +600,7 @@ public class List<T> extends View implements HasValueSelectables<T>, java.util.L
 		return this.listPanel;
 	}
 
-	public void onCellDoubleClicked(ListEntry<T> entry) {
+	protected void onCellDoubleClicked(ListEntry<T> entry) {
 	}
 
 	protected void selectionChangedEventFireBypass(SelectionChangedEvent e){

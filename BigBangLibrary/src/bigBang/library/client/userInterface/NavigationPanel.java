@@ -8,8 +8,8 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
-import bigBang.library.client.userInterface.NavigationToolbar.NavigationEvent.Navigation;
-import bigBang.library.client.userInterface.NavigationToolbar.NavigationEventHandler;
+import bigBang.library.client.event.NavigationEvent;
+import bigBang.library.client.event.NavigationEventHandler;
 import bigBang.library.client.userInterface.SlidePanel.Direction;
 import bigBang.library.client.userInterface.view.View;
 
@@ -43,8 +43,8 @@ public class NavigationPanel extends View {
 		navBar.addNavigationEventHandler(new NavigationEventHandler() {
 
 			@Override
-			public void onNavigationEvent(Navigation n) {
-				switch(n) {
+			public void onNavigationEvent(NavigationEvent event) {
+				switch(event.getNavigationCommand()) {
 				case NEXT:
 					navigateForward();
 					break;

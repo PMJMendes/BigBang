@@ -3,11 +3,11 @@ package bigBang.module.generalSystemModule.client.userInterface.view;
 import com.google.gwt.event.dom.client.HasClickHandlers;
 import com.google.gwt.user.client.ui.Button;
 
+import bigBang.definitions.client.types.Tax;
 import bigBang.library.client.userInterface.ExpandableListBoxFormField;
 import bigBang.library.client.userInterface.TextBoxFormField;
 import bigBang.library.client.userInterface.view.FormView;
 import bigBang.module.generalSystemModule.shared.ModuleConstants;
-import bigBang.module.generalSystemModule.shared.Tax;
 import bigBang.module.generalSystemModule.shared.formValidator.TaxFormValidator;
 
 public class TaxForm extends FormView<Tax> {

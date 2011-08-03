@@ -2,23 +2,26 @@ package bigBang.module.generalSystemModule.client.userInterface;
 
 import com.google.gwt.event.dom.client.HasClickHandlers;
 
+import bigBang.definitions.client.BigBangConstants;
+import bigBang.definitions.client.broker.InsuranceAgencyBroker;
+import bigBang.definitions.client.brokerClient.InsuranceAgencyDataBrokerClient;
+import bigBang.definitions.client.types.InsuranceAgency;
+import bigBang.library.client.ValueSelectable;
+import bigBang.library.client.dataAccess.DataBrokerManager;
 import bigBang.library.client.userInterface.FilterableList;
 import bigBang.library.client.userInterface.ListHeader;
-import bigBang.module.generalSystemModule.shared.InsuranceAgency;
 
-public class InsuranceAgencyList extends FilterableList<InsuranceAgency> {
+public class InsuranceAgencyList extends FilterableList<InsuranceAgency> implements InsuranceAgencyDataBrokerClient {
 
-	public HasClickHandlers refreshButton;
-	public HasClickHandlers newButton;
+	protected ListHeader header;
+	protected int insuranceAgencyDataVersion;
 	
 	public InsuranceAgencyList(){
 		super();
-		ListHeader header = new ListHeader();
+		header = new ListHeader();
 		header.setText("Seguradoras");
 		header.showNewButton("Novo");
 		header.showRefreshButton();
-		refreshButton = header.getRefreshButton();
-		newButton = header.getNewButton();
 		setHeaderWidget(header);
 		onSizeChanged();
 	}
@@ -40,6 +43,64 @@ public class InsuranceAgencyList extends FilterableList<InsuranceAgency> {
 		}
 		
 		setFooterText(text);
+		
+		((InsuranceAgencyBroker)DataBrokerManager.Util.getInstance().getBroker(BigBangConstants.EntityIds.INSURANCE_AGENCY)).registerClient(this);
+	}
+	
+	public HasClickHandlers getNewButton(){
+		return header.getNewButton();
+	}
+	
+	public HasClickHandlers getRefreshButton(){
+		return header.getRefreshButton();
+	}
+
+	@Override
+	public void setDataVersionNumber(String dataElementId, int number) {
+		if(dataElementId.equals(BigBangConstants.EntityIds.INSURANCE_AGENCY)){
+			this.insuranceAgencyDataVersion = number;
+		}
+	}
+
+	@Override
+	public int getDataVersion(String dataElementId) {
+		if(dataElementId.equals(BigBangConstants.EntityIds.INSURANCE_AGENCY)){
+			return this.insuranceAgencyDataVersion;
+		}
+		return -1;
+	}
+
+	@Override
+	public void setInsuranceAgencies(InsuranceAgency[] insuranceAgencies) {
+		clear();
+		for(int i = 0; i < insuranceAgencies.length; i++) {
+			addInsuranceAgency(insuranceAgencies[i]);
+		}
+	}
+
+	@Override
+	public void addInsuranceAgency(InsuranceAgency insuranceAgency) {
+		add(new InsuranceAgencyListEntry(insuranceAgency));
+	}
+
+	@Override
+	public void updateInsuranceAgency(InsuranceAgency insuranceAgency) {
+		for(ValueSelectable<InsuranceAgency> vs : this) {
+			if(insuranceAgency.id.equals(vs.getValue().id)){
+				vs.setValue(insuranceAgency, false);
+				break;
+			}
+		}
+	}
+
+	@Override
+	public void removeInsuranceAgency(String insuranceAgencyId) {
+		for(ValueSelectable<InsuranceAgency> vs : this) {
+			if(insuranceAgencyId.equals(vs.getValue().id)){
+				remove(vs);
+				break;
+			}
+		}
 	}
 
 }

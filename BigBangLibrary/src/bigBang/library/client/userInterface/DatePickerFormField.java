@@ -11,12 +11,13 @@ import com.google.gwt.user.client.ui.UIObject;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.user.datepicker.client.DateBox;
 
+import bigBang.library.client.FieldValidator;
 import bigBang.library.client.FormField;
 
 
 public class DatePickerFormField extends FormField<Date> {
 	
-	private static final String DEFAULT_PATTERN = "d-M-y";
+	private static final String DEFAULT_FORMAT = "d-M-y";
 	
 	private Label label;
 	@SuppressWarnings("unused")
@@ -24,13 +25,23 @@ public class DatePickerFormField extends FormField<Date> {
 	private boolean readonly;
 	
 	public DatePickerFormField(){
-		this(DEFAULT_PATTERN);
+		this("");
 	}
 	
 	public DatePickerFormField(String label){
+		this(label, DEFAULT_FORMAT);
+	}
+	
+	public DatePickerFormField(String label, String format){
+		this(label, format, null);
+	}
+	
+	public DatePickerFormField(String label, String format, FieldValidator<Date> validator){
 		super();
 		
-		this.datePattern = DEFAULT_PATTERN; //TODO
+		this.setValidator(validator);
+		
+		this.datePattern = format;
 		this.field = new DateBox();
 		
 		HorizontalPanel wrapper = new HorizontalPanel();

@@ -1,4 +1,4 @@
-package bigBang.module.clientModule.shared;
+package bigBang.definitions.client.types;
 
 import bigBang.library.shared.Address;
 

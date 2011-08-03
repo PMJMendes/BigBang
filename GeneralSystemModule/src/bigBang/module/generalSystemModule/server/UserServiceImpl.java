@@ -10,12 +10,12 @@ import Jewel.Engine.DataAccess.MasterDB;
 import Jewel.Engine.Implementation.Entity;
 import Jewel.Engine.Security.Password;
 import Jewel.Engine.SysObjects.ObjectBase;
+import bigBang.definitions.client.types.User;
+import bigBang.definitions.client.types.UserProfile;
 import bigBang.library.server.EngineImplementor;
 import bigBang.library.shared.BigBangException;
 import bigBang.library.shared.SessionExpiredException;
 import bigBang.module.generalSystemModule.interfaces.UserService;
-import bigBang.module.generalSystemModule.shared.User;
-import bigBang.module.generalSystemModule.shared.UserProfile;
 
 import com.premiumminds.BigBang.Jewel.Constants;
 import com.premiumminds.BigBang.Jewel.Objects.GeneralSystem;

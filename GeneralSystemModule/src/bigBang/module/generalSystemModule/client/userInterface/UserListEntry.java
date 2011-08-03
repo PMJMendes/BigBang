@@ -4,8 +4,8 @@ import com.google.gwt.dom.client.Style.FontWeight;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
 
+import bigBang.definitions.client.types.User;
 import bigBang.library.client.userInterface.ListEntry;
-import bigBang.module.generalSystemModule.shared.User;
 
 public class UserListEntry extends ListEntry<User> {
 

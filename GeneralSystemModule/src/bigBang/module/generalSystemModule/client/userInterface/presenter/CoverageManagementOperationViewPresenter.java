@@ -2,6 +2,9 @@ package bigBang.module.generalSystemModule.client.userInterface.presenter;
 
 import java.util.Collection;
 
+import bigBang.definitions.client.types.Coverage;
+import bigBang.definitions.client.types.Line;
+import bigBang.definitions.client.types.SubLine;
 import bigBang.library.client.EventBus;
 import bigBang.library.client.HasValueSelectables;
 import bigBang.library.client.Operation;
@@ -13,9 +16,6 @@ import bigBang.library.client.userInterface.presenter.OperationViewPresenter;
 import bigBang.library.client.userInterface.view.View;
 import bigBang.library.interfaces.Service;
 import bigBang.module.generalSystemModule.interfaces.CoveragesServiceAsync;
-import bigBang.module.generalSystemModule.shared.Coverage;
-import bigBang.module.generalSystemModule.shared.Line;
-import bigBang.module.generalSystemModule.shared.SubLine;
 import bigBang.module.generalSystemModule.shared.operation.CoverageManagementOperation;
 
 import com.google.gwt.user.client.ui.HasWidgets;

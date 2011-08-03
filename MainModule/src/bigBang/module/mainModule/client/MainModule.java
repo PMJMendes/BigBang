@@ -5,6 +5,7 @@ import com.google.gwt.user.client.ui.RootPanel;
 
 import bigBang.library.client.BigBangPermissionManager;
 import bigBang.library.client.EventBus;
+import bigBang.library.client.dataAccess.DataBroker;
 import bigBang.library.client.userInterface.presenter.SectionViewPresenter;
 import bigBang.library.client.userInterface.presenter.ViewPresenter;
 
@@ -59,6 +60,18 @@ public class MainModule implements bigBang.library.client.MainModule {
 	
 	public EventBus getEventBus() {
 		return eventBus;
+	}
+
+	@Override
+	public DataBroker<?>[] getBrokerImplementations() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public String[] getBrokerDependencies() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

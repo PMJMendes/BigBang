@@ -15,18 +15,22 @@ import bigBang.library.interfaces.Service;
 import bigBang.library.interfaces.UndoService;
 import bigBang.library.interfaces.UndoServiceAsync;
 import bigBang.library.shared.operation.UndoOperation;
+import bigBang.module.generalSystemModule.client.userInterface.presenter.ClientGroupManagementOperationViewPresenter;
 import bigBang.module.generalSystemModule.client.userInterface.presenter.CostCenterManagementOperationViewPresenter;
 import bigBang.module.generalSystemModule.client.userInterface.presenter.CoverageManagementOperationViewPresenter;
 import bigBang.module.generalSystemModule.client.userInterface.presenter.InsuranceAgencyManagementOperationViewPresenter;
 import bigBang.module.generalSystemModule.client.userInterface.presenter.MediatorManagementOperationViewPresenter;
 import bigBang.module.generalSystemModule.client.userInterface.presenter.TaxManagementOperationViewPresenter;
 import bigBang.module.generalSystemModule.client.userInterface.presenter.UserManagementOperationViewPresenter;
+import bigBang.module.generalSystemModule.client.userInterface.view.ClientGroupManagementOperationView;
 import bigBang.module.generalSystemModule.client.userInterface.view.CostCenterManagementOperationView;
 import bigBang.module.generalSystemModule.client.userInterface.view.CoverageManagementOperationView;
 import bigBang.module.generalSystemModule.client.userInterface.view.InsuranceAgencyManagementOperationView;
 import bigBang.module.generalSystemModule.client.userInterface.view.MediatorManagementOperationView;
 import bigBang.module.generalSystemModule.client.userInterface.view.TaxManagementOperationView;
 import bigBang.module.generalSystemModule.client.userInterface.view.UserManagementOperationView;
+import bigBang.module.generalSystemModule.interfaces.ClientGroupService;
+import bigBang.module.generalSystemModule.interfaces.ClientGroupServiceAsync;
 import bigBang.module.generalSystemModule.interfaces.CostCenterService;
 import bigBang.module.generalSystemModule.interfaces.CostCenterServiceAsync;
 import bigBang.module.generalSystemModule.interfaces.CoveragesService;
@@ -38,6 +42,7 @@ import bigBang.module.generalSystemModule.interfaces.MediatorServiceAsync;
 import bigBang.module.generalSystemModule.interfaces.UserService;
 import bigBang.module.generalSystemModule.interfaces.UserServiceAsync;
 import bigBang.module.generalSystemModule.shared.ModuleConstants;
+import bigBang.module.generalSystemModule.shared.operation.ClientGroupManagementOperation;
 import bigBang.module.generalSystemModule.shared.operation.CostCenterManagementOperation;
 import bigBang.module.generalSystemModule.shared.operation.CoverageManagementOperation;
 import bigBang.module.generalSystemModule.shared.operation.InsuranceAgencyManagementOperation;
@@ -113,6 +118,14 @@ public class GeneralSystemSection implements MenuSection {
 		TaxManagementOperationViewPresenter taxManagementOperationPresenter = new TaxManagementOperationViewPresenter(null, coveragesService, taxManagementOperationView);
 		taxManagementOperationPresenter.setOperation(taxManagementOperation);
 		this.sectionOperationPresenters.add((OperationViewPresenter)taxManagementOperationPresenter);
+		
+		/* CLIENT GROUP MANAGEMENT */
+		ClientGroupManagementOperation clientGroupManagementOperation = (ClientGroupManagementOperation)GWT.create(ClientGroupManagementOperation.class);
+		ClientGroupManagementOperationView clientGroupManagementOperationView = (ClientGroupManagementOperationView) GWT.create(ClientGroupManagementOperationView.class);
+		ClientGroupServiceAsync clientGroupService = (ClientGroupServiceAsync) GWT.create(ClientGroupService.class);
+		ClientGroupManagementOperationViewPresenter clientGroupManagementOperationPresenter = new ClientGroupManagementOperationViewPresenter(null, clientGroupService, clientGroupManagementOperationView);
+		clientGroupManagementOperationPresenter.setOperation(clientGroupManagementOperation);
+		this.sectionOperationPresenters.add((OperationViewPresenter)clientGroupManagementOperationPresenter);
 	}
 	
 	public String getId() {

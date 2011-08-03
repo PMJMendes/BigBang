@@ -1,7 +1,7 @@
 package bigBang.module.generalSystemModule.interfaces;
 
+import bigBang.definitions.client.types.Mediator;
 import bigBang.library.interfaces.Service;
-import bigBang.module.generalSystemModule.shared.Mediator;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
 

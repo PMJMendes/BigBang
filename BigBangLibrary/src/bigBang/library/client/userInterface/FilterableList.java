@@ -172,8 +172,8 @@ public class FilterableList<T> extends SortableList<T> {
 	}
 
 	/**
-	 * returns the panel wrapping the filters
-	 * @return
+	 * Gets the panel wrapping the filters
+	 * @return The panel wrapping the filters 
 	 */
 	protected HasWidgets getFiltersPanel(){
 		VerticalPanel panel = new VerticalPanel();
@@ -190,11 +190,16 @@ public class FilterableList<T> extends SortableList<T> {
 		this.filters.put(filter.getName(), filter);
 	}
 	
+	/**
+	 * Removes a filter from the list
+	 * @param filter
+	 */
 	public void removeFilter(ListFilter<?> filter){
 		this.filters.remove(filter);
 	}
 	
 	/**
+	 * Gets a map with the filters
 	 * @return The map with the current list's filters
 	 */
 	public Map<String, ListFilter<?>> getFilters(){

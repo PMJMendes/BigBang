@@ -1,14 +1,14 @@
 package bigBang.module.generalSystemModule.client.userInterface.view;
 
+import bigBang.definitions.client.types.Coverage;
+import bigBang.definitions.client.types.Line;
+import bigBang.definitions.client.types.SubLine;
 import bigBang.library.client.HasValueSelectables;
 import bigBang.library.client.userInterface.view.View;
 import bigBang.module.generalSystemModule.client.userInterface.CoverageList;
 import bigBang.module.generalSystemModule.client.userInterface.LineList;
 import bigBang.module.generalSystemModule.client.userInterface.SubLineList;
 import bigBang.module.generalSystemModule.client.userInterface.presenter.CoverageManagementOperationViewPresenter;
-import bigBang.module.generalSystemModule.shared.Coverage;
-import bigBang.module.generalSystemModule.shared.Line;
-import bigBang.module.generalSystemModule.shared.SubLine;
 
 import com.google.gwt.user.client.ui.HorizontalPanel;
 

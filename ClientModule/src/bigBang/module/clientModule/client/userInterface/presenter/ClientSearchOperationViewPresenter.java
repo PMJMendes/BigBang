@@ -1,30 +1,41 @@
 package bigBang.module.clientModule.client.userInterface.presenter;
 
+import java.util.Collection;
+
+import bigBang.definitions.client.BigBangConstants;
+import bigBang.definitions.client.broker.ClientProcessBroker;
+import bigBang.definitions.client.brokerClient.ClientProcessDataBrokerClient;
+import bigBang.definitions.client.types.Client;
+import bigBang.definitions.client.types.ClientStub;
 import bigBang.library.client.EventBus;
 import bigBang.library.client.HasSelectables;
 import bigBang.library.client.Operation;
 import bigBang.library.client.Selectable;
 import bigBang.library.client.ValueSelectable;
+import bigBang.library.client.dataAccess.DataBrokerManager;
 import bigBang.library.client.event.OperationInvokedEvent;
 import bigBang.library.client.event.OperationInvokedEventHandler;
 import bigBang.library.client.event.SelectionChangedEvent;
 import bigBang.library.client.event.SelectionChangedEventHandler;
+import bigBang.library.client.response.ResponseError;
+import bigBang.library.client.response.ResponseHandler;
 import bigBang.library.client.userInterface.presenter.OperationViewPresenter;
 import bigBang.library.client.userInterface.view.View;
-import bigBang.library.interfaces.SearchService;
 import bigBang.library.interfaces.Service;
-import bigBang.module.clientModule.shared.Client;
+import bigBang.module.clientModule.interfaces.ClientServiceAsync;
 import bigBang.module.clientModule.shared.operation.ClientSearchOperation;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.HasWidgets;
 import com.google.gwt.user.client.ui.Widget;
 
-public class ClientSearchOperationViewPresenter implements OperationViewPresenter {
+public class ClientSearchOperationViewPresenter implements OperationViewPresenter, ClientProcessDataBrokerClient {
 
 	public interface Display {
 		HasSelectables<?> getClientSearchList();
 		void setClient(Client client);
+		
+		void setReadOnly(boolean readonly);
 		
 		Widget asWidget();
 		View getInstance();
@@ -32,18 +43,20 @@ public class ClientSearchOperationViewPresenter implements OperationViewPresente
 
 	protected Display view;
 	private EventBus eventBus;
-	@SuppressWarnings("unused")
-	private SearchService service;
 	private ClientSearchOperation operation;
 	
-	public ClientSearchOperationViewPresenter(EventBus eventBus, SearchService service, View view){
+	protected ClientProcessBroker clientBroker;
+	protected int clientDataVersionNumber;
+	
+	public ClientSearchOperationViewPresenter(EventBus eventBus, ClientServiceAsync service, View view){
 		this.setService((Service) service);
 		this.setView(view);
 		this.setEventBus(eventBus);
+		this.clientBroker = (ClientProcessBroker) DataBrokerManager.Util.getInstance().getBroker(BigBangConstants.EntityIds.CLIENT);
 	}
 
 	public void setService(Service service) {
-		this.service = (SearchService) service;
+		//TODO CLEAN
 	}
 
 	public void setEventBus(final EventBus eventBus) {
@@ -60,6 +73,7 @@ public class ClientSearchOperationViewPresenter implements OperationViewPresente
 	public void go(HasWidgets container) {
 		this.bind();
 		container.clear();
+		view.setReadOnly(true);
 		container.add(this.view.asWidget());
 	}
 	
@@ -78,8 +92,9 @@ public class ClientSearchOperationViewPresenter implements OperationViewPresente
 			public void onSelectionChanged(SelectionChangedEvent event) {
 				for(Selectable s : event.getSelected()){
 					ValueSelectable<?> vs = (ValueSelectable<?>) s;
-					if(vs.getValue() instanceof Client){
-						GWT.log("Client selected");
+					if(vs.getValue() instanceof ClientStub){
+						ClientStub stub = (ClientStub) vs.getValue();
+						showClientProcess(stub.id);
 					}
 				}
 			}
@@ -108,10 +123,19 @@ public class ClientSearchOperationViewPresenter implements OperationViewPresente
 		});
 	}
 
-	@SuppressWarnings("unused")
-	private void fetchClientProcess(String processId){
-		Client process = new Client();
-		this.view.setClient(process);
+	private void showClientProcess(final String processId){
+		this.clientBroker.getClient(processId, new ResponseHandler<Client>() {
+			
+			@Override
+			public void onResponse(Client response) {
+				view.setClient(response);
+			}
+			
+			@Override
+			public void onError(Collection<ResponseError> errors) {
+				throw new RuntimeException("Could not get the client process with id=\"" + processId + "\"");
+			}
+		});
 	}
 	
 	public void setOperation(Operation o) {
@@ -134,6 +158,38 @@ public class ClientSearchOperationViewPresenter implements OperationViewPresente
 	}
 
 	private void setReadOnly(boolean result) {
+		// TODO Auto-generated method stub
+		this.view.setReadOnly(true);
+	}
+
+	@Override
+	public void setDataVersionNumber(String dataElementId, int number) {
+		if(dataElementId.equals(BigBangConstants.EntityIds.CLIENT)){
+			this.clientDataVersionNumber = number;
+		}
+	}
+
+	@Override
+	public int getDataVersion(String dataElementId) {
+		if(dataElementId.equals(BigBangConstants.EntityIds.CLIENT))
+			return this.clientDataVersionNumber;
+		throw new RuntimeException(this.getClass().getName() + " does not support being a data broker client for data element with id=" + dataElementId);
+	}
+
+	@Override
+	public void addClient(Client client) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void updateClient(Client client) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void removeClient(String clientId) {
 		// TODO Auto-generated method stub
 		
 	}

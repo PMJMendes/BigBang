@@ -1,4 +1,4 @@
-package bigBang.module.generalSystemModule.shared;
+package bigBang.definitions.client.types;
 
 import bigBang.library.shared.TipifiedListItem;
 

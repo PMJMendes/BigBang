@@ -1,24 +1,28 @@
 package bigBang.module.generalSystemModule.client.userInterface.view;
 
+import bigBang.definitions.client.types.CostCenter;
+import bigBang.definitions.client.types.User;
 import bigBang.library.client.HasEditableValue;
 import bigBang.library.client.HasValueSelectables;
 import bigBang.library.client.ValueSelectable;
-import bigBang.library.client.userInterface.ListEntry;
+import bigBang.library.client.event.ActionInvokedEvent;
+import bigBang.library.client.event.ActionInvokedEventHandler;
+import bigBang.library.client.userInterface.BigBangOperationsToolBar;
+import bigBang.library.client.userInterface.BigBangOperationsToolBar.SUB_MENU;
 import bigBang.library.client.userInterface.view.FormViewSection;
 import bigBang.library.client.userInterface.view.PopupPanel;
 import bigBang.library.client.userInterface.view.View;
 import bigBang.module.generalSystemModule.client.userInterface.CostCenterList;
 import bigBang.module.generalSystemModule.client.userInterface.CostCenterListEntry;
 import bigBang.module.generalSystemModule.client.userInterface.CostCenterMemberList;
-import bigBang.module.generalSystemModule.client.userInterface.UserListEntry;
 import bigBang.module.generalSystemModule.client.userInterface.presenter.CostCenterManagementOperationViewPresenter;
-import bigBang.module.generalSystemModule.shared.CostCenter;
-import bigBang.module.generalSystemModule.shared.User;
+import bigBang.module.generalSystemModule.client.userInterface.presenter.CostCenterManagementOperationViewPresenter.Action;
 
-import com.google.gwt.event.dom.client.DoubleClickEvent;
-import com.google.gwt.event.dom.client.DoubleClickHandler;
-import com.google.gwt.event.dom.client.HasClickHandlers;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.ui.Button;
+import com.google.gwt.user.client.ui.MenuItem;
 import com.google.gwt.user.client.ui.SplitLayoutPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
@@ -31,18 +35,69 @@ public class CostCenterManagementOperationView extends View implements CostCente
 	private CostCenterMemberList memberList;
 	private CostCenterForm costCenterForm;
 	private UserForm userForm;
+	private BigBangOperationsToolBar toolbar;
+	
+	protected ActionInvokedEventHandler<CostCenterManagementOperationViewPresenter.Action> actionHandler; 
 	
 	public CostCenterManagementOperationView() {
 		SplitLayoutPanel wrapper = new SplitLayoutPanel();
 		wrapper.setSize("100%", "100%");
 
 		costCenterList = new CostCenterList();
+		
+		costCenterList.getNewButton().addClickHandler(new ClickHandler() {
+			
+			@Override
+			public void onClick(ClickEvent event) {
+				actionHandler.onActionInvoked(new ActionInvokedEvent<CostCenterManagementOperationViewPresenter.Action>(Action.NEW));
+			}
+		});
+		costCenterList.getRefreshButton().addClickHandler(new ClickHandler() {
+			
+			@Override
+			public void onClick(ClickEvent event) {
+				actionHandler.onActionInvoked(new ActionInvokedEvent<CostCenterManagementOperationViewPresenter.Action>(Action.REFRESH));
+			}
+		});
+		
 		costCenterList.setSize("100%", "100%");
 		wrapper.addWest(costCenterList, LIST_WIDTH);
 		wrapper.setWidgetMinSize(costCenterList, LIST_WIDTH);
 
 		final VerticalPanel previewWrapper = new VerticalPanel();
 		previewWrapper.setSize("100%", "100%");
+		
+		this.toolbar = new BigBangOperationsToolBar() {
+			
+			@Override
+			public void onSaveRequest() {
+				actionHandler.onActionInvoked(new ActionInvokedEvent<CostCenterManagementOperationViewPresenter.Action>(Action.SAVE));
+			}
+			
+			@Override
+			public void onEditRequest() {
+				actionHandler.onActionInvoked(new ActionInvokedEvent<CostCenterManagementOperationViewPresenter.Action>(Action.EDIT));
+			}
+			
+			@Override
+			public void onCancelRequest() {
+				actionHandler.onActionInvoked(new ActionInvokedEvent<CostCenterManagementOperationViewPresenter.Action>(Action.CANCEL_EDIT));
+			}
+		};
+		toolbar.hideAll();
+		toolbar.showItem(SUB_MENU.EDIT, true);
+		toolbar.showItem(SUB_MENU.ADMIN, true);
+		toolbar.addItem(SUB_MENU.ADMIN, new MenuItem("Apagar", new Command() {
+			
+			@Override
+			public void execute() {
+				actionHandler.onActionInvoked(new ActionInvokedEvent<CostCenterManagementOperationViewPresenter.Action>(Action.DELETE));
+			}
+		}));
+		
+		
+		previewWrapper.add(toolbar);
+		previewWrapper.setCellHeight(toolbar, "21px");
 		
 		costCenterForm = new CostCenterForm();
 		Widget costCenterFormContent = costCenterForm.getNonScrollableContent();
@@ -54,7 +109,11 @@ public class CostCenterManagementOperationView extends View implements CostCente
 		previewWrapper.add(sectionHeader);
 		previewWrapper.setCellHeight(sectionHeader, "22px");
 		
-		memberList = new CostCenterMemberList();
+		memberList = new CostCenterMemberList(){
+			protected void onCellDoubleClicked(bigBang.library.client.userInterface.ListEntry<User> entry) {
+				showUserDetails(entry.getValue());
+			};
+		};
 		memberList.setSize("100%", "100%");
 		previewWrapper.add(memberList);
 		previewWrapper.setCellHeight(memberList, "100%");
@@ -70,53 +129,6 @@ public class CostCenterManagementOperationView extends View implements CostCente
 		return (HasValueSelectables<CostCenter>)this.costCenterList;
 	}
 	
-	@Override
-	public void clearList(){
-		this.costCenterList.clear();
-	}
-	
-	@Override
-	public void addValuesToList(CostCenter[] result) {
-		for(int i = 0; i < result.length; i++)
-			this.costCenterList.add(new CostCenterListEntry(result[i]));
-	}
-
-	@Override
-	public void removeCostCenterFromList(CostCenter c) {
-		for(ListEntry<CostCenter> e : this.costCenterList){
-			if(e.getValue() == c || e.getValue().id.equals(c.id)){
-				this.costCenterList.remove(e);
-				break;
-			}
-		}
-	}
-	
-	@Override
-	public HasValueSelectables<User> getMembersList() {
-		return this.memberList;
-	}
-
-	@Override
-	public void clearMembersList() {
-		this.memberList.clear();
-	}
-
-	@Override
-	public void addValuesToMembersList(User[] result) {
-		for(int i = 0; i < result.length; i++){
-			final UserListEntry entry = new UserListEntry(result[i]);
-			entry.setDoubleClickable(true);
-			entry.addHandler(new DoubleClickHandler() {
-				
-				@Override
-				public void onDoubleClick(DoubleClickEvent event) {
-					showUserDetails(entry.getValue());
-				}
-			}, DoubleClickEvent.getType());
-			this.memberList.add(entry);
-		}
-	}
-
 	@Override
 	public HasEditableValue<CostCenter> getForm() {
 		return this.costCenterForm;
@@ -140,35 +152,10 @@ public class CostCenterManagementOperationView extends View implements CostCente
 	public void removeNewCostCenterPreparation(){
 		for(ValueSelectable<CostCenter> s : this.costCenterList){
 			if(s.getValue().id == null){
-				this.removeCostCenterFromList(s.getValue());
+				this.costCenterList.remove(s);
 				break;
 			}
 		}
-	}
-
-	@Override
-	public HasClickHandlers getNewButton() {
-		return this.costCenterList.newButton;
-	}
-
-	@Override
-	public HasClickHandlers getRefreshButton() {
-		return this.costCenterList.refreshButton;
-	}
-	
-	@Override
-	public HasClickHandlers getSaveButton() {
-		return this.costCenterForm.getSaveButton();
-	}
-
-	@Override
-	public HasClickHandlers getEditButton() {
-		return this.costCenterForm.getEditButton();
-	}
-	
-	@Override
-	public HasClickHandlers getDeleteButton() {
-		return this.costCenterForm.getDeleteButton();
 	}
 
 	@Override
@@ -179,6 +166,7 @@ public class CostCenterManagementOperationView extends View implements CostCente
 	@Override
 	public void lockForm(boolean lock) {
 		this.costCenterForm.lock(lock);
+		this.toolbar.setSaveModeEnabled(false);
 	}
 
 	public void showUserDetails(User user) {
@@ -195,7 +183,7 @@ public class CostCenterManagementOperationView extends View implements CostCente
 
 	@Override
 	public void setReadOnly(boolean readOnly) {
-		((Button)this.costCenterList.newButton).setEnabled(!readOnly);
+		((Button)this.costCenterList.getNewButton()).setEnabled(!readOnly);
 		this.costCenterForm.setReadOnly(readOnly);
 	}
 	
@@ -206,5 +194,26 @@ public class CostCenterManagementOperationView extends View implements CostCente
 		this.costCenterList.clearFilters();
 		this.memberList.clear();
 		this.userForm.clearInfo();
+	}
+
+	@Override
+	public void showUsersForCostCenterWithId(String costCenterId) {
+		this.memberList.setCostCenterId(costCenterId);
+	}
+
+	@Override
+	public void clearMembersList() {
+		this.memberList.setCostCenterId(null);
+	}
+
+	@Override
+	public void registerActionInvokedHandler(
+			ActionInvokedEventHandler<Action> handler) {
+		this.actionHandler = handler;
+	}
+
+	@Override
+	public void setSaveModeEnabled(boolean enabled) {
+		this.toolbar.setSaveModeEnabled(enabled);
 	}
 }

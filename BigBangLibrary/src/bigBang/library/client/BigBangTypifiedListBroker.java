@@ -54,7 +54,6 @@ public class BigBangTypifiedListBroker implements TypifiedListBroker {
 		if(!this.clients.containsKey(listId)){
 			this.dataVersions.put(listId, NO_DATA_VERSION);
 			this.lists.put(listId, new ArrayList<TipifiedListItem>());
-			GWT.log("register list : " + listId);
 			refreshListData(listId);
 			this.clients.put(listId, new ArrayList<TypifiedListClient>());
 		}
@@ -71,11 +70,10 @@ public class BigBangTypifiedListBroker implements TypifiedListBroker {
 
 	@Override
 	public void refreshListData(final String listId) {
-		this.service.getListItems(listId, new BigBangAsyncCallback<TipifiedListItem[]>() {
+		this.service.getListItems(listId, new BigBangAsyncCallback<TipifiedListItem[]>() { // TODO IMPORTANT FJVC
 
 			@Override
 			public void onSuccess(TipifiedListItem[] result) {
-				GWT.log("recebeu" + listId);
 				BigBangTypifiedListBroker.this.lists.put(listId, new ArrayList<TipifiedListItem>(Arrays.asList(result)));
 				incrementListDataVersion(listId);
 				updateListClients(listId);
@@ -246,7 +244,7 @@ public class BigBangTypifiedListBroker implements TypifiedListBroker {
 			throw new RuntimeException("The typified list client is not registered for the list with id : " + listId);
 		
 		int clientVersion = client.getTypifiedDataVersionNumber();
-		
+
 		if(clientVersion > currentDataVersion || clientVersion < this.NO_DATA_VERSION)
 			throw new RuntimeException("Unexpected exception. The client has an inconsistent version number " + clientVersion +
 					". Expected between "  + this.NO_DATA_VERSION + " and " + currentDataVersion + ".");

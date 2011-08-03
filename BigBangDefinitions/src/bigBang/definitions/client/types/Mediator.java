@@ -1,4 +1,4 @@
-package bigBang.module.generalSystemModule.shared;
+package bigBang.definitions.client.types;
 
 import java.io.Serializable;
 
@@ -25,5 +25,17 @@ public class Mediator
 	{
 		comissionProfile = new CommissionProfile();
 		contacts = new Contact[0];
+	}
+	
+	public Mediator(Mediator original){
+		this.id = original.id;
+		this.name = original.name;
+		this.ISPNumber = original.ISPNumber;
+		this.taxNumber = original.taxNumber;
+		this.NIB = original.NIB;
+		this.comissionProfile = original.comissionProfile;
+		this.address = original.address;
+		this.contacts = original.contacts;
+		this.documents = original.documents;
 	}
 }
