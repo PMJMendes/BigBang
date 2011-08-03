@@ -51,6 +51,7 @@ public class ClientGroupList extends FilterableList<ClientGroup> implements
 		onSizeChanged();
 		
 		this.clientGroupBroker = (ClientGroupBroker) DataBrokerManager.Util.getInstance().getBroker(BigBangConstants.EntityIds.CLIENT_GROUP);
+		this.clientGroupBroker.registerClient(this);
 		/*this.clientGroupBroker.registerClient(this);
 		this.addAttachHandler(new AttachEvent.Handler() {
 			
