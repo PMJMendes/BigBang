@@ -44,7 +44,7 @@ public class CostCenterBrokerImpl extends DataBroker<CostCenter> implements Cost
 					for(int i = 0; i < result.length; i++) {
 						cache.add(result[i].id, result[i]);
 					}
-					for(DataBrokerClient<CostCenter> c : clients) {
+					for(DataBrokerClient<CostCenter> c : getClients()) {
 						((CostCenterDataBrokerClient) c).setCostCenters(result);
 					}
 					handler.onResponse(result);
@@ -81,7 +81,7 @@ public class CostCenterBrokerImpl extends DataBroker<CostCenter> implements Cost
 			@Override
 			public void onSuccess(CostCenter result) {
 				cache.add(result.id, result);
-				for(DataBrokerClient<CostCenter> c : clients) {
+				for(DataBrokerClient<CostCenter> c : getClients()) {
 					((CostCenterDataBrokerClient) c).addCostCenter(result);
 				}
 				handler.onResponse(result);
@@ -97,7 +97,7 @@ public class CostCenterBrokerImpl extends DataBroker<CostCenter> implements Cost
 			@Override
 			public void onSuccess(CostCenter result) {
 				cache.update(result.id, result);
-				for(DataBrokerClient<CostCenter> c : clients) {
+				for(DataBrokerClient<CostCenter> c : getClients()) {
 					((CostCenterDataBrokerClient) c).updateCostCenter(result);
 				}
 				handler.onResponse(result);
@@ -113,7 +113,7 @@ public class CostCenterBrokerImpl extends DataBroker<CostCenter> implements Cost
 			@Override
 			public void onSuccess(Void result) {
 				cache.remove(costCenterId);
-				for(DataBrokerClient<CostCenter> c : clients) {
+				for(DataBrokerClient<CostCenter> c : getClients()) {
 					((CostCenterDataBrokerClient) c).removeCostCenter(costCenterId);
 				}
 				handler.onResponse(null);

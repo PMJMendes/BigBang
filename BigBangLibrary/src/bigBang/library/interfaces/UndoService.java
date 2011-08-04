@@ -26,5 +26,6 @@ public interface UndoService
 	}
 	
 	public ProcessUndoItem[] getProcessUndoItems(String processId) throws SessionExpiredException, BigBangException;
+	public ProcessUndoItem[] getProcessUndoItemsAfterTimestamp(String processId, String timestamp) throws SessionExpiredException, BigBangException;
 	public ProcessUndoItem undo(String undoItemId) throws SessionExpiredException, BigBangException;
 }

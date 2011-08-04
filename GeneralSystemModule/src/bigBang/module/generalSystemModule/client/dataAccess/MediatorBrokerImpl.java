@@ -39,7 +39,7 @@ public class MediatorBrokerImpl extends DataBroker<Mediator> implements Mediator
 						cache.add(result[i].id, result[i]);
 					}
 
-					for(DataBrokerClient<Mediator> c : MediatorBrokerImpl.this.clients){
+					for(DataBrokerClient<Mediator> c : MediatorBrokerImpl.this.getClients()){
 						((MediatorDataBrokerClient)c).setMediators(result);
 					}
 					handler.onResponse(result);
@@ -75,7 +75,7 @@ public class MediatorBrokerImpl extends DataBroker<Mediator> implements Mediator
 			@Override
 			public void onSuccess(Mediator result) {
 				cache.add(result.id, result);
-				for(DataBrokerClient<Mediator> c : MediatorBrokerImpl.this.clients){
+				for(DataBrokerClient<Mediator> c : MediatorBrokerImpl.this.getClients()){
 					((MediatorDataBrokerClient)c).addMediator(result);
 				}
 				handler.onResponse(result);
@@ -91,7 +91,7 @@ public class MediatorBrokerImpl extends DataBroker<Mediator> implements Mediator
 			@Override
 			public void onSuccess(Mediator result) {
 				cache.update(result.id, result);
-				for(DataBrokerClient<Mediator> c : MediatorBrokerImpl.this.clients){
+				for(DataBrokerClient<Mediator> c : MediatorBrokerImpl.this.getClients()){
 					((MediatorDataBrokerClient)c).updateMediator(result);
 				}
 				handler.onResponse(result);
@@ -107,7 +107,7 @@ public class MediatorBrokerImpl extends DataBroker<Mediator> implements Mediator
 			@Override
 			public void onSuccess(Void result) {
 				cache.remove(mediatorId);
-				for(DataBrokerClient<Mediator> c : MediatorBrokerImpl.this.clients){
+				for(DataBrokerClient<Mediator> c : MediatorBrokerImpl.this.getClients()){
 					((MediatorDataBrokerClient)c).removeMediator(mediatorId);
 				}
 				handler.onResponse(null);

@@ -82,7 +82,7 @@ CoverageBroker {
 							}
 						}
 					}
-					for(DataBrokerClient<Line> c : clients) {
+					for(DataBrokerClient<Line> c : getClients()) {
 						((CoverageDataBrokerClient) c).setLines(result);
 					}
 					handler.onResponse(result);
@@ -116,7 +116,7 @@ CoverageBroker {
 			@Override
 			public void onSuccess(Line result) {
 				linesCache.add(result.id, result);
-				for(DataBrokerClient<Line> c : clients){
+				for(DataBrokerClient<Line> c : getClients()){
 					((CoverageDataBrokerClient) c).addLine(result);
 				}
 				handler.onResponse(result);
@@ -133,7 +133,7 @@ CoverageBroker {
 			@Override
 			public void onSuccess(Line result) {
 				linesCache.update(result.id, result);
-				for(DataBrokerClient<Line> c : clients){
+				for(DataBrokerClient<Line> c : getClients()){
 					((CoverageDataBrokerClient)c).updateLine(result);
 				}
 				handler.onResponse(result);

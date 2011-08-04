@@ -1,6 +1,7 @@
 package bigBang.library.client.dataAccess;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -13,7 +14,7 @@ public abstract class DataBroker<T> implements DataBrokerInterface<T> {
 	protected String dataElementId;
 	protected int dataVersion;
 	protected DataBrokerCache cache;
-	protected List<DataBrokerClient<T>> clients;
+	private List<DataBrokerClient<T>> clients;
 	
 	protected final int INITIAL_DATA_VERSION = 0;
 	
@@ -61,6 +62,11 @@ public abstract class DataBroker<T> implements DataBrokerInterface<T> {
 	@Override
 	public void unregisterClient(DataBrokerClient<T> client) {
 		this.clients.remove(client);
+	}
+	
+	@Override
+	public Collection<DataBrokerClient<T>> getClients() {
+		return this.clients;
 	}
 
 	/**

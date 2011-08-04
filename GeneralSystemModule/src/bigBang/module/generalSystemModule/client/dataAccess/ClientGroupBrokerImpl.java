@@ -39,7 +39,7 @@ public class ClientGroupBrokerImpl extends DataBroker<ClientGroup> implements Cl
 						cache.add(result[i].id, result[i]);
 					}
 
-					for(DataBrokerClient<ClientGroup> c : ClientGroupBrokerImpl.this.clients){
+					for(DataBrokerClient<ClientGroup> c : ClientGroupBrokerImpl.this.getClients()){
 						((ClientGroupDataBrokerClient)c).setGroups(result);
 					}
 					handler.onResponse(result);
@@ -67,7 +67,7 @@ public class ClientGroupBrokerImpl extends DataBroker<ClientGroup> implements Cl
 			@Override
 			public void onSuccess(ClientGroup result) {
 				cache.add(result.id, result);
-				for(DataBrokerClient<ClientGroup> c : clients){
+				for(DataBrokerClient<ClientGroup> c : getClients()){
 					((ClientGroupDataBrokerClient)c).addGroup(result);
 				}
 				handler.onResponse(result);
@@ -83,7 +83,7 @@ public class ClientGroupBrokerImpl extends DataBroker<ClientGroup> implements Cl
 			@Override
 			public void onSuccess(ClientGroup result) {
 				cache.update(result.id, result);
-				for(DataBrokerClient<ClientGroup> c : ClientGroupBrokerImpl.this.clients){
+				for(DataBrokerClient<ClientGroup> c : ClientGroupBrokerImpl.this.getClients()){
 					((ClientGroupDataBrokerClient)c).updateGroup(result);
 				}
 				handler.onResponse(result);
@@ -99,7 +99,7 @@ public class ClientGroupBrokerImpl extends DataBroker<ClientGroup> implements Cl
 			@Override
 			public void onSuccess(Void result) {
 				cache.remove(groupId);
-				for(DataBrokerClient<ClientGroup> c : ClientGroupBrokerImpl.this.clients){
+				for(DataBrokerClient<ClientGroup> c : ClientGroupBrokerImpl.this.getClients()){
 					((ClientGroupDataBrokerClient)c).removeGroup(groupId);
 				}
 				handler.onResponse(null);

@@ -36,7 +36,7 @@ public class ClientProcessBrokerImpl extends DataBroker<Client> implements Clien
 				public void onSuccess(Client result) {
 					cache.add(clientId, result);
 					incrementDataVersion();
-					for(DataBrokerClient<Client> bc : clients){
+					for(DataBrokerClient<Client> bc : getClients()){
 						((ClientProcessDataBrokerClient) bc).addClient(result);
 						((ClientProcessDataBrokerClient) bc).setDataVersionNumber(BigBangConstants.EntityIds.CLIENT, getCurrentDataVersion());
 					}
@@ -56,7 +56,7 @@ public class ClientProcessBrokerImpl extends DataBroker<Client> implements Clien
 			public void onSuccess(Client result) {
 				cache.add(result.id, result);
 				incrementDataVersion();
-				for(DataBrokerClient<Client> bc : clients){
+				for(DataBrokerClient<Client> bc : getClients()){
 					((ClientProcessDataBrokerClient) bc).addClient(result);
 					((ClientProcessDataBrokerClient) bc).setDataVersionNumber(BigBangConstants.EntityIds.CLIENT, getCurrentDataVersion());
 				}
@@ -73,7 +73,7 @@ public class ClientProcessBrokerImpl extends DataBroker<Client> implements Clien
 			public void onSuccess(Client result) {
 				cache.add(result.id, result);
 				incrementDataVersion();
-				for(DataBrokerClient<Client> bc : clients){
+				for(DataBrokerClient<Client> bc : getClients()){
 					((ClientProcessDataBrokerClient) bc).updateClient(result);
 					((ClientProcessDataBrokerClient) bc).setDataVersionNumber(BigBangConstants.EntityIds.CLIENT, getCurrentDataVersion());
 				}
@@ -90,7 +90,7 @@ public class ClientProcessBrokerImpl extends DataBroker<Client> implements Clien
 			public void onSuccess(Void result) {
 				cache.remove(clientId);
 				incrementDataVersion();
-				for(DataBrokerClient<Client> bc : clients){
+				for(DataBrokerClient<Client> bc : getClients()){
 					((ClientProcessDataBrokerClient) bc).removeClient(clientId);
 					((ClientProcessDataBrokerClient) bc).setDataVersionNumber(BigBangConstants.EntityIds.CLIENT, getCurrentDataVersion());
 				}

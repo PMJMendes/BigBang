@@ -91,8 +91,6 @@ public class ClientGroupManagementOperationView extends View implements ClientGr
 		groupForm = new ClientGroupFormView();
 		formWrapper.add(groupForm);
 
-
-
 		wrapper.add(formWrapper);
 
 		initWidget(wrapper);

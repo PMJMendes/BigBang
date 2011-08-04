@@ -44,7 +44,7 @@ public class InsuranceAgencyBrokerImpl extends DataBroker<InsuranceAgency> imple
 					for(int i = 0; i < result.length; i++) {
 						cache.add(result[i].id, result[i]);
 					}
-					for(DataBrokerClient<InsuranceAgency> c : clients) {
+					for(DataBrokerClient<InsuranceAgency> c : getClients()) {
 						((InsuranceAgencyDataBrokerClient) c).setInsuranceAgencies(result);
 					}
 					handler.onResponse(result);
@@ -82,7 +82,7 @@ public class InsuranceAgencyBrokerImpl extends DataBroker<InsuranceAgency> imple
 			@Override
 			public void onSuccess(InsuranceAgency result) {
 				cache.add(result.id, result);
-				for(DataBrokerClient<InsuranceAgency> c : clients) {
+				for(DataBrokerClient<InsuranceAgency> c : getClients()) {
 					((InsuranceAgencyDataBrokerClient) c).addInsuranceAgency(result);
 				}
 				handler.onResponse(result);
@@ -98,7 +98,7 @@ public class InsuranceAgencyBrokerImpl extends DataBroker<InsuranceAgency> imple
 			@Override
 			public void onSuccess(InsuranceAgency result) {
 				cache.update(result.id, result);
-				for(DataBrokerClient<InsuranceAgency> c : clients) {
+				for(DataBrokerClient<InsuranceAgency> c : getClients()) {
 					((InsuranceAgencyDataBrokerClient) c).updateInsuranceAgency(result);
 				}
 				handler.onResponse(result);
@@ -114,7 +114,7 @@ public class InsuranceAgencyBrokerImpl extends DataBroker<InsuranceAgency> imple
 			@Override
 			public void onSuccess(Void result) {
 				cache.remove(insuranceAgencyId);
-				for(DataBrokerClient<InsuranceAgency> c : clients) {
+				for(DataBrokerClient<InsuranceAgency> c : getClients()) {
 					((InsuranceAgencyDataBrokerClient) c).removeInsuranceAgency(insuranceAgencyId);
 				}
 				handler.onResponse(null);

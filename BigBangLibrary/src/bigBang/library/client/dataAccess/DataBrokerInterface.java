@@ -1,5 +1,7 @@
 package bigBang.library.client.dataAccess;
 
+import java.util.Collection;
+
 public interface DataBrokerInterface <T> {
 
 	/**
@@ -30,6 +32,12 @@ public interface DataBrokerInterface <T> {
 	 * @param client The client to be unregistered
 	 */
 	public void unregisterClient(DataBrokerClient<T> client);
+	
+	/**
+	 * Gets the clients for the data broker
+	 * @return A collection with the registered clients in the data broker
+	 */
+	public Collection<DataBrokerClient<T>> getClients();
 	
 	/**
 	 * Gets the if of the data element being managed by the broker

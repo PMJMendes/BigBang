@@ -526,8 +526,10 @@ public class List<T> extends View implements HasValueSelectables<T>, java.util.L
 		ListEntry<?> entry = (ListEntry<?>) o;
 		boolean result = this.entries.remove(o);
 		if(result){
-			if(((Selectable) o).isSelected())
-				selectNext();
+			if(o instanceof Selectable && ((Selectable) o).isSelected()){
+				((Selectable) o).setSelected(false, true);
+				//selectNext();
+			}
 			entry.removeFromParent();
 		}
 		onSizeChanged();

@@ -1,21 +1,11 @@
 package bigBang.module.generalSystemModule.client.userInterface;
 
-import java.util.ArrayList;
 import java.util.Collection;
-
-import com.google.gwt.dom.client.Style.FontWeight;
-import com.google.gwt.event.dom.client.HasClickHandlers;
-import com.google.gwt.event.logical.shared.AttachEvent;
-import com.google.gwt.event.shared.HandlerRegistration;
-import com.google.gwt.user.client.ui.HasHorizontalAlignment;
-import com.google.gwt.user.client.ui.HorizontalPanel;
-import com.google.gwt.user.client.ui.Label;
 
 import bigBang.definitions.client.BigBangConstants;
 import bigBang.definitions.client.broker.ClientGroupBroker;
 import bigBang.definitions.client.brokerClient.ClientGroupDataBrokerClient;
 import bigBang.definitions.client.types.ClientGroup;
-import bigBang.definitions.client.types.CostCenter;
 import bigBang.library.client.HasNavigationHandlers;
 import bigBang.library.client.ValueSelectable;
 import bigBang.library.client.dataAccess.DataBrokerManager;
@@ -25,10 +15,14 @@ import bigBang.library.client.response.ResponseHandler;
 import bigBang.library.client.userInterface.FilterableList;
 import bigBang.library.client.userInterface.ListEntry;
 import bigBang.library.client.userInterface.ListHeader;
-import bigBang.library.client.userInterface.NavigationListItem;
+
+import com.google.gwt.event.dom.client.HasClickHandlers;
+import com.google.gwt.event.shared.HandlerRegistration;
+import com.google.gwt.user.client.ui.HasHorizontalAlignment;
+import com.google.gwt.user.client.ui.HorizontalPanel;
 
 public class ClientGroupList extends FilterableList<ClientGroup> implements
-		ClientGroupDataBrokerClient, HasNavigationHandlers {
+ClientGroupDataBrokerClient, HasNavigationHandlers {
 
 	public static class ClientGroupListEntry extends ListEntry<ClientGroup> {
 
@@ -39,14 +33,14 @@ public class ClientGroupList extends FilterableList<ClientGroup> implements
 			labelWrapper.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_RIGHT);
 			labelWrapper.setSize("150px", "100%");
 			setRightWidget(labelWrapper);
-			
+
 			setInfo(group);
 		}
-		
+
 		@Override
 		public <I extends Object> void setInfo(I infoGeneric){
 			ClientGroup info	= (ClientGroup) infoGeneric;
-			
+
 			if(info.id == null) {
 				setTitle("Novo Centro de Custo");
 				return;
@@ -54,49 +48,57 @@ public class ClientGroupList extends FilterableList<ClientGroup> implements
 
 			setTitle(info.name);
 		}
-		
+
 	}
-	
-	
+
+
 	protected int clientGroupDataVersion;
 	protected ClientGroupBroker clientGroupBroker;
 	protected ListHeader header;
-	
+
 	protected ClientGroup currentGroup;
 
 	public ClientGroupList(){
+		this(null);
+	}
+
+	public ClientGroupList(ClientGroup currentGroup) {
 		super();
 		header = new ListHeader();
-		header.setText("Grupos de Clientes");
+
 		header.showNewButton("Novo");
 		header.showRefreshButton();
 		setHeaderWidget(header);
 		onSizeChanged();
-		
+
 		this.clientGroupBroker = (ClientGroupBroker) DataBrokerManager.Util.getInstance().getBroker(BigBangConstants.EntityIds.CLIENT_GROUP);
 		this.clientGroupBroker.registerClient(this);
-		/*this.clientGroupBroker.registerClient(this);
-		this.addAttachHandler(new AttachEvent.Handler() {
-			
-			@Override
-			public void onAttachOrDetach(AttachEvent event) {
-				if(!event.isAttached()){
-					clientGroupBroker.unregisterClient(ClientGroupList.this);
+
+		this.currentGroup = currentGroup;
+
+		if(currentGroup != null) {
+			this.clientGroupBroker.getClientGroup(currentGroup.id, new ResponseHandler<ClientGroup>() {
+
+				@Override
+				public void onResponse(ClientGroup response) {
+					ClientGroupList.this.currentGroup = response;
+					showCurrentGroupDetails();
 				}
-			}
-		});
-		
-		this.clientGroupBroker.getClientGroup(currentGroupId, new ResponseHandler<ClientGroup>() {
 
-			@Override
-			public void onResponse(ClientGroup response) {
-				currentGroup = response;
-				showGroupDetails();
-			}
+				@Override
+				public void onError(Collection<ResponseError> errors) {}
+			});
+		}else{
+			showCurrentGroupDetails();
+		}
+	}
 
-			@Override
-			public void onError(Collection<ResponseError> errors) {}
-		});*/
+	protected void showCurrentGroupDetails(){
+		if(currentGroup == null) {
+			header.setText("Grupos de Clientes");
+		}else{
+			header.setText(currentGroup.name);
+		}
 	}
 
 	@Override
@@ -114,13 +116,8 @@ public class ClientGroupList extends FilterableList<ClientGroup> implements
 			text = size + " Grupos";
 			break;
 		}
-		
+
 		setFooterText(text);
-	}
-	
-	protected void showGroupDetails(){
-		ArrayList<ClientGroup> subGroups = new ArrayList<ClientGroup>();
-		
 	}
 
 	@Override
@@ -142,7 +139,10 @@ public class ClientGroupList extends FilterableList<ClientGroup> implements
 	public void setGroups(ClientGroup[] clientGroups) {
 		this.clear();
 		for(int i = 0; i < clientGroups.length; i++) {
-			addGroup(clientGroups[i]);
+			if((currentGroup == null && clientGroups[i].parentGroupId == null) ||
+					(currentGroup != null && currentGroup.id.equalsIgnoreCase(clientGroups[i].id))){
+				addGroup(clientGroups[i]);
+			}
 		}
 	}
 
@@ -153,20 +153,39 @@ public class ClientGroupList extends FilterableList<ClientGroup> implements
 
 	@Override
 	public void updateGroup(ClientGroup clientGroup) {
-		for(ValueSelectable<ClientGroup> s : this) {
-			if(s.getValue().id.equals(clientGroup.id)){
-				s.setValue(clientGroup);
-				break;
+		if(currentGroup != null && currentGroup.id != null && currentGroup.id.equalsIgnoreCase(clientGroup.id)){
+			this.currentGroup = clientGroup;
+			showCurrentGroupDetails();
+		}else{
+			for(ValueSelectable<ClientGroup> s : this) {
+				if(s.getValue().id.equals(clientGroup.id)){
+					String currentGroupId = currentGroup == null ? null : currentGroup.id;
+					if(((currentGroupId == null) ^ (clientGroup.parentGroupId == null)) 
+						|| (currentGroupId != null && clientGroup.parentGroupId != null
+						&&!currentGroupId.equalsIgnoreCase(clientGroup.parentGroupId))){
+						remove(s);
+					}else{
+						s.setValue(clientGroup);
+					}
+					break;
+				}
 			}
 		}
 	}
 
 	@Override
 	public void removeGroup(String clientGroupId) {
-		for(ValueSelectable<ClientGroup> s : this) {
-			if(s.getValue().id.equals(clientGroupId)){
-				//remove(s);
-				break;
+		if(currentGroup != null && currentGroup.id != null && currentGroup.id.equalsIgnoreCase(clientGroupId)){
+			this.currentGroup = new ClientGroup();
+			this.currentGroup.name = "< Indefinido >";
+			this.clear();
+			showCurrentGroupDetails();
+		}else{
+			for(ValueSelectable<ClientGroup> s : this) {
+				if(s.getValue().id.equals(clientGroupId)){
+					remove(s);
+					break;
+				}
 			}
 		}
 	}
@@ -178,7 +197,7 @@ public class ClientGroupList extends FilterableList<ClientGroup> implements
 	public HasClickHandlers getNewButton(){
 		return header.getNewButton();
 	}
-	
+
 	/**
 	 * Gets a reference to the 'refresh' button
 	 * @return The reference to the 'refresh' button

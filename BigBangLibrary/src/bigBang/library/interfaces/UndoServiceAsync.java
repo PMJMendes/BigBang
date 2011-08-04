@@ -9,4 +9,6 @@ public interface UndoServiceAsync
 {
 	void getProcessUndoItems(String processId, AsyncCallback<ProcessUndoItem[]> callback);
 	void undo(String undoItemId, AsyncCallback<ProcessUndoItem> callback);
+	void getProcessUndoItemsAfterTimestamp(String processId, String timestamp,
+			AsyncCallback<ProcessUndoItem[]> callback);
 }

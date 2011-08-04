@@ -39,7 +39,7 @@ public class UserBrokerImpl extends DataBroker<User> implements UserBroker {
 						cache.add(result[i].id, result[i]);
 					}
 
-					for(DataBrokerClient<User> c : UserBrokerImpl.this.clients){
+					for(DataBrokerClient<User> c : UserBrokerImpl.this.getClients()){
 						((UserDataBrokerClient)c).setUsers(result);
 					}
 					handler.onResponse(result);
@@ -74,7 +74,7 @@ public class UserBrokerImpl extends DataBroker<User> implements UserBroker {
 			@Override
 			public void onSuccess(User result) {
 				cache.add(result.id, result);
-				for(DataBrokerClient<User> c : UserBrokerImpl.this.clients){
+				for(DataBrokerClient<User> c : UserBrokerImpl.this.getClients()){
 					((UserDataBrokerClient)c).addUser(result);
 				}
 				handler.onResponse(result);
@@ -90,7 +90,7 @@ public class UserBrokerImpl extends DataBroker<User> implements UserBroker {
 			@Override
 			public void onSuccess(User result) {
 				cache.update(result.id, result);
-				for(DataBrokerClient<User> c : UserBrokerImpl.this.clients){
+				for(DataBrokerClient<User> c : UserBrokerImpl.this.getClients()){
 					((UserDataBrokerClient)c).updateUser(result);
 				}
 				handler.onResponse(result);
@@ -106,7 +106,7 @@ public class UserBrokerImpl extends DataBroker<User> implements UserBroker {
 			@Override
 			public void onSuccess(Void result) {
 				cache.remove(userId);
-				for(DataBrokerClient<User> c : UserBrokerImpl.this.clients){
+				for(DataBrokerClient<User> c : UserBrokerImpl.this.getClients()){
 					((UserDataBrokerClient)c).removeUser(userId);
 				}
 				handler.onResponse(null);

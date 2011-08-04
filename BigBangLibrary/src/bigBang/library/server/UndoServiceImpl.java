@@ -118,6 +118,14 @@ public class UndoServiceImpl
 		return larrAux.toArray(new ProcessUndoItem[larrAux.size()]);
 	}
 
+	@Override
+	public ProcessUndoItem[] getProcessUndoItemsAfterTimestamp(
+			String processId, String timestamp) throws SessionExpiredException,
+			BigBangException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	
 	public ProcessUndoItem undo(String undoItemId)
 		throws SessionExpiredException, BigBangException
 	{
@@ -142,4 +150,5 @@ public class UndoServiceImpl
 
 		return null;
 	}
+
 }
