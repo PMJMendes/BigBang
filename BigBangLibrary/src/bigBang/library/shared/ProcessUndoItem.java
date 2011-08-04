@@ -1,6 +1,7 @@
 package bigBang.library.shared;
 
 import java.io.Serializable;
+import java.util.Map;
 
 public class ProcessUndoItem
 	implements Serializable
@@ -13,6 +14,7 @@ public class ProcessUndoItem
 	public String shortDescription;
 	public String description;
 	public String undoDescription;
-
+	public Map<String, String[]> alteredEntities; //key:Entity type id / value: entity instance id
+	
 	public boolean canUndo;
 }
