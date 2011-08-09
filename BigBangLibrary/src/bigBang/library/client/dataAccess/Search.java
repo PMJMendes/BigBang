@@ -2,6 +2,7 @@ package bigBang.library.client.dataAccess;
 
 import bigBang.library.shared.SearchParameter;
 import bigBang.library.shared.SearchResult;
+import bigBang.library.shared.SortParameter;
 
 public class Search<T extends SearchResult> {
 	protected String workspaceId;
@@ -9,9 +10,10 @@ public class Search<T extends SearchResult> {
 	protected int offset;
 	protected int count;
 	protected SearchParameter[] parameters;
+	protected SortParameter[] sorts;
 	protected T[] obtainedresults;
 	
-	public Search(String workspaceId, int totalResultsCount, int offset, int count, SearchParameter[] parameters, T[] obtainedResults){
+	public Search(String workspaceId, int totalResultsCount, int offset, int count, SearchParameter[] parameters, SortParameter[] sorts, T[] obtainedResults){
 		this.workspaceId = workspaceId;
 		this.totalResultsCount = totalResultsCount;
 		this.offset = offset;
@@ -25,5 +27,6 @@ public class Search<T extends SearchResult> {
 	public int getOffset(){return this.offset;}
 	public int getCount(){return this.count;}
 	public SearchParameter[] getParameters(){return this.parameters;}
+	public SortParameter[] getSortParameters(){return this.sorts;}
 	public T[] getResults(){return this.obtainedresults;}
 }

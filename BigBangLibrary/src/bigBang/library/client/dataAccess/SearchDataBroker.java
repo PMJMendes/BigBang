@@ -3,25 +3,28 @@ package bigBang.library.client.dataAccess;
 import bigBang.library.client.response.ResponseHandler;
 import bigBang.library.shared.SearchParameter;
 import bigBang.library.shared.SearchResult;
+import bigBang.library.shared.SortParameter;
 
 public interface SearchDataBroker<T extends SearchResult> extends DataBrokerInterface<T> {
 
 	/**
 	 * Opens and performs a search operation
 	 * @param parameters The parameters for the search
+	 * @param sorts The parameters by which the search results will be sorted
 	 * @param size How many results will be returned
 	 * @param handler The handler to be notified on  response
 	 */
-	public void search(SearchParameter[] parameters, int size, ResponseHandler<Search<T>> handler);
+	public void search(SearchParameter[] parameters, SortParameter[] sorts, int size, ResponseHandler<Search<T>> handler);
 
 	/**
 	 * Performs a search in an already open workspace
 	 * @param workspaceId The id of the workspace in which the search is being performed 
 	 * @param parameters The parameters for the search
+	 * @param sorts The parameters by which the search results will be sorted
 	 * @param size How many results will be returned
 	 * @param handler The handler to be notified on response
 	 */
-	public void search(String workspaceId, SearchParameter[] parameters, int size, ResponseHandler<Search<T>> handler);
+	public void search(String workspaceId, SearchParameter[] parameters, SortParameter[] sorts, int size, ResponseHandler<Search<T>> handler);
 	
 	/**
 	 * Gets the search results from a current search within a given range

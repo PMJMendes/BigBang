@@ -16,6 +16,7 @@ import bigBang.library.shared.NewSearchResult;
 import bigBang.library.shared.SearchParameter;
 import bigBang.library.shared.SearchResult;
 import bigBang.library.shared.SessionExpiredException;
+import bigBang.library.shared.SortParameter;
 
 public abstract class SearchServiceBase
 	extends EngineImplementor
@@ -219,7 +220,7 @@ public abstract class SearchServiceBase
         return larrAux;
 	}
 
-	public NewSearchResult openSearch(SearchParameter[] parameters, int size)
+	public NewSearchResult openSearch(SearchParameter[] parameters, SortParameter[] sorts, int size)
 		throws SessionExpiredException, BigBangException
 	{
 		StringBuilder lstrBuffer;
@@ -256,7 +257,7 @@ public abstract class SearchServiceBase
 		return lobjResult;
 	}
 
-	public NewSearchResult openForOperation(String opId, SearchParameter[] parameters, int size)
+	public NewSearchResult openForOperation(String opId, SearchParameter[] parameters, SortParameter[] sorts, int size)
 		throws SessionExpiredException, BigBangException
 	{
 		StringBuilder lstrBuffer;
@@ -293,7 +294,7 @@ public abstract class SearchServiceBase
 		return lobjResult;
 	}
 
-	public NewSearchResult search(String workspaceId, SearchParameter[] parameters, int size)
+	public NewSearchResult search(String workspaceId, SearchParameter[] parameters, SortParameter[] sorts, int size)
 		throws SessionExpiredException, BigBangException
 	{
 		SearchWSpace lrefWSpace;

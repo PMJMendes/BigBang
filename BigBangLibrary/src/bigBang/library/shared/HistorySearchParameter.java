@@ -5,6 +5,7 @@ import java.io.Serializable;
 public class HistorySearchParameter extends SearchParameter {
 	
 	public static enum SortableField implements Serializable{
+		RELEVANCE,
 		TIMESTAMP
 	}
 
@@ -12,8 +13,4 @@ public class HistorySearchParameter extends SearchParameter {
 
 	public String processId;
 	public String afterTimestamp;
-
-	public HistorySearchParameter(){
-		sortables.add(new SortParameter(SortableField.TIMESTAMP, SortOrder.DESC));
-	}
 }

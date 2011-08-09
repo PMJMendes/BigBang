@@ -23,6 +23,7 @@ import bigBang.library.shared.ProcessUndoItem;
 import bigBang.library.shared.SearchParameter;
 import bigBang.library.shared.SearchResult;
 import bigBang.library.shared.SessionExpiredException;
+import bigBang.library.shared.SortParameter;
 
 public class UndoServiceImpl
 	extends EngineImplementor
@@ -147,15 +148,16 @@ public class UndoServiceImpl
 	}
 
 	@Override
-	public NewSearchResult openSearch(SearchParameter[] parameters, int size)
-			throws SessionExpiredException, BigBangException {
+	public NewSearchResult openSearch(SearchParameter[] parameters,
+			SortParameter[] sorts, int size) throws SessionExpiredException,
+			BigBangException {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
 	public NewSearchResult openForOperation(String opId,
-			SearchParameter[] parameters, int size)
+			SearchParameter[] parameters, SortParameter[] sorts, int size)
 			throws SessionExpiredException, BigBangException {
 		// TODO Auto-generated method stub
 		return null;
@@ -163,7 +165,7 @@ public class UndoServiceImpl
 
 	@Override
 	public NewSearchResult search(String workspaceId,
-			SearchParameter[] parameters, int size)
+			SearchParameter[] parameters, SortParameter[] sorts, int size)
 			throws SessionExpiredException, BigBangException {
 		// TODO Auto-generated method stub
 		return null;

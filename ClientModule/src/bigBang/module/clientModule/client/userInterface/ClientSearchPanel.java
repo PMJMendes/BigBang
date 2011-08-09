@@ -8,6 +8,8 @@ import bigBang.library.client.ValueWrapper;
 import bigBang.library.client.userInterface.view.SearchPanel;
 import bigBang.library.shared.SearchParameter;
 import bigBang.library.shared.SearchResult;
+import bigBang.library.shared.SortOrder;
+import bigBang.library.shared.SortParameter;
 import bigBang.module.clientModule.interfaces.ClientService;
 import bigBang.module.clientModule.shared.ClientSearchParameter;
 
@@ -52,7 +54,12 @@ public class ClientSearchPanel extends SearchPanel implements ClientProcessDataB
 		p.freeText = this.getFreeText();
 		
 		parameters[0] = p;
-		doSearch(parameters);
+		
+		SortParameter[] sorts = new SortParameter[]{
+				new SortParameter(ClientSearchParameter.SortableField.RELEVANCE, SortOrder.DESC)
+		};
+		
+		doSearch(parameters, sorts);
 	}
 
 	@Override

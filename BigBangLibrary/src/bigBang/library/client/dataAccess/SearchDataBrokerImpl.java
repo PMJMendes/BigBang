@@ -9,6 +9,7 @@ import bigBang.library.interfaces.SearchServiceAsync;
 import bigBang.library.shared.NewSearchResult;
 import bigBang.library.shared.SearchParameter;
 import bigBang.library.shared.SearchResult;
+import bigBang.library.shared.SortParameter;
 
 public class SearchDataBrokerImpl<T extends SearchResult> extends DataBroker<T> implements SearchDataBroker<T> {
 
@@ -24,14 +25,14 @@ public class SearchDataBrokerImpl<T extends SearchResult> extends DataBroker<T> 
 	public void requireDataRefresh() {}
 
 	@Override
-	public void search(final SearchParameter[] parameters, int size,
+	public void search(final SearchParameter[] parameters, final SortParameter[] sorts, int size,
 			final ResponseHandler<Search<T>> handler) {
-		this.service.openSearch(parameters, size, new BigBangAsyncCallback<NewSearchResult>() {
+		this.service.openSearch(parameters, sorts, size, new BigBangAsyncCallback<NewSearchResult>() {
 
 			@SuppressWarnings("unchecked")
 			@Override
 			public void onSuccess(NewSearchResult result) {
-				Search<T> search = new Search<T>(result.workspaceId, result.totalCount, 0, result.results.length, parameters, (T[]) result.results);
+				Search<T> search = new Search<T>(result.workspaceId, result.totalCount, 0, result.results.length, parameters, sorts, (T[]) result.results);
 				workspaces.put(result.workspaceId, search);
 				handler.onResponse(search);
 			}
@@ -39,15 +40,15 @@ public class SearchDataBrokerImpl<T extends SearchResult> extends DataBroker<T> 
 	}
 
 	@Override
-	public void search(final String workspaceId, final SearchParameter[] parameters,
+	public void search(final String workspaceId, final SearchParameter[] parameters, final SortParameter[] sorts,
 			final int size, final ResponseHandler<Search<T>> handler) {
 		if(workspaces.containsKey(workspaceId)){
-			this.service.search(workspaceId, parameters, size, new BigBangAsyncCallback<NewSearchResult>() {
+			this.service.search(workspaceId, parameters, sorts, size, new BigBangAsyncCallback<NewSearchResult>() {
 
 				@SuppressWarnings("unchecked")
 				@Override
 				public void onSuccess(NewSearchResult result) {
-					Search<T> search = new Search<T>(result.workspaceId, result.totalCount, 0, result.results.length, parameters, (T[]) result.results);
+					Search<T> search = new Search<T>(result.workspaceId, result.totalCount, 0, result.results.length, parameters, sorts, (T[]) result.results);
 					workspaces.put(workspaceId, search);
 					handler.onResponse(search);
 				}
@@ -64,7 +65,7 @@ public class SearchDataBrokerImpl<T extends SearchResult> extends DataBroker<T> 
 			@Override
 			public void onSuccess(SearchResult[] result) {
 				Search<T> currentSearch = workspaces.get(workspaceId);
-				Search<T> search = new Search<T>(workspaceId, currentSearch.totalResultsCount, offset, result.length, currentSearch.parameters, (T[]) result);
+				Search<T> search = new Search<T>(workspaceId, currentSearch.totalResultsCount, offset, result.length, currentSearch.parameters, currentSearch.getSortParameters(), (T[]) result);
 				workspaces.put(workspaceId, search);
 				handler.onResponse(search);
 			}

@@ -7,6 +7,7 @@ import bigBang.library.interfaces.SearchServiceAsync;
 import bigBang.library.shared.NewSearchResult;
 import bigBang.library.shared.SearchParameter;
 import bigBang.library.shared.SearchResult;
+import bigBang.library.shared.SortParameter;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -166,7 +167,7 @@ public abstract class SearchPanel extends FilterableList<SearchResult> {
 	 * Queries the search service for elements that match a number of search parameters 
 	 * @param parameters The search parameters to be matched
 	 */
-	public void doSearch(SearchParameter[] parameters) {
+	public void doSearch(SearchParameter[] parameters, SortParameter[] sorts) {
 
 		try {
 			if (workspaceId == null) {
@@ -183,7 +184,7 @@ public abstract class SearchPanel extends FilterableList<SearchResult> {
 					}
 
 				};
-				this.service.openSearch(parameters, this.pageSize, callback);
+				this.service.openSearch(parameters, sorts, this.pageSize, callback);
 			} else {
 				BigBangAsyncCallback<NewSearchResult> callback = new BigBangAsyncCallback<NewSearchResult>() {
 
@@ -197,7 +198,7 @@ public abstract class SearchPanel extends FilterableList<SearchResult> {
 					}
 
 				};
-				this.service.search(this.workspaceId, parameters, this.pageSize, callback);
+				this.service.search(this.workspaceId, parameters, sorts, this.pageSize, callback);
 			}
 		} catch (Exception e) {
 			GWT.log(e.getMessage());

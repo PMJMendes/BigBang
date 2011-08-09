@@ -9,6 +9,8 @@ public class SortParameter implements Serializable {
 	public Enum<?> field;
 	public SortOrder order;
 	
+	public SortParameter(){}
+	
 	public SortParameter(Enum<?> field, SortOrder order) {
 		this.field = field;
 		this.order = order;

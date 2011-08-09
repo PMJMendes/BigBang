@@ -8,6 +8,7 @@ import bigBang.library.shared.NewSearchResult;
 import bigBang.library.shared.SearchParameter;
 import bigBang.library.shared.SearchResult;
 import bigBang.library.shared.SessionExpiredException;
+import bigBang.library.shared.SortParameter;
 
 public interface SearchService
 	extends RemoteService
@@ -25,9 +26,9 @@ public interface SearchService
 		}
 	}
 	
-	NewSearchResult openSearch(SearchParameter[] parameters, int size) throws SessionExpiredException, BigBangException;
-	NewSearchResult openForOperation(String opId, SearchParameter[] parameters, int size) throws SessionExpiredException, BigBangException;
-	NewSearchResult search(String workspaceId, SearchParameter[] parameters, int size) throws SessionExpiredException, BigBangException;
+	NewSearchResult openSearch(SearchParameter[] parameters, SortParameter[] sorts, int size) throws SessionExpiredException, BigBangException;
+	NewSearchResult openForOperation(String opId, SearchParameter[] parameters, SortParameter[] sorts, int size) throws SessionExpiredException, BigBangException;
+	NewSearchResult search(String workspaceId, SearchParameter[] parameters, SortParameter[] sorts, int size) throws SessionExpiredException, BigBangException;
 	SearchResult[] getResults(String workspaceId, int from, int size) throws SessionExpiredException, BigBangException;
 	void closeSearch(String workspaceId) throws SessionExpiredException, BigBangException;
 }
