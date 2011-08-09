@@ -11,6 +11,7 @@ import bigBang.library.client.userInterface.presenter.SectionViewPresenter;
 import bigBang.module.generalSystemModule.client.dataAccess.ClientGroupBrokerImpl;
 import bigBang.module.generalSystemModule.client.dataAccess.CostCenterBrokerImpl;
 import bigBang.module.generalSystemModule.client.dataAccess.CoverageBrokerImpl;
+import bigBang.module.generalSystemModule.client.dataAccess.HistoryBrokerImpl;
 import bigBang.module.generalSystemModule.client.dataAccess.InsuranceAgencyBrokerImpl;
 import bigBang.module.generalSystemModule.client.dataAccess.MediatorBrokerImpl;
 import bigBang.module.generalSystemModule.client.dataAccess.UserBrokerImpl;
@@ -74,7 +75,8 @@ public class GeneralSystemModule implements Module {
 				new InsuranceAgencyBrokerImpl(),
 				new ClientGroupBrokerImpl(),
 				new MediatorBrokerImpl(),
-				new CoverageBrokerImpl()
+				new CoverageBrokerImpl(),
+				new HistoryBrokerImpl()
 		};
 	}
 
@@ -86,7 +88,8 @@ public class GeneralSystemModule implements Module {
 				BigBangConstants.EntityIds.INSURANCE_AGENCY,
 				BigBangConstants.EntityIds.CLIENT_GROUP,
 				BigBangConstants.EntityIds.MEDIATOR,
-				BigBangConstants.EntityIds.COVERAGE
+				BigBangConstants.EntityIds.COVERAGE,
+				BigBangConstants.EntityIds.HISTORY
 		};
 	}
 }

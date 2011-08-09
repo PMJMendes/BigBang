@@ -1,12 +1,19 @@
 package bigBang.module.clientModule.shared;
 
 import bigBang.library.shared.SearchParameter;
+import bigBang.library.shared.SortOrder;
+import bigBang.library.shared.SortParameter;
 
 public class ClientSearchParameter
 	extends SearchParameter
 {
+	
+	public static enum SortableField {
+		RELEVANCE
+	}
+		
 	private static final long serialVersionUID = 1L;
-
+	
 	public String[] postalCodes;
 	public String managerId;
 	public String costCenterId;
@@ -26,6 +33,7 @@ public class ClientSearchParameter
 	public ClientSearchParameter(){
 		this.postalCodes = new String[0];
 		this.CAEs = new String[0];
-		this.professionIds = new String[0];		
+		this.professionIds = new String[0];
+		this.sortables.add(new SortParameter(SortableField.RELEVANCE, SortOrder.DESC));	
 	}
 }

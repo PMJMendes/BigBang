@@ -9,31 +9,43 @@ import bigBang.definitions.client.types.ClientGroup;
 import bigBang.library.client.HasNavigationHandlers;
 import bigBang.library.client.ValueSelectable;
 import bigBang.library.client.dataAccess.DataBrokerManager;
+import bigBang.library.client.event.NavigationEvent;
 import bigBang.library.client.event.NavigationEventHandler;
+import bigBang.library.client.resources.Resources;
 import bigBang.library.client.response.ResponseError;
 import bigBang.library.client.response.ResponseHandler;
 import bigBang.library.client.userInterface.FilterableList;
 import bigBang.library.client.userInterface.ListEntry;
 import bigBang.library.client.userInterface.ListHeader;
 
+import com.google.gwt.core.client.GWT;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.HasClickHandlers;
 import com.google.gwt.event.shared.HandlerRegistration;
-import com.google.gwt.user.client.ui.HasHorizontalAlignment;
-import com.google.gwt.user.client.ui.HorizontalPanel;
+import com.google.gwt.user.client.ui.Image;
 
 public class ClientGroupList extends FilterableList<ClientGroup> implements
 ClientGroupDataBrokerClient, HasNavigationHandlers {
 
 	public static class ClientGroupListEntry extends ListEntry<ClientGroup> {
 
+		protected Image detailsButton;
+		
 		public ClientGroupListEntry(ClientGroup group) {
 			super(group);
+			Resources r = GWT.create(Resources.class);
+			
 			setHeight("40px");
-			HorizontalPanel labelWrapper = new HorizontalPanel();
-			labelWrapper.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_RIGHT);
-			labelWrapper.setSize("150px", "100%");
-			setRightWidget(labelWrapper);
-
+			this.detailsButton = new Image(r.arrowDown());
+			detailsButton.addClickHandler(new ClickHandler() {
+				
+				@Override
+				public void onClick(ClickEvent event) {
+					fireEvent(new NavigationEvent(NavigationEvent.Navigation.NAVIGATE_TO, getValue().id));
+				}
+			});
+			setRightWidget(detailsButton);
 			setInfo(group);
 		}
 
@@ -43,9 +55,10 @@ ClientGroupDataBrokerClient, HasNavigationHandlers {
 
 			if(info.id == null) {
 				setTitle("Novo Centro de Custo");
+				detailsButton.setVisible(false);
 				return;
 			}
-
+			detailsButton.setVisible(true);
 			setTitle(info.name);
 		}
 
@@ -148,9 +161,23 @@ ClientGroupDataBrokerClient, HasNavigationHandlers {
 
 	@Override
 	public void addGroup(ClientGroup clientGroup) {
-		add(new ClientGroupListEntry(clientGroup));
+		ClientGroupListEntry entry = new ClientGroupListEntry(clientGroup);
+		add(entry);
 	}
 
+	@Override
+	protected HandlerRegistration bindEntry(ListEntry<ClientGroup> e) {
+		e.addHandler(new NavigationEventHandler() {
+			
+			@Override
+			public void onNavigationEvent(NavigationEvent event) {
+				
+			}
+		}, NavigationEvent.TYPE);
+		return super.bindEntry(e);
+		
+	}
+	
 	@Override
 	public void updateGroup(ClientGroup clientGroup) {
 		if(currentGroup != null && currentGroup.id != null && currentGroup.id.equalsIgnoreCase(clientGroup.id)){

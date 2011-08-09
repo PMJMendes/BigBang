@@ -60,7 +60,8 @@ public class ClientModule implements Module {
 	@Override
 	public String[] getBrokerDependencies() {
 		return new String[]{
-			BigBangConstants.EntityIds.CLIENT
+			BigBangConstants.EntityIds.CLIENT,
+			BigBangConstants.EntityIds.HISTORY
 		};
 	}
 	

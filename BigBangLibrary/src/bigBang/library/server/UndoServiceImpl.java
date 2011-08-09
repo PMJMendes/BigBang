@@ -18,7 +18,10 @@ import Jewel.Petri.SysObjects.Operation;
 import Jewel.Petri.SysObjects.UndoOperation;
 import bigBang.library.interfaces.UndoService;
 import bigBang.library.shared.BigBangException;
+import bigBang.library.shared.NewSearchResult;
 import bigBang.library.shared.ProcessUndoItem;
+import bigBang.library.shared.SearchParameter;
+import bigBang.library.shared.SearchResult;
 import bigBang.library.shared.SessionExpiredException;
 
 public class UndoServiceImpl
@@ -117,14 +120,6 @@ public class UndoServiceImpl
 
 		return larrAux.toArray(new ProcessUndoItem[larrAux.size()]);
 	}
-
-	@Override
-	public ProcessUndoItem[] getProcessUndoItemsAfterTimestamp(
-			String processId, String timestamp) throws SessionExpiredException,
-			BigBangException {
-		// TODO Auto-generated method stub
-		return null;
-	}
 	
 	public ProcessUndoItem undo(String undoItemId)
 		throws SessionExpiredException, BigBangException
@@ -149,6 +144,43 @@ public class UndoServiceImpl
 		}
 
 		return null;
+	}
+
+	@Override
+	public NewSearchResult openSearch(SearchParameter[] parameters, int size)
+			throws SessionExpiredException, BigBangException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public NewSearchResult openForOperation(String opId,
+			SearchParameter[] parameters, int size)
+			throws SessionExpiredException, BigBangException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public NewSearchResult search(String workspaceId,
+			SearchParameter[] parameters, int size)
+			throws SessionExpiredException, BigBangException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public SearchResult[] getResults(String workspaceId, int from, int size)
+			throws SessionExpiredException, BigBangException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void closeSearch(String workspaceId) throws SessionExpiredException,
+			BigBangException {
+		// TODO Auto-generated method stub
+		
 	}
 
 }

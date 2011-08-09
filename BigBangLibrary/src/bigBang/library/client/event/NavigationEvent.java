@@ -15,18 +15,28 @@ public class NavigationEvent extends GwtEvent<NavigationEventHandler> {
 			NAVIGATE_TO
 		}
 		
+		protected String navigateToId;
 		protected NavigationItem navigateTo;
-		protected Navigation navigation; 
+		protected Navigation navigation;
 		
 		public NavigationEvent(Navigation n){
-			this(n, null);
+			this(n, (NavigationItem)null);
 		}
 		
 		public NavigationEvent(Navigation n, NavigationItem to){
 			this.navigation = n;
 			this.navigateTo = to;
 		}
+		
+		public NavigationEvent(Navigation n, String to){
+			this.navigation = n;
+			this.navigateToId = to;
+		}
 
+		public String getNaviationItemId(){
+			return this.navigateToId;
+		}
+		
 		public NavigationItem getNavigationItem(){
 			return this.navigateTo;
 		}

@@ -218,8 +218,9 @@ public abstract class SearchPanel extends FilterableList<SearchResult> {
 	 * Queries the search service for the next page of results
 	 */
 	protected void fetchNextPage() {
-		if(this.nextResultIndex > this.numberOfResults)
+		if(this.nextResultIndex > this.numberOfResults){
 			return;
+		}
 		requestedNextPage = true;
 		this.service.getResults(this.workspaceId, this.nextResultIndex, this.pageSize, new BigBangAsyncCallback<SearchResult[]>() {
 

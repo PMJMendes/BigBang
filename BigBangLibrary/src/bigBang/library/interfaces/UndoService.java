@@ -5,12 +5,11 @@ import bigBang.library.shared.ProcessUndoItem;
 import bigBang.library.shared.SessionExpiredException;
 
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.user.client.rpc.RemoteService;
 import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 
 @RemoteServiceRelativePath("UndoService")
 public interface UndoService
-	extends RemoteService
+	extends SearchService
 {
 	/**
 	 * Utility class for simplifying access to the instance of async service.
@@ -25,7 +24,5 @@ public interface UndoService
 		}
 	}
 	
-	public ProcessUndoItem[] getProcessUndoItems(String processId) throws SessionExpiredException, BigBangException;
-	public ProcessUndoItem[] getProcessUndoItemsAfterTimestamp(String processId, String timestamp) throws SessionExpiredException, BigBangException;
 	public ProcessUndoItem undo(String undoItemId) throws SessionExpiredException, BigBangException;
 }

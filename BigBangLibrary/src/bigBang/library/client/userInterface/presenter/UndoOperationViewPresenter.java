@@ -1,5 +1,7 @@
 package bigBang.library.client.userInterface.presenter;
 
+import java.util.Collection;
+
 import org.gwt.mosaic.ui.client.MessageBox.ConfirmationCallback;
 
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -15,8 +17,11 @@ import bigBang.library.client.HasValueSelectables;
 import bigBang.library.client.Operation;
 import bigBang.library.client.Selectable;
 import bigBang.library.client.ValueSelectable;
+import bigBang.library.client.dataAccess.HistoryBroker;
 import bigBang.library.client.event.SelectionChangedEvent;
 import bigBang.library.client.event.SelectionChangedEventHandler;
+import bigBang.library.client.response.ResponseError;
+import bigBang.library.client.response.ResponseHandler;
 import bigBang.library.client.userInterface.view.View;
 import bigBang.library.interfaces.Service;
 import bigBang.library.interfaces.UndoServiceAsync;
@@ -48,6 +53,7 @@ public class UndoOperationViewPresenter implements OperationViewPresenter {
 	private EventBus eventBus;
 	private UndoServiceAsync service;
 	private Display view;
+	protected HistoryBroker historyBroker;
 	
 	private String processId;
 	
@@ -55,17 +61,16 @@ public class UndoOperationViewPresenter implements OperationViewPresenter {
 	
 	private boolean bound = false;
 	
-	public UndoOperationViewPresenter(EventBus eventBus, Service service, Display view, String processId) {
+	public UndoOperationViewPresenter(EventBus eventBus, HistoryBroker broker, Display view, String processId) {
 		this.processId = processId;
 		setEventBus(eventBus);
 		setService(service);
 		setView((View) view);
+		this.historyBroker = broker;
 	}
-
+	
 	@Override
-	public void setService(Service service) {
-		this.service = (UndoServiceAsync) service;
-	}
+	public void setService(Service service) {}
 
 	@Override
 	public void setEventBus(EventBus eventBus) {
@@ -83,19 +88,21 @@ public class UndoOperationViewPresenter implements OperationViewPresenter {
 			bind();
 		bound = true;
 		
-		setup();
+		fetchHistoryItems();
 		
 		container.clear();
 		container.add(this.view.asWidget());
 	}
 	
-	private void setup(){
-		service.getProcessUndoItems(processId, new BigBangAsyncCallback<ProcessUndoItem[]>() {
-
+	protected void fetchHistoryItems(){
+		this.historyBroker.requireDataRefresh();
+		this.historyBroker.getItems(this.processId, new ResponseHandler<ProcessUndoItem[]>() {
+			
 			@Override
-			public void onSuccess(ProcessUndoItem[] result) {
-				view.setUndoItems(result);
-			}
+			public void onResponse(ProcessUndoItem[] response) {}
+			
+			@Override
+			public void onError(Collection<ResponseError> errors) {}
 		});
 	}
 

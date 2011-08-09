@@ -2,9 +2,12 @@ package bigBang.module.generalSystemModule.client;
 
 import java.util.ArrayList;
 
+import bigBang.definitions.client.BigBangConstants;
 import bigBang.library.client.BigBangPermissionManager;
 import bigBang.library.client.EventBus;
 import bigBang.library.client.MenuSections;
+import bigBang.library.client.dataAccess.DataBrokerManager;
+import bigBang.library.client.dataAccess.HistoryBroker;
 import bigBang.library.client.userInterface.MenuSection;
 import bigBang.library.client.userInterface.TextBadge;
 import bigBang.library.client.userInterface.presenter.OperationViewPresenter;
@@ -12,8 +15,6 @@ import bigBang.library.client.userInterface.presenter.UndoOperationViewPresenter
 import bigBang.library.client.userInterface.presenter.ViewPresenter;
 import bigBang.library.client.userInterface.view.UndoOperationView;
 import bigBang.library.interfaces.Service;
-import bigBang.library.interfaces.UndoService;
-import bigBang.library.interfaces.UndoServiceAsync;
 import bigBang.library.shared.operation.UndoOperation;
 import bigBang.module.generalSystemModule.client.userInterface.presenter.ClientGroupManagementOperationViewPresenter;
 import bigBang.module.generalSystemModule.client.userInterface.presenter.CostCenterManagementOperationViewPresenter;
@@ -63,12 +64,12 @@ public class GeneralSystemSection implements MenuSection {
 	public GeneralSystemSection(BigBangPermissionManager permissionManager, String processId){
 		this.sectionOperationPresenters = new ArrayList<OperationViewPresenter>();
 		this.permissionManager = permissionManager;
-
+		
 		/* UNDO */
 		UndoOperation undoOperation = (UndoOperation)GWT.create(UndoOperation.class);
 		UndoOperationView undoOperationView = (UndoOperationView) GWT.create(UndoOperationView.class);
-		UndoServiceAsync undoService = UndoService.Util.getInstance();
-		UndoOperationViewPresenter undoOperationViewPresenter = new UndoOperationViewPresenter(null, undoService, undoOperationView, processId);
+		HistoryBroker historyBroker = (HistoryBroker) DataBrokerManager.Util.getInstance().getBroker(BigBangConstants.EntityIds.HISTORY);
+		UndoOperationViewPresenter undoOperationViewPresenter = new UndoOperationViewPresenter(null, historyBroker, undoOperationView, processId);
 		undoOperationViewPresenter.setOperation(undoOperation);
 		this.sectionOperationPresenters.add((OperationViewPresenter) undoOperationViewPresenter);
 		
