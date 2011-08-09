@@ -60,18 +60,16 @@ public abstract class SearchServiceBase
         private UUID midObject;
 		private UUID midOp;
         private String[] marrColumns;
-        private String mstrSort;
         private ArrayList<Row> marrData;
         private int mlngColCount;
 
-		public SearchWSpace(UUID pidObject, UUID pidOp, String[] parrColumns, String pstrSort)
+		public SearchWSpace(UUID pidObject, UUID pidOp, String[] parrColumns)
 			throws BigBangException
 		{
 			mid = UUID.randomUUID();
 			midObject = pidObject;
 			midOp = pidOp;
 			marrColumns = parrColumns;
-			mstrSort = pstrSort;
 		}
 		
 		public UUID GetID()
@@ -84,7 +82,7 @@ public abstract class SearchServiceBase
 			return midOp;
 		}
 
-		public void OpenSearch(String pstrCriteria)
+		public void OpenSearch(String pstrCriteria, String pstrSort)
 			throws BigBangException
 		{
 	        IEntity lrefClients;
@@ -113,7 +111,7 @@ public abstract class SearchServiceBase
 	        	for ( i = 0; i < marrColumns.length; i++ )
 	        		lstrSQL.append(", ").append(marrColumns[i]);
 	        	lstrSQL.append(" FROM (").append(lrefClients.SQLForSelectMulti()).append(") [Aux] WHERE ").append(pstrCriteria)
-	        			.append(" ORDER BY ").append(mstrSort);
+	        			.append(" ORDER BY ").append(pstrSort);
 	        	lrsRows = ldb.OpenRecordset(lstrSQL.toString());
 			}
 			catch (Throwable e)
@@ -216,11 +214,11 @@ public abstract class SearchServiceBase
 		if ( Engine.getCurrentUser() == null )
 			throw new SessionExpiredException();
 
-		lrefWSpace = new SearchWSpace(getObjectID(), (opId == null ? null : UUID.fromString(opId)), getColumns(), getSort());
+		lrefWSpace = new SearchWSpace(getObjectID(), (opId == null ? null : UUID.fromString(opId)), getColumns());
 		lidAux = lrefWSpace.GetID();
 		GetSearchWSStorage().put(lidAux, lrefWSpace);
 
-		return doOpenSearch(lrefWSpace, parameters, size);
+		return doOpenSearch(lrefWSpace, parameters, sorts, size);
 	}
 
 	public NewSearchResult search(String workspaceId, SearchParameter[] parameters, SortParameter[] sorts, int size)
@@ -235,7 +233,7 @@ public abstract class SearchServiceBase
 		if ( lrefWSpace == null )
 			throw new BigBangException("Unexpected: non-existant query workspace.");
 
-		return doOpenSearch(lrefWSpace, parameters, size);
+		return doOpenSearch(lrefWSpace, parameters, sorts, size);
 	}
 
 	public SearchResult[] getResults(String workspaceId, int from, int size)
@@ -276,10 +274,11 @@ public abstract class SearchServiceBase
 		GetSearchWSStorage().remove(UUID.fromString(workspaceId));
 	}
 
-	private NewSearchResult doOpenSearch(SearchWSpace prefWSpace, SearchParameter[] parameters, int size)
+	private NewSearchResult doOpenSearch(SearchWSpace prefWSpace, SearchParameter[] parameters, SortParameter[] sorts, int size)
 		throws BigBangException
 	{
 		StringBuilder lstrBuffer;
+		String lstrCriteria, lstrSort;
 		int[] larrMembers;
 		java.lang.Object[] larrValues;
 		IEntity lrefSteps;
@@ -327,8 +326,23 @@ public abstract class SearchServiceBase
 			}
 		}
 		lstrBuffer.append(")");
+		lstrCriteria = lstrBuffer.toString();
 
-		prefWSpace.OpenSearch(lstrBuffer.toString());
+		lstrBuffer = new StringBuilder();
+		if ( (sorts == null) || (sorts.length == 0) )
+			lstrBuffer.append("[PK]");
+		else
+		{
+			for ( i = 0; i < sorts.length; i++ )
+			{
+				if ( i > 0 )
+					lstrBuffer.append(", ");
+				buildSort(lstrBuffer, sorts[i], parameters);
+			}
+		}
+		lstrSort = lstrBuffer.toString();
+
+		prefWSpace.OpenSearch(lstrCriteria, lstrSort);
 
 		lobjResult = new NewSearchResult();
 		lobjResult.workspaceId = prefWSpace.GetID().toString();
@@ -347,8 +361,8 @@ public abstract class SearchServiceBase
 	}
 
 	protected abstract UUID getObjectID();
-	protected abstract void buildFilter(StringBuilder pstrBuffer, SearchParameter pParam) throws BigBangException;
 	protected abstract String[] getColumns();
-	protected abstract String getSort();
+	protected abstract void buildFilter(StringBuilder pstrBuffer, SearchParameter pParam) throws BigBangException;
+	protected abstract void buildSort(StringBuilder pstrBuffer, SortParameter pParam, SearchParameter[] parrParams);
 	protected abstract SearchResult buildResult(UUID pid, java.lang.Object[] parrValues);
 }

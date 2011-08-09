@@ -17,9 +17,12 @@ import bigBang.library.shared.BigBangException;
 import bigBang.library.shared.SearchParameter;
 import bigBang.library.shared.SearchResult;
 import bigBang.library.shared.SessionExpiredException;
+import bigBang.library.shared.SortOrder;
+import bigBang.library.shared.SortParameter;
 import bigBang.library.shared.ZipCode;
 import bigBang.module.clientModule.interfaces.ClientService;
 import bigBang.module.clientModule.shared.ClientSearchParameter;
+import bigBang.module.clientModule.shared.ClientSortParameter;
 
 import com.premiumminds.BigBang.Jewel.Constants;
 
@@ -129,6 +132,11 @@ public class ClientServiceImpl
 		return Constants.ObjID_Client;
 	}
 
+	protected String[] getColumns()
+	{
+		return new String[] {"[:Name]", "[:Number]", "[:Group:Name]"};
+	}
+
 	protected void buildFilter(StringBuilder pstrBuffer, SearchParameter pParam)
 		throws BigBangException
 	{
@@ -145,10 +153,12 @@ public class ClientServiceImpl
 
 		if ( (lParam.freeText != null) && (lParam.freeText.trim().length() > 0) )
 		{
-			pstrBuffer.append(" AND ([:Name] LIKE N'%").append(lParam.freeText.trim().replace("'", "''")).append("%'")
-					.append(" OR CAST([:Number] AS NVARCHAR(20)) LIKE N'%").append(lParam.freeText.trim().replace("'", "''"))
+			pstrBuffer.append(" AND ([:Name] LIKE N'%").append(lParam.freeText.trim().replace("'", "''").replace(" ", "%"))
 					.append("%'")
-					.append(" OR [:Group:Name] LIKE N'%").append(lParam.freeText.trim().replace("'", "''")).append("%')");
+					.append(" OR CAST([:Number] AS NVARCHAR(20)) LIKE N'%").append(lParam.freeText.trim().replace("'", "''")
+					.replace(" ", "%")).append("%'")
+					.append(" OR [:Group:Name] LIKE N'%").append(lParam.freeText.trim().replace("'", "''").replace(" ", "%"))
+					.append("%')");
 		}
 
 		if ( (lParam.postalCodes != null) && (lParam.postalCodes.length > 0) )
@@ -261,14 +271,34 @@ public class ClientServiceImpl
 		}
 	}
 
-	protected String[] getColumns()
+	protected void buildSort(StringBuilder pstrBuffer, SortParameter pParam, SearchParameter[] parrParams)
 	{
-		return new String[] {"[:Name]", "[:Number]", "[:Group:Name]"};
-	}
+		ClientSortParameter lParam;
 
-	protected String getSort()
-	{
-		return "[:Name]";
+		if ( !(pParam instanceof ClientSortParameter) )
+			return;
+		lParam = (ClientSortParameter)pParam;
+
+		if ( lParam.field == ClientSortParameter.SortableField.RELEVANCE )
+		{
+			if ( !buildRelevanceSort(pstrBuffer, parrParams) )
+				return;
+		}
+
+		if ( lParam.field == ClientSortParameter.SortableField.NAME )
+			pstrBuffer.append("[:Name]");
+
+		if ( lParam.field == ClientSortParameter.SortableField.GROUP )
+			pstrBuffer.append("[:Group:Name]");
+
+		if ( lParam.field == ClientSortParameter.SortableField.NUMBER )
+			pstrBuffer.append("[:Number]");
+
+		if ( lParam.order == SortOrder.ASC )
+			pstrBuffer.append(" ASC");
+
+		if ( lParam.order == SortOrder.DESC )
+			pstrBuffer.append(" DESC");
 	}
 
 	protected SearchResult buildResult(UUID pid, java.lang.Object[] parrValues)
@@ -282,5 +312,33 @@ public class ClientServiceImpl
 		lobjResult.groupName = (parrValues[2] == null ? null : parrValues[2].toString());
 
 		return lobjResult;
+	}
+
+	private boolean buildRelevanceSort(StringBuilder pstrBuffer, SearchParameter[] parrParams)
+	{
+		ClientSearchParameter lParam;
+		boolean lbFound;
+		int i;
+
+		if ( (parrParams == null) || (parrParams.length == 0) )
+			return false;
+
+		lbFound = false;
+		for ( i = 0; i < parrParams.length; i++ )
+		{
+			if ( !(parrParams[i] instanceof ClientSearchParameter) )
+				continue;
+			lParam = (ClientSearchParameter) parrParams[i];
+			if ( (lParam.freeText == null) || (lParam.freeText.trim().length() == 0) )
+				continue;
+			if ( lbFound )
+				pstrBuffer.append(" + ");
+			lbFound = true;
+			pstrBuffer.append("CASE WHEN [:Group:Name] LIKE N'%").append(lParam.freeText.trim().replace("'", "''").replace(" ", "%"))
+					.append("%' THEN 10 ELSE 0 END + CASE WHEN [:Name] LIKE N'%").append(lParam.freeText.trim().replace("'", "''")
+					.replace(" ", "%")).append("%' THEN 1 ELSE 0 END");
+		}
+
+		return lbFound;
 	}
 }
