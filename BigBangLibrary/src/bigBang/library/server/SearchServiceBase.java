@@ -79,15 +79,17 @@ public abstract class SearchServiceBase
 			return mid;
 		}
 
+		public UUID GetOpID()
+		{
+			return midOp;
+		}
+
 		public void OpenSearch(String pstrCriteria)
 			throws BigBangException
 		{
 	        IEntity lrefClients;
 	        MasterDB ldb;
 	        StringBuilder lstrSQL;
-			int[] larrMembers;
-			java.lang.Object[] larrValues;
-			IEntity lrefUserDecs;
 	        ResultSet lrsRows;
             UUID lidKey;
             java.lang.Object[] larrRow;
@@ -110,29 +112,8 @@ public abstract class SearchServiceBase
 	        	lstrSQL = new StringBuilder("SELECT [PK]");
 	        	for ( i = 0; i < marrColumns.length; i++ )
 	        		lstrSQL.append(", ").append(marrColumns[i]);
-	        	lstrSQL.append(" FROM (").append(lrefClients.SQLForSelectMulti()).append(") [Aux] WHERE 1=1");
-	        	if ( midOp != null )
-	        	{
-	        		lstrSQL.append(" AND [PK] IN (SELECT [:Process:Data] FROM (");
-	    			larrMembers = new int[1];
-	    			larrMembers[0] = 1;
-	    			larrValues = new java.lang.Object[1];
-	    			larrValues[0] = midOp;
-	    			try
-	    			{
-	    				lrefUserDecs = Entity.GetInstance(Engine.FindEntity(Engine.getCurrentNameSpace(),
-	    						Jewel.Petri.Constants.ObjID_PNStep));
-	    				lstrSQL.append(lrefUserDecs.SQLForSelectByMembers(larrMembers, larrValues, new int[0]));
-	    			}
-	    			catch (Throwable e)
-	    			{
-	            		throw new BigBangException(e.getMessage(), e);
-	    			}
-	    			lstrSQL.append(") [Aux0])");
-	        	}
-	        	lstrSQL.append(pstrCriteria);
-	        	lstrSQL.append(" ORDER BY ");
-	        	lstrSQL.append(mstrSort);
+	        	lstrSQL.append(" FROM (").append(lrefClients.SQLForSelectMulti()).append(") [Aux] WHERE ").append(pstrCriteria)
+	        			.append(" ORDER BY ").append(mstrSort);
 	        	lrsRows = ldb.OpenRecordset(lstrSQL.toString());
 			}
 			catch (Throwable e)
@@ -223,86 +204,29 @@ public abstract class SearchServiceBase
 	public NewSearchResult openSearch(SearchParameter[] parameters, SortParameter[] sorts, int size)
 		throws SessionExpiredException, BigBangException
 	{
-		StringBuilder lstrBuffer;
-		int i;
-		SearchWSpace lrefWSpace;
-		UUID lidAux;
-		NewSearchResult lobjResult;
-		SearchWSpace.Row lobjAux;
-
-		if ( Engine.getCurrentUser() == null )
-			throw new SessionExpiredException();
-
-		lstrBuffer = new StringBuilder();
-		for ( i = 0; i < parameters.length; i++ )
-			buildFilter(lstrBuffer, parameters[i]);
-
-		lrefWSpace = new SearchWSpace(getObjectID(), null, getColumns(), getSort());
-		lidAux = lrefWSpace.GetID();
-		GetSearchWSStorage().put(lidAux, lrefWSpace);
-		lrefWSpace.OpenSearch(lstrBuffer.toString());
-
-		lobjResult = new NewSearchResult();
-		lobjResult.workspaceId = lidAux.toString();
-		lobjResult.totalCount = lrefWSpace.GetRowCount();
-		if ( lobjResult.totalCount < size )
-			size = lobjResult.totalCount;
-		lobjResult.results = new SearchResult[size];
-		for ( i = 0; i < size; i++ )
-		{
-			lobjAux = lrefWSpace.GetRow(i);
-			lobjResult.results[i] = buildResult(lobjAux.getKey(), lobjAux.GetValues());
-		}
-
-		return lobjResult;
+		return openForOperation(null, parameters, sorts, size);
 	}
 
 	public NewSearchResult openForOperation(String opId, SearchParameter[] parameters, SortParameter[] sorts, int size)
 		throws SessionExpiredException, BigBangException
 	{
-		StringBuilder lstrBuffer;
-		int i;
 		SearchWSpace lrefWSpace;
 		UUID lidAux;
-		NewSearchResult lobjResult;
-		SearchWSpace.Row lobjAux;
 
 		if ( Engine.getCurrentUser() == null )
 			throw new SessionExpiredException();
 
-		lstrBuffer = new StringBuilder();
-		for ( i = 0; i < parameters.length; i++ )
-			buildFilter(lstrBuffer, parameters[i]);
-
-		lrefWSpace = new SearchWSpace(getObjectID(), UUID.fromString(opId), getColumns(), getSort());
+		lrefWSpace = new SearchWSpace(getObjectID(), (opId == null ? null : UUID.fromString(opId)), getColumns(), getSort());
 		lidAux = lrefWSpace.GetID();
 		GetSearchWSStorage().put(lidAux, lrefWSpace);
-		lrefWSpace.OpenSearch(lstrBuffer.toString());
 
-		lobjResult = new NewSearchResult();
-		lobjResult.workspaceId = lidAux.toString();
-		lobjResult.totalCount = lrefWSpace.GetRowCount();
-		if ( lobjResult.totalCount < size )
-			size = lobjResult.totalCount;
-		lobjResult.results = new SearchResult[size];
-		for ( i = 0; i < size; i++ )
-		{
-			lobjAux = lrefWSpace.GetRow(i);
-			lobjResult.results[i] = buildResult(lobjAux.getKey(), lobjAux.GetValues());
-		}
-
-		return lobjResult;
+		return doOpenSearch(lrefWSpace, parameters, size);
 	}
 
 	public NewSearchResult search(String workspaceId, SearchParameter[] parameters, SortParameter[] sorts, int size)
 		throws SessionExpiredException, BigBangException
 	{
 		SearchWSpace lrefWSpace;
-		StringBuilder lstrBuffer;
-		int i;
-		int llngCount;
-		NewSearchResult lobjResult;
-		SearchWSpace.Row lobjAux;
 
 		if ( Engine.getCurrentUser() == null )
 			throw new SessionExpiredException();
@@ -311,26 +235,7 @@ public abstract class SearchServiceBase
 		if ( lrefWSpace == null )
 			throw new BigBangException("Unexpected: non-existant query workspace.");
 
-		lstrBuffer = new StringBuilder();
-		for ( i = 0; i < parameters.length; i++ )
-			buildFilter(lstrBuffer, parameters[i]);
-
-		lrefWSpace.OpenSearch(lstrBuffer.toString());
-
-		lobjResult = new NewSearchResult();
-		lobjResult.workspaceId = workspaceId;
-		lobjResult.totalCount = lrefWSpace.GetRowCount();
-		llngCount = lrefWSpace.GetRowCount();
-		if ( llngCount < size )
-			size = llngCount;
-		lobjResult.results = new SearchResult[size];
-		for ( i = 0; i < size; i++ )
-		{
-			lobjAux = lrefWSpace.GetRow(i);
-			lobjResult.results[i] = buildResult(lobjAux.getKey(), lobjAux.GetValues());
-		}
-
-		return lobjResult;
+		return doOpenSearch(lrefWSpace, parameters, size);
 	}
 
 	public SearchResult[] getResults(String workspaceId, int from, int size)
@@ -369,6 +274,76 @@ public abstract class SearchServiceBase
 			throw new SessionExpiredException();
 
 		GetSearchWSStorage().remove(UUID.fromString(workspaceId));
+	}
+
+	private NewSearchResult doOpenSearch(SearchWSpace prefWSpace, SearchParameter[] parameters, int size)
+		throws BigBangException
+	{
+		StringBuilder lstrBuffer;
+		int[] larrMembers;
+		java.lang.Object[] larrValues;
+		IEntity lrefSteps;
+		NewSearchResult lobjResult;
+		SearchWSpace.Row lobjAux;
+		int llngCount;
+		int i;
+
+		lstrBuffer = new StringBuilder("(");
+
+		if ( (parameters == null) || (parameters.length == 0) )
+			lstrBuffer.append("1 = 1");
+		else
+		{
+			for ( i = 0; i < parameters.length; i++ )
+			{
+				if ( i > 0 )
+					lstrBuffer.append(") OR (");
+
+				if ( prefWSpace.GetOpID() == null )
+				{
+					lstrBuffer.append("1 = 1");
+				}
+				else
+				{
+					lstrBuffer.append("[PK] IN (SELECT [:Process:Data] FROM (");
+					larrMembers = new int[1];
+					larrMembers[0] = 1;
+					larrValues = new java.lang.Object[1];
+					larrValues[0] = prefWSpace.GetOpID();
+					try
+					{
+						lrefSteps = Entity.GetInstance(Engine.FindEntity(Engine.getCurrentNameSpace(),
+								Jewel.Petri.Constants.ObjID_PNStep));
+						lstrBuffer.append(lrefSteps.SQLForSelectByMembers(larrMembers, larrValues, new int[0]));
+					}
+					catch (Throwable e)
+					{
+			    		throw new BigBangException(e.getMessage(), e);
+					}
+					lstrBuffer.append(") [AuxSteps0])");
+				}
+
+				buildFilter(lstrBuffer, parameters[i]);
+			}
+		}
+		lstrBuffer.append(")");
+
+		prefWSpace.OpenSearch(lstrBuffer.toString());
+
+		lobjResult = new NewSearchResult();
+		lobjResult.workspaceId = prefWSpace.GetID().toString();
+		lobjResult.totalCount = prefWSpace.GetRowCount();
+		llngCount = prefWSpace.GetRowCount();
+		if ( llngCount < size )
+			size = llngCount;
+		lobjResult.results = new SearchResult[size];
+		for ( i = 0; i < size; i++ )
+		{
+			lobjAux = prefWSpace.GetRow(i);
+			lobjResult.results[i] = buildResult(lobjAux.getKey(), lobjAux.GetValues());
+		}
+
+		return lobjResult;
 	}
 
 	protected abstract UUID getObjectID();
