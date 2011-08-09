@@ -8,7 +8,10 @@ public class ClientSortParameter extends SortParameter {
 	private static final long serialVersionUID = 1L;
 
 	public static enum SortableField {
-		RELEVANCE
+		RELEVANCE,
+		NAME,
+		GROUP,
+		NUMBER
 	}
 	
 	public ClientSortParameter(SortableField field, SortOrder order) {
