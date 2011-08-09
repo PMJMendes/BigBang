@@ -26,6 +26,7 @@ public class InsuranceAgency
 	{
 		ownMediatorCodes = new String[0];
 		contacts = new Contact[0];
+		documents = new Document[0];
 	}
 	
 	public InsuranceAgency(InsuranceAgency original){
