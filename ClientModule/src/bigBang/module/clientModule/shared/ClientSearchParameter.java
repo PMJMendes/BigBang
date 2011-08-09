@@ -5,10 +5,6 @@ import bigBang.library.shared.SearchParameter;
 public class ClientSearchParameter
 	extends SearchParameter
 {
-	
-	public static enum SortableField {
-		RELEVANCE
-	}
 
 	private static final long serialVersionUID = 1L;
 	

@@ -2,7 +2,7 @@ package bigBang.library.shared;
 
 import java.io.Serializable;
 
-public class SortParameter implements Serializable {
+public abstract class SortParameter implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 	

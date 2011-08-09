@@ -12,6 +12,7 @@ import bigBang.library.shared.SortOrder;
 import bigBang.library.shared.SortParameter;
 import bigBang.module.clientModule.interfaces.ClientService;
 import bigBang.module.clientModule.shared.ClientSearchParameter;
+import bigBang.module.clientModule.shared.ClientSortParameter;
 
 /**
  * @author Premium-Minds (Francisco Cabrita)
@@ -56,7 +57,7 @@ public class ClientSearchPanel extends SearchPanel implements ClientProcessDataB
 		parameters[0] = p;
 		
 		SortParameter[] sorts = new SortParameter[]{
-				new SortParameter(ClientSearchParameter.SortableField.RELEVANCE, SortOrder.DESC)
+				new ClientSortParameter(ClientSortParameter.SortableField.RELEVANCE, SortOrder.DESC)
 		};
 		
 		doSearch(parameters, sorts);
