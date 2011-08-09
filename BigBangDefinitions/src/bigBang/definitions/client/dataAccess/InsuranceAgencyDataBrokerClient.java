@@ -1,7 +1,6 @@
-package bigBang.definitions.client.brokerClient;
+package bigBang.definitions.client.dataAccess;
 
-import bigBang.definitions.client.types.InsuranceAgency;
-import bigBang.library.client.dataAccess.DataBrokerClient;
+import bigBang.definitions.shared.InsuranceAgency;
 
 public interface InsuranceAgencyDataBrokerClient extends
 DataBrokerClient<InsuranceAgency> {

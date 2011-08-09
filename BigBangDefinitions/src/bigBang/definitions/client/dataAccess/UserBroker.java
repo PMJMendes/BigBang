@@ -1,8 +1,7 @@
-package bigBang.definitions.client.broker;
+package bigBang.definitions.client.dataAccess;
 
-import bigBang.definitions.client.types.User;
-import bigBang.library.client.dataAccess.DataBrokerInterface;
-import bigBang.library.client.response.ResponseHandler;
+import bigBang.definitions.client.response.ResponseHandler;
+import bigBang.definitions.shared.User;
 
 /**
  * The interface for a User DataBroker

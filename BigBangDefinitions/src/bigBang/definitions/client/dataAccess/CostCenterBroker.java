@@ -1,8 +1,7 @@
-package bigBang.definitions.client.broker;
+package bigBang.definitions.client.dataAccess;
 
-import bigBang.definitions.client.types.CostCenter;
-import bigBang.library.client.dataAccess.DataBrokerInterface;
-import bigBang.library.client.response.ResponseHandler;
+import bigBang.definitions.client.response.ResponseHandler;
+import bigBang.definitions.shared.CostCenter;
 
 /**
  * The interface for a Cost Center DataBroker

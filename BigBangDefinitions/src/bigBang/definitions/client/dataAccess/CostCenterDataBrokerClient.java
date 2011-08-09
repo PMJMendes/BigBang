@@ -1,7 +1,6 @@
-package bigBang.definitions.client.brokerClient;
+package bigBang.definitions.client.dataAccess;
 
-import bigBang.definitions.client.types.CostCenter;
-import bigBang.library.client.dataAccess.DataBrokerClient;
+import bigBang.definitions.shared.CostCenter;
 
 public interface CostCenterDataBrokerClient extends
 DataBrokerClient<CostCenter> {

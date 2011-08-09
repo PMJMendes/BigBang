@@ -1,7 +1,6 @@
-package bigBang.definitions.client.brokerClient;
+package bigBang.definitions.client.dataAccess;
 
-import bigBang.definitions.client.types.Mediator;
-import bigBang.library.client.dataAccess.DataBrokerClient;
+import bigBang.definitions.shared.Mediator;
 
 public interface MediatorDataBrokerClient extends
 DataBrokerClient<Mediator> {

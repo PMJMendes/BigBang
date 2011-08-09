@@ -1,7 +1,6 @@
-package bigBang.definitions.client.brokerClient;
+package bigBang.definitions.client.dataAccess;
 
-import bigBang.definitions.client.types.User;
-import bigBang.library.client.dataAccess.DataBrokerClient;
+import bigBang.definitions.shared.User;
 
 public interface UserDataBrokerClient extends
 DataBrokerClient<User> {

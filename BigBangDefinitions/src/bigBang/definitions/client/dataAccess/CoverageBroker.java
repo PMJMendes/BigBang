@@ -1,11 +1,10 @@
-package bigBang.definitions.client.broker;
+package bigBang.definitions.client.dataAccess;
 
-import bigBang.definitions.client.types.Coverage;
-import bigBang.definitions.client.types.Line;
-import bigBang.definitions.client.types.SubLine;
-import bigBang.definitions.client.types.Tax;
-import bigBang.library.client.dataAccess.DataBrokerInterface;
-import bigBang.library.client.response.ResponseHandler;
+import bigBang.definitions.client.response.ResponseHandler;
+import bigBang.definitions.shared.Coverage;
+import bigBang.definitions.shared.Line;
+import bigBang.definitions.shared.SubLine;
+import bigBang.definitions.shared.Tax;
 
 public interface CoverageBroker extends DataBrokerInterface<Line> {
 
