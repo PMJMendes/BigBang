@@ -2,9 +2,11 @@ package bigBang.module.generalSystemModule.client.userInterface.presenter;
 
 import java.util.Collection;
 
-import bigBang.definitions.client.BigBangConstants;
-import bigBang.definitions.client.broker.UserBroker;
-import bigBang.definitions.client.types.User;
+import bigBang.definitions.client.dataAccess.UserBroker;
+import bigBang.definitions.client.response.ResponseError;
+import bigBang.definitions.client.response.ResponseHandler;
+import bigBang.definitions.shared.BigBangConstants;
+import bigBang.definitions.shared.User;
 import bigBang.library.client.EventBus;
 import bigBang.library.client.HasEditableValue;
 import bigBang.library.client.HasValueSelectables;
@@ -16,8 +18,6 @@ import bigBang.library.client.event.ActionInvokedEvent;
 import bigBang.library.client.event.ActionInvokedEventHandler;
 import bigBang.library.client.event.SelectionChangedEvent;
 import bigBang.library.client.event.SelectionChangedEventHandler;
-import bigBang.library.client.response.ResponseError;
-import bigBang.library.client.response.ResponseHandler;
 import bigBang.library.client.userInterface.presenter.OperationViewPresenter;
 import bigBang.library.client.userInterface.view.View;
 import bigBang.library.interfaces.Service;

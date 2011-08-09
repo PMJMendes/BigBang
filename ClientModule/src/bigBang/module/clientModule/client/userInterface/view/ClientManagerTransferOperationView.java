@@ -2,7 +2,7 @@ package bigBang.module.clientModule.client.userInterface.view;
 
 import com.google.gwt.user.client.ui.SplitLayoutPanel;
 
-import bigBang.definitions.client.types.Client;
+import bigBang.definitions.shared.Client;
 import bigBang.library.client.userInterface.FilterableList;
 import bigBang.library.client.userInterface.view.View;
 import bigBang.module.clientModule.client.userInterface.ClientSearchPanel;

@@ -1,9 +1,9 @@
 package bigBang.library.client.userInterface;
 
+import bigBang.definitions.shared.Document;
 import bigBang.library.client.DocumentManager;
 import bigBang.library.client.event.SelectedStateChangedEventHandler;
 import bigBang.library.client.resources.Resources;
-import bigBang.library.shared.Document;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Overflow;

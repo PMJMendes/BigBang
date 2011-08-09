@@ -1,7 +1,7 @@
 package bigBang.module.generalSystemModule.interfaces;
 
-import bigBang.definitions.client.types.User;
-import bigBang.definitions.client.types.UserProfile;
+import bigBang.definitions.shared.User;
+import bigBang.definitions.shared.UserProfile;
 import bigBang.library.shared.BigBangException;
 import bigBang.library.shared.SessionExpiredException;
 

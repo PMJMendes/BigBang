@@ -23,13 +23,13 @@ import Jewel.Petri.Interfaces.IStep;
 import Jewel.Petri.Objects.PNStep;
 import Jewel.Petri.SysObjects.JewelPetriException;
 import Jewel.Petri.SysObjects.Operation;
+import bigBang.definitions.shared.Address;
+import bigBang.definitions.shared.Contact;
+import bigBang.definitions.shared.ContactInfo;
+import bigBang.definitions.shared.ZipCode;
 import bigBang.library.interfaces.ContactsService;
-import bigBang.library.shared.Address;
 import bigBang.library.shared.BigBangException;
-import bigBang.library.shared.Contact;
-import bigBang.library.shared.ContactInfo;
 import bigBang.library.shared.SessionExpiredException;
-import bigBang.library.shared.ZipCode;
 
 public class ContactsServiceImpl
 	extends EngineImplementor

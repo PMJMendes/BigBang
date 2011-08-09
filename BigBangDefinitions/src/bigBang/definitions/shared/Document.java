@@ -1,4 +1,4 @@
-package bigBang.library.shared;
+package bigBang.definitions.shared;
 
 import java.io.Serializable;
 
@@ -15,10 +15,10 @@ public class Document
 	public String mimeType;
 	public String fileName;
 	public String fileStorageId;
-	public Parameter[] parameters;
+	public DocInfo[] parameters;
 
 	public Document()
 	{
-		parameters = new Parameter[0];
+		parameters = new DocInfo[0];
 	}
 }

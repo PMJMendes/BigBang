@@ -1,6 +1,6 @@
 package bigBang.library.client.event;
 
-import bigBang.library.shared.Parameter;
+import bigBang.library.client.Parameter;
 
 import com.google.gwt.event.shared.GwtEvent;
 

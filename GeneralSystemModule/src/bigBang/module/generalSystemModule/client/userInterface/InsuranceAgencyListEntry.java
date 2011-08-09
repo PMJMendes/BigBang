@@ -1,6 +1,6 @@
 package bigBang.module.generalSystemModule.client.userInterface;
 
-import bigBang.definitions.client.types.InsuranceAgency;
+import bigBang.definitions.shared.InsuranceAgency;
 import bigBang.library.client.userInterface.ListEntry;
 
 public class InsuranceAgencyListEntry extends ListEntry<InsuranceAgency> {

@@ -3,7 +3,7 @@ package bigBang.module.generalSystemModule.client.userInterface.view;
 import com.google.gwt.event.dom.client.HasClickHandlers;
 import com.google.gwt.user.client.ui.Button;
 
-import bigBang.definitions.client.types.Coverage;
+import bigBang.definitions.shared.Coverage;
 import bigBang.library.client.userInterface.TextBoxFormField;
 import bigBang.library.client.userInterface.view.FormView;
 

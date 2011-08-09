@@ -1,13 +1,13 @@
 package bigBang.module.generalSystemModule.client.dataAccess;
 
-import bigBang.definitions.client.BigBangConstants;
-import bigBang.definitions.client.broker.UserBroker;
-import bigBang.definitions.client.brokerClient.UserDataBrokerClient;
-import bigBang.definitions.client.types.User;
+import bigBang.definitions.client.dataAccess.DataBroker;
+import bigBang.definitions.client.dataAccess.DataBrokerClient;
+import bigBang.definitions.client.dataAccess.UserBroker;
+import bigBang.definitions.client.dataAccess.UserDataBrokerClient;
+import bigBang.definitions.client.response.ResponseHandler;
+import bigBang.definitions.shared.BigBangConstants;
+import bigBang.definitions.shared.User;
 import bigBang.library.client.BigBangAsyncCallback;
-import bigBang.library.client.dataAccess.DataBroker;
-import bigBang.library.client.dataAccess.DataBrokerClient;
-import bigBang.library.client.response.ResponseHandler;
 import bigBang.module.generalSystemModule.interfaces.UserService;
 import bigBang.module.generalSystemModule.interfaces.UserServiceAsync;
 

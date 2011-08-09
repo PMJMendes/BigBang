@@ -1,13 +1,13 @@
 package bigBang.module.clientModule.client.userInterface;
 
-import bigBang.definitions.client.brokerClient.ClientProcessDataBrokerClient;
-import bigBang.definitions.client.types.Client;
-import bigBang.definitions.client.types.ClientStub;
+import bigBang.definitions.client.dataAccess.ClientProcessDataBrokerClient;
+import bigBang.definitions.shared.Client;
+import bigBang.definitions.shared.ClientStub;
+import bigBang.definitions.shared.SearchResult;
 import bigBang.library.client.ValueSelectable;
 import bigBang.library.client.ValueWrapper;
 import bigBang.library.client.userInterface.view.SearchPanel;
 import bigBang.library.shared.SearchParameter;
-import bigBang.library.shared.SearchResult;
 import bigBang.library.shared.SortOrder;
 import bigBang.library.shared.SortParameter;
 import bigBang.module.clientModule.interfaces.ClientService;

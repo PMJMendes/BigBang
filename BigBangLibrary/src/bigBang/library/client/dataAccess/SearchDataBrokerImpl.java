@@ -3,12 +3,13 @@ package bigBang.library.client.dataAccess;
 import java.util.HashMap;
 import java.util.Map;
 
+import bigBang.definitions.client.dataAccess.DataBroker;
+import bigBang.definitions.client.response.ResponseHandler;
+import bigBang.definitions.shared.SearchResult;
 import bigBang.library.client.BigBangAsyncCallback;
-import bigBang.library.client.response.ResponseHandler;
 import bigBang.library.interfaces.SearchServiceAsync;
 import bigBang.library.shared.NewSearchResult;
 import bigBang.library.shared.SearchParameter;
-import bigBang.library.shared.SearchResult;
 import bigBang.library.shared.SortParameter;
 
 public class SearchDataBrokerImpl<T extends SearchResult> extends DataBroker<T> implements SearchDataBroker<T> {

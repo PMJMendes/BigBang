@@ -1,8 +1,8 @@
 package bigBang.module.generalSystemModule.shared.formValidator;
 
+import bigBang.definitions.shared.Address;
 import bigBang.library.client.FieldValidator;
 import bigBang.library.client.FormValidator;
-import bigBang.library.shared.Address;
 
 public class MediatorFormValidator implements FormValidator {
 

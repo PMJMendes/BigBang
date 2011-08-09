@@ -2,7 +2,7 @@ package bigBang.library.client;
 
 import java.util.List;
 
-import bigBang.library.shared.TipifiedListItem;
+import bigBang.definitions.shared.TipifiedListItem;
 
 /**
  * An interface for a client to a typified list to be managed by a TypifiedListBroker.

@@ -1,8 +1,8 @@
-package bigBang.library.shared;
+package bigBang.definitions.shared;
 
 import java.io.Serializable;
 
-public class Parameter
+public class DocInfo
 	implements Serializable
 {
 	private static final long serialVersionUID = 1L;

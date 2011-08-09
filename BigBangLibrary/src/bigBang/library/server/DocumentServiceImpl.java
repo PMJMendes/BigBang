@@ -15,10 +15,10 @@ import Jewel.Petri.Interfaces.IStep;
 import Jewel.Petri.Objects.PNStep;
 import Jewel.Petri.SysObjects.JewelPetriException;
 import Jewel.Petri.SysObjects.Operation;
+import bigBang.definitions.shared.Document;
+import bigBang.definitions.shared.DocInfo;
 import bigBang.library.interfaces.DocumentService;
 import bigBang.library.shared.BigBangException;
-import bigBang.library.shared.Document;
-import bigBang.library.shared.Parameter;
 import bigBang.library.shared.SessionExpiredException;
 
 import com.premiumminds.BigBang.Jewel.BigBangJewelException;
@@ -241,18 +241,18 @@ public class DocumentServiceImpl
 		{
 			throw new BigBangException(e.getMessage(), e);
 		}
-		lobjAux.parameters = new Parameter[larrInfo.length];
+		lobjAux.parameters = new DocInfo[larrInfo.length];
 		for ( i = 0; i < larrInfo.length; i++ )
 			lobjAux.parameters[i] = fromServer(larrInfo[i]);
 
 		return lobjAux;
 	}
 
-	private Parameter fromServer(com.premiumminds.BigBang.Jewel.Objects.DocInfo pobjDocInfo)
+	private DocInfo fromServer(com.premiumminds.BigBang.Jewel.Objects.DocInfo pobjDocInfo)
 	{
-		Parameter lobjAux;
+		DocInfo lobjAux;
 
-		lobjAux = new Parameter();
+		lobjAux = new DocInfo();
 
 		lobjAux.name = (String)pobjDocInfo.getAt(1);
 		lobjAux.value = (String)pobjDocInfo.getAt(2);

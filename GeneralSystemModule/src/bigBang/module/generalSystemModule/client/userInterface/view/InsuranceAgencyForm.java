@@ -2,7 +2,7 @@ package bigBang.module.generalSystemModule.client.userInterface.view;
 
 import java.util.ArrayList;
 
-import bigBang.definitions.client.types.InsuranceAgency;
+import bigBang.definitions.shared.InsuranceAgency;
 import bigBang.library.client.userInterface.AddressFormField;
 import bigBang.library.client.userInterface.TextBoxFormField;
 import bigBang.library.client.userInterface.view.FormView;

@@ -8,10 +8,10 @@ import java.util.Map;
 
 import com.google.gwt.core.client.GWT;
 
-import bigBang.library.client.response.ResponseHandler;
+import bigBang.definitions.client.response.ResponseHandler;
+import bigBang.definitions.shared.TipifiedListItem;
 import bigBang.library.interfaces.TipifiedListService;
 import bigBang.library.interfaces.TipifiedListServiceAsync;
-import bigBang.library.shared.TipifiedListItem;
 
 /**
  * A TypifiedListBroker implementation for the BigBang project

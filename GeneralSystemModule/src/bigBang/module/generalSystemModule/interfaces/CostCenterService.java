@@ -1,6 +1,6 @@
 package bigBang.module.generalSystemModule.interfaces;
 
-import bigBang.definitions.client.types.CostCenter;
+import bigBang.definitions.shared.CostCenter;
 import bigBang.library.shared.BigBangException;
 import bigBang.library.shared.SessionExpiredException;
 

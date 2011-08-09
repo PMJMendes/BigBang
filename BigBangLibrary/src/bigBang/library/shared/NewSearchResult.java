@@ -2,6 +2,8 @@ package bigBang.library.shared;
 
 import java.io.Serializable;
 
+import bigBang.definitions.shared.SearchResult;
+
 public class NewSearchResult extends SearchResult
 	implements Serializable
 {

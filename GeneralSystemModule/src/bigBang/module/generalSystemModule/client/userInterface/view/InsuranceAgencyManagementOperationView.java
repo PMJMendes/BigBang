@@ -1,6 +1,6 @@
 package bigBang.module.generalSystemModule.client.userInterface.view;
 
-import bigBang.definitions.client.types.InsuranceAgency;
+import bigBang.definitions.shared.InsuranceAgency;
 import bigBang.library.client.HasEditableValue;
 import bigBang.library.client.HasValueSelectables;
 import bigBang.library.client.ValueSelectable;

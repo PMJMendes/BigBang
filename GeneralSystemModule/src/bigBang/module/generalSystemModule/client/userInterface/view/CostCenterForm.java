@@ -1,7 +1,7 @@
 package bigBang.module.generalSystemModule.client.userInterface.view;
 
-import bigBang.definitions.client.brokerClient.CostCenterDataBrokerClient;
-import bigBang.definitions.client.types.CostCenter;
+import bigBang.definitions.client.dataAccess.CostCenterDataBrokerClient;
+import bigBang.definitions.shared.CostCenter;
 import bigBang.library.client.FormField;
 import bigBang.library.client.userInterface.TextBoxFormField;
 import bigBang.library.client.userInterface.view.FormView;

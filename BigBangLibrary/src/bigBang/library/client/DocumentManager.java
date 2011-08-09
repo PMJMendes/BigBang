@@ -3,9 +3,9 @@ package bigBang.library.client;
 import java.util.ArrayList;
 import java.util.List;
 
+import bigBang.definitions.shared.Document;
 import bigBang.library.interfaces.DocumentService;
 import bigBang.library.interfaces.DocumentServiceAsync;
-import bigBang.library.shared.Document;
 
 import com.google.gwt.event.shared.EventHandler;
 import com.google.gwt.event.shared.GwtEvent;

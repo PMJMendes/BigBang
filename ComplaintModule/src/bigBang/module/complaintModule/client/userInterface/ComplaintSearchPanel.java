@@ -1,7 +1,7 @@
 package bigBang.module.complaintModule.client.userInterface;
 
+import bigBang.definitions.shared.SearchResult;
 import bigBang.library.client.userInterface.view.SearchPanel;
-import bigBang.library.shared.SearchResult;
 import bigBang.module.complaintModule.interfaces.ComplaintService;
 
 public class ComplaintSearchPanel extends SearchPanel {

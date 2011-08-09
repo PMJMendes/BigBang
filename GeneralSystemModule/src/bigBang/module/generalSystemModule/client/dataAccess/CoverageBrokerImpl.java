@@ -1,17 +1,17 @@
 package bigBang.module.generalSystemModule.client.dataAccess;
 
-import bigBang.definitions.client.BigBangConstants;
-import bigBang.definitions.client.broker.CoverageBroker;
-import bigBang.definitions.client.brokerClient.CoverageDataBrokerClient;
-import bigBang.definitions.client.types.Coverage;
-import bigBang.definitions.client.types.Line;
-import bigBang.definitions.client.types.SubLine;
-import bigBang.definitions.client.types.Tax;
+import bigBang.definitions.client.dataAccess.CoverageBroker;
+import bigBang.definitions.client.dataAccess.CoverageDataBrokerClient;
+import bigBang.definitions.client.dataAccess.DataBroker;
+import bigBang.definitions.client.dataAccess.DataBrokerCache;
+import bigBang.definitions.client.dataAccess.DataBrokerClient;
+import bigBang.definitions.client.response.ResponseHandler;
+import bigBang.definitions.shared.BigBangConstants;
+import bigBang.definitions.shared.Coverage;
+import bigBang.definitions.shared.Line;
+import bigBang.definitions.shared.SubLine;
+import bigBang.definitions.shared.Tax;
 import bigBang.library.client.BigBangAsyncCallback;
-import bigBang.library.client.dataAccess.DataBroker;
-import bigBang.library.client.dataAccess.DataBrokerCache;
-import bigBang.library.client.dataAccess.DataBrokerClient;
-import bigBang.library.client.response.ResponseHandler;
 import bigBang.module.generalSystemModule.interfaces.CoveragesService;
 import bigBang.module.generalSystemModule.interfaces.CoveragesServiceAsync;
 

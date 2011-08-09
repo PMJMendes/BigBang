@@ -1,9 +1,9 @@
 package bigBang.module.generalSystemModule.client.userInterface.view;
 
-import bigBang.definitions.client.BigBangConstants;
-import bigBang.definitions.client.types.CostCenter;
-import bigBang.definitions.client.types.User;
-import bigBang.definitions.client.types.UserProfile;
+import bigBang.definitions.shared.BigBangConstants;
+import bigBang.definitions.shared.CostCenter;
+import bigBang.definitions.shared.User;
+import bigBang.definitions.shared.UserProfile;
 import bigBang.library.client.userInterface.ExpandableListBoxFormField;
 import bigBang.library.client.userInterface.PasswordTextBoxFormField;
 import bigBang.library.client.userInterface.TextBoxFormField;

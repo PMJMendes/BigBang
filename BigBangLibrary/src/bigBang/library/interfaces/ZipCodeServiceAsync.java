@@ -1,6 +1,6 @@
 package bigBang.library.interfaces;
 
-import bigBang.library.shared.ZipCode;
+import bigBang.definitions.shared.ZipCode;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
 

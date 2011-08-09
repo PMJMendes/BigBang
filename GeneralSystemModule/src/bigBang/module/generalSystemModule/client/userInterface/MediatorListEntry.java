@@ -4,7 +4,7 @@ import com.google.gwt.user.client.ui.HasVerticalAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
 
-import bigBang.definitions.client.types.Mediator;
+import bigBang.definitions.shared.Mediator;
 import bigBang.library.client.userInterface.ListEntry;
 
 public class MediatorListEntry extends ListEntry<Mediator> {

@@ -1,7 +1,7 @@
 package bigBang.module.casualtyModule.client.userInterface;
 
+import bigBang.definitions.shared.SearchResult;
 import bigBang.library.client.userInterface.view.SearchPanel;
-import bigBang.library.shared.SearchResult;
 import bigBang.module.casualtyModule.interfaces.CasualtyService;
 
 public class CasualtySearchPanel extends SearchPanel {

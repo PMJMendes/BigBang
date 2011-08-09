@@ -2,14 +2,14 @@ package bigBang.library.client.userInterface;
 
 import java.util.Collection;
 
+import bigBang.definitions.client.response.ResponseError;
+import bigBang.definitions.client.response.ResponseHandler;
+import bigBang.definitions.shared.TipifiedListItem;
 import bigBang.library.client.BigBangTypifiedListBroker;
 import bigBang.library.client.TypifiedListBroker;
 import bigBang.library.client.TypifiedListClient;
 import bigBang.library.client.ValueSelectable;
 import bigBang.library.client.resources.Resources;
-import bigBang.library.client.response.ResponseError;
-import bigBang.library.client.response.ResponseHandler;
-import bigBang.library.shared.TipifiedListItem;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Cursor;

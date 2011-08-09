@@ -2,8 +2,8 @@ package bigBang.module.generalSystemModule.client.userInterface;
 
 import org.gwt.mosaic.ui.client.ToolButton;
 
-import bigBang.definitions.client.types.Coverage;
-import bigBang.definitions.client.types.SubLine;
+import bigBang.definitions.shared.Coverage;
+import bigBang.definitions.shared.SubLine;
 import bigBang.library.client.BigBangAsyncCallback;
 import bigBang.library.client.Selectable;
 import bigBang.library.client.ValueSelectable;

@@ -1,6 +1,6 @@
 package bigBang.module.clientModule.client.userInterface.view;
 
-import bigBang.definitions.client.types.Client;
+import bigBang.definitions.shared.Client;
 import bigBang.library.client.event.SelectedStateChangedEvent;
 import bigBang.library.client.event.SelectedStateChangedEventHandler;
 import bigBang.library.client.userInterface.FilterableList;

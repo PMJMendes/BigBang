@@ -1,4 +1,4 @@
-package bigBang.library.shared;
+package bigBang.definitions.shared;
 
 import java.io.Serializable;
 

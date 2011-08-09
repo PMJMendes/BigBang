@@ -1,7 +1,7 @@
 package bigBang.module.clientModule.client.userInterface.view;
 
-import bigBang.definitions.client.brokerClient.ClientProcessDataBrokerClient;
-import bigBang.definitions.client.types.Client;
+import bigBang.definitions.client.dataAccess.ClientProcessDataBrokerClient;
+import bigBang.definitions.shared.Client;
 import bigBang.library.client.userInterface.AddressFormField;
 import bigBang.library.client.userInterface.DatePickerFormField;
 import bigBang.library.client.userInterface.ExpandableListBoxFormField;

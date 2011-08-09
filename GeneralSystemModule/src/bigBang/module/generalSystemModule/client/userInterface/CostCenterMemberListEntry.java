@@ -1,6 +1,6 @@
 package bigBang.module.generalSystemModule.client.userInterface;
 
-import bigBang.definitions.client.types.User;
+import bigBang.definitions.shared.User;
 import bigBang.library.client.userInterface.ListEntry;
 
 import com.google.gwt.dom.client.Style.FontWeight;

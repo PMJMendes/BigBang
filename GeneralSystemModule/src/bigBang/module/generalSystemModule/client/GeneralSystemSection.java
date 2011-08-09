@@ -2,12 +2,12 @@ package bigBang.module.generalSystemModule.client;
 
 import java.util.ArrayList;
 
-import bigBang.definitions.client.BigBangConstants;
+import bigBang.definitions.client.dataAccess.HistoryBroker;
+import bigBang.definitions.shared.BigBangConstants;
 import bigBang.library.client.BigBangPermissionManager;
 import bigBang.library.client.EventBus;
 import bigBang.library.client.MenuSections;
 import bigBang.library.client.dataAccess.DataBrokerManager;
-import bigBang.library.client.dataAccess.HistoryBroker;
 import bigBang.library.client.userInterface.MenuSection;
 import bigBang.library.client.userInterface.TextBadge;
 import bigBang.library.client.userInterface.presenter.OperationViewPresenter;
@@ -15,7 +15,7 @@ import bigBang.library.client.userInterface.presenter.UndoOperationViewPresenter
 import bigBang.library.client.userInterface.presenter.ViewPresenter;
 import bigBang.library.client.userInterface.view.UndoOperationView;
 import bigBang.library.interfaces.Service;
-import bigBang.library.shared.operation.UndoOperation;
+import bigBang.library.shared.operation.HistoryOperation;
 import bigBang.module.generalSystemModule.client.userInterface.presenter.ClientGroupManagementOperationViewPresenter;
 import bigBang.module.generalSystemModule.client.userInterface.presenter.CostCenterManagementOperationViewPresenter;
 import bigBang.module.generalSystemModule.client.userInterface.presenter.CoverageManagementOperationViewPresenter;
@@ -66,7 +66,7 @@ public class GeneralSystemSection implements MenuSection {
 		this.permissionManager = permissionManager;
 		
 		/* UNDO */
-		UndoOperation undoOperation = (UndoOperation)GWT.create(UndoOperation.class);
+		HistoryOperation undoOperation = (HistoryOperation)GWT.create(HistoryOperation.class);
 		UndoOperationView undoOperationView = (UndoOperationView) GWT.create(UndoOperationView.class);
 		HistoryBroker historyBroker = (HistoryBroker) DataBrokerManager.Util.getInstance().getBroker(BigBangConstants.EntityIds.HISTORY);
 		UndoOperationViewPresenter undoOperationViewPresenter = new UndoOperationViewPresenter(null, historyBroker, undoOperationView, processId);

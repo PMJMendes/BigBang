@@ -1,6 +1,6 @@
 package bigBang.module.generalSystemModule.interfaces;
 
-import bigBang.definitions.client.types.ClientGroup;
+import bigBang.definitions.shared.ClientGroup;
 import bigBang.library.shared.BigBangException;
 import bigBang.library.shared.SessionExpiredException;
 

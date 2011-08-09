@@ -3,9 +3,9 @@ package bigBang.module.mainModule.client;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.RootPanel;
 
+import bigBang.definitions.client.dataAccess.DataBroker;
 import bigBang.library.client.BigBangPermissionManager;
 import bigBang.library.client.EventBus;
-import bigBang.library.client.dataAccess.DataBroker;
 import bigBang.library.client.userInterface.presenter.SectionViewPresenter;
 import bigBang.library.client.userInterface.presenter.ViewPresenter;
 

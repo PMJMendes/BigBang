@@ -6,7 +6,7 @@ import com.google.gwt.user.client.ui.AbstractImagePrototype;
 import bigBang.library.client.Operation;
 import bigBang.library.client.resources.Resources;
 
-public class UndoOperation implements Operation {
+public class HistoryOperation implements Operation {
 
 	public static final String ID = "UNDO_OPERATION";
 	public static final String DESCRIPTION = "Histórico";

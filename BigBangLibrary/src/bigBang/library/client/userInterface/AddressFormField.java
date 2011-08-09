@@ -6,9 +6,9 @@ import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.TextBox;
 
+import bigBang.definitions.shared.Address;
 import bigBang.library.client.FieldValidator;
 import bigBang.library.client.FormField;
-import bigBang.library.shared.Address;
 
 public class AddressFormField extends FormField<Address> {
 

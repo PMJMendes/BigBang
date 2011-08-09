@@ -11,34 +11,35 @@ import com.google.gwt.user.client.ui.HasValue;
 import com.google.gwt.user.client.ui.HasWidgets;
 import com.google.gwt.user.client.ui.Widget;
 
+import bigBang.definitions.client.dataAccess.HistoryBroker;
+import bigBang.definitions.client.response.ResponseError;
+import bigBang.definitions.client.response.ResponseHandler;
+import bigBang.definitions.shared.HistoryItem;
+import bigBang.definitions.shared.HistoryItemStub;
 import bigBang.library.client.BigBangAsyncCallback;
 import bigBang.library.client.EventBus;
 import bigBang.library.client.HasValueSelectables;
 import bigBang.library.client.Operation;
 import bigBang.library.client.Selectable;
 import bigBang.library.client.ValueSelectable;
-import bigBang.library.client.dataAccess.HistoryBroker;
 import bigBang.library.client.event.SelectionChangedEvent;
 import bigBang.library.client.event.SelectionChangedEventHandler;
-import bigBang.library.client.response.ResponseError;
-import bigBang.library.client.response.ResponseHandler;
 import bigBang.library.client.userInterface.view.View;
 import bigBang.library.interfaces.Service;
-import bigBang.library.interfaces.UndoServiceAsync;
-import bigBang.library.shared.ProcessUndoItem;
-import bigBang.library.shared.operation.UndoOperation;
+import bigBang.library.interfaces.HistoryServiceAsync;
+import bigBang.library.shared.operation.HistoryOperation;
 
 public class UndoOperationViewPresenter implements OperationViewPresenter {
 
 	public interface Display {
 		//LIST
-		HasValueSelectables<ProcessUndoItem> getUndoItemList();
-		void setUndoItems(ProcessUndoItem[] items);
-		void removeUndoItem(ProcessUndoItem item);
-		void addItem(ProcessUndoItem item);
+		HasValueSelectables<HistoryItemStub> getUndoItemList();
+		void setUndoItems(HistoryItemStub[] items);
+		void removeUndoItem(HistoryItemStub item);
+		void addItem(HistoryItemStub item);
 		
 		//FORM
-		HasValue<ProcessUndoItem> getForm();
+		HasValue<HistoryItem> getForm();
 		
 		//BUTTONS
 		HasClickHandlers getUndoButton();
@@ -51,13 +52,13 @@ public class UndoOperationViewPresenter implements OperationViewPresenter {
 	
 	@SuppressWarnings("unused")
 	private EventBus eventBus;
-	private UndoServiceAsync service;
+	private HistoryServiceAsync service;
 	private Display view;
 	protected HistoryBroker historyBroker;
 	
 	private String processId;
 	
-	private UndoOperation operation;
+	private HistoryOperation operation;
 	
 	private boolean bound = false;
 	
@@ -96,10 +97,10 @@ public class UndoOperationViewPresenter implements OperationViewPresenter {
 	
 	protected void fetchHistoryItems(){
 		this.historyBroker.requireDataRefresh();
-		this.historyBroker.getItems(this.processId, new ResponseHandler<ProcessUndoItem[]>() {
+		this.historyBroker.getItems(this.processId, new ResponseHandler<HistoryItemStub[]>() {
 			
 			@Override
-			public void onResponse(ProcessUndoItem[] response) {}
+			public void onResponse(HistoryItemStub[] response) {}
 			
 			@Override
 			public void onError(Collection<ResponseError> errors) {}
@@ -116,7 +117,7 @@ public class UndoOperationViewPresenter implements OperationViewPresenter {
 					view.getForm().setValue(null);
 				for(Selectable s : event.getSelected()) {
 					@SuppressWarnings("unchecked")
-					ValueSelectable<ProcessUndoItem> vs = (ValueSelectable<ProcessUndoItem>) s;
+					ValueSelectable<HistoryItem> vs = (ValueSelectable<HistoryItem>) s;
 					view.getForm().setValue(vs.getValue());
 				}
 			}
@@ -138,11 +139,11 @@ public class UndoOperationViewPresenter implements OperationViewPresenter {
 		});
 	}
 
-	private void undo(final ProcessUndoItem item) {
-		service.undo(item.id, new BigBangAsyncCallback<ProcessUndoItem>() {
+	private void undo(final HistoryItemStub item) {
+		service.undo(item.id, new BigBangAsyncCallback<HistoryItemStub>() {
 
 			@Override
-			public void onSuccess(ProcessUndoItem result) {
+			public void onSuccess(HistoryItemStub result) {
 				view.addItem(result);
 				view.removeUndoItem(item);
 			}
@@ -157,7 +158,7 @@ public class UndoOperationViewPresenter implements OperationViewPresenter {
 
 	@Override
 	public void setOperation(Operation o) {
-		this.operation = (UndoOperation) o;
+		this.operation = (HistoryOperation) o;
 	}
 
 	@Override

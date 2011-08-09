@@ -7,8 +7,8 @@ import com.google.gwt.user.client.ui.HasValue;
 import com.google.gwt.user.client.ui.HasWidgets;
 import com.google.gwt.user.client.ui.Widget;
 
-import bigBang.definitions.client.types.Line;
-import bigBang.definitions.client.types.Tax;
+import bigBang.definitions.shared.Line;
+import bigBang.definitions.shared.Tax;
 import bigBang.library.client.BigBangAsyncCallback;
 import bigBang.library.client.EventBus;
 import bigBang.library.client.Operation;

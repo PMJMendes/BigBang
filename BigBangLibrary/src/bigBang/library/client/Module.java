@@ -1,6 +1,6 @@
 package bigBang.library.client;
 
-import bigBang.library.client.dataAccess.DataBroker;
+import bigBang.definitions.client.dataAccess.DataBroker;
 import bigBang.library.client.userInterface.presenter.SectionViewPresenter;
 
 public interface Module {

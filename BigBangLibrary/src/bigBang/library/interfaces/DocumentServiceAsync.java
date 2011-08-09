@@ -2,7 +2,7 @@ package bigBang.library.interfaces;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
-import bigBang.library.shared.Document;
+import bigBang.definitions.shared.Document;
 
 public interface DocumentServiceAsync
 	extends Service

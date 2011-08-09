@@ -1,7 +1,7 @@
 package bigBang.module.generalSystemModule.client.userInterface.view;
 
-import bigBang.definitions.client.types.CommissionProfile;
-import bigBang.definitions.client.types.Mediator;
+import bigBang.definitions.shared.CommissionProfile;
+import bigBang.definitions.shared.Mediator;
 import bigBang.library.client.userInterface.AddressFormField;
 import bigBang.library.client.userInterface.ExpandableListBoxFormField;
 import bigBang.library.client.userInterface.TextBoxFormField;

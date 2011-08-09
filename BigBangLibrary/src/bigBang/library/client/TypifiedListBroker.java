@@ -2,8 +2,8 @@ package bigBang.library.client;
 
 import java.util.List;
 
-import bigBang.library.client.response.ResponseHandler;
-import bigBang.library.shared.TipifiedListItem;
+import bigBang.definitions.client.response.ResponseHandler;
+import bigBang.definitions.shared.TipifiedListItem;
 
 /**
  * Interface for a client broker that manages the interaction between a TypifiedListClient and a TypifiedListService.

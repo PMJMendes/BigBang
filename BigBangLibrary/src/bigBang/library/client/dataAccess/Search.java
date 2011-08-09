@@ -1,7 +1,7 @@
 package bigBang.library.client.dataAccess;
 
+import bigBang.definitions.shared.SearchResult;
 import bigBang.library.shared.SearchParameter;
-import bigBang.library.shared.SearchResult;
 import bigBang.library.shared.SortParameter;
 
 public class Search<T extends SearchResult> {

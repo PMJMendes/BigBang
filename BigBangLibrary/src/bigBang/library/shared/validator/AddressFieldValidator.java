@@ -1,7 +1,7 @@
 package bigBang.library.shared.validator;
 
+import bigBang.definitions.shared.Address;
 import bigBang.library.client.FieldValidator;
-import bigBang.library.shared.Address;
 
 public class AddressFieldValidator implements FieldValidator<Address> {
 

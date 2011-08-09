@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import bigBang.definitions.shared.TipifiedListItem;
 import bigBang.library.client.BigBangTypifiedListBroker;
 import bigBang.library.client.FieldValidator;
 import bigBang.library.client.Selectable;
@@ -14,7 +15,6 @@ import bigBang.library.client.event.SelectionChangedEvent;
 import bigBang.library.client.event.SelectionChangedEventHandler;
 import bigBang.library.client.resources.Resources;
 import bigBang.library.client.userInterface.view.PopupPanel;
-import bigBang.library.shared.TipifiedListItem;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Cursor;

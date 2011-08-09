@@ -1,8 +1,8 @@
 package bigBang.library.interfaces;
 
+import bigBang.definitions.shared.TipifiedListItem;
 import bigBang.library.shared.BigBangException;
 import bigBang.library.shared.SessionExpiredException;
-import bigBang.library.shared.TipifiedListItem;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.rpc.RemoteService;

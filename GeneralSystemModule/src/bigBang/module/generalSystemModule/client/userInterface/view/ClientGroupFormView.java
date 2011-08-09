@@ -1,13 +1,13 @@
 package bigBang.module.generalSystemModule.client.userInterface.view;
 
-import bigBang.definitions.client.BigBangConstants;
-import bigBang.definitions.client.types.ClientGroup;
+import bigBang.definitions.shared.BigBangConstants;
+import bigBang.definitions.shared.ClientGroup;
+import bigBang.definitions.shared.TipifiedListItem;
 import bigBang.library.client.ValueSelectable;
 import bigBang.library.client.userInterface.ExpandableListBoxFormField;
 import bigBang.library.client.userInterface.ListEntry;
 import bigBang.library.client.userInterface.TextBoxFormField;
 import bigBang.library.client.userInterface.view.FormView;
-import bigBang.library.shared.TipifiedListItem;
 
 public class ClientGroupFormView extends FormView<ClientGroup> {
 

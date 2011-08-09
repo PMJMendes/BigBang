@@ -1,7 +1,7 @@
 package bigBang.module.receiptModule.client.userInterface;
 
+import bigBang.definitions.shared.SearchResult;
 import bigBang.library.client.userInterface.view.SearchPanel;
-import bigBang.library.shared.SearchResult;
 import bigBang.module.receiptModule.interfaces.ReceiptService;
 
 public class ReceiptSearchPanel extends SearchPanel {

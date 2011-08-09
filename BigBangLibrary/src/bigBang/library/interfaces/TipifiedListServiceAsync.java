@@ -1,6 +1,6 @@
 package bigBang.library.interfaces;
 
-import bigBang.library.shared.TipifiedListItem;
+import bigBang.definitions.shared.TipifiedListItem;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
 

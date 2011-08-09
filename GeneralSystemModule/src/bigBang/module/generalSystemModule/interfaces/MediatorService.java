@@ -1,6 +1,6 @@
 package bigBang.module.generalSystemModule.interfaces;
 
-import bigBang.definitions.client.types.Mediator;
+import bigBang.definitions.shared.Mediator;
 import bigBang.library.shared.BigBangException;
 import bigBang.library.shared.SessionExpiredException;
 

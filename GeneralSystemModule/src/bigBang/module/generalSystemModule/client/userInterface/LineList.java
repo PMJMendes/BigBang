@@ -2,7 +2,7 @@ package bigBang.module.generalSystemModule.client.userInterface;
 
 import org.gwt.mosaic.ui.client.ToolButton;
 
-import bigBang.definitions.client.types.Line;
+import bigBang.definitions.shared.Line;
 import bigBang.library.client.BigBangAsyncCallback;
 import bigBang.library.client.resources.Resources;
 import bigBang.library.client.userInterface.FilterableList;

@@ -9,10 +9,10 @@ import Jewel.Engine.DataAccess.MasterDB;
 import Jewel.Engine.Implementation.Entity;
 import Jewel.Engine.Interfaces.IEntity;
 import Jewel.Engine.SysObjects.ObjectBase;
+import bigBang.definitions.shared.TipifiedListItem;
 import bigBang.library.interfaces.TipifiedListService;
 import bigBang.library.shared.BigBangException;
 import bigBang.library.shared.SessionExpiredException;
-import bigBang.library.shared.TipifiedListItem;
 
 public class TipifiedListServiceImpl
 	extends EngineImplementor

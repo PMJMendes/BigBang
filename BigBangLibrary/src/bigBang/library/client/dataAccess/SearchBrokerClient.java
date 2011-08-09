@@ -1,6 +1,7 @@
 package bigBang.library.client.dataAccess;
 
-import bigBang.library.shared.SearchResult;
+import bigBang.definitions.client.dataAccess.DataBrokerClient;
+import bigBang.definitions.shared.SearchResult;
 
 public interface SearchBrokerClient<T extends SearchResult> extends DataBrokerClient<T> {
 

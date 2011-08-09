@@ -1,9 +1,9 @@
 package bigBang.library.client.userInterface;
 
+import bigBang.definitions.shared.Contact;
 import bigBang.library.client.ContactManager;
 import bigBang.library.client.event.SelectedStateChangedEventHandler;
 import bigBang.library.client.resources.Resources;
-import bigBang.library.shared.Contact;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Overflow;

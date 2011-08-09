@@ -10,11 +10,11 @@ import Jewel.Engine.Engine;
 import Jewel.Engine.DataAccess.MasterDB;
 import Jewel.Engine.Implementation.Entity;
 import Jewel.Engine.Interfaces.IEntity;
+import bigBang.definitions.shared.SearchResult;
 import bigBang.library.interfaces.SearchService;
 import bigBang.library.shared.BigBangException;
 import bigBang.library.shared.NewSearchResult;
 import bigBang.library.shared.SearchParameter;
-import bigBang.library.shared.SearchResult;
 import bigBang.library.shared.SessionExpiredException;
 import bigBang.library.shared.SortParameter;
 

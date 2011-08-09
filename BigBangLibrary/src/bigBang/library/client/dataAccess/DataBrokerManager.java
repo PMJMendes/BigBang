@@ -3,6 +3,8 @@ package bigBang.library.client.dataAccess;
 import java.util.HashMap;
 import java.util.Map;
 
+import bigBang.definitions.client.dataAccess.DataBroker;
+
 import com.google.gwt.core.client.GWT;
 
 /**

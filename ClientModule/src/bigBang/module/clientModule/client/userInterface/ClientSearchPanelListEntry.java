@@ -4,10 +4,10 @@ import com.google.gwt.dom.client.Style.FontStyle;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 
-import bigBang.definitions.client.types.ClientStub;
+import bigBang.definitions.shared.ClientStub;
+import bigBang.definitions.shared.SearchResult;
 import bigBang.library.client.ValueWrapper;
 import bigBang.library.client.userInterface.SearchPanelListEntry;
-import bigBang.library.shared.SearchResult;
 
 public class ClientSearchPanelListEntry extends SearchPanelListEntry<SearchResult> {
 

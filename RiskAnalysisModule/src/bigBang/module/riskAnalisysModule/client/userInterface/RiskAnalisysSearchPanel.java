@@ -1,7 +1,7 @@
 package bigBang.module.riskAnalisysModule.client.userInterface;
 
+import bigBang.definitions.shared.SearchResult;
 import bigBang.library.client.userInterface.view.SearchPanel;
-import bigBang.library.shared.SearchResult;
 import bigBang.module.riskAnalisysModule.interfaces.RiskAnalisysService;
 
 public class RiskAnalisysSearchPanel extends SearchPanel {

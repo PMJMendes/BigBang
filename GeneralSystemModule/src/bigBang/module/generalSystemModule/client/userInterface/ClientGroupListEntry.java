@@ -1,6 +1,6 @@
 package bigBang.module.generalSystemModule.client.userInterface;
 
-import bigBang.definitions.client.types.ClientGroup;
+import bigBang.definitions.shared.ClientGroup;
 import bigBang.library.client.userInterface.ListEntry;
 
 import com.google.gwt.user.client.ui.HorizontalPanel;

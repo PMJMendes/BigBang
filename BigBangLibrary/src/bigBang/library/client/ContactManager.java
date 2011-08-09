@@ -3,9 +3,9 @@ package bigBang.library.client;
 import java.util.ArrayList;
 import java.util.List;
 
+import bigBang.definitions.shared.Contact;
 import bigBang.library.interfaces.ContactsService;
 import bigBang.library.interfaces.ContactsServiceAsync;
-import bigBang.library.shared.Contact;
 
 import com.google.gwt.event.shared.EventHandler;
 import com.google.gwt.event.shared.GwtEvent;

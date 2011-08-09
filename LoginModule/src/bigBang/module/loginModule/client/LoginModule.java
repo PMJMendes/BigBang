@@ -2,10 +2,10 @@ package bigBang.module.loginModule.client;
 
 import com.google.gwt.core.client.GWT;
 
+import bigBang.definitions.client.dataAccess.DataBroker;
 import bigBang.library.client.BigBangPermissionManager;
 import bigBang.library.client.Domain;
 import bigBang.library.client.EventBus;
-import bigBang.library.client.dataAccess.DataBroker;
 import bigBang.library.client.userInterface.presenter.SectionViewPresenter;
 import bigBang.library.client.userInterface.presenter.ViewPresenter;
 import bigBang.library.interfaces.Service;

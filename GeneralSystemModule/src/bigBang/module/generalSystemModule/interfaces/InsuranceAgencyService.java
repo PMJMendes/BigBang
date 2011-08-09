@@ -1,6 +1,6 @@
 package bigBang.module.generalSystemModule.interfaces;
 
-import bigBang.definitions.client.types.InsuranceAgency;
+import bigBang.definitions.shared.InsuranceAgency;
 import bigBang.library.shared.BigBangException;
 import bigBang.library.shared.SessionExpiredException;
 

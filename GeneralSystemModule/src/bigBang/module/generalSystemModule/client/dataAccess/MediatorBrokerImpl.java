@@ -1,13 +1,13 @@
 package bigBang.module.generalSystemModule.client.dataAccess;
 
-import bigBang.definitions.client.BigBangConstants;
-import bigBang.definitions.client.broker.MediatorBroker;
-import bigBang.definitions.client.brokerClient.MediatorDataBrokerClient;
-import bigBang.definitions.client.types.Mediator;
+import bigBang.definitions.client.dataAccess.DataBroker;
+import bigBang.definitions.client.dataAccess.DataBrokerClient;
+import bigBang.definitions.client.dataAccess.MediatorBroker;
+import bigBang.definitions.client.dataAccess.MediatorDataBrokerClient;
+import bigBang.definitions.client.response.ResponseHandler;
+import bigBang.definitions.shared.BigBangConstants;
+import bigBang.definitions.shared.Mediator;
 import bigBang.library.client.BigBangAsyncCallback;
-import bigBang.library.client.dataAccess.DataBroker;
-import bigBang.library.client.dataAccess.DataBrokerClient;
-import bigBang.library.client.response.ResponseHandler;
 import bigBang.module.generalSystemModule.interfaces.MediatorService;
 import bigBang.module.generalSystemModule.interfaces.MediatorServiceAsync;
 

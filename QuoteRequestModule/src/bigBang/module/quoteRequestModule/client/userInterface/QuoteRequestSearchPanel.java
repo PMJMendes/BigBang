@@ -1,7 +1,7 @@
 package bigBang.module.quoteRequestModule.client.userInterface;
 
+import bigBang.definitions.shared.SearchResult;
 import bigBang.library.client.userInterface.view.SearchPanel;
-import bigBang.library.shared.SearchResult;
 import bigBang.module.quoteRequestModule.interfaces.QuoteRequestService;
 
 public class QuoteRequestSearchPanel extends SearchPanel {

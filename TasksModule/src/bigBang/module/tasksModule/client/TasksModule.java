@@ -2,10 +2,10 @@ package bigBang.module.tasksModule.client;
 
 import com.google.gwt.core.client.GWT;
 
+import bigBang.definitions.client.dataAccess.DataBroker;
 import bigBang.library.client.BigBangPermissionManager;
 import bigBang.library.client.EventBus;
 import bigBang.library.client.Module;
-import bigBang.library.client.dataAccess.DataBroker;
 import bigBang.library.client.event.ModuleInitializedEvent;
 import bigBang.library.client.userInterface.TextBadge;
 import bigBang.library.client.userInterface.presenter.SectionViewPresenter;

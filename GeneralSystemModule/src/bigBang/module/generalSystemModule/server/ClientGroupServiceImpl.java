@@ -7,7 +7,7 @@ import java.util.UUID;
 import Jewel.Engine.Engine;
 import Jewel.Engine.DataAccess.MasterDB;
 import Jewel.Engine.Implementation.Entity;
-import bigBang.definitions.client.types.ClientGroup;
+import bigBang.definitions.shared.ClientGroup;
 import bigBang.library.server.EngineImplementor;
 import bigBang.library.shared.BigBangException;
 import bigBang.library.shared.SessionExpiredException;

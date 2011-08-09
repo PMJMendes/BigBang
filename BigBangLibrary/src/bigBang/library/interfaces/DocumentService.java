@@ -1,7 +1,7 @@
 package bigBang.library.interfaces;
 
+import bigBang.definitions.shared.Document;
 import bigBang.library.shared.BigBangException;
-import bigBang.library.shared.Document;
 import bigBang.library.shared.SessionExpiredException;
 
 import com.google.gwt.core.client.GWT;

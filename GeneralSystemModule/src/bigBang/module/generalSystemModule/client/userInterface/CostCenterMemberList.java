@@ -2,14 +2,14 @@ package bigBang.module.generalSystemModule.client.userInterface;
 
 import java.util.Collection;
 
-import bigBang.definitions.client.BigBangConstants;
-import bigBang.definitions.client.broker.UserBroker;
-import bigBang.definitions.client.brokerClient.UserDataBrokerClient;
-import bigBang.definitions.client.types.User;
+import bigBang.definitions.client.dataAccess.UserBroker;
+import bigBang.definitions.client.dataAccess.UserDataBrokerClient;
+import bigBang.definitions.client.response.ResponseError;
+import bigBang.definitions.client.response.ResponseHandler;
+import bigBang.definitions.shared.BigBangConstants;
+import bigBang.definitions.shared.User;
 import bigBang.library.client.ValueSelectable;
 import bigBang.library.client.dataAccess.DataBrokerManager;
-import bigBang.library.client.response.ResponseError;
-import bigBang.library.client.response.ResponseHandler;
 import bigBang.library.client.userInterface.List;
 
 import com.google.gwt.event.dom.client.HasClickHandlers;

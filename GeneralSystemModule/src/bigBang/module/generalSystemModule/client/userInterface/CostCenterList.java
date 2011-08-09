@@ -1,9 +1,9 @@
 package bigBang.module.generalSystemModule.client.userInterface;
 
-import bigBang.definitions.client.BigBangConstants;
-import bigBang.definitions.client.broker.CostCenterBroker;
-import bigBang.definitions.client.brokerClient.CostCenterDataBrokerClient;
-import bigBang.definitions.client.types.CostCenter;
+import bigBang.definitions.client.dataAccess.CostCenterBroker;
+import bigBang.definitions.client.dataAccess.CostCenterDataBrokerClient;
+import bigBang.definitions.shared.BigBangConstants;
+import bigBang.definitions.shared.CostCenter;
 import bigBang.library.client.ValueSelectable;
 import bigBang.library.client.dataAccess.DataBrokerManager;
 import bigBang.library.client.userInterface.FilterableList;

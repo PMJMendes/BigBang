@@ -2,10 +2,10 @@ package bigBang.module.generalSystemModule.client.userInterface;
 
 import com.google.gwt.event.dom.client.HasClickHandlers;
 
-import bigBang.definitions.client.BigBangConstants;
-import bigBang.definitions.client.broker.UserBroker;
-import bigBang.definitions.client.brokerClient.UserDataBrokerClient;
-import bigBang.definitions.client.types.User;
+import bigBang.definitions.client.dataAccess.UserBroker;
+import bigBang.definitions.client.dataAccess.UserDataBrokerClient;
+import bigBang.definitions.shared.BigBangConstants;
+import bigBang.definitions.shared.User;
 import bigBang.library.client.ValueSelectable;
 import bigBang.library.client.dataAccess.DataBrokerManager;
 import bigBang.library.client.userInterface.FilterableList;

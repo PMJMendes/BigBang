@@ -1,10 +1,10 @@
 package bigBang.module.insurancePolicyModule.client;
 
+import bigBang.definitions.client.dataAccess.DataBroker;
 import bigBang.library.client.BigBangPermissionManager;
 import bigBang.library.client.EventBus;
 import bigBang.library.client.Module;
 import bigBang.library.client.Process;
-import bigBang.library.client.dataAccess.DataBroker;
 import bigBang.library.client.event.ModuleInitializedEvent;
 import bigBang.library.client.userInterface.presenter.SectionViewPresenter;
 import bigBang.module.insurancePolicyModule.client.userInterface.presenter.InsurancePolicySectionViewPresenter;

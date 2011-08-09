@@ -1,12 +1,12 @@
 package bigBang.library.client.userInterface.view;
 
+import bigBang.definitions.shared.SearchResult;
 import bigBang.library.client.BigBangAsyncCallback;
 import bigBang.library.client.userInterface.FilterableList;
 import bigBang.library.client.userInterface.ListHeader;
 import bigBang.library.interfaces.SearchServiceAsync;
 import bigBang.library.shared.NewSearchResult;
 import bigBang.library.shared.SearchParameter;
-import bigBang.library.shared.SearchResult;
 import bigBang.library.shared.SortParameter;
 
 import com.google.gwt.core.client.GWT;

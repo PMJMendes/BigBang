@@ -1,13 +1,13 @@
 package bigBang.module.generalSystemModule.client.dataAccess;
 
-import bigBang.definitions.client.BigBangConstants;
-import bigBang.definitions.client.broker.InsuranceAgencyBroker;
-import bigBang.definitions.client.brokerClient.InsuranceAgencyDataBrokerClient;
-import bigBang.definitions.client.types.InsuranceAgency;
+import bigBang.definitions.client.dataAccess.DataBroker;
+import bigBang.definitions.client.dataAccess.DataBrokerClient;
+import bigBang.definitions.client.dataAccess.InsuranceAgencyBroker;
+import bigBang.definitions.client.dataAccess.InsuranceAgencyDataBrokerClient;
+import bigBang.definitions.client.response.ResponseHandler;
+import bigBang.definitions.shared.BigBangConstants;
+import bigBang.definitions.shared.InsuranceAgency;
 import bigBang.library.client.BigBangAsyncCallback;
-import bigBang.library.client.dataAccess.DataBroker;
-import bigBang.library.client.dataAccess.DataBrokerClient;
-import bigBang.library.client.response.ResponseHandler;
 import bigBang.module.generalSystemModule.interfaces.InsuranceAgencyService;
 import bigBang.module.generalSystemModule.interfaces.InsuranceAgencyServiceAsync;
 

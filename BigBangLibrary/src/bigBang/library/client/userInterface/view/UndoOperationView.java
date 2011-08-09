@@ -3,12 +3,13 @@ package bigBang.library.client.userInterface.view;
 import org.gwt.mosaic.ui.client.MessageBox;
 import org.gwt.mosaic.ui.client.MessageBox.ConfirmationCallback;
 
+import bigBang.definitions.shared.HistoryItem;
+import bigBang.definitions.shared.HistoryItemStub;
 import bigBang.library.client.HasValueSelectables;
 import bigBang.library.client.ValueSelectable;
 import bigBang.library.client.userInterface.FilterableList;
 import bigBang.library.client.userInterface.ListEntry;
 import bigBang.library.client.userInterface.ListHeader;
-import bigBang.library.shared.ProcessUndoItem;
 
 import bigBang.library.client.userInterface.presenter.UndoOperationViewPresenter;
 
@@ -19,7 +20,7 @@ import com.google.gwt.user.client.ui.SplitLayoutPanel;
 
 public class UndoOperationView extends View implements UndoOperationViewPresenter.Display {
 
-	private class UndoItemList extends FilterableList<ProcessUndoItem> {
+	private class UndoItemList extends FilterableList<HistoryItemStub> {
 		
 		public UndoItemList(){
 			ListHeader header = new ListHeader();
@@ -28,14 +29,13 @@ public class UndoOperationView extends View implements UndoOperationViewPresente
 		}
 	}
 	
-	private class UndoItemListEntry extends ListEntry<ProcessUndoItem> {
+	private class UndoItemListEntry extends ListEntry<HistoryItemStub> {
 
-		public UndoItemListEntry(ProcessUndoItem value) {
+		public UndoItemListEntry(HistoryItemStub value) {
 			super(value);
-			setTitle(value.shortDescription);
+			setTitle(value.opName);
 			setText(value.username + " (" + value.timeStamp.substring(0, 16) + ")");
 			setHeight("40px");
-			setMetaData(new String[]{value.shortDescription, value.description});
 		}
 		
 	}
@@ -58,7 +58,7 @@ public class UndoOperationView extends View implements UndoOperationViewPresente
 	}
 
 	@Override
-	public void setUndoItems(ProcessUndoItem[] items) {
+	public void setUndoItems(HistoryItemStub[] items) {
 		this.list.clear();
 		for(int i = 0; i < items.length; i++) {
 			addItem(items[i]);
@@ -67,14 +67,14 @@ public class UndoOperationView extends View implements UndoOperationViewPresente
 
 
 	@Override
-	public void addItem(ProcessUndoItem item) {
+	public void addItem(HistoryItemStub item) {
 		list.add(new UndoItemListEntry(item));
 	}
 	
 	
 	@Override
-	public void removeUndoItem(ProcessUndoItem item) {
-		for(ValueSelectable<ProcessUndoItem> s : this.list) {
+	public void removeUndoItem(HistoryItemStub item) {
+		for(ValueSelectable<HistoryItemStub> s : this.list) {
 			if(s.getValue().id.equals(item.id)){
 				list.remove(s);
 				break;
@@ -83,12 +83,12 @@ public class UndoOperationView extends View implements UndoOperationViewPresente
 	}
 
 	@Override
-	public HasValueSelectables<ProcessUndoItem> getUndoItemList() {
+	public HasValueSelectables<HistoryItemStub> getUndoItemList() {
 		return list;
 	}
 
 	@Override
-	public HasValue<ProcessUndoItem> getForm() {
+	public HasValue<HistoryItem> getForm() {
 		return form;
 	}
 

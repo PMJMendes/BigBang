@@ -4,12 +4,12 @@ import java.util.ArrayList;
 
 import com.google.gwt.core.client.GWT;
 
+import bigBang.definitions.client.dataAccess.DataBroker;
 import bigBang.library.client.BigBangPermissionManager;
 import bigBang.library.client.EventBus;
 import bigBang.library.client.LoginModule;
 import bigBang.library.client.MainModule;
 import bigBang.library.client.Module;
-import bigBang.library.client.dataAccess.DataBroker;
 import bigBang.library.client.dataAccess.DataBrokerManager;
 import bigBang.library.client.event.LoginSuccessEvent;
 import bigBang.library.client.event.LoginSuccessEventHandler;

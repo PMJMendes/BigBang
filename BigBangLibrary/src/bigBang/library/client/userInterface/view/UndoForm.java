@@ -5,9 +5,9 @@ import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
 
-import bigBang.library.shared.ProcessUndoItem;
+import bigBang.definitions.shared.HistoryItem;
 
-public class UndoForm extends FormView<ProcessUndoItem> {
+public class UndoForm extends FormView<HistoryItem> {
 
 	private Label beforeDescription, afterDescription;
 	private Button undoButton;
@@ -36,12 +36,12 @@ public class UndoForm extends FormView<ProcessUndoItem> {
 	}
 	
 	@Override
-	public ProcessUndoItem getInfo() {
+	public HistoryItem getInfo() {
 		return null;
 	}
 
 	@Override
-	public void setInfo(ProcessUndoItem info) {
+	public void setInfo(HistoryItem info) {
 		if(info == null){
 			clearInfo();
 			return;

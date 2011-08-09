@@ -3,10 +3,10 @@ package bigBang.library.interfaces;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.rpc.RemoteService;
 
+import bigBang.definitions.shared.SearchResult;
 import bigBang.library.shared.BigBangException;
 import bigBang.library.shared.NewSearchResult;
 import bigBang.library.shared.SearchParameter;
-import bigBang.library.shared.SearchResult;
 import bigBang.library.shared.SessionExpiredException;
 import bigBang.library.shared.SortParameter;
 

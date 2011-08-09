@@ -1,9 +1,9 @@
 package bigBang.module.generalSystemModule.interfaces;
 
-import bigBang.definitions.client.types.Coverage;
-import bigBang.definitions.client.types.Line;
-import bigBang.definitions.client.types.SubLine;
-import bigBang.definitions.client.types.Tax;
+import bigBang.definitions.shared.Coverage;
+import bigBang.definitions.shared.Line;
+import bigBang.definitions.shared.SubLine;
+import bigBang.definitions.shared.Tax;
 import bigBang.library.shared.BigBangException;
 import bigBang.library.shared.SessionExpiredException;
 
