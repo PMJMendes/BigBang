@@ -14,6 +14,8 @@ public class ClientSortParameter extends SortParameter {
 		NUMBER
 	}
 	
+	public ClientSortParameter(){}
+	
 	public ClientSortParameter(SortableField field, SortOrder order) {
 		this.field = field;
 		this.order = order;
