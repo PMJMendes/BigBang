@@ -329,17 +329,15 @@ public abstract class SearchServiceBase
 		lstrCriteria = lstrBuffer.toString();
 
 		lstrBuffer = new StringBuilder();
-		if ( (sorts == null) || (sorts.length == 0) )
-			lstrBuffer.append("[PK]");
-		else
+		if ( (sorts != null) && (sorts.length > 0) )
 		{
 			for ( i = 0; i < sorts.length; i++ )
 			{
-				if ( i > 0 )
-					lstrBuffer.append(", ");
 				buildSort(lstrBuffer, sorts[i], parameters);
+				lstrBuffer.append(", ");
 			}
 		}
+		lstrBuffer.append("[PK] ASC");
 		lstrSort = lstrBuffer.toString();
 
 		prefWSpace.OpenSearch(lstrCriteria, lstrSort);
