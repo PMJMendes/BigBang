@@ -4,6 +4,7 @@ import java.util.Calendar;
 import java.util.Date;
 
 import com.google.gwt.dom.client.Style.Unit;
+import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.HasVerticalAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
@@ -51,6 +52,11 @@ public class DatePickerFormField extends FormField<Date> {
 		this.label = new Label();
 		this.label.setText(label);
 		this.label.getElement().getStyle().setMarginRight(5, Unit.PX);
+		
+		day = new ListBox();
+		month = new ListBox();
+		year = new ListBox();
+		
 		wrapper.add(this.label);
 		wrapper.setCellWidth(this.label, "100px");
 		wrapper.setCellHorizontalAlignment(this.label, HasHorizontalAlignment.ALIGN_RIGHT);
@@ -130,21 +136,48 @@ public class DatePickerFormField extends FormField<Date> {
 	
 	@Override
 	public void setValue(Date value, boolean fireEvents) {
-		
-		super.setValue(value, fireEvents);
+		//TODO
+		if(fireEvents)
+			ValueChangeEvent.fire(this, value);
+	}
+	
+	
+	@Override
+	public Date getValue() {
+		return new Date(); //TODO
+	}
+	
+	@Override
+	public void setInvalid(boolean invalid){
+		if(field != null){
+			/*if(invalid)
+				((Widget)field).addStyleName("invalidFormField");
+			else
+				((Widget)field).removeStyleName("invalidFormField");*/ //TODO
+		}
+		FieldValidator<?> validator = this.validator;
+		String message =  validator == null ? null : validator.getErrorMessage();
+		this.errorMessageLabel.setText(message == null ? "Valor inválido" : message);
+		this.errorMessageLabel.setVisible(invalid);
 	}
 
 	@Override
 	public void setReadOnly(boolean readonly) {
-		if(!editable)
+		/*if(!editable)
 			return;
 		((DateBox)this.field).setEnabled(!readonly);
 		this.readonly = readonly;
 		mandatoryIndicatorLabel.setVisible(!readonly);
 		((UIObject) field).getElement().getStyle().setBorderColor(readonly ? "transparent" : "gray");
-		((UIObject) field).getElement().getStyle().setBackgroundColor(readonly ? "transparent" : "white");
+		((UIObject) field).getElement().getStyle().setBackgroundColor(readonly ? "transparent" : "white");*/
 	}
 
+	@Override
+	public void setFieldWidth(String width) {
+		// TODO Auto-generated method stub
+	//	super.setFieldWidth(width);
+	}
+	
 	@Override
 	public boolean isReadOnly() {
 		return readonly;
