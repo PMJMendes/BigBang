@@ -1,17 +1,25 @@
 package bigBang.library.server;
 
+import java.sql.Timestamp;
 import java.util.UUID;
 
 import Jewel.Engine.Engine;
 import Jewel.Petri.Constants;
+import Jewel.Petri.Interfaces.ILog;
 import Jewel.Petri.Objects.PNLog;
+import Jewel.Petri.SysObjects.JewelPetriException;
+import Jewel.Petri.SysObjects.Operation;
 import Jewel.Petri.SysObjects.UndoOperation;
 import bigBang.definitions.shared.HistoryItem;
+import bigBang.definitions.shared.HistoryItemStub;
 import bigBang.definitions.shared.SearchResult;
 import bigBang.library.interfaces.HistoryService;
 import bigBang.library.shared.BigBangException;
+import bigBang.library.shared.HistorySearchParameter;
+import bigBang.library.shared.HistorySortParameter;
 import bigBang.library.shared.SearchParameter;
 import bigBang.library.shared.SessionExpiredException;
+import bigBang.library.shared.SortOrder;
 import bigBang.library.shared.SortParameter;
 
 public class HistoryServiceImpl
@@ -20,14 +28,43 @@ public class HistoryServiceImpl
 {
 	private static final long serialVersionUID = 1L;
 
-//				lobjAux.id = lobjLog.getKey().toString();
-//				lobjAux.username = ((IUser)User.GetInstance(Engine.getCurrentNameSpace(), (UUID)lobjLog.getAt(3))).getUserName();
-//				lobjAux.timeStamp = ((Timestamp)lobjLog.getAt(2)).toString();
-//				lobjAux.shortDescription = lobjOp.ShortDesc();
-//				lobjAux.description = lobjOp.LongDesc("<br />");
-//				lobjAux.undoDescription = lobjOp.UndoDesc("<br />");
-//				lobjAux.canUndo = (lobjLog.GetOperation().GetUndoOp() != null);
-	
+	public HistoryItem getItem(String undoItemId)
+		throws SessionExpiredException, BigBangException
+	{
+		UUID lid;
+		ILog lobjLog;
+		Operation lobjOp;
+		HistoryItem lobjResult;
+
+		if ( Engine.getCurrentUser() == null )
+			throw new SessionExpiredException();
+
+		lid = UUID.fromString(undoItemId);
+
+		lobjResult = new HistoryItem();
+		lobjResult.id = undoItemId;
+
+		try
+		{
+			lobjLog = PNLog.GetInstance(Engine.getCurrentNameSpace(), lid);
+			lobjOp = lobjLog.GetOperationData();
+
+			lobjResult.username = lobjLog.GetUser().getUserName();
+		}
+		catch (JewelPetriException e)
+		{
+			throw new BigBangException(e.getMessage(), e);
+		}
+
+		lobjResult.timeStamp = lobjLog.GetTimestamp().toString();
+		lobjResult.shortDescription = lobjOp.ShortDesc();
+		lobjResult.description = lobjOp.LongDesc("<br />");
+		lobjResult.undoDescription = lobjOp.UndoDesc("<br />");
+		lobjResult.canUndo = lobjLog.CanUndo();
+
+		return lobjResult;
+	}
+
 	public HistoryItem undo(String undoItemId)
 		throws SessionExpiredException, BigBangException
 	{
@@ -60,27 +97,56 @@ public class HistoryServiceImpl
 
 	protected String[] getColumns()
 	{
-		return new String[] {"[:Name]", "[:Number]", "[:Group:Name]"};
+		return new String[] {"[:User:Username]", "[:Timestamp]", "[:Operation:Name]"};
 	}
 
-	@Override
 	protected void buildFilter(StringBuilder pstrBuffer, SearchParameter pParam)
-			throws BigBangException {
-		// TODO Auto-generated method stub
-		
+		throws BigBangException
+	{
+		HistorySearchParameter lParam;
+
+		if ( !(pParam instanceof HistorySearchParameter) )
+			return;
+		lParam = (HistorySearchParameter)pParam;
+
+		if ( lParam.processId == null )
+			throw new BigBangException("Attempt to search through History with a NULL Process ID.");
+		pstrBuffer.append(" AND [:Process] = '").append(lParam.processId).append("'");
+
+		if ( lParam.afterTimestamp != null )
+		{
+			pstrBuffer.append(" AND [:Timestamp] > '").append(lParam.afterTimestamp).append("'");
+		}
 	}
 
-	@Override
-	protected void buildSort(StringBuilder pstrBuffer, SortParameter pParam,
-			SearchParameter[] parrParams) {
-		// TODO Auto-generated method stub
-		
+	protected void buildSort(StringBuilder pstrBuffer, SortParameter pParam, SearchParameter[] parrParams)
+	{
+		HistorySortParameter lParam;
+
+		if ( !(pParam instanceof HistorySortParameter) )
+			return;
+		lParam = (HistorySortParameter)pParam;
+
+		if ( lParam.field == HistorySortParameter.SortableField.TIMESTAMP )
+			pstrBuffer.append("[:Timestamp]");
+
+		if ( lParam.order == SortOrder.ASC )
+			pstrBuffer.append(" ASC");
+
+		if ( lParam.order == SortOrder.DESC )
+			pstrBuffer.append(" DESC");
 	}
 
-	@Override
-	protected SearchResult buildResult(UUID pid, Object[] parrValues) {
-		// TODO Auto-generated method stub
-		return null;
-	}
+	protected SearchResult buildResult(UUID pid, Object[] parrValues)
+	{
+		HistoryItemStub lobjResult;
 
+		lobjResult = new HistoryItemStub();
+		lobjResult.id = pid.toString();
+		lobjResult.username = (String)parrValues[0];
+		lobjResult.timeStamp = ((Timestamp)parrValues[1]).toString();
+		lobjResult.opName = (String)parrValues[2];
+
+		return lobjResult;
+	}
 }

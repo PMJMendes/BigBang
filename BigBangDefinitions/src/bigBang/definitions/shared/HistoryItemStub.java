@@ -11,7 +11,6 @@ public class HistoryItemStub
 
 	private static final long serialVersionUID = 1L;
 
-	public String id;
 	public String username;
 	public String timeStamp;
 	public String opName;

@@ -1,5 +1,6 @@
 package bigBang.library.interfaces;
 
+import bigBang.definitions.shared.HistoryItem;
 import bigBang.definitions.shared.HistoryItemStub;
 import bigBang.library.shared.BigBangException;
 import bigBang.library.shared.SessionExpiredException;
@@ -23,6 +24,7 @@ public interface HistoryService
 			return instance;
 		}
 	}
-	
+
+	public HistoryItem getItem(String undoItemId) throws SessionExpiredException, BigBangException;
 	public HistoryItemStub undo(String undoItemId) throws SessionExpiredException, BigBangException;
 }
