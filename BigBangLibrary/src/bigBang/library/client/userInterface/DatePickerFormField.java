@@ -1,5 +1,6 @@
 package bigBang.library.client.userInterface;
 
+import java.sql.Timestamp;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -135,7 +136,7 @@ public class DatePickerFormField extends FormField<Date> {
 	
 	@Override
 	public void setValue(Date value, boolean fireEvents) {
-		/*String day = new SimpleDateFormat("d").format(value);
+		String day = new SimpleDateFormat("d").format(value);
 		String month = new SimpleDateFormat("M").format(value);
 		String year = new SimpleDateFormat("yyyy").format(value);
 		
@@ -164,34 +165,35 @@ public class DatePickerFormField extends FormField<Date> {
 		}
 		
 		if(fireEvents)
-			ValueChangeEvent.fire(this, value);*/
+			ValueChangeEvent.fire(this, value);
 	}
 	
 	
 	@Override
 	public Date getValue() {
-		/*String day = this.day.getValue(this.day.getSelectedIndex());
+		String day = this.day.getValue(this.day.getSelectedIndex());
 		String month = this.month.getValue(this.month.getSelectedIndex());
 		String year = this.year.getValue(this.year.getSelectedIndex());
 		
 		Date result = null;
 		
-		try {
-			result = new SimpleDateFormat("yyyy-M-d").parse(year+"-"+month+"-"+day);
-		} catch (ParseException e) {
-			throw new RuntimeException("Could not parse the date");
-		}
-		
-		return result;*/ return null;
+		//Timestamp.valueOf(year+"-"+month+"-"+day);
+
+		return result;
 	}
 	
 	@Override
 	public void setInvalid(boolean invalid){
 		if(field != null){
-			/*if(invalid)
-				((Widget)field).addStyleName("invalidFormField");
-			else
-				((Widget)field).removeStyleName("invalidFormField");*/ //TODO
+			if(invalid){
+				day.addStyleName("invalidFormField");
+				month.addStyleName("invalidFormField");
+				year.addStyleName("invalidFormField");
+			}else{
+				day.removeStyleName("invalidFormField");
+				month.removeStyleName("invalidFormField");
+				year.removeStyleName("invalidFormField");
+			}
 		}
 		FieldValidator<?> validator = this.validator;
 		String message =  validator == null ? null : validator.getErrorMessage();
@@ -201,20 +203,23 @@ public class DatePickerFormField extends FormField<Date> {
 
 	@Override
 	public void setReadOnly(boolean readonly) {
-		/*if(!editable)
+		if(!editable)
 			return;
-		((DateBox)this.field).setEnabled(!readonly);
+		day.setEnabled(!readonly);
+		month.setEnabled(!readonly);
+		year.setEnabled(!readonly);
 		this.readonly = readonly;
 		mandatoryIndicatorLabel.setVisible(!readonly);
-		((UIObject) field).getElement().getStyle().setBorderColor(readonly ? "transparent" : "gray");
-		((UIObject) field).getElement().getStyle().setBackgroundColor(readonly ? "transparent" : "white");*/
+		day.getElement().getStyle().setBorderColor(readonly ? "transparent" : "gray");
+		day.getElement().getStyle().setBackgroundColor(readonly ? "transparent" : "white");
+		month.getElement().getStyle().setBorderColor(readonly ? "transparent" : "gray");
+		month.getElement().getStyle().setBackgroundColor(readonly ? "transparent" : "white");
+		year.getElement().getStyle().setBorderColor(readonly ? "transparent" : "gray");
+		year.getElement().getStyle().setBackgroundColor(readonly ? "transparent" : "white");
 	}
 
 	@Override
-	public void setFieldWidth(String width) {
-		// TODO Auto-generated method stub
-	//	super.setFieldWidth(width);
-	}
+	public void setFieldWidth(String width) {}
 	
 	@Override
 	public boolean isReadOnly() {

@@ -1,5 +1,8 @@
 package bigBang.library.client.userInterface;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -72,6 +75,10 @@ public class FiltersPanel extends View {
 		
 		sortListBox = new ListBox();
 		sortListBox.setWidth("200px");
+		
+		//java.util.List<Enum<?>> sortedKeys = new ArrayList<Enum<?>>(sorts.keySet());
+		//Collections.sort(sortedKeys);
+		
 		for(Enum<?> key : sorts.keySet()){
 			sortListBox.addItem(sorts.get(key), key.toString());
 		}
