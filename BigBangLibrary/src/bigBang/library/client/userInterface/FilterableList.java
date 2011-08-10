@@ -46,7 +46,7 @@ public class FilterableList<T> extends SortableList<T> {
 		super();
 
 		this.filters = new HashMap<String, ListFilter<?>>();
-		Resources resources = GWT.create(Resources.class);		
+		final Resources resources = GWT.create(Resources.class);		
 		
 		final VerticalPanel headerWrapper = new VerticalPanel();
 
@@ -75,12 +75,27 @@ public class FilterableList<T> extends SortableList<T> {
 		
 		HorizontalPanel filterHeaderWrapper = new HorizontalPanel();
 		filterHeaderWrapper.setSize("100%", "100%");
-		Image filterHeaderImage = new Image(resources.arrowDown());
+		final Image filterHeaderImage = new Image(resources.arrowDown());
 		filterHeaderImage.getElement().getStyle().setMarginLeft(5, Unit.PX);
 		filterHeaderWrapper.add(filterHeaderImage);
 		filterHeaderWrapper.setCellWidth(filterHeaderImage, "20px");
-		filterHeaderWrapper.add(new Label("Filtros"));
+		filterHeaderWrapper.add(new Label("Ordenação e Filtros"));
 		filterContainer.setHeader(filterHeaderWrapper);
+		
+		filterContainer.addCloseHandler(new CloseHandler<DisclosurePanel>() {
+
+			@Override
+			public void onClose(CloseEvent<DisclosurePanel> event) {
+				filterHeaderImage.setResource(resources.arrowDown());
+			}
+		});
+		filterContainer.addOpenHandler(new OpenHandler<DisclosurePanel>() {
+
+			@Override
+			public void onOpen(OpenEvent<DisclosurePanel> event) {
+				filterHeaderImage.setResource(resources.arrowUp());
+			}
+		});
 		
 		filtersContainer = filterContainer;
 		
@@ -96,7 +111,8 @@ public class FilterableList<T> extends SortableList<T> {
 			
 			@Override
 			public void onOpen(OpenEvent<DisclosurePanel> event) {
-				((DisclosurePanel) filtersContainer).getContent().setHeight(scrollPanel.getOffsetHeight() + "px");
+				if(((DisclosurePanel) filtersContainer).getContent().getOffsetHeight() > ((DisclosurePanel) filtersContainer).getOffsetHeight())
+					((DisclosurePanel) filtersContainer).getContent().setHeight(scrollPanel.getOffsetHeight() + "px");
 			}
 		});
 		

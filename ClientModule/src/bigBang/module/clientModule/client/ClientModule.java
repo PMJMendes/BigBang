@@ -61,7 +61,7 @@ public class ClientModule implements Module {
 	public String[] getBrokerDependencies() {
 		return new String[]{
 			BigBangConstants.EntityIds.CLIENT,
-			BigBangConstants.EntityIds.HISTORY
+			//BigBangConstants.EntityIds.HISTORY TODO FJVC
 		};
 	}
 	
