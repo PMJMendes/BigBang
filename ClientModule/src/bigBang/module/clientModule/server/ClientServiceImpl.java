@@ -188,7 +188,7 @@ public class ClientServiceImpl
 			try
 			{
 				lrefUserDecs = Entity.GetInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), Constants.ObjID_Decorations));
-				pstrBuffer.append(lrefUserDecs.SQLForSelectByMembers(larrMembers, larrValues, new int[0]));
+				pstrBuffer.append(lrefUserDecs.SQLForSelectByMembers(larrMembers, larrValues, null));
 			}
 			catch (Throwable e)
 			{
