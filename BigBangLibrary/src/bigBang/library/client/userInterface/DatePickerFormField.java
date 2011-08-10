@@ -1,6 +1,8 @@
 package bigBang.library.client.userInterface;
 
-import java.util.Calendar;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import com.google.gwt.dom.client.Style.Unit;
@@ -10,9 +12,6 @@ import com.google.gwt.user.client.ui.HasVerticalAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
-import com.google.gwt.user.client.ui.UIObject;
-import com.google.gwt.user.client.ui.Widget;
-import com.google.gwt.user.datepicker.client.DateBox;
 
 import bigBang.library.client.FieldValidator;
 import bigBang.library.client.FormField;
@@ -24,9 +23,9 @@ public class DatePickerFormField extends FormField<Date> {
 	
 	private Label label;
 	@SuppressWarnings("unused")
-	private String datePattern;
 	protected ListBox day, month, year;	
 	private boolean readonly;
+	protected DateFormat format;
 	
 	public DatePickerFormField(){
 		this("");
@@ -45,7 +44,7 @@ public class DatePickerFormField extends FormField<Date> {
 		
 		this.setValidator(validator);
 		
-		this.datePattern = format;
+		this.format = new SimpleDateFormat(format);
 
 		HorizontalPanel wrapper = new HorizontalPanel();
 		wrapper.setVerticalAlignment(HasVerticalAlignment.ALIGN_MIDDLE);
@@ -116,11 +115,11 @@ public class DatePickerFormField extends FormField<Date> {
 				monthStr = "Dez";
 				break;
 			}
-			this.day.addItem(monthStr, i+"");
+			this.month.addItem(monthStr, i+"");
 		}
 		year.addItem("-", "");
-		int currentYear = Calendar.getInstance().get(Calendar.YEAR);
-		for(int i = 1900; i <= currentYear; i++){
+		int currentYear = Integer.parseInt(new SimpleDateFormat("yyyy").format(new Date()));
+		for(int i = currentYear; i >= 1900; i--){
 			year.addItem(i+"", i+"");
 		}
 		
@@ -136,15 +135,54 @@ public class DatePickerFormField extends FormField<Date> {
 	
 	@Override
 	public void setValue(Date value, boolean fireEvents) {
-		//TODO
+		/*String day = new SimpleDateFormat("d").format(value);
+		String month = new SimpleDateFormat("M").format(value);
+		String year = new SimpleDateFormat("yyyy").format(value);
+		
+		int count = this.day.getItemCount();
+		for(int i = 0; i < count; i++){
+			if(this.day.getValue(i).equals(day+"")){
+				this.day.setSelectedIndex(i);
+				break;
+			}
+		}
+		
+		count = this.month.getItemCount();
+		for(int i = 0; i < count; i++){
+			if(this.month.getValue(i).equals(month+"")){
+				this.month.setSelectedIndex(i);
+				break;
+			}
+		}
+		
+		count = this.year.getItemCount();
+		for(int i = 0; i < count; i++){
+			if(this.year.getValue(i).equals(year+"")){
+				this.year.setSelectedIndex(i);
+				break;
+			}
+		}
+		
 		if(fireEvents)
-			ValueChangeEvent.fire(this, value);
+			ValueChangeEvent.fire(this, value);*/
 	}
 	
 	
 	@Override
 	public Date getValue() {
-		return new Date(); //TODO
+		/*String day = this.day.getValue(this.day.getSelectedIndex());
+		String month = this.month.getValue(this.month.getSelectedIndex());
+		String year = this.year.getValue(this.year.getSelectedIndex());
+		
+		Date result = null;
+		
+		try {
+			result = new SimpleDateFormat("yyyy-M-d").parse(year+"-"+month+"-"+day);
+		} catch (ParseException e) {
+			throw new RuntimeException("Could not parse the date");
+		}
+		
+		return result;*/ return null;
 	}
 	
 	@Override

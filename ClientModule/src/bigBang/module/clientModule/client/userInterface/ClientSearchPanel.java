@@ -1,5 +1,7 @@
 package bigBang.module.clientModule.client.userInterface;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -107,8 +109,8 @@ public class ClientSearchPanel extends SearchPanel implements ClientProcessDataB
 		p.workerSizeId = (String) filtersPanel.getFilterValue(Filters.COMPANY_SIZE);
 		p.salesVolumeId = (String) filtersPanel.getFilterValue(Filters.SALES_VOLUME);
 		p.maritalStatusId = (String) filtersPanel.getFilterValue(Filters.MARITAL_STATUS);
-		p.birthDateFrom = (String) filtersPanel.getFilterValue(Filters.BORN_AFTER);
-		p.birthDateTo = (String) filtersPanel.getFilterValue(Filters.BORN_BEFORE);
+		//p.birthDateFrom = new SimpleDateFormat("yyyy-MM-dd").format((Date) filtersPanel.getFilterValue(Filters.BORN_AFTER));
+		//p.birthDateTo = new SimpleDateFormat("yyyy-MM-dd").format((Date) filtersPanel.getFilterValue(Filters.BORN_BEFORE));
 		
 		parameters[0] = p;
 		
