@@ -87,7 +87,8 @@ public abstract class SearchServiceBase
 		{
 	        IEntity lrefClients;
 	        MasterDB ldb;
-	        StringBuilder lstrSQL;
+	        StringBuilder lstrSQLB;
+	        String lstrSQL;
 	        ResultSet lrsRows;
             UUID lidKey;
             java.lang.Object[] larrRow;
@@ -107,67 +108,69 @@ public abstract class SearchServiceBase
 
 	        try
 	        {
-	        	lstrSQL = new StringBuilder("SELECT [PK]");
+	        	lstrSQLB = new StringBuilder("SELECT [PK]");
 	        	for ( i = 0; i < marrColumns.length; i++ )
-	        		lstrSQL.append(", ").append(marrColumns[i]);
-	        	lstrSQL.append(" FROM (").append(lrefClients.SQLForSelectMulti()).append(") [Aux] WHERE ").append(pstrCriteria)
+	        		lstrSQLB.append(", ").append(marrColumns[i]);
+	        	lstrSQLB.append(" FROM (").append(lrefClients.SQLForSelectMulti()).append(") [Aux] WHERE ").append(pstrCriteria)
 	        			.append(" ORDER BY ").append(pstrSort);
-	        	lrsRows = ldb.OpenRecordset(lstrSQL.toString());
+	        	lstrSQL = lstrSQLB.toString();
+	        	throw new BigBangException(lstrSQL);
+//	        	lrsRows = ldb.OpenRecordset(lstrSQL);
 			}
 			catch (Throwable e)
 			{
 				try { ldb.Disconnect(); } catch (Throwable e1) {}
 				throw new BigBangException(e.getMessage(), e);
 			}
-			try
-			{
-	            lrsMetaData = lrsRows.getMetaData();
-	            mlngColCount = lrsMetaData.getColumnCount();
+//			try
+//			{
+//	            lrsMetaData = lrsRows.getMetaData();
+//	            mlngColCount = lrsMetaData.getColumnCount();
+//
+//	            marrData = new ArrayList<Row>();
+//		        while (lrsRows.next())
+//		        {
+//					lidKey = UUID.fromString(lrsRows.getString(1));
+//	                larrRow = new java.lang.Object[mlngColCount - 1]; 
+//	                for (i = 1; i < mlngColCount; i++)
+//	                	if ( lrsMetaData.getColumnTypeName(i + 1).equals("uniqueidentifier") )
+//	                	{
+//	                		lstrAux = lrsRows.getString(i + 1);
+//	                		if ( lstrAux == null )
+//	                    		larrRow[i - 1] = null;
+//	                		else
+//	                			larrRow[i - 1] = UUID.fromString(lstrAux);
+//	                	}
+//	                	else
+//	                		larrRow[i - 1] = lrsRows.getObject(i + 1);
+//					marrData.add(new Row(lidKey, larrRow));
+//		        }
+//	        }
+//	        catch (Throwable e)
+//	        {
+//				try { lrsRows.close(); } catch (Throwable e1) {}
+//				try { ldb.Disconnect(); } catch (Throwable e1) {}
+//	        	throw new BigBangException(e.getMessage(), e);
+//	        }
 
-	            marrData = new ArrayList<Row>();
-		        while (lrsRows.next())
-		        {
-					lidKey = UUID.fromString(lrsRows.getString(1));
-	                larrRow = new java.lang.Object[mlngColCount - 1]; 
-	                for (i = 1; i < mlngColCount; i++)
-	                	if ( lrsMetaData.getColumnTypeName(i + 1).equals("uniqueidentifier") )
-	                	{
-	                		lstrAux = lrsRows.getString(i + 1);
-	                		if ( lstrAux == null )
-	                    		larrRow[i - 1] = null;
-	                		else
-	                			larrRow[i - 1] = UUID.fromString(lstrAux);
-	                	}
-	                	else
-	                		larrRow[i - 1] = lrsRows.getObject(i + 1);
-					marrData.add(new Row(lidKey, larrRow));
-		        }
-	        }
-	        catch (Throwable e)
-	        {
-				try { lrsRows.close(); } catch (Throwable e1) {}
-				try { ldb.Disconnect(); } catch (Throwable e1) {}
-	        	throw new BigBangException(e.getMessage(), e);
-	        }
+//	        try
+//	        {
+//	        	lrsRows.close();
+//	        }
+//			catch (Throwable e)
+//			{
+//				try { ldb.Disconnect(); } catch (Throwable e1) {}
+//				throw new BigBangException(e.getMessage(), e);
+//			}
 
-	        try
-	        {
-	        	lrsRows.close();
-	        }
-			catch (Throwable e)
-			{
-				try { ldb.Disconnect(); } catch (Throwable e1) {}
-				throw new BigBangException(e.getMessage(), e);
-			}
-
-			try
-			{
-				ldb.Disconnect();
-			}
-			catch (Throwable e)
-			{
-				throw new BigBangException(e.getMessage(), e);
-			}
+//			try
+//			{
+//				ldb.Disconnect();
+//			}
+//			catch (Throwable e)
+//			{
+//				throw new BigBangException(e.getMessage(), e);
+//			}
 		}
 		
 		int GetRowCount()
