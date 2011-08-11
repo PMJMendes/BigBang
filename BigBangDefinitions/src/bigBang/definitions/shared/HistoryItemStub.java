@@ -1,10 +1,14 @@
 package bigBang.definitions.shared;
 
+import java.io.Serializable;
+
 public class HistoryItemStub
 	extends SearchResult
 {
-	public class AlteredItem
+	public static class AlteredItem implements Serializable
 	{
+		private static final long serialVersionUID = 1L;
+
 		public String typeId;
 		public String[] instanceIds;
 	}
@@ -14,4 +18,5 @@ public class HistoryItemStub
 	public String username;
 	public String timeStamp;
 	public String opName;
+	public AlteredItem[] alteredEntities; //key:Entity type id / value: entity instance id
 }
