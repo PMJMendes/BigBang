@@ -137,7 +137,7 @@ public class ClientServiceImpl
 		return new String[] {"[:Name]", "[:Number]", "[:Group:Name]"};
 	}
 
-	protected void buildFilter(StringBuilder pstrBuffer, SearchParameter pParam)
+	protected boolean buildFilter(StringBuilder pstrBuffer, SearchParameter pParam)
 		throws BigBangException
 	{
 		ClientSearchParameter lParam;
@@ -148,7 +148,7 @@ public class ClientServiceImpl
 		int i;
 
 		if ( !(pParam instanceof ClientSearchParameter) )
-			return;
+			return false;
 		lParam = (ClientSearchParameter)pParam;
 
 		if ( (lParam.freeText != null) && (lParam.freeText.trim().length() > 0) )
@@ -180,7 +180,7 @@ public class ClientServiceImpl
 
 		if ( lParam.costCenterId != null )
 		{
-			pstrBuffer.append(" AND [:Manager] IN (SELECT [PK] FROM (");
+			pstrBuffer.append(" AND [:Manager] IN (SELECT [User] FROM (");
 			larrMembers = new int[1];
 			larrMembers[0] = 2;
 			larrValues = new java.lang.Object[1];
@@ -269,20 +269,22 @@ public class ClientServiceImpl
 		{
 			pstrBuffer.append(" AND [:Notes] LIKE N'%").append(lParam.notes.trim().replace("'", "''")).append("%'");
 		}
+
+		return true;
 	}
 
-	protected void buildSort(StringBuilder pstrBuffer, SortParameter pParam, SearchParameter[] parrParams)
+	protected boolean buildSort(StringBuilder pstrBuffer, SortParameter pParam, SearchParameter[] parrParams)
 	{
 		ClientSortParameter lParam;
 
 		if ( !(pParam instanceof ClientSortParameter) )
-			return;
+			return false;
 		lParam = (ClientSortParameter)pParam;
 
 		if ( lParam.field == ClientSortParameter.SortableField.RELEVANCE )
 		{
 			if ( !buildRelevanceSort(pstrBuffer, parrParams) )
-				return;
+				return false;
 		}
 
 		if ( lParam.field == ClientSortParameter.SortableField.NAME )
@@ -299,6 +301,8 @@ public class ClientServiceImpl
 
 		if ( lParam.order == SortOrder.DESC )
 			pstrBuffer.append(" DESC");
+
+		return true;
 	}
 
 	protected SearchResult buildResult(UUID pid, java.lang.Object[] parrValues)
@@ -335,8 +339,10 @@ public class ClientServiceImpl
 				pstrBuffer.append(" + ");
 			lbFound = true;
 			pstrBuffer.append("CASE WHEN [:Group:Name] LIKE N'%").append(lParam.freeText.trim().replace("'", "''").replace(" ", "%"))
-					.append("%' THEN 10 ELSE 0 END + CASE WHEN [:Name] LIKE N'%").append(lParam.freeText.trim().replace("'", "''")
-					.replace(" ", "%")).append("%' THEN 1 ELSE 0 END");
+					.append("%' THEN -1000*PATINDEX(N'%").append(lParam.freeText.trim().replace("'", "''").replace(" ", "%"))
+					.append("%', [:Group:Name]) ELSE 0 END + CASE WHEN [:Name] LIKE N'%")
+					.append(lParam.freeText.trim().replace("'", "''").replace(" ", "%")).append("%' THEN -PATINDEX(N'%")
+					.append(lParam.freeText.trim().replace("'", "''").replace(" ", "%")).append("%', [:Name]) ELSE 0 END");
 		}
 
 		return lbFound;

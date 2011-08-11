@@ -100,13 +100,13 @@ public class HistoryServiceImpl
 		return new String[] {"[:User:Username]", "[:Timestamp]", "[:Operation:Name]"};
 	}
 
-	protected void buildFilter(StringBuilder pstrBuffer, SearchParameter pParam)
+	protected boolean buildFilter(StringBuilder pstrBuffer, SearchParameter pParam)
 		throws BigBangException
 	{
 		HistorySearchParameter lParam;
 
 		if ( !(pParam instanceof HistorySearchParameter) )
-			return;
+			return false;
 		lParam = (HistorySearchParameter)pParam;
 
 		if ( lParam.processId == null )
@@ -117,14 +117,16 @@ public class HistoryServiceImpl
 		{
 			pstrBuffer.append(" AND [:Timestamp] > '").append(lParam.afterTimestamp).append("'");
 		}
+
+		return true;
 	}
 
-	protected void buildSort(StringBuilder pstrBuffer, SortParameter pParam, SearchParameter[] parrParams)
+	protected boolean buildSort(StringBuilder pstrBuffer, SortParameter pParam, SearchParameter[] parrParams)
 	{
 		HistorySortParameter lParam;
 
 		if ( !(pParam instanceof HistorySortParameter) )
-			return;
+			return false;
 		lParam = (HistorySortParameter)pParam;
 
 		if ( lParam.field == HistorySortParameter.SortableField.TIMESTAMP )
@@ -135,6 +137,8 @@ public class HistoryServiceImpl
 
 		if ( lParam.order == SortOrder.DESC )
 			pstrBuffer.append(" DESC");
+
+		return true;
 	}
 
 	protected SearchResult buildResult(UUID pid, Object[] parrValues)

@@ -114,6 +114,8 @@ public abstract class SearchServiceBase
 	        	lstrSQLB.append(" FROM (").append(lrefClients.SQLForSelectMulti()).append(") [Aux] WHERE ").append(pstrCriteria)
 	        			.append(" ORDER BY ").append(pstrSort);
 	        	lstrSQL = lstrSQLB.toString();
+//	        	if ( lstrSQL.length() > 0 )
+//	        		throw new BigBangException(lstrSQL);
 	        	lrsRows = ldb.OpenRecordset(lstrSQL);
 			}
 			catch (Throwable e)
@@ -335,8 +337,8 @@ public abstract class SearchServiceBase
 		{
 			for ( i = 0; i < sorts.length; i++ )
 			{
-				buildSort(lstrBuffer, sorts[i], parameters);
-				lstrBuffer.append(", ");
+				if ( buildSort(lstrBuffer, sorts[i], parameters) )
+					lstrBuffer.append(", ");
 			}
 		}
 		lstrBuffer.append("[PK] ASC");
@@ -362,7 +364,7 @@ public abstract class SearchServiceBase
 
 	protected abstract UUID getObjectID();
 	protected abstract String[] getColumns();
-	protected abstract void buildFilter(StringBuilder pstrBuffer, SearchParameter pParam) throws BigBangException;
-	protected abstract void buildSort(StringBuilder pstrBuffer, SortParameter pParam, SearchParameter[] parrParams);
+	protected abstract boolean buildFilter(StringBuilder pstrBuffer, SearchParameter pParam) throws BigBangException;
+	protected abstract boolean buildSort(StringBuilder pstrBuffer, SortParameter pParam, SearchParameter[] parrParams);
 	protected abstract SearchResult buildResult(UUID pid, java.lang.Object[] parrValues);
 }

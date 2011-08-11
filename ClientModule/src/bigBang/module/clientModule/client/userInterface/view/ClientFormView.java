@@ -1,6 +1,7 @@
 package bigBang.module.clientModule.client.userInterface.view;
 
 import bigBang.definitions.client.dataAccess.ClientProcessDataBrokerClient;
+import bigBang.definitions.shared.BigBangConstants;
 import bigBang.definitions.shared.Client;
 import bigBang.library.client.userInterface.AddressFormField;
 import bigBang.library.client.userInterface.DatePickerFormField;
@@ -47,10 +48,10 @@ public class ClientFormView extends FormView<Client> implements ClientProcessDat
 		name = new TextBoxFormField("Nome");
 		taxNumber = new TextBoxFormField("Nº Contribuinte");
 		address = new AddressFormField();
-		group = new ListBoxFormField("Grupo");
+		group = new ExpandableListBoxFormField(BigBangConstants.EntityIds.CLIENT_GROUP, "Grupo");
 		NIB = new TextBoxFormField("NIB");
 		mediator = new ExpandableListBoxFormField("Mediador");
-		clientManager = new ExpandableListBoxFormField("Gestor de Cliente");
+		clientManager = new ExpandableListBoxFormField(BigBangConstants.EntityIds.USER, "Gestor de Cliente");
 		profile = new ExpandableListBoxFormField(ModuleConstants.ListIDs.OperationalProfiles, "Perfil Operacional");
 		email = new TextBoxFormField("Email");
 		CAE = new ExpandableListBoxFormField(ModuleConstants.ListIDs.CAEs, "CAE");
