@@ -24,7 +24,7 @@ import bigBang.library.shared.SessionExpiredException;
 import com.premiumminds.BigBang.Jewel.BigBangJewelException;
 import com.premiumminds.BigBang.Jewel.Constants;
 import com.premiumminds.BigBang.Jewel.Operations.DocOps;
-import com.premiumminds.BigBang.Jewel.Operations.General.ManageInsuranceCompanies;
+import com.premiumminds.BigBang.Jewel.Operations.General.ManageInsurers;
 import com.premiumminds.BigBang.Jewel.Operations.General.ManageMediators;
 
 public class DocumentServiceImpl
@@ -322,7 +322,7 @@ public class DocumentServiceImpl
 
 		lidResult = null;
 
-		if ( lobjAux instanceof ManageInsuranceCompanies )
+		if ( lobjAux instanceof ManageInsurers )
 			lidResult = Constants.ObjID_Company;
 
 		if ( lobjAux instanceof ManageMediators )
@@ -348,13 +348,13 @@ public class DocumentServiceImpl
 
 		lbFound = false;
 
-		if ( lobjResult instanceof ManageInsuranceCompanies )
+		if ( lobjResult instanceof ManageInsurers )
 		{
-			((ManageInsuranceCompanies)lobjResult).marrCreate = null;
-			((ManageInsuranceCompanies)lobjResult).marrModify = null;
-			((ManageInsuranceCompanies)lobjResult).marrDelete = null;
-			((ManageInsuranceCompanies)lobjResult).mobjContactOps = null;
-			((ManageInsuranceCompanies)lobjResult).mobjDocOps = pobjInner;
+			((ManageInsurers)lobjResult).marrCreate = null;
+			((ManageInsurers)lobjResult).marrModify = null;
+			((ManageInsurers)lobjResult).marrDelete = null;
+			((ManageInsurers)lobjResult).mobjContactOps = null;
+			((ManageInsurers)lobjResult).mobjDocOps = pobjInner;
 			lbFound = true;
 		}
 

@@ -21,7 +21,7 @@ import bigBang.module.generalSystemModule.interfaces.CoveragesService;
 import com.premiumminds.BigBang.Jewel.Constants;
 import com.premiumminds.BigBang.Jewel.Objects.GeneralSystem;
 import com.premiumminds.BigBang.Jewel.Operations.General.ManageLines;
-import com.premiumminds.BigBang.Jewel.Operations.General.ManageTaxes;
+import com.premiumminds.BigBang.Jewel.Operations.General.ManageCoefficients;
 
 public class CoveragesServiceImpl
 	extends EngineImplementor
@@ -459,7 +459,7 @@ public class CoveragesServiceImpl
 		throws SessionExpiredException, BigBangException
 	{
 		Tax[] larrAux;
-		ManageTaxes lopMT;
+		ManageCoefficients lopMT;
 
 		if ( Engine.getCurrentUser() == null )
 			throw new SessionExpiredException();
@@ -469,7 +469,7 @@ public class CoveragesServiceImpl
 
 		try
 		{
-			lopMT = new ManageTaxes(GeneralSystem.GetAnyInstance(Engine.getCurrentNameSpace()).GetProcessID());
+			lopMT = new ManageCoefficients(GeneralSystem.GetAnyInstance(Engine.getCurrentNameSpace()).GetProcessID());
 
 			lopMT.marrCreate = BuildTaxArray(lopMT, larrAux);
 
@@ -492,7 +492,7 @@ public class CoveragesServiceImpl
 		throws SessionExpiredException, BigBangException
 	{
 		Tax[] larrAux;
-		ManageTaxes lopMT;
+		ManageCoefficients lopMT;
 
 		if ( Engine.getCurrentUser() == null )
 			throw new SessionExpiredException();
@@ -502,7 +502,7 @@ public class CoveragesServiceImpl
 
 		try
 		{
-			lopMT = new ManageTaxes(GeneralSystem.GetAnyInstance(Engine.getCurrentNameSpace()).GetProcessID());
+			lopMT = new ManageCoefficients(GeneralSystem.GetAnyInstance(Engine.getCurrentNameSpace()).GetProcessID());
 
 			lopMT.marrModify = BuildTaxArray(lopMT, larrAux);
 
@@ -523,7 +523,7 @@ public class CoveragesServiceImpl
 		throws SessionExpiredException, BigBangException
 	{
 		Tax[] larrAux;
-		ManageTaxes lopMT;
+		ManageCoefficients lopMT;
 
 		if ( Engine.getCurrentUser() == null )
 			throw new SessionExpiredException();
@@ -534,7 +534,7 @@ public class CoveragesServiceImpl
 
 		try
 		{
-			lopMT = new ManageTaxes(GeneralSystem.GetAnyInstance(Engine.getCurrentNameSpace()).GetProcessID());
+			lopMT = new ManageCoefficients(GeneralSystem.GetAnyInstance(Engine.getCurrentNameSpace()).GetProcessID());
 
 			lopMT.marrDelete = BuildTaxArray(lopMT, larrAux);
 
@@ -705,12 +705,12 @@ public class CoveragesServiceImpl
 		return larrResult;
 	}
 
-	private ManageTaxes.TaxData[] BuildTaxArray(ManageTaxes prefOp, Tax[] parrTaxes)
+	private ManageCoefficients.TaxData[] BuildTaxArray(ManageCoefficients prefOp, Tax[] parrTaxes)
 	{
-		ManageTaxes.TaxData[] larrResult;
+		ManageCoefficients.TaxData[] larrResult;
 		int i;
 
-		larrResult = new ManageTaxes.TaxData[parrTaxes.length];
+		larrResult = new ManageCoefficients.TaxData[parrTaxes.length];
 		for ( i = 0; i < parrTaxes.length; i++ )
 		{
 			larrResult[i] = prefOp.new TaxData();
@@ -757,7 +757,7 @@ public class CoveragesServiceImpl
 			parrCoverages[i].id = parrIDs[i].mid.toString();
 	}
 
-	private void TagTaxes(ManageTaxes.TaxData[] parrIDs, Tax[] parrTaxes)
+	private void TagTaxes(ManageCoefficients.TaxData[] parrIDs, Tax[] parrTaxes)
 	{
 		int i;
 

@@ -26,7 +26,7 @@ import com.premiumminds.BigBang.Jewel.ZipCodeBridge;
 import com.premiumminds.BigBang.Jewel.Objects.GeneralSystem;
 import com.premiumminds.BigBang.Jewel.Operations.ContactOps;
 import com.premiumminds.BigBang.Jewel.Operations.DocOps;
-import com.premiumminds.BigBang.Jewel.Operations.General.ManageInsuranceCompanies;
+import com.premiumminds.BigBang.Jewel.Operations.General.ManageInsurers;
 
 public class InsuranceAgencyServiceImpl
 	extends EngineImplementor
@@ -131,15 +131,15 @@ public class InsuranceAgencyServiceImpl
 	public InsuranceAgency createInsuranceAgency(InsuranceAgency agency)
 		throws SessionExpiredException, BigBangException
 	{
-		ManageInsuranceCompanies lopMIC;
+		ManageInsurers lopMIC;
 
 		if ( Engine.getCurrentUser() == null )
 			throw new SessionExpiredException();
 
 		try
 		{
-			lopMIC = new ManageInsuranceCompanies(GeneralSystem.GetAnyInstance(Engine.getCurrentNameSpace()).GetProcessID());
-			lopMIC.marrCreate = new ManageInsuranceCompanies.CompanyData[1];
+			lopMIC = new ManageInsurers(GeneralSystem.GetAnyInstance(Engine.getCurrentNameSpace()).GetProcessID());
+			lopMIC.marrCreate = new ManageInsurers.CompanyData[1];
 			lopMIC.marrCreate[0] = lopMIC.new CompanyData();
 			lopMIC.marrCreate[0].mid = null;
 			lopMIC.marrCreate[0].mstrName = agency.name;
@@ -208,15 +208,15 @@ public class InsuranceAgencyServiceImpl
 	public InsuranceAgency saveInsuranceAgency(InsuranceAgency agency)
 		throws SessionExpiredException, BigBangException
 	{
-		ManageInsuranceCompanies lopMIC;
+		ManageInsurers lopMIC;
 
 		if ( Engine.getCurrentUser() == null )
 			throw new SessionExpiredException();
 
 		try
 		{
-			lopMIC = new ManageInsuranceCompanies(GeneralSystem.GetAnyInstance(Engine.getCurrentNameSpace()).GetProcessID());
-			lopMIC.marrModify = new ManageInsuranceCompanies.CompanyData[1];
+			lopMIC = new ManageInsurers(GeneralSystem.GetAnyInstance(Engine.getCurrentNameSpace()).GetProcessID());
+			lopMIC.marrModify = new ManageInsurers.CompanyData[1];
 			lopMIC.marrModify[0] = lopMIC.new CompanyData();
 			lopMIC.marrModify[0].mid = UUID.fromString(agency.id);
 			lopMIC.marrModify[0].mstrName = agency.name;
@@ -263,15 +263,15 @@ public class InsuranceAgencyServiceImpl
 	public void deleteInsuranceAgency(String id)
 		throws SessionExpiredException, BigBangException
 	{
-		ManageInsuranceCompanies lopMIC;
+		ManageInsurers lopMIC;
 
 		if ( Engine.getCurrentUser() == null )
 			throw new SessionExpiredException();
 
 		try
 		{
-			lopMIC = new ManageInsuranceCompanies(GeneralSystem.GetAnyInstance(Engine.getCurrentNameSpace()).GetProcessID());
-			lopMIC.marrDelete = new ManageInsuranceCompanies.CompanyData[1];
+			lopMIC = new ManageInsurers(GeneralSystem.GetAnyInstance(Engine.getCurrentNameSpace()).GetProcessID());
+			lopMIC.marrDelete = new ManageInsurers.CompanyData[1];
 			lopMIC.marrDelete[0] = lopMIC.new CompanyData();
 			lopMIC.marrDelete[0].mid = UUID.fromString(id);
 			lopMIC.marrDelete[0].mstrName = null;

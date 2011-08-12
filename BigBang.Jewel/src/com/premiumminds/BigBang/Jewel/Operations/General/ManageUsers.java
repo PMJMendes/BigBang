@@ -209,8 +209,8 @@ public class ManageUsers
 			{
 				for ( i = 0; i < marrCreate.length; i++ )
 				{
-					if ( marrCreate[i].midProfile.equals(Constants.ProfID_Root) &&
-							!lobjAuxCurrent.getProfile().getKey().equals(Constants.ProfID_Root) )
+					if ( marrCreate[i].midProfile.equals(Constants.ProfileID_Root) &&
+							!lobjAuxCurrent.getProfile().getKey().equals(Constants.ProfileID_Root) )
 						throw new BigBangJewelException("Sem permissão: Só um utilizador Root pode criar outros utilizadores Root.");
 
 					lobjAuxBase = (User)Engine.GetWorkInstance(lidUsers, (UUID)null);
@@ -236,19 +236,19 @@ public class ManageUsers
 			{
 				for ( i = 0; i < marrModify.length; i++ )
 				{
-					if ( marrModify[i].midProfile.equals(Constants.ProfID_Root) &&
-							!lobjAuxCurrent.getProfile().getKey().equals(Constants.ProfID_Root) )
+					if ( marrModify[i].midProfile.equals(Constants.ProfileID_Root) &&
+							!lobjAuxCurrent.getProfile().getKey().equals(Constants.ProfileID_Root) )
 						throw new BigBangJewelException("Sem permissão: Só um utilizador Root pode definir outros utilizadores Root.");
 					if ( lobjAuxCurrent.getKey().equals(marrModify[i].mid) &&
-							lobjAuxCurrent.getProfile().getKey().equals(Constants.ProfID_Root) &&
-							!marrModify[i].midProfile.equals(Constants.ProfID_Root) )
+							lobjAuxCurrent.getProfile().getKey().equals(Constants.ProfileID_Root) &&
+							!marrModify[i].midProfile.equals(Constants.ProfileID_Root) )
 						throw new BigBangJewelException("Sem permissão: Não pode remover o seu próprio privilégio de Root.");
 
 					lobjAuxOuter = UserDecoration.GetInstance(Engine.getCurrentNameSpace(), marrModify[i].mid);
 					lobjAuxBase = (User)Engine.GetWorkInstance(lidUsers, (UUID)lobjAuxOuter.getAt(0));
 
-					if ( lobjAuxBase.getProfile().getKey().equals(Constants.ProfID_Root) &&
-							!lobjAuxCurrent.getProfile().getKey().equals(Constants.ProfID_Root) )
+					if ( lobjAuxBase.getProfile().getKey().equals(Constants.ProfileID_Root) &&
+							!lobjAuxCurrent.getProfile().getKey().equals(Constants.ProfileID_Root) )
 						throw new BigBangJewelException("Sem permissão: Só um utilizador Root pode modificar outros utilizadores Root.");
 
 					marrModify[i].mobjPrevValues = new UserData();
@@ -286,8 +286,8 @@ public class ManageUsers
 
 					if ( lobjAuxBase.getKey().equals(Engine.getCurrentUser()) )
 						throw new BigBangJewelException("Sem permissão: Não se pode apagar a si próprio.");
-					if ( lobjAuxBase.getProfile().getKey().equals(Constants.ProfID_Root) &&
-							!lobjAuxCurrent.getProfile().getKey().equals(Constants.ProfID_Root) )
+					if ( lobjAuxBase.getProfile().getKey().equals(Constants.ProfileID_Root) &&
+							!lobjAuxCurrent.getProfile().getKey().equals(Constants.ProfileID_Root) )
 						throw new BigBangJewelException("Sem permissão: Só um utilizador Root pode apagar outros utilizadores Root.");
 
 					marrDelete[i].mstrFullName = (String)lobjAuxBase.getAt(0);

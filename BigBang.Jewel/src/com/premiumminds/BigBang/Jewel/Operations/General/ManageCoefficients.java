@@ -18,7 +18,7 @@ import com.premiumminds.BigBang.Jewel.Objects.Line;
 import com.premiumminds.BigBang.Jewel.Objects.SubLine;
 import com.premiumminds.BigBang.Jewel.Objects.Tax;
 
-public class ManageTaxes
+public class ManageCoefficients
 	extends Operation
 {
 	private static final long serialVersionUID = 1L;
@@ -40,7 +40,7 @@ public class ManageTaxes
 	public TaxData[] marrModify;
 	public TaxData[] marrDelete;
 
-	public ManageTaxes(UUID pidProcess)
+	public ManageCoefficients(UUID pidProcess)
 	{
 		super(pidProcess);
 	}

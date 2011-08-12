@@ -18,7 +18,7 @@ import com.premiumminds.BigBang.Jewel.Objects.Document;
 import com.premiumminds.BigBang.Jewel.Operations.ContactOps;
 import com.premiumminds.BigBang.Jewel.Operations.DocOps;
 
-public class ManageInsuranceCompanies
+public class ManageInsurers
 	extends Operation
 {
 	private static final long serialVersionUID = 1L;
@@ -49,14 +49,14 @@ public class ManageInsuranceCompanies
 	public ContactOps mobjContactOps;
 	public DocOps mobjDocOps;
 
-	public ManageInsuranceCompanies(UUID pidProcess)
+	public ManageInsurers(UUID pidProcess)
 	{
 		super(pidProcess);
 	}
 
 	public String ShortDesc()
 	{
-		return "Gestão de Seguradoras"; 
+		return "Gestão de Seguradoras";
 	}
 
 	public String LongDesc(String pstrLineBreak)
