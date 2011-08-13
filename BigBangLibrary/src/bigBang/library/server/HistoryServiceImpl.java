@@ -10,6 +10,7 @@ import Jewel.Petri.Objects.PNLog;
 import Jewel.Petri.SysObjects.JewelPetriException;
 import Jewel.Petri.SysObjects.Operation;
 import Jewel.Petri.SysObjects.UndoOperation;
+import Jewel.Petri.SysObjects.UndoableOperation;
 import bigBang.definitions.shared.HistoryItem;
 import bigBang.definitions.shared.HistoryItemStub;
 import bigBang.definitions.shared.SearchResult;
@@ -50,6 +51,7 @@ public class HistoryServiceImpl
 			lobjOp = lobjLog.GetOperationData();
 
 			lobjResult.username = lobjLog.GetUser().getUserName();
+			lobjResult.canUndo = lobjLog.CanUndo();
 		}
 		catch (JewelPetriException e)
 		{
@@ -59,8 +61,11 @@ public class HistoryServiceImpl
 		lobjResult.timeStamp = lobjLog.GetTimestamp().toString();
 		lobjResult.shortDescription = lobjOp.ShortDesc();
 		lobjResult.description = lobjOp.LongDesc("<br />");
-		lobjResult.undoDescription = lobjOp.UndoDesc("<br />");
-		lobjResult.canUndo = lobjLog.CanUndo();
+
+		if ( lobjResult.canUndo )
+			lobjResult.undoDescription = ((UndoableOperation)lobjOp).UndoDesc("<br />");
+		else
+			lobjResult.undoDescription = "N/A";
 
 		return lobjResult;
 	}
@@ -70,6 +75,7 @@ public class HistoryServiceImpl
 	{
         PNLog lobjLog;
         UndoOperation lobjRunnable;
+        Operation lobjData;
 
 		if ( Engine.getCurrentUser() == null )
 			throw new SessionExpiredException();
@@ -78,8 +84,15 @@ public class HistoryServiceImpl
 		{
 			lobjLog = PNLog.GetInstance(Engine.getCurrentNameSpace(), UUID.fromString(undoItemId));
 			lobjRunnable = (UndoOperation)lobjLog.GetOperation().GetUndoOp().GetNewInstance(lobjLog.GetProcessID());
-			lobjRunnable.mobjSourceOp = lobjLog.GetOperationData();
+			lobjRunnable.midSourceLog = lobjLog.getKey();
+
+			lobjData = lobjLog.GetOperationData();
+			if ( !(lobjData instanceof UndoableOperation) )
+				throw new BigBangException("Error: Operation does not define undo methods.");
+
+			lobjRunnable.mobjSourceOp = (UndoableOperation)lobjData;
 			lobjRunnable.mrefLog = lobjLog;
+
 			lobjRunnable.Execute(lobjLog.getKey());
 		}
 		catch (Throwable e)

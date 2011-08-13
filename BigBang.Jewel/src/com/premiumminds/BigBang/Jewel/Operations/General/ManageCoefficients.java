@@ -9,7 +9,7 @@ import Jewel.Engine.DataAccess.SQLServer;
 import Jewel.Engine.Implementation.Entity;
 import Jewel.Engine.SysObjects.ObjectBase;
 import Jewel.Petri.SysObjects.JewelPetriException;
-import Jewel.Petri.SysObjects.Operation;
+import Jewel.Petri.SysObjects.UndoableOperation;
 
 import com.premiumminds.BigBang.Jewel.BigBangJewelException;
 import com.premiumminds.BigBang.Jewel.Constants;
@@ -19,7 +19,7 @@ import com.premiumminds.BigBang.Jewel.Objects.SubLine;
 import com.premiumminds.BigBang.Jewel.Objects.Tax;
 
 public class ManageCoefficients
-	extends Operation
+	extends UndoableOperation
 {
 	private static final long serialVersionUID = 1L;
 
@@ -47,7 +47,7 @@ public class ManageCoefficients
 
 	public String ShortDesc()
 	{
-		return "Gestão de Impostos e Coeficientes"; 
+		return "Gestão de Valores"; 
 	}
 
 	public String LongDesc(String pstrLineBreak)
@@ -61,7 +61,7 @@ public class ManageCoefficients
 		{
 			if ( marrCreate.length == 1 )
 			{
-				lstrResult.append("Foi criado 1 coeficiente:");
+				lstrResult.append("Foi criado 1 valor:");
 				lstrResult.append(pstrLineBreak);
 				Describe(lstrResult, marrCreate[0], pstrLineBreak);
 			}
@@ -69,11 +69,11 @@ public class ManageCoefficients
 			{
 				lstrResult.append("Foram criados ");
 				lstrResult.append(marrCreate.length);
-				lstrResult.append(" coeficientes:");
+				lstrResult.append(" valores:");
 				lstrResult.append(pstrLineBreak);
 				for ( i = 0; i < marrCreate.length; i++ )
 				{
-					lstrResult.append("Coeficiente ");
+					lstrResult.append("Valor ");
 					lstrResult.append(i + 1);
 					lstrResult.append(":");
 					lstrResult.append(pstrLineBreak);
@@ -86,7 +86,7 @@ public class ManageCoefficients
 		{
 			if ( marrModify.length == 1 )
 			{
-				lstrResult.append("Foi modificado 1 coeficiente:");
+				lstrResult.append("Foi modificado 1 valor:");
 				lstrResult.append(pstrLineBreak);
 				Describe(lstrResult, marrModify[0], pstrLineBreak);
 			}
@@ -94,11 +94,11 @@ public class ManageCoefficients
 			{
 				lstrResult.append("Foram modificados ");
 				lstrResult.append(marrModify.length);
-				lstrResult.append(" coeficientes:");
+				lstrResult.append(" valores:");
 				lstrResult.append(pstrLineBreak);
 				for ( i = 0; i < marrModify.length; i++ )
 				{
-					lstrResult.append("Coeficiente ");
+					lstrResult.append("Valor ");
 					lstrResult.append(i + 1);
 					lstrResult.append(":");
 					lstrResult.append(pstrLineBreak);
@@ -111,7 +111,7 @@ public class ManageCoefficients
 		{
 			if ( marrDelete.length == 1 )
 			{
-				lstrResult.append("Foi apagado 1 coeficiente:");
+				lstrResult.append("Foi apagado 1 valor:");
 				lstrResult.append(pstrLineBreak);
 				Describe(lstrResult, marrDelete[0], pstrLineBreak);
 			}
@@ -119,64 +119,17 @@ public class ManageCoefficients
 			{
 				lstrResult.append("Foram apagados ");
 				lstrResult.append(marrDelete.length);
-				lstrResult.append(" coeficientes:");
+				lstrResult.append(" valores:");
 				lstrResult.append(pstrLineBreak);
 				for ( i = 0; i < marrDelete.length; i++ )
 				{
-					lstrResult.append("Coeficiente ");
+					lstrResult.append("Valor ");
 					lstrResult.append(i + 1);
 					lstrResult.append(":");
 					lstrResult.append(pstrLineBreak);
 					Describe(lstrResult, marrDelete[i], pstrLineBreak);
 				}
 			}
-		}
-
-		return lstrResult.toString();
-	}
-
-	public String UndoDesc(String pstrLineBreak)
-	{
-		StringBuilder lstrResult;
-		int i;
-
-		lstrResult = new StringBuilder();
-
-		if ( (marrCreate != null) && (marrCreate.length > 0) )
-		{
-			if ( marrCreate.length == 1 )
-				lstrResult.append("O coeficiente criado será apagado.");
-			else
-				lstrResult.append("Os coeficientes criados serão apagados.");
-			lstrResult.append(pstrLineBreak);
-		}
-
-		if ( (marrModify != null) && (marrModify.length > 0) )
-		{
-			lstrResult.append("Serão repostos os valores anteriores:");
-			lstrResult.append(pstrLineBreak);
-			if ( marrModify.length == 1 )
-				Describe(lstrResult, marrModify[0].mobjPrevValues, pstrLineBreak);
-			else
-			{
-				for ( i = 0; i < marrModify.length; i++ )
-				{
-					lstrResult.append("Coeficiente ");
-					lstrResult.append(i + 1);
-					lstrResult.append(":");
-					lstrResult.append(pstrLineBreak);
-					Describe(lstrResult, marrModify[i].mobjPrevValues, pstrLineBreak);
-				}
-			}
-		}
-
-		if ( (marrDelete != null) && (marrDelete.length > 0) )
-		{
-			if ( marrDelete.length == 1 )
-				lstrResult.append("O coeficiente apagado será reposto.");
-			else
-				lstrResult.append("Os coeficientes apagados serão repostos.");
-			lstrResult.append(pstrLineBreak);
 		}
 
 		return lstrResult.toString();
@@ -200,6 +153,157 @@ public class ManageCoefficients
 
 			if ( marrDelete != null )
 				DeleteTaxes(pdb, marrDelete);
+		}
+		catch (Throwable e)
+		{
+			throw new JewelPetriException(e.getMessage(), e);
+		}
+	}
+
+	public String UndoDesc(String pstrLineBreak)
+	{
+		StringBuilder lstrResult;
+		int i;
+
+		lstrResult = new StringBuilder();
+
+		if ( (marrCreate != null) && (marrCreate.length > 0) )
+		{
+			if ( marrCreate.length == 1 )
+				lstrResult.append("O valor criado será apagado.");
+			else
+				lstrResult.append("Os valores criados serão apagados.");
+			lstrResult.append(pstrLineBreak);
+		}
+
+		if ( (marrModify != null) && (marrModify.length > 0) )
+		{
+			lstrResult.append("Serão repostas as definições anteriores:");
+			lstrResult.append(pstrLineBreak);
+			if ( marrModify.length == 1 )
+				Describe(lstrResult, marrModify[0].mobjPrevValues, pstrLineBreak);
+			else
+			{
+				for ( i = 0; i < marrModify.length; i++ )
+				{
+					lstrResult.append("Valor ");
+					lstrResult.append(i + 1);
+					lstrResult.append(":");
+					lstrResult.append(pstrLineBreak);
+					Describe(lstrResult, marrModify[i].mobjPrevValues, pstrLineBreak);
+				}
+			}
+		}
+
+		if ( (marrDelete != null) && (marrDelete.length > 0) )
+		{
+			if ( marrDelete.length == 1 )
+				lstrResult.append("O valor apagado será reposto.");
+			else
+				lstrResult.append("Os valores apagados serão repostos.");
+			lstrResult.append(pstrLineBreak);
+		}
+
+		return lstrResult.toString();
+	}
+
+	public String UndoLongDesc(String pstrLineBreak)
+	{
+		StringBuilder lstrResult;
+		int i;
+
+		lstrResult = new StringBuilder();
+
+		if ( (marrCreate != null) && (marrCreate.length > 0) )
+		{
+			if ( marrCreate.length == 1 )
+			{
+				lstrResult.append("Foi apagado 1 valor:");
+				lstrResult.append(pstrLineBreak);
+				Describe(lstrResult, marrCreate[0], pstrLineBreak);
+			}
+			else
+			{
+				lstrResult.append("Foram apagados ");
+				lstrResult.append(marrCreate.length);
+				lstrResult.append(" valores:");
+				lstrResult.append(pstrLineBreak);
+				for ( i = 0; i < marrCreate.length; i++ )
+				{
+					lstrResult.append("Valor ");
+					lstrResult.append(i + 1);
+					lstrResult.append(":");
+					lstrResult.append(pstrLineBreak);
+					Describe(lstrResult, marrCreate[i], pstrLineBreak);
+				}
+			}
+		}
+
+		if ( (marrModify != null) && (marrModify.length > 0) )
+		{
+			if ( marrModify.length == 1 )
+			{
+				lstrResult.append("Foi reposta a definição de 1 valor:");
+				lstrResult.append(pstrLineBreak);
+				Describe(lstrResult, marrModify[0].mobjPrevValues, pstrLineBreak);
+			}
+			else
+			{
+				lstrResult.append("Foram repostas as definições de ");
+				lstrResult.append(marrModify.length);
+				lstrResult.append(" valores:");
+				lstrResult.append(pstrLineBreak);
+				for ( i = 0; i < marrModify.length; i++ )
+				{
+					lstrResult.append("Valor ");
+					lstrResult.append(i + 1);
+					lstrResult.append(":");
+					lstrResult.append(pstrLineBreak);
+					Describe(lstrResult, marrModify[i].mobjPrevValues, pstrLineBreak);
+				}
+			}
+		}
+
+		if ( (marrDelete != null) && (marrDelete.length > 0) )
+		{
+			if ( marrDelete.length == 1 )
+			{
+				lstrResult.append("Foi reposto 1 valor:");
+				lstrResult.append(pstrLineBreak);
+				Describe(lstrResult, marrDelete[0], pstrLineBreak);
+			}
+			else
+			{
+				lstrResult.append("Foram repostos ");
+				lstrResult.append(marrDelete.length);
+				lstrResult.append(" valores:");
+				lstrResult.append(pstrLineBreak);
+				for ( i = 0; i < marrDelete.length; i++ )
+				{
+					lstrResult.append("Valor ");
+					lstrResult.append(i + 1);
+					lstrResult.append(":");
+					lstrResult.append(pstrLineBreak);
+					Describe(lstrResult, marrDelete[i], pstrLineBreak);
+				}
+			}
+		}
+
+		return lstrResult.toString();
+	}
+
+	protected void Undo(SQLServer pdb) throws JewelPetriException
+	{
+		try
+		{
+			if ( marrCreate != null )
+				UndoCreateTaxes(pdb, marrCreate);
+
+			if ( marrModify != null )
+				UndoModifyTaxes(pdb, marrModify);
+
+			if ( marrDelete != null )
+				UndoDeleteTaxes(pdb, marrDelete);
 		}
 		catch (Throwable e)
 		{
@@ -295,6 +399,84 @@ public class ManageCoefficients
 			try
 			{
 				lrefTaxes.Delete(pdb, parrData[i].mid);
+			}
+			catch (Throwable e)
+			{
+				throw new BigBangJewelException(e.getMessage(), e);
+			}
+		}
+	}
+
+	private void UndoCreateTaxes(SQLServer pdb, TaxData[] parrData)
+		throws BigBangJewelException
+	{
+		Entity lrefTaxes;
+		int i;
+
+		try
+		{
+			lrefTaxes = Entity.GetInstance(Engine.FindEntity(Engine.getCurrentNameSpace(),
+					Constants.ObjID_Tax));
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangJewelException(e.getMessage(), e);
+		}
+
+		for ( i = 0; i < parrData.length; i++ )
+		{
+			try
+			{
+				lrefTaxes.Delete(pdb, parrData[i].mid);
+			}
+			catch (Throwable e)
+			{
+				throw new BigBangJewelException(e.getMessage(), e);
+			}
+		}
+	}
+
+	private void UndoModifyTaxes(SQLServer pdb, TaxData[] parrData)
+		throws BigBangJewelException
+	{
+		int i;
+		Tax lobjAuxTax;
+
+		for ( i = 0; i < parrData.length; i++ )
+		{
+			lobjAuxTax = Tax.GetInstance(Engine.getCurrentNameSpace(), parrData[i].mid);
+
+			try
+			{
+				lobjAuxTax.setAt(0, parrData[i].mobjPrevValues.mstrName);
+				lobjAuxTax.setAt(1, parrData[i].mobjPrevValues.midCoverage);
+				lobjAuxTax.setAt(2, parrData[i].mobjPrevValues.midCurrency);
+				lobjAuxTax.setAt(3, BigDecimal.valueOf(parrData[i].mobjPrevValues.mdblValue));
+				lobjAuxTax.SaveToDb(pdb);
+			}
+			catch (Throwable e)
+			{
+				throw new BigBangJewelException(e.getMessage(), e);
+			}
+		}
+	}
+
+	private void UndoDeleteTaxes(SQLServer pdb, TaxData[] parrData)
+		throws BigBangJewelException
+	{
+		int i;
+		Tax lobjAuxTax;
+
+		for ( i = 0; i < parrData.length; i++ )
+		{
+			try
+			{
+				lobjAuxTax = Tax.GetInstance(Engine.getCurrentNameSpace(), (UUID)null);
+				lobjAuxTax.setAt(0, parrData[i].mstrName);
+				lobjAuxTax.setAt(1, parrData[i].midCoverage);
+				lobjAuxTax.setAt(2, parrData[i].midCurrency);
+				lobjAuxTax.setAt(3, BigDecimal.valueOf(parrData[i].mdblValue));
+				lobjAuxTax.SaveToDb(pdb);
 			}
 			catch (Throwable e)
 			{

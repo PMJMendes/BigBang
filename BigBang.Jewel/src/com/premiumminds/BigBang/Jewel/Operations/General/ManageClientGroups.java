@@ -8,14 +8,14 @@ import Jewel.Engine.DataAccess.SQLServer;
 import Jewel.Engine.Implementation.Entity;
 import Jewel.Engine.SysObjects.ObjectBase;
 import Jewel.Petri.SysObjects.JewelPetriException;
-import Jewel.Petri.SysObjects.Operation;
+import Jewel.Petri.SysObjects.UndoableOperation;
 
 import com.premiumminds.BigBang.Jewel.BigBangJewelException;
 import com.premiumminds.BigBang.Jewel.Constants;
 import com.premiumminds.BigBang.Jewel.Objects.ClientGroup;
 
 public class ManageClientGroups
-	extends Operation
+	extends UndoableOperation
 {
 	private static final long serialVersionUID = 1L;
 
@@ -42,7 +42,7 @@ public class ManageClientGroups
 
 	public String ShortDesc()
 	{
-		return "Gestão de Grupos de Clientes"; 
+		return "Gestão de Grupos de Clientes";
 	}
 
 	public String LongDesc(String pstrLineBreak)
@@ -130,6 +130,32 @@ public class ManageClientGroups
 		return lstrResult.toString();
 	}
 
+	protected UUID OpID()
+	{
+		return Constants.OPID_ManageGroups;
+	}
+
+	protected void Run(SQLServer pdb)
+		throws JewelPetriException
+	{
+		try
+		{
+			if ( marrCreateGroups != null )
+				CreateGroups(pdb, marrCreateGroups, null);
+
+			if ( marrModifyGroups != null )
+				ModifyGroups(pdb, marrModifyGroups);
+
+			if ( marrDeleteGroups != null )
+				DeleteGroups(pdb, marrDeleteGroups,
+						Entity.GetInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), Constants.ObjID_ClientGroup)));
+		}
+		catch (Throwable e)
+		{
+			throw new JewelPetriException(e.getMessage(), e);
+		}
+	}
+
 	public String UndoDesc(String pstrLineBreak)
 	{
 		StringBuilder lstrResult;
@@ -177,24 +203,106 @@ public class ManageClientGroups
 		return lstrResult.toString();
 	}
 
-	protected UUID OpID()
+	public String UndoLongDesc(String pstrLineBreak)
 	{
-		return Constants.OPID_ManageGroups;
+		StringBuilder lstrResult;
+		int i;
+
+		lstrResult = new StringBuilder();
+
+		if ( (marrCreateGroups != null) && (marrCreateGroups.length > 0) )
+		{
+			if ( marrCreateGroups.length == 1 )
+			{
+				lstrResult.append("Foi apagado 1 grupo:");
+				lstrResult.append(pstrLineBreak);
+				DescribeGroup(lstrResult, marrCreateGroups[0], pstrLineBreak, null, true);
+			}
+			else
+			{
+				lstrResult.append("Foram apagados ");
+				lstrResult.append(marrCreateGroups.length);
+				lstrResult.append(" grupos:");
+				lstrResult.append(pstrLineBreak);
+				for ( i = 0; i < marrCreateGroups.length; i++ )
+				{
+					lstrResult.append("Grupo ");
+					lstrResult.append(i + 1);
+					lstrResult.append(":");
+					lstrResult.append(pstrLineBreak);
+					DescribeGroup(lstrResult, marrCreateGroups[i], pstrLineBreak, null, true);
+				}
+			}
+		}
+
+		if ( (marrModifyGroups != null) && (marrModifyGroups.length > 0) )
+		{
+			if ( marrModifyGroups.length == 1 )
+			{
+				lstrResult.append("Foram repostos os valores de 1 grupo:");
+				lstrResult.append(pstrLineBreak);
+				DescribeGroup(lstrResult, marrModifyGroups[0].mobjPrevValues, pstrLineBreak, null, false);
+			}
+			else
+			{
+				lstrResult.append("Foram repostos os valores de ");
+				lstrResult.append(marrModifyGroups.length);
+				lstrResult.append(" grupos:");
+				lstrResult.append(pstrLineBreak);
+				for ( i = 0; i < marrModifyGroups.length; i++ )
+				{
+					lstrResult.append("Grupo ");
+					lstrResult.append(i + 1);
+					lstrResult.append(":");
+					lstrResult.append(pstrLineBreak);
+					DescribeGroup(lstrResult, marrModifyGroups[i].mobjPrevValues, pstrLineBreak, null, false);
+				}
+			}
+		}
+
+		if ( (marrDeleteGroups != null) && (marrDeleteGroups.length > 0) )
+		{
+			if ( marrDeleteGroups.length == 1 )
+			{
+				lstrResult.append("Foi reposto 1 grupo:");
+				lstrResult.append(pstrLineBreak);
+				DescribeGroup(lstrResult, marrDeleteGroups[0], pstrLineBreak, null, true);
+			}
+			else
+			{
+				lstrResult.append("Foram repostos ");
+				lstrResult.append(marrDeleteGroups.length);
+				lstrResult.append(" grupos:");
+				lstrResult.append(pstrLineBreak);
+				for ( i = 0; i < marrDeleteGroups.length; i++ )
+				{
+					lstrResult.append("Grupo ");
+					lstrResult.append(i + 1);
+					lstrResult.append(":");
+					lstrResult.append(pstrLineBreak);
+					DescribeGroup(lstrResult, marrDeleteGroups[i], pstrLineBreak, null, true);
+				}
+			}
+		}
+
+		return lstrResult.toString();
 	}
 
-	protected void Run(SQLServer pdb)
-		throws JewelPetriException
+	protected void Undo(SQLServer pdb) throws JewelPetriException
 	{
 		try
 		{
 			if ( marrCreateGroups != null )
-				CreateGroups(pdb, marrCreateGroups, null);
+			{
+				UndoCreateGroups(pdb, marrCreateGroups,
+						Entity.GetInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), Constants.ObjID_ClientGroup)));
+			}
 
 			if ( marrModifyGroups != null )
-				ModifyGroups(pdb, marrModifyGroups);
+				UndoModifyGroups(pdb, marrModifyGroups);
 
 			if ( marrDeleteGroups != null )
-				DeleteGroups(pdb, marrDeleteGroups);
+				UndoDeleteGroups(pdb, marrDeleteGroups, null);
 		}
 		catch (Throwable e)
 		{
@@ -262,23 +370,13 @@ public class ManageClientGroups
 		}
 	}
 
-	private void DeleteGroups(SQLServer pdb, GroupData[] parrData)
+	private void DeleteGroups(SQLServer pdb, GroupData[] parrData, Entity prefGroups)
 		throws BigBangJewelException
 	{
-		Entity lrefGroups;
 		int i;
 		ClientGroup lobjAuxGroup;
 		ClientGroup[] larrSubGroups;
 		int j;
-
-		try
-		{
-			lrefGroups = Entity.GetInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), Constants.ObjID_ClientGroup));
-		}
-		catch (Throwable e)
-		{
-			throw new BigBangJewelException(e.getMessage(), e);
-		}
 
 		for ( i = 0; i < parrData.length; i++ )
 		{
@@ -297,17 +395,86 @@ public class ManageClientGroups
 					parrData[i].marrSubGroups[j] = new GroupData();
 					parrData[i].marrSubGroups[j].mid = larrSubGroups[j].getKey();
 				}
-				DeleteGroups(pdb, parrData[i].marrSubGroups);
+				DeleteGroups(pdb, parrData[i].marrSubGroups, prefGroups);
 			}
 
 			try
 			{
-				lrefGroups.Delete(pdb, parrData[i].mid);
+				prefGroups.Delete(pdb, parrData[i].mid);
 			}
 			catch (Throwable e)
 			{
 				throw new BigBangJewelException(e.getMessage(), e);
 			}
+		}
+	}
+
+	private void UndoCreateGroups(SQLServer pdb, GroupData[] parrData, Entity prefGroups)
+		throws BigBangJewelException
+	{
+		int i;
+
+		for ( i = 0; i < parrData.length; i++ )
+		{
+			if ( parrData[i].marrSubGroups != null )
+				UndoCreateGroups(pdb, parrData[i].marrSubGroups, prefGroups);
+
+			try
+			{
+				prefGroups.Delete(pdb, parrData[i].mid);
+			}
+			catch (Throwable e)
+			{
+				throw new BigBangJewelException(e.getMessage(), e);
+			}
+		}
+	}
+
+	private void UndoModifyGroups(SQLServer pdb, GroupData[] parrData)
+		throws BigBangJewelException
+	{
+		int i;
+		ClientGroup lobjAuxGroup;
+
+		for ( i = 0; i < parrData.length; i++ )
+		{
+			lobjAuxGroup = ClientGroup.GetInstance(Engine.getCurrentNameSpace(), parrData[i].mid);
+
+			try
+			{
+				lobjAuxGroup.setAt(0, parrData[i].mobjPrevValues.mstrName);
+				lobjAuxGroup.setAt(1, parrData[i].mobjPrevValues.midParent);
+				lobjAuxGroup.SaveToDb(pdb);
+			}
+			catch (Throwable e)
+			{
+				throw new BigBangJewelException(e.getMessage(), e);
+			}
+		}
+	}
+
+	private void UndoDeleteGroups(SQLServer pdb, GroupData[] parrData, UUID pidParent)
+		throws BigBangJewelException
+	{
+		int i;
+		ClientGroup lobjAuxGroup;
+
+		for ( i = 0; i < parrData.length; i++ )
+		{
+			try
+			{
+				lobjAuxGroup = ClientGroup.GetInstance(Engine.getCurrentNameSpace(), (UUID)null);
+				lobjAuxGroup.setAt(0, parrData[i].mstrName);
+				lobjAuxGroup.setAt(1, parrData[i].midParent);
+				lobjAuxGroup.SaveToDb(pdb);
+			}
+			catch (Throwable e)
+			{
+				throw new BigBangJewelException(e.getMessage(), e);
+			}
+
+			if ( parrData[i].marrSubGroups != null )
+				UndoDeleteGroups(pdb, parrData[i].marrSubGroups, lobjAuxGroup.getKey());
 		}
 	}
 
