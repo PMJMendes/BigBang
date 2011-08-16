@@ -130,6 +130,42 @@ public class DocOps
 		}
 	}
 
+	public void RunSubOp(SQLServer pdb, UUID pidOwner)
+		throws JewelPetriException
+	{
+		int i;
+
+		try
+		{
+			if ( marrCreate != null )
+			{
+				for ( i = 0; i < marrCreate.length; i++ )
+				{
+					if ( pidOwner == null )
+						CreateDocument(pdb, marrCreate[i], marrCreate[i].midOwnerId);
+					else
+						CreateDocument(pdb, marrCreate[i], pidOwner);
+				}
+			}
+
+			if ( marrModify != null )
+			{
+				for ( i = 0; i < marrModify.length; i++ )
+					ModifyDocument(pdb, marrModify[i]);
+			}
+
+			if ( marrDelete != null )
+			{
+				for ( i = 0; i < marrDelete.length; i++ )
+					DeleteDocument(pdb, marrDelete[i]);
+			}
+		}
+		catch (Throwable e)
+		{
+			throw new JewelPetriException(e.getMessage(), e);
+		}
+	}
+
 	public void UndoDesc(StringBuilder pstrResult, String pstrLineBreak)
 	{
 		int i;
@@ -172,40 +208,120 @@ public class DocOps
 		}
 	}
 
-	public void RunSubOp(SQLServer pdb, UUID pidOwner)
-		throws JewelPetriException
+	public void UndoLongDesc(StringBuilder pstrResult, String pstrLineBreak)
 	{
 		int i;
 
-		try
+		if ( (marrCreate != null) && (marrCreate.length > 0) )
 		{
-			if ( marrCreate != null )
+			if ( marrCreate.length == 1 )
 			{
+				pstrResult.append("Foi apagado 1 documento:");
+				pstrResult.append(pstrLineBreak);
+				Describe(pstrResult, marrCreate[0], pstrLineBreak);
+			}
+			else
+			{
+				pstrResult.append("Foram apagados ");
+				pstrResult.append(marrCreate.length);
+				pstrResult.append(" documentos:");
+				pstrResult.append(pstrLineBreak);
 				for ( i = 0; i < marrCreate.length; i++ )
 				{
-					if ( pidOwner == null )
-						CreateDocument(pdb, marrCreate[i], marrCreate[i].midOwnerId);
-					else
-						CreateDocument(pdb, marrCreate[i], pidOwner);
+					pstrResult.append("Documento ");
+					pstrResult.append(i + 1);
+					pstrResult.append(":");
+					pstrResult.append(pstrLineBreak);
+					Describe(pstrResult, marrCreate[i], pstrLineBreak);
 				}
 			}
-
-			if ( marrModify != null )
-			{
-				for ( i = 0; i < marrModify.length; i++ )
-					ModifyDocument(pdb, marrModify[i]);
-			}
-
-			if ( marrDelete != null )
-			{
-				for ( i = 0; i < marrDelete.length; i++ )
-					DeleteDocument(pdb, marrDelete[i]);
-			}
 		}
-		catch (Throwable e)
+
+		if ( (marrModify != null) && (marrModify.length > 0) )
 		{
-			throw new JewelPetriException(e.getMessage(), e);
+			if ( marrModify.length == 1 )
+			{
+				pstrResult.append("Foi reposta a definição de 1 documento:");
+				pstrResult.append(pstrLineBreak);
+				Describe(pstrResult, marrModify[0].mobjPrevValues, pstrLineBreak);
+			}
+			else
+			{
+				pstrResult.append("Foram repostas as definições de ");
+				pstrResult.append(marrModify.length);
+				pstrResult.append(" documentos:");
+				pstrResult.append(pstrLineBreak);
+				for ( i = 0; i < marrModify.length; i++ )
+				{
+					pstrResult.append("Documento ");
+					pstrResult.append(i + 1);
+					pstrResult.append(":");
+					pstrResult.append(pstrLineBreak);
+					Describe(pstrResult, marrModify[i].mobjPrevValues, pstrLineBreak);
+				}
+			}
 		}
+
+		if ( (marrDelete != null) && (marrDelete.length > 0) )
+		{
+			if ( marrDelete.length == 1 )
+			{
+				pstrResult.append("Foi reposto 1 documento:");
+				pstrResult.append(pstrLineBreak);
+				Describe(pstrResult, marrDelete[0], pstrLineBreak);
+			}
+			else
+			{
+				pstrResult.append("Foram repostos ");
+				pstrResult.append(marrDelete.length);
+				pstrResult.append(" documentos:");
+				pstrResult.append(pstrLineBreak);
+				for ( i = 0; i < marrDelete.length; i++ )
+				{
+					pstrResult.append("Documento ");
+					pstrResult.append(i + 1);
+					pstrResult.append(":");
+					pstrResult.append(pstrLineBreak);
+					Describe(pstrResult, marrDelete[i], pstrLineBreak);
+				}
+			}
+		}
+	}
+
+	public void UndoSubOp(SQLServer pdb, UUID pidOwner)
+		throws JewelPetriException
+	{
+			int i;
+
+			try
+			{
+				if ( marrCreate != null )
+				{
+					for ( i = 0; i < marrCreate.length; i++ )
+						UndoCreateDocument(pdb, marrCreate[i]);
+				}
+
+				if ( marrModify != null )
+				{
+					for ( i = 0; i < marrModify.length; i++ )
+						UndoModifyDocument(pdb, marrModify[i]);
+				}
+
+				if ( marrDelete != null )
+				{
+					for ( i = 0; i < marrDelete.length; i++ )
+					{
+						if ( pidOwner == null )
+							UndoDeleteDocument(pdb, marrDelete[i], marrCreate[i].midOwnerId);
+						else
+							UndoDeleteDocument(pdb, marrDelete[i], pidOwner);
+					}
+				}
+			}
+			catch (Throwable e)
+			{
+				throw new JewelPetriException(e.getMessage(), e);
+			}
 	}
 
 	private void CreateDocument(SQLServer pdb, DocumentData pobjData, UUID pidOwner)
@@ -384,6 +500,150 @@ public class DocOps
 		catch (Throwable e)
 		{
 			throw new BigBangJewelException(e.getMessage(), e);
+		}
+	}
+
+	private void UndoCreateDocument(SQLServer pdb, DocumentData pobjData)
+		throws BigBangJewelException
+	{
+		Document lobjAux;
+		Entity lrefDocuments;
+		Entity lrefDocInfo;
+		int i;
+		DocInfo[] larrCIAux;
+
+		try
+		{
+			lrefDocuments = Entity.GetInstance(Engine.FindEntity(Engine.getCurrentNameSpace(),
+					Constants.ObjID_Document));
+			lrefDocInfo = Entity.GetInstance(Engine.FindEntity(Engine.getCurrentNameSpace(),
+					Constants.ObjID_DocInfo));
+
+			lobjAux = Document.GetInstance(Engine.getCurrentNameSpace(), pobjData.mid);
+
+			larrCIAux = lobjAux.getCurrentInfo();
+			for ( i = 0; i < larrCIAux.length; i++ )
+			{
+				lrefDocInfo.Delete(pdb, larrCIAux[i].getKey());
+			}
+
+			lrefDocuments.Delete(pdb, lobjAux.getKey());
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangJewelException(e.getMessage(), e);
+		}
+	}
+
+	private void UndoModifyDocument(SQLServer pdb, DocumentData pobjData)
+		throws BigBangJewelException
+	{
+		Document lobjAux;
+		DocInfo lobjAuxInfo;
+		int i;
+		Entity lrefDocInfo;
+		DocInfo[] larrCIAux;
+
+		try
+		{
+			lrefDocInfo = Entity.GetInstance(Engine.FindEntity(Engine.getCurrentNameSpace(),
+					Constants.ObjID_DocInfo));
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangJewelException(e.getMessage(), e);
+		}
+
+		lobjAux = Document.GetInstance(Engine.getCurrentNameSpace(), pobjData.mid);
+
+		larrCIAux = lobjAux.getCurrentInfo();
+		for ( i = 0; i < larrCIAux.length; i++ )
+		{
+			try
+			{
+				lrefDocInfo.Delete(pdb, larrCIAux[i].getKey());
+			}
+			catch (Throwable e)
+			{
+				throw new BigBangJewelException(e.getMessage(), e);
+			}
+		}
+
+		try
+		{
+			lobjAux.setAt(0, pobjData.mobjPrevValues.mstrName);
+			lobjAux.setAt(1, pobjData.mobjPrevValues.midOwnerType);
+			lobjAux.setAt(2, pobjData.mobjPrevValues.midOwnerId);
+			lobjAux.setAt(3, pobjData.mobjPrevValues.midDocType);
+			lobjAux.setAt(4, pobjData.mobjPrevValues.mstrText);
+			lobjAux.setAt(5, pobjData.mobjPrevValues.mobjFile);
+			lobjAux.SaveToDb(pdb);
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangJewelException(e.getMessage(), e);
+		}
+
+		if ( pobjData.mobjPrevValues.marrInfo != null )
+		{
+			for ( i = 0; i < pobjData.mobjPrevValues.marrInfo.length; i++ )
+			{
+				lobjAuxInfo = DocInfo.GetInstance(Engine.getCurrentNameSpace(), (UUID)null);
+				try
+				{
+					lobjAuxInfo.setAt(0, lobjAux.getKey());
+					lobjAuxInfo.setAt(1, pobjData.mobjPrevValues.marrInfo[i].mstrType);
+					lobjAuxInfo.setAt(2, pobjData.mobjPrevValues.marrInfo[i].mstrValue);
+					lobjAuxInfo.SaveToDb(pdb);
+				}
+				catch (Throwable e)
+				{
+					throw new BigBangJewelException(e.getMessage(), e);
+				}
+			}
+		}
+	}
+
+	private void UndoDeleteDocument(SQLServer pdb, DocumentData pobjData, UUID pidOwner)
+		throws BigBangJewelException
+	{
+		Document lobjAux;
+		DocInfo lobjAuxInfo;
+		int i;
+
+		lobjAux = Document.GetInstance(Engine.getCurrentNameSpace(), (UUID)null);
+		try
+		{
+			lobjAux.setAt(0, pobjData.mstrName);
+			lobjAux.setAt(1, pobjData.midOwnerType);
+			lobjAux.setAt(2, pidOwner);
+			lobjAux.setAt(3, pobjData.midDocType);
+			lobjAux.setAt(4, pobjData.mstrText);
+			lobjAux.setAt(5, pobjData.mobjFile);
+			lobjAux.SaveToDb(pdb);
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangJewelException(e.getMessage(), e);
+		}
+
+		if ( pobjData.marrInfo != null )
+		{
+			for ( i = 0; i < pobjData.marrInfo.length; i++ )
+			{
+				lobjAuxInfo = DocInfo.GetInstance(Engine.getCurrentNameSpace(), (UUID)null);
+				try
+				{
+					lobjAuxInfo.setAt(0, lobjAux.getKey());
+					lobjAuxInfo.setAt(1, pobjData.marrInfo[i].mstrType);
+					lobjAuxInfo.setAt(2, pobjData.marrInfo[i].mstrValue);
+					lobjAuxInfo.SaveToDb(pdb);
+				}
+				catch (Throwable e)
+				{
+					throw new BigBangJewelException(e.getMessage(), e);
+				}
+			}
 		}
 	}
 

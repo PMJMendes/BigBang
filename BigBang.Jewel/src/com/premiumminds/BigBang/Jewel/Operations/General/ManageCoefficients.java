@@ -45,6 +45,11 @@ public class ManageCoefficients
 		super(pidProcess);
 	}
 
+	protected UUID OpID()
+	{
+		return Constants.OPID_ManageCoefficients;
+	}
+
 	public String ShortDesc()
 	{
 		return "Gestão de Valores"; 
@@ -133,11 +138,6 @@ public class ManageCoefficients
 		}
 
 		return lstrResult.toString();
-	}
-
-	protected UUID OpID()
-	{
-		return Constants.OPID_ManageCoefficients;
 	}
 
 	protected void Run(SQLServer pdb)

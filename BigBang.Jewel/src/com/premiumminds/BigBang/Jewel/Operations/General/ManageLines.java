@@ -8,7 +8,7 @@ import Jewel.Engine.DataAccess.SQLServer;
 import Jewel.Engine.Implementation.Entity;
 import Jewel.Engine.SysObjects.ObjectBase;
 import Jewel.Petri.SysObjects.JewelPetriException;
-import Jewel.Petri.SysObjects.Operation;
+import Jewel.Petri.SysObjects.UndoableOperation;
 
 import com.premiumminds.BigBang.Jewel.BigBangJewelException;
 import com.premiumminds.BigBang.Jewel.Constants;
@@ -17,7 +17,7 @@ import com.premiumminds.BigBang.Jewel.Objects.Line;
 import com.premiumminds.BigBang.Jewel.Objects.SubLine;
 
 public class ManageLines
-	extends Operation
+	extends UndoableOperation
 {
 	private static final long serialVersionUID = 1L;
 
@@ -69,6 +69,11 @@ public class ManageLines
 	public ManageLines(UUID pidProcess)
 	{
 		super(pidProcess);
+	}
+
+	protected UUID OpID()
+	{
+		return Constants.OPID_ManageLines;
 	}
 
 	public String ShortDesc()
@@ -311,6 +316,44 @@ public class ManageLines
 		return lstrResult.toString();
 	}
 
+	protected void Run(SQLServer pdb)
+		throws JewelPetriException
+	{
+		try
+		{
+			if ( marrCreateLines != null )
+				CreateLines(pdb, marrCreateLines);
+
+			if ( marrModifyLines != null )
+				ModifyLines(pdb, marrModifyLines);
+
+			if ( marrDeleteLines != null )
+				DeleteLines(pdb, marrDeleteLines);
+
+			if ( marrCreateSubLines != null )
+				CreateSubLines(pdb, marrCreateSubLines, null);
+
+			if ( marrModifySubLines != null )
+				ModifySubLines(pdb, marrModifySubLines);
+
+			if ( marrDeleteSubLines != null )
+				DeleteSubLines(pdb, marrDeleteSubLines);
+
+			if ( marrCreateCoverages != null )
+				CreateCoverages(pdb, marrCreateCoverages, null);
+
+			if ( marrModifyCoverages != null )
+				ModifyCoverages(pdb, marrModifyCoverages);
+
+			if ( marrDeleteCoverages != null )
+				DeleteCoverages(pdb, marrDeleteCoverages);
+		}
+		catch (Throwable e)
+		{
+			throw new JewelPetriException(e.getMessage(), e);
+		}
+	}
+
 	public String UndoDesc(String pstrLineBreak)
 	{
 		StringBuilder lstrResult;
@@ -432,42 +475,271 @@ public class ManageLines
 		return lstrResult.toString();
 	}
 
-	protected UUID OpID()
+	public String UndoLongDesc(String pstrLineBreak)
 	{
-		return Constants.OPID_ManageLines;
+		StringBuilder lstrResult;
+		int i;
+
+		lstrResult = new StringBuilder();
+
+		if ( (marrCreateLines != null) && (marrCreateLines.length > 0) )
+		{
+			if ( marrCreateLines.length == 1 )
+			{
+				lstrResult.append("Foi apagado 1 ramo:");
+				lstrResult.append(pstrLineBreak);
+				DescribeLine(lstrResult, marrCreateLines[0], pstrLineBreak, true);
+			}
+			else
+			{
+				lstrResult.append("Foram apagados ");
+				lstrResult.append(marrCreateLines.length);
+				lstrResult.append(" ramos:");
+				lstrResult.append(pstrLineBreak);
+				for ( i = 0; i < marrCreateLines.length; i++ )
+				{
+					lstrResult.append("Ramo ");
+					lstrResult.append(i + 1);
+					lstrResult.append(":");
+					lstrResult.append(pstrLineBreak);
+					DescribeLine(lstrResult, marrCreateLines[i], pstrLineBreak, true);
+				}
+			}
+		}
+
+		if ( (marrModifyLines != null) && (marrModifyLines.length > 0) )
+		{
+			if ( marrModifyLines.length == 1 )
+			{
+				lstrResult.append("Foi reposta a definição de 1 ramo:");
+				lstrResult.append(pstrLineBreak);
+				DescribeLine(lstrResult, marrModifyLines[0].mobjPrevValues, pstrLineBreak, false);
+			}
+			else
+			{
+				lstrResult.append("Foram repostas as definições de ");
+				lstrResult.append(marrModifyLines.length);
+				lstrResult.append(" ramos:");
+				lstrResult.append(pstrLineBreak);
+				for ( i = 0; i < marrModifyLines.length; i++ )
+				{
+					lstrResult.append("Ramo ");
+					lstrResult.append(i + 1);
+					lstrResult.append(":");
+					lstrResult.append(pstrLineBreak);
+					DescribeLine(lstrResult, marrModifyLines[i].mobjPrevValues, pstrLineBreak, false);
+				}
+			}
+		}
+
+		if ( (marrDeleteLines != null) && (marrDeleteLines.length > 0) )
+		{
+			if ( marrDeleteLines.length == 1 )
+			{
+				lstrResult.append("Foi reposto 1 ramo:");
+				lstrResult.append(pstrLineBreak);
+				DescribeLine(lstrResult, marrDeleteLines[0], pstrLineBreak, true);
+			}
+			else
+			{
+				lstrResult.append("Foram repostos ");
+				lstrResult.append(marrDeleteLines.length);
+				lstrResult.append(" ramos:");
+				lstrResult.append(pstrLineBreak);
+				for ( i = 0; i < marrDeleteLines.length; i++ )
+				{
+					lstrResult.append("Ramo ");
+					lstrResult.append(i + 1);
+					lstrResult.append(":");
+					lstrResult.append(pstrLineBreak);
+					DescribeLine(lstrResult, marrDeleteLines[i], pstrLineBreak, true);
+				}
+			}
+		}
+
+		if ( (marrCreateSubLines != null) && (marrCreateSubLines.length > 0) )
+		{
+			if ( marrCreateSubLines.length == 1 )
+			{
+				lstrResult.append("Foi apagada 1 modalidade:");
+				lstrResult.append(pstrLineBreak);
+				DescribeSubLine(lstrResult, marrCreateSubLines[0], pstrLineBreak, null, true);
+			}
+			else
+			{
+				lstrResult.append("Foram apagadas ");
+				lstrResult.append(marrCreateSubLines.length);
+				lstrResult.append(" modalidades:");
+				lstrResult.append(pstrLineBreak);
+				for ( i = 0; i < marrCreateSubLines.length; i++ )
+				{
+					lstrResult.append("Modalidade ");
+					lstrResult.append(i + 1);
+					lstrResult.append(":");
+					lstrResult.append(pstrLineBreak);
+					DescribeSubLine(lstrResult, marrCreateSubLines[i], pstrLineBreak, null, true);
+				}
+			}
+		}
+
+		if ( (marrModifySubLines != null) && (marrModifySubLines.length > 0) )
+		{
+			if ( marrModifySubLines.length == 1 )
+			{
+				lstrResult.append("Foi reposta a definição de 1 modalidade:");
+				lstrResult.append(pstrLineBreak);
+				DescribeSubLine(lstrResult, marrModifySubLines[0].mobjPrevValues, pstrLineBreak, null, false);
+			}
+			else
+			{
+				lstrResult.append("Foram repostas as definições de ");
+				lstrResult.append(marrModifySubLines.length);
+				lstrResult.append(" modalidades:");
+				lstrResult.append(pstrLineBreak);
+				for ( i = 0; i < marrModifySubLines.length; i++ )
+				{
+					lstrResult.append("Modalidade ");
+					lstrResult.append(i + 1);
+					lstrResult.append(":");
+					lstrResult.append(pstrLineBreak);
+					DescribeSubLine(lstrResult, marrModifySubLines[i].mobjPrevValues, pstrLineBreak, null, false);
+				}
+			}
+		}
+
+		if ( (marrDeleteSubLines != null) && (marrDeleteSubLines.length > 0) )
+		{
+			if ( marrDeleteSubLines.length == 1 )
+			{
+				lstrResult.append("Foi reposta 1 modalidade:");
+				lstrResult.append(pstrLineBreak);
+				DescribeSubLine(lstrResult, marrDeleteSubLines[0], pstrLineBreak, null, true);
+			}
+			else
+			{
+				lstrResult.append("Foram repostas ");
+				lstrResult.append(marrDeleteSubLines.length);
+				lstrResult.append(" modalidades:");
+				lstrResult.append(pstrLineBreak);
+				for ( i = 0; i < marrDeleteSubLines.length; i++ )
+				{
+					lstrResult.append("Modalidade ");
+					lstrResult.append(i + 1);
+					lstrResult.append(":");
+					lstrResult.append(pstrLineBreak);
+					DescribeSubLine(lstrResult, marrDeleteSubLines[i], pstrLineBreak, null, true);
+				}
+			}
+		}
+
+		if ( (marrCreateCoverages != null) && (marrCreateCoverages.length > 0) )
+		{
+			if ( marrCreateCoverages.length == 1 )
+			{
+				lstrResult.append("Foi apagada 1 cobertura:");
+				lstrResult.append(pstrLineBreak);
+				DescribeCoverage(lstrResult, marrCreateCoverages[0], pstrLineBreak, null);
+			}
+			else
+			{
+				lstrResult.append("Foram apagadas ");
+				lstrResult.append(marrCreateCoverages.length);
+				lstrResult.append(" coberturas:");
+				lstrResult.append(pstrLineBreak);
+				for ( i = 0; i < marrCreateCoverages.length; i++ )
+				{
+					lstrResult.append("Cobertura ");
+					lstrResult.append(i + 1);
+					lstrResult.append(":");
+					lstrResult.append(pstrLineBreak);
+					DescribeCoverage(lstrResult, marrCreateCoverages[i], pstrLineBreak, null);
+				}
+			}
+		}
+
+		if ( (marrModifyCoverages != null) && (marrModifyCoverages.length > 0) )
+		{
+			if ( marrModifyCoverages.length == 1 )
+			{
+				lstrResult.append("Foi reposta a definição de 1 cobertura:");
+				lstrResult.append(pstrLineBreak);
+				DescribeCoverage(lstrResult, marrModifyCoverages[0].mobjPrevValues, pstrLineBreak, null);
+			}
+			else
+			{
+				lstrResult.append("Foram repostas as definições de ");
+				lstrResult.append(marrModifyCoverages.length);
+				lstrResult.append(" coberturas:");
+				lstrResult.append(pstrLineBreak);
+				for ( i = 0; i < marrModifyCoverages.length; i++ )
+				{
+					lstrResult.append("Cobertura ");
+					lstrResult.append(i + 1);
+					lstrResult.append(":");
+					lstrResult.append(pstrLineBreak);
+					DescribeCoverage(lstrResult, marrModifyCoverages[i].mobjPrevValues, pstrLineBreak, null);
+				}
+			}
+		}
+
+		if ( (marrDeleteCoverages != null) && (marrDeleteCoverages.length > 0) )
+		{
+			if ( marrDeleteCoverages.length == 1 )
+			{
+				lstrResult.append("Foi reposta 1 cobertura:");
+				lstrResult.append(pstrLineBreak);
+				DescribeCoverage(lstrResult, marrDeleteCoverages[0], pstrLineBreak, null);
+			}
+			else
+			{
+				lstrResult.append("Foram repostas ");
+				lstrResult.append(marrDeleteCoverages.length);
+				lstrResult.append(" coberturas:");
+				lstrResult.append(pstrLineBreak);
+				for ( i = 0; i < marrDeleteCoverages.length; i++ )
+				{
+					lstrResult.append("Cobertura ");
+					lstrResult.append(i + 1);
+					lstrResult.append(":");
+					lstrResult.append(pstrLineBreak);
+					DescribeCoverage(lstrResult, marrDeleteCoverages[i], pstrLineBreak, null);
+				}
+			}
+		}
+
+		return lstrResult.toString();
 	}
 
-	protected void Run(SQLServer pdb)
-		throws JewelPetriException
+	protected void Undo(SQLServer pdb) throws JewelPetriException
 	{
 		try
 		{
 			if ( marrCreateLines != null )
-				CreateLines(pdb, marrCreateLines);
+				UndoCreateLines(pdb, marrCreateLines);
 
 			if ( marrModifyLines != null )
-				ModifyLines(pdb, marrModifyLines);
+				UndoModifyLines(pdb, marrModifyLines);
 
 			if ( marrDeleteLines != null )
-				DeleteLines(pdb, marrDeleteLines);
+				UndoDeleteLines(pdb, marrDeleteLines);
 
 			if ( marrCreateSubLines != null )
-				CreateSubLines(pdb, marrCreateSubLines, null);
+				UndoCreateSubLines(pdb, marrCreateSubLines);
 
 			if ( marrModifySubLines != null )
-				ModifySubLines(pdb, marrModifySubLines);
+				UndoModifySubLines(pdb, marrModifySubLines);
 
 			if ( marrDeleteSubLines != null )
-				DeleteSubLines(pdb, marrDeleteSubLines);
+				UndoDeleteSubLines(pdb, marrDeleteSubLines, null);
 
 			if ( marrCreateCoverages != null )
-				CreateCoverages(pdb, marrCreateCoverages, null);
+				UndoCreateCoverages(pdb, marrCreateCoverages);
 
 			if ( marrModifyCoverages != null )
-				ModifyCoverages(pdb, marrModifyCoverages);
+				UndoModifyCoverages(pdb, marrModifyCoverages);
 
 			if ( marrDeleteCoverages != null )
-				DeleteCoverages(pdb, marrDeleteCoverages);
+				UndoDeleteCoverages(pdb, marrDeleteCoverages, null);
 		}
 		catch (Throwable e)
 		{
@@ -775,6 +1047,246 @@ public class ManageLines
 			try
 			{
 				lrefCoverages.Delete(pdb, parrData[i].mid);
+			}
+			catch (Throwable e)
+			{
+				throw new BigBangJewelException(e.getMessage(), e);
+			}
+		}
+	}
+
+	private void UndoCreateLines(SQLServer pdb, LineData[] parrData)
+		throws BigBangJewelException
+	{
+		Entity lrefLines;
+		int i;
+
+		try
+		{
+			lrefLines = Entity.GetInstance(Engine.FindEntity(Engine.getCurrentNameSpace(),
+					Constants.ObjID_Line));
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangJewelException(e.getMessage(), e);
+		}
+
+		for ( i = 0; i < parrData.length; i++ )
+		{
+			if ( parrData[i].marrSubLines != null )
+				UndoCreateSubLines(pdb, parrData[i].marrSubLines);
+
+			try
+			{
+				lrefLines.Delete(pdb, parrData[i].mid);
+			}
+			catch (Throwable e)
+			{
+				throw new BigBangJewelException(e.getMessage(), e);
+			}
+		}
+	}
+
+	private void UndoCreateSubLines(SQLServer pdb, SubLineData[] parrData)
+		throws BigBangJewelException
+	{
+		Entity lrefSubLines;
+		int i;
+
+		try
+		{
+			lrefSubLines = Entity.GetInstance(Engine.FindEntity(Engine.getCurrentNameSpace(),
+					Constants.ObjID_SubLine));
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangJewelException(e.getMessage(), e);
+		}
+
+		for ( i = 0; i < parrData.length; i++ )
+		{
+			if ( parrData[i].marrCoverages != null )
+				UndoCreateCoverages(pdb, parrData[i].marrCoverages);
+
+			try
+			{
+				lrefSubLines.Delete(pdb, parrData[i].mid);
+			}
+			catch (Throwable e)
+			{
+				throw new BigBangJewelException(e.getMessage(), e);
+			}
+		}
+	}
+
+	private void UndoCreateCoverages(SQLServer pdb, CoverageData[] parrData)
+		throws BigBangJewelException
+	{
+		Entity lrefCoverages;
+		int i;
+
+		try
+		{
+			lrefCoverages = Entity.GetInstance(Engine.FindEntity(Engine.getCurrentNameSpace(),
+					Constants.ObjID_Coverage));
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangJewelException(e.getMessage(), e);
+		}
+
+		for ( i = 0; i < parrData.length; i++ )
+		{
+			try
+			{
+				lrefCoverages.Delete(pdb, parrData[i].mid);
+			}
+			catch (Throwable e)
+			{
+				throw new BigBangJewelException(e.getMessage(), e);
+			}
+		}
+	}
+
+	private void UndoModifyLines(SQLServer pdb, LineData[] parrData)
+		throws BigBangJewelException
+	{
+		int i;
+		Line lobjAuxLine;
+
+		for ( i = 0; i < parrData.length; i++ )
+		{
+			lobjAuxLine = Line.GetInstance(Engine.getCurrentNameSpace(), parrData[i].mid);
+
+			try
+			{
+				lobjAuxLine.setAt(0, parrData[i].mobjPrevValues.mstrName);
+				lobjAuxLine.setAt(1, parrData[i].mobjPrevValues.midCategory);
+				lobjAuxLine.SaveToDb(pdb);
+			}
+			catch (Throwable e)
+			{
+				throw new BigBangJewelException(e.getMessage(), e);
+			}
+		}
+	}
+
+	private void UndoModifySubLines(SQLServer pdb, SubLineData[] parrData)
+		throws BigBangJewelException
+	{
+		int i;
+		SubLine lobjAuxSubLine;
+
+		for ( i = 0; i < parrData.length; i++ )
+		{
+			lobjAuxSubLine = SubLine.GetInstance(Engine.getCurrentNameSpace(), parrData[i].mid);
+
+			try
+			{
+				lobjAuxSubLine.setAt(0, parrData[i].mobjPrevValues.mstrName);
+				lobjAuxSubLine.setAt(1, parrData[i].mobjPrevValues.midLine);
+				lobjAuxSubLine.SaveToDb(pdb);
+			}
+			catch (Throwable e)
+			{
+				throw new BigBangJewelException(e.getMessage(), e);
+			}
+		}
+	}
+
+	private void UndoModifyCoverages(SQLServer pdb, CoverageData[] parrData)
+		throws BigBangJewelException
+	{
+		int i;
+		Coverage lobjAuxCoverage;
+
+		for ( i = 0; i < parrData.length; i++ )
+		{
+			lobjAuxCoverage = Coverage.GetInstance(Engine.getCurrentNameSpace(), parrData[i].mid);
+
+			try
+			{
+				lobjAuxCoverage.setAt(0, parrData[i].mobjPrevValues.mstrName);
+				lobjAuxCoverage.setAt(1, parrData[i].mobjPrevValues.midSubLine);
+				lobjAuxCoverage.SaveToDb(pdb);
+			}
+			catch (Throwable e)
+			{
+				throw new BigBangJewelException(e.getMessage(), e);
+			}
+		}
+	}
+
+	private void UndoDeleteLines(SQLServer pdb, LineData[] parrData)
+		throws BigBangJewelException
+	{
+		int i;
+		Line lobjAuxLine;
+
+		for ( i = 0; i < parrData.length; i++ )
+		{
+			try
+			{
+				lobjAuxLine = Line.GetInstance(Engine.getCurrentNameSpace(), (UUID)null);
+				lobjAuxLine.setAt(0, parrData[i].mstrName);
+				lobjAuxLine.setAt(1, parrData[i].midCategory);
+				lobjAuxLine.SaveToDb(pdb);
+			}
+			catch (Throwable e)
+			{
+				throw new BigBangJewelException(e.getMessage(), e);
+			}
+
+			if ( parrData[i].marrSubLines != null )
+				UndoDeleteSubLines(pdb, parrData[i].marrSubLines, lobjAuxLine.getKey());
+		}
+	}
+
+	private void UndoDeleteSubLines(SQLServer pdb, SubLineData[] parrData, UUID pidParent)
+		throws BigBangJewelException
+	{
+		int i;
+		SubLine lobjAuxSubLine;
+
+		for ( i = 0; i < parrData.length; i++ )
+		{
+			if ( pidParent != null )
+				parrData[i].midLine = pidParent;
+
+			try
+			{
+				lobjAuxSubLine = SubLine.GetInstance(Engine.getCurrentNameSpace(), (UUID)null);
+				lobjAuxSubLine.setAt(0, parrData[i].mstrName);
+				lobjAuxSubLine.setAt(1, parrData[i].midLine);
+				lobjAuxSubLine.SaveToDb(pdb);
+			}
+			catch (Throwable e)
+			{
+				throw new BigBangJewelException(e.getMessage(), e);
+			}
+
+			if ( parrData[i].marrCoverages != null )
+				UndoDeleteCoverages(pdb, parrData[i].marrCoverages, lobjAuxSubLine.getKey());
+		}
+	}
+
+	private void UndoDeleteCoverages(SQLServer pdb, CoverageData[] parrData, UUID pidParent)
+		throws BigBangJewelException
+	{
+		int i;
+		Coverage lobjAuxCoverage;
+
+		for ( i = 0; i < parrData.length; i++ )
+		{
+			if ( pidParent != null )
+				parrData[i].midSubLine = pidParent;
+
+			try
+			{
+				lobjAuxCoverage = Coverage.GetInstance(Engine.getCurrentNameSpace(), (UUID)null);
+				lobjAuxCoverage.setAt(0, parrData[i].mstrName);
+				lobjAuxCoverage.setAt(1, parrData[i].midSubLine);
+				lobjAuxCoverage.SaveToDb(pdb);
 			}
 			catch (Throwable e)
 			{

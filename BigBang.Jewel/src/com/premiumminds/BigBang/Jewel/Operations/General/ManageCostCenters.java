@@ -7,13 +7,13 @@ import Jewel.Engine.Engine;
 import Jewel.Engine.DataAccess.SQLServer;
 import Jewel.Engine.Implementation.Entity;
 import Jewel.Petri.SysObjects.JewelPetriException;
-import Jewel.Petri.SysObjects.Operation;
+import Jewel.Petri.SysObjects.UndoableOperation;
 
 import com.premiumminds.BigBang.Jewel.Constants;
 import com.premiumminds.BigBang.Jewel.Objects.CostCenter;
 
 public class ManageCostCenters
-	extends Operation
+	extends UndoableOperation
 {
 	private static final long serialVersionUID = 1L;
 
@@ -35,6 +35,11 @@ public class ManageCostCenters
 	public ManageCostCenters(UUID pidProcess)
 	{
 		super(pidProcess);
+	}
+
+	protected UUID OpID()
+	{
+		return Constants.OPID_ManageCostCenters;
 	}
 
 	public String ShortDesc()
@@ -127,58 +132,6 @@ public class ManageCostCenters
 		return lstrResult.toString();
 	}
 
-	public String UndoDesc(String pstrLineBreak)
-	{
-		StringBuilder lstrResult;
-		int i;
-
-		lstrResult = new StringBuilder();
-
-		if ( (marrCreate != null) && (marrCreate.length > 0) )
-		{
-			if ( marrCreate.length == 1 )
-				lstrResult.append("O centro de custo criado será apagado.");
-			else
-				lstrResult.append("Os centros de custo criados serão apagados.");
-			lstrResult.append(pstrLineBreak);
-		}
-
-		if ( (marrModify != null) && (marrModify.length > 0) )
-		{
-			lstrResult.append("Serão repostos os valores anteriores:");
-			lstrResult.append(pstrLineBreak);
-			if ( marrModify.length == 1 )
-				Describe(lstrResult, marrModify[0].mobjPrevValues, pstrLineBreak);
-			else
-			{
-				for ( i = 0; i < marrModify.length; i++ )
-				{
-					lstrResult.append("Centro de custo ");
-					lstrResult.append(i + 1);
-					lstrResult.append(":");
-					lstrResult.append(pstrLineBreak);
-					Describe(lstrResult, marrModify[i].mobjPrevValues, pstrLineBreak);
-				}
-			}
-		}
-
-		if ( (marrDelete != null) && (marrDelete.length > 0) )
-		{
-			if ( marrDelete.length == 1 )
-				lstrResult.append("O centro de custo apagado será reposto.");
-			else
-				lstrResult.append("Os centros de custo apagados serão repostos.");
-			lstrResult.append(pstrLineBreak);
-		}
-
-		return lstrResult.toString();
-	}
-
-	protected UUID OpID()
-	{
-		return Constants.OPID_ManageCostCenters;
-	}
-
 	protected void Run(SQLServer pdb)
 		throws JewelPetriException
 	{
@@ -229,6 +182,183 @@ public class ManageCostCenters
 					marrDelete[i].mstrName = (String)lobjAux.getAt(1);
 					marrDelete[i].mobjPrevValues = null;
 					lrefCostCenters.Delete(pdb, marrDelete[i].mid);
+				}
+			}
+		}
+		catch (Throwable e)
+		{
+			throw new JewelPetriException(e.getMessage(), e);
+		}
+	}
+
+	public String UndoDesc(String pstrLineBreak)
+	{
+		StringBuilder lstrResult;
+		int i;
+
+		lstrResult = new StringBuilder();
+
+		if ( (marrCreate != null) && (marrCreate.length > 0) )
+		{
+			if ( marrCreate.length == 1 )
+				lstrResult.append("O centro de custo criado será apagado.");
+			else
+				lstrResult.append("Os centros de custo criados serão apagados.");
+			lstrResult.append(pstrLineBreak);
+		}
+
+		if ( (marrModify != null) && (marrModify.length > 0) )
+		{
+			lstrResult.append("Serão repostos os valores anteriores:");
+			lstrResult.append(pstrLineBreak);
+			if ( marrModify.length == 1 )
+				Describe(lstrResult, marrModify[0].mobjPrevValues, pstrLineBreak);
+			else
+			{
+				for ( i = 0; i < marrModify.length; i++ )
+				{
+					lstrResult.append("Centro de custo ");
+					lstrResult.append(i + 1);
+					lstrResult.append(":");
+					lstrResult.append(pstrLineBreak);
+					Describe(lstrResult, marrModify[i].mobjPrevValues, pstrLineBreak);
+				}
+			}
+		}
+
+		if ( (marrDelete != null) && (marrDelete.length > 0) )
+		{
+			if ( marrDelete.length == 1 )
+				lstrResult.append("O centro de custo apagado será reposto.");
+			else
+				lstrResult.append("Os centros de custo apagados serão repostos.");
+			lstrResult.append(pstrLineBreak);
+		}
+
+		return lstrResult.toString();
+	}
+
+	public String UndoLongDesc(String pstrLineBreak)
+	{
+		StringBuilder lstrResult;
+		int i;
+
+		lstrResult = new StringBuilder();
+
+		if ( (marrCreate != null) && (marrCreate.length > 0) )
+		{
+			if ( marrCreate.length == 1 )
+			{
+				lstrResult.append("Foi apagado 1 centro de custo:");
+				lstrResult.append(pstrLineBreak);
+				Describe(lstrResult, marrCreate[0], pstrLineBreak);
+			}
+			else
+			{
+				lstrResult.append("Foram apagados ");
+				lstrResult.append(marrCreate.length);
+				lstrResult.append(" centros de custo:");
+				lstrResult.append(pstrLineBreak);
+				for ( i = 0; i < marrCreate.length; i++ )
+				{
+					lstrResult.append("Centro de custo ");
+					lstrResult.append(i + 1);
+					lstrResult.append(":");
+					lstrResult.append(pstrLineBreak);
+					Describe(lstrResult, marrCreate[i], pstrLineBreak);
+				}
+			}
+		}
+
+		if ( (marrModify != null) && (marrModify.length > 0) )
+		{
+			if ( marrModify.length == 1 )
+			{
+				lstrResult.append("Foram repostos os valores de 1 centro de custo:");
+				lstrResult.append(pstrLineBreak);
+				Describe(lstrResult, marrModify[0].mobjPrevValues, pstrLineBreak);
+			}
+			else
+			{
+				lstrResult.append("Foram repostos os valores de ");
+				lstrResult.append(marrModify.length);
+				lstrResult.append(" centros de custo:");
+				lstrResult.append(pstrLineBreak);
+				for ( i = 0; i < marrModify.length; i++ )
+				{
+					lstrResult.append("Centro de custo ");
+					lstrResult.append(i + 1);
+					lstrResult.append(":");
+					lstrResult.append(pstrLineBreak);
+					Describe(lstrResult, marrModify[i].mobjPrevValues, pstrLineBreak);
+				}
+			}
+		}
+
+		if ( (marrDelete != null) && (marrDelete.length > 0) )
+		{
+			if ( marrDelete.length == 1 )
+			{
+				lstrResult.append("Foi reposto 1 centro de custo:");
+				lstrResult.append(pstrLineBreak);
+				Describe(lstrResult, marrDelete[0], pstrLineBreak);
+			}
+			else
+			{
+				lstrResult.append("Foram repostos ");
+				lstrResult.append(marrDelete.length);
+				lstrResult.append(" centros de custo:");
+				lstrResult.append(pstrLineBreak);
+				for ( i = 0; i < marrDelete.length; i++ )
+				{
+					lstrResult.append("Centro de custo ");
+					lstrResult.append(i + 1);
+					lstrResult.append(":");
+					lstrResult.append(pstrLineBreak);
+					Describe(lstrResult, marrDelete[i], pstrLineBreak);
+				}
+			}
+		}
+
+		return lstrResult.toString();
+	}
+
+	protected void Undo(SQLServer pdb) throws JewelPetriException
+	{
+		int i;
+		CostCenter lobjAux;
+		Entity lrefCostCenters;
+
+		try
+		{
+			if ( marrCreate != null )
+			{
+				lrefCostCenters = Entity.GetInstance(Engine.FindEntity(Engine.getCurrentNameSpace(),
+						Constants.ObjID_CostCenter));
+
+				for ( i = 0; i < marrCreate.length; i++ )
+					lrefCostCenters.Delete(pdb, marrCreate[i].mid);
+			}
+
+			if ( marrModify != null )
+			{
+				for ( i = 0; i < marrModify.length; i++ )
+				{
+					lobjAux = CostCenter.GetInstance(Engine.getCurrentNameSpace(), marrModify[i].mid);
+					lobjAux.setAt(0, marrModify[i].mobjPrevValues.mstrCode);
+					lobjAux.setAt(1, marrModify[i].mobjPrevValues.mstrName);
+					lobjAux.SaveToDb(pdb);
+				}
+			}
+
+			if ( marrDelete != null )
+			{
+				for ( i = 0; i < marrDelete.length; i++ )
+				{
+					lobjAux = CostCenter.GetInstance(Engine.getCurrentNameSpace(), (UUID)null);
+					lobjAux.setAt(0, marrDelete[i].mstrCode);
+					lobjAux.setAt(1, marrDelete[i].mstrName);
+					lobjAux.SaveToDb(pdb);
 				}
 			}
 		}

@@ -40,6 +40,11 @@ public class ManageClientGroups
 		super(pidProcess);
 	}
 
+	protected UUID OpID()
+	{
+		return Constants.OPID_ManageGroups;
+	}
+
 	public String ShortDesc()
 	{
 		return "Gestão de Grupos de Clientes";
@@ -128,11 +133,6 @@ public class ManageClientGroups
 		}
 
 		return lstrResult.toString();
-	}
-
-	protected UUID OpID()
-	{
-		return Constants.OPID_ManageGroups;
 	}
 
 	protected void Run(SQLServer pdb)

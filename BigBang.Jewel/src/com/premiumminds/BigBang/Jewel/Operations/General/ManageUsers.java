@@ -11,7 +11,7 @@ import Jewel.Engine.Implementation.User;
 import Jewel.Engine.Security.Password;
 import Jewel.Engine.SysObjects.ObjectBase;
 import Jewel.Petri.SysObjects.JewelPetriException;
-import Jewel.Petri.SysObjects.Operation;
+import Jewel.Petri.SysObjects.UndoableOperation;
 
 import com.premiumminds.BigBang.Jewel.BigBangJewelException;
 import com.premiumminds.BigBang.Jewel.Constants;
@@ -19,7 +19,7 @@ import com.premiumminds.BigBang.Jewel.Objects.CostCenter;
 import com.premiumminds.BigBang.Jewel.Objects.UserDecoration;
 
 public class ManageUsers
-	extends Operation
+	extends UndoableOperation
 {
 	private static final long serialVersionUID = 1L;
 
@@ -45,6 +45,11 @@ public class ManageUsers
 	public ManageUsers(UUID pidProcess)
 	{
 		super(pidProcess);
+	}
+
+	protected UUID OpID()
+	{
+		return Constants.OPID_ManageUsers;
 	}
 
 	public String ShortDesc()
@@ -135,58 +140,6 @@ public class ManageUsers
 		}
 
 		return lstrResult.toString();
-	}
-
-	public String UndoDesc(String pstrLineBreak)
-	{
-		StringBuilder lstrResult;
-		int i;
-
-		lstrResult = new StringBuilder();
-
-		if ( (marrCreate != null) && (marrCreate.length > 0) )
-		{
-			if ( marrCreate.length == 1 )
-				lstrResult.append("O utilizador criado será apagado.");
-			else
-				lstrResult.append("Os utilizadores criados serão apagados.");
-			lstrResult.append(pstrLineBreak);
-		}
-
-		if ( (marrModify != null) && (marrModify.length > 0) )
-		{
-			lstrResult.append("Serão repostos os valores anteriores:");
-			lstrResult.append(pstrLineBreak);
-			if ( marrModify.length == 1 )
-				Describe(lstrResult, marrModify[0].mobjPrevValues, pstrLineBreak);
-			else
-			{
-				for ( i = 0; i < marrModify.length; i++ )
-				{
-					lstrResult.append("Utilizador ");
-					lstrResult.append(i + 1);
-					lstrResult.append(":");
-					lstrResult.append(pstrLineBreak);
-					Describe(lstrResult, marrModify[i].mobjPrevValues, pstrLineBreak);
-				}
-			}
-		}
-
-		if ( (marrDelete != null) && (marrDelete.length > 0) )
-		{
-			if ( marrDelete.length == 1 )
-				lstrResult.append("O utilizador apagado será reposto.");
-			else
-				lstrResult.append("Os utilizadores apagados serão repostos.");
-			lstrResult.append(pstrLineBreak);
-		}
-
-		return lstrResult.toString();
-	}
-
-	protected UUID OpID()
-	{
-		return Constants.OPID_ManageUsers;
 	}
 
 	protected void Run(SQLServer pdb)
@@ -300,6 +253,235 @@ public class ManageUsers
 
 					lrefDecorations.Delete(pdb, lobjAuxOuter.getKey());
 					lrefUsers.Delete(pdb, lobjAuxBase.getKey());
+				}
+			}
+		}
+		catch (Throwable e)
+		{
+			throw new JewelPetriException(e.getMessage(), e);
+		}
+	}
+
+	public String UndoDesc(String pstrLineBreak)
+	{
+		StringBuilder lstrResult;
+		int i;
+
+		lstrResult = new StringBuilder();
+
+		if ( (marrCreate != null) && (marrCreate.length > 0) )
+		{
+			if ( marrCreate.length == 1 )
+				lstrResult.append("O utilizador criado será apagado.");
+			else
+				lstrResult.append("Os utilizadores criados serão apagados.");
+			lstrResult.append(pstrLineBreak);
+		}
+
+		if ( (marrModify != null) && (marrModify.length > 0) )
+		{
+			lstrResult.append("Serão repostos os valores anteriores:");
+			lstrResult.append(pstrLineBreak);
+			if ( marrModify.length == 1 )
+				Describe(lstrResult, marrModify[0].mobjPrevValues, pstrLineBreak);
+			else
+			{
+				for ( i = 0; i < marrModify.length; i++ )
+				{
+					lstrResult.append("Utilizador ");
+					lstrResult.append(i + 1);
+					lstrResult.append(":");
+					lstrResult.append(pstrLineBreak);
+					Describe(lstrResult, marrModify[i].mobjPrevValues, pstrLineBreak);
+				}
+			}
+		}
+
+		if ( (marrDelete != null) && (marrDelete.length > 0) )
+		{
+			if ( marrDelete.length == 1 )
+				lstrResult.append("O utilizador apagado será reposto.");
+			else
+				lstrResult.append("Os utilizadores apagados serão repostos.");
+			lstrResult.append(pstrLineBreak);
+		}
+
+		return lstrResult.toString();
+	}
+
+	public String UndoLongDesc(String pstrLineBreak)
+	{
+		StringBuilder lstrResult;
+		int i;
+
+		lstrResult = new StringBuilder();
+
+		if ( (marrCreate != null) && (marrCreate.length > 0) )
+		{
+			if ( marrCreate.length == 1 )
+			{
+				lstrResult.append("Foi apagado 1 utilizador:");
+				lstrResult.append(pstrLineBreak);
+				Describe(lstrResult, marrCreate[0], pstrLineBreak);
+			}
+			else
+			{
+				lstrResult.append("Foram apagados ");
+				lstrResult.append(marrCreate.length);
+				lstrResult.append(" utilizadores:");
+				lstrResult.append(pstrLineBreak);
+				for ( i = 0; i < marrCreate.length; i++ )
+				{
+					lstrResult.append("Utilizador ");
+					lstrResult.append(i + 1);
+					lstrResult.append(":");
+					lstrResult.append(pstrLineBreak);
+					Describe(lstrResult, marrCreate[i], pstrLineBreak);
+				}
+			}
+		}
+
+		if ( (marrModify != null) && (marrModify.length > 0) )
+		{
+			if ( marrModify.length == 1 )
+			{
+				lstrResult.append("Foram repostos os valores de 1 utilizador:");
+				lstrResult.append(pstrLineBreak);
+				Describe(lstrResult, marrModify[0], pstrLineBreak);
+			}
+			else
+			{
+				lstrResult.append("Foram repostos os valores de ");
+				lstrResult.append(marrModify.length);
+				lstrResult.append(" utilizadores:");
+				lstrResult.append(pstrLineBreak);
+				for ( i = 0; i < marrModify.length; i++ )
+				{
+					lstrResult.append("Utilizador ");
+					lstrResult.append(i + 1);
+					lstrResult.append(":");
+					lstrResult.append(pstrLineBreak);
+					Describe(lstrResult, marrModify[i], pstrLineBreak);
+				}
+			}
+		}
+
+		if ( (marrDelete != null) && (marrDelete.length > 0) )
+		{
+			if ( marrDelete.length == 1 )
+			{
+				lstrResult.append("Foi reposto 1 utilizador:");
+				lstrResult.append(pstrLineBreak);
+				Describe(lstrResult, marrDelete[0], pstrLineBreak);
+			}
+			else
+			{
+				lstrResult.append("Foram repostos ");
+				lstrResult.append(marrDelete.length);
+				lstrResult.append(" utilizadores:");
+				lstrResult.append(pstrLineBreak);
+				for ( i = 0; i < marrDelete.length; i++ )
+				{
+					lstrResult.append("Utilizador ");
+					lstrResult.append(i + 1);
+					lstrResult.append(":");
+					lstrResult.append(pstrLineBreak);
+					Describe(lstrResult, marrDelete[i], pstrLineBreak);
+				}
+			}
+		}
+
+		return lstrResult.toString();
+	}
+
+	protected void Undo(SQLServer pdb) throws JewelPetriException
+	{
+		UUID lidUsers;
+		int i;
+		UserDecoration lobjAuxOuter;
+		User lobjAuxBase;
+		User lobjAuxCurrent;
+		Entity lrefDecorations;
+		Entity lrefUsers;
+
+		try
+		{
+        	lidUsers = Engine.FindEntity(Engine.getCurrentNameSpace(), ObjectGUIDs.O_User);
+			lobjAuxCurrent = User.GetInstance(Engine.getCurrentNameSpace(), Engine.getCurrentUser());
+
+			if ( marrCreate != null )
+			{
+				lrefDecorations = Entity.GetInstance(Engine.FindEntity(Engine.getCurrentNameSpace(),
+						Constants.ObjID_Decorations));
+				lrefUsers = Entity.GetInstance(lidUsers);
+
+				for ( i = 0; i < marrCreate.length; i++ )
+				{
+					lobjAuxOuter = UserDecoration.GetInstance(Engine.getCurrentNameSpace(), marrCreate[i].mid);
+					lobjAuxBase = (User)Engine.GetWorkInstance(lidUsers, (UUID)lobjAuxOuter.getAt(0));
+
+					if ( lobjAuxBase.getKey().equals(Engine.getCurrentUser()) )
+						throw new BigBangJewelException("Sem permissão: Não pode desfazer a sua própria criação.");
+					if ( lobjAuxBase.getProfile().getKey().equals(Constants.ProfileID_Root) &&
+							!lobjAuxCurrent.getProfile().getKey().equals(Constants.ProfileID_Root) )
+						throw new BigBangJewelException("Sem permissão: Só um utilizador Root pode desfazer a criação de outros utilizadores Root.");
+
+					lrefDecorations.Delete(pdb, lobjAuxOuter.getKey());
+					lrefUsers.Delete(pdb, lobjAuxBase.getKey());
+				}
+			}
+
+			if ( marrModify != null )
+			{
+				for ( i = 0; i < marrModify.length; i++ )
+				{
+					if ( marrModify[i].mobjPrevValues.midProfile.equals(Constants.ProfileID_Root) &&
+							!lobjAuxCurrent.getProfile().getKey().equals(Constants.ProfileID_Root) )
+						throw new BigBangJewelException("Sem permissão: Só um utilizador Root pode repôr privilégio de Root a outros utilizadores.");
+					if ( lobjAuxCurrent.getKey().equals(marrModify[i].mid) &&
+							lobjAuxCurrent.getProfile().getKey().equals(Constants.ProfileID_Root) &&
+							!marrModify[i].mobjPrevValues.midProfile.equals(Constants.ProfileID_Root) )
+						throw new BigBangJewelException("Sem permissão: Não pode desfazer alterações que lhe deram o seu próprio privilégio de Root.");
+
+					lobjAuxOuter = UserDecoration.GetInstance(Engine.getCurrentNameSpace(), marrModify[i].mid);
+					lobjAuxBase = (User)Engine.GetWorkInstance(lidUsers, (UUID)lobjAuxOuter.getAt(0));
+
+					if ( lobjAuxBase.getProfile().getKey().equals(Constants.ProfileID_Root) &&
+							!lobjAuxCurrent.getProfile().getKey().equals(Constants.ProfileID_Root) )
+						throw new BigBangJewelException("Sem permissão: Só um utilizador Root pode desfazer alterações a outros utilizadores Root.");
+
+					lobjAuxBase.setAt(0, marrModify[i].mobjPrevValues.mstrFullName);
+					lobjAuxBase.setAt(1, marrModify[i].mobjPrevValues.mstrUsername);
+					lobjAuxBase.setAt(2, marrModify[i].mobjPrevValues.mobjPassword);
+					lobjAuxBase.setAt(3, marrModify[i].mobjPrevValues.midProfile);
+					lobjAuxBase.SaveToDb(pdb);
+
+					lobjAuxOuter.setAt(1, marrModify[i].mobjPrevValues.mstrEmail);
+					lobjAuxOuter.setAt(2, marrModify[i].mobjPrevValues.midCostCenter);
+					lobjAuxOuter.SaveToDb(pdb);
+				}
+			}
+
+			if ( marrDelete != null )
+			{
+				for ( i = 0; i < marrDelete.length; i++ )
+				{
+					if ( marrDelete[i].midProfile.equals(Constants.ProfileID_Root) &&
+							!lobjAuxCurrent.getProfile().getKey().equals(Constants.ProfileID_Root) )
+						throw new BigBangJewelException("Sem permissão: Só um utilizador Root pode repôr outros utilizadores Root.");
+
+					lobjAuxBase = (User)Engine.GetWorkInstance(lidUsers, (UUID)null);
+					lobjAuxBase.setAt(0, marrDelete[i].mstrFullName);
+					lobjAuxBase.setAt(1, marrDelete[i].mstrUsername);
+					lobjAuxBase.setAt(2, marrDelete[i].mobjPassword);
+					lobjAuxBase.setAt(3, marrDelete[i].midProfile);
+					lobjAuxBase.SaveToDb(pdb);
+
+					lobjAuxOuter = UserDecoration.GetInstance(Engine.getCurrentNameSpace(), (UUID)null);
+					lobjAuxOuter.setAt(0, lobjAuxBase.getKey());
+					lobjAuxOuter.setAt(1, marrDelete[i].mstrEmail);
+					lobjAuxOuter.setAt(2, marrDelete[i].midCostCenter);
+					lobjAuxOuter.SaveToDb(pdb);
 				}
 			}
 		}

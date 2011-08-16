@@ -64,6 +64,12 @@ public class Constants
 	public static final UUID OPID_DeleteClient       = UUID.fromString("EA560433-17DF-4E0A-A7BC-9F3300EAFD78");
 	public static final UUID OPID_UndoGroups         = UUID.fromString("742FCF0E-FD17-439A-A810-9F3300CCF026");
 	public static final UUID OPID_UndoCoefficients   = UUID.fromString("B841D5C5-CCA9-4E25-B88C-9F3300E64E61");
+	public static final UUID OPID_UndoCostCenters    = UUID.fromString("438CC18F-51A7-4037-A5B4-9F3300CCBD74");
+	public static final UUID OPID_UndoCompanies      = UUID.fromString("266E812E-53F0-4968-AC6C-9F3300E68E03");
+	public static final UUID OPID_UndoLines          = UUID.fromString("D4E44325-B8F8-450B-9949-9F3300E6AB0E");
+	public static final UUID OPID_UndoMediators      = UUID.fromString("3A1572FF-B1C6-4DEC-9819-9F3300E6DA84");
+	public static final UUID OPID_UndoUsers          = UUID.fromString("F71DF6CC-C58E-4AA7-9BE5-9F3300E6FD4F");
+	public static final UUID OPID_UndoDeleteClient   = UUID.fromString("711B9533-8298-4DA5-BFD1-9F3D01211F51");
 
 	// Client Types 
 	public static final UUID TypeID_Individual = UUID.fromString("462096E4-68A2-408A-963A-9EE600C9556A");

@@ -9,7 +9,7 @@ import Jewel.Engine.DataAccess.SQLServer;
 import Jewel.Engine.Implementation.Entity;
 import Jewel.Engine.SysObjects.ObjectBase;
 import Jewel.Petri.SysObjects.JewelPetriException;
-import Jewel.Petri.SysObjects.Operation;
+import Jewel.Petri.SysObjects.UndoableOperation;
 
 import com.premiumminds.BigBang.Jewel.Constants;
 import com.premiumminds.BigBang.Jewel.Objects.Company;
@@ -19,7 +19,7 @@ import com.premiumminds.BigBang.Jewel.Operations.ContactOps;
 import com.premiumminds.BigBang.Jewel.Operations.DocOps;
 
 public class ManageInsurers
-	extends Operation
+	extends UndoableOperation
 {
 	private static final long serialVersionUID = 1L;
 
@@ -52,6 +52,11 @@ public class ManageInsurers
 	public ManageInsurers(UUID pidProcess)
 	{
 		super(pidProcess);
+	}
+
+	protected UUID OpID()
+	{
+		return Constants.OPID_ManageCompanies;
 	}
 
 	public String ShortDesc()
@@ -172,64 +177,6 @@ public class ManageInsurers
 		}
 
 		return lstrResult.toString();
-	}
-
-	public String UndoDesc(String pstrLineBreak)
-	{
-		StringBuilder lstrResult;
-		int i;
-
-		lstrResult = new StringBuilder();
-
-		if ( (marrCreate != null) && (marrCreate.length > 0) )
-		{
-			if ( marrCreate.length == 1 )
-				lstrResult.append("A seguradora criada será apagada.");
-			else
-				lstrResult.append("As seguradoras criadas serão apagadas.");
-			lstrResult.append(pstrLineBreak);
-		}
-
-		if ( (marrModify != null) && (marrModify.length > 0) )
-		{
-			lstrResult.append("Serão repostos os valores anteriores:");
-			lstrResult.append(pstrLineBreak);
-			if ( marrModify.length == 1 )
-				Describe(lstrResult, marrModify[0].mobjPrevValues, pstrLineBreak);
-			else
-			{
-				for ( i = 0; i < marrModify.length; i++ )
-				{
-					lstrResult.append("Seguradora ");
-					lstrResult.append(i + 1);
-					lstrResult.append(":");
-					lstrResult.append(pstrLineBreak);
-					Describe(lstrResult, marrModify[i].mobjPrevValues, pstrLineBreak);
-				}
-			}
-		}
-
-		if ( (marrDelete != null) && (marrDelete.length > 0) )
-		{
-			if ( marrDelete.length == 1 )
-				lstrResult.append("A seguradora apagada será reposta.");
-			else
-				lstrResult.append("As seguradoras apagadas serão repostas.");
-			lstrResult.append(pstrLineBreak);
-		}
-
-		if ( mobjContactOps != null )
-			mobjContactOps.UndoDesc(lstrResult, pstrLineBreak);
-
-		if ( mobjDocOps  != null )
-			mobjDocOps.UndoDesc(lstrResult, pstrLineBreak);
-
-		return lstrResult.toString();
-	}
-
-	protected UUID OpID()
-	{
-		return Constants.OPID_ManageCompanies;
 	}
 
 	protected void Run(SQLServer pdb)
@@ -354,6 +301,249 @@ public class ManageInsurers
 
 			if ( mobjDocOps != null )
 				mobjDocOps.RunSubOp(pdb, null);
+		}
+		catch (Throwable e)
+		{
+			throw new JewelPetriException(e.getMessage(), e);
+		}
+	}
+
+	public String UndoDesc(String pstrLineBreak)
+	{
+		StringBuilder lstrResult;
+		int i;
+
+		lstrResult = new StringBuilder();
+
+		if ( (marrCreate != null) && (marrCreate.length > 0) )
+		{
+			if ( marrCreate.length == 1 )
+				lstrResult.append("A seguradora criada será apagada.");
+			else
+				lstrResult.append("As seguradoras criadas serão apagadas.");
+			lstrResult.append(pstrLineBreak);
+		}
+
+		if ( (marrModify != null) && (marrModify.length > 0) )
+		{
+			lstrResult.append("Serão repostos os valores anteriores:");
+			lstrResult.append(pstrLineBreak);
+			if ( marrModify.length == 1 )
+				Describe(lstrResult, marrModify[0].mobjPrevValues, pstrLineBreak);
+			else
+			{
+				for ( i = 0; i < marrModify.length; i++ )
+				{
+					lstrResult.append("Seguradora ");
+					lstrResult.append(i + 1);
+					lstrResult.append(":");
+					lstrResult.append(pstrLineBreak);
+					Describe(lstrResult, marrModify[i].mobjPrevValues, pstrLineBreak);
+				}
+			}
+		}
+
+		if ( (marrDelete != null) && (marrDelete.length > 0) )
+		{
+			if ( marrDelete.length == 1 )
+				lstrResult.append("A seguradora apagada será reposta.");
+			else
+				lstrResult.append("As seguradoras apagadas serão repostas.");
+			lstrResult.append(pstrLineBreak);
+		}
+
+		if ( mobjContactOps != null )
+			mobjContactOps.UndoDesc(lstrResult, pstrLineBreak);
+
+		if ( mobjDocOps  != null )
+			mobjDocOps.UndoDesc(lstrResult, pstrLineBreak);
+
+		return lstrResult.toString();
+	}
+
+	public String UndoLongDesc(String pstrLineBreak)
+	{
+		StringBuilder lstrResult;
+		int i;
+
+		lstrResult = new StringBuilder();
+
+		if ( (marrCreate != null) && (marrCreate.length > 0) )
+		{
+			if ( marrCreate.length == 1 )
+			{
+				lstrResult.append("Foi apagada 1 seguradora:");
+				lstrResult.append(pstrLineBreak);
+				Describe(lstrResult, marrCreate[0], pstrLineBreak);
+				if ( marrCreate[0].mobjContactOps != null )
+					marrCreate[0].mobjContactOps.UndoLongDesc(lstrResult, pstrLineBreak);
+				if ( marrCreate[0].mobjDocOps != null )
+					marrCreate[0].mobjDocOps.UndoLongDesc(lstrResult, pstrLineBreak);
+			}
+			else
+			{
+				lstrResult.append("Foram apagadas ");
+				lstrResult.append(marrCreate.length);
+				lstrResult.append(" seguradoras:");
+				lstrResult.append(pstrLineBreak);
+				for ( i = 0; i < marrCreate.length; i++ )
+				{
+					lstrResult.append("Seguradora ");
+					lstrResult.append(i + 1);
+					lstrResult.append(":");
+					lstrResult.append(pstrLineBreak);
+					Describe(lstrResult, marrCreate[i], pstrLineBreak);
+					if ( marrCreate[i].mobjContactOps != null )
+						marrCreate[i].mobjContactOps.UndoLongDesc(lstrResult, pstrLineBreak);
+					if ( marrCreate[i].mobjDocOps != null )
+						marrCreate[i].mobjDocOps.UndoLongDesc(lstrResult, pstrLineBreak);
+				}
+			}
+		}
+
+		if ( (marrModify != null) && (marrModify.length > 0) )
+		{
+			if ( marrModify.length == 1 )
+			{
+				lstrResult.append("Foram repostos os valores de 1 seguradora:");
+				lstrResult.append(pstrLineBreak);
+				Describe(lstrResult, marrModify[0].mobjPrevValues, pstrLineBreak);
+			}
+			else
+			{
+				lstrResult.append("Foram repostos os valores de ");
+				lstrResult.append(marrModify.length);
+				lstrResult.append(" seguradoras:");
+				lstrResult.append(pstrLineBreak);
+				for ( i = 0; i < marrModify.length; i++ )
+				{
+					lstrResult.append("Seguradora ");
+					lstrResult.append(i + 1);
+					lstrResult.append(":");
+					lstrResult.append(pstrLineBreak);
+					Describe(lstrResult, marrModify[i].mobjPrevValues, pstrLineBreak);
+				}
+			}
+		}
+
+		if ( (marrDelete != null) && (marrDelete.length > 0) )
+		{
+			if ( marrDelete.length == 1 )
+			{
+				lstrResult.append("Foi reposta 1 seguradora:");
+				lstrResult.append(pstrLineBreak);
+				Describe(lstrResult, marrDelete[0], pstrLineBreak);
+				if ( marrDelete[0].mobjContactOps != null )
+					marrDelete[0].mobjContactOps.UndoLongDesc(lstrResult, pstrLineBreak);
+				if ( marrDelete[0].mobjDocOps != null )
+					marrDelete[0].mobjDocOps.UndoLongDesc(lstrResult, pstrLineBreak);
+			}
+			else
+			{
+				lstrResult.append("Foram repostas ");
+				lstrResult.append(marrDelete.length);
+				lstrResult.append(" seguradoras:");
+				lstrResult.append(pstrLineBreak);
+				for ( i = 0; i < marrDelete.length; i++ )
+				{
+					lstrResult.append("Seguradora ");
+					lstrResult.append(i + 1);
+					lstrResult.append(":");
+					lstrResult.append(pstrLineBreak);
+					Describe(lstrResult, marrDelete[i], pstrLineBreak);
+					if ( marrDelete[i].mobjContactOps != null )
+						marrDelete[i].mobjContactOps.UndoLongDesc(lstrResult, pstrLineBreak);
+					if ( marrDelete[i].mobjDocOps != null )
+						marrDelete[i].mobjDocOps.UndoLongDesc(lstrResult, pstrLineBreak);
+				}
+			}
+		}
+
+		if ( mobjContactOps != null )
+		{
+			lstrResult.append("Operações sobre contactos de seguradoras:");
+			lstrResult.append(pstrLineBreak);
+			mobjContactOps.UndoLongDesc(lstrResult, pstrLineBreak);
+		}
+
+		if ( mobjDocOps  != null )
+		{
+			lstrResult.append("Operações sobre documentos de seguradoras:");
+			lstrResult.append(pstrLineBreak);
+			mobjDocOps.UndoLongDesc(lstrResult, pstrLineBreak);
+		}
+
+		return lstrResult.toString();
+	}
+
+	protected void Undo(SQLServer pdb) throws JewelPetriException
+	{
+		int i;
+		Company lobjAux;
+		Entity lrefCompanies;
+
+		try
+		{
+			if ( marrCreate != null )
+			{
+				lrefCompanies = Entity.GetInstance(Engine.FindEntity(Engine.getCurrentNameSpace(),
+						Constants.ObjID_Company));
+
+				for ( i = 0; i < marrCreate.length; i++ )
+				{
+					if ( marrCreate[i].mobjContactOps != null )
+						marrCreate[i].mobjContactOps.UndoSubOp(pdb, null);
+					if ( marrCreate[i].mobjDocOps != null )
+						marrCreate[i].mobjDocOps.UndoSubOp(pdb, null);
+					lrefCompanies.Delete(pdb, marrCreate[i].mid);
+				}
+			}
+
+			if ( marrModify != null )
+			{
+				for ( i = 0; i < marrModify.length; i++ )
+				{
+					lobjAux = Company.GetInstance(Engine.getCurrentNameSpace(), marrModify[i].mid);
+					lobjAux.setAt(0, marrModify[i].mobjPrevValues.mstrName);
+					lobjAux.setAt(1, marrModify[i].mobjPrevValues.mstrAcronym);
+					lobjAux.setAt(2, marrModify[i].mobjPrevValues.mstrISPNumber);
+					lobjAux.setAt(3, marrModify[i].mobjPrevValues.mstrMedCode);
+					lobjAux.setAt(4, marrModify[i].mobjPrevValues.mstrFiscalNumber);
+					lobjAux.setAt(5, marrModify[i].mobjPrevValues.mstrBankID);
+					lobjAux.setAt(6, marrModify[i].mobjPrevValues.mstrAddress1);
+					lobjAux.setAt(7, marrModify[i].mobjPrevValues.mstrAddress2);
+					lobjAux.setAt(8, marrModify[i].mobjPrevValues.midZipCode);
+					lobjAux.SaveToDb(pdb);
+				}
+			}
+
+			if ( marrDelete != null )
+			{
+				for ( i = 0; i < marrDelete.length; i++ )
+				{
+					lobjAux = Company.GetInstance(Engine.getCurrentNameSpace(), (UUID)null);
+					lobjAux.setAt(0, marrDelete[i].mstrName);
+					lobjAux.setAt(1, marrDelete[i].mstrAcronym);
+					lobjAux.setAt(2, marrDelete[i].mstrISPNumber);
+					lobjAux.setAt(3, marrDelete[i].mstrMedCode);
+					lobjAux.setAt(4, marrDelete[i].mstrFiscalNumber);
+					lobjAux.setAt(5, marrDelete[i].mstrBankID);
+					lobjAux.setAt(6, marrDelete[i].mstrAddress1);
+					lobjAux.setAt(7, marrDelete[i].mstrAddress2);
+					lobjAux.setAt(8, marrDelete[i].midZipCode);
+					lobjAux.SaveToDb(pdb);
+					if ( marrDelete[i].mobjContactOps != null )
+						marrDelete[i].mobjContactOps.UndoSubOp(pdb, lobjAux.getKey());
+					if ( marrDelete[i].mobjDocOps != null )
+						marrDelete[i].mobjDocOps.UndoSubOp(pdb, lobjAux.getKey());
+				}
+			}
+
+			if ( mobjContactOps != null )
+				mobjContactOps.UndoSubOp(pdb, null);
+
+			if ( mobjDocOps != null )
+				mobjDocOps.UndoSubOp(pdb, null);
 		}
 		catch (Throwable e)
 		{

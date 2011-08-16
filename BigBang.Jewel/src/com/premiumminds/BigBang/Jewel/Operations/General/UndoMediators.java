@@ -1,5 +1,28 @@
 package com.premiumminds.BigBang.Jewel.Operations.General;
 
-public class UndoMediators {
+import java.util.UUID;
 
+import Jewel.Petri.SysObjects.UndoOperation;
+
+import com.premiumminds.BigBang.Jewel.Constants;
+
+public class UndoMediators
+	extends UndoOperation
+{
+	private static final long serialVersionUID = 1L;
+
+	public UndoMediators(UUID pidProcess)
+	{
+		super(pidProcess);
+	}
+
+	protected UUID OpID()
+	{
+		return Constants.OPID_UndoMediators;
+	}
+
+	public String ShortDesc()
+	{
+		return "Desfazer Gestão de Mediadores";
+	}
 }

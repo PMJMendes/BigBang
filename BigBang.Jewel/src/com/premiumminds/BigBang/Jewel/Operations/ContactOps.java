@@ -132,6 +132,42 @@ public class ContactOps
 		}
 	}
 
+	public void RunSubOp(SQLServer pdb, UUID pidOwner)
+		throws JewelPetriException
+	{
+		int i;
+
+		try
+		{
+			if ( marrCreate != null )
+			{
+				for ( i = 0; i < marrCreate.length; i++ )
+				{
+					if ( pidOwner == null )
+						CreateContact(pdb, marrCreate[i], marrCreate[i].midOwnerId);
+					else
+						CreateContact(pdb, marrCreate[i], pidOwner);
+				}
+			}
+
+			if ( marrModify != null )
+			{
+				for ( i = 0; i < marrModify.length; i++ )
+					ModifyContact(pdb, marrModify[i]);
+			}
+
+			if ( marrDelete != null )
+			{
+				for ( i = 0; i < marrDelete.length; i++ )
+					DeleteContact(pdb, marrDelete[i]);
+			}
+		}
+		catch (Throwable e)
+		{
+			throw new JewelPetriException(e.getMessage(), e);
+		}
+	}
+
 	public void UndoDesc(StringBuilder pstrResult, String pstrLineBreak)
 	{
 		int i;
@@ -174,7 +210,87 @@ public class ContactOps
 		}
 	}
 
-	public void RunSubOp(SQLServer pdb, UUID pidOwner)
+	public void UndoLongDesc(StringBuilder pstrResult, String pstrLineBreak)
+	{
+		int i;
+
+		if ( (marrCreate != null) && (marrCreate.length > 0) )
+		{
+			if ( marrCreate.length == 1 )
+			{
+				pstrResult.append("Foi apagado 1 contacto:");
+				pstrResult.append(pstrLineBreak);
+				Describe(pstrResult, marrCreate[0], pstrLineBreak, true);
+			}
+			else
+			{
+				pstrResult.append("Foram apagados ");
+				pstrResult.append(marrCreate.length);
+				pstrResult.append(" contactos:");
+				pstrResult.append(pstrLineBreak);
+				for ( i = 0; i < marrCreate.length; i++ )
+				{
+					pstrResult.append("Contacto ");
+					pstrResult.append(i + 1);
+					pstrResult.append(":");
+					pstrResult.append(pstrLineBreak);
+					Describe(pstrResult, marrCreate[i], pstrLineBreak, true);
+				}
+			}
+		}
+
+		if ( (marrModify != null) && (marrModify.length > 0) )
+		{
+			if ( marrModify.length == 1 )
+			{
+				pstrResult.append("Foi reposta a definição de 1 contacto:");
+				pstrResult.append(pstrLineBreak);
+				Describe(pstrResult, marrModify[0].mobjPrevValues, pstrLineBreak, false);
+			}
+			else
+			{
+				pstrResult.append("Foram repostas as definições de ");
+				pstrResult.append(marrModify.length);
+				pstrResult.append(" contactos:");
+				pstrResult.append(pstrLineBreak);
+				for ( i = 0; i < marrModify.length; i++ )
+				{
+					pstrResult.append("Contacto ");
+					pstrResult.append(i + 1);
+					pstrResult.append(":");
+					pstrResult.append(pstrLineBreak);
+					Describe(pstrResult, marrModify[i].mobjPrevValues, pstrLineBreak, false);
+				}
+			}
+		}
+
+		if ( (marrDelete != null) && (marrDelete.length > 0) )
+		{
+			if ( marrDelete.length == 1 )
+			{
+				pstrResult.append("Foi reposto 1 contacto:");
+				pstrResult.append(pstrLineBreak);
+				Describe(pstrResult, marrDelete[0], pstrLineBreak, true);
+			}
+			else
+			{
+				pstrResult.append("Foram repostos ");
+				pstrResult.append(marrDelete.length);
+				pstrResult.append(" contactos:");
+				pstrResult.append(pstrLineBreak);
+				for ( i = 0; i < marrDelete.length; i++ )
+				{
+					pstrResult.append("Contacto ");
+					pstrResult.append(i + 1);
+					pstrResult.append(":");
+					pstrResult.append(pstrLineBreak);
+					Describe(pstrResult, marrDelete[i], pstrLineBreak, true);
+				}
+			}
+		}
+	}
+
+	public void UndoSubOp(SQLServer pdb, UUID pidOwner)
 		throws JewelPetriException
 	{
 		int i;
@@ -184,24 +300,24 @@ public class ContactOps
 			if ( marrCreate != null )
 			{
 				for ( i = 0; i < marrCreate.length; i++ )
-				{
-					if ( pidOwner == null )
-						CreateContact(pdb, marrCreate[i], marrCreate[i].midOwnerId);
-					else
-						CreateContact(pdb, marrCreate[i], pidOwner);
-				}
+					UndoCreateContact(pdb, marrCreate[i]);
 			}
 
 			if ( marrModify != null )
 			{
 				for ( i = 0; i < marrModify.length; i++ )
-					ModifyContact(pdb, marrModify[i]);
+					UndoModifyContact(pdb, marrModify[i]);
 			}
 
 			if ( marrDelete != null )
 			{
 				for ( i = 0; i < marrDelete.length; i++ )
-					DeleteContact(pdb, marrDelete[i]);
+				{
+					if ( pidOwner == null )
+						UndoDeleteContact(pdb, marrDelete[i], marrDelete[i].midOwnerId);
+					else
+						UndoDeleteContact(pdb, marrDelete[i], pidOwner);
+				}
 			}
 		}
 		catch (Throwable e)
@@ -401,6 +517,162 @@ public class ContactOps
 		catch (Throwable e)
 		{
 			throw new BigBangJewelException(e.getMessage(), e);
+		}
+	}
+
+	private void UndoCreateContact(SQLServer pdb, ContactData pobjData)
+		throws BigBangJewelException
+	{
+		Contact lobjAux;
+		Entity lrefContacts;
+		Entity lrefContactInfo;
+		int i;
+		ContactInfo[] larrCIAux;
+
+		try
+		{
+			lrefContacts = Entity.GetInstance(Engine.FindEntity(Engine.getCurrentNameSpace(),
+					Constants.ObjID_Contact));
+			lrefContactInfo = Entity.GetInstance(Engine.FindEntity(Engine.getCurrentNameSpace(),
+					Constants.ObjID_ContactInfo));
+
+			lobjAux = Contact.GetInstance(Engine.getCurrentNameSpace(), pobjData.mid);
+
+			if ( pobjData.marrSubContacts != null )
+			{
+				for ( i = 0; i < pobjData.marrSubContacts.length; i++ )
+					UndoCreateContact(pdb, pobjData.marrSubContacts[i]);
+			}
+
+			larrCIAux = lobjAux.getCurrentInfo();
+			for ( i = 0; i < larrCIAux.length; i++ )
+				lrefContactInfo.Delete(pdb, larrCIAux[i].getKey());
+
+			lrefContacts.Delete(pdb, lobjAux.getKey());
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangJewelException(e.getMessage(), e);
+		}
+	}
+
+	private void UndoModifyContact(SQLServer pdb, ContactData pobjData)
+		throws BigBangJewelException
+	{
+		Contact lobjAux;
+		ContactInfo lobjAuxInfo;
+		int i;
+		Entity lrefContactInfo;
+		ContactInfo[] larrCIAux;
+
+		try
+		{
+			lrefContactInfo = Entity.GetInstance(Engine.FindEntity(Engine.getCurrentNameSpace(),
+					Constants.ObjID_ContactInfo));
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangJewelException(e.getMessage(), e);
+		}
+
+		lobjAux = Contact.GetInstance(Engine.getCurrentNameSpace(), pobjData.mid);
+
+		larrCIAux = lobjAux.getCurrentInfo();
+		for ( i = 0; i < larrCIAux.length; i++ )
+		{
+			try
+			{
+				lrefContactInfo.Delete(pdb, larrCIAux[i].getKey());
+			}
+			catch (Throwable e)
+			{
+				throw new BigBangJewelException(e.getMessage(), e);
+			}
+		}
+
+		try
+		{
+			lobjAux.setAt(0, pobjData.mobjPrevValues.mstrName);
+			lobjAux.setAt(1, pobjData.mobjPrevValues.midOwnerType);
+			lobjAux.setAt(2, pobjData.mobjPrevValues.midOwnerId);
+			lobjAux.setAt(3, pobjData.mobjPrevValues.mstrAddress1);
+			lobjAux.setAt(4, pobjData.mobjPrevValues.mstrAddress2);
+			lobjAux.setAt(5, pobjData.mobjPrevValues.midZipCode);
+			lobjAux.setAt(6, pobjData.mobjPrevValues.midContactType);
+			lobjAux.SaveToDb(pdb);
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangJewelException(e.getMessage(), e);
+		}
+
+		if ( pobjData.mobjPrevValues.marrInfo != null )
+		{
+			for ( i = 0; i < pobjData.mobjPrevValues.marrInfo.length; i++ )
+			{
+				lobjAuxInfo = ContactInfo.GetInstance(Engine.getCurrentNameSpace(), (UUID)null);
+				try
+				{
+					lobjAuxInfo.setAt(0, lobjAux.getKey());
+					lobjAuxInfo.setAt(1, pobjData.mobjPrevValues.marrInfo[i].midType);
+					lobjAuxInfo.setAt(2, pobjData.mobjPrevValues.marrInfo[i].mstrValue);
+					lobjAuxInfo.SaveToDb(pdb);
+				}
+				catch (Throwable e)
+				{
+					throw new BigBangJewelException(e.getMessage(), e);
+				}
+			}
+		}
+	}
+
+	private void UndoDeleteContact(SQLServer pdb, ContactData pobjData, UUID pidOwner)
+		throws BigBangJewelException
+	{
+		Contact lobjAux;
+		ContactInfo lobjAuxInfo;
+		int i;
+
+		lobjAux = Contact.GetInstance(Engine.getCurrentNameSpace(), (UUID)null);
+		try
+		{
+			lobjAux.setAt(0, pobjData.mstrName);
+			lobjAux.setAt(1, pobjData.midOwnerType);
+			lobjAux.setAt(2, pidOwner);
+			lobjAux.setAt(3, pobjData.mstrAddress1);
+			lobjAux.setAt(4, pobjData.mstrAddress2);
+			lobjAux.setAt(5, pobjData.midZipCode);
+			lobjAux.setAt(6, pobjData.midContactType);
+			lobjAux.SaveToDb(pdb);
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangJewelException(e.getMessage(), e);
+		}
+
+		if ( pobjData.marrInfo != null )
+		{
+			for ( i = 0; i < pobjData.marrInfo.length; i++ )
+			{
+				lobjAuxInfo = ContactInfo.GetInstance(Engine.getCurrentNameSpace(), (UUID)null);
+				try
+				{
+					lobjAuxInfo.setAt(0, lobjAux.getKey());
+					lobjAuxInfo.setAt(1, pobjData.marrInfo[i].midType);
+					lobjAuxInfo.setAt(2, pobjData.marrInfo[i].mstrValue);
+					lobjAuxInfo.SaveToDb(pdb);
+				}
+				catch (Throwable e)
+				{
+					throw new BigBangJewelException(e.getMessage(), e);
+				}
+			}
+		}
+
+		if ( pobjData.marrSubContacts != null )
+		{
+			for ( i = 0; i < pobjData.marrSubContacts.length; i++ )
+				UndoDeleteContact(pdb, pobjData.marrSubContacts[i], lobjAux.getKey());
 		}
 	}
 

@@ -7,7 +7,7 @@ import Jewel.Engine.DataAccess.SQLServer;
 import Jewel.Engine.Implementation.Entity;
 import Jewel.Petri.Objects.PNProcess;
 import Jewel.Petri.SysObjects.JewelPetriException;
-import Jewel.Petri.SysObjects.Operation;
+import Jewel.Petri.SysObjects.UndoableOperation;
 
 import com.premiumminds.BigBang.Jewel.Constants;
 import com.premiumminds.BigBang.Jewel.Objects.Client;
@@ -18,7 +18,7 @@ import com.premiumminds.BigBang.Jewel.Operations.DocOps;
 import com.premiumminds.BigBang.Jewel.Operations.DataObjects.ClientData;
 
 public class DeleteClient
-	extends Operation
+	extends UndoableOperation
 {
 	private static final long serialVersionUID = 1L;
 
@@ -29,6 +29,11 @@ public class DeleteClient
 	public DeleteClient(UUID pidProcess)
 	{
 		super(pidProcess);
+	}
+
+	protected UUID OpID()
+	{
+		return Constants.OPID_DeleteClient;
 	}
 
 	public String ShortDesc()
@@ -53,16 +58,6 @@ public class DeleteClient
 			mobjDocOps.LongDesc(lstrResult, pstrLineBreak);
 
 		return lstrResult.toString();
-	}
-
-	public String UndoDesc(String pstrLineBreak)
-	{
-		return "O cliente apagado será reposto. O histórico de operações será mantido.";
-	}
-
-	protected UUID OpID()
-	{
-		return Constants.OPID_DeleteClient;
 	}
 
 	protected void Run(SQLServer pdb)
@@ -121,6 +116,58 @@ public class DeleteClient
 			}
 
 			lrefClients.Delete(pdb, mobjData.mid);
+		}
+		catch (Throwable e)
+		{
+			throw new JewelPetriException(e.getMessage(), e);
+		}
+	}
+
+	public String UndoDesc(String pstrLineBreak)
+	{
+		return "O cliente apagado será reposto. O histórico de operações será mantido.";
+	}
+
+	public String UndoLongDesc(String pstrLineBreak)
+	{
+		StringBuilder lstrResult;
+
+		lstrResult = new StringBuilder();
+		lstrResult.append("Foi reposto o seguinte cliente:");
+		lstrResult.append(pstrLineBreak);
+
+		mobjData.Describe(lstrResult, pstrLineBreak);
+
+		if ( mobjContactOps != null )
+			mobjContactOps.UndoLongDesc(lstrResult, pstrLineBreak);
+
+		if ( mobjDocOps != null )
+			mobjDocOps.UndoLongDesc(lstrResult, pstrLineBreak);
+
+		return lstrResult.toString();
+	}
+
+	protected void Undo(SQLServer pdb) throws JewelPetriException
+	{
+		Client lobjAux;
+		PNProcess lobjProcess;
+
+		try
+		{
+			lobjAux = Client.GetInstance(Engine.getCurrentNameSpace(), (UUID)null);
+			mobjData.ToObject(lobjAux);
+			lobjAux.SaveToDb(pdb);
+
+			lobjProcess = (PNProcess)Engine.GetWorkInstance(Engine.FindEntity(Engine.getCurrentNameSpace(),
+					Jewel.Petri.Constants.ObjID_PNProcess), mobjData.midProcess);
+			lobjProcess.setAt(1, lobjAux.getKey());
+			lobjProcess.setAt(4, true);
+			lobjProcess.SaveToDb(pdb);
+
+			if ( mobjContactOps != null )
+				mobjContactOps.UndoSubOp(pdb, lobjAux.getKey());
+			if ( mobjDocOps != null )
+				mobjDocOps.UndoSubOp(pdb, lobjAux.getKey());
 		}
 		catch (Throwable e)
 		{

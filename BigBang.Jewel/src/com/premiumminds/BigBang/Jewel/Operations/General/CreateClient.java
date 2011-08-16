@@ -28,6 +28,11 @@ public class CreateClient
 		super(pidProcess);
 	}
 
+	protected UUID OpID()
+	{
+		return Constants.OPID_CreateClient;
+	}
+
 	public String ShortDesc()
 	{
 		return "Criação de Cliente";
@@ -50,11 +55,6 @@ public class CreateClient
 			mobjDocOps.LongDesc(lstrResult, pstrLineBreak);
 
 		return lstrResult.toString();
-	}
-
-	protected UUID OpID()
-	{
-		return Constants.OPID_CreateClient;
 	}
 
 	protected void Run(SQLServer pdb)
@@ -86,6 +86,7 @@ public class CreateClient
 				mobjDocOps.RunSubOp(pdb, lobjAux.getKey());
 
 			mobjData.mid = lobjAux.getKey();
+			mobjData.midProcess = lobjProcess.getKey();
 			mobjData.mobjPrevValues = null;
 		}
 		catch (Throwable e)
