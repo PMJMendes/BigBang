@@ -74,6 +74,7 @@ public class HistoryServiceImpl
 		throws SessionExpiredException, BigBangException
 	{
         PNLog lobjLog;
+        Operation lobjAux;
         UndoOperation lobjRunnable;
         Operation lobjData;
 
@@ -83,13 +84,19 @@ public class HistoryServiceImpl
 		try
 		{
 			lobjLog = PNLog.GetInstance(Engine.getCurrentNameSpace(), UUID.fromString(undoItemId));
-			lobjRunnable = (UndoOperation)lobjLog.GetOperation().GetUndoOp().GetNewInstance(lobjLog.GetProcessID());
-			lobjRunnable.midSourceLog = lobjLog.getKey();
+			if ( lobjLog.GetOperation().GetUndoOp() == null )
+				throw new BigBangException("Error: Operation does not define a corresponding undo operation.");
+
+			lobjAux = lobjLog.GetOperation().GetUndoOp().GetNewInstance(lobjLog.GetProcessID());
+			if ( !(lobjAux instanceof UndoOperation) )
+				throw new BigBangException("Error: Undo Operation has an improper definition.");
 
 			lobjData = lobjLog.GetOperationData();
 			if ( !(lobjData instanceof UndoableOperation) )
 				throw new BigBangException("Error: Operation does not define undo methods.");
 
+			lobjRunnable = (UndoOperation)lobjAux;
+			lobjRunnable.midSourceLog = lobjLog.getKey();
 			lobjRunnable.mobjSourceOp = (UndoableOperation)lobjData;
 			lobjRunnable.mrefLog = lobjLog;
 

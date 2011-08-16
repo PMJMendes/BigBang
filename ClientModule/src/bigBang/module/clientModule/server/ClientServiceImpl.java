@@ -12,8 +12,11 @@ import Jewel.Engine.SysObjects.ObjectBase;
 import bigBang.definitions.shared.Address;
 import bigBang.definitions.shared.Client;
 import bigBang.definitions.shared.ClientStub;
+import bigBang.definitions.shared.Contact;
+import bigBang.definitions.shared.Document;
 import bigBang.definitions.shared.SearchResult;
 import bigBang.definitions.shared.ZipCode;
+import bigBang.library.server.FileServiceImpl;
 import bigBang.library.server.SearchServiceBase;
 import bigBang.library.shared.BigBangException;
 import bigBang.library.shared.SearchParameter;
@@ -24,7 +27,14 @@ import bigBang.module.clientModule.interfaces.ClientService;
 import bigBang.module.clientModule.shared.ClientSearchParameter;
 import bigBang.module.clientModule.shared.ClientSortParameter;
 
+import com.premiumminds.BigBang.Jewel.BigBangJewelException;
 import com.premiumminds.BigBang.Jewel.Constants;
+import com.premiumminds.BigBang.Jewel.ZipCodeBridge;
+import com.premiumminds.BigBang.Jewel.Objects.GeneralSystem;
+import com.premiumminds.BigBang.Jewel.Operations.ContactOps;
+import com.premiumminds.BigBang.Jewel.Operations.DocOps;
+import com.premiumminds.BigBang.Jewel.Operations.DataObjects.ClientData;
+import com.premiumminds.BigBang.Jewel.Operations.General.CreateClient;
 
 public class ClientServiceImpl
 	extends SearchServiceBase
@@ -104,10 +114,91 @@ public class ClientServiceImpl
 	public Client createClient(Client client)
 		throws SessionExpiredException, BigBangException
 	{
+		CreateClient lopCC;
+
 		if ( Engine.getCurrentUser() == null )
 			throw new SessionExpiredException();
 
-		return null;
+		try
+		{
+			lopCC = new CreateClient(GeneralSystem.GetAnyInstance(Engine.getCurrentNameSpace()).GetProcessID());
+			lopCC.mobjData = new ClientData();
+
+			lopCC.mobjData.mid = null;
+			lopCC.mobjData.mlngNumber = 0;
+			lopCC.mobjData.midProcess = null;
+			lopCC.mobjData.mobjPrevValues = null;
+
+			lopCC.mobjData.mstrName = client.name;
+			if ( client.address != null )
+			{
+				lopCC.mobjData.mstrAddress1 = client.address.street1;
+				lopCC.mobjData.mstrAddress2 = client.address.street2;
+				if ( client.address.zipCode != null )
+					lopCC.mobjData.midZipCode = ZipCodeBridge.GetZipCode(client.address.zipCode.code,
+							client.address.zipCode.city, client.address.zipCode.county, client.address.zipCode.district,
+							client.address.zipCode.country);
+				else
+					lopCC.mobjData.midZipCode = null;
+			}
+			else
+			{
+				lopCC.mobjData.mstrAddress1 = null;
+				lopCC.mobjData.mstrAddress2 = null;
+				lopCC.mobjData.midZipCode = null;
+			}
+			lopCC.mobjData.mstrFiscal = client.taxNumber;
+			lopCC.mobjData.midType = ( client.typeId == null ? null : UUID.fromString(client.typeId) );
+			lopCC.mobjData.midSubtype = ( client.subtypeId == null ? null : UUID.fromString(client.subtypeId) );
+			lopCC.mobjData.midManager = ( client.managerId == null ? null : UUID.fromString(client.managerId) );
+			lopCC.mobjData.midMediator = ( client.mediatorId == null ? null : UUID.fromString(client.mediatorId) );
+			lopCC.mobjData.midProfile = ( client.operationalProfileId == null ? null : UUID.fromString(client.operationalProfileId) );
+			lopCC.mobjData.midGroup = ( client.groupId == null ? null : UUID.fromString(client.groupId) );
+			lopCC.mobjData.mstrBankingID = client.NIB;
+			lopCC.mobjData.mdtDateOfBirth = ( client.birthDate == null ? null : Timestamp.valueOf(client.birthDate) );
+			lopCC.mobjData.midSex = ( client.genderId == null ? null : UUID.fromString(client.genderId) );
+			lopCC.mobjData.midMarital = ( client.maritalStatusId == null ? null : UUID.fromString(client.maritalStatusId) );
+			lopCC.mobjData.midProfession = ( client.professionId == null ? null : UUID.fromString(client.professionId) );
+			lopCC.mobjData.midCAE = ( client.caeId == null ? null : UUID.fromString(client.caeId) );
+			lopCC.mobjData.mstrCAENotes = client.activityNotes;
+			lopCC.mobjData.midSize = ( client.sizeId == null ? null : UUID.fromString(client.sizeId) );
+			lopCC.mobjData.midSales = ( client.revenueId == null ? null : UUID.fromString(client.revenueId) );
+			lopCC.mobjData.mstrNotes = client.notes;
+
+			if ( (client.contacts != null) && (client.contacts.length > 0) )
+			{
+				lopCC.mobjContactOps = new ContactOps();
+				lopCC.mobjContactOps.marrCreate = BuildContactTree(lopCC.mobjContactOps,
+						client.contacts, Constants.ObjID_Client);
+			}
+			else
+				lopCC.mobjContactOps = null;
+			if ( (client.documents != null) && (client.documents.length > 0) )
+			{
+				lopCC.mobjDocOps = new DocOps();
+				lopCC.mobjDocOps.marrCreate = BuildDocTree(lopCC.mobjDocOps,
+						client.documents, Constants.ObjID_Client);
+			}
+			else
+				lopCC.mobjDocOps = null;
+
+			lopCC.Execute(null);
+
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangException(e.getMessage(), e);
+		}
+
+		client.id = lopCC.mobjData.mid.toString();
+		client.clientNumber = Integer.toString(lopCC.mobjData.mlngNumber);
+		client.processId = lopCC.mobjData.midProcess.toString();
+		if ( (client.contacts != null) && (client.contacts.length > 0) )
+			WalkContactTree(lopCC.mobjContactOps.marrCreate, client.contacts);
+		if ( (client.documents != null) && (client.documents.length > 0) )
+			WalkDocTree(lopCC.mobjDocOps.marrCreate, client.documents);
+
+		return client;
 	}
 
 	public Client editClient(Client client)
@@ -346,5 +437,116 @@ public class ClientServiceImpl
 		}
 
 		return lbFound;
+	}
+
+	private ContactOps.ContactData[] BuildContactTree(ContactOps prefAux, Contact[] parrContacts, UUID pidParentType)
+		throws BigBangJewelException
+	{
+		ContactOps.ContactData[] larrResult;
+		int i, j;
+
+		if ( (parrContacts == null) || (parrContacts.length == 0) )
+			return null;
+
+		larrResult = new ContactOps.ContactData[parrContacts.length];
+		for ( i = 0; i < parrContacts.length; i++ )
+		{
+			larrResult[i] = prefAux.new ContactData();
+			larrResult[i].mid = null;
+			larrResult[i].mstrName = parrContacts[i].name;
+			larrResult[i].midOwnerType = pidParentType;
+			larrResult[i].midOwnerId = null;
+			if ( parrContacts[i].address != null )
+			{
+				larrResult[i].mstrAddress1 = parrContacts[i].address.street1;
+				larrResult[i].mstrAddress2 = parrContacts[i].address.street2;
+				larrResult[i].midZipCode = ZipCodeBridge.GetZipCode(parrContacts[i].address.zipCode.code,
+						parrContacts[i].address.zipCode.city, parrContacts[i].address.zipCode.county,
+						parrContacts[i].address.zipCode.district, parrContacts[i].address.zipCode.country);
+			}
+			else
+			{
+				larrResult[i].mstrAddress1 = null;
+				larrResult[i].mstrAddress2 = null;
+				larrResult[i].midZipCode = null;
+			}
+			larrResult[i].midContactType = (parrContacts[i].typeId == null ? null : UUID.fromString(parrContacts[i].typeId));
+			if ( parrContacts[i].info != null )
+			{
+				larrResult[i].marrInfo = new ContactOps.ContactData.ContactInfoData[parrContacts[i].info.length];
+				for ( j = 0; j < parrContacts[i].info.length; j++ )
+				{
+					larrResult[i].marrInfo[j] = larrResult[i].new ContactInfoData();
+					larrResult[i].marrInfo[j].midType = UUID.fromString(parrContacts[i].info[j].typeId);
+					larrResult[i].marrInfo[j].mstrValue = parrContacts[i].info[j].value;
+				}
+			}
+			else
+				larrResult[i].marrInfo = null;
+			larrResult[i].marrSubContacts = BuildContactTree(prefAux, parrContacts[i].subContacts, Constants.ObjID_Contact);
+		}
+
+		return larrResult;
+	}
+
+	private DocOps.DocumentData[] BuildDocTree(DocOps prefAux, Document[] parrDocuments, UUID pidParentType)
+		throws BigBangJewelException
+	{
+		DocOps.DocumentData[] larrResult;
+		int i, j;
+
+		if ( (parrDocuments == null) || (parrDocuments.length == 0) )
+			return null;
+
+		larrResult = new DocOps.DocumentData[parrDocuments.length];
+		for ( i = 0; i < parrDocuments.length; i++ )
+		{
+			larrResult[i] = prefAux.new DocumentData();
+			larrResult[i].mid = null;
+			larrResult[i].mstrName = parrDocuments[i].name;
+			larrResult[i].midOwnerType = pidParentType;
+			larrResult[i].midOwnerId = null;
+			larrResult[i].midDocType = (parrDocuments[i].docTypeId == null ? null : UUID.fromString(parrDocuments[i].docTypeId));
+			larrResult[i].mstrText = parrDocuments[i].text;
+			if ( parrDocuments[i].fileStorageId != null )
+				larrResult[i].mobjFile = FileServiceImpl.GetFileXferStorage().
+						get(UUID.fromString(parrDocuments[i].fileStorageId)).GetVarData();
+			else
+				larrResult[i].mobjFile = null;
+			if ( parrDocuments[i].parameters != null )
+			{
+				larrResult[i].marrInfo = new DocOps.DocumentData.DocInfoData[parrDocuments[i].parameters.length];
+				for ( j = 0; j < parrDocuments[i].parameters.length; j++ )
+				{
+					larrResult[i].marrInfo[j] = larrResult[i].new DocInfoData();
+					larrResult[i].marrInfo[j].mstrType = parrDocuments[i].parameters[j].name;
+					larrResult[i].marrInfo[j].mstrValue = parrDocuments[i].parameters[j].value;
+				}
+			}
+			else
+				larrResult[i].marrInfo = null;
+		}
+
+		return larrResult;
+	}
+
+	private void WalkContactTree(ContactOps.ContactData[] parrResults, Contact[] parrContacts)
+	{
+		int i;
+		
+		for ( i = 0; i < parrResults.length; i++ )
+		{
+			parrContacts[i].id = parrResults[i].mid.toString();
+			if ( (parrContacts[i].subContacts != null) && (parrResults[i].marrSubContacts != null) )
+				WalkContactTree(parrResults[i].marrSubContacts, parrContacts[i].subContacts);
+		}
+	}
+
+	private void WalkDocTree(DocOps.DocumentData[] parrResults, Document[] parrDocuments)
+	{
+		int i;
+		
+		for ( i = 0; i < parrResults.length; i++ )
+			parrDocuments[i].id = parrResults[i].mid.toString();
 	}
 }

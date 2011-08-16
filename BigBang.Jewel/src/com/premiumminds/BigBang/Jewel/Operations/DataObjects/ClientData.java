@@ -17,8 +17,8 @@ public class ClientData
 
 	public UUID mid;
 
-	public int mlngNumber;
 	public String mstrName;
+	public int mlngNumber;
 	public String mstrAddress1;
 	public String mstrAddress2;
 	public UUID midZipCode;
@@ -47,8 +47,8 @@ public class ClientData
 	{
 		mid = pobjSource.getKey();
 
-		mlngNumber = (Integer)pobjSource.getAt(0);
-		mstrName = (String)pobjSource.getAt(1);
+		mstrName = (String)pobjSource.getAt(0);
+		mlngNumber = (Integer)pobjSource.getAt(1);
 		mstrAddress1 = (String)pobjSource.getAt(2);
 		mstrAddress2 = (String)pobjSource.getAt(3);
 		midZipCode = (UUID)pobjSource.getAt(4);
@@ -77,8 +77,8 @@ public class ClientData
 	{
 		try
 		{
-			pobjDest.setAt( 0, mlngNumber);
-			pobjDest.setAt( 1, mstrName);
+			pobjDest.setAt( 0, mstrName);
+			pobjDest.setAt( 1, mlngNumber);
 			pobjDest.setAt( 2, mstrAddress1);
 			pobjDest.setAt( 3, mstrAddress2);
 			pobjDest.setAt( 4, midZipCode);

@@ -1,13 +1,19 @@
 package com.premiumminds.BigBang.Jewel.Operations.General;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.UUID;
 
 import Jewel.Engine.Engine;
+import Jewel.Engine.DataAccess.MasterDB;
 import Jewel.Engine.DataAccess.SQLServer;
+import Jewel.Engine.Implementation.Entity;
+import Jewel.Engine.Interfaces.IEntity;
 import Jewel.Petri.Objects.PNProcess;
 import Jewel.Petri.SysObjects.JewelPetriException;
 import Jewel.Petri.SysObjects.Operation;
 
+import com.premiumminds.BigBang.Jewel.BigBangJewelException;
 import com.premiumminds.BigBang.Jewel.Constants;
 import com.premiumminds.BigBang.Jewel.Objects.Client;
 import com.premiumminds.BigBang.Jewel.Operations.ContactOps;
@@ -65,6 +71,8 @@ public class CreateClient
 
 		try
 		{
+			mobjData.mlngNumber = GetNewClientNumber();
+
 			lobjAux = Client.GetInstance(Engine.getCurrentNameSpace(), (UUID)null);
 			mobjData.ToObject(lobjAux);
 			lobjAux.SaveToDb(pdb);
@@ -93,5 +101,72 @@ public class CreateClient
 		{
 			throw new JewelPetriException(e.getMessage(), e);
 		}
+	}
+
+	private int GetNewClientNumber()
+		throws BigBangJewelException
+	{
+		int[] larrSorts;
+		IEntity lrefClients;
+        MasterDB ldb;
+        ResultSet lrsClients;
+        int llngResult;
+
+		larrSorts = new int[1];
+		larrSorts[0] = -1;
+
+		try
+		{
+			lrefClients = Entity.GetInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), Constants.ObjID_Client)); 
+			ldb = new MasterDB();
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangJewelException(e.getMessage(), e);
+		}
+
+		try
+		{
+			lrsClients = lrefClients.SelectByMembers(ldb, new int[0], new java.lang.Object[0], larrSorts);
+		}
+		catch (Throwable e)
+		{
+			try { ldb.Disconnect(); } catch (SQLException e1) {}
+			throw new BigBangJewelException(e.getMessage(), e);
+		}
+
+		llngResult = 1;
+		try
+		{
+			if ( lrsClients.next() )
+				llngResult = lrsClients.getInt(3) + 1;
+		}
+		catch (Throwable e)
+		{
+			try { lrsClients.close(); } catch (SQLException e1) {}
+			try { ldb.Disconnect(); } catch (SQLException e1) {}
+			throw new BigBangJewelException(e.getMessage(), e);
+		}
+
+		try
+		{
+			lrsClients.close();
+		}
+		catch (Throwable e)
+		{
+			try { ldb.Disconnect(); } catch (SQLException e1) {}
+			throw new BigBangJewelException(e.getMessage(), e);
+		}
+
+		try
+		{
+			ldb.Disconnect();
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangJewelException(e.getMessage(), e);
+		}
+
+		return llngResult;
 	}
 }
