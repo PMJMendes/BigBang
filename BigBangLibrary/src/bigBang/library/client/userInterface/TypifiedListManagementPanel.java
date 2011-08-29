@@ -6,9 +6,9 @@ import bigBang.definitions.client.response.ResponseError;
 import bigBang.definitions.client.response.ResponseHandler;
 import bigBang.definitions.shared.TipifiedListItem;
 import bigBang.library.client.BigBangTypifiedListBroker;
-import bigBang.library.client.TypifiedListBroker;
-import bigBang.library.client.TypifiedListClient;
 import bigBang.library.client.ValueSelectable;
+import bigBang.library.client.dataAccess.TypifiedListBroker;
+import bigBang.library.client.dataAccess.TypifiedListClient;
 import bigBang.library.client.resources.Resources;
 
 import com.google.gwt.core.client.GWT;
@@ -69,7 +69,7 @@ public class TypifiedListManagementPanel extends FilterableList<TipifiedListItem
 	private Button editButton;
 	private HorizontalPanel toolBar;
 
-	public TypifiedListManagementPanel(String listId, String listName){
+	public TypifiedListManagementPanel(final String listId, String listName){
 		super();
 		this.listBroker = BigBangTypifiedListBroker.Util.getInstance();
 		this.listId = listId;
@@ -143,8 +143,19 @@ public class TypifiedListManagementPanel extends FilterableList<TipifiedListItem
 		});
 
 		setEditModeEnabled(false);
-		this.listBroker.registerClient(listId, this);
-		this.listBroker.getListItems(listId);
+		this.addAttachHandler(new AttachEvent.Handler() {
+			
+			@Override
+			public void onAttachOrDetach(AttachEvent event) {
+				if(event.isAttached()){
+					listBroker.registerClient(listId, TypifiedListManagementPanel.this);
+					listBroker.getListItems(listId);
+				}else{
+					listBroker.unregisterClient(listId, TypifiedListManagementPanel.this);
+				}
+			}
+		});
+		
 		showFilterField(false);
 	}
 

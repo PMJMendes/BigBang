@@ -1,10 +1,10 @@
 package bigBang.module.receiptModule.client.userInterface;
 
+import bigBang.definitions.shared.Receipt;
 import bigBang.library.client.userInterface.DatePickerFormField;
 import bigBang.library.client.userInterface.ExpandableListBoxFormField;
 import bigBang.library.client.userInterface.TextBoxFormField;
 import bigBang.library.client.userInterface.view.FormView;
-import bigBang.module.receiptModule.shared.Receipt;
 
 public class ReceiptForm extends FormView<Receipt> {
 

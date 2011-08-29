@@ -1,4 +1,4 @@
-package bigBang.module.complaintModule.shared;
+package bigBang.definitions.shared;
 
 import java.io.Serializable;
 

@@ -1,7 +1,7 @@
 package bigBang.module.complaintModule.client.userInterface;
 
+import bigBang.definitions.shared.Complaint;
 import bigBang.library.client.userInterface.view.FormView;
-import bigBang.module.complaintModule.shared.Complaint;
 
 public class ComplaintForm extends FormView<Complaint> {
 

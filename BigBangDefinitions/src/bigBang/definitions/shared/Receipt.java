@@ -1,4 +1,4 @@
-package bigBang.module.receiptModule.shared;
+package bigBang.definitions.shared;
 
 import java.io.Serializable;
 

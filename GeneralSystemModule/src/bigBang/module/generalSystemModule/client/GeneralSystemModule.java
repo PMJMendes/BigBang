@@ -32,13 +32,14 @@ public class GeneralSystemModule implements Module {
 
 			@Override
 			public void onSuccess(final String result) {
-				permissionManager.getProcessPermissionContext(result, new BigBangAsyncCallback<Void>() {
+				setup(eventBus, permissionManager, result); //TODO FJVC IMPORTANT
+				/*permissionManager.getProcessPermissionContext(result, new BigBangAsyncCallback<Void>() {
 
 					@Override
 					public void onSuccess(Void result2) {
 						setup(eventBus, permissionManager, result);
 					}
-				});	
+				});	*/
 			}
 		});
 	}

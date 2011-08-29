@@ -1,11 +1,11 @@
 package bigBang.module.quoteRequestModule.client.userInterface;
 
+import bigBang.definitions.shared.QuoteRequest;
 import bigBang.library.client.userInterface.CheckBoxFormField;
 import bigBang.library.client.userInterface.ExpandableListBoxFormField;
 import bigBang.library.client.userInterface.TextAreaFormField;
 import bigBang.library.client.userInterface.TextBoxFormField;
 import bigBang.library.client.userInterface.view.FormView;
-import bigBang.module.quoteRequestModule.shared.QuoteRequest;
 
 public class QuoteRequestForm extends FormView<QuoteRequest> {
 

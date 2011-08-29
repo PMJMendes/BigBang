@@ -7,14 +7,21 @@ import bigBang.definitions.client.dataAccess.ClientProcessDataBrokerClient;
 import bigBang.definitions.client.response.ResponseError;
 import bigBang.definitions.client.response.ResponseHandler;
 import bigBang.definitions.shared.BigBangConstants;
+import bigBang.definitions.shared.Casualty;
 import bigBang.definitions.shared.Client;
 import bigBang.definitions.shared.ClientStub;
+import bigBang.definitions.shared.InsurancePolicy;
+import bigBang.definitions.shared.QuoteRequest;
+import bigBang.definitions.shared.RiskAnalisys;
 import bigBang.library.client.EventBus;
-import bigBang.library.client.HasSelectables;
+import bigBang.library.client.HasEditableValue;
+import bigBang.library.client.HasValueSelectables;
 import bigBang.library.client.Operation;
 import bigBang.library.client.Selectable;
 import bigBang.library.client.ValueSelectable;
 import bigBang.library.client.dataAccess.DataBrokerManager;
+import bigBang.library.client.event.ActionInvokedEvent;
+import bigBang.library.client.event.ActionInvokedEventHandler;
 import bigBang.library.client.event.OperationInvokedEvent;
 import bigBang.library.client.event.OperationInvokedEventHandler;
 import bigBang.library.client.event.SelectionChangedEvent;
@@ -31,12 +38,72 @@ import com.google.gwt.user.client.ui.Widget;
 
 public class ClientSearchOperationViewPresenter implements OperationViewPresenter, ClientProcessDataBrokerClient {
 
+	public static enum Action{
+		NEW,
+		REFRESH,
+		EDIT,
+		SAVE,
+		CANCEL_EDIT,
+		DELETE,
+
+		CREATE_POLICY,
+		CREATE_RISK_ANALISYS,
+		CREATE_QUOTE_REQUEST,
+		CREATE_CASUALTY,
+
+		MERGE_WITH_CLIENT,
+
+		REQUIRE_INFO_DOCUMENT
+	}
+
 	public interface Display {
-		HasSelectables<?> getClientSearchList();
-		void setClient(Client client);
+		//List
+		HasValueSelectables<?> getList();
+
+		//Form
+		HasEditableValue<Client> getForm();
+		boolean isFormValid();
+		void lockForm(boolean lock);
+
+		//Operations
+		void showPolicyForm(boolean show);
+		HasEditableValue<InsurancePolicy> getPolicyForm();
+		boolean isPolicyFormValid();
+		void lockPolicyForm(boolean lock);
 		
-		void setReadOnly(boolean readonly);
+		void showRiskAnalisysForm(boolean show);
+		HasEditableValue<RiskAnalisys> getRiskAnalisysForm();
+		boolean isRiskAnalisysFormValid();
+		void lockRiskAnalisysForm(boolean lock);
 		
+		void showQuoteRequestForm(boolean show);
+		HasEditableValue<QuoteRequest> getQuoteRequestForm();
+		boolean isQuoteRequestFormValid();
+		void lockQuoteRequestForm(boolean lock);
+		
+		void showCasualtyForm(boolean show);
+		HasEditableValue<Casualty> getCasualtyForm();
+		boolean isCasualtyFormValid();
+		void lockCasualtyForm(boolean lock);
+		
+		void showClientMergeForm(boolean show);
+		HasEditableValue<Casualty> getClientMergeForm();
+		boolean isClientMergeFormValid();
+		void lockClientMergeForm(boolean lock);
+		
+		void showInfoOrDocumentRequestForm(boolean show);
+		HasEditableValue<Casualty> getInfoOrDocumentRequestForm();
+		boolean isInfoOrDocumentFormValid();
+		void lockInfoOrDocumentRequestForm(boolean lock);
+		
+		//General
+		void clear();
+		void registerActionInvokedHandler(ActionInvokedEventHandler<Action> handler);
+		void prepareNewClient();
+		void removeNewClientPreparation();
+		void setSaveModeEnabled(boolean enabled);
+		void setReadOnly(boolean readOnly);
+
 		Widget asWidget();
 		View getInstance();
 	}
@@ -44,10 +111,10 @@ public class ClientSearchOperationViewPresenter implements OperationViewPresente
 	protected Display view;
 	private EventBus eventBus;
 	private ClientSearchOperation operation;
-	
+
 	protected ClientProcessBroker clientBroker;
 	protected int clientDataVersionNumber;
-	
+
 	public ClientSearchOperationViewPresenter(EventBus eventBus, ClientServiceAsync service, View view){
 		this.setService((Service) service);
 		this.setView(view);
@@ -55,9 +122,7 @@ public class ClientSearchOperationViewPresenter implements OperationViewPresente
 		this.clientBroker = (ClientProcessBroker) DataBrokerManager.Util.getInstance().getBroker(BigBangConstants.EntityIds.CLIENT);
 	}
 
-	public void setService(Service service) {
-		//TODO CLEAN
-	}
+	public void setService(Service service) {}
 
 	public void setEventBus(final EventBus eventBus) {
 		this.eventBus = eventBus;
@@ -76,7 +141,7 @@ public class ClientSearchOperationViewPresenter implements OperationViewPresente
 		view.setReadOnly(true);
 		container.add(this.view.asWidget());
 	}
-	
+
 	//The compact version of the operation view
 	public void goCompact(HasWidgets container){
 		go(container);
@@ -86,18 +151,128 @@ public class ClientSearchOperationViewPresenter implements OperationViewPresente
 	}
 
 	public void bind() {
-		this.view.getClientSearchList().addSelectionChangedEventHandler(new SelectionChangedEventHandler() {
-			
+		this.view.getList().addSelectionChangedEventHandler(new SelectionChangedEventHandler() {
+
 			@Override
 			public void onSelectionChanged(SelectionChangedEvent event) {
-				for(Selectable s : event.getSelected()){
-					ValueSelectable<?> vs = (ValueSelectable<?>) s;
-					if(vs.getValue() instanceof ClientStub){
-						ClientStub stub = (ClientStub) vs.getValue();
-						showClientProcess(stub.id);
+				@SuppressWarnings("unchecked")
+				ValueSelectable<ClientStub> selected = (ValueSelectable<ClientStub>) event.getFirstSelected();
+				ClientStub selectedValue = selected == null ? null : selected.getValue();
+				if(selectedValue == null){
+					view.getForm().setValue(null);
+					view.lockForm(true);
+				}else{
+					if(selectedValue.id != null){
+						view.removeNewClientPreparation();
+						clientBroker.getClient(selectedValue.id, new ResponseHandler<Client>() {
+
+							@Override
+							public void onResponse(Client value) {
+								view.getForm().setValue(value);
+								view.lockForm(value == null);
+							}
+
+							@Override
+							public void onError(Collection<ResponseError> errors) {}
+						});
 					}
+
 				}
 			}
+		});
+		this.view.registerActionInvokedHandler(new ActionInvokedEventHandler<ClientSearchOperationViewPresenter.Action>() {
+
+			@Override
+			public void onActionInvoked(ActionInvokedEvent<Action> action) {
+				switch(action.getAction()){
+				case NEW:
+					view.prepareNewClient();
+					for(Selectable s : view.getList().getSelected()) {
+						@SuppressWarnings("unchecked")
+						ValueSelectable<Client> vs = (ValueSelectable<Client>) s;
+						Client value = vs.getValue();
+						view.getForm().setValue(value);
+						view.getForm().setReadOnly(false);
+						break;
+					}
+					break;
+				case SAVE:
+					if(!view.isFormValid())
+						return;
+					Client info = view.getForm().getInfo();
+					if(info.id == null)
+						addClient(info);
+					else
+						updateClient(info);
+					break;
+				case EDIT:
+					view.getForm().setReadOnly(false);
+					view.setSaveModeEnabled(true);
+					break;
+				case CANCEL_EDIT:
+					break;
+				case DELETE:
+					break;
+				case REFRESH:
+					//TODO
+					break;
+				case CREATE_CASUALTY:
+					createCasualty();
+					break;
+				case CREATE_POLICY:
+					createPolicy();
+					break;
+				case CREATE_QUOTE_REQUEST:
+					createQuoteRequest();
+					break;
+				case CREATE_RISK_ANALISYS:
+					createRiskAnalisys();
+					break;
+				case MERGE_WITH_CLIENT:
+					mergeWithClient();
+					break;
+				case REQUIRE_INFO_DOCUMENT:
+					requireInfoOrDocument();
+					break;
+				}
+			}
+			
+			protected void createCasualty(){
+				view.getCasualtyForm().setValue(null);
+				view.showCasualtyForm(true);
+				view.lockCasualtyForm(false);
+			}
+			
+			protected void createPolicy(){
+				view.getPolicyForm().setValue(null);
+				view.showPolicyForm(true);
+				view.lockPolicyForm(false);
+			}
+			
+			protected void createQuoteRequest(){
+				view.getQuoteRequestForm().setValue(null);
+				view.showQuoteRequestForm(true);
+				view.lockQuoteRequestForm(false);
+			}
+			
+			protected void createRiskAnalisys(){
+				view.getRiskAnalisysForm().setValue(null);
+				view.showRiskAnalisysForm(true);
+				view.lockRiskAnalisysForm(false);
+			}
+			
+			protected void mergeWithClient(){
+				//view.getClientMergeForm().setValue(null);
+				view.showClientMergeForm(true);
+				//view.lockClientMergeForm(false);
+			}
+			
+			protected void requireInfoOrDocument(){
+				//view.getInfoOrDocumentRequestForm().setValue(null);
+				view.showInfoOrDocumentRequestForm(true);
+				//view.lockInfoOrDocumentRequestForm(false);
+			}
+			
 		});
 	}
 
@@ -125,19 +300,19 @@ public class ClientSearchOperationViewPresenter implements OperationViewPresente
 
 	private void showClientProcess(final String processId){
 		this.clientBroker.getClient(processId, new ResponseHandler<Client>() {
-			
+
 			@Override
 			public void onResponse(Client response) {
-				view.setClient(response);
+				view.getForm().setValue(response);
 			}
-			
+
 			@Override
 			public void onError(Collection<ResponseError> errors) {
 				throw new RuntimeException("Could not get the client process with id=\"" + processId + "\"");
 			}
 		});
 	}
-	
+
 	public void setOperation(Operation o) {
 		this.operation = (ClientSearchOperation)o;
 	}
@@ -147,8 +322,8 @@ public class ClientSearchOperationViewPresenter implements OperationViewPresente
 	}
 
 	public String setTargetEntity(String id) {
-		// TODO Auto-generated method stub
-		return null;
+		showClientProcess(id);
+		return id;
 	}
 
 	@Override
@@ -158,7 +333,6 @@ public class ClientSearchOperationViewPresenter implements OperationViewPresente
 	}
 
 	private void setReadOnly(boolean result) {
-		// TODO Auto-generated method stub
 		this.view.setReadOnly(true);
 	}
 
@@ -178,19 +352,46 @@ public class ClientSearchOperationViewPresenter implements OperationViewPresente
 
 	@Override
 	public void addClient(Client client) {
-		// TODO Auto-generated method stub
-		
+		clientBroker.addClient(client, new ResponseHandler<Client>() {
+
+			@Override
+			public void onResponse(Client response) {
+				view.getForm().setValue(response);
+				view.getForm().setReadOnly(true);
+			}
+
+			@Override
+			public void onError(Collection<ResponseError> errors) {}
+		});
 	}
 
 	@Override
 	public void updateClient(Client client) {
-		// TODO Auto-generated method stub
-		
+		clientBroker.updateClient(client, new ResponseHandler<Client>() {
+
+			@Override
+			public void onResponse(Client response) {
+				view.getForm().setValue(response);
+				view.getForm().setReadOnly(true);
+			}
+
+			@Override
+			public void onError(Collection<ResponseError> errors) {}
+		});
 	}
 
 	@Override
 	public void removeClient(String clientId) {
-		// TODO Auto-generated method stub
-		
+		clientBroker.removeClient(clientId, new ResponseHandler<String>() {
+
+			@Override
+			public void onResponse(String response) {
+				view.getForm().setValue(null);
+				view.setReadOnly(true);
+			}
+
+			@Override
+			public void onError(Collection<ResponseError> errors) {}
+		});
 	}
 }

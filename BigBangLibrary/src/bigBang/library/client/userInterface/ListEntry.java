@@ -1,4 +1,5 @@
 package bigBang.library.client.userInterface;
+import bigBang.library.client.Checkable;
 import bigBang.library.client.HasMetaData;
 import bigBang.library.client.ValueSelectable;
 import bigBang.library.client.event.CheckedStateChangedEvent;
@@ -9,6 +10,7 @@ import bigBang.library.client.userInterface.view.View;
 
 import com.google.gwt.dom.client.Style.Cursor;
 import com.google.gwt.dom.client.Style.FontWeight;
+import com.google.gwt.dom.client.Style.Overflow;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
@@ -27,7 +29,7 @@ import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
-public class ListEntry<T> extends View implements ValueSelectable<T>, HasMetaData<String> {
+public class ListEntry<T> extends View implements ValueSelectable<T>, HasMetaData<String>, Checkable {
 
 
 	protected T value;
@@ -85,11 +87,19 @@ public class ListEntry<T> extends View implements ValueSelectable<T>, HasMetaDat
 		this.titleLabel.getElement().getStyle().setFontSize(14, Unit.PX);
 		textWrapper.add(this.titleLabel);
 		textWrapper.setCellHeight(this.titleLabel, "100%");
+		this.titleLabel.getElement().getStyle().setProperty("textOverflow", "ellipsis");
+		this.titleLabel.getElement().getStyle().setProperty("whiteSpace", "normal");
+		this.titleLabel.getElement().getStyle().setOverflowY(Overflow.HIDDEN);
+		this.titleLabel.setHeight("1em");
+		this.titleLabel.setWordWrap(false);
 	
 		this.textLabel = new Label();
 		this.textLabel.getElement().getStyle().setFontWeight(FontWeight.BOLD);
 		this.textLabel.getElement().getStyle().setFontSize(11, Unit.PX);
-		this.textLabel.setWordWrap(true);
+		this.textLabel.getElement().getStyle().setProperty("textOverflow", "ellipsis");
+		this.textLabel.getElement().getStyle().setOverflowY(Overflow.HIDDEN);
+		this.textLabel.setWordWrap(false);
+		
 		textWrapper.add(this.textLabel);		
 		
 		widgetContainer.add(textWrapper);
@@ -184,16 +194,17 @@ public class ListEntry<T> extends View implements ValueSelectable<T>, HasMetaDat
 	}
 	
 	public void setTitle(String title){
+		this.titleLabel.getElement().getStyle().setProperty("whiteSpace", "normal");
 		if(title == null){
 			this.titleLabel.setText("");
-			this.titleLabel.getElement().getStyle().setProperty("textOverflow", "ellipsis");
-			this.titleLabel.getElement().getStyle().setProperty("whiteSpace", "nowrap");
-			//this.textLabel.getElement().getStyle().setProperty("whiteSpace", "nowrap");
+			this.titleLabel.setTitle("");
 			this.titleLabel.setVisible(false);
+			this.titleLabel.setHeight("0px");
 			return;
 		}
-		
+		this.titleLabel.setHeight("1.2em");
 		this.titleLabel.setText(title);
+		this.titleLabel.setTitle(title);
 		this.titleLabel.setVisible(true);
 	}
 	
@@ -202,13 +213,17 @@ public class ListEntry<T> extends View implements ValueSelectable<T>, HasMetaDat
 	}
 	
 	public void setText(String text) {
+		this.textLabel.getElement().getStyle().setProperty("whiteSpace", "normal");
 		if(text == null){
 			this.textLabel.setText("");
+			this.textLabel.setTitle("");
 			this.textLabel.setVisible(false);
+			this.textLabel.setHeight("0px");
 			return;
 		}
-		
+		this.textLabel.setHeight("1.2em");
 		this.textLabel.setText(text);
+		this.textLabel.setTitle(text);
 		this.textLabel.setVisible(true);
 	}
 	
@@ -251,7 +266,8 @@ public class ListEntry<T> extends View implements ValueSelectable<T>, HasMetaDat
 		return addHandler(handler, ValueChangeEvent.getType());
 	}
 	
-	public HandlerRegistration addCheckedStateChangedHandler(
+	@Override
+	public HandlerRegistration addCheckedStateChangedEventHandler(
 			CheckedStateChangedEventHandler handler) {
 		return addHandler(handler, CheckedStateChangedEvent.TYPE);
 	}
@@ -333,4 +349,5 @@ public class ListEntry<T> extends View implements ValueSelectable<T>, HasMetaDat
 	protected void setDragHandle(Widget w){
 		this.dragHandle = w;
 	}
+
 }

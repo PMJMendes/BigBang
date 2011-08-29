@@ -1,7 +1,6 @@
 package bigBang.client;
 
 import java.util.ArrayList;
-
 import com.google.gwt.core.client.GWT;
 
 import bigBang.definitions.client.dataAccess.DataBroker;
@@ -15,6 +14,7 @@ import bigBang.library.client.event.LoginSuccessEvent;
 import bigBang.library.client.event.LoginSuccessEventHandler;
 import bigBang.library.client.event.ModuleInitializedEvent;
 import bigBang.library.client.event.ModuleInitializedEventHandler;
+import bigBang.library.client.userInterface.presenter.SectionViewPresenter;
 
 public class ModuleManager {
 
@@ -24,6 +24,7 @@ public class ModuleManager {
 	private static MainModule mainModule;
 	private static LoginModule loginModule;
 	private ArrayList <Module> modules;
+	protected int initializedModulesCount = 0;
 
 	public ModuleManager(){
 		modules = new ArrayList <Module> ();
@@ -37,12 +38,22 @@ public class ModuleManager {
 		if(mainModule == null)
 			throw new Exception("Cannot initialize main module");
 
+		final ArrayList<SectionViewPresenter> presenters = new ArrayList<SectionViewPresenter>();
+		
 		eventBus.addHandler(ModuleInitializedEvent.TYPE, new ModuleInitializedEventHandler() {
 			
 			@Override
 			public void onModuleInitialized(ModuleInitializedEvent event) {
+				initializedModulesCount++;
 				GWT.log("module initialized : " + event.getModule().getClass().toString());
-				mainModule.includeMainMenuSectionPresenters(event.getModule().getMainMenuSectionPresenters());
+				
+				SectionViewPresenter[] mainPresenters = event.getModule().getMainMenuSectionPresenters();
+				for(int i = 0; mainPresenters != null && i < mainPresenters.length; i++) {
+					presenters.add(mainPresenters[i]);
+				}
+
+				if(initializedModulesCount == modules.size())
+					mainModule.includeMainMenuSectionPresenters(presenters.toArray(new SectionViewPresenter[0]));
 			}
 		});
 		

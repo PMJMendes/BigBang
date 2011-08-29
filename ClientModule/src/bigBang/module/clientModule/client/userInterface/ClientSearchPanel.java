@@ -1,9 +1,10 @@
 package bigBang.module.clientModule.client.userInterface;
 
-import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+
+import com.google.gwt.i18n.client.DateTimeFormat;
 
 import bigBang.definitions.client.dataAccess.ClientProcessDataBrokerClient;
 import bigBang.definitions.shared.BigBangConstants;
@@ -15,7 +16,6 @@ import bigBang.library.client.ValueWrapper;
 import bigBang.library.client.userInterface.FiltersPanel;
 import bigBang.library.client.userInterface.view.SearchPanel;
 import bigBang.library.shared.SearchParameter;
-import bigBang.library.shared.SortOrder;
 import bigBang.library.shared.SortParameter;
 import bigBang.module.clientModule.interfaces.ClientService;
 import bigBang.module.clientModule.shared.ClientSearchParameter;
@@ -26,7 +26,7 @@ import bigBang.module.clientModule.shared.ModuleConstants;
 /**
  * @author Premium-Minds (Francisco Cabrita)
  *
- * A SearchPanel for clients and client groups
+ * A SearchPanel for clients
  */
 public class ClientSearchPanel extends SearchPanel implements ClientProcessDataBrokerClient {
 
@@ -57,11 +57,11 @@ public class ClientSearchPanel extends SearchPanel implements ClientProcessDataB
 		sortOptions.put(ClientSortParameter.SortableField.GROUP, "Grupo");
 		
 		filtersPanel = new FiltersPanel(sortOptions);
-		filtersPanel.addTypifiedListField(Filters.MANAGER, BigBangConstants.EntityIds.USER, "Gestor"); //TODO FJVC
+		filtersPanel.addTypifiedListField(Filters.MANAGER, BigBangConstants.EntityIds.USER, "Gestor");
 		filtersPanel.addTypifiedListField(Filters.COST_CENTER, BigBangConstants.EntityIds.COST_CENTER, "Centro de Custo");
 		filtersPanel.addTypifiedListField(Filters.MEDIATOR, BigBangConstants.EntityIds.MEDIATOR, "Mediador");
 		
-		filtersPanel.addTypifiedListField(Filters.PROFESSION, ModuleConstants.ListIDs.CAEs, "Profissão");
+		filtersPanel.addTypifiedListField(Filters.PROFESSION, ModuleConstants.ListIDs.Professions, "Profissão");
 		filtersPanel.addTypifiedListField(Filters.OPERATIONAL_PROFILE, ModuleConstants.ListIDs.OperationalProfiles, "Perfil Op.");
 		filtersPanel.addTypifiedListField(Filters.COMPANY_SIZE, ModuleConstants.ListIDs.CompanySizes, "Num. de Trab.");
 		filtersPanel.addTypifiedListField(Filters.SALES_VOLUME, ModuleConstants.ListIDs.SalesVolumes, "Vol. de Vendas");
@@ -101,16 +101,19 @@ public class ClientSearchPanel extends SearchPanel implements ClientProcessDataB
 		
 		p.freeText = this.getFreeText();
 
-		//p.managerId = (String) filtersPanel.getFilterValue(Filters.MANAGER);
+		p.managerId = (String) filtersPanel.getFilterValue(Filters.MANAGER);
 		p.costCenterId = (String) filtersPanel.getFilterValue(Filters.COST_CENTER);
 		p.mediatorId = (String) filtersPanel.getFilterValue(Filters.MEDIATOR);
-		p.professionIds = new String[0]; //(String) filtersPanel.getFilterValue(Filters.PROFESSION)}; TODO
+		String profession = (String) filtersPanel.getFilterValue(Filters.PROFESSION);
+		p.professionIds = profession == null ? new String[0] : new String[]{profession}; //TODO FILTERS FJVC
 		p.opProfileId = (String) filtersPanel.getFilterValue(Filters.OPERATIONAL_PROFILE);
 		p.workerSizeId = (String) filtersPanel.getFilterValue(Filters.COMPANY_SIZE);
 		p.salesVolumeId = (String) filtersPanel.getFilterValue(Filters.SALES_VOLUME);
 		p.maritalStatusId = (String) filtersPanel.getFilterValue(Filters.MARITAL_STATUS);
-		//p.birthDateFrom = new SimpleDateFormat("yyyy-MM-dd").format((Date) filtersPanel.getFilterValue(Filters.BORN_AFTER));
-		//p.birthDateTo = new SimpleDateFormat("yyyy-MM-dd").format((Date) filtersPanel.getFilterValue(Filters.BORN_BEFORE));
+		Date bornAfter = (Date) filtersPanel.getFilterValue(Filters.BORN_AFTER);
+		p.birthDateFrom = bornAfter == null ? null : DateTimeFormat.getFormat("yyyy-MM-dd").format(bornAfter);
+		Date bornBefore = (Date) filtersPanel.getFilterValue(Filters.BORN_BEFORE);
+		p.birthDateTo = bornBefore == null ? null : DateTimeFormat.getFormat("yyyy-MM-dd").format(bornBefore);
 		
 		parameters[0] = p;
 		

@@ -1,5 +1,8 @@
 package bigBang.module.mainModule.client;
 
+import java.util.Arrays;
+import java.util.Comparator;
+
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.RootPanel;
 
@@ -48,10 +51,21 @@ public class MainModule implements bigBang.library.client.MainModule {
 	}
 
 	public void includeMainMenuSectionPresenters(SectionViewPresenter[] sectionPresenters) {
+		Arrays.sort(sectionPresenters, new Comparator<SectionViewPresenter>() {
+
+			@Override
+			public int compare(SectionViewPresenter arg0,
+					SectionViewPresenter arg1) {
+				return arg0.getSection().getMenuIndex().ordinal() - arg1.getSection().getMenuIndex().ordinal();
+			}
+		});
+		
 		if(sectionPresenters == null)
 			return;
 		for(int i = 0; i < sectionPresenters.length; i++)
 			this.includeMainMenuSectionPresenter(sectionPresenters[i]);
+		
+		applicationController.renderPresenters();
 	}
 
 	public void includeMainMenuSectionPresenter(SectionViewPresenter section) {

@@ -2,13 +2,13 @@ package bigBang.module.insurancePolicyModule.client.userInterface;
 
 import com.google.gwt.user.client.ui.Label;
 
+import bigBang.definitions.shared.InsurancePolicy;
 import bigBang.library.client.userInterface.CheckBoxFormField;
 import bigBang.library.client.userInterface.DatePickerFormField;
 import bigBang.library.client.userInterface.ExpandableListBoxFormField;
 import bigBang.library.client.userInterface.TextAreaFormField;
 import bigBang.library.client.userInterface.TextBoxFormField;
 import bigBang.library.client.userInterface.view.FormView;
-import bigBang.module.insurancePolicyModule.shared.InsurancePolicy;
 
 public class InsurancePolicyForm extends FormView<InsurancePolicy> {
 

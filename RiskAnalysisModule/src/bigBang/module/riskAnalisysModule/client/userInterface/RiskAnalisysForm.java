@@ -1,9 +1,9 @@
 package bigBang.module.riskAnalisysModule.client.userInterface;
 
+import bigBang.definitions.shared.RiskAnalisys;
 import bigBang.library.client.userInterface.AddressFormField;
 import bigBang.library.client.userInterface.TextBoxFormField;
 import bigBang.library.client.userInterface.view.FormView;
-import bigBang.module.riskAnalisysModule.shared.RiskAnalisys;
 
 public class RiskAnalisysForm extends FormView<RiskAnalisys> {
 

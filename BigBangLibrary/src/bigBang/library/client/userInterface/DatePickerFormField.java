@@ -1,13 +1,11 @@
 package bigBang.library.client.userInterface;
 
-import java.sql.Timestamp;
-import java.text.DateFormat;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
+import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.HasVerticalAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
@@ -20,13 +18,12 @@ import bigBang.library.client.FormField;
 
 public class DatePickerFormField extends FormField<Date> {
 	
-	private static final String DEFAULT_FORMAT = "d-M-y";
-	
+	private static final String DEFAULT_FORMAT = "yyyy-MM-dd";
+
 	private Label label;
-	@SuppressWarnings("unused")
 	protected ListBox day, month, year;	
 	private boolean readonly;
-	protected DateFormat format;
+	protected DateTimeFormat format;
 	
 	public DatePickerFormField(){
 		this("");
@@ -45,7 +42,7 @@ public class DatePickerFormField extends FormField<Date> {
 		
 		this.setValidator(validator);
 		
-		this.format = new SimpleDateFormat(format);
+		this.format = DateTimeFormat.getFormat(format);
 
 		HorizontalPanel wrapper = new HorizontalPanel();
 		wrapper.setVerticalAlignment(HasVerticalAlignment.ALIGN_MIDDLE);
@@ -123,8 +120,6 @@ public class DatePickerFormField extends FormField<Date> {
 		for(int i = currentYear; i >= 1900; i--){
 			year.addItem(i+"", i+"");
 		}
-		
-		setReadOnly(false);
 	}
 	
 	@Override
@@ -163,11 +158,10 @@ public class DatePickerFormField extends FormField<Date> {
 				break;
 			}
 		}
-		
+
 		if(fireEvents)
 			ValueChangeEvent.fire(this, value);
 	}
-	
 	
 	@Override
 	public Date getValue() {
@@ -175,11 +169,10 @@ public class DatePickerFormField extends FormField<Date> {
 		String month = this.month.getValue(this.month.getSelectedIndex());
 		String year = this.year.getValue(this.year.getSelectedIndex());
 		
-		Date result = null;
+		if(day.equals("") || month.equals("") || year.equals(""))
+			return null;
 		
-		//Timestamp.valueOf(year+"-"+month+"-"+day);
-
-		return result;
+		return this.format.parse(year+"-"+month+"-"+day);
 	}
 	
 	@Override
@@ -196,7 +189,7 @@ public class DatePickerFormField extends FormField<Date> {
 			}
 		}
 		FieldValidator<?> validator = this.validator;
-		String message =  validator == null ? null : validator.getErrorMessage();
+		String message = validator == null ? null : validator.getErrorMessage();
 		this.errorMessageLabel.setText(message == null ? "Valor inválido" : message);
 		this.errorMessageLabel.setVisible(invalid);
 	}
@@ -210,12 +203,6 @@ public class DatePickerFormField extends FormField<Date> {
 		year.setEnabled(!readonly);
 		this.readonly = readonly;
 		mandatoryIndicatorLabel.setVisible(!readonly);
-		day.getElement().getStyle().setBorderColor(readonly ? "transparent" : "gray");
-		day.getElement().getStyle().setBackgroundColor(readonly ? "transparent" : "white");
-		month.getElement().getStyle().setBorderColor(readonly ? "transparent" : "gray");
-		month.getElement().getStyle().setBackgroundColor(readonly ? "transparent" : "white");
-		year.getElement().getStyle().setBorderColor(readonly ? "transparent" : "gray");
-		year.getElement().getStyle().setBackgroundColor(readonly ? "transparent" : "white");
 	}
 
 	@Override

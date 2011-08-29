@@ -22,12 +22,13 @@ public class MainScreenViewPresenter implements ViewPresenter {
 
 	public interface Display {
 		Widget asWidget();
-		void createMenuSection(SectionViewPresenter sectionPresenter, int index);
+		void createMenuSection(SectionViewPresenter sectionPresenter);
 		void showSection(MenuSection section) throws Exception;
 		void setUsername(String username);
 
 		MenuItem getLogoutButton();
 		void setDomain(String domain);
+		void showFirstSection();
 	}
 
 	private Display view;
@@ -72,8 +73,12 @@ public class MainScreenViewPresenter implements ViewPresenter {
 	}
 
 	public void addMenuSectionPresenter(SectionViewPresenter sectionPresenter){
-		this.view.createMenuSection(sectionPresenter, sectionPresenter.getSection().getMenuIndex().ordinal());
+		this.view.createMenuSection(sectionPresenter);
 		this.sections.put(sectionPresenter.getSection().getId(), sectionPresenter.getSection());
+	}
+	
+	public void renderPresenters() {
+		this.view.showFirstSection();
 	}
 
 	public void bind() {

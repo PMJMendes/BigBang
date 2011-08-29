@@ -1,4 +1,4 @@
-package bigBang.library.client;
+package bigBang.library.client.dataAccess;
 
 import java.util.List;
 
@@ -21,6 +21,13 @@ public interface TypifiedListBroker {
 	 */
 	public void registerClient(String listId, TypifiedListClient client);
 
+	/**
+	 * Unregisters a client for this broker
+	 * @param listId The id of the list from which the client will be unregistered
+	 * @param client The client to unregister
+	 */
+	public void unregisterClient(String listId, TypifiedListClient client);
+	
 	/**
 	 * @param listId the id of list to be refreshed
 	 */

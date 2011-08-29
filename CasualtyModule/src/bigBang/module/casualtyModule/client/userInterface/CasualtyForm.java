@@ -1,12 +1,12 @@
 package bigBang.module.casualtyModule.client.userInterface;
 
+import bigBang.definitions.shared.Casualty;
 import bigBang.library.client.userInterface.CheckBoxFormField;
 import bigBang.library.client.userInterface.DatePickerFormField;
 import bigBang.library.client.userInterface.ExpandableListBoxFormField;
 import bigBang.library.client.userInterface.TextAreaFormField;
 import bigBang.library.client.userInterface.TextBoxFormField;
 import bigBang.library.client.userInterface.view.FormView;
-import bigBang.module.casualtyModule.shared.Casualty;
 
 public class CasualtyForm extends FormView<Casualty> {
 

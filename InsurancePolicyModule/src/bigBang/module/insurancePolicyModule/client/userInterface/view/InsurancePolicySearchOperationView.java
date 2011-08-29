@@ -4,6 +4,7 @@ import com.google.gwt.event.logical.shared.AttachEvent;
 import com.google.gwt.user.client.ui.SplitLayoutPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
+import bigBang.definitions.shared.SecuredObject;
 import bigBang.library.client.userInterface.ContactsPreviewList;
 import bigBang.library.client.userInterface.DocumentsPreviewList;
 import bigBang.library.client.userInterface.List;
@@ -13,7 +14,6 @@ import bigBang.module.insurancePolicyModule.client.userInterface.InsurancePolicy
 import bigBang.module.insurancePolicyModule.client.userInterface.InsurancePolicyOperationsToolBar;
 import bigBang.module.insurancePolicyModule.client.userInterface.InsurancePolicySearchPanel;
 import bigBang.module.insurancePolicyModule.client.userInterface.presenter.InsurancePolicySearchOperationViewPresenter;
-import bigBang.module.insurancePolicyModule.shared.SecuredObject;
 
 public class InsurancePolicySearchOperationView extends View implements InsurancePolicySearchOperationViewPresenter.Display {
 

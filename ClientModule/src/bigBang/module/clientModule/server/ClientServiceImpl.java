@@ -71,8 +71,8 @@ public class ClientServiceImpl
 		lobjResult = new Client();
 
 		lobjResult.id = lid.toString();
-		lobjResult.name = (String)lobjClient.getAt(1);
-		lobjResult.clientNumber = lobjClient.getAt(0).toString();
+		lobjResult.name = (String)lobjClient.getAt(0);
+		lobjResult.clientNumber = lobjClient.getAt(1).toString();
 		lobjResult.groupName = null;
 		lobjResult.groupId = (lobjClient.getAt(11) == null ? null : lobjClient.getAt(11).toString());
 		lobjResult.taxNumber = (String)lobjClient.getAt(5);

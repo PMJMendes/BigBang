@@ -31,6 +31,8 @@ public class ClientMergeOperationView extends View implements ClientMergeOperati
 		ClientVerticalSearchPreview previewPanelDuplicate = new ClientVerticalSearchPreview();
 		previewPanelDuplicate.setSize("100%", "100%");
 		
+		
+		
 		mainWrapper.add(previewPanelOriginal);
 		mainWrapper.add(barrier);
 		mainWrapper.add(previewPanelDuplicate);

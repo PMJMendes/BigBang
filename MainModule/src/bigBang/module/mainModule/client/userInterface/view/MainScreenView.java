@@ -1,8 +1,6 @@
 package bigBang.module.mainModule.client.userInterface.view;
 
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashMap;
 
 import org.gwt.mosaic.ui.client.SheetPanel.Resources;
@@ -17,11 +15,14 @@ import com.google.gwt.dom.client.Style.Position;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.logical.shared.ResizeEvent;
 import com.google.gwt.event.logical.shared.ResizeHandler;
+import com.google.gwt.event.logical.shared.SelectionEvent;
+import com.google.gwt.event.logical.shared.SelectionHandler;
 import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.HasVerticalAlignment;
+import com.google.gwt.user.client.ui.HasWidgets;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.MenuBar;
 import com.google.gwt.user.client.ui.MenuItem;
@@ -34,7 +35,7 @@ public class MainScreenView extends View implements MainScreenViewPresenter.Disp
 
 	private VerticalPanel panel;
 	private TabPanel mainTabPanel;
-	private HashMap<MenuSection, Widget> sectionWrappers;
+	private HashMap<MenuSection, HasWidgets> sectionWrappers;
 	private ArrayList<SectionViewPresenter> sectionIndexes;
 	
 	private MenuItem usernameMenuItem;
@@ -42,7 +43,7 @@ public class MainScreenView extends View implements MainScreenViewPresenter.Disp
 	private MenuItem logoutMenuItem;
 
 	public MainScreenView(){
-		this.sectionWrappers = new HashMap<MenuSection, Widget>();
+		this.sectionWrappers = new HashMap<MenuSection, HasWidgets>();
 		this.sectionIndexes = new ArrayList<SectionViewPresenter>();
 		panel = new VerticalPanel();
 		panel.setVerticalAlignment(HasVerticalAlignment.ALIGN_TOP);
@@ -103,55 +104,50 @@ public class MainScreenView extends View implements MainScreenViewPresenter.Disp
 		this.mainTabPanel.getDeckPanel().getElement().getStyle().setPadding(0, Unit.PX);
 		panel.add(mainTabPanel);
 		panel.setCellHeight(mainTabPanel, "100%");
-
+		
 		initWidget(panel);
 		
 		disableTextSelection(true);
 	}
 
-	public void createMenuSection(SectionViewPresenter sectionPresenter, int index) {
+	@Override
+	public void createMenuSection(SectionViewPresenter sectionPresenter) {
 		sectionIndexes.add(sectionPresenter);
-		rearrangeTabs();
+		
+		MenuSection section = sectionPresenter.getSection();
+		AbsolutePanel tabPanelWidget = new AbsolutePanel();
+		tabPanelWidget.setSize("100px", "35px");
+
+		Label label = new Label(section.getShortDescription());
+		label.getElement().getStyle().setMarginTop(12, Unit.PX);
+		label.setWidth("100%");
+		tabPanelWidget.add(label, 0, 0);
+
+		if(section.hasBadge()){
+			section.getBadge().getElement().getStyle().setPosition(Position.ABSOLUTE);
+			tabPanelWidget.add(section.getBadge());
+			section.getBadge().getElement().getStyle().setRight(30, Unit.PX);
+		}
+
+		SimplePanel wrapper = new SimplePanel();
+		wrapper.setSize("100%", "100%");
+		
+		this.mainTabPanel.add(wrapper, tabPanelWidget);
+		
+		sectionWrappers.put(section, wrapper);
 	}
 	
-	public void rearrangeTabs(){
-		Collections.sort(this.sectionIndexes, new Comparator<SectionViewPresenter>() {
-
+	@Override
+	public void showFirstSection() {
+		this.mainTabPanel.addSelectionHandler(new SelectionHandler<Integer>() { //TODO FJVC nao pertence aqui
+			
 			@Override
-			public int compare(SectionViewPresenter o1, SectionViewPresenter o2) {
-				return o1.getSection().getMenuIndex().compareTo(o2.getSection().getMenuIndex());
+			public void onSelection(SelectionEvent<Integer> event) {
+				SectionViewPresenter presenter = sectionIndexes.get(event.getSelectedItem());
+				presenter.go(sectionWrappers.get(presenter.getSection()));
 			}
 		});
-		
-		this.mainTabPanel.clear();
-		sectionWrappers.clear();
-		
-		for(SectionViewPresenter sectionPresenter : this.sectionIndexes){
-			MenuSection section = sectionPresenter.getSection();
-			AbsolutePanel tabPanelWidget = new AbsolutePanel();
-			tabPanelWidget.setSize("100px", "35px");
-
-			Label label = new Label(section.getShortDescription());
-			label.getElement().getStyle().setMarginTop(12, Unit.PX);
-			label.setWidth("100%");
-			tabPanelWidget.add(label, 0, 0);
-
-			if(section.hasBadge()){
-				section.getBadge().getElement().getStyle().setPosition(Position.ABSOLUTE);
-				tabPanelWidget.add(section.getBadge());
-				section.getBadge().getElement().getStyle().setRight(30, Unit.PX);
-			}
-
-			SimplePanel wrapper = new SimplePanel();
-			wrapper.setSize("100%", "100%");
-			
-			this.mainTabPanel.add(wrapper, tabPanelWidget);
-			
-			sectionPresenter.go(wrapper);
-			
-			sectionWrappers.put(section, wrapper);
-		}
-		this.mainTabPanel.selectTab(0);
+		mainTabPanel.selectTab(0, true);
 	}
 
 	public void showPreferencesPanel(){
@@ -160,10 +156,10 @@ public class MainScreenView extends View implements MainScreenViewPresenter.Disp
 	}
 
 	public void showSection(MenuSection section) throws Exception {
-		int index = this.mainTabPanel.getDeckPanel().getWidgetIndex(sectionWrappers.get(section));
+		int index = this.mainTabPanel.getDeckPanel().getWidgetIndex((Widget) sectionWrappers.get(section));
 		if(index == -1)
 			throw new Exception("Could not select the menu section. it does not exist.");
-		this.mainTabPanel.selectTab(index);
+		this.mainTabPanel.selectTab(index, true);
 	}
 
 	@Override

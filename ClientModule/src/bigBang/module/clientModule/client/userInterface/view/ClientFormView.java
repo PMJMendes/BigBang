@@ -7,16 +7,16 @@ import bigBang.library.client.userInterface.AddressFormField;
 import bigBang.library.client.userInterface.DatePickerFormField;
 import bigBang.library.client.userInterface.ExpandableListBoxFormField;
 import bigBang.library.client.userInterface.ListBoxFormField;
+import bigBang.library.client.userInterface.RadioButtonFormField;
 import bigBang.library.client.userInterface.TextAreaFormField;
 import bigBang.library.client.userInterface.TextBoxFormField;
 import bigBang.library.client.userInterface.view.FormView;
 import bigBang.library.client.userInterface.view.FormViewSection;
 import bigBang.module.clientModule.shared.ModuleConstants;
 
-import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.user.client.ui.HorizontalPanel;
-import com.google.gwt.user.client.ui.RadioButton;
+import com.google.gwt.event.logical.shared.ValueChangeEvent;
+import com.google.gwt.event.logical.shared.ValueChangeHandler;
+import com.google.gwt.i18n.client.DateTimeFormat;
 
 public class ClientFormView extends FormView<Client> implements ClientProcessDataBrokerClient {
 
@@ -28,7 +28,6 @@ public class ClientFormView extends FormView<Client> implements ClientProcessDat
 	private ListBoxFormField mediator;
 	private ExpandableListBoxFormField clientManager;
 	private ExpandableListBoxFormField profile;
-	private TextBoxFormField email;
 	private ExpandableListBoxFormField CAE;
 	private TextBoxFormField activityObservations;
 	private ExpandableListBoxFormField numberOfWorkers;
@@ -39,8 +38,9 @@ public class ClientFormView extends FormView<Client> implements ClientProcessDat
 	private ExpandableListBoxFormField profession;
 	private TextAreaFormField notes;
 	private ExpandableListBoxFormField otherClientType;
+	private RadioButtonFormField clientType;
 
-	private FormViewSection specificSection;
+	private FormViewSection individualSection, companySection, otherSection;
 
 	public ClientFormView() {
 		super();
@@ -50,27 +50,26 @@ public class ClientFormView extends FormView<Client> implements ClientProcessDat
 		address = new AddressFormField();
 		group = new ExpandableListBoxFormField(BigBangConstants.EntityIds.CLIENT_GROUP, "Grupo");
 		NIB = new TextBoxFormField("NIB");
-		mediator = new ExpandableListBoxFormField("Mediador");
+		mediator = new ExpandableListBoxFormField(BigBangConstants.EntityIds.MEDIATOR, "Mediador");
 		clientManager = new ExpandableListBoxFormField(BigBangConstants.EntityIds.USER, "Gestor de Cliente");
 		profile = new ExpandableListBoxFormField(ModuleConstants.ListIDs.OperationalProfiles, "Perfil Operacional");
-		email = new TextBoxFormField("Email");
 		CAE = new ExpandableListBoxFormField(ModuleConstants.ListIDs.CAEs, "CAE");
 		CAE.setPopupWidth("600px");
 		CAE.setReadOnly(true);
 		activityObservations = new TextBoxFormField("Observações sobre actividade");
 		numberOfWorkers = new ExpandableListBoxFormField(ModuleConstants.ListIDs.CompanySizes, "Número de trabalhadores");
 		gender = new ExpandableListBoxFormField(ModuleConstants.ListIDs.Sexes, "Sexo");
-		birthDate = new DatePickerFormField();
+		birthDate = new DatePickerFormField("Data de Nascimento");
 		maritalStatus = new ExpandableListBoxFormField(ModuleConstants.ListIDs.MaritalStatuses, "Estado Civil");
 		profession = new ExpandableListBoxFormField(ModuleConstants.ListIDs.Professions, "Profissão");
 		revenue = new ExpandableListBoxFormField(ModuleConstants.ListIDs.SalesVolumes, "Facturação");
 		otherClientType = new ExpandableListBoxFormField(ModuleConstants.ListIDs.ClientSubtypes, "Tipo");
 		notes = new TextAreaFormField();
+		clientType = new RadioButtonFormField();
 
 		addSection("Informação Geral");
 
 		addFormField(name);
-		addFormField(email);
 		addFormField(taxNumber);
 		addFormField(NIB);
 		addFormField(group);
@@ -80,61 +79,45 @@ public class ClientFormView extends FormView<Client> implements ClientProcessDat
 
 		addSection("Tipo de Cliente");
 
-		final RadioButton radioButtonI = new RadioButton("clientType", "Indivíduo");
-		final RadioButton radioButtonE = new RadioButton("clientType", "Empresa");
-		final RadioButton radioButtonC = new RadioButton("clientType", "Outro");
+		clientType.addOption(ModuleConstants.ClientTypeIDs.Person, "Indivíduo");
+		clientType.addOption(ModuleConstants.ClientTypeIDs.Company, "Empresa");
+		clientType.addOption(ModuleConstants.ClientTypeIDs.Other, "Outro");
 
-		radioButtonI.addClickHandler(new ClickHandler() {
-
+		clientType.addValueChangeHandler(new ValueChangeHandler<String>() {
+			
 			@Override
-			public void onClick(ClickEvent event) {
-				if(radioButtonE.getValue())
-					setCompanyMode();
-				else if(radioButtonI.getValue())
+			public void onValueChange(ValueChangeEvent<String> event) {
+				if(event.getValue().equalsIgnoreCase(ModuleConstants.ClientTypeIDs.Person)){
 					setIndividualMode();
-				else if(radioButtonC.getValue())
+				}else if(event.getValue().equalsIgnoreCase(ModuleConstants.ClientTypeIDs.Company)){
+					setCompanyMode();
+				}else if(event.getValue().equalsIgnoreCase(ModuleConstants.ClientTypeIDs.Other)){
 					setOtherMode();
+				}
 			}
 		});
+		
+		addFormField(clientType);
 
-		radioButtonE.addClickHandler(new ClickHandler() {
+		individualSection = new FormViewSection("Informação Específica a Indivíduo");
+		addSection(individualSection);
+		individualSection.addFormField(birthDate);
+		individualSection.addFormField(gender);
+		individualSection.addFormField(maritalStatus);
+		individualSection.addFormField(profession);
+		
+		companySection = new FormViewSection("Informação Específica a Companhias");
+		addSection(companySection);
+		companySection.addFormField(CAE);
+		companySection.addFormField(activityObservations);
+		companySection.addFormField(numberOfWorkers);
+		companySection.addFormField(revenue);
+		
+		otherSection = new FormViewSection("Informação Específica");
+		addSection(otherSection);
+		otherSection.addFormField(otherClientType);
 
-			@Override
-			public void onClick(ClickEvent event) {
-				if(radioButtonE.getValue())
-					setCompanyMode();
-				else if(radioButtonI.getValue())
-					setIndividualMode();
-				else if(radioButtonC.getValue())
-					setOtherMode();
-			}
-		});
-
-		radioButtonC.addClickHandler(new ClickHandler() {
-
-			@Override
-			public void onClick(ClickEvent event) {
-				if(radioButtonE.getValue())
-					setCompanyMode();
-				else if(radioButtonI.getValue())
-					setIndividualMode();
-				else if(radioButtonC.getValue())
-					setOtherMode();
-			}
-		});
-
-		HorizontalPanel radioWrapper = new HorizontalPanel();
-		radioWrapper.setSpacing(5);
-		radioWrapper.add(radioButtonI);
-		radioWrapper.add(radioButtonE);
-		radioWrapper.add(radioButtonC);
-		addWidget(radioWrapper);
-
-		specificSection = new FormViewSection("Informação Específica");
-		addSection(specificSection);
-
-		radioButtonI.setValue(true);
-		setIndividualMode();
+		clientType.setValue(ModuleConstants.ClientTypeIDs.Person, true);
 
 		addSection("Morada");
 		addFormField(address);
@@ -146,27 +129,21 @@ public class ClientFormView extends FormView<Client> implements ClientProcessDat
 	}
 
 	public void setIndividualMode(){
-		specificSection.setVisible(true);
-		specificSection.clear();
-		specificSection.addWidget(birthDate);
-		specificSection.addFormField(gender);
-		specificSection.addFormField(maritalStatus);
-		specificSection.addFormField(profession);
+		companySection.setVisible(false);
+		otherSection.setVisible(false);
+		individualSection.setVisible(true);
 	}
 
 	public void setCompanyMode() {
-		specificSection.setVisible(true);
-		specificSection.clear();
-		specificSection.addFormField(CAE);
-		specificSection.addFormField(activityObservations);
-		specificSection.addFormField(numberOfWorkers);
-		specificSection.addFormField(revenue);
+		companySection.setVisible(true);
+		otherSection.setVisible(false);
+		individualSection.setVisible(false);
 	}
-
+	
 	public void setOtherMode() {
-		specificSection.setVisible(true);
-		specificSection.clear();
-		specificSection.addFormField(otherClientType);
+		companySection.setVisible(false);
+		otherSection.setVisible(true);
+		individualSection.setVisible(false);
 	}
 
 	@Override
@@ -181,7 +158,6 @@ public class ClientFormView extends FormView<Client> implements ClientProcessDat
 		mediator.getValue();
 		clientManager.getValue();
 		profile.getValue();
-		email.getValue();
 		CAE.getValue();
 		activityObservations.getValue();
 		numberOfWorkers.getValue();
@@ -191,7 +167,7 @@ public class ClientFormView extends FormView<Client> implements ClientProcessDat
 		maritalStatus.getValue();
 		profession.getValue();
 		notes.getValue();
-		//TODO CLIENT TYPE FJVC
+		clientType.getValue();
 		otherClientType.getValue();
 		
 		return result;
@@ -199,6 +175,10 @@ public class ClientFormView extends FormView<Client> implements ClientProcessDat
 
 	@Override
 	public void setInfo(Client info) {
+		if(info == null){
+			clearInfo();
+			return;			
+		}
 		name.setValue(info.name);
 		taxNumber.setValue(info.taxNumber);
 		address.setValue(info.address);
@@ -207,18 +187,17 @@ public class ClientFormView extends FormView<Client> implements ClientProcessDat
 		mediator.setValue(info.mediatorId);
 		clientManager.setValue(info.managerId);
 		profile.setValue(info.operationalProfileId);
-		email.setValue("TODO"); //TODO FJVC
 		CAE.setValue(info.caeId);
 		activityObservations.setValue(info.activityNotes);
 		numberOfWorkers.setValue(info.sizeId);
 		revenue.setValue(info.revenueId);
-		//if(birthDate != null)
-		//	birthDate.setValue(new Date(info.birthDate)); //TODO FJVC
+		if(info.birthDate != null)
+			birthDate.setValue(DateTimeFormat.getFormat("yyyy-MM-dd").parse(info.birthDate));
 		gender.setValue(info.genderId);
 		maritalStatus.setValue(info.maritalStatusId);
 		profession.setValue(info.professionId);
 		notes.setValue(info.notes);
-		//TODO CLIENT TYPE FJVC
+		clientType.setValue(info.typeId, true);
 		otherClientType.setValue(info.subtypeId);
 	}
 

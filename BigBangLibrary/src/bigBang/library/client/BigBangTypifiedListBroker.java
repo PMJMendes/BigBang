@@ -10,6 +10,8 @@ import com.google.gwt.core.client.GWT;
 
 import bigBang.definitions.client.response.ResponseHandler;
 import bigBang.definitions.shared.TipifiedListItem;
+import bigBang.library.client.dataAccess.TypifiedListBroker;
+import bigBang.library.client.dataAccess.TypifiedListClient;
 import bigBang.library.interfaces.TipifiedListService;
 import bigBang.library.interfaces.TipifiedListServiceAsync;
 
@@ -67,18 +69,33 @@ public class BigBangTypifiedListBroker implements TypifiedListBroker {
 		client.setTypifiedListItems(this.getListItems(listId));		
 		client.setTypifiedDataVersionNumber(listDataVersion.intValue());
 	}
+	
+	@Override
+	public void unregisterClient(String listId, TypifiedListClient client) {
+		if(clients.containsKey(listId)){
+			List<TypifiedListClient> clientList = clients.get(listId);
+			clientList.remove(client);
+			if(clientList.isEmpty()){
+				clients.remove(listId);
+				dataVersions.remove(listId);
+				lists.remove(listId);
+			}
+		}
+	}
 
 	@Override
 	public void refreshListData(final String listId) {
-		this.service.getListItems(listId, new BigBangAsyncCallback<TipifiedListItem[]>() { // TODO IMPORTANT FJVC
-
-			@Override
-			public void onSuccess(TipifiedListItem[] result) {
-				BigBangTypifiedListBroker.this.lists.put(listId, new ArrayList<TipifiedListItem>(Arrays.asList(result)));
-				incrementListDataVersion(listId);
-				updateListClients(listId);
-			}
-		});
+		if(!bigBang.definitions.client.Constants.DEBUG){
+			this.service.getListItems(listId, new BigBangAsyncCallback<TipifiedListItem[]>() {
+	
+				@Override
+				public void onSuccess(TipifiedListItem[] result) {
+					BigBangTypifiedListBroker.this.lists.put(listId, new ArrayList<TipifiedListItem>(Arrays.asList(result)));
+					incrementListDataVersion(listId);
+					updateListClients(listId);
+				}
+			});
+		}
 	}
 
 	@Override

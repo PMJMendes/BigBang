@@ -1,12 +1,8 @@
 package bigBang.library.client.userInterface;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
@@ -63,29 +59,18 @@ public class FiltersPanel extends View {
 		
 		wrapper.add(buttonsWrapper);
 
-		ClickHandler radioClickHandler =  new ClickHandler() {
-
-			@Override
-			public void onClick(ClickEvent event) {
-				GWT.log("RADIO");
-			}
-		};
-		
 		wrapper.add(new Label("Ordenar por:"));
 		
 		sortListBox = new ListBox();
 		sortListBox.setWidth("200px");
-		
-		//java.util.List<Enum<?>> sortedKeys = new ArrayList<Enum<?>>(sorts.keySet());
-		//Collections.sort(sortedKeys);
 		
 		for(Enum<?> key : sorts.keySet()){
 			sortListBox.addItem(sorts.get(key), key.toString());
 		}
 		
 		sortOrderList = new ListBox();
-		sortOrderList.addItem("Descendente", "ASC");
-		sortOrderList.addItem("Ascendente", "DESC");
+		sortOrderList.addItem("Descendente", "DESC");
+		sortOrderList.addItem("Ascendente", "ASC");
 		
 		HorizontalPanel sortFieldsWrapper = new HorizontalPanel();
 		sortFieldsWrapper.setVerticalAlignment(HasVerticalAlignment.ALIGN_MIDDLE);
@@ -105,7 +90,7 @@ public class FiltersPanel extends View {
 
 		ScrollPanel mainWrapper = new ScrollPanel(wrapper);
 		mainWrapper.setSize("100%", "100%");
-		mainWrapper.getElement().getStyle().setMarginBottom(20, Unit.PX);
+		mainWrapper.getElement().getStyle().setMarginBottom(10, Unit.PX);
 		
 		initWidget(mainWrapper);
 	}

@@ -177,6 +177,7 @@ public abstract class SearchPanel extends FilterableList<SearchResult> {
 						workspaceId = result.workspaceId;
 						clear();
 						scrollPanel.scrollToTop();
+						requestedNextPage = false;
 						nextResultIndex += result.results.length;
 						SearchPanel.this.numberOfResults = result.totalCount;
 						onResults(result.results);
@@ -191,6 +192,7 @@ public abstract class SearchPanel extends FilterableList<SearchResult> {
 					public void onSuccess(NewSearchResult result) {
 						clear();
 						scrollPanel.scrollToTop();
+						requestedNextPage = false;
 						nextResultIndex += result.results.length;
 						SearchPanel.this.numberOfResults = result.totalCount;
 						onResults(result.results);

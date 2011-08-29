@@ -120,13 +120,13 @@ public class AddressFormField extends FormField<Address> {
 			clear();
 			return;
 		}
-		street1.setValue(address.street1);
-		street2.setValue(address.street2);
-		code.setValue(address.zipCode.code);
-		city.setValue(address.zipCode.city);
-		county.setValue(address.zipCode.county);
-		district.setValue(address.zipCode.district);
-		country.setValue(address.zipCode.country);
+		street1.setValue(address.street1 == null ? "": address.street1);
+		street2.setValue(address.street2 == null ? "": address.street2);
+		code.setValue(address.zipCode == null ? "": address.zipCode.code);
+		city.setValue(address.zipCode == null || address.zipCode.city == null ? "" : address.zipCode.city);
+		county.setValue(address.zipCode == null || address.zipCode.county == null ? "" : address.zipCode.county);
+		district.setValue(address.zipCode == null || address.zipCode.district == null ? "" : address.zipCode.district);
+		country.setValue(address.zipCode == null || address.zipCode.country == null ? "" : address.zipCode.country);
 	}
 	
 	@Override

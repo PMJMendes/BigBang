@@ -6,11 +6,15 @@ import java.util.List;
 
 import bigBang.definitions.shared.TipifiedListItem;
 import bigBang.library.client.BigBangTypifiedListBroker;
+import bigBang.library.client.Checkable;
 import bigBang.library.client.FieldValidator;
+import bigBang.library.client.FormField;
 import bigBang.library.client.Selectable;
 import bigBang.library.client.ValueSelectable;
 import bigBang.library.client.dataAccess.TypifiedListBroker;
 import bigBang.library.client.dataAccess.TypifiedListClient;
+import bigBang.library.client.event.CheckedStateChangedEvent;
+import bigBang.library.client.event.CheckedStateChangedEventHandler;
 import bigBang.library.client.event.SelectionChangedEvent;
 import bigBang.library.client.event.SelectionChangedEventHandler;
 import bigBang.library.client.resources.Resources;
@@ -18,64 +22,84 @@ import bigBang.library.client.userInterface.view.PopupPanel;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Cursor;
+import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.event.logical.shared.AttachEvent;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.HasVerticalAlignment;
+import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Image;
+import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Widget;
 
-public class ExpandableListBoxFormField extends ListBoxFormField implements
-		TypifiedListClient {
+public class ExpandableMultipleListBoxFormField extends FormField<String[]> {
 
-	protected Image expandImage;
+
+
+	@Override
+	public void clear() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void setReadOnly(boolean readonly) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public boolean isReadOnly() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	/*protected Image expandImage;
 	protected TypifiedListManagementPanel list;
-	protected String tempValue;
-	protected String selectedValueId;
 	protected int typifiedListDataVersion;
 	protected TypifiedListBroker typifiedListBroker;
+	protected Label selectedItemsLabel;
 
 	protected boolean hasServices;
 
-	public ExpandableListBoxFormField(String description) {
+	public ExpandableMultipleListBoxFormField(String description) {
 		this("", description);
 	}
 
-	public ExpandableListBoxFormField(String listId,
-			FieldValidator<String> validator) {
+	public ExpandableMultipleListBoxFormField(String listId,
+			FieldValidator<String[]> validator) {
 		this(listId, "");
 		setValidator(validator);
 	}
 
-	public ExpandableListBoxFormField(String listId, String description,
-			FieldValidator<String> validator) {
+	public ExpandableMultipleListBoxFormField(String listId, String description,
+			FieldValidator<String[]> validator) {
 		this(listId, description);
 		setValidator(validator);
 	}
 
-	public ExpandableListBoxFormField(final String listId,
+	public ExpandableMultipleListBoxFormField(final String listId,
 			final String listDescription) {
 		super();
 		this.typifiedListBroker = BigBangTypifiedListBroker.Util.getInstance();
-		clearValues();
 
 		hasServices = listId != null && !listId.equals("");
 
-		label.setText(listDescription + ":");
-
-		wrapper.clear();
+		HorizontalPanel wrapper = new HorizontalPanel();
 		wrapper.setVerticalAlignment(HasVerticalAlignment.ALIGN_MIDDLE);
-
-		wrapper.add(this.label);
-		wrapper.setCellWidth(this.label, "100px");
-		wrapper.setCellHorizontalAlignment(this.label,
-				HasHorizontalAlignment.ALIGN_RIGHT);
-		wrapper.add((Widget) this.listBox);
+		Label label = new Label();
+		label.getElement().getStyle().setMarginRight(5, Unit.PX);
+		wrapper.add(label);
+		wrapper.setCellWidth(label, "100px");
+		wrapper.setCellHorizontalAlignment(label, HasHorizontalAlignment.ALIGN_RIGHT);
+		wrapper.add((Widget) selectedItemsLabel);
 		Resources r = GWT.create(Resources.class);
 		expandImage = new Image(r.listExpandIcon());
 		expandImage.getElement().getStyle().setCursor(Cursor.POINTER);
-
+		wrapper.add(mandatoryIndicatorLabel);
+		initWidget(wrapper);
+		setFieldWidth("150px");
+		
 		final PopupPanel popup = new PopupPanel(true, "Listagem");
 
 		list = new TypifiedListManagementPanel(listId, listDescription) {
@@ -83,25 +107,26 @@ public class ExpandableListBoxFormField extends ListBoxFormField implements
 			public void onCellDoubleClicked(
 					bigBang.library.client.userInterface.ListEntry<TipifiedListItem> entry) {
 				super.onCellDoubleClicked(entry);
-				popup.hidePopup();
+				entry.setChecked(!entry.isChecked());
 			};
 		};
-
-		list.addSelectionChangedEventHandler(new SelectionChangedEventHandler() {
-
-			@Override
-			public void onSelectionChanged(SelectionChangedEvent event) {
-				Collection<? extends Selectable> selected = event.getSelected();
-				for (Selectable i : selected) {
-					@SuppressWarnings("unchecked")
-					ValueSelectable<TipifiedListItem> iv = (ValueSelectable<TipifiedListItem>) i;
-					if (!getValue().equals(iv.getValue().id))
-						setValue(iv.getValue().id);
-					break;
-				}
-
-			}
-		});
+		
+		list.setCheckable(true);
+		
+//		list.addCheckedStateChangedEventHandler(new CheckedStateChangedEventHandler() {
+//			
+//			@Override
+//			public void onCheckedStateChanged(CheckedStateChangedEvent event) {
+//				Collection<? extends Selectable> selected = event.getChecked();
+//				for (Selectable i : selected) {
+//					@SuppressWarnings("unchecked")
+//					ValueSelectable<TipifiedListItem> iv = (ValueSelectable<TipifiedListItem>) i;
+//					if (!getValue().equals(iv.getValue().id))
+//						setValue(iv.getValue().id);
+//					break;
+//				}
+//			}
+//		});
 		list.setReadOnly(!this.hasServices);
 		list.setEditable(this.hasServices);
 
@@ -113,7 +138,7 @@ public class ExpandableListBoxFormField extends ListBoxFormField implements
 				popup.add(list);
 				list.clearSelection();
 				for(ListEntry<TipifiedListItem> e : list) {
-					if(e.getValue().id.equals(ExpandableListBoxFormField.this.getValue())){
+					if(e.getValue().id.equals(ExpandableMultipleListBoxFormField.this.getValue())){
 						e.setSelected(true);
 						break;
 					}
@@ -128,17 +153,7 @@ public class ExpandableListBoxFormField extends ListBoxFormField implements
 		wrapper.add(mandatoryIndicatorLabel);
 		setFieldWidth("150px");
 		
-		this.addHandler(new AttachEvent.Handler() {
-			
-			@Override
-			public void onAttachOrDetach(AttachEvent event) {
-				if(event.isAttached()){
-					typifiedListBroker.registerClient(listId, ExpandableListBoxFormField.this);
-				}else{
-					typifiedListBroker.unregisterClient(listId, ExpandableListBoxFormField.this);
-				}
-			}
-		}, AttachEvent.getType());
+		this.typifiedListBroker.registerClient(listId, this);
 	}
 
 	public void setEditable(boolean editable) {
@@ -147,24 +162,26 @@ public class ExpandableListBoxFormField extends ListBoxFormField implements
 
 	@Override
 	public void setReadOnly(boolean readonly) {
-		super.setReadOnly(readonly);
 		list.setReadOnly(readonly);
 		list.setSelectableEntries(!readonly);
 	}
 
 	@Override
-	public void setValue(String value, boolean fireEvents) {
-		String strValue = value;
+	public void setValue(String[] value, boolean fireEvents) {
+		String[] strValue = value;
 		if (value == null)
-			strValue = "";
-		super.setValue(strValue, fireEvents);
-		tempValue = value;
+			strValue = new String[0];
+		for(int i = 0; i < strValue.length; i++) {
+			
+		}
 	}
 
 	@Override
 	public void clear() {
 		list.clearSelection();
-		super.clear();
+		for(Checkable c : list.getChecked()){
+			c.setChecked(false);
+		}
 	}
 
 	public void setPopupWidth(String width) {
@@ -175,60 +192,13 @@ public class ExpandableListBoxFormField extends ListBoxFormField implements
 		list.setHeight(height);
 	}
 
-	// TypifiedListClient methods
-
-	@Override
-	public int getTypifiedDataVersionNumber() {
-		return this.typifiedListDataVersion;
-	}
-
-	@Override
-	public void setTypifiedDataVersionNumber(int number) {
-		this.typifiedListDataVersion = number;
-	}
-
-	@Override
-	public void setTypifiedListItems(List<TipifiedListItem> items) {
-		String selectedItemId = getValue();
-		boolean exists = false;
-		this.clearValues();
-		for (TipifiedListItem i : items) {
-			addItem(i);
-			exists |= i.id.equals(selectedItemId);
-		}
-		if(exists)
-			setValue(selectedItemId);
-	}
-
-	@Override
-	public void removeItem(TipifiedListItem item) {
-		int index = super.getItemIndex(item.value, item.id);
-		super.removeItem(index);
-	}
-
-	@Override
-	public void addItem(TipifiedListItem item) {
-		super.addItem(item.value, item.id);
-	}
-
-	@Override
-	public void updateItem(TipifiedListItem item) {
-		int size = listBox.getItemCount();
-		for(int i = 0; i < size; i++){ 
-			if(listBox.getValue(i).equals(item.id)) {
-				listBox.setItemText(i, item.value);
-				break;
-			}
-		}
-	}
-	
 	/**
 	 * Gets all the typified list item entries
 	 * @return A collection of list items wrapped in value selectables
-	 */
+	 *
 	public Collection<ValueSelectable<TipifiedListItem>> getListItems(){
 		ArrayList<ValueSelectable<TipifiedListItem>> result = new ArrayList<ValueSelectable<TipifiedListItem>>(this.list);
 		return result;
-	}
+	}*/
 
 }

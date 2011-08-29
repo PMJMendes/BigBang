@@ -1,4 +1,4 @@
-package bigBang.module.riskAnalisysModule.shared;
+package bigBang.definitions.shared;
 
 import java.io.Serializable;
 

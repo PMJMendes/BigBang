@@ -3,6 +3,8 @@ package bigBang.module.quoteRequestModule.client.userInterface.view;
 import com.google.gwt.user.client.ui.SplitLayoutPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
+import bigBang.definitions.shared.Negotiation;
+import bigBang.definitions.shared.SecuredObject;
 import bigBang.library.client.userInterface.ContactsPreviewList;
 import bigBang.library.client.userInterface.FilterableList;
 import bigBang.library.client.userInterface.NavigationPanel;
@@ -11,8 +13,6 @@ import bigBang.module.quoteRequestModule.client.userInterface.QuoteRequestForm;
 import bigBang.module.quoteRequestModule.client.userInterface.QuoteRequestProcessToolBar;
 import bigBang.module.quoteRequestModule.client.userInterface.QuoteRequestSearchPanel;
 import bigBang.module.quoteRequestModule.client.userInterface.presenter.QuoteRequestSearchOperationViewPresenter;
-import bigBang.module.quoteRequestModule.shared.Negotiation;
-import bigBang.module.quoteRequestModule.shared.SecuredObject;
 
 public class QuoteRequestSearchOperationView extends View implements QuoteRequestSearchOperationViewPresenter.Display {
 

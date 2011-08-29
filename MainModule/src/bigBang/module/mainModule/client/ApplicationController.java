@@ -95,4 +95,8 @@ public class ApplicationController {
 		});
 	}
 
+	public void renderPresenters() {
+		mainScreenViewPresenter.renderPresenters();
+	}
+
 }

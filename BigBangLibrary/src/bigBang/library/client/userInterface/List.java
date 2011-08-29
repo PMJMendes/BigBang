@@ -5,9 +5,15 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.ListIterator;
 
+import bigBang.library.client.Checkable;
+import bigBang.library.client.HasCheckables;
 import bigBang.library.client.HasValueSelectables;
 import bigBang.library.client.Selectable;
 import bigBang.library.client.ValueSelectable;
+import bigBang.library.client.event.CheckedSelectionChangedEvent;
+import bigBang.library.client.event.CheckedSelectionChangedEventHandler;
+import bigBang.library.client.event.CheckedStateChangedEvent;
+import bigBang.library.client.event.CheckedStateChangedEventHandler;
 import bigBang.library.client.event.SelectedStateChangedEvent;
 import bigBang.library.client.event.SelectedStateChangedEventHandler;
 import bigBang.library.client.event.SelectionChangedEvent;
@@ -38,7 +44,7 @@ import com.google.gwt.user.client.ui.Widget;
  * Implements a list, able to hold entries inside a scrollable panel 
  * @param <T> The type of the value held by the list entries
  */
-public class List<T> extends View implements HasValueSelectables<T>, java.util.List<ListEntry<T>> {
+public class List<T> extends View implements HasValueSelectables<T>, java.util.List<ListEntry<T>>, HasCheckables {
 
 	protected java.util.List<ListEntry<T>> entries;
 	protected boolean multipleSelection = false;
@@ -54,6 +60,7 @@ public class List<T> extends View implements HasValueSelectables<T>, java.util.L
 	protected ScrollPanel scrollPanel;
 	protected SelectedStateChangedEventHandler entrySelectionHandler;
 	protected DoubleClickHandler cellDoubleClickHandler;
+	protected CheckedStateChangedEventHandler cellCheckedHandler;
 	protected boolean selectionChangeHandlerInitialized;
 	protected PickupDragController dragController;
 	protected boolean draggable = false;
@@ -132,6 +139,15 @@ public class List<T> extends View implements HasValueSelectables<T>, java.util.L
 					onCellDoubleClicked((ListEntry<T>) event.getSource());
 			}
 		};
+		
+		cellCheckedHandler = new CheckedStateChangedEventHandler() {
+			
+			@Override
+			public void onCheckedStateChanged(CheckedStateChangedEvent event) {
+				if(entries.contains(event.getSource()))
+					checkedSelectionChanged();
+			}
+		};
 
 		clear();
 
@@ -161,6 +177,7 @@ public class List<T> extends View implements HasValueSelectables<T>, java.util.L
 		if(draggable)
 			dragController.makeDraggable(e, e.getDragHandler());
 		e.addHandler(this.cellDoubleClickHandler, DoubleClickEvent.getType());
+		e.addHandler(this.cellCheckedHandler , CheckedStateChangedEvent.TYPE);
 		return e.addHandler(this.entrySelectionHandler, SelectedStateChangedEvent.TYPE);
 	}
 
@@ -277,6 +294,9 @@ public class List<T> extends View implements HasValueSelectables<T>, java.util.L
 	protected void onSizeChanged() {
 	}
 
+	
+	//Checkable functions
+	
 	/**
 	 * Sets whether or not the list entries have checkable capabilities.
 	 * @param checkable If true, the list entries acquire checkable capabilities.
@@ -287,19 +307,25 @@ public class List<T> extends View implements HasValueSelectables<T>, java.util.L
 			entry.setCheckable(checkable);
 	}
 
-	/**
-	 * Returns all the checked entries
-	 * @return the checked entries
-	 */
-	public ArrayList<ListEntry<T>> getCheckedEntries() {
-		ArrayList<ListEntry<T>> result = new ArrayList<ListEntry<T>>();
+	@Override
+	public Collection<Checkable> getChecked() {
+		ArrayList<Checkable> result = new ArrayList<Checkable>();
 		for (ListEntry<T> e : this.entries) {
 			if (e.isChecked())
 				result.add(e);
 		}
 		return result;
 	}
-
+	
+	@Override
+	public HandlerRegistration addCheckedSelectionChangedEventHandler(
+			CheckedSelectionChangedEventHandler handler) {
+		return addHandler(handler, CheckedSelectionChangedEvent.TYPE);
+	}
+	
+	protected void checkedSelectionChanged(){
+		fireEvent(new CheckedSelectionChangedEvent(getChecked()));
+	}
 
 	protected void selectableStateChanged(Selectable source) {
 		if(multipleSelection){
@@ -312,7 +338,6 @@ public class List<T> extends View implements HasValueSelectables<T>, java.util.L
 		}
 		selectionChangedEventFireBypass(new SelectionChangedEvent(this.getSelected()));
 	}
-
 
 	//HasSelectables Methods
 
@@ -620,4 +645,5 @@ public class List<T> extends View implements HasValueSelectables<T>, java.util.L
 
 		this.draggable = draggable;
 	}
+
 }

@@ -1,4 +1,4 @@
-package bigBang.module.casualtyModule.shared;
+package bigBang.definitions.shared;
 
 import java.io.Serializable;
 
