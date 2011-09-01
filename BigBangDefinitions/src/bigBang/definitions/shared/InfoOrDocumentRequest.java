@@ -2,7 +2,7 @@ package bigBang.definitions.shared;
 
 import java.io.Serializable;
 
-public class ClientInfoOrDocumentRequest implements Serializable {
+public class InfoOrDocumentRequest implements Serializable {
 	
 	//The response to an info or document request
 	public static class Response implements Serializable {

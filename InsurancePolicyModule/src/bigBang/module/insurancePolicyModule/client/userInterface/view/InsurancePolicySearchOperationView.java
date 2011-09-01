@@ -4,7 +4,7 @@ import com.google.gwt.event.logical.shared.AttachEvent;
 import com.google.gwt.user.client.ui.SplitLayoutPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
-import bigBang.definitions.shared.SecuredObject;
+import bigBang.definitions.shared.InsuredObject;
 import bigBang.library.client.userInterface.ContactsPreviewList;
 import bigBang.library.client.userInterface.DocumentsPreviewList;
 import bigBang.library.client.userInterface.List;
@@ -23,7 +23,7 @@ public class InsurancePolicySearchOperationView extends View implements Insuranc
 	protected InsurancePolicyForm form;
 	protected ContactsPreviewList contactsList;
 	protected DocumentsPreviewList documentsList;
-	protected List<SecuredObject> securedObjectsList;
+	protected List<InsuredObject> securedObjectsList;
 	protected InsurancePolicyOperationsToolBar operationsToolBar;
 
 	public InsurancePolicySearchOperationView(){
@@ -67,7 +67,7 @@ public class InsurancePolicySearchOperationView extends View implements Insuranc
 		SplitLayoutPanel formWrapper = new SplitLayoutPanel();
 		formWrapper.setSize("100%", "100%");
 				
-		securedObjectsList = new List<SecuredObject>();
+		securedObjectsList = new List<InsuredObject>();
 		securedObjectsList.setHeaderWidget(new ListHeader("Objectos Seguros"));
 		
 		form = new InsurancePolicyForm();

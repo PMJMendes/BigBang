@@ -17,9 +17,6 @@ public interface NegotiationServiceAsync extends SearchServiceAsync {
 	void getNegotiation(String negotiationId,
 			AsyncCallback<Negotiation> callback);
 
-	void createNegotiation(Negotiation negotiation,
-			AsyncCallback<Negotiation> callback);
-
 	void cancelNegotiation(Cancellation cancellation,
 			AsyncCallback<Negotiation> callback);
 

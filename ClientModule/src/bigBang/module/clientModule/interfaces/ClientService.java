@@ -2,8 +2,8 @@ package bigBang.module.clientModule.interfaces;
 
 import bigBang.definitions.shared.Casualty;
 import bigBang.definitions.shared.Client;
-import bigBang.definitions.shared.ClientInfoOrDocumentRequest;
-import bigBang.definitions.shared.ClientToManagerTransfer;
+import bigBang.definitions.shared.InfoOrDocumentRequest;
+import bigBang.definitions.shared.ManagerTransfer;
 import bigBang.definitions.shared.InsurancePolicy;
 import bigBang.definitions.shared.QuoteRequest;
 import bigBang.definitions.shared.RiskAnalisys;
@@ -32,24 +32,20 @@ public interface ClientService
 	}
 
 	public Client getClient(String clientId) throws SessionExpiredException, BigBangException;
-	public Client createClient(Client client) throws SessionExpiredException, BigBangException;
-	public Client editClient(Client client) throws SessionExpiredException, BigBangException;
-	public void deleteClient(String clientId) throws SessionExpiredException, BigBangException;
-	
-	public RiskAnalisys createRiskAnalisys(String clientId, RiskAnalisys riskAnalisys) throws SessionExpiredException, BigBangException;
-	public InsurancePolicy createPolicy(String clientId, InsurancePolicy policy) throws SessionExpiredException, BigBangException;
-	public QuoteRequest createQuoteRequest(String clientId, QuoteRequest request) throws SessionExpiredException, BigBangException;
-	public Casualty createCasualty(String clientId, Casualty casualty) throws SessionExpiredException, BigBangException;
-	public Client mergeWithClient(String originalId, String receptorId) throws SessionExpiredException, BigBangException; //Returns the altered receptor client
-	
-	public ClientToManagerTransfer[] transferToManager(String[] clientIds, String managerId) throws SessionExpiredException, BigBangException;
-	public ClientToManagerTransfer acceptTransfer(String transferId) throws SessionExpiredException, BigBangException;
-	public ClientToManagerTransfer cancelTransfer(String transferId) throws SessionExpiredException, BigBangException;
-	
-	public ClientInfoOrDocumentRequest createInfoOrDocumentRequest(ClientInfoOrDocumentRequest request) throws SessionExpiredException, BigBangException;
-	public ClientInfoOrDocumentRequest repeatRequest(ClientInfoOrDocumentRequest request) throws SessionExpiredException, BigBangException;
-	public ClientInfoOrDocumentRequest receiveInfoOrDocumentRequestResponse(ClientInfoOrDocumentRequest.Response response) throws SessionExpiredException, BigBangException;
-	public void cancelInfoOrDocumentRequest(ClientInfoOrDocumentRequest.Cancellation cancellation) throws SessionExpiredException, BigBangException;
-	
-}
 
+	public Client createClient(Client client) throws SessionExpiredException, BigBangException;
+
+	public Client editClient(Client client) throws SessionExpiredException, BigBangException;
+
+	public Client mergeWithClient(String originalId, String receptorId) throws SessionExpiredException, BigBangException; //Returns the altered receptor client
+
+	public InfoOrDocumentRequest createInfoOrDocumentRequest(InfoOrDocumentRequest request) throws SessionExpiredException, BigBangException;
+	public ManagerTransfer[] createManagerTransfer(String[] clientIds, String managerId) throws SessionExpiredException, BigBangException;
+
+	public QuoteRequest createQuoteRequest(String clientId, QuoteRequest request) throws SessionExpiredException, BigBangException;
+	public InsurancePolicy createPolicy(String clientId, InsurancePolicy policy) throws SessionExpiredException, BigBangException;
+	public RiskAnalisys createRiskAnalisys(String clientId, RiskAnalisys riskAnalisys) throws SessionExpiredException, BigBangException;
+	public Casualty createCasualty(String clientId, Casualty casualty) throws SessionExpiredException, BigBangException;
+
+	public void deleteClient(String clientId) throws SessionExpiredException, BigBangException;
+}

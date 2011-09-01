@@ -1,12 +1,12 @@
 package bigBang.module.clientModule.client.userInterface.view;
 
-import bigBang.definitions.shared.ClientInfoOrDocumentRequest;
+import bigBang.definitions.shared.InfoOrDocumentRequest;
 import bigBang.library.client.userInterface.ExpandableListBoxFormField;
 import bigBang.library.client.userInterface.RichTextAreaFormField;
 import bigBang.library.client.userInterface.TextBoxFormField;
 import bigBang.library.client.userInterface.view.FormView;
 
-public class InfoOrDocumentRequestForm extends FormView<ClientInfoOrDocumentRequest> {
+public class InfoOrDocumentRequestForm extends FormView<InfoOrDocumentRequest> {
 	
 	protected ExpandableListBoxFormField documentType;
 	protected RichTextAreaFormField text;
@@ -37,13 +37,13 @@ public class InfoOrDocumentRequestForm extends FormView<ClientInfoOrDocumentRequ
 	}
 	
 	@Override
-	public ClientInfoOrDocumentRequest getInfo() {
+	public InfoOrDocumentRequest getInfo() {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public void setInfo(ClientInfoOrDocumentRequest info) {
+	public void setInfo(InfoOrDocumentRequest info) {
 		// TODO Auto-generated method stub
 	}
 

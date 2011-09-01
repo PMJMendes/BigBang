@@ -28,8 +28,6 @@ public interface NegotiationService extends SearchService {
 	}
 
 	public Negotiation getNegotiation(String negotiationId);
-	public Negotiation createNegotiation(Negotiation negotiation) throws SessionExpiredException, BigBangException;
-	public Negotiation deleteNegotiation(Negotiation.Deletion deletion) throws SessionExpiredException, BigBangException;
 	public Negotiation cancelNegotiation(Negotiation.Cancellation cancellation) throws SessionExpiredException, BigBangException;
 	public Negotiation.Adjudication adjudicateNegotiation(Negotiation.Adjudication adjudication);
 
@@ -50,4 +48,5 @@ public interface NegotiationService extends SearchService {
 	public void closeInfoRequestFromInsuranceAgency(InsuranceAgencyInfoRequest.Cancellation cancellation) throws SessionExpiredException, BigBangException;
 	public InsuranceAgencyInfoRequest receiveInfoRequestFromInsuranceAgencyResponse(InsuranceAgencyInfoRequest.Response response) throws SessionExpiredException, BigBangException;
 
+	public Negotiation deleteNegotiation(Negotiation.Deletion deletion) throws SessionExpiredException, BigBangException;
 }

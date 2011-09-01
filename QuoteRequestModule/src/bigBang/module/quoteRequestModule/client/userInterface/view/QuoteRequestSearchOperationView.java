@@ -4,7 +4,7 @@ import com.google.gwt.user.client.ui.SplitLayoutPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
 import bigBang.definitions.shared.Negotiation;
-import bigBang.definitions.shared.SecuredObject;
+import bigBang.definitions.shared.InsuredObject;
 import bigBang.library.client.userInterface.ContactsPreviewList;
 import bigBang.library.client.userInterface.FilterableList;
 import bigBang.library.client.userInterface.NavigationPanel;
@@ -20,7 +20,7 @@ public class QuoteRequestSearchOperationView extends View implements QuoteReques
 	
 	protected QuoteRequestSearchPanel searchPanel;
 	protected QuoteRequestForm form;
-	protected FilterableList<SecuredObject> securedObjectsList;
+	protected FilterableList<InsuredObject> securedObjectsList;
 	protected FilterableList<Negotiation> negotiationsList;
 	
 	protected NavigationPanel securedObjectsNavigationPanel;
@@ -52,7 +52,7 @@ public class QuoteRequestSearchOperationView extends View implements QuoteReques
 		
 		contentWrapper.addSouth(listsWrapper, 300);
 		
-		securedObjectsList = new FilterableList<SecuredObject>();
+		securedObjectsList = new FilterableList<InsuredObject>();
 		negotiationsList = new FilterableList<Negotiation>();
 		
 		securedObjectsNavigationPanel = new NavigationPanel("Objectos Seguros");

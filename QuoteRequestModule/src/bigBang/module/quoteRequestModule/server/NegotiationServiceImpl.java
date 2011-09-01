@@ -67,13 +67,6 @@ public class NegotiationServiceImpl  extends RemoteServiceServlet implements Neg
 	}
 
 	@Override
-	public Negotiation createNegotiation(Negotiation negotiation)
-			throws SessionExpiredException, BigBangException {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
 	public Negotiation deleteNegotiation(Deletion deletion)
 			throws SessionExpiredException, BigBangException {
 		// TODO Auto-generated method stub

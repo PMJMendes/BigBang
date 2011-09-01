@@ -15,9 +15,9 @@ import bigBang.definitions.client.dataAccess.SortParameter;
 import bigBang.definitions.shared.Address;
 import bigBang.definitions.shared.Casualty;
 import bigBang.definitions.shared.Client;
-import bigBang.definitions.shared.ClientInfoOrDocumentRequest;
+import bigBang.definitions.shared.InfoOrDocumentRequest;
 import bigBang.definitions.shared.ClientStub;
-import bigBang.definitions.shared.ClientToManagerTransfer;
+import bigBang.definitions.shared.ManagerTransfer;
 import bigBang.definitions.shared.Contact;
 import bigBang.definitions.shared.Document;
 import bigBang.definitions.shared.InsurancePolicy;
@@ -593,57 +593,17 @@ public class ClientServiceImpl
 	}
 
 	@Override
-	public ClientToManagerTransfer[] transferToManager(String[] clientIds,
+	public ManagerTransfer[] createManagerTransfer(String[] clientIds,
 			String managerId) throws SessionExpiredException, BigBangException {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public ClientToManagerTransfer acceptTransfer(String transferId)
+	public InfoOrDocumentRequest createInfoOrDocumentRequest(
+			InfoOrDocumentRequest request)
 			throws SessionExpiredException, BigBangException {
 		// TODO Auto-generated method stub
 		return null;
 	}
-
-	@Override
-	public ClientToManagerTransfer cancelTransfer(String transferId)
-			throws SessionExpiredException, BigBangException {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public ClientInfoOrDocumentRequest createInfoOrDocumentRequest(
-			ClientInfoOrDocumentRequest request)
-			throws SessionExpiredException, BigBangException {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public ClientInfoOrDocumentRequest repeatRequest(
-			ClientInfoOrDocumentRequest request)
-			throws SessionExpiredException, BigBangException {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public ClientInfoOrDocumentRequest receiveInfoOrDocumentRequestResponse(
-			bigBang.definitions.shared.ClientInfoOrDocumentRequest.Response response)
-			throws SessionExpiredException, BigBangException {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public void cancelInfoOrDocumentRequest(
-			bigBang.definitions.shared.ClientInfoOrDocumentRequest.Cancellation cancellation)
-			throws SessionExpiredException, BigBangException {
-		// TODO Auto-generated method stub
-		
-	}
-
-
 }
