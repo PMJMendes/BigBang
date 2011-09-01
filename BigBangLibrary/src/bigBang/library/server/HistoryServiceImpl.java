@@ -11,6 +11,9 @@ import Jewel.Petri.SysObjects.JewelPetriException;
 import Jewel.Petri.SysObjects.Operation;
 import Jewel.Petri.SysObjects.UndoOperation;
 import Jewel.Petri.SysObjects.UndoableOperation;
+import bigBang.definitions.client.dataAccess.SearchParameter;
+import bigBang.definitions.client.dataAccess.SortOrder;
+import bigBang.definitions.client.dataAccess.SortParameter;
 import bigBang.definitions.shared.HistoryItem;
 import bigBang.definitions.shared.HistoryItemStub;
 import bigBang.definitions.shared.SearchResult;
@@ -18,10 +21,7 @@ import bigBang.library.interfaces.HistoryService;
 import bigBang.library.shared.BigBangException;
 import bigBang.library.shared.HistorySearchParameter;
 import bigBang.library.shared.HistorySortParameter;
-import bigBang.library.shared.SearchParameter;
 import bigBang.library.shared.SessionExpiredException;
-import bigBang.library.shared.SortOrder;
-import bigBang.library.shared.SortParameter;
 
 public class HistoryServiceImpl
 	extends SearchServiceBase

@@ -1,107 +1,86 @@
 package bigBang.module.quoteRequestModule.client.userInterface;
 
+import bigBang.library.client.userInterface.BigBangOperationsToolBar;
+
 import com.google.gwt.user.client.Command;
-import com.google.gwt.user.client.ui.MenuBar;
 import com.google.gwt.user.client.ui.MenuItem;
 
-import bigBang.library.client.userInterface.OperationsToolBar;
-
-public class QuoteRequestProcessToolBar extends OperationsToolBar {
+public abstract class QuoteRequestProcessToolBar extends BigBangOperationsToolBar {
 
 	public QuoteRequestProcessToolBar(){
-		addItem("Operações", new Command() {
+
+		//CREATE
+		addItem(SUB_MENU.CREATE, new MenuItem("Negociação", new Command() {
 
 			@Override
 			public void execute() {
-				// TODO Auto-generated method stub
-
+				onCreateNegotiationButtonPressed();
 			}
-		});
-		addSeparator();
-		
-		MenuBar newSubMenu = new MenuBar(true);
-		MenuItem newMenuItem = new MenuItem("Criar", newSubMenu);
-		newSubMenu.addItem("Análise de Risco", new Command() {
+		}));
+
+		//DATA
+		addItem(SUB_MENU.DATA, new MenuItem("Inserir Objecto Seguro", new Command() {
 
 			@Override
 			public void execute() {
-				// TODO Auto-generated method stub
-
+				onInsertSecuredObjectButtonPressed();
 			}
-		});
-		newSubMenu.addItem("Negociação", new Command() {
+		}));
+
+		//EXECUTE
+		addItem(SUB_MENU.EXECUTE, new MenuItem("Enviar Resposta ao Cliente", new Command() {
 
 			@Override
 			public void execute() {
-				// TODO Auto-generated method stub
-
+				onSendResponseToClientButtonPressed();
 			}
-		});
-		
-		addItem(newMenuItem);
-		
-		MenuBar insertSubMenu = new MenuBar(true);
-		MenuItem insertMenuItem = new MenuItem("Inserir", insertSubMenu);
-		insertSubMenu.addItem("Objecto Seguro do Cliente", new Command() {
+		}));
+
+		addItem(SUB_MENU.EXECUTE, new MenuItem("Pedir Informação ou Documento", new Command() {
 
 			@Override
 			public void execute() {
-				// TODO Auto-generated method stub
-
+				onInfoOrDocumentRequestButtonPressed();
 			}
-		});
-		
-		addItem(insertMenuItem);
-		
-		MenuBar executeSubMenu = new MenuBar(true);
-		MenuItem executeMenuItem = new MenuItem("Executar", executeSubMenu);
-		executeSubMenu.addItem("Enviar Resposta ao Cliente", new Command() {
+		}));
+
+		//ADMIN
+		addItem(SUB_MENU.ADMIN, new MenuItem("Histórico", new Command() {
 
 			@Override
 			public void execute() {
-				// TODO Auto-generated method stub
-
+				onHistoryButtonPressed();
 			}
-		});
-		executeSubMenu.addItem("Pedir Informação/Documento ao Cliente", new Command() {
+		}));
+
+		addItem(SUB_MENU.ADMIN, new MenuItem("Fechar Processo", new Command() {
 
 			@Override
 			public void execute() {
-				// TODO Auto-generated method stub
-
+				onCloseProcessButtonPressed();
 			}
-		});
-		
-		addItem(executeMenuItem);
-		
-		MenuBar quoteRequestSubMenu = new MenuBar(true);
-		MenuItem quoteRequestMenuItem = new MenuItem("Outras", quoteRequestSubMenu);
-		quoteRequestSubMenu.addItem("Desfazer Alterações", new Command() {
+		}));
+
+		addItem(SUB_MENU.ADMIN, new MenuItem("Eliminar", new Command() {
 
 			@Override
 			public void execute() {
-				// TODO Auto-generated method stub
-
+				onDeleteButtonPressed();
 			}
-		});
-		quoteRequestSubMenu.addItem("Fechar Processo", new Command() {
-
-			@Override
-			public void execute() {
-				// TODO Auto-generated method stub
-
-			}
-		});
-		quoteRequestSubMenu.addItem("Eliminar", new Command() {
-
-			@Override
-			public void execute() {
-				// TODO Auto-generated method stub
-
-			}
-		});
-		
-		addItem(quoteRequestMenuItem);
+		}));	
 	}
+
+	public abstract void onCreateNegotiationButtonPressed();
 	
+	public abstract void onInsertSecuredObjectButtonPressed();
+	
+	public abstract void onSendResponseToClientButtonPressed();
+	
+	public abstract void onInfoOrDocumentRequestButtonPressed();
+	
+	public abstract void onHistoryButtonPressed();
+	
+	public abstract void onCloseProcessButtonPressed();
+	
+	public abstract void onDeleteButtonPressed();
 }

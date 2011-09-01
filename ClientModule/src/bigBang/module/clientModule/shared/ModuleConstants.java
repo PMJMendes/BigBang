@@ -12,6 +12,7 @@ public class ModuleConstants
 		public static final String ClientSubtypes      = "1907DB1B-6F75-4715-A210-9EE600B9D072";
 		public static final String CompanySizes        = "5E489662-2AAF-4348-95E0-9EE600C4A71F";
 		public static final String SalesVolumes        = "5C4E267C-B306-482F-8636-9EE600C586B6";
+		public static final String CLIENT_DELETION_MOTIVES = "103F49C3-1D27-40C5-9B8E-9F50011952D7";
 	}
 
 	public class ClientTypeIDs
@@ -24,14 +25,14 @@ public class ModuleConstants
 	public class ProcessTypeIDs
 	{
 		public static final String GENERAL_SYSTEM = "628f5da6-434f-46a8-9c88-9eb1008a689a";
-		public static final String CLIENT         = "";
+		public static final String CLIENT         = ""; //TODO
 	}
 
 	public class OpTypeIDs
 	{
 		public static final String ManageClientGroups = "08E5A828-0AF2-4347-A57A-9EB500A11526";
 		public static final String CreateClient       = "214118B8-C43C-4941-9D1E-9EB500A1381C";
-
-		public static final String ChangeClientData   = "";
+		public static final String DELETE_CLIENT	  = ""; //TODO
+		public static final String ChangeClientData   = ""; //TODO
 	}
 }

@@ -1,13 +1,14 @@
 package bigBang.module.receiptModule.client.userInterface;
 
-import bigBang.definitions.shared.SearchResult;
-import bigBang.library.client.userInterface.view.SearchPanel;
-import bigBang.module.receiptModule.interfaces.ReceiptService;
+import java.util.Collection;
 
-public class ReceiptSearchPanel extends SearchPanel {
+import bigBang.definitions.shared.ReceiptStub;
+import bigBang.library.client.userInterface.view.SearchPanel;
+
+public class ReceiptSearchPanel extends SearchPanel<ReceiptStub> {
 
 	public ReceiptSearchPanel() {
-		super(ReceiptService.Util.getInstance());
+		super(null);
 		// TODO Auto-generated constructor stub
 	}
 
@@ -18,9 +19,9 @@ public class ReceiptSearchPanel extends SearchPanel {
 	}
 
 	@Override
-	public void onResults(SearchResult[] results) {
+	public void onResults(Collection<ReceiptStub> results) {
 		// TODO Auto-generated method stub
-
+		
 	}
 
 }

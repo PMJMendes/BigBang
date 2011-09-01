@@ -1,9 +1,10 @@
 package bigBang.definitions.client.dataAccess;
 
+import bigBang.definitions.shared.HistoryItem;
 import bigBang.definitions.shared.HistoryItemStub;
 import bigBang.definitions.client.response.ResponseHandler;
 
-public interface HistoryBroker extends DataBrokerInterface<HistoryItemStub> {
+public interface HistoryBroker extends DataBrokerInterface<HistoryItem> {
 
 	/**
 	 * Returns whether or not the history data for a process needs to be refreshed
@@ -16,21 +17,21 @@ public interface HistoryBroker extends DataBrokerInterface<HistoryItemStub> {
 	 * @param client The client to be registered
 	 * @param processId The id of the process to watch
 	 */
-	public void registerClient(DataBrokerClient<HistoryItemStub> client, String processId);
+	public void registerClient(DataBrokerClient<HistoryItem> client, String processId);
 	
 	/**
 	 * Voids the client registration for a given process
 	 * @param client The client to be unregistered
 	 * @param processId The watched process id
 	 */
-	public void unregisterClient(DataBrokerClient<HistoryItemStub> client, String processId);
+	public void unregisterClient(DataBrokerClient<HistoryItem> client, String processId);
 	
 	/**
 	 * Gets the history items for a given process
 	 * @param processId The id of the process to which the history items belong
 	 * @param handler The handler to be notified on response
 	 */
-	public void getItems(String processId, ResponseHandler<HistoryItemStub[]> handler);
+	public void getItems(String processId, ResponseHandler<HistoryItem[]> handler);
 	
 	/**
 	 * Gets a specific history item
@@ -38,13 +39,19 @@ public interface HistoryBroker extends DataBrokerInterface<HistoryItemStub> {
 	 * @param The id of the process to which the item belongs
 	 * @param handler The handler to be notified on response 
 	 */
-	public void getItem(String itemId, String processId, ResponseHandler<HistoryItemStub> handler);
+	public void getItem(String itemId, String processId, ResponseHandler<HistoryItem> handler);
 	
 	/**
 	 * Reverts a given history item
 	 * @param undoItemId The history item
 	 * @param handler The handler to be notified on response
 	 */
-	public void undo(String undoItemId, ResponseHandler<HistoryItemStub> handler);
+	public void undo(String undoItemId, ResponseHandler<HistoryItem> handler);
+	
+	/**
+	 * Gets the search broker for the burrent broker type
+	 * @return the search broker for history items
+	 */
+	public SearchDataBroker<HistoryItemStub> getSearchBroker();
 	
 }

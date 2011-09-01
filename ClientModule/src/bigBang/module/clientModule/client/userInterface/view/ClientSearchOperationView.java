@@ -2,30 +2,47 @@ package bigBang.module.clientModule.client.userInterface.view;
 
 import java.util.Collection;
 
+import org.gwt.mosaic.ui.client.ToolButton;
+
+import bigBang.definitions.client.dataAccess.HistoryBroker;
 import bigBang.definitions.client.response.ResponseError;
 import bigBang.definitions.client.response.ResponseHandler;
+import bigBang.definitions.shared.BigBangConstants;
 import bigBang.definitions.shared.Casualty;
 import bigBang.definitions.shared.Client;
+import bigBang.definitions.shared.ClientStub;
 import bigBang.definitions.shared.InsurancePolicy;
 import bigBang.definitions.shared.QuoteRequest;
 import bigBang.definitions.shared.RiskAnalisys;
 import bigBang.library.client.HasEditableValue;
 import bigBang.library.client.HasSelectables;
 import bigBang.library.client.HasValueSelectables;
+import bigBang.library.client.ValueSelectable;
+import bigBang.library.client.ValueWrapper;
+import bigBang.library.client.dataAccess.DataBrokerManager;
 import bigBang.library.client.event.ActionInvokedEvent;
 import bigBang.library.client.event.ActionInvokedEventHandler;
 import bigBang.library.client.userInterface.ContactsPreviewList;
+import bigBang.library.client.userInterface.ListEntry;
+import bigBang.library.client.userInterface.ListHeader;
 import bigBang.library.client.userInterface.PopupBar;
 import bigBang.library.client.userInterface.SlidePanel;
 import bigBang.library.client.userInterface.SlidePanel.Direction;
+import bigBang.library.client.userInterface.presenter.UndoOperationViewPresenter;
 import bigBang.library.client.userInterface.view.PopupPanel;
+import bigBang.library.client.userInterface.view.UndoOperationView;
 import bigBang.library.client.userInterface.view.View;
 import bigBang.module.clientModule.client.userInterface.ClientProcessToolBar;
 import bigBang.module.clientModule.client.userInterface.ClientSearchPanel;
+import bigBang.module.clientModule.client.userInterface.ClientSearchPanelListEntry;
 import bigBang.module.clientModule.client.userInterface.presenter.ClientSearchOperationViewPresenter;
 import bigBang.module.clientModule.client.userInterface.presenter.ClientSearchOperationViewPresenter.Action;
 
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.logical.shared.AttachEvent;
+import com.google.gwt.user.client.ui.Button;
+import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.SplitLayoutPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
@@ -43,6 +60,7 @@ public class ClientSearchOperationView extends View implements ClientSearchOpera
 	protected ContactsPreviewList contactsList;
 	protected ClientProcessToolBar operationsToolbar; 
 	protected PopupBar childProcessesBar;
+	protected ToolButton newButton;
 
 	protected ActionInvokedEventHandler<ClientSearchOperationViewPresenter.Action> actionHandler;
 
@@ -53,10 +71,31 @@ public class ClientSearchOperationView extends View implements ClientSearchOpera
 		SplitLayoutPanel wrapper = new SplitLayoutPanel();
 		wrapper.setSize("100%", "100%");
 
+		VerticalPanel searchPanelWrapper = new VerticalPanel();
+		searchPanelWrapper.setSize("100%", "100%");
+
+		ListHeader header = new ListHeader("Clientes");
+		header.showNewButton("Novo");
+		this.newButton = header.getNewButton();
+		this.newButton.addClickHandler(new ClickHandler() {
+
+			@Override
+			public void onClick(ClickEvent event) {
+				actionHandler.onActionInvoked(new ActionInvokedEvent<ClientSearchOperationViewPresenter.Action>(Action.NEW));
+			}
+		});
+
+		searchPanelWrapper.add(header);
+
 		searchPanel = new ClientSearchPanel();
 		searchPanel.setSize("100%", "100%");
-		wrapper.addWest(searchPanel, SEARCH_PANEL_WIDTH);
-		wrapper.setWidgetMinSize(searchPanel, SEARCH_PANEL_WIDTH);
+
+		searchPanelWrapper.add(searchPanel);
+		searchPanelWrapper.setCellHeight(searchPanel, "100%");
+		searchPanelWrapper.setSize("100%", "100%");
+
+		wrapper.addWest(searchPanelWrapper, SEARCH_PANEL_WIDTH);
+		wrapper.setWidgetMinSize(searchPanelWrapper, SEARCH_PANEL_WIDTH);
 
 		SplitLayoutPanel contentWrapper = new SplitLayoutPanel();
 		contentWrapper.setSize("100%", "100%");
@@ -67,11 +106,11 @@ public class ClientSearchOperationView extends View implements ClientSearchOpera
 		this.childProcessesBar = new PopupBar();
 		this.childProcessesBar.setSize("100%", "100%");
 
-		/*Widget testContent =  new ClientSearchPanel(); //TODO
+		Widget testContent =  new ClientSearchPanel(); //TODO
 		testContent.setSize("300px", "300px");
 		this.childProcessesBar.addItem(new PopupBar.Item("Apólices", testContent));
 
-		Widget testContent2 =  new ClientSearchPanel();
+		/*Widget testContent2 =  new ClientSearchPanel();
 		testContent2.setSize("300px", "300px");
 		this.childProcessesBar.addItem(new PopupBar.Item("Sinistros", testContent2));
 
@@ -148,6 +187,21 @@ public class ClientSearchOperationView extends View implements ClientSearchOpera
 			public void onRequestInfoOrDocument() {
 				actionHandler.onActionInvoked(new ActionInvokedEvent<ClientSearchOperationViewPresenter.Action>(Action.REQUIRE_INFO_DOCUMENT));
 			}
+			
+			@Override
+			public void onHistory() {
+				actionHandler.onActionInvoked(new ActionInvokedEvent<ClientSearchOperationViewPresenter.Action>(Action.SHOW_HISTORY));
+			}
+
+			@Override
+			public void onDelete() {
+				actionHandler.onActionInvoked(new ActionInvokedEvent<ClientSearchOperationViewPresenter.Action>(Action.DELETE));
+			}
+			
+			@Override
+			public void onRefresh() {
+				actionHandler.onActionInvoked(new ActionInvokedEvent<ClientSearchOperationViewPresenter.Action>(Action.REFRESH));
+			}
 		};
 
 		this.form = new ClientFormView();
@@ -199,6 +253,7 @@ public class ClientSearchOperationView extends View implements ClientSearchOpera
 	@Override
 	public void lockForm(boolean lock) {
 		this.form.lock(lock);
+		this.operationsToolbar.setEditionAvailable(!lock);
 	}
 
 	@Override
@@ -310,9 +365,9 @@ public class ClientSearchOperationView extends View implements ClientSearchOpera
 
 						@Override
 						public void onMergeButtonPressed() {
-			
+
 							this.confirmMerge(new ResponseHandler<Boolean>() {
-								
+
 								@Override
 								public void onResponse(Boolean response) {
 									if(response){
@@ -320,7 +375,7 @@ public class ClientSearchOperationView extends View implements ClientSearchOpera
 										onBackButtonPressed();
 									}
 								}
-								
+
 								@Override
 								public void onError(Collection<ResponseError> errors) {}
 							});
@@ -356,24 +411,74 @@ public class ClientSearchOperationView extends View implements ClientSearchOpera
 
 	@Override
 	public void showInfoOrDocumentRequestForm(boolean show) {
+		VerticalPanel wrapper = new VerticalPanel();
+		wrapper.setSize("100%", "100%");
+		
+		ListHeader header = new ListHeader();
+		header.setText("Pedido de Informação ou Documento");
+		header.setLeftWidget(new Button("Voltar", new ClickHandler() {
+			
+			@Override
+			public void onClick(ClickEvent event) {
+				mainWrapper.slideInto(mainContent, Direction.RIGHT);
+			}
+		}));
+		wrapper.add(header);
+		
+		SimplePanel viewContainer = new SimplePanel();
+		viewContainer.setSize("100%", "100%");
+		viewContainer.add(new InfoOrDocumentRequestView() {
+			
+			@Override
+			public void onSendButtonPressed() {
+				onBackButtonPressed();
+			}
+			
+			@Override
+			public void onBackButtonPressed() {
+				mainWrapper.slideInto(mainContent, Direction.RIGHT);
+			}
+
+		});
+		
+		wrapper.add(viewContainer);
+		wrapper.setCellHeight(viewContainer, "100%");
+		
+		mainWrapper.slideInto(
+				wrapper, Direction.LEFT);
+	}
+
+	@Override
+	public void showDeleteForm(boolean show) {
 		if(show){
-			this.popup = new PopupPanel(true, "Pedido de Informação ou documento");
-			InfoOrDocumentRequestView form = new InfoOrDocumentRequestView() {
-				
+			this.popup = new PopupPanel(true, "Eliminação de Cliente");
+			DeleteClientView view = new DeleteClientView() {
+
 				@Override
-				public void onSendButtonPressed() {
-					showInfoOrDocumentRequestForm(false);
+				public void onDeleteButtonPressed() {
+					this.confirmDelete(new ResponseHandler<Boolean>() {
+
+						@Override
+						public void onResponse(Boolean response) {
+							if(response){
+								showDeleteForm(false);
+							}
+						}
+
+						@Override
+						public void onError(Collection<ResponseError> errors) {}
+					});
+
 				}
 			};
-			form.setSize("660px", "605px");
-			this.popup.add(form);
+			view.setSize("660px", "100px");
+			this.popup.add(view);
 			this.popup.addAttachHandler(new AttachEvent.Handler() {
-				
+
 				@Override
 				public void onAttachOrDetach(AttachEvent event) {
 					if(event.isAttached()){
-						
-						popup.setSize("660px", "605px");
+						popup.setSize("660px", "100px");
 					}
 				}
 			});
@@ -383,6 +488,24 @@ public class ClientSearchOperationView extends View implements ClientSearchOpera
 			this.popup.clear();
 			this.popup.removeFromParent();
 		}
+	}
+
+	@Override
+	public HasEditableValue<String> getDeleteForm() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public boolean isDeleteFormValid() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public void lockDeleteForm(boolean lock) {
+		// TODO Auto-generated method stub
+
 	}
 
 	@Override
@@ -411,17 +534,111 @@ public class ClientSearchOperationView extends View implements ClientSearchOpera
 
 	@Override
 	public void prepareNewClient() {
-		//TODO
+		for(ListEntry<ClientStub> s : this.searchPanel){
+			if(s.getValue().id == null){
+				s.setSelected(true, true);
+				return;
+			}
+		}
+		ClientSearchPanelListEntry entry = new ClientSearchPanelListEntry(new ValueWrapper<ClientStub>(new Client()));
+		this.searchPanel.add(0, entry);
+		this.searchPanel.getScrollable().scrollToTop();
+		entry.setSelected(true, true);
 	}
 
 	@Override
 	public void removeNewClientPreparation() {
-		// TODO Auto-generated method stub
+		for(ValueSelectable<ClientStub> s : this.searchPanel){
+			if(s.getValue().id == null){
+				this.searchPanel.remove(s);
+				break;
+			}
+		}
 	}
 
 	@Override
 	public void setSaveModeEnabled(boolean enabled) {
 		this.operationsToolbar.setSaveModeEnabled(enabled);
+	}
+
+	@Override
+	public void showHistory(Client process) {
+		UndoOperationView historyView = new UndoOperationView();
+		UndoOperationViewPresenter presenter = new UndoOperationViewPresenter(null,
+				(HistoryBroker) DataBrokerManager.Util.getInstance().getBroker(BigBangConstants.EntityIds.HISTORY),
+						historyView,
+						process.processId);
+		VerticalPanel wrapper = new VerticalPanel();
+		wrapper.setSize("100%", "100%");
+		
+		ListHeader header = new ListHeader();
+		header.setText("Histórico do Processo Cliente Nº" + process.clientNumber + " (" + process.name + ")");
+		header.setLeftWidget(new Button("Voltar", new ClickHandler() {
+			
+			@Override
+			public void onClick(ClickEvent event) {
+				mainWrapper.slideInto(mainContent, Direction.RIGHT);
+			}
+		}));
+		wrapper.add(header);
+		
+		SimplePanel viewContainer = new SimplePanel();
+		viewContainer.setSize("100%", "100%");
+		presenter.go(viewContainer);
+		
+		wrapper.add(viewContainer);
+		wrapper.setCellHeight(viewContainer, "100%");
+		
+		mainWrapper.slideInto(
+				wrapper, Direction.LEFT);
+	}
+
+	@Override
+	public void showManagerTransferForm(boolean show) {
+		if(show){
+			this.popup = new PopupPanel(true, "Transferência de Gestor");
+			ClientManagerTransferView view = new ClientManagerTransferView() {
+
+				@Override
+				public void onTransferButtonPressed() {
+					showManagerTransferForm(false); //TODO
+				}
+			};
+			view.setSize("660px", "100px");
+			this.popup.add(view);
+			this.popup.addAttachHandler(new AttachEvent.Handler() {
+
+				@Override
+				public void onAttachOrDetach(AttachEvent event) {
+					if(event.isAttached()){
+						popup.setSize("660px", "100px");
+					}
+				}
+			});
+			this.popup.center();
+		}else{
+			this.popup.hidePopup();
+			this.popup.clear();
+			this.popup.removeFromParent();
+		}
+	}
+
+	@Override
+	public HasEditableValue<String> getManagerTransferForm() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public boolean isManagerTransferFormValid() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public void lockManagerTransferForm(boolean lock) {
+		// TODO Auto-generated method stub
+		
 	}
 
 }

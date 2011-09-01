@@ -1,5 +1,7 @@
 package bigBang.library.shared;
 
+import bigBang.definitions.client.dataAccess.SearchParameter;
+
 public class HistorySearchParameter
 	extends SearchParameter
 {

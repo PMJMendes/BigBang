@@ -1,13 +1,14 @@
 package bigBang.module.riskAnalisysModule.client.userInterface;
 
-import bigBang.definitions.shared.SearchResult;
-import bigBang.library.client.userInterface.view.SearchPanel;
-import bigBang.module.riskAnalisysModule.interfaces.RiskAnalisysService;
+import java.util.Collection;
 
-public class RiskAnalisysSearchPanel extends SearchPanel {
+import bigBang.definitions.shared.RiskAnalisysStub;
+import bigBang.library.client.userInterface.view.SearchPanel;
+
+public class RiskAnalisysSearchPanel extends SearchPanel<RiskAnalisysStub> {
 
 	public RiskAnalisysSearchPanel() {
-		super(RiskAnalisysService.Util.getInstance());
+		super(null);
 	}
 
 	@Override
@@ -17,9 +18,9 @@ public class RiskAnalisysSearchPanel extends SearchPanel {
 	}
 
 	@Override
-	public void onResults(SearchResult[] results) {
+	public void onResults(Collection<RiskAnalisysStub> results) {
 		// TODO Auto-generated method stub
-
+		
 	}
 
 }

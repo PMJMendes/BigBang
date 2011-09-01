@@ -1,31 +1,70 @@
 package bigBang.library.client.userInterface.view;
 
+import java.util.Collection;
+
 import org.gwt.mosaic.ui.client.MessageBox;
 import org.gwt.mosaic.ui.client.MessageBox.ConfirmationCallback;
 
+import bigBang.definitions.client.dataAccess.HistoryBroker;
+import bigBang.definitions.client.dataAccess.SortParameter;
+import bigBang.definitions.shared.BigBangConstants;
 import bigBang.definitions.shared.HistoryItem;
 import bigBang.definitions.shared.HistoryItemStub;
 import bigBang.library.client.HasValueSelectables;
 import bigBang.library.client.ValueSelectable;
-import bigBang.library.client.userInterface.FilterableList;
+import bigBang.library.client.dataAccess.DataBrokerManager;
 import bigBang.library.client.userInterface.ListEntry;
 import bigBang.library.client.userInterface.ListHeader;
 
 import bigBang.library.client.userInterface.presenter.UndoOperationViewPresenter;
+import bigBang.library.shared.HistorySearchParameter;
 
 import com.google.gwt.event.dom.client.HasClickHandlers;
+import com.google.gwt.event.logical.shared.AttachEvent;
 import com.google.gwt.user.client.ui.HasValue;
 import com.google.gwt.user.client.ui.SplitLayoutPanel;
 
 
 public class UndoOperationView extends View implements UndoOperationViewPresenter.Display {
 
-	private class UndoItemList extends FilterableList<HistoryItemStub> {
+	private class UndoItemList extends SearchPanel<HistoryItemStub> {
+		
+		protected String currentProcessId;
 		
 		public UndoItemList(){
+			super(((HistoryBroker)DataBrokerManager.Util.getInstance().getBroker(BigBangConstants.EntityIds.HISTORY)).getSearchBroker());
 			ListHeader header = new ListHeader();
 			header.setText("Histórico");
 			setHeaderWidget(header);
+			
+			addAttachHandler(new AttachEvent.Handler() {
+				
+				@Override
+				public void onAttachOrDetach(AttachEvent event) {
+					if(event.isAttached())
+						doSearch();
+				}
+			});
+		}
+
+		@Override
+		public void doSearch() {
+			if(currentProcessId == null)
+				throw new RuntimeException("The process id is not defined");
+			HistorySearchParameter parameter = new HistorySearchParameter();
+			parameter.processId = this.currentProcessId;
+			doSearch(new HistorySearchParameter[]{parameter}, new SortParameter[0]);
+		}
+
+		@Override
+		public void onResults(Collection<HistoryItemStub> results) {
+			for(HistoryItemStub s : results) {
+				add(new UndoItemListEntry(s));
+			}
+		}
+		
+		public void setProcessId(String id){
+			this.currentProcessId = id;
 		}
 	}
 	
@@ -37,7 +76,7 @@ public class UndoOperationView extends View implements UndoOperationViewPresente
 			setText(value.username + " (" + value.timeStamp.substring(0, 16) + ")");
 			setHeight("40px");
 		}
-		
+
 	}
 	
 	private static final int LIST_WIDTH = 400; //PX 
@@ -58,11 +97,8 @@ public class UndoOperationView extends View implements UndoOperationViewPresente
 	}
 
 	@Override
-	public void setUndoItems(HistoryItemStub[] items) {
-		this.list.clear();
-		for(int i = 0; i < items.length; i++) {
-			addItem(items[i]);
-		}
+	public void setProcessId(String processId) {
+		this.list.setProcessId(processId);
 	}
 
 

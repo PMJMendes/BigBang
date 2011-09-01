@@ -1,4 +1,4 @@
-package bigBang.library.shared;
+package bigBang.definitions.client.dataAccess;
 
 import java.io.Serializable;
 

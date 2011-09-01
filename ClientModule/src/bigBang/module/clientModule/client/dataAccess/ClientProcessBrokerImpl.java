@@ -4,9 +4,11 @@ import bigBang.definitions.client.dataAccess.ClientProcessBroker;
 import bigBang.definitions.client.dataAccess.ClientProcessDataBrokerClient;
 import bigBang.definitions.client.dataAccess.DataBroker;
 import bigBang.definitions.client.dataAccess.DataBrokerClient;
+import bigBang.definitions.client.dataAccess.SearchDataBroker;
 import bigBang.definitions.client.response.ResponseHandler;
 import bigBang.definitions.shared.BigBangConstants;
 import bigBang.definitions.shared.Client;
+import bigBang.definitions.shared.ClientStub;
 import bigBang.library.client.BigBangAsyncCallback;
 import bigBang.module.clientModule.interfaces.ClientService;
 import bigBang.module.clientModule.interfaces.ClientServiceAsync;
@@ -14,6 +16,7 @@ import bigBang.module.clientModule.interfaces.ClientServiceAsync;
 public class ClientProcessBrokerImpl extends DataBroker<Client> implements ClientProcessBroker {
 
 	protected ClientServiceAsync service;
+	protected SearchDataBroker<ClientStub> searchBroker;
 	protected boolean requiresRefresh = true;
 	
 	public ClientProcessBrokerImpl(){
@@ -23,6 +26,7 @@ public class ClientProcessBrokerImpl extends DataBroker<Client> implements Clien
 	public ClientProcessBrokerImpl(ClientServiceAsync service) {
 		this.service = service;
 		this.dataElementId = BigBangConstants.EntityIds.CLIENT;
+		this.searchBroker = new ClientSearchDataBroker(this.service);
 	}
 
 	@Override
@@ -102,6 +106,11 @@ public class ClientProcessBrokerImpl extends DataBroker<Client> implements Clien
 	@Override
 	public void requireDataRefresh() {
 		this.requiresRefresh = true;
+	}
+
+	@Override
+	public SearchDataBroker<ClientStub> getSearchBroker() {
+		return this.searchBroker;
 	}
 
 }

@@ -1,16 +1,20 @@
 package bigBang.library.client.dataAccess;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
 import bigBang.definitions.client.dataAccess.DataBroker;
+import bigBang.definitions.client.dataAccess.Search;
+import bigBang.definitions.client.dataAccess.SearchDataBroker;
+import bigBang.definitions.client.dataAccess.SearchParameter;
+import bigBang.definitions.client.dataAccess.SortParameter;
 import bigBang.definitions.client.response.ResponseHandler;
 import bigBang.definitions.shared.SearchResult;
 import bigBang.library.client.BigBangAsyncCallback;
 import bigBang.library.interfaces.SearchServiceAsync;
 import bigBang.library.shared.NewSearchResult;
-import bigBang.library.shared.SearchParameter;
-import bigBang.library.shared.SortParameter;
 
 public class SearchDataBrokerImpl<T extends SearchResult> extends DataBroker<T> implements SearchDataBroker<T> {
 
@@ -33,7 +37,10 @@ public class SearchDataBrokerImpl<T extends SearchResult> extends DataBroker<T> 
 			@SuppressWarnings("unchecked")
 			@Override
 			public void onSuccess(NewSearchResult result) {
-				Search<T> search = new Search<T>(result.workspaceId, result.totalCount, 0, result.results.length, parameters, sorts, (T[]) result.results);
+				Collection<T> resultsCollection = new ArrayList<T>();
+				for(int i = 0; i < result.results.length; i++)
+					resultsCollection.add((T) result.results[i]);
+				Search<T> search = new Search<T>(result.workspaceId, result.totalCount, 0, result.results.length, parameters, sorts, resultsCollection);
 				workspaces.put(result.workspaceId, search);
 				handler.onResponse(search);
 			}
@@ -49,7 +56,10 @@ public class SearchDataBrokerImpl<T extends SearchResult> extends DataBroker<T> 
 				@SuppressWarnings("unchecked")
 				@Override
 				public void onSuccess(NewSearchResult result) {
-					Search<T> search = new Search<T>(result.workspaceId, result.totalCount, 0, result.results.length, parameters, sorts, (T[]) result.results);
+					Collection<T> resultsCollection = new ArrayList<T>();
+					for(int i = 0; i < result.results.length; i++)
+						resultsCollection.add((T) result.results[i]);
+					Search<T> search = new Search<T>(result.workspaceId, result.totalCount, 0, result.results.length, parameters, sorts, resultsCollection);
 					workspaces.put(workspaceId, search);
 					handler.onResponse(search);
 				}
@@ -66,7 +76,10 @@ public class SearchDataBrokerImpl<T extends SearchResult> extends DataBroker<T> 
 			@Override
 			public void onSuccess(SearchResult[] result) {
 				Search<T> currentSearch = workspaces.get(workspaceId);
-				Search<T> search = new Search<T>(workspaceId, currentSearch.totalResultsCount, offset, result.length, currentSearch.parameters, currentSearch.getSortParameters(), (T[]) result);
+				Collection<T> resultsCollection = new ArrayList<T>();
+				for(int i = 0; i < result.length; i++)
+					resultsCollection.add((T) result[i]);
+				Search<T> search = new Search<T>(workspaceId, currentSearch.getTotalResultsCount(), offset, result.length, currentSearch.getParameters(), currentSearch.getSortParameters(), resultsCollection);
 				workspaces.put(workspaceId, search);
 				handler.onResponse(search);
 			}
@@ -81,7 +94,7 @@ public class SearchDataBrokerImpl<T extends SearchResult> extends DataBroker<T> 
 	@Override
 	public boolean hasMoreResults(String workspaceId) {
 		Search<T> search = workspaces.get(workspaceId);
-		return (search.totalResultsCount - search.offset - search.getCount()) > 0;
+		return (search.getTotalResultsCount() - search.getOffset() - search.getCount()) > 0;
 	}
 
 }

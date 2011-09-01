@@ -1,15 +1,11 @@
 package bigBang.module.clientModule.client.userInterface.view;
 
-import bigBang.definitions.shared.Client;
 import bigBang.library.client.event.SelectedStateChangedEvent;
 import bigBang.library.client.event.SelectedStateChangedEventHandler;
 import bigBang.library.client.userInterface.FilterableList;
 import bigBang.library.client.userInterface.ListEntry;
 import bigBang.library.client.userInterface.ListHeader;
-import bigBang.library.client.userInterface.TypifiedListManagementPanel;
-import bigBang.library.client.userInterface.view.PreviewPanel;
 import bigBang.library.client.userInterface.view.View;
-import bigBang.module.clientModule.shared.ModuleConstants;
 
 import com.google.gwt.event.logical.shared.CloseEvent;
 import com.google.gwt.event.logical.shared.CloseHandler;

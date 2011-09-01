@@ -66,7 +66,68 @@ public class QuoteRequestSearchOperationView extends View implements QuoteReques
 		listsWrapper.addWest(securedObjectsNavigationPanel, 500);
 		listsWrapper.add(negotiationsNavigationPanel);
 		
-		operationsToolbar = new QuoteRequestProcessToolBar();
+		operationsToolbar = new QuoteRequestProcessToolBar() {
+			
+			@Override
+			public void onSaveRequest() {
+				// TODO Auto-generated method stub
+				
+			}
+			
+			@Override
+			public void onEditRequest() {
+				// TODO Auto-generated method stub
+				
+			}
+			
+			@Override
+			public void onCancelRequest() {
+				// TODO Auto-generated method stub
+				
+			}
+			
+			@Override
+			public void onSendResponseToClientButtonPressed() {
+				// TODO Auto-generated method stub
+				
+			}
+			
+			@Override
+			public void onInsertSecuredObjectButtonPressed() {
+				// TODO Auto-generated method stub
+				
+			}
+			
+			@Override
+			public void onInfoOrDocumentRequestButtonPressed() {
+				// TODO Auto-generated method stub
+				
+			}
+			
+			@Override
+			public void onHistoryButtonPressed() {
+				// TODO Auto-generated method stub
+				
+			}
+			
+			@Override
+			public void onDeleteButtonPressed() {
+				// TODO Auto-generated method stub
+				
+			}
+			
+			@Override
+			public void onCreateNegotiationButtonPressed() {
+				// TODO Auto-generated method stub
+				
+			}
+			
+			@Override
+			public void onCloseProcessButtonPressed() {
+				// TODO Auto-generated method stub
+				
+			}
+		};
 		VerticalPanel formWrapper = new VerticalPanel();
 		formWrapper.setSize("100%", "100%");
 		

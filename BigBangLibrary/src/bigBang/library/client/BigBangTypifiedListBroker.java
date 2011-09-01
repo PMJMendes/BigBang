@@ -139,12 +139,11 @@ public class BigBangTypifiedListBroker implements TypifiedListBroker {
 			@Override
 			public void onSuccess(Void result) {
 				TipifiedListItem item = null;
-				updateListClients(listId);
 				
 				for(TipifiedListItem i : BigBangTypifiedListBroker.this.lists.get(listId)) {
-					if(i.id.equals(itemId)){
+					if(i.id.equalsIgnoreCase(itemId)){
 						item = i;
-						BigBangTypifiedListBroker.this.lists.remove(i);
+						BigBangTypifiedListBroker.this.lists.remove(itemId);
 						break;
 					}
 				}

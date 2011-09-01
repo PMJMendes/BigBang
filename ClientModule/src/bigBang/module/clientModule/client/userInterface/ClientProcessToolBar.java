@@ -55,6 +55,34 @@ public abstract class ClientProcessToolBar extends BigBangOperationsToolBar {
 				onRequestInfoOrDocument();
 			}
 		}));
+		
+		//ADMIN
+		addItem(SUB_MENU.ADMIN, new MenuItem("Actualizar Informação", new Command() {
+
+			@Override
+			public void execute() {
+				onRefresh();
+			}
+		}));
+		
+		addItem(SUB_MENU.ADMIN, new MenuItem("Histórico", new Command() {
+
+			@Override
+			public void execute() {
+				onHistory();
+			}
+		}));
+
+		adminSubMenu.addSeparator();
+		
+		addItem(SUB_MENU.ADMIN, new MenuItem("Eliminar", new Command() {
+
+			@Override
+			public void execute() {
+				onDelete();
+			}
+		}));
+		
 	}
 
 	//CREATE
@@ -68,4 +96,9 @@ public abstract class ClientProcessToolBar extends BigBangOperationsToolBar {
 	
 	//DATA
 	public abstract void onRequestInfoOrDocument();
+	
+	//ADMIN
+	public abstract void onRefresh();
+	public abstract void onHistory();
+	public abstract void onDelete();
 }

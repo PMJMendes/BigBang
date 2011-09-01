@@ -1,34 +1,36 @@
 package bigBang.module.clientModule.client.userInterface;
 
+import java.util.Collection;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.Map;
+import java.util.TreeMap;
 
-import com.google.gwt.i18n.client.DateTimeFormat;
-
+import bigBang.definitions.client.dataAccess.ClientProcessBroker;
 import bigBang.definitions.client.dataAccess.ClientProcessDataBrokerClient;
+import bigBang.definitions.client.dataAccess.SearchParameter;
+import bigBang.definitions.client.dataAccess.SortParameter;
 import bigBang.definitions.shared.BigBangConstants;
 import bigBang.definitions.shared.Client;
 import bigBang.definitions.shared.ClientStub;
 import bigBang.definitions.shared.SearchResult;
 import bigBang.library.client.ValueSelectable;
 import bigBang.library.client.ValueWrapper;
+import bigBang.library.client.dataAccess.DataBrokerManager;
 import bigBang.library.client.userInterface.FiltersPanel;
 import bigBang.library.client.userInterface.view.SearchPanel;
-import bigBang.library.shared.SearchParameter;
-import bigBang.library.shared.SortParameter;
-import bigBang.module.clientModule.interfaces.ClientService;
 import bigBang.module.clientModule.shared.ClientSearchParameter;
 import bigBang.module.clientModule.shared.ClientSortParameter;
 import bigBang.module.clientModule.shared.ClientSortParameter.SortableField;
 import bigBang.module.clientModule.shared.ModuleConstants;
+
+import com.google.gwt.i18n.client.DateTimeFormat;
 
 /**
  * @author Premium-Minds (Francisco Cabrita)
  *
  * A SearchPanel for clients
  */
-public class ClientSearchPanel extends SearchPanel implements ClientProcessDataBrokerClient {
+public class ClientSearchPanel extends SearchPanel<ClientStub> implements ClientProcessDataBrokerClient {
 
 	protected static enum Filters {
 		MANAGER,
@@ -46,15 +48,14 @@ public class ClientSearchPanel extends SearchPanel implements ClientProcessDataB
 	protected int clientDataVersionNumber;
 	protected FiltersPanel filtersPanel;
 	
-	
 	public ClientSearchPanel(){
-		super(ClientService.Util.getInstance());
+		super(((ClientProcessBroker)DataBrokerManager.Util.getInstance().getBroker(BigBangConstants.EntityIds.CLIENT)).getSearchBroker());
 		
-		Map<Enum<?>, String> sortOptions = new HashMap<Enum<?>, String>(); 
+		Map<Enum<?>, String> sortOptions = new TreeMap<Enum<?>, String>(); 
 		sortOptions.put(ClientSortParameter.SortableField.RELEVANCE, "Relevância");
 		sortOptions.put(ClientSortParameter.SortableField.NAME, "Nome");
-		sortOptions.put(ClientSortParameter.SortableField.NUMBER, "Número");
 		sortOptions.put(ClientSortParameter.SortableField.GROUP, "Grupo");
+		sortOptions.put(ClientSortParameter.SortableField.NUMBER, "Número");
 		
 		filtersPanel = new FiltersPanel(sortOptions);
 		filtersPanel.addTypifiedListField(Filters.MANAGER, BigBangConstants.EntityIds.USER, "Gestor");
@@ -75,10 +76,9 @@ public class ClientSearchPanel extends SearchPanel implements ClientProcessDataB
 	}
 
 	@Override
-	public void onResults(SearchResult[] results) {
-		for(int i = 0; i < results.length; i++){
-			SearchResult r = results[i];
-			addSearchResult(r);
+	public void onResults(Collection<ClientStub> results) {
+		for(ClientStub s : results){
+			addSearchResult(s);
 		}
 	}
 	
@@ -141,7 +141,7 @@ public class ClientSearchPanel extends SearchPanel implements ClientProcessDataB
 
 	@Override
 	public void updateClient(Client client) {
-		for(ValueSelectable<SearchResult> vs : this) {
+		for(ValueSelectable<ClientStub> vs : this) {
 			if(vs.getValue().id.equals(client.id)){
 				vs.setValue(client);
 				break;
@@ -151,7 +151,7 @@ public class ClientSearchPanel extends SearchPanel implements ClientProcessDataB
 
 	@Override
 	public void removeClient(String clientId) {
-		for(ValueSelectable<SearchResult> vs : this) {
+		for(ValueSelectable<ClientStub> vs : this) {
 			if(vs.getValue().id.equals(clientId)){
 				remove(vs);
 				break;

@@ -7,33 +7,24 @@ import java.util.Map;
 
 import javax.validation.constraints.NotNull;
 
-import org.gwt.mosaic.ui.client.util.ButtonHelper.ButtonLabelType;
+import bigBang.library.client.resources.Resources;
+import bigBang.library.client.userInterface.view.View;
 
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.logical.shared.AttachEvent;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
-import com.google.gwt.user.client.ui.AbstractImagePrototype;
 import com.google.gwt.user.client.ui.CellPanel;
-import com.google.gwt.user.client.ui.DecoratedPopupPanel;
-import com.google.gwt.user.client.ui.DialogBox;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
-import com.google.gwt.user.client.ui.HasVerticalAlignment;
-import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Image;
-import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.PopupPanel;
+import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.ToggleButton;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
-
-import bigBang.library.client.resources.Resources;
-import bigBang.library.client.userInterface.view.View;
 
 /**
  * A Toolbar that shows popups when an item is selected
@@ -168,6 +159,7 @@ public class PopupBar extends View {
 		ArrayList<HandlerRegistration> handlersList = new ArrayList<HandlerRegistration>();
 		this.handlers.put(item, handlersList);
 		itemsWrapper.add(item);
+		itemsWrapper.setCellWidth(item, "100%");
 
 		HandlerRegistration attachHandlerRegistration = item.getContent().addHandler(new AttachEvent.Handler() {
 
@@ -203,10 +195,28 @@ public class PopupBar extends View {
 	 * @return the left position of the popup
 	 */
 	protected int getNextPopupLeft(PopupBar.Item item){
-		if((item.getAbsoluteLeft() + item.getContent().getOffsetWidth() + 10) > (this.getElement().getAbsoluteLeft() + this.getElement().getOffsetWidth())){
-			return this.getElement().getAbsoluteLeft() + this.getElement().getOffsetWidth() - item.getContent().getOffsetWidth() - 10;
+		int left = 0;
+		
+		switch(this.popupPosition){
+		case NORTH:
+			left = item.getAbsoluteLeft();
+			break;
+		case SOUTH:
+			left = item.getAbsoluteLeft();
+			break;
+		case EAST:
+			left = item.getAbsoluteLeft() + item.getOffsetWidth() + 5;
+			break;
+		case WEST:
+			left = item.getAbsoluteLeft() - item.getContent().getOffsetWidth() - 15;
+			break;
 		}
-		return item.getAbsoluteLeft();
+
+		if(left < 0)
+			return 0;
+		if(left + item.getContent().getOffsetWidth() > RootPanel.get().getOffsetWidth())
+			return RootPanel.get().getOffsetWidth() - item.getContent().getOffsetWidth();
+		return left;
 	}
 
 	/**
@@ -215,7 +225,28 @@ public class PopupBar extends View {
 	 * @return the top position of the popup
 	 */
 	protected int getNextPopupTop(PopupBar.Item item){
-		return item.getAbsoluteTop() - item.getContent().getOffsetHeight() - 10;
+		int top = 0;
+		
+		switch(this.popupPosition){
+		case NORTH:
+			top = PopupBar.this.getAbsoluteTop() - item.getContent().getOffsetHeight();
+			break;
+		case SOUTH:
+			top = PopupBar.this.getAbsoluteTop() - item.getOffsetHeight();
+			break;
+		case EAST:
+			top = item.getAbsoluteTop();
+			break;
+		case WEST:
+			top = item.getAbsoluteTop();
+			break;
+		}
+		
+		if(top < 0)
+			return 0;
+		if(top > RootPanel.get().getOffsetHeight())
+			return RootPanel.get().getOffsetHeight() - item.getContent().getOffsetHeight();
+		return top;
 	}
 
 	/**

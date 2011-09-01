@@ -1,5 +1,8 @@
 package bigBang.library.shared;
 
+import bigBang.definitions.client.dataAccess.SortOrder;
+import bigBang.definitions.client.dataAccess.SortParameter;
+
 public class HistorySortParameter
 	extends SortParameter
 {

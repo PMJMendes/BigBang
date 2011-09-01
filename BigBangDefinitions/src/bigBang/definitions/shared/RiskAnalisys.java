@@ -1,8 +1,6 @@
 package bigBang.definitions.shared;
 
-import java.io.Serializable;
-
-public class RiskAnalisys implements Serializable {
+public class RiskAnalisys extends RiskAnalisysStub {
 
 	private static final long serialVersionUID = 1L;
 

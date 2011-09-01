@@ -1,13 +1,14 @@
 package bigBang.module.quoteRequestModule.client.userInterface;
 
-import bigBang.definitions.shared.SearchResult;
-import bigBang.library.client.userInterface.view.SearchPanel;
-import bigBang.module.quoteRequestModule.interfaces.QuoteRequestService;
+import java.util.Collection;
 
-public class QuoteRequestSearchPanel extends SearchPanel {
+import bigBang.definitions.shared.QuoteRequestStub;
+import bigBang.library.client.userInterface.view.SearchPanel;
+
+public class QuoteRequestSearchPanel extends SearchPanel<QuoteRequestStub> {
 
 	public QuoteRequestSearchPanel() {
-		super(QuoteRequestService.Util.getInstance());
+		super(null);
 	}
 
 	@Override
@@ -17,9 +18,9 @@ public class QuoteRequestSearchPanel extends SearchPanel {
 	}
 
 	@Override
-	public void onResults(SearchResult[] results) {
+	public void onResults(Collection<QuoteRequestStub> results) {
 		// TODO Auto-generated method stub
-
+		
 	}
 
 }

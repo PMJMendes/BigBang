@@ -19,7 +19,6 @@ public class BigBangConstants {
 	}
 	
 	public static class TypifiedListIds {
-		
 	}
 	
 }

@@ -1,11 +1,11 @@
 package bigBang.module.expenseModule.server;
 
+import bigBang.definitions.client.dataAccess.SearchParameter;
+import bigBang.definitions.client.dataAccess.SortParameter;
 import bigBang.definitions.shared.SearchResult;
 import bigBang.library.shared.BigBangException;
 import bigBang.library.shared.NewSearchResult;
-import bigBang.library.shared.SearchParameter;
 import bigBang.library.shared.SessionExpiredException;
-import bigBang.library.shared.SortParameter;
 import bigBang.module.expenseModule.interfaces.ExpenseService;
 
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;

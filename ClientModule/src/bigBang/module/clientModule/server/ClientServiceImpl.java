@@ -9,20 +9,26 @@ import Jewel.Engine.Constants.ObjectGUIDs;
 import Jewel.Engine.Implementation.Entity;
 import Jewel.Engine.Interfaces.IEntity;
 import Jewel.Engine.SysObjects.ObjectBase;
+import bigBang.definitions.client.dataAccess.SearchParameter;
+import bigBang.definitions.client.dataAccess.SortOrder;
+import bigBang.definitions.client.dataAccess.SortParameter;
 import bigBang.definitions.shared.Address;
+import bigBang.definitions.shared.Casualty;
 import bigBang.definitions.shared.Client;
+import bigBang.definitions.shared.ClientInfoOrDocumentRequest;
 import bigBang.definitions.shared.ClientStub;
+import bigBang.definitions.shared.ClientToManagerTransfer;
 import bigBang.definitions.shared.Contact;
 import bigBang.definitions.shared.Document;
+import bigBang.definitions.shared.InsurancePolicy;
+import bigBang.definitions.shared.QuoteRequest;
+import bigBang.definitions.shared.RiskAnalisys;
 import bigBang.definitions.shared.SearchResult;
 import bigBang.definitions.shared.ZipCode;
 import bigBang.library.server.FileServiceImpl;
 import bigBang.library.server.SearchServiceBase;
 import bigBang.library.shared.BigBangException;
-import bigBang.library.shared.SearchParameter;
 import bigBang.library.shared.SessionExpiredException;
-import bigBang.library.shared.SortOrder;
-import bigBang.library.shared.SortParameter;
 import bigBang.module.clientModule.interfaces.ClientService;
 import bigBang.module.clientModule.shared.ClientSearchParameter;
 import bigBang.module.clientModule.shared.ClientSortParameter;
@@ -207,7 +213,7 @@ public class ClientServiceImpl
 		if ( Engine.getCurrentUser() == null )
 			throw new SessionExpiredException();
 
-		return null;
+		return client;
 	}
 
 	public void deleteClient(String clientId)
@@ -549,4 +555,95 @@ public class ClientServiceImpl
 		for ( i = 0; i < parrResults.length; i++ )
 			parrDocuments[i].id = parrResults[i].mid.toString();
 	}
+
+	@Override
+	public RiskAnalisys createRiskAnalisys(String clientId,
+			RiskAnalisys riskAnalisys) throws SessionExpiredException,
+			BigBangException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public InsurancePolicy createPolicy(String clientId, InsurancePolicy policy)
+			throws SessionExpiredException, BigBangException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public QuoteRequest createQuoteRequest(String clientId, QuoteRequest request)
+			throws SessionExpiredException, BigBangException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Casualty createCasualty(String clientId, Casualty casualty)
+			throws SessionExpiredException, BigBangException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Client mergeWithClient(String originalId, String receptorId)
+			throws SessionExpiredException, BigBangException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public ClientToManagerTransfer[] transferToManager(String[] clientIds,
+			String managerId) throws SessionExpiredException, BigBangException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public ClientToManagerTransfer acceptTransfer(String transferId)
+			throws SessionExpiredException, BigBangException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public ClientToManagerTransfer cancelTransfer(String transferId)
+			throws SessionExpiredException, BigBangException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public ClientInfoOrDocumentRequest createInfoOrDocumentRequest(
+			ClientInfoOrDocumentRequest request)
+			throws SessionExpiredException, BigBangException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public ClientInfoOrDocumentRequest repeatRequest(
+			ClientInfoOrDocumentRequest request)
+			throws SessionExpiredException, BigBangException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public ClientInfoOrDocumentRequest receiveInfoOrDocumentRequestResponse(
+			bigBang.definitions.shared.ClientInfoOrDocumentRequest.Response response)
+			throws SessionExpiredException, BigBangException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void cancelInfoOrDocumentRequest(
+			bigBang.definitions.shared.ClientInfoOrDocumentRequest.Cancellation cancellation)
+			throws SessionExpiredException, BigBangException {
+		// TODO Auto-generated method stub
+		
+	}
+
+
 }

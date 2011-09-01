@@ -1,8 +1,6 @@
 package bigBang.definitions.shared;
 
-import java.io.Serializable;
-
-public class Complaint implements Serializable {
+public class Complaint extends ComplaintStub {
 
 	private static final long serialVersionUID = 1L;
 

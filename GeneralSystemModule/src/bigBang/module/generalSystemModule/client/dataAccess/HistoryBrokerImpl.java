@@ -1,6 +1,7 @@
 package bigBang.module.generalSystemModule.client.dataAccess;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -9,14 +10,18 @@ import bigBang.definitions.client.dataAccess.DataBroker;
 import bigBang.definitions.client.dataAccess.DataBrokerClient;
 import bigBang.definitions.client.dataAccess.HistoryBroker;
 import bigBang.definitions.client.dataAccess.HistoryDataBrokerClient;
+import bigBang.definitions.client.dataAccess.SearchDataBroker;
+import bigBang.definitions.client.response.ResponseError;
 import bigBang.definitions.client.response.ResponseHandler;
 import bigBang.definitions.shared.BigBangConstants;
+import bigBang.definitions.shared.HistoryItem;
 import bigBang.definitions.shared.HistoryItemStub;
 import bigBang.library.client.BigBangAsyncCallback;
+import bigBang.library.client.dataAccess.SearchDataBrokerImpl;
 import bigBang.library.interfaces.HistoryService;
 import bigBang.library.interfaces.HistoryServiceAsync;
 
-public class HistoryBrokerImpl extends DataBroker<HistoryItemStub> implements
+public class HistoryBrokerImpl extends DataBroker<HistoryItem> implements
 		HistoryBroker {
 
 	protected static final String ALL_PROCESSES = "";
@@ -24,11 +29,13 @@ public class HistoryBrokerImpl extends DataBroker<HistoryItemStub> implements
 	protected HistoryServiceAsync service;
 	protected Map<String, List<HistoryDataBrokerClient>> clientProcessRegistrations;
 	protected Map<String, Boolean> dataRefreshRequests;
+	protected SearchDataBroker<HistoryItemStub> searchBroker; 
 	
 	public HistoryBrokerImpl(){
 		clientProcessRegistrations = new HashMap<String, List<HistoryDataBrokerClient>>();
 		dataRefreshRequests = new HashMap<String, Boolean>();
 		service = HistoryService.Util.getInstance();
+		this.searchBroker = new SearchDataBrokerImpl<HistoryItemStub>(this.service);
 		
 		this.dataElementId = BigBangConstants.EntityIds.HISTORY;
 	}
@@ -54,7 +61,7 @@ public class HistoryBrokerImpl extends DataBroker<HistoryItemStub> implements
 	}
 
 	@Override
-	public void registerClient(DataBrokerClient<HistoryItemStub> client,
+	public void registerClient(DataBrokerClient<HistoryItem> client,
 			String processId) {
 		ArrayList<HistoryDataBrokerClient> processHistoryClients = null;
 		processId = processId == null ? ALL_PROCESSES : processId;
@@ -69,17 +76,17 @@ public class HistoryBrokerImpl extends DataBroker<HistoryItemStub> implements
 	}
 	
 	@Override
-	public void registerClient(DataBrokerClient<HistoryItemStub> client) {
+	public void registerClient(DataBrokerClient<HistoryItem> client) {
 		registerClient(client, ALL_PROCESSES);
 	}
 	
 	@Override
-	public void unregisterClient(DataBrokerClient<HistoryItemStub> client) {
+	public void unregisterClient(DataBrokerClient<HistoryItem> client) {
 		unregisterClient(client, ALL_PROCESSES);
 	}
 
 	@Override
-	public void unregisterClient(DataBrokerClient<HistoryItemStub> client,
+	public void unregisterClient(DataBrokerClient<HistoryItem> client,
 			String processId) {
 		if(!clientProcessRegistrations.containsKey(processId))
 			return;
@@ -89,39 +96,51 @@ public class HistoryBrokerImpl extends DataBroker<HistoryItemStub> implements
 
 	@Override
 	public void getItems(String processId,
-			ResponseHandler<HistoryItemStub[]> handler) {
-		handler.onResponse(new HistoryItemStub[0]);
-		//TODO FJVC
+			ResponseHandler<HistoryItem[]> handler) {
+		Collection<ResponseError> errors = new ArrayList<ResponseError>();
+		ResponseError error = new ResponseError();
+		error.description = "Please use the search broker to get the items";
+		errors.add(error);
+		handler.onError(errors);
 	}
 
 	@Override
-	public void getItem(String itemId, String processId, ResponseHandler<HistoryItemStub> handler) {
-		handler.onResponse(new HistoryItemStub());
-		/*if(!dataRefreshRequests.containsKey(processId)){
+	public void getItem(String itemId, String processId, final ResponseHandler<HistoryItem> handler) {
+		if(!dataRefreshRequests.containsKey(processId)){
 			throw new RuntimeException("The given process id is not managed by the history broker at the moment : " + processId);
 		}
 		
 		boolean isRefreshNeeded = dataRefreshRequests.get(processId);
 		
 		if(isRefreshNeeded || !cache.contains(itemId)){
-			service.
+			service.getItem(itemId, new BigBangAsyncCallback<HistoryItem>() {
+
+				@Override
+				public void onSuccess(HistoryItem result) {
+					handler.onResponse(result);
+				}
+			});
 		}else{
-			handler.onResponse((ProcessUndoItem) cache.get(itemId));
-		}*/ //TODO FJVC
+			handler.onResponse((HistoryItem) cache.get(itemId));
+		}
 	}
 
 	@Override
-	public void undo(String undoItemId, final ResponseHandler<HistoryItemStub> handler) {
+	public void undo(String undoItemId, final ResponseHandler<HistoryItem> handler) {
 		this.service.undo(undoItemId, new BigBangAsyncCallback<HistoryItemStub>() {
 
 			@Override
 			public void onSuccess(HistoryItemStub result) {
 				if(cache.contains(result.id))
 					cache.update(result.id, result);
-				handler.onResponse(result);
+				handler.onResponse((HistoryItem) result);
 			}
 		});
 	}
-	
+
+	@Override
+	public SearchDataBroker<HistoryItemStub> getSearchBroker() {
+		return this.searchBroker;
+	}
 	
 }

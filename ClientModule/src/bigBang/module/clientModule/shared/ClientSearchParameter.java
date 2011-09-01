@@ -1,6 +1,6 @@
 package bigBang.module.clientModule.shared;
 
-import bigBang.library.shared.SearchParameter;
+import bigBang.definitions.client.dataAccess.SearchParameter;
 
 public class ClientSearchParameter
 	extends SearchParameter

@@ -1,13 +1,16 @@
 package bigBang.library.client.userInterface.view;
 
+import java.util.Collection;
+
+import bigBang.definitions.client.dataAccess.Search;
+import bigBang.definitions.client.dataAccess.SearchDataBroker;
+import bigBang.definitions.client.dataAccess.SearchParameter;
+import bigBang.definitions.client.dataAccess.SortParameter;
+import bigBang.definitions.client.response.ResponseError;
+import bigBang.definitions.client.response.ResponseHandler;
 import bigBang.definitions.shared.SearchResult;
-import bigBang.library.client.BigBangAsyncCallback;
 import bigBang.library.client.userInterface.FilterableList;
 import bigBang.library.client.userInterface.ListHeader;
-import bigBang.library.interfaces.SearchServiceAsync;
-import bigBang.library.shared.NewSearchResult;
-import bigBang.library.shared.SearchParameter;
-import bigBang.library.shared.SortParameter;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -37,7 +40,7 @@ import com.google.gwt.user.client.ui.Widget;
  * Implements a List panel with remote search capabilities.
  * This list can be sorted and filtered.  
  */
-public abstract class SearchPanel extends FilterableList<SearchResult> {
+public abstract class SearchPanel<T extends SearchResult> extends FilterableList<T> {
 
 	protected final int DEFAULT_PAGE_SIZE = 50;
 
@@ -47,8 +50,8 @@ public abstract class SearchPanel extends FilterableList<SearchResult> {
 	private Widget filtersWidget;
 	private HandlerRegistration liveSearchKeyUpHandlerRegistration;
 
-	private SearchServiceAsync service;
-	private String workspaceId;
+	protected SearchDataBroker<T> broker;
+	protected String workspaceId;
 	protected int pageSize = DEFAULT_PAGE_SIZE;
 	protected int nextResultIndex = 0;
 	protected int numberOfResults = 0;
@@ -58,11 +61,11 @@ public abstract class SearchPanel extends FilterableList<SearchResult> {
 	 * The class constructor
 	 * @param the search service to be used.
 	 */
-	public SearchPanel(SearchServiceAsync service) {
+	public SearchPanel(SearchDataBroker<T> broker) {
 		super();
 
 		super.liveSearch = false;
-		this.service = service;
+		this.broker = broker;
 
 		this.searchButton = new Button("Pesquisar");
 		this.searchButton.setSize("80px", "100%");
@@ -171,36 +174,42 @@ public abstract class SearchPanel extends FilterableList<SearchResult> {
 
 		try {
 			if (workspaceId == null) {
-				BigBangAsyncCallback<NewSearchResult> callback = new BigBangAsyncCallback<NewSearchResult>() {
+				ResponseHandler<Search<T>> handler = new ResponseHandler<Search<T>>() {
 
-					public void onSuccess(NewSearchResult result) {
-						workspaceId = result.workspaceId;
+					@Override
+					public void onResponse(Search<T> result) {
+						workspaceId = result.getWorkspaceId();
 						clear();
 						scrollPanel.scrollToTop();
 						requestedNextPage = false;
-						nextResultIndex += result.results.length;
-						SearchPanel.this.numberOfResults = result.totalCount;
-						onResults(result.results);
+						nextResultIndex += result.getResults().size();
+						SearchPanel.this.numberOfResults = result.getTotalResultsCount();
+						onResults(result.getResults());
 						updateFooterText();
 					}
 
+					@Override
+					public void onError(Collection<ResponseError> errors) {}
 				};
-				this.service.openSearch(parameters, sorts, this.pageSize, callback);
+				this.broker.search(parameters, sorts, this.pageSize, handler);
 			} else {
-				BigBangAsyncCallback<NewSearchResult> callback = new BigBangAsyncCallback<NewSearchResult>() {
+				ResponseHandler<Search<T>> handler = new ResponseHandler<Search<T>>() {
 
-					public void onSuccess(NewSearchResult result) {
+					@Override
+					public void onResponse(Search<T> result) {
 						clear();
 						scrollPanel.scrollToTop();
 						requestedNextPage = false;
-						nextResultIndex += result.results.length;
-						SearchPanel.this.numberOfResults = result.totalCount;
-						onResults(result.results);
+						nextResultIndex += result.getResults().size();
+						SearchPanel.this.numberOfResults = result.getTotalResultsCount();
+						onResults(result.getResults());
 						updateFooterText();
 					}
 
+					@Override
+					public void onError(Collection<ResponseError> errors) {}
 				};
-				this.service.search(this.workspaceId, parameters, sorts, this.pageSize, callback);
+				this.broker.search(parameters, sorts, this.pageSize, handler);
 			}
 		} catch (Exception e) {
 			GWT.log(e.getMessage());
@@ -225,20 +234,19 @@ public abstract class SearchPanel extends FilterableList<SearchResult> {
 			return;
 		}
 		requestedNextPage = true;
-		this.service.getResults(this.workspaceId, this.nextResultIndex, this.pageSize, new BigBangAsyncCallback<SearchResult[]>() {
-
+		this.broker.getResults(this.workspaceId, this.nextResultIndex, this.pageSize, new ResponseHandler<Search<T>>() {
+			
 			@Override
-			public void onSuccess(SearchResult[] result) {
-				nextResultIndex += result.length;
-				onResults(result);
+			public void onResponse(Search<T> result) {
+				nextResultIndex += result.getResults().size();
+				onResults(result.getResults());
 				updateFooterText();
 				requestedNextPage = false;
 			}
 			
 			@Override
-			public void onFailure(Throwable caught) {
+			public void onError(Collection<ResponseError> errors) {
 				requestedNextPage = false;
-				super.onFailure(caught);
 			}
 		});
 	}
@@ -268,6 +276,6 @@ public abstract class SearchPanel extends FilterableList<SearchResult> {
 	 * This function is invoked when results are received after a query.
 	 * @param results The array of results
 	 */
-	public abstract void onResults(SearchResult[] results);
+	public abstract void onResults(Collection<T> results);
 
 }

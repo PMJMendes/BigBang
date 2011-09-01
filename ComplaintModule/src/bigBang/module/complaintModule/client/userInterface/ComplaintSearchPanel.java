@@ -1,13 +1,14 @@
 package bigBang.module.complaintModule.client.userInterface;
 
-import bigBang.definitions.shared.SearchResult;
-import bigBang.library.client.userInterface.view.SearchPanel;
-import bigBang.module.complaintModule.interfaces.ComplaintService;
+import java.util.Collection;
 
-public class ComplaintSearchPanel extends SearchPanel {
+import bigBang.definitions.shared.ComplaintStub;
+import bigBang.library.client.userInterface.view.SearchPanel;
+
+public class ComplaintSearchPanel extends SearchPanel<ComplaintStub> {
 
 	public ComplaintSearchPanel(){
-		super(ComplaintService.Util.getInstance());
+		super(null);
 	}
 	
 	@Override
@@ -17,9 +18,9 @@ public class ComplaintSearchPanel extends SearchPanel {
 	}
 
 	@Override
-	public void onResults(SearchResult[] results) {
+	public void onResults(Collection<ComplaintStub> results) {
 		// TODO Auto-generated method stub
-
+		
 	}
 
 }

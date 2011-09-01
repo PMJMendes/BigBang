@@ -188,13 +188,11 @@ public class TypifiedListManagementPanel extends FilterableList<TipifiedListItem
 
 			@Override
 			public void onResponse(TipifiedListItem response) {
-				GWT.log("Recebi resposta");
+				remove(e);
 			}
 			
 			@Override
-			public void onError(Collection<ResponseError> errors) {
-				GWT.log("Recebi erro");
-			}
+			public void onError(Collection<ResponseError> errors) {}
 		});
 	}
 
@@ -214,7 +212,7 @@ public class TypifiedListManagementPanel extends FilterableList<TipifiedListItem
 
 	public void setEditable(boolean editable) {
 		this.editable = editable;
-		this.editButton.setVisible(!editable);
+		this.editButton.setVisible(editable);
 	}
 	
 	public void setReadOnly(boolean readonly) {

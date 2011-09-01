@@ -2,11 +2,12 @@ package bigBang.definitions.client.dataAccess;
 
 import bigBang.definitions.client.response.ResponseHandler;
 import bigBang.definitions.shared.Client;
+import bigBang.definitions.shared.ClientStub;
 
 /**
  * The interface for a Client processes DataBroker
  */
-public interface ClientProcessBroker extends DataBrokerInterface<Client> {
+public interface ClientProcessBroker extends DataBrokerInterface<Client>{
 
 	/**
 	 * Fetches the client for a given id
@@ -36,4 +37,9 @@ public interface ClientProcessBroker extends DataBrokerInterface<Client> {
 	 */
 	public void removeClient(String clientId, ResponseHandler<String> handler);
 	
+	/**
+	 * Gets the search service associated with this broker
+	 * @return
+	 */
+	public SearchDataBroker<ClientStub> getSearchBroker();
 }

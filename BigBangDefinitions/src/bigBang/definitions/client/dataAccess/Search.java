@@ -1,8 +1,8 @@
-package bigBang.library.client.dataAccess;
+package bigBang.definitions.client.dataAccess;
+
+import java.util.Collection;
 
 import bigBang.definitions.shared.SearchResult;
-import bigBang.library.shared.SearchParameter;
-import bigBang.library.shared.SortParameter;
 
 public class Search<T extends SearchResult> {
 	protected String workspaceId;
@@ -11,9 +11,9 @@ public class Search<T extends SearchResult> {
 	protected int count;
 	protected SearchParameter[] parameters;
 	protected SortParameter[] sorts;
-	protected T[] obtainedresults;
+	protected Collection<T> obtainedresults;
 	
-	public Search(String workspaceId, int totalResultsCount, int offset, int count, SearchParameter[] parameters, SortParameter[] sorts, T[] obtainedResults){
+	public Search(String workspaceId, int totalResultsCount, int offset, int count, SearchParameter[] parameters, SortParameter[] sorts, Collection<T> obtainedResults){
 		this.workspaceId = workspaceId;
 		this.totalResultsCount = totalResultsCount;
 		this.offset = offset;
@@ -28,5 +28,5 @@ public class Search<T extends SearchResult> {
 	public int getCount(){return this.count;}
 	public SearchParameter[] getParameters(){return this.parameters;}
 	public SortParameter[] getSortParameters(){return this.sorts;}
-	public T[] getResults(){return this.obtainedresults;}
+	public Collection<T> getResults(){return this.obtainedresults;}
 }

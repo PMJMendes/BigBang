@@ -1,13 +1,14 @@
 package bigBang.module.expenseModule.client.userInterface;
 
-import bigBang.definitions.shared.SearchResult;
-import bigBang.library.client.userInterface.view.SearchPanel;
-import bigBang.module.expenseModule.interfaces.ExpenseService;
+import java.util.Collection;
 
-public class ExpenseSearchPanel extends SearchPanel {
+import bigBang.definitions.shared.ExpenseStub;
+import bigBang.library.client.userInterface.view.SearchPanel;
+
+public class ExpenseSearchPanel extends SearchPanel<ExpenseStub> {
 
 	public ExpenseSearchPanel() {
-		super(ExpenseService.Util.getInstance());
+		super(null);
 	}
 	
 	@Override
@@ -17,9 +18,9 @@ public class ExpenseSearchPanel extends SearchPanel {
 	}
 
 	@Override
-	public void onResults(SearchResult[] results) {
+	public void onResults(Collection<ExpenseStub> results) {
 		// TODO Auto-generated method stub
-
+		
 	}
 
 }

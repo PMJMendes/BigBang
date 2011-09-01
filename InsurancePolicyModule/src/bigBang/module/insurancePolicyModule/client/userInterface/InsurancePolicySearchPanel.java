@@ -1,13 +1,14 @@
 package bigBang.module.insurancePolicyModule.client.userInterface;
 
-import bigBang.definitions.shared.SearchResult;
-import bigBang.library.client.userInterface.view.SearchPanel;
-import bigBang.module.insurancePolicyModule.interfaces.InsurancePolicyService;
+import java.util.Collection;
 
-public class InsurancePolicySearchPanel extends SearchPanel {
+import bigBang.definitions.shared.InsurancePolicyStub;
+import bigBang.library.client.userInterface.view.SearchPanel;
+
+public class InsurancePolicySearchPanel extends SearchPanel<InsurancePolicyStub> {
 
 	public InsurancePolicySearchPanel() {
-		super(InsurancePolicyService.Util.getInstance());
+		super(null);
 		// TODO Auto-generated constructor stub
 	}
 
@@ -18,9 +19,9 @@ public class InsurancePolicySearchPanel extends SearchPanel {
 	}
 
 	@Override
-	public void onResults(SearchResult[] results) {
+	public void onResults(Collection<InsurancePolicyStub> results) {
 		// TODO Auto-generated method stub
-
+		
 	}
 
 }

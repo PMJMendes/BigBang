@@ -1,7 +1,5 @@
 package bigBang.library.client.userInterface.presenter;
 
-import java.util.Collection;
-
 import org.gwt.mosaic.ui.client.MessageBox.ConfirmationCallback;
 
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -12,8 +10,6 @@ import com.google.gwt.user.client.ui.HasWidgets;
 import com.google.gwt.user.client.ui.Widget;
 
 import bigBang.definitions.client.dataAccess.HistoryBroker;
-import bigBang.definitions.client.response.ResponseError;
-import bigBang.definitions.client.response.ResponseHandler;
 import bigBang.definitions.shared.HistoryItem;
 import bigBang.definitions.shared.HistoryItemStub;
 import bigBang.library.client.BigBangAsyncCallback;
@@ -34,7 +30,7 @@ public class UndoOperationViewPresenter implements OperationViewPresenter {
 	public interface Display {
 		//LIST
 		HasValueSelectables<HistoryItemStub> getUndoItemList();
-		void setUndoItems(HistoryItemStub[] items);
+		void setProcessId(String processId);
 		void removeUndoItem(HistoryItemStub item);
 		void addItem(HistoryItemStub item);
 		
@@ -97,18 +93,21 @@ public class UndoOperationViewPresenter implements OperationViewPresenter {
 	
 	protected void fetchHistoryItems(){
 		this.historyBroker.requireDataRefresh();
-		this.historyBroker.getItems(this.processId, new ResponseHandler<HistoryItemStub[]>() {
+		/*this.historyBroker.getItems(this.processId, new ResponseHandler<HistoryItemStub[]>() {
 			
 			@Override
 			public void onResponse(HistoryItemStub[] response) {}
 			
 			@Override
 			public void onError(Collection<ResponseError> errors) {}
-		});
+		});*/
 	}
 
 	@Override
 	public void bind() {
+		if(bound)
+			return;
+		view.setProcessId(this.processId);
 		view.getUndoItemList().addSelectionChangedEventHandler(new SelectionChangedEventHandler() {
 			
 			@Override

@@ -1,8 +1,6 @@
 package bigBang.definitions.shared;
 
-import java.io.Serializable;
-
-public class QuoteRequest implements Serializable {
+public class QuoteRequest extends QuoteRequestStub {
 
 	private static final long serialVersionUID = 1L;
 

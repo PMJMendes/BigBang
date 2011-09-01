@@ -1,7 +1,7 @@
 package bigBang.module.clientModule.shared;
 
-import bigBang.library.shared.SortOrder;
-import bigBang.library.shared.SortParameter;
+import bigBang.definitions.client.dataAccess.SortOrder;
+import bigBang.definitions.client.dataAccess.SortParameter;
 
 public class ClientSortParameter
 	extends SortParameter

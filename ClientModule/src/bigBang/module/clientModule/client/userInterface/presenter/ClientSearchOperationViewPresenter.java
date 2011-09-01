@@ -45,6 +45,7 @@ public class ClientSearchOperationViewPresenter implements OperationViewPresente
 		SAVE,
 		CANCEL_EDIT,
 		DELETE,
+		SHOW_HISTORY,
 
 		CREATE_POLICY,
 		CREATE_RISK_ANALISYS,
@@ -52,6 +53,7 @@ public class ClientSearchOperationViewPresenter implements OperationViewPresente
 		CREATE_CASUALTY,
 
 		MERGE_WITH_CLIENT,
+		TRANSFER_MANAGER,
 
 		REQUIRE_INFO_DOCUMENT
 	}
@@ -91,10 +93,22 @@ public class ClientSearchOperationViewPresenter implements OperationViewPresente
 		boolean isClientMergeFormValid();
 		void lockClientMergeForm(boolean lock);
 		
+		void showManagerTransferForm(boolean show);
+		HasEditableValue<String> getManagerTransferForm();
+		boolean isManagerTransferFormValid();
+		void lockManagerTransferForm(boolean lock);
+		
 		void showInfoOrDocumentRequestForm(boolean show);
 		HasEditableValue<Casualty> getInfoOrDocumentRequestForm();
 		boolean isInfoOrDocumentFormValid();
 		void lockInfoOrDocumentRequestForm(boolean lock);
+		
+		void showHistory(Client process);
+		
+		void showDeleteForm(boolean show);
+		HasEditableValue<String> getDeleteForm();
+		boolean isDeleteFormValid();
+		void lockDeleteForm(boolean lock);
 		
 		//General
 		void clear();
@@ -151,6 +165,7 @@ public class ClientSearchOperationViewPresenter implements OperationViewPresente
 	}
 
 	public void bind() {
+		view.lockForm(true);
 		this.view.getList().addSelectionChangedEventHandler(new SelectionChangedEventHandler() {
 
 			@Override
@@ -212,9 +227,23 @@ public class ClientSearchOperationViewPresenter implements OperationViewPresente
 				case CANCEL_EDIT:
 					break;
 				case DELETE:
+					deleteClient();
+					break;
+				case SHOW_HISTORY:
+					showHistory();
 					break;
 				case REFRESH:
-					//TODO
+					clientBroker.requireDataRefresh();
+					clientBroker.getClient(view.getForm().getValue().id, new ResponseHandler<Client>() {
+
+						@Override
+						public void onResponse(Client response) {
+							view.getForm().setValue(response);
+						}
+
+						@Override
+						public void onError(Collection<ResponseError> errors) {}
+					});
 					break;
 				case CREATE_CASUALTY:
 					createCasualty();
@@ -230,6 +259,9 @@ public class ClientSearchOperationViewPresenter implements OperationViewPresente
 					break;
 				case MERGE_WITH_CLIENT:
 					mergeWithClient();
+					break;
+				case TRANSFER_MANAGER:
+					transferManager();
 					break;
 				case REQUIRE_INFO_DOCUMENT:
 					requireInfoOrDocument();
@@ -267,10 +299,26 @@ public class ClientSearchOperationViewPresenter implements OperationViewPresente
 				//view.lockClientMergeForm(false);
 			}
 			
+			protected void transferManager(){
+				//view.getManagerTransferForm().setValue(null);
+				view.showManagerTransferForm(true);
+				//view.lockManagerTransferForm(false);
+			}
+			
 			protected void requireInfoOrDocument(){
 				//view.getInfoOrDocumentRequestForm().setValue(null);
 				view.showInfoOrDocumentRequestForm(true);
 				//view.lockInfoOrDocumentRequestForm(false);
+			}
+			
+			protected void showHistory() {
+				view.showHistory(view.getForm().getValue());
+			}
+			
+			protected void deleteClient(){
+				//view.getDeleteForm().setValue(null);
+				view.showDeleteForm(true);
+				//view.lockDeleteForm(false);
 			}
 			
 		});
@@ -358,6 +406,7 @@ public class ClientSearchOperationViewPresenter implements OperationViewPresente
 			public void onResponse(Client response) {
 				view.getForm().setValue(response);
 				view.getForm().setReadOnly(true);
+				view.setSaveModeEnabled(false);
 			}
 
 			@Override
@@ -373,6 +422,7 @@ public class ClientSearchOperationViewPresenter implements OperationViewPresente
 			public void onResponse(Client response) {
 				view.getForm().setValue(response);
 				view.getForm().setReadOnly(true);
+				view.setSaveModeEnabled(false);
 			}
 
 			@Override
