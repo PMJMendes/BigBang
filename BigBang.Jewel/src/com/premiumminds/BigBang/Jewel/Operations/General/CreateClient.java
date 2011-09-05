@@ -93,6 +93,8 @@ public class CreateClient
 			if ( mobjDocOps != null )
 				mobjDocOps.RunSubOp(pdb, lobjAux.getKey());
 
+			lobjProcess.Setup();
+
 			mobjData.mid = lobjAux.getKey();
 			mobjData.midProcess = lobjProcess.getKey();
 			mobjData.mobjPrevValues = null;

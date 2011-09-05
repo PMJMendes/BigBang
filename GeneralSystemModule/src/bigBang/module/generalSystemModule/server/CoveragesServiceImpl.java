@@ -146,7 +146,7 @@ public class CoveragesServiceImpl
 			lopML.marrModifyCoverages = null;
 			lopML.marrDeleteCoverages = null;
 
-			lopML.Execute(null);
+			lopML.Execute();
 		}
 		catch (Throwable e)
 		{
@@ -185,7 +185,7 @@ public class CoveragesServiceImpl
 			lopML.marrModifyCoverages = null;
 			lopML.marrDeleteCoverages = null;
 
-			lopML.Execute(null);
+			lopML.Execute();
 		}
 		catch (Throwable e)
 		{
@@ -223,7 +223,7 @@ public class CoveragesServiceImpl
 			lopML.marrModifyCoverages = null;
 			lopML.marrDeleteCoverages = null;
 
-			lopML.Execute(null);
+			lopML.Execute();
 		}
 		catch (Throwable e)
 		{
@@ -258,7 +258,7 @@ public class CoveragesServiceImpl
 			lopML.marrModifyCoverages = null;
 			lopML.marrDeleteCoverages = null;
 
-			lopML.Execute(null);
+			lopML.Execute();
 		}
 		catch (Throwable e)
 		{
@@ -297,7 +297,7 @@ public class CoveragesServiceImpl
 			lopML.marrModifyCoverages = null;
 			lopML.marrDeleteCoverages = null;
 
-			lopML.Execute(null);
+			lopML.Execute();
 		}
 		catch (Throwable e)
 		{
@@ -335,7 +335,7 @@ public class CoveragesServiceImpl
 			lopML.marrModifyCoverages = null;
 			lopML.marrDeleteCoverages = null;
 
-			lopML.Execute(null);
+			lopML.Execute();
 		}
 		catch (Throwable e)
 		{
@@ -370,7 +370,7 @@ public class CoveragesServiceImpl
 			lopML.marrModifyCoverages = null;
 			lopML.marrDeleteCoverages = null;
 
-			lopML.Execute(null);
+			lopML.Execute();
 		}
 		catch (Throwable e)
 		{
@@ -409,7 +409,7 @@ public class CoveragesServiceImpl
 			lopML.marrCreateCoverages = null;
 			lopML.marrDeleteCoverages = null;
 
-			lopML.Execute(null);
+			lopML.Execute();
 		}
 		catch (Throwable e)
 		{
@@ -447,7 +447,7 @@ public class CoveragesServiceImpl
 			lopML.marrCreateCoverages = null;
 			lopML.marrModifyCoverages = null;
 
-			lopML.Execute(null);
+			lopML.Execute();
 		}
 		catch (Throwable e)
 		{
@@ -476,7 +476,7 @@ public class CoveragesServiceImpl
 			lopMT.marrModify = null;
 			lopMT.marrDelete = null;
 
-			lopMT.Execute(null);
+			lopMT.Execute();
 		}
 		catch (Throwable e)
 		{
@@ -509,7 +509,7 @@ public class CoveragesServiceImpl
 			lopMT.marrCreate = null;
 			lopMT.marrModify = null;
 
-			lopMT.Execute(null);
+			lopMT.Execute();
 		}
 		catch (Throwable e)
 		{
@@ -541,7 +541,7 @@ public class CoveragesServiceImpl
 			lopMT.marrCreate = null;
 			lopMT.marrModify = null;
 
-			lopMT.Execute(null);
+			lopMT.Execute();
 		}
 		catch (Throwable e)
 		{

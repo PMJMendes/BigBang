@@ -192,7 +192,7 @@ public class CostCenterServiceImpl
 			lopMCC.marrModify = null;
 			lopMCC.marrDelete = null;
 
-			lopMCC.Execute(null);
+			lopMCC.Execute();
 		}
 		catch (Throwable e)
 		{
@@ -234,7 +234,7 @@ public class CostCenterServiceImpl
 			lopMCC.marrCreate = null;
 			lopMCC.marrDelete = null;
 
-			lopMCC.Execute(null);
+			lopMCC.Execute();
 		}
 		catch (Throwable e)
 		{
@@ -339,7 +339,7 @@ public class CostCenterServiceImpl
 			lopMCC.marrCreate = null;
 			lopMCC.marrModify = null;
 
-			lopMCC.Execute(null);
+			lopMCC.Execute();
 		}
 		catch (Throwable e)
 		{

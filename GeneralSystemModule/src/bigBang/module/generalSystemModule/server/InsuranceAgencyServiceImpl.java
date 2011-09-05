@@ -189,7 +189,7 @@ public class InsuranceAgencyServiceImpl
 			lopMIC.mobjContactOps = null;
 			lopMIC.mobjDocOps = null;
 
-			lopMIC.Execute(null);
+			lopMIC.Execute();
 		}
 		catch (Throwable e)
 		{
@@ -250,7 +250,7 @@ public class InsuranceAgencyServiceImpl
 			lopMIC.mobjContactOps = null;
 			lopMIC.mobjDocOps = null;
 
-			lopMIC.Execute(null);
+			lopMIC.Execute();
 		}
 		catch (Throwable e)
 		{
@@ -288,7 +288,7 @@ public class InsuranceAgencyServiceImpl
 			lopMIC.mobjContactOps = null;
 			lopMIC.mobjDocOps = null;
 
-			lopMIC.Execute(null);
+			lopMIC.Execute();
 		}
 		catch (Throwable e)
 		{

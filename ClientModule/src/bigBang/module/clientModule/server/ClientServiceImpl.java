@@ -188,7 +188,7 @@ public class ClientServiceImpl
 			else
 				lopCC.mobjDocOps = null;
 
-			lopCC.Execute(null);
+			lopCC.Execute();
 
 		}
 		catch (Throwable e)

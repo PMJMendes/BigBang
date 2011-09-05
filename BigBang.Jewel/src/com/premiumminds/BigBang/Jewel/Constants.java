@@ -52,7 +52,7 @@ public class Constants
 
 	// Operations
 
-	// General System
+	// General System Operations
 	public static final UUID OPID_ManageCostCenters  = UUID.fromString("39A4A919-F3D0-4966-8CBB-9EB100A38EE8");
 	public static final UUID OPID_ManageUsers        = UUID.fromString("03F5BBC1-5AB5-45DF-BAEF-9EB500A043FD");
 	public static final UUID OPID_ManageMediators    = UUID.fromString("EDA3659D-4BE9-4779-B0C9-9EB500A07726");
@@ -70,6 +70,11 @@ public class Constants
 	public static final UUID OPID_UndoMediators      = UUID.fromString("3A1572FF-B1C6-4DEC-9819-9F3300E6DA84");
 	public static final UUID OPID_UndoUsers          = UUID.fromString("F71DF6CC-C58E-4AA7-9BE5-9F3300E6FD4F");
 	public static final UUID OPID_UndoDeleteClient   = UUID.fromString("711B9533-8298-4DA5-BFD1-9F3D01211F51");
+
+	// Client Operations
+	public static final UUID OPID_TriggerAllowPolicies    = UUID.fromString("A99DCEF5-91BA-4CFA-9E70-9F090146FAE4");
+	public static final UUID OPID_TriggerDisallowPolicies = UUID.fromString("6A031641-DEC8-46D3-B402-9F0901474FE9");
+	public static final UUID OPID_AutoProcessData         = UUID.fromString("A9A8F4ED-74C2-473C-873C-9F0901435C1C");
 
 	// Client Types 
 	public static final UUID TypeID_Individual = UUID.fromString("462096E4-68A2-408A-963A-9EE600C9556A");

@@ -137,7 +137,7 @@ public class ContactsServiceImpl
 			lopCOps.marrDelete = null;
 
 			lobjOp = BuildOuterOp(UUID.fromString(opInstanceId), lopCOps);
-			lobjOp.Execute(null);
+			lobjOp.Execute();
 		}
 		catch (Throwable e)
 		{
@@ -167,7 +167,7 @@ public class ContactsServiceImpl
 			lopCOps.marrDelete = null;
 
 			lobjOp = BuildOuterOp(UUID.fromString(opInstanceId), lopCOps);
-			lobjOp.Execute(null);
+			lobjOp.Execute();
 		}
 		catch (Throwable e)
 		{
@@ -196,7 +196,7 @@ public class ContactsServiceImpl
 			lopCOps.marrModify = null;
 
 			lobjOp = BuildOuterOp(UUID.fromString(opInstanceId), lopCOps);
-			lobjOp.Execute(null);
+			lobjOp.Execute();
 		}
 		catch (Throwable e)
 		{

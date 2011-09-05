@@ -132,7 +132,7 @@ public class DocumentServiceImpl
 			lopDOps.marrDelete = null;
 
 			lobjOp = BuildOuterOp(UUID.fromString(opInstanceId), lopDOps);
-			lobjOp.Execute(null);
+			lobjOp.Execute();
 		}
 		catch (Throwable e)
 		{
@@ -161,7 +161,7 @@ public class DocumentServiceImpl
 			lopDOps.marrDelete = null;
 
 			lobjOp = BuildOuterOp(UUID.fromString(opInstanceId), lopDOps);
-			lobjOp.Execute(null);
+			lobjOp.Execute();
 		}
 		catch (Throwable e)
 		{
@@ -190,7 +190,7 @@ public class DocumentServiceImpl
 			lopDOps.marrModify = null;
 
 			lobjOp = BuildOuterOp(UUID.fromString(opInstanceId), lopDOps);
-			lobjOp.Execute(null);
+			lobjOp.Execute();
 		}
 		catch (Throwable e)
 		{

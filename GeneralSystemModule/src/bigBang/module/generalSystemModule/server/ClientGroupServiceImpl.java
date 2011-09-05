@@ -128,7 +128,7 @@ public class ClientGroupServiceImpl
 			lopMCG.marrModifyGroups = null;
 			lopMCG.marrDeleteGroups = null;
 
-			lopMCG.Execute(null);
+			lopMCG.Execute();
 		}
 		catch (Throwable e)
 		{
@@ -161,7 +161,7 @@ public class ClientGroupServiceImpl
 			lopMCG.marrCreateGroups = null;
 			lopMCG.marrDeleteGroups = null;
 
-			lopMCG.Execute(null);
+			lopMCG.Execute();
 		}
 		catch (Throwable e)
 		{
@@ -193,7 +193,7 @@ public class ClientGroupServiceImpl
 			lopMCG.marrCreateGroups = null;
 			lopMCG.marrModifyGroups = null;
 
-			lopMCG.Execute(null);
+			lopMCG.Execute();
 		}
 		catch (Throwable e)
 		{

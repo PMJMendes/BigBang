@@ -191,7 +191,7 @@ public class MediatorServiceImpl
 			lopMM.mobjContactOps = null;
 			lopMM.mobjDocOps = null;
 
-			lopMM.Execute(null);
+			lopMM.Execute();
 		}
 		catch (Throwable e)
 		{
@@ -251,7 +251,7 @@ public class MediatorServiceImpl
 			lopMM.mobjContactOps = null;
 			lopMM.mobjDocOps = null;
 
-			lopMM.Execute(null);
+			lopMM.Execute();
 		}
 		catch (Throwable e)
 		{
@@ -288,7 +288,7 @@ public class MediatorServiceImpl
 			lopMM.mobjContactOps = null;
 			lopMM.mobjDocOps = null;
 
-			lopMM.Execute(null);
+			lopMM.Execute();
 		}
 		catch (Throwable e)
 		{

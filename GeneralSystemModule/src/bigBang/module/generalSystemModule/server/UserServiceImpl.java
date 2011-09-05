@@ -136,7 +136,7 @@ public class UserServiceImpl
 			lopMU.marrCreate = null;
 			lopMU.marrDelete = null;
 
-			lopMU.Execute(null);
+			lopMU.Execute();
 		}
 		catch (Throwable e)
 		{
@@ -174,7 +174,7 @@ public class UserServiceImpl
 			lopMU.marrModify = null;
 			lopMU.marrDelete = null;
 
-			lopMU.Execute(null);
+			lopMU.Execute();
 		}
 		catch (Throwable e)
 		{
@@ -210,7 +210,7 @@ public class UserServiceImpl
 				lopMU.marrCreate = null;
 				lopMU.marrModify = null;
 
-				lopMU.Execute(null);
+				lopMU.Execute();
 			}
 			catch (Throwable e)
 			{
