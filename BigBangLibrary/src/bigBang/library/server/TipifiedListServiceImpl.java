@@ -25,6 +25,7 @@ public class TipifiedListServiceImpl
 	{
 		UUID lidListRef;
         MasterDB ldb;
+        int[] larrSorts;
         ResultSet lrsItems;
 		ArrayList<TipifiedListItem> larrAux;
 //		ObjectBase lobjItem;
@@ -34,6 +35,8 @@ public class TipifiedListServiceImpl
 			throw new SessionExpiredException();
 
 		larrAux = new ArrayList<TipifiedListItem>();
+		larrSorts = new int[1];
+		larrSorts[0] = 0;
 
 		try
 		{
@@ -47,7 +50,7 @@ public class TipifiedListServiceImpl
 
         try
         {
-	        lrsItems = Entity.GetInstance(lidListRef).SelectAll(ldb);
+	        lrsItems = Entity.GetInstance(lidListRef).SelectAllSort(ldb, larrSorts);
 		}
 		catch (Throwable e)
 		{
