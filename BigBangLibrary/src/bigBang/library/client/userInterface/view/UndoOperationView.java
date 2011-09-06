@@ -6,45 +6,44 @@ import org.gwt.mosaic.ui.client.MessageBox;
 import org.gwt.mosaic.ui.client.MessageBox.ConfirmationCallback;
 
 import bigBang.definitions.client.dataAccess.HistoryBroker;
+import bigBang.definitions.client.dataAccess.HistoryDataBrokerClient;
 import bigBang.definitions.client.dataAccess.SortParameter;
+import bigBang.definitions.client.response.ResponseError;
 import bigBang.definitions.shared.BigBangConstants;
 import bigBang.definitions.shared.HistoryItem;
 import bigBang.definitions.shared.HistoryItemStub;
 import bigBang.library.client.HasValueSelectables;
 import bigBang.library.client.ValueSelectable;
 import bigBang.library.client.dataAccess.DataBrokerManager;
+import bigBang.library.client.event.ActionInvokedEvent;
+import bigBang.library.client.event.ActionInvokedEventHandler;
+import bigBang.library.client.userInterface.BigBangOperationsToolBar;
 import bigBang.library.client.userInterface.ListEntry;
 import bigBang.library.client.userInterface.ListHeader;
 
 import bigBang.library.client.userInterface.presenter.UndoOperationViewPresenter;
+import bigBang.library.client.userInterface.presenter.UndoOperationViewPresenter.Action;
 import bigBang.library.shared.HistorySearchParameter;
 
-import com.google.gwt.event.dom.client.HasClickHandlers;
-import com.google.gwt.event.logical.shared.AttachEvent;
+import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.ui.HasValue;
+import com.google.gwt.user.client.ui.MenuItem;
 import com.google.gwt.user.client.ui.SplitLayoutPanel;
+import com.google.gwt.user.client.ui.VerticalPanel;
 
 
 public class UndoOperationView extends View implements UndoOperationViewPresenter.Display {
 
-	private class UndoItemList extends SearchPanel<HistoryItemStub> {
+	private class UndoItemList extends SearchPanel<HistoryItemStub>  implements HistoryDataBrokerClient {
 		
 		protected String currentProcessId;
+		protected int dataVersion;
 		
 		public UndoItemList(){
 			super(((HistoryBroker)DataBrokerManager.Util.getInstance().getBroker(BigBangConstants.EntityIds.HISTORY)).getSearchBroker());
 			ListHeader header = new ListHeader();
 			header.setText("Histórico");
 			setHeaderWidget(header);
-			
-			addAttachHandler(new AttachEvent.Handler() {
-				
-				@Override
-				public void onAttachOrDetach(AttachEvent event) {
-					if(event.isAttached())
-						doSearch();
-				}
-			});
 		}
 
 		@Override
@@ -65,6 +64,52 @@ public class UndoOperationView extends View implements UndoOperationViewPresente
 		
 		public void setProcessId(String id){
 			this.currentProcessId = id;
+			HistoryBroker historyBroker = ((HistoryBroker)DataBrokerManager.Util.getInstance().getBroker(BigBangConstants.EntityIds.HISTORY));
+			historyBroker.registerClient(this, id);
+		}
+
+		@Override
+		public void setDataVersionNumber(String dataElementId, int number) {
+			if(!dataElementId.equalsIgnoreCase(this.currentProcessId))
+				throw new RuntimeException("A data version for a wrong entity was received");
+			this.dataVersion = number;
+		}
+
+		@Override
+		public int getDataVersion(String dataElementId) {
+			if(!dataElementId.equalsIgnoreCase(this.currentProcessId))
+				throw new RuntimeException("A data version for a wrong entity was requested");
+			return this.dataVersion;
+		}
+
+		@Override
+		public void setHistoryItems(String processId, HistoryItem[] items) {}
+
+		@Override
+		public void addHistoryItem(String processId, HistoryItem item) {}
+
+		@Override
+		public void updateHistoryItem(String processId, HistoryItem item) {
+			if(!processId.equalsIgnoreCase(this.currentProcessId))
+				throw new RuntimeException("A reference was made to a wrong entity type");
+			for(ValueSelectable<HistoryItemStub> i : this){
+				if(i.getValue().id.equalsIgnoreCase(item.id)){
+					i.setValue(item);
+					break;
+				}
+			}
+		}
+
+		@Override
+		public void removeHistoryItem(String processId, HistoryItem item) {
+			if(!processId.equalsIgnoreCase(this.currentProcessId))
+				throw new RuntimeException("A reference was made to a wrong entity type");
+			for(ValueSelectable<HistoryItemStub> i : this){
+				if(i.getValue().id.equalsIgnoreCase(item.id)){
+					remove(i);
+					break;
+				}
+			}
 		}
 	}
 	
@@ -72,16 +117,22 @@ public class UndoOperationView extends View implements UndoOperationViewPresente
 
 		public UndoItemListEntry(HistoryItemStub value) {
 			super(value);
+		}
+		
+		public <I extends Object> void setInfo(I info) {
+			HistoryItemStub value = (HistoryItemStub) info;
 			setTitle(value.opName);
 			setText(value.username + " (" + value.timeStamp.substring(0, 16) + ")");
 			setHeight("40px");
-		}
+		};
 
 	}
 	
 	private static final int LIST_WIDTH = 400; //PX 
 	private UndoItemList list;
 	private UndoForm form;
+	protected BigBangOperationsToolBar toolbar;
+	protected ActionInvokedEventHandler<Action> actionHandler;
 	
 	public UndoOperationView(){
 		SplitLayoutPanel wrapper = new SplitLayoutPanel();
@@ -91,7 +142,37 @@ public class UndoOperationView extends View implements UndoOperationViewPresente
 		wrapper.addWest(list, LIST_WIDTH);
 		
 		this.form = new UndoForm();
-		wrapper.add(form);
+		
+		VerticalPanel formWrapper = new VerticalPanel();
+		formWrapper.setSize("100%", "100%");
+		
+		this.toolbar = new BigBangOperationsToolBar() {
+			
+			@Override
+			public void onSaveRequest() {}
+			
+			@Override
+			public void onEditRequest() {}
+			
+			@Override
+			public void onCancelRequest() {}
+		};
+		toolbar.hideAll();
+		toolbar.addItem(new MenuItem("Desfazer Operação", new Command() {
+			
+			@Override
+			public void execute() {
+				actionHandler.onActionInvoked(new ActionInvokedEvent<Action>(Action.REVERT_OPERATION));
+			}
+		}));
+		
+		formWrapper.add(toolbar);
+		formWrapper.setCellHeight(toolbar, "21px");
+		
+		formWrapper.add(this.form);
+		formWrapper.setCellHeight(this.form, "100%");
+		
+		wrapper.add(formWrapper);
 		
 		initWidget(wrapper);
 	}
@@ -99,23 +180,6 @@ public class UndoOperationView extends View implements UndoOperationViewPresente
 	@Override
 	public void setProcessId(String processId) {
 		this.list.setProcessId(processId);
-	}
-
-
-	@Override
-	public void addItem(HistoryItemStub item) {
-		list.add(new UndoItemListEntry(item));
-	}
-	
-	
-	@Override
-	public void removeUndoItem(HistoryItemStub item) {
-		for(ValueSelectable<HistoryItemStub> s : this.list) {
-			if(s.getValue().id.equals(item.id)){
-				list.remove(s);
-				break;
-			}
-		}
 	}
 
 	@Override
@@ -129,13 +193,37 @@ public class UndoOperationView extends View implements UndoOperationViewPresente
 	}
 
 	@Override
-	public HasClickHandlers getUndoButton() {
-		return form.getUndoButton();
+	public void showConfirmUndo(ConfirmationCallback callback) {
+		MessageBox.confirm("Confirmação", "Tem certeza que pretende desfazer esta operação?", callback);
 	}
 
 	@Override
-	public void showConfirmUndo(ConfirmationCallback callback) {
-		MessageBox.confirm("Confirmação", "Tem certeza que pretende desfazer esta operação?", callback);
+	public void refreshList() {
+		this.list.doSearch();
+	}
+
+	@Override
+	public void showErrors(Collection<ResponseError> errors) {
+		String message = "A operação não foi desfeita pelas seguintes razões:";
+		for(ResponseError e : errors)
+			message += "</br>" + e.description;
+		MessageBox.alert("Não foi possível desfazer a operação", message);
+	}
+
+	@Override
+	public void registerActionHandler(ActionInvokedEventHandler<Action> handler) {
+		this.actionHandler = handler;
+	}
+
+	@Override
+	public void clear() {
+		this.list.clearSelection();
+		this.form.clearInfo();
+	}
+
+	@Override
+	public void setUndoable(boolean undoable) {
+		this.toolbar.setEditionAvailable(undoable);
 	}
 
 }

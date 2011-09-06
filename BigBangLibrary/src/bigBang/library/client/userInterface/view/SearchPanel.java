@@ -56,6 +56,7 @@ public abstract class SearchPanel<T extends SearchResult> extends FilterableList
 	protected int nextResultIndex = 0;
 	protected int numberOfResults = 0;
 	protected boolean requestedNextPage = false;
+	protected String operationId;
 
 	/**
 	 * The class constructor
@@ -165,7 +166,15 @@ public abstract class SearchPanel<T extends SearchResult> extends FilterableList
 		int nEntries = this.numberOfResults;
 		this.setFooterText((nEntries == 0 ? "Sem" : nEntries) + " resultados");
 	}
-
+	
+	/**
+	 * Sets the id of the Operation for which the results should be open to execution 
+	 * @param operationId The id of the operation
+	 */
+	public void setOperationId(String operationId) {
+		this.operationId = operationId;
+	}
+	
 	/**
 	 * Queries the search service for elements that match a number of search parameters 
 	 * @param parameters The search parameters to be matched
@@ -191,7 +200,11 @@ public abstract class SearchPanel<T extends SearchResult> extends FilterableList
 					@Override
 					public void onError(Collection<ResponseError> errors) {}
 				};
-				this.broker.search(parameters, sorts, this.pageSize, handler);
+				if(this.operationId == null){
+					this.broker.search(parameters, sorts, this.pageSize, handler);
+				}else{
+					this.broker.searchOpenForOperation(this.operationId, parameters, sorts, this.pageSize, handler);
+				}
 			} else {
 				ResponseHandler<Search<T>> handler = new ResponseHandler<Search<T>>() {
 

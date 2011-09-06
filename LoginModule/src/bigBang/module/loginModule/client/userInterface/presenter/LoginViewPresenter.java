@@ -1,7 +1,9 @@
 package bigBang.module.loginModule.client.userInterface.presenter;
 
-import org.gwt.mosaic.ui.client.MessageBox;
+import java.util.Collection;
 
+import bigBang.definitions.client.response.ResponseError;
+import bigBang.definitions.client.response.ResponseHandler;
 import bigBang.library.client.BigBangAsyncCallback;
 import bigBang.library.client.EventBus;
 import bigBang.library.client.event.LoginSuccessEvent;
@@ -26,6 +28,12 @@ import com.google.gwt.user.client.ui.Widget;
 
 public class LoginViewPresenter implements ViewPresenter {
 
+	public class LoginData {
+		public String username;
+		public String password;
+		public String domain;
+	}
+	
 	public interface Display {
 		HasClickHandlers getSubmitButton();
 		HasValue<String> getUsername();
@@ -35,6 +43,9 @@ public class LoginViewPresenter implements ViewPresenter {
 		
 		void showErrorMessage(String message);
 		void hideErrorMessage();
+		void showCredentialsPrompt(ResponseHandler<LoginData> responseHandler);
+		void hideCredentialsPrompt();
+		void showCredentialsPromptLoginError(boolean show);
 		
 		Widget asWidget();
 		void setSelectedDomain(String domain);
@@ -93,7 +104,7 @@ public class LoginViewPresenter implements ViewPresenter {
 		view.getSubmitButton().addClickHandler(new ClickHandler() {
 			
 			public void onClick(ClickEvent event) {
-				checkLogin();
+				checkLogin(view.getUsername().getValue(), view.getPassword().getValue(), view.getDomain(), null);
 			}
 		});
 	}
@@ -124,20 +135,23 @@ public class LoginViewPresenter implements ViewPresenter {
 		});
 	}
 	
-	private void checkLogin(){
+	private void checkLogin(String username, String password, String domain, final ResponseHandler<Boolean> callback){
 		view.showLoading(true);
-		service.login(view.getUsername().getValue(), view.getPassword().getValue(), view.getDomain(), new AsyncCallback<String>() {
+		service.login(username, password, domain, new AsyncCallback<String>() {
 			
 			public void onSuccess(String username) {
 				eventBus.fireEvent(new LoginSuccessEvent(username, view.getDomain()));
 				GWT.log("Authentication success for " + username);
 				LoginViewPresenter.this.view.showLoading(false);
+				if(callback != null)
+					callback.onResponse(true);
 			}
 			
 			public void onFailure(Throwable caught) {
 				GWT.log("Authentication service failure : " + caught.getMessage());
 				LoginViewPresenter.this.view.showLoading(false);
 				LoginViewPresenter.this.view.showErrorMessage("Não foi possível autenticar. Verifique se as credenciais de acesso inseridas são as correctas");
+				callback.onError(new String[]{"Login error"});
 			}
 		});
 		view.getPassword().setValue("");
@@ -163,7 +177,32 @@ public class LoginViewPresenter implements ViewPresenter {
 			@Override
 			public void onSessionExpired() {
 				GWT.log("A sess�o expirou");
-				MessageBox.alert("", "A sess�o expirou.");
+				showRenewLoginPrompt();
+			}
+		});
+	}
+	
+	protected void showRenewLoginPrompt(){
+		view.showCredentialsPrompt(new ResponseHandler<LoginData>() {
+
+			@Override
+			public void onResponse(LoginData response) {
+				checkLogin(response.username, response.password, Window.Location.getParameter("domain"), new ResponseHandler<Boolean>() {
+
+					@Override
+					public void onResponse(Boolean response) {
+						view.hideCredentialsPrompt();
+					}
+
+					@Override
+					public void onError(Collection<ResponseError> errors) {
+						view.showCredentialsPromptLoginError(true);
+					}
+				});
+			}
+
+			@Override
+			public void onError(Collection<ResponseError> errors) {
 				Window.Location.reload();
 			}
 		});

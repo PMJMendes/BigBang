@@ -2,22 +2,25 @@ package bigBang.module.clientModule.client;
 
 import java.util.ArrayList;
 
+import bigBang.definitions.client.dataAccess.HistoryBroker;
+import bigBang.definitions.shared.BigBangConstants;
 import bigBang.library.client.EventBus;
 import bigBang.library.client.MenuSections;
+import bigBang.library.client.dataAccess.DataBrokerManager;
 import bigBang.library.client.userInterface.MenuSection;
 import bigBang.library.client.userInterface.TextBadge;
 import bigBang.library.client.userInterface.presenter.OperationViewPresenter;
+import bigBang.library.client.userInterface.presenter.UndoOperationViewPresenter;
 import bigBang.library.client.userInterface.presenter.ViewPresenter;
+import bigBang.library.client.userInterface.view.UndoOperationView;
+import bigBang.library.shared.operation.HistoryOperation;
 import bigBang.module.clientModule.client.userInterface.presenter.ClientManagerTransferOperationViewPresenter;
-import bigBang.module.clientModule.client.userInterface.presenter.ClientMergeOperationViewPresenter;
 import bigBang.module.clientModule.client.userInterface.presenter.ClientSearchOperationViewPresenter;
 import bigBang.module.clientModule.client.userInterface.view.ClientManagerTransferOperationView;
-import bigBang.module.clientModule.client.userInterface.view.ClientMergeOperationView;
 import bigBang.module.clientModule.client.userInterface.view.ClientSearchOperationView;
 import bigBang.module.clientModule.interfaces.ClientService;
 import bigBang.module.clientModule.interfaces.ClientServiceAsync;
 import bigBang.module.clientModule.shared.operation.ClientManagerTransferOperation;
-import bigBang.module.clientModule.shared.operation.ClientMergeOperation;
 import bigBang.module.clientModule.shared.operation.ClientSearchOperation;
 
 import com.google.gwt.core.client.GWT;
@@ -57,13 +60,14 @@ public class ClientSection implements MenuSection {
 		clientManagerTransferOperationViewPresenter.setOperation(clientManagerTransferOperation);
 		this.sectionOperationPresenters.add((OperationViewPresenter)clientManagerTransferOperationViewPresenter);
 		
-//TODO IMPORTANT
-		/* MERGE */ 
-//		ClientMergeOperation clientMergeOperation = (ClientMergeOperation)GWT.create(ClientMergeOperation.class);
-//		ClientMergeOperationView clientMergeOperationView = new ClientMergeOperationView();
-//		ClientMergeOperationViewPresenter clientMergeOperationPresenter = new ClientMergeOperationViewPresenter(null, null, clientMergeOperationView);
-//		clientMergeOperationPresenter.setOperation(clientMergeOperation);
-//		this.sectionOperationPresenters.add((OperationViewPresenter)clientMergeOperationPresenter);
+		/* UNDO */
+		HistoryOperation undoOperation = (HistoryOperation)GWT.create(HistoryOperation.class);
+		UndoOperationView undoOperationView = (UndoOperationView) GWT.create(UndoOperationView.class);
+		HistoryBroker historyBroker = (HistoryBroker) DataBrokerManager.Util.getInstance().getBroker(BigBangConstants.EntityIds.HISTORY);
+		UndoOperationViewPresenter undoOperationViewPresenter = new UndoOperationViewPresenter(null, historyBroker, undoOperationView, BigBangConstants.EntityIds.CLIENT);
+		undoOperationViewPresenter.setOperation(undoOperation);
+		this.sectionOperationPresenters.add((OperationViewPresenter) undoOperationViewPresenter);
+		
 	}
 	
 	public String getId() {

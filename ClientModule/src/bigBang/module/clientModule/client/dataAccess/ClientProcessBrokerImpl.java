@@ -10,9 +10,19 @@ import bigBang.definitions.client.dataAccess.SearchDataBroker;
 import bigBang.definitions.client.response.ResponseError;
 import bigBang.definitions.client.response.ResponseHandler;
 import bigBang.definitions.shared.BigBangConstants;
+import bigBang.definitions.shared.Casualty;
 import bigBang.definitions.shared.Client;
+import bigBang.definitions.shared.InfoOrDocumentRequest;
+import bigBang.definitions.shared.InfoOrDocumentRequest.Cancellation;
+import bigBang.definitions.shared.InfoOrDocumentRequest.Response;
 import bigBang.definitions.shared.ClientStub;
+import bigBang.definitions.shared.InsurancePolicy;
+import bigBang.definitions.shared.ManagerTransfer;
+import bigBang.definitions.shared.QuoteRequest;
+import bigBang.definitions.shared.RiskAnalisys;
 import bigBang.library.client.BigBangAsyncCallback;
+import bigBang.library.interfaces.InfoOrDocumentRequestService;
+import bigBang.library.interfaces.InfoOrDocumentRequestServiceAsync;
 import bigBang.module.clientModule.interfaces.ClientService;
 import bigBang.module.clientModule.interfaces.ClientServiceAsync;
 
@@ -21,7 +31,7 @@ public class ClientProcessBrokerImpl extends DataBroker<Client> implements Clien
 	protected ClientServiceAsync service;
 	protected SearchDataBroker<ClientStub> searchBroker;
 	protected boolean requiresRefresh = true;
-	
+
 	public ClientProcessBrokerImpl(){
 		this(ClientService.Util.getInstance());
 	}
@@ -53,7 +63,7 @@ public class ClientProcessBrokerImpl extends DataBroker<Client> implements Clien
 			});
 		}
 	}
-	
+
 
 	@Override
 	public void addClient(Client client, final ResponseHandler<Client> handler) {
@@ -127,6 +137,143 @@ public class ClientProcessBrokerImpl extends DataBroker<Client> implements Clien
 	@Override
 	public SearchDataBroker<ClientStub> getSearchBroker() {
 		return this.searchBroker;
+	}
+
+	@Override
+	public void createRiskAnalisys(String clientId, RiskAnalisys riskAnalisys,
+			final ResponseHandler<RiskAnalisys> handler) {
+		service.createRiskAnalisys(clientId, riskAnalisys, new BigBangAsyncCallback<RiskAnalisys>() {
+
+			@Override
+			public void onSuccess(RiskAnalisys result) {
+				//TODO
+				handler.onResponse(result);
+			}
+		});
+	}
+
+	@Override
+	public void createInsurancePolicy(String clientId, InsurancePolicy policy,
+			final ResponseHandler<InsurancePolicy> handler) {
+		service.createPolicy(clientId, policy, new BigBangAsyncCallback<InsurancePolicy>() {
+
+			@Override
+			public void onSuccess(InsurancePolicy result) {
+				//TODO
+				handler.onResponse(result);
+			}
+		});
+	}
+
+	@Override
+	public void createQuoteRequest(String clientId, QuoteRequest quoteRequest,
+			final ResponseHandler<QuoteRequest> handler) {
+		service.createQuoteRequest(clientId, quoteRequest, new BigBangAsyncCallback<QuoteRequest>() {
+
+			@Override
+			public void onSuccess(QuoteRequest result) {
+				//TODO
+				handler.onResponse(result);
+			}
+		});
+	}
+
+	@Override
+	public void createCasualty(String clientId, Casualty casualty,
+			final ResponseHandler<Casualty> handler) {
+		service.createCasualty(clientId, casualty, new BigBangAsyncCallback<Casualty>() {
+
+			@Override
+			public void onSuccess(Casualty result) {
+				//TODO
+				handler.onResponse(result);
+			}
+		});
+	}
+
+	@Override
+	public void mergeWithClient(String originalId, String receptorId,
+			final ResponseHandler<Client> handler) {
+		service.mergeWithClient(originalId, receptorId, new BigBangAsyncCallback<Client>() {
+
+			@Override
+			public void onSuccess(Client result) {
+				cache.add(result.id, result);
+				incrementDataVersion();
+				for(DataBrokerClient<Client> bc : getClients()){
+					((ClientProcessDataBrokerClient) bc).updateClient(result);
+					((ClientProcessDataBrokerClient) bc).setDataVersionNumber(BigBangConstants.EntityIds.CLIENT, getCurrentDataVersion());
+				}
+				handler.onResponse(result);
+			}
+		});
+	}
+
+	@Override
+	public void createInfoOrDocumentRequest(
+			InfoOrDocumentRequest request,
+			final ResponseHandler<InfoOrDocumentRequest> handler) {
+		service.createInfoOrDocumentRequest(request, new BigBangAsyncCallback<InfoOrDocumentRequest>() {
+
+			@Override
+			public void onSuccess(InfoOrDocumentRequest result) {
+				//TODO
+				handler.onResponse(result);
+			}
+		});
+	}
+
+	@Override
+	public void repeatRequest(InfoOrDocumentRequest request,
+			final ResponseHandler<InfoOrDocumentRequest> handler) {
+		InfoOrDocumentRequestServiceAsync infoService = InfoOrDocumentRequestService.Util.getInstance();
+		infoService.repeatRequest(request, new BigBangAsyncCallback<InfoOrDocumentRequest>() {
+
+			@Override
+			public void onSuccess(InfoOrDocumentRequest result) {
+				//TODO
+				handler.onResponse(result);
+			}
+		});
+	}
+
+	@Override
+	public void receiveInfoOrDocumentRequestResponse(Response response,
+			final ResponseHandler<InfoOrDocumentRequest> handler) {
+		InfoOrDocumentRequestServiceAsync infoService = InfoOrDocumentRequestService.Util.getInstance();
+		infoService.receiveResponse(response, new BigBangAsyncCallback<InfoOrDocumentRequest>() {
+
+			@Override
+			public void onSuccess(InfoOrDocumentRequest result) {
+				// TODO Auto-generated method stub
+				handler.onResponse(result);
+			}
+		});
+	}
+
+	@Override
+	public void cancelInfoOrDocumentRequest(Cancellation cancellation,
+			final ResponseHandler<Void> handler) {
+		InfoOrDocumentRequestServiceAsync infoService = InfoOrDocumentRequestService.Util.getInstance();
+		infoService.cancelRequest(cancellation, new BigBangAsyncCallback<Void>() {
+
+			@Override
+			public void onSuccess(Void result) {
+				// TODO Auto-generated method stub
+			}
+		});
+	}
+
+	@Override
+	public void createManagerTransfer(String[] clientIds, String managerId,
+			final ResponseHandler<ManagerTransfer[]> handler) {
+		service.createManagerTransfer(clientIds, managerId, new BigBangAsyncCallback<ManagerTransfer[]>() {
+
+			@Override
+			public void onSuccess(ManagerTransfer[] result) {
+				handler.onResponse(result);
+			}
+		});
 	}
 
 }

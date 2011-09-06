@@ -182,6 +182,11 @@ public class ClientSearchOperationView extends View implements ClientSearchOpera
 			public void onMergeWithClient() {
 				actionHandler.onActionInvoked(new ActionInvokedEvent<ClientSearchOperationViewPresenter.Action>(Action.MERGE_WITH_CLIENT));
 			}
+			
+			@Override
+			public void onTransferToManager() {
+				actionHandler.onActionInvoked(new ActionInvokedEvent<ClientSearchOperationViewPresenter.Action>(Action.TRANSFER_MANAGER));
+			}
 
 			@Override
 			public void onRequestInfoOrDocument() {
@@ -427,7 +432,7 @@ public class ClientSearchOperationView extends View implements ClientSearchOpera
 		
 		SimplePanel viewContainer = new SimplePanel();
 		viewContainer.setSize("100%", "100%");
-		viewContainer.add(new InfoOrDocumentRequestView() {
+		InfoOrDocumentRequestView requestView = new InfoOrDocumentRequestView() {
 			
 			@Override
 			public void onSendButtonPressed() {
@@ -439,7 +444,9 @@ public class ClientSearchOperationView extends View implements ClientSearchOpera
 				mainWrapper.slideInto(mainContent, Direction.RIGHT);
 			}
 
-		});
+		};
+		requestView.setClient(this.form.getValue());
+		viewContainer.add(requestView);
 		
 		wrapper.add(viewContainer);
 		wrapper.setCellHeight(viewContainer, "100%");

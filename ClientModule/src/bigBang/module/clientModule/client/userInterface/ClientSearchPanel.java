@@ -87,11 +87,13 @@ public class ClientSearchPanel extends SearchPanel<ClientStub> implements Client
 	 * The entries' presentation is different for clients or client groups
 	 * @param r The search result to be added to the list
 	 */
-	protected void addSearchResult(SearchResult r){
+	protected ClientSearchPanelListEntry addSearchResult(SearchResult r){
+		ClientSearchPanelListEntry entry = null;
 		if(r instanceof ClientStub){
-			ClientSearchPanelListEntry entry = new ClientSearchPanelListEntry(new ValueWrapper<ClientStub>((ClientStub) r));
+			entry = new ClientSearchPanelListEntry(new ValueWrapper<ClientStub>((ClientStub) r));
 			add(entry);
 		}
+		return entry;
 	}
 
 	@Override
@@ -158,5 +160,5 @@ public class ClientSearchPanel extends SearchPanel<ClientStub> implements Client
 			}
 		}
 	}
-
+	
 }

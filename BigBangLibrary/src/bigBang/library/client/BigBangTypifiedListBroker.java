@@ -75,11 +75,11 @@ public class BigBangTypifiedListBroker implements TypifiedListBroker {
 		if(clients.containsKey(listId)){
 			List<TypifiedListClient> clientList = clients.get(listId);
 			clientList.remove(client);
-			if(clientList.isEmpty()){
+			/*if(clientList.isEmpty()){ //TODO MARK FOR REMOVAL FJVC
 				clients.remove(listId);
 				dataVersions.remove(listId);
 				lists.remove(listId);
-			}
+			}*/
 		}
 	}
 
@@ -126,7 +126,7 @@ public class BigBangTypifiedListBroker implements TypifiedListBroker {
 
 			@Override
 			public void onFailure(Throwable caught) {
-				handler.onError(null);
+				handler.onError(new String[]{"The item could not be created"});
 				super.onFailure(caught);
 			}
 		});
@@ -162,7 +162,7 @@ public class BigBangTypifiedListBroker implements TypifiedListBroker {
 			
 			@Override
 			public void onFailure(Throwable caught) {
-				handler.onError(null);
+				handler.onError(new String[]{"The item could not be removed"});
 				super.onFailure(caught);
 			}
 
@@ -190,7 +190,7 @@ public class BigBangTypifiedListBroker implements TypifiedListBroker {
 			
 			@Override
 			public void onFailure(Throwable caught) {
-				handler.onError(null);
+				handler.onError(new String[]{"The item could not be saved"});
 				super.onFailure(caught);
 			}
 		});

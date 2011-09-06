@@ -1,5 +1,7 @@
 package bigBang.library.client.userInterface;
 
+import org.gwt.mosaic.ui.client.MessageBox;
+
 import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.ui.MenuBar;
 import com.google.gwt.user.client.ui.MenuItem;
@@ -32,6 +34,7 @@ public abstract class BigBangOperationsToolBar extends OperationsToolBar {
 	protected MenuItem adminMenuItem;
 
 	protected boolean saveModeEnabled;
+	protected boolean confirmOnCancel = true;
 
 	protected final String EDIT_TEXT = "Editar";
 	protected final String SAVE_TEXT = "Guardar";
@@ -56,8 +59,21 @@ public abstract class BigBangOperationsToolBar extends OperationsToolBar {
 			@Override
 			public void execute() {
 				if(BigBangOperationsToolBar.this.saveModeEnabled){
-					setSaveModeEnabled(false);
-					onCancelRequest();
+					if(confirmOnCancel){
+						MessageBox.confirm("Cancelar alterações", "Tem certeza que pretende cancelar as alterações realizadas?", new MessageBox.ConfirmationCallback() {
+
+							@Override
+							public void onResult(boolean result) {
+								if(result){
+									setSaveModeEnabled(false);
+									onCancelRequest();
+								}
+							}
+						});
+					}else{
+						setSaveModeEnabled(false);
+						onCancelRequest();
+					}
 				}else{
 					setSaveModeEnabled(true);
 					onEditRequest();
@@ -126,7 +142,16 @@ public abstract class BigBangOperationsToolBar extends OperationsToolBar {
 	 * @param available If true, the edit mode will be available, otherwise it won't.
 	 */
 	public void setEditionAvailable(boolean available){
-		setSaveModeEnabled(!(!available && this.saveModeEnabled));
+		if(!available)
+			setSaveModeEnabled(false);
+		for(MenuItem i : getItems()){
+			if(i == this.saveMenuItem){
+				if(!available)
+					this.saveMenuItem.setEnabled(false);
+			}else{
+				i.setEnabled(available);
+			}
+		}
 	}
 
 	/**
@@ -187,6 +212,10 @@ public abstract class BigBangOperationsToolBar extends OperationsToolBar {
 		default:
 			throw new RuntimeException("The requested menu item was not found");
 		}
+	}
+
+	public void showConfirmOnCancel(boolean confirm) {
+		this.confirmOnCancel = confirm;
 	}
 
 	/**

@@ -5,12 +5,15 @@ import com.google.gwt.user.client.ui.MenuItem;
 import com.google.gwt.user.client.ui.SplitLayoutPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
+import bigBang.definitions.shared.Client;
+import bigBang.definitions.shared.InfoOrDocumentRequest;
 import bigBang.library.client.userInterface.BigBangOperationsToolBar;
 import bigBang.library.client.userInterface.view.View;
 
 public abstract class InfoOrDocumentRequestView extends View {
 	
 	protected InfoOrDocumentRequestForm form;
+	protected ClientFormView clientForm;
 	
 	public InfoOrDocumentRequestView(){
 		SplitLayoutPanel mainWrapper = new SplitLayoutPanel();
@@ -44,13 +47,23 @@ public abstract class InfoOrDocumentRequestView extends View {
 		wrapper.setCellHeight(toolbar, "21px");
 		
 		mainWrapper.addWest(wrapper, 665);
-		mainWrapper.add(new ClientFormView());
+		this.clientForm = new ClientFormView();
+		mainWrapper.add(clientForm);
+		this.clientForm.setReadOnly(true);
 		mainWrapper.setWidgetMinSize(wrapper, 665);
 		
 		form = new InfoOrDocumentRequestForm();
 		wrapper.add(form);
 		
 		initWidget(mainWrapper);
+	}
+	
+	public void setClient(Client client){
+		clientForm.setValue(client);
+	}
+	
+	public void setRequest(InfoOrDocumentRequest request) {
+		this.form.setValue(request);
 	}
 	
 	public abstract void onSendButtonPressed();

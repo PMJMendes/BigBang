@@ -1,5 +1,6 @@
 package bigBang.definitions.client.response;
 
+import java.util.ArrayList;
 import java.util.Collection;
 
 /**
@@ -21,5 +22,14 @@ public abstract class ResponseHandler<T> {
 	 * @param errors the collection of ResponseError objects
 	 */
 	public abstract void onError(Collection<ResponseError> errors);
+	
+	public void onError(String[] errorStrings){
+		Collection<ResponseError> errors = new ArrayList<ResponseError>();
+		for(int i = 0; i < errorStrings.length; i++){
+			ResponseError error = new ResponseError();
+			error.description = errorStrings[i];
+			errors.add(error);
+		}
+	}
 
 }

@@ -121,7 +121,7 @@ public class ListEntry<T> extends View implements ValueSelectable<T>, HasMetaDat
 
 			@Override
 			public void onValueChange(ValueChangeEvent<Boolean> event) {
-				setCheckable(event.getValue());
+				setChecked(event.getValue());
 			}
 		});
 		
@@ -292,11 +292,9 @@ public class ListEntry<T> extends View implements ValueSelectable<T>, HasMetaDat
 	}
 	
 	public void setChecked(boolean checked, boolean fireEvents) {
-		if(checked != this.checkBox.getValue()){
-			this.checkBox.setValue(checked);
-			if(fireEvents)
-				fireEvent(new CheckedStateChangedEvent(checked));
-		}
+		this.checkBox.setValue(checked);
+		if(fireEvents)
+			fireEvent(new CheckedStateChangedEvent(checked));
 	}
 	
 	public boolean isCheckable(){

@@ -1,8 +1,14 @@
 package bigBang.definitions.client.dataAccess;
 
 import bigBang.definitions.client.response.ResponseHandler;
+import bigBang.definitions.shared.Casualty;
 import bigBang.definitions.shared.Client;
+import bigBang.definitions.shared.InfoOrDocumentRequest;
 import bigBang.definitions.shared.ClientStub;
+import bigBang.definitions.shared.InsurancePolicy;
+import bigBang.definitions.shared.ManagerTransfer;
+import bigBang.definitions.shared.QuoteRequest;
+import bigBang.definitions.shared.RiskAnalisys;
 
 /**
  * The interface for a Client processes DataBroker
@@ -42,4 +48,30 @@ public interface ClientProcessBroker extends DataBrokerInterface<Client>{
 	 * @return
 	 */
 	public SearchDataBroker<ClientStub> getSearchBroker();
+	
+	/**
+	 * Creates a risk analysis for a given client
+	 * @param clientId The id of the client
+	 * @param riskAnalysis The risk analysis to be created
+	 * @param handler The handler to be notified on response
+	 */
+	public void createRiskAnalisys(String clientId, RiskAnalisys riskAnalisys, ResponseHandler<RiskAnalisys> handler);
+
+	public void createInsurancePolicy(String clientId, InsurancePolicy policy, ResponseHandler<InsurancePolicy> handler);
+	
+	public void createQuoteRequest(String clientId, QuoteRequest quoteRequest, ResponseHandler<QuoteRequest> handler);
+	
+	public void createCasualty(String clientId, Casualty casualty, ResponseHandler<Casualty> handler);
+	
+	public void mergeWithClient(String originalId, String receptorId, ResponseHandler<Client> handler);
+	
+	public void createInfoOrDocumentRequest(InfoOrDocumentRequest request, ResponseHandler<InfoOrDocumentRequest> handler);
+	
+	public void repeatRequest(InfoOrDocumentRequest request, ResponseHandler<InfoOrDocumentRequest> handler);
+	
+	public void receiveInfoOrDocumentRequestResponse(InfoOrDocumentRequest.Response response, ResponseHandler<InfoOrDocumentRequest> handler);
+	
+	public void cancelInfoOrDocumentRequest(InfoOrDocumentRequest.Cancellation cancellation, ResponseHandler<Void> handler);
+	
+	public void createManagerTransfer(String[] clientIds, String managerId, ResponseHandler<ManagerTransfer[]> handler);
 }

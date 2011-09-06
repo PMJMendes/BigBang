@@ -5,6 +5,8 @@ import bigBang.library.client.FormField;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Unit;
+import com.google.gwt.event.dom.client.ChangeEvent;
+import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.HasVerticalAlignment;
@@ -54,6 +56,15 @@ public class ListBoxFormField extends FormField<String> {
 		wrapper.add(mandatoryIndicatorLabel);
 		initWidget(wrapper);
 		setFieldWidth("150px");
+		
+		this.listBox.addChangeHandler(new ChangeHandler() {
+			
+			@Override
+			public void onChange(ChangeEvent event) {
+				String value = listBox.getValue(listBox.getSelectedIndex());
+				setValue(value, true);
+			}
+		});
 		
 		clearValues();
 	}

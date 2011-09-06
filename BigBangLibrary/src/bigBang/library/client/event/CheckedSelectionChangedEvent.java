@@ -11,9 +11,19 @@ public class CheckedSelectionChangedEvent extends GwtEvent<CheckedSelectionChang
 	public static Type<CheckedSelectionChangedEventHandler> TYPE = new Type<CheckedSelectionChangedEventHandler>();
 
 	protected Collection<Checkable> checkedList;
+	protected Checkable checkable;
 
+	public CheckedSelectionChangedEvent(Collection<Checkable> list, Checkable checkable){
+		this.checkedList = list;
+		this.checkable = checkable;
+	}
+	
 	public CheckedSelectionChangedEvent(Collection<Checkable> list) {
 		this.checkedList = list;
+	}
+	
+	public CheckedSelectionChangedEvent(Checkable checkable) {
+		this.checkable = checkable;
 	}
 
 	public Collection<Checkable> getChecked(){
@@ -28,6 +38,10 @@ public class CheckedSelectionChangedEvent extends GwtEvent<CheckedSelectionChang
 	@Override
 	protected void dispatch(CheckedSelectionChangedEventHandler handler) {
 		handler.onCheckedSelectionChanged(this);
+	}
+
+	public Checkable getChangedCheckable() {
+		return this.checkable;
 	}
 
 }

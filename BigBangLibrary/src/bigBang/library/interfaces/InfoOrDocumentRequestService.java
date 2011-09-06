@@ -14,12 +14,12 @@ public interface InfoOrDocumentRequestService
 {
 	public static class Util
 	{
-		private static TipifiedListServiceAsync instance;
+		private static InfoOrDocumentRequestServiceAsync instance;
 
-		public static TipifiedListServiceAsync getInstance()
+		public static InfoOrDocumentRequestServiceAsync getInstance()
 		{
 			if (instance == null)
-				instance = GWT.create(TipifiedListService.class);
+				instance = GWT.create(InfoOrDocumentRequestService.class);
 
 			return instance;
 		}

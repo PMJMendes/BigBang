@@ -1,9 +1,14 @@
 package bigBang.module.generalSystemModule.client.dataAccess;
 
+import java.util.Collection;
+
+import com.google.gwt.core.client.GWT;
+
 import bigBang.definitions.client.dataAccess.DataBroker;
 import bigBang.definitions.client.dataAccess.DataBrokerClient;
 import bigBang.definitions.client.dataAccess.UserBroker;
 import bigBang.definitions.client.dataAccess.UserDataBrokerClient;
+import bigBang.definitions.client.response.ResponseError;
 import bigBang.definitions.client.response.ResponseHandler;
 import bigBang.definitions.shared.BigBangConstants;
 import bigBang.definitions.shared.User;
@@ -60,11 +65,31 @@ public class UserBrokerImpl extends DataBroker<User> implements UserBroker {
 	}
 
 	@Override
-	public void getUser(String userId,
-			ResponseHandler<User> handler) {
-		if(!cache.contains(userId))
-			throw new RuntimeException("The requested user could not be found locally. id:\"" + userId + "\"");
-		handler.onResponse((User) cache.get(userId));
+	public void getUser(final String userId,
+			final ResponseHandler<User> handler) {
+		if(!cache.contains(userId)){
+			this.requireDataRefresh();
+			this.getUsers(new ResponseHandler<User[]>() {
+
+				@Override
+				public void onResponse(User[] response) {
+					if(cache.contains(userId)){
+						handler.onResponse((User) cache.get(userId));
+					}else{
+						handler.onError(new String[]{"The requested user could not be found. id:" + userId});
+					}
+				}
+
+				@Override
+				public void onError(Collection<ResponseError> errors) {
+					for(ResponseError e : errors){
+						GWT.log(e.description);
+					}
+				}
+			});
+		}else{
+			handler.onResponse((User) cache.get(userId));
+		}
 	}
 
 	@Override

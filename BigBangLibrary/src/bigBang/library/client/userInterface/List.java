@@ -145,7 +145,7 @@ public class List<T> extends View implements HasValueSelectables<T>, java.util.L
 			@Override
 			public void onCheckedStateChanged(CheckedStateChangedEvent event) {
 				if(entries.contains(event.getSource()))
-					checkedSelectionChanged();
+					checkedSelectionChanged((Checkable) event.getSource());
 			}
 		};
 
@@ -323,8 +323,8 @@ public class List<T> extends View implements HasValueSelectables<T>, java.util.L
 		return addHandler(handler, CheckedSelectionChangedEvent.TYPE);
 	}
 	
-	protected void checkedSelectionChanged(){
-		fireEvent(new CheckedSelectionChangedEvent(getChecked()));
+	protected void checkedSelectionChanged(Checkable c){
+		fireEvent(new CheckedSelectionChangedEvent(getChecked(), c));
 	}
 
 	protected void selectableStateChanged(Selectable source) {

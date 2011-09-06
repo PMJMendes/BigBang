@@ -46,6 +46,13 @@ public abstract class ClientProcessToolBar extends BigBangOperationsToolBar {
 				onMergeWithClient();
 			}
 		}));
+		addItem(SUB_MENU.EXECUTE, new MenuItem("Transferir para Gestor", new Command() {
+
+			@Override
+			public void execute() {
+				onTransferToManager();
+			}
+		}));
 		
 		//DATA
 		addItem(SUB_MENU.DATA, new MenuItem("Pedir Informação ou Documento", new Command() {
@@ -93,6 +100,7 @@ public abstract class ClientProcessToolBar extends BigBangOperationsToolBar {
 
 	//EXECUTE
 	public abstract void onMergeWithClient();
+	public abstract void onTransferToManager();
 	
 	//DATA
 	public abstract void onRequestInfoOrDocument();

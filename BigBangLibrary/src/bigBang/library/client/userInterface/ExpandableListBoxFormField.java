@@ -21,17 +21,17 @@ import com.google.gwt.dom.client.Style.Cursor;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.logical.shared.AttachEvent;
+import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.HasVerticalAlignment;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Widget;
 
 public class ExpandableListBoxFormField extends ListBoxFormField implements
-		TypifiedListClient {
+TypifiedListClient {
 
 	protected Image expandImage;
 	protected TypifiedListManagementPanel list;
-	protected String tempValue;
 	protected String selectedValueId;
 	protected int typifiedListDataVersion;
 	protected TypifiedListBroker typifiedListBroker;
@@ -61,7 +61,6 @@ public class ExpandableListBoxFormField extends ListBoxFormField implements
 		clearValues();
 
 		hasServices = listId != null && !listId.equals("");
-
 		label.setText(listDescription + ":");
 
 		wrapper.clear();
@@ -95,7 +94,7 @@ public class ExpandableListBoxFormField extends ListBoxFormField implements
 				for (Selectable i : selected) {
 					@SuppressWarnings("unchecked")
 					ValueSelectable<TipifiedListItem> iv = (ValueSelectable<TipifiedListItem>) i;
-					if (!getValue().equals(iv.getValue().id))
+					if ((iv != null && iv.getValue() != null) && (!getValue().equals(iv.getValue().id)))
 						setValue(iv.getValue().id);
 					break;
 				}
@@ -127,9 +126,9 @@ public class ExpandableListBoxFormField extends ListBoxFormField implements
 		wrapper.add(expandImage);
 		wrapper.add(mandatoryIndicatorLabel);
 		setFieldWidth("150px");
-		
+
 		this.addHandler(new AttachEvent.Handler() {
-			
+
 			@Override
 			public void onAttachOrDetach(AttachEvent event) {
 				if(event.isAttached()){
@@ -157,8 +156,10 @@ public class ExpandableListBoxFormField extends ListBoxFormField implements
 		String strValue = value;
 		if (value == null)
 			strValue = "";
-		super.setValue(strValue, fireEvents);
-		tempValue = value;
+		super.setValue(strValue, false);
+		if(fireEvents)
+			ValueChangeEvent.fire(this, value);
+		selectedValueId = value;
 	}
 
 	@Override
@@ -209,6 +210,8 @@ public class ExpandableListBoxFormField extends ListBoxFormField implements
 	@Override
 	public void addItem(TipifiedListItem item) {
 		super.addItem(item.value, item.id);
+		if(selectedValueId != null && item.id.equalsIgnoreCase(selectedValueId))
+			setValue(selectedValueId, false);
 	}
 
 	@Override
@@ -221,7 +224,7 @@ public class ExpandableListBoxFormField extends ListBoxFormField implements
 			}
 		}
 	}
-	
+
 	/**
 	 * Gets all the typified list item entries
 	 * @return A collection of list items wrapped in value selectables

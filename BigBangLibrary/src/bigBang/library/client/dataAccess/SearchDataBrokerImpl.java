@@ -46,6 +46,25 @@ public class SearchDataBrokerImpl<T extends SearchResult> extends DataBroker<T> 
 			}
 		});
 	}
+	
+	@Override
+	public void searchOpenForOperation(String operationId,
+			final SearchParameter[] parameters, final SortParameter[] sorts, int size,
+			final ResponseHandler<Search<T>> handler) {
+		this.service.openForOperation(operationId, parameters, sorts, size, new BigBangAsyncCallback<NewSearchResult>() {
+
+			@SuppressWarnings("unchecked")
+			@Override
+			public void onSuccess(NewSearchResult result) {
+				Collection<T> resultsCollection = new ArrayList<T>();
+				for(int i = 0; i < result.results.length; i++)
+					resultsCollection.add((T) result.results[i]);
+				Search<T> search = new Search<T>(result.workspaceId, result.totalCount, 0, result.results.length, parameters, sorts, resultsCollection);
+				workspaces.put(result.workspaceId, search);
+				handler.onResponse(search);
+			}
+		});
+	}
 
 	@Override
 	public void search(final String workspaceId, final SearchParameter[] parameters, final SortParameter[] sorts,
@@ -66,7 +85,7 @@ public class SearchDataBrokerImpl<T extends SearchResult> extends DataBroker<T> 
 			});
 		}
 	}
-
+	
 	@Override
 	public void getResults(final String workspaceId, final int offset, int count,
 			final ResponseHandler<Search<T>> handler) {

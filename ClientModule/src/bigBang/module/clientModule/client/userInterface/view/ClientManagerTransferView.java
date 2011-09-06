@@ -26,7 +26,7 @@ public abstract class ClientManagerTransferView extends View {
 			public void onCancelRequest() {}
 		};
 		toolbar.hideAll();
-		toolbar.addItem("Eliminar", new Command() {
+		toolbar.addItem("Transferir", new Command() {
 
 			@Override
 			public void execute() {

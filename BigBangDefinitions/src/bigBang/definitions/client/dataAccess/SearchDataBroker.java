@@ -25,6 +25,16 @@ public interface SearchDataBroker<T extends SearchResult> extends DataBrokerInte
 	public void search(String workspaceId, SearchParameter[] parameters, SortParameter[] sorts, int size, ResponseHandler<Search<T>> handler);
 	
 	/**
+	 * Performs a search for results open to the execution of ano operation
+	 * @param operationId The id of the operation for which the results should be open to execution
+	 * @param parameters The parameters for the search
+	 * @param sorts The parameters by which the search results will be sorted
+	 * @param size How many results will be returned
+	 * @param handler The handler to be notified on response
+	 */
+	public void searchOpenForOperation(String operationId, SearchParameter[] parameters, SortParameter[] sorts, int size, ResponseHandler<Search<T>> handler);
+	
+	/**
 	 * Gets the search results from a current search within a given range
 	 * @param workspaceId The id of the workspace in which the search is being performed 
 	 * @param from The index of the first result to be returned

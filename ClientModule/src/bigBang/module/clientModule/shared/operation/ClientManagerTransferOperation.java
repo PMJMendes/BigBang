@@ -13,7 +13,7 @@ import bigBang.module.clientModule.client.userInterface.view.ClientManagerTransf
 public class ClientManagerTransferOperation implements Operation {
 
 	public static final String OWNER_PROCESS_ID = ""; //ClientProcess.ID;
-	public static final String ID = "clientManagerTransferOperation";
+	public static final String ID = "C75EEC27-780C-4C0C-9FD7-9F090142CB10";
 	private final String DESCRIPTION = "A operação de transferência do gestor de clientes";
 	private final String SHORT_DESCRIPTION = "Transf. Gestor";
 	private boolean permission;

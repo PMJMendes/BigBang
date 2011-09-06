@@ -60,6 +60,7 @@ public class TypifiedListManagementPanel extends FilterableList<TipifiedListItem
 	}
 
 	private String listId;
+	private String selectedValueId;
 	private TextBox valueTextBox;
 	private boolean editModeEnabled, editable;
 	private int typifiedListDataVersion;
@@ -270,6 +271,8 @@ public class TypifiedListManagementPanel extends FilterableList<TipifiedListItem
 			}
 		});
 		add(entry);
+		if(this.selectedValueId != null && this.selectedValueId.equalsIgnoreCase(item.id))
+			entry.setSelected(true);
 		setEditModeEnabled(this.editModeEnabled);
 		return entry;
 	}

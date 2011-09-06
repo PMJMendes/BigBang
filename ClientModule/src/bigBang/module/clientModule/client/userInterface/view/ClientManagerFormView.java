@@ -1,11 +1,23 @@
 package bigBang.module.clientModule.client.userInterface.view;
 
+import java.util.Collection;
+
+import com.google.gwt.event.logical.shared.ValueChangeEvent;
+import com.google.gwt.event.logical.shared.ValueChangeHandler;
+
+import bigBang.definitions.client.dataAccess.CostCenterBroker;
+import bigBang.definitions.client.dataAccess.UserBroker;
+import bigBang.definitions.client.response.ResponseError;
+import bigBang.definitions.client.response.ResponseHandler;
+import bigBang.definitions.shared.BigBangConstants;
+import bigBang.definitions.shared.CostCenter;
+import bigBang.definitions.shared.User;
+import bigBang.library.client.dataAccess.DataBrokerManager;
 import bigBang.library.client.userInterface.ExpandableListBoxFormField;
 import bigBang.library.client.userInterface.TextBoxFormField;
 import bigBang.library.client.userInterface.view.FormView;
-import bigBang.module.clientModule.shared.ClientManager;
 
-public class ClientManagerFormView extends FormView<ClientManager> {
+public class ClientManagerFormView extends FormView<User> {
 
 	protected ExpandableListBoxFormField clientManager;
 	protected TextBoxFormField name;
@@ -15,7 +27,24 @@ public class ClientManagerFormView extends FormView<ClientManager> {
 	protected TextBoxFormField email;
 	
 	public ClientManagerFormView(){
-		clientManager = new ExpandableListBoxFormField("Gestor de Cliente");
+		clientManager = new ExpandableListBoxFormField(BigBangConstants.EntityIds.USER, "Gestor de Cliente");
+		clientManager.addValueChangeHandler(new ValueChangeHandler<String>() {
+			
+			@Override
+			public void onValueChange(ValueChangeEvent<String> event) {
+				UserBroker userBroker = ((UserBroker)DataBrokerManager.Util.getInstance().getBroker(BigBangConstants.EntityIds.USER));
+				userBroker.getUser(clientManager.getValue(), new ResponseHandler<User>() {
+					
+					@Override
+					public void onResponse(User response) {
+						ClientManagerFormView.this.setValue(response);
+					}
+					
+					@Override
+					public void onError(Collection<ResponseError> errors) {}
+				});
+			}
+		});
 		name = new TextBoxFormField("Nome");
 		username = new TextBoxFormField("Nome de utilizador");
 		userProfile = new TextBoxFormField("Perfil");
@@ -37,15 +66,34 @@ public class ClientManagerFormView extends FormView<ClientManager> {
 	}
 
 	@Override
-	public ClientManager getInfo() {
-		// TODO Auto-generated method stub
-		return null;
+	public User getInfo() {
+		User user = new User();
+		user.id = this.clientManager.getValue();
+		return user;
 	}
 
 	@Override
-	public void setInfo(ClientManager info) {
-		// TODO Auto-generated method stub
-		
+	public void setInfo(User info) {
+		if(info == null){
+			clearInfo();
+			return;
+		}
+		this.clientManager.setValue(info.id);
+		this.name.setValue(info.name);
+		this.username.setValue(info.username);
+		this.userProfile.setValue(info.profile.name);
+		CostCenterBroker costCenterBroker = ((CostCenterBroker)DataBrokerManager.Util.getInstance().getBroker(BigBangConstants.EntityIds.COST_CENTER));
+		costCenterBroker.getCostCenter(info.costCenterId, new ResponseHandler<CostCenter>() {
+			
+			@Override
+			public void onResponse(CostCenter response) {
+				costCenter.setValue(response.name);
+			}
+			
+			@Override
+			public void onError(Collection<ResponseError> errors) {}
+		});
+		this.email.setValue(info.email);
 	}
 
 }

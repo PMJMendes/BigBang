@@ -173,6 +173,7 @@ public class ClientSearchOperationViewPresenter implements OperationViewPresente
 				@SuppressWarnings("unchecked")
 				ValueSelectable<ClientStub> selected = (ValueSelectable<ClientStub>) event.getFirstSelected();
 				ClientStub selectedValue = selected == null ? null : selected.getValue();
+				view.setSaveModeEnabled(false);
 				if(selectedValue == null){
 					view.getForm().setValue(null);
 					view.lockForm(true);
@@ -191,7 +192,6 @@ public class ClientSearchOperationViewPresenter implements OperationViewPresente
 							public void onError(Collection<ResponseError> errors) {}
 						});
 					}
-
 				}
 			}
 		});
@@ -202,14 +202,16 @@ public class ClientSearchOperationViewPresenter implements OperationViewPresente
 				switch(action.getAction()){
 				case NEW:
 					view.prepareNewClient();
+					
 					for(Selectable s : view.getList().getSelected()) {
 						@SuppressWarnings("unchecked")
 						ValueSelectable<Client> vs = (ValueSelectable<Client>) s;
 						Client value = vs.getValue();
 						view.getForm().setValue(value);
-						view.getForm().setReadOnly(false);
 						break;
 					}
+					view.getForm().setReadOnly(false);
+					view.setSaveModeEnabled(true);
 					break;
 				case SAVE:
 					if(!view.isFormValid())
@@ -225,6 +227,13 @@ public class ClientSearchOperationViewPresenter implements OperationViewPresente
 					view.setSaveModeEnabled(true);
 					break;
 				case CANCEL_EDIT:
+					if(view.getForm().getValue().id == null){
+						view.removeNewClientPreparation();
+					}else{
+						view.getForm().revert();
+						view.getForm().setReadOnly(true);
+						view.setSaveModeEnabled(false);
+					}
 					break;
 				case DELETE:
 					deleteClient();
