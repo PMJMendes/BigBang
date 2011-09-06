@@ -560,11 +560,12 @@ public class ClientServiceImpl
 			if ( lbFound )
 				pstrBuffer.append(" + ");
 			lbFound = true;
-			pstrBuffer.append("CASE WHEN [:Group:Name] LIKE N'%").append(lParam.freeText.trim().replace("'", "''").replace(" ", "%"))
+			pstrBuffer.append("CASE WHEN [:Name] LIKE N'%").append(lParam.freeText.trim().replace("'", "''").replace(" ", "%"))
+					.append("%' THEN -PATINDEX(N'%").append(lParam.freeText.trim().replace("'", "''").replace(" ", "%"))
+					.append("%', [:Name]) ELSE ")
+					.append("CASE WHEN [:Group:Name] LIKE N'%").append(lParam.freeText.trim().replace("'", "''").replace(" ", "%"))
 					.append("%' THEN -1000*PATINDEX(N'%").append(lParam.freeText.trim().replace("'", "''").replace(" ", "%"))
-					.append("%', [:Group:Name]) ELSE 0 END + CASE WHEN [:Name] LIKE N'%")
-					.append(lParam.freeText.trim().replace("'", "''").replace(" ", "%")).append("%' THEN -PATINDEX(N'%")
-					.append(lParam.freeText.trim().replace("'", "''").replace(" ", "%")).append("%', [:Name]) ELSE 0 END");
+					.append("%', [:Group:Name]) ELSE 0 END END");
 		}
 
 		return lbFound;
