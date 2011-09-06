@@ -15,12 +15,12 @@ import bigBang.definitions.client.dataAccess.SortParameter;
 import bigBang.definitions.shared.Address;
 import bigBang.definitions.shared.Casualty;
 import bigBang.definitions.shared.Client;
-import bigBang.definitions.shared.InfoOrDocumentRequest;
 import bigBang.definitions.shared.ClientStub;
-import bigBang.definitions.shared.ManagerTransfer;
 import bigBang.definitions.shared.Contact;
 import bigBang.definitions.shared.Document;
+import bigBang.definitions.shared.InfoOrDocumentRequest;
 import bigBang.definitions.shared.InsurancePolicy;
+import bigBang.definitions.shared.ManagerTransfer;
 import bigBang.definitions.shared.QuoteRequest;
 import bigBang.definitions.shared.RiskAnalisys;
 import bigBang.definitions.shared.SearchResult;
@@ -39,6 +39,8 @@ import com.premiumminds.BigBang.Jewel.ZipCodeBridge;
 import com.premiumminds.BigBang.Jewel.Objects.GeneralSystem;
 import com.premiumminds.BigBang.Jewel.Operations.ContactOps;
 import com.premiumminds.BigBang.Jewel.Operations.DocOps;
+import com.premiumminds.BigBang.Jewel.Operations.Client.DeleteClient;
+import com.premiumminds.BigBang.Jewel.Operations.Client.ManageClientData;
 import com.premiumminds.BigBang.Jewel.Operations.DataObjects.ClientData;
 import com.premiumminds.BigBang.Jewel.Operations.General.CreateClient;
 
@@ -210,18 +212,141 @@ public class ClientServiceImpl
 	public Client editClient(Client client)
 		throws SessionExpiredException, BigBangException
 	{
+		ManageClientData lopMD;
+
 		if ( Engine.getCurrentUser() == null )
 			throw new SessionExpiredException();
+
+		try
+		{
+			lopMD = new ManageClientData(UUID.fromString(client.processId));
+			lopMD.mobjData = new ClientData();
+
+			lopMD.mobjData.mid = UUID.fromString(client.id);
+			lopMD.mobjData.mlngNumber = Integer.parseInt(client.clientNumber);
+			lopMD.mobjData.midProcess = UUID.fromString(client.processId);
+			lopMD.mobjData.mobjPrevValues = null;
+
+			lopMD.mobjData.mstrName = client.name;
+			if ( client.address != null )
+			{
+				lopMD.mobjData.mstrAddress1 = client.address.street1;
+				lopMD.mobjData.mstrAddress2 = client.address.street2;
+				if ( client.address.zipCode != null )
+					lopMD.mobjData.midZipCode = ZipCodeBridge.GetZipCode(client.address.zipCode.code,
+							client.address.zipCode.city, client.address.zipCode.county, client.address.zipCode.district,
+							client.address.zipCode.country);
+				else
+					lopMD.mobjData.midZipCode = null;
+			}
+			else
+			{
+				lopMD.mobjData.mstrAddress1 = null;
+				lopMD.mobjData.mstrAddress2 = null;
+				lopMD.mobjData.midZipCode = null;
+			}
+			lopMD.mobjData.mstrFiscal = client.taxNumber;
+			lopMD.mobjData.midType = ( client.typeId == null ? null : UUID.fromString(client.typeId) );
+			lopMD.mobjData.midSubtype = ( client.subtypeId == null ? null : UUID.fromString(client.subtypeId) );
+			lopMD.mobjData.midManager = ( client.managerId == null ? null : UUID.fromString(client.managerId) );
+			lopMD.mobjData.midMediator = ( client.mediatorId == null ? null : UUID.fromString(client.mediatorId) );
+			lopMD.mobjData.midProfile = ( client.operationalProfileId == null ? null : UUID.fromString(client.operationalProfileId) );
+			lopMD.mobjData.midGroup = ( client.groupId == null ? null : UUID.fromString(client.groupId) );
+			lopMD.mobjData.mstrBankingID = client.NIB;
+			lopMD.mobjData.mdtDateOfBirth = ( client.birthDate == null ? null : Timestamp.valueOf(client.birthDate) );
+			lopMD.mobjData.midSex = ( client.genderId == null ? null : UUID.fromString(client.genderId) );
+			lopMD.mobjData.midMarital = ( client.maritalStatusId == null ? null : UUID.fromString(client.maritalStatusId) );
+			lopMD.mobjData.midProfession = ( client.professionId == null ? null : UUID.fromString(client.professionId) );
+			lopMD.mobjData.midCAE = ( client.caeId == null ? null : UUID.fromString(client.caeId) );
+			lopMD.mobjData.mstrCAENotes = client.activityNotes;
+			lopMD.mobjData.midSize = ( client.sizeId == null ? null : UUID.fromString(client.sizeId) );
+			lopMD.mobjData.midSales = ( client.revenueId == null ? null : UUID.fromString(client.revenueId) );
+			lopMD.mobjData.mstrNotes = client.notes;
+
+			lopMD.mobjContactOps = null;
+			lopMD.mobjDocOps = null;
+
+			lopMD.Execute();
+
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangException(e.getMessage(), e);
+		}
 
 		return client;
 	}
 
-	public void deleteClient(String clientId)
+	@Override
+	public RiskAnalisys createRiskAnalisys(String clientId,
+			RiskAnalisys riskAnalisys) throws SessionExpiredException,
+			BigBangException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public InsurancePolicy createPolicy(String clientId, InsurancePolicy policy)
+			throws SessionExpiredException, BigBangException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public QuoteRequest createQuoteRequest(String clientId, QuoteRequest request)
+			throws SessionExpiredException, BigBangException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Casualty createCasualty(String clientId, Casualty casualty)
+			throws SessionExpiredException, BigBangException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Client mergeWithClient(String originalId, String receptorId)
+			throws SessionExpiredException, BigBangException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public ManagerTransfer[] createManagerTransfer(String[] clientIds,
+			String managerId) throws SessionExpiredException, BigBangException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public InfoOrDocumentRequest createInfoOrDocumentRequest(
+			InfoOrDocumentRequest request)
+			throws SessionExpiredException, BigBangException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public void deleteClient(String clientId, String processId)
 		throws SessionExpiredException, BigBangException
 	{
-			if ( Engine.getCurrentUser() == null )
-				throw new SessionExpiredException();
+		DeleteClient lobjDC;
 
+		if ( Engine.getCurrentUser() == null )
+			throw new SessionExpiredException();
+
+		lobjDC = new DeleteClient(UUID.fromString(processId));
+		lobjDC.midClient = UUID.fromString(clientId);
+
+		try
+		{
+			lobjDC.Execute();
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangException(e.getMessage(), e);
+		}
 	}
 
 	protected UUID getObjectID()
@@ -554,56 +679,5 @@ public class ClientServiceImpl
 		
 		for ( i = 0; i < parrResults.length; i++ )
 			parrDocuments[i].id = parrResults[i].mid.toString();
-	}
-
-	@Override
-	public RiskAnalisys createRiskAnalisys(String clientId,
-			RiskAnalisys riskAnalisys) throws SessionExpiredException,
-			BigBangException {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public InsurancePolicy createPolicy(String clientId, InsurancePolicy policy)
-			throws SessionExpiredException, BigBangException {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public QuoteRequest createQuoteRequest(String clientId, QuoteRequest request)
-			throws SessionExpiredException, BigBangException {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public Casualty createCasualty(String clientId, Casualty casualty)
-			throws SessionExpiredException, BigBangException {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public Client mergeWithClient(String originalId, String receptorId)
-			throws SessionExpiredException, BigBangException {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public ManagerTransfer[] createManagerTransfer(String[] clientIds,
-			String managerId) throws SessionExpiredException, BigBangException {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public InfoOrDocumentRequest createInfoOrDocumentRequest(
-			InfoOrDocumentRequest request)
-			throws SessionExpiredException, BigBangException {
-		// TODO Auto-generated method stub
-		return null;
 	}
 }

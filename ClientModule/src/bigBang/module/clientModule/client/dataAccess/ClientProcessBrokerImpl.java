@@ -1,10 +1,13 @@
 package bigBang.module.clientModule.client.dataAccess;
 
+import java.util.Collection;
+
 import bigBang.definitions.client.dataAccess.ClientProcessBroker;
 import bigBang.definitions.client.dataAccess.ClientProcessDataBrokerClient;
 import bigBang.definitions.client.dataAccess.DataBroker;
 import bigBang.definitions.client.dataAccess.DataBrokerClient;
 import bigBang.definitions.client.dataAccess.SearchDataBroker;
+import bigBang.definitions.client.response.ResponseError;
 import bigBang.definitions.client.response.ResponseHandler;
 import bigBang.definitions.shared.BigBangConstants;
 import bigBang.definitions.shared.Client;
@@ -88,17 +91,30 @@ public class ClientProcessBrokerImpl extends DataBroker<Client> implements Clien
 
 	@Override
 	public void removeClient(final String clientId, final ResponseHandler<String> handler) {
-		this.service.deleteClient(clientId, new BigBangAsyncCallback<Void>() {
-
+		this.getClient(clientId, new ResponseHandler<Client>() {
+			
 			@Override
-			public void onSuccess(Void result) {
-				cache.remove(clientId);
-				incrementDataVersion();
-				for(DataBrokerClient<Client> bc : getClients()){
-					((ClientProcessDataBrokerClient) bc).removeClient(clientId);
-					((ClientProcessDataBrokerClient) bc).setDataVersionNumber(BigBangConstants.EntityIds.CLIENT, getCurrentDataVersion());
-				}
-				handler.onResponse(clientId);
+			public void onResponse(Client response) {
+				ClientProcessBrokerImpl.this.service.deleteClient(clientId, response.processId, new BigBangAsyncCallback<Void>() {
+
+					@Override
+					public void onSuccess(Void result) {
+						cache.remove(clientId);
+						incrementDataVersion();
+						for(DataBrokerClient<Client> bc : getClients()){
+							((ClientProcessDataBrokerClient) bc).removeClient(clientId);
+							((ClientProcessDataBrokerClient) bc).setDataVersionNumber(BigBangConstants.EntityIds.CLIENT, getCurrentDataVersion());
+						}
+						handler.onResponse(clientId);
+					}
+				});
+				
+			}
+			
+			@Override
+			public void onError(Collection<ResponseError> errors) {
+				// TODO Auto-generated method stub
+				
 			}
 		});
 	}

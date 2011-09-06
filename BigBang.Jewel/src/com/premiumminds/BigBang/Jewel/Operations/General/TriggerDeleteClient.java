@@ -17,7 +17,7 @@ import com.premiumminds.BigBang.Jewel.Operations.ContactOps;
 import com.premiumminds.BigBang.Jewel.Operations.DocOps;
 import com.premiumminds.BigBang.Jewel.Operations.DataObjects.ClientData;
 
-public class DeleteClient
+public class TriggerDeleteClient
 	extends UndoableOperation
 {
 	private static final long serialVersionUID = 1L;
@@ -26,19 +26,19 @@ public class DeleteClient
 	public ContactOps mobjContactOps;
 	public DocOps mobjDocOps;
 
-	public DeleteClient(UUID pidProcess)
+	public TriggerDeleteClient(UUID pidProcess)
 	{
 		super(pidProcess);
 	}
 
 	protected UUID OpID()
 	{
-		return Constants.OPID_DeleteClient;
+		return Constants.OPID_TriggerDeleteClient;
 	}
 
 	public String ShortDesc()
 	{
-		return "Eliminação de Cliente";
+		return "Eliminação de Cliente (Trigger)";
 	}
 
 	public String LongDesc(String pstrLineBreak)

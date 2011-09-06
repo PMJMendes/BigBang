@@ -24,5 +24,5 @@ public interface ClientServiceAsync
 	void createPolicy(String clientId, InsurancePolicy policy, AsyncCallback<InsurancePolicy> callback);
 	void createRiskAnalisys(String clientId, RiskAnalisys riskAnalisys, AsyncCallback<RiskAnalisys> callback);
 	void createCasualty(String clientId, Casualty casualty, AsyncCallback<Casualty> callback);
-	void deleteClient(String clientId, AsyncCallback<Void> callback);
+	void deleteClient(String clientId, String processId, AsyncCallback<Void> callback);
 }

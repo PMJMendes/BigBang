@@ -1,6 +1,5 @@
 package bigBang.definitions.shared;
 
-import java.io.Serializable;
 
 public class InsurancePolicy extends InsurancePolicyStub {
 
