@@ -33,6 +33,6 @@ public class ModuleConstants
 		public static final String ManageClientGroups = "08E5A828-0AF2-4347-A57A-9EB500A11526";
 		public static final String CreateClient       = "214118B8-C43C-4941-9D1E-9EB500A1381C";
 		public static final String DELETE_CLIENT	  = ""; //TODO
-		public static final String ChangeClientData   = ""; //TODO
+		public static final String ChangeClientData   = "AE3CC7F0-BE2C-4548-87B5-9F09014072B8";
 	}
 }

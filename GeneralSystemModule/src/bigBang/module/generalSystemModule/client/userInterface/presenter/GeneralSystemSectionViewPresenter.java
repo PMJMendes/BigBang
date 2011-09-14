@@ -42,7 +42,7 @@ public class GeneralSystemSectionViewPresenter implements SectionViewPresenter {
 
 	public void registerOperation(OperationViewPresenter operationPresenter) {
 		this.view.createOperationNavigationItem(operationPresenter, 
-				section.permissionManager.hasPermissionForOperation(operationPresenter.getOperation().getId()));
+				section.permissionManager.hasPermissionForOperation(section.processId, operationPresenter.getOperation().getId()));
 		if(!hasRegisteredOperations) { //TO SHOW THE FIRST OPERATION BY DEFAULT
 			this.view.selectOperation(operationPresenter);
 			operationPresenter.go(this.view.getOperationViewContainer()); 

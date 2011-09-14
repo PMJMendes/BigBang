@@ -10,7 +10,7 @@ import com.google.gwt.user.client.Timer;
 
 public class TasksNotificationsManager extends Timer {
 	
-	final int DELAY = 1000 * 60; //miliseconds
+	final int DELAY = 1000 * 10; //miliseconds
 	private EventBus eventBus;
 
 	public TasksNotificationsManager(EventBus eventBus){
@@ -19,7 +19,7 @@ public class TasksNotificationsManager extends Timer {
 
 	public void run() {
 		//TODO Check if there are any new notifications
-		Notification notification = new Notification("Notificacao Tasks", "conteudo tasks", new ScreenInvokedEvent(null, TasksSection.ID, null));
+		Notification notification = new Notification("Agenda", "Foi-lhe atribuída uma nova tarefa", new ScreenInvokedEvent(null, TasksSection.ID, null));
 		this.eventBus.fireEvent(new NewNotificationEvent(notification,
 				Notification.TYPE.TRAY_NOTIFICATION));
 		

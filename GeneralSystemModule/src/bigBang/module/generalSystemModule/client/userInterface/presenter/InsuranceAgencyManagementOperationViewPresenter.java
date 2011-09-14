@@ -7,7 +7,6 @@ import bigBang.definitions.client.response.ResponseError;
 import bigBang.definitions.client.response.ResponseHandler;
 import bigBang.definitions.shared.BigBangConstants;
 import bigBang.definitions.shared.InsuranceAgency;
-import bigBang.library.client.ContactManager;
 import bigBang.library.client.EventBus;
 import bigBang.library.client.HasEditableValue;
 import bigBang.library.client.HasValueSelectables;
@@ -66,14 +65,12 @@ public class InsuranceAgencyManagementOperationViewPresenter implements
 	private InsuranceAgencyManagementOperation operation;
 	
 	private boolean bound = false;
-	private ContactManager contactManager; //TODO
 	protected InsuranceAgencyBroker insuranceAgencyBroker;
 
 	public InsuranceAgencyManagementOperationViewPresenter(EventBus eventBus, Service service, View view){
 		setEventBus(eventBus);
 		setService(service);
 		setView(view);
-		this.contactManager = new ContactManager();
 		this.insuranceAgencyBroker = (InsuranceAgencyBroker) DataBrokerManager.Util.getInstance().getBroker(BigBangConstants.EntityIds.INSURANCE_AGENCY);
 	}
 
@@ -131,7 +128,7 @@ public class InsuranceAgencyManagementOperationViewPresenter implements
 
 							@Override
 							public void onResponse(InsuranceAgency value) {
-								view.getForm().setValue(value);
+								view.getForm().setValue(value, true);
 								view.lockForm(value == null);
 							}
 

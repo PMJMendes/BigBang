@@ -223,6 +223,8 @@ public class ClientSearchOperationView extends View implements ClientSearchOpera
 
 		mainWrapper.add(wrapper);
 		mainContent = wrapper;
+
+		searchPanel.doSearch();
 		initWidget(mainWrapper);
 	}
 

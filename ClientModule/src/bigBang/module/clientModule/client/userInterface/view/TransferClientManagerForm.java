@@ -17,14 +17,12 @@ public class TransferClientManagerForm extends FormView<String> {
 
 	@Override
 	public String getInfo() {
-		// TODO Auto-generated method stub
-		return null;
+		return manager.getValue();
 	}
 
 	@Override
 	public void setInfo(String info) {
-		// TODO Auto-generated method stub
-
+		this.manager.setValue(info);
 	}
 
 }

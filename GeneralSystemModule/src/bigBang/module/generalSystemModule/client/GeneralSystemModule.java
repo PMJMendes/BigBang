@@ -1,6 +1,10 @@
 package bigBang.module.generalSystemModule.client;
 
+import java.util.Collection;
+
 import bigBang.definitions.client.dataAccess.DataBroker;
+import bigBang.definitions.client.response.ResponseError;
+import bigBang.definitions.client.response.ResponseHandler;
 import bigBang.definitions.shared.BigBangConstants;
 import bigBang.library.client.BigBangAsyncCallback;
 import bigBang.library.client.BigBangPermissionManager;
@@ -23,6 +27,7 @@ public class GeneralSystemModule implements Module {
 
 	private SectionViewPresenter[] sectionPresenters;
 	private boolean initialized = false;
+	public static String processId;
 
 	@Override
 	public void initialize(final EventBus eventBus, final BigBangPermissionManager permissionManager) {
@@ -32,12 +37,16 @@ public class GeneralSystemModule implements Module {
 
 			@Override
 			public void onSuccess(final String result) {
-				permissionManager.getProcessPermissionContext(result, new BigBangAsyncCallback<Void>() {
+				processId = result;
+				permissionManager.getProcessPermissionContext(result, new ResponseHandler<Void>() {
 
 					@Override
-					public void onSuccess(Void result2) {
+					public void onResponse(Void result2) {
 						setup(eventBus, permissionManager, result);
 					}
+					
+					@Override
+					public void onError(Collection<ResponseError> errors) {}
 				});
 			}
 		});

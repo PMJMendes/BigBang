@@ -191,7 +191,7 @@ public abstract class SearchPanel<T extends SearchResult> extends FilterableList
 						clear();
 						scrollPanel.scrollToTop();
 						requestedNextPage = false;
-						nextResultIndex += result.getResults().size();
+						nextResultIndex = result.getResults().size();
 						SearchPanel.this.numberOfResults = result.getTotalResultsCount();
 						onResults(result.getResults());
 						updateFooterText();
@@ -213,7 +213,7 @@ public abstract class SearchPanel<T extends SearchResult> extends FilterableList
 						clear();
 						scrollPanel.scrollToTop();
 						requestedNextPage = false;
-						nextResultIndex += result.getResults().size();
+						nextResultIndex = result.getResults().size();
 						SearchPanel.this.numberOfResults = result.getTotalResultsCount();
 						onResults(result.getResults());
 						updateFooterText();

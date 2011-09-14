@@ -1,75 +1,38 @@
 package bigBang.module.generalSystemModule.client.userInterface;
 
-import java.util.Collection;
-
 import bigBang.definitions.client.dataAccess.ClientGroupBroker;
 import bigBang.definitions.client.dataAccess.ClientGroupDataBrokerClient;
-import bigBang.definitions.client.response.ResponseError;
-import bigBang.definitions.client.response.ResponseHandler;
 import bigBang.definitions.shared.BigBangConstants;
 import bigBang.definitions.shared.ClientGroup;
-import bigBang.library.client.HasNavigationHandlers;
 import bigBang.library.client.ValueSelectable;
 import bigBang.library.client.dataAccess.DataBrokerManager;
 import bigBang.library.client.event.NavigationEvent;
 import bigBang.library.client.event.NavigationEventHandler;
-import bigBang.library.client.resources.Resources;
 import bigBang.library.client.userInterface.FilterableList;
 import bigBang.library.client.userInterface.ListEntry;
 import bigBang.library.client.userInterface.ListHeader;
 
-import com.google.gwt.core.client.GWT;
-import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.HasClickHandlers;
 import com.google.gwt.event.shared.HandlerRegistration;
-import com.google.gwt.user.client.ui.Image;
 
-public class ClientGroupList extends FilterableList<ClientGroup> implements
-ClientGroupDataBrokerClient, HasNavigationHandlers {
+public class ClientGroupList extends FilterableList<ClientGroup> implements ClientGroupDataBrokerClient {
 
-	public static class ClientGroupListEntry extends ListEntry<ClientGroup> {
+	public static class Entry extends ListEntry<ClientGroup>{
 
-		protected Image detailsButton;
-		
-		public ClientGroupListEntry(ClientGroup group) {
-			super(group);
-			Resources r = GWT.create(Resources.class);
-			
-			setHeight("40px");
-			this.detailsButton = new Image(r.arrowDown());
-			detailsButton.addClickHandler(new ClickHandler() {
-				
-				@Override
-				public void onClick(ClickEvent event) {
-					fireEvent(new NavigationEvent(NavigationEvent.Navigation.NAVIGATE_TO, getValue().id));
-				}
-			});
-			setRightWidget(detailsButton);
-			setInfo(group);
+		public Entry(ClientGroup value) {
+			super(value);
 		}
 
-		@Override
-		public <I extends Object> void setInfo(I infoGeneric){
-			ClientGroup info	= (ClientGroup) infoGeneric;
-
-			if(info.id == null) {
-				setTitle("Novo Centro de Custo");
-				detailsButton.setVisible(false);
-				return;
-			}
-			detailsButton.setVisible(true);
-			setTitle(info.name);
-		}
-
+		public <I extends Object> void setInfo(I info) {
+			ClientGroup g = (ClientGroup) info;
+			setText(g.name);
+		};
 	}
 
 
 	protected int clientGroupDataVersion;
 	protected ClientGroupBroker clientGroupBroker;
 	protected ListHeader header;
-
-	protected ClientGroup currentGroup;
 
 	public ClientGroupList(){
 		this(null);
@@ -86,32 +49,6 @@ ClientGroupDataBrokerClient, HasNavigationHandlers {
 
 		this.clientGroupBroker = (ClientGroupBroker) DataBrokerManager.Util.getInstance().getBroker(BigBangConstants.EntityIds.CLIENT_GROUP);
 		this.clientGroupBroker.registerClient(this);
-
-		this.currentGroup = currentGroup;
-
-		if(currentGroup != null) {
-			this.clientGroupBroker.getClientGroup(currentGroup.id, new ResponseHandler<ClientGroup>() {
-
-				@Override
-				public void onResponse(ClientGroup response) {
-					ClientGroupList.this.currentGroup = response;
-					showCurrentGroupDetails();
-				}
-
-				@Override
-				public void onError(Collection<ResponseError> errors) {}
-			});
-		}else{
-			showCurrentGroupDetails();
-		}
-	}
-
-	protected void showCurrentGroupDetails(){
-		if(currentGroup == null) {
-			header.setText("Grupos de Clientes");
-		}else{
-			header.setText(currentGroup.name);
-		}
 	}
 
 	@Override
@@ -152,10 +89,7 @@ ClientGroupDataBrokerClient, HasNavigationHandlers {
 	public void setGroups(ClientGroup[] clientGroups) {
 		this.clear();
 		for(int i = 0; i < clientGroups.length; i++) {
-			if((currentGroup == null && clientGroups[i].parentGroupId == null) ||
-					(currentGroup != null && currentGroup.id.equalsIgnoreCase(clientGroups[i].id))){
-				addGroup(clientGroups[i]);
-			}
+			addGroup(clientGroups[i]);
 		}
 	}
 
@@ -168,51 +102,31 @@ ClientGroupDataBrokerClient, HasNavigationHandlers {
 	@Override
 	protected HandlerRegistration bindEntry(ListEntry<ClientGroup> e) {
 		e.addHandler(new NavigationEventHandler() {
-			
+
 			@Override
 			public void onNavigationEvent(NavigationEvent event) {
-				
+
 			}
 		}, NavigationEvent.TYPE);
 		return super.bindEntry(e);
-		
+
 	}
-	
+
 	@Override
 	public void updateGroup(ClientGroup clientGroup) {
-		if(currentGroup != null && currentGroup.id != null && currentGroup.id.equalsIgnoreCase(clientGroup.id)){
-			this.currentGroup = clientGroup;
-			showCurrentGroupDetails();
-		}else{
-			for(ValueSelectable<ClientGroup> s : this) {
-				if(s.getValue().id.equals(clientGroup.id)){
-					String currentGroupId = currentGroup == null ? null : currentGroup.id;
-					if(((currentGroupId == null) ^ (clientGroup.parentGroupId == null)) 
-						|| (currentGroupId != null && clientGroup.parentGroupId != null
-						&&!currentGroupId.equalsIgnoreCase(clientGroup.parentGroupId))){
-						remove(s);
-					}else{
-						s.setValue(clientGroup);
-					}
-					break;
-				}
+		for(ValueSelectable<ClientGroup> s : this) {
+			if(s.getValue().id.equals(clientGroup.id)){
+				s.setValue(clientGroup, true);
 			}
 		}
 	}
 
 	@Override
 	public void removeGroup(String clientGroupId) {
-		if(currentGroup != null && currentGroup.id != null && currentGroup.id.equalsIgnoreCase(clientGroupId)){
-			this.currentGroup = new ClientGroup();
-			this.currentGroup.name = "< Indefinido >";
-			this.clear();
-			showCurrentGroupDetails();
-		}else{
-			for(ValueSelectable<ClientGroup> s : this) {
-				if(s.getValue().id.equals(clientGroupId)){
-					remove(s);
-					break;
-				}
+		for(ValueSelectable<ClientGroup> s : this) {
+			if(s.getValue().id.equals(clientGroupId)){
+				remove(s);
+				break;
 			}
 		}
 	}
@@ -231,13 +145,6 @@ ClientGroupDataBrokerClient, HasNavigationHandlers {
 	 */
 	public HasClickHandlers getRefreshButton(){
 		return header.getRefreshButton();
-	}
-
-	@Override
-	public HandlerRegistration addNavigationHandler(
-			NavigationEventHandler handler) {
-		// TODO Auto-generated method stub
-		return null;
 	}
 
 }

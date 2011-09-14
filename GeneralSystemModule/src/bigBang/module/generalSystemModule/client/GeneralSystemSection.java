@@ -60,43 +60,45 @@ public class GeneralSystemSection implements MenuSection {
 	private static final String SHORT_DESCRIPTION = "Sist. Geral";
 	private ArrayList<OperationViewPresenter> sectionOperationPresenters;
 	public BigBangPermissionManager permissionManager;
+	public String processId;
 	
 	public GeneralSystemSection(BigBangPermissionManager permissionManager, String processId){
+		this.processId = processId;
 		this.sectionOperationPresenters = new ArrayList<OperationViewPresenter>();
 		this.permissionManager = permissionManager;
 		
-		/* UNDO */
-		HistoryOperation undoOperation = (HistoryOperation)GWT.create(HistoryOperation.class);
-		UndoOperationView undoOperationView = (UndoOperationView) GWT.create(UndoOperationView.class);
-		HistoryBroker historyBroker = (HistoryBroker) DataBrokerManager.Util.getInstance().getBroker(BigBangConstants.EntityIds.HISTORY);
-		UndoOperationViewPresenter undoOperationViewPresenter = new UndoOperationViewPresenter(null, historyBroker, undoOperationView, processId);
-		undoOperationViewPresenter.setOperation(undoOperation);
-		this.sectionOperationPresenters.add((OperationViewPresenter) undoOperationViewPresenter);
+//		/* UNDO */
+//		HistoryOperation undoOperation = (HistoryOperation)GWT.create(HistoryOperation.class);
+//		UndoOperationView undoOperationView = (UndoOperationView) GWT.create(UndoOperationView.class);
+//		HistoryBroker historyBroker = (HistoryBroker) DataBrokerManager.Util.getInstance().getBroker(BigBangConstants.EntityIds.HISTORY);
+//		UndoOperationViewPresenter undoOperationViewPresenter = new UndoOperationViewPresenter(null, historyBroker, undoOperationView, processId);
+//		undoOperationViewPresenter.setOperation(undoOperation);
+//		this.sectionOperationPresenters.add((OperationViewPresenter) undoOperationViewPresenter);
 		
-		/* COST CENTER MANAGEMENT */
-		CostCenterManagementOperation costCenterManagementOperation = (CostCenterManagementOperation)GWT.create(CostCenterManagementOperation.class);
-		CostCenterManagementOperationView costCenterManagementOperationView = new CostCenterManagementOperationView();
-		CostCenterServiceAsync costCenterService = CostCenterService.Util.getInstance();
-		CostCenterManagementOperationViewPresenter costCenterManagementOperationPresenter = new CostCenterManagementOperationViewPresenter(null, (Service)costCenterService, costCenterManagementOperationView);
-		costCenterManagementOperationPresenter.setOperation(costCenterManagementOperation);
-		this.sectionOperationPresenters.add((OperationViewPresenter)costCenterManagementOperationPresenter);
-
-		/* USERS MANAGEMENT */
-		UserManagementOperation userManagementOperation = (UserManagementOperation)GWT.create(UserManagementOperation.class);
-		UserManagementOperationView userManagementOperationView = new UserManagementOperationView();
-		UserServiceAsync userService = UserService.Util.getInstance();
-		UserManagementOperationViewPresenter userManagementOperationPresenter = new UserManagementOperationViewPresenter(null, userService, userManagementOperationView);
-		userManagementOperationPresenter.setOperation(userManagementOperation);
-		this.sectionOperationPresenters.add((OperationViewPresenter)userManagementOperationPresenter);
-		
-		/* MEDIATORS MANAGEMENT */
-		MediatorManagementOperation mediatorManagementOperation = (MediatorManagementOperation)GWT.create(MediatorManagementOperation.class);
-		MediatorManagementOperationView mediatorManagementOperationView = new MediatorManagementOperationView();
-		MediatorServiceAsync mediatorService = MediatorService.Util.getInstance();
-		MediatorManagementOperationViewPresenter mediatorManagementOperationPresenter = new MediatorManagementOperationViewPresenter(null, mediatorService, mediatorManagementOperationView);
-		mediatorManagementOperationPresenter.setOperation(mediatorManagementOperation);
-		this.sectionOperationPresenters.add((OperationViewPresenter)mediatorManagementOperationPresenter);
-		
+//		/* COST CENTER MANAGEMENT */
+//		CostCenterManagementOperation costCenterManagementOperation = (CostCenterManagementOperation)GWT.create(CostCenterManagementOperation.class);
+//		CostCenterManagementOperationView costCenterManagementOperationView = new CostCenterManagementOperationView();
+//		CostCenterServiceAsync costCenterService = CostCenterService.Util.getInstance();
+//		CostCenterManagementOperationViewPresenter costCenterManagementOperationPresenter = new CostCenterManagementOperationViewPresenter(null, (Service)costCenterService, costCenterManagementOperationView);
+//		costCenterManagementOperationPresenter.setOperation(costCenterManagementOperation);
+//		this.sectionOperationPresenters.add((OperationViewPresenter)costCenterManagementOperationPresenter);
+//
+//		/* USERS MANAGEMENT */
+//		UserManagementOperation userManagementOperation = (UserManagementOperation)GWT.create(UserManagementOperation.class);
+//		UserManagementOperationView userManagementOperationView = new UserManagementOperationView();
+//		UserServiceAsync userService = UserService.Util.getInstance();
+//		UserManagementOperationViewPresenter userManagementOperationPresenter = new UserManagementOperationViewPresenter(null, userService, userManagementOperationView);
+//		userManagementOperationPresenter.setOperation(userManagementOperation);
+//		this.sectionOperationPresenters.add((OperationViewPresenter)userManagementOperationPresenter);
+//		
+//		/* MEDIATORS MANAGEMENT */
+//		MediatorManagementOperation mediatorManagementOperation = (MediatorManagementOperation)GWT.create(MediatorManagementOperation.class);
+//		MediatorManagementOperationView mediatorManagementOperationView = new MediatorManagementOperationView();
+//		MediatorServiceAsync mediatorService = MediatorService.Util.getInstance();
+//		MediatorManagementOperationViewPresenter mediatorManagementOperationPresenter = new MediatorManagementOperationViewPresenter(null, mediatorService, mediatorManagementOperationView);
+//		mediatorManagementOperationPresenter.setOperation(mediatorManagementOperation);
+//		this.sectionOperationPresenters.add((OperationViewPresenter)mediatorManagementOperationPresenter);
+//		
 		/* INSURANCE AGENCIES MANAGEMENT */
 		InsuranceAgencyManagementOperation insuranceAgencyManagementOperation = (InsuranceAgencyManagementOperation)GWT.create(InsuranceAgencyManagementOperation.class);
 		InsuranceAgencyManagementOperationView insuranceAgencyManagementOperationView = (InsuranceAgencyManagementOperationView) GWT.create(InsuranceAgencyManagementOperationView.class);
@@ -105,28 +107,28 @@ public class GeneralSystemSection implements MenuSection {
 		insuranceAgencyManagementOperationPresenter.setOperation(insuranceAgencyManagementOperation);
 		this.sectionOperationPresenters.add((OperationViewPresenter)insuranceAgencyManagementOperationPresenter);
 		
-		/* COVERAGES MANAGEMENT */
-		CoverageManagementOperation coverageManagementOperation = (CoverageManagementOperation)GWT.create(CoverageManagementOperation.class);
-		CoverageManagementOperationView coverageManagementOperationView = (CoverageManagementOperationView) GWT.create(CoverageManagementOperationView.class);
-		CoveragesServiceAsync coveragesService = CoveragesService.Util.getInstance();
-		CoverageManagementOperationViewPresenter coverageManagementOperationPresenter = new CoverageManagementOperationViewPresenter(null, coveragesService, coverageManagementOperationView);
-		coverageManagementOperationPresenter.setOperation(coverageManagementOperation);
-		this.sectionOperationPresenters.add((OperationViewPresenter)coverageManagementOperationPresenter);
-		
-		/* TAXES MANAGEMENT */
-		TaxManagementOperation taxManagementOperation = (TaxManagementOperation)GWT.create(TaxManagementOperation.class);
-		TaxManagementOperationView taxManagementOperationView = (TaxManagementOperationView) GWT.create(TaxManagementOperationView.class);
-		TaxManagementOperationViewPresenter taxManagementOperationPresenter = new TaxManagementOperationViewPresenter(null, coveragesService, taxManagementOperationView);
-		taxManagementOperationPresenter.setOperation(taxManagementOperation);
-		this.sectionOperationPresenters.add((OperationViewPresenter)taxManagementOperationPresenter);
-		
-		/* CLIENT GROUP MANAGEMENT */
-		ClientGroupManagementOperation clientGroupManagementOperation = (ClientGroupManagementOperation)GWT.create(ClientGroupManagementOperation.class);
-		ClientGroupManagementOperationView clientGroupManagementOperationView = (ClientGroupManagementOperationView) GWT.create(ClientGroupManagementOperationView.class);
-		ClientGroupServiceAsync clientGroupService = (ClientGroupServiceAsync) GWT.create(ClientGroupService.class);
-		ClientGroupManagementOperationViewPresenter clientGroupManagementOperationPresenter = new ClientGroupManagementOperationViewPresenter(null, clientGroupService, clientGroupManagementOperationView);
-		clientGroupManagementOperationPresenter.setOperation(clientGroupManagementOperation);
-		this.sectionOperationPresenters.add((OperationViewPresenter)clientGroupManagementOperationPresenter);
+//		/* COVERAGES MANAGEMENT */
+//		CoverageManagementOperation coverageManagementOperation = (CoverageManagementOperation)GWT.create(CoverageManagementOperation.class);
+//		CoverageManagementOperationView coverageManagementOperationView = (CoverageManagementOperationView) GWT.create(CoverageManagementOperationView.class);
+//		CoveragesServiceAsync coveragesService = CoveragesService.Util.getInstance();
+//		CoverageManagementOperationViewPresenter coverageManagementOperationPresenter = new CoverageManagementOperationViewPresenter(null, coveragesService, coverageManagementOperationView);
+//		coverageManagementOperationPresenter.setOperation(coverageManagementOperation);
+//		this.sectionOperationPresenters.add((OperationViewPresenter)coverageManagementOperationPresenter);
+//		
+//		/* TAXES MANAGEMENT */
+//		TaxManagementOperation taxManagementOperation = (TaxManagementOperation)GWT.create(TaxManagementOperation.class);
+//		TaxManagementOperationView taxManagementOperationView = (TaxManagementOperationView) GWT.create(TaxManagementOperationView.class);
+//		TaxManagementOperationViewPresenter taxManagementOperationPresenter = new TaxManagementOperationViewPresenter(null, coveragesService, taxManagementOperationView);
+//		taxManagementOperationPresenter.setOperation(taxManagementOperation);
+//		this.sectionOperationPresenters.add((OperationViewPresenter)taxManagementOperationPresenter);
+//		
+//		/* CLIENT GROUP MANAGEMENT */
+//		ClientGroupManagementOperation clientGroupManagementOperation = (ClientGroupManagementOperation)GWT.create(ClientGroupManagementOperation.class);
+//		ClientGroupManagementOperationView clientGroupManagementOperationView = (ClientGroupManagementOperationView) GWT.create(ClientGroupManagementOperationView.class);
+//		ClientGroupServiceAsync clientGroupService = (ClientGroupServiceAsync) GWT.create(ClientGroupService.class);
+//		ClientGroupManagementOperationViewPresenter clientGroupManagementOperationPresenter = new ClientGroupManagementOperationViewPresenter(null, clientGroupService, clientGroupManagementOperationView);
+//		clientGroupManagementOperationPresenter.setOperation(clientGroupManagementOperation);
+//		this.sectionOperationPresenters.add((OperationViewPresenter)clientGroupManagementOperationPresenter);
 	}
 	
 	public String getId() {

@@ -55,13 +55,13 @@ public class DocumentManager implements HasHandlers {
 		}
 	}
 
-	public void addDocument(final Document c, final AsyncCallback<Document> callBack) {
+	public void addDocument(String processId, final Document c, final AsyncCallback<Document> callBack) {
 		c.ownerId = this.entityId;
 		if(offlineMode) {
 			this.documents.add(c);
 			callBack.onSuccess(c);
 		}else{
-			service.createDocument(this.entityId, c, new BigBangAsyncCallback<Document>() {
+			service.createDocument(processId, this.entityId, c, new BigBangAsyncCallback<Document>() {
 
 				@Override
 				public void onSuccess(Document result) {
@@ -72,55 +72,55 @@ public class DocumentManager implements HasHandlers {
 		}
 	}
 
-	public void updateDocument(final Document c, final AsyncCallback<Document> callBack) {
-		c.ownerId = this.entityId;
-		if(offlineMode) {
-			for(Document ct : documents) {
-				if(ct.id.equals(c.id)){
-					documents.set(documents.indexOf(ct), c);
-					break;
-				}
-			}
-			callBack.onSuccess(c);
-		}else{
-			service.saveDocument(this.entityId, c, new BigBangAsyncCallback<Document>() {
-
-				@Override
-				public void onSuccess(Document result) {
-					for(Document ct : documents) {
-						if(ct.id.equals(c.id)){
-							documents.set(documents.indexOf(ct), result);
-							break;
-						}
-					}
-					callBack.onSuccess(result);
-				}
-			});
-		}
+	public void updateDocument(String processId, final Document c, final AsyncCallback<Document> callBack) {
+//		c.ownerId = this.entityId;
+//		if(offlineMode) {
+//			for(Document ct : documents) {
+//				if(ct.id.equals(c.id)){
+//					documents.set(documents.indexOf(ct), c);
+//					break;
+//				}
+//			}
+//			callBack.onSuccess(c);
+//		}else{
+//			service.saveDocument(processId, this.entityId, c, new BigBangAsyncCallback<Document>() {
+//
+//				@Override
+//				public void onSuccess(Document result) {
+//					for(Document ct : documents) {
+//						if(ct.id.equals(c.id)){
+//							documents.set(documents.indexOf(ct), result);
+//							break;
+//						}
+//					}
+//					callBack.onSuccess(result);
+//				}
+//			});
+//		}
 	}
 
-	public void deleteDocument(final Document c, final AsyncCallback<Void> callback){
-		c.ownerId = this.entityId;
-		if(offlineMode) {
-			documents.remove(c);
-			callback.onSuccess(null);
-		}else{
-			//TODO
-			service.deleteDocument(entityId, null, new BigBangAsyncCallback<Void>() {
-
-				@Override
-				public void onSuccess(Void result) {
-					documents.remove(c);
-					callback.onSuccess(result);
-				}
-
-				@Override
-				public void onFailure(Throwable caught) {
-					callback.onFailure(null);
-					super.onFailure(caught);
-				}
-			});
-		}
+	public void deleteDocument(String processId, final Document c, final AsyncCallback<Void> callback){
+//		c.ownerId = this.entityId;
+//		if(offlineMode) {
+//			documents.remove(c);
+//			callback.onSuccess(null);
+//		}else{
+//			//TODO
+//			service.deleteDocument(entityId, null, new BigBangAsyncCallback<Void>() {
+//
+//				@Override
+//				public void onSuccess(Void result) {
+//					documents.remove(c);
+//					callback.onSuccess(result);
+//				}
+//
+//				@Override
+//				public void onFailure(Throwable caught) {
+//					callback.onFailure(null);
+//					super.onFailure(caught);
+//				}
+//			});
+//		}
 	}
 
 	public List<Document> getDocuments(){

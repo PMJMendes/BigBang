@@ -29,7 +29,7 @@ public class UserBrokerImpl extends DataBroker<User> implements UserBroker {
 	public UserBrokerImpl(UserServiceAsync service) {
 		this.service = service;
 		this.dataElementId = BigBangConstants.EntityIds.USER;
-		cache.setThreshold(0);
+		this.cache.setThreshold(0);
 	}
 
 	@Override

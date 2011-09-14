@@ -10,13 +10,17 @@ import bigBang.library.client.userInterface.BigBangOperationsToolBar;
 import bigBang.library.client.userInterface.ContactsPreviewList;
 import bigBang.library.client.userInterface.BigBangOperationsToolBar.SUB_MENU;
 import bigBang.library.client.userInterface.view.View;
+import bigBang.module.generalSystemModule.client.GeneralSystemModule;
 import bigBang.module.generalSystemModule.client.userInterface.InsuranceAgencyList;
 import bigBang.module.generalSystemModule.client.userInterface.InsuranceAgencyListEntry;
 import bigBang.module.generalSystemModule.client.userInterface.presenter.InsuranceAgencyManagementOperationViewPresenter;
 import bigBang.module.generalSystemModule.client.userInterface.presenter.InsuranceAgencyManagementOperationViewPresenter.Action;
+import bigBang.module.generalSystemModule.shared.ModuleConstants;
 
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.logical.shared.ValueChangeEvent;
+import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.MenuItem;
@@ -62,7 +66,7 @@ public class InsuranceAgencyManagementOperationView extends View implements Insu
 		SplitLayoutPanel contentWrapper = new SplitLayoutPanel();
 
 		contactsPreviewList = new ContactsPreviewList();
-		contactsPreviewList.setSize("100%", "100%");
+		contactsPreviewList.setReadOnly(true);
 
 		VerticalPanel formWrapper = new VerticalPanel();
 		formWrapper.setSize("100%", "100%");
@@ -100,6 +104,17 @@ public class InsuranceAgencyManagementOperationView extends View implements Insu
 
 		formWrapper.add(insuranceAgencyForm);
 		formWrapper.setCellHeight(insuranceAgencyForm, "100%");
+		
+		insuranceAgencyForm.addValueChangeHandler(new ValueChangeHandler<InsuranceAgency>() {
+			@Override
+			public void onValueChange(ValueChangeEvent<InsuranceAgency> event) {
+				InsuranceAgency agency = event.getValue();
+				if(agency != null){
+					contactsPreviewList.setContactProcessAndOperationAndOwner(GeneralSystemModule.processId, ModuleConstants.OpTypeIDs.ManageCompanies, agency.id);
+				}
+				contactsPreviewList.setReadOnly(agency == null); //TODO FJVC
+			}
+		});
 
 		contentWrapper.addEast(contactsPreviewList, 250);
 		contentWrapper.add(formWrapper);

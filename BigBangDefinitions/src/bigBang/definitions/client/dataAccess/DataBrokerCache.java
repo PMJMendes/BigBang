@@ -118,7 +118,7 @@ public class DataBrokerCache {
 	 * @param o The item
 	 */
 	public void add(String id, Object o){
-		if(store.size() == threshold){
+		if(threshold != 0 && store.size() == threshold){
 			clean();
 		}
 		CacheEntry entry = new CacheEntry(o);
