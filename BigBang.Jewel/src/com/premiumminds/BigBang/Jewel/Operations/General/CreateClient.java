@@ -83,9 +83,8 @@ public class CreateClient
 			if ( mobjDocOps != null )
 				mobjDocOps.RunSubOp(pdb, lobjAux.getKey());
 
-			lobjScript = PNScript.GetInstance(Engine.FindEntity(Engine.getCurrentNameSpace(),
-					Jewel.Petri.Constants.ObjID_PNScript), Constants.ProcID_Client);
-			lobjScript.CreateInstance(Engine.getCurrentNameSpace(), lobjAux.getKey(), null);
+			lobjScript = PNScript.GetInstance(Engine.getCurrentNameSpace(), Constants.ProcID_Client);
+			lobjScript.CreateInstance(Engine.getCurrentNameSpace(), lobjAux.getKey(), null, pdb);
 
 			mobjData.mid = lobjAux.getKey();
 			mobjData.midProcess = lobjAux.GetProcessID();

@@ -20,7 +20,7 @@ public class TriggerDisallowPolicies
 
 	protected UUID OpID()
 	{
-		return Constants.OPID_TriggerAllowPolicies;
+		return Constants.OPID_TriggerDisallowPolicies;
 	}
 
 	public String ShortDesc()

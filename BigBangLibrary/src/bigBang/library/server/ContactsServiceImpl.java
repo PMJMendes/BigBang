@@ -5,13 +5,6 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.UUID;
 
-import com.premiumminds.BigBang.Jewel.BigBangJewelException;
-import com.premiumminds.BigBang.Jewel.Constants;
-import com.premiumminds.BigBang.Jewel.ZipCodeBridge;
-import com.premiumminds.BigBang.Jewel.Operations.ContactOps;
-import com.premiumminds.BigBang.Jewel.Operations.General.ManageInsurers;
-import com.premiumminds.BigBang.Jewel.Operations.General.ManageMediators;
-
 import Jewel.Engine.Engine;
 import Jewel.Engine.Constants.ObjectGUIDs;
 import Jewel.Engine.DataAccess.MasterDB;
@@ -19,8 +12,7 @@ import Jewel.Engine.Implementation.Entity;
 import Jewel.Engine.Interfaces.IEntity;
 import Jewel.Engine.SysObjects.ObjectBase;
 import Jewel.Petri.Interfaces.IOperation;
-import Jewel.Petri.Interfaces.IStep;
-import Jewel.Petri.Objects.PNStep;
+import Jewel.Petri.Objects.PNOperation;
 import Jewel.Petri.SysObjects.JewelPetriException;
 import Jewel.Petri.SysObjects.Operation;
 import bigBang.definitions.shared.Address;
@@ -30,6 +22,14 @@ import bigBang.definitions.shared.ZipCode;
 import bigBang.library.interfaces.ContactsService;
 import bigBang.library.shared.BigBangException;
 import bigBang.library.shared.SessionExpiredException;
+
+import com.premiumminds.BigBang.Jewel.BigBangJewelException;
+import com.premiumminds.BigBang.Jewel.Constants;
+import com.premiumminds.BigBang.Jewel.ZipCodeBridge;
+import com.premiumminds.BigBang.Jewel.Operations.ContactOps;
+import com.premiumminds.BigBang.Jewel.Operations.Client.ManageClientData;
+import com.premiumminds.BigBang.Jewel.Operations.General.ManageInsurers;
+import com.premiumminds.BigBang.Jewel.Operations.General.ManageMediators;
 
 public class ContactsServiceImpl
 	extends EngineImplementor
@@ -118,7 +118,7 @@ public class ContactsServiceImpl
 		return larrAux.toArray(new Contact[larrAux.size()]);
 	}
 
-	public Contact createContact(String opInstanceId, Contact contact)
+	public Contact createContact(String procId, String opId, Contact contact)
 		throws SessionExpiredException, BigBangException
 	{
 		Contact[] larrAux;
@@ -132,11 +132,11 @@ public class ContactsServiceImpl
 		try
 		{
 			lopCOps.marrCreate = BuildContactTree(lopCOps, larrAux, (contact.isSubContact ? Constants.ObjID_Contact :
-					GetParentType(UUID.fromString(opInstanceId))));
+					GetParentType(UUID.fromString(procId), UUID.fromString(opId))));
 			lopCOps.marrModify = null;
 			lopCOps.marrDelete = null;
 
-			lobjOp = BuildOuterOp(UUID.fromString(opInstanceId), lopCOps);
+			lobjOp = BuildOuterOp(UUID.fromString(procId), UUID.fromString(opId), lopCOps);
 			lobjOp.Execute();
 		}
 		catch (Throwable e)
@@ -148,7 +148,7 @@ public class ContactsServiceImpl
 		return larrAux[0];
 	}
 
-	public Contact saveContact(String opInstanceId, Contact contact)
+	public Contact saveContact(String procId, String opId, Contact contact)
 		throws SessionExpiredException, BigBangException
 	{
 		Contact[] larrAux;
@@ -162,11 +162,11 @@ public class ContactsServiceImpl
 		try
 		{
 			lopCOps.marrModify = BuildContactTree(lopCOps, larrAux, (contact.isSubContact ? Constants.ObjID_Contact :
-					GetParentType(UUID.fromString(opInstanceId))));
+					GetParentType(UUID.fromString(procId), UUID.fromString(opId))));
 			lopCOps.marrCreate = null;
 			lopCOps.marrDelete = null;
 
-			lobjOp = BuildOuterOp(UUID.fromString(opInstanceId), lopCOps);
+			lobjOp = BuildOuterOp(UUID.fromString(procId), UUID.fromString(opId), lopCOps);
 			lobjOp.Execute();
 		}
 		catch (Throwable e)
@@ -177,7 +177,7 @@ public class ContactsServiceImpl
 		return larrAux[0];
 	}
 
-	public void deleteContact(String opInstanceId, Contact contact)
+	public void deleteContact(String procId, String opId, Contact contact)
 		throws SessionExpiredException, BigBangException
 	{
 		Contact[] larrAux;
@@ -191,11 +191,11 @@ public class ContactsServiceImpl
 		try
 		{
 			lopCOps.marrDelete = BuildContactTree(lopCOps, larrAux, (contact.isSubContact ? Constants.ObjID_Contact :
-					GetParentType(UUID.fromString(opInstanceId))));
+					GetParentType(UUID.fromString(procId), UUID.fromString(opId))));
 			lopCOps.marrCreate = null;
 			lopCOps.marrModify = null;
 
-			lobjOp = BuildOuterOp(UUID.fromString(opInstanceId), lopCOps);
+			lobjOp = BuildOuterOp(UUID.fromString(procId), UUID.fromString(opId), lopCOps);
 			lobjOp.Execute();
 		}
 		catch (Throwable e)
@@ -343,17 +343,15 @@ public class ContactsServiceImpl
 		}
 	}
 
-	private UUID GetParentType(UUID pidOpInstance)
+	private UUID GetParentType(UUID pidProc, UUID pidOp)
 		throws JewelPetriException
 	{
-		IStep lobjStep;
 		IOperation lobjOp;
 		Operation lobjAux;
 		UUID lidResult;
 
-		lobjStep = (IStep)PNStep.GetInstance(Engine.getCurrentNameSpace(), pidOpInstance);
-		lobjOp = lobjStep.GetOperation();
-		lobjAux = lobjOp.GetNewInstance(lobjStep.GetProcessID());
+		lobjOp = (IOperation)PNOperation.GetInstance(Engine.getCurrentNameSpace(), pidOp);
+		lobjAux = lobjOp.GetNewInstance(pidProc);
 
 		lidResult = null;
 
@@ -363,23 +361,24 @@ public class ContactsServiceImpl
 		if ( lobjAux instanceof ManageMediators )
 			lidResult = Constants.ObjID_Mediator;
 
+		if ( lobjAux instanceof ManageClientData )
+			lidResult = Constants.ObjID_Client;
+
 		if ( lidResult == null )
 			throw new JewelPetriException("Erro: A operação pretendida não permite movimentos de Contactos.");
 
 		return lidResult;
 	}
 
-	private Operation BuildOuterOp(UUID pidOpInstance, ContactOps pobjInner)
+	private Operation BuildOuterOp(UUID pidProc, UUID pidOp, ContactOps pobjInner)
 		throws JewelPetriException
 	{
-		IStep lobjStep;
 		IOperation lobjOp;
 		Operation lobjResult;
 		boolean lbFound;
 
-		lobjStep = (IStep)PNStep.GetInstance(Engine.getCurrentNameSpace(), pidOpInstance);
-		lobjOp = lobjStep.GetOperation();
-		lobjResult = lobjOp.GetNewInstance(lobjStep.GetProcessID());
+		lobjOp = (IOperation)PNOperation.GetInstance(Engine.getCurrentNameSpace(), pidOp);
+		lobjResult = lobjOp.GetNewInstance(pidProc);
 
 		lbFound = false;
 
@@ -400,6 +399,14 @@ public class ContactsServiceImpl
 			((ManageMediators)lobjResult).marrDelete = null;
 			((ManageMediators)lobjResult).mobjContactOps = pobjInner;
 			((ManageMediators)lobjResult).mobjDocOps = null;
+			lbFound = true;
+		}
+
+		if ( lobjResult instanceof ManageClientData )
+		{
+			((ManageClientData)lobjResult).mobjData = null;
+			((ManageClientData)lobjResult).mobjContactOps = pobjInner;
+			((ManageClientData)lobjResult).mobjDocOps = null;
 			lbFound = true;
 		}
 

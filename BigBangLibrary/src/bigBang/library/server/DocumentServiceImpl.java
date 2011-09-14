@@ -11,12 +11,11 @@ import Jewel.Engine.Implementation.Entity;
 import Jewel.Engine.Interfaces.IEntity;
 import Jewel.Engine.SysObjects.FileXfer;
 import Jewel.Petri.Interfaces.IOperation;
-import Jewel.Petri.Interfaces.IStep;
-import Jewel.Petri.Objects.PNStep;
+import Jewel.Petri.Objects.PNOperation;
 import Jewel.Petri.SysObjects.JewelPetriException;
 import Jewel.Petri.SysObjects.Operation;
-import bigBang.definitions.shared.Document;
 import bigBang.definitions.shared.DocInfo;
+import bigBang.definitions.shared.Document;
 import bigBang.library.interfaces.DocumentService;
 import bigBang.library.shared.BigBangException;
 import bigBang.library.shared.SessionExpiredException;
@@ -24,6 +23,7 @@ import bigBang.library.shared.SessionExpiredException;
 import com.premiumminds.BigBang.Jewel.BigBangJewelException;
 import com.premiumminds.BigBang.Jewel.Constants;
 import com.premiumminds.BigBang.Jewel.Operations.DocOps;
+import com.premiumminds.BigBang.Jewel.Operations.Client.ManageClientData;
 import com.premiumminds.BigBang.Jewel.Operations.General.ManageInsurers;
 import com.premiumminds.BigBang.Jewel.Operations.General.ManageMediators;
 
@@ -114,7 +114,7 @@ public class DocumentServiceImpl
 		return larrAux.toArray(new Document[larrAux.size()]);
 	}
 
-	public Document createDocument(String opInstanceId, Document document)
+	public Document createDocument(String procId, String opId, Document document)
 		throws SessionExpiredException, BigBangException
 	{
 		Document[] larrAux;
@@ -127,11 +127,11 @@ public class DocumentServiceImpl
 		lopDOps = new DocOps();
 		try
 		{
-			lopDOps.marrCreate = BuildDocTree(lopDOps, larrAux, GetParentType(UUID.fromString(opInstanceId)));
+			lopDOps.marrCreate = BuildDocTree(lopDOps, larrAux, GetParentType(UUID.fromString(procId), UUID.fromString(opId)));
 			lopDOps.marrModify = null;
 			lopDOps.marrDelete = null;
 
-			lobjOp = BuildOuterOp(UUID.fromString(opInstanceId), lopDOps);
+			lobjOp = BuildOuterOp(UUID.fromString(procId), UUID.fromString(opId), lopDOps);
 			lobjOp.Execute();
 		}
 		catch (Throwable e)
@@ -143,7 +143,7 @@ public class DocumentServiceImpl
 		return larrAux[0];
 	}
 
-	public Document saveDocument(String opInstanceId, Document document)
+	public Document saveDocument(String procId, String opId, Document document)
 		throws SessionExpiredException, BigBangException
 	{
 		Document[] larrAux;
@@ -156,11 +156,11 @@ public class DocumentServiceImpl
 		lopDOps = new DocOps();
 		try
 		{
-			lopDOps.marrModify = BuildDocTree(lopDOps, larrAux, GetParentType(UUID.fromString(opInstanceId)));
+			lopDOps.marrModify = BuildDocTree(lopDOps, larrAux, GetParentType(UUID.fromString(procId), UUID.fromString(opId)));
 			lopDOps.marrCreate = null;
 			lopDOps.marrDelete = null;
 
-			lobjOp = BuildOuterOp(UUID.fromString(opInstanceId), lopDOps);
+			lobjOp = BuildOuterOp(UUID.fromString(procId), UUID.fromString(opId), lopDOps);
 			lobjOp.Execute();
 		}
 		catch (Throwable e)
@@ -171,7 +171,7 @@ public class DocumentServiceImpl
 		return larrAux[0];
 	}
 
-	public void deleteDocument(String opInstanceId, String id)
+	public void deleteDocument(String procId, String opId, String id)
 		throws SessionExpiredException, BigBangException
 	{
 		Document[] larrAux;
@@ -185,11 +185,11 @@ public class DocumentServiceImpl
 		lopDOps = new DocOps();
 		try
 		{
-			lopDOps.marrDelete = BuildDocTree(lopDOps, larrAux, GetParentType(UUID.fromString(opInstanceId)));
+			lopDOps.marrDelete = BuildDocTree(lopDOps, larrAux, GetParentType(UUID.fromString(procId), UUID.fromString(opId)));
 			lopDOps.marrCreate = null;
 			lopDOps.marrModify = null;
 
-			lobjOp = BuildOuterOp(UUID.fromString(opInstanceId), lopDOps);
+			lobjOp = BuildOuterOp(UUID.fromString(procId), UUID.fromString(opId), lopDOps);
 			lobjOp.Execute();
 		}
 		catch (Throwable e)
@@ -308,17 +308,15 @@ public class DocumentServiceImpl
 			parrDocuments[i].id = parrResults[i].mid.toString();
 	}
 
-	private UUID GetParentType(UUID pidOpInstance)
+	private UUID GetParentType(UUID pidProc, UUID pidOp)
 		throws JewelPetriException
 	{
-		IStep lobjStep;
 		IOperation lobjOp;
 		Operation lobjAux;
 		UUID lidResult;
 
-		lobjStep = (IStep)PNStep.GetInstance(Engine.getCurrentNameSpace(), pidOpInstance);
-		lobjOp = lobjStep.GetOperation();
-		lobjAux = lobjOp.GetNewInstance(lobjStep.GetProcessID());
+		lobjOp = (IOperation)PNOperation.GetInstance(Engine.getCurrentNameSpace(), pidOp);
+		lobjAux = lobjOp.GetNewInstance(pidProc);
 
 		lidResult = null;
 
@@ -328,23 +326,24 @@ public class DocumentServiceImpl
 		if ( lobjAux instanceof ManageMediators )
 			lidResult = Constants.ObjID_Mediator;
 
+		if ( lobjAux instanceof ManageClientData )
+			lidResult = Constants.ObjID_Client;
+
 		if ( lidResult == null )
 			throw new JewelPetriException("Erro: A operação pretendida não permite movimentos de Documentos.");
 
 		return lidResult;
 	}
 
-	private Operation BuildOuterOp(UUID pidOpInstance, DocOps pobjInner)
+	private Operation BuildOuterOp(UUID pidProc, UUID pidOp, DocOps pobjInner)
 		throws JewelPetriException
 	{
-		IStep lobjStep;
 		IOperation lobjOp;
 		Operation lobjResult;
 		boolean lbFound;
 
-		lobjStep = (IStep)PNStep.GetInstance(Engine.getCurrentNameSpace(), pidOpInstance);
-		lobjOp = lobjStep.GetOperation();
-		lobjResult = lobjOp.GetNewInstance(lobjStep.GetProcessID());
+		lobjOp = (IOperation)PNOperation.GetInstance(Engine.getCurrentNameSpace(), pidOp);
+		lobjResult = lobjOp.GetNewInstance(pidProc);
 
 		lbFound = false;
 
@@ -365,6 +364,14 @@ public class DocumentServiceImpl
 			((ManageMediators)lobjResult).marrDelete = null;
 			((ManageMediators)lobjResult).mobjContactOps = null;
 			((ManageMediators)lobjResult).mobjDocOps = pobjInner;
+			lbFound = true;
+		}
+
+		if ( lobjResult instanceof ManageClientData )
+		{
+			((ManageClientData)lobjResult).mobjData = null;
+			((ManageClientData)lobjResult).mobjContactOps = null;
+			((ManageClientData)lobjResult).mobjDocOps = pobjInner;
 			lbFound = true;
 		}
 
