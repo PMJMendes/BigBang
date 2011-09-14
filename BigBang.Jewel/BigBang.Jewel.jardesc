@@ -11,13 +11,17 @@
         </sealing>
     </manifest>
     <selectedElements exportClassFiles="true" exportJavaFiles="false" exportOutputFolder="false">
-        <javaElement handleIdentifier="=BigBang.Jewel/src&lt;com.premiumminds.BigBang.Jewel.Operations"/>
+        <javaElement handleIdentifier="=BigBang.Jewel/src&lt;com.premiumminds.BigBang.Jewel.Operations{ContactOps.java"/>
         <javaElement handleIdentifier="=BigBang.Jewel/src&lt;com.premiumminds.BigBang.Jewel.Forms"/>
         <javaElement handleIdentifier="=BigBang.Jewel/src&lt;com.premiumminds.BigBang"/>
+        <javaElement handleIdentifier="=BigBang.Jewel/src&lt;com.premiumminds.BigBang.Jewel.Operations.DataObjects"/>
         <javaElement handleIdentifier="=BigBang.Jewel/src&lt;com.premiumminds"/>
         <javaElement handleIdentifier="=BigBang.Jewel/src&lt;com"/>
+        <javaElement handleIdentifier="=BigBang.Jewel/src&lt;com.premiumminds.BigBang.Jewel.Operations.General"/>
         <javaElement handleIdentifier="=BigBang.Jewel/src&lt;com.premiumminds.BigBang.Jewel.Processes"/>
         <javaElement handleIdentifier="=BigBang.Jewel/src&lt;com.premiumminds.BigBang.Jewel"/>
+        <javaElement handleIdentifier="=BigBang.Jewel/src&lt;com.premiumminds.BigBang.Jewel.Operations.Client"/>
         <javaElement handleIdentifier="=BigBang.Jewel/src&lt;com.premiumminds.BigBang.Jewel.Objects"/>
+        <javaElement handleIdentifier="=BigBang.Jewel/src&lt;com.premiumminds.BigBang.Jewel.Operations{DocOps.java"/>
     </selectedElements>
 </jardesc>

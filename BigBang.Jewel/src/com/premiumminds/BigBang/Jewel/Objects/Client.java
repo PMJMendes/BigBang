@@ -4,18 +4,18 @@ import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.UUID;
 
-import com.premiumminds.BigBang.Jewel.BigBangJewelException;
-import com.premiumminds.BigBang.Jewel.Constants;
-
 import Jewel.Engine.Engine;
 import Jewel.Engine.DataAccess.MasterDB;
 import Jewel.Engine.Implementation.Entity;
 import Jewel.Engine.Interfaces.IEntity;
 import Jewel.Engine.SysObjects.JewelEngineException;
-import Jewel.Engine.SysObjects.ObjectBase;
+import Jewel.Petri.SysObjects.ProcessData;
+
+import com.premiumminds.BigBang.Jewel.BigBangJewelException;
+import com.premiumminds.BigBang.Jewel.Constants;
 
 public class Client
-	extends ObjectBase
+	extends ProcessData
 {
     public static Client GetInstance(UUID pidNameSpace, UUID pidKey)
 		throws BigBangJewelException
@@ -33,6 +33,16 @@ public class Client
 	public void Initialize()
 		throws JewelEngineException
 	{
+	}
+
+	public UUID GetProcessID()
+	{
+		return (UUID)getAt(22);
+	}
+
+	public void SetProcessID(UUID pidProcess)
+	{
+		internalSetAt(22, pidProcess);
 	}
 
     public Contact[] GetCurrentContacts()

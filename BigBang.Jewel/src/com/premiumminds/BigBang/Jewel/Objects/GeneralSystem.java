@@ -66,4 +66,14 @@ public class GeneralSystem
     {
     	return "(Default)";
     }
+
+	public UUID GetProcessID()
+	{
+		return (UUID)getAt(0);
+	}
+
+	public void SetProcessID(UUID pidProcess)
+	{
+		internalSetAt(0, pidProcess);
+	}
 }

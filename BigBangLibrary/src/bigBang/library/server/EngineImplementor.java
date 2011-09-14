@@ -144,6 +144,19 @@ public class EngineImplementor
         return larrUserData;
     }
 
+	public void pushNameSpace(UUID pidNameSpace)
+		throws JewelEngineException
+	{
+    	throw new UnsupportedOperationException();
+		
+	}
+
+	public void popNameSpace()
+		throws JewelEngineException
+	{
+    	throw new UnsupportedOperationException();
+	}
+
     public String getCurrentPath()
     {
     	return System.getenv("user.dir");

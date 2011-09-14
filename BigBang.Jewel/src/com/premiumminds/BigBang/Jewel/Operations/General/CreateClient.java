@@ -9,7 +9,8 @@ import Jewel.Engine.DataAccess.MasterDB;
 import Jewel.Engine.DataAccess.SQLServer;
 import Jewel.Engine.Implementation.Entity;
 import Jewel.Engine.Interfaces.IEntity;
-import Jewel.Petri.Objects.PNProcess;
+import Jewel.Petri.Interfaces.IScript;
+import Jewel.Petri.Objects.PNScript;
 import Jewel.Petri.SysObjects.JewelPetriException;
 import Jewel.Petri.SysObjects.Operation;
 
@@ -67,7 +68,7 @@ public class CreateClient
 		throws JewelPetriException
 	{
 		Client lobjAux;
-		PNProcess lobjProcess;
+		IScript lobjScript;
 
 		try
 		{
@@ -77,26 +78,17 @@ public class CreateClient
 			mobjData.ToObject(lobjAux);
 			lobjAux.SaveToDb(pdb);
 
-			lobjProcess = (PNProcess)Engine.GetWorkInstance(Engine.FindEntity(Engine.getCurrentNameSpace(),
-					Jewel.Petri.Constants.ObjID_PNProcess), (UUID)null);
-			lobjProcess.setAt(0, Constants.ProcID_Client);
-			lobjProcess.setAt(1, lobjAux.getKey());
-			lobjProcess.setAt(2, mobjData.midManager);
-			lobjProcess.setAt(4, true);
-			lobjProcess.SaveToDb(pdb);
-
-			lobjAux.setAt(22, lobjProcess.getKey());
-			lobjAux.SaveToDb(pdb);
-
 			if ( mobjContactOps != null )
 				mobjContactOps.RunSubOp(pdb, lobjAux.getKey());
 			if ( mobjDocOps != null )
 				mobjDocOps.RunSubOp(pdb, lobjAux.getKey());
 
-			lobjProcess.Setup();
+			lobjScript = PNScript.GetInstance(Engine.FindEntity(Engine.getCurrentNameSpace(),
+					Jewel.Petri.Constants.ObjID_PNScript), Constants.ProcID_Client);
+			lobjScript.CreateInstance(Engine.getCurrentNameSpace(), lobjAux.getKey(), null);
 
 			mobjData.mid = lobjAux.getKey();
-			mobjData.midProcess = lobjProcess.getKey();
+			mobjData.midProcess = lobjAux.GetProcessID();
 			mobjData.mobjPrevValues = null;
 		}
 		catch (Throwable e)

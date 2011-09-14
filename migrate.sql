@@ -312,19 +312,7 @@ where gestor not in (91, 98, 99);
 
 
 
-insert into credite_egs.tblPNProcesses (PK, FKScript, FKData, FKManager, IsRunning) values ('49153B77-1391-4E3A-81D2-9EB800CB68B7', '37A989E2-9D1F-470C-A59E-9EB1008A97A5', '1822E9C1-700F-49A5-AB6F-9EB500C632D2', '091B8442-B7B0-40FA-B517-9EB00068A390', 1);
-
-insert into credite_egs.tblPNSteps (PK, FKProcess, FKOperation, FKLevel)
-select CAST(CAST(NEWID() AS BINARY(10)) + CAST(GETDATE() AS BINARY(6)) AS UNIQUEIDENTIFIER) PK,
-'49153B77-1391-4E3A-81D2-9EB800CB68B7' FKProcess, PK FKOperation, FKDefaultLevel FKLevel
-from bigbang.tblPNOperations
-where FKScript='37A989E2-9D1F-470C-A59E-9EB1008A97A5'  and (OpName like 'Manage%' or OpName like 'Create%');
-
-insert into credite_egs.tblPNNodes (PK, FKProcess, FKController, NodeCount)
-select CAST(CAST(NEWID() AS BINARY(10)) + CAST(GETDATE() AS BINARY(6)) AS UNIQUEIDENTIFIER) PK,
-p.PK FKProcess, c.PK FKController, c.StartCount NodeCount
-from credite_egs.tblPNProcesses p inner join bigbang.tblPNControllers c on c.FKScript=p.FKScript
-where p.FKScript='37A989E2-9D1F-470C-A59E-9EB1008A97A5';
+insert into credite_egs.tblPNProcesses (PK, FKScript, FKData, FKManager, IsRunning) values ('49153B77-1391-4E3A-81D2-9EB800CB68B7', '37A989E2-9D1F-470C-A59E-9EB1008A97A5', '1822E9C1-700F-49A5-AB6F-9EB500C632D2', '091B8442-B7B0-40FA-B517-9EB00068A390', 0);
 
 insert into credite_egs.tblProcGeneralSystem (PK, FKProcess) values ('1822E9C1-700F-49A5-AB6F-9EB500C632D2', '49153B77-1391-4E3A-81D2-9EB800CB68B7');
 
@@ -609,39 +597,15 @@ and r.CartaCondData is not null and r.CartaCondData<>'';
 
 insert into credite_egs.tblPNProcesses (PK, FKScript, FKData, FKManager, IsRunning)
 select CAST(CAST(NEWID() AS BINARY(10)) + CAST(GETDATE() AS BINARY(6)) AS UNIQUEIDENTIFIER) PK,
-'100E701A-EDC5-4D9C-A221-9F09013D7954' FKScript, PK FKData, FKManager FKManager, 1 IsRunning
+'100E701A-EDC5-4D9C-A221-9F09013D7954' FKScript, PK FKData, FKManager FKManager, 0 IsRunning
 from credite_egs.tblBBClients;
 
 update credite_egs.tblBBClients set FKProcess=p.PK
 from credite_egs.tblBBClients c inner join credite_egs.tblPNProcesses p on p.FKData=c.PK;
 
-insert into credite_egs.tblPNSteps (PK, FKProcess, FKOperation, FKLevel)
-select CAST(CAST(NEWID() AS BINARY(10)) + CAST(GETDATE() AS BINARY(6)) AS UNIQUEIDENTIFIER) PK,
-p.PK FKProcess, o.PK FKOperation, o.FKDefaultLevel FKLevel
-from credite_egs.tblPNProcesses p, bigbang.tblPNOperations o
-where p.FKScript='100E701A-EDC5-4D9C-A221-9F09013D7954' and o.PK in ('A9A8F4ED-74C2-473C-873C-9F0901435C1C', 'A99DCEF5-91BA-4CFA-9E70-9F090146FAE4');
-
-insert into credite_egs.tblPNNodes (PK, FKProcess, FKController, NodeCount)
-select CAST(CAST(NEWID() AS BINARY(10)) + CAST(GETDATE() AS BINARY(6)) AS UNIQUEIDENTIFIER) PK,
-p.PK FKProcess, c.PK FKController, c.StartCount NodeCount
-from credite_egs.tblPNProcesses p inner join bigbang.tblPNControllers c on c.FKScript=p.FKScript
-where p.FKScript='100E701A-EDC5-4D9C-A221-9F09013D7954';
 
 
-
-insert into amartins.tblPNProcesses (PK, FKScript, FKData, FKManager, IsRunning) values ('FDF0DBAA-22BD-4679-AF72-9EB800CB024D', '37A989E2-9D1F-470C-A59E-9EB1008A97A5', '8E5E3504-875A-4313-91A9-9EB500C6295C', '091B8442-B7B0-40FA-B517-9EB00068A390', 1);
-
-insert into amartins.tblPNSteps (PK, FKProcess, FKOperation, FKLevel)
-select CAST(CAST(NEWID() AS BINARY(10)) + CAST(GETDATE() AS BINARY(6)) AS UNIQUEIDENTIFIER) PK,
-'FDF0DBAA-22BD-4679-AF72-9EB800CB024D' FKProcess, PK FKOperation, FKDefaultLevel FKLevel
-from bigbang.tblPNOperations
-where FKScript='37A989E2-9D1F-470C-A59E-9EB1008A97A5'  and (OpName like 'Manage%' or OpName like 'Create%');
-
-insert into amartins.tblPNNodes (PK, FKProcess, FKController, NodeCount)
-select CAST(CAST(NEWID() AS BINARY(10)) + CAST(GETDATE() AS BINARY(6)) AS UNIQUEIDENTIFIER) PK,
-p.PK FKProcess, c.PK FKController, c.StartCount NodeCount
-from amartins.tblPNProcesses p inner join bigbang.tblPNControllers c on c.FKScript=p.FKScript
-where p.FKScript='37A989E2-9D1F-470C-A59E-9EB1008A97A5';
+insert into amartins.tblPNProcesses (PK, FKScript, FKData, FKManager, IsRunning) values ('FDF0DBAA-22BD-4679-AF72-9EB800CB024D', '37A989E2-9D1F-470C-A59E-9EB1008A97A5', '8E5E3504-875A-4313-91A9-9EB500C6295C', '091B8442-B7B0-40FA-B517-9EB00068A390', 0);
 
 insert into amartins.tblProcGeneralSystem (PK, FKProcess) values ('8E5E3504-875A-4313-91A9-9EB500C6295C', 'FDF0DBAA-22BD-4679-AF72-9EB800CB024D');
 
@@ -912,20 +876,8 @@ and r.CartaCondData is not null and r.CartaCondData<>'';
 
 insert into amartins.tblPNProcesses (PK, FKScript, FKData, FKManager, IsRunning)
 select CAST(CAST(NEWID() AS BINARY(10)) + CAST(GETDATE() AS BINARY(6)) AS UNIQUEIDENTIFIER) PK,
-'100E701A-EDC5-4D9C-A221-9F09013D7954' FKScript, PK FKData, FKManager FKManager, 1 IsRunning
+'100E701A-EDC5-4D9C-A221-9F09013D7954' FKScript, PK FKData, FKManager FKManager, 0 IsRunning
 from amartins.tblBBClients;
 
 update amartins.tblBBClients set FKProcess=p.PK
 from amartins.tblBBClients c inner join amartins.tblPNProcesses p on p.FKData=c.PK;
-
-insert into amartins.tblPNSteps (PK, FKProcess, FKOperation, FKLevel)
-select CAST(CAST(NEWID() AS BINARY(10)) + CAST(GETDATE() AS BINARY(6)) AS UNIQUEIDENTIFIER) PK,
-p.PK FKProcess, o.PK FKOperation, o.FKDefaultLevel FKLevel
-from amartins.tblPNProcesses p, bigbang.tblPNOperations o
-where p.FKScript='100E701A-EDC5-4D9C-A221-9F09013D7954' and o.PK in ('A9A8F4ED-74C2-473C-873C-9F0901435C1C', 'A99DCEF5-91BA-4CFA-9E70-9F090146FAE4');
-
-insert into amartins.tblPNNodes (PK, FKProcess, FKController, NodeCount)
-select CAST(CAST(NEWID() AS BINARY(10)) + CAST(GETDATE() AS BINARY(6)) AS UNIQUEIDENTIFIER) PK,
-p.PK FKProcess, c.PK FKController, c.StartCount NodeCount
-from amartins.tblPNProcesses p inner join bigbang.tblPNControllers c on c.FKScript=p.FKScript
-where p.FKScript='100E701A-EDC5-4D9C-A221-9F09013D7954';

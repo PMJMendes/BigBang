@@ -114,8 +114,6 @@ public abstract class SearchServiceBase
 	        	lstrSQLB.append(" FROM (").append(lrefClients.SQLForSelectMulti()).append(") [Aux] WHERE ").append(pstrCriteria)
 	        			.append(" ORDER BY ").append(pstrSort);
 	        	lstrSQL = lstrSQLB.toString();
-//	        	if ( lstrSQL.length() > 0 )
-//	        		throw new BigBangException(lstrSQL);
 	        	lrsRows = ldb.OpenRecordset(lstrSQL);
 			}
 			catch (Throwable e)
