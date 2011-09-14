@@ -315,7 +315,7 @@ public abstract class SearchServiceBase
 					{
 						lrefSteps = Entity.GetInstance(Engine.FindEntity(Engine.getCurrentNameSpace(),
 								Jewel.Petri.Constants.ObjID_PNStep));
-						lstrBuffer.append(lrefSteps.SQLForSelectByMembers(larrMembers, larrValues, null));
+						lstrBuffer.append(lrefSteps.SQLForSelectMultiFiltered(larrMembers, larrValues));
 					}
 					catch (Throwable e)
 					{
