@@ -97,6 +97,7 @@ public class HistoryServiceImpl
 
 			lobjRunnable = (UndoOperation)lobjAux;
 			lobjRunnable.midSourceLog = lobjLog.getKey();
+			lobjRunnable.midNameSpace = lobjLog.getNameSpace();
 			lobjRunnable.mobjSourceOp = (UndoableOperation)lobjData;
 			lobjRunnable.mrefLog = lobjLog;
 
