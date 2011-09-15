@@ -10,6 +10,7 @@ import Jewel.Engine.Implementation.Entity;
 import Jewel.Engine.SysObjects.ObjectBase;
 import Jewel.Petri.SysObjects.JewelPetriException;
 import Jewel.Petri.SysObjects.SubOperation;
+import Jewel.Petri.SysObjects.UndoableOperation;
 
 import com.premiumminds.BigBang.Jewel.BigBangJewelException;
 import com.premiumminds.BigBang.Jewel.Constants;
@@ -324,6 +325,66 @@ public class ContactOps
 		{
 			throw new JewelPetriException(e.getMessage(), e);
 		}
+	}
+
+	public UndoableOperation.UndoSet[] GetSubSet()
+	{
+		int llngCreates, llngModifies, llngDeletes;
+		UndoableOperation.UndoSet[] larrResult;
+		int i, j;
+
+		llngCreates = 0;
+		if ( marrCreate != null )
+		{
+			for ( i = 0; i < marrCreate.length; i++ )
+				llngCreates += CountCreateContacts(marrCreate[i]);
+		}
+
+		llngModifies = 0;
+		if ( marrModify != null )
+		{
+			for ( i = 0; i < marrModify.length; i++ )
+				llngModifies += CountModifyContacts(marrModify[i]);
+		}
+
+		llngDeletes = 0;
+		if ( marrDelete != null )
+		{
+			for ( i = 0; i < marrDelete.length; i++ )
+				llngModifies += CountDeleteContacts(marrDelete[i]);
+		}
+
+		if ( llngCreates + llngModifies + llngDeletes == 0 )
+			return new UndoableOperation.UndoSet[0];
+
+		larrResult = new UndoableOperation.UndoSet[1];
+		larrResult[0].midType = Constants.ObjID_Contact;
+		larrResult[0].marrDeleted = new UUID[llngCreates];
+		larrResult[0].marrChanged = new UUID[llngModifies];
+		larrResult[0].marrCreated = new UUID[llngDeletes];
+
+		if ( marrCreate != null )
+		{
+			j = 0;
+			for ( i = 0; i < marrCreate.length; i ++ )
+				j = IdCreateContacts(larrResult[0].marrDeleted, j, marrCreate[i]);
+		}
+
+		if ( marrModify != null )
+		{
+			j = 0;
+			for ( i = 0; i < marrModify.length; i ++ )
+				j = IdModifyContacts(larrResult[0].marrChanged, j, marrModify[i]);
+		}
+
+		if ( marrDelete != null )
+		{
+			j = 0;
+			for ( i = 0; i < marrDelete.length; i ++ )
+				j = IdDeleteContacts(larrResult[0].marrCreated, j, marrDelete[i]);
+		}
+
+		return larrResult;
 	}
 
 	private void CreateContact(SQLServer pdb, ContactData pobjData, UUID pidOwner)
@@ -644,6 +705,7 @@ public class ContactOps
 			lobjAux.setAt(5, pobjData.midZipCode);
 			lobjAux.setAt(6, pobjData.midContactType);
 			lobjAux.SaveToDb(pdb);
+			pobjData.mid = lobjAux.getKey();
 		}
 		catch (Throwable e)
 		{
@@ -674,6 +736,79 @@ public class ContactOps
 			for ( i = 0; i < pobjData.marrSubContacts.length; i++ )
 				UndoDeleteContact(pdb, pobjData.marrSubContacts[i], lobjAux.getKey());
 		}
+	}
+
+	private int CountCreateContacts(ContactData pobjData)
+	{
+		int llngTotal;
+		int i;
+
+		llngTotal = 1;
+
+		if ( pobjData.marrSubContacts != null )
+		{
+			for ( i = 0; i < pobjData.marrSubContacts.length; i++ )
+				llngTotal += CountCreateContacts(pobjData.marrSubContacts[i]);
+		}
+
+		return llngTotal;
+	}
+
+	private int CountModifyContacts(ContactData pobjData)
+	{
+		return 1;
+	}
+
+	private int CountDeleteContacts(ContactData pobjData)
+	{
+		int llngTotal;
+		int i;
+
+		llngTotal = 1;
+
+		if ( pobjData.marrSubContacts != null )
+		{
+			for ( i = 0; i < pobjData.marrSubContacts.length; i++ )
+				llngTotal += CountDeleteContacts(pobjData.marrSubContacts[i]);
+		}
+
+		return llngTotal;
+	}
+
+	private int IdCreateContacts(UUID[] parrBuffer, int plngStart, ContactData pobjData)
+	{
+		int i;
+
+		parrBuffer[plngStart] = pobjData.mid;
+		plngStart++;
+		if ( pobjData.marrSubContacts != null )
+		{
+			for ( i = 0; i < pobjData.marrSubContacts.length; i++ )
+				plngStart = IdCreateContacts(parrBuffer, plngStart, pobjData.marrSubContacts[i]);
+		}
+
+		return plngStart;
+	}
+
+	private int IdModifyContacts(UUID[] parrBuffer, int plngStart, ContactData pobjData)
+	{
+		parrBuffer[plngStart] = pobjData.mid;
+		return plngStart + 1;
+	}
+
+	private int IdDeleteContacts(UUID[] parrBuffer, int plngStart, ContactData pobjData)
+	{
+		int i;
+
+		parrBuffer[plngStart] = pobjData.mid;
+		plngStart++;
+		if ( pobjData.marrSubContacts != null )
+		{
+			for ( i = 0; i < pobjData.marrSubContacts.length; i++ )
+				plngStart = IdDeleteContacts(parrBuffer, plngStart, pobjData.marrSubContacts[i]);
+		}
+
+		return plngStart;
 	}
 
 	private void Describe(StringBuilder pstrString, ContactData pobjData, String pstrLineBreak, boolean pbRecurse)

@@ -310,6 +310,34 @@ public class ManageClientGroups
 		}
 	}
 
+	public UndoSet[] GetSets()
+	{
+		UndoSet[] larrResult;
+		int llngCreates, llngModifies, llngDeletes;
+
+		llngCreates = ( marrCreateGroups == null ? 0 : CountCreateGroups(marrCreateGroups) );
+		llngModifies = ( marrModifyGroups == null ? 0 : CountModifyGroups(marrModifyGroups) );
+		llngDeletes = ( marrDeleteGroups == null ? 0 : CountDeleteGroups(marrDeleteGroups) );
+
+		if ( llngCreates + llngModifies + llngDeletes == 0 )
+			return new UndoSet[0];
+
+		larrResult = new UndoSet[1];
+		larrResult[0] = new UndoSet();
+		larrResult[0].midType = Constants.ObjID_ClientGroup;
+
+		larrResult[0].marrDeleted = new UUID[llngCreates];
+		IdCreateGroups(larrResult[0].marrDeleted, 0, marrCreateGroups);
+
+		larrResult[0].marrChanged = new UUID[llngModifies];
+		IdModifyGroups(larrResult[0].marrChanged, 0, marrModifyGroups);
+
+		larrResult[0].marrCreated = new UUID[llngDeletes];
+		IdDeleteGroups(larrResult[0].marrCreated, 0, marrDeleteGroups);
+
+		return larrResult;
+	}
+
 	private void CreateGroups(SQLServer pdb, GroupData[] parrData, UUID pidParent)
 		throws BigBangJewelException
 	{
@@ -467,6 +495,7 @@ public class ManageClientGroups
 				lobjAuxGroup.setAt(0, parrData[i].mstrName);
 				lobjAuxGroup.setAt(1, parrData[i].midParent);
 				lobjAuxGroup.SaveToDb(pdb);
+				parrData[i].mid = lobjAuxGroup.getKey();
 			}
 			catch (Throwable e)
 			{
@@ -476,6 +505,86 @@ public class ManageClientGroups
 			if ( parrData[i].marrSubGroups != null )
 				UndoDeleteGroups(pdb, parrData[i].marrSubGroups, lobjAuxGroup.getKey());
 		}
+	}
+
+	private int CountCreateGroups(GroupData[] parrData)
+	{
+		int llngTotal;
+		int i;
+
+		llngTotal = parrData.length;
+
+		for ( i = 0; i < parrData.length; i++ )
+		{
+			if ( parrData[i].marrSubGroups != null )
+				llngTotal += CountCreateGroups(parrData[i].marrSubGroups);
+		}
+
+		return llngTotal;
+	}
+
+	private int CountModifyGroups(GroupData[] parrData)
+	{
+		return parrData.length;
+	}
+
+	private int CountDeleteGroups(GroupData[] parrData)
+	{
+		int llngTotal;
+		int i;
+
+		llngTotal = parrData.length;
+
+		for ( i = 0; i < parrData.length; i++ )
+		{
+			if ( parrData[i].marrSubGroups != null )
+				llngTotal += CountDeleteGroups(parrData[i].marrSubGroups);
+		}
+
+		return llngTotal;
+	}
+
+	private int IdCreateGroups(UUID[] parrBuffer, int plngStart, GroupData[] parrData)
+	{
+		int i;
+
+		for ( i = 0; i < parrData.length; i++ )
+		{
+			parrBuffer[plngStart] = parrData[i].mid;
+			plngStart++;
+			if ( parrData[i].marrSubGroups != null )
+				plngStart = IdCreateGroups(parrBuffer, plngStart, parrData[i].marrSubGroups);
+		}
+
+		return plngStart;
+	}
+
+	private int IdModifyGroups(UUID[] parrBuffer, int plngStart, GroupData[] parrData)
+	{
+		int i;
+
+		for ( i = 0; i < parrData.length; i++ )
+		{
+			parrBuffer[plngStart] = parrData[i].mid;
+			plngStart++;
+		}
+
+		return plngStart;
+	}
+
+	private int IdDeleteGroups(UUID[] parrBuffer, int plngStart, GroupData[] parrData)
+	{
+		int i;
+
+		for ( i = 0; i < parrData.length; i++ )
+		{
+			parrBuffer[plngStart] = parrData[i].mid;
+			plngStart++;
+			if ( parrData[i].marrSubGroups != null )
+				plngStart = IdDeleteGroups(parrBuffer, plngStart, parrData[i].marrSubGroups);
+		}
+
+		return plngStart;
 	}
 
 	private void DescribeGroup(StringBuilder pstrString, GroupData pobjData, String pstrLineBreak, String pstrPrefix, boolean pbRecurse)

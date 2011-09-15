@@ -77,6 +77,10 @@ public class HistoryServiceImpl
         Operation lobjAux;
         UndoOperation lobjRunnable;
         Operation lobjData;
+		ILog lobjNewLog;
+		HistoryItem lobjResult;
+		UndoableOperation.UndoSet[] larrAux;
+		int i, j;
 
 		if ( Engine.getCurrentUser() == null )
 			throw new SessionExpiredException();
@@ -85,15 +89,15 @@ public class HistoryServiceImpl
 		{
 			lobjLog = PNLog.GetInstance(Engine.getCurrentNameSpace(), UUID.fromString(undoItemId));
 			if ( lobjLog.GetOperation().GetUndoOp() == null )
-				throw new BigBangException("Error: Operation does not define a corresponding undo operation.");
+				throw new BigBangException("Error: Source operation does not define a corresponding undo operation.");
 
 			lobjAux = lobjLog.GetOperation().GetUndoOp().GetNewInstance(lobjLog.GetProcessID());
 			if ( !(lobjAux instanceof UndoOperation) )
-				throw new BigBangException("Error: Undo Operation has an improper definition.");
+				throw new BigBangException("Error: Undo operation has an improper definition.");
 
 			lobjData = lobjLog.GetOperationData();
 			if ( !(lobjData instanceof UndoableOperation) )
-				throw new BigBangException("Error: Operation does not define undo methods.");
+				throw new BigBangException("Error: Source operation does not define undo methods.");
 
 			lobjRunnable = (UndoOperation)lobjAux;
 			lobjRunnable.midSourceLog = lobjLog.getKey();
@@ -108,7 +112,48 @@ public class HistoryServiceImpl
 			throw new BigBangException(e.getMessage(), e);
 		}
 
-		return null;
+		lobjNewLog = lobjRunnable.getLog();
+
+		lobjResult = new HistoryItem();
+		lobjResult.id = lobjNewLog.getKey().toString();
+
+		try
+		{
+			lobjResult.username = lobjNewLog.GetUser().getUserName();
+			lobjResult.canUndo = lobjNewLog.CanUndo();
+		}
+		catch (JewelPetriException e)
+		{
+			throw new BigBangException(e.getMessage(), e);
+		}
+
+		lobjResult.timeStamp = lobjNewLog.GetTimestamp().toString();
+		lobjResult.shortDescription = lobjRunnable.ShortDesc();
+		lobjResult.description = lobjRunnable.LongDesc("<br />");
+		lobjResult.undoDescription = "N/A";
+
+		larrAux = ((UndoableOperation)lobjData).GetSets();
+
+		lobjResult.alteredEntities = new HistoryItem.AlteredItem[larrAux.length];
+
+		for ( i = 0; i < larrAux.length; i++ )
+		{
+			lobjResult.alteredEntities[i] = new HistoryItem.AlteredItem();
+			lobjResult.alteredEntities[i].typeId = larrAux[i].midType.toString();
+
+			lobjResult.alteredEntities[i].createdIds = new String[larrAux[i].marrCreated.length];
+			for ( j = 0; j < larrAux[i].marrCreated.length; j++ )
+				lobjResult.alteredEntities[i].createdIds[j] = larrAux[i].marrCreated[j].toString();
+
+			lobjResult.alteredEntities[i].modifiedIds = new String[larrAux[i].marrChanged.length];
+			for ( j = 0; j < larrAux[i].marrChanged.length; j++ )
+				lobjResult.alteredEntities[i].modifiedIds[j] = larrAux[i].marrChanged[j].toString();
+
+			lobjResult.alteredEntities[i].deletedIds = new String[larrAux[i].marrDeleted.length];
+			for ( j = 0; j < larrAux[i].marrDeleted.length; j++ )
+				lobjResult.alteredEntities[i].deletedIds[j] = larrAux[i].marrDeleted[j].toString();
+		}
+		return lobjResult;
 	}
 
 	protected UUID getObjectID()

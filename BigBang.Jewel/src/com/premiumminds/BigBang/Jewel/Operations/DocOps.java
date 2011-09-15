@@ -10,6 +10,7 @@ import Jewel.Engine.SysObjects.FileXfer;
 import Jewel.Engine.SysObjects.ObjectBase;
 import Jewel.Petri.SysObjects.JewelPetriException;
 import Jewel.Petri.SysObjects.SubOperation;
+import Jewel.Petri.SysObjects.UndoableOperation;
 
 import com.premiumminds.BigBang.Jewel.BigBangJewelException;
 import com.premiumminds.BigBang.Jewel.Constants;
@@ -324,6 +325,37 @@ public class DocOps
 			}
 	}
 
+	public UndoableOperation.UndoSet[] GetSubSet()
+	{
+		int llngCreates, llngModifies, llngDeletes;
+		UndoableOperation.UndoSet[] larrResult;
+		int i;
+
+		llngCreates = ( marrCreate == null ? 0 : marrCreate.length );
+		llngModifies = ( marrModify == null ? 0 : marrModify.length );
+		llngDeletes = ( marrDelete == null ? 0 : marrDelete.length );
+
+		if ( llngCreates + llngModifies + llngDeletes == 0 )
+			return new UndoableOperation.UndoSet[0];
+
+		larrResult = new UndoableOperation.UndoSet[1];
+		larrResult[0].midType = Constants.ObjID_Document;
+		larrResult[0].marrDeleted = new UUID[llngCreates];
+		larrResult[0].marrChanged = new UUID[llngModifies];
+		larrResult[0].marrCreated = new UUID[llngDeletes];
+
+		for ( i = 0; i < llngCreates; i ++ )
+			larrResult[0].marrDeleted[i] = marrCreate[0].mid;
+
+		for ( i = 0; i < llngModifies; i ++ )
+			larrResult[0].marrChanged[i] = marrModify[0].mid;
+
+		for ( i = 0; i < llngDeletes; i ++ )
+			larrResult[0].marrCreated[i] = marrDelete[0].mid;
+
+		return larrResult;
+	}
+
 	private void CreateDocument(SQLServer pdb, DocumentData pobjData, UUID pidOwner)
 		throws BigBangJewelException
 	{
@@ -621,6 +653,7 @@ public class DocOps
 			lobjAux.setAt(4, pobjData.mstrText);
 			lobjAux.setAt(5, pobjData.mobjFile);
 			lobjAux.SaveToDb(pdb);
+			pobjData.mid = lobjAux.getKey();
 		}
 		catch (Throwable e)
 		{

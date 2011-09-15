@@ -1,6 +1,7 @@
 package com.premiumminds.BigBang.Jewel.Operations.General;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.UUID;
 
 import Jewel.Engine.Engine;
@@ -542,6 +543,310 @@ public class ManageMediators
 		{
 			throw new JewelPetriException(e.getMessage(), e);
 		}
+	}
+
+	public UndoSet[] GetSets()
+	{
+		UndoSet[] larrResult;
+		int llngCreates, llngModifies, llngDeletes;
+		UndoSet lobjContacts, lobjDocs;
+		int llngSize;
+		int i, j;
+
+		llngCreates = ( marrCreate == null ? 0 : marrCreate.length );
+		llngModifies = ( marrModify == null ? 0 : marrModify.length );
+		llngDeletes = ( marrDelete == null ? 0 : marrDelete.length );
+		lobjContacts = GetContactSet();
+		lobjDocs = GetDocSet();
+
+		llngSize = 0;
+		if ( llngCreates + llngModifies + llngDeletes > 0 )
+			llngSize++;
+		if ( lobjContacts != null )
+			llngSize++;
+		if ( lobjDocs != null )
+			llngSize++;
+		if ( llngSize == 0)
+			return new UndoSet[0];
+
+		larrResult = new UndoSet[llngSize];
+		i = 0;
+
+		if ( llngCreates + llngModifies + llngDeletes > 0 )
+		{
+			larrResult[i] = new UndoSet();
+			larrResult[i].midType = Constants.ObjID_Mediator;
+			larrResult[i].marrDeleted = new UUID[llngCreates];
+			larrResult[i].marrChanged = new UUID[llngModifies];
+			larrResult[i].marrCreated = new UUID[llngDeletes];
+
+			for ( j = 0; j < llngCreates; j ++ )
+				larrResult[i].marrDeleted[j] = marrCreate[j].mid;
+
+			for ( j = 0; j < llngModifies; j ++ )
+				larrResult[i].marrChanged[j] = marrModify[j].mid;
+
+			for ( j = 0; j < llngDeletes; j ++ )
+				larrResult[i].marrCreated[j] = marrDelete[j].mid;
+
+			i++;
+		}
+
+		if ( lobjContacts != null )
+		{
+			larrResult[i] = lobjContacts;
+			i++;
+		}
+
+		if ( lobjDocs != null )
+		{
+			larrResult[i] = lobjDocs;
+			i++;
+		}
+
+		return larrResult;
+	}
+
+	private UndoSet GetContactSet()
+	{
+		int llngCreates, llngModifies, llngDeletes;
+		ArrayList<UndoSet> larrTally;
+		UndoSet[] larrAux;
+		UndoSet lobjResult;
+		int i, j, iD, iM, iC;
+
+		llngCreates = 0;
+		llngModifies = 0;
+		llngDeletes = 0;
+
+		larrTally = new ArrayList<UndoSet>();
+
+		if ( marrCreate != null )
+		{
+			for ( i = 0; i < marrCreate.length; i++ )
+			{
+				if ( marrCreate[i].mobjContactOps != null )
+				{
+					larrAux = marrCreate[i].mobjContactOps.GetSubSet();
+					for ( j = 0; j < larrAux.length; j++ )
+					{
+						if ( !Constants.ObjID_Contact.equals(larrAux[j].midType) )
+							continue;
+						llngDeletes += larrAux[j].marrDeleted.length;
+						llngModifies += larrAux[j].marrChanged.length;
+						llngCreates += larrAux[j].marrCreated.length;
+						larrTally.add(larrAux[j]);
+					}
+				}
+			}
+		}
+
+		if ( marrModify != null )
+		{
+			for ( i = 0; i < marrModify.length; i++ )
+			{
+				if ( marrModify[i].mobjContactOps != null )
+				{
+					larrAux = marrModify[i].mobjContactOps.GetSubSet();
+					for ( j = 0; j < larrAux.length; j++ )
+					{
+						if ( !Constants.ObjID_Contact.equals(larrAux[j].midType) )
+							continue;
+						llngDeletes += larrAux[j].marrDeleted.length;
+						llngModifies += larrAux[j].marrChanged.length;
+						llngCreates += larrAux[j].marrCreated.length;
+						larrTally.add(larrAux[j]);
+					}
+				}
+			}
+		}
+
+		if ( marrDelete != null )
+		{
+			for ( i = 0; i < marrDelete.length; i++ )
+			{
+				if ( marrDelete[i].mobjContactOps != null )
+				{
+					larrAux = marrDelete[i].mobjContactOps.GetSubSet();
+					for ( j = 0; j < larrAux.length; j++ )
+					{
+						if ( !Constants.ObjID_Contact.equals(larrAux[j].midType) )
+							continue;
+						llngDeletes += larrAux[j].marrDeleted.length;
+						llngModifies += larrAux[j].marrChanged.length;
+						llngCreates += larrAux[j].marrCreated.length;
+						larrTally.add(larrAux[j]);
+					}
+				}
+			}
+		}
+
+		if ( mobjContactOps != null )
+		{
+			larrAux = mobjContactOps.GetSubSet();
+			for ( j = 0; j < larrAux.length; j++ )
+			{
+				if ( !Constants.ObjID_Contact.equals(larrAux[j].midType) )
+					continue;
+				llngDeletes += larrAux[j].marrDeleted.length;
+				llngModifies += larrAux[j].marrChanged.length;
+				llngCreates += larrAux[j].marrCreated.length;
+				larrTally.add(larrAux[j]);
+			}
+		}
+
+		if ( llngDeletes + llngModifies + llngCreates == 0)
+			return null;
+
+		larrAux = larrTally.toArray(new UndoSet[larrTally.size()]);
+
+		lobjResult = new UndoSet();
+		lobjResult.midType = Constants.ObjID_Contact;
+		lobjResult.marrDeleted = new UUID[llngDeletes];
+		lobjResult.marrChanged = new UUID[llngModifies];
+		lobjResult.marrCreated = new UUID[llngCreates];
+
+		iD = 0;
+		iM = 0;
+		iC = 0;
+
+		for ( i = 0; i < larrAux.length; i++ )
+		{
+			for ( j = 0; j < larrAux[i].marrDeleted.length; j++ )
+				lobjResult.marrDeleted[iD + j] = larrAux[i].marrDeleted[j];
+			iD += larrAux[i].marrDeleted.length;
+
+			for ( j = 0; j < larrAux[i].marrChanged.length; j++ )
+				lobjResult.marrChanged[iM + j] = larrAux[i].marrChanged[j];
+			iM += larrAux[i].marrChanged.length;
+
+			for ( j = 0; j < larrAux[i].marrCreated.length; j++ )
+				lobjResult.marrCreated[iC + j] = larrAux[i].marrCreated[j];
+			iC += larrAux[i].marrCreated.length;
+		}
+
+		return lobjResult;
+	}
+
+	private UndoSet GetDocSet()
+	{
+		int llngCreates, llngModifies, llngDeletes;
+		ArrayList<UndoSet> larrTally;
+		UndoSet[] larrAux;
+		UndoSet lobjResult;
+		int i, j, iD, iM, iC;
+
+		llngCreates = 0;
+		llngModifies = 0;
+		llngDeletes = 0;
+
+		larrTally = new ArrayList<UndoSet>();
+
+		if ( marrCreate != null )
+		{
+			for ( i = 0; i < marrCreate.length; i++ )
+			{
+				if ( marrCreate[i].mobjDocOps != null )
+				{
+					larrAux = marrCreate[i].mobjDocOps.GetSubSet();
+					for ( j = 0; j < larrAux.length; j++ )
+					{
+						if ( !Constants.ObjID_Document.equals(larrAux[j].midType) )
+							continue;
+						llngDeletes += larrAux[j].marrDeleted.length;
+						llngModifies += larrAux[j].marrChanged.length;
+						llngCreates += larrAux[j].marrCreated.length;
+						larrTally.add(larrAux[j]);
+					}
+				}
+			}
+		}
+
+		if ( marrModify != null )
+		{
+			for ( i = 0; i < marrModify.length; i++ )
+			{
+				if ( marrModify[i].mobjDocOps != null )
+				{
+					larrAux = marrModify[i].mobjDocOps.GetSubSet();
+					for ( j = 0; j < larrAux.length; j++ )
+					{
+						if ( !Constants.ObjID_Document.equals(larrAux[j].midType) )
+							continue;
+						llngDeletes += larrAux[j].marrDeleted.length;
+						llngModifies += larrAux[j].marrChanged.length;
+						llngCreates += larrAux[j].marrCreated.length;
+						larrTally.add(larrAux[j]);
+					}
+				}
+			}
+		}
+
+		if ( marrDelete != null )
+		{
+			for ( i = 0; i < marrDelete.length; i++ )
+			{
+				if ( marrDelete[i].mobjDocOps != null )
+				{
+					larrAux = marrDelete[i].mobjDocOps.GetSubSet();
+					for ( j = 0; j < larrAux.length; j++ )
+					{
+						if ( !Constants.ObjID_Document.equals(larrAux[j].midType) )
+							continue;
+						llngDeletes += larrAux[j].marrDeleted.length;
+						llngModifies += larrAux[j].marrChanged.length;
+						llngCreates += larrAux[j].marrCreated.length;
+						larrTally.add(larrAux[j]);
+					}
+				}
+			}
+		}
+
+		if ( mobjDocOps != null )
+		{
+			larrAux = mobjDocOps.GetSubSet();
+			for ( j = 0; j < larrAux.length; j++ )
+			{
+				if ( !Constants.ObjID_Document.equals(larrAux[j].midType) )
+					continue;
+				llngDeletes += larrAux[j].marrDeleted.length;
+				llngModifies += larrAux[j].marrChanged.length;
+				llngCreates += larrAux[j].marrCreated.length;
+				larrTally.add(larrAux[j]);
+			}
+		}
+
+		if ( llngDeletes + llngModifies + llngCreates == 0)
+			return null;
+
+		larrAux = larrTally.toArray(new UndoSet[larrTally.size()]);
+
+		lobjResult = new UndoSet();
+		lobjResult.midType = Constants.ObjID_Document;
+		lobjResult.marrDeleted = new UUID[llngDeletes];
+		lobjResult.marrChanged = new UUID[llngModifies];
+		lobjResult.marrCreated = new UUID[llngCreates];
+
+		iD = 0;
+		iM = 0;
+		iC = 0;
+
+		for ( i = 0; i < larrAux.length; i++ )
+		{
+			for ( j = 0; j < larrAux[i].marrDeleted.length; j++ )
+				lobjResult.marrDeleted[iD + j] = larrAux[i].marrDeleted[j];
+			iD += larrAux[i].marrDeleted.length;
+
+			for ( j = 0; j < larrAux[i].marrChanged.length; j++ )
+				lobjResult.marrChanged[iM + j] = larrAux[i].marrChanged[j];
+			iM += larrAux[i].marrChanged.length;
+
+			for ( j = 0; j < larrAux[i].marrCreated.length; j++ )
+				lobjResult.marrCreated[iC + j] = larrAux[i].marrCreated[j];
+			iC += larrAux[i].marrCreated.length;
+		}
+
+		return lobjResult;
 	}
 
 	private void Describe(StringBuilder pstrString, MediatorData pobjData, String pstrLineBreak)

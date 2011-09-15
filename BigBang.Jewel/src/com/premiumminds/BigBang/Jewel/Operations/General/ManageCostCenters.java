@@ -359,6 +359,7 @@ public class ManageCostCenters
 					lobjAux.setAt(0, marrDelete[i].mstrCode);
 					lobjAux.setAt(1, marrDelete[i].mstrName);
 					lobjAux.SaveToDb(pdb);
+					marrDelete[i].mid = lobjAux.getKey();
 				}
 			}
 		}
@@ -366,6 +367,38 @@ public class ManageCostCenters
 		{
 			throw new JewelPetriException(e.getMessage(), e);
 		}
+	}
+
+	public UndoSet[] GetSets()
+	{
+		UndoSet[] larrResult;
+		int llngCreates, llngModifies, llngDeletes;
+		int i;
+
+		llngCreates = ( marrCreate == null ? 0 : marrCreate.length );
+		llngModifies = ( marrModify == null ? 0 : marrModify.length );
+		llngDeletes = ( marrDelete == null ? 0 : marrDelete.length );
+
+		if ( llngCreates + llngModifies + llngDeletes == 0 )
+			return new UndoSet[0];
+
+		larrResult = new UndoSet[1];
+		larrResult[0] = new UndoSet();
+		larrResult[0].midType = Constants.ObjID_CostCenter;
+
+		larrResult[0].marrDeleted = new UUID[llngCreates];
+		for ( i = 0; i < llngCreates; i ++ )
+			larrResult[0].marrDeleted[i] = marrCreate[i].mid;
+
+		larrResult[0].marrChanged = new UUID[llngModifies];
+		for ( i = 0; i < llngModifies; i ++ )
+			larrResult[0].marrChanged[i] = marrModify[i].mid;
+
+		larrResult[0].marrCreated = new UUID[llngDeletes];
+		for ( i = 0; i < llngDeletes; i ++ )
+			larrResult[0].marrCreated[i] = marrDelete[i].mid;
+
+		return larrResult;
 	}
 
 	private void Describe(StringBuilder pstrString, CostCenterData pobjData, String pstrLineBreak)

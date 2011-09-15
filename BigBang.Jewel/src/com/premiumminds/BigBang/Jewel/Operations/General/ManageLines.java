@@ -747,6 +747,115 @@ public class ManageLines
 		}
 	}
 
+	public UndoSet[] GetSets()
+	{
+		int llngCreateLines, llngModifyLines, llngDeleteLines;
+		int llngCreateSubLines, llngModifySubLines, llngDeleteSubLines;
+		int llngCreateCoverages, llngModifyCoverages, llngDeleteCoverages;
+		int llngSize;
+		UndoSet[] larrResult;
+		int i, j;
+
+		llngCreateLines = CountLines(marrCreateLines);
+		llngModifyLines = CountLines(marrModifyLines);
+		llngDeleteLines = CountLines(marrDeleteLines);
+
+		llngCreateSubLines = CountSubLines(marrCreateLines) + CountSubLines(marrCreateSubLines);
+		llngModifySubLines = CountSubLines(marrModifyLines) + CountSubLines(marrModifySubLines);
+		llngDeleteSubLines = CountSubLines(marrDeleteLines) + CountSubLines(marrDeleteSubLines);
+
+		llngCreateCoverages = CountCoverages(marrCreateLines) + CountCoverages(marrCreateSubLines) +
+				CountCoverages(marrCreateCoverages);
+		llngModifyCoverages = CountCoverages(marrModifyLines) + CountCoverages(marrModifySubLines) +
+				CountCoverages(marrModifyCoverages);
+		llngDeleteCoverages = CountCoverages(marrDeleteLines) + CountCoverages(marrDeleteSubLines) +
+				CountCoverages(marrDeleteCoverages);
+
+		llngSize = 0;
+		if ( llngCreateLines + llngModifyLines + llngDeleteLines > 0 )
+			llngSize++;
+		if ( llngCreateSubLines + llngModifySubLines + llngDeleteSubLines > 0 )
+			llngSize++;
+		if ( llngCreateCoverages + llngModifyCoverages + llngDeleteCoverages > 0 )
+			llngSize++;
+		if ( llngSize == 0 )
+			return new UndoSet[0];
+
+		larrResult = new UndoSet[llngSize];
+		i = 0;
+
+		if ( llngCreateLines + llngModifyLines + llngDeleteLines > 0 )
+		{
+			larrResult[i] = new UndoSet();
+			larrResult[i].midType = Constants.ObjID_Line;
+			larrResult[i].marrDeleted = new UUID[llngCreateLines];
+			larrResult[i].marrChanged = new UUID[llngModifyLines];
+			larrResult[i].marrCreated = new UUID[llngDeleteLines];
+
+			j = 0;
+			j = IdLines(larrResult[i].marrDeleted, j, marrCreateLines);
+
+			j = 0;
+			j = IdLines(larrResult[i].marrChanged, j, marrModifyLines);
+
+			j = 0;
+			j = IdLines(larrResult[i].marrCreated, j, marrDeleteLines);
+
+			i++;
+		}
+
+		if ( llngCreateSubLines + llngModifySubLines + llngDeleteSubLines > 0 )
+		{
+			larrResult[i] = new UndoSet();
+			larrResult[i].midType = Constants.ObjID_SubLine;
+			larrResult[i].marrDeleted = new UUID[llngCreateSubLines];
+			larrResult[i].marrChanged = new UUID[llngModifySubLines];
+			larrResult[i].marrCreated = new UUID[llngDeleteSubLines];
+
+			j = 0;
+			j = IdSubLines(larrResult[i].marrDeleted, j, marrCreateLines);
+			j = IdSubLines(larrResult[i].marrDeleted, j, marrCreateSubLines);
+
+			j = 0;
+			j = IdSubLines(larrResult[i].marrChanged, j, marrModifyLines);
+			j = IdSubLines(larrResult[i].marrChanged, j, marrModifySubLines);
+
+			j = 0;
+			j = IdSubLines(larrResult[i].marrCreated, j, marrDeleteLines);
+			j = IdSubLines(larrResult[i].marrCreated, j, marrDeleteSubLines);
+
+			i++;
+		}
+
+		if ( llngCreateCoverages + llngModifyCoverages + llngDeleteCoverages > 0 )
+		{
+			larrResult[i] = new UndoSet();
+			larrResult[i].midType = Constants.ObjID_Coverage;
+			larrResult[i].marrDeleted = new UUID[llngCreateCoverages];
+			larrResult[i].marrChanged = new UUID[llngModifyCoverages];
+			larrResult[i].marrCreated = new UUID[llngDeleteCoverages];
+
+			j = 0;
+			j = IdCoverages(larrResult[i].marrDeleted, j, marrCreateLines);
+			j = IdCoverages(larrResult[i].marrDeleted, j, marrCreateSubLines);
+			j = IdCoverages(larrResult[i].marrDeleted, j, marrCreateCoverages);
+
+			j = 0;
+			j = IdCoverages(larrResult[i].marrChanged, j, marrModifyLines);
+			j = IdCoverages(larrResult[i].marrChanged, j, marrModifySubLines);
+			j = IdCoverages(larrResult[i].marrChanged, j, marrModifyCoverages);
+
+			j = 0;
+			j = IdCoverages(larrResult[i].marrCreated, j, marrDeleteLines);
+			j = IdCoverages(larrResult[i].marrCreated, j, marrDeleteSubLines);
+			j = IdCoverages(larrResult[i].marrCreated, j, marrDeleteCoverages);
+
+			i++;
+		}
+
+		return larrResult;
+	}
+
 	private void CreateLines(SQLServer pdb, LineData[] parrData)
 		throws BigBangJewelException
 	{
@@ -1231,6 +1340,7 @@ public class ManageLines
 				lobjAuxLine.setAt(0, parrData[i].mstrName);
 				lobjAuxLine.setAt(1, parrData[i].midCategory);
 				lobjAuxLine.SaveToDb(pdb);
+				parrData[i].mid = lobjAuxLine.getKey();
 			}
 			catch (Throwable e)
 			{
@@ -1259,6 +1369,7 @@ public class ManageLines
 				lobjAuxSubLine.setAt(0, parrData[i].mstrName);
 				lobjAuxSubLine.setAt(1, parrData[i].midLine);
 				lobjAuxSubLine.SaveToDb(pdb);
+				parrData[i].mid = lobjAuxSubLine.getKey();
 			}
 			catch (Throwable e)
 			{
@@ -1287,12 +1398,163 @@ public class ManageLines
 				lobjAuxCoverage.setAt(0, parrData[i].mstrName);
 				lobjAuxCoverage.setAt(1, parrData[i].midSubLine);
 				lobjAuxCoverage.SaveToDb(pdb);
+				parrData[i].mid = lobjAuxCoverage.getKey();
 			}
 			catch (Throwable e)
 			{
 				throw new BigBangJewelException(e.getMessage(), e);
 			}
 		}
+	}
+
+	private int CountLines(LineData[] parrData)
+	{
+		return ( parrData == null ? 0 : parrData.length);
+	}
+
+	private int CountSubLines(LineData[] parrData)
+	{
+		int llngTotal;
+		int i;
+
+		if ( parrData == null )
+			return 0;
+
+		llngTotal = 0;
+
+		for ( i = 0; i < parrData.length; i++ )
+			llngTotal += CountSubLines(parrData[i].marrSubLines);
+
+		return llngTotal;
+	}
+
+	private int CountSubLines(SubLineData[] parrData)
+	{
+		return ( parrData == null ? 0 : parrData.length);
+	}
+
+	private int CountCoverages(LineData[] parrData)
+	{
+		int llngTotal;
+		int i;
+
+		llngTotal = 0;
+
+		if ( parrData == null )
+			return 0;
+
+		for ( i = 0; i < parrData.length; i++ )
+			llngTotal += CountCoverages(parrData[i].marrSubLines);
+
+		return llngTotal;
+	}
+
+	private int CountCoverages(SubLineData[] parrData)
+	{
+		int llngTotal;
+		int i;
+
+		if ( parrData == null )
+			return 0;
+
+		llngTotal = 0;
+
+		for ( i = 0; i < parrData.length; i++ )
+			llngTotal += CountCoverages(parrData[i].marrCoverages);
+
+		return llngTotal;
+	}
+
+	private int CountCoverages(CoverageData[] parrData)
+	{
+		return ( parrData == null ? 0 : parrData.length);
+	}
+
+	private int IdLines(UUID[] parrBuffer, int plngStart, LineData[] parrData)
+	{
+		int i;
+
+		if ( parrData == null )
+			return plngStart;
+
+		for ( i = 0; i < parrData.length; i++ )
+		{
+			parrBuffer[plngStart] = parrData[i].mid;
+			plngStart++;
+		}
+
+		return plngStart;
+	}
+
+	private int IdSubLines(UUID[] parrBuffer, int plngStart, LineData[] parrData)
+	{
+		int i;
+
+		if ( parrData == null )
+			return plngStart;
+
+		for ( i = 0; i < parrData.length; i++ )
+			plngStart = IdSubLines(parrBuffer, plngStart, parrData[i].marrSubLines);
+
+		return plngStart;
+	}
+
+	private int IdSubLines(UUID[] parrBuffer, int plngStart, SubLineData[] parrData)
+	{
+		int i;
+
+		if ( parrData == null )
+			return plngStart;
+
+		for ( i = 0; i < parrData.length; i++ )
+		{
+			parrBuffer[plngStart] = parrData[i].mid;
+			plngStart++;
+		}
+
+		return plngStart;
+	}
+
+	private int IdCoverages(UUID[] parrBuffer, int plngStart, LineData[] parrData)
+	{
+		int i;
+
+		if ( parrData == null )
+			return plngStart;
+
+		for ( i = 0; i < parrData.length; i++ )
+			plngStart = IdCoverages(parrBuffer, plngStart, parrData[i].marrSubLines);
+
+		return plngStart;
+	}
+
+	private int IdCoverages(UUID[] parrBuffer, int plngStart, SubLineData[] parrData)
+	{
+		int i;
+
+		if ( parrData == null )
+			return plngStart;
+
+		for ( i = 0; i < parrData.length; i++ )
+			plngStart = IdCoverages(parrBuffer, plngStart, parrData[i].marrCoverages);
+
+		return plngStart;
+	}
+
+	private int IdCoverages(UUID[] parrBuffer, int plngStart, CoverageData[] parrData)
+	{
+		int i;
+
+		if ( parrData == null )
+			return plngStart;
+
+		for ( i = 0; i < parrData.length; i++ )
+		{
+			parrBuffer[plngStart] = parrData[i].mid;
+			plngStart++;
+		}
+
+		return plngStart;
 	}
 
 	private void DescribeLine(StringBuilder pstrString, LineData pobjData, String pstrLineBreak, boolean pbRecurse)

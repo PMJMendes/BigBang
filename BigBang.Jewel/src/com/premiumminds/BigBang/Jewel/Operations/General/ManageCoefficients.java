@@ -311,6 +311,38 @@ public class ManageCoefficients
 		}
 	}
 
+	public UndoSet[] GetSets()
+	{
+		UndoSet[] larrResult;
+		int llngCreates, llngModifies, llngDeletes;
+		int i;
+
+		llngCreates = ( marrCreate == null ? 0 : marrCreate.length );
+		llngModifies = ( marrModify == null ? 0 : marrModify.length );
+		llngDeletes = ( marrDelete == null ? 0 : marrDelete.length );
+
+		if ( llngCreates + llngModifies + llngDeletes == 0 )
+			return new UndoSet[0];
+
+		larrResult = new UndoSet[1];
+		larrResult[0] = new UndoSet();
+		larrResult[0].midType = Constants.ObjID_Tax;
+
+		larrResult[0].marrDeleted = new UUID[llngCreates];
+		for ( i = 0; i < llngCreates; i ++ )
+			larrResult[0].marrDeleted[i] = marrCreate[i].mid;
+
+		larrResult[0].marrChanged = new UUID[llngModifies];
+		for ( i = 0; i < llngModifies; i ++ )
+			larrResult[0].marrChanged[i] = marrModify[i].mid;
+
+		larrResult[0].marrCreated = new UUID[llngDeletes];
+		for ( i = 0; i < llngDeletes; i ++ )
+			larrResult[0].marrCreated[i] = marrDelete[i].mid;
+
+		return larrResult;
+	}
+
 	private void CreateTaxes(SQLServer pdb, TaxData[] parrData)
 		throws BigBangJewelException
 	{
@@ -477,6 +509,7 @@ public class ManageCoefficients
 				lobjAuxTax.setAt(2, parrData[i].midCurrency);
 				lobjAuxTax.setAt(3, BigDecimal.valueOf(parrData[i].mdblValue));
 				lobjAuxTax.SaveToDb(pdb);
+				parrData[i].mid = lobjAuxTax.getKey();
 			}
 			catch (Throwable e)
 			{
