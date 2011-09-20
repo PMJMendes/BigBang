@@ -7,6 +7,7 @@ public class User implements Serializable
 	private static final long serialVersionUID = 1L;
 
 	public String id;
+	public String decoId;
 	public String name;
 	public String username;
 	public String password; //Filled only for the current user

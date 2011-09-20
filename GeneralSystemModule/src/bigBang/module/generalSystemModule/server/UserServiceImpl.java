@@ -35,7 +35,7 @@ public class UserServiceImpl
         MasterDB ldb;
         ResultSet lrsUsers;
 		ArrayList<User> larrAux;
-		UserDecoration lobjUser;
+		UserDecoration lobjUserDeco;
 		User lobjTmp;
 
 		if ( Engine.getCurrentUser() == null )
@@ -67,17 +67,18 @@ public class UserServiceImpl
 		{
 	        while (lrsUsers.next())
 	        {
-	        	lobjUser = UserDecoration.GetInstance(Engine.getCurrentNameSpace(), lrsUsers);
+	        	lobjUserDeco = UserDecoration.GetInstance(Engine.getCurrentNameSpace(), lrsUsers);
 	        	lobjTmp = new User();
-	        	lobjTmp.id = lobjUser.getKey().toString();
-	        	lobjTmp.name = lobjUser.getBaseUser().getDisplayName();
-	        	lobjTmp.username = lobjUser.getBaseUser().getUserName();
+	        	lobjTmp.id = lobjUserDeco.getBaseUser().getKey().toString();
+	        	lobjTmp.decoId = lobjUserDeco.getKey().toString();
+	        	lobjTmp.name = lobjUserDeco.getBaseUser().getDisplayName();
+	        	lobjTmp.username = lobjUserDeco.getBaseUser().getUserName();
 	        	lobjTmp.password = null; //JMMM: No way!
 	        	lobjTmp.profile = new UserProfile();
-	        	lobjTmp.profile.id = lobjUser.getBaseUser().getProfile().getKey().toString();
-	        	lobjTmp.profile.name = lobjUser.getBaseUser().getProfile().getLabel();
-	        	lobjTmp.costCenterId = ((UUID)lobjUser.getAt(2)).toString();
-	        	lobjTmp.email = (String)lobjUser.getAt(1);
+	        	lobjTmp.profile.id = lobjUserDeco.getBaseUser().getProfile().getKey().toString();
+	        	lobjTmp.profile.name = lobjUserDeco.getBaseUser().getProfile().getLabel();
+	        	lobjTmp.costCenterId = ((UUID)lobjUserDeco.getAt(2)).toString();
+	        	lobjTmp.email = (String)lobjUserDeco.getAt(1);
 	        	larrAux.add(lobjTmp);
 	        }
         }
@@ -127,6 +128,7 @@ public class UserServiceImpl
 			lopMU.marrModify = new ManageUsers.UserData[1];
 			lopMU.marrModify[0] = lopMU.new UserData();
 			lopMU.marrModify[0].mid = UUID.fromString(user.id);
+			lopMU.marrModify[0].midDecorations = UUID.fromString(user.decoId);
 			lopMU.marrModify[0].mstrFullName = user.name;
 			lopMU.marrModify[0].mstrUsername = user.username;
 			lopMU.marrModify[0].mobjPassword = (user.password == null ? null : new Password(user.password, false));
@@ -165,6 +167,7 @@ public class UserServiceImpl
 			lopMU.marrCreate = new ManageUsers.UserData[1];
 			lopMU.marrCreate[0] = lopMU.new UserData();
 			lopMU.marrCreate[0].mid = null;
+			lopMU.marrCreate[0].midDecorations = null;
 			lopMU.marrCreate[0].mstrFullName = user.name;
 			lopMU.marrCreate[0].mstrUsername = user.username;
 			lopMU.marrCreate[0].mobjPassword = (user.password == null ? null : new Password(user.password, false));
@@ -182,12 +185,13 @@ public class UserServiceImpl
 		}
 
 		user.id = lopMU.marrCreate[0].mid.toString();
+		user.decoId = lopMU.marrCreate[0].midDecorations.toString();
 		user.password = null;
 
 		return user;
 	}
 
-	public void deleteUser(String id)
+	public void deleteUser(User user)
 		throws SessionExpiredException, BigBangException
 	{
 		ManageUsers lopMU;
@@ -200,7 +204,8 @@ public class UserServiceImpl
 				lopMU = new ManageUsers(GeneralSystem.GetAnyInstance(Engine.getCurrentNameSpace()).GetProcessID());
 				lopMU.marrDelete = new ManageUsers.UserData[1];
 				lopMU.marrDelete[0] = lopMU.new UserData();
-				lopMU.marrDelete[0].mid = UUID.fromString(id);
+				lopMU.marrDelete[0].mid = UUID.fromString(user.id);
+				lopMU.marrDelete[0].midDecorations = UUID.fromString(user.decoId);
 				lopMU.marrDelete[0].mstrFullName = null;
 				lopMU.marrDelete[0].mstrUsername = null;
 				lopMU.marrDelete[0].mobjPassword = null;

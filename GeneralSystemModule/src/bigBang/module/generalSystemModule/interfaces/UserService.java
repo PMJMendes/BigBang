@@ -33,7 +33,7 @@ public interface UserService
 //	public User getUser(String id) throws SessionExpiredException, BigBangException;
 	public User saveUser(User user) throws SessionExpiredException, BigBangException;
 	public User addUser(User user) throws SessionExpiredException, BigBangException;
-	public void deleteUser(String id) throws SessionExpiredException, BigBangException;
+	public void deleteUser(User user) throws SessionExpiredException, BigBangException;
 //	public User[] getUsersForCostCenterAssignment() throws SessionExpiredException, BigBangException;
 	public UserProfile[] getUserProfiles() throws SessionExpiredException, BigBangException;
 }

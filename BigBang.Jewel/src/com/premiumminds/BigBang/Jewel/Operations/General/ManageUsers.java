@@ -29,6 +29,7 @@ public class ManageUsers
 		private static final long serialVersionUID = 1L;
 
 		public UUID mid;
+		public UUID midDecorations;
 		public String mstrFullName;
 		public String mstrUsername;
 		public Password mobjPassword;
@@ -179,7 +180,8 @@ public class ManageUsers
 					lobjAuxOuter.setAt(2, marrCreate[i].midCostCenter);
 					lobjAuxOuter.SaveToDb(pdb);
 
-					marrCreate[i].mid = lobjAuxOuter.getKey();
+					marrCreate[i].mid = lobjAuxBase.getKey();
+					marrCreate[i].midDecorations = lobjAuxOuter.getKey();
 					marrCreate[i].mobjPassword = null;
 					marrCreate[i].mobjPrevValues = null;
 				}
@@ -197,15 +199,16 @@ public class ManageUsers
 							!marrModify[i].midProfile.equals(Constants.ProfileID_Root) )
 						throw new BigBangJewelException("Sem permissão: Não pode remover o seu próprio privilégio de Root.");
 
-					lobjAuxOuter = UserDecoration.GetInstance(Engine.getCurrentNameSpace(), marrModify[i].mid);
-					lobjAuxBase = (User)Engine.GetWorkInstance(lidUsers, (UUID)lobjAuxOuter.getAt(0));
+					lobjAuxOuter = UserDecoration.GetInstance(Engine.getCurrentNameSpace(), marrModify[i].midDecorations);
+					lobjAuxBase = (User)Engine.GetWorkInstance(lidUsers, marrModify[i].mid);
 
 					if ( lobjAuxBase.getProfile().getKey().equals(Constants.ProfileID_Root) &&
 							!lobjAuxCurrent.getProfile().getKey().equals(Constants.ProfileID_Root) )
 						throw new BigBangJewelException("Sem permissão: Só um utilizador Root pode modificar outros utilizadores Root.");
 
 					marrModify[i].mobjPrevValues = new UserData();
-					marrModify[i].mobjPrevValues.mid =  lobjAuxOuter.getKey();
+					marrModify[i].mobjPrevValues.mid = lobjAuxBase.getKey();
+					marrModify[i].mobjPrevValues.midDecorations = lobjAuxOuter.getKey();
 					marrModify[i].mobjPrevValues.mstrFullName = (String)lobjAuxBase.getAt(0);
 					marrModify[i].mobjPrevValues.mstrUsername = (String)lobjAuxBase.getAt(1);
 					marrModify[i].mobjPrevValues.mobjPassword = null;
@@ -234,8 +237,8 @@ public class ManageUsers
 
 				for ( i = 0; i < marrDelete.length; i++ )
 				{
-					lobjAuxOuter = UserDecoration.GetInstance(Engine.getCurrentNameSpace(), marrDelete[i].mid);
-					lobjAuxBase = (User)Engine.GetWorkInstance(lidUsers, (UUID)lobjAuxOuter.getAt(0));
+					lobjAuxOuter = UserDecoration.GetInstance(Engine.getCurrentNameSpace(), marrDelete[i].midDecorations);
+					lobjAuxBase = (User)Engine.GetWorkInstance(lidUsers, marrDelete[i].mid);
 
 					if ( lobjAuxBase.getKey().equals(Engine.getCurrentUser()) )
 						throw new BigBangJewelException("Sem permissão: Não se pode apagar a si próprio.");

@@ -13,7 +13,7 @@ public interface UserServiceAsync
 //	void getUser(String id, AsyncCallback<User> callback);
 	void saveUser(User user, AsyncCallback<User> callback);
 	void addUser(User user, AsyncCallback<User> callback);
-	void deleteUser(String id, AsyncCallback<Void> callback);
+	void deleteUser(User user, AsyncCallback<Void> callback);
 //	void getUsersForCostCenterAssignment(AsyncCallback<User[]> callback);
 	void getUserProfiles(AsyncCallback<UserProfile[]> callback);
 }
