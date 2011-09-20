@@ -5,7 +5,6 @@ import bigBang.definitions.client.dataAccess.SearchParameter;
 public class ClientSearchParameter
 	extends SearchParameter
 {
-
 	private static final long serialVersionUID = 1L;
 	
 	public String[] postalCodes;

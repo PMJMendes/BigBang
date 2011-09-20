@@ -1,13 +1,17 @@
 package bigBang.module.tasksModule.interfaces;
 
-import bigBang.module.tasksModule.shared.Task;
+import bigBang.definitions.shared.Task;
+import bigBang.library.interfaces.SearchService;
+import bigBang.library.shared.BigBangException;
+import bigBang.library.shared.SessionExpiredException;
 
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.user.client.rpc.RemoteService;
 import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 
 @RemoteServiceRelativePath("TasksService")
-public interface TasksService extends RemoteService {
+public interface TasksService
+	extends SearchService
+{
 	/**
 	 * Utility class for simplifying access to the instance of async service.
 	 */
@@ -20,8 +24,6 @@ public interface TasksService extends RemoteService {
 			return instance;
 		}
 	}
-	
-	public Task[] getTasks();
-	
-	public boolean isSolved(String taskId);
+
+	public Task getTask(String clientId) throws SessionExpiredException, BigBangException;
 }

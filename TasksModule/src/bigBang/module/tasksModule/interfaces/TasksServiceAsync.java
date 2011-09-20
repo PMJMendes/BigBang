@@ -1,14 +1,12 @@
 package bigBang.module.tasksModule.interfaces;
 
-import bigBang.library.interfaces.Service;
-import bigBang.module.tasksModule.shared.Task;
-
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
-public interface TasksServiceAsync extends Service{
+import bigBang.definitions.shared.Task;
+import bigBang.library.interfaces.SearchServiceAsync;
 
-	void getTasks(AsyncCallback<Task[]> callback);
-
-	void isSolved(String taskId, AsyncCallback<Boolean> callback);
-
+public interface TasksServiceAsync
+	extends SearchServiceAsync
+{
+	void getTask(String clientId, AsyncCallback<Task> callback);
 }

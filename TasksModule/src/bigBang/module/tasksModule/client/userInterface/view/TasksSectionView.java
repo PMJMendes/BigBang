@@ -2,10 +2,10 @@ package bigBang.module.tasksModule.client.userInterface.view;
 
 import java.util.ArrayList;
 
+import bigBang.definitions.shared.Task;
 import bigBang.library.client.userInterface.view.View;
 import bigBang.module.tasksModule.client.userInterface.TaskList;
 import bigBang.module.tasksModule.client.userInterface.presenter.TasksSectionViewPresenter;
-import bigBang.module.tasksModule.shared.Task;
 
 import com.google.gwt.user.client.ui.HasWidgets;
 import com.google.gwt.user.client.ui.SimplePanel;

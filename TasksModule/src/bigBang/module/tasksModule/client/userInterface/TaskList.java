@@ -1,7 +1,7 @@
 package bigBang.module.tasksModule.client.userInterface;
 
+import bigBang.definitions.shared.Task;
 import bigBang.library.client.userInterface.List;
-import bigBang.module.tasksModule.shared.Task;
 
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.user.client.ui.Button;

@@ -16,6 +16,7 @@ public class BigBangConstants {
 		public static final String INSURANCE_AGENCY = "7B203DCA-FFAC-46B2-B849-9EBC009DB127";
 		public static final String COVERAGE = "007022A0-6DFA-498B-9DC4-9EC900F5219F";
 		public static final String HISTORY = "F63454DC-B63C-44EC-9E5E-9E1A01004BDB";
+		public static final String TASK = "F850E623-E686-4575-A2D8-9F640128FCD7";
 		public static final String QUOTE_REQUEST = ""; //TODO
 		public static final String QUOTE_REQUEST_NEGOTIATION = ""; //TODO
 		public static final String INSURANCE_POLICY = ""; //TODO

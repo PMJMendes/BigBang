@@ -23,6 +23,11 @@ public class Constants
 
 	public static final UUID ObjID_GenSys        = UUID.fromString("628F5DA6-434F-46A8-9C88-9EB1008A689A");
 
+	// Agenda Objects
+	public static final UUID ObjID_AgendaItem    = UUID.fromString("F850E623-E686-4575-A2D8-9F640128FCD7");
+	public static final UUID ObjID_AgendaProcess = UUID.fromString("3620AAEE-A950-421C-A5D3-9F640135D7D8");
+	public static final UUID ObjID_AgendaOp      = UUID.fromString("3C01C389-71FE-43A8-AEE7-9F640135635D");
+
 	// Client Objects
 	public static final UUID ObjID_Client        = UUID.fromString("D535A99E-149F-44DC-A28B-9EE600B240F5");
 

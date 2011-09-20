@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 
+import bigBang.definitions.shared.Task;
 import bigBang.library.client.EventBus;
 import bigBang.library.client.userInterface.MenuSection;
 import bigBang.library.client.userInterface.presenter.OperationViewPresenter;
@@ -14,7 +15,6 @@ import bigBang.library.client.userInterface.view.View;
 import bigBang.library.interfaces.Service;
 import bigBang.module.tasksModule.client.TasksSection;
 import bigBang.module.tasksModule.interfaces.TasksServiceAsync;
-import bigBang.module.tasksModule.shared.Task;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -77,16 +77,16 @@ public class TasksSectionViewPresenter implements SectionViewPresenter, ViewPres
 	}
 	
 	public void refreshList() {
-		this.service.getTasks(new AsyncCallback<Task[]>() {
-
-			public void onFailure(Throwable caught) {
-				GWT.log("Failure while fetching the list of tasks");
-			}
-
-			public void onSuccess(Task[] result) {
-				view.setListEntries(new ArrayList<Task>(Arrays.asList(result)));
-			}
-		});
+//		this.service.getTasks(new AsyncCallback<Task[]>() {
+//
+//			public void onFailure(Throwable caught) {
+//				GWT.log("Failure while fetching the list of tasks");
+//			}
+//
+//			public void onSuccess(Task[] result) {
+//				view.setListEntries(new ArrayList<Task>(Arrays.asList(result)));
+//			}
+//		});
 	}
 
 	public void bind() {
