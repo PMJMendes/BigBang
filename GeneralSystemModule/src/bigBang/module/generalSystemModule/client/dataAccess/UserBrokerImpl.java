@@ -126,15 +126,27 @@ public class UserBrokerImpl extends DataBroker<User> implements UserBroker {
 	@Override
 	public void removeUser(final String userId,
 			final ResponseHandler<User> handler) {
-		this.service.deleteUser(userId, new BigBangAsyncCallback<Void>() {
+		this.getUser(userId, new ResponseHandler<User>() {
 
 			@Override
-			public void onSuccess(Void result) {
-				cache.remove(userId);
-				for(DataBrokerClient<User> c : UserBrokerImpl.this.getClients()){
-					((UserDataBrokerClient)c).removeUser(userId);
-				}
-				handler.onResponse(null);
+			public void onResponse(User response) {
+				UserBrokerImpl.this.service.deleteUser(response, new BigBangAsyncCallback<Void>() {
+
+					@Override
+					public void onSuccess(Void result) {
+						cache.remove(userId);
+						for(DataBrokerClient<User> c : UserBrokerImpl.this.getClients()){
+							((UserDataBrokerClient)c).removeUser(userId);
+						}
+						handler.onResponse(null);
+					}
+				});
+			}
+
+			@Override
+			public void onError(Collection<ResponseError> errors) {
+				// TODO Auto-generated method stub FJVC
+				
 			}
 		});
 	}
@@ -150,6 +162,24 @@ public class UserBrokerImpl extends DataBroker<User> implements UserBroker {
 	 */
 	protected boolean needsRefresh(){
 		return this.needsRefresh;
+	}
+	
+	@Override
+	public void notifyItemCreation(String itemId) {
+		requireDataRefresh();
+		//TODO FJVC
+	}
+
+	@Override
+	public void notifyItemDeletion(String itemId) {
+		requireDataRefresh();
+		//TODO
+	}
+
+	@Override
+	public void notifyItemUpdate(String itemId) {
+		requireDataRefresh();
+		//TODO
 	}
 
 }
