@@ -116,7 +116,7 @@ public class TasksServiceImpl
 
 		if ( lParam.processId != null )
 		{
-			pstrBuffer.append("[PK] IN (SELECT [:Process] FROM (");
+			pstrBuffer.append("[PK] IN (SELECT [:Item] FROM (");
 			larrMembers = new int[1];
 			larrMembers[0] = 1;
 			larrValues = new java.lang.Object[1];
@@ -131,6 +131,25 @@ public class TasksServiceImpl
 	    		throw new BigBangException(e.getMessage(), e);
 			}
 			pstrBuffer.append(") [Aux2])");
+		}
+
+		if ( lParam.operationId != null )
+		{
+			pstrBuffer.append("[PK] IN (SELECT [:Item] FROM (");
+			larrMembers = new int[1];
+			larrMembers[0] = 1;
+			larrValues = new java.lang.Object[1];
+			larrValues[0] = UUID.fromString(lParam.operationId);
+			try
+			{
+				lrefProcs = Entity.GetInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), Constants.ObjID_AgendaOp));
+				pstrBuffer.append(lrefProcs.SQLForSelectByMembers(larrMembers, larrValues, null));
+			}
+			catch (Throwable e)
+			{
+	    		throw new BigBangException(e.getMessage(), e);
+			}
+			pstrBuffer.append(") [Aux3])");
 		}
 
 		return true;

@@ -8,4 +8,5 @@ public class TaskSearchParameter
 	private static final long serialVersionUID = 1L;
 
 	public String processId;
+	public String operationId;
 }
