@@ -94,8 +94,9 @@ TypifiedListClient {
 				for (Selectable i : selected) {
 					@SuppressWarnings("unchecked")
 					ValueSelectable<TipifiedListItem> iv = (ValueSelectable<TipifiedListItem>) i;
-					if ((iv != null && iv.getValue() != null) && (!getValue().equals(iv.getValue().id)))
+					if ((iv != null && iv.getValue() != null) && (!getValue().equals(iv.getValue().id))){
 						setValue(iv.getValue().id);
+					}
 					break;
 				}
 

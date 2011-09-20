@@ -116,4 +116,19 @@ public class SearchDataBrokerImpl<T extends SearchResult> extends DataBroker<T> 
 		return (search.getTotalResultsCount() - search.getOffset() - search.getCount()) > 0;
 	}
 
+	@Override
+	public void notifyItemCreation(String itemId) {
+		return;
+	}
+
+	@Override
+	public void notifyItemDeletion(String itemId) {
+		return;
+	}
+
+	@Override
+	public void notifyItemUpdate(String itemId) {
+		return;
+	}
+
 }

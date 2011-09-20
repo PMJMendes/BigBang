@@ -50,4 +50,21 @@ public interface DataBrokerInterface <T> {
 	 */
 	public void requireDataRefresh();
 	
+	/**
+	 * Notifies the broker that an item was created with the given id
+	 * @param itemId The id of the created item
+	 */
+	public void notifyItemCreation(String itemId);
+	
+	/**
+	 * Notifies the broker that an item was deleted
+	 * @param itemId The id of the deleted item
+	 */
+	public void notifyItemDeletion(String itemId);
+	
+	/**
+	 * Notifies the broker that an item was altered
+	 * @param itemId The id of the altered item
+	 */
+	public void notifyItemUpdate(String itemId);
 }

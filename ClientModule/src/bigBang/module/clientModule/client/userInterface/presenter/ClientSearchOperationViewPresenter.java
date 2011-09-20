@@ -12,7 +12,7 @@ import bigBang.definitions.shared.Client;
 import bigBang.definitions.shared.ClientStub;
 import bigBang.definitions.shared.InsurancePolicy;
 import bigBang.definitions.shared.QuoteRequest;
-import bigBang.definitions.shared.RiskAnalisys;
+import bigBang.definitions.shared.RiskAnalysis;
 import bigBang.library.client.EventBus;
 import bigBang.library.client.HasEditableValue;
 import bigBang.library.client.HasValueSelectables;
@@ -74,7 +74,7 @@ public class ClientSearchOperationViewPresenter implements OperationViewPresente
 		void lockPolicyForm(boolean lock);
 		
 		void showRiskAnalisysForm(boolean show);
-		HasEditableValue<RiskAnalisys> getRiskAnalisysForm();
+		HasEditableValue<RiskAnalysis> getRiskAnalisysForm();
 		boolean isRiskAnalisysFormValid();
 		void lockRiskAnalisysForm(boolean lock);
 		

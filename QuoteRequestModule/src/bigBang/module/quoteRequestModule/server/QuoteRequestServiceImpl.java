@@ -7,7 +7,7 @@ import bigBang.definitions.shared.InsuredObject;
 import bigBang.definitions.shared.ManagerTransfer;
 import bigBang.definitions.shared.Negotiation;
 import bigBang.definitions.shared.QuoteRequest;
-import bigBang.definitions.shared.RiskAnalisys;
+import bigBang.definitions.shared.RiskAnalysis;
 import bigBang.definitions.shared.SearchResult;
 import bigBang.library.shared.BigBangException;
 import bigBang.library.shared.NewSearchResult;
@@ -89,7 +89,7 @@ public class QuoteRequestServiceImpl
 	}
 
 	@Override
-	public RiskAnalisys createRiskAnalisys(RiskAnalisys riskAnalisys)
+	public RiskAnalysis createRiskAnalisys(RiskAnalysis riskAnalisys)
 			throws SessionExpiredException, BigBangException {
 		// TODO Auto-generated method stub
 		return null;

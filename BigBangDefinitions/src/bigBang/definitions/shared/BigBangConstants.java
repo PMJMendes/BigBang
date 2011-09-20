@@ -20,6 +20,8 @@ public class BigBangConstants {
 		public static final String QUOTE_REQUEST_NEGOTIATION = ""; //TODO
 		public static final String INSURANCE_POLICY = ""; //TODO
 		public static final String RISK_ANALISYS = ""; //TODO
+		
+		public static final String CONTACT = "2085F9FD-7FCE-46C0-99FD-9EC400FFBA5C";
 	}
 	
 	public static class TypifiedListIds {

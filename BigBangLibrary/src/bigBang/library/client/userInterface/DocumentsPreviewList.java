@@ -1,7 +1,6 @@
 package bigBang.library.client.userInterface;
 
 import bigBang.definitions.shared.Document;
-import bigBang.library.client.DocumentManager;
 import bigBang.library.client.event.SelectedStateChangedEventHandler;
 import bigBang.library.client.resources.Resources;
 
@@ -12,41 +11,13 @@ import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Image;
-import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.PopupPanel;
 
 public class DocumentsPreviewList extends List<Document> {
-	protected class DocumentPreviewPanel extends NavigationPanel {
-
-		protected Label nameLabel;
-		protected Label valueLabel;
-		protected ExpandableListBoxFormField type;
-		protected DocumentManager documentManager;
-
-		public DocumentPreviewPanel(DocumentManager documentManager){
-			this();
-			setDocumentManager(documentManager);
-		}
-
-		public DocumentPreviewPanel(){
-			super();
-			setSize("100%", "100%");
-			navBar.setText("Documento");
-		}
-
-		public void setDocumentManager(DocumentManager documentManager) {
-			this.documentManager = documentManager;
-		}
-
-		public void setDocument(Document document) {
-			
-		}
-	}
 
 	protected Resources resources;
 	protected PopupPanel documentPopupPanel;
 	protected SelectedStateChangedEventHandler documentSelectedStateChangedHandler;
-	protected DocumentManager manager;
 	protected HandlerRegistration managerHandlerRegistration;
 	protected Button newButton;
 
@@ -119,44 +90,6 @@ public class DocumentsPreviewList extends List<Document> {
 			}
 		});
 		header.setRightWidget(newButton);
-	}
-
-	public DocumentsPreviewList(DocumentManager documentManager) {
-		this();
-		setManager(documentManager);
-	}
-
-	public void setManager(DocumentManager manager) {
-		this.manager = manager;
-		//if(this.managerHandlerRegistration != null)
-		//	this.managerHandlerRegistration = this.manager.
-		refresh();
-	}
-
-	public void refresh(){
-		for(Document c : this.manager.getDocuments()){
-			addEntryForDocument(c);
-		}
-	}
-
-	protected void addEntryForDocument(Document c){
-		ListEntry<Document> e = new ListEntry<Document>(c) {
-			@Override
-			public void setSelected(boolean selected, boolean fireEvents) {
-				super.setSelected(selected, fireEvents);
-				if(selected) {
-					//setLeftWidget(new Image(resources.phoneSmallIconWhite()));
-				}else{
-					//setLeftWidget(new Image(resources.phoneSmallIconBlack()));
-				}
-			}
-		};
-		//e.setLeftWidget(new Image(resources.phoneSmallIconBlack()));
-		e.setText(c.name);
-		e.setToggleable(true);
-		e.addSelectedStateChangedEventHandler(documentSelectedStateChangedHandler);
-		e.setHeight("25px");
-		add(e);
 	}
 
 	public void setReadOnly(boolean readOnly) {

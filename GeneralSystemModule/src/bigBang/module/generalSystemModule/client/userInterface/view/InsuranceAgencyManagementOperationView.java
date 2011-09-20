@@ -9,6 +9,7 @@ import bigBang.library.client.event.ActionInvokedEventHandler;
 import bigBang.library.client.userInterface.BigBangOperationsToolBar;
 import bigBang.library.client.userInterface.ContactsPreviewList;
 import bigBang.library.client.userInterface.BigBangOperationsToolBar.SUB_MENU;
+import bigBang.library.client.userInterface.DocumentsPreviewList;
 import bigBang.library.client.userInterface.view.View;
 import bigBang.module.generalSystemModule.client.GeneralSystemModule;
 import bigBang.module.generalSystemModule.client.userInterface.InsuranceAgencyList;
@@ -34,6 +35,7 @@ public class InsuranceAgencyManagementOperationView extends View implements Insu
 	private InsuranceAgencyList insuranceAgencyList;
 	private InsuranceAgencyForm insuranceAgencyForm;
 	private ContactsPreviewList contactsPreviewList;
+	protected DocumentsPreviewList documentsPreviewList;
 	protected ActionInvokedEventHandler<InsuranceAgencyManagementOperationViewPresenter.Action> actionHandler;
 	protected BigBangOperationsToolBar toolbar;
 
@@ -66,7 +68,12 @@ public class InsuranceAgencyManagementOperationView extends View implements Insu
 		SplitLayoutPanel contentWrapper = new SplitLayoutPanel();
 
 		contactsPreviewList = new ContactsPreviewList();
+		contactsPreviewList.setSize("100%", "100%");
 		contactsPreviewList.setReadOnly(true);
+		
+		documentsPreviewList = new DocumentsPreviewList();
+		documentsPreviewList.setSize("100%", "100%");
+		documentsPreviewList.setReadOnly(true);
 
 		VerticalPanel formWrapper = new VerticalPanel();
 		formWrapper.setSize("100%", "100%");
@@ -116,7 +123,14 @@ public class InsuranceAgencyManagementOperationView extends View implements Insu
 			}
 		});
 
-		contentWrapper.addEast(contactsPreviewList, 250);
+		VerticalPanel sideWrapper = new VerticalPanel();
+		sideWrapper.setSize("100%", "100%");
+		sideWrapper.add(contactsPreviewList);
+		sideWrapper.add(documentsPreviewList);
+		sideWrapper.setCellHeight(contactsPreviewList, "50%");
+		sideWrapper.setCellHeight(documentsPreviewList, "50%");
+		
+		contentWrapper.addEast(sideWrapper, 250);
 		contentWrapper.add(formWrapper);
 
 		wrapper.add(contentWrapper);

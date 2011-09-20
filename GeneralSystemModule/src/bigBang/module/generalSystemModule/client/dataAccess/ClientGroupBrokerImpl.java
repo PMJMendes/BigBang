@@ -120,4 +120,22 @@ public class ClientGroupBrokerImpl extends DataBroker<ClientGroup> implements Cl
 		this.needsRefresh = true;
 	}
 
+	@Override
+	public void notifyItemCreation(String itemId) {
+		requireDataRefresh();
+		//TODO FJVC
+	}
+
+	@Override
+	public void notifyItemDeletion(String itemId) {
+		requireDataRefresh();
+		//TODO
+	}
+
+	@Override
+	public void notifyItemUpdate(String itemId) {
+		requireDataRefresh();
+		//TODO
+	}
+
 }

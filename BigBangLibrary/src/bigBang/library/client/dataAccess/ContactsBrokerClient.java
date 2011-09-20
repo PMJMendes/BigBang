@@ -2,9 +2,10 @@ package bigBang.library.client.dataAccess;
 
 import java.util.List;
 
+import bigBang.definitions.client.dataAccess.DataBrokerClient;
 import bigBang.definitions.shared.Contact;
 
-public interface ContactsBrokerClient {
+public interface ContactsBrokerClient extends DataBrokerClient<Contact> {
 	/**
 	 * @param ownerId The id of the owner of the contacts
 	 * @return the version of the data held by the client

@@ -22,7 +22,7 @@ import bigBang.definitions.shared.InfoOrDocumentRequest;
 import bigBang.definitions.shared.InsurancePolicy;
 import bigBang.definitions.shared.ManagerTransfer;
 import bigBang.definitions.shared.QuoteRequest;
-import bigBang.definitions.shared.RiskAnalisys;
+import bigBang.definitions.shared.RiskAnalysis;
 import bigBang.definitions.shared.SearchResult;
 import bigBang.definitions.shared.ZipCode;
 import bigBang.library.server.FileServiceImpl;
@@ -278,8 +278,8 @@ public class ClientServiceImpl
 	}
 
 	@Override
-	public RiskAnalisys createRiskAnalisys(String clientId,
-			RiskAnalisys riskAnalisys) throws SessionExpiredException,
+	public RiskAnalysis createRiskAnalisys(String clientId,
+			RiskAnalysis riskAnalisys) throws SessionExpiredException,
 			BigBangException {
 		// TODO Auto-generated method stub
 		return null;

@@ -4,7 +4,7 @@ import bigBang.definitions.shared.InfoOrDocumentRequest;
 import bigBang.definitions.shared.ManagerTransfer;
 import bigBang.definitions.shared.Negotiation;
 import bigBang.definitions.shared.QuoteRequest;
-import bigBang.definitions.shared.RiskAnalisys;
+import bigBang.definitions.shared.RiskAnalysis;
 import bigBang.definitions.shared.InsuredObject;
 import bigBang.library.interfaces.SearchService;
 import bigBang.library.shared.BigBangException;
@@ -40,7 +40,7 @@ public interface QuoteRequestService
 	public InfoOrDocumentRequest createInfoOrDocumentRequest(InfoOrDocumentRequest request) throws SessionExpiredException, BigBangException;
 	public ManagerTransfer[] createManagerTransfer(String[] quoteRequestIds, String managerId) throws SessionExpiredException, BigBangException;
 
-	public RiskAnalisys createRiskAnalisys(RiskAnalisys riskAnalisys) throws SessionExpiredException, BigBangException;
+	public RiskAnalysis createRiskAnalisys(RiskAnalysis riskAnalisys) throws SessionExpiredException, BigBangException;
 
 	public void deleteRequest(String requestId) throws SessionExpiredException, BigBangException;
 }

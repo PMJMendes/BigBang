@@ -6,7 +6,7 @@ import bigBang.definitions.shared.InfoOrDocumentRequest;
 import bigBang.definitions.shared.InsurancePolicy;
 import bigBang.definitions.shared.ManagerTransfer;
 import bigBang.definitions.shared.QuoteRequest;
-import bigBang.definitions.shared.RiskAnalisys;
+import bigBang.definitions.shared.RiskAnalysis;
 import bigBang.library.interfaces.SearchServiceAsync;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -22,7 +22,7 @@ public interface ClientServiceAsync
 	void createManagerTransfer(String[] clientIds, String managerId, AsyncCallback<ManagerTransfer[]> callback);
 	void createQuoteRequest(String clientId, QuoteRequest request, AsyncCallback<QuoteRequest> callback);
 	void createPolicy(String clientId, InsurancePolicy policy, AsyncCallback<InsurancePolicy> callback);
-	void createRiskAnalisys(String clientId, RiskAnalisys riskAnalisys, AsyncCallback<RiskAnalisys> callback);
+	void createRiskAnalisys(String clientId, RiskAnalysis riskAnalisys, AsyncCallback<RiskAnalysis> callback);
 	void createCasualty(String clientId, Casualty casualty, AsyncCallback<Casualty> callback);
 	void deleteClient(String clientId, String processId, AsyncCallback<Void> callback);
 }

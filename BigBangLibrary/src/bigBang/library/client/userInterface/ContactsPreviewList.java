@@ -4,6 +4,7 @@ import java.util.Collection;
 
 import bigBang.definitions.client.response.ResponseError;
 import bigBang.definitions.client.response.ResponseHandler;
+import bigBang.definitions.shared.BigBangConstants;
 import bigBang.definitions.shared.Contact;
 import bigBang.library.client.ValueSelectable;
 import bigBang.library.client.dataAccess.BigBangContactsListBroker;
@@ -12,10 +13,12 @@ import bigBang.library.client.dataAccess.ContactsBrokerClient;
 import bigBang.library.client.event.SelectionChangedEvent;
 import bigBang.library.client.event.SelectionChangedEventHandler;
 import bigBang.library.client.resources.Resources;
-import bigBang.library.client.userInterface.view.View;
+import bigBang.library.client.userInterface.view.ContactView;
+import bigBang.library.client.userInterface.view.ContactsNavigationPanel;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Overflow;
+import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.logical.shared.CloseEvent;
@@ -24,37 +27,23 @@ import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.PopupPanel;
-import com.google.gwt.user.client.ui.SimplePanel;
+import com.google.gwt.user.client.ui.PopupPanel.PositionCallback;
+import com.google.gwt.user.client.ui.RootPanel;
 
 public class ContactsPreviewList extends List<Contact> implements ContactsBrokerClient {
-
-	public static abstract class ContactView extends View {
-		public ContactView(){
-			SimplePanel wrapper = new SimplePanel();
-			wrapper.setSize("400px", "500px");
-			initWidget(wrapper);
-		}
-
-		public void setEditable(boolean editable) {
-			//TODO
-		}
-
-		public void setContact(Contact contact){
-			//TODO
-		}
-
-		public abstract void onSaveContact(Contact contact);
-	}
 
 	public static class Entry extends ListEntry<Contact> {
 
 		public Entry(Contact value) {
 			super(value);
+			setToggleable(true);
+			this.setHeight("25px");
+			this.titleLabel.getElement().getStyle().setFontSize(11, Unit.PX);
 		}
 
 		public <I extends Object> void setInfo(I info) {
 			Contact c = (Contact) info;
-			setText(c.name);
+			setTitle(c.name);
 		};
 	}
 
@@ -87,8 +76,6 @@ public class ContactsPreviewList extends List<Contact> implements ContactsBroker
 
 		setSize("100%", "145px");
 
-		this.scrollPanel.getElement().getStyle().setOverflow(Overflow.HIDDEN);
-
 		contactPopupPanel = new PopupPanel();
 		contactPopupPanel.setAutoHideEnabled(true);
 		contactPopupPanel.setSize("350px", "400px");
@@ -108,6 +95,7 @@ public class ContactsPreviewList extends List<Contact> implements ContactsBroker
 				}
 			}
 		};
+		addSelectionChangedEventHandler(selectionChangedHandler);
 
 		contactPopupPanel.addCloseHandler(new CloseHandler<PopupPanel>() {
 
@@ -137,6 +125,7 @@ public class ContactsPreviewList extends List<Contact> implements ContactsBroker
 		if(this.contactOwner != ownerId || !this.contactOwner.equalsIgnoreCase(ownerId)) {
 			if(this.contactOwner != null){
 				this.broker.unregisterClient(this, this.contactOwner);
+				this.contactsDataVersion = 0;
 			}
 			this.processId = processId;
 			this.contactOwner = ownerId;
@@ -222,18 +211,53 @@ public class ContactsPreviewList extends List<Contact> implements ContactsBroker
 					public void onError(Collection<ResponseError> errors) {}
 				});
 			}
+
+			@Override
+			public void onCreateSubContact() {
+				// TODO Auto-generated method stub
+
+			}
 		};
 		contactView.setEditable(true);
 		contactPopupPanel.clear();
-		contactPopupPanel.add(contactView);
-		contactPopupPanel.center();
+		ContactsNavigationPanel navPanel = new ContactsNavigationPanel();
+		navPanel.setMainContact(contactView);
+		contactPopupPanel.add(navPanel);
+
+		contactPopupPanel.setPopupPositionAndShow(new PositionCallback() {
+
+			@Override
+			public void setPosition(int offsetWidth, int offsetHeight) {
+				for(ValueSelectable<Contact> s : ContactsPreviewList.this.getSelected()){
+					ListEntry<?> entry = (ListEntry<?>) s;
+					contactPopupPanel.setPopupPosition(entry.getAbsoluteLeft()-offsetWidth, entry.getAbsoluteTop() - 20);
+					break;
+				}
+			}
+		});
 
 		//TODO APAGAR FJVC
+		Contact testesub2 = new Contact();
+		testesub2.address = null;
+		testesub2.isSubContact = false;
+		testesub2.name = "Um teste maior 2";
+		testesub2.subContacts = new Contact[0];
+		testesub2.ownerId = contactOwner;
+		testesub2.typeId = "04F6BC3C-0283-47F0-9670-9EEE013350D9";
+
+		Contact testesub1 = new Contact();
+		testesub1.address = null;
+		testesub1.isSubContact = false;
+		testesub1.name = "Um teste maior 1";
+		testesub1.subContacts = new Contact[]{testesub2};
+		testesub1.ownerId = contactOwner;
+		testesub1.typeId = "04F6BC3C-0283-47F0-9670-9EEE013350D9";
+
 		Contact teste = new Contact();
 		teste.address = null;
 		teste.isSubContact = false;
-		teste.name = "Um teste";
-		teste.subContacts = new Contact[0];
+		teste.name = "Um teste maior";
+		teste.subContacts = new Contact[]{testesub1, testesub2};
 		teste.ownerId = contactOwner;
 		teste.typeId = "04F6BC3C-0283-47F0-9670-9EEE013350D9";
 		broker.addContact(processId, operationId, contactOwner, teste, new ResponseHandler<Contact>() {
@@ -266,10 +290,60 @@ public class ContactsPreviewList extends List<Contact> implements ContactsBroker
 					public void onError(Collection<ResponseError> errors) {}
 				});
 			}
+
+			@Override
+			public void onCreateSubContact() {
+				// TODO Auto-generated method stub
+
+			}
 		};
 		contactView.setContact(contact);
 		contactPopupPanel.clear();
-		contactPopupPanel.add(contactView);
-		contactPopupPanel.center();
+		ContactsNavigationPanel navPanel = new ContactsNavigationPanel();
+		navPanel.setMainContact(contactView);
+		contactPopupPanel.add(navPanel);
+
+		contactPopupPanel.setPopupPositionAndShow(new PositionCallback() {
+
+			@Override
+			public void setPosition(int offsetWidth, int offsetHeight) {
+				for(ValueSelectable<Contact> s : ContactsPreviewList.this.getSelected()){
+					ListEntry<?> entry = (ListEntry<?>) s;
+					int left = entry.getAbsoluteLeft()-offsetWidth;
+					int top = entry.getAbsoluteTop() - 20;
+
+					if(left < 0)
+						left = 0;
+					if((top + offsetHeight) > RootPanel.get().getOffsetHeight()){
+						top = RootPanel.get().getOffsetHeight() - offsetHeight;
+					}
+					if(top < 0)
+						top = 0;
+
+					contactPopupPanel.setPopupPosition(left, top);
+					break;
+				}
+			}
+		});
+	}
+
+	public void clearAll() {
+		this.clear();
+		this.contactOwner = null;
+		this.processId = null;
+		this.operationId = null;
+	}
+
+	@Override
+	public void setDataVersionNumber(String dataElementId, int number) {
+		return;
+	}
+
+	@Override
+	public int getDataVersion(String dataElementId) {
+		if(dataElementId.equalsIgnoreCase(BigBangConstants.EntityIds.CONTACT)){
+			return contactsDataVersion;
+		}
+		return -1;
 	}
 }

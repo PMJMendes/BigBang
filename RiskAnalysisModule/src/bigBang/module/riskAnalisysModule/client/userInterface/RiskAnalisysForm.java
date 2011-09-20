@@ -1,11 +1,11 @@
 package bigBang.module.riskAnalisysModule.client.userInterface;
 
-import bigBang.definitions.shared.RiskAnalisys;
+import bigBang.definitions.shared.RiskAnalysis;
 import bigBang.library.client.userInterface.AddressFormField;
 import bigBang.library.client.userInterface.TextBoxFormField;
 import bigBang.library.client.userInterface.view.FormView;
 
-public class RiskAnalisysForm extends FormView<RiskAnalisys> {
+public class RiskAnalisysForm extends FormView<RiskAnalysis> {
 
 	protected TextBoxFormField number;
 	protected AddressFormField address;
@@ -28,13 +28,13 @@ public class RiskAnalisysForm extends FormView<RiskAnalisys> {
 	}
 	
 	@Override
-	public RiskAnalisys getInfo() {
+	public RiskAnalysis getInfo() {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public void setInfo(RiskAnalisys info) {
+	public void setInfo(RiskAnalysis info) {
 		// TODO Auto-generated method stub
 		
 	}

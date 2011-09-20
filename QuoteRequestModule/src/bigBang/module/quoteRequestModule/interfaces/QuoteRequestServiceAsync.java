@@ -4,7 +4,7 @@ import bigBang.definitions.shared.InfoOrDocumentRequest;
 import bigBang.definitions.shared.ManagerTransfer;
 import bigBang.definitions.shared.Negotiation;
 import bigBang.definitions.shared.QuoteRequest;
-import bigBang.definitions.shared.RiskAnalisys;
+import bigBang.definitions.shared.RiskAnalysis;
 import bigBang.definitions.shared.InsuredObject;
 import bigBang.library.interfaces.SearchServiceAsync;
 
@@ -20,6 +20,6 @@ public interface QuoteRequestServiceAsync
 	void createNegotiation(Negotiation negotiation, AsyncCallback<Negotiation> callback);
 	void createInfoOrDocumentRequest(InfoOrDocumentRequest request, AsyncCallback<InfoOrDocumentRequest> callback);
 	void createManagerTransfer(String[] quoteRequestIds, String managerId, AsyncCallback<ManagerTransfer[]> callback);
-	void createRiskAnalisys(RiskAnalisys riskAnalisys, AsyncCallback<RiskAnalisys> callback);
+	void createRiskAnalisys(RiskAnalysis riskAnalisys, AsyncCallback<RiskAnalysis> callback);
 	void deleteRequest(String requestId, AsyncCallback<Void> callback);
 }

@@ -13,7 +13,7 @@ import bigBang.definitions.shared.Client;
 import bigBang.definitions.shared.ClientStub;
 import bigBang.definitions.shared.InsurancePolicy;
 import bigBang.definitions.shared.QuoteRequest;
-import bigBang.definitions.shared.RiskAnalisys;
+import bigBang.definitions.shared.RiskAnalysis;
 import bigBang.library.client.HasEditableValue;
 import bigBang.library.client.HasSelectables;
 import bigBang.library.client.HasValueSelectables;
@@ -37,10 +37,13 @@ import bigBang.module.clientModule.client.userInterface.ClientSearchPanel;
 import bigBang.module.clientModule.client.userInterface.ClientSearchPanelListEntry;
 import bigBang.module.clientModule.client.userInterface.presenter.ClientSearchOperationViewPresenter;
 import bigBang.module.clientModule.client.userInterface.presenter.ClientSearchOperationViewPresenter.Action;
+import bigBang.module.clientModule.shared.ModuleConstants;
 
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.logical.shared.AttachEvent;
+import com.google.gwt.event.logical.shared.ValueChangeEvent;
+import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.SplitLayoutPanel;
@@ -182,7 +185,7 @@ public class ClientSearchOperationView extends View implements ClientSearchOpera
 			public void onMergeWithClient() {
 				actionHandler.onActionInvoked(new ActionInvokedEvent<ClientSearchOperationViewPresenter.Action>(Action.MERGE_WITH_CLIENT));
 			}
-			
+
 			@Override
 			public void onTransferToManager() {
 				actionHandler.onActionInvoked(new ActionInvokedEvent<ClientSearchOperationViewPresenter.Action>(Action.TRANSFER_MANAGER));
@@ -192,7 +195,7 @@ public class ClientSearchOperationView extends View implements ClientSearchOpera
 			public void onRequestInfoOrDocument() {
 				actionHandler.onActionInvoked(new ActionInvokedEvent<ClientSearchOperationViewPresenter.Action>(Action.REQUIRE_INFO_DOCUMENT));
 			}
-			
+
 			@Override
 			public void onHistory() {
 				actionHandler.onActionInvoked(new ActionInvokedEvent<ClientSearchOperationViewPresenter.Action>(Action.SHOW_HISTORY));
@@ -202,7 +205,7 @@ public class ClientSearchOperationView extends View implements ClientSearchOpera
 			public void onDelete() {
 				actionHandler.onActionInvoked(new ActionInvokedEvent<ClientSearchOperationViewPresenter.Action>(Action.DELETE));
 			}
-			
+
 			@Override
 			public void onRefresh() {
 				actionHandler.onActionInvoked(new ActionInvokedEvent<ClientSearchOperationViewPresenter.Action>(Action.REFRESH));
@@ -211,6 +214,23 @@ public class ClientSearchOperationView extends View implements ClientSearchOpera
 
 		this.form = new ClientFormView();
 		this.form.setSize("100%", "100%");
+
+		this.form.addValueChangeHandler(new ValueChangeHandler<Client>() {
+			@Override
+			public void onValueChange(ValueChangeEvent<Client> event) {
+				Client client = event.getValue();
+				if(client != null){
+					if(client.id != null){
+						contactsList.setContactProcessAndOperationAndOwner(client.processId, ModuleConstants.OpTypeIDs.ChangeClientData, client.id);
+					}else{
+						contactsList.clearAll();
+					}
+				}else{
+					contactsList.clearAll();
+				}
+				contactsList.setReadOnly(client == null); //TODO FJVC
+			}
+		});
 
 		formWrapper.add(operationsToolbar);
 		formWrapper.setCellHeight(operationsToolbar, "21px");
@@ -224,7 +244,9 @@ public class ClientSearchOperationView extends View implements ClientSearchOpera
 		mainWrapper.add(wrapper);
 		mainContent = wrapper;
 
-		searchPanel.doSearch();
+		if(!bigBang.definitions.client.Constants.DEBUG){
+			searchPanel.doSearch();
+		}
 		initWidget(mainWrapper);
 	}
 
@@ -299,7 +321,7 @@ public class ClientSearchOperationView extends View implements ClientSearchOpera
 	}
 
 	@Override
-	public HasEditableValue<RiskAnalisys> getRiskAnalisysForm() {
+	public HasEditableValue<RiskAnalysis> getRiskAnalisysForm() {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -420,27 +442,27 @@ public class ClientSearchOperationView extends View implements ClientSearchOpera
 	public void showInfoOrDocumentRequestForm(boolean show) {
 		VerticalPanel wrapper = new VerticalPanel();
 		wrapper.setSize("100%", "100%");
-		
+
 		ListHeader header = new ListHeader();
 		header.setText("Pedido de Informação ou Documento");
 		header.setLeftWidget(new Button("Voltar", new ClickHandler() {
-			
+
 			@Override
 			public void onClick(ClickEvent event) {
 				mainWrapper.slideInto(mainContent, Direction.RIGHT);
 			}
 		}));
 		wrapper.add(header);
-		
+
 		SimplePanel viewContainer = new SimplePanel();
 		viewContainer.setSize("100%", "100%");
 		InfoOrDocumentRequestView requestView = new InfoOrDocumentRequestView() {
-			
+
 			@Override
 			public void onSendButtonPressed() {
 				onBackButtonPressed();
 			}
-			
+
 			@Override
 			public void onBackButtonPressed() {
 				mainWrapper.slideInto(mainContent, Direction.RIGHT);
@@ -449,10 +471,10 @@ public class ClientSearchOperationView extends View implements ClientSearchOpera
 		};
 		requestView.setClient(this.form.getValue());
 		viewContainer.add(requestView);
-		
+
 		wrapper.add(viewContainer);
 		wrapper.setCellHeight(viewContainer, "100%");
-		
+
 		mainWrapper.slideInto(
 				wrapper, Direction.LEFT);
 	}
@@ -575,29 +597,29 @@ public class ClientSearchOperationView extends View implements ClientSearchOpera
 		UndoOperationView historyView = new UndoOperationView();
 		UndoOperationViewPresenter presenter = new UndoOperationViewPresenter(null,
 				(HistoryBroker) DataBrokerManager.Util.getInstance().getBroker(BigBangConstants.EntityIds.HISTORY),
-						historyView,
-						process.processId);
+				historyView,
+				process.processId);
 		VerticalPanel wrapper = new VerticalPanel();
 		wrapper.setSize("100%", "100%");
-		
+
 		ListHeader header = new ListHeader();
 		header.setText("Histórico do Processo Cliente Nº" + process.clientNumber + " (" + process.name + ")");
 		header.setLeftWidget(new Button("Voltar", new ClickHandler() {
-			
+
 			@Override
 			public void onClick(ClickEvent event) {
 				mainWrapper.slideInto(mainContent, Direction.RIGHT);
 			}
 		}));
 		wrapper.add(header);
-		
+
 		SimplePanel viewContainer = new SimplePanel();
 		viewContainer.setSize("100%", "100%");
 		presenter.go(viewContainer);
-		
+
 		wrapper.add(viewContainer);
 		wrapper.setCellHeight(viewContainer, "100%");
-		
+
 		mainWrapper.slideInto(
 				wrapper, Direction.LEFT);
 	}
@@ -647,7 +669,7 @@ public class ClientSearchOperationView extends View implements ClientSearchOpera
 	@Override
 	public void lockManagerTransferForm(boolean lock) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 }

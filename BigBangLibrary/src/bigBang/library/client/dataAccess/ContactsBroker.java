@@ -54,12 +54,6 @@ public interface ContactsBroker {
 	public void unregisterClient(ContactsBrokerClient client, String ownerId);
 	
 	/**
-	 * Gets the clients for the data broker
-	 * @return A collection with the registered clients in the data broker
-	 */
-	public Collection<ContactsBrokerClient> getClients();
-	
-	/**
 	 * Gets the clients for the data broker for a given contact owner
 	 * @param ownerId The id of the owner of the contacts
 	 * @return A collection with the registered clients in the data broker

@@ -1,6 +1,6 @@
 package bigBang.definitions.shared;
 
-public class RiskAnalisysStub extends SearchResult {
+public class RiskAnalysisStub extends SearchResult {
 
 	private static final long serialVersionUID = 1L;
 	

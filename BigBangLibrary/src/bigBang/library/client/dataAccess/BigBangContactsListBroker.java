@@ -6,6 +6,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import bigBang.definitions.client.dataAccess.DataBroker;
+import bigBang.definitions.client.dataAccess.DataBrokerClient;
 import bigBang.definitions.client.response.ResponseError;
 import bigBang.definitions.client.response.ResponseHandler;
 import bigBang.definitions.shared.Contact;
@@ -13,7 +15,7 @@ import bigBang.library.client.BigBangAsyncCallback;
 import bigBang.library.interfaces.ContactsService;
 import bigBang.library.interfaces.ContactsServiceAsync;
 
-public class BigBangContactsListBroker implements ContactsBroker {
+public class BigBangContactsListBroker extends DataBroker<Contact> implements ContactsBroker {
 
 	public static class Util {
 		protected static BigBangContactsListBroker instance;
@@ -83,16 +85,28 @@ public class BigBangContactsListBroker implements ContactsBroker {
 	}
 
 	@Override
-	public void registerClient(ContactsBrokerClient client, String ownerId) {
+	public void registerClient(final ContactsBrokerClient client, final String ownerId) {
 		if(!clients.containsKey(ownerId)){
 			List<ContactsBrokerClient> clientList = new ArrayList<ContactsBrokerClient>();
 			clients.put(ownerId, clientList);
 			contacts.put(ownerId, new ArrayList<Contact>());
 			requireDataRefresh(ownerId);
 			dataVersions.put(ownerId, NO_DATA_VERSION);	
+			getContacts(ownerId, new ResponseHandler<List<Contact>>() {
+
+				@Override
+				public void onResponse(List<Contact> response) {
+					clients.get(ownerId).add(client);
+					updateClient(ownerId, client);
+				}
+
+				@Override
+				public void onError(Collection<ResponseError> errors) {}
+			});
+		}else{
+			clients.get(ownerId).add(client);
+			updateClient(ownerId, client);
 		}
-		clients.get(ownerId).add(client);
-		updateClient(ownerId, client);
 	}
 
 	@Override
@@ -126,8 +140,8 @@ public class BigBangContactsListBroker implements ContactsBroker {
 	}
 
 	@Override
-	public Collection<ContactsBrokerClient> getClients() {
-		List<ContactsBrokerClient> result = new ArrayList<ContactsBrokerClient>();
+	public Collection<DataBrokerClient<Contact>> getClients() {
+		Collection<DataBrokerClient<Contact>> result = new ArrayList<DataBrokerClient<Contact>>();
 		for(List<ContactsBrokerClient> clientList : clients.values()){
 			result.addAll(clientList);
 		}
@@ -157,13 +171,17 @@ public class BigBangContactsListBroker implements ContactsBroker {
 		dataRefreshRequirements.put(ownerId, true);
 	}
 
+	protected boolean requiresDataRefresh(String ownerId){
+		return this.dataRefreshRequirements.get(ownerId);
+	}
+
 	@Override
 	public void getContact(final String ownerId, final String contactId,
 			final ResponseHandler<Contact> handler) {
 		if(!clients.containsKey(ownerId)){
 			throw new RuntimeException("The contacts for the owner with id " + ownerId + " are not being managed by this broker.");
 		}
-		if(dataRefreshRequirements.get(ownerId)){
+		if(requiresDataRefresh(ownerId)){
 			getContacts(ownerId, new ResponseHandler<List<Contact>>() {
 				@Override
 				public void onResponse(List<Contact> response) {
@@ -191,7 +209,7 @@ public class BigBangContactsListBroker implements ContactsBroker {
 		if(!clients.containsKey(ownerId)){
 			throw new RuntimeException("The contacts for the owner with id " + ownerId + " are not being managed by this broker.");
 		}
-		if(dataRefreshRequirements.get(ownerId)){
+		if(requiresDataRefresh(ownerId)){
 			service.getContacts(ownerId, new BigBangAsyncCallback<Contact[]>() {
 
 				@Override
@@ -334,6 +352,24 @@ public class BigBangContactsListBroker implements ContactsBroker {
 		int currentVersion = dataVersions.get(ownerId);
 		client.setContacts(ownerId, contacts.get(ownerId));
 		client.setContactsDataVersionNumber(ownerId, currentVersion);
+	}
+
+	@Override
+	public void notifyItemCreation(String itemId) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void notifyItemDeletion(String itemId) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void notifyItemUpdate(String itemId) {
+		// TODO Auto-generated method stub
+		
 	}
 
 }

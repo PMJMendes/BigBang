@@ -1,5 +1,5 @@
 package bigBang.definitions.client;
 
 public class Constants {
-	public static final boolean DEBUG = false;
+	public static final boolean DEBUG = true;
 }

@@ -19,7 +19,7 @@ import bigBang.definitions.shared.ClientStub;
 import bigBang.definitions.shared.InsurancePolicy;
 import bigBang.definitions.shared.ManagerTransfer;
 import bigBang.definitions.shared.QuoteRequest;
-import bigBang.definitions.shared.RiskAnalisys;
+import bigBang.definitions.shared.RiskAnalysis;
 import bigBang.library.client.BigBangAsyncCallback;
 import bigBang.library.interfaces.InfoOrDocumentRequestService;
 import bigBang.library.interfaces.InfoOrDocumentRequestServiceAsync;
@@ -140,12 +140,12 @@ public class ClientProcessBrokerImpl extends DataBroker<Client> implements Clien
 	}
 
 	@Override
-	public void createRiskAnalisys(String clientId, RiskAnalisys riskAnalisys,
-			final ResponseHandler<RiskAnalisys> handler) {
-		service.createRiskAnalisys(clientId, riskAnalisys, new BigBangAsyncCallback<RiskAnalisys>() {
+	public void createRiskAnalisys(String clientId, RiskAnalysis riskAnalisys,
+			final ResponseHandler<RiskAnalysis> handler) {
+		service.createRiskAnalisys(clientId, riskAnalisys, new BigBangAsyncCallback<RiskAnalysis>() {
 
 			@Override
-			public void onSuccess(RiskAnalisys result) {
+			public void onSuccess(RiskAnalysis result) {
 				//TODO
 				handler.onResponse(result);
 			}
@@ -272,6 +272,51 @@ public class ClientProcessBrokerImpl extends DataBroker<Client> implements Clien
 			@Override
 			public void onSuccess(ManagerTransfer[] result) {
 				handler.onResponse(result);
+			}
+		});
+	}
+
+	@Override
+	public void notifyItemCreation(String itemId) {
+		requireDataRefresh();
+		this.getClient(itemId, new ResponseHandler<Client>() {
+
+			@Override
+			public void onResponse(Client response) {
+				return;
+			}
+
+			@Override
+			public void onError(Collection<ResponseError> errors) {
+				return;
+			}
+		});
+	}
+
+	@Override
+	public void notifyItemDeletion(String itemId) {
+		if(this.cache.contains(itemId)){
+			cache.remove(itemId);
+		}
+		for(DataBrokerClient<Client> c : this.clients) {
+			ClientProcessDataBrokerClient b = (ClientProcessDataBrokerClient)c;
+			b.removeClient(itemId);
+		}
+	}
+
+	@Override
+	public void notifyItemUpdate(String itemId) {
+		requireDataRefresh();
+		this.getClient(itemId, new ResponseHandler<Client>() {
+
+			@Override
+			public void onResponse(Client response) {
+				return;
+			}
+
+			@Override
+			public void onError(Collection<ResponseError> errors) {
+				return;
 			}
 		});
 	}

@@ -14,7 +14,7 @@ public abstract class DataBroker<T> implements DataBrokerInterface<T> {
 	protected String dataElementId;
 	protected int dataVersion;
 	protected DataBrokerCache cache;
-	private List<DataBrokerClient<T>> clients;
+	protected List<DataBrokerClient<T>> clients;
 	
 	protected final int INITIAL_DATA_VERSION = 0;
 	

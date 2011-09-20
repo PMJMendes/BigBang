@@ -31,8 +31,6 @@ public class GeneralSystemModule implements Module {
 
 	@Override
 	public void initialize(final EventBus eventBus, final BigBangPermissionManager permissionManager) {
-		sectionPresenters = new SectionViewPresenter[1];
-
 		GeneralSystemService.Util.getInstance().getGeneralSystemProcessId(new BigBangAsyncCallback<String>() {
 
 			@Override
@@ -53,6 +51,8 @@ public class GeneralSystemModule implements Module {
 	}
 
 	private void setup(EventBus eventBus, BigBangPermissionManager permissionManager, String processId) {
+		sectionPresenters = new SectionViewPresenter[0];
+		//TODO FJVC
 		//GeneralSystem section
 		GeneralSystemSection generalSystemSection = new GeneralSystemSection(permissionManager, processId);
 		GeneralSystemSectionView generalSystemSectionView = new GeneralSystemSectionView();

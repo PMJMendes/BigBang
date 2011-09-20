@@ -8,7 +8,7 @@ import bigBang.definitions.shared.ClientStub;
 import bigBang.definitions.shared.InsurancePolicy;
 import bigBang.definitions.shared.ManagerTransfer;
 import bigBang.definitions.shared.QuoteRequest;
-import bigBang.definitions.shared.RiskAnalisys;
+import bigBang.definitions.shared.RiskAnalysis;
 
 /**
  * The interface for a Client processes DataBroker
@@ -55,7 +55,7 @@ public interface ClientProcessBroker extends DataBrokerInterface<Client>{
 	 * @param riskAnalysis The risk analysis to be created
 	 * @param handler The handler to be notified on response
 	 */
-	public void createRiskAnalisys(String clientId, RiskAnalisys riskAnalisys, ResponseHandler<RiskAnalisys> handler);
+	public void createRiskAnalisys(String clientId, RiskAnalysis riskAnalisys, ResponseHandler<RiskAnalysis> handler);
 
 	public void createInsurancePolicy(String clientId, InsurancePolicy policy, ResponseHandler<InsurancePolicy> handler);
 	

@@ -22,7 +22,7 @@ import bigBang.library.interfaces.TipifiedListServiceAsync;
  * @see TypifiedListBroker
  */
 public class BigBangTypifiedListBroker implements TypifiedListBroker {
-	
+
 	public static class Util {
 		private static TypifiedListBroker instance;
 
@@ -33,14 +33,14 @@ public class BigBangTypifiedListBroker implements TypifiedListBroker {
 			return instance;
 		}
 	}
-	
+
 	protected final Integer NO_DATA_VERSION = new Integer(0); 
-	
+
 	protected TipifiedListServiceAsync service;
 	protected Map<String, ArrayList<TypifiedListClient>> clients;
 	protected Map<String, Integer> dataVersions;
 	protected Map<String, ArrayList<TipifiedListItem>> lists;
-	
+
 	/**
 	 * The class constructor
 	 */
@@ -59,17 +59,17 @@ public class BigBangTypifiedListBroker implements TypifiedListBroker {
 			refreshListData(listId);
 			this.clients.put(listId, new ArrayList<TypifiedListClient>());
 		}
-		
+
 		List<TypifiedListClient> clientList = this.clients.get(listId);
-		
+
 		Integer listDataVersion = getListDataVersion(listId);
-		
+
 		if(!clientList.contains(client))
 			clientList.add(client);
 		client.setTypifiedListItems(this.getListItems(listId));		
 		client.setTypifiedDataVersionNumber(listDataVersion.intValue());
 	}
-	
+
 	@Override
 	public void unregisterClient(String listId, TypifiedListClient client) {
 		if(clients.containsKey(listId)){
@@ -85,17 +85,15 @@ public class BigBangTypifiedListBroker implements TypifiedListBroker {
 
 	@Override
 	public void refreshListData(final String listId) {
-		if(!bigBang.definitions.client.Constants.DEBUG){
-			this.service.getListItems(listId, new BigBangAsyncCallback<TipifiedListItem[]>() {
-	
-				@Override
-				public void onSuccess(TipifiedListItem[] result) {
-					BigBangTypifiedListBroker.this.lists.put(listId, new ArrayList<TipifiedListItem>(Arrays.asList(result)));
-					incrementListDataVersion(listId);
-					updateListClients(listId);
-				}
-			});
-		}
+		this.service.getListItems(listId, new BigBangAsyncCallback<TipifiedListItem[]>() {
+
+			@Override
+			public void onSuccess(TipifiedListItem[] result) {
+				BigBangTypifiedListBroker.this.lists.put(listId, new ArrayList<TipifiedListItem>(Arrays.asList(result)));
+				incrementListDataVersion(listId);
+				updateListClients(listId);
+			}
+		});
 	}
 
 	@Override
@@ -107,7 +105,7 @@ public class BigBangTypifiedListBroker implements TypifiedListBroker {
 
 	@Override
 	public void createListItem(final String listId, TipifiedListItem item, final ResponseHandler<TipifiedListItem> handler) {
-		
+
 		this.service.createListItem(listId, item, new BigBangAsyncCallback<TipifiedListItem>() {
 
 			@Override
@@ -115,12 +113,12 @@ public class BigBangTypifiedListBroker implements TypifiedListBroker {
 				updateListClients(listId);
 				BigBangTypifiedListBroker.this.lists.get(listId).add(result);
 				Integer version = BigBangTypifiedListBroker.this.incrementListDataVersion(listId);
-				
+
 				for(TypifiedListClient client : BigBangTypifiedListBroker.this.clients.get(listId)) {
 					client.addItem(result);
 					client.setTypifiedDataVersionNumber(version.intValue());
 				}
-				
+
 				handler.onResponse(result);
 			}
 
@@ -139,7 +137,7 @@ public class BigBangTypifiedListBroker implements TypifiedListBroker {
 			@Override
 			public void onSuccess(Void result) {
 				TipifiedListItem item = null;
-				
+
 				for(TipifiedListItem i : BigBangTypifiedListBroker.this.lists.get(listId)) {
 					if(i.id.equalsIgnoreCase(itemId)){
 						item = i;
@@ -147,19 +145,19 @@ public class BigBangTypifiedListBroker implements TypifiedListBroker {
 						break;
 					}
 				}
-				
+
 				if(item == null)
 					throw new RuntimeException("The typified list item with id \"" + itemId + "\" does no exist in list with id \"" + listId + "\"");
 
 				Integer version = BigBangTypifiedListBroker.this.incrementListDataVersion(listId);
-				
+
 				for(TypifiedListClient client : BigBangTypifiedListBroker.this.clients.get(listId)) {
 					client.removeItem(item);
 					client.setTypifiedDataVersionNumber(version.intValue());
 				}
 				handler.onResponse(item);
 			}
-			
+
 			@Override
 			public void onFailure(Throwable caught) {
 				handler.onError(new String[]{"The item could not be removed"});
@@ -176,7 +174,7 @@ public class BigBangTypifiedListBroker implements TypifiedListBroker {
 			@Override
 			public void onSuccess(TipifiedListItem result) {
 				updateListClients(listId);
-				
+
 				BigBangTypifiedListBroker.this.lists.get(listId).remove(item);
 				BigBangTypifiedListBroker.this.lists.get(listId).add(result);
 				Integer version = BigBangTypifiedListBroker.this.incrementListDataVersion(listId);
@@ -187,7 +185,7 @@ public class BigBangTypifiedListBroker implements TypifiedListBroker {
 				}
 				handler.onResponse(result);
 			}
-			
+
 			@Override
 			public void onFailure(Throwable caught) {
 				handler.onError(new String[]{"The item could not be saved"});
@@ -195,7 +193,7 @@ public class BigBangTypifiedListBroker implements TypifiedListBroker {
 			}
 		});
 	}
-	
+
 	/**
 	 * Gets the current data version number for the list with the given id
 	 * @param listId the id of the list
@@ -206,7 +204,7 @@ public class BigBangTypifiedListBroker implements TypifiedListBroker {
 			throw new RuntimeException("There is no list registered with id \"" + listId + "\"");
 		return this.dataVersions.get(listId);
 	}
-	
+
 	/**
 	 * Sets the new data version for the list with the given id
 	 * @param listId the id of the list
@@ -217,7 +215,7 @@ public class BigBangTypifiedListBroker implements TypifiedListBroker {
 			throw new RuntimeException("There if no list registered with id \"" + listId + "\"");
 		this.dataVersions.put(listId, version);
 	}
-	
+
 	/**
 	 * Increments the data version for the list with the given id
 	 * @param listId the id of the list
@@ -226,12 +224,12 @@ public class BigBangTypifiedListBroker implements TypifiedListBroker {
 	protected Integer incrementListDataVersion(String listId) {
 		if(!this.lists.containsKey(listId))
 			throw new RuntimeException("There if no list registered with id \"" + listId + "\"");
-		
+
 		Integer dataVersion = new Integer(this.dataVersions.get(listId).intValue() + 1);
 		setListDataVersion(listId, dataVersion);
 		return dataVersion;
 	}
-	
+
 	/**
 	 * Updates all the clients for a given list with the latest data
 	 * @param listId the id of the list for which clients will be updated
@@ -241,12 +239,12 @@ public class BigBangTypifiedListBroker implements TypifiedListBroker {
 			throw new RuntimeException("There if no list registered with id \"" + listId + "\"");
 
 		List<TypifiedListClient> listClients = this.clients.get(listId);
-		
+
 		for(TypifiedListClient client : listClients) {
 			this.updateListClient(listId, client);
 		}
 	}
-	
+
 	/**
 	 * Updates one client for a given list with the latest data
 	 * @param listId the id of the list for which the client will be updated 
@@ -258,13 +256,13 @@ public class BigBangTypifiedListBroker implements TypifiedListBroker {
 
 		if(!this.clients.get(listId).contains(client))
 			throw new RuntimeException("The typified list client is not registered for the list with id : " + listId);
-		
+
 		int clientVersion = client.getTypifiedDataVersionNumber();
 
 		if(clientVersion > currentDataVersion || clientVersion < this.NO_DATA_VERSION)
 			throw new RuntimeException("Unexpected exception. The client has an inconsistent version number " + clientVersion +
 					". Expected between "  + this.NO_DATA_VERSION + " and " + currentDataVersion + ".");
-		
+
 		if(client.getTypifiedDataVersionNumber() < currentDataVersion){
 			client.setTypifiedListItems(items);
 			client.setTypifiedDataVersionNumber(currentDataVersion);
