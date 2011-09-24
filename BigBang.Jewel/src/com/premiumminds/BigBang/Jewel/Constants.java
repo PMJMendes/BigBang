@@ -7,6 +7,8 @@ public class Constants
 	// Objects
 	
 	// General Objects
+	public static final UUID ObjID_GenSys        = UUID.fromString("628F5DA6-434F-46A8-9C88-9EB1008A689A");
+
 	public static final UUID ObjID_CostCenter    = UUID.fromString("4AF891C6-707B-43AE-98C3-9EB100C0419E");
 	public static final UUID ObjID_Decorations   = UUID.fromString("87C6A1DB-2381-47E4-ADE5-9EB800836FF7");
 	public static final UUID ObjID_Company       = UUID.fromString("7B203DCA-FFAC-46B2-B849-9EBC009DB127");
@@ -21,8 +23,6 @@ public class Constants
 	public static final UUID ObjID_Tax           = UUID.fromString("43644146-07C4-4E63-9E87-9EC900F6EB73");
 	public static final UUID ObjID_ClientGroup   = UUID.fromString("DC89D454-CCCC-441E-BCE3-9EE600AFCCCD");
 
-	public static final UUID ObjID_GenSys        = UUID.fromString("628F5DA6-434F-46A8-9C88-9EB1008A689A");
-
 	// Agenda Objects
 	public static final UUID ObjID_AgendaItem    = UUID.fromString("F850E623-E686-4575-A2D8-9F640128FCD7");
 	public static final UUID ObjID_AgendaProcess = UUID.fromString("3620AAEE-A950-421C-A5D3-9F640135D7D8");
@@ -30,6 +30,9 @@ public class Constants
 
 	// Client Objects
 	public static final UUID ObjID_Client        = UUID.fromString("D535A99E-149F-44DC-A28B-9EE600B240F5");
+
+	// Sub-Process Objects
+	public static final UUID ObjID_MgrXFer       = UUID.fromString("66EC1066-AD5A-430C-9A70-9F65013F5453");
 
 	// Typified Lists
 	public static final UUID ObjID_ContactType   = UUID.fromString("228F6A73-1335-4C99-8DD0-9EEE012964BA");
@@ -48,12 +51,10 @@ public class Constants
 	public static final UUID ObjID_Size          = UUID.fromString("5E489662-2AAF-4348-95E0-9EE600C4A71F");
 	public static final UUID ObjID_SalesVolume   = UUID.fromString("5C4E267C-B306-482F-8636-9EE600C586B6");
 
-	// User Profiles
-	public static final UUID ProfileID_Root = UUID.fromString("061388D9-16A6-443F-A69E-9EB000685026");
-
 	// Process Scripts
-	public static final UUID ProcID_GenSys = UUID.fromString("37A989E2-9D1F-470C-A59E-9EB1008A97A5");
-	public static final UUID ProcID_Client = UUID.fromString("100E701A-EDC5-4D9C-A221-9F09013D7954");
+	public static final UUID ProcID_GenSys  = UUID.fromString("37A989E2-9D1F-470C-A59E-9EB1008A97A5");
+	public static final UUID ProcID_Client  = UUID.fromString("100E701A-EDC5-4D9C-A221-9F09013D7954");
+	public static final UUID ProcID_MgrXFer = UUID.fromString("BBF5FFD1-4249-48AE-BB2D-9F6501420E7B");
 
 	// Operations
 
@@ -80,9 +81,28 @@ public class Constants
 	public static final UUID OPID_TriggerAllowPolicies    = UUID.fromString("A99DCEF5-91BA-4CFA-9E70-9F090146FAE4");
 	public static final UUID OPID_TriggerDisallowPolicies = UUID.fromString("6A031641-DEC8-46D3-B402-9F0901474FE9");
 	public static final UUID OPID_AutoProcessData         = UUID.fromString("A9A8F4ED-74C2-473C-873C-9F0901435C1C");
-	public static final UUID OPID_CreateManagerTransfer   = UUID.fromString("C75EEC27-780C-4C0C-9FD7-9F090142CB10");
+	public static final UUID OPID_CreateMgrXFer           = UUID.fromString("C75EEC27-780C-4C0C-9FD7-9F090142CB10");
 	public static final UUID OPID_ManageClientData        = UUID.fromString("AE3CC7F0-BE2C-4548-87B5-9F09014072B8");
 	public static final UUID OPID_DeleteClient            = UUID.fromString("2227C32A-0AF5-4ECC-B807-9F090143401F");
+	public static final UUID OPID_UndoManageClientData    = UUID.fromString("61097A3F-2322-4C06-B015-9F090143A35B");
+	public static final UUID OPID_EndMgrXFer              = UUID.fromString("B8D56EF0-F619-4EB2-8F26-9F0901438388");
+	public static final UUID OPID_UndoEndMgrXFer          = UUID.fromString("955E3DFE-F74A-46A5-9A42-9F6800EADA3D");
+
+	// Manager Transfer Operations
+	public static final UUID OPID_AcceptXFer     = UUID.fromString("8B3AB41F-76F6-4311-8600-9F65014CF682");
+	public static final UUID OPID_CancelXFer     = UUID.fromString("C8FCD8FD-B616-4252-942F-9F650155B3BC");
+	public static final UUID OPID_UndoAcceptXFer = UUID.fromString("C8ED82AD-B227-4124-8317-9F650155DFFD");
+	public static final UUID OPID_UndoCancelXFer = UUID.fromString("38B353D0-4D69-45E2-BCF8-9F650155F824");
+
+	// Urgency Levels
+	public static final UUID UrgID_Invalid   = UUID.fromString("6FDEA9C9-55E0-4214-8BC2-9EB1007E9BA5");
+	public static final UUID UrgID_Valid     = UUID.fromString("7925EF60-80FC-4EA2-96A0-9EB1007EA1FF");
+	public static final UUID UrgID_Pending   = UUID.fromString("C8B78B35-C9D7-4D5A-A65C-9EB1007EA842");
+	public static final UUID UrgID_Urgent    = UUID.fromString("23A9B8C2-91E8-4188-885F-9EB1007ED540");
+	public static final UUID UrgID_Completed = UUID.fromString("86C2D8A9-B754-4C8A-A81C-9EB1007EE286");
+
+	// User Profiles
+	public static final UUID ProfileID_Root = UUID.fromString("061388D9-16A6-443F-A69E-9EB000685026");
 
 	// Client Types 
 	public static final UUID TypeID_Individual = UUID.fromString("462096E4-68A2-408A-963A-9EE600C9556A");

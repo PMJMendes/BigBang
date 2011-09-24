@@ -18,7 +18,7 @@ import com.premiumminds.BigBang.Jewel.Operations.ContactOps;
 import com.premiumminds.BigBang.Jewel.Operations.DocOps;
 import com.premiumminds.BigBang.Jewel.Operations.DataObjects.ClientData;
 
-public class TriggerDeleteClient
+public class ExternDeleteClient
 	extends UndoableOperation
 {
 	private static final long serialVersionUID = 1L;
@@ -27,7 +27,7 @@ public class TriggerDeleteClient
 	public ContactOps mobjContactOps;
 	public DocOps mobjDocOps;
 
-	public TriggerDeleteClient(UUID pidProcess)
+	public ExternDeleteClient(UUID pidProcess)
 	{
 		super(pidProcess);
 	}
@@ -59,6 +59,11 @@ public class TriggerDeleteClient
 			mobjDocOps.LongDesc(lstrResult, pstrLineBreak);
 
 		return lstrResult.toString();
+	}
+
+	public UUID GetExternalProcess()
+	{
+		return mobjData.midProcess;
 	}
 
 	protected void Run(SQLServer pdb)

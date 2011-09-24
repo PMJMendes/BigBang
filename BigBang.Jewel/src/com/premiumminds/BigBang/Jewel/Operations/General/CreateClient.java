@@ -9,6 +9,7 @@ import Jewel.Engine.DataAccess.MasterDB;
 import Jewel.Engine.DataAccess.SQLServer;
 import Jewel.Engine.Implementation.Entity;
 import Jewel.Engine.Interfaces.IEntity;
+import Jewel.Petri.Interfaces.IProcess;
 import Jewel.Petri.Interfaces.IScript;
 import Jewel.Petri.Objects.PNScript;
 import Jewel.Petri.SysObjects.JewelPetriException;
@@ -64,11 +65,17 @@ public class CreateClient
 		return lstrResult.toString();
 	}
 
+	public UUID GetExternalProcess()
+	{
+		return mobjData.midProcess;
+	}
+
 	protected void Run(SQLServer pdb)
 		throws JewelPetriException
 	{
 		Client lobjAux;
 		IScript lobjScript;
+		IProcess lobjProc; 
 
 		try
 		{
@@ -84,10 +91,11 @@ public class CreateClient
 				mobjDocOps.RunSubOp(pdb, lobjAux.getKey());
 
 			lobjScript = PNScript.GetInstance(Engine.getCurrentNameSpace(), Constants.ProcID_Client);
-			lobjScript.CreateInstance(Engine.getCurrentNameSpace(), lobjAux.getKey(), null, pdb);
+			lobjProc = lobjScript.CreateInstance(Engine.getCurrentNameSpace(), lobjAux.getKey(), null, pdb);
 
 			mobjData.mid = lobjAux.getKey();
-			mobjData.midProcess = lobjAux.GetProcessID();
+			mobjData.midProcess = lobjProc.getKey();
+			mobjData.midManager = lobjProc.GetManagerID();
 			mobjData.mobjPrevValues = null;
 		}
 		catch (Throwable e)

@@ -481,19 +481,18 @@ select CAST(CAST(NEWID() AS BINARY(10)) + CAST(GETDATE() AS BINARY(6)) AS UNIQUE
 left outer join bigbang.tblCAE x on left(x.CAEText, 5) = CAST(c.CODCAE AS VARCHAR(5)) COLLATE DATABASE_DEFAULT
 where c.CODCAE like '_____' and x.PK is null) z;
 
-insert into credite_egs.tblBBClients (PK, ClientName, ClientNumber, Address1, Address2, FKZipCode, FiscalNumber, FKEntityType, FKEntitySubType, FKManager, FKMediator,
+insert into credite_egs.tblBBClients (PK, ClientName, ClientNumber, Address1, Address2, FKZipCode, FiscalNumber, FKEntityType, FKEntitySubType, FKMediator,
 FKProfile, FKGroup, DateOfBirth, FKSex, FKMaritalStatus, FKProfession, FKCAE, ClientNotes, MigrationID)
 select CAST(CAST(NEWID() AS BINARY(10)) + CAST(GETDATE() AS BINARY(6)) AS UNIQUEIDENTIFIER) PK,
 c.NOME ClientName, row_number() over (order by c.CLIENTE) ClientNumber, c.MORADA Address1, c.LOCALIDADE Address2, p.PK FKZipCode, c.NCONTRIB FiscalNumber,
 CASE c.TIPO_C WHEN 'I' THEN '462096E4-68A2-408A-963A-9EE600C9556A' WHEN 'E' THEN 'C5B4F500-BB57-4BFD-8248-9EE600C95ABA' ELSE '4098CF7A-B5EE-4C3F-973F-9EE600C961AA' END FKEntityType,
 CASE c.TIPO_C WHEN 'C' THEN '5C7A0424-126B-467B-977A-9EE600CC13A4' ELSE NULL END FKEntitySubType,
-u.FKUser FKManager, m.PK FKMediator,
+m.PK FKMediator,
 CASE c.ClienteVIP WHEN 1 THEN '63114D11-6087-4EFE-9A7E-9EE600BE52DA' ELSE '9F871430-9BBC-449F-B125-9EE600BE5A9A' END FKProfile,
 g.PK FKGroup, c.DataNascimento DateOfBirth, s.PK FKSex, t.PK FKMaritalStatus, f.PK FKProfession, x.PK FKCAE, CAST(c.OBSERV AS VARCHAR(250)) ClientNotes,
 c.CLIENTE MigrationID
 from credegs..empresa.cliente c
 left outer join bigbang.tblPostalCodes p on p.PostalCode=CAST(c.CODPOSTAL AS VARCHAR(20)) COLLATE DATABASE_DEFAULT
-left outer join bigbang.tblUser2 u on u.MigrationID=c.GESTORCLI
 left outer join credite_egs.tblMediators m on m.MigrationID=c.MEDIACLI
 left outer join credite_egs.tblBBGroups g on g.MigrationID=c.grupo COLLATE DATABASE_DEFAULT
 left outer join bigbang.tblSex s on left(s.SexName, 1)=c.Sexo COLLATE DATABASE_DEFAULT
@@ -597,8 +596,10 @@ and r.CartaCondData is not null and r.CartaCondData<>'';
 
 insert into credite_egs.tblPNProcesses (PK, FKScript, FKData, FKManager, IsRunning)
 select CAST(CAST(NEWID() AS BINARY(10)) + CAST(GETDATE() AS BINARY(6)) AS UNIQUEIDENTIFIER) PK,
-'100E701A-EDC5-4D9C-A221-9F09013D7954' FKScript, PK FKData, FKManager FKManager, 0 IsRunning
-from credite_egs.tblBBClients;
+'100E701A-EDC5-4D9C-A221-9F09013D7954' FKScript, i.PK FKData, u.FKUser FKManager, 0 IsRunning
+from credite_egs.tblBBClients i
+inner join credegs..empresa.cliente c on c.CLIENTE=i.MigrationID
+inner join bigbang.tblUser2 u on u.MigrationID=c.GESTORCLI;
 
 update credite_egs.tblBBClients set FKProcess=p.PK
 from credite_egs.tblBBClients c inner join credite_egs.tblPNProcesses p on p.FKData=c.PK;
@@ -760,19 +761,18 @@ select CAST(CAST(NEWID() AS BINARY(10)) + CAST(GETDATE() AS BINARY(6)) AS UNIQUE
 left outer join bigbang.tblCAE x on left(x.CAEText, 5) = CAST(c.CODCAE AS VARCHAR(5)) COLLATE DATABASE_DEFAULT
 where c.CODCAE like '_____' and x.PK is null) z;
 
-insert into amartins.tblBBClients (PK, ClientName, ClientNumber, Address1, Address2, FKZipCode, FiscalNumber, FKEntityType, FKEntitySubType, FKManager, FKMediator,
+insert into amartins.tblBBClients (PK, ClientName, ClientNumber, Address1, Address2, FKZipCode, FiscalNumber, FKEntityType, FKEntitySubType, FKMediator,
 FKProfile, FKGroup, DateOfBirth, FKSex, FKMaritalStatus, FKProfession, FKCAE, ClientNotes, MigrationID)
 select CAST(CAST(NEWID() AS BINARY(10)) + CAST(GETDATE() AS BINARY(6)) AS UNIQUEIDENTIFIER) PK,
 c.NOME ClientName, row_number() over (order by c.CLIENTE) ClientNumber, c.MORADA Address1, c.LOCALIDADE Address2, p.PK FKZipCode, c.NCONTRIB FiscalNumber,
 CASE c.TIPO_C WHEN 'I' THEN '462096E4-68A2-408A-963A-9EE600C9556A' WHEN 'E' THEN 'C5B4F500-BB57-4BFD-8248-9EE600C95ABA' ELSE '4098CF7A-B5EE-4C3F-973F-9EE600C961AA' END FKEntityType,
 CASE c.TIPO_C WHEN 'C' THEN '5C7A0424-126B-467B-977A-9EE600CC13A4' ELSE NULL END FKEntitySubType,
-u.FKUser FKManager, m.PK FKMediator,
+m.PK FKMediator,
 CASE c.ClienteVIP WHEN 1 THEN '63114D11-6087-4EFE-9A7E-9EE600BE52DA' ELSE '9F871430-9BBC-449F-B125-9EE600BE5A9A' END FKProfile,
 g.PK FKGroup, c.DataNascimento DateOfBirth, s.PK FKSex, t.PK FKMaritalStatus, f.PK FKProfession, x.PK FKCAE, CAST(c.OBSERV AS VARCHAR(250)) ClientNotes,
 c.CLIENTE MigrationID
 from amartins..empresa.cliente c
 left outer join bigbang.tblPostalCodes p on p.PostalCode=CAST(c.CODPOSTAL AS VARCHAR(20)) COLLATE DATABASE_DEFAULT
-left outer join bigbang.tblUser2 u on u.MigrationID=c.GESTORCLI
 left outer join amartins.tblMediators m on m.MigrationID=c.MEDIACLI
 left outer join amartins.tblBBGroups g on g.MigrationID=c.grupo COLLATE DATABASE_DEFAULT
 left outer join bigbang.tblSex s on left(s.SexName, 1)=c.Sexo COLLATE DATABASE_DEFAULT
@@ -876,8 +876,10 @@ and r.CartaCondData is not null and r.CartaCondData<>'';
 
 insert into amartins.tblPNProcesses (PK, FKScript, FKData, FKManager, IsRunning)
 select CAST(CAST(NEWID() AS BINARY(10)) + CAST(GETDATE() AS BINARY(6)) AS UNIQUEIDENTIFIER) PK,
-'100E701A-EDC5-4D9C-A221-9F09013D7954' FKScript, PK FKData, FKManager FKManager, 0 IsRunning
-from amartins.tblBBClients;
+'100E701A-EDC5-4D9C-A221-9F09013D7954' FKScript, i.PK FKData, u.FKUser FKManager, 0 IsRunning
+from amartins.tblBBClients i
+inner join amartins..empresa.cliente c on c.CLIENTE=i.MigrationID
+inner join bigbang.tblUser2 u on u.MigrationID=c.GESTORCLI;
 
 update amartins.tblBBClients set FKProcess=p.PK
 from amartins.tblBBClients c inner join amartins.tblPNProcesses p on p.FKData=c.PK;

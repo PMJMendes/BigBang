@@ -12,30 +12,27 @@ import Jewel.Petri.SysObjects.Operation;
 import com.premiumminds.BigBang.Jewel.Constants;
 import com.premiumminds.BigBang.Jewel.Objects.MgrXFer;
 
-public class ExternEndManagerTransfer
+public class ExternUndoEndManagerTransfer
 	extends Operation
 {
 	private static final long serialVersionUID = 1L;
 
 	public UUID midProcess;
-	public boolean mbCancelled;
+	public UUID midReopener;
 
-	public ExternEndManagerTransfer(UUID pidProcess)
+	public ExternUndoEndManagerTransfer(UUID pidProcess)
 	{
 		super(pidProcess);
 	}
 
 	protected UUID OpID()
 	{
-		return Constants.OPID_EndMgrXFer;
+		return Constants.OPID_UndoEndMgrXFer;
 	}
 
 	public String ShortDesc()
 	{
-		if ( mbCancelled )
-			return "O procedimento de transferência do gestor de cliente foi cancelado.";
-
-		return "O procedimento de transferência do gestor de cliente foi completado.";
+		return "O procedimento de transferência do gestor de cliente foi reaberto.";
 	}
 
 	public String LongDesc(String pstrLineBreak)
@@ -65,7 +62,18 @@ public class ExternEndManagerTransfer
 		}
 		lstrBuffer.append(pstrLineBreak);
 
-		lstrBuffer.append(( mbCancelled ? "Gestor anterior: " : "Gestor do cliente: "));
+		lstrBuffer.append("Reabertura por: ");
+		try
+		{
+			lstrBuffer.append(User.GetInstance(Engine.getCurrentNameSpace(), midReopener).getDisplayName());
+		}
+		catch (Throwable e)
+		{
+			lstrBuffer.append("(Erro a obter o nome do utilizador.)");
+		}
+		lstrBuffer.append(pstrLineBreak);
+
+		lstrBuffer.append("Gestor actual: ");
 		try
 		{
 			lstrBuffer.append(User.GetInstance(Engine.getCurrentNameSpace(), lobjXFer.GetOldManagerID()).getDisplayName());
@@ -76,7 +84,7 @@ public class ExternEndManagerTransfer
 		}
 		lstrBuffer.append(pstrLineBreak);
 
-		lstrBuffer.append(( mbCancelled ? "Novo gestor: " : "Gestor pedido: "));
+		lstrBuffer.append("Gestor pedido: ");
 		try
 		{
 			lstrBuffer.append(User.GetInstance(Engine.getCurrentNameSpace(), lobjXFer.GetNewManagerID()).getDisplayName());

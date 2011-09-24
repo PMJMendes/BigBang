@@ -33,6 +33,11 @@ public class TriggerAllowPolicies
 		return "Após análise dos dados submetidos, a criação de apólices neste cliente foi activada.";
 	}
 
+	public UUID GetExternalProcess()
+	{
+		return null;
+	}
+
 	protected void Run(SQLServer pdb)
 		throws JewelPetriException
 	{

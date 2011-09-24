@@ -143,6 +143,11 @@ public class ManageUsers
 		return lstrResult.toString();
 	}
 
+	public UUID GetExternalProcess()
+	{
+		return null;
+	}
+
 	protected void Run(SQLServer pdb)
 		throws JewelPetriException
 	{

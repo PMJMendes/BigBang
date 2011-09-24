@@ -9,6 +9,8 @@ import Jewel.Engine.Constants.ObjectGUIDs;
 import Jewel.Engine.Implementation.Entity;
 import Jewel.Engine.Interfaces.IEntity;
 import Jewel.Engine.SysObjects.ObjectBase;
+import Jewel.Petri.Interfaces.IProcess;
+import Jewel.Petri.Objects.PNProcess;
 import bigBang.definitions.client.dataAccess.SearchParameter;
 import bigBang.definitions.client.dataAccess.SortOrder;
 import bigBang.definitions.client.dataAccess.SortParameter;
@@ -57,6 +59,7 @@ public class ClientServiceImpl
 		com.premiumminds.BigBang.Jewel.Objects.Client lobjClient;
 		ObjectBase lobjZipCode;
 		Client lobjResult;
+		IProcess lobjProc;
 
 		if ( Engine.getCurrentUser() == null )
 			throw new SessionExpiredException();
@@ -65,11 +68,15 @@ public class ClientServiceImpl
 		try
 		{
 			lobjClient = com.premiumminds.BigBang.Jewel.Objects.Client.GetInstance(Engine.getCurrentNameSpace(), lid);
+			if ( lobjClient.getAt(21) == null )
+				throw new BigBangException("Erro: Cliente sem processo de suporte. (Cliente n. "
+						+ lobjClient.getAt(1).toString() + ")");
 			if ( lobjClient.getAt(4) == null )
 				lobjZipCode = null;
 			else
 				lobjZipCode = Engine.GetWorkInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), ObjectGUIDs.O_PostalCode),
 						(UUID)lobjClient.getAt(4));
+			lobjProc = PNProcess.GetInstance(Engine.getCurrentNameSpace(), (UUID)lobjClient.getAt(21));
 		}
 		catch (Throwable e)
 		{
@@ -82,7 +89,7 @@ public class ClientServiceImpl
 		lobjResult.name = (String)lobjClient.getAt(0);
 		lobjResult.clientNumber = lobjClient.getAt(1).toString();
 		lobjResult.groupName = null;
-		lobjResult.groupId = (lobjClient.getAt(11) == null ? null : lobjClient.getAt(11).toString());
+		lobjResult.groupId = (lobjClient.getAt(10) == null ? null : lobjClient.getAt(10).toString());
 		lobjResult.taxNumber = (String)lobjClient.getAt(5);
 		lobjResult.address = new Address();
 		lobjResult.address.street1 = (String)lobjClient.getAt(2);
@@ -98,23 +105,23 @@ public class ClientServiceImpl
 			lobjResult.address.zipCode.district = (String)lobjZipCode.getAt(3);
 			lobjResult.address.zipCode.country = (String)lobjZipCode.getAt(4);
 		}
-		lobjResult.NIB = (String)lobjClient.getAt(12);
+		lobjResult.NIB = (String)lobjClient.getAt(11);
 		lobjResult.typeId = lobjClient.getAt(6).toString();
 		lobjResult.subtypeId = (lobjClient.getAt(7) == null ? null : lobjClient.getAt(7).toString());
-		lobjResult.mediatorId = lobjClient.getAt(9).toString();
-		lobjResult.managerId = lobjClient.getAt(8).toString();
-		lobjResult.operationalProfileId = lobjClient.getAt(10).toString();
-		lobjResult.caeId = (lobjClient.getAt(17) == null ? null : lobjClient.getAt(17).toString());
-		lobjResult.activityNotes = (String)lobjClient.getAt(18);
-		lobjResult.sizeId = (lobjClient.getAt(19) == null ? null : lobjClient.getAt(19).toString());
-		lobjResult.revenueId = (lobjClient.getAt(20) == null ? null : lobjClient.getAt(20).toString());
-		lobjResult.birthDate = (lobjClient.getAt(13) == null ? null : ((Timestamp)lobjClient.getAt(13)).toString());
-		lobjResult.genderId = (lobjClient.getAt(14) == null ? null : lobjClient.getAt(14).toString());
-		lobjResult.maritalStatusId = (lobjClient.getAt(15) == null ? null : lobjClient.getAt(15).toString());
-		lobjResult.professionId = (lobjClient.getAt(16) == null ? null : lobjClient.getAt(16).toString());
-		lobjResult.notes = (String)lobjClient.getAt(21);
+		lobjResult.mediatorId = lobjClient.getAt(8).toString();
+		lobjResult.operationalProfileId = lobjClient.getAt(9).toString();
+		lobjResult.caeId = (lobjClient.getAt(16) == null ? null : lobjClient.getAt(16).toString());
+		lobjResult.activityNotes = (String)lobjClient.getAt(17);
+		lobjResult.sizeId = (lobjClient.getAt(18) == null ? null : lobjClient.getAt(18).toString());
+		lobjResult.revenueId = (lobjClient.getAt(19) == null ? null : lobjClient.getAt(19).toString());
+		lobjResult.birthDate = (lobjClient.getAt(12) == null ? null : ((Timestamp)lobjClient.getAt(12)).toString());
+		lobjResult.genderId = (lobjClient.getAt(13) == null ? null : lobjClient.getAt(13).toString());
+		lobjResult.maritalStatusId = (lobjClient.getAt(14) == null ? null : lobjClient.getAt(14).toString());
+		lobjResult.professionId = (lobjClient.getAt(15) == null ? null : lobjClient.getAt(15).toString());
+		lobjResult.notes = (String)lobjClient.getAt(20);
 
-		lobjResult.processId = (lobjClient.getAt(22) == null ? null : lobjClient.getAt(22).toString());
+		lobjResult.processId = lobjProc.getKey().toString();
+		lobjResult.managerId = lobjProc.GetManagerID().toString();
 
 		return lobjResult;
 	}
@@ -158,7 +165,7 @@ public class ClientServiceImpl
 			lopCC.mobjData.mstrFiscal = client.taxNumber;
 			lopCC.mobjData.midType = ( client.typeId == null ? null : UUID.fromString(client.typeId) );
 			lopCC.mobjData.midSubtype = ( client.subtypeId == null ? null : UUID.fromString(client.subtypeId) );
-			lopCC.mobjData.midManager = ( client.managerId == null ? Engine.getCurrentUser() : UUID.fromString(client.managerId) );
+			lopCC.mobjData.midManager = null; //( client.managerId == null ? Engine.getCurrentUser() : UUID.fromString(client.managerId) );
 			lopCC.mobjData.midMediator = ( client.mediatorId == null ? null : UUID.fromString(client.mediatorId) );
 			lopCC.mobjData.midProfile = ( client.operationalProfileId == null ? null : UUID.fromString(client.operationalProfileId) );
 			lopCC.mobjData.midGroup = ( client.groupId == null ? null : UUID.fromString(client.groupId) );
@@ -201,6 +208,7 @@ public class ClientServiceImpl
 		client.id = lopCC.mobjData.mid.toString();
 		client.clientNumber = Integer.toString(lopCC.mobjData.mlngNumber);
 		client.processId = lopCC.mobjData.midProcess.toString();
+		client.managerId = lopCC.mobjData.midManager.toString();
 		if ( (client.contacts != null) && (client.contacts.length > 0) )
 			WalkContactTree(lopCC.mobjContactOps.marrCreate, client.contacts);
 		if ( (client.documents != null) && (client.documents.length > 0) )
@@ -248,7 +256,7 @@ public class ClientServiceImpl
 			lopMD.mobjData.mstrFiscal = client.taxNumber;
 			lopMD.mobjData.midType = ( client.typeId == null ? null : UUID.fromString(client.typeId) );
 			lopMD.mobjData.midSubtype = ( client.subtypeId == null ? null : UUID.fromString(client.subtypeId) );
-			lopMD.mobjData.midManager = ( client.managerId == null ? null : UUID.fromString(client.managerId) );
+			lopMD.mobjData.midManager = null; //( client.managerId == null ? null : UUID.fromString(client.managerId) );
 			lopMD.mobjData.midMediator = ( client.mediatorId == null ? null : UUID.fromString(client.mediatorId) );
 			lopMD.mobjData.midProfile = ( client.operationalProfileId == null ? null : UUID.fromString(client.operationalProfileId) );
 			lopMD.mobjData.midGroup = ( client.groupId == null ? null : UUID.fromString(client.groupId) );
@@ -274,6 +282,7 @@ public class ClientServiceImpl
 			throw new BigBangException(e.getMessage(), e);
 		}
 
+		client.managerId = lopMD.mobjData.midManager.toString();
 		return client;
 	}
 

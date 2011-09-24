@@ -46,6 +46,11 @@ public class AutoProcessData
 		return lstrBuffer.toString();
 	}
 
+	public UUID GetExternalProcess()
+	{
+		return null;
+	}
+
 	protected void Run(SQLServer pdb)
 		throws JewelPetriException
 	{

@@ -55,21 +55,20 @@ public class ClientData
 		mstrFiscal = (String)pobjSource.getAt(5);
 		midType = (UUID)pobjSource.getAt(6);
 		midSubtype = (UUID)pobjSource.getAt(7);
-		midManager = (UUID)pobjSource.getAt(8);
-		midMediator = (UUID)pobjSource.getAt(9);
-		midProfile = (UUID)pobjSource.getAt(10);
-		midGroup = (UUID)pobjSource.getAt(11);
-		mstrBankingID = (String)pobjSource.getAt(12);
-		mdtDateOfBirth = (Timestamp)pobjSource.getAt(13);
-		midSex = (UUID)pobjSource.getAt(14);
-		midMarital = (UUID)pobjSource.getAt(15);
-		midProfession = (UUID)pobjSource.getAt(16);
-		midCAE = (UUID)pobjSource.getAt(17);
-		mstrCAENotes = (String)pobjSource.getAt(18);
-		midSize = (UUID)pobjSource.getAt(19);
-		midSales = (UUID)pobjSource.getAt(20);
-		mstrNotes = (String)pobjSource.getAt(21);
-		midProcess = (UUID)pobjSource.getAt(22);
+		midMediator = (UUID)pobjSource.getAt(8);
+		midProfile = (UUID)pobjSource.getAt(9);
+		midGroup = (UUID)pobjSource.getAt(10);
+		mstrBankingID = (String)pobjSource.getAt(11);
+		mdtDateOfBirth = (Timestamp)pobjSource.getAt(12);
+		midSex = (UUID)pobjSource.getAt(13);
+		midMarital = (UUID)pobjSource.getAt(14);
+		midProfession = (UUID)pobjSource.getAt(15);
+		midCAE = (UUID)pobjSource.getAt(16);
+		mstrCAENotes = (String)pobjSource.getAt(17);
+		midSize = (UUID)pobjSource.getAt(18);
+		midSales = (UUID)pobjSource.getAt(19);
+		mstrNotes = (String)pobjSource.getAt(20);
+		midProcess = (UUID)pobjSource.getAt(21);
 	}
 
 	public void ToObject(ObjectBase pobjDest)
@@ -85,21 +84,20 @@ public class ClientData
 			pobjDest.setAt( 5, mstrFiscal);
 			pobjDest.setAt( 6, midType);
 			pobjDest.setAt( 7, midSubtype);
-			pobjDest.setAt( 8, midManager);
-			pobjDest.setAt( 9, midMediator);
-			pobjDest.setAt(10, midProfile);
-			pobjDest.setAt(11, midGroup);
-			pobjDest.setAt(12, mstrBankingID);
-			pobjDest.setAt(13, mdtDateOfBirth);
-			pobjDest.setAt(14, midSex);
-			pobjDest.setAt(15, midMarital);
-			pobjDest.setAt(16, midProfession);
-			pobjDest.setAt(17, midCAE);
-			pobjDest.setAt(18, mstrCAENotes);
-			pobjDest.setAt(19, midSize);
-			pobjDest.setAt(20, midSales);
-			pobjDest.setAt(21, mstrNotes);
-			pobjDest.setAt(22, midProcess);
+			pobjDest.setAt( 8, midMediator);
+			pobjDest.setAt( 9, midProfile);
+			pobjDest.setAt(10, midGroup);
+			pobjDest.setAt(11, mstrBankingID);
+			pobjDest.setAt(12, mdtDateOfBirth);
+			pobjDest.setAt(13, midSex);
+			pobjDest.setAt(14, midMarital);
+			pobjDest.setAt(15, midProfession);
+			pobjDest.setAt(16, midCAE);
+			pobjDest.setAt(17, mstrCAENotes);
+			pobjDest.setAt(18, midSize);
+			pobjDest.setAt(19, midSales);
+			pobjDest.setAt(20, mstrNotes);
+			pobjDest.setAt(21, midProcess);
 		}
 		catch (Throwable e)
 		{
@@ -186,18 +184,18 @@ public class ClientData
 			pstrBuilder.append(pstrLineBreak);
 		}
 
-		pstrBuilder.append("Gestor: ");
-		try
-		{
-			lobjAux = Engine.GetWorkInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), ObjectGUIDs.O_User),
-					midManager);
-			pstrBuilder.append((String)lobjAux.getAt(0));
-		}
-		catch (Throwable e)
-		{
-			pstrBuilder.append("(Erro a obter o gestor de cliente.)");
-		}
-		pstrBuilder.append(pstrLineBreak);
+//		pstrBuilder.append("Gestor: ");
+//		try
+//		{
+//			lobjAux = Engine.GetWorkInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), ObjectGUIDs.O_User),
+//					midManager);
+//			pstrBuilder.append((String)lobjAux.getAt(0));
+//		}
+//		catch (Throwable e)
+//		{
+//			pstrBuilder.append("(Erro a obter o gestor de cliente.)");
+//		}
+//		pstrBuilder.append(pstrLineBreak);
 
 		pstrBuilder.append("Mediador: ");
 		try

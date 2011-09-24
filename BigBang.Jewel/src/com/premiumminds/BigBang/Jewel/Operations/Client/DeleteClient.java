@@ -10,7 +10,7 @@ import Jewel.Petri.SysObjects.Operation;
 import com.premiumminds.BigBang.Jewel.Constants;
 import com.premiumminds.BigBang.Jewel.Objects.GeneralSystem;
 import com.premiumminds.BigBang.Jewel.Operations.DataObjects.ClientData;
-import com.premiumminds.BigBang.Jewel.Operations.General.TriggerDeleteClient;
+import com.premiumminds.BigBang.Jewel.Operations.General.ExternDeleteClient;
 
 public class DeleteClient
 	extends Operation
@@ -39,14 +39,19 @@ public class DeleteClient
 		return "O cliente foi eliminado. A sua reposição foi/é possível a partir do sistema geral.";
 	}
 
+	public UUID GetExternalProcess()
+	{
+		return null;
+	}
+
 	protected void Run(SQLServer pdb)
 		throws JewelPetriException
 	{
-		TriggerDeleteClient lobjOp;
+		ExternDeleteClient lobjOp;
 
 		try
 		{
-			lobjOp = new TriggerDeleteClient(GeneralSystem.GetAnyInstance(Engine.getCurrentNameSpace()).GetProcessID());
+			lobjOp = new ExternDeleteClient(GeneralSystem.GetAnyInstance(Engine.getCurrentNameSpace()).GetProcessID());
 			lobjOp.mobjData = new ClientData();
 			lobjOp.mobjData.mid = midClient;
 			TriggerOp(lobjOp);

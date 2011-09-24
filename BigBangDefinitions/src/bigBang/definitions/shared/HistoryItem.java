@@ -23,5 +23,8 @@ public class HistoryItem
 
 	public boolean canUndo;
 
+	public String otherProcessTypeId;
+	public String otherProcessId;
+
 	public AlteredItem[] alteredEntities; //key:Entity type id / value: entity instance id
 }
