@@ -61,7 +61,17 @@ public class TasksServiceImpl
 		lobjResult.description = (String)lobjAgenda.getAt(0);
 		lobjResult.timeStamp = ((Timestamp)lobjAgenda.getAt(3)).toString();
 		lobjResult.dueDate = ((Timestamp)lobjAgenda.getAt(4)).toString();
-		lobjResult.urgencyId = ((UUID)lobjAgenda.getAt(5)).toString();
+		if(((UUID)lobjAgenda.getAt(5)).compareTo(Constants.UrgID_Valid) == 0){
+			lobjResult.status = TaskStub.Status.VALID;
+		}else if(((UUID)lobjAgenda.getAt(5)).compareTo(Constants.UrgID_Invalid) == 0){
+			lobjResult.status = TaskStub.Status.INVALID;
+		}else if(((UUID)lobjAgenda.getAt(5)).compareTo(Constants.UrgID_Pending) == 0){
+			lobjResult.status = TaskStub.Status.PENDING;
+		}else if(((UUID)lobjAgenda.getAt(5)).compareTo(Constants.UrgID_Completed) == 0){
+			lobjResult.status = TaskStub.Status.COMPLETED;
+		}else if(((UUID)lobjAgenda.getAt(5)).compareTo(Constants.UrgID_Urgent) == 0){
+			lobjResult.status = TaskStub.Status.URGENT;
+		}
 		lobjResult.processTypeId = lobjScript.getKey().toString();
 		lobjResult.objectTypeId = lobjScript.GetDataType().toString();
 
@@ -175,8 +185,24 @@ public class TasksServiceImpl
 		lobjResult.description = (String)parrValues[0];
 		lobjResult.timeStamp = ((Timestamp)parrValues[1]).toString();
 		lobjResult.dueDate = ((Timestamp)parrValues[2]).toString();
-		lobjResult.urgencyId = ((UUID)parrValues[3]).toString();
-
+		if(((UUID)parrValues[3]).compareTo(Constants.UrgID_Valid) == 0){
+			lobjResult.status = TaskStub.Status.VALID;
+		}else if(((UUID)parrValues[3]).compareTo(Constants.UrgID_Invalid) == 0){
+			lobjResult.status = TaskStub.Status.INVALID;
+		}else if(((UUID)parrValues[3]).compareTo(Constants.UrgID_Pending) == 0){
+			lobjResult.status = TaskStub.Status.PENDING;
+		}else if(((UUID)parrValues[3]).compareTo(Constants.UrgID_Completed) == 0){
+			lobjResult.status = TaskStub.Status.COMPLETED;
+		}else if(((UUID)parrValues[3]).compareTo(Constants.UrgID_Urgent) == 0){
+			lobjResult.status = TaskStub.Status.URGENT;
+		}
 		return lobjResult;
+	}
+
+	@Override
+	public Integer getPendingTasksCount() throws SessionExpiredException,
+			BigBangException {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }
