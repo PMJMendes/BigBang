@@ -63,13 +63,9 @@ public class TasksServiceImpl
 		lobjResult.dueDate = ((Timestamp)lobjAgenda.getAt(4)).toString();
 		if(((UUID)lobjAgenda.getAt(5)).compareTo(Constants.UrgID_Valid) == 0){
 			lobjResult.status = TaskStub.Status.VALID;
-		}else if(((UUID)lobjAgenda.getAt(5)).compareTo(Constants.UrgID_Invalid) == 0){
-			lobjResult.status = TaskStub.Status.INVALID;
 		}else if(((UUID)lobjAgenda.getAt(5)).compareTo(Constants.UrgID_Pending) == 0){
 			lobjResult.status = TaskStub.Status.PENDING;
 		}else if(((UUID)lobjAgenda.getAt(5)).compareTo(Constants.UrgID_Completed) == 0){
-			lobjResult.status = TaskStub.Status.COMPLETED;
-		}else if(((UUID)lobjAgenda.getAt(5)).compareTo(Constants.UrgID_Urgent) == 0){
 			lobjResult.status = TaskStub.Status.URGENT;
 		}
 		lobjResult.processTypeId = lobjScript.getKey().toString();
@@ -188,12 +184,8 @@ public class TasksServiceImpl
 		if(((UUID)parrValues[3]).compareTo(Constants.UrgID_Valid) == 0){
 			lobjResult.status = TaskStub.Status.VALID;
 		}else if(((UUID)parrValues[3]).compareTo(Constants.UrgID_Invalid) == 0){
-			lobjResult.status = TaskStub.Status.INVALID;
-		}else if(((UUID)parrValues[3]).compareTo(Constants.UrgID_Pending) == 0){
 			lobjResult.status = TaskStub.Status.PENDING;
 		}else if(((UUID)parrValues[3]).compareTo(Constants.UrgID_Completed) == 0){
-			lobjResult.status = TaskStub.Status.COMPLETED;
-		}else if(((UUID)parrValues[3]).compareTo(Constants.UrgID_Urgent) == 0){
 			lobjResult.status = TaskStub.Status.URGENT;
 		}
 		return lobjResult;
