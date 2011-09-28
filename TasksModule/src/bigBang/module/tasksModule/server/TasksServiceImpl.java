@@ -1,9 +1,11 @@
 package bigBang.module.tasksModule.server;
 
+import java.sql.ResultSet;
 import java.sql.Timestamp;
 import java.util.UUID;
 
 import Jewel.Engine.Engine;
+import Jewel.Engine.DataAccess.MasterDB;
 import Jewel.Engine.Implementation.Entity;
 import Jewel.Engine.Interfaces.IEntity;
 import Jewel.Petri.Interfaces.IProcess;
@@ -94,6 +96,71 @@ public class TasksServiceImpl
 			lobjResult.operationIds[i] = larrAux[i].toString();
 
 		return null;
+	}
+
+	public int getPendingTasksCount()
+		throws SessionExpiredException, BigBangException
+	{
+        MasterDB ldb;
+        ResultSet lrsItems;
+        int llngResult;
+
+		if ( Engine.getCurrentUser() == null )
+			throw new SessionExpiredException();
+
+		try
+		{
+			ldb = new MasterDB();
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangException(e.getMessage(), e);
+		}
+
+        try
+        {
+	        lrsItems = Entity.GetInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), Constants.ObjID_AgendaItem))
+	        		.SelectByMembers(ldb, new int[] {1}, new java.lang.Object[] {Engine.getCurrentUser()}, new int[0]);
+		}
+		catch (Throwable e)
+		{
+			try { ldb.Disconnect(); } catch (Throwable e1) {}
+			throw new BigBangException(e.getMessage(), e);
+		}
+
+		llngResult = 0;
+		try
+		{
+	        while (lrsItems.next())
+	        	llngResult++;
+        }
+        catch (Throwable e)
+        {
+			try { lrsItems.close(); } catch (Throwable e1) {}
+			try { ldb.Disconnect(); } catch (Throwable e1) {}
+        	throw new BigBangException(e.getMessage(), e);
+        }
+
+        try
+        {
+        	lrsItems.close();
+        }
+		catch (Throwable e)
+		{
+			try { ldb.Disconnect(); } catch (Throwable e1) {}
+			throw new BigBangException(e.getMessage(), e);
+		}
+
+		try
+		{
+			ldb.Disconnect();
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangException(e.getMessage(), e);
+		}
+
+		return llngResult;
 	}
 
 	protected UUID getObjectID()
@@ -189,12 +256,5 @@ public class TasksServiceImpl
 			lobjResult.status = TaskStub.Status.URGENT;
 		}
 		return lobjResult;
-	}
-
-	@Override
-	public Integer getPendingTasksCount() throws SessionExpiredException,
-			BigBangException {
-		// TODO Auto-generated method stub
-		return null;
 	}
 }
