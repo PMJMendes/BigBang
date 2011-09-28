@@ -255,7 +255,7 @@ public abstract class SearchServiceBase
 			throw new BigBangException("Unexpected: non-existant query workspace.");
 
 		llngCount = lrefWSpace.GetRowCount();
-		if ( llngCount < from + size )
+		if ( (size < 0) || (llngCount < from + size) )
 			size = llngCount - from;
 		larrResult = new SearchResult[size];
 		for ( i = 0; i < size; i++ )
@@ -348,7 +348,7 @@ public abstract class SearchServiceBase
 		lobjResult.workspaceId = prefWSpace.GetID().toString();
 		lobjResult.totalCount = prefWSpace.GetRowCount();
 		llngCount = prefWSpace.GetRowCount();
-		if ( llngCount < size )
+		if ( (size < 0) || (llngCount < size) )
 			size = llngCount;
 		lobjResult.results = new SearchResult[size];
 		for ( i = 0; i < size; i++ )
