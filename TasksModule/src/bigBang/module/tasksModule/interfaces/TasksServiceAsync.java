@@ -9,4 +9,5 @@ public interface TasksServiceAsync
 	extends SearchServiceAsync
 {
 	void getTask(String clientId, AsyncCallback<Task> callback);
+	void getPendingTasksCount(AsyncCallback<Integer> callback);
 }
