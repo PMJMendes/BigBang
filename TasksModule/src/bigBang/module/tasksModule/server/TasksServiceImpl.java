@@ -98,6 +98,79 @@ public class TasksServiceImpl
 		return null;
 	}
 
+	public void dismissTask(String taskId)
+		throws SessionExpiredException, BigBangException
+	{
+		AgendaItem lobjAgenda;
+		MasterDB ldb;
+
+		if ( Engine.getCurrentUser() == null )
+			throw new SessionExpiredException();
+
+		try
+		{
+			lobjAgenda = AgendaItem.GetInstance(Engine.getCurrentNameSpace(), UUID.fromString(taskId));
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangException(e.getMessage(), e);
+		}
+
+		if ( lobjAgenda.GetOperationIDs().length > 0 )
+			throw new BigBangException("Erro: Não pode cancelar items de agenda com operações associadas.");
+
+		try
+		{
+			ldb = new MasterDB();
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangException(e.getMessage(), e);
+		}
+
+		try
+		{
+			ldb.BeginTrans();
+		}
+		catch (Throwable e)
+		{
+			try { ldb.Disconnect(); } catch (Throwable e1) {}
+			throw new BigBangException(e.getMessage(), e);
+		}
+
+		try
+		{
+			lobjAgenda.ClearData(ldb);
+			Entity.GetInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), Constants.ObjID_AgendaItem))
+				.Delete(ldb, lobjAgenda.getKey());
+		}
+		catch (Throwable e)
+		{
+			try { ldb.Rollback(); } catch (Throwable e1) {}
+			try { ldb.Disconnect(); } catch (Throwable e1) {}
+			throw new BigBangException(e.getMessage(), e);
+		}
+
+		try
+		{
+			ldb.Commit();
+		}
+		catch (Throwable e)
+		{
+			try { ldb.Disconnect(); } catch (Throwable e1) {}
+			throw new BigBangException(e.getMessage(), e);
+		}
+
+		try
+		{
+			ldb.Disconnect();
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangException(e.getMessage(), e);
+		}
+	}
+
 	public int getPendingTasksCount()
 		throws SessionExpiredException, BigBangException
 	{

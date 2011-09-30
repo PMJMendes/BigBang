@@ -33,6 +33,7 @@ public class Constants
 
 	// Sub-Process Objects
 	public static final UUID ObjID_MgrXFer       = UUID.fromString("66EC1066-AD5A-430C-9A70-9F65013F5453");
+	public static final UUID ObjID_MgrXFerProc   = UUID.fromString("324A0D54-4ED9-4925-97D2-9F6D0135A37E");
 
 	// Typified Lists
 	public static final UUID ObjID_ContactType   = UUID.fromString("228F6A73-1335-4C99-8DD0-9EEE012964BA");
@@ -87,6 +88,8 @@ public class Constants
 	public static final UUID OPID_UndoManageClientData    = UUID.fromString("61097A3F-2322-4C06-B015-9F090143A35B");
 	public static final UUID OPID_EndMgrXFer              = UUID.fromString("B8D56EF0-F619-4EB2-8F26-9F0901438388");
 	public static final UUID OPID_UndoEndMgrXFer          = UUID.fromString("955E3DFE-F74A-46A5-9A42-9F6800EADA3D");
+	public static final UUID OPID_TriggerAllowUndoMgrXFer = UUID.fromString("91530E4E-9F84-4240-B1F3-9F6D017FE928");
+	public static final UUID OPID_UndoDirectMgrXFer       = UUID.fromString("E7ABBF15-4DB6-4376-92FD-9F6D01792783");
 
 	// Manager Transfer Operations
 	public static final UUID OPID_AcceptXFer     = UUID.fromString("8B3AB41F-76F6-4311-8600-9F65014CF682");

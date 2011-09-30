@@ -40,7 +40,7 @@ public interface ClientService
 	public Client mergeWithClient(String originalId, String receptorId) throws SessionExpiredException, BigBangException; //Returns the altered receptor client
 
 	public InfoOrDocumentRequest createInfoOrDocumentRequest(InfoOrDocumentRequest request) throws SessionExpiredException, BigBangException;
-	public ManagerTransfer[] createManagerTransfer(String[] clientIds, String managerId) throws SessionExpiredException, BigBangException;
+	public ManagerTransfer createManagerTransfer(ManagerTransfer transfer) throws SessionExpiredException, BigBangException;
 
 	public QuoteRequest createQuoteRequest(String clientId, QuoteRequest request) throws SessionExpiredException, BigBangException;
 	public InsurancePolicy createPolicy(String clientId, InsurancePolicy policy) throws SessionExpiredException, BigBangException;
@@ -48,4 +48,6 @@ public interface ClientService
 	public Casualty createCasualty(String clientId, Casualty casualty) throws SessionExpiredException, BigBangException;
 
 	public void deleteClient(String clientId, String processId) throws SessionExpiredException, BigBangException;
+
+	public ManagerTransfer massCreateManagerTransfer(ManagerTransfer transfer) throws SessionExpiredException, BigBangException;
 }

@@ -12,7 +12,10 @@ import Jewel.Engine.Implementation.Entity;
 import Jewel.Engine.Implementation.User;
 import Jewel.Engine.Interfaces.IEntity;
 import Jewel.Engine.SysObjects.ObjectBase;
+import Jewel.Petri.Interfaces.IProcess;
+import Jewel.Petri.Objects.PNProcess;
 import Jewel.Petri.SysObjects.JewelPetriException;
+import Jewel.Petri.SysObjects.Operation;
 import Jewel.Petri.SysObjects.UndoableOperation;
 
 import com.premiumminds.BigBang.Jewel.Constants;
@@ -25,6 +28,11 @@ public class AcceptXFer
 	extends UndoableOperation
 {
 	private static final long serialVersionUID = 1L;
+
+	public boolean mbMassTransfer;
+	public int mlngCount;
+	public UUID midParentProc;
+	public UUID[] marrOldManagers;
 
 	public AcceptXFer(UUID pidProcess)
 	{
@@ -47,15 +55,23 @@ public class AcceptXFer
 
 		lstrBuffer = new StringBuilder();
 
-		lstrBuffer.append("O processo de transferência de gestor foi completado.").append(pstrLineBreak).append("Gestor anterior: ");
-		try
+		lstrBuffer.append("O processo de transferência de gestor foi completado.");
+
+		if ( mbMassTransfer)
 		{
-			lstrBuffer.append(User.GetInstance(Engine.getCurrentNameSpace(),
-					((MgrXFer)GetProcess().GetData()).GetOldManagerID()).getDisplayName());
+			lstrBuffer.append(pstrLineBreak).append("Nº de processos transferidos: ").append(mlngCount);
 		}
-		catch (Throwable e)
+		else
 		{
-			lstrBuffer.append("(Erro a obter o nome do gestor anterior.)");
+			lstrBuffer.append(pstrLineBreak).append("Gestor anterior: ");
+			try
+			{
+				lstrBuffer.append(User.GetInstance(Engine.getCurrentNameSpace(), marrOldManagers[0]).getDisplayName());
+			}
+			catch (Throwable e)
+			{
+				lstrBuffer.append("(Erro a obter o nome do gestor anterior.)");
+			}
 		}
 
 		lstrBuffer.append(pstrLineBreak).append("Novo gestor: ");
@@ -74,7 +90,7 @@ public class AcceptXFer
 
 	public UUID GetExternalProcess()
 	{
-		return null;
+		return midParentProc;
 	}
 
 	protected void Run(SQLServer pdb)
@@ -82,14 +98,14 @@ public class AcceptXFer
 	{
 		ObjectBase lobjData;
 		MgrXFer lobjXFer;
-		int[] larrMembers;
-		java.lang.Object[] larrParams;
-		IEntity lrefAux;
+		UUID lidNewManager;
+		UUID[] larrProcs;
+		int i;
+		IProcess lobjProc;
 		ArrayList<UUID> larrItems;
 		ResultSet lrs;
-		int i;
+		IEntity lrefAux;
 		AgendaItem lobjItem;
-		ExternEndManagerTransfer lobjTrigger;
 
 		lobjData = GetProcess().GetData();
 		if ( lobjData == null )
@@ -97,19 +113,41 @@ public class AcceptXFer
 		if ( !(lobjData instanceof MgrXFer) )
 			throw new JewelPetriException("Inesperado: Dados da transferência do tipo errado.");
 		lobjXFer = (MgrXFer)lobjData;
+		if ( lobjXFer.IsMassTransfer() && !mbMassTransfer )
+			throw new JewelPetriException("Erro: Esta transferência de gestor faz parte de um processo de transferência em massa.");
+		if ( mbMassTransfer && !lobjXFer.IsMassTransfer() )
+			throw new JewelPetriException("Inesperado: Esta transferência de gestor não faz parte de um processo de transferência em massa.");
 
-		GetProcess().GetParent().SetManagerID(lobjXFer.GetNewManagerID(), pdb);
-		GetProcess().Stop(pdb);
+		lidNewManager = lobjXFer.GetNewManagerID();
 
-		larrMembers = new int[] {1};
-		larrParams = new java.lang.Object[] {GetProcess().getKey()};
+		if ( mbMassTransfer )
+		{
+			midParentProc = null;
+			larrProcs = lobjXFer.GetProcessIDs();
+			mlngCount = larrProcs.length;
+		}
+		else
+		{
+			midParentProc = GetProcess().GetParent().getKey();
+			larrProcs = new UUID[] {midParentProc};
+			mlngCount = 1;
+		}
+
+		marrOldManagers = new UUID[larrProcs.length];
+		for ( i = 0; i < larrProcs.length; i++ )
+		{
+			lobjProc = PNProcess.GetInstance(Engine.getCurrentNameSpace(), larrProcs[i]);
+			marrOldManagers[i] = lobjProc.GetManagerID();
+			lobjProc.SetManagerID(lidNewManager, pdb);
+			TriggerOp(GetRunTrigger(lobjXFer.GetOuterObjectType(), larrProcs[i]));
+		}
 
 		larrItems = new ArrayList<UUID>();
 		lrs = null;
 		try
 		{
 			lrefAux = Entity.GetInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), Constants.ObjID_AgendaProcess));
-			lrs = lrefAux.SelectByMembers(pdb, larrMembers, larrParams, new int[0]);
+			lrs = lrefAux.SelectByMembers(pdb, new int[] {1}, new java.lang.Object[] {GetProcess().getKey()}, new int[0]);
 			while ( lrs.next() )
 			{
 				larrItems.add(UUID.fromString(lrs.getString(1)));
@@ -131,10 +169,7 @@ public class AcceptXFer
 			throw new JewelPetriException(e.getMessage(), e);
 		}
 
-		lobjTrigger = new ExternEndManagerTransfer(GetProcess().GetParent().getKey());
-		lobjTrigger.midProcess = GetProcess().getKey();
-		lobjTrigger.mbCancelled = false;
-		TriggerOp(lobjTrigger);
+		GetProcess().Stop(pdb);
 	}
 
 	public String UndoDesc(String pstrLineBreak)
@@ -148,16 +183,24 @@ public class AcceptXFer
 
 		lstrBuffer = new StringBuilder();
 
-		lstrBuffer.append("O gestor anterior foi reposto e o processo de transferência foi reaberto.")
-				.append(pstrLineBreak).append("Gestor anterior: ");
-		try
+		lstrBuffer.append("O gestor anterior foi reposto e o processo de transferência foi reaberto.");
+
+		if ( mbMassTransfer )
 		{
-			lstrBuffer.append(User.GetInstance(Engine.getCurrentNameSpace(),
-					((MgrXFer)GetProcess().GetData()).GetOldManagerID()).getDisplayName());
+			lstrBuffer.append(pstrLineBreak).append("Nº de processos envolvidos: ").append(mlngCount);
 		}
-		catch (Throwable e)
+		else
 		{
-			lstrBuffer.append("(Erro a obter o nome do gestor anterior.)");
+			lstrBuffer.append(pstrLineBreak).append("Gestor anterior: ");
+			try
+			{
+				lstrBuffer.append(User.GetInstance(Engine.getCurrentNameSpace(),
+						((MgrXFer)GetProcess().GetData()).GetOldManagerID()).getDisplayName());
+			}
+			catch (Throwable e)
+			{
+				lstrBuffer.append("(Erro a obter o nome do gestor anterior.)");
+			}
 		}
 
 		return lstrBuffer.toString();
@@ -168,10 +211,12 @@ public class AcceptXFer
 	{
 		ObjectBase lobjData;
 		MgrXFer lobjXFer;
-		AgendaItem lobjItem;
+		UUID[] larrProcs;
+		int i;
+		IProcess lobjProc;
 		Timestamp ldtAux;
 		Calendar ldtAux2;
-		ExternUndoEndManagerTransfer lobjTrigger;
+		AgendaItem lobjItem;
 
 		lobjData = GetProcess().GetData();
 		if ( lobjData == null )
@@ -180,7 +225,22 @@ public class AcceptXFer
 			throw new JewelPetriException("Inesperado: Dados da transferência do tipo errado.");
 		lobjXFer = (MgrXFer)lobjData;
 
-		GetProcess().GetParent().SetManagerID(lobjXFer.GetOldManagerID(), pdb);
+		if ( mbMassTransfer )
+		{
+			larrProcs = lobjXFer.GetProcessIDs();
+		}
+		else
+		{
+			larrProcs = new UUID[] {midParentProc};
+		}
+
+		for ( i = 0; i < larrProcs.length; i++ )
+		{
+			lobjProc = PNProcess.GetInstance(Engine.getCurrentNameSpace(), larrProcs[i]);
+			lobjProc.SetManagerID(marrOldManagers[i], pdb);
+			TriggerOp(GetUndoTrigger(lobjXFer.GetOuterObjectType(), larrProcs[i]));
+		}
+
 		GetProcess().Restart(pdb);
 
 		ldtAux = new Timestamp(new java.util.Date().getTime());
@@ -192,16 +252,6 @@ public class AcceptXFer
     	{
 			lobjItem = AgendaItem.GetInstance(Engine.getCurrentNameSpace(), (UUID)null);
 			lobjItem.setAt(0, lobjXFer.GetTag());
-			lobjItem.setAt(1, Engine.getCurrentUser());
-			lobjItem.setAt(2, Constants.ProcID_MgrXFer);
-			lobjItem.setAt(3, ldtAux);
-			lobjItem.setAt(4, new Timestamp(ldtAux2.getTimeInMillis()));
-			lobjItem.setAt(5, Constants.UrgID_Valid);
-			lobjItem.SaveToDb(pdb);
-			lobjItem.InitNew(new UUID[] {GetProcess().getKey()}, new UUID[] {Constants.OPID_CancelXFer}, pdb);
-
-			lobjItem = AgendaItem.GetInstance(Engine.getCurrentNameSpace(), (UUID)null);
-			lobjItem.setAt(0, lobjXFer.GetTag());
 			lobjItem.setAt(1, lobjXFer.GetNewManagerID());
 			lobjItem.setAt(2, Constants.ProcID_MgrXFer);
 			lobjItem.setAt(3, ldtAux);
@@ -210,39 +260,89 @@ public class AcceptXFer
 			lobjItem.SaveToDb(pdb);
 			lobjItem.InitNew(new UUID[] {GetProcess().getKey()},
 					new UUID[] {Constants.OPID_AcceptXFer, Constants.OPID_CancelXFer}, pdb);
+
+			lobjItem = AgendaItem.GetInstance(Engine.getCurrentNameSpace(), (UUID)null);
+			lobjItem.setAt(0, lobjXFer.GetTag());
+			lobjItem.setAt(1, Engine.getCurrentUser());
+			lobjItem.setAt(2, Constants.ProcID_MgrXFer);
+			lobjItem.setAt(3, ldtAux);
+			lobjItem.setAt(4, new Timestamp(ldtAux2.getTimeInMillis()));
+			lobjItem.setAt(5, Constants.UrgID_Valid);
+			lobjItem.SaveToDb(pdb);
+			lobjItem.InitNew(new UUID[] {GetProcess().getKey()}, new UUID[] {Constants.OPID_CancelXFer}, pdb);
 		}
 		catch (Throwable e)
 		{
 			throw new JewelPetriException(e.getMessage(), e);
 		}
-
-		lobjTrigger = new ExternUndoEndManagerTransfer(GetProcess().GetParent().getKey());
-		lobjTrigger.midProcess = GetProcess().getKey();
-		lobjTrigger.midReopener = Engine.getCurrentUser();
-		TriggerOp(lobjTrigger);
 	}
 
 	public UndoSet[] GetSets()
 	{
 		UndoSet[] larrResult;
-		ObjectBase lobjData;
+		MgrXFer lobjData;
+		UUID[] larrProcs;
+		int i;
+		IProcess lobjProc;
 
 		try
 		{
-			lobjData = GetProcess().GetData();
+			lobjData = (MgrXFer)GetProcess().GetData();
 		}
-		catch (JewelPetriException e)
+		catch (Throwable e)
 		{
 			return null;
 		}
 
 		larrResult = new UndoSet[1];
 		larrResult[0] = new UndoSet();
-		larrResult[0].midType = lobjData.getDefinition().getDefObject().getKey();
+		larrResult[0].midType = lobjData.GetOuterObjectType();
 		larrResult[0].marrDeleted = new UUID[0];
-		larrResult[0].marrChanged = new UUID[] {lobjData.getKey()};
 		larrResult[0].marrCreated = new UUID[0];
 
+		if ( mbMassTransfer )
+			larrProcs = lobjData.GetProcessIDs();
+		else
+			larrProcs = new UUID[] {midParentProc};
+
+		larrResult[0].marrChanged = new UUID[larrProcs.length];
+		for ( i = 0; i < larrProcs.length; i++ )
+		{
+			try
+			{
+				lobjProc = PNProcess.GetInstance(Engine.getCurrentNameSpace(), larrProcs[i]);
+				larrResult[0].marrChanged[i] = lobjProc.GetData().getKey();
+			}
+			catch (Throwable e)
+			{
+				larrResult[0].marrChanged[i] = null;
+			}
+		}
+
 		return larrResult;
+	}
+
+	private Operation GetRunTrigger(UUID pidObjectType, UUID pidProc)
+	{
+		if ( Constants.ObjID_Client.equals(pidObjectType) )
+			return new ExternEndManagerTransfer(pidProc);
+
+		return null;
+	}
+
+	private Operation GetUndoTrigger(UUID pidObjectType, UUID pidProc)
+		throws JewelPetriException
+	{
+		if ( Constants.ObjID_Client.equals(pidObjectType) )
+		{
+			ExternUndoEndManagerTransfer lopResult;
+
+			lopResult = new ExternUndoEndManagerTransfer(pidProc);
+			lopResult.midProcess = GetProcess().getKey();
+			lopResult.midReopener = Engine.getCurrentNameSpace();
+			return lopResult;
+		}
+
+		return null;
 	}
 }

@@ -19,6 +19,7 @@ public class ExternUndoEndManagerTransfer
 
 	public UUID midProcess;
 	public UUID midReopener;
+	public UUID midOldManager;
 
 	public ExternUndoEndManagerTransfer(UUID pidProcess)
 	{
@@ -32,7 +33,7 @@ public class ExternUndoEndManagerTransfer
 
 	public String ShortDesc()
 	{
-		return "O procedimento de transferência do gestor de cliente foi reaberto.";
+		return "Reabertura de Processo de Transferência de Gestor";
 	}
 
 	public String LongDesc(String pstrLineBreak)
@@ -50,6 +51,8 @@ public class ExternUndoEndManagerTransfer
 		}
 
 		lstrBuffer = new StringBuilder();
+
+		lstrBuffer.append("O procedimento de transferência do gestor de cliente foi reaberto.").append(pstrLineBreak);
 
 		lstrBuffer.append("Pedido original feito por: ");
 		try
@@ -76,7 +79,7 @@ public class ExternUndoEndManagerTransfer
 		lstrBuffer.append("Gestor actual: ");
 		try
 		{
-			lstrBuffer.append(User.GetInstance(Engine.getCurrentNameSpace(), lobjXFer.GetOldManagerID()).getDisplayName());
+			lstrBuffer.append(User.GetInstance(Engine.getCurrentNameSpace(), midOldManager).getDisplayName());
 		}
 		catch (Throwable e)
 		{
@@ -105,6 +108,6 @@ public class ExternUndoEndManagerTransfer
 	protected void Run(SQLServer pdb)
 		throws JewelPetriException
 	{
-		// Null Op. Node count manipulation only.
+		midOldManager = GetProcess().GetManagerID();
 	}
 }

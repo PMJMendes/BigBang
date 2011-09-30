@@ -9,4 +9,6 @@ public interface TransferManagerServiceAsync
 {
 	void acceptTransfer(String transferId, AsyncCallback<ManagerTransfer> callback);
 	void cancelTransfer(String transferId, AsyncCallback<ManagerTransfer> callback);
+	void massAcceptTransfer(String transferId, AsyncCallback<ManagerTransfer> callback);
+	void massCancelTransfer(String transferId, AsyncCallback<ManagerTransfer> callback);
 }

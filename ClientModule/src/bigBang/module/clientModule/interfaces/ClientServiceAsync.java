@@ -19,10 +19,11 @@ public interface ClientServiceAsync
 	void editClient(Client client, AsyncCallback<Client> callback);
 	void mergeWithClient(String originalId, String receptorId, AsyncCallback<Client> callback);
 	void createInfoOrDocumentRequest(InfoOrDocumentRequest request, AsyncCallback<InfoOrDocumentRequest> callback);
-	void createManagerTransfer(String[] clientIds, String managerId, AsyncCallback<ManagerTransfer[]> callback);
-	void createQuoteRequest(String clientId, QuoteRequest request, AsyncCallback<QuoteRequest> callback);
+	void createManagerTransfer(ManagerTransfer transfer, AsyncCallback<ManagerTransfer> callback);
+	void createQuoteRequest(String processId, QuoteRequest request, AsyncCallback<QuoteRequest> callback);
 	void createPolicy(String clientId, InsurancePolicy policy, AsyncCallback<InsurancePolicy> callback);
 	void createRiskAnalisys(String clientId, RiskAnalysis riskAnalisys, AsyncCallback<RiskAnalysis> callback);
 	void createCasualty(String clientId, Casualty casualty, AsyncCallback<Casualty> callback);
 	void deleteClient(String clientId, String processId, AsyncCallback<Void> callback);
+	void massCreateManagerTransfer(ManagerTransfer transfer, AsyncCallback<ManagerTransfer> callback);
 }

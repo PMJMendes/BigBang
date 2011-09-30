@@ -25,6 +25,8 @@ public interface TasksService
 		}
 	}
 
-	public Task getTask(String clientId) throws SessionExpiredException, BigBangException;
+	public Task getTask(String taskId) throws SessionExpiredException, BigBangException;
+	public void dismissTask(String taskId) throws SessionExpiredException, BigBangException;
+
 	public int getPendingTasksCount() throws SessionExpiredException, BigBangException;
 }

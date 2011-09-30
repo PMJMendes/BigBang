@@ -50,57 +50,57 @@ public class AgendaItem
 	public void Initialize()
 		throws JewelEngineException
 	{
-			int[] larrMembers;
-			java.lang.Object[] larrParams;
-			IEntity lrefAux;
-			MasterDB ldb;
-			ArrayList<UUID> larrAux;
-			ResultSet lrs;
+		int[] larrMembers;
+		java.lang.Object[] larrParams;
+		IEntity lrefAux;
+		MasterDB ldb;
+		ArrayList<UUID> larrAux;
+		ResultSet lrs;
 
-			larrMembers = new int[1];
-			larrMembers[0] = 0;
-			larrParams = new java.lang.Object[1];
-			larrParams[0] = getKey();
+		larrMembers = new int[1];
+		larrMembers[0] = 0;
+		larrParams = new java.lang.Object[1];
+		larrParams[0] = getKey();
 
-			larrAux = new ArrayList<UUID>();
-			try
+		larrAux = new ArrayList<UUID>();
+		try
+		{
+			lrefAux = Entity.GetInstance(Engine.FindEntity(getNameSpace(), Constants.ObjID_AgendaOp));
+			ldb = new MasterDB();
+			lrs = lrefAux.SelectByMembers(ldb, larrMembers, larrParams, new int[0]);
+			while ( lrs.next() )
 			{
-				lrefAux = Entity.GetInstance(Engine.FindEntity(getNameSpace(), Constants.ObjID_AgendaOp));
-				ldb = new MasterDB();
-				lrs = lrefAux.SelectByMembers(ldb, larrMembers, larrParams, new int[0]);
-				while ( lrs.next() )
-				{
-					larrAux.add(UUID.fromString(lrs.getString(2)));
-				}
-				lrs.close();
-				ldb.Disconnect();
+				larrAux.add(UUID.fromString(lrs.getString(2)));
 			}
-			catch (Throwable e)
-			{
-				throw new JewelEngineException(e.getMessage(), e);
-			}
+			lrs.close();
+			ldb.Disconnect();
+		}
+		catch (Throwable e)
+		{
+			throw new JewelEngineException(e.getMessage(), e);
+		}
 
-			marrOperations = larrAux.toArray(new UUID[larrAux.size()]);
+		marrOperations = larrAux.toArray(new UUID[larrAux.size()]);
 
-			larrAux = new ArrayList<UUID>();
-			try
+		larrAux = new ArrayList<UUID>();
+		try
+		{
+			lrefAux = Entity.GetInstance(Engine.FindEntity(getNameSpace(), Constants.ObjID_AgendaProcess));
+			ldb = new MasterDB();
+			lrs = lrefAux.SelectByMembers(ldb, larrMembers, larrParams, new int[0]);
+			while ( lrs.next() )
 			{
-				lrefAux = Entity.GetInstance(Engine.FindEntity(getNameSpace(), Constants.ObjID_AgendaProcess));
-				ldb = new MasterDB();
-				lrs = lrefAux.SelectByMembers(ldb, larrMembers, larrParams, new int[0]);
-				while ( lrs.next() )
-				{
-					larrAux.add(UUID.fromString(lrs.getString(2)));
-				}
-				lrs.close();
-				ldb.Disconnect();
+				larrAux.add(UUID.fromString(lrs.getString(2)));
 			}
-			catch (Throwable e)
-			{
-				throw new JewelEngineException(e.getMessage(), e);
-			}
+			lrs.close();
+			ldb.Disconnect();
+		}
+		catch (Throwable e)
+		{
+			throw new JewelEngineException(e.getMessage(), e);
+		}
 
-			marrProcesses = larrAux.toArray(new UUID[larrAux.size()]);
+		marrProcesses = larrAux.toArray(new UUID[larrAux.size()]);
 	}
 
 	public UUID[] GetProcessIDs()
@@ -130,37 +130,35 @@ public class AgendaItem
 		if ( parrOpIDs.length == 0 )
 			throw new BigBangJewelException("Erro: Não pode definir um conjunto vazio de operações para um novo item de agenda.");
 
-		marrProcesses = parrProcIDs;
-		marrOperations = parrOpIDs;
-
 		try
 		{
 			lidAux = Engine.FindEntity(Engine.getCurrentNameSpace(), Constants.ObjID_AgendaProcess);
 
-			for ( i = 0; i < marrProcesses.length; i++ )
+			for ( i = 0; i < parrProcIDs.length; i++ )
 			{
 				lobjAux = Engine.GetWorkInstance(lidAux, (UUID)null);
 				lobjAux.setAt(0, getKey());
-				lobjAux.setAt(1, marrProcesses[i]);
+				lobjAux.setAt(1, parrProcIDs[i]);
 				lobjAux.SaveToDb(pdb);
 			}
 
 			lidAux = Engine.FindEntity(Engine.getCurrentNameSpace(), Constants.ObjID_AgendaOp);
 
-			for ( i = 0; i < marrOperations.length; i++ )
+			for ( i = 0; i < parrOpIDs.length; i++ )
 			{
 				lobjAux = Engine.GetWorkInstance(lidAux, (UUID)null);
 				lobjAux.setAt(0, getKey());
-				lobjAux.setAt(1, marrOperations[i]);
+				lobjAux.setAt(1, parrOpIDs[i]);
 				lobjAux.SaveToDb(pdb);
 			}
 		}
 		catch (Throwable e)
 		{
-			marrProcesses = null;
-			marrOperations = null;
 			throw new BigBangJewelException(e.getMessage(), e);
 		}
+
+		marrProcesses = parrProcIDs;
+		marrOperations = parrOpIDs;
 	}
 
 	public void ClearData(SQLServer pdb)
@@ -188,5 +186,8 @@ public class AgendaItem
 			marrOperations = null;
 			throw new BigBangJewelException(e.getMessage(), e);
 		}
+
+		marrProcesses = new UUID[0];
+		marrOperations = new UUID[0];
 	}
 }

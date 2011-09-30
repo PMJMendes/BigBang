@@ -9,13 +9,16 @@ public class ManagerTransfer
 		implements Serializable
 	{
 		ACCEPTED,
-		REJECTED,
+		CANCELED,
 		PENDING
 	}
 
 	private static final long serialVersionUID = 1L;
 
-	public String clientId;
-	public String managerId;
+	public String id; // ID do objecto de dados que representa a transferência de gestor, ou null se fôr um direct transfer
+	public String[] managedProcessIds; // IDs dos processos a transferir
+	public String newManagerId;
+	public boolean directTransfer; // True se o newManagerId fôr o próprio utilizador
+	public String processId; // ID do processo de transferência, ou null se fôr um direct transfer
 	public Status status;
 }

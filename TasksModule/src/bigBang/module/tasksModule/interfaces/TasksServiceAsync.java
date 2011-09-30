@@ -8,6 +8,7 @@ import bigBang.library.interfaces.SearchServiceAsync;
 public interface TasksServiceAsync
 	extends SearchServiceAsync
 {
-	void getTask(String clientId, AsyncCallback<Task> callback);
+	void getTask(String taskId, AsyncCallback<Task> callback);
+	void dismissTask(String taskId, AsyncCallback<Void> callback);
 	void getPendingTasksCount(AsyncCallback<Integer> callback);
 }
