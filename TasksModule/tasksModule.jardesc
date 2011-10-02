@@ -11,9 +11,8 @@
         </sealing>
     </manifest>
     <selectedElements exportClassFiles="true" exportJavaFiles="false" exportOutputFolder="false">
+        <javaElement handleIdentifier="=TasksModule/src&lt;bigBang.module.tasksModule.server{TasksServiceImpl.java"/>
         <javaElement handleIdentifier="=TasksModule/src&lt;bigBang.module.tasksModule.interfaces{TasksService.java"/>
         <javaElement handleIdentifier="=TasksModule/src&lt;bigBang.module.tasksModule.interfaces{TasksServiceAsync.java"/>
-        <javaElement handleIdentifier="=TasksModule/src&lt;bigBang.module.tasksModule.server{TasksServiceImpl.java"/>
-        <javaElement handleIdentifier="=TasksModule/src&lt;bigBang.module.tasksModule.shared{Task.java"/>
     </selectedElements>
 </jardesc>

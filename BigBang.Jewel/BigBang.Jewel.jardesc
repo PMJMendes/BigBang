@@ -11,8 +11,8 @@
         </sealing>
     </manifest>
     <selectedElements exportClassFiles="true" exportJavaFiles="false" exportOutputFolder="false">
+        <javaElement handleIdentifier="=BigBang.Jewel/src&lt;com.premiumminds.BigBang.Jewel.Forms{Migration_Startup.java"/>
         <javaElement handleIdentifier="=BigBang.Jewel/src&lt;com.premiumminds.BigBang.Jewel.Operations{ContactOps.java"/>
-        <javaElement handleIdentifier="=BigBang.Jewel/src&lt;com.premiumminds.BigBang.Jewel.Forms"/>
         <javaElement handleIdentifier="=BigBang.Jewel/src&lt;com.premiumminds.BigBang"/>
         <javaElement handleIdentifier="=BigBang.Jewel/src&lt;com.premiumminds.BigBang.Jewel.Operations.DataObjects"/>
         <javaElement handleIdentifier="=BigBang.Jewel/src&lt;com.premiumminds"/>

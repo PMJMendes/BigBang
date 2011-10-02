@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="WINDOWS-1252" standalone="no"?>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <jardesc>
     <jar path="BigBang/war/WEB-INF/lib/bigBang-module-loginModule.jar"/>
     <options buildIfNeeded="true" compress="true" descriptionLocation="/LoginModule/loginModule.jardesc" exportErrors="true" exportWarnings="true" includeDirectoryEntries="false" overwrite="true" saveDescription="true" storeRefactorings="false" useSourceFolders="false"/>
@@ -11,8 +11,9 @@
         </sealing>
     </manifest>
     <selectedElements exportClassFiles="true" exportJavaFiles="false" exportOutputFolder="false">
-        <javaElement handleIdentifier="=LoginModule/src&lt;bigBang.module.loginModule.server"/>
+        <javaElement handleIdentifier="=LoginModule/src&lt;bigBang.module.loginModule.server{Constants.java"/>
         <javaElement handleIdentifier="=LoginModule/src&lt;bigBang.module.loginModule.interfaces"/>
         <javaElement handleIdentifier="=LoginModule/src&lt;bigBang.module.loginModule.shared"/>
+        <javaElement handleIdentifier="=LoginModule/src&lt;bigBang.module.loginModule.server{AuthenticationServiceImpl.java"/>
     </selectedElements>
 </jardesc>

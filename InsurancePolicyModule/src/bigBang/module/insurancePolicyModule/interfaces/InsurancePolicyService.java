@@ -1,9 +1,6 @@
 package bigBang.module.insurancePolicyModule.interfaces;
 
-import bigBang.definitions.shared.InsurancePolicy;
 import bigBang.library.interfaces.SearchService;
-import bigBang.library.shared.BigBangException;
-import bigBang.library.shared.SessionExpiredException;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;

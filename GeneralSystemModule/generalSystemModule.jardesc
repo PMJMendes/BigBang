@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="WINDOWS-1252" standalone="no"?>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <jardesc>
     <jar path="BigBang/war/WEB-INF/lib/bigBang-module-generalSystemModule.jar"/>
     <options buildIfNeeded="true" compress="true" descriptionLocation="/GeneralSystemModule/generalSystemModule.jardesc" exportErrors="true" exportWarnings="true" includeDirectoryEntries="false" overwrite="true" saveDescription="true" storeRefactorings="false" useSourceFolders="false"/>
@@ -11,8 +11,14 @@
         </sealing>
     </manifest>
     <selectedElements exportClassFiles="true" exportJavaFiles="false" exportOutputFolder="false">
-        <javaElement handleIdentifier="=GeneralSystemModule/src&lt;bigBang.module.generalSystemModule.server"/>
-        <javaElement handleIdentifier="=GeneralSystemModule/src&lt;bigBang.module.generalSystemModule.shared"/>
+        <javaElement handleIdentifier="=GeneralSystemModule/src&lt;bigBang.module.generalSystemModule.server{ClientGroupServiceImpl.java"/>
+        <javaElement handleIdentifier="=GeneralSystemModule/src&lt;bigBang.module.generalSystemModule.server{InsuranceAgencyServiceImpl.java"/>
         <javaElement handleIdentifier="=GeneralSystemModule/src&lt;bigBang.module.generalSystemModule.interfaces"/>
+        <javaElement handleIdentifier="=GeneralSystemModule/src&lt;bigBang.module.generalSystemModule.server{CostCenterServiceImpl.java"/>
+        <javaElement handleIdentifier="=GeneralSystemModule/src&lt;bigBang.module.generalSystemModule.server{UserServiceImpl.java"/>
+        <javaElement handleIdentifier="=GeneralSystemModule/src&lt;bigBang.module.generalSystemModule.server{MediatorServiceImpl.java"/>
+        <javaElement handleIdentifier="=GeneralSystemModule/src&lt;bigBang.module.generalSystemModule.shared"/>
+        <javaElement handleIdentifier="=GeneralSystemModule/src&lt;bigBang.module.generalSystemModule.server{GeneralSystemServiceImpl.java"/>
+        <javaElement handleIdentifier="=GeneralSystemModule/src&lt;bigBang.module.generalSystemModule.server{CoveragesServiceImpl.java"/>
     </selectedElements>
 </jardesc>
