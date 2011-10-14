@@ -188,7 +188,7 @@ public class CreateMgrXFer
     		}
 
         	midTransferObject = lobjXFer.getKey();
-			midCreatedSubproc = lobjScript.getKey();
+			midCreatedSubproc = lobjProc.getKey();
 		}
 	}
 
