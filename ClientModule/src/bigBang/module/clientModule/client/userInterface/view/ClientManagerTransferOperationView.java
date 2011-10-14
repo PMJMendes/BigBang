@@ -129,6 +129,7 @@ public class ClientManagerTransferOperationView extends View implements ClientMa
 							break;
 						}
 					}
+					selectedList.remove(checkable);
 				}
 			}
 		});

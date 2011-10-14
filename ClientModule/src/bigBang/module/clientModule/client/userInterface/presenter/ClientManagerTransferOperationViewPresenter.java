@@ -123,7 +123,7 @@ OperationViewPresenter {
 					
 					@Override
 					public void onResponse(ManagerTransfer response) {
-						view.showMessage("O gestor de cliente foi alterado com sucesso.");
+						view.showMessage("Foi criado um novo processo de Alteração de Gestor de Cliente.");
 						view.clear();
 					}
 					

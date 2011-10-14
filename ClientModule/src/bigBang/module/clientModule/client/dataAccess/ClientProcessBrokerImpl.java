@@ -102,7 +102,7 @@ public class ClientProcessBrokerImpl extends DataBroker<Client> implements Clien
 	@Override
 	public void removeClient(final String clientId, final ResponseHandler<String> handler) {
 		this.getClient(clientId, new ResponseHandler<Client>() {
-			
+
 			@Override
 			public void onResponse(Client response) {
 				ClientProcessBrokerImpl.this.service.deleteClient(clientId, response.processId, new BigBangAsyncCallback<Void>() {
@@ -118,13 +118,13 @@ public class ClientProcessBrokerImpl extends DataBroker<Client> implements Clien
 						handler.onResponse(clientId);
 					}
 				});
-				
+
 			}
-			
+
 			@Override
 			public void onError(Collection<ResponseError> errors) {
 				// TODO Auto-generated method stub
-				
+
 			}
 		});
 	}
@@ -270,14 +270,24 @@ public class ClientProcessBrokerImpl extends DataBroker<Client> implements Clien
 		ManagerTransfer transfer = new ManagerTransfer();
 		transfer.newManagerId = managerId;
 		transfer.managedProcessIds = clientIds;
-		
-		service.createManagerTransfer(transfer, new BigBangAsyncCallback<ManagerTransfer>() {
+			
+		if(clientIds.length > 1){
+			service.massCreateManagerTransfer(transfer, new BigBangAsyncCallback<ManagerTransfer>() {
 
-			@Override
-			public void onSuccess(ManagerTransfer result) {
-				handler.onResponse(result);
-			}
-		});
+				@Override
+				public void onSuccess(ManagerTransfer result) {
+					handler.onResponse(result);
+				}
+			});
+		}else{
+			service.createManagerTransfer(transfer, new BigBangAsyncCallback<ManagerTransfer>() {
+
+				@Override
+				public void onSuccess(ManagerTransfer result) {
+					handler.onResponse(result);
+				}
+			});
+		}
 	}
 
 	@Override
