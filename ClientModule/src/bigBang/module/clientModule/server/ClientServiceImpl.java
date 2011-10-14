@@ -334,6 +334,14 @@ public class ClientServiceImpl
 	}
 
 	@Override
+	public InfoOrDocumentRequest createInfoOrDocumentRequest(InfoOrDocumentRequest request)
+		throws SessionExpiredException, BigBangException
+	{
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
 	public RiskAnalysis createRiskAnalisys(String clientId,
 			RiskAnalysis riskAnalisys) throws SessionExpiredException,
 			BigBangException {
@@ -364,14 +372,6 @@ public class ClientServiceImpl
 
 	@Override
 	public Client mergeWithClient(String originalId, String receptorId)
-			throws SessionExpiredException, BigBangException {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public InfoOrDocumentRequest createInfoOrDocumentRequest(
-			InfoOrDocumentRequest request)
 			throws SessionExpiredException, BigBangException {
 		// TODO Auto-generated method stub
 		return null;
@@ -590,7 +590,7 @@ public class ClientServiceImpl
 
 		if ( lParam.managerId != null )
 		{
-			pstrBuffer.append(" AND [:Manager] = '").append(lParam.managerId).append("'");
+			pstrBuffer.append(" AND [:Process:Manager] = '").append(lParam.managerId).append("'");
 		}
 
 		if ( lParam.costCenterId != null )
