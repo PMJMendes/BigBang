@@ -13,7 +13,6 @@ import bigBang.definitions.shared.BigBangConstants;
 import bigBang.definitions.shared.Client;
 import bigBang.definitions.shared.ClientStub;
 import bigBang.definitions.shared.ManagerTransfer;
-import bigBang.definitions.shared.User;
 import bigBang.library.client.EventBus;
 import bigBang.library.client.HasEditableValue;
 import bigBang.library.client.HasValueSelectables;
@@ -42,7 +41,7 @@ OperationViewPresenter {
 		HasValueSelectables<?> getList();
 		HasValueSelectables<?> getSelectedList();
 		
-		HasEditableValue<User> getForm();
+		HasEditableValue<String> getForm();
 		boolean isFormValid();
 		void lockForm(boolean lock);
 		Collection<String> getSelectedClientIds();
@@ -119,7 +118,7 @@ OperationViewPresenter {
 				String[] clientIds = new String[selectedIds.size()];
 				clientIds = selectedIds.toArray(clientIds); 
 				
-				clientBroker.createManagerTransfer(clientIds, view.getForm().getValue().id, new ResponseHandler<ManagerTransfer[]>() {
+				clientBroker.createManagerTransfer(clientIds, view.getForm().getValue(), new ResponseHandler<ManagerTransfer[]>() {
 					
 					@Override
 					public void onResponse(ManagerTransfer[] response) {

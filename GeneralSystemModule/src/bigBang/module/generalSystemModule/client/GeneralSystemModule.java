@@ -51,8 +51,8 @@ public class GeneralSystemModule implements Module {
 	}
 
 	private void setup(EventBus eventBus, BigBangPermissionManager permissionManager, String processId) {
-		sectionPresenters = new SectionViewPresenter[0];
-		//TODO FJVC
+		sectionPresenters = new SectionViewPresenter[1];
+
 		//GeneralSystem section
 		GeneralSystemSection generalSystemSection = new GeneralSystemSection(permissionManager, processId);
 		GeneralSystemSectionView generalSystemSectionView = new GeneralSystemSectionView();

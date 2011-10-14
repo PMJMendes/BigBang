@@ -207,7 +207,7 @@ public class ClientManagerTransferOperationView extends View implements ClientMa
 	}
 
 	@Override
-	public HasEditableValue<User> getForm() {
+	public HasEditableValue<String> getForm() {
 		return this.managerForm;
 	}
 

@@ -16,68 +16,63 @@ import bigBang.library.client.userInterface.view.FormView;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 
-public class ClientManagerFormView extends FormView<User> implements UserDataBrokerClient {
+public class ClientManagerFormView extends FormView<String> implements UserDataBrokerClient {
 
 	protected ExpandableListBoxFormField clientManager;
-	protected TextBoxFormField name;
 	protected TextBoxFormField username;
 	protected TextBoxFormField userProfile;
+	protected UserBroker broker;
 	
 	protected int userDataVersion;
 	
 	public ClientManagerFormView(){
 		clientManager = new ExpandableListBoxFormField(BigBangConstants.EntityIds.USER, "Gestor de Cliente");
-		clientManager.addValueChangeHandler(new ValueChangeHandler<String>() {
-			
-			@Override
-			public void onValueChange(ValueChangeEvent<String> event) {
-				UserBroker userBroker = ((UserBroker)DataBrokerManager.Util.getInstance().getBroker(BigBangConstants.EntityIds.USER));
-				userBroker.getUser(event.getValue(), new ResponseHandler<User>() {
-					
-					@Override
-					public void onResponse(User response) {
-						ClientManagerFormView.this.setValue(response);
-					}
-					
-					@Override
-					public void onError(Collection<ResponseError> errors) {}
-				});
-			}
-		});
-		name = new TextBoxFormField("Nome");
 		username = new TextBoxFormField("Nome de utilizador");
 		userProfile = new TextBoxFormField("Perfil");
-		
+
 		addSection("Gestor de Cliente");
 		
 		addFormField(clientManager);
-		addFormField(name);
 		addFormField(username);
 		addFormField(userProfile);
 		
-		((UserBroker)DataBrokerManager.Util.getInstance().getBroker(BigBangConstants.EntityIds.USER)).registerClient(this);
+		this.broker = ((UserBroker)DataBrokerManager.Util.getInstance().getBroker(BigBangConstants.EntityIds.USER));
+		this.broker.registerClient(this);
 		
 		setReadOnly(true);
 		clientManager.setReadOnly(false);
+		clientManager.addValueChangeHandler(new ValueChangeHandler<String>() {
+
+			@Override
+			public void onValueChange(ValueChangeEvent<String> event) {
+				setValue(event.getValue());
+			}
+		});
 	}
 
 	@Override
-	public User getInfo() {
-		User user = new User();
-		user.id = this.clientManager.getValue();
-		return user;
+	public String getInfo() {
+		return this.clientManager.getValue();
 	}
 
 	@Override
-	public void setInfo(User info) {
+	public void setInfo(String info) {
 		if(info == null){
 			clearInfo();
 			return;
 		}
-		this.clientManager.setValue(info.id);
-		this.name.setValue(info.name);
-		this.username.setValue(info.username);
-		this.userProfile.setValue(info.profile.name);
+		this.broker.getUser(info, new ResponseHandler<User>() {
+
+			@Override
+			public void onResponse(User response) {
+				clientManager.setValue(response.id, false);
+				username.setValue(response.username);
+				userProfile.setValue(response.profile.name);
+			}
+
+			@Override
+			public void onError(Collection<ResponseError> errors) {}
+		});
 	}
 
 	@Override
@@ -98,9 +93,9 @@ public class ClientManagerFormView extends FormView<User> implements UserDataBro
 	@Override
 	public void setUsers(User[] users) {
 		for(int i = 0; i < users.length; i++) {
-			User user = this.value;
-			if(user != null && user.id != null && user.id.equalsIgnoreCase(users[i].id)) {
-				this.setValue(users[i]);
+			String userId = this.value;
+			if(userId != null && userId.equalsIgnoreCase(users[i].id)) {
+				this.setValue(users[i].id);
 				break;
 			}
 		}
@@ -113,9 +108,9 @@ public class ClientManagerFormView extends FormView<User> implements UserDataBro
 
 	@Override
 	public void updateUser(User alteredUser) {
-		User user = this.value;
-		if(user != null && user.id != null && user.id.equalsIgnoreCase(alteredUser.id)) {
-			this.setValue(alteredUser);
+		String userid = this.value;
+		if(userid != null && userid.equalsIgnoreCase(alteredUser.id)) {
+			this.setValue(alteredUser.id);
 		}
 	}
 

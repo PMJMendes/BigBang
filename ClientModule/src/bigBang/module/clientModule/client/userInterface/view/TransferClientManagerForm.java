@@ -15,6 +15,8 @@ public class TransferClientManagerForm extends FormView<String> {
 		addFormField(manager);
 	}
 
+	
+	
 	@Override
 	public String getInfo() {
 		return manager.getValue();

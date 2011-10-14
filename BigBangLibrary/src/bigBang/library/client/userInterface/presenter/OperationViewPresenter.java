@@ -15,4 +15,10 @@ public interface OperationViewPresenter extends ViewPresenter {
 	public String setTargetEntity(String id);
 
 	public void setOperationPermission(boolean hasPermissionForOperation);
+	
+	/*public String[] getImplementedOperations();
+	public boolean implementsOperation(String operation);
+	
+	public void setProcesses(String[] processIds);
+	public void setObjects(String[] objectIds);*/
 }

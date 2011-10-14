@@ -10,6 +10,7 @@ import bigBang.definitions.client.response.ResponseError;
 import bigBang.definitions.client.response.ResponseHandler;
 import bigBang.definitions.shared.SearchResult;
 import bigBang.library.client.userInterface.FilterableList;
+import bigBang.library.client.userInterface.ListEntry;
 import bigBang.library.client.userInterface.ListHeader;
 
 import com.google.gwt.core.client.GWT;
@@ -29,7 +30,6 @@ import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.HasVerticalAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
-import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
@@ -56,7 +56,7 @@ public abstract class SearchPanel<T extends SearchResult> extends FilterableList
 	protected int nextResultIndex = 0;
 	protected int numberOfResults = 0;
 	protected boolean requestedNextPage = false;
-	protected String operationId;
+	protected String operationId = null;
 
 	/**
 	 * The class constructor
@@ -93,15 +93,11 @@ public abstract class SearchPanel<T extends SearchResult> extends FilterableList
 			}
 		});
 
-		final ScrollPanel scroll = this.getScrollable();
-		scroll.addScrollHandler(new ScrollHandler() {
+		this.getScrollable().addScrollHandler(new ScrollHandler() {
 
 			@Override
 			public void onScroll(ScrollEvent event) {
-				if (((scroll.getMaximumVerticalScrollPosition() - scroll
-						.getVerticalScrollPosition()) < 300) && !SearchPanel.this.requestedNextPage) {
-					SearchPanel.this.fetchNextPage();
-				}
+				checkScrollPosition();
 			}
 		});
 
@@ -224,7 +220,7 @@ public abstract class SearchPanel<T extends SearchResult> extends FilterableList
 				};
 				this.broker.search(parameters, sorts, this.pageSize, handler);
 			}
-		} catch (Exception e) {
+		} catch (RuntimeException e) {
 			GWT.log(e.getMessage());
 		}
 
@@ -279,7 +275,35 @@ public abstract class SearchPanel<T extends SearchResult> extends FilterableList
 	protected String getFreeText(){
 		return this.textBoxFilter.getText();
 	}
-
+	
+	@Override
+	public ListEntry<T> remove(int index) {
+		ListEntry<T> result = super.remove(index);
+		checkScrollPosition();
+		return result;		
+	}
+	
+	@Override
+	public boolean remove(Object o) {
+		boolean result = super.remove(o);
+		checkScrollPosition();
+		return result;
+	}
+	
+	@Override
+	public boolean removeAll(Collection<?> c) {
+		boolean result = super.removeAll(c);
+		checkScrollPosition();
+		return result;
+	}
+	
+	protected void checkScrollPosition(){
+		if (((this.getScrollable().getMaximumVerticalScrollPosition() - this.getScrollable()
+				.getVerticalScrollPosition()) < 300) && !SearchPanel.this.requestedNextPage) {
+			SearchPanel.this.fetchNextPage();
+		}
+	}
+	
 	/**
 	 * Performs A search query to the class' defined search service
 	 */

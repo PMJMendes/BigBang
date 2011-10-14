@@ -40,13 +40,13 @@ public interface DataBrokerInterface <T> {
 	public Collection<DataBrokerClient<T>> getClients();
 	
 	/**
-	 * Gets the if of the data element being managed by the broker
+	 * Gets the id of the data element being managed by the broker
 	 * @return The data element id
 	 */
 	public String getDataElementId();
 	
 	/**
-	 * Requires que data broker to refresh its currently held data
+	 * Requires the data broker to refresh its currently held data
 	 */
 	public void requireDataRefresh();
 	

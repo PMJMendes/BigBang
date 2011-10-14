@@ -117,8 +117,8 @@ public class DatePickerFormField extends FormField<Date> {
 		}
 		year.addItem("-", "");
 		int currentYear = Integer.parseInt(new SimpleDateFormat("yyyy").format(new Date()));
-		for(int i = currentYear; i >= 1900; i--){
-			year.addItem(i+"", i+"");
+		for(int j = currentYear; j >= 1900; j--){
+			year.addItem(j+"", j+"");
 		}
 	}
 	

@@ -23,6 +23,8 @@ import bigBang.module.clientModule.shared.ClientSortParameter;
 import bigBang.module.clientModule.shared.ClientSortParameter.SortableField;
 import bigBang.module.clientModule.shared.ModuleConstants;
 
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.i18n.client.DateTimeFormat;
 
 /**
@@ -70,6 +72,14 @@ public class ClientSearchPanel extends SearchPanel<ClientStub> implements Client
 		filtersPanel.addTypifiedListField(Filters.MARITAL_STATUS, ModuleConstants.ListIDs.MaritalStatuses, "Estado Civil");
 		filtersPanel.addDateField(Filters.BORN_AFTER, "Nascido De");
 		filtersPanel.addDateField(Filters.BORN_BEFORE, "Nascido Até");
+		
+		filtersPanel.getApplyButton().addClickHandler(new ClickHandler() {
+			
+			@Override
+			public void onClick(ClickEvent event) {
+				doSearch();
+			}
+		});
 		
 		filtersContainer.clear();
 		filtersContainer.add(filtersPanel);

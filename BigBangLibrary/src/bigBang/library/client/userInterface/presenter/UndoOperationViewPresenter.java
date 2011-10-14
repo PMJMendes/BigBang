@@ -60,7 +60,7 @@ public class UndoOperationViewPresenter implements OperationViewPresenter {
 	private HistoryServiceAsync service;
 	private Display view;
 	protected HistoryBroker historyBroker;
-
+	protected String[] implementedOperationIds;
 	private String processId;
 
 	private HistoryOperation operation;

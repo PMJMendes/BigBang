@@ -28,4 +28,10 @@ public class BigBangConstants {
 	public static class TypifiedListIds {
 	}
 	
+	public static class OperationIds {
+		public static class ClientProcess {
+			public static final String UPDATE_CLIENT = "";
+		}		
+	}
+	
 }
