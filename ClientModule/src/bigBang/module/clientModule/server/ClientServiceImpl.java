@@ -595,7 +595,7 @@ public class ClientServiceImpl
 
 		if ( lParam.costCenterId != null )
 		{
-			pstrBuffer.append(" AND [:Manager] IN (SELECT [User] FROM (");
+			pstrBuffer.append(" AND [:Process:Manager] IN (SELECT [User] FROM (");
 			larrMembers = new int[1];
 			larrMembers[0] = 2;
 			larrValues = new java.lang.Object[1];
