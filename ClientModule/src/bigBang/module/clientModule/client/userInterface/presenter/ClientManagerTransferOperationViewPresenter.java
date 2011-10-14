@@ -117,11 +117,12 @@ OperationViewPresenter {
 				Collection<String> selectedIds = view.getSelectedClientIds();
 				String[] clientIds = new String[selectedIds.size()];
 				clientIds = selectedIds.toArray(clientIds); 
+				String managerId = view.getForm().getValue();
 				
-				clientBroker.createManagerTransfer(clientIds, view.getForm().getValue(), new ResponseHandler<ManagerTransfer[]>() {
+				clientBroker.createManagerTransfer(clientIds, managerId, new ResponseHandler<ManagerTransfer>() {
 					
 					@Override
-					public void onResponse(ManagerTransfer[] response) {
+					public void onResponse(ManagerTransfer response) {
 						view.showMessage("O gestor de cliente foi alterado com sucesso.");
 						view.clear();
 					}

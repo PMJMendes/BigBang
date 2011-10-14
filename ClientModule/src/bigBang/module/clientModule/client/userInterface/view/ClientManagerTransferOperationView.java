@@ -5,6 +5,7 @@ import java.util.Collection;
 
 import org.gwt.mosaic.ui.client.MessageBox;
 
+import bigBang.definitions.client.dataAccess.ClientProcessBroker;
 import bigBang.definitions.shared.Client;
 import bigBang.definitions.shared.ClientStub;
 import bigBang.definitions.shared.SearchResult;
@@ -14,6 +15,7 @@ import bigBang.library.client.HasEditableValue;
 import bigBang.library.client.HasValueSelectables;
 import bigBang.library.client.ValueSelectable;
 import bigBang.library.client.ValueWrapper;
+import bigBang.library.client.dataAccess.DataBrokerManager;
 import bigBang.library.client.event.ActionInvokedEvent;
 import bigBang.library.client.event.ActionInvokedEventHandler;
 import bigBang.library.client.event.CheckedSelectionChangedEvent;
@@ -225,7 +227,7 @@ public class ClientManagerTransferOperationView extends View implements ClientMa
 	public Collection<String> getSelectedClientIds() {
 		Collection<String> result = new ArrayList<String>();
 		for(ValueSelectable<ClientStub> c : this.selectedList){
-			result.add(c.getValue().id);
+			result.add(c.getValue().processId);
 		}
 		return result;
 	}

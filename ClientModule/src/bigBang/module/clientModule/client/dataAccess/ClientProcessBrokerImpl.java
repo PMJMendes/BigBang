@@ -266,15 +266,18 @@ public class ClientProcessBrokerImpl extends DataBroker<Client> implements Clien
 
 	@Override
 	public void createManagerTransfer(String[] clientIds, String managerId,
-			final ResponseHandler<ManagerTransfer[]> handler) {
-		// TODO Important!
-//		service.createManagerTransfer(clientIds, managerId, new BigBangAsyncCallback<ManagerTransfer[]>() {
-//
-//			@Override
-//			public void onSuccess(ManagerTransfer[] result) {
-//				handler.onResponse(result);
-//			}
-//		});
+			final ResponseHandler<ManagerTransfer> handler) {
+		ManagerTransfer transfer = new ManagerTransfer();
+		transfer.newManagerId = managerId;
+		transfer.managedProcessIds = clientIds;
+		
+		service.createManagerTransfer(transfer, new BigBangAsyncCallback<ManagerTransfer>() {
+
+			@Override
+			public void onSuccess(ManagerTransfer result) {
+				handler.onResponse(result);
+			}
+		});
 	}
 
 	@Override
