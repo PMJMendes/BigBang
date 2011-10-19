@@ -192,19 +192,32 @@ public class ClientProcessBrokerImpl extends DataBroker<Client> implements Clien
 	}
 
 	@Override
-	public void mergeWithClient(String originalId, String receptorId,
+	public void mergeWithClient(final String originalId, String receptorId,
 			final ResponseHandler<Client> handler) {
-		service.mergeWithClient(originalId, receptorId, new BigBangAsyncCallback<Client>() {
+		this.getClient(receptorId, new ResponseHandler<Client>() {
 
 			@Override
-			public void onSuccess(Client result) {
-				cache.add(result.id, result);
-				incrementDataVersion();
-				for(DataBrokerClient<Client> bc : getClients()){
-					((ClientProcessDataBrokerClient) bc).updateClient(result);
-					((ClientProcessDataBrokerClient) bc).setDataVersionNumber(BigBangConstants.EntityIds.CLIENT, getCurrentDataVersion());
-				}
-				handler.onResponse(result);
+			public void onResponse(Client response) {
+				service.mergeWithClient(originalId, response, new BigBangAsyncCallback<Client>() {
+		
+					@Override
+					public void onSuccess(Client result) {
+						cache.add(result.id, result);
+						incrementDataVersion();
+						for(DataBrokerClient<Client> bc : getClients()){
+							((ClientProcessDataBrokerClient) bc).updateClient(result);
+							((ClientProcessDataBrokerClient) bc).setDataVersionNumber(BigBangConstants.EntityIds.CLIENT, getCurrentDataVersion());
+						}
+						handler.onResponse(result);
+					}
+				});
+				
+			}
+			
+			@Override
+			public void onError(Collection<ResponseError> errors) {
+				// TODO Auto-generated method stub
+				
 			}
 		});
 	}
