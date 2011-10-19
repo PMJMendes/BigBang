@@ -11,7 +11,7 @@ public interface InsurancePolicyServiceAsync extends SearchServiceAsync{
 
 	void getPolicy(String policyId, AsyncCallback<InsurancePolicy> callback);
 
-	void savePolicy(InsurancePolicy policy, AsyncCallback<Void> callback);
+	void editPolicy(InsurancePolicy policy, AsyncCallback<InsurancePolicy> callback);
 
 	void voidPolicy(String policyId, AsyncCallback<InsurancePolicy> callback);
 	

@@ -10,6 +10,7 @@ import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 
 @RemoteServiceRelativePath("InsurancePolicyService")
 public interface InsurancePolicyService extends SearchService {
+
 	/**
 	 * Utility class for simplifying access to the instance of async service.
 	 */
@@ -26,7 +27,7 @@ public interface InsurancePolicyService extends SearchService {
 	public InsurancePolicy getPolicy(String policyId) throws SessionExpiredException, BigBangException;
 	public InsurancePolicy voidPolicy(String policyId) throws SessionExpiredException, BigBangException;
 	public void deletePolicy(String policyId) throws SessionExpiredException, BigBangException;
-	public void savePolicy(InsurancePolicy policy) throws SessionExpiredException, BigBangException;
+	public InsurancePolicy editPolicy(InsurancePolicy policy) throws SessionExpiredException, BigBangException;
 
 	//public RiskAnalisys createRiskAnalisys(String policyId, RiskAnalisys riskAnalisys) throws SessionExpiredException, BigBangException;
 	//public 
