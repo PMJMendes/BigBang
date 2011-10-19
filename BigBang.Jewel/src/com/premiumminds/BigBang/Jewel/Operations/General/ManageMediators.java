@@ -13,6 +13,8 @@ import Jewel.Petri.SysObjects.JewelPetriException;
 import Jewel.Petri.SysObjects.UndoableOperation;
 
 import com.premiumminds.BigBang.Jewel.Constants;
+import com.premiumminds.BigBang.Jewel.Data.ContactData;
+import com.premiumminds.BigBang.Jewel.Data.DocumentData;
 import com.premiumminds.BigBang.Jewel.Objects.Contact;
 import com.premiumminds.BigBang.Jewel.Objects.Document;
 import com.premiumminds.BigBang.Jewel.Objects.Mediator;
@@ -270,10 +272,10 @@ public class ManageMediators
 					else
 					{
 						marrDelete[i].mobjContactOps = new ContactOps();
-						marrDelete[i].mobjContactOps.marrDelete = new ContactOps.ContactData[larrContacts.length];
+						marrDelete[i].mobjContactOps.marrDelete = new ContactData[larrContacts.length];
 						for ( j = 0; j < larrContacts.length; j++ )
 						{
-							marrDelete[i].mobjContactOps.marrDelete[j] = marrDelete[i].mobjContactOps.new ContactData();
+							marrDelete[i].mobjContactOps.marrDelete[j] = new ContactData();
 							marrDelete[i].mobjContactOps.marrDelete[j].mid = larrContacts[j].getKey();
 						}
 						marrDelete[i].mobjContactOps.RunSubOp(pdb, null);
@@ -284,10 +286,10 @@ public class ManageMediators
 					else
 					{
 						marrDelete[i].mobjDocOps = new DocOps();
-						marrDelete[i].mobjDocOps.marrDelete = new DocOps.DocumentData[larrDocs.length];
+						marrDelete[i].mobjDocOps.marrDelete = new DocumentData[larrDocs.length];
 						for ( j = 0; j < larrDocs.length; j++ )
 						{
-							marrDelete[i].mobjDocOps.marrDelete[j] = marrDelete[i].mobjDocOps.new DocumentData();
+							marrDelete[i].mobjDocOps.marrDelete[j] = new DocumentData();
 							marrDelete[i].mobjDocOps.marrDelete[j].mid = larrDocs[j].getKey();
 						}
 						marrDelete[i].mobjDocOps.RunSubOp(pdb, null);

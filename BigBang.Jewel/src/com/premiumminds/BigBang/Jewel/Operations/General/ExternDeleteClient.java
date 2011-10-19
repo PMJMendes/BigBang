@@ -11,12 +11,14 @@ import Jewel.Petri.SysObjects.JewelPetriException;
 import Jewel.Petri.SysObjects.UndoableOperation;
 
 import com.premiumminds.BigBang.Jewel.Constants;
+import com.premiumminds.BigBang.Jewel.Data.ClientData;
+import com.premiumminds.BigBang.Jewel.Data.ContactData;
+import com.premiumminds.BigBang.Jewel.Data.DocumentData;
 import com.premiumminds.BigBang.Jewel.Objects.Client;
 import com.premiumminds.BigBang.Jewel.Objects.Contact;
 import com.premiumminds.BigBang.Jewel.Objects.Document;
 import com.premiumminds.BigBang.Jewel.Operations.ContactOps;
 import com.premiumminds.BigBang.Jewel.Operations.DocOps;
-import com.premiumminds.BigBang.Jewel.Operations.DataObjects.ClientData;
 
 public class ExternDeleteClient
 	extends UndoableOperation
@@ -97,10 +99,10 @@ public class ExternDeleteClient
 			else
 			{
 				mobjContactOps = new ContactOps();
-				mobjContactOps.marrDelete = new ContactOps.ContactData[larrContacts.length];
+				mobjContactOps.marrDelete = new ContactData[larrContacts.length];
 				for ( i = 0; i < larrContacts.length; i++ )
 				{
-					mobjContactOps.marrDelete[i] = mobjContactOps.new ContactData();
+					mobjContactOps.marrDelete[i] = new ContactData();
 					mobjContactOps.marrDelete[i].mid = larrContacts[i].getKey();
 				}
 				mobjContactOps.RunSubOp(pdb, null);
@@ -112,10 +114,10 @@ public class ExternDeleteClient
 			else
 			{
 				mobjDocOps = new DocOps();
-				mobjDocOps.marrDelete = new DocOps.DocumentData[larrDocs.length];
+				mobjDocOps.marrDelete = new DocumentData[larrDocs.length];
 				for ( i = 0; i < larrDocs.length; i++ )
 				{
-					mobjDocOps.marrDelete[i] = mobjDocOps.new DocumentData();
+					mobjDocOps.marrDelete[i] = new DocumentData();
 					mobjDocOps.marrDelete[i].mid = larrDocs[i].getKey();
 				}
 				mobjDocOps.RunSubOp(pdb, null);

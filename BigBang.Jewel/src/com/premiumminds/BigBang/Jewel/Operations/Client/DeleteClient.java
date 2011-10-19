@@ -8,8 +8,8 @@ import Jewel.Petri.SysObjects.JewelPetriException;
 import Jewel.Petri.SysObjects.Operation;
 
 import com.premiumminds.BigBang.Jewel.Constants;
+import com.premiumminds.BigBang.Jewel.Data.ClientData;
 import com.premiumminds.BigBang.Jewel.Objects.GeneralSystem;
-import com.premiumminds.BigBang.Jewel.Operations.DataObjects.ClientData;
 import com.premiumminds.BigBang.Jewel.Operations.General.ExternDeleteClient;
 
 public class DeleteClient

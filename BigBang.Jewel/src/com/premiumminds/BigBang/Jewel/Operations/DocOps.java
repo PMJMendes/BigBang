@@ -1,19 +1,18 @@
 package com.premiumminds.BigBang.Jewel.Operations;
 
-import java.io.Serializable;
 import java.util.UUID;
 
 import Jewel.Engine.Engine;
 import Jewel.Engine.DataAccess.SQLServer;
 import Jewel.Engine.Implementation.Entity;
-import Jewel.Engine.SysObjects.FileXfer;
-import Jewel.Engine.SysObjects.ObjectBase;
 import Jewel.Petri.SysObjects.JewelPetriException;
 import Jewel.Petri.SysObjects.SubOperation;
 import Jewel.Petri.SysObjects.UndoableOperation;
 
 import com.premiumminds.BigBang.Jewel.BigBangJewelException;
 import com.premiumminds.BigBang.Jewel.Constants;
+import com.premiumminds.BigBang.Jewel.Data.DocInfoData;
+import com.premiumminds.BigBang.Jewel.Data.DocumentData;
 import com.premiumminds.BigBang.Jewel.Objects.DocInfo;
 import com.premiumminds.BigBang.Jewel.Objects.Document;
 
@@ -21,31 +20,6 @@ public class DocOps
 	extends SubOperation
 {
 	private static final long serialVersionUID = 1L;
-
-	public class DocumentData
-		implements Serializable
-	{
-		private static final long serialVersionUID = 1L;
-
-		public class DocInfoData
-			implements Serializable
-		{
-			private static final long serialVersionUID = 1L;
-
-			public String mstrType;
-			public String mstrValue;
-		}
-
-		public UUID mid;
-		public String mstrName;
-		public UUID midOwnerType;
-		public UUID midOwnerId;
-		public UUID midDocType;
-		public String mstrText;
-		public byte[] mobjFile;
-		public DocInfoData[] marrInfo;
-		public DocumentData mobjPrevValues;
-	}
 
 	public DocumentData[] marrCreate;
 	public DocumentData[] marrModify;
@@ -61,7 +35,7 @@ public class DocOps
 			{
 				pstrResult.append("Foi criado 1 documento:");
 				pstrResult.append(pstrLineBreak);
-				Describe(pstrResult, marrCreate[0], pstrLineBreak);
+				marrCreate[0].Describe(pstrResult, pstrLineBreak);
 			}
 			else
 			{
@@ -75,7 +49,7 @@ public class DocOps
 					pstrResult.append(i + 1);
 					pstrResult.append(":");
 					pstrResult.append(pstrLineBreak);
-					Describe(pstrResult, marrCreate[i], pstrLineBreak);
+					marrCreate[i].Describe(pstrResult, pstrLineBreak);
 				}
 			}
 		}
@@ -86,7 +60,7 @@ public class DocOps
 			{
 				pstrResult.append("Foi modificado 1 documento:");
 				pstrResult.append(pstrLineBreak);
-				Describe(pstrResult, marrModify[0], pstrLineBreak);
+				marrModify[0].Describe(pstrResult, pstrLineBreak);
 			}
 			else
 			{
@@ -100,7 +74,7 @@ public class DocOps
 					pstrResult.append(i + 1);
 					pstrResult.append(":");
 					pstrResult.append(pstrLineBreak);
-					Describe(pstrResult, marrModify[i], pstrLineBreak);
+					marrModify[i].Describe(pstrResult, pstrLineBreak);
 				}
 			}
 		}
@@ -111,7 +85,7 @@ public class DocOps
 			{
 				pstrResult.append("Foi apagado 1 documento:");
 				pstrResult.append(pstrLineBreak);
-				Describe(pstrResult, marrDelete[0], pstrLineBreak);
+				marrDelete[0].Describe(pstrResult, pstrLineBreak);
 			}
 			else
 			{
@@ -125,7 +99,7 @@ public class DocOps
 					pstrResult.append(i + 1);
 					pstrResult.append(":");
 					pstrResult.append(pstrLineBreak);
-					Describe(pstrResult, marrDelete[i], pstrLineBreak);
+					marrDelete[i].Describe(pstrResult, pstrLineBreak);
 				}
 			}
 		}
@@ -185,7 +159,7 @@ public class DocOps
 			pstrResult.append("Serão repostos os valores anteriores:");
 			pstrResult.append(pstrLineBreak);
 			if ( marrModify.length == 1 )
-				Describe(pstrResult, marrModify[0].mobjPrevValues, pstrLineBreak);
+				marrModify[0].mobjPrevValues.Describe(pstrResult, pstrLineBreak);
 			else
 			{
 				for ( i = 0; i < marrModify.length; i++ )
@@ -194,7 +168,7 @@ public class DocOps
 					pstrResult.append(i + 1);
 					pstrResult.append(":");
 					pstrResult.append(pstrLineBreak);
-					Describe(pstrResult, marrModify[i].mobjPrevValues, pstrLineBreak);
+					marrModify[i].mobjPrevValues.Describe(pstrResult, pstrLineBreak);
 				}
 			}
 		}
@@ -219,7 +193,7 @@ public class DocOps
 			{
 				pstrResult.append("Foi apagado 1 documento:");
 				pstrResult.append(pstrLineBreak);
-				Describe(pstrResult, marrCreate[0], pstrLineBreak);
+				marrCreate[0].Describe(pstrResult, pstrLineBreak);
 			}
 			else
 			{
@@ -233,7 +207,7 @@ public class DocOps
 					pstrResult.append(i + 1);
 					pstrResult.append(":");
 					pstrResult.append(pstrLineBreak);
-					Describe(pstrResult, marrCreate[i], pstrLineBreak);
+					marrCreate[i].Describe(pstrResult, pstrLineBreak);
 				}
 			}
 		}
@@ -244,7 +218,7 @@ public class DocOps
 			{
 				pstrResult.append("Foi reposta a definição de 1 documento:");
 				pstrResult.append(pstrLineBreak);
-				Describe(pstrResult, marrModify[0].mobjPrevValues, pstrLineBreak);
+				marrModify[0].mobjPrevValues.Describe(pstrResult, pstrLineBreak);
 			}
 			else
 			{
@@ -258,7 +232,7 @@ public class DocOps
 					pstrResult.append(i + 1);
 					pstrResult.append(":");
 					pstrResult.append(pstrLineBreak);
-					Describe(pstrResult, marrModify[i].mobjPrevValues, pstrLineBreak);
+					marrModify[i].mobjPrevValues.Describe(pstrResult, pstrLineBreak);
 				}
 			}
 		}
@@ -269,7 +243,7 @@ public class DocOps
 			{
 				pstrResult.append("Foi reposto 1 documento:");
 				pstrResult.append(pstrLineBreak);
-				Describe(pstrResult, marrDelete[0], pstrLineBreak);
+				marrDelete[0].Describe(pstrResult, pstrLineBreak);
 			}
 			else
 			{
@@ -283,7 +257,7 @@ public class DocOps
 					pstrResult.append(i + 1);
 					pstrResult.append(":");
 					pstrResult.append(pstrLineBreak);
-					Describe(pstrResult, marrDelete[i], pstrLineBreak);
+					marrDelete[i].Describe(pstrResult, pstrLineBreak);
 				}
 			}
 		}
@@ -364,42 +338,37 @@ public class DocOps
 		int i;
 
 		lobjAux = Document.GetInstance(Engine.getCurrentNameSpace(), (UUID)null);
+		pobjData.midOwnerId = pidOwner;
+		pobjData.ToObject(lobjAux);
 		try
 		{
-			lobjAux.setAt(0, pobjData.mstrName);
-			lobjAux.setAt(1, pobjData.midOwnerType);
-			lobjAux.setAt(2, pidOwner);
-			lobjAux.setAt(3, pobjData.midDocType);
-			lobjAux.setAt(4, pobjData.mstrText);
-			lobjAux.setAt(5, pobjData.mobjFile);
 			lobjAux.SaveToDb(pdb);
 		}
 		catch (Throwable e)
 		{
 			throw new BigBangJewelException(e.getMessage(), e);
 		}
+		pobjData.mid = lobjAux.getKey();
 
 		if ( pobjData.marrInfo != null )
 		{
 			for ( i = 0; i < pobjData.marrInfo.length; i++ )
 			{
 				lobjAuxInfo = DocInfo.GetInstance(Engine.getCurrentNameSpace(), (UUID)null);
+				pobjData.marrInfo[i].midOwner = pobjData.mid;
+				pobjData.marrInfo[i].ToObject(lobjAuxInfo);
 				try
 				{
-					lobjAuxInfo.setAt(0, lobjAux.getKey());
-					lobjAuxInfo.setAt(1, pobjData.marrInfo[i].mstrType);
-					lobjAuxInfo.setAt(2, pobjData.marrInfo[i].mstrValue);
 					lobjAuxInfo.SaveToDb(pdb);
 				}
 				catch (Throwable e)
 				{
 					throw new BigBangJewelException(e.getMessage(), e);
 				}
+				pobjData.marrInfo[i].mid = lobjAuxInfo.getKey();
 			}
 		}
 
-		pobjData.mid = lobjAux.getKey();
-		pobjData.midOwnerId = pidOwner;
 		pobjData.mobjPrevValues = null;
 	}
 
@@ -425,25 +394,15 @@ public class DocOps
 		lobjAux = Document.GetInstance(Engine.getCurrentNameSpace(), pobjData.mid);
 
 		pobjData.mobjPrevValues = new DocumentData();
-
-		pobjData.mobjPrevValues.mid = lobjAux.getKey();
-		pobjData.mobjPrevValues.mstrName = (String)lobjAux.getAt(0);
-		pobjData.mobjPrevValues.midOwnerType = (UUID)lobjAux.getAt(1);
-		pobjData.mobjPrevValues.midOwnerId = (UUID)lobjAux.getAt(2);
-		pobjData.mobjPrevValues.midDocType = (UUID)lobjAux.getAt(3);
-		pobjData.mobjPrevValues.mstrText = (String)lobjAux.getAt(4);
-		if ( lobjAux.getAt(5) instanceof FileXfer )
-			pobjData.mobjPrevValues.mobjFile = ((FileXfer)lobjAux.getAt(5)).GetVarData();
-		else
-			pobjData.mobjPrevValues.mobjFile = (byte [])lobjAux.getAt(5);
+		pobjData.mobjPrevValues.FromObject(lobjAux);
 		pobjData.mobjPrevValues.mobjPrevValues = null;
 
 		larrCIAux = lobjAux.getCurrentInfo();
-		pobjData.mobjPrevValues.marrInfo = new DocumentData.DocInfoData[larrCIAux.length];
+		pobjData.mobjPrevValues.marrInfo = new DocInfoData[larrCIAux.length];
 		for ( i = 0; i < larrCIAux.length; i++ )
 		{
-			pobjData.mobjPrevValues.marrInfo[i].mstrType = (String)larrCIAux[i].getAt(0);
-			pobjData.mobjPrevValues.marrInfo[i].mstrValue = (String)larrCIAux[i].getAt(1);
+			pobjData.mobjPrevValues.marrInfo[i] = new DocInfoData();
+			pobjData.mobjPrevValues.marrInfo[i].FromObject(larrCIAux[i]);
 			try
 			{
 				lrefDocInfo.Delete(pdb, larrCIAux[i].getKey());
@@ -454,14 +413,9 @@ public class DocOps
 			}
 		}
 
+		pobjData.ToObject(lobjAux);
 		try
 		{
-			lobjAux.setAt(0, pobjData.mstrName);
-			lobjAux.setAt(1, pobjData.midOwnerType);
-			lobjAux.setAt(2, pobjData.midOwnerId);
-			lobjAux.setAt(3, pobjData.midDocType);
-			lobjAux.setAt(4, pobjData.mstrText);
-			lobjAux.setAt(5, pobjData.mobjFile);
 			lobjAux.SaveToDb(pdb);
 		}
 		catch (Throwable e)
@@ -474,17 +428,17 @@ public class DocOps
 			for ( i = 0; i < pobjData.marrInfo.length; i++ )
 			{
 				lobjAuxInfo = DocInfo.GetInstance(Engine.getCurrentNameSpace(), (UUID)null);
+				pobjData.marrInfo[i].midOwner = pobjData.mid;
+				pobjData.marrInfo[i].ToObject(lobjAuxInfo);
 				try
 				{
-					lobjAuxInfo.setAt(0, lobjAux.getKey());
-					lobjAuxInfo.setAt(1, pobjData.marrInfo[i].mstrType);
-					lobjAuxInfo.setAt(2, pobjData.marrInfo[i].mstrValue);
 					lobjAuxInfo.SaveToDb(pdb);
 				}
 				catch (Throwable e)
 				{
 					throw new BigBangJewelException(e.getMessage(), e);
 				}
+				pobjData.marrInfo[i].mid = lobjAuxInfo.getKey();
 			}
 		}
 	}
@@ -508,23 +462,15 @@ public class DocOps
 			lobjAux = Document.GetInstance(Engine.getCurrentNameSpace(), pobjData.mid);
 
 			larrCIAux = lobjAux.getCurrentInfo();
-			pobjData.marrInfo = new DocumentData.DocInfoData[larrCIAux.length];
+			pobjData.marrInfo = new DocInfoData[larrCIAux.length];
 			for ( i = 0; i < larrCIAux.length; i++ )
 			{
-				pobjData.marrInfo[i].mstrType = (String)larrCIAux[i].getAt(1);
-				pobjData.marrInfo[i].mstrValue = (String)larrCIAux[i].getAt(2);
+				pobjData.marrInfo[i] = new DocInfoData();
+				pobjData.marrInfo[i].FromObject(larrCIAux[i]);
 				lrefDocInfo.Delete(pdb, larrCIAux[i].getKey());
 			}
 
-			pobjData.mstrName = (String)lobjAux.getAt(0);
-			pobjData.midOwnerType = (UUID)lobjAux.getAt(1);
-			pobjData.midOwnerId = (UUID)lobjAux.getAt(2);
-			pobjData.midDocType = (UUID)lobjAux.getAt(3);
-			pobjData.mstrText = (String)lobjAux.getAt(4);
-			if ( lobjAux.getAt(5) instanceof FileXfer )
-				pobjData.mobjFile = ((FileXfer)lobjAux.getAt(5)).GetVarData();
-			else
-				pobjData.mobjFile = (byte [])lobjAux.getAt(5);
+			pobjData.FromObject(lobjAux);
 			pobjData.mobjPrevValues = null;
 
 			lrefDocuments.Delete(pdb, lobjAux.getKey());
@@ -542,7 +488,6 @@ public class DocOps
 		Entity lrefDocuments;
 		Entity lrefDocInfo;
 		int i;
-		DocInfo[] larrCIAux;
 
 		try
 		{
@@ -553,11 +498,8 @@ public class DocOps
 
 			lobjAux = Document.GetInstance(Engine.getCurrentNameSpace(), pobjData.mid);
 
-			larrCIAux = lobjAux.getCurrentInfo();
-			for ( i = 0; i < larrCIAux.length; i++ )
-			{
-				lrefDocInfo.Delete(pdb, larrCIAux[i].getKey());
-			}
+			for ( i = 0; i < pobjData.marrInfo.length; i++ )
+				lrefDocInfo.Delete(pdb, pobjData.marrInfo[i].mid);
 
 			lrefDocuments.Delete(pdb, lobjAux.getKey());
 		}
@@ -574,7 +516,6 @@ public class DocOps
 		DocInfo lobjAuxInfo;
 		int i;
 		Entity lrefDocInfo;
-		DocInfo[] larrCIAux;
 
 		try
 		{
@@ -588,12 +529,11 @@ public class DocOps
 
 		lobjAux = Document.GetInstance(Engine.getCurrentNameSpace(), pobjData.mid);
 
-		larrCIAux = lobjAux.getCurrentInfo();
-		for ( i = 0; i < larrCIAux.length; i++ )
+		for ( i = 0; i < pobjData.marrInfo.length; i++ )
 		{
 			try
 			{
-				lrefDocInfo.Delete(pdb, larrCIAux[i].getKey());
+				lrefDocInfo.Delete(pdb, pobjData.marrInfo[i].mid);
 			}
 			catch (Throwable e)
 			{
@@ -601,14 +541,9 @@ public class DocOps
 			}
 		}
 
+		pobjData.mobjPrevValues.ToObject(lobjAux);
 		try
 		{
-			lobjAux.setAt(0, pobjData.mobjPrevValues.mstrName);
-			lobjAux.setAt(1, pobjData.mobjPrevValues.midOwnerType);
-			lobjAux.setAt(2, pobjData.mobjPrevValues.midOwnerId);
-			lobjAux.setAt(3, pobjData.mobjPrevValues.midDocType);
-			lobjAux.setAt(4, pobjData.mobjPrevValues.mstrText);
-			lobjAux.setAt(5, pobjData.mobjPrevValues.mobjFile);
 			lobjAux.SaveToDb(pdb);
 		}
 		catch (Throwable e)
@@ -621,17 +556,17 @@ public class DocOps
 			for ( i = 0; i < pobjData.mobjPrevValues.marrInfo.length; i++ )
 			{
 				lobjAuxInfo = DocInfo.GetInstance(Engine.getCurrentNameSpace(), (UUID)null);
+				pobjData.mobjPrevValues.marrInfo[i].midOwner = pobjData.mid; 
+				pobjData.mobjPrevValues.marrInfo[i].ToObject(lobjAuxInfo);
 				try
 				{
-					lobjAuxInfo.setAt(0, lobjAux.getKey());
-					lobjAuxInfo.setAt(1, pobjData.mobjPrevValues.marrInfo[i].mstrType);
-					lobjAuxInfo.setAt(2, pobjData.mobjPrevValues.marrInfo[i].mstrValue);
 					lobjAuxInfo.SaveToDb(pdb);
 				}
 				catch (Throwable e)
 				{
 					throw new BigBangJewelException(e.getMessage(), e);
 				}
+				pobjData.mobjPrevValues.marrInfo[i].mid = lobjAuxInfo.getKey(); 
 			}
 		}
 	}
@@ -644,89 +579,34 @@ public class DocOps
 		int i;
 
 		lobjAux = Document.GetInstance(Engine.getCurrentNameSpace(), (UUID)null);
+		pobjData.midOwnerId = pidOwner;
+		pobjData.ToObject(lobjAux);
 		try
 		{
-			lobjAux.setAt(0, pobjData.mstrName);
-			lobjAux.setAt(1, pobjData.midOwnerType);
-			lobjAux.setAt(2, pidOwner);
-			lobjAux.setAt(3, pobjData.midDocType);
-			lobjAux.setAt(4, pobjData.mstrText);
-			lobjAux.setAt(5, pobjData.mobjFile);
 			lobjAux.SaveToDb(pdb);
-			pobjData.mid = lobjAux.getKey();
 		}
 		catch (Throwable e)
 		{
 			throw new BigBangJewelException(e.getMessage(), e);
 		}
+		pobjData.mid = lobjAux.getKey();
 
 		if ( pobjData.marrInfo != null )
 		{
 			for ( i = 0; i < pobjData.marrInfo.length; i++ )
 			{
 				lobjAuxInfo = DocInfo.GetInstance(Engine.getCurrentNameSpace(), (UUID)null);
+				pobjData.marrInfo[i].midOwner = pobjData.mid;
+  				pobjData.marrInfo[i].ToObject(lobjAuxInfo);
 				try
 				{
-					lobjAuxInfo.setAt(0, lobjAux.getKey());
-					lobjAuxInfo.setAt(1, pobjData.marrInfo[i].mstrType);
-					lobjAuxInfo.setAt(2, pobjData.marrInfo[i].mstrValue);
 					lobjAuxInfo.SaveToDb(pdb);
 				}
 				catch (Throwable e)
 				{
 					throw new BigBangJewelException(e.getMessage(), e);
 				}
-			}
-		}
-	}
-
-	private void Describe(StringBuilder pstrString, DocumentData pobjData, String pstrLineBreak)
-	{
-		ObjectBase lobjOwner;
-		ObjectBase lobjDocType;
-		int i;
-
-		pstrString.append("Documento para: ");
-		try
-		{
-			lobjOwner = Engine.GetWorkInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), pobjData.midOwnerType), pobjData.midOwnerId);
-			pstrString.append(lobjOwner.getLabel());
-		}
-		catch (Throwable e)
-		{
-			pstrString.append("(Erro a obter o dono do documento.)");
-		}
-		pstrString.append(pstrLineBreak);
-
-		pstrString.append("Nome: ");
-		pstrString.append(pobjData.mstrName);
-		pstrString.append(pstrLineBreak);
-		pstrString.append("Tipo: ");
-
-		try
-		{
-			lobjDocType = Engine.GetWorkInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), Constants.ObjID_DocType), pobjData.midDocType);
-			pstrString.append((String)lobjDocType.getAt(0));
-		}
-		catch (Throwable e)
-		{
-			pstrString.append("(Erro a obter o tipo de documento.)");
-		}
-		pstrString.append(pstrLineBreak);
-
-		pstrString.append("Texto:");
-		pstrString.append(pstrLineBreak);
-		pstrString.append(pobjData.mstrText);
-		pstrString.append(pstrLineBreak);
-
-		if ( pobjData.marrInfo != null )
-		{
-			for ( i = 0; i < pobjData.marrInfo.length; i++ )
-			{
-				pstrString.append(pobjData.marrInfo[i].mstrType);
-				pstrString.append(": ");
-				pstrString.append(pobjData.marrInfo[i].mstrValue);
-				pstrString.append(pstrLineBreak);
+				pobjData.marrInfo[i].mid = lobjAuxInfo.getKey(); 
 			}
 		}
 	}
