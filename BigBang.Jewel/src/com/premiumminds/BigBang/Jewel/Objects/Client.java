@@ -37,12 +37,12 @@ public class Client
 
 	public UUID GetProcessID()
 	{
-		return (UUID)getAt(22);
+		return (UUID)getAt(21);
 	}
 
 	public void SetProcessID(UUID pidProcess)
 	{
-		internalSetAt(22, pidProcess);
+		internalSetAt(21, pidProcess);
 	}
 
     public Contact[] GetCurrentContacts()

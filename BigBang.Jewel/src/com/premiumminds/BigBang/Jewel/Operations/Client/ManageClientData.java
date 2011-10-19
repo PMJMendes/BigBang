@@ -77,6 +77,7 @@ public class ManageClientData
 			mobjData.mobjPrevValues = new ClientData();
 			mobjData.mobjPrevValues.FromObject(lobjAux);
 
+			mobjData.midManager = GetProcess().GetManagerID();
 			mobjData.ToObject(lobjAux);
 			lobjAux.SaveToDb(pdb);
 
