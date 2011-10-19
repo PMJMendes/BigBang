@@ -2,6 +2,7 @@ package bigBang.module.insurancePolicyModule.server;
 
 import bigBang.definitions.client.dataAccess.SearchParameter;
 import bigBang.definitions.client.dataAccess.SortParameter;
+import bigBang.definitions.shared.InsurancePolicy;
 import bigBang.definitions.shared.SearchResult;
 import bigBang.library.shared.BigBangException;
 import bigBang.library.shared.NewSearchResult;
@@ -48,6 +49,34 @@ public class InsurancePolicyServiceImpl extends RemoteServiceServlet implements 
 	@Override
 	public void closeSearch(String workspaceId) throws SessionExpiredException,
 			BigBangException {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public InsurancePolicy getPolicy(String policyId)
+			throws SessionExpiredException, BigBangException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public InsurancePolicy voidPolicy(String policyId)
+			throws SessionExpiredException, BigBangException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void deletePolicy(String policyId) throws SessionExpiredException,
+			BigBangException {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void savePolicy(InsurancePolicy policy)
+			throws SessionExpiredException, BigBangException {
 		// TODO Auto-generated method stub
 		
 	}
