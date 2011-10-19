@@ -37,7 +37,7 @@ public interface ClientService
 
 	public Client editClient(Client client) throws SessionExpiredException, BigBangException;
 
-	public Client mergeWithClient(String originalId, String receptorId) throws SessionExpiredException, BigBangException; //Returns the altered receptor client
+	public Client mergeWithClient(String originalId, Client receptor) throws SessionExpiredException, BigBangException; //Returns the altered receptor client
 
 	public InfoOrDocumentRequest createInfoOrDocumentRequest(InfoOrDocumentRequest request) throws SessionExpiredException, BigBangException;
 	public ManagerTransfer createManagerTransfer(ManagerTransfer transfer) throws SessionExpiredException, BigBangException;

@@ -17,7 +17,7 @@ public interface ClientServiceAsync
 	void getClient(String clientId, AsyncCallback<Client> callback);
 	void createClient(Client client, AsyncCallback<Client> callback);
 	void editClient(Client client, AsyncCallback<Client> callback);
-	void mergeWithClient(String originalId, String receptorId, AsyncCallback<Client> callback);
+	void mergeWithClient(String originalId, Client receptor, AsyncCallback<Client> callback);
 	void createInfoOrDocumentRequest(InfoOrDocumentRequest request, AsyncCallback<InfoOrDocumentRequest> callback);
 	void createManagerTransfer(ManagerTransfer transfer, AsyncCallback<ManagerTransfer> callback);
 	void createQuoteRequest(String processId, QuoteRequest request, AsyncCallback<QuoteRequest> callback);
