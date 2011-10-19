@@ -22,6 +22,8 @@ import bigBang.library.shared.SessionExpiredException;
 
 import com.premiumminds.BigBang.Jewel.BigBangJewelException;
 import com.premiumminds.BigBang.Jewel.Constants;
+import com.premiumminds.BigBang.Jewel.Data.DocInfoData;
+import com.premiumminds.BigBang.Jewel.Data.DocumentData;
 import com.premiumminds.BigBang.Jewel.Operations.DocOps;
 import com.premiumminds.BigBang.Jewel.Operations.Client.ManageClientData;
 import com.premiumminds.BigBang.Jewel.Operations.General.ManageInsurers;
@@ -32,6 +34,55 @@ public class DocumentServiceImpl
 	implements DocumentService
 {
 	private static final long serialVersionUID = 1L;
+
+	public static DocumentData[] BuildDocTree(DocOps prefAux, Document[] parrDocuments, UUID pidParentType)
+		throws BigBangJewelException
+	{
+		DocumentData[] larrResult;
+		int i, j;
+
+		if ( (parrDocuments == null) || (parrDocuments.length == 0) )
+			return null;
+
+		larrResult = new DocumentData[parrDocuments.length];
+		for ( i = 0; i < parrDocuments.length; i++ )
+		{
+			larrResult[i] = new DocumentData();
+			larrResult[i].mid = (parrDocuments[i].id == null ? null : UUID.fromString(parrDocuments[i].id));
+			larrResult[i].mstrName = parrDocuments[i].name;
+			larrResult[i].midOwnerType = pidParentType;
+			larrResult[i].midOwnerId = (parrDocuments[i].ownerId == null ? null : UUID.fromString(parrDocuments[i].ownerId));
+			larrResult[i].midDocType = (parrDocuments[i].docTypeId == null ? null : UUID.fromString(parrDocuments[i].docTypeId));
+			larrResult[i].mstrText = parrDocuments[i].text;
+			if ( parrDocuments[i].fileStorageId != null )
+				larrResult[i].mobjFile = FileServiceImpl.GetFileXferStorage().
+						get(UUID.fromString(parrDocuments[i].fileStorageId)).GetVarData();
+			else
+				larrResult[i].mobjFile = null;
+			if ( parrDocuments[i].parameters != null )
+			{
+				larrResult[i].marrInfo = new DocInfoData[parrDocuments[i].parameters.length];
+				for ( j = 0; j < parrDocuments[i].parameters.length; j++ )
+				{
+					larrResult[i].marrInfo[j] = new DocInfoData();
+					larrResult[i].marrInfo[j].mstrType = parrDocuments[i].parameters[j].name;
+					larrResult[i].marrInfo[j].mstrValue = parrDocuments[i].parameters[j].value;
+				}
+			}
+			else
+				larrResult[i].marrInfo = null;
+		}
+
+		return larrResult;
+	}
+
+	public static void WalkDocTree(DocumentData[] parrResults, Document[] parrDocuments)
+	{
+		int i;
+		
+		for ( i = 0; i < parrResults.length; i++ )
+			parrDocuments[i].id = parrResults[i].mid.toString();
+	}
 
 	public Document[] getDocuments(String ownerId)
 		throws SessionExpiredException, BigBangException
@@ -257,55 +308,6 @@ public class DocumentServiceImpl
 		lobjAux.name = (String)pobjDocInfo.getAt(1);
 		lobjAux.value = (String)pobjDocInfo.getAt(2);
 		return lobjAux;
-	}
-
-	private DocOps.DocumentData[] BuildDocTree(DocOps prefAux, Document[] parrDocuments, UUID pidParentType)
-		throws BigBangJewelException
-	{
-		DocOps.DocumentData[] larrResult;
-		int i, j;
-
-		if ( (parrDocuments == null) || (parrDocuments.length == 0) )
-			return null;
-
-		larrResult = new DocOps.DocumentData[parrDocuments.length];
-		for ( i = 0; i < parrDocuments.length; i++ )
-		{
-			larrResult[i] = prefAux.new DocumentData();
-			larrResult[i].mid = (parrDocuments[i].id == null ? null : UUID.fromString(parrDocuments[i].id));
-			larrResult[i].mstrName = parrDocuments[i].name;
-			larrResult[i].midOwnerType = pidParentType;
-			larrResult[i].midOwnerId = (parrDocuments[i].ownerId == null ? null : UUID.fromString(parrDocuments[i].ownerId));
-			larrResult[i].midDocType = (parrDocuments[i].docTypeId == null ? null : UUID.fromString(parrDocuments[i].docTypeId));
-			larrResult[i].mstrText = parrDocuments[i].text;
-			if ( parrDocuments[i].fileStorageId != null )
-				larrResult[i].mobjFile = FileServiceImpl.GetFileXferStorage().
-						get(UUID.fromString(parrDocuments[i].fileStorageId)).GetVarData();
-			else
-				larrResult[i].mobjFile = null;
-			if ( parrDocuments[i].parameters != null )
-			{
-				larrResult[i].marrInfo = new DocOps.DocumentData.DocInfoData[parrDocuments[i].parameters.length];
-				for ( j = 0; j < parrDocuments[i].parameters.length; j++ )
-				{
-					larrResult[i].marrInfo[j] = larrResult[i].new DocInfoData();
-					larrResult[i].marrInfo[j].mstrType = parrDocuments[i].parameters[j].name;
-					larrResult[i].marrInfo[j].mstrValue = parrDocuments[i].parameters[j].value;
-				}
-			}
-			else
-				larrResult[i].marrInfo = null;
-		}
-
-		return larrResult;
-	}
-
-	private void WalkDocTree(DocOps.DocumentData[] parrResults, Document[] parrDocuments)
-	{
-		int i;
-		
-		for ( i = 0; i < parrResults.length; i++ )
-			parrDocuments[i].id = parrResults[i].mid.toString();
 	}
 
 	private UUID GetParentType(UUID pidProc, UUID pidOp)

@@ -5,7 +5,8 @@ import java.util.*;
 public class Constants
 {
 	// Objects
-	
+    public static final UUID ObjectID_AppParams  = UUID.fromString("5485B660-A102-441A-912C-7B960584399F");
+
 	// General Objects
 	public static final UUID ObjID_GenSys        = UUID.fromString("628F5DA6-434F-46A8-9C88-9EB1008A689A");
 
@@ -90,6 +91,9 @@ public class Constants
 	public static final UUID OPID_UndoEndMgrXFer          = UUID.fromString("955E3DFE-F74A-46A5-9A42-9F6800EADA3D");
 	public static final UUID OPID_TriggerAllowUndoMgrXFer = UUID.fromString("91530E4E-9F84-4240-B1F3-9F6D017FE928");
 	public static final UUID OPID_UndoDirectMgrXFer       = UUID.fromString("E7ABBF15-4DB6-4376-92FD-9F6D01792783");
+	public static final UUID OPID_CreateInfoRequest       = UUID.fromString("26185760-A862-4CE4-9620-9F090142B18A");
+	public static final UUID OPID_MergeOtherClient        = UUID.fromString("A5B43B14-43A6-4C0F-A410-9F0901425E48");
+	public static final UUID OPID_UndoMergeOtherClient    = UUID.fromString("33704B93-F5A5-481F-A0EF-9F090143B96C");
 
 	// Manager Transfer Operations
 	public static final UUID OPID_AcceptXFer     = UUID.fromString("8B3AB41F-76F6-4311-8600-9F65014CF682");

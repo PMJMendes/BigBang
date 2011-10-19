@@ -12,11 +12,10 @@ public class InfoOrDocumentRequest
 		implements Serializable
 	{
 		private static final long serialVersionUID = 1L;
-		
+
 		public String id;
 		public String requestId;
 		public String content;
-		public Client clientData;
 	}
 
 	//The cancellation data
@@ -24,7 +23,7 @@ public class InfoOrDocumentRequest
 		implements Serializable
 	{
 		private static final long serialVersionUID = 1L;
-		
+
 		public String id;
 		public String requestId;
 		public String motive;
@@ -37,5 +36,4 @@ public class InfoOrDocumentRequest
 	public String[] forwardUserIds;
 	public String internalBCCs;
 	public String externalCCs;
-	
 }

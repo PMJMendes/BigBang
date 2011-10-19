@@ -26,6 +26,8 @@ import bigBang.library.shared.SessionExpiredException;
 import com.premiumminds.BigBang.Jewel.BigBangJewelException;
 import com.premiumminds.BigBang.Jewel.Constants;
 import com.premiumminds.BigBang.Jewel.ZipCodeBridge;
+import com.premiumminds.BigBang.Jewel.Data.ContactData;
+import com.premiumminds.BigBang.Jewel.Data.ContactInfoData;
 import com.premiumminds.BigBang.Jewel.Operations.ContactOps;
 import com.premiumminds.BigBang.Jewel.Operations.Client.ManageClientData;
 import com.premiumminds.BigBang.Jewel.Operations.General.ManageInsurers;
@@ -36,6 +38,68 @@ public class ContactsServiceImpl
 	implements ContactsService
 {
 	private static final long serialVersionUID = 1L;
+
+	public static ContactData[] BuildContactTree(ContactOps prefAux, Contact[] parrContacts, UUID pidParentType)
+		throws BigBangJewelException
+	{
+		ContactData[] larrResult;
+		int i, j;
+
+		if ( (parrContacts == null) || (parrContacts.length == 0) )
+			return null;
+
+		larrResult = new ContactData[parrContacts.length];
+		for ( i = 0; i < parrContacts.length; i++ )
+		{
+			larrResult[i] = new ContactData();
+			larrResult[i].mid = (parrContacts[i].id == null ? null : UUID.fromString(parrContacts[i].id));
+			larrResult[i].mstrName = parrContacts[i].name;
+			larrResult[i].midOwnerType = pidParentType;
+			larrResult[i].midOwnerId = (parrContacts[i].ownerId == null ? null : UUID.fromString(parrContacts[i].ownerId));
+			if ( parrContacts[i].address != null )
+			{
+				larrResult[i].mstrAddress1 = parrContacts[i].address.street1;
+				larrResult[i].mstrAddress2 = parrContacts[i].address.street2;
+				larrResult[i].midZipCode = ZipCodeBridge.GetZipCode(parrContacts[i].address.zipCode.code,
+						parrContacts[i].address.zipCode.city, parrContacts[i].address.zipCode.county,
+						parrContacts[i].address.zipCode.district, parrContacts[i].address.zipCode.country);
+			}
+			else
+			{
+				larrResult[i].mstrAddress1 = null;
+				larrResult[i].mstrAddress2 = null;
+				larrResult[i].midZipCode = null;
+			}
+			larrResult[i].midContactType = (parrContacts[i].typeId == null ? null : UUID.fromString(parrContacts[i].typeId));
+			if ( parrContacts[i].info != null )
+			{
+				larrResult[i].marrInfo = new ContactInfoData[parrContacts[i].info.length];
+				for ( j = 0; j < parrContacts[i].info.length; j++ )
+				{
+					larrResult[i].marrInfo[j] = new ContactInfoData();
+					larrResult[i].marrInfo[j].midType = UUID.fromString(parrContacts[i].info[j].typeId);
+					larrResult[i].marrInfo[j].mstrValue = parrContacts[i].info[j].value;
+				}
+			}
+			else
+				larrResult[i].marrInfo = null;
+			larrResult[i].marrSubContacts = BuildContactTree(prefAux, parrContacts[i].subContacts, Constants.ObjID_Contact);
+		}
+
+		return larrResult;
+	}
+
+	public static void WalkContactTree(ContactData[] parrResults, Contact[] parrContacts)
+	{
+		int i;
+		
+		for ( i = 0; i < parrResults.length; i++ )
+		{
+			parrContacts[i].id = parrResults[i].mid.toString();
+			if ( (parrContacts[i].subContacts != null) && (parrResults[i].marrSubContacts != null) )
+				WalkContactTree(parrResults[i].marrSubContacts, parrContacts[i].subContacts);
+		}
+	}
 
 	public Contact[] getContacts(String ownerId)
 		throws SessionExpiredException, BigBangException
@@ -279,68 +343,6 @@ public class ContactsServiceImpl
 		lobjAux.typeId = ((UUID)pobjContactInfo.getAt(1)).toString();
 		lobjAux.value = (String)pobjContactInfo.getAt(2);
 		return lobjAux;
-	}
-
-	private ContactOps.ContactData[] BuildContactTree(ContactOps prefAux, Contact[] parrContacts, UUID pidParentType)
-		throws BigBangJewelException
-	{
-		ContactOps.ContactData[] larrResult;
-		int i, j;
-
-		if ( (parrContacts == null) || (parrContacts.length == 0) )
-			return null;
-
-		larrResult = new ContactOps.ContactData[parrContacts.length];
-		for ( i = 0; i < parrContacts.length; i++ )
-		{
-			larrResult[i] = prefAux.new ContactData();
-			larrResult[i].mid = (parrContacts[i].id == null ? null : UUID.fromString(parrContacts[i].id));
-			larrResult[i].mstrName = parrContacts[i].name;
-			larrResult[i].midOwnerType = pidParentType;
-			larrResult[i].midOwnerId = (parrContacts[i].ownerId == null ? null : UUID.fromString(parrContacts[i].ownerId));
-			if ( parrContacts[i].address != null )
-			{
-				larrResult[i].mstrAddress1 = parrContacts[i].address.street1;
-				larrResult[i].mstrAddress2 = parrContacts[i].address.street2;
-				larrResult[i].midZipCode = ZipCodeBridge.GetZipCode(parrContacts[i].address.zipCode.code,
-						parrContacts[i].address.zipCode.city, parrContacts[i].address.zipCode.county,
-						parrContacts[i].address.zipCode.district, parrContacts[i].address.zipCode.country);
-			}
-			else
-			{
-				larrResult[i].mstrAddress1 = null;
-				larrResult[i].mstrAddress2 = null;
-				larrResult[i].midZipCode = null;
-			}
-			larrResult[i].midContactType = (parrContacts[i].typeId == null ? null : UUID.fromString(parrContacts[i].typeId));
-			if ( parrContacts[i].info != null )
-			{
-				larrResult[i].marrInfo = new ContactOps.ContactData.ContactInfoData[parrContacts[i].info.length];
-				for ( j = 0; j < parrContacts[i].info.length; j++ )
-				{
-					larrResult[i].marrInfo[j] = larrResult[i].new ContactInfoData();
-					larrResult[i].marrInfo[j].midType = UUID.fromString(parrContacts[i].info[j].typeId);
-					larrResult[i].marrInfo[j].mstrValue = parrContacts[i].info[j].value;
-				}
-			}
-			else
-				larrResult[i].marrInfo = null;
-			larrResult[i].marrSubContacts = BuildContactTree(prefAux, parrContacts[i].subContacts, Constants.ObjID_Contact);
-		}
-
-		return larrResult;
-	}
-
-	private void WalkContactTree(ContactOps.ContactData[] parrResults, Contact[] parrContacts)
-	{
-		int i;
-		
-		for ( i = 0; i < parrResults.length; i++ )
-		{
-			parrContacts[i].id = parrResults[i].mid.toString();
-			if ( (parrContacts[i].subContacts != null) && (parrResults[i].marrSubContacts != null) )
-				WalkContactTree(parrResults[i].marrSubContacts, parrContacts[i].subContacts);
-		}
 	}
 
 	private UUID GetParentType(UUID pidProc, UUID pidOp)
