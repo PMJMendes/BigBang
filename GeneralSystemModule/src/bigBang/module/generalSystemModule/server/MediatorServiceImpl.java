@@ -11,17 +11,15 @@ import Jewel.Engine.Implementation.Entity;
 import Jewel.Engine.SysObjects.ObjectBase;
 import bigBang.definitions.shared.Address;
 import bigBang.definitions.shared.CommissionProfile;
-import bigBang.definitions.shared.Contact;
-import bigBang.definitions.shared.Document;
 import bigBang.definitions.shared.Mediator;
 import bigBang.definitions.shared.ZipCode;
+import bigBang.library.server.ContactsServiceImpl;
+import bigBang.library.server.DocumentServiceImpl;
 import bigBang.library.server.EngineImplementor;
-import bigBang.library.server.FileServiceImpl;
 import bigBang.library.shared.BigBangException;
 import bigBang.library.shared.SessionExpiredException;
 import bigBang.module.generalSystemModule.interfaces.MediatorService;
 
-import com.premiumminds.BigBang.Jewel.BigBangJewelException;
 import com.premiumminds.BigBang.Jewel.Constants;
 import com.premiumminds.BigBang.Jewel.ZipCodeBridge;
 import com.premiumminds.BigBang.Jewel.Objects.GeneralSystem;
@@ -173,15 +171,16 @@ public class MediatorServiceImpl
 			if ( (mediator.contacts != null) && (mediator.contacts.length > 0) )
 			{
 				lopMM.marrCreate[0].mobjContactOps = new ContactOps();
-				lopMM.marrCreate[0].mobjContactOps.marrCreate = BuildContactTree(lopMM.marrCreate[0].mobjContactOps,
-						mediator.contacts, Constants.ObjID_Mediator);
+				lopMM.marrCreate[0].mobjContactOps.marrCreate =
+						ContactsServiceImpl.BuildContactTree(lopMM.marrCreate[0].mobjContactOps, mediator.contacts,
+								Constants.ObjID_Mediator);
 			}
 			else
 				lopMM.marrCreate[0].mobjContactOps = null;
 			if ( (mediator.documents != null) && (mediator.documents.length > 0) )
 			{
 				lopMM.marrCreate[0].mobjDocOps = new DocOps();
-				lopMM.marrCreate[0].mobjDocOps.marrCreate = BuildDocTree(lopMM.marrCreate[0].mobjDocOps,
+				lopMM.marrCreate[0].mobjDocOps.marrCreate = DocumentServiceImpl.BuildDocTree(lopMM.marrCreate[0].mobjDocOps,
 						mediator.documents, Constants.ObjID_Mediator);
 			}
 			else
@@ -200,9 +199,9 @@ public class MediatorServiceImpl
 
 		mediator.id = lopMM.marrCreate[0].mid.toString();
 		if ( (mediator.contacts != null) && (mediator.contacts.length > 0) )
-			WalkContactTree(lopMM.marrCreate[0].mobjContactOps.marrCreate, mediator.contacts);
+			ContactsServiceImpl.WalkContactTree(lopMM.marrCreate[0].mobjContactOps.marrCreate, mediator.contacts);
 		if ( (mediator.documents != null) && (mediator.documents.length > 0) )
-			WalkDocTree(lopMM.marrCreate[0].mobjDocOps.marrCreate, mediator.documents);
+			DocumentServiceImpl.WalkDocTree(lopMM.marrCreate[0].mobjDocOps.marrCreate, mediator.documents);
 
 		return mediator;
 	}
@@ -294,116 +293,5 @@ public class MediatorServiceImpl
 		{
 			throw new BigBangException(e.getMessage(), e);
 		}
-	}
-
-	private ContactOps.ContactData[] BuildContactTree(ContactOps prefAux, Contact[] parrContacts, UUID pidParentType)
-		throws BigBangJewelException
-	{
-		ContactOps.ContactData[] larrResult;
-		int i, j;
-
-		if ( (parrContacts == null) || (parrContacts.length == 0) )
-			return null;
-
-		larrResult = new ContactOps.ContactData[parrContacts.length];
-		for ( i = 0; i < parrContacts.length; i++ )
-		{
-			larrResult[i] = prefAux.new ContactData();
-			larrResult[i].mid = null;
-			larrResult[i].mstrName = parrContacts[i].name;
-			larrResult[i].midOwnerType = pidParentType;
-			larrResult[i].midOwnerId = null;
-			if ( parrContacts[i].address != null )
-			{
-				larrResult[i].mstrAddress1 = parrContacts[i].address.street1;
-				larrResult[i].mstrAddress2 = parrContacts[i].address.street2;
-				larrResult[i].midZipCode = ZipCodeBridge.GetZipCode(parrContacts[i].address.zipCode.code,
-						parrContacts[i].address.zipCode.city, parrContacts[i].address.zipCode.county,
-						parrContacts[i].address.zipCode.district, parrContacts[i].address.zipCode.country);
-			}
-			else
-			{
-				larrResult[i].mstrAddress1 = null;
-				larrResult[i].mstrAddress2 = null;
-				larrResult[i].midZipCode = null;
-			}
-			larrResult[i].midContactType = (parrContacts[i].typeId == null ? null : UUID.fromString(parrContacts[i].typeId));
-			if ( parrContacts[i].info != null )
-			{
-				larrResult[i].marrInfo = new ContactOps.ContactData.ContactInfoData[parrContacts[i].info.length];
-				for ( j = 0; j < parrContacts[i].info.length; j++ )
-				{
-					larrResult[i].marrInfo[j] = larrResult[i].new ContactInfoData();
-					larrResult[i].marrInfo[j].midType = UUID.fromString(parrContacts[i].info[j].typeId);
-					larrResult[i].marrInfo[j].mstrValue = parrContacts[i].info[j].value;
-				}
-			}
-			else
-				larrResult[i].marrInfo = null;
-			larrResult[i].marrSubContacts = BuildContactTree(prefAux, parrContacts[i].subContacts, Constants.ObjID_Contact);
-		}
-			
-		return larrResult;
-	}
-
-	private DocOps.DocumentData[] BuildDocTree(DocOps prefAux, Document[] parrDocuments, UUID pidParentType)
-		throws BigBangJewelException
-	{
-		DocOps.DocumentData[] larrResult;
-		int i, j;
-
-		if ( (parrDocuments == null) || (parrDocuments.length == 0) )
-			return null;
-
-		larrResult = new DocOps.DocumentData[parrDocuments.length];
-		for ( i = 0; i < parrDocuments.length; i++ )
-		{
-			larrResult[i] = prefAux.new DocumentData();
-			larrResult[i].mid = null;
-			larrResult[i].mstrName = parrDocuments[i].name;
-			larrResult[i].midOwnerType = pidParentType;
-			larrResult[i].midOwnerId = null;
-			larrResult[i].midDocType = (parrDocuments[i].docTypeId == null ? null : UUID.fromString(parrDocuments[i].docTypeId));
-			larrResult[i].mstrText = parrDocuments[i].text;
-			if ( parrDocuments[i].fileStorageId != null )
-				larrResult[i].mobjFile = FileServiceImpl.GetFileXferStorage().
-						get(UUID.fromString(parrDocuments[i].fileStorageId)).GetVarData();
-			else
-				larrResult[i].mobjFile = null;
-			if ( parrDocuments[i].parameters != null )
-			{
-				larrResult[i].marrInfo = new DocOps.DocumentData.DocInfoData[parrDocuments[i].parameters.length];
-				for ( j = 0; j < parrDocuments[i].parameters.length; j++ )
-				{
-					larrResult[i].marrInfo[j] = larrResult[i].new DocInfoData();
-					larrResult[i].marrInfo[j].mstrType = parrDocuments[i].parameters[j].name;
-					larrResult[i].marrInfo[j].mstrValue = parrDocuments[i].parameters[j].value;
-				}
-			}
-			else
-				larrResult[i].marrInfo = null;
-		}
-
-		return larrResult;
-	}
-
-	private void WalkContactTree(ContactOps.ContactData[] parrResults, Contact[] parrContacts)
-	{
-		int i;
-		
-		for ( i = 0; i < parrResults.length; i++ )
-		{
-			parrContacts[i].id = parrResults[i].mid.toString();
-			if ( (parrContacts[i].subContacts != null) && (parrResults[i].marrSubContacts != null) )
-				WalkContactTree(parrResults[i].marrSubContacts, parrContacts[i].subContacts);
-		}
-	}
-
-	private void WalkDocTree(DocOps.DocumentData[] parrResults, Document[] parrDocuments)
-	{
-		int i;
-		
-		for ( i = 0; i < parrResults.length; i++ )
-			parrDocuments[i].id = parrResults[i].mid.toString();
 	}
 }
