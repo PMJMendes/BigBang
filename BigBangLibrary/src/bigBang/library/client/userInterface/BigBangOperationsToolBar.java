@@ -3,7 +3,6 @@ package bigBang.library.client.userInterface;
 import org.gwt.mosaic.ui.client.MessageBox;
 
 import com.google.gwt.user.client.Command;
-import com.google.gwt.user.client.ui.MenuBar;
 import com.google.gwt.user.client.ui.MenuItem;
 
 /**
@@ -21,10 +20,10 @@ public abstract class BigBangOperationsToolBar extends OperationsToolBar {
 		EDIT
 	}
 
-	protected MenuBar createSubMenu;
-	protected MenuBar executeSubMenu;
-	protected MenuBar dataSubMenu;
-	protected MenuBar adminSubMenu;
+	protected OperationsToolBar createSubMenu;
+	protected OperationsToolBar executeSubMenu;
+	protected OperationsToolBar dataSubMenu;
+	protected OperationsToolBar adminSubMenu;
 
 	protected MenuItem editCancelMenuItem;
 	protected MenuItem saveMenuItem;
@@ -44,10 +43,10 @@ public abstract class BigBangOperationsToolBar extends OperationsToolBar {
 	 * The constructor
 	 */
 	public BigBangOperationsToolBar(){
-		this.createSubMenu = new MenuBar(true);
-		this.executeSubMenu = new MenuBar(true);
-		this.dataSubMenu = new MenuBar(true);
-		this.adminSubMenu = new MenuBar(true);
+		this.createSubMenu = new OperationsToolBar(true);
+		this.executeSubMenu = new OperationsToolBar(true);
+		this.dataSubMenu = new OperationsToolBar(true);
+		this.adminSubMenu = new OperationsToolBar(true);
 
 		createMenuItem = new BigBangMenuItem("Criar", this.createSubMenu);
 		executeMenuItem = new BigBangMenuItem("Executar", this.executeSubMenu);
@@ -211,6 +210,22 @@ public abstract class BigBangOperationsToolBar extends OperationsToolBar {
 			break;
 		default:
 			throw new RuntimeException("The requested menu item was not found");
+		}
+	}
+	
+	public void lockAll(){
+		lockMenuBarItems(this, true);
+	}
+	
+	protected void lockMenuBarItems(OperationsToolBar bar, boolean lock){
+		for(MenuItem i : bar.getMenuItems()){
+			if(i != null){
+				i.setEnabled(!lock);
+				OperationsToolBar subMenu = (OperationsToolBar) i.getSubMenu();
+				if(subMenu != null){
+					lockMenuBarItems(subMenu, lock);
+				}
+			}
 		}
 	}
 

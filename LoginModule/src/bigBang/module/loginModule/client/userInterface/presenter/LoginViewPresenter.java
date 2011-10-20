@@ -101,12 +101,24 @@ public class LoginViewPresenter implements ViewPresenter {
 	}
 
 	public void bind() {
-		view.getSubmitButton().addClickHandler(new ClickHandler() {
-			
-			public void onClick(ClickEvent event) {
-				checkLogin(view.getUsername().getValue(), view.getPassword().getValue(), view.getDomain(), null);
+		this.checkLogin("root", "Premium.", "CrediteEGS", new ResponseHandler<Boolean>() {
+
+			@Override
+			public void onResponse(Boolean response) {
+				GWT.log("login success");
+			}
+
+			@Override
+			public void onError(Collection<ResponseError> errors) {
+				GWT.log("login failure");
 			}
 		});
+//		view.getSubmitButton().addClickHandler(new ClickHandler() {//TODO IMPORTANT FJVC
+//			
+//			public void onClick(ClickEvent event) {
+//				checkLogin(view.getUsername().getValue(), view.getPassword().getValue(), view.getDomain(), null);
+//			}
+//		});
 	}
 	
 	private void checkIntegrated(){

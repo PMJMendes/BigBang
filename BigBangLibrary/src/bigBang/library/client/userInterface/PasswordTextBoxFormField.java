@@ -14,8 +14,6 @@ import com.google.gwt.user.client.ui.Widget;
 
 public class PasswordTextBoxFormField extends FormField<String> {
 
-	private Label label;
-
 	public PasswordTextBoxFormField(String label,FieldValidator<String> validator){
 		this();
 		setLabel(label);
@@ -34,6 +32,11 @@ public class PasswordTextBoxFormField extends FormField<String> {
 
 	private void setLabel(String label) {
 		this.label.setText(label);
+	}
+	
+	@Override
+	public void setLabelWidth(String width) {
+		this.label.setWidth(width);
 	}
 
 	public PasswordTextBoxFormField(){

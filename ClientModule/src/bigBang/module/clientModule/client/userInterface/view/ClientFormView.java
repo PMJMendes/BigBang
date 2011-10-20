@@ -82,7 +82,7 @@ public class ClientFormView extends FormView<Client> implements ClientProcessDat
 		addSection("Informação Geral");
 
 		addFormField(name);
-		addFormField(taxNumber);
+		addInlineFormField(taxNumber);
 		addFormField(NIB);
 		addFormField(group);
 		addFormField(clientManager);
@@ -201,6 +201,8 @@ public class ClientFormView extends FormView<Client> implements ClientProcessDat
 				}
 			}
 		});
+		
+		this.setValue(new Client());
 
 	}
 

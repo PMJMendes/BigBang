@@ -14,7 +14,6 @@ import bigBang.library.client.FormField;
 
 public class CheckBoxFormField extends FormField<Boolean> {
 	
-	protected Label label;
 	protected HorizontalPanel wrapper;
 	
 	public CheckBoxFormField(String label,FieldValidator<Boolean> validator){
@@ -51,13 +50,18 @@ public class CheckBoxFormField extends FormField<Boolean> {
 
 	protected void setLabel(String label) {
 		if(label == null || label.equals("")){
-			wrapper.setCellWidth(this.label, "0px");
+			setLabelWidth("0px");
 			this.label.setText("");
 			
 		}else{
 			this.label.setText(label + ":");
-			wrapper.setCellWidth(this.label, "100px");
+			setLabelWidth("100px");
 		}
+	}
+	
+	@Override
+	public void setLabelWidth(String width) {
+		wrapper.setCellWidth(this.label, width);
 	}
 	
 	@Override

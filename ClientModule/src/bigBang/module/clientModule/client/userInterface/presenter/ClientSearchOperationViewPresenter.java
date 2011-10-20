@@ -13,6 +13,7 @@ import bigBang.definitions.shared.ClientStub;
 import bigBang.definitions.shared.InsurancePolicy;
 import bigBang.definitions.shared.QuoteRequest;
 import bigBang.definitions.shared.RiskAnalysis;
+import bigBang.library.client.BigBangPermissionManager;
 import bigBang.library.client.EventBus;
 import bigBang.library.client.HasEditableValue;
 import bigBang.library.client.HasValueSelectables;
@@ -29,7 +30,9 @@ import bigBang.library.client.event.SelectionChangedEventHandler;
 import bigBang.library.client.userInterface.presenter.OperationViewPresenter;
 import bigBang.library.client.userInterface.view.View;
 import bigBang.library.interfaces.Service;
+import bigBang.library.shared.Permission;
 import bigBang.module.clientModule.interfaces.ClientServiceAsync;
+import bigBang.module.clientModule.shared.ModuleConstants;
 import bigBang.module.clientModule.shared.operation.ClientSearchOperation;
 
 import com.google.gwt.core.client.GWT;
@@ -110,6 +113,18 @@ public class ClientSearchOperationViewPresenter implements OperationViewPresente
 		boolean isDeleteFormValid();
 		void lockDeleteForm(boolean lock);
 		
+		void clearAllowedPermissions();
+		void allowCreate(boolean allow);
+		void allowUpdate(boolean allow);
+		void allowDelete(boolean allow);
+		void allowRequestInfoOrDocument(boolean allow);
+		void allowManagerTransfer(boolean allow);
+		void allowClientMerge(boolean allow);
+		void allowCreatePolicy(boolean allow);
+		void allowCreateRiskAnalysis(boolean allow);
+		void allowCreateQuoteRequest(boolean allow);
+		void allowcreateCasualty(boolean allow);
+		
 		//General
 		void clear();
 		void registerActionInvokedHandler(ActionInvokedEventHandler<Action> handler);
@@ -180,6 +195,39 @@ public class ClientSearchOperationViewPresenter implements OperationViewPresente
 				}else{
 					if(selectedValue.id != null){
 						view.removeNewClientPreparation();
+						BigBangPermissionManager.Util.getInstance().getProcessPermissions(selectedValue.processId, new ResponseHandler<Permission[]> () {
+
+							@Override
+							public void onResponse(Permission[] response) {
+								view.clearAllowedPermissions();
+								for(int i = 0; i < response.length; i++) {
+									Permission p = response[i];
+									if(p.instanceId == null){continue;}
+									if(p.id.equalsIgnoreCase(ModuleConstants.OpTypeIDs.CreateClient)){
+										view.allowCreate(true);
+									}
+									if(p.id.equalsIgnoreCase(ModuleConstants.OpTypeIDs.ChangeClientData)){
+										view.allowUpdate(true);
+									}
+									if(p.id.equalsIgnoreCase(ModuleConstants.OpTypeIDs.DELETE_CLIENT)){
+										view.allowDelete(true);
+									}
+									if(p.id.equalsIgnoreCase(ModuleConstants.OpTypeIDs.CREATE_MANAGER_TRANSFER)){
+										view.allowManagerTransfer(true);
+									}
+									if(p.id.equalsIgnoreCase(ModuleConstants.OpTypeIDs.CREATE_INFO_OR_DOCUMENT_REQUEST)){
+										view.allowRequestInfoOrDocument(true);
+									}
+									if(p.id.equalsIgnoreCase(ModuleConstants.OpTypeIDs.MERGE_CLIENT)){
+										view.allowClientMerge(true);
+									}
+								}
+							}
+
+							@Override
+							public void onError(Collection<ResponseError> errors) {}
+							
+						});
 						clientBroker.getClient(selectedValue.id, new ResponseHandler<Client>() {
 
 							@Override

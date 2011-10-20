@@ -15,7 +15,6 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 
 public class RichTextAreaFormField extends FormField<String> {
 
-	protected Label label;
 	protected boolean hasDummyValue = false;
 	protected HorizontalPanel wrapper;
 	protected RichTextArea field;
@@ -143,6 +142,11 @@ public class RichTextAreaFormField extends FormField<String> {
 		field.setHTML(!field.isEnabled() ? "-" : "");
 		if(!field.isEnabled())
 			hasDummyValue = true;
+	}
+	
+	@Override
+	public void setLabelWidth(String width) {
+		return;
 	}
 
 }

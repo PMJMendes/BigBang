@@ -1,9 +1,5 @@
 package bigBang.library.client.userInterface;
 
-import java.util.Collection;
-
-import bigBang.definitions.client.response.ResponseError;
-import bigBang.definitions.client.response.ResponseHandler;
 import bigBang.definitions.shared.BigBangConstants;
 import bigBang.definitions.shared.Contact;
 import bigBang.library.client.ValueSelectable;
@@ -78,7 +74,8 @@ public class ContactsPreviewList extends List<Contact> implements ContactsBroker
 
 		contactPopupPanel = new PopupPanel();
 		contactPopupPanel.setAutoHideEnabled(true);
-		contactPopupPanel.setSize("350px", "400px");
+		contactPopupPanel.setSize("370px", "400px");
+		contactPopupPanel.getElement().getStyle().setOverflow(Overflow.HIDDEN);
 
 		selectionChangedHandler = new SelectionChangedEventHandler() {
 
@@ -196,28 +193,7 @@ public class ContactsPreviewList extends List<Contact> implements ContactsBroker
 	}
 
 	protected void showNewContactForm(){
-		ContactView contactView = new ContactView() {
-
-			@Override
-			public void onSaveContact(Contact contact) {
-				broker.addContact(processId, operationId, contactOwner, contact, new ResponseHandler<Contact>() {
-
-					@Override
-					public void onResponse(Contact response) {
-						setEditable(false);
-					}
-
-					@Override
-					public void onError(Collection<ResponseError> errors) {}
-				});
-			}
-
-			@Override
-			public void onCreateSubContact() {
-				// TODO Auto-generated method stub
-
-			}
-		};
+		ContactView contactView = new ContactView();
 		contactView.setEditable(true);
 		contactPopupPanel.clear();
 		ContactsNavigationPanel navPanel = new ContactsNavigationPanel();
@@ -235,68 +211,10 @@ public class ContactsPreviewList extends List<Contact> implements ContactsBroker
 				}
 			}
 		});
-
-		//TODO APAGAR FJVC
-		Contact testesub2 = new Contact();
-		testesub2.address = null;
-		testesub2.isSubContact = false;
-		testesub2.name = "Um teste maior 2";
-		testesub2.subContacts = new Contact[0];
-		testesub2.ownerId = contactOwner;
-		testesub2.typeId = "04F6BC3C-0283-47F0-9670-9EEE013350D9";
-
-		Contact testesub1 = new Contact();
-		testesub1.address = null;
-		testesub1.isSubContact = false;
-		testesub1.name = "Um teste maior 1";
-		testesub1.subContacts = new Contact[]{testesub2};
-		testesub1.ownerId = contactOwner;
-		testesub1.typeId = "04F6BC3C-0283-47F0-9670-9EEE013350D9";
-
-		Contact teste = new Contact();
-		teste.address = null;
-		teste.isSubContact = false;
-		teste.name = "Um teste maior";
-		teste.subContacts = new Contact[]{testesub1, testesub2};
-		teste.ownerId = contactOwner;
-		teste.typeId = "04F6BC3C-0283-47F0-9670-9EEE013350D9";
-		broker.addContact(processId, operationId, contactOwner, teste, new ResponseHandler<Contact>() {
-
-			@Override
-			public void onResponse(Contact response) {
-				GWT.log("criado");
-			}
-
-			@Override
-			public void onError(Collection<ResponseError> errors) {
-				GWT.log("erro");
-			}
-		});
 	}
 
 	protected void showContactForm(Contact contact) {
-		ContactView contactView = new ContactView() {
-
-			@Override
-			public void onSaveContact(Contact contact) {
-				broker.updateContact(processId, operationId, contactOwner, contact, new ResponseHandler<Contact>() {
-
-					@Override
-					public void onResponse(Contact response) {
-						setEditable(false);
-					}
-
-					@Override
-					public void onError(Collection<ResponseError> errors) {}
-				});
-			}
-
-			@Override
-			public void onCreateSubContact() {
-				// TODO Auto-generated method stub
-
-			}
-		};
+		ContactView contactView = new ContactView();
 		contactView.setContact(contact);
 		contactPopupPanel.clear();
 		ContactsNavigationPanel navPanel = new ContactsNavigationPanel();

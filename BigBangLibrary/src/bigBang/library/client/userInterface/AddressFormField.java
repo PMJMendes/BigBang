@@ -47,7 +47,7 @@ public class AddressFormField extends FormField<Address> {
 		country.setText(COUNTRY_DEFAULT_VALUE);
 		
 		Grid wrapper = new Grid(7, 3);
-		wrapper.getColumnFormatter().setWidth(0, "100px");
+		wrapper.getColumnFormatter().setWidth(1, "100%");
 		
 		wrapper.setWidget(0, 0, new Label("Rua:"));
 		wrapper.getCellFormatter().setHorizontalAlignment(0, 0, HasHorizontalAlignment.ALIGN_RIGHT);
@@ -151,6 +151,12 @@ public class AddressFormField extends FormField<Address> {
 		district.setValue("");
 		country.setValue(COUNTRY_DEFAULT_VALUE);
 		getValue();
+	}
+
+	@Override
+	public void setLabelWidth(String width) {
+		// TODO Auto-generated method stub
+		
 	}
 
 }

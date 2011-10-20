@@ -1,13 +1,24 @@
 package bigBang.library.client.userInterface;
 
+import java.util.List;
+
 import com.google.gwt.user.client.ui.MenuBar;
+import com.google.gwt.user.client.ui.MenuItem;
 
 public class OperationsToolBar extends MenuBar {
 
 	public OperationsToolBar(){
-		super();
+		this(false);
+	}
+	
+	public OperationsToolBar(boolean vertical){
+		super(vertical);
 		setWidth("100%");
 		this.getElement().getStyle().setBackgroundImage("images/listHeaderBackground.png");
+	}
+	
+	public List<MenuItem> getMenuItems(){
+		return getItems();
 	}
 
 }

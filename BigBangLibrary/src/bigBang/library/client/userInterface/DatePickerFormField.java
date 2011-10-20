@@ -20,7 +20,6 @@ public class DatePickerFormField extends FormField<Date> {
 	
 	private static final String DEFAULT_FORMAT = "yyyy-MM-dd";
 
-	private Label label;
 	protected ListBox day, month, year;	
 	private boolean readonly;
 	protected DateTimeFormat format;
@@ -120,6 +119,11 @@ public class DatePickerFormField extends FormField<Date> {
 		for(int j = currentYear; j >= 1900; j--){
 			year.addItem(j+"", j+"");
 		}
+	}
+	
+	@Override
+	public void setLabelWidth(String width) {
+		this.label.setWidth(width);
 	}
 	
 	@Override

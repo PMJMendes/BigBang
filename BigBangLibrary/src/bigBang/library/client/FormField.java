@@ -19,6 +19,7 @@ public abstract class FormField<T> extends View implements HasValue<T>, Validata
 	protected FieldValidator<T> validator;
 	protected Label mandatoryIndicatorLabel;
 	protected boolean editable = true;
+	protected Label label;
 	
 	protected HandlerRegistration handlerRegistration;
 
@@ -107,4 +108,14 @@ public abstract class FormField<T> extends View implements HasValue<T>, Validata
 		setReadOnly(true);
 		this.editable = editable;
 	}
+	
+	public void showLabel(boolean show) {
+		this.label.setVisible(show);
+		if(!show){
+			setLabelWidth("0px");
+		}
+	}
+	
+	public abstract void setLabelWidth(String width);
+	
 }

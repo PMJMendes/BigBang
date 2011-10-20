@@ -17,7 +17,6 @@ import bigBang.library.client.FormField;
 
 public class RadioButtonFormField extends FormField<String> {
 
-	protected Label label;
 	protected HorizontalPanel wrapper;
 	protected HorizontalPanel radioWrapper;
 	protected Map<RadioButton, String> radioButtons;
@@ -69,14 +68,19 @@ public class RadioButtonFormField extends FormField<String> {
 
 	protected void setLabel(String label) {
 		if(label == null || label.equals("")){
-			wrapper.setCellWidth(this.label, "0px");
+			setLabelWidth("0px");
 			this.label.setText("");
 
 		}else{
 			this.label.setText(label + ":");
-			wrapper.setCellWidth(this.label, "100px");
+			setLabelWidth("100px");
 		}
 	}
+	
+	@Override
+	public void setLabelWidth(String width) {
+		wrapper.setCellWidth(this.label, width);
+	}	
 
 	public void addOption(String value, String description) {
 		RadioButton radio = new RadioButton(this.id, description);

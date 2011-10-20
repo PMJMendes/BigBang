@@ -46,7 +46,6 @@ public class MultiSelectExpandableListFormField extends FormField<String[]> {
 		
 	}
 	
-	protected Label label;
 	protected HorizontalPanel wrapper;
 	protected TextBox textBox;
 	
@@ -86,15 +85,20 @@ public class MultiSelectExpandableListFormField extends FormField<String[]> {
 	
 	protected void setLabel(String label) {
 		if(label == null || label.equals("")){
-			wrapper.setCellWidth(this.label, "0px");
+			setLabelWidth("0px");
 			this.label.setText("");
 			
 		}else{
 			this.label.setText(label + ":");
-			wrapper.setCellWidth(this.label, "100px");
+			setLabelWidth("100px");
 		}
 	}
-	
+
+	@Override
+	public void setLabelWidth(String width) {
+		wrapper.setCellWidth(this.label, width);
+	}
+
 	@Override
 	public void clear() {
 		// TODO Auto-generated method stub

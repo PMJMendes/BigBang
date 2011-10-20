@@ -1,5 +1,6 @@
 package bigBang.library.client.userInterface;
 
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.ui.MenuBar;
 import com.google.gwt.user.client.ui.MenuItem;
@@ -23,6 +24,7 @@ public class BigBangMenuItem extends MenuItem {
 
 	@Override
 	public void setEnabled(boolean enabled) {
+		GWT.log(this.getText());
 		super.setEnabled(enabled);
 		this.getElement().getStyle().setColor(enabled ? defaultColor : DISABLED_COLOR);
 	}

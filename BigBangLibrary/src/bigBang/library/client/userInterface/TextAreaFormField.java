@@ -14,7 +14,6 @@ import com.google.gwt.user.client.ui.Widget;
 
 public class TextAreaFormField extends FormField<String> {
 
-	protected Label label;
 	protected boolean hasDummyValue = false;
 	protected HorizontalPanel wrapper;
 	
@@ -23,28 +22,33 @@ public class TextAreaFormField extends FormField<String> {
 		setLabel(label);
 		setValidator(validator);
 	}
-	
+
 	public TextAreaFormField(FieldValidator<String> validator) {
 		this();
 		setValidator(validator);
 	}
-	
+
 	public TextAreaFormField(String label) {
 		this();
 		setLabel(label);
 	}
-	
+
 	protected void setLabel(String label) {
 		if(label == null || label.equals("")){
-			wrapper.setCellWidth(this.label, "0px");
+			setLabelWidth("0px");
 			this.label.setText("");
 			
 		}else{
 			this.label.setText(label + ":");
-			wrapper.setCellWidth(this.label, "100px");
+			setLabelWidth("100%");
 		}
 	}
-	
+
+	@Override
+	public void setLabelWidth(String width) {
+		wrapper.setCellWidth(this.label, width);
+	}
+
 	public TextAreaFormField(){
 		super();
 		wrapper = new HorizontalPanel();

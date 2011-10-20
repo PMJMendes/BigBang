@@ -28,7 +28,8 @@ public class NavigationPanel extends View {
 	}
 	
 	public NavigationPanel(String navBarTitle){
-		showPreviousButton = showNextButton = true;
+		showPreviousButton = true;
+		showNextButton = false;
 		
 		navigatables = new ArrayList<Widget>();
 		iterator = navigatables.listIterator();

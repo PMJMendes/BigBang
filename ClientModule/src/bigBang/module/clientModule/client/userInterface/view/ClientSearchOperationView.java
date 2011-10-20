@@ -672,4 +672,63 @@ public class ClientSearchOperationView extends View implements ClientSearchOpera
 
 	}
 
+	@Override
+	public void clearAllowedPermissions() {
+		this.form.setReadOnly(true);
+		this.contactsList.setReadOnly(true);
+		this.operationsToolbar.lockAll();
+	}
+	
+	@Override
+	public void allowCreate(boolean allow) {
+		this.newButton.setEnabled(allow);
+	}
+
+	@Override
+	public void allowUpdate(boolean allow) {
+		this.form.setReadOnly(!allow);
+		this.operationsToolbar.setEditionAvailable(allow);
+		this.contactsList.setReadOnly(!allow);
+	}
+
+	@Override
+	public void allowDelete(boolean allow) {
+		this.operationsToolbar.allowDelete(allow);
+	}
+
+	@Override
+	public void allowRequestInfoOrDocument(boolean allow) {
+		this.operationsToolbar.allowInfoOrDocumentRequest(allow);
+	}
+
+	@Override
+	public void allowManagerTransfer(boolean allow) {
+		this.operationsToolbar.allowManagerTransfer(allow);
+	}
+
+	@Override
+	public void allowClientMerge(boolean allow) {
+		this.operationsToolbar.allowClientMerge(allow);
+	}
+
+	@Override
+	public void allowCreatePolicy(boolean allow) {
+		this.operationsToolbar.allowCreatePolicy(allow);
+	}
+
+	@Override
+	public void allowCreateRiskAnalysis(boolean allow) {
+		this.operationsToolbar.allowCreateRiskAnalysis(allow);
+	}
+
+	@Override
+	public void allowCreateQuoteRequest(boolean allow) {
+		this.operationsToolbar.allowCreateQuoteRequest(allow);
+	}
+
+	@Override
+	public void allowcreateCasualty(boolean allow) {
+		this.operationsToolbar.allowCreateCasualty(allow);
+	}
+
 }

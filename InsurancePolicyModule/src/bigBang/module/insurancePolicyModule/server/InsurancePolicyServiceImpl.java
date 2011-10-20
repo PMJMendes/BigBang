@@ -75,10 +75,10 @@ public class InsurancePolicyServiceImpl extends RemoteServiceServlet implements 
 	}
 
 	@Override
-	public void savePolicy(InsurancePolicy policy)
+	public InsurancePolicy editPolicy(InsurancePolicy policy)
 			throws SessionExpiredException, BigBangException {
 		// TODO Auto-generated method stub
-		
+		return null;
 	}
 
 }

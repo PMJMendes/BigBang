@@ -51,15 +51,15 @@ public class GeneralSystemModule implements Module {
 	}
 
 	private void setup(EventBus eventBus, BigBangPermissionManager permissionManager, String processId) {
-		sectionPresenters = new SectionViewPresenter[1];
+		sectionPresenters = new SectionViewPresenter[0];
 
-		//GeneralSystem section
-		GeneralSystemSection generalSystemSection = new GeneralSystemSection(permissionManager, processId);
-		GeneralSystemSectionView generalSystemSectionView = new GeneralSystemSectionView();
-		GeneralSystemSectionViewPresenter generalSystemSectionPresenter = new GeneralSystemSectionViewPresenter(eventBus, null, generalSystemSectionView);
-		generalSystemSectionPresenter.setSection(generalSystemSection);
-		generalSystemSection.registerEventHandlers(eventBus);
-		sectionPresenters[0] = generalSystemSectionPresenter;
+		//GeneralSystem section TODO IMPORTANT FJVC
+//		GeneralSystemSection generalSystemSection = new GeneralSystemSection(permissionManager, processId);
+//		GeneralSystemSectionView generalSystemSectionView = new GeneralSystemSectionView();
+//		GeneralSystemSectionViewPresenter generalSystemSectionPresenter = new GeneralSystemSectionViewPresenter(eventBus, null, generalSystemSectionView);
+//		generalSystemSectionPresenter.setSection(generalSystemSection);
+//		generalSystemSection.registerEventHandlers(eventBus);
+//		sectionPresenters[0] = generalSystemSectionPresenter;
 		this.initialized = true;
 		eventBus.fireEvent(new ModuleInitializedEvent(this));
 	}

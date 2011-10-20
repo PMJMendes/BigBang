@@ -54,6 +54,12 @@ public class ExpandableMultipleListBoxFormField extends FormField<String[]> {
 		return false;
 	}
 
+	@Override
+	public void setLabelWidth(String width) {
+		// TODO Auto-generated method stub
+		
+	}
+	
 	/*protected Image expandImage;
 	protected TypifiedListManagementPanel list;
 	protected int typifiedListDataVersion;

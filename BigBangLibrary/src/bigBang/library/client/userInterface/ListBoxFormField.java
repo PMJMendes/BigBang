@@ -18,7 +18,6 @@ import com.google.gwt.user.client.ui.Widget;
 public class ListBoxFormField extends FormField<String> {
 	
 	protected ListBox listBox;
-	protected Label label;
 	protected HorizontalPanel wrapper;
 	
 	public ListBoxFormField(String label,FieldValidator<String> validator){
@@ -71,6 +70,12 @@ public class ListBoxFormField extends FormField<String> {
 	
 	private void setLabel(String label) {
 		this.label.setText(label + ":");
+	}
+	
+	@Override
+	public void setLabelWidth(String width) {
+		this.label.setWidth(width);
+		this.wrapper.setCellWidth(this.label, width);
 	}
 	
 	@Override

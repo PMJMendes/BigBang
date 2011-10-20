@@ -32,7 +32,10 @@ public class ModuleConstants
 	{
 		public static final String ManageClientGroups = "08E5A828-0AF2-4347-A57A-9EB500A11526";
 		public static final String CreateClient       = "214118B8-C43C-4941-9D1E-9EB500A1381C";
-		public static final String DELETE_CLIENT	  = ""; //TODO
+		public static final String DELETE_CLIENT	  = "2227C32A-0AF5-4ECC-B807-9F090143401F";
 		public static final String ChangeClientData   = "AE3CC7F0-BE2C-4548-87B5-9F09014072B8";
+		public static final String CREATE_MANAGER_TRANSFER = "C75EEC27-780C-4C0C-9FD7-9F090142CB10";
+		public static final String CREATE_INFO_OR_DOCUMENT_REQUEST = "26185760-A862-4CE4-9620-9F090142B18A";
+		public static final String MERGE_CLIENT = "33704B93-F5A5-481F-A0EF-9F090143B96C";
 	}
 }

@@ -4,13 +4,14 @@ import java.util.ArrayList;
 
 import bigBang.library.client.FormField;
 
+import com.google.gwt.dom.client.Style.Float;
 import com.google.gwt.dom.client.Style.FontWeight;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.user.client.ui.DisclosurePanel;
+import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.HasVerticalAlignment;
 import com.google.gwt.user.client.ui.HasWidgets;
-import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
@@ -20,10 +21,13 @@ public class FormViewSection extends View {
 	private ArrayList<FormField<?>> fields;
 	private Label headerLabel;
 	private HasWidgets content;
+	private HasWidgets currentContainer;
 	private Widget header;
 	
 	private DisclosurePanel errorMessagePanel;
 	private ArrayList<String> errorMessages;
+	
+	protected boolean inline = true;
 	
 	public FormViewSection(String title){
 		fields = new ArrayList<FormField<?>>();
@@ -48,7 +52,9 @@ public class FormViewSection extends View {
 		wrapper.add(p);
 		
 		content = p;
-
+		currentContainer = new FlowPanel();
+		content.add((Widget) currentContainer);
+		
 		initWidget(wrapper);
 	}
 	
@@ -90,11 +96,20 @@ public class FormViewSection extends View {
 		return headerLabel.getText();
 	}
 
+	public void addInlineFormField(FormField<?> field){
+		this.inline = true;
+		addFormField(field);
+	}
+	
 	public void addFormField(FormField<?> field) {
 		registerFormField(field);
-		HorizontalPanel wrapper = new HorizontalPanel();
+		FlowPanel wrapper = new FlowPanel();
+		if(this.inline){
+			wrapper.getElement().getStyle().setFloat(Float.LEFT);
+		}
 		wrapper.add(field);
 		addWidget(wrapper);
+		inline = false;
 	}
 	
 	public void registerFormField(FormField<?> field) {

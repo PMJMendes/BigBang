@@ -33,7 +33,7 @@ public abstract class FormView<T> extends View implements Validatable, HasEditab
 	protected VerticalPanel panel;
 	protected FormViewSection currentSection = null;
 	protected ArrayList<FormViewSection> sections;
-	
+
 	protected HorizontalPanel topButtonWrapper;
 	protected HorizontalPanel topToolbar;
 
@@ -184,6 +184,10 @@ public abstract class FormView<T> extends View implements Validatable, HasEditab
 	}
 
 	public void addFormField(FormField<?> field) {
+		currentSection.addFormField(field);
+	}
+	
+	public void addInlineFormField(FormField<?> field){
 		currentSection.addFormField(field);
 	}
 	

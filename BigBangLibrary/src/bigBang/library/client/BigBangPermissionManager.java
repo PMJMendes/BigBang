@@ -44,19 +44,29 @@ public class BigBangPermissionManager {
 		});
 	}
 	
+	public void getProcessPermissions(String processId, final ResponseHandler<Permission[]> handler){
+		this.service.getProcessPermissions(processId, new BigBangAsyncCallback<Permission[]>() {
+
+			@Override
+			public void onSuccess(Permission[] result) {
+				handler.onResponse(result);
+			}
+		});	
+	}
+	
 	public void clearContext(String processId){
 		this.contexts.remove(processId);
 	}
 	
 	public boolean hasPermissionForOperation(String processId, String operationId) {
-		return true; //TODO FJVC
-		/*Permission[] permissions = contexts.get(processId);
-		for(Permission p : permissions) {
-			if(operationId.equalsIgnoreCase(p.id)){
-				return true;
-			}
-		}
-		return false;*/
+//		Permission[] permissions = contexts.get(processId);
+//		for(Permission p : permissions) {
+//			if(operationId.equalsIgnoreCase(p.id)){
+//				return true;
+//			}
+//		}
+//		return false;
+		return true;
 	}
 
 }

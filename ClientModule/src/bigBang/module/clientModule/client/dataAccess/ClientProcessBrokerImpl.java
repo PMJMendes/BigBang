@@ -44,7 +44,7 @@ public class ClientProcessBrokerImpl extends DataBroker<Client> implements Clien
 
 	@Override
 	public void getClient(final String clientId, final ResponseHandler<Client> handler) {
-		if(cache.contains(clientId) && !requiresRefresh){ //TODO IMPORTANT WHEN TO UPDATE FJVC
+		if(cache.contains(clientId) && !requiresRefresh){
 			handler.onResponse((Client) cache.get(clientId));
 		}else{
 			this.service.getClient(clientId, new BigBangAsyncCallback<Client>() {

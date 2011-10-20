@@ -13,7 +13,6 @@ import com.google.gwt.user.client.ui.Widget;
 
 public class TextBoxFormField extends FormField<String> {
 	
-	protected Label label;
 	protected boolean hasDummyValue = false;
 	protected HorizontalPanel wrapper;
 	
@@ -35,13 +34,18 @@ public class TextBoxFormField extends FormField<String> {
 	
 	protected void setLabel(String label) {
 		if(label == null || label.equals("")){
-			wrapper.setCellWidth(this.label, "0px");
+			setLabelWidth("0px");
 			this.label.setText("");
 			
 		}else{
 			this.label.setText(label + ":");
-			wrapper.setCellWidth(this.label, "100px");
+			setLabelWidth("100px");
 		}
+	}
+	
+	@Override
+	public void setLabelWidth(String width) {
+		wrapper.setCellWidth(this.label, width);
 	}
 	
 	public TextBoxFormField(){
