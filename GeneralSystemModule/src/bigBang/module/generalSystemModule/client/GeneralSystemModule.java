@@ -31,23 +31,24 @@ public class GeneralSystemModule implements Module {
 
 	@Override
 	public void initialize(final EventBus eventBus, final BigBangPermissionManager permissionManager) {
-		GeneralSystemService.Util.getInstance().getGeneralSystemProcessId(new BigBangAsyncCallback<String>() {
-
-			@Override
-			public void onSuccess(final String result) {
-				processId = result;
-				permissionManager.getProcessPermissionContext(result, new ResponseHandler<Void>() {
-
-					@Override
-					public void onResponse(Void result2) {
-						setup(eventBus, permissionManager, result);
-					}
-					
-					@Override
-					public void onError(Collection<ResponseError> errors) {}
-				});
-			}
-		});
+		setup(eventBus, permissionManager, null); //TODO IMPORTANT FJVC
+//		GeneralSystemService.Util.getInstance().getGeneralSystemProcessId(new BigBangAsyncCallback<String>() {
+//
+//			@Override
+//			public void onSuccess(final String result) {
+//				processId = result;
+//				permissionManager.getProcessPermissionContext(result, new ResponseHandler<Void>() {
+//
+//					@Override
+//					public void onResponse(Void result2) {
+//						setup(eventBus, permissionManager, result);
+//					}
+//					
+//					@Override
+//					public void onError(Collection<ResponseError> errors) {}
+//				});
+//			}
+//		});
 	}
 
 	private void setup(EventBus eventBus, BigBangPermissionManager permissionManager, String processId) {
