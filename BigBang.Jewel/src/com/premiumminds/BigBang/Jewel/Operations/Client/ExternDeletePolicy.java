@@ -1,4 +1,4 @@
-package com.premiumminds.BigBang.Jewel.Operations.General;
+package com.premiumminds.BigBang.Jewel.Operations.Client;
 
 import java.util.ArrayList;
 import java.util.UUID;
@@ -9,39 +9,41 @@ import Jewel.Engine.Implementation.Entity;
 import Jewel.Petri.Objects.PNProcess;
 import Jewel.Petri.SysObjects.JewelPetriException;
 import Jewel.Petri.SysObjects.UndoableOperation;
+import Jewel.Petri.SysObjects.UndoableOperation.UndoSet;
 
 import com.premiumminds.BigBang.Jewel.Constants;
-import com.premiumminds.BigBang.Jewel.Data.ClientData;
 import com.premiumminds.BigBang.Jewel.Data.ContactData;
 import com.premiumminds.BigBang.Jewel.Data.DocumentData;
+import com.premiumminds.BigBang.Jewel.Data.PolicyData;
 import com.premiumminds.BigBang.Jewel.Objects.Client;
 import com.premiumminds.BigBang.Jewel.Objects.Contact;
 import com.premiumminds.BigBang.Jewel.Objects.Document;
+import com.premiumminds.BigBang.Jewel.Objects.Policy;
 import com.premiumminds.BigBang.Jewel.Operations.ContactOps;
 import com.premiumminds.BigBang.Jewel.Operations.DocOps;
 
-public class ExternDeleteClient
+public class ExternDeletePolicy
 	extends UndoableOperation
 {
 	private static final long serialVersionUID = 1L;
 
-	public ClientData mobjData;
+	public PolicyData mobjData;
 	public ContactOps mobjContactOps;
 	public DocOps mobjDocOps;
 
-	public ExternDeleteClient(UUID pidProcess)
+	public ExternDeletePolicy(UUID pidProcess)
 	{
 		super(pidProcess);
 	}
 
 	protected UUID OpID()
 	{
-		return Constants.OPID_TriggerDeleteClient;
+		return Constants.OPID_TriggerDeletePolicy;
 	}
 
 	public String ShortDesc()
 	{
-		return "Eliminação de Cliente";
+		return "Eliminação de Apólice";
 	}
 
 	public String LongDesc(String pstrLineBreak)
@@ -49,7 +51,7 @@ public class ExternDeleteClient
 		StringBuilder lstrResult;
 
 		lstrResult = new StringBuilder();
-		lstrResult.append("Foi eliminado o seguinte cliente:");
+		lstrResult.append("Foi eliminada a seguinte apólice:");
 		lstrResult.append(pstrLineBreak);
 
 		mobjData.Describe(lstrResult, pstrLineBreak);
@@ -71,8 +73,8 @@ public class ExternDeleteClient
 	protected void Run(SQLServer pdb)
 		throws JewelPetriException
 	{
-		Entity lrefClients;
-		Client lobjAux;
+		Entity lrefPolicies;
+		Policy lobjAux;
 		Contact[] larrContacts;
 		Document[] larrDocs;
 		PNProcess lobjProcess;
@@ -80,10 +82,10 @@ public class ExternDeleteClient
 
 		try
 		{
-			lrefClients = Entity.GetInstance(Engine.FindEntity(Engine.getCurrentNameSpace(),
-					Constants.ObjID_Client));
+			lrefPolicies = Entity.GetInstance(Engine.FindEntity(Engine.getCurrentNameSpace(),
+					Constants.ObjID_Policy));
 
-			lobjAux = Client.GetInstance(Engine.getCurrentNameSpace(), mobjData.mid);
+			lobjAux = Policy.GetInstance(Engine.getCurrentNameSpace(), mobjData.mid);
 			mobjData.FromObject(lobjAux);
 			mobjData.mobjPrevValues = null;
 
@@ -123,7 +125,7 @@ public class ExternDeleteClient
 				mobjDocOps.RunSubOp(pdb, null);
 			}
 
-			lrefClients.Delete(pdb, mobjData.mid);
+			lrefPolicies.Delete(pdb, mobjData.mid);
 		}
 		catch (Throwable e)
 		{
@@ -133,7 +135,7 @@ public class ExternDeleteClient
 
 	public String UndoDesc(String pstrLineBreak)
 	{
-		return "O cliente apagado será reposto. O histórico de operações será recuperado.";
+		return "A apólice apagada será reposta. O histórico de operações será recuperado.";
 	}
 
 	public String UndoLongDesc(String pstrLineBreak)
@@ -141,7 +143,7 @@ public class ExternDeleteClient
 		StringBuilder lstrResult;
 
 		lstrResult = new StringBuilder();
-		lstrResult.append("Foi reposto o seguinte cliente:");
+		lstrResult.append("Foi reposta a seguinte apólice:");
 		lstrResult.append(pstrLineBreak);
 
 		mobjData.Describe(lstrResult, pstrLineBreak);
@@ -155,14 +157,15 @@ public class ExternDeleteClient
 		return lstrResult.toString();
 	}
 
-	protected void Undo(SQLServer pdb) throws JewelPetriException
+	protected void Undo(SQLServer pdb)
+		throws JewelPetriException
 	{
-		Client lobjAux;
+		Policy lobjAux;
 		PNProcess lobjProcess;
 
 		try
 		{
-			lobjAux = Client.GetInstance(Engine.getCurrentNameSpace(), (UUID)null);
+			lobjAux = Policy.GetInstance(Engine.getCurrentNameSpace(), (UUID)null);
 			mobjData.ToObject(lobjAux);
 			lobjAux.SaveToDb(pdb);
 			mobjData.mid = lobjAux.getKey();
@@ -203,7 +206,7 @@ public class ExternDeleteClient
 		larrResult = new UndoSet[llngSize];
 
 		larrResult[0] = new UndoSet();
-		larrResult[0].midType = Constants.ObjID_Client;
+		larrResult[0].midType = Constants.ObjID_Policy;
 		larrResult[0].marrDeleted = new UUID[0];
 		larrResult[0].marrChanged = new UUID[0];
 		larrResult[0].marrCreated = new UUID[1];

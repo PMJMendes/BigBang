@@ -43,12 +43,14 @@ import bigBang.module.clientModule.shared.ClientSortParameter;
 import com.premiumminds.BigBang.Jewel.Constants;
 import com.premiumminds.BigBang.Jewel.ZipCodeBridge;
 import com.premiumminds.BigBang.Jewel.Data.ClientData;
+import com.premiumminds.BigBang.Jewel.Data.PolicyData;
 import com.premiumminds.BigBang.Jewel.Objects.AgendaItem;
 import com.premiumminds.BigBang.Jewel.Objects.GeneralSystem;
 import com.premiumminds.BigBang.Jewel.Objects.MgrXFer;
 import com.premiumminds.BigBang.Jewel.Operations.ContactOps;
 import com.premiumminds.BigBang.Jewel.Operations.DocOps;
 import com.premiumminds.BigBang.Jewel.Operations.Client.CreateMgrXFer;
+import com.premiumminds.BigBang.Jewel.Operations.Client.CreatePolicy;
 import com.premiumminds.BigBang.Jewel.Operations.Client.DeleteClient;
 import com.premiumminds.BigBang.Jewel.Operations.Client.ManageClientData;
 import com.premiumminds.BigBang.Jewel.Operations.Client.MergeWithOther;
@@ -76,7 +78,7 @@ public class ClientServiceImpl
 		try
 		{
 			lobjClient = com.premiumminds.BigBang.Jewel.Objects.Client.GetInstance(Engine.getCurrentNameSpace(), lid);
-			if ( lobjClient.getAt(21) == null )
+			if ( lobjClient.GetProcessID() == null )
 				throw new BigBangException("Erro: Cliente sem processo de suporte. (Cliente n. "
 						+ lobjClient.getAt(1).toString() + ")");
 			if ( lobjClient.getAt(4) == null )
@@ -84,7 +86,7 @@ public class ClientServiceImpl
 			else
 				lobjZipCode = Engine.GetWorkInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), ObjectGUIDs.O_PostalCode),
 						(UUID)lobjClient.getAt(4));
-			lobjProc = PNProcess.GetInstance(Engine.getCurrentNameSpace(), (UUID)lobjClient.getAt(21));
+			lobjProc = PNProcess.GetInstance(Engine.getCurrentNameSpace(), lobjClient.GetProcessID());
 		}
 		catch (Throwable e)
 		{
@@ -362,17 +364,77 @@ public class ClientServiceImpl
 		return receptor;
 	}
 
+	public InsurancePolicy createPolicy(Client client, InsurancePolicy policy)
+		throws SessionExpiredException, BigBangException
+	{
+		CreatePolicy lopCP;
+
+		if ( Engine.getCurrentUser() == null )
+			throw new SessionExpiredException();
+
+		try
+		{
+			lopCP = new CreatePolicy(UUID.fromString(client.processId));
+			lopCP.mobjData = new PolicyData();
+
+			lopCP.mobjData.mid = null;
+
+			lopCP.mobjData.mstrNumber = policy.number;
+			lopCP.mobjData.midCompany = UUID.fromString(policy.insuranceAgencyId);
+			lopCP.mobjData.midSubLine = UUID.fromString(policy.subLineId);
+			lopCP.mobjData.mdtBeginDate = ( policy.startDate == null ? null : Timestamp.valueOf(policy.startDate) );
+			lopCP.mobjData.midDuration = UUID.fromString(policy.durationId);
+			lopCP.mobjData.midFractioning = UUID.fromString(policy.fractioningId);
+			lopCP.mobjData.mlngMaturityDay = policy.maturityDay;
+			lopCP.mobjData.mlngMaturityMonth = policy.maturityMonth;
+			lopCP.mobjData.mdtEndDate = ( policy.expirationDate == null ? null : Timestamp.valueOf(policy.expirationDate) );
+			lopCP.mobjData.mstrNotes = policy.notes;
+
+			lopCP.mobjData.midManager = null;
+			lopCP.mobjData.midProcess = null;
+
+			lopCP.mobjData.mobjPrevValues = null;
+
+			if ( (policy.contacts != null) && (policy.contacts.length > 0) )
+			{
+				lopCP.mobjContactOps = new ContactOps();
+				lopCP.mobjContactOps.marrCreate = ContactsServiceImpl.BuildContactTree(lopCP.mobjContactOps,
+						policy.contacts, Constants.ObjID_Client);
+			}
+			else
+				lopCP.mobjContactOps = null;
+			if ( (policy.documents != null) && (policy.documents.length > 0) )
+			{
+				lopCP.mobjDocOps = new DocOps();
+				lopCP.mobjDocOps.marrCreate = DocumentServiceImpl.BuildDocTree(lopCP.mobjDocOps,
+						policy.documents, Constants.ObjID_Client);
+			}
+			else
+				lopCP.mobjDocOps = null;
+
+			lopCP.Execute();
+
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangException(e.getMessage(), e);
+		}
+
+		policy.id = lopCP.mobjData.mid.toString();
+		policy.processId = lopCP.mobjData.midProcess.toString();
+		policy.managerId = lopCP.mobjData.midManager.toString();
+		if ( (policy.contacts != null) && (policy.contacts.length > 0) )
+			ContactsServiceImpl.WalkContactTree(lopCP.mobjContactOps.marrCreate, policy.contacts);
+		if ( (policy.documents != null) && (policy.documents.length > 0) )
+			DocumentServiceImpl.WalkDocTree(lopCP.mobjDocOps.marrCreate, policy.documents);
+
+		return policy;
+	}
+
 	@Override
 	public RiskAnalysis createRiskAnalisys(String clientId,
 			RiskAnalysis riskAnalisys) throws SessionExpiredException,
 			BigBangException {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public InsurancePolicy createPolicy(String clientId, InsurancePolicy policy)
-			throws SessionExpiredException, BigBangException {
 		// TODO Auto-generated method stub
 		return null;
 	}

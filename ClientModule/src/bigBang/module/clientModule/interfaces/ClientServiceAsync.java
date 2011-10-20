@@ -21,7 +21,7 @@ public interface ClientServiceAsync
 	void createInfoOrDocumentRequest(InfoOrDocumentRequest request, AsyncCallback<InfoOrDocumentRequest> callback);
 	void createManagerTransfer(ManagerTransfer transfer, AsyncCallback<ManagerTransfer> callback);
 	void createQuoteRequest(String processId, QuoteRequest request, AsyncCallback<QuoteRequest> callback);
-	void createPolicy(String clientId, InsurancePolicy policy, AsyncCallback<InsurancePolicy> callback);
+	void createPolicy(Client client, InsurancePolicy policy, AsyncCallback<InsurancePolicy> callback);
 	void createRiskAnalisys(String clientId, RiskAnalysis riskAnalisys, AsyncCallback<RiskAnalysis> callback);
 	void createCasualty(String clientId, Casualty casualty, AsyncCallback<Casualty> callback);
 	void deleteClient(String clientId, String processId, AsyncCallback<Void> callback);

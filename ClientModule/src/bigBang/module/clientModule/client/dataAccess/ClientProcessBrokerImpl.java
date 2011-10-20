@@ -153,14 +153,27 @@ public class ClientProcessBrokerImpl extends DataBroker<Client> implements Clien
 	}
 
 	@Override
-	public void createInsurancePolicy(String clientId, InsurancePolicy policy,
+	public void createInsurancePolicy(String clientId, final InsurancePolicy policy,
 			final ResponseHandler<InsurancePolicy> handler) {
-		service.createPolicy(clientId, policy, new BigBangAsyncCallback<InsurancePolicy>() {
+		this.getClient(clientId, new ResponseHandler<Client>() {
 
 			@Override
-			public void onSuccess(InsurancePolicy result) {
-				//TODO
-				handler.onResponse(result);
+			public void onResponse(Client response) {
+				service.createPolicy(response, policy, new BigBangAsyncCallback<InsurancePolicy>() {
+		
+					@Override
+					public void onSuccess(InsurancePolicy result) {
+						//TODO
+						handler.onResponse(result);
+					}
+				});
+
+			}
+
+			@Override
+			public void onError(Collection<ResponseError> errors) {
+				// TODO Auto-generated method stub
+
 			}
 		});
 	}

@@ -25,7 +25,6 @@ public class ClientData
 	public String mstrFiscal;
 	public UUID midType;
 	public UUID midSubtype;
-	public UUID midManager;
 	public UUID midMediator;
 	public UUID midProfile;
 	public UUID midGroup;
@@ -39,6 +38,8 @@ public class ClientData
 	public UUID midSize;
 	public UUID midSales;
 	public String mstrNotes;
+
+	public UUID midManager;
 	public UUID midProcess;
 	
 	public ClientData mobjPrevValues;

@@ -1,4 +1,4 @@
-package com.premiumminds.BigBang.Jewel.Operations.Client;
+package com.premiumminds.BigBang.Jewel.Operations.Policy;
 
 import java.util.UUID;
 
@@ -8,35 +8,35 @@ import Jewel.Petri.SysObjects.JewelPetriException;
 import Jewel.Petri.SysObjects.Operation;
 
 import com.premiumminds.BigBang.Jewel.Constants;
-import com.premiumminds.BigBang.Jewel.Data.ClientData;
+import com.premiumminds.BigBang.Jewel.Data.PolicyData;
 import com.premiumminds.BigBang.Jewel.Objects.GeneralSystem;
-import com.premiumminds.BigBang.Jewel.Operations.General.ExternDeleteClient;
+import com.premiumminds.BigBang.Jewel.Operations.Client.ExternDeletePolicy;
 
-public class DeleteClient
+public class DeletePolicy
 	extends Operation
 {
 	private static final long serialVersionUID = 1L;
 
-	public UUID midClient;
+	public UUID midPolicy;
 
-	public DeleteClient(UUID pidProcess)
+	public DeletePolicy(UUID pidProcess)
 	{
 		super(pidProcess);
 	}
 
 	protected UUID OpID()
 	{
-		return Constants.OPID_DeleteClient;
+		return Constants.OPID_DeletePolicy;
 	}
 
 	public String ShortDesc()
 	{
-		return "Eliminação de Cliente";
+		return "Eliminação de Apólice";
 	}
 
 	public String LongDesc(String pstrLineBreak)
 	{
-		return "O cliente foi eliminado. A sua reposição foi/é possível a partir do sistema geral.";
+		return "A apólice foi eliminada. A sua reposição foi/é possível a partir do cliente.";
 	}
 
 	public UUID GetExternalProcess()
@@ -47,13 +47,13 @@ public class DeleteClient
 	protected void Run(SQLServer pdb)
 		throws JewelPetriException
 	{
-		ExternDeleteClient lobjOp;
+		ExternDeletePolicy lobjOp;
 
 		try
 		{
-			lobjOp = new ExternDeleteClient(GeneralSystem.GetAnyInstance(Engine.getCurrentNameSpace()).GetProcessID());
-			lobjOp.mobjData = new ClientData();
-			lobjOp.mobjData.mid = midClient;
+			lobjOp = new ExternDeletePolicy(GeneralSystem.GetAnyInstance(Engine.getCurrentNameSpace()).GetProcessID());
+			lobjOp.mobjData = new PolicyData();
+			lobjOp.mobjData.mid = midPolicy;
 			TriggerOp(lobjOp);
 		}
 		catch (Throwable e)
