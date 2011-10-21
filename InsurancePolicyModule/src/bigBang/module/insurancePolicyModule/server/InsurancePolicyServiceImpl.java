@@ -16,7 +16,6 @@ import bigBang.library.shared.BigBangException;
 import bigBang.library.shared.SessionExpiredException;
 import bigBang.module.insurancePolicyModule.interfaces.InsurancePolicyService;
 
-import com.premiumminds.BigBang.Jewel.BigBangJewelException;
 import com.premiumminds.BigBang.Jewel.Constants;
 import com.premiumminds.BigBang.Jewel.Data.PolicyData;
 import com.premiumminds.BigBang.Jewel.Objects.Client;
@@ -157,7 +156,7 @@ public class InsurancePolicyServiceImpl
 	protected String[] getColumns()
 	{
 		return new String[] {"[:Number]", "[:Process]", "[:SubLine:Line:Category]", "[:SubLine:Line:Category:Name]",
-				"[:SubLine:Line]", "[:SubLine:Line:Name]", "[:SubLine]", "[:SubLine:Name]", "[:Process]"};
+				"[:SubLine:Line]", "[:SubLine:Line:Name]", "[:SubLine]", "[:SubLine:Name]"};
 	}
 
 	protected boolean buildFilter(StringBuilder pstrBuffer, SearchParameter pParam)
@@ -180,10 +179,18 @@ public class InsurancePolicyServiceImpl
 		try
 		{
 			lobjProcess = PNProcess.GetInstance(Engine.getCurrentNameSpace(), (UUID)parrValues[1]);
-			lobjClient = (Client)lobjProcess.GetParent().GetData();
+			try
+			{
+				lobjClient = (Client)lobjProcess.GetParent().GetData();
+			}
+			catch (Throwable e)
+			{
+				lobjClient = null;
+			}
 		}
 		catch (Throwable e)
 		{
+			lobjProcess = null;
 			lobjClient = null;
 		}
 
@@ -192,7 +199,7 @@ public class InsurancePolicyServiceImpl
 		lobjResult.id = pid.toString();
 		lobjResult.number = (String)parrValues[0];
 		lobjResult.clientId = (lobjClient == null ? null : lobjClient.getKey().toString());
-		lobjResult.clientNumber = (lobjClient == null ? "" : ((Integer)lobjClient.getAt(0)).toString());
+		lobjResult.clientNumber = (lobjClient == null ? "" : ((Integer)lobjClient.getAt(1)).toString());
 		lobjResult.clientName = (lobjClient == null ? "(Erro)" : lobjClient.getLabel());
 		lobjResult.categoryId = parrValues[2].toString();
 		lobjResult.categoryName = (String)parrValues[3];
@@ -200,7 +207,7 @@ public class InsurancePolicyServiceImpl
 		lobjResult.lineName = (String)parrValues[5];
 		lobjResult.subLineId = parrValues[6].toString();
 		lobjResult.subLineName = (String)parrValues[7];
-		lobjResult.processId = parrValues[8].toString();
+		lobjResult.processId = (lobjProcess == null ? null : lobjProcess.getKey().toString());
 		return lobjResult;
 	}
 }
