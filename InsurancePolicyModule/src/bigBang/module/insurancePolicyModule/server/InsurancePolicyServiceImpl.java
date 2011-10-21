@@ -156,7 +156,7 @@ public class InsurancePolicyServiceImpl
 
 	protected String[] getColumns()
 	{
-		return new String[] {"[:Number]", "[:Process:Parent:Data]", "[:SubLine:Line:Category]", "[:SubLine:Line:Category:Name]",
+		return new String[] {"[:Number]", "[:Process]", "[:SubLine:Line:Category]", "[:SubLine:Line:Category:Name]",
 				"[:SubLine:Line]", "[:SubLine:Line:Name]", "[:SubLine]", "[:SubLine:Name]", "[:Process]"};
 	}
 
@@ -173,14 +173,16 @@ public class InsurancePolicyServiceImpl
 
 	protected SearchResult buildResult(UUID pid, Object[] parrValues)
 	{
+		IProcess lobjProcess;
 		InsurancePolicyStub lobjResult;
 		Client lobjClient;
 
 		try
 		{
-			lobjClient = Client.GetInstance(Engine.getCurrentNameSpace(), (UUID)parrValues[1]);
+			lobjProcess = PNProcess.GetInstance(Engine.getCurrentNameSpace(), (UUID)parrValues[1]);
+			lobjClient = (Client)lobjProcess.GetParent().GetData();
 		}
-		catch (BigBangJewelException e)
+		catch (Throwable e)
 		{
 			lobjClient = null;
 		}
@@ -190,6 +192,7 @@ public class InsurancePolicyServiceImpl
 		lobjResult.id = pid.toString();
 		lobjResult.number = (String)parrValues[0];
 		lobjResult.clientId = parrValues[1].toString();
+		lobjResult.clientNumber = (lobjClient == null ? "" : ((Integer)lobjClient.getAt(0)).toString());
 		lobjResult.clientName = (lobjClient == null ? "(Erro)" : lobjClient.getLabel());
 		lobjResult.categoryId = parrValues[2].toString();
 		lobjResult.categoryName = (String)parrValues[3];

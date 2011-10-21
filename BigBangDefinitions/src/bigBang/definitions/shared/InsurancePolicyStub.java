@@ -7,6 +7,7 @@ public class InsurancePolicyStub
 
 	public String number;
 	public String clientId;
+	public String clientNumber;
 	public String clientName;
 	public String categoryId;
 	public String categoryName;
