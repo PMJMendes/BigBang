@@ -1,7 +1,9 @@
 package bigBang.module.insurancePolicyModule.client.userInterface.view;
 
 import com.google.gwt.event.logical.shared.AttachEvent;
+import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.SplitLayoutPanel;
+import com.google.gwt.user.client.ui.StackPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
 import bigBang.definitions.shared.InsuredObject;
@@ -38,7 +40,7 @@ public class InsurancePolicySearchOperationView extends View implements Insuranc
 		
 		SplitLayoutPanel listsWrapper = new SplitLayoutPanel();
 		listsWrapper.setSize("100%", "100%");
-		contentWrapper.addEast(listsWrapper, 250);
+		//contentWrapper.addEast(listsWrapper, 250);
 		
 		contactsList = new ContactsPreviewList();
 		contactsList.setSize("100%", "100%");		
@@ -46,8 +48,24 @@ public class InsurancePolicySearchOperationView extends View implements Insuranc
 		documentsList = new DocumentsPreviewList();
 		documentsList.setSize("100%", "100%");
 		
-		listsWrapper.addNorth(contactsList, 250);
-		listsWrapper.add(documentsList);		
+		StackPanel stack = new StackPanel();
+		stack.setSize("100%", "100%");
+		stack.add(contactsList, "Contactos");
+		stack.add(documentsList, "Documentos");
+		stack.add(new SimplePanel(), "teste");
+		stack.add(new SimplePanel(), "teste");
+		stack.add(new SimplePanel(), "teste");
+		stack.add(new SimplePanel(), "teste");
+		stack.add(new SimplePanel(), "teste");
+		stack.add(new SimplePanel(), "teste");
+		stack.add(new SimplePanel(), "teste");
+		stack.add(new SimplePanel(), "teste");
+		stack.add(new SimplePanel(), "teste");
+		
+		contentWrapper.addEast(stack, 250);
+		
+//		listsWrapper.addNorth(contactsList, 250);
+//		listsWrapper.add(documentsList);		
 		
 		final VerticalPanel toolBarFormContainer = new VerticalPanel();
 		toolBarFormContainer.setSize("100%", "100%");

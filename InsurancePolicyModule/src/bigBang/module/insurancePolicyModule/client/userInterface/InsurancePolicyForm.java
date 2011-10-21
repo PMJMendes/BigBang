@@ -2,6 +2,7 @@ package bigBang.module.insurancePolicyModule.client.userInterface;
 
 import com.google.gwt.user.client.ui.Label;
 
+import bigBang.definitions.shared.BigBangConstants;
 import bigBang.definitions.shared.InsurancePolicy;
 import bigBang.library.client.userInterface.CheckBoxFormField;
 import bigBang.library.client.userInterface.DatePickerFormField;
@@ -15,6 +16,7 @@ public class InsurancePolicyForm extends FormView<InsurancePolicy> {
 	protected ExpandableListBoxFormField manager;
 	protected TextBoxFormField number;
 	protected ExpandableListBoxFormField insuranceAgency;
+	protected ExpandableListBoxFormField category;
 	protected ExpandableListBoxFormField line;
 	protected ExpandableListBoxFormField subLine;
 	protected ExpandableListBoxFormField mediator;
@@ -29,10 +31,12 @@ public class InsurancePolicyForm extends FormView<InsurancePolicy> {
 		super();
 		addSection("Apólice");
 		number  = new TextBoxFormField("Número");
-		manager = new ExpandableListBoxFormField("Gestor");
-		mediator = new ExpandableListBoxFormField("Mediador");
-		line = new ExpandableListBoxFormField("Ramo");
-		subLine = new ExpandableListBoxFormField("Modalidade");
+		number.setFieldWidth("100px");
+		manager = new ExpandableListBoxFormField(BigBangConstants.EntityIds.USER, "Gestor");
+		mediator = new ExpandableListBoxFormField(BigBangConstants.EntityIds.MEDIATOR, "Mediador");
+		category = new ExpandableListBoxFormField(BigBangConstants.EntityIds.CATEGORY, "Categoria");
+		line = new ExpandableListBoxFormField(BigBangConstants.EntityIds.LINE, "Ramo");
+		subLine = new ExpandableListBoxFormField(BigBangConstants.EntityIds.SUB_LINE, "Modalidade");
 		startDate = new DatePickerFormField("Data de Início");
 		temporary = new CheckBoxFormField("Temporária");
 		endDate = new DatePickerFormField("Data de Fim");
@@ -42,6 +46,7 @@ public class InsurancePolicyForm extends FormView<InsurancePolicy> {
 		addFormField(number);
 		addFormField(manager);
 		addFormField(mediator);
+		addFormField(category);
 		addFormField(line);
 		addFormField(subLine);
 		addFormField(startDate);
@@ -54,10 +59,7 @@ public class InsurancePolicyForm extends FormView<InsurancePolicy> {
 		
 		addSection("Cliente");
 		
-		
 		addSection("Seguradora");
-		
-		
 	}
 	
 	@Override

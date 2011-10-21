@@ -1,0 +1,9 @@
+<servlet>
+	<servlet-name>InsurancePolicyService</servlet-name>
+	<servlet-class>bigBang.module.insurancePolicyModule.server.InsurancePolicyServiceImpl</servlet-class>
+</servlet>
+
+<servlet-mapping>
+	<servlet-name>InsurancePolicyService</servlet-name>
+	<url-pattern>/bigbang/InsurancePolicyService</url-pattern>
+</servlet-mapping>
