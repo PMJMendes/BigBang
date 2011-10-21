@@ -686,7 +686,6 @@ public class ClientSearchOperationView extends View implements ClientSearchOpera
 
 	@Override
 	public void allowUpdate(boolean allow) {
-		this.form.setReadOnly(!allow);
 		this.operationsToolbar.setEditionAvailable(allow);
 		this.contactsList.setReadOnly(!allow);
 	}

@@ -26,7 +26,7 @@ import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.PopupPanel.PositionCallback;
 import com.google.gwt.user.client.ui.RootPanel;
 
-public class ContactsPreviewList extends List<Contact> implements ContactsBrokerClient {
+public class ContactsPreviewList extends FilterableList<Contact> implements ContactsBrokerClient {
 
 	public static class Entry extends ListEntry<Contact> {
 
@@ -68,7 +68,7 @@ public class ContactsPreviewList extends List<Contact> implements ContactsBroker
 		header.setHeight("25px");
 		header.setLeftWidget(new Image(resources.contactsIcon()));
 
-		setHeaderWidget(header);
+		//setHeaderWidget(header); //TODO
 
 		setSize("100%", "145px");
 
@@ -110,6 +110,8 @@ public class ContactsPreviewList extends List<Contact> implements ContactsBroker
 				showNewContactForm();
 			}
 		});
+		showSearchField(true); //TODO
+		showFilterField(false);
 		header.setRightWidget(newButton);
 	}
 
