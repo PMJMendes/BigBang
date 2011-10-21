@@ -100,6 +100,84 @@ public class TipifiedListServiceImpl
 		return larrAux.toArray(new TipifiedListItem[larrAux.size()]);
 	}
 
+	public TipifiedListItem[] getListItemsFilter(String listId, String filterId)
+		throws SessionExpiredException, BigBangException
+	{
+		UUID lidListRef;
+        MasterDB ldb;
+        ResultSet lrsItems;
+		ArrayList<TipifiedListItem> larrAux;
+//		ObjectBase lobjItem;
+		TipifiedListItem lobjAux;
+
+		if ( Engine.getCurrentUser() == null )
+			throw new SessionExpiredException();
+
+		larrAux = new ArrayList<TipifiedListItem>();
+
+		try
+		{
+			lidListRef = Engine.FindEntity(Engine.getCurrentNameSpace(), UUID.fromString(listId));
+			ldb = new MasterDB();
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangException(e.getMessage(), e);
+		}
+
+        try
+        {
+	        lrsItems = Entity.GetInstance(lidListRef).SelectByMembers(ldb,
+	        		new int[] {1}, new java.lang.Object[] {UUID.fromString(filterId)}, new int[] {0});
+		}
+		catch (Throwable e)
+		{
+			try { ldb.Disconnect(); } catch (Throwable e1) {}
+			throw new BigBangException(e.getMessage(), e);
+		}
+
+		try
+		{
+	        while (lrsItems.next())
+	        {
+//	        	lobjItem = Engine.GetWorkInstance(lidListRef, lrsItems);
+	        	lobjAux = new TipifiedListItem();
+//	        	lobjAux.id = lobjItem.getKey().toString();
+//	        	lobjAux.value = (String) lobjItem.getAt(0);
+	        	lobjAux.id = lrsItems.getString(1);
+	        	lobjAux.value = lrsItems.getString(2);
+	        	larrAux.add(lobjAux);
+	        }
+        }
+        catch (Throwable e)
+        {
+			try { lrsItems.close(); } catch (Throwable e1) {}
+			try { ldb.Disconnect(); } catch (Throwable e1) {}
+        	throw new BigBangException(e.getMessage(), e);
+        }
+
+        try
+        {
+        	lrsItems.close();
+        }
+		catch (Throwable e)
+		{
+			try { ldb.Disconnect(); } catch (Throwable e1) {}
+			throw new BigBangException(e.getMessage(), e);
+		}
+
+		try
+		{
+			ldb.Disconnect();
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangException(e.getMessage(), e);
+		}
+
+		return larrAux.toArray(new TipifiedListItem[larrAux.size()]);
+	}
+
 	public TipifiedListItem createListItem(String listId, TipifiedListItem item)
 		throws SessionExpiredException, BigBangException
 	{
