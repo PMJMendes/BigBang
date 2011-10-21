@@ -191,7 +191,7 @@ public class InsurancePolicyServiceImpl
 
 		lobjResult.id = pid.toString();
 		lobjResult.number = (String)parrValues[0];
-		lobjResult.clientId = parrValues[1].toString();
+		lobjResult.clientId = (lobjClient == null ? null : lobjClient.getKey().toString());
 		lobjResult.clientNumber = (lobjClient == null ? "" : ((Integer)lobjClient.getAt(0)).toString());
 		lobjResult.clientName = (lobjClient == null ? "(Erro)" : lobjClient.getLabel());
 		lobjResult.categoryId = parrValues[2].toString();
