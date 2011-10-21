@@ -14,6 +14,7 @@ public class InsurancePolicy
 	public int maturityMonth; //1 to 12
 	public String expirationDate;
 	public String notes;
+	public String mediatorId;
 	public Contact[] contacts;
 	public Document[] documents;
 

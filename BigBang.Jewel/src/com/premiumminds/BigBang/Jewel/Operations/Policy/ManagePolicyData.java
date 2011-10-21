@@ -9,7 +9,6 @@ import Jewel.Petri.SysObjects.JewelPetriException;
 import Jewel.Petri.SysObjects.UndoableOperation;
 
 import com.premiumminds.BigBang.Jewel.Constants;
-import com.premiumminds.BigBang.Jewel.Data.ClientData;
 import com.premiumminds.BigBang.Jewel.Data.PolicyData;
 import com.premiumminds.BigBang.Jewel.Objects.Policy;
 import com.premiumminds.BigBang.Jewel.Operations.ContactOps;
@@ -70,22 +69,31 @@ public class ManagePolicyData
 		throws JewelPetriException
 	{
 		Policy lobjAux;
+		UUID lidOwner;
 
+		lidOwner = null;
 		try
 		{
-			lobjAux = Policy.GetInstance(Engine.getCurrentNameSpace(), mobjData.mid);
+			if ( mobjData != null )
+			{
+				lidOwner = mobjData.mid;
 
-			mobjData.mobjPrevValues = new ClientData();
-			mobjData.mobjPrevValues.FromObject(lobjAux);
+				lobjAux = Policy.GetInstance(Engine.getCurrentNameSpace(), mobjData.mid);
 
-			mobjData.midManager = GetProcess().GetManagerID();
-			mobjData.ToObject(lobjAux);
-			lobjAux.SaveToDb(pdb);
+				mobjData.mobjPrevValues = new PolicyData();
+				mobjData.mobjPrevValues.FromObject(lobjAux);
+
+				mobjData.midManager = GetProcess().GetManagerID();
+				mobjData.midCompany = mobjData.mobjPrevValues.midCompany;
+				mobjData.midSubLine = mobjData.mobjPrevValues.midSubLine;
+				mobjData.ToObject(lobjAux);
+				lobjAux.SaveToDb(pdb);
+			}
 
 			if ( mobjContactOps != null )
-				mobjContactOps.RunSubOp(pdb, lobjAux.getKey());
+				mobjContactOps.RunSubOp(pdb, lidOwner);
 			if ( mobjDocOps != null )
-				mobjDocOps.RunSubOp(pdb, lobjAux.getKey());
+				mobjDocOps.RunSubOp(pdb, lidOwner);
 		}
 		catch (Throwable e)
 		{
@@ -141,18 +149,25 @@ public class ManagePolicyData
 		throws JewelPetriException
 	{
 		Policy lobjAux;
+		UUID lidOwner;
 
+		lidOwner = null;
 		try
 		{
-			lobjAux = Policy.GetInstance(Engine.getCurrentNameSpace(), mobjData.mid);
+			if ( mobjData != null )
+			{
+				lidOwner = mobjData.mid;
 
-			mobjData.mobjPrevValues.ToObject(lobjAux);
-			lobjAux.SaveToDb(pdb);
+				lobjAux = Policy.GetInstance(Engine.getCurrentNameSpace(), mobjData.mid);
+
+				mobjData.mobjPrevValues.ToObject(lobjAux);
+				lobjAux.SaveToDb(pdb);
+			}
 
 			if ( mobjContactOps != null )
-				mobjContactOps.UndoSubOp(pdb, lobjAux.getKey());
+				mobjContactOps.UndoSubOp(pdb, lidOwner);
 			if ( mobjDocOps != null )
-				mobjDocOps.UndoSubOp(pdb, lobjAux.getKey());
+				mobjDocOps.UndoSubOp(pdb, lidOwner);
 		}
 		catch (Throwable e)
 		{

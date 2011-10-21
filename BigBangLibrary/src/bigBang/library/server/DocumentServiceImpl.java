@@ -28,6 +28,7 @@ import com.premiumminds.BigBang.Jewel.Operations.DocOps;
 import com.premiumminds.BigBang.Jewel.Operations.Client.ManageClientData;
 import com.premiumminds.BigBang.Jewel.Operations.General.ManageInsurers;
 import com.premiumminds.BigBang.Jewel.Operations.General.ManageMediators;
+import com.premiumminds.BigBang.Jewel.Operations.Policy.ManagePolicyData;
 
 public class DocumentServiceImpl
 	extends EngineImplementor
@@ -331,6 +332,9 @@ public class DocumentServiceImpl
 		if ( lobjAux instanceof ManageClientData )
 			lidResult = Constants.ObjID_Client;
 
+		if ( lobjAux instanceof ManagePolicyData )
+			lidResult = Constants.ObjID_Policy;
+
 		if ( lidResult == null )
 			throw new JewelPetriException("Erro: A operação pretendida não permite movimentos de Documentos.");
 
@@ -374,6 +378,14 @@ public class DocumentServiceImpl
 			((ManageClientData)lobjResult).mobjData = null;
 			((ManageClientData)lobjResult).mobjContactOps = null;
 			((ManageClientData)lobjResult).mobjDocOps = pobjInner;
+			lbFound = true;
+		}
+
+		if ( lobjResult instanceof ManagePolicyData )
+		{
+			((ManagePolicyData)lobjResult).mobjData = null;
+			((ManagePolicyData)lobjResult).mobjContactOps = null;
+			((ManagePolicyData)lobjResult).mobjDocOps = pobjInner;
 			lbFound = true;
 		}
 

@@ -69,22 +69,29 @@ public class ManageClientData
 		throws JewelPetriException
 	{
 		Client lobjAux;
+		UUID lidOwner;
 
+		lidOwner = null;
 		try
 		{
-			lobjAux = Client.GetInstance(Engine.getCurrentNameSpace(), mobjData.mid);
+			if ( mobjData != null )
+			{
+				lidOwner = mobjData.mid;
 
-			mobjData.mobjPrevValues = new ClientData();
-			mobjData.mobjPrevValues.FromObject(lobjAux);
+				lobjAux = Client.GetInstance(Engine.getCurrentNameSpace(), mobjData.mid);
 
-			mobjData.midManager = GetProcess().GetManagerID();
-			mobjData.ToObject(lobjAux);
-			lobjAux.SaveToDb(pdb);
+				mobjData.mobjPrevValues = new ClientData();
+				mobjData.mobjPrevValues.FromObject(lobjAux);
+
+				mobjData.midManager = GetProcess().GetManagerID();
+				mobjData.ToObject(lobjAux);
+				lobjAux.SaveToDb(pdb);
+			}
 
 			if ( mobjContactOps != null )
-				mobjContactOps.RunSubOp(pdb, lobjAux.getKey());
+				mobjContactOps.RunSubOp(pdb, lidOwner);
 			if ( mobjDocOps != null )
-				mobjDocOps.RunSubOp(pdb, lobjAux.getKey());
+				mobjDocOps.RunSubOp(pdb, lidOwner);
 		}
 		catch (Throwable e)
 		{
@@ -140,18 +147,25 @@ public class ManageClientData
 		throws JewelPetriException
 	{
 		Client lobjAux;
+		UUID lidOwner;
 
+		lidOwner = null;
 		try
 		{
-			lobjAux = Client.GetInstance(Engine.getCurrentNameSpace(), mobjData.mid);
+			if ( mobjData != null )
+			{
+				lidOwner = mobjData.mid;
 
-			mobjData.mobjPrevValues.ToObject(lobjAux);
-			lobjAux.SaveToDb(pdb);
+				lobjAux = Client.GetInstance(Engine.getCurrentNameSpace(), mobjData.mid);
+
+				mobjData.mobjPrevValues.ToObject(lobjAux);
+				lobjAux.SaveToDb(pdb);
+			}
 
 			if ( mobjContactOps != null )
-				mobjContactOps.UndoSubOp(pdb, lobjAux.getKey());
+				mobjContactOps.UndoSubOp(pdb, lidOwner);
 			if ( mobjDocOps != null )
-				mobjDocOps.UndoSubOp(pdb, lobjAux.getKey());
+				mobjDocOps.UndoSubOp(pdb, lidOwner);
 		}
 		catch (Throwable e)
 		{

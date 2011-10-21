@@ -390,7 +390,7 @@ public class ClientServiceImpl
 			lopCP.mobjData.mdtEndDate = ( policy.expirationDate == null ? null : Timestamp.valueOf(policy.expirationDate) );
 			lopCP.mobjData.mstrNotes = policy.notes;
 
-			lopCP.mobjData.midManager = null;
+			lopCP.mobjData.midManager = ( policy.managerId == null ? null : UUID.fromString(policy.managerId) );
 			lopCP.mobjData.midProcess = null;
 
 			lopCP.mobjData.mobjPrevValues = null;
@@ -422,7 +422,9 @@ public class ClientServiceImpl
 
 		policy.id = lopCP.mobjData.mid.toString();
 		policy.processId = lopCP.mobjData.midProcess.toString();
+		policy.number = lopCP.mobjData.mstrNumber;
 		policy.managerId = lopCP.mobjData.midManager.toString();
+		policy.mediatorId = lopCP.mobjData.midMediator.toString();
 		if ( (policy.contacts != null) && (policy.contacts.length > 0) )
 			ContactsServiceImpl.WalkContactTree(lopCP.mobjContactOps.marrCreate, policy.contacts);
 		if ( (policy.documents != null) && (policy.documents.length > 0) )

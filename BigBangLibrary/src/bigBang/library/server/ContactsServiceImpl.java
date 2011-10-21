@@ -32,6 +32,7 @@ import com.premiumminds.BigBang.Jewel.Operations.ContactOps;
 import com.premiumminds.BigBang.Jewel.Operations.Client.ManageClientData;
 import com.premiumminds.BigBang.Jewel.Operations.General.ManageInsurers;
 import com.premiumminds.BigBang.Jewel.Operations.General.ManageMediators;
+import com.premiumminds.BigBang.Jewel.Operations.Policy.ManagePolicyData;
 
 public class ContactsServiceImpl
 	extends EngineImplementor
@@ -366,6 +367,9 @@ public class ContactsServiceImpl
 		if ( lobjAux instanceof ManageClientData )
 			lidResult = Constants.ObjID_Client;
 
+		if ( lobjAux instanceof ManagePolicyData )
+			lidResult = Constants.ObjID_Policy;
+
 		if ( lidResult == null )
 			throw new JewelPetriException("Erro: A operação pretendida não permite movimentos de Contactos.");
 
@@ -409,6 +413,14 @@ public class ContactsServiceImpl
 			((ManageClientData)lobjResult).mobjData = null;
 			((ManageClientData)lobjResult).mobjContactOps = pobjInner;
 			((ManageClientData)lobjResult).mobjDocOps = null;
+			lbFound = true;
+		}
+
+		if ( lobjResult instanceof ManagePolicyData )
+		{
+			((ManagePolicyData)lobjResult).mobjData = null;
+			((ManagePolicyData)lobjResult).mobjContactOps = pobjInner;
+			((ManagePolicyData)lobjResult).mobjDocOps = null;
 			lbFound = true;
 		}
 

@@ -26,11 +26,12 @@ public class PolicyData
 	public int mlngMaturityMonth;
 	public Timestamp mdtEndDate;
 	public String mstrNotes;
+	public UUID midMediator;
 
 	public UUID midManager;
 	public UUID midProcess;
 
-	public ClientData mobjPrevValues;
+	public PolicyData mobjPrevValues;
 
 	public void FromObject(ObjectBase pobjSource)
 	{
@@ -47,6 +48,7 @@ public class PolicyData
 		mlngMaturityMonth = (Integer)pobjSource.getAt(8);
 		mdtEndDate = (Timestamp)pobjSource.getAt(9);
 		mstrNotes = (String)pobjSource.getAt(10);
+		midMediator = (UUID)pobjSource.getAt(11);
 	}
 
 	public void ToObject(ObjectBase pobjDest)
@@ -65,6 +67,7 @@ public class PolicyData
 			pobjDest.setAt( 8, mlngMaturityMonth);
 			pobjDest.setAt( 9, mdtEndDate);
 			pobjDest.setAt(10, mstrNotes);
+			pobjDest.setAt(11, midMediator);
 		}
 		catch (Throwable e)
 		{
