@@ -8,6 +8,7 @@
     	<!ENTITY  taskServices SYSTEM "taskServices.xml" > 
     	<!ENTITY  generalSystemServices SYSTEM "generalSystemServices.xml" > 
     	<!ENTITY  clientServices SYSTEM "clientServices.xml" > 
+    	<!ENTITY  insurancePolicyServices SYSTEM "insurancePolicyServices.xml" > 
     ]  >
 
 <web-app>
@@ -25,6 +26,7 @@
 	&taskServices;
 	&generalSystemServices;
 	&clientServices;
+	&insurancePolicyServices;
 
 	<servlet>
 		<servlet-name>remoteLoggingServiceImpl</servlet-name>
@@ -41,25 +43,72 @@
 	</welcome-file-list>
 
 	<!-- Forcing SSL -->
-	<!-- <security-constraint> <web-resource-collection> <web-resource-name>Entire 
-		Application</web-resource-name> <url-pattern>/*</url-pattern> </web-resource-collection> 
-		<user-data-constraint> <transport-guarantee>CONFIDENTIAL</transport-guarantee> 
-		</user-data-constraint> </security-constraint> -->
+	<!--
+	<security-constraint>
+		<web-resource-collection>
+			<web-resource-name>Entire Application</web-resource-name>
+			<url-pattern>/*</url-pattern>
+		</web-resource-collection> 
+		<user-data-constraint>
+			<transport-guarantee>CONFIDENTIAL</transport-guarantee> 
+		</user-data-constraint>
+	</security-constraint>
+	-->
 
 	<!-- SPNEGO Integrated Login -->
-	<!-- <filter> <filter-name>SpnegoHttpFilter</filter-name> <filter-class>net.sourceforge.spnego.SpnegoHttpFilter</filter-class> 
-		<init-param> <param-name>spnego.allow.basic</param-name> <param-value>true</param-value> 
-		</init-param> <init-param> <param-name>spnego.allow.localhost</param-name> 
-		<param-value>true</param-value> </init-param> <init-param> <param-name>spnego.allow.unsecure.basic</param-name> 
-		<param-value>true</param-value> </init-param> <init-param> <param-name>spnego.login.client.module</param-name> 
-		<param-value>spnego-client</param-value> </init-param> <init-param> <param-name>spnego.krb5.conf</param-name> 
-		<param-value>krb5.conf</param-value> </init-param> <init-param> <param-name>spnego.login.conf</param-name> 
-		<param-value>login.conf</param-value> </init-param> <init-param> <param-name>spnego.preauth.username</param-name> 
-		<param-value>jmmtomcat</param-value> </init-param> <init-param> <param-name>spnego.preauth.password</param-name> 
-		<param-value>jmm.000</param-value> </init-param> <init-param> <param-name>spnego.login.server.module</param-name> 
-		<param-value>spnego-server</param-value> </init-param> <init-param> <param-name>spnego.prompt.ntlm</param-name> 
-		<param-value>true</param-value> </init-param> <init-param> <param-name>spnego.logger.level</param-name> 
-		<param-value>1</param-value> </init-param> </filter> <filter-mapping> <filter-name>SpnegoHttpFilter</filter-name> 
-		<url-pattern>*</url-pattern> </filter-mapping> -->
+	<!--
+	<filter>
+		<filter-name>SpnegoHttpFilter</filter-name>
+		<filter-class>net.sourceforge.spnego.SpnegoHttpFilter</filter-class> 
+		<init-param>
+			<param-name>spnego.allow.basic</param-name>
+			<param-value>true</param-value> 
+		</init-param>
+		<init-param>
+			<param-name>spnego.allow.localhost</param-name> 
+			<param-value>true</param-value>
+		</init-param>
+		<init-param>
+			<param-name>spnego.allow.unsecure.basic</param-name> 
+			<param-value>true</param-value>
+		</init-param>
+		<init-param>
+			<param-name>spnego.login.client.module</param-name> 
+			<param-value>spnego-client</param-value>
+		</init-param>
+		<init-param>
+			<param-name>spnego.krb5.conf</param-name> 
+			<param-value>krb5.conf</param-value>
+		</init-param>
+		<init-param>
+			<param-name>spnego.login.conf</param-name> 
+			<param-value>login.conf</param-value>
+		</init-param>
+		<init-param>
+			<param-name>spnego.preauth.username</param-name> 
+			<param-value>jmmtomcat</param-value>
+		</init-param>
+		<init-param>
+			<param-name>spnego.preauth.password</param-name> 
+			<param-value>jmm.000</param-value>
+		</init-param>
+		<init-param>
+			<param-name>spnego.login.server.module</param-name> 
+			<param-value>spnego-server</param-value>
+		</init-param>
+		<init-param>
+			<param-name>spnego.prompt.ntlm</param-name> 
+			<param-value>true</param-value>
+		</init-param>
+		<init-param>
+			<param-name>spnego.logger.level</param-name> 
+			<param-value>1</param-value>
+		</init-param>
+	</filter>
+	<filter-mapping>
+		<filter-name>SpnegoHttpFilter</filter-name> 
+		<url-pattern>*</url-pattern>
+	</filter-mapping>
+	-->
 
 </web-app>
