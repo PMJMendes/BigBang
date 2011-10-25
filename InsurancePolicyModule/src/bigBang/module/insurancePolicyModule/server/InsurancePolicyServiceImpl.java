@@ -68,8 +68,8 @@ public class InsurancePolicyServiceImpl
 		lobjResult.durationId = ((UUID)lobjPolicy.getAt(5)).toString();
 		lobjResult.fractioningId = ((UUID)lobjPolicy.getAt(6)).toString();
 		lobjResult.maturityDay = (lobjPolicy.getAt(7) == null ? 0 : (Integer)lobjPolicy.getAt(7));
-		lobjResult.maturityMonth = (lobjPolicy.getAt(8) == null ? 0 : (Integer)lobjPolicy.getAt(9));
-		lobjResult.expirationDate = (lobjPolicy.getAt(9) == null ? null : ((Timestamp)lobjPolicy.getAt(10)).toString());
+		lobjResult.maturityMonth = (lobjPolicy.getAt(8) == null ? 0 : (Integer)lobjPolicy.getAt(8));
+		lobjResult.expirationDate = (lobjPolicy.getAt(9) == null ? null : ((Timestamp)lobjPolicy.getAt(9)).toString());
 		lobjResult.notes = (String)lobjPolicy.getAt(10);
 
 		return lobjResult;
