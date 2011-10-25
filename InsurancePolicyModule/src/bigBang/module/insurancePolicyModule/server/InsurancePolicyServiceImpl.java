@@ -4,6 +4,8 @@ import java.sql.Timestamp;
 import java.util.UUID;
 
 import Jewel.Engine.Engine;
+import Jewel.Engine.Implementation.Entity;
+import Jewel.Engine.Interfaces.IEntity;
 import Jewel.Engine.SysObjects.ObjectBase;
 import Jewel.Petri.Interfaces.IProcess;
 import Jewel.Petri.Objects.PNProcess;
@@ -15,7 +17,9 @@ import bigBang.definitions.shared.SortParameter;
 import bigBang.library.server.SearchServiceBase;
 import bigBang.library.shared.BigBangException;
 import bigBang.library.shared.SessionExpiredException;
+import bigBang.module.insurancePolicyModule.client.shared.InsurancePolicySortParameter;
 import bigBang.module.insurancePolicyModule.interfaces.InsurancePolicyService;
+import bigBang.module.insurancePolicyModule.shared.InsurancePolicySearchParameter;
 
 import com.premiumminds.BigBang.Jewel.Constants;
 import com.premiumminds.BigBang.Jewel.Data.PolicyData;
@@ -177,12 +181,101 @@ public class InsurancePolicyServiceImpl
 	protected boolean buildFilter(StringBuilder pstrBuffer, SearchParameter pParam)
 		throws BigBangException
 	{
-		return false;
+		InsurancePolicySearchParameter lParam;
+		String lstrAux;
+		IEntity lrefClients;
+
+		if ( !(pParam instanceof InsurancePolicySearchParameter) )
+			return false;
+		lParam = (InsurancePolicySearchParameter)pParam;
+
+		if ( (lParam.freeText != null) && (lParam.freeText.trim().length() > 0) )
+		{
+			lstrAux = lParam.freeText.trim().replace("'", "''").replace(" ", "%");
+			pstrBuffer.append(" AND ([:PolicyNumber] LIKE N'%").append(lstrAux).append("%'")
+					.append(" OR [:SubLine:Name] LIKE N'%").append(lstrAux).append("%'")
+					.append(" OR [:SubLine:Line:Name] LIKE N'%").append(lstrAux).append("%'")
+					.append(" OR [:SubLine:Line:Category:Name] LIKE N'%").append(lstrAux).append("%'")
+					.append(" OR [:Process:Parent] IN (SELECT [:Process] FROM (");
+			try
+			{
+				lrefClients = Entity.GetInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), Constants.ObjID_Client));
+				pstrBuffer.append(lrefClients.SQLForSelectMulti());
+			}
+			catch (Throwable e)
+			{
+        		throw new BigBangException(e.getMessage(), e);
+			}
+			pstrBuffer.append(") [AuxClients] WHERE [:Name] LIKE N'%").append(lstrAux).append("%'")
+					.append(" OR CAST([:Number] AS NVARCHAR(20)) LIKE N'%").append(lstrAux).append("%'))");
+		}
+
+		if ( lParam.ownerId != null )
+		{
+			pstrBuffer.append(" AND [:Process:Parent] IN (SELECT [:Process] FROM (");
+			try
+			{
+				lrefClients = Entity.GetInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), Constants.ObjID_Client));
+				pstrBuffer.append(lrefClients.SQLForSelectMulti());
+			}
+			catch (Throwable e)
+			{
+        		throw new BigBangException(e.getMessage(), e);
+			}
+			pstrBuffer.append(") [AuxOwner] WHERE [:Process:Data] = '").append(lParam.ownerId).append("'");
+		}
+
+		if ( lParam.subLineId != null )
+		{
+			pstrBuffer.append(" AND [:SubLine] = '").append(lParam.subLineId).append("'");
+		}
+		else if ( lParam.lineId != null )
+		{
+			pstrBuffer.append(" AND [:SubLine:Line] = '").append(lParam.lineId).append("'");
+		}
+		else if ( lParam.categoryId != null )
+		{
+			pstrBuffer.append(" AND [:SubLine:Line:Category] = '").append(lParam.categoryId).append("'");
+		}
+
+		if ( lParam.insuranceAgencyId != null )
+		{
+			pstrBuffer.append(" AND [:Company] = '").append(lParam.insuranceAgencyId).append("'");
+		}
+
+		if ( lParam.mediatorId != null )
+		{
+			pstrBuffer.append(" AND [:Mediator] = '").append(lParam.mediatorId).append("'");
+		}
+
+		if ( lParam.managerId != null )
+		{
+			pstrBuffer.append(" AND [:Process:Manager] = '").append(lParam.managerId).append("'");
+		}
+
+		if ( lParam.caseStudy != null )
+		{
+			pstrBuffer.append(" AND [:Case Study] = ").append(lParam.caseStudy ? "1" : "0");
+		}
+
+		return true;
 	}
 
 	protected boolean buildSort(StringBuilder pstrBuffer, SortParameter pParam, SearchParameter[] parrParams)
 	{
-		return false;
+		InsurancePolicySortParameter lParam;
+
+		if ( !(pParam instanceof InsurancePolicySortParameter) )
+			return false;
+		lParam = (InsurancePolicySortParameter)pParam;
+
+		if ( lParam.field == InsurancePolicySortParameter.SortableField.RELEVANCE )
+		{
+			if ( !buildRelevanceSort(pstrBuffer, parrParams) )
+				return false;
+		}
+
+		return true;
 	}
 
 	protected SearchResult buildResult(UUID pid, Object[] parrValues)
@@ -224,5 +317,10 @@ public class InsurancePolicyServiceImpl
 		lobjResult.subLineName = (String)parrValues[7];
 		lobjResult.processId = (lobjProcess == null ? null : lobjProcess.getKey().toString());
 		return lobjResult;
+	}
+
+	private boolean buildRelevanceSort(StringBuilder pstrBuffer, SearchParameter[] parrParams)
+	{
+		return false;
 	}
 }

@@ -85,7 +85,7 @@ public abstract class SearchServiceBase
 		public void OpenSearch(String pstrCriteria, String pstrSort)
 			throws BigBangException
 		{
-	        IEntity lrefClients;
+	        IEntity lrefDataObj;
 	        MasterDB ldb;
 	        StringBuilder lstrSQLB;
 	        String lstrSQL;
@@ -98,7 +98,7 @@ public abstract class SearchServiceBase
 
 			try
 			{
-		    	lrefClients = Entity.GetInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), midObject));
+		    	lrefDataObj = Entity.GetInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), midObject));
 		        ldb = new MasterDB();
 			}
 			catch (Throwable e)
@@ -111,7 +111,7 @@ public abstract class SearchServiceBase
 	        	lstrSQLB = new StringBuilder("SELECT [PK]");
 	        	for ( i = 0; i < marrColumns.length; i++ )
 	        		lstrSQLB.append(", ").append(marrColumns[i]);
-	        	lstrSQLB.append(" FROM (").append(lrefClients.SQLForSelectMulti()).append(") [Aux] WHERE ").append(pstrCriteria)
+	        	lstrSQLB.append(" FROM (").append(lrefDataObj.SQLForSelectMulti()).append(") [Aux] WHERE ").append(pstrCriteria)
 	        			.append(" ORDER BY ").append(pstrSort);
 	        	lstrSQL = lstrSQLB.toString();
 	        	lrsRows = ldb.OpenRecordset(lstrSQL);

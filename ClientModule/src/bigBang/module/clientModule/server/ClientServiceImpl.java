@@ -634,6 +634,7 @@ public class ClientServiceImpl
 		throws BigBangException
 	{
 		ClientSearchParameter lParam;
+		String lstrAux;
 		int[] larrMembers;
 		java.lang.Object[] larrValues;
 		IEntity lrefUserDecs;
@@ -646,12 +647,10 @@ public class ClientServiceImpl
 
 		if ( (lParam.freeText != null) && (lParam.freeText.trim().length() > 0) )
 		{
-			pstrBuffer.append(" AND ([:Name] LIKE N'%").append(lParam.freeText.trim().replace("'", "''").replace(" ", "%"))
-					.append("%'")
-					.append(" OR CAST([:Number] AS NVARCHAR(20)) LIKE N'%").append(lParam.freeText.trim().replace("'", "''")
-					.replace(" ", "%")).append("%'")
-					.append(" OR [:Group:Name] LIKE N'%").append(lParam.freeText.trim().replace("'", "''").replace(" ", "%"))
-					.append("%')");
+			lstrAux = lParam.freeText.trim().replace("'", "''").replace(" ", "%");
+			pstrBuffer.append(" AND ([:Name] LIKE N'%").append(lstrAux).append("%'")
+					.append(" OR CAST([:Number] AS NVARCHAR(20)) LIKE N'%").append(lstrAux).append("%'")
+					.append(" OR [:Group:Name] LIKE N'%").append(lstrAux).append("%')");
 		}
 
 		if ( (lParam.postalCodes != null) && (lParam.postalCodes.length > 0) )

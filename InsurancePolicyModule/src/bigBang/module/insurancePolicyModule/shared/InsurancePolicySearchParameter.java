@@ -4,8 +4,10 @@ import java.io.Serializable;
 
 import bigBang.definitions.shared.SearchParameter;
 
-public class InsurancePolicySearchParameter extends SearchParameter implements Serializable {
-
+public class InsurancePolicySearchParameter	
+	extends SearchParameter
+	implements Serializable
+{
 	private static final long serialVersionUID = 1L;
 	
 	public String ownerId;
@@ -15,6 +17,5 @@ public class InsurancePolicySearchParameter extends SearchParameter implements S
 	public String insuranceAgencyId;
 	public String mediatorId;
 	public String managerId;
-	public boolean caseStudy;
-	
+	public Boolean caseStudy;
 }
