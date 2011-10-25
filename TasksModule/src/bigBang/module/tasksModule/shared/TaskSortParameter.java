@@ -1,7 +1,7 @@
 package bigBang.module.tasksModule.shared;
 
-import bigBang.definitions.client.dataAccess.SortOrder;
-import bigBang.definitions.client.dataAccess.SortParameter;
+import bigBang.definitions.shared.SortOrder;
+import bigBang.definitions.shared.SortParameter;
 
 public class TaskSortParameter
 	extends SortParameter

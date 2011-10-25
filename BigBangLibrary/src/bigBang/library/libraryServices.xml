@@ -38,10 +38,6 @@
 </servlet>
 
 <servlet-mapping>
-	<servlet-name>SearchService</servlet-name>
-	<url-pattern>/bigbang/SearchService</url-pattern>
-</servlet-mapping>
-<servlet-mapping>
 	<servlet-name>BigBangPermissionService</servlet-name>
 	<url-pattern>/bigbang/BigBangPermissionService</url-pattern>
 </servlet-mapping>
