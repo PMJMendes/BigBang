@@ -4,9 +4,8 @@ import bigBang.library.shared.BigBangProcess;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
-public interface BigBangProcessServiceAsync extends Service {
-
-	void getProcesses(String processTypeId,
-			AsyncCallback<BigBangProcess[]> callback);
-
+public interface BigBangProcessServiceAsync
+	extends Service
+{
+	void getSubProcesses(String parentProcessId, AsyncCallback<BigBangProcess[]> callback);
 }

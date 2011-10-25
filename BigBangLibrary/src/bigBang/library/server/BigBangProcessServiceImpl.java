@@ -9,7 +9,7 @@ public class BigBangProcessServiceImpl
 {
 	private static final long serialVersionUID = 1L;
 
-	public BigBangProcess[] getProcesses(String processTypeId)
+	public BigBangProcess[] getSubProcesses(String parentProcessId)
 	{
 		return null;
 	}

@@ -1,6 +1,8 @@
 package bigBang.library.interfaces;
 
+import bigBang.library.shared.BigBangException;
 import bigBang.library.shared.BigBangProcess;
+import bigBang.library.shared.SessionExpiredException;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.rpc.RemoteService;
@@ -21,5 +23,5 @@ public interface BigBangProcessService extends RemoteService {
 		}
 	}
 	
-	public BigBangProcess[] getProcesses(String processTypeId);
+	public BigBangProcess[] getSubProcesses(String parentProcessId) throws SessionExpiredException, BigBangException;
 }
