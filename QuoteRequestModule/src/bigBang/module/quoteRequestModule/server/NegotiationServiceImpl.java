@@ -1,10 +1,10 @@
 package bigBang.module.quoteRequestModule.server;
 
-import bigBang.definitions.client.dataAccess.SearchParameter;
-import bigBang.definitions.client.dataAccess.SortParameter;
 import bigBang.definitions.shared.InsuranceAgencyInfoRequest;
 import bigBang.definitions.shared.InsurancePolicy;
 import bigBang.definitions.shared.Negotiation;
+import bigBang.definitions.shared.SearchParameter;
+import bigBang.definitions.shared.SortParameter;
 import bigBang.definitions.shared.Negotiation.Adjudication;
 import bigBang.definitions.shared.Negotiation.Cancellation;
 import bigBang.definitions.shared.Negotiation.Deletion;

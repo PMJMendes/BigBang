@@ -7,12 +7,12 @@ import java.util.TreeMap;
 
 import bigBang.definitions.client.dataAccess.ClientProcessBroker;
 import bigBang.definitions.client.dataAccess.ClientProcessDataBrokerClient;
-import bigBang.definitions.client.dataAccess.SearchParameter;
-import bigBang.definitions.client.dataAccess.SortParameter;
 import bigBang.definitions.shared.BigBangConstants;
 import bigBang.definitions.shared.Client;
 import bigBang.definitions.shared.ClientStub;
+import bigBang.definitions.shared.SearchParameter;
 import bigBang.definitions.shared.SearchResult;
+import bigBang.definitions.shared.SortParameter;
 import bigBang.library.client.ValueSelectable;
 import bigBang.library.client.ValueWrapper;
 import bigBang.library.client.dataAccess.DataBrokerManager;

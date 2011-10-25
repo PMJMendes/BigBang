@@ -16,7 +16,7 @@ import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
-import bigBang.definitions.client.dataAccess.SortOrder;
+import bigBang.definitions.shared.SortOrder;
 import bigBang.library.client.userInterface.view.View;
 
 public class FiltersPanel extends View {

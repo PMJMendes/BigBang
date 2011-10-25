@@ -1,7 +1,9 @@
 package bigBang.definitions.client.dataAccess;
 
 import bigBang.definitions.client.response.ResponseHandler;
+import bigBang.definitions.shared.SearchParameter;
 import bigBang.definitions.shared.SearchResult;
+import bigBang.definitions.shared.SortParameter;
 
 public interface SearchDataBroker<T extends SearchResult> extends DataBrokerInterface<T> {
 

@@ -2,7 +2,9 @@ package bigBang.definitions.client.dataAccess;
 
 import java.util.Collection;
 
+import bigBang.definitions.shared.SearchParameter;
 import bigBang.definitions.shared.SearchResult;
+import bigBang.definitions.shared.SortParameter;
 
 public class Search<T extends SearchResult> {
 	protected String workspaceId;

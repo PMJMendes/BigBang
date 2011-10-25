@@ -7,11 +7,11 @@ import org.gwt.mosaic.ui.client.MessageBox.ConfirmationCallback;
 
 import bigBang.definitions.client.dataAccess.HistoryBroker;
 import bigBang.definitions.client.dataAccess.HistoryDataBrokerClient;
-import bigBang.definitions.client.dataAccess.SortParameter;
 import bigBang.definitions.client.response.ResponseError;
 import bigBang.definitions.shared.BigBangConstants;
 import bigBang.definitions.shared.HistoryItem;
 import bigBang.definitions.shared.HistoryItemStub;
+import bigBang.definitions.shared.SortParameter;
 import bigBang.library.client.HasValueSelectables;
 import bigBang.library.client.ValueSelectable;
 import bigBang.library.client.dataAccess.DataBrokerManager;

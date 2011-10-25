@@ -1,14 +1,14 @@
 package bigBang.module.quoteRequestModule.server;
 
-import bigBang.definitions.client.dataAccess.SearchParameter;
-import bigBang.definitions.client.dataAccess.SortParameter;
 import bigBang.definitions.shared.InfoOrDocumentRequest;
 import bigBang.definitions.shared.InsuredObject;
 import bigBang.definitions.shared.ManagerTransfer;
 import bigBang.definitions.shared.Negotiation;
 import bigBang.definitions.shared.QuoteRequest;
 import bigBang.definitions.shared.RiskAnalysis;
+import bigBang.definitions.shared.SearchParameter;
 import bigBang.definitions.shared.SearchResult;
+import bigBang.definitions.shared.SortParameter;
 import bigBang.library.shared.BigBangException;
 import bigBang.library.shared.NewSearchResult;
 import bigBang.library.shared.SessionExpiredException;

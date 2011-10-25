@@ -1,8 +1,8 @@
 package bigBang.library.interfaces;
 
-import bigBang.definitions.client.dataAccess.SearchParameter;
-import bigBang.definitions.client.dataAccess.SortParameter;
+import bigBang.definitions.shared.SearchParameter;
 import bigBang.definitions.shared.SearchResult;
+import bigBang.definitions.shared.SortParameter;
 import bigBang.library.shared.NewSearchResult;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;

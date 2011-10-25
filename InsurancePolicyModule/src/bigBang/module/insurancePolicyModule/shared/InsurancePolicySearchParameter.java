@@ -2,7 +2,7 @@ package bigBang.module.insurancePolicyModule.shared;
 
 import java.io.Serializable;
 
-import bigBang.definitions.client.dataAccess.SearchParameter;
+import bigBang.definitions.shared.SearchParameter;
 
 public class InsurancePolicySearchParameter extends SearchParameter implements Serializable {
 
