@@ -15,6 +15,7 @@ public class InsurancePolicyStub
 	public String lineName;
 	public String subLineId;
 	public String subLineName;
+	public boolean caseStudy;
 
 	public String processId;
 }

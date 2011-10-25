@@ -88,6 +88,7 @@ public class InsurancePolicyServiceImpl
 		lobjResult.expirationDate = (lobjPolicy.getAt(9) == null ? null : ((Timestamp)lobjPolicy.getAt(9)).toString());
 		lobjResult.notes = (String)lobjPolicy.getAt(10);
 		lobjResult.mediatorId = (lobjPolicy.getAt(11) == null ? null : ((UUID)lobjPolicy.getAt(11)).toString());
+		lobjResult.caseStudy = (Boolean)lobjPolicy.getAt(12);
 
 		lobjResult.managerId = lobjProc.GetManagerID().toString();
 
@@ -175,7 +176,7 @@ public class InsurancePolicyServiceImpl
 	protected String[] getColumns()
 	{
 		return new String[] {"[:Number]", "[:Process]", "[:SubLine:Line:Category]", "[:SubLine:Line:Category:Name]",
-				"[:SubLine:Line]", "[:SubLine:Line:Name]", "[:SubLine]", "[:SubLine:Name]"};
+				"[:SubLine:Line]", "[:SubLine:Line:Name]", "[:SubLine]", "[:SubLine:Name], [:Case Study]"};
 	}
 
 	protected boolean buildFilter(StringBuilder pstrBuffer, SearchParameter pParam)
@@ -315,6 +316,7 @@ public class InsurancePolicyServiceImpl
 		lobjResult.lineName = (String)parrValues[5];
 		lobjResult.subLineId = parrValues[6].toString();
 		lobjResult.subLineName = (String)parrValues[7];
+		lobjResult.caseStudy = (Boolean)parrValues[8];
 		lobjResult.processId = (lobjProcess == null ? null : lobjProcess.getKey().toString());
 		return lobjResult;
 	}
