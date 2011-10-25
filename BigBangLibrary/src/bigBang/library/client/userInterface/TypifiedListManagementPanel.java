@@ -65,6 +65,7 @@ public class TypifiedListManagementPanel extends FilterableList<TipifiedListItem
 	private boolean editModeEnabled, editable;
 	private int typifiedListDataVersion;
 	protected TypifiedListBroker listBroker;
+	protected HandlerRegistration attachHandlerRegistration;
 
 	//UI
 	private Button editButton;
@@ -73,8 +74,7 @@ public class TypifiedListManagementPanel extends FilterableList<TipifiedListItem
 	public TypifiedListManagementPanel(final String listId, String listName){
 		super();
 		this.listBroker = BigBangTypifiedListBroker.Util.getInstance();
-		this.listId = listId;
-		editable = listId != null && !listId.equals("");
+		setListId(listId);
 		this.setSize("300px", "400px");
 
 		this.editButton = new Button();
@@ -117,7 +117,7 @@ public class TypifiedListManagementPanel extends FilterableList<TipifiedListItem
 		setHeaderWidget(headerWrapper);
 
 		showFilterField(false);
-		
+
 		addButton.setEnabled(false);
 
 		addButton.addClickHandler(new ClickHandler() {
@@ -144,19 +144,7 @@ public class TypifiedListManagementPanel extends FilterableList<TipifiedListItem
 		});
 
 		setEditModeEnabled(false);
-		this.addAttachHandler(new AttachEvent.Handler() {
-			
-			@Override
-			public void onAttachOrDetach(AttachEvent event) {
-				if(event.isAttached()){
-					listBroker.registerClient(listId, TypifiedListManagementPanel.this);
-					listBroker.getListItems(listId);
-				}else{
-					listBroker.unregisterClient(listId, TypifiedListManagementPanel.this);
-				}
-			}
-		});
-		
+
 		showFilterField(false);
 	}
 
@@ -164,9 +152,9 @@ public class TypifiedListManagementPanel extends FilterableList<TipifiedListItem
 		String value = valueTextBox.getValue();
 		TipifiedListItem item = new TipifiedListItem();
 		item.value = value;
-		
+
 		this.listBroker.createListItem(this.listId, item, new ResponseHandler<TipifiedListItem>() {
-			
+
 			@Override
 			public void onResponse(TipifiedListItem response) {
 				for(ListEntry<TipifiedListItem> e : TypifiedListManagementPanel.this){
@@ -176,12 +164,41 @@ public class TypifiedListManagementPanel extends FilterableList<TipifiedListItem
 					}
 				}
 			}
-			
+
 			@Override
 			public void onError(Collection<ResponseError> errors) {
 				GWT.log("Recebi erro");
 			}
 		});
+	}
+
+	public void setListId(String listId){
+		if(this.listId != null) {
+			listBroker.unregisterClient(this.listId, this);
+		}
+		this.listId = listId;
+		editable = listId != null && !listId.equals("");
+		this.clear();
+
+		if(this.attachHandlerRegistration == null){
+			this.attachHandlerRegistration = this.addAttachHandler(new AttachEvent.Handler() {
+
+				@Override
+				public void onAttachOrDetach(AttachEvent event) {
+					if(event.isAttached()){
+						listBroker.registerClient(TypifiedListManagementPanel.this.listId, TypifiedListManagementPanel.this);
+						listBroker.getListItems(TypifiedListManagementPanel.this.listId);
+					}else{
+						listBroker.unregisterClient(TypifiedListManagementPanel.this.listId, TypifiedListManagementPanel.this);
+					}
+				}
+			});
+		}
+		
+		if(this.isAttached()){
+			listBroker.registerClient(TypifiedListManagementPanel.this.listId, TypifiedListManagementPanel.this);
+			listBroker.getListItems(TypifiedListManagementPanel.this.listId);
+		}
 	}
 
 	private void deleteEntry(final TypifiedListEntry e){
@@ -191,7 +208,7 @@ public class TypifiedListManagementPanel extends FilterableList<TipifiedListItem
 			public void onResponse(TipifiedListItem response) {
 				remove(e);
 			}
-			
+
 			@Override
 			public void onError(Collection<ResponseError> errors) {}
 		});
@@ -215,23 +232,23 @@ public class TypifiedListManagementPanel extends FilterableList<TipifiedListItem
 		this.editable = editable;
 		this.editButton.setVisible(editable);
 	}
-	
+
 	public void setReadOnly(boolean readonly) {
 		this.setEditModeEnabled(false);
 		this.editButton.setVisible(!readonly && editable);
 	}
 
-	
+
 	//TypifiedListClient methods
-	
+
 	@Override
 	protected HandlerRegistration bindEntry(ListEntry<TipifiedListItem> e) {
 		e.setDoubleClickable(true);
 		return super.bindEntry(e);
 	}
-	
+
 	public void onChanged(){
-		
+
 	}
 
 	@Override
@@ -260,7 +277,7 @@ public class TypifiedListManagementPanel extends FilterableList<TipifiedListItem
 		setEditModeEnabled(isEditModeEnabled());
 		onChanged();	
 	}
-	
+
 	protected TypifiedListEntry addEntry(TipifiedListItem item){
 		final TypifiedListEntry entry = new TypifiedListEntry(item);
 		entry.deleteButton.addClickHandler(new ClickHandler() {
@@ -276,8 +293,8 @@ public class TypifiedListManagementPanel extends FilterableList<TipifiedListItem
 		setEditModeEnabled(this.editModeEnabled);
 		return entry;
 	}
-	
-	
+
+
 	//TypifiedListClient methods
 
 	@Override

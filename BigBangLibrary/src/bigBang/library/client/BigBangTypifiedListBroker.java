@@ -5,6 +5,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.StringTokenizer;
 
 import com.google.gwt.core.client.GWT;
 
@@ -34,6 +35,8 @@ public class BigBangTypifiedListBroker implements TypifiedListBroker {
 		}
 	}
 
+	protected static final String DEPENDENCY_DELIMITER = "/";
+	
 	protected final Integer NO_DATA_VERSION = new Integer(0); 
 
 	protected TipifiedListServiceAsync service;
@@ -85,15 +88,39 @@ public class BigBangTypifiedListBroker implements TypifiedListBroker {
 
 	@Override
 	public void refreshListData(final String listId) {
-		this.service.getListItems(listId, new BigBangAsyncCallback<TipifiedListItem[]>() {
-
-			@Override
-			public void onSuccess(TipifiedListItem[] result) {
-				BigBangTypifiedListBroker.this.lists.put(listId, new ArrayList<TipifiedListItem>(Arrays.asList(result)));
+		StringTokenizer tokenizer = new StringTokenizer(listId, DEPENDENCY_DELIMITER);
+		if(!tokenizer.hasMoreTokens()){
+			return;
+		}
+		final String effectiveListId = tokenizer.nextToken();
+		if(tokenizer.hasMoreTokens()){
+			String dependencyListId = tokenizer.nextToken();
+			if(dependencyListId.isEmpty()){
+				BigBangTypifiedListBroker.this.lists.put(listId, new ArrayList<TipifiedListItem>(new ArrayList<TipifiedListItem>()));
 				incrementListDataVersion(listId);
 				updateListClients(listId);
+			}else{
+				this.service.getListItemsFilter(effectiveListId, dependencyListId, new BigBangAsyncCallback<TipifiedListItem[]>() {
+	
+					@Override
+					public void onSuccess(TipifiedListItem[] result) {
+						BigBangTypifiedListBroker.this.lists.put(listId, new ArrayList<TipifiedListItem>(Arrays.asList(result)));
+						incrementListDataVersion(listId);
+						updateListClients(listId);
+					}
+				});
 			}
-		});
+		}else{
+			this.service.getListItems(effectiveListId, new BigBangAsyncCallback<TipifiedListItem[]>() {
+
+				@Override
+				public void onSuccess(TipifiedListItem[] result) {
+					BigBangTypifiedListBroker.this.lists.put(effectiveListId, new ArrayList<TipifiedListItem>(Arrays.asList(result)));
+					incrementListDataVersion(effectiveListId);
+					updateListClients(effectiveListId);
+				}
+			});
+		}
 	}
 
 	@Override

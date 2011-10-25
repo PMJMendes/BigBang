@@ -45,7 +45,7 @@ public class TextBoxFormField extends FormField<String> {
 	
 	@Override
 	public void setLabelWidth(String width) {
-		wrapper.setCellWidth(this.label, width);
+		this.label.setWidth(width);
 	}
 	
 	public TextBoxFormField(){

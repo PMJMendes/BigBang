@@ -30,7 +30,7 @@ public abstract class ClientManagerTransferView extends View {
 
 			@Override
 			public void execute() {
-				onTransferButtonPressed();
+				onTransferButtonPressed(form.getValue());
 			}
 		});
 
@@ -46,6 +46,6 @@ public abstract class ClientManagerTransferView extends View {
 		initWidget(wrapper);
 	}
 	
-	public abstract void onTransferButtonPressed();
+	public abstract void onTransferButtonPressed(String managerId);
 
 }

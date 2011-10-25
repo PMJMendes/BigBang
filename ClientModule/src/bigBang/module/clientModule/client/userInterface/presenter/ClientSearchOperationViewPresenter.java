@@ -357,9 +357,10 @@ public class ClientSearchOperationViewPresenter implements OperationViewPresente
 			}
 			
 			protected void transferManager(){
-				//view.getManagerTransferForm().setValue(null);
+				view.getManagerTransferForm().setValue(null);
 				view.showManagerTransferForm(true);
-				//view.lockManagerTransferForm(false);
+				view.lockManagerTransferForm(false);
+				
 			}
 			
 			protected void requireInfoOrDocument(){

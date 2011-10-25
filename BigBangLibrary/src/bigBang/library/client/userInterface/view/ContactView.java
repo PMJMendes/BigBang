@@ -14,6 +14,7 @@ import bigBang.library.client.event.SelectedStateChangedEvent;
 import bigBang.library.client.event.SelectedStateChangedEventHandler;
 import bigBang.library.client.userInterface.BigBangOperationsToolBar;
 import bigBang.library.client.userInterface.BigBangOperationsToolBar.SUB_MENU;
+import bigBang.library.client.userInterface.AddressFormField;
 import bigBang.library.client.userInterface.ExpandableListBoxFormField;
 import bigBang.library.client.userInterface.ListEntry;
 import bigBang.library.client.userInterface.NavigationListEntry;
@@ -98,6 +99,7 @@ public class ContactView extends View implements ContactsBrokerClient {
 	protected TextBoxFormField nameField;
 	protected ExpandableListBoxFormField typeField;
 	protected VerticalPanel infoWrapper;
+	protected AddressFormField addressFormField;
 	protected Collection<InfoEntry> infoEntries;
 	protected BigBangOperationsToolBar toolbar;
 	protected Contact contact;
@@ -109,7 +111,11 @@ public class ContactView extends View implements ContactsBrokerClient {
 	public ContactView(){
 		nameField = new TextBoxFormField("Nome");
 		nameField.setFieldWidth("100%");
+		nameField.setLabelWidth("60px");
 		typeField = new ExpandableListBoxFormField(ModuleConstants.ListIDs.ContactTypes, "Tipo");
+		typeField.setLabelWidth("60px");
+		addressFormField = new AddressFormField();
+		addressFormField.setLabelWidth("60px");
 
 		SimplePanel mainWrapper = new SimplePanel();
 		mainWrapper.setSize("100%", "100%");
@@ -159,6 +165,7 @@ public class ContactView extends View implements ContactsBrokerClient {
 		nameWrapper.add(nameField);
 		nameWrapper.add(typeField);
 		nameWrapper.getElement().getStyle().setProperty("borderBottom", "1px solid gray");
+		nameWrapper.add(addressFormField);
 		wrapper.add(nameWrapper);
 
 		addInfoFieldButton = new ListEntry<Void>(null);

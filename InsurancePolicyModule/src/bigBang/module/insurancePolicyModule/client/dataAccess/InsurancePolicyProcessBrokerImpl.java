@@ -6,15 +6,21 @@ import bigBang.definitions.client.dataAccess.DataBroker;
 import bigBang.definitions.client.dataAccess.DataBrokerClient;
 import bigBang.definitions.client.dataAccess.InsurancePolicyBroker;
 import bigBang.definitions.client.dataAccess.InsurancePolicyDataBrokerClient;
+import bigBang.definitions.client.dataAccess.Search;
 import bigBang.definitions.client.dataAccess.SearchDataBroker;
+import bigBang.definitions.client.dataAccess.SearchParameter;
+import bigBang.definitions.client.dataAccess.SortOrder;
+import bigBang.definitions.client.dataAccess.SortParameter;
 import bigBang.definitions.client.response.ResponseError;
 import bigBang.definitions.client.response.ResponseHandler;
 import bigBang.definitions.shared.BigBangConstants;
 import bigBang.definitions.shared.InsurancePolicy;
 import bigBang.definitions.shared.InsurancePolicyStub;
 import bigBang.library.client.BigBangAsyncCallback;
+import bigBang.module.insurancePolicyModule.client.shared.InsurancePolicySortParameter;
 import bigBang.module.insurancePolicyModule.interfaces.InsurancePolicyService;
 import bigBang.module.insurancePolicyModule.interfaces.InsurancePolicyServiceAsync;
+import bigBang.module.insurancePolicyModule.shared.InsurancePolicySearchParameter;
 
 public class InsurancePolicyProcessBrokerImpl extends DataBroker<InsurancePolicy> implements InsurancePolicyBroker {
 	
@@ -127,9 +133,36 @@ public class InsurancePolicyProcessBrokerImpl extends DataBroker<InsurancePolicy
 	}
 
 	@Override
+	public void getClientPolicies(String clientid,
+			final ResponseHandler<Collection<InsurancePolicyStub>> policies) {
+		InsurancePolicySearchParameter parameter = new InsurancePolicySearchParameter();
+		parameter.ownerId = clientid;
+		
+		SearchParameter[] parameters = new SearchParameter[]{
+		//	parameter //TODO FJVC
+		};
+		
+		SortParameter sort = new InsurancePolicySortParameter(InsurancePolicySortParameter.SortableField.RELEVANCE, SortOrder.DESC);		
+		SortParameter[] sorts = new SortParameter[]{
+		//TODO FJVC	sort 
+		};
+		
+		this.searchBroker.search(parameters, sorts, -1, new ResponseHandler<Search<InsurancePolicyStub>>() {
+
+			@Override
+			public void onResponse(Search<InsurancePolicyStub> response) {
+				policies.onResponse(response.getResults());
+			}
+
+			@Override
+			public void onError(Collection<ResponseError> errors) {
+			}
+		});
+	}
+	
+	@Override
 	public SearchDataBroker<InsurancePolicyStub> getSearchBroker() {
 		return this.searchBroker;
 	}
-
 	
 }

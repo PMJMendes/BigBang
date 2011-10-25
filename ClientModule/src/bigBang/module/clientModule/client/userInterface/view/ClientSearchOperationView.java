@@ -22,7 +22,6 @@ import bigBang.library.client.ValueWrapper;
 import bigBang.library.client.dataAccess.DataBrokerManager;
 import bigBang.library.client.event.ActionInvokedEvent;
 import bigBang.library.client.event.ActionInvokedEventHandler;
-import bigBang.library.client.userInterface.ContactsPreviewList;
 import bigBang.library.client.userInterface.ListEntry;
 import bigBang.library.client.userInterface.ListHeader;
 import bigBang.library.client.userInterface.PopupBar;
@@ -32,12 +31,12 @@ import bigBang.library.client.userInterface.presenter.UndoOperationViewPresenter
 import bigBang.library.client.userInterface.view.PopupPanel;
 import bigBang.library.client.userInterface.view.UndoOperationView;
 import bigBang.library.client.userInterface.view.View;
+import bigBang.module.clientModule.client.userInterface.ClientChildrenPanel;
 import bigBang.module.clientModule.client.userInterface.ClientProcessToolBar;
 import bigBang.module.clientModule.client.userInterface.ClientSearchPanel;
 import bigBang.module.clientModule.client.userInterface.ClientSearchPanelListEntry;
 import bigBang.module.clientModule.client.userInterface.presenter.ClientSearchOperationViewPresenter;
 import bigBang.module.clientModule.client.userInterface.presenter.ClientSearchOperationViewPresenter.Action;
-import bigBang.module.clientModule.shared.ModuleConstants;
 
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
@@ -60,7 +59,7 @@ public class ClientSearchOperationView extends View implements ClientSearchOpera
 	protected Widget mainContent;
 	protected ClientSearchPanel searchPanel;
 	protected ClientFormView form;
-	protected ContactsPreviewList contactsList;
+	protected ClientChildrenPanel childrenPanel;
 	protected ClientProcessToolBar operationsToolbar; 
 	protected PopupBar childProcessesBar;
 	protected ToolButton newButton;
@@ -103,9 +102,6 @@ public class ClientSearchOperationView extends View implements ClientSearchOpera
 		SplitLayoutPanel contentWrapper = new SplitLayoutPanel();
 		contentWrapper.setSize("100%", "100%");
 
-		VerticalPanel sideBarWrapper = new VerticalPanel();
-		sideBarWrapper.setSize("100%", "100%");
-
 		this.childProcessesBar = new PopupBar();
 		this.childProcessesBar.setSize("100%", "100%");
 
@@ -130,16 +126,10 @@ public class ClientSearchOperationView extends View implements ClientSearchOpera
 		this.childProcessesBar.addItem(new PopupBar.Item("Reclamação", testContent5));
 		 */
 
-		sideBarWrapper.add(childProcessesBar);
-		sideBarWrapper.setCellWidth(childProcessesBar, "100%");
+		this.childrenPanel = new ClientChildrenPanel();
+		this.childrenPanel.setSize("100%", "100%");		
 
-		this.contactsList = new ContactsPreviewList();
-		this.contactsList.setSize("100%", "100%");
-
-		sideBarWrapper.add(contactsList);
-		sideBarWrapper.setCellHeight(this.contactsList, "100%");
-
-		contentWrapper.addEast(sideBarWrapper, 250);
+		contentWrapper.addEast(this.childrenPanel, 250);
 
 		final VerticalPanel formWrapper = new VerticalPanel();
 		formWrapper.setSize("100%", "100%");
@@ -221,14 +211,14 @@ public class ClientSearchOperationView extends View implements ClientSearchOpera
 				Client client = event.getValue();
 				if(client != null){
 					if(client.id != null){
-						contactsList.setContactProcessAndOperationAndOwner(client.processId, ModuleConstants.OpTypeIDs.ChangeClientData, client.id);
+						childrenPanel.setClient(event.getValue());
 					}else{
-						contactsList.clearAll();
+						childrenPanel.clear();
 					}
 				}else{
-					contactsList.clearAll();
+					childrenPanel.clear();
 				}
-				contactsList.setReadOnly(client == null); //TODO FJVC
+				childrenPanel.setReadOnly(client == null); //TODO FJVC
 			}
 		});
 
@@ -631,8 +621,11 @@ public class ClientSearchOperationView extends View implements ClientSearchOpera
 			ClientManagerTransferView view = new ClientManagerTransferView() {
 
 				@Override
-				public void onTransferButtonPressed() {
-					showManagerTransferForm(false); //TODO
+				public void onTransferButtonPressed(String managerId) {
+					if(this.form.validate()){
+						//TODO TRANSFER
+						showManagerTransferForm(false);
+					}
 				}
 			};
 			view.setSize("660px", "100px");
@@ -675,7 +668,7 @@ public class ClientSearchOperationView extends View implements ClientSearchOpera
 	@Override
 	public void clearAllowedPermissions() {
 		this.form.setReadOnly(true);
-		this.contactsList.setReadOnly(true);
+		this.childrenPanel.setReadOnly(true);
 		this.operationsToolbar.lockAll();
 	}
 	
@@ -687,7 +680,7 @@ public class ClientSearchOperationView extends View implements ClientSearchOpera
 	@Override
 	public void allowUpdate(boolean allow) {
 		this.operationsToolbar.setEditionAvailable(allow);
-		this.contactsList.setReadOnly(!allow);
+		this.childrenPanel.setReadOnly(!allow);
 	}
 
 	@Override

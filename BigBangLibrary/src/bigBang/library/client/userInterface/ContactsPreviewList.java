@@ -21,6 +21,7 @@ import com.google.gwt.event.logical.shared.CloseEvent;
 import com.google.gwt.event.logical.shared.CloseHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.user.client.ui.Button;
+import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.PopupPanel.PositionCallback;
@@ -64,6 +65,9 @@ public class ContactsPreviewList extends FilterableList<Contact> implements Cont
 		this.scrollPanel.getElement().getStyle().setOverflow(Overflow.AUTO);
 		resources = GWT.create(Resources.class);
 		ListHeader header = new ListHeader();
+		HorizontalPanel headerWrapper = new HorizontalPanel();
+		header.setWidget(headerWrapper);
+		
 		header.setText("Contactos");
 		header.setHeight("25px");
 		header.setLeftWidget(new Image(resources.contactsIcon()));

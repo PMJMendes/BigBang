@@ -22,6 +22,8 @@ public class AddressFormField extends FormField<Address> {
 	private TextBox district;
 	private TextBox country;
 
+	protected Grid wrapper;
+	
 	public AddressFormField(FieldValidator<Address> validator) {
 		this();
 		setValidator(validator);
@@ -46,7 +48,7 @@ public class AddressFormField extends FormField<Address> {
 		street2.setWidth("100%");
 		country.setText(COUNTRY_DEFAULT_VALUE);
 		
-		Grid wrapper = new Grid(7, 3);
+		wrapper = new Grid(7, 3);
 		wrapper.getColumnFormatter().setWidth(1, "100%");
 		
 		wrapper.setWidget(0, 0, new Label("Rua:"));
@@ -75,7 +77,8 @@ public class AddressFormField extends FormField<Address> {
 		wrapper.setWidget(6, 1, country);
 		country.getElement().getStyle().setMargin(0, Unit.PX);
 		
-		wrapper.setWidth("550px");
+		//wrapper.setWidth("550px");
+		
 		
 		initWidget(wrapper);
 	}
@@ -155,8 +158,7 @@ public class AddressFormField extends FormField<Address> {
 
 	@Override
 	public void setLabelWidth(String width) {
-		// TODO Auto-generated method stub
-		
+		this.wrapper.getColumnFormatter().setWidth(0, width);
 	}
 
 }

@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.google.gwt.dom.client.Style.FontStyle;
+import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.user.client.ui.Label;
 
 import bigBang.definitions.client.dataAccess.InsurancePolicyBroker;
@@ -29,6 +30,7 @@ public class InsurancePolicySearchPanel extends SearchPanel<InsurancePolicyStub>
 		public Entry(InsurancePolicyStub policy){
 			super(policy);
 			setHeight("40px");
+			this.titleLabel.getElement().getStyle().setFontSize(11, Unit.PX);
 		}
 		
 		public <I extends Object> void setInfo(I info) {

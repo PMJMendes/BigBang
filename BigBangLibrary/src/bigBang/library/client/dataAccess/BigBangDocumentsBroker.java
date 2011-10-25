@@ -4,6 +4,7 @@ import java.util.Collection;
 
 import bigBang.definitions.client.dataAccess.DataBroker;
 import bigBang.definitions.client.response.ResponseHandler;
+import bigBang.definitions.shared.BigBangConstants;
 import bigBang.definitions.shared.Document;
 import bigBang.library.interfaces.ContactsService;
 import bigBang.library.interfaces.ContactsServiceAsync;
@@ -12,7 +13,7 @@ public class BigBangDocumentsBroker extends DataBroker<Document> implements Docu
 
 	public static class Util {
 		private static DocumentsBroker instance;
-		public DocumentsBroker getInstance(){
+		public static DocumentsBroker getInstance(){
 			if(instance == null){
 				instance = new BigBangDocumentsBroker();
 			}
@@ -24,6 +25,7 @@ public class BigBangDocumentsBroker extends DataBroker<Document> implements Docu
 	
 	public BigBangDocumentsBroker(){
 		this.service = ContactsService.Util.getInstance();
+		this.dataElementId = BigBangConstants.EntityIds.DOCUMENT;
 	}
 	
 	@Override

@@ -1,0 +1,20 @@
+package bigBang.module.insurancePolicyModule.client.shared;
+
+import bigBang.definitions.client.dataAccess.SortOrder;
+import bigBang.definitions.client.dataAccess.SortParameter;
+
+public class InsurancePolicySortParameter extends SortParameter {
+
+	private static final long serialVersionUID = 1L;
+
+	public static enum SortableField {
+		RELEVANCE
+	}
+	
+	public InsurancePolicySortParameter(){}
+	
+	public InsurancePolicySortParameter(SortableField field, SortOrder order){
+		this.field = field;
+		this.order = order;
+	}
+}

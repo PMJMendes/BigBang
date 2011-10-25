@@ -60,7 +60,6 @@ TypifiedListClient {
 		this.typifiedListBroker = BigBangTypifiedListBroker.Util.getInstance();
 		clearValues();
 
-		hasServices = listId != null && !listId.equals("");
 		label.setText(listDescription + ":");
 
 		wrapper.clear();
@@ -102,8 +101,6 @@ TypifiedListClient {
 
 			}
 		});
-		list.setReadOnly(!this.hasServices);
-		list.setEditable(this.hasServices);
 
 		expandImage.addClickHandler(new ClickHandler() {
 
@@ -127,6 +124,21 @@ TypifiedListClient {
 		wrapper.add(expandImage);
 		wrapper.add(mandatoryIndicatorLabel);
 		setFieldWidth("150px");
+
+		setListId(listId);
+	}
+
+	public void setListId(final String listId){
+		hasServices = listId != null && !listId.equals("");
+		this.list.setListId(listId);
+		list.setReadOnly(!this.hasServices);
+		list.setEditable(this.hasServices);
+
+		if(this.isAttached()){
+			typifiedListBroker.registerClient(listId, this);
+		}else{
+			this.typifiedListBroker.unregisterClient(listId, this);
+		}
 
 		this.addHandler(new AttachEvent.Handler() {
 
@@ -198,8 +210,11 @@ TypifiedListClient {
 			addItem(i);
 			exists |= i.id.equals(selectedItemId);
 		}
-		if(exists)
-			setValue(selectedItemId);
+		if(exists){
+			setValue(selectedItemId, true);
+		}else{
+			clear();
+		}
 	}
 
 	@Override

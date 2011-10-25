@@ -162,7 +162,7 @@ public class ListBoxFormField extends FormField<String> {
 
 	@Override
 	public void clear() {
-		setValue("");
+		setValue("", true);
 	}
 	
 	public void clearValues() {
