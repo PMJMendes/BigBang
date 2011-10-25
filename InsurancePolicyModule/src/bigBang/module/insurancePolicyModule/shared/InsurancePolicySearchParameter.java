@@ -9,5 +9,12 @@ public class InsurancePolicySearchParameter extends SearchParameter implements S
 	private static final long serialVersionUID = 1L;
 	
 	public String ownerId;
-
+	public String categoryId;
+	public String lineId;
+	public String subLineId;
+	public String insuranceAgencyId;
+	public String mediatorId;
+	public String managerId;
+	public boolean caseStudy;
+	
 }
