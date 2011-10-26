@@ -8,7 +8,11 @@ public class InsurancePolicySortParameter extends SortParameter {
 	private static final long serialVersionUID = 1L;
 
 	public static enum SortableField {
-		RELEVANCE
+		RELEVANCE,
+		NUMBER,
+		CATEGORY_LINE_SUBLINE,
+		CLIENT_NAME,
+		CLIENT_NUMBER
 	}
 	
 	public InsurancePolicySortParameter(){}
