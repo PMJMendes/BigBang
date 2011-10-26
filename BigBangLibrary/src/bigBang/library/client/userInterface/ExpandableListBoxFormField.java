@@ -22,6 +22,7 @@ import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.logical.shared.AttachEvent;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
+import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.HasVerticalAlignment;
 import com.google.gwt.user.client.ui.Image;
@@ -35,6 +36,8 @@ TypifiedListClient {
 	protected String selectedValueId;
 	protected int typifiedListDataVersion;
 	protected TypifiedListBroker typifiedListBroker;
+	protected HandlerRegistration attachHandler;
+	protected boolean locked = false;
 
 	protected boolean hasServices;
 
@@ -140,32 +143,43 @@ TypifiedListClient {
 			this.typifiedListBroker.unregisterClient(listId, this);
 		}
 
-		this.addHandler(new AttachEvent.Handler() {
+		if(this.attachHandler == null){
+			this.attachHandler = this.addHandler(new AttachEvent.Handler() {
 
-			@Override
-			public void onAttachOrDetach(AttachEvent event) {
-				if(event.isAttached()){
-					typifiedListBroker.registerClient(listId, ExpandableListBoxFormField.this);
-				}else{
-					typifiedListBroker.unregisterClient(listId, ExpandableListBoxFormField.this);
+				@Override
+				public void onAttachOrDetach(AttachEvent event) {
+					if(event.isAttached() && !ExpandableListBoxFormField.this.isAttached()){
+						typifiedListBroker.registerClient(listId, ExpandableListBoxFormField.this);
+					}else{
+						typifiedListBroker.unregisterClient(listId, ExpandableListBoxFormField.this);
+					}
 				}
-			}
-		}, AttachEvent.getType());
+			}, AttachEvent.getType());
+		}
 	}
 
 	public String getListId() {
 		return this.list.getListId();
 	}
-	
+
 	public void setEditable(boolean editable) {
 		this.list.setEditable(editable);
 	}
 
 	@Override
 	public void setReadOnly(boolean readonly) {
-		super.setReadOnly(readonly);
-		list.setReadOnly(readonly);
-		list.setSelectableEntries(!readonly);
+		if(!locked){
+			super.setReadOnly(readonly);
+			list.setReadOnly(readonly);
+			list.setSelectableEntries(!readonly);
+		}
+	}
+
+	public void lock(boolean locked){
+		if(locked){
+			setReadOnly(true);
+		}
+		this.locked = locked;
 	}
 
 	@Override
@@ -181,7 +195,9 @@ TypifiedListClient {
 
 	@Override
 	public void clear() {
-		list.clearSelection();
+		if(list != null){
+			list.clearSelection();
+		}
 		super.clear();
 	}
 
@@ -212,7 +228,7 @@ TypifiedListClient {
 		this.clearValues();
 		for (TipifiedListItem i : items) {
 			addItem(i);
-			exists |= i.id.equals(selectedItemId);
+			exists |= i.id.equalsIgnoreCase(selectedItemId);
 		}
 		if(exists){
 			setValue(selectedItemId, true);

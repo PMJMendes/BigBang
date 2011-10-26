@@ -168,6 +168,7 @@ public class ListBoxFormField extends FormField<String> {
 	public void clearValues() {
 		this.listBox.clear();
 		this.addItem("-", "");
+		clear();
 	}
 
 }

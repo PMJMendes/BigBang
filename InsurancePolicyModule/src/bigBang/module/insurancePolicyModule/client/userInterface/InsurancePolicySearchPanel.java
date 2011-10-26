@@ -88,7 +88,10 @@ public class InsurancePolicySearchPanel extends SearchPanel<InsurancePolicyStub>
 
 		Map<Enum<?>, String> sortOptions = new TreeMap<Enum<?>, String>(); 
 		sortOptions.put(InsurancePolicySortParameter.SortableField.RELEVANCE, "Relevância");
-		//TODO FJVC outros
+		sortOptions.put(InsurancePolicySortParameter.SortableField.NUMBER, "Número");
+		sortOptions.put(InsurancePolicySortParameter.SortableField.CATEGORY_LINE_SUBLINE, "Categoria/Ramo/Modalidade");
+		sortOptions.put(InsurancePolicySortParameter.SortableField.CLIENT_NUMBER, "Número de Cliente");
+		sortOptions.put(InsurancePolicySortParameter.SortableField.CLIENT_NAME, "Nome de Cliente");
 
 		filtersPanel = new FiltersPanel(sortOptions);
 		filtersPanel.addTypifiedListField(Filters.MANAGER, BigBangConstants.EntityIds.USER, "Gestor");

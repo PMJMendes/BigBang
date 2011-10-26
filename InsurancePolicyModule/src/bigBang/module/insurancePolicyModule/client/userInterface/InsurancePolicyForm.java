@@ -120,10 +120,14 @@ public class InsurancePolicyForm extends FormView<InsurancePolicy> {
 			}
 		});
 		
-		this.manager.setEditable(false);
+		this.manager.lock(true);
 		this.client.setEditable(false);
 	}
 
+	public void allowManagerEdition(boolean allow) {
+		this.manager.setEditable(allow);
+	}
+	
 	@Override
 	public InsurancePolicy getInfo() {
 		// TODO Auto-generated method stub
