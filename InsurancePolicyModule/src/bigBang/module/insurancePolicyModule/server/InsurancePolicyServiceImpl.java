@@ -13,6 +13,7 @@ import bigBang.definitions.shared.InsurancePolicy;
 import bigBang.definitions.shared.InsurancePolicyStub;
 import bigBang.definitions.shared.SearchParameter;
 import bigBang.definitions.shared.SearchResult;
+import bigBang.definitions.shared.SortOrder;
 import bigBang.definitions.shared.SortParameter;
 import bigBang.library.server.SearchServiceBase;
 import bigBang.library.shared.BigBangException;
@@ -265,6 +266,7 @@ public class InsurancePolicyServiceImpl
 	protected boolean buildSort(StringBuilder pstrBuffer, SortParameter pParam, SearchParameter[] parrParams)
 	{
 		InsurancePolicySortParameter lParam;
+		IEntity lrefClients;
 
 		if ( !(pParam instanceof InsurancePolicySortParameter) )
 			return false;
@@ -272,9 +274,70 @@ public class InsurancePolicyServiceImpl
 
 		if ( lParam.field == InsurancePolicySortParameter.SortableField.RELEVANCE )
 		{
-			if ( !buildRelevanceSort(pstrBuffer, parrParams) )
+			try
+			{
+				if ( !buildRelevanceSort(pstrBuffer, parrParams) )
+					return false;
+			}
+			catch (Throwable e)
+			{
 				return false;
+			}
 		}
+
+		if ( lParam.field == InsurancePolicySortParameter.SortableField.NUMBER )
+			pstrBuffer.append("[:Number]");
+
+		if ( lParam.field == InsurancePolicySortParameter.SortableField.CATEGORY_LINE_SUBLINE )
+		{
+			pstrBuffer.append("[:SubLine:Name]");
+			if ( lParam.order == SortOrder.ASC )
+				pstrBuffer.append(" ASC");
+			if ( lParam.order == SortOrder.DESC )
+				pstrBuffer.append(" DESC");
+			pstrBuffer.append(", [:SubLine:Line:Name]");
+			if ( lParam.order == SortOrder.ASC )
+				pstrBuffer.append(" ASC");
+			if ( lParam.order == SortOrder.DESC )
+				pstrBuffer.append(" DESC");
+			pstrBuffer.append(", [:SubLine:Line:Category:Name]");
+		}
+
+		if ( lParam.field == InsurancePolicySortParameter.SortableField.CLIENT_NAME )
+		{
+			pstrBuffer.append("(SELECT [:Name] FROM (");
+			try
+			{
+				lrefClients = Entity.GetInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), Constants.ObjID_Client));
+				pstrBuffer.append(lrefClients.SQLForSelectMulti());
+			}
+			catch (Throwable e)
+			{
+        		return false;
+			}
+			pstrBuffer.append(") [AuxClients] WHERE [:Process] = [Aux].[:Process:Parent])");
+		}
+
+		if ( lParam.field == InsurancePolicySortParameter.SortableField.CLIENT_NUMBER )
+		{
+			pstrBuffer.append("(SELECT [:Number] FROM (");
+			try
+			{
+				lrefClients = Entity.GetInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), Constants.ObjID_Client));
+				pstrBuffer.append(lrefClients.SQLForSelectMulti());
+			}
+			catch (Throwable e)
+			{
+        		return false;
+			}
+			pstrBuffer.append(") [AuxClients] WHERE [:Process] = [Aux].[:Process:Parent])");
+		}
+
+		if ( lParam.order == SortOrder.ASC )
+			pstrBuffer.append(" ASC");
+
+		if ( lParam.order == SortOrder.DESC )
+			pstrBuffer.append(" DESC");
 
 		return true;
 	}
@@ -322,7 +385,82 @@ public class InsurancePolicyServiceImpl
 	}
 
 	private boolean buildRelevanceSort(StringBuilder pstrBuffer, SearchParameter[] parrParams)
+		throws BigBangException
 	{
-		return false;
+		InsurancePolicySearchParameter lParam;
+		String lstrAux;
+		IEntity lrefClients;
+		boolean lbFound;
+		int i;
+
+		if ( (parrParams == null) || (parrParams.length == 0) )
+			return false;
+
+		lbFound = false;
+		for ( i = 0; i < parrParams.length; i++ )
+		{
+			if ( !(parrParams[i] instanceof InsurancePolicySearchParameter) )
+				continue;
+			lParam = (InsurancePolicySearchParameter) parrParams[i];
+			if ( (lParam.freeText == null) || (lParam.freeText.trim().length() == 0) )
+				continue;
+			lstrAux = lParam.freeText.trim().replace("'", "''").replace(" ", "%");
+			if ( lbFound )
+				pstrBuffer.append(" + ");
+			lbFound = true;
+			pstrBuffer.append("CASE WHEN [:Number] LIKE N'%").append(lstrAux).append("%' THEN ")
+					.append("-PATINDEX(N'%").append(lstrAux).append("%', [:Number]) ELSE ")
+					.append("CASE WHEN [:Process:Parent] IN (SELECT [:Process] FROM (");
+			try
+			{
+				lrefClients = Entity.GetInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), Constants.ObjID_Client));
+				pstrBuffer.append(lrefClients.SQLForSelectMulti());
+			}
+			catch (Throwable e)
+			{
+        		throw new BigBangException(e.getMessage(), e);
+			}
+			pstrBuffer.append(") [AuxClients] WHERE [:Name] LIKE N'%").append(lstrAux).append("%') THEN ")
+					.append("-1000*PATINDEX(N'%").append(lstrAux).append("%', (SELECT [:Name] FROM (");
+			try
+			{
+				pstrBuffer.append(lrefClients.SQLForSelectMulti());
+			}
+			catch (Throwable e)
+			{
+        		throw new BigBangException(e.getMessage(), e);
+			}
+			pstrBuffer.append(") [AuxClients] WHERE [:Process] = [Aux].[:Process:Parent])) ELSE ")
+					.append("CASE WHEN [:Process:Parent] IN (SELECT [:Process] FROM (");
+			try
+			{
+				lrefClients = Entity.GetInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), Constants.ObjID_Client));
+				pstrBuffer.append(lrefClients.SQLForSelectMulti());
+			}
+			catch (Throwable e)
+			{
+        		throw new BigBangException(e.getMessage(), e);
+			}
+			pstrBuffer.append(") [AuxClients] WHERE CAST([:Number] AS NVARCHAR(20)) LIKE N'%").append(lstrAux).append("%') THEN ")
+					.append("-1000000*PATINDEX(N'%").append(lstrAux).append("%', CAST((SELECT [:Number] FROM (");
+			try
+			{
+				pstrBuffer.append(lrefClients.SQLForSelectMulti());
+			}
+			catch (Throwable e)
+			{
+        		throw new BigBangException(e.getMessage(), e);
+			}
+			pstrBuffer.append(") [AuxClients] WHERE [:Process] = [Aux].[:Process:Parent]) AS NVARCHAR(20))) ELSE ")
+					.append("CASE WHEN [:SubLine:Name] LIKE N'%").append(lstrAux).append("%' THEN ")
+					.append("-1000000000*PATINDEX(N'%").append(lstrAux).append("%', [:SubLine:Name]) ELSE ")
+					.append("CASE WHEN [:SubLine:Line:Name] LIKE N'%").append(lstrAux).append("%' THEN ")
+					.append("-1000000000000*PATINDEX(N'%").append(lstrAux).append("%', [:SubLine:Line:Name]) ELSE ")
+					.append("CASE WHEN [:SubLine:Line:Category:Name] LIKE N'%").append(lstrAux).append("%' THEN ")
+					.append("-1000000000000000*PATINDEX(N'%").append(lstrAux).append("%', [:SubLine:Line:Category:Name]) ELSE ")
+					.append("0 END END END END END END");
+		}
+
+		return lbFound;
 	}
 }

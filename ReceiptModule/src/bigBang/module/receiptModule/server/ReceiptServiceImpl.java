@@ -1,55 +1,43 @@
 package bigBang.module.receiptModule.server;
 
+import java.util.UUID;
+
 import bigBang.definitions.shared.SearchParameter;
 import bigBang.definitions.shared.SearchResult;
 import bigBang.definitions.shared.SortParameter;
+import bigBang.library.server.SearchServiceBase;
 import bigBang.library.shared.BigBangException;
-import bigBang.library.shared.NewSearchResult;
-import bigBang.library.shared.SessionExpiredException;
 import bigBang.module.receiptModule.interfaces.ReceiptService;
 
-import com.google.gwt.user.server.rpc.RemoteServiceServlet;
-
-public class ReceiptServiceImpl extends RemoteServiceServlet implements ReceiptService {
-
+public class ReceiptServiceImpl
+	extends SearchServiceBase
+	implements ReceiptService
+{
 	private static final long serialVersionUID = 1L;
 
-	@Override
-	public NewSearchResult openSearch(SearchParameter[] parameters,
-			SortParameter[] sorts, int size) throws SessionExpiredException,
-			BigBangException {
-		// TODO Auto-generated method stub
+	protected UUID getObjectID()
+	{
 		return null;
 	}
 
-	@Override
-	public NewSearchResult openForOperation(String opId,
-			SearchParameter[] parameters, SortParameter[] sorts, int size)
-			throws SessionExpiredException, BigBangException {
-		// TODO Auto-generated method stub
+	protected String[] getColumns()
+	{
 		return null;
 	}
 
-	@Override
-	public NewSearchResult search(String workspaceId,
-			SearchParameter[] parameters, SortParameter[] sorts, int size)
-			throws SessionExpiredException, BigBangException {
-		// TODO Auto-generated method stub
+	protected boolean buildFilter(StringBuilder pstrBuffer, SearchParameter pParam)
+		throws BigBangException
+	{
+		return false;
+	}
+
+	protected boolean buildSort(StringBuilder pstrBuffer, SortParameter pParam, SearchParameter[] parrParams)
+	{
+		return false;
+	}
+
+	protected SearchResult buildResult(UUID pid, Object[] parrValues)
+	{
 		return null;
 	}
-
-	@Override
-	public SearchResult[] getResults(String workspaceId, int from, int size)
-			throws SessionExpiredException, BigBangException {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public void closeSearch(String workspaceId) throws SessionExpiredException,
-			BigBangException {
-		// TODO Auto-generated method stub
-		
-	}
-
 }

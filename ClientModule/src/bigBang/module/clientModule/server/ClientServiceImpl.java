@@ -814,6 +814,7 @@ public class ClientServiceImpl
 	private boolean buildRelevanceSort(StringBuilder pstrBuffer, SearchParameter[] parrParams)
 	{
 		ClientSearchParameter lParam;
+		String lstrAux;
 		boolean lbFound;
 		int i;
 
@@ -828,14 +829,13 @@ public class ClientServiceImpl
 			lParam = (ClientSearchParameter) parrParams[i];
 			if ( (lParam.freeText == null) || (lParam.freeText.trim().length() == 0) )
 				continue;
+			lstrAux = lParam.freeText.trim().replace("'", "''").replace(" ", "%");
 			if ( lbFound )
 				pstrBuffer.append(" + ");
 			lbFound = true;
-			pstrBuffer.append("CASE WHEN [:Name] LIKE N'%").append(lParam.freeText.trim().replace("'", "''").replace(" ", "%"))
-					.append("%' THEN -PATINDEX(N'%").append(lParam.freeText.trim().replace("'", "''").replace(" ", "%"))
+			pstrBuffer.append("CASE WHEN [:Name] LIKE N'%").append(lstrAux).append("%' THEN -PATINDEX(N'%").append(lstrAux)
 					.append("%', [:Name]) ELSE ")
-					.append("CASE WHEN [:Group:Name] LIKE N'%").append(lParam.freeText.trim().replace("'", "''").replace(" ", "%"))
-					.append("%' THEN -1000*PATINDEX(N'%").append(lParam.freeText.trim().replace("'", "''").replace(" ", "%"))
+					.append("CASE WHEN [:Group:Name] LIKE N'%").append(lstrAux).append("%' THEN -1000*PATINDEX(N'%").append(lstrAux)
 					.append("%', [:Group:Name]) ELSE 0 END END");
 		}
 
