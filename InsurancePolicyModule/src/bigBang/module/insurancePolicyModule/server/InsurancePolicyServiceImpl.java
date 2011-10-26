@@ -264,6 +264,7 @@ public class InsurancePolicyServiceImpl
 	}
 
 	protected boolean buildSort(StringBuilder pstrBuffer, SortParameter pParam, SearchParameter[] parrParams)
+		throws BigBangException
 	{
 		InsurancePolicySortParameter lParam;
 		IEntity lrefClients;
@@ -274,15 +275,8 @@ public class InsurancePolicyServiceImpl
 
 		if ( lParam.field == InsurancePolicySortParameter.SortableField.RELEVANCE )
 		{
-			try
-			{
-				if ( !buildRelevanceSort(pstrBuffer, parrParams) )
-					return false;
-			}
-			catch (Throwable e)
-			{
+			if ( !buildRelevanceSort(pstrBuffer, parrParams) )
 				return false;
-			}
 		}
 
 		if ( lParam.field == InsurancePolicySortParameter.SortableField.NUMBER )
@@ -313,7 +307,7 @@ public class InsurancePolicyServiceImpl
 			}
 			catch (Throwable e)
 			{
-        		return false;
+        		throw new BigBangException(e.getMessage(), e);
 			}
 			pstrBuffer.append(") [AuxClients] WHERE [:Process] = [Aux].[:Process:Parent])");
 		}
@@ -328,7 +322,7 @@ public class InsurancePolicyServiceImpl
 			}
 			catch (Throwable e)
 			{
-        		return false;
+        		throw new BigBangException(e.getMessage(), e);
 			}
 			pstrBuffer.append(") [AuxClients] WHERE [:Process] = [Aux].[:Process:Parent])");
 		}

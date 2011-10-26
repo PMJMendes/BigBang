@@ -363,6 +363,7 @@ public abstract class SearchServiceBase
 	protected abstract UUID getObjectID();
 	protected abstract String[] getColumns();
 	protected abstract boolean buildFilter(StringBuilder pstrBuffer, SearchParameter pParam) throws BigBangException;
-	protected abstract boolean buildSort(StringBuilder pstrBuffer, SortParameter pParam, SearchParameter[] parrParams);
+	protected abstract boolean buildSort(StringBuilder pstrBuffer, SortParameter pParam, SearchParameter[] parrParams)
+			throws BigBangException;
 	protected abstract SearchResult buildResult(UUID pid, java.lang.Object[] parrValues);
 }

@@ -766,6 +766,7 @@ public class ClientServiceImpl
 	}
 
 	protected boolean buildSort(StringBuilder pstrBuffer, SortParameter pParam, SearchParameter[] parrParams)
+		throws BigBangException
 	{
 		ClientSortParameter lParam;
 

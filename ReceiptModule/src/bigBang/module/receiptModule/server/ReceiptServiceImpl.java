@@ -32,6 +32,7 @@ public class ReceiptServiceImpl
 	}
 
 	protected boolean buildSort(StringBuilder pstrBuffer, SortParameter pParam, SearchParameter[] parrParams)
+		throws BigBangException
 	{
 		return false;
 	}
