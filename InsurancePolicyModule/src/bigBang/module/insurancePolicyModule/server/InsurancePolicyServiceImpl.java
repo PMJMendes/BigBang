@@ -193,7 +193,7 @@ public class InsurancePolicyServiceImpl
 		if ( (lParam.freeText != null) && (lParam.freeText.trim().length() > 0) )
 		{
 			lstrAux = lParam.freeText.trim().replace("'", "''").replace(" ", "%");
-			pstrBuffer.append(" AND ([:PolicyNumber] LIKE N'%").append(lstrAux).append("%'")
+			pstrBuffer.append(" AND ([:Number] LIKE N'%").append(lstrAux).append("%'")
 					.append(" OR [:SubLine:Name] LIKE N'%").append(lstrAux).append("%'")
 					.append(" OR [:SubLine:Line:Name] LIKE N'%").append(lstrAux).append("%'")
 					.append(" OR [:SubLine:Line:Category:Name] LIKE N'%").append(lstrAux).append("%'")
