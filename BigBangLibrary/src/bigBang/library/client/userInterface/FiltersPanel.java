@@ -7,6 +7,8 @@ import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.HasClickHandlers;
+import com.google.gwt.event.logical.shared.ValueChangeEvent;
+import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.HasValue;
 import com.google.gwt.user.client.ui.HasVerticalAlignment;
@@ -16,11 +18,12 @@ import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
+import bigBang.definitions.shared.BigBangConstants;
 import bigBang.definitions.shared.SortOrder;
 import bigBang.library.client.userInterface.view.View;
 
 public class FiltersPanel extends View {
-	
+
 	protected Button applyFiltersButton, clearFiltersButton;
 	protected ListBox sortListBox;
 	protected ListBox sortOrderList;
@@ -33,12 +36,12 @@ public class FiltersPanel extends View {
 		sortableOptions = sorts;
 		VerticalPanel wrapper = new VerticalPanel();
 		wrapper.setSize("100%", "100%");
-		
+
 		clearFiltersButton = new Button("Limpar filtros");
 		applyFiltersButton = new Button("Aplicar");
-		
+
 		ClickHandler filtersButtonsCH = new ClickHandler() {
-			
+
 			@Override
 			public void onClick(ClickEvent event) {
 				if(event.getSource() == clearFiltersButton)
@@ -47,31 +50,31 @@ public class FiltersPanel extends View {
 					applyFilters();
 			}
 		};
-		
+
 		clearFiltersButton.addClickHandler(filtersButtonsCH);
 		applyFiltersButton.addClickHandler(filtersButtonsCH);
-		
+
 		HorizontalPanel buttonsWrapper = new HorizontalPanel();
 		buttonsWrapper.setVerticalAlignment(HasVerticalAlignment.ALIGN_MIDDLE);
 		buttonsWrapper.setSpacing(5);
 		buttonsWrapper.add(clearFiltersButton);
 		buttonsWrapper.add(applyFiltersButton);
-		
+
 		wrapper.add(buttonsWrapper);
 
 		wrapper.add(new Label("Ordenar por:"));
-		
+
 		sortListBox = new ListBox();
 		sortListBox.setWidth("200px");
-		
+
 		for(Enum<?> key : sorts.keySet()){
 			sortListBox.addItem(sorts.get(key), key.toString());
 		}
-		
+
 		sortOrderList = new ListBox();
 		sortOrderList.addItem("Descendente", "DESC");
 		sortOrderList.addItem("Ascendente", "ASC");
-		
+
 		HorizontalPanel sortFieldsWrapper = new HorizontalPanel();
 		sortFieldsWrapper.setVerticalAlignment(HasVerticalAlignment.ALIGN_MIDDLE);
 		sortFieldsWrapper.setSpacing(5);
@@ -81,7 +84,7 @@ public class FiltersPanel extends View {
 		wrapper.add(sortFieldsWrapper);
 
 		wrapper.add(new Label("Filtrar por:"));
-		
+
 		filtersWrapper = new VerticalPanel();
 		filtersWrapper.setVerticalAlignment(HasVerticalAlignment.ALIGN_MIDDLE);
 		filtersWrapper.setSpacing(5);
@@ -91,7 +94,7 @@ public class FiltersPanel extends View {
 		ScrollPanel mainWrapper = new ScrollPanel(wrapper);
 		mainWrapper.setSize("100%", "100%");
 		mainWrapper.getElement().getStyle().setMarginBottom(10, Unit.PX);
-		
+
 		initWidget(mainWrapper);
 	}
 
@@ -111,28 +114,52 @@ public class FiltersPanel extends View {
 	public HasClickHandlers getClearButton(){
 		return this.clearFiltersButton;
 	}
-	
+
 	public void addTextField(Enum<?> id, String description){
 		TextBoxFormField field = new TextBoxFormField(description);
 		field.setFieldWidth("200px");
 		filters.put(id, field);
 		filtersWrapper.add(field);
 	}
-	
-	public void addTypifiedListField(Enum<?> id, String listId, String description) {
-		ExpandableListBoxFormField field = new ExpandableListBoxFormField(listId, description);
+
+	public void addTypifiedListField(Enum<?> id, String listId, String description){
+		addTypifiedListField(id, listId, description, null);
+	}
+
+	public void addTypifiedListField(Enum<?> id, final String listId, String description, Enum<?> dependencyId) {
+		final ExpandableListBoxFormField field = dependencyId != null ?  new ExpandableListBoxFormField(description) : new ExpandableListBoxFormField(listId, description);
+		if(dependencyId != null) {
+			final ExpandableListBoxFormField dependencyField = (ExpandableListBoxFormField) this.filters.get(dependencyId);
+			dependencyField.addValueChangeHandler(new ValueChangeHandler<String>() {
+
+				@Override
+				public void onValueChange(ValueChangeEvent<String> event) {
+					if(event.getValue() == null || event.getValue().isEmpty()){
+						field.clearValues();
+					}else{
+						field.setListId(listId+"/"+event.getValue());
+					}
+				}
+			});
+		}
 		field.setFieldWidth("200px");
 		filters.put(id, field);
 		filtersWrapper.add(field);
 	} 
-	
+
 	public void addDateField(Enum<?> id, String description) {
 		DatePickerFormField field = new DatePickerFormField(description);
 		field.setFieldWidth("200px");
 		filters.put(id, field);
 		filtersWrapper.add(field);
 	}
-	
+
+	public void addCheckBoxField(Enum<?> id, String description){
+		CheckBoxFormField field = new CheckBoxFormField(description);
+		filters.put(id, field);
+		filtersWrapper.add(field);
+	}
+
 	public Object getFilterValue(Enum<?> id){
 		Object value = this.filters.get(id).getValue();
 		if(value instanceof String && value.equals("")){
@@ -144,11 +171,11 @@ public class FiltersPanel extends View {
 	public SortOrder getSortingOrder(){
 		return this.sortOrderList.getValue(this.sortOrderList.getSelectedIndex()).equals("DESC") ? SortOrder.DESC : SortOrder.ASC;
 	}
-	
+
 	public void applyFilters(){
 		//TODO
 	}
-	
+
 	public void clearFilters(){
 		for(HasValue<?> v : this.filters.values()){
 			v.setValue(null);

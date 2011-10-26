@@ -147,6 +147,10 @@ public class TypifiedListManagementPanel extends FilterableList<TipifiedListItem
 
 		showFilterField(false);
 	}
+	
+	public String getListId(){
+		return this.listId;
+	}
 
 	private void addNew(){	
 		String value = valueTextBox.getValue();

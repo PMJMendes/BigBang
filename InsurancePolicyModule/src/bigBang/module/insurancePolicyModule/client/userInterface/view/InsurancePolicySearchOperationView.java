@@ -33,7 +33,6 @@ public class InsurancePolicySearchOperationView extends View implements Insuranc
 	protected InsurancePolicyForm form;
 	protected ContactsPreviewList contactsList;
 	protected DocumentsPreviewList documentsList;
-	protected List<InsuredObject> securedObjectsList;
 	protected InsurancePolicyOperationsToolBar operationsToolBar;
 	protected ActionInvokedEventHandler<Action> actionHandler;
 
@@ -94,13 +93,13 @@ public class InsurancePolicySearchOperationView extends View implements Insuranc
 		SplitLayoutPanel formWrapper = new SplitLayoutPanel();
 		formWrapper.setSize("100%", "100%");
 				
-		securedObjectsList = new List<InsuredObject>();
-		securedObjectsList.setHeaderWidget(new ListHeader("Objectos Seguros"));
-		
+//		securedObjectsList = new List<InsuredObject>();
+//		securedObjectsList.setHeaderWidget(new ListHeader("Objectos Seguros"));
+//		
 		form = new InsurancePolicyForm();
 		form.setSize("100%", "100%");
 		
-		formWrapper.addSouth(this.securedObjectsList, 300);
+//		formWrapper.addSouth(this.securedObjectsList, 300);
 		formWrapper.add(form);
 		
 		toolBarFormContainer.add(operationsToolBar);

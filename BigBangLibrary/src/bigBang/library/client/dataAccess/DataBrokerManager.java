@@ -39,10 +39,10 @@ public class DataBrokerManager {
 	 */
 	public void registerBrokerImplementation(String dataElementId, DataBroker<?> broker){
 		if(hasBrokerImplementationForDataElement(dataElementId)) {
-			throw new RuntimeException("Could not register the broker implementation. There is already a broker implementation for the data element with id: " + dataElementId);
+			GWT.log("Ignoring broker implementation. There is already a broker implementation for the data element with id: " + dataElementId);
+		}else{
+			brokers.put(dataElementId, broker);
 		}
-		
-		brokers.put(dataElementId, broker);
 	}
 	
 	/**

@@ -153,6 +153,10 @@ TypifiedListClient {
 		}, AttachEvent.getType());
 	}
 
+	public String getListId() {
+		return this.list.getListId();
+	}
+	
 	public void setEditable(boolean editable) {
 		this.list.setEditable(editable);
 	}
@@ -203,7 +207,7 @@ TypifiedListClient {
 
 	@Override
 	public void setTypifiedListItems(List<TipifiedListItem> items) {
-		String selectedItemId = getValue();
+		String selectedItemId = this.selectedValueId;
 		boolean exists = false;
 		this.clearValues();
 		for (TipifiedListItem i : items) {
@@ -226,8 +230,10 @@ TypifiedListClient {
 	@Override
 	public void addItem(TipifiedListItem item) {
 		super.addItem(item.value, item.id);
-		if(selectedValueId != null && item.id.equalsIgnoreCase(selectedValueId))
-			setValue(selectedValueId, false);
+		if(selectedValueId != null && item.id.equalsIgnoreCase(selectedValueId)){
+			GWT.log("setting the value " + item.id + " - " + item.value);
+			setValue(item.id, false);
+		}
 	}
 
 	@Override
