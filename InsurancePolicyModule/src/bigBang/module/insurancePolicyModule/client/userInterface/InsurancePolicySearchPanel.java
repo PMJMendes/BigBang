@@ -26,6 +26,7 @@ import bigBang.library.client.userInterface.FiltersPanel;
 import bigBang.library.client.userInterface.ListEntry;
 import bigBang.library.client.userInterface.view.SearchPanel;
 import bigBang.module.insurancePolicyModule.client.shared.InsurancePolicySortParameter;
+import bigBang.module.insurancePolicyModule.client.shared.InsurancePolicySortParameter.SortableField;
 import bigBang.module.insurancePolicyModule.shared.InsurancePolicySearchParameter;
 
 public class InsurancePolicySearchPanel extends SearchPanel<InsurancePolicyStub> implements InsurancePolicyDataBrokerClient {
@@ -134,7 +135,7 @@ public class InsurancePolicySearchPanel extends SearchPanel<InsurancePolicyStub>
 			parameter
 		};
 
-		InsurancePolicySortParameter sort = new InsurancePolicySortParameter(InsurancePolicySortParameter.SortableField.RELEVANCE, SortOrder.DESC);
+		InsurancePolicySortParameter sort = new InsurancePolicySortParameter((SortableField) filtersPanel.getSelectedSortableField(), filtersPanel.getSortingOrder());
 
 		SortParameter[] sorts = new SortParameter[]{
 				sort
