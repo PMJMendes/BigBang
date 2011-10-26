@@ -10,7 +10,8 @@ public class ManagerTransfer
 	{
 		ACCEPTED,
 		CANCELED,
-		PENDING
+		PENDING,
+		DIRECT
 	}
 
 	private static final long serialVersionUID = 1L;

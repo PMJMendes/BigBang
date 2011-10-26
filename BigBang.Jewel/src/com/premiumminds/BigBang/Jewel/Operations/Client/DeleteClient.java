@@ -52,13 +52,14 @@ public class DeleteClient
 		try
 		{
 			lobjOp = new ExternDeleteClient(GeneralSystem.GetAnyInstance(Engine.getCurrentNameSpace()).GetProcessID());
-			lobjOp.mobjData = new ClientData();
-			lobjOp.mobjData.mid = midClient;
-			TriggerOp(lobjOp);
 		}
 		catch (Throwable e)
 		{
 			throw new JewelPetriException(e.getMessage(), e);
 		}
+
+		lobjOp.mobjData = new ClientData();
+		lobjOp.mobjData.mid = midClient;
+		TriggerOp(lobjOp);
 	}
 }

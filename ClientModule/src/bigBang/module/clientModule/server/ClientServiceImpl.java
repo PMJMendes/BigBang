@@ -53,8 +53,9 @@ import com.premiumminds.BigBang.Jewel.Operations.Client.CreateMgrXFer;
 import com.premiumminds.BigBang.Jewel.Operations.Client.CreatePolicy;
 import com.premiumminds.BigBang.Jewel.Operations.Client.DeleteClient;
 import com.premiumminds.BigBang.Jewel.Operations.Client.ManageClientData;
-import com.premiumminds.BigBang.Jewel.Operations.Client.MergeWithOther;
+import com.premiumminds.BigBang.Jewel.Operations.Client.MergeIntoAnother;
 import com.premiumminds.BigBang.Jewel.Operations.General.CreateClient;
+import com.premiumminds.BigBang.Jewel.Operations.MgrXFer.AcceptXFer;
 
 public class ClientServiceImpl
 	extends SearchServiceBase
@@ -322,7 +323,7 @@ public class ClientServiceImpl
 		{
 			transfer.id = null;
 			transfer.processId = null;
-			transfer.status = ManagerTransfer.Status.ACCEPTED;
+			transfer.status = ManagerTransfer.Status.DIRECT;
 		}
 		else
 		{
@@ -341,32 +342,36 @@ public class ClientServiceImpl
 		return null;
 	}
 
-	public Client mergeWithClient(String originalId, Client receptor)
+	public Client mergeWithClient(String originalId, String receptorId)
 		throws SessionExpiredException, BigBangException
 	{
-		MergeWithOther lopMWO;
+		com.premiumminds.BigBang.Jewel.Objects.Client lobjClient;
+		MergeIntoAnother lopMIA;
 
 		if ( Engine.getCurrentUser() == null )
 			throw new SessionExpiredException();
 
-		lopMWO = new MergeWithOther(UUID.fromString(receptor.processId));
-		lopMWO.mobjData = new ClientData();
-		lopMWO.mobjData.mid = UUID.fromString(originalId);
 		try
 		{
-			lopMWO.Execute();
+			lobjClient = com.premiumminds.BigBang.Jewel.Objects.Client.GetInstance(Engine.getCurrentNameSpace(),
+					UUID.fromString(originalId));
+
+			lopMIA = new MergeIntoAnother(lobjClient.GetProcessID());
+			lopMIA.midClientDestination = UUID.fromString(receptorId);
+			lopMIA.Execute();
 		}
-		catch (JewelPetriException e)
+		catch (Throwable e)
 		{
 			throw new BigBangException(e.getMessage(), e);
 		}
 
-		return receptor;
+		return getClient(receptorId);
 	}
 
-	public InsurancePolicy createPolicy(Client client, InsurancePolicy policy)
+	public InsurancePolicy createPolicy(String clientId, InsurancePolicy policy)
 		throws SessionExpiredException, BigBangException
 	{
+		com.premiumminds.BigBang.Jewel.Objects.Client lobjClient;
 		CreatePolicy lopCP;
 
 		if ( Engine.getCurrentUser() == null )
@@ -374,7 +379,10 @@ public class ClientServiceImpl
 
 		try
 		{
-			lopCP = new CreatePolicy(UUID.fromString(client.processId));
+			lobjClient = com.premiumminds.BigBang.Jewel.Objects.Client.GetInstance(Engine.getCurrentNameSpace(),
+					UUID.fromString(clientId));
+
+			lopCP = new CreatePolicy(lobjClient.GetProcessID());
 			lopCP.mobjData = new PolicyData();
 
 			lopCP.mobjData.mid = null;
@@ -483,11 +491,13 @@ public class ClientServiceImpl
 		Calendar ldtAux2;
 		UUID lidManager;
 		SQLServer ldb;
-		int i;
 		MgrXFer lobjXFer;
-		IScript lobjScript;
 		IProcess lobjProc;
+		UUID [] larrProcessIDs;
+		int i;
+		IScript lobjScript;
 		CreateMgrXFer lobjCMX;
+		AcceptXFer lopAX;
 		AgendaItem lobjItem;
 
 		if ( Engine.getCurrentUser() == null )
@@ -523,37 +533,42 @@ public class ClientServiceImpl
 
 		lobjXFer = null;
 		lobjProc = null;
+		larrProcessIDs = new UUID[transfer.managedProcessIds.length];
+		for ( i = 0 ; i < larrProcessIDs.length; i++ )
+			larrProcessIDs[i] = UUID.fromString(transfer.managedProcessIds[i]);
+
 		try
 		{
-			if ( !lidManager.equals(Engine.getCurrentUser()) )
-			{
-				lobjXFer = MgrXFer.GetInstance(Engine.getCurrentNameSpace(), (UUID)null);
-				lobjXFer.setAt(1, null);
-				lobjXFer.setAt(2, lidManager);
-				lobjXFer.setAt(3, "Transferência de Gestor de Cliente");
-				lobjXFer.setAt(4, Engine.getCurrentUser());
-				lobjXFer.setAt(5, true);
-				lobjXFer.setAt(6, Constants.ObjID_Client);
-				lobjXFer.SaveToDb(ldb);
+			lobjXFer = MgrXFer.GetInstance(Engine.getCurrentNameSpace(), (UUID)null);
+			lobjXFer.setAt(1, null);
+			lobjXFer.setAt(2, lidManager);
+			lobjXFer.setAt(3, "Transferência de Gestor de Cliente");
+			lobjXFer.setAt(4, Engine.getCurrentUser());
+			lobjXFer.setAt(5, true);
+			lobjXFer.setAt(6, Constants.ObjID_Client);
+			lobjXFer.SaveToDb(ldb);
+			lobjXFer.InitNew(larrProcessIDs, ldb);
 
-				lobjScript = PNScript.GetInstance(Engine.getCurrentNameSpace(), Constants.ProcID_MgrXFer);
-				lobjProc = lobjScript.CreateInstance(Engine.getCurrentNameSpace(), lobjXFer.getKey(), null, ldb);
-			}
+			lobjScript = PNScript.GetInstance(Engine.getCurrentNameSpace(), Constants.ProcID_MgrXFer);
+			lobjProc = lobjScript.CreateInstance(Engine.getCurrentNameSpace(), lobjXFer.getKey(), null, ldb);
 
 			for ( i = 0; i < transfer.managedProcessIds.length; i++ )
 			{
 				lobjCMX = new CreateMgrXFer(UUID.fromString(transfer.managedProcessIds[i]));
 				lobjCMX.midNewManager = lidManager;
 				lobjCMX.mbMassTransfer = true;
-				if ( !lidManager.equals(Engine.getCurrentUser()) )
-				{
-					lobjCMX.midTransferObject = lobjXFer.getKey();
-					lobjCMX.midCreatedSubproc = lobjProc.getKey();
-				}
+				lobjCMX.midTransferObject = lobjXFer.getKey();
+				lobjCMX.midCreatedSubproc = lobjProc.getKey();
 				lobjCMX.Execute(ldb);
 			}
 
-			if ( !lidManager.equals(Engine.getCurrentUser()) )
+			if ( lidManager.equals(Engine.getCurrentUser()) )
+			{
+				lopAX = new AcceptXFer(lobjProc.getKey());
+				lopAX.mbMassTransfer = true;
+				lopAX.Execute(ldb);
+			}
+			else
 			{
 				lobjItem = AgendaItem.GetInstance(Engine.getCurrentNameSpace(), (UUID)null);
 				lobjItem.setAt(0, "Transferência de Gestor de Cliente");
@@ -608,7 +623,7 @@ public class ClientServiceImpl
 		{
 			transfer.id = null;
 			transfer.processId = null;
-			transfer.status = ManagerTransfer.Status.ACCEPTED;
+			transfer.status = ManagerTransfer.Status.DIRECT;
 		}
 		else
 		{

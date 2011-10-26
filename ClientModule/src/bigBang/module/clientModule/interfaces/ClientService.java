@@ -37,13 +37,13 @@ public interface ClientService
 
 	public Client editClient(Client client) throws SessionExpiredException, BigBangException;
 
-	public Client mergeWithClient(String originalId, Client receptor) throws SessionExpiredException, BigBangException; //Returns the altered receptor client
+	public Client mergeWithClient(String clientId, String receptorId) throws SessionExpiredException, BigBangException; //Returns the altered receptor client
 
 	public InfoOrDocumentRequest createInfoOrDocumentRequest(InfoOrDocumentRequest request) throws SessionExpiredException, BigBangException;
 	public ManagerTransfer createManagerTransfer(ManagerTransfer transfer) throws SessionExpiredException, BigBangException;
 
 	public QuoteRequest createQuoteRequest(String clientId, QuoteRequest request) throws SessionExpiredException, BigBangException;
-	public InsurancePolicy createPolicy(Client client, InsurancePolicy policy) throws SessionExpiredException, BigBangException;
+	public InsurancePolicy createPolicy(String clientId, InsurancePolicy policy) throws SessionExpiredException, BigBangException;
 	public RiskAnalysis createRiskAnalisys(String clientId, RiskAnalysis riskAnalisys) throws SessionExpiredException, BigBangException;
 	public Casualty createCasualty(String clientId, Casualty casualty) throws SessionExpiredException, BigBangException;
 

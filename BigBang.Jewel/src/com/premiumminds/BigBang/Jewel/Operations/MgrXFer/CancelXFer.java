@@ -114,7 +114,7 @@ public class CancelXFer
 			mlngCount = 1;
 		}
 
-		for ( i = 0; i < larrProcs.length; i++ )
+		for ( i = 0; i < mlngCount; i++ )
 		{
 			TriggerOp(GetRunTrigger(lobjXFer.GetOuterObjectType(), larrProcs[i]));
 		}

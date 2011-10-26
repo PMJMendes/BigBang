@@ -27,9 +27,9 @@ public class CreateMgrXFer
 	public boolean mbMassTransfer;
 	public UUID midTransferObject;
 	public UUID midCreatedSubproc;
-	public UUID midOldManager;
 	public boolean mbDirectTransfer;
-	public UUID midClient;
+	private UUID midOldManager;
+	private UUID midClient;
 
 	public CreateMgrXFer(UUID pidProcess)
 	{
@@ -66,7 +66,7 @@ public class CreateMgrXFer
 		lstrBuffer.append(pstrLineBreak).append("Gestor anterior: ");
 		try
 		{
-			lobjUser = User.GetInstance(Engine.getCurrentNameSpace(), midNewManager);
+			lobjUser = User.GetInstance(Engine.getCurrentNameSpace(), midOldManager);
 			lstrBuffer.append(lobjUser.getDisplayName()).append(".");
 		}
 		catch (Throwable e)
@@ -106,24 +106,23 @@ public class CreateMgrXFer
 		if ( midNewManager == null )
 			throw new JewelPetriException("Erro: Novo gestor não indicado.");
 		midOldManager = GetProcess().GetManagerID();
-		if ( !this.mbMassTransfer && midNewManager.equals(midOldManager) )
-			throw new JewelPetriException("Erro: O gestor indicado já é o gestor deste cliente.");
 
 		ldtAux = new Timestamp(new java.util.Date().getTime());
     	ldtAux2 = Calendar.getInstance();
     	ldtAux2.setTimeInMillis(ldtAux.getTime());
     	ldtAux2.add(Calendar.DAY_OF_MONTH, 7);
 
-		if ( midNewManager.equals(Engine.getCurrentUser()) )
-		{
-			if ( midNewManager.equals(midOldManager) )
-				return;
-			mbDirectTransfer = true;
-			midClient = GetProcess().GetData().getKey();
-			GetProcess().SetManagerID(midNewManager, pdb);
-			TriggerOp(new TriggerAllowUndoMgrXFer(GetProcess().getKey()));
-	    	if ( !mbMassTransfer )
-	    	{
+    	if ( !mbMassTransfer )
+    	{
+    		if ( midNewManager.equals(midOldManager) )
+    			throw new JewelPetriException("Erro: O gestor indicado já é o gestor deste cliente.");
+
+    		if ( midNewManager.equals(Engine.getCurrentUser()) )
+    		{
+    			mbDirectTransfer = true;
+    			midClient = GetProcess().GetData().getKey();
+    			GetProcess().SetManagerID(midNewManager, pdb);
+    			TriggerOp(new TriggerAllowUndoMgrXFer(GetProcess().getKey()));
 	    		try
 	    		{
 					lobjItem = AgendaItem.GetInstance(Engine.getCurrentNameSpace(), (UUID)null);
@@ -140,13 +139,10 @@ public class CreateMgrXFer
 	    		{
 	    			throw new JewelPetriException(e.getMessage(), e);
 	    		}
-	    	}
-			return;
-		}
+    			return;
+    		}
 
-		mbDirectTransfer = false;
-    	if ( !mbMassTransfer )
-    	{
+    		mbDirectTransfer = false;
     		try
     		{
     			lobjXFer = MgrXFer.GetInstance(Engine.getCurrentNameSpace(), (UUID)null);
@@ -189,12 +185,16 @@ public class CreateMgrXFer
 
         	midTransferObject = lobjXFer.getKey();
 			midCreatedSubproc = lobjProc.getKey();
+			
+			return;
 		}
+
+		mbDirectTransfer = false;
 	}
 
 	public String UndoDesc(String pstrLineBreak)
 	{
-		if ( !mbDirectTransfer )
+		if ( mbMassTransfer || !mbDirectTransfer )
 			return "N/A";
 
 		return "Será reposto o gestor anterior.";
@@ -205,7 +205,7 @@ public class CreateMgrXFer
 		StringBuilder lstrBuffer;
 		IUser lobjUser;
 		
-		if ( !mbDirectTransfer )
+		if ( mbMassTransfer || !mbDirectTransfer )
 			return "N/A";
 
 		lstrBuffer = new StringBuilder();
@@ -227,9 +227,15 @@ public class CreateMgrXFer
 	protected void Undo(SQLServer pdb)
 		throws JewelPetriException
 	{
+		if ( mbMassTransfer )
+			throw new JewelPetriException("Inesperado: Não pode desfazer individualmente transferências de gestor de " +
+					"processos transferidos em grupo.");
+
 		if ( !mbDirectTransfer )
 			throw new JewelPetriException("Inesperado: Não pode desfazer transferências de gestor para terceiros gestores.");
 
+		if ( midNewManager.equals(midOldManager) )
+			return;
 		GetProcess().SetManagerID(midOldManager, pdb);
 	}
 
@@ -251,6 +257,6 @@ public class CreateMgrXFer
 
 	public boolean LocalCanUndo()
 	{
-		return mbDirectTransfer;
+		return mbDirectTransfer && !mbMassTransfer;
 	}
 }

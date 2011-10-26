@@ -25,26 +25,27 @@ import com.premiumminds.BigBang.Jewel.Objects.Document;
 import com.premiumminds.BigBang.Jewel.Operations.ContactOps;
 import com.premiumminds.BigBang.Jewel.Operations.DocOps;
 
-public class MergeWithOther
+public class ExternMergeOtherHere
 	extends UndoableOperation
 {
 	private static final long serialVersionUID = 1L;
 
-	public ClientData mobjData;
-	public ContactOps mobjContactOps;
-	public DocOps mobjDocOps;
-	public UUID[] marrSubProcIDs;
-	public UUID midNewClient;
-	public UUID midNewProcess;
+	public UUID midClientSource;
+	private ClientData mobjSource;
+	private ContactOps mobjContactOps;
+	private DocOps mobjDocOps;
+	private UUID[] marrSubProcIDs;
+	private UUID midNewClient;
+	private UUID midNewProcess;
 
-	public MergeWithOther(UUID pidProcess)
+	public ExternMergeOtherHere(UUID pidProcess)
 	{
 		super(pidProcess);
 	}
 
 	protected UUID OpID()
 	{
-		return Constants.OPID_MergeOtherClient;
+		return Constants.OPID_ExternMergeOtherHere;
 	}
 
 	public String ShortDesc()
@@ -61,7 +62,7 @@ public class MergeWithOther
 		lstrResult.append("O cliente descrito abaixo foi considerado repetido com este cliente e foi fundido neste.")
 				.append(pstrLineBreak);
 
-		mobjData.Describe(lstrResult, pstrLineBreak);
+		mobjSource.Describe(lstrResult, pstrLineBreak);
 
 		if ( mobjContactOps != null )
 			mobjContactOps.LongDesc(lstrResult, pstrLineBreak);
@@ -74,7 +75,7 @@ public class MergeWithOther
 
 	public UUID GetExternalProcess()
 	{
-		return mobjData.midProcess;
+		return mobjSource.midProcess;
 	}
 
 	protected void Run(SQLServer pdb)
@@ -98,12 +99,12 @@ public class MergeWithOther
 			lrefClients = Entity.GetInstance(Engine.FindEntity(Engine.getCurrentNameSpace(),
 					Constants.ObjID_Client));
 
-			lobjAux = Client.GetInstance(Engine.getCurrentNameSpace(), mobjData.mid);
-			mobjData.FromObject(lobjAux);
-			mobjData.mobjPrevValues = null;
+			lobjAux = Client.GetInstance(Engine.getCurrentNameSpace(), midClientSource);
+			mobjSource.FromObject(lobjAux);
+			mobjSource.mobjPrevValues = null;
 
 			lobjProcess = (PNProcess)Engine.GetWorkInstance(Engine.FindEntity(Engine.getCurrentNameSpace(),
-					Jewel.Petri.Constants.ObjID_PNProcess), mobjData.midProcess);
+					Jewel.Petri.Constants.ObjID_PNProcess), mobjSource.midProcess);
 			larrSubProcs = lobjProcess.GetCurrentSubProcesses();
 
 			if ( (larrSubProcs == null) || (larrSubProcs.length == 0) )
@@ -178,7 +179,7 @@ public class MergeWithOther
 				mobjDocOps.RunSubOp(pdb, null);
 			}
 
-			lrefClients.Delete(pdb, mobjData.mid);
+			lrefClients.Delete(pdb, mobjSource.mid);
 		}
 		catch (Throwable e)
 		{
@@ -188,7 +189,8 @@ public class MergeWithOther
 
 	public String UndoDesc(String pstrLineBreak)
 	{
-		return "O cliente eliminado será reposto.";
+		return "Os dois clientes serão novamente separados. Os processos do cliente antigo serão repostos " +
+				"e o seu histórico de operações será recuperado.";
 	}
 
 	public String UndoLongDesc(String pstrLineBreak)
@@ -199,7 +201,7 @@ public class MergeWithOther
 		lstrResult.append("Foi reposto o seguinte cliente:");
 		lstrResult.append(pstrLineBreak);
 
-		mobjData.Describe(lstrResult, pstrLineBreak);
+		mobjSource.Describe(lstrResult, pstrLineBreak);
 
 		if ( mobjContactOps != null )
 			mobjContactOps.UndoLongDesc(lstrResult, pstrLineBreak);
@@ -213,31 +215,58 @@ public class MergeWithOther
 	protected void Undo(SQLServer pdb)
 		throws JewelPetriException
 	{
+		UUID lidProcesses;
 		Client lobjAux;
 		PNProcess lobjProcess;
+		PNProcess lobjSubProcAux;
+		int i;
+		ExternResumeClient lopERC;
 
 		try
 		{
-			lobjAux = Client.GetInstance(Engine.getCurrentNameSpace(), (UUID)null);
-			mobjData.ToObject(lobjAux);
-			lobjAux.SaveToDb(pdb);
-			mobjData.mid = lobjAux.getKey();
+			lidProcesses = Engine.FindEntity(Engine.getCurrentNameSpace(), Jewel.Petri.Constants.ObjID_PNProcess);
 
-			lobjProcess = (PNProcess)Engine.GetWorkInstance(Engine.FindEntity(Engine.getCurrentNameSpace(),
-					Jewel.Petri.Constants.ObjID_PNProcess), mobjData.midProcess);
+			lobjAux = Client.GetInstance(Engine.getCurrentNameSpace(), (UUID)null);
+			mobjSource.ToObject(lobjAux);
+			lobjAux.SaveToDb(pdb);
+			mobjSource.mid = lobjAux.getKey();
+
+			lobjProcess = (PNProcess)Engine.GetWorkInstance(lidProcesses, mobjSource.midProcess);
 			lobjProcess.setAt(1, lobjAux.getKey());
 			lobjProcess.setAt(4, true);
 			lobjProcess.SaveToDb(pdb);
 
 			if ( mobjContactOps != null )
+			{
+				for ( i = 0; i < mobjContactOps.marrModify.length; i++ )
+					mobjContactOps.marrModify[i].mobjPrevValues.midOwnerId = lobjAux.getKey();
 				mobjContactOps.UndoSubOp(pdb, lobjAux.getKey());
+			}
+
 			if ( mobjDocOps != null )
+			{
+				for ( i = 0; i < mobjDocOps.marrModify.length; i++ )
+					mobjDocOps.marrModify[i].mobjPrevValues.midOwnerId = lobjAux.getKey();
 				mobjDocOps.UndoSubOp(pdb, lobjAux.getKey());
+			}
+
+			if ( marrSubProcIDs != null )
+			{
+				for ( i = 0; i < marrSubProcIDs.length; i++ )
+				{
+					lobjSubProcAux = (PNProcess)Engine.GetWorkInstance(lidProcesses, marrSubProcIDs[i]);
+					lobjSubProcAux.SetParentProcId(lobjProcess.getKey(), pdb);
+				}
+			}
 		}
 		catch (Throwable e)
 		{
 			throw new JewelPetriException(e.getMessage(), e);
 		}
+
+		lopERC = new ExternResumeClient(lobjProcess.getKey());
+		lopERC.midOtherClientProc = GetProcess().getKey();
+		TriggerOp(lopERC);
 	}
 
 	public UndoSet[] GetSets()
@@ -263,7 +292,7 @@ public class MergeWithOther
 		larrResult[0].marrDeleted = new UUID[0];
 		larrResult[0].marrCreated = new UUID[1];
 		larrResult[0].marrChanged = new UUID[1];
-		larrResult[0].marrCreated[0] = mobjData.mid;
+		larrResult[0].marrCreated[0] = mobjSource.mid;
 		larrResult[0].marrChanged[0] = midNewClient; 
 		i = 1;
 

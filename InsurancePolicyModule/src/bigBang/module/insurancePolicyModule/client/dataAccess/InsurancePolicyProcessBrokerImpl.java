@@ -104,30 +104,17 @@ public class InsurancePolicyProcessBrokerImpl extends DataBroker<InsurancePolicy
 
 	@Override
 	public void removePolicy(final String policyId, final ResponseHandler<String> handler) {
-		this.getPolicy(policyId, new ResponseHandler<InsurancePolicy>() {
+		InsurancePolicyProcessBrokerImpl.this.service.deletePolicy(policyId, new BigBangAsyncCallback<Void>() {
 
 			@Override
-			public void onResponse(final InsurancePolicy response) {
-				InsurancePolicyProcessBrokerImpl.this.service.deletePolicy(policyId, response.processId, new BigBangAsyncCallback<Void>() {
-
-					@Override
-					public void onSuccess(Void result) {
-						cache.remove(policyId);
-						incrementDataVersion();
-						for(DataBrokerClient<InsurancePolicy> bc : getClients()){
-							((InsurancePolicyDataBrokerClient) bc).removeInsurancePolicy(policyId);
-							((InsurancePolicyDataBrokerClient) bc).setDataVersionNumber(BigBangConstants.EntityIds.INSURANCE_POLICY, getCurrentDataVersion());
-						}
-						handler.onResponse(policyId);
-					}
-				});
-
-			}
-
-			@Override
-			public void onError(Collection<ResponseError> errors) {
-				// TODO Auto-generated method stub
-
+			public void onSuccess(Void result) {
+				cache.remove(policyId);
+				incrementDataVersion();
+				for(DataBrokerClient<InsurancePolicy> bc : getClients()){
+					((InsurancePolicyDataBrokerClient) bc).removeInsurancePolicy(policyId);
+					((InsurancePolicyDataBrokerClient) bc).setDataVersionNumber(BigBangConstants.EntityIds.INSURANCE_POLICY, getCurrentDataVersion());
+				}
+				handler.onResponse(policyId);
 			}
 		});
 	}

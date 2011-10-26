@@ -98,11 +98,13 @@ public class Constants
 	public static final UUID OPID_TriggerAllowUndoMgrXFer = UUID.fromString("91530E4E-9F84-4240-B1F3-9F6D017FE928");
 	public static final UUID OPID_UndoDirectMgrXFer       = UUID.fromString("E7ABBF15-4DB6-4376-92FD-9F6D01792783");
 	public static final UUID OPID_CreateInfoRequest       = UUID.fromString("26185760-A862-4CE4-9620-9F090142B18A");
-	public static final UUID OPID_MergeOtherClient        = UUID.fromString("A5B43B14-43A6-4C0F-A410-9F0901425E48");
+	public static final UUID OPID_ExternMergeOtherHere    = UUID.fromString("A5B43B14-43A6-4C0F-A410-9F0901425E48");
+	public static final UUID OPID_MergeIntoAnother        = UUID.fromString("895BB8D7-1263-4230-B1C4-9F8801189ADF");
 	public static final UUID OPID_UndoMergeOtherClient    = UUID.fromString("33704B93-F5A5-481F-A0EF-9F090143B96C");
 	public static final UUID OPID_CreatePolicy            = UUID.fromString("5903FA18-8F4D-4DD3-B4AE-9F090143186E");
 	public static final UUID OPID_TriggerDeletePolicy     = UUID.fromString("8BFB93C8-2CCF-423F-9E35-9F8200CA7E06");
 	public static final UUID OPID_UndoDeletePolicy        = UUID.fromString("E5E66BC3-4B16-42F4-B653-9F8200CE2893");
+	public static final UUID OPID_ExternResumeClient      = UUID.fromString("380BC979-5C71-4991-A382-9F8801257EB5");
 
 	// Policy Operations
 	public static final UUID OPID_ManagePolicyData        = UUID.fromString("1F7B31EC-9388-4EA0-816C-9F81013A8ED4");

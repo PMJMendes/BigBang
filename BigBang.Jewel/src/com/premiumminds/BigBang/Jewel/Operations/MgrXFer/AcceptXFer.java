@@ -30,9 +30,9 @@ public class AcceptXFer
 	private static final long serialVersionUID = 1L;
 
 	public boolean mbMassTransfer;
-	public int mlngCount;
 	public UUID midParentProc;
-	public UUID[] marrOldManagers;
+	private int mlngCount;
+	private UUID[] marrOldManagers;
 
 	public AcceptXFer(UUID pidProcess)
 	{
@@ -133,8 +133,8 @@ public class AcceptXFer
 			mlngCount = 1;
 		}
 
-		marrOldManagers = new UUID[larrProcs.length];
-		for ( i = 0; i < larrProcs.length; i++ )
+		marrOldManagers = new UUID[mlngCount];
+		for ( i = 0; i < mlngCount; i++ )
 		{
 			lobjProc = PNProcess.GetInstance(Engine.getCurrentNameSpace(), larrProcs[i]);
 			marrOldManagers[i] = lobjProc.GetManagerID();

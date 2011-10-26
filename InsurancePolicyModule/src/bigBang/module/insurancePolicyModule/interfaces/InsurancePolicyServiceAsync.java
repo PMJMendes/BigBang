@@ -7,7 +7,7 @@ import bigBang.library.interfaces.SearchServiceAsync;
 
 public interface InsurancePolicyServiceAsync extends SearchServiceAsync{
 
-	void deletePolicy(String policyId, String processId, AsyncCallback<Void> callback);
+	void deletePolicy(String policyId, AsyncCallback<Void> callback);
 
 	void getPolicy(String policyId, AsyncCallback<InsurancePolicy> callback);
 

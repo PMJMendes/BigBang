@@ -52,16 +52,16 @@ public class BigBang implements EntryPoint {
 			moduleManager.registerMainModule((MainModule) GWT.create(bigBang.module.mainModule.client.MainModule.class));
 			moduleManager.registerLoginModule((LoginModule) GWT.create(bigBang.module.loginModule.client.LoginModule.class));
 			
-			moduleManager.registerModule((TasksModule) GWT.create(bigBang.module.tasksModule.client.TasksModule.class));
-			moduleManager.registerModule((GeneralSystemModule) GWT.create(bigBang.module.generalSystemModule.client.GeneralSystemModule.class));
-			moduleManager.registerModule((ClientModule) GWT.create(bigBang.module.clientModule.client.ClientModule.class));
-			moduleManager.registerModule((QuoteRequestModule) GWT.create(bigBang.module.quoteRequestModule.client.QuoteRequestModule.class));			
+//			moduleManager.registerModule((TasksModule) GWT.create(bigBang.module.tasksModule.client.TasksModule.class));
+//			moduleManager.registerModule((GeneralSystemModule) GWT.create(bigBang.module.generalSystemModule.client.GeneralSystemModule.class));
+//			moduleManager.registerModule((ClientModule) GWT.create(bigBang.module.clientModule.client.ClientModule.class));
+//			moduleManager.registerModule((QuoteRequestModule) GWT.create(bigBang.module.quoteRequestModule.client.QuoteRequestModule.class));			
 			moduleManager.registerModule((InsurancePolicyModule) GWT.create(bigBang.module.insurancePolicyModule.client.InsurancePolicyModule.class));
-			moduleManager.registerModule((ReceiptModule) GWT.create(bigBang.module.receiptModule.client.ReceiptModule.class));
-			moduleManager.registerModule((RiskAnalisysModule) GWT.create(bigBang.module.riskAnalisysModule.client.RiskAnalisysModule.class));
-			moduleManager.registerModule((CasualtyModule) GWT.create(bigBang.module.casualtyModule.client.CasualtyModule.class));			
-			moduleManager.registerModule((ExpenseModule) GWT.create(bigBang.module.expenseModule.client.ExpenseModule.class));
-			moduleManager.registerModule((ComplaintModule) GWT.create(bigBang.module.complaintModule.client.ComplaintModule.class));
+//			moduleManager.registerModule((ReceiptModule) GWT.create(bigBang.module.receiptModule.client.ReceiptModule.class));
+//			moduleManager.registerModule((RiskAnalisysModule) GWT.create(bigBang.module.riskAnalisysModule.client.RiskAnalisysModule.class));
+//			moduleManager.registerModule((CasualtyModule) GWT.create(bigBang.module.casualtyModule.client.CasualtyModule.class));			
+//			moduleManager.registerModule((ExpenseModule) GWT.create(bigBang.module.expenseModule.client.ExpenseModule.class));
+//			moduleManager.registerModule((ComplaintModule) GWT.create(bigBang.module.complaintModule.client.ComplaintModule.class));
 			
 			moduleManager.runMainModule();
 		} catch (Exception e) {

@@ -115,7 +115,7 @@ public class TransferManagerServiceImpl
 			throw new BigBangException(e.getMessage(), e);
 		}
 
-		larrProcs = new UUID[] {lobjAX.midParentProc};
+		larrProcs = lobjXFer.GetProcessIDs();
 
 		lobjResult = new ManagerTransfer();
 		lobjResult.id = lobjXFer.getKey().toString();

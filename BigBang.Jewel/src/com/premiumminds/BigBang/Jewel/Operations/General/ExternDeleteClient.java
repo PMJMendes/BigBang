@@ -19,6 +19,7 @@ import com.premiumminds.BigBang.Jewel.Objects.Contact;
 import com.premiumminds.BigBang.Jewel.Objects.Document;
 import com.premiumminds.BigBang.Jewel.Operations.ContactOps;
 import com.premiumminds.BigBang.Jewel.Operations.DocOps;
+import com.premiumminds.BigBang.Jewel.Operations.Client.ExternResumeClient;
 
 public class ExternDeleteClient
 	extends UndoableOperation
@@ -159,6 +160,7 @@ public class ExternDeleteClient
 	{
 		Client lobjAux;
 		PNProcess lobjProcess;
+		ExternResumeClient lopERC;
 
 		try
 		{
@@ -182,6 +184,10 @@ public class ExternDeleteClient
 		{
 			throw new JewelPetriException(e.getMessage(), e);
 		}
+
+		lopERC = new ExternResumeClient(lobjProcess.getKey());
+		lopERC.midOtherClientProc = null;
+		TriggerOp(lopERC);
 	}
 
 	public UndoSet[] GetSets()

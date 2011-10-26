@@ -141,19 +141,21 @@ public class InsurancePolicyServiceImpl
 		return policy;
 	}
 
-	public void deletePolicy(String policyId, String processId)
+	public void deletePolicy(String policyId)
 		throws SessionExpiredException, BigBangException
 	{
+		Policy lobjPolicy;
 		DeletePolicy lobjDP;
 
 		if ( Engine.getCurrentUser() == null )
 			throw new SessionExpiredException();
 
-		lobjDP = new DeletePolicy(UUID.fromString(processId));
-		lobjDP.midPolicy = UUID.fromString(policyId);
-
 		try
 		{
+			lobjPolicy = Policy.GetInstance(Engine.getCurrentNameSpace(), UUID.fromString(policyId));
+
+			lobjDP = new DeletePolicy(lobjPolicy.GetProcessID());
+			lobjDP.midPolicy = UUID.fromString(policyId);
 			lobjDP.Execute();
 		}
 		catch (Throwable e)

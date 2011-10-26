@@ -153,27 +153,14 @@ public class ClientProcessBrokerImpl extends DataBroker<Client> implements Clien
 	}
 
 	@Override
-	public void createInsurancePolicy(String clientId, final InsurancePolicy policy,
+	public void createInsurancePolicy(String clientId, InsurancePolicy policy,
 			final ResponseHandler<InsurancePolicy> handler) {
-		this.getClient(clientId, new ResponseHandler<Client>() {
+		service.createPolicy(clientId, policy, new BigBangAsyncCallback<InsurancePolicy>() {
 
 			@Override
-			public void onResponse(Client response) {
-				service.createPolicy(response, policy, new BigBangAsyncCallback<InsurancePolicy>() {
-		
-					@Override
-					public void onSuccess(InsurancePolicy result) {
-						//TODO
-						handler.onResponse(result);
-					}
-				});
-
-			}
-
-			@Override
-			public void onError(Collection<ResponseError> errors) {
-				// TODO Auto-generated method stub
-
+			public void onSuccess(InsurancePolicy result) {
+				//TODO
+				handler.onResponse(result);
 			}
 		});
 	}
@@ -205,32 +192,19 @@ public class ClientProcessBrokerImpl extends DataBroker<Client> implements Clien
 	}
 
 	@Override
-	public void mergeWithClient(final String originalId, String receptorId,
+	public void mergeWithClient(String originalId, String receptorId,
 			final ResponseHandler<Client> handler) {
-		this.getClient(receptorId, new ResponseHandler<Client>() {
-
-			@Override
-			public void onResponse(Client response) {
-				service.mergeWithClient(originalId, response, new BigBangAsyncCallback<Client>() {
-		
-					@Override
-					public void onSuccess(Client result) {
-						cache.add(result.id, result);
-						incrementDataVersion();
-						for(DataBrokerClient<Client> bc : getClients()){
-							((ClientProcessDataBrokerClient) bc).updateClient(result);
-							((ClientProcessDataBrokerClient) bc).setDataVersionNumber(BigBangConstants.EntityIds.CLIENT, getCurrentDataVersion());
-						}
-						handler.onResponse(result);
-					}
-				});
-				
-			}
+		service.mergeWithClient(originalId, receptorId, new BigBangAsyncCallback<Client>() {
 			
 			@Override
-			public void onError(Collection<ResponseError> errors) {
-				// TODO Auto-generated method stub
-				
+			public void onSuccess(Client result) {
+				cache.add(result.id, result);
+				incrementDataVersion();
+				for(DataBrokerClient<Client> bc : getClients()){
+					((ClientProcessDataBrokerClient) bc).updateClient(result);
+					((ClientProcessDataBrokerClient) bc).setDataVersionNumber(BigBangConstants.EntityIds.CLIENT, getCurrentDataVersion());
+				}
+				handler.onResponse(result);
 			}
 		});
 	}
