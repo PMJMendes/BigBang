@@ -5,7 +5,7 @@ import java.util.*;
 public class Constants
 {
 	// Objects
-    public static final UUID ObjectID_AppParams  = UUID.fromString("5485B660-A102-441A-912C-7B960584399F");
+    public static final UUID ObjID_AppParams  = UUID.fromString("5485B660-A102-441A-912C-7B960584399F");
 
 	// General Objects
 	public static final UUID ObjID_GenSys        = UUID.fromString("628F5DA6-434F-46A8-9C88-9EB1008A689A");
@@ -35,6 +35,9 @@ public class Constants
 	// Policy Objects
 	public static final UUID ObjID_Policy        = UUID.fromString("D0C5AE6B-D340-4171-B7A3-9F81011F5D42");
 
+	// Receipt Objects
+	public static final UUID ObjID_Receipt       = UUID.fromString("B24E4BF7-382C-40EE-8120-9F8A00DABB81");
+
 	// Sub-Process Objects
 	public static final UUID ObjID_MgrXFer       = UUID.fromString("66EC1066-AD5A-430C-9A70-9F65013F5453");
 	public static final UUID ObjID_MgrXFerProc   = UUID.fromString("324A0D54-4ED9-4925-97D2-9F6D0135A37E");
@@ -57,11 +60,13 @@ public class Constants
 	public static final UUID ObjID_SalesVolume   = UUID.fromString("5C4E267C-B306-482F-8636-9EE600C586B6");
 	public static final UUID ObjID_Durations     = UUID.fromString("A522A5B3-245B-4F8B-97F1-9F810120FAB6");
 	public static final UUID ObjID_Fractioning   = UUID.fromString("28B2D442-2CF3-4E14-8430-9F8101229DA8");
+	public static final UUID ObjID_ReceiptType   = UUID.fromString("AFE7CC47-B44F-442D-8CF4-9F8A00DB2637");
 
 	// Process Scripts
 	public static final UUID ProcID_GenSys  = UUID.fromString("37A989E2-9D1F-470C-A59E-9EB1008A97A5");
 	public static final UUID ProcID_Client  = UUID.fromString("100E701A-EDC5-4D9C-A221-9F09013D7954");
 	public static final UUID ProcID_Policy  = UUID.fromString("29145166-59AC-452E-8C2B-9F81013A39AC");
+	public static final UUID ProcID_Receipt = UUID.fromString("62D0A72A-525E-450C-9917-9F8A00EB38AC");
 	public static final UUID ProcID_MgrXFer = UUID.fromString("BBF5FFD1-4249-48AE-BB2D-9F6501420E7B");
 
 	// Operations
@@ -102,7 +107,7 @@ public class Constants
 	public static final UUID OPID_MergeIntoAnother        = UUID.fromString("895BB8D7-1263-4230-B1C4-9F8801189ADF");
 	public static final UUID OPID_UndoMergeOtherClient    = UUID.fromString("33704B93-F5A5-481F-A0EF-9F090143B96C");
 	public static final UUID OPID_CreatePolicy            = UUID.fromString("5903FA18-8F4D-4DD3-B4AE-9F090143186E");
-	public static final UUID OPID_TriggerDeletePolicy     = UUID.fromString("8BFB93C8-2CCF-423F-9E35-9F8200CA7E06");
+	public static final UUID OPID_ExternDeletePolicy     = UUID.fromString("8BFB93C8-2CCF-423F-9E35-9F8200CA7E06");
 	public static final UUID OPID_UndoDeletePolicy        = UUID.fromString("E5E66BC3-4B16-42F4-B653-9F8200CE2893");
 	public static final UUID OPID_ExternResumeClient      = UUID.fromString("380BC979-5C71-4991-A382-9F8801257EB5");
 
@@ -110,6 +115,14 @@ public class Constants
 	public static final UUID OPID_ManagePolicyData        = UUID.fromString("1F7B31EC-9388-4EA0-816C-9F81013A8ED4");
 	public static final UUID OPID_UndoManagePolicyData    = UUID.fromString("98304BAB-0C9F-4089-879C-9F81013AFDB7");
 	public static final UUID OPID_DeletePolicy            = UUID.fromString("9B993DB1-CF37-4E34-965A-9F8200C986B9");
+	public static final UUID OPID_CreateReceipt           = UUID.fromString("C4117861-16EB-40DB-A771-9F8A00EA6B32");
+	public static final UUID OPID_ExternDeleteReceipt    = UUID.fromString("92982C76-0AEA-4028-A29B-9F8A00EA9F48");
+	public static final UUID OPID_UndoDeleteReceipt       = UUID.fromString("DE651450-BDA1-4DBA-A269-9F8A00EACA60");
+
+	// Receipt Operations
+	public static final UUID OPID_ManageReceiptData       = UUID.fromString("581AA15C-DF2C-4DF9-B3B3-9F8A00EDBADB");
+	public static final UUID OPID_UndoManageReceiptData   = UUID.fromString("6D530E4A-8585-433F-9BE9-9F8A00EDE805");
+	public static final UUID OPID_DeleteReceipt           = UUID.fromString("994D421F-E414-41EF-8D02-9F8A00EEE620");
 
 	// Manager Transfer Operations
 	public static final UUID OPID_AcceptXFer     = UUID.fromString("8B3AB41F-76F6-4311-8600-9F65014CF682");

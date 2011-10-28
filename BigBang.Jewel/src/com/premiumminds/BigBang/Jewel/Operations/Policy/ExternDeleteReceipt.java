@@ -5,37 +5,43 @@ import java.util.UUID;
 
 import Jewel.Engine.Engine;
 import Jewel.Engine.DataAccess.SQLServer;
+import Jewel.Engine.Implementation.Entity;
+import Jewel.Petri.Objects.PNProcess;
 import Jewel.Petri.SysObjects.JewelPetriException;
 import Jewel.Petri.SysObjects.UndoableOperation;
 
 import com.premiumminds.BigBang.Jewel.Constants;
-import com.premiumminds.BigBang.Jewel.Data.PolicyData;
-import com.premiumminds.BigBang.Jewel.Objects.Policy;
+import com.premiumminds.BigBang.Jewel.Data.ContactData;
+import com.premiumminds.BigBang.Jewel.Data.DocumentData;
+import com.premiumminds.BigBang.Jewel.Data.ReceiptData;
+import com.premiumminds.BigBang.Jewel.Objects.Contact;
+import com.premiumminds.BigBang.Jewel.Objects.Document;
+import com.premiumminds.BigBang.Jewel.Objects.Receipt;
 import com.premiumminds.BigBang.Jewel.Operations.ContactOps;
 import com.premiumminds.BigBang.Jewel.Operations.DocOps;
 
-public class ManagePolicyData
+public class ExternDeleteReceipt
 	extends UndoableOperation
 {
 	private static final long serialVersionUID = 1L;
 
-	public PolicyData mobjData;
+	public ReceiptData mobjData;
 	public ContactOps mobjContactOps;
 	public DocOps mobjDocOps;
 
-	public ManagePolicyData(UUID pidProcess)
+	public ExternDeleteReceipt(UUID pidProcess)
 	{
 		super(pidProcess);
 	}
 
 	protected UUID OpID()
 	{
-		return Constants.OPID_ManagePolicyData;
+		return Constants.OPID_ExternDeleteReceipt;
 	}
 
 	public String ShortDesc()
 	{
-		return "Alteração de Dados";
+		return "Eliminação de Recibo";
 	}
 
 	public String LongDesc(String pstrLineBreak)
@@ -43,13 +49,10 @@ public class ManagePolicyData
 		StringBuilder lstrResult;
 
 		lstrResult = new StringBuilder();
+		lstrResult.append("Foi eliminado o seguinte recibo:");
+		lstrResult.append(pstrLineBreak);
 
-		if ( mobjData != null )
-		{
-			lstrResult.append("Novos dados da apólice:");
-			lstrResult.append(pstrLineBreak);
-			mobjData.Describe(lstrResult, pstrLineBreak);
-		}
+		mobjData.Describe(lstrResult, pstrLineBreak);
 
 		if ( mobjContactOps != null )
 			mobjContactOps.LongDesc(lstrResult, pstrLineBreak);
@@ -62,38 +65,65 @@ public class ManagePolicyData
 
 	public UUID GetExternalProcess()
 	{
-		return null;
+		return mobjData.midProcess;
 	}
 
 	protected void Run(SQLServer pdb)
 		throws JewelPetriException
 	{
-		Policy lobjAux;
-		UUID lidOwner;
+		Entity lrefReceipts;
+		Receipt lobjAux;
+		Contact[] larrContacts;
+		Document[] larrDocs;
+		PNProcess lobjProcess;
+		int i;
 
-		lidOwner = null;
 		try
 		{
-			if ( mobjData != null )
+			lrefReceipts = Entity.GetInstance(Engine.FindEntity(Engine.getCurrentNameSpace(),
+					Constants.ObjID_Receipt));
+
+			lobjAux = Receipt.GetInstance(Engine.getCurrentNameSpace(), mobjData.mid);
+			mobjData.FromObject(lobjAux);
+			mobjData.mobjPrevValues = null;
+
+			lobjProcess = (PNProcess)Engine.GetWorkInstance(Engine.FindEntity(Engine.getCurrentNameSpace(),
+					Jewel.Petri.Constants.ObjID_PNProcess), mobjData.midProcess);
+			lobjProcess.setAt(1, null);
+			lobjProcess.setAt(4, false);
+			lobjProcess.SaveToDb(pdb);
+
+			larrContacts = lobjAux.GetCurrentContacts();
+			if ( (larrContacts == null) || (larrContacts.length == 0) )
+				mobjContactOps = null;
+			else
 			{
-				lidOwner = mobjData.mid;
-
-				lobjAux = Policy.GetInstance(Engine.getCurrentNameSpace(), mobjData.mid);
-
-				mobjData.mobjPrevValues = new PolicyData();
-				mobjData.mobjPrevValues.FromObject(lobjAux);
-
-				mobjData.midManager = GetProcess().GetManagerID();
-				mobjData.midCompany = mobjData.mobjPrevValues.midCompany;
-				mobjData.midSubLine = mobjData.mobjPrevValues.midSubLine;
-				mobjData.ToObject(lobjAux);
-				lobjAux.SaveToDb(pdb);
+				mobjContactOps = new ContactOps();
+				mobjContactOps.marrDelete = new ContactData[larrContacts.length];
+				for ( i = 0; i < larrContacts.length; i++ )
+				{
+					mobjContactOps.marrDelete[i] = new ContactData();
+					mobjContactOps.marrDelete[i].mid = larrContacts[i].getKey();
+				}
+				mobjContactOps.RunSubOp(pdb, null);
 			}
 
-			if ( mobjContactOps != null )
-				mobjContactOps.RunSubOp(pdb, lidOwner);
-			if ( mobjDocOps != null )
-				mobjDocOps.RunSubOp(pdb, lidOwner);
+			larrDocs = lobjAux.GetCurrentDocs();
+			if ( (larrDocs == null) || (larrDocs.length == 0) )
+				mobjDocOps = null;
+			else
+			{
+				mobjDocOps = new DocOps();
+				mobjDocOps.marrDelete = new DocumentData[larrDocs.length];
+				for ( i = 0; i < larrDocs.length; i++ )
+				{
+					mobjDocOps.marrDelete[i] = new DocumentData();
+					mobjDocOps.marrDelete[i].mid = larrDocs[i].getKey();
+				}
+				mobjDocOps.RunSubOp(pdb, null);
+			}
+
+			lrefReceipts.Delete(pdb, mobjData.mid);
 		}
 		catch (Throwable e)
 		{
@@ -103,24 +133,7 @@ public class ManagePolicyData
 
 	public String UndoDesc(String pstrLineBreak)
 	{
-		StringBuilder lstrResult;
-
-		lstrResult = new StringBuilder();
-
-		if ( mobjData != null )
-		{
-			lstrResult.append("Os dados anteriores serão repostos:");
-			lstrResult.append(pstrLineBreak);
-			mobjData.mobjPrevValues.Describe(lstrResult, pstrLineBreak);
-		}
-
-		if ( mobjContactOps != null )
-			mobjContactOps.UndoDesc(lstrResult, pstrLineBreak);
-
-		if ( mobjDocOps != null )
-			mobjDocOps.UndoDesc(lstrResult, pstrLineBreak);
-
-		return lstrResult.toString();
+		return "O recibo apagado será reposto. O histórico de operações será recuperado.";
 	}
 
 	public String UndoLongDesc(String pstrLineBreak)
@@ -128,13 +141,10 @@ public class ManagePolicyData
 		StringBuilder lstrResult;
 
 		lstrResult = new StringBuilder();
+		lstrResult.append("Foi reposto o seguinte recibo:");
+		lstrResult.append(pstrLineBreak);
 
-		if ( mobjData != null )
-		{
-			lstrResult.append("Os dados anteriores foram repostos:");
-			lstrResult.append(pstrLineBreak);
-			mobjData.mobjPrevValues.Describe(lstrResult, pstrLineBreak);
-		}
+		mobjData.Describe(lstrResult, pstrLineBreak);
 
 		if ( mobjContactOps != null )
 			mobjContactOps.UndoLongDesc(lstrResult, pstrLineBreak);
@@ -148,26 +158,26 @@ public class ManagePolicyData
 	protected void Undo(SQLServer pdb)
 		throws JewelPetriException
 	{
-		Policy lobjAux;
-		UUID lidOwner;
+		Receipt lobjAux;
+		PNProcess lobjProcess;
 
-		lidOwner = null;
 		try
 		{
-			if ( mobjData != null )
-			{
-				lidOwner = mobjData.mid;
+			lobjAux = Receipt.GetInstance(Engine.getCurrentNameSpace(), (UUID)null);
+			mobjData.ToObject(lobjAux);
+			lobjAux.SaveToDb(pdb);
+			mobjData.mid = lobjAux.getKey();
 
-				lobjAux = Policy.GetInstance(Engine.getCurrentNameSpace(), mobjData.mid);
-
-				mobjData.mobjPrevValues.ToObject(lobjAux);
-				lobjAux.SaveToDb(pdb);
-			}
+			lobjProcess = (PNProcess)Engine.GetWorkInstance(Engine.FindEntity(Engine.getCurrentNameSpace(),
+					Jewel.Petri.Constants.ObjID_PNProcess), mobjData.midProcess);
+			lobjProcess.setAt(1, lobjAux.getKey());
+			lobjProcess.setAt(4, true);
+			lobjProcess.SaveToDb(pdb);
 
 			if ( mobjContactOps != null )
-				mobjContactOps.UndoSubOp(pdb, lidOwner);
+				mobjContactOps.UndoSubOp(pdb, lobjAux.getKey());
 			if ( mobjDocOps != null )
-				mobjDocOps.UndoSubOp(pdb, lidOwner);
+				mobjDocOps.UndoSubOp(pdb, lobjAux.getKey());
 		}
 		catch (Throwable e)
 		{
@@ -185,27 +195,21 @@ public class ManagePolicyData
 		lobjContacts = GetContactSet();
 		lobjDocs = GetDocSet();
 
-		llngSize = 0;
-		if ( mobjData != null )
-			llngSize++;
+		llngSize = 1;
 		if ( lobjContacts != null )
 			llngSize++;
 		if ( lobjDocs != null )
 			llngSize++;
 
 		larrResult = new UndoSet[llngSize];
-		i = 0;
 
-		if ( mobjData != null )
-		{
-			larrResult[0] = new UndoSet();
-			larrResult[0].midType = Constants.ObjID_Policy;
-			larrResult[0].marrDeleted = new UUID[0];
-			larrResult[0].marrChanged = new UUID[1];
-			larrResult[0].marrChanged[0] = mobjData.mid;
-			larrResult[0].marrCreated = new UUID[0];
-			i++;
-		}
+		larrResult[0] = new UndoSet();
+		larrResult[0].midType = Constants.ObjID_Receipt;
+		larrResult[0].marrDeleted = new UUID[0];
+		larrResult[0].marrChanged = new UUID[0];
+		larrResult[0].marrCreated = new UUID[1];
+		larrResult[0].marrCreated[0] = mobjData.mid;
+		i = 1;
 
 		if ( lobjContacts != null )
 		{

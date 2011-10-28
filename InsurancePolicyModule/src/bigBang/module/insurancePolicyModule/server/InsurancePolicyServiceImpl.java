@@ -1,5 +1,6 @@
 package bigBang.module.insurancePolicyModule.server;
 
+import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.util.UUID;
 
@@ -16,6 +17,8 @@ import bigBang.definitions.shared.SearchParameter;
 import bigBang.definitions.shared.SearchResult;
 import bigBang.definitions.shared.SortOrder;
 import bigBang.definitions.shared.SortParameter;
+import bigBang.library.server.ContactsServiceImpl;
+import bigBang.library.server.DocumentServiceImpl;
 import bigBang.library.server.SearchServiceBase;
 import bigBang.library.shared.BigBangException;
 import bigBang.library.shared.SessionExpiredException;
@@ -25,10 +28,14 @@ import bigBang.module.insurancePolicyModule.shared.InsurancePolicySearchParamete
 
 import com.premiumminds.BigBang.Jewel.Constants;
 import com.premiumminds.BigBang.Jewel.Data.PolicyData;
+import com.premiumminds.BigBang.Jewel.Data.ReceiptData;
 import com.premiumminds.BigBang.Jewel.Objects.Client;
 import com.premiumminds.BigBang.Jewel.Objects.Line;
 import com.premiumminds.BigBang.Jewel.Objects.Policy;
 import com.premiumminds.BigBang.Jewel.Objects.SubLine;
+import com.premiumminds.BigBang.Jewel.Operations.ContactOps;
+import com.premiumminds.BigBang.Jewel.Operations.DocOps;
+import com.premiumminds.BigBang.Jewel.Operations.Policy.CreateReceipt;
 import com.premiumminds.BigBang.Jewel.Operations.Policy.DeletePolicy;
 import com.premiumminds.BigBang.Jewel.Operations.Policy.ManagePolicyData;
 
@@ -122,6 +129,7 @@ public class InsurancePolicyServiceImpl
 			lopMPD.mobjData.mlngMaturityMonth = policy.maturityMonth;
 			lopMPD.mobjData.mdtEndDate = ( policy.expirationDate == null ? null : Timestamp.valueOf(policy.expirationDate) );
 			lopMPD.mobjData.mstrNotes = policy.notes;
+			lopMPD.mobjData.midMediator = ( policy.mediatorId == null ? null : UUID.fromString(policy.mediatorId) );
 
 			lopMPD.mobjData.midManager = null;
 			lopMPD.mobjData.midProcess = null;
@@ -163,6 +171,82 @@ public class InsurancePolicyServiceImpl
 		{
 			throw new BigBangException(e.getMessage(), e);
 		}
+	}
+
+	public Receipt createReceipt(String policyId, Receipt receipt)
+		throws SessionExpiredException, BigBangException
+	{
+		Policy lobjPolicy;
+		CreateReceipt lopCR;
+
+		if ( Engine.getCurrentUser() == null )
+			throw new SessionExpiredException();
+
+		try
+		{
+			lobjPolicy = Policy.GetInstance(Engine.getCurrentNameSpace(), UUID.fromString(policyId));
+
+			lopCR = new CreateReceipt(lobjPolicy.GetProcessID());
+			lopCR.mobjData = new ReceiptData();
+
+			lopCR.mobjData.mid = null;
+
+			lopCR.mobjData.mstrNumber = receipt.number;
+			lopCR.mobjData.midType = UUID.fromString(receipt.typeId);
+			lopCR.mobjData.mdblTotal = new BigDecimal(receipt.totalPremium);
+			lopCR.mobjData.mdblCommercial = (receipt.comercialPremium == null ? null : new BigDecimal(receipt.comercialPremium));
+			lopCR.mobjData.mdblCommissions = (receipt.comissions == null ? new BigDecimal(0) : new BigDecimal(receipt.comissions));
+			lopCR.mobjData.mdblRetrocessions = (receipt.retrocessions == null ? new BigDecimal(0) :
+					new BigDecimal(receipt.retrocessions));
+			lopCR.mobjData.mdblFAT = (receipt.FATValue == null ? null : new BigDecimal(receipt.FATValue));
+			lopCR.mobjData.mdtIssue = Timestamp.valueOf(receipt.issueDate);
+			lopCR.mobjData.mdtMaturity = (receipt.maturityDate == null ? null : Timestamp.valueOf(receipt.maturityDate));
+			lopCR.mobjData.mdtEnd = (receipt.endDate == null ? null : Timestamp.valueOf(receipt.endDate));
+			lopCR.mobjData.mdtDue = (receipt.dueDate == null ? null : Timestamp.valueOf(receipt.dueDate));
+			lopCR.mobjData.midMediator = (receipt.mediatorId == null ? null : UUID.fromString(receipt.mediatorId));
+			lopCR.mobjData.mstrNotes = receipt.notes;
+			lopCR.mobjData.mstrDescription = receipt.description;
+
+			lopCR.mobjData.midManager = ( receipt.managerId == null ? null : UUID.fromString(receipt.managerId) );
+			lopCR.mobjData.midProcess = null;
+
+			lopCR.mobjData.mobjPrevValues = null;
+
+			if ( (receipt.contacts != null) && (receipt.contacts.length > 0) )
+			{
+				lopCR.mobjContactOps = new ContactOps();
+				lopCR.mobjContactOps.marrCreate = ContactsServiceImpl.BuildContactTree(lopCR.mobjContactOps,
+						receipt.contacts, Constants.ObjID_Client);
+			}
+			else
+				lopCR.mobjContactOps = null;
+			if ( (receipt.documents != null) && (receipt.documents.length > 0) )
+			{
+				lopCR.mobjDocOps = new DocOps();
+				lopCR.mobjDocOps.marrCreate = DocumentServiceImpl.BuildDocTree(lopCR.mobjDocOps,
+						receipt.documents, Constants.ObjID_Client);
+			}
+			else
+				lopCR.mobjDocOps = null;
+
+			lopCR.Execute();
+
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangException(e.getMessage(), e);
+		}
+
+		receipt.id = lopCR.mobjData.mid.toString();
+		receipt.processId = lopCR.mobjData.midProcess.toString();
+		receipt.managerId = lopCR.mobjData.midManager.toString();
+		receipt.mediatorId = lopCR.mobjData.midMediator.toString();
+		if ( (receipt.contacts != null) && (receipt.contacts.length > 0) )
+			ContactsServiceImpl.WalkContactTree(lopCR.mobjContactOps.marrCreate, receipt.contacts);
+		if ( (receipt.documents != null) && (receipt.documents.length > 0) )
+			DocumentServiceImpl.WalkDocTree(lopCR.mobjDocOps.marrCreate, receipt.documents);
+
+		return receipt;
 	}
 
 	@Override
@@ -459,12 +543,5 @@ public class InsurancePolicyServiceImpl
 		}
 
 		return lbFound;
-	}
-
-	@Override
-	public Receipt createReceipt(String policyId, Receipt receipt)
-			throws SessionExpiredException, BigBangException {
-		// TODO Auto-generated method stub
-		return null;
 	}
 }

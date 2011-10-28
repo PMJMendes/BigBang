@@ -46,7 +46,7 @@ public class StaticFunctions
 		{
 			ldb = new MasterDB();
 
-			lidParams = Engine.FindEntity(Engine.getCurrentNameSpace(), Constants.ObjectID_AppParams);
+			lidParams = Engine.FindEntity(Engine.getCurrentNameSpace(), Constants.ObjID_AppParams);
 			lrsParams = Entity.GetInstance(lidParams).SelectAll(ldb);
 			while (lrsParams.next())
 			{

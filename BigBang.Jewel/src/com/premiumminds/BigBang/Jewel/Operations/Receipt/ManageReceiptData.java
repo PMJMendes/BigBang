@@ -1,4 +1,4 @@
-package com.premiumminds.BigBang.Jewel.Operations.Policy;
+package com.premiumminds.BigBang.Jewel.Operations.Receipt;
 
 import java.util.ArrayList;
 import java.util.UUID;
@@ -9,28 +9,28 @@ import Jewel.Petri.SysObjects.JewelPetriException;
 import Jewel.Petri.SysObjects.UndoableOperation;
 
 import com.premiumminds.BigBang.Jewel.Constants;
-import com.premiumminds.BigBang.Jewel.Data.PolicyData;
-import com.premiumminds.BigBang.Jewel.Objects.Policy;
+import com.premiumminds.BigBang.Jewel.Data.ReceiptData;
+import com.premiumminds.BigBang.Jewel.Objects.Receipt;
 import com.premiumminds.BigBang.Jewel.Operations.ContactOps;
 import com.premiumminds.BigBang.Jewel.Operations.DocOps;
 
-public class ManagePolicyData
+public class ManageReceiptData
 	extends UndoableOperation
 {
 	private static final long serialVersionUID = 1L;
 
-	public PolicyData mobjData;
+	public ReceiptData mobjData;
 	public ContactOps mobjContactOps;
 	public DocOps mobjDocOps;
 
-	public ManagePolicyData(UUID pidProcess)
+	public ManageReceiptData(UUID pidProcess)
 	{
 		super(pidProcess);
 	}
 
 	protected UUID OpID()
 	{
-		return Constants.OPID_ManagePolicyData;
+		return Constants.OPID_ManageReceiptData;
 	}
 
 	public String ShortDesc()
@@ -46,7 +46,7 @@ public class ManagePolicyData
 
 		if ( mobjData != null )
 		{
-			lstrResult.append("Novos dados da apólice:");
+			lstrResult.append("Novos dados do recibo:");
 			lstrResult.append(pstrLineBreak);
 			mobjData.Describe(lstrResult, pstrLineBreak);
 		}
@@ -68,7 +68,7 @@ public class ManagePolicyData
 	protected void Run(SQLServer pdb)
 		throws JewelPetriException
 	{
-		Policy lobjAux;
+		Receipt lobjAux;
 		UUID lidOwner;
 
 		lidOwner = null;
@@ -78,14 +78,12 @@ public class ManagePolicyData
 			{
 				lidOwner = mobjData.mid;
 
-				lobjAux = Policy.GetInstance(Engine.getCurrentNameSpace(), mobjData.mid);
+				lobjAux = Receipt.GetInstance(Engine.getCurrentNameSpace(), mobjData.mid);
 
-				mobjData.mobjPrevValues = new PolicyData();
+				mobjData.mobjPrevValues = new ReceiptData();
 				mobjData.mobjPrevValues.FromObject(lobjAux);
 
 				mobjData.midManager = GetProcess().GetManagerID();
-				mobjData.midCompany = mobjData.mobjPrevValues.midCompany;
-				mobjData.midSubLine = mobjData.mobjPrevValues.midSubLine;
 				mobjData.ToObject(lobjAux);
 				lobjAux.SaveToDb(pdb);
 			}
@@ -148,7 +146,7 @@ public class ManagePolicyData
 	protected void Undo(SQLServer pdb)
 		throws JewelPetriException
 	{
-		Policy lobjAux;
+		Receipt lobjAux;
 		UUID lidOwner;
 
 		lidOwner = null;
@@ -158,7 +156,7 @@ public class ManagePolicyData
 			{
 				lidOwner = mobjData.mid;
 
-				lobjAux = Policy.GetInstance(Engine.getCurrentNameSpace(), mobjData.mid);
+				lobjAux = Receipt.GetInstance(Engine.getCurrentNameSpace(), mobjData.mid);
 
 				mobjData.mobjPrevValues.ToObject(lobjAux);
 				lobjAux.SaveToDb(pdb);
@@ -199,7 +197,7 @@ public class ManagePolicyData
 		if ( mobjData != null )
 		{
 			larrResult[0] = new UndoSet();
-			larrResult[0].midType = Constants.ObjID_Policy;
+			larrResult[0].midType = Constants.ObjID_Receipt;
 			larrResult[0].marrDeleted = new UUID[0];
 			larrResult[0].marrChanged = new UUID[1];
 			larrResult[0].marrChanged[0] = mobjData.mid;
