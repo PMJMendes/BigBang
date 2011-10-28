@@ -6,17 +6,24 @@ import java.util.List;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.logical.shared.AttachEvent;
 
+import bigBang.definitions.client.dataAccess.HistoryBroker;
+import bigBang.definitions.client.dataAccess.HistoryDataBrokerClient;
 import bigBang.definitions.client.dataAccess.InsurancePolicyBroker;
 import bigBang.definitions.client.dataAccess.InsurancePolicyDataBrokerClient;
+import bigBang.definitions.client.dataAccess.Search;
 import bigBang.definitions.client.response.ResponseError;
 import bigBang.definitions.client.response.ResponseHandler;
 import bigBang.definitions.shared.BigBangConstants;
+import bigBang.definitions.shared.Client;
 import bigBang.definitions.shared.Contact;
 import bigBang.definitions.shared.Document;
+import bigBang.definitions.shared.HistoryItem;
+import bigBang.definitions.shared.HistoryItemStub;
 import bigBang.definitions.shared.InfoOrDocumentRequest;
 import bigBang.definitions.shared.InsurancePolicy;
 import bigBang.definitions.shared.InsurancePolicyStub;
 import bigBang.definitions.shared.ManagerTransfer;
+import bigBang.definitions.shared.SortOrder;
 import bigBang.library.client.ValueSelectable;
 import bigBang.library.client.dataAccess.BigBangContactsListBroker;
 import bigBang.library.client.dataAccess.BigBangDocumentsBroker;
@@ -27,6 +34,8 @@ import bigBang.library.client.dataAccess.DocumentsBroker;
 import bigBang.library.client.dataAccess.DocumentsBrokerClient;
 import bigBang.library.client.userInterface.FilterableList;
 import bigBang.library.client.userInterface.ListEntry;
+import bigBang.library.shared.HistorySearchParameter;
+import bigBang.library.shared.HistorySortParameter;
 
 public class ClientChildrenLists {
 
@@ -409,5 +418,141 @@ public class ClientChildrenLists {
 		public void setOwner(String ownerId) {
 			//TODO
 		}
+	}
+	
+	public static class HistoryList extends FilterableList<HistoryItemStub> implements HistoryDataBrokerClient {
+
+		protected static class Entry extends ListEntry<HistoryItemStub> {
+
+			public Entry(HistoryItemStub value) {
+				super(value);
+				setHeight("25px");
+				titleLabel.getElement().getStyle().setFontSize(11, Unit.PX);
+			}
+			
+			public <I extends Object> void setInfo(I info) {
+				HistoryItemStub s = (HistoryItemStub) info;
+				setTitle(s.opName);
+			};
+		}
+		
+		protected int dataVersion;
+		protected Client owner;
+		protected HistoryBroker broker;
+		
+		public HistoryList(){
+			this.showFilterField(false);
+			this.showSearchField(true);
+
+			this.broker = ((HistoryBroker) DataBrokerManager.Util.getInstance().getBroker(BigBangConstants.EntityIds.HISTORY));
+
+			this.addAttachHandler(new AttachEvent.Handler() {
+
+				@Override
+				public void onAttachOrDetach(AttachEvent event) {
+					if(event.isAttached()) {
+						setOwner(owner);
+					}else{
+						discardOwner();
+					}
+				}
+			});
+		}
+		
+		public void setOwner(Client client) {
+			discardOwner();
+			if(this.isAttached() && client != null){
+				this.broker.registerClient(this, client.processId);
+				
+				HistorySearchParameter parameter = new HistorySearchParameter();
+				parameter.processId = client.processId;
+				
+				HistorySearchParameter[] parameters = new HistorySearchParameter[]{
+						parameter
+				};
+				
+				HistorySortParameter sort = new HistorySortParameter(HistorySortParameter.SortableField.TIMESTAMP, SortOrder.DESC);
+				HistorySortParameter[] sorts = new HistorySortParameter[]{
+						sort
+				};
+				
+				this.broker.getSearchBroker().search(parameters, sorts, -1, new ResponseHandler<Search<HistoryItemStub>>() {
+
+					@Override
+					public void onResponse(Search<HistoryItemStub> response) {
+						broker.getSearchBroker().disposeSearch(response.getWorkspaceId());
+						for(HistoryItemStub s : response.getResults()) {
+							addEntry(s);
+						}
+					}
+
+					@Override
+					public void onError(Collection<ResponseError> errors) {
+					}
+				});
+			}
+			this.owner = client;
+		}
+
+		public void discardOwner(){
+			this.clear();
+			if(owner != null){
+				this.broker.unregisterClient(this, this.owner.processId);
+				this.owner = null;
+			}
+		}
+		
+		@Override
+		public void setDataVersionNumber(String dataElementId, int number) {
+			if(dataElementId.equalsIgnoreCase(BigBangConstants.EntityIds.HISTORY)){
+				this.dataVersion = number;
+			}
+		}
+
+		@Override
+		public int getDataVersion(String dataElementId) {
+			if(dataElementId.equalsIgnoreCase(BigBangConstants.EntityIds.HISTORY)){
+				return this.dataVersion;
+			}
+			return -1;
+		}
+		
+		protected void addEntry(HistoryItemStub item) {
+			add(new Entry(item));
+		}
+
+		@Override
+		public void setHistoryItems(String processId, HistoryItem[] items) {
+			this.clear();
+			for(int i = 0; i < items.length; i++) {
+				addEntry(items[i]);
+			}
+		}
+
+		@Override
+		public void addHistoryItem(String processId, HistoryItem item) {
+			addEntry(item);
+		}
+
+		@Override
+		public void updateHistoryItem(String processId, HistoryItem item) {
+			for(ValueSelectable<HistoryItemStub> s : this) {
+				if(s.getValue().id.equalsIgnoreCase(item.id)){
+					s.setValue(item);
+					break;
+				}
+			}
+		}
+
+		@Override
+		public void removeHistoryItem(String processId, HistoryItem item) {
+			for(ValueSelectable<HistoryItemStub> s : this) {
+				if(s.getValue().id.equalsIgnoreCase(item.id)){
+					remove(s);
+					break;
+				}
+			}
+		}
+		
 	}
 }

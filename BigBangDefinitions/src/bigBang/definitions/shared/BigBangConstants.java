@@ -29,6 +29,7 @@ public class BigBangConstants {
 	}
 	
 	public static class TypifiedListIds {
+		public static final String DOCUMENT_TYPE = "B4DBEE18-FA81-471D-A9F5-9ECC012A028D";
 	}
 	
 	public static class OperationIds {

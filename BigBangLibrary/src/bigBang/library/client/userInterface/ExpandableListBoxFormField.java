@@ -148,10 +148,14 @@ TypifiedListClient {
 
 				@Override
 				public void onAttachOrDetach(AttachEvent event) {
-					if(event.isAttached() && !ExpandableListBoxFormField.this.isAttached()){
-						typifiedListBroker.registerClient(listId, ExpandableListBoxFormField.this);
+					if(event.isAttached()){
+						if(!typifiedListBroker.isClientRegistered(listId, ExpandableListBoxFormField.this)){
+							typifiedListBroker.registerClient(listId, ExpandableListBoxFormField.this);
+						}
 					}else{
-						typifiedListBroker.unregisterClient(listId, ExpandableListBoxFormField.this);
+						if(typifiedListBroker.isClientRegistered(listId, ExpandableListBoxFormField.this)){
+							typifiedListBroker.unregisterClient(listId, ExpandableListBoxFormField.this);
+						}
 					}
 				}
 			}, AttachEvent.getType());

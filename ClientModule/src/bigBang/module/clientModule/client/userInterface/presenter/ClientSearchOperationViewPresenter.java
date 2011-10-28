@@ -10,7 +10,8 @@ import bigBang.definitions.shared.BigBangConstants;
 import bigBang.definitions.shared.Casualty;
 import bigBang.definitions.shared.Client;
 import bigBang.definitions.shared.ClientStub;
-import bigBang.definitions.shared.InsurancePolicy;
+import bigBang.definitions.shared.InfoOrDocumentRequest;
+import bigBang.definitions.shared.ManagerTransfer;
 import bigBang.definitions.shared.QuoteRequest;
 import bigBang.definitions.shared.RiskAnalysis;
 import bigBang.library.client.BigBangPermissionManager;
@@ -31,6 +32,7 @@ import bigBang.library.client.userInterface.presenter.OperationViewPresenter;
 import bigBang.library.client.userInterface.view.View;
 import bigBang.library.interfaces.Service;
 import bigBang.library.shared.Permission;
+import bigBang.module.clientModule.client.userInterface.view.CreateInsurancePolicyView;
 import bigBang.module.clientModule.interfaces.ClientServiceAsync;
 import bigBang.module.clientModule.shared.ModuleConstants;
 import bigBang.module.clientModule.shared.operation.ClientSearchOperation;
@@ -71,10 +73,7 @@ public class ClientSearchOperationViewPresenter implements OperationViewPresente
 		void lockForm(boolean lock);
 
 		//Operations
-		void showPolicyForm(boolean show);
-		HasEditableValue<InsurancePolicy> getPolicyForm();
-		boolean isPolicyFormValid();
-		void lockPolicyForm(boolean lock);
+		HasWidgets showPolicyForm(boolean show);
 		
 		void showRiskAnalisysForm(boolean show);
 		HasEditableValue<RiskAnalysis> getRiskAnalisysForm();
@@ -102,7 +101,7 @@ public class ClientSearchOperationViewPresenter implements OperationViewPresente
 		void lockManagerTransferForm(boolean lock);
 		
 		void showInfoOrDocumentRequestForm(boolean show);
-		HasEditableValue<Casualty> getInfoOrDocumentRequestForm();
+		HasEditableValue<InfoOrDocumentRequest> getInfoOrDocumentRequestForm();
 		boolean isInfoOrDocumentFormValid();
 		void lockInfoOrDocumentRequestForm(boolean lock);
 		
@@ -221,6 +220,9 @@ public class ClientSearchOperationViewPresenter implements OperationViewPresente
 									if(p.id.equalsIgnoreCase(ModuleConstants.OpTypeIDs.MERGE_CLIENT)){
 										view.allowClientMerge(true);
 									}
+									if(p.id.equalsIgnoreCase(ModuleConstants.OpTypeIDs.CREATE_POLICY)){
+										view.allowCreatePolicy(true);
+									}
 								}
 							}
 
@@ -333,9 +335,24 @@ public class ClientSearchOperationViewPresenter implements OperationViewPresente
 			}
 			
 			protected void createPolicy(){
-				view.getPolicyForm().setValue(null);
-				view.showPolicyForm(true);
-				view.lockPolicyForm(false);
+				HasWidgets container = view.showPolicyForm(true);
+				
+				CreateInsurancePolicyView createPolicyView = new CreateInsurancePolicyView();
+				CreateInsurancePolicyViewPresenter presenter = new CreateInsurancePolicyViewPresenter(null, createPolicyView) {
+
+					@Override
+					public void onPolicyCreated() {
+						ClientSearchOperationViewPresenter.this.view.showPolicyForm(false);
+					}
+					
+					@Override
+					public void onCreationCancelled() {
+						ClientSearchOperationViewPresenter.this.view.showPolicyForm(false);
+					}
+					
+				};
+				presenter.setClient(view.getForm().getValue());
+				presenter.go(container);
 			}
 			
 			protected void createQuoteRequest(){
@@ -357,16 +374,39 @@ public class ClientSearchOperationViewPresenter implements OperationViewPresente
 			}
 			
 			protected void transferManager(){
-				view.getManagerTransferForm().setValue(null);
-				view.showManagerTransferForm(true);
-				view.lockManagerTransferForm(false);
-				
+				String[] clientIds = new String[]{
+					view.getForm().getValue().processId
+				};
+				String managerId = view.getManagerTransferForm().getValue();
+				clientBroker.createManagerTransfer(clientIds, managerId, new ResponseHandler<ManagerTransfer>() {
+					
+					@Override
+					public void onResponse(ManagerTransfer response) {
+						view.showManagerTransferForm(false);
+					}
+					
+					@Override
+					public void onError(Collection<ResponseError> errors) {
+						//TODO
+					}
+				});
 			}
 			
 			protected void requireInfoOrDocument(){
-				//view.getInfoOrDocumentRequestForm().setValue(null);
-				view.showInfoOrDocumentRequestForm(true);
-				//view.lockInfoOrDocumentRequestForm(false);
+				InfoOrDocumentRequest request = view.getInfoOrDocumentRequestForm().getValue();
+				
+				clientBroker.createInfoOrDocumentRequest(request, new ResponseHandler<InfoOrDocumentRequest>() {
+					
+					@Override
+					public void onResponse(InfoOrDocumentRequest response) {
+						view.showInfoOrDocumentRequestForm(false);
+					}
+					
+					@Override
+					public void onError(Collection<ResponseError> errors) {
+						//TODO
+					}
+				});
 			}
 			
 			protected void showHistory() {

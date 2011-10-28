@@ -6,6 +6,7 @@ import bigBang.definitions.shared.Client;
 import bigBang.library.client.userInterface.view.View;
 import bigBang.module.clientModule.client.userInterface.ClientChildrenLists.ContactsList;
 import bigBang.module.clientModule.client.userInterface.ClientChildrenLists.DocumentsList;
+import bigBang.module.clientModule.client.userInterface.ClientChildrenLists.HistoryList;
 import bigBang.module.clientModule.client.userInterface.ClientChildrenLists.InfoRequestList;
 import bigBang.module.clientModule.client.userInterface.ClientChildrenLists.InsurancePoliciesList;
 import bigBang.module.clientModule.client.userInterface.ClientChildrenLists.ManagerTransferList;
@@ -22,6 +23,7 @@ public class ClientChildrenPanel extends View implements ClientProcessDataBroker
 	protected ClientChildrenLists.InsurancePoliciesList insurancePoliciesList;
 	protected ClientChildrenLists.InfoRequestList requestsList;
 	protected ClientChildrenLists.ManagerTransferList managerTransfersList;
+	protected ClientChildrenLists.HistoryList historyList;
 	
 	public ClientChildrenPanel(){
 		StackPanel wrapper = new StackPanel();
@@ -32,12 +34,14 @@ public class ClientChildrenPanel extends View implements ClientProcessDataBroker
 		insurancePoliciesList = new InsurancePoliciesList();
 		requestsList = new InfoRequestList();
 		managerTransfersList = new ManagerTransferList();
+		historyList = new HistoryList();
 		
 		wrapper.add(this.contactsList, "Contactos");
 		wrapper.add(this.documentsList, "Documentos");
 		wrapper.add(this.insurancePoliciesList, "Apólices");
 		wrapper.add(this.requestsList, "Pedidos de Informação");
 		wrapper.add(this.managerTransfersList, "Transferências de Gestor");
+		wrapper.add(this.historyList, "Histórico");
 		
 		initWidget(wrapper);
 	}
@@ -48,7 +52,8 @@ public class ClientChildrenPanel extends View implements ClientProcessDataBroker
 		this.documentsList.setOwner(client.id);	
 		this.insurancePoliciesList.setOwner(client.id);	
 		this.requestsList.setOwner(client.id);	
-		this.managerTransfersList.setOwner(client.id);	
+		this.managerTransfersList.setOwner(client.id);
+		this.historyList.setOwner(client);
 	}
 
 	public Client getCurrentClient(){
@@ -61,6 +66,7 @@ public class ClientChildrenPanel extends View implements ClientProcessDataBroker
 		this.insurancePoliciesList.clear();
 		this.requestsList.clear();
 		this.managerTransfersList.clear();
+		this.historyList.clear();
 	}
 
 	@Override

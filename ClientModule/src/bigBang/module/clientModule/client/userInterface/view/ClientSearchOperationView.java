@@ -11,6 +11,7 @@ import bigBang.definitions.shared.BigBangConstants;
 import bigBang.definitions.shared.Casualty;
 import bigBang.definitions.shared.Client;
 import bigBang.definitions.shared.ClientStub;
+import bigBang.definitions.shared.InfoOrDocumentRequest;
 import bigBang.definitions.shared.InsurancePolicy;
 import bigBang.definitions.shared.QuoteRequest;
 import bigBang.definitions.shared.RiskAnalysis;
@@ -44,6 +45,7 @@ import com.google.gwt.event.logical.shared.AttachEvent;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.user.client.ui.Button;
+import com.google.gwt.user.client.ui.HasWidgets;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.SplitLayoutPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
@@ -61,6 +63,8 @@ public class ClientSearchOperationView extends View implements ClientSearchOpera
 	protected ClientFormView form;
 	protected ClientChildrenPanel childrenPanel;
 	protected ClientProcessToolBar operationsToolbar; 
+	protected ClientManagerTransferView managerTransferView;
+	protected InfoOrDocumentRequestView infoOrDocumentRequestView;
 	protected PopupBar childProcessesBar;
 	protected ToolButton newButton;
 
@@ -178,12 +182,16 @@ public class ClientSearchOperationView extends View implements ClientSearchOpera
 
 			@Override
 			public void onTransferToManager() {
-				actionHandler.onActionInvoked(new ActionInvokedEvent<ClientSearchOperationViewPresenter.Action>(Action.TRANSFER_MANAGER));
+				getManagerTransferForm().setValue(null);
+				showManagerTransferForm(true);
+				lockManagerTransferForm(false);
 			}
 
 			@Override
 			public void onRequestInfoOrDocument() {
-				actionHandler.onActionInvoked(new ActionInvokedEvent<ClientSearchOperationViewPresenter.Action>(Action.REQUIRE_INFO_DOCUMENT));
+				getInfoOrDocumentRequestForm().setValue(null);
+				showInfoOrDocumentRequestForm(true);
+				lockInfoOrDocumentRequestForm(false);
 			}
 
 			@Override
@@ -234,6 +242,26 @@ public class ClientSearchOperationView extends View implements ClientSearchOpera
 		mainWrapper.add(wrapper);
 		mainContent = wrapper;
 
+		this.managerTransferView = new ClientManagerTransferView() {
+
+			@Override
+			public void onTransferButtonPressed(String managerId) {
+				actionHandler.onActionInvoked(new ActionInvokedEvent<ClientSearchOperationViewPresenter.Action>(Action.TRANSFER_MANAGER));
+			}
+		};
+		this.infoOrDocumentRequestView = new InfoOrDocumentRequestView() {
+
+			@Override
+			public void onSendButtonPressed() {
+				actionHandler.onActionInvoked(new ActionInvokedEvent<ClientSearchOperationViewPresenter.Action>(Action.REQUIRE_INFO_DOCUMENT));
+			}
+
+			@Override
+			public void onBackButtonPressed() {
+				showInfoOrDocumentRequestForm(false);
+			}
+		};
+
 		if(!bigBang.definitions.client.Constants.DEBUG){
 			searchPanel.doSearch();
 		}
@@ -281,27 +309,30 @@ public class ClientSearchOperationView extends View implements ClientSearchOpera
 	}
 
 	@Override
-	public void showPolicyForm(boolean show) {
-		// TODO Auto-generated method stub
+	public HasWidgets showPolicyForm(boolean show) {
+		VerticalPanel wrapper = new VerticalPanel();
+		wrapper.setSize("100%", "100%");
 
-	}
+		ListHeader header = new ListHeader();
+		header.setText("Criação de Apólice");
+		header.setLeftWidget(new Button("Voltar", new ClickHandler() {
 
-	@Override
-	public HasEditableValue<InsurancePolicy> getPolicyForm() {
-		// TODO Auto-generated method stub
-		return null;
-	}
+			@Override
+			public void onClick(ClickEvent event) {
+				mainWrapper.slideInto(mainContent, Direction.RIGHT);
+			}
+		}));
+		wrapper.add(header);
 
-	@Override
-	public boolean isPolicyFormValid() {
-		// TODO Auto-generated method stub
-		return false;
-	}
+		SimplePanel viewContainer = new SimplePanel();
+		viewContainer.setSize("100%", "100%");
 
-	@Override
-	public void lockPolicyForm(boolean lock) {
-		// TODO Auto-generated method stub
+		wrapper.add(viewContainer);
+		wrapper.setCellHeight(viewContainer, "100%");
 
+		mainWrapper.slideInto(
+				wrapper, Direction.LEFT);
+		return viewContainer;
 	}
 
 	@Override
@@ -430,43 +461,35 @@ public class ClientSearchOperationView extends View implements ClientSearchOpera
 
 	@Override
 	public void showInfoOrDocumentRequestForm(boolean show) {
-		VerticalPanel wrapper = new VerticalPanel();
-		wrapper.setSize("100%", "100%");
+		if(show){
+			VerticalPanel wrapper = new VerticalPanel();
+			wrapper.setSize("100%", "100%");
 
-		ListHeader header = new ListHeader();
-		header.setText("Pedido de Informação ou Documento");
-		header.setLeftWidget(new Button("Voltar", new ClickHandler() {
+			ListHeader header = new ListHeader();
+			header.setText("Pedido de Informação ou Documento");
+			header.setLeftWidget(new Button("Voltar", new ClickHandler() {
 
-			@Override
-			public void onClick(ClickEvent event) {
-				mainWrapper.slideInto(mainContent, Direction.RIGHT);
-			}
-		}));
-		wrapper.add(header);
+				@Override
+				public void onClick(ClickEvent event) {
+					showInfoOrDocumentRequestForm(false);
+				}
+			}));
+			wrapper.add(header);
 
-		SimplePanel viewContainer = new SimplePanel();
-		viewContainer.setSize("100%", "100%");
-		InfoOrDocumentRequestView requestView = new InfoOrDocumentRequestView() {
+			SimplePanel viewContainer = new SimplePanel();
+			viewContainer.setSize("100%", "100%");
 
-			@Override
-			public void onSendButtonPressed() {
-				onBackButtonPressed();
-			}
+			this.infoOrDocumentRequestView.setClient(this.form.getValue());
+			viewContainer.add(this.infoOrDocumentRequestView);
 
-			@Override
-			public void onBackButtonPressed() {
-				mainWrapper.slideInto(mainContent, Direction.RIGHT);
-			}
+			wrapper.add(viewContainer);
+			wrapper.setCellHeight(viewContainer, "100%");
 
-		};
-		requestView.setClient(this.form.getValue());
-		viewContainer.add(requestView);
-
-		wrapper.add(viewContainer);
-		wrapper.setCellHeight(viewContainer, "100%");
-
-		mainWrapper.slideInto(
-				wrapper, Direction.LEFT);
+			mainWrapper.slideInto(
+					wrapper, Direction.LEFT);
+		}else{
+			mainWrapper.slideInto(mainContent, Direction.RIGHT);
+		}
 	}
 
 	@Override
@@ -530,21 +553,18 @@ public class ClientSearchOperationView extends View implements ClientSearchOpera
 	}
 
 	@Override
-	public HasEditableValue<Casualty> getInfoOrDocumentRequestForm() {
-		// TODO Auto-generated method stub
-		return null;
+	public HasEditableValue<InfoOrDocumentRequest> getInfoOrDocumentRequestForm() {
+		return this.infoOrDocumentRequestView.form;
 	}
 
 	@Override
 	public boolean isInfoOrDocumentFormValid() {
-		// TODO Auto-generated method stub
-		return false;
+		return this.infoOrDocumentRequestView.form.validate();
 	}
 
 	@Override
 	public void lockInfoOrDocumentRequestForm(boolean lock) {
-		// TODO Auto-generated method stub
-
+		this.infoOrDocumentRequestView.form.setReadOnly(lock);
 	}
 
 	@Override
@@ -618,18 +638,8 @@ public class ClientSearchOperationView extends View implements ClientSearchOpera
 	public void showManagerTransferForm(boolean show) {
 		if(show){
 			this.popup = new PopupPanel(true, "Transferência de Gestor");
-			ClientManagerTransferView view = new ClientManagerTransferView() {
-
-				@Override
-				public void onTransferButtonPressed(String managerId) {
-					if(this.form.validate()){
-						//TODO TRANSFER
-						showManagerTransferForm(false);
-					}
-				}
-			};
-			view.setSize("660px", "100px");
-			this.popup.add(view);
+			managerTransferView.setSize("660px", "100px");
+			this.popup.add(managerTransferView);
 			this.popup.addAttachHandler(new AttachEvent.Handler() {
 
 				@Override
@@ -649,20 +659,17 @@ public class ClientSearchOperationView extends View implements ClientSearchOpera
 
 	@Override
 	public HasEditableValue<String> getManagerTransferForm() {
-		// TODO Auto-generated method stub
-		return null;
+		return this.managerTransferView.form;
 	}
 
 	@Override
 	public boolean isManagerTransferFormValid() {
-		// TODO Auto-generated method stub
-		return false;
+		return this.managerTransferView.form.validate();
 	}
 
 	@Override
 	public void lockManagerTransferForm(boolean lock) {
-		// TODO Auto-generated method stub
-
+		this.managerTransferView.form.setReadOnly(lock);
 	}
 
 	@Override
@@ -671,7 +678,7 @@ public class ClientSearchOperationView extends View implements ClientSearchOpera
 		this.childrenPanel.setReadOnly(true);
 		this.operationsToolbar.lockAll();
 	}
-	
+
 	@Override
 	public void allowCreate(boolean allow) {
 		this.newButton.setEnabled(allow);

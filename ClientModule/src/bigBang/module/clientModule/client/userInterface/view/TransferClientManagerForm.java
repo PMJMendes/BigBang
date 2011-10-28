@@ -14,8 +14,6 @@ public class TransferClientManagerForm extends FormView<String> {
 		addSection("Informação da Transferência");
 		addFormField(manager);
 	}
-
-	
 	
 	@Override
 	public String getInfo() {

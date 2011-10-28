@@ -13,6 +13,9 @@ public abstract class ClientManagerTransferView extends View {
 	public ClientManagerTransferView(){
 		VerticalPanel wrapper = new VerticalPanel();
 		wrapper.setSize("100%", "100%");
+		
+		form = new TransferClientManagerForm();
+		form.setSize("100%", "100%");
 
 		BigBangOperationsToolBar toolbar = new BigBangOperationsToolBar() {
 
@@ -30,15 +33,13 @@ public abstract class ClientManagerTransferView extends View {
 
 			@Override
 			public void execute() {
+				form.commit();
 				onTransferButtonPressed(form.getValue());
 			}
 		});
 
 		wrapper.add(toolbar);
 		wrapper.setCellHeight(toolbar, "21px");
-
-		form = new TransferClientManagerForm();
-		form.setSize("100%", "100%");
 
 		wrapper.add(form);
 		wrapper.setCellHeight(form, "100%");

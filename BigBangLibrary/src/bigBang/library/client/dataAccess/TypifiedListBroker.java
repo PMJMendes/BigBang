@@ -28,6 +28,8 @@ public interface TypifiedListBroker {
 	 */
 	public void unregisterClient(String listId, TypifiedListClient client);
 	
+	public boolean isClientRegistered(String listId, TypifiedListClient client);
+	
 	/**
 	 * @param listId the id of list to be refreshed
 	 */

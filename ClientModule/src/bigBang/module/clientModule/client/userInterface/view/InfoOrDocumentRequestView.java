@@ -39,6 +39,7 @@ public abstract class InfoOrDocumentRequestView extends View {
 			
 			@Override
 			public void execute() {
+				form.commit();
 				onSendButtonPressed();
 			}
 		}));

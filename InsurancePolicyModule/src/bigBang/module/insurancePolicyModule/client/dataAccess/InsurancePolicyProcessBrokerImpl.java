@@ -45,20 +45,52 @@ public class InsurancePolicyProcessBrokerImpl extends DataBroker<InsurancePolicy
 
 	@Override
 	public void notifyItemCreation(String itemId) {
-		// TODO Auto-generated method stub
-		
+		this.getPolicy(itemId, new ResponseHandler<InsurancePolicy>() {
+
+			@Override
+			public void onResponse(InsurancePolicy response) {
+				cache.add(response.id, response);
+				incrementDataVersion();
+				for(DataBrokerClient<InsurancePolicy> bc : getClients()){
+					((InsurancePolicyDataBrokerClient) bc).addInsurancePolicy(response);
+					((InsurancePolicyDataBrokerClient) bc).setDataVersionNumber(BigBangConstants.EntityIds.INSURANCE_POLICY, getCurrentDataVersion());
+				}
+			}
+
+			@Override
+			public void onError(Collection<ResponseError> errors) {
+			}
+		});
 	}
 
 	@Override
 	public void notifyItemDeletion(String itemId) {
-		// TODO Auto-generated method stub
-		
+		cache.remove(itemId);
+		incrementDataVersion();
+		for(DataBrokerClient<InsurancePolicy> bc : getClients()){
+			((InsurancePolicyDataBrokerClient) bc).removeInsurancePolicy(itemId);
+			((InsurancePolicyDataBrokerClient) bc).setDataVersionNumber(BigBangConstants.EntityIds.INSURANCE_POLICY, getCurrentDataVersion());
+		}
 	}
 
 	@Override
 	public void notifyItemUpdate(String itemId) {
-		// TODO Auto-generated method stub
-		
+		this.getPolicy(itemId, new ResponseHandler<InsurancePolicy>() {
+
+			@Override
+			public void onResponse(InsurancePolicy response) {
+				cache.add(response.id, response);
+				incrementDataVersion();
+				for(DataBrokerClient<InsurancePolicy> bc : getClients()){
+					((InsurancePolicyDataBrokerClient) bc).updateInsurancePolicy(response);
+					((InsurancePolicyDataBrokerClient) bc).setDataVersionNumber(BigBangConstants.EntityIds.INSURANCE_POLICY, getCurrentDataVersion());
+				}
+			}
+
+			@Override
+			public void onError(Collection<ResponseError> errors) {
+			}
+		});
 	}
 
 	@Override
@@ -126,12 +158,12 @@ public class InsurancePolicyProcessBrokerImpl extends DataBroker<InsurancePolicy
 		parameter.ownerId = clientid;
 		
 		SearchParameter[] parameters = new SearchParameter[]{
-		//	parameter //TODO FJVC
+				parameter
 		};
 		
-		SortParameter sort = new InsurancePolicySortParameter(InsurancePolicySortParameter.SortableField.RELEVANCE, SortOrder.DESC);		
+		SortParameter sort = new InsurancePolicySortParameter(InsurancePolicySortParameter.SortableField.NUMBER, SortOrder.DESC);		
 		SortParameter[] sorts = new SortParameter[]{
-		//TODO FJVC	sort 
+				sort
 		};
 		
 		this.searchBroker.search(parameters, sorts, -1, new ResponseHandler<Search<InsurancePolicyStub>>() {

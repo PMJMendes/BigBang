@@ -1,5 +1,6 @@
 package bigBang.module.clientModule.client.userInterface.view;
 
+import bigBang.definitions.shared.BigBangConstants;
 import bigBang.definitions.shared.InfoOrDocumentRequest;
 import bigBang.library.client.userInterface.ExpandableListBoxFormField;
 import bigBang.library.client.userInterface.RichTextAreaFormField;
@@ -18,7 +19,7 @@ public class InfoOrDocumentRequestForm extends FormView<InfoOrDocumentRequest> {
 	public InfoOrDocumentRequestForm(){
 		addSection("Detalhes do Pedido");
 
-		documentType = new ExpandableListBoxFormField("", "Tipo de Documento"); //TODO
+		documentType = new ExpandableListBoxFormField(BigBangConstants.TypifiedListIds.DOCUMENT_TYPE, "Tipo de Documento");
 		text = new RichTextAreaFormField();
 		text.setFieldWidth("630px");
 		text.setFieldHeight("300px");
@@ -38,13 +39,31 @@ public class InfoOrDocumentRequestForm extends FormView<InfoOrDocumentRequest> {
 	
 	@Override
 	public InfoOrDocumentRequest getInfo() {
-		// TODO Auto-generated method stub
-		return null;
+		if(value == null){
+			value = new InfoOrDocumentRequest();
+		}
+		InfoOrDocumentRequest request = value;
+		request.documentType = documentType.getValue();
+		request.text = text.getValue();
+		request.replylimit = Integer.parseInt(replyLimit.getValue());
+		request.forwardUserIds = new String[0];
+		request.internalBCCs = internalCCAddresses.getValue();
+		request.externalCCs = externalCCAddresses.getValue();
+		return request;
 	}
 
 	@Override
 	public void setInfo(InfoOrDocumentRequest info) {
-		// TODO Auto-generated method stub
+		if(info == null) {
+			clearInfo();
+			return;
+		}
+		documentType.setValue(info.documentType);
+		text.setValue(info.text);
+		replyLimit.setValue(info.replylimit+"");
+		forwardReply.setValue(info.forwardUserIds.toString());
+		internalCCAddresses.setValue(info.internalBCCs);
+		externalCCAddresses.setValue(info.externalCCs);
 	}
 
 }

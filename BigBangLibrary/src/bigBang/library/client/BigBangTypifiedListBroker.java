@@ -67,7 +67,7 @@ public class BigBangTypifiedListBroker implements TypifiedListBroker {
 
 		Integer listDataVersion = getListDataVersion(listId);
 
-		if(!clientList.contains(client))
+		if(!isClientRegistered(listId, client))
 			clientList.add(client);
 		client.setTypifiedListItems(this.getListItems(listId));		
 		client.setTypifiedDataVersionNumber(listDataVersion.intValue());
@@ -84,6 +84,15 @@ public class BigBangTypifiedListBroker implements TypifiedListBroker {
 				lists.remove(listId);
 			}*/
 		}
+	}
+	
+	@Override
+	public boolean isClientRegistered(String listId, TypifiedListClient client) {
+		if(clients.containsKey(listId)){
+			List<TypifiedListClient> clientList = clients.get(listId);
+			return clientList.contains(client);
+		}
+		return false;
 	}
 
 	@Override
