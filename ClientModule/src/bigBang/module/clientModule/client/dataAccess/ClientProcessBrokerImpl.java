@@ -155,9 +155,9 @@ public class ClientProcessBrokerImpl extends DataBroker<Client> implements Clien
 	}
 
 	@Override
-	public void createInsurancePolicy(String clientId, InsurancePolicy policy,
+	public void createInsurancePolicy(String clientProcessId, InsurancePolicy policy,
 			final ResponseHandler<InsurancePolicy> handler) {
-		service.createPolicy(clientId, policy, new BigBangAsyncCallback<InsurancePolicy>() {
+		service.createPolicy(clientProcessId, policy, new BigBangAsyncCallback<InsurancePolicy>() {
 
 			@Override
 			public void onSuccess(InsurancePolicy result) {

@@ -57,7 +57,7 @@ public interface ClientProcessBroker extends DataBrokerInterface<Client>{
 	 */
 	public void createRiskAnalisys(String clientId, RiskAnalysis riskAnalisys, ResponseHandler<RiskAnalysis> handler);
 
-	public void createInsurancePolicy(String clientId, InsurancePolicy policy, ResponseHandler<InsurancePolicy> handler);
+	public void createInsurancePolicy(String clientProcessId, InsurancePolicy policy, ResponseHandler<InsurancePolicy> handler);
 	
 	public void createQuoteRequest(String clientId, QuoteRequest quoteRequest, ResponseHandler<QuoteRequest> handler);
 	

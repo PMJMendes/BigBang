@@ -368,10 +368,9 @@ public class ClientServiceImpl
 		return getClient(receptorId);
 	}
 
-	public InsurancePolicy createPolicy(String clientId, InsurancePolicy policy)
+	public InsurancePolicy createPolicy(String clientProcessId, InsurancePolicy policy)
 		throws SessionExpiredException, BigBangException
 	{
-		com.premiumminds.BigBang.Jewel.Objects.Client lobjClient;
 		CreatePolicy lopCP;
 
 		if ( Engine.getCurrentUser() == null )
@@ -379,10 +378,7 @@ public class ClientServiceImpl
 
 		try
 		{
-			lobjClient = com.premiumminds.BigBang.Jewel.Objects.Client.GetInstance(Engine.getCurrentNameSpace(),
-					UUID.fromString(clientId));
-
-			lopCP = new CreatePolicy(lobjClient.GetProcessID());
+			lopCP = new CreatePolicy(UUID.fromString(clientProcessId));
 			lopCP.mobjData = new PolicyData();
 
 			lopCP.mobjData.mid = null;
