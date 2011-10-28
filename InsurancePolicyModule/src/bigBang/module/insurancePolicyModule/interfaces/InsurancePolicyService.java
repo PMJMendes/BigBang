@@ -1,6 +1,7 @@
 package bigBang.module.insurancePolicyModule.interfaces;
 
 import bigBang.definitions.shared.InsurancePolicy;
+import bigBang.definitions.shared.Receipt;
 import bigBang.library.interfaces.SearchService;
 import bigBang.library.shared.BigBangException;
 import bigBang.library.shared.SessionExpiredException;
@@ -28,7 +29,11 @@ public interface InsurancePolicyService extends SearchService {
 	public InsurancePolicy voidPolicy(String policyId) throws SessionExpiredException, BigBangException;
 	public void deletePolicy(String policyId) throws SessionExpiredException, BigBangException;
 	public InsurancePolicy editPolicy(InsurancePolicy policy) throws SessionExpiredException, BigBangException;
+	
+	public Receipt createReceipt(String policyId, Receipt receipt) throws SessionExpiredException, BigBangException;
 
+	
+	
 	//public RiskAnalisys createRiskAnalisys(String policyId, RiskAnalisys riskAnalisys) throws SessionExpiredException, BigBangException;
 	//public 
 	

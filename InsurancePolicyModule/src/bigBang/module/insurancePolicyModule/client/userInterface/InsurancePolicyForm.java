@@ -143,8 +143,12 @@ public class InsurancePolicyForm extends FormView<InsurancePolicy> {
 			this.number.setValue(info.number);
 			this.insuranceAgency.setValue(info.insuranceAgencyId);
 			this.category.setValue(info.categoryId, true);
-			this.line.setValue(info.lineId, true);
-			this.subLine.setValue(info.subLineId, true);
+			
+			this.line.setListId(BigBangConstants.EntityIds.LINE+"/"+info.categoryId);
+			this.line.setValue(info.lineId, false);
+			this.subLine.setListId(BigBangConstants.EntityIds.SUB_LINE+"/"+info.lineId);
+			this.subLine.setValue(info.subLineId, false);
+			
 			this.mediator.setValue(info.mediatorId);
 			this.maturityDay.setValue(info.maturityDay+"");
 			this.maturityMonth.setValue(info.maturityMonth+"");
@@ -162,7 +166,9 @@ public class InsurancePolicyForm extends FormView<InsurancePolicy> {
 				@Override
 				public void onError(Collection<ResponseError> errors) {}
 			});
-					
+			
+			
+			
 					
 			//			protected DatePickerFormField endDate;
 //			//TODO dynamic fields

@@ -11,6 +11,7 @@ import Jewel.Petri.Interfaces.IProcess;
 import Jewel.Petri.Objects.PNProcess;
 import bigBang.definitions.shared.InsurancePolicy;
 import bigBang.definitions.shared.InsurancePolicyStub;
+import bigBang.definitions.shared.Receipt;
 import bigBang.definitions.shared.SearchParameter;
 import bigBang.definitions.shared.SearchResult;
 import bigBang.definitions.shared.SortOrder;
@@ -458,5 +459,12 @@ public class InsurancePolicyServiceImpl
 		}
 
 		return lbFound;
+	}
+
+	@Override
+	public Receipt createReceipt(String policyId, Receipt receipt)
+			throws SessionExpiredException, BigBangException {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }

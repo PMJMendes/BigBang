@@ -20,6 +20,8 @@ import bigBang.module.insurancePolicyModule.client.userInterface.presenter.Insur
 import bigBang.module.insurancePolicyModule.client.userInterface.presenter.InsurancePolicySearchOperationViewPresenter.Action;
 
 import com.google.gwt.event.logical.shared.AttachEvent;
+import com.google.gwt.event.logical.shared.ValueChangeEvent;
+import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.SplitLayoutPanel;
 import com.google.gwt.user.client.ui.StackPanel;
@@ -108,6 +110,14 @@ public class InsurancePolicySearchOperationView extends View implements Insuranc
 		contentWrapper.add(toolBarFormContainer);
 		
 		mainWrapper.add(contentWrapper);
+		
+		form.addValueChangeHandler(new ValueChangeHandler<InsurancePolicy>() {
+			
+			@Override
+			public void onValueChange(ValueChangeEvent<InsurancePolicy> event) {
+				
+			}
+		});
 		
 		initWidget(mainWrapper);
 	}

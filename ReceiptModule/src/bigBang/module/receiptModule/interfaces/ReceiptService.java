@@ -1,6 +1,9 @@
 package bigBang.module.receiptModule.interfaces;
 
+import bigBang.definitions.shared.Receipt;
 import bigBang.library.interfaces.SearchService;
+import bigBang.library.shared.BigBangException;
+import bigBang.library.shared.SessionExpiredException;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
@@ -19,4 +22,8 @@ public interface ReceiptService extends SearchService {
 			return instance;
 		}
 	}
+	
+	public Receipt getReceipt(String receiptId) throws SessionExpiredException, BigBangException;
+	public void deleteReceipt(String receiptId) throws SessionExpiredException, BigBangException;
+	public Receipt editReceipt(Receipt receipt) throws SessionExpiredException, BigBangException;
 }
