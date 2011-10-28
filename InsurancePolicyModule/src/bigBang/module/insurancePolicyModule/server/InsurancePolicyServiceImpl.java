@@ -311,7 +311,7 @@ public class InsurancePolicyServiceImpl
 			{
         		throw new BigBangException(e.getMessage(), e);
 			}
-			pstrBuffer.append(") [AuxOwner] WHERE [:Process:Data] = '").append(lParam.ownerId).append("'");
+			pstrBuffer.append(") [AuxOwner] WHERE [:Process:Data] = '").append(lParam.ownerId).append("')");
 		}
 
 		if ( lParam.subLineId != null )
