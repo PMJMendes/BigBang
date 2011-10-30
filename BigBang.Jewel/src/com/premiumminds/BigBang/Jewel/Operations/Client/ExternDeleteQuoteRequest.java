@@ -1,5 +1,5 @@
 package com.premiumminds.BigBang.Jewel.Operations.Client;
 
-public class CreateMarketRequest {
+public class ExternDeleteQuoteRequest {
 
 }

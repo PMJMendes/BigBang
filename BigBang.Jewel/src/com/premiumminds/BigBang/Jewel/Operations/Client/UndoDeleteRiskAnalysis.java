@@ -6,23 +6,23 @@ import com.premiumminds.BigBang.Jewel.Constants;
 
 import Jewel.Petri.SysObjects.UndoOperation;
 
-public class UndoManageData
+public class UndoDeleteRiskAnalysis
 	extends UndoOperation
 {
 	private static final long serialVersionUID = 1L;
 
-	public UndoManageData(UUID pidProcess)
+	public UndoDeleteRiskAnalysis(UUID pidProcess)
 	{
 		super(pidProcess);
 	}
 
 	protected UUID OpID()
 	{
-		return Constants.OPID_UndoManageClientData;
+		return Constants.OPID_UndoDeleteRiskAnalysis;
 	}
 
 	public String ShortDesc()
 	{
-		return "Desfazer Alteração de Dados";
+		return "Desfazer Eliminação de Análise de Risco";
 	}
 }

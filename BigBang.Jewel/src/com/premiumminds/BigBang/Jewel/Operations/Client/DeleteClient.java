@@ -8,7 +8,6 @@ import Jewel.Petri.SysObjects.JewelPetriException;
 import Jewel.Petri.SysObjects.Operation;
 
 import com.premiumminds.BigBang.Jewel.Constants;
-import com.premiumminds.BigBang.Jewel.Data.ClientData;
 import com.premiumminds.BigBang.Jewel.Objects.GeneralSystem;
 import com.premiumminds.BigBang.Jewel.Operations.General.ExternDeleteClient;
 
@@ -47,19 +46,18 @@ public class DeleteClient
 	protected void Run(SQLServer pdb)
 		throws JewelPetriException
 	{
-		ExternDeleteClient lobjOp;
+		ExternDeleteClient lopDC;
 
 		try
 		{
-			lobjOp = new ExternDeleteClient(GeneralSystem.GetAnyInstance(Engine.getCurrentNameSpace()).GetProcessID());
+			lopDC = new ExternDeleteClient(GeneralSystem.GetAnyInstance(Engine.getCurrentNameSpace()).GetProcessID());
 		}
 		catch (Throwable e)
 		{
 			throw new JewelPetriException(e.getMessage(), e);
 		}
 
-		lobjOp.mobjData = new ClientData();
-		lobjOp.mobjData.mid = midClient;
-		TriggerOp(lobjOp);
+		lopDC.midClient = midClient;
+		TriggerOp(lopDC);
 	}
 }

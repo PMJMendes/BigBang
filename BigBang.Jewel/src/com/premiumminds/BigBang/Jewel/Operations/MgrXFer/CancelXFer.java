@@ -12,6 +12,7 @@ import Jewel.Engine.Implementation.Entity;
 import Jewel.Engine.Implementation.User;
 import Jewel.Engine.Interfaces.IEntity;
 import Jewel.Engine.SysObjects.ObjectBase;
+import Jewel.Petri.Objects.PNProcess;
 import Jewel.Petri.SysObjects.JewelPetriException;
 import Jewel.Petri.SysObjects.Operation;
 import Jewel.Petri.SysObjects.UndoableOperation;
@@ -19,8 +20,8 @@ import Jewel.Petri.SysObjects.UndoableOperation;
 import com.premiumminds.BigBang.Jewel.Constants;
 import com.premiumminds.BigBang.Jewel.Objects.AgendaItem;
 import com.premiumminds.BigBang.Jewel.Objects.MgrXFer;
-import com.premiumminds.BigBang.Jewel.Operations.Client.ExternEndManagerTransfer;
-import com.premiumminds.BigBang.Jewel.Operations.Client.ExternUndoEndManagerTransfer;
+import com.premiumminds.BigBang.Jewel.Operations.Client.ExternEndClientMgrXFer;
+import com.premiumminds.BigBang.Jewel.Operations.Client.ExternUndoEndClientMgrXFer;
 
 public class CancelXFer
 	extends UndoableOperation
@@ -28,8 +29,10 @@ public class CancelXFer
 	private static final long serialVersionUID = 1L;
 
 	public boolean mbMassTransfer;
-	public int mlngCount;
 	public UUID midParentProc;
+	private int mlngCount;
+	private UUID midNewManager;
+	private UUID[] marrOldManagers;
 
 	public CancelXFer(UUID pidProcess)
 	{
@@ -62,8 +65,7 @@ public class CancelXFer
 		lstrBuffer.append(pstrLineBreak).append("Gestor pretendido: ");
 		try
 		{
-			lstrBuffer.append(User.GetInstance(Engine.getCurrentNameSpace(),
-					((MgrXFer)GetProcess().GetData()).GetNewManagerID()).getDisplayName());
+			lstrBuffer.append(User.GetInstance(Engine.getCurrentNameSpace(), midNewManager).getDisplayName());
 		}
 		catch (Throwable e)
 		{
@@ -101,6 +103,8 @@ public class CancelXFer
 		if ( mbMassTransfer && !lobjXFer.IsMassTransfer() )
 			throw new JewelPetriException("Inesperado: Esta transferência de gestor não faz parte de um processo de transferência em massa.");
 
+		midNewManager = lobjXFer.GetNewManagerID();
+
 		if ( mbMassTransfer )
 		{
 			midParentProc = null;
@@ -116,7 +120,8 @@ public class CancelXFer
 
 		for ( i = 0; i < mlngCount; i++ )
 		{
-			TriggerOp(GetRunTrigger(lobjXFer.GetOuterObjectType(), larrProcs[i]));
+			marrOldManagers[i] = PNProcess.GetInstance(Engine.getCurrentNameSpace(), larrProcs[i]).GetManagerID();
+			TriggerOp(GetRunTrigger(lobjXFer.GetOuterObjectType(), larrProcs[i], marrOldManagers[i]));
 		}
 
 		larrItems = new ArrayList<UUID>();
@@ -164,8 +169,7 @@ public class CancelXFer
 				.append(pstrLineBreak).append("Gestor pedido: ");
 		try
 		{
-			lstrBuffer.append(User.GetInstance(Engine.getCurrentNameSpace(),
-					((MgrXFer)GetProcess().GetData()).GetNewManagerID()).getDisplayName());
+			lstrBuffer.append(User.GetInstance(Engine.getCurrentNameSpace(), midNewManager).getDisplayName());
 		}
 		catch (Throwable e)
 		{
@@ -246,27 +250,43 @@ public class CancelXFer
 		return new UndoSet[0];
 	}
 
-	private Operation GetRunTrigger(UUID pidObjectType, UUID pidProc)
+	private Operation GetRunTrigger(UUID pidObjectType, UUID pidProc, UUID pidOldMgr)
+		throws JewelPetriException
 	{
-		if ( Constants.ObjID_Client.equals(pidObjectType) )
-			return new ExternEndManagerTransfer(pidProc);
+		ExternEndMgrXFerBase lopResult;
 
-		return null;
+		lopResult = null;
+
+		if ( Constants.ObjID_Client.equals(pidObjectType) )
+			lopResult = new ExternEndClientMgrXFer(pidProc);
+
+		if ( lopResult != null )
+		{
+			lopResult.midXFerProcess = GetProcess().getKey();
+			lopResult.mbAccepted = true;
+			lopResult.midOldManager = pidOldMgr;
+			lopResult.midNewManager = midNewManager;
+		}
+
+		return lopResult;
 	}
 
 	private Operation GetUndoTrigger(UUID pidObjectType, UUID pidProc)
 		throws JewelPetriException
 	{
-		if ( Constants.ObjID_Client.equals(pidObjectType) )
-		{
-			ExternUndoEndManagerTransfer lopResult;
+		ExternUndoEndMgrXFerBase lopResult;
 
-			lopResult = new ExternUndoEndManagerTransfer(pidProc);
+		lopResult = null;
+
+		if ( Constants.ObjID_Client.equals(pidObjectType) )
+			lopResult = new ExternUndoEndClientMgrXFer(pidProc);
+
+		if ( lopResult != null )
+		{
 			lopResult.midProcess = GetProcess().getKey();
 			lopResult.midReopener = Engine.getCurrentNameSpace();
-			return lopResult;
 		}
 
-		return null;
+		return lopResult;
 	}
 }

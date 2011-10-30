@@ -57,7 +57,6 @@ public class AutoProcessData
 		ObjectBase lobjData;
 		Client lobjClient;
 		boolean b;
-		Operation lobjTrigger;
 
 		lobjData = GetProcess().GetData();
 		if ( lobjData == null )
@@ -96,11 +95,8 @@ public class AutoProcessData
 			}
 		}
 
-		if ( b )
-			lobjTrigger = new TriggerAllowPolicies(this.GetProcess().getKey());
-		else
-			lobjTrigger = new TriggerDisallowPolicies(this.GetProcess().getKey());
-		TriggerOp(lobjTrigger);
+		if ( !b )
+			TriggerOp(new TriggerDisallowPolicies(this.GetProcess().getKey()));
 	}
 
 	private static boolean IsValidNIF(String pstrNIF, UUID pidType)

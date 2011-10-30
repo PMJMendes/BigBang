@@ -26,9 +26,10 @@ public class ExternDeleteClient
 {
 	private static final long serialVersionUID = 1L;
 
-	public ClientData mobjData;
-	public ContactOps mobjContactOps;
-	public DocOps mobjDocOps;
+	public UUID midClient;
+	private ClientData mobjData;
+	private ContactOps mobjContactOps;
+	private DocOps mobjDocOps;
 
 	public ExternDeleteClient(UUID pidProcess)
 	{
@@ -84,7 +85,7 @@ public class ExternDeleteClient
 			lrefClients = Entity.GetInstance(Engine.FindEntity(Engine.getCurrentNameSpace(),
 					Constants.ObjID_Client));
 
-			lobjAux = Client.GetInstance(Engine.getCurrentNameSpace(), mobjData.mid);
+			lobjAux = Client.GetInstance(Engine.getCurrentNameSpace(), midClient);
 			mobjData.FromObject(lobjAux);
 			mobjData.mobjPrevValues = null;
 

@@ -1,6 +1,8 @@
-package com.premiumminds.BigBang.Jewel.Operations.Client;
+package com.premiumminds.BigBang.Jewel.Operations.MgrXFer;
 
 import java.util.UUID;
+
+import com.premiumminds.BigBang.Jewel.Objects.MgrXFer;
 
 import Jewel.Engine.Engine;
 import Jewel.Engine.DataAccess.SQLServer;
@@ -9,26 +11,18 @@ import Jewel.Petri.Objects.PNProcess;
 import Jewel.Petri.SysObjects.JewelPetriException;
 import Jewel.Petri.SysObjects.Operation;
 
-import com.premiumminds.BigBang.Jewel.Constants;
-import com.premiumminds.BigBang.Jewel.Objects.MgrXFer;
-
-public class ExternUndoEndManagerTransfer
+public abstract class ExternUndoEndMgrXFerBase
 	extends Operation
 {
 	private static final long serialVersionUID = 1L;
 
 	public UUID midProcess;
 	public UUID midReopener;
-	public UUID midOldManager;
+	private UUID midOldManager;
 
-	public ExternUndoEndManagerTransfer(UUID pidProcess)
+	public ExternUndoEndMgrXFerBase(UUID pidProcess)
 	{
 		super(pidProcess);
-	}
-
-	protected UUID OpID()
-	{
-		return Constants.OPID_UndoEndMgrXFer;
 	}
 
 	public String ShortDesc()
@@ -52,7 +46,7 @@ public class ExternUndoEndManagerTransfer
 
 		lstrBuffer = new StringBuilder();
 
-		lstrBuffer.append("O procedimento de transferência do gestor de cliente foi reaberto.").append(pstrLineBreak);
+		lstrBuffer.append("O procedimento de transferência de gestor foi reaberto.").append(pstrLineBreak);
 
 		lstrBuffer.append("Pedido original feito por: ");
 		try

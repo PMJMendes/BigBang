@@ -21,8 +21,8 @@ import Jewel.Petri.SysObjects.UndoableOperation;
 import com.premiumminds.BigBang.Jewel.Constants;
 import com.premiumminds.BigBang.Jewel.Objects.AgendaItem;
 import com.premiumminds.BigBang.Jewel.Objects.MgrXFer;
-import com.premiumminds.BigBang.Jewel.Operations.Client.ExternEndManagerTransfer;
-import com.premiumminds.BigBang.Jewel.Operations.Client.ExternUndoEndManagerTransfer;
+import com.premiumminds.BigBang.Jewel.Operations.Client.ExternEndClientMgrXFer;
+import com.premiumminds.BigBang.Jewel.Operations.Client.ExternUndoEndClientMgrXFer;
 
 public class AcceptXFer
 	extends UndoableOperation
@@ -32,6 +32,7 @@ public class AcceptXFer
 	public boolean mbMassTransfer;
 	public UUID midParentProc;
 	private int mlngCount;
+	private UUID midNewManager;
 	private UUID[] marrOldManagers;
 
 	public AcceptXFer(UUID pidProcess)
@@ -77,8 +78,7 @@ public class AcceptXFer
 		lstrBuffer.append(pstrLineBreak).append("Novo gestor: ");
 		try
 		{
-			lstrBuffer.append(User.GetInstance(Engine.getCurrentNameSpace(),
-					((MgrXFer)GetProcess().GetData()).GetNewManagerID()).getDisplayName());
+			lstrBuffer.append(User.GetInstance(Engine.getCurrentNameSpace(), midNewManager).getDisplayName());
 		}
 		catch (Throwable e)
 		{
@@ -98,7 +98,6 @@ public class AcceptXFer
 	{
 		ObjectBase lobjData;
 		MgrXFer lobjXFer;
-		UUID lidNewManager;
 		UUID[] larrProcs;
 		int i;
 		IProcess lobjProc;
@@ -118,7 +117,7 @@ public class AcceptXFer
 		if ( mbMassTransfer && !lobjXFer.IsMassTransfer() )
 			throw new JewelPetriException("Inesperado: Esta transferência de gestor não faz parte de um processo de transferência em massa.");
 
-		lidNewManager = lobjXFer.GetNewManagerID();
+		midNewManager = lobjXFer.GetNewManagerID();
 
 		if ( mbMassTransfer )
 		{
@@ -138,8 +137,8 @@ public class AcceptXFer
 		{
 			lobjProc = PNProcess.GetInstance(Engine.getCurrentNameSpace(), larrProcs[i]);
 			marrOldManagers[i] = lobjProc.GetManagerID();
-			lobjProc.SetManagerID(lidNewManager, pdb);
-			TriggerOp(GetRunTrigger(lobjXFer.GetOuterObjectType(), larrProcs[i]));
+			lobjProc.SetManagerID(midNewManager, pdb);
+			TriggerOp(GetRunTrigger(lobjXFer.GetOuterObjectType(), larrProcs[i], marrOldManagers[i]));
 		}
 
 		larrItems = new ArrayList<UUID>();
@@ -322,27 +321,43 @@ public class AcceptXFer
 		return larrResult;
 	}
 
-	private Operation GetRunTrigger(UUID pidObjectType, UUID pidProc)
+	private Operation GetRunTrigger(UUID pidObjectType, UUID pidProc, UUID pidOldMgr)
+		throws JewelPetriException
 	{
-		if ( Constants.ObjID_Client.equals(pidObjectType) )
-			return new ExternEndManagerTransfer(pidProc);
+		ExternEndMgrXFerBase lopResult;
 
-		return null;
+		lopResult = null;
+
+		if ( Constants.ObjID_Client.equals(pidObjectType) )
+			lopResult = new ExternEndClientMgrXFer(pidProc);
+
+		if ( lopResult != null )
+		{
+			lopResult.midXFerProcess = GetProcess().getKey();
+			lopResult.mbAccepted = true;
+			lopResult.midOldManager = pidOldMgr;
+			lopResult.midNewManager = midNewManager;
+		}
+
+		return lopResult;
 	}
 
 	private Operation GetUndoTrigger(UUID pidObjectType, UUID pidProc)
 		throws JewelPetriException
 	{
-		if ( Constants.ObjID_Client.equals(pidObjectType) )
-		{
-			ExternUndoEndManagerTransfer lopResult;
+		ExternUndoEndMgrXFerBase lopResult;
 
-			lopResult = new ExternUndoEndManagerTransfer(pidProc);
+		lopResult = null;
+
+		if ( Constants.ObjID_Client.equals(pidObjectType) )
+			lopResult = new ExternUndoEndClientMgrXFer(pidProc);
+
+		if ( lopResult != null )
+		{
 			lopResult.midProcess = GetProcess().getKey();
 			lopResult.midReopener = Engine.getCurrentNameSpace();
-			return lopResult;
 		}
 
-		return null;
+		return lopResult;
 	}
 }

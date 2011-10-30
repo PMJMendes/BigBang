@@ -6,23 +6,23 @@ import com.premiumminds.BigBang.Jewel.Constants;
 
 import Jewel.Petri.SysObjects.UndoOperation;
 
-public class UndoMergeWithOther
+public class UndoManageClientData
 	extends UndoOperation
 {
 	private static final long serialVersionUID = 1L;
 
-	public UndoMergeWithOther(UUID pidProcess)
+	public UndoManageClientData(UUID pidProcess)
 	{
 		super(pidProcess);
 	}
 
 	protected UUID OpID()
 	{
-		return Constants.OPID_UndoMergeOtherClient;
+		return Constants.OPID_UndoManageClientData;
 	}
 
 	public String ShortDesc()
 	{
-		return "Desfazer Fusão de Clientes";
+		return "Desfazer Alteração de Dados";
 	}
 }

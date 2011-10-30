@@ -72,63 +72,73 @@ public class Constants
 	// Operations
 
 	// General System Operations
-	public static final UUID OPID_ManageCostCenters   = UUID.fromString("39A4A919-F3D0-4966-8CBB-9EB100A38EE8");
-	public static final UUID OPID_ManageUsers         = UUID.fromString("03F5BBC1-5AB5-45DF-BAEF-9EB500A043FD");
-	public static final UUID OPID_ManageMediators     = UUID.fromString("EDA3659D-4BE9-4779-B0C9-9EB500A07726");
-	public static final UUID OPID_ManageCompanies     = UUID.fromString("83081039-C3C0-4BAC-8B24-9EB500A0A3EB");
-	public static final UUID OPID_ManageLines         = UUID.fromString("7CE5A4B8-9E13-4F14-BDDA-9EB500A0D171");
-	public static final UUID OPID_ManageCoefficients  = UUID.fromString("BF76CE8C-C9A7-408B-B623-9EB500A0F07F");
-	public static final UUID OPID_ManageGroups        = UUID.fromString("08E5A828-0AF2-4347-A57A-9EB500A11526");
-	public static final UUID OPID_CreateClient        = UUID.fromString("214118B8-C43C-4941-9D1E-9EB500A1381C");
-	public static final UUID OPID_TriggerDeleteClient = UUID.fromString("EA560433-17DF-4E0A-A7BC-9F3300EAFD78");
-	public static final UUID OPID_UndoGroups          = UUID.fromString("742FCF0E-FD17-439A-A810-9F3300CCF026");
-	public static final UUID OPID_UndoCoefficients    = UUID.fromString("B841D5C5-CCA9-4E25-B88C-9F3300E64E61");
-	public static final UUID OPID_UndoCostCenters     = UUID.fromString("438CC18F-51A7-4037-A5B4-9F3300CCBD74");
-	public static final UUID OPID_UndoCompanies       = UUID.fromString("266E812E-53F0-4968-AC6C-9F3300E68E03");
-	public static final UUID OPID_UndoLines           = UUID.fromString("D4E44325-B8F8-450B-9949-9F3300E6AB0E");
-	public static final UUID OPID_UndoMediators       = UUID.fromString("3A1572FF-B1C6-4DEC-9819-9F3300E6DA84");
-	public static final UUID OPID_UndoUsers           = UUID.fromString("F71DF6CC-C58E-4AA7-9BE5-9F3300E6FD4F");
-	public static final UUID OPID_UndoDeleteClient    = UUID.fromString("711B9533-8298-4DA5-BFD1-9F3D01211F51");
+	public static final UUID OPID_ManageCostCenters        = UUID.fromString("39A4A919-F3D0-4966-8CBB-9EB100A38EE8");
+	public static final UUID OPID_ManageUsers              = UUID.fromString("03F5BBC1-5AB5-45DF-BAEF-9EB500A043FD");
+	public static final UUID OPID_ManageMediators          = UUID.fromString("EDA3659D-4BE9-4779-B0C9-9EB500A07726");
+	public static final UUID OPID_ManageCompanies          = UUID.fromString("83081039-C3C0-4BAC-8B24-9EB500A0A3EB");
+	public static final UUID OPID_ManageLines              = UUID.fromString("7CE5A4B8-9E13-4F14-BDDA-9EB500A0D171");
+	public static final UUID OPID_ManageCoefficients       = UUID.fromString("BF76CE8C-C9A7-408B-B623-9EB500A0F07F");
+	public static final UUID OPID_ManageGroups             = UUID.fromString("08E5A828-0AF2-4347-A57A-9EB500A11526");
+	public static final UUID OPID_CreateClient             = UUID.fromString("214118B8-C43C-4941-9D1E-9EB500A1381C");
+	public static final UUID OPID_TriggerDeleteClient      = UUID.fromString("EA560433-17DF-4E0A-A7BC-9F3300EAFD78");
+	public static final UUID OPID_UndoGroups               = UUID.fromString("742FCF0E-FD17-439A-A810-9F3300CCF026");
+	public static final UUID OPID_UndoCoefficients         = UUID.fromString("B841D5C5-CCA9-4E25-B88C-9F3300E64E61");
+	public static final UUID OPID_UndoCostCenters          = UUID.fromString("438CC18F-51A7-4037-A5B4-9F3300CCBD74");
+	public static final UUID OPID_UndoCompanies            = UUID.fromString("266E812E-53F0-4968-AC6C-9F3300E68E03");
+	public static final UUID OPID_UndoLines                = UUID.fromString("D4E44325-B8F8-450B-9949-9F3300E6AB0E");
+	public static final UUID OPID_UndoMediators            = UUID.fromString("3A1572FF-B1C6-4DEC-9819-9F3300E6DA84");
+	public static final UUID OPID_UndoUsers                = UUID.fromString("F71DF6CC-C58E-4AA7-9BE5-9F3300E6FD4F");
+	public static final UUID OPID_UndoDeleteClient         = UUID.fromString("711B9533-8298-4DA5-BFD1-9F3D01211F51");
 
 	// Client Operations
-	public static final UUID OPID_TriggerAllowPolicies    = UUID.fromString("A99DCEF5-91BA-4CFA-9E70-9F090146FAE4");
-	public static final UUID OPID_TriggerDisallowPolicies = UUID.fromString("6A031641-DEC8-46D3-B402-9F0901474FE9");
-	public static final UUID OPID_AutoProcessData         = UUID.fromString("A9A8F4ED-74C2-473C-873C-9F0901435C1C");
-	public static final UUID OPID_CreateMgrXFer           = UUID.fromString("C75EEC27-780C-4C0C-9FD7-9F090142CB10");
-	public static final UUID OPID_ManageClientData        = UUID.fromString("AE3CC7F0-BE2C-4548-87B5-9F09014072B8");
-	public static final UUID OPID_DeleteClient            = UUID.fromString("2227C32A-0AF5-4ECC-B807-9F090143401F");
-	public static final UUID OPID_UndoManageClientData    = UUID.fromString("61097A3F-2322-4C06-B015-9F090143A35B");
-	public static final UUID OPID_EndMgrXFer              = UUID.fromString("B8D56EF0-F619-4EB2-8F26-9F0901438388");
-	public static final UUID OPID_UndoEndMgrXFer          = UUID.fromString("955E3DFE-F74A-46A5-9A42-9F6800EADA3D");
-	public static final UUID OPID_TriggerAllowUndoMgrXFer = UUID.fromString("91530E4E-9F84-4240-B1F3-9F6D017FE928");
-	public static final UUID OPID_UndoDirectMgrXFer       = UUID.fromString("E7ABBF15-4DB6-4376-92FD-9F6D01792783");
-	public static final UUID OPID_CreateInfoRequest       = UUID.fromString("26185760-A862-4CE4-9620-9F090142B18A");
-	public static final UUID OPID_ExternMergeOtherHere    = UUID.fromString("A5B43B14-43A6-4C0F-A410-9F0901425E48");
-	public static final UUID OPID_MergeIntoAnother        = UUID.fromString("895BB8D7-1263-4230-B1C4-9F8801189ADF");
-	public static final UUID OPID_UndoMergeOtherClient    = UUID.fromString("33704B93-F5A5-481F-A0EF-9F090143B96C");
-	public static final UUID OPID_CreatePolicy            = UUID.fromString("5903FA18-8F4D-4DD3-B4AE-9F090143186E");
-	public static final UUID OPID_ExternDeletePolicy     = UUID.fromString("8BFB93C8-2CCF-423F-9E35-9F8200CA7E06");
-	public static final UUID OPID_UndoDeletePolicy        = UUID.fromString("E5E66BC3-4B16-42F4-B653-9F8200CE2893");
-	public static final UUID OPID_ExternResumeClient      = UUID.fromString("380BC979-5C71-4991-A382-9F8801257EB5");
+	public static final UUID OPID_AutoProcessData          = UUID.fromString("A9A8F4ED-74C2-473C-873C-9F0901435C1C");
+	public static final UUID OPID_TriggerDisallowPolicies  = UUID.fromString("6A031641-DEC8-46D3-B402-9F0901474FE9");
+	public static final UUID OPID_AutoProcessSubProcs      = UUID.fromString("62F70BDD-B9AC-4733-99FF-9F8B0128BAD5");
+	public static final UUID OPID_TriggerDisallowDelete    = UUID.fromString("6B5518F6-01E1-4C75-94B3-9F8B0129365E");
+	public static final UUID OPID_ManageClientData         = UUID.fromString("AE3CC7F0-BE2C-4548-87B5-9F09014072B8");
+	public static final UUID OPID_UndoManageClientData     = UUID.fromString("61097A3F-2322-4C06-B015-9F090143A35B");
+	public static final UUID OPID_MergeIntoAnother         = UUID.fromString("895BB8D7-1263-4230-B1C4-9F8801189ADF");
+	public static final UUID OPID_ExternMergeOtherHere     = UUID.fromString("A5B43B14-43A6-4C0F-A410-9F0901425E48");
+	public static final UUID OPID_UndoMergeOtherClientHere = UUID.fromString("33704B93-F5A5-481F-A0EF-9F090143B96C");
+	public static final UUID OPID_ExternResumeClient       = UUID.fromString("380BC979-5C71-4991-A382-9F8801257EB5");
+	public static final UUID OPID_CreateInfoRequest        = UUID.fromString("26185760-A862-4CE4-9620-9F090142B18A");
+	public static final UUID OPID_CreateMgrXFer            = UUID.fromString("C75EEC27-780C-4C0C-9FD7-9F090142CB10");
+	public static final UUID OPID_TriggerAllowUndoMgrXFer  = UUID.fromString("91530E4E-9F84-4240-B1F3-9F6D017FE928");
+	public static final UUID OPID_UndoDirectMgrXFer        = UUID.fromString("E7ABBF15-4DB6-4376-92FD-9F6D01792783");
+	public static final UUID OPID_ExternEndMgrXFer         = UUID.fromString("77BB2541-4AA8-4980-BE98-9F8B01297CB6");
+	public static final UUID OPID_ExternUndoEndMgrXFer     = UUID.fromString("AC843270-9D90-489A-A99B-9F8B0129C6AD");
+	public static final UUID OPID_CreateQuoteRequest       = UUID.fromString("F9BF0190-20E3-45F8-9EBE-9F090142E605");
+	public static final UUID OPID_ExternDeleteQuoteRequest = UUID.fromString("68251204-CDAC-41CC-AADC-9F8B012A2274");
+	public static final UUID OPID_UndoDeleteQuoteRequest   = UUID.fromString("AAA14707-B11F-42B6-BEF5-9F8B012B1424");
+	public static final UUID OPID_CreatePolicy             = UUID.fromString("5903FA18-8F4D-4DD3-B4AE-9F090143186E");
+	public static final UUID OPID_ExternDeletePolicy       = UUID.fromString("8BFB93C8-2CCF-423F-9E35-9F8200CA7E06");
+	public static final UUID OPID_UndoDeletePolicy         = UUID.fromString("E5E66BC3-4B16-42F4-B653-9F8200CE2893");
+	public static final UUID OPID_CreateRiskAnalysis       = UUID.fromString("AEC0C809-28EF-478D-B5B1-9F8B012E1757");
+	public static final UUID OPID_ExternDeleteRiskAnalysis = UUID.fromString("D301D131-D156-49EF-B727-9F8B012A49B7");
+	public static final UUID OPID_UndoDeleteRiskAnalysis   = UUID.fromString("0BD92466-BCEB-4854-BF84-9F8B012AF683");
+	public static final UUID OPID_CreateCasualty           = UUID.fromString("6CCF24EB-AF80-4B63-A50A-9F8B012E01BB");
+	public static final UUID OPID_ExternDeleteCasualty     = UUID.fromString("EFC6FC1E-BC09-4D94-B60D-9F8B012A707E");
+	public static final UUID OPID_UndoDeleteCasualty       = UUID.fromString("A7FB514E-B632-4247-9BCE-9F8B012B2DF6");
+	public static final UUID OPID_DeleteClient             = UUID.fromString("2227C32A-0AF5-4ECC-B807-9F090143401F");
 
 	// Policy Operations
-	public static final UUID OPID_ManagePolicyData        = UUID.fromString("1F7B31EC-9388-4EA0-816C-9F81013A8ED4");
-	public static final UUID OPID_UndoManagePolicyData    = UUID.fromString("98304BAB-0C9F-4089-879C-9F81013AFDB7");
-	public static final UUID OPID_DeletePolicy            = UUID.fromString("9B993DB1-CF37-4E34-965A-9F8200C986B9");
-	public static final UUID OPID_CreateReceipt           = UUID.fromString("C4117861-16EB-40DB-A771-9F8A00EA6B32");
-	public static final UUID OPID_ExternDeleteReceipt    = UUID.fromString("92982C76-0AEA-4028-A29B-9F8A00EA9F48");
-	public static final UUID OPID_UndoDeleteReceipt       = UUID.fromString("DE651450-BDA1-4DBA-A269-9F8A00EACA60");
+	public static final UUID OPID_ManagePolicyData         = UUID.fromString("1F7B31EC-9388-4EA0-816C-9F81013A8ED4");
+	public static final UUID OPID_UndoManagePolicyData     = UUID.fromString("98304BAB-0C9F-4089-879C-9F81013AFDB7");
+	public static final UUID OPID_DeletePolicy             = UUID.fromString("9B993DB1-CF37-4E34-965A-9F8200C986B9");
+	public static final UUID OPID_CreateReceipt            = UUID.fromString("C4117861-16EB-40DB-A771-9F8A00EA6B32");
+	public static final UUID OPID_ExternDeleteReceipt      = UUID.fromString("92982C76-0AEA-4028-A29B-9F8A00EA9F48");
+	public static final UUID OPID_UndoDeleteReceipt        = UUID.fromString("DE651450-BDA1-4DBA-A269-9F8A00EACA60");
 
 	// Receipt Operations
-	public static final UUID OPID_ManageReceiptData       = UUID.fromString("581AA15C-DF2C-4DF9-B3B3-9F8A00EDBADB");
-	public static final UUID OPID_UndoManageReceiptData   = UUID.fromString("6D530E4A-8585-433F-9BE9-9F8A00EDE805");
-	public static final UUID OPID_DeleteReceipt           = UUID.fromString("994D421F-E414-41EF-8D02-9F8A00EEE620");
+	public static final UUID OPID_ManageReceiptData        = UUID.fromString("581AA15C-DF2C-4DF9-B3B3-9F8A00EDBADB");
+	public static final UUID OPID_UndoManageReceiptData    = UUID.fromString("6D530E4A-8585-433F-9BE9-9F8A00EDE805");
+	public static final UUID OPID_DeleteReceipt            = UUID.fromString("994D421F-E414-41EF-8D02-9F8A00EEE620");
 
 	// Manager Transfer Operations
-	public static final UUID OPID_AcceptXFer     = UUID.fromString("8B3AB41F-76F6-4311-8600-9F65014CF682");
-	public static final UUID OPID_CancelXFer     = UUID.fromString("C8FCD8FD-B616-4252-942F-9F650155B3BC");
-	public static final UUID OPID_UndoAcceptXFer = UUID.fromString("C8ED82AD-B227-4124-8317-9F650155DFFD");
-	public static final UUID OPID_UndoCancelXFer = UUID.fromString("38B353D0-4D69-45E2-BCF8-9F650155F824");
+	public static final UUID OPID_AcceptXFer               = UUID.fromString("8B3AB41F-76F6-4311-8600-9F65014CF682");
+	public static final UUID OPID_CancelXFer               = UUID.fromString("C8FCD8FD-B616-4252-942F-9F650155B3BC");
+	public static final UUID OPID_UndoAcceptXFer           = UUID.fromString("C8ED82AD-B227-4124-8317-9F650155DFFD");
+	public static final UUID OPID_UndoCancelXFer           = UUID.fromString("38B353D0-4D69-45E2-BCF8-9F650155F824");
 
 	// Urgency Levels
 	public static final UUID UrgID_Invalid   = UUID.fromString("6FDEA9C9-55E0-4214-8BC2-9EB1007E9BA5");
