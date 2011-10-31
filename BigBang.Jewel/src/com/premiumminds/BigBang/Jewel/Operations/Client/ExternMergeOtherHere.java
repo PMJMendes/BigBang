@@ -105,7 +105,7 @@ public class ExternMergeOtherHere
 
 			lobjProcess = (PNProcess)Engine.GetWorkInstance(Engine.FindEntity(Engine.getCurrentNameSpace(),
 					Jewel.Petri.Constants.ObjID_PNProcess), mobjSource.midProcess);
-			larrSubProcs = lobjProcess.GetCurrentSubProcesses();
+			larrSubProcs = lobjProcess.GetCurrentSubProcesses(pdb);
 
 			if ( (larrSubProcs == null) || (larrSubProcs.length == 0) )
 				marrSubProcIDs = null;
