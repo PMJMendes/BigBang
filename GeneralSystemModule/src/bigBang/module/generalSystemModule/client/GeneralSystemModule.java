@@ -1,7 +1,12 @@
 package bigBang.module.generalSystemModule.client;
 
+import java.util.Collection;
+
 import bigBang.definitions.client.dataAccess.DataBroker;
+import bigBang.definitions.client.response.ResponseError;
+import bigBang.definitions.client.response.ResponseHandler;
 import bigBang.definitions.shared.BigBangConstants;
+import bigBang.library.client.BigBangAsyncCallback;
 import bigBang.library.client.BigBangPermissionManager;
 import bigBang.library.client.EventBus;
 import bigBang.library.client.Module;
@@ -16,6 +21,7 @@ import bigBang.module.generalSystemModule.client.dataAccess.MediatorBrokerImpl;
 import bigBang.module.generalSystemModule.client.dataAccess.UserBrokerImpl;
 import bigBang.module.generalSystemModule.client.userInterface.presenter.GeneralSystemSectionViewPresenter;
 import bigBang.module.generalSystemModule.client.userInterface.view.GeneralSystemSectionView;
+import bigBang.module.generalSystemModule.interfaces.GeneralSystemService;
 
 public class GeneralSystemModule implements Module {
 
@@ -25,24 +31,23 @@ public class GeneralSystemModule implements Module {
 
 	@Override
 	public void initialize(final EventBus eventBus, final BigBangPermissionManager permissionManager) {
-		setup(eventBus, permissionManager, null); //TODO IMPORTANT FJVC
-//		GeneralSystemService.Util.getInstance().getGeneralSystemProcessId(new BigBangAsyncCallback<String>() {
-//
-//			@Override
-//			public void onSuccess(final String result) {
-//				processId = result;
-//				permissionManager.getProcessPermissionContext(result, new ResponseHandler<Void>() {
-//
-//					@Override
-//					public void onResponse(Void result2) {
-//						setup(eventBus, permissionManager, result);
-//					}
-//					
-//					@Override
-//					public void onError(Collection<ResponseError> errors) {}
-//				});
-//			}
-//		});
+		GeneralSystemService.Util.getInstance().getGeneralSystemProcessId(new BigBangAsyncCallback<String>() {
+
+			@Override
+			public void onSuccess(final String result) {
+				processId = result;
+				permissionManager.getProcessPermissionContext(result, new ResponseHandler<Void>() {
+
+					@Override
+					public void onResponse(Void result2) {
+						setup(eventBus, permissionManager, result);
+					}
+					
+					@Override
+					public void onError(Collection<ResponseError> errors) {}
+				});
+			}
+		});
 	}
 
 	private void setup(EventBus eventBus, BigBangPermissionManager permissionManager, String processId) {

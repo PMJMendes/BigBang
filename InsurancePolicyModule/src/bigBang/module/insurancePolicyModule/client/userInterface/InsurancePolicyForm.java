@@ -122,6 +122,8 @@ public class InsurancePolicyForm extends FormView<InsurancePolicy> {
 		
 		this.manager.lock(true);
 		this.client.setEditable(false);
+		
+		this.setValue(new InsurancePolicy());
 	}
 
 	public void allowManagerEdition(boolean allow) {
@@ -130,8 +132,25 @@ public class InsurancePolicyForm extends FormView<InsurancePolicy> {
 	
 	@Override
 	public InsurancePolicy getInfo() {
-		// TODO Auto-generated method stub
-		return null;
+		InsurancePolicy result = new InsurancePolicy();
+		
+		result.managerId = manager.getValue();
+		result.number = number.getValue();
+		result.insuranceAgencyId = insuranceAgency.getValue();
+		result.categoryId = category.getValue();
+		result.lineId = line.getValue();
+		result.subLineId = subLine.getValue();
+		result.mediatorId = mediator.getValue();
+		result.maturityDay = Integer.parseInt(maturityDay.getValue());
+		result.maturityMonth = Integer.parseInt(maturityMonth.getValue());
+		result.startDate = "2011-11-01 00:00:00"; //TODO 
+		//result. TODO END DATE
+		result.durationId = duration.getValue();
+		result.fractioningId = duration.getValue();
+		result.caseStudy = caseStudy.getValue();
+		result.notes = notes.getValue();
+		
+		return result;
 	}
 
 	@Override

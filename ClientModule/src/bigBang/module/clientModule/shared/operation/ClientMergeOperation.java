@@ -5,7 +5,6 @@ import bigBang.library.client.userInterface.presenter.ViewPresenter;
 import bigBang.library.client.userInterface.view.View;
 import bigBang.module.clientModule.client.resources.Resources;
 import bigBang.module.clientModule.client.userInterface.presenter.ClientMergeOperationViewPresenter;
-import bigBang.module.clientModule.client.userInterface.view.ClientMergeOperationView;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.AbstractImagePrototype;
@@ -51,8 +50,6 @@ public class ClientMergeOperation implements Operation {
 	}
 
 	public View getView() {
-		if(this.view == null)
-			this.view = new ClientMergeOperationView();
 		return this.view;
 	}
 

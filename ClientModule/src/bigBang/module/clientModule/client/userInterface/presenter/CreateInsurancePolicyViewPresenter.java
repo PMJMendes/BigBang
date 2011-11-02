@@ -102,6 +102,7 @@ public abstract class CreateInsurancePolicyViewPresenter implements
 
 	protected void createPolicy(){
 		if(view.isInsurancePolicyFormValid()){
+			view.getInsurancePolicyForm().commit();
 			this.clientBroker.createInsurancePolicy(this.client.processId, view.getInsurancePolicyForm().getValue(), new ResponseHandler<InsurancePolicy>() {
 				
 				@Override

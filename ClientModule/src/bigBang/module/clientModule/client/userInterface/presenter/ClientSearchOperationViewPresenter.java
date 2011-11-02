@@ -74,44 +74,44 @@ public class ClientSearchOperationViewPresenter implements OperationViewPresente
 
 		//Operations
 		HasWidgets showPolicyForm(boolean show);
-		
+
 		void showRiskAnalisysForm(boolean show);
 		HasEditableValue<RiskAnalysis> getRiskAnalisysForm();
 		boolean isRiskAnalisysFormValid();
 		void lockRiskAnalisysForm(boolean lock);
-		
+
 		void showQuoteRequestForm(boolean show);
 		HasEditableValue<QuoteRequest> getQuoteRequestForm();
 		boolean isQuoteRequestFormValid();
 		void lockQuoteRequestForm(boolean lock);
-		
+
 		void showCasualtyForm(boolean show);
 		HasEditableValue<Casualty> getCasualtyForm();
 		boolean isCasualtyFormValid();
 		void lockCasualtyForm(boolean lock);
-		
+
 		void showClientMergeForm(boolean show);
-		HasEditableValue<Casualty> getClientMergeForm();
+		HasEditableValue<Client> getClientMergeForm();
 		boolean isClientMergeFormValid();
 		void lockClientMergeForm(boolean lock);
-		
+
 		void showManagerTransferForm(boolean show);
 		HasEditableValue<String> getManagerTransferForm();
 		boolean isManagerTransferFormValid();
 		void lockManagerTransferForm(boolean lock);
-		
+
 		void showInfoOrDocumentRequestForm(boolean show);
 		HasEditableValue<InfoOrDocumentRequest> getInfoOrDocumentRequestForm();
 		boolean isInfoOrDocumentFormValid();
 		void lockInfoOrDocumentRequestForm(boolean lock);
-		
+
 		void showHistory(Client process);
-		
+
 		void showDeleteForm(boolean show);
 		HasEditableValue<String> getDeleteForm();
 		boolean isDeleteFormValid();
 		void lockDeleteForm(boolean lock);
-		
+
 		void clearAllowedPermissions();
 		void allowCreate(boolean allow);
 		void allowUpdate(boolean allow);
@@ -123,7 +123,7 @@ public class ClientSearchOperationViewPresenter implements OperationViewPresente
 		void allowCreateRiskAnalysis(boolean allow);
 		void allowCreateQuoteRequest(boolean allow);
 		void allowcreateCasualty(boolean allow);
-		
+
 		//General
 		void clear();
 		void registerActionInvokedHandler(ActionInvokedEventHandler<Action> handler);
@@ -228,7 +228,7 @@ public class ClientSearchOperationViewPresenter implements OperationViewPresente
 
 							@Override
 							public void onError(Collection<ResponseError> errors) {}
-							
+
 						});
 						clientBroker.getClient(selectedValue.id, new ResponseHandler<Client>() {
 
@@ -252,7 +252,7 @@ public class ClientSearchOperationViewPresenter implements OperationViewPresente
 				switch(action.getAction()){
 				case NEW:
 					view.prepareNewClient();
-					
+
 					for(Selectable s : view.getList().getSelected()) {
 						@SuppressWarnings("unchecked")
 						ValueSelectable<Client> vs = (ValueSelectable<Client>) s;
@@ -327,16 +327,16 @@ public class ClientSearchOperationViewPresenter implements OperationViewPresente
 					break;
 				}
 			}
-			
+
 			protected void createCasualty(){
 				view.getCasualtyForm().setValue(null);
 				view.showCasualtyForm(true);
 				view.lockCasualtyForm(false);
 			}
-			
+
 			protected void createPolicy(){
 				HasWidgets container = view.showPolicyForm(true);
-				
+
 				CreateInsurancePolicyView createPolicyView = new CreateInsurancePolicyView();
 				CreateInsurancePolicyViewPresenter presenter = new CreateInsurancePolicyViewPresenter(null, createPolicyView) {
 
@@ -344,81 +344,95 @@ public class ClientSearchOperationViewPresenter implements OperationViewPresente
 					public void onPolicyCreated() {
 						ClientSearchOperationViewPresenter.this.view.showPolicyForm(false);
 					}
-					
+
 					@Override
 					public void onCreationCancelled() {
 						ClientSearchOperationViewPresenter.this.view.showPolicyForm(false);
 					}
-					
+
 				};
 				presenter.setClient(view.getForm().getValue());
 				presenter.go(container);
 			}
-			
+
 			protected void createQuoteRequest(){
 				view.getQuoteRequestForm().setValue(null);
 				view.showQuoteRequestForm(true);
 				view.lockQuoteRequestForm(false);
 			}
-			
+
 			protected void createRiskAnalisys(){
 				view.getRiskAnalisysForm().setValue(null);
 				view.showRiskAnalisysForm(true);
 				view.lockRiskAnalisysForm(false);
 			}
-			
+
 			protected void mergeWithClient(){
-				//view.getClientMergeForm().setValue(null);
-				view.showClientMergeForm(true);
-				//view.lockClientMergeForm(false);
+				Client receptor = view.getClientMergeForm().getValue();
+
+				if(receptor != null && receptor.id != null){
+					clientBroker.mergeWithClient(receptor.id, view.getForm().getValue().id, new ResponseHandler<Client>() {
+
+						@Override
+						public void onResponse(Client response) {
+							view.getForm().setValue(response);
+						}
+
+						@Override
+						public void onError(Collection<ResponseError> errors) {
+							//TODO
+							GWT.log("Não foi possível fundir os clientes : "+errors.toString());
+						}
+					});
+				}
 			}
-			
+
 			protected void transferManager(){
 				String[] clientIds = new String[]{
-					view.getForm().getValue().processId
+						view.getForm().getValue().processId
 				};
 				String managerId = view.getManagerTransferForm().getValue();
 				clientBroker.createManagerTransfer(clientIds, managerId, new ResponseHandler<ManagerTransfer>() {
-					
+
 					@Override
 					public void onResponse(ManagerTransfer response) {
 						view.showManagerTransferForm(false);
 					}
-					
+
 					@Override
 					public void onError(Collection<ResponseError> errors) {
 						//TODO
 					}
 				});
 			}
-			
+
 			protected void requireInfoOrDocument(){
 				InfoOrDocumentRequest request = view.getInfoOrDocumentRequestForm().getValue();
-				
+
 				clientBroker.createInfoOrDocumentRequest(request, new ResponseHandler<InfoOrDocumentRequest>() {
-					
+
 					@Override
 					public void onResponse(InfoOrDocumentRequest response) {
 						view.showInfoOrDocumentRequestForm(false);
 					}
-					
+
 					@Override
 					public void onError(Collection<ResponseError> errors) {
 						//TODO
 					}
 				});
 			}
-			
+
 			protected void showHistory() {
 				view.showHistory(view.getForm().getValue());
 			}
-			
+
 			protected void deleteClient(){
 				//view.getDeleteForm().setValue(null);
 				view.showDeleteForm(true);
 				//view.lockDeleteForm(false);
 			}
-			
+
 		});
 	}
 

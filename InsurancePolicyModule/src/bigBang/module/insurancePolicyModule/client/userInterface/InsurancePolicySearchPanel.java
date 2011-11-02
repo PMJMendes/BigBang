@@ -18,7 +18,6 @@ import bigBang.definitions.shared.InsurancePolicy;
 import bigBang.definitions.shared.InsurancePolicyStub;
 import bigBang.definitions.shared.SearchParameter;
 import bigBang.definitions.shared.SearchResult;
-import bigBang.definitions.shared.SortOrder;
 import bigBang.definitions.shared.SortParameter;
 import bigBang.library.client.ValueSelectable;
 import bigBang.library.client.dataAccess.DataBrokerManager;
@@ -206,7 +205,7 @@ public class InsurancePolicySearchPanel extends SearchPanel<InsurancePolicyStub>
 				return;
 			}
 		}
-		this.policiesToUpdate.put(policyId, null);
+		this.policiesToRemove.put(policyId, null);
 	}
 
 }

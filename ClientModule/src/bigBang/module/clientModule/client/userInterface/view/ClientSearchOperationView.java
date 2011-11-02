@@ -12,7 +12,6 @@ import bigBang.definitions.shared.Casualty;
 import bigBang.definitions.shared.Client;
 import bigBang.definitions.shared.ClientStub;
 import bigBang.definitions.shared.InfoOrDocumentRequest;
-import bigBang.definitions.shared.InsurancePolicy;
 import bigBang.definitions.shared.QuoteRequest;
 import bigBang.definitions.shared.RiskAnalysis;
 import bigBang.library.client.HasEditableValue;
@@ -65,6 +64,7 @@ public class ClientSearchOperationView extends View implements ClientSearchOpera
 	protected ClientProcessToolBar operationsToolbar; 
 	protected ClientManagerTransferView managerTransferView;
 	protected InfoOrDocumentRequestView infoOrDocumentRequestView;
+	protected ClientMergeView clientMergeView;
 	protected PopupBar childProcessesBar;
 	protected ToolButton newButton;
 
@@ -177,7 +177,10 @@ public class ClientSearchOperationView extends View implements ClientSearchOpera
 
 			@Override
 			public void onMergeWithClient() {
-				actionHandler.onActionInvoked(new ActionInvokedEvent<ClientSearchOperationViewPresenter.Action>(Action.MERGE_WITH_CLIENT));
+				getClientMergeForm().setValue(null);
+				clientMergeView.getOriginalForm().setValue(form.getValue());
+				showClientMergeForm(true);
+				lockClientMergeForm(false);
 			}
 
 			@Override
@@ -259,6 +262,18 @@ public class ClientSearchOperationView extends View implements ClientSearchOpera
 			@Override
 			public void onBackButtonPressed() {
 				showInfoOrDocumentRequestForm(false);
+			}
+		};
+		this.clientMergeView = new ClientMergeView() {
+			
+			@Override
+			public void onMergeButtonPressed() {
+				actionHandler.onActionInvoked(new ActionInvokedEvent<ClientSearchOperationViewPresenter.Action>(Action.MERGE_WITH_CLIENT));
+			}
+			
+			@Override
+			public void onBackButtonPressed() {
+				showClientMergeForm(false);
 			}
 		};
 
@@ -410,53 +425,25 @@ public class ClientSearchOperationView extends View implements ClientSearchOpera
 	@Override
 	public void showClientMergeForm(boolean show) {
 		if(show){
-			mainWrapper.slideInto(
-					new ClientMergeView() {
-
-						@Override
-						public void onMergeButtonPressed() {
-
-							this.confirmMerge(new ResponseHandler<Boolean>() {
-
-								@Override
-								public void onResponse(Boolean response) {
-									if(response){
-										//TODO Merge
-										onBackButtonPressed();
-									}
-								}
-
-								@Override
-								public void onError(Collection<ResponseError> errors) {}
-							});
-						}
-
-						@Override
-						public void onBackButtonPressed() {
-							mainWrapper.slideInto(mainContent, Direction.RIGHT);
-						}
-					}, Direction.LEFT);
+			mainWrapper.slideInto(this.clientMergeView, Direction.LEFT);
 		}else{
 			mainWrapper.slideInto(mainContent, Direction.RIGHT);
 		}
 	}
 
 	@Override
-	public HasEditableValue<Casualty> getClientMergeForm() {
-		// TODO Auto-generated method stub
-		return null;
+	public HasEditableValue<Client> getClientMergeForm() {
+		return this.clientMergeView.getReceptorForm();
 	}
 
 	@Override
 	public boolean isClientMergeFormValid() {
-		// TODO Auto-generated method stub
-		return false;
+		return true;
 	}
 
 	@Override
 	public void lockClientMergeForm(boolean lock) {
-		// TODO Auto-generated method stub
-
+		this.clientMergeView.getOriginalForm().setReadOnly(lock);
 	}
 
 	@Override
