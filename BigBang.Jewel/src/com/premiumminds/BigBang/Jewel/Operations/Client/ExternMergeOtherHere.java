@@ -100,6 +100,7 @@ public class ExternMergeOtherHere
 					Constants.ObjID_Client));
 
 			lobjAux = Client.GetInstance(Engine.getCurrentNameSpace(), midClientSource);
+			mobjSource = new ClientData();
 			mobjSource.FromObject(lobjAux);
 			mobjSource.mobjPrevValues = null;
 
