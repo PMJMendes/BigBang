@@ -32,6 +32,6 @@ public class AutoProcessSubs
 		larrSubs = GetProcess().GetCurrentSubProcesses(pdb);
 
 		if ( (larrSubs != null) && (larrSubs.length > 0) )
-			TriggerOp(new TriggerDisallowPolicies(this.GetProcess().getKey()));
+			TriggerOp(new TriggerDisallowDelete(this.GetProcess().getKey()));
 	}
 }
