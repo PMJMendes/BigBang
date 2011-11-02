@@ -92,9 +92,9 @@ public class InsurancePolicyForm extends FormView<InsurancePolicy> {
 		addFormField(endDate);
 		addFormField(fractioning);
 		addFormField(caseStudy);
-		
+
 		addWidget(new Label("Acrescentar campos dinamicos"));
-		
+
 		addFormField(notes);
 
 		category.addValueChangeHandler(new ValueChangeHandler<String>() {
@@ -119,21 +119,21 @@ public class InsurancePolicyForm extends FormView<InsurancePolicy> {
 				}
 			}
 		});
-		
+
 		this.manager.lock(true);
 		this.client.setEditable(false);
-		
+
 		this.setValue(new InsurancePolicy());
 	}
 
 	public void allowManagerEdition(boolean allow) {
 		this.manager.setEditable(allow);
 	}
-	
+
 	@Override
 	public InsurancePolicy getInfo() {
 		InsurancePolicy result = new InsurancePolicy();
-		
+
 		result.managerId = manager.getValue();
 		result.number = number.getValue();
 		result.insuranceAgencyId = insuranceAgency.getValue();
@@ -149,7 +149,7 @@ public class InsurancePolicyForm extends FormView<InsurancePolicy> {
 		result.fractioningId = duration.getValue();
 		result.caseStudy = caseStudy.getValue();
 		result.notes = notes.getValue();
-		
+
 		return result;
 	}
 
@@ -162,36 +162,37 @@ public class InsurancePolicyForm extends FormView<InsurancePolicy> {
 			this.number.setValue(info.number);
 			this.insuranceAgency.setValue(info.insuranceAgencyId);
 			this.category.setValue(info.categoryId, true);
-			
+
 			this.line.setListId(BigBangConstants.EntityIds.LINE+"/"+info.categoryId);
 			this.line.setValue(info.lineId, false);
 			this.subLine.setListId(BigBangConstants.EntityIds.SUB_LINE+"/"+info.lineId);
 			this.subLine.setValue(info.subLineId, false);
-			
+
 			this.mediator.setValue(info.mediatorId);
 			this.maturityDay.setValue(info.maturityDay+"");
 			this.maturityMonth.setValue(info.maturityMonth+"");
 			this.duration.setValue(info.durationId);
 			this.fractioning.setValue(info.fractioningId);
-			
-			ClientProcessBroker clientBroker = ((ClientProcessBroker) DataBrokerManager.Util.getInstance().getBroker(BigBangConstants.EntityIds.CLIENT));
-			clientBroker.getClient(info.clientId, new ResponseHandler<Client>() {
-				
-				@Override
-				public void onResponse(Client response) {
-					InsurancePolicyForm.this.client.setValue(response.name + " (" + response.clientNumber + ")");
-				}
-				
-				@Override
-				public void onError(Collection<ResponseError> errors) {}
-			});
-			
-			
-			
-					
+
+			if(info.clientId != null) {
+				ClientProcessBroker clientBroker = ((ClientProcessBroker) DataBrokerManager.Util.getInstance().getBroker(BigBangConstants.EntityIds.CLIENT));
+				clientBroker.getClient(info.clientId, new ResponseHandler<Client>() {
+
+					@Override
+					public void onResponse(Client response) {
+						InsurancePolicyForm.this.client.setValue(response.name + " (" + response.clientNumber + ")");
+					}
+
+					@Override
+					public void onError(Collection<ResponseError> errors) {}
+				});
+			}
+
+
+
 			//			protected DatePickerFormField endDate;
-//			//TODO dynamic fields
-			
+			//			//TODO dynamic fields
+
 			this.caseStudy.setValue(info.caseStudy);
 			this.notes.setValue(info.notes);
 		}
