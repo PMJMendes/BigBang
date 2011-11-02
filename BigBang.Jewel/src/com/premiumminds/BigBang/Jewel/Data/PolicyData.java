@@ -27,6 +27,7 @@ public class PolicyData
 	public Timestamp mdtEndDate;
 	public String mstrNotes;
 	public UUID midMediator;
+	public Boolean mbCaseStudy;
 
 	public UUID midManager;
 	public UUID midProcess;
@@ -49,6 +50,7 @@ public class PolicyData
 		mdtEndDate = (Timestamp)pobjSource.getAt(9);
 		mstrNotes = (String)pobjSource.getAt(10);
 		midMediator = (UUID)pobjSource.getAt(11);
+		mbCaseStudy = (Boolean)pobjSource.getAt(12);
 	}
 
 	public void ToObject(ObjectBase pobjDest)
@@ -68,6 +70,7 @@ public class PolicyData
 			pobjDest.setAt( 9, mdtEndDate);
 			pobjDest.setAt(10, mstrNotes);
 			pobjDest.setAt(11, midMediator);
+			pobjDest.setAt(12, mbCaseStudy);
 		}
 		catch (Throwable e)
 		{
@@ -127,6 +130,22 @@ public class PolicyData
 		}
 		pstrBuilder.append(pstrLineBreak);
 
+		if ( midMediator != null )
+		{
+			pstrBuilder.append("Mediador: ");
+			try
+			{
+				lobjAux = Engine.GetWorkInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), Constants.ObjID_Mediator),
+						midMediator);
+				pstrBuilder.append((String)lobjAux.getLabel());
+			}
+			catch (Throwable e)
+			{
+				pstrBuilder.append("(Erro a obter o mediador.)");
+			}
+			pstrBuilder.append(pstrLineBreak);
+		}
+
 		pstrBuilder.append("Data de Início: ");
 		if ( mdtBeginDate != null )
 			pstrBuilder.append(mdtBeginDate.toString().substring(0, 10));
@@ -172,5 +191,8 @@ public class PolicyData
 		if ( mstrNotes != null )
 			pstrBuilder.append(mstrNotes);
 		pstrBuilder.append(pstrLineBreak);
+
+		if ( (mbCaseStudy != null) && (boolean)mbCaseStudy )
+			pstrBuilder.append("Case Study!");
 	}
 }

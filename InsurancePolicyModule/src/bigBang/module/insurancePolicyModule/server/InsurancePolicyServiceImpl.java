@@ -117,7 +117,7 @@ public class InsurancePolicyServiceImpl
 			lopMPD = new ManagePolicyData(UUID.fromString(policy.processId));
 			lopMPD.mobjData = new PolicyData();
 
-			lopMPD.mobjData.mid = null;
+			lopMPD.mobjData.mid = UUID.fromString(policy.id);
 
 			lopMPD.mobjData.mstrNumber = policy.number;
 			lopMPD.mobjData.midCompany = UUID.fromString(policy.insuranceAgencyId);
@@ -130,6 +130,7 @@ public class InsurancePolicyServiceImpl
 			lopMPD.mobjData.mdtEndDate = ( policy.expirationDate == null ? null : Timestamp.valueOf(policy.expirationDate) );
 			lopMPD.mobjData.mstrNotes = policy.notes;
 			lopMPD.mobjData.midMediator = ( policy.mediatorId == null ? null : UUID.fromString(policy.mediatorId) );
+			lopMPD.mobjData.mbCaseStudy = policy.caseStudy;
 
 			lopMPD.mobjData.midManager = null;
 			lopMPD.mobjData.midProcess = null;

@@ -393,6 +393,8 @@ public class ClientServiceImpl
 			lopCP.mobjData.mlngMaturityMonth = policy.maturityMonth;
 			lopCP.mobjData.mdtEndDate = ( policy.expirationDate == null ? null : Timestamp.valueOf(policy.expirationDate) );
 			lopCP.mobjData.mstrNotes = policy.notes;
+			lopCP.mobjData.midMediator = ( policy.mediatorId == null ? null : UUID.fromString(policy.mediatorId) );
+			lopCP.mobjData.mbCaseStudy = policy.caseStudy;
 
 			lopCP.mobjData.midManager = ( policy.managerId == null ? null : UUID.fromString(policy.managerId) );
 			lopCP.mobjData.midProcess = null;
