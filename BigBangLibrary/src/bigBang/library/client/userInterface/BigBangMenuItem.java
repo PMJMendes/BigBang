@@ -24,6 +24,8 @@ public class BigBangMenuItem extends MenuItem {
 	@Override
 	public void setEnabled(boolean enabled) {
 		super.setEnabled(enabled);
-		this.getElement().getStyle().setColor(enabled ? defaultColor : DISABLED_COLOR);
+		if(defaultColor != null) {
+			getElement().getStyle().setColor(enabled ? defaultColor : DISABLED_COLOR);
+		}
 	}
 }

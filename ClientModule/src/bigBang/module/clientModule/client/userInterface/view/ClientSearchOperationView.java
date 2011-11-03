@@ -325,29 +325,35 @@ public class ClientSearchOperationView extends View implements ClientSearchOpera
 
 	@Override
 	public HasWidgets showPolicyForm(boolean show) {
-		VerticalPanel wrapper = new VerticalPanel();
-		wrapper.setSize("100%", "100%");
-
-		ListHeader header = new ListHeader();
-		header.setText("Criação de Apólice");
-		header.setLeftWidget(new Button("Voltar", new ClickHandler() {
-
-			@Override
-			public void onClick(ClickEvent event) {
-				mainWrapper.slideInto(mainContent, Direction.RIGHT);
-			}
-		}));
-		wrapper.add(header);
-
-		SimplePanel viewContainer = new SimplePanel();
-		viewContainer.setSize("100%", "100%");
-
-		wrapper.add(viewContainer);
-		wrapper.setCellHeight(viewContainer, "100%");
-
-		mainWrapper.slideInto(
-				wrapper, Direction.LEFT);
-		return viewContainer;
+		if(show){
+			VerticalPanel wrapper = new VerticalPanel();
+			wrapper.setSize("100%", "100%");
+	
+			ListHeader header = new ListHeader();
+			header.setText("Criação de Apólice");
+			header.setLeftWidget(new Button("Voltar", new ClickHandler() {
+	
+				@Override
+				public void onClick(ClickEvent event) {
+					mainWrapper.slideInto(mainContent, Direction.RIGHT);
+				}
+			}));
+			wrapper.add(header);
+	
+			SimplePanel viewContainer = new SimplePanel();
+			viewContainer.setSize("100%", "100%");
+	
+			wrapper.add(viewContainer);
+			wrapper.setCellHeight(viewContainer, "100%");
+	
+			mainWrapper.slideInto(
+					wrapper, Direction.LEFT);
+			return viewContainer;
+		}else{
+			mainWrapper.slideInto(
+					mainContent, Direction.RIGHT);
+			return null;
+		}
 	}
 
 	@Override

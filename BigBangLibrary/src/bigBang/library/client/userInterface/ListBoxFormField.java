@@ -45,6 +45,7 @@ public class ListBoxFormField extends FormField<String> {
 		//this.field = new MockField();
 		
 		wrapper = new HorizontalPanel();
+		initWidget(wrapper);
 		wrapper.setVerticalAlignment(HasVerticalAlignment.ALIGN_MIDDLE);
 		this.label = new Label();
 		this.label.getElement().getStyle().setMarginRight(5, Unit.PX);
@@ -53,7 +54,6 @@ public class ListBoxFormField extends FormField<String> {
 		wrapper.setCellHorizontalAlignment(this.label, HasHorizontalAlignment.ALIGN_RIGHT);
 		wrapper.add((Widget) this.listBox);
 		wrapper.add(mandatoryIndicatorLabel);
-		initWidget(wrapper);
 		setFieldWidth("150px");
 		
 		this.listBox.addChangeHandler(new ChangeHandler() {

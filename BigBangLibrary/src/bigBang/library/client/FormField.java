@@ -24,6 +24,7 @@ public abstract class FormField<T> extends View implements HasValue<T>, Validata
 	protected HandlerRegistration handlerRegistration;
 
 	public FormField(){
+		label = new Label();
 		errorMessageLabel = new Label();
 		errorMessageLabel.getElement().getStyle().setMarginLeft(5, Unit.PX);
 		errorMessageLabel.getElement().getStyle().setColor("#F00");

@@ -60,6 +60,7 @@ public class ListEntry<T> extends View implements ValueSelectable<T>, HasMetaDat
 	
 	public ListEntry(T value) {
 		AbsolutePanel panel = new AbsolutePanel();
+		initWidget(panel);
 		this.widgetContainer = new SimplePanel();
 		((Widget)this.widgetContainer).setSize("100%", "100%");
 		panel.setSize("100%", "30px");
@@ -71,7 +72,6 @@ public class ListEntry<T> extends View implements ValueSelectable<T>, HasMetaDat
 		panel.add(backgroundImage, 0, 0);
 		
 		HorizontalPanel contentWrapper = new HorizontalPanel();
-		contentWrapper.setSize("100%", "100%");
 		contentWrapper.setVerticalAlignment(HasVerticalAlignment.ALIGN_MIDDLE);
 		contentWrapper.setSpacing(5);
 		
@@ -111,8 +111,8 @@ public class ListEntry<T> extends View implements ValueSelectable<T>, HasMetaDat
 		contentWrapper.add((Widget) this.rightWidgetContainer);
 		
 		panel.add(contentWrapper, 0 , 0);
-		
-		initWidget(panel);
+
+		contentWrapper.setSize("100%", "100%");
 		this.getElement().getStyle().setCursor(Cursor.POINTER);
 		this.setSelected(false);
 		
