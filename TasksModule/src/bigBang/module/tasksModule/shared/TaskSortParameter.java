@@ -10,6 +10,11 @@ public class TaskSortParameter
 
 	public static enum SortableField
 	{
+		STATUS,
+		CREATION_DATE,
+		DUE_DATE,
+		PROCESS,
+		OPERATION
 	}
 
 	public TaskSortParameter()

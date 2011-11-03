@@ -3,12 +3,14 @@ package bigBang.module.tasksModule.client;
 import com.google.gwt.core.client.GWT;
 
 import bigBang.definitions.client.dataAccess.DataBroker;
+import bigBang.definitions.shared.BigBangConstants;
 import bigBang.library.client.BigBangPermissionManager;
 import bigBang.library.client.EventBus;
 import bigBang.library.client.Module;
 import bigBang.library.client.event.ModuleInitializedEvent;
 import bigBang.library.client.userInterface.TextBadge;
 import bigBang.library.client.userInterface.presenter.SectionViewPresenter;
+import bigBang.module.tasksModule.client.dataAccess.TasksBrokerImpl;
 import bigBang.module.tasksModule.client.event.NumberOfTasksUpdateEvent;
 import bigBang.module.tasksModule.client.event.NumberOfTasksUpdateEventHandler;
 import bigBang.module.tasksModule.client.userInterface.presenter.TasksSectionViewPresenter;
@@ -59,14 +61,16 @@ public class TasksModule implements Module {
 
 	@Override
 	public DataBroker<?>[] getBrokerImplementations() {
-		// TODO Auto-generated method stub
-		return null;
+		return new DataBroker[]{
+			new TasksBrokerImpl()
+		};
 	}
 
 	@Override
 	public String[] getBrokerDependencies() {
-		// TODO Auto-generated method stub
-		return null;
+		return new String[]{
+			BigBangConstants.EntityIds.TASK
+		};
 	}
 
 }

@@ -9,4 +9,5 @@ public class TaskSearchParameter
 
 	public String processId;
 	public String operationId;
+	public String afterTimestamp;
 }
