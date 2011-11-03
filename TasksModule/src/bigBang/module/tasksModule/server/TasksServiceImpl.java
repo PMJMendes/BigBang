@@ -269,21 +269,6 @@ public class TasksServiceImpl
 					.append("%'");
 		}
 
-		if ( lParam.processId != null )
-		{
-			pstrBuffer.append(" AND [PK] IN (SELECT [:Item] FROM (");
-			try
-			{
-				lrefProcs = Entity.GetInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), Constants.ObjID_AgendaProcess));
-				pstrBuffer.append(lrefProcs.SQLForSelectMulti());
-			}
-			catch (Throwable e)
-			{
-	    		throw new BigBangException(e.getMessage(), e);
-			}
-			pstrBuffer.append(") [Aux2] WHERE [:Process:Script] = '").append(lParam.processId).append("')");
-		}
-
 		if ( lParam.operationId != null )
 		{
 			pstrBuffer.append(" AND [PK] IN (SELECT [:Item] FROM (");
@@ -298,6 +283,19 @@ public class TasksServiceImpl
 	    		throw new BigBangException(e.getMessage(), e);
 			}
 			pstrBuffer.append(") [Aux3])");
+		} else if ( lParam.processId != null )
+		{
+			pstrBuffer.append(" AND [PK] IN (SELECT [:Item] FROM (");
+			try
+			{
+				lrefProcs = Entity.GetInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), Constants.ObjID_AgendaProcess));
+				pstrBuffer.append(lrefProcs.SQLForSelectMulti());
+			}
+			catch (Throwable e)
+			{
+	    		throw new BigBangException(e.getMessage(), e);
+			}
+			pstrBuffer.append(") [Aux2] WHERE [:Process:Script] = '").append(lParam.processId).append("')");
 		}
 		
 		if ( lParam.afterTimestamp != null )
