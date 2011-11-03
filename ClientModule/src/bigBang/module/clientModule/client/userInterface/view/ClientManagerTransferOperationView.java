@@ -225,10 +225,10 @@ public class ClientManagerTransferOperationView extends View implements ClientMa
 	}
 
 	@Override
-	public Collection<String> getSelectedClientIds() {
-		Collection<String> result = new ArrayList<String>();
+	public Collection<ClientStub> getSelectedClientStubs() {
+		Collection<ClientStub> result = new ArrayList<ClientStub>();
 		for(ValueSelectable<ClientStub> c : this.selectedList){
-			result.add(c.getValue().processId);
+			result.add(c.getValue());
 		}
 		return result;
 	}

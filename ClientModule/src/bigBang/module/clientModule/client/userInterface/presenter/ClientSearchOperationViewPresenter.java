@@ -388,11 +388,15 @@ public class ClientSearchOperationViewPresenter implements OperationViewPresente
 			}
 
 			protected void transferManager(){
+				ClientStub client = view.getForm().getValue();
 				String[] clientIds = new String[]{
-						view.getForm().getValue().processId
+						client.id
+				};
+				String[] clientProcessIds = new String[]{
+						client.processId
 				};
 				String managerId = view.getManagerTransferForm().getValue();
-				clientBroker.createManagerTransfer(clientIds, managerId, new ResponseHandler<ManagerTransfer>() {
+				clientBroker.createManagerTransfer(clientProcessIds, clientIds, managerId, new ResponseHandler<ManagerTransfer>() {
 
 					@Override
 					public void onResponse(ManagerTransfer response) {

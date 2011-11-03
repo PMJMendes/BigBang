@@ -21,6 +21,7 @@ import bigBang.library.client.userInterface.BigBangOperationsToolBar;
 import bigBang.library.client.userInterface.ListHeader;
 import bigBang.library.client.userInterface.view.View;
 import bigBang.module.clientModule.client.userInterface.ClientSearchPanel;
+import bigBang.module.clientModule.shared.ModuleConstants;
 
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
@@ -40,7 +41,15 @@ public abstract class ClientMergeView extends View {
 		SplitLayoutPanel wrapper = new SplitLayoutPanel();
 		wrapper.setSize("100%", "100%");
 
-		searchPanel = new ClientSearchPanel();
+		searchPanel = new ClientSearchPanel(){
+			@Override
+			public void addClient(Client client) {
+				if(!client.id.equals(formOriginal.getValue().id)){
+					super.addClient(client);
+				}
+			}
+		};
+		searchPanel.setOperationId(ModuleConstants.OpTypeIDs.MERGE_INTO_THIS_CLIENT);
 		searchPanel.addSelectionChangedEventHandler(new SelectionChangedEventHandler() {
 
 			@Override
@@ -123,6 +132,7 @@ public abstract class ClientMergeView extends View {
 		receptorFormWrapper.add(formReceptor);
 		receptorFormWrapper.setCellHeight(formReceptor, "100%");
 		formReceptor.lock(true);
+		formOriginal.lock(true);
 
 		wrapper.addWest(originalFormWrapper, 500);
 		wrapper.addWest(searchWrapper, 400);

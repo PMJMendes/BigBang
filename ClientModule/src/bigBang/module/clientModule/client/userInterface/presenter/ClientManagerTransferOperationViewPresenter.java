@@ -44,7 +44,7 @@ OperationViewPresenter {
 		HasEditableValue<String> getForm();
 		boolean isFormValid();
 		void lockForm(boolean lock);
-		Collection<String> getSelectedClientIds();
+		Collection<ClientStub> getSelectedClientStubs();
 		
 		HasValue<Client> getClientForm();
 		
@@ -114,12 +114,19 @@ OperationViewPresenter {
 			}
 			
 			public void onTransfer() {
-				Collection<String> selectedIds = view.getSelectedClientIds();
-				String[] clientIds = new String[selectedIds.size()];
-				clientIds = selectedIds.toArray(clientIds); 
+				Collection<ClientStub> selectedClients = view.getSelectedClientStubs();
+				String[] clientIds = new String[selectedClients.size()];
+				String[] clientProcessIds = new String[selectedClients.size()];
+				
+				int i = 0;
+				for(ClientStub s : selectedClients) {
+					clientIds[i] = s.id;
+					clientProcessIds[i] = s.processId;
+					i++;
+				}
 				String managerId = view.getForm().getValue();
 				
-				clientBroker.createManagerTransfer(clientIds, managerId, new ResponseHandler<ManagerTransfer>() {
+				clientBroker.createManagerTransfer(clientProcessIds,clientIds, managerId, new ResponseHandler<ManagerTransfer>() {
 					
 					@Override
 					public void onResponse(ManagerTransfer response) {

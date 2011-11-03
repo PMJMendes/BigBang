@@ -267,17 +267,34 @@ public class ClientProcessBrokerImpl extends DataBroker<Client> implements Clien
 	}
 
 	@Override
-	public void createManagerTransfer(String[] clientIds, String managerId,
+	public void createManagerTransfer(String[] processIds, String [] dataObjectIds, String managerId,
 			final ResponseHandler<ManagerTransfer> handler) {
 		ManagerTransfer transfer = new ManagerTransfer();
 		transfer.newManagerId = managerId;
-		transfer.managedProcessIds = clientIds;
+		transfer.managedProcessIds = processIds;
+		transfer.dataObjectIds = dataObjectIds;
 			
-		if(clientIds.length > 1){
+		if(processIds.length > 1){
 			service.massCreateManagerTransfer(transfer, new BigBangAsyncCallback<ManagerTransfer>() {
 
 				@Override
 				public void onSuccess(ManagerTransfer result) {
+					for(int i = 0; i < result.dataObjectIds.length; i++) {
+						getClient(result.dataObjectIds[i], new ResponseHandler<Client>(){
+
+							@Override
+							public void onResponse(Client response) {
+								for(DataBrokerClient<Client> c : ClientProcessBrokerImpl.this.clients) {
+									ClientProcessDataBrokerClient b = (ClientProcessDataBrokerClient)c;
+									b.updateClient(response);
+								}
+							}
+
+							@Override
+							public void onError(Collection<ResponseError> errors) {
+							}
+						});
+					}
 					handler.onResponse(result);
 				}
 			});
@@ -286,6 +303,22 @@ public class ClientProcessBrokerImpl extends DataBroker<Client> implements Clien
 
 				@Override
 				public void onSuccess(ManagerTransfer result) {
+					for(int i = 0; i < result.dataObjectIds.length; i++) {
+						getClient(result.dataObjectIds[i], new ResponseHandler<Client>(){
+
+							@Override
+							public void onResponse(Client response) {
+								for(DataBrokerClient<Client> c : ClientProcessBrokerImpl.this.clients) {
+									ClientProcessDataBrokerClient b = (ClientProcessDataBrokerClient)c;
+									b.updateClient(response);
+								}
+							}
+
+							@Override
+							public void onError(Collection<ResponseError> errors) {
+							}
+						});
+					}
 					handler.onResponse(result);
 				}
 			});

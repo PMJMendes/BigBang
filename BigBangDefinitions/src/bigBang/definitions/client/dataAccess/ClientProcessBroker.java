@@ -73,5 +73,5 @@ public interface ClientProcessBroker extends DataBrokerInterface<Client>{
 	
 	public void cancelInfoOrDocumentRequest(InfoOrDocumentRequest.Cancellation cancellation, ResponseHandler<Void> handler);
 	
-	public void createManagerTransfer(String[] clientIds, String managerId, ResponseHandler<ManagerTransfer> handler);
+	public void createManagerTransfer(String[] processIds, String[] dataObjectIds, String managerId, ResponseHandler<ManagerTransfer> handler);
 }

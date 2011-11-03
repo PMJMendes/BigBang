@@ -180,7 +180,7 @@ public class ClientSearchOperationView extends View implements ClientSearchOpera
 				getClientMergeForm().setValue(null);
 				clientMergeView.getOriginalForm().setValue(form.getValue());
 				showClientMergeForm(true);
-				lockClientMergeForm(false);
+				lockClientMergeForm(true);
 			}
 
 			@Override
