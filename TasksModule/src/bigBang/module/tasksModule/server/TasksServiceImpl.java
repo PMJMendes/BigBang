@@ -300,6 +300,11 @@ public class TasksServiceImpl
 			}
 			pstrBuffer.append(") [Aux3])");
 		}
+		
+		if ( lParam.afterTimestamp != null )
+		{
+			pstrBuffer.append("[:Timestamp] > '").append(lParam.afterTimestamp).append("'");
+		}
 
 		return true;
 	}

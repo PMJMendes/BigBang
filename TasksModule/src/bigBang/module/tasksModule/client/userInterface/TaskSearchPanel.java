@@ -5,17 +5,11 @@ import java.util.Collection;
 import java.util.Map;
 import java.util.TreeMap;
 
-import com.google.gwt.core.client.GWT;
-import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.user.client.ui.Image;
-
 import bigBang.definitions.shared.BigBangConstants;
 import bigBang.definitions.shared.SearchParameter;
 import bigBang.definitions.shared.SortParameter;
 import bigBang.definitions.shared.Task;
 import bigBang.definitions.shared.TaskStub;
-import bigBang.definitions.shared.TaskStub.Status;
 import bigBang.library.client.ValueSelectable;
 import bigBang.library.client.dataAccess.DataBrokerManager;
 import bigBang.library.client.userInterface.FiltersPanel;
@@ -28,6 +22,11 @@ import bigBang.module.tasksModule.client.resources.Resources;
 import bigBang.module.tasksModule.shared.TaskSearchParameter;
 import bigBang.module.tasksModule.shared.TaskSortParameter;
 import bigBang.module.tasksModule.shared.TaskSortParameter.SortableField;
+
+import com.google.gwt.core.client.GWT;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.user.client.ui.Image;
 
 public class TaskSearchPanel extends SearchPanel<TaskStub> implements TasksDataBrokerClient {
 
@@ -167,27 +166,6 @@ public class TaskSearchPanel extends SearchPanel<TaskStub> implements TasksDataB
 				addSearchResult(s);
 			}
 		}
-
-		TaskStub s3 = new TaskStub();
-		s3.description = "DESC 1";
-		s3.dueDate = "2011-09-31";
-		s3.timeStamp = "2011-09-05";
-		s3.status = Status.PENDING;
-		addSearchResult(s3);
-
-		TaskStub s4 = new TaskStub();
-		s4.description = "DESC 1";
-		s4.dueDate = "2011-09-31";
-		s4.timeStamp = "2011-09-05";
-		s4.status = Status.URGENT;
-		addSearchResult(s4);
-
-		TaskStub s5 = new TaskStub();
-		s5.description = "DESC 1";
-		s5.dueDate = "2011-09-31";
-		s5.timeStamp = "2011-09-05";
-		s5.status = Status.VALID;
-		addSearchResult(s5);
 	}
 
 	public Entry addSearchResult(TaskStub r){
