@@ -13,8 +13,6 @@ public class TaskSortParameter
 		STATUS,
 		CREATION_DATE,
 		DUE_DATE,
-		PROCESS,
-		OPERATION
 	}
 
 	public TaskSortParameter()

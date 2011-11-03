@@ -91,8 +91,6 @@ public class TaskSearchPanel extends SearchPanel<TaskStub> implements TasksDataB
 		sortOptions.put(TaskSortParameter.SortableField.STATUS, "Urgência");
 		sortOptions.put(TaskSortParameter.SortableField.DUE_DATE, "Data limite");
 		sortOptions.put(TaskSortParameter.SortableField.CREATION_DATE, "Data de criação");
-		sortOptions.put(TaskSortParameter.SortableField.OPERATION, "Tipo de Operação");
-		sortOptions.put(TaskSortParameter.SortableField.PROCESS, "Tipo de Processo");
 
 		this.filtersPanel = new FiltersPanel(sortOptions);
 		this.filtersPanel.addTypifiedListField(Filters.OPERATION, "" /*TODO FJVC*/, "Tipo de Operação");
