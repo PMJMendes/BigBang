@@ -265,6 +265,12 @@ public class TasksServiceImpl
 
 		pstrBuffer.append(" AND [:User] = '").append(Engine.getCurrentUser().toString()).append("'");
 
+		if ( (lParam.freeText != null) && (lParam.freeText.trim().length() > 0) )
+		{
+			pstrBuffer.append(" AND [:Description] LIKE N'%").append(lParam.freeText.trim().replace("'", "''").replace(" ", "%"))
+					.append("%'");
+		}
+
 		if ( lParam.processId != null )
 		{
 			pstrBuffer.append(" AND [PK] IN (SELECT [:Item] FROM (");
