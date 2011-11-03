@@ -255,8 +255,6 @@ public class TasksServiceImpl
 		throws BigBangException
 	{
 		TaskSearchParameter lParam;
-		int[] larrMembers;
-		java.lang.Object[] larrValues;
 		IEntity lrefProcs;
 
 		if ( !(pParam instanceof TaskSearchParameter) )
@@ -274,33 +272,26 @@ public class TasksServiceImpl
 		if ( lParam.processId != null )
 		{
 			pstrBuffer.append(" AND [PK] IN (SELECT [:Item] FROM (");
-			larrMembers = new int[1];
-			larrMembers[0] = 1;
-			larrValues = new java.lang.Object[1];
-			larrValues[0] = UUID.fromString(lParam.processId);
 			try
 			{
 				lrefProcs = Entity.GetInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), Constants.ObjID_AgendaProcess));
-				pstrBuffer.append(lrefProcs.SQLForSelectByMembers(larrMembers, larrValues, null));
+				pstrBuffer.append(lrefProcs.SQLForSelectMulti());
 			}
 			catch (Throwable e)
 			{
 	    		throw new BigBangException(e.getMessage(), e);
 			}
-			pstrBuffer.append(") [Aux2])");
+			pstrBuffer.append(") [Aux2] WHERE [:Process:Script] = '").append(lParam.processId).append("')");
 		}
 
 		if ( lParam.operationId != null )
 		{
 			pstrBuffer.append(" AND [PK] IN (SELECT [:Item] FROM (");
-			larrMembers = new int[1];
-			larrMembers[0] = 1;
-			larrValues = new java.lang.Object[1];
-			larrValues[0] = UUID.fromString(lParam.operationId);
 			try
 			{
 				lrefProcs = Entity.GetInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), Constants.ObjID_AgendaOp));
-				pstrBuffer.append(lrefProcs.SQLForSelectByMembers(larrMembers, larrValues, null));
+				pstrBuffer.append(lrefProcs.SQLForSelectMultiFiltered(new int[] {1},
+						new java.lang.Object[] {UUID.fromString(lParam.operationId)}));
 			}
 			catch (Throwable e)
 			{
