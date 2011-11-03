@@ -88,18 +88,17 @@ h1 {
 
 /* stackPanel */
 .gwt-StackPanel .gwt-StackPanelItem { 
-	height: 40px !important;
+	height: 25px !important;
 	background: url("images/listHeaderBackground1.png") repeat-x !important;
 	margin: 0px !important;
 	padding: 0px 0px 0px 10px !important;
 	font-family: sans-serif;
 	font-size: 14px !important;
-	font-weight: normal !important;
+	font-weight: bold !important;
 	border: none !important;
 }
 .gwt-StackPanel .gwt-StackPanelItem-selected {
 	color: black;
-	font-weight: bold !important;
 }
 
 .gwt-StackPanel .gwt-StackPanelContent {
@@ -235,7 +234,7 @@ h1 {
 }
 
 .listItem-selected {
-	color:white;
+	color:white !important;
 	font-weight: bold;
 }
 
