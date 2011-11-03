@@ -100,7 +100,7 @@ public class TasksServiceImpl
 		for ( i = 0; i < larrAux.length; i++ )
 			lobjResult.operationIds[i] = larrAux[i].toString();
 
-		return null;
+		return lobjResult;
 	}
 
 	public void dismissTask(String taskId)
