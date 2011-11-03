@@ -265,7 +265,7 @@ public class TasksServiceImpl
 
 		if ( lParam.processId != null )
 		{
-			pstrBuffer.append("[PK] IN (SELECT [:Item] FROM (");
+			pstrBuffer.append(" AND [PK] IN (SELECT [:Item] FROM (");
 			larrMembers = new int[1];
 			larrMembers[0] = 1;
 			larrValues = new java.lang.Object[1];
@@ -284,7 +284,7 @@ public class TasksServiceImpl
 
 		if ( lParam.operationId != null )
 		{
-			pstrBuffer.append("[PK] IN (SELECT [:Item] FROM (");
+			pstrBuffer.append(" AND [PK] IN (SELECT [:Item] FROM (");
 			larrMembers = new int[1];
 			larrMembers[0] = 1;
 			larrValues = new java.lang.Object[1];
@@ -303,7 +303,7 @@ public class TasksServiceImpl
 		
 		if ( lParam.afterTimestamp != null )
 		{
-			pstrBuffer.append("[:Timestamp] > '").append(lParam.afterTimestamp).append("'");
+			pstrBuffer.append(" AND [:Timestamp] > '").append(lParam.afterTimestamp).append("'");
 		}
 
 		return true;
