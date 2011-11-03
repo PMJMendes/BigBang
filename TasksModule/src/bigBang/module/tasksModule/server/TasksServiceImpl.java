@@ -13,8 +13,9 @@ import Jewel.Petri.Interfaces.IScript;
 import Jewel.Petri.Objects.PNProcess;
 import Jewel.Petri.Objects.PNScript;
 import bigBang.definitions.shared.SearchParameter;
-import bigBang.definitions.shared.SortParameter;
 import bigBang.definitions.shared.SearchResult;
+import bigBang.definitions.shared.SortOrder;
+import bigBang.definitions.shared.SortParameter;
 import bigBang.definitions.shared.Task;
 import bigBang.definitions.shared.TaskStub;
 import bigBang.library.server.SearchServiceBase;
@@ -22,6 +23,7 @@ import bigBang.library.shared.BigBangException;
 import bigBang.library.shared.SessionExpiredException;
 import bigBang.module.tasksModule.interfaces.TasksService;
 import bigBang.module.tasksModule.shared.TaskSearchParameter;
+import bigBang.module.tasksModule.shared.TaskSortParameter;
 
 import com.premiumminds.BigBang.Jewel.Constants;
 import com.premiumminds.BigBang.Jewel.Objects.AgendaItem;
@@ -311,13 +313,31 @@ public class TasksServiceImpl
 
 	protected boolean buildSort(StringBuilder pstrBuffer, SortParameter pParam, SearchParameter[] parrParams)
 	{
-//		TaskSortParameter lParam;
+		TaskSortParameter lParam;
 
-//		if ( !(pParam instanceof TaskSortParameter) )
+		if ( !(pParam instanceof TaskSortParameter) )
 			return false;
-//		lParam = (TaskSortParameter)pParam;
+		lParam = (TaskSortParameter)pParam;
 
-//		return true;
+		if ( lParam.field == TaskSortParameter.SortableField.TAG )
+			pstrBuffer.append("[:Description]");
+
+		if ( lParam.field == TaskSortParameter.SortableField.STATUS )
+			pstrBuffer.append("[:Level:Level]");
+
+		if ( lParam.field == TaskSortParameter.SortableField.CREATION_DATE )
+			pstrBuffer.append("[:Timestamp]");
+
+		if ( lParam.field == TaskSortParameter.SortableField.DUE_DATE )
+			pstrBuffer.append("[:Due Date]");
+
+		if ( lParam.order == SortOrder.ASC )
+			pstrBuffer.append(" ASC");
+
+		if ( lParam.order == SortOrder.DESC )
+			pstrBuffer.append(" DESC");
+
+		return true;
 	}
 
 	protected SearchResult buildResult(UUID pid, Object[] parrValues)
