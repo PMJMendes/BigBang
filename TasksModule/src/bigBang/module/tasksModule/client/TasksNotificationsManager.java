@@ -31,7 +31,7 @@ public class TasksNotificationsManager extends Timer implements TasksDataBrokerC
 	private EventBus eventBus;
 	protected TasksBroker broker;
 	protected int currentCount = 0;
-	protected String lastTimestamp = "0000-00-00 00:00:00";
+	protected String lastTimestamp = null;
 
 	public TasksNotificationsManager(EventBus eventBus){
 		this.eventBus = eventBus;
@@ -72,13 +72,6 @@ public class TasksNotificationsManager extends Timer implements TasksDataBrokerC
 			@Override
 			public void onError(Collection<ResponseError> errors) {}
 		});
-
-
-
-
-
-
-
 		this.schedule(this.DELAY);
 	}
 
