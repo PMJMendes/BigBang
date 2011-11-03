@@ -49,7 +49,7 @@ import com.premiumminds.BigBang.Jewel.Objects.GeneralSystem;
 import com.premiumminds.BigBang.Jewel.Objects.MgrXFer;
 import com.premiumminds.BigBang.Jewel.Operations.ContactOps;
 import com.premiumminds.BigBang.Jewel.Operations.DocOps;
-import com.premiumminds.BigBang.Jewel.Operations.Client.CreateMgrXFer;
+import com.premiumminds.BigBang.Jewel.Operations.Client.CreateClientMgrXFer;
 import com.premiumminds.BigBang.Jewel.Operations.Client.CreatePolicy;
 import com.premiumminds.BigBang.Jewel.Operations.Client.DeleteClient;
 import com.premiumminds.BigBang.Jewel.Operations.Client.ManageClientData;
@@ -300,12 +300,12 @@ public class ClientServiceImpl
 	public ManagerTransfer createManagerTransfer(ManagerTransfer transfer)
 		throws SessionExpiredException, BigBangException
 	{
-		CreateMgrXFer lobjCMX;
+		CreateClientMgrXFer lobjCMX;
 
 		if ( Engine.getCurrentUser() == null )
 			throw new SessionExpiredException();
 
-		lobjCMX = new CreateMgrXFer(UUID.fromString(transfer.managedProcessIds[0]));
+		lobjCMX = new CreateClientMgrXFer(UUID.fromString(transfer.managedProcessIds[0]));
 		lobjCMX.midNewManager = UUID.fromString(transfer.newManagerId);
 		lobjCMX.mbMassTransfer = false;
 
@@ -405,7 +405,7 @@ public class ClientServiceImpl
 			{
 				lopCP.mobjContactOps = new ContactOps();
 				lopCP.mobjContactOps.marrCreate = ContactsServiceImpl.BuildContactTree(lopCP.mobjContactOps,
-						policy.contacts, Constants.ObjID_Client);
+						policy.contacts, Constants.ObjID_Policy);
 			}
 			else
 				lopCP.mobjContactOps = null;
@@ -413,7 +413,7 @@ public class ClientServiceImpl
 			{
 				lopCP.mobjDocOps = new DocOps();
 				lopCP.mobjDocOps.marrCreate = DocumentServiceImpl.BuildDocTree(lopCP.mobjDocOps,
-						policy.documents, Constants.ObjID_Client);
+						policy.documents, Constants.ObjID_Policy);
 			}
 			else
 				lopCP.mobjDocOps = null;
@@ -494,7 +494,7 @@ public class ClientServiceImpl
 		UUID [] larrProcessIDs;
 		int i;
 		IScript lobjScript;
-		CreateMgrXFer lobjCMX;
+		CreateClientMgrXFer lobjCMX;
 		AcceptXFer lopAX;
 		AgendaItem lobjItem;
 
@@ -552,7 +552,7 @@ public class ClientServiceImpl
 
 			for ( i = 0; i < transfer.managedProcessIds.length; i++ )
 			{
-				lobjCMX = new CreateMgrXFer(UUID.fromString(transfer.managedProcessIds[i]));
+				lobjCMX = new CreateClientMgrXFer(UUID.fromString(transfer.managedProcessIds[i]));
 				lobjCMX.midNewManager = lidManager;
 				lobjCMX.mbMassTransfer = true;
 				lobjCMX.midTransferObject = lobjXFer.getKey();

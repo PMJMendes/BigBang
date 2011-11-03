@@ -15,6 +15,7 @@ import bigBang.library.client.userInterface.presenter.ViewPresenter;
 import bigBang.library.client.userInterface.view.View;
 import bigBang.library.interfaces.Service;
 import bigBang.module.loginModule.interfaces.AuthenticationServiceAsync;
+import bigBang.module.loginModule.shared.LoginResponse;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -128,16 +129,16 @@ public class LoginViewPresenter implements ViewPresenter {
 			return;
 		}
 					
-		service.login(domain, new AsyncCallback<String>() {
+		service.login(domain, new AsyncCallback<LoginResponse>() {
 			
-			public void onSuccess(String username) {
-				if(username == null){
+			public void onSuccess(LoginResponse loginResponse) {
+				if(loginResponse == null){
 					view.setSelectedDomain(domain);
 					finishGo();
 					LoginViewPresenter.this.view.showErrorMessage("Não foi possível autenticar automaticamente.");
 				} else {		
-					eventBus.fireEvent(new LoginSuccessEvent(username, domain));
-					GWT.log("Authentication success for " + username);
+					eventBus.fireEvent(new LoginSuccessEvent(loginResponse.userName, domain));
+					GWT.log("Authentication success for " + loginResponse.userName);
 				}
 			}
 			
@@ -149,11 +150,11 @@ public class LoginViewPresenter implements ViewPresenter {
 	
 	private void checkLogin(String username, String password, String domain, final ResponseHandler<Boolean> callback){
 		view.showLoading(true);
-		service.login(username, password, domain, new AsyncCallback<String>() {
+		service.login(username, password, domain, new AsyncCallback<LoginResponse>() {
 			
-			public void onSuccess(String username) {
-				eventBus.fireEvent(new LoginSuccessEvent(username, view.getDomain()));
-				GWT.log("Authentication success for " + username);
+			public void onSuccess(LoginResponse loginResponse) {
+				eventBus.fireEvent(new LoginSuccessEvent(loginResponse.userName, view.getDomain()));
+				GWT.log("Authentication success for " + loginResponse.userName);
 				LoginViewPresenter.this.view.showLoading(false);
 				if(callback != null)
 					callback.onResponse(true);

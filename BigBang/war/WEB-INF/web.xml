@@ -9,6 +9,7 @@
     	<!ENTITY  generalSystemServices SYSTEM "generalSystemServices.xml" > 
     	<!ENTITY  clientServices SYSTEM "clientServices.xml" > 
     	<!ENTITY  insurancePolicyServices SYSTEM "insurancePolicyServices.xml" > 
+    	<!ENTITY  receiptServices SYSTEM "receiptServices.xml" > 
     ]  >
 
 <web-app>
@@ -27,6 +28,7 @@
 	&generalSystemServices;
 	&clientServices;
 	&insurancePolicyServices;
+	&receiptServices;
 
 	<servlet>
 		<servlet-name>remoteLoggingServiceImpl</servlet-name>

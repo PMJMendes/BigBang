@@ -1,6 +1,8 @@
 package bigBang.module.insurancePolicyModule.interfaces;
 
+import bigBang.definitions.shared.InfoOrDocumentRequest;
 import bigBang.definitions.shared.InsurancePolicy;
+import bigBang.definitions.shared.ManagerTransfer;
 import bigBang.definitions.shared.Receipt;
 import bigBang.library.interfaces.SearchService;
 import bigBang.library.shared.BigBangException;
@@ -26,11 +28,18 @@ public interface InsurancePolicyService extends SearchService {
 	}
 	
 	public InsurancePolicy getPolicy(String policyId) throws SessionExpiredException, BigBangException;
-	public InsurancePolicy voidPolicy(String policyId) throws SessionExpiredException, BigBangException;
-	public void deletePolicy(String policyId) throws SessionExpiredException, BigBangException;
+
 	public InsurancePolicy editPolicy(InsurancePolicy policy) throws SessionExpiredException, BigBangException;
-	
+	public InsurancePolicy voidPolicy(String policyId) throws SessionExpiredException, BigBangException;
+
+	public InfoOrDocumentRequest createInfoOrDocumentRequest(InfoOrDocumentRequest request) throws SessionExpiredException, BigBangException;
+	public ManagerTransfer createManagerTransfer(ManagerTransfer transfer) throws SessionExpiredException, BigBangException;
+
 	public Receipt createReceipt(String policyId, Receipt receipt) throws SessionExpiredException, BigBangException;
+
+	public void deletePolicy(String policyId) throws SessionExpiredException, BigBangException;
+
+	public ManagerTransfer massCreateManagerTransfer(ManagerTransfer transfer) throws SessionExpiredException, BigBangException;
 
 	
 	

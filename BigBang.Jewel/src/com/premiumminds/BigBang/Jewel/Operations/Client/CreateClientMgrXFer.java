@@ -18,7 +18,7 @@ import com.premiumminds.BigBang.Jewel.Constants;
 import com.premiumminds.BigBang.Jewel.Objects.AgendaItem;
 import com.premiumminds.BigBang.Jewel.Objects.MgrXFer;
 
-public class CreateMgrXFer
+public class CreateClientMgrXFer
 	extends UndoableOperation
 {
 	private static final long serialVersionUID = 1L;
@@ -31,14 +31,14 @@ public class CreateMgrXFer
 	private UUID midOldManager;
 	private UUID midClient;
 
-	public CreateMgrXFer(UUID pidProcess)
+	public CreateClientMgrXFer(UUID pidProcess)
 	{
 		super(pidProcess);
 	}
 
 	protected UUID OpID()
 	{
-		return Constants.OPID_CreateMgrXFer;
+		return Constants.OPID_CreateClientMgrXFer;
 	}
 
 	public String ShortDesc()
@@ -122,7 +122,7 @@ public class CreateMgrXFer
     			mbDirectTransfer = true;
     			midClient = GetProcess().GetData().getKey();
     			GetProcess().SetManagerID(midNewManager, pdb);
-    			TriggerOp(new TriggerAllowUndoMgrXFer(GetProcess().getKey()));
+    			TriggerOp(new TriggerAllowUndoClientMgrXFer(GetProcess().getKey()));
 	    		try
 	    		{
 					lobjItem = AgendaItem.GetInstance(Engine.getCurrentNameSpace(), (UUID)null);

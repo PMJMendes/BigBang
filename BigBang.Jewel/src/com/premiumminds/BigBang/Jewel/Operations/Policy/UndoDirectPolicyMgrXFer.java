@@ -1,4 +1,4 @@
-package com.premiumminds.BigBang.Jewel.Operations.Client;
+package com.premiumminds.BigBang.Jewel.Operations.Policy;
 
 import java.util.UUID;
 
@@ -6,19 +6,19 @@ import Jewel.Petri.SysObjects.UndoOperation;
 
 import com.premiumminds.BigBang.Jewel.Constants;
 
-public class UndoDirectMgrXFer
+public class UndoDirectPolicyMgrXFer
 	extends UndoOperation
 {
 	private static final long serialVersionUID = 1L;
 
-	public UndoDirectMgrXFer(UUID pidProcess)
+	public UndoDirectPolicyMgrXFer(UUID pidProcess)
 	{
 		super(pidProcess);
 	}
 
 	protected UUID OpID()
 	{
-		return Constants.OPID_UndoDirectMgrXFer;
+		return Constants.OPID_UndoDirectPolicyMgrXFer;
 	}
 
 	public String ShortDesc()

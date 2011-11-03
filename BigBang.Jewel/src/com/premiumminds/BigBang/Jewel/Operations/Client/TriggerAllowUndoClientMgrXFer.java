@@ -4,18 +4,20 @@ import java.util.UUID;
 
 import Jewel.Petri.SysObjects.SilentOperation;
 
-public class TriggerAllowUndoMgrXFer
+import com.premiumminds.BigBang.Jewel.Constants;
+
+public class TriggerAllowUndoClientMgrXFer
 	extends SilentOperation
 {
 	private static final long serialVersionUID = 1L;
 
-	public TriggerAllowUndoMgrXFer(UUID pidProcess)
+	public TriggerAllowUndoClientMgrXFer(UUID pidProcess)
 	{
 		super(pidProcess);
 	}
 
 	protected UUID OpID()
 	{
-		return null;
+		return Constants.OPID_TriggerAllowUndoClientMgrXFer;
 	}
 }

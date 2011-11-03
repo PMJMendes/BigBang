@@ -1,17 +1,26 @@
 package bigBang.module.insurancePolicyModule.server;
 
 import java.math.BigDecimal;
+import java.sql.SQLException;
 import java.sql.Timestamp;
+import java.util.Calendar;
 import java.util.UUID;
 
 import Jewel.Engine.Engine;
+import Jewel.Engine.DataAccess.MasterDB;
+import Jewel.Engine.DataAccess.SQLServer;
 import Jewel.Engine.Implementation.Entity;
 import Jewel.Engine.Interfaces.IEntity;
 import Jewel.Engine.SysObjects.ObjectBase;
 import Jewel.Petri.Interfaces.IProcess;
+import Jewel.Petri.Interfaces.IScript;
 import Jewel.Petri.Objects.PNProcess;
+import Jewel.Petri.Objects.PNScript;
+import Jewel.Petri.SysObjects.JewelPetriException;
+import bigBang.definitions.shared.InfoOrDocumentRequest;
 import bigBang.definitions.shared.InsurancePolicy;
 import bigBang.definitions.shared.InsurancePolicyStub;
+import bigBang.definitions.shared.ManagerTransfer;
 import bigBang.definitions.shared.Receipt;
 import bigBang.definitions.shared.SearchParameter;
 import bigBang.definitions.shared.SearchResult;
@@ -29,12 +38,16 @@ import bigBang.module.insurancePolicyModule.shared.InsurancePolicySearchParamete
 import com.premiumminds.BigBang.Jewel.Constants;
 import com.premiumminds.BigBang.Jewel.Data.PolicyData;
 import com.premiumminds.BigBang.Jewel.Data.ReceiptData;
+import com.premiumminds.BigBang.Jewel.Objects.AgendaItem;
 import com.premiumminds.BigBang.Jewel.Objects.Client;
 import com.premiumminds.BigBang.Jewel.Objects.Line;
+import com.premiumminds.BigBang.Jewel.Objects.MgrXFer;
 import com.premiumminds.BigBang.Jewel.Objects.Policy;
 import com.premiumminds.BigBang.Jewel.Objects.SubLine;
 import com.premiumminds.BigBang.Jewel.Operations.ContactOps;
 import com.premiumminds.BigBang.Jewel.Operations.DocOps;
+import com.premiumminds.BigBang.Jewel.Operations.MgrXFer.AcceptXFer;
+import com.premiumminds.BigBang.Jewel.Operations.Policy.CreatePolicyMgrXFer;
 import com.premiumminds.BigBang.Jewel.Operations.Policy.CreateReceipt;
 import com.premiumminds.BigBang.Jewel.Operations.Policy.DeletePolicy;
 import com.premiumminds.BigBang.Jewel.Operations.Policy.ManagePolicyData;
@@ -52,7 +65,7 @@ public class InsurancePolicyServiceImpl
 		Policy lobjPolicy;
 		InsurancePolicy lobjResult;
 		IProcess lobjProc;
-		UUID lidClient;
+		UUID lidPolicy;
 		ObjectBase lobjAux;
 		UUID lidLine;
 		UUID lidCategory;
@@ -68,7 +81,7 @@ public class InsurancePolicyServiceImpl
 				throw new BigBangException("Erro: Apólice sem processo de suporte. (Apólice n. "
 						+ lobjPolicy.getAt(0).toString() + ")");
 			lobjProc = PNProcess.GetInstance(Engine.getCurrentNameSpace(), lobjPolicy.GetProcessID());
-			lidClient = lobjProc.GetParent().GetData().getKey();
+			lidPolicy = lobjProc.GetParent().GetData().getKey();
 			lobjAux = SubLine.GetInstance(Engine.getCurrentNameSpace(), (UUID)lobjPolicy.getAt(3));
 			lidLine = (UUID)lobjAux.getAt(1);
 			lobjAux = Line.GetInstance(Engine.getCurrentNameSpace(), lidLine);
@@ -83,7 +96,7 @@ public class InsurancePolicyServiceImpl
 
 		lobjResult.id = lobjPolicy.getKey().toString();
 		lobjResult.number = (String)lobjPolicy.getAt(0);
-		lobjResult.clientId = lidClient.toString();
+		lobjResult.clientId = lidPolicy.toString();
 		lobjResult.categoryId = lidCategory.toString();
 		lobjResult.lineId = lidLine.toString();
 		lobjResult.subLineId = ((UUID)lobjPolicy.getAt(3)).toString();
@@ -217,7 +230,7 @@ public class InsurancePolicyServiceImpl
 			{
 				lopCR.mobjContactOps = new ContactOps();
 				lopCR.mobjContactOps.marrCreate = ContactsServiceImpl.BuildContactTree(lopCR.mobjContactOps,
-						receipt.contacts, Constants.ObjID_Client);
+						receipt.contacts, Constants.ObjID_Policy);
 			}
 			else
 				lopCR.mobjContactOps = null;
@@ -225,7 +238,7 @@ public class InsurancePolicyServiceImpl
 			{
 				lopCR.mobjDocOps = new DocOps();
 				lopCR.mobjDocOps.marrCreate = DocumentServiceImpl.BuildDocTree(lopCR.mobjDocOps,
-						receipt.documents, Constants.ObjID_Client);
+						receipt.documents, Constants.ObjID_Policy);
 			}
 			else
 				lopCR.mobjDocOps = null;
@@ -250,11 +263,208 @@ public class InsurancePolicyServiceImpl
 		return receipt;
 	}
 
+	public ManagerTransfer createManagerTransfer(ManagerTransfer transfer)
+		throws SessionExpiredException, BigBangException
+	{
+		CreatePolicyMgrXFer lobjCMX;
+
+		if ( Engine.getCurrentUser() == null )
+			throw new SessionExpiredException();
+
+		lobjCMX = new CreatePolicyMgrXFer(UUID.fromString(transfer.managedProcessIds[0]));
+		lobjCMX.midNewManager = UUID.fromString(transfer.newManagerId);
+		lobjCMX.mbMassTransfer = false;
+
+		try
+		{
+			lobjCMX.Execute();
+		}
+		catch (JewelPetriException e)
+		{
+			throw new BigBangException(e.getMessage(), e);
+		}
+
+		transfer.directTransfer = lobjCMX.mbDirectTransfer;
+		if ( transfer.directTransfer )
+		{
+			transfer.id = null;
+			transfer.processId = null;
+			transfer.status = ManagerTransfer.Status.DIRECT;
+		}
+		else
+		{
+			transfer.id = lobjCMX.midTransferObject.toString();
+			transfer.processId = lobjCMX.midCreatedSubproc.toString();
+			transfer.status = ManagerTransfer.Status.PENDING;
+		}
+
+		return transfer;
+	}
+
 	@Override
 	public InsurancePolicy voidPolicy(String policyId)
 			throws SessionExpiredException, BigBangException {
 		// TODO Auto-generated method stub
 		return null;
+	}
+
+	@Override
+	public InfoOrDocumentRequest createInfoOrDocumentRequest(
+			InfoOrDocumentRequest request) throws SessionExpiredException,
+			BigBangException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public ManagerTransfer massCreateManagerTransfer(ManagerTransfer transfer)
+		throws SessionExpiredException, BigBangException
+	{
+		Timestamp ldtAux;
+		Calendar ldtAux2;
+		UUID lidManager;
+		SQLServer ldb;
+		MgrXFer lobjXFer;
+		IProcess lobjProc;
+		UUID [] larrProcessIDs;
+		int i;
+		IScript lobjScript;
+		CreatePolicyMgrXFer lobjCMX;
+		AcceptXFer lopAX;
+		AgendaItem lobjItem;
+
+		if ( Engine.getCurrentUser() == null )
+			throw new SessionExpiredException();
+
+		ldtAux = new Timestamp(new java.util.Date().getTime());
+    	ldtAux2 = Calendar.getInstance();
+    	ldtAux2.setTimeInMillis(ldtAux.getTime());
+    	ldtAux2.add(Calendar.DAY_OF_MONTH, 7);
+
+    	lidManager = UUID.fromString(transfer.newManagerId);
+    	if ( lidManager == null )
+    		throw new BigBangException("Erro: Novo gestor não indicado.");
+
+		try
+		{
+			ldb = new MasterDB();
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangException(e.getMessage(), e);
+		}
+
+		try
+		{
+			ldb.BeginTrans();
+		}
+		catch (Throwable e)
+		{
+			try { ldb.Disconnect(); } catch (Throwable e1) {}
+			throw new BigBangException(e.getMessage(), e);
+		}
+
+		lobjXFer = null;
+		lobjProc = null;
+		larrProcessIDs = new UUID[transfer.managedProcessIds.length];
+		for ( i = 0 ; i < larrProcessIDs.length; i++ )
+			larrProcessIDs[i] = UUID.fromString(transfer.managedProcessIds[i]);
+
+		try
+		{
+			lobjXFer = MgrXFer.GetInstance(Engine.getCurrentNameSpace(), (UUID)null);
+			lobjXFer.setAt(1, null);
+			lobjXFer.setAt(2, lidManager);
+			lobjXFer.setAt(3, "Transferência de Gestor de Apólice");
+			lobjXFer.setAt(4, Engine.getCurrentUser());
+			lobjXFer.setAt(5, true);
+			lobjXFer.setAt(6, Constants.ObjID_Policy);
+			lobjXFer.SaveToDb(ldb);
+			lobjXFer.InitNew(larrProcessIDs, ldb);
+
+			lobjScript = PNScript.GetInstance(Engine.getCurrentNameSpace(), Constants.ProcID_MgrXFer);
+			lobjProc = lobjScript.CreateInstance(Engine.getCurrentNameSpace(), lobjXFer.getKey(), null, ldb);
+
+			for ( i = 0; i < transfer.managedProcessIds.length; i++ )
+			{
+				lobjCMX = new CreatePolicyMgrXFer(UUID.fromString(transfer.managedProcessIds[i]));
+				lobjCMX.midNewManager = lidManager;
+				lobjCMX.mbMassTransfer = true;
+				lobjCMX.midTransferObject = lobjXFer.getKey();
+				lobjCMX.midCreatedSubproc = lobjProc.getKey();
+				lobjCMX.Execute(ldb);
+			}
+
+			if ( lidManager.equals(Engine.getCurrentUser()) )
+			{
+				lopAX = new AcceptXFer(lobjProc.getKey());
+				lopAX.mbMassTransfer = true;
+				lopAX.Execute(ldb);
+			}
+			else
+			{
+				lobjItem = AgendaItem.GetInstance(Engine.getCurrentNameSpace(), (UUID)null);
+				lobjItem.setAt(0, "Transferência de Gestor de Apólice");
+				lobjItem.setAt(1, Engine.getCurrentUser());
+				lobjItem.setAt(2, Constants.ProcID_MgrXFer);
+				lobjItem.setAt(3, ldtAux);
+				lobjItem.setAt(4, new Timestamp(ldtAux2.getTimeInMillis()));
+				lobjItem.setAt(5, Constants.UrgID_Valid);
+				lobjItem.SaveToDb(ldb);
+				lobjItem.InitNew(new UUID[] {lobjProc.getKey()}, new UUID[] {Constants.OPID_CancelXFer}, ldb);
+
+				lobjItem = AgendaItem.GetInstance(Engine.getCurrentNameSpace(), (UUID)null);
+				lobjItem.setAt(0, "Transferência de Gestor de Apólice");
+				lobjItem.setAt(1, lidManager);
+				lobjItem.setAt(2, Constants.ProcID_MgrXFer);
+				lobjItem.setAt(3, ldtAux);
+				lobjItem.setAt(4, new Timestamp(ldtAux2.getTimeInMillis()));
+				lobjItem.setAt(5, Constants.UrgID_Pending);
+				lobjItem.SaveToDb(ldb);
+				lobjItem.InitNew(new UUID[] {lobjProc.getKey()},
+						new UUID[] {Constants.OPID_AcceptXFer, Constants.OPID_CancelXFer}, ldb);
+			}
+		}
+		catch (Throwable e)
+		{
+			try { ldb.Rollback(); } catch (SQLException e1) {}
+			try { ldb.Disconnect(); } catch (Throwable e1) {}
+			throw new BigBangException(e.getMessage(), e);
+		}
+
+		try
+		{
+			ldb.Commit();
+		}
+		catch (Throwable e)
+		{
+			try { ldb.Disconnect(); } catch (Throwable e1) {}
+			throw new BigBangException(e.getMessage(), e);
+		}
+
+		try
+		{
+			ldb.Disconnect();
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangException(e.getMessage(), e);
+		}
+
+		transfer.directTransfer = lidManager.equals(Engine.getCurrentUser());
+		if ( transfer.directTransfer )
+		{
+			transfer.id = null;
+			transfer.processId = null;
+			transfer.status = ManagerTransfer.Status.DIRECT;
+		}
+		else
+		{
+			transfer.id = lobjXFer.getKey().toString();
+			transfer.processId = lobjProc.getKey().toString();
+			transfer.status = ManagerTransfer.Status.PENDING;
+		}
+
+		return transfer;
 	}
 
 	protected UUID getObjectID()

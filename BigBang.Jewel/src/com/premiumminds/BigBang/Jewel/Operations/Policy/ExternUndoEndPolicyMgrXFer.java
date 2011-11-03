@@ -1,22 +1,22 @@
-package com.premiumminds.BigBang.Jewel.Operations.Client;
+package com.premiumminds.BigBang.Jewel.Operations.Policy;
 
 import java.util.UUID;
 
 import com.premiumminds.BigBang.Jewel.Constants;
 import com.premiumminds.BigBang.Jewel.Operations.MgrXFer.ExternUndoEndMgrXFerBase;
 
-public class ExternUndoEndClientMgrXFer
+public class ExternUndoEndPolicyMgrXFer
 	extends ExternUndoEndMgrXFerBase
 {
 	private static final long serialVersionUID = 1L;
 
-	public ExternUndoEndClientMgrXFer(UUID pidProcess)
+	public ExternUndoEndPolicyMgrXFer(UUID pidProcess)
 	{
 		super(pidProcess);
 	}
 
 	protected UUID OpID()
 	{
-		return Constants.OPID_ExternUndoEndClientMgrXFer;
+		return Constants.OPID_ExternUndoEndPolicyMgrXFer;
 	}
 }

@@ -23,6 +23,8 @@ import com.premiumminds.BigBang.Jewel.Objects.AgendaItem;
 import com.premiumminds.BigBang.Jewel.Objects.MgrXFer;
 import com.premiumminds.BigBang.Jewel.Operations.Client.ExternEndClientMgrXFer;
 import com.premiumminds.BigBang.Jewel.Operations.Client.ExternUndoEndClientMgrXFer;
+import com.premiumminds.BigBang.Jewel.Operations.Policy.ExternEndPolicyMgrXFer;
+import com.premiumminds.BigBang.Jewel.Operations.Policy.ExternUndoEndPolicyMgrXFer;
 
 public class AcceptXFer
 	extends UndoableOperation
@@ -331,6 +333,9 @@ public class AcceptXFer
 		if ( Constants.ObjID_Client.equals(pidObjectType) )
 			lopResult = new ExternEndClientMgrXFer(pidProc);
 
+		if ( Constants.ObjID_Policy.equals(pidObjectType) )
+			lopResult = new ExternEndPolicyMgrXFer(pidProc);
+
 		if ( lopResult != null )
 		{
 			lopResult.midXFerProcess = GetProcess().getKey();
@@ -351,6 +356,9 @@ public class AcceptXFer
 
 		if ( Constants.ObjID_Client.equals(pidObjectType) )
 			lopResult = new ExternUndoEndClientMgrXFer(pidProc);
+
+		if ( Constants.ObjID_Policy.equals(pidObjectType) )
+			lopResult = new ExternUndoEndPolicyMgrXFer(pidProc);
 
 		if ( lopResult != null )
 		{

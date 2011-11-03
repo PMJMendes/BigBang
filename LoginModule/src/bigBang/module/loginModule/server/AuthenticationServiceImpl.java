@@ -14,6 +14,7 @@ import Jewel.Engine.SysObjects.*;
 import bigBang.library.server.*;
 import bigBang.library.shared.*;
 import bigBang.module.loginModule.interfaces.*;
+import bigBang.module.loginModule.shared.LoginResponse;
 
 public class AuthenticationServiceImpl
 	extends EngineImplementor
@@ -21,7 +22,7 @@ public class AuthenticationServiceImpl
 {
 	private static final long serialVersionUID = 1L;
 
-	public String login(String domain)
+	public LoginResponse login(String domain)
 		throws BigBangException
 	{
 		String lstrUsername;
@@ -31,12 +32,13 @@ public class AuthenticationServiceImpl
         ResultSet lrs;
         int[] larrMembers;
         java.lang.Object[] larrParams;
-        UUID lidUser;
+        User lobjUser;
+        LoginResponse lobjResult;
 
         lstrUsername = getThreadLocalRequest().getRemoteUser();
         if ( lstrUsername == null )
         	return null;
-        lidUser = null;
+        lobjUser = null;
 
         if ( domain.equals("AMartins") )
         	lidNSpace = Constants.WSpace_AMartins;
@@ -59,7 +61,7 @@ public class AuthenticationServiceImpl
 
 	        if (lrs.next())
 	        {
-	            lidUser = UUID.fromString(lrs.getString(1));
+	            lobjUser = User.GetInstance(lidNSpace, lrs);
 	            if (lrs.next())
 	                throw new BigBangException("Unexpected: Username is not unique!");
 	        }
@@ -67,15 +69,18 @@ public class AuthenticationServiceImpl
 	        lrs.close();
 	        ldb.Disconnect();
 
-	        if ( lidUser == null )
+	        if ( lobjUser == null )
 	        	return null;
 
-	        getSession().setAttribute("UserID", lidUser);
+	        getSession().setAttribute("UserID", lobjUser);
 	        getSession().setAttribute("UserNSpace", lidNSpace);
 
-	        NameSpace.GetInstance(lidNSpace).DoLogin(lidUser, false);
+	        NameSpace.GetInstance(lidNSpace).DoLogin(lobjUser.getKey(), false);
 
-	        return User.GetInstance(lidNSpace, lidUser).getDisplayName();
+	        lobjResult = new LoginResponse();
+	        lobjResult.userId = lobjUser.getKey().toString();
+	        lobjResult.userName = lobjUser.getDisplayName();
+	        return lobjResult;
         }
         catch (BigBangException e)
         {
@@ -87,7 +92,7 @@ public class AuthenticationServiceImpl
         }
 	}
 
-	public String login(String username, String password, String domain)
+	public LoginResponse login(String username, String password, String domain)
 		throws BigBangException
 	{
 		UUID lidNSpace;
@@ -96,9 +101,10 @@ public class AuthenticationServiceImpl
         ResultSet lrs;
         int[] larrMembers;
         java.lang.Object[] larrParams;
-        UUID lidUser;
+        User lobjUser;
+        LoginResponse lobjResult;
 
-        lidUser = null;
+        lobjUser = null;
 
         if ( domain.equals("AMartins") )
         	lidNSpace = Constants.WSpace_AMartins;
@@ -127,7 +133,7 @@ public class AuthenticationServiceImpl
 
 	        if (lrs.next())
 	        {
-	            lidUser = UUID.fromString(lrs.getString(1));
+	            lobjUser = User.GetInstance(lidNSpace, lrs);
 	            if (lrs.next())
 	                throw new BigBangException("Unexpected: Username is not unique!");
 	        }
@@ -140,12 +146,15 @@ public class AuthenticationServiceImpl
 	        if ( larrParams[1] == null )
 	            throw new BigBangException("User restricted to integrated logon!");
 
-	        getSession().setAttribute("UserID", lidUser);
+	        getSession().setAttribute("UserID", lobjUser);
 	        getSession().setAttribute("UserNSpace", lidNSpace);
 
-	        NameSpace.GetInstance(lidNSpace).DoLogin(lidUser, false);
+	        NameSpace.GetInstance(lidNSpace).DoLogin(lobjUser.getKey(), false);
 
-	        return User.GetInstance(lidNSpace, lidUser).getDisplayName();
+	        lobjResult = new LoginResponse();
+	        lobjResult.userId = lobjUser.getKey().toString();
+	        lobjResult.userName = lobjUser.getDisplayName();
+	        return lobjResult;
         }
         catch (BigBangException e)
         {
