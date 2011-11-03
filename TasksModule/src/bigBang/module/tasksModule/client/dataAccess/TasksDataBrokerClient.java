@@ -7,5 +7,6 @@ public interface TasksDataBrokerClient extends DataBrokerClient<Task> {
 	
 	public void addTask(Task task);
 	public void removeTask(String id);
+	public void updateTask(Task task);
 	
 }

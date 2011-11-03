@@ -208,7 +208,7 @@ public class InsurancePolicyServiceImpl
 			lopCR.mobjData.mstrNumber = receipt.number;
 			lopCR.mobjData.midType = UUID.fromString(receipt.typeId);
 			lopCR.mobjData.mdblTotal = new BigDecimal(receipt.totalPremium);
-			lopCR.mobjData.mdblCommercial = (receipt.comercialPremium == null ? null : new BigDecimal(receipt.comercialPremium));
+			lopCR.mobjData.mdblCommercial = (receipt.salesPremium == null ? null : new BigDecimal(receipt.salesPremium));
 			lopCR.mobjData.mdblCommissions = (receipt.comissions == null ? new BigDecimal(0) : new BigDecimal(receipt.comissions));
 			lopCR.mobjData.mdblRetrocessions = (receipt.retrocessions == null ? new BigDecimal(0) :
 					new BigDecimal(receipt.retrocessions));

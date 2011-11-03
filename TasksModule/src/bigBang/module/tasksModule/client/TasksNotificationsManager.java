@@ -64,6 +64,7 @@ public class TasksNotificationsManager extends Timer implements TasksDataBrokerC
 			@Override
 			public void onResponse(Search<TaskStub> response) {
 				for(TaskStub t : response.getResults()){
+					broker.notifyItemCreation(t.id);
 					lastTimestamp = t.timeStamp;
 					fireTaskNotification(t);
 				}
@@ -106,6 +107,11 @@ public class TasksNotificationsManager extends Timer implements TasksDataBrokerC
 	public void removeTask(String id) {
 		this.currentCount--;
 		this.updateTasksCount(this.currentCount);
+	}
+
+	@Override
+	public void updateTask(Task task) {
+		return;
 	}
 
 }

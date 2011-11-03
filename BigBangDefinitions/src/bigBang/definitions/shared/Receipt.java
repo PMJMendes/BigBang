@@ -5,7 +5,7 @@ public class Receipt
 {
 	private static final long serialVersionUID = 1L;
 	
-	public String comercialPremium;
+	public String salesPremium;
 	public String comissions;
 	public String retrocessions;
 	public String FATValue;

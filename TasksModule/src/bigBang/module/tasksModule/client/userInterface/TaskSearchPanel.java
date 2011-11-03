@@ -49,7 +49,7 @@ public class TaskSearchPanel extends SearchPanel<TaskStub> implements TasksDataB
 			Resources r = GWT.create(Resources.class);
 			TaskStub t = (TaskStub) info;
 			setTitle(t.description);
-			setText(t.dueDate);
+			setText(t.dueDate.substring(0, 10));
 			statusIndicator.setVisible(true);
 			this.getElement().getStyle().setBackgroundColor(this.defaultBGColor);
 			switch(t.status){
@@ -80,9 +80,13 @@ public class TaskSearchPanel extends SearchPanel<TaskStub> implements TasksDataB
 	protected int taskDataVersion;
 	protected FiltersPanel filtersPanel;
 	protected Collection<String> removedIds;
+	protected TasksBroker broker;
 
 	public TaskSearchPanel() {
 		super(((TasksBroker)DataBrokerManager.Util.getInstance().getBroker(BigBangConstants.EntityIds.TASK)).getSearchBroker());
+		this.broker = ((TasksBroker)DataBrokerManager.Util.getInstance().getBroker(BigBangConstants.EntityIds.TASK));
+		broker.registerClient(this);
+
 		ListHeader header = new ListHeader("Lista de Tarefas");
 		this.setHeaderWidget(header);
 		this.removedIds = new ArrayList<String>();
@@ -93,8 +97,8 @@ public class TaskSearchPanel extends SearchPanel<TaskStub> implements TasksDataB
 		sortOptions.put(TaskSortParameter.SortableField.CREATION_DATE, "Data de criação");
 
 		this.filtersPanel = new FiltersPanel(sortOptions);
-		this.filtersPanel.addTypifiedListField(Filters.OPERATION, "" /*TODO FJVC*/, "Tipo de Operação");
-		this.filtersPanel.addTypifiedListField(Filters.PROCESS, "" /*TODO FJVC*/, "Tipo de Processo");
+		this.filtersPanel.addTypifiedListField(Filters.PROCESS, BigBangConstants.TypifiedListIds.PROCESS_TYPE, "Tipo de Processo");
+		this.filtersPanel.addTypifiedListField(Filters.OPERATION, BigBangConstants.TypifiedListIds.OPERATION_TYPE, "Tipo de Operação", Filters.PROCESS);
 
 		filtersPanel.getApplyButton().addClickHandler(new ClickHandler() {
 
@@ -128,6 +132,16 @@ public class TaskSearchPanel extends SearchPanel<TaskStub> implements TasksDataB
 		this.add(0, new Entry(task));
 	}
 
+	@Override
+	public void updateTask(Task task) {
+		for(ValueSelectable<TaskStub> e : this){
+			if(e.getValue().id.equalsIgnoreCase(task.id)){
+				e.setValue(task);
+				break;
+			}
+		}
+	}
+	
 	@Override
 	public void removeTask(String id) {
 		this.removedIds.add(id.toUpperCase());

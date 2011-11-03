@@ -1,5 +1,7 @@
 package bigBang.definitions.shared;
 
+import java.util.UUID;
+
 /**
  * Class that holds important information which should be shared across modules
  */
@@ -24,19 +26,21 @@ public class BigBangConstants {
 		public static final String INSURANCE_POLICY = "29145166-59AC-452E-8C2B-9F81013A39AC";
 		public static final String RISK_ANALISYS = ""; //TODO
 		public static final String RECEIPT = "B24E4BF7-382C-40EE-8120-9F8A00DABB81";
-		
+
 		public static final String CONTACT = "2085F9FD-7FCE-46C0-99FD-9EC400FFBA5C";
 		public static final String DOCUMENT = "794F44DB-191A-4E17-9217-9ECC012A8AC2";
 	}
-	
+
 	public static class TypifiedListIds {
 		public static final String DOCUMENT_TYPE = "B4DBEE18-FA81-471D-A9F5-9ECC012A028D";
+		public static final String PROCESS_TYPE = "905B49A4-B4A9-4330-825C-9E1600DBE7EA";
+		public static final String OPERATION_TYPE = "30FBD723-9ACD-43F9-B931-9E1600DC051A";
 	}
-	
+
 	public static class OperationIds {
 		public static class ClientProcess {
 			public static final String UPDATE_CLIENT = "";
 		}		
 	}
-	
+
 }

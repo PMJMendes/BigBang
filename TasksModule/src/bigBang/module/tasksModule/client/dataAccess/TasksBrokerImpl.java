@@ -1,7 +1,11 @@
 package bigBang.module.tasksModule.client.dataAccess;
 
+import java.util.Collection;
+
 import bigBang.definitions.client.dataAccess.DataBroker;
+import bigBang.definitions.client.dataAccess.DataBrokerClient;
 import bigBang.definitions.client.dataAccess.SearchDataBroker;
+import bigBang.definitions.client.response.ResponseError;
 import bigBang.definitions.client.response.ResponseHandler;
 import bigBang.definitions.shared.BigBangConstants;
 import bigBang.definitions.shared.Task;
@@ -29,17 +33,46 @@ public class TasksBrokerImpl extends DataBroker<Task> implements TasksBroker {
 
 	@Override
 	public void notifyItemCreation(String itemId) {
-		return;
+		this.getTask(itemId, new ResponseHandler<Task>() {
+
+			@Override
+			public void onResponse(Task response) {
+				for(DataBrokerClient<Task> c : TasksBrokerImpl.this.clients) {
+					TasksDataBrokerClient b = (TasksDataBrokerClient)c;
+					b.addTask(response);
+				}
+			}
+
+			@Override
+			public void onError(Collection<ResponseError> errors) {
+			}
+		});
 	}
 
 	@Override
 	public void notifyItemDeletion(String itemId) {
-		return;
+		for(DataBrokerClient<Task> c : TasksBrokerImpl.this.clients) {
+			TasksDataBrokerClient b = (TasksDataBrokerClient)c;
+			b.removeTask(itemId);
+		}
 	}
 
 	@Override
 	public void notifyItemUpdate(String itemId) {
-		return;
+		this.getTask(itemId, new ResponseHandler<Task>() {
+
+			@Override
+			public void onResponse(Task response) {
+				for(DataBrokerClient<Task> c : TasksBrokerImpl.this.clients) {
+					TasksDataBrokerClient b = (TasksDataBrokerClient)c;
+					b.updateTask(response);
+				}
+			}
+
+			@Override
+			public void onError(Collection<ResponseError> errors) {
+			}
+		});
 	}
 
 	@Override

@@ -69,7 +69,7 @@ public class ReceiptServiceImpl
 				((Timestamp)lobjReceipt.getAt(9)).toString().substring(0, 10));
 		lobjResult.description = (String)lobjReceipt.getAt(14);
 		lobjResult.processId = lobjProc.getKey().toString();
-		lobjResult.comercialPremium = (lobjReceipt.getAt(4) == null ? null : ((BigDecimal)lobjReceipt.getAt(4)).toPlainString());
+		lobjResult.salesPremium = (lobjReceipt.getAt(4) == null ? null : ((BigDecimal)lobjReceipt.getAt(4)).toPlainString());
 		lobjResult.comissions = ((BigDecimal)lobjReceipt.getAt(5)).toPlainString();
 		lobjResult.retrocessions = ((BigDecimal)lobjReceipt.getAt(6)).toPlainString();
 		lobjResult.FATValue = (lobjReceipt.getAt(7) == null ? null : ((BigDecimal)lobjReceipt.getAt(7)).toPlainString());
@@ -106,7 +106,7 @@ public class ReceiptServiceImpl
 			lopMRD.mobjData.mdblTotal = new BigDecimal(receipt.totalPremium);
 			lopMRD.mobjData.midType = UUID.fromString(receipt.typeId);
 			lopMRD.mobjData.mdblTotal = new BigDecimal(receipt.totalPremium);
-			lopMRD.mobjData.mdblCommercial = (receipt.comercialPremium == null ? null : new BigDecimal(receipt.comercialPremium));
+			lopMRD.mobjData.mdblCommercial = (receipt.salesPremium == null ? null : new BigDecimal(receipt.salesPremium));
 			lopMRD.mobjData.mdblCommissions = (receipt.comissions == null ? new BigDecimal(0) : new BigDecimal(receipt.comissions));
 			lopMRD.mobjData.mdblRetrocessions = (receipt.retrocessions == null ? new BigDecimal(0) :
 					new BigDecimal(receipt.retrocessions));
