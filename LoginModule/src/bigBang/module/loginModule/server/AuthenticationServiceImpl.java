@@ -72,7 +72,7 @@ public class AuthenticationServiceImpl
 	        if ( lobjUser == null )
 	        	return null;
 
-	        getSession().setAttribute("UserID", lobjUser);
+	        getSession().setAttribute("UserID", lobjUser.getKey());
 	        getSession().setAttribute("UserNSpace", lidNSpace);
 
 	        NameSpace.GetInstance(lidNSpace).DoLogin(lobjUser.getKey(), false);
@@ -146,7 +146,7 @@ public class AuthenticationServiceImpl
 	        if ( larrParams[1] == null )
 	            throw new BigBangException("User restricted to integrated logon!");
 
-	        getSession().setAttribute("UserID", lobjUser);
+	        getSession().setAttribute("UserID", lobjUser.getKey());
 	        getSession().setAttribute("UserNSpace", lidNSpace);
 
 	        NameSpace.GetInstance(lidNSpace).DoLogin(lobjUser.getKey(), false);
