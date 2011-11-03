@@ -3,6 +3,8 @@ package bigBang.library.server;
 import java.util.UUID;
 
 import Jewel.Engine.Engine;
+import Jewel.Petri.Objects.PNProcess;
+import Jewel.Petri.SysObjects.JewelPetriException;
 import bigBang.definitions.shared.ManagerTransfer;
 import bigBang.library.interfaces.TransferManagerService;
 import bigBang.library.shared.BigBangException;
@@ -46,6 +48,16 @@ public class TransferManagerServiceImpl
 		lobjResult = new ManagerTransfer();
 		lobjResult.id = lobjXFer.getKey().toString();
 		lobjResult.managedProcessIds = new String[] {lobjAX.midParentProc.toString()};
+		try
+		{
+			lobjResult.dataObjectIds = new String[] {PNProcess.GetInstance(Engine.getCurrentNameSpace(),
+					lidProc).GetData().getKey().toString()};
+		}
+		catch (JewelPetriException e)
+		{
+			lobjResult.dataObjectIds = new String[] {null};
+		}
+		lobjResult.objectTypeId = lobjXFer.GetOuterObjectType().toString();
 		lobjResult.newManagerId = lobjXFer.GetNewManagerID().toString();
 		lobjResult.processId = lidProc.toString();
 		lobjResult.status = ManagerTransfer.Status.ACCEPTED;
@@ -81,6 +93,16 @@ public class TransferManagerServiceImpl
 		lobjResult = new ManagerTransfer();
 		lobjResult.id = lobjXFer.getKey().toString();
 		lobjResult.managedProcessIds = new String[] {lobjCX.midParentProc.toString()};
+		try
+		{
+			lobjResult.dataObjectIds = new String[] {PNProcess.GetInstance(Engine.getCurrentNameSpace(),
+					lidProc).GetData().getKey().toString()};
+		}
+		catch (JewelPetriException e)
+		{
+			lobjResult.dataObjectIds = new String[] {null};
+		}
+		lobjResult.objectTypeId = lobjXFer.GetOuterObjectType().toString();
 		lobjResult.newManagerId = lobjXFer.GetNewManagerID().toString();
 		lobjResult.processId = lidProc.toString();
 		lobjResult.status = ManagerTransfer.Status.CANCELED;
@@ -120,8 +142,21 @@ public class TransferManagerServiceImpl
 		lobjResult = new ManagerTransfer();
 		lobjResult.id = lobjXFer.getKey().toString();
 		lobjResult.managedProcessIds = new String[larrProcs.length];
+		lobjResult.dataObjectIds = new String[larrProcs.length];
 		for ( i = 0; i < larrProcs.length; i++ )
+		{
 			lobjResult.managedProcessIds[i] = larrProcs[i].toString();
+			try
+			{
+				lobjResult.dataObjectIds[i] = PNProcess.GetInstance(Engine.getCurrentNameSpace(),
+							larrProcs[i]).GetData().getKey().toString();
+			}
+			catch (Throwable e)
+			{
+				lobjResult.dataObjectIds[i] = null;
+			}
+		}
+		lobjResult.objectTypeId = lobjXFer.GetOuterObjectType().toString();
 		lobjResult.newManagerId = lobjXFer.GetNewManagerID().toString();
 		lobjResult.processId = lidProc.toString();
 		lobjResult.status = ManagerTransfer.Status.ACCEPTED;
@@ -161,8 +196,21 @@ public class TransferManagerServiceImpl
 		lobjResult = new ManagerTransfer();
 		lobjResult.id = lobjXFer.getKey().toString();
 		lobjResult.managedProcessIds = new String[larrProcs.length];
+		lobjResult.dataObjectIds = new String[larrProcs.length];
 		for ( i = 0; i < larrProcs.length; i++ )
+		{
 			lobjResult.managedProcessIds[i] = larrProcs[i].toString();
+			try
+			{
+				lobjResult.dataObjectIds[i] = PNProcess.GetInstance(Engine.getCurrentNameSpace(),
+							larrProcs[i]).GetData().getKey().toString();
+			}
+			catch (Throwable e)
+			{
+				lobjResult.dataObjectIds[i] = null;
+			}
+		}
+		lobjResult.objectTypeId = lobjXFer.GetOuterObjectType().toString();
 		lobjResult.newManagerId = lobjXFer.GetNewManagerID().toString();
 		lobjResult.processId = lidProc.toString();
 		lobjResult.status = ManagerTransfer.Status.ACCEPTED;
