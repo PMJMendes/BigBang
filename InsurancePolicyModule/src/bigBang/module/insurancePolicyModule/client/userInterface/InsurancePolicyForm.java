@@ -146,7 +146,7 @@ public class InsurancePolicyForm extends FormView<InsurancePolicy> {
 		result.startDate = "2011-11-01 00:00:00"; //TODO 
 		//result. TODO END DATE
 		result.durationId = duration.getValue();
-		result.fractioningId = duration.getValue();
+		result.fractioningId = fractioning.getValue();
 		result.caseStudy = caseStudy.getValue();
 		result.notes = notes.getValue();
 
