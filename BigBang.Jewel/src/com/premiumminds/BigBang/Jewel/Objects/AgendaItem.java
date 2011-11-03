@@ -56,6 +56,7 @@ public class AgendaItem
 		MasterDB ldb;
 		ArrayList<UUID> larrAux;
 		ResultSet lrs;
+		ObjectBase lobjAux;
 
 		larrMembers = new int[1];
 		larrMembers[0] = 0;
@@ -70,7 +71,8 @@ public class AgendaItem
 			lrs = lrefAux.SelectByMembers(ldb, larrMembers, larrParams, new int[0]);
 			while ( lrs.next() )
 			{
-				larrAux.add(UUID.fromString(lrs.getString(2)));
+				lobjAux = Engine.GetWorkInstance(lrefAux.getKey(), lrs);
+				larrAux.add((UUID)lobjAux.getAt(1));
 			}
 			lrs.close();
 			ldb.Disconnect();
@@ -90,7 +92,8 @@ public class AgendaItem
 			lrs = lrefAux.SelectByMembers(ldb, larrMembers, larrParams, new int[0]);
 			while ( lrs.next() )
 			{
-				larrAux.add(UUID.fromString(lrs.getString(2)));
+				lobjAux = Engine.GetWorkInstance(lrefAux.getKey(), lrs);
+				larrAux.add((UUID)lobjAux.getAt(1));
 			}
 			lrs.close();
 			ldb.Disconnect();
