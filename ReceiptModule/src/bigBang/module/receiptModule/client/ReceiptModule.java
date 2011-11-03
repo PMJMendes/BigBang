@@ -1,12 +1,14 @@
 package bigBang.module.receiptModule.client;
 
 import bigBang.definitions.client.dataAccess.DataBroker;
+import bigBang.definitions.shared.BigBangConstants;
 import bigBang.library.client.BigBangPermissionManager;
 import bigBang.library.client.EventBus;
 import bigBang.library.client.Module;
 import bigBang.library.client.Process;
 import bigBang.library.client.event.ModuleInitializedEvent;
 import bigBang.library.client.userInterface.presenter.SectionViewPresenter;
+import bigBang.module.receiptModule.client.dataAccess.ReceiptDataBrokerImpl;
 import bigBang.module.receiptModule.client.userInterface.presenter.ReceiptSectionViewPresenter;
 import bigBang.module.receiptModule.client.userInterface.view.ReceiptSectionView;
 
@@ -52,14 +54,16 @@ public class ReceiptModule implements Module {
 
 	@Override
 	public DataBroker<?>[] getBrokerImplementations() {
-		// TODO Auto-generated method stub
-		return null;
+		return new DataBroker<?>[]{
+			new ReceiptDataBrokerImpl()	
+		};
 	}
 
 	@Override
 	public String[] getBrokerDependencies() {
-		// TODO Auto-generated method stub
-		return null;
+		return new String[]{
+			BigBangConstants.EntityIds.RECEIPT	
+		};
 	}
 
 }
