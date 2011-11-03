@@ -6,11 +6,13 @@ public class TaskStub
 	extends SearchResult
 {
 	public enum Status implements Serializable {
+		INVALID,
 		VALID,
 		PENDING,
 		URGENT,
+		COMPLETED
 	}
-	
+
 	private static final long serialVersionUID = 1L;
 
 	public String description;

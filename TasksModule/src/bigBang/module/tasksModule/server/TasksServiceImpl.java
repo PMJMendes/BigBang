@@ -63,13 +63,16 @@ public class TasksServiceImpl
 		lobjResult.description = (String)lobjAgenda.getAt(0);
 		lobjResult.timeStamp = ((Timestamp)lobjAgenda.getAt(3)).toString();
 		lobjResult.dueDate = ((Timestamp)lobjAgenda.getAt(4)).toString();
-		if(((UUID)lobjAgenda.getAt(5)).compareTo(Constants.UrgID_Valid) == 0){
+		if(((UUID)lobjAgenda.getAt(5)).compareTo(Constants.UrgID_Invalid) == 0)
+			lobjResult.status = TaskStub.Status.INVALID;
+		if(((UUID)lobjAgenda.getAt(5)).compareTo(Constants.UrgID_Valid) == 0)
 			lobjResult.status = TaskStub.Status.VALID;
-		}else if(((UUID)lobjAgenda.getAt(5)).compareTo(Constants.UrgID_Pending) == 0){
+		if(((UUID)lobjAgenda.getAt(5)).compareTo(Constants.UrgID_Pending) == 0)
 			lobjResult.status = TaskStub.Status.PENDING;
-		}else if(((UUID)lobjAgenda.getAt(5)).compareTo(Constants.UrgID_Completed) == 0){
+		if(((UUID)lobjAgenda.getAt(5)).compareTo(Constants.UrgID_Urgent) == 0)
 			lobjResult.status = TaskStub.Status.URGENT;
-		}
+		if(((UUID)lobjAgenda.getAt(5)).compareTo(Constants.UrgID_Completed) == 0)
+			lobjResult.status = TaskStub.Status.COMPLETED;
 		lobjResult.processTypeId = lobjScript.getKey().toString();
 		lobjResult.objectTypeId = lobjScript.GetDataType().toString();
 
@@ -321,13 +324,17 @@ public class TasksServiceImpl
 		lobjResult.description = (String)parrValues[0];
 		lobjResult.timeStamp = ((Timestamp)parrValues[1]).toString();
 		lobjResult.dueDate = ((Timestamp)parrValues[2]).toString();
-		if(((UUID)parrValues[3]).compareTo(Constants.UrgID_Valid) == 0){
+		if(((UUID)parrValues[3]).compareTo(Constants.UrgID_Invalid) == 0)
+			lobjResult.status = TaskStub.Status.INVALID;
+		if(((UUID)parrValues[3]).compareTo(Constants.UrgID_Valid) == 0)
 			lobjResult.status = TaskStub.Status.VALID;
-		}else if(((UUID)parrValues[3]).compareTo(Constants.UrgID_Invalid) == 0){
+		if(((UUID)parrValues[3]).compareTo(Constants.UrgID_Pending) == 0)
 			lobjResult.status = TaskStub.Status.PENDING;
-		}else if(((UUID)parrValues[3]).compareTo(Constants.UrgID_Completed) == 0){
+		if(((UUID)parrValues[3]).compareTo(Constants.UrgID_Urgent) == 0)
 			lobjResult.status = TaskStub.Status.URGENT;
-		}
+		if(((UUID)parrValues[3]).compareTo(Constants.UrgID_Completed) == 0)
+			lobjResult.status = TaskStub.Status.COMPLETED;
+
 		return lobjResult;
 	}
 }
