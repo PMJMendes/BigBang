@@ -30,10 +30,6 @@ public class TasksSearchDataBroker extends SearchDataBrokerImpl<TaskStub> implem
 
 			@Override
 			public void onResponse(Search<TaskStub> response) {
-				TaskStub t1 = new TaskStub();
-				t1.description = "Transferência de gestor de cliente";
-				t1.timeStamp = "0000-00-00 00:00:00";
-				response.getResults().add(t1);
 				handler.onResponse(response);
 			}
 
