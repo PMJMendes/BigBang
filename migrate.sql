@@ -5,8 +5,6 @@ delete from credite_egs.tblContacts;
 
 delete from credite_egs.tblBBClients;
 delete from credite_egs.tblBBGroups;
-delete from credite_egs.tblBBTaxes;
-delete from credite_egs.tblBBCoverages;
 delete from credite_egs.tblMediators;
 delete from credite_egs.tblCompanies;
 delete from credite_egs.tblProcGeneralSystem;
@@ -23,8 +21,6 @@ delete from amartins.tblContacts;
 
 delete from amartins.tblBBClients;
 delete from amartins.tblBBGroups;
-delete from amartins.tblBBTaxes;
-delete from amartins.tblBBCoverages;
 delete from amartins.tblMediators;
 delete from amartins.tblCompanies;
 delete from amartins.tblProcGeneralSystem;
@@ -34,6 +30,8 @@ delete from amartins.tblPNNodes;
 delete from amartins.tblPNSteps;
 delete from amartins.tblPNProcesses;
 
+delete from bigbang.tblBBTaxes;
+delete from bigbang.tblBBCoverages;
 delete from bigbang.tblBBSubLines;
 delete from bigbang.tblBBLines;
 delete from bigbang.tblLineCategories;

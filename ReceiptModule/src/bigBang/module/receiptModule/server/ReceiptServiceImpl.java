@@ -114,6 +114,7 @@ public class ReceiptServiceImpl
 		return lobjResult;
 	}
 
+	@SuppressWarnings("deprecation")
 	public Receipt editReceipt(Receipt receipt)
 		throws SessionExpiredException, BigBangException
 	{
@@ -139,10 +140,11 @@ public class ReceiptServiceImpl
 			lopMRD.mobjData.mdblRetrocessions = (receipt.retrocessions == null ? new BigDecimal(0) :
 					new BigDecimal(receipt.retrocessions));
 			lopMRD.mobjData.mdblFAT = (receipt.FATValue == null ? null : new BigDecimal(receipt.FATValue));
-			lopMRD.mobjData.mdtIssue = Timestamp.valueOf(receipt.issueDate);
-			lopMRD.mobjData.mdtMaturity = (receipt.maturityDate == null ? null : Timestamp.valueOf(receipt.maturityDate));
-			lopMRD.mobjData.mdtEnd = (receipt.endDate == null ? null : Timestamp.valueOf(receipt.endDate));
-			lopMRD.mobjData.mdtDue = (receipt.dueDate == null ? null : Timestamp.valueOf(receipt.dueDate));
+			lopMRD.mobjData.mdtIssue = new Timestamp(Timestamp.parse(receipt.issueDate));
+			lopMRD.mobjData.mdtMaturity = (receipt.maturityDate == null ? null :
+					new Timestamp(Timestamp.parse(receipt.maturityDate)));
+			lopMRD.mobjData.mdtEnd = (receipt.endDate == null ? null : new Timestamp(Timestamp.parse(receipt.endDate)));
+			lopMRD.mobjData.mdtDue = (receipt.dueDate == null ? null : new Timestamp(Timestamp.parse(receipt.dueDate)));
 			lopMRD.mobjData.midMediator = ( receipt.mediatorId == null ? null : UUID.fromString(receipt.mediatorId) );
 			lopMRD.mobjData.mstrNotes = receipt.notes;
 			lopMRD.mobjData.mstrDescription = receipt.description;
