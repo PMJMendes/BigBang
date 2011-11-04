@@ -28,10 +28,25 @@ public class AutoProcessSubs
 		throws JewelPetriException
 	{
 		IProcess[] larrSubs;
+		boolean b;
+		int i;
 
 		larrSubs = GetProcess().GetCurrentSubProcesses(pdb);
 
-		if ( (larrSubs != null) && (larrSubs.length > 0) )
+		if ( larrSubs == null )
+			return;
+
+		b = false;
+		for ( i = 0; i < larrSubs.length; i++ )
+		{
+			if ( larrSubs[i].IsRunning() || !larrSubs[i].GetScript().IsTopLevel() )
+			{
+				b = true;
+				break;
+			}
+		}
+
+		if ( b )
 			TriggerOp(new TriggerDisallowDelete(this.GetProcess().getKey()));
 	}
 }
