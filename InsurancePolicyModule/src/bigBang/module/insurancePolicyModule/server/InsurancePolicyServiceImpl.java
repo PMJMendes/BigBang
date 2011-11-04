@@ -124,7 +124,6 @@ public class InsurancePolicyServiceImpl
 		return lobjResult;
 	}
 
-	@SuppressWarnings("deprecation")
 	public InsurancePolicy editPolicy(InsurancePolicy policy)
 		throws SessionExpiredException, BigBangException
 	{
@@ -143,7 +142,7 @@ public class InsurancePolicyServiceImpl
 			lopMPD.mobjData.mstrNumber = policy.number;
 			lopMPD.mobjData.midCompany = UUID.fromString(policy.insuranceAgencyId);
 			lopMPD.mobjData.midSubLine = UUID.fromString(policy.subLineId);
-			lopMPD.mobjData.mdtBeginDate = ( policy.startDate == null ? null : new Timestamp(Timestamp.parse(policy.startDate)) );
+			lopMPD.mobjData.mdtBeginDate = ( policy.startDate == null ? null : Timestamp.valueOf(policy.startDate) );
 			lopMPD.mobjData.midDuration = UUID.fromString(policy.durationId);
 			lopMPD.mobjData.midFractioning = UUID.fromString(policy.fractioningId);
 			lopMPD.mobjData.mlngMaturityDay = policy.maturityDay;
@@ -195,7 +194,6 @@ public class InsurancePolicyServiceImpl
 		}
 	}
 
-	@SuppressWarnings("deprecation")
 	public Receipt createReceipt(String policyId, Receipt receipt)
 		throws SessionExpiredException, BigBangException
 	{
@@ -222,10 +220,10 @@ public class InsurancePolicyServiceImpl
 			lopCR.mobjData.mdblRetrocessions = (receipt.retrocessions == null ? new BigDecimal(0) :
 					new BigDecimal(receipt.retrocessions));
 			lopCR.mobjData.mdblFAT = (receipt.FATValue == null ? null : new BigDecimal(receipt.FATValue));
-			lopCR.mobjData.mdtIssue = new Timestamp(Timestamp.parse(receipt.issueDate));
-			lopCR.mobjData.mdtMaturity = (receipt.maturityDate == null ? null : new Timestamp(Timestamp.parse(receipt.maturityDate)));
-			lopCR.mobjData.mdtEnd = (receipt.endDate == null ? null : new Timestamp(Timestamp.parse(receipt.endDate)));
-			lopCR.mobjData.mdtDue = (receipt.dueDate == null ? null : new Timestamp(Timestamp.parse(receipt.dueDate)));
+			lopCR.mobjData.mdtIssue = Timestamp.valueOf(receipt.issueDate);
+			lopCR.mobjData.mdtMaturity = (receipt.maturityDate == null ? null : Timestamp.valueOf(receipt.maturityDate));
+			lopCR.mobjData.mdtEnd = (receipt.endDate == null ? null : Timestamp.valueOf(receipt.endDate));
+			lopCR.mobjData.mdtDue = (receipt.dueDate == null ? null : Timestamp.valueOf(receipt.dueDate));
 			lopCR.mobjData.midMediator = (receipt.mediatorId == null ? null : UUID.fromString(receipt.mediatorId));
 			lopCR.mobjData.mstrNotes = receipt.notes;
 			lopCR.mobjData.mstrDescription = receipt.description;

@@ -137,7 +137,6 @@ public class ClientServiceImpl
 		return lobjResult;
 	}
 
-	@SuppressWarnings("deprecation")
 	public Client createClient(Client client)
 		throws SessionExpiredException, BigBangException
 	{
@@ -182,7 +181,7 @@ public class ClientServiceImpl
 			lopCC.mobjData.midProfile = ( client.operationalProfileId == null ? null : UUID.fromString(client.operationalProfileId) );
 			lopCC.mobjData.midGroup = ( client.groupId == null ? null : UUID.fromString(client.groupId) );
 			lopCC.mobjData.mstrBankingID = client.NIB;
-			lopCC.mobjData.mdtDateOfBirth = ( client.birthDate == null ? null : new Timestamp(Timestamp.parse(client.birthDate)) );
+			lopCC.mobjData.mdtDateOfBirth = ( client.birthDate == null ? null : Timestamp.valueOf(client.birthDate) );
 			lopCC.mobjData.midSex = ( client.genderId == null ? null : UUID.fromString(client.genderId) );
 			lopCC.mobjData.midMarital = ( client.maritalStatusId == null ? null : UUID.fromString(client.maritalStatusId) );
 			lopCC.mobjData.midProfession = ( client.professionId == null ? null : UUID.fromString(client.professionId) );
@@ -229,7 +228,6 @@ public class ClientServiceImpl
 		return client;
 	}
 
-	@SuppressWarnings("deprecation")
 	public Client editClient(Client client)
 		throws SessionExpiredException, BigBangException
 	{
@@ -274,7 +272,7 @@ public class ClientServiceImpl
 			lopMD.mobjData.midProfile = ( client.operationalProfileId == null ? null : UUID.fromString(client.operationalProfileId) );
 			lopMD.mobjData.midGroup = ( client.groupId == null ? null : UUID.fromString(client.groupId) );
 			lopMD.mobjData.mstrBankingID = client.NIB;
-			lopMD.mobjData.mdtDateOfBirth = ( client.birthDate == null ? null : new Timestamp(Timestamp.parse(client.birthDate)) );
+			lopMD.mobjData.mdtDateOfBirth = ( client.birthDate == null ? null : Timestamp.valueOf(client.birthDate) );
 			lopMD.mobjData.midSex = ( client.genderId == null ? null : UUID.fromString(client.genderId) );
 			lopMD.mobjData.midMarital = ( client.maritalStatusId == null ? null : UUID.fromString(client.maritalStatusId) );
 			lopMD.mobjData.midProfession = ( client.professionId == null ? null : UUID.fromString(client.professionId) );
@@ -370,7 +368,6 @@ public class ClientServiceImpl
 		return getClient(receptorId);
 	}
 
-	@SuppressWarnings("deprecation")
 	public InsurancePolicy createPolicy(String clientProcessId, InsurancePolicy policy)
 		throws SessionExpiredException, BigBangException
 	{
@@ -389,13 +386,12 @@ public class ClientServiceImpl
 			lopCP.mobjData.mstrNumber = policy.number;
 			lopCP.mobjData.midCompany = UUID.fromString(policy.insuranceAgencyId);
 			lopCP.mobjData.midSubLine = UUID.fromString(policy.subLineId);
-			lopCP.mobjData.mdtBeginDate = ( policy.startDate == null ? null : new Timestamp(Timestamp.parse(policy.startDate)) );
+			lopCP.mobjData.mdtBeginDate = ( policy.startDate == null ? null : Timestamp.valueOf(policy.startDate) );
 			lopCP.mobjData.midDuration = UUID.fromString(policy.durationId);
 			lopCP.mobjData.midFractioning = UUID.fromString(policy.fractioningId);
 			lopCP.mobjData.mlngMaturityDay = policy.maturityDay;
 			lopCP.mobjData.mlngMaturityMonth = policy.maturityMonth;
-			lopCP.mobjData.mdtEndDate = ( policy.expirationDate == null ? null :
-					new Timestamp(Timestamp.parse(policy.expirationDate)) );
+			lopCP.mobjData.mdtEndDate = ( policy.expirationDate == null ? null : Timestamp.valueOf(policy.expirationDate) );
 			lopCP.mobjData.mstrNotes = policy.notes;
 			lopCP.mobjData.midMediator = ( policy.mediatorId == null ? null : UUID.fromString(policy.mediatorId) );
 			lopCP.mobjData.mbCaseStudy = policy.caseStudy;
@@ -647,7 +643,6 @@ public class ClientServiceImpl
 		return new String[] {"[:Name]", "[:Number]", "[:Group:Name]", "[:Process]"};
 	}
 
-	@SuppressWarnings("deprecation")
 	protected boolean buildFilter(StringBuilder pstrBuffer, SearchParameter pParam)
 		throws BigBangException
 	{
@@ -765,7 +760,7 @@ public class ClientServiceImpl
 		{
 			pstrBuffer.append(" AND [:Date of Birth] < '");
         	ldtAux = Calendar.getInstance();
-        	ldtAux.setTimeInMillis(Timestamp.parse(lParam.birthDateTo));
+        	ldtAux.setTimeInMillis(Timestamp.valueOf(lParam.birthDateTo).getTime());
         	ldtAux.add(Calendar.DAY_OF_MONTH, 1);
 			pstrBuffer.append((new Timestamp(ldtAux.getTimeInMillis())).toString().substring(0, 10)).append("'");
 		}
