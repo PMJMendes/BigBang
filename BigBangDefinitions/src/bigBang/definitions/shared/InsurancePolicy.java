@@ -15,6 +15,8 @@ public class InsurancePolicy
 	public String expirationDate;
 	public String notes;
 	public String mediatorId;
+	public String inheritMediatorId;
+	public String inheritMediatorName;
 	public Contact[] contacts;
 	public Document[] documents;
 

@@ -41,6 +41,7 @@ import com.premiumminds.BigBang.Jewel.Data.ReceiptData;
 import com.premiumminds.BigBang.Jewel.Objects.AgendaItem;
 import com.premiumminds.BigBang.Jewel.Objects.Client;
 import com.premiumminds.BigBang.Jewel.Objects.Line;
+import com.premiumminds.BigBang.Jewel.Objects.Mediator;
 import com.premiumminds.BigBang.Jewel.Objects.MgrXFer;
 import com.premiumminds.BigBang.Jewel.Objects.Policy;
 import com.premiumminds.BigBang.Jewel.Objects.SubLine;
@@ -65,7 +66,8 @@ public class InsurancePolicyServiceImpl
 		Policy lobjPolicy;
 		InsurancePolicy lobjResult;
 		IProcess lobjProc;
-		UUID lidPolicy;
+		Client lobjClient;
+		Mediator lobjMed;
 		ObjectBase lobjAux;
 		UUID lidLine;
 		UUID lidCategory;
@@ -81,7 +83,8 @@ public class InsurancePolicyServiceImpl
 				throw new BigBangException("Erro: Apólice sem processo de suporte. (Apólice n. "
 						+ lobjPolicy.getAt(0).toString() + ")");
 			lobjProc = PNProcess.GetInstance(Engine.getCurrentNameSpace(), lobjPolicy.GetProcessID());
-			lidPolicy = lobjProc.GetParent().GetData().getKey();
+			lobjClient = Client.GetInstance(Engine.getCurrentNameSpace(), lobjProc.GetParent().GetData().getKey());
+			lobjMed = Mediator.GetInstance(Engine.getCurrentNameSpace(), (UUID)lobjClient.getAt(8));
 			lobjAux = SubLine.GetInstance(Engine.getCurrentNameSpace(), (UUID)lobjPolicy.getAt(3));
 			lidLine = (UUID)lobjAux.getAt(1);
 			lobjAux = Line.GetInstance(Engine.getCurrentNameSpace(), lidLine);
@@ -96,7 +99,9 @@ public class InsurancePolicyServiceImpl
 
 		lobjResult.id = lobjPolicy.getKey().toString();
 		lobjResult.number = (String)lobjPolicy.getAt(0);
-		lobjResult.clientId = lidPolicy.toString();
+		lobjResult.clientId = lobjClient.getKey().toString();
+		lobjResult.clientNumber = ((Integer)lobjClient.getAt(1)).toString();
+		lobjResult.clientName = lobjClient.getLabel();
 		lobjResult.categoryId = lidCategory.toString();
 		lobjResult.lineId = lidLine.toString();
 		lobjResult.subLineId = ((UUID)lobjPolicy.getAt(3)).toString();
@@ -110,6 +115,8 @@ public class InsurancePolicyServiceImpl
 		lobjResult.expirationDate = (lobjPolicy.getAt(9) == null ? null : ((Timestamp)lobjPolicy.getAt(9)).toString());
 		lobjResult.notes = (String)lobjPolicy.getAt(10);
 		lobjResult.mediatorId = (lobjPolicy.getAt(11) == null ? null : ((UUID)lobjPolicy.getAt(11)).toString());
+		lobjResult.inheritMediatorId = lobjMed.getKey().toString();
+		lobjResult.inheritMediatorName = lobjMed.getLabel();
 		lobjResult.caseStudy = (Boolean)lobjPolicy.getAt(12);
 
 		lobjResult.managerId = lobjProc.GetManagerID().toString();

@@ -15,6 +15,8 @@ public class Receipt
 	public String mediatorId;
 	public String notes;
 	public String managerId;
+	public String inheritMediatorId;
+	public String inheritMediatorName;
 	public Contact[] contacts;
 	public Document[] documents;
 

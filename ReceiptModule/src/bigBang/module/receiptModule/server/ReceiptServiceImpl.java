@@ -22,6 +22,7 @@ import com.premiumminds.BigBang.Jewel.Constants;
 import com.premiumminds.BigBang.Jewel.Data.ReceiptData;
 import com.premiumminds.BigBang.Jewel.Objects.Client;
 import com.premiumminds.BigBang.Jewel.Objects.Line;
+import com.premiumminds.BigBang.Jewel.Objects.Mediator;
 import com.premiumminds.BigBang.Jewel.Objects.Policy;
 import com.premiumminds.BigBang.Jewel.Objects.SubLine;
 import com.premiumminds.BigBang.Jewel.Operations.Receipt.DeleteReceipt;
@@ -42,6 +43,7 @@ public class ReceiptServiceImpl
 		IProcess lobjProc;
 		Policy lobjPolicy;
 		Client lobjClient;
+		Mediator lobjMed;
 		SubLine lobjSubLine;
 		Line lobjLine;
 		ObjectBase lobjCategory;
@@ -59,6 +61,8 @@ public class ReceiptServiceImpl
 			lobjProc = PNProcess.GetInstance(Engine.getCurrentNameSpace(), lobjReceipt.GetProcessID());
 			lobjPolicy = Policy.GetInstance(Engine.getCurrentNameSpace(), lobjProc.GetParent().GetData().getKey());
 			lobjClient = Client.GetInstance(Engine.getCurrentNameSpace(), lobjProc.GetParent().GetParent().GetData().getKey());
+			lobjMed = Mediator.GetInstance(Engine.getCurrentNameSpace(),
+					(lobjPolicy.getAt(11) == null ?  (UUID)lobjClient.getAt(8) : (UUID)lobjPolicy.getAt(11)) );
 			lobjSubLine = SubLine.GetInstance(Engine.getCurrentNameSpace(), (UUID)lobjPolicy.getAt(3));
 			lobjLine = Line.GetInstance(Engine.getCurrentNameSpace(), (UUID)lobjSubLine.getAt(1));
 			lobjCategory = Engine.GetWorkInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), Constants.ObjID_LineCategory),
@@ -101,6 +105,8 @@ public class ReceiptServiceImpl
 		lobjResult.dueDate = (lobjReceipt.getAt(11) == null ? null :
 			((Timestamp)lobjReceipt.getAt(11)).toString().substring(0, 10));
 		lobjResult.mediatorId = (lobjReceipt.getAt(12) == null ? null : ((UUID)lobjReceipt.getAt(13)).toString());
+		lobjResult.inheritMediatorId = lobjMed.getKey().toString();
+		lobjResult.inheritMediatorName = lobjMed.getLabel();
 		lobjResult.notes = (String)lobjReceipt.getAt(13);
 
 		lobjResult.managerId = lobjProc.GetManagerID().toString();
