@@ -21,7 +21,9 @@ import bigBang.module.receiptModule.interfaces.ReceiptService;
 import com.premiumminds.BigBang.Jewel.Constants;
 import com.premiumminds.BigBang.Jewel.Data.ReceiptData;
 import com.premiumminds.BigBang.Jewel.Objects.Client;
+import com.premiumminds.BigBang.Jewel.Objects.Line;
 import com.premiumminds.BigBang.Jewel.Objects.Policy;
+import com.premiumminds.BigBang.Jewel.Objects.SubLine;
 import com.premiumminds.BigBang.Jewel.Operations.Receipt.DeleteReceipt;
 import com.premiumminds.BigBang.Jewel.Operations.Receipt.ManageReceiptData;
 
@@ -38,7 +40,11 @@ public class ReceiptServiceImpl
 		com.premiumminds.BigBang.Jewel.Objects.Receipt lobjReceipt;
 		Receipt lobjResult;
 		IProcess lobjProc;
-		UUID lidPolicy;
+		Policy lobjPolicy;
+		Client lobjClient;
+		SubLine lobjSubLine;
+		Line lobjLine;
+		ObjectBase lobjCategory;
 
 		if ( Engine.getCurrentUser() == null )
 			throw new SessionExpiredException();
@@ -51,7 +57,13 @@ public class ReceiptServiceImpl
 				throw new BigBangException("Erro: Recibo sem processo de suporte. (Recibo n. "
 						+ lobjReceipt.getAt(0).toString() + ")");
 			lobjProc = PNProcess.GetInstance(Engine.getCurrentNameSpace(), lobjReceipt.GetProcessID());
-			lidPolicy = lobjProc.GetParent().GetData().getKey();
+			lobjPolicy = Policy.GetInstance(Engine.getCurrentNameSpace(), lobjProc.GetParent().GetData().getKey());
+			lobjClient = Client.GetInstance(Engine.getCurrentNameSpace(), lobjProc.GetParent().GetParent().GetData().getKey());
+			lobjSubLine = SubLine.GetInstance(Engine.getCurrentNameSpace(), (UUID)lobjPolicy.getAt(3));
+			lobjLine = Line.GetInstance(Engine.getCurrentNameSpace(), (UUID)lobjSubLine.getAt(1));
+			lobjCategory = Engine.GetWorkInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), Constants.ObjID_LineCategory),
+					(UUID)lobjLine.getAt(1));
+			
 		}
 		catch (Throwable e)
 		{
@@ -62,7 +74,17 @@ public class ReceiptServiceImpl
 
 		lobjResult.id = lobjReceipt.getKey().toString();
 		lobjResult.number = (String)lobjReceipt.getAt(0);
-		lobjResult.policyId = lidPolicy.toString();
+		lobjResult.clientId = lobjClient.getKey().toString();
+		lobjResult.clientNumber = ((Integer)lobjClient.getAt(1)).toString();
+		lobjResult.clientName = lobjClient.getLabel();
+		lobjResult.policyId = lobjPolicy.getKey().toString();
+		lobjResult.policyNumber = lobjPolicy.getLabel();
+		lobjResult.categoryId = lobjCategory.getKey().toString();
+		lobjResult.categoryName = lobjCategory.getLabel();
+		lobjResult.lineId = lobjLine.getKey().toString();
+		lobjResult.lineName = lobjLine.getLabel();
+		lobjResult.subLineId = lobjSubLine.getKey().toString();
+		lobjResult.subLineName = lobjSubLine.getLabel();
 		lobjResult.typeId = ((UUID)lobjReceipt.getAt(1)).toString();
 		lobjResult.totalPremium = ((BigDecimal)lobjReceipt.getAt(3)).toPlainString();
 		lobjResult.maturityDate = (lobjReceipt.getAt(9) == null ? null :
