@@ -142,12 +142,13 @@ public class InsurancePolicyServiceImpl
 			lopMPD.mobjData.mstrNumber = policy.number;
 			lopMPD.mobjData.midCompany = UUID.fromString(policy.insuranceAgencyId);
 			lopMPD.mobjData.midSubLine = UUID.fromString(policy.subLineId);
-			lopMPD.mobjData.mdtBeginDate = ( policy.startDate == null ? null : Timestamp.valueOf(policy.startDate) );
+			lopMPD.mobjData.mdtBeginDate = ( policy.startDate == null ? null : Timestamp.valueOf(policy.startDate + "00:00:00.0") );
 			lopMPD.mobjData.midDuration = UUID.fromString(policy.durationId);
 			lopMPD.mobjData.midFractioning = UUID.fromString(policy.fractioningId);
 			lopMPD.mobjData.mlngMaturityDay = policy.maturityDay;
 			lopMPD.mobjData.mlngMaturityMonth = policy.maturityMonth;
-			lopMPD.mobjData.mdtEndDate = ( policy.expirationDate == null ? null : Timestamp.valueOf(policy.expirationDate) );
+			lopMPD.mobjData.mdtEndDate = ( policy.expirationDate == null ? null :
+					Timestamp.valueOf(policy.expirationDate + "00:00:00.0") );
 			lopMPD.mobjData.mstrNotes = policy.notes;
 			lopMPD.mobjData.midMediator = ( policy.mediatorId == null ? null : UUID.fromString(policy.mediatorId) );
 			lopMPD.mobjData.mbCaseStudy = policy.caseStudy;
@@ -220,10 +221,11 @@ public class InsurancePolicyServiceImpl
 			lopCR.mobjData.mdblRetrocessions = (receipt.retrocessions == null ? new BigDecimal(0) :
 					new BigDecimal(receipt.retrocessions));
 			lopCR.mobjData.mdblFAT = (receipt.FATValue == null ? null : new BigDecimal(receipt.FATValue));
-			lopCR.mobjData.mdtIssue = Timestamp.valueOf(receipt.issueDate);
-			lopCR.mobjData.mdtMaturity = (receipt.maturityDate == null ? null : Timestamp.valueOf(receipt.maturityDate));
-			lopCR.mobjData.mdtEnd = (receipt.endDate == null ? null : Timestamp.valueOf(receipt.endDate));
-			lopCR.mobjData.mdtDue = (receipt.dueDate == null ? null : Timestamp.valueOf(receipt.dueDate));
+			lopCR.mobjData.mdtIssue = Timestamp.valueOf(receipt.issueDate + "00:00:00.0");
+			lopCR.mobjData.mdtMaturity = (receipt.maturityDate == null ? null :
+					Timestamp.valueOf(receipt.maturityDate + "00:00:00.0"));
+			lopCR.mobjData.mdtEnd = (receipt.endDate == null ? null : Timestamp.valueOf(receipt.endDate + "00:00:00.0"));
+			lopCR.mobjData.mdtDue = (receipt.dueDate == null ? null : Timestamp.valueOf(receipt.dueDate + "00:00:00.0"));
 			lopCR.mobjData.midMediator = (receipt.mediatorId == null ? null : UUID.fromString(receipt.mediatorId));
 			lopCR.mobjData.mstrNotes = receipt.notes;
 			lopCR.mobjData.mstrDescription = receipt.description;
