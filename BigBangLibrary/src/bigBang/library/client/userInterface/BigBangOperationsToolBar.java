@@ -16,6 +16,7 @@ public abstract class BigBangOperationsToolBar extends OperationsToolBar {
 		CREATE,
 		EXECUTE,
 		DATA,
+		REQUESTS,
 		ADMIN,
 		EDIT
 	}
@@ -23,6 +24,7 @@ public abstract class BigBangOperationsToolBar extends OperationsToolBar {
 	protected OperationsToolBar createSubMenu;
 	protected OperationsToolBar executeSubMenu;
 	protected OperationsToolBar dataSubMenu;
+	protected OperationsToolBar requestsSubMenu;
 	protected OperationsToolBar adminSubMenu;
 
 	protected MenuItem editCancelMenuItem;
@@ -30,6 +32,7 @@ public abstract class BigBangOperationsToolBar extends OperationsToolBar {
 	protected MenuItem createMenuItem;
 	protected MenuItem executeMenuItem;
 	protected MenuItem dataMenuItem;
+	protected MenuItem requestMenuItem;
 	protected MenuItem adminMenuItem;
 
 	protected boolean saveModeEnabled;
@@ -46,11 +49,13 @@ public abstract class BigBangOperationsToolBar extends OperationsToolBar {
 		this.createSubMenu = new OperationsToolBar(true);
 		this.executeSubMenu = new OperationsToolBar(true);
 		this.dataSubMenu = new OperationsToolBar(true);
+		this.requestsSubMenu = new OperationsToolBar(true);
 		this.adminSubMenu = new OperationsToolBar(true);
 
 		createMenuItem = new BigBangMenuItem("Criar", this.createSubMenu);
 		executeMenuItem = new BigBangMenuItem("Executar", this.executeSubMenu);
 		dataMenuItem = new BigBangMenuItem("Dados", this.dataSubMenu);
+		requestMenuItem = new BigBangMenuItem("Pedidos", this.requestsSubMenu);
 		adminMenuItem = new BigBangMenuItem("Admin", this.adminSubMenu);
 
 		editCancelMenuItem = new BigBangMenuItem("", new Command() {
@@ -96,6 +101,7 @@ public abstract class BigBangOperationsToolBar extends OperationsToolBar {
 		this.addItem(this.createMenuItem);
 		this.addItem(this.executeMenuItem);
 		this.addItem(this.dataMenuItem);
+		this.addItem(this.requestMenuItem);
 		this.addItem(this.adminMenuItem);
 
 		showAll();
@@ -117,6 +123,9 @@ public abstract class BigBangOperationsToolBar extends OperationsToolBar {
 			break;
 		case DATA:
 			this.dataSubMenu.addItem(item);
+			break;
+		case REQUESTS:
+			this.requestsSubMenu.addItem(item);
 			break;
 		case ADMIN:
 			this.adminSubMenu.addItem(item);
@@ -170,6 +179,7 @@ public abstract class BigBangOperationsToolBar extends OperationsToolBar {
 		this.createMenuItem.setVisible(true);
 		this.executeMenuItem.setVisible(true);
 		this.dataMenuItem.setVisible(true);
+		this.requestMenuItem.setVisible(true);
 		this.adminMenuItem.setVisible(true);
 	}
 
@@ -182,6 +192,7 @@ public abstract class BigBangOperationsToolBar extends OperationsToolBar {
 		this.createMenuItem.setVisible(false);
 		this.executeMenuItem.setVisible(false);
 		this.dataMenuItem.setVisible(false);
+		this.requestMenuItem.setVisible(false);
 		this.adminMenuItem.setVisible(false);
 	}
 
@@ -200,6 +211,9 @@ public abstract class BigBangOperationsToolBar extends OperationsToolBar {
 			break;
 		case DATA:
 			this.adminMenuItem.setVisible(show);
+			break;
+		case REQUESTS:
+			this.requestMenuItem.setVisible(show);
 			break;
 		case EDIT:
 			this.saveMenuItem.setVisible(show);

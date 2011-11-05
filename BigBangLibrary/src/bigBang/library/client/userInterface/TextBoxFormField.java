@@ -107,5 +107,14 @@ public class TextBoxFormField extends FormField<String> {
 		if(field.isReadOnly())
 			hasDummyValue = true;
 	}
+	
+	@Override
+	public String getValue() {
+		String value = super.getValue();
+		if(value != null && value.isEmpty()){
+			value = null;
+		}
+		return value;
+	}
 
 }

@@ -2,35 +2,45 @@ package bigBang.module.insurancePolicyModule.client.userInterface.view;
 
 import bigBang.definitions.shared.InsurancePolicy;
 import bigBang.definitions.shared.InsurancePolicyStub;
-import bigBang.definitions.shared.InsuredObject;
+import bigBang.definitions.shared.Receipt;
 import bigBang.library.client.HasEditableValue;
 import bigBang.library.client.HasValueSelectables;
 import bigBang.library.client.ValueSelectable;
+import bigBang.library.client.event.ActionInvokedEvent;
 import bigBang.library.client.event.ActionInvokedEventHandler;
 import bigBang.library.client.userInterface.ContactsPreviewList;
 import bigBang.library.client.userInterface.DocumentsPreviewList;
-import bigBang.library.client.userInterface.List;
 import bigBang.library.client.userInterface.ListEntry;
 import bigBang.library.client.userInterface.ListHeader;
+import bigBang.library.client.userInterface.SlidePanel;
+import bigBang.library.client.userInterface.SlidePanel.Direction;
 import bigBang.library.client.userInterface.view.View;
 import bigBang.module.insurancePolicyModule.client.userInterface.InsurancePolicyForm;
 import bigBang.module.insurancePolicyModule.client.userInterface.InsurancePolicyOperationsToolBar;
 import bigBang.module.insurancePolicyModule.client.userInterface.InsurancePolicySearchPanel;
+import bigBang.module.insurancePolicyModule.client.userInterface.PolicyChildrenPanel;
 import bigBang.module.insurancePolicyModule.client.userInterface.presenter.InsurancePolicySearchOperationViewPresenter;
 import bigBang.module.insurancePolicyModule.client.userInterface.presenter.InsurancePolicySearchOperationViewPresenter.Action;
 
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.logical.shared.AttachEvent;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
+import com.google.gwt.user.client.ui.Button;
+import com.google.gwt.user.client.ui.HasWidgets;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.SplitLayoutPanel;
 import com.google.gwt.user.client.ui.StackPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
+import com.google.gwt.user.client.ui.Widget;
 
 public class InsurancePolicySearchOperationView extends View implements InsurancePolicySearchOperationViewPresenter.Display {
 
 	protected static final int SEARCH_PANEL_WIDTH = 400; //PX
 	
+	protected SlidePanel slideWrapper;
+	protected Widget mainContent;
 	protected InsurancePolicySearchPanel searchPanel;
 	protected InsurancePolicyForm form;
 	protected ContactsPreviewList contactsList;
@@ -39,7 +49,10 @@ public class InsurancePolicySearchOperationView extends View implements Insuranc
 	protected ActionInvokedEventHandler<Action> actionHandler;
 
 	public InsurancePolicySearchOperationView(){
+		slideWrapper = new SlidePanel();
+		slideWrapper.setSize("100%", "100%");
 		SplitLayoutPanel mainWrapper = new SplitLayoutPanel();
+		mainContent = mainWrapper;
 		mainWrapper.setSize("100%", "100%");
 		
 		searchPanel = new InsurancePolicySearchPanel();
@@ -59,28 +72,133 @@ public class InsurancePolicySearchOperationView extends View implements Insuranc
 		documentsList.setSize("100%", "100%");
 		
 		StackPanel stack = new StackPanel();
-		stack.setSize("100%", "100%");
-		stack.add(contactsList, "Contactos");
-		stack.add(documentsList, "Documentos");
-		stack.add(new SimplePanel(), "teste");
-		stack.add(new SimplePanel(), "teste");
-		stack.add(new SimplePanel(), "teste");
-		stack.add(new SimplePanel(), "teste");
-		stack.add(new SimplePanel(), "teste");
-		stack.add(new SimplePanel(), "teste");
-		stack.add(new SimplePanel(), "teste");
-		stack.add(new SimplePanel(), "teste");
-		stack.add(new SimplePanel(), "teste");
-		
+		stack.setSize("100%", "100%");		
 		contentWrapper.addEast(stack, 250);
-		
-//		listsWrapper.addNorth(contactsList, 250);
-//		listsWrapper.add(documentsList);		
+		stack.add(new PolicyChildrenPanel.ContactsList(), "Contactos");
+		stack.add(new PolicyChildrenPanel.DocumentsList(), "Documentos");
 		
 		final VerticalPanel toolBarFormContainer = new VerticalPanel();
 		toolBarFormContainer.setSize("100%", "100%");
 		
-		operationsToolBar = new InsurancePolicyOperationsToolBar();
+		operationsToolBar = new InsurancePolicyOperationsToolBar(){
+
+			@Override
+			public void onVoidPolicy() {
+				// TODO Auto-generated method stub
+				
+			}
+
+			@Override
+			public void onBrokerageTransfer() {
+				// TODO Auto-generated method stub
+				
+			}
+
+			@Override
+			public void onDelete() {
+				// TODO Auto-generated method stub
+				
+			}
+
+			@Override
+			public void onCreateSubstitutePolicy() {
+				// TODO Auto-generated method stub
+				
+			}
+
+			@Override
+			public void onRequestInfoFromClient() {
+				// TODO Auto-generated method stub
+				
+			}
+
+			@Override
+			public void onRequestInfoFromAgency() {
+				// TODO Auto-generated method stub
+				
+			}
+
+			@Override
+			public void onCreateSecuredObject() {
+				// TODO Auto-generated method stub
+				
+			}
+
+			@Override
+			public void onCreateSecuredObjectFromClient() {
+				// TODO Auto-generated method stub
+				
+			}
+
+			@Override
+			public void onCreateManagerTransfer() {
+				// TODO Auto-generated method stub
+				
+			}
+
+			@Override
+			public void onExecuteDecailedCalculations() {
+				// TODO Auto-generated method stub
+				
+			}
+
+			@Override
+			public void onCreateInfoManagementProcess() {
+				// TODO Auto-generated method stub
+				
+			}
+
+			@Override
+			public void onCreateSubPolicy() {
+				// TODO Auto-generated method stub
+				
+			}
+
+			@Override
+			public void onIssueCreditNote() {
+				// TODO Auto-generated method stub
+				
+			}
+
+			@Override
+			public void onCreateNegotiation() {
+				// TODO Auto-generated method stub
+				
+			}
+
+			@Override
+			public void onCreateHealthExpense() {
+				// TODO Auto-generated method stub
+				
+			}
+
+			@Override
+			public void onCreateRiskAnalysis() {
+				// TODO Auto-generated method stub
+				
+			}
+
+			@Override
+			public void onCreateReceipt() {
+				actionHandler.onActionInvoked(new ActionInvokedEvent<InsurancePolicySearchOperationViewPresenter.Action>(Action.CREATE_RECEIPT));
+			}
+
+			@Override
+			public void onEditRequest() {
+				actionHandler.onActionInvoked(new ActionInvokedEvent<InsurancePolicySearchOperationViewPresenter.Action>(Action.EDIT));
+			}
+
+			@Override
+			public void onSaveRequest() {
+				actionHandler.onActionInvoked(new ActionInvokedEvent<InsurancePolicySearchOperationViewPresenter.Action>(Action.SAVE));
+			}
+
+			@Override
+			public void onCancelRequest() {
+				actionHandler.onActionInvoked(new ActionInvokedEvent<InsurancePolicySearchOperationViewPresenter.Action>(Action.CANCEL));
+			}
+			
+		};
 
 		operationsToolBar.addAttachHandler(new AttachEvent.Handler() {
 			
@@ -118,8 +236,8 @@ public class InsurancePolicySearchOperationView extends View implements Insuranc
 				
 			}
 		});
-		
-		initWidget(mainWrapper);
+		slideWrapper.add(mainWrapper);
+		initWidget(slideWrapper);
 	}
 
 	@Override
@@ -191,8 +309,76 @@ public class InsurancePolicySearchOperationView extends View implements Insuranc
 
 	@Override
 	public void clearAllowedPermissions() {
+		this.form.setReadOnly(true);
+		//this.childrenPanel.setReadOnly(true); todo
+		this.operationsToolBar.lockAll();
+	}
+
+	@Override
+	public HasWidgets showCreateReceiptForm(boolean show) {
+		if(show){
+			VerticalPanel wrapper = new VerticalPanel();
+			wrapper.setSize("100%", "100%");
+	
+			ListHeader header = new ListHeader();
+			header.setText("Criação de Recibo");
+			header.setLeftWidget(new Button("Voltar", new ClickHandler() {
+	
+				@Override
+				public void onClick(ClickEvent event) {
+					slideWrapper.slideInto(mainContent, Direction.RIGHT);
+				}
+			}));
+			wrapper.add(header);
+	
+			SimplePanel viewContainer = new SimplePanel();
+			viewContainer.setSize("100%", "100%");
+	
+			wrapper.add(viewContainer);
+			wrapper.setCellHeight(viewContainer, "100%");
+	
+			slideWrapper.slideInto(
+					wrapper, Direction.LEFT);
+			return viewContainer;
+		}else{
+			slideWrapper.slideInto(
+					mainContent, Direction.RIGHT);
+			return null;
+		}
+	}
+
+	@Override
+	public HasEditableValue<Receipt> getNewReceiptForm() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public boolean isNewReceiptFormValid() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public void lockNewReceiptForm(boolean lock) {
 		// TODO Auto-generated method stub
 		
+	}
+
+	@Override
+	public void allowCreateReceipt(boolean allow) {
+		this.operationsToolBar.allowCreateReceipt(allow);
+	}
+
+	@Override
+	public void allowUpdate(boolean allow) {
+		this.operationsToolBar.setEditionAvailable(allow);
+		//this.childrenPanel.setReadOnly(!allow); TODO
+	}
+
+	@Override
+	public void allowDelete(boolean allow) {
+		this.operationsToolBar.allowDelete(allow);
 	}
 	
 }

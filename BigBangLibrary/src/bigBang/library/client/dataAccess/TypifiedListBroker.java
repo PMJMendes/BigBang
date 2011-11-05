@@ -41,6 +41,8 @@ public interface TypifiedListBroker {
 	 */
 	public List<TipifiedListItem> getListItems(String listId);
 
+	public TipifiedListItem getListItem(String listId, String itemId);
+	
 	/**
 	 * @param listId the id for the typified list into which the item will be inserted
 	 * @param item the item to insert

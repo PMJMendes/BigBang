@@ -1,9 +1,6 @@
-package bigBang.module.insurancePolicyModule.client.userInterface;
+package bigBang.module.receiptModule.client.userInterface;
 
 import java.util.List;
-
-import com.google.gwt.dom.client.Style.Unit;
-import com.google.gwt.event.logical.shared.AttachEvent;
 
 import bigBang.definitions.shared.BigBangConstants;
 import bigBang.definitions.shared.Contact;
@@ -17,10 +14,11 @@ import bigBang.library.client.dataAccess.DocumentsBroker;
 import bigBang.library.client.dataAccess.DocumentsBrokerClient;
 import bigBang.library.client.userInterface.FilterableList;
 import bigBang.library.client.userInterface.ListEntry;
-import bigBang.library.client.userInterface.view.View;
 
-public class PolicyChildrenPanel {
+import com.google.gwt.dom.client.Style.Unit;
+import com.google.gwt.event.logical.shared.AttachEvent;
 
+public class ReceiptChildrenLists {
 
 	public static class ContactsList extends FilterableList<Contact> implements ContactsBrokerClient {
 
@@ -142,6 +140,7 @@ public class PolicyChildrenPanel {
 		}
 	}
 
+
 	public static class DocumentsList extends FilterableList<Document> implements DocumentsBrokerClient {
 
 		public static class Entry extends ListEntry<Document> {
@@ -262,6 +261,5 @@ public class PolicyChildrenPanel {
 		}
 
 	}
-
 	
 }

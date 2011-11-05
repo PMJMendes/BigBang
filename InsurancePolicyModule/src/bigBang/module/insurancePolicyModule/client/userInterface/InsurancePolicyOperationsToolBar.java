@@ -1,178 +1,230 @@
 package bigBang.module.insurancePolicyModule.client.userInterface;
 
+import bigBang.library.client.userInterface.BigBangOperationsToolBar;
+
 import com.google.gwt.user.client.Command;
-import com.google.gwt.user.client.ui.MenuBar;
 import com.google.gwt.user.client.ui.MenuItem;
 
-import bigBang.library.client.userInterface.OperationsToolBar;
+public abstract class InsurancePolicyOperationsToolBar extends BigBangOperationsToolBar {
 
-public class InsurancePolicyOperationsToolBar extends OperationsToolBar {
-
+	//CREATE
+	protected MenuItem receiptItem;
+	protected MenuItem riskAnalysis;
+	protected MenuItem healthExpense;
+	protected MenuItem negotiation;
+	protected MenuItem issueCreditNote;
+	protected MenuItem subPolicy;
+	protected MenuItem infoManagementProcess;
+	
+	//EXECUTE
+	protected MenuItem detailedCalculations;
+	
+	//DATA
+	protected MenuItem managerTransfer;
+	protected MenuItem clientAsSecuredObject;
+	protected MenuItem createSecuredObject;
+	
+	//REQUESTS
+	protected MenuItem agencyInfoRequestItem;
+	protected MenuItem clientInfoRequestItem;
+	
+	//ADMIN
+	protected MenuItem substitutePolicy;
+	protected MenuItem deleteItem;
+	protected MenuItem brokerageTransfer;
+	protected MenuItem voidPolicy;
+	
+	//OTHER
+	
+	
 	public InsurancePolicyOperationsToolBar(){
-		addItem("Operações", new Command() {
-
+		//CREATE
+		receiptItem = new MenuItem("Recibo", new Command() {
+			
 			@Override
 			public void execute() {
-				// TODO Auto-generated method stub
-
+				onCreateReceipt();
 			}
 		});
-		addSeparator();
+		addItem(SUB_MENU.CREATE, receiptItem);
+		riskAnalysis = new MenuItem("Análise de Risco", new Command() {
+			
+			@Override
+			public void execute() {
+				onCreateRiskAnalysis();
+			}
+		});
+		addItem(SUB_MENU.CREATE, riskAnalysis);
+		healthExpense = new MenuItem("Despesa de Saúde", new Command() {
+			
+			@Override
+			public void execute() {
+				onCreateHealthExpense();
+			}
+		});
+		addItem(SUB_MENU.CREATE, healthExpense);
+		negotiation = new MenuItem("Negociação", new Command() {
+			
+			@Override
+			public void execute() {
+				onCreateNegotiation();
+			}
+		});
+		addItem(SUB_MENU.CREATE, negotiation);
+		issueCreditNote = new MenuItem("Emitir Nota de Crédito", new Command() {
+			
+			@Override
+			public void execute() {
+				onIssueCreditNote();
+			}
+		});
+		addItem(SUB_MENU.CREATE, issueCreditNote);
+		subPolicy = new MenuItem("Apólice Adesão", new Command() {
+			
+			@Override
+			public void execute() {
+				onCreateSubPolicy();
+			}
+		});
+		addItem(SUB_MENU.CREATE, subPolicy);
+		infoManagementProcess = new MenuItem("Processo de Gestão de Informação", new Command() {
+			
+			@Override
+			public void execute() {
+				onCreateInfoManagementProcess();
+			}
+		});
+		addItem(SUB_MENU.CREATE, infoManagementProcess);
 		
-		MenuBar executeSubMenu = new MenuBar(true);
-		MenuItem executeMenuItem = new MenuItem("Executar", executeSubMenu);
-		executeSubMenu.addItem("Pedir Informação/Documento ao Cliente", new Command() {
-
+		//EXECUTE
+		detailedCalculations = new MenuItem("Cálculos Detalhados", new Command() {
+			
 			@Override
 			public void execute() {
-				// TODO Auto-generated method stub
-
+				onExecuteDecailedCalculations();
 			}
 		});
-		executeSubMenu.addItem("Pedir Informação/Documento á Seguradora", new Command() {
-
-			@Override
-			public void execute() {
-				// TODO Auto-generated method stub
-
-			}
-		});
-		executeSubMenu.addItem("Emitir Nota de Crédito", new Command() {
-
-			@Override
-			public void execute() {
-				// TODO Auto-generated method stub
-
-			}
-		});
-		executeSubMenu.addItem("Executar Cálculos Detalhados", new Command() {
-
-			@Override
-			public void execute() {
-				// TODO Auto-generated method stub
-
-			}
-		});
-
-		this.addItem(executeMenuItem);
-
-		MenuBar newSubMenu = new MenuBar(true);
-		MenuItem newItem = new MenuItem("Criar", newSubMenu);
-		newSubMenu.addItem("Análise de Risco", new Command() {
-
-			@Override
-			public void execute() {
-				// TODO Auto-generated method stub
-
-			}
-		});
-		newSubMenu.addItem("Apólice de Substituição", new Command() {
-
-			@Override
-			public void execute() {
-				// TODO Auto-generated method stub
-
-			}
-		});
-		newSubMenu.addItem("Apólice Adesão", new Command() {
-
-			@Override
-			public void execute() {
-				// TODO Auto-generated method stub
-
-			}
-		});
-		newSubMenu.addItem("Despesa de Saúde", new Command() {
-
-			@Override
-			public void execute() {
-				// TODO Auto-generated method stub
-
-			}
-		});
-		newSubMenu.addItem("Recibo", new Command() {
-
-			@Override
-			public void execute() {
-				// TODO Auto-generated method stub
-
-			}
-		});
-		newSubMenu.addItem("Negociação anual", new Command() {
-
-			@Override
-			public void execute() {
-				// TODO Auto-generated method stub
-
-			}
-		});
-		newSubMenu.addItem("Apólice Adesão", new Command() {
-
-			@Override
-			public void execute() {
-				// TODO Auto-generated method stub
-
-			}
-		});
-		newSubMenu.addItem("Processos de Gestão de Informação", new Command() {
-
-			@Override
-			public void execute() {
-				// TODO Auto-generated method stub
-
-			}
-		});
-
-		this.addItem(newItem);
-
-		MenuBar insertSubMenu = new MenuBar(true);
-		MenuItem insertMenuItem = new MenuItem("Inserir", insertSubMenu);
-		insertSubMenu.addItem("Objecto Seguro", new Command() {
-
-			@Override
-			public void execute() {
-				// TODO Auto-generated method stub
-
-			}
-		});
-		insertSubMenu.addItem("Objecto Seguro do Cliente", new Command() {
-
-			@Override
-			public void execute() {
-				// TODO Auto-generated method stub
-
-			}
-		});
-
-		this.addItem(insertMenuItem);
+		addItem(SUB_MENU.EXECUTE, detailedCalculations);
 		
-		MenuBar policySubMenu = new MenuBar(true);
-		MenuItem policyMenuItem = new MenuItem("Outras", policySubMenu);
-		policySubMenu.addItem("Desfazer Alterações", new Command() {
-
+		//DATA
+		managerTransfer = new MenuItem("Criar Transferência de Gestor", new Command() {
+			
 			@Override
 			public void execute() {
-				// TODO Auto-generated method stub
-
+				onCreateManagerTransfer();
 			}
 		});
-		policySubMenu.addItem("Anular", new Command() {
-
+		addItem(SUB_MENU.DATA, managerTransfer);
+		clientAsSecuredObject = new MenuItem("Criar Objecto Seguro a Partir do Cliente", new Command() {
+			
 			@Override
 			public void execute() {
-				// TODO Auto-generated method stub
-
+				onCreateSecuredObjectFromClient();
 			}
 		});
-		policySubMenu.addItem("Eliminar", new Command() {
-
+		addItem(SUB_MENU.DATA, clientAsSecuredObject);
+		createSecuredObject = new MenuItem("Criar Objecto Seguro", new Command() {
+			
 			@Override
 			public void execute() {
-				// TODO Auto-generated method stub
-
+				onCreateSecuredObject();
 			}
 		});
+		addItem(SUB_MENU.DATA, createSecuredObject);	
 		
-		addItem(policyMenuItem);
+		//REQUESTS
+		agencyInfoRequestItem = new MenuItem("Pedido de Informação à Seguradora", new Command() {
+			
+			@Override
+			public void execute() {
+				onRequestInfoFromAgency();
+			}
+		});
+		addItem(SUB_MENU.REQUESTS, agencyInfoRequestItem);
+		clientInfoRequestItem = new MenuItem("Pedido de Informação ao Cliente", new Command() {
+			
+			@Override
+			public void execute() {
+				onRequestInfoFromClient();
+			}
+		});
+		addItem(SUB_MENU.REQUESTS, clientInfoRequestItem);	
+		
+		//ADMIN
+		substitutePolicy = new MenuItem("Criar Apólice de Substituição", new Command() {
+			
+			@Override
+			public void execute() {
+				onCreateSubstitutePolicy();
+			}
+		});
+		addItem(SUB_MENU.ADMIN, substitutePolicy);
+		deleteItem = new MenuItem("Eliminar", new Command() {
+			
+			@Override
+			public void execute() {
+				onDelete();
+			}
+		});
+		addItem(SUB_MENU.ADMIN, deleteItem);	
+		brokerageTransfer = new MenuItem("Transferência de Mediação", new Command() {
+			
+			@Override
+			public void execute() {
+				onBrokerageTransfer();
+			}
+		});
+		addItem(SUB_MENU.ADMIN, brokerageTransfer);
+		voidPolicy = new MenuItem("Invalidar Apólice", new Command() {
+			
+			@Override
+			public void execute() {
+				onVoidPolicy();
+			}
+		});
+		addItem(SUB_MENU.ADMIN, voidPolicy);
 	}
+
+	public void allowCreateReceipt(boolean allow){
+		this.receiptItem.setEnabled(allow);
+	};
+	
+	public abstract void onVoidPolicy();
+
+	public abstract void onBrokerageTransfer();
+
+	public abstract void onDelete();
+
+	public abstract void onCreateSubstitutePolicy();
+
+	public abstract void onRequestInfoFromClient();
+
+	public abstract void onRequestInfoFromAgency();
+
+	public abstract void onCreateSecuredObject();
+
+	public abstract void onCreateSecuredObjectFromClient();
+
+	public abstract void onCreateManagerTransfer();
+
+	public abstract void onExecuteDecailedCalculations();
+
+	public abstract void onCreateInfoManagementProcess();
+
+	public abstract void onCreateSubPolicy();
+
+	public abstract void onIssueCreditNote();
+
+	public abstract void onCreateNegotiation();
+
+	public abstract void onCreateHealthExpense();
+
+	public abstract void onCreateRiskAnalysis();
+
+	public abstract void onCreateReceipt();
+
+	public void allowDelete(boolean allow) {
+		this.deleteItem.setEnabled(allow);
+	}
+
 }

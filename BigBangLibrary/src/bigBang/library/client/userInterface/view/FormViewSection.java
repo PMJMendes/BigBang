@@ -17,51 +17,51 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
 public class FormViewSection extends View {
-	
+
 	private ArrayList<FormField<?>> fields;
 	private Label headerLabel;
 	private HasWidgets content;
 	private HasWidgets currentContainer;
 	private Widget header;
-	
+
 	private DisclosurePanel errorMessagePanel;
 	private ArrayList<String> errorMessages;
-	
+
 	protected boolean inline = true;
-	
+
 	public FormViewSection(String title){
 		fields = new ArrayList<FormField<?>>();
 		errorMessages = new ArrayList<String>();
 		VerticalPanel wrapper = new VerticalPanel();
 		wrapper.setSize("100%", "100%");
-		
+
 		if(title != null){
 			wrapper.add(getSectionHeader(title));
 		}
-		
+
 		wrapper.add(getErrorMessagesPanel());
 		wrapper.setCellHorizontalAlignment(this.errorMessagePanel, HasHorizontalAlignment.ALIGN_CENTER);
-		
+
 		VerticalPanel p = new VerticalPanel();
 		p.setWidth("100%");
-		
+
 		//String minHeight = "30px";
 		//p.setSize("100%", minHeight);
 		p.setStyleName("formSection");
 		p.setSpacing(5);
 		wrapper.add(p);
-		
+
 		content = p;
 		currentContainer = new FlowPanel();
 		content.add((Widget) currentContainer);
-		
+
 		initWidget(wrapper);
 	}
-	
+
 	public ArrayList<FormField<?>> getFields(){
 		return this.fields;
 	}
-	
+
 	private Widget getSectionHeader(String text) {
 		VerticalPanel headerWrapper = new VerticalPanel();
 		headerWrapper.setVerticalAlignment(HasVerticalAlignment.ALIGN_MIDDLE);
@@ -77,7 +77,7 @@ public class FormViewSection extends View {
 		this.header = headerWrapper;
 		return headerWrapper;
 	}
-	
+
 	private Widget getErrorMessagesPanel(){
 		DisclosurePanel wrapper = new DisclosurePanel();
 		wrapper.setOpen(false);
@@ -86,12 +86,12 @@ public class FormViewSection extends View {
 		this.errorMessagePanel = wrapper;
 		return wrapper;
 	}
-	
-	
+
+
 	public void setHeaderText(String text){
 		headerLabel.setText(text);
 	}
-	
+
 	public String getHeaderText(){
 		return headerLabel.getText();
 	}
@@ -100,29 +100,31 @@ public class FormViewSection extends View {
 		this.inline = true;
 		addFormField(field);
 	}
-	
+
 	public void addFormField(FormField<?> field) {
-		registerFormField(field);
-		FlowPanel wrapper = new FlowPanel();
-		if(this.inline){
-			wrapper.getElement().getStyle().setFloat(Float.LEFT);
+		if(field != null) {
+			registerFormField(field);
+			FlowPanel wrapper = new FlowPanel();
+			addWidget(wrapper);
+			if(this.inline){
+				wrapper.getElement().getStyle().setFloat(Float.LEFT);
+			}
+			wrapper.add(field);
+			inline = false;
 		}
-		wrapper.add(field);
-		addWidget(wrapper);
-		inline = false;
 	}
-	
+
 	public void registerFormField(FormField<?> field) {
 		this.fields.add(field);
 	}
-	
+
 	public void clear(){
 		this.fields.clear();
 		this.errorMessagePanel.clear();
 		this.content.clear();
 		this.errorMessages.clear();
 	}
-	
+
 	public void addWidget(Widget w){
 		content.add(w);
 	}
@@ -131,26 +133,26 @@ public class FormViewSection extends View {
 		this.content.clear();
 		this.content.add(content);
 	}
-	
+
 	public void clearErrorMessages(){
 		clearErrorMessages(true);
 	}
-	
+
 	public void clearErrorMessages(boolean hide) {
 		errorMessagePanel.clear();
 		errorMessages.clear();
 		showErrorMessages(!hide);
 	}
-	
+
 	public void addErrorMessage(String message, boolean show) {
 		showErrorMessages(show);
 	}
-	
+
 	public void addErrorMessage(String message) {
 		addErrorMessage(message, true);
 		this.errorMessages.add(message);
 	}
-	
+
 	public void showErrorMessages(boolean show) {
 		errorMessagePanel.clear();
 		if(errorMessages.size() == 0){
@@ -173,7 +175,7 @@ public class FormViewSection extends View {
 	public Widget getHeader() {
 		return this.header;
 	}
-	
+
 	public HasWidgets getContentWrapper() {
 		return this.content;
 	}

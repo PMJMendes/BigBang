@@ -13,10 +13,12 @@ import bigBang.definitions.client.response.ResponseHandler;
 import bigBang.definitions.shared.BigBangConstants;
 import bigBang.definitions.shared.InsurancePolicy;
 import bigBang.definitions.shared.InsurancePolicyStub;
+import bigBang.definitions.shared.Receipt;
 import bigBang.definitions.shared.SearchParameter;
 import bigBang.definitions.shared.SortOrder;
 import bigBang.definitions.shared.SortParameter;
 import bigBang.library.client.BigBangAsyncCallback;
+import bigBang.library.client.dataAccess.DataBrokerManager;
 import bigBang.module.insurancePolicyModule.client.shared.InsurancePolicySortParameter;
 import bigBang.module.insurancePolicyModule.interfaces.InsurancePolicyService;
 import bigBang.module.insurancePolicyModule.interfaces.InsurancePolicyServiceAsync;
@@ -175,6 +177,19 @@ public class InsurancePolicyProcessBrokerImpl extends DataBroker<InsurancePolicy
 
 			@Override
 			public void onError(Collection<ResponseError> errors) {
+			}
+		});
+	}
+	
+	@Override
+	public void createReceipt(String policyId, Receipt receipt,
+			final ResponseHandler<Receipt> handler) {
+		this.service.createReceipt(policyId, receipt, new BigBangAsyncCallback<Receipt>() {
+
+			@Override
+			public void onSuccess(Receipt result) {
+				handler.onResponse(result);
+				DataBrokerManager.Util.getInstance().getBroker(BigBangConstants.EntityIds.RECEIPT).notifyItemCreation(result.id);
 			}
 		});
 	}

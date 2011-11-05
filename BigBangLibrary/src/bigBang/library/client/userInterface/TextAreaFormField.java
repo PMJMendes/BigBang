@@ -101,6 +101,15 @@ public class TextAreaFormField extends FormField<String> {
 	}
 	
 	@Override
+	public String getValue() {
+		String value = super.getValue();
+		if(value != null && value.isEmpty()){
+			value = null;
+		}
+		return value;
+	}
+	
+	@Override
 	public boolean isReadOnly() {
 		return ((TextArea)this.field).isReadOnly();
 	}

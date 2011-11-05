@@ -181,7 +181,7 @@ public class ClientServiceImpl
 			lopCC.mobjData.midProfile = ( client.operationalProfileId == null ? null : UUID.fromString(client.operationalProfileId) );
 			lopCC.mobjData.midGroup = ( client.groupId == null ? null : UUID.fromString(client.groupId) );
 			lopCC.mobjData.mstrBankingID = client.NIB;
-			lopCC.mobjData.mdtDateOfBirth = ( client.birthDate == null ? null : Timestamp.valueOf(client.birthDate + "00:00:00.0") );
+			lopCC.mobjData.mdtDateOfBirth = ( client.birthDate == null ? null : Timestamp.valueOf(client.birthDate + " 00:00:00.0") );
 			lopCC.mobjData.midSex = ( client.genderId == null ? null : UUID.fromString(client.genderId) );
 			lopCC.mobjData.midMarital = ( client.maritalStatusId == null ? null : UUID.fromString(client.maritalStatusId) );
 			lopCC.mobjData.midProfession = ( client.professionId == null ? null : UUID.fromString(client.professionId) );
@@ -272,7 +272,7 @@ public class ClientServiceImpl
 			lopMD.mobjData.midProfile = ( client.operationalProfileId == null ? null : UUID.fromString(client.operationalProfileId) );
 			lopMD.mobjData.midGroup = ( client.groupId == null ? null : UUID.fromString(client.groupId) );
 			lopMD.mobjData.mstrBankingID = client.NIB;
-			lopMD.mobjData.mdtDateOfBirth = ( client.birthDate == null ? null : Timestamp.valueOf(client.birthDate + "00:00:00.0") );
+			lopMD.mobjData.mdtDateOfBirth = ( client.birthDate == null ? null : Timestamp.valueOf(client.birthDate + " 00:00:00.0") );
 			lopMD.mobjData.midSex = ( client.genderId == null ? null : UUID.fromString(client.genderId) );
 			lopMD.mobjData.midMarital = ( client.maritalStatusId == null ? null : UUID.fromString(client.maritalStatusId) );
 			lopMD.mobjData.midProfession = ( client.professionId == null ? null : UUID.fromString(client.professionId) );
@@ -386,13 +386,13 @@ public class ClientServiceImpl
 			lopCP.mobjData.mstrNumber = policy.number;
 			lopCP.mobjData.midCompany = UUID.fromString(policy.insuranceAgencyId);
 			lopCP.mobjData.midSubLine = UUID.fromString(policy.subLineId);
-			lopCP.mobjData.mdtBeginDate = ( policy.startDate == null ? null : Timestamp.valueOf(policy.startDate + "00:00:00.0") );
+			lopCP.mobjData.mdtBeginDate = ( policy.startDate == null ? null : Timestamp.valueOf(policy.startDate + " 00:00:00.0") );
 			lopCP.mobjData.midDuration = UUID.fromString(policy.durationId);
 			lopCP.mobjData.midFractioning = UUID.fromString(policy.fractioningId);
 			lopCP.mobjData.mlngMaturityDay = policy.maturityDay;
 			lopCP.mobjData.mlngMaturityMonth = policy.maturityMonth;
 			lopCP.mobjData.mdtEndDate = ( policy.expirationDate == null ? null :
-					Timestamp.valueOf(policy.expirationDate + "00:00:00.0") );
+					Timestamp.valueOf(policy.expirationDate + " 00:00:00.0") );
 			lopCP.mobjData.mstrNotes = policy.notes;
 			lopCP.mobjData.midMediator = ( policy.mediatorId == null ? null : UUID.fromString(policy.mediatorId) );
 			lopCP.mobjData.mbCaseStudy = policy.caseStudy;
@@ -761,7 +761,7 @@ public class ClientServiceImpl
 		{
 			pstrBuffer.append(" AND [:Date of Birth] < '");
         	ldtAux = Calendar.getInstance();
-        	ldtAux.setTimeInMillis(Timestamp.valueOf(lParam.birthDateTo + "00:00:00.0").getTime());
+        	ldtAux.setTimeInMillis(Timestamp.valueOf(lParam.birthDateTo + " 00:00:00.0").getTime());
         	ldtAux.add(Calendar.DAY_OF_MONTH, 1);
 			pstrBuffer.append((new Timestamp(ldtAux.getTimeInMillis())).toString().substring(0, 10)).append("'");
 		}

@@ -137,7 +137,13 @@ public class BigBangTypifiedListBroker implements TypifiedListBroker {
 		if(!this.lists.containsKey(listId))
 			throw new RuntimeException("There if no list registered with id \"" + listId + "\"");
 		return this.lists.get(listId);
-	}	
+	}
+	
+	@Override
+	public TipifiedListItem getListItem(String listId, String itemId) {
+			//TODO
+		return null;
+	}
 
 	@Override
 	public void createListItem(final String listId, TipifiedListItem item, final ResponseHandler<TipifiedListItem> handler) {

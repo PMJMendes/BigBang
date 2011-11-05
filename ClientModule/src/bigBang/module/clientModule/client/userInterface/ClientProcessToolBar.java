@@ -7,14 +7,25 @@ import bigBang.library.client.userInterface.BigBangOperationsToolBar;
 
 public abstract class ClientProcessToolBar extends BigBangOperationsToolBar {
 	
-	protected MenuItem deleteItem;
-	private MenuItem infoRequestItem;
-	private MenuItem managerTransferItem;
-	private MenuItem clientMergeItem;
+	//CREATE
 	private MenuItem createPolicyItem;
 	private MenuItem riskAnalysisItem;
 	private MenuItem quoteRequestItem;
 	private MenuItem casualtyItem;
+	
+	//EXECUTE
+	private MenuItem clientMergeItem;
+	
+	//DATA
+	private MenuItem managerTransferItem;
+	
+	//REQUESTS
+	private MenuItem infoRequestItem;
+	
+	//ADMIN
+	protected MenuItem deleteItem;
+	
+	//OTHER
 	
 	public ClientProcessToolBar(){
 
@@ -66,16 +77,17 @@ public abstract class ClientProcessToolBar extends BigBangOperationsToolBar {
 		});
 		addItem(SUB_MENU.EXECUTE, clientMergeItem);
 		
-		managerTransferItem = new MenuItem("Transferir para Gestor", new Command() {
+		//DATA
+		managerTransferItem = new MenuItem("Criar Transferência de Gestor", new Command() {
 
 			@Override
 			public void execute() {
 				onTransferToManager();
 			}
 		});
-		addItem(SUB_MENU.EXECUTE, managerTransferItem);
+		addItem(SUB_MENU.DATA, managerTransferItem);
 		
-		//DATA
+		//REQUESTS
 		infoRequestItem = new MenuItem("Pedir Informação ou Documento", new Command() {
 
 			@Override
@@ -83,7 +95,7 @@ public abstract class ClientProcessToolBar extends BigBangOperationsToolBar {
 				onRequestInfoOrDocument();
 			}
 		});
-		addItem(SUB_MENU.DATA, infoRequestItem);
+		addItem(SUB_MENU.REQUESTS, infoRequestItem);
 		
 		//ADMIN
 		addItem(SUB_MENU.ADMIN, new MenuItem("Actualizar Informação", new Command() {
@@ -91,14 +103,6 @@ public abstract class ClientProcessToolBar extends BigBangOperationsToolBar {
 			@Override
 			public void execute() {
 				onRefresh();
-			}
-		}));
-		
-		addItem(SUB_MENU.ADMIN, new MenuItem("Histórico", new Command() {
-
-			@Override
-			public void execute() {
-				onHistory();
 			}
 		}));
 
@@ -123,10 +127,10 @@ public abstract class ClientProcessToolBar extends BigBangOperationsToolBar {
 
 	//EXECUTE
 	public abstract void onMergeWithClient();
-	public abstract void onTransferToManager();
 	
 	//DATA
 	public abstract void onRequestInfoOrDocument();
+	public abstract void onTransferToManager();
 	
 	//ADMIN
 	public abstract void onRefresh();
