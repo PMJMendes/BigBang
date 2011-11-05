@@ -1,7 +1,5 @@
 package bigBang.definitions.shared;
 
-import java.util.UUID;
-
 /**
  * Class that holds important information which should be shared across modules
  */

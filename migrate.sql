@@ -3,6 +3,8 @@ delete from credite_egs.tblBBDocuments;
 delete from credite_egs.tblContactInfo;
 delete from credite_egs.tblContacts;
 
+delete from credite_egs.tblBBReceipts;
+delete from credite_egs.tblBBPolicies;
 delete from credite_egs.tblBBClients;
 delete from credite_egs.tblBBGroups;
 delete from credite_egs.tblMediators;
@@ -19,6 +21,8 @@ delete from amartins.tblBBDocuments;
 delete from amartins.tblContactInfo;
 delete from amartins.tblContacts;
 
+delete from amartins.tblBBReceipts;
+delete from amartins.tblBBPolicies;
 delete from amartins.tblBBClients;
 delete from amartins.tblBBGroups;
 delete from amartins.tblMediators;

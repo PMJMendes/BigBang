@@ -13,29 +13,26 @@
     <selectedElements exportClassFiles="true" exportJavaFiles="false" exportOutputFolder="false">
         <javaElement handleIdentifier="=BigBang.Jewel/src&lt;com.premiumminds.BigBang.Jewel.Operations.Client{AutoProcessData.java"/>
         <javaElement handleIdentifier="=BigBang.Jewel/src&lt;com.premiumminds.BigBang.Jewel.Operations{ContactOps.java"/>
-        <javaElement handleIdentifier="=BigBang.Jewel/src&lt;com.premiumminds.BigBang.Jewel.Operations.Client{TriggerAllowUndoMgrXFer.java"/>
         <javaElement handleIdentifier="=BigBang.Jewel/src&lt;com.premiumminds.BigBang.Jewel.Objects{Tax.java"/>
         <javaElement handleIdentifier="=BigBang.Jewel/src&lt;com.premiumminds.BigBang.Jewel.Operations.Client{ExternResumeClient.java"/>
         <javaElement handleIdentifier="=BigBang.Jewel/src&lt;com.premiumminds.BigBang.Jewel.Objects{Coverage.java"/>
         <javaElement handleIdentifier="=BigBang.Jewel/src&lt;com.premiumminds.BigBang.Jewel.Operations.Client{TriggerDisallowPolicies.java"/>
-        <javaElement handleIdentifier="=BigBang.Jewel/src&lt;com.premiumminds.BigBang.Jewel.Operations.Client{UndoDirectMgrXFer.java"/>
         <javaElement handleIdentifier="=BigBang.Jewel/src&lt;com.premiumminds.BigBang.Jewel.Objects{CostCenter.java"/>
         <javaElement handleIdentifier="=BigBang.Jewel/src&lt;com.premiumminds.BigBang.Jewel.Processes{GeneralSystem.java"/>
         <javaElement handleIdentifier="=BigBang.Jewel/src&lt;com.premiumminds.BigBang.Jewel.Objects{GeneralSystem.java"/>
-        <javaElement handleIdentifier="=BigBang.Jewel/src&lt;com.premiumminds.BigBang.Jewel.Objects{DocInfo.java"/>
         <javaElement handleIdentifier="=BigBang.Jewel/src&lt;com.premiumminds.BigBang.Jewel.Operations.Client{ExternDeletePolicy.java"/>
-        <javaElement handleIdentifier="=BigBang.Jewel/src&lt;com.premiumminds.BigBang.Jewel.Operations.Client{CreateMgrXFer.java"/>
+        <javaElement handleIdentifier="=BigBang.Jewel/src&lt;com.premiumminds.BigBang.Jewel.Objects{DocInfo.java"/>
         <javaElement handleIdentifier="=BigBang.Jewel/src&lt;com.premiumminds.BigBang.Jewel.Objects{Company.java"/>
         <javaElement handleIdentifier="=BigBang.Jewel/src&lt;com.premiumminds.BigBang.Jewel.Library"/>
         <javaElement handleIdentifier="=BigBang.Jewel/src&lt;com.premiumminds.BigBang.Jewel.Operations.Client{CreateRiskAnalysis.java"/>
         <javaElement handleIdentifier="=BigBang.Jewel/src&lt;com.premiumminds.BigBang.Jewel{BigBangJewelException.java"/>
-        <javaElement handleIdentifier="=BigBang.Jewel/src&lt;com.premiumminds.BigBang.Jewel.Operations.Client{ExternDeleteRiskAnalysis.java"/>
         <javaElement handleIdentifier="=BigBang.Jewel/src&lt;com.premiumminds.BigBang.Jewel.Operations{DocOps.java"/>
+        <javaElement handleIdentifier="=BigBang.Jewel/src&lt;com.premiumminds.BigBang.Jewel.Operations.Client{ExternDeleteRiskAnalysis.java"/>
         <javaElement handleIdentifier="=BigBang.Jewel/src&lt;com.premiumminds.BigBang.Jewel.Objects{AgendaItem.java"/>
         <javaElement handleIdentifier="=BigBang.Jewel/src&lt;com.premiumminds.BigBang.Jewel.Objects{Document.java"/>
         <javaElement handleIdentifier="=BigBang.Jewel/src&lt;com.premiumminds.BigBang.Jewel.Operations.Client{AutoProcessSubs.java"/>
-        <javaElement handleIdentifier="=BigBang.Jewel/src&lt;com.premiumminds.BigBang.Jewel{ZipCodeBridge.java"/>
         <javaElement handleIdentifier="=BigBang.Jewel/src&lt;com.premiumminds.BigBang.Jewel.Objects{UserDecoration.java"/>
+        <javaElement handleIdentifier="=BigBang.Jewel/src&lt;com.premiumminds.BigBang.Jewel{ZipCodeBridge.java"/>
         <javaElement handleIdentifier="=BigBang.Jewel/src&lt;com.premiumminds.BigBang.Jewel.Operations.Client{UndoDeleteQuoteRequest.java"/>
         <javaElement handleIdentifier="=BigBang.Jewel/src&lt;com.premiumminds.BigBang.Jewel.Operations.Client{UndoDeletePolicy.java"/>
         <javaElement handleIdentifier="=BigBang.Jewel/src&lt;com.premiumminds.BigBang.Jewel.Operations.Policy"/>
@@ -47,6 +44,7 @@
         <javaElement handleIdentifier="=BigBang.Jewel/src&lt;com.premiumminds.BigBang.Jewel.Objects{MgrXFerProcHolder.java"/>
         <javaElement handleIdentifier="=BigBang.Jewel/src&lt;com.premiumminds.BigBang.Jewel.Data"/>
         <javaElement handleIdentifier="=BigBang.Jewel/src&lt;com.premiumminds.BigBang.Jewel.Operations.MgrXFer"/>
+        <javaElement handleIdentifier="=BigBang.Jewel/src&lt;com.premiumminds.BigBang.Jewel.Operations.Client{CreateClientMgrXFer.java"/>
         <javaElement handleIdentifier="=BigBang.Jewel/src&lt;com.premiumminds.BigBang.Jewel.Operations.Client{UndoMergeOtherHere.java"/>
         <javaElement handleIdentifier="=BigBang.Jewel/src&lt;com.premiumminds.BigBang.Jewel.Objects{Receipt.java"/>
         <javaElement handleIdentifier="=BigBang.Jewel/src&lt;com.premiumminds.BigBang.Jewel.Operations.InfoRequest"/>
@@ -61,10 +59,12 @@
         <javaElement handleIdentifier="=BigBang.Jewel/src&lt;com.premiumminds.BigBang.Jewel.Objects{Mediator.java"/>
         <javaElement handleIdentifier="=BigBang.Jewel/src&lt;com.premiumminds.BigBang.Jewel.Objects{MgrXFer.java"/>
         <javaElement handleIdentifier="=BigBang.Jewel/src&lt;com.premiumminds.BigBang.Jewel.Forms{Migration_Startup.java"/>
+        <javaElement handleIdentifier="=BigBang.Jewel/src&lt;com.premiumminds.BigBang.Jewel.Operations.Client{TriggerAllowUndoClientMgrXFer.java"/>
         <javaElement handleIdentifier="=BigBang.Jewel/src&lt;com.premiumminds.BigBang.Jewel.Operations.Client{UndoDeleteCasualty.java"/>
         <javaElement handleIdentifier="=BigBang.Jewel/src&lt;com.premiumminds.BigBang.Jewel.Objects{SubLine.java"/>
         <javaElement handleIdentifier="=BigBang.Jewel/src&lt;com.premiumminds.BigBang.Jewel{Constants.java"/>
         <javaElement handleIdentifier="=BigBang.Jewel/src&lt;com.premiumminds.BigBang.Jewel.Objects{ClientGroup.java"/>
+        <javaElement handleIdentifier="=BigBang.Jewel/src&lt;com.premiumminds.BigBang.Jewel.Operations.Client{UndoDirectClientMgrXFer.java"/>
         <javaElement handleIdentifier="=BigBang.Jewel/src&lt;com.premiumminds.BigBang.Jewel.Operations.Client{ManageClientData.java"/>
         <javaElement handleIdentifier="=BigBang.Jewel/src&lt;com.premiumminds.BigBang.Jewel.Operations.Client{TriggerDisallowDelete.java"/>
         <javaElement handleIdentifier="=BigBang.Jewel/src&lt;com.premiumminds.BigBang.Jewel.Objects{Contact.java"/>
