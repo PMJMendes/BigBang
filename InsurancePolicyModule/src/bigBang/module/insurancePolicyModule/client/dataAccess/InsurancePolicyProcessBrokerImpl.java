@@ -19,10 +19,10 @@ import bigBang.definitions.shared.SortOrder;
 import bigBang.definitions.shared.SortParameter;
 import bigBang.library.client.BigBangAsyncCallback;
 import bigBang.library.client.dataAccess.DataBrokerManager;
-import bigBang.module.insurancePolicyModule.client.shared.InsurancePolicySortParameter;
 import bigBang.module.insurancePolicyModule.interfaces.InsurancePolicyService;
 import bigBang.module.insurancePolicyModule.interfaces.InsurancePolicyServiceAsync;
 import bigBang.module.insurancePolicyModule.shared.InsurancePolicySearchParameter;
+import bigBang.module.insurancePolicyModule.shared.InsurancePolicySortParameter;
 
 public class InsurancePolicyProcessBrokerImpl extends DataBroker<InsurancePolicy> implements InsurancePolicyBroker {
 	

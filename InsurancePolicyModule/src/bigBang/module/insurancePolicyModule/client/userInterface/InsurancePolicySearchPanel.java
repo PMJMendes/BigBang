@@ -24,9 +24,9 @@ import bigBang.library.client.dataAccess.DataBrokerManager;
 import bigBang.library.client.userInterface.FiltersPanel;
 import bigBang.library.client.userInterface.ListEntry;
 import bigBang.library.client.userInterface.view.SearchPanel;
-import bigBang.module.insurancePolicyModule.client.shared.InsurancePolicySortParameter;
-import bigBang.module.insurancePolicyModule.client.shared.InsurancePolicySortParameter.SortableField;
 import bigBang.module.insurancePolicyModule.shared.InsurancePolicySearchParameter;
+import bigBang.module.insurancePolicyModule.shared.InsurancePolicySortParameter;
+import bigBang.module.insurancePolicyModule.shared.InsurancePolicySortParameter.SortableField;
 
 public class InsurancePolicySearchPanel extends SearchPanel<InsurancePolicyStub> implements InsurancePolicyDataBrokerClient {
 

@@ -1,4 +1,4 @@
-package bigBang.module.insurancePolicyModule.client.shared;
+package bigBang.module.insurancePolicyModule.shared;
 
 import bigBang.definitions.shared.SortOrder;
 import bigBang.definitions.shared.SortParameter;

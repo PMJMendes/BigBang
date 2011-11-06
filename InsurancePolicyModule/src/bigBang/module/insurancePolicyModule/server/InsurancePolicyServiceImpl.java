@@ -31,9 +31,9 @@ import bigBang.library.server.DocumentServiceImpl;
 import bigBang.library.server.SearchServiceBase;
 import bigBang.library.shared.BigBangException;
 import bigBang.library.shared.SessionExpiredException;
-import bigBang.module.insurancePolicyModule.client.shared.InsurancePolicySortParameter;
 import bigBang.module.insurancePolicyModule.interfaces.InsurancePolicyService;
 import bigBang.module.insurancePolicyModule.shared.InsurancePolicySearchParameter;
+import bigBang.module.insurancePolicyModule.shared.InsurancePolicySortParameter;
 
 import com.premiumminds.BigBang.Jewel.Constants;
 import com.premiumminds.BigBang.Jewel.Data.PolicyData;
