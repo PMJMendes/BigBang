@@ -24,17 +24,9 @@ public abstract class SearchServiceBase
 {
 	private static final long serialVersionUID = 1L;
 
-	protected class ColumnDef
+	private static class SearchWSpace
 	{
-		public String mstrAlias;
-		public String mstrCriteria;
-
-		public ColumnDef() {}
-	}
-
-	private class SearchWSpace
-	{
-        public class Row
+        public static class Row
         {
         	private UUID midKey;
         	private java.lang.Object[] marrValues;

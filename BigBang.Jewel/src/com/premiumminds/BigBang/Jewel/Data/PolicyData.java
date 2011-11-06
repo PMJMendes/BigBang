@@ -187,7 +187,7 @@ public class PolicyData
 			pstrBuilder.append(mdtEndDate.toString().substring(0, 10));
 		pstrBuilder.append(pstrLineBreak);
 
-		pstrBuilder.append("Obervações: ");
+		pstrBuilder.append("Observações: ");
 		if ( mstrNotes != null )
 			pstrBuilder.append(mstrNotes);
 		pstrBuilder.append(pstrLineBreak);

@@ -359,7 +359,7 @@ public class ClientData
 			pstrBuilder.append(pstrLineBreak);
 		}
 
-		pstrBuilder.append("Obervações: ");
+		pstrBuilder.append("Observações: ");
 		if ( mstrNotes != null )
 			pstrBuilder.append(mstrNotes);
 		pstrBuilder.append(pstrLineBreak);
