@@ -11,9 +11,8 @@
         </sealing>
     </manifest>
     <selectedElements exportClassFiles="true" exportJavaFiles="false" exportOutputFolder="false">
-        <javaElement handleIdentifier="=QuoteRequestModule/src&lt;bigBang.module.quoteRequestModule.shared"/>
-        <javaElement handleIdentifier="=QuoteRequestModule/src&lt;bigBang.module.quoteRequestModule.shared.operation"/>
         <javaElement handleIdentifier="=QuoteRequestModule/src&lt;bigBang.module.quoteRequestModule.server"/>
+        <javaElement handleIdentifier="=QuoteRequestModule/src&lt;bigBang.module.quoteRequestModule.shared"/>
         <javaElement handleIdentifier="=QuoteRequestModule/src&lt;bigBang.module.quoteRequestModule.interfaces"/>
     </selectedElements>
 </jardesc>

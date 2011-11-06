@@ -11,9 +11,8 @@
         </sealing>
     </manifest>
     <selectedElements exportClassFiles="true" exportJavaFiles="false" exportOutputFolder="false">
-        <javaElement handleIdentifier="=ReceiptModule/src&lt;bigBang.module.receiptModule.server"/>
         <javaElement handleIdentifier="=ReceiptModule/src&lt;bigBang.module.receiptModule.shared"/>
         <javaElement handleIdentifier="=ReceiptModule/src&lt;bigBang.module.receiptModule.interfaces"/>
-        <javaElement handleIdentifier="=ReceiptModule/src&lt;bigBang.module.receiptModule.shared.operation"/>
+        <javaElement handleIdentifier="=ReceiptModule/src&lt;bigBang.module.receiptModule.server"/>
     </selectedElements>
 </jardesc>

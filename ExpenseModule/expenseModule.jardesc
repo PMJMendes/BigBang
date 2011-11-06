@@ -11,9 +11,8 @@
         </sealing>
     </manifest>
     <selectedElements exportClassFiles="true" exportJavaFiles="false" exportOutputFolder="false">
+        <javaElement handleIdentifier="=ExpenseModule/src&lt;bigBang.module.expenseModule.interfaces"/>
         <javaElement handleIdentifier="=ExpenseModule/src&lt;bigBang.module.expenseModule.shared"/>
         <javaElement handleIdentifier="=ExpenseModule/src&lt;bigBang.module.expenseModule.server"/>
-        <javaElement handleIdentifier="=ExpenseModule/src&lt;bigBang.module.expenseModule.interfaces"/>
-        <javaElement handleIdentifier="=ExpenseModule/src&lt;bigBang.module.expenseModule.shared.operation"/>
     </selectedElements>
 </jardesc>

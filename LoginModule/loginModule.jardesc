@@ -11,9 +11,10 @@
         </sealing>
     </manifest>
     <selectedElements exportClassFiles="true" exportJavaFiles="false" exportOutputFolder="false">
+        <javaElement handleIdentifier="=LoginModule/src&lt;bigBang.module.loginModule.shared{LoginResponse.java"/>
         <javaElement handleIdentifier="=LoginModule/src&lt;bigBang.module.loginModule.server{Constants.java"/>
-        <javaElement handleIdentifier="=LoginModule/src&lt;bigBang.module.loginModule.interfaces"/>
-        <javaElement handleIdentifier="=LoginModule/src&lt;bigBang.module.loginModule.shared"/>
+        <javaElement handleIdentifier="=LoginModule/src&lt;bigBang.module.loginModule.interfaces{AuthenticationServiceAsync.java"/>
         <javaElement handleIdentifier="=LoginModule/src&lt;bigBang.module.loginModule.server{AuthenticationServiceImpl.java"/>
+        <javaElement handleIdentifier="=LoginModule/src&lt;bigBang.module.loginModule.interfaces{AuthenticationService.java"/>
     </selectedElements>
 </jardesc>

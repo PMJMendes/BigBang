@@ -11,12 +11,13 @@
         </sealing>
     </manifest>
     <selectedElements exportClassFiles="true" exportJavaFiles="false" exportOutputFolder="false">
+        <javaElement handleIdentifier="=ClientModule/src&lt;bigBang.module.clientModule.server{ClientServiceImpl.java"/>
+        <javaElement handleIdentifier="=ClientModule/src&lt;bigBang.module.clientModule.interfaces{ClientServiceAsync.java"/>
         <javaElement handleIdentifier="=ClientModule/src&lt;bigBang.module.clientModule.shared{ClientManager.java"/>
         <javaElement handleIdentifier="=ClientModule/src&lt;bigBang.module.clientModule.shared{ClientFormValidator.java"/>
         <javaElement handleIdentifier="=ClientModule/src&lt;bigBang.module.clientModule.shared{ModuleConstants.java"/>
         <javaElement handleIdentifier="=ClientModule/src&lt;bigBang.module.clientModule.shared{ClientSearchParameter.java"/>
         <javaElement handleIdentifier="=ClientModule/src&lt;bigBang.module.clientModule.shared{ClientSortParameter.java"/>
-        <javaElement handleIdentifier="=ClientModule/src&lt;bigBang.module.clientModule.server"/>
-        <javaElement handleIdentifier="=ClientModule/src&lt;bigBang.module.clientModule.interfaces"/>
+        <javaElement handleIdentifier="=ClientModule/src&lt;bigBang.module.clientModule.interfaces{ClientService.java"/>
     </selectedElements>
 </jardesc>

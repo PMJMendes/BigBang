@@ -12,8 +12,7 @@
     </manifest>
     <selectedElements exportClassFiles="true" exportJavaFiles="false" exportOutputFolder="false">
         <javaElement handleIdentifier="=InsurancePolicyModule/src&lt;bigBang.module.insurancePolicyModule.server"/>
-        <javaElement handleIdentifier="=InsurancePolicyModule/src&lt;bigBang.module.insurancePolicyModule.shared.operation"/>
-        <javaElement handleIdentifier="=InsurancePolicyModule/src&lt;bigBang.module.insurancePolicyModule.shared"/>
         <javaElement handleIdentifier="=InsurancePolicyModule/src&lt;bigBang.module.insurancePolicyModule.interfaces"/>
+        <javaElement handleIdentifier="=InsurancePolicyModule/src&lt;bigBang.module.insurancePolicyModule.shared"/>
     </selectedElements>
 </jardesc>

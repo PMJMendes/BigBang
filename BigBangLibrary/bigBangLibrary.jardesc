@@ -12,15 +12,51 @@
     </manifest>
     <selectedElements exportClassFiles="true" exportJavaFiles="false" exportOutputFolder="false">
         <javaElement handleIdentifier="=BigBangLibrary/src&lt;bigBang.library.shared{NewSearchResult.java"/>
-        <javaElement handleIdentifier="=BigBangLibrary/src&lt;bigBang.library.shared{DocuShareItem.java"/>
-        <javaElement handleIdentifier="=BigBangLibrary/src&lt;bigBang.library.shared{HistorySortParameter.java"/>
-        <javaElement handleIdentifier="=BigBangLibrary/src&lt;bigBang.library.server"/>
-        <javaElement handleIdentifier="=BigBangLibrary/src&lt;bigBang.library.shared{HistorySearchParameter.java"/>
-        <javaElement handleIdentifier="=BigBangLibrary/src&lt;bigBang.library.shared{ModuleConstants.java"/>
-        <javaElement handleIdentifier="=BigBangLibrary/src&lt;bigBang.library.shared{BigBangException.java"/>
+        <javaElement handleIdentifier="=BigBangLibrary/src&lt;bigBang.library.interfaces{BigBangPermissionService.java"/>
+        <javaElement handleIdentifier="=BigBangLibrary/src&lt;bigBang.library.interfaces{ContactsService.java"/>
+        <javaElement handleIdentifier="=BigBangLibrary/src&lt;bigBang.library.server{DocumentServiceImpl.java"/>
         <javaElement handleIdentifier="=BigBangLibrary/src&lt;bigBang.library.shared{Permission.java"/>
-        <javaElement handleIdentifier="=BigBangLibrary/src&lt;bigBang.library.shared{SessionExpiredException.java"/>
-        <javaElement handleIdentifier="=BigBangLibrary/src&lt;bigBang.library.interfaces"/>
+        <javaElement handleIdentifier="=BigBangLibrary/src&lt;bigBang.library.interfaces{BigBangPermissionServiceAsync.java"/>
+        <javaElement handleIdentifier="=BigBangLibrary/src&lt;bigBang.library.interfaces{TransferManagerService.java"/>
+        <javaElement handleIdentifier="=BigBangLibrary/src&lt;bigBang.library.server{ZipCodeServiceImpl.java"/>
         <javaElement handleIdentifier="=BigBangLibrary/src&lt;bigBang.library.shared{BigBangProcess.java"/>
+        <javaElement handleIdentifier="=BigBangLibrary/src&lt;bigBang.library.server{BigBangProcessServiceImpl.java"/>
+        <javaElement handleIdentifier="=BigBangLibrary/src&lt;bigBang.library.server{BigBangPermissionServiceImpl.java"/>
+        <javaElement handleIdentifier="=BigBangLibrary/src&lt;bigBang.library.interfaces{InfoOrDocumentRequestServiceAsync.java"/>
+        <javaElement handleIdentifier="=BigBangLibrary/src&lt;bigBang.library.interfaces{TransferManagerServiceAsync.java"/>
+        <javaElement handleIdentifier="=BigBangLibrary/src&lt;bigBang.library.server{SearchServiceBase.java"/>
+        <javaElement handleIdentifier="=BigBangLibrary/src&lt;bigBang.library.server{DocuShareServiceImpl.java"/>
+        <javaElement handleIdentifier="=BigBangLibrary/src&lt;bigBang.library.interfaces{FileService.java"/>
+        <javaElement handleIdentifier="=BigBangLibrary/src&lt;bigBang.library.interfaces{TipifiedListServiceAsync.java"/>
+        <javaElement handleIdentifier="=BigBangLibrary/src&lt;bigBang.library.interfaces{BigBangProcessServiceAsync.java"/>
+        <javaElement handleIdentifier="=BigBangLibrary/src&lt;bigBang.library.interfaces{HistoryServiceAsync.java"/>
+        <javaElement handleIdentifier="=BigBangLibrary/src&lt;bigBang.library.interfaces{FileServiceAsync.java"/>
+        <javaElement handleIdentifier="=BigBangLibrary/src&lt;bigBang.library.interfaces{ZipCodeServiceAsync.java"/>
+        <javaElement handleIdentifier="=BigBangLibrary/src&lt;bigBang.library.interfaces{SearchService.java"/>
+        <javaElement handleIdentifier="=BigBangLibrary/src&lt;bigBang.library.server{InfoOrDocumentRequestServiceImpl.java"/>
+        <javaElement handleIdentifier="=BigBangLibrary/src&lt;bigBang.library.interfaces{InfoOrDocumentRequestService.java"/>
+        <javaElement handleIdentifier="=BigBangLibrary/src&lt;bigBang.library.interfaces{BigBangProcessService.java"/>
+        <javaElement handleIdentifier="=BigBangLibrary/src&lt;bigBang.library.shared{HistorySortParameter.java"/>
+        <javaElement handleIdentifier="=BigBangLibrary/src&lt;bigBang.library.interfaces{Service.java"/>
+        <javaElement handleIdentifier="=BigBangLibrary/src&lt;bigBang.library.interfaces{SearchServiceAsync.java"/>
+        <javaElement handleIdentifier="=BigBangLibrary/src&lt;bigBang.library.server{TransferManagerServiceImpl.java"/>
+        <javaElement handleIdentifier="=BigBangLibrary/src&lt;bigBang.library.interfaces{DocuShareService.java"/>
+        <javaElement handleIdentifier="=BigBangLibrary/src&lt;bigBang.library.server{FileServiceImpl.java"/>
+        <javaElement handleIdentifier="=BigBangLibrary/src&lt;bigBang.library.server{TipifiedListServiceImpl.java"/>
+        <javaElement handleIdentifier="=BigBangLibrary/src&lt;bigBang.library.shared{DocuShareItem.java"/>
+        <javaElement handleIdentifier="=BigBangLibrary/src&lt;bigBang.library.interfaces{HistoryService.java"/>
+        <javaElement handleIdentifier="=BigBangLibrary/src&lt;bigBang.library.server{HistoryServiceImpl.java"/>
+        <javaElement handleIdentifier="=BigBangLibrary/src&lt;bigBang.library.shared{HistorySearchParameter.java"/>
+        <javaElement handleIdentifier="=BigBangLibrary/src&lt;bigBang.library.shared{BigBangException.java"/>
+        <javaElement handleIdentifier="=BigBangLibrary/src&lt;bigBang.library.shared{ModuleConstants.java"/>
+        <javaElement handleIdentifier="=BigBangLibrary/src&lt;bigBang.library.interfaces{DocumentServiceAsync.java"/>
+        <javaElement handleIdentifier="=BigBangLibrary/src&lt;bigBang.library.server{EngineImplementor.java"/>
+        <javaElement handleIdentifier="=BigBangLibrary/src&lt;bigBang.library.interfaces{ZipCodeService.java"/>
+        <javaElement handleIdentifier="=BigBangLibrary/src&lt;bigBang.library.server{ContactsServiceImpl.java"/>
+        <javaElement handleIdentifier="=BigBangLibrary/src&lt;bigBang.library.interfaces{DocuShareServiceAsync.java"/>
+        <javaElement handleIdentifier="=BigBangLibrary/src&lt;bigBang.library.shared{SessionExpiredException.java"/>
+        <javaElement handleIdentifier="=BigBangLibrary/src&lt;bigBang.library.interfaces{DocumentService.java"/>
+        <javaElement handleIdentifier="=BigBangLibrary/src&lt;bigBang.library.interfaces{ContactsServiceAsync.java"/>
+        <javaElement handleIdentifier="=BigBangLibrary/src&lt;bigBang.library.interfaces{TipifiedListService.java"/>
     </selectedElements>
 </jardesc>

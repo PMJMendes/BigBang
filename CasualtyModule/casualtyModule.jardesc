@@ -12,8 +12,7 @@
     </manifest>
     <selectedElements exportClassFiles="true" exportJavaFiles="false" exportOutputFolder="false">
         <javaElement handleIdentifier="=CasualtyModule/src&lt;bigBang.module.casualtyModule.server"/>
-        <javaElement handleIdentifier="=CasualtyModule/src&lt;bigBang.module.casualtyModule.interfaces"/>
         <javaElement handleIdentifier="=CasualtyModule/src&lt;bigBang.module.casualtyModule.shared"/>
-        <javaElement handleIdentifier="=CasualtyModule/src&lt;bigBang.module.casualtyModule.shared.operation"/>
+        <javaElement handleIdentifier="=CasualtyModule/src&lt;bigBang.module.casualtyModule.interfaces"/>
     </selectedElements>
 </jardesc>

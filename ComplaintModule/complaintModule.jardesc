@@ -12,7 +12,6 @@
     </manifest>
     <selectedElements exportClassFiles="true" exportJavaFiles="false" exportOutputFolder="false">
         <javaElement handleIdentifier="=ComplaintModule/src&lt;bigBang.module.complaintModule.shared"/>
-        <javaElement handleIdentifier="=ComplaintModule/src&lt;bigBang.module.complaintModule.shared.operation"/>
         <javaElement handleIdentifier="=ComplaintModule/src&lt;bigBang.module.complaintModule.server"/>
         <javaElement handleIdentifier="=ComplaintModule/src&lt;bigBang.module.complaintModule.interfaces"/>
     </selectedElements>
