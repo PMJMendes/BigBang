@@ -229,6 +229,10 @@ public class InsurancePolicySearchOperationView extends View implements Insuranc
 		
 		mainWrapper.add(contentWrapper);
 		
+		if(!bigBang.definitions.client.Constants.DEBUG){
+			searchPanel.doSearch();
+		}
+		
 		form.addValueChangeHandler(new ValueChangeHandler<InsurancePolicy>() {
 			
 			@Override

@@ -211,6 +211,10 @@ public class ReceiptSearchOperationView extends View implements ReceiptSearchOpe
 		
 		mainWrapper.add(contentWrapper);
 		
+		if(!bigBang.definitions.client.Constants.DEBUG){
+			searchPanel.doSearch();
+		}
+		
 		initWidget(mainWrapper);
 	}
 
