@@ -507,9 +507,9 @@ public class ClientServiceImpl
     	ldtAux2.setTimeInMillis(ldtAux.getTime());
     	ldtAux2.add(Calendar.DAY_OF_MONTH, 7);
 
-    	lidManager = UUID.fromString(transfer.newManagerId);
-    	if ( lidManager == null )
+    	if ( transfer.newManagerId == null )
     		throw new BigBangException("Erro: Novo gestor não indicado.");
+    	lidManager = UUID.fromString(transfer.newManagerId);
 
 		try
 		{
