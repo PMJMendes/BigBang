@@ -51,8 +51,8 @@ public class CreateInsurancePolicyView extends View implements CreateInsurancePo
 		insurancePolicyWrapper.add(insurancePolicyForm);
 		insurancePolicyWrapper.setCellHeight(insurancePolicyForm, "100%");
 
-		wrapper.addWest(insurancePolicyWrapper, 600);
-		wrapper.add(clientForm);
+		wrapper.addWest(clientForm, 600);
+		wrapper.add(insurancePolicyWrapper);
 
 		initWidget(wrapper);
 	}

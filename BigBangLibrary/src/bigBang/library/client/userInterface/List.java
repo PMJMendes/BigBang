@@ -76,6 +76,7 @@ public class List<T> extends View implements HasValueSelectables<T>, java.util.L
 		mainWrapper.setVerticalAlignment(HasVerticalAlignment.ALIGN_MIDDLE);
 		mainWrapper.setSize("100%", "100%");
 		mainWrapper.setStyleName("emptyContainer");
+		initWidget(mainWrapper);
 
 		headerContainer = new SimplePanel();
 		((UIObject) headerContainer).setSize("100%", "100%");
@@ -94,11 +95,10 @@ public class List<T> extends View implements HasValueSelectables<T>, java.util.L
 		VerticalPanel listWrapper = new VerticalPanel();
 		listWrapper.setSize("100%", "100%");
 		this.listPanel = new VerticalPanel();
+		listWrapper.add(this.listPanel);
+		scrollPanel.add(listWrapper);
 		this.listPanel.setSize("100%", "100%");
 		this.listPanel.setStyleName("emptyContainer");
-		listWrapper.add(this.listPanel);
-
-		scrollPanel.add(listWrapper);
 
 		AbsolutePanel shadowBottom = new AbsolutePanel();
 		shadowBottom.setSize("100%", "3px");
@@ -150,8 +150,6 @@ public class List<T> extends View implements HasValueSelectables<T>, java.util.L
 		};
 
 		clear();
-
-		initWidget(mainWrapper);
 
 		disableTextSelection(true);
 	}

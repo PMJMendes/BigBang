@@ -3,6 +3,7 @@ package bigBang.module.clientModule.client.userInterface;
 import com.google.gwt.dom.client.Style.FontStyle;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
+import com.google.gwt.user.client.ui.Label;
 
 import bigBang.definitions.shared.ClientStub;
 import bigBang.library.client.ValueWrapper;
@@ -37,8 +38,11 @@ public class ClientSearchPanelListEntry extends SearchPanelListEntry<ClientStub>
 	public <I extends Object> void setInfo(I info) {
 		ClientStub value = (ClientStub)info;
 		if(value.id != null){
+			Label clientNumberLabel = new Label(value.clientNumber);
+			clientNumberLabel.setWidth("40px");
+			setLeftWidget(clientNumberLabel);
 			setTitle(value.name);
-			setText("nº"+value.clientNumber);
+			setText(value.groupName);
 			this.textLabel.getElement().getStyle().setFontStyle(FontStyle.OBLIQUE);
 		}else{
 			setTitle("Novo Cliente");

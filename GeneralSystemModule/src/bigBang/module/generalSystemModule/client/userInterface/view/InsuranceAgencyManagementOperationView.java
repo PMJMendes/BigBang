@@ -41,6 +41,7 @@ public class InsuranceAgencyManagementOperationView extends View implements Insu
 
 	public InsuranceAgencyManagementOperationView() {
 		SplitLayoutPanel wrapper = new SplitLayoutPanel();
+		initWidget(wrapper);
 		wrapper.setSize("100%", "100%");
 
 		insuranceAgencyList = new InsuranceAgencyList();
@@ -134,8 +135,6 @@ public class InsuranceAgencyManagementOperationView extends View implements Insu
 		contentWrapper.add(formWrapper);
 
 		wrapper.add(contentWrapper);
-
-		initWidget(wrapper);
 	}
 
 	@Override

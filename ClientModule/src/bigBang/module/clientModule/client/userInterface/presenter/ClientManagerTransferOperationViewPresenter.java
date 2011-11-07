@@ -135,7 +135,9 @@ OperationViewPresenter {
 					}
 					
 					@Override
-					public void onError(Collection<ResponseError> errors) {}
+					public void onError(Collection<ResponseError> errors) {
+						view.showMessage("Não foi possível criar um novo processo de Alteração de Gestor de Cliente. Por favor tente de novo mais tarde.");
+					}
 				});
 			}
 		});

@@ -277,6 +277,16 @@ public class ClientSearchOperationView extends View implements ClientSearchOpera
 			}
 		};
 
+		addAttachHandler(new AttachEvent.Handler() {
+			
+			@Override
+			public void onAttachOrDetach(AttachEvent event) {
+				if(event.isAttached()){
+					childrenPanel.setClient(form.getValue());
+				}
+			}
+		});
+		
 		if(!bigBang.definitions.client.Constants.DEBUG){
 			searchPanel.doSearch();
 		}
