@@ -28,6 +28,7 @@ public interface InsurancePolicyService extends SearchService {
 	}
 	
 	public InsurancePolicy getPolicy(String policyId) throws SessionExpiredException, BigBangException;
+	public InsurancePolicy initializeNewPolicy(InsurancePolicy policy) throws SessionExpiredException, BigBangException;
 
 	public InsurancePolicy editPolicy(InsurancePolicy policy) throws SessionExpiredException, BigBangException;
 	public InsurancePolicy voidPolicy(String policyId) throws SessionExpiredException, BigBangException;

@@ -124,6 +124,12 @@ public class InsurancePolicyServiceImpl
 		return lobjResult;
 	}
 
+	public InsurancePolicy initializeNewPolicy(InsurancePolicy policy)
+		throws SessionExpiredException, BigBangException
+	{
+		return policy;
+	}
+
 	public InsurancePolicy editPolicy(InsurancePolicy policy)
 		throws SessionExpiredException, BigBangException
 	{
