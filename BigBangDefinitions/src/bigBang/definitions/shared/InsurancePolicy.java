@@ -1,12 +1,17 @@
 package bigBang.definitions.shared;
 
+import java.io.Serializable;
+
 public class InsurancePolicy
 	extends InsurancePolicyStub
 {
 	private static final long serialVersionUID = 1L;
 
 	public class HeaderField
+		implements Serializable
 	{
+		private static final long serialVersionUID = 1L;
+
 		public String fieldId;
 		public String fieldName;
 		public String unitsId;
@@ -14,14 +19,20 @@ public class InsurancePolicy
 	}
 
 	public class Coverage
+		implements Serializable
 	{
+		private static final long serialVersionUID = 1L;
+
 		public String coverageId;
 		public String coverageName;
 		public boolean mandatory;
 	}
 
 	public class ColumnHeader
+		implements Serializable
 	{
+		private static final long serialVersionUID = 1L;
+
 		public String label;
 		public String unitsId;
 		public boolean variesByObject;
@@ -29,9 +40,15 @@ public class InsurancePolicy
 	}
 
 	public class TableSection
+		implements Serializable
 	{
+		private static final long serialVersionUID = 1L;
+
 		public class TableField
+			implements Serializable
 		{
+			private static final long serialVersionUID = 1L;
+
 			public String coverageId;
 			public int columnIndex;
 			public String value;
@@ -45,6 +62,8 @@ public class InsurancePolicy
 	public class ExtraField
 		extends HeaderField
 	{
+		private static final long serialVersionUID = 1L;
+
 		public String coverageId;
 	}
 
