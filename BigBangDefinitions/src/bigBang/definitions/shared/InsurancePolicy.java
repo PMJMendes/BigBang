@@ -7,7 +7,7 @@ public class InsurancePolicy
 {
 	private static final long serialVersionUID = 1L;
 
-	public class HeaderField
+	public static class HeaderField
 		implements Serializable
 	{
 		private static final long serialVersionUID = 1L;
@@ -18,7 +18,7 @@ public class InsurancePolicy
 		public String value;
 	}
 
-	public class Coverage
+	public static class Coverage
 		implements Serializable
 	{
 		private static final long serialVersionUID = 1L;
@@ -28,7 +28,7 @@ public class InsurancePolicy
 		public boolean mandatory;
 	}
 
-	public class ColumnHeader
+	public static class ColumnHeader
 		implements Serializable
 	{
 		private static final long serialVersionUID = 1L;
@@ -39,12 +39,12 @@ public class InsurancePolicy
 		public boolean variesByExercise;
 	}
 
-	public class TableSection
+	public static class TableSection
 		implements Serializable
 	{
 		private static final long serialVersionUID = 1L;
 
-		public class TableField
+		public static class TableField
 			implements Serializable
 		{
 			private static final long serialVersionUID = 1L;
@@ -59,7 +59,7 @@ public class InsurancePolicy
 		public TableField[] data;
 	}
 
-	public class ExtraField
+	public static class ExtraField
 		extends HeaderField
 	{
 		private static final long serialVersionUID = 1L;
