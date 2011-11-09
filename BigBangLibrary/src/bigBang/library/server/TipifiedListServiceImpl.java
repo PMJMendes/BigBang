@@ -223,6 +223,52 @@ public class TipifiedListServiceImpl
 		return item;
 	}
 
+	public TipifiedListItem createListItemFiltered(String listId, String filterId, TipifiedListItem item)
+			throws SessionExpiredException, BigBangException
+	{
+		UUID lidListRef;
+        MasterDB ldb;
+		ObjectBase lobjItem;
+
+		if ( Engine.getCurrentUser() == null )
+			throw new SessionExpiredException();
+
+		try
+		{
+			lidListRef = Engine.FindEntity(Engine.getCurrentNameSpace(), UUID.fromString(listId));
+			lobjItem = Engine.GetWorkInstance(lidListRef, (UUID)null);
+			lobjItem.setAt(0, item.value);
+			lobjItem.setAt(1, UUID.fromString(filterId));
+			ldb = new MasterDB();
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangException(e.getMessage(), e);
+		}
+
+		try
+		{
+			lobjItem.SaveToDb(ldb);
+		}
+		catch (Throwable e)
+		{
+			try { ldb.Disconnect(); } catch (Throwable e1) {}
+			throw new BigBangException(e.getMessage(), e);
+		}
+
+		try
+		{
+			ldb.Disconnect();
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangException(e.getMessage(), e);
+		}
+
+		item.id = lobjItem.getKey().toString();
+		return item;
+	}
+
 	public TipifiedListItem saveListItem(String listId, TipifiedListItem item)
 		throws SessionExpiredException, BigBangException
 	{

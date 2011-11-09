@@ -10,6 +10,7 @@ public interface TipifiedListServiceAsync
 	void getListItems(String listId, AsyncCallback<TipifiedListItem[]> callback);
 	void getListItemsFilter(String listId, String filterId, AsyncCallback<TipifiedListItem[]> callback);
 	void createListItem(String listId, TipifiedListItem item, AsyncCallback<TipifiedListItem> callback);
+	void createListItemFiltered(String listId, String filterId, TipifiedListItem item, AsyncCallback<TipifiedListItem> callback);
 	void saveListItem(String listId, TipifiedListItem item, AsyncCallback<TipifiedListItem> callback);
 	void deleteListItem(String listId, String itemId, AsyncCallback<Void> callback);
 }

@@ -182,7 +182,7 @@ public class ClientServiceImpl
 			lopCC.mobjData.mstrFiscal = client.taxNumber;
 			lopCC.mobjData.midType = ( client.typeId == null ? null : UUID.fromString(client.typeId) );
 			lopCC.mobjData.midSubtype = ( client.subtypeId == null ? null : UUID.fromString(client.subtypeId) );
-			lopCC.mobjData.midManager = null; //( client.managerId == null ? Engine.getCurrentUser() : UUID.fromString(client.managerId) );
+			lopCC.mobjData.midManager = ( client.managerId == null ? Engine.getCurrentUser() : UUID.fromString(client.managerId) );
 			lopCC.mobjData.midMediator = ( client.mediatorId == null ? null : UUID.fromString(client.mediatorId) );
 			lopCC.mobjData.midProfile = ( client.operationalProfileId == null ? null : UUID.fromString(client.operationalProfileId) );
 			lopCC.mobjData.midGroup = ( client.groupId == null ? null : UUID.fromString(client.groupId) );

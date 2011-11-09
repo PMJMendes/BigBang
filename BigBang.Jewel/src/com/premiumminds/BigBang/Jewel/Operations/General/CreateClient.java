@@ -92,6 +92,7 @@ public class CreateClient
 
 			lobjScript = PNScript.GetInstance(Engine.getCurrentNameSpace(), Constants.ProcID_Client);
 			lobjProc = lobjScript.CreateInstance(Engine.getCurrentNameSpace(), lobjAux.getKey(), null, pdb);
+			lobjProc.SetManagerID(mobjData.midManager, pdb);
 
 			mobjData.mid = lobjAux.getKey();
 			mobjData.midProcess = lobjProc.getKey();
