@@ -34,6 +34,7 @@ public class InsurancePolicy
 		public String coverageId;
 		public String coverageName;
 		public boolean mandatory;
+		public Boolean presentInPolicy; 
 	}
 
 	public static class ColumnHeader
