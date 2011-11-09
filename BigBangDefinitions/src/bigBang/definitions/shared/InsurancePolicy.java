@@ -12,7 +12,8 @@ public class InsurancePolicy
 		TEXT,
 		LIST,
 		REFERENCE,
-		BOOLEAN
+		BOOLEAN,
+		DATE
 	}
 
 	public static class HeaderField
