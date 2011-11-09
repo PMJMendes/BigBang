@@ -7,14 +7,21 @@ public class InsurancePolicy
 {
 	private static final long serialVersionUID = 1L;
 
+	public static enum FieldType {
+		NUMERIC,
+		TEXT,
+		LIST
+	}
+	
 	public static class HeaderField
 		implements Serializable
 	{
 		private static final long serialVersionUID = 1L;
-
+		
 		public String fieldId;
 		public String fieldName;
-		public String unitsId;
+		public FieldType type;
+		
 		public String value;
 	}
 
@@ -34,7 +41,7 @@ public class InsurancePolicy
 		private static final long serialVersionUID = 1L;
 
 		public String label;
-		public String unitsId;
+		public FieldType type;
 		public boolean variesByObject;
 		public boolean variesByExercise;
 	}
