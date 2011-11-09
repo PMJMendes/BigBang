@@ -21,6 +21,7 @@ public class InsurancePolicy
 		public String fieldId;
 		public String fieldName;
 		public FieldType type;
+		public String unitsLabel;
 		
 		public String value;
 	}
@@ -42,6 +43,7 @@ public class InsurancePolicy
 
 		public String label;
 		public FieldType type;
+		public String unitsLabel;
 		public boolean variesByObject;
 		public boolean variesByExercise;
 	}
