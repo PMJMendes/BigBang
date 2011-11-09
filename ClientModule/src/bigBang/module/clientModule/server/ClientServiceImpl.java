@@ -45,6 +45,7 @@ import com.premiumminds.BigBang.Jewel.ZipCodeBridge;
 import com.premiumminds.BigBang.Jewel.Data.ClientData;
 import com.premiumminds.BigBang.Jewel.Data.PolicyData;
 import com.premiumminds.BigBang.Jewel.Objects.AgendaItem;
+import com.premiumminds.BigBang.Jewel.Objects.ClientGroup;
 import com.premiumminds.BigBang.Jewel.Objects.GeneralSystem;
 import com.premiumminds.BigBang.Jewel.Objects.MgrXFer;
 import com.premiumminds.BigBang.Jewel.Operations.ContactOps;
@@ -69,6 +70,7 @@ public class ClientServiceImpl
 		UUID lid;
 		com.premiumminds.BigBang.Jewel.Objects.Client lobjClient;
 		ObjectBase lobjZipCode;
+		ClientGroup lobjGroup;
 		Client lobjResult;
 		IProcess lobjProc;
 
@@ -87,6 +89,10 @@ public class ClientServiceImpl
 			else
 				lobjZipCode = Engine.GetWorkInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), ObjectGUIDs.O_PostalCode),
 						(UUID)lobjClient.getAt(4));
+			if ( lobjClient.getAt(10) == null )
+				lobjGroup = null;
+			else
+				lobjGroup = ClientGroup.GetInstance(Engine.getCurrentNameSpace(), (UUID)lobjClient.getAt(10));
 			lobjProc = PNProcess.GetInstance(Engine.getCurrentNameSpace(), lobjClient.GetProcessID());
 		}
 		catch (Throwable e)
@@ -99,8 +105,8 @@ public class ClientServiceImpl
 		lobjResult.id = lid.toString();
 		lobjResult.name = (String)lobjClient.getAt(0);
 		lobjResult.clientNumber = lobjClient.getAt(1).toString();
-		lobjResult.groupName = null;
-		lobjResult.groupId = (lobjClient.getAt(10) == null ? null : lobjClient.getAt(10).toString());
+		lobjResult.groupId = (lobjGroup == null ? null : lobjGroup.getKey().toString());
+		lobjResult.groupName = (lobjGroup == null ? null : lobjGroup.getLabel());
 		lobjResult.taxNumber = (String)lobjClient.getAt(5);
 		lobjResult.address = new Address();
 		lobjResult.address.street1 = (String)lobjClient.getAt(2);
