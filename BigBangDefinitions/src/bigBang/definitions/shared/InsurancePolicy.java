@@ -11,7 +11,8 @@ public class InsurancePolicy
 		NUMERIC,
 		TEXT,
 		LIST,
-		REFERENCE
+		REFERENCE,
+		BOOLEAN
 	}
 
 	public static class HeaderField
