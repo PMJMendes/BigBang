@@ -23,8 +23,9 @@ public class TaxForm extends FormView<Tax> {
 	public TaxForm() {
 		name = new TextBoxFormField("Designação", new TaxFormValidator.NameValidator());
 		value = new TextBoxFormField("Valor", new TaxFormValidator.ValueValidator());
-		unit = new ExpandableListBoxFormField(ModuleConstants.ListIDs.ValueUnits, "Unidade", new TaxFormValidator.UnitValidator());
-		
+		unit = new ExpandableListBoxFormField(ModuleConstants.ListIDs.FieldTypes, "Tipo", new TaxFormValidator.UnitValidator());
+		unit.setEditable(false);
+
 		addSection("Informação Geral");
 		
 		addFormField(name);

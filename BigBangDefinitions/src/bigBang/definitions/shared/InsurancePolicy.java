@@ -10,9 +10,10 @@ public class InsurancePolicy
 	public static enum FieldType {
 		NUMERIC,
 		TEXT,
-		LIST
+		LIST,
+		REFERENCE
 	}
-	
+
 	public static class HeaderField
 		implements Serializable
 	{
@@ -22,7 +23,10 @@ public class InsurancePolicy
 		public String fieldName;
 		public FieldType type;
 		public String unitsLabel;
-		
+		public String refersToId;
+//		public boolean variesByObject; <- Not needed. Should always be false.
+//		public boolean variesByExercise; <- Not needed. Should always be false.
+
 		public String value;
 	}
 
@@ -45,6 +49,7 @@ public class InsurancePolicy
 		public String label;
 		public FieldType type;
 		public String unitsLabel;
+		public String refersToId;
 		public boolean variesByObject;
 		public boolean variesByExercise;
 	}

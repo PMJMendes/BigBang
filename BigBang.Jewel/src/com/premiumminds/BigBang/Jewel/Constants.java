@@ -48,7 +48,6 @@ public class Constants
 	public static final UUID ObjID_DocType       = UUID.fromString("B4DBEE18-FA81-471D-A9F5-9ECC012A028D");
 	public static final UUID ObjID_CommProfile   = UUID.fromString("5F40713C-1FE7-4715-AC24-9EBB00E53392");
 	public static final UUID ObjID_LineCategory  = UUID.fromString("3FF829D9-5C33-4C91-A42B-9EC900F013CB");
-	public static final UUID ObjID_ValueUnit     = UUID.fromString("0D8E4FEE-AE4D-4429-A517-9EC900F80A20");
 	public static final UUID ObjID_ClientType    = UUID.fromString("40A63D68-E2A6-40AB-B3A4-9EE600B91EBE");
 	public static final UUID ObjID_ClientSubtype = UUID.fromString("1907DB1B-6F75-4715-A210-9EE600B9D072");
 	public static final UUID ObjID_OpProfile     = UUID.fromString("11921769-CDF3-447A-8E6B-9ECA01761BAA");
@@ -62,6 +61,7 @@ public class Constants
 	public static final UUID ObjID_Fractioning   = UUID.fromString("28B2D442-2CF3-4E14-8430-9F8101229DA8");
 	public static final UUID ObjID_ReceiptType   = UUID.fromString("AFE7CC47-B44F-442D-8CF4-9F8A00DB2637");
 	
+	public static final UUID ObjID_FieldType     = UUID.fromString("0D8E4FEE-AE4D-4429-A517-9EC900F80A20");
 	public static final UUID ObjID_FieldValues   = UUID.fromString("D50A75B9-5F44-4BF2-9060-9F960121503A");
 
 	// Process Scripts

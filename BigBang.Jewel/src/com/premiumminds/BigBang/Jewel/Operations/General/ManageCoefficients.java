@@ -574,7 +574,7 @@ public class ManageCoefficients
 
 		try
 		{
-			lobjUnits = Engine.GetWorkInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), Constants.ObjID_ValueUnit), pobjData.midCurrency);
+			lobjUnits = Engine.GetWorkInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), Constants.ObjID_FieldType), pobjData.midCurrency);
 			pstrString.append((String)lobjUnits.getAt(0));
 		}
 		catch (Throwable e)
