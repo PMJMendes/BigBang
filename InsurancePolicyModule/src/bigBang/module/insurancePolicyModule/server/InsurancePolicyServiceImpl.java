@@ -45,6 +45,7 @@ import com.premiumminds.BigBang.Jewel.Objects.Mediator;
 import com.premiumminds.BigBang.Jewel.Objects.MgrXFer;
 import com.premiumminds.BigBang.Jewel.Objects.Policy;
 import com.premiumminds.BigBang.Jewel.Objects.SubLine;
+import com.premiumminds.BigBang.Jewel.Objects.Tax;
 import com.premiumminds.BigBang.Jewel.Operations.ContactOps;
 import com.premiumminds.BigBang.Jewel.Operations.DocOps;
 import com.premiumminds.BigBang.Jewel.Operations.MgrXFer.AcceptXFer;
@@ -71,6 +72,7 @@ public class InsurancePolicyServiceImpl
 		ObjectBase lobjAux;
 		UUID lidLine;
 		UUID lidCategory;
+		ObjectBase lobjStatus;
 
 		if ( Engine.getCurrentUser() == null )
 			throw new SessionExpiredException();
@@ -89,6 +91,8 @@ public class InsurancePolicyServiceImpl
 			lidLine = (UUID)lobjAux.getAt(1);
 			lobjAux = Line.GetInstance(Engine.getCurrentNameSpace(), lidLine);
 			lidCategory = (UUID)lobjAux.getAt(1);
+			lobjStatus = Engine.GetWorkInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), Constants.ObjID_PolicyStatus),
+					(UUID)lobjAux.getAt(13));
 		}
 		catch (Throwable e)
 		{
@@ -118,6 +122,22 @@ public class InsurancePolicyServiceImpl
 		lobjResult.inheritMediatorId = lobjMed.getKey().toString();
 		lobjResult.inheritMediatorName = lobjMed.getLabel();
 		lobjResult.caseStudy = (Boolean)lobjPolicy.getAt(12);
+		lobjResult.statusId = lobjStatus.getKey().toString();
+		lobjResult.statusText = lobjStatus.getLabel();
+		switch ( (Integer)lobjStatus.getAt(1) )
+		{
+		case 0:
+			lobjResult.statusIcon = InsurancePolicyStub.PolicyStatus.PROVISIONAL;
+			break;
+
+		case 1:
+			lobjResult.statusIcon = InsurancePolicyStub.PolicyStatus.VALID;
+			break;
+
+		case 2:
+			lobjResult.statusIcon = InsurancePolicyStub.PolicyStatus.OBSOLETE;
+			break;
+		}
 
 		lobjResult.managerId = lobjProc.GetManagerID().toString();
 
@@ -127,6 +147,41 @@ public class InsurancePolicyServiceImpl
 	public InsurancePolicy initializeNewPolicy(InsurancePolicy policy)
 		throws SessionExpiredException, BigBangException
 	{
+//		public HeaderField[] headerFields;
+//		public Coverage[] coverages;
+//		public ColumnHeader[] columns;
+//		public TableSection[] tableData;
+//		public ExtraField[] extraData;
+		com.premiumminds.BigBang.Jewel.Objects.Coverage[] larrCoverages;
+		Tax[] larrTaxes;
+		int i, j;
+
+		if ( Engine.getCurrentUser() == null )
+			throw new SessionExpiredException();
+
+		if ( policy.id != null )
+			throw new BigBangException("Erro: Não pode inicializar uma apólice já existente.");
+
+		if ( policy.subLineId == null )
+			throw new BigBangException("Erro: Não pode inicializar uma apólice antes de preencher a categoria, ramo e modalidade.");
+		try
+		{
+			larrCoverages = SubLine.GetInstance(Engine.getCurrentNameSpace(),
+					UUID.fromString(policy.subLineId)).GetCurrentCoverages();
+
+			for ( i = 0; i < larrCoverages.length; i++ )
+			{
+				larrTaxes = larrCoverages[i].GetCurrentTaxes();
+				for ( j = 0; j < larrTaxes.length; j++ )
+				{
+				}
+			}
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangException(e.getMessage(), e);
+		}
+
 		return policy;
 	}
 
@@ -490,7 +545,8 @@ public class InsurancePolicyServiceImpl
 	protected String[] getColumns()
 	{
 		return new String[] {"[:Number]", "[:Process]", "[:SubLine:Line:Category]", "[:SubLine:Line:Category:Name]",
-				"[:SubLine:Line]", "[:SubLine:Line:Name]", "[:SubLine]", "[:SubLine:Name], [:Case Study]"};
+				"[:SubLine:Line]", "[:SubLine:Line:Name]", "[:SubLine]", "[:SubLine:Name]", "[:Case Study]", "[:Status]",
+				"[:Status:Status]", "[:Status:Level]"};
 	}
 
 	protected boolean buildFilter(StringBuilder pstrBuffer, SearchParameter pParam)
@@ -687,6 +743,22 @@ public class InsurancePolicyServiceImpl
 		lobjResult.subLineId = parrValues[6].toString();
 		lobjResult.subLineName = (String)parrValues[7];
 		lobjResult.caseStudy = (Boolean)parrValues[8];
+		lobjResult.statusId = ((UUID)parrValues[9]).toString();
+		lobjResult.statusText = (String)parrValues[10];
+		switch ( (Integer)parrValues[11] )
+		{
+		case 0:
+			lobjResult.statusIcon = InsurancePolicyStub.PolicyStatus.PROVISIONAL;
+			break;
+
+		case 1:
+			lobjResult.statusIcon = InsurancePolicyStub.PolicyStatus.VALID;
+			break;
+
+		case 2:
+			lobjResult.statusIcon = InsurancePolicyStub.PolicyStatus.OBSOLETE;
+			break;
+		}
 		lobjResult.processId = (lobjProcess == null ? null : lobjProcess.getKey().toString());
 		return lobjResult;
 	}

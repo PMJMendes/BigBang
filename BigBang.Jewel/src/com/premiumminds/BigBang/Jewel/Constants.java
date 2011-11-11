@@ -60,7 +60,8 @@ public class Constants
 	public static final UUID ObjID_Durations     = UUID.fromString("A522A5B3-245B-4F8B-97F1-9F810120FAB6");
 	public static final UUID ObjID_Fractioning   = UUID.fromString("28B2D442-2CF3-4E14-8430-9F8101229DA8");
 	public static final UUID ObjID_ReceiptType   = UUID.fromString("AFE7CC47-B44F-442D-8CF4-9F8A00DB2637");
-	
+	public static final UUID ObjID_PolicyStatus  = UUID.fromString("EF9C2F88-2AC7-44CF-9AD6-9F98012A7236");
+
 	public static final UUID ObjID_FieldType     = UUID.fromString("0D8E4FEE-AE4D-4429-A517-9EC900F80A20");
 	public static final UUID ObjID_FieldValues   = UUID.fromString("D50A75B9-5F44-4BF2-9060-9F960121503A");
 
