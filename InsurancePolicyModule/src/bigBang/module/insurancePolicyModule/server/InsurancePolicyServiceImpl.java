@@ -92,7 +92,7 @@ public class InsurancePolicyServiceImpl
 			lobjAux = Line.GetInstance(Engine.getCurrentNameSpace(), lidLine);
 			lidCategory = (UUID)lobjAux.getAt(1);
 			lobjStatus = Engine.GetWorkInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), Constants.ObjID_PolicyStatus),
-					(UUID)lobjAux.getAt(13));
+					(UUID)lobjPolicy.getAt(13));
 		}
 		catch (Throwable e)
 		{
@@ -171,6 +171,9 @@ public class InsurancePolicyServiceImpl
 
 			for ( i = 0; i < larrCoverages.length; i++ )
 			{
+				if ( !larrCoverages[i].getLabel().equals("(Cabeçalho)") )
+					continue;
+
 				larrTaxes = larrCoverages[i].GetCurrentTaxes();
 				for ( j = 0; j < larrTaxes.length; j++ )
 				{
