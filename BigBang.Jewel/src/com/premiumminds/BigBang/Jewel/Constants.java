@@ -172,6 +172,7 @@ public class Constants
 	public static final int FKOwnerType_In_Document = 1;
 	public static final int FKOwner_In_Document = 2;
 	public static final int FKCoverage_In_Tax = 1;
+	public static final int Order_In_Tax = 8;
 	public static final int FKSubLine_In_Coverage = 1;
 	public static final int FKLine_In_SubLine = 1;
 	public static final int FKParent_In_Group = 1;

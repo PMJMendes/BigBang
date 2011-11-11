@@ -5,6 +5,12 @@ public class InsurancePolicyStub
 {
 	private static final long serialVersionUID = 1L;
 
+	public static enum PolicyStatus {
+		PROVISIONAL,
+		VALID,
+		OBSOLETE
+	}
+
 	public String number;
 	public String clientId;
 	public String clientNumber;
@@ -16,6 +22,9 @@ public class InsurancePolicyStub
 	public String subLineId;
 	public String subLineName;
 	public boolean caseStudy;
+	public String statusId;
+	public String statusText;
+	public PolicyStatus statusIcon;
 
 	public String processId;
 }
