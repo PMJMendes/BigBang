@@ -77,7 +77,8 @@ public class Coverage
 
 		try
 		{
-			lrsTaxes = lrefCoverages.SelectByMembers(ldb, larrMembers, larrParams, new int[0]);
+			lrsTaxes = lrefCoverages.SelectByMembers(ldb, new int[] {Constants.FKCoverage_In_Tax},
+					new java.lang.Object[] {getKey()}, new int[] {Constants.Order_In_Tax});
 		}
 		catch (Throwable e)
 		{

@@ -43,4 +43,19 @@ public class Tax
 		throws JewelEngineException
 	{
 	}
+
+	public boolean GetVariesByObject()
+	{
+		return (Boolean)getAt(5);
+	}
+
+	public boolean GetVariesByExercise()
+	{
+		return (Boolean)getAt(6);
+	}
+
+	public int GetColumnOrder()
+	{
+		return (Integer)getAt(8);
+	}
 }

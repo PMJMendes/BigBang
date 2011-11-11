@@ -37,10 +37,18 @@ public class InsurancePolicy
 	{
 		private static final long serialVersionUID = 1L;
 
+		public static class Variability
+		{
+			public int columnIndex;
+			public boolean variesByObject;
+			public boolean variesByExercise;
+		}
+
 		public String coverageId;
 		public String coverageName;
 		public boolean mandatory;
-		public Boolean presentInPolicy; 
+		public Boolean presentInPolicy;
+		public Variability[] variability;
 	}
 
 	public static class ColumnHeader
@@ -52,8 +60,6 @@ public class InsurancePolicy
 		public FieldType type;
 		public String unitsLabel;
 		public String refersToId;
-		public boolean variesByObject;
-		public boolean variesByExercise;
 	}
 
 	public static class TableSection
@@ -98,6 +104,8 @@ public class InsurancePolicy
 	public String inheritMediatorName;
 	public Contact[] contacts;
 	public Document[] documents;
+
+	public String scratchPadId;
 
 	public HeaderField[] headerFields;
 	public Coverage[] coverages;

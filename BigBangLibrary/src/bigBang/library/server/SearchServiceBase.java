@@ -176,7 +176,7 @@ public abstract class SearchServiceBase
 	}
 
 	@SuppressWarnings("unchecked")
-	public static Hashtable<UUID, SearchWSpace> GetSearchWSStorage()
+	private static Hashtable<UUID, SearchWSpace> GetSearchWSStorage()
 	{
 		Hashtable<UUID, SearchWSpace> larrAux;
 

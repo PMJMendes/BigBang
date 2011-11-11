@@ -3,7 +3,9 @@ package bigBang.module.insurancePolicyModule.server;
 import java.math.BigDecimal;
 import java.sql.SQLException;
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Hashtable;
 import java.util.UUID;
 
 import Jewel.Engine.Engine;
@@ -17,9 +19,12 @@ import Jewel.Petri.Interfaces.IScript;
 import Jewel.Petri.Objects.PNProcess;
 import Jewel.Petri.Objects.PNScript;
 import Jewel.Petri.SysObjects.JewelPetriException;
+import bigBang.definitions.shared.Exercise;
 import bigBang.definitions.shared.InfoOrDocumentRequest;
 import bigBang.definitions.shared.InsurancePolicy;
+import bigBang.definitions.shared.InsurancePolicy.TableSection;
 import bigBang.definitions.shared.InsurancePolicyStub;
+import bigBang.definitions.shared.InsuredObject;
 import bigBang.definitions.shared.ManagerTransfer;
 import bigBang.definitions.shared.Receipt;
 import bigBang.definitions.shared.SearchParameter;
@@ -36,7 +41,6 @@ import bigBang.module.insurancePolicyModule.shared.InsurancePolicySearchParamete
 import bigBang.module.insurancePolicyModule.shared.InsurancePolicySortParameter;
 
 import com.premiumminds.BigBang.Jewel.Constants;
-import com.premiumminds.BigBang.Jewel.Data.PolicyData;
 import com.premiumminds.BigBang.Jewel.Data.ReceiptData;
 import com.premiumminds.BigBang.Jewel.Objects.AgendaItem;
 import com.premiumminds.BigBang.Jewel.Objects.Client;
@@ -52,13 +56,39 @@ import com.premiumminds.BigBang.Jewel.Operations.MgrXFer.AcceptXFer;
 import com.premiumminds.BigBang.Jewel.Operations.Policy.CreatePolicyMgrXFer;
 import com.premiumminds.BigBang.Jewel.Operations.Policy.CreateReceipt;
 import com.premiumminds.BigBang.Jewel.Operations.Policy.DeletePolicy;
-import com.premiumminds.BigBang.Jewel.Operations.Policy.ManagePolicyData;
 
 public class InsurancePolicyServiceImpl
 	extends SearchServiceBase
 	implements InsurancePolicyService
 {
 	private static final long serialVersionUID = 1L;
+
+	private static class PolicyScratchPad
+	{
+		public UUID policyId;
+
+		public void CommitChanges()
+		{
+		}
+	}
+
+	@SuppressWarnings("unchecked")
+	public static Hashtable<UUID, PolicyScratchPad> GetScratchPadStorage()
+	{
+		Hashtable<UUID, PolicyScratchPad> larrAux;
+
+        if (getSession() == null)
+            return null;
+
+        larrAux = (Hashtable<UUID, PolicyScratchPad>)getSession().getAttribute("BigBang_Policy_ScratchPad_Storage");
+        if (larrAux == null)
+        {
+        	larrAux = new Hashtable<UUID, PolicyScratchPad>();
+            getSession().setAttribute("BigBang_Policy_ScratchPad_Storage", larrAux);
+        }
+
+        return larrAux;
+	}
 
 	public InsurancePolicy getPolicy(String policyId)
 		throws SessionExpiredException, BigBangException
@@ -144,6 +174,14 @@ public class InsurancePolicyServiceImpl
 		return lobjResult;
 	}
 
+	@Override
+	public TableSection getPage(String policyId, String insuredObjectId, String exerciseId)
+		throws SessionExpiredException, BigBangException
+	{
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 	public InsurancePolicy initializeNewPolicy(InsurancePolicy policy)
 		throws SessionExpiredException, BigBangException
 	{
@@ -154,6 +192,7 @@ public class InsurancePolicyServiceImpl
 //		public ExtraField[] extraData;
 		com.premiumminds.BigBang.Jewel.Objects.Coverage[] larrCoverages;
 		Tax[] larrTaxes;
+		ArrayList<Tax> larrHeaders;
 		int i, j;
 
 		if ( Engine.getCurrentUser() == null )
@@ -169,6 +208,7 @@ public class InsurancePolicyServiceImpl
 			larrCoverages = SubLine.GetInstance(Engine.getCurrentNameSpace(),
 					UUID.fromString(policy.subLineId)).GetCurrentCoverages();
 
+			larrHeaders = new ArrayList<Tax>();
 			for ( i = 0; i < larrCoverages.length; i++ )
 			{
 				if ( !larrCoverages[i].getLabel().equals("(Cabeçalho)") )
@@ -177,6 +217,9 @@ public class InsurancePolicyServiceImpl
 				larrTaxes = larrCoverages[i].GetCurrentTaxes();
 				for ( j = 0; j < larrTaxes.length; j++ )
 				{
+					if ( larrTaxes[j].GetVariesByObject() || larrTaxes[j].GetVariesByExercise() )
+						continue;
+					larrHeaders.add(larrTaxes[j]);
 				}
 			}
 		}
@@ -185,55 +228,219 @@ public class InsurancePolicyServiceImpl
 			throw new BigBangException(e.getMessage(), e);
 		}
 
+		policy.headerFields = new InsurancePolicy.HeaderField[larrHeaders.size()];
+		for ( i = 0; i < larrHeaders.size(); i++ )
+		{
+			policy.headerFields[i] = new InsurancePolicy.HeaderField();
+			policy.headerFields[i].fieldId = larrHeaders.get(i).getKey().toString();
+			policy.headerFields[i].fieldName = larrHeaders.get(i).getLabel();
+			policy.headerFields[i].type = GetFieldTypeByID((UUID)larrHeaders.get(i).getAt(2));
+			policy.headerFields[i].unitsLabel = (String)larrHeaders.get(i).getAt(3);
+			policy.headerFields[i].refersToId = ((UUID)larrHeaders.get(i).getAt(7)).toString();
+		}
+
 		return policy;
+	}
+
+	@Override
+	public InsurancePolicy openForEdit(InsurancePolicy policy)
+			throws SessionExpiredException, BigBangException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public InsurancePolicy updateHeader(InsurancePolicy policy)
+			throws SessionExpiredException, BigBangException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public TableSection getPageForEdit(String scratchPadId,
+			String tempObjectId, String tempExerciseId)
+			throws SessionExpiredException, BigBangException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public TableSection savePage(String scratchPadId, String insuredObjectId,
+			String exerciseId, TableSection data)
+			throws SessionExpiredException, BigBangException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public InsuredObject createObjectInPad(String scratchPadId)
+			throws SessionExpiredException, BigBangException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public InsuredObject createObjectFromClientInPad(String scratchPadId)
+			throws SessionExpiredException, BigBangException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public InsuredObject updateObjectInPad(String scratchPadId,
+			InsuredObject data) throws SessionExpiredException,
+			BigBangException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void deleteObjectInPad(String scratchPadId, String tempObjectId)
+			throws SessionExpiredException, BigBangException {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public Exercise createFirstExercise(String scratchPadId)
+			throws SessionExpiredException, BigBangException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Exercise updateExerciseInPad(String scratchPadId, Exercise data)
+			throws SessionExpiredException, BigBangException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void deleteExerciseInPad(String scratchPadId, String tempExerciseId)
+			throws SessionExpiredException, BigBangException {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public InsurancePolicy commitPolicy(String scratchPadId)
+		throws SessionExpiredException, BigBangException
+	{
+		PolicyScratchPad lrefPad;
+
+		if ( Engine.getCurrentUser() == null )
+			throw new SessionExpiredException();
+
+		lrefPad = GetScratchPadStorage().get(UUID.fromString(scratchPadId));
+		lrefPad.CommitChanges();
+		GetScratchPadStorage().remove(UUID.fromString(scratchPadId));
+		return getPolicy(lrefPad.policyId.toString());
+	}
+
+	public InsurancePolicy discardPolicy(String scratchPadId)
+		throws SessionExpiredException, BigBangException
+	{
+		PolicyScratchPad lrefPad;
+
+		if ( Engine.getCurrentUser() == null )
+			throw new SessionExpiredException();
+
+		lrefPad = GetScratchPadStorage().get(UUID.fromString(scratchPadId));
+		GetScratchPadStorage().remove(UUID.fromString(scratchPadId));
+
+		if ( lrefPad.policyId == null )
+			return null;
+		return getPolicy(lrefPad.policyId.toString());
+	}
+
+	@Override
+	public InsuredObject includeObject(String policyId, InsuredObject object)
+			throws SessionExpiredException, BigBangException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public InsuredObject includeObjectFromClient(String policyId)
+			throws SessionExpiredException, BigBangException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public InsuredObject editObject(String policyId, InsuredObject object)
+			throws SessionExpiredException, BigBangException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void excludeObject(String policyId, String objectId)
+			throws SessionExpiredException, BigBangException {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public Exercise openNewExercise(String policyId, Exercise exercise)
+			throws SessionExpiredException, BigBangException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Exercise editExercise(String policyId, Exercise exercise)
+			throws SessionExpiredException, BigBangException {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 	public InsurancePolicy editPolicy(InsurancePolicy policy)
 		throws SessionExpiredException, BigBangException
 	{
-		ManagePolicyData lopMPD;
-
+//		ManagePolicyData lopMPD;
+//
 		if ( Engine.getCurrentUser() == null )
 			throw new SessionExpiredException();
-
-		try
-		{
-			lopMPD = new ManagePolicyData(UUID.fromString(policy.processId));
-			lopMPD.mobjData = new PolicyData();
-
-			lopMPD.mobjData.mid = UUID.fromString(policy.id);
-
-			lopMPD.mobjData.mstrNumber = policy.number;
-			lopMPD.mobjData.midCompany = UUID.fromString(policy.insuranceAgencyId);
-			lopMPD.mobjData.midSubLine = UUID.fromString(policy.subLineId);
-			lopMPD.mobjData.mdtBeginDate = ( policy.startDate == null ? null : Timestamp.valueOf(policy.startDate + " 00:00:00.0") );
-			lopMPD.mobjData.midDuration = UUID.fromString(policy.durationId);
-			lopMPD.mobjData.midFractioning = UUID.fromString(policy.fractioningId);
-			lopMPD.mobjData.mlngMaturityDay = policy.maturityDay;
-			lopMPD.mobjData.mlngMaturityMonth = policy.maturityMonth;
-			lopMPD.mobjData.mdtEndDate = ( policy.expirationDate == null ? null :
-					Timestamp.valueOf(policy.expirationDate + " 00:00:00.0") );
-			lopMPD.mobjData.mstrNotes = policy.notes;
-			lopMPD.mobjData.midMediator = ( policy.mediatorId == null ? null : UUID.fromString(policy.mediatorId) );
-			lopMPD.mobjData.mbCaseStudy = policy.caseStudy;
-
-			lopMPD.mobjData.midManager = null;
-			lopMPD.mobjData.midProcess = null;
-
-			lopMPD.mobjData.mobjPrevValues = null;
-
-			lopMPD.mobjContactOps = null;
-			lopMPD.mobjDocOps = null;
-
-			lopMPD.Execute();
-		}
-		catch (Throwable e)
-		{
-			throw new BigBangException(e.getMessage(), e);
-		}
-
-		policy.managerId = lopMPD.mobjData.midManager.toString();
-		return policy;
+//
+//		try
+//		{
+//			lopMPD = new ManagePolicyData(UUID.fromString(policy.processId));
+//			lopMPD.mobjData = new PolicyData();
+//
+//			lopMPD.mobjData.mid = UUID.fromString(policy.id);
+//
+//			lopMPD.mobjData.mstrNumber = policy.number;
+//			lopMPD.mobjData.midCompany = UUID.fromString(policy.insuranceAgencyId);
+//			lopMPD.mobjData.midSubLine = UUID.fromString(policy.subLineId);
+//			lopMPD.mobjData.mdtBeginDate = ( policy.startDate == null ? null : Timestamp.valueOf(policy.startDate + " 00:00:00.0") );
+//			lopMPD.mobjData.midDuration = UUID.fromString(policy.durationId);
+//			lopMPD.mobjData.midFractioning = UUID.fromString(policy.fractioningId);
+//			lopMPD.mobjData.mlngMaturityDay = policy.maturityDay;
+//			lopMPD.mobjData.mlngMaturityMonth = policy.maturityMonth;
+//			lopMPD.mobjData.mdtEndDate = ( policy.expirationDate == null ? null :
+//					Timestamp.valueOf(policy.expirationDate + " 00:00:00.0") );
+//			lopMPD.mobjData.mstrNotes = policy.notes;
+//			lopMPD.mobjData.midMediator = ( policy.mediatorId == null ? null : UUID.fromString(policy.mediatorId) );
+//			lopMPD.mobjData.mbCaseStudy = policy.caseStudy;
+//
+//			lopMPD.mobjData.midManager = null;
+//			lopMPD.mobjData.midProcess = null;
+//
+//			lopMPD.mobjData.mobjPrevValues = null;
+//
+//			lopMPD.mobjContactOps = null;
+//			lopMPD.mobjDocOps = null;
+//
+//			lopMPD.Execute();
+//		}
+//		catch (Throwable e)
+//		{
+//			throw new BigBangException(e.getMessage(), e);
+//		}
+//
+//		policy.managerId = lopMPD.mobjData.midManager.toString();
+//		return policy;
+		throw new BigBangException("Erro: Operação de edição directa não suportada.");
 	}
 
 	public void deletePolicy(String policyId)
@@ -844,5 +1051,22 @@ public class InsurancePolicyServiceImpl
 		}
 
 		return lbFound;
+	}
+
+	private InsurancePolicy.FieldType GetFieldTypeByID(UUID pidFieldType)
+	{
+		if ( Constants.FieldID_Boolean.equals(pidFieldType) )
+			return InsurancePolicy.FieldType.BOOLEAN;
+		if ( Constants.FieldID_Date.equals(pidFieldType) )
+			return InsurancePolicy.FieldType.DATE;
+		if ( Constants.FieldID_List.equals(pidFieldType) )
+			return InsurancePolicy.FieldType.LIST;
+		if ( Constants.FieldID_Number.equals(pidFieldType) )
+			return InsurancePolicy.FieldType.NUMERIC;
+		if ( Constants.FieldID_Reference.equals(pidFieldType) )
+			return InsurancePolicy.FieldType.REFERENCE;
+		if ( Constants.FieldID_Text.equals(pidFieldType) )
+			return InsurancePolicy.FieldType.TEXT;
+		return null;
 	}
 }
