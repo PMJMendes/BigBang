@@ -222,16 +222,7 @@ public class ClientServiceImpl
 			throw new BigBangException(e.getMessage(), e);
 		}
 
-		client.id = lopCC.mobjData.mid.toString();
-		client.clientNumber = Integer.toString(lopCC.mobjData.mlngNumber);
-		client.processId = lopCC.mobjData.midProcess.toString();
-		client.managerId = lopCC.mobjData.midManager.toString();
-		if ( (client.contacts != null) && (client.contacts.length > 0) )
-			ContactsServiceImpl.WalkContactTree(lopCC.mobjContactOps.marrCreate, client.contacts);
-		if ( (client.documents != null) && (client.documents.length > 0) )
-			DocumentServiceImpl.WalkDocTree(lopCC.mobjDocOps.marrCreate, client.documents);
-
-		return client;
+		return getClient(lopCC.mobjData.mid.toString());
 	}
 
 	public Client editClient(Client client)
@@ -299,8 +290,7 @@ public class ClientServiceImpl
 			throw new BigBangException(e.getMessage(), e);
 		}
 
-		client.managerId = lopMD.mobjData.midManager.toString();
-		return client;
+		return getClient(client.id);
 	}
 
 	public ManagerTransfer createManagerTransfer(ManagerTransfer transfer)
