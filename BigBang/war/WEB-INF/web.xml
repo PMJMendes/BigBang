@@ -44,6 +44,10 @@
 		<welcome-file>BigBang.html</welcome-file>
 	</welcome-file-list>
 
+    <session-config>
+      <session-timeout>60</session-timeout> 
+    </session-config>
+
 	<!-- Forcing SSL -->
 	<!--
 	<security-constraint>
