@@ -129,7 +129,7 @@ public class ClientServiceImpl
 		lobjResult.activityNotes = (String)lobjClient.getAt(17);
 		lobjResult.sizeId = (lobjClient.getAt(18) == null ? null : lobjClient.getAt(18).toString());
 		lobjResult.revenueId = (lobjClient.getAt(19) == null ? null : lobjClient.getAt(19).toString());
-		lobjResult.birthDate = (lobjClient.getAt(12) == null ? null : ((Timestamp)lobjClient.getAt(12)).toString());
+		lobjResult.birthDate = (lobjClient.getAt(12) == null ? null : ((Timestamp)lobjClient.getAt(12)).toString().substring(0, 10));
 		lobjResult.genderId = (lobjClient.getAt(13) == null ? null : lobjClient.getAt(13).toString());
 		lobjResult.maritalStatusId = (lobjClient.getAt(14) == null ? null : lobjClient.getAt(14).toString());
 		lobjResult.professionId = (lobjClient.getAt(15) == null ? null : lobjClient.getAt(15).toString());
