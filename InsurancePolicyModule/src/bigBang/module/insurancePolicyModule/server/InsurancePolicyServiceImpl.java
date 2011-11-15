@@ -880,6 +880,7 @@ public class InsurancePolicyServiceImpl
 			throws BigBangException
 		{
 			CreatePolicy lopCC;
+			int i;
 
 			if ( !mbValid )
 				throw new BigBangException("Ocorreu um erro interno. Os dados correntes não são válidos.");
@@ -893,6 +894,61 @@ public class InsurancePolicyServiceImpl
 				{
 					lopCC = new CreatePolicy(Client.GetInstance(Engine.getCurrentNameSpace(), midClient).GetProcessID());
 					lopCC.mobjData = new PolicyData();
+					lopCC.mobjData.Clone(mobjPolicy);
+
+					if ( marrCoverages.size() > 0 )
+					{
+						lopCC.mobjData.marrCoverages = new PolicyCoverageData[marrCoverages.size()];
+						for ( i = 0; i < marrCoverages.size(); i++ )
+						{
+							lopCC.mobjData.marrCoverages[i] = new PolicyCoverageData();
+							lopCC.mobjData.marrCoverages[i].Clone(marrCoverages.get(i));
+						}
+					}
+					else
+						lopCC.mobjData.marrCoverages = null;
+
+					if ( marrObjects.size() > 0 )
+					{
+						lopCC.mobjData.marrObjects = new PolicyObjectData[marrObjects.size()];
+						for ( i = 0; i < marrObjects.size(); i++ )
+						{
+							lopCC.mobjData.marrObjects[i] = new PolicyObjectData();
+							lopCC.mobjData.marrObjects[i].Clone(marrObjects.get(i));
+						}
+					}
+					else
+						lopCC.mobjData.marrObjects = null;
+
+					if ( marrExercises.size() > 0 )
+					{
+						lopCC.mobjData.marrExercises = new PolicyExerciseData[marrExercises.size()];
+						for ( i = 0; i < marrObjects.size(); i++ )
+						{
+							lopCC.mobjData.marrExercises[i] = new PolicyExerciseData();
+							lopCC.mobjData.marrExercises[i].Clone(marrExercises.get(i));
+						}
+					}
+					else
+						lopCC.mobjData.marrExercises = null;
+
+					if ( marrValues.size() > 0 )
+					{
+						lopCC.mobjData.marrValues = new PolicyValueData[marrValues.size()];
+						for ( i = 0; i < marrValues.size(); i++ )
+						{
+							lopCC.mobjData.marrValues[i] = new PolicyValueData();
+							lopCC.mobjData.marrValues[i].Clone(marrValues.get(i));
+						}
+					}
+					else
+						lopCC.mobjData.marrValues = null;
+
+					lopCC.mobjContactOps = null;
+					lopCC.mobjDocOps = null;
+
+					lopCC.Execute();
+					
 				}
 				catch (Throwable e)
 				{

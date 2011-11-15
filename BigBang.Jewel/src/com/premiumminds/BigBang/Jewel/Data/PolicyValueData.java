@@ -21,6 +21,18 @@ public class PolicyValueData
 	public int mlngObject;
 	public int mlngExercise;
 
+	public void Clone(PolicyValueData pobjSource)
+	{
+		mid = pobjSource.mid;
+		mstrValue = pobjSource.mstrValue;
+		midOwner = pobjSource.midOwner;
+		midField = pobjSource.midField;
+		midObject = pobjSource.midObject;
+		midExercise = pobjSource.midExercise;
+		mlngObject = pobjSource.mlngObject;
+		mlngExercise = pobjSource.mlngExercise;
+	}
+
 	public void FromObject(ObjectBase pobjSource)
 	{
 		mid = pobjSource.getKey();

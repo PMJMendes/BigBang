@@ -41,7 +41,21 @@ public class PolicyData
 
 	public void Clone(PolicyData pobjSource)
 	{
-		
+		mid = pobjSource.mid;
+		mstrNumber = pobjSource.mstrNumber;
+		midCompany = pobjSource.midCompany;
+		midSubLine = pobjSource.midSubLine;
+		mdtBeginDate = pobjSource.mdtBeginDate;
+		midDuration = pobjSource.midDuration;
+		midFractioning = pobjSource.midFractioning;
+		mlngMaturityDay = pobjSource.mlngMaturityDay;
+		mlngMaturityMonth = pobjSource.mlngMaturityMonth;
+		mdtEndDate = pobjSource.mdtEndDate;
+		mstrNotes = pobjSource.mstrNotes;
+		midMediator = pobjSource.midMediator;
+		mbCaseStudy = pobjSource.mbCaseStudy;
+		midManager = pobjSource.midManager;
+		midProcess = pobjSource.midProcess;
 	}
 
 	public void FromObject(ObjectBase pobjSource)

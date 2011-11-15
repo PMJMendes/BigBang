@@ -23,6 +23,19 @@ public class PolicyObjectData
 	public Timestamp mdtInclusion;
 	public Timestamp mdtExclusion;
 
+	public void Clone(PolicyObjectData pobjSource)
+	{
+		mid = pobjSource.mid;
+		mstrName = pobjSource.mstrName;
+		midOwner = pobjSource.midOwner;
+		midType = pobjSource.midType;
+		mstrAddress1 = pobjSource.mstrAddress1;
+		mstrAddress2 = pobjSource.mstrAddress2;
+		midZipCode = pobjSource.midZipCode;
+		mdtInclusion = pobjSource.mdtInclusion;
+		mdtExclusion = pobjSource.mdtExclusion;
+	}
+
 	public void FromObject(ObjectBase pobjSource)
 	{
 		mid = pobjSource.getKey();

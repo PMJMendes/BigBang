@@ -19,6 +19,15 @@ public class PolicyExerciseData
 	public Timestamp mdtStart;
 	public Timestamp mdtEnd;
 
+	public void Clone(PolicyExerciseData pobjSource)
+	{
+		mid = pobjSource.mid;
+		mstrLabel = pobjSource.mstrLabel;
+		midOwner = pobjSource.midOwner;
+		mdtStart = pobjSource.mdtStart;
+		mdtEnd = pobjSource.mdtEnd;
+	}
+
 	public void FromObject(ObjectBase pobjSource)
 	{
 		mid = pobjSource.getKey();

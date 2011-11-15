@@ -17,6 +17,14 @@ public class PolicyCoverageData
 	public UUID midCoverage;
 	public Boolean mbPresent;
 
+	public void Clone(PolicyCoverageData pobjSource)
+	{
+		mid = pobjSource.mid;
+		midOwner = pobjSource.midOwner;
+		midCoverage = pobjSource.midCoverage;
+		mbPresent = pobjSource.mbPresent;
+	}
+
 	public void FromObject(ObjectBase pobjSource)
 	{
 		mid = pobjSource.getKey();
