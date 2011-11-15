@@ -17,11 +17,7 @@ import Jewel.Petri.SysObjects.Operation;
 
 import com.premiumminds.BigBang.Jewel.BigBangJewelException;
 import com.premiumminds.BigBang.Jewel.Constants;
-import com.premiumminds.BigBang.Jewel.Data.PolicyCoverageData;
 import com.premiumminds.BigBang.Jewel.Data.PolicyData;
-import com.premiumminds.BigBang.Jewel.Data.PolicyExerciseData;
-import com.premiumminds.BigBang.Jewel.Data.PolicyObjectData;
-import com.premiumminds.BigBang.Jewel.Data.PolicyValueData;
 import com.premiumminds.BigBang.Jewel.Objects.Policy;
 import com.premiumminds.BigBang.Jewel.Operations.ContactOps;
 import com.premiumminds.BigBang.Jewel.Operations.DocOps;
