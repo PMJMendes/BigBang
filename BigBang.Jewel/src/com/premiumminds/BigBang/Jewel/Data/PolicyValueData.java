@@ -18,6 +18,8 @@ public class PolicyValueData
 	public UUID midField;
 	public UUID midObject;
 	public UUID midExercise;
+	public int mlngObject;
+	public int mlngExercise;
 
 	public void FromObject(ObjectBase pobjSource)
 	{

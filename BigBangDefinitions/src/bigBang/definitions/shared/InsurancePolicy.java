@@ -80,9 +80,13 @@ public class InsurancePolicy
 			public String value;
 		}
 
-		public int insuredObjectIndex; // Use -1 for invariants
-		public int exerciseIndex; // Use -1 for invariants
+		public String pageId;
 		public TableField[] data;
+
+		public TableSection()
+		{
+			pageId = null;
+		}
 	}
 
 	public static class ExtraField

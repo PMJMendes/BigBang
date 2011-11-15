@@ -13,12 +13,10 @@ public class InsuredObject
 	public String inclusionDate;
 	public String exclusionDate;
 
-	public String scratchPadId; // Temporary ID for an insured object in a policy scratch pad
-	public int objectIndex; // Index of the insured object in the policy scratch pad
+	public String tempObjectId; // Temporary ID for an insured object in a policy scratch pad
 
 	public InsuredObject()
 	{
-		scratchPadId = null;
-		objectIndex = -1;
+		tempObjectId = null;
 	}
 }

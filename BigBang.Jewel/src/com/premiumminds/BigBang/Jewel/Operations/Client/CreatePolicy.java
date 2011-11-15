@@ -19,6 +19,10 @@ import com.premiumminds.BigBang.Jewel.BigBangJewelException;
 import com.premiumminds.BigBang.Jewel.Constants;
 import com.premiumminds.BigBang.Jewel.Data.PolicyData;
 import com.premiumminds.BigBang.Jewel.Objects.Policy;
+import com.premiumminds.BigBang.Jewel.Objects.PolicyCoverage;
+import com.premiumminds.BigBang.Jewel.Objects.PolicyExercise;
+import com.premiumminds.BigBang.Jewel.Objects.PolicyObject;
+import com.premiumminds.BigBang.Jewel.Objects.PolicyValue;
 import com.premiumminds.BigBang.Jewel.Operations.ContactOps;
 import com.premiumminds.BigBang.Jewel.Operations.DocOps;
 
@@ -28,7 +32,6 @@ public class CreatePolicy
 	private static final long serialVersionUID = 1L;
 
 	public PolicyData mobjData;
-
 	public ContactOps mobjContactOps;
 	public DocOps mobjDocOps;
 
@@ -74,9 +77,14 @@ public class CreatePolicy
 	protected void Run(SQLServer pdb)
 		throws JewelPetriException
 	{
-		Policy lobjAux;
+		Policy lobjPolicy;
+		int i;
+		PolicyCoverage lobjCoverage;
+		PolicyObject lobjObject;
+		PolicyExercise lobjExercise;
+		PolicyValue lobjValue;
 		IScript lobjScript;
-		IProcess lobjProc; 
+		IProcess lobjProc;
 
 		try
 		{
@@ -87,20 +95,74 @@ public class CreatePolicy
 			if ( mobjData.midMediator == null )
 				mobjData.midMediator = (UUID)GetProcess().GetData().getAt(8);
 
-			lobjAux = Policy.GetInstance(Engine.getCurrentNameSpace(), (UUID)null);
-			mobjData.ToObject(lobjAux);
-			lobjAux.SaveToDb(pdb);
+			lobjPolicy = Policy.GetInstance(Engine.getCurrentNameSpace(), (UUID)null);
+			mobjData.ToObject(lobjPolicy);
+			lobjPolicy.SaveToDb(pdb);
+			mobjData.mid = lobjPolicy.getKey();
+
+			if ( mobjData.marrCoverages != null )
+			{
+				for ( i = 0; i < mobjData.marrCoverages.length; i++ )
+				{
+					mobjData.marrCoverages[i].midOwner = mobjData.mid;
+					lobjCoverage = PolicyCoverage.GetInstance(Engine.getCurrentNameSpace(), (UUID)null);
+					mobjData.marrCoverages[i].ToObject(lobjCoverage);
+					lobjCoverage.SaveToDb(pdb);
+					mobjData.marrCoverages[i].mid = lobjCoverage.getKey();
+				}
+			}
+
+			if ( mobjData.marrObjects != null )
+			{
+				for ( i = 0; i < mobjData.marrObjects.length; i++ )
+				{
+					if ( mobjData.marrObjects[i] == null )
+						continue;
+					mobjData.marrObjects[i].midOwner = mobjData.mid;
+					lobjObject = PolicyObject.GetInstance(Engine.getCurrentNameSpace(), (UUID)null);
+					mobjData.marrObjects[i].ToObject(lobjObject);
+					lobjObject.SaveToDb(pdb);
+					mobjData.marrObjects[i].mid = lobjObject.getKey();
+				}
+			}
+
+			if ( mobjData.marrExercises != null )
+			{
+				for ( i = 0; i < mobjData.marrExercises.length; i++ )
+				{
+					if ( mobjData.marrExercises[i] == null )
+						continue;
+					mobjData.marrExercises[i].midOwner = mobjData.mid;
+					lobjExercise = PolicyExercise.GetInstance(Engine.getCurrentNameSpace(), (UUID)null);
+					mobjData.marrExercises[i].ToObject(lobjExercise);
+					lobjExercise.SaveToDb(pdb);
+					mobjData.marrExercises[i].mid = lobjExercise.getKey();
+				}
+			}
+
+			if ( mobjData.marrValues != null )
+			{
+				for ( i = 0; i < mobjData.marrValues.length; i++ )
+				{
+					mobjData.marrValues[i].midOwner = mobjData.mid;
+					mobjData.marrValues[i].midObject = mobjData.marrObjects[mobjData.marrValues[i].mlngObject].mid;
+					mobjData.marrValues[i].midExercise = mobjData.marrExercises[mobjData.marrValues[i].mlngExercise].mid;
+					lobjValue = PolicyValue.GetInstance(Engine.getCurrentNameSpace(), (UUID)null);
+					mobjData.marrValues[i].ToObject(lobjValue);
+					lobjValue.SaveToDb(pdb);
+					mobjData.marrValues[i].mid = lobjValue.getKey();
+				}
+			}
 
 			if ( mobjContactOps != null )
-				mobjContactOps.RunSubOp(pdb, lobjAux.getKey());
+				mobjContactOps.RunSubOp(pdb, lobjPolicy.getKey());
 			if ( mobjDocOps != null )
-				mobjDocOps.RunSubOp(pdb, lobjAux.getKey());
+				mobjDocOps.RunSubOp(pdb, lobjPolicy.getKey());
 
 			lobjScript = PNScript.GetInstance(Engine.getCurrentNameSpace(), Constants.ProcID_Policy);
-			lobjProc = lobjScript.CreateInstance(Engine.getCurrentNameSpace(), lobjAux.getKey(), GetProcess().getKey(), pdb);
+			lobjProc = lobjScript.CreateInstance(Engine.getCurrentNameSpace(), lobjPolicy.getKey(), GetProcess().getKey(), pdb);
 			lobjProc.SetManagerID(mobjData.midManager, pdb);
 
-			mobjData.mid = lobjAux.getKey();
 			mobjData.midProcess = lobjProc.getKey();
 			mobjData.mobjPrevValues = null;
 		}

@@ -6,6 +6,7 @@ import bigBang.definitions.shared.InsurancePolicy;
 import bigBang.definitions.shared.InsuredObject;
 import bigBang.definitions.shared.ManagerTransfer;
 import bigBang.definitions.shared.Receipt;
+import bigBang.definitions.shared.TipifiedListItem;
 import bigBang.library.interfaces.SearchService;
 import bigBang.library.shared.BigBangException;
 import bigBang.library.shared.SessionExpiredException;
@@ -37,18 +38,24 @@ public interface InsurancePolicyService extends SearchService {
 	public InsurancePolicy openForEdit(InsurancePolicy policy) throws SessionExpiredException, BigBangException;
 
 	public InsurancePolicy updateHeader(InsurancePolicy policy) throws SessionExpiredException, BigBangException;
-	public InsurancePolicy.TableSection getPageForEdit(String scratchPadId, int objectIndex, int exerciseIndex)
+
+	public InsurancePolicy.TableSection getPageForEdit(String tempObjectId, String tempExerciseId)
 			throws SessionExpiredException, BigBangException;
-	public InsurancePolicy.TableSection savePage(String scratchPadId, InsurancePolicy.TableSection data)
+	public InsurancePolicy.TableSection savePage(InsurancePolicy.TableSection data)
 			throws SessionExpiredException, BigBangException;
-	public InsuredObject getObjectInPad(String scratchPadId, int objectIndex) throws SessionExpiredException, BigBangException;
+
+	public TipifiedListItem[] getPadItemsFilter(String listId, String scratchPadId) throws SessionExpiredException, BigBangException;
+
+	public InsuredObject getObjectInPad(String tempObjectId) throws SessionExpiredException, BigBangException;
 	public InsuredObject createObjectInPad(String scratchPadId) throws SessionExpiredException, BigBangException;
 	public InsuredObject createObjectFromClientInPad(String scratchPadId) throws SessionExpiredException, BigBangException;
 	public InsuredObject updateObjectInPad(InsuredObject data) throws SessionExpiredException, BigBangException;
-	public void deleteObjectInPad(InsuredObject data) throws SessionExpiredException, BigBangException;
+	public void deleteObjectInPad(String tempObjectId) throws SessionExpiredException, BigBangException;
+
+	public Exercise getExerciseInPad(String tempExerciseId) throws SessionExpiredException, BigBangException;
 	public Exercise createFirstExercise(String scratchPadId) throws SessionExpiredException, BigBangException;
-	public Exercise updateExerciseInPad(String scratchPadId, Exercise data) throws SessionExpiredException, BigBangException;
-	public void deleteExerciseInPad(String scratchPadId, String tempExerciseId) throws SessionExpiredException, BigBangException;
+	public Exercise updateExerciseInPad(Exercise data) throws SessionExpiredException, BigBangException;
+	public void deleteExerciseInPad(String tempExerciseId) throws SessionExpiredException, BigBangException;
 
 	public InsurancePolicy commitPolicy(String scratchPadId) throws SessionExpiredException, BigBangException;
 	public InsurancePolicy discardPolicy(String scratchPadId) throws SessionExpiredException, BigBangException;
