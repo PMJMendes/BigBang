@@ -175,9 +175,12 @@ public class InsurancePolicyServiceImpl
 					lobjCoverage.mid = null;
 					lobjCoverage.midOwner = null;
 					lobjCoverage.midCoverage = larrAuxCoverages[i].getKey();
-					lobjCoverage.mbPresent = null;
 					lobjCoverage.mstrLabel = larrAuxCoverages[i].getLabel();
 					lobjCoverage.mbMandatory = (Boolean)larrAuxCoverages[i].getAt(2);
+					if ( lobjCoverage.mbMandatory )
+						lobjCoverage.mbPresent = true;
+					else
+						lobjCoverage.mbPresent = null;
 					lobjCoverage.mbIsHeader = ("(Cabeçalho)").equals(lobjCoverage.mstrLabel);
 					larrTaxes = larrAuxCoverages[i].GetCurrentTaxes();
 					larrFields = new ArrayList<PadField>();

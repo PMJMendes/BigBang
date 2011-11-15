@@ -32,6 +32,11 @@ public class PolicyData
 	public UUID midManager;
 	public UUID midProcess;
 
+	public PolicyCoverageData[] mobjCoverages;
+	public PolicyObjectData[] mobjObjects;
+	public PolicyExerciseData[] mobjExercises;
+	public PolicyValueData[] mobjValues;
+
 	public PolicyData mobjPrevValues;
 
 	public void FromObject(ObjectBase pobjSource)
