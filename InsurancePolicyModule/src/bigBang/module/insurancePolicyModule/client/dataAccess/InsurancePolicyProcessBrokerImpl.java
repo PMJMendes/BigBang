@@ -1,6 +1,10 @@
 package bigBang.module.insurancePolicyModule.client.dataAccess;
 
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
+
+import com.google.gwt.user.client.rpc.AsyncCallback;
 
 import bigBang.definitions.client.dataAccess.DataBroker;
 import bigBang.definitions.client.dataAccess.DataBrokerClient;
@@ -11,8 +15,12 @@ import bigBang.definitions.client.dataAccess.SearchDataBroker;
 import bigBang.definitions.client.response.ResponseError;
 import bigBang.definitions.client.response.ResponseHandler;
 import bigBang.definitions.shared.BigBangConstants;
+import bigBang.definitions.shared.Exercise;
 import bigBang.definitions.shared.InsurancePolicy;
+import bigBang.definitions.shared.InsurancePolicy.FieldType;
+import bigBang.definitions.shared.InsurancePolicy.TableSection;
 import bigBang.definitions.shared.InsurancePolicyStub;
+import bigBang.definitions.shared.InsuredObject;
 import bigBang.definitions.shared.Receipt;
 import bigBang.definitions.shared.SearchParameter;
 import bigBang.definitions.shared.SortOrder;
@@ -25,21 +33,23 @@ import bigBang.module.insurancePolicyModule.shared.InsurancePolicySearchParamete
 import bigBang.module.insurancePolicyModule.shared.InsurancePolicySortParameter;
 
 public class InsurancePolicyProcessBrokerImpl extends DataBroker<InsurancePolicy> implements InsurancePolicyBroker {
-	
+
 	protected InsurancePolicyServiceAsync service;
 	protected SearchDataBroker<InsurancePolicyStub> searchBroker;
+	protected Map<String, String> policyScratchPadIds;
 	public boolean requiresRefresh;
-	
+
 	public InsurancePolicyProcessBrokerImpl(){
 		this(InsurancePolicyService.Util.getInstance());
 	}
-	
+
 	public InsurancePolicyProcessBrokerImpl(InsurancePolicyServiceAsync service) {
 		this.service = service;
 		this.dataElementId = BigBangConstants.EntityIds.INSURANCE_POLICY;
+		this.policyScratchPadIds = new HashMap<String, String>();
 		this.searchBroker = new InsurancePolicySearchDataBroker(this.service);
 	}
-	
+
 	@Override
 	public void requireDataRefresh() {
 		this.requiresRefresh = true;
@@ -105,6 +115,35 @@ public class InsurancePolicyProcessBrokerImpl extends DataBroker<InsurancePolicy
 
 				@Override
 				public void onSuccess(InsurancePolicy result) {
+					InsurancePolicy.HeaderField field = new InsurancePolicy.HeaderField();
+					field.fieldId = "00";
+					field.fieldName = "um campo";
+					field.type = FieldType.BOOLEAN;
+					field.value = BigBangConstants.EntityIds.USER;
+					
+					InsurancePolicy.HeaderField field2 = new InsurancePolicy.HeaderField();
+					field2.fieldId = "00";
+					field2.fieldName = "um campo";
+					field2.type = FieldType.DATE;
+					field2.value = BigBangConstants.EntityIds.USER;
+
+					result.headerFields = new InsurancePolicy.HeaderField[]{
+							field,
+							field2
+					};
+
+					InsurancePolicy.ExtraField extrafield = new InsurancePolicy.ExtraField();
+					extrafield.fieldId = "00";
+					extrafield.fieldName = "um campo extra";
+					extrafield.type = FieldType.TEXT;
+					extrafield.value = BigBangConstants.EntityIds.USER;
+					extrafield.unitsLabel = "Km";
+
+					result.extraData = new InsurancePolicy.ExtraField[]{
+							extrafield,
+							extrafield
+					};
+
 					cache.add(policyId, result);
 					incrementDataVersion();
 					for(DataBrokerClient<InsurancePolicy> bc : getClients()){
@@ -158,16 +197,16 @@ public class InsurancePolicyProcessBrokerImpl extends DataBroker<InsurancePolicy
 			final ResponseHandler<Collection<InsurancePolicyStub>> policies) {
 		InsurancePolicySearchParameter parameter = new InsurancePolicySearchParameter();
 		parameter.ownerId = clientid;
-		
+
 		SearchParameter[] parameters = new SearchParameter[]{
 				parameter
 		};
-		
+
 		SortParameter sort = new InsurancePolicySortParameter(InsurancePolicySortParameter.SortableField.NUMBER, SortOrder.DESC);		
 		SortParameter[] sorts = new SortParameter[]{
 				sort
 		};
-		
+
 		this.searchBroker.search(parameters, sorts, -1, new ResponseHandler<Search<InsurancePolicyStub>>() {
 
 			@Override
@@ -180,7 +219,7 @@ public class InsurancePolicyProcessBrokerImpl extends DataBroker<InsurancePolicy
 			}
 		});
 	}
-	
+
 	@Override
 	public void createReceipt(String policyId, Receipt receipt,
 			final ResponseHandler<Receipt> handler) {
@@ -193,10 +232,142 @@ public class InsurancePolicyProcessBrokerImpl extends DataBroker<InsurancePolicy
 			}
 		});
 	}
-	
+
 	@Override
 	public SearchDataBroker<InsurancePolicyStub> getSearchBroker() {
 		return this.searchBroker;
 	}
+
+	@Override
+	public void openPolicyResource(InsurancePolicy policy,
+			final ResponseHandler<InsurancePolicy> handler) {
+		//If it is a new policy
+		if(policy.id == null){
+			this.service.initializeNewPolicy(policy, new AsyncCallback<InsurancePolicy>() {
+				
+				@Override
+				public void onSuccess(InsurancePolicy result) {
+					String tempId = addToScratchPad(result);
+					result.id = tempId;
+					handler.onResponse(result);
+				}
+				
+				@Override
+				public void onFailure(Throwable caught) {
+					//TODO
+				}
+			});
+		}else{ //if it is an existing policy
+			service.openForEdit(policy, new AsyncCallback<InsurancePolicy>() {
+				
+				@Override
+				public void onSuccess(InsurancePolicy result) {
+					addToScratchPad(result);
+					handler.onResponse(result);
+				}
+				
+				@Override
+				public void onFailure(Throwable caught) {
+					//TODO
+				}
+			});
+		}
+	}
+
+	@Override
+	public void closePolicyResource(String policyId, final ResponseHandler<Void> handler) {
+		if(inScratchPad(policyId)){
+			service.discardPolicy(getScratchPadId(policyId), new AsyncCallback<InsurancePolicy>() {
+				
+				@Override
+				public void onSuccess(InsurancePolicy result) {
+					handler.onResponse(null);
+				}
+				
+				@Override
+				public void onFailure(Throwable caught) {
+					// TODO
+				}
+			});
+		}
+	}
+
+	@Override
+	public void openCoverageDetailsPage(String policyId,
+			String insuredObjectId, String exerciseId,
+			ResponseHandler<TableSection> handler) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void saveCoverageDetailsPage(String policyId,
+			String insuredObjectId, String exerciseId,
+			ResponseHandler<TableSection> handler) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void createInsuredObject(String policyId, InsuredObject object,
+			ResponseHandler<InsuredObject> handler) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void updateInsuredObject(String policyId, InsuredObject object,
+			ResponseHandler<InsuredObject> handler) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void removeInsuredObject(String policyId, InsuredObject object) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void createExercise(String policyId, Exercise exercise,
+			ResponseHandler<Exercise> handler) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void updateExercise(String policyId, Exercise exercise,
+			ResponseHandler<Exercise> handler) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void removeExercise(String policyId, String exerciseId) {
+		// TODO Auto-generated method stub
+		
+	}
 	
+	protected boolean inScratchPad(String policyId) {
+		return this.policyScratchPadIds.containsKey(policyId);
+	}
+	
+	protected String getScratchPadId(String policyId){
+		if(inScratchPad(policyId)){
+			return policyScratchPadIds.get(policyId);
+		}
+		throw new RuntimeException("The policy is not currently in the scratchpad");
+	}
+	
+	protected void removeFromScratchPad(String policyId) {
+		this.policyScratchPadIds.remove(policyId);
+	}
+	
+	//Adds a policy to the scratchpad and returns a temporary id
+	protected String addToScratchPad(InsurancePolicy policy) {
+		String tempId = policy.id == null ? policy.scratchPadId : policy.id;
+		policyScratchPadIds.put(tempId, policy.scratchPadId);
+		return tempId;
+	}
+
 }

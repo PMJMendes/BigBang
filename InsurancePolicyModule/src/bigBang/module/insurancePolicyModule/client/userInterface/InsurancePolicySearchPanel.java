@@ -5,10 +5,12 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.TreeMap;
 
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.FontStyle;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
 
 import bigBang.definitions.client.dataAccess.InsurancePolicyBroker;
@@ -24,6 +26,7 @@ import bigBang.library.client.dataAccess.DataBrokerManager;
 import bigBang.library.client.userInterface.FiltersPanel;
 import bigBang.library.client.userInterface.ListEntry;
 import bigBang.library.client.userInterface.view.SearchPanel;
+import bigBang.module.insurancePolicyModule.client.resources.Resources;
 import bigBang.module.insurancePolicyModule.shared.InsurancePolicySearchParameter;
 import bigBang.module.insurancePolicyModule.shared.InsurancePolicySortParameter;
 import bigBang.module.insurancePolicyModule.shared.InsurancePolicySortParameter.SortableField;
@@ -50,6 +53,24 @@ public class InsurancePolicySearchPanel extends SearchPanel<InsurancePolicyStub>
 				setText(value.clientNumber + " - " + value.clientName);
 				setTitle(value.categoryName+" / "+value.lineName+" / "+value.subLineName);
 				this.textLabel.getElement().getStyle().setFontStyle(FontStyle.OBLIQUE);
+
+				Resources resources = GWT.create(Resources.class);
+				Image statusIcon = null;
+				switch(value.statusIcon){
+				case OBSOLETE:
+					statusIcon = new Image(resources.inactivePolicyIcon());
+					break;
+				case PROVISIONAL:
+					statusIcon = new Image(resources.provisionalPolicyIcon());
+					break;
+				case VALID:
+					statusIcon = new Image(resources.activePolicyIcon());
+					break;
+				default:
+					return;
+				}
+				statusIcon.setTitle(value.statusText);
+				setRightWidget(statusIcon);
 				return;
 			}
 			throw new RuntimeException("The given policy was invalid (InsurancePolicySearchPanel.Entry)");
@@ -131,7 +152,7 @@ public class InsurancePolicySearchPanel extends SearchPanel<InsurancePolicyStub>
 		parameter.caseStudy = caseStudy ? true : null;
 
 		SearchParameter[] parameters = new SearchParameter[]{
-			parameter
+				parameter
 		};
 
 		InsurancePolicySortParameter sort = new InsurancePolicySortParameter((SortableField) filtersPanel.getSelectedSortableField(), filtersPanel.getSortingOrder());

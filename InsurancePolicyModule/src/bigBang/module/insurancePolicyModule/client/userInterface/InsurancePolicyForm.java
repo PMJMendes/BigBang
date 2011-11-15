@@ -1,10 +1,8 @@
 package bigBang.module.insurancePolicyModule.client.userInterface;
 
 import java.util.Collection;
-
-import com.google.gwt.event.logical.shared.ValueChangeEvent;
-import com.google.gwt.event.logical.shared.ValueChangeHandler;
-import com.google.gwt.user.client.ui.Label;
+import java.util.HashMap;
+import java.util.Map;
 
 import bigBang.definitions.client.dataAccess.ClientProcessBroker;
 import bigBang.definitions.client.response.ResponseError;
@@ -12,17 +10,115 @@ import bigBang.definitions.client.response.ResponseHandler;
 import bigBang.definitions.shared.BigBangConstants;
 import bigBang.definitions.shared.Client;
 import bigBang.definitions.shared.InsurancePolicy;
+import bigBang.definitions.shared.InsurancePolicy.ExtraField;
+import bigBang.definitions.shared.InsurancePolicy.HeaderField;
+import bigBang.library.client.FieldValidator;
+import bigBang.library.client.FormField;
 import bigBang.library.client.dataAccess.DataBrokerManager;
 import bigBang.library.client.userInterface.CheckBoxFormField;
 import bigBang.library.client.userInterface.DatePickerFormField;
 import bigBang.library.client.userInterface.ExpandableListBoxFormField;
 import bigBang.library.client.userInterface.ListBoxFormField;
+import bigBang.library.client.userInterface.RadioButtonFormField;
 import bigBang.library.client.userInterface.TextAreaFormField;
 import bigBang.library.client.userInterface.TextBoxFormField;
 import bigBang.library.client.userInterface.view.FormView;
+import bigBang.library.client.userInterface.view.FormViewSection;
 import bigBang.module.insurancePolicyModule.shared.ModuleConstants;
 
+import com.google.gwt.event.logical.shared.ValueChangeEvent;
+import com.google.gwt.event.logical.shared.ValueChangeHandler;
+import com.google.gwt.i18n.client.DateTimeFormat;
+
 public class InsurancePolicyForm extends FormView<InsurancePolicy> {
+
+	protected static class HeaderFormField extends FormField<String> {
+
+		public String id;
+		protected FormField<?> field;
+		protected HeaderField headerField;
+		protected String coverageId;
+
+		public HeaderFormField(HeaderField field){
+			super();
+			this.id = field.fieldId;
+			this.headerField = field;
+
+			if(field instanceof ExtraField){
+				coverageId = ((ExtraField)field).coverageId;
+			}
+
+			switch(field.type) {
+			case LIST:
+				ExpandableListBoxFormField listField = new ExpandableListBoxFormField(field.fieldName);
+				listField.setListId(BigBangConstants.TypifiedListIds.FIELD_VALUES+"/"+field.fieldId);
+				this.field = listField;
+				break;
+			case NUMERIC:
+				this.field = new TextBoxFormField(field.fieldName, new FieldValidator<String>() {
+
+					@Override
+					public boolean isValid(String value) {
+						try{
+							Integer.parseInt(value);
+						}catch(Exception e){
+							return false;
+						}
+						return true;
+					}
+
+					@Override
+					public boolean isMandatory() {
+						return false;
+					}
+
+					@Override
+					public String getErrorMessage() {
+						return "Apenas valores numéricos";
+					}
+				});
+				break;
+			case TEXT:
+				this.field = new TextBoxFormField(field.fieldName);
+				break;
+			case BOOLEAN:
+				RadioButtonFormField radioField = new RadioButtonFormField(field.fieldName);
+				radioField.addOption("1", "Sim");
+				radioField.addOption("0", "Não");
+				this.field = radioField;
+				break;
+			case DATE:
+				DatePickerFormField dateField = new DatePickerFormField(field.fieldName);
+				this.field = dateField;
+				break;
+			default:
+				break;
+			}
+			this.field.setUnitsLabel(field.unitsLabel);
+
+			initWidget(this.field);
+		}
+
+		@Override
+		public void clear() {
+			this.field.clear();
+		}
+
+		@Override
+		public void setReadOnly(boolean readonly) {
+			this.field.setReadOnly(readonly);
+		}
+
+		@Override
+		public boolean isReadOnly() {
+			return this.field.isReadOnly();
+		}
+
+		@Override
+		public void setLabelWidth(String width) {
+			this.field.setLabelWidth(width);
+		}
+	}
 
 	protected ExpandableListBoxFormField manager;
 	protected TextBoxFormField number;
@@ -32,17 +128,30 @@ public class InsurancePolicyForm extends FormView<InsurancePolicy> {
 	protected ExpandableListBoxFormField line;
 	protected ExpandableListBoxFormField subLine;
 	protected ExpandableListBoxFormField mediator;
+	protected TextBoxFormField policyStatus;
 	protected ListBoxFormField maturityDay;
 	protected ListBoxFormField maturityMonth;
+	protected DatePickerFormField startDate;
 	protected DatePickerFormField endDate;
 	protected ExpandableListBoxFormField duration;
 	protected ExpandableListBoxFormField fractioning;
-	//TODO dynamic fields
+	protected PolicyFormTable table;
+
+	protected Map<String, HeaderFormField> headerFields;
+	protected FormViewSection headerFieldsSection;
+
+	protected Map<String, HeaderFormField> extraFields;
+	protected FormViewSection extraFieldsSection;
+
 	protected CheckBoxFormField caseStudy;
 	protected TextAreaFormField notes;
 
 	public InsurancePolicyForm(){
 		super();
+
+		headerFields = new HashMap<String, HeaderFormField>();
+		extraFields = new HashMap<String, HeaderFormField>();
+
 		addSection("Apólice");
 		number  = new TextBoxFormField("Número");
 		client = new TextBoxFormField("Cliente");
@@ -56,10 +165,16 @@ public class InsurancePolicyForm extends FormView<InsurancePolicy> {
 		maturityDay = new ListBoxFormField("Dia de Vencimento");
 		duration = new ExpandableListBoxFormField(ModuleConstants.TypifiedListIds.DURATION, "Duração");
 		maturityMonth = new ListBoxFormField("Mês de Vencimento");
+		startDate = new DatePickerFormField("Data de Início");
 		endDate = new DatePickerFormField("Data de Fim");
 		fractioning = new ExpandableListBoxFormField(ModuleConstants.TypifiedListIds.FRACTIONING, "Fraccionamento");
 		caseStudy = new CheckBoxFormField("Case Study");
 		notes = new TextAreaFormField("Observações");
+		policyStatus = new TextBoxFormField("Estado");
+		policyStatus.setFieldWidth("100%");
+		policyStatus.setEditable(false);
+		table = new PolicyFormTable();
+		table.setSize("100%", "100%");
 
 		maturityMonth.addItem("Janeiro", "1");
 		maturityMonth.addItem("Fevereiro", "2");
@@ -80,20 +195,41 @@ public class InsurancePolicyForm extends FormView<InsurancePolicy> {
 
 		addFormField(number);
 		addFormField(client);
-		addFormField(manager);
-		addFormField(insuranceAgency);
-		addFormField(mediator);
-		addFormField(category);
-		addFormField(line);
-		addFormField(subLine);
-		addFormField(this.duration);
-		addFormField(maturityDay);
-		addFormField(maturityMonth);
-		addFormField(endDate);
-		addFormField(fractioning);
-		addFormField(caseStudy);
+		
+		FormField<?>[] group1 = new FormField<?>[]{
+				policyStatus,
+				manager,
+				mediator,
+				insuranceAgency,
+				fractioning
+		};
+		addFormFieldGroup(group1, true);
 
-		addWidget(new Label("Acrescentar campos dinamicos"));
+		FormField<?>[] group2 = new FormField<?>[]{
+				duration,
+				startDate,
+				endDate,
+				maturityDay,
+				maturityMonth
+		};
+		addFormFieldGroup(group2, true);
+		
+		FormField<?>[] group3 = new FormField<?>[]{
+				caseStudy,
+				category,
+				line,
+				subLine
+		};
+		addFormFieldGroup(group3, true);
+
+		this.headerFieldsSection = new FormViewSection("Informação Específica da Modalidade");
+		addSection(headerFieldsSection);
+
+		addSection("Coberturas");
+		addWidget(this.table);
+		
+		this.extraFieldsSection = new FormViewSection("Informação Extra");
+		addSection(this.extraFieldsSection);
 
 		addFormField(notes);
 
@@ -143,15 +279,67 @@ public class InsurancePolicyForm extends FormView<InsurancePolicy> {
 		result.mediatorId = mediator.getValue();
 		result.maturityDay = Integer.parseInt(maturityDay.getValue());
 		result.maturityMonth = Integer.parseInt(maturityMonth.getValue());
-		result.startDate = "2011-11-01 00:00:00"; //TODO 
-		//result. TODO END DATE
+		result.startDate = startDate.getValue() == null ? null : DateTimeFormat.getFormat("yyyy-MM-dd").format(startDate.getValue());
+		result.startDate = endDate.getValue() == null ? null : DateTimeFormat.getFormat("yyyy-MM-dd").format(endDate.getValue());
 		result.durationId = duration.getValue();
 		result.fractioningId = fractioning.getValue();
 		result.caseStudy = caseStudy.getValue();
 		result.notes = notes.getValue();
 
+		result.headerFields = getHeaderFieldsInfo();
+		result.extraData = getExtraFieldsInfo();
+
 		return result;
 	}
+
+	protected void setHeaderFields(HeaderField[] fields){
+		this.headerFieldsSection.clear();
+		this.headerFields.clear();
+
+		for(int i = 0; fields != null && i < fields.length; i++) {
+			HeaderFormField field = new HeaderFormField(fields[i]);
+			this.headerFieldsSection.addFormField(field);
+			this.headerFields.put(fields[i].fieldId, field);
+		}
+	}
+
+	protected HeaderField[] getHeaderFieldsInfo(){
+		HeaderField[] fields = new HeaderField[this.headerFields.size()];
+		int i = 0;
+		for(HeaderFormField f : this.headerFields.values()) {
+			HeaderField headerField = f.headerField;
+			headerField.value = f.getValue();
+			fields[i] = headerField;
+			i++;
+		}
+		return null;
+	}
+
+	protected void clearHeaderFieldsInfo(){
+		for(HeaderFormField f : this.headerFields.values()) {
+			f.clear();
+		}
+	}
+
+	protected void setExtraFields(ExtraField[] fields){
+		this.extraFieldsSection.clear();
+		this.extraFields.clear();
+
+		for(int i = 0; fields != null && i < fields.length; i++) {
+			HeaderFormField field = new HeaderFormField(fields[i]);
+			this.extraFieldsSection.addFormField(field);
+			this.extraFields.put(fields[i].fieldId, field);
+		}
+	}
+
+	protected ExtraField[] getExtraFieldsInfo(){
+		return null; //TODO
+	}
+	
+	protected void clearExtraFields(){
+		//TODO
+	}
+	
 
 	@Override
 	public void setInfo(InsurancePolicy info) {
@@ -188,11 +376,18 @@ public class InsurancePolicyForm extends FormView<InsurancePolicy> {
 				});
 			}
 
+			setHeaderFields(info.headerFields);
+			setExtraFields(info.extraData);
 
-
-			//			protected DatePickerFormField endDate;
-			//			//TODO dynamic fields
-
+			table.setColumnDefinitions(info.columns);
+			//table.setData(info.);//TODO
+			
+			if(info.startDate != null)
+				startDate.setValue(DateTimeFormat.getFormat("yyyy-MM-dd 00:00:00.0").parse(info.startDate));
+			if(info.expirationDate != null)
+				endDate.setValue(DateTimeFormat.getFormat("yyyy-MM-dd 00:00:00.0").parse(info.expirationDate));
+			
+			this.policyStatus.setValue(info.statusText);
 			this.caseStudy.setValue(info.caseStudy);
 			this.notes.setValue(info.notes);
 		}
