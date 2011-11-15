@@ -37,8 +37,10 @@ public class InsurancePolicy
 	{
 		private static final long serialVersionUID = 1L;
 
-		public static class Variability
+		public static class Variability implements Serializable
 		{
+			private static final long serialVersionUID = 1L;
+			
 			public int columnIndex;
 			public boolean variesByObject;
 			public boolean variesByExercise;

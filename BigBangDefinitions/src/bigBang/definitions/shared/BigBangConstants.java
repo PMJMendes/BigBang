@@ -33,6 +33,7 @@ public class BigBangConstants {
 		public static final String DOCUMENT_TYPE = "B4DBEE18-FA81-471D-A9F5-9ECC012A028D";
 		public static final String PROCESS_TYPE = "905B49A4-B4A9-4330-825C-9E1600DBE7EA";
 		public static final String OPERATION_TYPE = "30FBD723-9ACD-43F9-B931-9E1600DC051A";
+		public static final String FIELD_VALUES = "D50A75B9-5F44-4BF2-9060-9F960121503A";
 	}
 
 	public static class OperationIds {
