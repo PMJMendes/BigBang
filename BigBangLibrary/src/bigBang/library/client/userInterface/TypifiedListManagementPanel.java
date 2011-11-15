@@ -84,6 +84,7 @@ public class TypifiedListManagementPanel extends FilterableList<TipifiedListItem
 		headerWrapper.setSize("100%", "100%");
 
 		ListHeader header = new ListHeader();
+		headerWrapper.add(header);
 		header.setText(listName);
 		header.setRightWidget(editButton);
 		editButton.addClickHandler(new ClickHandler() {
@@ -93,8 +94,6 @@ public class TypifiedListManagementPanel extends FilterableList<TipifiedListItem
 				setEditModeEnabled(!isEditModeEnabled());
 			}
 		});
-
-		headerWrapper.add(header);
 
 		toolBar = new HorizontalPanel();
 		toolBar.getElement().getStyle().setProperty("borderTop", "1px solid gray");

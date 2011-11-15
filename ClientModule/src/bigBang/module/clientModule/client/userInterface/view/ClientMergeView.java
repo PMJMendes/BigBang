@@ -38,7 +38,24 @@ public abstract class ClientMergeView extends View {
 	public ClientSearchPanel searchPanel;
 
 	public ClientMergeView(){
+		VerticalPanel mainWrapper = new VerticalPanel();
+		initWidget(mainWrapper);
+		mainWrapper.setSize("100%", "100%");
+
+		ListHeader header = new ListHeader("Fusão de Clientes");
+		mainWrapper.add(header);
+		Button backButton = new Button("Voltar");
+		backButton.addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent event) {
+				onBackButtonPressed();
+			}
+		});
+		header.setLeftWidget(backButton);
+		
 		SplitLayoutPanel wrapper = new SplitLayoutPanel();
+		mainWrapper.add(wrapper);
+		mainWrapper.setCellHeight(wrapper, "100%");
 		wrapper.setSize("100%", "100%");
 
 		searchPanel = new ClientSearchPanel(){
@@ -81,15 +98,9 @@ public abstract class ClientMergeView extends View {
 		VerticalPanel originalFormWrapper = new VerticalPanel();
 		originalFormWrapper.setSize("100%", "100%");
 		ListHeader originalHeader = new ListHeader();
+		originalHeader.setHeight("30px");
 		originalHeader.setText("Cliente a Fundir");
-		Button backButton = new Button("Voltar");
-		backButton.addClickHandler(new ClickHandler() {
-			@Override
-			public void onClick(ClickEvent event) {
-				onBackButtonPressed();
-			}
-		});
-		originalHeader.setLeftWidget(backButton);
+		
 		formReceptor.lock(true);
 		originalFormWrapper.add(originalHeader);
 		originalFormWrapper.add(formOriginal);
@@ -99,6 +110,7 @@ public abstract class ClientMergeView extends View {
 		searchWrapper.setSize("100%", "100%");
 		ListHeader searchHeader = new ListHeader();
 		searchHeader.setText("Seleccionar cliente Receptor");
+		searchHeader.setHeight("30px");
 		searchWrapper.add(searchHeader);
 		searchWrapper.add(searchPanel);
 		searchWrapper.setCellHeight(searchPanel, "100%");
@@ -107,6 +119,7 @@ public abstract class ClientMergeView extends View {
 		receptorFormWrapper.setSize("100%", "100%");
 		ListHeader receptorHeader = new ListHeader();
 		receptorHeader.setText("Cliente Receptor");
+		receptorHeader.setHeight("30px");
 		BigBangOperationsToolBar toolbar = new BigBangOperationsToolBar() {
 
 			@Override
@@ -140,8 +153,6 @@ public abstract class ClientMergeView extends View {
 
 		formOriginal.setReadOnly(true);
 		formReceptor.setReadOnly(true);
-		
-		initWidget(wrapper);
 	}
 
 	public HasEditableValue<Client> getOriginalForm(){

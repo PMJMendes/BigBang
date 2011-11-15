@@ -11,7 +11,7 @@ public class ClientFormValidator implements FormValidator {
 		
 		public boolean isValid(String value) {
 			String name = (String) value;
-			if(!(name.length() > 0 && name.length() < 100)){
+			if(!(name != null && name.length() > 0 && name.length() < 100)){
 				errorMessage = "O nome do cliente não é válido";
 				return false;
 			}
@@ -25,6 +25,100 @@ public class ClientFormValidator implements FormValidator {
 		public boolean isMandatory() {
 			return true;
 		}
+	}
+	
+	public static final class TaxNumberValidator implements FieldValidator<String> {
+
+		@Override
+		public boolean isValid(String value) {
+			return true;
+		}
+
+		@Override
+		public String getErrorMessage() {
+			return null;
+		}
+
+		@Override
+		public boolean isMandatory() {
+			return false;
+		}	
+	}
+	
+	public static final class ClientGroupValidator implements FieldValidator<String> {
+
+		@Override
+		public boolean isValid(String value) {
+			return true;
+		}
+
+		@Override
+		public String getErrorMessage() {
+			return null;
+		}
+
+		@Override
+		public boolean isMandatory() {
+			return false;
+		}
+		
+	}
+	
+	public static final class NIBValidator implements FieldValidator<String> {
+
+		@Override
+		public boolean isValid(String value) {
+			return true;
+		}
+
+		@Override
+		public String getErrorMessage() {
+			return null;
+		}
+
+		@Override
+		public boolean isMandatory() {
+			return false;
+		}
+		
+	}
+	
+	public static final class MediatorValidator implements FieldValidator<String> {
+
+		@Override
+		public boolean isValid(String value) {
+			return value != null && !value.isEmpty();
+		}
+
+		@Override
+		public String getErrorMessage() {
+			return MANDATORY_FIELD_MESSAGE;
+		}
+
+		@Override
+		public boolean isMandatory() {
+			return true;
+		}
+
+	}
+	
+	public static final class ProfileValidator implements FieldValidator<String> {
+
+		@Override
+		public boolean isValid(String value) {
+			return value != null && !value.isEmpty();
+		}
+
+		@Override
+		public String getErrorMessage() {
+			return MANDATORY_FIELD_MESSAGE;
+		}
+
+		@Override
+		public boolean isMandatory() {
+			return false;
+		}
+		
 	}
 	
 }

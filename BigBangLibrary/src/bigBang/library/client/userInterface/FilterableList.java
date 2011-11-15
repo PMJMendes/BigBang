@@ -55,18 +55,6 @@ public class FilterableList<T> extends SortableList<T> {
 		headerWrapper.setWidth("100%");
 		headerWrapper.add(newHeaderContainer);
 
-		textBoxFilter = new TextBox();
-		textBoxFilter.setWidth("100%");
-
-		textBoxFilter.addKeyUpHandler(new KeyUpHandler() {
-
-			@Override
-			public void onKeyUp(KeyUpEvent event) {
-				if(FilterableList.this.liveSearch)
-					onFilterTextChanged(textBoxFilter.getValue());
-			}
-		});
-
 		DisclosurePanel filterContainer = new DisclosurePanel();
 		filterContainer.getElement().getStyle().setBackgroundColor("#DDD");
 		filterContainer.setAnimationEnabled(true);
@@ -74,13 +62,14 @@ public class FilterableList<T> extends SortableList<T> {
 		filterContainer.getElement().getStyle().setProperty("borderTop", "1px solid gray");
 		
 		HorizontalPanel filterHeaderWrapper = new HorizontalPanel();
+		filterContainer.setHeader(filterHeaderWrapper);
 		filterHeaderWrapper.setSize("100%", "100%");
 		final Image filterHeaderImage = new Image(resources.arrowDown());
 		filterHeaderImage.getElement().getStyle().setMarginLeft(5, Unit.PX);
 		filterHeaderWrapper.add(filterHeaderImage);
 		filterHeaderWrapper.setCellWidth(filterHeaderImage, "20px");
 		filterHeaderWrapper.add(new Label("Ordenação e Filtros"));
-		filterContainer.setHeader(filterHeaderWrapper);
+		
 		
 		filterContainer.addCloseHandler(new CloseHandler<DisclosurePanel>() {
 
@@ -102,7 +91,17 @@ public class FilterableList<T> extends SortableList<T> {
 		this.searchFieldContainer = new HorizontalPanel();
 		searchFieldContainer.setSize("100%", "100%");
 		searchFieldContainer.setSpacing(5);
+		textBoxFilter = new TextBox();
 		searchFieldContainer.add(textBoxFilter);
+		textBoxFilter.setWidth("100%");
+		textBoxFilter.addKeyUpHandler(new KeyUpHandler() {
+
+			@Override
+			public void onKeyUp(KeyUpEvent event) {
+				if(FilterableList.this.liveSearch)
+					onFilterTextChanged(textBoxFilter.getValue());
+			}
+		});
 	
 		headerWrapper.add(searchFieldContainer);
 		headerWrapper.add(filterContainer);

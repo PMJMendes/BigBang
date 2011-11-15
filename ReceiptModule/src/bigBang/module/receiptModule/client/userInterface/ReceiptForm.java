@@ -3,6 +3,7 @@ package bigBang.module.receiptModule.client.userInterface;
 import bigBang.definitions.client.dataAccess.ReceiptDataBrokerClient;
 import bigBang.definitions.shared.BigBangConstants;
 import bigBang.definitions.shared.Receipt;
+import bigBang.library.client.FormField;
 import bigBang.library.client.userInterface.DatePickerFormField;
 import bigBang.library.client.userInterface.ExpandableListBoxFormField;
 import bigBang.library.client.userInterface.TextAreaFormField;
@@ -15,8 +16,10 @@ import com.google.gwt.i18n.client.DateTimeFormat;
 public class ReceiptForm extends FormView<Receipt> implements ReceiptDataBrokerClient {
 
 	protected TextBoxFormField number;
-	protected TextBoxFormField client;
+	protected TextBoxFormField clientName;
+	protected TextBoxFormField clientNumber;
 	protected TextBoxFormField policyNumber;
+	protected TextBoxFormField policyDescription;
 	protected ExpandableListBoxFormField type;
 	protected TextBoxFormField totalPremium;
 	protected TextBoxFormField salesPremium;
@@ -36,49 +39,87 @@ public class ReceiptForm extends FormView<Receipt> implements ReceiptDataBrokerC
 
 	public ReceiptForm(){
 		number = new TextBoxFormField("Número");
+		number.setFieldWidth("100px");
 		type = new ExpandableListBoxFormField(ModuleConstants.TypifiedListIds.RECEIPT_TYPE, "Tipo");
-		client = new TextBoxFormField("Cliente");
-		policyNumber = new TextBoxFormField("Apólice");
-		totalPremium = new TextBoxFormField("Prémio Total (€)");
-		salesPremium = new  TextBoxFormField("Pŕemio Comercial (€)");
+		clientName = new TextBoxFormField("Nome");
+		clientNumber = new TextBoxFormField("Número");
+		clientNumber.setFieldWidth("100px");
+		policyDescription = new TextBoxFormField("Categoria, Ramo e Modalidade");
+		policyNumber = new TextBoxFormField("Número");
+		policyNumber.setFieldWidth("100px");
+		totalPremium = new TextBoxFormField("Prémio Total");
+		totalPremium.setUnitsLabel("€");
+		totalPremium.setFieldWidth("100px");
+		salesPremium = new  TextBoxFormField("Prémio Comercial");
+		salesPremium.setUnitsLabel("€");
+		salesPremium.setFieldWidth("100px");
 		commission = new TextBoxFormField("Commissão (€)");
+		commission.setUnitsLabel("€");
+		commission.setFieldWidth("100px");
 		retro = new TextBoxFormField("Retrocessões (€)");
+		retro.setUnitsLabel("€");
+		retro.setFieldWidth("100px");
 		fat = new TextBoxFormField("FAT (€)");
+		fat.setFieldWidth("100px");
 		issueDate = new DatePickerFormField("Data de Emissão");
 		coverageStart = new DatePickerFormField("Vencimento");
 		coverageEnd = new DatePickerFormField("Até");
 		dueDate = new DatePickerFormField("Limite de Pagamento");
 		mediator = new ExpandableListBoxFormField(BigBangConstants.EntityIds.MEDIATOR, "Mediador");
 		manager = new ExpandableListBoxFormField(BigBangConstants.EntityIds.USER, "Gestor");
+		description = new TextAreaFormField();
+		notes = new TextAreaFormField();
 
 		addSection("Informação Geral");
-		addFormField(number);
-		addFormField(type);
-		addFormField(manager);
-		addFormField(mediator);
-		
+		addFormFieldGroup(new FormField<?>[]{
+				number,
+				type
+		}, true);
+		addFormFieldGroup(new FormField<?>[]{
+				manager,
+				mediator
+		}, true);
+
 		addSection("Cliente");
-		addFormField(client);
-		client.setEditable(false);
-		
+		addFormField(clientNumber, true);
+		clientNumber.setEditable(false);
+		addFormField(clientName, true);
+		clientName.setEditable(false);
+
 		addSection("Apólice");
-		addFormField(policyNumber);
+		addFormField(policyNumber, true);
 		policyNumber.setEditable(false);
-		
+		addFormField(policyDescription, true);
+		policyDescription.setEditable(false);
+
 		addSection("Valores");
-		addFormField(totalPremium);
-		addFormField(salesPremium);
-		addFormField(commission);
-		addFormField(retro);
-		addFormField(fat);
-		
+		addFormFieldGroup(new FormField<?>[]{
+				totalPremium,
+				salesPremium
+		}, true);
+		addFormFieldGroup(new FormField<?>[]{
+				commission,
+				retro
+		}, true);
+		addFormFieldGroup(new FormField<?>[]{
+				fat
+		}, true);
+
 		addSection("Datas");
-		addFormField(issueDate);
-		addFormField(dueDate);
+		addFormFieldGroup(new FormField<?>[]{
+				issueDate,
+				dueDate
+		}, true);
+		addFormFieldGroup(new FormField<?>[]{
+				coverageStart,
+				coverageEnd
+		}, true);
+		
+		addSection("Descrição");
 		addFormField(description);
+		
+		addSection("Notas Internas");
 		addFormField(notes);
-		addFormField(coverageStart);
-		addFormField(coverageEnd);
 
 		setValue(new Receipt());		
 	}
@@ -112,14 +153,18 @@ public class ReceiptForm extends FormView<Receipt> implements ReceiptDataBrokerC
 		}
 
 		if(info.clientId != null){
-			client.setValue(info.clientNumber + " - " + info.clientName);
+			clientNumber.setValue(info.clientNumber);
+			clientName.setValue(info.clientName);
 		}else{
-			client.clear();
+			clientNumber.clear();
+			clientName.clear();
 		}
 		if(info.policyId != null) {
-			policyNumber.setValue(info.policyNumber + " - " + info.categoryName+"/"+info.lineName+"/"+info.subLineName);
+			policyNumber.setValue(info.policyNumber);
+			policyDescription.setValue(info.categoryName+"/"+info.lineName+"/"+info.subLineName);
 		}else{
 			policyNumber.clear();
+			policyDescription.clear();
 		}
 
 		number.setValue(info.number);

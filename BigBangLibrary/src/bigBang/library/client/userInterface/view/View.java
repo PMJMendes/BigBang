@@ -1,5 +1,7 @@
 package bigBang.library.client.userInterface.view;
 
+import org.gwt.mosaic.ui.client.MessageBox;
+
 import bigBang.library.client.RightClickable;
 import bigBang.library.client.event.DoubleClickEvent;
 
@@ -118,6 +120,18 @@ public class View extends Composite implements RightClickable, HasAllMouseHandle
 		} 
 	}-*/;
 
+	public void showMessage(String message){
+		MessageBox.info("Informação", message);
+	}
+	
+	public void showErrorMessage(String message){
+		MessageBox.error("Erro", message);
+	}
+	
+	public void showWarningMessage(String message) {
+		MessageBox.alert("Aviso", message);
+	}
+	
 	@Override
 	public HandlerRegistration addMouseDownHandler(MouseDownHandler handler) {
 		return addDomHandler(handler, MouseDownEvent.getType());

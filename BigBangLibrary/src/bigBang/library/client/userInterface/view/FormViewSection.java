@@ -18,6 +18,8 @@ import com.google.gwt.user.client.ui.Widget;
 
 public class FormViewSection extends View {
 
+	protected static final String DEFAULT_FIELD_HEIGHT = "45px";
+	
 	private ArrayList<FormField<?>> fields;
 	private Label headerLabel;
 	private HasWidgets content;
@@ -27,37 +29,42 @@ public class FormViewSection extends View {
 	private DisclosurePanel errorMessagePanel;
 	private ArrayList<String> errorMessages;
 
-	protected boolean inline = true;
-
 	public FormViewSection(String title){
 		fields = new ArrayList<FormField<?>>();
 		errorMessages = new ArrayList<String>();
 		VerticalPanel wrapper = new VerticalPanel();
+		initWidget(wrapper);
 		wrapper.setSize("100%", "100%");
+		wrapper.getElement().getStyle().setMarginBottom(5, Unit.PX);
 
+		//Verificar as larguras e a margem de baixo da secção
+		
 		if(title != null){
 			wrapper.add(getSectionHeader(title));
 		}
 
-		wrapper.add(getErrorMessagesPanel());
+		DisclosurePanel errorMessagesWrapper = new DisclosurePanel();
+		wrapper.add(errorMessagesWrapper);
+		errorMessagesWrapper.setOpen(false);
+		errorMessagesWrapper.setAnimationEnabled(true);
+		errorMessagesWrapper.setWidth("500px");
+		this.errorMessagePanel = errorMessagesWrapper;
+		
 		wrapper.setCellHorizontalAlignment(this.errorMessagePanel, HasHorizontalAlignment.ALIGN_CENTER);
 
-		VerticalPanel p = new VerticalPanel();
+		FlowPanel p = new FlowPanel();
 		p.setWidth("100%");
 
 		//String minHeight = "30px";
 		//p.setSize("100%", minHeight);
 		p.setStyleName("formSection");
-		p.setSpacing(5);
 		wrapper.add(p);
 
 		content = p;
 		currentContainer = new FlowPanel();
 		content.add((Widget) currentContainer);
-
-		initWidget(wrapper);
 	}
-
+	
 	public ArrayList<FormField<?>> getFields(){
 		return this.fields;
 	}
@@ -78,16 +85,6 @@ public class FormViewSection extends View {
 		return headerWrapper;
 	}
 
-	private Widget getErrorMessagesPanel(){
-		DisclosurePanel wrapper = new DisclosurePanel();
-		wrapper.setOpen(false);
-		wrapper.setAnimationEnabled(true);
-		wrapper.setWidth("500px");
-		this.errorMessagePanel = wrapper;
-		return wrapper;
-	}
-
-
 	public void setHeaderText(String text){
 		headerLabel.setText(text);
 	}
@@ -96,22 +93,35 @@ public class FormViewSection extends View {
 		return headerLabel.getText();
 	}
 
-	public void addInlineFormField(FormField<?> field){
-		this.inline = true;
-		addFormField(field);
-	}
-
-	public void addFormField(FormField<?> field) {
+	public void addFormField(FormField<?> field, boolean inline) {
 		if(field != null) {
+			field.setHeight(DEFAULT_FIELD_HEIGHT);
 			registerFormField(field);
 			FlowPanel wrapper = new FlowPanel();
 			addWidget(wrapper);
-			if(this.inline){
+			if(inline){
 				wrapper.getElement().getStyle().setFloat(Float.LEFT);
 			}
 			wrapper.add(field);
-			inline = false;
 		}
+	}
+	
+	public void addFormField(FormField<?> field) {
+		this.addFormField(field, false);
+	} 
+	
+	public void addFormFieldGroup(FormField<?>[] group, boolean inline){
+		VerticalPanel wrapper = new VerticalPanel();
+		wrapper.getElement().getStyle().setProperty("borderRight", "1px solid #BBB");
+		for(int i = 0; i < group.length; i++) {
+			group[i].setHeight(DEFAULT_FIELD_HEIGHT);
+			registerFormField(group[i]);
+			wrapper.add(group[i]);
+		}
+		if(inline) {
+			wrapper.getElement().getStyle().setFloat(Float.LEFT);
+		}
+		addWidget(wrapper);
 	}
 
 	public void registerFormField(FormField<?> field) {

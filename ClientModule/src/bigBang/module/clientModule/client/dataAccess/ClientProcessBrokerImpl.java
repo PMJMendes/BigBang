@@ -56,7 +56,7 @@ public class ClientProcessBrokerImpl extends DataBroker<Client> implements Clien
 					cache.add(clientId, result);
 					incrementDataVersion();
 					for(DataBrokerClient<Client> bc : getClients()){
-						((ClientProcessDataBrokerClient) bc).addClient(result);
+						((ClientProcessDataBrokerClient) bc).updateClient(result);
 						((ClientProcessDataBrokerClient) bc).setDataVersionNumber(BigBangConstants.EntityIds.CLIENT, getCurrentDataVersion());
 					}
 					handler.onResponse(result);

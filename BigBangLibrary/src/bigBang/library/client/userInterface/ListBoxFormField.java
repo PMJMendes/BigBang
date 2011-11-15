@@ -4,15 +4,14 @@ import bigBang.library.client.FieldValidator;
 import bigBang.library.client.FormField;
 
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
-import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.HasVerticalAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
+import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
 public class ListBoxFormField extends FormField<String> {
@@ -44,15 +43,16 @@ public class ListBoxFormField extends FormField<String> {
 		
 		//this.field = new MockField();
 		
-		wrapper = new HorizontalPanel();
-		initWidget(wrapper);
-		wrapper.setVerticalAlignment(HasVerticalAlignment.ALIGN_MIDDLE);
+		VerticalPanel mainWrapper = new VerticalPanel();
+		initWidget(mainWrapper);
 		this.label = new Label();
-		this.label.getElement().getStyle().setMarginRight(5, Unit.PX);
-		wrapper.add(this.label);
+		mainWrapper.add(this.label);
+		wrapper = new HorizontalPanel();
+		mainWrapper.add(wrapper);
+		wrapper.setVerticalAlignment(HasVerticalAlignment.ALIGN_MIDDLE);
 		wrapper.setCellWidth(this.label, "100px");
-		wrapper.setCellHorizontalAlignment(this.label, HasHorizontalAlignment.ALIGN_RIGHT);
 		wrapper.add((Widget) this.listBox);
+		wrapper.add(unitsLabel);
 		wrapper.add(mandatoryIndicatorLabel);
 		setFieldWidth("150px");
 		
@@ -69,7 +69,7 @@ public class ListBoxFormField extends FormField<String> {
 	}
 	
 	private void setLabel(String label) {
-		this.label.setText(label + ":");
+		this.label.setText(label);
 	}
 	
 	@Override
@@ -141,14 +141,16 @@ public class ListBoxFormField extends FormField<String> {
 	@Override
 	public void setValue(String value, boolean fireEvents){
 		if(value == null){
-			clear();
+			if(isAttached()){
+				clear();
+			}
 			return;
 		}
 		
 		boolean hasValue = false;
 		for(int i = 0; i < this.listBox.getItemCount(); i++) {
 			String itemValue = this.listBox.getValue(i);
-			if(itemValue.equalsIgnoreCase(value)){
+			if(itemValue != null && value != null && itemValue.equalsIgnoreCase(value)){
 				this.listBox.setSelectedIndex(i);
 				hasValue = true;
 				break;

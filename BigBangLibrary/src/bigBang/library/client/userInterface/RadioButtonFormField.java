@@ -3,17 +3,15 @@ package bigBang.library.client.userInterface;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.google.gwt.dom.client.Style.Unit;
-import com.google.gwt.event.logical.shared.ValueChangeEvent;
-import com.google.gwt.event.logical.shared.ValueChangeHandler;
-import com.google.gwt.user.client.ui.HasHorizontalAlignment;
-import com.google.gwt.user.client.ui.HasVerticalAlignment;
-import com.google.gwt.user.client.ui.HorizontalPanel;
-import com.google.gwt.user.client.ui.Label;
-import com.google.gwt.user.client.ui.RadioButton;
-
 import bigBang.library.client.FieldValidator;
 import bigBang.library.client.FormField;
+
+import com.google.gwt.event.logical.shared.ValueChangeEvent;
+import com.google.gwt.event.logical.shared.ValueChangeHandler;
+import com.google.gwt.user.client.ui.HasVerticalAlignment;
+import com.google.gwt.user.client.ui.HorizontalPanel;
+import com.google.gwt.user.client.ui.RadioButton;
+import com.google.gwt.user.client.ui.VerticalPanel;
 
 public class RadioButtonFormField extends FormField<String> {
 
@@ -42,13 +40,15 @@ public class RadioButtonFormField extends FormField<String> {
 	public RadioButtonFormField(){
 		super();
 		this.id = Math.random()+"";
+		
+		VerticalPanel mainWrapper = new VerticalPanel();
+		initWidget(mainWrapper);
+		mainWrapper.add(this.label);
+		
 		radioButtons = new HashMap<RadioButton, String>();
 		wrapper = new HorizontalPanel();
-		wrapper.setVerticalAlignment(HasVerticalAlignment.ALIGN_MIDDLE);
-		this.label = new Label();
-		this.label.getElement().getStyle().setMarginRight(5, Unit.PX);
-		wrapper.add(this.label);
-		wrapper.setCellHorizontalAlignment(this.label, HasHorizontalAlignment.ALIGN_RIGHT);
+		mainWrapper.add(wrapper);
+		wrapper.setVerticalAlignment(HasVerticalAlignment.ALIGN_MIDDLE);		
 		radioWrapper = new HorizontalPanel();
 		wrapper.add(radioWrapper);
 		wrapper.add(mandatoryIndicatorLabel);
@@ -62,18 +62,14 @@ public class RadioButtonFormField extends FormField<String> {
 				setValue(value, true);
 			}
 		};
-		
-		initWidget(wrapper);
 	}
 
 	protected void setLabel(String label) {
 		if(label == null || label.equals("")){
-			setLabelWidth("0px");
 			this.label.setText("");
 
 		}else{
-			this.label.setText(label + ":");
-			setLabelWidth("100px");
+			this.label.setText(label);
 		}
 	}
 	

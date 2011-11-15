@@ -78,11 +78,11 @@ public class BigBangTypifiedListBroker implements TypifiedListBroker {
 		if(clients.containsKey(listId)){
 			List<TypifiedListClient> clientList = clients.get(listId);
 			clientList.remove(client);
-			/*if(clientList.isEmpty()){ //TODO MARK FOR REMOVAL FJVC
+			if(clientList.isEmpty()){
 				clients.remove(listId);
 				dataVersions.remove(listId);
 				lists.remove(listId);
-			}*/
+			}
 		}
 	}
 	

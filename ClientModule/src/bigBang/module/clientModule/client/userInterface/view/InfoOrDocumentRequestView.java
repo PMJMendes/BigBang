@@ -8,6 +8,7 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 import bigBang.definitions.shared.Client;
 import bigBang.definitions.shared.InfoOrDocumentRequest;
 import bigBang.library.client.userInterface.BigBangOperationsToolBar;
+import bigBang.library.client.userInterface.ListHeader;
 import bigBang.library.client.userInterface.view.View;
 
 public abstract class InfoOrDocumentRequestView extends View {
@@ -17,10 +18,8 @@ public abstract class InfoOrDocumentRequestView extends View {
 	
 	public InfoOrDocumentRequestView(){
 		SplitLayoutPanel mainWrapper = new SplitLayoutPanel();
+		initWidget(mainWrapper);
 		mainWrapper.setSize("100%", "100%");
-		
-		VerticalPanel wrapper = new VerticalPanel();
-		wrapper.setSize("100%", "100%");
 		
 		BigBangOperationsToolBar toolbar = new BigBangOperationsToolBar() {
 			
@@ -43,20 +42,29 @@ public abstract class InfoOrDocumentRequestView extends View {
 				onSendButtonPressed();
 			}
 		}));
-
-		wrapper.add(toolbar);
-		wrapper.setCellHeight(toolbar, "21px");
 		
-		mainWrapper.addWest(wrapper, 665);
+		VerticalPanel clientFormWrapper = new VerticalPanel();
+		clientFormWrapper.setSize("100%", "100%");
+		ListHeader clientHeader = new ListHeader("Cliente");
+		clientFormWrapper.add(clientHeader);
+		clientHeader.setHeight("30px");
 		this.clientForm = new ClientFormView();
-		mainWrapper.add(clientForm);
+		clientFormWrapper.add(this.clientForm);
+		clientFormWrapper.setCellHeight(this.clientForm, "100%");
 		this.clientForm.setReadOnly(true);
-		mainWrapper.setWidgetMinSize(wrapper, 665);
+		mainWrapper.addWest(clientFormWrapper, 665);
 		
+		VerticalPanel requestFormWrapper = new VerticalPanel();
+		requestFormWrapper.setSize("100%", "100%");
+		ListHeader requestHeader = new ListHeader("Pedido");
+		requestFormWrapper.add(requestHeader);
+		requestHeader.setHeight("30px");
+		requestFormWrapper.add(toolbar);
+		requestFormWrapper.setCellHeight(toolbar, "21px");
 		form = new InfoOrDocumentRequestForm();
-		wrapper.add(form);
-		
-		initWidget(mainWrapper);
+		requestFormWrapper.add(form);
+		requestFormWrapper.setCellHeight(form, "100%");
+		mainWrapper.add(requestFormWrapper);
 	}
 	
 	public void setClient(Client client){

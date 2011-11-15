@@ -3,14 +3,13 @@ package bigBang.library.client.userInterface;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.i18n.client.DateTimeFormat;
-import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.HasVerticalAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
+import com.google.gwt.user.client.ui.VerticalPanel;
 
 import bigBang.library.client.FieldValidator;
 import bigBang.library.client.FormField;
@@ -43,19 +42,19 @@ public class DatePickerFormField extends FormField<Date> {
 		
 		this.format = DateTimeFormat.getFormat(format);
 
-		HorizontalPanel wrapper = new HorizontalPanel();
-		wrapper.setVerticalAlignment(HasVerticalAlignment.ALIGN_MIDDLE);
-		this.label = new Label();
+		VerticalPanel mainWrapper = new VerticalPanel();
+		initWidget(mainWrapper);
+		
+		mainWrapper.add(this.label);
 		this.label.setText(label);
-		this.label.getElement().getStyle().setMarginRight(5, Unit.PX);
+		HorizontalPanel wrapper = new HorizontalPanel();
+		mainWrapper.add(wrapper);
+		wrapper.setVerticalAlignment(HasVerticalAlignment.ALIGN_MIDDLE);
 		
 		day = new ListBox();
 		month = new ListBox();
 		year = new ListBox();
 		
-		wrapper.add(this.label);
-		wrapper.setCellWidth(this.label, "100px");
-		wrapper.setCellHorizontalAlignment(this.label, HasHorizontalAlignment.ALIGN_RIGHT);
 		wrapper.add(new Label("Dia:"));
 		wrapper.add(day);
 		wrapper.add(new Label("Mês:"));
@@ -65,7 +64,6 @@ public class DatePickerFormField extends FormField<Date> {
 		
 		wrapper.add(mandatoryIndicatorLabel);
 		wrapper.add(errorMessageLabel);
-		initWidget(wrapper);
 		
 		day.addItem("-", "");
 		for(int i = 1; i <= 31; i++) {
@@ -114,9 +112,14 @@ public class DatePickerFormField extends FormField<Date> {
 			}
 			this.month.addItem(monthStr, i+"");
 		}
-		year.addItem("-", "");
+		
 		int currentYear = Integer.parseInt(new SimpleDateFormat("yyyy").format(new Date()));
-		for(int j = currentYear; j >= 1900; j--){
+		setYearSpan(1900, currentYear);
+	}
+	
+	public void setYearSpan(int minYear, int maxYear){
+		year.addItem("-", "");
+		for(int j = maxYear; j >= minYear; j--){
 			year.addItem(j+"", j+"");
 		}
 	}
@@ -135,6 +138,10 @@ public class DatePickerFormField extends FormField<Date> {
 	
 	@Override
 	public void setValue(Date value, boolean fireEvents) {
+		if(value == null) {
+			clear();
+			return;
+		}
 		String day = new SimpleDateFormat("d").format(value);
 		String month = new SimpleDateFormat("M").format(value);
 		String year = new SimpleDateFormat("yyyy").format(value);

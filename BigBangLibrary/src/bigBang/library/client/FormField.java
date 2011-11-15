@@ -1,6 +1,7 @@
 package bigBang.library.client;
 
 import bigBang.library.client.userInterface.view.View;
+import bigBang.library.client.FieldValidator;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.FontStyle;
@@ -20,11 +21,12 @@ public abstract class FormField<T> extends View implements HasValue<T>, Validata
 	protected Label mandatoryIndicatorLabel;
 	protected boolean editable = true;
 	protected Label label;
+	protected Label unitsLabel;
 	
 	protected HandlerRegistration handlerRegistration;
 
 	public FormField(){
-		label = new Label();
+		this.label = new Label();
 		errorMessageLabel = new Label();
 		errorMessageLabel.getElement().getStyle().setMarginLeft(5, Unit.PX);
 		errorMessageLabel.getElement().getStyle().setColor("#F00");
@@ -33,8 +35,16 @@ public abstract class FormField<T> extends View implements HasValue<T>, Validata
 		errorMessageLabel.setVisible(false);
 		mandatoryIndicatorLabel = new Label("*");
 		mandatoryIndicatorLabel.setVisible(false);
+		unitsLabel = new Label("");
+		
 	}
 
+	@Override
+	protected void onAttach() {
+		super.onAttach();
+		getElement().getStyle().setMargin(5, Unit.PX);
+	}
+	
 	public HandlerRegistration addValueChangeHandler(
 			ValueChangeHandler<T> handler) {
 		handlerRegistration = addHandler(handler, ValueChangeEvent.getType());
@@ -113,8 +123,11 @@ public abstract class FormField<T> extends View implements HasValue<T>, Validata
 	public void showLabel(boolean show) {
 		this.label.setVisible(show);
 		if(!show){
-			setLabelWidth("0px");
 		}
+	}
+	
+	public void setUnitsLabel(String label){
+		unitsLabel.setText(label);
 	}
 	
 	public abstract void setLabelWidth(String width);

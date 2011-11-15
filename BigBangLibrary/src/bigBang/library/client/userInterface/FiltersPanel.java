@@ -18,7 +18,6 @@ import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
-import bigBang.definitions.shared.BigBangConstants;
 import bigBang.definitions.shared.SortOrder;
 import bigBang.library.client.userInterface.view.View;
 
@@ -54,14 +53,6 @@ public class FiltersPanel extends View {
 		clearFiltersButton.addClickHandler(filtersButtonsCH);
 		applyFiltersButton.addClickHandler(filtersButtonsCH);
 
-		HorizontalPanel buttonsWrapper = new HorizontalPanel();
-		buttonsWrapper.setVerticalAlignment(HasVerticalAlignment.ALIGN_MIDDLE);
-		buttonsWrapper.setSpacing(5);
-		buttonsWrapper.add(clearFiltersButton);
-		buttonsWrapper.add(applyFiltersButton);
-
-		wrapper.add(buttonsWrapper);
-
 		wrapper.add(new Label("Ordenar por:"));
 
 		sortListBox = new ListBox();
@@ -91,6 +82,14 @@ public class FiltersPanel extends View {
 		wrapper.add(filtersWrapper);
 		wrapper.setCellHeight(filtersWrapper, "100%");
 
+		HorizontalPanel buttonsWrapper = new HorizontalPanel();
+		buttonsWrapper.setVerticalAlignment(HasVerticalAlignment.ALIGN_MIDDLE);
+		buttonsWrapper.setSpacing(5);
+		buttonsWrapper.add(clearFiltersButton);
+		buttonsWrapper.add(applyFiltersButton);
+
+		wrapper.add(buttonsWrapper);
+		
 		ScrollPanel mainWrapper = new ScrollPanel(wrapper);
 		mainWrapper.setSize("100%", "100%");
 		mainWrapper.getElement().getStyle().setMarginBottom(10, Unit.PX);

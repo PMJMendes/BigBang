@@ -18,7 +18,6 @@ import bigBang.library.client.HasEditableValue;
 import bigBang.library.client.HasSelectables;
 import bigBang.library.client.HasValueSelectables;
 import bigBang.library.client.ValueSelectable;
-import bigBang.library.client.ValueWrapper;
 import bigBang.library.client.dataAccess.DataBrokerManager;
 import bigBang.library.client.event.ActionInvokedEvent;
 import bigBang.library.client.event.ActionInvokedEventHandler;
@@ -53,7 +52,6 @@ import com.google.gwt.user.client.ui.Widget;
 public class ClientSearchOperationView extends View implements ClientSearchOperationViewPresenter.Display {
 
 	protected final int SEARCH_PANEL_WIDTH = 400; //minimum and starting width (px)
-	//protected final int SEARCH_PREVIEW_PANEL_WIDTH = 400;
 
 	protected SlidePanel mainWrapper;
 	protected PopupPanel popup;
@@ -65,6 +63,7 @@ public class ClientSearchOperationView extends View implements ClientSearchOpera
 	protected ClientManagerTransferView managerTransferView;
 	protected InfoOrDocumentRequestView infoOrDocumentRequestView;
 	protected ClientMergeView clientMergeView;
+	protected DeleteClientView clientDeleteView;
 	protected PopupBar childProcessesBar;
 	protected ToolButton newButton;
 
@@ -204,7 +203,9 @@ public class ClientSearchOperationView extends View implements ClientSearchOpera
 
 			@Override
 			public void onDelete() {
-				actionHandler.onActionInvoked(new ActionInvokedEvent<ClientSearchOperationViewPresenter.Action>(Action.DELETE));
+				getDeleteForm().setValue(null);
+				showDeleteForm(true);
+				lockDeleteForm(false);
 			}
 
 			@Override
@@ -265,20 +266,38 @@ public class ClientSearchOperationView extends View implements ClientSearchOpera
 			}
 		};
 		this.clientMergeView = new ClientMergeView() {
-			
+
 			@Override
 			public void onMergeButtonPressed() {
 				actionHandler.onActionInvoked(new ActionInvokedEvent<ClientSearchOperationViewPresenter.Action>(Action.MERGE_WITH_CLIENT));
 			}
-			
+
 			@Override
 			public void onBackButtonPressed() {
 				showClientMergeForm(false);
 			}
 		};
+		this.clientDeleteView = new DeleteClientView() {
+
+			@Override
+			public void onDeleteButtonPressed() {
+				this.confirmDelete(new ResponseHandler<Boolean>() {
+
+					@Override
+					public void onResponse(Boolean response) {
+						if(response){
+							actionHandler.onActionInvoked(new ActionInvokedEvent<ClientSearchOperationViewPresenter.Action>(Action.DELETE));
+						}
+					}
+
+					@Override
+					public void onError(Collection<ResponseError> errors) {}
+				});
+			}
+		};
 
 		addAttachHandler(new AttachEvent.Handler() {
-			
+
 			@Override
 			public void onAttachOrDetach(AttachEvent event) {
 				if(event.isAttached()){
@@ -286,7 +305,7 @@ public class ClientSearchOperationView extends View implements ClientSearchOpera
 				}
 			}
 		});
-		
+
 		if(!bigBang.definitions.client.Constants.DEBUG){
 			searchPanel.doSearch();
 		}
@@ -295,6 +314,16 @@ public class ClientSearchOperationView extends View implements ClientSearchOpera
 
 	public HasSelectables<?> getClientSearchList() {
 		return this.searchPanel;
+	}
+
+	@Override
+	public void selectClient(Client client) {
+		for(ValueSelectable<ClientStub> s : this.searchPanel) {
+			if(s != null && s.getValue().id.equalsIgnoreCase(client.id)){
+				s.setSelected(true, true);
+				break;
+			}
+		}
 	}
 
 	@Override
@@ -338,24 +367,24 @@ public class ClientSearchOperationView extends View implements ClientSearchOpera
 		if(show){
 			VerticalPanel wrapper = new VerticalPanel();
 			wrapper.setSize("100%", "100%");
-	
+
 			ListHeader header = new ListHeader();
 			header.setText("Criação de Apólice");
 			header.setLeftWidget(new Button("Voltar", new ClickHandler() {
-	
+
 				@Override
 				public void onClick(ClickEvent event) {
 					mainWrapper.slideInto(mainContent, Direction.RIGHT);
 				}
 			}));
 			wrapper.add(header);
-	
+
 			SimplePanel viewContainer = new SimplePanel();
 			viewContainer.setSize("100%", "100%");
-	
+
 			wrapper.add(viewContainer);
 			wrapper.setCellHeight(viewContainer, "100%");
-	
+
 			mainWrapper.slideInto(
 					wrapper, Direction.LEFT);
 			return viewContainer;
@@ -469,7 +498,7 @@ public class ClientSearchOperationView extends View implements ClientSearchOpera
 			wrapper.setSize("100%", "100%");
 
 			ListHeader header = new ListHeader();
-			header.setText("Pedido de Informação ou Documento");
+			header.setText("Criação de Pedido de Informação ou Documento");
 			header.setLeftWidget(new Button("Voltar", new ClickHandler() {
 
 				@Override
@@ -499,25 +528,7 @@ public class ClientSearchOperationView extends View implements ClientSearchOpera
 	public void showDeleteForm(boolean show) {
 		if(show){
 			this.popup = new PopupPanel(true, "Eliminação de Cliente");
-			DeleteClientView view = new DeleteClientView() {
-
-				@Override
-				public void onDeleteButtonPressed() {
-					this.confirmDelete(new ResponseHandler<Boolean>() {
-
-						@Override
-						public void onResponse(Boolean response) {
-							if(response){
-								showDeleteForm(false);
-							}
-						}
-
-						@Override
-						public void onError(Collection<ResponseError> errors) {}
-					});
-
-				}
-			};
+			Widget view = this.clientDeleteView;
 			view.setSize("660px", "100px");
 			this.popup.add(view);
 			this.popup.addAttachHandler(new AttachEvent.Handler() {
@@ -539,20 +550,17 @@ public class ClientSearchOperationView extends View implements ClientSearchOpera
 
 	@Override
 	public HasEditableValue<String> getDeleteForm() {
-		// TODO Auto-generated method stub
-		return null;
+		return this.clientDeleteView.form;
 	}
 
 	@Override
 	public boolean isDeleteFormValid() {
-		// TODO Auto-generated method stub
-		return false;
+		return this.clientDeleteView.form.validate();
 	}
 
 	@Override
 	public void lockDeleteForm(boolean lock) {
-		// TODO Auto-generated method stub
-
+		this.clientDeleteView.form.setReadOnly(lock);
 	}
 
 	@Override
@@ -584,7 +592,7 @@ public class ClientSearchOperationView extends View implements ClientSearchOpera
 				return;
 			}
 		}
-		ClientSearchPanelListEntry entry = new ClientSearchPanelListEntry(new ValueWrapper<ClientStub>(new Client()));
+		ClientSearchPanelListEntry entry = new ClientSearchPanelListEntry(new Client());
 		this.searchPanel.add(0, entry);
 		this.searchPanel.getScrollable().scrollToTop();
 		entry.setSelected(true, true);
@@ -731,6 +739,11 @@ public class ClientSearchOperationView extends View implements ClientSearchOpera
 	@Override
 	public void allowcreateCasualty(boolean allow) {
 		this.operationsToolbar.allowCreateCasualty(allow);
+	}
+	
+	@Override
+	public void scrollFormToTop() {
+		this.form.scrollToTop();
 	}
 
 }

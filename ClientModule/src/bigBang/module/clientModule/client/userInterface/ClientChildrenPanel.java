@@ -27,6 +27,7 @@ public class ClientChildrenPanel extends View implements ClientProcessDataBroker
 	
 	public ClientChildrenPanel(){
 		StackPanel wrapper = new StackPanel();
+		initWidget(wrapper);
 		wrapper.setSize("100%", "100%");
 		
 		contactsList = new ContactsList();
@@ -42,18 +43,20 @@ public class ClientChildrenPanel extends View implements ClientProcessDataBroker
 		wrapper.add(this.requestsList, "Pedidos de Informação");
 		wrapper.add(this.managerTransfersList, "Transferências de Gestor");
 		wrapper.add(this.historyList, "Histórico");
-		
-		initWidget(wrapper);
 	}
 	
 	public void setClient(Client client){
-		this.client = client;
-		this.contactsList.setOwner(client.id);
-		this.documentsList.setOwner(client.id);	
-		this.insurancePoliciesList.setOwner(client.id);	
-		this.requestsList.setOwner(client.id);	
-		this.managerTransfersList.setOwner(client.id);
-		this.historyList.setOwner(client);
+		if(client == null) {
+			clear();
+		}else if(this.client != client){
+			this.client = client;
+			this.contactsList.setOwner(client.id);
+			this.documentsList.setOwner(client.id);	
+			this.insurancePoliciesList.setOwner(client.id);	
+			this.requestsList.setOwner(client.id);	
+			this.managerTransfersList.setOwner(client.id);
+			this.historyList.setOwner(client);
+		}
 	}
 
 	public Client getCurrentClient(){

@@ -85,12 +85,10 @@ public class MultiSelectExpandableListFormField extends FormField<String[]> {
 	
 	protected void setLabel(String label) {
 		if(label == null || label.equals("")){
-			setLabelWidth("0px");
 			this.label.setText("");
 			
 		}else{
 			this.label.setText(label + ":");
-			setLabelWidth("100px");
 		}
 	}
 

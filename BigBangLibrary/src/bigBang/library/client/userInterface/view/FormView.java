@@ -36,6 +36,7 @@ public abstract class FormView<T> extends View implements Validatable, HasEditab
 
 	protected HorizontalPanel topButtonWrapper;
 	protected HorizontalPanel topToolbar;
+	protected ScrollPanel scrollWrapper;
 
 	private boolean isReadOnly;
 	
@@ -46,9 +47,11 @@ public abstract class FormView<T> extends View implements Validatable, HasEditab
 	public FormView(){
 		sections = new ArrayList<FormViewSection>();
 		mainWrapper = new AbsolutePanel();
+		initWidget(mainWrapper);
 		mainWrapper.setSize("100%", "100%");
 		
 		ScrollPanel wrapper = new ScrollPanel();
+		this.scrollWrapper = wrapper;
 		wrapper.getElement().getStyle().setProperty("overflowX", "hidden");
 		this.panel = new VerticalPanel();
 		this.panel.setSize("100%", "100%");
@@ -75,8 +78,6 @@ public abstract class FormView<T> extends View implements Validatable, HasEditab
 		topToolbar.add(topButtonWrapper);
 		
 		mainWrapper.add(topToolbar, 0, 0);
-		
-		initWidget(mainWrapper);
 	}
 
 	public void addTitleSection(String title, String subTitle, AbstractImagePrototype icon){		
@@ -187,8 +188,12 @@ public abstract class FormView<T> extends View implements Validatable, HasEditab
 		currentSection.addFormField(field);
 	}
 	
-	public void addInlineFormField(FormField<?> field){
-		currentSection.addFormField(field);
+	public void addFormField(FormField<?> field, boolean inline) {
+		currentSection.addFormField(field, inline);
+	}
+	
+	public void addFormFieldGroup(FormField<?>[] group, boolean inline){
+		currentSection.addFormFieldGroup(group, inline);
 	}
 	
 	public void registerFormField(FormField<?> field) {
@@ -279,6 +284,14 @@ public abstract class FormView<T> extends View implements Validatable, HasEditab
 	
 	public Widget getContentPanel(){
 		return this.panel;
+	}
+	
+	public void scrollToTop(){
+		this.scrollWrapper.scrollToTop();
+	}
+	
+	public void scrollToBottom(){
+		this.scrollWrapper.scrollToBottom();
 	}
 	
 	public void lock(boolean lock) {

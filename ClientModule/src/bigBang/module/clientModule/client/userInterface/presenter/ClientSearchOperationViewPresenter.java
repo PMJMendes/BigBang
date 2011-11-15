@@ -126,11 +126,16 @@ public class ClientSearchOperationViewPresenter implements OperationViewPresente
 
 		//General
 		void clear();
+		void selectClient(Client client);
 		void registerActionInvokedHandler(ActionInvokedEventHandler<Action> handler);
 		void prepareNewClient();
 		void removeNewClientPreparation();
 		void setSaveModeEnabled(boolean enabled);
 		void setReadOnly(boolean readOnly);
+		void showMessage(String message);
+		void showErrorMessage(String message);
+		void showWarningMessage(String message);
+		void scrollFormToTop();
 
 		Widget asWidget();
 		View getInstance();
@@ -184,16 +189,18 @@ public class ClientSearchOperationViewPresenter implements OperationViewPresente
 
 			@Override
 			public void onSelectionChanged(SelectionChangedEvent event) {
+				view.setSaveModeEnabled(false);
+				view.scrollFormToTop();
 				@SuppressWarnings("unchecked")
 				ValueSelectable<ClientStub> selected = (ValueSelectable<ClientStub>) event.getFirstSelected();
-				ClientStub selectedValue = selected == null ? null : selected.getValue();
-				view.setSaveModeEnabled(false);
+				final ClientStub selectedValue = selected == null ? null : selected.getValue();
 				if(selectedValue == null){
 					view.getForm().setValue(null);
 					view.lockForm(true);
 				}else{
 					if(selectedValue.id != null){
 						view.removeNewClientPreparation();
+						view.lockForm(true);
 						BigBangPermissionManager.Util.getInstance().getProcessPermissions(selectedValue.processId, new ResponseHandler<Permission[]> () {
 
 							@Override
@@ -224,22 +231,26 @@ public class ClientSearchOperationViewPresenter implements OperationViewPresente
 										view.allowCreatePolicy(true);
 									}
 								}
+								clientBroker.getClient(selectedValue.id, new ResponseHandler<Client>() {
+
+									@Override
+									public void onResponse(Client value) {
+										view.getForm().setValue(value);
+										view.lockForm(value == null);
+									}
+
+									@Override
+									public void onError(Collection<ResponseError> errors) {
+										view.showErrorMessage("Não foi possível mostrar a informação para o cliente. Por favor tente mais tarde.");
+									}
+								});
 							}
 
 							@Override
-							public void onError(Collection<ResponseError> errors) {}
-
-						});
-						clientBroker.getClient(selectedValue.id, new ResponseHandler<Client>() {
-
-							@Override
-							public void onResponse(Client value) {
-								view.getForm().setValue(value);
-								view.lockForm(value == null);
+							public void onError(Collection<ResponseError> errors) {
+								view.showErrorMessage("Não foi possível mostrar a informação para o cliente. Por favor tente mais tarde.");
 							}
 
-							@Override
-							public void onError(Collection<ResponseError> errors) {}
 						});
 					}
 				}
@@ -301,7 +312,9 @@ public class ClientSearchOperationViewPresenter implements OperationViewPresente
 						}
 
 						@Override
-						public void onError(Collection<ResponseError> errors) {}
+						public void onError(Collection<ResponseError> errors) {
+							view.showErrorMessage("Não foi possível actualizar a informação para o cliente. Por favor tente mais tarde.");
+						}
 					});
 					break;
 				case CREATE_CASUALTY:
@@ -380,7 +393,7 @@ public class ClientSearchOperationViewPresenter implements OperationViewPresente
 
 						@Override
 						public void onError(Collection<ResponseError> errors) {
-							//TODO
+							view.showErrorMessage("De momento não foi possível fundir os clientes. Por favor tente mais tarde.");
 							GWT.log("Não foi possível fundir os clientes : "+errors.toString());
 						}
 					});
@@ -405,7 +418,7 @@ public class ClientSearchOperationViewPresenter implements OperationViewPresente
 
 					@Override
 					public void onError(Collection<ResponseError> errors) {
-						//TODO
+						view.showErrorMessage("Não foi possível criar a transferência de gestor de cliente. Por favor, tente mais tarde.");
 					}
 				});
 			}
@@ -422,7 +435,7 @@ public class ClientSearchOperationViewPresenter implements OperationViewPresente
 
 					@Override
 					public void onError(Collection<ResponseError> errors) {
-						//TODO
+						view.showErrorMessage("Não foi possível criar o pedido de informação. Por favor tente mais tarde.");
 					}
 				});
 			}
@@ -432,9 +445,23 @@ public class ClientSearchOperationViewPresenter implements OperationViewPresente
 			}
 
 			protected void deleteClient(){
-				//view.getDeleteForm().setValue(null);
-				view.showDeleteForm(true);
-				//view.lockDeleteForm(false);
+				Client client = view.getForm().getValue();
+				if(client == null || client.id == null || client.processId == null) {
+					return;
+				}
+				
+				clientBroker.removeClient(client.id, new ResponseHandler<String>() {
+
+					@Override
+					public void onResponse(String response) {
+						view.showDeleteForm(false);
+					}
+
+					@Override
+					public void onError(Collection<ResponseError> errors) {
+						view.showErrorMessage("Não foi possível eliminar o cliente. Por favor, tente mais tarde.");
+					}
+				});
 			}
 
 		});
@@ -520,6 +547,8 @@ public class ClientSearchOperationViewPresenter implements OperationViewPresente
 
 			@Override
 			public void onResponse(Client response) {
+				view.removeNewClientPreparation();
+				view.selectClient(response);
 				view.getForm().setValue(response);
 				view.getForm().setReadOnly(true);
 				view.setSaveModeEnabled(false);
@@ -536,6 +565,8 @@ public class ClientSearchOperationViewPresenter implements OperationViewPresente
 
 			@Override
 			public void onResponse(Client response) {
+				view.removeNewClientPreparation();
+				view.selectClient(response);
 				view.getForm().setValue(response);
 				view.getForm().setReadOnly(true);
 				view.setSaveModeEnabled(false);

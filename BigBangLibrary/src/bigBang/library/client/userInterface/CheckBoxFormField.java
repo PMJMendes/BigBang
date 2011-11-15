@@ -2,11 +2,10 @@ package bigBang.library.client.userInterface;
 
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.user.client.ui.CheckBox;
-import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.HasVerticalAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
-import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.UIObject;
+import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
 import bigBang.library.client.FieldValidator;
@@ -34,34 +33,33 @@ public class CheckBoxFormField extends FormField<Boolean> {
 	
 	public CheckBoxFormField(){
 		super();
+		VerticalPanel mainWrapper = new VerticalPanel();
+		initWidget(mainWrapper);
+		mainWrapper.add(this.label);
+
 		wrapper = new HorizontalPanel();
+		mainWrapper.add(wrapper);
 		wrapper.setVerticalAlignment(HasVerticalAlignment.ALIGN_MIDDLE);
-		this.label = new Label();
-		this.label.getElement().getStyle().setMarginRight(5, Unit.PX);
-		wrapper.add(this.label);
-		wrapper.setCellHorizontalAlignment(this.label, HasHorizontalAlignment.ALIGN_RIGHT);
 		this.field = new CheckBox();
 		((UIObject) this.field).getElement().getStyle().setMargin(0, Unit.PX);
 		wrapper.add((Widget) this.field);
+		wrapper.add(unitsLabel);
 		wrapper.add(mandatoryIndicatorLabel);
 		wrapper.add(errorMessageLabel);
-		initWidget(wrapper);
 	}
 
 	protected void setLabel(String label) {
 		if(label == null || label.equals("")){
-			setLabelWidth("0px");
 			this.label.setText("");
 			
 		}else{
-			this.label.setText(label + ":");
-			setLabelWidth("100px");
+			this.label.setText(label);
 		}
 	}
 	
 	@Override
 	public void setLabelWidth(String width) {
-		wrapper.setCellWidth(this.label, width);
+		return;
 	}
 	
 	@Override

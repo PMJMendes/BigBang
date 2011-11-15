@@ -25,20 +25,17 @@ public class PopupPanel extends View implements HasWidgets {
 
 	public PopupPanel(boolean withGlassPanel, String title) {
 		super();
+		
+		showGlassPanel = withGlassPanel;
+		
 		panel = new SimplePanel();
 		initWidget(panel);
-		
+		panel.setSize("100%", "100%");
+
 		this.popup = new WindowPanel(title);
 		popup.setAnimationEnabled(true);
-
-		panel.setSize("100%", "100%");
 		popup.setWidget(this);
-
 		popup.getHeader().add(Caption.IMAGES.window().createImage());
-
-		//addMaximizeButton(popup, CaptionRegion.RIGHT);
-
-		showGlassPanel = withGlassPanel;
 	}
 
 	public PopupPanel(){

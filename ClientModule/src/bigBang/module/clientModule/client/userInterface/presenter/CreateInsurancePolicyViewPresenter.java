@@ -53,7 +53,7 @@ public abstract class CreateInsurancePolicyViewPresenter implements
 	public void setClient(Client client){
 		this.client = client;
 		this.view.getClientForm().setValue(client);
-		clientBroker = ((ClientProcessBroker) DataBrokerManager.Util.getInstance().getBroker(BigBangConstants.EntityIds.CLIENT)); 
+		clientBroker = ((ClientProcessBroker) DataBrokerManager.Util.getInstance().getBroker(BigBangConstants.EntityIds.CLIENT));
 	}
 	
 	@Override

@@ -73,10 +73,10 @@ public class List<T> extends View implements HasValueSelectables<T>, java.util.L
 		dragController = new PickupDragController(RootPanel.get(), false);
 
 		mainWrapper = new VerticalPanel();
+		initWidget(mainWrapper);
 		mainWrapper.setVerticalAlignment(HasVerticalAlignment.ALIGN_MIDDLE);
 		mainWrapper.setSize("100%", "100%");
 		mainWrapper.setStyleName("emptyContainer");
-		initWidget(mainWrapper);
 
 		headerContainer = new SimplePanel();
 		((UIObject) headerContainer).setSize("100%", "100%");
@@ -124,11 +124,11 @@ public class List<T> extends View implements HasValueSelectables<T>, java.util.L
 		this.footerLabel = new Label();
 		footerLabel.getElement().getStyle().setFontStyle(FontStyle.ITALIC);
 		footer = new SimplePanel();
+		mainWrapper.add((Widget) footer);
 		footerLabel.getElement().getStyle().setMargin(2, Unit.PX);
 		((UIObject) footer).setSize("100%", "100%");
 		((UIObject) footer).getElement().getStyle().setBackgroundColor("#CCC");
 		((UIObject) footer).getElement().getStyle().setProperty("borderTop", "1px solid #BBB");
-		mainWrapper.add((Widget) footer);
 
 		cellDoubleClickHandler = new DoubleClickHandler() {
 

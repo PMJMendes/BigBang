@@ -3,12 +3,10 @@ package bigBang.library.client.userInterface;
 import bigBang.library.client.FieldValidator;
 import bigBang.library.client.FormField;
 
-import com.google.gwt.dom.client.Style.Unit;
-import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.HasVerticalAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
-import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.TextBox;
+import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
 public class TextBoxFormField extends FormField<String> {
@@ -34,12 +32,10 @@ public class TextBoxFormField extends FormField<String> {
 	
 	protected void setLabel(String label) {
 		if(label == null || label.equals("")){
-			setLabelWidth("0px");
 			this.label.setText("");
 			
 		}else{
-			this.label.setText(label + ":");
-			setLabelWidth("100px");
+			this.label.setText(label);
 		}
 	}
 	
@@ -50,17 +46,20 @@ public class TextBoxFormField extends FormField<String> {
 	
 	public TextBoxFormField(){
 		super();
+		
+		VerticalPanel mainWrapper = new VerticalPanel();
+		initWidget(mainWrapper);
+		
+		mainWrapper.add(this.label);
+		
 		wrapper = new HorizontalPanel();
+		mainWrapper.add(wrapper);
 		wrapper.setVerticalAlignment(HasVerticalAlignment.ALIGN_MIDDLE);
-		this.label = new Label();
-		this.label.getElement().getStyle().setMarginRight(5, Unit.PX);
-		wrapper.add(this.label);
-		wrapper.setCellHorizontalAlignment(this.label, HasHorizontalAlignment.ALIGN_RIGHT);
 		this.field = new TextBox();
 		wrapper.add((Widget) this.field);
+		wrapper.add(unitsLabel);
 		wrapper.add(mandatoryIndicatorLabel);
 		wrapper.add(errorMessageLabel);
-		initWidget(wrapper);
 		
 		setFieldWidth("400px");
 	}

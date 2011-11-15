@@ -8,8 +8,6 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.FontWeight;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.HasClickHandlers;
-import com.google.gwt.event.shared.GwtEvent;
-import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.user.client.ui.AbstractImagePrototype;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.HasVerticalAlignment;
@@ -40,6 +38,7 @@ public class ListHeader extends View {
 
 	public ListHeader(String text){
 		HorizontalPanel headerWrapper = new HorizontalPanel();
+		initWidget(headerWrapper);
 		headerLabel = new Label();
 		headerLabel.setText(text);
 		headerWrapper.setSize("100%", "40px");
@@ -61,8 +60,6 @@ public class ListHeader extends View {
 
 		headerLabel.getElement().getStyle().setFontSize(14, Unit.PX);
 		headerLabel.getElement().getStyle().setFontWeight(FontWeight.BOLD);
-
-		initWidget(headerWrapper);
 	}
 
 	public void setText(String text){

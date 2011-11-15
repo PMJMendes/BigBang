@@ -5,17 +5,13 @@ import java.util.Collection;
 
 import org.gwt.mosaic.ui.client.MessageBox;
 
-import bigBang.definitions.client.dataAccess.ClientProcessBroker;
 import bigBang.definitions.shared.Client;
 import bigBang.definitions.shared.ClientStub;
 import bigBang.definitions.shared.SearchResult;
-import bigBang.definitions.shared.User;
 import bigBang.library.client.Checkable;
 import bigBang.library.client.HasEditableValue;
 import bigBang.library.client.HasValueSelectables;
 import bigBang.library.client.ValueSelectable;
-import bigBang.library.client.ValueWrapper;
-import bigBang.library.client.dataAccess.DataBrokerManager;
 import bigBang.library.client.event.ActionInvokedEvent;
 import bigBang.library.client.event.ActionInvokedEventHandler;
 import bigBang.library.client.event.CheckedSelectionChangedEvent;
@@ -42,9 +38,9 @@ public class ClientManagerTransferOperationView extends View implements ClientMa
 	protected static class SelectedList extends FilterableList<ClientStub> {
 
 		public void addEntry(ClientStub client){
-			ListEntry<ClientStub> entry = new ClientSearchPanelListEntry(new ValueWrapper<ClientStub>(client));
+			ListEntry<ClientStub> entry = new ClientSearchPanelListEntry(client);
 			entry.setChecked(true, false);
-			this.add(entry);		
+			this.add(entry);
 		}
 	}
 

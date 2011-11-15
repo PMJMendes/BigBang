@@ -8,6 +8,7 @@ import bigBang.definitions.shared.BigBangConstants;
 import bigBang.definitions.shared.Client;
 import bigBang.definitions.shared.TipifiedListItem;
 import bigBang.library.client.BigBangTypifiedListBroker;
+import bigBang.library.client.FormField;
 import bigBang.library.client.dataAccess.DataBrokerManager;
 import bigBang.library.client.dataAccess.TypifiedListBroker;
 import bigBang.library.client.dataAccess.TypifiedListClient;
@@ -20,6 +21,7 @@ import bigBang.library.client.userInterface.TextAreaFormField;
 import bigBang.library.client.userInterface.TextBoxFormField;
 import bigBang.library.client.userInterface.view.FormView;
 import bigBang.library.client.userInterface.view.FormViewSection;
+import bigBang.module.clientModule.shared.ClientFormValidator;
 import bigBang.module.clientModule.shared.ModuleConstants;
 
 import com.google.gwt.event.logical.shared.AttachEvent;
@@ -56,15 +58,19 @@ public class ClientFormView extends FormView<Client> implements ClientProcessDat
 	public ClientFormView() {
 		super();
 
-		name = new TextBoxFormField("Nome");
-		taxNumber = new TextBoxFormField("Nº Contribuinte");
+		name = new TextBoxFormField("Nome", new ClientFormValidator.ClientNameValidator());
+		name.setFieldWidth("600px");
+		taxNumber = new TextBoxFormField("Nº Contribuinte", new ClientFormValidator.TaxNumberValidator());
+		taxNumber.setFieldWidth("100px");
 		address = new AddressFormField();
-		group = new ExpandableListBoxFormField(BigBangConstants.EntityIds.CLIENT_GROUP, "Grupo");
-		NIB = new TextBoxFormField("NIB");
-		mediator = new ExpandableListBoxFormField(BigBangConstants.EntityIds.MEDIATOR, "Mediador");
+		group = new ExpandableListBoxFormField(BigBangConstants.EntityIds.CLIENT_GROUP, "Grupo", new ClientFormValidator.ClientGroupValidator());
+		NIB = new TextBoxFormField("NIB", new ClientFormValidator.NIBValidator());
+		NIB.setFieldWidth("200px");
+		mediator = new ExpandableListBoxFormField(BigBangConstants.EntityIds.MEDIATOR, "Mediador", new ClientFormValidator.MediatorValidator());
 		clientManager = new TextBoxFormField("Gestor de Cliente");
+		clientManager.setFieldWidth("100px");
 		clientManager.setEditable(false);
-		profile = new ExpandableListBoxFormField(ModuleConstants.ListIDs.OperationalProfiles, "Perfil Operacional");
+		profile = new ExpandableListBoxFormField(ModuleConstants.ListIDs.OperationalProfiles, "Perfil Operacional", new ClientFormValidator.ProfileValidator());
 		CAE = new ExpandableListBoxFormField(ModuleConstants.ListIDs.CAEs, "CAE");
 		CAE.setPopupWidth("600px");
 		CAE.setReadOnly(true);
@@ -82,12 +88,19 @@ public class ClientFormView extends FormView<Client> implements ClientProcessDat
 		addSection("Informação Geral");
 
 		addFormField(name);
-		addInlineFormField(taxNumber);
-		addFormField(NIB);
-		addFormField(group);
-		addFormField(clientManager);
-		addFormField(mediator);
-		addFormField(profile);
+
+		addFormFieldGroup(new FormField<?>[]{
+				clientManager,
+				mediator,
+		}, true);
+		addFormFieldGroup(new FormField<?>[]{
+				profile,
+				group
+		}, true);
+		addFormFieldGroup(new FormField<?>[]{
+				taxNumber,
+				NIB
+		}, true);
 
 		addSection("Tipo de Cliente");
 
@@ -115,17 +128,25 @@ public class ClientFormView extends FormView<Client> implements ClientProcessDat
 
 		individualSection = new FormViewSection("Informação Específica a Indivíduo");
 		addSection(individualSection);
-		individualSection.addFormField(birthDate);
-		individualSection.addFormField(gender);
-		individualSection.addFormField(maritalStatus);
-		individualSection.addFormField(profession);
+		addFormFieldGroup(new FormField<?>[]{
+				birthDate,
+				gender
+		}, true);
+		addFormFieldGroup(new FormField<?>[]{
+				maritalStatus,
+				profession
+		}, true);
 
 		companySection = new FormViewSection("Informação Específica a Companhias");
 		addSection(companySection);
-		companySection.addFormField(CAE);
-		companySection.addFormField(activityObservations);
-		companySection.addFormField(numberOfWorkers);
-		companySection.addFormField(revenue);
+		addFormFieldGroup(new FormField<?>[]{
+				numberOfWorkers,
+				revenue
+		}, true);
+		addFormFieldGroup(new FormField<?>[]{
+				CAE,
+				activityObservations
+		}, true);
 
 		otherSection = new FormViewSection("Informação Específica");
 		addSection(otherSection);
@@ -201,7 +222,7 @@ public class ClientFormView extends FormView<Client> implements ClientProcessDat
 				}
 			}
 		});
-		
+
 		this.setValue(new Client());
 
 	}
@@ -265,7 +286,7 @@ public class ClientFormView extends FormView<Client> implements ClientProcessDat
 		if(info.managerId == null){
 			clientManager.clear();
 		}else if(info.managerId != null){
-			
+
 			List<TipifiedListItem> items = BigBangTypifiedListBroker.Util.getInstance().getListItems(BigBangConstants.EntityIds.USER);
 			for(TipifiedListItem i : items){
 				if(i.id.equalsIgnoreCase(info.managerId)){
@@ -305,7 +326,7 @@ public class ClientFormView extends FormView<Client> implements ClientProcessDat
 
 	@Override
 	public void updateClient(Client client) {
-		if(this.value.id == null)
+		if(this.value == null || this.value.id == null)
 			return;
 		if(this.value.id.equals(client.id)){
 			this.setValue(client, false);

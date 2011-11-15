@@ -20,10 +20,7 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Cursor;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.event.logical.shared.AttachEvent;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
-import com.google.gwt.event.shared.HandlerRegistration;
-import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.HasVerticalAlignment;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Widget;
@@ -36,7 +33,6 @@ TypifiedListClient {
 	protected String selectedValueId;
 	protected int typifiedListDataVersion;
 	protected TypifiedListBroker typifiedListBroker;
-	protected HandlerRegistration attachHandler;
 	protected boolean locked = false;
 
 	protected boolean hasServices;
@@ -63,15 +59,11 @@ TypifiedListClient {
 		this.typifiedListBroker = BigBangTypifiedListBroker.Util.getInstance();
 		clearValues();
 
-		label.setText(listDescription + ":");
+		label.setText(listDescription);
 
 		wrapper.clear();
 		wrapper.setVerticalAlignment(HasVerticalAlignment.ALIGN_MIDDLE);
 
-		wrapper.add(this.label);
-		wrapper.setCellWidth(this.label, "100px");
-		wrapper.setCellHorizontalAlignment(this.label,
-				HasHorizontalAlignment.ALIGN_RIGHT);
 		wrapper.add((Widget) this.listBox);
 		Resources r = GWT.create(Resources.class);
 		expandImage = new Image(r.listExpandIcon());
@@ -125,6 +117,7 @@ TypifiedListClient {
 		});
 
 		wrapper.add(expandImage);
+		wrapper.add(unitsLabel);
 		wrapper.add(mandatoryIndicatorLabel);
 		setFieldWidth("150px");
 
@@ -142,23 +135,23 @@ TypifiedListClient {
 		}else{
 			this.typifiedListBroker.unregisterClient(listId, this);
 		}
+	}
+	
+	@Override
+	protected void onAttach() {
+		super.onAttach();
+		String listId = this.getListId();
+		if(!typifiedListBroker.isClientRegistered(listId, ExpandableListBoxFormField.this)){
+			typifiedListBroker.registerClient(listId, ExpandableListBoxFormField.this);
+		}
+	}
 
-		if(this.attachHandler == null){
-			this.attachHandler = this.addHandler(new AttachEvent.Handler() {
-
-				@Override
-				public void onAttachOrDetach(AttachEvent event) {
-					if(event.isAttached()){
-						if(!typifiedListBroker.isClientRegistered(listId, ExpandableListBoxFormField.this)){
-							typifiedListBroker.registerClient(listId, ExpandableListBoxFormField.this);
-						}
-					}else{
-						if(typifiedListBroker.isClientRegistered(listId, ExpandableListBoxFormField.this)){
-							typifiedListBroker.unregisterClient(listId, ExpandableListBoxFormField.this);
-						}
-					}
-				}
-			}, AttachEvent.getType());
+	@Override
+	protected void onDetach() {
+		super.onDetach();
+		String listId = this.getListId();
+		if(typifiedListBroker.isClientRegistered(listId, ExpandableListBoxFormField.this)){
+			typifiedListBroker.unregisterClient(listId, ExpandableListBoxFormField.this);
 		}
 	}
 
