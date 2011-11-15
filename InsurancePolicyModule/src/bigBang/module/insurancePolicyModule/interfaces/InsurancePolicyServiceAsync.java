@@ -20,7 +20,7 @@ public interface InsurancePolicyServiceAsync
 	void initializeNewPolicy(InsurancePolicy policy, AsyncCallback<InsurancePolicy> callback);
 	void openForEdit(InsurancePolicy policy, AsyncCallback<InsurancePolicy> callback);
 	void updateHeader(InsurancePolicy policy, AsyncCallback<InsurancePolicy> callback);
-	void getPageForEdit(String tempObjectId, String tempExerciseId, AsyncCallback<TableSection> callback);
+	void getPageForEdit(String scratchPadId, String tempObjectId, String tempExerciseId, AsyncCallback<TableSection> callback);
 	void savePage(InsurancePolicy.TableSection data, AsyncCallback<TableSection> callback);
 	void getPadItemsFilter(String listId, String scratchPadId, AsyncCallback<TipifiedListItem[]> callback);
 	void getObjectInPad(String tempObjectId, AsyncCallback<InsuredObject> callback);

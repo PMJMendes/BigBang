@@ -608,15 +608,12 @@ public class InsurancePolicyServiceImpl
 			if ( !mbValid )
 				throw new BigBangException("Ocorreu um erro interno. Os dados correntes não são válidos.");
 
-			larrResult = new TipifiedListItem[marrObjects.size() + 1];
-			larrResult[0] = new TipifiedListItem();
-			larrResult[0].id = mid + ":-1";
-			larrResult[0].value = "-";
+			larrResult = new TipifiedListItem[marrObjects.size()];
 			for ( i = 0; i < marrObjects.size(); i++ )
 			{
-				larrResult[i + 1] = new TipifiedListItem();
-				larrResult[i + 1].id = mid + ":" + i;
-				larrResult[i + 1].value = marrObjects.get(i).mstrName;
+				larrResult[i] = new TipifiedListItem();
+				larrResult[i].id = mid + ":" + i;
+				larrResult[i].value = marrObjects.get(i).mstrName;
 
 			}
 			return larrResult;
@@ -677,15 +674,12 @@ public class InsurancePolicyServiceImpl
 			if ( !mbValid )
 				throw new BigBangException("Ocorreu um erro interno. Os dados correntes não são válidos.");
 
-			larrResult = new TipifiedListItem[marrExercises.size() + 1];
-			larrResult[0] = new TipifiedListItem();
-			larrResult[0].id = mid + ":-1";
-			larrResult[0].value = "-";
+			larrResult = new TipifiedListItem[marrExercises.size()];
 			for ( i = 0; i < marrExercises.size(); i++ )
 			{
-				larrResult[i + 1] = new TipifiedListItem();
-				larrResult[i + 1].id = mid + ":" + i;
-				larrResult[i + 1].value = marrExercises.get(i).mstrLabel;
+				larrResult[i] = new TipifiedListItem();
+				larrResult[i].id = mid + ":" + i;
+				larrResult[i].value = marrExercises.get(i).mstrLabel;
 
 			}
 			return larrResult;
@@ -1263,7 +1257,7 @@ public class InsurancePolicyServiceImpl
 		return policy;
 	}
 
-	public TableSection getPageForEdit(String tempObjectId, String tempExerciseId)
+	public TableSection getPageForEdit(String scratchPadId, String tempObjectId, String tempExerciseId)
 		throws SessionExpiredException, BigBangException
 	{
 		String[] larrAux;
@@ -1276,18 +1270,33 @@ public class InsurancePolicyServiceImpl
 		if ( Engine.getCurrentUser() == null )
 			throw new SessionExpiredException();
 
-		larrAux = tempObjectId.split(":");
-		if ( larrAux.length != 2 )
-            throw new IllegalArgumentException("Invalid temporary ID string: " + tempObjectId);
-		lidPad = UUID.fromString(larrAux[0]);
-		llngObject = Integer.parseInt(larrAux[1]);
+		if ( scratchPadId == null )
+			throw new BigBangException("Erro: Espaço de trabalho não existente.");
+		lidPad = UUID.fromString(scratchPadId);
 
-		larrAux = tempExerciseId.split(":");
-		if ( larrAux.length != 2 )
-            throw new IllegalArgumentException("Invalid temporary ID string: " + tempObjectId);
-		if ( !lidPad.equals(UUID.fromString(larrAux[0])) )
-			throw new BigBangException("Inesperado: objecto e exercício não pertencem ao mesmo espaço de trabalho.");
-		llngExercise = Integer.parseInt(larrAux[1]);
+		if ( (tempObjectId == null) || (tempObjectId.length() == 0) )
+			llngObject = -1;
+		else
+		{
+			larrAux = tempObjectId.split(":");
+			if ( larrAux.length != 2 )
+	            throw new IllegalArgumentException("Invalid temporary ID string: " + tempObjectId);
+			if ( !lidPad.equals(UUID.fromString(larrAux[0])) )
+				throw new BigBangException("Inesperado: objecto não pertence ao espaço de trabalho.");
+			llngObject = Integer.parseInt(larrAux[1]);
+		}
+
+		if ( (tempExerciseId == null) || (tempExerciseId.length() == 0) )
+			llngExercise = -1;
+		else
+		{
+			larrAux = tempExerciseId.split(":");
+			if ( larrAux.length != 2 )
+	            throw new IllegalArgumentException("Invalid temporary ID string: " + tempObjectId);
+			if ( !lidPad.equals(UUID.fromString(larrAux[0])) )
+				throw new BigBangException("Inesperado: exercício não pertence ao espaço de trabalho.");
+			llngExercise = Integer.parseInt(larrAux[1]);
+		}
 
 		lobjPad = GetScratchPadStorage().get(lidPad);
 

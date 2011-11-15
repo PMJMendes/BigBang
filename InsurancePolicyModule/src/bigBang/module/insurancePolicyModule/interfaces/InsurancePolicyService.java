@@ -39,7 +39,7 @@ public interface InsurancePolicyService extends SearchService {
 
 	public InsurancePolicy updateHeader(InsurancePolicy policy) throws SessionExpiredException, BigBangException;
 
-	public InsurancePolicy.TableSection getPageForEdit(String tempObjectId, String tempExerciseId)
+	public InsurancePolicy.TableSection getPageForEdit(String scratchPadId, String tempObjectId, String tempExerciseId)
 			throws SessionExpiredException, BigBangException;
 	public InsurancePolicy.TableSection savePage(InsurancePolicy.TableSection data)
 			throws SessionExpiredException, BigBangException;
