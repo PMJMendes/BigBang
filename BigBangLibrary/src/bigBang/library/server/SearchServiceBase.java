@@ -203,14 +203,12 @@ public abstract class SearchServiceBase
 		throws SessionExpiredException, BigBangException
 	{
 		SearchWSpace lrefWSpace;
-		UUID lidAux;
 
 		if ( Engine.getCurrentUser() == null )
 			throw new SessionExpiredException();
 
 		lrefWSpace = new SearchWSpace(getObjectID(), (opId == null ? null : UUID.fromString(opId)), getColumns());
-		lidAux = lrefWSpace.GetID();
-		GetSearchWSStorage().put(lidAux, lrefWSpace);
+		GetSearchWSStorage().put(lrefWSpace.GetID(), lrefWSpace);
 
 		return doOpenSearch(lrefWSpace, parameters, sorts, size);
 	}

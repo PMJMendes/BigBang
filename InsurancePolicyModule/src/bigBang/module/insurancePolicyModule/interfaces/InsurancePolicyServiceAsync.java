@@ -1,7 +1,5 @@
 package bigBang.module.insurancePolicyModule.interfaces;
 
-import com.google.gwt.user.client.rpc.AsyncCallback;
-
 import bigBang.definitions.shared.Exercise;
 import bigBang.definitions.shared.InfoOrDocumentRequest;
 import bigBang.definitions.shared.InsurancePolicy;
@@ -11,6 +9,8 @@ import bigBang.definitions.shared.ManagerTransfer;
 import bigBang.definitions.shared.Receipt;
 import bigBang.library.interfaces.SearchServiceAsync;
 
+import com.google.gwt.user.client.rpc.AsyncCallback;
+
 public interface InsurancePolicyServiceAsync
 	extends SearchServiceAsync
 {
@@ -19,13 +19,13 @@ public interface InsurancePolicyServiceAsync
 	void initializeNewPolicy(InsurancePolicy policy, AsyncCallback<InsurancePolicy> callback);
 	void openForEdit(InsurancePolicy policy, AsyncCallback<InsurancePolicy> callback);
 	void updateHeader(InsurancePolicy policy, AsyncCallback<InsurancePolicy> callback);
-	void getPageForEdit(String scratchPadId, String tempObjectId, String tempExerciseId, AsyncCallback<TableSection> callback);
-	void savePage(String scratchPadId, String insuredObjectId, String exerciseId, TableSection data,
-			AsyncCallback<TableSection> callback);
+	void getPageForEdit(String scratchPadId, int objectIndex, int exerciseIndex, AsyncCallback<TableSection> callback);
+	void savePage(String scratchPadId, TableSection data, AsyncCallback<TableSection> callback);
+	void getObjectInPad(String scratchPadId, int objectIndex, AsyncCallback<InsuredObject> callback);
 	void createObjectInPad(String scratchPadId, AsyncCallback<InsuredObject> callback);
 	void createObjectFromClientInPad(String scratchPadId, AsyncCallback<InsuredObject> callback);
-	void updateObjectInPad(String scratchPadId, InsuredObject data, AsyncCallback<InsuredObject> callback);
-	void deleteObjectInPad(String scratchPadId, String tempObjectId, AsyncCallback<Void> callback);
+	void updateObjectInPad(InsuredObject data, AsyncCallback<InsuredObject> callback);
+	void deleteObjectInPad(InsuredObject data, AsyncCallback<Void> callback);
 	void createFirstExercise(String scratchPadId, AsyncCallback<Exercise> callback);
 	void updateExerciseInPad(String scratchPadId, Exercise data, AsyncCallback<Exercise> callback);
 	void deleteExerciseInPad(String scratchPadId, String tempExerciseId, AsyncCallback<Void> callback);

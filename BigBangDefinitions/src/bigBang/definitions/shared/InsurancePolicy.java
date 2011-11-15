@@ -72,13 +72,14 @@ public class InsurancePolicy
 		{
 			private static final long serialVersionUID = 1L;
 
+			public String fieldId;
 			public String coverageId;
 			public int columnIndex;
 			public String value;
 		}
 
-		public String insuredObjectId; // Can be null
-		public String exerciseId; // Can be null
+		public int insuredObjectIndex; // Use -1 for invariants
+		public int exerciseIndex; // Use -1 for invariants
 		public TableField[] data;
 	}
 

@@ -10,17 +10,28 @@ import Jewel.Engine.Engine;
 import Jewel.Engine.SysObjects.JewelEngineException;
 import Jewel.Engine.SysObjects.ObjectBase;
 
-public class Tax
+public class PolicyValue
 	extends ObjectBase
 {
-	private Coverage lobjCoverage;
+    public static PolicyValue GetInstance(UUID pidNameSpace, UUID pidKey)
+		throws BigBangJewelException
+	{
+		try
+		{
+			return (PolicyValue)Engine.GetWorkInstance(Engine.FindEntity(pidNameSpace, Constants.ObjID_PolicyValue), pidKey);
+		}
+	    catch (Throwable e)
+	    {
+	    	throw new BigBangJewelException(e.getMessage(), e);
+		}
+	}
 
-    public static Tax GetInstance(UUID pidNameSpace, UUID pidKey)
+	public static PolicyValue GetInstance(UUID pidNameSpace, ResultSet prsObject)
 		throws BigBangJewelException
 	{
 	    try
 	    {
-			return (Tax)Engine.GetWorkInstance(Engine.FindEntity(pidNameSpace, Constants.ObjID_Tax), pidKey);
+			return (PolicyValue)Engine.GetWorkInstance(Engine.FindEntity(pidNameSpace, Constants.ObjID_PolicyValue), prsObject);
 		}
 	    catch (Throwable e)
 	    {
@@ -28,25 +39,14 @@ public class Tax
 		}
 	}
 
-    public static Tax GetInstance(UUID pidNameSpace, ResultSet prsObject)
-		throws BigBangJewelException
-	{
-		try
-		{
-			return (Tax)Engine.GetWorkInstance(Engine.FindEntity(pidNameSpace, Constants.ObjID_Tax), prsObject);
-		}
-	    catch (Throwable e)
-	    {
-	    	throw new BigBangJewelException(e.getMessage(), e);
-		}
-	}
+	private Tax mrefTax;
 
-	public void Initialize()	
+	public void Initialize()
 		throws JewelEngineException
 	{
 		try
 		{
-			lobjCoverage = Coverage.GetInstance(getNameSpace(), (UUID)getAt(1));
+			mrefTax = Tax.GetInstance(getNameSpace(), (UUID)getAt(2));
 		}
 		catch (Throwable e)
 		{
@@ -54,23 +54,8 @@ public class Tax
 		}
 	}
 
-	public Coverage GetCoverage()
+	public Tax GetTax()
 	{
-		return lobjCoverage;
-	}
-
-	public boolean GetVariesByObject()
-	{
-		return (Boolean)getAt(5);
-	}
-
-	public boolean GetVariesByExercise()
-	{
-		return (Boolean)getAt(6);
-	}
-
-	public int GetColumnOrder()
-	{
-		return (Integer)getAt(8);
+		return mrefTax;
 	}
 }

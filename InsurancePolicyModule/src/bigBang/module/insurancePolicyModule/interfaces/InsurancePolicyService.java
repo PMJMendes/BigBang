@@ -37,14 +37,15 @@ public interface InsurancePolicyService extends SearchService {
 	public InsurancePolicy openForEdit(InsurancePolicy policy) throws SessionExpiredException, BigBangException;
 
 	public InsurancePolicy updateHeader(InsurancePolicy policy) throws SessionExpiredException, BigBangException;
-	public InsurancePolicy.TableSection getPageForEdit(String scratchPadId, String tempObjectId, String tempExerciseId)
+	public InsurancePolicy.TableSection getPageForEdit(String scratchPadId, int objectIndex, int exerciseIndex)
 			throws SessionExpiredException, BigBangException;
-	public InsurancePolicy.TableSection savePage(String scratchPadId, String insuredObjectId, String exerciseId,
-			InsurancePolicy.TableSection data) throws SessionExpiredException, BigBangException;
+	public InsurancePolicy.TableSection savePage(String scratchPadId, InsurancePolicy.TableSection data)
+			throws SessionExpiredException, BigBangException;
+	public InsuredObject getObjectInPad(String scratchPadId, int objectIndex) throws SessionExpiredException, BigBangException;
 	public InsuredObject createObjectInPad(String scratchPadId) throws SessionExpiredException, BigBangException;
 	public InsuredObject createObjectFromClientInPad(String scratchPadId) throws SessionExpiredException, BigBangException;
-	public InsuredObject updateObjectInPad(String scratchPadId, InsuredObject data) throws SessionExpiredException, BigBangException;
-	public void deleteObjectInPad(String scratchPadId, String tempObjectId) throws SessionExpiredException, BigBangException;
+	public InsuredObject updateObjectInPad(InsuredObject data) throws SessionExpiredException, BigBangException;
+	public void deleteObjectInPad(InsuredObject data) throws SessionExpiredException, BigBangException;
 	public Exercise createFirstExercise(String scratchPadId) throws SessionExpiredException, BigBangException;
 	public Exercise updateExerciseInPad(String scratchPadId, Exercise data) throws SessionExpiredException, BigBangException;
 	public void deleteExerciseInPad(String scratchPadId, String tempExerciseId) throws SessionExpiredException, BigBangException;

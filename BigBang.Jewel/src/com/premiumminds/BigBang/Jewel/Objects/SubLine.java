@@ -77,7 +77,8 @@ public class SubLine
 
 		try
 		{
-			lrsCoverages = lrefCoverages.SelectByMembers(ldb, larrMembers, larrParams, new int[0]);
+			lrsCoverages = lrefCoverages.SelectByMembers(ldb, new int[] {Constants.FKSubLine_In_Coverage},
+					new java.lang.Object[] {getKey()}, new int[] {-Constants.Mandatory_In_Coverage});
 		}
 		catch (Throwable e)
 		{

@@ -10,17 +10,28 @@ import Jewel.Engine.Engine;
 import Jewel.Engine.SysObjects.JewelEngineException;
 import Jewel.Engine.SysObjects.ObjectBase;
 
-public class Tax
+public class PolicyCoverage
 	extends ObjectBase
 {
-	private Coverage lobjCoverage;
+    public static PolicyCoverage GetInstance(UUID pidNameSpace, UUID pidKey)
+		throws BigBangJewelException
+	{
+		try
+		{
+			return (PolicyCoverage)Engine.GetWorkInstance(Engine.FindEntity(pidNameSpace, Constants.ObjID_PolicyCoverage), pidKey);
+		}
+	    catch (Throwable e)
+	    {
+	    	throw new BigBangJewelException(e.getMessage(), e);
+		}
+	}
 
-    public static Tax GetInstance(UUID pidNameSpace, UUID pidKey)
+	public static PolicyCoverage GetInstance(UUID pidNameSpace, ResultSet prsObject)
 		throws BigBangJewelException
 	{
 	    try
 	    {
-			return (Tax)Engine.GetWorkInstance(Engine.FindEntity(pidNameSpace, Constants.ObjID_Tax), pidKey);
+			return (PolicyCoverage)Engine.GetWorkInstance(Engine.FindEntity(pidNameSpace, Constants.ObjID_PolicyCoverage), prsObject);
 		}
 	    catch (Throwable e)
 	    {
@@ -28,25 +39,14 @@ public class Tax
 		}
 	}
 
-    public static Tax GetInstance(UUID pidNameSpace, ResultSet prsObject)
-		throws BigBangJewelException
-	{
-		try
-		{
-			return (Tax)Engine.GetWorkInstance(Engine.FindEntity(pidNameSpace, Constants.ObjID_Tax), prsObject);
-		}
-	    catch (Throwable e)
-	    {
-	    	throw new BigBangJewelException(e.getMessage(), e);
-		}
-	}
+	Coverage mrefCoverage;
 
-	public void Initialize()	
+	public void Initialize()
 		throws JewelEngineException
 	{
 		try
 		{
-			lobjCoverage = Coverage.GetInstance(getNameSpace(), (UUID)getAt(1));
+			mrefCoverage = Coverage.GetInstance(getNameSpace(), (UUID)getAt(1));
 		}
 		catch (Throwable e)
 		{
@@ -56,21 +56,6 @@ public class Tax
 
 	public Coverage GetCoverage()
 	{
-		return lobjCoverage;
-	}
-
-	public boolean GetVariesByObject()
-	{
-		return (Boolean)getAt(5);
-	}
-
-	public boolean GetVariesByExercise()
-	{
-		return (Boolean)getAt(6);
-	}
-
-	public int GetColumnOrder()
-	{
-		return (Integer)getAt(8);
+		return mrefCoverage;
 	}
 }

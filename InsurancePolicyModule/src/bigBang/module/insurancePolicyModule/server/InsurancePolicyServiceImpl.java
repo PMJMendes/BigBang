@@ -22,7 +22,6 @@ import Jewel.Petri.SysObjects.JewelPetriException;
 import bigBang.definitions.shared.Exercise;
 import bigBang.definitions.shared.InfoOrDocumentRequest;
 import bigBang.definitions.shared.InsurancePolicy;
-import bigBang.definitions.shared.InsurancePolicy.TableSection;
 import bigBang.definitions.shared.InsurancePolicyStub;
 import bigBang.definitions.shared.InsuredObject;
 import bigBang.definitions.shared.ManagerTransfer;
@@ -41,6 +40,12 @@ import bigBang.module.insurancePolicyModule.shared.InsurancePolicySearchParamete
 import bigBang.module.insurancePolicyModule.shared.InsurancePolicySortParameter;
 
 import com.premiumminds.BigBang.Jewel.Constants;
+import com.premiumminds.BigBang.Jewel.ZipCodeBridge;
+import com.premiumminds.BigBang.Jewel.Data.PolicyCoverageData;
+import com.premiumminds.BigBang.Jewel.Data.PolicyData;
+import com.premiumminds.BigBang.Jewel.Data.PolicyExerciseData;
+import com.premiumminds.BigBang.Jewel.Data.PolicyObjectData;
+import com.premiumminds.BigBang.Jewel.Data.PolicyValueData;
 import com.premiumminds.BigBang.Jewel.Data.ReceiptData;
 import com.premiumminds.BigBang.Jewel.Objects.AgendaItem;
 import com.premiumminds.BigBang.Jewel.Objects.Client;
@@ -48,6 +53,10 @@ import com.premiumminds.BigBang.Jewel.Objects.Line;
 import com.premiumminds.BigBang.Jewel.Objects.Mediator;
 import com.premiumminds.BigBang.Jewel.Objects.MgrXFer;
 import com.premiumminds.BigBang.Jewel.Objects.Policy;
+import com.premiumminds.BigBang.Jewel.Objects.PolicyCoverage;
+import com.premiumminds.BigBang.Jewel.Objects.PolicyExercise;
+import com.premiumminds.BigBang.Jewel.Objects.PolicyObject;
+import com.premiumminds.BigBang.Jewel.Objects.PolicyValue;
 import com.premiumminds.BigBang.Jewel.Objects.SubLine;
 import com.premiumminds.BigBang.Jewel.Objects.Tax;
 import com.premiumminds.BigBang.Jewel.Operations.ContactOps;
@@ -65,15 +74,816 @@ public class InsurancePolicyServiceImpl
 
 	private static class PolicyScratchPad
 	{
-		public UUID policyId;
+//		private static final UUID GUID_Empty = UUID.fromString("00000000-0000-0000-0000-000000000000");
+
+		private static class PadField
+		{
+			public UUID midField;
+			public int mlngColIndex;
+			public String mstrLabel;
+			public UUID midType;
+			public String mstrUnits;
+			public String mstrDefault;
+			public UUID midRefersTo;
+			public boolean mbVariesByObject;
+			public boolean mbVariesByExercise;
+		}
+
+		private static class PadCoverage
+			extends PolicyCoverageData
+		{
+			private static final long serialVersionUID = 1L;
+
+			public String mstrLabel;
+			public boolean mbMandatory;
+			public boolean mbIsHeader;
+			public PadField[] marrFields;
+		}
+
+		private static class PadValue
+			extends PolicyValueData
+		{
+			private static final long serialVersionUID = 1L;
+
+			public PadCoverage mrefCoverage;
+			public PadField mrefField;
+			public int mlngObject;
+			public int mlngExercise;
+		}
+
+		public final UUID mid;
+		public boolean mbValid;
+
+		public PolicyData mobjPolicy;
+		public ArrayList<PadCoverage> marrCoverages;
+		public ArrayList<PolicyObjectData> marrObjects;
+		public ArrayList<PolicyExerciseData> marrExercises;
+		public ArrayList<PadValue> marrValues;
+
+		public PolicyScratchPad()
+		{
+			mid = UUID.randomUUID();
+			mbValid = false;
+		}
+		
+		public UUID GetID()
+		{
+			return mid;
+		}
+
+		public void InitNew(InsurancePolicy pobjSource)
+			throws BigBangException
+		{
+			com.premiumminds.BigBang.Jewel.Objects.Coverage[] larrAuxCoverages;
+			PadCoverage lobjCoverage;
+			Tax[] larrTaxes;
+			ArrayList<PadField> larrFields;
+			PadField lobjField;
+			PadValue lobjValue;
+			int i, j;
+
+			if ( mbValid )
+				throw new BigBangException("Erro: Não pode inicializr o mesmo espaço de trabalho duas vezes.");
+
+			mobjPolicy = new PolicyData();
+			mobjPolicy.mstrNumber = pobjSource.number;
+			mobjPolicy.midCompany = UUID.fromString(pobjSource.insuranceAgencyId);
+			mobjPolicy.midSubLine = UUID.fromString(pobjSource.subLineId);
+			mobjPolicy.mdtBeginDate = ( pobjSource.startDate == null ? null :
+					Timestamp.valueOf(pobjSource.startDate + " 00:00:00.0") );
+			mobjPolicy.midDuration = UUID.fromString(pobjSource.durationId);
+			mobjPolicy.midFractioning = UUID.fromString(pobjSource.fractioningId);
+			mobjPolicy.mlngMaturityDay = pobjSource.maturityDay;
+			mobjPolicy.mlngMaturityMonth = pobjSource.maturityMonth;
+			mobjPolicy.mdtEndDate = ( pobjSource.expirationDate == null ? null :
+					Timestamp.valueOf(pobjSource.expirationDate + " 00:00:00.0") );
+			mobjPolicy.mstrNotes = pobjSource.notes;
+			mobjPolicy.midMediator = ( pobjSource.mediatorId == null ? null : UUID.fromString(pobjSource.mediatorId) );
+			mobjPolicy.mbCaseStudy = pobjSource.caseStudy;
+
+			marrCoverages = new ArrayList<PadCoverage>();
+			marrObjects = new ArrayList<PolicyObjectData>();
+			marrExercises = new ArrayList<PolicyExerciseData>();
+			marrValues = new ArrayList<PadValue>();
+
+			try
+			{
+				larrAuxCoverages = SubLine.GetInstance(Engine.getCurrentNameSpace(), mobjPolicy.midSubLine).GetCurrentCoverages();
+				for ( i = 0 ; i < larrAuxCoverages.length; i++ )
+				{
+					lobjCoverage = new PadCoverage();
+					lobjCoverage.mid = null;
+					lobjCoverage.midOwner = null;
+					lobjCoverage.midCoverage = larrAuxCoverages[i].getKey();
+					lobjCoverage.mbPresent = null;
+					lobjCoverage.mstrLabel = larrAuxCoverages[i].getLabel();
+					lobjCoverage.mbMandatory = (Boolean)larrAuxCoverages[i].getAt(2);
+					lobjCoverage.mbIsHeader = ("(Cabeçalho)").equals(lobjCoverage.mstrLabel);
+					larrTaxes = larrAuxCoverages[i].GetCurrentTaxes();
+					larrFields = new ArrayList<PadField>();
+					for ( j = 0; j < larrTaxes.length; j++ )
+					{
+						lobjField = new PadField();
+						lobjField.midField = larrTaxes[i].getKey();
+						lobjField.mlngColIndex = larrTaxes[i].GetColumnOrder();
+						lobjField.mstrLabel = larrTaxes[i].getLabel();
+						lobjField.midType = (UUID)larrTaxes[i].getAt(2);
+						lobjField.mstrUnits = (String)larrTaxes[i].getAt(3);
+						lobjField.mstrDefault = (String)larrTaxes[i].getAt(4);
+						lobjField.midRefersTo = (UUID)larrTaxes[i].getAt(7);
+						lobjField.mbVariesByObject = larrTaxes[i].GetVariesByObject();
+						lobjField.mbVariesByExercise = larrTaxes[i].GetVariesByExercise();
+						larrFields.add(lobjField);
+
+						if ( lobjField.mbVariesByObject || lobjField.mbVariesByExercise )
+							continue;
+						lobjValue = new PadValue();
+						lobjValue.mid = null;
+						lobjValue.mstrValue = (String)larrTaxes[i].getAt(4);
+						lobjValue.midOwner = null;
+						lobjValue.midField = larrTaxes[i].getKey();
+						lobjValue.midObject = null;
+						lobjValue.midExercise = null;
+						lobjValue.mrefCoverage = lobjCoverage;
+						lobjValue.mrefField = lobjField;
+						lobjValue.mlngObject = -1;
+						lobjValue.mlngExercise = -1;
+						marrValues.add(lobjValue);
+					}
+					lobjCoverage.marrFields = larrFields.toArray(new PadField[larrFields.size()]);
+					marrCoverages.add(lobjCoverage);
+				}
+			}
+			catch (Throwable e)
+			{
+				throw new BigBangException(e.getMessage(), e);
+			}
+
+			mbValid = true;
+		}
+
+		public void OpenForEdit(UUID pidPolicy)
+			throws BigBangException
+		{
+			Policy lobjAuxPolicy;
+			PolicyCoverage[] larrLocalCoverages;
+			com.premiumminds.BigBang.Jewel.Objects.Coverage[] larrAuxCoverages;
+			Hashtable<UUID, PadCoverage> lmapCoverages;
+			PadCoverage lobjCoverage;
+			Tax[] larrTaxes;
+			ArrayList<PadField> larrFields;
+			Hashtable<UUID, PadField> lmapFields;
+			PadField lobjField;
+			PolicyObject[] larrAuxObjects;
+			Hashtable<UUID, Integer> lmapObjects;
+			PolicyObjectData lobjObject;
+			PolicyExercise[] larrAuxExercises;
+			Hashtable<UUID, Integer> lmapExercises;
+			PolicyExerciseData lobjExercise;
+			PolicyValue[] larrAuxValues;
+			PadValue lobjValue;
+			int i, j;
+
+			if ( mbValid )
+				throw new BigBangException("Erro: Não pode inicializr o mesmo espaço de trabalho duas vezes.");
+
+			marrCoverages = new ArrayList<PadCoverage>();
+			marrObjects = new ArrayList<PolicyObjectData>();
+			marrExercises = new ArrayList<PolicyExerciseData>();
+			marrValues = new ArrayList<PadValue>();
+
+			try
+			{
+				lobjAuxPolicy = Policy.GetInstance(Engine.getCurrentNameSpace(), pidPolicy);
+
+				mobjPolicy = new PolicyData();
+				mobjPolicy.FromObject(lobjAuxPolicy);
+
+				larrLocalCoverages = lobjAuxPolicy.GetCurrentCoverages();
+				lmapCoverages = new Hashtable<UUID, PadCoverage>();
+				lmapFields = new Hashtable<UUID, PadField>();
+				for ( i = 0 ; i < larrLocalCoverages.length; i++ )
+				{
+					lobjCoverage = new PadCoverage();
+					lobjCoverage.FromObject(larrLocalCoverages[i]);
+					lobjCoverage.mstrLabel = larrLocalCoverages[i].GetCoverage().getLabel();
+					lobjCoverage.mbMandatory = (Boolean)larrLocalCoverages[i].GetCoverage().getAt(2);
+					lobjCoverage.mbIsHeader = ("(Cabeçalho)").equals(lobjCoverage.mstrLabel);
+					larrTaxes = larrLocalCoverages[i].GetCoverage().GetCurrentTaxes();
+					larrFields = new ArrayList<PadField>();
+					for ( j = 0; j < larrTaxes.length; j++ )
+					{
+						lobjField = new PadField();
+						lobjField.midField = larrTaxes[i].getKey();
+						lobjField.mlngColIndex = larrTaxes[i].GetColumnOrder();
+						lobjField.mstrLabel = larrTaxes[i].getLabel();
+						lobjField.midType = (UUID)larrTaxes[i].getAt(2);
+						lobjField.mstrUnits = (String)larrTaxes[i].getAt(3);
+						lobjField.mstrDefault = (String)larrTaxes[i].getAt(4);
+						lobjField.midRefersTo = (UUID)larrTaxes[i].getAt(7);
+						lobjField.mbVariesByObject = larrTaxes[i].GetVariesByObject();
+						lobjField.mbVariesByExercise = larrTaxes[i].GetVariesByExercise();
+						larrFields.add(lobjField);
+						lmapCoverages.put(larrTaxes[i].getKey(), lobjCoverage);
+						lmapFields.put(larrTaxes[i].getKey(), lobjField);
+
+						if ( lobjField.mbVariesByObject || lobjField.mbVariesByExercise ||
+								(FindValue(larrTaxes[i].getKey(), -1, -1, 0) > 0) )
+							continue;
+						lobjValue = new PadValue();
+						lobjValue.mid = null;
+						lobjValue.mstrValue = (String)larrTaxes[i].getAt(4);
+						lobjValue.midOwner = pidPolicy;
+						lobjValue.midField = larrTaxes[i].getKey();
+						lobjValue.midObject = null;
+						lobjValue.midExercise = null;
+						lobjValue.mrefCoverage = lobjCoverage;
+						lobjValue.mrefField = lobjField;
+						lobjValue.mlngObject = -1;
+						lobjValue.mlngExercise = -1;
+						marrValues.add(lobjValue);
+					}
+					lobjCoverage.marrFields = larrFields.toArray(new PadField[larrFields.size()]);
+					marrCoverages.add(lobjCoverage);
+				}
+
+				larrAuxCoverages = SubLine.GetInstance(Engine.getCurrentNameSpace(), mobjPolicy.midSubLine).GetCurrentCoverages();
+				for ( i = 0 ; i < larrAuxCoverages.length; i++ )
+				{
+					if ( FindCoverage(larrAuxCoverages[i].getKey(), 0) >= 0 )
+						continue;
+					lobjCoverage = new PadCoverage();
+					lobjCoverage.mid = null;
+					lobjCoverage.midOwner = pidPolicy;
+					lobjCoverage.midCoverage = larrAuxCoverages[i].getKey();
+					lobjCoverage.mbPresent = null;
+					lobjCoverage.mstrLabel = larrAuxCoverages[i].getLabel();
+					lobjCoverage.mbMandatory = (Boolean)larrAuxCoverages[i].getAt(2);
+					lobjCoverage.mbIsHeader = ("(Cabeçalho)").equals(lobjCoverage.mstrLabel);
+					larrTaxes = larrAuxCoverages[i].GetCurrentTaxes();
+					larrFields = new ArrayList<PadField>();
+					for ( j = 0; j < larrTaxes.length; j++ )
+					{
+						lobjField = new PadField();
+						lobjField.midField = larrTaxes[i].getKey();
+						lobjField.mlngColIndex = larrTaxes[i].GetColumnOrder();
+						lobjField.mstrLabel = larrTaxes[i].getLabel();
+						lobjField.midType = (UUID)larrTaxes[i].getAt(2);
+						lobjField.mstrUnits = (String)larrTaxes[i].getAt(3);
+						lobjField.mstrDefault = (String)larrTaxes[i].getAt(4);
+						lobjField.midRefersTo = (UUID)larrTaxes[i].getAt(7);
+						lobjField.mbVariesByObject = larrTaxes[i].GetVariesByObject();
+						lobjField.mbVariesByExercise = larrTaxes[i].GetVariesByExercise();
+						larrFields.add(lobjField);
+
+						if ( lobjField.mbVariesByObject || lobjField.mbVariesByExercise )
+							continue;
+						lobjValue = new PadValue();
+						lobjValue.mid = null;
+						lobjValue.mstrValue = (String)larrTaxes[i].getAt(4);
+						lobjValue.midOwner = pidPolicy;
+						lobjValue.midField = larrTaxes[i].getKey();
+						lobjValue.midObject = null;
+						lobjValue.midExercise = null;
+						lobjValue.mrefCoverage = lobjCoverage;
+						lobjValue.mrefField = lobjField;
+						lobjValue.mlngObject = -1;
+						lobjValue.mlngExercise = -1;
+						marrValues.add(lobjValue);
+					}
+					lobjCoverage.marrFields = larrFields.toArray(new PadField[larrFields.size()]);
+					marrCoverages.add(lobjCoverage);
+				}
+
+				larrAuxObjects = lobjAuxPolicy.GetCurrentObjects();
+				lmapObjects = new Hashtable<UUID, Integer>();
+				for ( i = 0 ; i < larrAuxObjects.length; i++ )
+				{
+					lobjObject = new PolicyObjectData();
+					lobjObject.FromObject(larrAuxObjects[i]);
+					marrObjects.add(lobjObject);
+					lmapObjects.put(lobjObject.mid, i);
+				}
+
+				larrAuxExercises = lobjAuxPolicy.GetCurrentExercises();
+				lmapExercises = new Hashtable<UUID, Integer>();
+				for ( i = 0 ; i < larrAuxExercises.length; i++ )
+				{
+					lobjExercise = new PolicyExerciseData();
+					lobjExercise.FromObject(larrAuxExercises[i]);
+					marrExercises.add(lobjExercise);
+					lmapExercises.put(lobjExercise.mid, i);
+				}
+
+				larrAuxValues = lobjAuxPolicy.GetCurrentValues();
+				for ( i = 0 ; i < larrAuxValues.length; i++ )
+				{
+					lobjValue = new PadValue();
+					lobjValue.FromObject(larrAuxValues[i]);
+					lobjValue.mrefCoverage = lmapCoverages.get(lobjValue.midField);
+					lobjValue.mrefField = lmapFields.get(lobjValue.midField);
+					lobjValue.mlngObject = ( lobjValue.midObject == null ? -1 : lmapObjects.get(lobjValue.midObject) );
+					lobjValue.mlngExercise = ( lobjValue.midExercise == null ? -1 : lmapExercises.get(lobjValue.midExercise) );
+					marrValues.add(lobjValue);
+				}
+			}
+			catch (Throwable e)
+			{
+				throw new BigBangException(e.getMessage(), e);
+			}
+
+			mbValid = true;
+		}
+
+		public void WriteResult(InsurancePolicy pobjResult)
+			throws BigBangException
+		{
+			ArrayList<InsurancePolicy.HeaderField> larrHeaders;
+			ArrayList<InsurancePolicy.Coverage> larrAuxCoverages;
+			ArrayList<InsurancePolicy.Coverage.Variability> larrVariability;
+			ArrayList<InsurancePolicy.ColumnHeader> larrColumns;
+			ArrayList<InsurancePolicy.TableSection.TableField> larrTableFields;
+			ArrayList<InsurancePolicy.ExtraField> larrExtraFields;
+			InsurancePolicy.HeaderField lobjHeader;
+			InsurancePolicy.Coverage lobjAuxCoverage;
+			InsurancePolicy.Coverage.Variability lobjVariability;
+			InsurancePolicy.ColumnHeader lobjColumn;
+			InsurancePolicy.TableSection.TableField lobjTableField;
+			InsurancePolicy.ExtraField lobjExtraField;
+			int i, j;
+
+			if ( !mbValid )
+				throw new BigBangException("Ocorreu um erro interno. Os dados correntes não são válidos.");
+
+			pobjResult.scratchPadId = mid.toString();
+
+			larrHeaders = new ArrayList<InsurancePolicy.HeaderField>();
+			for ( i = 0; i < marrValues.size(); i++ )
+			{
+				if ( !marrValues.get(i).mrefCoverage.mbIsHeader || (marrValues.get(i).mlngObject >= 0) ||
+						(marrValues.get(i).mlngExercise >= 0))
+					continue;
+
+				lobjHeader = new InsurancePolicy.HeaderField();
+				lobjHeader.fieldId = marrValues.get(i).midField.toString();
+				lobjHeader.fieldName = marrValues.get(i).mrefField.mstrLabel;
+				lobjHeader.type = GetFieldTypeByID(marrValues.get(i).mrefField.midType);
+				lobjHeader.unitsLabel = marrValues.get(i).mrefField.mstrUnits;
+				lobjHeader.refersToId = ( marrValues.get(i).mrefField.midRefersTo == null ? null :
+						marrValues.get(i).mrefField.midRefersTo.toString() );
+				lobjHeader.value = marrValues.get(i).mstrValue;
+				larrHeaders.add(lobjHeader);
+			}
+			pobjResult.headerFields = larrHeaders.toArray(new InsurancePolicy.HeaderField[larrHeaders.size()]);
+
+			larrAuxCoverages = new ArrayList<InsurancePolicy.Coverage>();
+			for ( i = 0; i < marrCoverages.size(); i++ )
+			{
+				if ( marrCoverages.get(i).mbIsHeader )
+					continue;
+
+				lobjAuxCoverage = new InsurancePolicy.Coverage();
+				lobjAuxCoverage.coverageId = marrCoverages.get(i).midCoverage.toString();
+				lobjAuxCoverage.coverageName = marrCoverages.get(i).mstrLabel;
+				lobjAuxCoverage.mandatory = marrCoverages.get(i).mbMandatory;
+				lobjAuxCoverage.presentInPolicy = marrCoverages.get(i).mbPresent;
+				larrVariability = new ArrayList<InsurancePolicy.Coverage.Variability>();
+				for ( j = 0; j < marrCoverages.get(i).marrFields.length; j++ )
+				{
+					if ( marrCoverages.get(i).marrFields[j].mlngColIndex < 0 )
+						continue;
+
+					lobjVariability = new InsurancePolicy.Coverage.Variability();
+					lobjVariability.columnIndex = marrCoverages.get(i).marrFields[j].mlngColIndex;
+					lobjVariability.variesByObject = marrCoverages.get(i).marrFields[j].mbVariesByObject;
+					lobjVariability.variesByExercise = marrCoverages.get(i).marrFields[j].mbVariesByExercise;
+					larrVariability.add(lobjVariability);
+				}
+				lobjAuxCoverage.variability =
+						larrVariability.toArray(new InsurancePolicy.Coverage.Variability[larrVariability.size()]);
+				larrAuxCoverages.add(lobjAuxCoverage);
+			}
+			pobjResult.coverages = larrAuxCoverages.toArray(new InsurancePolicy.Coverage[larrAuxCoverages.size()]);
+
+			larrColumns = new ArrayList<InsurancePolicy.ColumnHeader>();
+			for ( i = 0; i < marrCoverages.size(); i++ )
+			{
+				if ( marrCoverages.get(i).mbIsHeader )
+					continue;
+
+				for ( j = 0; j < marrCoverages.get(i).marrFields.length; j++ )
+				{
+					if ( marrCoverages.get(i).marrFields[j].mlngColIndex < 0 )
+						continue;
+
+					lobjColumn = new InsurancePolicy.ColumnHeader();
+					lobjColumn.label = marrCoverages.get(i).marrFields[j].mstrLabel;
+					lobjColumn.type = GetFieldTypeByID(marrCoverages.get(i).marrFields[j].midType);
+					lobjColumn.unitsLabel = marrCoverages.get(i).marrFields[j].mstrUnits;
+					lobjColumn.refersToId = ( marrCoverages.get(i).marrFields[j].midRefersTo == null ? null :
+						marrCoverages.get(i).marrFields[j].midRefersTo.toString() );
+					larrColumns.add(lobjColumn);
+				}
+				break;
+			}
+			pobjResult.columns = larrColumns.toArray(new InsurancePolicy.ColumnHeader[larrColumns.size()]);
+
+			if ( pobjResult.coverages.length * pobjResult.columns.length == 0 )
+				pobjResult.tableData = new InsurancePolicy.TableSection[0];
+			else
+			{
+				pobjResult.tableData = new InsurancePolicy.TableSection[1];
+				pobjResult.tableData[0] = new InsurancePolicy.TableSection();
+				pobjResult.tableData[0].insuredObjectIndex = -1;
+				pobjResult.tableData[0].exerciseIndex = -1;
+				larrTableFields = new ArrayList<InsurancePolicy.TableSection.TableField>();
+				for ( i = 0; i < marrValues.size(); i++ )
+				{
+					if ( marrValues.get(i).mrefCoverage.mbIsHeader || (marrValues.get(i).mrefField.mlngColIndex < 0) ||
+							(marrValues.get(i).mlngObject >= 0) || (marrValues.get(i).mlngExercise >= 0))
+						continue;
+
+					lobjTableField = new InsurancePolicy.TableSection.TableField();
+					lobjTableField.fieldId = marrValues.get(i).midField.toString();
+					lobjTableField.coverageId = marrValues.get(i).mrefCoverage.midCoverage.toString();
+					lobjTableField.columnIndex = marrValues.get(i).mrefField.mlngColIndex;
+					lobjTableField.value = marrValues.get(i).mstrValue;
+					larrTableFields.add(lobjTableField);
+				}
+				pobjResult.tableData[0].data =
+						larrTableFields.toArray(new InsurancePolicy.TableSection.TableField[larrTableFields.size()]);
+			}
+
+			larrExtraFields = new ArrayList<InsurancePolicy.ExtraField>();
+			for ( i = 0; i < marrValues.size(); i++ )
+			{
+				if ( marrValues.get(i).mrefCoverage.mbIsHeader || (marrValues.get(i).mrefField.mlngColIndex >= 0) ||
+						(marrValues.get(i).mlngObject >= 0) || (marrValues.get(i).mlngExercise >= 0) )
+					continue;
+
+				lobjExtraField = new InsurancePolicy.ExtraField();
+				lobjExtraField.fieldId = marrValues.get(i).midField.toString();
+				lobjExtraField.fieldName = marrValues.get(i).mrefField.mstrLabel;
+				lobjExtraField.type = GetFieldTypeByID(marrValues.get(i).mrefField.midType);
+				lobjExtraField.unitsLabel = marrValues.get(i).mrefField.mstrUnits;
+				lobjExtraField.refersToId = ( marrValues.get(i).mrefField.midRefersTo == null ? null :
+						marrValues.get(i).mrefField.midRefersTo.toString() );
+				lobjExtraField.value = marrValues.get(i).mstrValue;
+				lobjExtraField.coverageId = marrValues.get(i).mrefCoverage.midCoverage.toString();
+				larrExtraFields.add(lobjExtraField);
+			}
+			pobjResult.extraData = larrExtraFields.toArray(new InsurancePolicy.ExtraField[larrExtraFields.size()]);
+		}
+
+		public void WritePage(InsurancePolicy.TableSection pobjResult)
+			throws BigBangException
+		{
+			int llngCoverages;
+			int llngColumns;
+			ArrayList<InsurancePolicy.TableSection.TableField> larrTableFields;
+			InsurancePolicy.TableSection.TableField lobjTableField;
+			int i, j;
+
+			if ( !mbValid )
+				throw new BigBangException("Ocorreu um erro interno. Os dados correntes não são válidos.");
+
+			llngCoverages = 0;
+			for ( i = 0; i < marrCoverages.size(); i++ )
+			{
+				if ( marrCoverages.get(i).mbIsHeader )
+					continue;
+				llngCoverages++;
+			}
+
+			llngColumns = 0;
+			for ( i = 0; i < marrCoverages.size(); i++ )
+			{
+				if ( marrCoverages.get(i).mbIsHeader )
+					continue;
+				for ( j = 0; j < marrCoverages.get(i).marrFields.length; j++ )
+				{
+					if ( marrCoverages.get(i).marrFields[j].mlngColIndex < 0 )
+						continue;
+					llngColumns++;
+				}
+				break;
+			}
+
+			if ( llngCoverages * llngColumns == 0 )
+				pobjResult.data = new InsurancePolicy.TableSection.TableField[0];
+			else
+			{
+				larrTableFields = new ArrayList<InsurancePolicy.TableSection.TableField>();
+				for ( i = 0; i < marrValues.size(); i++ )
+				{
+					if ( marrValues.get(i).mrefCoverage.mbIsHeader || (marrValues.get(i).mrefField.mlngColIndex < 0) ||
+							(marrValues.get(i).mlngObject != pobjResult.insuredObjectIndex) ||
+							(marrValues.get(i).mlngExercise != pobjResult.exerciseIndex) )
+						continue;
+
+					lobjTableField = new InsurancePolicy.TableSection.TableField();
+					lobjTableField.fieldId = marrValues.get(i).midField.toString();
+					lobjTableField.coverageId = marrValues.get(i).mrefCoverage.midCoverage.toString();
+					lobjTableField.columnIndex = marrValues.get(i).mrefField.mlngColIndex;
+					lobjTableField.value = marrValues.get(i).mstrValue;
+					larrTableFields.add(lobjTableField);
+				}
+				pobjResult.data = larrTableFields.toArray(new InsurancePolicy.TableSection.TableField[larrTableFields.size()]);
+			}
+		}
+
+		public void UpdateInvariants(InsurancePolicy pobjSource)
+			throws BigBangException
+		{
+			int i, j;
+
+			if ( !mbValid )
+				throw new BigBangException("Ocorreu um erro interno. Os dados correntes não são válidos.");
+
+			mbValid = false;
+
+			if ( !mobjPolicy.midSubLine.equals(UUID.fromString(pobjSource.subLineId)) )
+				throw new BigBangException("Erro: Não pode alterar a modalidade da apólice.");
+
+			mobjPolicy.mstrNumber = pobjSource.number;
+			mobjPolicy.midCompany = UUID.fromString(pobjSource.insuranceAgencyId);
+			mobjPolicy.mdtBeginDate = ( pobjSource.startDate == null ? null :
+					Timestamp.valueOf(pobjSource.startDate + " 00:00:00.0") );
+			mobjPolicy.midDuration = UUID.fromString(pobjSource.durationId);
+			mobjPolicy.midFractioning = UUID.fromString(pobjSource.fractioningId);
+			mobjPolicy.mlngMaturityDay = pobjSource.maturityDay;
+			mobjPolicy.mlngMaturityMonth = pobjSource.maturityMonth;
+			mobjPolicy.mdtEndDate = ( pobjSource.expirationDate == null ? null :
+					Timestamp.valueOf(pobjSource.expirationDate + " 00:00:00.0") );
+			mobjPolicy.mstrNotes = pobjSource.notes;
+			mobjPolicy.midMediator = ( pobjSource.mediatorId == null ? null : UUID.fromString(pobjSource.mediatorId) );
+			mobjPolicy.mbCaseStudy = pobjSource.caseStudy;
+
+			j = -1;
+			if ( pobjSource.coverages != null )
+			{
+				for ( i = 0; i < pobjSource.coverages.length; i++ )
+				{
+					j = FindCoverage(UUID.fromString(pobjSource.coverages[i].coverageId), j + 1);
+					if ( j < 0 )
+						throw new BigBangException("Inesperado: Cobertura não existente do lado do servidor.");
+					marrCoverages.get(j).mbPresent = pobjSource.coverages[i].presentInPolicy;
+				}
+			}
+
+			j = -1;
+			if ( pobjSource.headerFields != null )
+			{
+				for ( i = 0; i < pobjSource.headerFields.length; i++ )
+				{
+					j = FindValue(UUID.fromString(pobjSource.headerFields[i].fieldId), -1, -1, j + 1);
+					if ( j < 0 )
+						throw new BigBangException("Inesperado: Valor de cabeçalho não existente do lado do servidor.");
+					marrValues.get(j).mstrValue = ( "".equals(pobjSource.headerFields[i].value) ? null :
+							pobjSource.headerFields[i].value );
+				}
+			}
+			if ( pobjSource.extraData != null )
+			{
+				for ( i = 0; i < pobjSource.extraData.length; i++ )
+				{
+					j = FindValue(UUID.fromString(pobjSource.extraData[i].fieldId), -1, -1, j + 1);
+					if ( j < 0 )
+						throw new BigBangException("Inesperado: Valor de cabeçalho não existente do lado do servidor.");
+					marrValues.get(j).mstrValue = ( "".equals(pobjSource.extraData[i].value) ? null :
+							pobjSource.extraData[i].value );
+				}
+			}
+
+			mbValid = true;
+		}
+
+		public void UpdatePage(InsurancePolicy.TableSection pobjSource)
+			throws BigBangException
+		{
+			int i, j;
+
+			if ( !mbValid )
+				throw new BigBangException("Ocorreu um erro interno. Os dados correntes não são válidos.");
+
+			if ( pobjSource.data == null )
+				return;
+
+			mbValid = false;
+
+			j = -1;
+			for ( i = 0; i < pobjSource.data.length; i++ )
+			{
+				j = FindValue(UUID.fromString(pobjSource.data[i].fieldId), pobjSource.insuredObjectIndex, pobjSource.exerciseIndex,
+						j + 1);
+				if ( j < 0 )
+					throw new BigBangException("Inesperado: Valor de tabela não existente do lado do servidor.");
+				marrValues.get(j).mstrValue = ( "".equals(pobjSource.data[i].value) ? null : pobjSource.data[i].value );
+			}
+
+			mbValid = true;
+		}
+
+		public int CreateNewObject()
+			throws BigBangException
+		{
+			PolicyObjectData lobjObject;
+			PadValue lobjValue;
+			int i, j, k;
+
+			if ( !mbValid )
+				throw new BigBangException("Ocorreu um erro interno. Os dados correntes não são válidos.");
+
+			if ( mobjPolicy.mid != null )
+				throw new BigBangException("Erro: Operação não suportada para apólices já existentes.");
+
+			lobjObject = new PolicyObjectData();
+			try
+			{
+				lobjObject.midType = (UUID)SubLine.GetInstance(Engine.getCurrentNameSpace(), mobjPolicy.midSubLine).getAt(2);
+			}
+			catch (Throwable e)
+			{
+				throw new BigBangException(e.getMessage(), e);
+			}
+
+			mbValid = false;
+
+			int llngIndex = marrObjects.size();
+			marrObjects.add(lobjObject);
+			for ( i = 0; i < marrCoverages.size(); i++ )
+			{
+				for ( j = 0; j < marrCoverages.get(i).marrFields.length; j++ )
+				{
+					if ( marrCoverages.get(i).marrFields[j].mbVariesByObject )
+					{
+						if ( !marrCoverages.get(i).marrFields[j].mbVariesByExercise )
+						{
+							lobjValue = new PadValue();
+							lobjValue.mid = null;
+							lobjValue.mstrValue = marrCoverages.get(i).marrFields[j].mstrDefault;
+							lobjValue.midOwner = null;
+							lobjValue.midField = marrCoverages.get(i).marrFields[j].midField;
+							lobjValue.midObject = null;
+							lobjValue.midExercise = null;
+							lobjValue.mrefCoverage = marrCoverages.get(i);
+							lobjValue.mrefField = marrCoverages.get(i).marrFields[j];
+							lobjValue.mlngObject = llngIndex;
+							lobjValue.mlngExercise = -1;
+							marrValues.add(lobjValue);
+						}
+						else
+						{
+							for ( k = 0; k < marrExercises.size(); k++ )
+							{
+								lobjValue = new PadValue();
+								lobjValue.mid = null;
+								lobjValue.mstrValue = marrCoverages.get(i).marrFields[j].mstrDefault;
+								lobjValue.midOwner = null;
+								lobjValue.midField = marrCoverages.get(i).marrFields[j].midField;
+								lobjValue.midObject = null;
+								lobjValue.midExercise = null;
+								lobjValue.mrefCoverage = marrCoverages.get(i);
+								lobjValue.mrefField = marrCoverages.get(i).marrFields[j];
+								lobjValue.mlngObject = llngIndex;
+								lobjValue.mlngExercise = k;
+								marrValues.add(lobjValue);
+							}
+						}
+					}
+				}
+			}
+
+			mbValid = true;
+
+			return llngIndex;
+		}
+
+		public void UpdateObject(InsuredObject pobjSource)
+			throws BigBangException
+		{
+			UUID lidType;
+			UUID lidZipCode;
+
+			if ( !mbValid )
+				throw new BigBangException("Ocorreu um erro interno. Os dados correntes não são válidos.");
+
+			if ( marrObjects.get(pobjSource.objectIndex) == null )
+				throw new BigBangException("Erro: Não pode alterar um objecto apagado.");
+
+			try
+			{
+				lidType = (UUID)SubLine.GetInstance(Engine.getCurrentNameSpace(), mobjPolicy.midSubLine).getAt(2);
+				if ( (pobjSource.address != null) && (pobjSource.address.zipCode != null) )
+					lidZipCode = ZipCodeBridge.GetZipCode(pobjSource.address.zipCode.code, pobjSource.address.zipCode.city,
+							pobjSource.address.zipCode.county, pobjSource.address.zipCode.district,
+							pobjSource.address.zipCode.country);
+				else
+					lidZipCode = null;
+			}
+			catch (Throwable e)
+			{
+				throw new BigBangException(e.getMessage(), e);
+			}
+
+			mbValid = false;
+
+			marrObjects.get(pobjSource.objectIndex).mstrName = pobjSource.unitIdentification;
+			marrObjects.get(pobjSource.objectIndex).midOwner = mobjPolicy.mid;
+			marrObjects.get(pobjSource.objectIndex).midType = lidType;
+			if ( pobjSource.address != null )
+			{
+				marrObjects.get(pobjSource.objectIndex).mstrAddress1 = pobjSource.address.street1;
+				marrObjects.get(pobjSource.objectIndex).mstrAddress2 = pobjSource.address.street2;
+				if ( pobjSource.address.zipCode != null )
+					marrObjects.get(pobjSource.objectIndex).midZipCode = lidZipCode;
+				else
+					marrObjects.get(pobjSource.objectIndex).midZipCode = null;
+			}
+			else
+			{
+				marrObjects.get(pobjSource.objectIndex).mstrAddress1 = null;
+				marrObjects.get(pobjSource.objectIndex).mstrAddress2 = null;
+				marrObjects.get(pobjSource.objectIndex).midZipCode = null;
+			}
+			marrObjects.get(pobjSource.objectIndex).mdtInclusion = ( pobjSource.inclusionDate == null ? null :
+				Timestamp.valueOf(pobjSource.inclusionDate + " 00:00:00.0") );
+			marrObjects.get(pobjSource.objectIndex).mdtExclusion = ( pobjSource.exclusionDate == null ? null :
+				Timestamp.valueOf(pobjSource.exclusionDate + " 00:00:00.0") );
+
+			mbValid = true;
+		}
+
+		public void DeleteObject(InsuredObject pobjSource)
+			throws BigBangException
+		{
+			int i;
+
+			if ( !mbValid )
+				throw new BigBangException("Ocorreu um erro interno. Os dados correntes não são válidos.");
+
+			mbValid = false;
+
+			marrObjects.set(pobjSource.objectIndex, null);
+			for ( i = marrValues.size() - 1; i >= 0; i++ )
+			{
+				if ( marrValues.get(i).mlngObject == pobjSource.objectIndex )
+					marrValues.remove(i);
+			}
+
+			mbValid = true;
+		}
 
 		public void CommitChanges()
+			throws BigBangException
 		{
+			if ( !mbValid )
+				throw new BigBangException("Ocorreu um erro interno. Os dados correntes não são válidos.");
+		}
+
+		private int FindCoverage(UUID pidCoverage, int plngStart)
+		{
+			int i;
+
+			for ( i = plngStart; i < marrCoverages.size(); i++ )
+			{
+				if ( marrCoverages.get(i).midCoverage.equals(pidCoverage) )
+					return i;
+			}
+
+			for ( i = 0; i < plngStart; i++ )
+			{
+				if ( marrCoverages.get(i).midCoverage.equals(pidCoverage) )
+					return i;
+			}
+
+			return -1;
+		}
+
+		private int FindValue(UUID pidField, int plngObject, int plngExercise, int plngStart)
+		{
+			int i;
+
+			for ( i = plngStart; i < marrValues.size(); i++ )
+			{
+				if ( (marrValues.get(i).midField.equals(pidField)) && (marrValues.get(i).mlngObject == plngObject) &&
+						(marrValues.get(i).mlngExercise == plngExercise) )
+					return i;
+			}
+
+			for ( i = 0; i < plngStart; i++ )
+			{
+				if ( (marrValues.get(i).midField.equals(pidField)) && (marrValues.get(i).mlngObject == plngObject) &&
+						(marrValues.get(i).mlngExercise == plngExercise) )
+					return i;
+			}
+
+			return -1;
 		}
 	}
 
 	@SuppressWarnings("unchecked")
-	public static Hashtable<UUID, PolicyScratchPad> GetScratchPadStorage()
+	private static Hashtable<UUID, PolicyScratchPad> GetScratchPadStorage()
 	{
 		Hashtable<UUID, PolicyScratchPad> larrAux;
 
@@ -174,26 +984,79 @@ public class InsurancePolicyServiceImpl
 		return lobjResult;
 	}
 
-	@Override
-	public TableSection getPage(String policyId, String insuredObjectId, String exerciseId)
+	public InsurancePolicy.TableSection getPage(String policyId, String insuredObjectId, String exerciseId)
 		throws SessionExpiredException, BigBangException
 	{
-		// TODO Auto-generated method stub
+		UUID lidObject;
+		UUID lidExercise;
+		Policy lobjPolicy;
+		PolicyValue[] larrValues;
+		int i;
+		InsurancePolicy.TableSection lobjResult;
+		ArrayList<InsurancePolicy.TableSection.TableField> larrFields;
+		InsurancePolicy.TableSection.TableField lobjField;
+		PolicyObject[] larrObjects;
+		PolicyExercise[] larrExercises;
+		int llngObject;
+		int llngExercise;
+
+		if ( Engine.getCurrentUser() == null )
+			throw new SessionExpiredException();
+
+		lidObject = (insuredObjectId == null ? null : UUID.fromString(insuredObjectId));
+		lidExercise = (exerciseId == null ? null : UUID.fromString(exerciseId));
+
+		try
+		{
+			lobjPolicy = Policy.GetInstance(Engine.getCurrentNameSpace(), UUID.fromString(policyId));
+
+			larrValues = lobjPolicy.GetCurrentKeyedValues(lidObject, lidExercise);
+			larrFields = new ArrayList<InsurancePolicy.TableSection.TableField>();
+			for ( i = 0; i < larrValues.length; i++ )
+			{
+				if ( larrValues[i].GetTax().GetColumnOrder() < 0 )
+					continue;
+
+				lobjField = new InsurancePolicy.TableSection.TableField();
+				lobjField.fieldId = larrValues[i].GetTax().getKey().toString();
+				lobjField.coverageId = larrValues[i].GetTax().GetCoverage().getKey().toString();
+				lobjField.columnIndex = larrValues[i].GetTax().GetColumnOrder();
+				lobjField.value = larrValues[i].getLabel();
+				larrFields.add(lobjField);
+			}
+
+			larrObjects = lobjPolicy.GetCurrentObjects();
+			llngObject = -1;
+			for ( i = 0; i < larrObjects.length; i++ )
+			{
+				if ( larrObjects[i].getKey().toString().equals(insuredObjectId) )
+					llngObject = i;
+			}
+
+			larrExercises = lobjPolicy.GetCurrentExercises();
+			llngExercise = -1;
+			for ( i = 0; i < larrExercises.length; i++ )
+			{
+				if ( larrExercises[i].getKey().toString().equals(insuredObjectId) )
+					llngExercise = i;
+			}
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangException(e.getMessage(), e);
+		}
+
+		lobjResult = new InsurancePolicy.TableSection();
+		lobjResult.insuredObjectIndex = llngObject;
+		lobjResult.exerciseIndex = llngExercise;
+		lobjResult.data = larrFields.toArray(new InsurancePolicy.TableSection.TableField[larrFields.size()]);
 		return null;
 	}
 
 	public InsurancePolicy initializeNewPolicy(InsurancePolicy policy)
 		throws SessionExpiredException, BigBangException
 	{
-//		public HeaderField[] headerFields;
-//		public Coverage[] coverages;
-//		public ColumnHeader[] columns;
-//		public TableSection[] tableData;
-//		public ExtraField[] extraData;
-		com.premiumminds.BigBang.Jewel.Objects.Coverage[] larrCoverages;
-		Tax[] larrTaxes;
-		ArrayList<Tax> larrHeaders;
-		int i, j;
+		PolicyScratchPad lobjPad;
 
 		if ( Engine.getCurrentUser() == null )
 			throw new SessionExpiredException();
@@ -203,80 +1066,115 @@ public class InsurancePolicyServiceImpl
 
 		if ( policy.subLineId == null )
 			throw new BigBangException("Erro: Não pode inicializar uma apólice antes de preencher a categoria, ramo e modalidade.");
-		try
-		{
-			larrCoverages = SubLine.GetInstance(Engine.getCurrentNameSpace(),
-					UUID.fromString(policy.subLineId)).GetCurrentCoverages();
 
-			larrHeaders = new ArrayList<Tax>();
-			for ( i = 0; i < larrCoverages.length; i++ )
-			{
-				if ( !larrCoverages[i].getLabel().equals("(Cabeçalho)") )
-					continue;
+		lobjPad = new PolicyScratchPad();
+		lobjPad.InitNew(policy);
+		GetScratchPadStorage().put(lobjPad.GetID(), lobjPad);
 
-				larrTaxes = larrCoverages[i].GetCurrentTaxes();
-				for ( j = 0; j < larrTaxes.length; j++ )
-				{
-					if ( larrTaxes[j].GetVariesByObject() || larrTaxes[j].GetVariesByExercise() )
-						continue;
-					larrHeaders.add(larrTaxes[j]);
-				}
-			}
-		}
-		catch (Throwable e)
-		{
-			throw new BigBangException(e.getMessage(), e);
-		}
+		lobjPad.WriteResult(policy);
+		return policy;
+	}
 
-		policy.headerFields = new InsurancePolicy.HeaderField[larrHeaders.size()];
-		for ( i = 0; i < larrHeaders.size(); i++ )
-		{
-			policy.headerFields[i] = new InsurancePolicy.HeaderField();
-			policy.headerFields[i].fieldId = larrHeaders.get(i).getKey().toString();
-			policy.headerFields[i].fieldName = larrHeaders.get(i).getLabel();
-			policy.headerFields[i].type = GetFieldTypeByID((UUID)larrHeaders.get(i).getAt(2));
-			policy.headerFields[i].unitsLabel = (String)larrHeaders.get(i).getAt(3);
-			policy.headerFields[i].refersToId = ((UUID)larrHeaders.get(i).getAt(7)).toString();
-		}
+	public InsurancePolicy openForEdit(InsurancePolicy policy)
+		throws SessionExpiredException, BigBangException
+	{
+		PolicyScratchPad lobjPad;
+
+		if ( Engine.getCurrentUser() == null )
+			throw new SessionExpiredException();
+
+		if ( policy.id == null )
+			throw new BigBangException("Erro: Não pode editar uma apólice não existente.");
+
+		lobjPad = new PolicyScratchPad();
+		lobjPad.OpenForEdit(UUID.fromString(policy.id));
+		GetScratchPadStorage().put(lobjPad.GetID(), lobjPad);
+
+		lobjPad.WriteResult(policy);
+		return policy;
+	}
+
+	public InsurancePolicy updateHeader(InsurancePolicy policy)
+		throws SessionExpiredException, BigBangException
+	{
+		PolicyScratchPad lobjPad;
+
+		if ( Engine.getCurrentUser() == null )
+			throw new SessionExpiredException();
+
+		if ( policy.scratchPadId == null )
+			throw new BigBangException("Erro: Espaço de trabalho não existente.");
+
+		lobjPad = GetScratchPadStorage().get(UUID.fromString(policy.scratchPadId));
+		lobjPad.UpdateInvariants(policy);
 
 		return policy;
 	}
 
+	public InsurancePolicy.TableSection getPageForEdit(String scratchPadId, int objectIndex, int exerciseIndex)
+		throws SessionExpiredException, BigBangException
+	{
+		PolicyScratchPad lobjPad;
+		InsurancePolicy.TableSection lobjResult;
+
+		if ( Engine.getCurrentUser() == null )
+			throw new SessionExpiredException();
+
+		if ( scratchPadId == null )
+			throw new BigBangException("Erro: Espaço de trabalho não existente.");
+
+		lobjPad = GetScratchPadStorage().get(UUID.fromString(scratchPadId));
+
+		lobjResult = new InsurancePolicy.TableSection();
+		lobjResult.insuredObjectIndex = objectIndex;
+		lobjResult.exerciseIndex = exerciseIndex;
+		lobjPad.WritePage(lobjResult);
+		return lobjResult;
+	}
+
+	public InsurancePolicy.TableSection savePage(String scratchPadId, InsurancePolicy.TableSection data)
+		throws SessionExpiredException, BigBangException
+	{
+		PolicyScratchPad lobjPad;
+
+		if ( Engine.getCurrentUser() == null )
+			throw new SessionExpiredException();
+
+		if ( scratchPadId == null )
+			throw new BigBangException("Erro: Espaço de trabalho não existente.");
+
+		lobjPad = GetScratchPadStorage().get(UUID.fromString(scratchPadId));
+		lobjPad.UpdatePage(data);
+
+		return data;
+	}
+
 	@Override
-	public InsurancePolicy openForEdit(InsurancePolicy policy)
+	public InsuredObject getObjectInPad(String scratchPadId, int objectIndex)
 			throws SessionExpiredException, BigBangException {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
-	@Override
-	public InsurancePolicy updateHeader(InsurancePolicy policy)
-			throws SessionExpiredException, BigBangException {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public TableSection getPageForEdit(String scratchPadId,
-			String tempObjectId, String tempExerciseId)
-			throws SessionExpiredException, BigBangException {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public TableSection savePage(String scratchPadId, String insuredObjectId,
-			String exerciseId, TableSection data)
-			throws SessionExpiredException, BigBangException {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
 	public InsuredObject createObjectInPad(String scratchPadId)
-			throws SessionExpiredException, BigBangException {
-		// TODO Auto-generated method stub
-		return null;
+		throws SessionExpiredException, BigBangException
+	{
+		PolicyScratchPad lobjPad;
+		InsuredObject lobjResult;
+
+		if ( Engine.getCurrentUser() == null )
+			throw new SessionExpiredException();
+
+		if ( scratchPadId == null )
+			throw new BigBangException("Erro: Espaço de trabalho não existente.");
+
+		lobjPad = GetScratchPadStorage().get(UUID.fromString(scratchPadId));
+
+		lobjResult = new InsuredObject();
+		lobjResult.scratchPadId = scratchPadId;
+		lobjResult.objectIndex = lobjPad.CreateNewObject();
+
+		return lobjResult;
 	}
 
 	@Override
@@ -286,19 +1184,36 @@ public class InsurancePolicyServiceImpl
 		return null;
 	}
 
-	@Override
-	public InsuredObject updateObjectInPad(String scratchPadId,
-			InsuredObject data) throws SessionExpiredException,
-			BigBangException {
-		// TODO Auto-generated method stub
-		return null;
+	public InsuredObject updateObjectInPad(InsuredObject data)
+		throws SessionExpiredException, BigBangException
+	{
+		PolicyScratchPad lobjPad;
+
+		if ( Engine.getCurrentUser() == null )
+			throw new SessionExpiredException();
+
+		if ( data.scratchPadId == null )
+			throw new BigBangException("Erro: Espaço de trabalho não existente.");
+
+		lobjPad = GetScratchPadStorage().get(UUID.fromString(data.scratchPadId));
+		lobjPad.UpdateObject(data);
+
+		return data;
 	}
 
-	@Override
-	public void deleteObjectInPad(String scratchPadId, String tempObjectId)
-			throws SessionExpiredException, BigBangException {
-		// TODO Auto-generated method stub
-		
+	public void deleteObjectInPad(InsuredObject data)
+		throws SessionExpiredException, BigBangException
+	{
+		PolicyScratchPad lobjPad;
+
+		if ( Engine.getCurrentUser() == null )
+			throw new SessionExpiredException();
+
+		if ( data.scratchPadId == null )
+			throw new BigBangException("Erro: Espaço de trabalho não existente.");
+
+		lobjPad = GetScratchPadStorage().get(UUID.fromString(data.scratchPadId));
+		lobjPad.DeleteObject(data);
 	}
 
 	@Override
@@ -333,7 +1248,7 @@ public class InsurancePolicyServiceImpl
 		lrefPad = GetScratchPadStorage().get(UUID.fromString(scratchPadId));
 		lrefPad.CommitChanges();
 		GetScratchPadStorage().remove(UUID.fromString(scratchPadId));
-		return getPolicy(lrefPad.policyId.toString());
+		return getPolicy(lrefPad.mobjPolicy.mid.toString());
 	}
 
 	public InsurancePolicy discardPolicy(String scratchPadId)
@@ -347,9 +1262,9 @@ public class InsurancePolicyServiceImpl
 		lrefPad = GetScratchPadStorage().get(UUID.fromString(scratchPadId));
 		GetScratchPadStorage().remove(UUID.fromString(scratchPadId));
 
-		if ( lrefPad.policyId == null )
+		if ( (lrefPad.mobjPolicy == null) || (lrefPad.mobjPolicy.mid == null) )
 			return null;
-		return getPolicy(lrefPad.policyId.toString());
+		return getPolicy(lrefPad.mobjPolicy.mid.toString());
 	}
 
 	@Override
@@ -1053,7 +1968,7 @@ public class InsurancePolicyServiceImpl
 		return lbFound;
 	}
 
-	private InsurancePolicy.FieldType GetFieldTypeByID(UUID pidFieldType)
+	private static InsurancePolicy.FieldType GetFieldTypeByID(UUID pidFieldType)
 	{
 		if ( Constants.FieldID_Boolean.equals(pidFieldType) )
 			return InsurancePolicy.FieldType.BOOLEAN;

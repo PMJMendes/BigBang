@@ -5,65 +5,69 @@ import java.util.*;
 public class Constants
 {
 	// Objects
-    public static final UUID ObjID_AppParams  = UUID.fromString("5485B660-A102-441A-912C-7B960584399F");
+    public static final UUID ObjID_AppParams      = UUID.fromString("5485B660-A102-441A-912C-7B960584399F");
 
 	// General Objects
-	public static final UUID ObjID_GenSys        = UUID.fromString("628F5DA6-434F-46A8-9C88-9EB1008A689A");
+	public static final UUID ObjID_GenSys         = UUID.fromString("628F5DA6-434F-46A8-9C88-9EB1008A689A");
 
-	public static final UUID ObjID_CostCenter    = UUID.fromString("4AF891C6-707B-43AE-98C3-9EB100C0419E");
-	public static final UUID ObjID_Decorations   = UUID.fromString("87C6A1DB-2381-47E4-ADE5-9EB800836FF7");
-	public static final UUID ObjID_Company       = UUID.fromString("7B203DCA-FFAC-46B2-B849-9EBC009DB127");
-	public static final UUID ObjID_Mediator      = UUID.fromString("8A33B9DD-001A-401F-AA7E-9EBB00E9D24F");
-	public static final UUID ObjID_Contact       = UUID.fromString("2085F9FD-7FCE-46C0-99FD-9EC400FFBA5C");
-	public static final UUID ObjID_ContactInfo   = UUID.fromString("069434F6-8EE7-4DFE-96C9-9EC401014608");
-	public static final UUID ObjID_Document      = UUID.fromString("794F44DB-191A-4E17-9217-9ECC012A8AC2");
-	public static final UUID ObjID_DocInfo       = UUID.fromString("75620A04-D0C7-43D4-8425-9ECC012C0E91");
-	public static final UUID ObjID_Line          = UUID.fromString("A9A1CE62-06A1-4761-A1FC-9EC900F234B0");
-	public static final UUID ObjID_SubLine       = UUID.fromString("FBCD74E1-A280-4443-9BB4-9EC900F4A4B9");
-	public static final UUID ObjID_Coverage      = UUID.fromString("007022A0-6DFA-498B-9DC4-9EC900F5219F");
-	public static final UUID ObjID_Tax           = UUID.fromString("43644146-07C4-4E63-9E87-9EC900F6EB73");
-	public static final UUID ObjID_ClientGroup   = UUID.fromString("DC89D454-CCCC-441E-BCE3-9EE600AFCCCD");
+	public static final UUID ObjID_CostCenter     = UUID.fromString("4AF891C6-707B-43AE-98C3-9EB100C0419E");
+	public static final UUID ObjID_Decorations    = UUID.fromString("87C6A1DB-2381-47E4-ADE5-9EB800836FF7");
+	public static final UUID ObjID_Company        = UUID.fromString("7B203DCA-FFAC-46B2-B849-9EBC009DB127");
+	public static final UUID ObjID_Mediator       = UUID.fromString("8A33B9DD-001A-401F-AA7E-9EBB00E9D24F");
+	public static final UUID ObjID_Contact        = UUID.fromString("2085F9FD-7FCE-46C0-99FD-9EC400FFBA5C");
+	public static final UUID ObjID_ContactInfo    = UUID.fromString("069434F6-8EE7-4DFE-96C9-9EC401014608");
+	public static final UUID ObjID_Document       = UUID.fromString("794F44DB-191A-4E17-9217-9ECC012A8AC2");
+	public static final UUID ObjID_DocInfo        = UUID.fromString("75620A04-D0C7-43D4-8425-9ECC012C0E91");
+	public static final UUID ObjID_Line           = UUID.fromString("A9A1CE62-06A1-4761-A1FC-9EC900F234B0");
+	public static final UUID ObjID_SubLine        = UUID.fromString("FBCD74E1-A280-4443-9BB4-9EC900F4A4B9");
+	public static final UUID ObjID_Coverage       = UUID.fromString("007022A0-6DFA-498B-9DC4-9EC900F5219F");
+	public static final UUID ObjID_Tax            = UUID.fromString("43644146-07C4-4E63-9E87-9EC900F6EB73");
+	public static final UUID ObjID_ClientGroup    = UUID.fromString("DC89D454-CCCC-441E-BCE3-9EE600AFCCCD");
 
 	// Agenda Objects
-	public static final UUID ObjID_AgendaItem    = UUID.fromString("F850E623-E686-4575-A2D8-9F640128FCD7");
-	public static final UUID ObjID_AgendaProcess = UUID.fromString("3620AAEE-A950-421C-A5D3-9F640135D7D8");
-	public static final UUID ObjID_AgendaOp      = UUID.fromString("3C01C389-71FE-43A8-AEE7-9F640135635D");
+	public static final UUID ObjID_AgendaItem     = UUID.fromString("F850E623-E686-4575-A2D8-9F640128FCD7");
+	public static final UUID ObjID_AgendaProcess  = UUID.fromString("3620AAEE-A950-421C-A5D3-9F640135D7D8");
+	public static final UUID ObjID_AgendaOp       = UUID.fromString("3C01C389-71FE-43A8-AEE7-9F640135635D");
 
 	// Client Objects
-	public static final UUID ObjID_Client        = UUID.fromString("D535A99E-149F-44DC-A28B-9EE600B240F5");
+	public static final UUID ObjID_Client         = UUID.fromString("D535A99E-149F-44DC-A28B-9EE600B240F5");
 
 	// Policy Objects
-	public static final UUID ObjID_Policy        = UUID.fromString("D0C5AE6B-D340-4171-B7A3-9F81011F5D42");
+	public static final UUID ObjID_Policy         = UUID.fromString("D0C5AE6B-D340-4171-B7A3-9F81011F5D42");
+	public static final UUID ObjID_PolicyCoverage = UUID.fromString("AE5F9DD7-2863-4C5B-AE0B-9F9C00229D02");
+	public static final UUID ObjID_PolicyObject   = UUID.fromString("3A3316D2-9D7C-4FD1-8486-9F9C0012E119");
+	public static final UUID ObjID_PolicyExercise = UUID.fromString("DEE32F69-B33D-4427-AD5B-9F9C001607F2");
+	public static final UUID ObjID_PolicyValue    = UUID.fromString("F1D23471-0AA8-40A3-A691-9F9C001843CC");
 
 	// Receipt Objects
-	public static final UUID ObjID_Receipt       = UUID.fromString("B24E4BF7-382C-40EE-8120-9F8A00DABB81");
+	public static final UUID ObjID_Receipt        = UUID.fromString("B24E4BF7-382C-40EE-8120-9F8A00DABB81");
 
 	// Sub-Process Objects
-	public static final UUID ObjID_MgrXFer       = UUID.fromString("66EC1066-AD5A-430C-9A70-9F65013F5453");
-	public static final UUID ObjID_MgrXFerProc   = UUID.fromString("324A0D54-4ED9-4925-97D2-9F6D0135A37E");
+	public static final UUID ObjID_MgrXFer        = UUID.fromString("66EC1066-AD5A-430C-9A70-9F65013F5453");
+	public static final UUID ObjID_MgrXFerProc    = UUID.fromString("324A0D54-4ED9-4925-97D2-9F6D0135A37E");
 
 	// Typified Lists
-	public static final UUID ObjID_ContactType   = UUID.fromString("228F6A73-1335-4C99-8DD0-9EEE012964BA");
-	public static final UUID ObjID_CInfoType     = UUID.fromString("03C5B78E-D71C-49F2-A079-9EC40111DCC0");
-	public static final UUID ObjID_DocType       = UUID.fromString("B4DBEE18-FA81-471D-A9F5-9ECC012A028D");
-	public static final UUID ObjID_CommProfile   = UUID.fromString("5F40713C-1FE7-4715-AC24-9EBB00E53392");
-	public static final UUID ObjID_LineCategory  = UUID.fromString("3FF829D9-5C33-4C91-A42B-9EC900F013CB");
-	public static final UUID ObjID_ClientType    = UUID.fromString("40A63D68-E2A6-40AB-B3A4-9EE600B91EBE");
-	public static final UUID ObjID_ClientSubtype = UUID.fromString("1907DB1B-6F75-4715-A210-9EE600B9D072");
-	public static final UUID ObjID_OpProfile     = UUID.fromString("11921769-CDF3-447A-8E6B-9ECA01761BAA");
-	public static final UUID ObjID_Sex           = UUID.fromString("2549E951-2747-4300-982E-9ECA01756B91");
-	public static final UUID ObjID_MaritalStatus = UUID.fromString("B560424E-1DF9-46CA-8B67-9ECA01774B00");
-	public static final UUID ObjID_Profession    = UUID.fromString("088C8CCE-A1D1-4976-808F-9ECA0177AB56");
-	public static final UUID ObjID_CAE           = UUID.fromString("14B89884-475A-4357-BB7D-9EE600C3CE6E");
-	public static final UUID ObjID_Size          = UUID.fromString("5E489662-2AAF-4348-95E0-9EE600C4A71F");
-	public static final UUID ObjID_SalesVolume   = UUID.fromString("5C4E267C-B306-482F-8636-9EE600C586B6");
-	public static final UUID ObjID_Durations     = UUID.fromString("A522A5B3-245B-4F8B-97F1-9F810120FAB6");
-	public static final UUID ObjID_Fractioning   = UUID.fromString("28B2D442-2CF3-4E14-8430-9F8101229DA8");
-	public static final UUID ObjID_ReceiptType   = UUID.fromString("AFE7CC47-B44F-442D-8CF4-9F8A00DB2637");
-	public static final UUID ObjID_PolicyStatus  = UUID.fromString("EF9C2F88-2AC7-44CF-9AD6-9F98012A7236");
+	public static final UUID ObjID_ContactType    = UUID.fromString("228F6A73-1335-4C99-8DD0-9EEE012964BA");
+	public static final UUID ObjID_CInfoType      = UUID.fromString("03C5B78E-D71C-49F2-A079-9EC40111DCC0");
+	public static final UUID ObjID_DocType        = UUID.fromString("B4DBEE18-FA81-471D-A9F5-9ECC012A028D");
+	public static final UUID ObjID_CommProfile    = UUID.fromString("5F40713C-1FE7-4715-AC24-9EBB00E53392");
+	public static final UUID ObjID_LineCategory   = UUID.fromString("3FF829D9-5C33-4C91-A42B-9EC900F013CB");
+	public static final UUID ObjID_ClientType     = UUID.fromString("40A63D68-E2A6-40AB-B3A4-9EE600B91EBE");
+	public static final UUID ObjID_ClientSubtype  = UUID.fromString("1907DB1B-6F75-4715-A210-9EE600B9D072");
+	public static final UUID ObjID_OpProfile      = UUID.fromString("11921769-CDF3-447A-8E6B-9ECA01761BAA");
+	public static final UUID ObjID_Sex            = UUID.fromString("2549E951-2747-4300-982E-9ECA01756B91");
+	public static final UUID ObjID_MaritalStatus  = UUID.fromString("B560424E-1DF9-46CA-8B67-9ECA01774B00");
+	public static final UUID ObjID_Profession     = UUID.fromString("088C8CCE-A1D1-4976-808F-9ECA0177AB56");
+	public static final UUID ObjID_CAE            = UUID.fromString("14B89884-475A-4357-BB7D-9EE600C3CE6E");
+	public static final UUID ObjID_Size           = UUID.fromString("5E489662-2AAF-4348-95E0-9EE600C4A71F");
+	public static final UUID ObjID_SalesVolume    = UUID.fromString("5C4E267C-B306-482F-8636-9EE600C586B6");
+	public static final UUID ObjID_Durations      = UUID.fromString("A522A5B3-245B-4F8B-97F1-9F810120FAB6");
+	public static final UUID ObjID_Fractioning    = UUID.fromString("28B2D442-2CF3-4E14-8430-9F8101229DA8");
+	public static final UUID ObjID_ReceiptType    = UUID.fromString("AFE7CC47-B44F-442D-8CF4-9F8A00DB2637");
+	public static final UUID ObjID_PolicyStatus   = UUID.fromString("EF9C2F88-2AC7-44CF-9AD6-9F98012A7236");
 
-	public static final UUID ObjID_FieldType     = UUID.fromString("0D8E4FEE-AE4D-4429-A517-9EC900F80A20");
-	public static final UUID ObjID_FieldValues   = UUID.fromString("D50A75B9-5F44-4BF2-9060-9F960121503A");
+	public static final UUID ObjID_FieldType      = UUID.fromString("0D8E4FEE-AE4D-4429-A517-9EC900F80A20");
+	public static final UUID ObjID_FieldValues    = UUID.fromString("D50A75B9-5F44-4BF2-9060-9F960121503A");
 
 	// Process Scripts
 	public static final UUID ProcID_GenSys  = UUID.fromString("37A989E2-9D1F-470C-A59E-9EB1008A97A5");
@@ -184,6 +188,13 @@ public class Constants
 	public static final int FKCoverage_In_Tax = 1;
 	public static final int Order_In_Tax = 8;
 	public static final int FKSubLine_In_Coverage = 1;
+	public static final int Mandatory_In_Coverage = 2;
 	public static final int FKLine_In_SubLine = 1;
 	public static final int FKParent_In_Group = 1;
+	public static final int FKPolicy_In_PolicyCoverage = 0;
+	public static final int FKPolicy_In_Object = 1;
+	public static final int FKPolicy_In_Exercise = 1;
+	public static final int FKPolicy_In_Value = 1;
+	public static final int FKObject_In_Value = 3;
+	public static final int FKExercise_In_Value = 4;
 }
