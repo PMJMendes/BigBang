@@ -9,6 +9,7 @@ import java.util.Hashtable;
 import java.util.UUID;
 
 import Jewel.Engine.Engine;
+import Jewel.Engine.Constants.ObjectGUIDs;
 import Jewel.Engine.DataAccess.MasterDB;
 import Jewel.Engine.DataAccess.SQLServer;
 import Jewel.Engine.Implementation.Entity;
@@ -19,6 +20,7 @@ import Jewel.Petri.Interfaces.IScript;
 import Jewel.Petri.Objects.PNProcess;
 import Jewel.Petri.Objects.PNScript;
 import Jewel.Petri.SysObjects.JewelPetriException;
+import bigBang.definitions.shared.Address;
 import bigBang.definitions.shared.Exercise;
 import bigBang.definitions.shared.InfoOrDocumentRequest;
 import bigBang.definitions.shared.InsurancePolicy;
@@ -32,6 +34,7 @@ import bigBang.definitions.shared.SearchResult;
 import bigBang.definitions.shared.SortOrder;
 import bigBang.definitions.shared.SortParameter;
 import bigBang.definitions.shared.TipifiedListItem;
+import bigBang.definitions.shared.ZipCode;
 import bigBang.library.server.ContactsServiceImpl;
 import bigBang.library.server.DocumentServiceImpl;
 import bigBang.library.server.SearchServiceBase;
@@ -597,9 +600,13 @@ public class InsurancePolicyServiceImpl
 		}
 
 		public TipifiedListItem[] GetObjects()
+			throws BigBangException
 		{
 			TipifiedListItem[] larrResult;
 			int i;
+
+			if ( !mbValid )
+				throw new BigBangException("Ocorreu um erro interno. Os dados correntes não são válidos.");
 
 			larrResult = new TipifiedListItem[marrObjects.size() + 1];
 			larrResult[0] = new TipifiedListItem();
@@ -615,10 +622,60 @@ public class InsurancePolicyServiceImpl
 			return larrResult;
 		}
 
+		public void WriteObject(InsuredObject pobjResult, int plngObject)
+			throws BigBangException
+		{
+			PolicyObjectData lobjObject;
+			ObjectBase lobjZipCode;
+
+			if ( !mbValid )
+				throw new BigBangException("Ocorreu um erro interno. Os dados correntes não são válidos.");
+
+			lobjObject = marrObjects.get(plngObject);
+			pobjResult.id = ( lobjObject.mid == null ? null : lobjObject.mid.toString() );
+			pobjResult.unitIdentification = lobjObject.mstrName;
+			if ( (lobjObject.mstrAddress1 == null) && (lobjObject.mstrAddress2 == null) && (lobjObject.midZipCode == null) )
+				pobjResult.address = null;
+			else
+			{
+				pobjResult.address = new Address();
+				pobjResult.address.street1 = lobjObject.mstrAddress1;
+				pobjResult.address.street2 = lobjObject.mstrAddress2;
+				if ( lobjObject.midZipCode == null )
+					pobjResult.address.zipCode = null;
+				else
+				{
+					try
+					{
+						lobjZipCode = Engine.GetWorkInstance(Engine.FindEntity(Engine.getCurrentNameSpace(),
+								ObjectGUIDs.O_PostalCode), lobjObject.midZipCode);
+					}
+					catch (Throwable e)
+					{
+						throw new BigBangException(e.getMessage(), e);
+					}
+					pobjResult.address.zipCode = new ZipCode();
+					pobjResult.address.zipCode.code = (String)lobjZipCode.getAt(0);
+					pobjResult.address.zipCode.city = (String)lobjZipCode.getAt(1);
+					pobjResult.address.zipCode.county = (String)lobjZipCode.getAt(2);
+					pobjResult.address.zipCode.district = (String)lobjZipCode.getAt(3);
+					pobjResult.address.zipCode.country = (String)lobjZipCode.getAt(4);
+				}
+			}
+			pobjResult.inclusionDate = ( lobjObject.mdtInclusion == null ? null :
+					lobjObject.mdtInclusion.toString().substring(0, 10) ); 
+			pobjResult.exclusionDate = ( lobjObject.mdtExclusion == null ? null :
+				lobjObject.mdtExclusion.toString().substring(0, 10) );
+		}
+
 		public TipifiedListItem[] GetExercises()
+			throws BigBangException
 		{
 			TipifiedListItem[] larrResult;
 			int i;
+
+			if ( !mbValid )
+				throw new BigBangException("Ocorreu um erro interno. Os dados correntes não são válidos.");
 
 			larrResult = new TipifiedListItem[marrExercises.size() + 1];
 			larrResult[0] = new TipifiedListItem();
@@ -1286,8 +1343,27 @@ public class InsurancePolicyServiceImpl
 	public InsuredObject getObjectInPad(String tempObjectId)
 		throws SessionExpiredException, BigBangException
 	{
-		// TODO Auto-generated method stub
-		return null;
+		String[] larrAux;
+		UUID lidPad;
+		int llngObject;
+		PolicyScratchPad lobjPad;
+		InsuredObject lobjResult;
+
+		if ( Engine.getCurrentUser() == null )
+			throw new SessionExpiredException();
+
+		larrAux = tempObjectId.split(":");
+		if ( larrAux.length != 2 )
+            throw new IllegalArgumentException("Invalid temporary ID string: " + tempObjectId);
+		lidPad = UUID.fromString(larrAux[0]);
+		llngObject = Integer.parseInt(larrAux[1]);
+
+		lobjPad = GetScratchPadStorage().get(lidPad);
+
+		lobjResult = new InsuredObject();
+		lobjResult.tempObjectId = lidPad.toString() + ":" + Integer.toString(llngObject);
+		lobjPad.WriteObject(lobjResult, llngObject);
+		return lobjResult;
 	}
 
 	public InsuredObject createObjectInPad(String scratchPadId)
