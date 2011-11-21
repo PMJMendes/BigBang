@@ -244,6 +244,10 @@ public abstract class FormView<T> extends View implements Validatable, HasEditab
 		}
 	}
 	
+	protected void clearValue(){
+		return;
+	}
+	
 	@Override
 	public void revert(){
 		this.setValue(this.value, false);
@@ -251,7 +255,7 @@ public abstract class FormView<T> extends View implements Validatable, HasEditab
 	
 	@Override
 	public void commit(){
-		this.setValue(this.getInfo());
+		this.setValue(this.getInfo(), false);
 	}
 	
 
@@ -273,11 +277,12 @@ public abstract class FormView<T> extends View implements Validatable, HasEditab
 	}
 
 	public void setValue(T value, boolean fireEvents) {
-		if(value == null)
+		if(value == null){
 			clearInfo();
-		else
+			clearValue();
+		}else
 			setInfo(value);
-		if(this.value != value)
+		if(this.value != value && fireEvents)
 			ValueChangeEvent.fire(this, value);
 		this.value = value;
 	}

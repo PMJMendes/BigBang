@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import bigBang.definitions.client.response.ResponseHandler;
 import bigBang.definitions.shared.TipifiedListItem;
 import bigBang.library.client.BigBangTypifiedListBroker;
 import bigBang.library.client.FieldValidator;
@@ -34,6 +35,7 @@ TypifiedListClient {
 	protected int typifiedListDataVersion;
 	protected TypifiedListBroker typifiedListBroker;
 	protected boolean locked = false;
+	protected ResponseHandler<Void> expectingResponseHandler = null;
 
 	protected boolean hasServices;
 
@@ -121,22 +123,28 @@ TypifiedListClient {
 		wrapper.add(mandatoryIndicatorLabel);
 		setFieldWidth("150px");
 
-		setListId(listId);
+		setListId(listId, null);
 	}
 
-	public void setListId(final String listId){
+	public void setListId(final String listId, ResponseHandler<Void> listReadyHandler){
 		hasServices = listId != null && !listId.equals("");
-		this.list.setListId(listId);
-		list.setReadOnly(!this.hasServices);
-		list.setEditable(this.hasServices);
+		String currentListId = this.list.getListId();
+		if(hasServices){
+			if(currentListId == null || !listId.equalsIgnoreCase(currentListId)){
+				this.list.setListId(listId);
+				list.setReadOnly(!this.hasServices);
+				list.setEditable(this.hasServices);
 
-		if(this.isAttached()){
-			typifiedListBroker.registerClient(listId, this);
-		}else{
-			this.typifiedListBroker.unregisterClient(listId, this);
+				if(this.isAttached()){
+					this.expectingResponseHandler = listReadyHandler;
+					typifiedListBroker.registerClient(listId, this);
+				}else{
+					this.typifiedListBroker.unregisterClient(listId, this);
+				}
+			}
 		}
 	}
-	
+
 	@Override
 	protected void onAttach() {
 		super.onAttach();
@@ -184,10 +192,13 @@ TypifiedListClient {
 		String strValue = value;
 		if (value == null)
 			strValue = "";
-		super.setValue(strValue, false);
-		if(fireEvents)
-			ValueChangeEvent.fire(this, value);
-		selectedValueId = value;
+
+		if(isDifferentValue(value)){
+			super.setValue(strValue, false);
+			if(fireEvents)
+				ValueChangeEvent.fire(this, value);
+			selectedValueId = value;
+		}
 	}
 
 	@Override
@@ -232,6 +243,9 @@ TypifiedListClient {
 		}else{
 			clear();
 		}
+		if(this.expectingResponseHandler != null) {
+			this.expectingResponseHandler.onResponse(null);
+		}
 	}
 
 	@Override
@@ -244,7 +258,6 @@ TypifiedListClient {
 	public void addItem(TipifiedListItem item) {
 		super.addItem(item.value, item.id);
 		if(selectedValueId != null && item.id.equalsIgnoreCase(selectedValueId)){
-			GWT.log("setting the value " + item.id + " - " + item.value);
 			setValue(item.id, false);
 		}
 	}

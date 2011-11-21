@@ -17,7 +17,6 @@ import bigBang.definitions.client.response.ResponseHandler;
 import bigBang.definitions.shared.BigBangConstants;
 import bigBang.definitions.shared.Exercise;
 import bigBang.definitions.shared.InsurancePolicy;
-import bigBang.definitions.shared.InsurancePolicy.FieldType;
 import bigBang.definitions.shared.InsurancePolicy.TableSection;
 import bigBang.definitions.shared.InsurancePolicyStub;
 import bigBang.definitions.shared.InsuredObject;
@@ -115,35 +114,6 @@ public class InsurancePolicyProcessBrokerImpl extends DataBroker<InsurancePolicy
 
 				@Override
 				public void onSuccess(InsurancePolicy result) {
-					InsurancePolicy.HeaderField field = new InsurancePolicy.HeaderField();
-					field.fieldId = "00";
-					field.fieldName = "um campo";
-					field.type = FieldType.BOOLEAN;
-					field.value = BigBangConstants.EntityIds.USER;
-					
-					InsurancePolicy.HeaderField field2 = new InsurancePolicy.HeaderField();
-					field2.fieldId = "00";
-					field2.fieldName = "um campo";
-					field2.type = FieldType.DATE;
-					field2.value = BigBangConstants.EntityIds.USER;
-
-					result.headerFields = new InsurancePolicy.HeaderField[]{
-							field,
-							field2
-					};
-
-					InsurancePolicy.ExtraField extrafield = new InsurancePolicy.ExtraField();
-					extrafield.fieldId = "00";
-					extrafield.fieldName = "um campo extra";
-					extrafield.type = FieldType.TEXT;
-					extrafield.value = BigBangConstants.EntityIds.USER;
-					extrafield.unitsLabel = "Km";
-
-					result.extraData = new InsurancePolicy.ExtraField[]{
-							extrafield,
-							extrafield
-					};
-
 					cache.add(policyId, result);
 					incrementDataVersion();
 					for(DataBrokerClient<InsurancePolicy> bc : getClients()){
@@ -160,19 +130,19 @@ public class InsurancePolicyProcessBrokerImpl extends DataBroker<InsurancePolicy
 	@Override
 	public void updatePolicy(final InsurancePolicy policy,
 			final ResponseHandler<InsurancePolicy> handler) {
-		this.service.editPolicy(policy, new BigBangAsyncCallback<InsurancePolicy>() {
-
-			@Override
-			public void onSuccess(InsurancePolicy result) {
-				cache.add(result.id, result);
-				incrementDataVersion();
-				for(DataBrokerClient<InsurancePolicy> bc : getClients()){
-					((InsurancePolicyDataBrokerClient) bc).updateInsurancePolicy(result);
-					((InsurancePolicyDataBrokerClient) bc).setDataVersionNumber(BigBangConstants.EntityIds.INSURANCE_POLICY, getCurrentDataVersion());
-				}
-				handler.onResponse(result);
-			}
-		});
+//		this.service.editPolicy(policy, new BigBangAsyncCallback<InsurancePolicy>() {
+//
+//			@Override
+//			public void onSuccess(InsurancePolicy result) {
+//				cache.add(result.id, result);
+//				incrementDataVersion();
+//				for(DataBrokerClient<InsurancePolicy> bc : getClients()){
+//					((InsurancePolicyDataBrokerClient) bc).updateInsurancePolicy(result);
+//					((InsurancePolicyDataBrokerClient) bc).setDataVersionNumber(BigBangConstants.EntityIds.INSURANCE_POLICY, getCurrentDataVersion());
+//				}
+//				handler.onResponse(result);
+//			}
+//		});
 	}
 
 	@Override
@@ -242,7 +212,11 @@ public class InsurancePolicyProcessBrokerImpl extends DataBroker<InsurancePolicy
 	public void openPolicyResource(InsurancePolicy policy,
 			final ResponseHandler<InsurancePolicy> handler) {
 		//If it is a new policy
-		if(policy.id == null){
+		if(policy.id == null || inScratchPad(policy.id)){
+			if(inScratchPad(policy.id)){
+				policy.id = getScratchPadId(policy.id);
+			}
+			removeFromScratchPad(policy.id);
 			this.service.initializeNewPolicy(policy, new AsyncCallback<InsurancePolicy>() {
 				
 				@Override
@@ -251,11 +225,9 @@ public class InsurancePolicyProcessBrokerImpl extends DataBroker<InsurancePolicy
 					result.id = tempId;
 					handler.onResponse(result);
 				}
-				
+
 				@Override
-				public void onFailure(Throwable caught) {
-					//TODO
-				}
+				public void onFailure(Throwable caught) {}
 			});
 		}else{ //if it is an existing policy
 			service.openForEdit(policy, new AsyncCallback<InsurancePolicy>() {
@@ -267,9 +239,7 @@ public class InsurancePolicyProcessBrokerImpl extends DataBroker<InsurancePolicy
 				}
 				
 				@Override
-				public void onFailure(Throwable caught) {
-					//TODO
-				}
+				public void onFailure(Throwable caught) {}
 			});
 		}
 	}
@@ -366,7 +336,7 @@ public class InsurancePolicyProcessBrokerImpl extends DataBroker<InsurancePolicy
 	//Adds a policy to the scratchpad and returns a temporary id
 	protected String addToScratchPad(InsurancePolicy policy) {
 		String tempId = policy.id == null ? policy.scratchPadId : policy.id;
-		policyScratchPadIds.put(tempId, policy.scratchPadId);
+		policyScratchPadIds.put(tempId, policy.id);
 		return tempId;
 	}
 

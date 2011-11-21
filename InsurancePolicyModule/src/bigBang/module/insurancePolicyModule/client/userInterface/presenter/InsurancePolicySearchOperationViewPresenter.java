@@ -40,7 +40,7 @@ public class InsurancePolicySearchOperationViewPresenter implements
 		SAVE,
 		CANCEL,
 		DELETE,
-		CREATE_RECEIPT
+		CREATE_RECEIPT,
 		//TODO
 	}
 	
@@ -185,8 +185,17 @@ public class InsurancePolicySearchOperationViewPresenter implements
 					updatePolicy(info);
 					break;
 				case EDIT:
-					view.getForm().setReadOnly(false);
-					view.setSaveModeEnabled(true);
+					broker.openPolicyResource(view.getForm().getValue(), new ResponseHandler<InsurancePolicy>() {
+
+						@Override
+						public void onResponse(InsurancePolicy response) {
+							view.getForm().setValue(response);
+							view.getForm().setReadOnly(false);
+							view.setSaveModeEnabled(true);
+						}
+						@Override
+						public void onError(Collection<ResponseError> errors) {}
+					});
 					break;
 				case CANCEL:
 					view.getForm().revert();

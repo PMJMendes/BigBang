@@ -15,34 +15,36 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
 public class ListBoxFormField extends FormField<String> {
-	
+
 	protected ListBox listBox;
 	protected HorizontalPanel wrapper;
-	
+
+	protected String value;
+
 	public ListBoxFormField(String label,FieldValidator<String> validator){
 		this();
 		setValidator(validator);
 		setLabel(label);
 	}
-	
+
 	public ListBoxFormField(FieldValidator<String> validator) {
 		this();
 		setValidator(validator);
 	}
-	
+
 	public ListBoxFormField(String label){
 		this();
 		setLabel(label);
 	}
-	
+
 	public ListBoxFormField(){
 		super();
-		
+
 		this.listBox = new ListBox();
 		this.listBox.setHeight("20px");
-		
+
 		//this.field = new MockField();
-		
+
 		VerticalPanel mainWrapper = new VerticalPanel();
 		initWidget(mainWrapper);
 		this.label = new Label();
@@ -55,29 +57,29 @@ public class ListBoxFormField extends FormField<String> {
 		wrapper.add(unitsLabel);
 		wrapper.add(mandatoryIndicatorLabel);
 		setFieldWidth("150px");
+
+		clearValues();
 		
 		this.listBox.addChangeHandler(new ChangeHandler() {
-			
+
 			@Override
 			public void onChange(ChangeEvent event) {
 				String value = listBox.getValue(listBox.getSelectedIndex());
 				setValue(value, true);
 			}
 		});
-		
-		clearValues();
 	}
-	
+
 	private void setLabel(String label) {
 		this.label.setText(label);
 	}
-	
+
 	@Override
 	public void setLabelWidth(String width) {
 		this.label.setWidth(width);
 		this.wrapper.setCellWidth(this.label, width);
 	}
-	
+
 	@Override
 	public void setReadOnly(boolean readonly) {
 		if(!editable)
@@ -90,20 +92,23 @@ public class ListBoxFormField extends FormField<String> {
 	public boolean isReadOnly() {
 		return !this.listBox.isEnabled();
 	}
-	
+
 	@Override 
 	public void setFieldWidth(String width){
 		this.listBox.setWidth(width);
 	}
-	
+
 	public void addItem(String item, String value){
 		this.listBox.addItem(item, value);
 	}
-	
+
 	public void removeItem(int index){
 		this.listBox.removeItem(index);
+		int selectedIndex = getSelectedIndex();
+		String selectedValue = this.listBox.getValue(selectedIndex);
+		setValue(selectedValue, true);
 	}
-	
+
 	public boolean hasItem(String item, String value) {
 		int nItems = this.listBox.getItemCount();
 		for(int i = 0; i < nItems; i++){
@@ -112,32 +117,33 @@ public class ListBoxFormField extends FormField<String> {
 		}
 		return false;
 	}
-	
+
 	public int getItemIndex(String item, String value) {
 		int count = this.listBox.getItemCount();
-		
+
 		for(int i = 0; i < count; i++) {
 			if(this.listBox.getValue(i).equals(value) && this.listBox.getItemText(i).equals(item))
 				return i;
 		}
 		throw new RuntimeException("The item does not exist in the listbox.");
 	}
-	
+
 	public int getSelectedIndex(){
 		return this.listBox.getSelectedIndex();
 	}
-	
+
 	@Override
 	public String getValue(){
-		String value = this.listBox.getValue(this.listBox.getSelectedIndex());
+		if(value == null)
+			value = new String();
 		return value.isEmpty() ? null : value;
 	}
-	
-	
+
+
 	public String getSelectedItemText(){
 		return this.listBox.getItemText(this.listBox.getSelectedIndex());
 	}
-	
+
 	@Override
 	public void setValue(String value, boolean fireEvents){
 		if(value == null){
@@ -146,31 +152,45 @@ public class ListBoxFormField extends FormField<String> {
 			}
 			return;
 		}
-		
-		boolean hasValue = false;
+		boolean hasValue = false; 
 		for(int i = 0; i < this.listBox.getItemCount(); i++) {
 			String itemValue = this.listBox.getValue(i);
-			if(itemValue != null && value != null && itemValue.equalsIgnoreCase(value)){
-				this.listBox.setSelectedIndex(i);
-				hasValue = true;
+			if(itemValue.equalsIgnoreCase(value)){
+				if(isDifferentValue(itemValue)){
+					this.listBox.setSelectedIndex(i);
+					hasValue = true;
+					this.value = value;
+					if(fireEvents)
+						ValueChangeEvent.fire(this, value);
+				}
 				break;
 			}
 		}
 		if(!hasValue)
 			GWT.log("Could not select list box value because value does not exist.");
-		else if(fireEvents)
-			ValueChangeEvent.fire(this, value);
 	}
 
 	@Override
 	public void clear() {
-		setValue("", true);
+		setValue(new String(), true);
 	}
-	
+
 	public void clearValues() {
 		this.listBox.clear();
-		this.addItem("-", "");
+		this.addItem("-", new String());
 		clear();
+	}
+
+	protected boolean isDifferentValue(String value) {
+		String currentValue = getValue();
+		if(currentValue == null){
+			currentValue = new String();
+		}
+		if(currentValue == value)
+			return false;
+		if(currentValue != null && currentValue.equalsIgnoreCase(value))
+			return false;
+		return true;
 	}
 
 }

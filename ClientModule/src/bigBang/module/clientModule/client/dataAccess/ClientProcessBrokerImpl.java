@@ -6,7 +6,6 @@ import bigBang.definitions.client.dataAccess.ClientProcessBroker;
 import bigBang.definitions.client.dataAccess.ClientProcessDataBrokerClient;
 import bigBang.definitions.client.dataAccess.DataBroker;
 import bigBang.definitions.client.dataAccess.DataBrokerClient;
-import bigBang.definitions.client.dataAccess.InsurancePolicyBroker;
 import bigBang.definitions.client.dataAccess.SearchDataBroker;
 import bigBang.definitions.client.response.ResponseError;
 import bigBang.definitions.client.response.ResponseHandler;
@@ -149,19 +148,6 @@ public class ClientProcessBrokerImpl extends DataBroker<Client> implements Clien
 			@Override
 			public void onSuccess(RiskAnalysis result) {
 				//TODO
-				handler.onResponse(result);
-			}
-		});
-	}
-
-	@Override
-	public void createInsurancePolicy(String clientProcessId, InsurancePolicy policy,
-			final ResponseHandler<InsurancePolicy> handler) {
-		service.createPolicy(clientProcessId, policy, new BigBangAsyncCallback<InsurancePolicy>() {
-
-			@Override
-			public void onSuccess(InsurancePolicy result) {
-				((InsurancePolicyBroker) DataBrokerManager.Util.getInstance().getBroker(BigBangConstants.EntityIds.INSURANCE_POLICY)).notifyItemCreation(result.id);
 				handler.onResponse(result);
 			}
 		});

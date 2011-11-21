@@ -6,6 +6,7 @@ import com.google.gwt.user.client.ui.HasWidgets;
 import com.google.gwt.user.client.ui.Widget;
 
 import bigBang.definitions.client.dataAccess.ClientProcessBroker;
+import bigBang.definitions.client.dataAccess.InsurancePolicyBroker;
 import bigBang.definitions.client.response.ResponseError;
 import bigBang.definitions.client.response.ResponseHandler;
 import bigBang.definitions.shared.BigBangConstants;
@@ -26,7 +27,8 @@ public abstract class CreateInsurancePolicyViewPresenter implements
 	
 	public enum Action {
 		CREATE_POLICY,
-		CANCEL_POLICY_CREATION
+		CANCEL_POLICY_CREATION,
+		MODALITY_CHANGED
 	}
 	
 	public interface Display {
@@ -43,17 +45,25 @@ public abstract class CreateInsurancePolicyViewPresenter implements
 	protected Display view;
 	protected EventBus eventBus;
 	protected ClientProcessBroker clientBroker;
+	protected InsurancePolicyBroker policyBroker;
 	protected Client client;
 	
 	public CreateInsurancePolicyViewPresenter(EventBus eventBus, Display view){
 		setEventBus(eventBus);
 		setView((View) view);
+		clientBroker = ((ClientProcessBroker) DataBrokerManager.Util.getInstance().getBroker(BigBangConstants.EntityIds.CLIENT));
+		policyBroker = ((InsurancePolicyBroker) DataBrokerManager.Util.getInstance().getBroker(BigBangConstants.EntityIds.INSURANCE_POLICY));
 	}
 
 	public void setClient(Client client){
 		this.client = client;
 		this.view.getClientForm().setValue(client);
-		clientBroker = ((ClientProcessBroker) DataBrokerManager.Util.getInstance().getBroker(BigBangConstants.EntityIds.CLIENT));
+		
+		InsurancePolicy newPolicy = new InsurancePolicy();
+		newPolicy.clientId = client.id;
+		newPolicy.clientNumber = client.clientNumber;
+		newPolicy.clientName = client.name;
+		view.getInsurancePolicyForm().setValue(newPolicy);
 	}
 	
 	@Override
@@ -87,34 +97,40 @@ public abstract class CreateInsurancePolicyViewPresenter implements
 			@Override
 			public void onActionInvoked(ActionInvokedEvent<Action> action) {
 				switch(action.getAction()) {
+				
 				case CREATE_POLICY:
-					createPolicy();
 					break;
+				
 				case CANCEL_POLICY_CREATION:
+					policyBroker.closePolicyResource(view.getInsurancePolicyForm().getValue().id, new ResponseHandler<Void>() {
+
+						@Override
+						public void onResponse(Void response) {}
+
+						@Override
+						public void onError(Collection<ResponseError> errors) {}
+					});
 					onCreationCancelled();
+					break;
+				
+				case MODALITY_CHANGED:
+					view.getInsurancePolicyForm().commit();
+					InsurancePolicy policy = view.getInsurancePolicyForm().getValue();
+					CreateInsurancePolicyViewPresenter.this.policyBroker.openPolicyResource(policy, new ResponseHandler<InsurancePolicy>() {
+
+						@Override
+						public void onResponse(InsurancePolicy response) {
+							view.getInsurancePolicyForm().setValue(response, false);
+						}
+
+						@Override
+						public void onError(Collection<ResponseError> errors) {}
+					});
 					break;
 				}
 			}
 		});
-		
 		bound = true;
-	}
-
-	protected void createPolicy(){
-		if(view.isInsurancePolicyFormValid()){
-			view.getInsurancePolicyForm().commit();
-			this.clientBroker.createInsurancePolicy(this.client.processId, view.getInsurancePolicyForm().getValue(), new ResponseHandler<InsurancePolicy>() {
-				
-				@Override
-				public void onResponse(InsurancePolicy response) {
-					onPolicyCreated();
-				}
-				
-				@Override
-				public void onError(Collection<ResponseError> errors) {
-				}
-			});
-		}
 	}
 	
 	public abstract void onCreationCancelled();

@@ -216,11 +216,20 @@ public class InsurancePolicySearchOperationView extends View implements Insuranc
 //		securedObjectsList = new List<InsuredObject>();
 //		securedObjectsList.setHeaderWidget(new ListHeader("Objectos Seguros"));
 //		
-		form = new InsurancePolicyForm();
+		form = new InsurancePolicyForm(){
+
+			@Override
+			public void onSubLineChanged(String subLineId) {
+				return;
+			}
+			
+		};
+		formWrapper.add(form);
 		form.setSize("100%", "100%");
+		form.setForEdit();
+
 		
 //		formWrapper.addSouth(this.securedObjectsList, 300);
-		formWrapper.add(form);
 		
 		toolBarFormContainer.add(operationsToolBar);
 		toolBarFormContainer.add(formWrapper);
@@ -243,7 +252,7 @@ public class InsurancePolicySearchOperationView extends View implements Insuranc
 		slideWrapper.add(mainWrapper);
 		initWidget(slideWrapper);
 	}
-
+	
 	@Override
 	public HasValueSelectables<?> getList() {
 		return this.searchPanel;

@@ -3,7 +3,6 @@ package bigBang.module.clientModule.interfaces;
 import bigBang.definitions.shared.Casualty;
 import bigBang.definitions.shared.Client;
 import bigBang.definitions.shared.InfoOrDocumentRequest;
-import bigBang.definitions.shared.InsurancePolicy;
 import bigBang.definitions.shared.ManagerTransfer;
 import bigBang.definitions.shared.QuoteRequest;
 import bigBang.definitions.shared.RiskAnalysis;
@@ -21,7 +20,6 @@ public interface ClientServiceAsync
 	void createInfoOrDocumentRequest(InfoOrDocumentRequest request, AsyncCallback<InfoOrDocumentRequest> callback);
 	void createManagerTransfer(ManagerTransfer transfer, AsyncCallback<ManagerTransfer> callback);
 	void createQuoteRequest(String processId, QuoteRequest request, AsyncCallback<QuoteRequest> callback);
-	void createPolicy(String clientProcessId, InsurancePolicy policy, AsyncCallback<InsurancePolicy> callback);
 	void createRiskAnalisys(String clientId, RiskAnalysis riskAnalisys, AsyncCallback<RiskAnalysis> callback);
 	void createCasualty(String clientId, Casualty casualty, AsyncCallback<Casualty> callback);
 	void deleteClient(String clientId, String processId, AsyncCallback<Void> callback);

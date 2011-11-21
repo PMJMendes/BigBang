@@ -57,15 +57,22 @@ public class CreateInsurancePolicyView extends View implements CreateInsurancePo
 		insurancePolicyWrapper.add(insurancePolicyHeader);
 		insurancePolicyHeader.setHeight("30px");
 		insurancePolicyWrapper.setSize("100%", "100%");
-		insurancePolicyForm = new InsurancePolicyForm();
+		insurancePolicyForm = new InsurancePolicyForm(){
+			@Override
+			public void onSubLineChanged(String subLineId) {
+				if(actionHandler != null){
+					actionHandler.onActionInvoked(new ActionInvokedEvent<CreateInsurancePolicyViewPresenter.Action>(Action.MODALITY_CHANGED));
+				}
+			}
+		};
 		insurancePolicyForm.setSize("100%", "100%");
 		insurancePolicyForm.setReadOnly(false);
-		insurancePolicyForm.allowManagerEdition(true);
+		insurancePolicyForm.setForNew();
 		insurancePolicyWrapper.add(toolbar);
 		insurancePolicyWrapper.add(insurancePolicyForm);
 		insurancePolicyWrapper.setCellHeight(insurancePolicyForm, "100%");
 	}
-	
+
 	@Override
 	public boolean isInsurancePolicyFormValid() {
 		return this.insurancePolicyForm.validate();

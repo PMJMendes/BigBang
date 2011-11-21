@@ -68,7 +68,6 @@ public interface InsurancePolicyService extends SearchService {
 	public Exercise openNewExercise(String policyId, Exercise exercise) throws SessionExpiredException, BigBangException;
 	public Exercise editExercise(String policyId, Exercise exercise) throws SessionExpiredException, BigBangException;
 
-	public InsurancePolicy editPolicy(InsurancePolicy policy) throws SessionExpiredException, BigBangException;
 	public InsurancePolicy voidPolicy(String policyId) throws SessionExpiredException, BigBangException;
 
 	public InfoOrDocumentRequest createInfoOrDocumentRequest(InfoOrDocumentRequest request) throws SessionExpiredException, BigBangException;

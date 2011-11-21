@@ -136,7 +136,7 @@ public class FiltersPanel extends View {
 					if(event.getValue() == null || event.getValue().isEmpty()){
 						field.clearValues();
 					}else{
-						field.setListId(listId+"/"+event.getValue());
+						field.setListId(listId+"/"+event.getValue(), null);
 					}
 				}
 			});

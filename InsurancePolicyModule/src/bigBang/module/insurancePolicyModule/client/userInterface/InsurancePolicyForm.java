@@ -10,8 +10,10 @@ import bigBang.definitions.client.response.ResponseHandler;
 import bigBang.definitions.shared.BigBangConstants;
 import bigBang.definitions.shared.Client;
 import bigBang.definitions.shared.InsurancePolicy;
+import bigBang.definitions.shared.InsurancePolicy.Coverage;
 import bigBang.definitions.shared.InsurancePolicy.ExtraField;
 import bigBang.definitions.shared.InsurancePolicy.HeaderField;
+import bigBang.definitions.shared.InsurancePolicy.TableSection;
 import bigBang.library.client.FieldValidator;
 import bigBang.library.client.FormField;
 import bigBang.library.client.dataAccess.DataBrokerManager;
@@ -30,7 +32,7 @@ import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.i18n.client.DateTimeFormat;
 
-public class InsurancePolicyForm extends FormView<InsurancePolicy> {
+public abstract class InsurancePolicyForm extends FormView<InsurancePolicy> {
 
 	protected static class HeaderFormField extends FormField<String> {
 
@@ -51,8 +53,13 @@ public class InsurancePolicyForm extends FormView<InsurancePolicy> {
 			switch(field.type) {
 			case LIST:
 				ExpandableListBoxFormField listField = new ExpandableListBoxFormField(field.fieldName);
-				listField.setListId(BigBangConstants.TypifiedListIds.FIELD_VALUES+"/"+field.fieldId);
+				listField.setListId(BigBangConstants.TypifiedListIds.FIELD_VALUES+"/"+field.fieldId, null);
 				this.field = listField;
+				break;
+			case REFERENCE:
+				ExpandableListBoxFormField referenceListField = new ExpandableListBoxFormField(field.fieldName);
+				referenceListField.setListId(field.refersToId, null);
+				this.field = referenceListField;
 				break;
 			case NUMERIC:
 				this.field = new TextBoxFormField(field.fieldName, new FieldValidator<String>() {
@@ -117,6 +124,11 @@ public class InsurancePolicyForm extends FormView<InsurancePolicy> {
 		@Override
 		public void setLabelWidth(String width) {
 			this.field.setLabelWidth(width);
+		}
+		
+		@Override
+		public void setFieldWidth(String width) {
+			this.field.setFieldWidth(width);
 		}
 	}
 
@@ -195,7 +207,7 @@ public class InsurancePolicyForm extends FormView<InsurancePolicy> {
 
 		addFormField(number);
 		addFormField(client);
-		
+
 		FormField<?>[] group1 = new FormField<?>[]{
 				policyStatus,
 				manager,
@@ -213,7 +225,7 @@ public class InsurancePolicyForm extends FormView<InsurancePolicy> {
 				maturityMonth
 		};
 		addFormFieldGroup(group2, true);
-		
+
 		FormField<?>[] group3 = new FormField<?>[]{
 				caseStudy,
 				category,
@@ -227,7 +239,7 @@ public class InsurancePolicyForm extends FormView<InsurancePolicy> {
 
 		addSection("Coberturas");
 		addWidget(this.table);
-		
+
 		this.extraFieldsSection = new FormViewSection("Informação Extra");
 		addSection(this.extraFieldsSection);
 
@@ -240,7 +252,7 @@ public class InsurancePolicyForm extends FormView<InsurancePolicy> {
 				if(event.getValue() == null || event.getValue().isEmpty()){
 					line.clearValues();
 				}else{
-					line.setListId(BigBangConstants.EntityIds.LINE+"/"+event.getValue());
+					line.setListId(BigBangConstants.EntityIds.LINE+"/"+event.getValue(), null);
 				}
 			}
 		});
@@ -251,24 +263,46 @@ public class InsurancePolicyForm extends FormView<InsurancePolicy> {
 				if(event.getValue() == null || event.getValue().isEmpty()){
 					subLine.clearValues();
 				}else{
-					subLine.setListId(BigBangConstants.EntityIds.SUB_LINE+"/"+event.getValue());
+					subLine.setListId(BigBangConstants.EntityIds.SUB_LINE+"/"+event.getValue(), null);
 				}
+			}
+		});
+		subLine.addValueChangeHandler(new ValueChangeHandler<String>() {
+
+			@Override
+			public void onValueChange(ValueChangeEvent<String> event) {
+				String value = event.getValue();
+				onSubLineChanged(value);
 			}
 		});
 
 		this.manager.lock(true);
 		this.client.setEditable(false);
 
-		this.setValue(new InsurancePolicy());
+		clearValue();
+		setValue(this.value);
+		this.table.setFilterable(false);
 	}
 
-	public void allowManagerEdition(boolean allow) {
-		this.manager.setEditable(allow);
-	}
+	public abstract void onSubLineChanged(String subLineId);
 
+	public void setForEdit(){
+		this.manager.setEditable(false);
+		this.category.setEditable(false);
+		this.line.setEditable(false);
+		this.subLine.setEditable(false);
+	}
+	
+	public void setForNew(){
+		this.manager.setEditable(true);
+		this.category.setEditable(true);
+		this.line.setEditable(true);
+		this.subLine.setEditable(true);
+	}
+	
 	@Override
 	public InsurancePolicy getInfo() {
-		InsurancePolicy result = new InsurancePolicy();
+		InsurancePolicy result = this.value;
 
 		result.managerId = manager.getValue();
 		result.number = number.getValue();
@@ -277,8 +311,16 @@ public class InsurancePolicyForm extends FormView<InsurancePolicy> {
 		result.lineId = line.getValue();
 		result.subLineId = subLine.getValue();
 		result.mediatorId = mediator.getValue();
-		result.maturityDay = Integer.parseInt(maturityDay.getValue());
-		result.maturityMonth = Integer.parseInt(maturityMonth.getValue());
+		try{
+			result.maturityDay = Integer.parseInt(maturityDay.getValue());
+		}catch(Exception e) {
+			result.maturityDay = -1;
+		}
+		try{
+			result.maturityMonth = Integer.parseInt(maturityMonth.getValue());
+		}catch(Exception e) {
+			result.maturityMonth = -1;
+		}
 		result.startDate = startDate.getValue() == null ? null : DateTimeFormat.getFormat("yyyy-MM-dd").format(startDate.getValue());
 		result.startDate = endDate.getValue() == null ? null : DateTimeFormat.getFormat("yyyy-MM-dd").format(endDate.getValue());
 		result.durationId = duration.getValue();
@@ -298,7 +340,8 @@ public class InsurancePolicyForm extends FormView<InsurancePolicy> {
 
 		for(int i = 0; fields != null && i < fields.length; i++) {
 			HeaderFormField field = new HeaderFormField(fields[i]);
-			this.headerFieldsSection.addFormField(field);
+			field.setFieldWidth("175px");
+			this.headerFieldsSection.addFormField(field, true);
 			this.headerFields.put(fields[i].fieldId, field);
 		}
 	}
@@ -306,12 +349,12 @@ public class InsurancePolicyForm extends FormView<InsurancePolicy> {
 	protected HeaderField[] getHeaderFieldsInfo(){
 		HeaderField[] fields = new HeaderField[this.headerFields.size()];
 		int i = 0;
-		for(HeaderFormField f : this.headerFields.values()) {
-			HeaderField headerField = f.headerField;
-			headerField.value = f.getValue();
-			fields[i] = headerField;
-			i++;
-		}
+//		for(HeaderFormField f : this.headerFields.values()) {
+//			HeaderField headerField = f.headerField;
+//			headerField.value = f.getValue();
+//			fields[i] = headerField;
+//			i++;
+//		}
 		return null;
 	}
 
@@ -327,7 +370,8 @@ public class InsurancePolicyForm extends FormView<InsurancePolicy> {
 
 		for(int i = 0; fields != null && i < fields.length; i++) {
 			HeaderFormField field = new HeaderFormField(fields[i]);
-			this.extraFieldsSection.addFormField(field);
+			field.setFieldWidth("175px");
+			this.extraFieldsSection.addFormField(field, true);
 			this.extraFields.put(fields[i].fieldId, field);
 		}
 	}
@@ -335,27 +379,44 @@ public class InsurancePolicyForm extends FormView<InsurancePolicy> {
 	protected ExtraField[] getExtraFieldsInfo(){
 		return null; //TODO
 	}
-	
+
 	protected void clearExtraFields(){
 		//TODO
 	}
-	
+
 
 	@Override
-	public void setInfo(InsurancePolicy info) {
+	public void setInfo(final InsurancePolicy info) {
 		if(info == null) {
 			clearInfo();
 		}else{
 			this.manager.setValue(info.managerId);
 			this.number.setValue(info.number);
 			this.insuranceAgency.setValue(info.insuranceAgencyId);
-			this.category.setValue(info.categoryId, true);
+			this.category.setValue(info.categoryId, false);
 
-			this.line.setListId(BigBangConstants.EntityIds.LINE+"/"+info.categoryId);
-			this.line.setValue(info.lineId, false);
-			this.subLine.setListId(BigBangConstants.EntityIds.SUB_LINE+"/"+info.lineId);
-			this.subLine.setValue(info.subLineId, false);
+			this.line.setListId(BigBangConstants.EntityIds.LINE+"/"+info.categoryId, new ResponseHandler<Void>() {
 
+				@Override
+				public void onResponse(Void response) {
+					line.setValue(info.lineId, false);
+					subLine.setListId(BigBangConstants.EntityIds.SUB_LINE+"/"+info.lineId, new ResponseHandler<Void>() {
+
+						@Override
+						public void onResponse(Void response) {
+							subLine.setValue(info.subLineId, false);
+						}
+
+						@Override
+						public void onError(Collection<ResponseError> errors) {}
+					});
+				}
+
+				@Override
+				public void onError(Collection<ResponseError> errors) {}
+				
+			});
+			
 			this.mediator.setValue(info.mediatorId);
 			this.maturityDay.setValue(info.maturityDay+"");
 			this.maturityMonth.setValue(info.maturityMonth+"");
@@ -377,20 +438,45 @@ public class InsurancePolicyForm extends FormView<InsurancePolicy> {
 			}
 
 			setHeaderFields(info.headerFields);
-			setExtraFields(info.extraData);
-
 			table.setColumnDefinitions(info.columns);
+			setCoverages(info.coverages);
+			if(info.tableData != null && info.tableData.length > 0){
+				setTableData(info.tableData[0]);
+			}else{
+				clearTableData();
+			}
+			
+			setExtraFields(info.extraData);
+			
 			//table.setData(info.);//TODO
-			
+
 			if(info.startDate != null)
-				startDate.setValue(DateTimeFormat.getFormat("yyyy-MM-dd 00:00:00.0").parse(info.startDate));
+				startDate.setValue(DateTimeFormat.getFormat("yyyy-MM-dd").parse(info.startDate));
 			if(info.expirationDate != null)
-				endDate.setValue(DateTimeFormat.getFormat("yyyy-MM-dd 00:00:00.0").parse(info.expirationDate));
-			
+				endDate.setValue(DateTimeFormat.getFormat("yyyy-MM-dd").parse(info.expirationDate));
+
 			this.policyStatus.setValue(info.statusText);
 			this.caseStudy.setValue(info.caseStudy);
 			this.notes.setValue(info.notes);
 		}
+	}
+	
+	public void setTableData(TableSection data){
+		this.table.setData(data);
+	}
+	
+	public void clearTableData(){
+		//TODO
+	}
+	
+	protected void setCoverages(Coverage[] coverages){
+		this.table.setCoverages(coverages);
+	}
+	
+	@Override
+	protected void clearValue() {
+		super.clearValue();
+		this.value = new InsurancePolicy();
 	}
 
 }
