@@ -153,12 +153,12 @@ public class InsurancePolicyServiceImpl
 			midClient = ( pobjSource.clientId == null ? null : UUID.fromString(pobjSource.clientId) );
 			mobjPolicy = new PolicyData();
 			mobjPolicy.mstrNumber = pobjSource.number;
-			mobjPolicy.midCompany = UUID.fromString(pobjSource.insuranceAgencyId);
+			mobjPolicy.midCompany = ( pobjSource.insuranceAgencyId == null ? null : UUID.fromString(pobjSource.insuranceAgencyId) );
 			mobjPolicy.midSubLine = UUID.fromString(pobjSource.subLineId);
 			mobjPolicy.mdtBeginDate = ( pobjSource.startDate == null ? null :
 					Timestamp.valueOf(pobjSource.startDate + " 00:00:00.0") );
-			mobjPolicy.midDuration = UUID.fromString(pobjSource.durationId);
-			mobjPolicy.midFractioning = UUID.fromString(pobjSource.fractioningId);
+			mobjPolicy.midDuration = ( pobjSource.durationId == null ? null : UUID.fromString(pobjSource.durationId) );
+			mobjPolicy.midFractioning = ( pobjSource.fractioningId == null ? null : UUID.fromString(pobjSource.fractioningId) );
 			mobjPolicy.mlngMaturityDay = pobjSource.maturityDay;
 			mobjPolicy.mlngMaturityMonth = pobjSource.maturityMonth;
 			mobjPolicy.mdtEndDate = ( pobjSource.expirationDate == null ? null :
@@ -193,24 +193,24 @@ public class InsurancePolicyServiceImpl
 					for ( j = 0; j < larrTaxes.length; j++ )
 					{
 						lobjField = new PadField();
-						lobjField.midField = larrTaxes[i].getKey();
-						lobjField.mlngColIndex = larrTaxes[i].GetColumnOrder();
-						lobjField.mstrLabel = larrTaxes[i].getLabel();
-						lobjField.midType = (UUID)larrTaxes[i].getAt(2);
-						lobjField.mstrUnits = (String)larrTaxes[i].getAt(3);
-						lobjField.mstrDefault = (String)larrTaxes[i].getAt(4);
-						lobjField.midRefersTo = (UUID)larrTaxes[i].getAt(7);
-						lobjField.mbVariesByObject = larrTaxes[i].GetVariesByObject();
-						lobjField.mbVariesByExercise = larrTaxes[i].GetVariesByExercise();
+						lobjField.midField = larrTaxes[j].getKey();
+						lobjField.mlngColIndex = larrTaxes[j].GetColumnOrder();
+						lobjField.mstrLabel = larrTaxes[j].getLabel();
+						lobjField.midType = (UUID)larrTaxes[j].getAt(2);
+						lobjField.mstrUnits = (String)larrTaxes[j].getAt(3);
+						lobjField.mstrDefault = (String)larrTaxes[j].getAt(4);
+						lobjField.midRefersTo = (UUID)larrTaxes[j].getAt(7);
+						lobjField.mbVariesByObject = larrTaxes[j].GetVariesByObject();
+						lobjField.mbVariesByExercise = larrTaxes[j].GetVariesByExercise();
 						larrFields.add(lobjField);
 
 						if ( lobjField.mbVariesByObject || lobjField.mbVariesByExercise )
 							continue;
 						lobjValue = new PadValue();
 						lobjValue.mid = null;
-						lobjValue.mstrValue = (String)larrTaxes[i].getAt(4);
+						lobjValue.mstrValue = (String)larrTaxes[j].getAt(4);
 						lobjValue.midOwner = null;
-						lobjValue.midField = larrTaxes[i].getKey();
+						lobjValue.midField = larrTaxes[j].getKey();
 						lobjValue.midObject = null;
 						lobjValue.midExercise = null;
 						lobjValue.mrefCoverage = lobjCoverage;
