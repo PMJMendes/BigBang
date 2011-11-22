@@ -56,7 +56,7 @@ public class QuoteRequestForm extends FormView<QuoteRequest> implements ClientPr
 		notes.setFieldHeight("150px");
 		
 		clientBroker = ((ClientProcessBroker)DataBrokerManager.Util.getInstance().getBroker(BigBangConstants.EntityIds.CLIENT));
-		clientBroker.registerClient(this);
+		//clientBroker.registerClient(this); // TODO
 	}
 	
 	@Override
