@@ -27,7 +27,7 @@ import com.google.gwt.user.client.Timer;
 
 public class TasksNotificationsManager extends Timer implements TasksDataBrokerClient {
 
-	final int DELAY = 1000 * 10; //miliseconds
+	final int DELAY = 1000 * 10 * 60; //miliseconds
 	private EventBus eventBus;
 	protected TasksBroker broker;
 	protected int currentCount = 0;
