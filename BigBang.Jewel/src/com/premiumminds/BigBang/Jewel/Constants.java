@@ -168,13 +168,15 @@ public class Constants
 	public static final UUID TypeID_Other      = UUID.fromString("4098CF7A-B5EE-4C3F-973F-9EE600C961AA");
 
 	// Policy Field Types
-
 	public static final UUID FieldID_Boolean   = UUID.fromString("361A1B4D-56A7-496C-A2CA-9F960154D6CA");
 	public static final UUID FieldID_Date      = UUID.fromString("426A1A8F-9F00-4A82-AA15-9F960156611B");
 	public static final UUID FieldID_List      = UUID.fromString("C32C7BE9-FCEB-457E-8C3A-9F9601403AC1");
 	public static final UUID FieldID_Number    = UUID.fromString("4D82EE91-0A9E-415E-9003-9F9601404007");
 	public static final UUID FieldID_Reference = UUID.fromString("9F626929-A5F7-4CAF-AAB3-9F96014A8A9F");
 	public static final UUID FieldID_Text      = UUID.fromString("49EB6448-E9E6-448A-82A0-9F9601404506");
+
+	// Policy Status Codes
+	public static final UUID StatusID_Provisional = UUID.fromString("6489D7DF-A090-40B9-BD5E-9F98012C8BED");
 
 	// FK Constants
 	public static final int FKCostCenter_In_UserDecoration = 2;

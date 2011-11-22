@@ -23,6 +23,11 @@ public class PolicyObjectData
 	public Timestamp mdtInclusion;
 	public Timestamp mdtExclusion;
 
+	public boolean mbNew;
+	public boolean mbDeleted;
+
+	public PolicyObjectData mobjPrevValues;
+
 	public void Clone(PolicyObjectData pobjSource)
 	{
 		mid = pobjSource.mid;

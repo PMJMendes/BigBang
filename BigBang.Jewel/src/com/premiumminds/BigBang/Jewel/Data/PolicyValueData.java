@@ -21,6 +21,11 @@ public class PolicyValueData
 	public int mlngObject;
 	public int mlngExercise;
 
+	public boolean mbNew;
+	public boolean mbDeleted;
+
+	public PolicyValueData mobjPrevValues;
+
 	public void Clone(PolicyValueData pobjSource)
 	{
 		mid = pobjSource.mid;

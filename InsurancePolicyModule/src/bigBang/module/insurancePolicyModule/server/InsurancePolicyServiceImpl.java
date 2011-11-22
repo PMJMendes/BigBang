@@ -47,7 +47,6 @@ import com.premiumminds.BigBang.Jewel.Constants;
 import com.premiumminds.BigBang.Jewel.ZipCodeBridge;
 import com.premiumminds.BigBang.Jewel.Data.PolicyCoverageData;
 import com.premiumminds.BigBang.Jewel.Data.PolicyData;
-import com.premiumminds.BigBang.Jewel.Data.PolicyDataArray;
 import com.premiumminds.BigBang.Jewel.Data.PolicyExerciseData;
 import com.premiumminds.BigBang.Jewel.Data.PolicyObjectData;
 import com.premiumminds.BigBang.Jewel.Data.PolicyValueData;
@@ -1017,13 +1016,81 @@ public class InsurancePolicyServiceImpl
 		public void CommitChanges()
 			throws BigBangException
 		{
+			PolicyData lobjData;
+			int i;
+
 			if ( !mbValid )
 				throw new BigBangException("Ocorreu um erro interno. Os dados correntes não são válidos.");
 
-			if ( mobjPolicy.mid == null )
-				CommitNew();
+			lobjData = new PolicyData();
+			lobjData.Clone(mobjPolicy);
+
+			if ( marrCoverages.size() > 0 )
+			{
+				lobjData.marrCoverages = new PolicyCoverageData[marrCoverages.size()];
+				for ( i = 0; i < marrCoverages.size(); i++ )
+				{
+					lobjData.marrCoverages[i] = new PolicyCoverageData();
+					lobjData.marrCoverages[i].Clone(marrCoverages.get(i));
+					if ( marrCoverages.get(i).mid == null )
+						lobjData.marrCoverages[i].mbNew = true;
+				}
+			}
 			else
-				CommitEdit();
+				lobjData.marrCoverages = null;
+
+			if ( marrObjects.size() > 0 )
+			{
+				lobjData.marrObjects = new PolicyObjectData[marrObjects.size()];
+				for ( i = 0; i < marrObjects.size(); i++ )
+				{
+					lobjData.marrObjects[i] = new PolicyObjectData();
+					lobjData.marrObjects[i].Clone(marrObjects.get(i));
+					if ( marrObjects.get(i).mbDeleted )
+						lobjData.marrObjects[i].mbDeleted = true;
+					else if ( marrObjects.get(i).mid == null )
+						lobjData.marrObjects[i].mbNew = true;
+				}
+			}
+			else
+				lobjData.marrObjects = null;
+
+			if ( marrExercises.size() > 0 )
+			{
+				lobjData.marrExercises = new PolicyExerciseData[marrExercises.size()];
+				for ( i = 0; i < marrExercises.size(); i++ )
+				{
+					lobjData.marrExercises[i] = new PolicyExerciseData();
+					lobjData.marrExercises[i].Clone(marrExercises.get(i));
+					if ( marrExercises.get(i).mbDeleted )
+						lobjData.marrExercises[i].mbDeleted = true;
+					else if ( marrExercises.get(i).mid == null )
+						lobjData.marrExercises[i].mbNew = true;
+				}
+			}
+			else
+				lobjData.marrExercises = null;
+
+			if ( marrValues.size() > 0 )
+			{
+				lobjData.marrValues = new PolicyValueData[marrValues.size()];
+				for ( i = 0; i < marrValues.size(); i++ )
+				{
+					lobjData.marrValues[i] = new PolicyValueData();
+					lobjData.marrValues[i].Clone(marrValues.get(i));
+					if ( marrValues.get(i).mbDeleted )
+						lobjData.marrValues[i].mbDeleted = true;
+					else if ( marrValues.get(i).mid == null )
+						lobjData.marrValues[i].mbNew = true;
+				}
+			}
+			else
+				lobjData.marrValues = null;
+
+			if ( mobjPolicy.mid == null )
+				CommitNew(lobjData);
+			else
+				CommitEdit(lobjData);
 		}
 
 		private int FindCoverage(UUID pidCoverage, int plngStart)
@@ -1066,17 +1133,10 @@ public class InsurancePolicyServiceImpl
 			return -1;
 		}
 
-		private void CommitNew()
+		private void CommitNew(PolicyData pobjData)
 			throws BigBangException
 		{
 			CreatePolicy lopCC;
-			ArrayList<PolicyObjectData> larrObjects;
-			PolicyObjectData lobjObject;
-			ArrayList<PolicyExerciseData> larrExercises;
-			PolicyExerciseData lobjExercise;
-			ArrayList<PolicyValueData> larrValues;
-			PolicyValueData lobjValue;
-			int i;
 
 			if ( midClient == null )
 				throw new BigBangException("Erro: Não preencheu o identificador do cliente.");
@@ -1084,74 +1144,7 @@ public class InsurancePolicyServiceImpl
 			try
 			{
 				lopCC = new CreatePolicy(Client.GetInstance(Engine.getCurrentNameSpace(), midClient).GetProcessID());
-				lopCC.mobjData = new PolicyData();
-				lopCC.mobjData.Clone(mobjPolicy);
-
-				if ( (marrCoverages.size() > 0) ||  (marrObjects.size() > 0) ||
-						(marrExercises.size() > 0)|| (marrValues.size() > 0) )
-				{
-					lopCC.mobjData.mobjArrays = new PolicyDataArray();
-
-					if ( marrCoverages.size() > 0 )
-					{
-						lopCC.mobjData.mobjArrays.marrCoverages = new PolicyCoverageData[marrCoverages.size()];
-						for ( i = 0; i < marrCoverages.size(); i++ )
-						{
-							lopCC.mobjData.mobjArrays.marrCoverages[i] = new PolicyCoverageData();
-							lopCC.mobjData.mobjArrays.marrCoverages[i].Clone(marrCoverages.get(i));
-						}
-					}
-					else
-						lopCC.mobjData.mobjArrays.marrCoverages = null;
-
-					if ( marrObjects.size() > 0 )
-					{
-						larrObjects = new ArrayList<PolicyObjectData>();
-						for ( i = 0; i < marrObjects.size(); i++ )
-						{
-							if ( marrObjects.get(i).mbDeleted )
-								continue;
-							lobjObject = new PolicyObjectData();
-							lobjObject.Clone(marrObjects.get(i));
-							larrObjects.add(lobjObject);
-						}
-						lopCC.mobjData.mobjArrays.marrObjects = larrObjects.toArray(new PolicyObjectData[larrObjects.size()]);
-					}
-					else
-						lopCC.mobjData.mobjArrays.marrObjects = null;
-
-					if ( marrExercises.size() > 0 )
-					{
-						larrExercises = new ArrayList<PolicyExerciseData>();
-						for ( i = 0; i < marrExercises.size(); i++ )
-						{
-							if ( marrExercises.get(i).mbDeleted )
-								continue;
-							lobjExercise = new PolicyExerciseData();
-							lobjExercise.Clone(marrExercises.get(i));
-							larrExercises.add(lobjExercise);
-						}
-						lopCC.mobjData.mobjArrays.marrExercises = larrExercises.toArray(new PolicyExerciseData[larrExercises.size()]);
-					}
-					else
-						lopCC.mobjData.mobjArrays.marrExercises = null;
-
-					if ( marrValues.size() > 0 )
-					{
-						larrValues = new ArrayList<PolicyValueData>();
-						for ( i = 0; i < marrValues.size(); i++ )
-						{
-							if ( marrValues.get(i).mbDeleted )
-								continue;
-							lobjValue = new PolicyValueData();
-							lobjValue.Clone(marrValues.get(i));
-							larrValues.add(lobjValue);
-						}
-						lopCC.mobjData.mobjArrays.marrValues = larrValues.toArray(new PolicyValueData[larrValues.size()]);
-					}
-					else
-						lopCC.mobjData.mobjArrays.marrValues = null;
-				}
+				lopCC.mobjData = pobjData;
 
 				lopCC.mobjContactOps = null;
 				lopCC.mobjDocOps = null;
@@ -1166,181 +1159,15 @@ public class InsurancePolicyServiceImpl
 			}
 		}
 
-		private void CommitEdit()
+		private void CommitEdit(PolicyData pobjData)
 			throws BigBangException
 		{
 			ManagePolicyData lopMPD;
-			ArrayList<PolicyCoverageData> larrCoverages;
-			ArrayList<PolicyCoverageData> larrNewCoverages;
-			PolicyCoverageData lobjCoverage;
-			ArrayList<PolicyObjectData> larrObjects;
-			ArrayList<PolicyObjectData> larrNewObjects;
-			ArrayList<PolicyObjectData> larrDelObjects;
-			PolicyObjectData lobjObject;
-			ArrayList<PolicyExerciseData> larrExercises;
-			ArrayList<PolicyExerciseData> larrNewExercises;
-			ArrayList<PolicyExerciseData> larrDelExercises;
-			PolicyExerciseData lobjExercise;
-			ArrayList<PolicyValueData> larrValues;
-			ArrayList<PolicyValueData> larrNewValues;
-			ArrayList<PolicyValueData> larrDelValues;
-			PolicyValueData lobjValue;
-			int i;
 
 			try
 			{
 				lopMPD = new ManagePolicyData(mobjPolicy.midProcess);
-				lopMPD.mobjData = new PolicyData();
-				lopMPD.mobjData.Clone(mobjPolicy);
-
-				larrCoverages = new ArrayList<PolicyCoverageData>();
-				larrNewCoverages = new ArrayList<PolicyCoverageData>();
-				for ( i = 0; i < marrCoverages.size(); i++ )
-				{
-					lobjCoverage = new PolicyCoverageData();
-					lobjCoverage.Clone(marrCoverages.get(i));
-					if ( marrCoverages.get(i).mid == null )
-						larrNewCoverages.add(lobjCoverage);
-					else
-						larrCoverages.add(lobjCoverage);
-				}
-
-				larrObjects = new ArrayList<PolicyObjectData>();
-				larrNewObjects = new ArrayList<PolicyObjectData>();
-				larrDelObjects = new ArrayList<PolicyObjectData>();
-				for ( i = 0; i < marrObjects.size(); i++ )
-				{
-					lobjObject = new PolicyObjectData();
-					lobjObject.Clone(marrObjects.get(i));
-					if ( marrObjects.get(i).mid == null )
-					{
-						if ( !marrObjects.get(i).mbDeleted )
-							larrNewObjects.add(lobjObject);
-					} else if ( marrObjects.get(i).mbDeleted )
-						larrDelObjects.add(lobjObject);
-					else
-						larrObjects.add(lobjObject);
-				}
-
-				larrExercises = new ArrayList<PolicyExerciseData>();
-				larrNewExercises = new ArrayList<PolicyExerciseData>();
-				larrDelExercises = new ArrayList<PolicyExerciseData>();
-				for ( i = 0; i < marrExercises.size(); i++ )
-				{
-					lobjExercise = new PolicyExerciseData();
-					lobjExercise.Clone(marrExercises.get(i));
-					if ( marrExercises.get(i).mid == null )
-					{
-						if ( !marrExercises.get(i).mbDeleted )
-							larrNewExercises.add(lobjExercise);
-					} else if ( marrExercises.get(i).mbDeleted )
-						larrDelExercises.add(lobjExercise);
-					else
-						larrExercises.add(lobjExercise);
-				}
-
-				larrValues = new ArrayList<PolicyValueData>();
-				larrNewValues = new ArrayList<PolicyValueData>();
-				larrDelValues = new ArrayList<PolicyValueData>();
-				for ( i = 0; i < marrValues.size(); i++ )
-				{
-					lobjValue = new PolicyValueData();
-					lobjValue.Clone(marrValues.get(i));
-					if ( marrValues.get(i).mid == null )
-					{
-						if ( !marrValues.get(i).mbDeleted )
-							larrNewValues.add(lobjValue);
-					} else if ( marrValues.get(i).mbDeleted )
-						larrDelValues.add(lobjValue);
-					else
-						larrValues.add(lobjValue);
-				}
-
-				if ( (larrCoverages.size() > 0) ||  (larrObjects.size() > 0) ||
-						(larrExercises.size() > 0)|| (larrValues.size() > 0) )
-				{
-					lopMPD.mobjData.mobjArrays = new PolicyDataArray();
-
-					if ( larrCoverages.size() > 0 )
-						lopMPD.mobjData.mobjArrays.marrCoverages =
-								larrCoverages.toArray(new PolicyCoverageData[larrCoverages.size()]);
-					else
-						lopMPD.mobjData.mobjArrays.marrCoverages = null;
-
-					if ( larrObjects.size() > 0 )
-						lopMPD.mobjData.mobjArrays.marrObjects =
-								larrObjects.toArray(new PolicyObjectData[larrObjects.size()]);
-					else
-						lopMPD.mobjData.mobjArrays.marrObjects = null;
-
-					if ( larrExercises.size() > 0 )
-						lopMPD.mobjData.mobjArrays.marrExercises =
-								larrExercises.toArray(new PolicyExerciseData[larrExercises.size()]);
-					else
-						lopMPD.mobjData.mobjArrays.marrExercises = null;
-
-					if ( larrValues.size() > 0 )
-						lopMPD.mobjData.mobjArrays.marrValues =
-								larrValues.toArray(new PolicyValueData[larrValues.size()]);
-					else
-						lopMPD.mobjData.mobjArrays.marrValues = null;
-				}
-
-				if ( (larrNewCoverages.size() > 0) ||  (larrNewObjects.size() > 0) ||
-						(larrNewExercises.size() > 0)|| (larrNewValues.size() > 0) )
-				{
-					lopMPD.mobjAddSet = new PolicyDataArray();
-
-					if ( larrNewCoverages.size() > 0 )
-						lopMPD.mobjAddSet.marrCoverages =
-								larrNewCoverages.toArray(new PolicyCoverageData[larrNewCoverages.size()]);
-					else
-						lopMPD.mobjAddSet.marrCoverages = null;
-
-					if ( larrNewObjects.size() > 0 )
-						lopMPD.mobjAddSet.marrObjects =
-								larrNewObjects.toArray(new PolicyObjectData[larrNewObjects.size()]);
-					else
-						lopMPD.mobjAddSet.marrObjects = null;
-
-					if ( larrNewExercises.size() > 0 )
-						lopMPD.mobjAddSet.marrExercises =
-								larrNewExercises.toArray(new PolicyExerciseData[larrNewExercises.size()]);
-					else
-						lopMPD.mobjAddSet.marrExercises = null;
-
-					if ( larrNewValues.size() > 0 )
-						lopMPD.mobjAddSet.marrValues =
-								larrNewValues.toArray(new PolicyValueData[larrNewValues.size()]);
-					else
-						lopMPD.mobjAddSet.marrValues = null;
-				}
-
-				if ( (larrDelObjects.size() > 0) || (larrDelExercises.size() > 0)||
-						(larrDelValues.size() > 0) )
-				{
-					lopMPD.mobjDeleteSet = new PolicyDataArray();
-
-					lopMPD.mobjDeleteSet.marrCoverages = null;
-
-					if ( larrDelObjects.size() > 0 )
-						lopMPD.mobjDeleteSet.marrObjects =
-								larrDelObjects.toArray(new PolicyObjectData[larrDelObjects.size()]);
-					else
-						lopMPD.mobjDeleteSet.marrObjects = null;
-
-					if ( larrDelExercises.size() > 0 )
-						lopMPD.mobjDeleteSet.marrExercises =
-								larrDelExercises.toArray(new PolicyExerciseData[larrDelExercises.size()]);
-					else
-						lopMPD.mobjDeleteSet.marrExercises = null;
-
-					if ( larrDelValues.size() > 0 )
-						lopMPD.mobjDeleteSet.marrValues =
-								larrDelValues.toArray(new PolicyValueData[larrDelValues.size()]);
-					else
-						lopMPD.mobjDeleteSet.marrValues = null;
-				}
+				lopMPD.mobjData = pobjData;
 
 				lopMPD.mobjContactOps = null;
 				lopMPD.mobjDocOps = null;

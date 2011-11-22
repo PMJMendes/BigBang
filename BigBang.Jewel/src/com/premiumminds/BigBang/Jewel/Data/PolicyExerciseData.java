@@ -19,6 +19,11 @@ public class PolicyExerciseData
 	public Timestamp mdtStart;
 	public Timestamp mdtEnd;
 
+	public boolean mbNew;
+	public boolean mbDeleted;
+
+	public PolicyExerciseData mobjPrevValues;
+
 	public void Clone(PolicyExerciseData pobjSource)
 	{
 		mid = pobjSource.mid;

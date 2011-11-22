@@ -28,11 +28,15 @@ public class PolicyData
 	public String mstrNotes;
 	public UUID midMediator;
 	public Boolean mbCaseStudy;
+	public UUID midStatus;
 
 	public UUID midManager;
 	public UUID midProcess;
 
-	public PolicyDataArray mobjArrays;
+	public PolicyCoverageData[] marrCoverages;
+	public PolicyObjectData[] marrObjects;
+	public PolicyExerciseData[] marrExercises;
+	public PolicyValueData[] marrValues;
 
 	public PolicyData mobjPrevValues;
 
@@ -53,6 +57,7 @@ public class PolicyData
 		mbCaseStudy = pobjSource.mbCaseStudy;
 		midManager = pobjSource.midManager;
 		midProcess = pobjSource.midProcess;
+		midStatus = pobjSource.midStatus;
 	}
 
 	public void FromObject(ObjectBase pobjSource)
@@ -72,6 +77,7 @@ public class PolicyData
 		mstrNotes = (String)pobjSource.getAt(10);
 		midMediator = (UUID)pobjSource.getAt(11);
 		mbCaseStudy = (Boolean)pobjSource.getAt(12);
+		midStatus = (UUID)pobjSource.getAt(13);
 	}
 
 	public void ToObject(ObjectBase pobjDest)
@@ -92,6 +98,7 @@ public class PolicyData
 			pobjDest.setAt(10, mstrNotes);
 			pobjDest.setAt(11, midMediator);
 			pobjDest.setAt(12, mbCaseStudy);
+			pobjDest.setAt(13, midStatus);
 		}
 		catch (Throwable e)
 		{
