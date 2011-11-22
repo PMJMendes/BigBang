@@ -47,6 +47,16 @@ public class Coverage
 	{
 	}
 
+	public boolean IsHeader()
+	{
+		return (Boolean)getAt(3);
+	}
+
+	public boolean IsMandatory()
+	{
+		return (Boolean)getAt(2);
+	}
+
     public Tax[] GetCurrentTaxes()
     	throws BigBangJewelException
     {
