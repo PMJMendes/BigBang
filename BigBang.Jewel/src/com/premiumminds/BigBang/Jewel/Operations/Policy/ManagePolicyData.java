@@ -9,9 +9,16 @@ import Jewel.Petri.SysObjects.JewelPetriException;
 import Jewel.Petri.SysObjects.UndoableOperation;
 
 import com.premiumminds.BigBang.Jewel.Constants;
+import com.premiumminds.BigBang.Jewel.Data.PolicyCoverageData;
 import com.premiumminds.BigBang.Jewel.Data.PolicyData;
-import com.premiumminds.BigBang.Jewel.Data.PolicyDataArray;
+import com.premiumminds.BigBang.Jewel.Data.PolicyExerciseData;
+import com.premiumminds.BigBang.Jewel.Data.PolicyObjectData;
+import com.premiumminds.BigBang.Jewel.Data.PolicyValueData;
 import com.premiumminds.BigBang.Jewel.Objects.Policy;
+import com.premiumminds.BigBang.Jewel.Objects.PolicyCoverage;
+import com.premiumminds.BigBang.Jewel.Objects.PolicyExercise;
+import com.premiumminds.BigBang.Jewel.Objects.PolicyObject;
+import com.premiumminds.BigBang.Jewel.Objects.PolicyValue;
 import com.premiumminds.BigBang.Jewel.Operations.ContactOps;
 import com.premiumminds.BigBang.Jewel.Operations.DocOps;
 
@@ -21,10 +28,11 @@ public class ManagePolicyData
 	private static final long serialVersionUID = 1L;
 
 	public PolicyData mobjData;
-	public PolicyDataArray mobjAddSet;
-	public PolicyDataArray mobjDeleteSet;
 	public ContactOps mobjContactOps;
 	public DocOps mobjDocOps;
+
+	public transient UUID[] marrObjectIDs;
+	public transient UUID[] marrExerciseIDs;
 
 	public ManagePolicyData(UUID pidProcess)
 	{
@@ -73,6 +81,11 @@ public class ManagePolicyData
 	{
 		Policy lobjAux;
 		UUID lidOwner;
+		PolicyCoverage lobjCoverage;
+		PolicyObject lobjObject;
+		PolicyExercise lobjExercise;
+		PolicyValue lobjValue;
+		int i;
 
 		lidOwner = null;
 		try
@@ -85,12 +98,75 @@ public class ManagePolicyData
 
 				mobjData.mobjPrevValues = new PolicyData();
 				mobjData.mobjPrevValues.FromObject(lobjAux);
+				mobjData.mobjPrevValues.mobjPrevValues = null;
 
 				mobjData.midManager = GetProcess().GetManagerID();
-				mobjData.midCompany = mobjData.mobjPrevValues.midCompany;
+				if ( (Integer)Engine.GetWorkInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), Constants.ObjID_PolicyStatus),
+						mobjData.midStatus).getAt(1) > 0 )
+					mobjData.midCompany = mobjData.mobjPrevValues.midCompany;
 				mobjData.midSubLine = mobjData.mobjPrevValues.midSubLine;
 				mobjData.ToObject(lobjAux);
 				lobjAux.SaveToDb(pdb);
+
+				if ( mobjData.marrCoverages != null )
+				{
+					for ( i = 0; i < mobjData.marrCoverages.length; i++ )
+					{
+						lobjCoverage = PolicyCoverage.GetInstance(Engine.getCurrentNameSpace(),
+								mobjData.marrCoverages[i].mid);
+						mobjData.marrCoverages[i].mobjPrevValues = new PolicyCoverageData();
+						mobjData.marrCoverages[i].mobjPrevValues.FromObject(lobjCoverage);
+						mobjData.marrCoverages[i].mobjPrevValues.mobjPrevValues = null;
+						mobjData.marrCoverages[i].ToObject(lobjCoverage);
+						lobjCoverage.SaveToDb(pdb);
+					}
+				}
+
+				if ( mobjData.marrObjects != null )
+				{
+					for ( i = 0; i < mobjData.marrObjects.length; i++ )
+					{
+						lobjObject = PolicyObject.GetInstance(Engine.getCurrentNameSpace(),
+								mobjData.marrObjects[i].mid);
+						mobjData.marrObjects[i].mobjPrevValues = new PolicyObjectData();
+						mobjData.marrObjects[i].mobjPrevValues.FromObject(lobjObject);
+						mobjData.marrObjects[i].mobjPrevValues.mobjPrevValues = null;
+						mobjData.marrObjects[i].ToObject(lobjObject);
+						lobjObject.SaveToDb(pdb);
+					}
+				}
+
+				if ( mobjData.marrExercises != null )
+				{
+					for ( i = 0; i < mobjData.marrExercises.length; i++ )
+					{
+						lobjExercise = PolicyExercise.GetInstance(Engine.getCurrentNameSpace(),
+								mobjData.marrExercises[i].mid);
+						mobjData.marrExercises[i].mobjPrevValues = new PolicyExerciseData();
+						mobjData.marrExercises[i].mobjPrevValues.FromObject(lobjExercise);
+						mobjData.marrExercises[i].mobjPrevValues.mobjPrevValues = null;
+						mobjData.marrExercises[i].ToObject(lobjExercise);
+						lobjExercise.SaveToDb(pdb);
+					}
+				}
+
+				if ( mobjData.marrValues != null )
+				{
+					for ( i = 0; i < mobjData.marrValues.length; i++ )
+					{
+						lobjValue = PolicyValue.GetInstance(Engine.getCurrentNameSpace(),
+								mobjData.marrValues[i].mid);
+						mobjData.marrValues[i].mobjPrevValues = new PolicyValueData();
+						mobjData.marrValues[i].mobjPrevValues.FromObject(lobjValue);
+						mobjData.marrValues[i].mobjPrevValues.mobjPrevValues = null;
+						mobjData.marrValues[i].midObject =
+								mobjData.marrValues[i].mobjPrevValues.midObject;
+						mobjData.marrValues[i].midExercise =
+								mobjData.marrValues[i].mobjPrevValues.midExercise;
+						mobjData.marrValues[i].ToObject(lobjValue);
+						lobjValue.SaveToDb(pdb);
+					}
+				}
 			}
 
 			if ( mobjContactOps != null )
