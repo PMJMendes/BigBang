@@ -117,8 +117,6 @@ public class CreatePolicy
 			{
 				for ( i = 0; i < mobjData.marrObjects.length; i++ )
 				{
-					if ( mobjData.marrObjects[i] == null )
-						continue;
 					mobjData.marrObjects[i].midOwner = mobjData.mid;
 					lobjObject = PolicyObject.GetInstance(Engine.getCurrentNameSpace(), (UUID)null);
 					mobjData.marrObjects[i].ToObject(lobjObject);
@@ -131,8 +129,6 @@ public class CreatePolicy
 			{
 				for ( i = 0; i < mobjData.marrExercises.length; i++ )
 				{
-					if ( mobjData.marrExercises[i] == null )
-						continue;
 					mobjData.marrExercises[i].midOwner = mobjData.mid;
 					lobjExercise = PolicyExercise.GetInstance(Engine.getCurrentNameSpace(), (UUID)null);
 					mobjData.marrExercises[i].ToObject(lobjExercise);
