@@ -24,7 +24,6 @@ import bigBang.definitions.shared.Address;
 import bigBang.definitions.shared.Exercise;
 import bigBang.definitions.shared.InfoOrDocumentRequest;
 import bigBang.definitions.shared.InsurancePolicy;
-import bigBang.definitions.shared.InsurancePolicy.TableSection;
 import bigBang.definitions.shared.InsurancePolicyStub;
 import bigBang.definitions.shared.InsuredObject;
 import bigBang.definitions.shared.ManagerTransfer;
@@ -53,7 +52,9 @@ import com.premiumminds.BigBang.Jewel.Data.PolicyObjectData;
 import com.premiumminds.BigBang.Jewel.Data.PolicyValueData;
 import com.premiumminds.BigBang.Jewel.Data.ReceiptData;
 import com.premiumminds.BigBang.Jewel.Objects.AgendaItem;
+import com.premiumminds.BigBang.Jewel.Objects.Category;
 import com.premiumminds.BigBang.Jewel.Objects.Client;
+import com.premiumminds.BigBang.Jewel.Objects.Coverage;
 import com.premiumminds.BigBang.Jewel.Objects.Line;
 import com.premiumminds.BigBang.Jewel.Objects.Mediator;
 import com.premiumminds.BigBang.Jewel.Objects.MgrXFer;
@@ -148,7 +149,7 @@ public class InsurancePolicyServiceImpl
 			int i, j;
 
 			if ( mbValid )
-				throw new BigBangException("Erro: Não pode inicializr o mesmo espaço de trabalho duas vezes.");
+				throw new BigBangException("Erro: Não pode inicializar o mesmo espaço de trabalho duas vezes.");
 
 			midClient = ( pobjSource.clientId == null ? null : UUID.fromString(pobjSource.clientId) );
 			mobjPolicy = new PolicyData();
@@ -182,12 +183,12 @@ public class InsurancePolicyServiceImpl
 					lobjCoverage.midOwner = null;
 					lobjCoverage.midCoverage = larrAuxCoverages[i].getKey();
 					lobjCoverage.mstrLabel = larrAuxCoverages[i].getLabel();
-					lobjCoverage.mbMandatory = (Boolean)larrAuxCoverages[i].getAt(2);
+					lobjCoverage.mbIsHeader = larrAuxCoverages[i].IsHeader();
+					lobjCoverage.mbMandatory = larrAuxCoverages[i].IsMandatory();
 					if ( lobjCoverage.mbMandatory )
 						lobjCoverage.mbPresent = true;
 					else
 						lobjCoverage.mbPresent = null;
-					lobjCoverage.mbIsHeader = ("(Cabeçalho)").equals(lobjCoverage.mstrLabel);
 					larrTaxes = larrAuxCoverages[i].GetCurrentTaxes();
 					larrFields = new ArrayList<PadField>();
 					for ( j = 0; j < larrTaxes.length; j++ )
@@ -276,8 +277,8 @@ public class InsurancePolicyServiceImpl
 					lobjCoverage = new PadCoverage();
 					lobjCoverage.FromObject(larrLocalCoverages[i]);
 					lobjCoverage.mstrLabel = larrLocalCoverages[i].GetCoverage().getLabel();
-					lobjCoverage.mbMandatory = (Boolean)larrLocalCoverages[i].GetCoverage().getAt(2);
-					lobjCoverage.mbIsHeader = ("(Cabeçalho)").equals(lobjCoverage.mstrLabel);
+					lobjCoverage.mbIsHeader = larrLocalCoverages[i].GetCoverage().IsHeader();
+					lobjCoverage.mbMandatory = larrLocalCoverages[i].GetCoverage().IsMandatory();
 					larrTaxes = larrLocalCoverages[i].GetCoverage().GetCurrentTaxes();
 					larrFields = new ArrayList<PadField>();
 					for ( j = 0; j < larrTaxes.length; j++ )
@@ -327,8 +328,8 @@ public class InsurancePolicyServiceImpl
 					lobjCoverage.midCoverage = larrAuxCoverages[i].getKey();
 					lobjCoverage.mbPresent = null;
 					lobjCoverage.mstrLabel = larrAuxCoverages[i].getLabel();
-					lobjCoverage.mbMandatory = (Boolean)larrAuxCoverages[i].getAt(2);
-					lobjCoverage.mbIsHeader = ("(Cabeçalho)").equals(lobjCoverage.mstrLabel);
+					lobjCoverage.mbIsHeader = larrAuxCoverages[i].IsHeader();
+					lobjCoverage.mbMandatory = larrAuxCoverages[i].IsMandatory();
 					larrTaxes = larrAuxCoverages[i].GetCurrentTaxes();
 					larrFields = new ArrayList<PadField>();
 					for ( j = 0; j < larrTaxes.length; j++ )
@@ -999,7 +1000,8 @@ public class InsurancePolicyServiceImpl
 					lopCC.mobjDocOps = null;
 
 					lopCC.Execute();
-					
+
+					mobjPolicy.mid = lopCC.mobjData.mid;
 				}
 				catch (Throwable e)
 				{
@@ -1076,10 +1078,30 @@ public class InsurancePolicyServiceImpl
 		IProcess lobjProc;
 		Client lobjClient;
 		Mediator lobjMed;
-		ObjectBase lobjAux;
-		UUID lidLine;
-		UUID lidCategory;
+		SubLine lobjSubLine;
+		Line lobjLine;
+		Category lobjCategory;
 		ObjectBase lobjStatus;
+		PolicyValue[] larrLocalValues;
+		PolicyCoverage[] larrLocalCoverages;
+		Coverage[] larrCoverages;
+		Hashtable<UUID, Tax> larrAuxFields;
+		ArrayList<InsurancePolicy.HeaderField> larrOutHeaders;
+		ArrayList<InsurancePolicy.TableSection.TableField> larrOutFields;
+		ArrayList<InsurancePolicy.ExtraField> larrOutExtras;
+		Tax lobjTax;
+		InsurancePolicy.HeaderField lobjHeader;
+		InsurancePolicy.TableSection.TableField lobjField;
+		InsurancePolicy.ExtraField lobjExtra;
+		Hashtable<UUID, Coverage> larrAuxCoverages;
+		ArrayList<InsurancePolicy.Coverage> larrOutCoverages;
+		Coverage lobjCoverage;
+		Tax[] larrTaxes;
+		InsurancePolicy.Coverage lobjAuxCoverage;
+		ArrayList<InsurancePolicy.Coverage.Variability> larrVariability;
+		InsurancePolicy.Coverage.Variability lobjVariability;
+		InsurancePolicy.TableSection lobjSection;
+		int i, j;
 
 		if ( Engine.getCurrentUser() == null )
 			throw new SessionExpiredException();
@@ -1094,12 +1116,14 @@ public class InsurancePolicyServiceImpl
 			lobjProc = PNProcess.GetInstance(Engine.getCurrentNameSpace(), lobjPolicy.GetProcessID());
 			lobjClient = Client.GetInstance(Engine.getCurrentNameSpace(), lobjProc.GetParent().GetData().getKey());
 			lobjMed = Mediator.GetInstance(Engine.getCurrentNameSpace(), (UUID)lobjClient.getAt(8));
-			lobjAux = SubLine.GetInstance(Engine.getCurrentNameSpace(), (UUID)lobjPolicy.getAt(3));
-			lidLine = (UUID)lobjAux.getAt(1);
-			lobjAux = Line.GetInstance(Engine.getCurrentNameSpace(), lidLine);
-			lidCategory = (UUID)lobjAux.getAt(1);
+			lobjSubLine = SubLine.GetInstance(Engine.getCurrentNameSpace(), (UUID)lobjPolicy.getAt(3));
+			lobjLine = Line.GetInstance(Engine.getCurrentNameSpace(), (UUID)lobjSubLine.getAt(1));
+			lobjCategory = Category.GetInstance(Engine.getCurrentNameSpace(), (UUID)lobjLine.getAt(1));
 			lobjStatus = Engine.GetWorkInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), Constants.ObjID_PolicyStatus),
 					(UUID)lobjPolicy.getAt(13));
+			larrLocalValues = lobjPolicy.GetCurrentKeyedValues(null, null);
+			larrLocalCoverages = lobjPolicy.GetCurrentCoverages();
+			larrCoverages = lobjSubLine.GetCurrentCoverages();
 		}
 		catch (Throwable e)
 		{
@@ -1113,9 +1137,12 @@ public class InsurancePolicyServiceImpl
 		lobjResult.clientId = lobjClient.getKey().toString();
 		lobjResult.clientNumber = ((Integer)lobjClient.getAt(1)).toString();
 		lobjResult.clientName = lobjClient.getLabel();
-		lobjResult.categoryId = lidCategory.toString();
-		lobjResult.lineId = lidLine.toString();
-		lobjResult.subLineId = ((UUID)lobjPolicy.getAt(3)).toString();
+		lobjResult.categoryId = lobjCategory.getKey().toString();
+		lobjResult.categoryName = lobjCategory.getLabel();
+		lobjResult.lineId = lobjLine.getKey().toString();
+		lobjResult.lineName = lobjLine.getLabel();
+		lobjResult.subLineId = lobjSubLine.getKey().toString();
+		lobjResult.subLineName = lobjSubLine.getLabel();
 		lobjResult.processId = lobjProc.getKey().toString();
 		lobjResult.insuranceAgencyId = ((UUID)lobjPolicy.getAt(2)).toString();
 		lobjResult.startDate = (lobjPolicy.getAt(4) == null ? null : ((Timestamp)lobjPolicy.getAt(4)).toString());
@@ -1145,8 +1172,186 @@ public class InsurancePolicyServiceImpl
 			lobjResult.statusIcon = InsurancePolicyStub.PolicyStatus.OBSOLETE;
 			break;
 		}
-
 		lobjResult.managerId = lobjProc.GetManagerID().toString();
+
+		larrAuxFields = new Hashtable<UUID, Tax>();
+		larrOutHeaders = new ArrayList<InsurancePolicy.HeaderField>();
+		larrOutFields = new ArrayList<InsurancePolicy.TableSection.TableField>();
+		larrOutExtras = new ArrayList<InsurancePolicy.ExtraField>();
+		for ( i = 0; i < larrLocalValues.length; i++ )
+		{
+			if ( (larrLocalValues[i].getAt(3) != null) || (larrLocalValues[i].getAt(4) != null) )
+				continue;
+			lobjTax = larrLocalValues[i].GetTax();
+			if ( lobjTax.GetVariesByObject() || lobjTax.GetVariesByExercise() )
+				throw new BigBangException("Inesperado: Valor variável marcado como invariante.");
+
+			if ( lobjTax.GetCoverage().IsHeader() )
+			{
+				lobjHeader = new InsurancePolicy.HeaderField();
+				lobjHeader.fieldId = lobjTax.getKey().toString();
+				lobjHeader.fieldName = lobjTax.getLabel();
+				lobjHeader.type = GetFieldTypeByID((UUID)lobjTax.getAt(2));
+				lobjHeader.unitsLabel = (String)lobjTax.getAt(3);
+				lobjHeader.refersToId = ( lobjTax.getAt(7) == null ? null : ((UUID)lobjTax.getAt(7)).toString() );
+				lobjHeader.value = larrLocalValues[i].getLabel();
+				larrOutHeaders.add(lobjHeader);
+			}
+			else if ( lobjTax.GetColumnOrder() >= 0 )
+			{
+				lobjField = new InsurancePolicy.TableSection.TableField();
+				lobjField.fieldId = lobjTax.getKey().toString();
+				lobjField.coverageId = lobjTax.GetCoverage().getKey().toString();
+				lobjField.columnIndex = lobjTax.GetColumnOrder();
+				lobjField.value = larrLocalValues[i].getLabel();
+				larrOutFields.add(lobjField);
+			}
+			else
+			{
+				lobjExtra = new InsurancePolicy.ExtraField();
+				lobjExtra.fieldId = lobjTax.getKey().toString();
+				lobjExtra.fieldName = lobjTax.getLabel();
+				lobjExtra.type = GetFieldTypeByID((UUID)lobjTax.getAt(2));
+				lobjExtra.unitsLabel = (String)lobjTax.getAt(3);
+				lobjExtra.refersToId = ( lobjTax.getAt(7) == null ? null : ((UUID)lobjTax.getAt(7)).toString() );
+				lobjExtra.coverageId = lobjTax.GetCoverage().getKey().toString();
+				lobjExtra.value = larrLocalValues[i].getLabel();
+				larrOutExtras.add(lobjExtra);
+			}
+			larrAuxFields.put(lobjTax.getKey(), lobjTax);
+		}
+
+		larrAuxCoverages = new Hashtable<UUID, Coverage>();
+		larrOutCoverages = new ArrayList<InsurancePolicy.Coverage>();
+		for ( i = 0; i < larrLocalCoverages.length; i++ )
+		{
+			lobjCoverage = larrLocalCoverages[i].GetCoverage();
+			if ( lobjCoverage.IsHeader() )
+				continue;
+
+			try
+			{
+				larrTaxes = lobjCoverage.GetCurrentTaxes();
+			}
+			catch (Throwable e)
+			{
+				throw new BigBangException(e.getMessage(), e);
+			}
+
+			lobjAuxCoverage = new InsurancePolicy.Coverage();
+			lobjAuxCoverage.coverageId = lobjCoverage.getKey().toString();
+			lobjAuxCoverage.coverageName = lobjCoverage.getLabel();
+			lobjAuxCoverage.mandatory = (Boolean)lobjCoverage.getAt(2);
+			lobjAuxCoverage.presentInPolicy = (Boolean)larrCoverages[i].getAt(2);
+			larrVariability = new ArrayList<InsurancePolicy.Coverage.Variability>();
+			for ( j = 0; j < larrTaxes.length ; j++ )
+			{
+				if ( larrTaxes[j].GetColumnOrder() < 0 )
+					continue;
+
+				lobjVariability = new InsurancePolicy.Coverage.Variability();
+				lobjVariability.columnIndex = larrTaxes[j].GetColumnOrder();
+				lobjVariability.variesByObject = larrTaxes[j].GetVariesByObject();
+				lobjVariability.variesByExercise = larrTaxes[j].GetVariesByExercise();
+				larrVariability.add(lobjVariability);
+
+			}
+			lobjAuxCoverage.variability = larrVariability.toArray(new InsurancePolicy.Coverage.Variability[larrVariability.size()]);
+			larrOutCoverages.add(lobjAuxCoverage);
+			larrAuxCoverages.put(lobjCoverage.getKey(), lobjCoverage);
+		}
+
+		for ( i = 0; i < larrCoverages.length; i++ )
+		{
+			try
+			{
+				larrTaxes = larrCoverages[i].GetCurrentTaxes();
+			}
+			catch (Throwable e)
+			{
+				throw new BigBangException(e.getMessage(), e);
+			}
+
+			for ( j = 0; j < larrTaxes.length; j++ )
+			{
+				if ( larrAuxFields.get(larrTaxes[j].getKey()) != null )
+					continue;
+
+				if ( larrTaxes[j].GetVariesByObject() || larrTaxes[j].GetVariesByExercise() )
+					continue;
+
+				if ( larrCoverages[i].IsHeader() )
+				{
+					lobjHeader = new InsurancePolicy.HeaderField();
+					lobjHeader.fieldId = larrTaxes[j].getKey().toString();
+					lobjHeader.fieldName = larrTaxes[j].getLabel();
+					lobjHeader.type = GetFieldTypeByID((UUID)larrTaxes[j].getAt(2));
+					lobjHeader.unitsLabel = (String)larrTaxes[j].getAt(3);
+					lobjHeader.refersToId = ( larrTaxes[j].getAt(7) == null ? null : ((UUID)larrTaxes[j].getAt(7)).toString() );
+					lobjHeader.value = (String)larrTaxes[j].getAt(4);
+					larrOutHeaders.add(lobjHeader);
+				}
+				else if ( larrTaxes[j].GetColumnOrder() >= 0 )
+				{
+					lobjField = new InsurancePolicy.TableSection.TableField();
+					lobjField.fieldId = larrTaxes[j].getKey().toString();
+					lobjField.coverageId = larrTaxes[j].GetCoverage().getKey().toString();
+					lobjField.columnIndex = larrTaxes[j].GetColumnOrder();
+					lobjField.value = (String)larrTaxes[j].getAt(4);
+					larrOutFields.add(lobjField);
+				}
+				else
+				{
+					lobjExtra = new InsurancePolicy.ExtraField();
+					lobjExtra.fieldId = larrTaxes[j].getKey().toString();
+					lobjExtra.fieldName = larrTaxes[j].getLabel();
+					lobjExtra.type = GetFieldTypeByID((UUID)larrTaxes[j].getAt(2));
+					lobjExtra.unitsLabel = (String)larrTaxes[j].getAt(3);
+					lobjExtra.refersToId = ( larrTaxes[j].getAt(7) == null ? null : ((UUID)larrTaxes[j].getAt(7)).toString() );
+					lobjExtra.coverageId = larrTaxes[j].GetCoverage().getKey().toString();
+					lobjExtra.value = (String)larrTaxes[j].getAt(4);
+					larrOutExtras.add(lobjExtra);
+				}
+				larrAuxFields.put(larrTaxes[j].getKey(), larrTaxes[j]);
+			}
+
+			if ( larrAuxCoverages.get(larrCoverages[i].getKey()) != null )
+				continue;
+
+			if ( larrCoverages[i].IsHeader() )
+				continue;
+
+			lobjAuxCoverage = new InsurancePolicy.Coverage();
+			lobjAuxCoverage.coverageId = larrCoverages[i].getKey().toString();
+			lobjAuxCoverage.coverageName = larrCoverages[i].getLabel();
+			lobjAuxCoverage.mandatory = (Boolean)larrCoverages[i].getAt(2);
+			lobjAuxCoverage.presentInPolicy = null;
+			larrVariability = new ArrayList<InsurancePolicy.Coverage.Variability>();
+			for ( j = 0; j < larrTaxes.length ; j++ )
+			{
+				if ( larrTaxes[j].GetColumnOrder() < 0 )
+					continue;
+
+				lobjVariability = new InsurancePolicy.Coverage.Variability();
+				lobjVariability.columnIndex = larrTaxes[j].GetColumnOrder();
+				lobjVariability.variesByObject = larrTaxes[j].GetVariesByObject();
+				lobjVariability.variesByExercise = larrTaxes[j].GetVariesByExercise();
+				larrVariability.add(lobjVariability);
+
+			}
+			lobjAuxCoverage.variability = larrVariability.toArray(new InsurancePolicy.Coverage.Variability[larrVariability.size()]);
+			larrOutCoverages.add(lobjAuxCoverage);
+			larrAuxCoverages.put(larrCoverages[j].getKey(), larrCoverages[j]);
+		}
+
+		lobjSection = new InsurancePolicy.TableSection();
+		lobjSection.pageId = null;
+		lobjSection.data = larrOutFields.toArray(new InsurancePolicy.TableSection.TableField[larrOutFields.size()]);
+
+		lobjResult.headerFields = larrOutHeaders.toArray(new InsurancePolicy.HeaderField[larrOutHeaders.size()]);
+		lobjResult.coverages = larrOutCoverages.toArray(new InsurancePolicy.Coverage[larrOutCoverages.size()]);
+		lobjResult.tableData = new InsurancePolicy.TableSection[] { lobjSection };
+		lobjResult.extraData = larrOutExtras.toArray(new InsurancePolicy.ExtraField[larrOutExtras.size()]);
 
 		return lobjResult;
 	}
@@ -1157,11 +1362,15 @@ public class InsurancePolicyServiceImpl
 		UUID lidObject;
 		UUID lidExercise;
 		Policy lobjPolicy;
+		Coverage[] larrCoverages;
 		PolicyValue[] larrValues;
-		int i;
 		InsurancePolicy.TableSection lobjResult;
+		Hashtable<UUID, Tax> larrAuxFields;
 		ArrayList<InsurancePolicy.TableSection.TableField> larrFields;
+		Tax lobjTax;
 		InsurancePolicy.TableSection.TableField lobjField;
+		Tax[] larrTaxes;
+		int i, j;
 
 		if ( Engine.getCurrentUser() == null )
 			throw new SessionExpiredException();
@@ -1172,20 +1381,52 @@ public class InsurancePolicyServiceImpl
 		try
 		{
 			lobjPolicy = Policy.GetInstance(Engine.getCurrentNameSpace(), UUID.fromString(policyId));
+			larrCoverages = SubLine.GetInstance(Engine.getCurrentNameSpace(), (UUID)lobjPolicy.getAt(3)).GetCurrentCoverages();
 
 			larrValues = lobjPolicy.GetCurrentKeyedValues(lidObject, lidExercise);
+			larrAuxFields = new Hashtable<UUID, Tax>();
 			larrFields = new ArrayList<InsurancePolicy.TableSection.TableField>();
 			for ( i = 0; i < larrValues.length; i++ )
 			{
-				if ( larrValues[i].GetTax().GetColumnOrder() < 0 )
+				lobjTax = larrValues[i].GetTax();
+				if ( lobjTax.GetVariesByObject() || lobjTax.GetVariesByExercise() )
+					throw new BigBangException("Inesperado: Valor variável marcado como invariante.");
+
+				if ( lobjTax.GetCoverage().IsHeader() || (lobjTax.GetColumnOrder() < 0) )
 					continue;
 
 				lobjField = new InsurancePolicy.TableSection.TableField();
-				lobjField.fieldId = larrValues[i].GetTax().getKey().toString();
-				lobjField.coverageId = larrValues[i].GetTax().GetCoverage().getKey().toString();
-				lobjField.columnIndex = larrValues[i].GetTax().GetColumnOrder();
+				lobjField.fieldId = lobjTax.getKey().toString();
+				lobjField.coverageId = lobjTax.GetCoverage().getKey().toString();
+				lobjField.columnIndex = lobjTax.GetColumnOrder();
 				lobjField.value = larrValues[i].getLabel();
 				larrFields.add(lobjField);
+				larrAuxFields.put(lobjTax.getKey(), lobjTax);
+			}
+
+			for ( i = 0; i < larrCoverages.length; i++ )
+			{
+				if ( larrCoverages[i].IsHeader() )
+					continue;
+
+				larrTaxes = larrCoverages[i].GetCurrentTaxes();
+				for ( j = 0; j < larrTaxes.length; j++ )
+				{
+					if ( larrAuxFields.get(larrTaxes[j].getKey()) != null )
+						continue;
+
+					if ( (larrTaxes[j].GetVariesByObject() == (lidObject == null)) ||
+							(larrTaxes[j].GetVariesByExercise() == (lidExercise == null)) )
+						continue;
+
+					lobjField = new InsurancePolicy.TableSection.TableField();
+					lobjField.fieldId = larrTaxes[j].getKey().toString();
+					lobjField.coverageId = larrTaxes[j].GetCoverage().getKey().toString();
+					lobjField.columnIndex = larrTaxes[j].GetColumnOrder();
+					lobjField.value = (String)larrTaxes[j].getAt(4);
+					larrFields.add(lobjField);
+					larrAuxFields.put(larrTaxes[j].getKey(), larrTaxes[j]);
+				}
 			}
 		}
 		catch (Throwable e)
@@ -1257,7 +1498,7 @@ public class InsurancePolicyServiceImpl
 		return policy;
 	}
 
-	public TableSection getPageForEdit(String scratchPadId, String tempObjectId, String tempExerciseId)
+	public InsurancePolicy.TableSection getPageForEdit(String scratchPadId, String tempObjectId, String tempExerciseId)
 		throws SessionExpiredException, BigBangException
 	{
 		String[] larrAux;
@@ -1306,7 +1547,7 @@ public class InsurancePolicyServiceImpl
 		return lobjResult;
 	}
 
-	public TableSection savePage(TableSection data)
+	public InsurancePolicy.TableSection savePage(InsurancePolicy.TableSection data)
 		throws SessionExpiredException, BigBangException
 	{
 		String[] larrAux;
