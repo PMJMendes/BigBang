@@ -146,10 +146,10 @@ public class CreatePolicy
 				for ( i = 0; i < mobjData.marrValues.length; i++ )
 				{
 					mobjData.marrValues[i].midOwner = mobjData.mid;
-					mobjData.marrValues[i].midObject =
-							mobjData.marrObjects[mobjData.marrValues[i].mlngObject].mid;
-					mobjData.marrValues[i].midExercise =
-							mobjData.marrExercises[mobjData.marrValues[i].mlngExercise].mid;
+					mobjData.marrValues[i].midObject = ( mobjData.marrValues[i].mlngObject < 0 ? null :
+							mobjData.marrObjects[mobjData.marrValues[i].mlngObject].mid );
+					mobjData.marrValues[i].midExercise = ( mobjData.marrValues[i].mlngExercise < 0 ? null :
+							mobjData.marrExercises[mobjData.marrValues[i].mlngExercise].mid );
 					lobjValue = PolicyValue.GetInstance(Engine.getCurrentNameSpace(), (UUID)null);
 					mobjData.marrValues[i].ToObject(lobjValue);
 					lobjValue.SaveToDb(pdb);
