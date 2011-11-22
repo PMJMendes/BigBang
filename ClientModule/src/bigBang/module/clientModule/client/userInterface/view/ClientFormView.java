@@ -300,8 +300,11 @@ public class ClientFormView extends FormView<Client> implements ClientProcessDat
 		activityObservations.setValue(info.activityNotes);
 		numberOfWorkers.setValue(info.sizeId);
 		revenue.setValue(info.revenueId);
-		if(info.birthDate != null)
+		if(info.birthDate != null){
 			birthDate.setValue(DateTimeFormat.getFormat("yyyy-MM-dd").parse(info.birthDate));
+		}else{
+			birthDate.clear();
+		}
 		gender.setValue(info.genderId);
 		maritalStatus.setValue(info.maritalStatusId);
 		profession.setValue(info.professionId);
