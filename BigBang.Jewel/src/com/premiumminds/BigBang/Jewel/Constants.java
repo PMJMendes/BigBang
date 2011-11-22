@@ -18,6 +18,7 @@ public class Constants
 	public static final UUID ObjID_ContactInfo    = UUID.fromString("069434F6-8EE7-4DFE-96C9-9EC401014608");
 	public static final UUID ObjID_Document       = UUID.fromString("794F44DB-191A-4E17-9217-9ECC012A8AC2");
 	public static final UUID ObjID_DocInfo        = UUID.fromString("75620A04-D0C7-43D4-8425-9ECC012C0E91");
+	public static final UUID ObjID_LineCategory   = UUID.fromString("3FF829D9-5C33-4C91-A42B-9EC900F013CB");
 	public static final UUID ObjID_Line           = UUID.fromString("A9A1CE62-06A1-4761-A1FC-9EC900F234B0");
 	public static final UUID ObjID_SubLine        = UUID.fromString("FBCD74E1-A280-4443-9BB4-9EC900F4A4B9");
 	public static final UUID ObjID_Coverage       = UUID.fromString("007022A0-6DFA-498B-9DC4-9EC900F5219F");
@@ -51,7 +52,6 @@ public class Constants
 	public static final UUID ObjID_CInfoType      = UUID.fromString("03C5B78E-D71C-49F2-A079-9EC40111DCC0");
 	public static final UUID ObjID_DocType        = UUID.fromString("B4DBEE18-FA81-471D-A9F5-9ECC012A028D");
 	public static final UUID ObjID_CommProfile    = UUID.fromString("5F40713C-1FE7-4715-AC24-9EBB00E53392");
-	public static final UUID ObjID_LineCategory   = UUID.fromString("3FF829D9-5C33-4C91-A42B-9EC900F013CB");
 	public static final UUID ObjID_ClientType     = UUID.fromString("40A63D68-E2A6-40AB-B3A4-9EE600B91EBE");
 	public static final UUID ObjID_ClientSubtype  = UUID.fromString("1907DB1B-6F75-4715-A210-9EE600B9D072");
 	public static final UUID ObjID_OpProfile      = UUID.fromString("11921769-CDF3-447A-8E6B-9ECA01761BAA");
