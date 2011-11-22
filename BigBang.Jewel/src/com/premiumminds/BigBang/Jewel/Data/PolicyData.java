@@ -32,10 +32,7 @@ public class PolicyData
 	public UUID midManager;
 	public UUID midProcess;
 
-	public PolicyCoverageData[] marrCoverages;
-	public PolicyObjectData[] marrObjects;
-	public PolicyExerciseData[] marrExercises;
-	public PolicyValueData[] marrValues;
+	public PolicyDataArray mobjArrays;
 
 	public PolicyData mobjPrevValues;
 

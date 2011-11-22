@@ -10,6 +10,7 @@ import Jewel.Petri.SysObjects.UndoableOperation;
 
 import com.premiumminds.BigBang.Jewel.Constants;
 import com.premiumminds.BigBang.Jewel.Data.PolicyData;
+import com.premiumminds.BigBang.Jewel.Data.PolicyDataArray;
 import com.premiumminds.BigBang.Jewel.Objects.Policy;
 import com.premiumminds.BigBang.Jewel.Operations.ContactOps;
 import com.premiumminds.BigBang.Jewel.Operations.DocOps;
@@ -20,6 +21,8 @@ public class ManagePolicyData
 	private static final long serialVersionUID = 1L;
 
 	public PolicyData mobjData;
+	public PolicyDataArray mobjAddSet;
+	public PolicyDataArray mobjDeleteSet;
 	public ContactOps mobjContactOps;
 	public DocOps mobjDocOps;
 

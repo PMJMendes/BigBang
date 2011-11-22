@@ -100,57 +100,62 @@ public class CreatePolicy
 			lobjPolicy.SaveToDb(pdb);
 			mobjData.mid = lobjPolicy.getKey();
 
-			if ( mobjData.marrCoverages != null )
+			if ( mobjData.mobjArrays != null )
 			{
-				for ( i = 0; i < mobjData.marrCoverages.length; i++ )
+				if ( mobjData.mobjArrays.marrCoverages != null )
 				{
-					mobjData.marrCoverages[i].midOwner = mobjData.mid;
-					lobjCoverage = PolicyCoverage.GetInstance(Engine.getCurrentNameSpace(), (UUID)null);
-					mobjData.marrCoverages[i].ToObject(lobjCoverage);
-					lobjCoverage.SaveToDb(pdb);
-					mobjData.marrCoverages[i].mid = lobjCoverage.getKey();
+					for ( i = 0; i < mobjData.mobjArrays.marrCoverages.length; i++ )
+					{
+						mobjData.mobjArrays.marrCoverages[i].midOwner = mobjData.mid;
+						lobjCoverage = PolicyCoverage.GetInstance(Engine.getCurrentNameSpace(), (UUID)null);
+						mobjData.mobjArrays.marrCoverages[i].ToObject(lobjCoverage);
+						lobjCoverage.SaveToDb(pdb);
+						mobjData.mobjArrays.marrCoverages[i].mid = lobjCoverage.getKey();
+					}
 				}
-			}
 
-			if ( mobjData.marrObjects != null )
-			{
-				for ( i = 0; i < mobjData.marrObjects.length; i++ )
+				if ( mobjData.mobjArrays.marrObjects != null )
 				{
-					if ( mobjData.marrObjects[i] == null )
-						continue;
-					mobjData.marrObjects[i].midOwner = mobjData.mid;
-					lobjObject = PolicyObject.GetInstance(Engine.getCurrentNameSpace(), (UUID)null);
-					mobjData.marrObjects[i].ToObject(lobjObject);
-					lobjObject.SaveToDb(pdb);
-					mobjData.marrObjects[i].mid = lobjObject.getKey();
+					for ( i = 0; i < mobjData.mobjArrays.marrObjects.length; i++ )
+					{
+						if ( mobjData.mobjArrays.marrObjects[i] == null )
+							continue;
+						mobjData.mobjArrays.marrObjects[i].midOwner = mobjData.mid;
+						lobjObject = PolicyObject.GetInstance(Engine.getCurrentNameSpace(), (UUID)null);
+						mobjData.mobjArrays.marrObjects[i].ToObject(lobjObject);
+						lobjObject.SaveToDb(pdb);
+						mobjData.mobjArrays.marrObjects[i].mid = lobjObject.getKey();
+					}
 				}
-			}
 
-			if ( mobjData.marrExercises != null )
-			{
-				for ( i = 0; i < mobjData.marrExercises.length; i++ )
+				if ( mobjData.mobjArrays.marrExercises != null )
 				{
-					if ( mobjData.marrExercises[i] == null )
-						continue;
-					mobjData.marrExercises[i].midOwner = mobjData.mid;
-					lobjExercise = PolicyExercise.GetInstance(Engine.getCurrentNameSpace(), (UUID)null);
-					mobjData.marrExercises[i].ToObject(lobjExercise);
-					lobjExercise.SaveToDb(pdb);
-					mobjData.marrExercises[i].mid = lobjExercise.getKey();
+					for ( i = 0; i < mobjData.mobjArrays.marrExercises.length; i++ )
+					{
+						if ( mobjData.mobjArrays.marrExercises[i] == null )
+							continue;
+						mobjData.mobjArrays.marrExercises[i].midOwner = mobjData.mid;
+						lobjExercise = PolicyExercise.GetInstance(Engine.getCurrentNameSpace(), (UUID)null);
+						mobjData.mobjArrays.marrExercises[i].ToObject(lobjExercise);
+						lobjExercise.SaveToDb(pdb);
+						mobjData.mobjArrays.marrExercises[i].mid = lobjExercise.getKey();
+					}
 				}
-			}
 
-			if ( mobjData.marrValues != null )
-			{
-				for ( i = 0; i < mobjData.marrValues.length; i++ )
+				if ( mobjData.mobjArrays.marrValues != null )
 				{
-					mobjData.marrValues[i].midOwner = mobjData.mid;
-					mobjData.marrValues[i].midObject = mobjData.marrObjects[mobjData.marrValues[i].mlngObject].mid;
-					mobjData.marrValues[i].midExercise = mobjData.marrExercises[mobjData.marrValues[i].mlngExercise].mid;
-					lobjValue = PolicyValue.GetInstance(Engine.getCurrentNameSpace(), (UUID)null);
-					mobjData.marrValues[i].ToObject(lobjValue);
-					lobjValue.SaveToDb(pdb);
-					mobjData.marrValues[i].mid = lobjValue.getKey();
+					for ( i = 0; i < mobjData.mobjArrays.marrValues.length; i++ )
+					{
+						mobjData.mobjArrays.marrValues[i].midOwner = mobjData.mid;
+						mobjData.mobjArrays.marrValues[i].midObject =
+								mobjData.mobjArrays.marrObjects[mobjData.mobjArrays.marrValues[i].mlngObject].mid;
+						mobjData.mobjArrays.marrValues[i].midExercise =
+								mobjData.mobjArrays.marrExercises[mobjData.mobjArrays.marrValues[i].mlngExercise].mid;
+						lobjValue = PolicyValue.GetInstance(Engine.getCurrentNameSpace(), (UUID)null);
+						mobjData.mobjArrays.marrValues[i].ToObject(lobjValue);
+						lobjValue.SaveToDb(pdb);
+						mobjData.mobjArrays.marrValues[i].mid = lobjValue.getKey();
+					}
 				}
 			}
 
