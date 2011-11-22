@@ -188,7 +188,7 @@ public class CreatePolicy
 
 		try
 		{
-	        lstrFilter = "-" + (String)GetProcess().GetData().getAt(1) + ".%";
+	        lstrFilter = "-" + ((Integer)GetProcess().GetData().getAt(1)).toString() + ".%";
 			lrefPolicies = Entity.GetInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), Constants.ObjID_Policy)); 
 			ldb = new MasterDB();
 		}
