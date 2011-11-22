@@ -1,12 +1,16 @@
 package bigBang.module.insurancePolicyModule.client.userInterface;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
 import bigBang.definitions.shared.BigBangConstants;
 import bigBang.definitions.shared.InsurancePolicy.ColumnHeader;
 import bigBang.definitions.shared.InsurancePolicy.Coverage;
+import bigBang.definitions.shared.InsurancePolicy.ExtraField;
 import bigBang.definitions.shared.InsurancePolicy.FieldType;
+import bigBang.definitions.shared.InsurancePolicy.HeaderField;
 import bigBang.definitions.shared.InsurancePolicy.TableSection;
 import bigBang.definitions.shared.InsurancePolicy.TableSection.TableField;
 import bigBang.library.client.FieldValidator;
@@ -17,6 +21,8 @@ import bigBang.library.client.userInterface.RadioButtonFormField;
 import bigBang.library.client.userInterface.TextBoxFormField;
 import bigBang.library.client.userInterface.view.View;
 
+import com.google.gwt.event.logical.shared.ValueChangeEvent;
+import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.user.client.ui.Grid;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
@@ -24,19 +30,113 @@ import com.google.gwt.user.client.ui.Widget;
 
 public class PolicyFormTable extends View {
 	
+	protected class Field extends FormField<String> {
+		public String id;
+		protected FormField<?> field;
+		protected TableField tableField;
+		protected String coverageId;
+
+		public Field(TableField tableField, ColumnHeader columnDefinition) {
+			super();
+			this.id = tableField.fieldId;
+			this.tableField = tableField;
+
+			switch(columnDefinition.type) {
+			case LIST:
+				ExpandableListBoxFormField listField = new ExpandableListBoxFormField(BigBangConstants.TypifiedListIds.FIELD_VALUES+"/"+tableField.fieldId, "");
+				this.field = listField;
+				break;
+			case REFERENCE:
+				ExpandableListBoxFormField referenceListField = new ExpandableListBoxFormField(columnDefinition.refersToId, "");
+				this.field = referenceListField;
+				break;
+			case NUMERIC:
+				field = new TextBoxFormField(new FieldValidator<String>() {
+
+					@Override
+					public boolean isValid(String value) {
+						try{
+							Integer.parseInt(value);
+						}catch(Exception e){
+							return false;
+						}
+						return true;
+					}
+
+					@Override
+					public boolean isMandatory() {
+						return false;
+					}
+
+					@Override
+					public String getErrorMessage() {
+						return "Apenas valores numéricos";
+					}
+				});
+				break;
+			case TEXT:
+				this.field = new TextBoxFormField();
+				break;
+			case BOOLEAN:
+				RadioButtonFormField radioField = new RadioButtonFormField();
+				radioField.addOption("1", "Sim");
+				radioField.addOption("0", "Não");
+				this.field = radioField;
+				break;
+			case DATE:
+				DatePickerFormField dateField = new DatePickerFormField();
+				this.field = dateField;
+				break;
+			default:
+				break;
+			}
+			initWidget(this.field);
+		}
+
+		@Override
+		public void clear() {
+			this.field.clear();
+		}
+
+		@Override
+		public void setReadOnly(boolean readonly) {
+			this.field.setReadOnly(readonly);
+		}
+
+		@Override
+		public boolean isReadOnly() {
+			return this.field.isReadOnly();
+		}
+
+		@Override
+		public void setLabelWidth(String width) {
+			this.field.setLabelWidth(width);
+		}
+		
+		@Override
+		public void setFieldWidth(String width) {
+			this.field.setFieldWidth(width);
+		}
+	}
+	
+	
 	protected static final int DATA_COLUMN_OFFSET = 2;
 	protected static final int DATA_ROW_OFFSET = 1;
-	
-	protected Coverage[] coverages;	
-	protected RadioButtonFormField[] radioFields;
+
 	protected ExpandableListBoxFormField insuredObjectField;
 	protected ExpandableListBoxFormField exerciseField;
 	protected Widget filtersWrapper;
 	protected boolean forNewPolicy;
 	
+	protected Coverage[] coverages;	
+	protected RadioButtonFormField[] radioFields;
 	protected ColumnHeader[] columnDefinitions;
 	protected Map<String, Integer> coverageIndexes;
 	protected String currentPageId;
+	
+	protected Map<String, Map<String, Field>> tableFields;
+	
+	protected TableSection section;
 	
 	protected Grid grid;
 
@@ -49,6 +149,7 @@ public class PolicyFormTable extends View {
 		
 		columnDefinitions = new ColumnHeader[0];
 		coverageIndexes = new HashMap<String, Integer>();
+		tableFields = new HashMap<String, Map<String,Field>>();
 		
 		VerticalPanel wrapper = new VerticalPanel();
 		initWidget(wrapper);
@@ -102,16 +203,17 @@ public class PolicyFormTable extends View {
 	}
 	
 	public void clear() {
-		this.grid.clear();
+		//this.columnDefinitions = new 
 	}
 
 	public void setCoverages(Coverage[] coverages){
 		this.clearRows();
+		this.tableFields.clear();
 		this.coverageIndexes.clear();
 		this.coverages = coverages;
 		this.radioFields = new RadioButtonFormField[coverages.length];
 		for(int i = 0;  i < coverages.length; i++) {
-			addCoverageLine(coverages[i]);
+			addCoverageLine(coverages[i], i);
 			this.coverageIndexes.put(coverages[i].coverageId, i);
 		}
 	}
@@ -120,7 +222,10 @@ public class PolicyFormTable extends View {
 		this.grid.resizeRows(DATA_ROW_OFFSET);
 	}
 	
-	protected void addCoverageLine(Coverage coverage) {
+	protected void addCoverageLine(Coverage coverage, final int rfIndex) {
+		Map<String, Field> coverageFields = new HashMap<String, Field>();
+		this.tableFields.put(coverage.coverageId, coverageFields);
+
 		int rowCount = this.grid.getRowCount()+1;
 		this.grid.resizeRows(rowCount);
 		int rowIndex = rowCount - 1;
@@ -130,82 +235,97 @@ public class PolicyFormTable extends View {
 		}
 
 		RadioButtonFormField radio = new RadioButtonFormField();
-		radio.addOption("YES", "Sim");
-		radio.addOption("NO", "Não");
+		radio.addOption("1", "Sim");
+		radio.addOption("0", "Não");
 		if(coverage.presentInPolicy != null && coverage.presentInPolicy){
-			radio.setValue("YES");
+			radio.setValue("1");
 			if(this.forNewPolicy){
 				radio.setEditable(false);
 			}
 		}
-		
+		radio.addValueChangeHandler(new ValueChangeHandler<String>() {
+			
+			@Override
+			public void onValueChange(ValueChangeEvent<String> event) {
+				if(event.getValue().equalsIgnoreCase("1")){
+					enableCoverageAtIndex(rfIndex);
+				}else{
+					disableCoverageAtIndex(rfIndex);
+				}
+				refreshFields();
+			}
+		});
 		this.grid.setWidget(rowIndex, 0, radio);
 		this.grid.setText(rowIndex, 1, coverage.coverageName);
+		this.radioFields[rfIndex] = radio;
 	}
 	
 	public void setData(TableSection section){
 		if(section == null){return;}
-		this.currentPageId = section.pageId;
+		this.section = section;
+		
 		for(int i = 0; i < section.data.length; i++) {
 			TableField tableField = section.data[i];
 			ColumnHeader column = columnDefinitions[tableField.columnIndex];
 			int coverageIndex = coverageIndexes.get(tableField.coverageId);
 			
-			FormField<?> field = null;
+			Field field = new Field(tableField, column);
 			
-			switch(column.type) {
-			case LIST:
-				ExpandableListBoxFormField listField = new ExpandableListBoxFormField(BigBangConstants.TypifiedListIds.FIELD_VALUES+"/"+tableField.fieldId, "");
-				field = listField;
-				break;
-			case REFERENCE:
-				ExpandableListBoxFormField referenceListField = new ExpandableListBoxFormField(column.refersToId, "");
-				field = referenceListField;
-				break;
-			case NUMERIC:
-				field = new TextBoxFormField(new FieldValidator<String>() {
+			Map<String, Field> coverageColumns = this.tableFields.get(tableField.coverageId);
+			coverageColumns.put(tableField.columnIndex+"", field);
 
-					@Override
-					public boolean isValid(String value) {
-						try{
-							Integer.parseInt(value);
-						}catch(Exception e){
-							return false;
-						}
-						return true;
-					}
-
-					@Override
-					public boolean isMandatory() {
-						return false;
-					}
-
-					@Override
-					public String getErrorMessage() {
-						return "Apenas valores numéricos";
-					}
-				});
-				break;
-			case TEXT:
-				field = new TextBoxFormField();
-				break;
-			case BOOLEAN:
-				RadioButtonFormField radioField = new RadioButtonFormField();
-				radioField.addOption("1", "Sim");
-				radioField.addOption("0", "Não");
-				field = radioField;
-				break;
-			case DATE:
-				DatePickerFormField dateField = new DatePickerFormField();
-				field = dateField;
-				break;
-			default:
-				break;
-			}
 			field.setWidth("100%");
 			field.setFieldWidth("100%");
 			this.grid.setWidget(DATA_ROW_OFFSET + coverageIndex, DATA_COLUMN_OFFSET + tableField.columnIndex, field);
 		}
+		refreshFields();
+	}
+	
+	public TableSection getData(){
+		for(int i = 0; this.section != null && i < this.section.data.length; i++) {
+			this.section.data[i].value = this.tableFields.get(this.section.data[i].coverageId).get(this.section.data[i].columnIndex+"").getValue();
+		}
+		return this.section;
+	}
+	
+	protected void refreshFields(){
+		for(int i = 0; i < this.radioFields.length; i++) {
+			RadioButtonFormField field = this.radioFields[i];
+			if(field.getValue() == null) {
+				nullifyCoverageAtIndex(i);
+			}else if(field.getValue().equalsIgnoreCase("0")){
+				disableCoverageAtIndex(i);
+			}else if(field.getValue().equalsIgnoreCase("1")){
+				enableCoverageAtIndex(i);
+			}
+		}
+	}
+	
+	protected void disableCoverageAtIndex(int index){
+		this.radioFields[index].setValue("0", false);
+		Coverage coverage = coverages[index];
+		Map<String, Field> fields = this.tableFields.get(coverage.coverageId);
+
+		for(Field f : fields.values()) {
+			f.clear();
+			f.setReadOnly(true);
+		}
+	}
+	
+	protected void enableCoverageAtIndex(int index){
+		this.radioFields[index].setValue("1", false);
+		Coverage coverage = coverages[index];
+		Map<String, Field> fields = this.tableFields.get(coverage.coverageId);
+
+		for(Field f : fields.values()) {
+			f.clear();
+			f.setReadOnly(false);
+		}
+	}
+	
+	protected void nullifyCoverageAtIndex(int index){
+		enableCoverageAtIndex(index);
+		this.radioFields[index].setValue("", false);
 	}
 	
 	public void setFilterable(boolean filterable) {

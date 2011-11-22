@@ -152,13 +152,11 @@ public class ListBoxFormField extends FormField<String> {
 			}
 			return;
 		}
-		boolean hasValue = false; 
 		for(int i = 0; i < this.listBox.getItemCount(); i++) {
 			String itemValue = this.listBox.getValue(i);
 			if(itemValue.equalsIgnoreCase(value)){
 				if(isDifferentValue(itemValue)){
 					this.listBox.setSelectedIndex(i);
-					hasValue = true;
 					this.value = value;
 					if(fireEvents)
 						ValueChangeEvent.fire(this, value);
@@ -166,8 +164,6 @@ public class ListBoxFormField extends FormField<String> {
 				break;
 			}
 		}
-		if(!hasValue)
-			GWT.log("Could not select list box value because value does not exist.");
 	}
 
 	@Override

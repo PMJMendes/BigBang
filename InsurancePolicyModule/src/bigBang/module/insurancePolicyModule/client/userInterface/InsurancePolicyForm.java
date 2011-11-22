@@ -328,8 +328,9 @@ public abstract class InsurancePolicyForm extends FormView<InsurancePolicy> {
 		result.caseStudy = caseStudy.getValue();
 		result.notes = notes.getValue();
 
-		result.headerFields = getHeaderFieldsInfo();
-		result.extraData = getExtraFieldsInfo();
+		//result.headerFields = getHeaderFieldsInfo();
+		result.tableData = new TableSection[]{this.table.getData()};
+		//result.extraData = getExtraFieldsInfo();
 
 		return result;
 	}
@@ -347,14 +348,15 @@ public abstract class InsurancePolicyForm extends FormView<InsurancePolicy> {
 	}
 
 	protected HeaderField[] getHeaderFieldsInfo(){
-		HeaderField[] fields = new HeaderField[this.headerFields.size()];
-		int i = 0;
+//		HeaderField[] fields = new HeaderField[this.headerFields.size()];
+//		int i = 0;
 //		for(HeaderFormField f : this.headerFields.values()) {
 //			HeaderField headerField = f.headerField;
 //			headerField.value = f.getValue();
 //			fields[i] = headerField;
 //			i++;
 //		}
+//		return fields;
 		return null;
 	}
 
@@ -377,13 +379,23 @@ public abstract class InsurancePolicyForm extends FormView<InsurancePolicy> {
 	}
 
 	protected ExtraField[] getExtraFieldsInfo(){
-		return null; //TODO
+//		ExtraField[] fields = new ExtraField[this.extraFields.size()];
+//		int i = 0;
+//		for(HeaderFormField f : this.extraFields.values()) {
+//			ExtraField extraField = (ExtraField) f.headerField;
+//			extraField.value = f.getValue();
+//			fields[i] = extraField;
+//			i++;
+//		}
+//		return fields;
+		return null;
 	}
 
 	protected void clearExtraFields(){
-		//TODO
+		for(HeaderFormField f : this.extraFields.values()) {
+			f.clear();
+		}
 	}
-
 
 	@Override
 	public void setInfo(final InsurancePolicy info) {
@@ -466,7 +478,7 @@ public abstract class InsurancePolicyForm extends FormView<InsurancePolicy> {
 	}
 	
 	public void clearTableData(){
-		//TODO
+		this.table.clear();
 	}
 	
 	protected void setCoverages(Coverage[] coverages){

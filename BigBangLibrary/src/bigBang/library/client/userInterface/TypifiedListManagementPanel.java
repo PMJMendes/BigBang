@@ -96,6 +96,7 @@ public class TypifiedListManagementPanel extends FilterableList<TipifiedListItem
 		});
 
 		toolBar = new HorizontalPanel();
+		headerWrapper.add(toolBar);
 		toolBar.getElement().getStyle().setProperty("borderTop", "1px solid gray");
 		toolBar.setVerticalAlignment(HasVerticalAlignment.ALIGN_MIDDLE);
 		toolBar.setSpacing(5);
@@ -110,8 +111,6 @@ public class TypifiedListManagementPanel extends FilterableList<TipifiedListItem
 		toolBar.add(valueTextBox);
 		toolBar.add(addButton);
 		toolBar.setCellWidth(valueTextBox, "100%");
-
-		headerWrapper.add(toolBar);
 
 		setHeaderWidget(headerWrapper);
 

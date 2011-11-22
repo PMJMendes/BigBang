@@ -218,9 +218,20 @@ public class InsurancePolicySearchOperationViewPresenter implements
 
 			@Override
 			public void onResponse(InsurancePolicy response) {
-				view.getForm().setValue(response);
-				view.getForm().setReadOnly(true);
-				view.setSaveModeEnabled(false);
+				broker.commitPolicy(response, new ResponseHandler<InsurancePolicy>() {
+
+					@Override
+					public void onResponse(InsurancePolicy response) {
+						view.getForm().setValue(response);
+						view.getForm().setReadOnly(true);
+						view.setSaveModeEnabled(false);
+					}
+
+					@Override
+					public void onError(Collection<ResponseError> errors) {
+						//TODO
+					}
+				});
 			}
 
 			@Override

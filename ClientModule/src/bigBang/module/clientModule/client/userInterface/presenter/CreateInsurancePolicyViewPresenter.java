@@ -99,6 +99,30 @@ public abstract class CreateInsurancePolicyViewPresenter implements
 				switch(action.getAction()) {
 				
 				case CREATE_POLICY:
+					InsurancePolicy policy = view.getInsurancePolicyForm().getValue();
+					policyBroker.updatePolicy(policy, new ResponseHandler<InsurancePolicy>() {
+
+						@Override
+						public void onResponse(InsurancePolicy response) {
+							policyBroker.commitPolicy(response, new ResponseHandler<InsurancePolicy>() {
+
+								@Override
+								public void onResponse(InsurancePolicy response) {
+									view.getInsurancePolicyForm().setValue(response);
+									view.getInsurancePolicyForm().setReadOnly(true);
+								}
+
+								@Override
+								public void onError(Collection<ResponseError> errors) {
+									//TODO
+								}
+							});
+						}
+
+						@Override
+						public void onError(Collection<ResponseError> errors) {
+						}
+					});
 					break;
 				
 				case CANCEL_POLICY_CREATION:
@@ -115,8 +139,8 @@ public abstract class CreateInsurancePolicyViewPresenter implements
 				
 				case MODALITY_CHANGED:
 					view.getInsurancePolicyForm().commit();
-					InsurancePolicy policy = view.getInsurancePolicyForm().getValue();
-					CreateInsurancePolicyViewPresenter.this.policyBroker.openPolicyResource(policy, new ResponseHandler<InsurancePolicy>() {
+					InsurancePolicy changedPolicy = view.getInsurancePolicyForm().getValue();
+					CreateInsurancePolicyViewPresenter.this.policyBroker.openPolicyResource(changedPolicy, new ResponseHandler<InsurancePolicy>() {
 
 						@Override
 						public void onResponse(InsurancePolicy response) {

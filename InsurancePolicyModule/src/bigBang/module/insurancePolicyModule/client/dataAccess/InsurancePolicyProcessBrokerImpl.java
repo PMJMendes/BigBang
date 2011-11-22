@@ -130,19 +130,24 @@ public class InsurancePolicyProcessBrokerImpl extends DataBroker<InsurancePolicy
 	@Override
 	public void updatePolicy(final InsurancePolicy policy,
 			final ResponseHandler<InsurancePolicy> handler) {
-//		this.service.editPolicy(policy, new BigBangAsyncCallback<InsurancePolicy>() {
-//
-//			@Override
-//			public void onSuccess(InsurancePolicy result) {
-//				cache.add(result.id, result);
-//				incrementDataVersion();
-//				for(DataBrokerClient<InsurancePolicy> bc : getClients()){
-//					((InsurancePolicyDataBrokerClient) bc).updateInsurancePolicy(result);
-//					((InsurancePolicyDataBrokerClient) bc).setDataVersionNumber(BigBangConstants.EntityIds.INSURANCE_POLICY, getCurrentDataVersion());
-//				}
-//				handler.onResponse(result);
-//			}
-//		});
+		if(policy.id == null || inScratchPad(policy.id)){
+			if(inScratchPad(policy.id)){
+				policy.id = getScratchPadId(policy.id);
+			}
+			removeFromScratchPad(policy.id);
+			this.service.updateHeader(policy, new AsyncCallback<InsurancePolicy>() {
+				
+				@Override
+				public void onSuccess(InsurancePolicy result) {
+					String tempId = addToScratchPad(result);
+					result.id = tempId;
+					handler.onResponse(result);
+				}
+
+				@Override
+				public void onFailure(Throwable caught) {}
+			});
+		}
 	}
 
 	@Override
@@ -242,6 +247,17 @@ public class InsurancePolicyProcessBrokerImpl extends DataBroker<InsurancePolicy
 				public void onFailure(Throwable caught) {}
 			});
 		}
+	}
+
+	@Override
+	public void commitPolicy(InsurancePolicy policy, final ResponseHandler<InsurancePolicy> handler){
+		this.service.commitPolicy(policy.scratchPadId, new BigBangAsyncCallback<InsurancePolicy>() {
+
+			@Override
+			public void onSuccess(InsurancePolicy result) {
+				handler.onResponse(result);
+			}
+		});
 	}
 
 	@Override

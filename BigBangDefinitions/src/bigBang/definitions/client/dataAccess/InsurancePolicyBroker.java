@@ -15,6 +15,8 @@ public interface InsurancePolicyBroker extends DataBrokerInterface<InsurancePoli
 	
 	public void openPolicyResource(InsurancePolicy policy, ResponseHandler<InsurancePolicy> handler);
 
+	public void commitPolicy(InsurancePolicy policy, ResponseHandler<InsurancePolicy> handler);
+	
 	public void closePolicyResource(String policyId, ResponseHandler<Void> handler);
 	
 	public void openCoverageDetailsPage(String policyId, String insuredObjectId, String exerciseId, ResponseHandler<InsurancePolicy.TableSection> handler);
