@@ -54,6 +54,15 @@ public class PolicyCoverage
 		}
 	}
 
+    public String AfterSave() 
+    	throws JewelEngineException
+    {
+    	if ( mrefCoverage == null )
+    		Initialize();
+
+        return "";
+    }
+
 	public Coverage GetCoverage()
 	{
 		return mrefCoverage;

@@ -58,4 +58,13 @@ public class PolicyValue
 	{
 		return mrefTax;
 	}
+
+    public String AfterSave() 
+    	throws JewelEngineException
+    {
+    	if ( mrefTax == null )
+    		Initialize();
+
+        return "";
+    }
 }
