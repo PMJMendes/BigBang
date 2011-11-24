@@ -779,8 +779,6 @@ public class InsurancePolicyServiceImpl
 			if ( !mbValid )
 				throw new BigBangException("Ocorreu um erro interno. Os dados correntes não são válidos.");
 
-			mbValid = false;
-
 			if ( !mobjPolicy.midSubLine.equals(UUID.fromString(pobjSource.subLineId)) )
 				throw new BigBangException("Erro: Não pode alterar a modalidade da apólice.");
 
@@ -798,6 +796,8 @@ public class InsurancePolicyServiceImpl
 			mobjPolicy.mstrNotes = pobjSource.notes;
 			mobjPolicy.midMediator = ( pobjSource.mediatorId == null ? null : UUID.fromString(pobjSource.mediatorId) );
 			mobjPolicy.mbCaseStudy = pobjSource.caseStudy;
+
+			mbValid = false;
 
 			j = -1;
 			if ( pobjSource.coverages != null )
