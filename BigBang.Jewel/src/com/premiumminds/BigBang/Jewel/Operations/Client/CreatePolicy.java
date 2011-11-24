@@ -208,7 +208,7 @@ public class CreatePolicy
 		{
 			while ( lrsPolicies.next() )
 			{
-				lstrAux = lrsPolicies.getString(2).substring(lstrFilter.length() - 2);
+				lstrAux = lrsPolicies.getString(2).substring(lstrFilter.length() - 1);
 				llngAux = Integer.parseInt(lstrAux);
 				if ( llngAux >= llngResult )
 					llngResult = llngAux + 1;
