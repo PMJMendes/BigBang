@@ -112,16 +112,12 @@ public class InsurancePolicyServiceImpl
 			extends PolicyObjectData
 		{
 			private static final long serialVersionUID = 1L;
-
-			public transient boolean mbDeleted;
 		}
 
 		private static class PadExercise
 			extends PolicyExerciseData
 		{
 			private static final long serialVersionUID = 1L;
-
-			public transient boolean mbDeleted;
 		}
 
 		private static class PadValue
@@ -131,7 +127,6 @@ public class InsurancePolicyServiceImpl
 
 			public transient PadCoverage mrefCoverage;
 			public transient PadField mrefField;
-			public transient boolean mbDeleted;
 		}
 
 		public final UUID mid;
@@ -771,6 +766,21 @@ public class InsurancePolicyServiceImpl
 			return larrResult;
 		}
 
+		public void WriteExercise(Exercise pobjResult, int plngObject)
+			throws BigBangException
+		{
+			PolicyExerciseData lobjObject;
+
+			if ( !mbValid )
+				throw new BigBangException("Ocorreu um erro interno. Os dados correntes não são válidos.");
+
+			lobjObject = marrExercises.get(plngObject);
+			pobjResult.id = ( lobjObject.mid == null ? null : lobjObject.mid.toString() );
+			pobjResult.label = lobjObject.mstrLabel;
+			pobjResult.startDate = ( lobjObject.mdtStart == null ? null : lobjObject.mdtStart.toString().substring(0, 10) );
+			pobjResult.endDate = ( lobjObject.mdtEnd == null ? null : lobjObject.mdtEnd.toString().substring(0, 10) );
+		}
+
 		public void UpdateInvariants(InsurancePolicy pobjSource)
 			throws BigBangException
 		{
@@ -947,7 +957,7 @@ public class InsurancePolicyServiceImpl
 			if ( !mbValid )
 				throw new BigBangException("Ocorreu um erro interno. Os dados correntes não são válidos.");
 
-			if ( marrObjects.get(plngObject) == null )
+			if ( (marrObjects.get(plngObject) == null) || marrObjects.get(plngObject).mbDeleted )
 				throw new BigBangException("Erro: Não pode alterar um objecto apagado.");
 
 			try
@@ -1007,6 +1017,125 @@ public class InsurancePolicyServiceImpl
 			for ( i = marrValues.size() - 1; i >= 0; i++ )
 			{
 				if ( marrValues.get(i).mlngObject == plngObject )
+					marrValues.get(i).mbDeleted = true;
+			}
+
+			mbValid = true;
+		}
+
+		public int CreateNewExercise()
+			throws BigBangException
+		{
+			PadExercise lobjObject;
+			PadValue lobjValue;
+			int i, j, k;
+
+			if ( !mbValid )
+				throw new BigBangException("Ocorreu um erro interno. Os dados correntes não são válidos.");
+
+			if ( mobjPolicy.mid != null )
+				throw new BigBangException("Erro: Operação não suportada para apólices já existentes.");
+
+			lobjObject = new PadExercise();
+
+			mbValid = false;
+
+			int llngIndex = marrObjects.size();
+			marrExercises.add(lobjObject);
+			for ( i = 0; i < marrCoverages.size(); i++ )
+			{
+				for ( j = 0; j < marrCoverages.get(i).marrFields.length; j++ )
+				{
+					if ( marrCoverages.get(i).marrFields[j].mbVariesByExercise )
+					{
+						if ( !marrCoverages.get(i).marrFields[j].mbVariesByObject )
+						{
+							lobjValue = new PadValue();
+							lobjValue.mid = null;
+							lobjValue.mstrValue = marrCoverages.get(i).marrFields[j].mstrDefault;
+							lobjValue.midOwner = null;
+							lobjValue.midField = marrCoverages.get(i).marrFields[j].midField;
+							lobjValue.midObject = null;
+							lobjValue.midExercise = null;
+							lobjValue.mrefCoverage = marrCoverages.get(i);
+							lobjValue.mrefField = marrCoverages.get(i).marrFields[j];
+							lobjValue.mlngObject = -1;
+							lobjValue.mlngExercise = llngIndex;
+							marrValues.add(lobjValue);
+						}
+						else
+						{
+							for ( k = 0; k < marrExercises.size(); k++ )
+							{
+								lobjValue = new PadValue();
+								lobjValue.mid = null;
+								lobjValue.mstrValue = marrCoverages.get(i).marrFields[j].mstrDefault;
+								lobjValue.midOwner = null;
+								lobjValue.midField = marrCoverages.get(i).marrFields[j].midField;
+								lobjValue.midObject = null;
+								lobjValue.midExercise = null;
+								lobjValue.mrefCoverage = marrCoverages.get(i);
+								lobjValue.mrefField = marrCoverages.get(i).marrFields[j];
+								lobjValue.mlngObject = k;
+								lobjValue.mlngExercise = llngIndex;
+								marrValues.add(lobjValue);
+							}
+						}
+					}
+				}
+			}
+
+			mbValid = true;
+
+			return llngIndex;
+		}
+
+		public void UpdateExercise(Exercise pobjSource, int plngExercise)
+			throws BigBangException
+		{
+			Timestamp ldtStart;
+			Timestamp ldtEnd;
+
+			if ( !mbValid )
+				throw new BigBangException("Ocorreu um erro interno. Os dados correntes não são válidos.");
+
+			if ( (marrExercises.get(plngExercise) == null) || marrExercises.get(plngExercise).mbDeleted )
+				throw new BigBangException("Erro: Não pode alterar um exercício apagado.");
+
+			try
+			{
+				ldtStart = ( pobjSource.startDate == null ? null : Timestamp.valueOf(pobjSource.startDate + " 00:00:00.0") );
+				ldtEnd = ( pobjSource.endDate == null ? null : Timestamp.valueOf(pobjSource.endDate + " 00:00:00.0") );
+			}
+			catch (Throwable e)
+			{
+				throw new BigBangException(e.getMessage(), e);
+			}
+
+			mbValid = false;
+
+			marrExercises.get(plngExercise).mstrLabel = pobjSource.label;
+			marrExercises.get(plngExercise).midOwner = mobjPolicy.mid;
+			marrExercises.get(plngExercise).mdtStart = ldtStart;
+			marrExercises.get(plngExercise).mdtEnd = ldtEnd;
+
+			mbValid = true;
+		}
+
+		public void DeleteExercise(int plngExercise)
+			throws BigBangException
+		{
+			int i;
+
+			if ( !mbValid )
+				throw new BigBangException("Ocorreu um erro interno. Os dados correntes não são válidos.");
+
+			mbValid = false;
+
+			marrExercises.get(plngExercise).mbDeleted = false;
+			for ( i = marrValues.size() - 1; i >= 0; i++ )
+			{
+				if ( marrValues.get(i).mlngExercise == plngExercise )
 					marrValues.get(i).mbDeleted = true;
 			}
 
@@ -1819,29 +1948,88 @@ public class InsurancePolicyServiceImpl
 	public Exercise getExerciseInPad(String tempExerciseId)
 		throws SessionExpiredException, BigBangException
 	{
-		// TODO Auto-generated method stub
-		return null;
+		String[] larrAux;
+		UUID lidPad;
+		int llngObject;
+		PolicyScratchPad lobjPad;
+		Exercise lobjResult;
+
+		if ( Engine.getCurrentUser() == null )
+			throw new SessionExpiredException();
+
+		larrAux = tempExerciseId.split(":");
+		if ( larrAux.length != 2 )
+            throw new IllegalArgumentException("Invalid temporary ID string: " + tempExerciseId);
+		lidPad = UUID.fromString(larrAux[0]);
+		llngObject = Integer.parseInt(larrAux[1]);
+
+		lobjPad = GetScratchPadStorage().get(lidPad);
+
+		lobjResult = new Exercise();
+		lobjResult.tempExerciseId = lidPad.toString() + ":" + Integer.toString(llngObject);
+		lobjPad.WriteExercise(lobjResult, llngObject);
+		return lobjResult;
 	}
 
-	@Override
 	public Exercise createFirstExercise(String scratchPadId)
-			throws SessionExpiredException, BigBangException {
-		// TODO Auto-generated method stub
-		return null;
+		throws SessionExpiredException, BigBangException
+	{
+		PolicyScratchPad lobjPad;
+		Exercise lobjResult;
+		int llngObject;
+
+		if ( Engine.getCurrentUser() == null )
+			throw new SessionExpiredException();
+
+		if ( scratchPadId == null )
+			throw new BigBangException("Erro: Espaço de trabalho não existente.");
+
+		lobjPad = GetScratchPadStorage().get(UUID.fromString(scratchPadId));
+		llngObject = lobjPad.CreateNewExercise();
+
+		lobjResult = new Exercise();
+		lobjResult.tempExerciseId = scratchPadId + ":" + llngObject;
+		return lobjResult;
 	}
 
-	@Override
 	public Exercise updateExerciseInPad(Exercise data)
-			throws SessionExpiredException, BigBangException {
-		// TODO Auto-generated method stub
-		return null;
+		throws SessionExpiredException, BigBangException
+	{
+		String[] larrAux;
+		UUID lidPad;
+		int llngObject;
+
+		if ( Engine.getCurrentUser() == null )
+			throw new SessionExpiredException();
+
+		larrAux = data.tempExerciseId.split(":");
+		if ( larrAux.length != 2 )
+            throw new IllegalArgumentException("Invalid temporary ID string: " + data.tempExerciseId);
+		lidPad = UUID.fromString(larrAux[0]);
+		llngObject = Integer.parseInt(larrAux[1]);
+
+		GetScratchPadStorage().get(lidPad).UpdateExercise(data, llngObject);
+
+		return data;
 	}
 
-	@Override
 	public void deleteExerciseInPad(String tempExerciseId)
-			throws SessionExpiredException, BigBangException {
-		// TODO Auto-generated method stub
-		
+		throws SessionExpiredException, BigBangException
+	{
+		String[] larrAux;
+		UUID lidPad;
+		int llngObject;
+
+		if ( Engine.getCurrentUser() == null )
+			throw new SessionExpiredException();
+
+		larrAux = tempExerciseId.split(":");
+		if ( larrAux.length != 2 )
+            throw new IllegalArgumentException("Invalid temporary ID string: " + tempExerciseId);
+		lidPad = UUID.fromString(larrAux[0]);
+		llngObject = Integer.parseInt(larrAux[1]);
+
+		GetScratchPadStorage().get(lidPad).DeleteExercise(llngObject);
 	}
 
 	public InsurancePolicy commitPolicy(String scratchPadId)
