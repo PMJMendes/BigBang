@@ -12,12 +12,10 @@ public class Exercise
 	public String startDate;
 	public String endDate;
 
-	public String scratchPadId; // Temporary ID for an exercise in a policy scratch pad
-	public int exerciseIndex; // Index of the exercise in the policy scratch pad
+	public String tempExerciseId; // Temporary ID for an exercise in a policy scratch pad
 
 	public Exercise()
 	{
-		scratchPadId = null;
-		exerciseIndex = -1;
+		tempExerciseId = null;
 	}
 }
