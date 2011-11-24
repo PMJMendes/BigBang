@@ -10,9 +10,14 @@ public class Tax
 	public String id;
 	public String name;
 	public String coverageId;
-	public String currencyId;
-	public double value;
-	
+	public String currencyId; // Isto devia chamar-se fieldTypeId
+	public double value; // Default value
+	public String unitsLabel; // Novo!
+	public boolean variesByObject; // Novo!
+	public boolean variesByExercise;  // Novo!
+	public String refersToEntityId;  // Novo!
+	public int columnOrder; // Novo!
+
 	public Tax(){}
 	
 	public Tax(Tax original) {

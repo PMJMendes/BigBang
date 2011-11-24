@@ -10,6 +10,7 @@ public class SubLine
 	public String id;
 	public String name;
 	public String lineId;
+	public String objectTypeId; // Novo!
 	public Coverage[] coverages;
 
 	public SubLine()
