@@ -50,17 +50,10 @@ public class SubLine
     public Coverage[] GetCurrentCoverages()
     	throws BigBangJewelException
     {
-		int[] larrMembers;
-		java.lang.Object[] larrParams;
 		Entity lrefCoverages;
 		MasterDB ldb;
 		ArrayList<Coverage> larrAux;
 		ResultSet lrsCoverages;
-
-		larrMembers = new int[1];
-		larrMembers[0] = Constants.FKSubLine_In_Coverage;
-		larrParams = new java.lang.Object[1];
-		larrParams[0] = getKey();
 
 		larrAux = new ArrayList<Coverage>();
 
