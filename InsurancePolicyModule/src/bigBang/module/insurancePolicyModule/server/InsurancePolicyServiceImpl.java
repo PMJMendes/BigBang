@@ -5,6 +5,7 @@ import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Comparator;
 import java.util.Hashtable;
 import java.util.UUID;
 
@@ -622,6 +623,40 @@ public class InsurancePolicyServiceImpl
 				larrExtraFields.add(lobjExtraField);
 			}
 			pobjResult.extraData = larrExtraFields.toArray(new InsurancePolicy.ExtraField[larrExtraFields.size()]);
+
+			java.util.Arrays.sort(pobjResult.headerFields, new Comparator<InsurancePolicy.HeaderField>()
+			{
+				public int compare(InsurancePolicy.HeaderField o1, InsurancePolicy.HeaderField o2)
+				{
+					if ( (o1.type == o2.type) && (o1.refersToId == o1.refersToId) )
+						return o1.fieldName.compareTo(o2.fieldName);
+					if ( o1.type == o2.type )
+						return o1.refersToId.compareTo(o2.refersToId);
+					return o1.type.compareTo(o2.type);
+				}
+			});
+			java.util.Arrays.sort(pobjResult.coverages, new Comparator<InsurancePolicy.Coverage>()
+			{
+				public int compare(InsurancePolicy.Coverage o1, InsurancePolicy.Coverage o2)
+				{
+					if ( o1.mandatory == o2.mandatory )
+						return o1.coverageName.compareTo(o2.coverageName);
+					if ( o1.mandatory )
+						return -1;
+					return 1;
+				}
+			});
+			java.util.Arrays.sort(pobjResult.extraData, new Comparator<InsurancePolicy.ExtraField>()
+			{
+				public int compare(InsurancePolicy.ExtraField o1, InsurancePolicy.ExtraField o2)
+				{
+					if ( (o1.type == o2.type) && (o1.refersToId == o1.refersToId) )
+						return o1.fieldName.compareTo(o2.fieldName);
+					if ( o1.type == o2.type )
+						return o1.refersToId.compareTo(o2.refersToId);
+					return o1.type.compareTo(o2.type);
+				}
+			});
 		}
 
 		public void WritePage(InsurancePolicy.TableSection pobjResult, int plngObject, int plngExercise)
@@ -1642,6 +1677,40 @@ public class InsurancePolicyServiceImpl
 		lobjResult.columns = larrOutColumns.toArray(new InsurancePolicy.ColumnHeader[larrOutColumns.size()]);
 		lobjResult.tableData = new InsurancePolicy.TableSection[] { lobjSection };
 		lobjResult.extraData = larrOutExtras.toArray(new InsurancePolicy.ExtraField[larrOutExtras.size()]);
+
+		java.util.Arrays.sort(lobjResult.headerFields, new Comparator<InsurancePolicy.HeaderField>()
+		{
+			public int compare(InsurancePolicy.HeaderField o1, InsurancePolicy.HeaderField o2)
+			{
+				if ( (o1.type == o2.type) && (o1.refersToId == o1.refersToId) )
+					return o1.fieldName.compareTo(o2.fieldName);
+				if ( o1.type == o2.type )
+					return o1.refersToId.compareTo(o2.refersToId);
+				return o1.type.compareTo(o2.type);
+			}
+		});
+		java.util.Arrays.sort(lobjResult.coverages, new Comparator<InsurancePolicy.Coverage>()
+		{
+			public int compare(InsurancePolicy.Coverage o1, InsurancePolicy.Coverage o2)
+			{
+				if ( o1.mandatory == o2.mandatory )
+					return o1.coverageName.compareTo(o2.coverageName);
+				if ( o1.mandatory )
+					return -1;
+				return 1;
+			}
+		});
+		java.util.Arrays.sort(lobjResult.extraData, new Comparator<InsurancePolicy.ExtraField>()
+		{
+			public int compare(InsurancePolicy.ExtraField o1, InsurancePolicy.ExtraField o2)
+			{
+				if ( (o1.type == o2.type) && (o1.refersToId == o1.refersToId) )
+					return o1.fieldName.compareTo(o2.fieldName);
+				if ( o1.type == o2.type )
+					return o1.refersToId.compareTo(o2.refersToId);
+				return o1.type.compareTo(o2.type);
+			}
+		});
 
 		return lobjResult;
 	}
