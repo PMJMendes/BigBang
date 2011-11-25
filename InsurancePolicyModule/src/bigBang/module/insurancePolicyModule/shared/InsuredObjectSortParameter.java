@@ -10,7 +10,8 @@ public class InsuredObjectSortParameter
 
 	public static enum SortableField
 	{
-		RELEVANCE
+		RELEVANCE,
+		NAME
 	}
 
 	public InsuredObjectSortParameter(){}

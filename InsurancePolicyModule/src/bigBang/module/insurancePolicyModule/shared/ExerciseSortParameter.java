@@ -10,7 +10,8 @@ public class ExerciseSortParameter
 
 	public static enum SortableField
 	{
-		RELEVANCE
+		RELEVANCE,
+		STARTDATE
 	}
 
 	public ExerciseSortParameter(){}

@@ -6,4 +6,6 @@ public class InsuredObjectSearchParameter
 	extends SearchParameter
 {
 	private static final long serialVersionUID = 1L;
+
+	public String policyId;
 }
