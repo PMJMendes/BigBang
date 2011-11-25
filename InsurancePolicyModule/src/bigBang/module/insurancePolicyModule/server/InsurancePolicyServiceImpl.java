@@ -1356,12 +1356,15 @@ public class InsurancePolicyServiceImpl
 		InsurancePolicy.ExtraField lobjExtra;
 		Hashtable<UUID, Coverage> larrAuxCoverages;
 		ArrayList<InsurancePolicy.Coverage> larrOutCoverages;
+		ArrayList<InsurancePolicy.ColumnHeader> larrOutColumns;
 		Coverage lobjCoverage;
+		InsurancePolicy.ColumnHeader lobjColumnHeader;
 		Tax[] larrTaxes;
 		InsurancePolicy.Coverage lobjAuxCoverage;
 		ArrayList<InsurancePolicy.Coverage.Variability> larrVariability;
 		InsurancePolicy.Coverage.Variability lobjVariability;
 		InsurancePolicy.TableSection lobjSection;
+		boolean lbColDone;
 		int i, j;
 
 		if ( Engine.getCurrentUser() == null )
@@ -1484,6 +1487,8 @@ public class InsurancePolicyServiceImpl
 
 		larrAuxCoverages = new Hashtable<UUID, Coverage>();
 		larrOutCoverages = new ArrayList<InsurancePolicy.Coverage>();
+		larrOutColumns = new ArrayList<InsurancePolicy.ColumnHeader>();
+		lbColDone = false;
 		for ( i = 0; i < larrLocalCoverages.length; i++ )
 		{
 			lobjCoverage = larrLocalCoverages[i].GetCoverage();
@@ -1510,6 +1515,15 @@ public class InsurancePolicyServiceImpl
 				if ( larrTaxes[j].GetColumnOrder() < 0 )
 					continue;
 
+				if ( !lbColDone )
+				{
+					lobjColumnHeader = new InsurancePolicy.ColumnHeader();
+					lobjColumnHeader.label = larrTaxes[j].getLabel();
+					lobjColumnHeader.type = GetFieldTypeByID((UUID)larrTaxes[j].getAt(2));
+					lobjColumnHeader.unitsLabel = (String)larrTaxes[j].getAt(3);
+					lobjColumnHeader.refersToId = ( larrTaxes[j].getAt(7) == null ? null : ((UUID)larrTaxes[j].getAt(7)).toString() );
+					larrOutColumns.add(lobjColumnHeader);
+				}
 				lobjVariability = new InsurancePolicy.Coverage.Variability();
 				lobjVariability.columnIndex = larrTaxes[j].GetColumnOrder();
 				lobjVariability.variesByObject = larrTaxes[j].GetVariesByObject();
@@ -1517,6 +1531,7 @@ public class InsurancePolicyServiceImpl
 				larrVariability.add(lobjVariability);
 
 			}
+			lbColDone = true;
 			lobjAuxCoverage.variability = larrVariability.toArray(new InsurancePolicy.Coverage.Variability[larrVariability.size()]);
 			larrOutCoverages.add(lobjAuxCoverage);
 			larrAuxCoverages.put(lobjCoverage.getKey(), lobjCoverage);
@@ -1535,6 +1550,16 @@ public class InsurancePolicyServiceImpl
 
 			for ( j = 0; j < larrTaxes.length; j++ )
 			{
+				if ( !lbColDone && !larrCoverages[i].IsHeader() && larrTaxes[j].GetColumnOrder() >= 0 )
+				{
+					lobjColumnHeader = new InsurancePolicy.ColumnHeader();
+					lobjColumnHeader.label = larrTaxes[j].getLabel();
+					lobjColumnHeader.type = GetFieldTypeByID((UUID)larrTaxes[j].getAt(2));
+					lobjColumnHeader.unitsLabel = (String)larrTaxes[j].getAt(3);
+					lobjColumnHeader.refersToId = ( larrTaxes[j].getAt(7) == null ? null : ((UUID)larrTaxes[j].getAt(7)).toString() );
+					larrOutColumns.add(lobjColumnHeader);
+				}
+
 				if ( larrAuxFields.get(larrTaxes[j].getKey()) != null )
 					continue;
 
@@ -1576,6 +1601,9 @@ public class InsurancePolicyServiceImpl
 				larrAuxFields.put(larrTaxes[j].getKey(), larrTaxes[j]);
 			}
 
+			if ( !lbColDone && !larrCoverages[i].IsHeader() )
+				lbColDone = true;
+
 			if ( larrAuxCoverages.get(larrCoverages[i].getKey()) != null )
 				continue;
 
@@ -1611,6 +1639,7 @@ public class InsurancePolicyServiceImpl
 
 		lobjResult.headerFields = larrOutHeaders.toArray(new InsurancePolicy.HeaderField[larrOutHeaders.size()]);
 		lobjResult.coverages = larrOutCoverages.toArray(new InsurancePolicy.Coverage[larrOutCoverages.size()]);
+		lobjResult.columns = larrOutColumns.toArray(new InsurancePolicy.ColumnHeader[larrOutColumns.size()]);
 		lobjResult.tableData = new InsurancePolicy.TableSection[] { lobjSection };
 		lobjResult.extraData = larrOutExtras.toArray(new InsurancePolicy.ExtraField[larrOutExtras.size()]);
 
