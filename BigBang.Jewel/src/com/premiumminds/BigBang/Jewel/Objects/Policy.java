@@ -428,7 +428,7 @@ public class Policy
 
 		try
 		{
-			lrefContactInfo = Entity.GetInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), Constants.ObjID_Contact)); 
+			lrefContactInfo = Entity.GetInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), Constants.ObjID_PolicyValue)); 
 			ldb = new MasterDB();
 		}
 		catch (Throwable e)
@@ -499,7 +499,7 @@ public class Policy
 
 		try
 		{
-			lrefContactInfo = Entity.GetInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), Constants.ObjID_Contact)); 
+			lrefContactInfo = Entity.GetInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), Constants.ObjID_PolicyValue)); 
 			ldb = new MasterDB();
 		}
 		catch (Throwable e)

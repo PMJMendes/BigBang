@@ -399,7 +399,7 @@ public class InsurancePolicyServiceImpl
 								{
 									for ( l = 0; l < marrExercises.size(); l++ )
 									{
-										if ( FindValue(lobjField.midField, k, l, 0) > 0 )
+										if ( FindValue(lobjField.midField, k, l, 0) >= 0 )
 											continue;
 										lobjValue = new PadValue();
 										lobjValue.mid = null;
@@ -418,7 +418,7 @@ public class InsurancePolicyServiceImpl
 								}
 								else
 								{
-									if ( FindValue(lobjField.midField, k, -1, 0) > 0 )
+									if ( FindValue(lobjField.midField, k, -1, 0) >= 0 )
 										continue;
 									lobjValue = new PadValue();
 									lobjValue.mid = null;
@@ -440,7 +440,7 @@ public class InsurancePolicyServiceImpl
 						{
 							for ( l = 0; l < marrExercises.size(); l++ )
 							{
-								if ( FindValue(lobjField.midField, -1, l, 0) > 0 )
+								if ( FindValue(lobjField.midField, -1, l, 0) >= 0 )
 									continue;
 								lobjValue = new PadValue();
 								lobjValue.mid = null;
@@ -459,7 +459,7 @@ public class InsurancePolicyServiceImpl
 						}
 						else
 						{
-							if ( FindValue(lobjField.midField, -1, -1, 0) > 0 )
+							if ( FindValue(lobjField.midField, -1, -1, 0) >= 0 )
 								continue;
 							lobjValue = new PadValue();
 							lobjValue.mid = null;
@@ -1444,12 +1444,14 @@ public class InsurancePolicyServiceImpl
 		lobjResult.subLineName = lobjSubLine.getLabel();
 		lobjResult.processId = lobjProc.getKey().toString();
 		lobjResult.insuranceAgencyId = ((UUID)lobjPolicy.getAt(2)).toString();
-		lobjResult.startDate = (lobjPolicy.getAt(4) == null ? null : ((Timestamp)lobjPolicy.getAt(4)).toString());
+		lobjResult.startDate = (lobjPolicy.getAt(4) == null ? null :
+				((Timestamp)lobjPolicy.getAt(4)).toString().substring(0, 10));
 		lobjResult.durationId = ((UUID)lobjPolicy.getAt(5)).toString();
 		lobjResult.fractioningId = ((UUID)lobjPolicy.getAt(6)).toString();
 		lobjResult.maturityDay = (lobjPolicy.getAt(7) == null ? 0 : (Integer)lobjPolicy.getAt(7));
 		lobjResult.maturityMonth = (lobjPolicy.getAt(8) == null ? 0 : (Integer)lobjPolicy.getAt(8));
-		lobjResult.expirationDate = (lobjPolicy.getAt(9) == null ? null : ((Timestamp)lobjPolicy.getAt(9)).toString());
+		lobjResult.expirationDate = (lobjPolicy.getAt(9) == null ? null :
+				((Timestamp)lobjPolicy.getAt(9)).toString().substring(0, 10));
 		lobjResult.notes = (String)lobjPolicy.getAt(10);
 		lobjResult.mediatorId = (lobjPolicy.getAt(11) == null ? null : ((UUID)lobjPolicy.getAt(11)).toString());
 		lobjResult.inheritMediatorId = lobjMed.getKey().toString();
