@@ -61,5 +61,11 @@ public class PolicyExerciseData
 
 	public void Describe(StringBuilder pstrBuilder, String pstrLineBreak)
 	{
+		pstrBuilder.append("Exercício: ").append(mstrLabel).append(pstrLineBreak);
+		if ( mdtStart != null )
+			pstrBuilder.append(" De ").append(mdtStart.toString().substring(0, 10));
+		if ( mdtEnd != null )
+			pstrBuilder.append(" Até ").append(mdtEnd.toString().substring(0, 10));
+		pstrBuilder.append(pstrLineBreak);
 	}
 }

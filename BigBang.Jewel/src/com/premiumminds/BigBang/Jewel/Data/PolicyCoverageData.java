@@ -2,9 +2,11 @@ package com.premiumminds.BigBang.Jewel.Data;
 
 import java.util.UUID;
 
+import Jewel.Engine.Engine;
 import Jewel.Engine.SysObjects.ObjectBase;
 
 import com.premiumminds.BigBang.Jewel.BigBangJewelException;
+import com.premiumminds.BigBang.Jewel.Objects.Coverage;
 
 public class PolicyCoverageData
 	implements DataBridge
@@ -55,5 +57,27 @@ public class PolicyCoverageData
 
 	public void Describe(StringBuilder pstrBuilder, String pstrLineBreak)
 	{
+		Coverage lobjCoverage;
+
+		pstrBuilder.append("Cobertura: ");
+		try
+		{
+			lobjCoverage = Coverage.GetInstance(Engine.getCurrentNameSpace(), midCoverage);
+			pstrBuilder.append(lobjCoverage.getLabel());
+		}
+		catch (Throwable e)
+		{
+			pstrBuilder.append("(Erro a obter o nome da cobertura.)");
+		}
+		pstrBuilder.append(pstrLineBreak);
+
+		pstrBuilder.append("Presente na apólice: ");
+		if ( mbPresent == null )
+			pstrBuilder.append("(Não especificado.)");
+		else if ( mbPresent.booleanValue() )
+			pstrBuilder.append("Sim");
+		else
+			pstrBuilder.append("Não");
+		pstrBuilder.append(pstrLineBreak);
 	}
 }

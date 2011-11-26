@@ -3,6 +3,8 @@ package com.premiumminds.BigBang.Jewel.Data;
 import java.sql.Timestamp;
 import java.util.UUID;
 
+import Jewel.Engine.Engine;
+import Jewel.Engine.Constants.ObjectGUIDs;
 import Jewel.Engine.SysObjects.ObjectBase;
 
 import com.premiumminds.BigBang.Jewel.BigBangJewelException;
@@ -77,5 +79,42 @@ public class PolicyObjectData
 
 	public void Describe(StringBuilder pstrBuilder, String pstrLineBreak)
 	{
+		ObjectBase lobjAux;
+
+		pstrBuilder.append("Identificação: ").append(mstrName).append(pstrLineBreak);
+		pstrBuilder.append("Morada de Risco:");
+		pstrBuilder.append(pstrLineBreak);
+		pstrBuilder.append("- ");
+		if ( mstrAddress1 != null )
+			pstrBuilder.append(mstrAddress1);
+		pstrBuilder.append(pstrLineBreak);
+		pstrBuilder.append("- ");
+		if ( mstrAddress2 != null )
+			pstrBuilder.append(mstrAddress2);
+		pstrBuilder.append(pstrLineBreak);
+		pstrBuilder.append("- ");
+		if ( midZipCode != null )
+		{
+			try
+			{
+				lobjAux = Engine.GetWorkInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), ObjectGUIDs.O_PostalCode),
+						midZipCode);
+				pstrBuilder.append((String)lobjAux.getAt(0));
+				pstrBuilder.append(" ");
+				pstrBuilder.append((String)lobjAux.getAt(1));
+				pstrBuilder.append(pstrLineBreak);
+				pstrBuilder.append("- ");
+	        	pstrBuilder.append((String)lobjAux.getAt(4));
+			}
+			catch (Throwable e)
+			{
+				pstrBuilder.append("(Erro a obter o código postal.)");
+			}
+		}
+		pstrBuilder.append(pstrLineBreak);
+		if ( mdtInclusion != null )
+			pstrBuilder.append("Data de Inclusão: ").append(mdtInclusion.toString().substring(0, 10)).append(pstrLineBreak);
+		if ( mdtExclusion != null )
+			pstrBuilder.append("Data de Exclusão: ").append(mdtExclusion.toString().substring(0, 10)).append(pstrLineBreak);
 	}
 }

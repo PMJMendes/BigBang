@@ -38,6 +38,8 @@ public class PolicyData
 	public PolicyExerciseData[] marrExercises;
 	public PolicyValueData[] marrValues;
 
+	public boolean mbModified;
+
 	public PolicyData mobjPrevValues;
 
 	public void Clone(PolicyData pobjSource)
@@ -221,6 +223,6 @@ public class PolicyData
 		pstrBuilder.append(pstrLineBreak);
 
 		if ( (mbCaseStudy != null) && (boolean)mbCaseStudy )
-			pstrBuilder.append("Case Study!");
+			pstrBuilder.append("Case Study!").append(pstrLineBreak);
 	}
 }

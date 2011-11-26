@@ -2,9 +2,13 @@ package com.premiumminds.BigBang.Jewel.Data;
 
 import java.util.UUID;
 
+import Jewel.Engine.Engine;
 import Jewel.Engine.SysObjects.ObjectBase;
 
 import com.premiumminds.BigBang.Jewel.BigBangJewelException;
+import com.premiumminds.BigBang.Jewel.Objects.PolicyExercise;
+import com.premiumminds.BigBang.Jewel.Objects.PolicyObject;
+import com.premiumminds.BigBang.Jewel.Objects.Tax;
 
 public class PolicyValueData
 	implements DataBridge
@@ -68,5 +72,54 @@ public class PolicyValueData
 
 	public void Describe(StringBuilder pstrBuilder, String pstrLineBreak)
 	{
+		Tax lobjTax;
+		PolicyObject lobjObject;
+		PolicyExercise lobjExercise;
+
+		try
+		{
+			lobjTax = Tax.GetInstance(Engine.getCurrentNameSpace(), midField);
+			pstrBuilder.append(lobjTax.getLabel());
+		}
+		catch (Throwable e)
+		{
+			pstrBuilder.append("(Erro a obter o nome do campo.)");
+		}
+
+		if ( midObject != null )
+		{
+			pstrBuilder.append(" [");
+			try
+			{
+				lobjObject = PolicyObject.GetInstance(Engine.getCurrentNameSpace(), midObject);
+				pstrBuilder.append(lobjObject.getLabel());
+			}
+			catch (Throwable e)
+			{
+				pstrBuilder.append("<Erro a obter o objecto correspondente.>");
+			}
+			if ( midExercise != null )
+				pstrBuilder.append(", ");
+			else
+				pstrBuilder.append("]");
+		}
+
+		if ( midExercise != null )
+		{
+			if ( midObject == null )
+				pstrBuilder.append("[");
+			try
+			{
+				lobjExercise = PolicyExercise.GetInstance(Engine.getCurrentNameSpace(), midExercise);
+				pstrBuilder.append(lobjExercise.getLabel());
+			}
+			catch (Throwable e)
+			{
+				pstrBuilder.append("<Erro a obter o exercício correspondente.>");
+			}
+			pstrBuilder.append("]");
+		}
+
+		pstrBuilder.append(": ").append(mstrValue).append(pstrLineBreak);
 	}
 }
