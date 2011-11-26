@@ -187,6 +187,8 @@ public class InsurancePolicyServiceImpl
 			marrExercises = new ArrayList<PadExercise>();
 			marrValues = new ArrayList<PadValue>();
 
+			mobjPolicy.mbModified = false;
+
 			try
 			{
 				larrAuxCoverages = SubLine.GetInstance(Engine.getCurrentNameSpace(), mobjPolicy.midSubLine).GetCurrentCoverages();
@@ -283,6 +285,8 @@ public class InsurancePolicyServiceImpl
 
 				mobjPolicy = new PolicyData();
 				mobjPolicy.FromObject(lobjAuxPolicy);
+
+				mobjPolicy.mbModified = false;
 
 				larrLocalCoverages = lobjAuxPolicy.GetCurrentCoverages();
 				lmapCoverages = new Hashtable<UUID, PadCoverage>();
@@ -842,6 +846,8 @@ public class InsurancePolicyServiceImpl
 			mobjPolicy.midMediator = ( pobjSource.mediatorId == null ? null : UUID.fromString(pobjSource.mediatorId) );
 			mobjPolicy.mbCaseStudy = pobjSource.caseStudy;
 
+			mobjPolicy.mbModified = true;
+
 			mbValid = false;
 
 			j = -1;
@@ -1188,6 +1194,8 @@ public class InsurancePolicyServiceImpl
 
 			lobjData = new PolicyData();
 			lobjData.Clone(mobjPolicy);
+
+			lobjData.mbModified = mobjPolicy.mbModified;
 
 			if ( marrCoverages.size() > 0 )
 			{
