@@ -52,14 +52,75 @@ public class ManagePolicyData
 	public String LongDesc(String pstrLineBreak)
 	{
 		StringBuilder lstrResult;
+		int i;
 
 		lstrResult = new StringBuilder();
 
 		if ( mobjData != null )
 		{
-			lstrResult.append("Novos dados da apólice:");
-			lstrResult.append(pstrLineBreak);
-			mobjData.Describe(lstrResult, pstrLineBreak);
+			if ( mobjData.mbModified )
+			{
+				lstrResult.append("Novos dados da apólice:").append(pstrLineBreak);
+				mobjData.Describe(lstrResult, pstrLineBreak);
+				lstrResult.append(pstrLineBreak);
+			}
+
+			if ( mobjData.marrCoverages != null )
+			{
+				for ( i = 0; i < mobjData.marrCoverages.length; i++ )
+				{
+					if ( mobjData.marrCoverages[i].mbNew )
+						lstrResult.append("Cobertura acrescentada:").append(pstrLineBreak);
+					else
+						lstrResult.append("Cobertura modificada:").append(pstrLineBreak);
+					mobjData.marrCoverages[i].Describe(lstrResult, pstrLineBreak);
+					lstrResult.append(pstrLineBreak);
+				}
+			}
+
+			if ( mobjData.marrObjects != null )
+			{
+				for ( i = 0; i < mobjData.marrObjects.length; i++ )
+				{
+					if ( mobjData.marrObjects[i].mbDeleted )
+						lstrResult.append("Objecto removido:").append(pstrLineBreak);
+					else if ( mobjData.marrObjects[i].mbNew )
+						lstrResult.append("Objecto acrescentado:").append(pstrLineBreak);
+					else
+						lstrResult.append("Objecto modificado:").append(pstrLineBreak);
+					mobjData.marrObjects[i].Describe(lstrResult, pstrLineBreak);
+					lstrResult.append(pstrLineBreak);
+				}
+			}
+
+			if ( mobjData.marrExercises != null )
+			{
+				for ( i = 0; i < mobjData.marrExercises.length; i++ )
+				{
+					if ( mobjData.marrExercises[i].mbDeleted )
+						lstrResult.append("Exercício removido:").append(pstrLineBreak);
+					else if ( mobjData.marrExercises[i].mbNew )
+						lstrResult.append("Exercício acrescentado:").append(pstrLineBreak);
+					else
+						lstrResult.append("Exercício modificado:").append(pstrLineBreak);
+					mobjData.marrExercises[i].Describe(lstrResult, pstrLineBreak);
+					lstrResult.append(pstrLineBreak);
+				}
+			}
+
+			if ( mobjData.marrValues != null )
+			{
+				for ( i = 0; i < mobjData.marrValues.length; i++ )
+				{
+					if ( mobjData.marrValues[i].mbDeleted )
+						lstrResult.append("(Removido) ");
+					if ( mobjData.marrValues[i].mbNew )
+						lstrResult.append("(Novo) ");
+					else
+						lstrResult.append("(Modificado) ");
+					mobjData.marrValues[i].Describe(lstrResult, pstrLineBreak);
+				}
+			}
 		}
 
 		if ( mobjContactOps != null )
@@ -94,19 +155,22 @@ public class ManagePolicyData
 			{
 				lidOwner = mobjData.mid;
 
-				lobjAux = Policy.GetInstance(Engine.getCurrentNameSpace(), mobjData.mid);
+				if ( mobjData.mbModified )
+				{
+					lobjAux = Policy.GetInstance(Engine.getCurrentNameSpace(), mobjData.mid);
 
-				mobjData.mobjPrevValues = new PolicyData();
-				mobjData.mobjPrevValues.FromObject(lobjAux);
-				mobjData.mobjPrevValues.mobjPrevValues = null;
+					mobjData.mobjPrevValues = new PolicyData();
+					mobjData.mobjPrevValues.FromObject(lobjAux);
+					mobjData.mobjPrevValues.mobjPrevValues = null;
 
-				mobjData.midManager = GetProcess().GetManagerID();
-				if ( (Integer)Engine.GetWorkInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), Constants.ObjID_PolicyStatus),
-						mobjData.midStatus).getAt(1) > 0 )
-					mobjData.midCompany = mobjData.mobjPrevValues.midCompany;
-				mobjData.midSubLine = mobjData.mobjPrevValues.midSubLine;
-				mobjData.ToObject(lobjAux);
-				lobjAux.SaveToDb(pdb);
+					mobjData.midManager = GetProcess().GetManagerID();
+					if ( (Integer)Engine.GetWorkInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), Constants.ObjID_PolicyStatus),
+							mobjData.midStatus).getAt(1) > 0 )
+						mobjData.midCompany = mobjData.mobjPrevValues.midCompany;
+					mobjData.midSubLine = mobjData.mobjPrevValues.midSubLine;
+					mobjData.ToObject(lobjAux);
+					lobjAux.SaveToDb(pdb);
+				}
 
 				if ( mobjData.marrCoverages != null )
 				{
@@ -277,14 +341,75 @@ public class ManagePolicyData
 	public String UndoLongDesc(String pstrLineBreak)
 	{
 		StringBuilder lstrResult;
+		int i;
 
 		lstrResult = new StringBuilder();
 
 		if ( mobjData != null )
 		{
-			lstrResult.append("Os dados anteriores foram repostos:");
-			lstrResult.append(pstrLineBreak);
-			mobjData.mobjPrevValues.Describe(lstrResult, pstrLineBreak);
+			if ( mobjData.mbModified )
+			{
+				lstrResult.append("Os dados anteriores foram repostos:");
+				lstrResult.append(pstrLineBreak);
+				mobjData.mobjPrevValues.Describe(lstrResult, pstrLineBreak);
+			}
+
+			if ( mobjData.marrCoverages != null )
+			{
+				for ( i = 0; i < mobjData.marrCoverages.length; i++ )
+				{
+					if ( mobjData.marrCoverages[i].mbNew )
+						lstrResult.append("Cobertura removida:").append(pstrLineBreak);
+					else
+						lstrResult.append("Dados de cobertura repostos:").append(pstrLineBreak);
+					mobjData.marrCoverages[i].Describe(lstrResult, pstrLineBreak);
+					lstrResult.append(pstrLineBreak);
+				}
+			}
+
+			if ( mobjData.marrObjects != null )
+			{
+				for ( i = 0; i < mobjData.marrObjects.length; i++ )
+				{
+					if ( mobjData.marrObjects[i].mbDeleted )
+						lstrResult.append("Objecto reposto:").append(pstrLineBreak);
+					else if ( mobjData.marrObjects[i].mbNew )
+						lstrResult.append("Objecto removido:").append(pstrLineBreak);
+					else
+						lstrResult.append("Dados do objecto repostos:").append(pstrLineBreak);
+					mobjData.marrObjects[i].Describe(lstrResult, pstrLineBreak);
+					lstrResult.append(pstrLineBreak);
+				}
+			}
+
+			if ( mobjData.marrExercises != null )
+			{
+				for ( i = 0; i < mobjData.marrExercises.length; i++ )
+				{
+					if ( mobjData.marrExercises[i].mbDeleted )
+						lstrResult.append("Exercício reposto:").append(pstrLineBreak);
+					else if ( mobjData.marrExercises[i].mbNew )
+						lstrResult.append("Exercício removido:").append(pstrLineBreak);
+					else
+						lstrResult.append("Dados do exercício repostos:").append(pstrLineBreak);
+					mobjData.marrExercises[i].Describe(lstrResult, pstrLineBreak);
+					lstrResult.append(pstrLineBreak);
+				}
+			}
+
+			if ( mobjData.marrValues != null )
+			{
+				for ( i = 0; i < mobjData.marrValues.length; i++ )
+				{
+					if ( mobjData.marrValues[i].mbDeleted )
+						lstrResult.append("(Reposto) ");
+					if ( mobjData.marrValues[i].mbNew )
+						lstrResult.append("(Removido) ");
+					else
+						lstrResult.append("(Valor reposto) ");
+					mobjData.marrValues[i].Describe(lstrResult, pstrLineBreak);
+				}
+			}
 		}
 
 		if ( mobjContactOps != null )
@@ -301,6 +426,11 @@ public class ManagePolicyData
 	{
 		Policy lobjAux;
 		UUID lidOwner;
+		PolicyCoverage lobjCoverage;
+		PolicyObject lobjObject;
+		PolicyExercise lobjExercise;
+		PolicyValue lobjValue;
+		int i;
 
 		lidOwner = null;
 		try
@@ -309,10 +439,103 @@ public class ManagePolicyData
 			{
 				lidOwner = mobjData.mid;
 
-				lobjAux = Policy.GetInstance(Engine.getCurrentNameSpace(), mobjData.mid);
+				if ( mobjData.mbModified )
+				{
+					lobjAux = Policy.GetInstance(Engine.getCurrentNameSpace(), mobjData.mid);
 
-				mobjData.mobjPrevValues.ToObject(lobjAux);
-				lobjAux.SaveToDb(pdb);
+					mobjData.mobjPrevValues.ToObject(lobjAux);
+					lobjAux.SaveToDb(pdb);
+				}
+
+				if ( mobjData.marrCoverages != null )
+				{
+					for ( i = 0; i < mobjData.marrCoverages.length; i++ )
+					{
+						if ( mobjData.marrCoverages[i].mbNew )
+						{
+							lobjCoverage = PolicyCoverage.GetInstance(Engine.getCurrentNameSpace(), mobjData.marrCoverages[i].mid);
+							lobjCoverage.getDefinition().Delete(pdb, lobjCoverage.getKey());
+						}
+						else
+						{
+							lobjCoverage = PolicyCoverage.GetInstance(Engine.getCurrentNameSpace(), mobjData.marrCoverages[i].mid);
+							mobjData.marrCoverages[i].mobjPrevValues.ToObject(lobjCoverage);
+							lobjCoverage.SaveToDb(pdb);
+						}
+					}
+				}
+
+				if ( mobjData.marrObjects != null )
+				{
+					for ( i = 0; i < mobjData.marrObjects.length; i++ )
+					{
+						if ( mobjData.marrObjects[i].mbDeleted )
+						{
+							lobjObject = PolicyObject.GetInstance(Engine.getCurrentNameSpace(), (UUID) null);
+							mobjData.marrObjects[i].ToObject(lobjObject);
+							lobjObject.SaveToDb(pdb);
+						}
+						else if ( mobjData.marrObjects[i].mbNew )
+						{
+							lobjObject = PolicyObject.GetInstance(Engine.getCurrentNameSpace(), mobjData.marrObjects[i].mid);
+							lobjObject.getDefinition().Delete(pdb, lobjObject.getKey());
+						}
+						else
+						{
+							lobjObject = PolicyObject.GetInstance(Engine.getCurrentNameSpace(), mobjData.marrObjects[i].mid);
+							mobjData.marrObjects[i].mobjPrevValues.ToObject(lobjObject);
+							lobjObject.SaveToDb(pdb);
+						}
+					}
+				}
+
+				if ( mobjData.marrExercises != null )
+				{
+					for ( i = 0; i < mobjData.marrExercises.length; i++ )
+					{
+						if ( mobjData.marrExercises[i].mbDeleted )
+						{
+							lobjExercise = PolicyExercise.GetInstance(Engine.getCurrentNameSpace(), (UUID)null);
+							mobjData.marrExercises[i].ToObject(lobjExercise);
+							lobjExercise.SaveToDb(pdb);
+						}
+						else if ( mobjData.marrExercises[i].mbNew )
+						{
+							lobjExercise = PolicyExercise.GetInstance(Engine.getCurrentNameSpace(), mobjData.marrExercises[i].mid);
+							lobjExercise.getDefinition().Delete(pdb, lobjExercise.getKey());
+						}
+						else
+						{
+							lobjExercise = PolicyExercise.GetInstance(Engine.getCurrentNameSpace(), mobjData.marrExercises[i].mid);
+							mobjData.marrExercises[i].mobjPrevValues.ToObject(lobjExercise);
+							lobjExercise.SaveToDb(pdb);
+						}
+					}
+				}
+
+				if ( mobjData.marrValues != null )
+				{
+					for ( i = 0; i < mobjData.marrValues.length; i++ )
+					{
+						if ( mobjData.marrValues[i].mbDeleted )
+						{
+							lobjValue = PolicyValue.GetInstance(Engine.getCurrentNameSpace(), (UUID)null);
+							mobjData.marrValues[i].ToObject(lobjValue);
+							lobjValue.SaveToDb(pdb);
+						}
+						if ( mobjData.marrValues[i].mbNew )
+						{
+							lobjValue = PolicyValue.GetInstance(Engine.getCurrentNameSpace(), mobjData.marrValues[i].mid);
+							lobjValue.getDefinition().Delete(pdb, lobjValue.getKey());
+						}
+						else
+						{
+							lobjValue = PolicyValue.GetInstance(Engine.getCurrentNameSpace(), mobjData.marrValues[i].mid);
+							mobjData.marrValues[i].mobjPrevValues.ToObject(lobjValue);
+							lobjValue.SaveToDb(pdb);
+						}
+					}
+				}
 			}
 
 			if ( mobjContactOps != null )
