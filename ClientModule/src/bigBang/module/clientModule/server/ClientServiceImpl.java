@@ -533,12 +533,6 @@ public class ClientServiceImpl
 
 		try
 		{
-			for ( i = 0; i < transfer.managedProcessIds.length; i++ )
-			{
-				PNProcess.GetInstance(Engine.getCurrentNameSpace(),
-						UUID.fromString(transfer.managedProcessIds[i])).GetValidSteps(ldb);
-			}
-
 			lobjXFer = MgrXFer.GetInstance(Engine.getCurrentNameSpace(), (UUID)null);
 			lobjXFer.setAt(1, null);
 			lobjXFer.setAt(2, lidManager);
