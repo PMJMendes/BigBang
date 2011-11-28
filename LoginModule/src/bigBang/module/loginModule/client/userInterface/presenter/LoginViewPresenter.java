@@ -18,6 +18,8 @@ import bigBang.module.loginModule.interfaces.AuthenticationServiceAsync;
 import bigBang.module.loginModule.shared.LoginResponse;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.HasClickHandlers;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -100,24 +102,24 @@ public class LoginViewPresenter implements ViewPresenter {
 	}
 
 	public void bind() {
-		this.checkLogin("root", "Premium.", "CrediteEGS", new ResponseHandler<Boolean>() {
-
-			@Override
-			public void onResponse(Boolean response) {
-				GWT.log("login success");
-			}
-
-			@Override
-			public void onError(Collection<ResponseError> errors) {
-				GWT.log("login failure");
-			}
-		});
-//		view.getSubmitButton().addClickHandler(new ClickHandler() {//TODO IMPORTANT FJVC
-//			
-//			public void onClick(ClickEvent event) {
-//				checkLogin(view.getUsername().getValue(), view.getPassword().getValue(), view.getDomain(), null);
+//		this.checkLogin("root", "Premium.", "CrediteEGS", new ResponseHandler<Boolean>() {
+//
+//			@Override
+//			public void onResponse(Boolean response) {
+//				GWT.log("login success");
+//			}
+//
+//			@Override
+//			public void onError(Collection<ResponseError> errors) {
+//				GWT.log("login failure");
 //			}
 //		});
+		view.getSubmitButton().addClickHandler(new ClickHandler() {//TODO IMPORTANT FJVC
+			
+			public void onClick(ClickEvent event) {
+				checkLogin(view.getUsername().getValue(), view.getPassword().getValue(), view.getDomain(), null);
+			}
+		});
 	}
 	
 	private void checkIntegrated(){
