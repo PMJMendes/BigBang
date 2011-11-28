@@ -272,7 +272,7 @@ public class InsurancePolicyServiceImpl
 			int i, j, k, l;
 
 			if ( mbValid )
-				throw new BigBangException("Erro: Não pode inicializr o mesmo espaço de trabalho duas vezes.");
+				throw new BigBangException("Erro: Não pode inicializar o mesmo espaço de trabalho duas vezes.");
 
 			marrCoverages = new ArrayList<PadCoverage>();
 			marrObjects = new ArrayList<PadObject>();
@@ -329,10 +329,13 @@ public class InsurancePolicyServiceImpl
 					lobjCoverage.mid = null;
 					lobjCoverage.midOwner = pidPolicy;
 					lobjCoverage.midCoverage = larrAuxCoverages[i].getKey();
-					lobjCoverage.mbPresent = null;
 					lobjCoverage.mstrLabel = larrAuxCoverages[i].getLabel();
 					lobjCoverage.mbIsHeader = larrAuxCoverages[i].IsHeader();
 					lobjCoverage.mbMandatory = larrAuxCoverages[i].IsMandatory();
+					if ( lobjCoverage.mbMandatory )
+						lobjCoverage.mbPresent = true;
+					else
+						lobjCoverage.mbPresent = null;
 					larrTaxes = larrAuxCoverages[i].GetCurrentTaxes();
 					larrFields = new ArrayList<PadField>();
 					for ( j = 0; j < larrTaxes.length; j++ )
@@ -1553,7 +1556,7 @@ public class InsurancePolicyServiceImpl
 			lobjAuxCoverage.coverageId = lobjCoverage.getKey().toString();
 			lobjAuxCoverage.coverageName = lobjCoverage.getLabel();
 			lobjAuxCoverage.mandatory = (Boolean)lobjCoverage.getAt(2);
-			lobjAuxCoverage.presentInPolicy = (Boolean)larrCoverages[i].getAt(2);
+			lobjAuxCoverage.presentInPolicy = (Boolean)larrLocalCoverages[i].getAt(2);
 			larrVariability = new ArrayList<InsurancePolicy.Coverage.Variability>();
 			for ( j = 0; j < larrTaxes.length ; j++ )
 			{
