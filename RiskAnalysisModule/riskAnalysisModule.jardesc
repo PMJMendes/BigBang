@@ -12,7 +12,7 @@
     </manifest>
     <selectedElements exportClassFiles="true" exportJavaFiles="false" exportOutputFolder="false">
         <javaElement handleIdentifier="=RiskAnalysisModule/src&lt;bigBang.module.riskAnalisysModule.server"/>
-        <javaElement handleIdentifier="=RiskAnalysisModule/src&lt;bigBang.module.riskAnalisysModule.shared"/>
         <javaElement handleIdentifier="=RiskAnalysisModule/src&lt;bigBang.module.riskAnalisysModule.interfaces"/>
+        <javaElement handleIdentifier="=RiskAnalysisModule/src&lt;bigBang.module.riskAnalisysModule.shared"/>
     </selectedElements>
 </jardesc>

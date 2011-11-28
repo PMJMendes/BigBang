@@ -11,27 +11,8 @@
         </sealing>
     </manifest>
     <selectedElements exportClassFiles="true" exportJavaFiles="false" exportOutputFolder="false">
-        <javaElement handleIdentifier="=GeneralSystemModule/src&lt;bigBang.module.generalSystemModule.interfaces{MediatorServiceAsync.java"/>
-        <javaElement handleIdentifier="=GeneralSystemModule/src&lt;bigBang.module.generalSystemModule.server{ClientGroupServiceImpl.java"/>
-        <javaElement handleIdentifier="=GeneralSystemModule/src&lt;bigBang.module.generalSystemModule.server{InsuranceAgencyServiceImpl.java"/>
-        <javaElement handleIdentifier="=GeneralSystemModule/src&lt;bigBang.module.generalSystemModule.interfaces{CostCenterService.java"/>
-        <javaElement handleIdentifier="=GeneralSystemModule/src&lt;bigBang.module.generalSystemModule.interfaces{GeneralSystemService.java"/>
-        <javaElement handleIdentifier="=GeneralSystemModule/src&lt;bigBang.module.generalSystemModule.interfaces{CoveragesServiceAsync.java"/>
-        <javaElement handleIdentifier="=GeneralSystemModule/src&lt;bigBang.module.generalSystemModule.server{GeneralSystemServiceImpl.java"/>
-        <javaElement handleIdentifier="=GeneralSystemModule/src&lt;bigBang.module.generalSystemModule.interfaces{MediatorService.java"/>
-        <javaElement handleIdentifier="=GeneralSystemModule/src&lt;bigBang.module.generalSystemModule.shared{ModuleConstants.java"/>
-        <javaElement handleIdentifier="=GeneralSystemModule/src&lt;bigBang.module.generalSystemModule.interfaces{GeneralSystemServiceAsync.java"/>
-        <javaElement handleIdentifier="=GeneralSystemModule/src&lt;bigBang.module.generalSystemModule.interfaces{UserService.java"/>
-        <javaElement handleIdentifier="=GeneralSystemModule/src&lt;bigBang.module.generalSystemModule.server{CostCenterServiceImpl.java"/>
-        <javaElement handleIdentifier="=GeneralSystemModule/src&lt;bigBang.module.generalSystemModule.server{UserServiceImpl.java"/>
-        <javaElement handleIdentifier="=GeneralSystemModule/src&lt;bigBang.module.generalSystemModule.server{MediatorServiceImpl.java"/>
-        <javaElement handleIdentifier="=GeneralSystemModule/src&lt;bigBang.module.generalSystemModule.interfaces{InsuranceAgencyService.java"/>
-        <javaElement handleIdentifier="=GeneralSystemModule/src&lt;bigBang.module.generalSystemModule.interfaces{ClientGroupService.java"/>
-        <javaElement handleIdentifier="=GeneralSystemModule/src&lt;bigBang.module.generalSystemModule.interfaces{ClientGroupServiceAsync.java"/>
-        <javaElement handleIdentifier="=GeneralSystemModule/src&lt;bigBang.module.generalSystemModule.interfaces{UserServiceAsync.java"/>
-        <javaElement handleIdentifier="=GeneralSystemModule/src&lt;bigBang.module.generalSystemModule.interfaces{CoveragesService.java"/>
-        <javaElement handleIdentifier="=GeneralSystemModule/src&lt;bigBang.module.generalSystemModule.interfaces{InsuranceAgencyServiceAsync.java"/>
-        <javaElement handleIdentifier="=GeneralSystemModule/src&lt;bigBang.module.generalSystemModule.server{CoveragesServiceImpl.java"/>
-        <javaElement handleIdentifier="=GeneralSystemModule/src&lt;bigBang.module.generalSystemModule.interfaces{CostCenterServiceAsync.java"/>
+        <javaElement handleIdentifier="=GeneralSystemModule/src&lt;bigBang.module.generalSystemModule.server"/>
+        <javaElement handleIdentifier="=GeneralSystemModule/src&lt;bigBang.module.generalSystemModule.shared"/>
+        <javaElement handleIdentifier="=GeneralSystemModule/src&lt;bigBang.module.generalSystemModule.interfaces"/>
     </selectedElements>
 </jardesc>
