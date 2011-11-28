@@ -155,6 +155,10 @@ public class TaskSearchPanel extends SearchPanel<TaskStub> implements TasksDataB
 
 	@Override
 	public void doSearch() {
+		if(this.workspaceId != null){
+			this.broker.getSearchBroker().disposeSearch(this.workspaceId);
+			this.workspaceId = null;
+		}
 		this.removedIds.clear();
 
 		TaskSearchParameter parameter = new TaskSearchParameter();

@@ -283,17 +283,24 @@ public class InsurancePolicyProcessBrokerImpl extends DataBroker<InsurancePolicy
 			String insuredObjectId, String exerciseId,
 			ResponseHandler<TableSection> handler) {
 		// TODO Auto-generated method stub
-		
 	}
 
 	@Override
 	public void saveCoverageDetailsPage(String policyId,
-			String insuredObjectId, String exerciseId,
-			ResponseHandler<TableSection> handler) {
-		// TODO Auto-generated method stub
-		
-	}
+			String insuredObjectId, String exerciseId, TableSection data,
+			final ResponseHandler<TableSection> handler) {
+		if(inScratchPad(policyId)){
+			policyId = this.getScratchPadId(policyId);
+			this.service.savePage(data, new BigBangAsyncCallback<InsurancePolicy.TableSection>() {
 
+				@Override
+				public void onSuccess(TableSection result) {
+					handler.onResponse(result);
+				}
+			});
+		}
+	}
+	
 	@Override
 	public void createInsuredObject(String policyId, InsuredObject object,
 			ResponseHandler<InsuredObject> handler) {

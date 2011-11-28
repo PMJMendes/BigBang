@@ -37,7 +37,7 @@ public abstract class InsurancePolicyForm extends FormView<InsurancePolicy> {
 	protected static class HeaderFormField extends FormField<String> {
 
 		public String id;
-		protected FormField<?> field;
+		protected FormField<String> field;
 		protected HeaderField headerField;
 		protected String coverageId;
 
@@ -95,8 +95,8 @@ public abstract class InsurancePolicyForm extends FormView<InsurancePolicy> {
 				this.field = radioField;
 				break;
 			case DATE:
-				DatePickerFormField dateField = new DatePickerFormField(field.fieldName);
-				this.field = dateField;
+//				DatePickerFormField dateField = new DatePickerFormField(field.fieldName);
+//				this.field = dateField;
 				break;
 			default:
 				break;
@@ -129,6 +129,16 @@ public abstract class InsurancePolicyForm extends FormView<InsurancePolicy> {
 		@Override
 		public void setFieldWidth(String width) {
 			this.field.setFieldWidth(width);
+		}
+		
+		@Override
+		public void setValue(String value, boolean fireEvents) {
+			this.field.setValue(value, fireEvents);
+		}
+		
+		@Override
+		public String getValue() {
+			return this.field.getValue() == null ? null : this.field.getValue().toString();
 		}
 	}
 
@@ -167,7 +177,7 @@ public abstract class InsurancePolicyForm extends FormView<InsurancePolicy> {
 		addSection("Apólice");
 		number  = new TextBoxFormField("Número");
 		client = new TextBoxFormField("Cliente");
-		number.setFieldWidth("100px");
+		number.setFieldWidth("175px");
 		manager = new ExpandableListBoxFormField(BigBangConstants.EntityIds.USER, "Gestor");
 		insuranceAgency = new ExpandableListBoxFormField(BigBangConstants.EntityIds.INSURANCE_AGENCY, "Seguradora");
 		mediator = new ExpandableListBoxFormField(BigBangConstants.EntityIds.MEDIATOR, "Mediador");
@@ -205,20 +215,26 @@ public abstract class InsurancePolicyForm extends FormView<InsurancePolicy> {
 			maturityDay.addItem(i+"", i+"");
 		}
 
-		addFormField(number);
-		addFormField(client);
+		addFormField(client, false);
+		
+		addFormField(number, true);
+		addFormField(insuranceAgency, false);
+		
+		addFormFieldGroup(new FormField<?>[]{
+				number,
+				insuranceAgency,
+				policyStatus
+		}, true);
 
 		FormField<?>[] group1 = new FormField<?>[]{
-				policyStatus,
 				manager,
 				mediator,
-				insuranceAgency,
-				fractioning
+				fractioning,
+				duration
 		};
 		addFormFieldGroup(group1, true);
 
 		FormField<?>[] group2 = new FormField<?>[]{
-				duration,
 				startDate,
 				endDate,
 				maturityDay,
@@ -322,14 +338,14 @@ public abstract class InsurancePolicyForm extends FormView<InsurancePolicy> {
 			result.maturityMonth = -1;
 		}
 		result.startDate = startDate.getValue() == null ? null : DateTimeFormat.getFormat("yyyy-MM-dd").format(startDate.getValue());
-		result.startDate = endDate.getValue() == null ? null : DateTimeFormat.getFormat("yyyy-MM-dd").format(endDate.getValue());
 		result.durationId = duration.getValue();
 		result.fractioningId = fractioning.getValue();
 		result.caseStudy = caseStudy.getValue();
 		result.notes = notes.getValue();
 
-		//result.headerFields = getHeaderFieldsInfo();
+		result.headerFields = getHeaderFieldsInfo();
 		result.tableData = new TableSection[]{this.table.getData()};
+		result.coverages = this.table.getCoveragesData();
 		//result.extraData = getExtraFieldsInfo();
 
 		return result;
@@ -341,6 +357,7 @@ public abstract class InsurancePolicyForm extends FormView<InsurancePolicy> {
 
 		for(int i = 0; fields != null && i < fields.length; i++) {
 			HeaderFormField field = new HeaderFormField(fields[i]);
+			field.setValue(fields[i].value);
 			field.setFieldWidth("175px");
 			this.headerFieldsSection.addFormField(field, true);
 			this.headerFields.put(fields[i].fieldId, field);
@@ -348,16 +365,15 @@ public abstract class InsurancePolicyForm extends FormView<InsurancePolicy> {
 	}
 
 	protected HeaderField[] getHeaderFieldsInfo(){
-//		HeaderField[] fields = new HeaderField[this.headerFields.size()];
-//		int i = 0;
-//		for(HeaderFormField f : this.headerFields.values()) {
-//			HeaderField headerField = f.headerField;
-//			headerField.value = f.getValue();
-//			fields[i] = headerField;
-//			i++;
-//		}
-//		return fields;
-		return null;
+		HeaderField[] fields = new HeaderField[this.headerFields.size()];
+		int i = 0;
+		for(HeaderFormField f : this.headerFields.values()) {
+			HeaderField headerField = f.headerField;
+			headerField.value = f.getValue();
+			fields[i] = headerField;
+			i++;
+		}
+		return fields;
 	}
 
 	protected void clearHeaderFieldsInfo(){
@@ -379,16 +395,15 @@ public abstract class InsurancePolicyForm extends FormView<InsurancePolicy> {
 	}
 
 	protected ExtraField[] getExtraFieldsInfo(){
-//		ExtraField[] fields = new ExtraField[this.extraFields.size()];
-//		int i = 0;
-//		for(HeaderFormField f : this.extraFields.values()) {
-//			ExtraField extraField = (ExtraField) f.headerField;
-//			extraField.value = f.getValue();
-//			fields[i] = extraField;
-//			i++;
-//		}
-//		return fields;
-		return null;
+		ExtraField[] fields = new ExtraField[this.extraFields.size()];
+		int i = 0;
+		for(HeaderFormField f : this.extraFields.values()) {
+			ExtraField extraField = (ExtraField) f.headerField;
+			extraField.value = f.getValue();
+			fields[i] = extraField;
+			i++;
+		}
+		return fields;
 	}
 
 	protected void clearExtraFields(){
@@ -407,16 +422,19 @@ public abstract class InsurancePolicyForm extends FormView<InsurancePolicy> {
 			this.insuranceAgency.setValue(info.insuranceAgencyId);
 			this.category.setValue(info.categoryId, false);
 
-			this.line.setListId(BigBangConstants.EntityIds.LINE+"/"+info.categoryId, new ResponseHandler<Void>() {
+			String categoryId = info.categoryId == null ? "" : info.categoryId;
+			this.line.setListId(BigBangConstants.EntityIds.LINE+"/"+categoryId, new ResponseHandler<Void>() {
 
 				@Override
 				public void onResponse(Void response) {
-					line.setValue(info.lineId, false);
-					subLine.setListId(BigBangConstants.EntityIds.SUB_LINE+"/"+info.lineId, new ResponseHandler<Void>() {
+					String lineId = info.lineId == null ? "" : info.lineId;
+					line.setValue(lineId, false);
+					subLine.setListId(BigBangConstants.EntityIds.SUB_LINE+"/"+lineId, new ResponseHandler<Void>() {
 
 						@Override
 						public void onResponse(Void response) {
-							subLine.setValue(info.subLineId, false);
+							String subLineId = info.subLineId == null ? "" : info.subLineId;
+							subLine.setValue(subLineId, false);
 						}
 
 						@Override
@@ -449,36 +467,30 @@ public abstract class InsurancePolicyForm extends FormView<InsurancePolicy> {
 				});
 			}
 
-			setHeaderFields(info.headerFields);
-			table.setColumnDefinitions(info.columns);
-			setCoverages(info.coverages);
-			if(info.tableData != null && info.tableData.length > 0){
-				setTableData(info.tableData[0]);
-			}else{
-				clearTableData();
-			}
-			
-			setExtraFields(info.extraData);
-			
-			//table.setData(info.);//TODO
-
-			if(info.startDate != null)
-				startDate.setValue(DateTimeFormat.getFormat("yyyy-MM-dd").parse(info.startDate));
-			if(info.expirationDate != null)
-				endDate.setValue(DateTimeFormat.getFormat("yyyy-MM-dd").parse(info.expirationDate));
 
 			this.policyStatus.setValue(info.statusText);
 			this.caseStudy.setValue(info.caseStudy);
 			this.notes.setValue(info.notes);
+			
+			if(info.startDate != null)
+				startDate.setValue(DateTimeFormat.getFormat("yyyy-MM-dd").parse(info.startDate));
+			if(info.expirationDate != null)
+				endDate.setValue(DateTimeFormat.getFormat("yyyy-MM-dd").parse(info.expirationDate));
+			setHeaderFields(info.headerFields);
+			table.setColumnDefinitions(info.columns);
+			setCoverages(info.coverages);
+			if(info.tableData != null && info.tableData.length > 0){
+				this.table.setData(info.tableData[0]);
+			}else{
+				this.table.clear();
+			}
+			
+			setExtraFields(info.extraData);
 		}
 	}
 	
-	public void setTableData(TableSection data){
-		this.table.setData(data);
-	}
-	
-	public void clearTableData(){
-		this.table.clear();
+	public PolicyFormTable getTable(){
+		return this.table;
 	}
 	
 	protected void setCoverages(Coverage[] coverages){

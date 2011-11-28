@@ -461,6 +461,7 @@ public class ClientChildrenLists {
 		
 		public void setOwner(Client client) {
 			discardOwner();
+			if(client == null) {return;}
 			if(this.isAttached() && client != null){
 				this.broker.registerClient(this, client.processId);
 				

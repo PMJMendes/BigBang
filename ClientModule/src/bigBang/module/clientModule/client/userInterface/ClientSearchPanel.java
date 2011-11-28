@@ -121,6 +121,11 @@ public class ClientSearchPanel extends SearchPanel<ClientStub> implements Client
 
 	@Override
 	public void doSearch() {
+		if(this.workspaceId != null){
+			this.broker.disposeSearch(this.workspaceId);
+			this.workspaceId = null;
+		}
+		
 		SearchParameter[] parameters = new SearchParameter[1];
 		ClientSearchParameter p = new ClientSearchParameter();
 

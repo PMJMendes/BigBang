@@ -12,6 +12,7 @@ import bigBang.definitions.client.response.ResponseHandler;
 import bigBang.definitions.shared.BigBangConstants;
 import bigBang.definitions.shared.Client;
 import bigBang.definitions.shared.InsurancePolicy;
+import bigBang.definitions.shared.InsurancePolicy.TableSection;
 import bigBang.library.client.EventBus;
 import bigBang.library.client.HasEditableValue;
 import bigBang.library.client.Operation;
@@ -34,11 +35,14 @@ public abstract class CreateInsurancePolicyViewPresenter implements
 	public interface Display {
 		HasEditableValue<Client> getClientForm();
 		HasEditableValue<InsurancePolicy> getInsurancePolicyForm();
+		TableSection getCurrentTableSection();	
 		
 		boolean isInsurancePolicyFormValid();
 		
 		public void setActionHandler(ActionInvokedEventHandler<Action> handler);
 		Widget asWidget();
+		String getInsuredObjectFilter();
+		String getExerciseFilter();
 	}
 	
 	protected boolean bound;
@@ -99,22 +103,39 @@ public abstract class CreateInsurancePolicyViewPresenter implements
 				switch(action.getAction()) {
 				
 				case CREATE_POLICY:
-					InsurancePolicy policy = view.getInsurancePolicyForm().getValue();
+					InsurancePolicy policy = view.getInsurancePolicyForm().getInfo();
 					policyBroker.updatePolicy(policy, new ResponseHandler<InsurancePolicy>() {
 
 						@Override
-						public void onResponse(InsurancePolicy response) {
-							policyBroker.commitPolicy(response, new ResponseHandler<InsurancePolicy>() {
+						public void onResponse(final InsurancePolicy response) {
+							String insuredObjectId = view.getInsuredObjectFilter();
+							String exerciseId = view.getExerciseFilter();
+							TableSection data = view.getCurrentTableSection();
+							
+							policyBroker.saveCoverageDetailsPage(response.id, insuredObjectId, exerciseId, data, new ResponseHandler<TableSection>() {
 
 								@Override
-								public void onResponse(InsurancePolicy response) {
-									view.getInsurancePolicyForm().setValue(response);
-									view.getInsurancePolicyForm().setReadOnly(true);
+								public void onResponse(TableSection sectionResponse) {
+									policyBroker.commitPolicy(response, new ResponseHandler<InsurancePolicy>() {
+
+										@Override
+										public void onResponse(InsurancePolicy response) {
+											view.getInsurancePolicyForm().setValue(response);
+											view.getInsurancePolicyForm().setReadOnly(true);
+											onPolicyCreated();
+										}
+
+										@Override
+										public void onError(Collection<ResponseError> errors) {
+											//TODO
+										}
+									});
 								}
 
 								@Override
-								public void onError(Collection<ResponseError> errors) {
-									//TODO
+								public void onError(
+										Collection<ResponseError> errors) {
+									// TODO Auto-generated method stub
 								}
 							});
 						}

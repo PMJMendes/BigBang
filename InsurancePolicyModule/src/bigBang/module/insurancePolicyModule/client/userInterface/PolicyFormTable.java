@@ -1,16 +1,11 @@
 package bigBang.module.insurancePolicyModule.client.userInterface;
 
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
 import bigBang.definitions.shared.BigBangConstants;
 import bigBang.definitions.shared.InsurancePolicy.ColumnHeader;
 import bigBang.definitions.shared.InsurancePolicy.Coverage;
-import bigBang.definitions.shared.InsurancePolicy.ExtraField;
-import bigBang.definitions.shared.InsurancePolicy.FieldType;
-import bigBang.definitions.shared.InsurancePolicy.HeaderField;
 import bigBang.definitions.shared.InsurancePolicy.TableSection;
 import bigBang.definitions.shared.InsurancePolicy.TableSection.TableField;
 import bigBang.library.client.FieldValidator;
@@ -29,10 +24,10 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
 public class PolicyFormTable extends View {
-	
+
 	protected class Field extends FormField<String> {
 		public String id;
-		protected FormField<?> field;
+		protected FormField<String> field;
 		protected TableField tableField;
 		protected String coverageId;
 
@@ -84,9 +79,9 @@ public class PolicyFormTable extends View {
 				this.field = radioField;
 				break;
 			case DATE:
-				DatePickerFormField dateField = new DatePickerFormField();
-				this.field = dateField;
-				break;
+				//				DatePickerFormField dateField = new DatePickerFormField();
+				//				this.field = dateField;
+				//				break;
 			default:
 				break;
 			}
@@ -112,14 +107,24 @@ public class PolicyFormTable extends View {
 		public void setLabelWidth(String width) {
 			this.field.setLabelWidth(width);
 		}
-		
+
 		@Override
 		public void setFieldWidth(String width) {
 			this.field.setFieldWidth(width);
 		}
+
+		@Override
+		public void setValue(String value, boolean fireEvents) {
+			this.field.setValue(value, fireEvents);
+		}
+
+		@Override
+		public String getValue() {
+			return this.field.getValue();
+		}
 	}
-	
-	
+
+
 	protected static final int DATA_COLUMN_OFFSET = 2;
 	protected static final int DATA_ROW_OFFSET = 1;
 
@@ -127,54 +132,54 @@ public class PolicyFormTable extends View {
 	protected ExpandableListBoxFormField exerciseField;
 	protected Widget filtersWrapper;
 	protected boolean forNewPolicy;
-	
+
 	protected Coverage[] coverages;	
 	protected RadioButtonFormField[] radioFields;
 	protected ColumnHeader[] columnDefinitions;
 	protected Map<String, Integer> coverageIndexes;
 	protected String currentPageId;
-	
+
 	protected Map<String, Map<String, Field>> tableFields;
-	
+
 	protected TableSection section;
-	
+
 	protected Grid grid;
 
 	public PolicyFormTable(){
 		this(true);
 	}
-	
+
 	public PolicyFormTable(boolean forNewPolicy){
 		this.forNewPolicy = forNewPolicy;
-		
+
 		columnDefinitions = new ColumnHeader[0];
 		coverageIndexes = new HashMap<String, Integer>();
 		tableFields = new HashMap<String, Map<String,Field>>();
-		
+
 		VerticalPanel wrapper = new VerticalPanel();
 		initWidget(wrapper);
-		
+
 		this.coverages = new Coverage[0];
-		
+
 		HorizontalPanel filtersWrapper = new HorizontalPanel();
 		wrapper.add(filtersWrapper);
 		this.filtersWrapper = filtersWrapper;
-		
+
 		this.insuredObjectField = new ExpandableListBoxFormField("Unidade de Risco");
 		filtersWrapper.add(insuredObjectField);
-		
+
 		this.exerciseField = new ExpandableListBoxFormField("Exercício");
 		filtersWrapper.add(exerciseField);
-		
+
 		grid = new Grid();
 		wrapper.add(grid);
 		grid.setSize("100%", "100%");
 	}
-	
+
 	public String getInsuredObjectFilterValue(){
 		return this.insuredObjectField.getValue();
 	}
-	
+
 	public String getExerciseFilterValue(){
 		return this.exerciseField.getValue();
 	}
@@ -193,15 +198,15 @@ public class PolicyFormTable extends View {
 		this.grid.resize(1, DATA_COLUMN_OFFSET + columns.length);
 		this.grid.setText(0, 0, "Incluir");
 		this.grid.setText(0, 1, "Nome");
-		
+
 		for(int i = 0; i < columns.length; i++) {
 			this.grid.setText(0, DATA_COLUMN_OFFSET + i, columns[i].label + " (" + columns[i].unitsLabel + ")");
 			this.columnDefinitions[i] = columns[i];
 		}
-		
+
 		this.grid.getColumnFormatter().setWidth(0, "110px");
 	}
-	
+
 	public void clear() {
 		//this.columnDefinitions = new 
 	}
@@ -217,11 +222,11 @@ public class PolicyFormTable extends View {
 			this.coverageIndexes.put(coverages[i].coverageId, i);
 		}
 	}
-	
+
 	public void clearRows(){
 		this.grid.resizeRows(DATA_ROW_OFFSET);
 	}
-	
+
 	protected void addCoverageLine(Coverage coverage, final int rfIndex) {
 		Map<String, Field> coverageFields = new HashMap<String, Field>();
 		this.tableFields.put(coverage.coverageId, coverageFields);
@@ -229,7 +234,7 @@ public class PolicyFormTable extends View {
 		int rowCount = this.grid.getRowCount()+1;
 		this.grid.resizeRows(rowCount);
 		int rowIndex = rowCount - 1;
-		
+
 		if(rowIndex % 2 == 1){
 			this.grid.getRowFormatter().getElement(rowIndex).getStyle().setBackgroundColor("#CCC");
 		}
@@ -237,14 +242,16 @@ public class PolicyFormTable extends View {
 		RadioButtonFormField radio = new RadioButtonFormField();
 		radio.addOption("1", "Sim");
 		radio.addOption("0", "Não");
-		if(coverage.presentInPolicy != null && coverage.presentInPolicy){
+
+		if((coverage.mandatory && coverage.presentInPolicy == null) || (coverage.presentInPolicy != null && coverage.presentInPolicy)){
 			radio.setValue("1");
-			if(this.forNewPolicy){
-				radio.setEditable(false);
-			}
+		}else if(coverage.presentInPolicy != null && !coverage.presentInPolicy){
+			radio.setValue("0");
 		}
+		radio.setEditable((!coverage.mandatory) || (coverage.presentInPolicy != null && !coverage.presentInPolicy));
+
 		radio.addValueChangeHandler(new ValueChangeHandler<String>() {
-			
+
 			@Override
 			public void onValueChange(ValueChangeEvent<String> event) {
 				if(event.getValue().equalsIgnoreCase("1")){
@@ -259,18 +266,18 @@ public class PolicyFormTable extends View {
 		this.grid.setText(rowIndex, 1, coverage.coverageName);
 		this.radioFields[rfIndex] = radio;
 	}
-	
+
 	public void setData(TableSection section){
 		if(section == null){return;}
 		this.section = section;
-		
+
 		for(int i = 0; i < section.data.length; i++) {
 			TableField tableField = section.data[i];
 			ColumnHeader column = columnDefinitions[tableField.columnIndex];
 			int coverageIndex = coverageIndexes.get(tableField.coverageId);
-			
+
 			Field field = new Field(tableField, column);
-			
+			field.setValue(tableField.value);
 			Map<String, Field> coverageColumns = this.tableFields.get(tableField.coverageId);
 			coverageColumns.put(tableField.columnIndex+"", field);
 
@@ -280,27 +287,38 @@ public class PolicyFormTable extends View {
 		}
 		refreshFields();
 	}
-	
+
 	public TableSection getData(){
 		for(int i = 0; this.section != null && i < this.section.data.length; i++) {
-			this.section.data[i].value = this.tableFields.get(this.section.data[i].coverageId).get(this.section.data[i].columnIndex+"").getValue();
+			Field field = this.tableFields.get(this.section.data[i].coverageId).get(this.section.data[i].columnIndex+"");
+			this.section.data[i].value = field == null ? null : field.getValue();
 		}
+
 		return this.section;
 	}
-	
+
+	public Coverage[] getCoveragesData(){
+		for(int i = 0; i < this.radioFields.length; i++) {
+			String value = this.radioFields[i].getValue();
+			this.coverages[i].presentInPolicy = value == null ? null : value.equalsIgnoreCase("1") ? true : value.equalsIgnoreCase("0") ? false : null;
+		}
+		return this.coverages;
+	}
+
 	protected void refreshFields(){
 		for(int i = 0; i < this.radioFields.length; i++) {
 			RadioButtonFormField field = this.radioFields[i];
-			if(field.getValue() == null) {
+			String value = field.getValue();
+			if(value == null) {
 				nullifyCoverageAtIndex(i);
-			}else if(field.getValue().equalsIgnoreCase("0")){
+			}else if(value.equalsIgnoreCase("0")){
 				disableCoverageAtIndex(i);
-			}else if(field.getValue().equalsIgnoreCase("1")){
+			}else if(value.equalsIgnoreCase("1")){
 				enableCoverageAtIndex(i);
 			}
 		}
 	}
-	
+
 	protected void disableCoverageAtIndex(int index){
 		this.radioFields[index].setValue("0", false);
 		Coverage coverage = coverages[index];
@@ -311,25 +329,24 @@ public class PolicyFormTable extends View {
 			f.setReadOnly(true);
 		}
 	}
-	
+
 	protected void enableCoverageAtIndex(int index){
 		this.radioFields[index].setValue("1", false);
 		Coverage coverage = coverages[index];
 		Map<String, Field> fields = this.tableFields.get(coverage.coverageId);
 
 		for(Field f : fields.values()) {
-			f.clear();
 			f.setReadOnly(false);
 		}
 	}
-	
+
 	protected void nullifyCoverageAtIndex(int index){
-		enableCoverageAtIndex(index);
+		disableCoverageAtIndex(index);
 		this.radioFields[index].setValue("", false);
 	}
-	
+
 	public void setFilterable(boolean filterable) {
 		this.filtersWrapper.setVisible(filterable);
 	}
-	
+
 }

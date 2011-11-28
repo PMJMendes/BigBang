@@ -11,6 +11,7 @@ import bigBang.definitions.shared.BigBangConstants;
 import bigBang.definitions.shared.Casualty;
 import bigBang.definitions.shared.Client;
 import bigBang.definitions.shared.ClientStub;
+import bigBang.definitions.shared.HistoryItemStub;
 import bigBang.definitions.shared.InfoOrDocumentRequest;
 import bigBang.definitions.shared.QuoteRequest;
 import bigBang.definitions.shared.RiskAnalysis;
@@ -744,6 +745,11 @@ public class ClientSearchOperationView extends View implements ClientSearchOpera
 	@Override
 	public void scrollFormToTop() {
 		this.form.scrollToTop();
+	}
+
+	@Override
+	public HasValueSelectables<HistoryItemStub> getHistoryList() {
+		return this.childrenPanel.historyList;
 	}
 
 }

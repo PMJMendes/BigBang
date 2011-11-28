@@ -92,7 +92,7 @@ public class RadioButtonFormField extends FormField<String> {
 		for(RadioButton r : this.radioButtons.keySet()){
 			r.setEnabled(!readOnly);
 		}
-		mandatoryIndicatorLabel.setVisible(!readOnly);
+		mandatoryIndicatorLabel.setVisible(!readOnly && this.isMandatory());
 	}
 
 	@Override

@@ -21,7 +21,7 @@ public interface InsurancePolicyBroker extends DataBrokerInterface<InsurancePoli
 	
 	public void openCoverageDetailsPage(String policyId, String insuredObjectId, String exerciseId, ResponseHandler<InsurancePolicy.TableSection> handler);
 	
-	public void saveCoverageDetailsPage(String policyId, String insuredObjectId, String exerciseId, ResponseHandler<InsurancePolicy.TableSection> handler);
+	public void saveCoverageDetailsPage(String policyId, String insuredObjectId, String exerciseId, InsurancePolicy.TableSection data, ResponseHandler<InsurancePolicy.TableSection> handler);
 	
 	public void updatePolicy(InsurancePolicy policy, ResponseHandler<InsurancePolicy> handler);
 	

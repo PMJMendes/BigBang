@@ -137,6 +137,11 @@ public class InsurancePolicySearchPanel extends SearchPanel<InsurancePolicyStub>
 
 	@Override
 	public void doSearch() {
+		if(this.workspaceId != null){
+			this.broker.disposeSearch(this.workspaceId);
+			this.workspaceId = null;
+		}
+		
 		this.policiesToRemove.clear();
 		this.policiesToUpdate.clear();
 

@@ -10,6 +10,7 @@ import bigBang.definitions.client.response.ResponseError;
 import bigBang.definitions.client.response.ResponseHandler;
 import bigBang.definitions.shared.BigBangConstants;
 import bigBang.definitions.shared.InsurancePolicy;
+import bigBang.definitions.shared.InsurancePolicy.TableSection;
 import bigBang.definitions.shared.InsurancePolicyStub;
 import bigBang.definitions.shared.Receipt;
 import bigBang.library.client.BigBangPermissionManager;
@@ -52,6 +53,10 @@ public class InsurancePolicySearchOperationViewPresenter implements
 		HasEditableValue<InsurancePolicy> getForm();
 		boolean isFormValid();
 		void lockForm(boolean lock);
+		
+		String getInsuredObjectTableFilter();
+		String getExerciseTableFilter();
+		TableSection getCurrentTablePage();
 
 		//Create receipt
 		void allowCreateReceipt(boolean allow);
@@ -185,11 +190,11 @@ public class InsurancePolicySearchOperationViewPresenter implements
 					updatePolicy(info);
 					break;
 				case EDIT:
-					broker.openPolicyResource(view.getForm().getValue(), new ResponseHandler<InsurancePolicy>() {
+					broker.openPolicyResource(view.getForm().getInfo(), new ResponseHandler<InsurancePolicy>() {
 
 						@Override
 						public void onResponse(InsurancePolicy response) {
-							view.getForm().setValue(response);
+							view.getForm().setInfo(response);
 							view.getForm().setReadOnly(false);
 							view.setSaveModeEnabled(true);
 						}
@@ -203,7 +208,7 @@ public class InsurancePolicySearchOperationViewPresenter implements
 					view.setSaveModeEnabled(false);
 					break;
 				case DELETE:
-					deletePolicy(view.getForm().getValue().id);
+					deletePolicy(view.getForm().getInfo().id);
 					break;
 				case CREATE_RECEIPT:
 					createReceipt();
@@ -213,23 +218,35 @@ public class InsurancePolicySearchOperationViewPresenter implements
 		});
 	}
 	
-	public void updatePolicy(InsurancePolicy policy){
+	public void updatePolicy(final InsurancePolicy policy){
 		this.broker.updatePolicy(policy, new ResponseHandler<InsurancePolicy>() {
 
 			@Override
-			public void onResponse(InsurancePolicy response) {
-				broker.commitPolicy(response, new ResponseHandler<InsurancePolicy>() {
+			public void onResponse(final InsurancePolicy policyResponse) {
+				
+				broker.saveCoverageDetailsPage(policy.id, view.getInsuredObjectTableFilter(), view.getExerciseTableFilter(), view.getCurrentTablePage(), new ResponseHandler<TableSection>() {
 
 					@Override
-					public void onResponse(InsurancePolicy response) {
-						view.getForm().setValue(response);
-						view.getForm().setReadOnly(true);
-						view.setSaveModeEnabled(false);
+					public void onResponse(TableSection response) {
+						broker.commitPolicy(policyResponse, new ResponseHandler<InsurancePolicy>() {
+
+							@Override
+							public void onResponse(InsurancePolicy response) {
+								view.getForm().setValue(response);
+								view.getForm().setReadOnly(true);
+								view.setSaveModeEnabled(false);
+							}
+
+							@Override
+							public void onError(Collection<ResponseError> errors) {
+								//TODO
+							}
+						});
 					}
 
 					@Override
 					public void onError(Collection<ResponseError> errors) {
-						//TODO
+						// TODO Auto-generated method stub
 					}
 				});
 			}

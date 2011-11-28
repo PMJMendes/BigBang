@@ -56,7 +56,7 @@ public abstract class FormField<T> extends View implements HasValue<T>, Validata
 	}
 
 	public void setValue(T value) {
-		setValue(value, true);
+		this.setValue(value, true);
 	}
 
 	public void setValue(T value, boolean fireEvents) {
@@ -116,7 +116,7 @@ public abstract class FormField<T> extends View implements HasValue<T>, Validata
 	 * @param editable if true, the field can be edited
 	 */
 	public void setEditable(boolean editable) {
-		setReadOnly(true);
+		setReadOnly(!editable);
 		this.editable = editable;
 	}
 	

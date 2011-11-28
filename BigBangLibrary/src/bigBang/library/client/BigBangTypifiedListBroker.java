@@ -36,7 +36,7 @@ public class BigBangTypifiedListBroker implements TypifiedListBroker {
 	}
 
 	protected static final String DEPENDENCY_DELIMITER = "/";
-	
+
 	protected final Integer NO_DATA_VERSION = new Integer(0); 
 
 	protected TipifiedListServiceAsync service;
@@ -56,9 +56,14 @@ public class BigBangTypifiedListBroker implements TypifiedListBroker {
 
 	@Override
 	public void registerClient(String listId, TypifiedListClient client) {
-		if(!this.clients.containsKey(listId)){
+		if(!validListId(listId)){
+			return;
+		}
+
+		if(!this.clients.containsKey(listId) && validListId(listId)){
 			this.dataVersions.put(listId, NO_DATA_VERSION);
 			this.lists.put(listId, new ArrayList<TipifiedListItem>());
+
 			refreshListData(listId);
 			this.clients.put(listId, new ArrayList<TypifiedListClient>());
 		}
@@ -73,8 +78,40 @@ public class BigBangTypifiedListBroker implements TypifiedListBroker {
 		client.setTypifiedDataVersionNumber(listDataVersion.intValue());
 	}
 
+	protected boolean validListId(String listId) {
+		if(listId == null){
+			GWT.log("The list id is null");
+			return false;
+		}
+		if(listId.isEmpty()) {
+			GWT.log("The list id is empty");
+			return false;
+		}
+		StringTokenizer tokenizer = new StringTokenizer(listId, DEPENDENCY_DELIMITER);
+		if(!tokenizer.hasMoreTokens()){
+			return false;
+		}
+		final String effectiveListId = tokenizer.nextToken();
+		if(effectiveListId == null){
+			GWT.log("The effective list id is null");
+			return false;
+		}
+		if(tokenizer.hasMoreTokens()){
+			String dependencyListId = tokenizer.nextToken();
+			if(dependencyListId == null || dependencyListId.isEmpty()){
+				return false;
+			}
+		}else if(listId.contains(DEPENDENCY_DELIMITER)){
+			return false;
+		}
+		return true;
+	}
+
 	@Override
 	public void unregisterClient(String listId, TypifiedListClient client) {
+		if(!validListId(listId)) {
+			return;
+		}
 		if(clients.containsKey(listId)){
 			List<TypifiedListClient> clientList = clients.get(listId);
 			clientList.remove(client);
@@ -85,9 +122,12 @@ public class BigBangTypifiedListBroker implements TypifiedListBroker {
 			}
 		}
 	}
-	
+
 	@Override
 	public boolean isClientRegistered(String listId, TypifiedListClient client) {
+		if(!validListId(listId)) {
+			return false;
+		}
 		if(clients.containsKey(listId)){
 			List<TypifiedListClient> clientList = clients.get(listId);
 			return clientList.contains(client);
@@ -97,28 +137,28 @@ public class BigBangTypifiedListBroker implements TypifiedListBroker {
 
 	@Override
 	public void refreshListData(final String listId) {
-		StringTokenizer tokenizer = new StringTokenizer(listId, DEPENDENCY_DELIMITER);
-		if(!tokenizer.hasMoreTokens()){
+		if(!validListId(listId)){
 			return;
 		}
+		StringTokenizer tokenizer = new StringTokenizer(listId, DEPENDENCY_DELIMITER);
 		final String effectiveListId = tokenizer.nextToken();
 		if(tokenizer.hasMoreTokens()){
 			String dependencyListId = tokenizer.nextToken();
-			if(dependencyListId.isEmpty()){
-				BigBangTypifiedListBroker.this.lists.put(listId, new ArrayList<TipifiedListItem>(new ArrayList<TipifiedListItem>()));
-				incrementListDataVersion(listId);
-				updateListClients(listId);
-			}else{
-				this.service.getListItemsFilter(effectiveListId, dependencyListId, new BigBangAsyncCallback<TipifiedListItem[]>() {
-	
-					@Override
-					public void onSuccess(TipifiedListItem[] result) {
-						BigBangTypifiedListBroker.this.lists.put(listId, new ArrayList<TipifiedListItem>(Arrays.asList(result)));
-						incrementListDataVersion(listId);
-						updateListClients(listId);
-					}
-				});
-			}
+			this.service.getListItemsFilter(effectiveListId, dependencyListId, new BigBangAsyncCallback<TipifiedListItem[]>() {
+
+				@Override
+				public void onSuccess(TipifiedListItem[] result) {
+					BigBangTypifiedListBroker.this.lists.put(listId, new ArrayList<TipifiedListItem>(Arrays.asList(result)));
+					incrementListDataVersion(listId);
+					updateListClients(listId);
+				}
+
+				@Override
+				public void onFailure(Throwable caught) {
+					// TODO Auto-generated method stub
+					super.onFailure(caught);
+				}
+			});
 		}else{
 			this.service.getListItems(effectiveListId, new BigBangAsyncCallback<TipifiedListItem[]>() {
 
@@ -138,16 +178,19 @@ public class BigBangTypifiedListBroker implements TypifiedListBroker {
 			throw new RuntimeException("There if no list registered with id \"" + listId + "\"");
 		return this.lists.get(listId);
 	}
-	
+
 	@Override
 	public TipifiedListItem getListItem(String listId, String itemId) {
-			//TODO
+		//TODO
 		return null;
 	}
 
 	@Override
 	public void createListItem(final String listId, TipifiedListItem item, final ResponseHandler<TipifiedListItem> handler) {
-
+		if(!validListId(listId)) {
+			return;
+		}
+		
 		this.service.createListItem(listId, item, new BigBangAsyncCallback<TipifiedListItem>() {
 
 			@Override
@@ -174,6 +217,10 @@ public class BigBangTypifiedListBroker implements TypifiedListBroker {
 
 	@Override
 	public void removeListItem(final String listId, final String itemId, final ResponseHandler<TipifiedListItem> handler) {
+		if(!validListId(listId)) {
+			return;
+		}
+		
 		this.service.deleteListItem(listId, itemId, new BigBangAsyncCallback<Void>() {
 
 			@Override
@@ -211,6 +258,10 @@ public class BigBangTypifiedListBroker implements TypifiedListBroker {
 
 	@Override
 	public void saveListItem(final String listId, final TipifiedListItem item, final ResponseHandler<TipifiedListItem> handler) {
+		if(!validListId(listId)) {
+			return;
+		}
+		
 		this.service.saveListItem(listId, item, new BigBangAsyncCallback<TipifiedListItem>() {
 
 			@Override
@@ -242,6 +293,10 @@ public class BigBangTypifiedListBroker implements TypifiedListBroker {
 	 * @return the version of the list data
 	 */
 	protected Integer getListDataVersion(String listId) {
+		if(!validListId(listId)) {
+			return NO_DATA_VERSION;
+		}
+
 		if(!this.lists.containsKey(listId))
 			throw new RuntimeException("There is no list registered with id \"" + listId + "\"");
 		return this.dataVersions.get(listId);
@@ -253,8 +308,14 @@ public class BigBangTypifiedListBroker implements TypifiedListBroker {
 	 * @param version the new version
 	 */
 	protected void setListDataVersion(String listId, Integer version) {
-		if(!this.lists.containsKey(listId))
+		if(!validListId(listId)) {
+			return;
+		}
+		if(listId == null || !this.lists.containsKey(listId))
 			throw new RuntimeException("There if no list registered with id \"" + listId + "\"");
+		if(version == null || version < NO_DATA_VERSION){
+			throw new RuntimeException("The version is not valid");
+		}
 		this.dataVersions.put(listId, version);
 	}
 
@@ -264,10 +325,15 @@ public class BigBangTypifiedListBroker implements TypifiedListBroker {
 	 * @return the new data version
 	 */
 	protected Integer incrementListDataVersion(String listId) {
+		if(!validListId(listId)) {
+			return NO_DATA_VERSION;
+		}
+
 		if(!this.lists.containsKey(listId))
 			throw new RuntimeException("There if no list registered with id \"" + listId + "\"");
 
-		Integer dataVersion = new Integer(this.dataVersions.get(listId).intValue() + 1);
+		Integer currentVersionNumber = this.dataVersions.get(listId);
+		Integer dataVersion = new Integer(currentVersionNumber.intValue() + 1);
 		setListDataVersion(listId, dataVersion);
 		return dataVersion;
 	}
@@ -277,6 +343,10 @@ public class BigBangTypifiedListBroker implements TypifiedListBroker {
 	 * @param listId the id of the list for which clients will be updated
 	 */
 	protected void updateListClients(String listId){
+		if(!validListId(listId)) {
+			return;
+		}
+
 		if(!this.lists.containsKey(listId))
 			throw new RuntimeException("There if no list registered with id \"" + listId + "\"");
 
@@ -293,6 +363,10 @@ public class BigBangTypifiedListBroker implements TypifiedListBroker {
 	 * @param client the client to update
 	 */
 	protected void updateListClient(String listId, TypifiedListClient client) {
+		if(!validListId(listId)) {
+			return;
+		}
+
 		List<TipifiedListItem> items = this.lists.get(listId);
 		int currentDataVersion = this.dataVersions.get(listId).intValue();		
 

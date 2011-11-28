@@ -18,12 +18,12 @@ public class ClientChildrenPanel extends View implements ClientProcessDataBroker
 	protected Client client;
 	protected int clientDataVersion;
 	
-	protected ClientChildrenLists.ContactsList contactsList;
-	protected ClientChildrenLists.DocumentsList documentsList;
-	protected ClientChildrenLists.InsurancePoliciesList insurancePoliciesList;
-	protected ClientChildrenLists.InfoRequestList requestsList;
-	protected ClientChildrenLists.ManagerTransferList managerTransfersList;
-	protected ClientChildrenLists.HistoryList historyList;
+	public ClientChildrenLists.ContactsList contactsList;
+	public ClientChildrenLists.DocumentsList documentsList;
+	public ClientChildrenLists.InsurancePoliciesList insurancePoliciesList;
+	public ClientChildrenLists.InfoRequestList requestsList;
+	public ClientChildrenLists.ManagerTransferList managerTransfersList;
+	public ClientChildrenLists.HistoryList historyList;
 	
 	public ClientChildrenPanel(){
 		StackPanel wrapper = new StackPanel();
@@ -43,6 +43,12 @@ public class ClientChildrenPanel extends View implements ClientProcessDataBroker
 		wrapper.add(this.requestsList, "Pedidos de Informação");
 		wrapper.add(this.managerTransfersList, "Transferências de Gestor");
 		wrapper.add(this.historyList, "Histórico");
+	}
+	
+	@Override
+	protected void onAttach() {
+		super.onAttach();
+		this.setClient(this.client);
 	}
 	
 	public void setClient(Client client){

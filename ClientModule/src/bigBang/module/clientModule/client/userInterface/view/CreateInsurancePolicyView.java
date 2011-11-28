@@ -7,6 +7,7 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 
 import bigBang.definitions.shared.Client;
 import bigBang.definitions.shared.InsurancePolicy;
+import bigBang.definitions.shared.InsurancePolicy.TableSection;
 import bigBang.library.client.HasEditableValue;
 import bigBang.library.client.event.ActionInvokedEvent;
 import bigBang.library.client.event.ActionInvokedEventHandler;
@@ -74,6 +75,11 @@ public class CreateInsurancePolicyView extends View implements CreateInsurancePo
 	}
 
 	@Override
+	public TableSection getCurrentTableSection(){
+		return this.insurancePolicyForm.getTable().getData();
+	}
+	
+	@Override
 	public boolean isInsurancePolicyFormValid() {
 		return this.insurancePolicyForm.validate();
 	}
@@ -91,6 +97,16 @@ public class CreateInsurancePolicyView extends View implements CreateInsurancePo
 	@Override
 	public void setActionHandler(ActionInvokedEventHandler<Action> handler) {
 		this.actionHandler = handler;
+	}
+
+	@Override
+	public String getInsuredObjectFilter() {
+		return this.insurancePolicyForm.getTable().getInsuredObjectFilterValue();
+	}
+
+	@Override
+	public String getExerciseFilter() {
+		return this.insurancePolicyForm.getTable().getExerciseFilterValue();
 	}
 	
 }

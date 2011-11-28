@@ -10,6 +10,7 @@ import bigBang.definitions.shared.BigBangConstants;
 import bigBang.definitions.shared.Casualty;
 import bigBang.definitions.shared.Client;
 import bigBang.definitions.shared.ClientStub;
+import bigBang.definitions.shared.HistoryItemStub;
 import bigBang.definitions.shared.InfoOrDocumentRequest;
 import bigBang.definitions.shared.ManagerTransfer;
 import bigBang.definitions.shared.QuoteRequest;
@@ -105,8 +106,6 @@ public class ClientSearchOperationViewPresenter implements OperationViewPresente
 		boolean isInfoOrDocumentFormValid();
 		void lockInfoOrDocumentRequestForm(boolean lock);
 
-		void showHistory(Client process);
-
 		void showDeleteForm(boolean show);
 		HasEditableValue<String> getDeleteForm();
 		boolean isDeleteFormValid();
@@ -124,6 +123,10 @@ public class ClientSearchOperationViewPresenter implements OperationViewPresente
 		void allowCreateQuoteRequest(boolean allow);
 		void allowcreateCasualty(boolean allow);
 
+		//History
+		HasValueSelectables<HistoryItemStub> getHistoryList();
+		void showHistory(Client process);
+		
 		//General
 		void clear();
 		void selectClient(Client client);
@@ -299,9 +302,6 @@ public class ClientSearchOperationViewPresenter implements OperationViewPresente
 				case DELETE:
 					deleteClient();
 					break;
-				case SHOW_HISTORY:
-					showHistory();
-					break;
 				case REFRESH:
 					clientBroker.requireDataRefresh();
 					clientBroker.getClient(view.getForm().getValue().id, new ResponseHandler<Client>() {
@@ -440,10 +440,6 @@ public class ClientSearchOperationViewPresenter implements OperationViewPresente
 				});
 			}
 
-			protected void showHistory() {
-				view.showHistory(view.getForm().getValue());
-			}
-
 			protected void deleteClient(){
 				Client client = view.getForm().getValue();
 				if(client == null || client.id == null || client.processId == null) {
@@ -464,6 +460,17 @@ public class ClientSearchOperationViewPresenter implements OperationViewPresente
 				});
 			}
 
+		});
+		this.view.getHistoryList().addSelectionChangedEventHandler(new SelectionChangedEventHandler() {
+			
+			@Override
+			public void onSelectionChanged(SelectionChangedEvent event) {
+				@SuppressWarnings("unchecked")
+				ValueSelectable<HistoryItemStub> vs = (ValueSelectable<HistoryItemStub>) event.getFirstSelected();
+				if(vs != null){
+					view.showHistory(view.getForm().getValue());
+				}
+			}
 		});
 	}
 

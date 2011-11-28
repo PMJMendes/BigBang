@@ -1,6 +1,7 @@
 package bigBang.module.insurancePolicyModule.client.userInterface.view;
 
 import bigBang.definitions.shared.InsurancePolicy;
+import bigBang.definitions.shared.InsurancePolicy.TableSection;
 import bigBang.definitions.shared.InsurancePolicyStub;
 import bigBang.definitions.shared.Receipt;
 import bigBang.library.client.HasEditableValue;
@@ -392,6 +393,21 @@ public class InsurancePolicySearchOperationView extends View implements Insuranc
 	@Override
 	public void allowDelete(boolean allow) {
 		this.operationsToolBar.allowDelete(allow);
+	}
+
+	@Override
+	public String getInsuredObjectTableFilter() {
+		return this.form.getTable().getInsuredObjectFilterValue();
+	}
+
+	@Override
+	public String getExerciseTableFilter() {
+		return this.form.getTable().getExerciseFilterValue();
+	}
+
+	@Override
+	public TableSection getCurrentTablePage() {
+		return this.form.getTable().getData();
 	}
 	
 }
