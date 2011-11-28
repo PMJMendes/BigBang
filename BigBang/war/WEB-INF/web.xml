@@ -71,6 +71,10 @@
 			<param-value>true</param-value> 
 		</init-param>
 		<init-param>
+			<param-name>spnego.allow.delegation</param-name>
+			<param-value>true</param-value> 
+		</init-param>
+		<init-param>
 			<param-name>spnego.allow.localhost</param-name> 
 			<param-value>true</param-value>
 		</init-param>
