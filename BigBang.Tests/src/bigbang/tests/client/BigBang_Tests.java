@@ -29,8 +29,14 @@ public class BigBang_Tests
 
 	private void DoTests()
 	{
-		TestGetPolicy.DoTest();
+//		TestGetPolicy.DoTest();
 //		TestNewPolicy.DoTest();
 //		TestEditPolicy.DoTest();
+//		TestCreateInsuredObject.DoTest();
+//		TestEditInsuredObject.DoTest();
+//		TestDeleteInsuredObject.DoTest();
+//		TestCreateExercise.DoTest();
+//		TestEditExercise.DoTest();
+//		TestDeleteExercise.DoTest();
 	}
 }
