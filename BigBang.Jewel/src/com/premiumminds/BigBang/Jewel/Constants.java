@@ -176,7 +176,7 @@ public class Constants
 	public static final UUID FieldID_Text      = UUID.fromString("49EB6448-E9E6-448A-82A0-9F9601404506");
 
 	// Policy Status Codes
-	public static final UUID StatusID_Provisional = UUID.fromString("6489D7DF-A090-40B9-BD5E-9F98012C8BED");
+	public static final UUID StatusID_InProgress = UUID.fromString("6489D7DF-A090-40B9-BD5E-9F98012C8BED");
 
 	// FK Constants
 	public static final int FKCostCenter_In_UserDecoration = 2;

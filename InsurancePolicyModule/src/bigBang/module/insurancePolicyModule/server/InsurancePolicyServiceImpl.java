@@ -927,8 +927,8 @@ public class InsurancePolicyServiceImpl
 			if ( !mbValid )
 				throw new BigBangException("Ocorreu um erro interno. Os dados correntes não são válidos.");
 
-			if ( mobjPolicy.mid != null )
-				throw new BigBangException("Erro: Operação não suportada para apólices já existentes.");
+			if ( !Constants.StatusID_InProgress.equals(mobjPolicy.midStatus) )
+				throw new BigBangException("Erro: Operação não suportada para apólices já validadas.");
 
 			lobjObject = new PadObject();
 			try
@@ -1057,8 +1057,8 @@ public class InsurancePolicyServiceImpl
 
 			mbValid = false;
 
-			marrObjects.get(plngObject).mbDeleted = false;
-			for ( i = marrValues.size() - 1; i >= 0; i++ )
+			marrObjects.get(plngObject).mbDeleted = true;
+			for ( i = 0; i < marrValues.size(); i++ )
 			{
 				if ( marrValues.get(i).mlngObject == plngObject )
 					marrValues.get(i).mbDeleted = true;
@@ -1077,8 +1077,8 @@ public class InsurancePolicyServiceImpl
 			if ( !mbValid )
 				throw new BigBangException("Ocorreu um erro interno. Os dados correntes não são válidos.");
 
-			if ( mobjPolicy.mid != null )
-				throw new BigBangException("Erro: Operação não suportada para apólices já existentes.");
+			if ( !Constants.StatusID_InProgress.equals(mobjPolicy.midStatus) )
+				throw new BigBangException("Erro: Operação não suportada para apólices já validadas.");
 
 			lobjObject = new PadExercise();
 
@@ -1176,8 +1176,8 @@ public class InsurancePolicyServiceImpl
 
 			mbValid = false;
 
-			marrExercises.get(plngExercise).mbDeleted = false;
-			for ( i = marrValues.size() - 1; i >= 0; i++ )
+			marrExercises.get(plngExercise).mbDeleted = true;
+			for ( i = 0; i < marrValues.size(); i++ )
 			{
 				if ( marrValues.get(i).mlngExercise == plngExercise )
 					marrValues.get(i).mbDeleted = true;
@@ -1348,8 +1348,6 @@ public class InsurancePolicyServiceImpl
 				lopMPD.mobjDocOps = null;
 
 				lopMPD.Execute();
-
-				mobjPolicy.mid = lopMPD.mobjData.mid;
 			}
 			catch (Throwable e)
 			{
@@ -1953,10 +1951,10 @@ public class InsurancePolicyServiceImpl
 		if ( scratchPadId == null )
 			throw new BigBangException("Erro: Espaço de trabalho não existente.");
 
-		if ( listId.equals(Constants.ObjID_PolicyObject) )
+		if ( Constants.ObjID_PolicyObject.equals(UUID.fromString(listId)) )
 			return GetScratchPadStorage().get(UUID.fromString(scratchPadId)).GetObjects();
 
-		if ( listId.equals(Constants.ObjID_PolicyExercise) )
+		if ( Constants.ObjID_PolicyExercise.equals(UUID.fromString(listId)) )
 			return GetScratchPadStorage().get(UUID.fromString(scratchPadId)).GetExercises();
 
 		throw new BigBangException("Erro: Lista inválida para o espaço de trabalho.");

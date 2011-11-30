@@ -94,7 +94,7 @@ public class CreatePolicy
 				mobjData.midManager = Engine.getCurrentUser();
 			if ( mobjData.midMediator == null )
 				mobjData.midMediator = (UUID)GetProcess().GetData().getAt(8);
-			mobjData.midStatus = Constants.StatusID_Provisional;
+			mobjData.midStatus = Constants.StatusID_InProgress;
 
 			lobjPolicy = Policy.GetInstance(Engine.getCurrentNameSpace(), (UUID)null);
 			mobjData.ToObject(lobjPolicy);
