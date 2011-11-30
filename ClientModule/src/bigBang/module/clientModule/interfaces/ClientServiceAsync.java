@@ -22,6 +22,6 @@ public interface ClientServiceAsync
 	void createQuoteRequest(String processId, QuoteRequest request, AsyncCallback<QuoteRequest> callback);
 	void createRiskAnalisys(String clientId, RiskAnalysis riskAnalisys, AsyncCallback<RiskAnalysis> callback);
 	void createCasualty(String clientId, Casualty casualty, AsyncCallback<Casualty> callback);
-	void deleteClient(String clientId, String processId, AsyncCallback<Void> callback);
+	void deleteClient(String clientId, String reason, AsyncCallback<Void> callback);
 	void massCreateManagerTransfer(ManagerTransfer transfer, AsyncCallback<ManagerTransfer> callback);
 }

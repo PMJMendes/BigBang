@@ -27,6 +27,7 @@ public class ExternDeleteClient
 	private static final long serialVersionUID = 1L;
 
 	public UUID midClient;
+	public String mstrReason;
 	private ClientData mobjData;
 	private ContactOps mobjContactOps;
 	private DocOps mobjDocOps;
@@ -61,6 +62,13 @@ public class ExternDeleteClient
 
 		if ( mobjDocOps != null )
 			mobjDocOps.LongDesc(lstrResult, pstrLineBreak);
+
+		lstrResult.append("Razão: ");
+		if ( mstrReason != null )
+			lstrResult.append(mstrReason);
+		else
+			lstrResult.append("(não indicada)");
+		lstrResult.append(pstrLineBreak);
 
 		return lstrResult.toString();
 	}

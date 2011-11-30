@@ -44,7 +44,7 @@ public interface ClientService
 	public RiskAnalysis createRiskAnalisys(String clientId, RiskAnalysis riskAnalisys) throws SessionExpiredException, BigBangException;
 	public Casualty createCasualty(String clientId, Casualty casualty) throws SessionExpiredException, BigBangException;
 
-	public void deleteClient(String clientId, String processId) throws SessionExpiredException, BigBangException;
+	public void deleteClient(String clientId, String reason) throws SessionExpiredException, BigBangException;
 
 	public ManagerTransfer massCreateManagerTransfer(ManagerTransfer transfer) throws SessionExpiredException, BigBangException;
 }

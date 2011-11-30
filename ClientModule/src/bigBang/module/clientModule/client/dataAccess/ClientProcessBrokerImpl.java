@@ -102,30 +102,18 @@ public class ClientProcessBrokerImpl extends DataBroker<Client> implements Clien
 
 	@Override
 	public void removeClient(final String clientId, final ResponseHandler<String> handler) {
-		this.getClient(clientId, new ResponseHandler<Client>() {
+		//TODO Enviar a razão para apagar
+		ClientProcessBrokerImpl.this.service.deleteClient(clientId, null /*reason*/, new BigBangAsyncCallback<Void>() {
 
 			@Override
-			public void onResponse(Client response) {
-				ClientProcessBrokerImpl.this.service.deleteClient(clientId, response.processId, new BigBangAsyncCallback<Void>() {
-
-					@Override
-					public void onSuccess(Void result) {
-						cache.remove(clientId);
-						incrementDataVersion();
-						for(DataBrokerClient<Client> bc : getClients()){
-							((ClientProcessDataBrokerClient) bc).removeClient(clientId);
-							((ClientProcessDataBrokerClient) bc).setDataVersionNumber(BigBangConstants.EntityIds.CLIENT, getCurrentDataVersion());
-						}
-						handler.onResponse(clientId);
-					}
-				});
-
-			}
-
-			@Override
-			public void onError(Collection<ResponseError> errors) {
-				// TODO Auto-generated method stub
-
+			public void onSuccess(Void result) {
+				cache.remove(clientId);
+				incrementDataVersion();
+				for(DataBrokerClient<Client> bc : getClients()){
+					((ClientProcessDataBrokerClient) bc).removeClient(clientId);
+					((ClientProcessDataBrokerClient) bc).setDataVersionNumber(BigBangConstants.EntityIds.CLIENT, getCurrentDataVersion());
+				}
+				handler.onResponse(clientId);
 			}
 		});
 	}

@@ -16,7 +16,8 @@ public class DeleteClient
 {
 	private static final long serialVersionUID = 1L;
 
-	public UUID midClient;
+	public transient UUID midClient;
+	public transient String mstrReason;
 
 	public DeleteClient(UUID pidProcess)
 	{
@@ -58,6 +59,7 @@ public class DeleteClient
 		}
 
 		lopDC.midClient = midClient;
+		lopDC.mstrReason = mstrReason;
 		TriggerOp(lopDC);
 	}
 }

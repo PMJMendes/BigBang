@@ -457,19 +457,24 @@ public class ClientServiceImpl
 		return null;
 	}
 
-	public void deleteClient(String clientId, String processId)
+	public void deleteClient(String clientId, String reason)
 		throws SessionExpiredException, BigBangException
 	{
+		com.premiumminds.BigBang.Jewel.Objects.Client lobjClient;
 		DeleteClient lobjDC;
 
 		if ( Engine.getCurrentUser() == null )
 			throw new SessionExpiredException();
 
-		lobjDC = new DeleteClient(UUID.fromString(processId));
-		lobjDC.midClient = UUID.fromString(clientId);
-
 		try
 		{
+			lobjClient = com.premiumminds.BigBang.Jewel.Objects.Client.GetInstance(Engine.getCurrentNameSpace(),
+					UUID.fromString(clientId));
+
+			lobjDC = new DeleteClient(lobjClient.GetProcessID());
+			lobjDC.midClient = UUID.fromString(clientId);
+			lobjDC.mstrReason = reason;
+
 			lobjDC.Execute();
 		}
 		catch (Throwable e)
