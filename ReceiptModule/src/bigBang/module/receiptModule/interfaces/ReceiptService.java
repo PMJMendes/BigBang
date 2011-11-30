@@ -24,6 +24,8 @@ public interface ReceiptService extends SearchService {
 	}
 	
 	public Receipt getReceipt(String receiptId) throws SessionExpiredException, BigBangException;
-	public void deleteReceipt(String receiptId) throws SessionExpiredException, BigBangException;
+
 	public Receipt editReceipt(Receipt receipt) throws SessionExpiredException, BigBangException;
+
+	public void deleteReceipt(String receiptId) throws SessionExpiredException, BigBangException;
 }

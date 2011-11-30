@@ -2,14 +2,12 @@ package com.premiumminds.BigBang.Jewel.Operations.Policy;
 
 import java.util.UUID;
 
-import Jewel.Engine.Engine;
 import Jewel.Engine.DataAccess.SQLServer;
 import Jewel.Petri.SysObjects.JewelPetriException;
 import Jewel.Petri.SysObjects.Operation;
 
 import com.premiumminds.BigBang.Jewel.Constants;
 import com.premiumminds.BigBang.Jewel.Data.PolicyData;
-import com.premiumminds.BigBang.Jewel.Objects.GeneralSystem;
 import com.premiumminds.BigBang.Jewel.Operations.Client.ExternDeletePolicy;
 
 public class DeletePolicy
@@ -51,7 +49,7 @@ public class DeletePolicy
 
 		try
 		{
-			lobjOp = new ExternDeletePolicy(GeneralSystem.GetAnyInstance(Engine.getCurrentNameSpace()).GetProcessID());
+			lobjOp = new ExternDeletePolicy(GetProcess().GetParent().getKey());
 			lobjOp.mobjData = new PolicyData();
 			lobjOp.mobjData.mid = midPolicy;
 			TriggerOp(lobjOp);

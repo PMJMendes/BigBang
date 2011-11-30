@@ -9,7 +9,8 @@ public class ReceiptSortParameter extends SortParameter {
 	
 	public static enum SortableField
 	{
-		RELEVANCE
+		RELEVANCE,
+		NUMBER
 	}
 	
 	public ReceiptSortParameter(){}

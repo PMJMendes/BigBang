@@ -10,5 +10,6 @@
 	<classpathentry kind="con" path="com.google.gwt.eclipse.core.GWT_CONTAINER"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/Jewel.Web.Filter"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/spnego"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/ReceiptModule"/>
 	<classpathentry kind="output" path="war/WEB-INF/classes"/>
 </classpath>

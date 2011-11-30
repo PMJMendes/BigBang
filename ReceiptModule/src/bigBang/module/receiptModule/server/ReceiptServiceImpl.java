@@ -5,6 +5,8 @@ import java.sql.Timestamp;
 import java.util.UUID;
 
 import Jewel.Engine.Engine;
+import Jewel.Engine.Implementation.Entity;
+import Jewel.Engine.Interfaces.IEntity;
 import Jewel.Engine.SysObjects.ObjectBase;
 import Jewel.Petri.Interfaces.IProcess;
 import Jewel.Petri.Objects.PNProcess;
@@ -12,11 +14,14 @@ import bigBang.definitions.shared.Receipt;
 import bigBang.definitions.shared.ReceiptStub;
 import bigBang.definitions.shared.SearchParameter;
 import bigBang.definitions.shared.SearchResult;
+import bigBang.definitions.shared.SortOrder;
 import bigBang.definitions.shared.SortParameter;
 import bigBang.library.server.SearchServiceBase;
 import bigBang.library.shared.BigBangException;
 import bigBang.library.shared.SessionExpiredException;
 import bigBang.module.receiptModule.interfaces.ReceiptService;
+import bigBang.module.receiptModule.shared.ReceiptSearchParameter;
+import bigBang.module.receiptModule.shared.ReceiptSortParameter;
 
 import com.premiumminds.BigBang.Jewel.Constants;
 import com.premiumminds.BigBang.Jewel.Data.ReceiptData;
@@ -104,7 +109,7 @@ public class ReceiptServiceImpl
 			((Timestamp)lobjReceipt.getAt(10)).toString().substring(0, 10));
 		lobjResult.dueDate = (lobjReceipt.getAt(11) == null ? null :
 			((Timestamp)lobjReceipt.getAt(11)).toString().substring(0, 10));
-		lobjResult.mediatorId = (lobjReceipt.getAt(12) == null ? null : ((UUID)lobjReceipt.getAt(13)).toString());
+		lobjResult.mediatorId = (lobjReceipt.getAt(12) == null ? null : ((UUID)lobjReceipt.getAt(12)).toString());
 		lobjResult.inheritMediatorId = lobjMed.getKey().toString();
 		lobjResult.inheritMediatorName = lobjMed.getLabel();
 		lobjResult.notes = (String)lobjReceipt.getAt(13);
@@ -127,7 +132,7 @@ public class ReceiptServiceImpl
 			lopMRD = new ManageReceiptData(UUID.fromString(receipt.processId));
 			lopMRD.mobjData = new ReceiptData();
 
-			lopMRD.mobjData.mid = null;
+			lopMRD.mobjData.mid = UUID.fromString(receipt.id);
 
 			lopMRD.mobjData.mstrNumber = receipt.number;
 			lopMRD.mobjData.midType = UUID.fromString(receipt.typeId);
@@ -147,9 +152,9 @@ public class ReceiptServiceImpl
 			lopMRD.mobjData.midMediator = ( receipt.mediatorId == null ? null : UUID.fromString(receipt.mediatorId) );
 			lopMRD.mobjData.mstrNotes = receipt.notes;
 			lopMRD.mobjData.mstrDescription = receipt.description;
+			lopMRD.mobjData.midProcess = UUID.fromString(receipt.processId);
 
 			lopMRD.mobjData.midManager = null;
-			lopMRD.mobjData.midProcess = null;
 
 			lopMRD.mobjData.mobjPrevValues = null;
 
@@ -163,14 +168,13 @@ public class ReceiptServiceImpl
 			throw new BigBangException(e.getMessage(), e);
 		}
 
-		receipt.managerId = lopMRD.mobjData.midManager.toString();
-		return receipt;
+		return getReceipt(receipt.id);
 	}
 
 	public void deleteReceipt(String receiptId)
 		throws SessionExpiredException, BigBangException
 	{
-		com.premiumminds.BigBang.Jewel.Objects.Receipt lobjPolicy;
+		com.premiumminds.BigBang.Jewel.Objects.Receipt lobjReceipt;
 		DeleteReceipt lopDP;
 
 		if ( Engine.getCurrentUser() == null )
@@ -178,10 +182,10 @@ public class ReceiptServiceImpl
 
 		try
 		{
-			lobjPolicy = com.premiumminds.BigBang.Jewel.Objects.Receipt.GetInstance(Engine.getCurrentNameSpace(),
+			lobjReceipt = com.premiumminds.BigBang.Jewel.Objects.Receipt.GetInstance(Engine.getCurrentNameSpace(),
 					UUID.fromString(receiptId));
 
-			lopDP = new DeleteReceipt(lobjPolicy.GetProcessID());
+			lopDP = new DeleteReceipt(lobjReceipt.GetProcessID());
 			lopDP.midReceipt = UUID.fromString(receiptId);
 			lopDP.Execute();
 		}
@@ -204,13 +208,63 @@ public class ReceiptServiceImpl
 	protected boolean buildFilter(StringBuilder pstrBuffer, SearchParameter pParam)
 		throws BigBangException
 	{
-		return false;
+		ReceiptSearchParameter lParam;
+		String lstrAux;
+		IEntity lrefPolicies;
+
+		if ( !(pParam instanceof ReceiptSearchParameter) )
+			return false;
+		lParam = (ReceiptSearchParameter)pParam;
+
+		if ( (lParam.freeText != null) && (lParam.freeText.trim().length() > 0) )
+		{
+			lstrAux = lParam.freeText.trim().replace("'", "''").replace(" ", "%");
+			pstrBuffer.append(" AND ([:Number] LIKE N'%").append(lstrAux).append("%')");
+		}
+
+		if ( lParam.ownerId != null )
+		{
+			pstrBuffer.append(" AND [:Process:Parent] IN (SELECT [:Process] FROM (");
+			try
+			{
+				lrefPolicies = Entity.GetInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), Constants.ObjID_Policy));
+				pstrBuffer.append(lrefPolicies.SQLForSelectMulti());
+			}
+			catch (Throwable e)
+			{
+        		throw new BigBangException(e.getMessage(), e);
+			}
+			pstrBuffer.append(") [AuxOwner] WHERE [:Process:Data] = '").append(lParam.ownerId).append("')");
+		}
+
+		return true;
 	}
 
 	protected boolean buildSort(StringBuilder pstrBuffer, SortParameter pParam, SearchParameter[] parrParams)
 		throws BigBangException
 	{
-		return false;
+		ReceiptSortParameter lParam;
+
+		if ( !(pParam instanceof ReceiptSortParameter) )
+			return false;
+		lParam = (ReceiptSortParameter)pParam;
+
+		if ( lParam.field == ReceiptSortParameter.SortableField.RELEVANCE )
+		{
+			if ( !buildRelevanceSort(pstrBuffer, parrParams) )
+				return false;
+		}
+
+		if ( lParam.field == ReceiptSortParameter.SortableField.NUMBER )
+			pstrBuffer.append("[:Number]");
+
+		if ( lParam.order == SortOrder.ASC )
+			pstrBuffer.append(" ASC");
+
+		if ( lParam.order == SortOrder.DESC )
+			pstrBuffer.append(" DESC");
+
+		return true;
 	}
 
 	protected SearchResult buildResult(UUID pid, Object[] parrValues)
@@ -305,5 +359,34 @@ public class ReceiptServiceImpl
 		lobjResult.description = (String)parrValues[5];
 		lobjResult.processId = (lobjProcess == null ? null : lobjProcess.getKey().toString());
 		return lobjResult;
+	}
+
+	private boolean buildRelevanceSort(StringBuilder pstrBuffer, SearchParameter[] parrParams)
+		throws BigBangException
+	{
+		ReceiptSearchParameter lParam;
+		String lstrAux;
+		boolean lbFound;
+		int i;
+
+		if ( (parrParams == null) || (parrParams.length == 0) )
+			return false;
+
+		lbFound = false;
+		for ( i = 0; i < parrParams.length; i++ )
+		{
+			if ( !(parrParams[i] instanceof ReceiptSearchParameter) )
+				continue;
+			lParam = (ReceiptSearchParameter) parrParams[i];
+			if ( (lParam.freeText == null) || (lParam.freeText.trim().length() == 0) )
+				continue;
+			lstrAux = lParam.freeText.trim().replace("'", "''").replace(" ", "%");
+			if ( lbFound )
+				pstrBuffer.append(" + ");
+			lbFound = true;
+			pstrBuffer.append("-PATINDEX(N'%").append(lstrAux).append("%', [:Number])");
+		}
+
+		return lbFound;
 	}
 }

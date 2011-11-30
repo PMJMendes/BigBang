@@ -2,14 +2,12 @@ package com.premiumminds.BigBang.Jewel.Operations.Receipt;
 
 import java.util.UUID;
 
-import Jewel.Engine.Engine;
 import Jewel.Engine.DataAccess.SQLServer;
 import Jewel.Petri.SysObjects.JewelPetriException;
 import Jewel.Petri.SysObjects.Operation;
 
 import com.premiumminds.BigBang.Jewel.Constants;
 import com.premiumminds.BigBang.Jewel.Data.ReceiptData;
-import com.premiumminds.BigBang.Jewel.Objects.GeneralSystem;
 import com.premiumminds.BigBang.Jewel.Operations.Policy.ExternDeleteReceipt;
 
 public class DeleteReceipt
@@ -51,7 +49,7 @@ public class DeleteReceipt
 
 		try
 		{
-			lobjOp = new ExternDeleteReceipt(GeneralSystem.GetAnyInstance(Engine.getCurrentNameSpace()).GetProcessID());
+			lobjOp = new ExternDeleteReceipt(GetProcess().GetParent().getKey());
 			lobjOp.mobjData = new ReceiptData();
 			lobjOp.mobjData.mid = midReceipt;
 			TriggerOp(lobjOp);

@@ -1,0 +1,9 @@
+<servlet>
+	<servlet-name>ReceiptService</servlet-name>
+	<servlet-class>bigBang.module.receiptModule.server.ReceiptServiceImpl</servlet-class>
+</servlet>
+
+<servlet-mapping>
+	<servlet-name>ReceiptService</servlet-name>
+	<url-pattern>/bigbang_tests/ReceiptService</url-pattern>
+</servlet-mapping>
