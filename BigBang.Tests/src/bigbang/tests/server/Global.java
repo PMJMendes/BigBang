@@ -15,7 +15,16 @@ public class Global
 {
 	public void contextInitialized(ServletContextEvent e)
 	{
-        try
+//		try
+//		{
+//			HelloKDC.doKDC(null);
+//		}
+//		catch (Throwable e1)
+//		{
+//			return;
+//		}
+
+		try
         {
 			Engine.InitEngine(new EngineImplementor(e.getServletContext()));
 		}

@@ -40,14 +40,15 @@
 	<!-- -->
 	<filter>
 		<filter-name>JewelWebFilter</filter-name>
-		<filter-class>Jewel.Web.Filter.JewelWebHttpFilter</filter-class> 
+		<filter-class>net.sourceforge.spnego.SpnegoHttpFilter</filter-class>
+		<!-- <filter-class>Jewel.Web.Filter.JewelWebHttpFilter</filter-class> -->
 		<init-param>
 			<param-name>spnego.allow.basic</param-name>
-			<param-value>true</param-value> 
+			<param-value>false</param-value> 
 		</init-param>
 		<init-param>
-			<param-name>spnego.allow.delegation</param-name>
-			<param-value>true</param-value> 
+			<param-name>spnego.allow.delegation</param-name> 
+			<param-value>true</param-value>
 		</init-param>
 		<init-param>
 			<param-name>spnego.allow.localhost</param-name> 
@@ -83,7 +84,7 @@
 		</init-param>
 		<init-param>
 			<param-name>spnego.prompt.ntlm</param-name> 
-			<param-value>true</param-value>
+			<param-value>false</param-value>
 		</init-param>
 		<init-param>
 			<param-name>spnego.logger.level</param-name> 
