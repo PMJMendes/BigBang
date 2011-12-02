@@ -10,7 +10,14 @@ public class ReceiptSortParameter extends SortParameter {
 	public static enum SortableField
 	{
 		RELEVANCE,
-		NUMBER
+		TYPE,
+		NUMBER,
+		CLIENT,
+		SUB_LINE,
+		EMISSION_DATE,
+		LIMIT_DATE,
+		MATURITY_DATE,
+		PAYMENT_DATE
 	}
 	
 	public ReceiptSortParameter(){}
