@@ -18,6 +18,7 @@ public class ReceiptStub
 	public String subLineId;
 	public String subLineName;
 	public String typeId;
+	public String typeName;
 	public String totalPremium;
 	public String maturityDate;
 	public String description;
