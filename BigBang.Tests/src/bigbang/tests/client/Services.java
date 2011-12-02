@@ -1,5 +1,7 @@
 package bigbang.tests.client;
 
+import bigBang.module.clientModule.interfaces.ClientService;
+import bigBang.module.clientModule.interfaces.ClientServiceAsync;
 import bigBang.module.insurancePolicyModule.interfaces.InsurancePolicyService;
 import bigBang.module.insurancePolicyModule.interfaces.InsurancePolicyServiceAsync;
 import bigBang.module.loginModule.interfaces.AuthenticationService;
@@ -13,6 +15,8 @@ public class Services
 {
 	public static final AuthenticationServiceAsync authenticationService =
 			GWT.create(AuthenticationService.class);
+	public static final ClientServiceAsync clientService =
+			GWT.create(ClientService.class);
 	public static final InsurancePolicyServiceAsync insurancePolicyService =
 			GWT.create(InsurancePolicyService.class);
 	public static final ReceiptServiceAsync receiptService =

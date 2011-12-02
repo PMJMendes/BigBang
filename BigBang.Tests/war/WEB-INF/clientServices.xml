@@ -1,0 +1,9 @@
+<servlet>
+	<servlet-name>ClientService</servlet-name>
+	<servlet-class>bigBang.module.clientModule.server.ClientServiceImpl</servlet-class>
+</servlet>
+
+<servlet-mapping>
+	<servlet-name>ClientService</servlet-name>
+	<url-pattern>/bigbang_tests/ClientService</url-pattern>
+</servlet-mapping>
