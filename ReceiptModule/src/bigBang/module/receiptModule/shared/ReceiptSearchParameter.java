@@ -8,4 +8,20 @@ public class ReceiptSearchParameter
 	private static final long serialVersionUID = 1L;
 
 	public String ownerId;
+	public String[] typeIds;
+	
+	//Dates
+	public String emitedFrom;
+	public String emitedTo;
+	public String maturityFrom;
+	public String maturityTo;
+	public String paymentFrom;
+	public String paymentTo;
+	
+	public String categoryId;
+	public String lineId;
+	public String subLineId;
+	
+	
+	
 }
