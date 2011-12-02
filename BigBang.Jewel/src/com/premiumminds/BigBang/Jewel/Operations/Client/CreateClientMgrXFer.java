@@ -122,7 +122,7 @@ public class CreateClientMgrXFer
     			mbDirectTransfer = true;
     			midClient = GetProcess().GetData().getKey();
     			GetProcess().SetManagerID(midNewManager, pdb);
-    			TriggerOp(new TriggerAllowUndoClientMgrXFer(GetProcess().getKey()));
+    			TriggerOp(new TriggerAllowUndoClientMgrXFer(GetProcess().getKey()), pdb);
 	    		try
 	    		{
 					lobjItem = AgendaItem.GetInstance(Engine.getCurrentNameSpace(), (UUID)null);

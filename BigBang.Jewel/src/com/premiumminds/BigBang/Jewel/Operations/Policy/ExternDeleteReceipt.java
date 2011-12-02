@@ -87,11 +87,9 @@ public class ExternDeleteReceipt
 			mobjData.FromObject(lobjAux);
 			mobjData.mobjPrevValues = null;
 
-			lobjProcess = (PNProcess)Engine.GetWorkInstance(Engine.FindEntity(Engine.getCurrentNameSpace(),
-					Jewel.Petri.Constants.ObjID_PNProcess), mobjData.midProcess);
-			lobjProcess.setAt(1, null);
-			lobjProcess.setAt(4, false);
-			lobjProcess.SaveToDb(pdb);
+			lobjProcess = PNProcess.GetInstance(Engine.getCurrentNameSpace(), mobjData.midProcess);
+			lobjProcess.Stop(pdb);
+			lobjProcess.SetDataObjectID(null, pdb);
 
 			larrContacts = lobjAux.GetCurrentContacts();
 			if ( (larrContacts == null) || (larrContacts.length == 0) )
@@ -168,11 +166,9 @@ public class ExternDeleteReceipt
 			lobjAux.SaveToDb(pdb);
 			mobjData.mid = lobjAux.getKey();
 
-			lobjProcess = (PNProcess)Engine.GetWorkInstance(Engine.FindEntity(Engine.getCurrentNameSpace(),
-					Jewel.Petri.Constants.ObjID_PNProcess), mobjData.midProcess);
-			lobjProcess.setAt(1, lobjAux.getKey());
-			lobjProcess.setAt(4, true);
-			lobjProcess.SaveToDb(pdb);
+			lobjProcess = PNProcess.GetInstance(Engine.getCurrentNameSpace(), mobjData.midProcess);
+			lobjProcess.SetDataObjectID(lobjAux.getKey(), pdb);
+			lobjProcess.Restart(pdb);
 
 			if ( mobjContactOps != null )
 				mobjContactOps.UndoSubOp(pdb, lobjAux.getKey());

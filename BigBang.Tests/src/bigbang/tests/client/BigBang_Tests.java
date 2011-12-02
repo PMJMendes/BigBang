@@ -29,6 +29,9 @@ public class BigBang_Tests
 
 	private void DoTests()
 	{
+//		TestCreateClient.DoTest();
+//		TestEditClient.DoTest();
+//		TestDeleteClient.DoTest();
 //		TestGetPolicy.DoTest();
 //		TestNewPolicy.DoTest();
 //		TestEditPolicy.DoTest();

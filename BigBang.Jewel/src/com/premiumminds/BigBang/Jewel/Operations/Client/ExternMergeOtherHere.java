@@ -104,8 +104,7 @@ public class ExternMergeOtherHere
 			mobjSource.FromObject(lobjAux);
 			mobjSource.mobjPrevValues = null;
 
-			lobjProcess = (PNProcess)Engine.GetWorkInstance(Engine.FindEntity(Engine.getCurrentNameSpace(),
-					Jewel.Petri.Constants.ObjID_PNProcess), mobjSource.midProcess);
+			lobjProcess = PNProcess.GetInstance(Engine.getCurrentNameSpace(), mobjSource.midProcess);
 			larrSubProcs = lobjProcess.GetCurrentSubProcesses(pdb);
 
 			if ( (larrSubProcs == null) || (larrSubProcs.length == 0) )
@@ -120,9 +119,8 @@ public class ExternMergeOtherHere
 				}
 			}
 
-			lobjProcess.setAt(1, null);
-			lobjProcess.setAt(4, false);
-			lobjProcess.SaveToDb(pdb);
+			lobjProcess.Stop(pdb);
+			lobjProcess.SetDataObjectID(null, pdb);
 
 			larrContacts = lobjAux.GetCurrentContacts();
 			if ( (larrContacts == null) || (larrContacts.length == 0) )
@@ -216,7 +214,6 @@ public class ExternMergeOtherHere
 	protected void Undo(SQLServer pdb)
 		throws JewelPetriException
 	{
-		UUID lidProcesses;
 		Client lobjAux;
 		PNProcess lobjProcess;
 		PNProcess lobjSubProcAux;
@@ -225,17 +222,14 @@ public class ExternMergeOtherHere
 
 		try
 		{
-			lidProcesses = Engine.FindEntity(Engine.getCurrentNameSpace(), Jewel.Petri.Constants.ObjID_PNProcess);
-
 			lobjAux = Client.GetInstance(Engine.getCurrentNameSpace(), (UUID)null);
 			mobjSource.ToObject(lobjAux);
 			lobjAux.SaveToDb(pdb);
 			mobjSource.mid = lobjAux.getKey();
 
-			lobjProcess = (PNProcess)Engine.GetWorkInstance(lidProcesses, mobjSource.midProcess);
-			lobjProcess.setAt(1, lobjAux.getKey());
-			lobjProcess.setAt(4, true);
-			lobjProcess.SaveToDb(pdb);
+			lobjProcess = PNProcess.GetInstance(Engine.getCurrentNameSpace(), mobjSource.midProcess);
+			lobjProcess.SetDataObjectID(lobjAux.getKey(), pdb);
+			lobjProcess.Restart(pdb);
 
 			if ( mobjContactOps != null )
 			{
@@ -255,7 +249,7 @@ public class ExternMergeOtherHere
 			{
 				for ( i = 0; i < marrSubProcIDs.length; i++ )
 				{
-					lobjSubProcAux = (PNProcess)Engine.GetWorkInstance(lidProcesses, marrSubProcIDs[i]);
+					lobjSubProcAux = PNProcess.GetInstance(Engine.getCurrentNameSpace(), marrSubProcIDs[i]);
 					lobjSubProcAux.SetParentProcId(lobjProcess.getKey(), pdb);
 				}
 			}
@@ -267,7 +261,7 @@ public class ExternMergeOtherHere
 
 		lopERC = new ExternResumeClient(lobjProcess.getKey());
 		lopERC.midOtherClientProc = GetProcess().getKey();
-		TriggerOp(lopERC);
+		TriggerOp(lopERC, pdb);
 	}
 
 	public UndoSet[] GetSets()

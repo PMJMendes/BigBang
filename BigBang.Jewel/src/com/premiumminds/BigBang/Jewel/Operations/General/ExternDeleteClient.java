@@ -94,14 +94,13 @@ public class ExternDeleteClient
 					Constants.ObjID_Client));
 
 			lobjAux = Client.GetInstance(Engine.getCurrentNameSpace(), midClient);
+			mobjData = new ClientData();
 			mobjData.FromObject(lobjAux);
 			mobjData.mobjPrevValues = null;
 
-			lobjProcess = (PNProcess)Engine.GetWorkInstance(Engine.FindEntity(Engine.getCurrentNameSpace(),
-					Jewel.Petri.Constants.ObjID_PNProcess), mobjData.midProcess);
-			lobjProcess.setAt(1, null);
-			lobjProcess.setAt(4, false);
-			lobjProcess.SaveToDb(pdb);
+			lobjProcess = PNProcess.GetInstance(Engine.getCurrentNameSpace(), mobjData.midProcess);
+			lobjProcess.Stop(pdb);
+			lobjProcess.SetDataObjectID(null, pdb);
 
 			larrContacts = lobjAux.GetCurrentContacts();
 			if ( (larrContacts == null) || (larrContacts.length == 0) )
@@ -178,11 +177,9 @@ public class ExternDeleteClient
 			lobjAux.SaveToDb(pdb);
 			mobjData.mid = lobjAux.getKey();
 
-			lobjProcess = (PNProcess)Engine.GetWorkInstance(Engine.FindEntity(Engine.getCurrentNameSpace(),
-					Jewel.Petri.Constants.ObjID_PNProcess), mobjData.midProcess);
-			lobjProcess.setAt(1, lobjAux.getKey());
-			lobjProcess.setAt(4, true);
-			lobjProcess.SaveToDb(pdb);
+			lobjProcess = PNProcess.GetInstance(Engine.getCurrentNameSpace(), mobjData.midProcess);
+			lobjProcess.SetDataObjectID(lobjAux.getKey(), pdb);
+			lobjProcess.Restart(pdb);
 
 			if ( mobjContactOps != null )
 				mobjContactOps.UndoSubOp(pdb, lobjAux.getKey());
@@ -196,7 +193,7 @@ public class ExternDeleteClient
 
 		lopERC = new ExternResumeClient(lobjProcess.getKey());
 		lopERC.midOtherClientProc = null;
-		TriggerOp(lopERC);
+		TriggerOp(lopERC, pdb);
 	}
 
 	public UndoSet[] GetSets()

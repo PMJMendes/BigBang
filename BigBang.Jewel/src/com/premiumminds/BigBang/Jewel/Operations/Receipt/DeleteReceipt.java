@@ -52,7 +52,7 @@ public class DeleteReceipt
 			lobjOp = new ExternDeleteReceipt(GetProcess().GetParent().getKey());
 			lobjOp.mobjData = new ReceiptData();
 			lobjOp.mobjData.mid = midReceipt;
-			TriggerOp(lobjOp);
+			TriggerOp(lobjOp, pdb);
 		}
 		catch (Throwable e)
 		{

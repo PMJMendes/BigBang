@@ -96,7 +96,7 @@ public class AutoProcessData
 		}
 
 		if ( !b )
-			TriggerOp(new TriggerDisallowPolicies(this.GetProcess().getKey()));
+			TriggerOp(new TriggerDisallowPolicies(this.GetProcess().getKey()), pdb);
 	}
 
 	private static boolean IsValidNIF(String pstrNIF, UUID pidType)

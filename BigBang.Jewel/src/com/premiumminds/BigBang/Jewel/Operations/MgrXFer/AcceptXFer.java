@@ -140,7 +140,7 @@ public class AcceptXFer
 			lobjProc = PNProcess.GetInstance(Engine.getCurrentNameSpace(), larrProcs[i]);
 			marrOldManagers[i] = lobjProc.GetManagerID();
 			lobjProc.SetManagerID(midNewManager, pdb);
-			TriggerOp(GetRunTrigger(lobjXFer.GetOuterObjectType(), larrProcs[i], marrOldManagers[i]));
+			TriggerOp(GetRunTrigger(lobjXFer.GetOuterObjectType(), larrProcs[i], marrOldManagers[i]), pdb);
 		}
 
 		larrItems = new ArrayList<UUID>();
@@ -239,7 +239,7 @@ public class AcceptXFer
 		{
 			lobjProc = PNProcess.GetInstance(Engine.getCurrentNameSpace(), larrProcs[i]);
 			lobjProc.SetManagerID(marrOldManagers[i], pdb);
-			TriggerOp(GetUndoTrigger(lobjXFer.GetOuterObjectType(), larrProcs[i]));
+			TriggerOp(GetUndoTrigger(lobjXFer.GetOuterObjectType(), larrProcs[i]), pdb);
 		}
 
 		GetProcess().Restart(pdb);

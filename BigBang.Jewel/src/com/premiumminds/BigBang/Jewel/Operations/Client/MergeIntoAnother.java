@@ -77,6 +77,6 @@ public class MergeIntoAnother
 
 		lopEMOH = new ExternMergeOtherHere(lobjAux.GetProcessID());
 		lopEMOH.midClientSource = GetProcess().GetData().getKey();
-		TriggerOp(lopEMOH);
+		TriggerOp(lopEMOH, pdb);
 	}
 }

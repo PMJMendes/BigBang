@@ -60,6 +60,6 @@ public class DeleteClient
 
 		lopDC.midClient = midClient;
 		lopDC.mstrReason = mstrReason;
-		TriggerOp(lopDC);
+		TriggerOp(lopDC, pdb);
 	}
 }

@@ -123,7 +123,7 @@ public class CancelXFer
 		for ( i = 0; i < mlngCount; i++ )
 		{
 			marrOldManagers[i] = PNProcess.GetInstance(Engine.getCurrentNameSpace(), larrProcs[i]).GetManagerID();
-			TriggerOp(GetRunTrigger(lobjXFer.GetOuterObjectType(), larrProcs[i], marrOldManagers[i]));
+			TriggerOp(GetRunTrigger(lobjXFer.GetOuterObjectType(), larrProcs[i], marrOldManagers[i]), pdb);
 		}
 
 		larrItems = new ArrayList<UUID>();
@@ -209,7 +209,7 @@ public class CancelXFer
 		}
 
 		for ( i = 0; i < larrProcs.length; i++ )
-			TriggerOp(GetUndoTrigger(lobjXFer.GetOuterObjectType(), larrProcs[i]));
+			TriggerOp(GetUndoTrigger(lobjXFer.GetOuterObjectType(), larrProcs[i]), pdb);
 
 		GetProcess().Restart(pdb);
 

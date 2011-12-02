@@ -47,6 +47,6 @@ public class AutoProcessSubs
 		}
 
 		if ( b )
-			TriggerOp(new TriggerDisallowDelete(this.GetProcess().getKey()));
+			TriggerOp(new TriggerDisallowDelete(this.GetProcess().getKey()), pdb);
 	}
 }

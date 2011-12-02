@@ -52,7 +52,7 @@ public class DeletePolicy
 			lobjOp = new ExternDeletePolicy(GetProcess().GetParent().getKey());
 			lobjOp.mobjData = new PolicyData();
 			lobjOp.mobjData.mid = midPolicy;
-			TriggerOp(lobjOp);
+			TriggerOp(lobjOp, pdb);
 		}
 		catch (Throwable e)
 		{
