@@ -29,7 +29,7 @@ public class TestEditPolicy
 			}
 		};
 
-		Services.insurancePolicyService.getPolicy("F5466780-B872-4243-A89D-9FA3014A861D", callback);
+		Services.insurancePolicyService.getPolicy("F4D6391A-CBB3-4555-BCB1-9FA900BA4838", callback);
 	}
 
 	private static void DoStep2(InsurancePolicy testPolicy)

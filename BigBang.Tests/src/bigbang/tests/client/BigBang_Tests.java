@@ -33,7 +33,7 @@ public class BigBang_Tests
 //		TestEditClient.DoTest();
 //		TestDeleteClient.DoTest();
 //		TestGetPolicy.DoTest();
-//		TestNewPolicy.DoTest();
+		TestNewPolicy.DoTest();
 //		TestEditPolicy.DoTest();
 //		TestCreateInsuredObject.DoTest();
 //		TestEditInsuredObject.DoTest();
