@@ -52,6 +52,7 @@ public class ReceiptServiceImpl
 		SubLine lobjSubLine;
 		Line lobjLine;
 		ObjectBase lobjCategory;
+		ObjectBase lobjType;
 
 		if ( Engine.getCurrentUser() == null )
 			throw new SessionExpiredException();
@@ -72,6 +73,8 @@ public class ReceiptServiceImpl
 			lobjLine = Line.GetInstance(Engine.getCurrentNameSpace(), (UUID)lobjSubLine.getAt(1));
 			lobjCategory = Engine.GetWorkInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), Constants.ObjID_LineCategory),
 					(UUID)lobjLine.getAt(1));
+			lobjType = Engine.GetWorkInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), Constants.ObjID_ReceiptType),
+					(UUID)lobjReceipt.getAt(1));
 			
 		}
 		catch (Throwable e)
@@ -94,7 +97,8 @@ public class ReceiptServiceImpl
 		lobjResult.lineName = lobjLine.getLabel();
 		lobjResult.subLineId = lobjSubLine.getKey().toString();
 		lobjResult.subLineName = lobjSubLine.getLabel();
-		lobjResult.typeId = ((UUID)lobjReceipt.getAt(1)).toString();
+		lobjResult.typeId = lobjType.getKey().toString();
+		lobjResult.typeName = (String)lobjType.getAt(1);
 		lobjResult.totalPremium = ((BigDecimal)lobjReceipt.getAt(3)).toPlainString();
 		lobjResult.maturityDate = (lobjReceipt.getAt(9) == null ? null :
 				((Timestamp)lobjReceipt.getAt(9)).toString().substring(0, 10));
@@ -202,7 +206,8 @@ public class ReceiptServiceImpl
 
 	protected String[] getColumns()
 	{
-		return new String[] {"[:Number]", "[:Process]", "[:Type]", "[:Total Premium]", "[:Maturity Date]", "[:Description]"};
+		return new String[] {"[:Number]", "[:Process]", "[:Type]", "[:Type:Indicator]", "[:Total Premium]", "[:Maturity Date]",
+				"[:Description]"};
 	}
 
 	protected boolean buildFilter(StringBuilder pstrBuffer, SearchParameter pParam)
@@ -354,9 +359,10 @@ public class ReceiptServiceImpl
 		lobjResult.subLineId = (lobjSubLine == null ? null : lobjSubLine.getKey().toString());
 		lobjResult.subLineName = (lobjSubLine == null ? null : lobjSubLine.getLabel());
 		lobjResult.typeId = ((UUID)parrValues[2]).toString();
-		lobjResult.totalPremium = ((BigDecimal)parrValues[3]).toPlainString();
-		lobjResult.maturityDate = (parrValues[4] == null ? null : ((Timestamp)parrValues[4]).toString().substring(0, 10));
-		lobjResult.description = (String)parrValues[5];
+		lobjResult.typeName = (String)parrValues[3];
+		lobjResult.totalPremium = ((BigDecimal)parrValues[4]).toPlainString();
+		lobjResult.maturityDate = (parrValues[5] == null ? null : ((Timestamp)parrValues[4]).toString().substring(0, 10));
+		lobjResult.description = (String)parrValues[6];
 		lobjResult.processId = (lobjProcess == null ? null : lobjProcess.getKey().toString());
 		return lobjResult;
 	}
