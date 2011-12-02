@@ -1,5 +1,7 @@
 package bigBang.definitions.shared;
 
+import java.io.Serializable;
+
 import bigBang.definitions.shared.InsurancePolicy.FieldType;
 
 public class InsuredObject
@@ -8,16 +10,25 @@ public class InsuredObject
 	private static final long serialVersionUID = 1L;
 
 	public static class Exercise
+		implements Serializable
 	{
+		private static final long serialVersionUID = 1L;
+
 		String id;
 		String tempExerciseId;
 		String label;
 	}
 
 	public static class CoverageData
+		implements Serializable
 	{
+		private static final long serialVersionUID = 1L;
+
 		public static class FixedField
+			implements Serializable
 		{
+			private static final long serialVersionUID = 1L;
+
 			public String fieldId;
 			public String fieldName;
 			public FieldType type;
@@ -31,6 +42,8 @@ public class InsuredObject
 		public static class VariableField
 			extends FixedField
 		{
+			private static final long serialVersionUID = 1L;
+
 			public String fieldId;
 			public String fieldName;
 			public FieldType type;
