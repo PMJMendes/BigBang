@@ -64,6 +64,36 @@ public class InsuredObject
 	public String inclusionDate;
 	public String exclusionDate;
 
+	public String taxNumberPerson;
+	public String genderId;
+	public String birthDate;
+	public String clientNumberPerson; // Only if the insured person is also a first level client
+	public String insuranceCompanyInternalIdPerson;
+
+	public String taxNumberCompany;
+	public String caeId;
+	public String grievousCaeId;
+	public String activityNotes;
+	public String productNotes;
+	public String businessVolume;
+	public String europeanUnionEntity;
+	public String clientNumberGroup; // Only if the insured company is also a first level client
+
+	public String makeAndModel;
+	public String equipmentDescription;
+	public String firstRegistryDate;
+	public String manufactureYear;
+	public String clientInternalId;
+	public String insuranceCompanyInternalIdVehicle;
+
+	public String siteDescription;
+
+	public String species;
+	public String race;
+	public String age;
+	public String cityRegistryNumber;
+	public String electronicIdTag;
+
 	Exercise[] exercises;
 	CoverageData[] coverageData;
 
