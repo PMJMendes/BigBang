@@ -43,6 +43,7 @@ import bigBang.library.shared.SessionExpiredException;
 import bigBang.module.insurancePolicyModule.interfaces.InsurancePolicyService;
 import bigBang.module.insurancePolicyModule.shared.InsurancePolicySearchParameter;
 import bigBang.module.insurancePolicyModule.shared.InsurancePolicySortParameter;
+import bigBang.module.receiptModule.server.ReceiptServiceImpl;
 
 import com.premiumminds.BigBang.Jewel.Constants;
 import com.premiumminds.BigBang.Jewel.ZipCodeBridge;
@@ -2350,16 +2351,7 @@ public class InsurancePolicyServiceImpl
 			throw new BigBangException(e.getMessage(), e);
 		}
 
-		receipt.id = lopCR.mobjData.mid.toString();
-		receipt.processId = lopCR.mobjData.midProcess.toString();
-		receipt.managerId = lopCR.mobjData.midManager.toString();
-		receipt.mediatorId = lopCR.mobjData.midMediator.toString();
-		if ( (receipt.contacts != null) && (receipt.contacts.length > 0) )
-			ContactsServiceImpl.WalkContactTree(lopCR.mobjContactOps.marrCreate, receipt.contacts);
-		if ( (receipt.documents != null) && (receipt.documents.length > 0) )
-			DocumentServiceImpl.WalkDocTree(lopCR.mobjDocOps.marrCreate, receipt.documents);
-
-		return receipt;
+		return ReceiptServiceImpl.sGetReceipt(lopCR.mobjData.mid.toString());
 	}
 
 	public ManagerTransfer createManagerTransfer(ManagerTransfer transfer)

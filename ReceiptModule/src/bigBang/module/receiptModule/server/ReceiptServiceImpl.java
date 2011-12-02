@@ -39,7 +39,7 @@ public class ReceiptServiceImpl
 {
 	private static final long serialVersionUID = 1L;
 
-	public Receipt getReceipt(String receiptId)
+	public static Receipt sGetReceipt(String receiptId)
 		throws SessionExpiredException, BigBangException
 	{
 		UUID lid;
@@ -123,6 +123,12 @@ public class ReceiptServiceImpl
 		return lobjResult;
 	}
 
+	public Receipt getReceipt(String receiptId)
+			throws SessionExpiredException, BigBangException
+	{
+		return sGetReceipt(receiptId);
+	}
+
 	public Receipt editReceipt(Receipt receipt)
 		throws SessionExpiredException, BigBangException
 	{
@@ -172,7 +178,7 @@ public class ReceiptServiceImpl
 			throw new BigBangException(e.getMessage(), e);
 		}
 
-		return getReceipt(receipt.id);
+		return sGetReceipt(receipt.id);
 	}
 
 	public void deleteReceipt(String receiptId)
@@ -361,7 +367,7 @@ public class ReceiptServiceImpl
 		lobjResult.typeId = ((UUID)parrValues[2]).toString();
 		lobjResult.typeName = (String)parrValues[3];
 		lobjResult.totalPremium = ((BigDecimal)parrValues[4]).toPlainString();
-		lobjResult.maturityDate = (parrValues[5] == null ? null : ((Timestamp)parrValues[4]).toString().substring(0, 10));
+		lobjResult.maturityDate = (parrValues[5] == null ? null : ((Timestamp)parrValues[5]).toString().substring(0, 10));
 		lobjResult.description = (String)parrValues[6];
 		lobjResult.processId = (lobjProcess == null ? null : lobjProcess.getKey().toString());
 		return lobjResult;
