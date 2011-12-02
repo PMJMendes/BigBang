@@ -2,7 +2,7 @@ package bigBang.module.insurancePolicyModule.server;
 
 import java.util.UUID;
 
-import bigBang.definitions.shared.InsuredObject;
+import bigBang.definitions.shared.InsuredObjectStub;
 import bigBang.definitions.shared.SearchParameter;
 import bigBang.definitions.shared.SearchResult;
 import bigBang.definitions.shared.SortOrder;
@@ -82,9 +82,9 @@ public class InsuredObjectServiceImpl
 
 	protected SearchResult buildResult(UUID pid, Object[] parrValues)
 	{
-		InsuredObject lobjResult;
+		InsuredObjectStub lobjResult;
 
-		lobjResult = new InsuredObject();
+		lobjResult = new InsuredObjectStub();
 		lobjResult.id = pid.toString();
 		lobjResult.unitIdentification = (String)parrValues[0];
 		return lobjResult;

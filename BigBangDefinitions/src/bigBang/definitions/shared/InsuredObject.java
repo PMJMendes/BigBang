@@ -5,7 +5,7 @@ import java.io.Serializable;
 import bigBang.definitions.shared.InsurancePolicy.FieldType;
 
 public class InsuredObject
-	extends SearchResult
+	extends InsuredObjectStub
 {
 	private static final long serialVersionUID = 1L;
 
@@ -59,11 +59,6 @@ public class InsuredObject
 		VariableField[] variableFields;
 	}
 
-	public String unitIdentification;
-	public Address address;
-	public String inclusionDate;
-	public String exclusionDate;
-
 	public String taxNumberPerson;
 	public String genderId;
 	public String birthDate;
@@ -96,11 +91,4 @@ public class InsuredObject
 
 	Exercise[] exercises;
 	CoverageData[] coverageData;
-
-	public String tempObjectId; // Temporary ID for an insured object in a policy scratch pad
-
-	public InsuredObject()
-	{
-		tempObjectId = null;
-	}
 }
