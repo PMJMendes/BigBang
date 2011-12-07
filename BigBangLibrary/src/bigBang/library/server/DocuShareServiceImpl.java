@@ -152,6 +152,7 @@ public class DocuShareServiceImpl
 				if ( lobjAux instanceof DSCollection )
 				{
 					lobjTmp = new DocuShareItem();
+					lobjTmp.directory = true;
 					lobjTmp.handle = lobjAux.getHandle().toString();
 					lobjTmp.desc = lobjAux.getTitle();
 					larrResult.add(lobjTmp);
@@ -201,6 +202,7 @@ public class DocuShareServiceImpl
 				if ( !(lobjAux instanceof DSCollection) )
 				{
 					lobjTmp = new DocuShareItem();
+					lobjTmp.directory = false;
 					lobjTmp.handle = lobjAux.getHandle().toString();
 					lobjTmp.desc = lobjAux.getTitle();
 					larrResult.add(lobjTmp);
