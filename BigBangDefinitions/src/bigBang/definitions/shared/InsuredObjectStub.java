@@ -5,10 +5,14 @@ public class InsuredObjectStub
 {
 	private static final long serialVersionUID = 1L;
 
+	public String ownerId;
+
 	public String unitIdentification;
 	public Address address;
 	public String inclusionDate;
 	public String exclusionDate;
+	public String typeId;
+	public String typeText;
 
 	public String tempObjectId; // Temporary ID for an insured object in a policy scratch pad
 
