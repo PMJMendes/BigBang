@@ -36,7 +36,6 @@ public interface InsurancePolicyServiceAsync
 	void discardPolicy(String scratchPadId, AsyncCallback<InsurancePolicy> callback);
 	void includeObject(String policyId, InsuredObject object, AsyncCallback<InsuredObject> callback);
 	void includeObjectFromClient(String policyId, AsyncCallback<InsuredObject> callback);
-	void editObject(String policyId, InsuredObject object, AsyncCallback<InsuredObject> callback);
 	void excludeObject(String policyId, String objectId, AsyncCallback<Void> callback);
 	void openNewExercise(String policyId, Exercise exercise, AsyncCallback<Exercise> callback);
 	void editExercise(String policyId, Exercise exercise, AsyncCallback<Exercise> callback);

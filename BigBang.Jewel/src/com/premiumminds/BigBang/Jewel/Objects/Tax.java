@@ -59,6 +59,16 @@ public class Tax
 		return lobjCoverage;
 	}
 
+	public UUID GetFieldType()
+	{
+		return (UUID)getAt(2);
+	}
+
+	public String GetUnitsLabel()
+	{
+		return (String)getAt(3);
+	}
+
 	public boolean GetVariesByObject()
 	{
 		return (Boolean)getAt(5);
@@ -67,6 +77,11 @@ public class Tax
 	public boolean GetVariesByExercise()
 	{
 		return (Boolean)getAt(6);
+	}
+
+	public UUID GetRefersToID()
+	{
+		return (UUID)getAt(7);
 	}
 
 	public int GetColumnOrder()

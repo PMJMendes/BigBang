@@ -14,9 +14,9 @@ public class InsuredObject
 	{
 		private static final long serialVersionUID = 1L;
 
-		String id;
-		String tempExerciseId;
-		String label;
+		public String id;
+		public String tempExerciseId;
+		public String label;
 	}
 
 	public static class CoverageData
@@ -40,9 +40,15 @@ public class InsuredObject
 		}
 
 		public static class VariableField
-			extends FixedField
+			implements Serializable
 		{
 			private static final long serialVersionUID = 1L;
+
+			public static class VariableValue
+			{
+				public int exerciseIndex; // Isto indexa o array exercises
+				public String value;
+			}
 
 			public String fieldId;
 			public String fieldName;
@@ -51,12 +57,12 @@ public class InsuredObject
 			public String refersToId;
 			public int columnIndex; // Informacional. Se 0 ou mais, na página identificada por tempObjectId e tempExerciseId
 
-			public String[] data; // Vêm pela mesma ordem que os exercícios no array exercises abaixo
+			public VariableValue[] data;
 		}
 
-		String coverageId;
-		FixedField[] fixedFields;
-		VariableField[] variableFields;
+		public String coverageId;
+		public FixedField[] fixedFields;
+		public VariableField[] variableFields;
 	}
 
 	public String taxNumberPerson;
@@ -89,6 +95,6 @@ public class InsuredObject
 	public String cityRegistryNumber;
 	public String electronicIdTag;
 
-	Exercise[] exercises;
-	CoverageData[] coverageData;
+	public Exercise[] exercises;
+	public CoverageData[] coverageData;
 }

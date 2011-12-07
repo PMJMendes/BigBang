@@ -62,7 +62,6 @@ public interface InsurancePolicyService extends SearchService {
 
 	public InsuredObject includeObject(String policyId, InsuredObject object) throws SessionExpiredException, BigBangException;
 	public InsuredObject includeObjectFromClient(String policyId) throws SessionExpiredException, BigBangException;
-	public InsuredObject editObject(String policyId, InsuredObject object) throws SessionExpiredException, BigBangException;
 	public void excludeObject(String policyId, String objectId) throws SessionExpiredException, BigBangException;
 
 	public Exercise openNewExercise(String policyId, Exercise exercise) throws SessionExpiredException, BigBangException;

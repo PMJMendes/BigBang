@@ -54,11 +54,6 @@ public class PolicyValue
 		}
 	}
 
-	public Tax GetTax()
-	{
-		return mrefTax;
-	}
-
     public String AfterSave() 
     	throws JewelEngineException
     {
@@ -67,4 +62,9 @@ public class PolicyValue
 
         return "";
     }
+
+	public Tax GetTax()
+	{
+		return mrefTax;
+	}
 }
