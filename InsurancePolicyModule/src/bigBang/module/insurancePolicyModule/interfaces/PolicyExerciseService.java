@@ -5,18 +5,18 @@ import bigBang.library.interfaces.SearchService;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 
-@RemoteServiceRelativePath("InsuredObjectService")
-public interface InsuredObjectService
+@RemoteServiceRelativePath("PolicyExerciseService")
+public interface PolicyExerciseService
 	extends SearchService
 {
 	/**
 	 * Utility class for simplifying access to the instance of async service.
 	 */
 	public static class Util {
-		private static InsuredObjectServiceAsync instance;
-		public static InsuredObjectServiceAsync getInstance(){
+		private static PolicyExerciseServiceAsync instance;
+		public static PolicyExerciseServiceAsync getInstance(){
 			if (instance == null) {
-				instance = GWT.create(InsuredObjectService.class);
+				instance = GWT.create(PolicyExerciseService.class);
 			}
 			return instance;
 		}
