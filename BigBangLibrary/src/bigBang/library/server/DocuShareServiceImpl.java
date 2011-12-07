@@ -41,7 +41,7 @@ public class DocuShareServiceImpl
         {
         	try
         	{
-				lrefResult = DSFactory.createServer("srv-xerox", 1099);
+				lrefResult = DSFactory.createServer("192.168.0.3", 1099);
 			}
         	catch (Throwable e)
         	{
