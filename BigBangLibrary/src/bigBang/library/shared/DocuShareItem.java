@@ -7,6 +7,7 @@ public class DocuShareItem
 {
 	private static final long serialVersionUID = 1L;
 
+	public boolean directory;
 	public String handle;
 	public String desc;
 }
