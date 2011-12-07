@@ -754,7 +754,9 @@ public class InsurancePolicyServiceImpl
 			ArrayList<PadExercise> larrExercises;
 			PadExercise[] larrSortedExercises;
 			final Hashtable<Integer, Integer> larrExerciseMap;
+			ArrayList<PadCoverage> larrCoverages;
 			PadCoverage[] larrSortedCoverages;
+			PadCoverage lobjHeaderCoverage;
 			Hashtable<UUID, ArrayList<InsuredObject.CoverageData.FixedField>> larrFixed;
 			Hashtable<UUID, ArrayList<InsuredObject.CoverageData.VariableField>> larrVarRef;
 			Hashtable<UUID, ArrayList<PadValue>> larrVariable;
@@ -869,7 +871,16 @@ public class InsurancePolicyServiceImpl
 				larrExerciseMap.put(larrSortedExercises[i].mlngOrigIndex, i);
 			}
 
-			larrSortedCoverages = marrCoverages.toArray(new PadCoverage[marrCoverages.size()]);
+			lobjHeaderCoverage = null;
+			larrCoverages = new ArrayList<PadCoverage>();
+			for ( i = 0; i < marrCoverages.size(); i++ )
+			{
+				if ( marrCoverages.get(i).mbIsHeader )
+					lobjHeaderCoverage = marrCoverages.get(i);
+				else
+					larrCoverages.add(marrCoverages.get(i));
+			}
+			larrSortedCoverages = larrCoverages.toArray(new PadCoverage[larrCoverages.size()]);
 			java.util.Arrays.sort(larrSortedCoverages, new Comparator<PadCoverage>()
 			{
 				public int compare(PadCoverage o1, PadCoverage o2)
@@ -890,6 +901,12 @@ public class InsurancePolicyServiceImpl
 				pobjResult.coverageData[i].coverageId = larrSortedCoverages[i].midCoverage.toString();
 				larrFixed.put(larrSortedCoverages[i].midCoverage, new ArrayList<InsuredObject.CoverageData.FixedField>());
 				larrVarRef.put(larrSortedCoverages[i].midCoverage, new ArrayList<InsuredObject.CoverageData.VariableField>());
+			}
+			if ( lobjHeaderCoverage != null )
+			{
+				pobjResult.headerData = new InsuredObject.HeaderData();
+				larrFixed.put(lobjHeaderCoverage.midCoverage, new ArrayList<InsuredObject.CoverageData.FixedField>());
+				larrVarRef.put(lobjHeaderCoverage.midCoverage, new ArrayList<InsuredObject.CoverageData.VariableField>());
 			}
 
 			larrVariable = new Hashtable<UUID, ArrayList<PadValue>>();
@@ -982,6 +999,59 @@ public class InsurancePolicyServiceImpl
 						pobjResult.coverageData[i].variableFields[j].data[k].exerciseIndex =
 								larrExerciseMap.get(larrSortedVariable[k].mlngExercise);
 						pobjResult.coverageData[i].variableFields[j].data[k].value = larrSortedVariable[k].mstrValue;
+					}
+				}
+			}
+			if ( lobjHeaderCoverage != null )
+			{
+				larrAuxFixed = larrFixed.get(lobjHeaderCoverage.midCoverage);
+				pobjResult.headerData.fixedFields =
+						larrAuxFixed.toArray(new InsuredObject.CoverageData.FixedField[larrAuxFixed.size()]);
+				java.util.Arrays.sort(pobjResult.headerData.fixedFields,
+						new Comparator<InsuredObject.CoverageData.FixedField>()
+				{
+					public int compare(InsuredObject.CoverageData.FixedField o1, InsuredObject.CoverageData.FixedField o2)
+					{
+						if ( (o1.type == o2.type) && (o1.refersToId == o1.refersToId) )
+							return o1.fieldName.compareTo(o2.fieldName);
+						if ( o1.type == o2.type )
+							return o1.refersToId.compareTo(o2.refersToId);
+						return o1.type.compareTo(o2.type);
+					}
+				});
+
+				larrAuxVarRef = larrVarRef.get(lobjHeaderCoverage.midCoverage);
+				pobjResult.headerData.variableFields =
+						larrAuxVarRef.toArray(new InsuredObject.CoverageData.VariableField[larrAuxVarRef.size()]);
+				java.util.Arrays.sort(pobjResult.headerData.variableFields,
+						new Comparator<InsuredObject.CoverageData.VariableField>()
+				{
+					public int compare(InsuredObject.CoverageData.VariableField o1, InsuredObject.CoverageData.VariableField o2)
+					{
+						if ( (o1.type == o2.type) && (o1.refersToId == o1.refersToId) )
+							return o1.fieldName.compareTo(o2.fieldName);
+						if ( o1.type == o2.type )
+							return o1.refersToId.compareTo(o2.refersToId);
+						return o1.type.compareTo(o2.type);
+					}
+				});
+
+				for ( i = 0; i < pobjResult.headerData.variableFields.length; i++ )
+				{
+					larrAuxVariable = larrVariable.get(UUID.fromString(pobjResult.headerData.variableFields[i].fieldId));
+					larrSortedVariable = larrAuxVariable.toArray(new PadValue[larrAuxVariable.size()]);
+					java.util.Arrays.sort(larrSortedVariable, new Comparator<PadValue>()
+					{
+						public int compare(PadValue o1, PadValue o2)
+						{
+							return larrExerciseMap.get(o1.mlngExercise) - larrExerciseMap.get(o2.mlngExercise);
+						}
+					});
+					for ( j = 0; j < larrSortedVariable.length; j++ )
+					{
+						pobjResult.headerData.variableFields[i].data[j].exerciseIndex =
+								larrExerciseMap.get(larrSortedVariable[j].mlngExercise);
+						pobjResult.headerData.variableFields[i].data[j].value = larrSortedVariable[j].mstrValue;
 					}
 				}
 			}
@@ -1287,28 +1357,58 @@ public class InsurancePolicyServiceImpl
 			mbValid = false;
 
 			l = -1;
-			for ( i = 0; i < pobjSource.coverageData.length; i++ )
+
+			if ( pobjSource.headerData != null )
 			{
-				for ( j = 0; j < pobjSource.coverageData[i].fixedFields.length; j++ )
+				for ( i = 0; i < pobjSource.headerData.fixedFields.length; i++ )
 				{
-					l = FindValue(UUID.fromString(pobjSource.coverageData[i].fixedFields[j].fieldId), plngObject, -1, l + 1);
+					l = FindValue(UUID.fromString(pobjSource.headerData.fixedFields[i].fieldId), plngObject, -1, l + 1);
 					if ( l < 0 )
-						throw new BigBangException("Inesperado: Valor de cabeçalho de objecto não existente do lado do servidor.");
-					marrValues.get(l).mstrValue = ( "".equals(pobjSource.coverageData[i].fixedFields[j].value) ? null :
-							pobjSource.coverageData[i].fixedFields[j].value );
+						throw new BigBangException("Inesperado: Valor fixo de objecto não existente do lado do servidor.");
+					marrValues.get(l).mstrValue = ( "".equals(pobjSource.headerData.fixedFields[i].value) ? null :
+							pobjSource.headerData.fixedFields[i].value );
 				}
 
-				for ( j = 0; j < pobjSource.coverageData[i].variableFields.length; j++ )
+				for ( i = 0; i < pobjSource.headerData.variableFields.length; i++ )
 				{
-					for ( k = 0; k < pobjSource.coverageData[i].variableFields[j].data.length; k++ )
+					for ( j = 0; j < pobjSource.headerData.variableFields[i].data.length; j++ )
 					{
-						l = FindValue(UUID.fromString(pobjSource.coverageData[i].variableFields[j].fieldId), plngObject,
-								Integer.parseInt(pobjSource.exercises[pobjSource.coverageData[i].variableFields[j].data[k]
+						l = FindValue(UUID.fromString(pobjSource.headerData.variableFields[i].fieldId), plngObject,
+								Integer.parseInt(pobjSource.exercises[pobjSource.headerData.variableFields[i].data[j]
 										.exerciseIndex].tempExerciseId.split(":")[1]), l + 1);
 						if ( l < 0 )
-							throw new BigBangException("Inesperado: Valor de tabela de objecto não existente do lado do servidor.");
-						marrValues.get(l).mstrValue = ( "".equals(pobjSource.coverageData[i].variableFields[j].data[k].value) ?
-								null : pobjSource.coverageData[i].variableFields[j].data[k].value );
+							throw new BigBangException("Inesperado: Valor variável de objecto não existente do lado do servidor.");
+						marrValues.get(l).mstrValue = ( "".equals(pobjSource.headerData.variableFields[i].data[j].value) ?
+								null : pobjSource.headerData.variableFields[i].data[j].value );
+					}
+				}
+			}
+
+			if ( pobjSource.coverageData != null )
+			{
+				for ( i = 0; i < pobjSource.coverageData.length; i++ )
+				{
+					for ( j = 0; j < pobjSource.coverageData[i].fixedFields.length; j++ )
+					{
+						l = FindValue(UUID.fromString(pobjSource.coverageData[i].fixedFields[j].fieldId), plngObject, -1, l + 1);
+						if ( l < 0 )
+							throw new BigBangException("Inesperado: Valor fixo de objecto não existente do lado do servidor.");
+						marrValues.get(l).mstrValue = ( "".equals(pobjSource.coverageData[i].fixedFields[j].value) ? null :
+								pobjSource.coverageData[i].fixedFields[j].value );
+					}
+
+					for ( j = 0; j < pobjSource.coverageData[i].variableFields.length; j++ )
+					{
+						for ( k = 0; k < pobjSource.coverageData[i].variableFields[j].data.length; k++ )
+						{
+							l = FindValue(UUID.fromString(pobjSource.coverageData[i].variableFields[j].fieldId), plngObject,
+									Integer.parseInt(pobjSource.exercises[pobjSource.coverageData[i].variableFields[j].data[k]
+											.exerciseIndex].tempExerciseId.split(":")[1]), l + 1);
+							if ( l < 0 )
+								throw new BigBangException("Inesperado: Valor variável de objecto não existente do lado do servidor.");
+							marrValues.get(l).mstrValue = ( "".equals(pobjSource.coverageData[i].variableFields[j].data[k].value) ?
+									null : pobjSource.coverageData[i].variableFields[j].data[k].value );
+						}
 					}
 				}
 			}

@@ -51,6 +51,8 @@ public class PolicyObjectServiceImpl
 		PolicyValue[] larrFixed;
 		PolicyValue[][] larrVariable;
 		int i, j, k;
+		ArrayList<PolicyCoverage> larrLocalCoverages;
+		PolicyCoverage lobjHeaderCoverage;
 		ArrayList<InsuredObject.CoverageData.FixedField> larrAuxFixed;
 		InsuredObject.CoverageData.FixedField lobjFixed;
 		ArrayList<InsuredObject.CoverageData.VariableField> larrAuxVariable;
@@ -78,26 +80,8 @@ public class PolicyObjectServiceImpl
 			lobjPolicy = Policy.GetInstance(Engine.getCurrentNameSpace(), (UUID)lobjObject.getAt(1));
 
 			larrExercises = lobjPolicy.GetCurrentExercises();
-			java.util.Arrays.sort(larrExercises, new Comparator<PolicyExercise>()
-			{
-				public int compare(PolicyExercise o1, PolicyExercise o2)
-				{
-					return ((Timestamp)o1.getAt(2)).compareTo((Timestamp)o2.getAt(2));
-				}
-			});
 
 			larrCoverages = lobjPolicy.GetCurrentCoverages();
-			java.util.Arrays.sort(larrCoverages, new Comparator<PolicyCoverage>()
-			{
-				public int compare(PolicyCoverage o1, PolicyCoverage o2)
-				{
-					if ( o1.GetCoverage().IsMandatory() == o2.GetCoverage().IsMandatory() )
-						return o1.GetCoverage().getLabel().compareTo(o2.GetCoverage().getLabel());
-					if ( o1.GetCoverage().IsMandatory() )
-						return -1;
-					return 1;
-				}
-			});
 
 			larrFixed = lobjPolicy.GetCurrentKeyedValues(lidObject, null);
 
@@ -187,6 +171,13 @@ public class PolicyObjectServiceImpl
 			lobjResult.electronicIdTag = (String)lobjObject.getAt(32);
 		}
 
+		java.util.Arrays.sort(larrExercises, new Comparator<PolicyExercise>()
+		{
+			public int compare(PolicyExercise o1, PolicyExercise o2)
+			{
+				return ((Timestamp)o1.getAt(2)).compareTo((Timestamp)o2.getAt(2));
+			}
+		});
 		lobjResult.exercises = new InsuredObject.Exercise[larrExercises.length];
 		for ( i = 0; i < larrExercises.length; i++ )
 		{
@@ -196,6 +187,27 @@ public class PolicyObjectServiceImpl
 			lobjResult.exercises[i].label = larrExercises[i].getLabel();
 		}
 
+		lobjHeaderCoverage = null;
+		larrLocalCoverages = new ArrayList<PolicyCoverage>();
+		for ( i = 0; i < larrCoverages.length; i++ )
+		{
+			if ( larrCoverages[i].GetCoverage().IsHeader() )
+				lobjHeaderCoverage = larrCoverages[i];
+			else
+				larrLocalCoverages.add(larrCoverages[i]);
+		}
+		larrCoverages = larrLocalCoverages.toArray(new PolicyCoverage[larrLocalCoverages.size()]);
+		java.util.Arrays.sort(larrCoverages, new Comparator<PolicyCoverage>()
+		{
+			public int compare(PolicyCoverage o1, PolicyCoverage o2)
+			{
+				if ( o1.GetCoverage().IsMandatory() == o2.GetCoverage().IsMandatory() )
+					return o1.GetCoverage().getLabel().compareTo(o2.GetCoverage().getLabel());
+				if ( o1.GetCoverage().IsMandatory() )
+					return -1;
+				return 1;
+			}
+		});
 		lobjResult.coverageData = new InsuredObject.CoverageData[larrCoverages.length];
 		larrValueMap = new Hashtable<UUID, InsuredObject.CoverageData.VariableField>();
 		larrAuxMap = new Hashtable<UUID, ArrayList<InsuredObject.CoverageData.VariableField.VariableValue>>();
@@ -285,6 +297,91 @@ public class PolicyObjectServiceImpl
 						larrAuxValues.toArray(new InsuredObject.CoverageData.VariableField.VariableValue[larrAuxValues.size()]);
 			}
 		}
+		if ( lobjHeaderCoverage != null )
+		{
+			lobjResult.headerData = new InsuredObject.CoverageData();
+			larrAuxFixed = new ArrayList<InsuredObject.CoverageData.FixedField>();
+			for ( j = 0; j < larrFixed.length; j++ )
+			{
+				if ( !larrFixed[j].GetTax().GetCoverage().getKey().equals(lobjHeaderCoverage.GetCoverage().getKey()) )
+					continue;
+
+				lobjFixed = new InsuredObject.CoverageData.FixedField();
+				lobjFixed.fieldId = larrFixed[j].GetTax().getKey().toString();
+				lobjFixed.fieldName = larrFixed[j].GetTax().getLabel();
+				lobjFixed.type = InsurancePolicyServiceImpl.GetFieldTypeByID(larrFixed[j].GetTax().GetFieldType());
+				lobjFixed.unitsLabel = larrFixed[j].GetTax().GetUnitsLabel();
+				lobjFixed.refersToId = ( larrFixed[j].GetTax().GetRefersToID() == null ? null :
+					larrFixed[j].GetTax().GetRefersToID().toString() );
+				lobjFixed.columnIndex = larrFixed[j].GetTax().GetColumnOrder();
+				lobjFixed.value = larrFixed[j].getLabel();
+				larrAuxFixed.add(lobjFixed);
+			}
+			lobjResult.headerData.fixedFields =
+					larrAuxFixed.toArray(new InsuredObject.CoverageData.FixedField[larrAuxFixed.size()]);
+			java.util.Arrays.sort(lobjResult.headerData.fixedFields, new Comparator<InsuredObject.CoverageData.FixedField>()
+			{
+				public int compare(InsuredObject.CoverageData.FixedField o1, InsuredObject.CoverageData.FixedField o2)
+				{
+					if ( (o1.type == o2.type) && (o1.refersToId == o1.refersToId) )
+						return o1.fieldName.compareTo(o2.fieldName);
+					if ( o1.type == o2.type )
+						return o1.refersToId.compareTo(o2.refersToId);
+					return o1.type.compareTo(o2.type);
+				}
+			});
+
+			larrAuxVariable = new ArrayList<InsuredObject.CoverageData.VariableField>();
+			for ( j = 0; j < larrExercises.length; j++ )
+			{
+				for ( k = 0; k < larrVariable[j].length; k++ )
+				{
+					if ( !larrVariable[j][k].GetTax().GetCoverage().getKey().equals(lobjHeaderCoverage.GetCoverage().getKey()) )
+						continue;
+
+					lobjVariable = larrValueMap.get(larrVariable[j][k].GetTax().getKey());
+					if ( lobjVariable == null )
+					{
+						lobjVariable = new InsuredObject.CoverageData.VariableField();
+						lobjVariable.fieldId = larrVariable[j][k].GetTax().getKey().toString();
+						lobjVariable.fieldName = larrVariable[j][k].GetTax().getLabel();
+						lobjVariable.type = InsurancePolicyServiceImpl.GetFieldTypeByID(larrVariable[j][k].GetTax().GetFieldType());
+						lobjVariable.unitsLabel = larrVariable[j][k].GetTax().GetUnitsLabel();
+						lobjVariable.refersToId = ( larrVariable[j][k].GetTax().GetRefersToID() == null ? null :
+								larrVariable[j][k].GetTax().GetRefersToID().toString() );
+						lobjVariable.columnIndex = larrVariable[j][k].GetTax().GetColumnOrder();
+						larrValueMap.put(larrVariable[j][k].GetTax().getKey(), lobjVariable);
+						larrAuxMap.put(larrVariable[j][k].GetTax().getKey(),
+								new ArrayList<InsuredObject.CoverageData.VariableField.VariableValue>());
+						larrAuxVariable.add(lobjVariable);
+					}
+					lobjValue = new InsuredObject.CoverageData.VariableField.VariableValue();
+					lobjValue.exerciseIndex = j;
+					lobjValue.value = larrVariable[j][k].getLabel();
+					larrAuxMap.get(larrVariable[j][k].GetTax().getKey()).add(lobjValue);
+				}
+			}
+			lobjResult.headerData.variableFields =
+					larrAuxVariable.toArray(new InsuredObject.CoverageData.VariableField[larrAuxVariable.size()]);
+			java.util.Arrays.sort(lobjResult.headerData.variableFields,
+					new Comparator<InsuredObject.CoverageData.VariableField>()
+			{
+				public int compare(InsuredObject.CoverageData.VariableField o1, InsuredObject.CoverageData.VariableField o2)
+				{
+					if ( (o1.type == o2.type) && (o1.refersToId == o1.refersToId) )
+						return o1.fieldName.compareTo(o2.fieldName);
+					if ( o1.type == o2.type )
+						return o1.refersToId.compareTo(o2.refersToId);
+					return o1.type.compareTo(o2.type);
+				}
+			});
+			for ( j = 0; j < lobjResult.headerData.variableFields.length; j++ )
+			{
+				larrAuxValues = larrAuxMap.get(UUID.fromString(lobjResult.headerData.variableFields[j].fieldId));
+				lobjResult.headerData.variableFields[j].data =
+						larrAuxValues.toArray(new InsuredObject.CoverageData.VariableField.VariableValue[larrAuxValues.size()]);
+			}
+		}
 
 		return lobjResult;
 	}
@@ -296,7 +393,7 @@ public class PolicyObjectServiceImpl
 
 	protected String[] getColumns()
 	{
-		return new String[] {"[:Name]", "[:Policy]", "[:Type]", "[:Type:Type]", "[:Address1]", "[:Address2]", "[:Zip Code]",
+		return new String[] {"[:Name]", "[:Policy]", "[:Type]", "[:Type:Type]", "[:Address 1]", "[:Address 2]", "[:Zip Code]",
 				"[:Zip Code:Code]", "[:Zip Code:City]", "[:Zip Code:County]", "[:Zip Code:District]", "[:Zip Code:Country]",
 				"[:Inclusion Date]", "[:Exclusion Date]"};
 	}
@@ -319,7 +416,7 @@ public class PolicyObjectServiceImpl
 
 		if ( lParam.policyId != null )
 		{
-			pstrBuffer.append(" AND [:Policy] = '").append(lParam.policyId).append("')");
+			pstrBuffer.append(" AND [:Policy] = '").append(lParam.policyId).append("'");
 		}
 
 		return true;

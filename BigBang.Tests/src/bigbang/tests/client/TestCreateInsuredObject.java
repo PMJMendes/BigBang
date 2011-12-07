@@ -29,7 +29,7 @@ public class TestCreateInsuredObject
 			}
 		};
 
-		Services.insurancePolicyService.getPolicy("F4D6391A-CBB3-4555-BCB1-9FA900BA4838", callback);
+		Services.insurancePolicyService.getPolicy("0B0C69A5-FA4E-4A7D-B625-9FB2015D29D6", callback);
 	}
 
 	private static void DoStep2(InsurancePolicy policy)

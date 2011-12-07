@@ -49,9 +49,9 @@ public class TestNewPolicy
 			}
 		};
 
-		testPolicy.clientId = "21C84FD4-4F8E-4F63-A3EA-9F92015BD90A";
+		testPolicy.clientId = "6566B2D2-AB58-440C-89C9-9FA801111909";
 		testPolicy.caseStudy = false;
-		testPolicy.insuranceAgencyId = "E4BBA479-ED15-4EA5-B5E8-9F92015BD5E9";
+		testPolicy.insuranceAgencyId = "63AAA532-6EF9-449D-8025-9FA8011115A7";
 		testPolicy.startDate = "2012-01-01";
 		testPolicy.durationId = "FFF15F7F-EB59-40D4-8E86-9F810157FD24";
 		testPolicy.fractioningId = "B8234D73-4432-45A0-B670-9F8101580CB5";

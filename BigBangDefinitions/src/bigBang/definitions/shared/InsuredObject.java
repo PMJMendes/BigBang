@@ -19,7 +19,7 @@ public class InsuredObject
 		public String label;
 	}
 
-	public static class CoverageData
+	public static class HeaderData
 		implements Serializable
 	{
 		private static final long serialVersionUID = 1L;
@@ -63,9 +63,16 @@ public class InsuredObject
 			public VariableValue[] data;
 		}
 
-		public String coverageId;
 		public FixedField[] fixedFields;
 		public VariableField[] variableFields;
+	}
+
+	public static class CoverageData
+		extends HeaderData
+	{
+		private static final long serialVersionUID = 1L;
+
+		public String coverageId;
 	}
 
 	public String taxNumberPerson;
@@ -99,5 +106,6 @@ public class InsuredObject
 	public String electronicIdTag;
 
 	public Exercise[] exercises;
+	public HeaderData headerData;
 	public CoverageData[] coverageData;
 }

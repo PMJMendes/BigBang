@@ -5,7 +5,6 @@ import java.util.UUID;
 
 import Jewel.Engine.Engine;
 import Jewel.Engine.DataAccess.SQLServer;
-import Jewel.Engine.Implementation.Entity;
 import Jewel.Petri.Objects.PNProcess;
 import Jewel.Petri.SysObjects.JewelPetriException;
 import Jewel.Petri.SysObjects.UndoableOperation;
@@ -13,10 +12,18 @@ import Jewel.Petri.SysObjects.UndoableOperation;
 import com.premiumminds.BigBang.Jewel.Constants;
 import com.premiumminds.BigBang.Jewel.Data.ContactData;
 import com.premiumminds.BigBang.Jewel.Data.DocumentData;
+import com.premiumminds.BigBang.Jewel.Data.PolicyCoverageData;
 import com.premiumminds.BigBang.Jewel.Data.PolicyData;
+import com.premiumminds.BigBang.Jewel.Data.PolicyExerciseData;
+import com.premiumminds.BigBang.Jewel.Data.PolicyObjectData;
+import com.premiumminds.BigBang.Jewel.Data.PolicyValueData;
 import com.premiumminds.BigBang.Jewel.Objects.Contact;
 import com.premiumminds.BigBang.Jewel.Objects.Document;
 import com.premiumminds.BigBang.Jewel.Objects.Policy;
+import com.premiumminds.BigBang.Jewel.Objects.PolicyCoverage;
+import com.premiumminds.BigBang.Jewel.Objects.PolicyExercise;
+import com.premiumminds.BigBang.Jewel.Objects.PolicyObject;
+import com.premiumminds.BigBang.Jewel.Objects.PolicyValue;
 import com.premiumminds.BigBang.Jewel.Operations.ContactOps;
 import com.premiumminds.BigBang.Jewel.Operations.DocOps;
 
@@ -71,18 +78,18 @@ public class ExternDeletePolicy
 	protected void Run(SQLServer pdb)
 		throws JewelPetriException
 	{
-		Entity lrefPolicies;
 		Policy lobjAux;
+		PNProcess lobjProcess;
 		Contact[] larrContacts;
 		Document[] larrDocs;
-		PNProcess lobjProcess;
-		int i;
+		PolicyValue[] larrValues;
+		PolicyExercise[] larrExercises;
+		PolicyObject[] larrObjects;
+		PolicyCoverage[] larrCoverages;
+		int i, j;
 
 		try
 		{
-			lrefPolicies = Entity.GetInstance(Engine.FindEntity(Engine.getCurrentNameSpace(),
-					Constants.ObjID_Policy));
-
 			lobjAux = Policy.GetInstance(Engine.getCurrentNameSpace(), mobjData.mid);
 			mobjData.FromObject(lobjAux);
 			mobjData.mobjPrevValues = null;
@@ -121,7 +128,87 @@ public class ExternDeletePolicy
 				mobjDocOps.RunSubOp(pdb, null);
 			}
 
-			lrefPolicies.Delete(pdb, mobjData.mid);
+			larrValues = lobjAux.GetCurrentValues();
+			larrExercises = lobjAux.GetCurrentExercises();
+			larrObjects = lobjAux.GetCurrentObjects();
+			larrCoverages = lobjAux.GetCurrentCoverages();
+
+			if ( (larrValues == null) || (larrValues.length == 0) )
+				mobjData.marrValues = null;
+			else
+			{
+				mobjData.marrValues = new PolicyValueData[larrValues.length];
+				for ( i = 0; i < larrValues.length; i++ )
+				{
+					mobjData.marrValues[i] = new PolicyValueData();
+					mobjData.marrValues[i].FromObject(larrValues[i]);
+					mobjData.marrValues[i].mlngExercise = -1;
+					if ( mobjData.marrValues[i].midExercise != null )
+					{
+						for ( j = 0; j < larrExercises.length; j++ )
+						{
+							if ( larrExercises[j].getKey().equals(mobjData.marrValues[i].midExercise) )
+							{
+								mobjData.marrValues[i].mlngExercise = j;
+								break;
+							}
+						}
+					}
+					mobjData.marrValues[i].mlngObject = -1;
+					if ( mobjData.marrValues[i].midObject != null )
+					{
+						for ( j = 0; j < larrObjects.length; j++ )
+						{
+							if ( larrObjects[j].getKey().equals(mobjData.marrValues[i].midObject) )
+							{
+								mobjData.marrValues[i].mlngObject = j;
+								break;
+							}
+						}
+					}
+					larrValues[i].getDefinition().Delete(pdb, larrValues[i].getKey());
+				}
+			}
+
+			if ( (larrExercises == null) || (larrExercises.length == 0) )
+				mobjData.marrExercises = null;
+			else
+			{
+				mobjData.marrExercises = new PolicyExerciseData[larrExercises.length];
+				for ( i = 0; i < larrExercises.length; i++ )
+				{
+					mobjData.marrExercises[i] = new PolicyExerciseData();
+					mobjData.marrExercises[i].FromObject(larrExercises[i]);
+					larrExercises[i].getDefinition().Delete(pdb, larrExercises[i].getKey());
+				}
+			}
+
+			if ( (larrObjects == null) || (larrObjects.length == 0) )
+				mobjData.marrObjects = null;
+			{
+				mobjData.marrObjects = new PolicyObjectData[larrObjects.length];
+				for ( i = 0; i < larrObjects.length; i++ )
+				{
+					mobjData.marrObjects[i] = new PolicyObjectData();
+					mobjData.marrObjects[i].FromObject(larrObjects[i]);
+					larrObjects[i].getDefinition().Delete(pdb, larrObjects[i].getKey());
+				}
+			}
+
+			if ( (larrCoverages == null) || (larrCoverages.length == 0) )
+				mobjData.marrCoverages = null;
+			else
+			{
+				mobjData.marrCoverages = new PolicyCoverageData[larrCoverages.length];
+				for ( i = 0; i < larrCoverages.length; i++ )
+				{
+					mobjData.marrCoverages[i] = new PolicyCoverageData();
+					mobjData.marrCoverages[i].FromObject(larrCoverages[i]);
+					larrCoverages[i].getDefinition().Delete(pdb, larrCoverages[i].getKey());
+				}
+			}
+
+			lobjAux.getDefinition().Delete(pdb, lobjAux.getKey());
 		}
 		catch (Throwable e)
 		{
@@ -158,6 +245,11 @@ public class ExternDeletePolicy
 	{
 		Policy lobjAux;
 		PNProcess lobjProcess;
+		PolicyCoverage lobjCoverage;
+		PolicyObject lobjObject;
+		PolicyExercise lobjExercise;
+		PolicyValue lobjValue;
+		int i;
 
 		try
 		{
@@ -166,14 +258,70 @@ public class ExternDeletePolicy
 			lobjAux.SaveToDb(pdb);
 			mobjData.mid = lobjAux.getKey();
 
-			lobjProcess = PNProcess.GetInstance(Engine.getCurrentNameSpace(), mobjData.midProcess);
-			lobjProcess.SetDataObjectID(lobjAux.getKey(), pdb);
-			lobjProcess.Restart(pdb);
+			if ( mobjData.marrCoverages != null )
+			{
+				for ( i = 0; i < mobjData.marrCoverages.length; i++ )
+				{
+					lobjCoverage = PolicyCoverage.GetInstance(Engine.getCurrentNameSpace(), (UUID)null);
+					mobjData.marrCoverages[i].midOwner = mobjData.mid;
+					mobjData.marrCoverages[i].ToObject(lobjCoverage);
+					lobjCoverage.SaveToDb(pdb);
+					mobjData.marrCoverages[i].mid = lobjCoverage.getKey();
+				}
+			}
+
+			if ( mobjData.marrObjects != null )
+			{
+				for ( i = 0; i < mobjData.marrObjects.length; i++ )
+				{
+					lobjObject = PolicyObject.GetInstance(Engine.getCurrentNameSpace(), (UUID)null);
+					mobjData.marrObjects[i].midOwner = mobjData.mid;
+					mobjData.marrObjects[i].ToObject(lobjObject);
+					lobjObject.SaveToDb(pdb);
+					mobjData.marrObjects[i].mid = lobjObject.getKey();
+				}
+			}
+
+			if ( mobjData.marrExercises != null )
+			{
+				for ( i = 0; i < mobjData.marrExercises.length; i++ )
+				{
+					lobjExercise = PolicyExercise.GetInstance(Engine.getCurrentNameSpace(), (UUID)null);
+					mobjData.marrExercises[i].midOwner = mobjData.mid;
+					mobjData.marrExercises[i].ToObject(lobjExercise);
+					lobjExercise.SaveToDb(pdb);
+					mobjData.marrExercises[i].mid = lobjExercise.getKey();
+				}
+			}
+
+			if ( mobjData.marrValues != null )
+			{
+				for ( i = 0; i < mobjData.marrValues.length; i++ )
+				{
+					lobjValue = PolicyValue.GetInstance(Engine.getCurrentNameSpace(), (UUID)null);
+					mobjData.marrValues[i].midOwner = mobjData.mid;
+					if ( mobjData.marrValues[i].mlngObject < 0 )
+						mobjData.marrValues[i].midObject = null;
+					else
+						mobjData.marrValues[i].midObject = mobjData.marrObjects[mobjData.marrValues[i].mlngObject].mid;
+					if ( mobjData.marrValues[i].mlngExercise < 0 )
+						mobjData.marrValues[i].midExercise = null;
+					else
+						mobjData.marrValues[i].midExercise = mobjData.marrExercises[mobjData.marrValues[i].mlngExercise].mid;
+					mobjData.marrValues[i].ToObject(lobjValue);
+					lobjValue.SaveToDb(pdb);
+					mobjData.marrValues[i].mid = lobjValue.getKey();
+				}
+			}
 
 			if ( mobjContactOps != null )
 				mobjContactOps.UndoSubOp(pdb, lobjAux.getKey());
 			if ( mobjDocOps != null )
 				mobjDocOps.UndoSubOp(pdb, lobjAux.getKey());
+
+			lobjProcess = PNProcess.GetInstance(Engine.getCurrentNameSpace(), mobjData.midProcess);
+			lobjProcess.SetDataObjectID(lobjAux.getKey(), pdb);
+			lobjProcess.Restart(pdb);
 		}
 		catch (Throwable e)
 		{
