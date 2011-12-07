@@ -14,7 +14,7 @@ import bigBang.module.insurancePolicyModule.shared.ExerciseSortParameter;
 
 import com.premiumminds.BigBang.Jewel.Constants;
 
-public class ExerciseServiceImpl
+public class PolicyExerciseServiceImpl
 	extends SearchServiceBase
 {
 	private static final long serialVersionUID = 1L;

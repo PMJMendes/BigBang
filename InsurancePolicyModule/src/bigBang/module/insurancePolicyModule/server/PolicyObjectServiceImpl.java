@@ -1,12 +1,15 @@
 package bigBang.module.insurancePolicyModule.server;
 
+import java.sql.Timestamp;
 import java.util.UUID;
 
+import bigBang.definitions.shared.Address;
 import bigBang.definitions.shared.InsuredObjectStub;
 import bigBang.definitions.shared.SearchParameter;
 import bigBang.definitions.shared.SearchResult;
 import bigBang.definitions.shared.SortOrder;
 import bigBang.definitions.shared.SortParameter;
+import bigBang.definitions.shared.ZipCode;
 import bigBang.library.server.SearchServiceBase;
 import bigBang.library.shared.BigBangException;
 import bigBang.module.insurancePolicyModule.shared.InsuredObjectSearchParameter;
@@ -14,7 +17,7 @@ import bigBang.module.insurancePolicyModule.shared.InsuredObjectSortParameter;
 
 import com.premiumminds.BigBang.Jewel.Constants;
 
-public class InsuredObjectServiceImpl
+public class PolicyObjectServiceImpl
 	extends SearchServiceBase
 {
 	private static final long serialVersionUID = 1L;
@@ -26,7 +29,9 @@ public class InsuredObjectServiceImpl
 
 	protected String[] getColumns()
 	{
-		return new String[] {"[:Name]"};
+		return new String[] {"[:Name]", "[:Policy]", "[:Type]", "[:Type:Type]", "[:Address1]", "[:Address2]", "[:Zip Code]",
+				"[:Zip Code:Code]", "[:Zip Code:City]", "[:Zip Code:County]", "[:Zip Code:District]", "[:Zip Code:Country]",
+				"[:Inclusion Date]", "[:Exclusion Date]"};
 	}
 
 	protected boolean buildFilter(StringBuilder pstrBuffer, SearchParameter pParam)
@@ -87,6 +92,30 @@ public class InsuredObjectServiceImpl
 		lobjResult = new InsuredObjectStub();
 		lobjResult.id = pid.toString();
 		lobjResult.unitIdentification = (String)parrValues[0];
+		lobjResult.ownerId = ((UUID)parrValues[1]).toString();
+		lobjResult.typeId = ((UUID)parrValues[2]).toString();
+		lobjResult.typeText = (String)parrValues[3];
+		if ( (parrValues[4] != null) || (parrValues[5] != null) || (parrValues[6] != null) )
+		{
+			lobjResult.address = new Address();
+			lobjResult.address.street1 = (String)parrValues[4];
+			lobjResult.address.street2 = (String)parrValues[5];
+			if ( parrValues[6] != null )
+			{
+				lobjResult.address.zipCode = new ZipCode();
+				lobjResult.address.zipCode.code = (String)parrValues[7];
+				lobjResult.address.zipCode.city = (String)parrValues[8];
+				lobjResult.address.zipCode.county = (String)parrValues[9];
+				lobjResult.address.zipCode.district = (String)parrValues[10];
+				lobjResult.address.zipCode.country = (String)parrValues[11];
+			}
+			else
+				lobjResult.address.zipCode = null;
+		}
+		else
+			lobjResult.address = null;
+		lobjResult.inclusionDate = ( parrValues[12] == null ? null : ((Timestamp)parrValues[12]).toString().substring(0, 10));
+		lobjResult.exclusionDate = ( parrValues[13] == null ? null : ((Timestamp)parrValues[13]).toString().substring(0, 10));
 		return lobjResult;
 	}
 
