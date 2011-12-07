@@ -15,15 +15,15 @@
 
 <servlet-mapping>
 	<servlet-name>InsurancePolicyService</servlet-name>
-	<url-pattern>/bigbang/InsurancePolicyService</url-pattern>
+	<url-pattern>/bigbang_tests/InsurancePolicyService</url-pattern>
 </servlet-mapping>
 
 <servlet-mapping>
 	<servlet-name>PolicyObjectService</servlet-name>
-	<url-pattern>/bigbang/PolicyObjectService</url-pattern>
+	<url-pattern>/bigbang_tests/PolicyObjectService</url-pattern>
 </servlet-mapping>
 
 <servlet-mapping>
 	<servlet-name>PolicyExerciseService</servlet-name>
-	<url-pattern>/bigbang/PolicyExerciseService</url-pattern>
+	<url-pattern>/bigbang_tests/PolicyExerciseService</url-pattern>
 </servlet-mapping>
