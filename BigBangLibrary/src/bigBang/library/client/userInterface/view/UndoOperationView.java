@@ -34,11 +34,12 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 
 public class UndoOperationView extends View implements UndoOperationViewPresenter.Display {
 
-	private class UndoItemList extends SearchPanel<HistoryItemStub>  implements HistoryDataBrokerClient {
-		
+	public class UndoItemList extends SearchPanel<HistoryItemStub>  implements HistoryDataBrokerClient {
+
 		protected String currentProcessId;
 		protected int dataVersion;
-		
+		protected String itemIdToSelect = null;
+
 		public UndoItemList(){
 			super(((HistoryBroker)DataBrokerManager.Util.getInstance().getBroker(BigBangConstants.EntityIds.HISTORY)).getSearchBroker());
 			ListHeader header = new ListHeader();
@@ -58,10 +59,15 @@ public class UndoOperationView extends View implements UndoOperationViewPresente
 		@Override
 		public void onResults(Collection<HistoryItemStub> results) {
 			for(HistoryItemStub s : results) {
-				add(new UndoItemListEntry(s));
+				UndoItemListEntry entry = new UndoItemListEntry(s);
+				add(entry);
+				if(this.itemIdToSelect != null && itemIdToSelect.equalsIgnoreCase(s.id)){
+					entry.setSelected(true, true);
+					this.itemIdToSelect = null;
+				}				
 			}
 		}
-		
+
 		public void setProcessId(String id){
 			this.currentProcessId = id;
 			HistoryBroker historyBroker = ((HistoryBroker)DataBrokerManager.Util.getInstance().getBroker(BigBangConstants.EntityIds.HISTORY));
@@ -111,14 +117,35 @@ public class UndoOperationView extends View implements UndoOperationViewPresente
 				}
 			}
 		}
+		
+		public void selectItem(String id){
+			if(id == null) {
+				return;
+			}
+			if(workspaceId == null) {
+				this.itemIdToSelect = id;
+				return;
+			}
+			boolean found = false;
+			boolean searchFinished = !hasResultsLeft();
+			while(!found && !searchFinished){
+				for(ListEntry<HistoryItemStub> i : this){
+					if(i.getValue().id.equalsIgnoreCase(id)){
+						i.setSelected(true, true);
+						found = true;
+						break;
+					}
+				}
+			}
+		}
 	}
-	
-	private class UndoItemListEntry extends ListEntry<HistoryItemStub> {
+
+	public class UndoItemListEntry extends ListEntry<HistoryItemStub> {
 
 		public UndoItemListEntry(HistoryItemStub value) {
 			super(value);
 		}
-		
+
 		public <I extends Object> void setInfo(I info) {
 			HistoryItemStub value = (HistoryItemStub) info;
 			setTitle(value.opName);
@@ -127,52 +154,61 @@ public class UndoOperationView extends View implements UndoOperationViewPresente
 		};
 
 	}
+
+	protected enum Status {
+		IDLE,
+		PENDING,
+		READY
+	}
 	
 	private static final int LIST_WIDTH = 400; //PX 
 	private UndoItemList list;
 	private UndoForm form;
 	protected BigBangOperationsToolBar toolbar;
 	protected ActionInvokedEventHandler<Action> actionHandler;
-	
+	protected Status status;
+
 	public UndoOperationView(){
 		SplitLayoutPanel wrapper = new SplitLayoutPanel();
 		wrapper.setSize("100%", "100%");
-		
+
 		this.list = new UndoItemList();
 		wrapper.addWest(list, LIST_WIDTH);
-		
+
 		this.form = new UndoForm();
-		
+
 		VerticalPanel formWrapper = new VerticalPanel();
 		formWrapper.setSize("100%", "100%");
-		
+
 		this.toolbar = new BigBangOperationsToolBar() {
-			
+
 			@Override
 			public void onSaveRequest() {}
-			
+
 			@Override
 			public void onEditRequest() {}
-			
+
 			@Override
 			public void onCancelRequest() {}
 		};
 		toolbar.hideAll();
 		toolbar.addItem(new MenuItem("Desfazer Operação", new Command() {
-			
+
 			@Override
 			public void execute() {
 				actionHandler.onActionInvoked(new ActionInvokedEvent<Action>(Action.REVERT_OPERATION));
 			}
 		}));
-		
+
 		formWrapper.add(toolbar);
 		formWrapper.setCellHeight(toolbar, "21px");
-		
+
 		formWrapper.add(this.form);
 		formWrapper.setCellHeight(this.form, "100%");
-		
+
 		wrapper.add(formWrapper);
+
+		this.status = Status.IDLE;
 		
 		initWidget(wrapper);
 	}
@@ -207,7 +243,7 @@ public class UndoOperationView extends View implements UndoOperationViewPresente
 		String message = "A operação não foi desfeita pelas seguintes razões:";
 		for(ResponseError e : errors)
 			message += "</br>" + e.description;
-		MessageBox.alert("Não foi possível desfazer a operação", message);
+				MessageBox.alert("Não foi possível desfazer a operação", message);
 	}
 
 	@Override
@@ -224,6 +260,11 @@ public class UndoOperationView extends View implements UndoOperationViewPresente
 	@Override
 	public void setUndoable(boolean undoable) {
 		this.toolbar.setEditionAvailable(undoable);
+	}
+
+	@Override
+	public void selectItem(String id) {
+		this.list.selectItem(id);
 	}
 
 }

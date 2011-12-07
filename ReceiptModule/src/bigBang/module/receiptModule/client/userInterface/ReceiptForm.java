@@ -1,9 +1,11 @@
 package bigBang.module.receiptModule.client.userInterface;
 
 import bigBang.definitions.client.dataAccess.ReceiptDataBrokerClient;
+import bigBang.definitions.client.dataAccess.ReceiptProcessDataBroker;
 import bigBang.definitions.shared.BigBangConstants;
 import bigBang.definitions.shared.Receipt;
 import bigBang.library.client.FormField;
+import bigBang.library.client.dataAccess.DataBrokerManager;
 import bigBang.library.client.userInterface.DatePickerFormField;
 import bigBang.library.client.userInterface.ExpandableListBoxFormField;
 import bigBang.library.client.userInterface.TextAreaFormField;
@@ -16,10 +18,8 @@ import com.google.gwt.i18n.client.DateTimeFormat;
 public class ReceiptForm extends FormView<Receipt> implements ReceiptDataBrokerClient {
 
 	protected TextBoxFormField number;
-	protected TextBoxFormField clientName;
-	protected TextBoxFormField clientNumber;
-	protected TextBoxFormField policyNumber;
-	protected TextBoxFormField policyDescription;
+	protected TextBoxFormField client;
+	protected TextBoxFormField policy;
 	protected ExpandableListBoxFormField type;
 	protected TextBoxFormField totalPremium;
 	protected TextBoxFormField salesPremium;
@@ -39,14 +39,10 @@ public class ReceiptForm extends FormView<Receipt> implements ReceiptDataBrokerC
 
 	public ReceiptForm(){
 		number = new TextBoxFormField("Número");
-		number.setFieldWidth("100px");
+		number.setFieldWidth("200px");
 		type = new ExpandableListBoxFormField(ModuleConstants.TypifiedListIds.RECEIPT_TYPE, "Tipo");
-		clientName = new TextBoxFormField("Nome");
-		clientNumber = new TextBoxFormField("Número");
-		clientNumber.setFieldWidth("100px");
-		policyDescription = new TextBoxFormField("Categoria, Ramo e Modalidade");
-		policyNumber = new TextBoxFormField("Número");
-		policyNumber.setFieldWidth("100px");
+		client = new TextBoxFormField("Cliente");
+		policy = new TextBoxFormField("Apólice");
 		totalPremium = new TextBoxFormField("Prémio Total");
 		totalPremium.setUnitsLabel("€");
 		totalPremium.setFieldWidth("100px");
@@ -62,7 +58,7 @@ public class ReceiptForm extends FormView<Receipt> implements ReceiptDataBrokerC
 		fat = new TextBoxFormField("FAT (€)");
 		fat.setFieldWidth("100px");
 		issueDate = new DatePickerFormField("Data de Emissão");
-		coverageStart = new DatePickerFormField("Vencimento");
+		coverageStart = new DatePickerFormField("Vigência");
 		coverageEnd = new DatePickerFormField("Até");
 		dueDate = new DatePickerFormField("Limite de Pagamento");
 		mediator = new ExpandableListBoxFormField(BigBangConstants.EntityIds.MEDIATOR, "Mediador");
@@ -71,39 +67,23 @@ public class ReceiptForm extends FormView<Receipt> implements ReceiptDataBrokerC
 		notes = new TextAreaFormField();
 
 		addSection("Informação Geral");
-		addFormFieldGroup(new FormField<?>[]{
-				number,
-				type
-		}, true);
-		addFormFieldGroup(new FormField<?>[]{
-				manager,
-				mediator
-		}, true);
+		addFormField(client, false);
+		client.setEditable(false);
+		addFormField(policy, false);
+		policy.setEditable(false);
 
-		addSection("Cliente");
-		addFormField(clientNumber, true);
-		clientNumber.setEditable(false);
-		addFormField(clientName, true);
-		clientName.setEditable(false);
+		addFormField(number, true);
+		addFormField(type, true);
 
-		addSection("Apólice");
-		addFormField(policyNumber, true);
-		policyNumber.setEditable(false);
-		addFormField(policyDescription, true);
-		policyDescription.setEditable(false);
+		addFormField(manager, true);
+		addFormField(mediator, true);
 
 		addSection("Valores");
-		addFormFieldGroup(new FormField<?>[]{
-				totalPremium,
-				salesPremium
-		}, true);
-		addFormFieldGroup(new FormField<?>[]{
-				commission,
-				retro
-		}, true);
-		addFormFieldGroup(new FormField<?>[]{
-				fat
-		}, true);
+		addFormField(totalPremium, true);
+		addFormField(salesPremium, true);
+		addFormField(commission, true);
+		addFormField(retro, true);
+		addFormField(fat, true);
 
 		addSection("Datas");
 		addFormFieldGroup(new FormField<?>[]{
@@ -121,7 +101,10 @@ public class ReceiptForm extends FormView<Receipt> implements ReceiptDataBrokerC
 		addSection("Notas Internas");
 		addFormField(notes);
 
-		setValue(new Receipt());		
+		setValue(new Receipt());
+		
+		ReceiptProcessDataBroker broker = ((ReceiptProcessDataBroker) DataBrokerManager.Util.getInstance().getBroker(BigBangConstants.EntityIds.RECEIPT));
+		broker.registerClient(this);
 	}
 
 	@Override
@@ -141,6 +124,8 @@ public class ReceiptForm extends FormView<Receipt> implements ReceiptDataBrokerC
 		result.dueDate = dueDate.getValue() == null ? null : DateTimeFormat.getFormat("yyyy-MM-dd").format(dueDate.getValue());
 		result.mediatorId = mediator.getValue();
 		result.managerId = manager.getValue();
+		result.notes = notes.getValue();
+		result.description = description.getValue();
 
 		return result;
 	}
@@ -153,18 +138,14 @@ public class ReceiptForm extends FormView<Receipt> implements ReceiptDataBrokerC
 		}
 
 		if(info.clientId != null){
-			clientNumber.setValue(info.clientNumber);
-			clientName.setValue(info.clientName);
+			client.setValue("#" + info.clientNumber + " - " + info.clientName);
 		}else{
-			clientNumber.clear();
-			clientName.clear();
+			client.clear();
 		}
 		if(info.policyId != null) {
-			policyNumber.setValue(info.policyNumber);
-			policyDescription.setValue(info.categoryName+"/"+info.lineName+"/"+info.subLineName);
+			policy.setValue("#" + info.policyNumber + " - " + info.categoryName + "/" + info.lineName + "/" + info.subLineName);
 		}else{
-			policyNumber.clear();
-			policyDescription.clear();
+			policy.clear();
 		}
 
 		number.setValue(info.number);
@@ -188,7 +169,9 @@ public class ReceiptForm extends FormView<Receipt> implements ReceiptDataBrokerC
 		}else{dueDate.clear();}
 		mediator.setValue(info.mediatorId);
 		manager.setValue(info.managerId);
-
+		
+		notes.setValue(info.notes);
+		description.setValue(info.description);
 	}
 
 	@Override
@@ -213,7 +196,7 @@ public class ReceiptForm extends FormView<Receipt> implements ReceiptDataBrokerC
 
 	@Override
 	public void updateReceipt(Receipt receipt) {
-		if(receipt.id != null && this.value.id != null) {
+		if(this.value != null && receipt.id != null && this.value.id != null) {
 			if(receipt.id.equalsIgnoreCase(this.value.id)){
 				this.setValue(receipt);
 			}
@@ -222,7 +205,7 @@ public class ReceiptForm extends FormView<Receipt> implements ReceiptDataBrokerC
 
 	@Override
 	public void removeReceipt(String id) {
-		if(id != null && this.value.id != null) {
+		if(this.value != null && id != null && this.value.id != null) {
 			if(id.equalsIgnoreCase(this.value.id)){
 				this.setValue(null);
 			}

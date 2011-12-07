@@ -43,19 +43,50 @@ public class ReceiptDataBrokerImpl extends DataBroker<Receipt> implements Receip
 
 	@Override
 	public void notifyItemCreation(String itemId) {
-		// TODO Auto-generated method stub
+		this.getReceipt(itemId, new ResponseHandler<Receipt>() {
+
+			@Override
+			public void onResponse(Receipt response) {
+				cache.add(response.id, response);
+				incrementDataVersion();
+				for(DataBrokerClient<Receipt> bc : getClients()){
+					((ReceiptDataBrokerClient) bc).addReceipt(response);
+					((ReceiptDataBrokerClient) bc).setDataVersionNumber(BigBangConstants.EntityIds.RECEIPT, getCurrentDataVersion());
+				}
+			}
+
+			@Override
+			public void onError(Collection<ResponseError> errors) {}
+		});
 	}
 
 	@Override
 	public void notifyItemDeletion(String itemId) {
-		// TODO Auto-generated method stub
-		
+		cache.remove(itemId);
+		incrementDataVersion();
+		for(DataBrokerClient<Receipt> bc : getClients()){
+			((ReceiptDataBrokerClient) bc).removeReceipt(itemId);
+			((ReceiptDataBrokerClient) bc).setDataVersionNumber(BigBangConstants.EntityIds.RECEIPT, getCurrentDataVersion());
+		}
 	}
 
 	@Override
 	public void notifyItemUpdate(String itemId) {
-		// TODO Auto-generated method stub
-		
+		this.getReceipt(itemId, new ResponseHandler<Receipt>() {
+
+			@Override
+			public void onResponse(Receipt response) {
+				cache.add(response.id, response);
+				incrementDataVersion();
+				for(DataBrokerClient<Receipt> bc : getClients()){
+					((ReceiptDataBrokerClient) bc).updateReceipt(response);
+					((ReceiptDataBrokerClient) bc).setDataVersionNumber(BigBangConstants.EntityIds.RECEIPT, getCurrentDataVersion());
+				}
+			}
+
+			@Override
+			public void onError(Collection<ResponseError> errors) {}
+		});
 	}
 
 	@Override
@@ -70,7 +101,7 @@ public class ReceiptDataBrokerImpl extends DataBroker<Receipt> implements Receip
 					cache.add(id, result);
 					incrementDataVersion();
 					for(DataBrokerClient<Receipt> bc : getClients()){
-						((ReceiptDataBrokerClient) bc).addReceipt(result);
+						((ReceiptDataBrokerClient) bc).updateReceipt(result);
 						((ReceiptDataBrokerClient) bc).setDataVersionNumber(BigBangConstants.EntityIds.RECEIPT, getCurrentDataVersion());
 					}
 					handler.onResponse(result);

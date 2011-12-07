@@ -15,7 +15,7 @@ import bigBang.library.client.userInterface.view.View;
 
 public class NavigationPanel extends View {
 
-	protected NavigationToolbar navBar;
+	public NavigationToolbar navBar;
 	protected SlidePanel slide;
 
 	protected ArrayList<Widget> navigatables;

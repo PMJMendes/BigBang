@@ -46,7 +46,8 @@ public class UndoOperationViewPresenter implements OperationViewPresenter {
 
 		//MISC
 		void setUndoable(boolean undoable);
-
+		void selectItem(String id);
+		
 		void showConfirmUndo(ConfirmationCallback callback);
 		void showErrors(Collection<ResponseError> errors);
 		HandlerRegistration addAttachHandler(AttachEvent.Handler handler);
@@ -199,7 +200,7 @@ public class UndoOperationViewPresenter implements OperationViewPresenter {
 
 	@Override
 	public String setTargetEntity(String id) {
-		// TODO Auto-generated method stub
+		this.view.selectItem(id);
 		return null;
 	}
 

@@ -3,139 +3,167 @@ package bigBang.library.client.userInterface;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import bigBang.library.client.FieldValidator;
+import bigBang.library.client.FormField;
+
+import com.google.gwt.event.dom.client.KeyPressEvent;
+import com.google.gwt.event.dom.client.KeyPressHandler;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.user.client.ui.HasVerticalAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
-import com.google.gwt.user.client.ui.ListBox;
+import com.google.gwt.user.client.ui.TextBox;
+import com.google.gwt.user.client.ui.ValueBoxBase.TextAlignment;
 import com.google.gwt.user.client.ui.VerticalPanel;
-
-import bigBang.library.client.FieldValidator;
-import bigBang.library.client.FormField;
 
 
 public class DatePickerFormField extends FormField<Date> {
-	
-	private static final String DEFAULT_FORMAT = "yyyy-MM-dd";
 
-	protected ListBox day, month, year;	
+	private static final String DEFAULT_FORMAT = "yyyy-MM-dd";
+	private final String EMPTY_VALUE_PLACEHOLDER  = "-";
+
+	protected TextBox day, month, year;	
 	private boolean readonly;
 	protected DateTimeFormat format;
-	
+
 	public DatePickerFormField(){
 		this("");
 	}
-	
+
 	public DatePickerFormField(String label){
 		this(label, DEFAULT_FORMAT);
 	}
-	
+
 	public DatePickerFormField(String label, String format){
 		this(label, format, null);
 	}
-	
+
 	public DatePickerFormField(String label, String format, FieldValidator<Date> validator){
 		super();
-		
+
 		this.setValidator(validator);
-		
+
 		this.format = DateTimeFormat.getFormat(format);
 
 		VerticalPanel mainWrapper = new VerticalPanel();
 		initWidget(mainWrapper);
-		
+
 		mainWrapper.add(this.label);
 		this.label.setText(label);
 		HorizontalPanel wrapper = new HorizontalPanel();
 		mainWrapper.add(wrapper);
 		wrapper.setVerticalAlignment(HasVerticalAlignment.ALIGN_MIDDLE);
-		
-		day = new ListBox();
-		month = new ListBox();
-		year = new ListBox();
-		
-		wrapper.add(new Label("Dia:"));
+
+		day = new TextBox();
+		day.setWidth("20px");
+		day.setMaxLength(2);
+		day.setAlignment(TextAlignment.CENTER);
+		month = new TextBox();
+		month.setWidth("20px");
+		month.setMaxLength(2);
+		month.setAlignment(TextAlignment.CENTER);
+		year = new TextBox();
+		year.setWidth("35px");
+		year.setMaxLength(4);
+		year.setAlignment(TextAlignment.CENTER);
+
+		KeyPressHandler keyPressHandler = new KeyPressHandler() {
+
+			@Override
+			public void onKeyPress(KeyPressEvent event) {
+				event.preventDefault();
+				if(event.getSource() == day){
+					onDayChanged(event.getUnicodeCharCode());
+				}else if(event.getSource() == month){
+					onMonthChanged(event.getUnicodeCharCode());
+				}else if(event.getSource() == year){
+					onYearChanged(event.getUnicodeCharCode());
+				}
+			}
+		};
+
+		day.addKeyPressHandler(keyPressHandler);
+		month.addKeyPressHandler(keyPressHandler);
+		year.addKeyPressHandler(keyPressHandler);
+
 		wrapper.add(day);
-		wrapper.add(new Label("Mês:"));
+		wrapper.add(new Label("/"));
 		wrapper.add(month);
-		wrapper.add(new Label("Ano:"));
+		wrapper.add(new Label("/"));
 		wrapper.add(year);
-		
+
 		wrapper.add(mandatoryIndicatorLabel);
 		wrapper.add(errorMessageLabel);
-		
-		day.addItem("-", "");
-		for(int i = 1; i <= 31; i++) {
-			this.day.addItem(i+"", i+"");
-		}
-		month.addItem("-", "");
-		for(int i = 1; i <= 12; i++) {
-			String monthStr = new String();
-			switch(i){
-			case 1:
-				monthStr = "Jan";
-				break;
-			case 2:
-				monthStr = "Fev";
-				break;
-			case 3:
-				monthStr = "Mar";
-				break;
-			case 4:
-				monthStr = "Abr";
-				break;
-			case 5:
-				monthStr = "Mai";
-				break;
-			case 6:
-				monthStr = "Jun";
-				break;
-			case 7:
-				monthStr = "Jul";
-				break;
-			case 8:
-				monthStr = "Ago";
-				break;
-			case 9:
-				monthStr = "Set";
-				break;
-			case 10:
-				monthStr = "Out";
-				break;
-			case 11:
-				monthStr = "Nov";
-				break;
-			case 12:
-				monthStr = "Dez";
-				break;
-			}
-			this.month.addItem(monthStr, i+"");
-		}
-		
-		int currentYear = Integer.parseInt(new SimpleDateFormat("yyyy").format(new Date()));
-		setYearSpan(1900, currentYear);
 	}
-	
-	public void setYearSpan(int minYear, int maxYear){
-		year.addItem("-", "");
-		for(int j = maxYear; j >= minYear; j--){
-			year.addItem(j+"", j+"");
-		}
-	}
-	
+
 	@Override
 	public void setLabelWidth(String width) {
 		this.label.setWidth(width);
 	}
-	
+
 	@Override
 	public void clear() {
-		this.day.setSelectedIndex(0);
-		this.month.setSelectedIndex(0);
-		this.year.setSelectedIndex(0);
+		if(this.readonly){
+			this.day.setValue("-");
+			this.month.setValue("-");
+			this.year.setValue("-");
+		}else{
+			this.day.setValue("");
+			this.month.setValue("");
+			this.year.setValue("");
+		}
 	}
-	
+
+	protected boolean isValidDate(boolean assumeComplete){
+		return true; //TODO
+	}
+
+	protected void onDayChanged(int charCode){
+		if((charCode == '-' || charCode == '/') && !this.day.getValue().isEmpty()){
+			this.month.setFocus(true);
+		}else if(Character.isDigit((char) charCode) && this.day.getMaxLength() != this.day.getValue().length()){
+		 	this.day.setValue(this.day.getValue()+(char)charCode);
+		}
+		if(this.day.getMaxLength() == this.day.getValue().length()){
+			this.month.setFocus(true);
+		}
+	}
+
+	protected boolean isValidDay(String value){
+		if(value != null && !value.isEmpty() && isValidDate(false)){
+			return true;
+		}
+		return false;
+	}
+
+	protected void onMonthChanged(int charCode){
+		if((charCode == '-' || charCode == '/') && !this.month.getValue().isEmpty()){
+			this.year.setFocus(true);
+		}else if(Character.isDigit((char) charCode) && this.month.getMaxLength() != this.month.getValue().length()){
+			this.month.setValue(this.month.getValue()+(char)charCode);
+		}
+		if(this.month.getMaxLength() == this.month.getValue().length()){
+			this.year.setFocus(true);
+		}
+	}
+
+	protected boolean isValidMonth(String value){
+		if(value != null && !value.isEmpty() && isValidDate(false)){
+			return true;
+		}
+		return false;
+	}
+
+	protected void onYearChanged(int charCode){
+		if(this.year.getValue().length() == this.year.getMaxLength()){
+			return;
+		}
+		if(Character.isDigit((char) charCode) && this.year.getMaxLength() != this.year.getValue().length()){
+			this.year.setValue(this.year.getValue()+(char)charCode);
+		}
+	}
+
 	@Override
 	public void setValue(Date value, boolean fireEvents) {
 		if(value == null) {
@@ -145,47 +173,27 @@ public class DatePickerFormField extends FormField<Date> {
 		String day = new SimpleDateFormat("d").format(value);
 		String month = new SimpleDateFormat("M").format(value);
 		String year = new SimpleDateFormat("yyyy").format(value);
-		
-		int count = this.day.getItemCount();
-		for(int i = 0; i < count; i++){
-			if(this.day.getValue(i).equals(day+"")){
-				this.day.setSelectedIndex(i);
-				break;
-			}
-		}
-		
-		count = this.month.getItemCount();
-		for(int i = 0; i < count; i++){
-			if(this.month.getValue(i).equals(month+"")){
-				this.month.setSelectedIndex(i);
-				break;
-			}
-		}
-		
-		count = this.year.getItemCount();
-		for(int i = 0; i < count; i++){
-			if(this.year.getValue(i).equals(year+"")){
-				this.year.setSelectedIndex(i);
-				break;
-			}
-		}
 
+		this.day.setValue(day);
+		this.month.setValue(month);
+		this.year.setValue(year);
+		
 		if(fireEvents)
 			ValueChangeEvent.fire(this, value);
 	}
-	
+
 	@Override
 	public Date getValue() {
-		String day = this.day.getValue(this.day.getSelectedIndex());
-		String month = this.month.getValue(this.month.getSelectedIndex());
-		String year = this.year.getValue(this.year.getSelectedIndex());
-		
+		String day = this.day.getValue();
+		String month = this.month.getValue();
+		String year = this.year.getValue();
+
 		if(day.equals("") || month.equals("") || year.equals(""))
 			return null;
-		
+
 		return this.format.parse(year+"-"+month+"-"+day);
 	}
-	
+
 	@Override
 	public void setInvalid(boolean invalid){
 		if(field != null){
@@ -209,16 +217,46 @@ public class DatePickerFormField extends FormField<Date> {
 	public void setReadOnly(boolean readonly) {
 		if(!editable)
 			return;
-		day.setEnabled(!readonly);
-		month.setEnabled(!readonly);
-		year.setEnabled(!readonly);
+		if(readonly){
+			if(day.getValue().isEmpty()){
+				day.setValue(EMPTY_VALUE_PLACEHOLDER);
+			}
+			if(month.getValue().isEmpty()){
+				month.setValue(EMPTY_VALUE_PLACEHOLDER);
+			}
+			if(year.getValue().isEmpty()){
+				year.setValue(EMPTY_VALUE_PLACEHOLDER);
+			}
+		}else{
+			if(day.getValue().equalsIgnoreCase(EMPTY_VALUE_PLACEHOLDER)){
+				day.setValue("");
+			}
+			if(month.getValue().equalsIgnoreCase(EMPTY_VALUE_PLACEHOLDER)){
+				month.setValue("");
+			}
+			if(year.getValue().equalsIgnoreCase(EMPTY_VALUE_PLACEHOLDER)){
+				year.setValue("");
+			}
+		}
+		day.setReadOnly(readonly);
+		day.getElement().getStyle().setBorderColor(readonly ? "transparent" : "gray");
+		day.getElement().getStyle().setBackgroundColor(readonly ? "transparent" : "white");
+		
+		month.setReadOnly(readonly);
+		month.getElement().getStyle().setBorderColor(readonly ? "transparent" : "gray");
+		month.getElement().getStyle().setBackgroundColor(readonly ? "transparent" : "white");
+		
+		year.setReadOnly(readonly);
+		year.getElement().getStyle().setBorderColor(readonly ? "transparent" : "gray");
+		year.getElement().getStyle().setBackgroundColor(readonly ? "transparent" : "white");
+		
 		this.readonly = readonly;
 		mandatoryIndicatorLabel.setVisible(!readonly);
 	}
 
 	@Override
 	public void setFieldWidth(String width) {}
-	
+
 	@Override
 	public boolean isReadOnly() {
 		return readonly;

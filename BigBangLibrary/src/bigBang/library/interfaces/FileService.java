@@ -11,6 +11,8 @@ import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 public interface FileService
 	extends RemoteService
 {
+	public static final String GET_PREFIX = "file?fileref=";
+	
 	/**
 	 * Utility class for simplifying access to the instance of async service.
 	 */

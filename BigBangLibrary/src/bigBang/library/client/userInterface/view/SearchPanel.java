@@ -239,7 +239,7 @@ public abstract class SearchPanel<T extends SearchResult> extends FilterableList
 	 * Queries the search service for the next page of results
 	 */
 	protected void fetchNextPage() {
-		if(this.nextResultIndex > this.numberOfResults){
+		if(!hasResultsLeft()){
 			return;
 		}
 		requestedNextPage = true;
@@ -258,6 +258,10 @@ public abstract class SearchPanel<T extends SearchResult> extends FilterableList
 				requestedNextPage = false;
 			}
 		});
+	}
+	
+	protected boolean hasResultsLeft(){
+		return this.nextResultIndex <= this.numberOfResults;
 	}
 
 	/**

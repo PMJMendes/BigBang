@@ -5,8 +5,15 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.TreeMap;
 
+import com.google.gwt.dom.client.Style.FontStyle;
+import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.user.client.ui.HasHorizontalAlignment;
+import com.google.gwt.user.client.ui.HasVerticalAlignment;
+import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.UIObject;
+import com.google.gwt.user.client.ui.VerticalPanel;
 
 import bigBang.definitions.client.dataAccess.ReceiptDataBrokerClient;
 import bigBang.definitions.client.dataAccess.ReceiptProcessDataBroker;
@@ -14,7 +21,6 @@ import bigBang.definitions.shared.BigBangConstants;
 import bigBang.definitions.shared.Receipt;
 import bigBang.definitions.shared.ReceiptStub;
 import bigBang.definitions.shared.SearchParameter;
-import bigBang.definitions.shared.SortOrder;
 import bigBang.library.client.ValueSelectable;
 import bigBang.library.client.dataAccess.DataBrokerManager;
 import bigBang.library.client.userInterface.FiltersPanel;
@@ -22,25 +28,108 @@ import bigBang.library.client.userInterface.ListEntry;
 import bigBang.library.client.userInterface.view.SearchPanel;
 import bigBang.module.receiptModule.shared.ReceiptSearchParameter;
 import bigBang.module.receiptModule.shared.ReceiptSortParameter;
+import bigBang.module.receiptModule.shared.ReceiptSortParameter.SortableField;
 
 public class ReceiptSearchPanel extends SearchPanel<ReceiptStub> implements ReceiptDataBrokerClient {
 
 	public static class Entry extends ListEntry<ReceiptStub> {
 
+		protected Label numberLabel;
+		protected Label clientLabel;
+		protected Label lineLabel;
+		protected Label premiumLabel;
+		protected Label maturityDateLabel;
+		protected boolean initialized = false;
+		
 		public Entry(ReceiptStub value) {
 			super(value);
-			setHeight("40px");
+			setHeight("55px");
 		}
 		
 		public <I extends Object> void setInfo(I info) {
+			if(!initialized){
+				numberLabel = getFormatedLabel();
+				numberLabel.setWordWrap(false);
+				numberLabel.getElement().getStyle().setFontSize(14, Unit.PX);
+				maturityDateLabel = getFormatedLabel();
+				clientLabel = getFormatedLabel();
+				this.clientLabel.getElement().getStyle().setFontSize(11, Unit.PX);
+				lineLabel = getFormatedLabel();
+				this.lineLabel.getElement().getStyle().setFontSize(11, Unit.PX);
+				this.lineLabel.getElement().getStyle().setFontStyle(FontStyle.OBLIQUE);
+				
+				VerticalPanel container = new VerticalPanel();
+				container.setSize("100%", "100%");
+				container.add(numberLabel);
+				container.setCellHeight(numberLabel, "100%");
+				container.setCellVerticalAlignment(numberLabel, HasVerticalAlignment.ALIGN_TOP);
+				container.add(clientLabel);
+				container.add(lineLabel);
+				setWidget(container);
+
+				VerticalPanel rightContainer = new VerticalPanel();
+				rightContainer.setSize("100%", "100%");
+				rightContainer.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_RIGHT);
+
+				maturityDateLabel = getFormatedLabel();
+				rightContainer.add(maturityDateLabel);
+				rightContainer.setCellVerticalAlignment(maturityDateLabel, HasVerticalAlignment.ALIGN_TOP);
+
+				premiumLabel = getFormatedLabel();
+				this.premiumLabel.getElement().getStyle().setFontSize(12, Unit.PX);
+				rightContainer.add(premiumLabel);
+				rightContainer.setCellVerticalAlignment(premiumLabel, HasVerticalAlignment.ALIGN_BOTTOM);
+
+				((UIObject) rightWidgetContainer).setSize("100%", "100%");
+				setRightWidget(rightContainer);
+				initialized = true;
+			}
+
 			ReceiptStub r = (ReceiptStub) info;
-			setTitle(r.description);
-			//TODO
+
+			this.numberLabel.setText("#" + (r.number == null ? "" : r.number) + " (" + r.typeName + ")");
+			this.numberLabel.setTitle("Número e tipo de Recibo");
+
+			this.clientLabel.setText((r.clientNumber == null ? "" : "#" + r.clientNumber + " - ") +
+										(r.clientName == null ? "" : r.clientName));
+			this.clientLabel.setTitle("Cliente");
+			
+			this.lineLabel.setText(r.categoryName + " / " + r.lineName + " / " + r.subLineName);
+			this.lineLabel.setTitle("Categoria / Ramo / Modalidade");
+			
+			this.premiumLabel.setText(r.totalPremium+"€");
+			this.premiumLabel.setTitle("Prémio total");
+			this.maturityDateLabel.setText(r.maturityDate == null ? "" : r.maturityDate);
+			this.maturityDateLabel.setTitle("Data de Vigência");
+			
+			setSelected(this.isSelected(), false);
 		};
+
+		@Override
+		public void setSelected(boolean selected, boolean b) {
+			super.setSelected(selected, b);
+			if(!initialized) {return;}
+			if(selected){
+				this.maturityDateLabel.getElement().getStyle().setColor("white");
+				this.lineLabel.getElement().getStyle().setColor("white");
+			}else{
+				this.maturityDateLabel.getElement().getStyle().setColor("#0066FF");
+				this.lineLabel.getElement().getStyle().setColor("gray");
+			}
+		}
 	}
 	
 	protected static enum Filters {
-		//TODO
+		TYPES,
+		EMITED_FROM,
+		EMITED_TO,
+		MATURITY_FROM,
+		MATURITY_TO,
+		PAYMENT_FROM,
+		PAYMENT_TO,
+		CATEGORY,
+		LINE,
+		SUB_LINE
 	}
 	
 	protected int dataVersion;
@@ -52,10 +141,29 @@ public class ReceiptSearchPanel extends SearchPanel<ReceiptStub> implements Rece
 		super(((ReceiptProcessDataBroker)DataBrokerManager.Util.getInstance().getBroker(BigBangConstants.EntityIds.RECEIPT)).getSearchBroker());
 		receiptsToRemove = new HashMap<String, Void>();
 		receiptsToUpdate = new HashMap<String, Receipt>();
-		
+
 		Map<Enum<?>, String> sortOptions = new TreeMap<Enum<?>, String>();
+		sortOptions.put(ReceiptSortParameter.SortableField.RELEVANCE, "Relevância");
+		sortOptions.put(ReceiptSortParameter.SortableField.TYPE, "Tipo");
+		sortOptions.put(ReceiptSortParameter.SortableField.NUMBER, "Número");
+		sortOptions.put(ReceiptSortParameter.SortableField.CLIENT, "Cliente");
+		sortOptions.put(ReceiptSortParameter.SortableField.SUB_LINE, "Ramo");
+		sortOptions.put(ReceiptSortParameter.SortableField.EMISSION_DATE, "Data de Emissão");
+		sortOptions.put(ReceiptSortParameter.SortableField.LIMIT_DATE, "Data Limite");
+		sortOptions.put(ReceiptSortParameter.SortableField.MATURITY_DATE, "Data de Vencimento");
+		sortOptions.put(ReceiptSortParameter.SortableField.PAYMENT_DATE, "Data de Pagamento");
 		
 		filtersPanel = new FiltersPanel(sortOptions);
+		filtersPanel.addTypifiedListField(Filters.TYPES, "", "Tipos");
+		filtersPanel.addDateField(Filters.EMITED_FROM, "Emitido de");
+		filtersPanel.addDateField(Filters.EMITED_TO, "Até");
+		filtersPanel.addDateField(Filters.MATURITY_FROM, "Vencimento de");
+		filtersPanel.addDateField(Filters.MATURITY_TO, "Até");
+		filtersPanel.addDateField(Filters.PAYMENT_FROM, "Pagamento de");
+		filtersPanel.addDateField(Filters.PAYMENT_TO, "Até");
+		filtersPanel.addTypifiedListField(Filters.CATEGORY, BigBangConstants.EntityIds.CATEGORY, "Categoria");
+		filtersPanel.addTypifiedListField(Filters.LINE, BigBangConstants.EntityIds.LINE, "Ramo", Filters.CATEGORY);
+		filtersPanel.addTypifiedListField(Filters.SUB_LINE, BigBangConstants.EntityIds.SUB_LINE, "Modalidade", Filters.LINE);
 		
 		filtersPanel.getApplyButton().addClickHandler(new ClickHandler() {
 			
@@ -67,20 +175,34 @@ public class ReceiptSearchPanel extends SearchPanel<ReceiptStub> implements Rece
 		
 		filtersContainer.clear();
 		filtersContainer.add(filtersPanel);
+		
+		ReceiptProcessDataBroker broker = (ReceiptProcessDataBroker) DataBrokerManager.Util.getInstance().getBroker(BigBangConstants.EntityIds.RECEIPT);
+		broker.registerClient(this);
 	}
 
 	@Override
 	public void doSearch() {
 		ReceiptSearchParameter parameter = new ReceiptSearchParameter();
 		parameter.freeText = this.getFreeText();
+		parameter.typeIds = new String[]{(String) filtersPanel.getFilterValue(Filters.TYPES)};
+		parameter.emitedFrom = (String) filtersPanel.getFilterValue(Filters.EMITED_FROM);
+		parameter.emitedTo = (String) filtersPanel.getFilterValue(Filters.EMITED_TO);
+		parameter.maturityFrom = (String) filtersPanel.getFilterValue(Filters.MATURITY_FROM);
+		parameter.maturityTo = (String) filtersPanel.getFilterValue(Filters.EMITED_TO);
+		parameter.paymentFrom = (String) filtersPanel.getFilterValue(Filters.PAYMENT_FROM);
+		parameter.paymentTo = (String) filtersPanel.getFilterValue(Filters.PAYMENT_TO);
+		parameter.categoryId = (String) filtersPanel.getFilterValue(Filters.CATEGORY);
+		parameter.lineId = (String) filtersPanel.getFilterValue(Filters.LINE);
+		parameter.subLineId = (String) filtersPanel.getFilterValue(Filters.SUB_LINE);
 		
 		SearchParameter[] parameters = new SearchParameter[] {
-				//parameter
+				parameter
 		};
 		
-		ReceiptSortParameter sortParameter = new ReceiptSortParameter(ReceiptSortParameter.SortableField.RELEVANCE, SortOrder.DESC);
+		ReceiptSortParameter sortParameter = new ReceiptSortParameter((SortableField) filtersPanel.getSelectedSortableField(), filtersPanel.getSortingOrder());
+		
 		ReceiptSortParameter[] sorts = new ReceiptSortParameter[]{
-				//sortParameter
+				sortParameter
 		};
 		
 		doSearch(parameters, sorts);

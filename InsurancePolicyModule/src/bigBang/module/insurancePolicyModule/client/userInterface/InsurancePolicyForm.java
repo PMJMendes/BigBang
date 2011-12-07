@@ -53,11 +53,13 @@ public abstract class InsurancePolicyForm extends FormView<InsurancePolicy> {
 			switch(field.type) {
 			case LIST:
 				ExpandableListBoxFormField listField = new ExpandableListBoxFormField(field.fieldName);
+				listField.setEditable(true);
 				listField.setListId(BigBangConstants.TypifiedListIds.FIELD_VALUES+"/"+field.fieldId, null);
 				this.field = listField;
 				break;
 			case REFERENCE:
 				ExpandableListBoxFormField referenceListField = new ExpandableListBoxFormField(field.fieldName);
+				referenceListField.setEditable(true);
 				referenceListField.setListId(field.refersToId, null);
 				this.field = referenceListField;
 				break;
@@ -191,7 +193,8 @@ public abstract class InsurancePolicyForm extends FormView<InsurancePolicy> {
 		endDate = new DatePickerFormField("Data de Fim");
 		fractioning = new ExpandableListBoxFormField(ModuleConstants.TypifiedListIds.FRACTIONING, "Fraccionamento");
 		caseStudy = new CheckBoxFormField("Case Study");
-		notes = new TextAreaFormField("Observações");
+		notes = new TextAreaFormField();
+		notes.setSize("100%", "200px");
 		policyStatus = new TextBoxFormField("Estado");
 		policyStatus.setFieldWidth("100%");
 		policyStatus.setEditable(false);
@@ -259,6 +262,7 @@ public abstract class InsurancePolicyForm extends FormView<InsurancePolicy> {
 		this.extraFieldsSection = new FormViewSection("Informação Extra");
 		addSection(this.extraFieldsSection);
 
+		addSection("Notas");
 		addFormField(notes);
 
 		category.addValueChangeHandler(new ValueChangeHandler<String>() {
@@ -357,6 +361,7 @@ public abstract class InsurancePolicyForm extends FormView<InsurancePolicy> {
 
 		for(int i = 0; fields != null && i < fields.length; i++) {
 			HeaderFormField field = new HeaderFormField(fields[i]);
+			field.setReadOnly(this.isReadOnly());
 			field.setValue(fields[i].value);
 			field.setFieldWidth("175px");
 			this.headerFieldsSection.addFormField(field, true);
@@ -388,6 +393,7 @@ public abstract class InsurancePolicyForm extends FormView<InsurancePolicy> {
 
 		for(int i = 0; fields != null && i < fields.length; i++) {
 			HeaderFormField field = new HeaderFormField(fields[i]);
+			field.setReadOnly(this.isReadOnly());
 			field.setFieldWidth("175px");
 			this.extraFieldsSection.addFormField(field, true);
 			this.extraFields.put(fields[i].fieldId, field);
@@ -503,4 +509,16 @@ public abstract class InsurancePolicyForm extends FormView<InsurancePolicy> {
 		this.value = new InsurancePolicy();
 	}
 
+	@Override
+	public void setReadOnly(boolean readOnly) {
+		super.setReadOnly(readOnly);
+		for(HeaderFormField f : this.extraFields.values()){
+			f.setReadOnly(readOnly);
+		}
+		for(HeaderFormField f : this.headerFields.values()){
+			f.setReadOnly(readOnly);
+		}
+		this.table.setReadOnly(readOnly);
+	}
+	
 }

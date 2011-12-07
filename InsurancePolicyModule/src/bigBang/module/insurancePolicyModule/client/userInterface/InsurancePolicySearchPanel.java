@@ -12,6 +12,7 @@ import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.VerticalPanel;
 
 import bigBang.definitions.client.dataAccess.InsurancePolicyBroker;
 import bigBang.definitions.client.dataAccess.InsurancePolicyDataBrokerClient;
@@ -37,22 +38,41 @@ public class InsurancePolicySearchPanel extends SearchPanel<InsurancePolicyStub>
 	 * An entry in the search panel
 	 */
 	public static class Entry extends ListEntry<InsurancePolicyStub>{
+		protected Label numberLabel;
+		protected Label clientLabel;
+		protected Label lineLabel;
+		
 		public Entry(InsurancePolicyStub policy){
 			super(policy);
-			setHeight("40px");
+			setHeight("55px");
 			this.titleLabel.getElement().getStyle().setFontSize(11, Unit.PX);
 		}
 
 		public <I extends Object> void setInfo(I info) {
 			InsurancePolicyStub value = (InsurancePolicyStub)info;
 			if(value.id != null){
-				Label numberLabel = new Label(value.number);
-				numberLabel.setWordWrap(false);
-				numberLabel.setWidth("45px");
-				setLeftWidget(numberLabel);
-				setText(value.clientNumber + " - " + value.clientName);
-				setTitle(value.categoryName+" / "+value.lineName+" / "+value.subLineName);
-				this.textLabel.getElement().getStyle().setFontStyle(FontStyle.OBLIQUE);
+				if(numberLabel == null) {
+					numberLabel = getFormatedLabel();
+					numberLabel.getElement().getStyle().setFontSize(14, Unit.PX);
+					numberLabel.setWordWrap(false);
+					clientLabel = getFormatedLabel();
+					clientLabel.getElement().getStyle().setFontSize(11, Unit.PX);
+					lineLabel = getFormatedLabel();
+					lineLabel.getElement().getStyle().setFontSize(11, Unit.PX);
+					VerticalPanel container = new VerticalPanel();
+					container.setSize("100%", "100%");
+					
+					container.add(numberLabel);
+					container.add(lineLabel);
+					container.add(clientLabel);
+
+					setWidget(container);
+				}
+				
+				numberLabel.setText("#" + value.number);
+				clientLabel.setText("#" + value.clientNumber + " - " + value.clientName);
+				lineLabel.setText(value.categoryName+" / "+value.lineName+" / "+value.subLineName);
+				lineLabel.getElement().getStyle().setFontStyle(FontStyle.OBLIQUE);
 
 				Resources resources = GWT.create(Resources.class);
 				Image statusIcon = null;
@@ -79,10 +99,11 @@ public class InsurancePolicySearchPanel extends SearchPanel<InsurancePolicyStub>
 		@Override
 		public void setSelected(boolean selected, boolean b) {
 			super.setSelected(selected, b);
+			if(this.clientLabel == null) {return;}
 			if(selected){
-				this.textLabel.getElement().getStyle().setColor("white");
+				this.clientLabel.getElement().getStyle().setColor("white");
 			}else{
-				this.textLabel.getElement().getStyle().setColor("gray");
+				this.clientLabel.getElement().getStyle().setColor("gray");
 			}
 		}
 	}

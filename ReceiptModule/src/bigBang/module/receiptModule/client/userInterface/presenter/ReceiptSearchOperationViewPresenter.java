@@ -40,18 +40,21 @@ OperationViewPresenter, ReceiptDataBrokerClient {
 		CANCEL,
 		DELETE,
 	}
-	
+
 	public interface Display {
 		//List
 		HasValueSelectables<?> getList();
-
+		void selectReceipt(Receipt receipt);
+		
 		//Form
 		HasEditableValue<Receipt> getForm();
 		boolean isFormValid();
 		void lockForm(boolean lock);
+		void scrollFormToTop();
 
 		void allowUpdate(boolean allow);
-		
+		void allowDelete(boolean allow);
+
 		void clearAllowedPermissions();
 		void clear();
 		void registerActionInvokedHandler(ActionInvokedEventHandler<Action> handler);
@@ -68,6 +71,7 @@ OperationViewPresenter, ReceiptDataBrokerClient {
 	protected boolean bound;
 	protected ReceiptSearchOperation operation;
 	protected ReceiptProcessDataBroker receiptBroker;
+	protected int version;
 
 	public ReceiptSearchOperationViewPresenter(EventBus evenBus, Service service, View view) {
 		setEventBus(eventBus);
@@ -106,15 +110,16 @@ OperationViewPresenter, ReceiptDataBrokerClient {
 		view.lockForm(true);
 		view.clearAllowedPermissions();
 		this.view.getList().addSelectionChangedEventHandler(new SelectionChangedEventHandler() {
-			
+
 			@Override
 			public void onSelectionChanged(SelectionChangedEvent event) {
 				@SuppressWarnings("unchecked")
 				ValueSelectable<ReceiptStub> selected = (ValueSelectable<ReceiptStub>) event.getFirstSelected();
-				ReceiptStub selectedValue = selected == null ? null : selected.getValue();
+				final ReceiptStub selectedValue = selected == null ? null : selected.getValue();
 				view.setSaveModeEnabled(false);
 				if(selectedValue == null){
 					view.getForm().setValue(null);
+					view.scrollFormToTop();
 					view.lockForm(true);
 				}else{
 					if(selectedValue.id != null){
@@ -122,32 +127,35 @@ OperationViewPresenter, ReceiptDataBrokerClient {
 
 							@Override
 							public void onResponse(Permission[] response) {
+								view.scrollFormToTop();
 								view.clearAllowedPermissions();
 								for(int i = 0; i < response.length; i++) {
 									Permission p = response[i];
 									if(p.instanceId == null){continue;}
 									if(p.id.equalsIgnoreCase(ModuleConstants.OpTypeIDs.CHANGE_RECEIPT_DATA)){
 										view.allowUpdate(true);
+									}else if(p.id.equalsIgnoreCase(ModuleConstants.OpTypeIDs.DELETE_RECEIPT)){
+										view.allowDelete(true);
 									}
 								}
+								receiptBroker.getReceipt(selectedValue.id, new ResponseHandler<Receipt>() {
+
+									@Override
+									public void onResponse(Receipt value) {
+										view.getForm().setValue(value);
+										view.lockForm(value == null);
+									}
+
+									@Override
+									public void onError(Collection<ResponseError> errors) {}
+								});
 							}
 
 							@Override
 							public void onError(Collection<ResponseError> errors) {
 								// TODO Auto-generated method stub
 							}
-							
-						});
-						receiptBroker.getReceipt(selectedValue.id, new ResponseHandler<Receipt>() {
 
-							@Override
-							public void onResponse(Receipt value) {
-								view.getForm().setValue(value);
-								view.lockForm(value == null);
-							}
-
-							@Override
-							public void onError(Collection<ResponseError> errors) {}
 						});
 					}
 				}
@@ -157,8 +165,26 @@ OperationViewPresenter, ReceiptDataBrokerClient {
 
 			@Override
 			public void onActionInvoked(ActionInvokedEvent<Action> action) {
-				// TODO Auto-generated method stub
-				
+				switch(action.getAction()){
+				case EDIT:
+					view.getForm().setReadOnly(false);
+					view.setSaveModeEnabled(true);
+					break;
+				case CANCEL:
+					view.getForm().revert();
+					view.getForm().setReadOnly(true);
+					view.setSaveModeEnabled(false);
+					break;
+				case DELETE:
+					deleteReceipt();
+					break;
+				case SAVE:
+					if(!view.isFormValid())
+						return;
+					Receipt info = view.getForm().getInfo();
+					saveReceipt(info);
+					break;
+				}
 			}
 		});
 	}
@@ -195,35 +221,65 @@ OperationViewPresenter, ReceiptDataBrokerClient {
 	public void setOperationPermission(boolean hasPermissionForOperation) {
 		this.operation.setPermission(hasPermissionForOperation);
 	}
+	
+	protected void saveReceipt(Receipt receipt){
+		this.receiptBroker.updateReceipt(receipt, new ResponseHandler<Receipt>() {
+
+			@Override
+			public void onResponse(Receipt response) {
+				view.selectReceipt(response);
+				view.getForm().setValue(response);
+				view.getForm().setReadOnly(true);
+				view.setSaveModeEnabled(false);
+			}
+
+			@Override
+			public void onError(Collection<ResponseError> errors) {}
+		});
+	}
+	
+	protected void deleteReceipt(){
+		Receipt receipt = view.getForm().getValue();
+		if(receipt == null || receipt.id == null){
+			return;
+		}
+		String id = receipt.id;
+		this.receiptBroker.removeReceipt(id, new ResponseHandler<String>() {
+
+			@Override
+			public void onResponse(String response) {
+				view.getList().clearSelection();
+				view.getForm().setValue(null);
+			}
+
+			@Override
+			public void onError(Collection<ResponseError> errors) {}
+		});
+	}
 
 	@Override
 	public void setDataVersionNumber(String dataElementId, int number) {
-		// TODO Auto-generated method stub
-		
+		this.version = number;
 	}
 
 	@Override
 	public int getDataVersion(String dataElementId) {
-		// TODO Auto-generated method stub
-		return 0;
+		return this.version;
 	}
 
 	@Override
 	public void addReceipt(Receipt receipt) {
-		// TODO Auto-generated method stub
-		
+		return;
 	}
 
 	@Override
 	public void updateReceipt(Receipt receipt) {
-		// TODO Auto-generated method stub
-		
+		return;
 	}
 
 	@Override
 	public void removeReceipt(String id) {
-		// TODO Auto-generated method stub
-		
+		return;
 	}
 
 }

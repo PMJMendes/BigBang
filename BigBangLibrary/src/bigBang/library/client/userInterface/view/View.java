@@ -41,6 +41,11 @@ public class View extends Composite implements RightClickable, HasAllMouseHandle
 		return this;
 	}
 
+	@Override
+	protected void initWidget(Widget widget) {
+		super.initWidget(widget);
+	}
+	
 	public View getInstance() {
 		return new View();
 	}
@@ -160,5 +165,9 @@ public class View extends Composite implements RightClickable, HasAllMouseHandle
 	@Override
 	public HandlerRegistration addMouseWheelHandler(MouseWheelHandler handler) {
 		return addDomHandler(handler, MouseWheelEvent.getType());
-	} 
+	}
+	
+	public void showLoading(boolean show) {
+		//TODO
+	}
 }

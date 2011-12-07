@@ -3,28 +3,67 @@ package bigBang.module.clientModule.client.userInterface;
 import bigBang.definitions.shared.ClientStub;
 import bigBang.library.client.userInterface.SearchPanelListEntry;
 
-import com.google.gwt.dom.client.Style.FontStyle;
+import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.VerticalPanel;
 
 public class ClientSearchPanelListEntry extends SearchPanelListEntry<ClientStub> {
 
+	protected Label numberLabel;
+	protected Label nameLabel;
+	protected Label groupLabel;
+	
+	protected boolean initialized = false;
+	
 	public ClientSearchPanelListEntry(ClientStub client) {
 		super(client);
-		this.setHeight("40px");
+		this.setHeight("55px");
+		this.setSelected(isSelected(), false);
 	}
 
 	public <I extends Object> void setInfo(I info) {
 		ClientStub value = (ClientStub)info;
+		if(!this.initialized){
+			initialize();
+		}
+		
 		if(value.id != null){
-			Label clientNumberLabel = new Label(value.clientNumber);
-			clientNumberLabel.setWidth("40px");
-			setLeftWidget(clientNumberLabel);
-			setTitle(value.name);
-			setText(value.groupName);
-			this.textLabel.getElement().getStyle().setFontStyle(FontStyle.OBLIQUE);
+			numberLabel.setText("#" + value.clientNumber);
+			nameLabel.setText(value.name);
+			groupLabel.setText(value.groupName == null ? "-" : value.groupName);
 		}else{
-			setTitle("Novo Cliente");
+			numberLabel.setText("");
+			nameLabel.setText("Novo Cliente");
+			groupLabel.setText("");
 		}
 	};
+	
+	protected void initialize(){
+		this.numberLabel = getFormatedLabel();
+		this.numberLabel.getElement().getStyle().setFontSize(14, Unit.PX);
+		this.nameLabel = getFormatedLabel();
+		this.nameLabel.getElement().getStyle().setFontSize(11, Unit.PX);
+		this.groupLabel = getFormatedLabel();
+		this.groupLabel.getElement().getStyle().setFontSize(11, Unit.PX);
+		
+		VerticalPanel container = new VerticalPanel();
+		container.setSize("100%", "100%");
+		container.add(this.numberLabel);
+		container.add(this.nameLabel);
+		container.add(this.groupLabel);
+		this.setWidget(container);
+		this.initialized = true;
+	}
 
+	@Override
+	public void setSelected(boolean selected, boolean fireEvents) {
+		super.setSelected(selected, fireEvents);
+		if(!this.initialized){return;}
+		if(selected){
+			this.groupLabel.getElement().getStyle().setColor("white");
+		}else{
+			this.groupLabel.getElement().getStyle().setColor("gray");
+		}
+	}
+	
 }

@@ -24,7 +24,9 @@ public class BigBangConstants {
 		public static final String INSURANCE_POLICY = "29145166-59AC-452E-8C2B-9F81013A39AC";
 		public static final String RISK_ANALISYS = ""; //TODO
 		public static final String RECEIPT = "B24E4BF7-382C-40EE-8120-9F8A00DABB81";
-
+		public static final String INSURED_OBJECT = "3A3316D2-9D7C-4FD1-8486-9F9C0012E119";
+		
+		
 		public static final String CONTACT = "2085F9FD-7FCE-46C0-99FD-9EC400FFBA5C";
 		public static final String DOCUMENT = "794F44DB-191A-4E17-9217-9ECC012A8AC2";
 	}

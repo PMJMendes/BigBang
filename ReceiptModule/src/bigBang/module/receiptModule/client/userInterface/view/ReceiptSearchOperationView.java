@@ -1,11 +1,16 @@
 package bigBang.module.receiptModule.client.userInterface.view;
 
+import org.gwt.mosaic.ui.client.MessageBox;
+import org.gwt.mosaic.ui.client.MessageBox.ConfirmationCallback;
+
 import com.google.gwt.user.client.ui.SplitLayoutPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
 import bigBang.definitions.shared.Receipt;
+import bigBang.definitions.shared.ReceiptStub;
 import bigBang.library.client.HasEditableValue;
 import bigBang.library.client.HasValueSelectables;
+import bigBang.library.client.ValueSelectable;
 import bigBang.library.client.event.ActionInvokedEvent;
 import bigBang.library.client.event.ActionInvokedEventHandler;
 import bigBang.library.client.userInterface.DocumentsPreviewList;
@@ -54,12 +59,20 @@ public class ReceiptSearchOperationView extends View implements ReceiptSearchOpe
 
 			@Override
 			public void onCancelRequest() {
-				actionHandler.onActionInvoked(new ActionInvokedEvent<ReceiptSearchOperationViewPresenter.Action>(Action.EDIT));
+				actionHandler.onActionInvoked(new ActionInvokedEvent<ReceiptSearchOperationViewPresenter.Action>(Action.CANCEL));
 			}
 
 			@Override
 			public void onDelete() {
-				actionHandler.onActionInvoked(new ActionInvokedEvent<ReceiptSearchOperationViewPresenter.Action>(Action.DELETE));
+				MessageBox.confirm("Eliminação de Recibo", "O Recibo seleccionado será eliminado do sistema. Tem certeza que deseja prosseguir?", new ConfirmationCallback() {
+					
+					@Override
+					public void onResult(boolean result) {
+						if(result){
+							actionHandler.onActionInvoked(new ActionInvokedEvent<ReceiptSearchOperationViewPresenter.Action>(Action.DELETE));
+						}
+					}
+				});
 			}
 
 			@Override
@@ -259,19 +272,41 @@ public class ReceiptSearchOperationView extends View implements ReceiptSearchOpe
 
 	@Override
 	public void setSaveModeEnabled(boolean enabled) {
-		// TODO Auto-generated method stub
-		
+		this.operationsToolbar.setSaveModeEnabled(enabled);
 	}
 
 	@Override
 	public void setReadOnly(boolean readOnly) {
-		// TODO Auto-generated method stub
-		
+		if(readOnly){
+			this.operationsToolbar.setSaveModeEnabled(false);
+			this.operationsToolbar.lockAll();
+		}
+	}
+	
+	@Override
+	public void allowUpdate(boolean allow) {
+		this.operationsToolbar.setEditionAvailable(allow);
+		//this.childrenPanel.setReadOnly(!allow); todo
+	}
+	
+	@Override
+	public void allowDelete(boolean allow) {
+		this.operationsToolbar.allowDelete(allow);
 	}
 
 	@Override
-	public void allowUpdate(boolean allow) {
-		this.operationsToolbar.allowDelete(allow);
+	public void selectReceipt(Receipt receipt) {
+		for(ValueSelectable<ReceiptStub> s : this.searchPanel) {
+			if(s != null && s.getValue().id.equalsIgnoreCase(receipt.id)){
+				s.setSelected(true, true);
+				break;
+			}
+		}
+	}
+	
+	@Override
+	public void scrollFormToTop() {
+		this.form.scrollToTop();
 	}
 	
 }

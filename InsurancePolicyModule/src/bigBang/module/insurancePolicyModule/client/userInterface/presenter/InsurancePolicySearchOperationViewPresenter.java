@@ -6,10 +6,14 @@ import com.google.gwt.user.client.ui.HasWidgets;
 import com.google.gwt.user.client.ui.Widget;
 
 import bigBang.definitions.client.dataAccess.InsurancePolicyBroker;
+import bigBang.definitions.client.dataAccess.InsurancePolicyDataBrokerClient;
+import bigBang.definitions.client.dataAccess.InsuredObjectDataBroker;
+import bigBang.definitions.client.dataAccess.InsuredObjectDataBrokerClient;
 import bigBang.definitions.client.response.ResponseError;
 import bigBang.definitions.client.response.ResponseHandler;
 import bigBang.definitions.shared.BigBangConstants;
 import bigBang.definitions.shared.InsurancePolicy;
+import bigBang.definitions.shared.InsuredObject;
 import bigBang.definitions.shared.InsurancePolicy.TableSection;
 import bigBang.definitions.shared.InsurancePolicyStub;
 import bigBang.definitions.shared.Receipt;
@@ -87,7 +91,11 @@ public class InsurancePolicySearchOperationViewPresenter implements
 	protected InsurancePolicySearchOperation operation;
 	protected boolean bound = false;
 	protected InsurancePolicyBroker broker;
+	protected InsuredObjectDataBroker insuredObjectBroker;
 	protected int dataVersion;
+	
+	protected InsurancePolicyDataBrokerClient insurancePolicyClient;
+	protected InsuredObjectDataBrokerClient insuredObjectClient;
 	
 	public InsurancePolicySearchOperationViewPresenter(EventBus eventBus, Service service, View view){
 		setEventBus(eventBus);
@@ -95,6 +103,83 @@ public class InsurancePolicySearchOperationViewPresenter implements
 		setView(view);
 		
 		this.broker = ((InsurancePolicyBroker)DataBrokerManager.Util.getInstance().getBroker(BigBangConstants.EntityIds.INSURANCE_POLICY));
+		this.insuredObjectBroker = ((InsuredObjectDataBroker)DataBrokerManager.Util.getInstance().getBroker(BigBangConstants.EntityIds.INSURED_OBJECT));
+		
+		this.insurancePolicyClient = initInsurancePolicyClient();
+		this.insuredObjectClient = initInsuredObjectClient();
+		
+		this.broker.registerClient(this.insurancePolicyClient);
+		this.insuredObjectBroker.registerClient(insuredObjectClient);
+	}
+	
+	protected InsurancePolicyDataBrokerClient initInsurancePolicyClient(){
+		InsurancePolicyDataBrokerClient result = new InsurancePolicyDataBrokerClient() {
+			
+			protected int version;
+			
+			@Override
+			public void setDataVersionNumber(String dataElementId, int number) {
+				this.version = number;
+			}
+			
+			@Override
+			public int getDataVersion(String dataElementId) {
+				return this.version;
+			}
+			
+			@Override
+			public void updateInsurancePolicy(InsurancePolicy policy) {
+				//TODO
+			}
+			
+			@Override
+			public void removeInsurancePolicy(String policyId) {
+				// TODO Auto-generated method stub
+			}
+			
+			@Override
+			public void addInsurancePolicy(InsurancePolicy policy) {
+				// TODO Auto-generated method stub
+				
+			}
+		};
+		return result;
+	}
+	
+	protected InsuredObjectDataBrokerClient initInsuredObjectClient() {
+		InsuredObjectDataBrokerClient result = new InsuredObjectDataBrokerClient() {
+			
+			@Override
+			public void setDataVersionNumber(String dataElementId, int number) {
+				// TODO Auto-generated method stub
+				
+			}
+			
+			@Override
+			public int getDataVersion(String dataElementId) {
+				// TODO Auto-generated method stub
+				return 0;
+			}
+			
+			@Override
+			public void updateInsuredObject(InsuredObject object) {
+				// TODO Auto-generated method stub
+				
+			}
+			
+			@Override
+			public void removeInsuredObject(String id) {
+				// TODO Auto-generated method stub
+				
+			}
+			
+			@Override
+			public void addInsuredObject(InsuredObject object) {
+				// TODO Auto-generated method stub
+				
+			}
+		};
+		return result;
 	}
 	
 	@Override
@@ -129,50 +214,50 @@ public class InsurancePolicySearchOperationViewPresenter implements
 			
 			@Override
 			public void onSelectionChanged(SelectionChangedEvent event) {
+				view.clearAllowedPermissions();
+				view.lockForm(true);
 				@SuppressWarnings("unchecked")
 				ValueSelectable<InsurancePolicyStub> selected = (ValueSelectable<InsurancePolicyStub>) event.getFirstSelected();
-				InsurancePolicyStub selectedValue = selected == null ? null : selected.getValue();
+				final InsurancePolicyStub selectedValue = selected == null ? null : selected.getValue();
 				view.setSaveModeEnabled(false);
 				if(selectedValue == null){
 					view.getForm().setValue(null);
-					view.lockForm(true);
 				}else{
 					if(selectedValue.id != null){
 						view.removeNewPolicyPreparation();
+						view.clearAllowedPermissions();
 						BigBangPermissionManager.Util.getInstance().getProcessPermissions(selectedValue.processId, new ResponseHandler<Permission[]> () {
-
 							@Override
-							public void onResponse(Permission[] response) {
-								view.clearAllowedPermissions();
-								for(int i = 0; i < response.length; i++) {
-									Permission p = response[i];
-									if(p.instanceId == null){continue;}
-									if(p.id.equalsIgnoreCase(ModuleConstants.OpTypeIDs.EDIT_POLICY)){
-										view.allowUpdate(true);
+							public void onResponse(final Permission[] response) {
+								broker.getPolicy(selectedValue.id, new ResponseHandler<InsurancePolicy>() {
+
+									@Override
+									public void onResponse(InsurancePolicy value) {
+										view.getForm().setValue(value);
+										view.lockForm(true);
+										for(int i = 0; i < response.length; i++) {
+											Permission p = response[i];
+											if(p.instanceId == null){continue;}
+											if(p.id.equalsIgnoreCase(ModuleConstants.OpTypeIDs.EDIT_POLICY)){
+												view.allowUpdate(true);
+											}
+											if(p.id.equalsIgnoreCase(ModuleConstants.OpTypeIDs.DELETE_POLICY)){
+												view.allowDelete(true);
+											}
+											if(p.id.equalsIgnoreCase(ModuleConstants.OpTypeIDs.CREATE_RECEIPT)){
+												view.allowCreateReceipt(true);
+											}
+										}
 									}
-									if(p.id.equalsIgnoreCase(ModuleConstants.OpTypeIDs.DELETE_POLICY)){
-										view.allowDelete(true);
-									}
-									if(p.id.equalsIgnoreCase(ModuleConstants.OpTypeIDs.CREATE_RECEIPT)){
-										view.allowCreateReceipt(true);
-									}
-								}
+
+									@Override
+									public void onError(Collection<ResponseError> errors) {}
+								});
 							}
 
 							@Override
 							public void onError(Collection<ResponseError> errors) {}
 							
-						});
-						broker.getPolicy(selectedValue.id, new ResponseHandler<InsurancePolicy>() {
-
-							@Override
-							public void onResponse(InsurancePolicy value) {
-								view.getForm().setValue(value);
-								view.lockForm(value == null);
-							}
-
-							@Override
-							public void onError(Collection<ResponseError> errors) {}
 						});
 					}
 				}

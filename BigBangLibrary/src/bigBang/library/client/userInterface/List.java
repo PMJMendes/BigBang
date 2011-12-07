@@ -149,8 +149,15 @@ public class List<T> extends View implements HasValueSelectables<T>, java.util.L
 			}
 		};
 
-		clear();
+		this.entrySelectionHandler = new SelectedStateChangedEventHandler() {
 
+			@Override
+			public void onSelectedStateChanged(SelectedStateChangedEvent event) {
+				selectableStateChanged((Selectable) event.getSource());
+			}
+		};
+
+		clear();
 		disableTextSelection(true);
 	}
 
@@ -330,9 +337,14 @@ public class List<T> extends View implements HasValueSelectables<T>, java.util.L
 			//TODO throw
 		}else{
 			for(ListEntry<T> e : entries){
-				if(source != e)
+				if(source != e){
 					e.setSelected(false, false);
+				}
 			}
+		}
+		
+		if(!((UIObject) source).isVisible()){
+			this.scrollPanel.ensureVisible((UIObject) source);
 		}
 		selectionChangedEventFireBypass(new SelectionChangedEvent(this.getSelected()));
 	}
@@ -483,13 +495,6 @@ public class List<T> extends View implements HasValueSelectables<T>, java.util.L
 
 	@Override
 	public void clear() {
-		this.entrySelectionHandler = new SelectedStateChangedEventHandler() {
-
-			@Override
-			public void onSelectedStateChanged(SelectedStateChangedEvent event) {
-				selectableStateChanged((Selectable) event.getSource());
-			}
-		};
 		selectionChangedEventFireBypass(new SelectionChangedEvent(getSelected()));
 		boolean hadElements = !entries.isEmpty();
 		this.clearSelection();

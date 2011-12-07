@@ -38,9 +38,10 @@ public interface ClientProcessBroker extends DataBrokerInterface<Client>{
 	/**
 	 * Removes the client for a given id
 	 * @param clientId The client id
+	 * @param reasonId The id of the reason for deletion
 	 * @param handler The handler to be notified on response
 	 */
-	public void removeClient(String clientId, ResponseHandler<String> handler);
+	public void removeClient(String clientId, String reasonId, ResponseHandler<String> handler);
 	
 	/**
 	 * Gets the search service associated with this broker

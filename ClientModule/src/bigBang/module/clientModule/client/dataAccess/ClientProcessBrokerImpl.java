@@ -16,12 +16,10 @@ import bigBang.definitions.shared.InfoOrDocumentRequest;
 import bigBang.definitions.shared.InfoOrDocumentRequest.Cancellation;
 import bigBang.definitions.shared.InfoOrDocumentRequest.Response;
 import bigBang.definitions.shared.ClientStub;
-import bigBang.definitions.shared.InsurancePolicy;
 import bigBang.definitions.shared.ManagerTransfer;
 import bigBang.definitions.shared.QuoteRequest;
 import bigBang.definitions.shared.RiskAnalysis;
 import bigBang.library.client.BigBangAsyncCallback;
-import bigBang.library.client.dataAccess.DataBrokerManager;
 import bigBang.library.interfaces.InfoOrDocumentRequestService;
 import bigBang.library.interfaces.InfoOrDocumentRequestServiceAsync;
 import bigBang.module.clientModule.interfaces.ClientService;
@@ -101,8 +99,7 @@ public class ClientProcessBrokerImpl extends DataBroker<Client> implements Clien
 	}
 
 	@Override
-	public void removeClient(final String clientId, final ResponseHandler<String> handler) {
-		//TODO Enviar a razão para apagar
+	public void removeClient(final String clientId, String reasonId, final ResponseHandler<String> handler) {
 		ClientProcessBrokerImpl.this.service.deleteClient(clientId, null /*reason*/, new BigBangAsyncCallback<Void>() {
 
 			@Override

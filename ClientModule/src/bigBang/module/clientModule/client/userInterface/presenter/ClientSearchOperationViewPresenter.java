@@ -3,7 +3,6 @@ package bigBang.module.clientModule.client.userInterface.presenter;
 import java.util.Collection;
 
 import bigBang.definitions.client.dataAccess.ClientProcessBroker;
-import bigBang.definitions.client.dataAccess.ClientProcessDataBrokerClient;
 import bigBang.definitions.client.response.ResponseError;
 import bigBang.definitions.client.response.ResponseHandler;
 import bigBang.definitions.shared.BigBangConstants;
@@ -42,7 +41,7 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.HasWidgets;
 import com.google.gwt.user.client.ui.Widget;
 
-public class ClientSearchOperationViewPresenter implements OperationViewPresenter, ClientProcessDataBrokerClient {
+public class ClientSearchOperationViewPresenter implements OperationViewPresenter {
 
 	public static enum Action{
 		NEW,
@@ -125,7 +124,7 @@ public class ClientSearchOperationViewPresenter implements OperationViewPresente
 
 		//History
 		HasValueSelectables<HistoryItemStub> getHistoryList();
-		void showHistory(Client process);
+		void showHistory(Client process, String selectedItemId);
 		
 		//General
 		void clear();
@@ -445,8 +444,8 @@ public class ClientSearchOperationViewPresenter implements OperationViewPresente
 				if(client == null || client.id == null || client.processId == null) {
 					return;
 				}
-				
-				clientBroker.removeClient(client.id, new ResponseHandler<String>() {
+				view.getDeleteForm().commit();
+				clientBroker.removeClient(client.id, view.getDeleteForm().getValue(), new ResponseHandler<String>() {
 
 					@Override
 					public void onResponse(String response) {
@@ -468,7 +467,7 @@ public class ClientSearchOperationViewPresenter implements OperationViewPresente
 				@SuppressWarnings("unchecked")
 				ValueSelectable<HistoryItemStub> vs = (ValueSelectable<HistoryItemStub>) event.getFirstSelected();
 				if(vs != null){
-					view.showHistory(view.getForm().getValue());
+					view.showHistory(view.getForm().getValue(), vs.getValue().id);
 				}
 			}
 		});
@@ -534,21 +533,6 @@ public class ClientSearchOperationViewPresenter implements OperationViewPresente
 		this.view.setReadOnly(true);
 	}
 
-	@Override
-	public void setDataVersionNumber(String dataElementId, int number) {
-		if(dataElementId.equals(BigBangConstants.EntityIds.CLIENT)){
-			this.clientDataVersionNumber = number;
-		}
-	}
-
-	@Override
-	public int getDataVersion(String dataElementId) {
-		if(dataElementId.equals(BigBangConstants.EntityIds.CLIENT))
-			return this.clientDataVersionNumber;
-		throw new RuntimeException(this.getClass().getName() + " does not support being a data broker client for data element with id=" + dataElementId);
-	}
-
-	@Override
 	public void addClient(Client client) {
 		clientBroker.addClient(client, new ResponseHandler<Client>() {
 
@@ -566,7 +550,6 @@ public class ClientSearchOperationViewPresenter implements OperationViewPresente
 		});
 	}
 
-	@Override
 	public void updateClient(Client client) {
 		clientBroker.updateClient(client, new ResponseHandler<Client>() {
 
@@ -584,18 +567,4 @@ public class ClientSearchOperationViewPresenter implements OperationViewPresente
 		});
 	}
 
-	@Override
-	public void removeClient(String clientId) {
-		clientBroker.removeClient(clientId, new ResponseHandler<String>() {
-
-			@Override
-			public void onResponse(String response) {
-				view.getForm().setValue(null);
-				view.setReadOnly(true);
-			}
-
-			@Override
-			public void onError(Collection<ResponseError> errors) {}
-		});
-	}
 }

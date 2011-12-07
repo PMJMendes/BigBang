@@ -190,29 +190,58 @@ public class BigBangTypifiedListBroker implements TypifiedListBroker {
 		if(!validListId(listId)) {
 			return;
 		}
-		
-		this.service.createListItem(listId, item, new BigBangAsyncCallback<TipifiedListItem>() {
 
-			@Override
-			public void onSuccess(TipifiedListItem result) {
-				updateListClients(listId);
-				BigBangTypifiedListBroker.this.lists.get(listId).add(result);
-				Integer version = BigBangTypifiedListBroker.this.incrementListDataVersion(listId);
+		if(isCompositeId(listId)) {
+			StringTokenizer tokenizer = new StringTokenizer(listId, DEPENDENCY_DELIMITER);
+			String effectiveListId = tokenizer.nextToken();
+			String dependencyId = tokenizer.nextToken();
+			
+			this.service.createListItemFiltered(effectiveListId, dependencyId, item, new BigBangAsyncCallback<TipifiedListItem>() {
 
-				for(TypifiedListClient client : BigBangTypifiedListBroker.this.clients.get(listId)) {
-					client.addItem(result);
-					client.setTypifiedDataVersionNumber(version.intValue());
+				@Override
+				public void onSuccess(TipifiedListItem result) {
+					updateListClients(listId);
+					BigBangTypifiedListBroker.this.lists.get(listId).add(result);
+					Integer version = BigBangTypifiedListBroker.this.incrementListDataVersion(listId);
+
+					for(TypifiedListClient client : BigBangTypifiedListBroker.this.clients.get(listId)) {
+						client.addItem(result);
+						client.setTypifiedDataVersionNumber(version.intValue());
+					}
+
+					handler.onResponse(result);
 				}
 
-				handler.onResponse(result);
-			}
+				@Override
+				public void onFailure(Throwable caught) {
+					handler.onError(new String[]{"The item could not be created"});
+					super.onFailure(caught);
+				}
+			});
+		}else{
+			this.service.createListItem(listId, item, new BigBangAsyncCallback<TipifiedListItem>() {
 
-			@Override
-			public void onFailure(Throwable caught) {
-				handler.onError(new String[]{"The item could not be created"});
-				super.onFailure(caught);
-			}
-		});
+				@Override
+				public void onSuccess(TipifiedListItem result) {
+					updateListClients(listId);
+					BigBangTypifiedListBroker.this.lists.get(listId).add(result);
+					Integer version = BigBangTypifiedListBroker.this.incrementListDataVersion(listId);
+
+					for(TypifiedListClient client : BigBangTypifiedListBroker.this.clients.get(listId)) {
+						client.addItem(result);
+						client.setTypifiedDataVersionNumber(version.intValue());
+					}
+
+					handler.onResponse(result);
+				}
+
+				@Override
+				public void onFailure(Throwable caught) {
+					handler.onError(new String[]{"The item could not be created"});
+					super.onFailure(caught);
+				}
+			});
+		}
 	}
 
 	@Override
@@ -220,8 +249,13 @@ public class BigBangTypifiedListBroker implements TypifiedListBroker {
 		if(!validListId(listId)) {
 			return;
 		}
+		String effectiveListId = listId;
+		if(isCompositeId(listId)){
+			StringTokenizer tokenizer = new StringTokenizer(listId, DEPENDENCY_DELIMITER);
+			effectiveListId = tokenizer.nextToken();
+		}
 		
-		this.service.deleteListItem(listId, itemId, new BigBangAsyncCallback<Void>() {
+		this.service.deleteListItem(effectiveListId, itemId, new BigBangAsyncCallback<Void>() {
 
 			@Override
 			public void onSuccess(Void result) {
@@ -261,7 +295,7 @@ public class BigBangTypifiedListBroker implements TypifiedListBroker {
 		if(!validListId(listId)) {
 			return;
 		}
-		
+
 		this.service.saveListItem(listId, item, new BigBangAsyncCallback<TipifiedListItem>() {
 
 			@Override
@@ -383,6 +417,19 @@ public class BigBangTypifiedListBroker implements TypifiedListBroker {
 			client.setTypifiedListItems(items);
 			client.setTypifiedDataVersionNumber(currentDataVersion);
 		}
+	}
+	
+	/**
+	 * Returns true if the given id represents a list with a dependency
+	 * @param listId The id of the list
+	 * @return true if the id is composite or false otherwise.
+	 */
+	protected boolean isCompositeId(String listId) {
+		if(!validListId(listId)){
+			throw new RuntimeException("The listId is invalid");
+		}
+		StringTokenizer tokenizer = new StringTokenizer(listId, DEPENDENCY_DELIMITER);
+		return tokenizer.countTokens() > 1;
 	}
 
 }

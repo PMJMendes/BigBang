@@ -36,6 +36,7 @@ import bigBang.library.client.userInterface.FilterableList;
 import bigBang.library.client.userInterface.ListEntry;
 import bigBang.library.shared.HistorySearchParameter;
 import bigBang.library.shared.HistorySortParameter;
+import bigBang.module.insurancePolicyModule.client.userInterface.InsurancePolicySearchPanel;
 
 public class ClientChildrenLists {
 
@@ -80,7 +81,7 @@ public class ClientChildrenLists {
 
 		public void setOwner(String ownerId){
 			discardOwner();
-			if(this.isAttached() && ownerId != null){
+			if(ownerId != null){
 				this.broker.registerClient(this, ownerId);
 			}
 			this.ownerId = ownerId;
@@ -200,7 +201,7 @@ public class ClientChildrenLists {
 
 		public void setOwner(String ownerId){
 			discardOwner();
-			if(this.isAttached() && ownerId != null){
+			if(ownerId != null){
 				this.broker.registerClient(this);
 			}
 			this.ownerId = ownerId;
@@ -282,17 +283,9 @@ public class ClientChildrenLists {
 
 	public static class InsurancePoliciesList extends FilterableList<InsurancePolicyStub> implements InsurancePolicyDataBrokerClient{
 
-		public static class Entry extends ListEntry<InsurancePolicyStub> {
-
-			public Entry(InsurancePolicyStub value) {
-				super(value);
-				setHeight("25px");
-				titleLabel.getElement().getStyle().setFontSize(11, Unit.PX);
-			}
-
-			public <I extends Object> void setInfo(I info) {
-				InsurancePolicyStub p = (InsurancePolicyStub) info;
-				setTitle(p.categoryName+"/"+p.lineName+"/"+p.subLineName);
+		public static class Entry extends InsurancePolicySearchPanel.Entry {
+			public Entry(InsurancePolicyStub policy) {
+				super(policy);
 			}
 		}
 
@@ -321,7 +314,7 @@ public class ClientChildrenLists {
 
 		public void setOwner(String ownerId){
 			discardOwner();
-			if(this.isAttached() && ownerId != null){
+			if(ownerId != null){
 				this.broker.registerClient(this);
 				broker.getClientPolicies(ownerId, new ResponseHandler<Collection<InsurancePolicyStub>>() {
 
@@ -419,21 +412,22 @@ public class ClientChildrenLists {
 			//TODO
 		}
 	}
-	
+
 	public static class HistoryList extends FilterableList<HistoryItemStub> implements HistoryDataBrokerClient {
 
-		protected static class Entry extends ListEntry<HistoryItemStub> {
+		protected static class Entry extends ListEntry<HistoryItemStub>{
 
 			public Entry(HistoryItemStub value) {
 				super(value);
-				setHeight("25px");
-				titleLabel.getElement().getStyle().setFontSize(11, Unit.PX);
 			}
-			
+
 			public <I extends Object> void setInfo(I info) {
-				HistoryItemStub s = (HistoryItemStub) info;
-				setTitle(s.opName);
+				HistoryItemStub value = (HistoryItemStub) info;
+				setTitle(value.opName);
+				setText(value.username + " (" + value.timeStamp.substring(0, 16) + ")");
+				setHeight("40px");
 			};
+
 		}
 		
 		protected int dataVersion;
@@ -445,24 +439,24 @@ public class ClientChildrenLists {
 			this.showSearchField(true);
 
 			this.broker = ((HistoryBroker) DataBrokerManager.Util.getInstance().getBroker(BigBangConstants.EntityIds.HISTORY));
-
-			this.addAttachHandler(new AttachEvent.Handler() {
-
-				@Override
-				public void onAttachOrDetach(AttachEvent event) {
-					if(event.isAttached()) {
-						setOwner(owner);
-					}else{
-						discardOwner();
-					}
-				}
-			});
+		}
+		
+		@Override
+		protected void onAttach() {
+			super.onAttach();
+			setOwner(owner);
+		}
+		
+		@Override
+		protected void onDetach() {
+			super.onDetach();
+			discardOwner();
 		}
 		
 		public void setOwner(Client client) {
 			discardOwner();
 			if(client == null) {return;}
-			if(this.isAttached() && client != null){
+			if(client != null){
 				this.broker.registerClient(this, client.processId);
 				
 				HistorySearchParameter parameter = new HistorySearchParameter();

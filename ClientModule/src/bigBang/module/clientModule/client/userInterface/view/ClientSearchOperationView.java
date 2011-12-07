@@ -230,6 +230,7 @@ public class ClientSearchOperationView extends View implements ClientSearchOpera
 					}
 				}else{
 					childrenPanel.clear();
+					
 				}
 				childrenPanel.setReadOnly(client == null); //TODO FJVC
 			}
@@ -615,12 +616,13 @@ public class ClientSearchOperationView extends View implements ClientSearchOpera
 	}
 
 	@Override
-	public void showHistory(Client process) {
+	public void showHistory(Client process, String selectedItemId) {
 		UndoOperationView historyView = new UndoOperationView();
 		UndoOperationViewPresenter presenter = new UndoOperationViewPresenter(null,
 				(HistoryBroker) DataBrokerManager.Util.getInstance().getBroker(BigBangConstants.EntityIds.HISTORY),
 				historyView,
 				process.processId);
+		presenter.setTargetEntity(selectedItemId);
 		VerticalPanel wrapper = new VerticalPanel();
 		wrapper.setSize("100%", "100%");
 

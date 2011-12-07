@@ -10,7 +10,6 @@ import bigBang.definitions.shared.InsurancePolicy.TableSection;
 import bigBang.definitions.shared.InsurancePolicy.TableSection.TableField;
 import bigBang.library.client.FieldValidator;
 import bigBang.library.client.FormField;
-import bigBang.library.client.userInterface.DatePickerFormField;
 import bigBang.library.client.userInterface.ExpandableListBoxFormField;
 import bigBang.library.client.userInterface.RadioButtonFormField;
 import bigBang.library.client.userInterface.TextBoxFormField;
@@ -138,6 +137,7 @@ public class PolicyFormTable extends View {
 	protected ColumnHeader[] columnDefinitions;
 	protected Map<String, Integer> coverageIndexes;
 	protected String currentPageId;
+	protected boolean readOnly;
 
 	protected Map<String, Map<String, Field>> tableFields;
 
@@ -174,6 +174,8 @@ public class PolicyFormTable extends View {
 		grid = new Grid();
 		wrapper.add(grid);
 		grid.setSize("100%", "100%");
+
+		this.setReadOnly(false);
 	}
 
 	public String getInsuredObjectFilterValue(){
@@ -277,6 +279,7 @@ public class PolicyFormTable extends View {
 			int coverageIndex = coverageIndexes.get(tableField.coverageId);
 
 			Field field = new Field(tableField, column);
+			field.setReadOnly(this.isReadOnly());
 			field.setValue(tableField.value);
 			Map<String, Field> coverageColumns = this.tableFields.get(tableField.coverageId);
 			coverageColumns.put(tableField.columnIndex+"", field);
@@ -347,6 +350,26 @@ public class PolicyFormTable extends View {
 
 	public void setFilterable(boolean filterable) {
 		this.filtersWrapper.setVisible(filterable);
+	}
+
+	public void setReadOnly(boolean readOnly) {
+		this.insuredObjectField.setReadOnly(readOnly);
+		this.exerciseField.setReadOnly(readOnly);
+		if(this.radioFields != null){
+			for(RadioButtonFormField f : this.radioFields){
+				f.setReadOnly(readOnly);
+			}
+		}
+		for(Map<String, Field> cf : this.tableFields.values()){
+			for(Field f : cf.values()){
+				f.setReadOnly(readOnly);
+			}
+		}
+		this.readOnly = readOnly;
+	}
+
+	public boolean isReadOnly(){
+		return this.readOnly;
 	}
 
 }
