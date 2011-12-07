@@ -133,14 +133,7 @@ public class DocuShareServiceImpl
 		if ( pstrFolder == null )
 			lhFolder = new DSHandle("Collection-59066");
 		else
-		{
 			lhFolder = new DSHandle(pstrFolder);
-
-			lobjTmp = new DocuShareItem();
-			lobjTmp.handle = null;
-			lobjTmp.desc = "Temporary Scan Repository";
-			larrResult.add(lobjTmp);
-		}
 
 		try
 		{
