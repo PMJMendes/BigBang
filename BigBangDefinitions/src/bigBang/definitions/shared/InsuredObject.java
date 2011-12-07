@@ -45,7 +45,10 @@ public class InsuredObject
 			private static final long serialVersionUID = 1L;
 
 			public static class VariableValue
+				implements Serializable
 			{
+				private static final long serialVersionUID = 1L;
+
 				public int exerciseIndex; // Isto indexa o array exercises
 				public String value;
 			}
