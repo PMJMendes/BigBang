@@ -11,7 +11,6 @@ import javax.servlet.http.HttpSession;
 
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
-import org.apache.pdfbox.util.PDFImageWriter;
 
 import Jewel.Engine.Engine;
 import Jewel.Engine.SysObjects.FileXfer;
