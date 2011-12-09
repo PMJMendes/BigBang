@@ -110,7 +110,7 @@ public class DocuShareServiceImpl
 		}
 	}
 
-	public DocuShareItem[] getSubFolders(String pstrFolder)
+	public DocuShareItem[] getItems(String pstrFolder, boolean pbWithFolders)
 		throws SessionExpiredException, BigBangException
 	{
 		DSSession lrefSession;
@@ -138,56 +138,24 @@ public class DocuShareServiceImpl
 		try
 		{
 			lobjFolder = (DSCollection)lrefSession.getObject(lhFolder);
-			i = lobjFolder.children(null);
-			while ( i.hasNext() )
+
+			if ( pbWithFolders )
 			{
-				lobjAux = i.nextObject();
-				if ( lobjAux instanceof DSCollection )
+				i = lobjFolder.children(null);
+				while ( i.hasNext() )
 				{
-					lobjTmp = new DocuShareItem();
-					lobjTmp.directory = true;
-					lobjTmp.handle = lobjAux.getHandle().toString();
-					lobjTmp.desc = lobjAux.getTitle();
-					larrResult.add(lobjTmp);
+					lobjAux = i.nextObject();
+					if ( lobjAux instanceof DSCollection )
+					{
+						lobjTmp = new DocuShareItem();
+						lobjTmp.directory = true;
+						lobjTmp.handle = lobjAux.getHandle().toString();
+						lobjTmp.desc = lobjAux.getTitle();
+						larrResult.add(lobjTmp);
+					}
 				}
 			}
-		}
-		catch (Throwable e)
-		{
-			throw new BigBangException(e.getMessage(), e);
-		}
 
-		return larrResult.toArray(new DocuShareItem[larrResult.size()]);
-	}
-
-	public DocuShareItem[] getItems(String pstrFolder)
-		throws SessionExpiredException, BigBangException
-	{
-		DSSession lrefSession;
-		DSHandle lhFolder;
-		DSCollection lobjFolder;
-		DSObjectIterator i;
-		DSObject lobjAux;
-		ArrayList<DocuShareItem> larrResult;
-		DocuShareItem lobjTmp;
-
-		if ( Engine.getCurrentUser() == null )
-			throw new SessionExpiredException();
-
-		lrefSession = GetSession();
-		if ( lrefSession == null )
-			return null;
-
-		larrResult = new ArrayList<DocuShareItem>();
-
-		if ( pstrFolder == null )
-			lhFolder = new DSHandle("Collection-59066");
-		else
-			lhFolder = new DSHandle(pstrFolder);
-
-		try
-		{
-			lobjFolder = (DSCollection)lrefSession.getObject(lhFolder);
 			i = lobjFolder.children(null);
 			while ( i.hasNext() )
 			{
@@ -211,6 +179,41 @@ public class DocuShareServiceImpl
 	}
 
 	public String getItem(String pstrItem)
+		throws SessionExpiredException, BigBangException
+	{
+		DSSession lrefSession;
+		DSDocument lobjAux;
+		DSContentElement[] larrAux;
+		FileXfer lobjFile;
+		UUID lidKey;
+
+		if ( Engine.getCurrentUser() == null )
+			throw new SessionExpiredException();
+
+		lrefSession = GetSession();
+		if ( lrefSession == null )
+			return null;
+
+		try
+		{
+			lobjAux = (DSDocument)lrefSession.getObject(new DSHandle(pstrItem));
+			larrAux = lobjAux.getContentElements();
+			larrAux[0].open();
+			lobjFile = new FileXfer(lobjAux.getSize(), lobjAux.getContentType(), lobjAux.getOriginalFileName(), larrAux[0]);
+			larrAux[0].close();
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangException(e.getMessage(), e);
+		}
+
+		lidKey = UUID.randomUUID();
+		FileServiceImpl.GetFileXferStorage().put(lidKey, lobjFile);
+
+		return lidKey.toString();
+	}
+
+	public String getItemAsImage(String pstrItem)
 		throws SessionExpiredException, BigBangException
 	{
 		DSSession lrefSession;

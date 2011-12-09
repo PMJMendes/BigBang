@@ -25,7 +25,7 @@ public interface DocuShareService
 		}
 	}
 
-	DocuShareItem[] getSubFolders(String pstrFolder) throws SessionExpiredException, BigBangException;
-	DocuShareItem[] getItems(String pstrFolder) throws SessionExpiredException, BigBangException;
+	DocuShareItem[] getItems(String pstrFolder, boolean pbWithFolders) throws SessionExpiredException, BigBangException;
 	String getItem(String pstrItem) throws SessionExpiredException, BigBangException;
+	String getItemAsImage(String pstrItem) throws SessionExpiredException, BigBangException;
 }
