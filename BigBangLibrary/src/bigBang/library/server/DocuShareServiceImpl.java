@@ -250,7 +250,8 @@ public class DocuShareServiceImpl
 			larrAux[0].close();
 
 			ldocPage = (PDPage)ldocOrig.getDocumentCatalog().getAllPages().get(0);
-			limgPage = ldocPage.convertToImage(BufferedImage.TYPE_3BYTE_BGR, 72);
+			int x = ldocPage.findRotation();
+			limgPage = ldocPage.convertToImage(BufferedImage.TYPE_BYTE_GRAY, 72);
 			lstreamOutput = new ByteArrayOutputStream();
 			ImageIO.write(limgPage, "png", lstreamOutput);
 			ldocOrig.close();
