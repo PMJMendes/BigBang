@@ -260,9 +260,9 @@ public class DocuShareServiceImpl
 			ldocOrig.close();
 
 			lobjXForm = new AffineTransform();
-//			lobjXForm.translate(0.5*limgPage.getHeight(), 0.5*limgPage.getWidth());
-			lobjXForm.quadrantRotate(llngRot/90, limgPage.getWidth(), limgPage.getHeight());
-//			lobjXForm.translate(-0.5*limgPage.getWidth(), -0.5*limgPage.getHeight());
+			lobjXForm.translate(0.5*limgPage.getHeight(), 0.5*limgPage.getWidth());
+			lobjXForm.quadrantRotate(llngRot/90/*, limgPage.getWidth(), limgPage.getHeight()*/);
+			lobjXForm.translate(-0.5*limgPage.getWidth(), -0.5*limgPage.getHeight());
 			lobjOp = new AffineTransformOp(lobjXForm, AffineTransformOp.TYPE_NEAREST_NEIGHBOR);
 			limgPage = lobjOp.filter(limgPage, null);
 
