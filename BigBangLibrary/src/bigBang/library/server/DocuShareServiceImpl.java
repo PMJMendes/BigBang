@@ -261,17 +261,16 @@ public class DocuShareServiceImpl
 			lobjCat = ldocOrig.getDocumentCatalog();
 			larrPages = lobjCat.getAllPages();
 			ldocPage = (PDPage)larrPages.get(0);
-//			llngRot = ldocPage.findRotation();
-			ldocPage.setRotation(0);
+			llngRot = ldocPage.findRotation();
 			limgPage = ldocPage.convertToImage(BufferedImage.TYPE_BYTE_BINARY, 300);
 			ldocOrig.close();
 
-//			lobjXForm = new AffineTransform();
-//			lobjXForm.translate(0.5*limgPage.getHeight(), 0.5*limgPage.getWidth());
-//			lobjXForm.quadrantRotate(llngRot/90);
-//			lobjXForm.translate(-0.5*limgPage.getWidth(), -0.5*limgPage.getHeight());
-//			lobjOp = new AffineTransformOp(lobjXForm, AffineTransformOp.TYPE_NEAREST_NEIGHBOR);
-//			limgPage = lobjOp.filter(limgPage, null);
+			lobjXForm = new AffineTransform();
+			lobjXForm.translate(0.5*limgPage.getHeight(), 0.5*limgPage.getWidth());
+			lobjXForm.quadrantRotate(llngRot/90);
+			lobjXForm.translate(-0.5*limgPage.getWidth(), -0.5*limgPage.getHeight());
+			lobjOp = new AffineTransformOp(lobjXForm, AffineTransformOp.TYPE_NEAREST_NEIGHBOR);
+			limgPage = lobjOp.filter(limgPage, null);
 
 			lstreamOutput = new ByteArrayOutputStream();
 			ImageIO.write(limgPage, "png", lstreamOutput);
