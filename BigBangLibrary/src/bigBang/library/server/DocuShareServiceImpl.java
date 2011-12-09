@@ -1,9 +1,17 @@
 package bigBang.library.server;
 
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
 import java.util.UUID;
 
+import javax.imageio.ImageIO;
 import javax.servlet.http.HttpSession;
+
+import org.apache.pdfbox.pdmodel.PDDocument;
+import org.apache.pdfbox.pdmodel.PDPage;
+import org.apache.pdfbox.util.PDFImageWriter;
 
 import Jewel.Engine.Engine;
 import Jewel.Engine.SysObjects.FileXfer;
@@ -218,6 +226,12 @@ public class DocuShareServiceImpl
 		DSSession lrefSession;
 		DSDocument lobjAux;
 		DSContentElement[] larrAux;
+		PDDocument ldocOrig;
+		PDPage ldocPage;
+		BufferedImage limgPage;
+		ByteArrayOutputStream lstreamOutput;
+		byte[] larrBytes;
+		ByteArrayInputStream lstreamInput;
 		FileXfer lobjFile;
 		UUID lidKey;
 
@@ -233,13 +247,24 @@ public class DocuShareServiceImpl
 			lobjAux = (DSDocument)lrefSession.getObject(new DSHandle(pstrItem));
 			larrAux = lobjAux.getContentElements();
 			larrAux[0].open();
-			lobjFile = new FileXfer(lobjAux.getSize(), lobjAux.getContentType(), lobjAux.getOriginalFileName(), larrAux[0]);
+			ldocOrig = PDDocument.load(larrAux[0]);
 			larrAux[0].close();
+
+			ldocPage = (PDPage)ldocOrig.getDocumentCatalog().getAllPages().get(0);
+			limgPage = ldocPage.convertToImage(BufferedImage.TYPE_3BYTE_BGR, 72);
+			lstreamOutput = new ByteArrayOutputStream();
+			ImageIO.write(limgPage, "png", lstreamOutput);
+			ldocOrig.close();
+
+			larrBytes = lstreamOutput.toByteArray();
+			lstreamInput = new ByteArrayInputStream(larrBytes);
+			lobjFile = new FileXfer(larrBytes.length, "image/png", "pdfPage.png", lstreamInput);
 		}
 		catch (Throwable e)
 		{
 			throw new BigBangException(e.getMessage(), e);
 		}
+
 
 		lidKey = UUID.randomUUID();
 		FileServiceImpl.GetFileXferStorage().put(lidKey, lobjFile);
