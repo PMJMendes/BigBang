@@ -27,6 +27,7 @@ import com.google.gwt.event.dom.client.DoubleClickEvent;
 import com.google.gwt.event.dom.client.DoubleClickHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.user.client.ui.AbsolutePanel;
+import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.HasVerticalAlignment;
 import com.google.gwt.user.client.ui.HasWidgets;
 import com.google.gwt.user.client.ui.Label;
@@ -58,12 +59,14 @@ public class List<T> extends View implements HasValueSelectables<T>, java.util.L
 	protected Label footerLabel;
 	protected HasWidgets footer;
 	protected ScrollPanel scrollPanel;
+	protected AbsolutePanel scrollPanelWrapper;
 	protected SelectedStateChangedEventHandler entrySelectionHandler;
 	protected DoubleClickHandler cellDoubleClickHandler;
 	protected CheckedStateChangedEventHandler cellCheckedHandler;
 	protected boolean selectionChangeHandlerInitialized;
 	protected PickupDragController dragController;
 	protected boolean draggable = false;
+	protected Widget loadingWidget;
 
 	/**
 	 * The list constructor
@@ -86,7 +89,7 @@ public class List<T> extends View implements HasValueSelectables<T>, java.util.L
 		mainWrapper.add((Widget) headerContainer);
 		this.setHeaderWidget(null);
 
-		AbsolutePanel scrollPanelWrapper = new AbsolutePanel();
+		scrollPanelWrapper = new AbsolutePanel();
 		scrollPanelWrapper.setSize("100%", "100%");
 
 		scrollPanel = new ScrollPanel();
@@ -647,6 +650,24 @@ public class List<T> extends View implements HasValueSelectables<T>, java.util.L
 		}
 
 		this.draggable = draggable;
+	}
+	
+	public void showLoading(boolean show){
+		if(show){
+			if(this.loadingWidget == null) {
+				VerticalPanel wrapper = new VerticalPanel();
+				wrapper.setSize("100%", "100%");
+				wrapper.setVerticalAlignment(HasVerticalAlignment.ALIGN_MIDDLE);
+				wrapper.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
+				wrapper.add(new Label("A Carregar..."));
+				this.loadingWidget = wrapper;
+				this.scrollPanelWrapper.add(this.loadingWidget, 0, 0);
+			}
+		}else{
+			if(this.loadingWidget != null) {
+				this.loadingWidget.removeFromParent();
+			}
+		}
 	}
 
 }

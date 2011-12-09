@@ -1,14 +1,17 @@
 package bigBang.module.insurancePolicyModule.client.userInterface;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.event.dom.client.ErrorEvent;
+import com.google.gwt.event.dom.client.ErrorHandler;
+import com.google.gwt.event.dom.client.LoadEvent;
+import com.google.gwt.event.dom.client.LoadHandler;
 import com.google.gwt.event.logical.shared.AttachEvent;
-import com.google.gwt.http.client.Request;
-import com.google.gwt.http.client.RequestBuilder;
-import com.google.gwt.http.client.RequestCallback;
-import com.google.gwt.http.client.RequestException;
-import com.google.gwt.http.client.Response;
+import com.google.gwt.user.client.ui.HasHorizontalAlignment;
+import com.google.gwt.user.client.ui.HasVerticalAlignment;
 import com.google.gwt.user.client.ui.Image;
+import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.VerticalPanel;
+import com.google.gwt.user.client.ui.Widget;
 
 import bigBang.library.client.BigBangAsyncCallback;
 import bigBang.library.client.ValueSelectable;
@@ -40,6 +43,7 @@ public class ReceiptImagePanel extends View {
 
 		navigationPanel = new NavigationPanel();
 		navigationPanel.navBar.setText("Imagem do Recibo");
+		navigationPanel.navBar.setHeight("30px");
 		navigationPanel.setSize("100%", "100%");
 
 		wrapper.add(navigationPanel);
@@ -71,7 +75,15 @@ public class ReceiptImagePanel extends View {
 	}
 
 	protected void showNoConnectionMessage() {
-
+		VerticalPanel widget = new VerticalPanel();
+		widget.setSize("100%", "100%");
+		widget.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
+		widget.setVerticalAlignment(HasVerticalAlignment.ALIGN_MIDDLE);
+		
+		Label label = new Label("Não foi possível aceder ao DocuShare");
+		
+		widget.add(label);
+		navigationPanel.setHomeWidget(widget);
 	}
 
 	protected void goToFile(String fileDesc){
@@ -79,28 +91,60 @@ public class ReceiptImagePanel extends View {
 
 			@Override
 			public void onSuccess(String result) {
-				RequestBuilder builder = new RequestBuilder(RequestBuilder.GET, GWT.getModuleBaseURL() + FileService.GET_PREFIX + result);
-				try {
-					builder.sendRequest(null, new RequestCallback() {
-						@Override 
-						public void onResponseReceived(Request request,
-								Response response) {
-							showMessage("Ficheiro Recebido");
-						}
+				Image image = new Image();
+				image.setSize("100%", "100%");
+				image.addLoadHandler(new LoadHandler() {
+					
+					@Override
+					public void onLoad(LoadEvent event) {
+						navigationPanel.navigateTo((Widget) event.getSource());
+					}
+				});
+				image.addErrorHandler(new ErrorHandler() {
+					
+					@Override
+					public void onError(ErrorEvent event) {
+						showFileCannotBeDisplayedMessage();
+					}
+				});
+				image.setUrl(GWT.getModuleBaseURL() + FileService.GET_PREFIX + result);
 
-						@Override
-						public void onError(Request request, Throwable exception) {
-							showMessage("Erro ao receber o ficheiro");
-						}
-					});
-				} catch (RequestException e) {
-					e.printStackTrace();
-				}
+//				RequestBuilder builder = new RequestBuilder(RequestBuilder.GET, GWT.getModuleBaseURL() + FileService.GET_PREFIX + result);
+//				try {
+//					builder.sendRequest(null, new RequestCallback() {
+//						@Override 
+//						public void onResponseReceived(Request request,
+//								Response response) {
+//							showMessage("Ficheiro Recebido");
+//						}
+//
+//						@Override
+//						public void onError(Request request, Throwable exception) {
+//							showMessage("Erro ao receber o ficheiro");
+//						}
+//					});
+//				} catch (RequestException e) {
+//					e.printStackTrace();
+//				}
 			}
 		});
 	}	
+	
+	protected void showFileCannotBeDisplayedMessage() {
+		VerticalPanel wrapper = new VerticalPanel();
+		wrapper.setSize("100%", "100%");
+		wrapper.setVerticalAlignment(HasVerticalAlignment.ALIGN_MIDDLE);
+		wrapper.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
+		wrapper.add(new Label("O ficheiro não pode ser apresentado"));
+		navigationPanel.navigateTo(wrapper);
+	}
+	
 
-	protected void navigateToDirectoryList(final String dirDesc){
+	protected void navigateToDirectoryList(String dirDesc){
+		navigateToDirectoryList(dirDesc, true);
+	}
+	
+	protected void navigateToDirectoryList(final String dirDesc, boolean showSubFolders){
 		final DocumentNavigationList list = new DocumentNavigationList();
 		list.addAttachHandler(new AttachEvent.Handler() {
 
@@ -119,34 +163,22 @@ public class ReceiptImagePanel extends View {
 		}else{
 			navigationPanel.navigateTo(list);
 		}
-		this.service.getSubFolders(dirDesc, new BigBangAsyncCallback<DocuShareItem[]>() {
+		list.showLoading(true);
+		this.service.getItems(dirDesc, showSubFolders, new BigBangAsyncCallback<DocuShareItem[]>() {
 
 			@Override
 			public void onSuccess(DocuShareItem[] result) {
 				for(int i = 0; i < result.length; i++){
 					list.addEntryForItem(result[i]);
 				}
-				service.getItems(dirDesc, new BigBangAsyncCallback<DocuShareItem[]>() {
-
-					@Override
-					public void onSuccess(DocuShareItem[] result) {
-						for(int i = 0; i < result.length; i++){
-							list.addEntryForItem(result[i]);
-						}
-					}
-
-					@Override
-					public void onFailure(Throwable caught) {
-						super.onFailure(caught);
-						showNoConnectionMessage();
-					}
-				});
+				list.showLoading(false);
 			}
 
 			@Override
 			public void onFailure(Throwable caught) {
 				super.onFailure(caught);
 				showNoConnectionMessage();
+				list.showLoading(false);
 			}
 		});
 	}
