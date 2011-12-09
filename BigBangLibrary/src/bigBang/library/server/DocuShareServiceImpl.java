@@ -6,6 +6,8 @@ import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.Map;
 import java.util.UUID;
 
 import javax.imageio.ImageIO;
@@ -13,6 +15,9 @@ import javax.servlet.http.HttpSession;
 
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
+import org.apache.pdfbox.pdmodel.PDResources;
+import org.apache.pdfbox.pdmodel.graphics.xobject.PDXObject;
+import org.apache.pdfbox.pdmodel.graphics.xobject.PDXObjectImage;
 
 import Jewel.Engine.Engine;
 import Jewel.Engine.SysObjects.FileXfer;
@@ -256,7 +261,7 @@ public class DocuShareServiceImpl
 
 			ldocPage = (PDPage)ldocOrig.getDocumentCatalog().getAllPages().get(0);
 			llngRot = ldocPage.findRotation();
-			limgPage = ldocPage.convertToImage(BufferedImage.TYPE_4BYTE_ABGR, 300);
+			limgPage = ldocPage.convertToImage(BufferedImage.TYPE_BYTE_GRAY, 300);
 			ldocOrig.close();
 
 			if ( llngRot != 0 )
@@ -270,11 +275,11 @@ public class DocuShareServiceImpl
 			}
 
 			lstreamOutput = new ByteArrayOutputStream();
-			ImageIO.write(limgPage, "png", lstreamOutput);
+			ImageIO.write(limgPage, "jpg", lstreamOutput);
 
 			larrBytes = lstreamOutput.toByteArray();
 			lstreamInput = new ByteArrayInputStream(larrBytes);
-			lobjFile = new FileXfer(larrBytes.length, "image/png", "pdfPage.png", lstreamInput);
+			lobjFile = new FileXfer(larrBytes.length, "image/jpeg", "pdfPage.jpg", lstreamInput);
 		}
 		catch (Throwable e)
 		{
@@ -287,4 +292,27 @@ public class DocuShareServiceImpl
 
 		return lidKey.toString();
 	}
+
+//	private static BufferedImage getFirstImage(PDPage prefPage)
+//	{
+//		PDResources lobjResources;
+//		Map<String, PDXObject> lmapObjects;
+//		Iterator<String> i;
+//		String lstrKey;
+//		PDXObject lobjObject;
+//		PDXObjectImage lobjImage;
+//
+//		lobjResources = prefPage.getResources();
+//		lmapObjects = lobjResources.getXObjects();
+//		i = lmapObjects.keySet().iterator();
+//		while ( i.hasNext() )
+//		{
+//			lstrKey = i.next();
+//			lobjObject = lmapObjects.get(lstrKey);
+//			if ( lobjObject instanceof PDXObjectImage )
+//			{
+//				lobjImage = (PDXObjectImage)lobjObject;
+//			}
+//		}
+//	}
 }
