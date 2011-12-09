@@ -1,5 +1,7 @@
 package bigBang.library.server;
 
+import java.awt.geom.AffineTransform;
+import java.awt.image.AffineTransformOp;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -227,7 +229,10 @@ public class DocuShareServiceImpl
 		DSContentElement[] larrAux;
 		PDDocument ldocOrig;
 		PDPage ldocPage;
+		int llngRot;
 		BufferedImage limgPage;
+		AffineTransform lobjXForm;
+		AffineTransformOp lobjOp;
 		ByteArrayOutputStream lstreamOutput;
 		byte[] larrBytes;
 		ByteArrayInputStream lstreamInput;
@@ -250,11 +255,19 @@ public class DocuShareServiceImpl
 			larrAux[0].close();
 
 			ldocPage = (PDPage)ldocOrig.getDocumentCatalog().getAllPages().get(0);
-			int x = ldocPage.findRotation();
+			llngRot = ldocPage.findRotation();
 			limgPage = ldocPage.convertToImage(BufferedImage.TYPE_BYTE_GRAY, 72);
+			ldocOrig.close();
+
+			lobjXForm = new AffineTransform();
+//			lobjXForm.translate(0.5*limgPage.getHeight(), 0.5*limgPage.getWidth());
+			lobjXForm.quadrantRotate(llngRot/90);
+//			lobjXForm.translate(-0.5*limgPage.getWidth(), -0.5*limgPage.getHeight());
+			lobjOp = new AffineTransformOp(lobjXForm, AffineTransformOp.TYPE_NEAREST_NEIGHBOR);
+			limgPage = lobjOp.filter(limgPage, null);
+
 			lstreamOutput = new ByteArrayOutputStream();
 			ImageIO.write(limgPage, "png", lstreamOutput);
-			ldocOrig.close();
 
 			larrBytes = lstreamOutput.toByteArray();
 			lstreamInput = new ByteArrayInputStream(larrBytes);
