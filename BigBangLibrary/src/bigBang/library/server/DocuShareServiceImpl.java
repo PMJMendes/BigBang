@@ -6,12 +6,14 @@ import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 import javax.imageio.ImageIO;
 import javax.servlet.http.HttpSession;
 
 import org.apache.pdfbox.pdmodel.PDDocument;
+import org.apache.pdfbox.pdmodel.PDDocumentCatalog;
 import org.apache.pdfbox.pdmodel.PDPage;
 
 import Jewel.Engine.Engine;
@@ -228,6 +230,8 @@ public class DocuShareServiceImpl
 		DSDocument lobjAux;
 		DSContentElement[] larrAux;
 		PDDocument ldocOrig;
+		PDDocumentCatalog lobjCat;
+		List<?> larrPages;
 		PDPage ldocPage;
 		int llngRot;
 		BufferedImage limgPage;
@@ -254,17 +258,20 @@ public class DocuShareServiceImpl
 			ldocOrig = PDDocument.load(larrAux[0]);
 			larrAux[0].close();
 
-			ldocPage = (PDPage)ldocOrig.getDocumentCatalog().getAllPages().get(0);
-			llngRot = ldocPage.findRotation();
+			lobjCat = ldocOrig.getDocumentCatalog();
+			larrPages = lobjCat.getAllPages();
+			ldocPage = (PDPage)larrPages.get(0);
+//			llngRot = ldocPage.findRotation();
+			ldocPage.setRotation(0);
 			limgPage = ldocPage.convertToImage(BufferedImage.TYPE_BYTE_BINARY, 300);
 			ldocOrig.close();
 
-			lobjXForm = new AffineTransform();
-			lobjXForm.translate(0.5*limgPage.getHeight(), 0.5*limgPage.getWidth());
-			lobjXForm.quadrantRotate(llngRot/90);
-			lobjXForm.translate(-0.5*limgPage.getWidth(), -0.5*limgPage.getHeight());
-			lobjOp = new AffineTransformOp(lobjXForm, AffineTransformOp.TYPE_NEAREST_NEIGHBOR);
-			limgPage = lobjOp.filter(limgPage, null);
+//			lobjXForm = new AffineTransform();
+//			lobjXForm.translate(0.5*limgPage.getHeight(), 0.5*limgPage.getWidth());
+//			lobjXForm.quadrantRotate(llngRot/90);
+//			lobjXForm.translate(-0.5*limgPage.getWidth(), -0.5*limgPage.getHeight());
+//			lobjOp = new AffineTransformOp(lobjXForm, AffineTransformOp.TYPE_NEAREST_NEIGHBOR);
+//			limgPage = lobjOp.filter(limgPage, null);
 
 			lstreamOutput = new ByteArrayOutputStream();
 			ImageIO.write(limgPage, "png", lstreamOutput);
