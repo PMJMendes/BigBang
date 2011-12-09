@@ -256,12 +256,12 @@ public class DocuShareServiceImpl
 
 			ldocPage = (PDPage)ldocOrig.getDocumentCatalog().getAllPages().get(0);
 			llngRot = ldocPage.findRotation();
-			limgPage = ldocPage.convertToImage(BufferedImage.TYPE_BYTE_GRAY, 72);
+			limgPage = ldocPage.convertToImage(BufferedImage.TYPE_BYTE_GRAY, 300);
 			ldocOrig.close();
 
 			lobjXForm = new AffineTransform();
 			lobjXForm.translate(0.5*limgPage.getHeight(), 0.5*limgPage.getWidth());
-			lobjXForm.quadrantRotate(llngRot/90/*, limgPage.getWidth(), limgPage.getHeight()*/);
+			lobjXForm.quadrantRotate(llngRot/90);
 			lobjXForm.translate(-0.5*limgPage.getWidth(), -0.5*limgPage.getHeight());
 			lobjOp = new AffineTransformOp(lobjXForm, AffineTransformOp.TYPE_NEAREST_NEIGHBOR);
 			limgPage = lobjOp.filter(limgPage, null);
