@@ -1,7 +1,5 @@
 package bigBang.library.server;
 
-import java.awt.geom.AffineTransform;
-import java.awt.image.AffineTransformOp;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -11,8 +9,7 @@ import java.util.UUID;
 import javax.imageio.ImageIO;
 import javax.servlet.http.HttpSession;
 
-import org.apache.pdfbox.pdmodel.PDDocument;
-import org.apache.pdfbox.pdmodel.PDPage;
+import org.jpedal.PdfDecoder;
 
 import Jewel.Engine.Engine;
 import Jewel.Engine.SysObjects.FileXfer;
@@ -227,14 +224,10 @@ public class DocuShareServiceImpl
 		DSSession lrefSession;
 		DSDocument lobjAux;
 		DSContentElement[] larrAux;
-		PDDocument ldocOrig;
-		PDPage ldocPage;
-		int llngRot;
-		BufferedImage limgPage;
-		AffineTransform lobjXForm;
-		AffineTransformOp lobjOp;
+		PdfDecoder lobjDecoder;
+		BufferedImage lobjImage;
 		ByteArrayOutputStream lstreamOutput;
-		byte[] larrBytes;
+		byte[] larrBuffer;
 		ByteArrayInputStream lstreamInput;
 		FileXfer lobjFile;
 		UUID lidKey;
@@ -251,39 +244,22 @@ public class DocuShareServiceImpl
 			lobjAux = (DSDocument)lrefSession.getObject(new DSHandle(pstrItem));
 			larrAux = lobjAux.getContentElements();
 			larrAux[0].open();
-			ldocOrig = PDDocument.load(larrAux[0]);
+			lobjDecoder = new PdfDecoder(false);
+			lobjDecoder.openPdfFileFromInputStream(larrAux[0], false);
+			lobjImage = lobjDecoder.getPageAsImage(1);
+			lobjDecoder.closePdfFile();
 			larrAux[0].close();
 
-			ldocPage = (PDPage)ldocOrig.getDocumentCatalog().getAllPages().get(0);
-			llngRot = ldocPage.findRotation();
-			limgPage = ldocPage.convertToImage(BufferedImage.TYPE_INT_ARGB_PRE, 300);
-			ldocOrig.close();
-
-			if ( llngRot != 0 )
-			{
-				lobjXForm = new AffineTransform();
-				lobjXForm.translate(0.5*limgPage.getHeight(), 0.5*limgPage.getWidth());
-				lobjXForm.quadrantRotate(llngRot/90);
-				lobjXForm.translate(-0.5*limgPage.getWidth(), -0.5*limgPage.getHeight());
-				lobjOp = new AffineTransformOp(lobjXForm, AffineTransformOp.TYPE_NEAREST_NEIGHBOR);
-				limgPage = lobjOp.filter(limgPage, null);
-			}
-
 			lstreamOutput = new ByteArrayOutputStream();
-			ImageIO.write(limgPage, "png", lstreamOutput);
-
-			larrBytes = lstreamOutput.toByteArray();
-			lstreamInput = new ByteArrayInputStream(larrBytes);
-			lobjFile = new FileXfer(larrBytes.length, "image/png", "pdfPage.png", lstreamInput);
-
-//			lobjFile = getFirstImage(ldocPage);
-//			ldocOrig.close();
+			ImageIO.write(lobjImage, "png", lstreamOutput);
+			larrBuffer = lstreamOutput.toByteArray();
+			lstreamInput = new ByteArrayInputStream(larrBuffer);
+			lobjFile = new FileXfer(larrBuffer.length, "image/png", "pdfPage.png", lstreamInput);
 		}
 		catch (Throwable e)
 		{
 			throw new BigBangException(e.getMessage(), e);
 		}
-
 
 		lidKey = UUID.randomUUID();
 		FileServiceImpl.GetFileXferStorage().put(lidKey, lobjFile);
@@ -291,65 +267,204 @@ public class DocuShareServiceImpl
 		return lidKey.toString();
 	}
 
-//	@SuppressWarnings("unchecked")
-//	private static FileXfer getFirstImage(PDPage prefPage)
-//		throws BigBangException
+//	public String getItemAsImage(String pstrItem)
+//		throws SessionExpiredException, BigBangException
 //	{
-//		PDResources lobjResources;
-//		Map<String, PDXObject> lmapObjects;
-//		Iterator<String> i;
-//		String lstrKey;
-//		PDXObject lobjObject;
-//		PDPixelMap lobjPNG;
-//		PDJpeg lobjJPG;
-//		PDCcitt lobjTIFF;
-//		ByteArrayOutputStream lstreamOutput;
+//		DSSession lrefSession;
+//		DSDocument lobjAux;
+//		int llngLen;
 //		byte[] larrBytes;
+//		DSContentElement[] larrAux;
+//		int llngRead;
+//		int llngAux;
+//		ByteBuffer lbuf;
+//		PDFFile lobjFile;
+//		PDFPage lobjPage;
+//		Rectangle2D lrect;
+//		Image lobjImage;
+//		ByteArrayOutputStream lstreamOutput;
+//		byte[] larrBuffer;
 //		ByteArrayInputStream lstreamInput;
+//		FileXfer lobjResult;
+//		UUID lidKey;
+//
+//		if ( Engine.getCurrentUser() == null )
+//			throw new SessionExpiredException();
+//
+//		lrefSession = GetSession();
+//		if ( lrefSession == null )
+//			return null;
 //
 //		try
 //		{
-//			lobjResources = prefPage.getResources();
-//			lmapObjects = lobjResources.getXObjects();
-//			i = lmapObjects.keySet().iterator();
-//			while ( i.hasNext() )
-//			{
-//				lstrKey = i.next();
-//				lobjObject = lmapObjects.get(lstrKey);
-//				if ( lobjObject instanceof PDPixelMap )
-//				{
-//					lobjPNG = (PDPixelMap)lobjObject;
-//					lstreamOutput = new ByteArrayOutputStream();
-//					lobjPNG.write2OutputStream(lstreamOutput);
-//					larrBytes = lstreamOutput.toByteArray();
-//					lstreamInput = new ByteArrayInputStream(larrBytes);
-//					return new FileXfer(larrBytes.length, "image/png", "pdfPage.png", lstreamInput);
-//				}
-//				if ( lobjObject instanceof PDJpeg)
-//				{
-//					lobjJPG = (PDJpeg)lobjObject;
-//					lstreamOutput = new ByteArrayOutputStream();
-//					lobjJPG.write2OutputStream(lstreamOutput);
-//					larrBytes = lstreamOutput.toByteArray();
-//					lstreamInput = new ByteArrayInputStream(larrBytes);
-//					return new FileXfer(larrBytes.length, "image/jpeg", "pdfPage.jpg", lstreamInput);
-//				}
-//				if ( lobjObject instanceof PDCcitt)
-//				{
-//					lobjTIFF = (PDCcitt)lobjObject;
-//					lstreamOutput = new ByteArrayOutputStream();
-//					lobjTIFF.write2OutputStream(lstreamOutput);
-//					larrBytes = lstreamOutput.toByteArray();
-//					lstreamInput = new ByteArrayInputStream(larrBytes);
-//					return new FileXfer(larrBytes.length, "image/tiff", "pdfPage.tif", lstreamInput);
-//				}
-//			}
+//			lobjAux = (DSDocument)lrefSession.getObject(new DSHandle(pstrItem));
+//			llngLen = lobjAux.getSize();
+//			larrAux = lobjAux.getContentElements();
+//			larrBytes = new byte[llngLen];
+//			larrAux[0].open();
+//	        llngRead = 0;
+//	        while (llngRead < llngLen)
+//	        {
+//	            llngAux = larrAux[0].read(larrBytes, llngRead, llngLen - llngRead);
+//	            llngRead += llngAux;
+//	            if (llngAux == 0)
+//	                break;
+//	        }
+//			larrAux[0].close();
+//			lbuf = ByteBuffer.wrap(larrBytes);
+//			lobjFile = new PDFFile(lbuf);
+//			lobjPage = lobjFile.getPage(1);
+//			lrect = lobjPage.getBBox();
+//			lobjImage = lobjPage.getImage((int)((300.0/72.0)*lrect.getWidth()), (int)((300.0/72.0)*lrect.getHeight()), lrect, null,
+//					true, true);
+//			
+//			lstreamOutput = new ByteArrayOutputStream();
+//			ImageIO.write((BufferedImage)lobjImage, "png", lstreamOutput);
+//
+//			larrBuffer = lstreamOutput.toByteArray();
+//			lstreamInput = new ByteArrayInputStream(larrBytes);
+//			lobjResult = new FileXfer(larrBuffer.length, "image/png", "pdfPage.png", lstreamInput);
 //		}
 //		catch (Throwable e)
 //		{
 //			throw new BigBangException(e.getMessage(), e);
 //		}
 //
-//		throw new BigBangException("No image found in page");
+//		lidKey = UUID.randomUUID();
+//		FileServiceImpl.GetFileXferStorage().put(lidKey, lobjResult);
+//
+//		return lidKey.toString();
 //	}
+
+//	public String getItemAsImage(String pstrItem)
+//		throws SessionExpiredException, BigBangException
+//	{
+//		DSSession lrefSession;
+//		DSDocument lobjAux;
+//		DSContentElement[] larrAux;
+//		PDDocument ldocOrig;
+//		PDPage ldocPage;
+//		int llngRot;
+//		BufferedImage limgPage;
+//		AffineTransform lobjXForm;
+//		AffineTransformOp lobjOp;
+//		ByteArrayOutputStream lstreamOutput;
+//		byte[] larrBytes;
+//		ByteArrayInputStream lstreamInput;
+//		FileXfer lobjFile;
+//		UUID lidKey;
+//
+//		if ( Engine.getCurrentUser() == null )
+//			throw new SessionExpiredException();
+//
+//		lrefSession = GetSession();
+//		if ( lrefSession == null )
+//			return null;
+//
+//		try
+//		{
+//			lobjAux = (DSDocument)lrefSession.getObject(new DSHandle(pstrItem));
+//			larrAux = lobjAux.getContentElements();
+//			larrAux[0].open();
+//			ldocOrig = PDDocument.load(larrAux[0]);
+//			larrAux[0].close();
+//
+//			ldocPage = (PDPage)ldocOrig.getDocumentCatalog().getAllPages().get(0);
+//			llngRot = ldocPage.findRotation();
+//			limgPage = ldocPage.convertToImage(BufferedImage.TYPE_INT_ARGB, 300);
+//			ldocOrig.close();
+//
+//			if ( llngRot != 0 )
+//			{
+//				lobjXForm = new AffineTransform();
+//				lobjXForm.translate(0.5*limgPage.getHeight(), 0.5*limgPage.getWidth());
+//				lobjXForm.quadrantRotate(llngRot/90);
+//				lobjXForm.translate(-0.5*limgPage.getWidth(), -0.5*limgPage.getHeight());
+//				lobjOp = new AffineTransformOp(lobjXForm, AffineTransformOp.TYPE_NEAREST_NEIGHBOR);
+//				limgPage = lobjOp.filter(limgPage, null);
+//			}
+//
+//			lstreamOutput = new ByteArrayOutputStream();
+//			ImageIO.write(limgPage, "png", lstreamOutput);
+//
+//			larrBytes = lstreamOutput.toByteArray();
+//			lstreamInput = new ByteArrayInputStream(larrBytes);
+//			lobjFile = new FileXfer(larrBytes.length, "image/png", "pdfPage.png", lstreamInput);
+//
+////			lobjFile = getFirstImage(ldocPage);
+////			ldocOrig.close();
+//		}
+//		catch (Throwable e)
+//		{
+//			throw new BigBangException(e.getMessage(), e);
+//		}
+//
+//
+//		lidKey = UUID.randomUUID();
+//		FileServiceImpl.GetFileXferStorage().put(lidKey, lobjFile);
+//
+//		return lidKey.toString();
+//	}
+//
+////	@SuppressWarnings("unchecked")
+////	private static FileXfer getFirstImage(PDPage prefPage)
+////		throws BigBangException
+////	{
+////		PDResources lobjResources;
+////		Map<String, PDXObject> lmapObjects;
+////		Iterator<String> i;
+////		String lstrKey;
+////		PDXObject lobjObject;
+////		PDPixelMap lobjPNG;
+////		PDJpeg lobjJPG;
+////		PDCcitt lobjTIFF;
+////		ByteArrayOutputStream lstreamOutput;
+////		byte[] larrBytes;
+////		ByteArrayInputStream lstreamInput;
+////
+////		try
+////		{
+////			lobjResources = prefPage.getResources();
+////			lmapObjects = lobjResources.getXObjects();
+////			i = lmapObjects.keySet().iterator();
+////			while ( i.hasNext() )
+////			{
+////				lstrKey = i.next();
+////				lobjObject = lmapObjects.get(lstrKey);
+////				if ( lobjObject instanceof PDPixelMap )
+////				{
+////					lobjPNG = (PDPixelMap)lobjObject;
+////					lstreamOutput = new ByteArrayOutputStream();
+////					lobjPNG.write2OutputStream(lstreamOutput);
+////					larrBytes = lstreamOutput.toByteArray();
+////					lstreamInput = new ByteArrayInputStream(larrBytes);
+////					return new FileXfer(larrBytes.length, "image/png", "pdfPage.png", lstreamInput);
+////				}
+////				if ( lobjObject instanceof PDJpeg)
+////				{
+////					lobjJPG = (PDJpeg)lobjObject;
+////					lstreamOutput = new ByteArrayOutputStream();
+////					lobjJPG.write2OutputStream(lstreamOutput);
+////					larrBytes = lstreamOutput.toByteArray();
+////					lstreamInput = new ByteArrayInputStream(larrBytes);
+////					return new FileXfer(larrBytes.length, "image/jpeg", "pdfPage.jpg", lstreamInput);
+////				}
+////				if ( lobjObject instanceof PDCcitt)
+////				{
+////					lobjTIFF = (PDCcitt)lobjObject;
+////					lstreamOutput = new ByteArrayOutputStream();
+////					lobjTIFF.write2OutputStream(lstreamOutput);
+////					larrBytes = lstreamOutput.toByteArray();
+////					lstreamInput = new ByteArrayInputStream(larrBytes);
+////					return new FileXfer(larrBytes.length, "image/tiff", "pdfPage.tif", lstreamInput);
+////				}
+////			}
+////		}
+////		catch (Throwable e)
+////		{
+////			throw new BigBangException(e.getMessage(), e);
+////		}
+////
+////		throw new BigBangException("No image found in page");
+////	}
 }
