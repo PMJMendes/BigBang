@@ -344,7 +344,7 @@ public class DocuShareServiceImpl
 					lobjTIFF.write2OutputStream(lstreamOutput);
 					larrBytes = lstreamOutput.toByteArray();
 					lstreamInput = new ByteArrayInputStream(larrBytes);
-					return new FileXfer(larrBytes.length, "image/jpeg", "pdfPage.jpg", lstreamInput);
+					return new FileXfer(larrBytes.length, "image/tiff", "pdfPage.tif", lstreamInput);
 				}
 			}
 		}
