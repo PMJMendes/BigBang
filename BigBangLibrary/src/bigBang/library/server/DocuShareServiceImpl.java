@@ -244,7 +244,7 @@ public class DocuShareServiceImpl
 			lobjAux = (DSDocument)lrefSession.getObject(new DSHandle(pstrItem));
 			larrAux = lobjAux.getContentElements();
 			larrAux[0].open();
-			lobjDecoder = new PdfDecoder(false);
+			lobjDecoder = new PdfDecoder();
 			lobjDecoder.openPdfFileFromInputStream(larrAux[0], false);
 			lobjImage = lobjDecoder.getPageAsImage(1);
 			lobjDecoder.closePdfFile();
