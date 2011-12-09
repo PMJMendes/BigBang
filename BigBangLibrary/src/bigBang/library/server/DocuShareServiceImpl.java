@@ -118,7 +118,8 @@ public class DocuShareServiceImpl
 		DSCollection lobjFolder;
 		DSObjectIterator i;
 		DSObject lobjAux;
-		ArrayList<DocuShareItem> larrResult;
+		ArrayList<DocuShareItem> larrFolders;
+		ArrayList<DocuShareItem> larrItems;
 		DocuShareItem lobjTmp;
 
 		if ( Engine.getCurrentUser() == null )
@@ -128,7 +129,8 @@ public class DocuShareServiceImpl
 		if ( lrefSession == null )
 			return null;
 
-		larrResult = new ArrayList<DocuShareItem>();
+		larrFolders = new ArrayList<DocuShareItem>();
+		larrItems = new ArrayList<DocuShareItem>();
 
 		if ( pstrFolder == null )
 			lhFolder = new DSHandle("Collection-59066");
@@ -138,35 +140,30 @@ public class DocuShareServiceImpl
 		try
 		{
 			lobjFolder = (DSCollection)lrefSession.getObject(lhFolder);
-
-			if ( pbWithFolders )
+			i = lobjFolder.children(null);
+			while ( i.hasNext() )
 			{
-				i = lobjFolder.children(null);
-				while ( i.hasNext() )
+				lobjAux = i.nextObject();
+
+				if ( pbWithFolders )
 				{
-					lobjAux = i.nextObject();
 					if ( lobjAux instanceof DSCollection )
 					{
 						lobjTmp = new DocuShareItem();
 						lobjTmp.directory = true;
 						lobjTmp.handle = lobjAux.getHandle().toString();
 						lobjTmp.desc = lobjAux.getTitle();
-						larrResult.add(lobjTmp);
+						larrFolders.add(lobjTmp);
 					}
 				}
-			}
 
-			i = lobjFolder.children(null);
-			while ( i.hasNext() )
-			{
-				lobjAux = i.nextObject();
 				if ( !(lobjAux instanceof DSCollection) )
 				{
 					lobjTmp = new DocuShareItem();
 					lobjTmp.directory = false;
 					lobjTmp.handle = lobjAux.getHandle().toString();
 					lobjTmp.desc = lobjAux.getTitle();
-					larrResult.add(lobjTmp);
+					larrItems.add(lobjTmp);
 				}
 			}
 		}
@@ -175,7 +172,9 @@ public class DocuShareServiceImpl
 			throw new BigBangException(e.getMessage(), e);
 		}
 
-		return larrResult.toArray(new DocuShareItem[larrResult.size()]);
+		larrFolders.addAll(larrItems);
+
+		return larrFolders.toArray(new DocuShareItem[larrFolders.size()]);
 	}
 
 	public String getItem(String pstrItem)
