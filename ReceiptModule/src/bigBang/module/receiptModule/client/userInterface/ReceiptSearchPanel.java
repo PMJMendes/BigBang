@@ -26,6 +26,7 @@ import bigBang.library.client.dataAccess.DataBrokerManager;
 import bigBang.library.client.userInterface.FiltersPanel;
 import bigBang.library.client.userInterface.ListEntry;
 import bigBang.library.client.userInterface.view.SearchPanel;
+import bigBang.module.receiptModule.shared.ModuleConstants;
 import bigBang.module.receiptModule.shared.ReceiptSearchParameter;
 import bigBang.module.receiptModule.shared.ReceiptSortParameter;
 import bigBang.module.receiptModule.shared.ReceiptSortParameter.SortableField;
@@ -154,7 +155,7 @@ public class ReceiptSearchPanel extends SearchPanel<ReceiptStub> implements Rece
 		sortOptions.put(ReceiptSortParameter.SortableField.PAYMENT_DATE, "Data de Pagamento");
 		
 		filtersPanel = new FiltersPanel(sortOptions);
-		filtersPanel.addTypifiedListField(Filters.TYPES, "", "Tipos");
+		filtersPanel.addTypifiedListField(Filters.TYPES, ModuleConstants.TypifiedListIds.RECEIPT_TYPE, "Tipos");
 		filtersPanel.addDateField(Filters.EMITED_FROM, "Emitido de");
 		filtersPanel.addDateField(Filters.EMITED_TO, "Até");
 		filtersPanel.addDateField(Filters.MATURITY_FROM, "Vencimento de");

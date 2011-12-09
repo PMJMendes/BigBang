@@ -256,7 +256,7 @@ public class DocuShareServiceImpl
 
 			ldocPage = (PDPage)ldocOrig.getDocumentCatalog().getAllPages().get(0);
 			llngRot = ldocPage.findRotation();
-			limgPage = ldocPage.convertToImage(BufferedImage.TYPE_BYTE_INDEXED, 300);
+			limgPage = ldocPage.convertToImage(BufferedImage.TYPE_INT_ARGB_PRE, 300);
 			ldocOrig.close();
 
 			if ( llngRot != 0 )
