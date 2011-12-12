@@ -294,10 +294,26 @@ public class DocuShareServiceImpl
 			larrAux = lobjAux.getContentElements();
 			larrAux[0].open();
 			lobjDecoder = new PdfDecoder();
-			lobjDecoder.openPdfFileFromInputStream(larrAux[0], false);
-			lobjImage = lobjDecoder.getPageAsHiRes(1);
+			try
+			{
+				lobjDecoder.openPdfFileFromInputStream(larrAux[0], false);
+			}
+			catch (Throwable e1)
+			{
+				try { larrAux[0].close(); } catch (Throwable e2) {}
+				throw e1;
+			}
+			try
+			{
+				larrAux[0].close();
+				lobjImage = lobjDecoder.getPageAsHiRes(1);
+			}
+			catch (Throwable e1)
+			{
+				lobjDecoder.closePdfFile();
+				throw e1;
+			}
 			lobjDecoder.closePdfFile();
-			larrAux[0].close();
 
 			lstreamOutput = new ByteArrayOutputStream();
 			ImageIO.write(lobjImage, "png", lstreamOutput);
