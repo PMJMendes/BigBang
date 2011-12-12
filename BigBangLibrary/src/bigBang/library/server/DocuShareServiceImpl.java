@@ -204,7 +204,15 @@ public class DocuShareServiceImpl
 			lobjAux = (DSDocument)lrefSession.getObject(new DSHandle(pstrItem));
 			larrAux = lobjAux.getContentElements();
 			larrAux[0].open();
-			lobjFile = new FileXfer(lobjAux.getSize(), lobjAux.getContentType(), lobjAux.getOriginalFileName(), larrAux[0]);
+			try
+			{
+				lobjFile = new FileXfer(lobjAux.getSize(), lobjAux.getContentType(), lobjAux.getOriginalFileName(), larrAux[0]);
+			}
+			catch (Throwable e1)
+			{
+				try { larrAux[0].close(); } catch (Throwable e2) {}
+				throw e1;
+			}
 			larrAux[0].close();
 		}
 		catch (Throwable e)
