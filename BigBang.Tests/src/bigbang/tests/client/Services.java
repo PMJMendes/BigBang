@@ -1,5 +1,9 @@
 package bigbang.tests.client;
 
+import bigBang.library.interfaces.DocuShareService;
+import bigBang.library.interfaces.DocuShareServiceAsync;
+import bigBang.library.interfaces.FileService;
+import bigBang.library.interfaces.FileServiceAsync;
 import bigBang.module.clientModule.interfaces.ClientService;
 import bigBang.module.clientModule.interfaces.ClientServiceAsync;
 import bigBang.module.insurancePolicyModule.interfaces.InsurancePolicyService;
@@ -17,6 +21,10 @@ public class Services
 {
 	public static final AuthenticationServiceAsync authenticationService =
 			GWT.create(AuthenticationService.class);
+	public static final DocuShareServiceAsync docuShareService =
+			GWT.create(DocuShareService.class);
+	public static final FileServiceAsync fileService =
+			GWT.create(FileService.class);
 	public static final ClientServiceAsync clientService =
 			GWT.create(ClientService.class);
 	public static final InsurancePolicyServiceAsync insurancePolicyService =

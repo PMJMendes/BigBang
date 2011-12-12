@@ -46,5 +46,7 @@ public class BigBang_Tests
 //		TestCreateReceipt.DoTest();
 //		TestUpdateReceipt.DoTest();
 //		TestDeleteReceipt.DoTest();
+
+		TestGetAsImage.DoTest();
 	}
 }
