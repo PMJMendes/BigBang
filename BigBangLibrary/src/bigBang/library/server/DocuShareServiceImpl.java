@@ -224,55 +224,6 @@ public class DocuShareServiceImpl
 //		DSSession lrefSession;
 //		DSDocument lobjAux;
 //		DSContentElement[] larrAux;
-//		Document lobjDoc;
-//		BufferedImage lobjImage;
-//		ByteArrayOutputStream lstreamOutput;
-//		byte[] larrBuffer;
-//		ByteArrayInputStream lstreamInput;
-//		FileXfer lobjFile;
-//		UUID lidKey;
-//
-//		if ( Engine.getCurrentUser() == null )
-//			throw new SessionExpiredException();
-//
-//		lrefSession = GetSession();
-//		if ( lrefSession == null )
-//			return null;
-//
-//		try
-//		{
-//			lobjAux = (DSDocument)lrefSession.getObject(new DSHandle(pstrItem));
-//			larrAux = lobjAux.getContentElements();
-//			larrAux[0].open();
-//			lobjDoc = new Document();
-//			lobjDoc.setInputStream(larrAux[0], pstrItem);
-//			larrAux[0].close();
-//			lobjImage = (BufferedImage)lobjDoc.getPageImage(0, GraphicsRenderingHints.SCREEN, Page.BOUNDARY_CROPBOX, 0, 4);
-//			lobjDoc.dispose();
-//
-//			lstreamOutput = new ByteArrayOutputStream();
-//			ImageIO.write(lobjImage, "png", lstreamOutput);
-//			larrBuffer = lstreamOutput.toByteArray();
-//			lstreamInput = new ByteArrayInputStream(larrBuffer);
-//			lobjFile = new FileXfer(larrBuffer.length, "image/png", "pdfPage.png", lstreamInput);
-//		}
-//		catch (Throwable e)
-//		{
-//			throw new BigBangException(e.getMessage(), e);
-//		}
-//
-//		lidKey = UUID.randomUUID();
-//		FileServiceImpl.GetFileXferStorage().put(lidKey, lobjFile);
-//
-//		return lidKey.toString();
-//	}
-
-//	public String getItemAsImage(String pstrItem)
-//		throws SessionExpiredException, BigBangException
-//	{
-//		DSSession lrefSession;
-//		DSDocument lobjAux;
-//		DSContentElement[] larrAux;
 //		PdfDecoder lobjDecoder;
 //		BufferedImage lobjImage;
 //		ByteArrayOutputStream lstreamOutput;
