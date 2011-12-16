@@ -29,7 +29,7 @@ public class TestEditPolicy
 			}
 		};
 
-		Services.insurancePolicyService.getPolicy("F4D6391A-CBB3-4555-BCB1-9FA900BA4838", callback);
+		Services.insurancePolicyService.getPolicy("FBA922E2-E2CE-4351-ABD5-9FBB00CE51B2", callback);
 	}
 
 	private static void DoStep2(InsurancePolicy testPolicy)
@@ -52,7 +52,7 @@ public class TestEditPolicy
 
 	private static void DoStep3(InsurancePolicy testPolicy)
 	{
-		int i, j, n;
+		int i, n;
 
 		AsyncCallback<InsurancePolicy> callback = new AsyncCallback<InsurancePolicy>()
 		{
@@ -67,49 +67,21 @@ public class TestEditPolicy
 			}
 		};
 
-		n = 0;
+		n = 1;
 		if ( testPolicy.headerFields != null )
 		{
 			for ( i = 0; i < testPolicy.headerFields.length; i++ )
 			{
-				if ( (testPolicy.headerFields[i].type == InsurancePolicy.FieldType.NUMERIC) ||
-						(testPolicy.headerFields[i].type == InsurancePolicy.FieldType.TEXT) )
-				{
-					testPolicy.headerFields[i].value = Integer.toString(n);
-					n++;
-				}
-			}
-		}
-		if ( testPolicy.tableData != null )
-		{
-			for ( i = 0; i < testPolicy.tableData.length; i++ )
-			{
-				if ( testPolicy.tableData[i].data != null )
-				{
-					for ( j = 0; j < testPolicy.tableData[0].data.length; j++ )
-					{
-						if ( (testPolicy.columns[testPolicy.tableData[i].data[j].columnIndex].type ==
-								InsurancePolicy.FieldType.NUMERIC) ||
-								(testPolicy.columns[testPolicy.tableData[i].data[j].columnIndex].type ==
-								InsurancePolicy.FieldType.TEXT) )
-						{
-							testPolicy.tableData[i].data[j].value = Integer.toString(n);
-							n++;
-						}
-					}
-				}
+				testPolicy.headerFields[i].value = Integer.toString(n);
+				n++;
 			}
 		}
 		if ( testPolicy.extraData != null )
 		{
 			for ( i = 0; i < testPolicy.extraData.length; i++ )
 			{
-				if ( (testPolicy.extraData[i].type == InsurancePolicy.FieldType.NUMERIC) ||
-						(testPolicy.extraData[i].type == InsurancePolicy.FieldType.TEXT) )
-				{
-					testPolicy.extraData[i].value = Integer.toString(n);
-					n++;
-				}
+				testPolicy.extraData[i].value = Integer.toString(n);
+				n++;
 			}
 		}
 
@@ -118,6 +90,8 @@ public class TestEditPolicy
 
 	private static void DoStep4(InsurancePolicy testPolicy)
 	{
+		int i, j, n;
+
 		AsyncCallback<TableSection> callback = new AsyncCallback<TableSection>()
 		{
 			public void onFailure(Throwable caught)
@@ -136,6 +110,23 @@ public class TestEditPolicy
 		else
 		{
 			tmpPolicy = testPolicy;
+
+			n = 11;
+			if ( testPolicy.tableData != null )
+			{
+				for ( i = 0; i < testPolicy.tableData.length; i++ )
+				{
+					if ( testPolicy.tableData[i].data != null )
+					{
+						for ( j = 0; j < testPolicy.tableData[0].data.length; j++ )
+						{
+							testPolicy.tableData[i].data[j].value = Integer.toString(n);
+							n++;
+						}
+					}
+				}
+			}
+
 			Services.insurancePolicyService.savePage(testPolicy.tableData[0], callback);
 		}
 	}

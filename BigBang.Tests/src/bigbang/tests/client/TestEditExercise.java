@@ -1,6 +1,6 @@
 package bigbang.tests.client;
 
-import bigBang.definitions.shared.ExerciseStub;
+import bigBang.definitions.shared.Exercise;
 import bigBang.definitions.shared.InsurancePolicy;
 import bigBang.definitions.shared.TipifiedListItem;
 
@@ -30,7 +30,7 @@ public class TestEditExercise
 			}
 		};
 	
-		Services.insurancePolicyService.getPolicy("F4D6391A-CBB3-4555-BCB1-9FA900BA4838", callback);
+		Services.insurancePolicyService.getPolicy("FBA922E2-E2CE-4351-ABD5-9FBB00CE51B2", callback);
 	}
 
 	private static void DoStep2(InsurancePolicy policy)
@@ -75,14 +75,14 @@ public class TestEditExercise
 
 	private static void DoStep4(String tempObjectId)
 	{
-		AsyncCallback<ExerciseStub> callback = new AsyncCallback<ExerciseStub>()
+		AsyncCallback<Exercise> callback = new AsyncCallback<Exercise>()
 		{
 			public void onFailure(Throwable caught)
 			{
 				return;
 			}
 
-			public void onSuccess(ExerciseStub result)
+			public void onSuccess(Exercise result)
 			{
 				DoStep5(result);
 			}
@@ -91,16 +91,18 @@ public class TestEditExercise
 		Services.insurancePolicyService.getExerciseInPad(tempObjectId, callback);
 	}
 
-	private static void DoStep5(ExerciseStub exercise)
+	private static void DoStep5(Exercise exercise)
 	{
-		AsyncCallback<ExerciseStub> callback = new AsyncCallback<ExerciseStub>()
+		int i, j, k, n;
+
+		AsyncCallback<Exercise> callback = new AsyncCallback<Exercise>()
 		{
 			public void onFailure(Throwable caught)
 			{
 				return;
 			}
 
-			public void onSuccess(ExerciseStub result)
+			public void onSuccess(Exercise result)
 			{
 				DoStep6();
 			}
@@ -108,6 +110,38 @@ public class TestEditExercise
 
 		exercise.label = "Início";
 		exercise.endDate = "2012-12-01";
+
+		n = 1001;
+		for ( i = 0; i < exercise.headerData.fixedFields.length; i++ )
+		{
+			exercise.headerData.fixedFields[i].value = Integer.toString(n);
+			n++;
+		}
+		for ( i = 0; i < exercise.headerData.variableFields.length; i++ )
+		{
+			for ( j = 0; j < exercise.headerData.variableFields[i].data.length; j++ )
+			{
+				exercise.headerData.variableFields[i].data[j].value = Integer.toString(n);
+				n++;
+			}
+		}
+		for ( i = 0; i < exercise.coverageData.length; i++ )
+		{
+			for ( j = 0; j < exercise.coverageData[i].fixedFields.length; j++ )
+			{
+				exercise.coverageData[i].fixedFields[j].value = Integer.toString(n);
+				n++;
+			}
+			for ( j = 0; j < exercise.coverageData[i].variableFields.length; j++ )
+			{
+				for ( k = 0; k < exercise.coverageData[i].variableFields[j].data.length; k++ )
+				{
+					exercise.coverageData[i].variableFields[j].data[k].value = Integer.toString(n);
+					n++;
+				}
+			}
+		}
+
 		Services.insurancePolicyService.updateExerciseInPad(exercise, callback);
 	}
 

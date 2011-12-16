@@ -1,6 +1,6 @@
 package bigbang.tests.client;
 
-import bigBang.definitions.shared.ExerciseStub;
+import bigBang.definitions.shared.Exercise;
 import bigBang.definitions.shared.InsurancePolicy;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -29,7 +29,7 @@ public class TestCreateExercise
 			}
 		};
 
-		Services.insurancePolicyService.getPolicy("F4D6391A-CBB3-4555-BCB1-9FA900BA4838", callback);
+		Services.insurancePolicyService.getPolicy("FBA922E2-E2CE-4351-ABD5-9FBB00CE51B2", callback);
 	}
 
 	private static void DoStep2(InsurancePolicy policy)
@@ -53,14 +53,14 @@ public class TestCreateExercise
 
 	private static void DoStep3(InsurancePolicy policy)
 	{
-		AsyncCallback<ExerciseStub> callback = new AsyncCallback<ExerciseStub> ()
+		AsyncCallback<Exercise> callback = new AsyncCallback<Exercise> ()
 		{
 			public void onFailure(Throwable caught)
 			{
 				return;
 			}
 
-			public void onSuccess(ExerciseStub result)
+			public void onSuccess(Exercise result)
 			{
 				DoStep4(result);
 			}
@@ -69,16 +69,16 @@ public class TestCreateExercise
 		Services.insurancePolicyService.createFirstExercise(policy.scratchPadId, callback);
 	}
 
-	private static void DoStep4(ExerciseStub exercise)
+	private static void DoStep4(Exercise exercise)
 	{
-		AsyncCallback<ExerciseStub> callback = new AsyncCallback<ExerciseStub> ()
+		AsyncCallback<Exercise> callback = new AsyncCallback<Exercise> ()
 		{
 			public void onFailure(Throwable caught)
 			{
 				return;
 			}
 
-			public void onSuccess(ExerciseStub result)
+			public void onSuccess(Exercise result)
 			{
 				DoStep5();
 			}

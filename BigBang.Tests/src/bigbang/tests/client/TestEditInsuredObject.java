@@ -30,7 +30,7 @@ public class TestEditInsuredObject
 			}
 		};
 	
-		Services.insurancePolicyService.getPolicy("0B0C69A5-FA4E-4A7D-B625-9FB2015D29D6", callback);
+		Services.insurancePolicyService.getPolicy("FBA922E2-E2CE-4351-ABD5-9FBB00CE51B2", callback);
 	}
 
 	private static void DoStep2(InsurancePolicy policy)
@@ -93,6 +93,8 @@ public class TestEditInsuredObject
 
 	private static void DoStep5(InsuredObject object)
 	{
+		int i, j, k, n;
+
 		AsyncCallback<InsuredObject> callback = new AsyncCallback<InsuredObject>()
 		{
 			public void onFailure(Throwable caught)
@@ -107,6 +109,38 @@ public class TestEditInsuredObject
 		};
 
 		object.unitIdentification = "Teste";
+
+		n = 101;
+		for ( i = 0; i < object.headerData.fixedFields.length; i++ )
+		{
+			object.headerData.fixedFields[i].value = Integer.toString(n);
+			n++;
+		}
+		for ( i = 0; i < object.headerData.variableFields.length; i++ )
+		{
+			for ( j = 0; j < object.headerData.variableFields[i].data.length; j++ )
+			{
+				object.headerData.variableFields[i].data[j].value = Integer.toString(n);
+				n++;
+			}
+		}
+		for ( i = 0; i < object.coverageData.length; i++ )
+		{
+			for ( j = 0; j < object.coverageData[i].fixedFields.length; j++ )
+			{
+				object.coverageData[i].fixedFields[j].value = Integer.toString(n);
+				n++;
+			}
+			for ( j = 0; j < object.coverageData[i].variableFields.length; j++ )
+			{
+				for ( k = 0; k < object.coverageData[i].variableFields[j].data.length; k++ )
+				{
+					object.coverageData[i].variableFields[j].data[k].value = Integer.toString(n);
+					n++;
+				}
+			}
+		}
+
 		Services.insurancePolicyService.updateObjectInPad(object, callback);
 	}
 
