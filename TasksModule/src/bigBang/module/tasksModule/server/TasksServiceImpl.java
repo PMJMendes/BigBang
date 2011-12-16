@@ -146,8 +146,7 @@ public class TasksServiceImpl
 		try
 		{
 			lobjAgenda.ClearData(ldb);
-			Entity.GetInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), Constants.ObjID_AgendaItem))
-				.Delete(ldb, lobjAgenda.getKey());
+			lobjAgenda.getDefinition().Delete(ldb, lobjAgenda.getKey());
 		}
 		catch (Throwable e)
 		{
