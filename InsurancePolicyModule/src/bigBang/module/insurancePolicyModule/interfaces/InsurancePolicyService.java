@@ -1,6 +1,6 @@
 package bigBang.module.insurancePolicyModule.interfaces;
 
-import bigBang.definitions.shared.Exercise;
+import bigBang.definitions.shared.ExerciseStub;
 import bigBang.definitions.shared.InfoOrDocumentRequest;
 import bigBang.definitions.shared.InsurancePolicy;
 import bigBang.definitions.shared.InsuredObject;
@@ -52,9 +52,9 @@ public interface InsurancePolicyService extends SearchService {
 	public InsuredObject updateObjectInPad(InsuredObject data) throws SessionExpiredException, BigBangException;
 	public void deleteObjectInPad(String tempObjectId) throws SessionExpiredException, BigBangException;
 
-	public Exercise getExerciseInPad(String tempExerciseId) throws SessionExpiredException, BigBangException;
-	public Exercise createFirstExercise(String scratchPadId) throws SessionExpiredException, BigBangException;
-	public Exercise updateExerciseInPad(Exercise data) throws SessionExpiredException, BigBangException;
+	public ExerciseStub getExerciseInPad(String tempExerciseId) throws SessionExpiredException, BigBangException;
+	public ExerciseStub createFirstExercise(String scratchPadId) throws SessionExpiredException, BigBangException;
+	public ExerciseStub updateExerciseInPad(ExerciseStub data) throws SessionExpiredException, BigBangException;
 	public void deleteExerciseInPad(String tempExerciseId) throws SessionExpiredException, BigBangException;
 
 	public InsurancePolicy commitPolicy(String scratchPadId) throws SessionExpiredException, BigBangException;
@@ -64,8 +64,8 @@ public interface InsurancePolicyService extends SearchService {
 	public InsuredObject includeObjectFromClient(String policyId) throws SessionExpiredException, BigBangException;
 	public void excludeObject(String policyId, String objectId) throws SessionExpiredException, BigBangException;
 
-	public Exercise openNewExercise(String policyId, Exercise exercise) throws SessionExpiredException, BigBangException;
-	public Exercise editExercise(String policyId, Exercise exercise) throws SessionExpiredException, BigBangException;
+	public ExerciseStub openNewExercise(String policyId, ExerciseStub exercise) throws SessionExpiredException, BigBangException;
+	public ExerciseStub editExercise(String policyId, ExerciseStub exercise) throws SessionExpiredException, BigBangException;
 
 	public InsurancePolicy voidPolicy(String policyId) throws SessionExpiredException, BigBangException;
 

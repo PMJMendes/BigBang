@@ -3,7 +3,7 @@ package bigBang.definitions.client.dataAccess;
 import java.util.Collection;
 
 import bigBang.definitions.client.response.ResponseHandler;
-import bigBang.definitions.shared.Exercise;
+import bigBang.definitions.shared.ExerciseStub;
 import bigBang.definitions.shared.InsurancePolicy;
 import bigBang.definitions.shared.InsurancePolicyStub;
 import bigBang.definitions.shared.InsuredObject;
@@ -39,9 +39,9 @@ public interface InsurancePolicyBroker extends DataBrokerInterface<InsurancePoli
 	public void removeInsuredObject(String policyId, InsuredObject object);
 	
 	//Exercises
-	public void createExercise(String policyId, Exercise exercise, ResponseHandler<Exercise> handler);
+	public void createExercise(String policyId, ExerciseStub exercise, ResponseHandler<ExerciseStub> handler);
 	
-	public void updateExercise(String policyId, Exercise exercise, ResponseHandler<Exercise> handler);
+	public void updateExercise(String policyId, ExerciseStub exercise, ResponseHandler<ExerciseStub> handler);
 	
 	public void removeExercise(String policyId, String exerciseId);
 

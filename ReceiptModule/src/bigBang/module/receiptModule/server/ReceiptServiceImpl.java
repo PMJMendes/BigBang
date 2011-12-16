@@ -2,6 +2,7 @@ package bigBang.module.receiptModule.server;
 
 import java.math.BigDecimal;
 import java.sql.Timestamp;
+import java.util.Calendar;
 import java.util.UUID;
 
 import Jewel.Engine.Engine;
@@ -222,6 +223,10 @@ public class ReceiptServiceImpl
 		ReceiptSearchParameter lParam;
 		String lstrAux;
 		IEntity lrefPolicies;
+		IEntity lrefClients;
+        Calendar ldtAux;
+		IEntity lrefLogs;
+		int i;
 
 		if ( !(pParam instanceof ReceiptSearchParameter) )
 			return false;
@@ -230,7 +235,47 @@ public class ReceiptServiceImpl
 		if ( (lParam.freeText != null) && (lParam.freeText.trim().length() > 0) )
 		{
 			lstrAux = lParam.freeText.trim().replace("'", "''").replace(" ", "%");
-			pstrBuffer.append(" AND ([:Number] LIKE N'%").append(lstrAux).append("%')");
+			pstrBuffer.append(" AND (");
+			pstrBuffer.append("([:Number] LIKE N'%").append(lstrAux).append("%')");
+			pstrBuffer.append(" OR ");
+			pstrBuffer.append("([:Type:Indicator] LIKE N'%").append(lstrAux).append("%')");
+			pstrBuffer.append(" OR ");
+			pstrBuffer.append("(LEFT(CONVERT(NVARCHAR, [:Maturity Date], 120), 10) LIKE N'%").append(lstrAux).append("%')");
+			pstrBuffer.append(" OR ");
+			pstrBuffer.append("([:Process:Parent] IN (SELECT [:Process] FROM (");
+			try
+			{
+				lrefPolicies = Entity.GetInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), Constants.ObjID_Client));
+				pstrBuffer.append(lrefPolicies.SQLForSelectMulti());
+			}
+			catch (Throwable e)
+			{
+				throw new BigBangException(e.getMessage(), e);
+			}
+			pstrBuffer.append(") [AuxPols] WHERE (");
+			pstrBuffer.append("([:Number] LIKE N'%").append(lstrAux).append("%')");
+			pstrBuffer.append(" OR ");
+			pstrBuffer.append("([:SubLine:Name] LIKE N'%").append(lstrAux).append("%')");
+			pstrBuffer.append(" OR ");
+			pstrBuffer.append("([:SubLine:Line:Name] LIKE N'%").append(lstrAux).append("%')");
+			pstrBuffer.append(" OR ");
+			pstrBuffer.append("([:SubLine:Line:Category:Name] LIKE N'%").append(lstrAux).append("%')");
+			pstrBuffer.append(" OR ");
+			pstrBuffer.append("([:Process:Parent] IN (SELECT [:Process] FROM (");
+			try
+			{
+				lrefClients = Entity.GetInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), Constants.ObjID_Client));
+				pstrBuffer.append(lrefClients.SQLForSelectMulti());
+			}
+			catch (Throwable e)
+			{
+				throw new BigBangException(e.getMessage(), e);
+			}
+			pstrBuffer.append(") [AuxClients] WHERE (");
+			pstrBuffer.append("([:Name] LIKE N'%").append(lstrAux).append("%')");
+			pstrBuffer.append(" OR ");
+			pstrBuffer.append("(CAST([:Number] AS NVARCHAR(20)) LIKE N'%").append(lstrAux).append("%')");
+			pstrBuffer.append(")))))))");
 		}
 
 		if ( lParam.ownerId != null )
@@ -246,6 +291,100 @@ public class ReceiptServiceImpl
         		throw new BigBangException(e.getMessage(), e);
 			}
 			pstrBuffer.append(") [AuxOwner] WHERE [:Process:Data] = '").append(lParam.ownerId).append("')");
+		}
+
+		if ( (lParam.typeIds != null ) && (lParam.typeIds.length > 0) )
+		{
+			pstrBuffer.append(" AND [:Type] IN ('");
+			for ( i = 0; i < lParam.typeIds.length; i++ )
+			{
+				if ( i > 0 )
+					pstrBuffer.append("', '");
+				pstrBuffer.append(lParam.typeIds[i]);
+			}
+			pstrBuffer.append("')");
+		}
+
+		if ( lParam.emitedFrom != null )
+		{
+			pstrBuffer.append(" AND [:Issue Date] >= '").append(lParam.emitedFrom).append("'");
+		}
+
+		if ( lParam.emitedTo != null )
+		{
+			pstrBuffer.append(" AND [:Issue Date] < '");
+        	ldtAux = Calendar.getInstance();
+        	ldtAux.setTimeInMillis(Timestamp.valueOf(lParam.emitedTo + " 00:00:00.0").getTime());
+        	ldtAux.add(Calendar.DAY_OF_MONTH, 1);
+			pstrBuffer.append((new Timestamp(ldtAux.getTimeInMillis())).toString().substring(0, 10)).append("'");
+		}
+
+		if ( lParam.maturityFrom != null )
+		{
+			pstrBuffer.append(" AND [:Maturity Date] >= '").append(lParam.maturityFrom).append("'");
+		}
+
+		if ( lParam.maturityTo != null )
+		{
+			pstrBuffer.append(" AND [:Maturity Date] < '");
+        	ldtAux = Calendar.getInstance();
+        	ldtAux.setTimeInMillis(Timestamp.valueOf(lParam.maturityTo + " 00:00:00.0").getTime());
+        	ldtAux.add(Calendar.DAY_OF_MONTH, 1);
+			pstrBuffer.append((new Timestamp(ldtAux.getTimeInMillis())).toString().substring(0, 10)).append("'");
+		}
+
+		if ( (lParam.paymentFrom != null) || (lParam.paymentTo != null) )
+		{
+			pstrBuffer.append(" AND [:Process] IN (SELECT [:Process] FROM (");
+			try
+			{
+				lrefLogs = Entity.GetInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), Jewel.Petri.Constants.ObjID_PNLog));
+				pstrBuffer.append(lrefLogs.SQLForSelectMulti());
+			}
+			catch (Throwable e)
+			{
+        		throw new BigBangException(e.getMessage(), e);
+			}
+			pstrBuffer.append(") [AuxPayment] WHERE [:Operation] = '").append(Constants.OPID_Payment);
+			if ( lParam.paymentFrom != null )
+				pstrBuffer.append("' AND [:Timestamp] >= '").append(lParam.paymentFrom).append("'");
+			if ( lParam.paymentTo != null )
+			{
+	        	ldtAux = Calendar.getInstance();
+	        	ldtAux.setTimeInMillis(Timestamp.valueOf(lParam.paymentTo + " 00:00:00.0").getTime());
+	        	ldtAux.add(Calendar.DAY_OF_MONTH, 1);
+	        	pstrBuffer.append("' AND [:Timestamp] < '");
+	        	pstrBuffer.append((new Timestamp(ldtAux.getTimeInMillis())).toString().substring(0, 10)).append("'");
+			}
+			pstrBuffer.append(")");
+		}
+
+		if ( (lParam.subLineId != null) || (lParam.lineId != null) || (lParam.categoryId != null) )
+		{
+			pstrBuffer.append(" AND [:Process:Parent] IN (SELECT [:Process] FROM (");
+			try
+			{
+				lrefPolicies = Entity.GetInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), Constants.ObjID_Policy));
+				pstrBuffer.append(lrefPolicies.SQLForSelectMulti());
+			}
+			catch (Throwable e)
+			{
+        		throw new BigBangException(e.getMessage(), e);
+			}
+			pstrBuffer.append(") [AuxLine] WHERE ");
+			if ( lParam.subLineId != null )
+			{
+				pstrBuffer.append("[:SubLine] = '").append(lParam.subLineId);
+			}
+			else if ( lParam.lineId != null )
+			{
+				pstrBuffer.append("[:SubLine:Line] = '").append(lParam.lineId);
+			}
+			else if ( lParam.categoryId != null )
+			{
+				pstrBuffer.append("[:SubLine:Line:Category] = '").append(lParam.categoryId);
+			}
+			pstrBuffer.append("')");
 		}
 
 		return true;

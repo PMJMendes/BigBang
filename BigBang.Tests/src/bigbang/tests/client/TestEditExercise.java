@@ -1,6 +1,6 @@
 package bigbang.tests.client;
 
-import bigBang.definitions.shared.Exercise;
+import bigBang.definitions.shared.ExerciseStub;
 import bigBang.definitions.shared.InsurancePolicy;
 import bigBang.definitions.shared.TipifiedListItem;
 
@@ -75,14 +75,14 @@ public class TestEditExercise
 
 	private static void DoStep4(String tempObjectId)
 	{
-		AsyncCallback<Exercise> callback = new AsyncCallback<Exercise>()
+		AsyncCallback<ExerciseStub> callback = new AsyncCallback<ExerciseStub>()
 		{
 			public void onFailure(Throwable caught)
 			{
 				return;
 			}
 
-			public void onSuccess(Exercise result)
+			public void onSuccess(ExerciseStub result)
 			{
 				DoStep5(result);
 			}
@@ -91,16 +91,16 @@ public class TestEditExercise
 		Services.insurancePolicyService.getExerciseInPad(tempObjectId, callback);
 	}
 
-	private static void DoStep5(Exercise exercise)
+	private static void DoStep5(ExerciseStub exercise)
 	{
-		AsyncCallback<Exercise> callback = new AsyncCallback<Exercise>()
+		AsyncCallback<ExerciseStub> callback = new AsyncCallback<ExerciseStub>()
 		{
 			public void onFailure(Throwable caught)
 			{
 				return;
 			}
 
-			public void onSuccess(Exercise result)
+			public void onSuccess(ExerciseStub result)
 			{
 				DoStep6();
 			}

@@ -22,7 +22,7 @@ import Jewel.Petri.Objects.PNProcess;
 import Jewel.Petri.Objects.PNScript;
 import Jewel.Petri.SysObjects.JewelPetriException;
 import bigBang.definitions.shared.Address;
-import bigBang.definitions.shared.Exercise;
+import bigBang.definitions.shared.ExerciseStub;
 import bigBang.definitions.shared.InfoOrDocumentRequest;
 import bigBang.definitions.shared.InsurancePolicy;
 import bigBang.definitions.shared.InsurancePolicyStub;
@@ -1077,7 +1077,7 @@ public class InsurancePolicyServiceImpl
 			return larrResult;
 		}
 
-		public void WriteExercise(Exercise pobjResult, int plngObject)
+		public void WriteExercise(ExerciseStub pobjResult, int plngObject)
 			throws BigBangException
 		{
 			PolicyExerciseData lobjObject;
@@ -1506,7 +1506,7 @@ public class InsurancePolicyServiceImpl
 			return llngIndex;
 		}
 
-		public void UpdateExercise(Exercise pobjSource, int plngExercise)
+		public void UpdateExercise(ExerciseStub pobjSource, int plngExercise)
 			throws BigBangException
 		{
 			Timestamp ldtStart;
@@ -2425,14 +2425,14 @@ public class InsurancePolicyServiceImpl
 		GetScratchPadStorage().get(lidPad).DeleteObject(llngObject);
 	}
 
-	public Exercise getExerciseInPad(String tempExerciseId)
+	public ExerciseStub getExerciseInPad(String tempExerciseId)
 		throws SessionExpiredException, BigBangException
 	{
 		String[] larrAux;
 		UUID lidPad;
 		int llngObject;
 		PolicyScratchPad lobjPad;
-		Exercise lobjResult;
+		ExerciseStub lobjResult;
 
 		if ( Engine.getCurrentUser() == null )
 			throw new SessionExpiredException();
@@ -2445,17 +2445,17 @@ public class InsurancePolicyServiceImpl
 
 		lobjPad = GetScratchPadStorage().get(lidPad);
 
-		lobjResult = new Exercise();
+		lobjResult = new ExerciseStub();
 		lobjResult.tempExerciseId = lidPad.toString() + ":" + Integer.toString(llngObject);
 		lobjPad.WriteExercise(lobjResult, llngObject);
 		return lobjResult;
 	}
 
-	public Exercise createFirstExercise(String scratchPadId)
+	public ExerciseStub createFirstExercise(String scratchPadId)
 		throws SessionExpiredException, BigBangException
 	{
 		PolicyScratchPad lobjPad;
-		Exercise lobjResult;
+		ExerciseStub lobjResult;
 		int llngObject;
 
 		if ( Engine.getCurrentUser() == null )
@@ -2467,12 +2467,12 @@ public class InsurancePolicyServiceImpl
 		lobjPad = GetScratchPadStorage().get(UUID.fromString(scratchPadId));
 		llngObject = lobjPad.CreateNewExercise();
 
-		lobjResult = new Exercise();
+		lobjResult = new ExerciseStub();
 		lobjResult.tempExerciseId = scratchPadId + ":" + llngObject;
 		return lobjResult;
 	}
 
-	public Exercise updateExerciseInPad(Exercise data)
+	public ExerciseStub updateExerciseInPad(ExerciseStub data)
 		throws SessionExpiredException, BigBangException
 	{
 		String[] larrAux;
@@ -2564,14 +2564,14 @@ public class InsurancePolicyServiceImpl
 	}
 
 	@Override
-	public Exercise openNewExercise(String policyId, Exercise exercise)
+	public ExerciseStub openNewExercise(String policyId, ExerciseStub exercise)
 			throws SessionExpiredException, BigBangException {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public Exercise editExercise(String policyId, Exercise exercise)
+	public ExerciseStub editExercise(String policyId, ExerciseStub exercise)
 			throws SessionExpiredException, BigBangException {
 		// TODO Auto-generated method stub
 		return null;

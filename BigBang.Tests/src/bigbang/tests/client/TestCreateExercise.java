@@ -1,6 +1,6 @@
 package bigbang.tests.client;
 
-import bigBang.definitions.shared.Exercise;
+import bigBang.definitions.shared.ExerciseStub;
 import bigBang.definitions.shared.InsurancePolicy;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -53,14 +53,14 @@ public class TestCreateExercise
 
 	private static void DoStep3(InsurancePolicy policy)
 	{
-		AsyncCallback<Exercise> callback = new AsyncCallback<Exercise> ()
+		AsyncCallback<ExerciseStub> callback = new AsyncCallback<ExerciseStub> ()
 		{
 			public void onFailure(Throwable caught)
 			{
 				return;
 			}
 
-			public void onSuccess(Exercise result)
+			public void onSuccess(ExerciseStub result)
 			{
 				DoStep4(result);
 			}
@@ -69,16 +69,16 @@ public class TestCreateExercise
 		Services.insurancePolicyService.createFirstExercise(policy.scratchPadId, callback);
 	}
 
-	private static void DoStep4(Exercise exercise)
+	private static void DoStep4(ExerciseStub exercise)
 	{
-		AsyncCallback<Exercise> callback = new AsyncCallback<Exercise> ()
+		AsyncCallback<ExerciseStub> callback = new AsyncCallback<ExerciseStub> ()
 		{
 			public void onFailure(Throwable caught)
 			{
 				return;
 			}
 
-			public void onSuccess(Exercise result)
+			public void onSuccess(ExerciseStub result)
 			{
 				DoStep5();
 			}

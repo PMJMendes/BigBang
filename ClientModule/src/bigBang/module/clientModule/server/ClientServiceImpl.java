@@ -705,14 +705,14 @@ public class ClientServiceImpl
 
 		if ( (lParam.CAEs != null) && (lParam.CAEs.length > 0) )
 		{
-			pstrBuffer.append(" AND [:Activity Code] IN (");
+			pstrBuffer.append(" AND [:Activity Code] IN ('");
 			for ( i = 0; i < lParam.CAEs.length; i++ )
 			{
 				if ( i > 0 )
-					pstrBuffer.append(", ");
-				pstrBuffer.append("'").append(lParam.CAEs[i]).append("'");
+					pstrBuffer.append("', '");
+				pstrBuffer.append(lParam.CAEs[i]);
 			}
-			pstrBuffer.append(")");
+			pstrBuffer.append("')");
 		}
 
 		if ( lParam.mediatorId != null )
@@ -742,14 +742,14 @@ public class ClientServiceImpl
 
 		if ( (lParam.professionIds != null) && (lParam.professionIds.length > 0) )
 		{
-			pstrBuffer.append(" AND [:Profession] IN (");
+			pstrBuffer.append(" AND [:Profession] IN ('");
 			for ( i = 0; i < lParam.professionIds.length; i++ )
 			{
 				if ( i > 0 )
-					pstrBuffer.append(", ");
-				pstrBuffer.append("'").append(lParam.professionIds[i]).append("'");
+					pstrBuffer.append("', '");
+				pstrBuffer.append(lParam.professionIds[i]);
 			}
-			pstrBuffer.append(")");
+			pstrBuffer.append("')");
 		}
 
 		if ( lParam.birthDateFrom != null )

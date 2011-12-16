@@ -15,7 +15,7 @@ import bigBang.definitions.client.dataAccess.SearchDataBroker;
 import bigBang.definitions.client.response.ResponseError;
 import bigBang.definitions.client.response.ResponseHandler;
 import bigBang.definitions.shared.BigBangConstants;
-import bigBang.definitions.shared.Exercise;
+import bigBang.definitions.shared.ExerciseStub;
 import bigBang.definitions.shared.InsurancePolicy;
 import bigBang.definitions.shared.InsurancePolicy.TableSection;
 import bigBang.definitions.shared.InsurancePolicyStub;
@@ -322,15 +322,15 @@ public class InsurancePolicyProcessBrokerImpl extends DataBroker<InsurancePolicy
 	}
 
 	@Override
-	public void createExercise(String policyId, Exercise exercise,
-			ResponseHandler<Exercise> handler) {
+	public void createExercise(String policyId, ExerciseStub exercise,
+			ResponseHandler<ExerciseStub> handler) {
 		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
-	public void updateExercise(String policyId, Exercise exercise,
-			ResponseHandler<Exercise> handler) {
+	public void updateExercise(String policyId, ExerciseStub exercise,
+			ResponseHandler<ExerciseStub> handler) {
 		// TODO Auto-generated method stub
 		
 	}

@@ -146,6 +146,7 @@ public class Constants
 	public static final UUID OPID_ManageReceiptData             = UUID.fromString("581AA15C-DF2C-4DF9-B3B3-9F8A00EDBADB");
 	public static final UUID OPID_UndoManageReceiptData         = UUID.fromString("6D530E4A-8585-433F-9BE9-9F8A00EDE805");
 	public static final UUID OPID_DeleteReceipt                 = UUID.fromString("994D421F-E414-41EF-8D02-9F8A00EEE620");
+	public static final UUID OPID_Payment                       = UUID.fromString("F5F00701-69F7-4622-BB8C-9FB800DED93F");
 
 	// Manager Transfer Operations
 	public static final UUID OPID_AcceptXFer                    = UUID.fromString("8B3AB41F-76F6-4311-8600-9F65014CF682");

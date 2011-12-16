@@ -2,7 +2,7 @@ package bigBang.module.insurancePolicyModule.server;
 
 import java.util.UUID;
 
-import bigBang.definitions.shared.Exercise;
+import bigBang.definitions.shared.ExerciseStub;
 import bigBang.definitions.shared.SearchParameter;
 import bigBang.definitions.shared.SearchResult;
 import bigBang.definitions.shared.SortOrder;
@@ -82,9 +82,9 @@ public class PolicyExerciseServiceImpl
 
 	protected SearchResult buildResult(UUID pid, Object[] parrValues)
 	{
-		Exercise lobjResult;
+		ExerciseStub lobjResult;
 
-		lobjResult = new Exercise();
+		lobjResult = new ExerciseStub();
 		lobjResult.id = pid.toString();
 		lobjResult.label = (String)parrValues[0];
 		return lobjResult;
