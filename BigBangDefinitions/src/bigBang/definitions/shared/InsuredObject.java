@@ -86,7 +86,7 @@ public class InsuredObject
 	public String grievousCaeId;
 	public String activityNotes;
 	public String productNotes;
-	public String businessVolume;
+	public String businessVolumeId;
 	public String europeanUnionEntity;
 	public String clientNumberGroup; // Only if the insured company is also a first level client
 
