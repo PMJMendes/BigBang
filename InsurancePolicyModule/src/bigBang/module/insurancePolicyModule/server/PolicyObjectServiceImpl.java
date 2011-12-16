@@ -141,7 +141,7 @@ public class PolicyObjectServiceImpl
 			lobjResult.grievousCaeId = ( lobjObject.getAt(15) == null ? null : ((UUID)lobjObject.getAt(15)).toString() );
 			lobjResult.activityNotes = (String)lobjObject.getAt(16);
 			lobjResult.productNotes = (String)lobjObject.getAt(17);
-			lobjResult.businessVolume = ( lobjObject.getAt(18) == null ? null : ((UUID)lobjObject.getAt(18)).toString() );
+			lobjResult.businessVolumeId = ( lobjObject.getAt(18) == null ? null : ((UUID)lobjObject.getAt(18)).toString() );
 			lobjResult.europeanUnionEntity = (String)lobjObject.getAt(19);
 			lobjResult.clientNumberGroup = ( lobjObject.getAt(20) == null ? null : ((Integer)lobjObject.getAt(20)).toString() );
 		}
