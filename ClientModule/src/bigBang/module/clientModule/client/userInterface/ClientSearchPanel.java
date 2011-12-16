@@ -73,7 +73,7 @@ public class ClientSearchPanel extends SearchPanel<ClientStub> implements Client
 		filtersPanel.addTypifiedListField(Filters.PROFESSION, ModuleConstants.ListIDs.Professions, "Profissão");
 		filtersPanel.addTypifiedListField(Filters.OPERATIONAL_PROFILE, ModuleConstants.ListIDs.OperationalProfiles, "Perfil Op.");
 		filtersPanel.addTypifiedListField(Filters.COMPANY_SIZE, ModuleConstants.ListIDs.CompanySizes, "Num. de Trab.");
-		filtersPanel.addTypifiedListField(Filters.SALES_VOLUME, ModuleConstants.ListIDs.SalesVolumes, "Vol. de Vendas");
+		filtersPanel.addTypifiedListField(Filters.SALES_VOLUME, BigBangConstants.TypifiedListIds.SALES_VOLUMES, "Vol. de Vendas");
 
 		filtersPanel.addTypifiedListField(Filters.MARITAL_STATUS, ModuleConstants.ListIDs.MaritalStatuses, "Estado Civil");
 		filtersPanel.addDateField(Filters.BORN_AFTER, "Nascido De");

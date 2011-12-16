@@ -6,6 +6,8 @@ import bigBang.library.client.FormField;
 import com.google.gwt.user.client.ui.HasVerticalAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.TextBox;
+import com.google.gwt.user.client.ui.TextBoxBase;
+import com.google.gwt.user.client.ui.ValueBoxBase.TextAlignment;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
@@ -114,6 +116,10 @@ public class TextBoxFormField extends FormField<String> {
 			value = null;
 		}
 		return value;
+	}
+	
+	public void setTextAligment(TextAlignment alignment){
+		((TextBox)this.field).setAlignment(alignment);
 	}
 
 }

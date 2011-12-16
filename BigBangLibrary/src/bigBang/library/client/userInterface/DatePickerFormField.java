@@ -6,6 +6,12 @@ import java.util.Date;
 import bigBang.library.client.FieldValidator;
 import bigBang.library.client.FormField;
 
+import com.google.gwt.core.client.GWT;
+import com.google.gwt.event.dom.client.BlurEvent;
+import com.google.gwt.event.dom.client.BlurHandler;
+import com.google.gwt.event.dom.client.FocusEvent;
+import com.google.gwt.event.dom.client.FocusHandler;
+import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.event.dom.client.KeyPressEvent;
 import com.google.gwt.event.dom.client.KeyPressHandler;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
@@ -72,7 +78,9 @@ public class DatePickerFormField extends FormField<Date> {
 
 			@Override
 			public void onKeyPress(KeyPressEvent event) {
-				event.preventDefault();
+				if(!Character.isDigit((char)event.getUnicodeCharCode())){
+					event.preventDefault();
+				}
 				if(event.getSource() == day){
 					onDayChanged(event.getUnicodeCharCode());
 				}else if(event.getSource() == month){
@@ -87,6 +95,18 @@ public class DatePickerFormField extends FormField<Date> {
 		month.addKeyPressHandler(keyPressHandler);
 		year.addKeyPressHandler(keyPressHandler);
 
+		BlurHandler blurHandler = new BlurHandler() {
+			
+			@Override
+			public void onBlur(BlurEvent event) {
+				validateDate();
+			}
+		};
+		
+		day.addBlurHandler(blurHandler);
+		month.addBlurHandler(blurHandler);
+		year.addBlurHandler(blurHandler);
+		
 		wrapper.add(day);
 		wrapper.add(new Label("/"));
 		wrapper.add(month);
@@ -97,6 +117,20 @@ public class DatePickerFormField extends FormField<Date> {
 		wrapper.add(errorMessageLabel);
 	}
 
+	protected boolean validateDate(){
+		String day = this.day.getValue();
+		String month = this.month.getValue();
+		String year = this.year.getValue();
+
+		try{
+			this.format.parse(year+"-"+month+"-"+day);
+		}catch(Exception e){
+			GWT.log("DATA INVALIDA");
+			return false;
+		}
+		return true;
+	}
+	
 	@Override
 	public void setLabelWidth(String width) {
 		this.label.setWidth(width);
@@ -120,12 +154,11 @@ public class DatePickerFormField extends FormField<Date> {
 	}
 
 	protected void onDayChanged(int charCode){
+		
 		if((charCode == '-' || charCode == '/') && !this.day.getValue().isEmpty()){
 			this.month.setFocus(true);
-		}else if(Character.isDigit((char) charCode) && this.day.getMaxLength() != this.day.getValue().length()){
-		 	this.day.setValue(this.day.getValue()+(char)charCode);
 		}
-		if(this.day.getMaxLength() == this.day.getValue().length()){
+		if(this.day.getMaxLength() == day.getCursorPos()+1){
 			this.month.setFocus(true);
 		}
 	}
@@ -140,10 +173,8 @@ public class DatePickerFormField extends FormField<Date> {
 	protected void onMonthChanged(int charCode){
 		if((charCode == '-' || charCode == '/') && !this.month.getValue().isEmpty()){
 			this.year.setFocus(true);
-		}else if(Character.isDigit((char) charCode) && this.month.getMaxLength() != this.month.getValue().length()){
-			this.month.setValue(this.month.getValue()+(char)charCode);
 		}
-		if(this.month.getMaxLength() == this.month.getValue().length()){
+		if(this.month.getMaxLength() == month.getCursorPos()+1){
 			this.year.setFocus(true);
 		}
 	}
@@ -156,12 +187,7 @@ public class DatePickerFormField extends FormField<Date> {
 	}
 
 	protected void onYearChanged(int charCode){
-		if(this.year.getValue().length() == this.year.getMaxLength()){
-			return;
-		}
-		if(Character.isDigit((char) charCode) && this.year.getMaxLength() != this.year.getValue().length()){
-			this.year.setValue(this.year.getValue()+(char)charCode);
-		}
+		return;
 	}
 
 	@Override
@@ -181,9 +207,21 @@ public class DatePickerFormField extends FormField<Date> {
 		if(fireEvents)
 			ValueChangeEvent.fire(this, value);
 	}
+	
+	public void setValue(String date){
+		if(date == null) {
+			setValue((Date) null);
+		}else{
+			setValue(DateTimeFormat.getFormat(DEFAULT_FORMAT).parse(date));
+		}
+	}
 
 	@Override
 	public Date getValue() {
+		if(!validateDate()){
+			return null;
+		}
+		
 		String day = this.day.getValue();
 		String month = this.month.getValue();
 		String year = this.year.getValue();

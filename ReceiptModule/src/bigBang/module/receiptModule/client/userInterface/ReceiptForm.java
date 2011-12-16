@@ -14,6 +14,7 @@ import bigBang.library.client.userInterface.view.FormView;
 import bigBang.module.receiptModule.shared.ModuleConstants;
 
 import com.google.gwt.i18n.client.DateTimeFormat;
+import com.google.gwt.user.client.ui.ValueBoxBase.TextAlignment;
 
 public class ReceiptForm extends FormView<Receipt> implements ReceiptDataBrokerClient {
 
@@ -46,17 +47,23 @@ public class ReceiptForm extends FormView<Receipt> implements ReceiptDataBrokerC
 		totalPremium = new TextBoxFormField("Prémio Total");
 		totalPremium.setUnitsLabel("€");
 		totalPremium.setFieldWidth("100px");
+		totalPremium.setTextAligment(TextAlignment.RIGHT);
 		salesPremium = new  TextBoxFormField("Prémio Comercial");
 		salesPremium.setUnitsLabel("€");
 		salesPremium.setFieldWidth("100px");
-		commission = new TextBoxFormField("Commissão (€)");
+		salesPremium.setTextAligment(TextAlignment.RIGHT);
+		commission = new TextBoxFormField("Commissão");
 		commission.setUnitsLabel("€");
 		commission.setFieldWidth("100px");
-		retro = new TextBoxFormField("Retrocessões (€)");
+		commission.setTextAligment(TextAlignment.RIGHT);
+		retro = new TextBoxFormField("Retrocessões");
 		retro.setUnitsLabel("€");
 		retro.setFieldWidth("100px");
-		fat = new TextBoxFormField("FAT (€)");
+		retro.setTextAligment(TextAlignment.RIGHT);
+		fat = new TextBoxFormField("FAT");
 		fat.setFieldWidth("100px");
+		fat.setUnitsLabel("€");
+		fat.setTextAligment(TextAlignment.RIGHT);
 		issueDate = new DatePickerFormField("Data de Emissão");
 		coverageStart = new DatePickerFormField("Vigência");
 		coverageEnd = new DatePickerFormField("Até");

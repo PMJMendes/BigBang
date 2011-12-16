@@ -841,7 +841,7 @@ public class InsurancePolicyServiceImpl
 
 			pobjResult.species = lobjObject.mstrSpecies;
 			pobjResult.race = lobjObject.mstrRace;
-			pobjResult.age = ( lobjObject.mlngAge == null ? null : lobjObject.mlngAge.toString() );
+			pobjResult.birthYear = ( lobjObject.mlngAge == null ? null : lobjObject.mlngAge.toString() );
 			pobjResult.cityRegistryNumber = lobjObject.mstrCityNumber;
 			pobjResult.electronicIdTag = lobjObject.mstrElectronicIDTag;
 
@@ -1591,8 +1591,8 @@ public class InsurancePolicyServiceImpl
 
 			lobjObject.mstrSpecies = pobjSource.species;
 			lobjObject.mstrRace = pobjSource.race;
-			lobjObject.mlngAge = ( pobjSource.age == null ? null :
-					Integer.decode(pobjSource.age) );
+			lobjObject.mlngAge = ( pobjSource.birthYear == null ? null :
+					Integer.decode(pobjSource.birthYear) );
 			lobjObject.mstrCityNumber = pobjSource.cityRegistryNumber;
 			lobjObject.mstrElectronicIDTag = pobjSource.electronicIdTag;
 

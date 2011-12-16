@@ -1,5 +1,7 @@
 package bigBang.definitions.shared;
 
+import java.util.UUID;
+
 /**
  * Class that holds important information which should be shared across modules
  */
@@ -29,6 +31,12 @@ public class BigBangConstants {
 		
 		public static final String CONTACT = "2085F9FD-7FCE-46C0-99FD-9EC400FFBA5C";
 		public static final String DOCUMENT = "794F44DB-191A-4E17-9217-9ECC012A8AC2";
+		
+		public static final String INSURED_OBJECT_TYPE_PERSON    = "EDD94689-EFED-4B50-AA6E-9F9501402700";
+		public static final String INSURED_OBJECT_TYPE_COMPANY     = "E04D67FA-F3D9-4597-96F0-9F950140323E";
+		public static final String INSURED_OBJECT_TYPE_EQUIPMENT = "E3E7B018-6F07-42DA-8B54-9F9501402D25";
+		public static final String INSURED_OBJECT_TYPE_PLACE      = "CD709854-DB59-424B-904A-9F9501403847";
+		public static final String INSURED_OBJECT_TYPE_ANIMAL    = "7A9A0E31-668A-4113-A03E-9F9501403E6E";
 	}
 
 	public static class TypifiedListIds {
@@ -36,6 +44,9 @@ public class BigBangConstants {
 		public static final String PROCESS_TYPE = "905B49A4-B4A9-4330-825C-9E1600DBE7EA";
 		public static final String OPERATION_TYPE = "30FBD723-9ACD-43F9-B931-9E1600DC051A";
 		public static final String FIELD_VALUES = "D50A75B9-5F44-4BF2-9060-9F960121503A";
+		public static final String GENDERS = "2549E951-2747-4300-982E-9ECA01756B91";
+		public static final String CAEs = "14B89884-475A-4357-BB7D-9EE600C3CE6E";
+		public static final String SALES_VOLUMES = "5C4E267C-B306-482F-8636-9EE600C586B6";
 	}
 
 	public static class OperationIds {

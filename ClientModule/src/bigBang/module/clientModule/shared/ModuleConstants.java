@@ -5,13 +5,10 @@ public class ModuleConstants
 	public class ListIDs
 	{
 		public static final String OperationalProfiles = "11921769-CDF3-447A-8E6B-9ECA01761BAA";
-		public static final String Sexes               = "2549E951-2747-4300-982E-9ECA01756B91";
 		public static final String MaritalStatuses     = "B560424E-1DF9-46CA-8B67-9ECA01774B00";
 		public static final String Professions         = "088C8CCE-A1D1-4976-808F-9ECA0177AB56";
-		public static final String CAEs                = "14B89884-475A-4357-BB7D-9EE600C3CE6E";
 		public static final String ClientSubtypes      = "1907DB1B-6F75-4715-A210-9EE600B9D072";
 		public static final String CompanySizes        = "5E489662-2AAF-4348-95E0-9EE600C4A71F";
-		public static final String SalesVolumes        = "5C4E267C-B306-482F-8636-9EE600C586B6";
 		public static final String CLIENT_DELETION_MOTIVES = "103F49C3-1D27-40C5-9B8E-9F50011952D7";
 	}
 

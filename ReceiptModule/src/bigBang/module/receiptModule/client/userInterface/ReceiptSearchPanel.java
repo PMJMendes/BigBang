@@ -37,6 +37,7 @@ public class ReceiptSearchPanel extends SearchPanel<ReceiptStub> implements Rece
 
 		protected Label numberLabel;
 		protected Label clientLabel;
+		protected Label policyNumberLabel;
 		protected Label lineLabel;
 		protected Label premiumLabel;
 		protected Label maturityDateLabel;
@@ -44,7 +45,7 @@ public class ReceiptSearchPanel extends SearchPanel<ReceiptStub> implements Rece
 		
 		public Entry(ReceiptStub value) {
 			super(value);
-			setHeight("55px");
+			setHeight("65px");
 		}
 		
 		public <I extends Object> void setInfo(I info) {
@@ -53,19 +54,22 @@ public class ReceiptSearchPanel extends SearchPanel<ReceiptStub> implements Rece
 				numberLabel.setWordWrap(false);
 				numberLabel.getElement().getStyle().setFontSize(14, Unit.PX);
 				maturityDateLabel = getFormatedLabel();
-				clientLabel = getFormatedLabel();
-				this.clientLabel.getElement().getStyle().setFontSize(11, Unit.PX);
+				this.policyNumberLabel = getFormatedLabel();
+				this.policyNumberLabel.getElement().getStyle().setFontSize(11, Unit.PX);
 				lineLabel = getFormatedLabel();
 				this.lineLabel.getElement().getStyle().setFontSize(11, Unit.PX);
 				this.lineLabel.getElement().getStyle().setFontStyle(FontStyle.OBLIQUE);
+				clientLabel = getFormatedLabel();
+				this.clientLabel.getElement().getStyle().setFontSize(10, Unit.PX);
 				
 				VerticalPanel container = new VerticalPanel();
 				container.setSize("100%", "100%");
 				container.add(numberLabel);
 				container.setCellHeight(numberLabel, "100%");
 				container.setCellVerticalAlignment(numberLabel, HasVerticalAlignment.ALIGN_TOP);
-				container.add(clientLabel);
+				container.add(policyNumberLabel);
 				container.add(lineLabel);
+				container.add(clientLabel);
 				setWidget(container);
 
 				VerticalPanel rightContainer = new VerticalPanel();
@@ -91,12 +95,14 @@ public class ReceiptSearchPanel extends SearchPanel<ReceiptStub> implements Rece
 			this.numberLabel.setText("#" + (r.number == null ? "" : r.number) + " (" + r.typeName + ")");
 			this.numberLabel.setTitle("Número e tipo de Recibo");
 
-			this.clientLabel.setText((r.clientNumber == null ? "" : "#" + r.clientNumber + " - ") +
-										(r.clientName == null ? "" : r.clientName));
-			this.clientLabel.setTitle("Cliente");
+			this.policyNumberLabel.setText("Apólice #" + r.policyNumber);
 			
 			this.lineLabel.setText(r.categoryName + " / " + r.lineName + " / " + r.subLineName);
 			this.lineLabel.setTitle("Categoria / Ramo / Modalidade");
+			
+			this.clientLabel.setText((r.clientNumber == null ? "" : "Cliente #" + r.clientNumber + " - ") +
+										(r.clientName == null ? "" : r.clientName));
+			this.clientLabel.setTitle("Cliente");
 			
 			this.premiumLabel.setText(r.totalPremium+"€");
 			this.premiumLabel.setTitle("Prémio total");
@@ -113,9 +119,13 @@ public class ReceiptSearchPanel extends SearchPanel<ReceiptStub> implements Rece
 			if(selected){
 				this.maturityDateLabel.getElement().getStyle().setColor("white");
 				this.lineLabel.getElement().getStyle().setColor("white");
+				this.policyNumberLabel.getElement().getStyle().setColor("white");
+				this.clientLabel.getElement().getStyle().setColor("white");
 			}else{
 				this.maturityDateLabel.getElement().getStyle().setColor("#0066FF");
+				this.clientLabel.getElement().getStyle().setColor("#0066FF");
 				this.lineLabel.getElement().getStyle().setColor("gray");
+				this.policyNumberLabel.getElement().getStyle().setColor("gray");
 			}
 		}
 	}

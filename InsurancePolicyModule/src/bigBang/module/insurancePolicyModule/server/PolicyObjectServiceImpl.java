@@ -166,7 +166,7 @@ public class PolicyObjectServiceImpl
 		{
 			lobjResult.species = (String)lobjObject.getAt(28);
 			lobjResult.race = (String)lobjObject.getAt(29);
-			lobjResult.age = ( lobjObject.getAt(30) == null ? null : ((Integer)lobjObject.getAt(30)).toString() );
+			lobjResult.birthYear = ( lobjObject.getAt(30) == null ? null : ((Integer)lobjObject.getAt(30)).toString() );
 			lobjResult.cityRegistryNumber = (String)lobjObject.getAt(31);
 			lobjResult.electronicIdTag = (String)lobjObject.getAt(32);
 		}

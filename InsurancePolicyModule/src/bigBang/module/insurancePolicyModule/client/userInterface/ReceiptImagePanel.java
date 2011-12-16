@@ -24,6 +24,7 @@ import bigBang.library.client.ValueSelectable;
 import bigBang.library.client.event.SelectionChangedEvent;
 import bigBang.library.client.event.SelectionChangedEventHandler;
 import bigBang.library.client.userInterface.DocumentNavigationList;
+import bigBang.library.client.userInterface.ImageHandlerPanel;
 import bigBang.library.client.userInterface.NavigationPanel;
 import bigBang.library.client.userInterface.view.View;
 import bigBang.library.interfaces.DocuShareService;
@@ -93,61 +94,89 @@ public class ReceiptImagePanel extends View {
 	}
 
 	protected void goToFile(String fileDesc){
+		final ImageHandlerPanel panel = new ImageHandlerPanel();
+		panel.setSize("100%", "100%");
+		panel.showLoading(true);
+		navigationPanel.navigateTo(panel);
+
 		service.getItemAsImage(fileDesc, new BigBangAsyncCallback<String>() {
 
 			@Override
 			public void onSuccess(String result) {
-				final ScrollPanel wrapper = new ScrollPanel();
-				wrapper.setSize("100%", "100%");
-				wrapper.getElement().getStyle().setBackgroundColor("#000");
-
-				final Image image = new Image();
-				image.addAttachHandler(new AttachEvent.Handler() {
-					
-					@Override
-					public void onAttachOrDetach(AttachEvent event) {
-						if(image.getOffsetHeight() > image.getOffsetWidth()){
-							image.setHeight(wrapper.getOffsetHeight() - 25 + "px");
-						}else{
-							image.setWidth("100%");
-						}
-					}
-				});
+				panel.setImage(GWT.getModuleBaseURL() + FileService.GET_PREFIX + result);
+				panel.showLoading(false);
 				
-				MouseWheelHandler mouseWheelHandler = new MouseWheelHandler() {
-
-					@Override
-					public void onMouseWheel(MouseWheelEvent event) {
-						event.preventDefault();
-						double scale = event.getDeltaY() * 0.05;
-
-						double newWidth = (image.getOffsetWidth() - (image.getOffsetWidth() * scale));
-						double newHeight = (image.getOffsetHeight() - (image.getOffsetHeight() * scale));
-						
-						if(newHeight > newWidth)
-						
-						
-						if(newWidth < wrapper.getOffsetWidth() || newHeight < wrapper.getOffsetHeight()){
-							fitImage(wrapper, image);
-						}else{
-							image.setSize((image.getOffsetWidth() - (image.getOffsetWidth() * scale)) + "px", (image.getOffsetHeight() - (image.getOffsetHeight() * scale)) + "px");
-						}
-					}
-				};
-				
-				wrapper.addHandler(mouseWheelHandler, MouseWheelEvent.getType());
-				image.addMouseWheelHandler(mouseWheelHandler);
-				
-				VerticalPanel imageWrapper = new VerticalPanel();
-				imageWrapper.setSize("100%", "100%");
-				imageWrapper.setVerticalAlignment(HasVerticalAlignment.ALIGN_MIDDLE);
-				imageWrapper.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
-				imageWrapper.add(image);
-				
-				wrapper.add(imageWrapper);
-				
-				image.setUrl(GWT.getModuleBaseURL() + FileService.GET_PREFIX + result);
-				navigationPanel.navigateTo(wrapper);
+//				final ScrollPanel wrapper = new ScrollPanel();
+//				wrapper.setSize("100%", "100%");
+//				wrapper.getElement().getStyle().setBackgroundColor("#000");
+//
+//				final Image image = new Image();
+//				image.addAttachHandler(new AttachEvent.Handler() {
+//					
+//					@Override
+//					public void onAttachOrDetach(AttachEvent event) {
+//						if(image.getOffsetHeight() > image.getOffsetWidth()){
+//							image.setHeight(wrapper.getOffsetHeight() - 25 + "px");
+//						}else{
+//							image.setWidth("100%");
+//						}
+//					}
+//				});
+//				
+//				MouseWheelHandler mouseWheelHandler = new MouseWheelHandler() {
+//
+//					@Override
+//					public void onMouseWheel(MouseWheelEvent event) {
+//						event.preventDefault();
+//						double scale = event.getDeltaY() * 0.05;
+//						
+//						int originX = wrapper.getOffsetWidth();
+//						int originY = wrapper.getOffsetHeight();
+//						int originZ = 1;
+//
+//						double newWidth = (image.getOffsetWidth() - (image.getOffsetWidth() * scale));
+//						double newHeight = (image.getOffsetHeight() - (image.getOffsetHeight() * scale));
+//
+//						if(newWidth < wrapper.getOffsetWidth() || newHeight < wrapper.getOffsetHeight()){
+//							fitImage(wrapper, image);
+//							return;
+//						}else{
+//							image.setSize((image.getOffsetWidth() - (image.getOffsetWidth() * scale)) + "px", (image.getOffsetHeight() - (image.getOffsetHeight() * scale)) + "px");
+//						}
+//						
+//						int viewportOriginX = -image.getElement().getOffsetLeft();
+//						int viewportOriginY = -image.getElement().getOffsetTop();
+//						
+//						int newViewportOriginX = (int) (scale * viewportOriginX);
+//						int newViewportOriginY = (int) (scale * viewportOriginY);
+//						
+//						GWT.log(newViewportOriginX + "-" + newViewportOriginY);
+//						
+//						if(newViewportOriginX < 0){
+//							newViewportOriginX = 0;
+//						}
+//						if(newViewportOriginY < 0){
+//							newViewportOriginY = 0;
+//						}
+//						
+//						wrapper.setHorizontalScrollPosition(newViewportOriginX);
+//						wrapper.setVerticalScrollPosition(newViewportOriginY);
+//					}
+//				};
+//				
+//				wrapper.addHandler(mouseWheelHandler, MouseWheelEvent.getType());
+//				image.addMouseWheelHandler(mouseWheelHandler);
+//				
+//				VerticalPanel imageWrapper = new VerticalPanel();
+//				imageWrapper.setSize("100%", "100%");
+//				imageWrapper.setVerticalAlignment(HasVerticalAlignment.ALIGN_MIDDLE);
+//				imageWrapper.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
+//				imageWrapper.add(image);
+//				
+//				wrapper.add(imageWrapper);
+//				
+//				image.setUrl(GWT.getModuleBaseURL() + FileService.GET_PREFIX + result);
+//				navigationPanel.navigateTo(wrapper);
 
 				//				image.addLoadHandler(new LoadHandler() {
 				//					

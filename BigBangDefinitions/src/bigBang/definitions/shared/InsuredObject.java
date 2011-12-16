@@ -101,7 +101,7 @@ public class InsuredObject
 
 	public String species;
 	public String race;
-	public String age;
+	public String birthYear;
 	public String cityRegistryNumber;
 	public String electronicIdTag;
 
