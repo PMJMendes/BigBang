@@ -23,7 +23,6 @@ import Jewel.Petri.Objects.PNScript;
 import Jewel.Petri.SysObjects.JewelPetriException;
 import bigBang.definitions.shared.Address;
 import bigBang.definitions.shared.Exercise;
-import bigBang.definitions.shared.ExerciseStub;
 import bigBang.definitions.shared.InfoOrDocumentRequest;
 import bigBang.definitions.shared.InsurancePolicy;
 import bigBang.definitions.shared.InsurancePolicyStub;
@@ -683,6 +682,8 @@ public class InsurancePolicyServiceImpl
 
 			if ( !mbValid )
 				throw new BigBangException("Ocorreu um erro interno. Os dados correntes não são válidos.");
+
+			pobjResult.pageId = mid.toString() + ":" + Integer.toString(plngObject) + ":" + Integer.toString(plngExercise);
 
 			llngCoverages = 0;
 			for ( i = 0; i < marrCoverages.size(); i++ )
@@ -1765,12 +1766,71 @@ public class InsurancePolicyServiceImpl
 				throw new BigBangException(e.getMessage(), e);
 			}
 
+			lobjExercise = marrExercises.get(plngExercise);
+
+			lobjExercise.mstrLabel = pobjSource.label;
+			lobjExercise.midOwner = mobjPolicy.mid;
+			lobjExercise.mdtStart = ldtStart;
+			lobjExercise.mdtEnd = ldtEnd;
+
 			mbValid = false;
 
-			marrExercises.get(plngExercise).mstrLabel = pobjSource.label;
-			marrExercises.get(plngExercise).midOwner = mobjPolicy.mid;
-			marrExercises.get(plngExercise).mdtStart = ldtStart;
-			marrExercises.get(plngExercise).mdtEnd = ldtEnd;
+			l = -1;
+
+			if ( pobjSource.headerData != null )
+			{
+				for ( i = 0; i < pobjSource.headerData.fixedFields.length; i++ )
+				{
+					l = FindValue(UUID.fromString(pobjSource.headerData.fixedFields[i].fieldId), -1, plngExercise, l + 1);
+					if ( l < 0 )
+						throw new BigBangException("Inesperado: Valor fixo de objecto não existente do lado do servidor.");
+					marrValues.get(l).mstrValue = ( "".equals(pobjSource.headerData.fixedFields[i].value) ? null :
+							pobjSource.headerData.fixedFields[i].value );
+				}
+
+				for ( i = 0; i < pobjSource.headerData.variableFields.length; i++ )
+				{
+					for ( j = 0; j < pobjSource.headerData.variableFields[i].data.length; j++ )
+					{
+						l = FindValue(UUID.fromString(pobjSource.headerData.variableFields[i].fieldId),
+								Integer.parseInt(pobjSource.objects[pobjSource.headerData.variableFields[i].data[j]
+										.objectIndex].tempObjectId.split(":")[1]), plngExercise, l + 1);
+						if ( l < 0 )
+							throw new BigBangException("Inesperado: Valor variável de objecto não existente do lado do servidor.");
+						marrValues.get(l).mstrValue = ( "".equals(pobjSource.headerData.variableFields[i].data[j].value) ?
+								null : pobjSource.headerData.variableFields[i].data[j].value );
+					}
+				}
+			}
+
+			if ( pobjSource.coverageData != null )
+			{
+				for ( i = 0; i < pobjSource.coverageData.length; i++ )
+				{
+					for ( j = 0; j < pobjSource.coverageData[i].fixedFields.length; j++ )
+					{
+						l = FindValue(UUID.fromString(pobjSource.coverageData[i].fixedFields[j].fieldId), -1, plngExercise, l + 1);
+						if ( l < 0 )
+							throw new BigBangException("Inesperado: Valor fixo de objecto não existente do lado do servidor.");
+						marrValues.get(l).mstrValue = ( "".equals(pobjSource.coverageData[i].fixedFields[j].value) ? null :
+								pobjSource.coverageData[i].fixedFields[j].value );
+					}
+
+					for ( j = 0; j < pobjSource.coverageData[i].variableFields.length; j++ )
+					{
+						for ( k = 0; k < pobjSource.coverageData[i].variableFields[j].data.length; k++ )
+						{
+							l = FindValue(UUID.fromString(pobjSource.coverageData[i].variableFields[j].fieldId),
+									Integer.parseInt(pobjSource.objects[pobjSource.coverageData[i].variableFields[j].data[k]
+											.objectIndex].tempObjectId.split(":")[1]), plngExercise, l + 1);
+							if ( l < 0 )
+								throw new BigBangException("Inesperado: Valor variável de objecto não existente do lado do servidor.");
+							marrValues.get(l).mstrValue = ( "".equals(pobjSource.coverageData[i].variableFields[j].data[k].value) ?
+									null : pobjSource.coverageData[i].variableFields[j].data[k].value );
+						}
+					}
+				}
+			}
 
 			mbValid = true;
 		}
@@ -2474,6 +2534,7 @@ public class InsurancePolicyServiceImpl
 		lobjPad = GetScratchPadStorage().get(UUID.fromString(policy.scratchPadId));
 		lobjPad.UpdateInvariants(policy);
 
+		lobjPad.WriteResult(policy);
 		return policy;
 	}
 
@@ -2521,7 +2582,6 @@ public class InsurancePolicyServiceImpl
 		lobjPad = GetScratchPadStorage().get(lidPad);
 
 		lobjResult = new InsurancePolicy.TableSection();
-		lobjResult.pageId = lidPad.toString() + ":" + Integer.toString(llngObject) + ":" + Integer.toString(llngExercise);
 		lobjPad.WritePage(lobjResult, llngObject, llngExercise);
 		return lobjResult;
 	}
@@ -2548,6 +2608,7 @@ public class InsurancePolicyServiceImpl
 		lobjPad = GetScratchPadStorage().get(lidPad);
 		lobjPad.UpdatePage(data, llngObject, llngExercise);
 
+		lobjPad.WritePage(data, llngObject, llngExercise);
 		return data;
 	}
 
@@ -2625,6 +2686,7 @@ public class InsurancePolicyServiceImpl
 	public InsuredObject updateObjectInPad(InsuredObject data)
 		throws SessionExpiredException, BigBangException
 	{
+		PolicyScratchPad lobjPad;
 		String[] larrAux;
 		UUID lidPad;
 		int llngObject;
@@ -2638,8 +2700,10 @@ public class InsurancePolicyServiceImpl
 		lidPad = UUID.fromString(larrAux[0]);
 		llngObject = Integer.parseInt(larrAux[1]);
 
-		GetScratchPadStorage().get(lidPad).UpdateObject(data, llngObject);
+		lobjPad = GetScratchPadStorage().get(lidPad);
+		lobjPad.UpdateObject(data, llngObject);
 
+		lobjPad.WriteObject(data, llngObject);
 		return data;
 	}
 
@@ -2705,13 +2769,14 @@ public class InsurancePolicyServiceImpl
 		llngObject = lobjPad.CreateNewExercise();
 
 		lobjResult = new Exercise();
-		lobjResult.tempExerciseId = scratchPadId + ":" + llngObject;
+		lobjPad.WriteExercise(lobjResult, llngObject);
 		return lobjResult;
 	}
 
 	public Exercise updateExerciseInPad(Exercise data)
 		throws SessionExpiredException, BigBangException
 	{
+		PolicyScratchPad lobjPad;
 		String[] larrAux;
 		UUID lidPad;
 		int llngObject;
@@ -2725,8 +2790,10 @@ public class InsurancePolicyServiceImpl
 		lidPad = UUID.fromString(larrAux[0]);
 		llngObject = Integer.parseInt(larrAux[1]);
 
-		GetScratchPadStorage().get(lidPad).UpdateExercise(data, llngObject);
+		lobjPad = GetScratchPadStorage().get(lidPad);
+		lobjPad.UpdateExercise(data, llngObject);
 
+		lobjPad.WriteExercise(data, llngObject);
 		return data;
 	}
 
