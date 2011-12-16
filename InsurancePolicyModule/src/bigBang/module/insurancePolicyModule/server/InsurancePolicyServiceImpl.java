@@ -22,6 +22,7 @@ import Jewel.Petri.Objects.PNProcess;
 import Jewel.Petri.Objects.PNScript;
 import Jewel.Petri.SysObjects.JewelPetriException;
 import bigBang.definitions.shared.Address;
+import bigBang.definitions.shared.Exercise;
 import bigBang.definitions.shared.ExerciseStub;
 import bigBang.definitions.shared.InfoOrDocumentRequest;
 import bigBang.definitions.shared.InsurancePolicy;
@@ -114,6 +115,8 @@ public class InsurancePolicyServiceImpl
 			extends PolicyObjectData
 		{
 			private static final long serialVersionUID = 1L;
+
+			public int mlngOrigIndex;
 		}
 
 		private static class PadExercise
@@ -820,7 +823,7 @@ public class InsurancePolicyServiceImpl
 			pobjResult.grievousCaeId = ( lobjObject.midGrievousCAE == null ? null : lobjObject.midGrievousCAE.toString() );
 			pobjResult.activityNotes = lobjObject.mstrActivityNotes;
 			pobjResult.productNotes = lobjObject.mstrProductNotes;
-			pobjResult.businessVolume = ( lobjObject.midSales == null ? null : lobjObject.midSales.toString() );
+			pobjResult.businessVolumeId = ( lobjObject.midSales == null ? null : lobjObject.midSales.toString() );
 			pobjResult.europeanUnionEntity = lobjObject.mstrEUEntity;
 			pobjResult.clientNumberGroup = ( lobjObject.mlngClientNumberC == null ? null : lobjObject.mlngClientNumberC.toString() );
 
@@ -1077,19 +1080,251 @@ public class InsurancePolicyServiceImpl
 			return larrResult;
 		}
 
-		public void WriteExercise(ExerciseStub pobjResult, int plngObject)
+		public void WriteExercise(Exercise pobjResult, int plngExercise)
 			throws BigBangException
 		{
-			PolicyExerciseData lobjObject;
+			PolicyExerciseData lobjExercise;
+			int i, j, k;
+			ArrayList<PadObject> larrObjects;
+			PadObject[] larrSortedObjects;
+			final Hashtable<Integer, Integer> larrObjectMap;
+			ArrayList<PadCoverage> larrCoverages;
+			PadCoverage[] larrSortedCoverages;
+			PadCoverage lobjHeaderCoverage;
+			Hashtable<UUID, ArrayList<Exercise.CoverageData.FixedField>> larrFixed;
+			Hashtable<UUID, ArrayList<Exercise.CoverageData.VariableField>> larrVarRef;
+			Hashtable<UUID, ArrayList<PadValue>> larrVariable;
+			Exercise.CoverageData.FixedField lobjFixed;
+			Exercise.CoverageData.VariableField lobjVariable;
+			PadValue lobjValue;
+			ArrayList<Exercise.CoverageData.FixedField> larrAuxFixed;
+			ArrayList<Exercise.CoverageData.VariableField> larrAuxVarRef;
+			ArrayList<PadValue> larrAuxVariable;
+			PadValue[] larrSortedVariable;
 
 			if ( !mbValid )
 				throw new BigBangException("Ocorreu um erro interno. Os dados correntes não são válidos.");
 
-			lobjObject = marrExercises.get(plngObject);
-			pobjResult.id = ( lobjObject.mid == null ? null : lobjObject.mid.toString() );
-			pobjResult.label = lobjObject.mstrLabel;
-			pobjResult.startDate = ( lobjObject.mdtStart == null ? null : lobjObject.mdtStart.toString().substring(0, 10) );
-			pobjResult.endDate = ( lobjObject.mdtEnd == null ? null : lobjObject.mdtEnd.toString().substring(0, 10) );
+			lobjExercise = marrExercises.get(plngExercise);
+			pobjResult.id = ( lobjExercise.mid == null ? null : lobjExercise.mid.toString() );
+			pobjResult.label = lobjExercise.mstrLabel;
+			pobjResult.startDate = ( lobjExercise.mdtStart == null ? null : lobjExercise.mdtStart.toString().substring(0, 10) );
+			pobjResult.endDate = ( lobjExercise.mdtEnd == null ? null : lobjExercise.mdtEnd.toString().substring(0, 10) );
+
+			pobjResult.tempExerciseId = mid.toString() + ":" + Integer.toString(plngExercise);
+
+			larrObjects = new ArrayList<PadObject>();
+			for ( i = 0; i < marrObjects.size(); i++ )
+			{
+				if ( marrObjects.get(i).mbDeleted )
+					continue;
+				marrObjects.get(i).mlngOrigIndex = i;
+				larrObjects.add(marrObjects.get(i));
+			}
+			larrSortedObjects = larrObjects.toArray(new PadObject[larrObjects.size()]);
+			java.util.Arrays.sort(larrSortedObjects, new Comparator<PadObject>()
+			{
+				public int compare(PadObject o1, PadObject o2)
+				{
+					return o1.mstrName.compareTo(o2.mstrName);
+				}
+			});
+			pobjResult.objects = new Exercise.InsuredObject[larrSortedObjects.length];
+			larrObjectMap = new Hashtable<Integer, Integer>();
+			for ( i = 0; i < larrSortedObjects.length; i++ )
+			{
+				pobjResult.objects[i] = new Exercise.InsuredObject();
+				pobjResult.objects[i].id = ( larrSortedObjects[i].mid == null ? null : larrSortedObjects[i].mid.toString() );
+				pobjResult.objects[i].tempObjectId = mid.toString() + ":" +
+						Integer.toString(larrSortedObjects[i].mlngOrigIndex);
+				pobjResult.objects[i].label = larrSortedObjects[i].mstrName;
+				larrObjectMap.put(larrSortedObjects[i].mlngOrigIndex, i);
+			}
+
+			lobjHeaderCoverage = null;
+			larrCoverages = new ArrayList<PadCoverage>();
+			for ( i = 0; i < marrCoverages.size(); i++ )
+			{
+				if ( marrCoverages.get(i).mbIsHeader )
+					lobjHeaderCoverage = marrCoverages.get(i);
+				else
+					larrCoverages.add(marrCoverages.get(i));
+			}
+			larrSortedCoverages = larrCoverages.toArray(new PadCoverage[larrCoverages.size()]);
+			java.util.Arrays.sort(larrSortedCoverages, new Comparator<PadCoverage>()
+			{
+				public int compare(PadCoverage o1, PadCoverage o2)
+				{
+					if ( o1.mbMandatory == o2.mbMandatory )
+						return o1.mstrLabel.compareTo(o2.mstrLabel);
+					if ( o1.mbMandatory )
+						return -1;
+					return 1;
+				}
+			});
+			pobjResult.coverageData = new Exercise.CoverageData[larrSortedCoverages.length];
+			larrFixed = new Hashtable<UUID, ArrayList<Exercise.CoverageData.FixedField>>();
+			larrVarRef = new Hashtable<UUID, ArrayList<Exercise.CoverageData.VariableField>>();
+			for ( i = 0; i < larrSortedCoverages.length; i++ )
+			{
+				pobjResult.coverageData[i] = new Exercise.CoverageData();
+				pobjResult.coverageData[i].coverageId = larrSortedCoverages[i].midCoverage.toString();
+				larrFixed.put(larrSortedCoverages[i].midCoverage, new ArrayList<Exercise.CoverageData.FixedField>());
+				larrVarRef.put(larrSortedCoverages[i].midCoverage, new ArrayList<Exercise.CoverageData.VariableField>());
+			}
+			if ( lobjHeaderCoverage != null )
+			{
+				pobjResult.headerData = new Exercise.HeaderData();
+				larrFixed.put(lobjHeaderCoverage.midCoverage, new ArrayList<Exercise.CoverageData.FixedField>());
+				larrVarRef.put(lobjHeaderCoverage.midCoverage, new ArrayList<Exercise.CoverageData.VariableField>());
+			}
+
+			larrVariable = new Hashtable<UUID, ArrayList<PadValue>>();
+			for ( i = 0; i < marrValues.size(); i++ )
+			{
+				lobjValue = marrValues.get(i);
+				if ( lobjValue.mbDeleted || (lobjValue.mlngExercise != plngExercise) )
+					continue;
+
+				if ( lobjValue.mrefField.mbVariesByObject )
+				{
+					if ( larrVariable.get(lobjValue.mrefField.midField) == null )
+					{
+						lobjVariable = new Exercise.CoverageData.VariableField();
+						lobjVariable.fieldId = lobjValue.mrefField.midField.toString();
+						lobjVariable.fieldName = lobjValue.mrefField.mstrLabel;
+						lobjVariable.type = GetFieldTypeByID(lobjValue.mrefField.midType);
+						lobjVariable.unitsLabel = lobjValue.mrefField.mstrUnits;
+						lobjVariable.refersToId = ( lobjValue.mrefField.midRefersTo == null ? null :
+							lobjValue.mrefField.midRefersTo.toString() );
+						lobjVariable.columnIndex = lobjValue.mrefField.mlngColIndex;
+						lobjVariable.data = new Exercise.CoverageData.VariableField.VariableValue[pobjResult.objects.length];
+						larrVarRef.get(lobjValue.mrefCoverage.midCoverage).add(lobjVariable);
+						larrVariable.put(lobjValue.mrefField.midField, new ArrayList<PadValue>());
+					}
+					larrVariable.get(lobjValue.mrefField.midField).add(lobjValue);
+				}
+				else
+				{
+					lobjFixed = new Exercise.CoverageData.FixedField();
+					lobjFixed.fieldId = lobjValue.mrefField.midField.toString();
+					lobjFixed.fieldName = lobjValue.mrefField.mstrLabel;
+					lobjFixed.type = GetFieldTypeByID(lobjValue.mrefField.midType);
+					lobjFixed.unitsLabel = lobjValue.mrefField.mstrUnits;
+					lobjFixed.refersToId = ( lobjValue.mrefField.midRefersTo == null ? null :
+							lobjValue.mrefField.midRefersTo.toString() );
+					lobjFixed.columnIndex = lobjValue.mrefField.mlngColIndex;
+					lobjFixed.value = lobjValue.mstrValue;
+					larrFixed.get(lobjValue.mrefCoverage.midCoverage).add(lobjFixed);
+				}
+			}
+
+			for ( i = 0; i < pobjResult.coverageData.length; i++ )
+			{
+				larrAuxFixed = larrFixed.get(UUID.fromString(pobjResult.coverageData[i].coverageId));
+				pobjResult.coverageData[i].fixedFields =
+						larrAuxFixed.toArray(new Exercise.CoverageData.FixedField[larrAuxFixed.size()]);
+				java.util.Arrays.sort(pobjResult.coverageData[i].fixedFields,
+						new Comparator<Exercise.CoverageData.FixedField>()
+				{
+					public int compare(Exercise.CoverageData.FixedField o1, Exercise.CoverageData.FixedField o2)
+					{
+						if ( (o1.type == o2.type) && (o1.refersToId == o1.refersToId) )
+							return o1.fieldName.compareTo(o2.fieldName);
+						if ( o1.type == o2.type )
+							return o1.refersToId.compareTo(o2.refersToId);
+						return o1.type.compareTo(o2.type);
+					}
+				});
+
+				larrAuxVarRef = larrVarRef.get(UUID.fromString(pobjResult.coverageData[i].coverageId));
+				pobjResult.coverageData[i].variableFields =
+						larrAuxVarRef.toArray(new Exercise.CoverageData.VariableField[larrAuxVarRef.size()]);
+				java.util.Arrays.sort(pobjResult.coverageData[i].variableFields,
+						new Comparator<Exercise.CoverageData.VariableField>()
+				{
+					public int compare(Exercise.CoverageData.VariableField o1, Exercise.CoverageData.VariableField o2)
+					{
+						if ( (o1.type == o2.type) && (o1.refersToId == o1.refersToId) )
+							return o1.fieldName.compareTo(o2.fieldName);
+						if ( o1.type == o2.type )
+							return o1.refersToId.compareTo(o2.refersToId);
+						return o1.type.compareTo(o2.type);
+					}
+				});
+
+				for ( j = 0; j < pobjResult.coverageData[i].variableFields.length; j++ )
+				{
+					larrAuxVariable = larrVariable.get(UUID.fromString(pobjResult.coverageData[i].variableFields[j].fieldId));
+					larrSortedVariable = larrAuxVariable.toArray(new PadValue[larrAuxVariable.size()]);
+					java.util.Arrays.sort(larrSortedVariable, new Comparator<PadValue>()
+					{
+						public int compare(PadValue o1, PadValue o2)
+						{
+							return larrObjectMap.get(o1.mlngObject) - larrObjectMap.get(o2.mlngObject);
+						}
+					});
+					for ( k = 0; k < larrSortedVariable.length; k++ )
+					{
+						pobjResult.coverageData[i].variableFields[j].data[k].objectIndex =
+								larrObjectMap.get(larrSortedVariable[k].mlngObject);
+						pobjResult.coverageData[i].variableFields[j].data[k].value = larrSortedVariable[k].mstrValue;
+					}
+				}
+			}
+			if ( lobjHeaderCoverage != null )
+			{
+				larrAuxFixed = larrFixed.get(lobjHeaderCoverage.midCoverage);
+				pobjResult.headerData.fixedFields =
+						larrAuxFixed.toArray(new Exercise.CoverageData.FixedField[larrAuxFixed.size()]);
+				java.util.Arrays.sort(pobjResult.headerData.fixedFields,
+						new Comparator<Exercise.CoverageData.FixedField>()
+				{
+					public int compare(Exercise.CoverageData.FixedField o1, Exercise.CoverageData.FixedField o2)
+					{
+						if ( (o1.type == o2.type) && (o1.refersToId == o1.refersToId) )
+							return o1.fieldName.compareTo(o2.fieldName);
+						if ( o1.type == o2.type )
+							return o1.refersToId.compareTo(o2.refersToId);
+						return o1.type.compareTo(o2.type);
+					}
+				});
+
+				larrAuxVarRef = larrVarRef.get(lobjHeaderCoverage.midCoverage);
+				pobjResult.headerData.variableFields =
+						larrAuxVarRef.toArray(new Exercise.CoverageData.VariableField[larrAuxVarRef.size()]);
+				java.util.Arrays.sort(pobjResult.headerData.variableFields,
+						new Comparator<Exercise.CoverageData.VariableField>()
+				{
+					public int compare(Exercise.CoverageData.VariableField o1, Exercise.CoverageData.VariableField o2)
+					{
+						if ( (o1.type == o2.type) && (o1.refersToId == o1.refersToId) )
+							return o1.fieldName.compareTo(o2.fieldName);
+						if ( o1.type == o2.type )
+							return o1.refersToId.compareTo(o2.refersToId);
+						return o1.type.compareTo(o2.type);
+					}
+				});
+
+				for ( i = 0; i < pobjResult.headerData.variableFields.length; i++ )
+				{
+					larrAuxVariable = larrVariable.get(UUID.fromString(pobjResult.headerData.variableFields[i].fieldId));
+					larrSortedVariable = larrAuxVariable.toArray(new PadValue[larrAuxVariable.size()]);
+					java.util.Arrays.sort(larrSortedVariable, new Comparator<PadValue>()
+					{
+						public int compare(PadValue o1, PadValue o2)
+						{
+							return larrObjectMap.get(o1.mlngObject) - larrObjectMap.get(o2.mlngObject);
+						}
+					});
+					for ( j = 0; j < larrSortedVariable.length; j++ )
+					{
+						pobjResult.headerData.variableFields[i].data[j].objectIndex =
+								larrObjectMap.get(larrSortedVariable[j].mlngObject);
+						pobjResult.headerData.variableFields[i].data[j].value = larrSortedVariable[j].mstrValue;
+					}
+				}
+			}
 		}
 
 		public void UpdateInvariants(InsurancePolicy pobjSource)
@@ -1331,7 +1566,7 @@ public class InsurancePolicyServiceImpl
 			lobjObject.midGrievousCAE = ( pobjSource.grievousCaeId == null ? null : UUID.fromString(pobjSource.grievousCaeId) );
 			lobjObject.mstrActivityNotes = pobjSource.activityNotes;
 			lobjObject.mstrProductNotes = pobjSource.productNotes;
-			lobjObject.midSales = ( pobjSource.businessVolume == null ? null : UUID.fromString(pobjSource.businessVolume) );
+			lobjObject.midSales = ( pobjSource.businessVolumeId == null ? null : UUID.fromString(pobjSource.businessVolumeId) );
 			lobjObject.mstrEUEntity = pobjSource.europeanUnionEntity;
 			lobjObject.mlngClientNumberC = ( pobjSource.clientNumberGroup == null ? null :
 					Integer.decode(pobjSource.clientNumberGroup) );
@@ -1506,11 +1741,13 @@ public class InsurancePolicyServiceImpl
 			return llngIndex;
 		}
 
-		public void UpdateExercise(ExerciseStub pobjSource, int plngExercise)
+		public void UpdateExercise(Exercise pobjSource, int plngExercise)
 			throws BigBangException
 		{
 			Timestamp ldtStart;
 			Timestamp ldtEnd;
+			PadExercise lobjExercise;
+			int i, j, k, l;
 
 			if ( !mbValid )
 				throw new BigBangException("Ocorreu um erro interno. Os dados correntes não são válidos.");
@@ -2425,14 +2662,14 @@ public class InsurancePolicyServiceImpl
 		GetScratchPadStorage().get(lidPad).DeleteObject(llngObject);
 	}
 
-	public ExerciseStub getExerciseInPad(String tempExerciseId)
+	public Exercise getExerciseInPad(String tempExerciseId)
 		throws SessionExpiredException, BigBangException
 	{
 		String[] larrAux;
 		UUID lidPad;
 		int llngObject;
 		PolicyScratchPad lobjPad;
-		ExerciseStub lobjResult;
+		Exercise lobjResult;
 
 		if ( Engine.getCurrentUser() == null )
 			throw new SessionExpiredException();
@@ -2445,17 +2682,17 @@ public class InsurancePolicyServiceImpl
 
 		lobjPad = GetScratchPadStorage().get(lidPad);
 
-		lobjResult = new ExerciseStub();
+		lobjResult = new Exercise();
 		lobjResult.tempExerciseId = lidPad.toString() + ":" + Integer.toString(llngObject);
 		lobjPad.WriteExercise(lobjResult, llngObject);
 		return lobjResult;
 	}
 
-	public ExerciseStub createFirstExercise(String scratchPadId)
+	public Exercise createFirstExercise(String scratchPadId)
 		throws SessionExpiredException, BigBangException
 	{
 		PolicyScratchPad lobjPad;
-		ExerciseStub lobjResult;
+		Exercise lobjResult;
 		int llngObject;
 
 		if ( Engine.getCurrentUser() == null )
@@ -2467,12 +2704,12 @@ public class InsurancePolicyServiceImpl
 		lobjPad = GetScratchPadStorage().get(UUID.fromString(scratchPadId));
 		llngObject = lobjPad.CreateNewExercise();
 
-		lobjResult = new ExerciseStub();
+		lobjResult = new Exercise();
 		lobjResult.tempExerciseId = scratchPadId + ":" + llngObject;
 		return lobjResult;
 	}
 
-	public ExerciseStub updateExerciseInPad(ExerciseStub data)
+	public Exercise updateExerciseInPad(Exercise data)
 		throws SessionExpiredException, BigBangException
 	{
 		String[] larrAux;
@@ -2564,14 +2801,14 @@ public class InsurancePolicyServiceImpl
 	}
 
 	@Override
-	public ExerciseStub openNewExercise(String policyId, ExerciseStub exercise)
+	public Exercise openNewExercise(String policyId, Exercise exercise)
 			throws SessionExpiredException, BigBangException {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public ExerciseStub editExercise(String policyId, ExerciseStub exercise)
+	public Exercise editExercise(String policyId, Exercise exercise)
 			throws SessionExpiredException, BigBangException {
 		// TODO Auto-generated method stub
 		return null;

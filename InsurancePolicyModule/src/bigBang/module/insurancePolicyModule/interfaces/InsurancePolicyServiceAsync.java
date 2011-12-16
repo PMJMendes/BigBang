@@ -1,6 +1,6 @@
 package bigBang.module.insurancePolicyModule.interfaces;
 
-import bigBang.definitions.shared.ExerciseStub;
+import bigBang.definitions.shared.Exercise;
 import bigBang.definitions.shared.InfoOrDocumentRequest;
 import bigBang.definitions.shared.InsurancePolicy;
 import bigBang.definitions.shared.InsurancePolicy.TableSection;
@@ -28,17 +28,17 @@ public interface InsurancePolicyServiceAsync
 	void createObjectFromClientInPad(String scratchPadId, AsyncCallback<InsuredObject> callback);
 	void updateObjectInPad(InsuredObject data, AsyncCallback<InsuredObject> callback);
 	void deleteObjectInPad(String tempObjectId, AsyncCallback<Void> callback);
-	void getExerciseInPad(String tempExerciseId, AsyncCallback<ExerciseStub> callback);
-	void createFirstExercise(String scratchPadId, AsyncCallback<ExerciseStub> callback);
-	void updateExerciseInPad(ExerciseStub data, AsyncCallback<ExerciseStub> callback);
+	void getExerciseInPad(String tempExerciseId, AsyncCallback<Exercise> callback);
+	void createFirstExercise(String scratchPadId, AsyncCallback<Exercise> callback);
+	void updateExerciseInPad(Exercise data, AsyncCallback<Exercise> callback);
 	void deleteExerciseInPad(String tempExerciseId, AsyncCallback<Void> callback);
 	void commitPolicy(String scratchPadId, AsyncCallback<InsurancePolicy> callback);
 	void discardPolicy(String scratchPadId, AsyncCallback<InsurancePolicy> callback);
 	void includeObject(String policyId, InsuredObject object, AsyncCallback<InsuredObject> callback);
 	void includeObjectFromClient(String policyId, AsyncCallback<InsuredObject> callback);
 	void excludeObject(String policyId, String objectId, AsyncCallback<Void> callback);
-	void openNewExercise(String policyId, ExerciseStub exercise, AsyncCallback<ExerciseStub> callback);
-	void editExercise(String policyId, ExerciseStub exercise, AsyncCallback<ExerciseStub> callback);
+	void openNewExercise(String policyId, Exercise exercise, AsyncCallback<Exercise> callback);
+	void editExercise(String policyId, Exercise exercise, AsyncCallback<Exercise> callback);
 	void voidPolicy(String policyId, AsyncCallback<InsurancePolicy> callback);
 	void createInfoOrDocumentRequest(InfoOrDocumentRequest request, AsyncCallback<InfoOrDocumentRequest> callback);
 	void createManagerTransfer(ManagerTransfer transfer, AsyncCallback<ManagerTransfer> callback);
