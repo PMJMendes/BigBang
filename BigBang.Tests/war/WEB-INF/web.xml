@@ -5,6 +5,7 @@
     [ 
     	<!ENTITY  loginServices SYSTEM "loginServices.xml" >
     	<!ENTITY  libraryServices SYSTEM "libraryServices.xml" > 
+    	<!ENTITY  taskServices SYSTEM "taskServices.xml" > 
     	<!ENTITY  clientServices SYSTEM "clientServices.xml" > 
     	<!ENTITY  insurancePolicyServices SYSTEM "insurancePolicyServices.xml" > 
     	<!ENTITY  receiptServices SYSTEM "receiptServices.xml" > 
@@ -27,6 +28,7 @@
 	<!-- Servlets -->
 	&loginServices;
 	&libraryServices;
+	&taskServices;
 	&clientServices;
 	&insurancePolicyServices;
 	&receiptServices;

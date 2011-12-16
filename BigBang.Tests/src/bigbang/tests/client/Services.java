@@ -16,6 +16,8 @@ import bigBang.module.loginModule.interfaces.AuthenticationService;
 import bigBang.module.loginModule.interfaces.AuthenticationServiceAsync;
 import bigBang.module.receiptModule.interfaces.ReceiptService;
 import bigBang.module.receiptModule.interfaces.ReceiptServiceAsync;
+import bigBang.module.tasksModule.interfaces.TasksService;
+import bigBang.module.tasksModule.interfaces.TasksServiceAsync;
 
 import com.google.gwt.core.client.GWT;
 
@@ -27,6 +29,8 @@ public class Services
 			GWT.create(DocuShareService.class);
 	public static final FileServiceAsync fileService =
 			GWT.create(FileService.class);
+	public static final TasksServiceAsync tasksService =
+			GWT.create(TasksService.class);
 	public static final ClientServiceAsync clientService =
 			GWT.create(ClientService.class);
 	public static final InsurancePolicyServiceAsync insurancePolicyService =

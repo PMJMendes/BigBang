@@ -11,5 +11,6 @@
 	<classpathentry combineaccessrules="false" kind="src" path="/ReceiptModule"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/ClientModule"/>
 	<classpathentry kind="con" path="com.google.gwt.eclipse.core.GWT_CONTAINER"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/TasksModule"/>
 	<classpathentry kind="output" path="war/WEB-INF/classes"/>
 </classpath>

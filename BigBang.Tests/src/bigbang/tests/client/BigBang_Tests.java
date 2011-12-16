@@ -31,6 +31,9 @@ public class BigBang_Tests
 	{
 //		TestSpecialGetAsImage.DoTest();
 //
+//		TestAgendaGet.DoTest();
+//		TestAgendaDismiss.DoTest();
+//
 //		TestClientGet.DoTest();
 //		TestClientCreate.DoTest();
 //		TestClientEdit.DoTest();
