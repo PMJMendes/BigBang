@@ -1000,6 +1000,8 @@ public class InsurancePolicyServiceImpl
 					});
 					for ( k = 0; k < larrSortedVariable.length; k++ )
 					{
+						pobjResult.coverageData[i].variableFields[j].data[k] =
+								new InsuredObject.HeaderData.VariableField.VariableValue();
 						pobjResult.coverageData[i].variableFields[j].data[k].exerciseIndex =
 								larrExerciseMap.get(larrSortedVariable[k].mlngExercise);
 						pobjResult.coverageData[i].variableFields[j].data[k].value = larrSortedVariable[k].mstrValue;
@@ -1053,6 +1055,7 @@ public class InsurancePolicyServiceImpl
 					});
 					for ( j = 0; j < larrSortedVariable.length; j++ )
 					{
+						pobjResult.headerData.variableFields[i].data[j] = new InsuredObject.HeaderData.VariableField.VariableValue();
 						pobjResult.headerData.variableFields[i].data[j].exerciseIndex =
 								larrExerciseMap.get(larrSortedVariable[j].mlngExercise);
 						pobjResult.headerData.variableFields[i].data[j].value = larrSortedVariable[j].mstrValue;
@@ -1267,6 +1270,8 @@ public class InsurancePolicyServiceImpl
 					});
 					for ( k = 0; k < larrSortedVariable.length; k++ )
 					{
+						pobjResult.coverageData[i].variableFields[j].data[k] =
+								new Exercise.HeaderData.VariableField.VariableValue(); 
 						pobjResult.coverageData[i].variableFields[j].data[k].objectIndex =
 								larrObjectMap.get(larrSortedVariable[k].mlngObject);
 						pobjResult.coverageData[i].variableFields[j].data[k].value = larrSortedVariable[k].mstrValue;
@@ -1320,6 +1325,7 @@ public class InsurancePolicyServiceImpl
 					});
 					for ( j = 0; j < larrSortedVariable.length; j++ )
 					{
+						pobjResult.headerData.variableFields[i].data[j] = new Exercise.HeaderData.VariableField.VariableValue();
 						pobjResult.headerData.variableFields[i].data[j].objectIndex =
 								larrObjectMap.get(larrSortedVariable[j].mlngObject);
 						pobjResult.headerData.variableFields[i].data[j].value = larrSortedVariable[j].mstrValue;
@@ -1689,7 +1695,7 @@ public class InsurancePolicyServiceImpl
 
 			mbValid = false;
 
-			int llngIndex = marrObjects.size();
+			int llngIndex = marrExercises.size();
 			marrExercises.add(lobjObject);
 			for ( i = 0; i < marrCoverages.size(); i++ )
 			{
