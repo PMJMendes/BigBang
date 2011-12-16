@@ -5,7 +5,7 @@ import bigBang.definitions.shared.InsurancePolicy;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
-public class TestCreateExercise
+public class TestExerciseCreate
 {
 	private static InsurancePolicy tmpPolicy;
 

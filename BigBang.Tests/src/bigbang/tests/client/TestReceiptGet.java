@@ -1,16 +1,17 @@
 package bigbang.tests.client;
 
+import bigBang.definitions.shared.Receipt;
 import bigBang.definitions.shared.SearchParameter;
 import bigBang.definitions.shared.SearchResult;
 import bigBang.definitions.shared.SortOrder;
 import bigBang.definitions.shared.SortParameter;
 import bigBang.library.shared.NewSearchResult;
-import bigBang.module.clientModule.shared.ClientSearchParameter;
-import bigBang.module.clientModule.shared.ClientSortParameter;
+import bigBang.module.receiptModule.shared.ReceiptSearchParameter;
+import bigBang.module.receiptModule.shared.ReceiptSortParameter;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
-public class TestDeleteClient
+public class TestReceiptGet
 {
 	private static String tmpWorkspace;
 
@@ -21,8 +22,8 @@ public class TestDeleteClient
 
 	private static void DoStep1()
 	{
-		ClientSearchParameter parameter;
-		ClientSortParameter sorts;
+		ReceiptSearchParameter parameter;
+		ReceiptSortParameter sorts;
 
 		AsyncCallback<NewSearchResult> callback = new AsyncCallback<NewSearchResult>()
 		{
@@ -48,31 +49,31 @@ public class TestDeleteClient
 			}
 		};
 
-		parameter = new ClientSearchParameter();
-		parameter.freeText = "Gumbercindo";
-		sorts = new ClientSortParameter();
-		sorts.field = ClientSortParameter.SortableField.NAME;
+		parameter = new ReceiptSearchParameter();
+		parameter.freeText = "Aida";
+		sorts = new ReceiptSortParameter();
+		sorts.field = ReceiptSortParameter.SortableField.NUMBER;
 		sorts.order = SortOrder.ASC;
 		
-		Services.clientService.openSearch(new SearchParameter[] {parameter}, new SortParameter[] {sorts}, 5, callback);
+		Services.receiptService.openSearch(new SearchParameter[] {parameter}, new SortParameter[] {sorts}, 5, callback);
 	}
 
 	private static void DoStep2(SearchResult stub)
 	{
-		AsyncCallback<Void> callback = new AsyncCallback<Void>()
+		AsyncCallback<Receipt> callback = new AsyncCallback<Receipt>()
 		{
 			public void onFailure(Throwable caught)
 			{
 				return;
 			}
 
-			public void onSuccess(Void result)
+			public void onSuccess(Receipt result)
 			{
 				DoStep3(tmpWorkspace);
 			}
 		};
 
-		Services.clientService.deleteClient(stub.id, "Porque Sim!", callback);
+		Services.receiptService.getReceipt(stub.id, callback);
 	}
 
 	private static void DoStep3(String workspaceId)
@@ -90,6 +91,6 @@ public class TestDeleteClient
 			}
 		};
 
-		Services.clientService.closeSearch(workspaceId, callback);
+		Services.receiptService.closeSearch(workspaceId, callback);
 	}
 }

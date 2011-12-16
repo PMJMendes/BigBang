@@ -1,16 +1,15 @@
 package bigbang.tests.client;
 
+import bigBang.definitions.shared.Exercise;
 import bigBang.definitions.shared.SearchParameter;
 import bigBang.definitions.shared.SearchResult;
-import bigBang.definitions.shared.SortOrder;
 import bigBang.definitions.shared.SortParameter;
 import bigBang.library.shared.NewSearchResult;
-import bigBang.module.receiptModule.shared.ReceiptSearchParameter;
-import bigBang.module.receiptModule.shared.ReceiptSortParameter;
+import bigBang.module.insurancePolicyModule.shared.InsuredObjectSearchParameter;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
-public class TestDeleteReceipt
+public class TestExerciseGet
 {
 	private static String tmpWorkspace;
 
@@ -21,8 +20,7 @@ public class TestDeleteReceipt
 
 	private static void DoStep1()
 	{
-		ReceiptSearchParameter search;
-		ReceiptSortParameter sort;
+		InsuredObjectSearchParameter parameter;
 
 		AsyncCallback<NewSearchResult> callback = new AsyncCallback<NewSearchResult>()
 		{
@@ -33,7 +31,7 @@ public class TestDeleteReceipt
 
 			public void onSuccess(NewSearchResult result)
 			{
-				if ( (result != null) && (result.results != null) && (result.results.length > 0) )
+				if ( result.workspaceId != null )
 				{
 					if ( (result.results != null) && (result.results.length > 0) )
 					{
@@ -48,31 +46,28 @@ public class TestDeleteReceipt
 			}
 		};
 
-		search = new ReceiptSearchParameter();
-		search.ownerId = "F4D6391A-CBB3-4555-BCB1-9FA900BA4838";
-		sort = new ReceiptSortParameter();
-		sort.field = ReceiptSortParameter.SortableField.NUMBER;
-		sort.order = SortOrder.ASC;
+		parameter = new InsuredObjectSearchParameter();
+		parameter.policyId = "0B0C69A5-FA4E-4A7D-B625-9FB2015D29D6";
 
-		Services.receiptService.openSearch(new SearchParameter[] {search}, new SortParameter[] {sort}, 5, callback);
+		Services.policyExerciseService.openSearch(new SearchParameter[] {parameter}, new SortParameter[] {}, 5, callback);
 	}
 
 	private static void DoStep2(SearchResult stub)
 	{
-		AsyncCallback<Void> callback = new AsyncCallback<Void>()
+		AsyncCallback<Exercise> callback = new AsyncCallback<Exercise>()
 		{
 			public void onFailure(Throwable caught)
 			{
 				return;
 			}
 
-			public void onSuccess(Void result)
+			public void onSuccess(Exercise result)
 			{
 				DoStep3(tmpWorkspace);
 			}
 		};
 
-		Services.receiptService.deleteReceipt(stub.id, callback);
+		Services.policyExerciseService.getExercise(stub.id, callback);
 	}
 
 	private static void DoStep3(String workspaceId)
@@ -90,6 +85,6 @@ public class TestDeleteReceipt
 			}
 		};
 
-		Services.receiptService.closeSearch(workspaceId, callback);
+		Services.policyExerciseService.closeSearch(workspaceId, callback);
 	}
 }

@@ -1,11 +1,12 @@
 package bigbang.tests.client;
 
 import bigBang.definitions.shared.InsurancePolicy;
+import bigBang.definitions.shared.InsuredObject;
 import bigBang.definitions.shared.TipifiedListItem;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
-public class TestDeleteInsuredObject
+public class TestObjectEdit
 {
 	private static InsurancePolicy tmpPolicy;
 
@@ -29,7 +30,7 @@ public class TestDeleteInsuredObject
 			}
 		};
 	
-		Services.insurancePolicyService.getPolicy("0B0C69A5-FA4E-4A7D-B625-9FB2015D29D6", callback);
+		Services.insurancePolicyService.getPolicy("FBA922E2-E2CE-4351-ABD5-9FBB00CE51B2", callback);
 	}
 
 	private static void DoStep2(InsurancePolicy policy)
@@ -74,23 +75,76 @@ public class TestDeleteInsuredObject
 
 	private static void DoStep4(String tempObjectId)
 	{
-		AsyncCallback<Void> callback = new AsyncCallback<Void>()
+		AsyncCallback<InsuredObject> callback = new AsyncCallback<InsuredObject>()
 		{
 			public void onFailure(Throwable caught)
 			{
 				return;
 			}
 
-			public void onSuccess(Void result)
+			public void onSuccess(InsuredObject result)
 			{
-				DoStep5();
+				DoStep5(result);
 			}
 		};
 
-		Services.insurancePolicyService.deleteObjectInPad(tempObjectId, callback);
+		Services.insurancePolicyService.getObjectInPad(tempObjectId, callback);
 	}
 
-	private static void DoStep5()
+	private static void DoStep5(InsuredObject object)
+	{
+		int i, j, k, n;
+
+		AsyncCallback<InsuredObject> callback = new AsyncCallback<InsuredObject>()
+		{
+			public void onFailure(Throwable caught)
+			{
+				return;
+			}
+
+			public void onSuccess(InsuredObject result)
+			{
+				DoStep6();
+			}
+		};
+
+		object.unitIdentification = "Teste";
+
+		n = 101;
+		for ( i = 0; i < object.headerData.fixedFields.length; i++ )
+		{
+			object.headerData.fixedFields[i].value = Integer.toString(n);
+			n++;
+		}
+		for ( i = 0; i < object.headerData.variableFields.length; i++ )
+		{
+			for ( j = 0; j < object.headerData.variableFields[i].data.length; j++ )
+			{
+				object.headerData.variableFields[i].data[j].value = Integer.toString(n);
+				n++;
+			}
+		}
+		for ( i = 0; i < object.coverageData.length; i++ )
+		{
+			for ( j = 0; j < object.coverageData[i].fixedFields.length; j++ )
+			{
+				object.coverageData[i].fixedFields[j].value = Integer.toString(n);
+				n++;
+			}
+			for ( j = 0; j < object.coverageData[i].variableFields.length; j++ )
+			{
+				for ( k = 0; k < object.coverageData[i].variableFields[j].data.length; k++ )
+				{
+					object.coverageData[i].variableFields[j].data[k].value = Integer.toString(n);
+					n++;
+				}
+			}
+		}
+
+		Services.insurancePolicyService.updateObjectInPad(object, callback);
+	}
+
+	private static void DoStep6()
 	{
 		AsyncCallback<InsurancePolicy> callback = new AsyncCallback<InsurancePolicy>()
 		{

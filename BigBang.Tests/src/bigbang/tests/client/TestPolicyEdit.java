@@ -5,7 +5,7 @@ import bigBang.definitions.shared.InsurancePolicy.TableSection;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
-public class TestEditPolicy
+public class TestPolicyEdit
 {
 	private static InsurancePolicy tmpPolicy;
 

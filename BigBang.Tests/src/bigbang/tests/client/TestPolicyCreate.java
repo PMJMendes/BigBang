@@ -4,7 +4,7 @@ import bigBang.definitions.shared.InsurancePolicy;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
-public class TestNewPolicy
+public class TestPolicyCreate
 {
 	public static void DoTest()
 	{

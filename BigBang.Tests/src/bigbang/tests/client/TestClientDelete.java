@@ -1,6 +1,5 @@
 package bigbang.tests.client;
 
-import bigBang.definitions.shared.Client;
 import bigBang.definitions.shared.SearchParameter;
 import bigBang.definitions.shared.SearchResult;
 import bigBang.definitions.shared.SortOrder;
@@ -11,7 +10,7 @@ import bigBang.module.clientModule.shared.ClientSortParameter;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
-public class TestEditClient
+public class TestClientDelete
 {
 	private static String tmpWorkspace;
 
@@ -42,7 +41,7 @@ public class TestEditClient
 						DoStep2(result.results[0]);
 					}
 					else
-						DoStep4(result.workspaceId);
+						DoStep3(result.workspaceId);
 				}
 				else
 					return;
@@ -60,42 +59,23 @@ public class TestEditClient
 
 	private static void DoStep2(SearchResult stub)
 	{
-		AsyncCallback<Client> callback = new AsyncCallback<Client>()
+		AsyncCallback<Void> callback = new AsyncCallback<Void>()
 		{
 			public void onFailure(Throwable caught)
 			{
 				return;
 			}
 
-			public void onSuccess(Client result)
+			public void onSuccess(Void result)
 			{
-				DoStep3(result);
+				DoStep3(tmpWorkspace);
 			}
 		};
 
-		Services.clientService.getClient(stub.id, callback);
+		Services.clientService.deleteClient(stub.id, "Porque Sim!", callback);
 	}
 
-	private static void DoStep3(Client client)
-	{
-		AsyncCallback<Client> callback = new AsyncCallback<Client>()
-		{
-			public void onFailure(Throwable caught)
-			{
-				return;
-			}
-
-			public void onSuccess(Client result)
-			{
-				DoStep4(tmpWorkspace);
-			}
-		};
-
-		client.name = "Gumbercindo Jonas";
-		Services.clientService.editClient(client, callback);
-	}
-
-	private static void DoStep4(String workspaceId)
+	private static void DoStep3(String workspaceId)
 	{
 		AsyncCallback<Void> callback = new AsyncCallback<Void>()
 		{

@@ -11,7 +11,7 @@ import bigBang.library.shared.NewSearchResult;
 import bigBang.module.receiptModule.shared.ReceiptSearchParameter;
 import bigBang.module.receiptModule.shared.ReceiptSortParameter;
 
-public class TestUpdateReceipt
+public class TestReceiptEdit
 {
 	private static String tmpWorkspace;
 

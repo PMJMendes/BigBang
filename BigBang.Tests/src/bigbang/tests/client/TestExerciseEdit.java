@@ -6,7 +6,7 @@ import bigBang.definitions.shared.TipifiedListItem;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
-public class TestEditExercise
+public class TestExerciseEdit
 {
 	private static InsurancePolicy tmpPolicy;
 

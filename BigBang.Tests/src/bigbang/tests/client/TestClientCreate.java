@@ -4,7 +4,7 @@ import bigBang.definitions.shared.Client;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
-public class TestCreateClient
+public class TestClientCreate
 {
 	public static void DoTest()
 	{

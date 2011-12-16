@@ -9,7 +9,7 @@ import com.google.gwt.http.client.RequestCallback;
 import com.google.gwt.http.client.Response;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
-public class TestGetAsImage
+public class TestSpecialGetAsImage
 {
 	private static String tmpString;
 

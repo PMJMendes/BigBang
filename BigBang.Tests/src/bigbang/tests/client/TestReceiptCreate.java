@@ -4,7 +4,7 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 
 import bigBang.definitions.shared.Receipt;
 
-public class TestCreateReceipt
+public class TestReceiptCreate
 {
 	public static void DoTest()
 	{
@@ -35,6 +35,6 @@ public class TestCreateReceipt
 		receipt.comissions = "13.2";
 		receipt.retrocessions = "0";
 		receipt.issueDate = "2011-11-30";
-		Services.insurancePolicyService.createReceipt("F4D6391A-CBB3-4555-BCB1-9FA900BA4838", receipt, callback);
+		Services.insurancePolicyService.createReceipt("FBA922E2-E2CE-4351-ABD5-9FBB00CE51B2", receipt, callback);
 	}
 }

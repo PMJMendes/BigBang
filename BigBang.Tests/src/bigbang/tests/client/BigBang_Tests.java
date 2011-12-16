@@ -29,24 +29,31 @@ public class BigBang_Tests
 
 	private void DoTests()
 	{
-//		TestCreateClient.DoTest();
-//		TestEditClient.DoTest();
-//		TestDeleteClient.DoTest();
-//		TestGetPolicy.DoTest();
-//		TestNewPolicy.DoTest();
-//		TestEditPolicy.DoTest();
-//		TestDeletePolicy.DoTest();
-//		TestGetObject.DoTest();
-//		TestCreateInsuredObject.DoTest();
-//		TestEditInsuredObject.DoTest();
-//		TestDeleteInsuredObject.DoTest();
-//		TestCreateExercise.DoTest();
-//		TestEditExercise.DoTest();
-//		TestDeleteExercise.DoTest();
-//		TestCreateReceipt.DoTest();
-//		TestUpdateReceipt.DoTest();
-//		TestDeleteReceipt.DoTest();
-
-//		TestGetAsImage.DoTest();
+//		TestSpecialGetAsImage.DoTest();
+//
+//		TestClientGet.DoTest();
+//		TestClientCreate.DoTest();
+//		TestClientEdit.DoTest();
+//		TestClientDelete.DoTest();
+//
+//		TestPolicyGet.DoTest();
+//		TestPolicyCreate.DoTest();
+//		TestPolicyEdit.DoTest();
+//		TestPolicyDelete.DoTest();
+//
+//		TestObjectGet.DoTest();
+//		TestObjectCreate.DoTest();
+//		TestObjectEdit.DoTest();
+//		TestObjectDelete.DoTest();
+//
+//		TestExerciseGet.DoTest();
+//		TestExerciseCreate.DoTest();
+//		TestExerciseEdit.DoTest();
+//		TestExerciseDelete.DoTest();
+//
+//		TestReceiptGet.DoTest();
+//		TestReceiptCreate.DoTest();
+//		TestReceiptEdit.DoTest();
+//		TestReceiptDelete.DoTest();
 	}
 }

@@ -7,7 +7,7 @@ import bigBang.library.shared.NewSearchResult;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
-public class TestDeletePolicy
+public class TestPolicyDelete
 {
 	private static String tmpWorkspace;
 

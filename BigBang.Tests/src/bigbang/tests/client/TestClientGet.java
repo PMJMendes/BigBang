@@ -1,15 +1,17 @@
 package bigbang.tests.client;
 
-import bigBang.definitions.shared.InsuredObject;
+import bigBang.definitions.shared.Client;
 import bigBang.definitions.shared.SearchParameter;
 import bigBang.definitions.shared.SearchResult;
+import bigBang.definitions.shared.SortOrder;
 import bigBang.definitions.shared.SortParameter;
 import bigBang.library.shared.NewSearchResult;
-import bigBang.module.insurancePolicyModule.shared.InsuredObjectSearchParameter;
+import bigBang.module.clientModule.shared.ClientSearchParameter;
+import bigBang.module.clientModule.shared.ClientSortParameter;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
-public class TestGetObject
+public class TestClientGet
 {
 	private static String tmpWorkspace;
 
@@ -20,7 +22,8 @@ public class TestGetObject
 
 	private static void DoStep1()
 	{
-		InsuredObjectSearchParameter parameter;
+		ClientSearchParameter parameter;
+		ClientSortParameter sorts;
 
 		AsyncCallback<NewSearchResult> callback = new AsyncCallback<NewSearchResult>()
 		{
@@ -46,28 +49,31 @@ public class TestGetObject
 			}
 		};
 
-		parameter = new InsuredObjectSearchParameter();
-		parameter.policyId = "0B0C69A5-FA4E-4A7D-B625-9FB2015D29D6";
-
-		Services.policyObjectService.openSearch(new SearchParameter[] {parameter}, new SortParameter[] {}, 5, callback);
+		parameter = new ClientSearchParameter();
+		parameter.freeText = "Gumbercindo";
+		sorts = new ClientSortParameter();
+		sorts.field = ClientSortParameter.SortableField.NAME;
+		sorts.order = SortOrder.ASC;
+		
+		Services.clientService.openSearch(new SearchParameter[] {parameter}, new SortParameter[] {sorts}, 5, callback);
 	}
 
 	private static void DoStep2(SearchResult stub)
 	{
-		AsyncCallback<InsuredObject> callback = new AsyncCallback<InsuredObject>()
+		AsyncCallback<Client> callback = new AsyncCallback<Client>()
 		{
 			public void onFailure(Throwable caught)
 			{
 				return;
 			}
 
-			public void onSuccess(InsuredObject result)
+			public void onSuccess(Client result)
 			{
 				DoStep3(tmpWorkspace);
 			}
 		};
 
-		Services.policyObjectService.getObject(stub.id, callback);
+		Services.clientService.getClient(stub.id, callback);
 	}
 
 	private static void DoStep3(String workspaceId)
@@ -85,6 +91,6 @@ public class TestGetObject
 			}
 		};
 
-		Services.insurancePolicyService.closeSearch(workspaceId, callback);
+		Services.clientService.closeSearch(workspaceId, callback);
 	}
 }
