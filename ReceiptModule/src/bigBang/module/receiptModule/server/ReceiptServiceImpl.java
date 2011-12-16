@@ -245,7 +245,7 @@ public class ReceiptServiceImpl
 			pstrBuffer.append("([:Process:Parent] IN (SELECT [:Process] FROM (");
 			try
 			{
-				lrefPolicies = Entity.GetInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), Constants.ObjID_Client));
+				lrefPolicies = Entity.GetInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), Constants.ObjID_Policy));
 				pstrBuffer.append(lrefPolicies.SQLForSelectMulti());
 			}
 			catch (Throwable e)
@@ -394,6 +394,9 @@ public class ReceiptServiceImpl
 		throws BigBangException
 	{
 		ReceiptSortParameter lParam;
+		IEntity lrefPolicies;
+		IEntity lrefClients;
+		IEntity lrefLogs;
 
 		if ( !(pParam instanceof ReceiptSortParameter) )
 			return false;
@@ -405,8 +408,78 @@ public class ReceiptServiceImpl
 				return false;
 		}
 
+		if ( lParam.field == ReceiptSortParameter.SortableField.TYPE )
+			pstrBuffer.append("[:Type:Indicator]");
+
 		if ( lParam.field == ReceiptSortParameter.SortableField.NUMBER )
 			pstrBuffer.append("[:Number]");
+
+		if ( lParam.field == ReceiptSortParameter.SortableField.CLIENT )
+		{
+			pstrBuffer.append("(SELECT [AuxClients].[:Number] FROM (");
+			try
+			{
+				lrefPolicies = Entity.GetInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), Constants.ObjID_Policy));
+				pstrBuffer.append(lrefPolicies.SQLForSelectMulti());
+			}
+			catch (Throwable e)
+			{
+				throw new BigBangException(e.getMessage(), e);
+			}
+			pstrBuffer.append(") [AuxPols], (");
+			try
+			{
+				lrefClients = Entity.GetInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), Constants.ObjID_Client));
+				pstrBuffer.append(lrefClients.SQLForSelectMulti());
+			}
+			catch (Throwable e)
+			{
+				throw new BigBangException(e.getMessage(), e);
+			}
+			pstrBuffer.append(") [AuxClients] WHERE [AuxPols].[:Process] = [Aux].[:Process:Parent] AND ")
+					.append("[AuxClients].[:Process] = [AuxPols].[:Process:Parent])");
+		}
+
+		if ( lParam.field == ReceiptSortParameter.SortableField.SUB_LINE )
+		{
+			pstrBuffer.append("(SELECT [:SubLine:Line:Category:Name] + ' / ' + [:SubLine:Line:Name] + ' / ' + [:SubLine:Name] ")
+					.append("FROM (");
+			try
+			{
+				lrefPolicies = Entity.GetInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), Constants.ObjID_Policy));
+				pstrBuffer.append(lrefPolicies.SQLForSelectMulti());
+			}
+			catch (Throwable e)
+			{
+				throw new BigBangException(e.getMessage(), e);
+			}
+			pstrBuffer.append(") [AuxPols] WHERE [:Process] = [Aux].[:Process:Parent])");
+		}
+
+		if ( lParam.field == ReceiptSortParameter.SortableField.EMISSION_DATE )
+			pstrBuffer.append("[:Issue Date]");
+			
+		if ( lParam.field == ReceiptSortParameter.SortableField.LIMIT_DATE )
+			pstrBuffer.append("[:Due Date]");
+			
+		if ( lParam.field == ReceiptSortParameter.SortableField.MATURITY_DATE )
+			pstrBuffer.append("[:Maturity Date]");
+
+		if ( lParam.field == ReceiptSortParameter.SortableField.PAYMENT_DATE )
+		{
+			pstrBuffer.append("(SELECT MAX([:Timestamp]) FROM (");
+			try
+			{
+				lrefLogs = Entity.GetInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), Jewel.Petri.Constants.ObjID_PNLog));
+				pstrBuffer.append(lrefLogs.SQLForSelectMulti());
+			}
+			catch (Throwable e)
+			{
+				throw new BigBangException(e.getMessage(), e);
+			}
+			pstrBuffer.append(") [AuxLogs] WHERE [:Process] = [Aux].[:Process] AND ")
+					.append("[:Operation] = '").append(Constants.OPID_Payment).append(")");
+		}
 
 		if ( lParam.order == SortOrder.ASC )
 			pstrBuffer.append(" ASC");
@@ -517,6 +590,8 @@ public class ReceiptServiceImpl
 	{
 		ReceiptSearchParameter lParam;
 		String lstrAux;
+		IEntity lrefPolicies;
+		IEntity lrefClients;
 		boolean lbFound;
 		int i;
 
@@ -535,7 +610,173 @@ public class ReceiptServiceImpl
 			if ( lbFound )
 				pstrBuffer.append(" + ");
 			lbFound = true;
-			pstrBuffer.append("-PATINDEX(N'%").append(lstrAux).append("%', [:Number])");
+			pstrBuffer.append("CASE WHEN [:Number] LIKE N'%").append(lstrAux).append("%' THEN ")
+					.append("-PATINDEX(N'%").append(lstrAux).append("%', [:Number]) ELSE ");
+			pstrBuffer.append("CASE WHEN [:Process:Parent] IN (SELECT [:Process] FROM (");
+			try
+			{
+				lrefPolicies = Entity.GetInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), Constants.ObjID_Policy));
+				pstrBuffer.append(lrefPolicies.SQLForSelectMulti());
+			}
+			catch (Throwable e)
+			{
+				throw new BigBangException(e.getMessage(), e);
+			}
+			pstrBuffer.append(") [AuxPols] WHERE [:Number] LIKE N'%").append(lstrAux).append("%') THEN ")
+					.append("-100*PATINDEX(N'%").append(lstrAux).append("%', (SELECT [:Number] FROM (");
+			try
+			{
+				pstrBuffer.append(lrefPolicies.SQLForSelectMulti());
+			}
+			catch (Throwable e)
+			{
+				throw new BigBangException(e.getMessage(), e);
+			}
+			pstrBuffer.append(") [AuxPols] WHERE [:Process] = [Aux].[:Process:Parent])) ELSE ");
+			pstrBuffer.append("CASE WHEN [:Process:Parent] IN (SELECT [:Process] FROM (");
+			try
+			{
+				pstrBuffer.append(lrefPolicies.SQLForSelectMulti());
+			}
+			catch (Throwable e)
+			{
+				throw new BigBangException(e.getMessage(), e);
+			}
+			pstrBuffer.append(") [AuxPols] WHERE [:Process:Parent] IN (SELECT [:Process] FROM (");
+			try
+			{
+				lrefClients = Entity.GetInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), Constants.ObjID_Client));
+				pstrBuffer.append(lrefClients.SQLForSelectMulti());
+			}
+			catch (Throwable e)
+			{
+				throw new BigBangException(e.getMessage(), e);
+			}
+			pstrBuffer.append(") [AuxClients] WHERE CAST([:Number] AS NVARCHAR(20)) LIKE N'%").append(lstrAux).append("%')) THEN ")
+					.append("-10000*PATINDEX(N'%").append(lstrAux).append("%', CAST((SELECT [AuxClients].[:Number] FROM (");
+			try
+			{
+				pstrBuffer.append(lrefPolicies.SQLForSelectMulti());
+			}
+			catch (Throwable e)
+			{
+				throw new BigBangException(e.getMessage(), e);
+			}
+			pstrBuffer.append(") [AuxPols], (");
+			try
+			{
+				pstrBuffer.append(lrefClients.SQLForSelectMulti());
+			}
+			catch (Throwable e)
+			{
+				throw new BigBangException(e.getMessage(), e);
+			}
+			pstrBuffer.append(") [AuxClients] WHERE [AuxPols].[:Process] = [Aux].[:Process:Parent] AND ")
+					.append("[AuxClients].[:Process] = [AuxPols].[:Process:Parent]) AS NVARCHAR(20))) ELSE ");
+			pstrBuffer.append("CASE WHEN [:Process:Parent] IN (SELECT [:Process] FROM (");
+			try
+			{
+				pstrBuffer.append(lrefPolicies.SQLForSelectMulti());
+			}
+			catch (Throwable e)
+			{
+				throw new BigBangException(e.getMessage(), e);
+			}
+			pstrBuffer.append(") [AuxPols] WHERE [:Process:Parent] IN (SELECT [:Process] FROM (");
+			try
+			{
+				lrefClients = Entity.GetInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), Constants.ObjID_Client));
+				pstrBuffer.append(lrefClients.SQLForSelectMulti());
+			}
+			catch (Throwable e)
+			{
+				throw new BigBangException(e.getMessage(), e);
+			}
+			pstrBuffer.append(") [AuxClients] WHERE [:Name] LIKE N'%").append(lstrAux).append("%')) THEN ")
+					.append("-1000000*PATINDEX(N'%").append(lstrAux).append("%', (SELECT [AuxClients].[:Name] FROM (");
+			try
+			{
+				pstrBuffer.append(lrefPolicies.SQLForSelectMulti());
+			}
+			catch (Throwable e)
+			{
+				throw new BigBangException(e.getMessage(), e);
+			}
+			pstrBuffer.append(") [AuxPols], (");
+			try
+			{
+				pstrBuffer.append(lrefClients.SQLForSelectMulti());
+			}
+			catch (Throwable e)
+			{
+				throw new BigBangException(e.getMessage(), e);
+			}
+			pstrBuffer.append(") [AuxPols].[:Process] = [Aux].[:Process:Parent] = [AuxPols].[:Process:Parent] AND ")
+					.append("[AuxClients] WHERE [AuxClients].[:Process])) ELSE ");
+			pstrBuffer.append("CASE WHEN [:Process:Parent] IN (SELECT [:Process] FROM (");
+			try
+			{
+				lrefPolicies = Entity.GetInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), Constants.ObjID_Policy));
+				pstrBuffer.append(lrefPolicies.SQLForSelectMulti());
+			}
+			catch (Throwable e)
+			{
+				throw new BigBangException(e.getMessage(), e);
+			}
+			pstrBuffer.append(") [AuxPols] WHERE [:SubLine:Name] LIKE N'%").append(lstrAux).append("%') THEN ")
+					.append("-100000000*PATINDEX(N'%").append(lstrAux).append("%', (SELECT [:SubLine:Name] FROM (");
+			try
+			{
+				pstrBuffer.append(lrefPolicies.SQLForSelectMulti());
+			}
+			catch (Throwable e)
+			{
+				throw new BigBangException(e.getMessage(), e);
+			}
+			pstrBuffer.append(") [AuxPols] WHERE [:Process] = [Aux].[:Process:Parent])) ELSE ");
+			pstrBuffer.append("CASE WHEN [:Process:Parent] IN (SELECT [:Process] FROM (");
+			try
+			{
+				lrefPolicies = Entity.GetInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), Constants.ObjID_Policy));
+				pstrBuffer.append(lrefPolicies.SQLForSelectMulti());
+			}
+			catch (Throwable e)
+			{
+				throw new BigBangException(e.getMessage(), e);
+			}
+			pstrBuffer.append(") [AuxPols] WHERE [:SubLine:Line:Name] LIKE N'%").append(lstrAux).append("%') THEN ")
+					.append("-10000000000*PATINDEX(N'%").append(lstrAux).append("%', (SELECT [:SubLine:Line:Name] FROM (");
+			try
+			{
+				pstrBuffer.append(lrefPolicies.SQLForSelectMulti());
+			}
+			catch (Throwable e)
+			{
+				throw new BigBangException(e.getMessage(), e);
+			}
+			pstrBuffer.append(") [AuxPols] WHERE [:Process] = [Aux].[:Process:Parent])) ELSE ");
+			pstrBuffer.append("CASE WHEN [:Process:Parent] IN (SELECT [:Process] FROM (");
+			try
+			{
+				lrefPolicies = Entity.GetInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), Constants.ObjID_Policy));
+				pstrBuffer.append(lrefPolicies.SQLForSelectMulti());
+			}
+			catch (Throwable e)
+			{
+				throw new BigBangException(e.getMessage(), e);
+			}
+			pstrBuffer.append(") [AuxPols] WHERE [:SubLine:Line:Category:Name] LIKE N'%").append(lstrAux).append("%') THEN ")
+					.append("-1000000000000*PATINDEX(N'%").append(lstrAux).append("%', (SELECT [:SubLine:Line:Category:Name] FROM (");
+			try
+			{
+				pstrBuffer.append(lrefPolicies.SQLForSelectMulti());
+			}
+			catch (Throwable e)
+			{
+				throw new BigBangException(e.getMessage(), e);
+			}
+			pstrBuffer.append(") [AuxPols] WHERE [:Process] = [Aux].[:Process:Parent])) ELSE ");
+			pstrBuffer.append("0 END END END END END END END");
 		}
 
 		return lbFound;
