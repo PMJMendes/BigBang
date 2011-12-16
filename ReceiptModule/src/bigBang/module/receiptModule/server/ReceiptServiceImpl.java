@@ -265,7 +265,7 @@ public class ReceiptServiceImpl
 			try
 			{
 				lrefClients = Entity.GetInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), Constants.ObjID_Client));
-				pstrBuffer.append(lrefClients.SQLForSelectMulti());
+				pstrBuffer.append(lrefClients.SQLForSelectSingle());
 			}
 			catch (Throwable e)
 			{
@@ -339,7 +339,7 @@ public class ReceiptServiceImpl
 			try
 			{
 				lrefLogs = Entity.GetInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), Jewel.Petri.Constants.ObjID_PNLog));
-				pstrBuffer.append(lrefLogs.SQLForSelectMulti());
+				pstrBuffer.append(lrefLogs.SQLForSelectSingle());
 			}
 			catch (Throwable e)
 			{
@@ -430,7 +430,7 @@ public class ReceiptServiceImpl
 			try
 			{
 				lrefClients = Entity.GetInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), Constants.ObjID_Client));
-				pstrBuffer.append(lrefClients.SQLForSelectMulti());
+				pstrBuffer.append(lrefClients.SQLForSelectSingle());
 			}
 			catch (Throwable e)
 			{
@@ -471,7 +471,7 @@ public class ReceiptServiceImpl
 			try
 			{
 				lrefLogs = Entity.GetInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), Jewel.Petri.Constants.ObjID_PNLog));
-				pstrBuffer.append(lrefLogs.SQLForSelectMulti());
+				pstrBuffer.append(lrefLogs.SQLForSelectSingle());
 			}
 			catch (Throwable e)
 			{
@@ -616,7 +616,7 @@ public class ReceiptServiceImpl
 			try
 			{
 				lrefPolicies = Entity.GetInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), Constants.ObjID_Policy));
-				pstrBuffer.append(lrefPolicies.SQLForSelectMulti());
+				pstrBuffer.append(lrefPolicies.SQLForSelectSingle());
 			}
 			catch (Throwable e)
 			{
@@ -626,7 +626,7 @@ public class ReceiptServiceImpl
 					.append("-100*PATINDEX(N'%").append(lstrAux).append("%', (SELECT [:Number] FROM (");
 			try
 			{
-				pstrBuffer.append(lrefPolicies.SQLForSelectMulti());
+				pstrBuffer.append(lrefPolicies.SQLForSelectSingle());
 			}
 			catch (Throwable e)
 			{
@@ -646,7 +646,7 @@ public class ReceiptServiceImpl
 			try
 			{
 				lrefClients = Entity.GetInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), Constants.ObjID_Client));
-				pstrBuffer.append(lrefClients.SQLForSelectMulti());
+				pstrBuffer.append(lrefClients.SQLForSelectSingle());
 			}
 			catch (Throwable e)
 			{
@@ -665,7 +665,7 @@ public class ReceiptServiceImpl
 			pstrBuffer.append(") [AuxPols], (");
 			try
 			{
-				pstrBuffer.append(lrefClients.SQLForSelectMulti());
+				pstrBuffer.append(lrefClients.SQLForSelectSingle());
 			}
 			catch (Throwable e)
 			{
@@ -685,8 +685,7 @@ public class ReceiptServiceImpl
 			pstrBuffer.append(") [AuxPols] WHERE [:Process:Parent] IN (SELECT [:Process] FROM (");
 			try
 			{
-				lrefClients = Entity.GetInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), Constants.ObjID_Client));
-				pstrBuffer.append(lrefClients.SQLForSelectMulti());
+				pstrBuffer.append(lrefClients.SQLForSelectSingle());
 			}
 			catch (Throwable e)
 			{
@@ -705,18 +704,17 @@ public class ReceiptServiceImpl
 			pstrBuffer.append(") [AuxPols], (");
 			try
 			{
-				pstrBuffer.append(lrefClients.SQLForSelectMulti());
+				pstrBuffer.append(lrefClients.SQLForSelectSingle());
 			}
 			catch (Throwable e)
 			{
 				throw new BigBangException(e.getMessage(), e);
 			}
-			pstrBuffer.append(") [AuxPols].[:Process] = [Aux].[:Process:Parent] = [AuxPols].[:Process:Parent] AND ")
-					.append("[AuxClients] WHERE [AuxClients].[:Process])) ELSE ");
+			pstrBuffer.append(") [AuxClients] WHERE [AuxPols].[:Process] = [Aux].[:Process:Parent] AND ")
+					.append("[AuxClients].[:Process] = [AuxPols].[:Process:Parent])) ELSE ");
 			pstrBuffer.append("CASE WHEN [:Process:Parent] IN (SELECT [:Process] FROM (");
 			try
 			{
-				lrefPolicies = Entity.GetInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), Constants.ObjID_Policy));
 				pstrBuffer.append(lrefPolicies.SQLForSelectMulti());
 			}
 			catch (Throwable e)
@@ -737,7 +735,6 @@ public class ReceiptServiceImpl
 			pstrBuffer.append("CASE WHEN [:Process:Parent] IN (SELECT [:Process] FROM (");
 			try
 			{
-				lrefPolicies = Entity.GetInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), Constants.ObjID_Policy));
 				pstrBuffer.append(lrefPolicies.SQLForSelectMulti());
 			}
 			catch (Throwable e)
@@ -758,7 +755,6 @@ public class ReceiptServiceImpl
 			pstrBuffer.append("CASE WHEN [:Process:Parent] IN (SELECT [:Process] FROM (");
 			try
 			{
-				lrefPolicies = Entity.GetInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), Constants.ObjID_Policy));
 				pstrBuffer.append(lrefPolicies.SQLForSelectMulti());
 			}
 			catch (Throwable e)

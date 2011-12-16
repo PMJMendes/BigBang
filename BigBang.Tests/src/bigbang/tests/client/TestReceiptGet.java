@@ -52,9 +52,9 @@ public class TestReceiptGet
 		parameter = new ReceiptSearchParameter();
 		parameter.freeText = "Aida";
 		sorts = new ReceiptSortParameter();
-		sorts.field = ReceiptSortParameter.SortableField.NUMBER;
+		sorts.field = ReceiptSortParameter.SortableField.RELEVANCE;
 		sorts.order = SortOrder.ASC;
-		
+
 		Services.receiptService.openSearch(new SearchParameter[] {parameter}, new SortParameter[] {sorts}, 5, callback);
 	}
 
