@@ -1,5 +1,7 @@
 package bigbang.tests.client;
 
+import bigBang.library.interfaces.BigBangProcessService;
+import bigBang.library.interfaces.BigBangProcessServiceAsync;
 import bigBang.library.interfaces.DocuShareService;
 import bigBang.library.interfaces.DocuShareServiceAsync;
 import bigBang.library.interfaces.FileService;
@@ -33,6 +35,8 @@ public class Services
 			GWT.create(FileService.class);
 	public static final HistoryServiceAsync historyService =
 			GWT.create(HistoryService.class);
+	public static final BigBangProcessServiceAsync processService =
+			GWT.create(BigBangProcessService.class);
 	public static final TasksServiceAsync tasksService =
 			GWT.create(TasksService.class);
 	public static final ClientServiceAsync clientService =
