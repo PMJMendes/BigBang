@@ -4,6 +4,7 @@ import bigBang.definitions.shared.SearchParameter;
 import bigBang.definitions.shared.SearchResult;
 import bigBang.definitions.shared.SortParameter;
 import bigBang.library.shared.NewSearchResult;
+import bigBang.module.insurancePolicyModule.shared.InsurancePolicySearchParameter;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
@@ -18,6 +19,8 @@ public class TestPolicyDelete
 
 	private static void DoStep1()
 	{
+		InsurancePolicySearchParameter parameter;
+
 		AsyncCallback<NewSearchResult> callback = new AsyncCallback<NewSearchResult>()
 		{
 			public void onFailure(Throwable caught)
@@ -42,7 +45,10 @@ public class TestPolicyDelete
 			}
 		};
 
-		Services.insurancePolicyService.openSearch(new SearchParameter[] {}, new SortParameter[] {}, 5, callback);
+		parameter = new InsurancePolicySearchParameter();
+		parameter.freeText = "-12868.1";
+
+		Services.insurancePolicyService.openSearch(new SearchParameter[] {parameter}, new SortParameter[] {}, 5, callback);
 	}
 
 	private static void DoStep2(SearchResult stub)

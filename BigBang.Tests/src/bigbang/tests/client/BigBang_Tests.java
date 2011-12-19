@@ -30,6 +30,7 @@ public class BigBang_Tests
 	private void DoTests()
 	{
 //		TestSpecialGetAsImage.DoTest();
+//		TestSpecialUndo.DoTest();
 //
 //		TestAgendaGet.DoTest();
 //		TestAgendaDismiss.DoTest();

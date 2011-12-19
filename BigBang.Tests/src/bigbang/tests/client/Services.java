@@ -4,6 +4,8 @@ import bigBang.library.interfaces.DocuShareService;
 import bigBang.library.interfaces.DocuShareServiceAsync;
 import bigBang.library.interfaces.FileService;
 import bigBang.library.interfaces.FileServiceAsync;
+import bigBang.library.interfaces.HistoryService;
+import bigBang.library.interfaces.HistoryServiceAsync;
 import bigBang.module.clientModule.interfaces.ClientService;
 import bigBang.module.clientModule.interfaces.ClientServiceAsync;
 import bigBang.module.insurancePolicyModule.interfaces.InsurancePolicyService;
@@ -29,6 +31,8 @@ public class Services
 			GWT.create(DocuShareService.class);
 	public static final FileServiceAsync fileService =
 			GWT.create(FileService.class);
+	public static final HistoryServiceAsync historyService =
+			GWT.create(HistoryService.class);
 	public static final TasksServiceAsync tasksService =
 			GWT.create(TasksService.class);
 	public static final ClientServiceAsync clientService =
