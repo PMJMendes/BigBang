@@ -109,15 +109,15 @@ public class HistoryServiceImpl
 		{
 			lobjLog = PNLog.GetInstance(Engine.getCurrentNameSpace(), UUID.fromString(undoItemId));
 			if ( lobjLog.GetOperation().GetUndoOp() == null )
-				throw new BigBangException("Error: Source operation does not define a corresponding undo operation.");
+				throw new BigBangException("Erro: A operação não define uma operação correspondente para a reversão.");
 
 			lobjAux = lobjLog.GetOperation().GetUndoOp().GetNewInstance(lobjLog.GetProcessID());
 			if ( !(lobjAux instanceof UndoOperation) )
-				throw new BigBangException("Error: Undo operation has an improper definition.");
+				throw new BigBangException("Erro: A operação de reversão está mal definida.");
 
 			lobjData = lobjLog.GetOperationData();
 			if ( !(lobjData instanceof UndoableOperation) )
-				throw new BigBangException("Error: Source operation does not define undo methods.");
+				throw new BigBangException("Erro: A operação não define métodos para reversão.");
 
 			lobjRunnable = (UndoOperation)lobjAux;
 			lobjRunnable.midSourceLog = lobjLog.getKey();
