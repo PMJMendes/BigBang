@@ -1789,7 +1789,7 @@ public class InsurancePolicyServiceImpl
 				{
 					l = FindValue(UUID.fromString(pobjSource.headerData.fixedFields[i].fieldId), -1, plngExercise, l + 1);
 					if ( l < 0 )
-						throw new BigBangException("Inesperado: Valor fixo de objecto não existente do lado do servidor.");
+						throw new BigBangException("Inesperado: Valor fixo de exercício não existente do lado do servidor.");
 					marrValues.get(l).mstrValue = ( "".equals(pobjSource.headerData.fixedFields[i].value) ? null :
 							pobjSource.headerData.fixedFields[i].value );
 				}
@@ -1802,7 +1802,7 @@ public class InsurancePolicyServiceImpl
 								Integer.parseInt(pobjSource.objects[pobjSource.headerData.variableFields[i].data[j]
 										.objectIndex].tempObjectId.split(":")[1]), plngExercise, l + 1);
 						if ( l < 0 )
-							throw new BigBangException("Inesperado: Valor variável de objecto não existente do lado do servidor.");
+							throw new BigBangException("Inesperado: Valor variável de exercício não existente do lado do servidor.");
 						marrValues.get(l).mstrValue = ( "".equals(pobjSource.headerData.variableFields[i].data[j].value) ?
 								null : pobjSource.headerData.variableFields[i].data[j].value );
 					}
@@ -1817,7 +1817,7 @@ public class InsurancePolicyServiceImpl
 					{
 						l = FindValue(UUID.fromString(pobjSource.coverageData[i].fixedFields[j].fieldId), -1, plngExercise, l + 1);
 						if ( l < 0 )
-							throw new BigBangException("Inesperado: Valor fixo de objecto não existente do lado do servidor.");
+							throw new BigBangException("Inesperado: Valor fixo de exercício não existente do lado do servidor.");
 						marrValues.get(l).mstrValue = ( "".equals(pobjSource.coverageData[i].fixedFields[j].value) ? null :
 								pobjSource.coverageData[i].fixedFields[j].value );
 					}
@@ -1830,7 +1830,7 @@ public class InsurancePolicyServiceImpl
 									Integer.parseInt(pobjSource.objects[pobjSource.coverageData[i].variableFields[j].data[k]
 											.objectIndex].tempObjectId.split(":")[1]), plngExercise, l + 1);
 							if ( l < 0 )
-								throw new BigBangException("Inesperado: Valor variável de objecto não existente do lado do servidor.");
+								throw new BigBangException("Inesperado: Valor variável de exercício não existente do lado do servidor.");
 							marrValues.get(l).mstrValue = ( "".equals(pobjSource.coverageData[i].variableFields[j].data[k].value) ?
 									null : pobjSource.coverageData[i].variableFields[j].data[k].value );
 						}
@@ -2168,8 +2168,8 @@ public class InsurancePolicyServiceImpl
 			if ( (larrLocalValues[i].getAt(3) != null) || (larrLocalValues[i].getAt(4) != null) )
 				continue;
 			lobjTax = larrLocalValues[i].GetTax();
-			if ( lobjTax.GetVariesByObject() || lobjTax.GetVariesByExercise() )
-				throw new BigBangException("Inesperado: Valor variável marcado como invariante.");
+//			if ( lobjTax.GetVariesByObject() || lobjTax.GetVariesByExercise() )
+//				throw new BigBangException("Inesperado: Valor variável marcado como invariante.");
 
 			if ( lobjTax.GetCoverage().IsHeader() )
 			{
@@ -2434,8 +2434,8 @@ public class InsurancePolicyServiceImpl
 			for ( i = 0; i < larrValues.length; i++ )
 			{
 				lobjTax = larrValues[i].GetTax();
-				if ( lobjTax.GetVariesByObject() || lobjTax.GetVariesByExercise() )
-					throw new BigBangException("Inesperado: Valor variável marcado como invariante.");
+//				if ( lobjTax.GetVariesByObject() || lobjTax.GetVariesByExercise() )
+//					throw new BigBangException("Inesperado: Valor variável marcado como invariante.");
 
 				if ( lobjTax.GetCoverage().IsHeader() || (lobjTax.GetColumnOrder() < 0) )
 					continue;
