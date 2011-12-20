@@ -106,16 +106,16 @@ public class ReceiptData
 		pstrBuilder.append(pstrLineBreak);
 
 		pstrBuilder.append("Prémio Total: ");
-		pstrBuilder.append(mdblTotal.toPlainString());
+		pstrBuilder.append(mdblTotal == null ? "(não indicado)" : mdblTotal.toPlainString());
 		pstrBuilder.append(" (Prémio Comercial: ");
-		pstrBuilder.append(mdblCommercial.toPlainString());
+		pstrBuilder.append(mdblCommercial == null ? "não indicado" : mdblCommercial.toPlainString());
 		pstrBuilder.append(")");
 		pstrBuilder.append(pstrLineBreak);
 
 		pstrBuilder.append("Comissão: ");
-		pstrBuilder.append(mdblCommissions.toPlainString());
+		pstrBuilder.append(mdblCommissions == null ? "(não indicada)" : mdblCommissions.toPlainString());
 		pstrBuilder.append(" (Retrocessão: ");
-		pstrBuilder.append(mdblRetrocessions.toPlainString());
+		pstrBuilder.append(mdblRetrocessions == null ? "não indicada" : mdblRetrocessions.toPlainString());
 		pstrBuilder.append(")");
 		pstrBuilder.append(pstrLineBreak);
 
@@ -127,16 +127,16 @@ public class ReceiptData
 		}
 
 		pstrBuilder.append("Data de Emissão: ");
-		pstrBuilder.append(mdtIssue.toString().substring(0, 10));
+		pstrBuilder.append(mdtIssue == null ? "(não indicada)" : mdtIssue.toString().substring(0, 10));
 		pstrBuilder.append(" (Data Limite Pagamento: ");
-		pstrBuilder.append(mdtDue.toString().substring(0, 10));
+		pstrBuilder.append(mdtDue == null ? "não indicada" : mdtDue.toString().substring(0, 10));
 		pstrBuilder.append(")");
 		pstrBuilder.append(pstrLineBreak);
 
-		pstrBuilder.append("Data de Vencimento: ");
-		pstrBuilder.append(mdtMaturity.toString().substring(0, 10));
-		pstrBuilder.append(" (Vigência Até: ");
-		pstrBuilder.append(mdtEnd.toString().substring(0, 10));
+		pstrBuilder.append("Data de Vigência: ");
+		pstrBuilder.append(mdtMaturity == null ? "(não indicada)" : mdtMaturity.toString().substring(0, 10));
+		pstrBuilder.append(" (Até: ");
+		pstrBuilder.append(mdtEnd == null ? "não indicada" : mdtEnd.toString().substring(0, 10));
 		pstrBuilder.append(")");
 		pstrBuilder.append(pstrLineBreak);
 
