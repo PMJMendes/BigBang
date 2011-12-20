@@ -339,6 +339,7 @@ public class ManagePolicyData
 	public String UndoDesc(String pstrLineBreak)
 	{
 		StringBuilder lstrResult;
+		int i;
 
 		lstrResult = new StringBuilder();
 
@@ -346,7 +347,99 @@ public class ManagePolicyData
 		{
 			lstrResult.append("Os dados anteriores serão repostos:");
 			lstrResult.append(pstrLineBreak);
-			mobjData.mobjPrevValues.Describe(lstrResult, pstrLineBreak);
+
+			if ( mobjData.mbModified )
+			{
+				mobjData.mobjPrevValues.Describe(lstrResult, pstrLineBreak);
+				lstrResult.append(pstrLineBreak);
+			}
+
+			if ( mobjData.marrCoverages != null )
+			{
+				for ( i = 0; i < mobjData.marrCoverages.length; i++ )
+				{
+					if ( mobjData.marrCoverages[i].mbNew )
+					{
+						lstrResult.append("A informação sobre esta cobertura será apagada:").append(pstrLineBreak);
+						mobjData.marrCoverages[i].Describe(lstrResult, pstrLineBreak);
+					}
+					else
+					{
+						lstrResult.append("A informação sobre esta cobertura será reposta:").append(pstrLineBreak);
+						mobjData.marrCoverages[i].mobjPrevValues.Describe(lstrResult, pstrLineBreak);
+					}
+					lstrResult.append(pstrLineBreak);
+				}
+			}
+
+			if ( mobjData.marrObjects != null )
+			{
+				for ( i = 0; i < mobjData.marrObjects.length; i++ )
+				{
+					if ( mobjData.marrObjects[i].mbDeleted )
+					{
+						lstrResult.append("O seguinte objecto será reposto:").append(pstrLineBreak);
+						mobjData.marrObjects[i].Describe(lstrResult, pstrLineBreak);
+					}
+					else if ( mobjData.marrObjects[i].mbNew )
+					{
+						lstrResult.append("O seguinte objecto será removido:").append(pstrLineBreak);
+						mobjData.marrObjects[i].Describe(lstrResult, pstrLineBreak);
+					}
+					else
+					{
+						lstrResult.append("A informação sobre este objecto será reposta:").append(pstrLineBreak);
+						mobjData.marrObjects[i].mobjPrevValues.Describe(lstrResult, pstrLineBreak);
+					}
+					lstrResult.append(pstrLineBreak);
+				}
+			}
+
+			if ( mobjData.marrExercises != null )
+			{
+				for ( i = 0; i < mobjData.marrExercises.length; i++ )
+				{
+					if ( mobjData.marrExercises[i].mbDeleted )
+					{
+						lstrResult.append("O seguinte exercício será reposto:").append(pstrLineBreak);
+						mobjData.marrExercises[i].Describe(lstrResult, pstrLineBreak);
+					}
+					else if ( mobjData.marrExercises[i].mbNew )
+					{
+						lstrResult.append("O seguinte exercício será removido:").append(pstrLineBreak);
+						mobjData.marrExercises[i].Describe(lstrResult, pstrLineBreak);
+					}
+					else
+					{
+						lstrResult.append("A informação sobre este exercício será reposta:").append(pstrLineBreak);
+						mobjData.marrExercises[i].mobjPrevValues.Describe(lstrResult, pstrLineBreak);
+					}
+					mobjData.marrExercises[i].Describe(lstrResult, pstrLineBreak);
+					lstrResult.append(pstrLineBreak);
+				}
+			}
+
+			if ( mobjData.marrValues != null )
+			{
+				for ( i = 0; i < mobjData.marrValues.length; i++ )
+				{
+					if ( mobjData.marrValues[i].mbDeleted )
+					{
+						lstrResult.append("(A repôr) ");
+						mobjData.marrValues[i].Describe(lstrResult, pstrLineBreak);
+					}
+					if ( mobjData.marrValues[i].mbNew )
+					{
+						lstrResult.append("(A remover) ");
+						mobjData.marrValues[i].Describe(lstrResult, pstrLineBreak);
+					}
+					else
+					{
+						lstrResult.append("(A repôr informação) ");
+						mobjData.marrValues[i].mobjPrevValues.Describe(lstrResult, pstrLineBreak);
+					}
+				}
+			}
 		}
 
 		if ( mobjContactOps != null )
