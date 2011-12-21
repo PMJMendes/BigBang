@@ -11,6 +11,8 @@ import bigBang.definitions.shared.Receipt;
 
 public interface InsurancePolicyBroker extends DataBrokerInterface<InsurancePolicy> {
 	
+	public boolean isTemp(InsurancePolicy policy);
+	
 	public void getPolicy(String policyId, ResponseHandler<InsurancePolicy> handler);
 	
 	public void openPolicyResource(InsurancePolicy policy, ResponseHandler<InsurancePolicy> handler);

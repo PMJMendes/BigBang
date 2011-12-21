@@ -1,25 +1,32 @@
 package bigBang.module.insurancePolicyModule.client.userInterface.view;
 
+import bigBang.definitions.client.dataAccess.HistoryBroker;
+import bigBang.definitions.shared.BigBangConstants;
+import bigBang.definitions.shared.Contact;
+import bigBang.definitions.shared.Document;
+import bigBang.definitions.shared.HistoryItemStub;
 import bigBang.definitions.shared.InsurancePolicy;
 import bigBang.definitions.shared.InsurancePolicy.TableSection;
 import bigBang.definitions.shared.InsurancePolicyStub;
+import bigBang.definitions.shared.InsuredObjectStub;
 import bigBang.definitions.shared.Receipt;
 import bigBang.library.client.HasEditableValue;
 import bigBang.library.client.HasValueSelectables;
 import bigBang.library.client.ValueSelectable;
+import bigBang.library.client.dataAccess.DataBrokerManager;
 import bigBang.library.client.event.ActionInvokedEvent;
 import bigBang.library.client.event.ActionInvokedEventHandler;
-import bigBang.library.client.userInterface.ContactsPreviewList;
-import bigBang.library.client.userInterface.DocumentsPreviewList;
 import bigBang.library.client.userInterface.ListEntry;
 import bigBang.library.client.userInterface.ListHeader;
 import bigBang.library.client.userInterface.SlidePanel;
 import bigBang.library.client.userInterface.SlidePanel.Direction;
+import bigBang.library.client.userInterface.presenter.UndoOperationViewPresenter;
+import bigBang.library.client.userInterface.view.UndoOperationView;
 import bigBang.library.client.userInterface.view.View;
+import bigBang.module.insurancePolicyModule.client.userInterface.InsurancePolicyChildrenPanel;
 import bigBang.module.insurancePolicyModule.client.userInterface.InsurancePolicyForm;
 import bigBang.module.insurancePolicyModule.client.userInterface.InsurancePolicyOperationsToolBar;
 import bigBang.module.insurancePolicyModule.client.userInterface.InsurancePolicySearchPanel;
-import bigBang.module.insurancePolicyModule.client.userInterface.PolicyChildrenPanel;
 import bigBang.module.insurancePolicyModule.client.userInterface.presenter.InsurancePolicySearchOperationViewPresenter;
 import bigBang.module.insurancePolicyModule.client.userInterface.presenter.InsurancePolicySearchOperationViewPresenter.Action;
 
@@ -32,7 +39,6 @@ import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.HasWidgets;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.SplitLayoutPanel;
-import com.google.gwt.user.client.ui.StackPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
@@ -44,9 +50,8 @@ public class InsurancePolicySearchOperationView extends View implements Insuranc
 	protected Widget mainContent;
 	protected InsurancePolicySearchPanel searchPanel;
 	protected InsurancePolicyForm form;
-	protected ContactsPreviewList contactsList;
-	protected DocumentsPreviewList documentsList;
 	protected InsurancePolicyOperationsToolBar operationsToolBar;
+	protected InsurancePolicyChildrenPanel childrenPanel; 
 	protected ActionInvokedEventHandler<Action> actionHandler;
 
 	public InsurancePolicySearchOperationView(){
@@ -62,21 +67,9 @@ public class InsurancePolicySearchOperationView extends View implements Insuranc
 		SplitLayoutPanel contentWrapper = new SplitLayoutPanel();
 		contentWrapper.setSize("100%", "100%");
 		
-		SplitLayoutPanel listsWrapper = new SplitLayoutPanel();
-		listsWrapper.setSize("100%", "100%");
-		//contentWrapper.addEast(listsWrapper, 250);
-		
-		contactsList = new ContactsPreviewList();
-		contactsList.setSize("100%", "100%");		
-		
-		documentsList = new DocumentsPreviewList();
-		documentsList.setSize("100%", "100%");
-		
-		StackPanel stack = new StackPanel();
-		stack.setSize("100%", "100%");		
-		contentWrapper.addEast(stack, 250);
-		stack.add(new PolicyChildrenPanel.ContactsList(), "Contactos");
-		stack.add(new PolicyChildrenPanel.DocumentsList(), "Documentos");
+		childrenPanel = new InsurancePolicyChildrenPanel();
+		childrenPanel.setSize("100%", "100%");
+		contentWrapper.addEast(childrenPanel, 300);
 		
 		final VerticalPanel toolBarFormContainer = new VerticalPanel();
 		toolBarFormContainer.setSize("100%", "100%");
@@ -120,13 +113,12 @@ public class InsurancePolicySearchOperationView extends View implements Insuranc
 			}
 
 			@Override
-			public void onCreateSecuredObject() {
-				// TODO Auto-generated method stub
-				
+			public void onCreateInsuredObject() {
+				actionHandler.onActionInvoked(new ActionInvokedEvent<InsurancePolicySearchOperationViewPresenter.Action>(Action.CREATE_INSURED_OBJECT));
 			}
 
 			@Override
-			public void onCreateSecuredObjectFromClient() {
+			public void onCreateInsuredObjectFromClient() {
 				// TODO Auto-generated method stub
 				
 			}
@@ -214,9 +206,6 @@ public class InsurancePolicySearchOperationView extends View implements Insuranc
 		SplitLayoutPanel formWrapper = new SplitLayoutPanel();
 		formWrapper.setSize("100%", "100%");
 				
-//		securedObjectsList = new List<InsuredObject>();
-//		securedObjectsList.setHeaderWidget(new ListHeader("Objectos Seguros"));
-//		
 		form = new InsurancePolicyForm(){
 
 			@Override
@@ -229,9 +218,6 @@ public class InsurancePolicySearchOperationView extends View implements Insuranc
 		form.setSize("100%", "100%");
 		form.setForEdit();
 
-		
-//		formWrapper.addSouth(this.securedObjectsList, 300);
-		
 		toolBarFormContainer.add(operationsToolBar);
 		toolBarFormContainer.add(formWrapper);
 		
@@ -247,7 +233,12 @@ public class InsurancePolicySearchOperationView extends View implements Insuranc
 			
 			@Override
 			public void onValueChange(ValueChangeEvent<InsurancePolicy> event) {
-				
+				InsurancePolicy policy = event.getValue();
+				if(policy == null){
+					childrenPanel.clear();
+				}else{
+					childrenPanel.setPolicy(policy);
+				}
 			}
 		});
 		slideWrapper.add(mainWrapper);
@@ -394,6 +385,10 @@ public class InsurancePolicySearchOperationView extends View implements Insuranc
 	public void allowDelete(boolean allow) {
 		this.operationsToolBar.allowDelete(allow);
 	}
+	
+	public void allowCreateInsuredObject(boolean allow) {
+		this.operationsToolBar.allowCreateInsuredObject(allow);
+	}
 
 	@Override
 	public String getInsuredObjectTableFilter() {
@@ -408,6 +403,89 @@ public class InsurancePolicySearchOperationView extends View implements Insuranc
 	@Override
 	public TableSection getCurrentTablePage() {
 		return this.form.getTable().getData();
+	}
+
+	@Override
+	public HasWidgets showCreateInsuredObjectView(boolean show) {
+		if(show){
+			VerticalPanel wrapper = new VerticalPanel();
+			wrapper.setSize("100%", "100%");
+			
+			ListHeader header = new ListHeader("Criação de Unidade de Risco");
+			wrapper.add(header);
+			header.setLeftWidget(new Button("Voltar", new ClickHandler() {
+				
+				@Override
+				public void onClick(ClickEvent event) {
+					showCreateInsuredObjectView(false);
+				}
+			}));
+			
+			SimplePanel container = new SimplePanel();
+			container.setSize("100%", "100%");
+			wrapper.add(container);			
+			wrapper.setCellHeight(container, "100%");
+			slideWrapper.slideInto(wrapper, Direction.LEFT);
+			return container;
+		}else{
+			slideWrapper.slideInto(mainContent, Direction.RIGHT);
+		}
+		return null;
+	}
+	
+
+	@Override
+	public void showHistory(InsurancePolicy policy, String selectedItemId) {
+		UndoOperationView historyView = new UndoOperationView();
+		UndoOperationViewPresenter presenter = new UndoOperationViewPresenter(null,
+				(HistoryBroker) DataBrokerManager.Util.getInstance().getBroker(BigBangConstants.EntityIds.HISTORY),
+				historyView,
+				policy.processId);
+		presenter.setTargetEntity(selectedItemId);
+		VerticalPanel wrapper = new VerticalPanel();
+		wrapper.setSize("100%", "100%");
+
+		ListHeader header = new ListHeader();
+		header.setText("Histórico da Apólice Nº" + policy.number);
+		header.setLeftWidget(new Button("Voltar", new ClickHandler() {
+
+			@Override
+			public void onClick(ClickEvent event) {
+				slideWrapper.slideInto(mainContent, Direction.RIGHT);
+			}
+		}));
+		wrapper.add(header);
+
+		SimplePanel viewContainer = new SimplePanel();
+		viewContainer.setSize("100%", "100%");
+		presenter.go(viewContainer);
+
+		wrapper.add(viewContainer);
+		wrapper.setCellHeight(viewContainer, "100%");
+
+		slideWrapper.slideInto(wrapper, Direction.LEFT);
+	}
+
+	//Gets lists
+	
+	@Override
+	public HasValueSelectables<Contact> getContactsList() {
+		return this.childrenPanel.contactsList;
+	}
+
+	@Override
+	public HasValueSelectables<Document> getDocumentsList() {
+		return this.childrenPanel.documentsList;
+	}
+
+	@Override
+	public HasValueSelectables<InsuredObjectStub> getObjectsList() {
+		return this.childrenPanel.insuredObjectsList;
+	}
+
+	@Override
+	public HasValueSelectables<HistoryItemStub> getHistoryList() {
+		return this.childrenPanel.historyList;
 	}
 	
 }

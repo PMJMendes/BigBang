@@ -119,9 +119,6 @@ public class BigBangContactsListBroker extends DataBroker<Contact> implements Co
 				unregisterClient(client, ownerId);
 			}
 		}
-		if(!managed){
-			throw new RuntimeException("The client os not managed by this broker.");
-		}
 	}
 
 	@Override

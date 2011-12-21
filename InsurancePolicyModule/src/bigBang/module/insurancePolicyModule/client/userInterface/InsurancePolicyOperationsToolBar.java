@@ -21,8 +21,8 @@ public abstract class InsurancePolicyOperationsToolBar extends BigBangOperations
 	
 	//DATA
 	protected MenuItem managerTransfer;
-	protected MenuItem clientAsSecuredObject;
-	protected MenuItem createSecuredObject;
+	protected MenuItem clientAsInsuredObject;
+	protected MenuItem createInsuredObject;
 	
 	//REQUESTS
 	protected MenuItem agencyInfoRequestItem;
@@ -115,22 +115,22 @@ public abstract class InsurancePolicyOperationsToolBar extends BigBangOperations
 			}
 		});
 		addItem(SUB_MENU.DATA, managerTransfer);
-		clientAsSecuredObject = new MenuItem("Criar Objecto Seguro a Partir do Cliente", new Command() {
+		clientAsInsuredObject = new MenuItem("Criar Unidade de Risco a Partir do Cliente", new Command() {
 			
 			@Override
 			public void execute() {
-				onCreateSecuredObjectFromClient();
+				onCreateInsuredObjectFromClient();
 			}
 		});
-		addItem(SUB_MENU.DATA, clientAsSecuredObject);
-		createSecuredObject = new MenuItem("Criar Objecto Seguro", new Command() {
+		addItem(SUB_MENU.DATA, clientAsInsuredObject);
+		createInsuredObject = new MenuItem("Criar Unidade de Risco", new Command() {
 			
 			@Override
 			public void execute() {
-				onCreateSecuredObject();
+				onCreateInsuredObject();
 			}
 		});
-		addItem(SUB_MENU.DATA, createSecuredObject);	
+		addItem(SUB_MENU.DATA, createInsuredObject);	
 		
 		//REQUESTS
 		agencyInfoRequestItem = new MenuItem("Pedido de Informação à Seguradora", new Command() {
@@ -189,6 +189,10 @@ public abstract class InsurancePolicyOperationsToolBar extends BigBangOperations
 		this.receiptItem.setEnabled(allow);
 	};
 	
+	public void allowCreateInsuredObject(boolean allow){
+		this.createInsuredObject.setEnabled(allow);
+	}
+	
 	public abstract void onVoidPolicy();
 
 	public abstract void onBrokerageTransfer();
@@ -201,9 +205,9 @@ public abstract class InsurancePolicyOperationsToolBar extends BigBangOperations
 
 	public abstract void onRequestInfoFromAgency();
 
-	public abstract void onCreateSecuredObject();
+	public abstract void onCreateInsuredObject();
 
-	public abstract void onCreateSecuredObjectFromClient();
+	public abstract void onCreateInsuredObjectFromClient();
 
 	public abstract void onCreateManagerTransfer();
 

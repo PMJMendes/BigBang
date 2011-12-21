@@ -4,17 +4,14 @@ import java.util.Collection;
 
 import bigBang.definitions.client.response.ResponseHandler;
 import bigBang.definitions.shared.InsuredObject;
+import bigBang.definitions.shared.InsuredObjectStub;
 
 public interface InsuredObjectDataBroker extends
 		DataBrokerInterface<InsuredObject> {
 
 	public void getInsuredObject(String id, ResponseHandler<InsuredObject> handler);
 	
-	public void getPolicyInsuredObjects(String policyId, ResponseHandler<Collection<InsuredObject>> handler);
+	public void getProcessInsuredObjects(String ownerId, ResponseHandler<Collection<InsuredObjectStub>> handler);
 	
-	public void updateInsuredObject(InsuredObject object, ResponseHandler<InsuredObject> handler);
-	
-	public void deleteInsuredObject(String id, ResponseHandler<Void> handler);
-	
-	public SearchDataBroker<InsuredObject> getSearchBroker();
+	public SearchDataBroker<InsuredObjectStub> getSearchBroker();
 }

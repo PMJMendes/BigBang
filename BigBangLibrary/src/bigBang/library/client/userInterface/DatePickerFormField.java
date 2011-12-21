@@ -232,6 +232,10 @@ public class DatePickerFormField extends FormField<Date> {
 		return this.format.parse(year+"-"+month+"-"+day);
 	}
 
+	public String getStringValue(){
+		return getValue() == null ? null : DateTimeFormat.getFormat(DEFAULT_FORMAT).format(getValue());
+	}
+	
 	@Override
 	public void setInvalid(boolean invalid){
 		if(field != null){

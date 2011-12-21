@@ -1,8 +1,6 @@
 package bigBang.library.client.userInterface;
 
 import com.google.gwt.dom.client.Style.Cursor;
-import com.google.gwt.event.dom.client.DragEvent;
-import com.google.gwt.event.dom.client.DragHandler;
 import com.google.gwt.event.dom.client.DragStartEvent;
 import com.google.gwt.event.dom.client.DragStartHandler;
 import com.google.gwt.event.dom.client.LoadEvent;
@@ -211,7 +209,7 @@ public class ImageHandlerPanel extends View {
 		height *= scale;
 
 		if(width < this.getViewportWidth()
-				|| height < this.getViewportHeight()){
+				&& height < this.getViewportHeight()){
 			fitToViewport();
 		}else{
 			image.setSize(width+"px", height+"px");

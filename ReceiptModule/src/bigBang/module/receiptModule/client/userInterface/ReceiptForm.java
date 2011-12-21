@@ -35,7 +35,7 @@ public class ReceiptForm extends FormView<Receipt> implements ReceiptDataBrokerC
 	protected ExpandableListBoxFormField mediator;
 	protected TextAreaFormField description;
 	protected TextAreaFormField notes;
-
+	
 	protected int dataVersion = 0;
 
 	public ReceiptForm(){

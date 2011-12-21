@@ -127,6 +127,17 @@ public class FormViewSection extends View {
 	public void registerFormField(FormField<?> field) {
 		this.fields.add(field);
 	}
+	
+	public void unregisterFormField(FormField<?> field){
+		field.removeFromParent();
+		this.fields.remove(field);
+	}
+	
+	public void unregisterAllFormFields(){
+		for(FormField<?> f : this.fields){
+			unregisterFormField(f);
+		}
+	}
 
 	public void clear(){
 		this.fields.clear();

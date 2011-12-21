@@ -275,7 +275,7 @@ public class DocuShareServiceImpl
 			lobjPage = (PDPage)lobjDocument.getDocumentCatalog().getAllPages().get(0);
 			try
 			{
-				lobjImage = lobjPage.convertToImage(BufferedImage.TYPE_4BYTE_ABGR_PRE, 200);
+				lobjImage = lobjPage.convertToImage(BufferedImage.TYPE_INT_ARGB, 200);
 			}
 			catch (Throwable e1)
 			{
@@ -286,9 +286,11 @@ public class DocuShareServiceImpl
 
 			lstreamOutput = new ByteArrayOutputStream();
 			ImageIO.write(lobjImage, "png", lstreamOutput);
+//			ImageIO.write(lobjImage, "jpg", lstreamOutput);
 			larrBuffer = lstreamOutput.toByteArray();
 			lstreamInput = new ByteArrayInputStream(larrBuffer);
 			lobjFile = new FileXfer(larrBuffer.length, "image/png", "pdfPage.png", lstreamInput);
+//			lobjFile = new FileXfer(larrBuffer.length, "image/jpeg", "pdfPage.jpg", lstreamInput);
 		}
 		catch (Throwable e)
 		{

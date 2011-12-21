@@ -5,114 +5,135 @@ import java.util.Collection;
 import bigBang.definitions.client.dataAccess.DataBroker;
 import bigBang.definitions.client.dataAccess.DataBrokerClient;
 import bigBang.definitions.client.dataAccess.InsuredObjectDataBroker;
+import bigBang.definitions.client.dataAccess.InsuredObjectDataBrokerClient;
+import bigBang.definitions.client.dataAccess.Search;
 import bigBang.definitions.client.dataAccess.SearchDataBroker;
+import bigBang.definitions.client.response.ResponseError;
 import bigBang.definitions.client.response.ResponseHandler;
 import bigBang.definitions.shared.BigBangConstants;
 import bigBang.definitions.shared.InsuredObject;
+import bigBang.definitions.shared.InsuredObjectStub;
+import bigBang.definitions.shared.SearchParameter;
+import bigBang.definitions.shared.SortOrder;
+import bigBang.definitions.shared.SortParameter;
+import bigBang.library.client.BigBangAsyncCallback;
+import bigBang.module.insurancePolicyModule.interfaces.PolicyObjectService;
+import bigBang.module.insurancePolicyModule.interfaces.PolicyObjectServiceAsync;
+import bigBang.module.insurancePolicyModule.shared.InsuredObjectSearchParameter;
+import bigBang.module.insurancePolicyModule.shared.InsuredObjectSortParameter;
 
 public class InsuredObjectDataBrokerImpl extends DataBroker<InsuredObject>
 		implements InsuredObjectDataBroker {
-
-	public InsuredObjectDataBrokerImpl(){
-		this.dataElementId = BigBangConstants.EntityIds.INSURED_OBJECT;
-	}
 	
-	@Override
-	public void incrementDataVersion() {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public boolean checkClientDataVersions() {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	@Override
-	public int getCurrentDataVersion() {
-		// TODO Auto-generated method stub
-		return 0;
-	}
-
-	@Override
-	public void registerClient(DataBrokerClient<InsuredObject> client) {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void unregisterClient(DataBrokerClient<InsuredObject> client) {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public Collection<DataBrokerClient<InsuredObject>> getClients() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public String getDataElementId() {
-		return this.dataElementId;
+	protected PolicyObjectServiceAsync service;
+	protected SearchDataBroker<InsuredObjectStub> searchBroker;
+	protected boolean requiresRefresh;
+	
+	public InsuredObjectDataBrokerImpl(){
+		this.dataElementId = BigBangConstants.EntityIds.POLICY_INSURED_OBJECT;
+		this.service = PolicyObjectService.Util.getInstance();
+		this.searchBroker = new InsuredObjectSearchBroker(this.service);
 	}
 
 	@Override
 	public void requireDataRefresh() {
-		// TODO Auto-generated method stub
-
+		this.requiresRefresh = true;
 	}
 
 	@Override
 	public void notifyItemCreation(String itemId) {
-		// TODO Auto-generated method stub
+		this.getInsuredObject(itemId, new ResponseHandler<InsuredObject>() {
 
+			@Override
+			public void onResponse(InsuredObject response) {
+				cache.add(response.id, response);
+				incrementDataVersion();
+				for(DataBrokerClient<InsuredObject> bc : getClients()){
+					((InsuredObjectDataBrokerClient) bc).addInsuredObject(response);
+					((InsuredObjectDataBrokerClient) bc).setDataVersionNumber(BigBangConstants.EntityIds.POLICY_INSURED_OBJECT, getCurrentDataVersion());
+				}
+			}
+
+			@Override
+			public void onError(Collection<ResponseError> errors) {
+			}
+		});
 	}
 
 	@Override
 	public void notifyItemDeletion(String itemId) {
-		// TODO Auto-generated method stub
-
+		cache.remove(itemId);
+		incrementDataVersion();
+		for(DataBrokerClient<InsuredObject> bc : getClients()){
+			((InsuredObjectDataBrokerClient) bc).removeInsuredObject(itemId);
+			((InsuredObjectDataBrokerClient) bc).setDataVersionNumber(BigBangConstants.EntityIds.POLICY_INSURED_OBJECT, getCurrentDataVersion());
+		}
 	}
 
 	@Override
 	public void notifyItemUpdate(String itemId) {
-		// TODO Auto-generated method stub
+		this.getInsuredObject(itemId, new ResponseHandler<InsuredObject>() {
 
+			@Override
+			public void onResponse(InsuredObject response) {
+				cache.add(response.id, response);
+				incrementDataVersion();
+				for(DataBrokerClient<InsuredObject> bc : getClients()){
+					((InsuredObjectDataBrokerClient) bc).updateInsuredObject(response);
+					((InsuredObjectDataBrokerClient) bc).setDataVersionNumber(BigBangConstants.EntityIds.POLICY_INSURED_OBJECT, getCurrentDataVersion());
+				}
+			}
+
+			@Override
+			public void onError(Collection<ResponseError> errors) {
+			}
+		});
 	}
 
 	@Override
 	public void getInsuredObject(String id,
-			ResponseHandler<InsuredObject> handler) {
-		// TODO Auto-generated method stub
+			final ResponseHandler<InsuredObject> handler) {
+		this.service.getObject(id, new BigBangAsyncCallback<InsuredObject>() {
 
+			@Override
+			public void onSuccess(InsuredObject result) {
+				handler.onResponse(result);
+			}
+		});
 	}
 
 	@Override
-	public void getPolicyInsuredObjects(String policyId,
-			ResponseHandler<Collection<InsuredObject>> handler) {
-		// TODO Auto-generated method stub
+	public void getProcessInsuredObjects(String ownerId,
+			final ResponseHandler<Collection<InsuredObjectStub>> handler) {
+		
+		InsuredObjectSearchParameter parameter = new InsuredObjectSearchParameter();
+		parameter.policyId = ownerId;
+		
+		SearchParameter[] parameters = new SearchParameter[]{
+			parameter	
+		};
 
+		SortParameter sort = new InsuredObjectSortParameter(InsuredObjectSortParameter.SortableField.NAME, SortOrder.ASC);
+		
+		SortParameter[] sorts = new SortParameter[]{
+			sort
+		};
+		
+		this.getSearchBroker().search(parameters, sorts, -1, new ResponseHandler<Search<InsuredObjectStub>>() {
+			
+			@Override
+			public void onResponse(Search<InsuredObjectStub> response) {
+				handler.onResponse(response.getResults());
+			}
+			
+			@Override
+			public void onError(Collection<ResponseError> errors) {}
+		});
 	}
 
 	@Override
-	public void updateInsuredObject(InsuredObject object,
-			ResponseHandler<InsuredObject> handler) {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void deleteInsuredObject(String id, ResponseHandler<Void> handler) {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public SearchDataBroker<InsuredObject> getSearchBroker() {
-		// TODO Auto-generated method stub
-		return null;
+	public SearchDataBroker<InsuredObjectStub> getSearchBroker() {
+		return this.searchBroker;
 	}
 
 }

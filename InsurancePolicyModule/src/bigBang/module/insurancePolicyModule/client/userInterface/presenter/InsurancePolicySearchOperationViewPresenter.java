@@ -12,10 +12,14 @@ import bigBang.definitions.client.dataAccess.InsuredObjectDataBrokerClient;
 import bigBang.definitions.client.response.ResponseError;
 import bigBang.definitions.client.response.ResponseHandler;
 import bigBang.definitions.shared.BigBangConstants;
+import bigBang.definitions.shared.Contact;
+import bigBang.definitions.shared.Document;
+import bigBang.definitions.shared.HistoryItemStub;
 import bigBang.definitions.shared.InsurancePolicy;
 import bigBang.definitions.shared.InsuredObject;
 import bigBang.definitions.shared.InsurancePolicy.TableSection;
 import bigBang.definitions.shared.InsurancePolicyStub;
+import bigBang.definitions.shared.InsuredObjectStub;
 import bigBang.definitions.shared.Receipt;
 import bigBang.library.client.BigBangPermissionManager;
 import bigBang.library.client.EventBus;
@@ -29,10 +33,13 @@ import bigBang.library.client.event.ActionInvokedEventHandler;
 import bigBang.library.client.event.SelectionChangedEvent;
 import bigBang.library.client.event.SelectionChangedEventHandler;
 import bigBang.library.client.userInterface.presenter.OperationViewPresenter;
+import bigBang.library.client.userInterface.presenter.UndoOperationViewPresenter;
+import bigBang.library.client.userInterface.view.UndoOperationView;
 import bigBang.library.client.userInterface.view.View;
 import bigBang.library.interfaces.Service;
 import bigBang.library.shared.Permission;
 import bigBang.module.insurancePolicyModule.client.userInterface.view.CreateReceiptView;
+import bigBang.module.insurancePolicyModule.client.userInterface.view.InsuredObjectView;
 import bigBang.module.insurancePolicyModule.interfaces.InsurancePolicyServiceAsync;
 import bigBang.module.insurancePolicyModule.shared.operation.InsurancePolicySearchOperation;
 import bigBang.module.insurancePolicyModule.shared.ModuleConstants;
@@ -46,6 +53,7 @@ public class InsurancePolicySearchOperationViewPresenter implements
 		CANCEL,
 		DELETE,
 		CREATE_RECEIPT,
+		CREATE_INSURED_OBJECT
 		//TODO
 	}
 	
@@ -62,12 +70,24 @@ public class InsurancePolicySearchOperationViewPresenter implements
 		String getExerciseTableFilter();
 		TableSection getCurrentTablePage();
 
+		//children lists
+		HasValueSelectables<Contact> getContactsList();
+		HasValueSelectables<Document> getDocumentsList();
+		HasValueSelectables<InsuredObjectStub> getObjectsList();
+		HasValueSelectables<HistoryItemStub> getHistoryList();
+		
+		void showHistory(InsurancePolicy policy, String selectedItemId);
+		
 		//Create receipt
 		void allowCreateReceipt(boolean allow);
 		HasWidgets showCreateReceiptForm(boolean show);
 		HasEditableValue<Receipt> getNewReceiptForm();
 		boolean isNewReceiptFormValid();
 		void lockNewReceiptForm(boolean lock);
+		
+		//Create Insured Object
+		HasWidgets showCreateInsuredObjectView(boolean show);
+		void allowCreateInsuredObject(boolean allow);
 		
 		void allowUpdate(boolean allow);
 		void allowDelete(boolean allow);
@@ -103,7 +123,7 @@ public class InsurancePolicySearchOperationViewPresenter implements
 		setView(view);
 		
 		this.broker = ((InsurancePolicyBroker)DataBrokerManager.Util.getInstance().getBroker(BigBangConstants.EntityIds.INSURANCE_POLICY));
-		this.insuredObjectBroker = ((InsuredObjectDataBroker)DataBrokerManager.Util.getInstance().getBroker(BigBangConstants.EntityIds.INSURED_OBJECT));
+		this.insuredObjectBroker = ((InsuredObjectDataBroker)DataBrokerManager.Util.getInstance().getBroker(BigBangConstants.EntityIds.POLICY_INSURED_OBJECT));
 		
 		this.insurancePolicyClient = initInsurancePolicyClient();
 		this.insuredObjectClient = initInsuredObjectClient();
@@ -148,7 +168,7 @@ public class InsurancePolicySearchOperationViewPresenter implements
 	
 	protected InsuredObjectDataBrokerClient initInsuredObjectClient() {
 		InsuredObjectDataBrokerClient result = new InsuredObjectDataBrokerClient() {
-			
+
 			@Override
 			public void setDataVersionNumber(String dataElementId, int number) {
 				// TODO Auto-generated method stub
@@ -226,38 +246,16 @@ public class InsurancePolicySearchOperationViewPresenter implements
 					if(selectedValue.id != null){
 						view.removeNewPolicyPreparation();
 						view.clearAllowedPermissions();
-						BigBangPermissionManager.Util.getInstance().getProcessPermissions(selectedValue.processId, new ResponseHandler<Permission[]> () {
+						broker.getPolicy(selectedValue.id, new ResponseHandler<InsurancePolicy>() {
+
 							@Override
-							public void onResponse(final Permission[] response) {
-								broker.getPolicy(selectedValue.id, new ResponseHandler<InsurancePolicy>() {
-
-									@Override
-									public void onResponse(InsurancePolicy value) {
-										view.getForm().setValue(value);
-										view.lockForm(true);
-										for(int i = 0; i < response.length; i++) {
-											Permission p = response[i];
-											if(p.instanceId == null){continue;}
-											if(p.id.equalsIgnoreCase(ModuleConstants.OpTypeIDs.EDIT_POLICY)){
-												view.allowUpdate(true);
-											}
-											if(p.id.equalsIgnoreCase(ModuleConstants.OpTypeIDs.DELETE_POLICY)){
-												view.allowDelete(true);
-											}
-											if(p.id.equalsIgnoreCase(ModuleConstants.OpTypeIDs.CREATE_RECEIPT)){
-												view.allowCreateReceipt(true);
-											}
-										}
-									}
-
-									@Override
-									public void onError(Collection<ResponseError> errors) {}
-								});
+							public void onResponse(InsurancePolicy value) {
+								view.getForm().setValue(value);
+								updatePermissions();
 							}
 
 							@Override
 							public void onError(Collection<ResponseError> errors) {}
-							
 						});
 					}
 				}
@@ -301,6 +299,82 @@ public class InsurancePolicySearchOperationViewPresenter implements
 				}
 			}
 		});
+		view.getContactsList().addSelectionChangedEventHandler(new SelectionChangedEventHandler() {
+			
+			@Override
+			public void onSelectionChanged(SelectionChangedEvent event) {
+				// TODO Auto-generated method stub
+				
+			}
+		});
+		view.getDocumentsList().addSelectionChangedEventHandler(new SelectionChangedEventHandler() {
+			
+			@Override
+			public void onSelectionChanged(SelectionChangedEvent event) {
+				// TODO Auto-generated method stub
+				
+			}
+		});
+		view.getObjectsList().addSelectionChangedEventHandler(new SelectionChangedEventHandler() {
+			
+			@Override
+			public void onSelectionChanged(SelectionChangedEvent event) {
+				@SuppressWarnings("unchecked")
+				InsuredObjectStub selectedValue = event.getFirstSelected() == null ? null : ((ValueSelectable<InsuredObjectStub>)event.getFirstSelected()).getValue();
+				if(selectedValue != null) {
+					showInsuredObject(selectedValue);
+				}
+			}
+		});
+		view.getHistoryList().addSelectionChangedEventHandler(new SelectionChangedEventHandler() {
+			
+			@Override
+			public void onSelectionChanged(SelectionChangedEvent event) {
+				@SuppressWarnings("unchecked")
+				HistoryItemStub selectedValue = event.getFirstSelected() == null ? null : ((ValueSelectable<HistoryItemStub>) event.getFirstSelected()).getValue();
+				if(selectedValue != null) {
+					showHistory(selectedValue);
+				}
+			}
+		});
+	}
+	
+	protected void updatePermissions(){
+		view.clearAllowedPermissions();
+		InsurancePolicy policy = view.getForm().getValue();
+		
+		if(broker.isTemp(policy)){
+			view.allowUpdate(true);
+			view.allowDelete(true);
+			view.allowCreateInsuredObject(true);
+		}else{
+			BigBangPermissionManager.Util.getInstance().getProcessPermissions(policy.processId, new ResponseHandler<Permission[]> () {
+				@Override
+				public void onResponse(final Permission[] response) {
+					view.lockForm(true);
+					for(int i = 0; i < response.length; i++) {
+						Permission p = response[i];
+						if(p.instanceId == null){continue;}
+						if(p.id.equalsIgnoreCase(ModuleConstants.OpTypeIDs.EDIT_POLICY)){
+							view.allowUpdate(true);
+						}
+						if(p.id.equalsIgnoreCase(ModuleConstants.OpTypeIDs.DELETE_POLICY)){
+							view.allowDelete(true);
+						}
+						if(p.id.equalsIgnoreCase(ModuleConstants.OpTypeIDs.CREATE_RECEIPT)){
+							view.allowCreateReceipt(true);
+						}
+						if(p.id.equalsIgnoreCase(ModuleConstants.OpTypeIDs.CREATE_INSURED_OBJECT)){
+							view.allowCreateInsuredObject(true);
+						}
+					}
+				}
+
+				@Override
+				public void onError(Collection<ResponseError> errors) {}
+						
+			});
+		}
 	}
 	
 	public void updatePolicy(final InsurancePolicy policy){
@@ -378,10 +452,52 @@ public class InsurancePolicySearchOperationViewPresenter implements
 		presenter.go(container);
 	}
 
+	protected void showInsuredObject(InsuredObjectStub object) {
+		HasWidgets container = view.showCreateInsuredObjectView(true);
+		final InsuredObjectViewPresenter presenter = new InsuredObjectViewPresenter(eventBus, new InsuredObjectView()){
+
+			@Override
+			public void onSave() {
+				// TODO Auto-generated method stub
+				
+			}
+
+			@Override
+			public void onCancel() {
+				// TODO Auto-generated method stub
+				
+			}
+
+			@Override
+			public void onDelete() {
+				// TODO Auto-generated method stub
+				
+			}
+			
+		};
+		presenter.setPolicy(view.getForm().getValue());
+		insuredObjectBroker.getInsuredObject(object.id, new ResponseHandler<InsuredObject>() {
+			
+			@Override
+			public void onResponse(InsuredObject response) {
+				presenter.setInsuredObject(response);
+			}
+			
+			@Override
+			public void onError(Collection<ResponseError> errors) {
+				return;
+			}
+		});
+		presenter.go(container);
+	}
+	
+	protected void showHistory(HistoryItemStub historyItem) {
+		view.showHistory(view.getForm().getValue(), historyItem.id);
+	}
+	
 	@Override
 	public void registerEventHandlers(EventBus eventBus) {
-		// TODO Auto-generated method stub
-
+		return;
 	}
 
 	@Override
@@ -396,20 +512,18 @@ public class InsurancePolicySearchOperationViewPresenter implements
 
 	@Override
 	public void goCompact(HasWidgets container) {
-		// TODO Auto-generated method stub
-		
+		return;
 	}
+		
 
 	@Override
 	public String setTargetEntity(String id) {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
 	public void setOperationPermission(boolean hasPermissionForOperation) {
-		// TODO Auto-generated method stub
-		
+		return;
 	}
 
 }

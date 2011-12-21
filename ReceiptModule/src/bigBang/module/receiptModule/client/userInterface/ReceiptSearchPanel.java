@@ -161,7 +161,7 @@ public class ReceiptSearchPanel extends SearchPanel<ReceiptStub> implements Rece
 		sortOptions.put(ReceiptSortParameter.SortableField.SUB_LINE, "Ramo");
 		sortOptions.put(ReceiptSortParameter.SortableField.EMISSION_DATE, "Data de Emissão");
 		sortOptions.put(ReceiptSortParameter.SortableField.LIMIT_DATE, "Data Limite");
-		sortOptions.put(ReceiptSortParameter.SortableField.MATURITY_DATE, "Data de Vencimento");
+		sortOptions.put(ReceiptSortParameter.SortableField.MATURITY_DATE, "Vigência");
 		sortOptions.put(ReceiptSortParameter.SortableField.PAYMENT_DATE, "Data de Pagamento");
 		
 		filtersPanel = new FiltersPanel(sortOptions);
@@ -195,7 +195,8 @@ public class ReceiptSearchPanel extends SearchPanel<ReceiptStub> implements Rece
 	public void doSearch() {
 		ReceiptSearchParameter parameter = new ReceiptSearchParameter();
 		parameter.freeText = this.getFreeText();
-		parameter.typeIds = new String[]{(String) filtersPanel.getFilterValue(Filters.TYPES)};
+		String type = (String) filtersPanel.getFilterValue(Filters.TYPES);
+		parameter.typeIds = type == null ? new String[0] : new String[]{type};
 		parameter.emitedFrom = (String) filtersPanel.getFilterValue(Filters.EMITED_FROM);
 		parameter.emitedTo = (String) filtersPanel.getFilterValue(Filters.EMITED_TO);
 		parameter.maturityFrom = (String) filtersPanel.getFilterValue(Filters.MATURITY_FROM);

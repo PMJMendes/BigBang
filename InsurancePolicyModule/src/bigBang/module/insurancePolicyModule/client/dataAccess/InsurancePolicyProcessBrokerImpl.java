@@ -136,7 +136,7 @@ public class InsurancePolicyProcessBrokerImpl extends DataBroker<InsurancePolicy
 			}
 			removeFromScratchPad(policy.id);
 			this.service.updateHeader(policy, new AsyncCallback<InsurancePolicy>() {
-				
+
 				@Override
 				public void onSuccess(InsurancePolicy result) {
 					String tempId = addToScratchPad(result);
@@ -223,7 +223,7 @@ public class InsurancePolicyProcessBrokerImpl extends DataBroker<InsurancePolicy
 			}
 			removeFromScratchPad(policy.id);
 			this.service.initializeNewPolicy(policy, new AsyncCallback<InsurancePolicy>() {
-				
+
 				@Override
 				public void onSuccess(InsurancePolicy result) {
 					String tempId = addToScratchPad(result);
@@ -236,13 +236,13 @@ public class InsurancePolicyProcessBrokerImpl extends DataBroker<InsurancePolicy
 			});
 		}else{ //if it is an existing policy
 			service.openForEdit(policy, new AsyncCallback<InsurancePolicy>() {
-				
+
 				@Override
 				public void onSuccess(InsurancePolicy result) {
 					addToScratchPad(result);
 					handler.onResponse(result);
 				}
-				
+
 				@Override
 				public void onFailure(Throwable caught) {}
 			});
@@ -264,12 +264,12 @@ public class InsurancePolicyProcessBrokerImpl extends DataBroker<InsurancePolicy
 	public void closePolicyResource(String policyId, final ResponseHandler<Void> handler) {
 		if(inScratchPad(policyId)){
 			service.discardPolicy(getScratchPadId(policyId), new AsyncCallback<InsurancePolicy>() {
-				
+
 				@Override
 				public void onSuccess(InsurancePolicy result) {
 					handler.onResponse(null);
 				}
-				
+
 				@Override
 				public void onFailure(Throwable caught) {
 					// TODO
@@ -300,67 +300,80 @@ public class InsurancePolicyProcessBrokerImpl extends DataBroker<InsurancePolicy
 			});
 		}
 	}
-	
+
 	@Override
 	public void createInsuredObject(String policyId, InsuredObject object,
-			ResponseHandler<InsuredObject> handler) {
-		// TODO Auto-generated method stub
-		
+			final ResponseHandler<InsuredObject> handler) {
+		if(inScratchPad(policyId)){
+			policyId = this.getScratchPadId(policyId);
+			this.service.createObjectInPad(policyId, new BigBangAsyncCallback<InsuredObject>() {
+
+				@Override
+				public void onSuccess(InsuredObject result) {
+					handler.onResponse(result);
+				}
+			});
+		}
 	}
 
 	@Override
 	public void updateInsuredObject(String policyId, InsuredObject object,
 			ResponseHandler<InsuredObject> handler) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void removeInsuredObject(String policyId, InsuredObject object) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void createExercise(String policyId, ExerciseStub exercise,
 			ResponseHandler<ExerciseStub> handler) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void updateExercise(String policyId, ExerciseStub exercise,
 			ResponseHandler<ExerciseStub> handler) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void removeExercise(String policyId, String exerciseId) {
 		// TODO Auto-generated method stub
-		
+
 	}
-	
+
 	protected boolean inScratchPad(String policyId) {
 		return this.policyScratchPadIds.containsKey(policyId);
 	}
-	
+
 	protected String getScratchPadId(String policyId){
 		if(inScratchPad(policyId)){
 			return policyScratchPadIds.get(policyId);
 		}
 		throw new RuntimeException("The policy is not currently in the scratchpad");
 	}
-	
+
 	protected void removeFromScratchPad(String policyId) {
 		this.policyScratchPadIds.remove(policyId);
 	}
-	
+
 	//Adds a policy to the scratchpad and returns a temporary id
 	protected String addToScratchPad(InsurancePolicy policy) {
 		String tempId = policy.id == null ? policy.scratchPadId : policy.id;
 		policyScratchPadIds.put(tempId, policy.id);
 		return tempId;
+	}
+
+	@Override
+	public boolean isTemp(InsurancePolicy policy) {
+		return inScratchPad(policy.id);
 	}
 
 }
