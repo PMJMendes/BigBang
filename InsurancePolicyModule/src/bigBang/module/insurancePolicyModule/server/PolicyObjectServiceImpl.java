@@ -215,6 +215,7 @@ public class PolicyObjectServiceImpl
 		{
 			lobjResult.coverageData[i] = new InsuredObject.CoverageData();
 			lobjResult.coverageData[i].coverageId = larrCoverages[i].GetCoverage().getKey().toString();
+			lobjResult.coverageData[i].coverageLabel = larrCoverages[i].GetCoverage().getLabel();
 			larrAuxFixed = new ArrayList<InsuredObject.CoverageData.FixedField>();
 			for ( j = 0; j < larrFixed.length; j++ )
 			{
