@@ -34,7 +34,7 @@ public class TestSpecialGetAsImage
 			}
 		};
 
-		Services.docuShareService.getItemAsImage("Document-422502", callback);
+		Services.docuShareService.getItemAsImage("Document-432723", callback);
 	}
 
 	private static void DoStep2(String fileStr)
