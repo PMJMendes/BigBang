@@ -22,6 +22,8 @@ delete from credite_egs.tblAgendaOperations;
 delete from credite_egs.tblAgendaProcesses;
 delete from credite_egs.tblAgendaItems;
 
+delete from credite_egs.tblpolicyvalueitems;
+
 delete from credite_egs.tblPNLogs;
 delete from credite_egs.tblPNNodes;
 delete from credite_egs.tblPNSteps;
@@ -50,6 +52,8 @@ delete from amartins.tblProcGeneralSystem;
 delete from amartins.tblAgendaOperations;
 delete from amartins.tblAgendaProcesses;
 delete from amartins.tblAgendaItems;
+
+delete from amartins.tblpolicyvalueitems;
 
 delete from amartins.tblPNLogs;
 delete from amartins.tblPNNodes;
