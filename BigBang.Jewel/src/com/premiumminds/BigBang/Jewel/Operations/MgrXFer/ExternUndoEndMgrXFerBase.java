@@ -16,9 +16,10 @@ public abstract class ExternUndoEndMgrXFerBase
 {
 	private static final long serialVersionUID = 1L;
 
-	public UUID midProcess;
+	public UUID midXFerProcess;
 	public UUID midReopener;
-	private UUID midOldManager;
+	public UUID midOldManager;
+	public UUID midNewManager;
 
 	public ExternUndoEndMgrXFerBase(UUID pidProcess)
 	{
@@ -38,7 +39,7 @@ public abstract class ExternUndoEndMgrXFerBase
 		lobjXFer = null;
 		try
 		{
-			lobjXFer = (MgrXFer)PNProcess.GetInstance(Engine.getCurrentNameSpace(), midProcess).GetData();
+			lobjXFer = (MgrXFer)PNProcess.GetInstance(Engine.getCurrentNameSpace(), midXFerProcess).GetData();
 		}
 		catch(Throwable e)
 		{
@@ -84,7 +85,7 @@ public abstract class ExternUndoEndMgrXFerBase
 		lstrBuffer.append("Gestor pedido: ");
 		try
 		{
-			lstrBuffer.append(User.GetInstance(Engine.getCurrentNameSpace(), lobjXFer.GetNewManagerID()).getDisplayName());
+			lstrBuffer.append(User.GetInstance(Engine.getCurrentNameSpace(), midNewManager).getDisplayName());
 		}
 		catch (Throwable e)
 		{
@@ -96,12 +97,11 @@ public abstract class ExternUndoEndMgrXFerBase
 
 	public UUID GetExternalProcess()
 	{
-		return midProcess;
+		return midXFerProcess;
 	}
 
 	protected void Run(SQLServer pdb)
 		throws JewelPetriException
 	{
-		midOldManager = GetProcess().GetManagerID();
 	}
 }

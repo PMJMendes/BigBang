@@ -239,7 +239,7 @@ public class AcceptXFer
 		{
 			lobjProc = PNProcess.GetInstance(Engine.getCurrentNameSpace(), larrProcs[i]);
 			lobjProc.SetManagerID(marrOldManagers[i], pdb);
-			TriggerOp(GetUndoTrigger(lobjXFer.GetOuterObjectType(), larrProcs[i]), pdb);
+			TriggerOp(GetUndoTrigger(lobjXFer.GetOuterObjectType(), larrProcs[i], marrOldManagers[i]), pdb);
 		}
 
 		GetProcess().Restart(pdb);
@@ -347,7 +347,7 @@ public class AcceptXFer
 		return lopResult;
 	}
 
-	private Operation GetUndoTrigger(UUID pidObjectType, UUID pidProc)
+	private Operation GetUndoTrigger(UUID pidObjectType, UUID pidProc, UUID pidOldMgr)
 		throws JewelPetriException
 	{
 		ExternUndoEndMgrXFerBase lopResult;
@@ -362,8 +362,10 @@ public class AcceptXFer
 
 		if ( lopResult != null )
 		{
-			lopResult.midProcess = GetProcess().getKey();
+			lopResult.midXFerProcess = GetProcess().getKey();
 			lopResult.midReopener = Engine.getCurrentUser();
+			lopResult.midOldManager = pidOldMgr;
+			lopResult.midNewManager = midNewManager;
 		}
 
 		return lopResult;
