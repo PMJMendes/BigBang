@@ -8,6 +8,8 @@ import bigBang.library.interfaces.FileService;
 import bigBang.library.interfaces.FileServiceAsync;
 import bigBang.library.interfaces.HistoryService;
 import bigBang.library.interfaces.HistoryServiceAsync;
+import bigBang.library.interfaces.TransferManagerService;
+import bigBang.library.interfaces.TransferManagerServiceAsync;
 import bigBang.module.clientModule.interfaces.ClientService;
 import bigBang.module.clientModule.interfaces.ClientServiceAsync;
 import bigBang.module.insurancePolicyModule.interfaces.InsurancePolicyService;
@@ -37,6 +39,8 @@ public class Services
 			GWT.create(HistoryService.class);
 	public static final BigBangProcessServiceAsync processService =
 			GWT.create(BigBangProcessService.class);
+	public static final TransferManagerServiceAsync transferManagerService =
+			GWT.create(TransferManagerService.class);
 	public static final TasksServiceAsync tasksService =
 			GWT.create(TasksService.class);
 	public static final ClientServiceAsync clientService =
