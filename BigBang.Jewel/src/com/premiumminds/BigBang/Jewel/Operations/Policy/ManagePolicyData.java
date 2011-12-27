@@ -203,6 +203,7 @@ public class ManagePolicyData
 					{
 						if ( mobjData.marrObjects[i].mbDeleted )
 						{
+							//Aqui não há código. Ver mais abaixo.
 						}
 						else if ( mobjData.marrObjects[i].mbNew )
 						{
@@ -231,6 +232,7 @@ public class ManagePolicyData
 					{
 						if ( mobjData.marrExercises[i].mbDeleted )
 						{
+							//Aqui não há código. Ver mais abaixo.
 						}
 						else if ( mobjData.marrExercises[i].mbNew )
 						{
@@ -259,6 +261,8 @@ public class ManagePolicyData
 					{
 						if ( mobjData.marrValues[i].mbDeleted )
 						{
+							if ( mobjData.marrValues[i].mid == null )
+								continue;
 							lobjValue = PolicyValue.GetInstance(Engine.getCurrentNameSpace(),
 									mobjData.marrValues[i].mid);
 							mobjData.marrValues[i].FromObject(lobjValue);
@@ -300,6 +304,8 @@ public class ManagePolicyData
 					{
 						if ( mobjData.marrObjects[i].mbDeleted )
 						{
+							if ( mobjData.marrObjects[i].mid == null )
+								continue;
 							lobjObject = PolicyObject.GetInstance(Engine.getCurrentNameSpace(),
 									mobjData.marrObjects[i].mid);
 							mobjData.marrObjects[i].FromObject(lobjObject);
@@ -315,6 +321,8 @@ public class ManagePolicyData
 					{
 						if ( mobjData.marrExercises[i].mbDeleted )
 						{
+							if ( mobjData.marrExercises[i].mid == null )
+								continue;
 							lobjExercise = PolicyExercise.GetInstance(Engine.getCurrentNameSpace(),
 									mobjData.marrExercises[i].mid);
 							mobjData.marrExercises[i].FromObject(lobjExercise);
@@ -584,6 +592,8 @@ public class ManagePolicyData
 					{
 						if ( mobjData.marrObjects[i].mbDeleted )
 						{
+							if ( mobjData.marrObjects[i].mid == null )
+								continue;
 							lobjObject = PolicyObject.GetInstance(Engine.getCurrentNameSpace(), (UUID) null);
 							mobjData.marrObjects[i].ToObject(lobjObject);
 							lobjObject.SaveToDb(pdb);
@@ -591,6 +601,7 @@ public class ManagePolicyData
 						}
 						else if ( mobjData.marrObjects[i].mbNew )
 						{
+							//Aqui não há código. Ver mais abaixo.
 						}
 						else
 						{
@@ -607,6 +618,8 @@ public class ManagePolicyData
 					{
 						if ( mobjData.marrExercises[i].mbDeleted )
 						{
+							if ( mobjData.marrExercises[i].mid == null )
+								continue;
 							lobjExercise = PolicyExercise.GetInstance(Engine.getCurrentNameSpace(), (UUID)null);
 							mobjData.marrExercises[i].ToObject(lobjExercise);
 							lobjExercise.SaveToDb(pdb);
@@ -614,6 +627,7 @@ public class ManagePolicyData
 						}
 						else if ( mobjData.marrExercises[i].mbNew )
 						{
+							//Aqui não há código. Ver mais abaixo.
 						}
 						else
 						{
@@ -630,6 +644,8 @@ public class ManagePolicyData
 					{
 						if ( mobjData.marrValues[i].mbDeleted )
 						{
+							if ( mobjData.marrValues[i].mid == null )
+								continue;
 							lobjValue = PolicyValue.GetInstance(Engine.getCurrentNameSpace(), (UUID)null);
 							mobjData.marrValues[i].midObject = ( mobjData.marrValues[i].mlngObject < 0 ? null :
 									mobjData.marrObjects[mobjData.marrValues[i].mlngObject].mid );
