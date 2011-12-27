@@ -230,6 +230,7 @@ public class AgendaItem
 		UUID lidAux;
 		int i;
 		ObjectBase lobjAux;
+		ArrayList<UUID> larrAux;
 
 		GetOperationIDs(pdb);
 		GetProcessIDs(pdb);
@@ -247,32 +248,33 @@ public class AgendaItem
 		try
 		{
 			lidAux = Engine.FindEntity(Engine.getCurrentNameSpace(), Constants.ObjID_AgendaProcess);
-
+			larrAux = new ArrayList<UUID>();
 			for ( i = 0; i < parrProcIDs.length; i++ )
 			{
 				lobjAux = Engine.GetWorkInstance(lidAux, (UUID)null);
 				lobjAux.setAt(0, getKey());
 				lobjAux.setAt(1, parrProcIDs[i]);
 				lobjAux.SaveToDb(pdb);
+				larrAux.add(lobjAux.getKey());
 			}
+			marrProcesses = larrAux.toArray(new UUID[larrAux.size()]);
 
 			lidAux = Engine.FindEntity(Engine.getCurrentNameSpace(), Constants.ObjID_AgendaOp);
-
+			larrAux = new ArrayList<UUID>();
 			for ( i = 0; i < parrOpIDs.length; i++ )
 			{
 				lobjAux = Engine.GetWorkInstance(lidAux, (UUID)null);
 				lobjAux.setAt(0, getKey());
 				lobjAux.setAt(1, parrOpIDs[i]);
 				lobjAux.SaveToDb(pdb);
+				larrAux.add(lobjAux.getKey());
 			}
+			marrOperations = larrAux.toArray(new UUID[larrAux.size()]);
 		}
 		catch (Throwable e)
 		{
 			throw new BigBangJewelException(e.getMessage(), e);
 		}
-
-		marrProcesses = parrProcIDs;
-		marrOperations = parrOpIDs;
 	}
 
 	public void ClearData(SQLServer pdb)
