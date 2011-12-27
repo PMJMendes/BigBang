@@ -42,7 +42,8 @@ public class TasksServiceImpl
 		IScript lobjScript;
 		IProcess lobjProcess;
 		Task lobjResult;
-		UUID[] larrAux;
+		UUID[] larrProcs;
+		UUID[] larrOps;
 		int i;
 
 		if ( Engine.getCurrentUser() == null )
@@ -52,6 +53,8 @@ public class TasksServiceImpl
 		try
 		{
 			lobjAgenda = AgendaItem.GetInstance(Engine.getCurrentNameSpace(), lid);
+			larrProcs = lobjAgenda.GetProcessIDs();
+			larrOps = lobjAgenda.GetOperationIDs();
 			lobjScript = PNScript.GetInstance(Engine.getCurrentNameSpace(), (UUID)lobjAgenda.getAt(2));
 		}
 		catch (Throwable e)
@@ -78,15 +81,14 @@ public class TasksServiceImpl
 		lobjResult.processTypeId = lobjScript.getKey().toString();
 		lobjResult.objectTypeId = lobjScript.GetDataType().toString();
 
-		larrAux = lobjAgenda.GetProcessIDs();
-		lobjResult.processIds = new String[larrAux.length];
-		lobjResult.objectIds = new String[larrAux.length];
-		for ( i = 0; i < larrAux.length; i++ )
+		lobjResult.processIds = new String[larrProcs.length];
+		lobjResult.objectIds = new String[larrProcs.length];
+		for ( i = 0; i < larrProcs.length; i++ )
 		{
-			lobjResult.processIds[i] = larrAux[i].toString();
+			lobjResult.processIds[i] = larrProcs[i].toString();
 			try
 			{
-				lobjProcess = PNProcess.GetInstance(Engine.getCurrentNameSpace(), larrAux[i]);
+				lobjProcess = PNProcess.GetInstance(Engine.getCurrentNameSpace(), larrProcs[i]);
 				lobjResult.objectIds[i] = lobjProcess.GetData().getKey().toString();
 			}
 			catch (Throwable e)
@@ -95,10 +97,9 @@ public class TasksServiceImpl
 			}
 		}
 
-		larrAux = lobjAgenda.GetOperationIDs();
-		lobjResult.operationIds = new String[larrAux.length];
-		for ( i = 0; i < larrAux.length; i++ )
-			lobjResult.operationIds[i] = larrAux[i].toString();
+		lobjResult.operationIds = new String[larrOps.length];
+		for ( i = 0; i < larrOps.length; i++ )
+			lobjResult.operationIds[i] = larrOps[i].toString();
 
 		return lobjResult;
 	}
@@ -107,6 +108,7 @@ public class TasksServiceImpl
 		throws SessionExpiredException, BigBangException
 	{
 		AgendaItem lobjAgenda;
+		UUID[] larrAux;
 		MasterDB ldb;
 
 		if ( Engine.getCurrentUser() == null )
@@ -115,13 +117,14 @@ public class TasksServiceImpl
 		try
 		{
 			lobjAgenda = AgendaItem.GetInstance(Engine.getCurrentNameSpace(), UUID.fromString(taskId));
+			larrAux = lobjAgenda.GetOperationIDs();
 		}
 		catch (Throwable e)
 		{
 			throw new BigBangException(e.getMessage(), e);
 		}
 
-		if ( lobjAgenda.GetOperationIDs().length > 0 )
+		if ( larrAux.length > 0 )
 			throw new BigBangException("Erro: Não pode cancelar items de agenda com operações associadas.");
 
 		try

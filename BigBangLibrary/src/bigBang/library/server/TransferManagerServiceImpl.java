@@ -51,7 +51,7 @@ public class TransferManagerServiceImpl
 		try
 		{
 			lobjResult.dataObjectIds = new String[] {PNProcess.GetInstance(Engine.getCurrentNameSpace(),
-					lidProc).GetData().getKey().toString()};
+					lobjAX.midParentProc).GetData().getKey().toString()};
 		}
 		catch (JewelPetriException e)
 		{
@@ -96,7 +96,7 @@ public class TransferManagerServiceImpl
 		try
 		{
 			lobjResult.dataObjectIds = new String[] {PNProcess.GetInstance(Engine.getCurrentNameSpace(),
-					lidProc).GetData().getKey().toString()};
+					lobjCX.midParentProc).GetData().getKey().toString()};
 		}
 		catch (JewelPetriException e)
 		{

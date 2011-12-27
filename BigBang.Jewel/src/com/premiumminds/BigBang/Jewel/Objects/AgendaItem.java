@@ -48,71 +48,179 @@ public class AgendaItem
 	private UUID[] marrProcesses;
 
 	public void Initialize()
-		throws JewelEngineException
-	{
-		int[] larrMembers;
-		java.lang.Object[] larrParams;
-		IEntity lrefAux;
-		MasterDB ldb;
-		ArrayList<UUID> larrAux;
-		ResultSet lrs;
-		ObjectBase lobjAux;
-
-		larrMembers = new int[1];
-		larrMembers[0] = 0;
-		larrParams = new java.lang.Object[1];
-		larrParams[0] = getKey();
-
-		larrAux = new ArrayList<UUID>();
-		try
+			throws JewelEngineException
 		{
-			lrefAux = Entity.GetInstance(Engine.FindEntity(getNameSpace(), Constants.ObjID_AgendaOp));
-			ldb = new MasterDB();
-			lrs = lrefAux.SelectByMembers(ldb, larrMembers, larrParams, new int[0]);
-			while ( lrs.next() )
+			MasterDB ldb;
+
+			try
 			{
-				lobjAux = Engine.GetWorkInstance(lrefAux.getKey(), lrs);
-				larrAux.add((UUID)lobjAux.getAt(1));
+				ldb = new MasterDB();
 			}
-			lrs.close();
-			ldb.Disconnect();
-		}
-		catch (Throwable e)
-		{
-			throw new JewelEngineException(e.getMessage(), e);
-		}
-
-		marrOperations = larrAux.toArray(new UUID[larrAux.size()]);
-
-		larrAux = new ArrayList<UUID>();
-		try
-		{
-			lrefAux = Entity.GetInstance(Engine.FindEntity(getNameSpace(), Constants.ObjID_AgendaProcess));
-			ldb = new MasterDB();
-			lrs = lrefAux.SelectByMembers(ldb, larrMembers, larrParams, new int[0]);
-			while ( lrs.next() )
+			catch (Throwable e)
 			{
-				lobjAux = Engine.GetWorkInstance(lrefAux.getKey(), lrs);
-				larrAux.add((UUID)lobjAux.getAt(1));
+				throw new JewelEngineException(e.getMessage(), e);
 			}
-			lrs.close();
-			ldb.Disconnect();
-		}
-		catch (Throwable e)
-		{
-			throw new JewelEngineException(e.getMessage(), e);
-		}
 
-		marrProcesses = larrAux.toArray(new UUID[larrAux.size()]);
-	}
+			try
+			{
+				GetOperationIDs(ldb);
+				GetProcessIDs(ldb);
+			}
+			catch (Throwable e)
+			{
+				try { ldb.Disconnect(); } catch (Throwable e1) {}
+				throw new JewelEngineException(e.getMessage(), e);
+			}
+
+			try
+			{
+				ldb.Disconnect();
+			}
+			catch (Throwable e)
+			{
+				throw new JewelEngineException(e.getMessage(), e);
+			}
+		}
 
 	public UUID[] GetProcessIDs()
+		throws JewelEngineException
 	{
+		MasterDB ldb;
+
+		if ( marrProcesses == null )
+		{
+			try
+			{
+				ldb = new MasterDB();
+			}
+			catch (Throwable e)
+			{
+				throw new JewelEngineException(e.getMessage(), e);
+			}
+
+			try
+			{
+				GetProcessIDs(ldb);
+			}
+			catch (Throwable e)
+			{
+				try { ldb.Disconnect(); } catch (Throwable e1) {}
+				throw new JewelEngineException(e.getMessage(), e);
+			}
+
+			try
+			{
+				ldb.Disconnect();
+			}
+			catch (Throwable e)
+			{
+				throw new JewelEngineException(e.getMessage(), e);
+			}
+		}
+
 		return marrProcesses;
 	}
 
 	public UUID[] GetOperationIDs()
+		throws JewelEngineException
 	{
+		MasterDB ldb;
+
+		if ( marrOperations == null )
+		{
+			try
+			{
+				ldb = new MasterDB();
+			}
+			catch (Throwable e)
+			{
+				throw new JewelEngineException(e.getMessage(), e);
+			}
+
+			try
+			{
+				GetOperationIDs(ldb);
+			}
+			catch (Throwable e)
+			{
+				try { ldb.Disconnect(); } catch (Throwable e1) {}
+				throw new JewelEngineException(e.getMessage(), e);
+			}
+
+			try
+			{
+				ldb.Disconnect();
+			}
+			catch (Throwable e)
+			{
+				throw new JewelEngineException(e.getMessage(), e);
+			}
+		}
+
+		return marrOperations;
+	}
+
+	public UUID[] GetProcessIDs(SQLServer pdb)
+		throws BigBangJewelException
+	{
+		IEntity lrefAux;
+		ArrayList<UUID> larrAux;
+		ResultSet lrs;
+		ObjectBase lobjAux;
+
+		if ( marrProcesses == null )
+		{
+			larrAux = new ArrayList<UUID>();
+			try
+			{
+				lrefAux = Entity.GetInstance(Engine.FindEntity(getNameSpace(), Constants.ObjID_AgendaProcess));
+				lrs = lrefAux.SelectByMembers(pdb, new int[] {0}, new java.lang.Object[] {getKey()}, new int[0]);
+				while ( lrs.next() )
+				{
+					lobjAux = Engine.GetWorkInstance(lrefAux.getKey(), lrs);
+					larrAux.add(lobjAux.getKey());
+				}
+				lrs.close();
+			}
+			catch (Throwable e)
+			{
+				throw new BigBangJewelException(e.getMessage(), e);
+			}
+			marrProcesses = larrAux.toArray(new UUID[larrAux.size()]);
+		}
+
+		return marrProcesses;
+	}
+
+	public UUID[] GetOperationIDs(SQLServer pdb)
+		throws BigBangJewelException
+	{
+		IEntity lrefAux;
+		ArrayList<UUID> larrAux;
+		ResultSet lrs;
+		ObjectBase lobjAux;
+
+		if ( marrOperations == null )
+		{
+			larrAux = new ArrayList<UUID>();
+			try
+			{
+				lrefAux = Entity.GetInstance(Engine.FindEntity(getNameSpace(), Constants.ObjID_AgendaOp));
+				lrs = lrefAux.SelectByMembers(pdb, new int[] {0}, new java.lang.Object[] {getKey()}, new int[0]);
+				while ( lrs.next() )
+				{
+					lobjAux = Engine.GetWorkInstance(lrefAux.getKey(), lrs);
+					larrAux.add(lobjAux.getKey());
+				}
+				lrs.close();
+			}
+			catch (Throwable e)
+			{
+				throw new BigBangJewelException(e.getMessage(), e);
+			}
+			marrOperations = larrAux.toArray(new UUID[larrAux.size()]);
+		}
+
 		return marrOperations;
 	}
 
@@ -123,6 +231,8 @@ public class AgendaItem
 		int i;
 		ObjectBase lobjAux;
 
+		GetOperationIDs(pdb);
+		GetProcessIDs(pdb);
 		if ( ((marrProcesses != null) && (marrProcesses.length > 0)) || 
 				((marrOperations != null) && (marrOperations.length > 0)) )
 			throw new BigBangJewelException("Erro: Não pode redefinir os processos de items de agenda pre-existentes.");
@@ -176,10 +286,12 @@ public class AgendaItem
 
 		try
 		{
+			GetProcessIDs(pdb);
 			lrefAux = Entity.GetInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), Constants.ObjID_AgendaProcess));
 			for ( i = 0; i < marrProcesses.length; i++ )
 				lrefAux.Delete(pdb, marrProcesses[i]);
 
+			GetOperationIDs(pdb);
 			lrefAux = Entity.GetInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), Constants.ObjID_AgendaOp));
 			for ( i = 0; i < marrOperations.length; i++ )
 				lrefAux.Delete(pdb, marrOperations[i]);
@@ -191,7 +303,7 @@ public class AgendaItem
 			throw new BigBangJewelException(e.getMessage(), e);
 		}
 
-		marrProcesses = new UUID[0];
-		marrOperations = new UUID[0];
+		marrProcesses = null;
+		marrOperations = null;
 	}
 }

@@ -2,8 +2,8 @@ package com.premiumminds.BigBang.Jewel.Operations.MgrXFer;
 
 import java.sql.ResultSet;
 import java.sql.Timestamp;
-import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Hashtable;
 import java.util.UUID;
 
 import Jewel.Engine.Engine;
@@ -103,10 +103,10 @@ public class AcceptXFer
 		UUID[] larrProcs;
 		int i;
 		IProcess lobjProc;
-		ArrayList<UUID> larrItems;
+		Hashtable<UUID, AgendaItem> larrItems;
 		ResultSet lrs;
 		IEntity lrefAux;
-		AgendaItem lobjItem;
+		ObjectBase lobjAgendaProc;
 
 		lobjData = GetProcess().GetData();
 		if ( lobjData == null )
@@ -143,7 +143,7 @@ public class AcceptXFer
 			TriggerOp(GetRunTrigger(lobjXFer.GetOuterObjectType(), larrProcs[i], marrOldManagers[i]), pdb);
 		}
 
-		larrItems = new ArrayList<UUID>();
+		larrItems = new Hashtable<UUID, AgendaItem>();
 		lrs = null;
 		try
 		{
@@ -151,17 +151,17 @@ public class AcceptXFer
 			lrs = lrefAux.SelectByMembers(pdb, new int[] {1}, new java.lang.Object[] {GetProcess().getKey()}, new int[0]);
 			while ( lrs.next() )
 			{
-				larrItems.add(UUID.fromString(lrs.getString(1)));
+				lobjAgendaProc = Engine.GetWorkInstance(lrefAux.getKey(), lrs);
+				larrItems.put((UUID)lobjAgendaProc.getAt(0),
+						AgendaItem.GetInstance(Engine.getCurrentNameSpace(), (UUID)lobjAgendaProc.getAt(0)));
 			}
 			lrs.close();
 			lrs = null;
 
-			lrefAux = Entity.GetInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), Constants.ObjID_AgendaItem));
-			for ( i = 0; i < larrItems.size(); i++ )
+			for ( AgendaItem lobjItem: larrItems.values() )
 			{
-				lobjItem = AgendaItem.GetInstance(Engine.getCurrentNameSpace(), larrItems.get(i));
 				lobjItem.ClearData(pdb);
-				lrefAux.Delete(pdb, lobjItem.getKey());
+				lobjItem.getDefinition().Delete(pdb, lobjItem.getKey());
 			}
 		}
 		catch (Throwable e)
@@ -363,7 +363,7 @@ public class AcceptXFer
 		if ( lopResult != null )
 		{
 			lopResult.midProcess = GetProcess().getKey();
-			lopResult.midReopener = Engine.getCurrentNameSpace();
+			lopResult.midReopener = Engine.getCurrentUser();
 		}
 
 		return lopResult;
