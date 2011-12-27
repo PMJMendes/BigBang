@@ -305,6 +305,8 @@ public class ClientServiceImpl
 
 		try
 		{
+			transfer.dataObjectIds = new String[] {PNProcess.GetInstance(Engine.getCurrentNameSpace(),
+					UUID.fromString(transfer.managedProcessIds[0])).GetData().getKey().toString()};
 			lobjCMX.Execute();
 		}
 		catch (JewelPetriException e)
@@ -325,6 +327,7 @@ public class ClientServiceImpl
 			transfer.processId = lobjCMX.midCreatedSubproc.toString();
 			transfer.status = ManagerTransfer.Status.PENDING;
 		}
+		transfer.objectTypeId = Constants.ObjID_Client.toString();
 
 		return transfer;
 	}
@@ -551,8 +554,11 @@ public class ClientServiceImpl
 			lobjScript = PNScript.GetInstance(Engine.getCurrentNameSpace(), Constants.ProcID_MgrXFer);
 			lobjProc = lobjScript.CreateInstance(Engine.getCurrentNameSpace(), lobjXFer.getKey(), null, ldb);
 
+			transfer.dataObjectIds = new String[transfer.managedProcessIds.length];
 			for ( i = 0; i < transfer.managedProcessIds.length; i++ )
 			{
+				transfer.dataObjectIds[i] = PNProcess.GetInstance(Engine.getCurrentNameSpace(),
+						UUID.fromString(transfer.managedProcessIds[i])).GetData().getKey().toString();
 				lobjCMX = new CreateClientMgrXFer(UUID.fromString(transfer.managedProcessIds[i]));
 				lobjCMX.midNewManager = lidManager;
 				lobjCMX.mbMassTransfer = true;
@@ -630,6 +636,7 @@ public class ClientServiceImpl
 			transfer.processId = lobjProc.getKey().toString();
 			transfer.status = ManagerTransfer.Status.PENDING;
 		}
+		transfer.objectTypeId = Constants.ObjID_Client.toString();
 
 		return transfer;
 	}

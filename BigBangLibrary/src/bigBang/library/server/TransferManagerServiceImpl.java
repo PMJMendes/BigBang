@@ -191,7 +191,7 @@ public class TransferManagerServiceImpl
 			throw new BigBangException(e.getMessage(), e);
 		}
 
-		larrProcs = new UUID[] {lobjCX.midParentProc};
+		larrProcs = lobjXFer.GetProcessIDs();
 
 		lobjResult = new ManagerTransfer();
 		lobjResult.id = lobjXFer.getKey().toString();
@@ -213,7 +213,7 @@ public class TransferManagerServiceImpl
 		lobjResult.objectTypeId = lobjXFer.GetOuterObjectType().toString();
 		lobjResult.newManagerId = lobjXFer.GetNewManagerID().toString();
 		lobjResult.processId = lidProc.toString();
-		lobjResult.status = ManagerTransfer.Status.ACCEPTED;
+		lobjResult.status = ManagerTransfer.Status.CANCELED;
 
 		return lobjResult;
 	}
