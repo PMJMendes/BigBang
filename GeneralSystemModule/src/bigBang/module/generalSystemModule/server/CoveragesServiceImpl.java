@@ -645,10 +645,10 @@ public class CoveragesServiceImpl
 			larrResult[i].fieldTypeId = ((UUID)larrTaxes[i].getAt(2)).toString();
 			larrResult[i].unitsLabel = (String)larrTaxes[i].getAt(3);
 			larrResult[i].defaultValue = (String)larrTaxes[i].getAt(4);
-			larrResult[i].variesByObject = (Boolean)larrTaxes[i].getAt(4);
-			larrResult[i].variesByExercise = (Boolean)larrTaxes[i].getAt(4);
-			larrResult[i].refersToEntityId = (larrTaxes[i].getAt(4) == null ? null : ((UUID)larrTaxes[i].getAt(4)).toString());
-			larrResult[i].columnOrder = (Integer)larrTaxes[i].getAt(4);
+			larrResult[i].variesByObject = (Boolean)larrTaxes[i].getAt(5);
+			larrResult[i].variesByExercise = (Boolean)larrTaxes[i].getAt(6);
+			larrResult[i].refersToEntityId = (larrTaxes[i].getAt(7) == null ? null : ((UUID)larrTaxes[i].getAt(7)).toString());
+			larrResult[i].columnOrder = (Integer)larrTaxes[i].getAt(8);
 		}
 
 		return larrResult;
