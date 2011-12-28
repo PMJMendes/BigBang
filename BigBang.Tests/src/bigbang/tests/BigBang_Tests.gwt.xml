@@ -7,6 +7,7 @@
 	<inherits name="bigBang.definitions.BigBangDefinitions" />
 	<inherits name="bigBang.module.loginModule.LoginModule" />
 	<inherits name="bigBang.module.tasksModule.TasksModule" />
+	<inherits name="bigBang.module.generalSystemModule.GeneralSystemModule" />
 	<inherits name="bigBang.module.clientModule.ClientModule" />
 	<inherits name="bigBang.module.insurancePolicyModule.InsurancePolicyModule"/>
 	<inherits name="bigBang.module.receiptModule.ReceiptModule"/>

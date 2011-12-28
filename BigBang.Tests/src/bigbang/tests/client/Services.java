@@ -12,6 +12,8 @@ import bigBang.library.interfaces.TransferManagerService;
 import bigBang.library.interfaces.TransferManagerServiceAsync;
 import bigBang.module.clientModule.interfaces.ClientService;
 import bigBang.module.clientModule.interfaces.ClientServiceAsync;
+import bigBang.module.generalSystemModule.interfaces.CoveragesService;
+import bigBang.module.generalSystemModule.interfaces.CoveragesServiceAsync;
 import bigBang.module.insurancePolicyModule.interfaces.InsurancePolicyService;
 import bigBang.module.insurancePolicyModule.interfaces.InsurancePolicyServiceAsync;
 import bigBang.module.insurancePolicyModule.interfaces.PolicyExerciseService;
@@ -43,6 +45,8 @@ public class Services
 			GWT.create(TransferManagerService.class);
 	public static final TasksServiceAsync tasksService =
 			GWT.create(TasksService.class);
+	public static final CoveragesServiceAsync coveragesService =
+			GWT.create(CoveragesService.class);
 	public static final ClientServiceAsync clientService =
 			GWT.create(ClientService.class);
 	public static final InsurancePolicyServiceAsync insurancePolicyService =
