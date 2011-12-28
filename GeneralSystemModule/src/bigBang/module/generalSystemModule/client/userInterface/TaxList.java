@@ -26,7 +26,7 @@ public class TaxList extends FilterableList<Tax> {
 				label = new Label();
 			Tax tax = (Tax) info;
 			setTitle(tax.name);
-			label.setText(tax.value + "TODO $");
+			label.setText(tax.defaultValue + "TODO $");
 		};
 	}
 	

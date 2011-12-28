@@ -10,9 +10,9 @@ public class Tax
 	public String id;
 	public String name;
 	public String coverageId;
-	public String currencyId; // Isto devia chamar-se fieldTypeId
-	public double value; // Default value
+	public String fieldTypeId;
 	public String unitsLabel; // Novo!
+	public String defaultValue; // Default value
 	public boolean variesByObject; // Novo!
 	public boolean variesByExercise;  // Novo!
 	public String refersToEntityId;  // Novo!
@@ -24,7 +24,12 @@ public class Tax
 		this.id = original.id;
 		this.name = original.name;
 		this.coverageId = original.coverageId;
-		this.currencyId = original.currencyId;
-		this.value = original.value;
+		this.unitsLabel = original.unitsLabel;
+		this.fieldTypeId = original.fieldTypeId;
+		this.defaultValue = original.defaultValue;
+		this.variesByObject = original.variesByObject;
+		this.variesByExercise = original.variesByExercise;
+		this.refersToEntityId = original.refersToEntityId;
+		this.columnOrder = original.columnOrder;
 	}
 }

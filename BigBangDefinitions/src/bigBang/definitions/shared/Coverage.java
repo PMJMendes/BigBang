@@ -23,6 +23,8 @@ public class Coverage
 		this.id = original.id;
 		this.name = original.name;
 		this.subLineId = original.subLineId;
+		this.isMandatory = original.isMandatory;
+		this.isHeader = original.isHeader;
 		this.taxes = original.taxes;
 	}
 }

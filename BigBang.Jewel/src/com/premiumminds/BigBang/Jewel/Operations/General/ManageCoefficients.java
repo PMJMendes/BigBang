@@ -1,10 +1,10 @@
 package com.premiumminds.BigBang.Jewel.Operations.General;
 
 import java.io.Serializable;
-import java.math.BigDecimal;
 import java.util.UUID;
 
 import Jewel.Engine.Engine;
+import Jewel.Engine.Constants.ObjectGUIDs;
 import Jewel.Engine.DataAccess.SQLServer;
 import Jewel.Engine.Implementation.Entity;
 import Jewel.Engine.SysObjects.ObjectBase;
@@ -31,8 +31,13 @@ public class ManageCoefficients
 		public UUID mid;
 		public String mstrName;
 		public UUID midCoverage;
-		public UUID midCurrency;
-		public double mdblValue;
+		public UUID midType;
+		public String mstrUnits;
+		public String mstrDefault;
+		public boolean mbVariesByObject;
+		public boolean mbVariesByExercise;
+		public UUID midReferenceTo;
+		public int mlngColumn;
 		public TaxData mobjPrevValues;
 	}
 
@@ -361,8 +366,13 @@ public class ManageCoefficients
 				lobjAuxTax = Tax.GetInstance(Engine.getCurrentNameSpace(), (UUID)null);
 				lobjAuxTax.setAt(0, parrData[i].mstrName);
 				lobjAuxTax.setAt(1, parrData[i].midCoverage);
-				lobjAuxTax.setAt(2, parrData[i].midCurrency);
-				lobjAuxTax.setAt(3, BigDecimal.valueOf(parrData[i].mdblValue));
+				lobjAuxTax.setAt(2, parrData[i].midType);
+				lobjAuxTax.setAt(3, parrData[i].mstrUnits);
+				lobjAuxTax.setAt(4, parrData[i].mstrDefault);
+				lobjAuxTax.setAt(5, parrData[i].mbVariesByObject);
+				lobjAuxTax.setAt(6, parrData[i].mbVariesByExercise);
+				lobjAuxTax.setAt(7, parrData[i].midReferenceTo);
+				lobjAuxTax.setAt(8, parrData[i].mlngColumn);
 				lobjAuxTax.SaveToDb(pdb);
 			}
 			catch (Throwable e)
@@ -388,16 +398,26 @@ public class ManageCoefficients
 			parrData[i].mobjPrevValues.mid = lobjAuxTax.getKey();
 			parrData[i].mobjPrevValues.mstrName = (String)lobjAuxTax.getAt(0);
 			parrData[i].mobjPrevValues.midCoverage = (UUID)lobjAuxTax.getAt(1);
-			parrData[i].mobjPrevValues.midCurrency = (UUID)lobjAuxTax.getAt(2);
-			parrData[i].mobjPrevValues.mdblValue = ((BigDecimal)lobjAuxTax.getAt(3)).doubleValue();
+			parrData[i].mobjPrevValues.midType = (UUID)lobjAuxTax.getAt(2);
+			parrData[i].mobjPrevValues.mstrUnits = (String)lobjAuxTax.getAt(3);
+			parrData[i].mobjPrevValues.mstrDefault = (String)lobjAuxTax.getAt(4);
+			parrData[i].mobjPrevValues.mbVariesByObject = (Boolean)lobjAuxTax.getAt(5);
+			parrData[i].mobjPrevValues.mbVariesByExercise = (Boolean)lobjAuxTax.getAt(6);
+			parrData[i].mobjPrevValues.midReferenceTo = (UUID)lobjAuxTax.getAt(7);
+			parrData[i].mobjPrevValues.mlngColumn = (Integer)lobjAuxTax.getAt(8);
 			parrData[i].mobjPrevValues.mobjPrevValues = null;
 
 			try
 			{
 				lobjAuxTax.setAt(0, parrData[i].mstrName);
 				lobjAuxTax.setAt(1, parrData[i].midCoverage);
-				lobjAuxTax.setAt(2, parrData[i].midCurrency);
-				lobjAuxTax.setAt(3, BigDecimal.valueOf(parrData[i].mdblValue));
+				lobjAuxTax.setAt(2, parrData[i].midType);
+				lobjAuxTax.setAt(3, parrData[i].mstrUnits);
+				lobjAuxTax.setAt(4, parrData[i].mstrDefault);
+				lobjAuxTax.setAt(5, parrData[i].mbVariesByObject);
+				lobjAuxTax.setAt(6, parrData[i].mbVariesByExercise);
+				lobjAuxTax.setAt(7, parrData[i].midReferenceTo);
+				lobjAuxTax.setAt(8, parrData[i].mlngColumn);
 				lobjAuxTax.SaveToDb(pdb);
 			}
 			catch (Throwable e)
@@ -429,8 +449,13 @@ public class ManageCoefficients
 			lobjAuxTax = Tax.GetInstance(Engine.getCurrentNameSpace(), parrData[i].mid);
 			parrData[i].mstrName = (String)lobjAuxTax.getAt(0);
 			parrData[i].midCoverage = (UUID)lobjAuxTax.getAt(1);
-			parrData[i].midCurrency = (UUID)lobjAuxTax.getAt(2);
-			parrData[i].mdblValue = ((BigDecimal)lobjAuxTax.getAt(3)).doubleValue();
+			parrData[i].midType = (UUID)lobjAuxTax.getAt(2);
+			parrData[i].mstrUnits = (String)lobjAuxTax.getAt(3);
+			parrData[i].mstrDefault = (String)lobjAuxTax.getAt(4);
+			parrData[i].mbVariesByObject = (Boolean)lobjAuxTax.getAt(5);
+			parrData[i].mbVariesByExercise = (Boolean)lobjAuxTax.getAt(6);
+			parrData[i].midReferenceTo = (UUID)lobjAuxTax.getAt(7);
+			parrData[i].mlngColumn = (Integer)lobjAuxTax.getAt(8);
 			parrData[i].mobjPrevValues = null;
 
 			try
@@ -487,8 +512,13 @@ public class ManageCoefficients
 			{
 				lobjAuxTax.setAt(0, parrData[i].mobjPrevValues.mstrName);
 				lobjAuxTax.setAt(1, parrData[i].mobjPrevValues.midCoverage);
-				lobjAuxTax.setAt(2, parrData[i].mobjPrevValues.midCurrency);
-				lobjAuxTax.setAt(3, BigDecimal.valueOf(parrData[i].mobjPrevValues.mdblValue));
+				lobjAuxTax.setAt(2, parrData[i].mobjPrevValues.midType);
+				lobjAuxTax.setAt(3, parrData[i].mobjPrevValues.mstrUnits);
+				lobjAuxTax.setAt(4, parrData[i].mobjPrevValues.mstrDefault);
+				lobjAuxTax.setAt(5, parrData[i].mobjPrevValues.mbVariesByObject);
+				lobjAuxTax.setAt(6, parrData[i].mobjPrevValues.mbVariesByExercise);
+				lobjAuxTax.setAt(7, parrData[i].mobjPrevValues.midReferenceTo);
+				lobjAuxTax.setAt(8, parrData[i].mobjPrevValues.mlngColumn);
 				lobjAuxTax.SaveToDb(pdb);
 			}
 			catch (Throwable e)
@@ -511,8 +541,13 @@ public class ManageCoefficients
 				lobjAuxTax = Tax.GetInstance(Engine.getCurrentNameSpace(), (UUID)null);
 				lobjAuxTax.setAt(0, parrData[i].mstrName);
 				lobjAuxTax.setAt(1, parrData[i].midCoverage);
-				lobjAuxTax.setAt(2, parrData[i].midCurrency);
-				lobjAuxTax.setAt(3, BigDecimal.valueOf(parrData[i].mdblValue));
+				lobjAuxTax.setAt(2, parrData[i].midType);
+				lobjAuxTax.setAt(3, parrData[i].mstrUnits);
+				lobjAuxTax.setAt(4, parrData[i].mstrDefault);
+				lobjAuxTax.setAt(5, parrData[i].mbVariesByObject);
+				lobjAuxTax.setAt(6, parrData[i].mbVariesByExercise);
+				lobjAuxTax.setAt(7, parrData[i].midReferenceTo);
+				lobjAuxTax.setAt(8, parrData[i].mlngColumn);
 				lobjAuxTax.SaveToDb(pdb);
 				parrData[i].mid = lobjAuxTax.getKey();
 			}
@@ -528,7 +563,7 @@ public class ManageCoefficients
 		Coverage lobjOwner;
 		SubLine lobjOwnerOwner;
 		Line lobjOwnerOwnerOwner;
-		ObjectBase lobjUnits;
+		ObjectBase lobjAux;
 
 		try
 		{
@@ -567,20 +602,67 @@ public class ManageCoefficients
 		pstrString.append("Coeficiente: ");
 		pstrString.append(pobjData.mstrName);
 		pstrString.append(pstrLineBreak);
-		pstrString.append("Valor: ");
-		pstrString.append(pobjData.mdblValue);
-		pstrString.append(pstrLineBreak);
-		pstrString.append("Unidades: ");
 
+		pstrString.append("Tipo de valor: ");
 		try
 		{
-			lobjUnits = Engine.GetWorkInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), Constants.ObjID_FieldType), pobjData.midCurrency);
-			pstrString.append((String)lobjUnits.getAt(0));
+			lobjAux = Engine.GetWorkInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), Constants.ObjID_FieldType),
+					pobjData.midType);
+			pstrString.append((String)lobjAux.getAt(0));
 		}
 		catch (Throwable e)
 		{
-			pstrString.append("(Erro a obter a categoria.)");
+			pstrString.append("(Erro a obter o tipo de valor.)");
 		}
 		pstrString.append(pstrLineBreak);
+
+		if ( pobjData.mstrUnits != null )
+		{
+			pstrString.append("Unidades: ");
+			pstrString.append(pobjData.mstrUnits);
+			pstrString.append(pstrLineBreak);
+		}
+
+		if ( pobjData.mstrDefault != null )
+		{
+			pstrString.append("Valor de referência: ");
+			pstrString.append(pobjData.mstrDefault);
+			pstrString.append(pstrLineBreak);
+		}
+
+		if ( pobjData.mbVariesByObject )
+		{
+			pstrString.append("Varia por objecto seguro.");
+			pstrString.append(pstrLineBreak);
+		}
+
+		if ( pobjData.mbVariesByExercise )
+		{
+			pstrString.append("Varia por exercício.");
+			pstrString.append(pstrLineBreak);
+		}
+
+		if ( pobjData.midReferenceTo != null )
+		{
+			pstrString.append("Referência externa: ");
+			try
+			{
+				lobjAux = Engine.GetWorkInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), ObjectGUIDs.O_Object),
+						pobjData.midReferenceTo);
+				pstrString.append((String)lobjAux.getAt(0));
+			}
+			catch (Throwable e)
+			{
+				pstrString.append("(Erro a obter a categoria.)");
+			}
+			pstrString.append(pstrLineBreak);
+		}
+
+		if ( pobjData.mlngColumn >= 0 )
+		{
+			pstrString.append("Coluna na tabela: ");
+			pstrString.append(pobjData.mlngColumn);
+			pstrString.append(pstrLineBreak);
+		}
 	}
 }

@@ -41,6 +41,8 @@ public class ManageLines
 		public UUID mid;
 		public String mstrName;
 		public UUID midLine;
+		public UUID midObjectType;
+		public UUID midExercisePeriod;
 		public CoverageData[] marrCoverages;
 		public SubLineData mobjPrevValues;
 	}
@@ -53,6 +55,8 @@ public class ManageLines
 		public UUID mid;
 		public String mstrName;
 		public UUID midSubLine;
+		public boolean mbMandatory;
+		public boolean mbHeader;
 		public CoverageData mobjPrevValues;
 	}
 
@@ -905,6 +909,8 @@ public class ManageLines
 				lobjAuxSubLine = SubLine.GetInstance(Engine.getCurrentNameSpace(), (UUID)null);
 				lobjAuxSubLine.setAt(0, parrData[i].mstrName);
 				lobjAuxSubLine.setAt(1, parrData[i].midLine);
+				lobjAuxSubLine.setAt(2, parrData[i].midObjectType);
+				lobjAuxSubLine.setAt(3, parrData[i].midExercisePeriod);
 				lobjAuxSubLine.SaveToDb(pdb);
 			}
 			catch (Throwable e)
@@ -936,6 +942,8 @@ public class ManageLines
 				lobjAuxCoverage = Coverage.GetInstance(Engine.getCurrentNameSpace(), (UUID)null);
 				lobjAuxCoverage.setAt(0, parrData[i].mstrName);
 				lobjAuxCoverage.setAt(1, parrData[i].midSubLine);
+				lobjAuxCoverage.setAt(2, parrData[i].mbMandatory);
+				lobjAuxCoverage.setAt(3, parrData[i].mbHeader);
 				lobjAuxCoverage.SaveToDb(pdb);
 			}
 			catch (Throwable e)
@@ -990,6 +998,8 @@ public class ManageLines
 			parrData[i].mobjPrevValues.mid = lobjAuxSubLine.getKey();
 			parrData[i].mobjPrevValues.mstrName = (String)lobjAuxSubLine.getAt(0);
 			parrData[i].mobjPrevValues.midLine = (UUID)lobjAuxSubLine.getAt(1);
+			parrData[i].mobjPrevValues.midObjectType = (UUID)lobjAuxSubLine.getAt(2);
+			parrData[i].mobjPrevValues.midExercisePeriod = (UUID)lobjAuxSubLine.getAt(3);
 			parrData[i].mobjPrevValues.marrCoverages = null;
 			parrData[i].mobjPrevValues.mobjPrevValues = null;
 
@@ -997,6 +1007,8 @@ public class ManageLines
 			{
 				lobjAuxSubLine.setAt(0, parrData[i].mstrName);
 				lobjAuxSubLine.setAt(1, parrData[i].midLine);
+				lobjAuxSubLine.setAt(2, parrData[i].midObjectType);
+				lobjAuxSubLine.setAt(3, parrData[i].midExercisePeriod);
 				lobjAuxSubLine.SaveToDb(pdb);
 			}
 			catch (Throwable e)
@@ -1019,12 +1031,16 @@ public class ManageLines
 			parrData[i].mobjPrevValues.mid = lobjAuxCoverage.getKey();
 			parrData[i].mobjPrevValues.mstrName = (String)lobjAuxCoverage.getAt(0);
 			parrData[i].mobjPrevValues.midSubLine = (UUID)lobjAuxCoverage.getAt(1);
+			parrData[i].mobjPrevValues.mbMandatory = (Boolean)lobjAuxCoverage.getAt(2);
+			parrData[i].mobjPrevValues.mbHeader = (Boolean)lobjAuxCoverage.getAt(3);
 			parrData[i].mobjPrevValues.mobjPrevValues = null;
 
 			try
 			{
 				lobjAuxCoverage.setAt(0, parrData[i].mstrName);
 				lobjAuxCoverage.setAt(1, parrData[i].midSubLine);
+				lobjAuxCoverage.setAt(2, parrData[i].mbMandatory);
+				lobjAuxCoverage.setAt(3, parrData[i].mbHeader);
 				lobjAuxCoverage.SaveToDb(pdb);
 			}
 			catch (Throwable e)
@@ -1108,6 +1124,8 @@ public class ManageLines
 			lobjAuxSubLine = SubLine.GetInstance(Engine.getCurrentNameSpace(), parrData[i].mid);
 			parrData[i].mstrName = (String)lobjAuxSubLine.getAt(0);
 			parrData[i].midLine = (UUID)lobjAuxSubLine.getAt(1);
+			parrData[i].midObjectType = (UUID)lobjAuxSubLine.getAt(2);
+			parrData[i].midExercisePeriod = (UUID)lobjAuxSubLine.getAt(3);
 			parrData[i].mobjPrevValues = null;
 			larrCoverages = lobjAuxSubLine.GetCurrentCoverages();
 			if ( larrCoverages == null )
@@ -1156,6 +1174,8 @@ public class ManageLines
 			lobjAuxCoverage = Coverage.GetInstance(Engine.getCurrentNameSpace(), parrData[i].mid);
 			parrData[i].mstrName = (String)lobjAuxCoverage.getAt(0);
 			parrData[i].midSubLine = (UUID)lobjAuxCoverage.getAt(1);
+			parrData[i].mbMandatory = (Boolean)lobjAuxCoverage.getAt(2);
+			parrData[i].mbHeader = (Boolean)lobjAuxCoverage.getAt(3);
 			parrData[i].mobjPrevValues = null;
 
 			try
@@ -1299,6 +1319,8 @@ public class ManageLines
 			{
 				lobjAuxSubLine.setAt(0, parrData[i].mobjPrevValues.mstrName);
 				lobjAuxSubLine.setAt(1, parrData[i].mobjPrevValues.midLine);
+				lobjAuxSubLine.setAt(2, parrData[i].mobjPrevValues.midObjectType);
+				lobjAuxSubLine.setAt(3, parrData[i].mobjPrevValues.midExercisePeriod);
 				lobjAuxSubLine.SaveToDb(pdb);
 			}
 			catch (Throwable e)
@@ -1322,6 +1344,8 @@ public class ManageLines
 			{
 				lobjAuxCoverage.setAt(0, parrData[i].mobjPrevValues.mstrName);
 				lobjAuxCoverage.setAt(1, parrData[i].mobjPrevValues.midSubLine);
+				lobjAuxCoverage.setAt(2, parrData[i].mobjPrevValues.mbMandatory);
+				lobjAuxCoverage.setAt(3, parrData[i].mobjPrevValues.mbHeader);
 				lobjAuxCoverage.SaveToDb(pdb);
 			}
 			catch (Throwable e)
@@ -1373,6 +1397,8 @@ public class ManageLines
 				lobjAuxSubLine = SubLine.GetInstance(Engine.getCurrentNameSpace(), (UUID)null);
 				lobjAuxSubLine.setAt(0, parrData[i].mstrName);
 				lobjAuxSubLine.setAt(1, parrData[i].midLine);
+				lobjAuxSubLine.setAt(2, parrData[i].midObjectType);
+				lobjAuxSubLine.setAt(3, parrData[i].midExercisePeriod);
 				lobjAuxSubLine.SaveToDb(pdb);
 				parrData[i].mid = lobjAuxSubLine.getKey();
 			}
@@ -1402,6 +1428,8 @@ public class ManageLines
 				lobjAuxCoverage = Coverage.GetInstance(Engine.getCurrentNameSpace(), (UUID)null);
 				lobjAuxCoverage.setAt(0, parrData[i].mstrName);
 				lobjAuxCoverage.setAt(1, parrData[i].midSubLine);
+				lobjAuxCoverage.setAt(2, parrData[i].mbMandatory);
+				lobjAuxCoverage.setAt(3, parrData[i].mbHeader);
 				lobjAuxCoverage.SaveToDb(pdb);
 				parrData[i].mid = lobjAuxCoverage.getKey();
 			}
@@ -1597,6 +1625,7 @@ public class ManageLines
 	{
 		Line lobjOwner;
 		String lstrSubs;
+		ObjectBase lobjAux;
 		int i;
 
 		if ( pstrPrefix == null )
@@ -1621,6 +1650,34 @@ public class ManageLines
 		pstrString.append(pstrPrefix);
 		pstrString.append(" ");
 		pstrString.append(pobjData.mstrName);
+		pstrString.append(pstrLineBreak);
+
+		pstrString.append(pstrPrefix);
+		pstrString.append(" Tipo de Objecto Seguro: ");
+		try
+		{
+			lobjAux = Engine.GetWorkInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), Constants.ObjID_ObjectType),
+					pobjData.midObjectType);
+			pstrString.append(lobjAux.getLabel());
+		}
+		catch (Throwable e)
+		{
+			pstrString.append("(Erro a obter o tipo de objecto seguro.)");
+		}
+		pstrString.append(pstrLineBreak);
+
+		pstrString.append(pstrPrefix);
+		pstrString.append(" Período do Exercício: ");
+		try
+		{
+			lobjAux = Engine.GetWorkInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), Constants.ObjID_ExercisePeriod),
+					pobjData.midExercisePeriod);
+			pstrString.append(lobjAux.getLabel());
+		}
+		catch (Throwable e)
+		{
+			pstrString.append("(Erro a obter o período do exercício.)");
+		}
 		pstrString.append(pstrLineBreak);
 
 		if ( pbRecurse && (pobjData.marrCoverages != null) && (pobjData.marrCoverages.length > 0) )
@@ -1670,5 +1727,19 @@ public class ManageLines
 		pstrString.append(" ");
 		pstrString.append(pobjData.mstrName);
 		pstrString.append(pstrLineBreak);
+
+		if ( pobjData.mbHeader )
+		{
+			pstrString.append(pstrPrefix);
+			pstrString.append(" Cabeçalho da Modalidade");
+			pstrString.append(pstrLineBreak);
+		}
+
+		if ( pobjData.mbMandatory )
+		{
+			pstrString.append(pstrPrefix);
+			pstrString.append(" Cobertura Obrigatória");
+			pstrString.append(pstrLineBreak);
+		}
 	}
 }

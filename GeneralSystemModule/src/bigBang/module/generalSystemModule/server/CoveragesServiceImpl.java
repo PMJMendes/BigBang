@@ -1,6 +1,5 @@
 package bigBang.module.generalSystemModule.server;
 
-import java.math.BigDecimal;
 import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.UUID;
@@ -20,8 +19,8 @@ import bigBang.module.generalSystemModule.interfaces.CoveragesService;
 
 import com.premiumminds.BigBang.Jewel.Constants;
 import com.premiumminds.BigBang.Jewel.Objects.GeneralSystem;
-import com.premiumminds.BigBang.Jewel.Operations.General.ManageLines;
 import com.premiumminds.BigBang.Jewel.Operations.General.ManageCoefficients;
+import com.premiumminds.BigBang.Jewel.Operations.General.ManageLines;
 
 public class CoveragesServiceImpl
 	extends EngineImplementor
@@ -575,6 +574,8 @@ public class CoveragesServiceImpl
 			larrResult[i].id = larrSubLines[i].getKey().toString();
 			larrResult[i].name = (String)larrSubLines[i].getAt(0);
 			larrResult[i].lineId = ((UUID)larrSubLines[i].getAt(1)).toString();
+			larrResult[i].objectTypeId = ((UUID)larrSubLines[i].getAt(2)).toString();
+			larrResult[i].exercisePeriodId = ((UUID)larrSubLines[i].getAt(3)).toString();
 			larrResult[i].coverages = getCoveragesForSubLine(larrSubLines[i]);
 		}
 
@@ -607,6 +608,8 @@ public class CoveragesServiceImpl
 			larrResult[i].id = larrCoverages[i].getKey().toString();
 			larrResult[i].name = (String)larrCoverages[i].getAt(0);
 			larrResult[i].subLineId = ((UUID)larrCoverages[i].getAt(1)).toString();
+			larrResult[i].isMandatory = (Boolean)larrCoverages[i].getAt(2);
+			larrResult[i].isHeader = (Boolean)larrCoverages[i].getAt(3);
 			larrResult[i].taxes = getTaxesForCoverage(larrCoverages[i]);
 		}
 
@@ -639,8 +642,13 @@ public class CoveragesServiceImpl
 			larrResult[i].id = larrTaxes[i].getKey().toString();
 			larrResult[i].name = (String)larrTaxes[i].getAt(0);
 			larrResult[i].coverageId = ((UUID)larrTaxes[i].getAt(1)).toString();
-			larrResult[i].currencyId = ((UUID)larrTaxes[i].getAt(2)).toString();
-			larrResult[i].value = ((BigDecimal)larrTaxes[i].getAt(3)).doubleValue();
+			larrResult[i].fieldTypeId = ((UUID)larrTaxes[i].getAt(2)).toString();
+			larrResult[i].unitsLabel = (String)larrTaxes[i].getAt(3);
+			larrResult[i].defaultValue = (String)larrTaxes[i].getAt(4);
+			larrResult[i].variesByObject = (Boolean)larrTaxes[i].getAt(4);
+			larrResult[i].variesByExercise = (Boolean)larrTaxes[i].getAt(4);
+			larrResult[i].refersToEntityId = (larrTaxes[i].getAt(4) == null ? null : ((UUID)larrTaxes[i].getAt(4)).toString());
+			larrResult[i].columnOrder = (Integer)larrTaxes[i].getAt(4);
 		}
 
 		return larrResult;
@@ -657,7 +665,7 @@ public class CoveragesServiceImpl
 			larrResult[i] = prefOp.new LineData();
 			larrResult[i].mid = (parrLines[i].id == null ? null : UUID.fromString(parrLines[i].id));
 			larrResult[i].mstrName = parrLines[i].name;
-			larrResult[i].midCategory = UUID.fromString(parrLines[i].categoryId);
+			larrResult[i].midCategory = (parrLines[i].categoryId == null ? null : UUID.fromString(parrLines[i].categoryId));
 			larrResult[i].marrSubLines = (pbRecurse && parrLines[i].subLines != null ?
 					BuildSubLineArray(prefOp, parrLines[i].subLines, larrResult[i].mid, pbRecurse) : null);
 			larrResult[i].mobjPrevValues = null;
@@ -679,6 +687,10 @@ public class CoveragesServiceImpl
 			larrResult[i].mid = (parrSubLines[i].id == null ? null : UUID.fromString(parrSubLines[i].id));
 			larrResult[i].mstrName = parrSubLines[i].name;
 			larrResult[i].midLine = pidParent;
+			larrResult[i].midObjectType = (parrSubLines[i].objectTypeId == null ? null :
+					UUID.fromString(parrSubLines[i].objectTypeId));
+			larrResult[i].midExercisePeriod = (parrSubLines[i].exercisePeriodId == null ? null :
+					UUID.fromString(parrSubLines[i].exercisePeriodId));
 			larrResult[i].marrCoverages = (pbRecurse && parrSubLines[i].coverages != null ?
 					BuildCoverageArray(prefOp, parrSubLines[i].coverages, larrResult[i].mid) : null);
 			larrResult[i].mobjPrevValues = null;
@@ -699,6 +711,8 @@ public class CoveragesServiceImpl
 			larrResult[i].mid = (parrCoverages[i].id == null ? null : UUID.fromString(parrCoverages[i].id));
 			larrResult[i].mstrName = parrCoverages[i].name;
 			larrResult[i].midSubLine = pidParent;
+			larrResult[i].mbMandatory = parrCoverages[i].isMandatory;
+			larrResult[i].mbHeader = parrCoverages[i].isHeader;
 			larrResult[i].mobjPrevValues = null;
 		}
 
@@ -717,8 +731,14 @@ public class CoveragesServiceImpl
 			larrResult[i].mid = (parrTaxes[i].id == null ? null : UUID.fromString(parrTaxes[i].id));
 			larrResult[i].mstrName = parrTaxes[i].name;
 			larrResult[i].midCoverage = (parrTaxes[i].coverageId == null ? null : UUID.fromString(parrTaxes[i].coverageId));
-			larrResult[i].midCurrency = (parrTaxes[i].currencyId == null ? null : UUID.fromString(parrTaxes[i].currencyId));
-			larrResult[i].mdblValue = parrTaxes[i].value;
+			larrResult[i].midType = (parrTaxes[i].fieldTypeId == null ? null : UUID.fromString(parrTaxes[i].fieldTypeId));
+			larrResult[i].mstrUnits = parrTaxes[i].unitsLabel;
+			larrResult[i].mstrDefault = parrTaxes[i].defaultValue;
+			larrResult[i].mbVariesByObject = parrTaxes[i].variesByObject;
+			larrResult[i].mbVariesByExercise = parrTaxes[i].variesByExercise;
+			larrResult[i].midReferenceTo = (parrTaxes[i].refersToEntityId == null ? null :
+					UUID.fromString(parrTaxes[i].refersToEntityId));
+			larrResult[i].mlngColumn = parrTaxes[i].columnOrder;
 			larrResult[i].mobjPrevValues = null;
 		}
 

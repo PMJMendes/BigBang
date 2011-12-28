@@ -11,6 +11,7 @@ public class SubLine
 	public String name;
 	public String lineId;
 	public String objectTypeId; // Novo!
+	public String exercisePeriodId; // Novo!
 	public Coverage[] coverages;
 
 	public SubLine()
@@ -22,6 +23,8 @@ public class SubLine
 		this.id = original.id;
 		this.name = original.name;
 		this.lineId = original.lineId;
+		this.objectTypeId = original.objectTypeId;
+		this.exercisePeriodId = original.exercisePeriodId;
 		this.coverages = original.coverages;
 	}
 }

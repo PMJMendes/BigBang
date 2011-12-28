@@ -41,14 +41,15 @@ public class TaxForm extends FormView<Tax> {
 
 	@Override
 	public Tax getInfo() {
+		//TODO: O tipo do campo defaultValue mudou para String, para também poder aceitar GUIDs e texto. JMMM.
 		tax.name = name.getValue();
-		tax.value = 0;
+		tax.defaultValue = /*0*/null;
 		try{
-			tax.value = Double.parseDouble(value.getValue());
+			tax.defaultValue = /*Double.parseDouble(*/value.getValue()/*)*/;
 		}catch(NumberFormatException e){
-			tax.value = 0;
+			tax.defaultValue = /*0*/null;
 		}
-		tax.currencyId = unit.getValue();
+		tax.fieldTypeId = unit.getValue();
 		return tax;
 	}
 
@@ -59,8 +60,8 @@ public class TaxForm extends FormView<Tax> {
 		else
 			tax = (Tax) info;
 		this.name.setValue(tax.name);
-		this.value.setValue(tax.value + "");
-		this.unit.setValue(tax.currencyId);
+		this.value.setValue(tax.defaultValue + "");
+		this.unit.setValue(tax.fieldTypeId);
 	}
 
 	@Override
