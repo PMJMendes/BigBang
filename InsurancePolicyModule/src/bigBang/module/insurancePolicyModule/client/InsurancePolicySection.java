@@ -4,10 +4,14 @@ import java.util.ArrayList;
 
 import com.google.gwt.core.client.GWT;
 
+import bigBang.definitions.shared.BigBangConstants;
 import bigBang.library.client.BigBangPermissionManager;
 import bigBang.library.client.EventBus;
 import bigBang.library.client.MenuSections;
 import bigBang.library.client.Operation;
+import bigBang.library.client.event.ScreenInvokedEvent;
+import bigBang.library.client.event.ScreenInvokedEventHandler;
+import bigBang.library.client.event.ShowMeRequestEvent;
 import bigBang.library.client.userInterface.MenuSection;
 import bigBang.library.client.userInterface.TextBadge;
 import bigBang.library.client.userInterface.presenter.OperationViewPresenter;
@@ -68,10 +72,20 @@ public class InsurancePolicySection implements MenuSection {
 		return result;
 	}
 
-	public void registerEventHandlers(EventBus eventBus) {
+	public void registerEventHandlers(final EventBus eventBus) {
 		for(ViewPresenter p : this.getOperationPresenters()) {
 			p.setEventBus(eventBus);
 		}
+		eventBus.addHandler(ScreenInvokedEvent.TYPE, new ScreenInvokedEventHandler() {
+			
+			@Override
+			public void onScreenInvoked(ScreenInvokedEvent event) {
+				String processTypeId = event.getProcessTypeId();
+				if(processTypeId.equalsIgnoreCase(BigBangConstants.EntityIds.INSURANCE_POLICY)){
+					eventBus.fireEvent(new ShowMeRequestEvent(this));
+				}
+			}
+		});
 	}
 
 	@Override
