@@ -135,6 +135,17 @@ public abstract class FormView<T> extends View implements Validatable, HasEditab
 		this.sections.add(this.currentSection);
 		//this.panel.setCellHeight(currentSection, minHeight);
 	}
+	
+	public void removeSection(FormViewSection section){
+		this.panel.remove(section);
+		int index = this.sections.indexOf(section) - 1;
+		this.sections.remove(section);
+		if(index < 0 || index > (this.sections.size() - 1)){
+			this.currentSection = null;
+		}else{
+			currentSection = this.sections.get(index);
+		}
+	} 
 
 	public void addRuler(){
 		SimplePanel p = new SimplePanel();
