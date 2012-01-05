@@ -186,8 +186,8 @@ public class UndoOperationViewPresenter implements OperationViewPresenter {
 
 	protected void onNavigateToAuxiliaryProcess(){
 		HistoryItem item = view.getForm().getValue();
-		String processTypeId = item.otherProcessId;
-		String processId = item.otherProcessId;
+		String processTypeId = item.otherObjectId;
+		String processId = item.otherObjectId;
 		eventBus.fireEvent(new ScreenInvokedEvent(ScreenInvokedEvent.OPERATION_TYPE_READ, processTypeId, processId));
 	}
 	
