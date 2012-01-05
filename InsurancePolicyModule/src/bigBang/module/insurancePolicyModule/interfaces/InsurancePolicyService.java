@@ -35,8 +35,8 @@ public interface InsurancePolicyService extends SearchService {
 	public InsurancePolicy.TableSection getPage(String policyId, String insuredObjectId, String exerciseId)
 			throws SessionExpiredException, BigBangException;
 
-	public Remap[] openPolicyScratchPad(String policyId, String subLineId) throws SessionExpiredException, BigBangException;
-
+	public Remap[] openPolicyScratchPad(String policyId) throws SessionExpiredException, BigBangException;
+	public InsurancePolicy initPolicyInPad(InsurancePolicy policy) throws SessionExpiredException, BigBangException;
 	public InsurancePolicy getPolicyInPad(String policyId) throws SessionExpiredException, BigBangException;
 	public InsurancePolicy updateHeader(InsurancePolicy policy) throws SessionExpiredException, BigBangException;
 
