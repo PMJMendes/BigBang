@@ -134,6 +134,7 @@ public class PolicyExerciseServiceImpl
 		{
 			lobjResult.coverageData[i] = new Exercise.CoverageData();
 			lobjResult.coverageData[i].coverageId = larrCoverages[i].GetCoverage().getKey().toString();
+			lobjResult.coverageData[i].coverageLabel = larrCoverages[i].GetCoverage().getLabel();
 			larrAuxFixed = new ArrayList<Exercise.CoverageData.FixedField>();
 			for ( j = 0; j < larrFixed.length; j++ )
 			{

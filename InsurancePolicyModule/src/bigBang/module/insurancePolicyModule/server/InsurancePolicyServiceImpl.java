@@ -1182,6 +1182,15 @@ public class InsurancePolicyServiceImpl
 			{
 				pobjResult.coverageData[i] = new Exercise.CoverageData();
 				pobjResult.coverageData[i].coverageId = larrSortedCoverages[i].midCoverage.toString();
+				try
+				{
+					pobjResult.coverageData[i].coverageLabel = Coverage.GetInstance(Engine.getCurrentNameSpace(),
+							larrSortedCoverages[i].midCoverage).getLabel();
+				}
+				catch (Throwable e)
+				{
+					pobjResult.coverageData[i].coverageLabel = "(Erro a obter o nome da cobertura.)";
+				}
 				larrFixed.put(larrSortedCoverages[i].midCoverage, new ArrayList<Exercise.CoverageData.FixedField>());
 				larrVarRef.put(larrSortedCoverages[i].midCoverage, new ArrayList<Exercise.CoverageData.VariableField>());
 			}
