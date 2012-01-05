@@ -23,8 +23,8 @@ public class HistoryItem
 
 	public boolean canUndo;
 
-	public String otherProcessTypeId;
-	public String otherProcessId;
+	public String otherObjectTypeId; // Null se não houver de todo
+	public String otherObjectId; // Null se já houve mas foi apagado
 
 	public AlteredItem[] alteredEntities; //key:Entity type id / value: entity instance id
 }
