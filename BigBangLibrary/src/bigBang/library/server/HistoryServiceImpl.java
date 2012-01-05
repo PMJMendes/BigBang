@@ -7,6 +7,7 @@ import Jewel.Engine.Engine;
 import Jewel.Petri.Constants;
 import Jewel.Petri.Interfaces.ILog;
 import Jewel.Petri.Interfaces.IProcess;
+import Jewel.Petri.Interfaces.IScript;
 import Jewel.Petri.Objects.PNLog;
 import Jewel.Petri.Objects.PNProcess;
 import Jewel.Petri.SysObjects.JewelPetriException;
@@ -39,6 +40,8 @@ public class HistoryServiceImpl
 		Operation lobjOp;
 		HistoryItem lobjResult;
 		IProcess lobjOther;
+		IScript lobjScript;
+		UUID lidData;
 
 		if ( Engine.getCurrentUser() == null )
 			throw new SessionExpiredException();
@@ -57,9 +60,15 @@ public class HistoryServiceImpl
 			lobjResult.canUndo = lobjLog.CanUndo();
 
 			if ( lobjLog.GetExternalProcess() == null )
+			{
 				lobjOther = null;
+				lobjScript = null;
+			}
 			else
+			{
 				lobjOther = PNProcess.GetInstance(Engine.getCurrentNameSpace(), lobjLog.GetExternalProcess());
+				lobjScript = lobjOther.GetScript();
+			}
 		}
 		catch (JewelPetriException e)
 		{
@@ -77,13 +86,14 @@ public class HistoryServiceImpl
 
 		if ( lobjOther == null )
 		{
-			lobjResult.otherProcessTypeId = null;
-			lobjResult.otherProcessId = null;
+			lobjResult.otherObjectTypeId = null;
+			lobjResult.otherObjectId = null;
 		}
 		else
 		{
-			lobjResult.otherProcessTypeId = lobjOther.GetScriptID().toString();
-			lobjResult.otherProcessId = lobjOther.getKey().toString();
+			lobjResult.otherObjectTypeId = lobjScript.GetDataType().toString();
+			lidData = lobjOther.GetDataKey();
+			lobjResult.otherObjectId = ( lidData == null ? null : lidData.toString() );
 		}
 
 		return lobjResult;
@@ -99,6 +109,8 @@ public class HistoryServiceImpl
 		ILog lobjNewLog;
 		HistoryItem lobjResult;
 		IProcess lobjOther;
+		IScript lobjScript;
+		UUID lidData;
 		UndoableOperation.UndoSet[] larrAux;
 		int i, j;
 
@@ -141,9 +153,15 @@ public class HistoryServiceImpl
 			lobjResult.canUndo = lobjNewLog.CanUndo();
 
 			if ( lobjNewLog.GetExternalProcess() == null )
+			{
 				lobjOther = null;
+				lobjScript = null;
+			}
 			else
+			{
 				lobjOther = PNProcess.GetInstance(Engine.getCurrentNameSpace(), lobjNewLog.GetExternalProcess());
+				lobjScript = lobjOther.GetScript();
+			}
 
 		}
 		catch (JewelPetriException e)
@@ -158,13 +176,14 @@ public class HistoryServiceImpl
 
 		if ( lobjOther == null )
 		{
-			lobjResult.otherProcessTypeId = null;
-			lobjResult.otherProcessId = null;
+			lobjResult.otherObjectTypeId = null;
+			lobjResult.otherObjectId = null;
 		}
 		else
 		{
-			lobjResult.otherProcessTypeId = lobjOther.GetScriptID().toString();
-			lobjResult.otherProcessId = lobjOther.getKey().toString();
+			lobjResult.otherObjectTypeId = lobjScript.GetDataType().toString();
+			lidData = lobjOther.GetDataKey();
+			lobjResult.otherObjectId = ( lidData == null ? null : lidData.toString() );
 		}
 
 		larrAux = ((UndoableOperation)lobjData).GetSets();
