@@ -6,6 +6,8 @@ import bigBang.library.client.EventBus;
 import bigBang.library.client.event.LogoutEvent;
 import bigBang.library.client.event.ScreenInvokedEvent;
 import bigBang.library.client.event.ScreenInvokedEventHandler;
+import bigBang.library.client.event.ShowMeRequestEvent;
+import bigBang.library.client.event.ShowMeRequestEventHandler;
 import bigBang.library.client.userInterface.MenuSection;
 import bigBang.library.client.userInterface.presenter.SectionViewPresenter;
 import bigBang.library.client.userInterface.presenter.ViewPresenter;
@@ -35,24 +37,14 @@ public class MainScreenViewPresenter implements ViewPresenter {
 	private EventBus eventBus;
 
 	private HashMap<String, MenuSection> sections;
+	private HashMap<String, SectionViewPresenter> sectionPresenters;
 
 	public MainScreenViewPresenter(EventBus eventBus, final View view){
 		this.sections = new HashMap<String, MenuSection>();
+		this.sectionPresenters = new HashMap<String, SectionViewPresenter>();
 		this.setView(view);
 		this.setEventBus(eventBus);
-
-		eventBus.addHandler(ScreenInvokedEvent.TYPE, new ScreenInvokedEventHandler() {
-
-			@Override
-			public void onScreenInvoked(ScreenInvokedEvent event) {
-				try {
-					((Display) view).showSection(sections.get(event.getSectionId()));
-				} catch (Exception e) {
-					GWT.log("Nonexistent section");
-				}
-			}
-		});
-	} 
+	}
 
 	public void setService(Service service) {
 		return;
@@ -60,6 +52,7 @@ public class MainScreenViewPresenter implements ViewPresenter {
 
 	public void setEventBus(EventBus eventBus) {
 		this.eventBus = eventBus;
+		registerEventHandlers(eventBus);
 	}
 
 	public void setView(View view) {
@@ -75,6 +68,7 @@ public class MainScreenViewPresenter implements ViewPresenter {
 	public void addMenuSectionPresenter(SectionViewPresenter sectionPresenter){
 		this.view.createMenuSection(sectionPresenter);
 		this.sections.put(sectionPresenter.getSection().getId(), sectionPresenter.getSection());
+		this.sectionPresenters.put(sectionPresenter.getSection().getId(), sectionPresenter);
 	}
 	
 	public void renderPresenters() {
@@ -92,7 +86,20 @@ public class MainScreenViewPresenter implements ViewPresenter {
 	}
 
 	public void registerEventHandlers(EventBus eventBus) {
-		setEventBus(eventBus);
+		if(this.eventBus == null) {setEventBus(eventBus);}
+		eventBus.addHandler(ShowMeRequestEvent.TYPE, new ShowMeRequestEventHandler() {
+			
+			@Override
+			public void onShowMeRequest(ShowMeRequestEvent event) {
+				Object source = event.getMe();
+				if(sections.containsValue(source)){
+					try {
+						view.showSection((MenuSection) source);
+					} catch (Exception e) {
+					}
+				}
+			}
+		});
 	}
 
 	public void setUsername(String username) {

@@ -84,7 +84,6 @@ public class TasksNotificationsManager extends Timer implements TasksDataBrokerC
 		Notification notification = new Notification("Agenda", "Foi-lhe atribuída uma nova tarefa:\n"+t.description, new ScreenInvokedEvent(null, TasksSection.ID, null));
 		this.eventBus.fireEvent(new NewNotificationEvent(notification,
 				Notification.TYPE.TRAY_NOTIFICATION));
-		
 	}
 
 	@Override

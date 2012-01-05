@@ -64,14 +64,15 @@ public class GeneralSystemSection implements MenuSection {
 	
 	public GeneralSystemSection(BigBangPermissionManager permissionManager, String processId){
 		this.processId = processId;
-		this.sectionOperationPresenters = new ArrayList<OperationViewPresenter>();
+//		this.processTypeId = BigBangConstants.EntityIds. //TODO
+//		this.sectionOperationPresenters = new ArrayList<OperationViewPresenter>();
 		this.permissionManager = permissionManager;
 		
 		/* UNDO */
 		HistoryOperation undoOperation = (HistoryOperation)GWT.create(HistoryOperation.class);
 		UndoOperationView undoOperationView = (UndoOperationView) GWT.create(UndoOperationView.class);
 		HistoryBroker historyBroker = (HistoryBroker) DataBrokerManager.Util.getInstance().getBroker(BigBangConstants.EntityIds.HISTORY);
-		UndoOperationViewPresenter undoOperationViewPresenter = new UndoOperationViewPresenter(null, historyBroker, undoOperationView, processId);
+		UndoOperationViewPresenter undoOperationViewPresenter = new UndoOperationViewPresenter(null, historyBroker, undoOperationView, processId, null, null); //TODO
 		undoOperationViewPresenter.setOperation(undoOperation);
 		this.sectionOperationPresenters.add((OperationViewPresenter) undoOperationViewPresenter);
 		

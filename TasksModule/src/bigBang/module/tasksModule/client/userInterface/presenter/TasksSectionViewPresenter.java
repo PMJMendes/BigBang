@@ -121,8 +121,8 @@ public class TasksSectionViewPresenter implements SectionViewPresenter, ViewPres
 
 	protected void showScreenForTask(Task task) {
 		//eventBus.fireEvent(new ScreeninOperationInvokedEvent(((Task)event.getValue()).operationId, ((Task)event.getValue()).operationInstanceId, presenterManager));
-		ViewPresenter presenter = new UndoOperationViewPresenter(eventBus, null, null, "");
-		view.presentTaskScreen(task, presenter);
+		//ViewPresenter presenter = new UndoOperationViewPresenter(eventBus, null, null, "");
+		//view.presentTaskScreen(task, presenter);
 		this.currentTask = task;
 	}
 

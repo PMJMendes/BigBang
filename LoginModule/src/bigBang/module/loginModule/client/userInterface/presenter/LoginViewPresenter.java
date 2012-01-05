@@ -191,6 +191,7 @@ public class LoginViewPresenter implements ViewPresenter {
 			public void onSessionExpired() {
 				GWT.log("A sess�o expirou");
 				showRenewLoginPrompt();
+				Window.Location.reload();
 			}
 		});
 	}

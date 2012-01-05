@@ -11,6 +11,7 @@ import bigBang.definitions.shared.Client;
 import bigBang.definitions.shared.ClientStub;
 import bigBang.definitions.shared.HistoryItemStub;
 import bigBang.definitions.shared.InfoOrDocumentRequest;
+import bigBang.definitions.shared.InsurancePolicyStub;
 import bigBang.definitions.shared.ManagerTransfer;
 import bigBang.definitions.shared.QuoteRequest;
 import bigBang.definitions.shared.RiskAnalysis;
@@ -24,10 +25,11 @@ import bigBang.library.client.ValueSelectable;
 import bigBang.library.client.dataAccess.DataBrokerManager;
 import bigBang.library.client.event.ActionInvokedEvent;
 import bigBang.library.client.event.ActionInvokedEventHandler;
-import bigBang.library.client.event.OperationInvokedEvent;
-import bigBang.library.client.event.OperationInvokedEventHandler;
+import bigBang.library.client.event.ScreenInvokedEvent;
+import bigBang.library.client.event.ScreenInvokedEventHandler;
 import bigBang.library.client.event.SelectionChangedEvent;
 import bigBang.library.client.event.SelectionChangedEventHandler;
+import bigBang.library.client.event.ShowMeRequestEvent;
 import bigBang.library.client.userInterface.presenter.OperationViewPresenter;
 import bigBang.library.client.userInterface.view.View;
 import bigBang.library.interfaces.Service;
@@ -126,6 +128,9 @@ public class ClientSearchOperationViewPresenter implements OperationViewPresente
 		HasValueSelectables<HistoryItemStub> getHistoryList();
 		void showHistory(Client process, String selectedItemId);
 		
+		//policies
+		HasValueSelectables<InsurancePolicyStub> getPolicyList();
+		
 		//General
 		void clear();
 		void selectClient(Client client);
@@ -149,6 +154,7 @@ public class ClientSearchOperationViewPresenter implements OperationViewPresente
 
 	protected ClientProcessBroker clientBroker;
 	protected int clientDataVersionNumber;
+	protected boolean bound = false;
 
 	public ClientSearchOperationViewPresenter(EventBus eventBus, ClientServiceAsync service, View view){
 		this.setService((Service) service);
@@ -160,9 +166,9 @@ public class ClientSearchOperationViewPresenter implements OperationViewPresente
 	public void setService(Service service) {}
 
 	public void setEventBus(final EventBus eventBus) {
-		this.eventBus = eventBus;
-		if(this.eventBus == null)
+		if(this.eventBus != null || eventBus == null)
 			return;
+		this.eventBus = eventBus;
 		registerEventHandlers(eventBus);
 	}
 
@@ -186,6 +192,8 @@ public class ClientSearchOperationViewPresenter implements OperationViewPresente
 	}
 
 	public void bind() {
+		if(bound) {return;}
+		bound = true;
 		view.lockForm(true);
 		this.view.getList().addSelectionChangedEventHandler(new SelectionChangedEventHandler() {
 
@@ -471,6 +479,18 @@ public class ClientSearchOperationViewPresenter implements OperationViewPresente
 				}
 			}
 		});
+		this.view.getPolicyList().addSelectionChangedEventHandler(new SelectionChangedEventHandler() {
+			
+			@Override
+			public void onSelectionChanged(SelectionChangedEvent event) {
+				@SuppressWarnings("unchecked")
+				ValueSelectable<InsurancePolicyStub> vs = (ValueSelectable<InsurancePolicyStub>) event.getFirstSelected();
+				if(vs != null) {
+					eventBus.fireEvent(new ScreenInvokedEvent(ScreenInvokedEvent.OPERATION_TYPE_READ, BigBangConstants.EntityIds.INSURANCE_POLICY, vs.getValue().id));
+					view.getPolicyList().clearSelection();
+				}
+			}
+		});
 	}
 
 	public void setOperation(final ClientSearchOperation operation) {
@@ -478,18 +498,30 @@ public class ClientSearchOperationViewPresenter implements OperationViewPresente
 	}
 
 	public void registerEventHandlers(final EventBus eventBus) {
-		eventBus.addHandler(OperationInvokedEvent.TYPE,	new OperationInvokedEventHandler() {
-
-			public void onOperationInvoked(OperationInvokedEvent event) {
-				if(getOperation() == null || !event.getOperationId().equals(getOperation().getId()))
-					return;
-				if(event.goToScreen())
-					GWT.log("GOTO SCREEN");
-				else {
-					View tempView  = view.getInstance();
-					ClientSearchOperationViewPresenter presenter = new ClientSearchOperationViewPresenter(eventBus, null, tempView);
-					event.getViewPresenterManager().managePresenter(getOperation().getId(), presenter);
-					//presenter.setTarget(event.getTargetId());
+		if(eventBus == null) {setEventBus(eventBus);}
+		eventBus.addHandler(ScreenInvokedEvent.TYPE, new ScreenInvokedEventHandler() {
+			
+			@Override
+			public void onScreenInvoked(ScreenInvokedEvent event) {
+				if(event.getProcessTypeId().equalsIgnoreCase(BigBangConstants.EntityIds.CLIENT)){
+					String clientId = event.getTargetId();
+					final String operationId = event.getOperationId();
+					
+					clientBroker.getClient(clientId, new ResponseHandler<Client>() {
+						
+						@Override
+						public void onResponse(Client response) {
+							if(operationId.equalsIgnoreCase(ScreenInvokedEvent.OPERATION_TYPE_READ)){
+								view.selectClient(response);
+								eventBus.fireEvent(new ShowMeRequestEvent(view));
+							}
+							
+						}
+						
+						@Override
+						public void onError(Collection<ResponseError> errors) {
+						}
+					});
 				}
 			}
 		});

@@ -1,8 +1,13 @@
 package bigBang.module.clientModule.client;
 
 import java.util.ArrayList;
+
+import bigBang.definitions.shared.BigBangConstants;
 import bigBang.library.client.EventBus;
 import bigBang.library.client.MenuSections;
+import bigBang.library.client.event.ScreenInvokedEvent;
+import bigBang.library.client.event.ScreenInvokedEventHandler;
+import bigBang.library.client.event.ShowMeRequestEvent;
 import bigBang.library.client.userInterface.MenuSection;
 import bigBang.library.client.userInterface.TextBadge;
 import bigBang.library.client.userInterface.presenter.OperationViewPresenter;
@@ -34,7 +39,7 @@ public class ClientSection implements MenuSection {
 	private void init(){
 		this.badge = null;
 		this.sectionOperationPresenters = new ArrayList<OperationViewPresenter>();
-		
+
 		/*Init the operations available for this process section*/
 //		BigBangPermissionManager.Util.getInstance().getProcessPermissionContext(BigBangConstants.EntityIds.CLIENT, new ResponseHandler<Void>() {
 //			
@@ -91,9 +96,19 @@ public class ClientSection implements MenuSection {
 		return result;
 	}
 
-	public void registerEventHandlers(EventBus eventBus) {
+	public void registerEventHandlers(final EventBus eventBus) {
 		for(ViewPresenter p : sectionOperationPresenters)
-			p.setEventBus(eventBus);	
+			p.setEventBus(eventBus);
+				
+		eventBus.addHandler(ScreenInvokedEvent.TYPE, new ScreenInvokedEventHandler() {
+			
+			@Override
+			public void onScreenInvoked(ScreenInvokedEvent event) {
+				if(event.getProcessTypeId().equalsIgnoreCase(BigBangConstants.EntityIds.CLIENT)){
+					eventBus.fireEvent(new ShowMeRequestEvent(this));
+				}
+			}
+		});
 	}
 
 	@Override

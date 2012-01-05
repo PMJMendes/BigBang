@@ -13,6 +13,7 @@ import bigBang.definitions.shared.Client;
 import bigBang.definitions.shared.ClientStub;
 import bigBang.definitions.shared.HistoryItemStub;
 import bigBang.definitions.shared.InfoOrDocumentRequest;
+import bigBang.definitions.shared.InsurancePolicyStub;
 import bigBang.definitions.shared.QuoteRequest;
 import bigBang.definitions.shared.RiskAnalysis;
 import bigBang.library.client.HasEditableValue;
@@ -320,11 +321,16 @@ public class ClientSearchOperationView extends View implements ClientSearchOpera
 
 	@Override
 	public void selectClient(Client client) {
+		this.searchPanel.clearSelection();
 		for(ValueSelectable<ClientStub> s : this.searchPanel) {
 			if(s != null && s.getValue().id.equalsIgnoreCase(client.id)){
-				s.setSelected(true, true);
+				s.setSelected(true, false);
 				break;
 			}
+		}
+		this.form.setValue(client, true);
+		if(this.mainWrapper.getCurrentWidget() != this.mainContent){
+			this.mainWrapper.slideInto(mainContent, Direction.LEFT);
 		}
 	}
 
@@ -620,8 +626,8 @@ public class ClientSearchOperationView extends View implements ClientSearchOpera
 		UndoOperationView historyView = new UndoOperationView();
 		UndoOperationViewPresenter presenter = new UndoOperationViewPresenter(null,
 				(HistoryBroker) DataBrokerManager.Util.getInstance().getBroker(BigBangConstants.EntityIds.HISTORY),
-				historyView,
-				process.processId);
+				historyView, process.id,
+				process.processId, BigBangConstants.EntityIds.CLIENT);
 		presenter.setTargetEntity(selectedItemId);
 		VerticalPanel wrapper = new VerticalPanel();
 		wrapper.setSize("100%", "100%");
@@ -754,4 +760,9 @@ public class ClientSearchOperationView extends View implements ClientSearchOpera
 		return this.childrenPanel.historyList;
 	}
 
+	@Override
+	public HasValueSelectables<InsurancePolicyStub> getPolicyList() {
+		return this.childrenPanel.insurancePoliciesList;
+	}
+	
 }

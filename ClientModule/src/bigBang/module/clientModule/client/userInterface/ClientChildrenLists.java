@@ -493,7 +493,6 @@ public class ClientChildrenLists {
 			this.clear();
 			if(owner != null){
 				this.broker.unregisterClient(this, this.owner.processId);
-				this.owner = null;
 			}
 		}
 		
