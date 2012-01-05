@@ -13,11 +13,4 @@ public class InsuredObjectStub
 	public String exclusionDate;
 	public String typeId;
 	public String typeText;
-
-	public String tempObjectId; // Temporary ID for an insured object in a policy scratch pad
-
-	public InsuredObjectStub()
-	{
-		tempObjectId = null;
-	}
 }

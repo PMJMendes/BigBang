@@ -10,11 +10,4 @@ public class ExerciseStub
 	public String label;
 	public String startDate;
 	public String endDate;
-
-	public String tempExerciseId; // Temporary ID for an exercise in a policy scratch pad
-
-	public ExerciseStub()
-	{
-		tempExerciseId = null;
-	}
 }

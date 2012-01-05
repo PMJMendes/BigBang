@@ -112,8 +112,6 @@ public class InsurancePolicy
 	public Contact[] contacts;
 	public Document[] documents;
 
-	public String scratchPadId;
-
 	public HeaderField[] headerFields;
 	public Coverage[] coverages;
 	public ColumnHeader[] columns;
