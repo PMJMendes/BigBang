@@ -1,6 +1,7 @@
 package bigBang.library.client.userInterface.view;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 
 import bigBang.library.client.FormField;
 
@@ -135,8 +136,11 @@ public class FormViewSection extends View {
 	}
 	
 	public void unregisterAllFormFields(){
-		for(FormField<?> f : this.fields){
-			unregisterFormField(f);
+		Iterator<FormField<?>> iterator = this.fields.listIterator();
+		while(iterator.hasNext()){
+			FormField<?> field = iterator.next();
+			field.removeFromParent();
+			iterator.remove();
 		}
 	}
 
