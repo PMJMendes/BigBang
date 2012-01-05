@@ -18,7 +18,7 @@ public interface InsurancePolicyServiceAsync
 {
 	void getPolicy(String policyId, AsyncCallback<InsurancePolicy> callback);
 	void getPage(String policyId, String insuredObjectId, String exerciseId, AsyncCallback<TableSection> callback);
-	void openPolicyScratchPad(String policyId, AsyncCallback<Remap[]> callback);
+	void openPolicyScratchPad(String policyId, String subLineId, AsyncCallback<Remap[]> callback);
 	void getPolicyInPad(String policyId, AsyncCallback<InsurancePolicy> callback);
 	void updateHeader(InsurancePolicy policy, AsyncCallback<InsurancePolicy> callback);
 	void getPageForEdit(String policyId, String objectId, String exerciseId, AsyncCallback<TableSection> callback);
