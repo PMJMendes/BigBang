@@ -9,8 +9,6 @@ import java.util.UUID;
 import javax.imageio.ImageIO;
 import javax.servlet.http.HttpSession;
 
-import org.jpedal.PdfDecoder;
-
 import Jewel.Engine.Engine;
 import Jewel.Engine.SysObjects.FileXfer;
 import bigBang.library.interfaces.DocuShareService;
@@ -305,66 +303,66 @@ public class DocuShareServiceImpl
 	public String getItemAsImage(String pstrItem)
 		throws SessionExpiredException, BigBangException
 	{
-		DSSession lrefSession;
-		DSDocument lobjAux;
-		DSContentElement[] larrAux;
-		PdfDecoder lobjDecoder;
-		BufferedImage lobjImage;
-		ByteArrayOutputStream lstreamOutput;
-		byte[] larrBuffer;
-		ByteArrayInputStream lstreamInput;
-		FileXfer lobjFile;
-		UUID lidKey;
-
-		if ( Engine.getCurrentUser() == null )
-			throw new SessionExpiredException();
-
-		lrefSession = GetSession();
-		if ( lrefSession == null )
-			return null;
-
-		try
-		{
-			lobjAux = (DSDocument)lrefSession.getObject(new DSHandle(pstrItem));
-			larrAux = lobjAux.getContentElements();
-			larrAux[0].open();
-			lobjDecoder = new PdfDecoder();
-			try
-			{
-				lobjDecoder.openPdfFileFromInputStream(larrAux[0], false);
-			}
-			catch (Throwable e1)
-			{
-				try { larrAux[0].close(); } catch (Throwable e2) {}
-				throw e1;
-			}
-			try
-			{
-				larrAux[0].close();
+//		DSSession lrefSession;
+//		DSDocument lobjAux;
+//		DSContentElement[] larrAux;
+//		PdfDecoder lobjDecoder;
+//		BufferedImage lobjImage;
+//		ByteArrayOutputStream lstreamOutput;
+//		byte[] larrBuffer;
+//		ByteArrayInputStream lstreamInput;
+//		FileXfer lobjFile;
+//		UUID lidKey;
+//
+//		if ( Engine.getCurrentUser() == null )
+//			throw new SessionExpiredException();
+//
+//		lrefSession = GetSession();
+//		if ( lrefSession == null )
+//			return null;
+//
+//		try
+//		{
+//			lobjAux = (DSDocument)lrefSession.getObject(new DSHandle(pstrItem));
+//			larrAux = lobjAux.getContentElements();
+//			larrAux[0].open();
+//			lobjDecoder = new PdfDecoder();
+//			try
+//			{
+//				lobjDecoder.openPdfFileFromInputStream(larrAux[0], false);
+//			}
+//			catch (Throwable e1)
+//			{
+//				try { larrAux[0].close(); } catch (Throwable e2) {}
+//				throw e1;
+//			}
+//			try
+//			{
+//				larrAux[0].close();
 //				lobjImage = lobjDecoder.getPageAsImage(1);
-				lobjImage = lobjDecoder.getPageAsHiRes(1);
-			}
-			catch (Throwable e1)
-			{
-				lobjDecoder.closePdfFile();
-				throw e1;
-			}
-			lobjDecoder.closePdfFile();
+////				lobjImage = lobjDecoder.getPageAsHiRes(1);
+//			}
+//			catch (Throwable e1)
+//			{
+//				lobjDecoder.closePdfFile();
+//				throw e1;
+//			}
+//			lobjDecoder.closePdfFile();
+//
+//			lstreamOutput = new ByteArrayOutputStream();
+//			ImageIO.write(lobjImage, "png", lstreamOutput);
+//			larrBuffer = lstreamOutput.toByteArray();
+//			lstreamInput = new ByteArrayInputStream(larrBuffer);
+//			lobjFile = new FileXfer(larrBuffer.length, "image/png", "pdfPage.png", lstreamInput);
+//		}
+//		catch (Throwable e)
+//		{
+//			throw new BigBangException(e.getMessage(), e);
+//		}
+//
+//		lidKey = UUID.randomUUID();
+//		FileServiceImpl.GetFileXferStorage().put(lidKey, lobjFile);
 
-			lstreamOutput = new ByteArrayOutputStream();
-			ImageIO.write(lobjImage, "png", lstreamOutput);
-			larrBuffer = lstreamOutput.toByteArray();
-			lstreamInput = new ByteArrayInputStream(larrBuffer);
-			lobjFile = new FileXfer(larrBuffer.length, "image/png", "pdfPage.png", lstreamInput);
-		}
-		catch (Throwable e)
-		{
-			throw new BigBangException(e.getMessage(), e);
-		}
-
-		lidKey = UUID.randomUUID();
-		FileServiceImpl.GetFileXferStorage().put(lidKey, lobjFile);
-
-		return lidKey.toString();
+		return null;//lidKey.toString();
 	}
 }

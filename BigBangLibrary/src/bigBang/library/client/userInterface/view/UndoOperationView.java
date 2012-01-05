@@ -199,6 +199,13 @@ public class UndoOperationView extends View implements UndoOperationViewPresente
 				actionHandler.onActionInvoked(new ActionInvokedEvent<Action>(Action.REVERT_OPERATION));
 			}
 		}));
+		toolbar.addItem(new MenuItem("Navegar para Processo Auxiliar", new Command() {
+
+			@Override
+			public void execute() {
+				actionHandler.onActionInvoked(new ActionInvokedEvent<Action>(Action.NAVIGATE_TO_AUXILIARY_PROCESS));
+			}
+		}));
 
 		formWrapper.add(toolbar);
 		formWrapper.setCellHeight(toolbar, "21px");

@@ -498,7 +498,6 @@ public class List<T> extends View implements HasValueSelectables<T>, java.util.L
 
 	@Override
 	public void clear() {
-		selectionChangedEventFireBypass(new SelectionChangedEvent(getSelected()));
 		boolean hadElements = !entries.isEmpty();
 		this.clearSelection();
 		this.listPanel.clear();

@@ -24,6 +24,7 @@ public class SlidePanel extends View {
 	protected AbsolutePanel canvas;
 	protected Widget mainWidget;
 	protected HandlerRegistration widgetAttachHandler;
+	protected Widget currentWidget;
 	
 	public SlidePanel(){
 		canvas = new AbsolutePanel();
@@ -138,9 +139,14 @@ public class SlidePanel extends View {
 		};
 		widgetAttachHandler = w.addAttachHandler(attachHandler);
 		canvas.add(w);
+		currentWidget = w;
 		return true;
 	}
 
+	public Widget getCurrentWidget(){
+		return this.currentWidget;
+	}
+	
 	public void add(final Widget w) {
 		clear();
 		mainWidget = w;

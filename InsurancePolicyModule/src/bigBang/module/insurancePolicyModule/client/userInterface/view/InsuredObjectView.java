@@ -6,17 +6,21 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 import bigBang.definitions.shared.InsurancePolicy;
 import bigBang.definitions.shared.InsuredObject;
 import bigBang.library.client.HasEditableValue;
+import bigBang.library.client.event.ActionInvokedEvent;
+import bigBang.library.client.event.ActionInvokedEventHandler;
 import bigBang.library.client.userInterface.ListHeader;
 import bigBang.library.client.userInterface.view.View;
 import bigBang.module.insurancePolicyModule.client.userInterface.InsurancePolicyForm;
 import bigBang.module.insurancePolicyModule.client.userInterface.InsuredObjectForm;
 import bigBang.module.insurancePolicyModule.client.userInterface.InsuredObjectOperationsToolbar;
 import bigBang.module.insurancePolicyModule.client.userInterface.presenter.InsuredObjectViewPresenter;
+import bigBang.module.insurancePolicyModule.client.userInterface.presenter.InsuredObjectViewPresenter.Action;
 
 public class InsuredObjectView extends View implements InsuredObjectViewPresenter.Display {
 
 	protected InsurancePolicyForm insurancePolicyForm;
 	protected InsuredObjectForm form;
+	protected ActionInvokedEventHandler<Action> actionHandler;
 	
 	public InsuredObjectView(){
 		SplitLayoutPanel mainWrapper = new SplitLayoutPanel();
@@ -52,20 +56,17 @@ public class InsuredObjectView extends View implements InsuredObjectViewPresente
 
 			@Override
 			public void onEditRequest() {
-				// TODO Auto-generated method stub
-				
+				actionHandler.onActionInvoked(new ActionInvokedEvent<InsuredObjectViewPresenter.Action>(Action.EDIT));
 			}
 
 			@Override
 			public void onSaveRequest() {
-				// TODO Auto-generated method stub
-				
+				actionHandler.onActionInvoked(new ActionInvokedEvent<InsuredObjectViewPresenter.Action>(Action.SAVE));
 			}
 
 			@Override
 			public void onCancelRequest() {
-				// TODO Auto-generated method stub
-				
+				actionHandler.onActionInvoked(new ActionInvokedEvent<InsuredObjectViewPresenter.Action>(Action.DELETE));
 			}
 		};
 		
@@ -102,6 +103,12 @@ public class InsuredObjectView extends View implements InsuredObjectViewPresente
 	public void setInsuredObject(InsuredObject object) {
 		// TODO Auto-generated method stub
 		
+	}
+
+	@Override
+	public void registerActionHandler(
+			ActionInvokedEventHandler<Action> actionInvokedEventHandler) {
+		this.actionHandler = actionInvokedEventHandler;
 	}
 	
 }

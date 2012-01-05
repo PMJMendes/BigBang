@@ -1,12 +1,21 @@
 package bigBang.library.client.userInterface;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
 
 
 public class TwoKeyTable {
 
+	public static enum Type {
+		NUMERIC,
+		TEXT,
+		LIST,
+		REFERENCE,
+		BOOLEAN,
+		DATE
+	}
+	
 	public static class Key {
 		public String k1;
 		public String k2;
@@ -19,16 +28,22 @@ public class TwoKeyTable {
 	
 	public static class Field{
 		public String id;
+		public String reference;
+		public Type type;
 		public String value;
 	}
 
 	protected Map<String, Integer> rows;
 	protected Map<String, Integer> columns;
+	protected Map<String, String> rowNames;
+	protected Map<String, String> columnNames;
 	protected Field[][] fields;
 	
 	public TwoKeyTable(){
 		rows = new HashMap<String, Integer>();
+		rowNames = new HashMap<String, String>();
 		columns = new HashMap<String, Integer>();
+		columnNames = new HashMap<String, String>();
 		this.fields = new Field[0][0];
 	}
 
@@ -39,10 +54,12 @@ public class TwoKeyTable {
 		this.fields = new Field[rows.length][columns.length];
 
 		for(int i = 0; i < rows.length; i++) {
-			this.rows.put(rows[i].id, i);
+			this.rows.put(rows[i].id, new Integer(i));
+			this.rowNames.put(rows[i].id, rows[i].text);
 		}
 		for(int i = 0; i < columns.length; i++) {
-			this.columns.put(columns[i].id, i);
+			this.columns.put(columns[i].id, new Integer(i));
+			this.columnNames.put(columns[i].id, columns[i].text);
 		}
 	}
 
@@ -80,7 +97,7 @@ public class TwoKeyTable {
 	}
 	
 	public String[] getColumnHeaders(){
-		Set<String> keys = this.columns.keySet();
+		Collection<String> keys = this.columns.keySet();
 		String[] result = new String[keys.size()];
 		int i = 0;
 		for(String s : keys){
@@ -91,7 +108,7 @@ public class TwoKeyTable {
 	}
 	
 	public String[] getRowHeaders(){
-		Set<String> keys = this.rows.keySet();
+		Collection<String> keys = this.rows.keySet();
 		String[] result = new String[keys.size()];
 		int i = 0;
 		for(String s : keys){
@@ -101,12 +118,22 @@ public class TwoKeyTable {
 		return result;
 	}
 	
+	public String getColumnText(String columnId){
+		return this.columnNames.get(columnId);
+	}
+	
+	public String getRowText(String rowId){
+		return this.rowNames.get(rowId);
+	}
+	
 	protected Integer getColumnIndex(String columnId) {
-		return columns.get(columnId);
+		Integer result = columns.get(columnId); 
+		return result;
 	}
 
 	protected Integer getRowIndex(String rowId){
-		return columns.get(rowId);
+		Integer result = rows.get(rowId);
+		return result;
 	}
 
 }

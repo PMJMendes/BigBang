@@ -439,8 +439,9 @@ public class InsurancePolicySearchOperationView extends View implements Insuranc
 		UndoOperationView historyView = new UndoOperationView();
 		UndoOperationViewPresenter presenter = new UndoOperationViewPresenter(null,
 				(HistoryBroker) DataBrokerManager.Util.getInstance().getBroker(BigBangConstants.EntityIds.HISTORY),
-				historyView,
-				policy.processId);
+				historyView, policy.id,
+				policy.processId,
+				BigBangConstants.EntityIds.INSURANCE_POLICY);
 		presenter.setTargetEntity(selectedItemId);
 		VerticalPanel wrapper = new VerticalPanel();
 		wrapper.setSize("100%", "100%");

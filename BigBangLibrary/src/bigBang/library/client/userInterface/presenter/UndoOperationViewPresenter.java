@@ -16,6 +16,7 @@ import bigBang.library.client.Selectable;
 import bigBang.library.client.ValueSelectable;
 import bigBang.library.client.event.ActionInvokedEvent;
 import bigBang.library.client.event.ActionInvokedEventHandler;
+import bigBang.library.client.event.ScreenInvokedEvent;
 import bigBang.library.client.event.SelectionChangedEvent;
 import bigBang.library.client.event.SelectionChangedEventHandler;
 import bigBang.library.client.userInterface.view.View;
@@ -32,7 +33,8 @@ import com.google.gwt.user.client.ui.Widget;
 public class UndoOperationViewPresenter implements OperationViewPresenter {
 
 	public static enum Action {
-		REVERT_OPERATION
+		REVERT_OPERATION,
+		NAVIGATE_TO_AUXILIARY_PROCESS
 	}
 
 	public interface Display {
@@ -56,20 +58,23 @@ public class UndoOperationViewPresenter implements OperationViewPresenter {
 		Widget asWidget();
 	}
 
-	@SuppressWarnings("unused")
 	private EventBus eventBus;
 	private HistoryServiceAsync service;
 	private Display view;
 	protected HistoryBroker historyBroker;
 	protected String[] implementedOperationIds;
 	private String processId;
+	private String objectId;
+	private String processTypeId;
 
 	private HistoryOperation operation;
 
 	private boolean bound = false;
 
-	public UndoOperationViewPresenter(EventBus eventBus, HistoryBroker broker, Display view, String processId) {
+	public UndoOperationViewPresenter(EventBus eventBus, HistoryBroker broker, Display view, String objectId, String processId, String processTypeId) {
+		this.objectId = objectId;
 		this.processId = processId;
+		this.processTypeId = processTypeId;
 		setEventBus(eventBus);
 		setService(service);
 		setView((View) view);
@@ -112,6 +117,9 @@ public class UndoOperationViewPresenter implements OperationViewPresenter {
 				switch(action.getAction()) {
 				case REVERT_OPERATION:
 					onRevertOperation();
+					break;
+				case NAVIGATE_TO_AUXILIARY_PROCESS:
+					onNavigateToAuxiliaryProcess();
 					break;
 				}
 			}
@@ -176,6 +184,13 @@ public class UndoOperationViewPresenter implements OperationViewPresenter {
 		});
 	}
 
+	protected void onNavigateToAuxiliaryProcess(){
+		HistoryItem item = view.getForm().getValue();
+		String processTypeId = item.otherProcessId;
+		String processId = item.otherProcessId;
+		eventBus.fireEvent(new ScreenInvokedEvent(ScreenInvokedEvent.OPERATION_TYPE_READ, processTypeId, processId));
+	}
+	
 	@Override
 	public void registerEventHandlers(EventBus eventBus) {
 		// TODO Auto-generated method stub

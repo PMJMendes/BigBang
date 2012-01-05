@@ -112,18 +112,18 @@ public class View extends Composite implements RightClickable, HasAllMouseHandle
 	}
 	
 	public void disableTextSelection(boolean disable){
-		disableTextSelectInternal(this.getElement(), disable);
+//		disableTextSelectInternal(this.getElement(), disable);
 	}
 
-	private native static void disableTextSelectInternal(Element e, boolean disable)/*-{ 
-		  if (disable) { 
-		    e.ondrag = function () { return false; }; 
-		    e.onselectstart = function () { return false; }; 
-		  } else { 
-		    e.ondrag = null; 
-		    e.onselectstart = null; 
-		} 
-	}-*/;
+//	private native static void disableTextSelectInternal(Element e, boolean disable)/*-{ 
+//		  if (disable) { 
+//		    e.ondrag = function () { return false; }; 
+//		    e.onselectstart = function () { return false; }; 
+//		  } else { 
+//		    e.ondrag = null; 
+//		    e.onselectstart = null; 
+//		} 
+//	}-*/;
 
 	public void showMessage(String message){
 		MessageBox.info("Informação", message);
@@ -170,4 +170,5 @@ public class View extends Composite implements RightClickable, HasAllMouseHandle
 	public void showLoading(boolean show) {
 		//TODO
 	}
+	
 }

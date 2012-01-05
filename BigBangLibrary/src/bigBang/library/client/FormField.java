@@ -67,7 +67,7 @@ public abstract class FormField<T> extends View implements HasValue<T>, Validata
 
 	public void setValidator(FieldValidator<T> validator) {
 		this.validator = validator;
-		mandatoryIndicatorLabel.setVisible(validator != null && !validator.isMandatory());
+		mandatoryIndicatorLabel.setVisible(validator != null && validator.isMandatory());
 	}
 
 	public void setFieldWidth(String width) {

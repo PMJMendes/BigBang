@@ -1,23 +1,22 @@
 package bigBang.library.client.event;
 
-import bigBang.library.client.Parameter;
-
 import com.google.gwt.event.shared.GwtEvent;
 
 public class ScreenInvokedEvent extends GwtEvent<ScreenInvokedEventHandler> {
 	
 	public static Type<ScreenInvokedEventHandler> TYPE = new Type<ScreenInvokedEventHandler>();
+	public static String OPERATION_TYPE_READ = "CRUD-READ";
 	
-	private String screenId;
-	private String sectionId;
-	private Parameter[] parameters;
+	private String operationId;
+	private String processTypeId;
+	private String targetId;
 	
-	public ScreenInvokedEvent(String screenId, String sectionId, Parameter[] parameters){
-		this.setScreenId(screenId);
-		this.setSectionId(sectionId);
-		this.setParameters(parameters);
+	public ScreenInvokedEvent(String operationId, String processTypeId, String targetId){
+		this.operationId = operationId;
+		this.processTypeId = processTypeId;
+		this.targetId = targetId;
 	}
-	
+
 	@Override
 	public Type<ScreenInvokedEventHandler> getAssociatedType() {
 		return TYPE;
@@ -28,28 +27,16 @@ public class ScreenInvokedEvent extends GwtEvent<ScreenInvokedEventHandler> {
 		handler.onScreenInvoked(this);
 	}
 
-	public void setScreenId(String screenId) {
-		this.screenId = screenId;
+	public String getOperationId(){
+		return this.operationId;
 	}
-
-	public String getScreenId() {
-		return screenId;
+	
+	public String getProcessTypeId(){
+		return this.processTypeId;
 	}
-
-	public void setSectionId(String sectionId) {
-		this.sectionId = sectionId;
-	}
-
-	public String getSectionId() {
-		return sectionId;
-	}
-
-	public void setParameters(Parameter[] parameters) {
-		this.parameters = parameters;
-	}
-
-	public Parameter[] getParameters() {
-		return parameters;
+	
+	public String getTargetId(){
+		return this.targetId;
 	}
 
 }

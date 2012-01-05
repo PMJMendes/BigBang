@@ -318,15 +318,22 @@ public class InsurancePolicyProcessBrokerImpl extends DataBroker<InsurancePolicy
 
 	@Override
 	public void updateInsuredObject(String policyId, InsuredObject object,
-			ResponseHandler<InsuredObject> handler) {
-		// TODO Auto-generated method stub
+			final ResponseHandler<InsuredObject> handler) {
+		if(inScratchPad(policyId)){
+			policyId = this.getScratchPadId(policyId);
+			this.service.updateObjectInPad(object, new BigBangAsyncCallback<InsuredObject>() {
 
+				@Override
+				public void onSuccess(InsuredObject result) {
+					handler.onResponse(result);
+				}
+			});
+		}
 	}
 
 	@Override
 	public void removeInsuredObject(String policyId, InsuredObject object) {
-		// TODO Auto-generated method stub
-
+		//service.updateObjectInPad(data, callback)
 	}
 
 	@Override

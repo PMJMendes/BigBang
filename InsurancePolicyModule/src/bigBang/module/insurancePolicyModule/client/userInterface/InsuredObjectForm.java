@@ -2,6 +2,8 @@ package bigBang.module.insurancePolicyModule.client.userInterface;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
@@ -23,9 +25,9 @@ import bigBang.library.client.userInterface.ExpandableListBoxFormField;
 import bigBang.library.client.userInterface.RadioButtonFormField;
 import bigBang.library.client.userInterface.TextAreaFormField;
 import bigBang.library.client.userInterface.TextBoxFormField;
-import bigBang.library.client.userInterface.TwoKeyTable;
 import bigBang.library.client.userInterface.TwoKeyTable.Field;
 import bigBang.library.client.userInterface.TwoKeyTable.HeaderCell;
+import bigBang.library.client.userInterface.TwoKeyTable.Type;
 import bigBang.library.client.userInterface.TwoKeyTableView;
 import bigBang.library.client.userInterface.view.FormView;
 import bigBang.library.client.userInterface.view.FormViewSection;
@@ -91,8 +93,8 @@ public class InsuredObjectForm extends FormView<InsuredObject> {
 				this.field = radioField;
 				break;
 			case DATE:
-//				DatePickerFormField dateField = new DatePickerFormField(field.fieldName);
-//				this.field = dateField;
+				//				DatePickerFormField dateField = new DatePickerFormField(field.fieldName);
+				//				this.field = dateField;
 				break;
 			default:
 				break;
@@ -121,23 +123,23 @@ public class InsuredObjectForm extends FormView<InsuredObject> {
 		public void setLabelWidth(String width) {
 			this.field.setLabelWidth(width);
 		}
-		
+
 		@Override
 		public void setFieldWidth(String width) {
 			this.field.setFieldWidth(width);
 		}
-		
+
 		@Override
 		public void setValue(String value, boolean fireEvents) {
 			this.field.setValue(value, fireEvents);
 		}
-		
+
 		@Override
 		public String getValue() {
 			return this.field.getValue() == null ? null : this.field.getValue().toString();
 		}
 	}
-	
+
 	//common fields
 	protected TextBoxFormField identification;
 	protected AddressFormField address;
@@ -183,15 +185,18 @@ public class InsuredObjectForm extends FormView<InsuredObject> {
 	protected FormViewSection commonSection, typeSection, personSection, companySection, equipmentSection, locationSection, animalSection, dynamicHeaderSection;
 	protected Collection<FormViewSection> dynamicFieldSections;
 	protected TwoKeyTableView dynamicVariableHeaderDataTable;
-	
-	protected Collection<DynFormField> dynamicFixedHeaderFields, dynamicVariableHeaderFields;
+	protected Map<String, TwoKeyTableView> coverageTables;
+	protected Map<String, Collection<DynFormField>> coverageFixedFields;
+
+	protected Collection<DynFormField> dynamicFixedHeaderFields;
 
 	public InsuredObjectForm(){
+		this.coverageFixedFields = new HashMap<String, Collection<DynFormField>>();
+		this.coverageTables = new HashMap<String, TwoKeyTableView>();
 		this.dynamicFieldSections = new ArrayList<FormViewSection>();
 		this.dynamicFixedHeaderFields = new ArrayList<InsuredObjectForm.DynFormField>();
-		this.dynamicVariableHeaderFields = new ArrayList<InsuredObjectForm.DynFormField>();
 		this.dynamicVariableHeaderDataTable = new TwoKeyTableView();
-		
+
 		//common fields
 		this.commonSection = new FormViewSection("Informação Geral");
 		this.identification = new TextBoxFormField("Identificação");
@@ -329,8 +334,9 @@ public class InsuredObjectForm extends FormView<InsuredObject> {
 		this.addSection(this.animalSection);
 
 		this.dynamicHeaderSection = new FormViewSection("");
+		this.dynamicHeaderSection.showHeader(false);
 		this.addSection(dynamicHeaderSection);
-		
+
 		this.setValue(new InsuredObject());
 	}
 
@@ -413,9 +419,69 @@ public class InsuredObjectForm extends FormView<InsuredObject> {
 		result.cityRegistryNumber = animalCityRegistryNumber.getValue();
 		result.electronicIdTag = animalElectronicTagId.getValue();
 
+		result.headerData = getDynamicHeaderData(result.exercises, result.headerData);
+		result.coverageData = getCoverageData(result.exercises, result.coverageData);
+
 		return result;
 	}
 
+	private CoverageData[] getCoverageData(Exercise[] exercises, CoverageData[] coverageData) {
+		for(int i = 0; i < coverageData.length; i++) {
+			String coverageId = coverageData[i].coverageId;
+			
+			//FIXED FIELDS
+			Collection<DynFormField> fixedFields = this.coverageFixedFields.get(coverageId);
+			if(fixedFields == null){continue;}
+			FixedField[] coverageFixedFields = coverageData[i].fixedFields;
+			for(int j = 0; j < coverageFixedFields.length; j++){
+				for(DynFormField field : fixedFields){
+					if(coverageFixedFields[j].fieldId.equalsIgnoreCase(field.id)){
+						coverageFixedFields[j].value = field.getValue();
+						break;
+					}
+				}
+			}
+
+			//EXERCISE-VARIABLE FIELDS
+			TwoKeyTableView coverageTable = this.coverageTables.get(coverageId);
+			VariableField[] variableFields = coverageData[i].variableFields;
+			for(int j = 0; j < variableFields.length; j++) {
+				VariableField variableField = variableFields[j];
+				for(int k = 0; k < exercises.length; k++) {
+  					Field field = coverageTable.getValue(variableField.fieldId, exercises[k].id);
+					variableField.data[k].value = field == null ? null : field.value;
+				}
+			}
+		}
+		return coverageData;
+	}
+
+	private HeaderData getDynamicHeaderData(Exercise[] exercises, HeaderData headerData) {
+		FixedField[] fixedFields = headerData.fixedFields;
+
+		for(int i = 0; i < fixedFields.length; i++){
+			FixedField fixedField = fixedFields[i];
+			for(DynFormField f : this.dynamicFixedHeaderFields){
+				if(f.id.equalsIgnoreCase(fixedField.fieldId)){
+					fixedField.value = f.getValue();
+					break;
+				}
+			}
+		}
+
+		VariableField[] variableFields = headerData.variableFields;
+		for(int i = 0; i < variableFields.length; i++) {
+			VariableField variableField = variableFields[i];
+			VariableValue[] values = variableField.data;
+			for(int j = 0; j < values.length; j++) {
+				VariableValue value = values[j];
+				Field tableField = this.dynamicVariableHeaderDataTable.getValue(variableField.fieldId, exercises[j].id);
+				value.value = tableField.value;
+			}
+		}
+		return headerData;
+	}
+	
 	@Override
 	public void setInfo(InsuredObject info) {
 		if(info == null){
@@ -464,18 +530,18 @@ public class InsuredObjectForm extends FormView<InsuredObject> {
 		animalBirthYear.setValue(info.birthYear);
 		animalCityRegistryNumber.setValue(info.cityRegistryNumber);
 		animalElectronicTagId.setValue(info.electronicIdTag);
-		
+
 		setDynamicHeaderData(info.exercises, info.headerData);
-		setDynamicData(info.coverageData);
+		setDynamicData(info.exercises, info.coverageData);
 	}
-	
+
 	protected void setDynamicHeaderData(Exercise[] exercises, HeaderData headerData){
 		if(headerData == null) {return;}
 		this.dynamicHeaderSection.clear();
 		setDynamicFixedHeaderData(headerData.fixedFields);
 		setDynamicVariableHeaderData(exercises, headerData.variableFields);
 	}
-	
+
 	protected void setDynamicFixedHeaderData(FixedField[] fields){
 		clearDynamicFixedHeaderData();
 		if(fields == null){
@@ -487,11 +553,11 @@ public class InsuredObjectForm extends FormView<InsuredObject> {
 				formField.setFieldWidth("175px");
 				formField.setValue(field.value);
 				this.dynamicFixedHeaderFields.add(formField);
-				this.dynamicHeaderSection.addFormField(formField, true);
+				this.dynamicHeaderSection.addFormField(formField, i != (fields.length - 1));
 			}
 		}
 	}
-	
+
 	protected void clearDynamicFixedHeaderData(){
 		this.dynamicHeaderSection.unregisterAllFormFields();
 		for(DynFormField f : this.dynamicFixedHeaderFields){
@@ -500,12 +566,14 @@ public class InsuredObjectForm extends FormView<InsuredObject> {
 		}
 		this.dynamicFixedHeaderFields.clear();	
 	}
-	
+
 	protected FixedField[] getDynamicFixedFieldHeaderData(){
 		return null; //TODO
 	}
-	
+
 	protected void setDynamicVariableHeaderData(Exercise[] exercises, VariableField[] fields){
+		this.dynamicVariableHeaderDataTable.removeFromParent();
+
 		if(exercises == null){
 			clearDynamicVariableHeaderData();
 			return;
@@ -516,7 +584,7 @@ public class InsuredObjectForm extends FormView<InsuredObject> {
 
 		HeaderCell[] rowHeaders = new HeaderCell[fields.length];
 		HeaderCell[] columnHeaders = new HeaderCell[exercises.length];
-		
+
 		for(int i = 0; i < fields.length; i++) {
 			HeaderCell header = new HeaderCell();
 			header.id = fields[i].fieldId;
@@ -531,54 +599,140 @@ public class InsuredObjectForm extends FormView<InsuredObject> {
 		}
 		dynamicVariableHeaderDataTable.setHeaders(rowHeaders, columnHeaders);
 
-//		for(int i = 0; i < fields.length; i++){
-//			VariableField field = fields[i];
-//			Field tableField = new Field();
-//			tableField.id = field.fieldId;
-//			tableField.value = field.
-//		}
+		for(int i = 0; i < fields.length; i++){
+			VariableField field = fields[i];
 
-		this.dynamicHeaderSection.addWidget(this.dynamicVariableHeaderDataTable);
+			for(int j = 0; j < field.data.length; j++) {
+				VariableValue fieldValue = field.data[j];
+				String exerciseId = exercises[j].id;
+				Field tableField = new Field();
+				tableField.value = fieldValue.value;
+				switch(field.type){
+				case BOOLEAN:
+					tableField.type = Type.BOOLEAN;
+					break;
+				case DATE:
+					tableField.type = Type.DATE;
+					break;
+				case LIST:
+					tableField.type = Type.LIST;
+					tableField.id = field.fieldId;
+					break;
+				case NUMERIC:
+					tableField.type = Type.NUMERIC;
+					break;
+				case REFERENCE:
+					tableField.type = Type.REFERENCE;
+					tableField.reference = field.refersToId;
+					break;
+				case TEXT:
+					tableField.type = Type.TEXT;
+					break;
+				}
+				tableField.value = fieldValue.value;
+				this.dynamicVariableHeaderDataTable.setValue(field.fieldId, exerciseId, tableField);
+			}
+		}
+
+		this.dynamicHeaderSection.addWidget(this.dynamicVariableHeaderDataTable, false);
 		this.dynamicVariableHeaderDataTable.render();
 	}
-	
+
 	protected void clearDynamicVariableHeaderData(){
 		//TODO
 	}
-	
-	protected VariableField[] getDynamicVariableHeaderData(){
-		return null;//TODO
-	}
-	
-	protected void setDynamicData(CoverageData[] data){
+
+	protected void setDynamicData(Exercise[] exercises, CoverageData[] data){
 		if(data == null) {
 			removeDynamicData();
 			return;
 		}
+		HeaderCell[] columnHeaders = new HeaderCell[exercises.length];
+		for(int i = 0; i < exercises.length; i++) {
+			Exercise exercise = exercises[i];
+			HeaderCell header = new HeaderCell();
+			header.id = exercise.id;
+			header.text = exercise.label;
+			columnHeaders[i] = header;
+		}
+
 		for(int i = 0; i < data.length; i++){
 			CoverageData covData = data[i];
+			if(covData.fixedFields.length == 0 && covData.variableFields.length == 0){
+				continue;
+			}
+
 			FormViewSection section = new FormViewSection("Cobertura " + covData.coverageLabel);
+			ArrayList<DynFormField> coverageFields = new ArrayList<DynFormField>();
 			
 			for(int j = 0; j < covData.fixedFields.length; j++){
 				FixedField field = covData.fixedFields[j];
 				DynFormField formField = new DynFormField(field);
 				formField.setFieldWidth("175px");
 				formField.setValue(field.value);
-				section.addFormField(formField, true);
+				section.addFormField(formField, j != (covData.fixedFields.length - 1));
+				coverageFields.add(formField);
+			}
+			this.coverageFixedFields.put(covData.coverageId, coverageFields);
+
+			TwoKeyTableView table = new TwoKeyTableView();
+			HeaderCell[] rowHeaders = new HeaderCell[covData.variableFields.length]; 
+
+			if(covData.variableFields.length != 0){
+				for(int j = 0; j < covData.variableFields.length; j++) {
+					HeaderCell header = new HeaderCell();
+					header.id = covData.variableFields[j].fieldId;
+					header.text = covData.variableFields[j].fieldName;
+					rowHeaders[j] = header;
+				}
+
+				table.setHeaders(rowHeaders, columnHeaders);
+
+				for(int j = 0; j < exercises.length; j++) {
+					for(int k = 0; k < covData.variableFields.length; k++){
+						VariableField field = covData.variableFields[k];
+						Field tableField = new Field();
+						switch(field.type){
+						case BOOLEAN:
+							tableField.type = Type.BOOLEAN;
+							break;
+						case DATE:
+							tableField.type = Type.DATE;
+							break;
+						case LIST:
+							tableField.type = Type.LIST;
+							tableField.id = field.fieldId;
+							break;
+						case NUMERIC:
+							tableField.type = Type.NUMERIC;
+							break;
+						case REFERENCE:
+							tableField.type = Type.REFERENCE;
+							tableField.reference = field.refersToId;
+							break;
+						case TEXT:
+							tableField.type = Type.TEXT;
+							break;
+						}
+						tableField.value = field.data[j].value;
+						table.setValue(field.fieldId, exercises[j].id, tableField);
+					}
+				}
+				table.render();
+				section.addWidget(table, false);
+				this.coverageTables.put(covData.coverageId, table);
 			}
 			addSection(section);
 		}
 	}
-	
-	protected CoverageData[] fillDynamicData(CoverageData[] data){
-		return null; //TODO
-	}
-	
+
 	protected void removeDynamicData(){
 		for(FormViewSection s : this.dynamicFieldSections){
 			s.unregisterAllFormFields();
 			s.removeFromParent();
 		}
+		this.coverageFixedFields.clear();
+		this.coverageTables.clear();
 	}
 
 	public void setForPolicyStatusNew(InsurancePolicyStub.PolicyStatus status){

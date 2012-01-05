@@ -63,6 +63,7 @@ public class FormViewSection extends View {
 		content = p;
 		currentContainer = new FlowPanel();
 		content.add((Widget) currentContainer);
+		((Widget)content).getElement().getStyle().setProperty("minHeight", "50px");
 	}
 	
 	public ArrayList<FormField<?>> getFields(){
@@ -146,8 +147,15 @@ public class FormViewSection extends View {
 		this.errorMessages.clear();
 	}
 
-	public void addWidget(Widget w){
+	public void addWidget(Widget w, boolean inline) {
+		if(inline){
+			w.getElement().getStyle().setFloat(Float.LEFT);
+		}
 		content.add(w);
+	}
+	
+	public void addWidget(Widget w){
+		addWidget(w, false);
 	}
 
 	public void setContent(Widget content) {
@@ -195,6 +203,10 @@ public class FormViewSection extends View {
 
 	public Widget getHeader() {
 		return this.header;
+	}
+	
+	public void showHeader(boolean show){
+		this.header.setVisible(show);
 	}
 
 	public HasWidgets getContentWrapper() {

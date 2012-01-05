@@ -65,4 +65,8 @@ public class DataBrokerManager {
 		return brokers.get(dataElementId);
 	}
 	
+	public static DataBroker<?> staticGetBroker(String dataElementId){
+		return DataBrokerManager.Util.getInstance().getBroker(dataElementId);
+	}
+	
 }

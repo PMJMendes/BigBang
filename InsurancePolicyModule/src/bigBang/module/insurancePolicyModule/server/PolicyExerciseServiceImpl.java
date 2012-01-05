@@ -15,7 +15,9 @@ import bigBang.definitions.shared.SortOrder;
 import bigBang.definitions.shared.SortParameter;
 import bigBang.library.server.SearchServiceBase;
 import bigBang.library.shared.BigBangException;
+import bigBang.library.shared.NewSearchResult;
 import bigBang.library.shared.SessionExpiredException;
+import bigBang.module.insurancePolicyModule.interfaces.PolicyExerciseService;
 import bigBang.module.insurancePolicyModule.shared.ExerciseSearchParameter;
 import bigBang.module.insurancePolicyModule.shared.ExerciseSortParameter;
 
@@ -27,7 +29,7 @@ import com.premiumminds.BigBang.Jewel.Objects.PolicyObject;
 import com.premiumminds.BigBang.Jewel.Objects.PolicyValue;
 
 public class PolicyExerciseServiceImpl
-	extends SearchServiceBase
+	extends SearchServiceBase implements PolicyExerciseService
 {
 	private static final long serialVersionUID = 1L;
 
@@ -401,5 +403,13 @@ public class PolicyExerciseServiceImpl
 		}
 
 		return lbFound;
+	}
+	
+	@Override
+	public NewSearchResult openSearch(SearchParameter[] parameters,
+			SortParameter[] sorts, int size) throws SessionExpiredException,
+			BigBangException {
+		// TODO Auto-generated method stub
+		return super.openSearch(parameters, sorts, size);
 	}
 }

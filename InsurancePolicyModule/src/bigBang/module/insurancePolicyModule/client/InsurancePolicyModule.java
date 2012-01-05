@@ -7,6 +7,7 @@ import bigBang.library.client.Module;
 import bigBang.library.client.Process;
 import bigBang.library.client.event.ModuleInitializedEvent;
 import bigBang.library.client.userInterface.presenter.SectionViewPresenter;
+import bigBang.module.insurancePolicyModule.client.dataAccess.ExerciseDataBrokerImpl;
 import bigBang.module.insurancePolicyModule.client.dataAccess.InsurancePolicyProcessBrokerImpl;
 import bigBang.module.insurancePolicyModule.client.dataAccess.InsuredObjectDataBrokerImpl;
 import bigBang.module.insurancePolicyModule.client.userInterface.presenter.InsurancePolicySectionViewPresenter;
@@ -56,7 +57,8 @@ public class InsurancePolicyModule implements Module {
 	public DataBroker<?>[] getBrokerImplementations() {
 		return new DataBroker[]{
 			new InsurancePolicyProcessBrokerImpl(),
-			new InsuredObjectDataBrokerImpl()
+			new InsuredObjectDataBrokerImpl(),
+			new ExerciseDataBrokerImpl()
 		};
 	}
 

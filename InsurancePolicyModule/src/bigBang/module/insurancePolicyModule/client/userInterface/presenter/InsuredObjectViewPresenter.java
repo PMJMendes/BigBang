@@ -1,15 +1,23 @@
 package bigBang.module.insurancePolicyModule.client.userInterface.presenter;
 
+import java.util.Collection;
+
 import com.google.gwt.user.client.ui.HasWidgets;
 import com.google.gwt.user.client.ui.Widget;
 
+import bigBang.definitions.client.dataAccess.InsurancePolicyBroker;
 import bigBang.definitions.client.dataAccess.InsurancePolicyDataBrokerClient;
 import bigBang.definitions.client.dataAccess.InsuredObjectDataBrokerClient;
+import bigBang.definitions.client.response.ResponseError;
+import bigBang.definitions.client.response.ResponseHandler;
 import bigBang.definitions.shared.BigBangConstants;
 import bigBang.definitions.shared.InsurancePolicy;
 import bigBang.definitions.shared.InsuredObject;
 import bigBang.library.client.EventBus;
 import bigBang.library.client.HasEditableValue;
+import bigBang.library.client.dataAccess.DataBrokerManager;
+import bigBang.library.client.event.ActionInvokedEvent;
+import bigBang.library.client.event.ActionInvokedEventHandler;
 import bigBang.library.client.userInterface.presenter.ViewPresenter;
 import bigBang.library.client.userInterface.view.View;
 import bigBang.library.interfaces.Service;
@@ -23,6 +31,8 @@ public abstract class InsuredObjectViewPresenter implements ViewPresenter {
 		void setInsurancePolicy(InsurancePolicy policy);
 		void setInsuredObject(InsuredObject object);
 		Widget asWidget();
+		void registerActionHandler(
+				ActionInvokedEventHandler<Action> actionInvokedEventHandler);
 	}
 
 	public static enum Action{
@@ -36,6 +46,7 @@ public abstract class InsuredObjectViewPresenter implements ViewPresenter {
 	protected InsuredObjectDataBrokerClient insuredObjectBrokerClient;
 	protected InsurancePolicyDataBrokerClient insurancePolicyBrokerClient;
 	protected boolean bound = false;
+	protected String policyId;
 	
 	public InsuredObjectViewPresenter(EventBus eventBus, Display display){
 		setEventBus(eventBus);
@@ -72,11 +83,28 @@ public abstract class InsuredObjectViewPresenter implements ViewPresenter {
 		if(bound){
 			return;
 		}
+		this.view.registerActionHandler(new ActionInvokedEventHandler<Action>() {
+
+			@Override
+			public void onActionInvoked(ActionInvokedEvent<Action> action) {
+				switch(action.getAction()){
+				case SAVE:
+					InsuredObject value = view.getInsuredObjectForm().getInfo();
+					saveObject(value);
+					break;
+				case EDIT:
+					break;
+				case DELETE:
+					break;
+				}
+			}
+		});
 		bound = true;
 	}
 	
 	public void setPolicy(InsurancePolicy policy){
 		view.getInsurancePolicyForm().setValue(policy);
+		setPolicyId(policy.id);
 	}
 	
 	public void setInsuredObject(InsuredObject object){
@@ -91,7 +119,7 @@ public abstract class InsuredObjectViewPresenter implements ViewPresenter {
 	protected InsuredObjectDataBrokerClient getInsuredObjectBrokerClient(){
 		return new InsuredObjectDataBrokerClient() {
 			protected int version;
-			
+
 			@Override
 			public void setDataVersionNumber(String dataElementId, int number) {
 				if(dataElementId.equalsIgnoreCase(BigBangConstants.EntityIds.POLICY_INSURED_OBJECT)){
@@ -163,6 +191,27 @@ public abstract class InsuredObjectViewPresenter implements ViewPresenter {
 				
 			}
 		};
+	}
+	
+	protected void saveObject(InsuredObject object) {
+		InsurancePolicyBroker broker = ((InsurancePolicyBroker)DataBrokerManager.Util.getInstance().getBroker(BigBangConstants.EntityIds.INSURANCE_POLICY));
+		broker.updateInsuredObject(this.policyId, object, new ResponseHandler<InsuredObject>() {
+			
+			@Override
+			public void onResponse(InsuredObject response) {
+				onSave();
+			}
+			
+			@Override
+			public void onError(Collection<ResponseError> errors) {
+				// TODO Auto-generated method stub
+				
+			}
+		});
+	}
+	
+	public void setPolicyId(String policyId) {
+		this.policyId = policyId;
 	}
 	
 	public abstract void onSave();

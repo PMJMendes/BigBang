@@ -228,6 +228,7 @@ public class InsurancePolicySearchOperationViewPresenter implements
 	public void bind() {
 		if(this.bound)
 			return;
+		this.bound = true;
 		
 		view.clearAllowedPermissions();
 		this.view.getList().addSelectionChangedEventHandler(new SelectionChangedEventHandler() {
@@ -458,8 +459,7 @@ public class InsurancePolicySearchOperationViewPresenter implements
 
 			@Override
 			public void onSave() {
-				// TODO Auto-generated method stub
-				
+				InsurancePolicySearchOperationViewPresenter.this.view.showCreateInsuredObjectView(false);
 			}
 
 			@Override
