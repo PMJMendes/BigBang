@@ -73,6 +73,7 @@ public class Exercise
 		private static final long serialVersionUID = 1L;
 
 		public String coverageId;
+		public String coverageLabel;
 	}
 
 	public InsuredObject[] objects;
