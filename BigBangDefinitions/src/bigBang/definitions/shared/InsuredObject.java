@@ -15,7 +15,6 @@ public class InsuredObject
 		private static final long serialVersionUID = 1L;
 
 		public String id;
-		public String tempExerciseId;
 		public String label;
 	}
 
