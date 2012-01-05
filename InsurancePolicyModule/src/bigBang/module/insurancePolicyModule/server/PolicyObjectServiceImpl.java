@@ -183,7 +183,6 @@ public class PolicyObjectServiceImpl
 		{
 			lobjResult.exercises[i] = new InsuredObject.Exercise();
 			lobjResult.exercises[i].id = larrExercises[i].getKey().toString();
-			lobjResult.exercises[i].tempExerciseId = null;
 			lobjResult.exercises[i].label = larrExercises[i].getLabel();
 		}
 
