@@ -2,7 +2,7 @@ package bigBang.definitions.shared;
 
 public class Remap
 {
-	public class RemapId
+	public static class RemapId
 	{
 		public String oldId;
 		public String newId;
