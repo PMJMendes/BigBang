@@ -1,5 +1,6 @@
 package com.premiumminds.BigBang.Jewel.Data;
 
+import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.util.UUID;
 
@@ -29,6 +30,7 @@ public class PolicyData
 	public UUID midMediator;
 	public Boolean mbCaseStudy;
 	public UUID midStatus;
+	public BigDecimal mdblPremium;
 
 	public UUID midManager;
 	public UUID midProcess;
@@ -60,6 +62,7 @@ public class PolicyData
 		midManager = pobjSource.midManager;
 		midProcess = pobjSource.midProcess;
 		midStatus = pobjSource.midStatus;
+		mdblPremium = pobjSource.mdblPremium;
 	}
 
 	public void FromObject(ObjectBase pobjSource)
@@ -80,6 +83,7 @@ public class PolicyData
 		midMediator = (UUID)pobjSource.getAt(11);
 		mbCaseStudy = (Boolean)pobjSource.getAt(12);
 		midStatus = (UUID)pobjSource.getAt(13);
+		mdblPremium = (BigDecimal)pobjSource.getAt(14);
 	}
 
 	public void ToObject(ObjectBase pobjDest)
@@ -101,6 +105,7 @@ public class PolicyData
 			pobjDest.setAt(11, midMediator);
 			pobjDest.setAt(12, mbCaseStudy);
 			pobjDest.setAt(13, midStatus);
+			pobjDest.setAt(14, mdblPremium);
 		}
 		catch (Throwable e)
 		{
@@ -215,6 +220,13 @@ public class PolicyData
 		pstrBuilder.append("Data de Fim: ");
 		if ( mdtEndDate != null )
 			pstrBuilder.append(mdtEndDate.toString().substring(0, 10));
+		pstrBuilder.append(pstrLineBreak);
+
+		pstrBuilder.append("Prémio Comercial: ");
+		if ( mdblPremium != null )
+			pstrBuilder.append(mdblPremium);
+		else
+			pstrBuilder.append("(não definido)");
 		pstrBuilder.append(pstrLineBreak);
 
 		pstrBuilder.append("Observações: ");

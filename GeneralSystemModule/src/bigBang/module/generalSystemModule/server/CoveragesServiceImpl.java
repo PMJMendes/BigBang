@@ -649,6 +649,7 @@ public class CoveragesServiceImpl
 			larrResult[i].variesByExercise = (Boolean)larrTaxes[i].getAt(6);
 			larrResult[i].refersToEntityId = (larrTaxes[i].getAt(7) == null ? null : ((UUID)larrTaxes[i].getAt(7)).toString());
 			larrResult[i].columnOrder = (Integer)larrTaxes[i].getAt(8);
+			larrResult[i].mandatory = (Boolean)larrTaxes[i].getAt(9);
 		}
 
 		return larrResult;
@@ -739,6 +740,7 @@ public class CoveragesServiceImpl
 			larrResult[i].midReferenceTo = (parrTaxes[i].refersToEntityId == null ? null :
 					UUID.fromString(parrTaxes[i].refersToEntityId));
 			larrResult[i].mlngColumn = parrTaxes[i].columnOrder;
+			larrResult[i].mbMandatory = parrTaxes[i].mandatory;
 			larrResult[i].mobjPrevValues = null;
 		}
 

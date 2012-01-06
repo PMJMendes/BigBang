@@ -187,6 +187,7 @@ public class InsurancePolicyServiceImpl
 			mobjPolicy.mstrNotes = pobjSource.notes;
 			mobjPolicy.midMediator = ( pobjSource.mediatorId == null ? null : UUID.fromString(pobjSource.mediatorId) );
 			mobjPolicy.mbCaseStudy = pobjSource.caseStudy;
+			mobjPolicy.mdblPremium = ( pobjSource.premium == null ? null : new BigDecimal(pobjSource.premium) );
 
 			marrCoverages = new ArrayList<PadCoverage>();
 			marrObjects = new ArrayList<PadObject>();
@@ -622,6 +623,7 @@ public class InsurancePolicyServiceImpl
 			pobjResult.mediatorId = ( mobjPolicy.midMediator == null ? null : mobjPolicy.midMediator.toString() );
 			pobjResult.caseStudy = ( mobjPolicy.mbCaseStudy == null ? false : mobjPolicy.mbCaseStudy );
 			pobjResult.statusId = ( mobjPolicy.midStatus == null ? null : mobjPolicy.midStatus.toString() );
+			pobjResult.premium = ( mobjPolicy.mdblPremium == null ? null : mobjPolicy.mdblPremium.toPlainString() );
 		}
 
 		public void WriteResult(InsurancePolicy pobjResult)
@@ -1495,6 +1497,7 @@ public class InsurancePolicyServiceImpl
 			mobjPolicy.mstrNotes = pobjSource.notes;
 			mobjPolicy.midMediator = ( pobjSource.mediatorId == null ? null : UUID.fromString(pobjSource.mediatorId) );
 			mobjPolicy.mbCaseStudy = pobjSource.caseStudy;
+			mobjPolicy.mdblPremium = ( pobjSource.premium == null ? null : new BigDecimal(pobjSource.premium) );
 
 			mobjPolicy.mbModified = true;
 
@@ -2323,6 +2326,7 @@ public class InsurancePolicyServiceImpl
 			lobjResult.statusIcon = InsurancePolicyStub.PolicyStatus.OBSOLETE;
 			break;
 		}
+		lobjResult.premium = (lobjPolicy.getAt(14) == null ? null : ((BigDecimal)lobjPolicy.getAt(14)).toPlainString());
 		lobjResult.managerId = lobjProc.GetManagerID().toString();
 
 		larrAuxFields = new Hashtable<UUID, Tax>();

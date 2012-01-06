@@ -17,6 +17,7 @@ public class Tax
 	public boolean variesByExercise;  // Novo!
 	public String refersToEntityId;  // Novo!
 	public int columnOrder; // Novo!
+	public boolean mandatory; // Novo!
 
 	public Tax(){}
 	
@@ -31,5 +32,6 @@ public class Tax
 		this.variesByExercise = original.variesByExercise;
 		this.refersToEntityId = original.refersToEntityId;
 		this.columnOrder = original.columnOrder;
+		this.mandatory = original.mandatory;
 	}
 }
