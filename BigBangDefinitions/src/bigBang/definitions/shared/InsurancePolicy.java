@@ -109,6 +109,7 @@ public class InsurancePolicy
 	public String mediatorId;
 	public String inheritMediatorId;
 	public String inheritMediatorName;
+	public String premium; // Numérico com duas casas decimais: prémio comercial.
 	public Contact[] contacts;
 	public Document[] documents;
 

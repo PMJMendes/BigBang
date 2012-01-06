@@ -25,7 +25,6 @@ public class InsurancePolicyStub
 	public String statusId;
 	public String statusText;
 	public PolicyStatus statusIcon;
-	public String premium; // Numérico com duas casas decimais: prémio comercial.
 
 	public String processId;
 }
