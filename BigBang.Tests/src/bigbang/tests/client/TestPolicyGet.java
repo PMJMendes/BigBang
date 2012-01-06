@@ -26,6 +26,6 @@ public class TestPolicyGet
 			}
 		};
 
-		Services.insurancePolicyService.getPolicy("F4D6391A-CBB3-4555-BCB1-9FA900BA4838", callback);
+		Services.insurancePolicyService.getPolicy("54FF52B3-076D-4E3E-B825-9FD000C6AF77", callback);
 	}
 }

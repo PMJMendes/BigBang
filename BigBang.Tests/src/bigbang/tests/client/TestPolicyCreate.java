@@ -16,8 +16,6 @@ public class TestPolicyCreate
 
 	private static void DoStep1()
 	{
-		final String lstrPolicy = "FBA922E2-E2CE-4351-ABD5-9FBB00CE51B2";
-
 		AsyncCallback<Remap[]> callback = new AsyncCallback<Remap[]>()
 		{
 			public void onFailure(Throwable caught)
@@ -32,11 +30,11 @@ public class TestPolicyCreate
 				gstrPad = null;
 				for (i = 0; i < result.length; i++ )
 				{
-					if ( result[i].typeId.equals("D0C5AE6B-D340-4171-B7A3-9F81011F5D42") )
+					if ( result[i].typeId.equalsIgnoreCase("D0C5AE6B-D340-4171-B7A3-9F81011F5D42") )
 					{
 						for ( j = 0; j < result[i].remapIds.length; j++ )
 						{
-							if ( lstrPolicy.equals(result[i].remapIds[j].oldId) )
+							if ( result[i].remapIds[j].oldId == null )
 							{
 								gstrPad = result[i].remapIds[j].newId;
 								break;

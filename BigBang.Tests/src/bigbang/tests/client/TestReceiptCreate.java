@@ -35,6 +35,6 @@ public class TestReceiptCreate
 		receipt.comissions = "13.2";
 		receipt.retrocessions = "0";
 		receipt.issueDate = "2011-11-30";
-		Services.insurancePolicyService.createReceipt("FBA922E2-E2CE-4351-ABD5-9FBB00CE51B2", receipt, callback);
+		Services.insurancePolicyService.createReceipt("54FF52B3-076D-4E3E-B825-9FD000C6AF77", receipt, callback);
 	}
 }
