@@ -181,7 +181,7 @@ public class MediatorServiceImpl
 			{
 				lopMM.marrCreate[0].mobjDocOps = new DocOps();
 				lopMM.marrCreate[0].mobjDocOps.marrCreate = DocumentServiceImpl.BuildDocTree(lopMM.marrCreate[0].mobjDocOps,
-						mediator.documents, Constants.ObjID_Mediator);
+						mediator.documents);
 			}
 			else
 				lopMM.marrCreate[0].mobjDocOps = null;

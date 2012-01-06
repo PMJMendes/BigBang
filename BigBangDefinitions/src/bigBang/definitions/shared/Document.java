@@ -9,6 +9,7 @@ public class Document
 
 	public String id;
 	public String name;
+	public String ownerTypeId;
 	public String ownerId;
 	public String docTypeId;
 	public String text;

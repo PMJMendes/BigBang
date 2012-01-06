@@ -3186,8 +3186,7 @@ public class InsurancePolicyServiceImpl
 			if ( (receipt.documents != null) && (receipt.documents.length > 0) )
 			{
 				lopCR.mobjDocOps = new DocOps();
-				lopCR.mobjDocOps.marrCreate = DocumentServiceImpl.BuildDocTree(lopCR.mobjDocOps,
-						receipt.documents, Constants.ObjID_Policy);
+				lopCR.mobjDocOps.marrCreate = DocumentServiceImpl.BuildDocTree(lopCR.mobjDocOps, receipt.documents);
 			}
 			else
 				lopCR.mobjDocOps = null;

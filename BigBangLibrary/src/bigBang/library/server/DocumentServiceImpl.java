@@ -10,20 +10,21 @@ import Jewel.Engine.DataAccess.MasterDB;
 import Jewel.Engine.Implementation.Entity;
 import Jewel.Engine.Interfaces.IEntity;
 import Jewel.Engine.SysObjects.FileXfer;
+import Jewel.Engine.SysObjects.ObjectBase;
 import Jewel.Petri.Interfaces.IOperation;
 import Jewel.Petri.Objects.PNOperation;
-import Jewel.Petri.SysObjects.JewelPetriException;
 import Jewel.Petri.SysObjects.Operation;
+import Jewel.Petri.SysObjects.ProcessData;
 import bigBang.definitions.shared.DocInfo;
 import bigBang.definitions.shared.Document;
 import bigBang.library.interfaces.DocumentService;
 import bigBang.library.shared.BigBangException;
 import bigBang.library.shared.SessionExpiredException;
 
-import com.premiumminds.BigBang.Jewel.BigBangJewelException;
 import com.premiumminds.BigBang.Jewel.Constants;
 import com.premiumminds.BigBang.Jewel.Data.DocInfoData;
 import com.premiumminds.BigBang.Jewel.Data.DocumentData;
+import com.premiumminds.BigBang.Jewel.Objects.GeneralSystem;
 import com.premiumminds.BigBang.Jewel.Operations.DocOps;
 import com.premiumminds.BigBang.Jewel.Operations.Client.ManageClientData;
 import com.premiumminds.BigBang.Jewel.Operations.General.ManageInsurers;
@@ -36,8 +37,7 @@ public class DocumentServiceImpl
 {
 	private static final long serialVersionUID = 1L;
 
-	public static DocumentData[] BuildDocTree(DocOps prefAux, Document[] parrDocuments, UUID pidParentType)
-		throws BigBangJewelException
+	public static DocumentData[] BuildDocTree(DocOps prefAux, Document[] parrDocuments)
 	{
 		DocumentData[] larrResult;
 		int i, j;
@@ -51,8 +51,8 @@ public class DocumentServiceImpl
 			larrResult[i] = new DocumentData();
 			larrResult[i].mid = (parrDocuments[i].id == null ? null : UUID.fromString(parrDocuments[i].id));
 			larrResult[i].mstrName = parrDocuments[i].name;
-			larrResult[i].midOwnerType = pidParentType;
-			larrResult[i].midOwnerId = (parrDocuments[i].ownerId == null ? null : UUID.fromString(parrDocuments[i].ownerId));
+			larrResult[i].midOwnerType = UUID.fromString(parrDocuments[i].ownerTypeId);
+			larrResult[i].midOwnerId = UUID.fromString(parrDocuments[i].ownerId);
 			larrResult[i].midDocType = (parrDocuments[i].docTypeId == null ? null : UUID.fromString(parrDocuments[i].docTypeId));
 			larrResult[i].mstrText = parrDocuments[i].text;
 			if ( parrDocuments[i].fileStorageId != null )
@@ -166,24 +166,29 @@ public class DocumentServiceImpl
 		return larrAux.toArray(new Document[larrAux.size()]);
 	}
 
-	public Document createDocument(String procId, String opId, Document document)
+	public Document createDocument(Document document)
 		throws SessionExpiredException, BigBangException
 	{
 		Document[] larrAux;
 		DocOps lopDOps;
 		Operation lobjOp;
 
+		if ( Engine.getCurrentUser() == null )
+			throw new SessionExpiredException();
+
 		larrAux = new Document[1];
 		larrAux[0] = document;
 
 		lopDOps = new DocOps();
+		lopDOps.marrCreate = BuildDocTree(lopDOps, larrAux);
+		lopDOps.marrModify = null;
+		lopDOps.marrDelete = null;
+
+		lobjOp = BuildOuterOp(GetOwnerProc(UUID.fromString(document.ownerTypeId), UUID.fromString(document.ownerId)),
+				GetOpType(UUID.fromString(document.ownerTypeId)), lopDOps);
+
 		try
 		{
-			lopDOps.marrCreate = BuildDocTree(lopDOps, larrAux, GetParentType(UUID.fromString(procId), UUID.fromString(opId)));
-			lopDOps.marrModify = null;
-			lopDOps.marrDelete = null;
-
-			lobjOp = BuildOuterOp(UUID.fromString(procId), UUID.fromString(opId), lopDOps);
 			lobjOp.Execute();
 		}
 		catch (Throwable e)
@@ -195,24 +200,28 @@ public class DocumentServiceImpl
 		return larrAux[0];
 	}
 
-	public Document saveDocument(String procId, String opId, Document document)
+	public Document saveDocument(Document document)
 		throws SessionExpiredException, BigBangException
 	{
 		Document[] larrAux;
 		DocOps lopDOps;
 		Operation lobjOp;
 
+		if ( Engine.getCurrentUser() == null )
+			throw new SessionExpiredException();
+
 		larrAux = new Document[1];
 		larrAux[0] = document;
 
 		lopDOps = new DocOps();
+		lopDOps.marrModify = BuildDocTree(lopDOps, larrAux);
+		lopDOps.marrCreate = null;
+		lopDOps.marrDelete = null;
+
+		lobjOp = BuildOuterOp(GetOwnerProc(UUID.fromString(document.ownerTypeId), UUID.fromString(document.ownerId)),
+				GetOpType(UUID.fromString(document.ownerTypeId)), lopDOps);
 		try
 		{
-			lopDOps.marrModify = BuildDocTree(lopDOps, larrAux, GetParentType(UUID.fromString(procId), UUID.fromString(opId)));
-			lopDOps.marrCreate = null;
-			lopDOps.marrDelete = null;
-
-			lobjOp = BuildOuterOp(UUID.fromString(procId), UUID.fromString(opId), lopDOps);
 			lobjOp.Execute();
 		}
 		catch (Throwable e)
@@ -223,25 +232,42 @@ public class DocumentServiceImpl
 		return larrAux[0];
 	}
 
-	public void deleteDocument(String procId, String opId, String id)
+	public void deleteDocument(String id)
 		throws SessionExpiredException, BigBangException
 	{
-		Document[] larrAux;
+		com.premiumminds.BigBang.Jewel.Objects.Document lobjAuxDoc;
+		DocumentData lobjData;
 		DocOps lopDOps;
 		Operation lobjOp;
 
-		larrAux = new Document[1];
-		larrAux[0] = new Document();
-		larrAux[0].id = id;
+		if ( Engine.getCurrentUser() == null )
+			throw new SessionExpiredException();
 
-		lopDOps = new DocOps();
 		try
 		{
-			lopDOps.marrDelete = BuildDocTree(lopDOps, larrAux, GetParentType(UUID.fromString(procId), UUID.fromString(opId)));
-			lopDOps.marrCreate = null;
-			lopDOps.marrModify = null;
+			lobjAuxDoc = com.premiumminds.BigBang.Jewel.Objects.Document.GetInstance(Engine.getCurrentNameSpace(),
+					UUID.fromString(id));
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangException(e.getMessage(), e);
+		}
 
-			lobjOp = BuildOuterOp(UUID.fromString(procId), UUID.fromString(opId), lopDOps);
+		lobjData = new DocumentData();
+		lobjData.mid = lobjAuxDoc.getKey();
+		lobjData.midOwnerType = lobjAuxDoc.getOwnerType();
+		lobjData.midOwnerId = lobjAuxDoc.getOwnerID();
+
+		lopDOps = new DocOps();
+		lopDOps.marrDelete = new DocumentData[] {lobjData};
+		lopDOps.marrCreate = null;
+		lopDOps.marrModify = null;
+
+		lobjOp = BuildOuterOp(GetOwnerProc(lobjData.midOwnerType, lobjData.midOwnerId),
+				GetOpType(lobjData.midOwnerType), lopDOps);
+
+		try
+		{
 			lobjOp.Execute();
 		}
 		catch (Throwable e)
@@ -263,6 +289,7 @@ public class DocumentServiceImpl
 
 		lobjAux.id = pobjDocument.getKey().toString();
 		lobjAux.name = (String)pobjDocument.getAt(0);
+		lobjAux.ownerTypeId = ((UUID)pobjDocument.getAt(1)).toString();
 		lobjAux.ownerId = ((UUID)pobjDocument.getAt(2)).toString();
 		lobjAux.docTypeId = ((UUID)pobjDocument.getAt(3)).toString();
 		lobjAux.text = (String)pobjDocument.getAt(4);
@@ -311,45 +338,63 @@ public class DocumentServiceImpl
 		return lobjAux;
 	}
 
-	private UUID GetParentType(UUID pidProc, UUID pidOp)
-		throws JewelPetriException
+	private UUID GetOwnerProc(UUID pidOwnerType, UUID pidOwner)
+		throws BigBangException
 	{
-		IOperation lobjOp;
-		Operation lobjAux;
-		UUID lidResult;
+		ObjectBase lobjOwner;
 
-		lobjOp = (IOperation)PNOperation.GetInstance(Engine.getCurrentNameSpace(), pidOp);
-		lobjAux = lobjOp.GetNewInstance(pidProc);
+		try
+		{
+			if ( Constants.ObjID_Company.equals(pidOwnerType) || Constants.ObjID_Mediator.equals(pidOwnerType) )
+				return GeneralSystem.GetAnyInstance(Engine.getCurrentNameSpace()).GetProcessID();
 
-		lidResult = null;
+			lobjOwner = Engine.GetWorkInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), pidOwnerType), pidOwner);
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangException(e.getMessage(), e);
+		}
 
-		if ( lobjAux instanceof ManageInsurers )
-			lidResult = Constants.ObjID_Company;
+		if ( !(lobjOwner instanceof ProcessData) )
+			return ((ProcessData)lobjOwner).GetProcessID();
 
-		if ( lobjAux instanceof ManageMediators )
-			lidResult = Constants.ObjID_Mediator;
+		throw new BigBangException("Erro: O tipo de objecto indicado não suporta processos.");
+	}
 
-		if ( lobjAux instanceof ManageClientData )
-			lidResult = Constants.ObjID_Client;
+	private UUID GetOpType(UUID pidOwnerType)
+		throws BigBangException
+	{
+		if ( Constants.ObjID_Company.equals(pidOwnerType) )
+			return Constants.OPID_ManageCompanies;
 
-		if ( lobjAux instanceof ManagePolicyData )
-			lidResult = Constants.ObjID_Policy;
+		if ( Constants.ObjID_Mediator.equals(pidOwnerType) )
+			return Constants.OPID_ManageMediators;
 
-		if ( lidResult == null )
-			throw new JewelPetriException("Erro: A operação pretendida não permite movimentos de Documentos.");
+		if ( Constants.ObjID_Client.equals(pidOwnerType) )
+			return Constants.OPID_ManageClientData;
 
-		return lidResult;
+		if ( Constants.ObjID_Policy.equals(pidOwnerType) )
+			return Constants.OPID_ManagePolicyData;
+
+		throw new BigBangException("Erro: O objecto indicado não permite movimentos de Documentos.");
 	}
 
 	private Operation BuildOuterOp(UUID pidProc, UUID pidOp, DocOps pobjInner)
-		throws JewelPetriException
+		throws BigBangException
 	{
 		IOperation lobjOp;
 		Operation lobjResult;
 		boolean lbFound;
 
-		lobjOp = (IOperation)PNOperation.GetInstance(Engine.getCurrentNameSpace(), pidOp);
-		lobjResult = lobjOp.GetNewInstance(pidProc);
+		try
+		{
+			lobjOp = (IOperation)PNOperation.GetInstance(Engine.getCurrentNameSpace(), pidOp);
+			lobjResult = lobjOp.GetNewInstance(pidProc);
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangException(e.getMessage(), e);
+		}
 
 		lbFound = false;
 
@@ -390,7 +435,7 @@ public class DocumentServiceImpl
 		}
 
 		if ( !lbFound )
-			throw new JewelPetriException("Erro: A operação pretendida não permite movimentos de Documentos.");
+			throw new BigBangException("Erro: A operação pretendida não permite movimentos de Documentos.");
 
 		return lobjResult;
 	}

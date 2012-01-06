@@ -179,7 +179,7 @@ public class InsuranceAgencyServiceImpl
 			{
 				lopMIC.marrCreate[0].mobjDocOps = new DocOps();
 				lopMIC.marrCreate[0].mobjDocOps.marrCreate = DocumentServiceImpl.BuildDocTree(lopMIC.marrCreate[0].mobjDocOps,
-						agency.documents, Constants.ObjID_Company);
+						agency.documents);
 			}
 			else
 				lopMIC.marrCreate[0].mobjDocOps = null;
