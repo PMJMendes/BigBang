@@ -15,7 +15,6 @@ import bigBang.definitions.shared.SortOrder;
 import bigBang.definitions.shared.SortParameter;
 import bigBang.library.server.SearchServiceBase;
 import bigBang.library.shared.BigBangException;
-import bigBang.library.shared.NewSearchResult;
 import bigBang.library.shared.SessionExpiredException;
 import bigBang.module.insurancePolicyModule.interfaces.PolicyExerciseService;
 import bigBang.module.insurancePolicyModule.shared.ExerciseSearchParameter;
@@ -333,7 +332,7 @@ public class PolicyExerciseServiceImpl
 
 		if ( lParam.policyId != null )
 		{
-			pstrBuffer.append(" AND [:Policy] = '").append(lParam.policyId).append("')");
+			pstrBuffer.append(" AND ([:Policy] = '").append(lParam.policyId).append("')");
 		}
 
 		return true;
@@ -403,13 +402,5 @@ public class PolicyExerciseServiceImpl
 		}
 
 		return lbFound;
-	}
-	
-	@Override
-	public NewSearchResult openSearch(SearchParameter[] parameters,
-			SortParameter[] sorts, int size) throws SessionExpiredException,
-			BigBangException {
-		// TODO Auto-generated method stub
-		return super.openSearch(parameters, sorts, size);
 	}
 }
