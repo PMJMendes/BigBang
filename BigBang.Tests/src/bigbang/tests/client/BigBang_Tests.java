@@ -46,6 +46,9 @@ public class BigBang_Tests
 //		TestValuesGet.DoTest();
 //
 //		TestDocumentGet.DoTest();
+//		TestDocumentCreate.DoTest();
+//		TestDocumentEdit.DoTest();
+//		TestDocumentDelete.DoTest();
 //
 //		TestClientGet.DoTest();
 //		TestClientCreate.DoTest();
