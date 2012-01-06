@@ -1,13 +1,13 @@
 package bigbang.tests.client;
 
-import bigBang.definitions.shared.InsurancePolicy;
+import bigBang.definitions.shared.Remap;
 import bigBang.definitions.shared.TipifiedListItem;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 public class TestObjectDelete
 {
-	private static InsurancePolicy tmpPolicy;
+	private static String gstrPad;
 
 	public static void DoTest()
 	{
@@ -16,42 +16,47 @@ public class TestObjectDelete
 
 	private static void DoStep1()
 	{
-		AsyncCallback<InsurancePolicy> callback = new AsyncCallback<InsurancePolicy> ()
+		final String lstrPolicy = "FBA922E2-E2CE-4351-ABD5-9FBB00CE51B2";
+
+		AsyncCallback<Remap[]> callback = new AsyncCallback<Remap[]> ()
 		{
 			public void onFailure(Throwable caught)
 			{
 				return;
 			}
-	
-			public void onSuccess(InsurancePolicy result)
+
+			public void onSuccess(Remap[] result)
 			{
-				DoStep2(result);
+				int i, j;
+
+				gstrPad = null;
+				for (i = 0; i < result.length; i++ )
+				{
+					if ( result[i].typeId.equals("D0C5AE6B-D340-4171-B7A3-9F81011F5D42") )
+					{
+						for ( j = 0; j < result[i].remapIds.length; j++ )
+						{
+							if ( lstrPolicy.equals(result[i].remapIds[j].oldId) )
+							{
+								gstrPad = result[i].remapIds[j].newId;
+								break;
+							}
+						}
+						break;
+					}
+				}
+
+				if ( gstrPad == null )
+					return;
+
+				DoStep2();
 			}
 		};
-	
-		Services.insurancePolicyService.getPolicy("0B0C69A5-FA4E-4A7D-B625-9FB2015D29D6", callback);
+
+		Services.insurancePolicyService.openPolicyScratchPad(lstrPolicy, callback);
 	}
 
-	private static void DoStep2(InsurancePolicy policy)
-	{
-		AsyncCallback<InsurancePolicy> callback = new AsyncCallback<InsurancePolicy> ()
-		{
-			public void onFailure(Throwable caught)
-			{
-				return;
-			}
-	
-			public void onSuccess(InsurancePolicy result)
-			{
-				tmpPolicy = result;
-				DoStep3(result);
-			}
-		};
-	
-		Services.insurancePolicyService.openForEdit(policy, callback);
-	}
-
-	private static void DoStep3(InsurancePolicy policy)
+	private static void DoStep2()
 	{
 		AsyncCallback<TipifiedListItem[]> callback = new AsyncCallback<TipifiedListItem[]> ()
 		{
@@ -63,16 +68,16 @@ public class TestObjectDelete
 			public void onSuccess(TipifiedListItem[] result)
 			{
 				if ( (result != null) && (result.length > 0) )
-					DoStep4(result[0].id);
+					DoStep3(result[0].id);
 				else
 					return;
 			}
 		};
 
-		Services.insurancePolicyService.getPadItemsFilter("3A3316D2-9D7C-4FD1-8486-9F9C0012E119", policy.scratchPadId, callback);
+		Services.insurancePolicyService.getPadItemsFilter("3A3316D2-9D7C-4FD1-8486-9F9C0012E119", gstrPad, callback);
 	}
 
-	private static void DoStep4(String tempObjectId)
+	private static void DoStep3(String tempObjectId)
 	{
 		AsyncCallback<Void> callback = new AsyncCallback<Void>()
 		{
@@ -83,28 +88,28 @@ public class TestObjectDelete
 
 			public void onSuccess(Void result)
 			{
-				DoStep5();
+				DoStep4();
 			}
 		};
 
 		Services.insurancePolicyService.deleteObjectInPad(tempObjectId, callback);
 	}
 
-	private static void DoStep5()
+	private static void DoStep4()
 	{
-		AsyncCallback<InsurancePolicy> callback = new AsyncCallback<InsurancePolicy>()
+		AsyncCallback<Remap[]> callback = new AsyncCallback<Remap[]>()
 		{
 			public void onFailure(Throwable caught)
 			{
 				return;
 			}
 
-			public void onSuccess(InsurancePolicy result)
+			public void onSuccess(Remap[] result)
 			{
 				return;
 			}
 		};
 
-		Services.insurancePolicyService.commitPolicy(tmpPolicy.scratchPadId, callback);
+		Services.insurancePolicyService.commitPad(gstrPad, callback);
 	}
 }
