@@ -13,7 +13,7 @@ public class Remap
 		private static final long serialVersionUID = 1L;
 
 		public String oldId;
-		public String newId;
+		public String newId; // No commit, este ID vem a null se o item foi apagado do pad
 		public boolean newIdIsInPad;
 	}
 

@@ -543,7 +543,7 @@ public class InsurancePolicyServiceImpl
 			larrResult[2] = new Remap();
 			larrResult[2].typeId = Constants.ObjID_PolicyExercise.toString();
 			larrResult[2].remapIds = new Remap.RemapId[marrExercises.size()];
-			for ( i = 0; i < larrResult[1].remapIds.length; i++ )
+			for ( i = 0; i < larrResult[2].remapIds.length; i++ )
 			{
 				larrResult[2].remapIds[i] = new Remap.RemapId();
 				larrResult[2].remapIds[i].oldId = marrExercises.get(i).mid.toString();
@@ -554,7 +554,7 @@ public class InsurancePolicyServiceImpl
 			return larrResult;
 		}
 
-		public Remap[] GetRemapFromPad()
+		public Remap[] GetRemapFromPad(boolean pbWithCommit)
 		{
 			Remap[] larrResult;
 			int i;
@@ -576,18 +576,24 @@ public class InsurancePolicyServiceImpl
 			{
 				larrResult[1].remapIds[i] = new Remap.RemapId();
 				larrResult[1].remapIds[i].oldId = mid.toString() + ":" + i;
-				larrResult[1].remapIds[i].newId = marrObjects.get(i).mid.toString();
+				if ( pbWithCommit && marrObjects.get(i).mbDeleted )
+					larrResult[1].remapIds[i].newId = null;
+				else
+					larrResult[1].remapIds[i].newId = marrObjects.get(i).mid.toString();
 				larrResult[1].remapIds[i].newIdIsInPad = false;
 			}
 
 			larrResult[2] = new Remap();
 			larrResult[2].typeId = Constants.ObjID_PolicyExercise.toString();
 			larrResult[2].remapIds = new Remap.RemapId[marrExercises.size()];
-			for ( i = 0; i < larrResult[1].remapIds.length; i++ )
+			for ( i = 0; i < larrResult[2].remapIds.length; i++ )
 			{
 				larrResult[2].remapIds[i] = new Remap.RemapId();
 				larrResult[2].remapIds[i].oldId = mid.toString() + ":" + i;
-				larrResult[2].remapIds[i].newId = marrExercises.get(i).mid.toString();
+				if ( pbWithCommit && marrExercises.get(i).mbDeleted )
+					larrResult[2].remapIds[i].newId = null;
+				else
+					larrResult[2].remapIds[i].newId = marrExercises.get(i).mid.toString();
 				larrResult[2].remapIds[i].newIdIsInPad = false;
 			}
 
@@ -3002,7 +3008,7 @@ public class InsurancePolicyServiceImpl
 		lrefPad = GetScratchPadStorage().get(UUID.fromString(policyId));
 		lrefPad.CommitChanges();
 		GetScratchPadStorage().remove(UUID.fromString(policyId));
-		return lrefPad.GetRemapFromPad();
+		return lrefPad.GetRemapFromPad(true);
 	}
 
 	public Remap[] discardPad(String policyId)
@@ -3015,7 +3021,7 @@ public class InsurancePolicyServiceImpl
 
 		lrefPad = GetScratchPadStorage().get(UUID.fromString(policyId));
 		GetScratchPadStorage().remove(UUID.fromString(policyId));
-		return lrefPad.GetRemapFromPad();
+		return lrefPad.GetRemapFromPad(false);
 	}
 
 	@Override
