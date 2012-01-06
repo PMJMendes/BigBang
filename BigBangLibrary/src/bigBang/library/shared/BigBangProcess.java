@@ -7,6 +7,9 @@ public class BigBangProcess
 {
 	private static final long serialVersionUID = 1L;
 
-	public String id;
+	public String dataTypeId;
+	public String dataId;
+	public String processTypeId;
+	public String processId;
 	public String tag;
 }

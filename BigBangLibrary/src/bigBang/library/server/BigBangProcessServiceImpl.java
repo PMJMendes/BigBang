@@ -33,6 +33,7 @@ public class BigBangProcessServiceImpl
 		ArrayList<BigBangProcess> larrAux;
         IProcess lobjProcess;
         IScript lobjScript;
+        UUID lidData;
         BigBangProcess lobjResult;
 
 		if ( Engine.getCurrentUser() == null )
@@ -66,12 +67,18 @@ public class BigBangProcessServiceImpl
 			while ( lrsProcesses.next() )
 			{
 				lobjProcess = PNProcess.GetInstance(Engine.getCurrentNameSpace(), lrsProcesses);
+				if ( !lobjProcess.IsRunning() )
+					continue;
 				lobjScript = lobjProcess.GetScript();
 				if ( lobjScript.IsTopLevel() )
 					continue;
+				lidData = lobjProcess.GetDataKey();
 
 				lobjResult = new BigBangProcess();
-				lobjResult.id = lobjProcess.getKey().toString();
+				lobjResult.dataTypeId = lobjScript.GetDataType().toString();
+				lobjResult.dataId = ( lidData == null ? null : lidData.toString() );
+				lobjResult.processTypeId = lobjScript.getKey().toString();
+				lobjResult.processId = lobjProcess.getKey().toString();
 				lobjResult.tag = lobjScript.getLabel();
 				larrAux.add(lobjResult);
 			}
