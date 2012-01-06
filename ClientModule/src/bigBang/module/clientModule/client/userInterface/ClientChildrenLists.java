@@ -387,6 +387,12 @@ public class ClientChildrenLists {
 				}
 			}
 		}
+
+		@Override
+		public void remapItemId(String oldId, String newId) {
+			// TODO Auto-generated method stub
+			
+		}
 	}
 
 	public static class InfoRequestList extends FilterableList<InfoOrDocumentRequest> {

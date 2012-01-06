@@ -255,4 +255,10 @@ public class InsurancePolicySearchPanel extends SearchPanel<InsurancePolicyStub>
 		this.policiesToRemove.put(policyId, null);
 	}
 
+	@Override
+	public void remapItemId(String oldId, String newId) {
+		// TODO Auto-generated method stub
+		
+	}
+
 }

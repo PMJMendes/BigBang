@@ -3,7 +3,6 @@ package bigBang.library.client.userInterface;
 import bigBang.library.client.FieldValidator;
 import bigBang.library.client.FormField;
 
-import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;

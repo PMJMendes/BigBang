@@ -4,6 +4,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 import bigBang.definitions.client.dataAccess.DataBroker;
+import bigBang.definitions.shared.Remap;
+import bigBang.definitions.shared.Remap.RemapId;
 
 import com.google.gwt.core.client.GWT;
 

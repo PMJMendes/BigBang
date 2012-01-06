@@ -3,7 +3,7 @@ package bigBang.definitions.client.dataAccess;
 import java.util.Collection;
 
 import bigBang.definitions.client.response.ResponseHandler;
-import bigBang.definitions.shared.ExerciseStub;
+import bigBang.definitions.shared.Exercise;
 import bigBang.definitions.shared.InsurancePolicy;
 import bigBang.definitions.shared.InsurancePolicyStub;
 import bigBang.definitions.shared.InsuredObject;
@@ -38,15 +38,16 @@ public interface InsurancePolicyBroker extends DataBrokerInterface<InsurancePoli
 	
 	public void updateInsuredObject(String policyId, InsuredObject object, ResponseHandler<InsuredObject> handler);
 	
-	public void removeInsuredObject(String policyId, InsuredObject object);
+	public void removeInsuredObject(String policyId, InsuredObject object, ResponseHandler<Void> handler);
 	
 	//Exercises
-	public void createExercise(String policyId, ExerciseStub exercise, ResponseHandler<ExerciseStub> handler);
+	public void createExercise(String policyId, Exercise exercise, ResponseHandler<Exercise> handler);
 	
-	public void updateExercise(String policyId, ExerciseStub exercise, ResponseHandler<ExerciseStub> handler);
+	public void updateExercise(String policyId, Exercise exercise, ResponseHandler<Exercise> handler);
 	
-	public void removeExercise(String policyId, String exerciseId);
+	public void removeExercise(String policyId, String exerciseId, ResponseHandler<Void> handler);
 
+	public void remapItemId(String oldId, String newId, boolean inScratchPad);
 	
 	public SearchDataBroker<InsurancePolicyStub> getSearchBroker();
 	

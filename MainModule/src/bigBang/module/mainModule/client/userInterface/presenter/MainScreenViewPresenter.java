@@ -4,8 +4,6 @@ import java.util.HashMap;
 
 import bigBang.library.client.EventBus;
 import bigBang.library.client.event.LogoutEvent;
-import bigBang.library.client.event.ScreenInvokedEvent;
-import bigBang.library.client.event.ScreenInvokedEventHandler;
 import bigBang.library.client.event.ShowMeRequestEvent;
 import bigBang.library.client.event.ShowMeRequestEventHandler;
 import bigBang.library.client.userInterface.MenuSection;
@@ -14,7 +12,6 @@ import bigBang.library.client.userInterface.presenter.ViewPresenter;
 import bigBang.library.client.userInterface.view.View;
 import bigBang.library.interfaces.Service;
 
-import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.ui.HasWidgets;
 import com.google.gwt.user.client.ui.MenuItem;

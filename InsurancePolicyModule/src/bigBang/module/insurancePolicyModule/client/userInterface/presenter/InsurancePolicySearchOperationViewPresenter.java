@@ -162,6 +162,12 @@ public class InsurancePolicySearchOperationViewPresenter implements
 				// TODO Auto-generated method stub
 				
 			}
+
+			@Override
+			public void remapItemId(String oldId, String newId) {
+				// TODO Auto-generated method stub
+				
+			}
 		};
 		return result;
 	}

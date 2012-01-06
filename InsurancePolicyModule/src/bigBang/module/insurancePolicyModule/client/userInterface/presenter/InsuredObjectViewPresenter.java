@@ -190,6 +190,12 @@ public abstract class InsuredObjectViewPresenter implements ViewPresenter {
 				// TODO Auto-generated method stub
 				
 			}
+
+			@Override
+			public void remapItemId(String oldId, String newId) {
+				// TODO Auto-generated method stub
+				
+			}
 		};
 	}
 	

@@ -103,6 +103,12 @@ public class InsurancePolicyChildrenPanel extends View {
 			public void addInsurancePolicy(InsurancePolicy policy) {
 				return;
 			}
+
+			@Override
+			public void remapItemId(String oldId, String newId) {
+				// TODO Auto-generated method stub
+				
+			}
 		};
 	}
 	

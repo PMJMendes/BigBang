@@ -10,5 +10,7 @@ public interface InsurancePolicyDataBrokerClient extends
 	public void updateInsurancePolicy(InsurancePolicy policy);
 	
 	public void removeInsurancePolicy(String policyId);
+	
+	public void remapItemId(String oldId, String newId);
 
 }
