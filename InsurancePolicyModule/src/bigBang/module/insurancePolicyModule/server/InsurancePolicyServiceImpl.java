@@ -594,6 +594,30 @@ public class InsurancePolicyServiceImpl
 			return larrResult;
 		}
 
+		public void WriteBasics(InsurancePolicy pobjResult)
+		{
+			if ( !mbValid )
+				return;
+
+			pobjResult.number = mobjPolicy.mstrNumber;
+			pobjResult.clientId = ( midClient == null ? null : midClient.toString() );
+			pobjResult.subLineId = ( mobjPolicy.midSubLine == null ? null : mobjPolicy.midSubLine.toString() );
+			pobjResult.processId = ( mobjPolicy.midProcess == null ? null : mobjPolicy.midProcess.toString() );
+			pobjResult.insuranceAgencyId = ( mobjPolicy.midCompany == null ? null : mobjPolicy.midCompany.toString() );
+			pobjResult.startDate = ( mobjPolicy.mdtBeginDate == null ? null :
+					mobjPolicy.mdtBeginDate.toString().substring(0, 10) );
+			pobjResult.durationId = ( mobjPolicy.midDuration == null ? null : mobjPolicy.midDuration.toString() );
+			pobjResult.fractioningId = ( mobjPolicy.midFractioning == null ? null : mobjPolicy.midFractioning.toString() );
+			pobjResult.maturityDay = mobjPolicy.mlngMaturityDay;
+			pobjResult.maturityMonth = mobjPolicy.mlngMaturityMonth;
+			pobjResult.expirationDate = ( mobjPolicy.mdtEndDate == null ? null :
+					mobjPolicy.mdtEndDate.toString().substring(0, 10));
+			pobjResult.notes = mobjPolicy.mstrNotes;
+			pobjResult.mediatorId = ( mobjPolicy.midMediator == null ? null : mobjPolicy.midMediator.toString() );
+			pobjResult.caseStudy = ( mobjPolicy.mbCaseStudy == null ? false : mobjPolicy.mbCaseStudy );
+			pobjResult.statusId = ( mobjPolicy.midStatus == null ? null : mobjPolicy.midStatus.toString() );
+		}
+
 		public void WriteResult(InsurancePolicy pobjResult)
 			throws BigBangException
 		{
@@ -2667,6 +2691,7 @@ public class InsurancePolicyServiceImpl
 		lobjPolicy = new InsurancePolicy();
 
 		lobjPad = GetScratchPadStorage().get(UUID.fromString(policyId));
+		lobjPad.WriteBasics(lobjPolicy);
 		lobjPad.WriteResult(lobjPolicy);
 		return lobjPolicy;
 	}
