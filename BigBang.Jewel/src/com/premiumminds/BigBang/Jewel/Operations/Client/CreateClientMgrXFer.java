@@ -8,14 +8,17 @@ import Jewel.Engine.Engine;
 import Jewel.Engine.DataAccess.SQLServer;
 import Jewel.Engine.Implementation.User;
 import Jewel.Engine.Interfaces.IUser;
+import Jewel.Engine.SysObjects.JewelEngineException;
 import Jewel.Petri.Interfaces.IProcess;
 import Jewel.Petri.Interfaces.IScript;
 import Jewel.Petri.Objects.PNScript;
 import Jewel.Petri.SysObjects.JewelPetriException;
 import Jewel.Petri.SysObjects.UndoableOperation;
 
+import com.premiumminds.BigBang.Jewel.BigBangJewelException;
 import com.premiumminds.BigBang.Jewel.Constants;
 import com.premiumminds.BigBang.Jewel.Objects.AgendaItem;
+import com.premiumminds.BigBang.Jewel.Objects.Client;
 import com.premiumminds.BigBang.Jewel.Objects.MgrXFer;
 
 public class CreateClientMgrXFer
@@ -98,6 +101,8 @@ public class CreateClientMgrXFer
 	{
 		Timestamp ldtAux;
 		Calendar ldtAux2;
+		String lstrClient;
+		String lstrUser;
 		MgrXFer lobjXFer;
 		IScript lobjScript;
 		IProcess lobjProc;
@@ -121,6 +126,22 @@ public class CreateClientMgrXFer
     		{
     			mbDirectTransfer = true;
     			midClient = GetProcess().GetData().getKey();
+    			try
+    			{
+					lstrClient = Client.GetInstance(Engine.getCurrentNameSpace(), midClient).getLabel();
+				}
+    			catch (Throwable e)
+    			{
+    				lstrClient = "(erro a obter o nome do cliente)";
+				}
+    			try
+    			{
+					lstrUser = User.GetInstance(Engine.getCurrentNameSpace(), midNewManager).getDisplayName();
+				}
+    			catch (Throwable e)
+    			{
+    				lstrUser = "(erro a obter o nome do utilizador)";
+				}
     			GetProcess().SetManagerID(midNewManager, pdb);
     			TriggerOp(new TriggerAllowUndoClientMgrXFer(GetProcess().getKey()), pdb);
 	    		try
@@ -132,6 +153,7 @@ public class CreateClientMgrXFer
 					lobjItem.setAt(3, ldtAux);
 					lobjItem.setAt(4, new Timestamp(ldtAux2.getTimeInMillis()));
 					lobjItem.setAt(5, Constants.UrgID_Completed);
+					lobjItem.setAt(6, "A gestão do cliente " + lstrClient + " foi transferida para " + lstrUser + ".");
 					lobjItem.SaveToDb(pdb);
 					lobjItem.InitNew(new UUID[] {GetProcess().getKey()}, new UUID[] {}, pdb);
 	        	}

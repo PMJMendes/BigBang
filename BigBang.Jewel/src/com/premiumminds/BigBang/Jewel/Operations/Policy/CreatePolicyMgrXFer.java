@@ -17,6 +17,7 @@ import Jewel.Petri.SysObjects.UndoableOperation;
 import com.premiumminds.BigBang.Jewel.Constants;
 import com.premiumminds.BigBang.Jewel.Objects.AgendaItem;
 import com.premiumminds.BigBang.Jewel.Objects.MgrXFer;
+import com.premiumminds.BigBang.Jewel.Objects.Policy;
 import com.premiumminds.BigBang.Jewel.Operations.Client.TriggerAllowUndoClientMgrXFer;
 
 public class CreatePolicyMgrXFer
@@ -99,6 +100,8 @@ public class CreatePolicyMgrXFer
 	{
 		Timestamp ldtAux;
 		Calendar ldtAux2;
+		String lstrPolicy;
+		String lstrUser;
 		MgrXFer lobjXFer;
 		IScript lobjScript;
 		IProcess lobjProc;
@@ -122,6 +125,22 @@ public class CreatePolicyMgrXFer
     		{
     			mbDirectTransfer = true;
     			midPolicy = GetProcess().GetData().getKey();
+    			try
+    			{
+					lstrPolicy = Policy.GetInstance(Engine.getCurrentNameSpace(), midPolicy).getLabel();
+				}
+    			catch (Throwable e)
+    			{
+    				lstrPolicy = "(erro a obter o nome do cliente)";
+				}
+    			try
+    			{
+					lstrUser = User.GetInstance(Engine.getCurrentNameSpace(), midNewManager).getDisplayName();
+				}
+    			catch (Throwable e)
+    			{
+    				lstrUser = "(erro a obter o nome do utilizador)";
+				}
     			GetProcess().SetManagerID(midNewManager, pdb);
     			TriggerOp(new TriggerAllowUndoClientMgrXFer(GetProcess().getKey()), pdb);
 	    		try
@@ -133,6 +152,7 @@ public class CreatePolicyMgrXFer
 					lobjItem.setAt(3, ldtAux);
 					lobjItem.setAt(4, new Timestamp(ldtAux2.getTimeInMillis()));
 					lobjItem.setAt(5, Constants.UrgID_Completed);
+					lobjItem.setAt(6, "A gestão da apólice " + lstrPolicy + " foi transferida para " + lstrUser + ".");
 					lobjItem.SaveToDb(pdb);
 					lobjItem.InitNew(new UUID[] {GetProcess().getKey()}, new UUID[] {}, pdb);
 	        	}
