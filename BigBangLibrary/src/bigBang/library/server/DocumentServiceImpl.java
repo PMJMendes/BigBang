@@ -355,7 +355,7 @@ public class DocumentServiceImpl
 			throw new BigBangException(e.getMessage(), e);
 		}
 
-		if ( !(lobjOwner instanceof ProcessData) )
+		if ( lobjOwner instanceof ProcessData )
 			return ((ProcessData)lobjOwner).GetProcessID();
 
 		throw new BigBangException("Erro: O tipo de objecto indicado não suporta processos.");
