@@ -17,14 +17,14 @@ import bigBang.module.loginModule.interfaces.*;
 import bigBang.module.loginModule.shared.LoginResponse;
 
 public class AuthenticationServiceImpl
-extends EngineImplementor
-implements AuthenticationService
+	extends EngineImplementor
+	implements AuthenticationService
 {
 	private static final long serialVersionUID = 1L;
 
 	public LoginResponse login(String domain)
-			throws BigBangException
-			{
+		throws BigBangException
+	{
 		String lstrUsername;
 		UUID lidNSpace;
 		IEntity lrefUser;
@@ -33,6 +33,7 @@ implements AuthenticationService
 		int[] larrMembers;
 		java.lang.Object[] larrParams;
 		User lobjUser;
+		NameSpace lobjNSpace;
 		LoginResponse lobjResult;
 
 		lstrUsername = getThreadLocalRequest().getRemoteUser();
@@ -75,11 +76,14 @@ implements AuthenticationService
 			getSession().setAttribute("UserID", lobjUser.getKey());
 			getSession().setAttribute("UserNSpace", lidNSpace);
 
-			NameSpace.GetInstance(lidNSpace).DoLogin(lobjUser.getKey(), false);
+			lobjNSpace = NameSpace.GetInstance(lidNSpace);
+			
+			lobjNSpace.DoLogin(lobjUser.getKey(), false);
 
 			lobjResult = new LoginResponse();
 			lobjResult.userId = lobjUser.getKey().toString();
 			lobjResult.userName = lobjUser.getDisplayName();
+			lobjResult.domain = lobjNSpace.getLabel();
 			return lobjResult;
 		}
 		catch (BigBangException e)
@@ -90,11 +94,11 @@ implements AuthenticationService
 		{
 			throw new BigBangException(e.getMessage(), e);
 		}
-			}
+	}
 
 	public LoginResponse login(String username, String password, String domain)
-			throws BigBangException
-			{
+		throws BigBangException
+	{
 		UUID lidNSpace;
 		IEntity lrefUser;
 		MasterDB ldb;
@@ -102,6 +106,7 @@ implements AuthenticationService
 		int[] larrMembers;
 		java.lang.Object[] larrParams;
 		User lobjUser;
+		NameSpace lobjNSpace;
 		LoginResponse lobjResult;
 
 		lobjUser = null;
@@ -149,11 +154,14 @@ implements AuthenticationService
 			getSession().setAttribute("UserID", lobjUser.getKey());
 			getSession().setAttribute("UserNSpace", lidNSpace);
 
-			NameSpace.GetInstance(lidNSpace).DoLogin(lobjUser.getKey(), false);
+			lobjNSpace = NameSpace.GetInstance(lidNSpace);
+			
+			lobjNSpace.DoLogin(lobjUser.getKey(), false);
 
 			lobjResult = new LoginResponse();
 			lobjResult.userId = lobjUser.getKey().toString();
 			lobjResult.userName = lobjUser.getDisplayName();
+			lobjResult.domain = lobjNSpace.getLabel();
 			return lobjResult;
 		}
 		catch (BigBangException e)
@@ -167,16 +175,16 @@ implements AuthenticationService
 			}
 
 	public String logout()
-			throws BigBangException
-			{
+		throws BigBangException
+	{
 		DocuShareServiceImpl.LogOff();
 		getSession().invalidate();
 		return null;
-			}
+	}
 
 	public String changePassword(String oldPassword, String newPassword)
-			throws BigBangException, SessionExpiredException
-			{
+		throws BigBangException, SessionExpiredException
+	{
 		java.lang.Object[] larrParams;
 
 		if ( Engine.getCurrentUser() == null )
@@ -210,32 +218,33 @@ implements AuthenticationService
 		}
 
 		return null;
-			}
+	}
 
-	/**
-	 * This method returns the details for the currently active session
-	 * @return null if there is no active session or a LoginResponse if there is one.
-	 */
-	@Override
-	public LoginResponse getCurrentLoginData() throws BigBangException {
-		LoginResponse result = new LoginResponse();
+	public LoginResponse getCurrentLoginData()
+		throws BigBangException
+	{
+		UUID lidUser;
+		UUID lidNSpace;
+		LoginResponse lobjResult;
 
-		try{
-			if ( Engine.getCurrentUser() == null )
-				return null;
+		lidUser = Engine.getCurrentUser();
+		if ( lidUser == null )
+			return null;
 
-			String domain = getSession().getAttribute("UserNSpace").toString();
-			if ( domain.equals(Constants.WSpace_AMartins) )
-				result.domain = "AMartins";
-			else if ( domain.equals(Constants.WSpace_CredEGS) )
-				result.domain = "CrediteEGS";
+		lidNSpace = Engine.getCurrentNameSpace();
 
-			result.userId = getSession().getAttribute("UserID").toString();
-			result.userName = "TODO"; //TODO
-		}catch(Throwable e){
+		lobjResult = new LoginResponse();
+		try
+		{
+			lobjResult.userId = lidUser.toString();
+			lobjResult.userName = User.GetInstance(lidNSpace, lidUser).getDisplayName();
+			lobjResult.domain = NameSpace.GetInstance(lidNSpace).getLabel();
+		}
+		catch(Throwable e)
+		{
 			throw new BigBangException(e.getMessage(), e);
 		}
 
-		return result;
+		return lobjResult;
 	}
 }
