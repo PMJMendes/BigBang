@@ -12,4 +12,5 @@ public interface AuthenticationServiceAsync
 	void login(String domain, AsyncCallback<LoginResponse> callback);
 	void logout(AsyncCallback<String> callback);
 	void changePassword(String oldPassword, String newPassword, AsyncCallback<String> callback);
+	void getCurrentLoginData(AsyncCallback<LoginResponse> callback);
 }
