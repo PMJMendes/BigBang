@@ -8,6 +8,7 @@ import Jewel.Engine.Engine;
 import Jewel.Engine.DataAccess.MasterDB;
 import Jewel.Engine.Implementation.Entity;
 import Jewel.Engine.Interfaces.IEntity;
+import Jewel.Engine.SysObjects.ObjectBase;
 import Jewel.Petri.Interfaces.IProcess;
 import Jewel.Petri.Interfaces.IScript;
 import Jewel.Petri.Objects.PNProcess;
@@ -44,6 +45,9 @@ public class TasksServiceImpl
 		Task lobjResult;
 		UUID[] larrProcs;
 		UUID[] larrOps;
+		UUID lidAgendaProcs;
+		UUID lidAgendaOps;
+		ObjectBase lobjAux;
 		int i;
 
 		if ( Engine.getCurrentUser() == null )
@@ -53,9 +57,11 @@ public class TasksServiceImpl
 		try
 		{
 			lobjAgenda = AgendaItem.GetInstance(Engine.getCurrentNameSpace(), lid);
-			larrProcs = lobjAgenda.GetProcessIDs();
-			larrOps = lobjAgenda.GetOperationIDs();
+			larrProcs = lobjAgenda.GetAgendaProcIDs();
+			larrOps = lobjAgenda.GetAgendaOpIDs();
 			lobjScript = PNScript.GetInstance(Engine.getCurrentNameSpace(), (UUID)lobjAgenda.getAt(2));
+			lidAgendaProcs = Engine.FindEntity(Engine.getCurrentNameSpace(), Constants.ObjID_AgendaProcess);
+			lidAgendaOps = Engine.FindEntity(Engine.getCurrentNameSpace(), Constants.ObjID_AgendaOp);
 		}
 		catch (Throwable e)
 		{
@@ -85,21 +91,32 @@ public class TasksServiceImpl
 		lobjResult.objectIds = new String[larrProcs.length];
 		for ( i = 0; i < larrProcs.length; i++ )
 		{
-			lobjResult.processIds[i] = larrProcs[i].toString();
 			try
 			{
-				lobjProcess = PNProcess.GetInstance(Engine.getCurrentNameSpace(), larrProcs[i]);
+				lobjAux = Engine.GetWorkInstance(lidAgendaProcs, larrProcs[i]);
+				lobjProcess = PNProcess.GetInstance(Engine.getCurrentNameSpace(), (UUID)lobjAux.getAt(1));
 				lobjResult.objectIds[i] = lobjProcess.GetData().getKey().toString();
 			}
 			catch (Throwable e)
 			{
 				throw new BigBangException(e.getMessage(), e);
 			}
+			lobjResult.processIds[i] = lobjProcess.getKey().toString();
 		}
 
 		lobjResult.operationIds = new String[larrOps.length];
 		for ( i = 0; i < larrOps.length; i++ )
-			lobjResult.operationIds[i] = larrOps[i].toString();
+		{
+			try
+			{
+				lobjAux = Engine.GetWorkInstance(lidAgendaOps, larrOps[i]);
+			}
+			catch (Throwable e)
+			{
+				throw new BigBangException(e.getMessage(), e);
+			}
+			lobjResult.operationIds[i] = ((UUID)lobjAux.getAt(1)).toString();
+		}
 
 		return lobjResult;
 	}
@@ -117,7 +134,7 @@ public class TasksServiceImpl
 		try
 		{
 			lobjAgenda = AgendaItem.GetInstance(Engine.getCurrentNameSpace(), UUID.fromString(taskId));
-			larrAux = lobjAgenda.GetOperationIDs();
+			larrAux = lobjAgenda.GetAgendaOpIDs();
 		}
 		catch (Throwable e)
 		{
