@@ -63,8 +63,8 @@ public class AgendaItem
 
 			try
 			{
-				GetOperationIDs(ldb);
-				GetProcessIDs(ldb);
+				GetAgendaOpIDs(ldb);
+				GetAgendaProcIDs(ldb);
 			}
 			catch (Throwable e)
 			{
@@ -82,7 +82,7 @@ public class AgendaItem
 			}
 		}
 
-	public UUID[] GetProcessIDs()
+	public UUID[] GetAgendaProcIDs()
 		throws JewelEngineException
 	{
 		MasterDB ldb;
@@ -100,7 +100,7 @@ public class AgendaItem
 
 			try
 			{
-				GetProcessIDs(ldb);
+				GetAgendaProcIDs(ldb);
 			}
 			catch (Throwable e)
 			{
@@ -121,7 +121,7 @@ public class AgendaItem
 		return marrProcesses;
 	}
 
-	public UUID[] GetOperationIDs()
+	public UUID[] GetAgendaOpIDs()
 		throws JewelEngineException
 	{
 		MasterDB ldb;
@@ -139,7 +139,7 @@ public class AgendaItem
 
 			try
 			{
-				GetOperationIDs(ldb);
+				GetAgendaOpIDs(ldb);
 			}
 			catch (Throwable e)
 			{
@@ -160,7 +160,7 @@ public class AgendaItem
 		return marrOperations;
 	}
 
-	public UUID[] GetProcessIDs(SQLServer pdb)
+	public UUID[] GetAgendaProcIDs(SQLServer pdb)
 		throws BigBangJewelException
 	{
 		IEntity lrefAux;
@@ -192,7 +192,7 @@ public class AgendaItem
 		return marrProcesses;
 	}
 
-	public UUID[] GetOperationIDs(SQLServer pdb)
+	public UUID[] GetAgendaOpIDs(SQLServer pdb)
 		throws BigBangJewelException
 	{
 		IEntity lrefAux;
@@ -232,8 +232,8 @@ public class AgendaItem
 		ObjectBase lobjAux;
 		ArrayList<UUID> larrAux;
 
-		GetOperationIDs(pdb);
-		GetProcessIDs(pdb);
+		GetAgendaOpIDs(pdb);
+		GetAgendaProcIDs(pdb);
 		if ( ((marrProcesses != null) && (marrProcesses.length > 0)) || 
 				((marrOperations != null) && (marrOperations.length > 0)) )
 			throw new BigBangJewelException("Erro: Não pode redefinir os processos de items de agenda pre-existentes.");
@@ -288,12 +288,12 @@ public class AgendaItem
 
 		try
 		{
-			GetProcessIDs(pdb);
+			GetAgendaProcIDs(pdb);
 			lrefAux = Entity.GetInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), Constants.ObjID_AgendaProcess));
 			for ( i = 0; i < marrProcesses.length; i++ )
 				lrefAux.Delete(pdb, marrProcesses[i]);
 
-			GetOperationIDs(pdb);
+			GetAgendaOpIDs(pdb);
 			lrefAux = Entity.GetInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), Constants.ObjID_AgendaOp));
 			for ( i = 0; i < marrOperations.length; i++ )
 				lrefAux.Delete(pdb, marrOperations[i]);
