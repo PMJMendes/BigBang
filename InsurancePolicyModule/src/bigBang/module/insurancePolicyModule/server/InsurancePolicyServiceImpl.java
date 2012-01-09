@@ -1245,6 +1245,7 @@ public class InsurancePolicyServiceImpl
 			lobjExercise = marrExercises.get(plngExercise);
 			pobjResult.id = mid.toString() + ":" + Integer.toString(plngExercise);
 			pobjResult.label = lobjExercise.mstrLabel;
+			pobjResult.ownerId = ( mobjPolicy.mid == null ? mid.toString() : mobjPolicy.mid.toString() );
 			pobjResult.startDate = ( lobjExercise.mdtStart == null ? null : lobjExercise.mdtStart.toString().substring(0, 10) );
 			pobjResult.endDate = ( lobjExercise.mdtEnd == null ? null : lobjExercise.mdtEnd.toString().substring(0, 10) );
 

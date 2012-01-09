@@ -25,6 +25,8 @@ public interface TransferManagerService
 		}
 	}
 
+	public ManagerTransfer getTransfer(String transferId) throws SessionExpiredException, BigBangException;
+
 	public ManagerTransfer acceptTransfer(String transferId) throws SessionExpiredException, BigBangException;
 	public ManagerTransfer cancelTransfer(String transferId) throws SessionExpiredException, BigBangException;
 
