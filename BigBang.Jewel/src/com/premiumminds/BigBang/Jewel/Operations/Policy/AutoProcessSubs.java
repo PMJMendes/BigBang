@@ -1,4 +1,4 @@
-package com.premiumminds.BigBang.Jewel.Operations.Client;
+package com.premiumminds.BigBang.Jewel.Operations.Policy;
 
 import java.util.UUID;
 
@@ -21,7 +21,7 @@ public class AutoProcessSubs
 
 	protected UUID OpID()
 	{
-		return Constants.OPID_AutoProcessClientSubProcs;
+		return Constants.OPID_AutoProcessPolicySubProcs;
 	}
 
 	protected void Run(SQLServer pdb)

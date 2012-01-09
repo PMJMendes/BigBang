@@ -1,4 +1,4 @@
-package com.premiumminds.BigBang.Jewel.Operations.Client;
+package com.premiumminds.BigBang.Jewel.Operations.Policy;
 
 import java.util.UUID;
 
@@ -33,7 +33,7 @@ public class CreateInfoRequest
 
 	protected UUID OpID()
 	{
-		return Constants.OPID_CreateClientInfoRequest;
+		return Constants.OPID_CreatePolicyInfoRequest;
 	}
 
 	public String ShortDesc()

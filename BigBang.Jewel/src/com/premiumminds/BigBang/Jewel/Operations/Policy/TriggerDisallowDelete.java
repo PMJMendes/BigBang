@@ -1,10 +1,10 @@
-package com.premiumminds.BigBang.Jewel.Operations.Client;
+package com.premiumminds.BigBang.Jewel.Operations.Policy;
 
 import java.util.UUID;
 
-import com.premiumminds.BigBang.Jewel.Constants;
-
 import Jewel.Petri.SysObjects.SilentOperation;
+
+import com.premiumminds.BigBang.Jewel.Constants;
 
 public class TriggerDisallowDelete
 	extends SilentOperation
@@ -18,6 +18,6 @@ public class TriggerDisallowDelete
 
 	protected UUID OpID()
 	{
-		return Constants.OPID_TriggerDisallowDeleteClient;
+		return Constants.OPID_TriggerDisallowDeletePolicy;
 	}
 }
