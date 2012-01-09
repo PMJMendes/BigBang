@@ -217,5 +217,21 @@ public class TwoKeyTableView extends View {
 	private FormField<String> getFormField(Field value) {
 		return new DynFormField(value);
 	}
+	
+	public void setReadOnly(boolean readOnly){
+		
+		for(Map<String,FormField<String>> m: this.fields.values()){
+			
+			for(FormField<String> field: m.values()){
+				
+				field.setReadOnly(readOnly);
+				
+			}
+			
+		}
+		
+		
+		
+	}
 
 }
