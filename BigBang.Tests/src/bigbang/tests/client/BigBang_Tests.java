@@ -36,6 +36,7 @@ public class BigBang_Tests
 //		TestAgendaGet.DoTest();
 //		TestAgendaDismiss.DoTest();
 //
+//		TestMgrXferGet.DoTest();
 //		TestMgrXferCreate.DoTest();
 //		TestMgrXferAccept.DoTest();
 //		TestMgrXferCancel.DoTest();
