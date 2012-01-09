@@ -2,6 +2,8 @@ package bigbang.tests.client;
 
 import bigBang.library.interfaces.BigBangProcessService;
 import bigBang.library.interfaces.BigBangProcessServiceAsync;
+import bigBang.library.interfaces.ContactsService;
+import bigBang.library.interfaces.ContactsServiceAsync;
 import bigBang.library.interfaces.DocuShareService;
 import bigBang.library.interfaces.DocuShareServiceAsync;
 import bigBang.library.interfaces.DocumentService;
@@ -35,6 +37,8 @@ public class Services
 {
 	public static final AuthenticationServiceAsync authenticationService =
 			GWT.create(AuthenticationService.class);
+	public static final ContactsServiceAsync contactsService =
+			GWT.create(ContactsService.class);
 	public static final DocumentServiceAsync documentService =
 			GWT.create(DocumentService.class);
 	public static final DocuShareServiceAsync docuShareService =
