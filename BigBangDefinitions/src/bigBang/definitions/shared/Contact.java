@@ -9,7 +9,7 @@ public class Contact
 
 	public String id;
 	public String name;
-	public boolean isSubContact;
+	public String ownerTypeId;
 	public String ownerId;
 	public Address address;
 	public String typeId;

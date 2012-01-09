@@ -50,6 +50,16 @@ public class Contact
 	{
 	}
 
+	public UUID getOwnerType()
+	{
+		return (UUID)getAt(1);
+	}
+
+	public UUID getOwnerID()
+	{
+		return (UUID)getAt(2);
+	}
+
     public ObjectBase getOwner()
     	throws BigBangJewelException
     {

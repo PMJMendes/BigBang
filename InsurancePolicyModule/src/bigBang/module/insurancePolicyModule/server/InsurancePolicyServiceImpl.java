@@ -3178,15 +3178,14 @@ public class InsurancePolicyServiceImpl
 			if ( (receipt.contacts != null) && (receipt.contacts.length > 0) )
 			{
 				lopCR.mobjContactOps = new ContactOps();
-				lopCR.mobjContactOps.marrCreate = ContactsServiceImpl.BuildContactTree(lopCR.mobjContactOps,
-						receipt.contacts, Constants.ObjID_Policy);
+				lopCR.mobjContactOps.marrCreate = ContactsServiceImpl.BuildContactTree(receipt.contacts);
 			}
 			else
 				lopCR.mobjContactOps = null;
 			if ( (receipt.documents != null) && (receipt.documents.length > 0) )
 			{
 				lopCR.mobjDocOps = new DocOps();
-				lopCR.mobjDocOps.marrCreate = DocumentServiceImpl.BuildDocTree(lopCR.mobjDocOps, receipt.documents);
+				lopCR.mobjDocOps.marrCreate = DocumentServiceImpl.BuildDocTree(receipt.documents);
 			}
 			else
 				lopCR.mobjDocOps = null;

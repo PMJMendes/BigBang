@@ -169,17 +169,14 @@ public class InsuranceAgencyServiceImpl
 			if ( (agency.contacts != null) && (agency.contacts.length > 0) )
 			{
 				lopMIC.marrCreate[0].mobjContactOps = new ContactOps();
-				lopMIC.marrCreate[0].mobjContactOps.marrCreate =
-						ContactsServiceImpl.BuildContactTree(lopMIC.marrCreate[0].mobjContactOps, agency.contacts,
-								Constants.ObjID_Company);
+				lopMIC.marrCreate[0].mobjContactOps.marrCreate = ContactsServiceImpl.BuildContactTree(agency.contacts);
 			}
 			else
 				lopMIC.marrCreate[0].mobjContactOps = null;
 			if ( (agency.documents != null) && (agency.documents.length > 0) )
 			{
 				lopMIC.marrCreate[0].mobjDocOps = new DocOps();
-				lopMIC.marrCreate[0].mobjDocOps.marrCreate = DocumentServiceImpl.BuildDocTree(lopMIC.marrCreate[0].mobjDocOps,
-						agency.documents);
+				lopMIC.marrCreate[0].mobjDocOps.marrCreate = DocumentServiceImpl.BuildDocTree(agency.documents);
 			}
 			else
 				lopMIC.marrCreate[0].mobjDocOps = null;

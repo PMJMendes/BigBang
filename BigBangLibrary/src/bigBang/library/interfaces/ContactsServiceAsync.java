@@ -8,7 +8,7 @@ public interface ContactsServiceAsync
 	extends Service
 {
 	void getContacts(String ownerId, AsyncCallback<Contact[]> callback);
-	void createContact(String procId, String opId, Contact contact, AsyncCallback<Contact> callback);
-	void saveContact(String procId, String opId, Contact contact, AsyncCallback<Contact> callback);
-	void deleteContact(String procId, String opId, Contact contact, AsyncCallback<Void> callback);
+	void createContact(Contact contact, AsyncCallback<Contact> callback);
+	void saveContact(Contact contact, AsyncCallback<Contact> callback);
+	void deleteContact(String id, AsyncCallback<Void> callback);
 }
