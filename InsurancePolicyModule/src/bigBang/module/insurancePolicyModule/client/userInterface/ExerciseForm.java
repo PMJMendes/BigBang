@@ -124,19 +124,18 @@ public class ExerciseForm extends FormView<Exercise> {
 
 		@Override
 		public void setReadOnly(boolean readonly) {
-			// TODO Auto-generated method stubfixedFormFields
+			this.field.setReadOnly(readonly);
 
 		}
 
 		@Override
 		public boolean isReadOnly() {
-			// TODO Auto-generated method stub
-			return false;
+			return this.field.isReadOnly();
 		}
 
 		@Override
 		public void setLabelWidth(String width) {
-			// TODO Auto-generated method stub
+			this.setLabelWidth(width);
 
 		}
 
@@ -338,6 +337,16 @@ public class ExerciseForm extends FormView<Exercise> {
 
 
 	}
+	
+	@Override
+	public void clearInfo(){
+		
+		startDate.clear();
+		endDate.clear();
+		label.setValue("");		
+		clearFormFields();
+		
+	}
 
 	private void setDynamicVariableData(InsuredObject[] objects2,
 			VariableField[] fields, int k) {
@@ -411,8 +420,7 @@ public class ExerciseForm extends FormView<Exercise> {
 	}
 
 	private void clearFormFields() {
-
-
+		
 		if (fixedFormFields != null && fixedFormFields.length > 0){
 
 			for (int i = 0; i<fixedFormFields.length; i++){
@@ -518,7 +526,19 @@ public class ExerciseForm extends FormView<Exercise> {
 	}
 
 
-
+	@Override
+	public void setReadOnly(boolean readOnly){
+		super.setReadOnly(readOnly);
+		
+		dynamicVariableHeaderDataTable.setReadOnly(readOnly);
+		
+		for(int i = 0; i<dynamicVariableDataTable.length; i++){
+			
+			dynamicVariableDataTable[i].setReadOnly(readOnly);
+			
+		}
+		
+	}
 
 }
 
