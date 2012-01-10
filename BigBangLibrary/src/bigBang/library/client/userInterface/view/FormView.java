@@ -212,33 +212,34 @@ public abstract class FormView<T> extends View implements Validatable, HasEditab
 	}
 
 	public Widget getNonScrollableContent(){
-		final VerticalPanel wrapper = new VerticalPanel();
-		wrapper.setSize("100%", "100%");
-		
-		final AbsolutePanel absolutePanel = new AbsolutePanel();
-		absolutePanel.setSize("100%", "100%");
-		absolutePanel.add(this.panel, 0, 0);
-		absolutePanel.add(this.topToolbar, 0, 0);
-
-		wrapper.add(absolutePanel);
-
-		wrapper.addAttachHandler(new AttachEvent.Handler() {
-			
-			@Override
-			public void onAttachOrDetach(AttachEvent event) {
-				if(event.isAttached()){
-					absolutePanel.addAttachHandler(new AttachEvent.Handler() {
-						
-						@Override
-						public void onAttachOrDetach(AttachEvent event) {
-							wrapper.setCellHeight(absolutePanel, panel.getOffsetHeight() + "px");
-						}
-					});
-				}
-			}
-		});
-
-		return wrapper;
+//		final VerticalPanel wrapper = new VerticalPanel();
+//		wrapper.setSize("100%", "100%");
+//		
+//		final AbsolutePanel absolutePanel = new AbsolutePanel();
+//		absolutePanel.setSize("100%", "100%");
+//		absolutePanel.add(this.panel, 0, 0);
+//		absolutePanel.add(this.topToolbar, 0, 0);
+//
+//		wrapper.add(absolutePanel);
+//
+//		wrapper.addAttachHandler(new AttachEvent.Handler() {
+//			
+//			@Override
+//			public void onAttachOrDetach(AttachEvent event) {
+//				if(event.isAttached()){
+//					absolutePanel.addAttachHandler(new AttachEvent.Handler() {
+//						
+//						@Override
+//						public void onAttachOrDetach(AttachEvent event) {
+//							wrapper.setCellHeight(absolutePanel, panel.getOffsetHeight() + "px");
+//						}
+//					});
+//				}
+//			}
+//		});
+//
+//		return wrapper;
+		return this.panel;
 	}
 	
 	@Override
