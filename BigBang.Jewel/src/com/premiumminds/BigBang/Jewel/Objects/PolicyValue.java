@@ -67,4 +67,19 @@ public class PolicyValue
 	{
 		return mrefTax;
 	}
+
+	public String GetValue()
+	{
+		return (String)getAt(0);
+	}
+
+	public UUID GetObjectID()
+	{
+		return (UUID)getAt(3);
+	}
+
+	public UUID GetExerciseID()
+	{
+		return (UUID)getAt(4);
+	}
 }

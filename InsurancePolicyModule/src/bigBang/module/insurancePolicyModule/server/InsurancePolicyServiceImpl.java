@@ -42,11 +42,13 @@ import bigBang.library.server.SearchServiceBase;
 import bigBang.library.shared.BigBangException;
 import bigBang.library.shared.SessionExpiredException;
 import bigBang.module.insurancePolicyModule.interfaces.InsurancePolicyService;
+import bigBang.module.insurancePolicyModule.shared.BigBangPolicyValidationException;
 import bigBang.module.insurancePolicyModule.shared.InsurancePolicySearchParameter;
 import bigBang.module.insurancePolicyModule.shared.InsurancePolicySortParameter;
 import bigBang.module.receiptModule.server.ReceiptServiceImpl;
 
 import com.premiumminds.BigBang.Jewel.Constants;
+import com.premiumminds.BigBang.Jewel.PolicyValidationException;
 import com.premiumminds.BigBang.Jewel.ZipCodeBridge;
 import com.premiumminds.BigBang.Jewel.Data.PolicyCoverageData;
 import com.premiumminds.BigBang.Jewel.Data.PolicyData;
@@ -76,6 +78,7 @@ import com.premiumminds.BigBang.Jewel.Operations.Policy.CreatePolicyMgrXFer;
 import com.premiumminds.BigBang.Jewel.Operations.Policy.CreateReceipt;
 import com.premiumminds.BigBang.Jewel.Operations.Policy.DeletePolicy;
 import com.premiumminds.BigBang.Jewel.Operations.Policy.ManagePolicyData;
+import com.premiumminds.BigBang.Jewel.Operations.Policy.ValidatePolicy;
 
 public class InsurancePolicyServiceImpl
 	extends SearchServiceBase
@@ -3027,6 +3030,40 @@ public class InsurancePolicyServiceImpl
 		lrefPad = GetScratchPadStorage().get(UUID.fromString(policyId));
 		GetScratchPadStorage().remove(UUID.fromString(policyId));
 		return lrefPad.GetRemapFromPad(false);
+	}
+
+	public void validatePolicy(String policyId)
+		throws SessionExpiredException, BigBangException, BigBangPolicyValidationException
+	{
+		Policy lobjPolicy;
+		ValidatePolicy lopVP;
+
+		if ( Engine.getCurrentUser() == null )
+			throw new SessionExpiredException();
+
+		try
+		{
+			lobjPolicy = Policy.GetInstance(Engine.getCurrentNameSpace(), UUID.fromString(policyId));
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangException(e.getMessage(), e);
+		}
+
+		lopVP = new ValidatePolicy(lobjPolicy.GetProcessID());
+
+		try
+		{
+			lopVP.Execute();
+		}
+		catch (PolicyValidationException e)
+		{
+			throw new BigBangPolicyValidationException(e.getMessage());
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangException(e.getMessage(), e);
+		}
 	}
 
 	@Override

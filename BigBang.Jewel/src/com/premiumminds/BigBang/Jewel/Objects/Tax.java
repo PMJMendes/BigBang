@@ -88,4 +88,9 @@ public class Tax
 	{
 		return (Integer)getAt(8);
 	}
+
+	public boolean IsMandatory()
+	{
+		return (Boolean)getAt(9);
+	}
 }

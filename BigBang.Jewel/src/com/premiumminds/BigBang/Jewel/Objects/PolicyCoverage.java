@@ -67,4 +67,9 @@ public class PolicyCoverage
 	{
 		return mrefCoverage;
 	}
+
+	public Boolean IsPresent()
+	{
+		return (Boolean)getAt(2);
+	}
 }
