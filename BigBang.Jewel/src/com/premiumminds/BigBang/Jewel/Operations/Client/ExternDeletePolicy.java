@@ -26,6 +26,7 @@ import com.premiumminds.BigBang.Jewel.Objects.PolicyObject;
 import com.premiumminds.BigBang.Jewel.Objects.PolicyValue;
 import com.premiumminds.BigBang.Jewel.Operations.ContactOps;
 import com.premiumminds.BigBang.Jewel.Operations.DocOps;
+import com.premiumminds.BigBang.Jewel.Operations.Policy.ExternResumePolicy;
 
 public class ExternDeletePolicy
 	extends UndoableOperation
@@ -250,6 +251,7 @@ public class ExternDeletePolicy
 		PolicyExercise lobjExercise;
 		PolicyValue lobjValue;
 		int i;
+		ExternResumePolicy lopERP;
 
 		try
 		{
@@ -327,6 +329,9 @@ public class ExternDeletePolicy
 		{
 			throw new JewelPetriException(e.getMessage(), e);
 		}
+
+		lopERP = new ExternResumePolicy(lobjProcess.getKey());
+		TriggerOp(lopERP, pdb);
 	}
 
 	public UndoSet[] GetSets()
