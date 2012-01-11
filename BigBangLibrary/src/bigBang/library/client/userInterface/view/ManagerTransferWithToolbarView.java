@@ -27,15 +27,23 @@ public class ManagerTransferWithToolbarView extends ManagerTransferView implemen
 			bar.accept.setVisible(true);
 			bar.reject.setVisible(true);
 			bar.cancel.setVisible(false);
-
+			bar.setVisible(true);
 		}
 
-			else{
+			else if (status == BarStatus.CANCEL){
 
 				bar.accept.setVisible(false);
 				bar.reject.setVisible(false);
 				bar.cancel.setVisible(true);
+				bar.setVisible(true);
 
+			}else {
+				
+				bar.accept.setVisible(false);
+				bar.reject.setVisible(false);
+				bar.cancel.setVisible(false);
+				bar.setVisible(false);
+				
 			}
 
 
