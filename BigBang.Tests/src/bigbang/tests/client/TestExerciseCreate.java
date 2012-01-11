@@ -16,7 +16,7 @@ public class TestExerciseCreate
 
 	private static void DoStep1()
 	{
-		final String lstrPolicy = "54FF52B3-076D-4E3E-B825-9FD000C6AF77";
+		final String lstrPolicy = "588E0BE9-6E92-4711-B0CD-9FD50118C191";
 
 		AsyncCallback<Remap[]> callback = new AsyncCallback<Remap[]> ()
 		{
