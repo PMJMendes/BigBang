@@ -2,11 +2,13 @@ package com.premiumminds.BigBang.Jewel.Operations.Policy;
 
 import java.util.UUID;
 
+import Jewel.Engine.Engine;
 import Jewel.Engine.DataAccess.SQLServer;
 import Jewel.Petri.SysObjects.JewelPetriException;
 import Jewel.Petri.SysObjects.UndoableOperation;
 
 import com.premiumminds.BigBang.Jewel.Constants;
+import com.premiumminds.BigBang.Jewel.Objects.Policy;
 
 public class ForceValidatePolicy
 	extends UndoableOperation
@@ -43,7 +45,20 @@ public class ForceValidatePolicy
 	protected void Run(SQLServer pdb)
 		throws JewelPetriException
 	{
+		Policy lobjPolicy;
+
 		midPolicy = GetProcess().GetDataKey();
+
+		try
+		{
+			lobjPolicy = Policy.GetInstance(Engine.getCurrentNameSpace(), midPolicy);
+			lobjPolicy.setAt(13, Constants.StatusID_Valid);
+			lobjPolicy.SaveToDb(pdb);
+		}
+		catch (Throwable e)
+		{
+			throw new JewelPetriException(e.getMessage(), e);
+		}
 	}
 
 	public String UndoDesc(String pstrLineBreak)
@@ -59,6 +74,20 @@ public class ForceValidatePolicy
 	protected void Undo(SQLServer pdb)
 		throws JewelPetriException
 	{
+		Policy lobjPolicy;
+
+		midPolicy = GetProcess().GetDataKey();
+
+		try
+		{
+			lobjPolicy = Policy.GetInstance(Engine.getCurrentNameSpace(), midPolicy);
+			lobjPolicy.setAt(13, Constants.StatusID_InProgress);
+			lobjPolicy.SaveToDb(pdb);
+		}
+		catch (Throwable e)
+		{
+			throw new JewelPetriException(e.getMessage(), e);
+		}
 	}
 
 	public UndoSet[] GetSets()

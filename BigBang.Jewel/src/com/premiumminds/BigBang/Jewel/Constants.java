@@ -230,6 +230,7 @@ public class Constants
 
 	// Policy Status Codes
 	public static final UUID StatusID_InProgress = UUID.fromString("6489D7DF-A090-40B9-BD5E-9F98012C8BED");
+	public static final UUID StatusID_Valid      = UUID.fromString("421E16B3-BE47-4D9C-9011-9F98012C945E");
 
 	// FK Constants
 	public static final int FKCostCenter_In_UserDecoration = 2;
