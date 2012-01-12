@@ -207,8 +207,8 @@ public class AuthenticationServiceImpl
 		}
 		catch (JewelEngineException e)
 		{
-			if (e.getMessage().equals("Password changed."))
-				return e.getMessage();
+			if ("Password changed.".equals(e.getMessage()))
+				return "Password alterada com sucesso.";
 
 			throw new BigBangException(e.getMessage(), e);
 		}
