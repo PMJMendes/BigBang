@@ -1,131 +1,126 @@
 package bigBang.library.client.userInterface.view;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-
-import bigBang.definitions.shared.Contact;
-import bigBang.definitions.shared.ContactInfo;
-import bigBang.library.client.Selectable;
-import bigBang.library.client.dataAccess.ContactsBrokerClient;
-import bigBang.library.client.event.ActionInvokedEvent;
-import bigBang.library.client.event.ActionInvokedEventHandler;
-import bigBang.library.client.event.SelectedStateChangedEvent;
-import bigBang.library.client.event.SelectedStateChangedEventHandler;
-import bigBang.library.client.userInterface.BigBangOperationsToolBar;
-import bigBang.library.client.userInterface.BigBangOperationsToolBar.SUB_MENU;
-import bigBang.library.client.userInterface.AddressFormField;
-import bigBang.library.client.userInterface.ExpandableListBoxFormField;
-import bigBang.library.client.userInterface.ListEntry;
-import bigBang.library.client.userInterface.NavigationListEntry;
-import bigBang.library.client.userInterface.TextBoxFormField;
-import bigBang.library.shared.ModuleConstants;
-
-import com.google.gwt.event.logical.shared.AttachEvent;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.Command;
-import com.google.gwt.user.client.ui.HasHorizontalAlignment;
+import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.MenuItem;
-import com.google.gwt.user.client.ui.ScrollPanel;
-import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
-import com.google.gwt.user.client.ui.Widget;
 
-public class ContactView extends View implements ContactsBrokerClient {
+import bigBang.library.client.event.ActionInvokedEvent;
+import bigBang.library.client.event.ActionInvokedEventHandler;
+import bigBang.library.client.event.DeleteRequestEvent;
+import bigBang.library.client.event.DeleteRequestEventHandler;
+import bigBang.library.client.event.SelectedStateChangedEvent;
+import bigBang.library.client.event.SelectedStateChangedEventHandler;
+import bigBang.library.client.userInterface.AddressFormField;
+import bigBang.library.client.userInterface.BigBangOperationsToolBar;
+import bigBang.library.client.userInterface.ExpandableListBoxFormField;
+import bigBang.library.client.userInterface.List;
+import bigBang.library.client.userInterface.ListEntry;
+import bigBang.library.client.userInterface.ListHeader;
+import bigBang.library.client.userInterface.NavigationListEntry;
+import bigBang.library.client.userInterface.TextBoxFormField;
+import bigBang.library.client.userInterface.BigBangOperationsToolBar.SUB_MENU;
+import bigBang.library.client.userInterface.presenter.ContactViewPresenter;
+import bigBang.library.client.userInterface.presenter.ContactViewPresenter.Action;
+import bigBang.definitions.shared.BigBangConstants;
+import bigBang.definitions.shared.Contact;
+import bigBang.definitions.shared.ContactInfo;
 
-	public static class InfoEntry extends View {
+public class ContactView extends View implements ContactViewPresenter.Display{
 
-		protected ExpandableListBoxFormField typeField;
-		protected TextBoxFormField valueField;
-		protected ContactInfo info;
+	private VerticalPanel wrapper;
+	private ActionInvokedEventHandler<Action> actionHandler;
+	private DeleteRequestEventHandler deleteHandler;
+	private ListEntry<Void> childContactsButton;
+	TextBoxFormField name;
+	ExpandableListBoxFormField type;
+	AddressFormField address;
+	List<ContactInfo> contactIL;
+	private Contact contact;
+	BigBangOperationsToolBar toolbar;
 
-		public InfoEntry(){
-			HorizontalPanel mainWrapper = new HorizontalPanel();
-			mainWrapper.setWidth("100%");
-			mainWrapper.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_LEFT);
-			mainWrapper.getElement().getStyle().setBorderColor("gray");
-			mainWrapper.getElement().getStyle().setBackgroundColor("#F6F6F6");
+	public class ContactEntry extends ListEntry<ContactInfo>{
 
-			typeField = new ExpandableListBoxFormField(ModuleConstants.ListIDs.ContactInfoTypes, "Tipo");
-			typeField.showLabel(false);
-			valueField = new TextBoxFormField("Valor");
-			valueField.showLabel(false);
-			valueField.setFieldWidth("100%");
-			valueField.setWidth("100%");
+		protected ExpandableListBoxFormField type;
+		protected TextBoxFormField infoValue;
+		private Button remove;
+		private int index;
 
-			mainWrapper.add(typeField);
-			mainWrapper.add(valueField);
-			mainWrapper.setCellWidth(valueField, "100%");
-
-			initWidget(mainWrapper);
-			clear();
+		public ContactEntry(ContactInfo contactinfo) {
+			super(contactinfo);
+			this.index = index;
 		}
 
-		public void setInfo(ContactInfo info){
-			if(info == null){
-				clear();
-			}else{
-				typeField.setValue(info.typeId);
-				valueField.setValue(info.value);
+		@Override
+		public void setValue(ContactInfo contactinfo) {
+
+
+			if(contactinfo == null){
+				Button add = new Button("Adicionar Detalhe");
+				add.addClickHandler(new ClickHandler() {
+
+					@Override
+					public void onClick(ClickEvent event) {
+						fireAction(Action.ADD_NEW_DETAIL);
+
+					}
+				});
+				add.setWidth("180px");
+				this.setLeftWidget(add);
+				super.setValue(contactinfo);
+				return;	
+
 			}
+
+			type = new ExpandableListBoxFormField(BigBangConstants.TypifiedListIds.CONTACT_DETAILS_TYPE, "");
+			infoValue = new TextBoxFormField();
+
+			type.setValue(contactinfo.typeId);
+			infoValue.setValue(contactinfo.value);
+			
+			remove = new Button("X");
+			remove.addClickHandler(new ClickHandler() {
+				
+				@Override
+				public void onClick(ClickEvent event) {
+					fireEvent(new DeleteRequestEvent(getValue()));
+				}
+			});
+			this.setLeftWidget(type);
+			this.setWidget(infoValue);
+			this.setRightWidget(remove);
+			super.setValue(contactinfo);
 		}
 
-		public ContactInfo getInfo() {
-			this.info.typeId = typeField.getValue();
-			this.info.value = valueField.getValue();
-			return this.info;
-		} 
+		public void setEditable(boolean editable){
 
-		public void clear() {
-			typeField.clear();
-			valueField.clear();
+			if(type == null){
+				this.setVisible(editable);
+				return;
+			}
+			type.setReadOnly(!editable);
+			infoValue.setReadOnly(!editable);
+			remove.setVisible(editable);
 		}
 
-		public void setReadOnly(boolean readOnly) {
-			typeField.setReadOnly(readOnly);
-			valueField.setReadOnly(readOnly);
-			info = new ContactInfo();
+
+		@Override
+		public ContactInfo getValue() {
+
+			return super.getValue();
 		}
 	}
 
-	public static enum Action {
-		SAVE,
-		EDIT,
-		CANCEL,
-		CREATE_CHILD_CONTACT,
-		SHOW_CHILD_CONTACTS
-	}
-
-	protected TextBoxFormField nameField;
-	protected ExpandableListBoxFormField typeField;
-	protected VerticalPanel infoWrapper;
-	protected AddressFormField addressFormField;
-	protected Collection<InfoEntry> infoEntries;
-	protected BigBangOperationsToolBar toolbar;
-	protected Contact contact;
-	protected ActionInvokedEventHandler<Action> actionHandler;
-	protected Selectable childContactsButton, addInfoFieldButton;
-	protected int contactsDataVersionNumber;
-
-	@SuppressWarnings("unchecked")
 	public ContactView(){
-		nameField = new TextBoxFormField("Nome");
-		nameField.setFieldWidth("100%");
-		nameField.setLabelWidth("60px");
-		typeField = new ExpandableListBoxFormField(ModuleConstants.ListIDs.ContactTypes, "Tipo");
-		typeField.setLabelWidth("60px");
-		addressFormField = new AddressFormField();
-		addressFormField.setLabelWidth("60px");
 
-		SimplePanel mainWrapper = new SimplePanel();
-		mainWrapper.setSize("100%", "100%");
-
-		ScrollPanel scrollWrapper = new ScrollPanel();
-		scrollWrapper.setSize("100%", "100%");
-
-		VerticalPanel wrapper = new VerticalPanel();
-		wrapper.setSize("100%", "100%");
-
+		
+		wrapper = new VerticalPanel();
+		initWidget(wrapper);
+		wrapper.setWidth("100%");
+		//TOOLBAR
 		toolbar = new BigBangOperationsToolBar() {
 
 			@Override
@@ -157,44 +152,11 @@ public class ContactView extends View implements ContactsBrokerClient {
 		toolbar.setHeight("21px");
 		toolbar.setWidth("100%");
 
-		wrapper.add(toolbar);
+		name = new TextBoxFormField("Nome");
+		type = new ExpandableListBoxFormField(BigBangConstants.TypifiedListIds.CONTACT_TYPE, "Tipo");
+		address = new AddressFormField();
 
-		VerticalPanel nameWrapper = new VerticalPanel();
-		nameWrapper.setSize("100%", "100%");
-		nameWrapper.setSpacing(5);
-		nameWrapper.add(nameField);
-		nameWrapper.add(typeField);
-		nameWrapper.getElement().getStyle().setProperty("borderBottom", "1px solid gray");
-		nameWrapper.add(addressFormField);
-		wrapper.add(nameWrapper);
-
-		addInfoFieldButton = new ListEntry<Void>(null);
-		((ListEntry<Void>)addInfoFieldButton).setTitle("Adicionar campo");
-		addInfoFieldButton.addSelectedStateChangedEventHandler(new SelectedStateChangedEventHandler() {
-			
-			@Override
-			public void onSelectedStateChanged(SelectedStateChangedEvent event) {
-				if(event.getSelected()){
-					addInfoField();
-					addInfoFieldButton.setSelected(false, false);
-				}
-			}
-		});
-		
-		infoEntries = new ArrayList<ContactView.InfoEntry>();
-		infoWrapper = new VerticalPanel();
-		infoWrapper.add((Widget) addInfoFieldButton);
-		infoWrapper.getElement().getStyle().setBackgroundColor("#F6F6F6");
-		infoWrapper.getElement().getStyle().setProperty("borderBottom", "1px solid gray");
-		infoWrapper.setSpacing(5);
-		infoWrapper.setWidth("100%");
-		scrollWrapper.add(infoWrapper);
-		scrollWrapper.setStylePrimaryName("emptyContainer");
-
-		wrapper.add(scrollWrapper);
-		wrapper.setCellHeight(scrollWrapper, "100%");
-
-		ListEntry<Void> childContactsButton = new NavigationListEntry<Void>(null);
+		childContactsButton = new NavigationListEntry<Void>(null);
 		childContactsButton.getElement().getStyle().setProperty("borderTop", "1px solid gray");
 		childContactsButton.setTitle("Sub-Contactos");
 		childContactsButton.addSelectedStateChangedEventHandler(new SelectedStateChangedEventHandler() {
@@ -206,174 +168,134 @@ public class ContactView extends View implements ContactsBrokerClient {
 				}
 			}
 		});
-		this.childContactsButton = childContactsButton;
 		childContactsButton.setHeight("40px");
+
+
+		HorizontalPanel horz = new HorizontalPanel();
+		horz.add(type);
+		horz.add(name);
+		wrapper.add(toolbar);
+		wrapper.add(horz);
+		wrapper.add(address);
+		ListHeader conts = new ListHeader("Detalhes");
+		wrapper.add(conts);
+		contactIL = new List<ContactInfo>();
+		contactIL.setSelectableEntries(false);
+		wrapper.add(contactIL.getListContent());
 		wrapper.add(childContactsButton);
 
-		mainWrapper.add(wrapper);
+		//END TOOLBAR
 
-		this.addAttachHandler(new AttachEvent.Handler() {
-
-			@Override
-			public void onAttachOrDetach(AttachEvent event) {
-				if(event.isAttached()){
-					ContactView.this.childContactsButton.setSelected(false);
-				}
-			}
-		});
-
-		initWidget(mainWrapper);
 	}
 
-	protected void addInfoField(){
-		InfoEntry entry = new InfoEntry();
-		this.infoEntries.add(entry);
-		this.infoEntries.remove(this.addInfoFieldButton);
-		this.infoWrapper.add(entry);
-		this.infoWrapper.add((Widget) this.addInfoFieldButton);
-	}
-	
-	public void setEditable(boolean editable) {
-		//TODO
-	}
+	@Override
+	public void setContact(Contact contact) {
 
-	@SuppressWarnings("unchecked")
-	public void setContact(Contact contact){
+		contactIL.clear();
 		this.contact = contact;
-		this.nameField.setValue(contact.name);
-		this.infoWrapper.remove((Widget) this.addInfoFieldButton);
-		for(int i = 0; contact.info != null && i < contact.info.length; i++) {
-			InfoEntry entry = new InfoEntry();
-			entry.setInfo(contact.info[i]);
-			infoEntries.add(entry);
-			infoWrapper.add(entry);
-		}
-		if(contact.subContacts != null){
-			int subContactsCount = contact.subContacts == null ? 0 : contact.subContacts.length;
-			((ListEntry<Contact>)this.childContactsButton).setTitle("Contactos Filho ("+subContactsCount+")");
-		}
-		this.infoWrapper.add((Widget) this.addInfoFieldButton);
+		this.name.setValue(contact.name);
+		this.type.setValue(contact.typeId);
+		this.address.setValue(contact.address);
+
+
 	}
+	@Override
+	public void addContactInfo(ContactInfo contactinfo){
+
+
+		ContactEntry temp = new ContactEntry(contactinfo);
+		temp.setHeight("40px");
+		temp.addHandler(deleteHandler, DeleteRequestEvent.TYPE);
+		contactIL.add(temp);
+
+	}
+
 
 	protected void fireAction(Action action){
 		if(this.actionHandler != null) {
-			actionHandler.onActionInvoked(new ActionInvokedEvent<ContactView.Action>(action));
+			actionHandler.onActionInvoked(new ActionInvokedEvent<Action>(action));
 		}
 	}
 
-	public Contact getContact(){
+	@Override
+	public void registerActionHandler(ActionInvokedEventHandler<Action> handler) {
+		this.actionHandler = handler;
+
+	}
+
+	@Override
+	public void setEditable(boolean editable) {
+
+		this.name.setReadOnly(!editable);
+		this.type.setReadOnly(!editable);
+		this.type.setEditable(editable);
+		this.address.setEditable(editable);
+		int i;
+		ContactEntry temp;
+		for(i=0; i<contactIL.size(); i++){
+
+			temp = (ContactEntry) contactIL.get(i);
+			temp.setEditable(editable);
+			
+		}
+
+	}
+
+	@Override
+	public List<ContactInfo> getContactInfoList() {
+		
+		return contactIL;
+		
+	}
+
+	@Override
+	public ContactEntry initializeContactEntry() {
+		return new ContactEntry(new ContactInfo());
+	}
+
+	@Override
+	public Contact getContact() {
+		Contact newContact = new Contact();
+		
+		newContact = this.contact;
+		newContact.address = address.getValue();
+		newContact.name = name.getValue();
+		newContact.typeId = type.getValue();
+		
+		newContact.info = new ContactInfo[contactIL.size()-1];
+		for(int i = 0; i<contactIL.size()-1; i++){
+			
+			newContact.info[i] = new ContactInfo();
+			newContact.info[i].typeId = ((ContactEntry) contactIL.get(i)).type.getValue();
+			newContact.info[i].value = ((ContactEntry) contactIL.get(i)).infoValue.getValue();
+			
+		}
+		
+		return newContact;
+	}
+
+	private Contact getInfo() {
 		return this.contact;
 	}
 
-	public void registerActionHandler(ActionInvokedEventHandler<Action> actionHandler) {
-		this.actionHandler = actionHandler;
-	}
-
-	public void clear(){
-		this.nameField.clear();
-		this.typeField.clear();
-		this.infoWrapper.clear();
-		this.contact = new Contact();
-	}
-
 	@Override
-	public void setDataVersionNumber(String dataElementId, int number) {
-		return;
-	}
-
-	@Override
-	public int getDataVersion(String dataElementId) {
-		return -1;
-	}
-
-	@Override
-	public int getContactsDataVersionNumber(String ownerId) {
-		return -1;
-	}
-
-	@Override
-	public void setContactsDataVersionNumber(String ownerId, int number) {
-		return;
-	}
-
-	@Override
-	public void setContacts(String ownerId, List<Contact> contacts) {
-		if(contact == null) {
-			return;
-		}
-		if((ownerId == null && contact.ownerId == null) || ((ownerId != null && contact.ownerId != null) && ownerId.equalsIgnoreCase(contact.ownerId))) {
-			for(Contact c : contacts) {
-				if(c.id.equalsIgnoreCase(contact.id)) {
-					setContact(c);
-					break;
-				}
-			}
-		}
-	}
-
-	@Override
-	public void removeContact(String ownerId, Contact contact) {
-		if(this.contact == null || contact == null) {
-			return;
-		}
+	public void setSaveMode(boolean b) {
+		toolbar.setSaveModeEnabled(b);
 		
-		if((ownerId == null && this.contact.ownerId == null) || ((ownerId != null && this.contact.ownerId != null) && ownerId.equalsIgnoreCase(this.contact.ownerId))) {
-			if(contact.id.equalsIgnoreCase(this.contact.id)){
-				clear();
-			
-			}else if(contact.ownerId != null && contact.ownerId.equalsIgnoreCase(this.contact.id)){
-				
-				ArrayList<Contact> newSubContacts = new ArrayList<Contact>();
-				for(int i = 0; this.contact.subContacts != null && i < contact.subContacts.length; i++) {
-					if(!this.contact.subContacts[i].id.equalsIgnoreCase(contact.id)){
-						newSubContacts.add(this.contact.subContacts[i]);
-					}
-				}
-				this.contact.subContacts = (Contact[]) newSubContacts.toArray();
-			}
-		}
 	}
 
 	@Override
-	public void addContact(String ownerId, Contact contact) {
-		if(contact.ownerId != null && contact.ownerId.equalsIgnoreCase(this.contact.id)){
-			ArrayList<Contact> newSubContacts = new ArrayList<Contact>();
-			for(int i = 0; this.contact.subContacts != null && i < contact.subContacts.length; i++) {
-				newSubContacts.add(this.contact.subContacts[i]);
-			}
-			newSubContacts.add(contact);
-			this.contact.subContacts = (Contact[]) newSubContacts.toArray();
-		}
-	}
-
-	@Override
-	public void updateContact(String ownerId, Contact contact) {
-		if(this.contact == null || contact == null) {
-			return;
-		}
+	public void deleteDetail() {
+		// TODO Auto-generated method stub
 		
-		if((ownerId == null && this.contact.ownerId == null) || ((ownerId != null && this.contact.ownerId != null) && ownerId.equalsIgnoreCase(this.contact.ownerId))) {
-			if(contact.id.equalsIgnoreCase(this.contact.id)){
-				setContact(contact);
-			}else if(contact.ownerId != null && contact.ownerId.equalsIgnoreCase(this.contact.id)){
-				for(int i = 0; this.contact.subContacts != null && i < contact.subContacts.length; i++) {
-					if(this.contact.subContacts[i].id.equalsIgnoreCase(contact.id)){
-						this.contact.subContacts[i] = contact;
-						break;
-					}
-				}
-			}
-		}
 	}
-	
-	public void setReadOnly(boolean readonly){
-		this.typeField.setReadOnly(readonly);
-		this.nameField.setReadOnly(readonly);
-		((Widget)this.addInfoFieldButton).setVisible(!readonly);
-		for(InfoEntry e : this.infoEntries) {
-			e.setReadOnly(readonly);
-		}
+
+	@Override
+	public void registerDeleteHandler(
+			DeleteRequestEventHandler deleteRequestEventHandler) {
+		this.deleteHandler = deleteRequestEventHandler;
+		
 	}
+
 
 }
-

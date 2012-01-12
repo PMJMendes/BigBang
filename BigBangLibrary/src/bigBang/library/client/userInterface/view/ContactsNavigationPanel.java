@@ -11,7 +11,7 @@ import bigBang.library.client.event.SelectionChangedEvent;
 import bigBang.library.client.event.SelectionChangedEventHandler;
 import bigBang.library.client.userInterface.ChildContactsList;
 import bigBang.library.client.userInterface.NavigationPanel;
-import bigBang.library.client.userInterface.view.ContactView.Action;
+import bigBang.library.client.userInterface.view.ContactView_OLD.Action;
 
 public class ContactsNavigationPanel extends NavigationPanel {
 	
@@ -20,7 +20,7 @@ public class ContactsNavigationPanel extends NavigationPanel {
 		navBar.setHeight("35px");
 	}
 	
-	public void setMainContact(ContactView view){
+	public void setMainContact(ContactView_OLD view){
 		view.addAttachHandler(new AttachEvent.Handler() {
 			
 			@Override
@@ -34,8 +34,8 @@ public class ContactsNavigationPanel extends NavigationPanel {
 		wireView(view);
 	}
 	
-	protected void wireView(final ContactView view) {
-		view.registerActionHandler(new ActionInvokedEventHandler<ContactView.Action>() {
+	protected void wireView(final ContactView_OLD view) {
+		view.registerActionHandler(new ActionInvokedEventHandler<ContactView_OLD.Action>() {
 			
 			@Override
 			public void onActionInvoked(ActionInvokedEvent<Action> actionEvent) {
@@ -63,7 +63,7 @@ public class ContactsNavigationPanel extends NavigationPanel {
 	}
 	
 	protected void showContactView(Contact contact){
-		ContactView newView = new ContactView();
+		ContactView_OLD newView = new ContactView_OLD();
 		newView.setContact(contact);
 		wireView(newView);
 		newView.addAttachHandler(new AttachEvent.Handler() {
