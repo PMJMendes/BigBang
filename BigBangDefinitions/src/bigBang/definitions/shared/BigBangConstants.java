@@ -45,6 +45,8 @@ public class BigBangConstants {
 		public static final String GENDERS = "2549E951-2747-4300-982E-9ECA01756B91";
 		public static final String CAEs = "14B89884-475A-4357-BB7D-9EE600C3CE6E";
 		public static final String SALES_VOLUMES = "5C4E267C-B306-482F-8636-9EE600C586B6";
+		public static final String CONTACT_TYPE = "228F6A73-1335-4C99-8DD0-9EEE012964BA";
+		public static final String CONTACT_DETAILS_TYPE = "03C5B78E-D71C-49F2-A079-9EC40111DCC0";
 	}
 
 	public static class OperationIds {
