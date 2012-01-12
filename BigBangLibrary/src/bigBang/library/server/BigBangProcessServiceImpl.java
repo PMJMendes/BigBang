@@ -24,9 +24,86 @@ public class BigBangProcessServiceImpl
 {
 	private static final long serialVersionUID = 1L;
 
-	public BigBangProcess[] getSubProcesses(String parentProcessId)
+	public static IProcess sGetProcessFromDataObject(UUID pidDataObject)
+		throws BigBangException
+	{
+		IEntity lrefProcess;
+        MasterDB ldb;
+        ResultSet lrsProcesses;
+		IProcess lobjProcess;
+
+        try
+		{
+			lrefProcess = Entity.GetInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), Constants.ObjID_PNProcess)); 
+			ldb = new MasterDB();
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangException(e.getMessage(), e);
+		}
+
+		try
+		{
+			lrsProcesses = lrefProcess.SelectByMembers(ldb, new int[] {Constants.FKData_In_Process},
+					new java.lang.Object[] {pidDataObject}, new int[0]);
+		}
+		catch (Throwable e)
+		{
+			try { ldb.Disconnect(); } catch (SQLException e1) {}
+			throw new BigBangException(e.getMessage(), e);
+		}
+
+		try
+		{
+			if ( lrsProcesses.next() )
+			{
+				lobjProcess = PNProcess.GetInstance(Engine.getCurrentNameSpace(), lrsProcesses);
+
+				if ( lrsProcesses.next() )
+					throw new BigBangException("Unexpected: More than one process for data object.");
+			}
+			else
+				throw new BigBangException("Erro: Esse objecto não tem processo associado.");
+		}
+		catch (BigBangException e)
+		{
+			try { lrsProcesses.close(); } catch (SQLException e1) {}
+			try { ldb.Disconnect(); } catch (SQLException e1) {}
+			throw e;
+		}
+		catch (Throwable e)
+		{
+			try { lrsProcesses.close(); } catch (SQLException e1) {}
+			try { ldb.Disconnect(); } catch (SQLException e1) {}
+			throw new BigBangException(e.getMessage(), e);
+		}
+
+		try
+		{
+			lrsProcesses.close();
+		}
+		catch (Throwable e)
+		{
+			try { ldb.Disconnect(); } catch (SQLException e1) {}
+			throw new BigBangException(e.getMessage(), e);
+		}
+
+		try
+		{
+			ldb.Disconnect();
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangException(e.getMessage(), e);
+		}
+
+		return lobjProcess;
+	}
+
+	public BigBangProcess[] getSubProcesses(String dataObjectId)
 		throws SessionExpiredException, BigBangException
 	{
+		IProcess lobjParent;
 		IEntity lrefProcess;
         MasterDB ldb;
         ResultSet lrsProcesses;
@@ -38,6 +115,8 @@ public class BigBangProcessServiceImpl
 
 		if ( Engine.getCurrentUser() == null )
 			throw new SessionExpiredException();
+
+		lobjParent = sGetProcessFromDataObject(UUID.fromString(dataObjectId));
 
 		try
 		{
@@ -52,7 +131,7 @@ public class BigBangProcessServiceImpl
 		try
 		{
 			lrsProcesses = lrefProcess.SelectByMembers(ldb, new int[] {Constants.FKParent_In_Process},
-					new java.lang.Object[] {UUID.fromString(parentProcessId)}, new int[0]);
+					new java.lang.Object[] {lobjParent.getKey()}, new int[0]);
 		}
 		catch (Throwable e)
 		{
