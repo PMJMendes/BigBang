@@ -4,6 +4,11 @@ import java.util.*;
 
 public class Constants
 {
+	// NameSpaces
+    public static final UUID NSID_BigBang  = UUID.fromString("C37B81F0-860F-4868-9177-9E15008B3EFD");
+    public static final UUID NSID_CredEGS  = UUID.fromString("A1CC31A3-E471-4568-B5FC-9E15008E98C9");
+    public static final UUID NSID_AMartins = UUID.fromString("90CB8FFB-1555-49D8-9594-9E15008EDC72");
+
 	// Objects
     public static final UUID ObjID_AppParams      = UUID.fromString("5485B660-A102-441A-912C-7B960584399F");
 
