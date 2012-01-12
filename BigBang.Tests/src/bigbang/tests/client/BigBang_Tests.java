@@ -31,11 +31,13 @@ public class BigBang_Tests
 	{
 //		TestSpecialChangePassword.DoTest();
 //		TestSpecialGetAsImage.DoTest();
-//		TestSpecialUndo.DoTest();
 //		TestSpecialGetSubProcs.DoTest();
 //
 //		TestAgendaGet.DoTest();
 //		TestAgendaDismiss.DoTest();
+//
+		TestHistoryGet.DoTest();
+//		TestHistoryUndo.DoTest();
 //
 //		TestMgrXferGet.DoTest();
 //		TestMgrXferCreate.DoTest();

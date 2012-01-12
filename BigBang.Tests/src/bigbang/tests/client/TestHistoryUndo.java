@@ -4,7 +4,7 @@ import bigBang.definitions.shared.HistoryItem;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
-public class TestSpecialUndo
+public class TestHistoryUndo
 {
 	public static void DoTest()
 	{
