@@ -4,12 +4,13 @@
     "http://java.sun.com/dtd/web-app_2_3.dtd"
     [ 
     	<!ENTITY  loginServices SYSTEM "loginServices.xml" >
-    	<!ENTITY  libraryServices SYSTEM "libraryServices.xml" > 
-    	<!ENTITY  taskServices SYSTEM "taskServices.xml" > 
-    	<!ENTITY  generalSystemServices SYSTEM "generalSystemServices.xml" > 
-    	<!ENTITY  clientServices SYSTEM "clientServices.xml" > 
-    	<!ENTITY  insurancePolicyServices SYSTEM "insurancePolicyServices.xml" > 
-    	<!ENTITY  receiptServices SYSTEM "receiptServices.xml" > 
+    	<!ENTITY  libraryServices SYSTEM "libraryServices.xml" >
+    	<!ENTITY  taskServices SYSTEM "taskServices.xml" >
+    	<!ENTITY  generalSystemServices SYSTEM "generalSystemServices.xml" >
+    	<!ENTITY  clientServices SYSTEM "clientServices.xml" >
+    	<!ENTITY  insurancePolicyServices SYSTEM "insurancePolicyServices.xml" >
+    	<!ENTITY  receiptServices SYSTEM "receiptServices.xml" >
+    	<!ENTITY  jewelWebServices SYSTEM "jewelWebServices.xml" >
     ]  >
 
 <web-app>
@@ -29,6 +30,7 @@
 	&clientServices;
 	&insurancePolicyServices;
 	&receiptServices;
+	&jewelWebServices;
 
 	<servlet>
 		<servlet-name>remoteLoggingServiceImpl</servlet-name>
