@@ -1,5 +1,7 @@
 package bigbang.tests.client;
 
+import bigBang.library.interfaces.BigBangPermissionService;
+import bigBang.library.interfaces.BigBangPermissionServiceAsync;
 import bigBang.library.interfaces.BigBangProcessService;
 import bigBang.library.interfaces.BigBangProcessServiceAsync;
 import bigBang.library.interfaces.ContactsService;
@@ -49,6 +51,8 @@ public class Services
 			GWT.create(HistoryService.class);
 	public static final BigBangProcessServiceAsync processService =
 			GWT.create(BigBangProcessService.class);
+	public static final BigBangPermissionServiceAsync permissionService =
+			GWT.create(BigBangPermissionService.class);
 	public static final TransferManagerServiceAsync transferManagerService =
 			GWT.create(TransferManagerService.class);
 	public static final TasksServiceAsync tasksService =
