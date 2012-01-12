@@ -26,6 +26,6 @@ public class TestSpecialGetSubProcs
 			}
 		};
 
-		Services.processService.getSubProcesses("BD8BAAFA-811E-4CA7-B4F1-9FB700201779", callback);
+		Services.processService.getSubProcesses("31B97CAC-CADD-4F9F-8D62-9FB700201362", callback);
 	}
 }
