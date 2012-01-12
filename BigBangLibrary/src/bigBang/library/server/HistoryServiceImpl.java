@@ -229,9 +229,13 @@ public class HistoryServiceImpl
 			return false;
 		lParam = (HistorySearchParameter)pParam;
 
-		if ( lParam.processId == null )
-			throw new BigBangException("Attempt to search through History with a NULL Process ID.");
-		pstrBuffer.append(" AND [:Process] = '").append(lParam.processId).append("'");
+		if ( (lParam.processId == null) && (lParam.dataObjectId == null) )
+			throw new BigBangException("Attempt to search through History with a NULL Process ID or Data Object ID.");
+
+		if ( lParam.dataObjectId != null )
+			pstrBuffer.append(" AND [:Process:Data] = '").append(lParam.dataObjectId).append("'");
+		else
+			pstrBuffer.append(" AND [:Process] = '").append(lParam.processId).append("'");
 
 		if ( lParam.afterTimestamp != null )
 		{
