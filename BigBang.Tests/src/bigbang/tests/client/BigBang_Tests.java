@@ -29,6 +29,7 @@ public class BigBang_Tests
 
 	private void DoTests()
 	{
+//		TestSpecialChangePassword.DoTest();
 //		TestSpecialGetAsImage.DoTest();
 //		TestSpecialUndo.DoTest();
 //		TestSpecialGetSubProcs.DoTest();
