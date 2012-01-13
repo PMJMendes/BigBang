@@ -29,4 +29,20 @@ public class GeneralSystemServiceImpl
 			throw new BigBangException(e.getMessage(), e);
 		}
 	}
+
+	public String getGeneralSystemId()
+		throws SessionExpiredException, BigBangException
+	{
+		if ( Engine.getCurrentUser() == null )
+			throw new SessionExpiredException();
+
+		try
+		{
+			return GeneralSystem.GetAnyInstance(Engine.getCurrentNameSpace()).getKey().toString();
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangException(e.getMessage(), e);
+		}
+	}
 }
