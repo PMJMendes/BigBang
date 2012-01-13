@@ -4,6 +4,9 @@ import bigBang.library.client.FieldValidator;
 import bigBang.library.client.FormField;
 
 import com.google.gwt.dom.client.Style.Unit;
+import com.google.gwt.event.dom.client.KeyCodes;
+import com.google.gwt.event.dom.client.KeyPressEvent;
+import com.google.gwt.event.dom.client.KeyPressHandler;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.HasVerticalAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
@@ -118,6 +121,26 @@ public class TextAreaFormField extends FormField<String> {
 		field.setValue(field.isReadOnly() ? "-" : "");
 		if(field.isReadOnly())
 			hasDummyValue = true;
+	}
+	
+	//TODO MAKE THIS WORK
+	public void setMaxCharacters(final int max){
+		
+		((TextArea)this.field).addHandler(new KeyPressHandler() {
+			
+			@Override
+			public void onKeyPress(KeyPressEvent event) {
+				
+				
+				
+				if(event.getCharCode() != KeyCodes.KEY_BACKSPACE && event.getCharCode() != KeyCodes.KEY_DELETE && field.getValue().length() > max){
+					event.preventDefault();
+					
+				}
+				
+			}
+		}, KeyPressEvent.getType());
+		
 	}
 
 }

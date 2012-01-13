@@ -35,23 +35,20 @@ public class ContactView extends View implements ContactViewPresenter.Display{
 	private ActionInvokedEventHandler<Action> actionHandler;
 	private DeleteRequestEventHandler deleteHandler;
 	private ListEntry<Void> childContactsButton;
-	TextBoxFormField name;
-	ExpandableListBoxFormField type;
-	AddressFormField address;
-	List<ContactInfo> contactIL;
+	private TextBoxFormField name;
+	private ExpandableListBoxFormField type;
+	private AddressFormField address;
+	private List<ContactInfo> contactIL;
 	private Contact contact;
-	BigBangOperationsToolBar toolbar;
+	private BigBangOperationsToolBar toolbar;
 
 	public class ContactEntry extends ListEntry<ContactInfo>{
 
 		protected ExpandableListBoxFormField type;
 		protected TextBoxFormField infoValue;
 		private Button remove;
-		private int index;
-
 		public ContactEntry(ContactInfo contactinfo) {
 			super(contactinfo);
-			this.index = index;
 		}
 
 		@Override
@@ -210,7 +207,7 @@ public class ContactView extends View implements ContactViewPresenter.Display{
 
 	}
 
-
+	
 	protected void fireAction(Action action){
 		if(this.actionHandler != null) {
 			actionHandler.onActionInvoked(new ActionInvokedEvent<Action>(action));
@@ -281,7 +278,6 @@ public class ContactView extends View implements ContactViewPresenter.Display{
 	@Override
 	public void setSaveMode(boolean b) {
 		toolbar.setSaveModeEnabled(b);
-		
 	}
 
 	@Override
