@@ -170,6 +170,7 @@ public class UndoOperationView extends View implements UndoOperationViewPresente
 
 	public UndoOperationView(){
 		SplitLayoutPanel wrapper = new SplitLayoutPanel();
+		initWidget(wrapper);
 		wrapper.setSize("100%", "100%");
 
 		this.list = new UndoItemList();
@@ -216,13 +217,16 @@ public class UndoOperationView extends View implements UndoOperationViewPresente
 		wrapper.add(formWrapper);
 
 		this.status = Status.IDLE;
-		
-		initWidget(wrapper);
+	}
+	
+	@Override
+	protected void initializeView() {
+		return;
 	}
 
 	@Override
-	public void setProcessId(String processId) {
-		this.list.setProcessId(processId);
+	public void setObjectId(String objectId) {
+		this.list.setProcessId(objectId);
 	}
 
 	@Override
@@ -272,6 +276,12 @@ public class UndoOperationView extends View implements UndoOperationViewPresente
 	@Override
 	public void selectItem(String id) {
 		this.list.selectItem(id);
+	}
+
+	@Override
+	public void clearUndoItemList() {
+		this.list.clear();
+		this.list.clearFilters();
 	}
 
 }

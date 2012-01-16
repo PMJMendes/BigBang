@@ -67,7 +67,7 @@ public abstract class SearchPanel<T extends SearchResult> extends FilterableList
 
 		super.liveSearch = false;
 		this.broker = broker;
-
+		
 		this.searchButton = new Button("Pesquisar");
 		this.searchButton.setSize("80px", "100%");
 		this.setLiveSearch(this.liveSearch);

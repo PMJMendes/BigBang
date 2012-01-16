@@ -25,6 +25,11 @@ public class UndoForm extends FormView<HistoryItem> {
 	}
 	
 	@Override
+	protected void initializeView() {
+		return;
+	}
+	
+	@Override
 	public HistoryItem getInfo() {
 		return null;
 	}

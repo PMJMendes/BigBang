@@ -167,6 +167,11 @@ public class ContactForm extends FormView<Contact> {
 		setReadOnly(false);
 	}
 
+	@Override
+	protected void initializeView() {
+		return;
+	}
+	
 	public List<Contact> getSubContactsList() {
 		return this.subContactsList;
 	}

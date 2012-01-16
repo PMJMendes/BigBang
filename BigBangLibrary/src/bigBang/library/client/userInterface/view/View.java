@@ -20,15 +20,12 @@ import com.google.gwt.event.dom.client.MouseWheelEvent;
 import com.google.gwt.event.dom.client.MouseWheelHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.user.client.DOM;
-import com.google.gwt.user.client.Element;
 import com.google.gwt.user.client.Event;
-import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.Widget;
 
-public class View extends Composite implements RightClickable, HasAllMouseHandlers {
+public abstract class View extends Composite implements RightClickable, HasAllMouseHandlers {
 
-	private AbsolutePanel loadingPanel;
 	private boolean rightClickable = false;
 	private boolean doubleClickable = false;
 
@@ -44,12 +41,11 @@ public class View extends Composite implements RightClickable, HasAllMouseHandle
 	@Override
 	protected void initWidget(Widget widget) {
 		super.initWidget(widget);
-	}
-	
-	public View getInstance() {
-		return new View();
+		initializeView();
 	}
 
+	protected abstract void initializeView();
+	
 	public void setRightClickable(boolean rightClickable) {
 		this.rightClickable = rightClickable;
 		//if(rightClickable)
@@ -165,10 +161,6 @@ public class View extends Composite implements RightClickable, HasAllMouseHandle
 	@Override
 	public HandlerRegistration addMouseWheelHandler(MouseWheelHandler handler) {
 		return addDomHandler(handler, MouseWheelEvent.getType());
-	}
-	
-	public void showLoading(boolean show) {
-		//TODO
 	}
 	
 }

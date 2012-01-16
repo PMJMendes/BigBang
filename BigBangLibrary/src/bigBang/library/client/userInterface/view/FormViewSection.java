@@ -8,9 +8,7 @@ import bigBang.library.client.FormField;
 import com.google.gwt.dom.client.Style.Float;
 import com.google.gwt.dom.client.Style.FontWeight;
 import com.google.gwt.dom.client.Style.Unit;
-import com.google.gwt.user.client.ui.DisclosurePanel;
 import com.google.gwt.user.client.ui.FlowPanel;
-import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.HasVerticalAlignment;
 import com.google.gwt.user.client.ui.HasWidgets;
 import com.google.gwt.user.client.ui.Label;
@@ -27,12 +25,8 @@ public class FormViewSection extends View {
 	private HasWidgets currentContainer;
 	private Widget header;
 
-	private DisclosurePanel errorMessagePanel;
-	private ArrayList<String> errorMessages;
-
 	public FormViewSection(String title){
 		fields = new ArrayList<FormField<?>>();
-		errorMessages = new ArrayList<String>();
 		VerticalPanel wrapper = new VerticalPanel();
 		initWidget(wrapper);
 		wrapper.setSize("100%", "100%");
@@ -44,20 +38,9 @@ public class FormViewSection extends View {
 			wrapper.add(getSectionHeader(title));
 		}
 
-		DisclosurePanel errorMessagesWrapper = new DisclosurePanel();
-		wrapper.add(errorMessagesWrapper);
-		errorMessagesWrapper.setOpen(false);
-		errorMessagesWrapper.setAnimationEnabled(true);
-		errorMessagesWrapper.setWidth("500px");
-		this.errorMessagePanel = errorMessagesWrapper;
-		
-		wrapper.setCellHorizontalAlignment(this.errorMessagePanel, HasHorizontalAlignment.ALIGN_CENTER);
-
 		FlowPanel p = new FlowPanel();
 		p.setWidth("100%");
 
-		//String minHeight = "30px";
-		//p.setSize("100%", minHeight);
 		p.setStyleName("formSection");
 		wrapper.add(p);
 
@@ -65,6 +48,11 @@ public class FormViewSection extends View {
 		currentContainer = new FlowPanel();
 		content.add((Widget) currentContainer);
 		((Widget)content).getElement().getStyle().setProperty("minHeight", "50px");
+	}
+	
+	@Override
+	protected void initializeView() {
+		return;
 	}
 	
 	public ArrayList<FormField<?>> getFields(){
@@ -146,9 +134,7 @@ public class FormViewSection extends View {
 
 	public void clear(){
 		this.fields.clear();
-		this.errorMessagePanel.clear();
 		this.content.clear();
-		this.errorMessages.clear();
 	}
 
 	public void addWidget(Widget w, boolean inline) {
@@ -165,44 +151,6 @@ public class FormViewSection extends View {
 	public void setContent(Widget content) {
 		this.content.clear();
 		this.content.add(content);
-	}
-
-	public void clearErrorMessages(){
-		clearErrorMessages(true);
-	}
-
-	public void clearErrorMessages(boolean hide) {
-		errorMessagePanel.clear();
-		errorMessages.clear();
-		showErrorMessages(!hide);
-	}
-
-	public void addErrorMessage(String message, boolean show) {
-		showErrorMessages(show);
-	}
-
-	public void addErrorMessage(String message) {
-		addErrorMessage(message, true);
-		this.errorMessages.add(message);
-	}
-
-	public void showErrorMessages(boolean show) {
-		errorMessagePanel.clear();
-		if(errorMessages.size() == 0){
-			errorMessages.clear();
-			errorMessagePanel.setOpen(false);
-			return;
-		}
-		VerticalPanel messagesWrapper = new VerticalPanel();
-		messagesWrapper.setSize("100%", "100%");
-		messagesWrapper.getElement().getStyle().setBorderColor("red");
-		messagesWrapper.getElement().getStyle().setBackgroundColor("#ffd497");
-		messagesWrapper.setVerticalAlignment(HasVerticalAlignment.ALIGN_MIDDLE);
-		for(String m : errorMessages){
-			messagesWrapper.add(new Label(m));
-		}
-		this.errorMessagePanel.setContent(messagesWrapper);
-		this.errorMessagePanel.setOpen(show);
 	}
 
 	public Widget getHeader() {
