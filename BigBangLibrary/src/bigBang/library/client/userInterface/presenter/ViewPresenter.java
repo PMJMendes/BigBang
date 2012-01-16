@@ -1,23 +1,16 @@
 package bigBang.library.client.userInterface.presenter;
 
-import bigBang.library.client.EventBus;
-import bigBang.library.client.userInterface.view.View;
-import bigBang.library.interfaces.Service;
+import bigBang.library.client.HasParameters;
 
 import com.google.gwt.user.client.ui.HasWidgets;
+import com.google.gwt.user.client.ui.UIObject;
 
 public interface ViewPresenter {	
 	
-	public void setService(Service service);
-	
-	public void setEventBus(EventBus eventBus);
-	
-	public void setView(View view);
+	public void setView(UIObject view);
 	
 	public void go(final HasWidgets container);
 	
-	public void bind();
-
-	public void registerEventHandlers(EventBus eventBus);
+	public void setParameters(HasParameters parameterHolder);
 	
 }
