@@ -1,5 +1,7 @@
 package bigBang.module.mainModule.client.notifications;
 
+import org.gwt.mosaic.ui.client.MessageBox;
+
 import bigBang.library.client.EventBus;
 import bigBang.library.client.Notification;
 import bigBang.library.client.event.NewNotificationEvent;
@@ -13,14 +15,8 @@ import com.google.gwt.user.client.ui.Button;
 
 public class NotificationsManager {
 	
-	private EventBus eventBus;
 	private com.google.gwt.event.shared.HandlerRegistration newNotificationHandlerRegistration = null;
 
-	public NotificationsManager(EventBus eventBus){
-		this.eventBus = eventBus;
-	}
-	
-	
 	/*
 	 * TRAY NOTIFICATIONS START
 	 */
@@ -31,7 +27,7 @@ public class NotificationsManager {
 				
 				public void onClick(ClickEvent event) {
 					if(notification.getEvent() != null)
-						eventBus.fireEvent(notification.getEvent());
+						EventBus.getInstance().fireEvent(notification.getEvent());
 				}
 			}); 
 			InfoPanel.show(InfoPanelType.TRAY_NOTIFICATION, info);
@@ -42,7 +38,7 @@ public class NotificationsManager {
 		
 			public void onClick(ClickEvent event) {
 				if(notification.getEvent() != null)
-					eventBus.fireEvent(notification.getEvent());
+					EventBus.getInstance().fireEvent(notification.getEvent());
 			}
 		}); 
 		InfoPanel.show(InfoPanelType.TRAY_NOTIFICATION, info);
@@ -59,11 +55,24 @@ public class NotificationsManager {
 	private void setTrayNotificationsEnabled(boolean enabled) {
 		if(enabled){
 			if(!isTrayNotificationsEnabled()){
-				this.newNotificationHandlerRegistration = eventBus.addHandler(NewNotificationEvent.TYPE, new NewNotificationEventHandler() {
+				this.newNotificationHandlerRegistration = EventBus.getInstance().addHandler(NewNotificationEvent.TYPE, new NewNotificationEventHandler() {
 					
 					public void onNewNotification(NewNotificationEvent event) {
-						
-						showTrayNotification(event.getNotification());
+						Notification notification = event.getNotification();
+						switch(event.getTYPE()){
+						case ALERT_NOTIFICATION:
+							MessageBox.error(notification.getCaption(), notification.getContent());
+							break;
+						case INFO_NOTIFICATION:
+							MessageBox.info(notification.getCaption(), notification.getContent());
+							break;
+						case WARNING_NOTIFICATION:
+							MessageBox.alert(notification.getCaption(), notification.getContent());
+							break;
+						case TRAY_NOTIFICATION:
+							showTrayNotification(event.getNotification());
+							break;
+						}
 					}
 				});
 			}
