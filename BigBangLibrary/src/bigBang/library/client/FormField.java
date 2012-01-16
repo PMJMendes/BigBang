@@ -25,7 +25,8 @@ public abstract class FormField<T> extends View implements HasValue<T>, Validata
 	
 	protected HandlerRegistration handlerRegistration;
 
-	public FormField(){
+	@Override
+	protected void initializeView() {
 		this.label = new Label();
 		errorMessageLabel = new Label();
 		errorMessageLabel.getElement().getStyle().setMarginLeft(5, Unit.PX);
@@ -36,7 +37,6 @@ public abstract class FormField<T> extends View implements HasValue<T>, Validata
 		mandatoryIndicatorLabel = new Label("*");
 		mandatoryIndicatorLabel.setVisible(false);
 		unitsLabel = new Label("");
-		
 	}
 
 	@Override

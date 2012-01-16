@@ -10,6 +10,8 @@ public interface HasSelectables <T extends Selectable> {
 
 	public Collection<T> getSelected();
 	
+	public Collection<T> getAll();
+	
 	/*public void setSelected(Collection<T> selectables, boolean selected);
 	
 	public void setSelected(Collection<T> selectables, boolean selected, boolean fireEvents);

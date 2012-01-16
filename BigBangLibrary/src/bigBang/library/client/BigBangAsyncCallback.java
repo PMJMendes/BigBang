@@ -8,12 +8,6 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 
 public abstract class BigBangAsyncCallback<T> implements AsyncCallback<T> {
 	
-	private static EventBus eventBus;
-	
-	public static void setEventBus(EventBus eventBus) {
-		BigBangAsyncCallback.eventBus = eventBus;
-	}
-	
 	@Override
 	public void onFailure(Throwable caught) {
 		try{
@@ -29,7 +23,7 @@ public abstract class BigBangAsyncCallback<T> implements AsyncCallback<T> {
 	public abstract void onSuccess(T result);
 	
 	protected void onSessionExpiredException(){
-		eventBus.fireEvent(new SessionExpiredEvent());
+		EventBus.getInstance().fireEvent(new SessionExpiredEvent());
 	}
 
 }
