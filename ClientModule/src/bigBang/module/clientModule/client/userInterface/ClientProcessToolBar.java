@@ -97,15 +97,6 @@ public abstract class ClientProcessToolBar extends BigBangOperationsToolBar {
 		});
 		addItem(SUB_MENU.REQUESTS, infoRequestItem);
 		
-		//ADMIN
-		addItem(SUB_MENU.ADMIN, new MenuItem("Actualizar Informação", new Command() {
-
-			@Override
-			public void execute() {
-				onRefresh();
-			}
-		}));
-
 		adminSubMenu.addSeparator();
 		
 		this.deleteItem = new MenuItem("Eliminar", new Command() {
@@ -133,8 +124,6 @@ public abstract class ClientProcessToolBar extends BigBangOperationsToolBar {
 	public abstract void onTransferToManager();
 	
 	//ADMIN
-	public abstract void onRefresh();
-	public abstract void onHistory();
 	public abstract void onDelete();
 
 	public void allowDelete(boolean allow){

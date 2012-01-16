@@ -46,7 +46,8 @@ public class ClientGroupList extends FilterableList<ClientGroup> implements Clie
 		header.showRefreshButton();
 		setHeaderWidget(header);
 		onSizeChanged();
-
+		showFilterField(false);
+		
 		this.clientGroupBroker = (ClientGroupBroker) DataBrokerManager.Util.getInstance().getBroker(BigBangConstants.EntityIds.CLIENT_GROUP);
 		this.clientGroupBroker.registerClient(this);
 	}
@@ -89,14 +90,14 @@ public class ClientGroupList extends FilterableList<ClientGroup> implements Clie
 	public void setGroups(ClientGroup[] clientGroups) {
 		this.clear();
 		for(int i = 0; i < clientGroups.length; i++) {
-			addGroup(clientGroups[i]);
+			add(new ClientGroupListEntry(clientGroups[i]));
 		}
 	}
 
 	@Override
 	public void addGroup(ClientGroup clientGroup) {
 		ClientGroupListEntry entry = new ClientGroupListEntry(clientGroup);
-		add(entry);
+		add(0, entry);
 	}
 
 	@Override

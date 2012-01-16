@@ -25,5 +25,4 @@ public interface GeneralSystemService
 	}
 	
 	public String getGeneralSystemProcessId() throws SessionExpiredException, BigBangException;
-	public String getGeneralSystemId() throws SessionExpiredException, BigBangException;
 }

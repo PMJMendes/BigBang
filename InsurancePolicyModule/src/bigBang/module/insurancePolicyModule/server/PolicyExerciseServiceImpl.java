@@ -311,7 +311,7 @@ public class PolicyExerciseServiceImpl
 
 	protected String[] getColumns()
 	{
-		return new String[] {"[:Label], [:Policy]"};
+		return new String[] {"[:Label]"};
 	}
 
 	protected boolean buildFilter(StringBuilder pstrBuffer, SearchParameter pParam)
@@ -372,7 +372,6 @@ public class PolicyExerciseServiceImpl
 		lobjResult = new ExerciseStub();
 		lobjResult.id = pid.toString();
 		lobjResult.label = (String)parrValues[0];
-		lobjResult.ownerId = ((UUID)parrValues[1]).toString();
 		return lobjResult;
 	}
 

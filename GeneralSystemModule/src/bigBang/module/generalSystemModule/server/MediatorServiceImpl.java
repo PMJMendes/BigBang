@@ -171,14 +171,17 @@ public class MediatorServiceImpl
 			if ( (mediator.contacts != null) && (mediator.contacts.length > 0) )
 			{
 				lopMM.marrCreate[0].mobjContactOps = new ContactOps();
-				lopMM.marrCreate[0].mobjContactOps.marrCreate = ContactsServiceImpl.BuildContactTree(mediator.contacts);
+				lopMM.marrCreate[0].mobjContactOps.marrCreate =
+						ContactsServiceImpl.BuildContactTree(lopMM.marrCreate[0].mobjContactOps, mediator.contacts,
+								Constants.ObjID_Mediator);
 			}
 			else
 				lopMM.marrCreate[0].mobjContactOps = null;
 			if ( (mediator.documents != null) && (mediator.documents.length > 0) )
 			{
 				lopMM.marrCreate[0].mobjDocOps = new DocOps();
-				lopMM.marrCreate[0].mobjDocOps.marrCreate = DocumentServiceImpl.BuildDocTree(mediator.documents);
+				lopMM.marrCreate[0].mobjDocOps.marrCreate = DocumentServiceImpl.BuildDocTree(lopMM.marrCreate[0].mobjDocOps,
+						mediator.documents);
 			}
 			else
 				lopMM.marrCreate[0].mobjDocOps = null;

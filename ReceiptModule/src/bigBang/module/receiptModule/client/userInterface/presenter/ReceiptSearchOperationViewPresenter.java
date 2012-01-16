@@ -9,30 +9,27 @@ import bigBang.definitions.client.response.ResponseHandler;
 import bigBang.definitions.shared.BigBangConstants;
 import bigBang.definitions.shared.Receipt;
 import bigBang.definitions.shared.ReceiptStub;
-import bigBang.library.client.BigBangPermissionManager;
-import bigBang.library.client.EventBus;
 import bigBang.library.client.HasEditableValue;
+import bigBang.library.client.HasOperationPermissions;
+import bigBang.library.client.HasParameters;
 import bigBang.library.client.HasValueSelectables;
-import bigBang.library.client.Operation;
 import bigBang.library.client.ValueSelectable;
+import bigBang.library.client.ViewPresenterController;
 import bigBang.library.client.dataAccess.DataBrokerManager;
 import bigBang.library.client.event.ActionInvokedEvent;
 import bigBang.library.client.event.ActionInvokedEventHandler;
 import bigBang.library.client.event.SelectionChangedEvent;
 import bigBang.library.client.event.SelectionChangedEventHandler;
-import bigBang.library.client.userInterface.presenter.OperationViewPresenter;
+import bigBang.library.client.history.NavigationHistoryItem;
+import bigBang.library.client.history.NavigationHistoryManager;
+import bigBang.library.client.userInterface.presenter.ViewPresenter;
 import bigBang.library.client.userInterface.view.View;
-import bigBang.library.interfaces.Service;
-import bigBang.library.shared.Permission;
-import bigBang.module.receiptModule.interfaces.ReceiptServiceAsync;
-import bigBang.module.receiptModule.shared.operation.ReceiptSearchOperation;
-import bigBang.module.receiptModule.shared.ModuleConstants;
 
 import com.google.gwt.user.client.ui.HasWidgets;
+import com.google.gwt.user.client.ui.UIObject;
 import com.google.gwt.user.client.ui.Widget;
 
-public class ReceiptSearchOperationViewPresenter implements
-OperationViewPresenter, ReceiptDataBrokerClient {
+public class ReceiptSearchOperationViewPresenter implements ViewPresenter, ReceiptDataBrokerClient, HasOperationPermissions {
 
 	public static enum Action {
 		EDIT,
@@ -45,7 +42,7 @@ OperationViewPresenter, ReceiptDataBrokerClient {
 		//List
 		HasValueSelectables<?> getList();
 		void selectReceipt(Receipt receipt);
-		
+
 		//Form
 		HasEditableValue<Receipt> getForm();
 		boolean isFormValid();
@@ -61,37 +58,24 @@ OperationViewPresenter, ReceiptDataBrokerClient {
 		void setSaveModeEnabled(boolean enabled);
 		void setReadOnly(boolean readOnly);
 
+		void showErrorMessage(String message);
+
 		Widget asWidget();
-		View getInstance();
 	}
 
-	protected ReceiptServiceAsync service;
-	protected EventBus eventBus;
 	protected Display view;
 	protected boolean bound;
-	protected ReceiptSearchOperation operation;
 	protected ReceiptProcessDataBroker receiptBroker;
 	protected int version;
+	protected ViewPresenterController controller;
 
-	public ReceiptSearchOperationViewPresenter(EventBus evenBus, Service service, View view) {
-		setEventBus(eventBus);
-		setService(service);
+	public ReceiptSearchOperationViewPresenter(View view) {
 		setView(view);
 		this.receiptBroker = (ReceiptProcessDataBroker) DataBrokerManager.Util.getInstance().getBroker(BigBangConstants.EntityIds.RECEIPT);
 	}
 
 	@Override
-	public void setService(Service service) {
-		this.service = (ReceiptServiceAsync) service;
-	}
-
-	@Override
-	public void setEventBus(EventBus eventBus) {
-		this.eventBus = eventBus;
-	}
-
-	@Override
-	public void setView(View view) {
+	public void setView(UIObject view) {
 		this.view = (Display) view;
 	}
 
@@ -100,13 +84,24 @@ OperationViewPresenter, ReceiptDataBrokerClient {
 		bind();
 		container.clear();
 		container.add(this.view.asWidget());
+		initializeController();
 	}
 
 	@Override
-	public void bind() {
+	public void setParameters(HasParameters parameterHolder) {
+		controller.onParameters(parameterHolder);
+	}
+
+	@Override
+	public void setPermittedOperations(String[] operationIds) {
+		// TODO Auto-generated method stub
+
+	}
+
+	private void bind() {
 		if(bound)
 			return;
-		bound = true;
+
 		view.lockForm(true);
 		view.clearAllowedPermissions();
 		this.view.getList().addSelectionChangedEventHandler(new SelectionChangedEventHandler() {
@@ -115,49 +110,17 @@ OperationViewPresenter, ReceiptDataBrokerClient {
 			public void onSelectionChanged(SelectionChangedEvent event) {
 				@SuppressWarnings("unchecked")
 				ValueSelectable<ReceiptStub> selected = (ValueSelectable<ReceiptStub>) event.getFirstSelected();
-				final ReceiptStub selectedValue = selected == null ? null : selected.getValue();
+				ReceiptStub selectedValue = selected == null ? null : selected.getValue();
 				view.setSaveModeEnabled(false);
-				if(selectedValue == null){
-					view.getForm().setValue(null);
-					view.scrollFormToTop();
-					view.lockForm(true);
+
+				if(selectedValue == null || selectedValue.id == null){
+					NavigationHistoryItem navigationItem = NavigationHistoryManager.getInstance().getCurrentState();
+					navigationItem.removeParameter("id");
+					NavigationHistoryManager.getInstance().go(navigationItem);
 				}else{
-					if(selectedValue.id != null){
-						BigBangPermissionManager.Util.getInstance().getProcessPermissions(selectedValue.processId, new ResponseHandler<Permission[]> () {
-
-							@Override
-							public void onResponse(Permission[] response) {
-								view.scrollFormToTop();
-								view.clearAllowedPermissions();
-								for(int i = 0; i < response.length; i++) {
-									Permission p = response[i];
-									if(p.instanceId == null){continue;}
-									if(p.id.equalsIgnoreCase(ModuleConstants.OpTypeIDs.CHANGE_RECEIPT_DATA)){
-										view.allowUpdate(true);
-									}else if(p.id.equalsIgnoreCase(ModuleConstants.OpTypeIDs.DELETE_RECEIPT)){
-										view.allowDelete(true);
-									}
-								}
-								receiptBroker.getReceipt(selectedValue.id, new ResponseHandler<Receipt>() {
-
-									@Override
-									public void onResponse(Receipt value) {
-										view.getForm().setValue(value);
-										view.lockForm(value == null);
-									}
-
-									@Override
-									public void onError(Collection<ResponseError> errors) {}
-								});
-							}
-
-							@Override
-							public void onError(Collection<ResponseError> errors) {
-								// TODO Auto-generated method stub
-							}
-
-						});
-					}
+					NavigationHistoryItem navigationItem = NavigationHistoryManager.getInstance().getCurrentState();
+					navigationItem.setParameter("id", selectedValue.id);
+					NavigationHistoryManager.getInstance().go(navigationItem);
 				}
 			}
 		});
@@ -187,41 +150,86 @@ OperationViewPresenter, ReceiptDataBrokerClient {
 				}
 			}
 		});
+
+		//APPLICATION-WIDE EVENTS
+		bound = true;
 	}
 
-	@Override
-	public void registerEventHandlers(EventBus eventBus) {
-		// TODO Auto-generated method stub
+	private void initializeController(){
+		this.controller = new ViewPresenterController() {
 
+			@Override
+			protected void onNavigationHistoryEvent(NavigationHistoryItem historyItem) {
+				return;
+			}
+			
+			@Override
+			public void onParameters(HasParameters parameters) {
+				String operation = parameters.getParameter("operation");
+				operation = operation == null ? "" : operation;
+
+				//SEARCH
+				{
+					String receiptId = parameters.getParameter("id");
+					receiptId = receiptId == null ? "" : receiptId;
+					if(!receiptId.isEmpty()){
+						showReceiptWithId(receiptId);
+					}else{
+						clearView();
+					}
+				}
+			}
+
+		};
 	}
 
-	@Override
-	public void setOperation(Operation o) {
-		this.operation = (ReceiptSearchOperation) o;
+	private void clearView(){
+		view.clearAllowedPermissions();
+		view.getForm().setValue(null);
+		view.getList().clearSelection();
+		view.clear();
 	}
 
-	@Override
-	public Operation getOperation() {
-		return this.operation;
+	private void showReceiptWithId(String id){
+		//		BigBangPermissionManager.Util.getInstance().getProcessPermissions(selectedValue.processId, new ResponseHandler<Permission[]> () {
+		//
+		//			@Override
+		//			public void onResponse(Permission[] response) {
+		//				view.scrollFormToTop();
+		//				view.clearAllowedPermissions();
+		//				for(int i = 0; i < response.length; i++) {
+		//					Permission p = response[i];
+		//					if(p.instanceId == null){continue;}
+		//					if(p.id.equalsIgnoreCase(ModuleConstants.OpTypeIDs.CHANGE_RECEIPT_DATA)){
+		//						view.allowUpdate(true);
+		//					}else if(p.id.equalsIgnoreCase(ModuleConstants.OpTypeIDs.DELETE_RECEIPT)){
+		//						view.allowDelete(true);
+		//					}
+		//				}
+		receiptBroker.getReceipt(id, new ResponseHandler<Receipt>() {
+
+			@Override
+			public void onResponse(Receipt value) {
+				view.getForm().setValue(value);
+				view.lockForm(value == null);
+				//TODO select in list
+			}
+
+			@Override
+			public void onError(Collection<ResponseError> errors) {
+				view.showErrorMessage("Não foi possível obter o recibo pedido.");
+			}
+		});
+		//			}
+		//
+		//			@Override
+		//			public void onError(Collection<ResponseError> errors) {
+		//				// TODO Auto-generated method stub
+		//			}
+		//
+		//		});
 	}
 
-	@Override
-	public void goCompact(HasWidgets container) {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public String setTargetEntity(String id) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public void setOperationPermission(boolean hasPermissionForOperation) {
-		this.operation.setPermission(hasPermissionForOperation);
-	}
-	
 	protected void saveReceipt(Receipt receipt){
 		this.receiptBroker.updateReceipt(receipt, new ResponseHandler<Receipt>() {
 
@@ -234,10 +242,12 @@ OperationViewPresenter, ReceiptDataBrokerClient {
 			}
 
 			@Override
-			public void onError(Collection<ResponseError> errors) {}
+			public void onError(Collection<ResponseError> errors) {
+				view.showErrorMessage("De momento não foi possível guardar o recibo.");
+			}
 		});
 	}
-	
+
 	protected void deleteReceipt(){
 		Receipt receipt = view.getForm().getValue();
 		if(receipt == null || receipt.id == null){
@@ -253,7 +263,9 @@ OperationViewPresenter, ReceiptDataBrokerClient {
 			}
 
 			@Override
-			public void onError(Collection<ResponseError> errors) {}
+			public void onError(Collection<ResponseError> errors) {
+				view.showErrorMessage("Não é possível eliminar o recibo.");
+			}
 		});
 	}
 

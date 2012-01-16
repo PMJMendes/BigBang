@@ -15,9 +15,13 @@ public class InsuredObjectExerciseValuesTable extends View {
 
 	public InsuredObjectExerciseValuesTable(){
 		grid = new Grid();
-		grid.setSize("100%", "100%");
-
 		initWidget(grid);
+		grid.setSize("100%", "100%");
+	}
+	
+	@Override
+	protected void initializeView() {
+		return;
 	}
 	
 	public void setHeaders(HeaderData headers){

@@ -1,9 +1,12 @@
 package bigBang.module.generalSystemModule.client.dataAccess;
 
+import java.util.Collection;
+
 import bigBang.definitions.client.dataAccess.ClientGroupBroker;
 import bigBang.definitions.client.dataAccess.ClientGroupDataBrokerClient;
 import bigBang.definitions.client.dataAccess.DataBroker;
 import bigBang.definitions.client.dataAccess.DataBrokerClient;
+import bigBang.definitions.client.response.ResponseError;
 import bigBang.definitions.client.response.ResponseHandler;
 import bigBang.definitions.shared.BigBangConstants;
 import bigBang.definitions.shared.ClientGroup;
@@ -38,12 +41,21 @@ public class ClientGroupBrokerImpl extends DataBroker<ClientGroup> implements Cl
 					for(int i = 0; i < result.length; i++){
 						cache.add(result[i].id, result[i]);
 					}
-
+					incrementDataVersion();
 					for(DataBrokerClient<ClientGroup> c : ClientGroupBrokerImpl.this.getClients()){
 						((ClientGroupDataBrokerClient)c).setGroups(result);
+						((ClientGroupDataBrokerClient)c).setDataVersionNumber(getDataElementId(), getCurrentDataVersion());						
 					}
 					handler.onResponse(result);
 					needsRefresh = false;
+				}
+				
+				@Override
+				public void onFailure(Throwable caught) {
+					handler.onError(new String[]{
+						new String("Could not fetch the list of client groups")	
+					});
+					super.onFailure(caught);
 				}
 			});
 		}else{
@@ -54,9 +66,13 @@ public class ClientGroupBrokerImpl extends DataBroker<ClientGroup> implements Cl
 	@Override
 	public void getClientGroup(String groupId,
 			ResponseHandler<ClientGroup> handler) {
-		if(!cache.contains(groupId))
-			throw new RuntimeException("The requested client group could not be found locally. id:\"" + groupId + "\"");
-		handler.onResponse((ClientGroup) cache.get(groupId));		
+		if(!cache.contains(groupId)){
+			handler.onError(new String[]{
+				new String("The requested client group was not found. id: " + groupId)	
+			});
+		}else{
+			handler.onResponse((ClientGroup) cache.get(groupId));
+		}
 	}
 
 	@Override
@@ -67,10 +83,20 @@ public class ClientGroupBrokerImpl extends DataBroker<ClientGroup> implements Cl
 			@Override
 			public void onSuccess(ClientGroup result) {
 				cache.add(result.id, result);
+				incrementDataVersion();
 				for(DataBrokerClient<ClientGroup> c : getClients()){
 					((ClientGroupDataBrokerClient)c).addGroup(result);
+					((ClientGroupDataBrokerClient)c).setDataVersionNumber(getDataElementId(), getCurrentDataVersion());
 				}
 				handler.onResponse(result);
+			}
+			
+			@Override
+			public void onFailure(Throwable caught) {
+				handler.onError(new String[]{
+					new String("Could not create client group.")	
+				});
+				super.onFailure(caught);
 			}
 		});
 	}
@@ -83,10 +109,20 @@ public class ClientGroupBrokerImpl extends DataBroker<ClientGroup> implements Cl
 			@Override
 			public void onSuccess(ClientGroup result) {
 				cache.update(result.id, result);
+				incrementDataVersion();
 				for(DataBrokerClient<ClientGroup> c : ClientGroupBrokerImpl.this.getClients()){
 					((ClientGroupDataBrokerClient)c).updateGroup(result);
+					((ClientGroupDataBrokerClient)c).setDataVersionNumber(getDataElementId(), getCurrentDataVersion());
 				}
 				handler.onResponse(result);
+			}
+			
+			@Override
+			public void onFailure(Throwable caught) {
+				handler.onError(new String[]{
+						new String("Could not update client group")
+				});
+				super.onFailure(caught);
 			}
 		});
 	}
@@ -99,10 +135,20 @@ public class ClientGroupBrokerImpl extends DataBroker<ClientGroup> implements Cl
 			@Override
 			public void onSuccess(Void result) {
 				cache.remove(groupId);
+				incrementDataVersion();
 				for(DataBrokerClient<ClientGroup> c : ClientGroupBrokerImpl.this.getClients()){
 					((ClientGroupDataBrokerClient)c).removeGroup(groupId);
+					((ClientGroupDataBrokerClient)c).setDataVersionNumber(getDataElementId(), getCurrentDataVersion());
 				}
 				handler.onResponse(null);
+			}
+			
+			@Override
+			public void onFailure(Throwable caught) {
+				handler.onError(new String[]{
+						new String("Could not delete client group")
+				});
+				super.onFailure(caught);
 			}
 		});
 	}
@@ -123,19 +169,55 @@ public class ClientGroupBrokerImpl extends DataBroker<ClientGroup> implements Cl
 	@Override
 	public void notifyItemCreation(String itemId) {
 		requireDataRefresh();
-		//TODO FJVC
+		this.getClientGroup(itemId, new ResponseHandler<ClientGroup>() {
+
+			@Override
+			public void onResponse(ClientGroup response) {
+				cache.add(response.id, response);
+				incrementDataVersion();
+				for(DataBrokerClient<ClientGroup> client : clients) {
+					((ClientGroupDataBrokerClient)client).addGroup(response);
+					((ClientGroupDataBrokerClient)client).setDataVersionNumber(getDataElementId(), getCurrentDataVersion());
+				}
+			}
+
+			@Override
+			public void onError(Collection<ResponseError> errors) {
+				return;
+			}
+		});
 	}
 
 	@Override
 	public void notifyItemDeletion(String itemId) {
-		requireDataRefresh();
-		//TODO
+		this.cache.remove(itemId);
+		incrementDataVersion();
+		for(DataBrokerClient<ClientGroup> client : clients) {
+			((ClientGroupDataBrokerClient)client).removeGroup(itemId);
+			((ClientGroupDataBrokerClient)client).setDataVersionNumber(getDataElementId(), getCurrentDataVersion());
+		}
 	}
 
 	@Override
 	public void notifyItemUpdate(String itemId) {
 		requireDataRefresh();
-		//TODO
+		this.getClientGroup(itemId, new ResponseHandler<ClientGroup>() {
+
+			@Override
+			public void onResponse(ClientGroup response) {
+				cache.add(response.id, response);
+				incrementDataVersion();
+				for(DataBrokerClient<ClientGroup> client : clients) {
+					((ClientGroupDataBrokerClient)client).updateGroup(response);
+					((ClientGroupDataBrokerClient)client).setDataVersionNumber(getDataElementId(), getCurrentDataVersion());
+				}
+			}
+
+			@Override
+			public void onError(Collection<ResponseError> errors) {
+				return;
+			}
+		});
 	}
 
 }

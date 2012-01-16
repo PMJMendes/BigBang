@@ -11,4 +11,6 @@ public interface InsuredObjectDataBrokerClient extends
 	
 	public void removeInsuredObject(String id);
 	
+	public void remapItemId(String newId, String oldId);
+	
 }

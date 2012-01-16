@@ -7,7 +7,6 @@ public class HistorySearchParameter
 {
 	private static final long serialVersionUID = 1L;
 
-	public String dataObjectId;
 	public String processId;
 	public String afterTimestamp;
 }

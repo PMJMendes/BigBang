@@ -2,10 +2,8 @@ package bigBang.module.insurancePolicyModule.client.dataAccess;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
 
-import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.google.gwt.core.client.GWT;
 
 import bigBang.definitions.client.dataAccess.DataBroker;
 import bigBang.definitions.client.dataAccess.DataBrokerClient;
@@ -19,7 +17,6 @@ import bigBang.definitions.client.response.ResponseError;
 import bigBang.definitions.client.response.ResponseHandler;
 import bigBang.definitions.shared.BigBangConstants;
 import bigBang.definitions.shared.Exercise;
-import bigBang.definitions.shared.ExerciseStub;
 import bigBang.definitions.shared.InsurancePolicy;
 import bigBang.definitions.shared.InsurancePolicy.TableSection;
 import bigBang.definitions.shared.InsurancePolicyStub;
@@ -49,14 +46,22 @@ public class InsurancePolicyProcessBrokerImpl extends DataBroker<InsurancePolicy
 	public InsurancePolicyProcessBrokerImpl(){
 		this(InsurancePolicyService.Util.getInstance());
 	}
+	
+	public InsurancePolicyProcessBrokerImpl(InsurancePolicyServiceAsync service){
+		this(InsurancePolicyService.Util.getInstance(), ((InsuredObjectDataBroker)DataBrokerManager.staticGetBroker(BigBangConstants.EntityIds.POLICY_INSURED_OBJECT)), ((ExerciseDataBroker)DataBrokerManager.staticGetBroker(BigBangConstants.EntityIds.POLICY_EXERCISE)));
+	}
 
-	public InsurancePolicyProcessBrokerImpl(InsurancePolicyServiceAsync service) {
+	public InsurancePolicyProcessBrokerImpl(InsuredObjectDataBroker insuredObjectDataBroker, ExerciseDataBroker exerciseDataBroker){
+		this(InsurancePolicyService.Util.getInstance(), insuredObjectDataBroker, exerciseDataBroker);
+	}
+	
+	public InsurancePolicyProcessBrokerImpl(InsurancePolicyServiceAsync service, InsuredObjectDataBroker insuredObjectDataBroker, ExerciseDataBroker exerciseDataBroker) {
 		this.service = service;
 		this.dataElementId = BigBangConstants.EntityIds.INSURANCE_POLICY;
 		this.policiesInScratchPad = new ArrayList<String>();
 		this.searchBroker = new InsurancePolicySearchDataBroker(this.service);
-		insuredObjectsBroker = (InsuredObjectDataBroker) DataBrokerManager.staticGetBroker(BigBangConstants.EntityIds.POLICY_INSURED_OBJECT);
-		exerciseDataBroker = (ExerciseDataBroker) DataBrokerManager.staticGetBroker(BigBangConstants.EntityIds.POLICY_EXERCISE);
+		this.insuredObjectsBroker = insuredObjectDataBroker;
+		this.exerciseDataBroker = exerciseDataBroker;
 	}
 
 	@Override
@@ -231,29 +236,29 @@ public class InsurancePolicyProcessBrokerImpl extends DataBroker<InsurancePolicy
 	public void openPolicyResource(final InsurancePolicy policy,
 			final ResponseHandler<InsurancePolicy> handler) {
 		//If it is a new policy
-//		service.openPolicyScratchPad(policy.id, new BigBangAsyncCallback<Remap[]>() {
-//
-//			@Override
-//			public void onSuccess(Remap[] result) {
-//				//If new policy
-//				if(result.length == 1 && result[0].remapIds.length == 1 && result[0].remapIds[0].oldId == null){
-//					InsurancePolicy policy = new InsurancePolicy();
-//					RemapId remapId = result[0].remapIds[0];
-//					policy.id = remapId.newId;
-//					if(remapId.newIdIsInPad){
-//						addToScratchPad(policy);
-//					}
-//					handler.onResponse(policy);
-//
-//				}else{
-//					
-//					doRemapping(result);
-//					getPolicy(policy.id, handler);
-//				}
-//			}
-//		});
-//		
-//		
+		
+		service.openPolicyScratchPad(policy.id, new BigBangAsyncCallback<Remap[]>() {
+
+			@Override
+			public void onSuccess(Remap[] result) {
+				//If new policy
+				if(result.length == 1 && result[0].remapIds.length == 1 && result[0].remapIds[0].oldId == null){
+					InsurancePolicy policy = new InsurancePolicy();
+					RemapId remapId = result[0].remapIds[0];
+					policy.id = remapId.newId;
+					if(remapId.newIdIsInPad){
+						addToScratchPad(policy);
+					}
+					handler.onResponse(policy);
+				}else{
+					
+					doRemapping(result);
+					getPolicy(policy.id, handler);
+				}
+			}
+		});
+		
+		
 //		if(policy.id == null || inScratchPad(policy.id)){
 //			if(inScratchPad(policy.id)){
 //				policy.id = getScratchPadId(policy.id);
@@ -288,18 +293,28 @@ public class InsurancePolicyProcessBrokerImpl extends DataBroker<InsurancePolicy
 
 	@Override
 	public void commitPolicy(InsurancePolicy policy, final ResponseHandler<InsurancePolicy> handler){
-//		this.service.commitPolicy(policy.scratchPadId, new BigBangAsyncCallback<InsurancePolicy>() {
-//
-//			@Override
-//			public void onSuccess(InsurancePolicy result) {
-//				handler.onResponse(result);
-//			}
-//		});
+		this.service.commitPad(policy.id, new BigBangAsyncCallback<Remap[]>() {
+
+			@Override
+			public void onSuccess(Remap[] result) {
+				
+			}
+		});
 	}
 
 	@Override
 	public void closePolicyResource(String policyId, final ResponseHandler<Void> handler) {
 //		if(inScratchPad(policyId)){
+//			service.discardPad(policyId, new BigBangAsyncCallback<Remap[]>() {
+//
+//				@Override
+//				public void onSuccess(Remap[] result) {
+//					doRemapping(result);
+//				}
+//			});
+//			
+//			
+//			
 //			service.discardPolicy(getScratchPadId(policyId), new AsyncCallback<InsurancePolicy>() {
 //
 //				@Override
@@ -390,16 +405,13 @@ public class InsurancePolicyProcessBrokerImpl extends DataBroker<InsurancePolicy
 					handler.onResponse(result);
 				}
 			});
-		}else{
-			
 		}
 	}
 
 	@Override
 	public void updateExercise(String policyId, Exercise exercise,
 			ResponseHandler<Exercise> handler) {
-		// TODO Auto-generated method stub
-
+		//service.
 	}
 
 	@Override
@@ -413,7 +425,7 @@ public class InsurancePolicyProcessBrokerImpl extends DataBroker<InsurancePolicy
 				}
 			});
 		}else{
-			
+			throw new RuntimeException("Não é possível eliminar o Exercício.");
 		}
 	}
 
@@ -471,4 +483,34 @@ public class InsurancePolicyProcessBrokerImpl extends DataBroker<InsurancePolicy
 		}
 	}
 
+	protected void doRemapping(Remap[] remappings){
+		for(int i = 0; i < remappings.length; i++) {
+			Remap remap = remappings[i];
+			
+			//POLICIES
+			if(remap.typeId.equalsIgnoreCase(BigBangConstants.EntityIds.INSURANCE_POLICY)){
+				for(int j = 0; j < remap.remapIds.length; j++){
+					RemapId remapId = remap.remapIds[j];
+					remapItemId(remapId.oldId, remapId.newId, remapId.newIdIsInPad);
+				}
+			
+			//INSURED OBJECTS
+			}else if(remap.typeId.equalsIgnoreCase(BigBangConstants.EntityIds.POLICY_INSURED_OBJECT)){
+				for(int j = 0; j < remap.remapIds.length; j++){
+					RemapId remapId = remap.remapIds[j];
+					this.insuredObjectsBroker.remapItemId(remapId.oldId, remapId.newId, remapId.newIdIsInPad);
+				}
+				
+			//EXERCISES
+			}else if(remap.typeId.equalsIgnoreCase(BigBangConstants.EntityIds.POLICY_EXERCISE)){
+				for(int j = 0; j < remap.remapIds.length; j++){
+					RemapId remapId = remap.remapIds[j];
+					this.exerciseDataBroker.remapItemId(remapId.oldId, remapId.newId, remapId.newIdIsInPad);
+				}
+			}else{
+				GWT.log("Could not remap item id for typeId = " + remap.typeId);
+			}
+		}
+	}
+	
 }

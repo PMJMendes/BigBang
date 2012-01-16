@@ -24,6 +24,7 @@ public class InsuredObjectView extends View implements InsuredObjectViewPresente
 	
 	public InsuredObjectView(){
 		SplitLayoutPanel mainWrapper = new SplitLayoutPanel();
+		initWidget(mainWrapper);
 		mainWrapper.setSize("100%", "100%");
 		
 		VerticalPanel insurancePolicyFormWrapper = new VerticalPanel();
@@ -79,9 +80,10 @@ public class InsuredObjectView extends View implements InsuredObjectViewPresente
 		mainWrapper.add(objectFormWrapper);
 
 		insurancePolicyForm.setReadOnly(true);
-		
-		initWidget(mainWrapper);
 	}
+	
+	@Override
+	protected void initializeView() {}
 
 	@Override
 	public HasEditableValue<InsuredObject> getInsuredObjectForm() {

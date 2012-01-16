@@ -30,6 +30,7 @@ public abstract class ResponseHandler<T> {
 			error.description = errorStrings[i];
 			errors.add(error);
 		}
+		onError(errors);
 	}
 
 }

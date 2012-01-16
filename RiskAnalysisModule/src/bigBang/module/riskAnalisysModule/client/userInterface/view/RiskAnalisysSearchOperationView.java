@@ -21,6 +21,8 @@ public class RiskAnalisysSearchOperationView extends View implements RiskAnalisy
 	
 	public RiskAnalisysSearchOperationView(){
 		SplitLayoutPanel mainWrapper = new SplitLayoutPanel();
+		initWidget(mainWrapper);
+
 		mainWrapper.setSize("100%", "100%");
 		
 		searchPanel = new RiskAnalisysSearchPanel();
@@ -49,8 +51,11 @@ public class RiskAnalisysSearchOperationView extends View implements RiskAnalisy
 		contentWrapper.add(formWrapper);
 		
 		mainWrapper.add(contentWrapper);
-		
-		initWidget(mainWrapper);
+	}
+	
+	@Override
+	protected void initializeView() {
+		return;
 	}
 	
 }

@@ -18,11 +18,11 @@ public class DismissTaskView extends View implements DismissTaskPresenter.Displa
 	
 	
 	public DismissTaskView(){
-		
+		VerticalPanel wrapper = new VerticalPanel();
+		initWidget(wrapper);
 		longDescFF = new Label();
 		datePFF = new Label();
 		dismissButton = new Button("Tomei Conhecimento");
-		VerticalPanel wrapper = new VerticalPanel();
 		wrapper.setSpacing(10);
 		wrapper.setSize("100%", "100%");
 		wrapper.add(new Label("Data do Aviso"));
@@ -30,7 +30,11 @@ public class DismissTaskView extends View implements DismissTaskPresenter.Displa
 		wrapper.add(new Label("Descrição"));
 		wrapper.add(longDescFF);
 		wrapper.add(dismissButton);
-		initWidget(wrapper);
+	}
+	
+	@Override
+	protected void initializeView() {
+		return;
 	}
 	
 	@Override

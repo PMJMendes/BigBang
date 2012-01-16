@@ -38,6 +38,7 @@ public class ReceiptImagePanel extends View {
 		this.fileService = FileService.Util.getInstance();
 
 		VerticalPanel wrapper = new VerticalPanel();
+		initWidget(wrapper);
 		wrapper.setSize("100%", "100%");
 
 		navigationPanel = new NavigationPanel();
@@ -46,8 +47,6 @@ public class ReceiptImagePanel extends View {
 		navigationPanel.setSize("100%", "100%");
 
 		wrapper.add(navigationPanel);
-
-		initWidget(wrapper);
 
 		this.selectionHandler = new SelectionChangedEventHandler() {
 
@@ -68,6 +67,9 @@ public class ReceiptImagePanel extends View {
 
 		navigateToDirectoryList(null, false);
 	}
+	
+	@Override
+	protected void initializeView() {}
 
 	protected void setImageSource(String src) {
 		imagePanel.setUrl(src);

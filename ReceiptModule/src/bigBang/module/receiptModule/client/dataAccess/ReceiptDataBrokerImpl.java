@@ -107,6 +107,12 @@ public class ReceiptDataBrokerImpl extends DataBroker<Receipt> implements Receip
 					handler.onResponse(result);
 					refreshRequired = false;
 				}
+				
+				@Override
+				public void onFailure(Throwable caught) {
+					handler.onError(new String[0]);
+					super.onFailure(caught);
+				}
 			});
 		}
 	}
@@ -124,6 +130,12 @@ public class ReceiptDataBrokerImpl extends DataBroker<Receipt> implements Receip
 					((ReceiptDataBrokerClient) bc).setDataVersionNumber(BigBangConstants.EntityIds.RECEIPT, getCurrentDataVersion());
 				}
 				handler.onResponse(result);
+			}
+			
+			@Override
+			public void onFailure(Throwable caught) {
+				handler.onError(new String[0]);
+				super.onFailure(caught);
 			}
 		});
 	}
@@ -146,11 +158,18 @@ public class ReceiptDataBrokerImpl extends DataBroker<Receipt> implements Receip
 						}
 						handler.onResponse(id);
 					}
+					
+					@Override
+					public void onFailure(Throwable caught) {
+						handler.onError(new String[0]);
+						super.onFailure(caught);
+					}
 				});		
 			}
 
 			@Override
 			public void onError(Collection<ResponseError> errors) {
+				handler.onError(new String[0]);
 			}
 		});
 	}

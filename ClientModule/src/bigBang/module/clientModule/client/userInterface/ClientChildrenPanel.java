@@ -45,6 +45,8 @@ public class ClientChildrenPanel extends View implements ClientProcessDataBroker
 		wrapper.add(this.historyList, "Histórico");
 	}
 	
+	protected void initializeView() {};
+	
 	@Override
 	protected void onAttach() {
 		super.onAttach();

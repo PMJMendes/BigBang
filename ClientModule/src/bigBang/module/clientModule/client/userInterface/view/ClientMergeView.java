@@ -15,27 +15,29 @@ import bigBang.library.client.HasEditableValue;
 import bigBang.library.client.HasValueSelectables;
 import bigBang.library.client.ValueSelectable;
 import bigBang.library.client.dataAccess.DataBrokerManager;
+import bigBang.library.client.event.ActionInvokedEvent;
+import bigBang.library.client.event.ActionInvokedEventHandler;
 import bigBang.library.client.event.SelectionChangedEvent;
 import bigBang.library.client.event.SelectionChangedEventHandler;
-import bigBang.library.client.userInterface.BigBangOperationsToolBar;
 import bigBang.library.client.userInterface.ListHeader;
+import bigBang.library.client.userInterface.OperationsToolBar;
 import bigBang.library.client.userInterface.view.View;
 import bigBang.module.clientModule.client.userInterface.ClientSearchPanel;
+import bigBang.module.clientModule.client.userInterface.presenter.ClientMergeViewPresenter;
+import bigBang.module.clientModule.client.userInterface.presenter.ClientMergeViewPresenter.Action;
 import bigBang.module.clientModule.shared.ModuleConstants;
 
-import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.Command;
-import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.MenuItem;
 import com.google.gwt.user.client.ui.SplitLayoutPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
-public abstract class ClientMergeView extends View {
+public class ClientMergeView extends View implements ClientMergeViewPresenter.Display {
 
-	public ClientFormView formOriginal;
-	public ClientFormView formReceptor;
-	public ClientSearchPanel searchPanel;
+	private ClientFormView formOriginal;
+	private ClientFormView formReceptor;
+	private ClientSearchPanel searchPanel;
+	private ActionInvokedEventHandler<Action> actionHandler;
 
 	public ClientMergeView(){
 		VerticalPanel mainWrapper = new VerticalPanel();
@@ -44,14 +46,6 @@ public abstract class ClientMergeView extends View {
 
 		ListHeader header = new ListHeader("Fusão de Clientes");
 		mainWrapper.add(header);
-		Button backButton = new Button("Voltar");
-		backButton.addClickHandler(new ClickHandler() {
-			@Override
-			public void onClick(ClickEvent event) {
-				onBackButtonPressed();
-			}
-		});
-		header.setLeftWidget(backButton);
 		
 		SplitLayoutPanel wrapper = new SplitLayoutPanel();
 		mainWrapper.add(wrapper);
@@ -120,23 +114,19 @@ public abstract class ClientMergeView extends View {
 		ListHeader receptorHeader = new ListHeader();
 		receptorHeader.setText("Cliente Receptor");
 		receptorHeader.setHeight("30px");
-		BigBangOperationsToolBar toolbar = new BigBangOperationsToolBar() {
-
-			@Override
-			public void onSaveRequest() {}
-
-			@Override
-			public void onEditRequest() {}
-
-			@Override
-			public void onCancelRequest() {}
-		};
-		toolbar.hideAll();
+		OperationsToolBar toolbar = new OperationsToolBar();
 		toolbar.addItem(new MenuItem("Fundir Clientes", new Command() {
 
 			@Override
 			public void execute() {
-				onMergeButtonPressed();
+				actionHandler.onActionInvoked(new ActionInvokedEvent<ClientMergeViewPresenter.Action>(Action.MERGE));
+			}
+		}));
+		toolbar.addItem(new MenuItem("Cancelar", new Command() {
+
+			@Override
+			public void execute() {
+				actionHandler.onActionInvoked(new ActionInvokedEvent<ClientMergeViewPresenter.Action>(Action.CANCEL));
 			}
 		}));
 		receptorFormWrapper.add(receptorHeader);
@@ -154,25 +144,38 @@ public abstract class ClientMergeView extends View {
 		formOriginal.setReadOnly(true);
 		formReceptor.setReadOnly(true);
 	}
+	
+	@Override
+	protected void initializeView() {
+		return;
+	}
 
-	public HasEditableValue<Client> getOriginalForm(){
+	@Override
+	public HasEditableValue<Client> getSourceClientForm() {
 		return this.formOriginal;
 	}
 
-	public HasEditableValue<Client> getReceptorForm(){
+
+	@Override
+	public HasEditableValue<Client> getTargetClientForm() {
 		return this.formReceptor;
 	}
 
-	public HasValueSelectables<?> getClientList(){
+
+	@Override
+	public HasValueSelectables<ClientStub> getList() {
 		return this.searchPanel;
 	}
 
-	public abstract void onBackButtonPressed();
+	@Override
+	public void registerActionHandler(
+			ActionInvokedEventHandler<Action> actionHandler) {
+		this.actionHandler = actionHandler;
+	}
 
-	public abstract void onMergeButtonPressed();
-
+	
 	public void confirmMerge(final ResponseHandler<Boolean> handler){
-		MessageBox.confirm("Confirmar Fusão de Clientes", "Esta operação transfere toda a informação do cliente a fundir para o cliente receptor seleccionado. Os dados do cliente receptor não serão substituídos. Tem certeza que pretende prosseguir?", new ConfirmationCallback() {
+		MessageBox.confirm("", "Esta operação transfere toda a informação do cliente a fundir para o cliente receptor seleccionado. Os dados do cliente receptor não serão substituídos. Tem certeza que pretende prosseguir?", new ConfirmationCallback() {
 
 			@Override
 			public void onResult(boolean result) {
@@ -180,4 +183,5 @@ public abstract class ClientMergeView extends View {
 			}
 		});
 	}
+
 }

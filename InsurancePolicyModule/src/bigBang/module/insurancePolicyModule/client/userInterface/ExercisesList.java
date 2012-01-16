@@ -102,6 +102,12 @@ public class ExercisesList extends FilterableList<ExerciseStub> {
 					ExercisesList.this.addEntry(exercise);
 				}
 			}
+
+			@Override
+			public void remapItemId(String oldId, String newId) {
+				// TODO Auto-generated method stub
+				
+			}
 		};
 	}
 }

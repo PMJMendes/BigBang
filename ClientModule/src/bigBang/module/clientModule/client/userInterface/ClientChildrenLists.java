@@ -3,12 +3,8 @@ package bigBang.module.clientModule.client.userInterface;
 import java.util.Collection;
 import java.util.List;
 
-import com.google.gwt.dom.client.Style.Unit;
-import com.google.gwt.event.logical.shared.AttachEvent;
-
 import bigBang.definitions.client.dataAccess.HistoryBroker;
 import bigBang.definitions.client.dataAccess.HistoryDataBrokerClient;
-import bigBang.definitions.client.dataAccess.InsurancePolicyBroker;
 import bigBang.definitions.client.dataAccess.InsurancePolicyDataBrokerClient;
 import bigBang.definitions.client.dataAccess.Search;
 import bigBang.definitions.client.response.ResponseError;
@@ -36,7 +32,9 @@ import bigBang.library.client.userInterface.FilterableList;
 import bigBang.library.client.userInterface.ListEntry;
 import bigBang.library.shared.HistorySearchParameter;
 import bigBang.library.shared.HistorySortParameter;
-import bigBang.module.insurancePolicyModule.client.userInterface.InsurancePolicySearchPanel;
+
+import com.google.gwt.dom.client.Style.Unit;
+import com.google.gwt.event.logical.shared.AttachEvent;
 
 public class ClientChildrenLists {
 
@@ -283,13 +281,13 @@ public class ClientChildrenLists {
 
 	public static class InsurancePoliciesList extends FilterableList<InsurancePolicyStub> implements InsurancePolicyDataBrokerClient{
 
-		public static class Entry extends InsurancePolicySearchPanel.Entry {
+		public static class Entry extends ListEntry<InsurancePolicyStub> { //InsurancePolicySearchPanel.Entry {
 			public Entry(InsurancePolicyStub policy) {
 				super(policy);
 			}
 		}
 
-		protected InsurancePolicyBroker broker;
+		//protected InsurancePolicyBroker broker;
 		protected String ownerId;
 		protected int dataVersion;
 
@@ -297,37 +295,37 @@ public class ClientChildrenLists {
 			this.showFilterField(false);
 			this.showSearchField(true);
 
-			broker = (InsurancePolicyBroker) DataBrokerManager.Util.getInstance().getBroker(BigBangConstants.EntityIds.INSURANCE_POLICY);
-
-			this.addAttachHandler(new AttachEvent.Handler() {
-
-				@Override
-				public void onAttachOrDetach(AttachEvent event) {
-					if(event.isAttached()){
-						setOwner(ownerId);
-					}else{
-						discardOwner();
-					}
-				}
-			});
+//			broker = (InsurancePolicyBroker) DataBrokerManager.Util.getInstance().getBroker(BigBangConstants.EntityIds.INSURANCE_POLICY); TODO IMPORTANT FJVC
+//
+//			this.addAttachHandler(new AttachEvent.Handler() {
+//
+//				@Override
+//				public void onAttachOrDetach(AttachEvent event) {
+//					if(event.isAttached()){
+//						setOwner(ownerId);
+//					}else{
+//						discardOwner();
+//					}
+//				}
+//			});
 		}
 
 		public void setOwner(String ownerId){
 			discardOwner();
 			if(ownerId != null){
-				this.broker.registerClient(this);
-				broker.getClientPolicies(ownerId, new ResponseHandler<Collection<InsurancePolicyStub>>() {
-
-					@Override
-					public void onResponse(Collection<InsurancePolicyStub> response) {
-						for(InsurancePolicyStub s : response){
-							addEntry(s);
-						}
-					}
-
-					@Override
-					public void onError(Collection<ResponseError> errors) {}
-				});
+//				this.broker.registerClient(this);
+//				broker.getClientPolicies(ownerId, new ResponseHandler<Collection<InsurancePolicyStub>>() {
+//
+//					@Override
+//					public void onResponse(Collection<InsurancePolicyStub> response) {
+//						for(InsurancePolicyStub s : response){
+//							addEntry(s);
+//						}
+//					}
+//
+//					@Override
+//					public void onError(Collection<ResponseError> errors) {}
+//				});
 			}
 			this.ownerId = ownerId;
 		}
@@ -335,7 +333,7 @@ public class ClientChildrenLists {
 		public void discardOwner(){
 			this.clear();
 			if(ownerId != null) {
-				broker.unregisterClient(this);
+//				broker.unregisterClient(this);
 				this.ownerId = null;
 			}
 		}
@@ -443,7 +441,6 @@ public class ClientChildrenLists {
 		public HistoryList(){
 			this.showFilterField(false);
 			this.showSearchField(true);
-
 			this.broker = ((HistoryBroker) DataBrokerManager.Util.getInstance().getBroker(BigBangConstants.EntityIds.HISTORY));
 		}
 		
@@ -498,7 +495,7 @@ public class ClientChildrenLists {
 		public void discardOwner(){
 			this.clear();
 			if(owner != null){
-				this.broker.unregisterClient(this, this.owner.processId);
+//				this.broker.unregisterClient(this, this.owner.processId);
 			}
 		}
 		

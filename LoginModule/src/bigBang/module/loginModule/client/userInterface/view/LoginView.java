@@ -1,17 +1,14 @@
 package bigBang.module.loginModule.client.userInterface.view;
 
-import org.gwt.mosaic.ui.client.MessageBox;
 import org.gwt.mosaic.ui.client.ToolButton;
-import org.gwt.mosaic.ui.client.MessageBox.MessageBoxType;
 import org.gwt.mosaic.ui.client.util.ButtonHelper;
 import org.gwt.mosaic.ui.client.util.ButtonHelper.ButtonLabelType;
 
-import bigBang.definitions.client.response.ResponseHandler;
+import bigBang.library.client.userInterface.ListBoxFormField;
 import bigBang.library.client.userInterface.view.PopupPanel;
 import bigBang.library.client.userInterface.view.View;
 import bigBang.module.loginModule.client.resources.Resources;
 import bigBang.module.loginModule.client.userInterface.presenter.LoginViewPresenter;
-import bigBang.module.loginModule.client.userInterface.presenter.LoginViewPresenter.LoginData;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Unit;
@@ -30,7 +27,6 @@ import com.google.gwt.user.client.ui.HasVerticalAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
-import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.PasswordTextBox;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.TextBox;
@@ -43,16 +39,18 @@ public class LoginView extends View implements LoginViewPresenter.Display {
 	private TextBox usernameField;
 	private PasswordTextBox passwordField;
 	private ToolButton submitButton;
-	private ListBox domainList;
+	private ListBoxFormField domainList;
 	private SimplePanel errorPanel;
 	private Label errorLabel;
 	protected PopupPanel loginPopup;
 
 	public LoginView(){
+		this.panel = new VerticalPanel();
+		initWidget(this.panel);
+		
 		Resources resources = GWT.create(Resources.class);
 		resources.css().ensureInjected();
-
-		this.panel = new VerticalPanel();
+		
 		this.panel.getElement().getStyle().setMarginTop(150, Unit.PX);
 		this.panel.setSize("100%", "100%");
 		this.panel.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
@@ -63,7 +61,7 @@ public class LoginView extends View implements LoginViewPresenter.Display {
 		this.submitButton = new ToolButton(ButtonHelper.createButtonLabel(
 				AbstractImagePrototype.create(resources.login()), "Entrar",
 				ButtonLabelType.TEXT_ON_LEFT));
-		this.domainList = new ListBox();
+		this.domainList = new ListBoxFormField();
 
 		HorizontalPanel formWrapper = new HorizontalPanel();
 		formWrapper.setVerticalAlignment(HasVerticalAlignment.ALIGN_MIDDLE);
@@ -135,8 +133,10 @@ public class LoginView extends View implements LoginViewPresenter.Display {
 		this.passwordField.addKeyUpHandler(keyUpHandler);
 
 		hideErrorMessage();
-
-		initWidget(this.panel);
+	}
+	
+	protected void initializeView() {
+		return;
 	}
 
 	public HasClickHandlers getSubmitButton() {
@@ -152,8 +152,8 @@ public class LoginView extends View implements LoginViewPresenter.Display {
 	}
 
 	@Override
-	public String getDomain() {
-		return domainList.getValue(domainList.getSelectedIndex());
+	public HasValue<String> getDomain() {
+		return domainList;
 	}
 
 	@Override
@@ -164,19 +164,8 @@ public class LoginView extends View implements LoginViewPresenter.Display {
 		}
 	}
 
-	@Override
-	public void setSelectedDomain(String domain) {
-		int nDomains = domainList.getItemCount();
-		for(int i = 0; i < nDomains; i++) {
-			if(domain.equals(domainList.getValue(i))){
-				domainList.setItemSelected(i, true);
-				return;
-			}
-		}
-	}
-
 	public void showLoading(boolean show) {
-		this.domainList.setEnabled(!show);
+		this.domainList.setReadOnly(show);
 		this.usernameField.setEnabled(!show);
 		this.passwordField.setEnabled(!show);
 		this.submitButton.setEnabled(!show && (this.passwordField.getText().length() > 0 && this.usernameField.getText().length() > 0));
@@ -191,30 +180,6 @@ public class LoginView extends View implements LoginViewPresenter.Display {
 	@Override
 	public void hideErrorMessage() {
 		this.errorPanel.setVisible(false);
-	}
-
-	@Override
-	public void showCredentialsPrompt(ResponseHandler<LoginData> responseHandler) {
-		MessageBox prompt = new MessageBox(MessageBoxType.PASSWORD,
-				"Login Form") {
-			@Override
-			public void onClose(boolean result) {
-				hide();
-				if (result) {
-					//TODO FJVC
-				}
-			}
-		};
-	}
-
-	@Override
-	public void hideCredentialsPrompt() {
-		this.loginPopup.hidePopup();
-	}
-
-	@Override
-	public void showCredentialsPromptLoginError(boolean show) {
-		//TODO 
 	}
 
 }

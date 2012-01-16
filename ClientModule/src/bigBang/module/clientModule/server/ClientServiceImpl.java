@@ -198,14 +198,15 @@ public class ClientServiceImpl
 			if ( (client.contacts != null) && (client.contacts.length > 0) )
 			{
 				lopCC.mobjContactOps = new ContactOps();
-				lopCC.mobjContactOps.marrCreate = ContactsServiceImpl.BuildContactTree(client.contacts);
+				lopCC.mobjContactOps.marrCreate = ContactsServiceImpl.BuildContactTree(lopCC.mobjContactOps,
+						client.contacts, Constants.ObjID_Client);
 			}
 			else
 				lopCC.mobjContactOps = null;
 			if ( (client.documents != null) && (client.documents.length > 0) )
 			{
 				lopCC.mobjDocOps = new DocOps();
-				lopCC.mobjDocOps.marrCreate = DocumentServiceImpl.BuildDocTree(client.documents);
+				lopCC.mobjDocOps.marrCreate = DocumentServiceImpl.BuildDocTree(lopCC.mobjDocOps, client.documents);
 			}
 			else
 				lopCC.mobjDocOps = null;

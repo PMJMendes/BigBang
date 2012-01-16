@@ -1,76 +1,68 @@
 package bigBang.module.tasksModule.client;
 
-import com.google.gwt.core.client.GWT;
-
 import bigBang.definitions.client.dataAccess.DataBroker;
 import bigBang.definitions.shared.BigBangConstants;
-import bigBang.library.client.BigBangPermissionManager;
-import bigBang.library.client.EventBus;
 import bigBang.library.client.Module;
-import bigBang.library.client.event.ModuleInitializedEvent;
-import bigBang.library.client.userInterface.TextBadge;
-import bigBang.library.client.userInterface.presenter.SectionViewPresenter;
+import bigBang.library.client.ViewPresenterFactory;
+import bigBang.library.client.ViewPresenterInstantiator;
+import bigBang.library.client.userInterface.presenter.ViewPresenter;
 import bigBang.module.tasksModule.client.dataAccess.TasksBrokerImpl;
-import bigBang.module.tasksModule.client.event.NumberOfTasksUpdateEvent;
-import bigBang.module.tasksModule.client.event.NumberOfTasksUpdateEventHandler;
 import bigBang.module.tasksModule.client.userInterface.presenter.TasksSectionViewPresenter;
 import bigBang.module.tasksModule.client.userInterface.view.TasksSectionView;
-import bigBang.module.tasksModule.interfaces.TasksService;
-import bigBang.module.tasksModule.interfaces.TasksServiceAsync;
 
 public class TasksModule implements Module {
 
-	private SectionViewPresenter[] mainMenuSectionPresenters;
-	
-	public void initialize(EventBus eventBus, BigBangPermissionManager permissionManager) {
-		initialize(eventBus);
+	private boolean initialized = false;	
+
+	@Override
+	public void initialize() {
+		//new TasksNotificationsManager().run(); //TODO IMPORTANT FJVC
+		bindToEvents();
+		registerViewPresenters();
+		initialized = true;
 	}
-	
-	public void initialize(EventBus eventBus) {
-		mainMenuSectionPresenters = new SectionViewPresenter[1];
+
+	private void bindToEvents(){
+//		EventBus.getInstance().addHandler(NumberOfTasksUpdateEvent.TYPE, new NumberOfTasksUpdateEventHandler() {
+//
+//			public void onUpdate(NumberOfTasksUpdateEvent event) {
+//				badge.setText(event.getValue() + "");
+//			}
+//		});
+	}
+
+	@Override
+	public boolean isInitialized() {
+		return initialized;
+	}
+
+	private void registerViewPresenters(){
+		ViewPresenterFactory factory = ViewPresenterFactory.getInstance();
 		
-		TasksSection section = new TasksSection();
-		TasksSectionView view = new TasksSectionView(); 
-		TasksServiceAsync service = GWT.create(TasksService.class);
-		TasksSectionViewPresenter presenter = new TasksSectionViewPresenter(eventBus, service, view);
-		presenter.setSection(section);
-		
-		mainMenuSectionPresenters[0] = (SectionViewPresenter)presenter;
-		
-		new TasksNotificationsManager(eventBus).run();
-		
-		final TextBadge badge = section.getBadge();
-		
-		eventBus.addHandler(NumberOfTasksUpdateEvent.TYPE, new NumberOfTasksUpdateEventHandler() {
+		factory.registerViewPresenterInstantiator("TASKS_SECTION", new ViewPresenterInstantiator() {
 			
-			public void onUpdate(NumberOfTasksUpdateEvent event) {
-				badge.setText(event.getValue() + "");
+			@Override
+			public ViewPresenter getInstance() {
+				TasksSectionView view = new TasksSectionView(); 
+				TasksSectionViewPresenter presenter = new TasksSectionViewPresenter(view);
+				return presenter;
 			}
 		});
-		eventBus.fireEvent(new ModuleInitializedEvent(this));
-	}
-
-	public boolean isInitialized() {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	public SectionViewPresenter[] getMainMenuSectionPresenters() {
-		return mainMenuSectionPresenters;
 	}
 
 	@Override
 	public DataBroker<?>[] getBrokerImplementations() {
 		return new DataBroker[]{
-			new TasksBrokerImpl()
+				new TasksBrokerImpl()
 		};
 	}
 
 	@Override
 	public String[] getBrokerDependencies() {
 		return new String[]{
-			BigBangConstants.EntityIds.TASK
+				BigBangConstants.EntityIds.TASK
 		};
 	}
+
 
 }

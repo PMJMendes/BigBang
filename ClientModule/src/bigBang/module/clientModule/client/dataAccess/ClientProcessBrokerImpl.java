@@ -59,6 +59,15 @@ public class ClientProcessBrokerImpl extends DataBroker<Client> implements Clien
 					handler.onResponse(result);
 					requiresRefresh = false;
 				}
+
+				@Override
+				public void onFailure(Throwable caught) {
+					handler.onError(new String[]{
+							new String("Could not get the requested client")
+					});
+					super.onFailure(caught);
+				}
+
 			});
 		}
 	}
@@ -78,6 +87,15 @@ public class ClientProcessBrokerImpl extends DataBroker<Client> implements Clien
 				}
 				handler.onResponse(result);
 			}
+
+			@Override
+			public void onFailure(Throwable caught) {
+				handler.onError(new String[]{
+						new String("Could not create the client")
+				});
+				super.onFailure(caught);
+			}
+
 		});
 	}
 
@@ -95,6 +113,15 @@ public class ClientProcessBrokerImpl extends DataBroker<Client> implements Clien
 				}
 				handler.onResponse(result);
 			}
+
+			@Override
+			public void onFailure(Throwable caught) {
+				handler.onError(new String[]{
+						new String("Could not save the client")
+				});
+				super.onFailure(caught);
+			}
+
 		});
 	}
 
@@ -112,6 +139,15 @@ public class ClientProcessBrokerImpl extends DataBroker<Client> implements Clien
 				}
 				handler.onResponse(clientId);
 			}
+
+			@Override
+			public void onFailure(Throwable caught) {
+				handler.onError(new String[]{
+						new String("Could not delete the client")
+				});
+				super.onFailure(caught);
+			}
+
 		});
 	}
 
@@ -168,7 +204,7 @@ public class ClientProcessBrokerImpl extends DataBroker<Client> implements Clien
 	public void mergeWithClient(String originalId, String receptorId,
 			final ResponseHandler<Client> handler) {
 		service.mergeWithClient(originalId, receptorId, new BigBangAsyncCallback<Client>() {
-			
+
 			@Override
 			public void onSuccess(Client result) {
 				cache.add(result.id, result);
@@ -244,7 +280,7 @@ public class ClientProcessBrokerImpl extends DataBroker<Client> implements Clien
 		transfer.newManagerId = managerId;
 		transfer.managedProcessIds = processIds;
 		transfer.dataObjectIds = dataObjectIds;
-			
+
 		if(processIds.length > 1){
 			service.massCreateManagerTransfer(transfer, new BigBangAsyncCallback<ManagerTransfer>() {
 

@@ -2,9 +2,6 @@ package bigBang.module.insurancePolicyModule.client.userInterface.presenter;
 
 import java.util.Collection;
 
-import com.google.gwt.user.client.ui.HasWidgets;
-import com.google.gwt.user.client.ui.Widget;
-
 import bigBang.definitions.client.dataAccess.InsurancePolicyBroker;
 import bigBang.definitions.client.dataAccess.InsurancePolicyDataBrokerClient;
 import bigBang.definitions.client.dataAccess.InsuredObjectDataBrokerClient;
@@ -13,14 +10,15 @@ import bigBang.definitions.client.response.ResponseHandler;
 import bigBang.definitions.shared.BigBangConstants;
 import bigBang.definitions.shared.InsurancePolicy;
 import bigBang.definitions.shared.InsuredObject;
-import bigBang.library.client.EventBus;
 import bigBang.library.client.HasEditableValue;
 import bigBang.library.client.dataAccess.DataBrokerManager;
 import bigBang.library.client.event.ActionInvokedEvent;
 import bigBang.library.client.event.ActionInvokedEventHandler;
 import bigBang.library.client.userInterface.presenter.ViewPresenter;
-import bigBang.library.client.userInterface.view.View;
-import bigBang.library.interfaces.Service;
+
+import com.google.gwt.user.client.ui.HasWidgets;
+import com.google.gwt.user.client.ui.UIObject;
+import com.google.gwt.user.client.ui.Widget;
 
 public abstract class InsuredObjectViewPresenter implements ViewPresenter {
 
@@ -41,33 +39,20 @@ public abstract class InsuredObjectViewPresenter implements ViewPresenter {
 		DELETE
 	}
 
-	protected EventBus eventBus;
 	protected Display view;
 	protected InsuredObjectDataBrokerClient insuredObjectBrokerClient;
 	protected InsurancePolicyDataBrokerClient insurancePolicyBrokerClient;
 	protected boolean bound = false;
 	protected String policyId;
 	
-	public InsuredObjectViewPresenter(EventBus eventBus, Display display){
-		setEventBus(eventBus);
-		setView((View) display);
-		
+	public InsuredObjectViewPresenter(Display display){
 		insuredObjectBrokerClient = getInsuredObjectBrokerClient();
 		insurancePolicyBrokerClient = getInsurancePolicyBrokerClient();
+		setView((UIObject) display);		
 	}
 
 	@Override
-	public void setService(Service service) {
-		return;
-	}
-
-	@Override
-	public void setEventBus(EventBus eventBus) {
-		this.eventBus = eventBus;
-	}
-
-	@Override
-	public void setView(View view) {
+	public void setView(UIObject view) {
 		this.view = (Display)view;
 	}
 
@@ -78,7 +63,6 @@ public abstract class InsuredObjectViewPresenter implements ViewPresenter {
 		container.add(this.view.asWidget());
 	}
 
-	@Override
 	public void bind() {
 		if(bound){
 			return;
@@ -99,6 +83,9 @@ public abstract class InsuredObjectViewPresenter implements ViewPresenter {
 				}
 			}
 		});
+		
+		//APPLICATION-WIDE EVENTS
+		
 		bound = true;
 	}
 	
@@ -109,11 +96,6 @@ public abstract class InsuredObjectViewPresenter implements ViewPresenter {
 	
 	public void setInsuredObject(InsuredObject object){
 		view.getInsuredObjectForm().setValue(object);
-	}
-
-	@Override
-	public void registerEventHandlers(EventBus eventBus) {
-		return;
 	}
 
 	protected InsuredObjectDataBrokerClient getInsuredObjectBrokerClient(){
@@ -152,6 +134,12 @@ public abstract class InsuredObjectViewPresenter implements ViewPresenter {
 			
 			@Override
 			public void addInsuredObject(InsuredObject object) {
+				// TODO Auto-generated method stub
+				
+			}
+
+			@Override
+			public void remapItemId(String newId, String oldId) {
 				// TODO Auto-generated method stub
 				
 			}

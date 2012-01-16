@@ -9,25 +9,30 @@ import bigBang.definitions.shared.BigBangConstants;
 import bigBang.definitions.shared.User;
 import bigBang.library.client.EventBus;
 import bigBang.library.client.HasEditableValue;
+import bigBang.library.client.HasParameters;
 import bigBang.library.client.HasValueSelectables;
-import bigBang.library.client.Operation;
-import bigBang.library.client.Selectable;
+import bigBang.library.client.Notification;
 import bigBang.library.client.ValueSelectable;
+import bigBang.library.client.Notification.TYPE;
 import bigBang.library.client.dataAccess.DataBrokerManager;
 import bigBang.library.client.event.ActionInvokedEvent;
 import bigBang.library.client.event.ActionInvokedEventHandler;
+import bigBang.library.client.event.NewNotificationEvent;
 import bigBang.library.client.event.SelectionChangedEvent;
 import bigBang.library.client.event.SelectionChangedEventHandler;
-import bigBang.library.client.userInterface.presenter.OperationViewPresenter;
+import bigBang.library.client.history.NavigationHistoryItem;
+import bigBang.library.client.history.NavigationHistoryManager;
+import bigBang.library.client.userInterface.presenter.ViewPresenter;
 import bigBang.library.client.userInterface.view.View;
-import bigBang.library.interfaces.Service;
-import bigBang.module.generalSystemModule.shared.operation.UserManagementOperation;
+import bigBang.module.generalSystemModule.client.GeneralSystemProcess;
+import bigBang.module.generalSystemModule.shared.ModuleConstants;
 
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.HasWidgets;
+import com.google.gwt.user.client.ui.UIObject;
 import com.google.gwt.user.client.ui.Widget;
 
-public class UserManagementOperationViewPresenter implements
-OperationViewPresenter {
+public class UserManagementOperationViewPresenter implements ViewPresenter {
 
 	public static enum Action{
 		NEW,
@@ -41,61 +46,70 @@ OperationViewPresenter {
 	public interface Display {
 		//List
 		HasValueSelectables<User> getList();
+		void removeFromList(ValueSelectable<User> selectable);
 
 		//Form
 		HasEditableValue<User> getForm();
+		void showFormPassword(boolean show);
 		boolean isFormValid();
-		void lockForm(boolean lock);
 
 		//General
-		void clear();
 		void registerActionInvokedHandler(ActionInvokedEventHandler<Action> handler);
-		void prepareNewUser();
-		void removeNewUserPreparation();
+		void prepareNewUser(User user);
+
+		//PERMISSIONS
+		void clearAllowedPermissions();
+		void allowCreate(boolean allow);
+		void allowEdit(boolean allow);
+		void allowDelete(boolean allow);
 		void setSaveModeEnabled(boolean enabled);
 
-		void setReadOnly(boolean readOnly);
 		Widget asWidget();
 	}
 
 	private Display view;
-	@SuppressWarnings("unused")
-	private EventBus eventBus;
-
-	private UserManagementOperation operation;
-	protected UserBroker userBroker;
-
+	private UserBroker userBroker;
 	private boolean bound = false;
 
-	public UserManagementOperationViewPresenter(EventBus eventBus, Service service, View view){
-		setEventBus(eventBus);
-		setService(service);
-		setView(view);
-
+	public UserManagementOperationViewPresenter(View view){
 		this.userBroker = (UserBroker) DataBrokerManager.Util.getInstance().getBroker(BigBangConstants.EntityIds.USER);
+		setView((UIObject)view);
 	}
 
-	public void setService(Service service) {}
-
-	public void setEventBus(EventBus eventBus) {
-		this.eventBus = eventBus;
-	}
-
-	public void setView(View view) {
+	@Override
+	public void setView(UIObject view) {
 		this.view = (Display)view;
 	}
 
+	@Override
 	public void go(HasWidgets container) {
 		bind();
-		bound = true;
-
-		view.clear();
-		view.getList().setMultipleSelectability(false);
-		view.getForm().setReadOnly(true);
-		fetchUserList();
-			
 		container.clear();
 		container.add(this.view.asWidget());
+		setup();
+	}
+
+	@Override
+	public void setParameters(HasParameters parameterHolder) {
+		String userId = parameterHolder.getParameter("id");
+		userId = userId == null ? new String() : userId;
+
+		if(inUserCreation()){
+			clearNewUser();
+		}
+		
+		boolean hasPermissions = GeneralSystemProcess.getInstance().hasPermission(ModuleConstants.OpTypeIDs.ManageUsers);
+		view.allowCreate(hasPermissions);
+		view.allowEdit(hasPermissions);
+		view.allowDelete(hasPermissions);
+
+		if(userId.isEmpty()){
+			clearView();
+		}else if(userId.equalsIgnoreCase("new")){
+			setupNewUser();
+		}else{
+			showUser(userId);
+		}
 	}
 
 	public void bind() {
@@ -108,72 +122,49 @@ OperationViewPresenter {
 				@SuppressWarnings("unchecked")
 				ValueSelectable<User> selected = (ValueSelectable<User>) event.getFirstSelected();
 				User selectedValue = selected == null ? null : selected.getValue();
-				if(selectedValue == null){
-					view.getForm().setValue(null);
-					view.lockForm(true);
+				String userId = selectedValue == null ? null : selectedValue.id;
+				userId = userId == null ? new String() : userId;
+
+				NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
+				if(userId.isEmpty()){
+					item.removeParameter("id");
 				}else{
-					if(selectedValue.id != null){
-						view.removeNewUserPreparation();
-						userBroker.getUser(selectedValue.id, new ResponseHandler<User>() {
-
-							@Override
-							public void onResponse(User value) {
-								view.getForm().setValue(value);
-								view.lockForm(value == null);
-							}
-
-							@Override
-							public void onError(Collection<ResponseError> errors) {}
-						});
-					}
-					
+					item.setParameter("id", userId);
 				}
+				NavigationHistoryManager.getInstance().go(item);
 			}
 		});
+
 		view.registerActionInvokedHandler(new ActionInvokedEventHandler<UserManagementOperationViewPresenter.Action>() {
 
 			@Override
 			public void onActionInvoked(ActionInvokedEvent<Action> action) {
 				switch(action.getAction()){
 				case NEW:
-					view.prepareNewUser();
-					for(Selectable s : view.getList().getSelected()) {
-						@SuppressWarnings("unchecked")
-						ValueSelectable<User> vs = (ValueSelectable<User>) s;
-						User value = vs.getValue();
-						view.getForm().setValue(value);
-						view.getForm().setReadOnly(false);
-						break;
-					}
-					break;
-				case REFRESH:
-					fetchUserList();
+					NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
+					item.setParameter("id", "new");
+					NavigationHistoryManager.getInstance().go(item);
 					break;
 				case DELETE:
-					if(view.getForm().getValue().id == null)
-						view.removeNewUserPreparation();
-					else
-						deleteUser(view.getForm().getValue());
+					deleteUser(view.getForm().getValue());
 					break;
 				case EDIT:
 					view.getForm().setReadOnly(false);
 					view.setSaveModeEnabled(true);
 					break;
 				case SAVE:
-					if(!view.isFormValid())
-						return;
 					User info = view.getForm().getInfo();
-					if(info.id == null)
+					view.getForm().setReadOnly(true);
+					if(info.id.equalsIgnoreCase("new"))
 						createUser(info);
 					else
 						saveUser(info);
 					break;
 				case CANCEL_EDIT:
-					if(view.getForm().getInfo().id == null){
-						view.removeNewUserPreparation();
+					if(inUserCreation()){
+						deleteUser(view.getForm().getValue());
 					}else{
-						view.getForm().revert();
-						view.getForm().setReadOnly(true);
+						NavigationHistoryManager.getInstance().reload();
 					}
 					break;
 				default:
@@ -182,31 +173,124 @@ OperationViewPresenter {
 			}
 		});
 	}
-	
-	private void fetchUserList() {
-		//Refreshes The users data (Info automatically propagated to the broker clients)
+
+	private void setup(){
 		this.userBroker.requireDataRefresh();
 		this.userBroker.getUsers(new ResponseHandler<User[]>() {
 
 			@Override
-			public void onResponse(User[] response) {}
+			public void onResponse(User[] response) {
+			}
 
 			@Override
-			public void onError(Collection<ResponseError> errors) {}
+			public void onError(Collection<ResponseError> errors) {
+				onGetUserListFailed();
+			}
 		});
-	} 
+	}
 
-	public void createUser(User c) {
-		this.userBroker.addUser(c, new ResponseHandler<User>() {
+	private void clearView(){
+		view.setSaveModeEnabled(false);
+		view.clearAllowedPermissions();
+		view.getForm().setValue(null);
+		view.getForm().setReadOnly(true);
+		view.getList().clearSelection();
+	}
+
+	private void setupNewUser(){
+		boolean hasPermissions = GeneralSystemProcess.getInstance().hasPermission(ModuleConstants.OpTypeIDs.ManageUsers);
+		if(hasPermissions){
+			User user = new User();
+			user.id = "new";
+			user.name = "Novo Utilizador";
+			view.getList().clearSelection();
+			view.prepareNewUser(user);
+			view.getForm().setValue(user);
+			view.showFormPassword(true);
+	
+			view.allowDelete(hasPermissions);
+			view.allowEdit(hasPermissions);
+			view.setSaveModeEnabled(hasPermissions);
+			view.getForm().setReadOnly(!hasPermissions);
+		}else{
+			GWT.log("User does not have the required permissions");
+		}
+	}
+
+	private void clearNewUser(){
+		if(inUserCreation()){
+			for(ValueSelectable<User> selected : view.getList().getAll()){
+				User user = selected.getValue();
+				if(user == null || user.id.equalsIgnoreCase("new")){
+					view.removeFromList(selected);
+					break;
+				}
+			}
+			view.clearAllowedPermissions();
+			view.getForm().setValue(null);
+			view.getForm().setReadOnly(true);
+			view.showFormPassword(false);
+			view.getList().clearSelection();
+		}
+	}
+
+	private boolean inUserCreation(){
+		for(ValueSelectable<User> selected : view.getList().getAll()){
+			User user = selected.getValue();
+			if(user == null || user.id.equalsIgnoreCase("new")){
+				return true;
+			}
+		}
+		return false;
+	}
+
+	private void showUser(String userId){
+		//Selects the user in list
+		for(ValueSelectable<User> entry : view.getList().getAll()){
+			User listUser = entry.getValue();
+			if(listUser.id.equalsIgnoreCase(userId) && !entry.isSelected()){
+				entry.setSelected(true, true);
+			}
+		}
+		//Gets the user to show
+		this.userBroker.getUser(userId, new ResponseHandler<User>() {
 
 			@Override
 			public void onResponse(User response) {
+				view.clearAllowedPermissions();
+
+				boolean hasPermissions = GeneralSystemProcess.getInstance().hasPermission(ModuleConstants.OpTypeIDs.ManageUsers);
+				view.allowEdit(hasPermissions);
+				view.allowDelete(hasPermissions);
+
+				view.setSaveModeEnabled(false);
 				view.getForm().setValue(response);
 				view.getForm().setReadOnly(true);
 			}
 
 			@Override
-			public void onError(Collection<ResponseError> errors) {}
+			public void onError(Collection<ResponseError> errors) {
+				onGetUserFailed();
+			}
+		});
+	}
+
+	public void createUser(User c) {
+		c.id = null;
+		this.userBroker.addUser(c, new ResponseHandler<User>() {
+
+			@Override
+			public void onResponse(User response) {
+				NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
+				item.setParameter("id", response.id);
+				NavigationHistoryManager.getInstance().go(item);
+				EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Utilizador criado com sucesso."), TYPE.TRAY_NOTIFICATION));
+			}
+
+			@Override
+			public void onError(Collection<ResponseError> errors) {
+				onCreateUserFailed();
+			}
 		});
 	}
 
@@ -215,59 +299,64 @@ OperationViewPresenter {
 
 			@Override
 			public void onResponse(User response) {
-				view.getForm().setValue(response);
-				view.getForm().setReadOnly(true);
+				NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
+				item.setParameter("id", response.id);
+				NavigationHistoryManager.getInstance().go(item);
+				EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Utilizador guardado com sucesso."), TYPE.TRAY_NOTIFICATION));
 			}
 
 			@Override
-			public void onError(Collection<ResponseError> errors) {}
+			public void onError(Collection<ResponseError> errors) {
+				onSaveUserFailed();
+			}
 		});
 	}
 
 	public void deleteUser(final User c) {
-		this.userBroker.removeUser(c.id, new ResponseHandler<User>() {
+		if(c.id.equalsIgnoreCase("new")){
+			clearNewUser();
+		}else{
+			this.userBroker.removeUser(c.id, new ResponseHandler<User>() {
 
-			@Override
-			public void onResponse(User response) {
-				view.getForm().setValue(null);
-			}
+				@Override
+				public void onResponse(User response) {
+					NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
+					item.removeParameter("id");
+					NavigationHistoryManager.getInstance().go(item);
+					EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Utilizador eliminado com sucesso."), TYPE.TRAY_NOTIFICATION));
+				}
 
-			@Override
-			public void onError(Collection<ResponseError> errors) {}
-		});
+				@Override
+				public void onError(Collection<ResponseError> errors) {
+					onDeleteUserFailed();
+				}
+			});
+		}
 	}	
 
-	public void registerEventHandlers(EventBus eventBus) {
-		// TODO Auto-generated method stub
-
+	private void onGetUserFailed(){
+		EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "De momento não foi possível obter o utilizador seleccionado"), TYPE.ALERT_NOTIFICATION));
+		NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
+		item.removeParameter("id");
+		NavigationHistoryManager.getInstance().go(item);
 	}
 
-	public void setOperation(Operation o) {
-		this.operation = (UserManagementOperation) o;
+	private void onGetUserListFailed(){
+		EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "De momento não foi possível obter a lista de utilizadores"), TYPE.ALERT_NOTIFICATION));
 	}
 
-	public Operation getOperation() {
-		return operation;
+	private void onCreateUserFailed(){
+		EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "De momento não foi possível criar o utilizador"), TYPE.ALERT_NOTIFICATION));
+		view.getForm().setReadOnly(false);
 	}
 
-	public void goCompact(HasWidgets container) {
-		// TODO Auto-generated method stub
-
+	private void onSaveUserFailed(){
+		EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "De momento não foi possível guardar as alterações ao utilizador"), TYPE.ALERT_NOTIFICATION));
+		view.getForm().setReadOnly(false);
 	}
 
-	public String setTargetEntity(String id) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public void setOperationPermission(boolean result) {
-		this.operation.setPermission(result);
-		setReadOnly(result);
-	}
-
-	private void setReadOnly(boolean result) {
-		view.setReadOnly(result);
+	private void onDeleteUserFailed() {
+		EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "De momento não foi possível eliminar o utilizador"), TYPE.ALERT_NOTIFICATION));
 	}
 
 }

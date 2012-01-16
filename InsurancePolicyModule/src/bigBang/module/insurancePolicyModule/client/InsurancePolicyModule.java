@@ -1,71 +1,130 @@
 package bigBang.module.insurancePolicyModule.client;
 
 import bigBang.definitions.client.dataAccess.DataBroker;
-import bigBang.library.client.BigBangPermissionManager;
-import bigBang.library.client.EventBus;
+import bigBang.library.client.HasParameters;
 import bigBang.library.client.Module;
-import bigBang.library.client.Process;
-import bigBang.library.client.event.ModuleInitializedEvent;
-import bigBang.library.client.userInterface.presenter.SectionViewPresenter;
+import bigBang.library.client.ViewPresenterFactory;
+import bigBang.library.client.ViewPresenterInstantiator;
+import bigBang.library.client.userInterface.presenter.ViewPresenter;
 import bigBang.module.insurancePolicyModule.client.dataAccess.ExerciseDataBrokerImpl;
 import bigBang.module.insurancePolicyModule.client.dataAccess.InsurancePolicyProcessBrokerImpl;
 import bigBang.module.insurancePolicyModule.client.dataAccess.InsuredObjectDataBrokerImpl;
+import bigBang.module.insurancePolicyModule.client.userInterface.presenter.CreateReceiptViewPresenter;
+import bigBang.module.insurancePolicyModule.client.userInterface.presenter.InsurancePolicyOperationsViewPresenter;
+import bigBang.module.insurancePolicyModule.client.userInterface.presenter.InsurancePolicySearchOperationViewPresenter;
 import bigBang.module.insurancePolicyModule.client.userInterface.presenter.InsurancePolicySectionViewPresenter;
+import bigBang.module.insurancePolicyModule.client.userInterface.presenter.InsuredObjectViewPresenter;
+import bigBang.module.insurancePolicyModule.client.userInterface.view.CreateReceiptView;
+import bigBang.module.insurancePolicyModule.client.userInterface.view.InsurancePolicyOperationsView;
+import bigBang.module.insurancePolicyModule.client.userInterface.view.InsurancePolicySearchOperationView;
 import bigBang.module.insurancePolicyModule.client.userInterface.view.InsurancePolicySectionView;
+import bigBang.module.insurancePolicyModule.client.userInterface.view.InsuredObjectView;
+
+import com.google.gwt.core.client.GWT;
 
 public class InsurancePolicyModule implements Module {
 
-	private SectionViewPresenter[] sectionPresenters;
-	protected BigBangPermissionManager permissionManager;
-	
-	public InsurancePolicyModule(){
-	}
-	
-	public void initialize(EventBus eventBus, BigBangPermissionManager permissionManager) {
-		this.permissionManager = permissionManager;
-		initialize(eventBus);
-	}
-	
-	public void initialize(EventBus eventBus) {
-		sectionPresenters = new SectionViewPresenter[1];
+	private boolean initialized = false;
 
-		//Insurance Policy section
-		InsurancePolicySection insurancePolicySection = new InsurancePolicySection(this.permissionManager);
-		InsurancePolicySectionView insurancePolicySectionView = new InsurancePolicySectionView();
-		InsurancePolicySectionViewPresenter insurancePolicySectionViewPresenter = new InsurancePolicySectionViewPresenter(eventBus, null, insurancePolicySectionView);
-		insurancePolicySectionViewPresenter.setSection(insurancePolicySection);
-		insurancePolicySection.registerEventHandlers(eventBus);
-		sectionPresenters[0] = insurancePolicySectionViewPresenter;
-
-		eventBus.fireEvent(new ModuleInitializedEvent(this));
+	public void initialize() {
+		registerViewPresenters();
+		initialized = true;
 	}
+
+	private void registerViewPresenters(){
+		ViewPresenterFactory.getInstance().registerViewPresenterInstantiator("INSURANCE_POLICY_SECTION", new ViewPresenterInstantiator() {
+
+			@Override
+			public ViewPresenter getInstance() {
+				InsurancePolicySectionView view = (InsurancePolicySectionView) GWT.create(InsurancePolicySectionView.class);
+				ViewPresenter presenter = new InsurancePolicySectionViewPresenter(view);
+				return presenter;
+			}
+		});
+		ViewPresenterFactory.getInstance().registerViewPresenterInstantiator("INSURANCE_POLICY_OPERATIONS", new ViewPresenterInstantiator() {
+
+			@Override
+			public ViewPresenter getInstance() {
+				InsurancePolicyOperationsView view = (InsurancePolicyOperationsView) GWT.create(InsurancePolicyOperationsView.class);
+				ViewPresenter presenter = new InsurancePolicyOperationsViewPresenter(view);
+				return presenter;
+			}
+		});
+		ViewPresenterFactory.getInstance().registerViewPresenterInstantiator("INSURANCE_POLICY_SEARCH", new ViewPresenterInstantiator() {
+
+			@Override
+			public ViewPresenter getInstance() {
+				InsurancePolicySearchOperationView view = (InsurancePolicySearchOperationView) GWT.create(InsurancePolicySearchOperationView.class);
+				InsurancePolicySearchOperationViewPresenter presenter = new InsurancePolicySearchOperationViewPresenter(view);
+				return presenter;
+			}
+		});
+		ViewPresenterFactory.getInstance().registerViewPresenterInstantiator("INSURANCE_POLICY_CREATE_RECEIPT", new ViewPresenterInstantiator() {
+
+			@Override
+			public ViewPresenter getInstance() {
+				CreateReceiptView view = (CreateReceiptView) GWT.create(CreateReceiptView.class);
+				CreateReceiptViewPresenter presenter = new CreateReceiptViewPresenter(view);
+				return presenter;
+			}
+		});
+		ViewPresenterFactory.getInstance().registerViewPresenterInstantiator("INSURANCE_POLICY_INSURED_OBJECT", new ViewPresenterInstantiator() {
+
+			@Override
+			public ViewPresenter getInstance() {
+				InsuredObjectView view = (InsuredObjectView) GWT.create(InsuredObjectView.class);
+				InsuredObjectViewPresenter presenter = new InsuredObjectViewPresenter(view){
+
+					@Override
+					public void onSave() {
+						// TODO Auto-generated method stub
+
+					}
+
+					@Override
+					public void onCancel() {
+						// TODO Auto-generated method stub
+
+					}
+
+					@Override
+					public void onDelete() {
+						// TODO Auto-generated method stub
+
+					}
+
+					@Override
+					public void setParameters(HasParameters parameterHolder) {
+						// TODO Auto-generated method stub
+
+					}
+
+				};
+				return presenter;
+			}
+		});
+	} 
 
 	public boolean isInitialized() {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	public SectionViewPresenter[] getMainMenuSectionPresenters() {
-		return sectionPresenters;
-	}
-
-	public Process[] getProcesses() {
-		return null;
+		return initialized;
 	}
 
 	@Override
 	public DataBroker<?>[] getBrokerImplementations() {
+		InsuredObjectDataBrokerImpl insuredObjectDataBrokerImpl = new InsuredObjectDataBrokerImpl();
+		ExerciseDataBrokerImpl exerciseDataBrokerImpl = new ExerciseDataBrokerImpl();
+
 		return new DataBroker[]{
-			new InsurancePolicyProcessBrokerImpl(),
-			new InsuredObjectDataBrokerImpl(),
-			new ExerciseDataBrokerImpl()
+				insuredObjectDataBrokerImpl,
+				exerciseDataBrokerImpl,
+				new InsurancePolicyProcessBrokerImpl(insuredObjectDataBrokerImpl, exerciseDataBrokerImpl)
 		};
 	}
 
 	@Override
 	public String[] getBrokerDependencies() {
 		return new String[]{
-			//TODO
+				//TODO
 		};
 	}
 

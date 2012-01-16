@@ -26,6 +26,8 @@ public class BigBangConstants {
 		public static final String RECEIPT = "B24E4BF7-382C-40EE-8120-9F8A00DABB81";
 		public static final String POLICY_INSURED_OBJECT = "3A3316D2-9D7C-4FD1-8486-9F9C0012E119";
 		public static final String POLICY_EXERCISE = "DEE32F69-B33D-4427-AD5B-9F9C001607F2";
+
+		public static final String MANAGER_TRANSFER = "66EC1066-AD5A-430C-9A70-9F65013F5453";
 		
 		public static final String CONTACT = "2085F9FD-7FCE-46C0-99FD-9EC400FFBA5C";
 		public static final String DOCUMENT = "794F44DB-191A-4E17-9217-9ECC012A8AC2";
@@ -52,7 +54,24 @@ public class BigBangConstants {
 	public static class OperationIds {
 		public static class ClientProcess {
 			public static final String UPDATE_CLIENT = "";
-		}		
+		}
+		
+		public static class ManagerTransfer{
+			public static final String CREATE_MANAGER_TRANSFER = "C75EEC27-780C-4C0C-9FD7-9F090142CB10";
+			public static final String CANCEL_MANAGER_TRANSFER = "C8FCD8FD-B616-4252-942F-9F650155B3BC";
+		}
+	}
+	
+	
+
+	//Session related constants
+	public static class Session{
+		public static final int DEFAULT_DOMAIN_INDEX = 0;
+		
+		public static final String[] DOMAINS = new String[] {
+			"CrediteEGS",
+			"AMartins"
+		};
 	}
 
 }

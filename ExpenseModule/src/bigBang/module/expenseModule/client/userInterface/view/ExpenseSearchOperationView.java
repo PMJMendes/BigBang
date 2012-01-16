@@ -16,6 +16,7 @@ public class ExpenseSearchOperationView extends View implements ExpenseSearchOpe
 	
 	public ExpenseSearchOperationView(){
 		SplitLayoutPanel mainWrapper = new SplitLayoutPanel();
+		initWidget(mainWrapper);
 		mainWrapper.setSize("100%", "100%");
 		
 		searchPanel = new ExpenseSearchPanel();
@@ -25,8 +26,11 @@ public class ExpenseSearchOperationView extends View implements ExpenseSearchOpe
 		form.setSize("100%", "100%");
 		
 		mainWrapper.add(form);
-		
-		initWidget(mainWrapper);
+	}
+
+	@Override
+	protected void initializeView() {
+		return;
 	}
 	
 }

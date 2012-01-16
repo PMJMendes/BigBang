@@ -9,7 +9,7 @@ import bigBang.library.client.dataAccess.ContactsBrokerClient;
 import bigBang.library.client.event.SelectionChangedEvent;
 import bigBang.library.client.event.SelectionChangedEventHandler;
 import bigBang.library.client.resources.Resources;
-import bigBang.library.client.userInterface.view.ContactView;
+import bigBang.library.client.userInterface.view.ContactView_OLD;
 import bigBang.library.client.userInterface.view.ContactsNavigationPanel;
 
 import com.google.gwt.core.client.GWT;
@@ -199,7 +199,7 @@ public class ContactsPreviewList extends FilterableList<Contact> implements Cont
 	}
 
 	protected void showNewContactForm(){
-		ContactView contactView = new ContactView();
+		ContactView_OLD contactView = new ContactView_OLD();
 		contactView.setEditable(true);
 		contactPopupPanel.clear();
 		ContactsNavigationPanel navPanel = new ContactsNavigationPanel();
@@ -220,7 +220,7 @@ public class ContactsPreviewList extends FilterableList<Contact> implements Cont
 	}
 
 	protected void showContactForm(Contact contact) {
-		ContactView contactView = new ContactView();
+		ContactView_OLD contactView = new ContactView_OLD();
 		contactView.setContact(contact);
 		contactPopupPanel.clear();
 		ContactsNavigationPanel navPanel = new ContactsNavigationPanel();

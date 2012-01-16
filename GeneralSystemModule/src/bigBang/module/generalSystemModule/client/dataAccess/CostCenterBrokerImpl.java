@@ -1,9 +1,12 @@
 package bigBang.module.generalSystemModule.client.dataAccess;
 
+import java.util.Collection;
+
 import bigBang.definitions.client.dataAccess.CostCenterBroker;
 import bigBang.definitions.client.dataAccess.CostCenterDataBrokerClient;
 import bigBang.definitions.client.dataAccess.DataBroker;
 import bigBang.definitions.client.dataAccess.DataBrokerClient;
+import bigBang.definitions.client.response.ResponseError;
 import bigBang.definitions.client.response.ResponseHandler;
 import bigBang.definitions.shared.BigBangConstants;
 import bigBang.definitions.shared.CostCenter;
@@ -44,17 +47,28 @@ public class CostCenterBrokerImpl extends DataBroker<CostCenter> implements Cost
 					for(int i = 0; i < result.length; i++) {
 						cache.add(result[i].id, result[i]);
 					}
+					incrementDataVersion();
 					for(DataBrokerClient<CostCenter> c : getClients()) {
 						((CostCenterDataBrokerClient) c).setCostCenters(result);
+						((CostCenterDataBrokerClient) c).setDataVersionNumber(getDataElementId(), getCurrentDataVersion());
 					}
 					handler.onResponse(result);
 					needsRefresh = false;
 				}
+
+				@Override
+				public void onFailure(Throwable caught) {
+					handler.onError(new String[]{
+							new String("Could not get the cost centers list")	
+					});
+					super.onFailure(caught);
+				}
+
 			});
 		}else{
 			int size = cache.getNumberOfEntries();
 			CostCenter[] result = new CostCenter[size];
-			
+
 			int i = 0;
 			for(Object e : cache.getEntries()){
 				result[i] = ((CostCenter) e);
@@ -67,9 +81,13 @@ public class CostCenterBrokerImpl extends DataBroker<CostCenter> implements Cost
 	@Override
 	public void getCostCenter(String costCenterId,
 			ResponseHandler<CostCenter> handler) {
-		if(!cache.contains(costCenterId))
-			throw new RuntimeException("The requested cost center could not be fould locally. id:\""+costCenterId+"\"");
-		handler.onResponse((CostCenter) cache.get(costCenterId));
+		if(!cache.contains(costCenterId)){
+			handler.onError(new String[]{
+					new String("Could not get the requested cost center. id: " + costCenterId)
+			});
+		}else{
+			handler.onResponse((CostCenter) cache.get(costCenterId));
+		}
 	}
 
 
@@ -81,11 +99,22 @@ public class CostCenterBrokerImpl extends DataBroker<CostCenter> implements Cost
 			@Override
 			public void onSuccess(CostCenter result) {
 				cache.add(result.id, result);
+				incrementDataVersion();
 				for(DataBrokerClient<CostCenter> c : getClients()) {
 					((CostCenterDataBrokerClient) c).addCostCenter(result);
+					((CostCenterDataBrokerClient) c).setDataVersionNumber(getDataElementId(), getCurrentDataVersion());
 				}
 				handler.onResponse(result);
 			}
+			
+			@Override
+			public void onFailure(Throwable caught) {
+				handler.onError(new String[]{
+						new String("Could not create cost center")
+				});
+				super.onFailure(caught);
+			}
+			
 		});
 	}
 
@@ -97,11 +126,22 @@ public class CostCenterBrokerImpl extends DataBroker<CostCenter> implements Cost
 			@Override
 			public void onSuccess(CostCenter result) {
 				cache.update(result.id, result);
+				incrementDataVersion();
 				for(DataBrokerClient<CostCenter> c : getClients()) {
 					((CostCenterDataBrokerClient) c).updateCostCenter(result);
+					((CostCenterDataBrokerClient) c).setDataVersionNumber(getDataElementId(), getCurrentDataVersion());
 				}
 				handler.onResponse(result);
 			}
+			
+			@Override
+			public void onFailure(Throwable caught) {
+				handler.onError(new String[]{
+						new String("Could not update cost center")
+				});
+				super.onFailure(caught);
+			}
+			
 		});
 	}
 
@@ -113,11 +153,22 @@ public class CostCenterBrokerImpl extends DataBroker<CostCenter> implements Cost
 			@Override
 			public void onSuccess(Void result) {
 				cache.remove(costCenterId);
+				incrementDataVersion();
 				for(DataBrokerClient<CostCenter> c : getClients()) {
 					((CostCenterDataBrokerClient) c).removeCostCenter(costCenterId);
+					((CostCenterDataBrokerClient) c).setDataVersionNumber(getDataElementId(), getCurrentDataVersion());
 				}
 				handler.onResponse(null);
 			}
+			
+			@Override
+			public void onFailure(Throwable caught) {
+				handler.onError(new String[]{
+						new String("Could not delete cost center.")
+				});
+				super.onFailure(caught);
+			}
+			
 		});
 	}
 
@@ -133,23 +184,62 @@ public class CostCenterBrokerImpl extends DataBroker<CostCenter> implements Cost
 	protected boolean needsRefresh(){
 		return this.needsRefresh;
 	}
-	
+
 	@Override
 	public void notifyItemCreation(String itemId) {
 		requireDataRefresh();
-		//TODO FJVC
+		this.getCostCenter(itemId, new ResponseHandler<CostCenter>() {
+
+			@Override
+			public void onResponse(CostCenter response) {
+				cache.add(response.id, response);
+				incrementDataVersion();
+
+				for(DataBrokerClient<CostCenter> client : clients){
+					((CostCenterDataBrokerClient) client).addCostCenter(response);
+					((CostCenterDataBrokerClient) client).setDataVersionNumber(getDataElementId(), getCurrentDataVersion());
+				}
+				
+			}
+
+			@Override
+			public void onError(Collection<ResponseError> errors) {
+				return;
+			}
+		});
 	}
 
 	@Override
 	public void notifyItemDeletion(String itemId) {
 		requireDataRefresh();
-		//TODO
+		cache.remove(itemId);
+		incrementDataVersion();
+		for(DataBrokerClient<CostCenter> client : clients){
+			((CostCenterDataBrokerClient) client).removeCostCenter(itemId);
+			((CostCenterDataBrokerClient) client).setDataVersionNumber(getDataElementId(), getCurrentDataVersion());
+		}
 	}
 
 	@Override
 	public void notifyItemUpdate(String itemId) {
 		requireDataRefresh();
-		//TODO
+		getCostCenter(itemId, new ResponseHandler<CostCenter>() {
+			
+			@Override
+			public void onResponse(CostCenter response) {
+				cache.add(response.id, response);
+				incrementDataVersion();
+				for(DataBrokerClient<CostCenter> client : clients){
+					((CostCenterDataBrokerClient) client).updateCostCenter(response);
+					((CostCenterDataBrokerClient) client).setDataVersionNumber(getDataElementId(), getCurrentDataVersion());
+				}
+			}
+			
+			@Override
+			public void onError(Collection<ResponseError> errors) {
+				return;
+			}
+		});
 	}
 
 }

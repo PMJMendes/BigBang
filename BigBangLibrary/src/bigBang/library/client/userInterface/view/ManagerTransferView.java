@@ -1,22 +1,14 @@
 package bigBang.library.client.userInterface.view;
 
 
-import com.google.gwt.user.client.ui.VerticalPanel;
-
-import bigBang.definitions.shared.BigBangConstants.EntityIds;
-import bigBang.definitions.shared.ClientGroup;
-import bigBang.definitions.shared.ClientStub;
-import bigBang.definitions.shared.InsurancePolicy;
-import bigBang.definitions.shared.ManagerTransfer;
 import bigBang.definitions.shared.SearchResult;
 import bigBang.library.client.HasValueSelectables;
 import bigBang.library.client.userInterface.FilterableList;
-import bigBang.library.client.userInterface.List;
 import bigBang.library.client.userInterface.ListEntry;
-import bigBang.library.client.userInterface.SortableList;
 import bigBang.library.client.userInterface.presenter.ManagerTransferViewPresenter;
 import bigBang.library.client.userInterface.presenter.ManagerTransferViewPresenter.BarStatus;
-import bigBang.library.client.userInterface.view.View;
+
+import com.google.gwt.user.client.ui.VerticalPanel;
 
 
 public class ManagerTransferView extends View implements ManagerTransferViewPresenter.Display{
@@ -48,6 +40,11 @@ public class ManagerTransferView extends View implements ManagerTransferViewPres
 		wrapper.add(list);
 		wrapper.setCellHeight(list, "100%");
 		
+	}
+	
+	@Override
+	protected void initializeView() {
+		return;
 	}
 
 	@Override

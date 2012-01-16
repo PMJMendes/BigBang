@@ -15,32 +15,33 @@ public abstract class InsurancePolicyOperationsToolBar extends BigBangOperations
 	protected MenuItem issueCreditNote;
 	protected MenuItem subPolicy;
 	protected MenuItem infoManagementProcess;
-	
+
 	//EXECUTE
 	protected MenuItem detailedCalculations;
-	
+
 	//DATA
 	protected MenuItem managerTransfer;
 	protected MenuItem clientAsInsuredObject;
 	protected MenuItem createInsuredObject;
-	
+	protected MenuItem createExercise;
+
 	//REQUESTS
 	protected MenuItem agencyInfoRequestItem;
 	protected MenuItem clientInfoRequestItem;
-	
+
 	//ADMIN
 	protected MenuItem substitutePolicy;
 	protected MenuItem deleteItem;
 	protected MenuItem brokerageTransfer;
 	protected MenuItem voidPolicy;
-	
+
 	//OTHER
-	
-	
+
+
 	public InsurancePolicyOperationsToolBar(){
 		//CREATE
 		receiptItem = new MenuItem("Recibo", new Command() {
-			
+
 			@Override
 			public void execute() {
 				onCreateReceipt();
@@ -48,7 +49,7 @@ public abstract class InsurancePolicyOperationsToolBar extends BigBangOperations
 		});
 		addItem(SUB_MENU.CREATE, receiptItem);
 		riskAnalysis = new MenuItem("Análise de Risco", new Command() {
-			
+
 			@Override
 			public void execute() {
 				onCreateRiskAnalysis();
@@ -56,7 +57,7 @@ public abstract class InsurancePolicyOperationsToolBar extends BigBangOperations
 		});
 		addItem(SUB_MENU.CREATE, riskAnalysis);
 		healthExpense = new MenuItem("Despesa de Saúde", new Command() {
-			
+
 			@Override
 			public void execute() {
 				onCreateHealthExpense();
@@ -64,7 +65,7 @@ public abstract class InsurancePolicyOperationsToolBar extends BigBangOperations
 		});
 		addItem(SUB_MENU.CREATE, healthExpense);
 		negotiation = new MenuItem("Negociação", new Command() {
-			
+
 			@Override
 			public void execute() {
 				onCreateNegotiation();
@@ -72,7 +73,7 @@ public abstract class InsurancePolicyOperationsToolBar extends BigBangOperations
 		});
 		addItem(SUB_MENU.CREATE, negotiation);
 		issueCreditNote = new MenuItem("Emitir Nota de Crédito", new Command() {
-			
+
 			@Override
 			public void execute() {
 				onIssueCreditNote();
@@ -80,7 +81,7 @@ public abstract class InsurancePolicyOperationsToolBar extends BigBangOperations
 		});
 		addItem(SUB_MENU.CREATE, issueCreditNote);
 		subPolicy = new MenuItem("Apólice Adesão", new Command() {
-			
+
 			@Override
 			public void execute() {
 				onCreateSubPolicy();
@@ -88,27 +89,27 @@ public abstract class InsurancePolicyOperationsToolBar extends BigBangOperations
 		});
 		addItem(SUB_MENU.CREATE, subPolicy);
 		infoManagementProcess = new MenuItem("Processo de Gestão de Informação", new Command() {
-			
+
 			@Override
 			public void execute() {
 				onCreateInfoManagementProcess();
 			}
 		});
 		addItem(SUB_MENU.CREATE, infoManagementProcess);
-		
+
 		//EXECUTE
 		detailedCalculations = new MenuItem("Cálculos Detalhados", new Command() {
-			
+
 			@Override
 			public void execute() {
 				onExecuteDecailedCalculations();
 			}
 		});
 		addItem(SUB_MENU.EXECUTE, detailedCalculations);
-		
+
 		//DATA
 		managerTransfer = new MenuItem("Criar Transferência de Gestor", new Command() {
-			
+
 			@Override
 			public void execute() {
 				onCreateManagerTransfer();
@@ -116,7 +117,7 @@ public abstract class InsurancePolicyOperationsToolBar extends BigBangOperations
 		});
 		addItem(SUB_MENU.DATA, managerTransfer);
 		clientAsInsuredObject = new MenuItem("Criar Unidade de Risco a Partir do Cliente", new Command() {
-			
+
 			@Override
 			public void execute() {
 				onCreateInsuredObjectFromClient();
@@ -124,17 +125,25 @@ public abstract class InsurancePolicyOperationsToolBar extends BigBangOperations
 		});
 		addItem(SUB_MENU.DATA, clientAsInsuredObject);
 		createInsuredObject = new MenuItem("Criar Unidade de Risco", new Command() {
-			
+
 			@Override
 			public void execute() {
 				onCreateInsuredObject();
 			}
 		});
 		addItem(SUB_MENU.DATA, createInsuredObject);	
-		
+		createExercise = new MenuItem("Criar Exercício", new Command() {
+
+			@Override
+			public void execute() {
+				onCreateExercise();
+			}
+		});
+		addItem(SUB_MENU.DATA, createExercise);	
+
 		//REQUESTS
 		agencyInfoRequestItem = new MenuItem("Pedido de Informação à Seguradora", new Command() {
-			
+
 			@Override
 			public void execute() {
 				onRequestInfoFromAgency();
@@ -142,17 +151,17 @@ public abstract class InsurancePolicyOperationsToolBar extends BigBangOperations
 		});
 		addItem(SUB_MENU.REQUESTS, agencyInfoRequestItem);
 		clientInfoRequestItem = new MenuItem("Pedido de Informação ao Cliente", new Command() {
-			
+
 			@Override
 			public void execute() {
 				onRequestInfoFromClient();
 			}
 		});
 		addItem(SUB_MENU.REQUESTS, clientInfoRequestItem);	
-		
+
 		//ADMIN
 		substitutePolicy = new MenuItem("Criar Apólice de Substituição", new Command() {
-			
+
 			@Override
 			public void execute() {
 				onCreateSubstitutePolicy();
@@ -160,7 +169,7 @@ public abstract class InsurancePolicyOperationsToolBar extends BigBangOperations
 		});
 		addItem(SUB_MENU.ADMIN, substitutePolicy);
 		deleteItem = new MenuItem("Eliminar", new Command() {
-			
+
 			@Override
 			public void execute() {
 				onDelete();
@@ -168,7 +177,7 @@ public abstract class InsurancePolicyOperationsToolBar extends BigBangOperations
 		});
 		addItem(SUB_MENU.ADMIN, deleteItem);	
 		brokerageTransfer = new MenuItem("Transferência de Mediação", new Command() {
-			
+
 			@Override
 			public void execute() {
 				onBrokerageTransfer();
@@ -176,7 +185,7 @@ public abstract class InsurancePolicyOperationsToolBar extends BigBangOperations
 		});
 		addItem(SUB_MENU.ADMIN, brokerageTransfer);
 		voidPolicy = new MenuItem("Invalidar Apólice", new Command() {
-			
+
 			@Override
 			public void execute() {
 				onVoidPolicy();
@@ -188,11 +197,19 @@ public abstract class InsurancePolicyOperationsToolBar extends BigBangOperations
 	public void allowCreateReceipt(boolean allow){
 		this.receiptItem.setEnabled(allow);
 	};
-	
+
 	public void allowCreateInsuredObject(boolean allow){
 		this.createInsuredObject.setEnabled(allow);
 	}
-	
+
+	public void allowCreateExercise(boolean allow) {
+		this.createExercise.setEnabled(allow);
+	}
+
+	public void allowDelete(boolean allow) {
+		this.deleteItem.setEnabled(allow);
+	}
+
 	public abstract void onVoidPolicy();
 
 	public abstract void onBrokerageTransfer();
@@ -206,6 +223,8 @@ public abstract class InsurancePolicyOperationsToolBar extends BigBangOperations
 	public abstract void onRequestInfoFromAgency();
 
 	public abstract void onCreateInsuredObject();
+	
+	public abstract void onCreateExercise();
 
 	public abstract void onCreateInsuredObjectFromClient();
 
@@ -226,9 +245,5 @@ public abstract class InsurancePolicyOperationsToolBar extends BigBangOperations
 	public abstract void onCreateRiskAnalysis();
 
 	public abstract void onCreateReceipt();
-
-	public void allowDelete(boolean allow) {
-		this.deleteItem.setEnabled(allow);
-	}
 
 }

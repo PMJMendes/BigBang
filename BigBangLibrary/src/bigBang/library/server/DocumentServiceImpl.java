@@ -37,7 +37,7 @@ public class DocumentServiceImpl
 {
 	private static final long serialVersionUID = 1L;
 
-	public static DocumentData[] BuildDocTree(Document[] parrDocuments)
+	public static DocumentData[] BuildDocTree(DocOps prefAux, Document[] parrDocuments)
 	{
 		DocumentData[] larrResult;
 		int i, j;
@@ -180,7 +180,7 @@ public class DocumentServiceImpl
 		larrAux[0] = document;
 
 		lopDOps = new DocOps();
-		lopDOps.marrCreate = BuildDocTree(larrAux);
+		lopDOps.marrCreate = BuildDocTree(lopDOps, larrAux);
 		lopDOps.marrModify = null;
 		lopDOps.marrDelete = null;
 
@@ -214,7 +214,7 @@ public class DocumentServiceImpl
 		larrAux[0] = document;
 
 		lopDOps = new DocOps();
-		lopDOps.marrModify = BuildDocTree(larrAux);
+		lopDOps.marrModify = BuildDocTree(lopDOps, larrAux);
 		lopDOps.marrCreate = null;
 		lopDOps.marrDelete = null;
 

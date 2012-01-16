@@ -15,6 +15,7 @@ public class ComplaintSearchOperationView extends View implements ComplaintSearc
 	
 	public ComplaintSearchOperationView(){
 		SplitLayoutPanel mainWrapper = new SplitLayoutPanel();
+		initWidget(mainWrapper);
 		mainWrapper.setSize("100%", "100%");
 		
 		searchPanel = new ComplaintSearchPanel();
@@ -22,8 +23,11 @@ public class ComplaintSearchOperationView extends View implements ComplaintSearc
 		
 		form = new ComplaintForm();
 		mainWrapper.add(form);
-		
-		initWidget(mainWrapper);		
+	}
+
+	@Override
+	protected void initializeView() {
+		return;
 	}
 	
 }

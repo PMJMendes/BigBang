@@ -1,23 +1,22 @@
 package bigBang.library.client.userInterface.presenter;
 
-import com.google.gwt.user.client.ui.HasWidgets;
-import com.google.gwt.user.client.ui.Widget;
-
+import bigBang.definitions.shared.BigBangConstants.EntityIds;
 import bigBang.definitions.shared.ClientStub;
 import bigBang.definitions.shared.InsurancePolicyStub;
 import bigBang.definitions.shared.ManagerTransfer;
 import bigBang.definitions.shared.SearchResult;
-import bigBang.definitions.shared.BigBangConstants.EntityIds;
-import bigBang.library.client.EventBus;
+import bigBang.library.client.HasParameters;
 import bigBang.library.client.HasValueSelectables;
 import bigBang.library.client.event.SelectionChangedEvent;
 import bigBang.library.client.event.SelectionChangedEventHandler;
 import bigBang.library.client.userInterface.ListEntry;
 import bigBang.library.client.userInterface.view.ManagerTransferForm;
-import bigBang.library.client.userInterface.view.View;
-import bigBang.library.interfaces.Service;
 
-public abstract class ManagerTransferViewPresenter implements ViewPresenter{
+import com.google.gwt.user.client.ui.HasWidgets;
+import com.google.gwt.user.client.ui.UIObject;
+import com.google.gwt.user.client.ui.Widget;
+
+public class ManagerTransferViewPresenter implements ViewPresenter{
 
 	private ManagerTransfer transfer;
 	private Display view;
@@ -39,6 +38,10 @@ public abstract class ManagerTransferViewPresenter implements ViewPresenter{
 		Widget asWidget();
 
 	}
+	
+	public ManagerTransferViewPresenter(Display view){
+		setView((UIObject) view);
+	}
 
 	public void setManagerTransfer(ManagerTransfer transfer){
 
@@ -49,17 +52,14 @@ public abstract class ManagerTransferViewPresenter implements ViewPresenter{
 		chooseToolBarState();
 		
 		fillList();
-
-
 	}
-
 
 	private void chooseToolBarState() {
 		// TODO COMPARISON OF USER ID WITH NEW MANAGER
 		view.setToolBarState(BarStatus.ACCEPT_REJECT);
 	}
 
-
+	@Override
 	public void go(HasWidgets container){
 		bind();
 		bound = true;
@@ -68,6 +68,11 @@ public abstract class ManagerTransferViewPresenter implements ViewPresenter{
 	}
 
 	@Override
+	public void setParameters(HasParameters parameterHolder) {
+		// TODO Auto-generated method stub
+		
+	}
+	
 	public void bind(){
 		if(bound){
 			return;
@@ -87,28 +92,9 @@ public abstract class ManagerTransferViewPresenter implements ViewPresenter{
 	}
 
 	@Override
-	public void setService(Service service) {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void setEventBus(EventBus eventBus) {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void setView(View view) {
+	public void setView(UIObject view) {
 
 		this.view = (Display)view;
-
-	}
-
-
-	@Override
-	public void registerEventHandlers(EventBus eventBus) {
-		// TODO Auto-generated method stub
 
 	}
 

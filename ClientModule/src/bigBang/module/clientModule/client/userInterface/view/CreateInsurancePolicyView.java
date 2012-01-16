@@ -13,15 +13,15 @@ import bigBang.library.client.event.ActionInvokedEvent;
 import bigBang.library.client.event.ActionInvokedEventHandler;
 import bigBang.library.client.userInterface.ListHeader;
 import bigBang.library.client.userInterface.OperationsToolBar;
+import bigBang.library.client.userInterface.view.FormView;
 import bigBang.library.client.userInterface.view.View;
 import bigBang.module.clientModule.client.userInterface.presenter.CreateInsurancePolicyViewPresenter;
 import bigBang.module.clientModule.client.userInterface.presenter.CreateInsurancePolicyViewPresenter.Action;
-import bigBang.module.insurancePolicyModule.client.userInterface.InsurancePolicyForm;
 
 public class CreateInsurancePolicyView extends View implements CreateInsurancePolicyViewPresenter.Display {
 
 	protected ClientFormView clientForm;
-	protected InsurancePolicyForm insurancePolicyForm;
+	protected FormView<InsurancePolicy> insurancePolicyForm;
 	
 	protected ActionInvokedEventHandler<Action> actionHandler;
 	
@@ -58,25 +58,43 @@ public class CreateInsurancePolicyView extends View implements CreateInsurancePo
 		insurancePolicyWrapper.add(insurancePolicyHeader);
 		insurancePolicyHeader.setHeight("30px");
 		insurancePolicyWrapper.setSize("100%", "100%");
-		insurancePolicyForm = new InsurancePolicyForm(){
+		
+		insurancePolicyForm = new FormView<InsurancePolicy>() {
+			
 			@Override
-			public void onSubLineChanged(String subLineId) {
-				if(actionHandler != null){
-					actionHandler.onActionInvoked(new ActionInvokedEvent<CreateInsurancePolicyViewPresenter.Action>(Action.MODALITY_CHANGED));
-				}
+			public void setInfo(InsurancePolicy info) {
+				// TODO Auto-generated method stub
+				
+			}
+			
+			@Override
+			public InsurancePolicy getInfo() {
+				// TODO Auto-generated method stub
+				return null;
 			}
 		};
-		insurancePolicyForm.setSize("100%", "100%");
-		insurancePolicyForm.setReadOnly(false);
-		insurancePolicyForm.setForNew();
+//		insurancePolicyForm = new InsurancePolicyForm(){
+//			@Override
+//			public void onSubLineChanged(String subLineId) {
+//				if(actionHandler != null){
+//					actionHandler.onActionInvoked(new ActionInvokedEvent<CreateInsurancePolicyViewPresenter.Action>(Action.MODALITY_CHANGED));
+//				}
+//			}
+//		};
+//		insurancePolicyForm.setSize("100%", "100%");
+//		insurancePolicyForm.setReadOnly(false);
+//		insurancePolicyForm.setForNew();
 		insurancePolicyWrapper.add(toolbar);
 		insurancePolicyWrapper.add(insurancePolicyForm);
 		insurancePolicyWrapper.setCellHeight(insurancePolicyForm, "100%");
 	}
+	
+	@Override
+	protected void initializeView() {}
 
 	@Override
 	public TableSection getCurrentTableSection(){
-		return this.insurancePolicyForm.getTable().getData();
+		return null; //this.insurancePolicyForm.getTable().getData();
 	}
 	
 	@Override
@@ -101,12 +119,12 @@ public class CreateInsurancePolicyView extends View implements CreateInsurancePo
 
 	@Override
 	public String getInsuredObjectFilter() {
-		return this.insurancePolicyForm.getTable().getInsuredObjectFilterValue();
+		return null; // this.insurancePolicyForm.getTable().getInsuredObjectFilterValue();
 	}
 
 	@Override
 	public String getExerciseFilter() {
-		return this.insurancePolicyForm.getTable().getExerciseFilterValue();
+		return null; // this.insurancePolicyForm.getTable().getExerciseFilterValue();
 	}
 	
 }

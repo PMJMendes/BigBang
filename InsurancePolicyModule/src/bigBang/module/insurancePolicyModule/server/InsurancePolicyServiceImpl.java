@@ -42,13 +42,11 @@ import bigBang.library.server.SearchServiceBase;
 import bigBang.library.shared.BigBangException;
 import bigBang.library.shared.SessionExpiredException;
 import bigBang.module.insurancePolicyModule.interfaces.InsurancePolicyService;
-import bigBang.module.insurancePolicyModule.shared.BigBangPolicyValidationException;
 import bigBang.module.insurancePolicyModule.shared.InsurancePolicySearchParameter;
 import bigBang.module.insurancePolicyModule.shared.InsurancePolicySortParameter;
 import bigBang.module.receiptModule.server.ReceiptServiceImpl;
 
 import com.premiumminds.BigBang.Jewel.Constants;
-import com.premiumminds.BigBang.Jewel.PolicyValidationException;
 import com.premiumminds.BigBang.Jewel.ZipCodeBridge;
 import com.premiumminds.BigBang.Jewel.Data.PolicyCoverageData;
 import com.premiumminds.BigBang.Jewel.Data.PolicyData;
@@ -78,7 +76,6 @@ import com.premiumminds.BigBang.Jewel.Operations.Policy.CreatePolicyMgrXFer;
 import com.premiumminds.BigBang.Jewel.Operations.Policy.CreateReceipt;
 import com.premiumminds.BigBang.Jewel.Operations.Policy.DeletePolicy;
 import com.premiumminds.BigBang.Jewel.Operations.Policy.ManagePolicyData;
-import com.premiumminds.BigBang.Jewel.Operations.Policy.ValidatePolicy;
 
 public class InsurancePolicyServiceImpl
 	extends SearchServiceBase
@@ -1248,7 +1245,6 @@ public class InsurancePolicyServiceImpl
 			lobjExercise = marrExercises.get(plngExercise);
 			pobjResult.id = mid.toString() + ":" + Integer.toString(plngExercise);
 			pobjResult.label = lobjExercise.mstrLabel;
-			pobjResult.ownerId = ( mobjPolicy.mid == null ? mid.toString() : mobjPolicy.mid.toString() );
 			pobjResult.startDate = ( lobjExercise.mdtStart == null ? null : lobjExercise.mdtStart.toString().substring(0, 10) );
 			pobjResult.endDate = ( lobjExercise.mdtEnd == null ? null : lobjExercise.mdtEnd.toString().substring(0, 10) );
 
@@ -3032,40 +3028,6 @@ public class InsurancePolicyServiceImpl
 		return lrefPad.GetRemapFromPad(false);
 	}
 
-	public void validatePolicy(String policyId)
-		throws SessionExpiredException, BigBangException, BigBangPolicyValidationException
-	{
-		Policy lobjPolicy;
-		ValidatePolicy lopVP;
-
-		if ( Engine.getCurrentUser() == null )
-			throw new SessionExpiredException();
-
-		try
-		{
-			lobjPolicy = Policy.GetInstance(Engine.getCurrentNameSpace(), UUID.fromString(policyId));
-		}
-		catch (Throwable e)
-		{
-			throw new BigBangException(e.getMessage(), e);
-		}
-
-		lopVP = new ValidatePolicy(lobjPolicy.GetProcessID());
-
-		try
-		{
-			lopVP.Execute();
-		}
-		catch (PolicyValidationException e)
-		{
-			throw new BigBangPolicyValidationException(e.getMessage());
-		}
-		catch (Throwable e)
-		{
-			throw new BigBangException(e.getMessage(), e);
-		}
-	}
-
 	@Override
 	public InsuredObject includeObject(String policyId, InsuredObject object)
 			throws SessionExpiredException, BigBangException {
@@ -3216,14 +3178,15 @@ public class InsurancePolicyServiceImpl
 			if ( (receipt.contacts != null) && (receipt.contacts.length > 0) )
 			{
 				lopCR.mobjContactOps = new ContactOps();
-				lopCR.mobjContactOps.marrCreate = ContactsServiceImpl.BuildContactTree(receipt.contacts);
+				lopCR.mobjContactOps.marrCreate = ContactsServiceImpl.BuildContactTree(lopCR.mobjContactOps,
+						receipt.contacts, Constants.ObjID_Policy);
 			}
 			else
 				lopCR.mobjContactOps = null;
 			if ( (receipt.documents != null) && (receipt.documents.length > 0) )
 			{
 				lopCR.mobjDocOps = new DocOps();
-				lopCR.mobjDocOps.marrCreate = DocumentServiceImpl.BuildDocTree(receipt.documents);
+				lopCR.mobjDocOps.marrCreate = DocumentServiceImpl.BuildDocTree(lopCR.mobjDocOps, receipt.documents);
 			}
 			else
 				lopCR.mobjDocOps = null;

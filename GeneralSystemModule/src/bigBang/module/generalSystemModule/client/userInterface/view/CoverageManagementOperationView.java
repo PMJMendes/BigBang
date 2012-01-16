@@ -24,6 +24,7 @@ public class CoverageManagementOperationView extends View implements CoverageMan
 		coverageList = new CoverageList(subLineList);
 
 		HorizontalPanel wrapper = new HorizontalPanel();
+		initWidget(wrapper);
 		wrapper.setSize("100%", "100%");
 		
 		wrapper.add(lineList);
@@ -33,8 +34,11 @@ public class CoverageManagementOperationView extends View implements CoverageMan
 		wrapper.setCellWidth(lineList, "33%");
 		wrapper.setCellWidth(subLineList, "33%");
 		wrapper.setCellWidth(coverageList, "33%");
-		
-		initWidget(wrapper);
+	}
+	
+	@Override
+	protected void initializeView() {
+		return;
 	}
 	
 	@Override

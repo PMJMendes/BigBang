@@ -25,6 +25,7 @@ public class UserList extends FilterableList<User> implements UserDataBrokerClie
 		header.showRefreshButton();
 		setHeaderWidget(header);
 		onSizeChanged();
+		showFilterField(false);
 		
 		this.userBroker = (UserBroker) DataBrokerManager.Util.getInstance().getBroker(BigBangConstants.EntityIds.USER);
 		this.userBroker.registerClient(this);
@@ -68,13 +69,13 @@ public class UserList extends FilterableList<User> implements UserDataBrokerClie
 	public void setUsers(User[] users) {
 		this.clear();
 		for(int i = 0; i < users.length; i++) {
-			addUser(users[i]);
+			add(new UserListEntry(users[i]));
 		}
 	}
 
 	@Override
 	public void addUser(User user) {
-		add(new UserListEntry(user));
+		add(0, new UserListEntry(user));
 	}
 
 	@Override

@@ -1,26 +1,17 @@
 package bigBang.module.generalSystemModule.client.userInterface.presenter;
 
-import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
+import bigBang.definitions.shared.Line;
+import bigBang.definitions.shared.Tax;
+import bigBang.library.client.HasParameters;
+import bigBang.library.client.userInterface.presenter.ViewPresenter;
+
 import com.google.gwt.event.dom.client.HasClickHandlers;
 import com.google.gwt.user.client.ui.HasValue;
 import com.google.gwt.user.client.ui.HasWidgets;
+import com.google.gwt.user.client.ui.UIObject;
 import com.google.gwt.user.client.ui.Widget;
 
-import bigBang.definitions.shared.Line;
-import bigBang.definitions.shared.Tax;
-import bigBang.library.client.BigBangAsyncCallback;
-import bigBang.library.client.EventBus;
-import bigBang.library.client.Operation;
-import bigBang.library.client.userInterface.presenter.OperationViewPresenter;
-import bigBang.library.client.userInterface.view.View;
-import bigBang.library.interfaces.Service;
-import bigBang.module.generalSystemModule.client.userInterface.view.TaxManagementOperationView;
-import bigBang.module.generalSystemModule.interfaces.CoveragesServiceAsync;
-import bigBang.module.generalSystemModule.shared.operation.TaxManagementOperation;
-
-public class TaxManagementOperationViewPresenter implements
-		OperationViewPresenter {
+public class TaxManagementOperationViewPresenter implements ViewPresenter {
 	
 	public interface Display {
 		void setLines(Line[] lines);
@@ -49,164 +40,100 @@ public class TaxManagementOperationViewPresenter implements
 		Widget asWidget();
 	}
 	
-	private CoveragesServiceAsync service;
 	private Display view;
-	@SuppressWarnings("unused")
-	private EventBus eventBus;
-	
-	private TaxManagementOperation operation;
 	private boolean bound = false;
 
-	public TaxManagementOperationViewPresenter(EventBus eventBus,
-			Service coveragesService,
-			TaxManagementOperationView view) {
-		setEventBus(eventBus);
-		setService(coveragesService);
-		setView((View) view);
+	public TaxManagementOperationViewPresenter(Display view) {
+		setView((UIObject) view);
 	}
 
 	@Override
-	public void setService(Service service) {
-		this.service = (CoveragesServiceAsync) service;
-	}
-
-	@Override
-	public void setEventBus(EventBus eventBus) {
-		this.eventBus = eventBus;
-	}
-
-	@Override
-	public void setView(View view) {
+	public void setView(UIObject view) {
 		this.view = (Display) view;
 	}
 
 	@Override
 	public void go(HasWidgets container) {
-		if(!bound)
-			bind();
-		bound = true;
-
-		view.clear();
-		setup();
-		
+		bind();
 		container.clear();
 		container.add(this.view.asWidget());
 	}
 	
-	public void setup(){
-		this.service.getLines(new BigBangAsyncCallback<Line[]>() {
-
-			@Override
-			public void onSuccess(Line[] result) {
-				view.setLines(result);
-			}
-		});
-	}
-
 	@Override
+	public void setParameters(HasParameters parameterHolder) {
+		//TODO
+	}
+	
 	public void bind() {
-		view.getNewButton().addClickHandler(new ClickHandler() {
-			
-			@Override
-			public void onClick(ClickEvent event) {
-				view.getTaxForm().setValue(null);
-				view.lockForm(false);
-				view.showForm(true);
-			}
-		});
-		view.getSaveButton().addClickHandler(new ClickHandler() {
-			
-			@Override
-			public void onClick(ClickEvent event) {
-				Tax value = view.getTaxForm().getValue();
-				if(value.id == null){
-					value.coverageId = view.getCurrentCoverageId();
-					createTax(value);
-				}else 
-					saveTax(value);
-			}
-		});
-		view.getDeleteButton().addClickHandler(new ClickHandler() {
-			
-			@Override
-			public void onClick(ClickEvent event) {
-				Tax tax = view.getTaxForm().getValue();
-				if(tax.id == null)
-					view.showForm(false);
-				else
-					deleteTax(tax);
-			}
-		});
+		if(bound){return;}
+
+//		view.getNewButton().addClickHandler(new ClickHandler() {
+//			
+//			@Override
+//			public void onClick(ClickEvent event) {
+//				view.getTaxForm().setValue(null);
+//				view.lockForm(false);
+//				view.showForm(true);
+//			}
+//		});
+//		view.getSaveButton().addClickHandler(new ClickHandler() {
+//			
+//			@Override
+//			public void onClick(ClickEvent event) {
+//				Tax value = view.getTaxForm().getValue();
+//				if(value.id == null){
+//					value.coverageId = view.getCurrentCoverageId();
+//					createTax(value);
+//				}else 
+//					saveTax(value);
+//			}
+//		});
+//		view.getDeleteButton().addClickHandler(new ClickHandler() {
+//			
+//			@Override
+//			public void onClick(ClickEvent event) {
+//				Tax tax = view.getTaxForm().getValue();
+//				if(tax.id == null)
+//					view.showForm(false);
+//				else
+//					deleteTax(tax);
+//			}
+//		});
+		
+		bound = true;
 	}
-	
-	private void createTax(Tax tax) {
-		service.createTax(tax, new BigBangAsyncCallback<Tax>() {
-
-			@Override
-			public void onSuccess(Tax result) {
-				view.addTaxToList(result);
-				view.showForm(false);
-			}
-		});
-	}
-	
-	private void saveTax(Tax tax) {
-		service.saveTax(tax, new BigBangAsyncCallback<Tax>() {
-
-			@Override
-			public void onSuccess(Tax result) {
-				view.getTaxForm().setValue(result);
-				view.showForm(false);
-			}
-		});
-	}
-
-	private void deleteTax(final Tax tax) {
-		service.deleteTax(tax.id, new BigBangAsyncCallback<Void>() {
-
-			@Override
-			public void onSuccess(Void result) {
-				view.showForm(false);
-				view.removeTaxFromList(tax);
-			}
-		});
-	}
-
-	@Override
-	public void registerEventHandlers(EventBus eventBus) {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void setOperation(Operation o) {
-		this.operation = (TaxManagementOperation) o;
-	}
-
-	@Override
-	public Operation getOperation() {
-		return this.operation;
-	}
-
-	@Override
-	public void goCompact(HasWidgets container) {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public String setTargetEntity(String id) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public void setOperationPermission(boolean hasPermissionForOperation) {
-		setReadOnly(!hasPermissionForOperation);
-	}
-	
-	public void setReadOnly(boolean readOnly) {
-		this.view.setReadOnly(readOnly);
-	}
+//
+//	private void createTax(Tax tax) {
+//		service.createTax(tax, new BigBangAsyncCallback<Tax>() {
+//
+//			@Override
+//			public void onSuccess(Tax result) {
+//				view.addTaxToList(result);
+//				view.showForm(false);
+//			}
+//		});
+//	}
+//	
+//	private void saveTax(Tax tax) {
+//		service.saveTax(tax, new BigBangAsyncCallback<Tax>() {
+//
+//			@Override
+//			public void onSuccess(Tax result) {
+//				view.getTaxForm().setValue(result);
+//				view.showForm(false);
+//			}
+//		});
+//	}
+//
+//	private void deleteTax(final Tax tax) {
+//		service.deleteTax(tax.id, new BigBangAsyncCallback<Void>() {
+//
+//			@Override
+//			public void onSuccess(Void result) {
+//				view.showForm(false);
+//				view.removeTaxFromList(tax);
+//			}
+//		});
+//	}
 
 }

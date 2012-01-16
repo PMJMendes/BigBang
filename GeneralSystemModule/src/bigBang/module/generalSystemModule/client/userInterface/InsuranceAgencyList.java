@@ -24,6 +24,7 @@ public class InsuranceAgencyList extends FilterableList<InsuranceAgency> impleme
 		header.showRefreshButton();
 		setHeaderWidget(header);
 		onSizeChanged();
+		showFilterField(false);
 	}
 	
 	@Override
@@ -74,13 +75,13 @@ public class InsuranceAgencyList extends FilterableList<InsuranceAgency> impleme
 	public void setInsuranceAgencies(InsuranceAgency[] insuranceAgencies) {
 		clear();
 		for(int i = 0; i < insuranceAgencies.length; i++) {
-			addInsuranceAgency(insuranceAgencies[i]);
+			add(new InsuranceAgencyListEntry(insuranceAgencies[i]));
 		}
 	}
 
 	@Override
 	public void addInsuranceAgency(InsuranceAgency insuranceAgency) {
-		add(new InsuranceAgencyListEntry(insuranceAgency));
+		add(0, new InsuranceAgencyListEntry(insuranceAgency));
 	}
 
 	@Override

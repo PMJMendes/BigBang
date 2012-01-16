@@ -1,9 +1,12 @@
 package bigBang.module.generalSystemModule.client.dataAccess;
 
+import java.util.Collection;
+
 import bigBang.definitions.client.dataAccess.DataBroker;
 import bigBang.definitions.client.dataAccess.DataBrokerClient;
 import bigBang.definitions.client.dataAccess.InsuranceAgencyBroker;
 import bigBang.definitions.client.dataAccess.InsuranceAgencyDataBrokerClient;
+import bigBang.definitions.client.response.ResponseError;
 import bigBang.definitions.client.response.ResponseHandler;
 import bigBang.definitions.shared.BigBangConstants;
 import bigBang.definitions.shared.InsuranceAgency;
@@ -44,12 +47,23 @@ public class InsuranceAgencyBrokerImpl extends DataBroker<InsuranceAgency> imple
 					for(int i = 0; i < result.length; i++) {
 						cache.add(result[i].id, result[i]);
 					}
+					incrementDataVersion();
 					for(DataBrokerClient<InsuranceAgency> c : getClients()) {
 						((InsuranceAgencyDataBrokerClient) c).setInsuranceAgencies(result);
+						((InsuranceAgencyDataBrokerClient) c).setDataVersionNumber(getDataElementId(), getCurrentDataVersion());
 					}
 					handler.onResponse(result);
 					needsRefresh = false;
 				}
+				
+				@Override
+				public void onFailure(Throwable caught) {
+					handler.onError(new String[]{
+						new String("Could not get insurance agencies list")	
+					});
+					super.onFailure(caught);
+				}
+				
 			});
 		}else{
 			int size = this.cache.getNumberOfEntries();
@@ -82,10 +96,20 @@ public class InsuranceAgencyBrokerImpl extends DataBroker<InsuranceAgency> imple
 			@Override
 			public void onSuccess(InsuranceAgency result) {
 				cache.add(result.id, result);
+				incrementDataVersion();
 				for(DataBrokerClient<InsuranceAgency> c : getClients()) {
 					((InsuranceAgencyDataBrokerClient) c).addInsuranceAgency(result);
+					((InsuranceAgencyDataBrokerClient) c).setDataVersionNumber(getDataElementId(), getCurrentDataVersion());
 				}
 				handler.onResponse(result);
+			}
+			
+			@Override
+			public void onFailure(Throwable caught) {
+				handler.onError(new String[]{
+					new String("Could not create insurance agency")	
+				});
+				super.onFailure(caught);
 			}
 		});
 	}
@@ -98,11 +122,22 @@ public class InsuranceAgencyBrokerImpl extends DataBroker<InsuranceAgency> imple
 			@Override
 			public void onSuccess(InsuranceAgency result) {
 				cache.update(result.id, result);
+				incrementDataVersion();
 				for(DataBrokerClient<InsuranceAgency> c : getClients()) {
 					((InsuranceAgencyDataBrokerClient) c).updateInsuranceAgency(result);
+					((InsuranceAgencyDataBrokerClient) c).setDataVersionNumber(getDataElementId(), getCurrentDataVersion());
 				}
 				handler.onResponse(result);
 			}
+			
+			@Override
+			public void onFailure(Throwable caught) {
+				handler.onError(new String[]{
+					new String("Could not update insurance agency")	
+				});
+				super.onFailure(caught);
+			}
+			
 		});
 	}
 
@@ -114,11 +149,22 @@ public class InsuranceAgencyBrokerImpl extends DataBroker<InsuranceAgency> imple
 			@Override
 			public void onSuccess(Void result) {
 				cache.remove(insuranceAgencyId);
+				incrementDataVersion();
 				for(DataBrokerClient<InsuranceAgency> c : getClients()) {
 					((InsuranceAgencyDataBrokerClient) c).removeInsuranceAgency(insuranceAgencyId);
+					((InsuranceAgencyDataBrokerClient) c).setDataVersionNumber(getDataElementId(), getCurrentDataVersion());
 				}
 				handler.onResponse(null);
 			}
+			
+			@Override
+			public void onFailure(Throwable caught) {
+				handler.onError(new String[]{
+						new String("Could not delete insurance agency")
+				});
+				super.onFailure(caught);
+			}
+			
 		});
 	}
 
@@ -138,19 +184,55 @@ public class InsuranceAgencyBrokerImpl extends DataBroker<InsuranceAgency> imple
 	@Override
 	public void notifyItemCreation(String itemId) {
 		requireDataRefresh();
-		//TODO FJVC
+		getInsuranceAgency(itemId, new ResponseHandler<InsuranceAgency>() {
+
+			@Override
+			public void onResponse(InsuranceAgency response) {
+				cache.add(response.id, response);
+				incrementDataVersion();
+				for(DataBrokerClient<InsuranceAgency> c : getClients()) {
+					((InsuranceAgencyDataBrokerClient) c).addInsuranceAgency(response);
+					((InsuranceAgencyDataBrokerClient) c).setDataVersionNumber(getDataElementId(), getCurrentDataVersion());
+				}
+			}
+
+			@Override
+			public void onError(Collection<ResponseError> errors) {
+				return;
+			}
+		});
 	}
 
 	@Override
 	public void notifyItemDeletion(String itemId) {
 		requireDataRefresh();
-		//TODO
+		cache.remove(itemId);
+		for(DataBrokerClient<InsuranceAgency> c : getClients()) {
+			((InsuranceAgencyDataBrokerClient) c).removeInsuranceAgency(itemId);
+			((InsuranceAgencyDataBrokerClient) c).setDataVersionNumber(getDataElementId(), getCurrentDataVersion());
+		}
 	}
 
 	@Override
 	public void notifyItemUpdate(String itemId) {
 		requireDataRefresh();
-		//TODO
+		getInsuranceAgency(itemId, new ResponseHandler<InsuranceAgency>() {
+
+			@Override
+			public void onResponse(InsuranceAgency response) {
+				cache.add(response.id, response);
+				incrementDataVersion();
+				for(DataBrokerClient<InsuranceAgency> c : getClients()) {
+					((InsuranceAgencyDataBrokerClient) c).updateInsuranceAgency(response);
+					((InsuranceAgencyDataBrokerClient) c).setDataVersionNumber(getDataElementId(), getCurrentDataVersion());
+				}
+			}
+
+			@Override
+			public void onError(Collection<ResponseError> errors) {
+				return;
+			}
+		});
 	}
 
 }

@@ -2,10 +2,6 @@ package bigBang.module.clientModule.client.userInterface.presenter;
 
 import java.util.Collection;
 
-import com.google.gwt.user.client.ui.HasValue;
-import com.google.gwt.user.client.ui.HasWidgets;
-import com.google.gwt.user.client.ui.Widget;
-
 import bigBang.definitions.client.dataAccess.ClientProcessBroker;
 import bigBang.definitions.client.response.ResponseError;
 import bigBang.definitions.client.response.ResponseHandler;
@@ -13,24 +9,24 @@ import bigBang.definitions.shared.BigBangConstants;
 import bigBang.definitions.shared.Client;
 import bigBang.definitions.shared.ClientStub;
 import bigBang.definitions.shared.ManagerTransfer;
-import bigBang.library.client.EventBus;
 import bigBang.library.client.HasEditableValue;
+import bigBang.library.client.HasParameters;
 import bigBang.library.client.HasValueSelectables;
-import bigBang.library.client.Operation;
 import bigBang.library.client.ValueSelectable;
 import bigBang.library.client.dataAccess.DataBrokerManager;
 import bigBang.library.client.event.ActionInvokedEvent;
 import bigBang.library.client.event.ActionInvokedEventHandler;
 import bigBang.library.client.event.SelectionChangedEvent;
 import bigBang.library.client.event.SelectionChangedEventHandler;
-import bigBang.library.client.userInterface.presenter.OperationViewPresenter;
+import bigBang.library.client.userInterface.presenter.ViewPresenter;
 import bigBang.library.client.userInterface.view.View;
-import bigBang.library.interfaces.Service;
-import bigBang.module.clientModule.interfaces.ClientServiceAsync;
-import bigBang.module.clientModule.shared.operation.ClientManagerTransferOperation;
 
-public class ClientManagerTransferOperationViewPresenter implements
-OperationViewPresenter {
+import com.google.gwt.user.client.ui.HasValue;
+import com.google.gwt.user.client.ui.HasWidgets;
+import com.google.gwt.user.client.ui.UIObject;
+import com.google.gwt.user.client.ui.Widget;
+
+public class ClientManagerTransferOperationViewPresenter implements ViewPresenter {
 
 	public static enum Action {
 		TRANSFER
@@ -58,30 +54,15 @@ OperationViewPresenter {
 
 	protected boolean bound = false;
 	protected Display view;
-	protected EventBus eventBus;
-	protected ClientServiceAsync service;
-	protected ClientManagerTransferOperation operation;
 	protected ClientProcessBroker clientBroker;
 
-	public ClientManagerTransferOperationViewPresenter(EventBus eventBus, Service service, View view){
-		this.setService(service);
+	public ClientManagerTransferOperationViewPresenter(View view){
 		this.setView(view);
-		this.setEventBus(eventBus);
 		this.clientBroker = ((ClientProcessBroker) DataBrokerManager.Util.getInstance().getBroker(BigBangConstants.EntityIds.CLIENT));
 	}
 
-	public void setService(Service service) {
-		this.service = (ClientServiceAsync) service;
-	}
-
-	public void setEventBus(final EventBus eventBus) {
-		this.eventBus = eventBus;
-		if(this.eventBus == null)
-			return;
-		registerEventHandlers(eventBus);
-	}
-
-	public void setView(View view) {
+	@Override
+	public void setView(UIObject view) {
 		this.view = (Display) view;
 	}
 
@@ -91,14 +72,12 @@ OperationViewPresenter {
 		container.add(this.view.asWidget());
 	}
 
-	//The compact version of the operation view
-	public void goCompact(HasWidgets container){
-		go(container);
-		/*this.bind();
-		container.clear();
-		container.add((Widget)this.view.getSearchPreviewPanelContainer());*/
+	@Override
+	public void setParameters(HasParameters parameterHolder) {
+		// TODO Auto-generated method stub
+		
 	}
-
+	
 	public void bind() {
 		if(bound)
 			return;
@@ -183,38 +162,8 @@ OperationViewPresenter {
 				}
 			}
 		});
-	}
-
-	public void setOperation(final ClientManagerTransferOperation operation) {
-		this.operation = operation;
-	}
-
-	public void registerEventHandlers(final EventBus eventBus) {
-		//TODO
-	}
-
-	public void setOperation(Operation o) {
-		this.operation = (ClientManagerTransferOperation)o;
-	}
-
-	public Operation getOperation() {
-		return this.operation;
-	}
-
-	public String setTargetEntity(String id) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public void setOperationPermission(boolean result) {
-		this.operation.setPermission(result);
-		setReadOnly(result);
-	}
-
-	protected void setReadOnly(boolean result) {
-		// TODO Auto-generated method stub
-
+		
+		//APPLICATION-WIDE EVENTS
 	}
 
 }

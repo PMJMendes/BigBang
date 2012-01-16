@@ -1,53 +1,60 @@
 package bigBang.module.expenseModule.client;
 
 import bigBang.definitions.client.dataAccess.DataBroker;
-import bigBang.library.client.BigBangPermissionManager;
-import bigBang.library.client.EventBus;
 import bigBang.library.client.Module;
-import bigBang.library.client.Process;
-import bigBang.library.client.event.ModuleInitializedEvent;
-import bigBang.library.client.userInterface.presenter.SectionViewPresenter;
+import bigBang.library.client.ViewPresenterFactory;
+import bigBang.library.client.ViewPresenterInstantiator;
+import bigBang.library.client.userInterface.presenter.ViewPresenter;
+import bigBang.module.expenseModule.client.userInterface.presenter.ExpenseOperationsViewPresenter;
+import bigBang.module.expenseModule.client.userInterface.presenter.ExpenseSearchOperationViewPresenter;
 import bigBang.module.expenseModule.client.userInterface.presenter.ExpenseSectionViewPresenter;
+import bigBang.module.expenseModule.client.userInterface.view.ExpenseOperationsView;
+import bigBang.module.expenseModule.client.userInterface.view.ExpenseSearchOperationView;
 import bigBang.module.expenseModule.client.userInterface.view.ExpenseSectionView;
+
+import com.google.gwt.core.client.GWT;
 
 public class ExpenseModule implements Module {
 
-	private SectionViewPresenter[] sectionPresenters;
-	protected BigBangPermissionManager permissionManager;
+	private boolean initialized = false;
 
-	public ExpenseModule(){
-	}
-
-	public void initialize(EventBus eventBus, BigBangPermissionManager permissionManager) {
-		this.permissionManager = permissionManager;
-		initialize(eventBus); 
-	}
-
-	public void initialize(EventBus eventBus) {
-		sectionPresenters = new SectionViewPresenter[1];
-
-		//Expense section
-		ExpenseSection expenseSection = new ExpenseSection(this.permissionManager);
-		ExpenseSectionView expenseSectionView = new ExpenseSectionView();
-		ExpenseSectionViewPresenter expenseSectionViewPresenter = new ExpenseSectionViewPresenter(eventBus, null, expenseSectionView);
-		expenseSectionViewPresenter.setSection(expenseSection);
-		expenseSection.registerEventHandlers(eventBus);
-		sectionPresenters[0] = expenseSectionViewPresenter;
-
-		eventBus.fireEvent(new ModuleInitializedEvent(this));
+	public void initialize() {
+		registerViewPresenters();
+		initialized = true;
 	}
 
 	public boolean isInitialized() {
-		// TODO Auto-generated method stub
-		return false;
+		return initialized;
 	}
 
-	public SectionViewPresenter[] getMainMenuSectionPresenters() {
-		return sectionPresenters;
-	}
+	private void registerViewPresenters(){
+		ViewPresenterFactory.getInstance().registerViewPresenterInstantiator("EXPENSE_SECTION", new ViewPresenterInstantiator() {
 
-	public Process[] getProcesses() {
-		return null;
+			@Override
+			public ViewPresenter getInstance() {
+				ExpenseSectionView expenseSectionView = (ExpenseSectionView) GWT.create(ExpenseSectionView.class);
+				ExpenseSectionViewPresenter expenseSectionViewPresenter = new ExpenseSectionViewPresenter(expenseSectionView);
+				return expenseSectionViewPresenter;
+			}
+		});
+		ViewPresenterFactory.getInstance().registerViewPresenterInstantiator("EXPENSE_OPERATIONS", new ViewPresenterInstantiator() {
+
+			@Override
+			public ViewPresenter getInstance() {
+				ExpenseOperationsView view = (ExpenseOperationsView) GWT.create(ExpenseOperationsView.class);
+				ViewPresenter presenter = new ExpenseOperationsViewPresenter(view);
+				return presenter;
+			}
+		});
+		ViewPresenterFactory.getInstance().registerViewPresenterInstantiator("EXPENSE_SEARCH", new ViewPresenterInstantiator() {
+
+			@Override
+			public ViewPresenter getInstance() {
+				ExpenseSearchOperationView expenseSearchOperationView = (ExpenseSearchOperationView) GWT.create(ExpenseSearchOperationView.class);
+				ExpenseSearchOperationViewPresenter expenseSearchOperationViewPresenter = new ExpenseSearchOperationViewPresenter(expenseSearchOperationView);
+				return expenseSearchOperationViewPresenter;
+			}
+		});
 	}
 
 	@Override

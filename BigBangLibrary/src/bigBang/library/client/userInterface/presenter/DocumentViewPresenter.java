@@ -1,10 +1,12 @@
 package bigBang.library.client.userInterface.presenter;
 
 import com.google.gwt.user.client.ui.HasWidgets;
+import com.google.gwt.user.client.ui.UIObject;
 import com.google.gwt.user.client.ui.Widget;
 
 import bigBang.definitions.shared.Document;
 import bigBang.library.client.EventBus;
+import bigBang.library.client.HasParameters;
 import bigBang.library.client.event.ActionInvokedEvent;
 import bigBang.library.client.event.ActionInvokedEventHandler;
 import bigBang.library.client.userInterface.presenter.ContactViewPresenter.Action;
@@ -36,19 +38,10 @@ public abstract class DocumentViewPresenter implements ViewPresenter{
 		void createNewNote();
 		
 	}
-	
 
 	@Override
-	public void setEventBus(EventBus eventBus) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void setView(View view) {
-
+	public void setView(UIObject view) {
 		this.view = (Display)view;
-
 	}
 
 	public void go(HasWidgets container) {
@@ -56,11 +49,15 @@ public abstract class DocumentViewPresenter implements ViewPresenter{
 		bound = true;
 		container.clear();
 		container.add(this.view.asWidget());
-
 	}
 
 	@Override
-	public void bind() {
+	public void setParameters(HasParameters parameterHolder) {
+		// TODO Auto-generated method stub
+		
+	}
+	
+	private void bind() {
 		if(bound){
 			return;
 		}
@@ -91,13 +88,7 @@ public abstract class DocumentViewPresenter implements ViewPresenter{
 		});
 	}
 
-	@Override
-	public void registerEventHandlers(EventBus eventBus) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	public void setDocument(Document doc) {
+	private void setDocument(Document doc) {
 		
 		this.doc = doc;
 		view.setDocument(doc);

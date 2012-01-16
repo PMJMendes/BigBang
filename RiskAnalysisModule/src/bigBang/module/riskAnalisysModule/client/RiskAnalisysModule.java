@@ -1,53 +1,61 @@
 package bigBang.module.riskAnalisysModule.client;
 
 import bigBang.definitions.client.dataAccess.DataBroker;
-import bigBang.library.client.BigBangPermissionManager;
-import bigBang.library.client.EventBus;
 import bigBang.library.client.Module;
-import bigBang.library.client.Process;
-import bigBang.library.client.event.ModuleInitializedEvent;
-import bigBang.library.client.userInterface.presenter.SectionViewPresenter;
+import bigBang.library.client.ViewPresenterFactory;
+import bigBang.library.client.ViewPresenterInstantiator;
+import bigBang.library.client.userInterface.presenter.ViewPresenter;
+import bigBang.module.riskAnalisysModule.client.userInterface.presenter.RiskAnalisysOperationsViewPresenter;
+import bigBang.module.riskAnalisysModule.client.userInterface.presenter.RiskAnalisysSearchOperationViewPresenter;
 import bigBang.module.riskAnalisysModule.client.userInterface.presenter.RiskAnalisysSectionViewPresenter;
+import bigBang.module.riskAnalisysModule.client.userInterface.view.RiskAnalisysOperationsView;
+import bigBang.module.riskAnalisysModule.client.userInterface.view.RiskAnalisysSearchOperationView;
 import bigBang.module.riskAnalisysModule.client.userInterface.view.RiskAnalisysSectionView;
+
+import com.google.gwt.core.client.GWT;
 
 public class RiskAnalisysModule implements Module {
 
-	private SectionViewPresenter[] sectionPresenters;
-	protected BigBangPermissionManager permissionManager;
-	
-	public RiskAnalisysModule(){
-	}
-	
-	public void initialize(EventBus eventBus, BigBangPermissionManager permissionManager) {
-		this.permissionManager = permissionManager;
-		initialize(eventBus);
-	}
-	
-	public void initialize(EventBus eventBus) {
-		sectionPresenters = new SectionViewPresenter[1];
+	private boolean initialized = false;
 
-		//Risk analisys section
-		RiskAnalisysSection riskAnalisysSection = new RiskAnalisysSection(this.permissionManager);
-		RiskAnalisysSectionView riskAnalisysSectionView = new RiskAnalisysSectionView();
-		RiskAnalisysSectionViewPresenter riskAnalisysSectionViewPresenter = new RiskAnalisysSectionViewPresenter(eventBus, null, riskAnalisysSectionView);
-		riskAnalisysSectionViewPresenter.setSection(riskAnalisysSection);
-		riskAnalisysSection.registerEventHandlers(eventBus);
-		sectionPresenters[0] = riskAnalisysSectionViewPresenter;
-		
-		eventBus.fireEvent(new ModuleInitializedEvent(this));
+	public void initialize() {
+		registerViewPresenters();
+		initialized = true;
 	}
-
+	
+	@Override
 	public boolean isInitialized() {
-		// TODO Auto-generated method stub
-		return false;
+		return initialized;
 	}
 
-	public SectionViewPresenter[] getMainMenuSectionPresenters() {
-		return sectionPresenters;
-	}
+	private void registerViewPresenters(){
+		ViewPresenterFactory.getInstance().registerViewPresenterInstantiator("RISK_ANALISYS_SECTION", new ViewPresenterInstantiator() {
 
-	public Process[] getProcesses() {
-		return null;
+			@Override
+			public ViewPresenter getInstance() {
+				RiskAnalisysSectionView view = (RiskAnalisysSectionView) GWT.create(RiskAnalisysSectionView.class);
+				RiskAnalisysSectionViewPresenter presenter = new RiskAnalisysSectionViewPresenter(view);
+				return presenter;
+			}
+		});
+		ViewPresenterFactory.getInstance().registerViewPresenterInstantiator("RISK_ANALISYS_OPERATIONS", new ViewPresenterInstantiator() {
+
+			@Override
+			public ViewPresenter getInstance() {
+				RiskAnalisysOperationsView view = (RiskAnalisysOperationsView) GWT.create(RiskAnalisysOperationsView.class);
+				ViewPresenter presenter = new RiskAnalisysOperationsViewPresenter(view);
+				return presenter;
+			}
+		});
+		ViewPresenterFactory.getInstance().registerViewPresenterInstantiator("RISK_ANALISYS_SEARCH_OPERATION", new ViewPresenterInstantiator() {
+
+			@Override
+			public ViewPresenter getInstance() {
+				RiskAnalisysSearchOperationView view = (RiskAnalisysSearchOperationView) GWT.create(RiskAnalisysSearchOperationView.class);
+				ViewPresenter presenter = new RiskAnalisysSearchOperationViewPresenter(view);
+				return presenter;
+			}
+		});
 	}
 
 	@Override

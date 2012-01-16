@@ -42,6 +42,9 @@ public class InsurancePolicyChildrenPanel extends View {
 	}
 	
 	@Override
+	protected void initializeView() {}
+	
+	@Override
 	protected void onAttach() {
 		super.onAttach();
 		this.setPolicy(this.insurancePolicy);

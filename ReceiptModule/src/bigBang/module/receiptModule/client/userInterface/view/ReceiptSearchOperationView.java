@@ -35,6 +35,7 @@ public class ReceiptSearchOperationView extends View implements ReceiptSearchOpe
 	
 	public ReceiptSearchOperationView() {
 		SplitLayoutPanel mainWrapper = new SplitLayoutPanel();
+		initWidget(mainWrapper);
 		mainWrapper.setSize("100%", "100%");
 		
 		childrenLists = new ReceiptChildrenLists();
@@ -227,8 +228,11 @@ public class ReceiptSearchOperationView extends View implements ReceiptSearchOpe
 		if(!bigBang.definitions.client.Constants.DEBUG){
 			searchPanel.doSearch();
 		}
-		
-		initWidget(mainWrapper);
+	}
+	
+	@Override
+	protected void initializeView() {
+		return;
 	}
 
 	@Override
@@ -308,5 +312,5 @@ public class ReceiptSearchOperationView extends View implements ReceiptSearchOpe
 	public void scrollFormToTop() {
 		this.form.scrollToTop();
 	}
-	
+
 }

@@ -14,4 +14,7 @@ public interface InsuredObjectDataBroker extends
 	public void getProcessInsuredObjects(String ownerId, ResponseHandler<Collection<InsuredObjectStub>> handler);
 	
 	public SearchDataBroker<InsuredObjectStub> getSearchBroker();
+	
+	public void remapItemId(String oldId, String newId, boolean newIdInScratchPad);
+
 }

@@ -43,6 +43,7 @@ public class TaxManagementOperationView extends View implements TaxManagementOpe
 	
 	public TaxManagementOperationView(){
 		SplitLayoutPanel wrapper = new SplitLayoutPanel();
+		initWidget(wrapper);
 		wrapper.setSize("100%", "100%");
 		
 		navPanel = new NavigationPanel();
@@ -141,9 +142,12 @@ public class TaxManagementOperationView extends View implements TaxManagementOpe
 		popup.setWidth("650px");
 		
 		wrapper.add(taxList);
-		initWidget(wrapper);
 	}
-
+	
+	@Override
+	protected void initializeView() {
+		return;
+	}
 
 	@Override
 	public void setReadOnly(boolean readOnly) {

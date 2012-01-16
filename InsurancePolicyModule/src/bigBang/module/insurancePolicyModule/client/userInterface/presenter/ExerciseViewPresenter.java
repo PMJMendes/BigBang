@@ -1,18 +1,17 @@
 package bigBang.module.insurancePolicyModule.client.userInterface.presenter;
 
-import com.google.gwt.user.client.ui.HasWidgets;
-import com.google.gwt.user.client.ui.Widget;
-
 import bigBang.definitions.client.dataAccess.ExerciseDataBrokerClient;
 import bigBang.definitions.shared.Exercise;
 import bigBang.definitions.shared.InsurancePolicy;
-import bigBang.library.client.EventBus;
+import bigBang.library.client.HasParameters;
 import bigBang.library.client.event.ActionInvokedEvent;
 import bigBang.library.client.event.ActionInvokedEventHandler;
 import bigBang.library.client.userInterface.presenter.ViewPresenter;
-import bigBang.library.client.userInterface.view.View;
-import bigBang.library.interfaces.Service;
 import bigBang.module.insurancePolicyModule.client.userInterface.ExerciseForm;
+
+import com.google.gwt.user.client.ui.HasWidgets;
+import com.google.gwt.user.client.ui.UIObject;
+import com.google.gwt.user.client.ui.Widget;
 
 public abstract class ExerciseViewPresenter implements ViewPresenter{
 
@@ -40,8 +39,9 @@ public abstract class ExerciseViewPresenter implements ViewPresenter{
 	protected Display view;
 	protected boolean bound = false;
 	private boolean readOnly = true;
+
 	@Override
-	public void setView(View view) {
+	public void setView(UIObject view) {
 		this.view = (Display) view;
 	}
 
@@ -52,8 +52,12 @@ public abstract class ExerciseViewPresenter implements ViewPresenter{
 		container.add(this.view.asWidget());
 	}
 
-
 	@Override
+	public void setParameters(HasParameters parameterHolder) {
+		// TODO Auto-generated method stub
+		
+	}
+	
 	public void bind() {
 		if(bound){
 			return;
@@ -112,25 +116,6 @@ public abstract class ExerciseViewPresenter implements ViewPresenter{
 		
 	}
 
-	@Override
-	public void setService(Service service) {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void setEventBus(EventBus eventBus) {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void registerEventHandlers(EventBus eventBus) {		//view.getInsurancePolicyForm().setValue(policy);
-
-		// TODO Auto-generated method stub
-
-	}
-
 	public void setPolicy(InsurancePolicy policy){
 		//view.getInsurancePolicyForm().setValue(policy);
 	}
@@ -177,6 +162,12 @@ public abstract class ExerciseViewPresenter implements ViewPresenter{
 			
 			@Override
 			public void addExercise(Exercise exercise) {
+				// TODO Auto-generated method stub
+				
+			}
+
+			@Override
+			public void remapItemId(String oldId, String newId) {
 				// TODO Auto-generated method stub
 				
 			}

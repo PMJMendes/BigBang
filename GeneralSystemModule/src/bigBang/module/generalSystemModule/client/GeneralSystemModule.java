@@ -1,79 +1,125 @@
 package bigBang.module.generalSystemModule.client;
 
-import java.util.Collection;
-
 import bigBang.definitions.client.dataAccess.DataBroker;
-import bigBang.definitions.client.response.ResponseError;
-import bigBang.definitions.client.response.ResponseHandler;
 import bigBang.definitions.shared.BigBangConstants;
-import bigBang.library.client.BigBangAsyncCallback;
-import bigBang.library.client.BigBangPermissionManager;
-import bigBang.library.client.EventBus;
 import bigBang.library.client.Module;
-import bigBang.library.client.event.ModuleInitializedEvent;
-import bigBang.library.client.userInterface.presenter.SectionViewPresenter;
+import bigBang.library.client.ViewPresenterFactory;
+import bigBang.library.client.ViewPresenterInstantiator;
+import bigBang.library.client.dataAccess.HistoryBrokerImpl;
+import bigBang.library.client.userInterface.presenter.ViewPresenter;
 import bigBang.module.generalSystemModule.client.dataAccess.ClientGroupBrokerImpl;
 import bigBang.module.generalSystemModule.client.dataAccess.CostCenterBrokerImpl;
 import bigBang.module.generalSystemModule.client.dataAccess.CoverageBrokerImpl;
-import bigBang.module.generalSystemModule.client.dataAccess.HistoryBrokerImpl;
 import bigBang.module.generalSystemModule.client.dataAccess.InsuranceAgencyBrokerImpl;
 import bigBang.module.generalSystemModule.client.dataAccess.MediatorBrokerImpl;
 import bigBang.module.generalSystemModule.client.dataAccess.UserBrokerImpl;
+import bigBang.module.generalSystemModule.client.userInterface.presenter.ClientGroupManagementOperationViewPresenter;
+import bigBang.module.generalSystemModule.client.userInterface.presenter.CostCenterManagementOperationViewPresenter;
+import bigBang.module.generalSystemModule.client.userInterface.presenter.CoverageManagementOperationViewPresenter;
 import bigBang.module.generalSystemModule.client.userInterface.presenter.GeneralSystemSectionViewPresenter;
+import bigBang.module.generalSystemModule.client.userInterface.presenter.InsuranceAgencyManagementOperationViewPresenter;
+import bigBang.module.generalSystemModule.client.userInterface.presenter.MediatorManagementOperationViewPresenter;
+import bigBang.module.generalSystemModule.client.userInterface.presenter.TaxManagementOperationViewPresenter;
+import bigBang.module.generalSystemModule.client.userInterface.presenter.UserManagementOperationViewPresenter;
+import bigBang.module.generalSystemModule.client.userInterface.view.ClientGroupManagementOperationView;
+import bigBang.module.generalSystemModule.client.userInterface.view.CostCenterManagementOperationView;
+import bigBang.module.generalSystemModule.client.userInterface.view.CoverageManagementOperationView;
 import bigBang.module.generalSystemModule.client.userInterface.view.GeneralSystemSectionView;
-import bigBang.module.generalSystemModule.interfaces.GeneralSystemService;
+import bigBang.module.generalSystemModule.client.userInterface.view.InsuranceAgencyManagementOperationView;
+import bigBang.module.generalSystemModule.client.userInterface.view.MediatorManagementOperationView;
+import bigBang.module.generalSystemModule.client.userInterface.view.TaxManagementOperationView;
+import bigBang.module.generalSystemModule.client.userInterface.view.UserManagementOperationView;
+
+import com.google.gwt.core.client.GWT;
 
 public class GeneralSystemModule implements Module {
 
-	private SectionViewPresenter[] sectionPresenters;
 	private boolean initialized = false;
-	public static String processId;
 
 	@Override
-	public void initialize(final EventBus eventBus, final BigBangPermissionManager permissionManager) {
-		GeneralSystemService.Util.getInstance().getGeneralSystemProcessId(new BigBangAsyncCallback<String>() {
+	public void initialize() {
+		registerViewPresenters();
+		initialized = true;
+	}
+
+	@Override
+	public boolean isInitialized() {
+		return this.initialized;
+	}
+
+	private void registerViewPresenters(){
+		ViewPresenterFactory.getInstance().registerViewPresenterInstantiator("GENERAL_SYSTEM_SECTION", new ViewPresenterInstantiator() {
 
 			@Override
-			public void onSuccess(final String result) {
-				processId = result;
-				permissionManager.getProcessPermissionContext(result, new ResponseHandler<Void>() {
-
-					@Override
-					public void onResponse(Void result2) {
-						setup(eventBus, permissionManager, result);
-					}
-					
-					@Override
-					public void onError(Collection<ResponseError> errors) {}
-				});
+			public ViewPresenter getInstance() {
+				GeneralSystemSectionView view = (GeneralSystemSectionView) GWT.create(GeneralSystemSectionView.class);
+				ViewPresenter presenter = new GeneralSystemSectionViewPresenter(view);
+				return presenter;
 			}
 		});
-	}
+		ViewPresenterFactory.getInstance().registerViewPresenterInstantiator("GENERAL_SYSTEM_USER_MANAGEMENT", new ViewPresenterInstantiator() {
 
-	private void setup(EventBus eventBus, BigBangPermissionManager permissionManager, String processId) {
-		sectionPresenters = new SectionViewPresenter[1];
+			@Override
+			public ViewPresenter getInstance() {
+				UserManagementOperationView view = (UserManagementOperationView) GWT.create(UserManagementOperationView.class);
+				ViewPresenter presenter = new UserManagementOperationViewPresenter(view);
+				return presenter;
+			}
+		});
+		ViewPresenterFactory.getInstance().registerViewPresenterInstantiator("GENERAL_SYSTEM_MEDIATOR_MANAGEMENT", new ViewPresenterInstantiator() {
 
-//		GeneralSystem section
-		GeneralSystemSection generalSystemSection = new GeneralSystemSection(permissionManager, processId);
-		GeneralSystemSectionView generalSystemSectionView = new GeneralSystemSectionView();
-		GeneralSystemSectionViewPresenter generalSystemSectionPresenter = new GeneralSystemSectionViewPresenter(eventBus, null, generalSystemSectionView);
-		generalSystemSectionPresenter.setSection(generalSystemSection);
-		generalSystemSection.registerEventHandlers(eventBus);
-		sectionPresenters[0] = generalSystemSectionPresenter;
-		this.initialized = true;
-		eventBus.fireEvent(new ModuleInitializedEvent(this));
-	}
+			@Override
+			public ViewPresenter getInstance() {
+				MediatorManagementOperationView view = (MediatorManagementOperationView) GWT.create(MediatorManagementOperationView.class);
+				ViewPresenter presenter = new MediatorManagementOperationViewPresenter(view);
+				return presenter;
+			}
+		});
+		ViewPresenterFactory.getInstance().registerViewPresenterInstantiator("GENERAL_SYSTEM_COST_CENTER_MANAGEMENT", new ViewPresenterInstantiator() {
 
-	public void initialize(EventBus eventBus) {
-		this.initialize(eventBus, null);
-	}
+			@Override
+			public ViewPresenter getInstance() {
+				CostCenterManagementOperationView view = (CostCenterManagementOperationView) GWT.create(CostCenterManagementOperationView.class);
+				ViewPresenter presenter = new CostCenterManagementOperationViewPresenter(view);
+				return presenter;
+			}
+		});
+		ViewPresenterFactory.getInstance().registerViewPresenterInstantiator("GENERAL_SYSTEM_INSURANCE_AGENCY_MANAGEMENT", new ViewPresenterInstantiator() {
 
-	public boolean isInitialized() {
-		return initialized;
-	}
+			@Override
+			public ViewPresenter getInstance() {
+				InsuranceAgencyManagementOperationView view = (InsuranceAgencyManagementOperationView) GWT.create(InsuranceAgencyManagementOperationView.class);
+				ViewPresenter presenter = new InsuranceAgencyManagementOperationViewPresenter(view);
+				return presenter;
+			}
+		});
+		ViewPresenterFactory.getInstance().registerViewPresenterInstantiator("GENERAL_SYSTEM_COVERAGE_MANAGEMENT", new ViewPresenterInstantiator() {
 
-	public SectionViewPresenter[] getMainMenuSectionPresenters() {
-		return sectionPresenters;
+			@Override
+			public ViewPresenter getInstance() {
+				CoverageManagementOperationView view = (CoverageManagementOperationView) GWT.create(CoverageManagementOperationView.class);
+				ViewPresenter presenter = new CoverageManagementOperationViewPresenter(view);
+				return presenter;
+			}
+		});
+		ViewPresenterFactory.getInstance().registerViewPresenterInstantiator("GENERAL_SYSTEM_TAX_MANAGEMENT", new ViewPresenterInstantiator() {
+
+			@Override
+			public ViewPresenter getInstance() {
+				TaxManagementOperationView view = (TaxManagementOperationView) GWT.create(TaxManagementOperationView.class);
+				ViewPresenter presenter = new TaxManagementOperationViewPresenter(view);
+				return presenter;
+			}
+		});
+		ViewPresenterFactory.getInstance().registerViewPresenterInstantiator("GENERAL_SYSTEM_CLIENT_GROUP_MANAGEMENT", new ViewPresenterInstantiator() {
+
+			@Override
+			public ViewPresenter getInstance() {
+				ClientGroupManagementOperationView view = (ClientGroupManagementOperationView) GWT.create(ClientGroupManagementOperationView.class);
+				ViewPresenter presenter = new ClientGroupManagementOperationViewPresenter(view);
+				return presenter;
+			}
+		});
 	}
 
 	@Override

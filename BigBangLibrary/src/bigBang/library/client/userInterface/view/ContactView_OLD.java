@@ -61,6 +61,11 @@ public class ContactView_OLD extends View implements ContactsBrokerClient {
 			clear();
 		}
 
+		@Override
+		protected void initializeView() {
+			return;
+		}
+		
 		public void setInfo(ContactInfo info){
 			if(info == null){
 				clear();
@@ -225,6 +230,11 @@ public class ContactView_OLD extends View implements ContactsBrokerClient {
 		initWidget(mainWrapper);
 	}
 
+	@Override
+	protected void initializeView() {
+		return;
+	}
+	
 	protected void addInfoField(){
 		InfoEntry entry = new InfoEntry();
 		this.infoEntries.add(entry);

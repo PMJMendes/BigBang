@@ -12,10 +12,7 @@ import bigBang.definitions.shared.SortParameter;
 import bigBang.definitions.shared.Task;
 import bigBang.definitions.shared.TaskStub;
 import bigBang.library.client.EventBus;
-import bigBang.library.client.Notification;
 import bigBang.library.client.dataAccess.DataBrokerManager;
-import bigBang.library.client.event.NewNotificationEvent;
-import bigBang.library.client.event.ScreenInvokedEvent;
 import bigBang.module.tasksModule.client.dataAccess.TasksBroker;
 import bigBang.module.tasksModule.client.dataAccess.TasksDataBrokerClient;
 import bigBang.module.tasksModule.client.event.NumberOfTasksUpdateEvent;
@@ -33,8 +30,8 @@ public class TasksNotificationsManager extends Timer implements TasksDataBrokerC
 	protected int currentCount = 0;
 	protected String lastTimestamp = null;
 
-	public TasksNotificationsManager(EventBus eventBus){
-		this.eventBus = eventBus;
+	public TasksNotificationsManager(){
+		this.eventBus = EventBus.getInstance();
 		this.broker = ((TasksBroker)DataBrokerManager.Util.getInstance().getBroker(BigBangConstants.EntityIds.TASK));
 	}
 
@@ -64,9 +61,9 @@ public class TasksNotificationsManager extends Timer implements TasksDataBrokerC
 			@Override
 			public void onResponse(Search<TaskStub> response) {
 				for(TaskStub t : response.getResults()){
-					broker.notifyItemCreation(t.id);
-					lastTimestamp = t.timeStamp;
-					fireTaskNotification(t);
+//					broker.notifyItemCreation(t.id);
+//					lastTimestamp = t.timeStamp;
+//					fireTaskNotification(t);
 				}
 			}
 
@@ -81,9 +78,9 @@ public class TasksNotificationsManager extends Timer implements TasksDataBrokerC
 	}
 
 	protected void fireTaskNotification(TaskStub t){
-		Notification notification = new Notification("Agenda", "Foi-lhe atribuída uma nova tarefa:\n"+t.description, new ScreenInvokedEvent(null, TasksSection.ID, null));
-		this.eventBus.fireEvent(new NewNotificationEvent(notification,
-				Notification.TYPE.TRAY_NOTIFICATION));
+//		Notification notification = new Notification("Agenda", "Foi-lhe atribuída uma nova tarefa:\n"+t.description, new ScreenInvokedEvent(null, TasksSection.ID, null));
+//		this.eventBus.fireEvent(new NewNotificationEvent(notification,
+//				Notification.TYPE.TRAY_NOTIFICATION));
 	}
 
 	@Override

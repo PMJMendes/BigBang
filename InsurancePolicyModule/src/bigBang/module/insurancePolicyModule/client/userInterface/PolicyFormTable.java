@@ -18,6 +18,7 @@ import bigBang.library.client.userInterface.view.View;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.user.client.ui.Grid;
+import com.google.gwt.user.client.ui.HasValue;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
@@ -177,13 +178,16 @@ public class PolicyFormTable extends View {
 
 		this.setReadOnly(false);
 	}
+	
+	@Override
+	protected void initializeView() {}
 
-	public String getInsuredObjectFilterValue(){
-		return this.insuredObjectField.getValue();
+	public HasValue<String> getInsuredObjectFilterValue(){
+		return this.insuredObjectField;
 	}
 
-	public String getExerciseFilterValue(){
-		return this.exerciseField.getValue();
+	public HasValue<String> getExerciseFilterValue(){
+		return this.exerciseField;
 	}
 
 	public void setInsuredObjectFilterValue(String value){

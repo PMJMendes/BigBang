@@ -1,53 +1,60 @@
 package bigBang.module.quoteRequestModule.client;
 
+import com.google.gwt.core.client.GWT;
+
 import bigBang.definitions.client.dataAccess.DataBroker;
-import bigBang.library.client.BigBangPermissionManager;
-import bigBang.library.client.EventBus;
 import bigBang.library.client.Module;
-import bigBang.library.client.Process;
-import bigBang.library.client.event.ModuleInitializedEvent;
-import bigBang.library.client.userInterface.presenter.SectionViewPresenter;
+import bigBang.library.client.ViewPresenterFactory;
+import bigBang.library.client.ViewPresenterInstantiator;
+import bigBang.library.client.userInterface.presenter.ViewPresenter;
+import bigBang.module.quoteRequestModule.client.userInterface.presenter.QuoteRequestOperationsViewPresenter;
+import bigBang.module.quoteRequestModule.client.userInterface.presenter.QuoteRequestSearchOperationViewPresenter;
 import bigBang.module.quoteRequestModule.client.userInterface.presenter.QuoteRequestSectionViewPresenter;
+import bigBang.module.quoteRequestModule.client.userInterface.view.QuoteRequestOperationsView;
+import bigBang.module.quoteRequestModule.client.userInterface.view.QuoteRequestSearchOperationView;
 import bigBang.module.quoteRequestModule.client.userInterface.view.QuoteRequestSectionView;
 
 public class QuoteRequestModule implements Module {
 
-	private SectionViewPresenter[] sectionPresenters;
-	protected BigBangPermissionManager permissionManager;
-	
-	public QuoteRequestModule(){
-	}
-	
-	public void initialize(EventBus eventBus, BigBangPermissionManager permissionManager) {
-		this.permissionManager = permissionManager;
-		initialize(eventBus);
-	}
-	
-	public void initialize(EventBus eventBus) {
-		sectionPresenters = new SectionViewPresenter[1];
+	private boolean initialized = true;
 
-		//Quote request section
-		QuoteRequestSection quoteRequestSection = new QuoteRequestSection(this.permissionManager);
-		QuoteRequestSectionView quoteRequestSectionView = new QuoteRequestSectionView();
-		QuoteRequestSectionViewPresenter quoteRequestSectionViewPresenter = new QuoteRequestSectionViewPresenter(eventBus, null, quoteRequestSectionView);
-		quoteRequestSectionViewPresenter.setSection(quoteRequestSection);
-		quoteRequestSection.registerEventHandlers(eventBus);
-		sectionPresenters[0] = quoteRequestSectionViewPresenter;
-
-		eventBus.fireEvent(new ModuleInitializedEvent(this));
+	public void initialize() {
+		registerViewPresenters();
+		initialized = true;
 	}
 
 	public boolean isInitialized() {
-		// TODO Auto-generated method stub
-		return false;
+		return initialized;
 	}
 
-	public SectionViewPresenter[] getMainMenuSectionPresenters() {
-		return sectionPresenters;
-	}
+	private void registerViewPresenters(){
+		ViewPresenterFactory.getInstance().registerViewPresenterInstantiator("QUOTE_REQUEST_SECTION", new ViewPresenterInstantiator() {
 
-	public Process[] getProcesses() {
-		return null;
+			@Override
+			public ViewPresenter getInstance() {
+				QuoteRequestSectionView quoteRequestSectionView = (QuoteRequestSectionView) GWT.create(QuoteRequestSectionView.class);
+				QuoteRequestSectionViewPresenter quoteRequestSectionViewPresenter = new QuoteRequestSectionViewPresenter(quoteRequestSectionView);
+				return quoteRequestSectionViewPresenter;
+			}
+		});
+		ViewPresenterFactory.getInstance().registerViewPresenterInstantiator("QUOTE_REQUEST_OPERATIONS", new ViewPresenterInstantiator() {
+
+			@Override
+			public ViewPresenter getInstance() {
+				QuoteRequestOperationsView view = (QuoteRequestOperationsView) GWT.create(QuoteRequestOperationsView.class);
+				ViewPresenter presenter = new QuoteRequestOperationsViewPresenter(view);
+				return presenter;
+			}
+		});
+		ViewPresenterFactory.getInstance().registerViewPresenterInstantiator("QUOTE_REQUEST_SEARCH", new ViewPresenterInstantiator() {
+
+			@Override
+			public ViewPresenter getInstance() {
+				QuoteRequestSearchOperationView quoteRequestSearchOperationView = (QuoteRequestSearchOperationView) GWT.create(QuoteRequestSearchOperationView.class);
+				QuoteRequestSearchOperationViewPresenter quoteRequestSearchOperationViewPresenter = new QuoteRequestSearchOperationViewPresenter(quoteRequestSearchOperationView);
+				return quoteRequestSearchOperationViewPresenter;
+			}
+		});
 	}
 
 	@Override

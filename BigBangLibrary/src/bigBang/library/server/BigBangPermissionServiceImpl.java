@@ -9,6 +9,7 @@ import Jewel.Engine.Implementation.User;
 import Jewel.Petri.Interfaces.IOperation;
 import Jewel.Petri.Interfaces.IProcess;
 import Jewel.Petri.Interfaces.IStep;
+import Jewel.Petri.Objects.PNProcess;
 import bigBang.library.interfaces.BigBangPermissionService;
 import bigBang.library.shared.BigBangException;
 import bigBang.library.shared.Permission;
@@ -20,12 +21,12 @@ public class BigBangPermissionServiceImpl
 {
 	private static final long serialVersionUID = 1L;
 
-	public Permission[] getProcessPermissions(String dataObjectId)
+	public Permission[] getProcessPermissions(String id)
 		throws SessionExpiredException, BigBangException
 	{
 		UUID lidUser;
-		IProcess lrefProcess;
 		UUID lidProfile;
+		IProcess lrefProcess;
 		IOperation[] larrOps;
 		ArrayList<Permission> larrResult;
 		MasterDB ldb;
@@ -37,12 +38,11 @@ public class BigBangPermissionServiceImpl
 		if ( lidUser == null )
 			throw new SessionExpiredException();
 
-		lrefProcess = BigBangProcessServiceImpl.sGetProcessFromDataObject(UUID.fromString(dataObjectId));
-
 		ldb = null;
 		try
 		{
 			lidProfile = User.GetInstance(Engine.getCurrentNameSpace(), lidUser).getProfile().getKey();
+			lrefProcess = (IProcess)PNProcess.GetInstance(Engine.getCurrentNameSpace(), UUID.fromString(id));
 			larrOps = lrefProcess.GetScript().getOperations();
 			larrResult = new ArrayList<Permission>();
 			ldb = new MasterDB();

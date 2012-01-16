@@ -1,18 +1,13 @@
 package bigBang.module.generalSystemModule.client.userInterface.view;
 
-import org.gwt.mosaic.ui.client.MessageBox;
+import bigBang.library.client.userInterface.DockPanel;
+import bigBang.library.client.userInterface.view.View;
+import bigBang.module.generalSystemModule.client.userInterface.presenter.GeneralSystemSectionViewPresenter;
 
-import com.google.gwt.user.client.ui.AbstractImagePrototype;
 import com.google.gwt.user.client.ui.HasValue;
 import com.google.gwt.user.client.ui.HasWidgets;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
-
-import bigBang.library.client.userInterface.DockItem;
-import bigBang.library.client.userInterface.DockPanel;
-import bigBang.library.client.userInterface.presenter.OperationViewPresenter;
-import bigBang.library.client.userInterface.view.View;
-import bigBang.module.generalSystemModule.client.userInterface.presenter.GeneralSystemSectionViewPresenter;;
 
 public class GeneralSystemSectionView extends View implements GeneralSystemSectionViewPresenter.Display {
 
@@ -21,6 +16,7 @@ public class GeneralSystemSectionView extends View implements GeneralSystemSecti
 	
 	public GeneralSystemSectionView(){
 		VerticalPanel panel = new VerticalPanel();
+		initWidget(panel);
 		panel.setSize("100%", "100%");
 
 		this.operationDock = new DockPanel();
@@ -30,20 +26,23 @@ public class GeneralSystemSectionView extends View implements GeneralSystemSecti
 		this.operationViewContainer.setSize("100%", "100%");
 		panel.add(operationViewContainer);
 		panel.setCellHeight(operationViewContainer, "100%");
-		
-		initWidget(panel);
+	}
+
+	@Override
+	protected void initializeView() {
+		return;
 	}
 	
-	public void createOperationNavigationItem(OperationViewPresenter p, boolean enabled) {
-		AbstractImagePrototype icon = p.getOperation().getIcon();
-		if(icon == null)
-			icon = MessageBox.MESSAGEBOX_IMAGES.dialogInformation();
-		DockItem item = new DockItem(p.getOperation().getShortDescription(), icon, null, p);
-		item.setEnabled(enabled);
-		item.setTitle(p.getOperation().getDescription());
-		item.setSize("100px", "52px");
-		this.operationDock.addItem(item);
-	}
+//	public void createOperationNavigationItem(OperationViewPresenter p, boolean enabled) {
+//		AbstractImagePrototype icon = p.getOperation().getIcon();
+//		if(icon == null)
+//			icon = MessageBox.MESSAGEBOX_IMAGES.dialogInformation();
+//		DockItem item = new DockItem(p.getOperation().getShortDescription(), icon, null, p);
+//		item.setEnabled(enabled);
+//		item.setTitle(p.getOperation().getDescription());
+//		item.setSize("100px", "52px");
+//		this.operationDock.addItem(item);
+//	}
 
 	public HasValue <Object> getOperationNavigationPanel() {
 		return operationDock;
@@ -53,8 +52,8 @@ public class GeneralSystemSectionView extends View implements GeneralSystemSecti
 		return operationViewContainer;
 	}
 
-	public void selectOperation(OperationViewPresenter p) {
-		this.operationDock.setValue(p);
-	}
+//	public void selectOperation(OperationViewPresenter p) {
+//		this.operationDock.setValue(p);
+//	}
 	
 }

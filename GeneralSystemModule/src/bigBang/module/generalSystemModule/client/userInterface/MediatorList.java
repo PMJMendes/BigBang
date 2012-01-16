@@ -24,6 +24,7 @@ public class MediatorList extends FilterableList<Mediator> implements MediatorDa
 		header.showRefreshButton();
 		setHeaderWidget(header);
 		onSizeChanged();
+		showFilterField(false);
 		
 		((MediatorBroker)DataBrokerManager.Util.getInstance().getBroker(BigBangConstants.EntityIds.MEDIATOR)).registerClient(this);
 	}
@@ -69,13 +70,13 @@ public class MediatorList extends FilterableList<Mediator> implements MediatorDa
 	public void setMediators(Mediator[] mediators) {
 		clear();
 		for(int i = 0; i < mediators.length; i++) {
-			addMediator(mediators[i]);
+			add(new MediatorListEntry(mediators[i]));
 		}
 	}
 
 	@Override
 	public void addMediator(Mediator mediator) {
-		add(new MediatorListEntry(mediator));
+		add(0, new MediatorListEntry(mediator));
 	}
 
 	@Override

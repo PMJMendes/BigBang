@@ -1,53 +1,60 @@
 package bigBang.module.casualtyModule.client;
 
 import bigBang.definitions.client.dataAccess.DataBroker;
-import bigBang.library.client.BigBangPermissionManager;
-import bigBang.library.client.EventBus;
 import bigBang.library.client.Module;
-import bigBang.library.client.Process;
-import bigBang.library.client.event.ModuleInitializedEvent;
-import bigBang.library.client.userInterface.presenter.SectionViewPresenter;
+import bigBang.library.client.ViewPresenterFactory;
+import bigBang.library.client.ViewPresenterInstantiator;
+import bigBang.library.client.userInterface.presenter.ViewPresenter;
+import bigBang.module.casualtyModule.client.userInterface.presenter.CasualtyOperationsViewPresenter;
+import bigBang.module.casualtyModule.client.userInterface.presenter.CasualtySearchOperationViewPresenter;
 import bigBang.module.casualtyModule.client.userInterface.presenter.CasualtySectionViewPresenter;
+import bigBang.module.casualtyModule.client.userInterface.view.CasualtyOperationsView;
+import bigBang.module.casualtyModule.client.userInterface.view.CasualtySearchOperationView;
 import bigBang.module.casualtyModule.client.userInterface.view.CasualtySectionView;
+
+import com.google.gwt.core.client.GWT;
 
 public class CasualtyModule implements Module {
 
-	private SectionViewPresenter[] sectionPresenters;
-	protected BigBangPermissionManager permissionManager;
+	private boolean initialized = false;
 
-	public CasualtyModule(){
-	}
-
-	public void initialize(EventBus eventBus, BigBangPermissionManager permissionManager) {
-		this.permissionManager = permissionManager;
-		initialize(eventBus); 
-	}
-
-	public void initialize(EventBus eventBus) {
-		sectionPresenters = new SectionViewPresenter[1];
-
-		//Casualty section
-		CasualtySection casualtySection = new CasualtySection(this.permissionManager);
-		CasualtySectionView casualtySectionView = new CasualtySectionView();
-		CasualtySectionViewPresenter casualtySectionViewPresenter = new CasualtySectionViewPresenter(eventBus, null, casualtySectionView);
-		casualtySectionViewPresenter.setSection(casualtySection);
-		casualtySection.registerEventHandlers(eventBus);
-		sectionPresenters[0] = casualtySectionViewPresenter;
-
-		eventBus.fireEvent(new ModuleInitializedEvent(this));
+	public void initialize() {
+		registerViewPresenters();
+		initialized = true;
 	}
 
 	public boolean isInitialized() {
-		// TODO Auto-generated method stub
-		return false;
+		return initialized;
 	}
 
-	public SectionViewPresenter[] getMainMenuSectionPresenters() {
-		return sectionPresenters;
-	}
+	private void registerViewPresenters(){
+		ViewPresenterFactory.getInstance().registerViewPresenterInstantiator("CASUALTY_SECTION", new ViewPresenterInstantiator() {
 
-	public Process[] getProcesses() {
-		return null;
+			@Override
+			public ViewPresenter getInstance() {
+				CasualtySectionView casualtySectionView = (CasualtySectionView) GWT.create(CasualtySectionView.class);
+				CasualtySectionViewPresenter casualtySectionViewPresenter = new CasualtySectionViewPresenter(casualtySectionView);
+				return casualtySectionViewPresenter;
+			}
+		});
+		ViewPresenterFactory.getInstance().registerViewPresenterInstantiator("CASUALTY_OPERATIONS", new ViewPresenterInstantiator() {
+
+			@Override
+			public ViewPresenter getInstance() {
+				CasualtyOperationsView view = (CasualtyOperationsView) GWT.create(CasualtyOperationsView.class);
+				ViewPresenter presenter = new CasualtyOperationsViewPresenter(view);
+				return presenter;
+			}
+		});
+		ViewPresenterFactory.getInstance().registerViewPresenterInstantiator("CASUALTY_SEARCH", new ViewPresenterInstantiator() {
+
+			@Override
+			public ViewPresenter getInstance() {
+				CasualtySearchOperationView casualtySearchOperationView = (CasualtySearchOperationView) GWT.create(CasualtySearchOperationView.class);
+				CasualtySearchOperationViewPresenter casualtySearchOperationViewPresenter = new CasualtySearchOperationViewPresenter(casualtySearchOperationView);
+				return casualtySearchOperationViewPresenter;
+			}
+		});
 	}
 
 	@Override

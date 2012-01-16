@@ -83,6 +83,12 @@ public class TasksBrokerImpl extends DataBroker<Task> implements TasksBroker {
 			public void onSuccess(Task result) {
 				handler.onResponse(result);
 			}
+			
+			@Override
+			public void onFailure(Throwable caught) {
+				handler.onError(new String[]{});
+//				super.onFailure(caught);
+			}
 		});
 	}
 

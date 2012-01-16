@@ -21,6 +21,7 @@ public class CasualtySearchOperationView extends View implements CasualtySearchO
 	
 	public CasualtySearchOperationView(){
 		SplitLayoutPanel mainWrapper = new SplitLayoutPanel();
+		initWidget(mainWrapper);		
 		mainWrapper.setSize("100%", "100%");
 		
 		this.searchPanel = new CasualtySearchPanel();
@@ -44,8 +45,11 @@ public class CasualtySearchOperationView extends View implements CasualtySearchO
 		contentWrapper.add(formWrapper);
 		
 		mainWrapper.add(contentWrapper);
-		
-		initWidget(mainWrapper);		
+	}
+
+	@Override
+	protected void initializeView() {
+		return;
 	}
 	
 }

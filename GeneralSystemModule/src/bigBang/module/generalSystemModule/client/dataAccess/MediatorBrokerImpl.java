@@ -1,9 +1,12 @@
 package bigBang.module.generalSystemModule.client.dataAccess;
 
+import java.util.Collection;
+
 import bigBang.definitions.client.dataAccess.DataBroker;
 import bigBang.definitions.client.dataAccess.DataBrokerClient;
 import bigBang.definitions.client.dataAccess.MediatorBroker;
 import bigBang.definitions.client.dataAccess.MediatorDataBrokerClient;
+import bigBang.definitions.client.response.ResponseError;
 import bigBang.definitions.client.response.ResponseHandler;
 import bigBang.definitions.shared.BigBangConstants;
 import bigBang.definitions.shared.Mediator;
@@ -38,12 +41,21 @@ public class MediatorBrokerImpl extends DataBroker<Mediator> implements Mediator
 					for(int i = 0; i < result.length; i++){
 						cache.add(result[i].id, result[i]);
 					}
-
+					incrementDataVersion();
 					for(DataBrokerClient<Mediator> c : MediatorBrokerImpl.this.getClients()){
 						((MediatorDataBrokerClient)c).setMediators(result);
+						((MediatorDataBrokerClient)c).setDataVersionNumber(getDataElementId(), getCurrentDataVersion());
 					}
 					handler.onResponse(result);
 					needsRefresh = false;
+				}
+				
+				@Override
+				public void onFailure(Throwable caught) {
+					handler.onError(new String[]{
+						new String("Could not get the mediators list")	
+					});
+					super.onFailure(caught);
 				}
 			});
 		}else{
@@ -62,9 +74,13 @@ public class MediatorBrokerImpl extends DataBroker<Mediator> implements Mediator
 	@Override
 	public void getMediator(String mediatorId,
 			ResponseHandler<Mediator> handler) {
-		if(!cache.contains(mediatorId))
-			throw new RuntimeException("The requested mediator could not be found locally. id:\"" + mediatorId + "\"");
-		handler.onResponse((Mediator) cache.get(mediatorId));
+		if(!cache.contains(mediatorId)){
+			handler.onError(new String[]{
+					new String("Could not get the requested mediator. id: " + mediatorId)
+			});
+		}else{
+			handler.onResponse((Mediator) cache.get(mediatorId));
+		}
 	}
 
 
@@ -75,10 +91,20 @@ public class MediatorBrokerImpl extends DataBroker<Mediator> implements Mediator
 			@Override
 			public void onSuccess(Mediator result) {
 				cache.add(result.id, result);
+				incrementDataVersion();
 				for(DataBrokerClient<Mediator> c : MediatorBrokerImpl.this.getClients()){
 					((MediatorDataBrokerClient)c).addMediator(result);
+					((MediatorDataBrokerClient)c).setDataVersionNumber(getDataElementId(), getCurrentDataVersion());
 				}
 				handler.onResponse(result);
+			}
+			
+			@Override
+			public void onFailure(Throwable caught) {
+				handler.onError(new String[]{
+					new String("Could not create mediator")	
+				});
+				super.onFailure(caught);
 			}
 		});
 	}
@@ -91,10 +117,20 @@ public class MediatorBrokerImpl extends DataBroker<Mediator> implements Mediator
 			@Override
 			public void onSuccess(Mediator result) {
 				cache.update(result.id, result);
+				incrementDataVersion();
 				for(DataBrokerClient<Mediator> c : MediatorBrokerImpl.this.getClients()){
 					((MediatorDataBrokerClient)c).updateMediator(result);
+					((MediatorDataBrokerClient)c).setDataVersionNumber(getDataElementId(), getCurrentDataVersion());
 				}
 				handler.onResponse(result);
+			}
+			
+			@Override
+			public void onFailure(Throwable caught) {
+				handler.onError(new String[]{
+					new String("Could not update mediator")	
+				});
+				super.onFailure(caught);
 			}
 		});
 	}
@@ -107,11 +143,22 @@ public class MediatorBrokerImpl extends DataBroker<Mediator> implements Mediator
 			@Override
 			public void onSuccess(Void result) {
 				cache.remove(mediatorId);
+				incrementDataVersion();
 				for(DataBrokerClient<Mediator> c : MediatorBrokerImpl.this.getClients()){
 					((MediatorDataBrokerClient)c).removeMediator(mediatorId);
+					((MediatorDataBrokerClient)c).setDataVersionNumber(getDataElementId(), getCurrentDataVersion());
 				}
 				handler.onResponse(null);
 			}
+			
+			@Override
+			public void onFailure(Throwable caught) {
+				handler.onError(new String[]{
+					new String("Could not delete mediator")	
+				});
+				super.onFailure(caught);
+			}
+
 		});
 	}
 
@@ -131,19 +178,54 @@ public class MediatorBrokerImpl extends DataBroker<Mediator> implements Mediator
 	@Override
 	public void notifyItemCreation(String itemId) {
 		requireDataRefresh();
-		//TODO FJVC
+		getMediator(itemId, new ResponseHandler<Mediator>() {
+
+			@Override
+			public void onResponse(Mediator response) {
+				cache.add(response.id, response);
+				incrementDataVersion();
+				for(DataBrokerClient<Mediator> c : MediatorBrokerImpl.this.getClients()){
+					((MediatorDataBrokerClient)c).addMediator(response);
+					((MediatorDataBrokerClient)c).setDataVersionNumber(getDataElementId(), getCurrentDataVersion());
+				}
+			}
+
+			@Override
+			public void onError(Collection<ResponseError> errors) {
+				return;
+			}
+		});
 	}
 
 	@Override
 	public void notifyItemDeletion(String itemId) {
 		requireDataRefresh();
-		//TODO
+		incrementDataVersion();
+		for(DataBrokerClient<Mediator> c : MediatorBrokerImpl.this.getClients()){
+			((MediatorDataBrokerClient)c).removeMediator(itemId);
+			((MediatorDataBrokerClient)c).setDataVersionNumber(getDataElementId(), getCurrentDataVersion());
+		}
 	}
 
 	@Override
 	public void notifyItemUpdate(String itemId) {
-		requireDataRefresh();
-		//TODO
+		getMediator(itemId, new ResponseHandler<Mediator>() {
+
+			@Override
+			public void onResponse(Mediator response) {
+				cache.add(response.id, response);
+				incrementDataVersion();
+				for(DataBrokerClient<Mediator> c : MediatorBrokerImpl.this.getClients()){
+					((MediatorDataBrokerClient)c).updateMediator(response);
+					((MediatorDataBrokerClient)c).setDataVersionNumber(getDataElementId(), getCurrentDataVersion());
+				}
+			}
+
+			@Override
+			public void onError(Collection<ResponseError> errors) {
+				return;
+			}
+		});
 	}
 
 }

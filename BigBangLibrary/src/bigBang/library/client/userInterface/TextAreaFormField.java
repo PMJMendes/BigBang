@@ -19,7 +19,7 @@ public class TextAreaFormField extends FormField<String> {
 
 	protected boolean hasDummyValue = false;
 	protected HorizontalPanel wrapper;
-	
+
 	public TextAreaFormField(String label,FieldValidator<String> validator){
 		this();
 		setLabel(label);
@@ -39,7 +39,7 @@ public class TextAreaFormField extends FormField<String> {
 	protected void setLabel(String label) {
 		if(label == null || label.equals("")){
 			this.label.setText("");
-			
+
 		}else{
 			this.label.setText(label + ":");
 		}
@@ -53,6 +53,8 @@ public class TextAreaFormField extends FormField<String> {
 	public TextAreaFormField(){
 		super();
 		wrapper = new HorizontalPanel();
+		initWidget(wrapper);
+
 		wrapper.setVerticalAlignment(HasVerticalAlignment.ALIGN_MIDDLE);
 		this.label = new Label();
 		this.label.getElement().getStyle().setMarginRight(5, Unit.PX);
@@ -62,8 +64,7 @@ public class TextAreaFormField extends FormField<String> {
 		wrapper.add((Widget) this.field);
 		wrapper.add(mandatoryIndicatorLabel);
 		wrapper.add(errorMessageLabel);
-		initWidget(wrapper);
-		
+
 		setFieldWidth("400px");
 	}
 
@@ -90,17 +91,17 @@ public class TextAreaFormField extends FormField<String> {
 		field.getElement().getStyle().setBackgroundColor(readOnly ? "transparent" : "white");
 		mandatoryIndicatorLabel.setVisible(!readOnly);
 	}
-	
+
 	public void setFieldHeight(String height){
 		((UIObject) this.field).setHeight(height);
 	}
-	
+
 	@Override
 	public void setValue(String value, boolean fireEvents) {
 		hasDummyValue = false;
 		super.setValue(value, fireEvents);
 	}
-	
+
 	@Override
 	public String getValue() {
 		String value = super.getValue();
@@ -109,7 +110,7 @@ public class TextAreaFormField extends FormField<String> {
 		}
 		return value;
 	}
-	
+
 	@Override
 	public boolean isReadOnly() {
 		return ((TextArea)this.field).isReadOnly();
@@ -122,25 +123,25 @@ public class TextAreaFormField extends FormField<String> {
 		if(field.isReadOnly())
 			hasDummyValue = true;
 	}
-	
+
 	//TODO MAKE THIS WORK
 	public void setMaxCharacters(final int max){
-		
+
 		((TextArea)this.field).addHandler(new KeyPressHandler() {
-			
+
 			@Override
 			public void onKeyPress(KeyPressEvent event) {
-				
-				
-				
+
+
+
 				if(event.getCharCode() != KeyCodes.KEY_BACKSPACE && event.getCharCode() != KeyCodes.KEY_DELETE && field.getValue().length() > max){
 					event.preventDefault();
-					
+
 				}
-				
+
 			}
 		}, KeyPressEvent.getType());
-		
+
 	}
 
 }

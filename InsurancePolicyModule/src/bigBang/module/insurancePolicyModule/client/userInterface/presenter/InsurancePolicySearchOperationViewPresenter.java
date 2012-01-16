@@ -2,9 +2,6 @@ package bigBang.module.insurancePolicyModule.client.userInterface.presenter;
 
 import java.util.Collection;
 
-import com.google.gwt.user.client.ui.HasWidgets;
-import com.google.gwt.user.client.ui.Widget;
-
 import bigBang.definitions.client.dataAccess.InsurancePolicyBroker;
 import bigBang.definitions.client.dataAccess.InsurancePolicyDataBrokerClient;
 import bigBang.definitions.client.dataAccess.InsuredObjectDataBroker;
@@ -14,212 +11,134 @@ import bigBang.definitions.client.response.ResponseHandler;
 import bigBang.definitions.shared.BigBangConstants;
 import bigBang.definitions.shared.Contact;
 import bigBang.definitions.shared.Document;
+import bigBang.definitions.shared.ExerciseStub;
 import bigBang.definitions.shared.HistoryItemStub;
 import bigBang.definitions.shared.InsurancePolicy;
-import bigBang.definitions.shared.InsuredObject;
 import bigBang.definitions.shared.InsurancePolicy.TableSection;
 import bigBang.definitions.shared.InsurancePolicyStub;
+import bigBang.definitions.shared.InsuredObject;
 import bigBang.definitions.shared.InsuredObjectStub;
-import bigBang.definitions.shared.Receipt;
-import bigBang.library.client.BigBangPermissionManager;
 import bigBang.library.client.EventBus;
 import bigBang.library.client.HasEditableValue;
+import bigBang.library.client.HasParameters;
 import bigBang.library.client.HasValueSelectables;
-import bigBang.library.client.Operation;
+import bigBang.library.client.Notification;
+import bigBang.library.client.Notification.TYPE;
 import bigBang.library.client.ValueSelectable;
 import bigBang.library.client.dataAccess.DataBrokerManager;
 import bigBang.library.client.event.ActionInvokedEvent;
 import bigBang.library.client.event.ActionInvokedEventHandler;
+import bigBang.library.client.event.NewNotificationEvent;
 import bigBang.library.client.event.SelectionChangedEvent;
 import bigBang.library.client.event.SelectionChangedEventHandler;
-import bigBang.library.client.userInterface.presenter.OperationViewPresenter;
-import bigBang.library.client.userInterface.presenter.UndoOperationViewPresenter;
-import bigBang.library.client.userInterface.view.UndoOperationView;
-import bigBang.library.client.userInterface.view.View;
-import bigBang.library.interfaces.Service;
-import bigBang.library.shared.Permission;
-import bigBang.module.insurancePolicyModule.client.userInterface.view.CreateReceiptView;
-import bigBang.module.insurancePolicyModule.client.userInterface.view.InsuredObjectView;
-import bigBang.module.insurancePolicyModule.interfaces.InsurancePolicyServiceAsync;
-import bigBang.module.insurancePolicyModule.shared.operation.InsurancePolicySearchOperation;
-import bigBang.module.insurancePolicyModule.shared.ModuleConstants;
+import bigBang.library.client.history.NavigationHistoryItem;
+import bigBang.library.client.history.NavigationHistoryManager;
+import bigBang.library.client.userInterface.presenter.ViewPresenter;
+
+import com.google.gwt.core.client.GWT;
+import com.google.gwt.user.client.ui.HasValue;
+import com.google.gwt.user.client.ui.HasWidgets;
+import com.google.gwt.user.client.ui.UIObject;
+import com.google.gwt.user.client.ui.Widget;
 
 public class InsurancePolicySearchOperationViewPresenter implements
-		OperationViewPresenter {
+ViewPresenter {
 
 	public static enum Action {
 		EDIT,
 		SAVE,
-		CANCEL,
+		CANCEL_EDIT,
 		DELETE,
 		CREATE_RECEIPT,
-		CREATE_INSURED_OBJECT
-		//TODO
+		CREATE_INSURED_OBJECT,
+		CREATE_EXERCISE,
+		VOID_POLICY,
+		TRANSFER_BROKERAGE,
+		CREATE_SUBSTITUTE_POLICY,
+		REQUEST_CLIENT_INFO,
+		REQUEST_AGENCY_INFO,
+		CREATE_INSURED_OBJECT_FROM_CLIENT,
+		TRANSFER_MANAGER,
+		EXECUTE_DETAILED_CALCULATIONS,
+		CREATE_INFO_MANAGEMENT_PROCESS,
+		CREATE_SUB_POLICY, ISSUE_CREDIT_NOTE,
+		CREATE_NEGOTIATION, CREATE_HEALTH_EXPENSE,
+		CREATE_RISK_ANALISYS
 	}
-	
+
 	public interface Display {
 		//Listtype filter text
-		HasValueSelectables<?> getList();
+		HasValueSelectables<InsurancePolicyStub> getList();
+		void removeFromList(ValueSelectable<InsurancePolicyStub> selectable);
+		void selectInsurancePolicy(String policyId);
 
 		//Form
 		HasEditableValue<InsurancePolicy> getForm();
+		void scrollFormToTop();
 		boolean isFormValid();
-		void lockForm(boolean lock);
-		
-		String getInsuredObjectTableFilter();
-		String getExerciseTableFilter();
+
+		HasValue<String> getInsuredObjectTableFilter();
+		HasValue<String> getExerciseTableFilter();
 		TableSection getCurrentTablePage();
+
+		//Permissions
+		void clearAllowedPermissions();
+		void allowEdit(boolean allow);
+		void allowDelete(boolean allow);
+		void allowCreateReceipt(boolean allow);
+		void allowCreateInsuredObject(boolean allow);
+		void allowCreateExercise(boolean allow);
+		void allowVoidPolicy(boolean allow);
+		void allowTransferBrokerage(boolean allow);
+		void allowCreateSubstitutePolicy(boolean allow);
+		void allowRequestClientInfo(boolean allow);
+		void allowRequestAgencyInfo(boolean allow);
+		void allowCreateInsuredObjectFromClient(boolean allow);
+		void allowTransferManager(boolean allow);
+		void allowExecuteDetailedCalculations(boolean allow);
+		void allowCreateInfoManagementProcess(boolean allow);
+		void allowCreateSubPolicy(boolean allow);
+		void allowIssueCreditNote(boolean allow);
+		void allowCreateNegotiation(boolean allow);
+		void allowCreateHealthExpense(boolean allow);
+		void allowCreateRiskAnalisys(boolean allow);
 
 		//children lists
 		HasValueSelectables<Contact> getContactsList();
 		HasValueSelectables<Document> getDocumentsList();
 		HasValueSelectables<InsuredObjectStub> getObjectsList();
+		HasValueSelectables<ExerciseStub> getExercisesList();
 		HasValueSelectables<HistoryItemStub> getHistoryList();
-		
-		void showHistory(InsurancePolicy policy, String selectedItemId);
-		
-		//Create receipt
-		void allowCreateReceipt(boolean allow);
-		HasWidgets showCreateReceiptForm(boolean show);
-		HasEditableValue<Receipt> getNewReceiptForm();
-		boolean isNewReceiptFormValid();
-		void lockNewReceiptForm(boolean lock);
-		
-		//Create Insured Object
-		HasWidgets showCreateInsuredObjectView(boolean show);
-		void allowCreateInsuredObject(boolean allow);
-		
-		void allowUpdate(boolean allow);
-		void allowDelete(boolean allow);
-		
+
 		//General
-		void clear();
 		void registerActionInvokedHandler(ActionInvokedEventHandler<Action> handler);
-		void prepareNewPolicy();
-		void removeNewPolicyPreparation();
 		void setSaveModeEnabled(boolean enabled);
-		void setReadOnly(boolean readOnly);
-		void clearAllowedPermissions();
 
 		Widget asWidget();
-		View getInstance();
 	}
-	
-	protected EventBus eventBus;
-	protected InsurancePolicyServiceAsync service;
+
 	protected Display view;
-	protected InsurancePolicySearchOperation operation;
-	protected boolean bound = false;
 	protected InsurancePolicyBroker broker;
 	protected InsuredObjectDataBroker insuredObjectBroker;
-	protected int dataVersion;
-	
 	protected InsurancePolicyDataBrokerClient insurancePolicyClient;
 	protected InsuredObjectDataBrokerClient insuredObjectClient;
-	
-	public InsurancePolicySearchOperationViewPresenter(EventBus eventBus, Service service, View view){
-		setEventBus(eventBus);
-		setService(service);
-		setView(view);
-		
+	protected boolean bound = false;
+
+	public InsurancePolicySearchOperationViewPresenter(Display view){
 		this.broker = ((InsurancePolicyBroker)DataBrokerManager.Util.getInstance().getBroker(BigBangConstants.EntityIds.INSURANCE_POLICY));
 		this.insuredObjectBroker = ((InsuredObjectDataBroker)DataBrokerManager.Util.getInstance().getBroker(BigBangConstants.EntityIds.POLICY_INSURED_OBJECT));
-		
+
 		this.insurancePolicyClient = initInsurancePolicyClient();
 		this.insuredObjectClient = initInsuredObjectClient();
-		
+
 		this.broker.registerClient(this.insurancePolicyClient);
 		this.insuredObjectBroker.registerClient(insuredObjectClient);
-	}
-	
-	protected InsurancePolicyDataBrokerClient initInsurancePolicyClient(){
-		InsurancePolicyDataBrokerClient result = new InsurancePolicyDataBrokerClient() {
-			
-			protected int version;
-			
-			@Override
-			public void setDataVersionNumber(String dataElementId, int number) {
-				this.version = number;
-			}
-			
-			@Override
-			public int getDataVersion(String dataElementId) {
-				return this.version;
-			}
-			
-			@Override
-			public void updateInsurancePolicy(InsurancePolicy policy) {
-				//TODO
-			}
-			
-			@Override
-			public void removeInsurancePolicy(String policyId) {
-				// TODO Auto-generated method stub
-			}
-			
-			@Override
-			public void addInsurancePolicy(InsurancePolicy policy) {
-				// TODO Auto-generated method stub
-				
-			}
 
-			@Override
-			public void remapItemId(String oldId, String newId) {
-				// TODO Auto-generated method stub
-				
-			}
-		};
-		return result;
-	}
-	
-	protected InsuredObjectDataBrokerClient initInsuredObjectClient() {
-		InsuredObjectDataBrokerClient result = new InsuredObjectDataBrokerClient() {
-
-			@Override
-			public void setDataVersionNumber(String dataElementId, int number) {
-				// TODO Auto-generated method stub
-				
-			}
-			
-			@Override
-			public int getDataVersion(String dataElementId) {
-				// TODO Auto-generated method stub
-				return 0;
-			}
-			
-			@Override
-			public void updateInsuredObject(InsuredObject object) {
-				// TODO Auto-generated method stub
-				
-			}
-			
-			@Override
-			public void removeInsuredObject(String id) {
-				// TODO Auto-generated method stub
-				
-			}
-			
-			@Override
-			public void addInsuredObject(InsuredObject object) {
-				// TODO Auto-generated method stub
-				
-			}
-		};
-		return result;
-	}
-	
-	@Override
-	public void setService(Service service) {
-		this.service = (InsurancePolicyServiceAsync) service;
+		setView((UIObject) view);
 	}
 
 	@Override
-	public void setEventBus(EventBus eventBus) {
-		this.eventBus = eventBus;
-	}
-
-	@Override
-	public void setView(View view) {
+	public void setView(UIObject view) {
 		this.view = (Display) view;
 	}
 
@@ -231,99 +150,182 @@ public class InsurancePolicySearchOperationViewPresenter implements
 	}
 
 	@Override
+	public void setParameters(HasParameters parameterHolder) {
+		String policyId = parameterHolder.getParameter("id");
+		policyId = policyId == null ? new String() : policyId;
+
+		if(policyId.isEmpty()){
+			clearView();
+		}else{
+			showPolicy(policyId);
+		}
+	}
+	
+
 	public void bind() {
 		if(this.bound)
 			return;
-		this.bound = true;
-		
-		view.clearAllowedPermissions();
+
 		this.view.getList().addSelectionChangedEventHandler(new SelectionChangedEventHandler() {
-			
+
 			@Override
 			public void onSelectionChanged(SelectionChangedEvent event) {
-				view.clearAllowedPermissions();
-				view.lockForm(true);
 				@SuppressWarnings("unchecked")
 				ValueSelectable<InsurancePolicyStub> selected = (ValueSelectable<InsurancePolicyStub>) event.getFirstSelected();
-				final InsurancePolicyStub selectedValue = selected == null ? null : selected.getValue();
-				view.setSaveModeEnabled(false);
-				if(selectedValue == null){
-					view.getForm().setValue(null);
+				InsurancePolicyStub selectedValue = selected == null ? null : selected.getValue();
+				String selectedPolicyId = selectedValue == null ? new String() : selectedValue.id;
+				selectedPolicyId = selectedPolicyId == null ? new String() : selectedPolicyId;
+
+				NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
+				if(selectedPolicyId.isEmpty()){
+					item.removeParameter("id");
 				}else{
-					if(selectedValue.id != null){
-						view.removeNewPolicyPreparation();
-						view.clearAllowedPermissions();
-						broker.getPolicy(selectedValue.id, new ResponseHandler<InsurancePolicy>() {
-
-							@Override
-							public void onResponse(InsurancePolicy value) {
-								view.getForm().setValue(value);
-								updatePermissions();
-							}
-
-							@Override
-							public void onError(Collection<ResponseError> errors) {}
-						});
-					}
+					item.setParameter("id", selectedPolicyId);
 				}
+				NavigationHistoryManager.getInstance().go(item);
 			}
 		});
+
 		this.view.registerActionInvokedHandler(new ActionInvokedEventHandler<InsurancePolicySearchOperationViewPresenter.Action>() {
 
 			@Override
 			public void onActionInvoked(ActionInvokedEvent<Action> action) {
+				NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
+
 				switch(action.getAction()){
-				case SAVE:
-					if(!view.isFormValid())
-						return;
-					InsurancePolicy info = view.getForm().getInfo();
-					updatePolicy(info);
-					break;
 				case EDIT:
-					broker.openPolicyResource(view.getForm().getInfo(), new ResponseHandler<InsurancePolicy>() {
+					broker.openPolicyResource(view.getForm().getValue(), new ResponseHandler<InsurancePolicy>() {
 
 						@Override
 						public void onResponse(InsurancePolicy response) {
-							view.getForm().setInfo(response);
+							view.getForm().setValue(response);
 							view.getForm().setReadOnly(false);
 							view.setSaveModeEnabled(true);
 						}
 						@Override
-						public void onError(Collection<ResponseError> errors) {}
+						public void onError(Collection<ResponseError> errors) {
+							onOpenPolicyResourceFailed();
+						}
 					});
 					break;
-				case CANCEL:
-					view.getForm().revert();
+				case CANCEL_EDIT:
+					broker.closePolicyResource(view.getForm().getValue().id, new ResponseHandler<Void>() {
+						
+						@Override
+						public void onResponse(Void response) {
+							return;
+						}
+						
+						@Override
+						public void onError(Collection<ResponseError> errors) {
+							onClosePolicyResourceFailed();
+						}
+					});
+					NavigationHistoryManager.getInstance().reload();
+					break;
+				case SAVE:
+					InsurancePolicy info = view.getForm().getInfo();
 					view.getForm().setReadOnly(true);
-					view.setSaveModeEnabled(false);
+					savePolicy(info);
 					break;
 				case DELETE:
-					deletePolicy(view.getForm().getInfo().id);
+					item.setParameter("operation", "delete");
+					NavigationHistoryManager.getInstance().go(item);
 					break;
 				case CREATE_RECEIPT:
-					createReceipt();
+					item.setParameter("operation", "createreceipt");
+					NavigationHistoryManager.getInstance().go(item);
+					break;
+				case CREATE_EXERCISE:
+					item.setParameter("operation", "createexercise");
+					NavigationHistoryManager.getInstance().go(item);
+					break;
+				case CREATE_INSURED_OBJECT:
+					item.setParameter("operation", "createinsuredobject");
+					NavigationHistoryManager.getInstance().go(item);
+					break;
+				case CREATE_INSURED_OBJECT_FROM_CLIENT:
+					item.setParameter("operation", "createinsuredobjectfromclient");
+					NavigationHistoryManager.getInstance().go(item);
+					break;
+				case CREATE_HEALTH_EXPENSE:
+					item.setParameter("operation", "createhealthexpense");
+					NavigationHistoryManager.getInstance().go(item);
+					break;
+				case CREATE_INFO_MANAGEMENT_PROCESS:
+					item.setParameter("operation", "createinfomanagementprocess");
+					NavigationHistoryManager.getInstance().go(item);
+					break;
+				case CREATE_NEGOTIATION:
+					item.setParameter("operation", "createnegotiation");
+					NavigationHistoryManager.getInstance().go(item);
+					break;
+				case CREATE_RISK_ANALISYS:
+					item.setParameter("operation", "createriskanalisys");
+					NavigationHistoryManager.getInstance().go(item);
+					break;
+				case CREATE_SUB_POLICY:
+					item.setParameter("operation", "createsubpolicy");
+					NavigationHistoryManager.getInstance().go(item);
+					break;
+				case CREATE_SUBSTITUTE_POLICY:
+					item.setParameter("operation", "createsubstitutepolicy");
+					NavigationHistoryManager.getInstance().go(item);
+					break;
+				case EXECUTE_DETAILED_CALCULATIONS:
+					//TODO
+					break;
+				case ISSUE_CREDIT_NOTE:
+					item.setParameter("operation", "issuecreditnote");
+					NavigationHistoryManager.getInstance().go(item);
+					break;
+				case REQUEST_AGENCY_INFO:
+					item.setParameter("operation", "requestagencyinfo");
+					NavigationHistoryManager.getInstance().go(item);
+					break;
+				case REQUEST_CLIENT_INFO:
+					item.setParameter("operation", "requestclientinfo");
+					NavigationHistoryManager.getInstance().go(item);
+					break;
+				case TRANSFER_BROKERAGE:
+					item.setParameter("operation", "brokeragetransfer");
+					NavigationHistoryManager.getInstance().go(item);
+					break;
+				case TRANSFER_MANAGER:
+					item.setParameter("operation", "managertransfer");
+					NavigationHistoryManager.getInstance().go(item);
+					break;
+				case VOID_POLICY:
+					item.setParameter("operation", "voidpolicy");
+					NavigationHistoryManager.getInstance().go(item);
 					break;
 				}
 			}
 		});
 		view.getContactsList().addSelectionChangedEventHandler(new SelectionChangedEventHandler() {
-			
+
 			@Override
 			public void onSelectionChanged(SelectionChangedEvent event) {
-				// TODO Auto-generated method stub
-				
+				@SuppressWarnings("unchecked")
+				Contact selectedValue = event.getFirstSelected() == null ? null : ((ValueSelectable<Contact>) event.getFirstSelected()).getValue();
+				if(selectedValue != null) {
+					showContact(selectedValue);
+				}
 			}
 		});
 		view.getDocumentsList().addSelectionChangedEventHandler(new SelectionChangedEventHandler() {
-			
+
 			@Override
 			public void onSelectionChanged(SelectionChangedEvent event) {
-				// TODO Auto-generated method stub
-				
+				@SuppressWarnings("unchecked")
+				Document selectedValue = event.getFirstSelected() == null ? null : ((ValueSelectable<Document>) event.getFirstSelected()).getValue();
+				if(selectedValue != null) {
+					showDocument(selectedValue);
+				}
 			}
 		});
 		view.getObjectsList().addSelectionChangedEventHandler(new SelectionChangedEventHandler() {
-			
+
 			@Override
 			public void onSelectionChanged(SelectionChangedEvent event) {
 				@SuppressWarnings("unchecked")
@@ -333,8 +335,19 @@ public class InsurancePolicySearchOperationViewPresenter implements
 				}
 			}
 		});
+		view.getExercisesList().addSelectionChangedEventHandler(new SelectionChangedEventHandler() {
+
+			@Override
+			public void onSelectionChanged(SelectionChangedEvent event) {
+				@SuppressWarnings("unchecked")
+				ExerciseStub selectedValue = event.getFirstSelected() == null ? null : ((ValueSelectable<ExerciseStub>)event.getFirstSelected()).getValue();
+				if(selectedValue != null) {
+					showExercise(selectedValue);
+				}
+			}
+		});
 		view.getHistoryList().addSelectionChangedEventHandler(new SelectionChangedEventHandler() {
-			
+
 			@Override
 			public void onSelectionChanged(SelectionChangedEvent event) {
 				@SuppressWarnings("unchecked")
@@ -344,53 +357,76 @@ public class InsurancePolicySearchOperationViewPresenter implements
 				}
 			}
 		});
-	}
-	
-	protected void updatePermissions(){
-		view.clearAllowedPermissions();
-		InsurancePolicy policy = view.getForm().getValue();
 		
-		if(broker.isTemp(policy)){
-			view.allowUpdate(true);
-			view.allowDelete(true);
-			view.allowCreateInsuredObject(true);
-		}else{
-			BigBangPermissionManager.Util.getInstance().getProcessPermissions(policy.processId, new ResponseHandler<Permission[]> () {
-				@Override
-				public void onResponse(final Permission[] response) {
-					view.lockForm(true);
-					for(int i = 0; i < response.length; i++) {
-						Permission p = response[i];
-						if(p.instanceId == null){continue;}
-						if(p.id.equalsIgnoreCase(ModuleConstants.OpTypeIDs.EDIT_POLICY)){
-							view.allowUpdate(true);
-						}
-						if(p.id.equalsIgnoreCase(ModuleConstants.OpTypeIDs.DELETE_POLICY)){
-							view.allowDelete(true);
-						}
-						if(p.id.equalsIgnoreCase(ModuleConstants.OpTypeIDs.CREATE_RECEIPT)){
-							view.allowCreateReceipt(true);
-						}
-						if(p.id.equalsIgnoreCase(ModuleConstants.OpTypeIDs.CREATE_INSURED_OBJECT)){
-							view.allowCreateInsuredObject(true);
-						}
-					}
-				}
+		//APPLICATION-WIDE EVENTS
+		this.bound = true;
+	}
 
-				@Override
-				public void onError(Collection<ResponseError> errors) {}
-						
-			});
-		}
+	private void clearView(){
+		view.setSaveModeEnabled(false);
+		view.clearAllowedPermissions();
+		view.getForm().setValue(null);
+		view.getForm().setReadOnly(true);
+		view.getList().clearSelection();
 	}
 	
-	public void updatePolicy(final InsurancePolicy policy){
+	private void showPolicy(String policyId){
+		for(ValueSelectable<InsurancePolicyStub> entry : view.getList().getAll()){
+			InsurancePolicyStub listPolicy = entry.getValue();
+			if(listPolicy.id.equalsIgnoreCase(policyId) && !entry.isSelected()){
+				view.selectInsurancePolicy(policyId);
+				break;
+			}
+		}
+		
+		this.broker.getPolicy(policyId, new ResponseHandler<InsurancePolicy>() {
+
+			@Override
+			public void onResponse(InsurancePolicy response) {
+				view.clearAllowedPermissions();
+
+				boolean hasPermissions = true; //TODO IMPORTANT FJVC
+				view.allowEdit(hasPermissions);
+				view.allowDelete(hasPermissions);
+				view.allowEdit(true);
+				view.allowDelete(true);
+				view.allowCreateExercise(true);
+				view.allowCreateInsuredObject(true);
+				view.allowCreateReceipt(true);
+				view.allowVoidPolicy(true);
+				view.allowTransferBrokerage(true);
+				view.allowCreateSubstitutePolicy(true);
+				view.allowRequestClientInfo(true);
+				view.allowRequestAgencyInfo(true);
+				view.allowCreateInsuredObjectFromClient(true);
+				view.allowTransferManager(true);
+				view.allowExecuteDetailedCalculations(true);
+				view.allowCreateInfoManagementProcess(true);
+				view.allowCreateSubPolicy(true);
+				view.allowIssueCreditNote(true);
+				view.allowCreateNegotiation(true);
+				view.allowCreateHealthExpense(true);
+				view.allowCreateRiskAnalisys(true);
+				
+				view.setSaveModeEnabled(false);
+				view.getForm().setValue(response);
+				view.getForm().setReadOnly(true);
+			}
+
+			@Override
+			public void onError(Collection<ResponseError> errors) {
+				onGetPolicyFailed();
+			}
+		});
+	}
+
+	private void savePolicy(final InsurancePolicy policy){
 		this.broker.updatePolicy(policy, new ResponseHandler<InsurancePolicy>() {
 
 			@Override
 			public void onResponse(final InsurancePolicy policyResponse) {
-				
-				broker.saveCoverageDetailsPage(policy.id, view.getInsuredObjectTableFilter(), view.getExerciseTableFilter(), view.getCurrentTablePage(), new ResponseHandler<TableSection>() {
+
+				broker.saveCoverageDetailsPage(policy.id, view.getInsuredObjectTableFilter().getValue(), view.getExerciseTableFilter().getValue(), view.getCurrentTablePage(), new ResponseHandler<TableSection>() {
 
 					@Override
 					public void onResponse(TableSection response) {
@@ -398,138 +434,202 @@ public class InsurancePolicySearchOperationViewPresenter implements
 
 							@Override
 							public void onResponse(InsurancePolicy response) {
-								view.getForm().setValue(response);
-								view.getForm().setReadOnly(true);
-								view.setSaveModeEnabled(false);
+								NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
+								item.setParameter("id", response.id);
+								NavigationHistoryManager.getInstance().go(item);
+								EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Apólice guardada com sucesso."), TYPE.TRAY_NOTIFICATION));
 							}
 
 							@Override
 							public void onError(Collection<ResponseError> errors) {
-								//TODO
+								onSavePolicyFailed();
 							}
 						});
 					}
 
 					@Override
 					public void onError(Collection<ResponseError> errors) {
-						// TODO Auto-generated method stub
+						onSavePolicyFailed();
 					}
 				});
 			}
 
 			@Override
 			public void onError(Collection<ResponseError> errors) {
+				onSavePolicyFailed();
 			}
 		});
 	}
-	
-	public void deletePolicy(String policyId){
-		this.broker.removePolicy(policyId, new ResponseHandler<String>() {
 
-			@Override
-			public void onResponse(String response) {
-				view.getForm().setValue(null);
-				view.setReadOnly(true);
-			}
-
-			@Override
-			public void onError(Collection<ResponseError> errors) {
-			}
-		});
+	private void onGetPolicyFailed(){
+		EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "De momento não foi possível obter a Apólice seleccionada"), TYPE.ALERT_NOTIFICATION));
+		NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
+		item.removeParameter("id");
+		NavigationHistoryManager.getInstance().go(item);
 	}
 	
-	protected void createReceipt(){
-		HasWidgets container = view.showCreateReceiptForm(true);
-
-		CreateReceiptView createReceiptView = new CreateReceiptView();
-		CreateReceiptViewPresenter presenter = new CreateReceiptViewPresenter(null, createReceiptView) {
-
-			@Override
-			public void onReceiptCreated() {
-				InsurancePolicySearchOperationViewPresenter.this.view.showCreateReceiptForm(false);
-			}
-
-			@Override
-			public void onCreationCancelled() {
-				InsurancePolicySearchOperationViewPresenter.this.view.showCreateReceiptForm(false);
-			}
-
-		};
-		presenter.setPolicy(view.getForm().getValue());
-		presenter.go(container);
+	private void onSavePolicyFailed(){
+		EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "De momento não foi possível guardar as alterações à Apólice"), TYPE.ALERT_NOTIFICATION));
+		view.getForm().setReadOnly(false);
+	}
+	
+	private void onOpenPolicyResourceFailed(){
+		EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Neste momento não é possível editar a Apólice"), TYPE.ALERT_NOTIFICATION));
+	}
+	
+	private void onClosePolicyResourceFailed(){
+		GWT.log("Could not close a policy resource : " + NavigationHistoryManager.getInstance().getCurrentState());
 	}
 
-	protected void showInsuredObject(InsuredObjectStub object) {
-		HasWidgets container = view.showCreateInsuredObjectView(true);
-		final InsuredObjectViewPresenter presenter = new InsuredObjectViewPresenter(eventBus, new InsuredObjectView()){
+	private void showInsuredObject(InsuredObjectStub object) {
+		NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
+		item.setParameter("operation", "viewinsuredobject");
+		item.setParameter("id", object.id);
+		item.setParameter("ownerid", object.ownerId);
+		NavigationHistoryManager.getInstance().go(item);
+	}
+	
+	private void showExercise(ExerciseStub exercise) {
+		NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
+		item.setParameter("operation", "viewexercise");
+		item.setParameter("id", exercise.id);
+		item.setParameter("ownerid", exercise.ownerId);
+		NavigationHistoryManager.getInstance().go(item);
+	}
+
+	private void showHistory(HistoryItemStub historyItem) {
+		NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
+		item.setParameter("operation", "history");
+		item.setParameter("historyitemid", historyItem.id);
+		NavigationHistoryManager.getInstance().go(item);
+	}
+	
+	private void showContact(Contact contact) {
+		//TODO
+	}
+	
+	private void showDocument(Document document) {
+		//TODO
+	}
+
+//	protected void updatePermissions(){
+//		view.clearAllowedPermissions();
+//		InsurancePolicy policy = view.getForm().getValue();
+//
+//		if(broker.isTemp(policy)){
+//			view.allowEdit(true);
+//			view.allowDelete(true);
+//			view.allowCreateInsuredObject(true);
+//		}else{
+//			BigBangPermissionManager.Util.getInstance().getProcessPermissions(policy.processId, new ResponseHandler<Permission[]> () {
+//				@Override
+//				public void onResponse(final Permission[] response) {
+////					view.lockForm(true);
+////					for(int i = 0; i < response.length; i++) {
+////						Permission p = response[i];
+////						if(p.instanceId == null){continue;}
+////						if(p.id.equalsIgnoreCase(ModuleConstants.OpTypeIDs.EDIT_POLICY)){
+////							view.allowUpdate(true);
+////						}
+////						if(p.id.equalsIgnoreCase(ModuleConstants.OpTypeIDs.DELETE_POLICY)){
+////							view.allowDelete(true);
+////						}
+////						if(p.id.equalsIgnoreCase(ModuleConstants.OpTypeIDs.CREATE_RECEIPT)){
+////							view.allowCreateReceipt(true);
+////						}
+////						if(p.id.equalsIgnoreCase(ModuleConstants.OpTypeIDs.CREATE_INSURED_OBJECT)){
+////							view.allowCreateInsuredObject(true);
+////						}
+////					}
+//				}
+//
+//				@Override
+//				public void onError(Collection<ResponseError> errors) {}
+//
+//			});
+//		}
+//	}
+
+	protected InsurancePolicyDataBrokerClient initInsurancePolicyClient(){
+		InsurancePolicyDataBrokerClient result = new InsurancePolicyDataBrokerClient() {
+
+			protected int version;
 
 			@Override
-			public void onSave() {
-				InsurancePolicySearchOperationViewPresenter.this.view.showCreateInsuredObjectView(false);
+			public void setDataVersionNumber(String dataElementId, int number) {
+				this.version = number;
 			}
 
 			@Override
-			public void onCancel() {
+			public int getDataVersion(String dataElementId) {
+				return this.version;
+			}
+
+			@Override
+			public void updateInsurancePolicy(InsurancePolicy policy) {
+				//TODO
+			}
+
+			@Override
+			public void removeInsurancePolicy(String policyId) {
 				// TODO Auto-generated method stub
-				
 			}
 
 			@Override
-			public void onDelete() {
+			public void addInsurancePolicy(InsurancePolicy policy) {
 				// TODO Auto-generated method stub
-				
+
 			}
-			
+
+			@Override
+			public void remapItemId(String oldId, String newId) {
+				// TODO Auto-generated method stub
+
+			}
 		};
-		presenter.setPolicy(view.getForm().getValue());
-		insuredObjectBroker.getInsuredObject(object.id, new ResponseHandler<InsuredObject>() {
-			
+		return result;
+	}
+
+	protected InsuredObjectDataBrokerClient initInsuredObjectClient() {
+		InsuredObjectDataBrokerClient result = new InsuredObjectDataBrokerClient() {
+
 			@Override
-			public void onResponse(InsuredObject response) {
-				presenter.setInsuredObject(response);
+			public void setDataVersionNumber(String dataElementId, int number) {
+				// TODO Auto-generated method stub
+
 			}
-			
+
 			@Override
-			public void onError(Collection<ResponseError> errors) {
-				return;
+			public int getDataVersion(String dataElementId) {
+				// TODO Auto-generated method stub
+				return 0;
 			}
-		});
-		presenter.go(container);
-	}
-	
-	protected void showHistory(HistoryItemStub historyItem) {
-		view.showHistory(view.getForm().getValue(), historyItem.id);
-	}
-	
-	@Override
-	public void registerEventHandlers(EventBus eventBus) {
-		return;
-	}
 
-	@Override
-	public void setOperation(Operation o) {
-		this.operation = (InsurancePolicySearchOperation)o;
-	}
+			@Override
+			public void updateInsuredObject(InsuredObject object) {
+				// TODO Auto-generated method stub
 
-	@Override
-	public Operation getOperation() {
-		return this.operation;
-	}
+			}
 
-	@Override
-	public void goCompact(HasWidgets container) {
-		return;
-	}
-		
+			@Override
+			public void removeInsuredObject(String id) {
+				// TODO Auto-generated method stub
 
-	@Override
-	public String setTargetEntity(String id) {
-		return null;
-	}
+			}
 
-	@Override
-	public void setOperationPermission(boolean hasPermissionForOperation) {
-		return;
+			@Override
+			public void addInsuredObject(InsuredObject object) {
+				// TODO Auto-generated method stub
+
+			}
+
+			@Override
+			public void remapItemId(String newId, String oldId) {
+				// TODO Auto-generated method stub
+
+			}
+		};
+		return result;
 	}
 
 }

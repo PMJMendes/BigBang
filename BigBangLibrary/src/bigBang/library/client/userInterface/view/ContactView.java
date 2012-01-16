@@ -184,6 +184,11 @@ public class ContactView extends View implements ContactViewPresenter.Display{
 		//END TOOLBAR
 
 	}
+	
+	@Override
+	protected void initializeView() {
+		return;
+	}
 
 	@Override
 	public void setContact(Contact contact) {
@@ -196,6 +201,7 @@ public class ContactView extends View implements ContactViewPresenter.Display{
 
 
 	}
+	
 	@Override
 	public void addContactInfo(ContactInfo contactinfo){
 
@@ -292,6 +298,5 @@ public class ContactView extends View implements ContactViewPresenter.Display{
 		this.deleteHandler = deleteRequestEventHandler;
 		
 	}
-
 
 }

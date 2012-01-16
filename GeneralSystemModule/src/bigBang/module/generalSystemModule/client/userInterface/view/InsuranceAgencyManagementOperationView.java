@@ -1,30 +1,24 @@
 package bigBang.module.generalSystemModule.client.userInterface.view;
 
+import org.gwt.mosaic.ui.client.ToolButton;
+
 import bigBang.definitions.shared.InsuranceAgency;
 import bigBang.library.client.HasEditableValue;
 import bigBang.library.client.HasValueSelectables;
 import bigBang.library.client.ValueSelectable;
 import bigBang.library.client.event.ActionInvokedEvent;
 import bigBang.library.client.event.ActionInvokedEventHandler;
-import bigBang.library.client.userInterface.BigBangOperationsToolBar;
 import bigBang.library.client.userInterface.ContactsPreviewList;
-import bigBang.library.client.userInterface.BigBangOperationsToolBar.SUB_MENU;
 import bigBang.library.client.userInterface.DocumentsPreviewList;
 import bigBang.library.client.userInterface.view.View;
-import bigBang.module.generalSystemModule.client.GeneralSystemModule;
 import bigBang.module.generalSystemModule.client.userInterface.InsuranceAgencyList;
 import bigBang.module.generalSystemModule.client.userInterface.InsuranceAgencyListEntry;
+import bigBang.module.generalSystemModule.client.userInterface.InsuranceAgencyOperationsToolbar;
 import bigBang.module.generalSystemModule.client.userInterface.presenter.InsuranceAgencyManagementOperationViewPresenter;
 import bigBang.module.generalSystemModule.client.userInterface.presenter.InsuranceAgencyManagementOperationViewPresenter.Action;
-import bigBang.module.generalSystemModule.shared.ModuleConstants;
 
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.event.logical.shared.ValueChangeEvent;
-import com.google.gwt.event.logical.shared.ValueChangeHandler;
-import com.google.gwt.user.client.Command;
-import com.google.gwt.user.client.ui.Button;
-import com.google.gwt.user.client.ui.MenuItem;
 import com.google.gwt.user.client.ui.SplitLayoutPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
@@ -35,9 +29,10 @@ public class InsuranceAgencyManagementOperationView extends View implements Insu
 	private InsuranceAgencyList insuranceAgencyList;
 	private InsuranceAgencyForm insuranceAgencyForm;
 	private ContactsPreviewList contactsPreviewList;
+	protected ToolButton newButton;
 	protected DocumentsPreviewList documentsPreviewList;
 	protected ActionInvokedEventHandler<InsuranceAgencyManagementOperationViewPresenter.Action> actionHandler;
-	protected BigBangOperationsToolBar toolbar;
+	protected InsuranceAgencyOperationsToolbar toolbar;
 
 	public InsuranceAgencyManagementOperationView() {
 		SplitLayoutPanel wrapper = new SplitLayoutPanel();
@@ -45,18 +40,19 @@ public class InsuranceAgencyManagementOperationView extends View implements Insu
 		wrapper.setSize("100%", "100%");
 
 		insuranceAgencyList = new InsuranceAgencyList();
-		insuranceAgencyList.getNewButton().addClickHandler(new ClickHandler() {
-
-			@Override
-			public void onClick(ClickEvent event) {
-				actionHandler.onActionInvoked(new ActionInvokedEvent<InsuranceAgencyManagementOperationViewPresenter.Action>(Action.NEW));
-			}
-		});	
 		insuranceAgencyList.getRefreshButton().addClickHandler(new ClickHandler() {
 
 			@Override
 			public void onClick(ClickEvent event) {
 				actionHandler.onActionInvoked(new ActionInvokedEvent<InsuranceAgencyManagementOperationViewPresenter.Action>(Action.REFRESH));
+			}
+		});	
+		this.newButton = (ToolButton) insuranceAgencyList.getNewButton();
+		this.newButton.addClickHandler(new ClickHandler() {
+
+			@Override
+			public void onClick(ClickEvent event) {
+				actionHandler.onActionInvoked(new ActionInvokedEvent<InsuranceAgencyManagementOperationViewPresenter.Action>(Action.NEW));
 			}
 		});
 
@@ -79,7 +75,7 @@ public class InsuranceAgencyManagementOperationView extends View implements Insu
 		VerticalPanel formWrapper = new VerticalPanel();
 		formWrapper.setSize("100%", "100%");
 
-		this.toolbar = new BigBangOperationsToolBar() {
+		this.toolbar = new InsuranceAgencyOperationsToolbar() {
 
 			@Override
 			public void onSaveRequest() {
@@ -95,17 +91,12 @@ public class InsuranceAgencyManagementOperationView extends View implements Insu
 			public void onCancelRequest() {
 				actionHandler.onActionInvoked(new ActionInvokedEvent<InsuranceAgencyManagementOperationViewPresenter.Action>(Action.CANCEL_EDIT));
 			}
-		};
-		toolbar.hideAll();
-		toolbar.showItem(SUB_MENU.EDIT, true);
-		toolbar.showItem(SUB_MENU.ADMIN, true);
-		toolbar.addItem(SUB_MENU.ADMIN, new MenuItem("Apagar", new Command() {
 
 			@Override
-			public void execute() {
+			public void onDelete() {
 				actionHandler.onActionInvoked(new ActionInvokedEvent<InsuranceAgencyManagementOperationViewPresenter.Action>(Action.DELETE));
 			}
-		}));
+		};
 
 		formWrapper.add(this.toolbar);
 		formWrapper.setCellHeight(this.toolbar, "21px");
@@ -113,17 +104,6 @@ public class InsuranceAgencyManagementOperationView extends View implements Insu
 		formWrapper.add(insuranceAgencyForm);
 		formWrapper.setCellHeight(insuranceAgencyForm, "100%");
 		
-		insuranceAgencyForm.addValueChangeHandler(new ValueChangeHandler<InsuranceAgency>() {
-			@Override
-			public void onValueChange(ValueChangeEvent<InsuranceAgency> event) {
-				InsuranceAgency agency = event.getValue();
-				if(agency != null){
-					contactsPreviewList.setContactProcessAndOperationAndOwner(GeneralSystemModule.processId, ModuleConstants.OpTypeIDs.ManageCompanies, agency.id);
-				}
-				contactsPreviewList.setReadOnly(agency == null); //TODO FJVC
-			}
-		});
-
 		VerticalPanel sideWrapper = new VerticalPanel();
 		sideWrapper.setSize("100%", "100%");
 		sideWrapper.add(contactsPreviewList);
@@ -135,6 +115,11 @@ public class InsuranceAgencyManagementOperationView extends View implements Insu
 		contentWrapper.add(formWrapper);
 
 		wrapper.add(contentWrapper);
+	}
+	
+	@Override
+	protected void initializeView() {
+		return;
 	}
 
 	@Override
@@ -148,51 +133,22 @@ public class InsuranceAgencyManagementOperationView extends View implements Insu
 	}
 
 	@Override
-	public void prepareNewInsuranceAgency() {
+	public void prepareNewInsuranceAgency(InsuranceAgency agency) {
 		for(ValueSelectable<InsuranceAgency> s : this.insuranceAgencyList){
 			if(s.getValue().id == null){
 				s.setSelected(true, true);
 				return;
 			}
 		}
-		InsuranceAgencyListEntry entry = new InsuranceAgencyListEntry(new InsuranceAgency());
-		this.insuranceAgencyList.add(entry);
-		this.insuranceAgencyList.getScrollable().scrollToBottom();
-		entry.setSelected(true, true);
-	}
-
-	@Override
-	public void removeNewInsuranceAgencyPreparation(){
-		for(ValueSelectable<InsuranceAgency> s : this.insuranceAgencyList){
-			if(s.getValue().id == null){
-				this.insuranceAgencyList.remove(s);
-				break;
-			}
-		}
+		InsuranceAgencyListEntry entry = new InsuranceAgencyListEntry(agency);
+		this.insuranceAgencyList.add(0, entry);
+		this.insuranceAgencyList.getScrollable().scrollToTop();
+		entry.setSelected(true, false);
 	}
 
 	@Override
 	public boolean isFormValid() {
 		return this.insuranceAgencyForm.validate();
-	}
-
-	@Override
-	public void lockForm(boolean lock) {
-		this.insuranceAgencyForm.lock(lock);
-	}
-
-	@Override
-	public void setReadOnly(boolean readOnly) {
-		((Button)this.insuranceAgencyList.getNewButton()).setEnabled(!readOnly);
-		this.insuranceAgencyForm.setReadOnly(readOnly);
-	}
-
-	@Override
-	public void clear(){
-		this.contactsPreviewList.clear();
-		this.insuranceAgencyForm.clearInfo();
-		this.insuranceAgencyList.clear();
-		this.insuranceAgencyList.clearFilters();
 	}
 
 	@Override
@@ -204,6 +160,31 @@ public class InsuranceAgencyManagementOperationView extends View implements Insu
 	@Override
 	public void setSaveModeEnabled(boolean enabled) {
 		this.toolbar.setSaveModeEnabled(enabled);
+	}
+
+	@Override
+	public void removeFromList(ValueSelectable<InsuranceAgency> selectable) {
+		this.insuranceAgencyList.remove(selectable);
+	}
+
+	@Override
+	public void clearAllowedPermissions() {
+		this.toolbar.lockAll();
+	}
+
+	@Override
+	public void allowCreate(boolean allow) {
+		this.newButton.setEnabled(allow);
+	}
+
+	@Override
+	public void allowEdit(boolean allow) {
+		this.toolbar.setEditionAvailable(allow);
+	}
+
+	@Override
+	public void allowDelete(boolean allow) {
+		this.toolbar.allowDelete(allow);
 	}
 
 }

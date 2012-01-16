@@ -10,4 +10,6 @@ public interface ExerciseDataBrokerClient extends DataBrokerClient<Exercise> {
 
 	public void removeExercise(String id);
 
+	public void remapItemId(String oldId, String newId);
+	
 }

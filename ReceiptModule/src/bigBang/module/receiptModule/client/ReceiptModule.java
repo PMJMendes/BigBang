@@ -2,67 +2,76 @@ package bigBang.module.receiptModule.client;
 
 import bigBang.definitions.client.dataAccess.DataBroker;
 import bigBang.definitions.shared.BigBangConstants;
-import bigBang.library.client.BigBangPermissionManager;
-import bigBang.library.client.EventBus;
 import bigBang.library.client.Module;
-import bigBang.library.client.Process;
-import bigBang.library.client.event.ModuleInitializedEvent;
-import bigBang.library.client.userInterface.presenter.SectionViewPresenter;
+import bigBang.library.client.ViewPresenterFactory;
+import bigBang.library.client.ViewPresenterInstantiator;
+import bigBang.library.client.userInterface.presenter.ViewPresenter;
 import bigBang.module.receiptModule.client.dataAccess.ReceiptDataBrokerImpl;
+import bigBang.module.receiptModule.client.userInterface.presenter.OperationNavigationViewPresenter;
+import bigBang.module.receiptModule.client.userInterface.presenter.ReceiptSearchOperationViewPresenter;
 import bigBang.module.receiptModule.client.userInterface.presenter.ReceiptSectionViewPresenter;
+import bigBang.module.receiptModule.client.userInterface.view.OperationNavigationView;
+import bigBang.module.receiptModule.client.userInterface.view.ReceiptSearchOperationView;
 import bigBang.module.receiptModule.client.userInterface.view.ReceiptSectionView;
+
+import com.google.gwt.core.client.GWT;
 
 public class ReceiptModule implements Module {
 
-	private SectionViewPresenter[] sectionPresenters;
-	protected BigBangPermissionManager permissionManager;
-	
-	public ReceiptModule(){
-	}
-	
-	public void initialize(EventBus eventBus, BigBangPermissionManager permissionManager) {
-		this.permissionManager = permissionManager;
-		initialize(eventBus);
-	}
-	
-	public void initialize(EventBus eventBus) {
-		sectionPresenters = new SectionViewPresenter[1];
+	private boolean initialized = false;
 
-		//Receipt section
-		ReceiptSection receiptSection = new ReceiptSection(this.permissionManager);
-		ReceiptSectionView receiptSectionView = new ReceiptSectionView();
-		ReceiptSectionViewPresenter receiptSectionViewPresenter = new ReceiptSectionViewPresenter(eventBus, null, receiptSectionView);
-		receiptSectionViewPresenter.setSection(receiptSection);
-		receiptSection.registerEventHandlers(eventBus);
-		sectionPresenters[0] = receiptSectionViewPresenter;
-
-		eventBus.fireEvent(new ModuleInitializedEvent(this));
+	@Override
+	public void initialize() {
+		registerViewPresenters();
+		initialized = true;
 	}
 
 	public boolean isInitialized() {
-		// TODO Auto-generated method stub
-		return false;
+		return this.initialized;
 	}
 
-	public SectionViewPresenter[] getMainMenuSectionPresenters() {
-		return sectionPresenters;
-	}
+	private void registerViewPresenters(){
+		ViewPresenterFactory.getInstance().registerViewPresenterInstantiator("RECEIPT_SECTION", new ViewPresenterInstantiator() {
 
-	public Process[] getProcesses() {
-		return null;
+			@Override
+			public ViewPresenter getInstance() {
+				//Receipt section
+				ReceiptSectionView receiptSectionView = (ReceiptSectionView) GWT.create(ReceiptSectionView.class);
+				ReceiptSectionViewPresenter receiptSectionViewPresenter = new ReceiptSectionViewPresenter(receiptSectionView);
+				return receiptSectionViewPresenter;
+			}
+		});
+		ViewPresenterFactory.getInstance().registerViewPresenterInstantiator("RECEIPT_MASS_OPERATION", new ViewPresenterInstantiator() {
+
+			@Override
+			public ViewPresenter getInstance() {
+				OperationNavigationView view = (OperationNavigationView) GWT.create(OperationNavigationView.class);
+				OperationNavigationViewPresenter presenter = new OperationNavigationViewPresenter(view);
+				return presenter;
+			}
+		});
+		ViewPresenterFactory.getInstance().registerViewPresenterInstantiator("RECEIPT_SEARCH", new ViewPresenterInstantiator() {
+
+			@Override
+			public ViewPresenter getInstance() {
+				ReceiptSearchOperationView receiptSearchOperationView = (ReceiptSearchOperationView) GWT.create(ReceiptSearchOperationView.class);
+				ReceiptSearchOperationViewPresenter receiptSearchOperationViewPresenter = new ReceiptSearchOperationViewPresenter(receiptSearchOperationView);
+				return receiptSearchOperationViewPresenter;
+			}
+		});
 	}
 
 	@Override
 	public DataBroker<?>[] getBrokerImplementations() {
 		return new DataBroker<?>[]{
-			new ReceiptDataBrokerImpl()	
+				new ReceiptDataBrokerImpl()	
 		};
 	}
 
 	@Override
 	public String[] getBrokerDependencies() {
 		return new String[]{
-			BigBangConstants.EntityIds.RECEIPT	
+				BigBangConstants.EntityIds.RECEIPT	
 		};
 	}
 

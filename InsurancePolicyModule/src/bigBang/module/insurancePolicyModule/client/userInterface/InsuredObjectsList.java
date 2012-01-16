@@ -108,6 +108,12 @@ public class InsuredObjectsList extends FilterableList<InsuredObjectStub> {
 					InsuredObjectsList.this.addEntry(object);
 				}
 			}
+
+			@Override
+			public void remapItemId(String newId, String oldId) {
+				// TODO Auto-generated method stub
+				
+			}
 		};
 	}
 

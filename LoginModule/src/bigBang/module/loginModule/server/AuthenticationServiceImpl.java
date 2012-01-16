@@ -3,8 +3,6 @@ package bigBang.module.loginModule.server;
 import java.sql.*;
 import java.util.*;
 
-import com.premiumminds.BigBang.Jewel.Constants;
-
 import Jewel.Engine.*;
 import Jewel.Engine.Constants.*;
 import Jewel.Engine.DataAccess.*;
@@ -44,9 +42,9 @@ public class AuthenticationServiceImpl
 		lobjUser = null;
 
 		if ( domain.equals("AMartins") )
-			lidNSpace = Constants.NSID_AMartins;
+			lidNSpace = Constants.WSpace_AMartins;
 		else if ( domain.equals("CrediteEGS") )
-			lidNSpace = Constants.NSID_CredEGS;
+			lidNSpace = Constants.WSpace_CredEGS;
 		else
 			throw new BigBangException("Invalid login domain.");
 
@@ -86,7 +84,6 @@ public class AuthenticationServiceImpl
 			lobjResult.userId = lobjUser.getKey().toString();
 			lobjResult.userName = lobjUser.getDisplayName();
 			lobjResult.domain = lobjNSpace.getLabel();
-			lobjResult.isSU = Constants.ProfileID_Root.equals(lobjUser.getProfile().getKey());
 			return lobjResult;
 		}
 		catch (BigBangException e)
@@ -115,9 +112,9 @@ public class AuthenticationServiceImpl
 		lobjUser = null;
 
 		if ( domain.equals("AMartins") )
-			lidNSpace = Constants.NSID_AMartins;
+			lidNSpace = Constants.WSpace_AMartins;
 		else if ( domain.equals("CrediteEGS") )
-			lidNSpace = Constants.NSID_CredEGS;
+			lidNSpace = Constants.WSpace_CredEGS;
 		else
 			throw new BigBangException("Invalid login domain.");
 
@@ -165,7 +162,6 @@ public class AuthenticationServiceImpl
 			lobjResult.userId = lobjUser.getKey().toString();
 			lobjResult.userName = lobjUser.getDisplayName();
 			lobjResult.domain = lobjNSpace.getLabel();
-			lobjResult.isSU = Constants.ProfileID_Root.equals(lobjUser.getProfile().getKey());
 			return lobjResult;
 		}
 		catch (BigBangException e)
@@ -211,8 +207,8 @@ public class AuthenticationServiceImpl
 		}
 		catch (JewelEngineException e)
 		{
-			if ("Password changed.".equals(e.getMessage()))
-				return "Password alterada com sucesso.";
+			if (e.getMessage().equals("Password changed."))
+				return e.getMessage();
 
 			throw new BigBangException(e.getMessage(), e);
 		}
@@ -228,7 +224,6 @@ public class AuthenticationServiceImpl
 		throws BigBangException
 	{
 		UUID lidUser;
-		User lobjUser;
 		UUID lidNSpace;
 		LoginResponse lobjResult;
 
@@ -237,17 +232,13 @@ public class AuthenticationServiceImpl
 			return null;
 
 		lidNSpace = Engine.getCurrentNameSpace();
-		if ( lidNSpace == null )
-			throw new BigBangException("Unexpected: No Name Space in session.");
 
 		lobjResult = new LoginResponse();
 		try
 		{
-			lobjUser = User.GetInstance(lidNSpace, lidUser);
 			lobjResult.userId = lidUser.toString();
-			lobjResult.userName = lobjUser.getDisplayName();
+			lobjResult.userName = User.GetInstance(lidNSpace, lidUser).getDisplayName();
 			lobjResult.domain = NameSpace.GetInstance(lidNSpace).getLabel();
-			lobjResult.isSU = Constants.ProfileID_Root.equals(lobjUser.getProfile().getKey());
 		}
 		catch(Throwable e)
 		{

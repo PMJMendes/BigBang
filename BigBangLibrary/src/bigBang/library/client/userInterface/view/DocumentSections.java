@@ -81,6 +81,11 @@ public abstract class DocumentSections{
 			
 		}
 		
+		@Override
+		protected void initializeView() {
+			return;
+		}
+		
 		public void initHandler(ActionInvokedEventHandler<Action> actionHandler){
 			
 			this.actionHandler = actionHandler;
@@ -170,6 +175,11 @@ public abstract class DocumentSections{
 			submitChange.add(changeToNote);
 			
 			wrapper.add(submitChange);
+		}
+		
+		@Override
+		protected void initializeView() {
+			return;
 		}
 		
 		public void initHandler(ActionInvokedEventHandler<Action> actionHandler){

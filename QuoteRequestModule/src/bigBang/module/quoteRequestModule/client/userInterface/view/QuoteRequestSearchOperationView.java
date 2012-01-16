@@ -29,6 +29,8 @@ public class QuoteRequestSearchOperationView extends View implements QuoteReques
 	
 	public QuoteRequestSearchOperationView(){
 		SplitLayoutPanel mainWrapper = new SplitLayoutPanel();
+		initWidget(mainWrapper);
+
 		mainWrapper.setSize("100%", "100%");
 		
 		ContactsPreviewList contactsList = new ContactsPreviewList();
@@ -138,8 +140,11 @@ public class QuoteRequestSearchOperationView extends View implements QuoteReques
 		formWrapper.add(form);
 		
 		contentWrapper.add(formWrapper);
-		
-		initWidget(mainWrapper);
+	}
+	
+	@Override
+	protected void initializeView() {
+		return;
 	}
 
 }

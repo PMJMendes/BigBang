@@ -85,17 +85,16 @@ public class ExerciseView extends View implements ExerciseViewPresenter.Display{
 		exerciseFormWrapper.add(exerciseForm);
 		exerciseFormWrapper.setCellHeight(exerciseForm, "100%");
 		mainWrapper.add(exerciseFormWrapper);
-		
-		
-		
-
+	}
+	
+	@Override
+	protected void initializeView() {
+		return;
 	}
 	
 	@Override
 	public void setExercise(Exercise exercise) {
-		
 		exerciseForm.setValue(exercise);
-		
 	}
 
 	@Override

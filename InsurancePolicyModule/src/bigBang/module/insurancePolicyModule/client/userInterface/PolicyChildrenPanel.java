@@ -17,7 +17,6 @@ import bigBang.library.client.dataAccess.DocumentsBroker;
 import bigBang.library.client.dataAccess.DocumentsBrokerClient;
 import bigBang.library.client.userInterface.FilterableList;
 import bigBang.library.client.userInterface.ListEntry;
-import bigBang.library.client.userInterface.view.View;
 
 public class PolicyChildrenPanel {
 

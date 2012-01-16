@@ -26,6 +26,8 @@ public class CostCenterList extends FilterableList<CostCenter> implements CostCe
 		header.showNewButton("Novo");
 		header.showRefreshButton();
 		setHeaderWidget(header);
+		showFilterField(false);
+		
 		onSizeChanged();
 	}
 
@@ -52,13 +54,13 @@ public class CostCenterList extends FilterableList<CostCenter> implements CostCe
 	public void setCostCenters(CostCenter[] costCenters) {
 		clear();
 		for(int i = 0; i < costCenters.length; i++){
-			addCostCenter(costCenters[i]);
+			add(new CostCenterListEntry(costCenters[i]));
 		}
 	}
 
 	@Override
 	public void addCostCenter(CostCenter costCenter) {
-		add(new CostCenterListEntry(costCenter));
+		add(0, new CostCenterListEntry(costCenter));
 	}
 
 	@Override

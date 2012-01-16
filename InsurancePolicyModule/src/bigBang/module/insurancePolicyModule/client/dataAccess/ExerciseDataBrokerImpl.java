@@ -27,6 +27,7 @@ public class ExerciseDataBrokerImpl extends DataBroker<Exercise>
 
 	protected PolicyExerciseServiceAsync service;
 	protected SearchDataBroker<ExerciseStub> searchBroker;
+	protected Collection<String> exercisesInScratchPanel;
 	protected boolean requiresRefresh;
 	
 	public ExerciseDataBrokerImpl(){
@@ -132,6 +133,29 @@ public class ExerciseDataBrokerImpl extends DataBroker<Exercise>
 	@Override
 	public SearchDataBroker<ExerciseStub> getSearchBroker() {
 		return this.searchBroker;
+	}
+
+	@Override
+	public void remapItemId(String oldId, String newId,
+			boolean newIdInScratchPad) {
+		Exercise exercise = (Exercise) this.cache.get(oldId);
+		if(exercise != null) {
+			cache.remove(oldId);
+			exercise.id = newId;
+			cache.add(newId, exercise);
+		}
+//		for(String s : this.exercisesInScratchPad){
+//			if(s.equalsIgnoreCase(oldId)){
+//				exercisesInScratchPad.remove(s);
+//				exercisesInScratchPad.add(newId);
+//				break;
+//			}
+//		}
+		incrementDataVersion();
+		for(DataBrokerClient<Exercise> bc : getClients()){
+			((ExerciseDataBrokerClient) bc).remapItemId(oldId, newId);
+			((ExerciseDataBrokerClient) bc).setDataVersionNumber(BigBangConstants.EntityIds.POLICY_EXERCISE, getCurrentDataVersion());
+		}
 	}
 	
 }

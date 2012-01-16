@@ -2,9 +2,6 @@ package bigBang.module.generalSystemModule.client.userInterface.presenter;
 
 import java.util.Collection;
 
-import com.google.gwt.user.client.ui.HasWidgets;
-import com.google.gwt.user.client.ui.Widget;
-
 import bigBang.definitions.client.dataAccess.MediatorBroker;
 import bigBang.definitions.client.response.ResponseError;
 import bigBang.definitions.client.response.ResponseHandler;
@@ -12,23 +9,31 @@ import bigBang.definitions.shared.BigBangConstants;
 import bigBang.definitions.shared.Mediator;
 import bigBang.library.client.EventBus;
 import bigBang.library.client.HasEditableValue;
+import bigBang.library.client.HasParameters;
 import bigBang.library.client.HasValueSelectables;
-import bigBang.library.client.Operation;
-import bigBang.library.client.Selectable;
+import bigBang.library.client.Notification;
+import bigBang.library.client.Notification.TYPE;
 import bigBang.library.client.ValueSelectable;
 import bigBang.library.client.dataAccess.DataBrokerManager;
 import bigBang.library.client.event.ActionInvokedEvent;
 import bigBang.library.client.event.ActionInvokedEventHandler;
+import bigBang.library.client.event.NewNotificationEvent;
 import bigBang.library.client.event.SelectionChangedEvent;
 import bigBang.library.client.event.SelectionChangedEventHandler;
-import bigBang.library.client.userInterface.presenter.OperationViewPresenter;
+import bigBang.library.client.history.NavigationHistoryItem;
+import bigBang.library.client.history.NavigationHistoryManager;
+import bigBang.library.client.userInterface.presenter.ViewPresenter;
 import bigBang.library.client.userInterface.view.View;
-import bigBang.library.interfaces.Service;
-import bigBang.module.generalSystemModule.shared.operation.MediatorManagementOperation;
+import bigBang.module.generalSystemModule.client.GeneralSystemProcess;
+import bigBang.module.generalSystemModule.shared.ModuleConstants;
+
+import com.google.gwt.core.client.GWT;
+import com.google.gwt.user.client.ui.HasWidgets;
+import com.google.gwt.user.client.ui.UIObject;
+import com.google.gwt.user.client.ui.Widget;
 
 
-public class MediatorManagementOperationViewPresenter implements
-OperationViewPresenter {
+public class MediatorManagementOperationViewPresenter implements ViewPresenter {
 
 	public static enum Action{
 		NEW,
@@ -42,61 +47,69 @@ OperationViewPresenter {
 	public interface Display {
 		//List
 		HasValueSelectables<Mediator> getList();
+		void removeFromList(ValueSelectable<Mediator> selectable);
 
 		//Form
 		HasEditableValue<Mediator> getForm();
 		boolean isFormValid();
-		void lockForm(boolean lock);
 
 		//General
-		void clear();
 		void registerActionInvokedHandler(ActionInvokedEventHandler<Action> handler);
-		void prepareNewMediator();
-		void removeNewMediatorPreparation();
+		void prepareNewMediator(Mediator mediator);
+
+		//PERMISSIONS
+		void clearAllowedPermissions();
+		void allowCreate(boolean allow);
+		void allowEdit(boolean allow);
+		void allowDelete(boolean allow);
 		void setSaveModeEnabled(boolean enabled);
 
-		void setReadOnly(boolean readOnly);
 		Widget asWidget();
 	}
 
 	private Display view;
-	@SuppressWarnings("unused")
-	private EventBus eventBus;
-
-	private MediatorManagementOperation operation;
 	protected MediatorBroker mediatorBroker;
-
 	private boolean bound = false;
 
-	public MediatorManagementOperationViewPresenter(EventBus eventBus, Service service, View view){
-		setEventBus(eventBus);
-		setService(service);
-		setView(view);
-
+	public MediatorManagementOperationViewPresenter(View view){
 		this.mediatorBroker = (MediatorBroker) DataBrokerManager.Util.getInstance().getBroker(BigBangConstants.EntityIds.MEDIATOR);
+		setView((UIObject)view);
 	}
 
-	public void setService(Service service) {}
-
-	public void setEventBus(EventBus eventBus) {
-		this.eventBus = eventBus;
-	}
-
-	public void setView(View view) {
+	@Override
+	public void setView(UIObject view) {
 		this.view = (Display)view;
 	}
 
+	@Override
 	public void go(HasWidgets container) {
 		bind();
-		bound = true;
-
-		view.clear();
-		view.getList().setMultipleSelectability(false);
-		view.getForm().setReadOnly(true);
-		fetchMediatorList();
-			
 		container.clear();
 		container.add(this.view.asWidget());
+		setup();
+	}
+
+	@Override
+	public void setParameters(HasParameters parameterHolder) {
+		String mediatorId = parameterHolder.getParameter("id");
+		mediatorId = mediatorId == null ? new String() : mediatorId;
+
+		if(inMediatorCreation()){
+			clearNewMediator();
+		}
+		
+		boolean hasPermissions = GeneralSystemProcess.getInstance().hasPermission(ModuleConstants.OpTypeIDs.ManageMediators);
+		view.allowCreate(hasPermissions);
+		view.allowEdit(hasPermissions);
+		view.allowDelete(hasPermissions);
+
+		if(mediatorId.isEmpty()){
+			clearView();
+		}else if(mediatorId.equalsIgnoreCase("new")){
+			setupNewMediator();
+		}else{
+			showMediator(mediatorId);
+		}
 	}
 
 	public void bind() {
@@ -109,72 +122,49 @@ OperationViewPresenter {
 				@SuppressWarnings("unchecked")
 				ValueSelectable<Mediator> selected = (ValueSelectable<Mediator>) event.getFirstSelected();
 				Mediator selectedValue = selected == null ? null : selected.getValue();
-				if(selectedValue == null){
-					view.getForm().setValue(null);
-					view.lockForm(true);
+				String mediatorId = selectedValue == null ? null : selectedValue.id;
+				mediatorId = mediatorId == null ? new String() : mediatorId;
+
+				NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
+				if(mediatorId.isEmpty()){
+					item.removeParameter("id");
 				}else{
-					if(selectedValue.id != null){
-						view.removeNewMediatorPreparation();
-						mediatorBroker.getMediator(selectedValue.id, new ResponseHandler<Mediator>() {
-
-							@Override
-							public void onResponse(Mediator value) {
-								view.getForm().setValue(value);
-								view.lockForm(value == null);
-							}
-
-							@Override
-							public void onError(Collection<ResponseError> errors) {}
-						});
-					}
-					
+					item.setParameter("id", mediatorId);
 				}
+				NavigationHistoryManager.getInstance().go(item);
 			}
 		});
+
 		view.registerActionInvokedHandler(new ActionInvokedEventHandler<MediatorManagementOperationViewPresenter.Action>() {
 
 			@Override
 			public void onActionInvoked(ActionInvokedEvent<Action> action) {
 				switch(action.getAction()){
 				case NEW:
-					view.prepareNewMediator();
-					for(Selectable s : view.getList().getSelected()) {
-						@SuppressWarnings("unchecked")
-						ValueSelectable<Mediator> vs = (ValueSelectable<Mediator>) s;
-						Mediator value = vs.getValue();
-						view.getForm().setValue(value);
-						view.getForm().setReadOnly(false);
-						break;
-					}
-					break;
-				case REFRESH:
-					fetchMediatorList();
+					NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
+					item.setParameter("id", "new");
+					NavigationHistoryManager.getInstance().go(item);
 					break;
 				case DELETE:
-					if(view.getForm().getValue().id == null)
-						view.removeNewMediatorPreparation();
-					else
-						deleteMediator(view.getForm().getValue());
+					deleteMediator(view.getForm().getValue());
 					break;
 				case EDIT:
 					view.getForm().setReadOnly(false);
 					view.setSaveModeEnabled(true);
 					break;
 				case SAVE:
-					if(!view.isFormValid())
-						return;
 					Mediator info = view.getForm().getInfo();
-					if(info.id == null)
+					view.getForm().setReadOnly(true);
+					if(info.id.equalsIgnoreCase("new"))
 						createMediator(info);
 					else
 						saveMediator(info);
 					break;
 				case CANCEL_EDIT:
-					if(view.getForm().getInfo().id == null){
-						view.removeNewMediatorPreparation();
+					if(inMediatorCreation()){
+						deleteMediator(view.getForm().getValue());
 					}else{
-						view.getForm().revert();
-						view.getForm().setReadOnly(true);
+						NavigationHistoryManager.getInstance().reload();
 					}
 					break;
 				default:
@@ -184,30 +174,122 @@ OperationViewPresenter {
 		});
 	}
 	
-	private void fetchMediatorList() {
-		//Refreshes The mediators data (Info automatically propagated to the broker clients)
+	private void setup(){
 		this.mediatorBroker.requireDataRefresh();
 		this.mediatorBroker.getMediators(new ResponseHandler<Mediator[]>() {
 
 			@Override
-			public void onResponse(Mediator[] response) {}
+			public void onResponse(Mediator[] response) {
+			}
 
 			@Override
-			public void onError(Collection<ResponseError> errors) {}
+			public void onError(Collection<ResponseError> errors) {
+				onGetMediatorListFailed();
+			}
 		});
-	} 
+	}
+	
+	private void clearView(){
+		view.setSaveModeEnabled(false);
+		view.clearAllowedPermissions();
+		view.getForm().setValue(null);
+		view.getForm().setReadOnly(true);
+		view.getList().clearSelection();
+	}
+	
+	private void setupNewMediator(){
+		boolean hasPermissions = GeneralSystemProcess.getInstance().hasPermission(ModuleConstants.OpTypeIDs.ManageMediators);
+		if(hasPermissions){
+			Mediator mediator = new Mediator();
+			mediator.id = "new";
+			mediator.name = "Novo Mediador";
+			view.getList().clearSelection();
+			view.prepareNewMediator(mediator);
+			view.getForm().setValue(mediator);
+	
+			view.allowDelete(hasPermissions);
+			view.allowEdit(hasPermissions);
+			view.setSaveModeEnabled(hasPermissions);
+			view.getForm().setReadOnly(!hasPermissions);
+		}else{
+			GWT.log("User does not have the required permissions");
+		}
+	}
 
-	public void createMediator(Mediator c) {
-		this.mediatorBroker.addMediator(c, new ResponseHandler<Mediator>() {
+	private void clearNewMediator(){
+		if(inMediatorCreation()){
+			for(ValueSelectable<Mediator> selected : view.getList().getAll()){
+				Mediator mediator = selected.getValue();
+				if(mediator == null || mediator.id.equalsIgnoreCase("new")){
+					view.removeFromList(selected);
+					break;
+				}
+			}
+			view.clearAllowedPermissions();
+			view.getForm().setValue(null);
+			view.getForm().setReadOnly(true);
+			view.getList().clearSelection();
+		}
+	}
+
+
+	private boolean inMediatorCreation(){
+		for(ValueSelectable<Mediator> selected : view.getList().getAll()){
+			Mediator mediator = selected.getValue();
+			if(mediator == null || mediator.id.equalsIgnoreCase("new")){
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	private void showMediator(String mediatorId){
+		//Selects the mediator in list
+		for(ValueSelectable<Mediator> entry : view.getList().getAll()){
+			Mediator listMediator = entry.getValue();
+			if(listMediator.id.equalsIgnoreCase(mediatorId) && !entry.isSelected()){
+				entry.setSelected(true, true);
+			}
+		}
+		//Gets the user to show
+		this.mediatorBroker.getMediator(mediatorId, new ResponseHandler<Mediator>() {
 
 			@Override
 			public void onResponse(Mediator response) {
+				view.clearAllowedPermissions();
+
+				boolean hasPermissions = GeneralSystemProcess.getInstance().hasPermission(ModuleConstants.OpTypeIDs.ManageMediators);
+				view.allowEdit(hasPermissions);
+				view.allowDelete(hasPermissions);
+
+				view.setSaveModeEnabled(false);
 				view.getForm().setValue(response);
 				view.getForm().setReadOnly(true);
 			}
 
 			@Override
-			public void onError(Collection<ResponseError> errors) {}
+			public void onError(Collection<ResponseError> errors) {
+				onGetMediatorFailed();
+			}
+		});
+	}
+	
+	public void createMediator(Mediator c) {
+		c.id = null;
+		this.mediatorBroker.addMediator(c, new ResponseHandler<Mediator>() {
+
+			@Override
+			public void onResponse(Mediator response) {
+				NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
+				item.setParameter("id", response.id);
+				NavigationHistoryManager.getInstance().go(item);
+				EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Mediador criado com sucesso."), TYPE.TRAY_NOTIFICATION));
+			}
+
+			@Override
+			public void onError(Collection<ResponseError> errors) {
+				onCreateMediatorFailed();
+			}
 		});
 	}
 
@@ -216,59 +298,64 @@ OperationViewPresenter {
 
 			@Override
 			public void onResponse(Mediator response) {
-				view.getForm().setValue(response);
-				view.getForm().setReadOnly(true);
+				NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
+				item.setParameter("id", response.id);
+				NavigationHistoryManager.getInstance().go(item);
+				EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Mediador guardado com sucesso."), TYPE.TRAY_NOTIFICATION));
 			}
 
 			@Override
-			public void onError(Collection<ResponseError> errors) {}
+			public void onError(Collection<ResponseError> errors) {
+				onSaveMediatorFailed();
+			}
 		});
 	}
 
 	public void deleteMediator(final Mediator c) {
-		this.mediatorBroker.removeMediator(c.id, new ResponseHandler<Mediator>() {
+		if(c.id.equalsIgnoreCase("new")){
+			clearNewMediator();
+		}else{
+			this.mediatorBroker.removeMediator(c.id, new ResponseHandler<Mediator>() {
 
-			@Override
-			public void onResponse(Mediator response) {
-				view.getForm().setValue(null);
-			}
+				@Override
+				public void onResponse(Mediator response) {
+					NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
+					item.removeParameter("id");
+					NavigationHistoryManager.getInstance().go(item);
+					EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Mediador eliminado com sucesso."), TYPE.TRAY_NOTIFICATION));
+				}
 
-			@Override
-			public void onError(Collection<ResponseError> errors) {}
-		});
+				@Override
+				public void onError(Collection<ResponseError> errors) {
+					onDeleteMediatorFailed();
+				}
+			});
+		}
 	}	
 
-	public void registerEventHandlers(EventBus eventBus) {
-		// TODO Auto-generated method stub
-
+	private void onGetMediatorFailed(){
+		EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "De momento não foi possível obter o mediador seleccionado"), TYPE.ALERT_NOTIFICATION));
+		NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
+		item.removeParameter("id");
+		NavigationHistoryManager.getInstance().go(item);
 	}
 
-	public void setOperation(Operation o) {
-		this.operation = (MediatorManagementOperation) o;
+	private void onGetMediatorListFailed(){
+		EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "De momento não foi possível obter a lista de mediadores"), TYPE.ALERT_NOTIFICATION));
 	}
 
-	public Operation getOperation() {
-		return operation;
+	private void onCreateMediatorFailed(){
+		EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "De momento não foi possível criar o mediador"), TYPE.ALERT_NOTIFICATION));
+		view.getForm().setReadOnly(false);
 	}
 
-	public void goCompact(HasWidgets container) {
-		// TODO Auto-generated method stub
-
+	private void onSaveMediatorFailed(){
+		EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "De momento não foi possível guardar as alterações ao mediador"), TYPE.ALERT_NOTIFICATION));
+		view.getForm().setReadOnly(false);
 	}
 
-	public String setTargetEntity(String id) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public void setOperationPermission(boolean result) {
-		this.operation.setPermission(result);
-		setReadOnly(result);
-	}
-
-	private void setReadOnly(boolean result) {
-		view.setReadOnly(result);
+	private void onDeleteMediatorFailed() {
+		EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "De momento não foi possível eliminar o mediador"), TYPE.ALERT_NOTIFICATION));
 	}
 
 }

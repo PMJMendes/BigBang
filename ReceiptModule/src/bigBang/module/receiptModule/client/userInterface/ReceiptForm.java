@@ -113,6 +113,11 @@ public class ReceiptForm extends FormView<Receipt> implements ReceiptDataBrokerC
 		ReceiptProcessDataBroker broker = ((ReceiptProcessDataBroker) DataBrokerManager.Util.getInstance().getBroker(BigBangConstants.EntityIds.RECEIPT));
 		broker.registerClient(this);
 	}
+	
+	@Override
+	protected void initializeView() {
+		return;
+	}
 
 	@Override
 	public Receipt getInfo() {

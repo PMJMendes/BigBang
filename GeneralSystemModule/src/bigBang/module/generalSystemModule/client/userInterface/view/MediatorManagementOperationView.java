@@ -1,24 +1,22 @@
 package bigBang.module.generalSystemModule.client.userInterface.view;
 
+import org.gwt.mosaic.ui.client.ToolButton;
+
 import bigBang.definitions.shared.Mediator;
 import bigBang.library.client.HasEditableValue;
 import bigBang.library.client.HasValueSelectables;
 import bigBang.library.client.ValueSelectable;
 import bigBang.library.client.event.ActionInvokedEvent;
 import bigBang.library.client.event.ActionInvokedEventHandler;
-import bigBang.library.client.userInterface.BigBangOperationsToolBar;
-import bigBang.library.client.userInterface.BigBangOperationsToolBar.SUB_MENU;
 import bigBang.library.client.userInterface.view.View;
 import bigBang.module.generalSystemModule.client.userInterface.MediatorList;
 import bigBang.module.generalSystemModule.client.userInterface.MediatorListEntry;
+import bigBang.module.generalSystemModule.client.userInterface.MediatorOperationsToolbar;
 import bigBang.module.generalSystemModule.client.userInterface.presenter.MediatorManagementOperationViewPresenter;
 import bigBang.module.generalSystemModule.client.userInterface.presenter.MediatorManagementOperationViewPresenter.Action;
 
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.user.client.Command;
-import com.google.gwt.user.client.ui.Button;
-import com.google.gwt.user.client.ui.MenuItem;
 import com.google.gwt.user.client.ui.SplitLayoutPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
@@ -28,15 +26,18 @@ public class MediatorManagementOperationView extends View implements MediatorMan
 
 	private MediatorList mediatorList;
 	private MediatorForm mediatorForm;
-	protected BigBangOperationsToolBar toolbar;
+	protected MediatorOperationsToolbar toolbar;
+	protected ToolButton newButton;
 	protected ActionInvokedEventHandler<MediatorManagementOperationViewPresenter.Action> actionHandler;
 
 	public MediatorManagementOperationView() {
 		SplitLayoutPanel wrapper = new SplitLayoutPanel();
+		initWidget(wrapper);
 		wrapper.setSize("100%", "100%");
 
 		mediatorList = new MediatorList();
-		mediatorList.getNewButton().addClickHandler(new ClickHandler() {
+		this.newButton = (ToolButton)mediatorList.getNewButton();
+		this.newButton.addClickHandler(new ClickHandler() {
 
 			@Override
 			public void onClick(ClickEvent event) {
@@ -58,7 +59,7 @@ public class MediatorManagementOperationView extends View implements MediatorMan
 		VerticalPanel formWrapper = new VerticalPanel();
 		formWrapper.setSize("100%", "100%");
 
-		this.toolbar = new BigBangOperationsToolBar() {
+		this.toolbar = new MediatorOperationsToolbar() {
 
 			@Override
 			public void onSaveRequest() {
@@ -74,17 +75,13 @@ public class MediatorManagementOperationView extends View implements MediatorMan
 			public void onCancelRequest() {
 				actionHandler.onActionInvoked(new ActionInvokedEvent<MediatorManagementOperationViewPresenter.Action>(Action.CANCEL_EDIT));
 			}
-		};
-		toolbar.hideAll();
-		toolbar.showItem(SUB_MENU.EDIT, true);
-		toolbar.showItem(SUB_MENU.ADMIN, true);
-		toolbar.addItem(SUB_MENU.ADMIN, new MenuItem("Apagar", new Command() {
-
+			
 			@Override
-			public void execute() {
+			public void onDelete(){
 				actionHandler.onActionInvoked(new ActionInvokedEvent<MediatorManagementOperationViewPresenter.Action>(Action.DELETE));
 			}
-		}));
+			
+		};
 
 		formWrapper.add(toolbar);
 		formWrapper.setCellHeight(toolbar, "21px");
@@ -92,11 +89,12 @@ public class MediatorManagementOperationView extends View implements MediatorMan
 		mediatorForm = new MediatorForm();
 		formWrapper.add(mediatorForm);
 
-
-
 		wrapper.add(formWrapper);
-
-		initWidget(wrapper);
+	}
+	
+	@Override
+	protected void initializeView() {
+		return;
 	}
 
 	@Override
@@ -110,51 +108,21 @@ public class MediatorManagementOperationView extends View implements MediatorMan
 	}
 
 	@Override
-	public void prepareNewMediator() {
+	public void prepareNewMediator(Mediator mediator) {
 		for(ValueSelectable<Mediator> s : this.mediatorList){
 			if(s.getValue().id == null){
 				s.setSelected(true, true);
 				return;
 			}
 		}
-		MediatorListEntry entry = new MediatorListEntry(new Mediator());
-		this.mediatorList.add(entry);
-		this.mediatorList.getScrollable().scrollToBottom();
-		entry.setSelected(true, true);
+		MediatorListEntry entry = new MediatorListEntry(mediator);
+		this.mediatorList.add(0, entry);
+		this.mediatorList.getScrollable().scrollToTop();
+		entry.setSelected(true, false);
 	}
-
-	@Override
-	public void removeNewMediatorPreparation(){
-		for(ValueSelectable<Mediator> s : this.mediatorList){
-			if(s.getValue().id == null){
-				this.mediatorList.remove(s);
-				break;
-			}
-		}
-	}
-
 	@Override
 	public boolean isFormValid() {
 		return this.mediatorForm.validate();
-	}
-
-	@Override
-	public void lockForm(boolean lock) {
-		this.mediatorForm.setReadOnly(true);
-		this.mediatorForm.lock(lock);
-	}
-
-	@Override
-	public void setReadOnly(boolean readOnly) {
-		((Button)this.mediatorList.getNewButton()).setEnabled(!readOnly);
-		this.mediatorForm.setReadOnly(readOnly);
-	}
-
-	@Override
-	public void clear(){
-		this.mediatorForm.clearInfo();
-		this.mediatorList.clear();
-		this.mediatorList.clearFilters();
 	}
 
 	@Override
@@ -166,6 +134,31 @@ public class MediatorManagementOperationView extends View implements MediatorMan
 	@Override
 	public void setSaveModeEnabled(boolean enabled) {
 		this.toolbar.setSaveModeEnabled(enabled);
+	}
+
+	@Override
+	public void removeFromList(ValueSelectable<Mediator> selectable) {
+		this.mediatorList.remove(selectable);
+	}
+
+	@Override
+	public void clearAllowedPermissions() {
+		this.toolbar.lockAll();
+	}
+
+	@Override
+	public void allowCreate(boolean allow) {
+		this.newButton.setEnabled(allow);
+	}
+
+	@Override
+	public void allowEdit(boolean allow) {
+		this.toolbar.setEditionAvailable(allow);
+	}
+
+	@Override
+	public void allowDelete(boolean allow) {
+		this.toolbar.allowDelete(allow);
 	}
 
 }

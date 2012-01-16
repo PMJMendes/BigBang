@@ -2,9 +2,6 @@ package bigBang.module.clientModule.client.userInterface.presenter;
 
 import java.util.Collection;
 
-import com.google.gwt.user.client.ui.HasWidgets;
-import com.google.gwt.user.client.ui.Widget;
-
 import bigBang.definitions.client.dataAccess.ClientProcessBroker;
 import bigBang.definitions.client.dataAccess.InsurancePolicyBroker;
 import bigBang.definitions.client.response.ResponseError;
@@ -13,18 +10,18 @@ import bigBang.definitions.shared.BigBangConstants;
 import bigBang.definitions.shared.Client;
 import bigBang.definitions.shared.InsurancePolicy;
 import bigBang.definitions.shared.InsurancePolicy.TableSection;
-import bigBang.library.client.EventBus;
 import bigBang.library.client.HasEditableValue;
-import bigBang.library.client.Operation;
+import bigBang.library.client.HasParameters;
 import bigBang.library.client.dataAccess.DataBrokerManager;
 import bigBang.library.client.event.ActionInvokedEvent;
 import bigBang.library.client.event.ActionInvokedEventHandler;
-import bigBang.library.client.userInterface.presenter.OperationViewPresenter;
-import bigBang.library.client.userInterface.view.View;
-import bigBang.library.interfaces.Service;
+import bigBang.library.client.userInterface.presenter.ViewPresenter;
 
-public abstract class CreateInsurancePolicyViewPresenter implements
-		OperationViewPresenter {
+import com.google.gwt.user.client.ui.HasWidgets;
+import com.google.gwt.user.client.ui.UIObject;
+import com.google.gwt.user.client.ui.Widget;
+
+public class CreateInsurancePolicyViewPresenter implements ViewPresenter {
 	
 	public enum Action {
 		CREATE_POLICY,
@@ -47,14 +44,12 @@ public abstract class CreateInsurancePolicyViewPresenter implements
 	
 	protected boolean bound;
 	protected Display view;
-	protected EventBus eventBus;
 	protected ClientProcessBroker clientBroker;
 	protected InsurancePolicyBroker policyBroker;
 	protected Client client;
 	
-	public CreateInsurancePolicyViewPresenter(EventBus eventBus, Display view){
-		setEventBus(eventBus);
-		setView((View) view);
+	public CreateInsurancePolicyViewPresenter(Display view){
+		setView((UIObject) view);
 		clientBroker = ((ClientProcessBroker) DataBrokerManager.Util.getInstance().getBroker(BigBangConstants.EntityIds.CLIENT));
 		policyBroker = ((InsurancePolicyBroker) DataBrokerManager.Util.getInstance().getBroker(BigBangConstants.EntityIds.INSURANCE_POLICY));
 	}
@@ -69,19 +64,9 @@ public abstract class CreateInsurancePolicyViewPresenter implements
 		newPolicy.clientName = client.name;
 		view.getInsurancePolicyForm().setValue(newPolicy);
 	}
-	
-	@Override
-	public void setService(Service service) {
-		return;
-	}
 
 	@Override
-	public void setEventBus(EventBus eventBus) {
-		this.eventBus = eventBus;
-	}
-
-	@Override
-	public void setView(View view) {
+	public void setView(UIObject view) {
 		this.view = (Display) view;
 	}
 
@@ -93,6 +78,11 @@ public abstract class CreateInsurancePolicyViewPresenter implements
 	}
 
 	@Override
+	public void setParameters(HasParameters parameterHolder) {
+		// TODO Auto-generated method stub
+		
+	}
+	
 	public void bind() {
 		if(bound){return;}
 		
@@ -122,7 +112,6 @@ public abstract class CreateInsurancePolicyViewPresenter implements
 										public void onResponse(InsurancePolicy response) {
 											view.getInsurancePolicyForm().setValue(response);
 											view.getInsurancePolicyForm().setReadOnly(true);
-											onPolicyCreated();
 										}
 
 										@Override
@@ -155,7 +144,6 @@ public abstract class CreateInsurancePolicyViewPresenter implements
 						@Override
 						public void onError(Collection<ResponseError> errors) {}
 					});
-					onCreationCancelled();
 					break;
 				
 				case MODALITY_CHANGED:
@@ -177,37 +165,5 @@ public abstract class CreateInsurancePolicyViewPresenter implements
 		});
 		bound = true;
 	}
-	
-	public abstract void onCreationCancelled();
-	public abstract void onPolicyCreated();
-	
-	@Override
-	public void registerEventHandlers(EventBus eventBus) {
-		return;
-	}
-
-	@Override
-	public void setOperation(Operation o) {
-		return;
-	}
-
-	@Override
-	public Operation getOperation() {
-		return null;
-	}
-
-	@Override
-	public void goCompact(HasWidgets container) {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public String setTargetEntity(String id) {
-		return null;
-	}
-
-	@Override
-	public void setOperationPermission(boolean hasPermissionForOperation) {}
 
 }

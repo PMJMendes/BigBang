@@ -13,4 +13,6 @@ public interface ExerciseDataBroker extends DataBrokerInterface<Exercise> {
 		public void getProcessExercises(String ownerId, ResponseHandler<Collection<ExerciseStub>> handler);
 		
 		public SearchDataBroker<ExerciseStub> getSearchBroker();
+		
+		public void remapItemId(String oldId, String newId, boolean newIdInScratchPad);
 }

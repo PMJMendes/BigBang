@@ -2,6 +2,8 @@ package bigBang.module.insurancePolicyModule.client.userInterface.view;
 
 import java.util.Collection;
 
+import org.gwt.mosaic.ui.client.MessageBox;
+
 import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.ui.MenuItem;
 import com.google.gwt.user.client.ui.SplitLayoutPanel;
@@ -35,6 +37,7 @@ public class CreateReceiptView extends View implements CreateReceiptViewPresente
 	public CreateReceiptView(){
 		
 		SplitLayoutPanel mainWrapper = new SplitLayoutPanel();
+		initWidget(mainWrapper);
 		mainWrapper.setSize("100%", "100%");
 		
 		VerticalPanel imageWrapper = new VerticalPanel();
@@ -71,9 +74,10 @@ public class CreateReceiptView extends View implements CreateReceiptViewPresente
 		wrapper.add(form);
 		
 		wrapper.setCellHeight(form, "100%");
-		
-		initWidget(mainWrapper);
 	}
+	
+	@Override
+	protected void initializeView() {}
 
 	@Override
 	public HasEditableValue<Receipt> getForm() {
@@ -114,5 +118,10 @@ public class CreateReceiptView extends View implements CreateReceiptViewPresente
 	@Override
 	public void registerActionHandler(ActionInvokedEventHandler<Action> handler) {
 		this.actionHandler = handler;
+	}
+
+	@Override
+	public void showReceiptCreationFailedErrorMessage() {
+		MessageBox.error("", "De momento não foi possível criar o recibo.");
 	}
 }

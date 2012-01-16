@@ -9,25 +9,30 @@ import bigBang.definitions.shared.BigBangConstants;
 import bigBang.definitions.shared.InsuranceAgency;
 import bigBang.library.client.EventBus;
 import bigBang.library.client.HasEditableValue;
+import bigBang.library.client.HasParameters;
 import bigBang.library.client.HasValueSelectables;
-import bigBang.library.client.Operation;
-import bigBang.library.client.Selectable;
+import bigBang.library.client.Notification;
 import bigBang.library.client.ValueSelectable;
+import bigBang.library.client.Notification.TYPE;
 import bigBang.library.client.dataAccess.DataBrokerManager;
 import bigBang.library.client.event.ActionInvokedEvent;
 import bigBang.library.client.event.ActionInvokedEventHandler;
+import bigBang.library.client.event.NewNotificationEvent;
 import bigBang.library.client.event.SelectionChangedEvent;
 import bigBang.library.client.event.SelectionChangedEventHandler;
-import bigBang.library.client.userInterface.presenter.OperationViewPresenter;
+import bigBang.library.client.history.NavigationHistoryItem;
+import bigBang.library.client.history.NavigationHistoryManager;
+import bigBang.library.client.userInterface.presenter.ViewPresenter;
 import bigBang.library.client.userInterface.view.View;
-import bigBang.library.interfaces.Service;
-import bigBang.module.generalSystemModule.shared.operation.InsuranceAgencyManagementOperation;
+import bigBang.module.generalSystemModule.client.GeneralSystemProcess;
+import bigBang.module.generalSystemModule.shared.ModuleConstants;
 
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.HasWidgets;
+import com.google.gwt.user.client.ui.UIObject;
 import com.google.gwt.user.client.ui.Widget;
 
-public class InsuranceAgencyManagementOperationViewPresenter implements
-		OperationViewPresenter {
+public class InsuranceAgencyManagementOperationViewPresenter implements ViewPresenter {
 
 	public static enum Action{
 		NEW,
@@ -41,73 +46,71 @@ public class InsuranceAgencyManagementOperationViewPresenter implements
 	public interface Display {
 		//List
 		HasValueSelectables<InsuranceAgency> getList();
+		void removeFromList(ValueSelectable<InsuranceAgency> selectable);
 
 		//Form
 		HasEditableValue<InsuranceAgency> getForm();
 		boolean isFormValid();
-		void lockForm(boolean lock);
 
 		//General
-		void clear();
 		void registerActionInvokedHandler(ActionInvokedEventHandler<Action> handler);
-		void prepareNewInsuranceAgency();
-		void removeNewInsuranceAgencyPreparation();
+		void prepareNewInsuranceAgency(InsuranceAgency agency);
+
+		//PERMISSIONS
+		void clearAllowedPermissions();
+		void allowCreate(boolean allow);
+		void allowEdit(boolean allow);
+		void allowDelete(boolean allow);
 		void setSaveModeEnabled(boolean enabled);
 
-		void setReadOnly(boolean readOnly);
 		Widget asWidget();
 	}
 
-	private Display view;
-	@SuppressWarnings("unused")
-	private EventBus eventBus;
-	
-	private InsuranceAgencyManagementOperation operation;
-	
-	private boolean bound = false;
+	protected boolean bound = false;
+	protected Display view;
 	protected InsuranceAgencyBroker insuranceAgencyBroker;
-
-	public InsuranceAgencyManagementOperationViewPresenter(EventBus eventBus, Service service, View view){
-		setEventBus(eventBus);
-		setService(service);
-		setView(view);
-		this.insuranceAgencyBroker = (InsuranceAgencyBroker) DataBrokerManager.Util.getInstance().getBroker(BigBangConstants.EntityIds.INSURANCE_AGENCY);
+	
+	public InsuranceAgencyManagementOperationViewPresenter(View view){
+		this.insuranceAgencyBroker = ((InsuranceAgencyBroker) DataBrokerManager.Util.getInstance().getBroker(BigBangConstants.EntityIds.INSURANCE_AGENCY));
+		this.setView(view);
 	}
 
-	public void setService(Service service) {}
-
-	public void setEventBus(EventBus eventBus) {
-		this.eventBus = eventBus;
+	@Override
+	public void setView(UIObject view) {
+		this.view = (Display) view;
 	}
 
-	public void setView(View view) {
-		this.view = (Display)view;
-	}
-
+	@Override
 	public void go(HasWidgets container) {
 		bind();
-		bound = true;
-		view.clear();
-
-		view.getList().setMultipleSelectability(false);
-		view.getForm().setReadOnly(true);
-		fetchInsuranceAgencies();
-
 		container.clear();
 		container.add(this.view.asWidget());
+		setup();
 	}
 	
-	private void fetchInsuranceAgencies(){
-		this.insuranceAgencyBroker.getInsuranceAgencies(new ResponseHandler<InsuranceAgency[]>() {
-			
-			@Override
-			public void onResponse(InsuranceAgency[] response) {}
-			
-			@Override
-			public void onError(Collection<ResponseError> errors) {}
-		});
+	@Override
+	public void setParameters(HasParameters parameterHolder) {
+		String agencyId = parameterHolder.getParameter("id");
+		agencyId = agencyId == null ? new String() : agencyId;
+
+		if(inInsuranceAgencyCreation()){
+			clearNewInsuranceAgency();
+		}
+		
+		boolean hasPermissions = GeneralSystemProcess.getInstance().hasPermission(ModuleConstants.OpTypeIDs.ManageCompanies);
+		view.allowCreate(hasPermissions);
+		view.allowEdit(hasPermissions);
+		view.allowDelete(hasPermissions);
+
+		if(agencyId.isEmpty()){
+			clearView();
+		}else if(agencyId.equalsIgnoreCase("new")){
+			setupNewInsuranceAgency();
+		}else{
+			showInsuranceAgency(agencyId);
+		}
 	}
-	
+
 	public void bind() {
 		if(bound)
 			return;
@@ -118,72 +121,49 @@ public class InsuranceAgencyManagementOperationViewPresenter implements
 				@SuppressWarnings("unchecked")
 				ValueSelectable<InsuranceAgency> selected = (ValueSelectable<InsuranceAgency>) event.getFirstSelected();
 				InsuranceAgency selectedValue = selected == null ? null : selected.getValue();
-				if(selectedValue == null){
-					view.getForm().setValue(null);
-					view.lockForm(true);
+				String agencyId = selectedValue == null ? null : selectedValue.id;
+				agencyId = agencyId == null ? new String() : agencyId;
+
+				NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
+				if(agencyId.isEmpty()){
+					item.removeParameter("id");
 				}else{
-					if(selectedValue.id != null){
-						view.removeNewInsuranceAgencyPreparation();
-						insuranceAgencyBroker.getInsuranceAgency(selectedValue.id, new ResponseHandler<InsuranceAgency>() {
-
-							@Override
-							public void onResponse(InsuranceAgency value) {
-								view.getForm().setValue(value, true);
-								view.lockForm(value == null);
-							}
-
-							@Override
-							public void onError(Collection<ResponseError> errors) {}
-						});
-					}
-					
+					item.setParameter("id", agencyId);
 				}
+				NavigationHistoryManager.getInstance().go(item);
 			}
 		});
-		view.registerActionInvokedHandler(new ActionInvokedEventHandler<InsuranceAgencyManagementOperationViewPresenter.Action>() {
+
+		view.registerActionInvokedHandler(new ActionInvokedEventHandler<Action>() {
 
 			@Override
 			public void onActionInvoked(ActionInvokedEvent<Action> action) {
 				switch(action.getAction()){
 				case NEW:
-					view.prepareNewInsuranceAgency();
-					for(Selectable s : view.getList().getSelected()) {
-						@SuppressWarnings("unchecked")
-						ValueSelectable<InsuranceAgency> vs = (ValueSelectable<InsuranceAgency>) s;
-						InsuranceAgency value = vs.getValue();
-						view.getForm().setValue(value);
-						view.getForm().setReadOnly(false);
-						break;
-					}
-					break;
-				case REFRESH:
-					fetchInsuranceAgencies();
+					NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
+					item.setParameter("id", "new");
+					NavigationHistoryManager.getInstance().go(item);
 					break;
 				case DELETE:
-					if(view.getForm().getValue().id == null)
-						view.removeNewInsuranceAgencyPreparation();
-					else
-						deleteInsuranceAgency(view.getForm().getValue());
+					deleteInsuranceAgency(view.getForm().getValue());
 					break;
 				case EDIT:
 					view.getForm().setReadOnly(false);
 					view.setSaveModeEnabled(true);
 					break;
 				case SAVE:
-					if(!view.isFormValid())
-						return;
 					InsuranceAgency info = view.getForm().getInfo();
-					if(info.id == null)
+					view.getForm().setReadOnly(true);
+					if(info.id.equalsIgnoreCase("new"))
 						createInsuranceAgency(info);
 					else
 						saveInsuranceAgency(info);
 					break;
 				case CANCEL_EDIT:
-					if(view.getForm().getInfo().id == null){
-						view.removeNewInsuranceAgencyPreparation();
+					if(inInsuranceAgencyCreation()){
+						deleteInsuranceAgency(view.getForm().getValue());
 					}else{
-						view.getForm().revert();
-						view.getForm().setReadOnly(true);
+						NavigationHistoryManager.getInstance().reload();
 					}
 					break;
 				default:
@@ -193,88 +173,187 @@ public class InsuranceAgencyManagementOperationViewPresenter implements
 		});
 	}
 
+	private void setup(){
+		this.insuranceAgencyBroker.requireDataRefresh();
+		this.insuranceAgencyBroker.getInsuranceAgencies(new ResponseHandler<InsuranceAgency[]>() {
+
+			@Override
+			public void onResponse(InsuranceAgency[] response) {
+			}
+
+			@Override
+			public void onError(Collection<ResponseError> errors) {
+				onGetInsuranceAgencyListFailed();
+			}
+		});
+	}
+
+	private void clearView(){
+		view.setSaveModeEnabled(false);
+		view.clearAllowedPermissions();
+		view.getForm().setValue(null);
+		view.getForm().setReadOnly(true);
+		view.getList().clearSelection();
+	}
+
+	private void setupNewInsuranceAgency(){
+		boolean hasPermissions = GeneralSystemProcess.getInstance().hasPermission(ModuleConstants.OpTypeIDs.ManageCompanies);
+		if(hasPermissions){
+			InsuranceAgency agency = new InsuranceAgency();
+			agency.id = "new";
+			agency.name = "Nova Seguradora";
+			view.getList().clearSelection();
+			view.prepareNewInsuranceAgency(agency);
+			view.getForm().setValue(agency);
+	
+			view.allowDelete(hasPermissions);
+			view.allowEdit(hasPermissions);
+			view.setSaveModeEnabled(hasPermissions);
+			view.getForm().setReadOnly(!hasPermissions);
+		}else{
+			GWT.log("User does not have the required permissions");
+		}
+	}
+
+	private void clearNewInsuranceAgency(){
+		if(inInsuranceAgencyCreation()){
+			for(ValueSelectable<InsuranceAgency> selected : view.getList().getAll()){
+				InsuranceAgency agency = selected.getValue();
+				if(agency == null || agency.id.equalsIgnoreCase("new")){
+					view.removeFromList(selected);
+					break;
+				}
+			}
+			view.clearAllowedPermissions();
+			view.getForm().setValue(null);
+			view.getForm().setReadOnly(true);
+			view.getList().clearSelection();
+		}
+	}
+
+	private boolean inInsuranceAgencyCreation(){
+		for(ValueSelectable<InsuranceAgency> selected : view.getList().getAll()){
+			InsuranceAgency agency = selected.getValue();
+			if(agency == null || agency.id.equalsIgnoreCase("new")){
+				return true;
+			}
+		}
+		return false;
+	}
+
+	private void showInsuranceAgency(String agencyId){
+		//Selects the user in list
+		for(ValueSelectable<InsuranceAgency> entry : view.getList().getAll()){
+			InsuranceAgency listInsuranceAgency = entry.getValue();
+			if(listInsuranceAgency.id.equalsIgnoreCase(agencyId) && !entry.isSelected()){
+				entry.setSelected(true, true);
+			}
+		}
+		//Gets the user to show
+		this.insuranceAgencyBroker.getInsuranceAgency(agencyId, new ResponseHandler<InsuranceAgency>() {
+
+			@Override
+			public void onResponse(InsuranceAgency response) {
+				view.clearAllowedPermissions();
+
+				boolean hasPermissions = GeneralSystemProcess.getInstance().hasPermission(ModuleConstants.OpTypeIDs.ManageCompanies);
+				view.allowEdit(hasPermissions);
+				view.allowDelete(hasPermissions);
+
+				view.setSaveModeEnabled(false);
+				view.getForm().setValue(response);
+				view.getForm().setReadOnly(true);
+			}
+
+			@Override
+			public void onError(Collection<ResponseError> errors) {
+				onGetInsuranceAgencyFailed();
+			}
+		});
+	}
+
 	public void createInsuranceAgency(InsuranceAgency c) {
+		c.id = null;
 		this.insuranceAgencyBroker.addInsuranceAgency(c, new ResponseHandler<InsuranceAgency>() {
 
 			@Override
 			public void onResponse(InsuranceAgency response) {
-				for(ValueSelectable<InsuranceAgency> s : view.getList().getSelected()){
-					s.setValue(response);
-					view.getForm().setValue(response);
-					view.getForm().setReadOnly(true);
-					break;
-				}
+				NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
+				item.setParameter("id", response.id);
+				NavigationHistoryManager.getInstance().go(item);
+				EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Seguradora criada com sucesso."), TYPE.TRAY_NOTIFICATION));
 			}
 
 			@Override
-			public void onError(Collection<ResponseError> errors) {}
+			public void onError(Collection<ResponseError> errors) {
+				onCreateInsuranceAgencyFailed();
+			}
 		});
 	}
 
 	public void saveInsuranceAgency(InsuranceAgency c) {
-		
 		this.insuranceAgencyBroker.updateInsuranceAgency(c, new ResponseHandler<InsuranceAgency>() {
 
 			@Override
 			public void onResponse(InsuranceAgency response) {
-				for(ValueSelectable<InsuranceAgency> s : view.getList().getSelected()){
-					s.setValue(response);
-					view.getForm().setValue(response);
-					view.getForm().setReadOnly(true);
-					break;
-				}
+				NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
+				item.setParameter("id", response.id);
+				NavigationHistoryManager.getInstance().go(item);
+				EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Seguradora guardada com sucesso."), TYPE.TRAY_NOTIFICATION));
 			}
 
 			@Override
-			public void onError(Collection<ResponseError> errors) {}
+			public void onError(Collection<ResponseError> errors) {
+				onSaveInsuranceAgencyFailed();
+			}
 		});
 	}
-	
-	public void deleteInsuranceAgency(InsuranceAgency c) {
-		this.insuranceAgencyBroker.removeInsuranceAgency(c.id, new ResponseHandler<InsuranceAgency>() {
 
-			@Override
-			public void onResponse(InsuranceAgency response) {
-				view.getList().clearSelection();
-				view.getForm().setValue(null);
-			}
+	public void deleteInsuranceAgency(final InsuranceAgency c) {
+		if(c.id.equalsIgnoreCase("new")){
+			clearNewInsuranceAgency();
+		}else{
+			this.insuranceAgencyBroker.removeInsuranceAgency(c.id, new ResponseHandler<InsuranceAgency>() {
 
-			@Override
-			public void onError(Collection<ResponseError> errors) {}
-		});
+				@Override
+				public void onResponse(InsuranceAgency response) {
+					NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
+					item.removeParameter("id");
+					NavigationHistoryManager.getInstance().go(item);
+					EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Seguradora eliminada com sucesso."), TYPE.TRAY_NOTIFICATION));
+				}
+
+				@Override
+				public void onError(Collection<ResponseError> errors) {
+					onDeleteInsuranceAgencyFailed();
+				}
+			});
+		}
 	}	
 
-	public void registerEventHandlers(EventBus eventBus) {
-		// TODO Auto-generated method stub
-
+	private void onGetInsuranceAgencyFailed(){
+		EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "De momento não foi possível obter a seguradora seleccionada"), TYPE.ALERT_NOTIFICATION));
+		NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
+		item.removeParameter("id");
+		NavigationHistoryManager.getInstance().go(item);
 	}
 
-	public void setOperation(Operation o) {
-		this.operation = (InsuranceAgencyManagementOperation) o;
+	private void onGetInsuranceAgencyListFailed(){
+		EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "De momento não foi possível obter a lista de seguradoras"), TYPE.ALERT_NOTIFICATION));
 	}
 
-	public Operation getOperation() {
-		return operation;
+	private void onCreateInsuranceAgencyFailed(){
+		EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "De momento não foi possível criar a seguradora"), TYPE.ALERT_NOTIFICATION));
+		view.getForm().setReadOnly(false);
 	}
 
-	public void goCompact(HasWidgets container) {
-		// TODO Auto-generated method stub
-
+	private void onSaveInsuranceAgencyFailed(){
+		EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "De momento não foi possível guardar as alterações à seguradora"), TYPE.ALERT_NOTIFICATION));
+		view.getForm().setReadOnly(false);
 	}
 
-	public String setTargetEntity(String id) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public void setOperationPermission(boolean result) {
-		this.operation.setPermission(result);
-		setReadOnly(result);
-	}
-
-	private void setReadOnly(boolean result) {
-		view.setReadOnly(result);
+	private void onDeleteInsuranceAgencyFailed() {
+		EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "De momento não foi possível eliminar a seguradora"), TYPE.ALERT_NOTIFICATION));
 	}
 
 }

@@ -1,13 +1,11 @@
 package bigBang.library.client.userInterface.view;
 
-import com.google.gwt.user.client.ui.VerticalPanel;
-
 import bigBang.definitions.shared.Document;
-import bigBang.library.client.event.ActionInvokedEvent;
 import bigBang.library.client.event.ActionInvokedEventHandler;
 import bigBang.library.client.userInterface.presenter.DocumentViewPresenter;
 import bigBang.library.client.userInterface.presenter.DocumentViewPresenter.Action;
-import bigBang.library.interfaces.Service;
+
+import com.google.gwt.user.client.ui.VerticalPanel;
 
 public class DocumentView extends View implements DocumentViewPresenter.Display{
 	
@@ -26,6 +24,11 @@ public class DocumentView extends View implements DocumentViewPresenter.Display{
 		wrapper.add(top);
 		wrapper.add(middle); 
 		wrapper.setWidth("100%");
+	}
+	
+	@Override
+	protected void initializeView() {
+		return;
 	}
 
 	@Override

@@ -1,23 +1,22 @@
 package bigBang.module.generalSystemModule.client.userInterface.view;
 
+import org.gwt.mosaic.ui.client.ToolButton;
+
 import bigBang.definitions.shared.ClientGroup;
 import bigBang.library.client.HasEditableValue;
 import bigBang.library.client.HasValueSelectables;
 import bigBang.library.client.ValueSelectable;
 import bigBang.library.client.event.ActionInvokedEvent;
 import bigBang.library.client.event.ActionInvokedEventHandler;
-import bigBang.library.client.userInterface.BigBangOperationsToolBar;
-import bigBang.library.client.userInterface.BigBangOperationsToolBar.SUB_MENU;
 import bigBang.library.client.userInterface.view.View;
 import bigBang.module.generalSystemModule.client.userInterface.ClientGroupList;
 import bigBang.module.generalSystemModule.client.userInterface.ClientGroupListEntry;
+import bigBang.module.generalSystemModule.client.userInterface.ClientGroupOperationsToolbar;
 import bigBang.module.generalSystemModule.client.userInterface.presenter.ClientGroupManagementOperationViewPresenter;
 import bigBang.module.generalSystemModule.client.userInterface.presenter.ClientGroupManagementOperationViewPresenter.Action;
 
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.user.client.Command;
-import com.google.gwt.user.client.ui.MenuItem;
 import com.google.gwt.user.client.ui.SplitLayoutPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
@@ -27,15 +26,18 @@ public class ClientGroupManagementOperationView extends View implements ClientGr
 	
 	protected ClientGroupFormView groupForm;
 	protected ClientGroupList groupList;
-	protected BigBangOperationsToolBar toolbar;
+	protected ClientGroupOperationsToolbar toolbar;
+	private ToolButton newButton;
 	protected ActionInvokedEventHandler<ClientGroupManagementOperationViewPresenter.Action> actionHandler;
 	
 	public ClientGroupManagementOperationView(){
 		SplitLayoutPanel wrapper = new SplitLayoutPanel();
+		initWidget(wrapper);
 		wrapper.setSize("100%", "100%");
 
 		groupList = new ClientGroupList();
-		groupList.getNewButton().addClickHandler(new ClickHandler() {
+		this.newButton = (ToolButton) groupList.getNewButton();
+		this.newButton.addClickHandler(new ClickHandler() {
 
 			@Override
 			public void onClick(ClickEvent event) {
@@ -57,7 +59,7 @@ public class ClientGroupManagementOperationView extends View implements ClientGr
 		VerticalPanel formWrapper = new VerticalPanel();
 		formWrapper.setSize("100%", "100%");
 
-		this.toolbar = new BigBangOperationsToolBar() {
+		this.toolbar = new ClientGroupOperationsToolbar() {
 
 			@Override
 			public void onSaveRequest() {
@@ -73,18 +75,12 @@ public class ClientGroupManagementOperationView extends View implements ClientGr
 			public void onCancelRequest() {
 				actionHandler.onActionInvoked(new ActionInvokedEvent<ClientGroupManagementOperationViewPresenter.Action>(Action.CANCEL_EDIT));
 			}
-		};
-		toolbar.hideAll();
-		toolbar.showItem(SUB_MENU.EDIT, true);
-		toolbar.showItem(SUB_MENU.ADMIN, true);
-		toolbar.addItem(SUB_MENU.ADMIN, new MenuItem("Apagar", new Command() {
 
 			@Override
-			public void execute() {
+			public void onDelete() {
 				actionHandler.onActionInvoked(new ActionInvokedEvent<ClientGroupManagementOperationViewPresenter.Action>(Action.DELETE));
 			}
-		}));
-
+		};
 		formWrapper.add(toolbar);
 		formWrapper.setCellHeight(toolbar, "21px");
 
@@ -92,8 +88,11 @@ public class ClientGroupManagementOperationView extends View implements ClientGr
 		formWrapper.add(groupForm);
 
 		wrapper.add(formWrapper);
-
-		initWidget(wrapper);
+	}
+	
+	@Override
+	protected void initializeView() {
+		return;
 	}
 
 	@Override
@@ -112,46 +111,23 @@ public class ClientGroupManagementOperationView extends View implements ClientGr
 	}
 
 	@Override
-	public void lockForm(boolean lock) {
-		this.groupForm.setReadOnly(true);
-		toolbar.setSaveModeEnabled(false);
-	}
-
-	@Override
-	public void clear() {
-		this.groupForm.clearInfo();
-		this.groupList.clear();
-		this.groupList.clearFilters();
-	}
-
-	@Override
 	public void registerActionInvokedHandler(
 			ActionInvokedEventHandler<Action> handler) {
 		this.actionHandler = handler;
 	}
 
 	@Override
-	public void prepareNewClientGroup() {
+	public void prepareNewClientGroup(ClientGroup group) {
 		for(ValueSelectable<ClientGroup> s : this.groupList){
 			if(s.getValue().id == null){
 				s.setSelected(true, true);
 				return;
 			}
 		}
-		ClientGroupListEntry entry = new ClientGroupListEntry(new ClientGroup());
-		this.groupList.add(entry);
-		this.groupList.getScrollable().scrollToBottom();
-		entry.setSelected(true, true);
-	}
-
-	@Override
-	public void removeNewClientGroupPreparation() {
-		for(ValueSelectable<ClientGroup> s : this.groupList){
-			if(s.getValue().id == null){
-				this.groupList.remove(s);
-				break;
-			}
-		}
+		ClientGroupListEntry entry = new ClientGroupListEntry(group);
+		this.groupList.add(0, entry);
+		this.groupList.getScrollable().scrollToTop();
+		entry.setSelected(true, false);
 	}
 
 	@Override
@@ -160,9 +136,28 @@ public class ClientGroupManagementOperationView extends View implements ClientGr
 	}
 
 	@Override
-	public void setReadOnly(boolean readOnly) {
-		// TODO Auto-generated method stub
-		
+	public void removeFromList(ValueSelectable<ClientGroup> selectable) {
+		this.groupList.remove(selectable);
+	}
+
+	@Override
+	public void clearAllowedPermissions() {
+		this.toolbar.lockAll();
+	}
+
+	@Override
+	public void allowCreate(boolean allow) {
+		this.newButton.setEnabled(allow);
 	}
 	
+	@Override
+	public void allowEdit(boolean allow) {
+		this.toolbar.setEditionAvailable(allow);
+	}
+	
+	@Override
+	public void allowDelete(boolean allow) {
+		this.toolbar.allowDelete(allow);
+	}
+
 }

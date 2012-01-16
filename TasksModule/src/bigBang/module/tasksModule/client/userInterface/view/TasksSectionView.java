@@ -2,11 +2,9 @@ package bigBang.module.tasksModule.client.userInterface.view;
 
 import org.gwt.mosaic.ui.client.MessageBox;
 
-import bigBang.definitions.shared.Task;
 import bigBang.definitions.shared.TaskStub;
 import bigBang.library.client.HasValueSelectables;
 import bigBang.library.client.userInterface.ListHeader;
-import bigBang.library.client.userInterface.presenter.ViewPresenter;
 import bigBang.library.client.userInterface.view.View;
 import bigBang.module.tasksModule.client.userInterface.TaskSearchPanel;
 import bigBang.module.tasksModule.client.userInterface.presenter.TasksSectionViewPresenter;
@@ -27,6 +25,7 @@ public class TasksSectionView extends View implements TasksSectionViewPresenter.
 	
 	public TasksSectionView() {
 		VerticalPanel wrapper = new VerticalPanel();
+		initWidget(wrapper);
 		wrapper.setSize("100%", "100%");
 		
 		SplitLayoutPanel splitPanel = new SplitLayoutPanel();
@@ -71,8 +70,11 @@ public class TasksSectionView extends View implements TasksSectionViewPresenter.
 				}
 			}
 		});
-
-		initWidget(wrapper);
+	}
+	
+	@Override
+	protected void initializeView() {
+		return;
 	}
 
 	@Override
@@ -90,16 +92,38 @@ public class TasksSectionView extends View implements TasksSectionViewPresenter.
 		this.container.clear();
 		this.containerHeader.setText("");
 	}
-
+	
 	@Override
-	public void presentTaskScreen(Task task, ViewPresenter presenter) {
-		this.containerHeader.setText(task.description);
-		presenter.go(this.container);
+	public void addTaskListEntry(TaskStub task) {
+		// TODO Auto-generated method stub
+		
+	}
+	
+	@Override
+	public void updateTaskListEntry(TaskStub task) {
+		// TODO Auto-generated method stub
+		
+	}
+	
+	@Override
+	public void removeTaskListEntry(String taskId) {
+		// TODO Auto-generated method stub
+		
 	}
 
 	@Override
-	public void showTaskDone() {
-		MessageBox.info("", "Tarefa completa");
+	public void setScreenDescription(String description) {
+		this.containerHeader.setText(description);
+	}
+
+	@Override
+	public void showErrorOnFetchingTask() {
+		MessageBox.error("", "Não é possível apresentar o item de agenda, neste momento.");
+	}
+
+	@Override
+	public void showErrorOnShowingScreen() {
+		MessageBox.error("", "Não é possível apresentar o item de agenda, neste momento.");
 	}
 
 }

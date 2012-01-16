@@ -40,7 +40,8 @@ public class UserListEntry extends ListEntry<User> {
 		
 		setTitle(info.name);
 		setText(info.username);
-		userProfileLabel.setText(info.profile.name);
+		String userProfile = info.profile == null ? new String() : info.profile.name == null ? new String() : info.profile.name;
+		userProfileLabel.setText(userProfile);
 	};
 
 }

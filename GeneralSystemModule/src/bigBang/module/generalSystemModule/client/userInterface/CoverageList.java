@@ -127,7 +127,7 @@ public class CoverageList extends FilterableList<Coverage> {
 		};
 
 		setDoubleClickable(true);
-
+		showFilterField(false);		
 		setReadOnly(true);
 	}
 

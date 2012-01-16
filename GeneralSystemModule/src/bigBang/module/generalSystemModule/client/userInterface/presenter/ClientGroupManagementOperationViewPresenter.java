@@ -2,9 +2,6 @@ package bigBang.module.generalSystemModule.client.userInterface.presenter;
 
 import java.util.Collection;
 
-import com.google.gwt.user.client.ui.HasWidgets;
-import com.google.gwt.user.client.ui.Widget;
-
 import bigBang.definitions.client.dataAccess.ClientGroupBroker;
 import bigBang.definitions.client.response.ResponseError;
 import bigBang.definitions.client.response.ResponseHandler;
@@ -12,22 +9,30 @@ import bigBang.definitions.shared.BigBangConstants;
 import bigBang.definitions.shared.ClientGroup;
 import bigBang.library.client.EventBus;
 import bigBang.library.client.HasEditableValue;
+import bigBang.library.client.HasParameters;
 import bigBang.library.client.HasValueSelectables;
-import bigBang.library.client.Operation;
-import bigBang.library.client.Selectable;
+import bigBang.library.client.Notification;
+import bigBang.library.client.Notification.TYPE;
 import bigBang.library.client.ValueSelectable;
 import bigBang.library.client.dataAccess.DataBrokerManager;
 import bigBang.library.client.event.ActionInvokedEvent;
 import bigBang.library.client.event.ActionInvokedEventHandler;
+import bigBang.library.client.event.NewNotificationEvent;
 import bigBang.library.client.event.SelectionChangedEvent;
 import bigBang.library.client.event.SelectionChangedEventHandler;
-import bigBang.library.client.userInterface.presenter.OperationViewPresenter;
+import bigBang.library.client.history.NavigationHistoryItem;
+import bigBang.library.client.history.NavigationHistoryManager;
+import bigBang.library.client.userInterface.presenter.ViewPresenter;
 import bigBang.library.client.userInterface.view.View;
-import bigBang.library.interfaces.Service;
-import bigBang.module.generalSystemModule.shared.operation.ClientGroupManagementOperation;
+import bigBang.module.generalSystemModule.client.GeneralSystemProcess;
+import bigBang.module.generalSystemModule.shared.ModuleConstants;
 
-public class ClientGroupManagementOperationViewPresenter implements
-		OperationViewPresenter {
+import com.google.gwt.core.client.GWT;
+import com.google.gwt.user.client.ui.HasWidgets;
+import com.google.gwt.user.client.ui.UIObject;
+import com.google.gwt.user.client.ui.Widget;
+
+public class ClientGroupManagementOperationViewPresenter implements ViewPresenter {
 
 	public static enum Action{
 		NEW,
@@ -41,63 +46,71 @@ public class ClientGroupManagementOperationViewPresenter implements
 	public interface Display {
 		//List
 		HasValueSelectables<ClientGroup> getList();
+		void removeFromList(ValueSelectable<ClientGroup> selectable);
 
 		//Form
 		HasEditableValue<ClientGroup> getForm();
 		boolean isFormValid();
-		void lockForm(boolean lock);
 
 		//General
-		void clear();
 		void registerActionInvokedHandler(ActionInvokedEventHandler<Action> handler);
-		void prepareNewClientGroup();
-		void removeNewClientGroupPreparation();
+		void prepareNewClientGroup(ClientGroup clientGroup);
+
+		//PERMISSIONS
+		void clearAllowedPermissions();
+		void allowCreate(boolean allow);
+		void allowEdit(boolean allow);
+		void allowDelete(boolean allow);
 		void setSaveModeEnabled(boolean enabled);
 
-		void setReadOnly(boolean readOnly);
 		Widget asWidget();
 	}
 
 	protected boolean bound = false;
 	protected Display view;
-	protected EventBus eventBus;
-	protected ClientGroupManagementOperation operation;
 	protected ClientGroupBroker clientGroupBroker;
 	
-	public ClientGroupManagementOperationViewPresenter(EventBus eventBus, Service service, View view){
-		this.setService(service);
-		this.setView(view);
-		this.setEventBus(eventBus);
-		
+	public ClientGroupManagementOperationViewPresenter(View view){
 		this.clientGroupBroker = ((ClientGroupBroker) DataBrokerManager.Util.getInstance().getBroker(BigBangConstants.EntityIds.CLIENT_GROUP));
+		this.setView(view);
 	}
 
-	public void setService(Service service) {}
-
-	public void setEventBus(final EventBus eventBus) {
-		this.eventBus = eventBus;
-		if(this.eventBus == null)
-			return;
-		registerEventHandlers(eventBus);
-	}
-
-	public void setView(View view) {
+	@Override
+	public void setView(UIObject view) {
 		this.view = (Display) view;
 	}
 
+	@Override
 	public void go(HasWidgets container) {
 		bind();
-		bound = true;
-
-		view.clear();
-		view.getList().setMultipleSelectability(false);
-		view.getForm().setReadOnly(true);
-		fetchClientGroupList();
-			
 		container.clear();
 		container.add(this.view.asWidget());
+		setup();
 	}
 	
+	@Override
+	public void setParameters(HasParameters parameterHolder) {
+		String groupId = parameterHolder.getParameter("id");
+		groupId = groupId == null ? new String() : groupId;
+
+		if(inClientGroupCreation()){
+			clearNewClientGroup();
+		}
+		
+		boolean hasPermissions = GeneralSystemProcess.getInstance().hasPermission(ModuleConstants.OpTypeIDs.ManageClientGroups);
+		view.allowCreate(hasPermissions);
+		view.allowEdit(hasPermissions);
+		view.allowDelete(hasPermissions);
+
+		if(groupId.isEmpty()){
+			clearView();
+		}else if(groupId.equalsIgnoreCase("new")){
+			setupNewClientGroup();
+		}else{
+			showClientGroup(groupId);
+		}
+	}
+
 	public void bind() {
 		if(bound)
 			return;
@@ -108,73 +121,50 @@ public class ClientGroupManagementOperationViewPresenter implements
 				@SuppressWarnings("unchecked")
 				ValueSelectable<ClientGroup> selected = (ValueSelectable<ClientGroup>) event.getFirstSelected();
 				ClientGroup selectedValue = selected == null ? null : selected.getValue();
-				if(selectedValue == null){
-					view.getForm().setValue(null);
-					view.lockForm(true);
+				String groupId = selectedValue == null ? null : selectedValue.id;
+				groupId = groupId == null ? new String() : groupId;
+
+				NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
+				if(groupId.isEmpty()){
+					item.removeParameter("id");
 				}else{
-					if(selectedValue.id != null){
-						view.removeNewClientGroupPreparation();
-						clientGroupBroker.getClientGroup(selectedValue.id, new ResponseHandler<ClientGroup>() {
-
-							@Override
-							public void onResponse(ClientGroup value) {
-								view.getForm().setValue(value);
-								view.lockForm(value == null);
-							}
-
-							@Override
-							public void onError(Collection<ResponseError> errors) {}
-						});
-					}
-					
+					item.setParameter("id", groupId);
 				}
+				NavigationHistoryManager.getInstance().go(item);
 			}
 		});
+
 		view.registerActionInvokedHandler(new ActionInvokedEventHandler<ClientGroupManagementOperationViewPresenter.Action>() {
 
 			@Override
 			public void onActionInvoked(ActionInvokedEvent<Action> action) {
 				switch(action.getAction()){
 				case NEW:
-					view.prepareNewClientGroup();
-					for(Selectable s : view.getList().getSelected()) {
-						@SuppressWarnings("unchecked")
-						ValueSelectable<ClientGroup> vs = (ValueSelectable<ClientGroup>) s;
-						ClientGroup value = vs.getValue();
-						view.getForm().setValue(value);
-						view.getForm().setReadOnly(false);
-						view.setSaveModeEnabled(true);
-						break;
-					}
-					break;
-				case REFRESH:
-					fetchClientGroupList();
+					NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
+					item.setParameter("id", "new");
+					NavigationHistoryManager.getInstance().go(item);
 					break;
 				case DELETE:
-					if(view.getForm().getValue().id == null)
-						view.removeNewClientGroupPreparation();
-					else
-						deleteClientGroup(view.getForm().getValue());
+					deleteClientGroup(view.getForm().getValue());
 					break;
 				case EDIT:
 					view.getForm().setReadOnly(false);
 					view.setSaveModeEnabled(true);
 					break;
 				case SAVE:
-					if(!view.isFormValid())
-						return;
 					ClientGroup info = view.getForm().getInfo();
-					if(info.id == null)
+					view.getForm().setReadOnly(true);
+					if(info.id.equalsIgnoreCase("new")){
 						createClientGroup(info);
-					else
-						saveClientGroup(info);
+					}else{
+						saveCostCenter(info);
+					}
 					break;
 				case CANCEL_EDIT:
-					if(view.getForm().getInfo().id == null){
-						view.removeNewClientGroupPreparation();
+					if(inClientGroupCreation()){
+						deleteClientGroup(view.getForm().getValue());
 					}else{
-						view.getForm().revert();
-						view.getForm().setReadOnly(true);
+						NavigationHistoryManager.getInstance().reload();
 					}
 					break;
 				default:
@@ -183,100 +173,188 @@ public class ClientGroupManagementOperationViewPresenter implements
 			}
 		});
 	}
-	
-	private void fetchClientGroupList() {
-		//Refreshes The mediators data (Info automatically propagated to the broker clients)
+
+	private void setup(){
 		this.clientGroupBroker.requireDataRefresh();
 		this.clientGroupBroker.getClientGroups(new ResponseHandler<ClientGroup[]>() {
 
 			@Override
-			public void onResponse(ClientGroup[] response) {}
+			public void onResponse(ClientGroup[] response) {
+			}
 
 			@Override
-			public void onError(Collection<ResponseError> errors) {}
+			public void onError(Collection<ResponseError> errors) {
+				onGetClientGroupListFailed();
+			}
 		});
 	}
+
+	private void clearView(){
+		view.setSaveModeEnabled(false);
+		view.clearAllowedPermissions();
+		view.getForm().setValue(null);
+		view.getForm().setReadOnly(true);
+		view.getList().clearSelection();
+	}
+
+	private void setupNewClientGroup(){
+		boolean hasPermissions = GeneralSystemProcess.getInstance().hasPermission(ModuleConstants.OpTypeIDs.ManageClientGroups);
+		if(hasPermissions){
+			ClientGroup group = new ClientGroup();
+			group.id = "new";
+			group.name = "Novo Grupo de Clientes";
+			view.getList().clearSelection();
+			view.prepareNewClientGroup(group);
+			view.getForm().setValue(group);
 	
+			view.allowDelete(hasPermissions);
+			view.allowEdit(hasPermissions);
+			view.setSaveModeEnabled(hasPermissions);
+			view.getForm().setReadOnly(!hasPermissions);
+		}else{
+			GWT.log("User does not have the required permissions");
+		}
+	}
+
+	private void clearNewClientGroup(){
+		if(inClientGroupCreation()){
+			for(ValueSelectable<ClientGroup> selected : view.getList().getAll()){
+				ClientGroup group = selected.getValue();
+				if(group == null || group.id.equalsIgnoreCase("new")){
+					view.removeFromList(selected);
+					break;
+				}
+			}
+			view.clearAllowedPermissions();
+			view.getForm().setValue(null);
+			view.getForm().setReadOnly(true);
+			view.getList().clearSelection();
+		}
+	}
+
+	private boolean inClientGroupCreation(){
+		for(ValueSelectable<ClientGroup> selected : view.getList().getAll()){
+			ClientGroup group = selected.getValue();
+			if(group == null || group.id.equalsIgnoreCase("new")){
+				return true;
+			}
+		}
+		return false;
+	}
+
+	private void showClientGroup(String groupId){
+		//Selects the client group in list
+		for(ValueSelectable<ClientGroup> entry : view.getList().getAll()){
+			ClientGroup listClientGroup = entry.getValue();
+			if(listClientGroup.id.equalsIgnoreCase(groupId) && !entry.isSelected()){
+				entry.setSelected(true, true);
+			}
+		}
+		//Gets the client group to show
+		this.clientGroupBroker.getClientGroup(groupId, new ResponseHandler<ClientGroup>() {
+
+			@Override
+			public void onResponse(ClientGroup response) {
+				view.clearAllowedPermissions();
+
+				boolean hasPermissions = GeneralSystemProcess.getInstance().hasPermission(ModuleConstants.OpTypeIDs.ManageClientGroups);
+				view.allowEdit(hasPermissions);
+				view.allowDelete(hasPermissions);
+
+				view.setSaveModeEnabled(false);
+				view.getForm().setValue(response);
+				view.getForm().setReadOnly(true);
+			}
+
+			@Override
+			public void onError(Collection<ResponseError> errors) {
+				onGetClientGroupFailed();
+			}
+		});
+	}
+
 	public void createClientGroup(ClientGroup c) {
+		c.id = null;
 		this.clientGroupBroker.addClientGroup(c, new ResponseHandler<ClientGroup>() {
 
 			@Override
 			public void onResponse(ClientGroup response) {
-				view.getForm().setValue(response);
-				view.getForm().setReadOnly(true);
+				NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
+				item.setParameter("id", response.id);
+				NavigationHistoryManager.getInstance().go(item);
+				EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Grupo de Clientes criado com sucesso."), TYPE.TRAY_NOTIFICATION));
 			}
 
 			@Override
-			public void onError(Collection<ResponseError> errors) {}
+			public void onError(Collection<ResponseError> errors) {
+				onCreateClientGroupFailed();
+			}
 		});
 	}
 
-	public void saveClientGroup(ClientGroup c) {
+	public void saveCostCenter(ClientGroup c) {
 		this.clientGroupBroker.updateClientGroup(c, new ResponseHandler<ClientGroup>() {
 
 			@Override
 			public void onResponse(ClientGroup response) {
-				view.getForm().setValue(response);
-				view.getForm().setReadOnly(true);
-				view.setSaveModeEnabled(false);
+				NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
+				item.setParameter("id", response.id);
+				NavigationHistoryManager.getInstance().go(item);
+				EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Grupo de Clientes guardado com sucesso."), TYPE.TRAY_NOTIFICATION));
 			}
 
 			@Override
-			public void onError(Collection<ResponseError> errors) {}
+			public void onError(Collection<ResponseError> errors) {
+				onSaveClientGroupFailed();
+			}
 		});
 	}
 
 	public void deleteClientGroup(final ClientGroup c) {
-		this.clientGroupBroker.removeClientGroup(c.id, new ResponseHandler<ClientGroup>() {
+		if(c.id.equalsIgnoreCase("new")){
+			clearNewClientGroup();
+		}else{
+			this.clientGroupBroker.removeClientGroup(c.id, new ResponseHandler<ClientGroup>() {
 
-			@Override
-			public void onResponse(ClientGroup response) {
-				view.getForm().setValue(null);
-			}
+				@Override
+				public void onResponse(ClientGroup response) {
+					NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
+					item.removeParameter("id");
+					NavigationHistoryManager.getInstance().go(item);
+					EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Grupo de Clientes eliminado com sucesso."), TYPE.TRAY_NOTIFICATION));
+				}
 
-			@Override
-			public void onError(Collection<ResponseError> errors) {}
-		});
-	}
-	
-	//The compact version of the operation view
-	public void goCompact(HasWidgets container){
-		go(container);
-		/*this.bind();
-		container.clear();
-		container.add((Widget)this.view.getSearchPreviewPanelContainer());*/
-	}
+				@Override
+				public void onError(Collection<ResponseError> errors) {
+					onDeleteClientGroupFailed();
+				}
+			});
+		}
+	}	
 
-	public void setOperation(final ClientGroupManagementOperation operation) {
-		this.operation = operation;
-	}
-
-	public void registerEventHandlers(final EventBus eventBus) {
-		//TODO
-	}
-
-	public void setOperation(Operation o) {
-		this.operation = (ClientGroupManagementOperation)o;
+	private void onGetClientGroupFailed(){
+		EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "De momento não foi possível obter o Grupo de Clientes seleccionado"), TYPE.ALERT_NOTIFICATION));
+		NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
+		item.removeParameter("id");
+		NavigationHistoryManager.getInstance().go(item);
 	}
 
-	public Operation getOperation() {
-		return this.operation;
+	private void onGetClientGroupListFailed(){
+		EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "De momento não foi possível obter a lista de Grupos de Utilizadores"), TYPE.ALERT_NOTIFICATION));
 	}
 
-	public String setTargetEntity(String id) {
-		// TODO Auto-generated method stub
-		return null;
+	private void onCreateClientGroupFailed(){
+		EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "De momento não foi possível criar o Grupo de Clientes"), TYPE.ALERT_NOTIFICATION));
+		view.getForm().setReadOnly(false);
 	}
 
-	@Override
-	public void setOperationPermission(boolean result) {
-		this.operation.setPermission(result);
-		setReadOnly(result);
+	private void onSaveClientGroupFailed(){
+		EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "De momento não foi possível guardar as alterações ao Grupo de Clientes"), TYPE.ALERT_NOTIFICATION));
+		view.getForm().setReadOnly(false);
 	}
 
-	protected void setReadOnly(boolean result) {
-		// TODO Auto-generated method stub
-		
+	private void onDeleteClientGroupFailed() {
+		EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "De momento não foi possível eliminar o Grupo de Clientes"), TYPE.ALERT_NOTIFICATION));
 	}
 
 }

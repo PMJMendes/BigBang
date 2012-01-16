@@ -43,12 +43,21 @@ public class UserBrokerImpl extends DataBroker<User> implements UserBroker {
 					for(int i = 0; i < result.length; i++){
 						cache.add(result[i].id, result[i]);
 					}
-
+					incrementDataVersion();
 					for(DataBrokerClient<User> c : UserBrokerImpl.this.getClients()){
 						((UserDataBrokerClient)c).setUsers(result);
+						((UserDataBrokerClient)c).setDataVersionNumber(getDataElementId(), getCurrentDataVersion());
 					}
 					handler.onResponse(result);
 					needsRefresh = false;
+				}
+
+				@Override
+				public void onFailure(Throwable caught) {
+					handler.onError(new String[]{
+							"Could not fetch user list."
+					});
+					super.onFailure(caught);
 				}
 			});
 		}else{
@@ -99,10 +108,20 @@ public class UserBrokerImpl extends DataBroker<User> implements UserBroker {
 			@Override
 			public void onSuccess(User result) {
 				cache.add(result.id, result);
+				incrementDataVersion();
 				for(DataBrokerClient<User> c : UserBrokerImpl.this.getClients()){
 					((UserDataBrokerClient)c).addUser(result);
+					((UserDataBrokerClient)c).setDataVersionNumber(getDataElementId(), getCurrentDataVersion());
 				}
 				handler.onResponse(result);
+			}
+
+			@Override
+			public void onFailure(Throwable caught) {
+				handler.onError(new String[]{
+						"Could not create user"	
+				});
+				super.onFailure(caught);
 			}
 		});
 	}
@@ -115,10 +134,20 @@ public class UserBrokerImpl extends DataBroker<User> implements UserBroker {
 			@Override
 			public void onSuccess(User result) {
 				cache.update(result.id, result);
+				incrementDataVersion();
 				for(DataBrokerClient<User> c : UserBrokerImpl.this.getClients()){
 					((UserDataBrokerClient)c).updateUser(result);
+					((UserDataBrokerClient)c).setDataVersionNumber(getDataElementId(), getCurrentDataVersion());
 				}
 				handler.onResponse(result);
+			}
+
+			@Override
+			public void onFailure(Throwable caught) {
+				handler.onError(new String[]{
+						"Could not update user"	
+				});
+				super.onFailure(caught);
 			}
 		});
 	}
@@ -135,18 +164,27 @@ public class UserBrokerImpl extends DataBroker<User> implements UserBroker {
 					@Override
 					public void onSuccess(Void result) {
 						cache.remove(userId);
+						incrementDataVersion();
 						for(DataBrokerClient<User> c : UserBrokerImpl.this.getClients()){
 							((UserDataBrokerClient)c).removeUser(userId);
+							((UserDataBrokerClient)c).setDataVersionNumber(getDataElementId(), getCurrentDataVersion());
 						}
 						handler.onResponse(null);
+					}
+
+					@Override
+					public void onFailure(Throwable caught) {
+						handler.onError(new String[]{
+								"Could not delete user"
+						});
+						super.onFailure(caught);
 					}
 				});
 			}
 
 			@Override
 			public void onError(Collection<ResponseError> errors) {
-				// TODO Auto-generated method stub FJVC
-				
+				handler.onError(errors);
 			}
 		});
 	}
@@ -155,7 +193,7 @@ public class UserBrokerImpl extends DataBroker<User> implements UserBroker {
 	public void requireDataRefresh() {
 		this.needsRefresh = true;
 	}
-	
+
 	/**
 	 * Returns whether or not the broker needs to refresh its data
 	 * @return true if the data needs to be refreshed, false otherwise
@@ -163,23 +201,60 @@ public class UserBrokerImpl extends DataBroker<User> implements UserBroker {
 	protected boolean needsRefresh(){
 		return this.needsRefresh;
 	}
-	
+
 	@Override
 	public void notifyItemCreation(String itemId) {
 		requireDataRefresh();
-		//TODO FJVC
+		getUser(itemId, new ResponseHandler<User>(){
+
+			@Override
+			public void onResponse(User response) {
+				cache.add(response.id, response);
+				incrementDataVersion();
+				for(DataBrokerClient<User> c : UserBrokerImpl.this.getClients()){
+					((UserDataBrokerClient)c).addUser(response);
+					((UserDataBrokerClient)c).setDataVersionNumber(getDataElementId(), getCurrentDataVersion());
+				}
+			}
+
+			@Override
+			public void onError(Collection<ResponseError> errors) {
+				return;				
+			}
+
+		});
 	}
 
 	@Override
 	public void notifyItemDeletion(String itemId) {
 		requireDataRefresh();
-		//TODO
+		cache.remove(itemId);
+		for(DataBrokerClient<User> c : UserBrokerImpl.this.getClients()){
+			((UserDataBrokerClient)c).removeUser(itemId);
+			((UserDataBrokerClient)c).setDataVersionNumber(getDataElementId(), getCurrentDataVersion());
+		}
 	}
 
 	@Override
 	public void notifyItemUpdate(String itemId) {
 		requireDataRefresh();
-		//TODO
+		getUser(itemId, new ResponseHandler<User>() {
+
+			@Override
+			public void onResponse(User response) {
+				cache.add(response.id, response);
+				incrementDataVersion();
+				for(DataBrokerClient<User> c : UserBrokerImpl.this.getClients()){
+					((UserDataBrokerClient)c).updateUser(response);
+					((UserDataBrokerClient)c).setDataVersionNumber(getDataElementId(), getCurrentDataVersion());
+				}
+			}
+
+			@Override
+			public void onError(Collection<ResponseError> errors) {
+				return;
+			}
+		});
 	}
 
 }

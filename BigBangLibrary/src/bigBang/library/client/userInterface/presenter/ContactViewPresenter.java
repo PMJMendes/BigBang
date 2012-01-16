@@ -2,17 +2,16 @@ package bigBang.library.client.userInterface.presenter;
 
 import bigBang.definitions.shared.Contact;
 import bigBang.definitions.shared.ContactInfo;
-import bigBang.library.client.EventBus;
+import bigBang.library.client.HasParameters;
 import bigBang.library.client.ValueSelectable;
 import bigBang.library.client.event.ActionInvokedEvent;
 import bigBang.library.client.event.ActionInvokedEventHandler;
 import bigBang.library.client.event.DeleteRequestEventHandler;
 import bigBang.library.client.userInterface.List;
 import bigBang.library.client.userInterface.view.ContactView.ContactEntry;
-import bigBang.library.client.userInterface.view.View;
-import bigBang.library.interfaces.Service;
 
 import com.google.gwt.user.client.ui.HasWidgets;
+import com.google.gwt.user.client.ui.UIObject;
 import com.google.gwt.user.client.ui.Widget;
 
 public abstract class ContactViewPresenter implements ViewPresenter{
@@ -50,12 +49,6 @@ public abstract class ContactViewPresenter implements ViewPresenter{
 				DeleteRequestEventHandler deleteRequestEventHandler);
 	}
 
-	@Override
-	public void setService(Service service) {
-		// TODO Auto-generated method stub
-
-	}
-
 	public void setContact(Contact contact){
 
 		this.contact = contact;
@@ -71,13 +64,7 @@ public abstract class ContactViewPresenter implements ViewPresenter{
 	}
 
 	@Override
-	public void setEventBus(EventBus eventBus) {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void setView(View view) {
+	public void setView(UIObject view) {
 
 		this.view = (Display)view;
 
@@ -91,8 +78,13 @@ public abstract class ContactViewPresenter implements ViewPresenter{
 		container.add(this.view.asWidget());
 
 	}
-
+	
 	@Override
+	public void setParameters(HasParameters parameterHolder) {
+		// TODO Auto-generated method stub
+		
+	}
+
 	public void bind() {
 		if(bound){
 			return;
@@ -166,17 +158,6 @@ public abstract class ContactViewPresenter implements ViewPresenter{
 
 	}
 
-
-	@Override
-	public void registerEventHandlers(EventBus eventBus) {
-		// TODO Auto-generated method stub
-
-	}
-
-	public Display getView() {
-		return view;
-	}
-	
 	public void addNewDetail() {
 		
 		ContactEntry temp = view.initializeContactEntry();

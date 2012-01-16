@@ -12,7 +12,7 @@ public class Address
 	public ZipCode zipCode;
 
 	public Address(){
-		street1 = street2 = null;
+		street1 = street2 = "";
 		zipCode = new ZipCode();
 	}
 }

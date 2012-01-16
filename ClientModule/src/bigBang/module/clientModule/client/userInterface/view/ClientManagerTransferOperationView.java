@@ -25,7 +25,7 @@ import bigBang.module.clientModule.client.userInterface.ClientSearchPanel;
 import bigBang.module.clientModule.client.userInterface.ClientSearchPanelListEntry;
 import bigBang.module.clientModule.client.userInterface.presenter.ClientManagerTransferOperationViewPresenter;
 import bigBang.module.clientModule.client.userInterface.presenter.ClientManagerTransferOperationViewPresenter.Action;
-import bigBang.module.clientModule.shared.operation.ClientManagerTransferOperation;
+import bigBang.module.clientModule.shared.ModuleConstants;
 
 import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.ui.HasValue;
@@ -67,6 +67,7 @@ public class ClientManagerTransferOperationView extends View implements ClientMa
 
 	public ClientManagerTransferOperationView(){
 		SplitLayoutPanel mainWrapper = new SplitLayoutPanel();
+		initWidget(mainWrapper);
 		mainWrapper.setSize("100%", "100%");
 
 		this.searchPanel = new CheckableClientSearchPanel(){
@@ -80,7 +81,7 @@ public class ClientManagerTransferOperationView extends View implements ClientMa
 				return false;
 			}
 		};
-		this.searchPanel.setOperationId(ClientManagerTransferOperation.ID);
+		this.searchPanel.setOperationId(ModuleConstants.OpTypeIDs.CREATE_MANAGER_TRANSFER);
 		this.searchPanel.addCheckedSelectionChangedEventHandler(new CheckedSelectionChangedEventHandler() {
 
 			@SuppressWarnings("unchecked")
@@ -176,8 +177,11 @@ public class ClientManagerTransferOperationView extends View implements ClientMa
 		clientWrapper.add(clientFormWrapper);
 		contentWrapper.add(clientWrapper);
 		mainWrapper.add(contentWrapper);
-
-		initWidget(mainWrapper);
+	}
+	
+	@Override
+	protected void initializeView() {
+		return;
 	}
 
 	@Override
