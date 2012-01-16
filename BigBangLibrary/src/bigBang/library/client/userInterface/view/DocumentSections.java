@@ -66,6 +66,7 @@ public abstract class DocumentSections{
 			
 			wrapper = new VerticalPanel();
 			initWidget(wrapper);
+			wrapper.setWidth("100%");
 			toolbar.hideAll();
 			toolbar.showItem(SUB_MENU.EDIT, true);
 			
@@ -326,10 +327,10 @@ public abstract class DocumentSections{
 			}
 
 			@Override
-			public void setValue(DocInfo contactinfo) {
+			public void setValue(DocInfo docInfo) {
 
 
-				if(contactinfo == null){
+				if(docInfo == null){
 					Button add = new Button("Adicionar Detalhe");
 					add.addClickHandler(new ClickHandler() {
 
@@ -340,7 +341,7 @@ public abstract class DocumentSections{
 					});
 					add.setWidth("180px");
 					this.setLeftWidget(add);
-					super.setValue(contactinfo);
+					super.setValue(docInfo);
 					return;	
 
 				}
@@ -348,8 +349,8 @@ public abstract class DocumentSections{
 				info = new TextBoxFormField();
 				infoValue = new TextBoxFormField();
 
-				info.setValue(contactinfo.name);
-				infoValue.setValue(contactinfo.value);
+				info.setValue(docInfo.name);
+				infoValue.setValue(docInfo.value);
 				
 				remove = new Button("X");
 				remove.addClickHandler(new ClickHandler() {
@@ -362,7 +363,7 @@ public abstract class DocumentSections{
 				this.setLeftWidget(info);
 				this.setWidget(infoValue);
 				this.setRightWidget(remove);
-				super.setValue(contactinfo);
+				super.setValue(docInfo);
 			}
 
 			public void setEditable(boolean editable){
@@ -440,7 +441,7 @@ public abstract class DocumentSections{
 			
 			
 		}
-		
+		 
 		public List<DocInfo> getList(){
 			
 			return details;
@@ -453,7 +454,7 @@ public abstract class DocumentSections{
 			emptyd.value = "";
 			return new DocumentDetailEntry(emptyd);
 		}
-
+		
 	}
 	
 

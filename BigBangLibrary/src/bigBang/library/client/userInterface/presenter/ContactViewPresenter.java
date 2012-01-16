@@ -8,6 +8,7 @@ import bigBang.library.client.event.ActionInvokedEvent;
 import bigBang.library.client.event.ActionInvokedEventHandler;
 import bigBang.library.client.event.DeleteRequestEventHandler;
 import bigBang.library.client.userInterface.List;
+import bigBang.library.client.userInterface.view.ContactView;
 import bigBang.library.client.userInterface.view.ContactView.ContactEntry;
 
 import com.google.gwt.user.client.ui.HasWidgets;
@@ -167,6 +168,10 @@ public abstract class ContactViewPresenter implements ViewPresenter{
 		view.getContactInfoList().add(temp);
 		view.addContactInfo(null);
 		
+	}
+
+	public ContactView getView() {
+		return (ContactView)view;
 	} 
 	
 

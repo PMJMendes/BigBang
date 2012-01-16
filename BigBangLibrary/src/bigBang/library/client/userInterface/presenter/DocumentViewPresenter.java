@@ -32,7 +32,6 @@ public class DocumentViewPresenter implements ViewPresenter{
 
 		Widget asWidget();
 		void registerActionHandler(ActionInvokedEventHandler<Action> handler);
-		public void setDocument(Document doc);
 		void createNewFile();
 		void createNewNote();
 		void addDetail(DocInfo docInfo);
@@ -42,6 +41,7 @@ public class DocumentViewPresenter implements ViewPresenter{
 		void setEditable(boolean b);
 		Document getInfo();
 		DocumentDetailEntry initializeDocumentDetailEntry();
+		void setValue(Document doc);
 
 	}
 
@@ -77,7 +77,7 @@ public class DocumentViewPresenter implements ViewPresenter{
 					view.createNewFile(); 
 					break;
 				case CANCEL:{
-					view.setDocument(view.getInfo());
+					setDocument(view.getInfo());
 					view.setEditable(false);
 					break;
 				}
@@ -104,8 +104,6 @@ public class DocumentViewPresenter implements ViewPresenter{
 					addDetail();
 					break;
 				}
-
-
 				}
 
 			}
@@ -116,9 +114,12 @@ public class DocumentViewPresenter implements ViewPresenter{
 
 	public void setDocument(Document doc) {
 
+		view.setValue(doc);
 		this.doc = doc;
-		view.setDocument(doc);
 		DocInfo[] docInfo = doc.parameters;
+		view.getFileNote().setDocument(doc);
+		view.getDetails().getList().clear();
+		view.getGeneralInfo().setDocument(doc);
 		
 		for(int i = 0; i< docInfo.length; i++){
 			

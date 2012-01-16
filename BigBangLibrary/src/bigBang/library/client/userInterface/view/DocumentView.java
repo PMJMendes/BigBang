@@ -53,20 +53,7 @@ public class DocumentView extends View implements DocumentViewPresenter.Display{
 		return;
 	}
 
-	@Override
-	public void setDocument(Document doc) {
 		
-		this.doc = doc;
-		
-		if(doc == null){
-			middle.generateNewDocument();
-			return;
-		}
-		else{
-			top.setDocument(doc);
-			middle.setDocument(doc);	
-		}
-	}
 	
 	@Override
 	public void registerActionHandler(ActionInvokedEventHandler<Action> handler) {
@@ -125,6 +112,11 @@ public class DocumentView extends View implements DocumentViewPresenter.Display{
 	public DocumentDetailEntry initializeDocumentDetailEntry() {
 		
 		return details.getNewDocumentDetailEntry();
+	}
+
+	@Override
+	public void setValue(Document doc) {
+		this.doc = doc;
 	}
 
 
