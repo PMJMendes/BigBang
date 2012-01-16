@@ -37,6 +37,8 @@ public class ImageHandlerPanel extends View {
 
 	public ImageHandlerPanel(){
 		AbsolutePanel wrapper = new AbsolutePanel();
+		initWidget(wrapper);
+
 		wrapper.setSize("100%", "100");
 		
 		image = new Image();
@@ -56,8 +58,6 @@ public class ImageHandlerPanel extends View {
 		imageWrapper.add(image);
 		
 		viewport.add(imageWrapper);
-		initWidget(wrapper);
-
 		dragMode = false;
 
 		image.addLoadHandler(new LoadHandler() {
@@ -116,6 +116,11 @@ public class ImageHandlerPanel extends View {
 			}
 		});
 		image.getElement().getStyle().setCursor(Cursor.MOVE);
+	}
+	
+	@Override
+	protected void initializeView() {
+		return;
 	}
 
 	public void setImage(String url){
@@ -217,7 +222,6 @@ public class ImageHandlerPanel extends View {
 		}
 	}
 
-	@Override
 	public void showLoading(boolean show) {
 		if(show){
 			this.cover.clear();

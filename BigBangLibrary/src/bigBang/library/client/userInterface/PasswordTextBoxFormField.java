@@ -42,6 +42,7 @@ public class PasswordTextBoxFormField extends FormField<String> {
 	public PasswordTextBoxFormField(){
 		super();
 		HorizontalPanel wrapper = new HorizontalPanel();
+		initWidget(wrapper);
 		wrapper.setVerticalAlignment(HasVerticalAlignment.ALIGN_MIDDLE);
 		this.label = new Label();
 		this.label.getElement().getStyle().setMarginRight(5, Unit.PX);
@@ -51,8 +52,6 @@ public class PasswordTextBoxFormField extends FormField<String> {
 		this.field = new PasswordTextBox();
 		wrapper.add((Widget) this.field);
 		wrapper.add(mandatoryIndicatorLabel);
-		initWidget(wrapper);
-
 		setFieldWidth("400px");
 	}
 

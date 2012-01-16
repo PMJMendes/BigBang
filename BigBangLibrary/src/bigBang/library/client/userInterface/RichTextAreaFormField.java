@@ -47,6 +47,7 @@ public class RichTextAreaFormField extends FormField<String> {
 	
 	public RichTextAreaFormField(){
 		wrapper = new HorizontalPanel();
+		initWidget(wrapper);
 		wrapper.setVerticalAlignment(HasVerticalAlignment.ALIGN_MIDDLE);
 		this.label = new Label();
 		this.label.getElement().getStyle().setMarginRight(5, Unit.PX);
@@ -67,8 +68,6 @@ public class RichTextAreaFormField extends FormField<String> {
 		wrapper.add(fieldWrapper);
 		wrapper.add(mandatoryIndicatorLabel);
 		wrapper.add(errorMessageLabel);
-		initWidget(wrapper);
-		
 		setFieldWidth("400px");
 	}
 

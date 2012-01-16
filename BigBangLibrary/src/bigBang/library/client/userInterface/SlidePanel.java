@@ -27,12 +27,19 @@ public class SlidePanel extends View {
 	protected Widget currentWidget;
 	
 	public SlidePanel(){
+		VerticalPanel wrapper = new VerticalPanel();
+		initWidget(wrapper);
+		
 		canvas = new AbsolutePanel();
 		canvas.setSize("100%", "100%");
-		VerticalPanel wrapper = new VerticalPanel();
+		
 		wrapper.add(canvas);
 		wrapper.setSize("100%", "100%");
-		initWidget(wrapper);
+	}
+	
+	@Override
+	protected void initializeView() {
+		return;
 	}
 
 	public void slideInto(Widget w, Direction d){

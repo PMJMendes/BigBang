@@ -35,6 +35,7 @@ public class NavigationPanel extends View {
 		iterator = navigatables.listIterator();
 
 		VerticalPanel wrapper = new VerticalPanel();
+		initWidget(wrapper);
 		wrapper.setSize("100%", "100%");
 
 		navBar = new NavigationToolbar(); 
@@ -65,7 +66,11 @@ public class NavigationPanel extends View {
 		wrapper.setCellHeight(slide, "100%");
 
 		checkToolbarItems();
-		initWidget(wrapper);
+	}
+	
+	@Override
+	protected void initializeView() {
+		return;
 	}
 
 	public void showNavigationBar(boolean show){

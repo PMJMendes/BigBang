@@ -55,7 +55,7 @@ public class FilterableList<T> extends SortableList<T> {
 		headerWrapper.setWidth("100%");
 		headerWrapper.add(newHeaderContainer);
 
-		DisclosurePanel filterContainer = new DisclosurePanel();
+		DisclosurePanel filterContainer = (DisclosurePanel) GWT.create(DisclosurePanel.class);
 		filterContainer.getElement().getStyle().setBackgroundColor("#DDD");
 		filterContainer.setAnimationEnabled(true);
 		filterContainer.setSize("100%", "100%");

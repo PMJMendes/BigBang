@@ -127,6 +127,7 @@ public class PopupBar extends View {
 		this.popup = new PopupPanel(true);
 
 		SimplePanel wrapper = new SimplePanel();
+		initWidget(wrapper);
 		wrapper.setSize("100%", "100%");
 
 		switch(orientation){
@@ -143,8 +144,11 @@ public class PopupBar extends View {
 		wrapper.add(itemsWrapper);
 
 		setPopupPosition(popupPosition);
-
-		initWidget(wrapper);
+	}
+	
+	@Override
+	protected void initializeView() {
+		return;
 	}
 
 	/**

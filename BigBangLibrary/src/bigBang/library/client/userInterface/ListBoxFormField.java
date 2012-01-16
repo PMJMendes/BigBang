@@ -41,11 +41,10 @@ public class ListBoxFormField extends FormField<String> {
 
 		this.listBox = new ListBox();
 		this.listBox.setHeight("20px");
-
-		//this.field = new MockField();
-
+		
 		VerticalPanel mainWrapper = new VerticalPanel();
 		initWidget(mainWrapper);
+
 		this.label = new Label();
 		mainWrapper.add(this.label);
 		wrapper = new HorizontalPanel();
@@ -67,6 +66,12 @@ public class ListBoxFormField extends FormField<String> {
 				setValue(value, true);
 			}
 		});
+	}
+	
+	@Override
+	protected void initializeView() {
+		super.initializeView();
+		
 	}
 
 	private void setLabel(String label) {

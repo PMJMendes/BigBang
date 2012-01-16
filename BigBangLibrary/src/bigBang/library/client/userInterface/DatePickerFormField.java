@@ -9,9 +9,6 @@ import bigBang.library.client.FormField;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.BlurEvent;
 import com.google.gwt.event.dom.client.BlurHandler;
-import com.google.gwt.event.dom.client.FocusEvent;
-import com.google.gwt.event.dom.client.FocusHandler;
-import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.event.dom.client.KeyPressEvent;
 import com.google.gwt.event.dom.client.KeyPressHandler;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
@@ -47,13 +44,13 @@ public class DatePickerFormField extends FormField<Date> {
 
 	public DatePickerFormField(String label, String format, FieldValidator<Date> validator){
 		super();
+		
+		VerticalPanel mainWrapper = new VerticalPanel();
+		initWidget(mainWrapper);
 
 		this.setValidator(validator);
 
 		this.format = DateTimeFormat.getFormat(format);
-
-		VerticalPanel mainWrapper = new VerticalPanel();
-		initWidget(mainWrapper);
 
 		mainWrapper.add(this.label);
 		this.label.setText(label);

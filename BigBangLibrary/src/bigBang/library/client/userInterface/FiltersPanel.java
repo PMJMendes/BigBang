@@ -33,7 +33,15 @@ public class FiltersPanel extends View {
 	public FiltersPanel(Map<Enum<?>, String> sorts){
 		filters = new HashMap<Enum<?>, HasValue<?>>();
 		sortableOptions = sorts;
+		
 		VerticalPanel wrapper = new VerticalPanel();
+		
+		ScrollPanel mainWrapper = new ScrollPanel(wrapper);
+		initWidget(mainWrapper);
+
+		mainWrapper.setSize("100%", "100%");
+		mainWrapper.getElement().getStyle().setMarginBottom(10, Unit.PX);
+		
 		wrapper.setSize("100%", "100%");
 
 		clearFiltersButton = new Button("Limpar filtros");
@@ -89,14 +97,13 @@ public class FiltersPanel extends View {
 		buttonsWrapper.add(applyFiltersButton);
 
 		wrapper.add(buttonsWrapper);
-		
-		ScrollPanel mainWrapper = new ScrollPanel(wrapper);
-		mainWrapper.setSize("100%", "100%");
-		mainWrapper.getElement().getStyle().setMarginBottom(10, Unit.PX);
-
-		initWidget(mainWrapper);
 	}
-
+		
+	@Override
+	protected void initializeView() {
+		return;
+	}
+	
 	public Enum<?> getSelectedSortableField(){
 		String strValue = this.sortListBox.getValue(this.sortListBox.getSelectedIndex());
 		for(Enum<?> key : sortableOptions.keySet()){

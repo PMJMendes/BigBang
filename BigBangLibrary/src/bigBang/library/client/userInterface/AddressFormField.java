@@ -34,6 +34,12 @@ public class AddressFormField extends FormField<Address> {
 	}
 	
 	public AddressFormField(){
+		wrapper = new Grid(7, 3);
+		initWidget(wrapper);
+	}
+	
+	protected void initializeView() {
+		super.initializeView();
 		street1 = new TextBox();
 		street2 = new TextBox();
 		code = new TextBox();
@@ -48,7 +54,6 @@ public class AddressFormField extends FormField<Address> {
 		street2.setWidth("100%");
 		country.setText(COUNTRY_DEFAULT_VALUE);
 		
-		wrapper = new Grid(7, 3);
 		wrapper.getColumnFormatter().setWidth(1, "100%");
 		
 		wrapper.setWidget(0, 0, new Label("Rua:"));
@@ -78,10 +83,7 @@ public class AddressFormField extends FormField<Address> {
 		country.getElement().getStyle().setMargin(0, Unit.PX);
 		
 		//wrapper.setWidth("550px");
-		
-		
-		initWidget(wrapper);
-	}
+	};
 
 	@Override
 	public void setReadOnly(boolean readOnly) {				

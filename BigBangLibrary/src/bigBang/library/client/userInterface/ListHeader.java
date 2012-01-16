@@ -62,6 +62,11 @@ public class ListHeader extends View {
 		headerLabel.getElement().getStyle().setFontWeight(FontWeight.BOLD);
 	}
 
+	@Override
+	protected void initializeView() {
+		return;
+	}
+	
 	public void setText(String text){
 		this.centralWidgetContainer.clear();
 		this.centralWidgetContainer.add(this.headerLabel);

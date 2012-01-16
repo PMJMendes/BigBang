@@ -138,6 +138,11 @@ public class ListEntry<T> extends View implements ValueSelectable<T>, HasMetaDat
 		setValue(value);
 	}
 	
+	@Override
+	protected void initializeView() {
+		return;
+	}
+	
 	public Label getFormatedLabel(){
 		Label result = new Label();
 		result = new Label();

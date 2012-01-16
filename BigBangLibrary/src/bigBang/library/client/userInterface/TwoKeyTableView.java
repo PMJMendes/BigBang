@@ -127,10 +127,15 @@ public class TwoKeyTableView extends View {
 	protected Map<String, Map<String, FormField<String>>> fields;
 
 	public TwoKeyTableView(){
+		fields = new HashMap<String, Map<String,FormField<String>>>();
 		table = new TwoKeyTable();
 		grid = new Grid();
-		fields = new HashMap<String, Map<String,FormField<String>>>();
 		initWidget(grid);
+	}
+	
+	@Override
+	protected void initializeView() {
+		return;
 	}
 
 	public void setHeaders(HeaderCell[] rows, HeaderCell[] columns){

@@ -77,6 +77,7 @@ public class List<T> extends View implements HasValueSelectables<T>, java.util.L
 
 		mainWrapper = new VerticalPanel();
 		initWidget(mainWrapper);
+
 		mainWrapper.setVerticalAlignment(HasVerticalAlignment.ALIGN_MIDDLE);
 		mainWrapper.setSize("100%", "100%");
 		mainWrapper.setStyleName("emptyContainer");
@@ -164,6 +165,10 @@ public class List<T> extends View implements HasValueSelectables<T>, java.util.L
 		disableTextSelection(true);
 	}
 
+	@Override
+	protected void initializeView() {
+		return;
+	}
 
 	//Listing Methods
 
@@ -346,7 +351,9 @@ public class List<T> extends View implements HasValueSelectables<T>, java.util.L
 			}
 		}
 		
-		if(!((UIObject) source).isVisible()){
+		UIObject sourceElem = (UIObject) source;
+		if(sourceElem.getAbsoluteTop() < this.scrollPanel.getAbsoluteTop()
+				|| sourceElem.getAbsoluteTop() > (this.scrollPanel.getAbsoluteTop() + this.scrollPanel.getOffsetHeight() - sourceElem.getOffsetHeight())){
 			this.scrollPanel.ensureVisible((UIObject) source);
 		}
 		selectionChangedEventFireBypass(new SelectionChangedEvent(this.getSelected()));
@@ -667,6 +674,12 @@ public class List<T> extends View implements HasValueSelectables<T>, java.util.L
 				this.loadingWidget.removeFromParent();
 			}
 		}
+	}
+
+	@Override
+	public Collection<ValueSelectable<T>> getAll() {
+		Collection<ValueSelectable<T>> result = new ArrayList<ValueSelectable<T>>(this.entries);
+		return result;
 	}
 
 }
