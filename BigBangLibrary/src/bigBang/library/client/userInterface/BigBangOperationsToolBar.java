@@ -4,6 +4,7 @@ import org.gwt.mosaic.ui.client.MessageBox;
 
 import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.ui.MenuItem;
+import com.google.gwt.user.client.ui.MenuItemSeparator;
 
 /**
  * Implements an abstract class for the process toolbars in the BigBang project.
@@ -34,6 +35,8 @@ public abstract class BigBangOperationsToolBar extends OperationsToolBar {
 	protected MenuItem dataMenuItem;
 	protected MenuItem requestMenuItem;
 	protected MenuItem adminMenuItem;
+	
+	protected MenuItemSeparator separator;
 
 	protected boolean saveModeEnabled;
 	protected boolean confirmOnCancel = true;
@@ -97,7 +100,9 @@ public abstract class BigBangOperationsToolBar extends OperationsToolBar {
 
 		this.addItem(this.editCancelMenuItem);
 		this.addItem(this.saveMenuItem);
-		this.addSeparator();
+		
+		this.separator = this.addSeparator();
+		
 		this.addItem(this.createMenuItem);
 		this.addItem(this.executeMenuItem);
 		this.addItem(this.dataMenuItem);
@@ -181,6 +186,7 @@ public abstract class BigBangOperationsToolBar extends OperationsToolBar {
 		this.dataMenuItem.setVisible(true);
 		this.requestMenuItem.setVisible(true);
 		this.adminMenuItem.setVisible(true);
+		this.separator.setVisible(true);
 	}
 
 	/**
@@ -194,6 +200,7 @@ public abstract class BigBangOperationsToolBar extends OperationsToolBar {
 		this.dataMenuItem.setVisible(false);
 		this.requestMenuItem.setVisible(false);
 		this.adminMenuItem.setVisible(false);
+		this.separator.setVisible(false);
 	}
 
 	/**

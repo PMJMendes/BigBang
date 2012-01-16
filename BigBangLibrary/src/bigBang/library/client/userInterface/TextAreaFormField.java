@@ -4,9 +4,12 @@ import bigBang.library.client.FieldValidator;
 import bigBang.library.client.FormField;
 
 import com.google.gwt.dom.client.Style.Unit;
-import com.google.gwt.event.dom.client.KeyCodes;
-import com.google.gwt.event.dom.client.KeyPressEvent;
-import com.google.gwt.event.dom.client.KeyPressHandler;
+import com.google.gwt.event.dom.client.BlurEvent;
+import com.google.gwt.event.dom.client.BlurHandler;
+import com.google.gwt.event.dom.client.FocusEvent;
+import com.google.gwt.event.dom.client.FocusHandler;
+import com.google.gwt.event.dom.client.KeyUpEvent;
+import com.google.gwt.event.dom.client.KeyUpHandler;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.HasVerticalAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
@@ -124,24 +127,51 @@ public class TextAreaFormField extends FormField<String> {
 			hasDummyValue = true;
 	}
 
-	//TODO MAKE THIS WORK
-	public void setMaxCharacters(final int max){
+	public void setMaxCharacters(final int max, final Label remainCharsNum){
 
-		((TextArea)this.field).addHandler(new KeyPressHandler() {
+
+		((TextArea)this.field).addKeyUpHandler(new KeyUpHandler() {
 
 			@Override
-			public void onKeyPress(KeyPressEvent event) {
-
-
-
-				if(event.getCharCode() != KeyCodes.KEY_BACKSPACE && event.getCharCode() != KeyCodes.KEY_DELETE && field.getValue().length() > max){
-					event.preventDefault();
-
-				}
+			public void onKeyUp(KeyUpEvent event) {
+				textAreaContentChanged(max, remainCharsNum);
 
 			}
-		}, KeyPressEvent.getType());
+		});
+
+
+		((TextArea)this.field).addFocusHandler(new FocusHandler() {
+
+			@Override
+			public void onFocus(FocusEvent event) {
+				textAreaContentChanged(max, remainCharsNum);
+			}
+		});
+
+		((TextArea)this.field).addBlurHandler(new BlurHandler() {
+
+			@Override
+			public void onBlur(BlurEvent event) {
+				textAreaContentChanged(max, remainCharsNum);
+
+			}
+		});
+
 
 	}
 
+	protected void textAreaContentChanged(int max, Label remainCharsNum) {	
+
+		int counter = new Integer(((TextArea)this.field).getText().length()).intValue();
+		System.out.println(((TextArea)this.field).getText());
+		int charsRemaining = max - counter;
+		if(charsRemaining < 0)
+			charsRemaining = 0;
+
+		remainCharsNum.setText("" + charsRemaining);
+
+		if (charsRemaining <= 0){
+			((TextArea)this.field).setText(((TextArea)this.field).getText().substring(0, max));
+		}
+	}
 }
