@@ -1,58 +1,52 @@
 package bigBang.module.mainModule.client.userInterface.presenter;
 
-import java.util.HashMap;
-
 import bigBang.library.client.EventBus;
+import bigBang.library.client.HasParameters;
+import bigBang.library.client.Session;
+import bigBang.library.client.event.ActionInvokedEvent;
+import bigBang.library.client.event.ActionInvokedEventHandler;
 import bigBang.library.client.event.LogoutEvent;
-import bigBang.library.client.event.ShowMeRequestEvent;
-import bigBang.library.client.event.ShowMeRequestEventHandler;
 import bigBang.library.client.userInterface.MenuSection;
 import bigBang.library.client.userInterface.presenter.SectionViewPresenter;
 import bigBang.library.client.userInterface.presenter.ViewPresenter;
 import bigBang.library.client.userInterface.view.View;
-import bigBang.library.interfaces.Service;
 
-import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.ui.HasWidgets;
-import com.google.gwt.user.client.ui.MenuItem;
+import com.google.gwt.user.client.ui.UIObject;
 import com.google.gwt.user.client.ui.Widget;
 
 public class MainScreenViewPresenter implements ViewPresenter {
-
+	
+	public enum Action{
+		SHOW_PREFERENCES,
+		LOGOUT
+	}
+	
 	public interface Display {
 		Widget asWidget();
 		void createMenuSection(SectionViewPresenter sectionPresenter);
 		void showSection(MenuSection section) throws Exception;
 		void setUsername(String username);
-
-		MenuItem getLogoutButton();
 		void setDomain(String domain);
 		void showFirstSection();
+		void registerActionHandler(ActionInvokedEventHandler<Action> handler);
+		void showPreferences(boolean show);
 	}
 
 	private Display view;
-	private EventBus eventBus;
 
-	private HashMap<String, MenuSection> sections;
-	private HashMap<String, SectionViewPresenter> sectionPresenters;
-
-	public MainScreenViewPresenter(EventBus eventBus, final View view){
-		this.sections = new HashMap<String, MenuSection>();
-		this.sectionPresenters = new HashMap<String, SectionViewPresenter>();
+	public MainScreenViewPresenter(View view){
 		this.setView(view);
-		this.setEventBus(eventBus);
+		initializeView();
+	}
+	
+	private void initializeView(){
+		view.setUsername(Session.getUsername());
+		view.setDomain(Session.getDomain());
 	}
 
-	public void setService(Service service) {
-		return;
-	}
-
-	public void setEventBus(EventBus eventBus) {
-		this.eventBus = eventBus;
-		registerEventHandlers(eventBus);
-	}
-
-	public void setView(View view) {
+	@Override
+	public void setView(UIObject view) {
 		this.view = (Display) view;
 	}
 
@@ -61,50 +55,29 @@ public class MainScreenViewPresenter implements ViewPresenter {
 		container.clear();
 		container.add(this.view.asWidget());		
 	}
-
-	public void addMenuSectionPresenter(SectionViewPresenter sectionPresenter){
-		this.view.createMenuSection(sectionPresenter);
-		this.sections.put(sectionPresenter.getSection().getId(), sectionPresenter.getSection());
-		this.sectionPresenters.put(sectionPresenter.getSection().getId(), sectionPresenter);
-	}
 	
-	public void renderPresenters() {
-		this.view.showFirstSection();
+	@Override
+	public void setParameters(HasParameters parameterHolder) {
+		return;
 	}
 
 	public void bind() {
-		view.getLogoutButton().setCommand(new Command() {
+		view.registerActionHandler(new ActionInvokedEventHandler<MainScreenViewPresenter.Action>() {
 
 			@Override
-			public void execute() {
-				eventBus.fireEvent(new LogoutEvent());
-			}
-		});
-	}
-
-	public void registerEventHandlers(EventBus eventBus) {
-		if(this.eventBus == null) {setEventBus(eventBus);}
-		eventBus.addHandler(ShowMeRequestEvent.TYPE, new ShowMeRequestEventHandler() {
-			
-			@Override
-			public void onShowMeRequest(ShowMeRequestEvent event) {
-				Object source = event.getMe();
-				if(sections.containsValue(source)){
-					try {
-						view.showSection((MenuSection) source);
-					} catch (Exception e) {
-					}
+			public void onActionInvoked(ActionInvokedEvent<Action> action) {
+				switch(action.getAction()){
+				case LOGOUT:
+					EventBus.getInstance().fireEvent(new LogoutEvent());
+					break;
+				case SHOW_PREFERENCES:
+					view.showPreferences(true);
+					break;
 				}
 			}
 		});
-	}
 
-	public void setUsername(String username) {
-		view.setUsername(username);
-	}
-
-	public void setDomain(String domain) {
-		view.setDomain(domain);
+		//APPLICATION-WIDE EVENTS
 	}
 
 }
