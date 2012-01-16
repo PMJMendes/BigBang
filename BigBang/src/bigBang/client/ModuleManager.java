@@ -1,88 +1,52 @@
 package bigBang.client;
 
 import java.util.ArrayList;
-import com.google.gwt.core.client.GWT;
+import java.util.List;
 
 import bigBang.definitions.client.dataAccess.DataBroker;
-import bigBang.library.client.BigBangPermissionManager;
-import bigBang.library.client.EventBus;
-import bigBang.library.client.LoginModule;
 import bigBang.library.client.MainModule;
 import bigBang.library.client.Module;
 import bigBang.library.client.dataAccess.DataBrokerManager;
-import bigBang.library.client.event.LoginSuccessEvent;
-import bigBang.library.client.event.LoginSuccessEventHandler;
-import bigBang.library.client.event.ModuleInitializedEvent;
-import bigBang.library.client.event.ModuleInitializedEventHandler;
-import bigBang.library.client.userInterface.presenter.SectionViewPresenter;
 
 public class ModuleManager {
 
-	private EventBus eventBus;
-	private BigBangPermissionManager permissionManager;
 	private DataBrokerManager brokerManager;
+
 	private static MainModule mainModule;
-	private static LoginModule loginModule;
-	private ArrayList <Module> modules;
+	private static Module loginModule;
+	private List<Module> modules;
+
 	protected int initializedModulesCount = 0;
 
 	public ModuleManager(){
 		modules = new ArrayList <Module> ();
+		brokerManager = DataBrokerManager.getInstance();
 	}
 
 	public void registerMainModule(MainModule module) throws Exception{
 		if(isMainModuleInitialized())
 			throw new Exception("The main module has already been initialized. It cannot be changed.");
 		mainModule = module;
-		
+
 		if(mainModule == null)
 			throw new Exception("Cannot initialize main module");
-
-		final ArrayList<SectionViewPresenter> presenters = new ArrayList<SectionViewPresenter>();
-		
-		eventBus.addHandler(ModuleInitializedEvent.TYPE, new ModuleInitializedEventHandler() {
-			
-			@Override
-			public void onModuleInitialized(ModuleInitializedEvent event) {
-				initializedModulesCount++;
-				GWT.log("module initialized : " + event.getModule().getClass().toString());
-				
-				SectionViewPresenter[] mainPresenters = event.getModule().getMainMenuSectionPresenters();
-				for(int i = 0; mainPresenters != null && i < mainPresenters.length; i++) {
-					presenters.add(mainPresenters[i]);
-				}
-
-				if(initializedModulesCount == modules.size())
-					mainModule.includeMainMenuSectionPresenters(presenters.toArray(new SectionViewPresenter[0]));
-			}
-		});
-		
-		mainModule.initialize(this.eventBus);
+		mainModule.initialize();
 	}
 
-	public void registerLoginModule(LoginModule module) throws Exception{
+	public void registerLoginModule(Module module) throws Exception{
 		if(!isMainModuleInitialized())
 			throw new Exception("The main module must be initialized before registering any otherprocessModules.");
 		loginModule = module;
-		loginModule.initialize(eventBus);
-		mainModule.setLoginPresenter(loginModule.getLoginViewPresenter());
-		
-		eventBus.addHandler(LoginSuccessEvent.TYPE, new LoginSuccessEventHandler() {
-			
-			@Override
-			public void onLoginSuccess(LoginSuccessEvent event) {
-				initializeModules();
-			}
-		});
+		loginModule.initialize();
 	}
-	
+
 	public void registerModule(Module module) throws Exception {
 		if(!isMainModuleInitialized())
 			throw new Exception("The main module must be initialized before registering any otherprocessModules.");
 
 		if(modules.contains(module))
 			return;
-		
+
 		modules.add(module);
 	}
 
@@ -93,10 +57,10 @@ public class ModuleManager {
 	private boolean isMainModuleInitialized(){
 		return mainModule != null && mainModule.isInitialized();
 	}
-	
+
 	public void initializeModules() {
 		int length = modules.size();
-		
+
 		//Registers the broker implementations
 		for(int i = 0; i < length; i++){
 			Module module = modules.get(i);
@@ -106,7 +70,7 @@ public class ModuleManager {
 				this.brokerManager.registerBrokerImplementation(broker.getDataElementId(), broker);
 			}
 		}
-		
+
 		//Verifies the broker dependencies
 		for(int i = 0; i < length; i++){
 			Module module = modules.get(i);
@@ -118,29 +82,16 @@ public class ModuleManager {
 				}
 			}
 		}
-		
+
 		for(int i = 0; i < length; i++){
 			Module module = modules.get(i);
-			module.initialize(eventBus, permissionManager);			
+			module.initialize();
 		}
 	}
 
 	public void runMainModule() throws Exception {
-		//if(isMainModuleInitialized())
-		//	throw new Exception("The main module has already been initialized. It cannot be run.");
+		initializeModules();
 		mainModule.run();
-	}
-
-	public void setEventBus(EventBus eventBus) {
-		this.eventBus = eventBus;
-	}
-
-	public void setPermissionManager(BigBangPermissionManager permissionManager) {
-		this.permissionManager = permissionManager;
-	}
-	
-	public void setBrokerManager(DataBrokerManager brokerManager) {
-		this.brokerManager = brokerManager;
 	}
 
 }
