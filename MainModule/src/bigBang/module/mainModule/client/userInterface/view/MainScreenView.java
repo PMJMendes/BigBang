@@ -5,10 +5,13 @@ import java.util.HashMap;
 
 import org.gwt.mosaic.ui.client.SheetPanel.Resources;
 
+import bigBang.library.client.event.ActionInvokedEvent;
+import bigBang.library.client.event.ActionInvokedEventHandler;
 import bigBang.library.client.userInterface.MenuSection;
 import bigBang.library.client.userInterface.presenter.SectionViewPresenter;
 import bigBang.library.client.userInterface.view.View;
 import bigBang.module.mainModule.client.userInterface.presenter.MainScreenViewPresenter;
+import bigBang.module.mainModule.client.userInterface.presenter.MainScreenViewPresenter.Action;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Position;
@@ -37,15 +40,17 @@ public class MainScreenView extends View implements MainScreenViewPresenter.Disp
 	private TabPanel mainTabPanel;
 	private HashMap<MenuSection, HasWidgets> sectionWrappers;
 	private ArrayList<SectionViewPresenter> sectionIndexes;
-	
+
 	private MenuItem usernameMenuItem;
 	private MenuItem domainMenuItem;
-	private MenuItem logoutMenuItem;
+	private ActionInvokedEventHandler<Action> actionHandler;
 
 	public MainScreenView(){
 		this.sectionWrappers = new HashMap<MenuSection, HasWidgets>();
 		this.sectionIndexes = new ArrayList<SectionViewPresenter>();
 		panel = new VerticalPanel();
+		initWidget(panel);
+		
 		panel.setVerticalAlignment(HasVerticalAlignment.ALIGN_TOP);
 		panel.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_LEFT);
 		panel.setSize(Window.getClientWidth() + "px", (Window.getClientHeight() - 5) + "px");
@@ -63,12 +68,12 @@ public class MainScreenView extends View implements MainScreenViewPresenter.Disp
 		usernameMenuItem = new MenuItem("", new Command() {
 
 			public void execute() {
-				
+
 			}
 		});
 		menuBar.addItem(usernameMenuItem);
 		menuBar.addSeparator();
-				
+
 		domainMenuItem = new MenuItem("", new Command() {
 
 			public void execute() {
@@ -76,20 +81,20 @@ public class MainScreenView extends View implements MainScreenViewPresenter.Disp
 			}
 		});
 		menuBar.addItem(domainMenuItem);		
-		
+
 		menuBar.addSeparator();
 		menuBar.addItem(new MenuItem("Preferências", new Command() {
 
 			public void execute() {
-				showPreferencesPanel();
+				actionHandler.onActionInvoked(new ActionInvokedEvent<MainScreenViewPresenter.Action>(Action.SHOW_PREFERENCES));
 			}
 		}));
 		menuBar.addSeparator();
-		
-		logoutMenuItem = new MenuItem("Sair", new Command() {
+
+		MenuItem logoutMenuItem = new MenuItem("Sair", new Command() {
 
 			public void execute() {
-
+				actionHandler.onActionInvoked(new ActionInvokedEvent<MainScreenViewPresenter.Action>(Action.LOGOUT));
 			}
 		});
 		menuBar.addItem(logoutMenuItem);
@@ -104,16 +109,19 @@ public class MainScreenView extends View implements MainScreenViewPresenter.Disp
 		this.mainTabPanel.getDeckPanel().getElement().getStyle().setPadding(0, Unit.PX);
 		panel.add(mainTabPanel);
 		panel.setCellHeight(mainTabPanel, "100%");
-		
-		initWidget(panel);
-		
+
 		disableTextSelection(true);
+	}
+	
+	@Override
+	protected void initializeView() {
+		return;
 	}
 
 	@Override
 	public void createMenuSection(SectionViewPresenter sectionPresenter) {
 		sectionIndexes.add(sectionPresenter);
-		
+
 		MenuSection section = sectionPresenter.getSection();
 		AbsolutePanel tabPanelWidget = new AbsolutePanel();
 		tabPanelWidget.setSize("100px", "35px");
@@ -131,16 +139,16 @@ public class MainScreenView extends View implements MainScreenViewPresenter.Disp
 
 		SimplePanel wrapper = new SimplePanel();
 		wrapper.setSize("100%", "100%");
-		
+
 		this.mainTabPanel.add(wrapper, tabPanelWidget);
-		
+
 		sectionWrappers.put(section, wrapper);
 	}
-	
+
 	@Override
 	public void showFirstSection() {
 		this.mainTabPanel.addSelectionHandler(new SelectionHandler<Integer>() { //TODO FJVC nao pertence aqui
-			
+
 			@Override
 			public void onSelection(SelectionEvent<Integer> event) {
 				SectionViewPresenter presenter = sectionIndexes.get(event.getSelectedItem());
@@ -150,9 +158,14 @@ public class MainScreenView extends View implements MainScreenViewPresenter.Disp
 		mainTabPanel.selectTab(0, true);
 	}
 
-	public void showPreferencesPanel(){
-		PreferencesPanelView preferencesView = new PreferencesPanelView(((Resources)GWT.create(Resources.class)));
-		preferencesView.show();
+	@Override
+	public void showPreferences(boolean show){
+		if(show){
+			PreferencesPanelView preferencesView = new PreferencesPanelView(((Resources)GWT.create(Resources.class)));
+			preferencesView.show();
+		}else{
+			//	TODO IMPORTANT FJVC
+		}
 	}
 
 	public void showSection(MenuSection section) throws Exception {
@@ -168,13 +181,13 @@ public class MainScreenView extends View implements MainScreenViewPresenter.Disp
 	}
 
 	@Override
-	public MenuItem getLogoutButton() {
-		return logoutMenuItem;
+	public void setDomain(String domain) {
+		domainMenuItem.setText(domain);
 	}
 
 	@Override
-	public void setDomain(String domain) {
-		domainMenuItem.setText(domain);
+	public void registerActionHandler(ActionInvokedEventHandler<Action> handler) {
+		this.actionHandler = handler;
 	}
 
 }
