@@ -19,6 +19,7 @@
 	<inherits name="bigBang.library.BigBangLibrary" />
 	<inherits name="bigBang.definitions.BigBangDefinitions" />
 	<inherits name="bigBang.module.mainModule.MainModule" />
+	<inherits name="bigBang.module.loginModule.LoginModule" />
 
 	<!-- Specify the app entry point class. -->
 	<entry-point class='bigBang.client.BigBang' />
@@ -27,7 +28,7 @@
 	<source path='client' />
 	<source path='shared' />
 
-	<inherits name="bigBang.module.loginModule.LoginModule" />
+
 	<inherits name="bigBang.module.tasksModule.TasksModule" />
 	<inherits name="bigBang.module.generalSystemModule.GeneralSystemModule"/>
 	<inherits name="bigBang.module.clientModule.ClientModule"/>
