@@ -111,11 +111,9 @@ public class BigBangContactsListBroker extends DataBroker<Contact> implements Co
 
 	@Override
 	public void unregisterClient(ContactsBrokerClient client) {
-		boolean managed = false;
 		for(String ownerId : clients.keySet()){
 			List<ContactsBrokerClient> clientList = clients.get(ownerId);
 			if(clientList.contains(client)){
-				managed = true;
 				unregisterClient(client, ownerId);
 			}
 		}
@@ -300,7 +298,7 @@ public class BigBangContactsListBroker extends DataBroker<Contact> implements Co
 				break;
 			}
 		}
-		final Contact contact = tempContact;
+		//final Contact contact = tempContact;
 //		service.deleteContact(processId, opId, contact, new BigBangAsyncCallback<Void>() {
 //
 //			@Override

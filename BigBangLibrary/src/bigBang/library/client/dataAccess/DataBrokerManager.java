@@ -4,8 +4,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import bigBang.definitions.client.dataAccess.DataBroker;
-import bigBang.definitions.shared.Remap;
-import bigBang.definitions.shared.Remap.RemapId;
 
 import com.google.gwt.core.client.GWT;
 
@@ -69,6 +67,10 @@ public class DataBrokerManager {
 	
 	public static DataBroker<?> staticGetBroker(String dataElementId){
 		return DataBrokerManager.Util.getInstance().getBroker(dataElementId);
+	}
+	
+	public static DataBrokerManager getInstance(){
+		return DataBrokerManager.Util.getInstance();
 	}
 	
 }
