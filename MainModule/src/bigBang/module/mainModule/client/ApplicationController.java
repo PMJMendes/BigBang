@@ -1,102 +1,88 @@
 package bigBang.module.mainModule.client;
 
 import bigBang.library.client.EventBus;
+import bigBang.library.client.ViewPresenterFactory;
 import bigBang.library.client.event.LoginSuccessEvent;
 import bigBang.library.client.event.LoginSuccessEventHandler;
-import bigBang.library.client.userInterface.presenter.SectionViewPresenter;
 import bigBang.library.client.userInterface.presenter.ViewPresenter;
 import bigBang.module.mainModule.client.notifications.NotificationsManager;
-import bigBang.module.mainModule.client.userInterface.presenter.MainScreenViewPresenter;
-import bigBang.module.mainModule.client.userInterface.view.MainScreenView;
+import bigBang.module.mainModule.client.userInterface.MainViewController;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.RunAsyncCallback;
+import com.google.gwt.dom.client.Style.Overflow;
+import com.google.gwt.event.logical.shared.ResizeEvent;
+import com.google.gwt.event.logical.shared.ResizeHandler;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.HasWidgets;
+import com.google.gwt.user.client.ui.RootPanel;
 
 public class ApplicationController {
 
-	private EventBus eventBus;
-	@SuppressWarnings("unused")
-	private HistoryManager historyManager;
 	private NotificationsManager notificationsManager;
-	@SuppressWarnings("unused")
-	private ProcessManager processManager;
-
-	private ViewPresenter loginPresenter;
-	private MainScreenViewPresenter mainScreenViewPresenter;
 	private HasWidgets mainContainer;
-	
-	private String username;
-	private String domain;
 
-	public ApplicationController(final EventBus eventBus, HistoryManager historyManager, ProcessManager processManager) {
-		this.eventBus = eventBus;
-		this.historyManager = historyManager;
-		this.processManager = processManager;
-		
-		mainScreenViewPresenter = new MainScreenViewPresenter(eventBus, new MainScreenView());
-		notificationsManager = new NotificationsManager(eventBus);
-		
-		this.bindEvents();
+	public ApplicationController() {
+		notificationsManager = (NotificationsManager) GWT.create(NotificationsManager.class);
+		this.bindToEvents();
 	}
-
+	
 	public void startNotificationsManager(){
 		notificationsManager.enableTrayNotifications();
 	}
-
-	public void setLoginViewPresenter(ViewPresenter loginPresenter){		
-		this.loginPresenter = loginPresenter;
-		if(this.loginPresenter != null)
-			this.loginPresenter.setEventBus(eventBus);
+	
+	private void bindToEvents(){
+		EventBus.getInstance().addHandler(LoginSuccessEvent.TYPE, new LoginSuccessEventHandler() {
+			public void onLoginSuccess(LoginSuccessEvent event) {
+				showMainScreen();
+			}
+		});
 	}
 
-	public void go(HasWidgets mainContainer) {
-		this.mainContainer = mainContainer;
-
-		if(loginPresenter != null)
-			showLoginScreen();
-		else
-			showMainScreen();
+	public void go() {
+		RootPanel.get().setSize("100%", Window.getClientHeight()+"px");
+		RootPanel.get().getElement().getStyle().setOverflow(Overflow.HIDDEN);
+		Window.addResizeHandler(new ResizeHandler() {
+			
+			@Override
+			public void onResize(ResizeEvent event) {
+				RootPanel.get().setSize("100%", Window.getClientHeight()+"px");
+			}
+		});
+		this.mainContainer = RootPanel.get();
+		showLoginScreen();
 	}
 
 	public void showMainScreen(){
-		mainScreenViewPresenter.setUsername(this.username);
-		mainScreenViewPresenter.setDomain(this.domain);
-		mainScreenViewPresenter.go(mainContainer);
-		startNotificationsManager();
+		GWT.runAsync(new RunAsyncCallback() {
+			
+			@Override
+			public void onSuccess() {
+//				ViewPresenter mainScreenPresenter = ViewPresenterFactory.getInstance().getViewPresenter("MAIN_SCREEN");
+//				mainScreenPresenter.go(ApplicationController.this.mainContainer);
+				new MainViewController(mainContainer);
+				startNotificationsManager();
+			}
+			
+			@Override
+			public void onFailure(Throwable reason) {
+				GWT.log("Could not present the Application Interface : " + reason.getMessage());
+			}
+		});
 	}
 
 	public void showLoginScreen(){
 		GWT.runAsync(new RunAsyncCallback() {
 
 			public void onSuccess() {
-				loginPresenter.go(mainContainer);
+				ViewPresenter loginViewPresenter = ViewPresenterFactory.getInstance().getViewPresenter("LOGIN");
+				loginViewPresenter.go(ApplicationController.this.mainContainer);
 			}
 
 			public void onFailure(Throwable reason) {
 				GWT.log("Could not present the login module : " + reason.getMessage());
 			}
 		});
-	}
-
-	public void includeMainMenuSectionPresenter(SectionViewPresenter sectionPresenter){
-		if(sectionPresenter == null)
-			return;
-		this.mainScreenViewPresenter.addMenuSectionPresenter(sectionPresenter);
-	}
-
-	private void bindEvents(){
-		eventBus.addHandler(LoginSuccessEvent.TYPE, new LoginSuccessEventHandler() {
-			public void onLoginSuccess(LoginSuccessEvent event) {
-				username = event.getUsername();
-				domain = event.getDomain();
-				showMainScreen();
-			}
-		});
-	}
-
-	public void renderPresenters() {
-		mainScreenViewPresenter.renderPresenters();
 	}
 
 }

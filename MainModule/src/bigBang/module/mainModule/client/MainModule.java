@@ -1,91 +1,54 @@
 package bigBang.module.mainModule.client;
 
-import java.util.Arrays;
-import java.util.Comparator;
+import bigBang.definitions.client.dataAccess.DataBroker;
+import bigBang.library.client.ViewPresenterFactory;
+import bigBang.library.client.ViewPresenterInstantiator;
+import bigBang.library.client.userInterface.presenter.ViewPresenter;
+import bigBang.module.mainModule.client.userInterface.presenter.MainScreenViewPresenter;
+import bigBang.module.mainModule.client.userInterface.view.MainScreenView;
 
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.user.client.ui.RootPanel;
-
-import bigBang.definitions.client.dataAccess.DataBroker;
-import bigBang.library.client.BigBangPermissionManager;
-import bigBang.library.client.EventBus;
-import bigBang.library.client.userInterface.presenter.SectionViewPresenter;
-import bigBang.library.client.userInterface.presenter.ViewPresenter;
 
 
 public class MainModule implements bigBang.library.client.MainModule {
 
-	private static EventBus eventBus; //Where app events are posted
-	private static ApplicationController applicationController; //Top level control of the application
-	private static HistoryManager historyManager; //Manages the application history
-	private static ProcessManager processManager; //Manages the processes and their respective operations
+	private ApplicationController applicationController; //Top level control of the application
+	private boolean initialized = false;
 
-	public MainModule() {
-	}
-
-	public void initialize(EventBus eventBus, BigBangPermissionManager permissionManager) {
-		initialize(eventBus);
-	}
-	
-	public void initialize(EventBus eventBus) {
-		MainModule.eventBus = eventBus;
-		historyManager = GWT.create(HistoryManager.class);
-		processManager = GWT.create(ProcessManager.class);
-		applicationController = new ApplicationController(eventBus, historyManager, processManager);
+	public void initialize() {
+		this.applicationController = (ApplicationController) GWT.create(ApplicationController.class);
+		registerViewPresenters();
+		this.initialized = true;
 	}
 
 	public boolean isInitialized() {
-		return applicationController != null;
+		return this.initialized;
 	}
 
-	public void run() {
-		applicationController.go(RootPanel.get());
-	}
-
-	public void setLoginPresenter(ViewPresenter loginViewPresenter) {
-		applicationController.setLoginViewPresenter(loginViewPresenter);
-	}
-
-	public SectionViewPresenter[] getMainMenuSectionPresenters() {
-		return null;
-	}
-
-	public void includeMainMenuSectionPresenters(SectionViewPresenter[] sectionPresenters) {
-		Arrays.sort(sectionPresenters, new Comparator<SectionViewPresenter>() {
-
+	private void registerViewPresenters(){
+		ViewPresenterFactory.getInstance().registerViewPresenterInstantiator("MAIN_SCREEN", new ViewPresenterInstantiator() {
+			
 			@Override
-			public int compare(SectionViewPresenter arg0,
-					SectionViewPresenter arg1) {
-				return arg0.getSection().getMenuIndex().ordinal() - arg1.getSection().getMenuIndex().ordinal();
+			public ViewPresenter getInstance() {
+				MainScreenView view =  (MainScreenView) GWT.create(MainScreenView.class);
+				MainScreenViewPresenter presenter = new MainScreenViewPresenter(view);
+				return presenter;
 			}
 		});
-		
-		if(sectionPresenters == null)
-			return;
-		for(int i = 0; i < sectionPresenters.length; i++)
-			this.includeMainMenuSectionPresenter(sectionPresenters[i]);
-		
-		applicationController.renderPresenters();
-	}
-
-	public void includeMainMenuSectionPresenter(SectionViewPresenter section) {
-		applicationController.includeMainMenuSectionPresenter(section);
 	}
 	
-	public EventBus getEventBus() {
-		return eventBus;
+	public void run() {
+		applicationController.go();
 	}
 
 	@Override
 	public DataBroker<?>[] getBrokerImplementations() {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
 	public String[] getBrokerDependencies() {
-		// TODO Auto-generated method stub
 		return null;
 	}
-	
+
 }
