@@ -10,4 +10,5 @@ public class LoginResponse
 	public String userId;
 	public String userName;
 	public String domain;
+	public boolean isSU;
 }
