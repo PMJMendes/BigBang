@@ -16,6 +16,7 @@
 	<set-property name="user.agent" value="safari"/>
 
 	<!-- BigBang Application modules -->
+	<inherits name="Jewel.Web.Jewel_Web" />
 	<inherits name="bigBang.library.BigBangLibrary" />
 	<inherits name="bigBang.definitions.BigBangDefinitions" />
 	<inherits name="bigBang.module.mainModule.MainModule" />
