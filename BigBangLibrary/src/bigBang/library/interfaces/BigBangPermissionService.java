@@ -25,5 +25,5 @@ public interface BigBangPermissionService
 		}
 	}
 	
-	Permission[] getProcessPermissions(String id) throws SessionExpiredException, BigBangException;
+	Permission[] getProcessPermissions(String dataObjectId) throws SessionExpiredException, BigBangException;
 }
