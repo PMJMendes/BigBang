@@ -10,45 +10,47 @@ import bigBang.definitions.shared.InsuredObject;
 import bigBang.definitions.shared.Receipt;
 
 public interface InsurancePolicyBroker extends DataBrokerInterface<InsurancePolicy> {
-	
+
 	public boolean isTemp(InsurancePolicy policy);
-	
+
 	public void getPolicy(String policyId, ResponseHandler<InsurancePolicy> handler);
-	
+
 	public void openPolicyResource(InsurancePolicy policy, ResponseHandler<InsurancePolicy> handler);
 
 	public void commitPolicy(InsurancePolicy policy, ResponseHandler<InsurancePolicy> handler);
-	
-	public void closePolicyResource(String policyId, ResponseHandler<Void> handler);
-	
-	public void openCoverageDetailsPage(String policyId, String insuredObjectId, String exerciseId, ResponseHandler<InsurancePolicy.TableSection> handler);
-	
-	public void saveCoverageDetailsPage(String policyId, String insuredObjectId, String exerciseId, InsurancePolicy.TableSection data, ResponseHandler<InsurancePolicy.TableSection> handler);
-	
-	public void updatePolicy(InsurancePolicy policy, ResponseHandler<InsurancePolicy> handler);
-	
-	public void removePolicy(String policyId, ResponseHandler<String> handler);
-	
-	public void getClientPolicies(String clientid, ResponseHandler<Collection<InsurancePolicyStub>> policies);
-	
-	public void createReceipt(String policyId, Receipt receipt, ResponseHandler<Receipt> handler);
 
-	//Insured Objects
-	public void createInsuredObject(String policyId, InsuredObject object, ResponseHandler<InsuredObject> handler);
-	
-	public void updateInsuredObject(String policyId, InsuredObject object, ResponseHandler<InsuredObject> handler);
-	
-	public void removeInsuredObject(String policyId, InsuredObject object, ResponseHandler<Void> handler);
-	
-	//Exercises
-	public void createExercise(String policyId, Exercise exercise, ResponseHandler<Exercise> handler);
-	
-	public void updateExercise(String policyId, Exercise exercise, ResponseHandler<Exercise> handler);
-	
-	public void removeExercise(String policyId, String exerciseId, ResponseHandler<Void> handler);
+	public void closePolicyResource(String policyId, ResponseHandler<Void> handler);
+
+	public void openCoverageDetailsPage(String policyId, String insuredObjectId, String exerciseId, ResponseHandler<InsurancePolicy.TableSection> handler);
+
+	public void saveCoverageDetailsPage(String policyId, String insuredObjectId, String exerciseId, InsurancePolicy.TableSection data, ResponseHandler<InsurancePolicy.TableSection> handler);
+
+	public void updatePolicy(InsurancePolicy policy, ResponseHandler<InsurancePolicy> handler);
+
+	public void removePolicy(String policyId, ResponseHandler<String> handler);
+
+	public void getClientPolicies(String clientid, ResponseHandler<Collection<InsurancePolicyStub>> policies);
+
+	public void createReceipt(String policyId, Receipt receipt, ResponseHandler<Receipt> handler);
 
 	public void remapItemId(String oldId, String newId, boolean inScratchPad);
 	
+	public String getTempMapping(String id);
+
 	public SearchDataBroker<InsurancePolicyStub> getSearchBroker();
-	
+
+	//Insured Objects
+	public void createInsuredObject(String policyId, InsuredObject object, ResponseHandler<InsuredObject> handler);
+
+	public void updateInsuredObject(String policyId, InsuredObject object, ResponseHandler<InsuredObject> handler);
+
+	public void removeInsuredObject(String policyId, InsuredObject object, ResponseHandler<Void> handler);
+
+	//Exercises
+	public void createExercise(String policyId, Exercise exercise, ResponseHandler<Exercise> handler);
+
+	public void updateExercise(String policyId, Exercise exercise, ResponseHandler<Exercise> handler);
+
+	public void removeExercise(String policyId, String exerciseId, ResponseHandler<Void> handler);
+
 }

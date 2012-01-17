@@ -198,7 +198,6 @@ ViewPresenter {
 
 						@Override
 						public void onResponse(InsurancePolicy response) {
-							view.getForm().setValue(response);
 							view.getForm().setReadOnly(false);
 							view.setSaveModeEnabled(true);
 						}
@@ -213,12 +212,13 @@ ViewPresenter {
 						
 						@Override
 						public void onResponse(Void response) {
-							return;
+							NavigationHistoryManager.getInstance().reload();
 						}
 						
 						@Override
 						public void onError(Collection<ResponseError> errors) {
 							onClosePolicyResourceFailed();
+							NavigationHistoryManager.getInstance().reload();
 						}
 					});
 					NavigationHistoryManager.getInstance().reload();
@@ -475,6 +475,7 @@ ViewPresenter {
 	
 	private void onOpenPolicyResourceFailed(){
 		EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Neste momento não é possível editar a Apólice"), TYPE.ALERT_NOTIFICATION));
+		NavigationHistoryManager.getInstance().reload();
 	}
 	
 	private void onClosePolicyResourceFailed(){

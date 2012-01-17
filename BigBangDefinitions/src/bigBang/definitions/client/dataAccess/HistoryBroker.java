@@ -8,30 +8,30 @@ public interface HistoryBroker extends DataBrokerInterface<HistoryItem> {
 
 	/**
 	 * Returns whether or not the history data for a process needs to be refreshed
-	 * @param processId The id of the process for which to require the data refresh
+	 * @param objectId The id of the process for which to require the data refresh
 	 */
-	public void requireDataRefresh(String processId);
+	public void requireDataRefresh(String objectId);
 	
 	/**
 	 * Registers a client for this data broker for a given process id
 	 * @param client The client to be registered
-	 * @param processId The id of the process to watch
+	 * @param objectId The id of the process to watch
 	 */
-	public void registerClient(DataBrokerClient<HistoryItem> client, String processId);
+	public void registerClient(DataBrokerClient<HistoryItem> client, String objectId);
 	
 	/**
 	 * Voids the client registration for a given process
 	 * @param client The client to be unregistered
-	 * @param processId The watched process id
+	 * @param objectId The watched process id
 	 */
-	public void unregisterClient(DataBrokerClient<HistoryItem> client, String processId);
+	public void unregisterClient(DataBrokerClient<HistoryItem> client, String objectId);
 	
 	/**
 	 * Gets the history items for a given process
-	 * @param processId The id of the process to which the history items belong
+	 * @param objectId The id of the process to which the history items belong
 	 * @param handler The handler to be notified on response
 	 */
-	public void getItems(String processId, ResponseHandler<HistoryItem[]> handler);
+	public void getItems(String objectId, ResponseHandler<HistoryItem[]> handler);
 	
 	/**
 	 * Gets a specific history item
@@ -39,7 +39,7 @@ public interface HistoryBroker extends DataBrokerInterface<HistoryItem> {
 	 * @param The id of the process to which the item belongs
 	 * @param handler The handler to be notified on response 
 	 */
-	public void getItem(String itemId, String processId, ResponseHandler<HistoryItem> handler);
+	public void getItem(String itemId, String objectId, ResponseHandler<HistoryItem> handler);
 	
 	/**
 	 * Reverts a given history item

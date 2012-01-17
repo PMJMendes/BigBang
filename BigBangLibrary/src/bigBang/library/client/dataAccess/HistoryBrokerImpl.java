@@ -27,12 +27,12 @@ HistoryBroker {
 	protected static final String ALL_PROCESSES = "";
 
 	protected HistoryServiceAsync service;
-	protected Map<String, List<HistoryDataBrokerClient>> clientProcessRegistrations;
+	protected Map<String, List<HistoryDataBrokerClient>> clientRegistrations;
 	protected Map<String, Boolean> dataRefreshRequests;
 	protected SearchDataBroker<HistoryItemStub> searchBroker; 
 
 	public HistoryBrokerImpl(){
-		clientProcessRegistrations = new HashMap<String, List<HistoryDataBrokerClient>>();
+		clientRegistrations = new HashMap<String, List<HistoryDataBrokerClient>>();
 		dataRefreshRequests = new HashMap<String, Boolean>();
 		service = HistoryService.Util.getInstance();
 		this.searchBroker = new SearchDataBrokerImpl<HistoryItemStub>(this.service);
@@ -46,31 +46,31 @@ HistoryBroker {
 	}
 
 	@Override
-	public void requireDataRefresh(String processId) {
-		processId = processId == null ? ALL_PROCESSES : processId;
-		dataRefreshRequests.put(processId, true);
+	public void requireDataRefresh(String objectId) {
+		objectId = objectId == null ? ALL_PROCESSES : objectId;
+		dataRefreshRequests.put(objectId, true);
 	}
 
 	/**
 	 * Returns whether or not a process data requires a refresh
-	 * @param processId The process for which the data needs to be refreshed
+	 * @param objectId The process for which the data needs to be refreshed
 	 * @return True if the data needs refresh
 	 */
-	protected boolean requiresDataRefresh(String processId) {
-		return dataRefreshRequests.get(processId);
+	protected boolean requiresDataRefresh(String objectId) {
+		return dataRefreshRequests.get(objectId);
 	}
 
 	@Override
 	public void registerClient(DataBrokerClient<HistoryItem> client,
-			String processId) {
+			String objectId) {
 		ArrayList<HistoryDataBrokerClient> processHistoryClients = null;
-		processId = processId == null ? ALL_PROCESSES : processId;
+		objectId = objectId == null ? ALL_PROCESSES : objectId;
 
-		if(!clientProcessRegistrations.containsKey(processId)){
+		if(!clientRegistrations.containsKey(objectId)){
 			processHistoryClients = new ArrayList<HistoryDataBrokerClient>();
-			dataRefreshRequests.put(processId, true);
+			dataRefreshRequests.put(objectId, true);
 		}else{
-			processHistoryClients = (ArrayList<HistoryDataBrokerClient>) clientProcessRegistrations.get(processId);
+			processHistoryClients = (ArrayList<HistoryDataBrokerClient>) clientRegistrations.get(objectId);
 		}
 		processHistoryClients.add((HistoryDataBrokerClient) client);
 	}
@@ -87,10 +87,10 @@ HistoryBroker {
 
 	@Override
 	public void unregisterClient(DataBrokerClient<HistoryItem> client,
-			String processId) {
-		if(!clientProcessRegistrations.containsKey(processId))
+			String objectId) {
+		if(!clientRegistrations.containsKey(objectId))
 			return;
-		List<HistoryDataBrokerClient> processHistoryItems = clientProcessRegistrations.get(processId);
+		List<HistoryDataBrokerClient> processHistoryItems = clientRegistrations.get(objectId);
 		processHistoryItems.remove(client);
 	}
 
@@ -105,12 +105,12 @@ HistoryBroker {
 	}
 
 	@Override
-	public void getItem(String itemId, String processId, final ResponseHandler<HistoryItem> handler) {
-		if(!dataRefreshRequests.containsKey(processId)){
-			throw new RuntimeException("The given process id is not managed by the history broker at the moment : " + processId);
+	public void getItem(String itemId, String objectId, final ResponseHandler<HistoryItem> handler) {
+		if(!dataRefreshRequests.containsKey(objectId)){
+			throw new RuntimeException("The given object id is not managed by the history broker at the moment : " + objectId);
 		}
 
-		boolean isRefreshNeeded = dataRefreshRequests.get(processId);
+		boolean isRefreshNeeded = dataRefreshRequests.get(objectId);
 
 		if(isRefreshNeeded || !cache.contains(itemId)){
 			service.getItem(itemId, new BigBangAsyncCallback<HistoryItem>() {
@@ -118,6 +118,14 @@ HistoryBroker {
 				@Override
 				public void onSuccess(HistoryItem result) {
 					handler.onResponse(result);
+				}
+				
+				@Override
+				public void onFailure(Throwable caught) {
+					handler.onError(new String[]{
+						new String("Could not get the history item")	
+					});
+					super.onFailure(caught);
 				}
 			});
 		}else{
@@ -150,6 +158,15 @@ HistoryBroker {
 				}
 				handler.onResponse((HistoryItem) result);
 			}
+			
+			@Override
+			public void onFailure(Throwable caught) {
+				handler.onError(new String[]{
+					new String("Could not perform undo")	
+				});
+				super.onFailure(caught);
+			}
+			
 		});
 	}
 

@@ -21,7 +21,7 @@ public class BigBangConstants {
 		public static final String TASK = "F850E623-E686-4575-A2D8-9F640128FCD7";
 		public static final String QUOTE_REQUEST = ""; //TODO
 		public static final String QUOTE_REQUEST_NEGOTIATION = ""; //TODO
-		public static final String INSURANCE_POLICY = "29145166-59AC-452E-8C2B-9F81013A39AC";
+		public static final String INSURANCE_POLICY = "D0C5AE6B-D340-4171-B7A3-9F81011F5D42";
 		public static final String RISK_ANALISYS = ""; //TODO
 		public static final String RECEIPT = "B24E4BF7-382C-40EE-8120-9F8A00DABB81";
 		public static final String POLICY_INSURED_OBJECT = "3A3316D2-9D7C-4FD1-8486-9F9C0012E119";
@@ -37,6 +37,9 @@ public class BigBangConstants {
 		public static final String INSURED_OBJECT_TYPE_EQUIPMENT = "E3E7B018-6F07-42DA-8B54-9F9501402D25";
 		public static final String INSURED_OBJECT_TYPE_PLACE      = "CD709854-DB59-424B-904A-9F9501403847";
 		public static final String INSURED_OBJECT_TYPE_ANIMAL    = "7A9A0E31-668A-4113-A03E-9F9501403E6E";
+		public static final String CASUALTY = "TODO";
+		public static final String COMPLAINT = "TODO";
+		public static final String EXPENSE = "TODO";
 	}
 
 	public static class TypifiedListIds {

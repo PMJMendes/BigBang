@@ -224,6 +224,25 @@ public class ClientSearchOperationViewPresenter implements ViewPresenter {
 				}
 			}
 		});
+		
+		view.getHistoryList().addSelectionChangedEventHandler(new SelectionChangedEventHandler() {
+			
+			@Override
+			public void onSelectionChanged(SelectionChangedEvent event) {
+				@SuppressWarnings("unchecked")
+				ValueSelectable<HistoryItemStub> selected = (ValueSelectable<HistoryItemStub>) event.getFirstSelected();
+				HistoryItemStub item = selected == null ? null : selected.getValue();
+				String itemId = item == null ? null : item.id;
+				itemId = itemId == null ? new String() : itemId;
+				
+				if(!itemId.isEmpty()){
+					NavigationHistoryItem navItem = NavigationHistoryManager.getInstance().getCurrentState();
+					navItem.setParameter("operation", "clienthistory");
+					navItem.setParameter("historyItemId", itemId);
+					NavigationHistoryManager.getInstance().go(navItem);
+				}
+			}
+		});
 
 		//APPLICATION-WIDE EVENTS
 		this.bound = true;
