@@ -1,32 +1,27 @@
 package bigBang.library.client.userInterface.view;
 
-import org.gwt.mosaic.ui.client.ToolBar;
-
-import com.google.gwt.user.client.ui.VerticalPanel;
-
 import bigBang.definitions.shared.DocInfo;
 import bigBang.definitions.shared.Document;
-import bigBang.library.client.event.ActionInvokedEvent;
 import bigBang.library.client.event.ActionInvokedEventHandler;
-import bigBang.library.client.userInterface.List;
-import bigBang.library.client.userInterface.ListEntry;
+import bigBang.library.client.event.DeleteRequestEventHandler;
 import bigBang.library.client.userInterface.ListHeader;
 import bigBang.library.client.userInterface.presenter.DocumentViewPresenter;
 import bigBang.library.client.userInterface.presenter.DocumentViewPresenter.Action;
 import bigBang.library.client.userInterface.view.DocumentSections.DetailsSection.DocumentDetailEntry;
-import bigBang.library.interfaces.Service;
+
+import com.google.gwt.user.client.ui.VerticalPanel;
 
 public class DocumentView extends View implements DocumentViewPresenter.Display{
-	
+
 	private VerticalPanel wrapper;
 	private Document doc;
 	private DocumentSections.GeneralInfoSection top;
 	private DocumentSections.FileNoteSection middle;
 	private DocumentSections.DetailsSection details;
 	ActionInvokedEventHandler<Action> actionHandler;
-	
+
 	public DocumentView(){
-		
+
 		wrapper = new VerticalPanel();
 		initWidget(wrapper);
 		top = new DocumentSections.GeneralInfoSection();
@@ -34,30 +29,28 @@ public class DocumentView extends View implements DocumentViewPresenter.Display{
 		details = new DocumentSections.DetailsSection();
 		wrapper.add(top);
 		wrapper.add(middle); 
-		
 		ListHeader conts = new ListHeader("Detalhes");
 		wrapper.add(conts);
 		details.details.setSelectableEntries(false);
 		wrapper.add(details.details.getListContent());
 		wrapper.setWidth("100%");
 	}
-	
+
 	@Override
 	public Document getInfo(){
-		
 		return this.doc;
 	}
-	
+
 	@Override
 	protected void initializeView() {
 		return;
 	}
 
-		
-	
+
+
 	@Override
 	public void registerActionHandler(ActionInvokedEventHandler<Action> handler) {
-		
+
 		this.actionHandler = handler;
 		top.initHandler(handler);
 		middle.initHandler(handler);
@@ -67,22 +60,22 @@ public class DocumentView extends View implements DocumentViewPresenter.Display{
 	@Override
 	public void createNewFile() {
 		middle.createNewFile();
-		
+
 	}
 
 	@Override
 	public void createNewNote() {
 		middle.createNewNote();
-		
+
 	}
-	
+
 	@Override
 	public void addDetail(DocInfo docInfo){
-		
+
 		details.addDocumentDetail(docInfo);
-		
+
 	}
-	
+
 
 	@Override
 	public DocumentSections.GeneralInfoSection getGeneralInfo() {
@@ -101,16 +94,16 @@ public class DocumentView extends View implements DocumentViewPresenter.Display{
 
 	@Override
 	public void setEditable(boolean b) {
-		
+
 		details.setEditable(b);
 		top.setEditable(b);
 		middle.setEditable(b);
-		
+
 	}
 
 	@Override
 	public DocumentDetailEntry initializeDocumentDetailEntry() {
-		
+
 		return details.getNewDocumentDetailEntry();
 	}
 
@@ -118,6 +111,58 @@ public class DocumentView extends View implements DocumentViewPresenter.Display{
 	public void setValue(Document doc) {
 		this.doc = doc;
 	}
+
+	@Override
+	public void registerDeleteHandler(
+			DeleteRequestEventHandler deleteRequestEventHandler) {
+		details.registerDeleteHandler(deleteRequestEventHandler);
+	}
+
+	@Override
+	public Document getDocument() {
+
+		Document newD = new Document();
+
+		if(getInfo() != null)
+			newD = getInfo();
+
+		newD.name = getGeneralInfo().name.getValue();
+		newD.docTypeId = getGeneralInfo().docType.getValue();
+		newD.fileName = getFileNote().filename.getValue();
+		newD.text = getFileNote().note.getValue();
+
+		newD.parameters = new DocInfo[getDetails().getList().size()-1];
+
+		for(int i = 0; i<getDetails().getList().size()-1; i++){
+
+			newD.parameters[i] = new DocInfo();
+			newD.parameters[i].name = ((DocumentDetailEntry) getDetails().getList().get(i)).info.getValue();
+			newD.parameters[i].value = ((DocumentDetailEntry) getDetails().getList().get(i)).infoValue.getValue();
+
+		}
+		if(!middle.isFileBoolean){
+			newD.fileStorageId = null;
+			newD.fileName = null;
+		}
+		else{
+			if(getFileNote().filename.isVisible()){
+				newD.fileName = getFileNote().filename.getValue();
+			}
+			else
+				newD.fileName = getFileNote().upload.getFilename();
+		}
+
+
+		return newD;
+	}
+
+	@Override
+	public void setSaveMode(boolean b) {
+
+		getGeneralInfo().toolbar.setSaveModeEnabled(b);
+
+	}
+
 
 
 }

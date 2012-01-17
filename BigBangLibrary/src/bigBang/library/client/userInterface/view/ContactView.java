@@ -277,6 +277,7 @@ public class ContactView extends View implements ContactViewPresenter.Display{
 		return newContact;
 	}
 
+	@SuppressWarnings("unused")
 	private Contact getInfo() {
 		return this.contact;
 	}
@@ -284,12 +285,6 @@ public class ContactView extends View implements ContactViewPresenter.Display{
 	@Override
 	public void setSaveMode(boolean b) {
 		toolbar.setSaveModeEnabled(b);
-	}
-
-	@Override
-	public void deleteDetail() {
-		// TODO Auto-generated method stub
-		
 	}
 
 	@Override

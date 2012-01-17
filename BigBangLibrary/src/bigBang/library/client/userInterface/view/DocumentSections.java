@@ -1,23 +1,13 @@
 package bigBang.library.client.userInterface.view;
 
 
-import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.user.client.Command;
-import com.google.gwt.user.client.ui.Button;
-import com.google.gwt.user.client.ui.FileUpload;
-import com.google.gwt.user.client.ui.HorizontalPanel;
-import com.google.gwt.user.client.ui.Label;
-import com.google.gwt.user.client.ui.MenuItem;
-import com.google.gwt.user.client.ui.VerticalPanel;
-
 import bigBang.definitions.shared.BigBangConstants;
-import bigBang.definitions.shared.ContactInfo;
 import bigBang.definitions.shared.DocInfo;
 import bigBang.definitions.shared.Document;
 import bigBang.library.client.event.ActionInvokedEvent;
 import bigBang.library.client.event.ActionInvokedEventHandler;
 import bigBang.library.client.event.DeleteRequestEvent;
+import bigBang.library.client.event.DeleteRequestEventHandler;
 import bigBang.library.client.userInterface.BigBangOperationsToolBar;
 import bigBang.library.client.userInterface.BigBangOperationsToolBar.SUB_MENU;
 import bigBang.library.client.userInterface.ExpandableListBoxFormField;
@@ -26,8 +16,19 @@ import bigBang.library.client.userInterface.ListEntry;
 import bigBang.library.client.userInterface.TextAreaFormField;
 import bigBang.library.client.userInterface.TextBoxFormField;
 import bigBang.library.client.userInterface.presenter.DocumentViewPresenter.Action;
-import bigBang.library.client.userInterface.view.ContactView.ContactEntry;
-import bigBang.library.client.userInterface.view.DocumentSections.DetailsSection.DocumentDetailEntry;
+import bigBang.library.client.resources.Resources;
+
+import com.google.gwt.core.client.GWT;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.resources.client.ImageResource;
+import com.google.gwt.user.client.ui.Button;
+import com.google.gwt.user.client.ui.FileUpload;
+import com.google.gwt.user.client.ui.HasVerticalAlignment;
+import com.google.gwt.user.client.ui.HorizontalPanel;
+import com.google.gwt.user.client.ui.Image;
+import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.VerticalPanel;
 
 
 public abstract class DocumentSections{
@@ -39,10 +40,10 @@ public abstract class DocumentSections{
 		ExpandableListBoxFormField docType;
 		Document doc = new Document();
 		ActionInvokedEventHandler<Action> actionHandler;
+		BigBangOperationsToolBar toolbar;
 		
 		public GeneralInfoSection(){
 
-			BigBangOperationsToolBar toolbar;
 			toolbar = new BigBangOperationsToolBar(){
 
 				@Override
@@ -94,9 +95,8 @@ public abstract class DocumentSections{
 		}
 		
 		public void setDocument(Document doc){
-			
+
 			this.doc = doc;
-			
 			name.setValue(doc.name);
 			docType.setValue(doc.docTypeId);
 			
@@ -113,7 +113,12 @@ public abstract class DocumentSections{
 			name.setReadOnly(!b);
 			
 		}
-		
+
+		public BigBangOperationsToolBar getToolbar() {
+			return toolbar;
+			
+		}
+
 	}
 	
 	
@@ -122,23 +127,28 @@ public abstract class DocumentSections{
 		private static final int MAXCHAR = 250;
 		private Button isFile;
 		private Button isText;
-		private TextAreaFormField note;
+		TextAreaFormField note;
 		private VerticalPanel wrapper;
 		private HorizontalPanel buttonsFileorNote;
 		private HorizontalPanel submitChange;
 		private HorizontalPanel charRemainP;
-		private FileUpload upload;
+		FileUpload upload;
 		private ClickHandler handler;
-		private Button submit;
 		private Button changeToFile;
 		private Button changeToNote;
-		
-		private TextBoxFormField filename;
+		boolean isFileBoolean;
+		TextBoxFormField filename;
 		private Button removeFile;
+		
+		private Image mimeImg;
+		
+		private Label charRemain;
+		private Label charRemainLabel;
 		
 		private HorizontalPanel filenameRemoveButton;
 		
 		private ActionInvokedEventHandler<Action> actionHandler;
+		private boolean hasFile;
 		
 		public FileNoteSection(){
 			
@@ -171,7 +181,7 @@ public abstract class DocumentSections{
 			isText = new Button("Nova Nota");
 			isText.addClickHandler(handler);
 			upload = new FileUpload();
-			submit = new Button("Submeter");
+			upload.setName("upload");
 			changeToFile = new Button("Substituir por ficheiro");
 			changeToFile.addClickHandler(handler);
 			changeToNote = new Button("Substituir por nota");
@@ -179,8 +189,8 @@ public abstract class DocumentSections{
 			
 			note = new TextAreaFormField("Nota");
 			charRemainP = new HorizontalPanel();
-			Label charRemain = new Label("Caracteres Restantes: ");
-			Label charRemainLabel = new Label(""+ MAXCHAR);
+			charRemain = new Label("Caracteres Restantes: ");
+			charRemainLabel = new Label(""+ MAXCHAR);
 			charRemainP.add(charRemain);
 			charRemainP.add(charRemainLabel);
 			note.setMaxCharacters(MAXCHAR, charRemainLabel);
@@ -190,7 +200,6 @@ public abstract class DocumentSections{
 			
 			wrapper.add(note);
 			wrapper.add(charRemainP);
-			wrapper.add(submit);
 			buttonsFileorNote.add(isFile);
 			buttonsFileorNote.add(isText);
 			wrapper.add(buttonsFileorNote);
@@ -201,8 +210,13 @@ public abstract class DocumentSections{
 			
 			filename = new TextBoxFormField("Nome do Ficheiro");
 			filename.setEditable(false);
-			filenameRemoveButton = new HorizontalPanel();
+			mimeImg = new Image();
 			
+			
+			filenameRemoveButton = new HorizontalPanel();
+			filenameRemoveButton.setVerticalAlignment(HasVerticalAlignment.ALIGN_MIDDLE);
+
+			filenameRemoveButton.add(mimeImg);
 			filenameRemoveButton.add(filename);
 			filenameRemoveButton.add(removeFile);
 			
@@ -211,7 +225,6 @@ public abstract class DocumentSections{
 			
 			submitChange = new HorizontalPanel();
 			
-			submitChange.add(submit);
 			submitChange.add(changeToFile);
 			submitChange.add(changeToNote);
 			wrapper.add(submitChange);
@@ -234,11 +247,12 @@ public abstract class DocumentSections{
 		public void generateNewDocument(){
 			
 			
+			removeFile.setVisible(false);
+			changeToNote.setVisible(false);
+			filename.setVisible(false);
 			upload.setVisible(false);
 			changeToFile.setVisible(false);
 			note.setVisible(false);
-			submit.setVisible(false);
-			submitChange.setVisible(false);
 			charRemainP.setVisible(false);
 			
 			isFile.setHeight("80px");
@@ -248,7 +262,6 @@ public abstract class DocumentSections{
 			isText.setWidth("80px");
 			
 
-				
 			
 		}
 		
@@ -260,14 +273,13 @@ public abstract class DocumentSections{
 
 		public void createNewFile() {
 			
+			isFileBoolean = true;
+			filename.setVisible(true);
 			buttonsFileorNote.setVisible(false);
 			changeToFile.setVisible(false);
 			note.setVisible(false);
-			submit.setVisible(true);
-			submit.setText("Submeter ficheiro");
 			upload.setVisible(true);
 			changeToNote.setVisible(true);
-			submitChange.setVisible(true);
 			charRemainP.setVisible(false);
 			filenameRemoveButton.setVisible(false);
 			
@@ -275,42 +287,77 @@ public abstract class DocumentSections{
 
 		public void createNewNote() {
 			
-			
+			isFileBoolean = false;
 			buttonsFileorNote.setVisible(false);
 			note.setVisible(true);
-			submit.setVisible(true);
-			submit.setText("Submeter nota");
 			upload.setVisible(false);
 			changeToNote.setVisible(false);
 			changeToFile.setVisible(true);
-			submitChange.setVisible(true);
 			charRemainP.setVisible(true);
 			filenameRemoveButton.setVisible(false);
-			
 		
 		}
 
-		public void setDocument(Document doc) {
+		public void setDocumentFile(Document doc) {
+			
+			this.filename.setValue(doc.fileName);
+			mimeImg.setResource(getMimeImage(doc.mimeType));
+			mimeImg.setVisible(true);
+			upload.setVisible(false);
+			changeToNote.setVisible(false);
+			filenameRemoveButton.setVisible(true);
+			hasFile = true;
+			
+		}
+		
+		public void setDocumentNote(Document doc){
+			
+			
+			
+		}
 
-			if(doc.fileStorageId != null){
-				createNewFile();
-				this.filename.setValue(doc.fileName);
-				upload.setVisible(false);
-				submitChange.setVisible(false);
-				filenameRemoveButton.setVisible(true);
+		private ImageResource getMimeImage(String mimeType) {
+			
+			Resources resources = GWT.create(Resources.class);
+			ImageResource mimeImage;
+			
+			if(mimeType.equalsIgnoreCase("text/plain")){
 				
+				mimeImage = resources.txtIcon();
 			}
-			else{
-				createNewNote();
-			}
+			else
+				mimeImage = resources.fileIcon();
 			
-			
+			return mimeImage;
 		}
 
 		public void setEditable(boolean b) {
 			
-			removeFile.setVisible(b);
+				
+			if(!isFileBoolean){
+				note.setReadOnly(!b);
+				changeToFile.setVisible(b);
+				charRemainLabel.setVisible(b);
+				charRemain.setVisible(b);
+			}
+			else{
+				removeFile.setVisible(b);
+			}
 			
+			if(!hasFile && isFileBoolean){
+				changeToNote.setVisible(b);
+				removeFile.setVisible(false);
+			}
+		}
+
+		public void removeFile() {
+			
+			hasFile = false;
+			filename.setVisible(false);
+			mimeImg.setVisible(false);
+			removeFile.setVisible(false);
+			upload.setVisible(true);
+			setEditable(true);
 		}
 		
 	}
@@ -319,8 +366,8 @@ public abstract class DocumentSections{
 		
 		public class DocumentDetailEntry extends ListEntry<DocInfo>{
 
-			protected TextBoxFormField  info;
-			protected TextBoxFormField infoValue;
+			TextBoxFormField  info;
+			TextBoxFormField infoValue;
 			private Button remove;
 			public DocumentDetailEntry(DocInfo docInfo) {
 				super(docInfo);
@@ -388,6 +435,7 @@ public abstract class DocumentSections{
 		DocInfo[] docInfo;
 		VerticalPanel wrapper;
 		private ActionInvokedEventHandler<Action> actionHandler;
+		private DeleteRequestEventHandler deleteHandler;
 		
 		
 		public DetailsSection(){
@@ -423,7 +471,7 @@ public abstract class DocumentSections{
 
 			DocumentDetailEntry temp = new DocumentDetailEntry(docInfo);
 			temp.setHeight("40px");
-			//temp.addHandler(deleteHandler, DeleteRequestEvent.TYPE);
+			temp.addHandler(deleteHandler, DeleteRequestEvent.TYPE);
 			details.add(temp);
 
 		}
@@ -452,7 +500,14 @@ public abstract class DocumentSections{
 			DocInfo emptyd = new DocInfo();
 			emptyd.name = "";
 			emptyd.value = "";
-			return new DocumentDetailEntry(emptyd);
+			DocumentDetailEntry newD = new DocumentDetailEntry(emptyd);
+			return newD;
+		}
+
+		public void registerDeleteHandler(
+				DeleteRequestEventHandler deleteRequestEventHandler) {
+			this.deleteHandler = deleteRequestEventHandler;
+			
 		}
 		
 	}
