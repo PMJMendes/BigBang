@@ -1,10 +1,20 @@
 package bigBang.library.client.userInterface.presenter;
 
+import java.util.Collection;
+
+import bigBang.definitions.client.response.ResponseError;
+import bigBang.definitions.client.response.ResponseHandler;
+import bigBang.definitions.shared.BigBangConstants;
 import bigBang.definitions.shared.DocInfo;
 import bigBang.definitions.shared.Document;
 import bigBang.library.client.HasParameters;
+import bigBang.library.client.ValueSelectable;
+import bigBang.library.client.dataAccess.DataBrokerManager;
+import bigBang.library.client.dataAccess.DocumentsBroker;
 import bigBang.library.client.event.ActionInvokedEvent;
 import bigBang.library.client.event.ActionInvokedEventHandler;
+import bigBang.library.client.event.DeleteRequestEventHandler;
+import bigBang.library.client.userInterface.List;
 import bigBang.library.client.userInterface.view.DocumentSections.DetailsSection;
 import bigBang.library.client.userInterface.view.DocumentSections.DetailsSection.DocumentDetailEntry;
 import bigBang.library.client.userInterface.view.DocumentSections.FileNoteSection;
@@ -19,13 +29,21 @@ public class DocumentViewPresenter implements ViewPresenter{
 	private Display view;
 	private Document doc;
 	private boolean bound = false;
+	private DocumentsBroker broker;
 
 	public static enum Action {
 		SAVE,
 		EDIT,
 		CANCEL,
 		NEW_FILE,
-		NEW_NOTE, CHANGE_TO_FILE, CHANGE_TO_NOTE, ADD_NEW_DETAIL, REMOVE_FILE
+		NEW_NOTE, CHANGE_TO_FILE, CHANGE_TO_NOTE, ADD_NEW_DETAIL, REMOVE_FILE, DELETE_DETAIL
+	}
+	
+	public DocumentViewPresenter(Display view){
+		
+		//broker = (DocumentsBroker) DataBrokerManager.staticGetBroker(BigBangConstants.EntityIds.DOCUMENT);
+		this.setView((UIObject) view);
+		
 	}
 
 	public interface Display{
@@ -42,6 +60,10 @@ public class DocumentViewPresenter implements ViewPresenter{
 		Document getInfo();
 		DocumentDetailEntry initializeDocumentDetailEntry();
 		void setValue(Document doc);
+		public void registerDeleteHandler(
+				DeleteRequestEventHandler deleteRequestEventHandler);
+		Document getDocument();
+		void setSaveMode(boolean b);
 
 	}
 
@@ -59,13 +81,65 @@ public class DocumentViewPresenter implements ViewPresenter{
 
 	@Override
 	public void setParameters(HasParameters parameterHolder) {
-		// TODO Auto-generated method stub
-	}
+		String idOwner = parameterHolder.getParameter("id");
+		String idDoc = parameterHolder.getParameter("documentid");
+		boolean hasPermissions = parameterHolder.getParameter("editpermission") != null;
+		
+		idOwner = idOwner == null ? new String() : idOwner;
+		idDoc = idDoc == null ? new String() : idDoc;
+		
+		if(!hasPermissions){
+			view.getGeneralInfo().getToolbar().lockAll();
+		}
 	
+//		broker.getDocument(id, new ResponseHandler<Document>() {
+//			
+//			@Override
+//			public void onResponse(Document response) {
+//				// TODO Auto-generated method stub
+//				
+//			}
+//			
+//			@Override
+//			public void onError(Collection<ResponseError> errors) {
+//				// TODO Auto-generated method stub
+//				
+//			}
+//		});
+//		
+//		if(groupId.isEmpty()){
+//			clearView();
+//		}else if(groupId.equalsIgnoreCase("new")){
+//			setupNewClientGroup();
+//		}else{
+//			showClientGroup(groupId);
+//		}
+	}
+
 	private void bind() {
 		if(bound){
 			return;
 		}
+		view.registerDeleteHandler(new DeleteRequestEventHandler(){
+
+			@Override
+			public void onDeleteRequest(Object object) {
+				//TODO APAGAR DA BD
+				List<DocInfo> list = view.getDetails().getList();
+
+				for(ValueSelectable<DocInfo> cont: list){
+					if(cont.getValue() == object) {
+						list.remove(cont);
+						break;
+					}
+
+				}
+
+
+			}
+
+
+		});
 
 		view.registerActionHandler(new ActionInvokedEventHandler<Action>(){
 
@@ -90,6 +164,13 @@ public class DocumentViewPresenter implements ViewPresenter{
 					break;
 				}
 				case SAVE:{
+					doc = view.getDocument();
+					if(doc != null){
+						System.out.println("GFDSAGDFS");
+						setDocument(doc);
+						//TODO SAVE TO BD
+						view.setSaveMode(false);
+					}
 					break;
 				}
 				case CHANGE_TO_FILE: {
@@ -97,15 +178,23 @@ public class DocumentViewPresenter implements ViewPresenter{
 					break;
 				}
 				case CHANGE_TO_NOTE:{
-					view.createNewNote(); 
+					view.createNewNote();
 					break;
 				}
 				case  ADD_NEW_DETAIL:{
 					addDetail();
 					break;
 				}
+				case REMOVE_FILE:{
+					removeFile();
+					break;
+				}
 				}
 
+			}
+
+			private void removeFile() {
+				view.getFileNote().removeFile();
 			}
 
 
@@ -114,38 +203,49 @@ public class DocumentViewPresenter implements ViewPresenter{
 
 	public void setDocument(Document doc) {
 
+		if(doc == null){
+			view.getFileNote().generateNewDocument();
+			view.addDetail(null);
+			view.setSaveMode(true);
+			return;
+		}
+		
+		if(doc.fileStorageId != null){
+			view.getFileNote().createNewFile();
+			view.getFileNote().setDocumentFile(doc);
+		}else{
+				view.getFileNote().createNewNote();
+				view.getFileNote().setDocumentNote(doc);
+		}
 		view.setValue(doc);
 		this.doc = doc;
 		DocInfo[] docInfo = doc.parameters;
-		view.getFileNote().setDocument(doc);
 		view.getDetails().getList().clear();
 		view.getGeneralInfo().setDocument(doc);
-		
+
 		for(int i = 0; i< docInfo.length; i++){
-			
+
 			view.addDetail(docInfo[i]);
 		}
 		view.addDetail(null);
 		view.setEditable(false);
 	}
-	
-	
+
+
 	public Document getInfo(){
-		
+
 		return this.doc;
-		
+
 	}
-	
+
 	public void addDetail(){
-		
-		DocumentDetailEntry temp = view.initializeDocumentDetailEntry();
-		temp.setHeight("40px");
+
+		DocInfo temp = new DocInfo();
 		view.getDetails().getList().remove(view.getDetails().getList().size()-1);
-		temp.setEditable(true);
-		view.getDetails().getList().add(temp);
+		view.addDetail(temp);
 		view.addDetail(null);
-		
+
 	}
-	
+
 
 }

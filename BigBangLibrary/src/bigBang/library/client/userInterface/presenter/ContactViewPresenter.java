@@ -45,7 +45,6 @@ public abstract class ContactViewPresenter implements ViewPresenter{
 		public ContactEntry initializeContactEntry();
 		public Contact getContact();
 		public void setSaveMode(boolean b);
-		public void deleteDetail();
 		public void registerDeleteHandler(
 				DeleteRequestEventHandler deleteRequestEventHandler);
 	}
@@ -144,11 +143,6 @@ public abstract class ContactViewPresenter implements ViewPresenter{
 					//TODO SUBMIT TO DATABASE
 					view.setEditable(false);
 				break;
-				
-				case DELETE_DETAIL:
-					view.deleteDetail();
-					break;
-
 				case SHOW_CHILD_CONTACTS: System.out.println("MOSTRA OS FILHOTES");
 				break;
 				}
