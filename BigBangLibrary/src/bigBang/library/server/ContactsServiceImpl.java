@@ -13,8 +13,8 @@ import Jewel.Engine.Interfaces.IEntity;
 import Jewel.Engine.SysObjects.ObjectBase;
 import Jewel.Petri.Interfaces.IOperation;
 import Jewel.Petri.Objects.PNOperation;
-import Jewel.Petri.SysObjects.JewelPetriException;
 import Jewel.Petri.SysObjects.Operation;
+import Jewel.Petri.SysObjects.ProcessData;
 import bigBang.definitions.shared.Address;
 import bigBang.definitions.shared.Contact;
 import bigBang.definitions.shared.ContactInfo;
@@ -23,11 +23,11 @@ import bigBang.library.interfaces.ContactsService;
 import bigBang.library.shared.BigBangException;
 import bigBang.library.shared.SessionExpiredException;
 
-import com.premiumminds.BigBang.Jewel.BigBangJewelException;
 import com.premiumminds.BigBang.Jewel.Constants;
 import com.premiumminds.BigBang.Jewel.ZipCodeBridge;
 import com.premiumminds.BigBang.Jewel.Data.ContactData;
 import com.premiumminds.BigBang.Jewel.Data.ContactInfoData;
+import com.premiumminds.BigBang.Jewel.Objects.GeneralSystem;
 import com.premiumminds.BigBang.Jewel.Operations.ContactOps;
 import com.premiumminds.BigBang.Jewel.Operations.Client.ManageClientData;
 import com.premiumminds.BigBang.Jewel.Operations.General.ManageInsurers;
@@ -40,8 +40,8 @@ public class ContactsServiceImpl
 {
 	private static final long serialVersionUID = 1L;
 
-	public static ContactData[] BuildContactTree(ContactOps prefAux, Contact[] parrContacts, UUID pidParentType)
-		throws BigBangJewelException
+	public static ContactData[] BuildContactTree(Contact[] parrContacts)
+		throws BigBangException
 	{
 		ContactData[] larrResult;
 		int i, j;
@@ -55,15 +55,22 @@ public class ContactsServiceImpl
 			larrResult[i] = new ContactData();
 			larrResult[i].mid = (parrContacts[i].id == null ? null : UUID.fromString(parrContacts[i].id));
 			larrResult[i].mstrName = parrContacts[i].name;
-			larrResult[i].midOwnerType = pidParentType;
+			larrResult[i].midOwnerType = UUID.fromString(parrContacts[i].ownerTypeId);
 			larrResult[i].midOwnerId = (parrContacts[i].ownerId == null ? null : UUID.fromString(parrContacts[i].ownerId));
 			if ( parrContacts[i].address != null )
 			{
 				larrResult[i].mstrAddress1 = parrContacts[i].address.street1;
 				larrResult[i].mstrAddress2 = parrContacts[i].address.street2;
-				larrResult[i].midZipCode = ZipCodeBridge.GetZipCode(parrContacts[i].address.zipCode.code,
-						parrContacts[i].address.zipCode.city, parrContacts[i].address.zipCode.county,
-						parrContacts[i].address.zipCode.district, parrContacts[i].address.zipCode.country);
+				try
+				{
+					larrResult[i].midZipCode = ZipCodeBridge.GetZipCode(parrContacts[i].address.zipCode.code,
+							parrContacts[i].address.zipCode.city, parrContacts[i].address.zipCode.county,
+							parrContacts[i].address.zipCode.district, parrContacts[i].address.zipCode.country);
+				}
+				catch (Throwable e)
+				{
+					throw new BigBangException(e.getMessage(), e);
+				}
 			}
 			else
 			{
@@ -84,7 +91,7 @@ public class ContactsServiceImpl
 			}
 			else
 				larrResult[i].marrInfo = null;
-			larrResult[i].marrSubContacts = BuildContactTree(prefAux, parrContacts[i].subContacts, Constants.ObjID_Contact);
+			larrResult[i].marrSubContacts = BuildContactTree(parrContacts[i].subContacts);
 		}
 
 		return larrResult;
@@ -183,25 +190,29 @@ public class ContactsServiceImpl
 		return larrAux.toArray(new Contact[larrAux.size()]);
 	}
 
-	public Contact createContact(String procId, String opId, Contact contact)
+	public Contact createContact(Contact contact)
 		throws SessionExpiredException, BigBangException
 	{
 		Contact[] larrAux;
 		ContactOps lopCOps;
 		Operation lobjOp;
 
+		if ( Engine.getCurrentUser() == null )
+			throw new SessionExpiredException();
+
 		larrAux = new Contact[1];
 		larrAux[0] = contact;
 
 		lopCOps = new ContactOps();
+		lopCOps.marrCreate = BuildContactTree(larrAux);
+		lopCOps.marrModify = null;
+		lopCOps.marrDelete = null;
+
+		lobjOp = BuildOuterOp(GetOwnerProc(UUID.fromString(contact.ownerTypeId), UUID.fromString(contact.ownerId)),
+				GetOpType(UUID.fromString(contact.ownerTypeId)), lopCOps);
+
 		try
 		{
-			lopCOps.marrCreate = BuildContactTree(lopCOps, larrAux, (contact.isSubContact ? Constants.ObjID_Contact :
-					GetParentType(UUID.fromString(procId), UUID.fromString(opId))));
-			lopCOps.marrModify = null;
-			lopCOps.marrDelete = null;
-
-			lobjOp = BuildOuterOp(UUID.fromString(procId), UUID.fromString(opId), lopCOps);
 			lobjOp.Execute();
 		}
 		catch (Throwable e)
@@ -213,25 +224,29 @@ public class ContactsServiceImpl
 		return larrAux[0];
 	}
 
-	public Contact saveContact(String procId, String opId, Contact contact)
+	public Contact saveContact(Contact contact)
 		throws SessionExpiredException, BigBangException
 	{
 		Contact[] larrAux;
 		ContactOps lopCOps;
 		Operation lobjOp;
 
+		if ( Engine.getCurrentUser() == null )
+			throw new SessionExpiredException();
+
 		larrAux = new Contact[1];
 		larrAux[0] = contact;
 
 		lopCOps = new ContactOps();
+		lopCOps.marrModify = BuildContactTree(larrAux);
+		lopCOps.marrCreate = null;
+		lopCOps.marrDelete = null;
+
+		lobjOp = BuildOuterOp(GetOwnerProc(UUID.fromString(contact.ownerTypeId), UUID.fromString(contact.ownerId)),
+				GetOpType(UUID.fromString(contact.ownerTypeId)), lopCOps);
+
 		try
 		{
-			lopCOps.marrModify = BuildContactTree(lopCOps, larrAux, (contact.isSubContact ? Constants.ObjID_Contact :
-					GetParentType(UUID.fromString(procId), UUID.fromString(opId))));
-			lopCOps.marrCreate = null;
-			lopCOps.marrDelete = null;
-
-			lobjOp = BuildOuterOp(UUID.fromString(procId), UUID.fromString(opId), lopCOps);
 			lobjOp.Execute();
 		}
 		catch (Throwable e)
@@ -239,28 +254,46 @@ public class ContactsServiceImpl
 			throw new BigBangException(e.getMessage(), e);
 		}
 
+		WalkContactTree(lopCOps.marrModify, larrAux);
 		return larrAux[0];
 	}
 
-	public void deleteContact(String procId, String opId, Contact contact)
+	public void deleteContact(String id)
 		throws SessionExpiredException, BigBangException
 	{
-		Contact[] larrAux;
+		com.premiumminds.BigBang.Jewel.Objects.Contact lobjAuxContact;
+		ContactData lobjData;
 		ContactOps lopCOps;
 		Operation lobjOp;
 
-		larrAux = new Contact[1];
-		larrAux[0] = contact;
+		if ( Engine.getCurrentUser() == null )
+			throw new SessionExpiredException();
 
-		lopCOps = new ContactOps();
 		try
 		{
-			lopCOps.marrDelete = BuildContactTree(lopCOps, larrAux, (contact.isSubContact ? Constants.ObjID_Contact :
-					GetParentType(UUID.fromString(procId), UUID.fromString(opId))));
-			lopCOps.marrCreate = null;
-			lopCOps.marrModify = null;
+			lobjAuxContact = com.premiumminds.BigBang.Jewel.Objects.Contact.GetInstance(Engine.getCurrentNameSpace(),
+					UUID.fromString(id));
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangException(e.getMessage(), e);
+		}
 
-			lobjOp = BuildOuterOp(UUID.fromString(procId), UUID.fromString(opId), lopCOps);
+		lobjData = new ContactData();
+		lobjData.mid = lobjAuxContact.getKey();
+		lobjData.midOwnerType = lobjAuxContact.getOwnerType();
+		lobjData.midOwnerId = lobjAuxContact.getOwnerID();
+
+		lopCOps = new ContactOps();
+		lopCOps.marrDelete = new ContactData[] {lobjData};
+		lopCOps.marrCreate = null;
+		lopCOps.marrModify = null;
+
+		lobjOp = BuildOuterOp(GetOwnerProc(lobjData.midOwnerType, lobjData.midOwnerId),
+				GetOpType(lobjData.midOwnerType), lopCOps);
+
+		try
+		{
 			lobjOp.Execute();
 		}
 		catch (Throwable e)
@@ -282,7 +315,7 @@ public class ContactsServiceImpl
 
 		lobjAux.id = pobjContact.getKey().toString();
 		lobjAux.name = (String)pobjContact.getAt(0);
-		lobjAux.isSubContact = ((UUID)pobjContact.getAt(2)).equals(Constants.ObjID_Contact);
+		lobjAux.ownerTypeId = ((UUID)pobjContact.getAt(1)).toString();
 		lobjAux.ownerId = ((UUID)pobjContact.getAt(2)).toString();
 		lobjAux.address = new Address();
 		lobjAux.address.street1 = (String)pobjContact.getAt(3);
@@ -307,6 +340,7 @@ public class ContactsServiceImpl
 			lobjAux.address.zipCode.district = (String)lobjZipCode.getAt(3);
 			lobjAux.address.zipCode.country = (String)lobjZipCode.getAt(4);
 		}
+		lobjAux.typeId = ((UUID)pobjContact.getAt(6)).toString();
 
 		try
 		{
@@ -346,45 +380,73 @@ public class ContactsServiceImpl
 		return lobjAux;
 	}
 
-	private UUID GetParentType(UUID pidProc, UUID pidOp)
-		throws JewelPetriException
+	private UUID GetOwnerProc(UUID pidOwnerType, UUID pidOwner)
+		throws BigBangException
 	{
-		IOperation lobjOp;
-		Operation lobjAux;
-		UUID lidResult;
+		ObjectBase lobjOwner;
 
-		lobjOp = (IOperation)PNOperation.GetInstance(Engine.getCurrentNameSpace(), pidOp);
-		lobjAux = lobjOp.GetNewInstance(pidProc);
+		try
+		{
+			if ( Constants.ObjID_Company.equals(pidOwnerType) || Constants.ObjID_Mediator.equals(pidOwnerType) )
+				return GeneralSystem.GetAnyInstance(Engine.getCurrentNameSpace()).GetProcessID();
 
-		lidResult = null;
+			lobjOwner = Engine.GetWorkInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), pidOwnerType), pidOwner);
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangException(e.getMessage(), e);
+		}
+		
+		try
+		{
+			while ( lobjOwner instanceof com.premiumminds.BigBang.Jewel.Objects.Contact )
+				lobjOwner = ((com.premiumminds.BigBang.Jewel.Objects.Contact)lobjOwner).getOwner();
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangException(e.getMessage(), e);
+		}
 
-		if ( lobjAux instanceof ManageInsurers )
-			lidResult = Constants.ObjID_Company;
+		if ( lobjOwner instanceof ProcessData )
+			return ((ProcessData)lobjOwner).GetProcessID();
 
-		if ( lobjAux instanceof ManageMediators )
-			lidResult = Constants.ObjID_Mediator;
+		throw new BigBangException("Erro: O tipo de objecto indicado não suporta processos.");
+	}
 
-		if ( lobjAux instanceof ManageClientData )
-			lidResult = Constants.ObjID_Client;
+	private UUID GetOpType(UUID pidOwnerType)
+		throws BigBangException
+	{
+		if ( Constants.ObjID_Company.equals(pidOwnerType) )
+			return Constants.OPID_ManageCompanies;
 
-		if ( lobjAux instanceof ManagePolicyData )
-			lidResult = Constants.ObjID_Policy;
+		if ( Constants.ObjID_Mediator.equals(pidOwnerType) )
+			return Constants.OPID_ManageMediators;
 
-		if ( lidResult == null )
-			throw new JewelPetriException("Erro: A operação pretendida não permite movimentos de Contactos.");
+		if ( Constants.ObjID_Client.equals(pidOwnerType) )
+			return Constants.OPID_ManageClientData;
 
-		return lidResult;
+		if ( Constants.ObjID_Policy.equals(pidOwnerType) )
+			return Constants.OPID_ManagePolicyData;
+
+		throw new BigBangException("Erro: O objecto indicado não permite movimentos de Documentos.");
 	}
 
 	private Operation BuildOuterOp(UUID pidProc, UUID pidOp, ContactOps pobjInner)
-		throws JewelPetriException
+		throws BigBangException
 	{
 		IOperation lobjOp;
 		Operation lobjResult;
 		boolean lbFound;
 
-		lobjOp = (IOperation)PNOperation.GetInstance(Engine.getCurrentNameSpace(), pidOp);
-		lobjResult = lobjOp.GetNewInstance(pidProc);
+		try
+		{
+			lobjOp = (IOperation)PNOperation.GetInstance(Engine.getCurrentNameSpace(), pidOp);
+			lobjResult = lobjOp.GetNewInstance(pidProc);
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangException(e.getMessage(), e);
+		}
 
 		lbFound = false;
 
@@ -425,7 +487,7 @@ public class ContactsServiceImpl
 		}
 
 		if ( !lbFound )
-			throw new JewelPetriException("Erro: A operação pretendida não permite movimentos de Contactos.");
+			throw new BigBangException("Erro: A operação pretendida não permite movimentos de Contactos.");
 
 		return lobjResult;
 	}
