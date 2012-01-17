@@ -312,7 +312,7 @@ public abstract class DocumentSections{
 		
 		public void setDocumentNote(Document doc){
 			
-			
+			this.note.setValue(doc.text);
 			
 		}
 
