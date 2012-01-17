@@ -72,4 +72,33 @@ public interface Resources extends ClientBundle {
 	@Source("images/documentsIcon.png")
 	ImageResource documentsIcon();
 	
+	//MIMETIMES
+	
+	@Source("images/fileicons/csv.png")
+	ImageResource csvIcon();
+	
+	@Source("images/fileicons/doc.png")
+	ImageResource docIcon();
+	
+	@Source("images/fileicons/file.png")
+	ImageResource fileIcon();
+	
+	@Source("images/fileicons/image.png")
+	ImageResource imageIcon();
+
+	@Source("images/fileicons/pdf.png")
+	ImageResource pdfIcon();
+	
+	@Source("images/fileicons/ppt.png")
+	ImageResource pptIcon();
+	
+	@Source("images/fileicons/txt.png")
+	ImageResource txtIcon();
+	
+	@Source("images/fileicons/xls.png")
+	ImageResource xlsIcon();
+	
+	@Source("images/fileicons/zip.png")
+	ImageResource zipIcon();
+	
 }
