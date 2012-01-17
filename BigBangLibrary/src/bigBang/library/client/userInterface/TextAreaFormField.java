@@ -163,7 +163,6 @@ public class TextAreaFormField extends FormField<String> {
 	protected void textAreaContentChanged(int max, Label remainCharsNum) {	
 
 		int counter = new Integer(((TextArea)this.field).getText().length()).intValue();
-		System.out.println(((TextArea)this.field).getText());
 		int charsRemaining = max - counter;
 		if(charsRemaining < 0)
 			charsRemaining = 0;
