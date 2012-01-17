@@ -15,6 +15,6 @@ public class ZipCode
 
 	public ZipCode()
 	{
-		code = city = county = district = country = "";
+		code = city = county = district = country = null;
 	}
 }
