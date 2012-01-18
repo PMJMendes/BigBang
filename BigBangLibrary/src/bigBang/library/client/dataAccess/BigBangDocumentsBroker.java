@@ -244,16 +244,15 @@ public class BigBangDocumentsBroker extends DataBroker<Document> implements Docu
 	}
 	
 	@Override
-	public void createDocument(Document document, final String ownerId, String opId,
-			final ResponseHandler<Document> handler) {
+	public void createDocument(Document document, final ResponseHandler<Document> handler) {
 		service.createDocument(document, new BigBangAsyncCallback<Document>() {
 
 			@Override
 			public void onSuccess(Document result) {
-				Collection<Document> documentsList = documents.get(ownerId);
+				Collection<Document> documentsList = documents.get(result.ownerId);
 				documentsList.add(result);
-				incrementDataVersion(ownerId);
-				updateClients(ownerId);
+				incrementDataVersion(result.ownerId);
+				updateClients(result.ownerId);
 			}
 			
 			@Override
@@ -269,8 +268,7 @@ public class BigBangDocumentsBroker extends DataBroker<Document> implements Docu
 
 	
 	@Override
-	public void updateDocument(Document document, String ownerId,
-			final ResponseHandler<Document> handler) {
+	public void updateDocument(Document document, final ResponseHandler<Document> handler) {
 		service.saveDocument(document, new BigBangAsyncCallback<Document>() {
 
 			@Override
@@ -296,20 +294,21 @@ public class BigBangDocumentsBroker extends DataBroker<Document> implements Docu
 	}
 	
 	@Override
-	public void deleteDocument(final String documentId, final String ownerId,
-			final ResponseHandler<Void> handler) {
+	public void deleteDocument(final String documentId, final ResponseHandler<Void> handler) {
 		service.deleteDocument(documentId, new BigBangAsyncCallback<Void>() {
 
 			@Override
 			public void onSuccess(Void result) {
-				List<Document> documentsList = documents.get(ownerId);
-				for(Document document : documentsList){
-					if(document.id.equalsIgnoreCase(documentId)){
-						documentsList.remove(document);
-						break;
-					}
-				}
-				updateClients(ownerId);
+				onFailure(null);
+				//TODO
+				//List<Document> documentsList = documents.get(ownerId);
+//				for(Document document : documentsList){
+//					if(document.id.equalsIgnoreCase(documentId)){
+//						documentsList.remove(document);
+//						break;
+//					}
+//				}
+//				updateClients(ownerId);
 			}
 			
 			@Override
