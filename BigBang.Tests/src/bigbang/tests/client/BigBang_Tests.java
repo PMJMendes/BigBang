@@ -48,8 +48,6 @@ public class BigBang_Tests
 //		TestMgrXferMassAccept.DoTest();
 //		TestMgrXferMassCancel.DoTest();
 //
-//		TestValuesGet.DoTest();
-//
 //		TestContactGet.DoTest();
 //		TestContactCreate.DoTest();
 //		TestContactEdit.DoTest();
@@ -59,6 +57,13 @@ public class BigBang_Tests
 //		TestDocumentCreate.DoTest();
 //		TestDocumentEdit.DoTest();
 //		TestDocumentDelete.DoTest();
+//
+//		TestValuesGet.DoTest();
+//
+//		TestUserGet.DoTest();
+//		TestUserCreate.DoTest();
+//		TestUserEdit.DoTest();
+//		TestUserDelete.DoTest();
 //
 //		TestClientGet.DoTest();
 //		TestClientCreate.DoTest();
