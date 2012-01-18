@@ -90,7 +90,7 @@ public class BigBangDocumentsBroker extends DataBroker<Document> implements Docu
 		if(!clients.containsKey(ownerId)){
 			List<DocumentsBrokerClient> clientList = new ArrayList<DocumentsBrokerClient>();
 			clients.put(ownerId, clientList);
-			documents.put(ownerId, new ArrayList<Document>());
+			//documents.put(ownerId, new ArrayList<Document>());
 			requireDataRefresh(ownerId);
 			dataVersions.put(ownerId, NO_DATA_VERSION);	
 			getDocuments(ownerId, new ResponseHandler<Collection<Document>>() {
@@ -226,7 +226,6 @@ public class BigBangDocumentsBroker extends DataBroker<Document> implements Docu
 			});
 		}else{
 			Collection<Document> documentsCollection = documents.get(ownerId);
-			documents.put(ownerId, new ArrayList<Document>(documentsCollection));
 			boolean hasDocument = false;
 			for(Document c : documentsCollection) {
 				if(c.id.equalsIgnoreCase(documentId)){
