@@ -157,12 +157,16 @@ public class DocumentViewPresenter implements ViewPresenter{
 					break;
 				}
 				case SAVE:{
+					boolean success = false;
 					doc = getDocument();
-					if(doc != null){
-						System.out.println("GFDSAGDFS");
+					if(success){
 						setDocument(doc);
 						//TODO SAVE TO BD
 						view.setSaveMode(false);
+					}
+					else{
+					//TODO FIRE ERROR
+						
 					}
 					break;
 				}
