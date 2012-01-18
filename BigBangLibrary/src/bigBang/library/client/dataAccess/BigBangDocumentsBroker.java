@@ -212,7 +212,7 @@ public class BigBangDocumentsBroker extends DataBroker<Document> implements Docu
 		if(!clients.containsKey(ownerId)){
 			throw new RuntimeException("The documents for the owner with id " + ownerId + " are not being managed by this broker.");
 		}
-		if(requiresDataRefresh(ownerId)){
+		if(!documents.containsKey(ownerId)){
 			getDocuments(ownerId, new ResponseHandler<Collection<Document>>() {
 				@Override
 				public void onResponse(Collection<Document> response) {
@@ -227,11 +227,19 @@ public class BigBangDocumentsBroker extends DataBroker<Document> implements Docu
 		}else{
 			Collection<Document> documentsCollection = documents.get(ownerId);
 			documents.put(ownerId, new ArrayList<Document>(documentsCollection));
+			boolean hasDocument = false;
 			for(Document c : documentsCollection) {
 				if(c.id.equalsIgnoreCase(documentId)){
 					handler.onResponse(c);
+					hasDocument = true;
 					break;
 				}
+			}
+			if(!hasDocument){
+				handler.onError(new String[]{
+						new String("Could not get the required document")
+				});
+				
 			}
 		}
 	}

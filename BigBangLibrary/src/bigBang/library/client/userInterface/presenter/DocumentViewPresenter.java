@@ -1,13 +1,26 @@
 package bigBang.library.client.userInterface.presenter;
 
+import java.util.Collection;
+
+import bigBang.definitions.client.response.ResponseError;
+import bigBang.definitions.client.response.ResponseHandler;
+import bigBang.definitions.shared.BigBangConstants;
 import bigBang.definitions.shared.DocInfo;
 import bigBang.definitions.shared.Document;
+import bigBang.library.client.EventBus;
 import bigBang.library.client.HasParameters;
+import bigBang.library.client.Notification;
 import bigBang.library.client.ValueSelectable;
+import bigBang.library.client.Notification.TYPE;
+import bigBang.library.client.dataAccess.DataBrokerManager;
 import bigBang.library.client.dataAccess.DocumentsBroker;
+import bigBang.library.client.dataAccess.DocumentsBrokerClient;
 import bigBang.library.client.event.ActionInvokedEvent;
 import bigBang.library.client.event.ActionInvokedEventHandler;
 import bigBang.library.client.event.DeleteRequestEventHandler;
+import bigBang.library.client.event.NewNotificationEvent;
+import bigBang.library.client.history.NavigationHistoryItem;
+import bigBang.library.client.history.NavigationHistoryManager;
 import bigBang.library.client.userInterface.List;
 import bigBang.library.client.userInterface.view.DocumentSections.DetailsSection;
 import bigBang.library.client.userInterface.view.DocumentSections.DetailsSection.DocumentDetailEntry;
@@ -18,12 +31,13 @@ import com.google.gwt.user.client.ui.HasWidgets;
 import com.google.gwt.user.client.ui.UIObject;
 import com.google.gwt.user.client.ui.Widget;
 
-public class DocumentViewPresenter implements ViewPresenter{
+public class DocumentViewPresenter implements ViewPresenter, DocumentsBrokerClient{
 
 	private Display view;
 	private Document doc;
 	private boolean bound = false;
 	private DocumentsBroker broker;
+	private int versionNumber;
 
 	public static enum Action {
 		SAVE,
@@ -32,12 +46,12 @@ public class DocumentViewPresenter implements ViewPresenter{
 		NEW_FILE,
 		NEW_NOTE, CHANGE_TO_FILE, CHANGE_TO_NOTE, ADD_NEW_DETAIL, REMOVE_FILE, DELETE_DETAIL
 	}
-	
+
 	public DocumentViewPresenter(Display view){
-		
-		//broker = (DocumentsBroker) DataBrokerManager.staticGetBroker(BigBangConstants.EntityIds.DOCUMENT);
+
+		broker = (DocumentsBroker) DataBrokerManager.staticGetBroker(BigBangConstants.EntityIds.DOCUMENT);
 		this.setView((UIObject) view);
-		
+
 	}
 
 	public interface Display{
@@ -74,39 +88,90 @@ public class DocumentViewPresenter implements ViewPresenter{
 
 	@Override
 	public void setParameters(HasParameters parameterHolder) {
+		
+		broker.unregisterClient(this);
+		
 		String idOwner = parameterHolder.getParameter("id");
 		String idDoc = parameterHolder.getParameter("documentid");
 		boolean hasPermissions = parameterHolder.getParameter("editpermission") != null;
-		
-		idOwner = idOwner == null ? new String() : idOwner;
-		idDoc = idDoc == null ? new String() : idDoc;
-		
+
+		if(idOwner == null){
+			EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não é possível criar um documento sem cliente associado."), TYPE.ALERT_NOTIFICATION));
+			view.getGeneralInfo().getToolbar().lockAll();
+			view.getFileNote().generateNewDocument();
+			view.addDetail(null);
+			view.setEditable(false);
+			return;
+		}
+		else{
+
+			broker.registerClient(this, idOwner);
+			
+		}	
+		if(idDoc == null){
+
+			if(hasPermissions){
+				setDocument(null);
+			}
+			else{
+				EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não é possível criar o documento."), TYPE.ALERT_NOTIFICATION));
+				view.getGeneralInfo().getToolbar().lockAll();
+				view.getFileNote().generateNewDocument();
+				view.addDetail(null);
+				view.setEditable(false);
+			}
+		}
+		else{
+			broker.getDocument(idOwner, idDoc, new ResponseHandler<Document>() {
+				@Override
+				public void onResponse(Document response) {
+
+					doc = response;
+					setDocument(doc);
+				}
+
+				@Override
+				public void onError(Collection<ResponseError> errors) {
+					EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não é possível mostrar o documento pedido."), TYPE.ALERT_NOTIFICATION));
+				}
+			});
+
+		}
+		//OWNER ID OBRIGATORIO
+		//if docid == null && hasPermissions, new doc
+		//else
+		//erro - Não é possivel criar ou editar o documento.
+
+
+		//idOwner = idOwner == null ? new String() : idOwner;
+		//idDoc = idDoc == null ? new String() : idDoc;
+
 		if(!hasPermissions){
 			view.getGeneralInfo().getToolbar().lockAll();
 		}
-	
-//		broker.getDocument(id, new ResponseHandler<Document>() {
-//			
-//			@Override
-//			public void onResponse(Document response) {
-//				// TODO Auto-generated method stub
-//				
-//			}
-//			
-//			@Override
-//			public void onError(Collection<ResponseError> errors) {
-//				// TODO Auto-generated method stub
-//				
-//			}
-//		});
-//		
-//		if(groupId.isEmpty()){
-//			clearView();
-//		}else if(groupId.equalsIgnoreCase("new")){
-//			setupNewClientGroup();
-//		}else{
-//			showClientGroup(groupId);
-//		}
+
+		//		broker.getDocument(id, new ResponseHandler<Document>() {
+		//			
+		//			@Override
+		//			public void onResponse(Document response) {
+		//				// TODO Auto-generated method stub
+		//				
+		//			}
+		//			
+		//			@Override
+		//			public void onError(Collection<ResponseError> errors) {
+		//				// TODO Auto-generated method stub
+		//				
+		//			}
+		//		});
+		//		
+		//		if(groupId.isEmpty()){
+		//			clearView();
+		//		}else if(groupId.equalsIgnoreCase("new")){
+		//			setupNewClientGroup();
+		//		}else{
+		//			showClientGroup(groupId);
+		//		}
 	}
 
 	private void bind() {
@@ -144,6 +209,13 @@ public class DocumentViewPresenter implements ViewPresenter{
 					view.createNewFile(); 
 					break;
 				case CANCEL:{
+					if(doc == null){
+						NavigationHistoryItem navig = NavigationHistoryManager.getInstance().getCurrentState();
+						navig.removeParameter("documentid");
+						navig.removeParameter("operation");
+						NavigationHistoryManager.getInstance().go(navig);
+						break;
+					}
 					setDocument(view.getInfo());
 					view.setEditable(false);
 					break;
@@ -165,8 +237,8 @@ public class DocumentViewPresenter implements ViewPresenter{
 						view.setSaveMode(false);
 					}
 					else{
-					//TODO FIRE ERROR
-						
+						//TODO FIRE ERROR
+
 					}
 					break;
 				}
@@ -191,7 +263,7 @@ public class DocumentViewPresenter implements ViewPresenter{
 			}
 
 			private Document getDocument() {
-				
+
 
 				Document newD = new Document();
 
@@ -226,7 +298,7 @@ public class DocumentViewPresenter implements ViewPresenter{
 
 
 				return newD;
-				
+
 			}
 
 			private void removeFile() {
@@ -239,24 +311,25 @@ public class DocumentViewPresenter implements ViewPresenter{
 
 	public void setDocument(Document doc) {
 
+		view.getDetails().getList().clear();
+
 		if(doc == null){
 			view.getFileNote().generateNewDocument();
 			view.addDetail(null);
 			view.setSaveMode(true);
 			return;
 		}
-		
+
 		if(doc.fileStorageId != null){
 			view.getFileNote().createNewFile();
 			view.getFileNote().setDocumentFile(doc);
 		}else{
-				view.getFileNote().createNewNote();
-				view.getFileNote().setDocumentNote(doc);
+			view.getFileNote().createNewNote();
+			view.getFileNote().setDocumentNote(doc);
 		}
 		view.setValue(doc);
 		this.doc = doc;
 		DocInfo[] docInfo = doc.parameters;
-		view.getDetails().getList().clear();
 		view.getGeneralInfo().setDocument(doc);
 
 		for(int i = 0; i< docInfo.length; i++){
@@ -281,6 +354,60 @@ public class DocumentViewPresenter implements ViewPresenter{
 		view.addDetail(temp);
 		view.addDetail(null);
 
+	}
+
+	@Override
+	public void setDataVersionNumber(String dataElementId, int number) {
+		
+		versionNumber = number;
+
+	}
+
+	@Override
+	public int getDataVersion(String dataElementId) {
+
+		return versionNumber;	
+	}
+
+	@Override
+	public int getDocumentsDataVersionNumber(String ownerId) {
+		
+		return versionNumber;
+	}
+
+	@Override
+	public void setDocumentsDataVersionNumber(String ownerId, int number) {
+		
+		versionNumber = number;
+
+	}
+
+	@Override
+	public void setDocuments(String ownerId, java.util.List<Document> documents) {
+		
+		return;
+
+	}
+
+	@Override
+	public void removeDocument(String ownerId, Document document) {
+		
+		NavigationHistoryItem navig = null;
+
+	}
+
+	@Override
+	public void addDocument(String ownerId, Document document) {
+		
+		return;
+	}
+
+	@Override
+	public void updateDocument(String ownerId, Document document) {
+		
+		if(doc.id.equalsIgnoreCase(document.id)){
+			NavigationHistoryManager.getInstance().reload();
+		}
 	}
 
 

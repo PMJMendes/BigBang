@@ -379,7 +379,8 @@ public abstract class DocumentSections{
 
 		public void setEditable(boolean b) {
 			
-				
+				isFile.setEnabled(b);
+				isText.setEnabled(b);
 			if(!isFileBoolean()){
 				getNote().setReadOnly(!b);
 				changeToFile.setVisible(b);
@@ -556,18 +557,19 @@ public abstract class DocumentSections{
 		}
 
 		public void setEditable(boolean b) {
-			
-			for(int i = 0; i<details.size()-1; i++){
-				
-				((DocumentDetailEntry)details.get(i)).getInfo().setReadOnly(!b);
-				((DocumentDetailEntry)details.get(i)).getInfoValue().setReadOnly(!b);
-				((DocumentDetailEntry)details.get(i)).remove.setVisible(b);
-			}
 
-			details.get(details.size()-1).setVisible(b);
+				for(int i = 0; i<details.size()-1; i++){
+					
+					((DocumentDetailEntry)details.get(i)).getInfo().setReadOnly(!b);
+					((DocumentDetailEntry)details.get(i)).getInfoValue().setReadOnly(!b);
+					((DocumentDetailEntry)details.get(i)).remove.setVisible(b);
+				}
+	
+				details.get(details.size()-1).setVisible(b);
+			}
 			
 			
-		}
+		
 		 
 		public List<DocInfo> getList(){
 			
