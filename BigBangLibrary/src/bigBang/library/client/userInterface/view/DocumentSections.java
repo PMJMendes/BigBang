@@ -338,8 +338,38 @@ public abstract class DocumentSections{
 			ImageResource mimeImage;
 			
 			if(mimeType.equalsIgnoreCase("text/plain")){
-				
 				mimeImage = resources.txtIcon();
+			}
+			else if(mimeType.equalsIgnoreCase("application/pdf")){
+				mimeImage = resources.pdfIcon();
+			}
+			else if(mimeType.equalsIgnoreCase("application/excel")
+					|| mimeType.equalsIgnoreCase("application/vnd.ms-excel")
+					|| mimeType.equalsIgnoreCase("application/x-excel")
+					|| mimeType.equalsIgnoreCase("application/x-msexcel")){
+				mimeImage = resources.pdfIcon();
+			}
+			else if(mimeType.equalsIgnoreCase("application/msword")){
+				mimeImage = resources.docIcon();
+			}
+			else if(mimeType.equalsIgnoreCase("image/jpeg")  
+					|| mimeType.equalsIgnoreCase("image/bmp") 
+					|| mimeType.equalsIgnoreCase("image/png") 
+					|| mimeType.equalsIgnoreCase("image/tiff")){
+				mimeImage = resources.imageIcon();
+			}
+			else if(mimeType.equalsIgnoreCase("application/powerpoint")
+					|| mimeType.equalsIgnoreCase("application/mspowerpoint")
+					|| mimeType.equalsIgnoreCase("application/vnd.ms-powerpoint")
+					|| mimeType.equalsIgnoreCase("application/x-mspowerpoint")){
+				mimeImage = resources.pptIcon();
+			}
+			else if(mimeType.equalsIgnoreCase("application/x-compressed")
+					|| mimeType.equalsIgnoreCase("application/x-zip-compressed") 
+					|| mimeType.equalsIgnoreCase("application/zip") 
+					|| mimeType.equalsIgnoreCase("multipart/x-zip") 
+					|| mimeType.equalsIgnoreCase("multipart/x-zip")){
+				mimeImage = resources.zipIcon();
 			}
 			else
 				mimeImage = resources.fileIcon();
