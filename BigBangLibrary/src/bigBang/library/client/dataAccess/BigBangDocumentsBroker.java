@@ -226,13 +226,13 @@ public class BigBangDocumentsBroker extends DataBroker<Document> implements Docu
 			});
 		}else{
 			Collection<Document> documentsCollection = documents.get(ownerId);
+			documents.put(ownerId, new ArrayList<Document>(documentsCollection));
 			for(Document c : documentsCollection) {
 				if(c.id.equalsIgnoreCase(documentId)){
 					handler.onResponse(c);
-					return;
+					break;
 				}
 			}
-			documents.put(ownerId, new ArrayList<Document>(documentsCollection));
 		}
 	}
 	
