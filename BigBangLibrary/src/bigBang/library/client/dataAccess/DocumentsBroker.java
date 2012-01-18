@@ -73,8 +73,8 @@ public interface DocumentsBroker extends DataBrokerInterface<Document>{
 	
 	public void getDocuments(String ownerId, ResponseHandler<Collection<Document>> handler);
 	public void getDocument(String ownerId, String documentId, ResponseHandler<Document> handler);
-	public void createDocument(Document document, String ownerId, String opId, ResponseHandler<Document> handler);
-	public void updateDocument(Document document, String ownerId, ResponseHandler<Document> handler);
-	public void deleteDocument(String documentId, String ownerId, ResponseHandler<Void> handler);
+	public void createDocument(Document document, ResponseHandler<Document> handler);
+	public void updateDocument(Document document, ResponseHandler<Document> handler);
+	public void deleteDocument(String documentId, ResponseHandler<Void> handler);
 	
 }
