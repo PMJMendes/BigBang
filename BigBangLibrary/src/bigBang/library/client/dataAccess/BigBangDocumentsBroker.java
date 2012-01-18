@@ -232,6 +232,7 @@ public class BigBangDocumentsBroker extends DataBroker<Document> implements Docu
 					return;
 				}
 			}
+			documents.put(ownerId, new ArrayList<Document>(documentsCollection));
 		}
 	}
 	
