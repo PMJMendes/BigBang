@@ -15,11 +15,13 @@ public class User
 	public UserProfile profile;
 	public String costCenterId;
 	public String email;
-	
-	public User(){};
-	
-	public User(User original) {
+
+	public User() {};
+
+	public User(User original)
+	{
 		this.id = original.id;
+		this.decoId = original.decoId;
 		this.name = original.name;
 		this.username = original.username;
 		this.password = original.password;
