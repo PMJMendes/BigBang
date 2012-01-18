@@ -118,43 +118,6 @@ public class DocumentView extends View implements DocumentViewPresenter.Display{
 		details.registerDeleteHandler(deleteRequestEventHandler);
 	}
 
-	@Override
-	public Document getDocument() {
-
-		Document newD = new Document();
-
-		if(getInfo() != null)
-			newD = getInfo();
-
-		newD.name = getGeneralInfo().name.getValue();
-		newD.docTypeId = getGeneralInfo().docType.getValue();
-		newD.fileName = getFileNote().filename.getValue();
-		newD.text = getFileNote().note.getValue();
-
-		newD.parameters = new DocInfo[getDetails().getList().size()-1];
-
-		for(int i = 0; i<getDetails().getList().size()-1; i++){
-
-			newD.parameters[i] = new DocInfo();
-			newD.parameters[i].name = ((DocumentDetailEntry) getDetails().getList().get(i)).info.getValue();
-			newD.parameters[i].value = ((DocumentDetailEntry) getDetails().getList().get(i)).infoValue.getValue();
-
-		}
-		if(!middle.isFileBoolean){
-			newD.fileStorageId = null;
-			newD.fileName = null;
-		}
-		else{
-			if(getFileNote().filename.isVisible()){
-				newD.fileName = getFileNote().filename.getValue();
-			}
-			else
-				newD.fileName = getFileNote().upload.getFilename();
-		}
-
-
-		return newD;
-	}
 
 	@Override
 	public void setSaveMode(boolean b) {

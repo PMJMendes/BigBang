@@ -1,15 +1,9 @@
 package bigBang.library.client.userInterface.presenter;
 
-import java.util.Collection;
-
-import bigBang.definitions.client.response.ResponseError;
-import bigBang.definitions.client.response.ResponseHandler;
-import bigBang.definitions.shared.BigBangConstants;
 import bigBang.definitions.shared.DocInfo;
 import bigBang.definitions.shared.Document;
 import bigBang.library.client.HasParameters;
 import bigBang.library.client.ValueSelectable;
-import bigBang.library.client.dataAccess.DataBrokerManager;
 import bigBang.library.client.dataAccess.DocumentsBroker;
 import bigBang.library.client.event.ActionInvokedEvent;
 import bigBang.library.client.event.ActionInvokedEventHandler;
@@ -62,7 +56,6 @@ public class DocumentViewPresenter implements ViewPresenter{
 		void setValue(Document doc);
 		public void registerDeleteHandler(
 				DeleteRequestEventHandler deleteRequestEventHandler);
-		Document getDocument();
 		void setSaveMode(boolean b);
 
 	}
@@ -164,7 +157,7 @@ public class DocumentViewPresenter implements ViewPresenter{
 					break;
 				}
 				case SAVE:{
-					doc = view.getDocument();
+					doc = getDocument();
 					if(doc != null){
 						System.out.println("GFDSAGDFS");
 						setDocument(doc);
@@ -191,6 +184,45 @@ public class DocumentViewPresenter implements ViewPresenter{
 				}
 				}
 
+			}
+
+			private Document getDocument() {
+				
+
+				Document newD = new Document();
+
+				if(getInfo() != null)
+					newD = getInfo();
+
+				newD.name = view.getGeneralInfo().getName().getValue();
+				newD.docTypeId = view.getGeneralInfo().getDocType().getValue();
+				newD.fileName = view.getFileNote().getFilename().getValue();
+				newD.text = view.getFileNote().getNote().getValue();
+
+				newD.parameters = new DocInfo[view.getDetails().getList().size()-1];
+
+				for(int i = 0; i<view.getDetails().getList().size()-1; i++){
+
+					newD.parameters[i] = new DocInfo();
+					newD.parameters[i].name = ((DocumentDetailEntry) view.getDetails().getList().get(i)).getInfo().getValue();
+					newD.parameters[i].value = ((DocumentDetailEntry) view.getDetails().getList().get(i)).getInfoValue().getValue();
+
+				}
+				if(!view.getFileNote().isFileBoolean()){
+					newD.fileStorageId = null;
+					newD.fileName = null;
+				}
+				else{
+					if(view.getFileNote().getFilename().isVisible()){
+						newD.fileName = view.getFileNote().getFilename().getValue();
+					}
+					else
+						newD.fileName = view.getFileNote().getUpload().getFilename();
+				}
+
+
+				return newD;
+				
 			}
 
 			private void removeFile() {

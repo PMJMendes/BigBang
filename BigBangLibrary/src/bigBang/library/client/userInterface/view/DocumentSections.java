@@ -36,8 +36,8 @@ public abstract class DocumentSections{
 	public static class GeneralInfoSection extends View{
 		
 		VerticalPanel wrapper;
-		TextBoxFormField name;
-		ExpandableListBoxFormField docType;
+		private TextBoxFormField name;
+		private ExpandableListBoxFormField docType;
 		Document doc = new Document();
 		ActionInvokedEventHandler<Action> actionHandler;
 		BigBangOperationsToolBar toolbar;
@@ -75,11 +75,11 @@ public abstract class DocumentSections{
 			toolbar.setWidth("100%");
 			wrapper.add(toolbar);
 			
-			name = new TextBoxFormField("Nome");
-			docType = new ExpandableListBoxFormField(BigBangConstants.TypifiedListIds.DOCUMENT_TYPE, "Tipo");
+			setName(new TextBoxFormField("Nome"));
+			setDocType(new ExpandableListBoxFormField(BigBangConstants.TypifiedListIds.DOCUMENT_TYPE, "Tipo"));
 			
-			wrapper.add(name);
-			wrapper.add(docType);
+			wrapper.add(getName());
+			wrapper.add(getDocType());
 			
 		}
 		
@@ -97,8 +97,8 @@ public abstract class DocumentSections{
 		public void setDocument(Document doc){
 
 			this.doc = doc;
-			name.setValue(doc.name);
-			docType.setValue(doc.docTypeId);
+			getName().setValue(doc.name);
+			getDocType().setValue(doc.docTypeId);
 			
 		}
 		
@@ -109,14 +109,30 @@ public abstract class DocumentSections{
 		}
 
 		public void setEditable(boolean b) {
-			docType.setReadOnly(!b);
-			name.setReadOnly(!b);
+			getDocType().setReadOnly(!b);
+			getName().setReadOnly(!b);
 			
 		}
 
 		public BigBangOperationsToolBar getToolbar() {
 			return toolbar;
 			
+		}
+
+		public TextBoxFormField getName() {
+			return name;
+		}
+
+		public void setName(TextBoxFormField name) {
+			this.name = name;
+		}
+
+		public ExpandableListBoxFormField getDocType() {
+			return docType;
+		}
+
+		public void setDocType(ExpandableListBoxFormField docType) {
+			this.docType = docType;
 		}
 
 	}
@@ -127,17 +143,17 @@ public abstract class DocumentSections{
 		private static final int MAXCHAR = 250;
 		private Button isFile;
 		private Button isText;
-		TextAreaFormField note;
+		private TextAreaFormField note;
 		private VerticalPanel wrapper;
 		private HorizontalPanel buttonsFileorNote;
 		private HorizontalPanel submitChange;
 		private HorizontalPanel charRemainP;
-		FileUpload upload;
+		private FileUpload upload;
 		private ClickHandler handler;
 		private Button changeToFile;
 		private Button changeToNote;
-		boolean isFileBoolean;
-		TextBoxFormField filename;
+		private boolean isFileBoolean;
+		private TextBoxFormField filename;
 		private Button removeFile;
 		
 		private Image mimeImg;
@@ -180,8 +196,8 @@ public abstract class DocumentSections{
 			isFile.addClickHandler(handler);
 			isText = new Button("Nova Nota");
 			isText.addClickHandler(handler);
-			upload = new FileUpload();
-			upload.setName("upload");
+			upload = (new FileUpload());
+			getUpload().setName("upload");
 			changeToFile = new Button("Substituir por ficheiro");
 			changeToFile.addClickHandler(handler);
 			changeToNote = new Button("Substituir por nota");
@@ -193,23 +209,23 @@ public abstract class DocumentSections{
 			charRemainLabel = new Label(""+ MAXCHAR);
 			charRemainP.add(charRemain);
 			charRemainP.add(charRemainLabel);
-			note.setMaxCharacters(MAXCHAR, charRemainLabel);
+			getNote().setMaxCharacters(MAXCHAR, charRemainLabel);
 			
 			wrapper.setWidth("100%");
 			buttonsFileorNote = new HorizontalPanel();
 			
-			wrapper.add(note);
+			wrapper.add(getNote());
 			wrapper.add(charRemainP);
 			buttonsFileorNote.add(isFile);
 			buttonsFileorNote.add(isText);
 			wrapper.add(buttonsFileorNote);
-			wrapper.add(upload);
+			wrapper.add(getUpload());
 			
 			removeFile = new Button("Apagar Ficheiro");
 			removeFile.addClickHandler(handler);
 			
 			filename = new TextBoxFormField("Nome do Ficheiro");
-			filename.setEditable(false);
+			getFilename().setEditable(false);
 			mimeImg = new Image();
 			
 			
@@ -217,7 +233,7 @@ public abstract class DocumentSections{
 			filenameRemoveButton.setVerticalAlignment(HasVerticalAlignment.ALIGN_MIDDLE);
 
 			filenameRemoveButton.add(mimeImg);
-			filenameRemoveButton.add(filename);
+			filenameRemoveButton.add(getFilename());
 			filenameRemoveButton.add(removeFile);
 			
 			
@@ -249,10 +265,10 @@ public abstract class DocumentSections{
 			
 			removeFile.setVisible(false);
 			changeToNote.setVisible(false);
-			filename.setVisible(false);
-			upload.setVisible(false);
+			getFilename().setVisible(false);
+			getUpload().setVisible(false);
 			changeToFile.setVisible(false);
-			note.setVisible(false);
+			getNote().setVisible(false);
 			charRemainP.setVisible(false);
 			
 			isFile.setHeight("80px");
@@ -274,11 +290,11 @@ public abstract class DocumentSections{
 		public void createNewFile() {
 			
 			isFileBoolean = true;
-			filename.setVisible(true);
+			getFilename().setVisible(true);
 			buttonsFileorNote.setVisible(false);
 			changeToFile.setVisible(false);
-			note.setVisible(false);
-			upload.setVisible(true);
+			getNote().setVisible(false);
+			getUpload().setVisible(true);
 			changeToNote.setVisible(true);
 			charRemainP.setVisible(false);
 			filenameRemoveButton.setVisible(false);
@@ -289,8 +305,8 @@ public abstract class DocumentSections{
 			
 			isFileBoolean = false;
 			buttonsFileorNote.setVisible(false);
-			note.setVisible(true);
-			upload.setVisible(false);
+			getNote().setVisible(true);
+			getUpload().setVisible(false);
 			changeToNote.setVisible(false);
 			changeToFile.setVisible(true);
 			charRemainP.setVisible(true);
@@ -300,10 +316,10 @@ public abstract class DocumentSections{
 
 		public void setDocumentFile(Document doc) {
 			
-			this.filename.setValue(doc.fileName);
+			this.getFilename().setValue(doc.fileName);
 			mimeImg.setResource(getMimeImage(doc.mimeType));
 			mimeImg.setVisible(true);
-			upload.setVisible(false);
+			getUpload().setVisible(false);
 			changeToNote.setVisible(false);
 			filenameRemoveButton.setVisible(true);
 			hasFile = true;
@@ -312,7 +328,7 @@ public abstract class DocumentSections{
 		
 		public void setDocumentNote(Document doc){
 			
-			this.note.setValue(doc.text);
+			this.getNote().setValue(doc.text);
 			
 		}
 
@@ -334,8 +350,8 @@ public abstract class DocumentSections{
 		public void setEditable(boolean b) {
 			
 				
-			if(!isFileBoolean){
-				note.setReadOnly(!b);
+			if(!isFileBoolean()){
+				getNote().setReadOnly(!b);
 				changeToFile.setVisible(b);
 				charRemainLabel.setVisible(b);
 				charRemain.setVisible(b);
@@ -344,7 +360,7 @@ public abstract class DocumentSections{
 				removeFile.setVisible(b);
 			}
 			
-			if(!hasFile && isFileBoolean){
+			if(!hasFile && isFileBoolean()){
 				changeToNote.setVisible(b);
 				removeFile.setVisible(false);
 			}
@@ -353,11 +369,28 @@ public abstract class DocumentSections{
 		public void removeFile() {
 			
 			hasFile = false;
-			filename.setVisible(false);
+			getFilename().setVisible(false);
 			mimeImg.setVisible(false);
 			removeFile.setVisible(false);
-			upload.setVisible(true);
+			getUpload().setVisible(true);
 			setEditable(true);
+		}
+
+		public TextBoxFormField getFilename() {
+			return filename;
+		}
+
+		public TextAreaFormField getNote() {
+			return note;
+		}
+
+
+		public boolean isFileBoolean() {
+			return isFileBoolean;
+		}
+
+		public FileUpload getUpload() {
+			return upload;
 		}
 		
 	}
@@ -366,8 +399,8 @@ public abstract class DocumentSections{
 		
 		public class DocumentDetailEntry extends ListEntry<DocInfo>{
 
-			TextBoxFormField  info;
-			TextBoxFormField infoValue;
+			private TextBoxFormField  info;
+			private TextBoxFormField infoValue;
 			private Button remove;
 			public DocumentDetailEntry(DocInfo docInfo) {
 				super(docInfo);
@@ -393,11 +426,11 @@ public abstract class DocumentSections{
 
 				}
 
-				info = new TextBoxFormField();
-				infoValue = new TextBoxFormField();
+				setInfo(new TextBoxFormField());
+				setInfoValue(new TextBoxFormField());
 
-				info.setValue(docInfo.name);
-				infoValue.setValue(docInfo.value);
+				getInfo().setValue(docInfo.name);
+				getInfoValue().setValue(docInfo.value);
 				
 				remove = new Button("X");
 				remove.addClickHandler(new ClickHandler() {
@@ -407,20 +440,20 @@ public abstract class DocumentSections{
 						fireEvent(new DeleteRequestEvent(getValue()));
 					}
 				});
-				this.setLeftWidget(info);
-				this.setWidget(infoValue);
+				this.setLeftWidget(getInfo());
+				this.setWidget(getInfoValue());
 				this.setRightWidget(remove);
 				super.setValue(docInfo);
 			}
 
 			public void setEditable(boolean editable){
 
-				if(info == null){
+				if(getInfo() == null){
 					this.setVisible(editable);
 					return;
 				}
-				info.setReadOnly(!editable);
-				infoValue.setReadOnly(!editable);
+				getInfo().setReadOnly(!editable);
+				getInfoValue().setReadOnly(!editable);
 				remove.setVisible(editable);
 			}
 
@@ -428,6 +461,22 @@ public abstract class DocumentSections{
 			@Override
 			public DocInfo getValue() {
 				return super.getValue();
+			}
+
+			public TextBoxFormField getInfo() {
+				return info;
+			}
+
+			public void setInfo(TextBoxFormField info) {
+				this.info = info;
+			}
+
+			public TextBoxFormField getInfoValue() {
+				return infoValue;
+			}
+
+			public void setInfoValue(TextBoxFormField infoValue) {
+				this.infoValue = infoValue;
 			}
 		}
 		
@@ -480,8 +529,8 @@ public abstract class DocumentSections{
 			
 			for(int i = 0; i<details.size()-1; i++){
 				
-				((DocumentDetailEntry)details.get(i)).info.setReadOnly(!b);
-				((DocumentDetailEntry)details.get(i)).infoValue.setReadOnly(!b);
+				((DocumentDetailEntry)details.get(i)).getInfo().setReadOnly(!b);
+				((DocumentDetailEntry)details.get(i)).getInfoValue().setReadOnly(!b);
 				((DocumentDetailEntry)details.get(i)).remove.setVisible(b);
 			}
 
