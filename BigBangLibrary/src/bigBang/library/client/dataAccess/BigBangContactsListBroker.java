@@ -10,6 +10,7 @@ import bigBang.definitions.client.dataAccess.DataBroker;
 import bigBang.definitions.client.dataAccess.DataBrokerClient;
 import bigBang.definitions.client.response.ResponseError;
 import bigBang.definitions.client.response.ResponseHandler;
+import bigBang.definitions.shared.BigBangConstants;
 import bigBang.definitions.shared.Contact;
 import bigBang.library.client.BigBangAsyncCallback;
 import bigBang.library.interfaces.ContactsService;
@@ -37,11 +38,12 @@ public class BigBangContactsListBroker extends DataBroker<Contact> implements Co
 	protected ContactsServiceAsync service;
 
 	public BigBangContactsListBroker(){
+		service = ContactsService.Util.getInstance();
+		this.dataElementId = BigBangConstants.EntityIds.CONTACT;
 		dataVersions = new HashMap<String, Integer>();
 		contacts = new HashMap<String, List<Contact>>();
 		dataRefreshRequirements = new HashMap<String, Boolean>();
 		clients = new HashMap<String, List<ContactsBrokerClient>>();
-		service = ContactsService.Util.getInstance();
 	}
 
 	@Override
