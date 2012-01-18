@@ -1,16 +1,17 @@
 package bigBang.module.clientModule.client.userInterface;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
 import bigBang.definitions.client.dataAccess.HistoryBroker;
 import bigBang.definitions.client.dataAccess.HistoryDataBrokerClient;
+import bigBang.definitions.client.dataAccess.InsurancePolicyBroker;
 import bigBang.definitions.client.dataAccess.InsurancePolicyDataBrokerClient;
 import bigBang.definitions.client.dataAccess.Search;
 import bigBang.definitions.client.response.ResponseError;
 import bigBang.definitions.client.response.ResponseHandler;
 import bigBang.definitions.shared.BigBangConstants;
-import bigBang.definitions.shared.Client;
 import bigBang.definitions.shared.Contact;
 import bigBang.definitions.shared.Document;
 import bigBang.definitions.shared.HistoryItem;
@@ -197,10 +198,23 @@ public class ClientChildrenLists {
 			});
 		}
 
-		public void setOwner(String ownerId){
+		public void setOwner(final String ownerId){
 			discardOwner();
 			if(ownerId != null){
-				this.broker.registerClient(this);
+				this.broker.registerClient(this, ownerId);
+				this.broker.getDocuments(ownerId, new ResponseHandler<Collection<Document>>() {
+
+					@Override
+					public void onResponse(Collection<Document> response) {
+						setDocuments(ownerId, new ArrayList<Document>(response));
+					}
+
+					@Override
+					public void onError(Collection<ResponseError> errors) {
+						// TODO Auto-generated method stub
+						
+					}
+				});
 			}
 			this.ownerId = ownerId;
 		}
@@ -287,7 +301,7 @@ public class ClientChildrenLists {
 			}
 		}
 
-		//protected InsurancePolicyBroker broker;
+		protected InsurancePolicyBroker broker;
 		protected String ownerId;
 		protected int dataVersion;
 
@@ -295,37 +309,37 @@ public class ClientChildrenLists {
 			this.showFilterField(false);
 			this.showSearchField(true);
 
-//			broker = (InsurancePolicyBroker) DataBrokerManager.Util.getInstance().getBroker(BigBangConstants.EntityIds.INSURANCE_POLICY); TODO IMPORTANT FJVC
-//
-//			this.addAttachHandler(new AttachEvent.Handler() {
-//
-//				@Override
-//				public void onAttachOrDetach(AttachEvent event) {
-//					if(event.isAttached()){
-//						setOwner(ownerId);
-//					}else{
-//						discardOwner();
-//					}
-//				}
-//			});
+			broker = (InsurancePolicyBroker) DataBrokerManager.Util.getInstance().getBroker(BigBangConstants.EntityIds.INSURANCE_POLICY);
+
+			this.addAttachHandler(new AttachEvent.Handler() {
+
+				@Override
+				public void onAttachOrDetach(AttachEvent event) {
+					if(event.isAttached()){
+						setOwner(ownerId);
+					}else{
+						discardOwner();
+					}
+				}
+			});
 		}
 
 		public void setOwner(String ownerId){
 			discardOwner();
 			if(ownerId != null){
-//				this.broker.registerClient(this);
-//				broker.getClientPolicies(ownerId, new ResponseHandler<Collection<InsurancePolicyStub>>() {
-//
-//					@Override
-//					public void onResponse(Collection<InsurancePolicyStub> response) {
-//						for(InsurancePolicyStub s : response){
-//							addEntry(s);
-//						}
-//					}
-//
-//					@Override
-//					public void onError(Collection<ResponseError> errors) {}
-//				});
+				this.broker.registerClient(this);
+				broker.getClientPolicies(ownerId, new ResponseHandler<Collection<InsurancePolicyStub>>() {
+
+					@Override
+					public void onResponse(Collection<InsurancePolicyStub> response) {
+						for(InsurancePolicyStub s : response){
+							addEntry(s);
+						}
+					}
+
+					@Override
+					public void onError(Collection<ResponseError> errors) {}
+				});
 			}
 			this.ownerId = ownerId;
 		}
@@ -333,7 +347,7 @@ public class ClientChildrenLists {
 		public void discardOwner(){
 			this.clear();
 			if(ownerId != null) {
-//				broker.unregisterClient(this);
+				broker.unregisterClient(this);
 				this.ownerId = null;
 			}
 		}
@@ -435,19 +449,19 @@ public class ClientChildrenLists {
 		}
 		
 		protected int dataVersion;
-		protected Client owner;
+		protected String ownerId;
 		protected HistoryBroker broker;
 		
 		public HistoryList(){
+			this.broker = ((HistoryBroker) DataBrokerManager.Util.getInstance().getBroker(BigBangConstants.EntityIds.HISTORY));
 			this.showFilterField(false);
 			this.showSearchField(true);
-			this.broker = ((HistoryBroker) DataBrokerManager.Util.getInstance().getBroker(BigBangConstants.EntityIds.HISTORY));
 		}
 		
 		@Override
 		protected void onAttach() {
 			super.onAttach();
-			setOwner(owner);
+			setOwner(ownerId);
 		}
 		
 		@Override
@@ -456,14 +470,14 @@ public class ClientChildrenLists {
 			discardOwner();
 		}
 		
-		public void setOwner(Client client) {
+		public void setOwner(String clientId) {
 			discardOwner();
-			if(client == null) {return;}
-			if(client != null){
-				this.broker.registerClient(this, client.processId);
+			if(clientId == null) {return;}
+			if(clientId != null){
+				this.broker.registerClient(this, clientId);
 				
 				HistorySearchParameter parameter = new HistorySearchParameter();
-				parameter.processId = client.processId;
+				parameter.dataObjectId = clientId;
 				
 				HistorySearchParameter[] parameters = new HistorySearchParameter[]{
 						parameter
@@ -486,16 +500,20 @@ public class ClientChildrenLists {
 
 					@Override
 					public void onError(Collection<ResponseError> errors) {
+						ListEntry<HistoryItemStub> entry = new ListEntry<HistoryItemStub>(null);
+						entry.setText("Não foi possível obter o histórico");
+						entry.setSelectable(false);
+						add(entry);
 					}
 				});
 			}
-			this.owner = client;
+			this.ownerId = clientId;
 		}
 
 		public void discardOwner(){
 			this.clear();
-			if(owner != null){
-//				this.broker.unregisterClient(this, this.owner.processId);
+			if(ownerId != null){
+				this.broker.unregisterClient(this, this.ownerId);
 			}
 		}
 		
@@ -542,13 +560,19 @@ public class ClientChildrenLists {
 		}
 
 		@Override
-		public void removeHistoryItem(String processId, HistoryItem item) {
+		public void removeHistoryItem(String objectId, HistoryItem item) {
 			for(ValueSelectable<HistoryItemStub> s : this) {
 				if(s.getValue().id.equalsIgnoreCase(item.id)){
 					remove(s);
 					break;
 				}
 			}
+		}
+		
+		@Override
+		public void refreshHistory() {
+			broker.requireDataRefresh(this.ownerId);
+			this.setOwner(this.ownerId);
 		}
 		
 	}

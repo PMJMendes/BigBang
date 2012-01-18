@@ -10,7 +10,6 @@ import bigBang.definitions.client.response.ResponseHandler;
 import bigBang.definitions.shared.BigBangConstants;
 import bigBang.definitions.shared.HistoryItem;
 import bigBang.definitions.shared.HistoryItemStub;
-import bigBang.definitions.shared.InsurancePolicy;
 import bigBang.definitions.shared.SortOrder;
 import bigBang.library.client.ValueSelectable;
 import bigBang.library.client.dataAccess.DataBrokerManager;
@@ -36,7 +35,7 @@ public class HistoryList extends FilterableList<HistoryItemStub> implements Hist
 	}
 
 	protected int dataVersion;
-	protected InsurancePolicy owner;
+	protected String ownerId;
 	protected HistoryBroker broker;
 
 	public HistoryList(){
@@ -49,7 +48,7 @@ public class HistoryList extends FilterableList<HistoryItemStub> implements Hist
 	@Override
 	protected void onAttach() {
 		super.onAttach();
-		setOwner(owner);
+		setOwner(ownerId);
 	}
 
 	@Override
@@ -58,14 +57,14 @@ public class HistoryList extends FilterableList<HistoryItemStub> implements Hist
 		discardOwner();
 	}
 
-	public void setOwner(InsurancePolicy owner) {
+	public void setOwner(String ownerId) {
 		discardOwner();
-		if(owner == null) {return;}
-		if(owner != null){
-			this.broker.registerClient(this, owner.processId);
+		if(ownerId == null) {return;}
+		if(ownerId != null){
+			this.broker.registerClient(this, ownerId);
 
 			HistorySearchParameter parameter = new HistorySearchParameter();
-			parameter.processId = owner.processId;
+			parameter.dataObjectId = ownerId;
 
 			HistorySearchParameter[] parameters = new HistorySearchParameter[]{
 					parameter
@@ -88,17 +87,21 @@ public class HistoryList extends FilterableList<HistoryItemStub> implements Hist
 
 				@Override
 				public void onError(Collection<ResponseError> errors) {
+					ListEntry<HistoryItemStub> entry = new ListEntry<HistoryItemStub>(null);
+					entry.setText("Não foi possível obter o histórico");
+					entry.setSelectable(false);
+					add(entry);
 				}
 			});
 		}
-		this.owner = owner;
+		this.ownerId = ownerId;
 	}
 
 	public void discardOwner(){
 		this.clear();
-		if(owner != null){
-			this.broker.unregisterClient(this, this.owner.processId);
-			this.owner = null;
+		if(ownerId != null){
+			this.broker.unregisterClient(this, this.ownerId);
+			this.ownerId = null;
 		}
 	}
 
@@ -153,4 +156,11 @@ public class HistoryList extends FilterableList<HistoryItemStub> implements Hist
 			}
 		}
 	}
+	
+	@Override
+	public void refreshHistory() {
+		broker.requireDataRefresh(this.ownerId);
+		this.setOwner(this.ownerId);
+	}
+	
 }

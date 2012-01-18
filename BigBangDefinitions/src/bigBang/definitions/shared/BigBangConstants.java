@@ -55,17 +55,30 @@ public class BigBangConstants {
 	}
 
 	public static class OperationIds {
+
+		public static class GeneralSystemProcess {
+			public static final String CREATE_CLIENT = "214118B8-C43C-4941-9D1E-9EB500A1381C";
+		}
+
 		public static class ClientProcess {
-			public static final String UPDATE_CLIENT = "";
+			public static final String UPDATE_CLIENT = "AE3CC7F0-BE2C-4548-87B5-9F09014072B8";
+			public static final String DELETE_CLIENT = "2227C32A-0AF5-4ECC-B807-9F090143401F";
+			public static final String CREATE_CASUALTY = ""; //TODO
+			public static final String MERGE_CLIENT = "";
+			public static final String CREATE_INFO_REQUEST = "";
+			public static final String CREATE_MANAGER_TRANSFER = "";
+			public static final String CREATE_QUOTE_REQUEST = "";
+			public static final String CREATE_POLICY = "";
+			public static final String CREATE_RISK_ANALISYS = "";
+			
 		}
 		
 		public static class ManagerTransfer{
 			public static final String CREATE_MANAGER_TRANSFER = "C75EEC27-780C-4C0C-9FD7-9F090142CB10";
 			public static final String CANCEL_MANAGER_TRANSFER = "C8FCD8FD-B616-4252-942F-9F650155B3BC";
 		}
+
 	}
-	
-	
 
 	//Session related constants
 	public static class Session{

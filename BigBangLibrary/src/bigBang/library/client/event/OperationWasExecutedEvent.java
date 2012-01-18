@@ -6,11 +6,11 @@ public class OperationWasExecutedEvent extends GwtEvent<OperationWasExecutedEven
 	
 	public static Type<OperationWasExecutedEventHandler> TYPE = new Type<OperationWasExecutedEventHandler>();
 
-	protected String operationId, processId;
+	protected String operationId, objectId;
 	
-	public OperationWasExecutedEvent(String operationId, String processId){
+	public OperationWasExecutedEvent(String operationId, String objectId){
 		this.operationId = operationId;
-		this.processId = processId;
+		this.objectId = objectId;
 	}
 	
 	@Override
@@ -20,7 +20,7 @@ public class OperationWasExecutedEvent extends GwtEvent<OperationWasExecutedEven
 
 	@Override
 	protected void dispatch(OperationWasExecutedEventHandler handler) {
-		handler.onOperationWasExecuted(this.operationId, this.processId);
+		handler.onOperationWasExecuted(this.operationId, this.objectId);
 	}
 
 }

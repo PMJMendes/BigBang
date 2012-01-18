@@ -59,7 +59,7 @@ public class InsurancePolicyChildrenPanel extends View {
 			this.documentsList.setOwner(policy.id);
 			this.insuredObjectsList.setOwner(policy.id);
 			this.exercisesList.setOwner(policy.id);
-			this.historyList.setOwner(policy);
+			this.historyList.setOwner(policy.id);
 		}
 	}
 	

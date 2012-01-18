@@ -18,11 +18,13 @@ import bigBang.definitions.shared.HistoryItem;
 import bigBang.definitions.shared.HistoryItem.AlteredItem;
 import bigBang.definitions.shared.HistoryItemStub;
 import bigBang.library.client.BigBangAsyncCallback;
+import bigBang.library.client.EventBus;
+import bigBang.library.client.event.OperationWasExecutedEvent;
+import bigBang.library.client.event.OperationWasExecutedEventHandler;
 import bigBang.library.interfaces.HistoryService;
 import bigBang.library.interfaces.HistoryServiceAsync;
 
-public class HistoryBrokerImpl extends DataBroker<HistoryItem> implements
-HistoryBroker {
+public class HistoryBrokerImpl extends DataBroker<HistoryItem> implements HistoryBroker {
 
 	protected static final String ALL_PROCESSES = "";
 
@@ -36,8 +38,15 @@ HistoryBroker {
 		dataRefreshRequests = new HashMap<String, Boolean>();
 		service = HistoryService.Util.getInstance();
 		this.searchBroker = new SearchDataBrokerImpl<HistoryItemStub>(this.service);
-
 		this.dataElementId = BigBangConstants.EntityIds.HISTORY;
+		
+		EventBus.getInstance().addHandler(OperationWasExecutedEvent.TYPE, new OperationWasExecutedEventHandler() {
+			
+			@Override
+			public void onOperationWasExecuted(String operationId, String objectId) {
+				HistoryBrokerImpl.this.onOperationWasExecuted(operationId, objectId);
+			}
+		});
 	}
 
 	@Override
@@ -69,6 +78,7 @@ HistoryBroker {
 		if(!clientRegistrations.containsKey(objectId)){
 			processHistoryClients = new ArrayList<HistoryDataBrokerClient>();
 			dataRefreshRequests.put(objectId, true);
+			clientRegistrations.put(objectId, processHistoryClients);
 		}else{
 			processHistoryClients = (ArrayList<HistoryDataBrokerClient>) clientRegistrations.get(objectId);
 		}
@@ -168,6 +178,15 @@ HistoryBroker {
 			}
 			
 		});
+	}
+	
+	private void onOperationWasExecuted(String operationId, String objectId){
+		if(this.clientRegistrations.containsKey(objectId)) {
+			List<HistoryDataBrokerClient> clients = this.clientRegistrations.get(objectId);
+			for(HistoryDataBrokerClient client : clients) {
+				client.refreshHistory();
+			}
+		}
 	}
 
 	@Override

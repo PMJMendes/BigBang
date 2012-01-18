@@ -46,11 +46,12 @@ public class UndoOperationView extends View implements UndoOperationViewPresente
 
 		@Override
 		public void doSearch() {
-			if(currentObjectId == null)
-				throw new RuntimeException("The process id is not defined");
-			HistorySearchParameter parameter = new HistorySearchParameter();
-			parameter.processId = this.currentObjectId;
-			doSearch(new HistorySearchParameter[]{parameter}, new SortParameter[0]);
+			if(currentObjectId != null){
+				HistorySearchParameter parameter = new HistorySearchParameter();
+				parameter.dataObjectId = this.currentObjectId;
+				doSearch(new HistorySearchParameter[]{parameter}, new SortParameter[0]);
+			}
+			itemIdToSelect = null;
 		}
 
 		@Override
@@ -66,10 +67,18 @@ public class UndoOperationView extends View implements UndoOperationViewPresente
 		}
 
 		public void setObjectId(String id){
-			this.currentObjectId = id;
-//			HistoryBroker historyBroker = ((HistoryBroker)DataBrokerManager.Util.getInstance().getBroker(BigBangConstants.EntityIds.HISTORY));
-//			historyBroker.unregisterClient(this);
-//			historyBroker.registerClient(this, id); TODO
+			if(id == null){
+				currentObjectId = id;
+				HistoryBroker historyBroker = ((HistoryBroker)DataBrokerManager.Util.getInstance().getBroker(BigBangConstants.EntityIds.HISTORY));
+				historyBroker.unregisterClient(this);
+				clear();
+			}else if(currentObjectId == null || !id.equalsIgnoreCase(currentObjectId)){
+				currentObjectId = id;
+				HistoryBroker historyBroker = ((HistoryBroker)DataBrokerManager.Util.getInstance().getBroker(BigBangConstants.EntityIds.HISTORY));
+				historyBroker.unregisterClient(this);
+				historyBroker.registerClient(this, id);
+				doSearch();
+			}
 		}
 
 		@Override
@@ -87,14 +96,14 @@ public class UndoOperationView extends View implements UndoOperationViewPresente
 		}
 
 		@Override
-		public void setHistoryItems(String processId, HistoryItem[] items) {}
+		public void setHistoryItems(String objectId, HistoryItem[] items) {}
 
 		@Override
-		public void addHistoryItem(String processId, HistoryItem item) {}
+		public void addHistoryItem(String objectId, HistoryItem item) {}
 
 		@Override
-		public void updateHistoryItem(String processId, HistoryItem item) {
-			if(!processId.equalsIgnoreCase(this.currentObjectId))
+		public void updateHistoryItem(String objectId, HistoryItem item) {
+			if(!objectId.equalsIgnoreCase(this.currentObjectId))
 				throw new RuntimeException("A reference was made to a wrong entity type");
 			for(ValueSelectable<HistoryItemStub> i : this){
 				if(i.getValue().id.equalsIgnoreCase(item.id)){
@@ -105,8 +114,8 @@ public class UndoOperationView extends View implements UndoOperationViewPresente
 		}
 
 		@Override
-		public void removeHistoryItem(String processId, HistoryItem item) {
-			if(!processId.equalsIgnoreCase(this.currentObjectId))
+		public void removeHistoryItem(String objectId, HistoryItem item) {
+			if(!objectId.equalsIgnoreCase(this.currentObjectId))
 				throw new RuntimeException("A reference was made to a wrong entity type");
 			for(ValueSelectable<HistoryItemStub> i : this){
 				if(i.getValue().id.equalsIgnoreCase(item.id)){
@@ -117,25 +126,48 @@ public class UndoOperationView extends View implements UndoOperationViewPresente
 		}
 
 		public void selectItem(String id){
-//			if(id == null) {
-//				return;
-//			}
-//			if(workspaceId == null) {
-//				this.itemIdToSelect = id;
-//				return;
-//			}
-//			boolean found = false;
-//			boolean searchFinished = !hasResultsLeft();
-//			while(!found && !searchFinished){
-//				for(ListEntry<HistoryItemStub> i : this){
-//					if(i.getValue().id.equalsIgnoreCase(id)){
-//						i.setSelected(true, true);
-//						found = true;
-//						break;
-//					}
-//				}
-//			} TODO
+			for(ListEntry<HistoryItemStub> i : this){
+				if(i.getValue().id.equalsIgnoreCase(id)){
+					i.setSelected(true, true);
+					break;
+				}
+			}
+
+			//			if(id == null) {
+			//				return;
+			//			}
+			//			if(workspaceId == null) {
+			//				this.itemIdToSelect = id;
+			//				return;
+			//			}
+			//			boolean found = false;
+			//			boolean searchFinished = !hasResultsLeft();
+			//			while(!found && !searchFinished){
+			//				for(ListEntry<HistoryItemStub> i : this){
+			//					if(i.getValue().id.equalsIgnoreCase(id)){
+			//						i.setSelected(true, true);
+			//						found = true;
+			//						break;
+			//					}
+			//				}
+			//			}
 		}
+
+		@Override
+		public void refreshHistory() {
+			Collection<ValueSelectable<HistoryItemStub>> selected = getSelected();
+			String id = null;
+			if(selected != null){
+				for(ValueSelectable<HistoryItemStub> selectable : selected){
+					id = selectable.getValue().id;
+				}
+			}
+			this.doSearch();
+			if(id != null){
+				selectItem(id);
+			}
+		}
+
 	}
 
 	public class UndoItemListEntry extends ListEntry<HistoryItemStub> {
@@ -210,16 +242,16 @@ public class UndoOperationView extends View implements UndoOperationViewPresente
 	@Override
 	public void setObjectId(String objectId) {
 		this.list.setObjectId(objectId);
-		if(objectId == null){
-			this.list.clear();
-		}else{
-			this.list.doSearch();
-		}
 	}
 
 	@Override
 	public HasValueSelectables<HistoryItemStub> getUndoItemList() {
 		return list;
+	}
+
+	@Override
+	public void refreshList() {
+		this.list.doSearch();
 	}
 
 	@Override

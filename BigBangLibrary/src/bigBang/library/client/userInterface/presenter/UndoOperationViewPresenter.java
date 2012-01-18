@@ -41,6 +41,7 @@ public class UndoOperationViewPresenter implements ViewPresenter {
 		HasValueSelectables<HistoryItemStub> getUndoItemList();
 		void setObjectId(String objectId);
 		void selectItem(String id);
+		void refreshList();
 
 		//FORM
 		HasValue<HistoryItem> getForm();
@@ -87,7 +88,10 @@ public class UndoOperationViewPresenter implements ViewPresenter {
 		if(objectId.isEmpty()){
 			clearView();
 		}else{
-			showHistory(objectId, itemId);
+			showHistory(objectId);
+			if(!itemId.isEmpty()){
+				showHistoryItem(objectId, itemId);
+			}
 		}
 	}
 
@@ -121,7 +125,7 @@ public class UndoOperationViewPresenter implements ViewPresenter {
 				if(itemId == null){
 					navigationItem.removeParameter("historyitemid");
 				}else{
-					navigationItem.setParameter("historyItemid", itemId);
+					navigationItem.setParameter("historyitemid", itemId);
 				}
 				NavigationHistoryManager.getInstance().go(navigationItem);
 			}
@@ -139,9 +143,11 @@ public class UndoOperationViewPresenter implements ViewPresenter {
 		view.allowNavigateToAuxiliaryProcess(false);
 	}
 
-	private void showHistory(String objectId, String itemId){
+	private void showHistory(String objectId){
 		view.setObjectId(objectId);
-		this.historyBroker.requireDataRefresh(objectId);
+	}
+	
+	private void showHistoryItem(String objectId, String itemId){
 		historyBroker.getItem(itemId, objectId, new ResponseHandler<HistoryItem>() {
 
 			@Override
@@ -158,7 +164,7 @@ public class UndoOperationViewPresenter implements ViewPresenter {
 			}
 		});
 	}
-
+	
 	private void onRevertOperation(){
 		view.confirmUndo(new ResponseHandler<Boolean>() {
 
@@ -173,6 +179,7 @@ public class UndoOperationViewPresenter implements ViewPresenter {
 							NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
 							item.removeParameter("historyItemId");
 							NavigationHistoryManager.getInstance().go(item);
+							view.refreshList();
 						}
 
 						@Override

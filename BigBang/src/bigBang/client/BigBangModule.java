@@ -6,10 +6,14 @@ import bigBang.definitions.client.dataAccess.DataBroker;
 import bigBang.library.client.Module;
 import bigBang.library.client.ViewPresenterFactory;
 import bigBang.library.client.ViewPresenterInstantiator;
+import bigBang.library.client.dataAccess.BigBangContactsListBroker;
+import bigBang.library.client.dataAccess.BigBangDocumentsBroker;
 import bigBang.library.client.dataAccess.HistoryBrokerImpl;
+import bigBang.library.client.userInterface.presenter.DocumentViewPresenter;
 import bigBang.library.client.userInterface.presenter.ManagerTransferViewPresenter;
 import bigBang.library.client.userInterface.presenter.UndoOperationViewPresenter;
 import bigBang.library.client.userInterface.presenter.ViewPresenter;
+import bigBang.library.client.userInterface.view.DocumentView;
 import bigBang.library.client.userInterface.view.ManagerTransferView;
 import bigBang.library.client.userInterface.view.UndoOperationView;
 
@@ -47,12 +51,23 @@ public class BigBangModule implements Module {
 				return presenter;
 			}
 		});
+		ViewPresenterFactory.getInstance().registerViewPresenterInstantiator("DOCUMENT", new ViewPresenterInstantiator() {
+
+			@Override
+			public ViewPresenter getInstance() {
+				DocumentView view = (DocumentView) GWT.create(DocumentView.class);
+				ViewPresenter presenter = new DocumentViewPresenter(view);
+				return presenter;
+			}
+		});
 	}
 
 	@Override
 	public DataBroker<?>[] getBrokerImplementations() {
 		return new DataBroker<?>[]{
-				new HistoryBrokerImpl()	
+				new HistoryBrokerImpl()	,
+				new BigBangContactsListBroker(),
+				new BigBangDocumentsBroker(),
 		};
 	}
 

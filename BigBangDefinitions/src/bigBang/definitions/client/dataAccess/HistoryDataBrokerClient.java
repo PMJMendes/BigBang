@@ -32,4 +32,6 @@ public interface HistoryDataBrokerClient extends DataBrokerClient<HistoryItem> {
 	 */
 	public void removeHistoryItem(String processId, HistoryItem item);
 
+	public void refreshHistory();
+	
 }

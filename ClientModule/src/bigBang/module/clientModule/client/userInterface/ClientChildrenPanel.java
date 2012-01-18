@@ -63,7 +63,7 @@ public class ClientChildrenPanel extends View implements ClientProcessDataBroker
 			this.insurancePoliciesList.setOwner(client.id);	
 			this.requestsList.setOwner(client.id);	
 			this.managerTransfersList.setOwner(client.id);
-			this.historyList.setOwner(client);
+			this.historyList.setOwner(client.id);
 		}
 	}
 

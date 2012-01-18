@@ -20,6 +20,8 @@ import bigBang.definitions.shared.ManagerTransfer;
 import bigBang.definitions.shared.QuoteRequest;
 import bigBang.definitions.shared.RiskAnalysis;
 import bigBang.library.client.BigBangAsyncCallback;
+import bigBang.library.client.EventBus;
+import bigBang.library.client.event.OperationWasExecutedEvent;
 import bigBang.library.interfaces.InfoOrDocumentRequestService;
 import bigBang.library.interfaces.InfoOrDocumentRequestServiceAsync;
 import bigBang.module.clientModule.interfaces.ClientService;
@@ -86,6 +88,7 @@ public class ClientProcessBrokerImpl extends DataBroker<Client> implements Clien
 					((ClientProcessDataBrokerClient) bc).setDataVersionNumber(BigBangConstants.EntityIds.CLIENT, getCurrentDataVersion());
 				}
 				handler.onResponse(result);
+				EventBus.getInstance().fireEvent(new OperationWasExecutedEvent(BigBangConstants.OperationIds.GeneralSystemProcess.CREATE_CLIENT, result.id));
 			}
 
 			@Override
@@ -112,6 +115,7 @@ public class ClientProcessBrokerImpl extends DataBroker<Client> implements Clien
 					((ClientProcessDataBrokerClient) bc).setDataVersionNumber(BigBangConstants.EntityIds.CLIENT, getCurrentDataVersion());
 				}
 				handler.onResponse(result);
+				EventBus.getInstance().fireEvent(new OperationWasExecutedEvent(BigBangConstants.OperationIds.ClientProcess.UPDATE_CLIENT, result.id));
 			}
 
 			@Override
@@ -127,7 +131,7 @@ public class ClientProcessBrokerImpl extends DataBroker<Client> implements Clien
 
 	@Override
 	public void removeClient(final String clientId, String reasonId, final ResponseHandler<String> handler) {
-		ClientProcessBrokerImpl.this.service.deleteClient(clientId, null /*reason*/, new BigBangAsyncCallback<Void>() {
+		ClientProcessBrokerImpl.this.service.deleteClient(clientId, reasonId, new BigBangAsyncCallback<Void>() {
 
 			@Override
 			public void onSuccess(Void result) {
@@ -138,6 +142,7 @@ public class ClientProcessBrokerImpl extends DataBroker<Client> implements Clien
 					((ClientProcessDataBrokerClient) bc).setDataVersionNumber(BigBangConstants.EntityIds.CLIENT, getCurrentDataVersion());
 				}
 				handler.onResponse(clientId);
+				EventBus.getInstance().fireEvent(new OperationWasExecutedEvent(BigBangConstants.OperationIds.ClientProcess.DELETE_CLIENT, clientId));
 			}
 
 			@Override
@@ -162,7 +167,7 @@ public class ClientProcessBrokerImpl extends DataBroker<Client> implements Clien
 	}
 
 	@Override
-	public void createRiskAnalisys(String clientId, RiskAnalysis riskAnalisys,
+	public void createRiskAnalisys(final String clientId, RiskAnalysis riskAnalisys,
 			final ResponseHandler<RiskAnalysis> handler) {
 		service.createRiskAnalisys(clientId, riskAnalisys, new BigBangAsyncCallback<RiskAnalysis>() {
 
@@ -170,12 +175,14 @@ public class ClientProcessBrokerImpl extends DataBroker<Client> implements Clien
 			public void onSuccess(RiskAnalysis result) {
 				//TODO
 				handler.onResponse(result);
+				
+				EventBus.getInstance().fireEvent(new OperationWasExecutedEvent(BigBangConstants.OperationIds.ClientProcess.CREATE_RISK_ANALISYS, clientId));				
 			}
 		});
 	}
 
 	@Override
-	public void createQuoteRequest(String clientId, QuoteRequest quoteRequest,
+	public void createQuoteRequest(final String clientId, QuoteRequest quoteRequest,
 			final ResponseHandler<QuoteRequest> handler) {
 		service.createQuoteRequest(clientId, quoteRequest, new BigBangAsyncCallback<QuoteRequest>() {
 
@@ -183,12 +190,14 @@ public class ClientProcessBrokerImpl extends DataBroker<Client> implements Clien
 			public void onSuccess(QuoteRequest result) {
 				//TODO
 				handler.onResponse(result);
+				
+				EventBus.getInstance().fireEvent(new OperationWasExecutedEvent(BigBangConstants.OperationIds.ClientProcess.CREATE_QUOTE_REQUEST, clientId));
 			}
 		});
 	}
 
 	@Override
-	public void createCasualty(String clientId, Casualty casualty,
+	public void createCasualty(final String clientId, Casualty casualty,
 			final ResponseHandler<Casualty> handler) {
 		service.createCasualty(clientId, casualty, new BigBangAsyncCallback<Casualty>() {
 
@@ -196,6 +205,8 @@ public class ClientProcessBrokerImpl extends DataBroker<Client> implements Clien
 			public void onSuccess(Casualty result) {
 				//TODO
 				handler.onResponse(result);
+				
+				EventBus.getInstance().fireEvent(new OperationWasExecutedEvent(BigBangConstants.OperationIds.ClientProcess.CREATE_CASUALTY, clientId));
 			}
 		});
 	}
@@ -212,6 +223,8 @@ public class ClientProcessBrokerImpl extends DataBroker<Client> implements Clien
 				for(DataBrokerClient<Client> bc : getClients()){
 					((ClientProcessDataBrokerClient) bc).updateClient(result);
 					((ClientProcessDataBrokerClient) bc).setDataVersionNumber(BigBangConstants.EntityIds.CLIENT, getCurrentDataVersion());
+					
+					EventBus.getInstance().fireEvent(new OperationWasExecutedEvent(BigBangConstants.OperationIds.ClientProcess.MERGE_CLIENT, result.id));
 				}
 				handler.onResponse(result);
 			}
@@ -228,6 +241,8 @@ public class ClientProcessBrokerImpl extends DataBroker<Client> implements Clien
 			public void onSuccess(InfoOrDocumentRequest result) {
 				//TODO
 				handler.onResponse(result);
+				
+//				EventBus.getInstance().fireEvent(new OperationWasExecutedEvent(BigBangConstants.OperationIds.ClientProcess.CREATE_INFO_REQUEST, result.));
 			}
 		});
 	}
@@ -303,6 +318,7 @@ public class ClientProcessBrokerImpl extends DataBroker<Client> implements Clien
 						});
 					}
 					handler.onResponse(result);
+					EventBus.getInstance().fireEvent(new OperationWasExecutedEvent(BigBangConstants.OperationIds.ClientProcess.CREATE_MANAGER_TRANSFER, result.newManagerId));
 				}
 			});
 		}else{
@@ -327,6 +343,7 @@ public class ClientProcessBrokerImpl extends DataBroker<Client> implements Clien
 						});
 					}
 					handler.onResponse(result);
+					EventBus.getInstance().fireEvent(new OperationWasExecutedEvent(BigBangConstants.OperationIds.ClientProcess.CREATE_MANAGER_TRANSFER, result.newManagerId));
 				}
 			});
 		}

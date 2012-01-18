@@ -5,7 +5,6 @@ import bigBang.definitions.shared.BigBangConstants;
 import bigBang.library.client.Module;
 import bigBang.library.client.ViewPresenterFactory;
 import bigBang.library.client.ViewPresenterInstantiator;
-import bigBang.library.client.dataAccess.HistoryBrokerImpl;
 import bigBang.library.client.userInterface.presenter.ViewPresenter;
 import bigBang.module.generalSystemModule.client.dataAccess.ClientGroupBrokerImpl;
 import bigBang.module.generalSystemModule.client.dataAccess.CostCenterBrokerImpl;
@@ -131,7 +130,6 @@ public class GeneralSystemModule implements Module {
 				new ClientGroupBrokerImpl(),
 				new MediatorBrokerImpl(),
 				new CoverageBrokerImpl(),
-				new HistoryBrokerImpl()
 		};
 	}
 
@@ -144,7 +142,6 @@ public class GeneralSystemModule implements Module {
 				BigBangConstants.EntityIds.CLIENT_GROUP,
 				BigBangConstants.EntityIds.MEDIATOR,
 				BigBangConstants.EntityIds.COVERAGE,
-				BigBangConstants.EntityIds.HISTORY
 		};
 	}
 }

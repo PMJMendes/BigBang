@@ -63,6 +63,8 @@ public class ClientOperationsViewPresenter implements ViewPresenter {
 					present("SINGLE_MANAGER_TRANSFER", parameters);
 				}else if(operation.equalsIgnoreCase("inforequest")){
 					present("INFO_OR_DOCUMENT_REQUEST", parameters);
+				}else if(operation.equalsIgnoreCase("documentmanagement")){
+					present("DOCUMENT", parameters);
 				}else if(operation.equalsIgnoreCase("clienthistory")){
 					present("HISTORY", parameters);
 				}else{
