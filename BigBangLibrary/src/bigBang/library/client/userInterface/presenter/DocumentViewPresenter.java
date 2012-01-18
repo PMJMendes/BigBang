@@ -38,6 +38,8 @@ public class DocumentViewPresenter implements ViewPresenter, DocumentsBrokerClie
 	private boolean bound = false;
 	private DocumentsBroker broker;
 	private int versionNumber;
+	private String ownerId;
+	private String documentId;
 
 	public static enum Action {
 		SAVE,
@@ -88,14 +90,14 @@ public class DocumentViewPresenter implements ViewPresenter, DocumentsBrokerClie
 
 	@Override
 	public void setParameters(HasParameters parameterHolder) {
-		
+
 		broker.unregisterClient(this);
-		
-		String idOwner = parameterHolder.getParameter("id");
-		String idDoc = parameterHolder.getParameter("documentid");
+
+		ownerId = parameterHolder.getParameter("id");
+		documentId = parameterHolder.getParameter("documentid");
 		boolean hasPermissions = parameterHolder.getParameter("editpermission") != null;
 
-		if(idOwner == null){
+		if(ownerId == null){
 			EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não é possível criar um documento sem cliente associado."), TYPE.ALERT_NOTIFICATION));
 			view.getGeneralInfo().getToolbar().lockAll();
 			view.getFileNote().generateNewDocument();
@@ -104,11 +106,9 @@ public class DocumentViewPresenter implements ViewPresenter, DocumentsBrokerClie
 			return;
 		}
 		else{
-
-			broker.registerClient(this, idOwner);
-			
+			broker.registerClient(this, ownerId);
 		}	
-		if(idDoc == null){
+		if(documentId == null){
 
 			if(hasPermissions){
 				setDocument(null);
@@ -122,7 +122,7 @@ public class DocumentViewPresenter implements ViewPresenter, DocumentsBrokerClie
 			}
 		}
 		else{
-			broker.getDocument(idOwner, idDoc, new ResponseHandler<Document>() {
+			broker.getDocument(ownerId, documentId, new ResponseHandler<Document>() {
 				@Override
 				public void onResponse(Document response) {
 
@@ -217,6 +217,11 @@ public class DocumentViewPresenter implements ViewPresenter, DocumentsBrokerClie
 						break;
 					}
 					setDocument(view.getInfo());
+
+					if(doc.text == null && doc.fileStorageId == null){
+						view.getFileNote().generateNewDocument();
+					}
+
 					view.setEditable(false);
 					break;
 				}
@@ -229,17 +234,8 @@ public class DocumentViewPresenter implements ViewPresenter, DocumentsBrokerClie
 					break;
 				}
 				case SAVE:{
-					boolean success = false;
-					doc = getDocument();
-					if(success){
-						setDocument(doc);
-						//TODO SAVE TO BD
-						view.setSaveMode(false);
-					}
-					else{
-						//TODO FIRE ERROR
-
-					}
+					Document temp = getDocument();
+					createUpdateDocument(temp);
 					break;
 				}
 				case CHANGE_TO_FILE: {
@@ -260,6 +256,55 @@ public class DocumentViewPresenter implements ViewPresenter, DocumentsBrokerClie
 				}
 				}
 
+			}
+
+			private void createUpdateDocument(Document temp) {
+				
+				System.out.println("ANDO AQUI ID: " + temp.id);
+				
+				if(temp.id == null){
+					broker.createDocument(temp, new ResponseHandler<Document>() {
+						
+						@Override
+						public void onResponse(Document response) {
+							EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Documento criado com sucesso."), TYPE.TRAY_NOTIFICATION));
+							doc = response;
+							setDocument(doc);
+							view.setSaveMode(false);
+							System.out.println("TESTE");
+							
+						}
+						
+						@Override
+						public void onError(Collection<ResponseError> errors) {
+							EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Erro ao criar o ficheiro."), TYPE.ALERT_NOTIFICATION));
+							view.setSaveMode(true);
+						}
+					});
+				}
+				
+				else
+				{
+					broker.updateDocument(temp, new ResponseHandler<Document>() {
+						
+						@Override
+						public void onResponse(Document response) {
+							EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Documento gravado com sucesso."), TYPE.TRAY_NOTIFICATION));
+							doc = response;
+							setDocument(doc);
+							view.setSaveMode(false);
+							System.out.println("TESTE");
+							
+						}
+						
+						@Override
+						public void onError(Collection<ResponseError> errors) {
+							EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Erro ao gravar o ficheiro."), TYPE.ALERT_NOTIFICATION));
+							view.setSaveMode(true);
+						}
+					});
+				}
+				
 			}
 
 			private Document getDocument() {
@@ -323,9 +368,12 @@ public class DocumentViewPresenter implements ViewPresenter, DocumentsBrokerClie
 		if(doc.fileStorageId != null){
 			view.getFileNote().createNewFile();
 			view.getFileNote().setDocumentFile(doc);
-		}else{
+		}else if (doc.text != null){
 			view.getFileNote().createNewNote();
 			view.getFileNote().setDocumentNote(doc);
+		}
+		else{
+			view.getFileNote().generateNewDocument();
 		}
 		view.setValue(doc);
 		this.doc = doc;
@@ -338,6 +386,7 @@ public class DocumentViewPresenter implements ViewPresenter, DocumentsBrokerClie
 		}
 		view.addDetail(null);
 		view.setEditable(false);
+
 	}
 
 
@@ -358,7 +407,7 @@ public class DocumentViewPresenter implements ViewPresenter, DocumentsBrokerClie
 
 	@Override
 	public void setDataVersionNumber(String dataElementId, int number) {
-		
+
 		versionNumber = number;
 
 	}
@@ -371,40 +420,40 @@ public class DocumentViewPresenter implements ViewPresenter, DocumentsBrokerClie
 
 	@Override
 	public int getDocumentsDataVersionNumber(String ownerId) {
-		
+
 		return versionNumber;
 	}
 
 	@Override
 	public void setDocumentsDataVersionNumber(String ownerId, int number) {
-		
+
 		versionNumber = number;
 
 	}
 
 	@Override
 	public void setDocuments(String ownerId, java.util.List<Document> documents) {
-		
+
 		return;
 
 	}
 
 	@Override
 	public void removeDocument(String ownerId, Document document) {
-		
+
 		NavigationHistoryItem navig = null;
 
 	}
 
 	@Override
 	public void addDocument(String ownerId, Document document) {
-		
+
 		return;
 	}
 
 	@Override
 	public void updateDocument(String ownerId, Document document) {
-		
+
 		if(doc.id.equalsIgnoreCase(document.id)){
 			NavigationHistoryManager.getInstance().reload();
 		}
