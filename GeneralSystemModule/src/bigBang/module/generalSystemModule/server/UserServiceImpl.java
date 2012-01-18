@@ -8,6 +8,7 @@ import Jewel.Engine.Engine;
 import Jewel.Engine.Constants.ObjectGUIDs;
 import Jewel.Engine.DataAccess.MasterDB;
 import Jewel.Engine.Implementation.Entity;
+import Jewel.Engine.Implementation.Profile;
 import Jewel.Engine.Security.Password;
 import Jewel.Engine.SysObjects.ObjectBase;
 import bigBang.definitions.shared.User;
@@ -186,6 +187,14 @@ public class UserServiceImpl
 
 		user.id = lopMU.marrCreate[0].mid.toString();
 		user.decoId = lopMU.marrCreate[0].midDecorations.toString();
+		try
+		{
+			user.profile.name = Profile.GetInstance(Engine.getCurrentNameSpace(), lopMU.marrCreate[0].midProfile).getLabel();
+		}
+		catch (Throwable e)
+		{
+			user.profile.name = "(Erro a obter o nome do perfil.)";
+		}
 		user.password = null;
 
 		return user;
