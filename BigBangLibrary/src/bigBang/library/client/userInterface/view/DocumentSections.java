@@ -271,12 +271,15 @@ public abstract class DocumentSections{
 			getNote().setVisible(false);
 			charRemainP.setVisible(false);
 			
-			isFile.setHeight("80px");
-			isFile.setWidth("80px");
+			isFile.setHeight("90px");
+			isFile.setWidth("90px");
 			
-			isText.setHeight("80px");
-			isText.setWidth("80px");
+			isText.setHeight("90px");
+			isText.setWidth("90px");
 			
+			isFile.setVisible(true);
+			isText.setVisible(true);
+			buttonsFileorNote.setVisible(true);
 
 			
 		}
@@ -381,6 +384,8 @@ public abstract class DocumentSections{
 			
 				isFile.setEnabled(b);
 				isText.setEnabled(b);
+				
+				
 			if(!isFileBoolean()){
 				getNote().setReadOnly(!b);
 				changeToFile.setVisible(b);
@@ -395,6 +400,12 @@ public abstract class DocumentSections{
 				changeToNote.setVisible(b);
 				removeFile.setVisible(false);
 			}
+			
+			if(isFile.isVisible()){
+				changeToNote.setVisible(false);
+				changeToFile.setVisible(false);
+			}
+
 		}
 
 		public void removeFile() {
@@ -558,15 +569,17 @@ public abstract class DocumentSections{
 
 		public void setEditable(boolean b) {
 
-				for(int i = 0; i<details.size()-1; i++){
-					
-					((DocumentDetailEntry)details.get(i)).getInfo().setReadOnly(!b);
-					((DocumentDetailEntry)details.get(i)).getInfoValue().setReadOnly(!b);
-					((DocumentDetailEntry)details.get(i)).remove.setVisible(b);
+			if(details.size() > 1){
+					for(int i = 0; i<details.size()-1; i++){
+						
+						((DocumentDetailEntry)details.get(i)).getInfo().setReadOnly(!b);
+						((DocumentDetailEntry)details.get(i)).getInfoValue().setReadOnly(!b);
+						((DocumentDetailEntry)details.get(i)).remove.setVisible(b);
+					}
+		
+					details.get(details.size()-1).setVisible(b);
 				}
-	
-				details.get(details.size()-1).setVisible(b);
-			}
+		}
 			
 			
 		
