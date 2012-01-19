@@ -29,6 +29,7 @@ import bigBang.library.client.userInterface.view.ContactView;
 import bigBang.library.client.userInterface.view.ContactView.ContactEntry;
 
 import com.google.gwt.user.client.ui.HasWidgets;
+import com.google.gwt.user.client.ui.MenuItem;
 import com.google.gwt.user.client.ui.UIObject;
 import com.google.gwt.user.client.ui.Widget;
 
@@ -76,7 +77,7 @@ public class ContactViewPresenter implements ViewPresenter, ContactsBrokerClient
 		public void registerDeleteHandler(
 				DeleteRequestEventHandler deleteRequestEventHandler);
 		BigBangOperationsToolBar getToolbar();
-		public void enableDelete(boolean b);
+		public MenuItem getDelete();
 	}
 
 	public void setContact(Contact contact){
@@ -84,7 +85,6 @@ public class ContactViewPresenter implements ViewPresenter, ContactsBrokerClient
 		if(contact == null){
 			view.addContactInfo(null);
 			view.setSaveMode(true);
-			view.enableDelete(false);
 			return;
 		}
 		this.contact = contact;
@@ -130,7 +130,7 @@ public class ContactViewPresenter implements ViewPresenter, ContactsBrokerClient
 		if(ownerId == null){
 			EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não é possível mostrar um contacto sem cliente associado."), TYPE.ALERT_NOTIFICATION));
 			view.getToolbar().lockAll();
-			view.enableDelete(false);
+			view.getDelete().setEnabled(false);
 			view.setContact(null);
 			view.setEditable(false);
 			return;
@@ -146,6 +146,7 @@ public class ContactViewPresenter implements ViewPresenter, ContactsBrokerClient
 				else{
 					EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não é possível criar o contacto."), TYPE.ALERT_NOTIFICATION));
 					view.getToolbar().lockAll();
+					view.getDelete().setEnabled(false);
 					view.setContact(null);
 					view.setEditable(false);
 				}
@@ -154,6 +155,7 @@ public class ContactViewPresenter implements ViewPresenter, ContactsBrokerClient
 			{
 				if(!hasPermissions){
 					view.getToolbar().lockAll();
+					view.getDelete().setEnabled(false);
 				}
 				broker.refreshContactsForOwner(ownerId, new ResponseHandler<Void>() {
 
@@ -167,7 +169,6 @@ public class ContactViewPresenter implements ViewPresenter, ContactsBrokerClient
 								contact = response;
 								setContact(contact);
 								view.getToolbar().setSaveModeEnabled(false);
-								view.enableDelete(false);
 
 							}
 
@@ -272,14 +273,13 @@ public class ContactViewPresenter implements ViewPresenter, ContactsBrokerClient
 						navig.removeParameter("ownertypeid");
 						navig.removeParameter("editpermission");
 						NavigationHistoryManager.getInstance().go(navig);
-						EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Documento eliminado com sucesso."), TYPE.TRAY_NOTIFICATION));
+						EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Contacto eliminado com sucesso."), TYPE.TRAY_NOTIFICATION));
 					}
 
 					@Override
 					public void onError(Collection<ResponseError> errors) {
-						EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não foi possível eliminar o documento."), TYPE.ALERT_NOTIFICATION));
+						EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não foi possível eliminar o contacto."), TYPE.ALERT_NOTIFICATION));
 						view.setSaveMode(true);
-						view.enableDelete(true);
 					}
 					
 				
@@ -307,7 +307,6 @@ public class ContactViewPresenter implements ViewPresenter, ContactsBrokerClient
 						public void onError(Collection<ResponseError> errors) {
 							EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não foi possível criar o contacto."), TYPE.ALERT_NOTIFICATION));
 							view.setSaveMode(true);
-							view.enableDelete(true);
 						}
 					});
 				}

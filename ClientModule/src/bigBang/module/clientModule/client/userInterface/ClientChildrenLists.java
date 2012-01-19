@@ -82,6 +82,20 @@ public class ClientChildrenLists {
 			discardOwner();
 			if(ownerId != null){
 				this.broker.registerClient(this, ownerId);
+				this.broker.refreshContactsForOwner(ownerId, new ResponseHandler<Void>() {
+
+							@Override
+							public void onResponse(Void response) {
+								// TODO Auto-generated method stub
+								
+							}
+
+							@Override
+							public void onError(Collection<ResponseError> errors) {
+								// TODO Auto-generated method stub
+								
+							}
+				});
 			}
 			this.ownerId = ownerId;
 		}

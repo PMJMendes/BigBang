@@ -154,8 +154,6 @@ public class ContactView extends View implements ContactViewPresenter.Display{
 				fireAction(Action.CREATE_CHILD_CONTACT);
 			}
 		}));
-		toolbar.addItem(delete);
-		delete.setEnabled(false);
 		toolbar.setHeight("21px");
 		toolbar.setWidth("100%");
 
@@ -175,8 +173,9 @@ public class ContactView extends View implements ContactViewPresenter.Display{
 				}
 			}
 		});
+		
 		childContactsButton.setHeight("40px");
-
+		toolbar.addItem(delete);
 
 		HorizontalPanel horz = new HorizontalPanel();
 		horz.add(type);
@@ -260,7 +259,6 @@ public class ContactView extends View implements ContactViewPresenter.Display{
 			temp.setEditable(editable);
 			
 		}
-
 	}
 
 	@Override
@@ -307,6 +305,12 @@ public class ContactView extends View implements ContactViewPresenter.Display{
 	@Override
 	public void setSaveMode(boolean b) {
 		toolbar.setSaveModeEnabled(b);
+		delete.setEnabled(b);
+	}
+
+	@Override
+	public MenuItem getDelete() {
+		return delete;
 	}
 
 	@Override
@@ -319,12 +323,6 @@ public class ContactView extends View implements ContactViewPresenter.Display{
 	@Override
 	public BigBangOperationsToolBar getToolbar(){
 		return toolbar;
-	}
-
-	@Override
-	public void enableDelete(boolean b) {
-		delete.setEnabled(b);
-		
 	}
 
 }

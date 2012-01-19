@@ -251,8 +251,8 @@ public class ClientSearchOperationViewPresenter implements ViewPresenter {
 			@Override
 			public void onSelectionChanged(SelectionChangedEvent event) {
 				@SuppressWarnings("unchecked")
-				ValueSelectable<HistoryItemStub> selected = (ValueSelectable<HistoryItemStub>) event.getFirstSelected();
-				HistoryItemStub item = selected == null ? null : selected.getValue();
+				ValueSelectable<Contact> selected = (ValueSelectable<Contact>) event.getFirstSelected();
+				Contact item = selected == null ? null : selected.getValue();
 				String itemId = item == null ? null : item.id;
 				itemId = itemId == null ? new String() : itemId;
 				
