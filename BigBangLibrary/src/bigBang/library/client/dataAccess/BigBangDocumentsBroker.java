@@ -253,6 +253,7 @@ public class BigBangDocumentsBroker extends DataBroker<Document> implements Docu
 				documentsList.add(result);
 				incrementDataVersion(result.ownerId);
 				updateClients(result.ownerId);
+				handler.onResponse(result);
 			}
 			
 			@Override
@@ -281,6 +282,7 @@ public class BigBangDocumentsBroker extends DataBroker<Document> implements Docu
 					}
 				}
 				updateClients(result.ownerId);
+				handler.onResponse(result);
 			}
 			
 			@Override
