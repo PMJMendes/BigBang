@@ -22,12 +22,14 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.resources.client.ImageResource;
+import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.FileUpload;
 import com.google.gwt.user.client.ui.HasVerticalAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.MenuItem;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
 
@@ -40,12 +42,24 @@ public abstract class DocumentSections{
 		private ExpandableListBoxFormField docType;
 		Document doc = new Document();
 		ActionInvokedEventHandler<Action> actionHandler;
+		
+		
 		BigBangOperationsToolBar toolbar;
+		MenuItem delete;
 		
 		public GeneralInfoSection(){
 
+			delete = new MenuItem("Eliminar", new Command() {
+				
+				@Override
+				public void execute() {
+					fireAction(Action.DELETE);
+					
+				}
+			});
+			
 			toolbar = new BigBangOperationsToolBar(){
-
+				
 				@Override
 				public void onEditRequest() {
 					fireAction(Action.EDIT);
@@ -61,16 +75,24 @@ public abstract class DocumentSections{
 				public void onCancelRequest() {
 					fireAction(Action.CANCEL);
 				}
+				
+				@Override
+				public void setSaveModeEnabled(boolean enabled) {
+					super.setSaveModeEnabled(enabled);
+					delete.setEnabled(enabled);
+				}
 
 			};
-			
-			
+	
 			wrapper = new VerticalPanel();
 			initWidget(wrapper);
 			wrapper.setWidth("100%");
 			toolbar.hideAll();
 			toolbar.showItem(SUB_MENU.EDIT, true);
-			
+			toolbar.addItem(delete);
+			delete.getElement().getStyle().setProperty("textAlign", "center");
+			delete.setEnabled(false);
+			//delete.setVisible(false);
 			toolbar.setHeight("21px");
 			toolbar.setWidth("100%");
 			wrapper.add(toolbar);
@@ -133,6 +155,10 @@ public abstract class DocumentSections{
 
 		public void setDocType(ExpandableListBoxFormField docType) {
 			this.docType = docType;
+		}
+
+		public void enableDelete(boolean b) {
+			delete.setEnabled(b);
 		}
 
 	}

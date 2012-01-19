@@ -60,12 +60,13 @@ public class DocumentView extends View implements DocumentViewPresenter.Display{
 	@Override
 	public void createNewFile() {
 		middle.createNewFile();
-
+		top.delete.setEnabled(false);
 	}
 
 	@Override
 	public void createNewNote() {
 		middle.createNewNote();
+		top.delete.setEnabled(false);
 
 	}
 

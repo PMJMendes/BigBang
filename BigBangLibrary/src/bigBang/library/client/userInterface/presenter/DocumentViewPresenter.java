@@ -40,13 +40,20 @@ public class DocumentViewPresenter implements ViewPresenter, DocumentsBrokerClie
 	private int versionNumber;
 	private String ownerId;
 	private String documentId;
+	private String ownerTypeId;
 
 	public static enum Action {
 		SAVE,
 		EDIT,
 		CANCEL,
 		NEW_FILE,
-		NEW_NOTE, CHANGE_TO_FILE, CHANGE_TO_NOTE, ADD_NEW_DETAIL, REMOVE_FILE, DELETE_DETAIL
+		NEW_NOTE, 
+		CHANGE_TO_FILE, 
+		CHANGE_TO_NOTE, 
+		ADD_NEW_DETAIL, 
+		REMOVE_FILE, 
+		DELETE_DETAIL, 
+		DELETE
 	}
 
 	public DocumentViewPresenter(Display view){
@@ -95,6 +102,7 @@ public class DocumentViewPresenter implements ViewPresenter, DocumentsBrokerClie
 
 		ownerId = parameterHolder.getParameter("id");
 		documentId = parameterHolder.getParameter("documentid");
+		ownerTypeId = parameterHolder.getParameter("ownertypeid");
 		boolean hasPermissions = parameterHolder.getParameter("editpermission") != null;
 
 		if(ownerId == null){
@@ -137,41 +145,11 @@ public class DocumentViewPresenter implements ViewPresenter, DocumentsBrokerClie
 			});
 
 		}
-		//OWNER ID OBRIGATORIO
-		//if docid == null && hasPermissions, new doc
-		//else
-		//erro - Não é possivel criar ou editar o documento.
-
-
-		//idOwner = idOwner == null ? new String() : idOwner;
-		//idDoc = idDoc == null ? new String() : idDoc;
-
+		
 		if(!hasPermissions){
 			view.getGeneralInfo().getToolbar().lockAll();
 		}
 
-		//		broker.getDocument(id, new ResponseHandler<Document>() {
-		//			
-		//			@Override
-		//			public void onResponse(Document response) {
-		//				// TODO Auto-generated method stub
-		//				
-		//			}
-		//			
-		//			@Override
-		//			public void onError(Collection<ResponseError> errors) {
-		//				// TODO Auto-generated method stub
-		//				
-		//			}
-		//		});
-		//		
-		//		if(groupId.isEmpty()){
-		//			clearView();
-		//		}else if(groupId.equalsIgnoreCase("new")){
-		//			setupNewClientGroup();
-		//		}else{
-		//			showClientGroup(groupId);
-		//		}
 	}
 
 	private void bind() {
@@ -246,7 +224,7 @@ public class DocumentViewPresenter implements ViewPresenter, DocumentsBrokerClie
 					view.createNewNote();
 					break;
 				}
-				case  ADD_NEW_DETAIL:{
+				case ADD_NEW_DETAIL:{
 					addDetail();
 					break;
 				}
@@ -254,15 +232,44 @@ public class DocumentViewPresenter implements ViewPresenter, DocumentsBrokerClie
 					removeFile();
 					break;
 				}
+				case DELETE:{
+					removeDocument();
+					break;
+				}
 				}
 
 			}
 
+			private void removeDocument() {
+				
+				broker.deleteDocument(documentId, new ResponseHandler<Void>() {
+
+					@Override
+					public void onResponse(Void response) {
+						NavigationHistoryItem navig = NavigationHistoryManager.getInstance().getCurrentState();
+						navig.removeParameter("documentid");
+						navig.removeParameter("operation");
+						NavigationHistoryManager.getInstance().go(navig);
+						EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Documento eliminado com sucesso."), TYPE.TRAY_NOTIFICATION));
+					}
+
+					@Override
+					public void onError(Collection<ResponseError> errors) {
+						EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não foi possível eliminar o documento."), TYPE.ALERT_NOTIFICATION));
+						view.setSaveMode(true);
+					}
+					
+				
+				});
+				
+			}
+
 			private void createUpdateDocument(Document temp) {
 				
-				System.out.println("ANDO AQUI ID: " + temp.id);
-				
 				if(temp.id == null){
+					
+					temp.ownerId = ownerId;
+					temp.ownerTypeId = ownerTypeId;
 					broker.createDocument(temp, new ResponseHandler<Document>() {
 						
 						@Override
@@ -271,13 +278,11 @@ public class DocumentViewPresenter implements ViewPresenter, DocumentsBrokerClie
 							doc = response;
 							setDocument(doc);
 							view.setSaveMode(false);
-							System.out.println("TESTE");
-							
 						}
 						
 						@Override
 						public void onError(Collection<ResponseError> errors) {
-							EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Erro ao criar o ficheiro."), TYPE.ALERT_NOTIFICATION));
+							EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não foi possível criar o documento."), TYPE.ALERT_NOTIFICATION));
 							view.setSaveMode(true);
 						}
 					});
@@ -293,13 +298,12 @@ public class DocumentViewPresenter implements ViewPresenter, DocumentsBrokerClie
 							doc = response;
 							setDocument(doc);
 							view.setSaveMode(false);
-							System.out.println("TESTE");
 							
 						}
 						
 						@Override
 						public void onError(Collection<ResponseError> errors) {
-							EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Erro ao gravar o ficheiro."), TYPE.ALERT_NOTIFICATION));
+							EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não foi possível gravar o documento."), TYPE.ALERT_NOTIFICATION));
 							view.setSaveMode(true);
 						}
 					});
@@ -360,6 +364,7 @@ public class DocumentViewPresenter implements ViewPresenter, DocumentsBrokerClie
 
 		if(doc == null){
 			view.getFileNote().generateNewDocument();
+			view.getGeneralInfo().enableDelete(false);
 			view.addDetail(null);
 			view.setSaveMode(true);
 			return;
