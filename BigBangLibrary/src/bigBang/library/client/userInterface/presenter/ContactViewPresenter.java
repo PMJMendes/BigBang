@@ -24,6 +24,7 @@ import bigBang.library.client.history.NavigationHistoryItem;
 import bigBang.library.client.history.NavigationHistoryManager;
 import bigBang.library.client.userInterface.BigBangOperationsToolBar;
 import bigBang.library.client.userInterface.List;
+import bigBang.library.client.userInterface.presenter.DocumentViewPresenter.Display;
 import bigBang.library.client.userInterface.view.ContactView;
 import bigBang.library.client.userInterface.view.ContactView.ContactEntry;
 
@@ -52,7 +53,7 @@ public class ContactViewPresenter implements ViewPresenter, ContactsBrokerClient
 		DELETE_DETAIL
 	}
 
-	public ContactViewPresenter(){
+	public ContactViewPresenter(Display view){
 
 		broker = (ContactsBroker)DataBrokerManager.staticGetBroker(BigBangConstants.EntityIds.CONTACT);
 		this.setView((UIObject) view);
