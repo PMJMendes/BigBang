@@ -322,7 +322,7 @@ public class ContactView_OLD extends View implements ContactsBrokerClient {
 	}
 
 	@Override
-	public void removeContact(String ownerId, Contact contact) {
+	public void removeContact(String ownerId, String contactId) {
 		if(this.contact == null || contact == null) {
 			return;
 		}

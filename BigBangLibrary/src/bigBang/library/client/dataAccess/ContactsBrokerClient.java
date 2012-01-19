@@ -27,9 +27,9 @@ public interface ContactsBrokerClient extends DataBrokerClient<Contact> {
 	/**
 	 * Indicates that the client should remove the contact if it is cached.
 	 * @param ownerId The id of the owner of the contacts
-	 * @param contact the item to remove
+	 * @param contactId the item to remove
 	 */
-	public void removeContact(String ownerId, Contact contact);
+	public void removeContact(String ownerId, String contactId);
 	
 	/**
 	 * Indicates that the client should take notice of a new contact

@@ -73,11 +73,10 @@ public interface ContactsBroker {
 	
 	/**
 	 * Gets a contact from a specified owner
-	 * @param ownerId The id of the owner of the contact
 	 * @param contactId The id of the contact to fetch
 	 * @param handler The handler to be notified on response
 	 */
-	public void getContact(String ownerId, String contactId, ResponseHandler<Contact> handler);
+	public void getContact(String contactId, ResponseHandler<Contact> handler);
 	
 	/**
 	 * Gets all contacts from a specified owner
@@ -88,31 +87,22 @@ public interface ContactsBroker {
 	
 	/**
 	 * Adds a contact to a specified owner
-	 * @param processId The id of the process
-	 * @param opId The id of the operation
-	 * @param ownerId The id of the owner of the contact
 	 * @param contact The contact to add
 	 * @param handler The handler to be notified on response
 	 */
-	public void addContact(String processId, String opId, String ownerId, Contact contact, ResponseHandler<Contact> handler);
+	public void addContact(Contact contact, ResponseHandler<Contact> handler);
 	
 	/**
 	 * Updates a contact for a given owner
-	 * @param processId The id of the process
-	 * @param opId The id of the operation
-	 * @param ownerId The id of the owner of the contact
 	 * @param contact The contact to be updated
 	 * @param handler The handler to be notified on response
 	 */
-	public void updateContact(String processId, String opId, String ownerId, Contact contact, ResponseHandler<Contact> handler);
+	public void updateContact(Contact contact, ResponseHandler<Contact> handler);
 	
 	/**
 	 * Removes a contact from a specifed owner
-	 * @param processId The id of the process
-	 * @param opId The id of the operation
-	 * @param ownerId The id of the owner of the contact
 	 * @param contactId The id of the contact to be removed
 	 * @param handler The handler to be notified on response
 	 */
-	public void removeContact(String processId, String opId, String ownerId, String contactId, ResponseHandler<Contact> handler);
+	public void removeContact(String contactId, ResponseHandler<Void> handler);
 }

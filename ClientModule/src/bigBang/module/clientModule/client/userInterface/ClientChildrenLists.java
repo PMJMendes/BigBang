@@ -132,10 +132,10 @@ public class ClientChildrenLists {
 		}
 
 		@Override
-		public void removeContact(String ownerId, Contact contact) {
+		public void removeContact(String ownerId, String contactId) {
 			if(ownerId == null){
 				for(ValueSelectable<Contact> s : this) {
-					if(s.getValue().id.equalsIgnoreCase(contact.id)){
+					if(s.getValue().id.equalsIgnoreCase(contactId)){
 						remove(s);
 					}
 				}

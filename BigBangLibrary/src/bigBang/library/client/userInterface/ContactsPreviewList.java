@@ -168,10 +168,10 @@ public class ContactsPreviewList extends FilterableList<Contact> implements Cont
 	}
 
 	@Override
-	public void removeContact(String ownerId, Contact contact) {
+	public void removeContact(String ownerId, String contactId) {
 		if(ownerId.equalsIgnoreCase(this.contactOwner)){
 			for(ValueSelectable<Contact> c : this) {
-				if(c.getValue().id.equalsIgnoreCase(contact.id)){
+				if(c.getValue().id.equalsIgnoreCase(contactId)){
 					remove(c);
 					break;
 				}

@@ -117,6 +117,7 @@ public class BigBangContactsListBroker extends DataBroker<Contact> implements Co
 			List<ContactsBrokerClient> clientList = clients.get(ownerId);
 			if(clientList.contains(client)){
 				unregisterClient(client, ownerId);
+				continue;
 			}
 		}
 	}
@@ -169,36 +170,26 @@ public class BigBangContactsListBroker extends DataBroker<Contact> implements Co
 	}
 
 	protected boolean requiresDataRefresh(String ownerId){
+		if(!dataRefreshRequirements.containsKey(ownerId)){
+			throw new RuntimeException("The contacts for the owner with id " + ownerId + " are not being managed by this broker.");
+		}
 		return this.dataRefreshRequirements.get(ownerId);
 	}
 
 	@Override
-	public void getContact(final String ownerId, final String contactId,
+	public void getContact(final String contactId,
 			final ResponseHandler<Contact> handler) {
-		if(!clients.containsKey(ownerId)){
-			throw new RuntimeException("The contacts for the owner with id " + ownerId + " are not being managed by this broker.");
-		}
-		if(requiresDataRefresh(ownerId)){
-			getContacts(ownerId, new ResponseHandler<List<Contact>>() {
-				@Override
-				public void onResponse(List<Contact> response) {
-					getContact(ownerId, contactId, handler);
-				}
-
-				@Override
-				public void onError(Collection<ResponseError> errors) {
-					handler.onError(errors);
-				}
-			});
-		}else{
-			Collection<Contact> contactsCollection = contacts.get(ownerId);
-			for(Contact c : contactsCollection) {
-				if(c.id.equalsIgnoreCase(contactId)){
-					handler.onResponse(c);
+		for(Collection<Contact> collection : this.contacts.values()){
+			for(Contact contact : collection){
+				if(contactId.equalsIgnoreCase(contact.id)){
+					handler.onResponse(contact);
 					return;
 				}
 			}
 		}
+		handler.onError(new String[]{
+			new String("Cannot get the requested contact")	
+		});
 	}
 
 	@Override
@@ -220,6 +211,14 @@ public class BigBangContactsListBroker extends DataBroker<Contact> implements Co
 					updateClients(ownerId);
 					handler.onResponse(contactsList);
 				}
+				
+				@Override
+				public void onFailure(Throwable caught) {
+					handler.onError(new String[]{
+						new String("Cannot get the contacts for the specified owner")	
+					});
+					super.onFailure(caught);
+				}
 			});
 		}else{
 			handler.onResponse(contacts.get(ownerId));
@@ -227,103 +226,101 @@ public class BigBangContactsListBroker extends DataBroker<Contact> implements Co
 	}
 
 	@Override
-	public void addContact(String processId, String opId, final String ownerId, Contact contact,
+	public void addContact(Contact contact,
 			final ResponseHandler<Contact> handler) {
-		if(!clients.containsKey(ownerId)){
-			throw new RuntimeException("The contacts for the owner with id " + ownerId + " are not being managed by this broker.");
+		if(!clients.containsKey(contact.ownerId)){
+			throw new RuntimeException("The contacts for the owner with id " + contact.ownerId + " are not being managed by this broker.");
 		}
-//		service.createContact(processId, opId, contact, new BigBangAsyncCallback<Contact>() {
-//
-//			@Override
-//			public void onSuccess(Contact result) {
-//				List<Contact> contactsList = contacts.get(ownerId);
-//				contactsList.add(result);
-//				int currentVersion = dataVersions.get(ownerId);
-//				int newVersion = incrementDataVersion(ownerId);
-//				for(ContactsBrokerClient c : clients.get(ownerId)) {
-//					if(c.getContactsDataVersionNumber(ownerId) != currentVersion) {
-//						updateClient(ownerId, c);
-//					}
-//					c.addContact(ownerId, result);
-//					c.setContactsDataVersionNumber(ownerId, newVersion);					
-//				}
-//				handler.onResponse(result);
-//			}
-//			@Override
-//			public void onFailure(Throwable caught) {
-//				handler.onError(new String[]{caught.getMessage()});
-//				super.onFailure(caught);
-//			}
-//		});
-	}
+		service.createContact(contact, new BigBangAsyncCallback<Contact>() {
 
-	@Override
-	public void updateContact(String processId, String opId, final String ownerId, Contact contact,
-			final ResponseHandler<Contact> handler) {
-		if(!clients.containsKey(ownerId)){
-			throw new RuntimeException("The contacts for the owner with id " + ownerId + " are not being managed by this broker.");
-		}
-//		service.saveContact(processId, opId, contact, new BigBangAsyncCallback<Contact>() {
-//			@Override
-//			public void onSuccess(Contact result) {
-//				List<Contact> contactsList = contacts.get(ownerId);
-//				contactsList.add(result);
-//				int currentVersion = dataVersions.get(ownerId);
-//				int newVersion = incrementDataVersion(ownerId);
-//				for(ContactsBrokerClient c : clients.get(ownerId)) {
-//					if(c.getContactsDataVersionNumber(ownerId) != currentVersion) {
-//						updateClient(ownerId, c);
-//					}
-//					c.updateContact(ownerId, result);
-//					c.setContactsDataVersionNumber(ownerId, newVersion);					
-//				}
-//				handler.onResponse(result);
-//			}
-//			@Override
-//			public void onFailure(Throwable caught) {
-//				handler.onError(new String[]{caught.getMessage()});
-//				super.onFailure(caught);
-//			}
-//		});
-	}
-
-	@Override
-	public void removeContact(String processId, String opId, final String ownerId, String contactId,
-			final ResponseHandler<Contact> handler) {
-		if(!clients.containsKey(ownerId)){
-			throw new RuntimeException("The contacts for the owner with id " + ownerId + " are not being managed by this broker.");
-		}
-		Contact tempContact = null;
-		for(Contact c : contacts.get(ownerId)){
-			if(c.id.equalsIgnoreCase(contactId)){
-				tempContact = c;
-				break;
+			@Override
+			public void onSuccess(Contact result) {
+				List<Contact> contactsList = contacts.get(result.ownerId);
+				contactsList.add(result);
+				incrementDataVersion(result.ownerId);
+				for(ContactsBrokerClient c : clients.get(result.ownerId)) {
+					c.addContact(result.ownerId, result);
+					c.setContactsDataVersionNumber(result.ownerId, getCurrentDataVersion(result.ownerId));					
+				}
+				handler.onResponse(result);
 			}
+			@Override
+			public void onFailure(Throwable caught) {
+				handler.onError(new String[]{
+						new String("Could not create the contact")
+				});
+				super.onFailure(caught);
+			}
+		});
+	}
+
+	@Override
+	public void updateContact(Contact contact, final ResponseHandler<Contact> handler) {
+		if(!clients.containsKey(contact.ownerId)){
+			throw new RuntimeException("The contacts for the owner with id " + contact.ownerId + " are not being managed by this broker.");
 		}
-		//final Contact contact = tempContact;
-//		service.deleteContact(processId, opId, contact, new BigBangAsyncCallback<Void>() {
-//
-//			@Override
-//			public void onSuccess(Void v) {
-//				List<Contact> contactsList = contacts.get(ownerId);
-//				contactsList.add(contact);
-//				int currentVersion = dataVersions.get(ownerId);
-//				int newVersion = incrementDataVersion(ownerId);
-//				for(ContactsBrokerClient c : clients.get(ownerId)) {
-//					if(c.getContactsDataVersionNumber(ownerId) != currentVersion) {
-//						updateClient(ownerId, c);
-//					}
-//					c.updateContact(ownerId, contact);
-//					c.setContactsDataVersionNumber(ownerId, newVersion);					
-//				}
-//				handler.onResponse(contact);
-//			}
-//			@Override
-//			public void onFailure(Throwable caught) {
-//				handler.onError(new String[]{caught.getMessage()});
-//				super.onFailure(caught);
-//			}
-//		});
+		service.saveContact(contact, new BigBangAsyncCallback<Contact>() {
+			@Override
+			public void onSuccess(Contact result) {
+				String ownerId = result.ownerId;
+				List<Contact> contactsList = contacts.get(ownerId);
+				for(Contact contact : contactsList){
+					if(contact.id.equalsIgnoreCase(result.id)){
+						int index = contactsList.indexOf(contact);
+						contactsList.remove(index);
+						contactsList.add(index, contact);
+						break;
+					}
+				}
+				incrementDataVersion(ownerId);
+				for(ContactsBrokerClient c : clients.get(ownerId)) {
+					c.updateContact(ownerId, result);
+					c.setContactsDataVersionNumber(ownerId, getCurrentDataVersion(ownerId));					
+				}
+				handler.onResponse(result);
+			}
+			@Override
+			public void onFailure(Throwable caught) {
+				handler.onError(new String[]{
+						new String("Could not updade the contact")
+				});
+				super.onFailure(caught);
+			}
+		});
+	}
+
+	@Override
+	public void removeContact(final String contactId,
+			final ResponseHandler<Void> handler) {
+		service.deleteContact(contactId, new BigBangAsyncCallback<Void>() {
+
+			@Override
+			public void onSuccess(Void v) {
+				String ownerId = null;
+				for(Collection<Contact> collection : contacts.values()){
+					for(Contact contact : collection) {
+						if(contact.id.equalsIgnoreCase(contactId)){
+							ownerId = contact.ownerId;
+							collection.remove(contact);
+							break;
+						}
+					}
+				}
+				incrementDataVersion();
+				for(ContactsBrokerClient c : clients.get(ownerId)) {
+					c.removeContact(ownerId, contactId);
+					c.setContactsDataVersionNumber(ownerId, getCurrentDataVersion(ownerId));					
+				}
+				handler.onResponse(null);
+			}
+			@Override
+			public void onFailure(Throwable caught) {
+				handler.onError(new String[]{
+						new String("Could not delete the contact")
+				});
+				super.onFailure(caught);
+			}
+		});
 	}
 
 	/**

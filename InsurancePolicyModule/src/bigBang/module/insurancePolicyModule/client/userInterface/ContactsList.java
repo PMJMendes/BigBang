@@ -64,9 +64,9 @@ public class ContactsList extends FilterableList<Contact> implements ContactsBro
 	}
 
 	@Override
-	public void removeContact(String ownerId, Contact contact) {
+	public void removeContact(String ownerId, String contactId) {
 		for(ValueSelectable<Contact> vs : this){
-			if(vs.getValue().id.equalsIgnoreCase(contact.id)){
+			if(vs.getValue().id.equalsIgnoreCase(contactId)){
 				remove(vs);
 				break;
 			}
