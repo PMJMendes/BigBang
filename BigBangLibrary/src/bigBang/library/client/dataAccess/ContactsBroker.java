@@ -105,4 +105,7 @@ public interface ContactsBroker {
 	 * @param handler The handler to be notified on response
 	 */
 	public void removeContact(String contactId, ResponseHandler<Void> handler);
+	
+	public void refreshContactsForOwner(String ownerId, ResponseHandler<Void> handler);
+	
 }

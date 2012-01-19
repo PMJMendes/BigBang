@@ -94,17 +94,6 @@ public class BigBangContactsListBroker extends DataBroker<Contact> implements Co
 			contacts.put(ownerId, new ArrayList<Contact>());
 			requireDataRefresh(ownerId);
 			dataVersions.put(ownerId, NO_DATA_VERSION);	
-			getContacts(ownerId, new ResponseHandler<List<Contact>>() {
-
-				@Override
-				public void onResponse(List<Contact> response) {
-					clients.get(ownerId).add(client);
-					updateClient(ownerId, client);
-				}
-
-				@Override
-				public void onError(Collection<ResponseError> errors) {}
-			});
 		}else{
 			clients.get(ownerId).add(client);
 			updateClient(ownerId, client);
@@ -189,6 +178,25 @@ public class BigBangContactsListBroker extends DataBroker<Contact> implements Co
 		}
 		handler.onError(new String[]{
 			new String("Cannot get the requested contact")	
+		});
+	}
+	
+	@Override
+	public void refreshContactsForOwner(String ownerId,
+			final ResponseHandler<Void> handler) {
+		getContacts(ownerId, new ResponseHandler<List<Contact>>() {
+
+			@Override
+			public void onResponse(List<Contact> response) {
+				handler.onResponse(null);
+			}
+
+			@Override
+			public void onError(Collection<ResponseError> errors) {
+				handler.onError(new String[]{
+						new String("Could not refersh contacts list")
+				});
+			}
 		});
 	}
 
