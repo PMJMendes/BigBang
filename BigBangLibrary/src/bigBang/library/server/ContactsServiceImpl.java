@@ -57,26 +57,39 @@ public class ContactsServiceImpl
 			larrResult[i].mstrName = parrContacts[i].name;
 			larrResult[i].midOwnerType = UUID.fromString(parrContacts[i].ownerTypeId);
 			larrResult[i].midOwnerId = (parrContacts[i].ownerId == null ? null : UUID.fromString(parrContacts[i].ownerId));
-			if ( parrContacts[i].address != null )
-			{
-				larrResult[i].mstrAddress1 = parrContacts[i].address.street1;
-				larrResult[i].mstrAddress2 = parrContacts[i].address.street2;
-				try
-				{
-					larrResult[i].midZipCode = ZipCodeBridge.GetZipCode(parrContacts[i].address.zipCode.code,
-							parrContacts[i].address.zipCode.city, parrContacts[i].address.zipCode.county,
-							parrContacts[i].address.zipCode.district, parrContacts[i].address.zipCode.country);
-				}
-				catch (Throwable e)
-				{
-					throw new BigBangException(e.getMessage(), e);
-				}
-			}
-			else
+			if ( (parrContacts[i].address == null) || ((parrContacts[i].address.street1 == null) &&
+					(parrContacts[i].address.street2 == null) && ((parrContacts[i].address.zipCode == null) ||
+					((parrContacts[i].address.zipCode.code == null) && (parrContacts[i].address.zipCode.city == null) &&
+					(parrContacts[i].address.zipCode.county == null) && (parrContacts[i].address.zipCode.district == null) &&
+					(parrContacts[i].address.zipCode.country == null)))) )
 			{
 				larrResult[i].mstrAddress1 = null;
 				larrResult[i].mstrAddress2 = null;
 				larrResult[i].midZipCode = null;
+			}
+			else
+			{
+				larrResult[i].mstrAddress1 = parrContacts[i].address.street1;
+				larrResult[i].mstrAddress2 = parrContacts[i].address.street2;
+				if ( (parrContacts[i].address.zipCode == null) || ((parrContacts[i].address.zipCode.code == null) &&
+						(parrContacts[i].address.zipCode.city == null) && (parrContacts[i].address.zipCode.county == null) &&
+						(parrContacts[i].address.zipCode.district == null) && (parrContacts[i].address.zipCode.country == null)) )
+				{
+					larrResult[i].midZipCode = null;
+				}
+				else
+				{
+					try
+					{
+						larrResult[i].midZipCode = ZipCodeBridge.GetZipCode(parrContacts[i].address.zipCode.code,
+								parrContacts[i].address.zipCode.city, parrContacts[i].address.zipCode.county,
+								parrContacts[i].address.zipCode.district, parrContacts[i].address.zipCode.country);
+					}
+					catch (Throwable e)
+					{
+						throw new BigBangException(e.getMessage(), e);
+					}
+				}
 			}
 			larrResult[i].midContactType = (parrContacts[i].typeId == null ? null : UUID.fromString(parrContacts[i].typeId));
 			if ( parrContacts[i].info != null )
