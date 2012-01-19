@@ -29,7 +29,7 @@ public class TestMgrXferCreate
 		};
 
 		transfer = new ManagerTransfer();
-		transfer.managedProcessIds = new String[] {"BD8BAAFA-811E-4CA7-B4F1-9FB700201779"};
+		transfer.dataObjectIds = new String[] {"8F474C7D-DE85-4BEC-8139-9FB70020135F"};
 		transfer.newManagerId = "CA20CE5A-C6A8-4820-81B4-9FB700200FB4";
 
 		Services.clientService.createManagerTransfer(transfer, callback);
