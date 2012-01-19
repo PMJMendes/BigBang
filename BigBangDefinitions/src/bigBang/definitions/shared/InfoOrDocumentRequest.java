@@ -30,6 +30,7 @@ public class InfoOrDocumentRequest
 	}
 
 	public String id;
+	public String ownerId;
 	public String documentType;
 	public String text;
 	public int replylimit;
