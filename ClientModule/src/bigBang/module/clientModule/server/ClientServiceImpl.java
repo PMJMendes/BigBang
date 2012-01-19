@@ -16,7 +16,6 @@ import Jewel.Petri.Interfaces.IProcess;
 import Jewel.Petri.Interfaces.IScript;
 import Jewel.Petri.Objects.PNProcess;
 import Jewel.Petri.Objects.PNScript;
-import Jewel.Petri.SysObjects.JewelPetriException;
 import bigBang.definitions.shared.Address;
 import bigBang.definitions.shared.Casualty;
 import bigBang.definitions.shared.Client;
@@ -34,6 +33,7 @@ import bigBang.definitions.shared.ZipCode;
 import bigBang.library.server.ContactsServiceImpl;
 import bigBang.library.server.DocumentServiceImpl;
 import bigBang.library.server.SearchServiceBase;
+import bigBang.library.server.TransferManagerServiceImpl;
 import bigBang.library.shared.BigBangException;
 import bigBang.library.shared.SessionExpiredException;
 import bigBang.module.clientModule.interfaces.ClientService;
@@ -50,6 +50,7 @@ import com.premiumminds.BigBang.Jewel.Objects.MgrXFer;
 import com.premiumminds.BigBang.Jewel.Operations.ContactOps;
 import com.premiumminds.BigBang.Jewel.Operations.DocOps;
 import com.premiumminds.BigBang.Jewel.Operations.Client.CreateClientMgrXFer;
+import com.premiumminds.BigBang.Jewel.Operations.Client.CreateInfoRequest;
 import com.premiumminds.BigBang.Jewel.Operations.Client.DeleteClient;
 import com.premiumminds.BigBang.Jewel.Operations.Client.ManageClientData;
 import com.premiumminds.BigBang.Jewel.Operations.Client.MergeIntoAnother;
@@ -292,26 +293,32 @@ public class ClientServiceImpl
 	public ManagerTransfer createManagerTransfer(ManagerTransfer transfer)
 		throws SessionExpiredException, BigBangException
 	{
+		com.premiumminds.BigBang.Jewel.Objects.Client lobjClient;
 		CreateClientMgrXFer lobjCMX;
 
 		if ( Engine.getCurrentUser() == null )
 			throw new SessionExpiredException();
 
-		lobjCMX = new CreateClientMgrXFer(UUID.fromString(transfer.managedProcessIds[0]));
-		lobjCMX.midNewManager = UUID.fromString(transfer.newManagerId);
-		lobjCMX.mbMassTransfer = false;
-
 		try
 		{
-			transfer.dataObjectIds = new String[] {PNProcess.GetInstance(Engine.getCurrentNameSpace(),
-					UUID.fromString(transfer.managedProcessIds[0])).GetData().getKey().toString()};
+			lobjClient = com.premiumminds.BigBang.Jewel.Objects.Client.GetInstance(Engine.getCurrentNameSpace(),
+					UUID.fromString(transfer.dataObjectIds[0]));
+
+			lobjCMX = new CreateClientMgrXFer(lobjClient.GetProcessID());
+			lobjCMX.midNewManager = UUID.fromString(transfer.newManagerId);
+			lobjCMX.mbMassTransfer = false;
+
 			lobjCMX.Execute();
 		}
-		catch (JewelPetriException e)
+		catch (Throwable e)
 		{
 			throw new BigBangException(e.getMessage(), e);
 		}
 
+		transfer.objectTypeId = Constants.ObjID_Client.toString();
+		transfer.objectStubs = new SearchResult[] {TransferManagerServiceImpl.sBuildStub(Constants.ObjID_Client,
+				UUID.fromString(transfer.dataObjectIds[0]))};
+		transfer.managedProcessIds = new String[] {lobjClient.GetProcessID().toString()};
 		transfer.directTransfer = lobjCMX.mbDirectTransfer;
 		if ( transfer.directTransfer )
 		{
@@ -325,7 +332,6 @@ public class ClientServiceImpl
 			transfer.processId = lobjCMX.midCreatedSubproc.toString();
 			transfer.status = ManagerTransfer.Status.PENDING;
 		}
-		transfer.objectTypeId = Constants.ObjID_Client.toString();
 
 		return transfer;
 	}
@@ -333,7 +339,26 @@ public class ClientServiceImpl
 	public InfoOrDocumentRequest createInfoOrDocumentRequest(InfoOrDocumentRequest request)
 		throws SessionExpiredException, BigBangException
 	{
-		// TODO Auto-generated method stub
+		com.premiumminds.BigBang.Jewel.Objects.Client lobjClient;
+		CreateInfoRequest lopCIR;
+
+		if ( Engine.getCurrentUser() == null )
+			throw new SessionExpiredException();
+
+		try
+		{
+			lobjClient = com.premiumminds.BigBang.Jewel.Objects.Client.GetInstance(Engine.getCurrentNameSpace(),
+					UUID.fromString(request.ownerId));
+
+			lopCIR = new CreateInfoRequest(lobjClient.GetProcessID());
+
+			lopCIR.Execute();
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangException(e.getMessage(), e);
+		}
+
 		return null;
 	}
 
@@ -494,6 +519,7 @@ public class ClientServiceImpl
 		MgrXFer lobjXFer;
 		IProcess lobjProc;
 		UUID [] larrProcessIDs;
+		com.premiumminds.BigBang.Jewel.Objects.Client lobjClient;
 		int i;
 		IScript lobjScript;
 		CreateClientMgrXFer lobjCMX;
@@ -533,12 +559,16 @@ public class ClientServiceImpl
 
 		lobjXFer = null;
 		lobjProc = null;
-		larrProcessIDs = new UUID[transfer.managedProcessIds.length];
-		for ( i = 0 ; i < larrProcessIDs.length; i++ )
-			larrProcessIDs[i] = UUID.fromString(transfer.managedProcessIds[i]);
-
+		larrProcessIDs = new UUID[transfer.dataObjectIds.length];
 		try
 		{
+			for ( i = 0 ; i < larrProcessIDs.length; i++ )
+			{
+				lobjClient = com.premiumminds.BigBang.Jewel.Objects.Client.GetInstance(Engine.getCurrentNameSpace(),
+						UUID.fromString(transfer.dataObjectIds[i]));
+				larrProcessIDs[i] = lobjClient.GetProcessID();
+			}
+
 			lobjXFer = MgrXFer.GetInstance(Engine.getCurrentNameSpace(), (UUID)null);
 			lobjXFer.setAt(1, null);
 			lobjXFer.setAt(2, lidManager);
@@ -552,12 +582,9 @@ public class ClientServiceImpl
 			lobjScript = PNScript.GetInstance(Engine.getCurrentNameSpace(), Constants.ProcID_MgrXFer);
 			lobjProc = lobjScript.CreateInstance(Engine.getCurrentNameSpace(), lobjXFer.getKey(), null, ldb);
 
-			transfer.dataObjectIds = new String[transfer.managedProcessIds.length];
-			for ( i = 0; i < transfer.managedProcessIds.length; i++ )
+			for ( i = 0; i < larrProcessIDs.length; i++ )
 			{
-				transfer.dataObjectIds[i] = PNProcess.GetInstance(Engine.getCurrentNameSpace(),
-						UUID.fromString(transfer.managedProcessIds[i])).GetData().getKey().toString();
-				lobjCMX = new CreateClientMgrXFer(UUID.fromString(transfer.managedProcessIds[i]));
+				lobjCMX = new CreateClientMgrXFer(larrProcessIDs[i]);
 				lobjCMX.midNewManager = lidManager;
 				lobjCMX.mbMassTransfer = true;
 				lobjCMX.midTransferObject = lobjXFer.getKey();
@@ -621,6 +648,15 @@ public class ClientServiceImpl
 			throw new BigBangException(e.getMessage(), e);
 		}
 
+		transfer.objectTypeId = Constants.ObjID_Client.toString();
+		transfer.objectStubs = new SearchResult[larrProcessIDs.length];
+		transfer.managedProcessIds = new String[larrProcessIDs.length];
+		for ( i = 0; i < larrProcessIDs.length; i++ )
+		{
+			transfer.objectStubs[i] = TransferManagerServiceImpl.sBuildStub(Constants.ObjID_Client,
+					UUID.fromString(transfer.dataObjectIds[i]));
+			transfer.managedProcessIds[i] = larrProcessIDs[i].toString();
+		}
 		transfer.directTransfer = lidManager.equals(Engine.getCurrentUser());
 		if ( transfer.directTransfer )
 		{
@@ -634,7 +670,6 @@ public class ClientServiceImpl
 			transfer.processId = lobjProc.getKey().toString();
 			transfer.status = ManagerTransfer.Status.PENDING;
 		}
-		transfer.objectTypeId = Constants.ObjID_Client.toString();
 
 		return transfer;
 	}
