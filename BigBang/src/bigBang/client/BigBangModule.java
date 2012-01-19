@@ -9,10 +9,12 @@ import bigBang.library.client.ViewPresenterInstantiator;
 import bigBang.library.client.dataAccess.BigBangContactsListBroker;
 import bigBang.library.client.dataAccess.BigBangDocumentsBroker;
 import bigBang.library.client.dataAccess.HistoryBrokerImpl;
+import bigBang.library.client.userInterface.presenter.ContactViewPresenter;
 import bigBang.library.client.userInterface.presenter.DocumentViewPresenter;
 import bigBang.library.client.userInterface.presenter.ManagerTransferViewPresenter;
 import bigBang.library.client.userInterface.presenter.UndoOperationViewPresenter;
 import bigBang.library.client.userInterface.presenter.ViewPresenter;
+import bigBang.library.client.userInterface.view.ContactView;
 import bigBang.library.client.userInterface.view.DocumentView;
 import bigBang.library.client.userInterface.view.ManagerTransferView;
 import bigBang.library.client.userInterface.view.UndoOperationView;
@@ -57,6 +59,15 @@ public class BigBangModule implements Module {
 			public ViewPresenter getInstance() {
 				DocumentView view = (DocumentView) GWT.create(DocumentView.class);
 				ViewPresenter presenter = new DocumentViewPresenter(view);
+				return presenter;
+			}
+		});
+		ViewPresenterFactory.getInstance().registerViewPresenterInstantiator("CONTACT", new ViewPresenterInstantiator() {
+
+			@Override
+			public ViewPresenter getInstance() {
+				ContactView view = (ContactView) GWT.create(ContactView.class);
+				ViewPresenter presenter = new ContactViewPresenter(view);
 				return presenter;
 			}
 		});
