@@ -301,16 +301,21 @@ public class BigBangDocumentsBroker extends DataBroker<Document> implements Docu
 
 			@Override
 			public void onSuccess(Void result) {
-				onFailure(null);
-				//TODO
-				//List<Document> documentsList = documents.get(ownerId);
-//				for(Document document : documentsList){
-//					if(document.id.equalsIgnoreCase(documentId)){
-//						documentsList.remove(document);
-//						break;
-//					}
-//				}
-//				updateClients(ownerId);
+				for(Collection<Document> collection : documents.values()){
+					for(Document document : collection){
+						if(document.id.equalsIgnoreCase(documentId)){
+							collection.remove(document);
+							incrementDataVersion(document.ownerId);
+							for(DocumentsBrokerClient client : clients.get(document.ownerId)){
+								client.removeDocument(document.ownerId, document);
+								client.setDataVersionNumber(documentId, getCurrentDataVersion(document.ownerId));
+							}
+							handler.onResponse(null);
+							return;
+						}
+					}
+				}
+				handler.onResponse(null);
 			}
 			
 			@Override
