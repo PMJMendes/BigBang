@@ -258,7 +258,7 @@ public class ClientSearchOperationViewPresenter implements ViewPresenter {
 				
 				if(!itemId.isEmpty()){
 					NavigationHistoryItem navItem = NavigationHistoryManager.getInstance().getCurrentState();
-					navItem.setParameter("show", "contactmanagement");
+					navItem.setParameter("operation", "contactmanagement");
 					navItem.setParameter("contactid", itemId);
 					navItem.setParameter("ownertypeid", BigBangConstants.EntityIds.CLIENT);
 					NavigationHistoryManager.getInstance().go(navItem);
