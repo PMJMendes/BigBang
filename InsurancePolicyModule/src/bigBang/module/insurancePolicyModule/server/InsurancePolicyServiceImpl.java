@@ -20,7 +20,6 @@ import Jewel.Petri.Interfaces.IProcess;
 import Jewel.Petri.Interfaces.IScript;
 import Jewel.Petri.Objects.PNProcess;
 import Jewel.Petri.Objects.PNScript;
-import Jewel.Petri.SysObjects.JewelPetriException;
 import bigBang.definitions.shared.Address;
 import bigBang.definitions.shared.Exercise;
 import bigBang.definitions.shared.InfoOrDocumentRequest;
@@ -39,6 +38,7 @@ import bigBang.definitions.shared.ZipCode;
 import bigBang.library.server.ContactsServiceImpl;
 import bigBang.library.server.DocumentServiceImpl;
 import bigBang.library.server.SearchServiceBase;
+import bigBang.library.server.TransferManagerServiceImpl;
 import bigBang.library.shared.BigBangException;
 import bigBang.library.shared.SessionExpiredException;
 import bigBang.module.insurancePolicyModule.interfaces.InsurancePolicyService;
@@ -3242,24 +3242,31 @@ public class InsurancePolicyServiceImpl
 	public ManagerTransfer createManagerTransfer(ManagerTransfer transfer)
 		throws SessionExpiredException, BigBangException
 	{
+		Policy lobjPolicy;
 		CreatePolicyMgrXFer lobjCMX;
 
 		if ( Engine.getCurrentUser() == null )
 			throw new SessionExpiredException();
 
-		lobjCMX = new CreatePolicyMgrXFer(UUID.fromString(transfer.managedProcessIds[0]));
-		lobjCMX.midNewManager = UUID.fromString(transfer.newManagerId);
-		lobjCMX.mbMassTransfer = false;
-
 		try
 		{
+			lobjPolicy = Policy.GetInstance(Engine.getCurrentNameSpace(), UUID.fromString(transfer.dataObjectIds[0]));
+
+			lobjCMX = new CreatePolicyMgrXFer(lobjPolicy.GetProcessID());
+			lobjCMX.midNewManager = UUID.fromString(transfer.newManagerId);
+			lobjCMX.mbMassTransfer = false;
+
 			lobjCMX.Execute();
 		}
-		catch (JewelPetriException e)
+		catch (Throwable e)
 		{
 			throw new BigBangException(e.getMessage(), e);
 		}
 
+		transfer.objectTypeId = Constants.ObjID_Policy.toString();
+		transfer.objectStubs = new SearchResult[] {TransferManagerServiceImpl.sBuildStub(Constants.ObjID_Policy,
+				UUID.fromString(transfer.dataObjectIds[0]))};
+		transfer.managedProcessIds = new String[] {lobjPolicy.GetProcessID().toString()};
 		transfer.directTransfer = lobjCMX.mbDirectTransfer;
 		if ( transfer.directTransfer )
 		{
@@ -3302,6 +3309,7 @@ public class InsurancePolicyServiceImpl
 		MgrXFer lobjXFer;
 		IProcess lobjProc;
 		UUID [] larrProcessIDs;
+		Policy lobjPolicy;
 		int i;
 		IScript lobjScript;
 		CreatePolicyMgrXFer lobjCMX;
@@ -3316,9 +3324,9 @@ public class InsurancePolicyServiceImpl
     	ldtAux2.setTimeInMillis(ldtAux.getTime());
     	ldtAux2.add(Calendar.DAY_OF_MONTH, 7);
 
-    	lidManager = UUID.fromString(transfer.newManagerId);
-    	if ( lidManager == null )
+    	if ( transfer.newManagerId == null )
     		throw new BigBangException("Erro: Novo gestor não indicado.");
+    	lidManager = UUID.fromString(transfer.newManagerId);
 
 		try
 		{
@@ -3341,12 +3349,15 @@ public class InsurancePolicyServiceImpl
 
 		lobjXFer = null;
 		lobjProc = null;
-		larrProcessIDs = new UUID[transfer.managedProcessIds.length];
-		for ( i = 0 ; i < larrProcessIDs.length; i++ )
-			larrProcessIDs[i] = UUID.fromString(transfer.managedProcessIds[i]);
-
+		larrProcessIDs = new UUID[transfer.dataObjectIds.length];
 		try
 		{
+			for ( i = 0 ; i < larrProcessIDs.length; i++ )
+			{
+				lobjPolicy = Policy.GetInstance(Engine.getCurrentNameSpace(), UUID.fromString(transfer.dataObjectIds[i]));
+				larrProcessIDs[i] = lobjPolicy.GetProcessID();
+			}
+
 			lobjXFer = MgrXFer.GetInstance(Engine.getCurrentNameSpace(), (UUID)null);
 			lobjXFer.setAt(1, null);
 			lobjXFer.setAt(2, lidManager);
@@ -3360,9 +3371,9 @@ public class InsurancePolicyServiceImpl
 			lobjScript = PNScript.GetInstance(Engine.getCurrentNameSpace(), Constants.ProcID_MgrXFer);
 			lobjProc = lobjScript.CreateInstance(Engine.getCurrentNameSpace(), lobjXFer.getKey(), null, ldb);
 
-			for ( i = 0; i < transfer.managedProcessIds.length; i++ )
+			for ( i = 0; i < larrProcessIDs.length; i++ )
 			{
-				lobjCMX = new CreatePolicyMgrXFer(UUID.fromString(transfer.managedProcessIds[i]));
+				lobjCMX = new CreatePolicyMgrXFer(larrProcessIDs[i]);
 				lobjCMX.midNewManager = lidManager;
 				lobjCMX.mbMassTransfer = true;
 				lobjCMX.midTransferObject = lobjXFer.getKey();
@@ -3426,6 +3437,15 @@ public class InsurancePolicyServiceImpl
 			throw new BigBangException(e.getMessage(), e);
 		}
 
+		transfer.objectTypeId = Constants.ObjID_Policy.toString();
+		transfer.objectStubs = new SearchResult[larrProcessIDs.length];
+		transfer.managedProcessIds = new String[larrProcessIDs.length];
+		for ( i = 0; i < larrProcessIDs.length; i++ )
+		{
+			transfer.objectStubs[i] = TransferManagerServiceImpl.sBuildStub(Constants.ObjID_Policy,
+					UUID.fromString(transfer.dataObjectIds[i]));
+			transfer.managedProcessIds[i] = larrProcessIDs[i].toString();
+		}
 		transfer.directTransfer = lidManager.equals(Engine.getCurrentUser());
 		if ( transfer.directTransfer )
 		{
