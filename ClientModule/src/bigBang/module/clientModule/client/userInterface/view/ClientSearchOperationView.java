@@ -4,6 +4,7 @@ import org.gwt.mosaic.ui.client.ToolButton;
 
 import bigBang.definitions.shared.Client;
 import bigBang.definitions.shared.ClientStub;
+import bigBang.definitions.shared.Contact;
 import bigBang.definitions.shared.HistoryItemStub;
 import bigBang.definitions.shared.InsurancePolicyStub;
 import bigBang.library.client.HasEditableValue;
@@ -316,6 +317,11 @@ public class ClientSearchOperationView extends View implements ClientSearchOpera
 	@Override
 	public HasValueSelectables<InsurancePolicyStub> getPolicyList() {
 		return this.childrenPanel.insurancePoliciesList;
+	}
+	
+	@Override
+	public HasValueSelectables<Contact> getContactsList() {
+		return this.childrenPanel.contactsList;
 	}
 
 	/*## CHILDREN LISTS END ##*/

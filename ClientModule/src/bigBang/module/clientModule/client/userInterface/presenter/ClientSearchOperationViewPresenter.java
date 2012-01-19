@@ -9,6 +9,7 @@ import bigBang.definitions.client.response.ResponseHandler;
 import bigBang.definitions.shared.BigBangConstants;
 import bigBang.definitions.shared.Client;
 import bigBang.definitions.shared.ClientStub;
+import bigBang.definitions.shared.Contact;
 import bigBang.definitions.shared.HistoryItemStub;
 import bigBang.definitions.shared.InsurancePolicyStub;
 import bigBang.library.client.EventBus;
@@ -80,6 +81,7 @@ public class ClientSearchOperationViewPresenter implements ViewPresenter {
 
 		//Children Lists
 		HasValueSelectables<HistoryItemStub> getHistoryList();
+		HasValueSelectables<Contact> getContactsList();
 		HasValueSelectables<InsurancePolicyStub> getPolicyList();
 
 		//General
@@ -218,7 +220,7 @@ public class ClientSearchOperationViewPresenter implements ViewPresenter {
 					NavigationHistoryManager.getInstance().go(item);
 					break;
 				case TRANSFER_MANAGER:
-					item.setParameter("operation", "managertransfer");
+					item.setParameter("show", "managertransfer");
 					NavigationHistoryManager.getInstance().go(item);
 					break;
 				}
@@ -239,6 +241,26 @@ public class ClientSearchOperationViewPresenter implements ViewPresenter {
 					NavigationHistoryItem navItem = NavigationHistoryManager.getInstance().getCurrentState();
 					navItem.setParameter("operation", "clienthistory");
 					navItem.setParameter("historyItemId", itemId);
+					NavigationHistoryManager.getInstance().go(navItem);
+				}
+			}
+		});
+		
+		view.getContactsList().addSelectionChangedEventHandler(new SelectionChangedEventHandler() {
+			
+			@Override
+			public void onSelectionChanged(SelectionChangedEvent event) {
+				@SuppressWarnings("unchecked")
+				ValueSelectable<HistoryItemStub> selected = (ValueSelectable<HistoryItemStub>) event.getFirstSelected();
+				HistoryItemStub item = selected == null ? null : selected.getValue();
+				String itemId = item == null ? null : item.id;
+				itemId = itemId == null ? new String() : itemId;
+				
+				if(!itemId.isEmpty()){
+					NavigationHistoryItem navItem = NavigationHistoryManager.getInstance().getCurrentState();
+					navItem.setParameter("show", "contactmanagement");
+					navItem.setParameter("contactid", itemId);
+					navItem.setParameter("ownertypeid", BigBangConstants.EntityIds.CLIENT);
 					NavigationHistoryManager.getInstance().go(navItem);
 				}
 			}
