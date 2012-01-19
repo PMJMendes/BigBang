@@ -50,7 +50,7 @@ public class ContactViewPresenter implements ViewPresenter, ContactsBrokerClient
 		CREATE_CHILD_CONTACT,
 		SHOW_CHILD_CONTACTS,
 		ADD_NEW_DETAIL,
-		DELETE_DETAIL
+		DELETE_DETAIL, DELETE
 	}
 
 	public ContactViewPresenter(Display view){
@@ -76,10 +76,17 @@ public class ContactViewPresenter implements ViewPresenter, ContactsBrokerClient
 		public void registerDeleteHandler(
 				DeleteRequestEventHandler deleteRequestEventHandler);
 		BigBangOperationsToolBar getToolbar();
+		public void enableDelete(boolean b);
 	}
 
 	public void setContact(Contact contact){
 
+		if(contact == null){
+			view.addContactInfo(null);
+			view.setSaveMode(true);
+			view.enableDelete(false);
+			return;
+		}
 		this.contact = contact;
 		view.setContact(contact);
 
@@ -90,6 +97,7 @@ public class ContactViewPresenter implements ViewPresenter, ContactsBrokerClient
 
 		}
 		view.addContactInfo(null);
+		view.setEditable(false);
 	}
 
 	@Override
@@ -111,7 +119,8 @@ public class ContactViewPresenter implements ViewPresenter, ContactsBrokerClient
 	@Override
 	public void setParameters(HasParameters parameterHolder) {
 
-		//broker.unregisterClient(this);
+		broker.unregisterClient(this);
+
 
 		ownerId = parameterHolder.getParameter("id");
 		contactId = parameterHolder.getParameter("contactid");
@@ -121,49 +130,71 @@ public class ContactViewPresenter implements ViewPresenter, ContactsBrokerClient
 		if(ownerId == null){
 			EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não é possível mostrar um contacto sem cliente associado."), TYPE.ALERT_NOTIFICATION));
 			view.getToolbar().lockAll();
+			view.enableDelete(false);
 			view.setContact(null);
 			view.setEditable(false);
 			return;
 		}
 		else{
 			broker.registerClient(this, ownerId);
-		}
-		if(contactId == null){
 
-			if(hasPermissions){
-				setContact(null);
-			}
-			else{
-				EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não é possível criar o contacto."), TYPE.ALERT_NOTIFICATION));
-				view.getToolbar().lockAll();
-				view.setContact(null);
-				view.setEditable(false);
-			}
-		}
-		else
-		{
-			broker.getContact(contactId, new ResponseHandler<Contact>() {
+			if(contactId == null){
 
-				@Override
-				public void onResponse(Contact response) {
-					contact = response;
-					setContact(contact);
-					view.getToolbar().setSaveModeEnabled(false);
-
+				if(hasPermissions){
+					setContact(null);
 				}
-
-				@Override
-				public void onError(Collection<ResponseError> errors) {
-					NavigationHistoryItem navig = NavigationHistoryManager.getInstance().getCurrentState();
-					navig.removeParameter("contactid");
-					navig.removeParameter("operation");
-					navig.removeParameter("ownertypeid");
-					navig.removeParameter("editpermission");
-					NavigationHistoryManager.getInstance().go(navig);
-					EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não é possível mostrar o contacto pedido."), TYPE.ALERT_NOTIFICATION));
+				else{
+					EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não é possível criar o contacto."), TYPE.ALERT_NOTIFICATION));
+					view.getToolbar().lockAll();
+					view.setContact(null);
+					view.setEditable(false);
 				}
-			});
+			}
+			else
+			{
+				if(!hasPermissions){
+					view.getToolbar().lockAll();
+				}
+				broker.refreshContactsForOwner(ownerId, new ResponseHandler<Void>() {
+
+					@Override
+					public void onResponse(Void response) {
+
+						broker.getContact(contactId, new ResponseHandler<Contact>() {
+
+							@Override
+							public void onResponse(Contact response) {
+								contact = response;
+								setContact(contact);
+								view.getToolbar().setSaveModeEnabled(false);
+								view.enableDelete(false);
+
+							}
+
+							@Override
+							public void onError(Collection<ResponseError> errors) {
+								NavigationHistoryItem navig = NavigationHistoryManager.getInstance().getCurrentState();
+								navig.removeParameter("contactid");
+								navig.removeParameter("operation");
+								navig.removeParameter("ownertypeid");
+								navig.removeParameter("editpermission");
+								NavigationHistoryManager.getInstance().go(navig);
+								EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não é possível mostrar o contacto pedido."), TYPE.ALERT_NOTIFICATION));
+							}
+						});
+
+					}
+
+					@Override
+					public void onError(Collection<ResponseError> errors) {
+						// TODO Auto-generated method stub
+
+					}
+				});
+			}
 		}
+
+
 	}
 
 	public void bind() {
@@ -223,51 +254,81 @@ public class ContactViewPresenter implements ViewPresenter, ContactsBrokerClient
 					break;
 				case SHOW_CHILD_CONTACTS: 
 					break;
+				case DELETE:
+					deleteContact(contact);
 				}
 
 			}
 
+			private void deleteContact(Contact contact) {
+			
+				broker.removeContact(contactId, new ResponseHandler<Void>() {
+
+					@Override
+					public void onResponse(Void response) {
+						NavigationHistoryItem navig = NavigationHistoryManager.getInstance().getCurrentState();
+						navig.removeParameter("contactid");
+						navig.removeParameter("operation");
+						navig.removeParameter("ownertypeid");
+						navig.removeParameter("editpermission");
+						NavigationHistoryManager.getInstance().go(navig);
+						EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Documento eliminado com sucesso."), TYPE.TRAY_NOTIFICATION));
+					}
+
+					@Override
+					public void onError(Collection<ResponseError> errors) {
+						EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não foi possível eliminar o documento."), TYPE.ALERT_NOTIFICATION));
+						view.setSaveMode(true);
+						view.enableDelete(true);
+					}
+					
+				
+				});
+				
+			}
+
 			private void createUpdateContact(Contact temp) {
 
-//				if(temp.id == null){
-//
-//					temp.ownerId = ownerId;
-//					temp.ownerTypeId = ownerTypeId;
-//					broker.addContact(temp, new ResponseHandler<Document>() {
-//
-//						@Override
-//						public void onResponse(Document response) {
-//							EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Contacto criado com sucesso."), TYPE.TRAY_NOTIFICATION));
-//							NavigationHistoryItem navig = NavigationHistoryManager.getInstance().getCurrentState();
-//							navig.setParameter("documentid", response.id);
-//							NavigationHistoryManager.getInstance().go(navig);
-//						}
-//
-//						@Override
-//						public void onError(Collection<ResponseError> errors) {
-//							EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não foi possível criar o contacto."), TYPE.ALERT_NOTIFICATION));
-//							view.setSaveMode(true);
-//						}
-//					});
-//				}
-//
-//				else
-//				{
-//					broker.updateContact(temp, new ResponseHandler<Document>() {
-//
-//						@Override
-//						public void onResponse(Document response) {
-//							EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Contacto gravado com sucesso."), TYPE.TRAY_NOTIFICATION));
-//							NavigationHistoryManager.getInstance().reload();
-//						}
-//
-//						@Override
-//						public void onError(Collection<ResponseError> errors) {
-//							EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não foi possível gravar o contacto."), TYPE.ALERT_NOTIFICATION));
-//							view.setSaveMode(true);
-//						}
-//					});
-//				}
+				if(temp.id == null){
+
+					temp.ownerId = ownerId;
+					temp.ownerTypeId = ownerTypeId;
+					broker.addContact(temp, new ResponseHandler<Contact>() {
+
+						@Override
+						public void onResponse(Contact response) {
+							EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Contacto criado com sucesso."), TYPE.TRAY_NOTIFICATION));
+							NavigationHistoryItem navig = NavigationHistoryManager.getInstance().getCurrentState();
+							navig.setParameter("contactid", response.id);
+							NavigationHistoryManager.getInstance().go(navig);
+						}
+
+						@Override
+						public void onError(Collection<ResponseError> errors) {
+							EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não foi possível criar o contacto."), TYPE.ALERT_NOTIFICATION));
+							view.setSaveMode(true);
+							view.enableDelete(true);
+						}
+					});
+				}
+
+				else
+				{
+					broker.updateContact(temp, new ResponseHandler<Contact>() {
+
+						@Override
+						public void onResponse(Contact response) {
+							EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Contacto gravado com sucesso."), TYPE.TRAY_NOTIFICATION));
+							NavigationHistoryManager.getInstance().reload();
+						}
+
+						@Override
+						public void onError(Collection<ResponseError> errors) {
+							EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não foi possível gravar o contacto."), TYPE.ALERT_NOTIFICATION));
+							view.setSaveMode(true);
+						}
+					});
+				}
 
 			}
 
@@ -335,7 +396,10 @@ public class ContactViewPresenter implements ViewPresenter, ContactsBrokerClient
 
 	@Override
 	public void updateContact(String ownerId, Contact contact) {
-		// TODO Auto-generated method stub
+
+		if(contact.id.equalsIgnoreCase(this.contact.id)){
+			NavigationHistoryManager.getInstance().reload();
+		}
 
 	} 
 

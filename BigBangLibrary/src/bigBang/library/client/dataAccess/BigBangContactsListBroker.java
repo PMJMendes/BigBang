@@ -94,10 +94,9 @@ public class BigBangContactsListBroker extends DataBroker<Contact> implements Co
 			contacts.put(ownerId, new ArrayList<Contact>());
 			requireDataRefresh(ownerId);
 			dataVersions.put(ownerId, NO_DATA_VERSION);	
-		}else{
-			clients.get(ownerId).add(client);
-			updateClient(ownerId, client);
 		}
+		clients.get(ownerId).add(client);
+		updateClient(ownerId, client);
 	}
 
 	@Override
@@ -177,10 +176,10 @@ public class BigBangContactsListBroker extends DataBroker<Contact> implements Co
 			}
 		}
 		handler.onError(new String[]{
-			new String("Cannot get the requested contact")	
+				new String("Cannot get the requested contact")	
 		});
 	}
-	
+
 	@Override
 	public void refreshContactsForOwner(String ownerId,
 			final ResponseHandler<Void> handler) {
@@ -219,11 +218,11 @@ public class BigBangContactsListBroker extends DataBroker<Contact> implements Co
 					updateClients(ownerId);
 					handler.onResponse(contactsList);
 				}
-				
+
 				@Override
 				public void onFailure(Throwable caught) {
 					handler.onError(new String[]{
-						new String("Cannot get the contacts for the specified owner")	
+							new String("Cannot get the contacts for the specified owner")	
 					});
 					super.onFailure(caught);
 				}
@@ -359,19 +358,19 @@ public class BigBangContactsListBroker extends DataBroker<Contact> implements Co
 	@Override
 	public void notifyItemCreation(String itemId) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void notifyItemDeletion(String itemId) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void notifyItemUpdate(String itemId) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 }

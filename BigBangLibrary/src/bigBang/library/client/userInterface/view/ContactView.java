@@ -41,6 +41,7 @@ public class ContactView extends View implements ContactViewPresenter.Display{
 	private List<ContactInfo> contactIL;
 	private Contact contact;
 	private BigBangOperationsToolBar toolbar;
+	private MenuItem delete;
 
 	public class ContactEntry extends ListEntry<ContactInfo>{
 
@@ -118,6 +119,14 @@ public class ContactView extends View implements ContactViewPresenter.Display{
 		initWidget(wrapper);
 		wrapper.setWidth("100%");
 		//TOOLBAR
+		delete = new MenuItem("Eliminar", new Command() {
+			
+			@Override
+			public void execute() {
+				fireAction(Action.DELETE);
+				
+			}
+		});
 		toolbar = new BigBangOperationsToolBar() {
 
 			@Override
@@ -145,7 +154,8 @@ public class ContactView extends View implements ContactViewPresenter.Display{
 				fireAction(Action.CREATE_CHILD_CONTACT);
 			}
 		}));
-
+		toolbar.addItem(delete);
+		delete.setEnabled(false);
 		toolbar.setHeight("21px");
 		toolbar.setWidth("100%");
 
@@ -267,9 +277,12 @@ public class ContactView extends View implements ContactViewPresenter.Display{
 
 	@Override
 	public Contact getContact() {
-		Contact newContact = new Contact();
 		
-		newContact = this.contact;
+		Contact newContact = new Contact();
+		if(this.contact != null){
+			newContact = this.contact;
+		}
+		
 		newContact.address = address.getValue();
 		newContact.name = name.getValue();
 		newContact.typeId = type.getValue();
@@ -306,6 +319,12 @@ public class ContactView extends View implements ContactViewPresenter.Display{
 	@Override
 	public BigBangOperationsToolBar getToolbar(){
 		return toolbar;
+	}
+
+	@Override
+	public void enableDelete(boolean b) {
+		delete.setEnabled(b);
+		
 	}
 
 }
