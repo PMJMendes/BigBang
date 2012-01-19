@@ -99,6 +99,7 @@ public class DocumentView extends View implements DocumentViewPresenter.Display{
 		details.setEditable(b);
 		top.setEditable(b);
 		middle.setEditable(b);
+		top.getToolbar().setSaveModeEnabled(b);
 
 	}
 

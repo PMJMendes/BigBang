@@ -136,10 +136,17 @@ public class DocumentViewPresenter implements ViewPresenter, DocumentsBrokerClie
 
 					doc = response;
 					setDocument(doc);
+					view.getGeneralInfo().getToolbar().setSaveModeEnabled(false);
 				}
 
 				@Override
 				public void onError(Collection<ResponseError> errors) {
+					NavigationHistoryItem navig = NavigationHistoryManager.getInstance().getCurrentState();
+					navig.removeParameter("documentid");
+					navig.removeParameter("operation");
+					navig.removeParameter("ownertypeid");
+					navig.removeParameter("editpermission");
+					NavigationHistoryManager.getInstance().go(navig);
 					EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não é possível mostrar o documento pedido."), TYPE.ALERT_NOTIFICATION));
 				}
 			});
@@ -191,6 +198,8 @@ public class DocumentViewPresenter implements ViewPresenter, DocumentsBrokerClie
 						NavigationHistoryItem navig = NavigationHistoryManager.getInstance().getCurrentState();
 						navig.removeParameter("documentid");
 						navig.removeParameter("operation");
+						navig.removeParameter("ownertypeid");
+						navig.removeParameter("editpermission");
 						NavigationHistoryManager.getInstance().go(navig);
 						break;
 					}
@@ -249,6 +258,8 @@ public class DocumentViewPresenter implements ViewPresenter, DocumentsBrokerClie
 						NavigationHistoryItem navig = NavigationHistoryManager.getInstance().getCurrentState();
 						navig.removeParameter("documentid");
 						navig.removeParameter("operation");
+						navig.removeParameter("ownertypeid");
+						navig.removeParameter("editpermission");
 						NavigationHistoryManager.getInstance().go(navig);
 						EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Documento eliminado com sucesso."), TYPE.TRAY_NOTIFICATION));
 					}
@@ -275,9 +286,9 @@ public class DocumentViewPresenter implements ViewPresenter, DocumentsBrokerClie
 						@Override
 						public void onResponse(Document response) {
 							EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Documento criado com sucesso."), TYPE.TRAY_NOTIFICATION));
-							doc = response;
-							setDocument(doc);
-							view.setSaveMode(false);
+							NavigationHistoryItem navig = NavigationHistoryManager.getInstance().getCurrentState();
+							navig.setParameter("documentid", response.id);
+							NavigationHistoryManager.getInstance().go(navig);
 						}
 						
 						@Override
@@ -295,10 +306,7 @@ public class DocumentViewPresenter implements ViewPresenter, DocumentsBrokerClie
 						@Override
 						public void onResponse(Document response) {
 							EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Documento gravado com sucesso."), TYPE.TRAY_NOTIFICATION));
-							doc = response;
-							setDocument(doc);
-							view.setSaveMode(false);
-							
+							NavigationHistoryManager.getInstance().reload();
 						}
 						
 						@Override
@@ -391,7 +399,7 @@ public class DocumentViewPresenter implements ViewPresenter, DocumentsBrokerClie
 		}
 		view.addDetail(null);
 		view.setEditable(false);
-
+		
 	}
 
 

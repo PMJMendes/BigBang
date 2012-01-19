@@ -121,6 +121,7 @@ public abstract class DocumentSections{
 			this.doc = doc;
 			getName().setValue(doc.name);
 			getDocType().setValue(doc.docTypeId);
+
 			
 		}
 		
