@@ -106,7 +106,7 @@ public class DocumentViewPresenter implements ViewPresenter, DocumentsBrokerClie
 		boolean hasPermissions = parameterHolder.getParameter("editpermission") != null;
 
 		if(ownerId == null){
-			EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não é possível criar um documento sem cliente associado."), TYPE.ALERT_NOTIFICATION));
+			EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não é possível mostrar um documento sem cliente associado."), TYPE.ALERT_NOTIFICATION));
 			view.getGeneralInfo().getToolbar().lockAll();
 			view.getFileNote().generateNewDocument();
 			view.addDetail(null);

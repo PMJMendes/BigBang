@@ -1,12 +1,28 @@
 package bigBang.library.client.userInterface.presenter;
 
+import java.util.Collection;
+
+import bigBang.definitions.client.response.ResponseError;
+import bigBang.definitions.client.response.ResponseHandler;
+import bigBang.definitions.shared.BigBangConstants;
 import bigBang.definitions.shared.Contact;
 import bigBang.definitions.shared.ContactInfo;
+import bigBang.definitions.shared.Document;
+import bigBang.library.client.EventBus;
 import bigBang.library.client.HasParameters;
+import bigBang.library.client.Notification;
 import bigBang.library.client.ValueSelectable;
+import bigBang.library.client.Notification.TYPE;
+import bigBang.library.client.dataAccess.ContactsBroker;
+import bigBang.library.client.dataAccess.ContactsBrokerClient;
+import bigBang.library.client.dataAccess.DataBrokerManager;
 import bigBang.library.client.event.ActionInvokedEvent;
 import bigBang.library.client.event.ActionInvokedEventHandler;
 import bigBang.library.client.event.DeleteRequestEventHandler;
+import bigBang.library.client.event.NewNotificationEvent;
+import bigBang.library.client.history.NavigationHistoryItem;
+import bigBang.library.client.history.NavigationHistoryManager;
+import bigBang.library.client.userInterface.BigBangOperationsToolBar;
 import bigBang.library.client.userInterface.List;
 import bigBang.library.client.userInterface.view.ContactView;
 import bigBang.library.client.userInterface.view.ContactView.ContactEntry;
@@ -15,11 +31,15 @@ import com.google.gwt.user.client.ui.HasWidgets;
 import com.google.gwt.user.client.ui.UIObject;
 import com.google.gwt.user.client.ui.Widget;
 
-public abstract class ContactViewPresenter implements ViewPresenter{
+public class ContactViewPresenter implements ViewPresenter, ContactsBrokerClient{
 
 	private Contact contact;
 	private boolean bound = false;
 	private Display view;
+	private ContactsBroker broker;
+	private String ownerId;
+	private String ownerTypeId;
+	private String contactId;
 
 
 	public static enum Action {
@@ -30,6 +50,13 @@ public abstract class ContactViewPresenter implements ViewPresenter{
 		SHOW_CHILD_CONTACTS,
 		ADD_NEW_DETAIL,
 		DELETE_DETAIL
+	}
+
+	public ContactViewPresenter(){
+
+		broker = (ContactsBroker)DataBrokerManager.staticGetBroker(BigBangConstants.EntityIds.CONTACT);
+		this.setView((UIObject) view);
+
 	}
 
 
@@ -47,6 +74,7 @@ public abstract class ContactViewPresenter implements ViewPresenter{
 		public void setSaveMode(boolean b);
 		public void registerDeleteHandler(
 				DeleteRequestEventHandler deleteRequestEventHandler);
+		BigBangOperationsToolBar getToolbar();
 	}
 
 	public void setContact(Contact contact){
@@ -78,11 +106,63 @@ public abstract class ContactViewPresenter implements ViewPresenter{
 		container.add(this.view.asWidget());
 
 	}
-	
+
 	@Override
 	public void setParameters(HasParameters parameterHolder) {
-		// TODO Auto-generated method stub
-		
+
+		//broker.unregisterClient(this);
+
+		ownerId = parameterHolder.getParameter("id");
+		contactId = parameterHolder.getParameter("contactid");
+		ownerTypeId= parameterHolder.getParameter("ownertypeid");
+		boolean hasPermissions = parameterHolder.getParameter("editpermission") != null;
+
+		if(ownerId == null){
+			EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não é possível mostrar um contacto sem cliente associado."), TYPE.ALERT_NOTIFICATION));
+			view.getToolbar().lockAll();
+			view.setContact(null);
+			view.setEditable(false);
+			return;
+		}
+		else{
+			broker.registerClient(this, ownerId);
+		}
+		if(contactId == null){
+
+			if(hasPermissions){
+				setContact(null);
+			}
+			else{
+				EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não é possível criar o contacto."), TYPE.ALERT_NOTIFICATION));
+				view.getToolbar().lockAll();
+				view.setContact(null);
+				view.setEditable(false);
+			}
+		}
+		else
+		{
+			broker.getContact(contactId, new ResponseHandler<Contact>() {
+
+				@Override
+				public void onResponse(Contact response) {
+					contact = response;
+					setContact(contact);
+					view.getToolbar().setSaveModeEnabled(false);
+
+				}
+
+				@Override
+				public void onError(Collection<ResponseError> errors) {
+					NavigationHistoryItem navig = NavigationHistoryManager.getInstance().getCurrentState();
+					navig.removeParameter("contactid");
+					navig.removeParameter("operation");
+					navig.removeParameter("ownertypeid");
+					navig.removeParameter("editpermission");
+					NavigationHistoryManager.getInstance().go(navig);
+					EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não é possível mostrar o contacto pedido."), TYPE.ALERT_NOTIFICATION));
+				}
+			});
+		}
 	}
 
 	public void bind() {
@@ -94,25 +174,25 @@ public abstract class ContactViewPresenter implements ViewPresenter{
 
 			@Override
 			public void onDeleteRequest(Object object) {
-				
+
 				//TODO APAGAR DA BD
 				List<ContactInfo> list = view.getContactInfoList();
-				
+
 				for(ValueSelectable<ContactInfo> cont: list){
-					
+
 					if(cont.getValue() == object) {
 						list.remove(cont);
 						break;
 					}
-					
+
 				}
 
-				
+
 			}
-			
-			
+
+
 		});
-		
+
 		view.registerActionHandler(new ActionInvokedEventHandler<Action>(){
 
 			@Override
@@ -124,8 +204,8 @@ public abstract class ContactViewPresenter implements ViewPresenter{
 					addNewDetail();
 					break;
 
-				case CREATE_CHILD_CONTACT: System.out.println("TENTEI CRIAR UM FILHO NOVO!");
-				break;
+				case CREATE_CHILD_CONTACT: 
+					break;
 
 				case CANCEL:
 					setContact(contact);
@@ -137,36 +217,126 @@ public abstract class ContactViewPresenter implements ViewPresenter{
 					break;
 
 				case SAVE: 
-					contact = view.getContact();
-					setContact(contact);
-					view.setSaveMode(false);
-					//TODO SUBMIT TO DATABASE
-					view.setEditable(false);
-				break;
-				case SHOW_CHILD_CONTACTS: System.out.println("MOSTRA OS FILHOTES");
-				break;
+					Contact temp = view.getContact();
+					createUpdateContact(temp);
+					break;
+				case SHOW_CHILD_CONTACTS: 
+					break;
 				}
 
 			}
+
+			private void createUpdateContact(Contact temp) {
+
+//				if(temp.id == null){
+//
+//					temp.ownerId = ownerId;
+//					temp.ownerTypeId = ownerTypeId;
+//					broker.addContact(temp, new ResponseHandler<Document>() {
+//
+//						@Override
+//						public void onResponse(Document response) {
+//							EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Contacto criado com sucesso."), TYPE.TRAY_NOTIFICATION));
+//							NavigationHistoryItem navig = NavigationHistoryManager.getInstance().getCurrentState();
+//							navig.setParameter("documentid", response.id);
+//							NavigationHistoryManager.getInstance().go(navig);
+//						}
+//
+//						@Override
+//						public void onError(Collection<ResponseError> errors) {
+//							EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não foi possível criar o contacto."), TYPE.ALERT_NOTIFICATION));
+//							view.setSaveMode(true);
+//						}
+//					});
+//				}
+//
+//				else
+//				{
+//					broker.updateContact(temp, new ResponseHandler<Document>() {
+//
+//						@Override
+//						public void onResponse(Document response) {
+//							EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Contacto gravado com sucesso."), TYPE.TRAY_NOTIFICATION));
+//							NavigationHistoryManager.getInstance().reload();
+//						}
+//
+//						@Override
+//						public void onError(Collection<ResponseError> errors) {
+//							EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não foi possível gravar o contacto."), TYPE.ALERT_NOTIFICATION));
+//							view.setSaveMode(true);
+//						}
+//					});
+//				}
+
+			}
+
 
 		});
 
 	}
 
 	public void addNewDetail() {
-		
+
 		ContactEntry temp = view.initializeContactEntry();
 		temp.setHeight("40px");
 		view.getContactInfoList().remove(view.getContactInfoList().size()-1);
 		temp.setEditable(true);
 		view.getContactInfoList().add(temp);
 		view.addContactInfo(null);
-		
+
 	}
 
 	public ContactView getView() {
 		return (ContactView)view;
+	}
+
+	@Override
+	public void setDataVersionNumber(String dataElementId, int number) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public int getDataVersion(String dataElementId) {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public int getContactsDataVersionNumber(String ownerId) {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public void setContactsDataVersionNumber(String ownerId, int number) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void setContacts(String ownerId, java.util.List<Contact> contacts) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void removeContact(String ownerId, String contactId) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void addContact(String ownerId, Contact contact) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void updateContact(String ownerId, Contact contact) {
+		// TODO Auto-generated method stub
+
 	} 
-	
+
 
 }

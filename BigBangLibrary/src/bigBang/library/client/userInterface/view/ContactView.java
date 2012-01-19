@@ -194,6 +194,15 @@ public class ContactView extends View implements ContactViewPresenter.Display{
 	public void setContact(Contact contact) {
 
 		contactIL.clear();
+
+		if(contact == null){
+			this.contact = new Contact();
+			this.name.setValue("");
+			this.type.setValue("");
+			this.address.setValue(null);
+			return;
+		}
+		
 		this.contact = contact;
 		this.name.setValue(contact.name);
 		this.type.setValue(contact.typeId);
@@ -292,6 +301,11 @@ public class ContactView extends View implements ContactViewPresenter.Display{
 			DeleteRequestEventHandler deleteRequestEventHandler) {
 		this.deleteHandler = deleteRequestEventHandler;
 		
+	}
+	
+	@Override
+	public BigBangOperationsToolBar getToolbar(){
+		return toolbar;
 	}
 
 }
