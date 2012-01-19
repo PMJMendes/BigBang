@@ -44,6 +44,10 @@ h1 {
 	background-image: url("images/metalTexture1.png");
 }
 
+.gwt-MenuItem-disabled{
+	color: #BBB !important;
+}
+
 .gwt-TextBox {
 	border: 1px solid gray;
 	padding: 0px !important;
