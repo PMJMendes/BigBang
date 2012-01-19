@@ -33,6 +33,29 @@ public class TransferManagerServiceImpl
 {
 	private static final long serialVersionUID = 1L;
 
+	public static SearchResult sBuildStub(UUID pidType, UUID pidKey)
+			throws BigBangException
+		{
+			ObjectBase lobjAux;
+
+			try
+			{
+				lobjAux = Engine.GetWorkInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), pidType), pidKey);
+			}
+			catch (Throwable e)
+			{
+				throw new BigBangException(e.getMessage(), e);
+			}
+
+			if ( lobjAux instanceof Client )
+				return BuildClientStub((Client)lobjAux);
+
+			if ( lobjAux instanceof Policy )
+				return BuildPolicyStub((Policy)lobjAux);
+
+			throw new BigBangException("Erro: Objecto não suporta transferências de gestor.");
+		}
+
 	public ManagerTransfer getTransfer(String transferId)
 		throws SessionExpiredException, BigBangException
 	{
@@ -82,7 +105,7 @@ public class TransferManagerServiceImpl
 					throw new BigBangException(e.getMessage(), e);
 				}
 				lobjResult.dataObjectIds[i] = lobjProcess.GetDataKey().toString();
-				lobjResult.objectStubs[i] = BuildStub(lobjXFer.GetOuterObjectType(), lobjProcess.GetDataKey());
+				lobjResult.objectStubs[i] = sBuildStub(lobjXFer.GetOuterObjectType(), lobjProcess.GetDataKey());
 			}
 		}
 		else
@@ -97,7 +120,7 @@ public class TransferManagerServiceImpl
 			}
 			lobjResult.managedProcessIds = new String[] {lobjProcess.getKey().toString()};
 			lobjResult.dataObjectIds = new String[] {lobjProcess.GetDataKey().toString()};
-			lobjResult.objectStubs = new SearchResult[] {BuildStub(lobjXFer.GetOuterObjectType(), lobjProcess.GetDataKey())};
+			lobjResult.objectStubs = new SearchResult[] {sBuildStub(lobjXFer.GetOuterObjectType(), lobjProcess.GetDataKey())};
 		}
 
 		return lobjResult;
@@ -301,30 +324,7 @@ public class TransferManagerServiceImpl
 		return lobjResult;
 	}
 
-	private SearchResult BuildStub(UUID pidType, UUID pidKey)
-		throws BigBangException
-	{
-		ObjectBase lobjAux;
-
-		try
-		{
-			lobjAux = Engine.GetWorkInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), pidType), pidKey);
-		}
-		catch (Throwable e)
-		{
-			throw new BigBangException(e.getMessage(), e);
-		}
-
-		if ( lobjAux instanceof Client )
-			return BuildClientStub((Client)lobjAux);
-
-		if ( lobjAux instanceof Policy )
-			return BuildPolicyStub((Policy)lobjAux);
-
-		throw new BigBangException("Erro: Objecto não suporta transferências de gestor.");
-	}
-
-	private ClientStub BuildClientStub(Client pobjClient)
+	private static ClientStub BuildClientStub(Client pobjClient)
 	{
 		ClientStub lobjResult;
 
@@ -351,7 +351,7 @@ public class TransferManagerServiceImpl
 		return lobjResult;
 	}
 
-	private InsurancePolicyStub BuildPolicyStub(Policy pobjPolicy)
+	private static InsurancePolicyStub BuildPolicyStub(Policy pobjPolicy)
 	{
 		InsurancePolicyStub lobjResult;
 
