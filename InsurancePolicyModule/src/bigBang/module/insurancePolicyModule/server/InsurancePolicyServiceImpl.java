@@ -607,6 +607,8 @@ public class InsurancePolicyServiceImpl
 
 		public void WriteBasics(InsurancePolicy pobjResult)
 		{
+			SubLine lobjSubLine;
+
 			if ( !mbValid )
 				return;
 
@@ -628,6 +630,32 @@ public class InsurancePolicyServiceImpl
 			pobjResult.caseStudy = ( mobjPolicy.mbCaseStudy == null ? false : mobjPolicy.mbCaseStudy );
 			pobjResult.statusId = ( mobjPolicy.midStatus == null ? null : mobjPolicy.midStatus.toString() );
 			pobjResult.premium = ( mobjPolicy.mdblPremium == null ? null : mobjPolicy.mdblPremium.toPlainString() );
+
+			if ( mobjPolicy.midStatus != null )
+			{
+				try
+				{
+					pobjResult.statusText = Engine.GetWorkInstance(Engine.FindEntity(Engine.getCurrentNameSpace(),
+							Constants.ObjID_PolicyStatus), mobjPolicy.midStatus).getLabel();
+				}
+				catch (Throwable e)
+				{
+					pobjResult.statusText = "(Erro a obter o estado da apólice.)";
+				}
+			}
+
+			if ( mobjPolicy.midSubLine != null )
+			{
+				try
+				{
+					lobjSubLine = SubLine.GetInstance(Engine.getCurrentNameSpace(), mobjPolicy.midSubLine);
+					pobjResult.lineId = lobjSubLine.getLine().getKey().toString();
+					pobjResult.categoryId = lobjSubLine.getLine().getCategory().getKey().toString();
+				}
+				catch (Throwable e)
+				{
+				}
+			}
 		}
 
 		public void WriteResult(InsurancePolicy pobjResult)
