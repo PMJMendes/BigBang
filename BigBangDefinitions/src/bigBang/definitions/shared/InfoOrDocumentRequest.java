@@ -3,7 +3,7 @@ package bigBang.definitions.shared;
 import java.io.Serializable;
 
 public class InfoOrDocumentRequest
-	implements Serializable
+	extends ProcessBase
 {
 	private static final long serialVersionUID = 1L;
 
@@ -29,7 +29,6 @@ public class InfoOrDocumentRequest
 		public String motive;
 	}
 
-	public String id;
 	public String ownerId;
 	public String documentType;
 	public String text;
@@ -38,6 +37,4 @@ public class InfoOrDocumentRequest
 	public String[] forwardUserIds;
 	public String internalBCCs;
 	public String externalCCs;
-
-	public Permission[] permissions;
 }

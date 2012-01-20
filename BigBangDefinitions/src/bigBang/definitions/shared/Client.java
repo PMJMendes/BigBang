@@ -26,8 +26,6 @@ public class Client
 	public Contact[] contacts;
 	public Document[] documents;
 
-	public Permission[] permissions;
-
 //JMMM: Até ver, o email primário irá para dentro dos contactos.
 
 	public Client()

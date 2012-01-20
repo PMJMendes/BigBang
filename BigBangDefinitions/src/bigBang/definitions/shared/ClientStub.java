@@ -1,7 +1,7 @@
 package bigBang.definitions.shared;
 
 public class ClientStub	
-	extends SearchResult
+	extends ProcessBase
 {	
 	private static final long serialVersionUID = 1L;
 

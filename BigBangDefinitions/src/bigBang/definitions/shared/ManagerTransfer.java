@@ -3,7 +3,7 @@ package bigBang.definitions.shared;
 import java.io.Serializable;
 
 public class ManagerTransfer
-	implements Serializable
+	extends ProcessBase
 {
 	public static enum Status
 		implements Serializable
@@ -16,7 +16,6 @@ public class ManagerTransfer
 
 	private static final long serialVersionUID = 1L;
 
-	public String id; // ID do objecto de dados que representa a transferência de gestor, ou null se fôr um direct transfer
 	public String[] managedProcessIds; // IDs dos processos a transferir
 	public String[] dataObjectIds; // IDs dos respectivos objectos de dados
 	public SearchResult[] objectStubs;
@@ -27,6 +26,4 @@ public class ManagerTransfer
 	public String processId; // ID do processo de transferência, ou null se fôr um direct transfer
 	public Status status; // (*)
 	// * - Por enquanto, estes dados são desconhecidos em GET
-
-	public Permission[] permissions;
 }

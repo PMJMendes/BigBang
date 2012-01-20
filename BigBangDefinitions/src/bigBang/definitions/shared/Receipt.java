@@ -20,8 +20,6 @@ public class Receipt
 	public Contact[] contacts;
 	public Document[] documents;
 
-	public Permission[] permissions;
-
 	public Receipt()
 	{
 		contacts = new Contact[0];
