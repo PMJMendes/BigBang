@@ -84,6 +84,7 @@ public class TasksServiceImpl
 			lobjResult.status = TaskStub.Status.URGENT;
 		if(((UUID)lobjAgenda.getAt(5)).compareTo(Constants.UrgID_Completed) == 0)
 			lobjResult.status = TaskStub.Status.COMPLETED;
+		lobjResult.longDesc = (String)lobjAgenda.getAt(6);
 		lobjResult.processTypeId = lobjScript.getKey().toString();
 		lobjResult.objectTypeId = lobjScript.GetDataType().toString();
 
