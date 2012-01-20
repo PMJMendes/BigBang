@@ -92,7 +92,6 @@ public abstract class DocumentSections{
 			toolbar.addItem(delete);
 			delete.getElement().getStyle().setProperty("textAlign", "center");
 			delete.setEnabled(false);
-			//delete.setVisible(false);
 			toolbar.setHeight("21px");
 			toolbar.setWidth("100%");
 			wrapper.add(toolbar);

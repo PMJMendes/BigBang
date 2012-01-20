@@ -1,13 +1,8 @@
 package bigBang.library.client.userInterface.view;
 
-import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.user.client.Command;
-import com.google.gwt.user.client.ui.Button;
-import com.google.gwt.user.client.ui.HorizontalPanel;
-import com.google.gwt.user.client.ui.MenuItem;
-import com.google.gwt.user.client.ui.VerticalPanel;
-
+import bigBang.definitions.shared.BigBangConstants;
+import bigBang.definitions.shared.Contact;
+import bigBang.definitions.shared.ContactInfo;
 import bigBang.library.client.event.ActionInvokedEvent;
 import bigBang.library.client.event.ActionInvokedEventHandler;
 import bigBang.library.client.event.DeleteRequestEvent;
@@ -15,19 +10,22 @@ import bigBang.library.client.event.DeleteRequestEventHandler;
 import bigBang.library.client.event.SelectedStateChangedEvent;
 import bigBang.library.client.event.SelectedStateChangedEventHandler;
 import bigBang.library.client.userInterface.AddressFormField;
-import bigBang.library.client.userInterface.BigBangOperationsToolBar;
+import bigBang.library.client.userInterface.ContactOperationsToolBar;
 import bigBang.library.client.userInterface.ExpandableListBoxFormField;
 import bigBang.library.client.userInterface.List;
 import bigBang.library.client.userInterface.ListEntry;
 import bigBang.library.client.userInterface.ListHeader;
 import bigBang.library.client.userInterface.NavigationListEntry;
 import bigBang.library.client.userInterface.TextBoxFormField;
-import bigBang.library.client.userInterface.BigBangOperationsToolBar.SUB_MENU;
 import bigBang.library.client.userInterface.presenter.ContactViewPresenter;
 import bigBang.library.client.userInterface.presenter.ContactViewPresenter.Action;
-import bigBang.definitions.shared.BigBangConstants;
-import bigBang.definitions.shared.Contact;
-import bigBang.definitions.shared.ContactInfo;
+
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.user.client.ui.Button;
+import com.google.gwt.user.client.ui.HorizontalPanel;
+import com.google.gwt.user.client.ui.MenuItem;
+import com.google.gwt.user.client.ui.VerticalPanel;
 
 public class ContactView extends View implements ContactViewPresenter.Display{
 
@@ -40,7 +38,7 @@ public class ContactView extends View implements ContactViewPresenter.Display{
 	private AddressFormField address;
 	private List<ContactInfo> contactIL;
 	private Contact contact;
-	private BigBangOperationsToolBar toolbar;
+	private ContactOperationsToolBar toolbar;
 	private MenuItem delete;
 
 	public class ContactEntry extends ListEntry<ContactInfo>{
@@ -119,15 +117,7 @@ public class ContactView extends View implements ContactViewPresenter.Display{
 		initWidget(wrapper);
 		wrapper.setWidth("100%");
 		//TOOLBAR
-		delete = new MenuItem("Eliminar", new Command() {
-			
-			@Override
-			public void execute() {
-				fireAction(Action.DELETE);
-				
-			}
-		});
-		toolbar = new BigBangOperationsToolBar() {
+		toolbar = new ContactOperationsToolBar() {
 
 			@Override
 			public void onSaveRequest() {
@@ -143,19 +133,18 @@ public class ContactView extends View implements ContactViewPresenter.Display{
 			public void onCancelRequest() {
 				fireAction(Action.CANCEL);
 			}
-		};
-		toolbar.hideAll();
-		toolbar.showItem(BigBangOperationsToolBar.SUB_MENU.EDIT, true);
-		toolbar.showItem(SUB_MENU.CREATE, true);
-		toolbar.addItem(SUB_MENU.CREATE, new MenuItem("Sub Contacto", new Command() {
-
+			
 			@Override
-			public void execute() {
+			public void onDelete(){
+				fireAction(Action.DELETE);
+			}
+			
+			@Override
+			public void onCreateSubContact(){
 				fireAction(Action.CREATE_CHILD_CONTACT);
 			}
-		}));
-		toolbar.setHeight("21px");
-		toolbar.setWidth("100%");
+			
+		};
 
 		name = new TextBoxFormField("Nome");
 		type = new ExpandableListBoxFormField(BigBangConstants.TypifiedListIds.CONTACT_TYPE, "Tipo");
@@ -175,8 +164,6 @@ public class ContactView extends View implements ContactViewPresenter.Display{
 		});
 		
 		childContactsButton.setHeight("40px");
-		toolbar.addItem(delete);
-
 		HorizontalPanel horz = new HorizontalPanel();
 		horz.add(type);
 		horz.add(name);
@@ -190,7 +177,6 @@ public class ContactView extends View implements ContactViewPresenter.Display{
 		wrapper.add(contactIL.getListContent());
 		wrapper.add(childContactsButton);
 
-		//END TOOLBAR
 
 	}
 	
@@ -303,17 +289,6 @@ public class ContactView extends View implements ContactViewPresenter.Display{
 	}
 
 	@Override
-	public void setSaveMode(boolean b) {
-		toolbar.setSaveModeEnabled(b);
-		delete.setEnabled(b);
-	}
-
-	@Override
-	public MenuItem getDelete() {
-		return delete;
-	}
-
-	@Override
 	public void registerDeleteHandler(
 			DeleteRequestEventHandler deleteRequestEventHandler) {
 		this.deleteHandler = deleteRequestEventHandler;
@@ -321,8 +296,12 @@ public class ContactView extends View implements ContactViewPresenter.Display{
 	}
 	
 	@Override
-	public BigBangOperationsToolBar getToolbar(){
+	public ContactOperationsToolBar getToolbar(){
 		return toolbar;
+	}
+	@Override
+	public void setSaveMode(boolean b) {
+		toolbar.setSaveModeEnabled(b);
 	}
 
 }
