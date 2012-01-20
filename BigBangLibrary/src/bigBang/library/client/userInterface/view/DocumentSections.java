@@ -19,17 +19,21 @@ import bigBang.library.client.userInterface.presenter.DocumentViewPresenter.Acti
 import bigBang.library.client.resources.Resources;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.event.dom.client.ChangeEvent;
+import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.resources.client.ImageResource;
 import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.FileUpload;
+import com.google.gwt.user.client.ui.FormPanel;
 import com.google.gwt.user.client.ui.HasVerticalAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.MenuItem;
+import com.google.gwt.user.client.ui.UIObject;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
 
@@ -42,10 +46,9 @@ public abstract class DocumentSections{
 		private ExpandableListBoxFormField docType;
 		Document doc = new Document();
 		ActionInvokedEventHandler<Action> actionHandler;
-		
-		
 		BigBangOperationsToolBar toolbar;
 		MenuItem delete;
+		
 		
 		public GeneralInfoSection(){
 
@@ -172,15 +175,18 @@ public abstract class DocumentSections{
 		private TextAreaFormField note;
 		private VerticalPanel wrapper;
 		private HorizontalPanel buttonsFileorNote;
-		private HorizontalPanel submitChange;
+		private HorizontalPanel changeFileNotePanel;
 		private HorizontalPanel charRemainP;
-		private FileUpload upload;
 		private ClickHandler handler;
 		private Button changeToFile;
 		private Button changeToNote;
 		private boolean isFileBoolean;
 		private TextBoxFormField filename;
 		private Button removeFile;
+		private FileUploadPopup uploadDialog;
+		private Button uploadButton;
+		private String fileUploadFilename = null;
+		private String fileStorageId = null;
 		
 		private Image mimeImg;
 		
@@ -193,6 +199,9 @@ public abstract class DocumentSections{
 		private boolean hasFile;
 		
 		public FileNoteSection(){
+			
+			uploadDialog = new FileUploadPopup(this);
+			
 			
 			wrapper = new VerticalPanel();
 			initWidget(wrapper);
@@ -215,6 +224,9 @@ public abstract class DocumentSections{
 					else if(event.getSource() == removeFile){
 						fireAction(Action.REMOVE_FILE);
 					}
+					else if(event.getSource() == uploadButton){
+						uploadDialog.center();
+					}
 				}
 
 			};
@@ -222,8 +234,6 @@ public abstract class DocumentSections{
 			isFile.addClickHandler(handler);
 			isText = new Button("Nova Nota");
 			isText.addClickHandler(handler);
-			upload = (new FileUpload());
-			getUpload().setName("upload");
 			changeToFile = new Button("Substituir por ficheiro");
 			changeToFile.addClickHandler(handler);
 			changeToNote = new Button("Substituir por nota");
@@ -236,16 +246,16 @@ public abstract class DocumentSections{
 			charRemainP.add(charRemain);
 			charRemainP.add(charRemainLabel);
 			getNote().setMaxCharacters(MAXCHAR, charRemainLabel);
-			
+
 			wrapper.setWidth("100%");
 			buttonsFileorNote = new HorizontalPanel();
 			
 			wrapper.add(getNote());
 			wrapper.add(charRemainP);
+			
 			buttonsFileorNote.add(isFile);
 			buttonsFileorNote.add(isText);
 			wrapper.add(buttonsFileorNote);
-			wrapper.add(getUpload());
 			
 			removeFile = new Button("Apagar Ficheiro");
 			removeFile.addClickHandler(handler);
@@ -264,17 +274,27 @@ public abstract class DocumentSections{
 			
 			
 			wrapper.add(filenameRemoveButton);
+			changeFileNotePanel = new HorizontalPanel();
+			changeFileNotePanel.add(changeToFile);
+			changeFileNotePanel.add(changeToNote);
+			wrapper.add(changeFileNotePanel);
 			
-			submitChange = new HorizontalPanel();
+			uploadButton = new Button("Adicionar Ficheiro");
+			uploadButton.addClickHandler(handler);
 			
-			submitChange.add(changeToFile);
-			submitChange.add(changeToNote);
-			wrapper.add(submitChange);
-			
+			wrapper.add(uploadButton);
 			wrapper.add(filenameRemoveButton);
 			
 		}
 		
+		public HorizontalPanel getFilenameRemoveButton() {
+			return filenameRemoveButton;
+		}
+
+		public Button getUploadButton() {
+			return uploadButton;
+		}
+
 		@Override
 		protected void initializeView() {
 			return;
@@ -288,11 +308,10 @@ public abstract class DocumentSections{
 		
 		public void generateNewDocument(){
 			
-			
+			uploadButton.setVisible(false);
 			removeFile.setVisible(false);
 			changeToNote.setVisible(false);
 			getFilename().setVisible(false);
-			getUpload().setVisible(false);
 			changeToFile.setVisible(false);
 			getNote().setVisible(false);
 			charRemainP.setVisible(false);
@@ -323,19 +342,19 @@ public abstract class DocumentSections{
 			buttonsFileorNote.setVisible(false);
 			changeToFile.setVisible(false);
 			getNote().setVisible(false);
-			getUpload().setVisible(true);
 			changeToNote.setVisible(true);
 			charRemainP.setVisible(false);
 			filenameRemoveButton.setVisible(false);
+			uploadButton.setVisible(true);
 			
 		}
 
 		public void createNewNote() {
 			
+			uploadButton.setVisible(false);
 			isFileBoolean = false;
 			buttonsFileorNote.setVisible(false);
 			getNote().setVisible(true);
-			getUpload().setVisible(false);
 			changeToNote.setVisible(false);
 			changeToFile.setVisible(true);
 			charRemainP.setVisible(true);
@@ -343,15 +362,19 @@ public abstract class DocumentSections{
 		
 		}
 
+		public Button getChangeToNote() {
+			return changeToNote;
+		}
+
 		public void setDocumentFile(Document doc) {
 			
 			this.getFilename().setValue(doc.fileName);
 			mimeImg.setResource(getMimeImage(doc.mimeType));
 			mimeImg.setVisible(true);
-			getUpload().setVisible(false);
 			changeToNote.setVisible(false);
 			filenameRemoveButton.setVisible(true);
 			hasFile = true;
+			uploadButton.setVisible(false);
 			
 		}
 		
@@ -440,7 +463,6 @@ public abstract class DocumentSections{
 			getFilename().setVisible(false);
 			mimeImg.setVisible(false);
 			removeFile.setVisible(false);
-			getUpload().setVisible(true);
 			setEditable(true);
 		}
 
@@ -456,11 +478,23 @@ public abstract class DocumentSections{
 		public boolean isFileBoolean() {
 			return isFileBoolean;
 		}
-
-		public FileUpload getUpload() {
-			return upload;
-		}
 		
+		public String getFileUploadFilename() {
+			return fileUploadFilename;
+		}
+
+		public void setFileUploadFilename(String fileUploadFilename) {
+			this.fileUploadFilename = fileUploadFilename;
+		}
+
+		public String getFileStorageId() {
+			return fileStorageId;
+		}
+
+		public void setFileStorageId(String fileStorageId) {
+			this.fileStorageId = fileStorageId;
+		}
+
 	}
 	
 	public static class DetailsSection extends View{

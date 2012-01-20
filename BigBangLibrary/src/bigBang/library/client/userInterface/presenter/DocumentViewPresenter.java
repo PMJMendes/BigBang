@@ -7,6 +7,7 @@ import bigBang.definitions.client.response.ResponseHandler;
 import bigBang.definitions.shared.BigBangConstants;
 import bigBang.definitions.shared.DocInfo;
 import bigBang.definitions.shared.Document;
+import bigBang.library.client.BigBangAsyncCallback;
 import bigBang.library.client.EventBus;
 import bigBang.library.client.HasParameters;
 import bigBang.library.client.Notification;
@@ -26,6 +27,7 @@ import bigBang.library.client.userInterface.view.DocumentSections.DetailsSection
 import bigBang.library.client.userInterface.view.DocumentSections.DetailsSection.DocumentDetailEntry;
 import bigBang.library.client.userInterface.view.DocumentSections.FileNoteSection;
 import bigBang.library.client.userInterface.view.DocumentSections.GeneralInfoSection;
+import bigBang.library.interfaces.FileService;
 
 import com.google.gwt.user.client.ui.HasWidgets;
 import com.google.gwt.user.client.ui.UIObject;
@@ -53,7 +55,7 @@ public class DocumentViewPresenter implements ViewPresenter, DocumentsBrokerClie
 		ADD_NEW_DETAIL, 
 		REMOVE_FILE, 
 		DELETE_DETAIL, 
-		DELETE
+		DELETE, UPLOAD_SUCCESS
 	}
 
 	public DocumentViewPresenter(Display view){
@@ -152,7 +154,7 @@ public class DocumentViewPresenter implements ViewPresenter, DocumentsBrokerClie
 			});
 
 		}
-		
+
 		if(!hasPermissions){
 			view.getGeneralInfo().getToolbar().lockAll();
 		}
@@ -163,6 +165,8 @@ public class DocumentViewPresenter implements ViewPresenter, DocumentsBrokerClie
 		if(bound){
 			return;
 		}
+
+
 		view.registerDeleteHandler(new DeleteRequestEventHandler(){
 
 			@Override
@@ -222,6 +226,8 @@ public class DocumentViewPresenter implements ViewPresenter, DocumentsBrokerClie
 				}
 				case SAVE:{
 					Document temp = getDocument();
+					temp.fileName = view.getFileNote().getFileUploadFilename();
+					temp.fileStorageId = view.getFileNote().getFileStorageId();
 					createUpdateDocument(temp);
 					break;
 				}
@@ -245,12 +251,40 @@ public class DocumentViewPresenter implements ViewPresenter, DocumentsBrokerClie
 					removeDocument();
 					break;
 				}
+				case UPLOAD_SUCCESS:{
+					
+					Document temp = getDocument();
+					view.getFileNote().getFilename().setValue(temp.fileName);
+					view.getFileNote().getChangeToNote().setVisible(false);
+					view.getFileNote().getUploadButton().setVisible(false);
+					view.getFileNote().getFilenameRemoveButton().setVisible(true);
+					
+					FileService.Util.getInstance().Discard(temp.fileStorageId, new BigBangAsyncCallback<Void>() {
+
+						@Override
+						public void onSuccess(Void result) {
+							System.out.println("FICHEIRO APAGADO DE MEMORIA");
+						}
+						
+						@Override
+						public void onFailure(Throwable caught) {
+							
+							System.out.println("ERRO AO APAGAR O FICHEIRO DE MEMÓRIA");
+							super.onFailure(caught);
+						}
+						
+						
+						
+						
+					});
+					break;
+				}
 				}
 
 			}
 
 			private void removeDocument() {
-				
+
 				broker.deleteDocument(documentId, new ResponseHandler<Void>() {
 
 					@Override
@@ -269,20 +303,22 @@ public class DocumentViewPresenter implements ViewPresenter, DocumentsBrokerClie
 						EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não foi possível eliminar o documento."), TYPE.ALERT_NOTIFICATION));
 						view.setSaveMode(true);
 					}
-					
-				
+
+
 				});
-				
+
 			}
 
 			private void createUpdateDocument(Document temp) {
+
+				
 				
 				if(temp.id == null){
-					
+
 					temp.ownerId = ownerId;
 					temp.ownerTypeId = ownerTypeId;
 					broker.createDocument(temp, new ResponseHandler<Document>() {
-						
+
 						@Override
 						public void onResponse(Document response) {
 							EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Documento criado com sucesso."), TYPE.TRAY_NOTIFICATION));
@@ -290,7 +326,7 @@ public class DocumentViewPresenter implements ViewPresenter, DocumentsBrokerClie
 							navig.setParameter("documentid", response.id);
 							NavigationHistoryManager.getInstance().go(navig);
 						}
-						
+
 						@Override
 						public void onError(Collection<ResponseError> errors) {
 							EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não foi possível criar o documento."), TYPE.ALERT_NOTIFICATION));
@@ -298,17 +334,17 @@ public class DocumentViewPresenter implements ViewPresenter, DocumentsBrokerClie
 						}
 					});
 				}
-				
+
 				else
 				{
 					broker.updateDocument(temp, new ResponseHandler<Document>() {
-						
+
 						@Override
 						public void onResponse(Document response) {
 							EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Documento gravado com sucesso."), TYPE.TRAY_NOTIFICATION));
 							NavigationHistoryManager.getInstance().reload();
 						}
-						
+
 						@Override
 						public void onError(Collection<ResponseError> errors) {
 							EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não foi possível gravar o documento."), TYPE.ALERT_NOTIFICATION));
@@ -316,7 +352,7 @@ public class DocumentViewPresenter implements ViewPresenter, DocumentsBrokerClie
 						}
 					});
 				}
-				
+
 			}
 
 			private Document getDocument() {
@@ -331,6 +367,8 @@ public class DocumentViewPresenter implements ViewPresenter, DocumentsBrokerClie
 				newD.docTypeId = view.getGeneralInfo().getDocType().getValue();
 				newD.fileName = view.getFileNote().getFilename().getValue();
 				newD.text = view.getFileNote().getNote().getValue();
+				newD.fileStorageId = view.getFileNote().getFileStorageId();
+				newD.fileName = view.getFileNote().getFileUploadFilename();
 
 				newD.parameters = new DocInfo[view.getDetails().getList().size()-1];
 
@@ -341,18 +379,6 @@ public class DocumentViewPresenter implements ViewPresenter, DocumentsBrokerClie
 					newD.parameters[i].value = ((DocumentDetailEntry) view.getDetails().getList().get(i)).getInfoValue().getValue();
 
 				}
-				if(!view.getFileNote().isFileBoolean()){
-					newD.fileStorageId = null;
-					newD.fileName = null;
-				}
-				else{
-					if(view.getFileNote().getFilename().isVisible()){
-						newD.fileName = view.getFileNote().getFilename().getValue();
-					}
-					else
-						newD.fileName = view.getFileNote().getUpload().getFilename();
-				}
-
 
 				return newD;
 
@@ -360,6 +386,7 @@ public class DocumentViewPresenter implements ViewPresenter, DocumentsBrokerClie
 
 			private void removeFile() {
 				view.getFileNote().removeFile();
+				view.getFileNote().getUploadButton().setVisible(true);
 			}
 
 
@@ -399,7 +426,7 @@ public class DocumentViewPresenter implements ViewPresenter, DocumentsBrokerClie
 		}
 		view.addDetail(null);
 		view.setEditable(false);
-		
+
 	}
 
 

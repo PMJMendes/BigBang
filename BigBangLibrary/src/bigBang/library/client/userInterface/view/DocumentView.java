@@ -129,5 +129,4 @@ public class DocumentView extends View implements DocumentViewPresenter.Display{
 	}
 
 
-
 }
