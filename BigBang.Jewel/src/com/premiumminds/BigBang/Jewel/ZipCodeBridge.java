@@ -24,7 +24,7 @@ public class ZipCodeBridge
 		larrMembers = new int[1];
 		larrMembers[0] = Constants.ZipCode_In_PostalCode;
 		larrParams = new java.lang.Object[1];
-		larrParams[0] = pstrCode;
+		larrParams[0] = "!" + pstrCode;
 
 		lobjAux = null;
 
