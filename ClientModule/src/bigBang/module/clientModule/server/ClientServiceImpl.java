@@ -3,6 +3,7 @@ package bigBang.module.clientModule.server;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.Calendar;
+import java.util.StringTokenizer;
 import java.util.UUID;
 
 import Jewel.Engine.Engine;
@@ -30,6 +31,7 @@ import bigBang.definitions.shared.SearchResult;
 import bigBang.definitions.shared.SortOrder;
 import bigBang.definitions.shared.SortParameter;
 import bigBang.definitions.shared.ZipCode;
+import bigBang.library.server.BigBangPermissionServiceImpl;
 import bigBang.library.server.ContactsServiceImpl;
 import bigBang.library.server.DocumentServiceImpl;
 import bigBang.library.server.SearchServiceBase;
@@ -138,6 +140,8 @@ public class ClientServiceImpl
 
 		lobjResult.processId = lobjProc.getKey().toString();
 		lobjResult.managerId = lobjProc.GetManagerID().toString();
+
+		lobjResult.permissions = BigBangPermissionServiceImpl.sGetProcessPermissions(lobjProc.getKey());
 
 		return lobjResult;
 	}
@@ -340,7 +344,10 @@ public class ClientServiceImpl
 		throws SessionExpiredException, BigBangException
 	{
 		com.premiumminds.BigBang.Jewel.Objects.Client lobjClient;
+		ObjectBase lobjType;
 		CreateInfoRequest lopCIR;
+		StringTokenizer lstrTok;
+		int i;
 
 		if ( Engine.getCurrentUser() == null )
 			throw new SessionExpiredException();
@@ -349,8 +356,39 @@ public class ClientServiceImpl
 		{
 			lobjClient = com.premiumminds.BigBang.Jewel.Objects.Client.GetInstance(Engine.getCurrentNameSpace(),
 					UUID.fromString(request.ownerId));
+			lobjType = Engine.GetWorkInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), Constants.ObjID_DocType),
+					UUID.fromString(request.documentType));
 
 			lopCIR = new CreateInfoRequest(lobjClient.GetProcessID());
+			lopCIR.mstrRequestSubject = "Pedido de " + lobjType.getLabel();
+			lopCIR.mstrRequestBody = request.text;
+			if ( request.forwardUserIds == null )
+				lopCIR.marrUserDecos = null;
+			else
+			{
+				lopCIR.marrUserDecos = new UUID[request.forwardUserIds.length];
+				for ( i = 0; i < request.forwardUserIds.length; i++ )
+					lopCIR.marrUserDecos[i] = UUID.fromString(request.forwardUserIds[i]);
+			}
+			lopCIR.marrTos = new UUID[] {UUID.fromString(request.toInfoId)};
+			if ( request.externalCCs == null )
+				lopCIR.marrCCs = null;
+			else
+			{
+				lstrTok = new StringTokenizer(request.externalCCs, ",;");
+				lopCIR.marrCCs = new String[lstrTok.countTokens()];
+				for ( i = 0; i < lopCIR.marrCCs.length; i++ )
+					lopCIR.marrCCs[i] = lstrTok.nextToken();
+			}
+			if ( request.internalBCCs == null )
+				lopCIR.marrBCCs = null;
+			else
+			{
+				lstrTok = new StringTokenizer(request.internalBCCs, ",;");
+				lopCIR.marrBCCs = new String[lstrTok.countTokens()];
+				for ( i = 0; i < lopCIR.marrBCCs.length; i++ )
+					lopCIR.marrBCCs[i] = lstrTok.nextToken();
+			}
 
 			lopCIR.Execute();
 		}

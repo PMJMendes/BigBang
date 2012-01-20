@@ -7,7 +7,6 @@ import Jewel.Engine.DataAccess.SQLServer;
 import Jewel.Petri.SysObjects.JewelPetriException;
 import Jewel.Petri.SysObjects.Operation;
 
-import com.premiumminds.BigBang.Jewel.BigBangJewelException;
 import com.premiumminds.BigBang.Jewel.Constants;
 import com.premiumminds.BigBang.Jewel.Library.SendMail;
 import com.premiumminds.BigBang.Jewel.Objects.ContactInfo;
@@ -18,12 +17,12 @@ public class CreateInfoRequest
 {
 	private static final long serialVersionUID = 1L;
 
-	private String mstrRequestHeader;
-	private String mstrRequestBody;
-	private UUID[] marrUserDecos;
-	private UUID[] marrTos;
-	private UUID[] marrCCs;
-	private UUID[] marrBCCs;
+	public String mstrRequestSubject;
+	public String mstrRequestBody;
+	public UUID[] marrUserDecos;
+	public UUID[] marrTos;
+	public String[] marrCCs;
+	public String[] marrBCCs;
 	private UUID midExternProcess;
 
 	public CreateInfoRequest(UUID pidProcess)
@@ -48,7 +47,7 @@ public class CreateInfoRequest
 		lstrBuffer = new StringBuilder();
 
 		lstrBuffer.append("Foi enviado o seguinte pedido:").append(pstrLineBreak);
-		lstrBuffer.append(mstrRequestHeader).append(pstrLineBreak);
+		lstrBuffer.append(mstrRequestSubject).append(pstrLineBreak);
 		lstrBuffer.append(mstrRequestBody).append(pstrLineBreak);
 
 		return lstrBuffer.toString();
@@ -64,8 +63,6 @@ public class CreateInfoRequest
 	{
 		String[] larrReplyTo;
 		String[] larrTo;
-		String[] larrCC;
-		String[] larrBCC;
 		int i;
 
 		try
@@ -85,38 +82,16 @@ public class CreateInfoRequest
 			{
 				larrTo = new String[marrTos.length];
 				for ( i = 0; i < marrTos.length; i++ )
-					larrTo[i] = EmailFromContactInfo(marrTos[i]);
+					larrTo[i] = (String)ContactInfo.GetInstance(Engine.getCurrentNameSpace(), marrTos[i]).getAt(2);
 			}
 
-			if ( marrCCs == null )
-				larrCC = null;
-			else
-			{
-				larrCC = new String[marrCCs.length];
-				for ( i = 0; i < marrCCs.length; i++ )
-					larrCC[i] = EmailFromContactInfo(marrCCs[i]);
-			}
-
-			if ( marrBCCs == null )
-				larrBCC = null;
-			else
-			{
-				larrBCC = new String[marrBCCs.length];
-				for ( i = 0; i < marrBCCs.length; i++ )
-					larrBCC[i] = EmailFromContactInfo(marrBCCs[i]);
-			}
-
-			SendMail.DoSendMail(larrReplyTo, larrTo, larrCC, larrBCC, mstrRequestHeader, mstrRequestBody);
+			SendMail.DoSendMail(larrReplyTo, larrTo, marrCCs, marrBCCs, mstrRequestSubject, mstrRequestBody);
 		}
 		catch (Throwable e)
 		{
 			throw new JewelPetriException(e.getMessage(), e);
 		}
-	}
 
-	private String EmailFromContactInfo(UUID pidInfo)
-		throws BigBangJewelException
-	{
-		return (String)ContactInfo.GetInstance(Engine.getCurrentNameSpace(), pidInfo).getAt(2);
+		throw new JewelPetriException("Incomplete implementation.");
 	}
 }

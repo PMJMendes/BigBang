@@ -17,6 +17,7 @@ import bigBang.definitions.shared.SearchParameter;
 import bigBang.definitions.shared.SearchResult;
 import bigBang.definitions.shared.SortOrder;
 import bigBang.definitions.shared.SortParameter;
+import bigBang.library.server.BigBangPermissionServiceImpl;
 import bigBang.library.server.SearchServiceBase;
 import bigBang.library.shared.BigBangException;
 import bigBang.library.shared.SessionExpiredException;
@@ -120,6 +121,8 @@ public class ReceiptServiceImpl
 		lobjResult.notes = (String)lobjReceipt.getAt(13);
 
 		lobjResult.managerId = lobjProc.GetManagerID().toString();
+
+		lobjResult.permissions = BigBangPermissionServiceImpl.sGetProcessPermissions(lobjProc.getKey());
 
 		return lobjResult;
 	}

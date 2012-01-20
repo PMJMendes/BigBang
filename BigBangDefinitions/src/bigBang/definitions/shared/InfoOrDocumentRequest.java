@@ -34,7 +34,10 @@ public class InfoOrDocumentRequest
 	public String documentType;
 	public String text;
 	public int replylimit;
+	public String toInfoId;
 	public String[] forwardUserIds;
 	public String internalBCCs;
 	public String externalCCs;
+
+	public Permission[] permissions;
 }

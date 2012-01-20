@@ -1,6 +1,6 @@
 package bigBang.library.interfaces;
 
-import bigBang.library.shared.Permission;
+import bigBang.definitions.shared.Permission;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
 

@@ -4,9 +4,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 import bigBang.definitions.client.response.ResponseHandler;
+import bigBang.definitions.shared.Permission;
 import bigBang.library.interfaces.BigBangPermissionService;
 import bigBang.library.interfaces.BigBangPermissionServiceAsync;
-import bigBang.library.shared.Permission;
 
 public class BigBangPermissionManager {
 	

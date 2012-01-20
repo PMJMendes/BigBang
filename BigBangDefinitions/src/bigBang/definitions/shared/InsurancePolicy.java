@@ -119,6 +119,8 @@ public class InsurancePolicy
 	public TableSection[] tableData;
 	public ExtraField[] extraData;
 
+	public Permission[] permissions;
+
 	public InsurancePolicy()
 	{
 		contacts = new Contact[0];

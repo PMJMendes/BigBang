@@ -2,6 +2,7 @@ package bigBang.module.generalSystemModule.interfaces;
 
 import bigBang.library.shared.BigBangException;
 import bigBang.library.shared.SessionExpiredException;
+import bigBang.module.generalSystemModule.shared.GeneralSystem;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.rpc.RemoteService;
@@ -26,4 +27,5 @@ public interface GeneralSystemService
 	
 	public String getGeneralSystemProcessId() throws SessionExpiredException, BigBangException;
 	public String getGeneralSystemId() throws SessionExpiredException, BigBangException;
+	public GeneralSystem getGeneralSystem() throws SessionExpiredException, BigBangException;
 }

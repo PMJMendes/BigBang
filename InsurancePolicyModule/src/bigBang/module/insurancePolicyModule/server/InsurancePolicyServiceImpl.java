@@ -35,6 +35,7 @@ import bigBang.definitions.shared.SortOrder;
 import bigBang.definitions.shared.SortParameter;
 import bigBang.definitions.shared.TipifiedListItem;
 import bigBang.definitions.shared.ZipCode;
+import bigBang.library.server.BigBangPermissionServiceImpl;
 import bigBang.library.server.ContactsServiceImpl;
 import bigBang.library.server.DocumentServiceImpl;
 import bigBang.library.server.SearchServiceBase;
@@ -2571,6 +2572,8 @@ public class InsurancePolicyServiceImpl
 				return o1.type.compareTo(o2.type);
 			}
 		});
+
+		lobjResult.permissions = BigBangPermissionServiceImpl.sGetProcessPermissions(lobjProc.getKey());
 
 		return lobjResult;
 	}
