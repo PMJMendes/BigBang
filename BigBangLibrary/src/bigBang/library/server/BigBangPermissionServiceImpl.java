@@ -24,7 +24,6 @@ public class BigBangPermissionServiceImpl
 	public static Permission[] sGetProcessPermissions(UUID pidProcess)
 		throws BigBangException
 	{
-		UUID lidUser;
 		IProcess lrefProcess;
 		UUID lidProfile;
 		IOperation[] larrOps;
@@ -34,13 +33,11 @@ public class BigBangPermissionServiceImpl
 		IStep lobjStep;
 		int i;
 
-		lidUser = Engine.getCurrentUser();
-
 		ldb = null;
 		try
 		{
-			lrefProcess = PNProcess.GetInstance(Engine.getCurrentNameSpace(), lidUser);
-			lidProfile = User.GetInstance(Engine.getCurrentNameSpace(), lidUser).getProfile().getKey();
+			lrefProcess = PNProcess.GetInstance(Engine.getCurrentNameSpace(), pidProcess);
+			lidProfile = User.GetInstance(Engine.getCurrentNameSpace(), Engine.getCurrentUser()).getProfile().getKey();
 			larrOps = lrefProcess.GetScript().getOperations();
 			larrResult = new ArrayList<Permission>();
 			ldb = new MasterDB();
