@@ -39,7 +39,6 @@ public class ContactView extends View implements ContactViewPresenter.Display{
 	private List<ContactInfo> contactIL;
 	private Contact contact;
 	private ContactOperationsToolBar toolbar;
-	private MenuItem delete;
 
 	public class ContactEntry extends ListEntry<ContactInfo>{
 
