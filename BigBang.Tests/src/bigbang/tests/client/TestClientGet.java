@@ -50,7 +50,7 @@ public class TestClientGet
 		};
 
 		parameter = new ClientSearchParameter();
-		parameter.freeText = "Gumbercindo";
+		parameter.freeText = "CREDITE";
 		sorts = new ClientSortParameter();
 		sorts.field = ClientSortParameter.SortableField.NAME;
 		sorts.order = SortOrder.ASC;
