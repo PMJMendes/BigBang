@@ -1,6 +1,6 @@
 package bigbang.tests.client;
 
-import bigBang.library.shared.Permission;
+import bigBang.definitions.shared.Permission;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
