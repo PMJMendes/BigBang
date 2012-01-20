@@ -16,6 +16,8 @@ import com.premiumminds.BigBang.Jewel.Constants;
 public class SubLine
 	extends ObjectBase
 {
+	private Line mrefLine;
+
     public static SubLine GetInstance(UUID pidNameSpace, UUID pidKey)
 		throws BigBangJewelException
 	{
@@ -45,7 +47,31 @@ public class SubLine
     public void Initialize()
 		throws JewelEngineException
 	{
+    	try
+    	{
+			mrefLine = Line.GetInstance(getNameSpace(), (UUID)getAt(1));
+		}
+    	catch (Throwable e)
+    	{
+    		throw new JewelEngineException(e.getMessage(), e);
+		}
 	}
+
+    public Line getLine()
+    {
+    	if ( mrefLine == null )
+    	{
+    		try
+    		{
+				Initialize();
+			}
+    		catch (Throwable e)
+    		{
+			}
+    	}
+
+    	return mrefLine;
+    }
 
     public Coverage[] GetCurrentCoverages()
     	throws BigBangJewelException
