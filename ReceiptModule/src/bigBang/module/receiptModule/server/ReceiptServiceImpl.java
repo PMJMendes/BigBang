@@ -42,7 +42,7 @@ public class ReceiptServiceImpl
 	private static final long serialVersionUID = 1L;
 
 	public static Receipt sGetReceipt(String receiptId)
-		throws SessionExpiredException, BigBangException
+		throws BigBangException
 	{
 		UUID lid;
 		com.premiumminds.BigBang.Jewel.Objects.Receipt lobjReceipt;
@@ -55,9 +55,6 @@ public class ReceiptServiceImpl
 		Line lobjLine;
 		ObjectBase lobjCategory;
 		ObjectBase lobjType;
-
-		if ( Engine.getCurrentUser() == null )
-			throw new SessionExpiredException();
 
 		lid = UUID.fromString(receiptId);
 		try
@@ -130,6 +127,9 @@ public class ReceiptServiceImpl
 	public Receipt getReceipt(String receiptId)
 			throws SessionExpiredException, BigBangException
 	{
+		if ( Engine.getCurrentUser() == null )
+			throw new SessionExpiredException();
+
 		return sGetReceipt(receiptId);
 	}
 
