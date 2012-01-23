@@ -129,7 +129,7 @@ public class DocumentServiceImpl
 		{
 			while ( lrsDocs.next() )
 				larrAux.add(fromServer(com.premiumminds.BigBang.Jewel.Objects.Document
-						.GetInstance(Engine.getCurrentNameSpace(), lrsDocs)));
+						.GetInstance(Engine.getCurrentNameSpace(), lrsDocs), true));
 		}
 		catch (BigBangException e)
 		{
@@ -164,6 +164,23 @@ public class DocumentServiceImpl
 		}
 
 		return larrAux.toArray(new Document[larrAux.size()]);
+	}
+
+	public Document getDocument(String docId)
+		throws SessionExpiredException, BigBangException
+	{
+		if ( Engine.getCurrentUser() == null )
+			throw new SessionExpiredException();
+
+		try
+		{
+			return fromServer(com.premiumminds.BigBang.Jewel.Objects.Document
+					.GetInstance(Engine.getCurrentNameSpace(), UUID.fromString(docId)), true);
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangException(e.getMessage(), e);
+		}
 	}
 
 	public Document createDocument(Document document)
@@ -276,7 +293,7 @@ public class DocumentServiceImpl
 		}
 	}
 
-	private Document fromServer(com.premiumminds.BigBang.Jewel.Objects.Document pobjDocument)
+	private Document fromServer(com.premiumminds.BigBang.Jewel.Objects.Document pobjDocument, boolean pbForList)
 		throws BigBangException
 	{
 		Document lobjAux;
@@ -293,23 +310,32 @@ public class DocumentServiceImpl
 		lobjAux.ownerId = ((UUID)pobjDocument.getAt(2)).toString();
 		lobjAux.docTypeId = ((UUID)pobjDocument.getAt(3)).toString();
 		lobjAux.text = (String)pobjDocument.getAt(4);
-		if ( pobjDocument.getAt(5) == null )
+		if ( pbForList )
 		{
-			lobjAux.mimeType = null;
-			lobjAux.fileName = null;
-			lobjAux.fileStorageId = null;
+			lobjAux.hasFile = (pobjDocument.getAt(5) != null);
 		}
 		else
 		{
-	    	if ( pobjDocument.getAt(5) instanceof FileXfer )
-	    		laux = (FileXfer)pobjDocument.getAt(5);
-	    	else
-	        	laux = new FileXfer((byte[])pobjDocument.getAt(5));
-	    	lidAux = UUID.randomUUID();
-	    	FileServiceImpl.GetFileXferStorage().put(lidAux, laux);
-			lobjAux.mimeType = laux.getContentType();
-			lobjAux.fileName = laux.getFileName();
-			lobjAux.fileStorageId = lidAux.toString();
+			if ( pobjDocument.getAt(5) == null )
+			{
+				lobjAux.hasFile = false;
+				lobjAux.mimeType = null;
+				lobjAux.fileName = null;
+				lobjAux.fileStorageId = null;
+			}
+			else
+			{
+				lobjAux.hasFile = true;
+		    	if ( pobjDocument.getAt(5) instanceof FileXfer )
+		    		laux = (FileXfer)pobjDocument.getAt(5);
+		    	else
+		        	laux = new FileXfer((byte[])pobjDocument.getAt(5));
+		    	lidAux = UUID.randomUUID();
+		    	FileServiceImpl.GetFileXferStorage().put(lidAux, laux);
+				lobjAux.mimeType = laux.getContentType();
+				lobjAux.fileName = laux.getFileName();
+				lobjAux.fileStorageId = lidAux.toString();
+			}
 		}
 
 		try

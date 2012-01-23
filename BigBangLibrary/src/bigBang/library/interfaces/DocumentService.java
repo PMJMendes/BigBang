@@ -24,8 +24,9 @@ public interface DocumentService
 			return instance;
 		}
 	}
-	
+
 	public Document[] getDocuments(String ownerId) throws SessionExpiredException, BigBangException;
+	public Document getDocument(String docId) throws SessionExpiredException, BigBangException;
 	public Document createDocument(Document document) throws SessionExpiredException, BigBangException;
 	public Document saveDocument(Document document) throws SessionExpiredException, BigBangException;
 	public void deleteDocument(String id) throws SessionExpiredException, BigBangException;

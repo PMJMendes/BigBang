@@ -13,6 +13,7 @@ public class Document
 	public String ownerId;
 	public String docTypeId;
 	public String text;
+	public boolean hasFile;
 	public String mimeType;
 	public String fileName;
 	public String fileStorageId;

@@ -8,6 +8,7 @@ public interface DocumentServiceAsync
 	extends Service
 {
 	void getDocuments(String ownerId, AsyncCallback<Document[]> callback);
+	void getDocument(String docId, AsyncCallback<Document> callback);
 	void createDocument(Document document, AsyncCallback<Document> callback);
 	void saveDocument(Document document, AsyncCallback<Document> callback);
 	void deleteDocument(String id, AsyncCallback<Void> callback);
