@@ -16,6 +16,8 @@ import bigBang.library.interfaces.HistoryService;
 import bigBang.library.interfaces.HistoryServiceAsync;
 import bigBang.library.interfaces.TransferManagerService;
 import bigBang.library.interfaces.TransferManagerServiceAsync;
+import bigBang.library.interfaces.TypifiedTextService;
+import bigBang.library.interfaces.TypifiedTextServiceAsync;
 import bigBang.module.clientModule.interfaces.ClientService;
 import bigBang.module.clientModule.interfaces.ClientServiceAsync;
 import bigBang.module.generalSystemModule.interfaces.CoveragesService;
@@ -57,6 +59,8 @@ public class Services
 			GWT.create(BigBangPermissionService.class);
 	public static final TransferManagerServiceAsync transferManagerService =
 			GWT.create(TransferManagerService.class);
+	public static final TypifiedTextServiceAsync typifiedTextService =
+			GWT.create(TypifiedTextService.class);
 	public static final TasksServiceAsync tasksService =
 			GWT.create(TasksService.class);
 	public static final CoveragesServiceAsync coveragesService =

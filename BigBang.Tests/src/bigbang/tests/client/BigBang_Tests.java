@@ -34,9 +34,6 @@ public class BigBang_Tests
 //		TestSpecialGetSubProcs.DoTest();
 //		TestSpecialGetPermissions.DoTest();
 //
-//		TestAgendaGet.DoTest();
-//		TestAgendaDismiss.DoTest();
-//
 //		TestHistoryGet.DoTest();
 //		TestHistoryUndo.DoTest();
 //
@@ -57,6 +54,14 @@ public class BigBang_Tests
 //		TestDocumentCreate.DoTest();
 //		TestDocumentEdit.DoTest();
 //		TestDocumentDelete.DoTest();
+//
+//		TestTextGet.DoTest();
+//		TestTextCreate.DoTest();
+//		TestTextEdit.DoTest();
+//		TestTextDelete.DoTest();
+//
+//		TestAgendaGet.DoTest();
+//		TestAgendaDismiss.DoTest();
 //
 //		TestValuesGet.DoTest();
 //
