@@ -205,31 +205,31 @@ public class UserServiceImpl
 	{
 		ManageUsers lopMU;
 
-			if ( Engine.getCurrentUser() == null )
-				throw new SessionExpiredException();
+		if ( Engine.getCurrentUser() == null )
+			throw new SessionExpiredException();
 
-			try
-			{
-				lopMU = new ManageUsers(GeneralSystem.GetAnyInstance(Engine.getCurrentNameSpace()).GetProcessID());
-				lopMU.marrDelete = new ManageUsers.UserData[1];
-				lopMU.marrDelete[0] = lopMU.new UserData();
-				lopMU.marrDelete[0].mid = UUID.fromString(user.id);
-				lopMU.marrDelete[0].midDecorations = UUID.fromString(user.decoId);
-				lopMU.marrDelete[0].mstrFullName = null;
-				lopMU.marrDelete[0].mstrUsername = null;
-				lopMU.marrDelete[0].mobjPassword = null;
-				lopMU.marrDelete[0].midProfile = null;
-				lopMU.marrDelete[0].mstrEmail = null;
-				lopMU.marrDelete[0].midCostCenter = null;
-				lopMU.marrCreate = null;
-				lopMU.marrModify = null;
+		try
+		{
+			lopMU = new ManageUsers(GeneralSystem.GetAnyInstance(Engine.getCurrentNameSpace()).GetProcessID());
+			lopMU.marrDelete = new ManageUsers.UserData[1];
+			lopMU.marrDelete[0] = lopMU.new UserData();
+			lopMU.marrDelete[0].mid = UUID.fromString(user.id);
+			lopMU.marrDelete[0].midDecorations = UUID.fromString(user.decoId);
+			lopMU.marrDelete[0].mstrFullName = null;
+			lopMU.marrDelete[0].mstrUsername = null;
+			lopMU.marrDelete[0].mobjPassword = null;
+			lopMU.marrDelete[0].midProfile = null;
+			lopMU.marrDelete[0].mstrEmail = null;
+			lopMU.marrDelete[0].midCostCenter = null;
+			lopMU.marrCreate = null;
+			lopMU.marrModify = null;
 
-				lopMU.Execute();
-			}
-			catch (Throwable e)
-			{
-				throw new BigBangException(e.getMessage(), e);
-			}
+			lopMU.Execute();
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangException(e.getMessage(), e);
+		}
 	}
 
 //	public User[] getUsersForCostCenterAssignment()
