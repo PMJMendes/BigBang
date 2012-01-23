@@ -239,10 +239,7 @@ public class ContactViewPresenter implements ViewPresenter, ContactsBrokerClient
 					break;
 
 				case CANCEL:
-					setContact(contact);
-					view.setEditable(false);
-					view.setSaveMode(false);
-					view.getToolbar().allowEdit(false);
+					NavigationHistoryManager.getInstance().reload();
 					break;
 
 				case EDIT: 

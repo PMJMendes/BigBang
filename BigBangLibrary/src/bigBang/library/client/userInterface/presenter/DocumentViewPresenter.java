@@ -277,7 +277,6 @@ public class DocumentViewPresenter implements ViewPresenter, DocumentsBrokerClie
 				
 				Window.open(GWT.getModuleBaseURL() + "bbfile?fileref=" +doc.fileStorageId , null, null);
 				
-				
 			}
 
 			private void removeDocument() {
