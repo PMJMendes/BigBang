@@ -44,7 +44,7 @@ public class FileUploadPopup
 		mfrmMain.setAction(action);
 		lvert.add(mfrmMain);
 		mfupMain = new FileUpload();
-		mfupMain.setName("781a6733-5c2c-4d85-b634-89c148d6d5e1"); //TODO tornar isto dinâmico.
+		mfupMain.setName("none");
 		mfrmMain.setWidget(mfupMain);
 		lhorz = new HorizontalPanel();
 		mbtnOk = new Button();
@@ -103,14 +103,6 @@ public class FileUploadPopup
 				hide();
 	        }
 		});
-	}
-
-	public void SetKey(String pstrKey)
-	{
-		if ( pstrKey == null )
-			mfupMain.setName("none");
-		else
-			mfupMain.setName(pstrKey);
 	}
 	
 	private void SetError(String pstrError)

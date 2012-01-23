@@ -1,6 +1,8 @@
 package bigBang.library.client.userInterface.view;
 
 
+import org.gwt.mosaic.ui.client.ToolBar;
+
 import bigBang.definitions.shared.BigBangConstants;
 import bigBang.definitions.shared.DocInfo;
 import bigBang.definitions.shared.Document;
@@ -82,7 +84,6 @@ public abstract class DocumentSections{
 				@Override
 				public void setSaveModeEnabled(boolean enabled) {
 					super.setSaveModeEnabled(enabled);
-					delete.setEnabled(enabled);
 				}
 
 			};
@@ -310,6 +311,7 @@ public abstract class DocumentSections{
 			
 			uploadButton.setVisible(false);
 			removeFile.setVisible(false);
+			
 			changeToNote.setVisible(false);
 			getFilename().setVisible(false);
 			changeToFile.setVisible(false);

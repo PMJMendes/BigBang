@@ -182,7 +182,6 @@ public class DocumentViewPresenter implements ViewPresenter, DocumentsBrokerClie
 
 				}
 
-
 			}
 
 
@@ -196,6 +195,7 @@ public class DocumentViewPresenter implements ViewPresenter, DocumentsBrokerClie
 				switch(action.getAction()){
 				case NEW_FILE: 
 					view.createNewFile(); 
+					
 					break;
 				case CANCEL:{
 					if(doc == null){
@@ -226,9 +226,11 @@ public class DocumentViewPresenter implements ViewPresenter, DocumentsBrokerClie
 				}
 				case SAVE:{
 					Document temp = getDocument();
+					
 					temp.fileName = view.getFileNote().getFileUploadFilename();
 					temp.fileStorageId = view.getFileNote().getFileStorageId();
 					createUpdateDocument(temp);
+					
 					break;
 				}
 				case CHANGE_TO_FILE: {
@@ -258,25 +260,6 @@ public class DocumentViewPresenter implements ViewPresenter, DocumentsBrokerClie
 					view.getFileNote().getChangeToNote().setVisible(false);
 					view.getFileNote().getUploadButton().setVisible(false);
 					view.getFileNote().getFilenameRemoveButton().setVisible(true);
-					
-					FileService.Util.getInstance().Discard(temp.fileStorageId, new BigBangAsyncCallback<Void>() {
-
-						@Override
-						public void onSuccess(Void result) {
-							System.out.println("FICHEIRO APAGADO DE MEMORIA");
-						}
-						
-						@Override
-						public void onFailure(Throwable caught) {
-							
-							System.out.println("ERRO AO APAGAR O FICHEIRO DE MEMÓRIA");
-							super.onFailure(caught);
-						}
-						
-						
-						
-						
-					});
 					break;
 				}
 				}
@@ -385,6 +368,8 @@ public class DocumentViewPresenter implements ViewPresenter, DocumentsBrokerClie
 			}
 
 			private void removeFile() {
+				
+				
 				view.getFileNote().removeFile();
 				view.getFileNote().getUploadButton().setVisible(true);
 			}
