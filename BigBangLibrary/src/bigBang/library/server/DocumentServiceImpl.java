@@ -85,6 +85,20 @@ public class DocumentServiceImpl
 			parrDocuments[i].id = parrResults[i].mid.toString();
 	}
 
+	public static Document sGetDocument(UUID pidDocument)
+		throws BigBangException
+	{
+		try
+		{
+			return fromServer(com.premiumminds.BigBang.Jewel.Objects.Document
+					.GetInstance(Engine.getCurrentNameSpace(), pidDocument), false);
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangException(e.getMessage(), e);
+		}
+	}
+
 	public Document[] getDocuments(String ownerId)
 		throws SessionExpiredException, BigBangException
 	{
@@ -172,15 +186,7 @@ public class DocumentServiceImpl
 		if ( Engine.getCurrentUser() == null )
 			throw new SessionExpiredException();
 
-		try
-		{
-			return fromServer(com.premiumminds.BigBang.Jewel.Objects.Document
-					.GetInstance(Engine.getCurrentNameSpace(), UUID.fromString(docId)), true);
-		}
-		catch (Throwable e)
-		{
-			throw new BigBangException(e.getMessage(), e);
-		}
+		return sGetDocument(UUID.fromString(docId));
 	}
 
 	public Document createDocument(Document document)
@@ -213,8 +219,7 @@ public class DocumentServiceImpl
 			throw new BigBangException(e.getMessage(), e);
 		}
 
-		WalkDocTree(lopDOps.marrCreate, larrAux);
-		return larrAux[0];
+		return sGetDocument(lopDOps.marrCreate[0].mid);
 	}
 
 	public Document saveDocument(Document document)
@@ -246,7 +251,7 @@ public class DocumentServiceImpl
 			throw new BigBangException(e.getMessage(), e);
 		}
 
-		return larrAux[0];
+		return sGetDocument(lopDOps.marrModify[0].mid);
 	}
 
 	public void deleteDocument(String id)
@@ -293,7 +298,7 @@ public class DocumentServiceImpl
 		}
 	}
 
-	private Document fromServer(com.premiumminds.BigBang.Jewel.Objects.Document pobjDocument, boolean pbForList)
+	private static Document fromServer(com.premiumminds.BigBang.Jewel.Objects.Document pobjDocument, boolean pbForList)
 		throws BigBangException
 	{
 		Document lobjAux;
@@ -353,7 +358,7 @@ public class DocumentServiceImpl
 		return lobjAux;
 	}
 
-	private DocInfo fromServer(com.premiumminds.BigBang.Jewel.Objects.DocInfo pobjDocInfo)
+	private static DocInfo fromServer(com.premiumminds.BigBang.Jewel.Objects.DocInfo pobjDocInfo)
 	{
 		DocInfo lobjAux;
 
