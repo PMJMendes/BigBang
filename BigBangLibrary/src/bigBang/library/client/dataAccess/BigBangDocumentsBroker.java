@@ -230,7 +230,21 @@ public class BigBangDocumentsBroker extends DataBroker<Document> implements Docu
 			boolean hasDocument = false;
 			for(Document c : documentsCollection) {
 				if(c.id.equalsIgnoreCase(documentId)){
-					handler.onResponse(c);
+					service.getDocument(documentId, new BigBangAsyncCallback<Document>() {
+
+						@Override
+						public void onSuccess(Document result) {
+							handler.onResponse(result);
+						}
+						
+						@Override
+						public void onFailure(Throwable caught) {
+							handler.onError(new String[]{
+								new String("Could not get the document")	
+							});
+							super.onFailure(caught);
+						}
+					});
 					hasDocument = true;
 					break;
 				}
@@ -239,7 +253,6 @@ public class BigBangDocumentsBroker extends DataBroker<Document> implements Docu
 				handler.onError(new String[]{
 						new String("Could not get the required document")
 				});
-				
 			}
 		}
 	}
