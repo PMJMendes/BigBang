@@ -77,6 +77,7 @@ public class TypifiedText
 		throws BigBangJewelException
 	{
 		FileXfer laux;
+		byte[] larrAux;
 
 		mstrText = pstrText;
 
@@ -87,8 +88,9 @@ public class TypifiedText
 				setAt(3, (byte[])null);
 				return;
 			}
-			
-			laux = new FileXfer(pstrText.length(), "text/plain", "body.txt", new ByteArrayInputStream(pstrText.getBytes()));
+
+			larrAux = pstrText.getBytes();
+			laux = new FileXfer(larrAux.length, "text/plain", "body.txt", new ByteArrayInputStream(larrAux));
 			setAt(3, laux.GetVarData());
 		}
 		catch (Throwable e)
