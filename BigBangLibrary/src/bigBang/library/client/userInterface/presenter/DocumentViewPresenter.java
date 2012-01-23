@@ -29,8 +29,10 @@ import bigBang.library.client.userInterface.view.DocumentSections.FileNoteSectio
 import bigBang.library.client.userInterface.view.DocumentSections.GeneralInfoSection;
 import bigBang.library.client.userInterface.view.FileUploadPopup;
 import bigBang.library.interfaces.FileService;
+import bigBang.library.server.FileServiceImpl;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.HasWidgets;
 import com.google.gwt.user.client.ui.UIObject;
 import com.google.gwt.user.client.ui.Widget;
@@ -57,7 +59,10 @@ public class DocumentViewPresenter implements ViewPresenter, DocumentsBrokerClie
 		ADD_NEW_DETAIL, 
 		REMOVE_FILE, 
 		DELETE_DETAIL, 
-		DELETE, UPLOAD_SUCCESS, UPLOAD_BUTTON
+		DELETE, 
+		UPLOAD_SUCCESS, 
+		UPLOAD_BUTTON, 
+		DOWNLOAD_FILE
 	}
 
 	public DocumentViewPresenter(Display view){
@@ -246,7 +251,9 @@ public class DocumentViewPresenter implements ViewPresenter, DocumentsBrokerClie
 					view.getFileNote().getChangeToNote().setVisible(false);
 					view.getFileNote().getUploadButton().setVisible(false);
 					view.getFileNote().enableRemoveFile(true);
+					view.getFileNote().getFilename().setVisible(true);
 					break;
+					
 				}
 				case UPLOAD_BUTTON:{
 					view.getFileNote().setUploadDialog(new FileUploadPopup(view.getFileNote()));
@@ -259,9 +266,18 @@ public class DocumentViewPresenter implements ViewPresenter, DocumentsBrokerClie
 					view.getFileNote().getUploadDialog().center();
 					break;
 				}
-
+				case DOWNLOAD_FILE:{
+					downloadFile();
+				}
 				}
 
+			}
+
+			private void downloadFile() {
+				
+				Window.open(GWT.getModuleBaseURL() + "bbfile?fileref=" +doc.fileStorageId , null, null);
+				
+				
 			}
 
 			private void removeDocument() {
@@ -368,14 +384,15 @@ public class DocumentViewPresenter implements ViewPresenter, DocumentsBrokerClie
 			private void removeFile() {
 
 				doc.fileStorageId = null;
+				view.getFileNote().setFileStorageId(null);
 				doc.fileName = null;
+				view.getFileNote().setFileUploadFilename(null);
 				doc.mimeType = null;
+				
 				view.getFileNote().removeFile();
 				view.getFileNote().getUploadButton().setVisible(true);
 
 			}
-
-
 		});
 	}
 

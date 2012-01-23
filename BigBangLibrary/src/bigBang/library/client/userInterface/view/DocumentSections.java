@@ -25,6 +25,8 @@ import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.dom.client.MouseUpEvent;
+import com.google.gwt.event.dom.client.MouseUpHandler;
 import com.google.gwt.resources.client.ImageResource;
 import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.ui.Button;
@@ -268,6 +270,15 @@ public abstract class DocumentSections{
 			
 			filename = new TextBoxFormField("Nome do Ficheiro");
 			getFilename().setEditable(false);
+			
+			filename.addMouseUpHandler(new MouseUpHandler() {
+				
+				@Override
+				public void onMouseUp(MouseUpEvent event) {
+					fireAction(Action.DOWNLOAD_FILE);
+				}
+			});
+			
 			mimeImg = new Image();
 			
 			
@@ -456,7 +467,7 @@ public abstract class DocumentSections{
 				removeFile.setVisible(false);
 			}
 			
-			if(isFile.isVisible()){
+			if(isFileBoolean()){
 				changeToNote.setVisible(false);
 				changeToFile.setVisible(false);
 			}
@@ -469,7 +480,7 @@ public abstract class DocumentSections{
 			getFilename().setVisible(false);
 			mimeImg.setVisible(false);
 			removeFile.setVisible(false);
-			setEditable(true);
+			changeToNote.setVisible(true);
 			
 		}
 		

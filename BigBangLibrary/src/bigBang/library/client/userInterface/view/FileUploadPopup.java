@@ -40,7 +40,7 @@ public class FileUploadPopup
 		mfrmMain = new FormPanel();
 		mfrmMain.setEncoding(FormPanel.ENCODING_MULTIPART);
 		mfrmMain.setMethod(FormPanel.METHOD_POST);
-		String action = GWT.getModuleBaseURL() + "file";
+		String action = GWT.getModuleBaseURL() + "bbfile";
 		mfrmMain.setAction(action);
 		lvert.add(mfrmMain);
 		mfupMain = new FileUpload();
