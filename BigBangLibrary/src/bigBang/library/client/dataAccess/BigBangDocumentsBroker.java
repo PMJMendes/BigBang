@@ -15,6 +15,7 @@ import bigBang.definitions.shared.Document;
 import bigBang.library.client.BigBangAsyncCallback;
 import bigBang.library.interfaces.DocumentService;
 import bigBang.library.interfaces.DocumentServiceAsync;
+import bigBang.library.interfaces.FileService;
 
 public class BigBangDocumentsBroker extends DataBroker<Document> implements DocumentsBroker {
 
@@ -269,28 +270,52 @@ public class BigBangDocumentsBroker extends DataBroker<Document> implements Docu
 
 	
 	@Override
-	public void updateDocument(Document document, final ResponseHandler<Document> handler) {
-		service.saveDocument(document, new BigBangAsyncCallback<Document>() {
+	public void updateDocument(final Document document, final ResponseHandler<Document> handler) {
+		getDocument(document.ownerId, document.id, new ResponseHandler<Document>() {
 
 			@Override
-			public void onSuccess(Document result) {
-				List<Document> documentsList = documents.get(result.ownerId);
-				for(Document document : documentsList) {
-					if(document.id.equalsIgnoreCase(result.id)){
-						documentsList.set(documentsList.indexOf(document), result);
-						break;
+			public void onResponse(final Document response) {
+				service.saveDocument(document, new BigBangAsyncCallback<Document>() {
+
+					@Override
+					public void onSuccess(Document result) {
+						if(response.fileStorageId != document.fileStorageId || 
+								(response.fileStorageId != null && document.fileStorageId != null && !document.fileStorageId.equalsIgnoreCase(response.fileStorageId))){
+							FileService.Util.getInstance().Discard(response.fileStorageId, new BigBangAsyncCallback<Void>() {
+
+								@Override
+								public void onSuccess(Void result) {
+									return;
+								}
+							});
+						}
+						
+						List<Document> documentsList = documents.get(result.ownerId);
+						for(Document document : documentsList) {
+							if(document.id.equalsIgnoreCase(result.id)){
+								documentsList.set(documentsList.indexOf(document), result);
+								break;
+							}
+						}
+						updateClients(result.ownerId);
+						handler.onResponse(result);
 					}
-				}
-				updateClients(result.ownerId);
-				handler.onResponse(result);
-			}
-			
-			@Override
-			public void onFailure(Throwable caught) {
-				handler.onError(new String[]{
-						new String("Could not save the document")
+					
+					@Override
+					public void onFailure(Throwable caught) {
+						handler.onError(new String[]{
+								new String("Could not save the document")
+						});
+						super.onFailure(caught);
+					}
 				});
-				super.onFailure(caught);
+			}
+
+			@Override
+			public void onError(Collection<ResponseError> errors) {
+				handler.onError(new String[]{
+					new String("Could not get the original document")	
+				});
 			}
 		});
 	}
@@ -326,6 +351,43 @@ public class BigBangDocumentsBroker extends DataBroker<Document> implements Docu
 				super.onFailure(caught);
 			}
 			
+		});
+	}
+	
+	@Override
+	public void closeDocumentResource(String ownerId, String documentId, final ResponseHandler<Void> handler) {
+		getDocument(ownerId, documentId, new ResponseHandler<Document>() {
+
+			@Override
+			public void onResponse(Document response) {
+				if(response.fileStorageId != null){
+					FileService.Util.getInstance().Discard(response.fileStorageId, new BigBangAsyncCallback<Void>() {
+
+						@Override
+						public void onSuccess(Void result) {
+							handler.onResponse(null);
+						}
+						
+						@Override
+						public void onFailure(Throwable caught) {
+							handler.onError(new String[]{
+								new String("Could not close the document file resource")	
+							});
+							super.onFailure(caught);
+						}
+						
+					});
+				}else{
+					handler.onResponse(null);
+				}
+			}
+
+			@Override
+			public void onError(Collection<ResponseError> errors) {
+				handler.onError(new String[]{
+					new String("Could not find the document locally")	
+				});
+			}
 		});
 	}
 	
