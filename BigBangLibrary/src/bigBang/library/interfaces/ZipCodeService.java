@@ -1,6 +1,8 @@
 package bigBang.library.interfaces;
 
 import bigBang.definitions.shared.ZipCode;
+import bigBang.library.shared.BigBangException;
+import bigBang.library.shared.SessionExpiredException;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.rpc.RemoteService;
@@ -21,6 +23,6 @@ public interface ZipCodeService extends RemoteService {
 		}
 	}
 	
-	public ZipCode getZipCode(String code);
+	public ZipCode getZipCode(String code) throws SessionExpiredException, BigBangException;
 
 }
