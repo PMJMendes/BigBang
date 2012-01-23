@@ -54,12 +54,17 @@ public class DocumentServiceImpl
 			larrResult[i].midOwnerType = UUID.fromString(parrDocuments[i].ownerTypeId);
 			larrResult[i].midOwnerId = UUID.fromString(parrDocuments[i].ownerId);
 			larrResult[i].midDocType = (parrDocuments[i].docTypeId == null ? null : UUID.fromString(parrDocuments[i].docTypeId));
-			larrResult[i].mstrText = parrDocuments[i].text;
 			if ( parrDocuments[i].fileStorageId != null )
+			{
+				larrResult[i].mstrText = null;
 				larrResult[i].mobjFile = FileServiceImpl.GetFileXferStorage().
 						get(UUID.fromString(parrDocuments[i].fileStorageId)).GetVarData();
+			}
 			else
+			{
+				larrResult[i].mstrText = parrDocuments[i].text;
 				larrResult[i].mobjFile = null;
+			}
 			if ( parrDocuments[i].parameters != null )
 			{
 				larrResult[i].marrInfo = new DocInfoData[parrDocuments[i].parameters.length];
