@@ -49,49 +49,49 @@
 
 	<servlet-mapping>
 		<servlet-name>LoginServiceImpls</servlet-name>
-		<url-pattern>/jewel_web/login</url-pattern>
+		<url-pattern>/bigbang/login</url-pattern>
 	</servlet-mapping>
 	<servlet-mapping>
 		<servlet-name>TreeServiceImpls</servlet-name>
-		<url-pattern>/jewel_web/tree</url-pattern>
+		<url-pattern>/bigbang/tree</url-pattern>
 	</servlet-mapping>
 	<servlet-mapping>
 		<servlet-name>DynaFormServiceImpls</servlet-name>
-		<url-pattern>/jewel_web/dynaform</url-pattern>
+		<url-pattern>/bigbang/dynaform</url-pattern>
 	</servlet-mapping>
 	<servlet-mapping>
 		<servlet-name>DynaFormActiveServiceImpls</servlet-name>
-		<url-pattern>/jewel_web/dynaformactive</url-pattern>
+		<url-pattern>/bigbang/dynaformactive</url-pattern>
 	</servlet-mapping>
 	<servlet-mapping>
 		<servlet-name>DynaSearchServiceImpls</servlet-name>
-		<url-pattern>/jewel_web/dynasearch</url-pattern>
+		<url-pattern>/bigbang/dynasearch</url-pattern>
 	</servlet-mapping>
 	<servlet-mapping>
 		<servlet-name>DynaGridServiceImpls</servlet-name>
-		<url-pattern>/jewel_web/dynagrid</url-pattern>
+		<url-pattern>/bigbang/dynagrid</url-pattern>
 	</servlet-mapping>
 	<servlet-mapping>
 		<servlet-name>DynaViewServiceImpls</servlet-name>
-		<url-pattern>/jewel_web/dynaview</url-pattern>
+		<url-pattern>/bigbang/dynaview</url-pattern>
 	</servlet-mapping>
 	<servlet-mapping>
 		<servlet-name>LookupServiceImpls</servlet-name>
-		<url-pattern>/jewel_web/lookup</url-pattern>
+		<url-pattern>/bigbang/lookup</url-pattern>
 	</servlet-mapping>
 	<servlet-mapping>
 		<servlet-name>ValueServiceImpls</servlet-name>
-		<url-pattern>/jewel_web/value</url-pattern>
+		<url-pattern>/bigbang/value</url-pattern>
 	</servlet-mapping>
 	<servlet-mapping>
 	  <servlet-name>FileServiceImpls</servlet-name>
-	  <url-pattern>/jewel_web/file</url-pattern>
+	  <url-pattern>/bigbang/file</url-pattern>
 	</servlet-mapping>
 	<servlet-mapping>
 		<servlet-name>DynaReportServiceImpls</servlet-name>
-		<url-pattern>/jewel_web/dynareport</url-pattern>
+		<url-pattern>/bigbang/dynareport</url-pattern>
 	</servlet-mapping>
 	<servlet-mapping>
 		<servlet-name>ReportServiceImpls</servlet-name>
-		<url-pattern>/jewel_web/report</url-pattern>
+		<url-pattern>/bigbang/report</url-pattern>
 	</servlet-mapping>
