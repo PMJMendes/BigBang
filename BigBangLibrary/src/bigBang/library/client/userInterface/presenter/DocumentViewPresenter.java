@@ -27,6 +27,7 @@ import bigBang.library.client.userInterface.view.DocumentSections.DetailsSection
 import bigBang.library.client.userInterface.view.DocumentSections.DetailsSection.DocumentDetailEntry;
 import bigBang.library.client.userInterface.view.DocumentSections.FileNoteSection;
 import bigBang.library.client.userInterface.view.DocumentSections.GeneralInfoSection;
+import bigBang.library.client.userInterface.view.FileUploadPopup;
 import bigBang.library.interfaces.FileService;
 
 import com.google.gwt.core.client.GWT;
@@ -56,7 +57,7 @@ public class DocumentViewPresenter implements ViewPresenter, DocumentsBrokerClie
 		ADD_NEW_DETAIL, 
 		REMOVE_FILE, 
 		DELETE_DETAIL, 
-		DELETE, UPLOAD_SUCCESS
+		DELETE, UPLOAD_SUCCESS, UPLOAD_BUTTON
 	}
 
 	public DocumentViewPresenter(Display view){
@@ -136,11 +137,11 @@ public class DocumentViewPresenter implements ViewPresenter, DocumentsBrokerClie
 			broker.getDocument(ownerId, documentId, new ResponseHandler<Document>() {
 				@Override
 				public void onResponse(Document response) {
-					
+
 					doc = response;
 					setDocument(doc);
 					view.getGeneralInfo().getToolbar().setSaveModeEnabled(false);
-					
+
 				}
 
 				@Override
@@ -215,7 +216,7 @@ public class DocumentViewPresenter implements ViewPresenter, DocumentsBrokerClie
 					temp.fileName = view.getFileNote().getFileUploadFilename();
 					temp.fileStorageId = view.getFileNote().getFileStorageId();
 					createUpdateDocument(temp);
-					
+
 					break;
 				}
 				case CHANGE_TO_FILE: {
@@ -239,7 +240,7 @@ public class DocumentViewPresenter implements ViewPresenter, DocumentsBrokerClie
 					break;
 				}
 				case UPLOAD_SUCCESS:{
-					
+
 					Document temp = getDocument();
 					view.getFileNote().getFilename().setValue(temp.fileName);
 					view.getFileNote().getChangeToNote().setVisible(false);
@@ -247,12 +248,24 @@ public class DocumentViewPresenter implements ViewPresenter, DocumentsBrokerClie
 					view.getFileNote().enableRemoveFile(true);
 					break;
 				}
+				case UPLOAD_BUTTON:{
+					view.getFileNote().setUploadDialog(new FileUploadPopup(view.getFileNote()));
+
+					if(doc != null)
+						view.getFileNote().getUploadDialog().SetKey(doc.fileStorageId);
+					else
+						view.getFileNote().getUploadDialog().SetKey(null);	
+
+					view.getFileNote().getUploadDialog().center();
+					break;
+				}
+
 				}
 
 			}
 
 			private void removeDocument() {
-				
+
 				broker.deleteDocument(documentId, new ResponseHandler<Void>() {
 
 					@Override
@@ -279,8 +292,8 @@ public class DocumentViewPresenter implements ViewPresenter, DocumentsBrokerClie
 
 			private void createUpdateDocument(Document temp) {
 
-				
-				
+
+
 				if(temp.id == null){
 
 					temp.ownerId = ownerId;
@@ -353,13 +366,13 @@ public class DocumentViewPresenter implements ViewPresenter, DocumentsBrokerClie
 			}
 
 			private void removeFile() {
-				
+
 				doc.fileStorageId = null;
 				doc.fileName = null;
 				doc.mimeType = null;
 				view.getFileNote().removeFile();
 				view.getFileNote().getUploadButton().setVisible(true);
-				
+
 			}
 
 
@@ -367,26 +380,26 @@ public class DocumentViewPresenter implements ViewPresenter, DocumentsBrokerClie
 	}
 
 	protected void clearResources() {
-	
+
 		broker.closeDocumentResource(ownerId, documentId, new ResponseHandler<Void>() {
-			
+
 			@Override
 			public void onResponse(Void response) {
-				
+
 			}
-			
+
 			@Override
 			public void onError(Collection<ResponseError> errors) {
 				GWT.log("Documento com ID: " + documentId + " deu erro ao cancelar alterações.");				
 			}
 		});
-		
+
 	}
-	
+
 	private void cancelChanges(){
-		
+
 		clearResources();
-		
+
 		if(doc == null){
 			NavigationHistoryItem navig = NavigationHistoryManager.getInstance().getCurrentState();
 			navig.removeParameter("documentid");
@@ -396,9 +409,9 @@ public class DocumentViewPresenter implements ViewPresenter, DocumentsBrokerClie
 			NavigationHistoryManager.getInstance().go(navig);
 			return;
 		}
-		
+
 		NavigationHistoryManager.getInstance().reload();
-		
+
 	}
 
 	public void setDocument(Document doc) {

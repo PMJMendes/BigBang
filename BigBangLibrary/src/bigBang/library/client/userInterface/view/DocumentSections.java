@@ -185,6 +185,11 @@ public abstract class DocumentSections{
 		private TextBoxFormField filename;
 		private Button removeFile;
 		private FileUploadPopup uploadDialog;
+		
+		public FileUploadPopup getUploadDialog() {
+			return uploadDialog;
+		}
+
 		private Button uploadButton;
 		private String fileUploadFilename = null;
 		private String fileStorageId = null;
@@ -226,7 +231,7 @@ public abstract class DocumentSections{
 						fireAction(Action.REMOVE_FILE);
 					}
 					else if(event.getSource() == uploadButton){
-						uploadDialog.center();
+						fireAction(Action.UPLOAD_BUTTON);
 					}
 				}
 
@@ -499,6 +504,10 @@ public abstract class DocumentSections{
 
 		public void setFileStorageId(String fileStorageId) {
 			this.fileStorageId = fileStorageId;
+		}
+
+		public void setUploadDialog(FileUploadPopup fileUploadPopup) {
+			uploadDialog = fileUploadPopup;
 		}
 
 	}

@@ -44,7 +44,6 @@ public class FileUploadPopup
 		mfrmMain.setAction(action);
 		lvert.add(mfrmMain);
 		mfupMain = new FileUpload();
-		mfupMain.setName("none");
 		mfrmMain.setWidget(mfupMain);
 		lhorz = new HorizontalPanel();
 		mbtnOk = new Button();
@@ -102,6 +101,14 @@ public class FileUploadPopup
 				hide();
 	        }
 		});
+	}
+	
+	public void SetKey(String pstrKey)
+	{
+		if ( pstrKey == null )
+			mfupMain.setName("none");
+		else
+			mfupMain.setName(pstrKey);
 	}
 	
 	private void SetError(String pstrError)
