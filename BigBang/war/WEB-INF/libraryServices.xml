@@ -9,6 +9,10 @@
 	<servlet-class>bigBang.library.server.TipifiedListServiceImpl</servlet-class>
 </servlet>
 <servlet>
+	<servlet-name>TypifiedTextService</servlet-name>
+	<servlet-class>bigBang.library.server.TypifiedTextServiceImpl</servlet-class>
+</servlet>
+<servlet>
 	<servlet-name>ContactsService</servlet-name>
 	<servlet-class>bigBang.library.server.ContactsServiceImpl</servlet-class>
 </servlet>
@@ -48,6 +52,10 @@
 <servlet-mapping>
 	<servlet-name>TipifiedListService</servlet-name>
 	<url-pattern>/bigbang/TipifiedListService</url-pattern>
+</servlet-mapping>
+<servlet-mapping>
+	<servlet-name>TypifiedTextService</servlet-name>
+	<url-pattern>/bigbang/TypifiedListService</url-pattern>
 </servlet-mapping>
 <servlet-mapping>
 	<servlet-name>ContactsService</servlet-name>

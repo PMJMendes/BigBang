@@ -12,6 +12,11 @@ public class Constants
 	// Objects
     public static final UUID ObjID_AppParams      = UUID.fromString("5485B660-A102-441A-912C-7B960584399F");
 
+	// Agenda Objects
+	public static final UUID ObjID_AgendaItem     = UUID.fromString("F850E623-E686-4575-A2D8-9F640128FCD7");
+	public static final UUID ObjID_AgendaProcess  = UUID.fromString("3620AAEE-A950-421C-A5D3-9F640135D7D8");
+	public static final UUID ObjID_AgendaOp       = UUID.fromString("3C01C389-71FE-43A8-AEE7-9F640135635D");
+
 	// General Objects
 	public static final UUID ObjID_GenSys         = UUID.fromString("628F5DA6-434F-46A8-9C88-9EB1008A689A");
 
@@ -29,11 +34,6 @@ public class Constants
 	public static final UUID ObjID_Coverage       = UUID.fromString("007022A0-6DFA-498B-9DC4-9EC900F5219F");
 	public static final UUID ObjID_Tax            = UUID.fromString("43644146-07C4-4E63-9E87-9EC900F6EB73");
 	public static final UUID ObjID_ClientGroup    = UUID.fromString("DC89D454-CCCC-441E-BCE3-9EE600AFCCCD");
-
-	// Agenda Objects
-	public static final UUID ObjID_AgendaItem     = UUID.fromString("F850E623-E686-4575-A2D8-9F640128FCD7");
-	public static final UUID ObjID_AgendaProcess  = UUID.fromString("3620AAEE-A950-421C-A5D3-9F640135D7D8");
-	public static final UUID ObjID_AgendaOp       = UUID.fromString("3C01C389-71FE-43A8-AEE7-9F640135635D");
 
 	// Client Objects
 	public static final UUID ObjID_Client         = UUID.fromString("D535A99E-149F-44DC-A28B-9EE600B240F5");
@@ -75,6 +75,8 @@ public class Constants
 
 	public static final UUID ObjID_FieldType      = UUID.fromString("0D8E4FEE-AE4D-4429-A517-9EC900F80A20");
 	public static final UUID ObjID_FieldValues    = UUID.fromString("D50A75B9-5F44-4BF2-9060-9F960121503A");
+
+	public static final UUID ObjID_TypifiedText   = UUID.fromString("0F218912-1626-4A2C-BF68-9FE100F72735");
 
 	// Process Scripts
 	public static final UUID ProcID_GenSys  = UUID.fromString("37A989E2-9D1F-470C-A59E-9EB1008A97A5");
