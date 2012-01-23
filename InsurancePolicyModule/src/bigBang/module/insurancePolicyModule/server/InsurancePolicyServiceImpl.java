@@ -2733,6 +2733,9 @@ public class InsurancePolicyServiceImpl
 		PolicyScratchPad lobjPad;
 		InsurancePolicy lobjPolicy;
 
+		if ( Engine.getCurrentUser() == null )
+			throw new SessionExpiredException();
+
 		lobjPolicy = new InsurancePolicy();
 
 		lobjPad = GetScratchPadStorage().get(UUID.fromString(policyId));
