@@ -29,6 +29,7 @@ import bigBang.library.client.userInterface.view.DocumentSections.FileNoteSectio
 import bigBang.library.client.userInterface.view.DocumentSections.GeneralInfoSection;
 import bigBang.library.interfaces.FileService;
 
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.HasWidgets;
 import com.google.gwt.user.client.ui.UIObject;
 import com.google.gwt.user.client.ui.Widget;
@@ -135,10 +136,11 @@ public class DocumentViewPresenter implements ViewPresenter, DocumentsBrokerClie
 			broker.getDocument(ownerId, documentId, new ResponseHandler<Document>() {
 				@Override
 				public void onResponse(Document response) {
-
+					
 					doc = response;
 					setDocument(doc);
 					view.getGeneralInfo().getToolbar().setSaveModeEnabled(false);
+					
 				}
 
 				@Override
@@ -195,25 +197,9 @@ public class DocumentViewPresenter implements ViewPresenter, DocumentsBrokerClie
 				switch(action.getAction()){
 				case NEW_FILE: 
 					view.createNewFile(); 
-					
 					break;
 				case CANCEL:{
-					if(doc == null){
-						NavigationHistoryItem navig = NavigationHistoryManager.getInstance().getCurrentState();
-						navig.removeParameter("documentid");
-						navig.removeParameter("operation");
-						navig.removeParameter("ownertypeid");
-						navig.removeParameter("editpermission");
-						NavigationHistoryManager.getInstance().go(navig);
-						break;
-					}
-					setDocument(view.getInfo());
-
-					if(doc.text == null && doc.fileStorageId == null){
-						view.getFileNote().generateNewDocument();
-					}
-
-					view.setEditable(false);
+					cancelChanges();
 					break;
 				}
 				case EDIT:{
@@ -226,7 +212,6 @@ public class DocumentViewPresenter implements ViewPresenter, DocumentsBrokerClie
 				}
 				case SAVE:{
 					Document temp = getDocument();
-					
 					temp.fileName = view.getFileNote().getFileUploadFilename();
 					temp.fileStorageId = view.getFileNote().getFileStorageId();
 					createUpdateDocument(temp);
@@ -379,6 +364,41 @@ public class DocumentViewPresenter implements ViewPresenter, DocumentsBrokerClie
 
 
 		});
+	}
+
+	protected void clearResources() {
+	
+		broker.closeDocumentResource(ownerId, documentId, new ResponseHandler<Void>() {
+			
+			@Override
+			public void onResponse(Void response) {
+				
+			}
+			
+			@Override
+			public void onError(Collection<ResponseError> errors) {
+				GWT.log("Documento com ID: " + documentId + " deu erro ao cancelar alterações.");				
+			}
+		});
+		
+	}
+	
+	private void cancelChanges(){
+		
+		clearResources();
+		
+		if(doc == null){
+			NavigationHistoryItem navig = NavigationHistoryManager.getInstance().getCurrentState();
+			navig.removeParameter("documentid");
+			navig.removeParameter("operation");
+			navig.removeParameter("ownertypeid");
+			navig.removeParameter("editpermission");
+			NavigationHistoryManager.getInstance().go(navig);
+			return;
+		}
+		
+		NavigationHistoryManager.getInstance().reload();
+		
 	}
 
 	public void setDocument(Document doc) {
