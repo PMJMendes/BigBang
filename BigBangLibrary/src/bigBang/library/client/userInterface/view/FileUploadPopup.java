@@ -73,7 +73,6 @@ public class FileUploadPopup
 					return;
 				}
 
-				System.out.println(lstrResults);
 				String [] splitString =  lstrResults.split("!");
 				
 				String fileStorageId = splitString[0];

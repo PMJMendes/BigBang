@@ -194,7 +194,7 @@ public abstract class DocumentSections{
 		private Label charRemain;
 		private Label charRemainLabel;
 		
-		private HorizontalPanel filenameRemoveButton;
+		private HorizontalPanel filenameRemoveButton; 
 		
 		private ActionInvokedEventHandler<Action> actionHandler;
 		private boolean hasFile;
@@ -288,10 +288,6 @@ public abstract class DocumentSections{
 			
 		}
 		
-		public HorizontalPanel getFilenameRemoveButton() {
-			return filenameRemoveButton;
-		}
-
 		public Button getUploadButton() {
 			return uploadButton;
 		}
@@ -310,6 +306,7 @@ public abstract class DocumentSections{
 		public void generateNewDocument(){
 			
 			uploadButton.setVisible(false);
+			filename.setVisible(false);
 			removeFile.setVisible(false);
 			
 			changeToNote.setVisible(false);
@@ -346,7 +343,8 @@ public abstract class DocumentSections{
 			getNote().setVisible(false);
 			changeToNote.setVisible(true);
 			charRemainP.setVisible(false);
-			filenameRemoveButton.setVisible(false);
+			filename.setVisible(false);
+			removeFile.setVisible(false);
 			uploadButton.setVisible(true);
 			
 		}
@@ -360,7 +358,8 @@ public abstract class DocumentSections{
 			changeToNote.setVisible(false);
 			changeToFile.setVisible(true);
 			charRemainP.setVisible(true);
-			filenameRemoveButton.setVisible(false);
+			removeFile.setVisible(false);
+			filename.setVisible(false);
 		
 		}
 
@@ -374,7 +373,7 @@ public abstract class DocumentSections{
 			mimeImg.setResource(getMimeImage(doc.mimeType));
 			mimeImg.setVisible(true);
 			changeToNote.setVisible(false);
-			filenameRemoveButton.setVisible(true);
+			filename.setVisible(true);
 			hasFile = true;
 			uploadButton.setVisible(false);
 			
@@ -466,6 +465,11 @@ public abstract class DocumentSections{
 			mimeImg.setVisible(false);
 			removeFile.setVisible(false);
 			setEditable(true);
+			
+		}
+		
+		public void enableRemoveFile(boolean b){
+			removeFile.setVisible(b);
 		}
 
 		public TextBoxFormField getFilename() {

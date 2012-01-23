@@ -259,7 +259,7 @@ public class DocumentViewPresenter implements ViewPresenter, DocumentsBrokerClie
 					view.getFileNote().getFilename().setValue(temp.fileName);
 					view.getFileNote().getChangeToNote().setVisible(false);
 					view.getFileNote().getUploadButton().setVisible(false);
-					view.getFileNote().getFilenameRemoveButton().setVisible(true);
+					view.getFileNote().enableRemoveFile(true);
 					break;
 				}
 				}
@@ -267,7 +267,7 @@ public class DocumentViewPresenter implements ViewPresenter, DocumentsBrokerClie
 			}
 
 			private void removeDocument() {
-
+				
 				broker.deleteDocument(documentId, new ResponseHandler<Void>() {
 
 					@Override
@@ -369,9 +369,12 @@ public class DocumentViewPresenter implements ViewPresenter, DocumentsBrokerClie
 
 			private void removeFile() {
 				
-				
+				doc.fileStorageId = null;
+				doc.fileName = null;
+				doc.mimeType = null;
 				view.getFileNote().removeFile();
 				view.getFileNote().getUploadButton().setVisible(true);
+				
 			}
 
 
