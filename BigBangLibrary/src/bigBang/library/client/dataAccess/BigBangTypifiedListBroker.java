@@ -59,7 +59,7 @@ public class BigBangTypifiedListBroker implements TypifiedListBroker {
 			return;
 		}
 
-		if(!this.clients.containsKey(listId) && validListId(listId)){
+		if(!this.clients.containsKey(listId)){
 			this.dataVersions.put(listId, NO_DATA_VERSION);
 			this.lists.put(listId, new ArrayList<TipifiedListItem>());
 

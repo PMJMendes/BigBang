@@ -8,22 +8,22 @@ import bigBang.definitions.shared.TypifiedText;
 public interface TypifiedTextBroker {
 
 	
-	public void registerClient(String listId, TypifiedTextClient client);
+	public void registerClient(String tag, TypifiedTextClient client);
 	
-	public void unregisterClient(String listId, TypifiedTextClient client);
+	public void unregisterClient(String tag, TypifiedTextClient client);
 	
-	public void isClientRegistered(String listId, TypifiedTextClient client);
+	public boolean isClientRegistered(String tag, TypifiedTextClient client);
 	
-	public void refreshListData(String listId);
+	public void refreshListData(String tag);
 	
-	public List<TypifiedText> getTextitems(String listId);
+	public List<TypifiedText> getTexts(String tag);
 	
-	public TypifiedText getListItem(String listId, String itemId);
+	public TypifiedText getText(String tag, String textId);
 	
-	public void createListItem(String listId, TypifiedText item, ResponseHandler<TypifiedText> handler);
+	public void createText(String tag, TypifiedText text, ResponseHandler<TypifiedText> handler);
 
-	public void removeListItem(String listId, String itemId, ResponseHandler<TypifiedText> handler);
+	public void removeText(String tag, String textId, ResponseHandler<TypifiedText> handler);
 	
-	public void saveListItem(String listId, TypifiedText item, ResponseHandler<TypifiedText> handler);
+	public void saveText(String tag, TypifiedText text, ResponseHandler<TypifiedText> handler);
 
 }

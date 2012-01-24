@@ -2,7 +2,6 @@ package bigBang.library.client.dataAccess;
 
 import java.util.List;
 
-import bigBang.definitions.shared.TipifiedListItem;
 import bigBang.definitions.shared.TypifiedText;
 
 public interface TypifiedTextClient {
@@ -18,26 +17,26 @@ public interface TypifiedTextClient {
 	public void setTypifiedDataVersionNumber(int number);
 	
 	/**
-	 * @param items sets the items
+	 * @param texts sets the texts
 	 */
 	public void setTypifiedTexts(List<TypifiedText> texts);
 	
 	/**
-	 * Indicates that the client should remove the item if it is cached.
-	 * @param item the item to remove
+	 * Indicates that the client should remove the text if it is cached.
+	 * @param text the text to remove
 	 */
 	public void removeText(TypifiedText text);
 	
 	/**
-	 * Indicates that the client should take notice of a new item
-	 * @param item the item to add
+	 * Indicates that the client should take notice of a new text
+	 * @param text the text to add
 	 */
 	public void addText(TypifiedText text);
 	
 	/**
-	 * Indicates that the client should update its cached representation of the item
-	 * @param item the item to update
+	 * Indicates that the client should update its cached representation of the text
+	 * @param text the text to update
 	 */
-	public void updateItem(TipifiedListItem item);
+	public void updateText(TypifiedText text);
 	
 }
