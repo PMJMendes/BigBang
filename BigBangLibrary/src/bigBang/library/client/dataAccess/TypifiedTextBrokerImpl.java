@@ -3,19 +3,17 @@ package bigBang.library.client.dataAccess;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-
-import com.anotherbigidea.flash.movie.Shape.SetLineStyle;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dev.util.collect.HashMap;
-import com.google.gwt.user.client.rpc.AsyncCallback;
 
+import bigBang.definitions.client.dataAccess.DataBroker;
 import bigBang.definitions.client.response.ResponseHandler;
 import bigBang.definitions.shared.TypifiedText;
 import bigBang.library.client.BigBangAsyncCallback;
 import bigBang.library.interfaces.TypifiedTextService;
 import bigBang.library.interfaces.TypifiedTextServiceAsync;
 
-public class TypifiedTextBrokerImpl implements TypifiedTextBroker {
+public class TypifiedTextBrokerImpl extends DataBroker<TypifiedText> implements TypifiedTextBroker {
 
 	public static class Util {
 
@@ -347,6 +345,30 @@ public class TypifiedTextBrokerImpl implements TypifiedTextBroker {
 			return clientList.contains(client);
 		}
 		return false;
+	}
+
+	@Override
+	public void requireDataRefresh() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void notifyItemCreation(String itemId) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void notifyItemDeletion(String itemId) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void notifyItemUpdate(String itemId) {
+		// TODO Auto-generated method stub
+		
 	}
 
 }

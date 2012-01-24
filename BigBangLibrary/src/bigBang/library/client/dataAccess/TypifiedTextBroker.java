@@ -2,10 +2,11 @@ package bigBang.library.client.dataAccess;
 
 import java.util.List;
 
+import bigBang.definitions.client.dataAccess.DataBrokerInterface;
 import bigBang.definitions.client.response.ResponseHandler;
 import bigBang.definitions.shared.TypifiedText;
 
-public interface TypifiedTextBroker {
+public interface TypifiedTextBroker extends DataBrokerInterface<TypifiedText>{
 
 	
 	public void registerClient(String tag, TypifiedTextClient client);
