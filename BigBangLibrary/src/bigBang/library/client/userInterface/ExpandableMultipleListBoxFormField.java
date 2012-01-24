@@ -5,12 +5,12 @@ import java.util.Collection;
 import java.util.List;
 
 import bigBang.definitions.shared.TipifiedListItem;
-import bigBang.library.client.BigBangTypifiedListBroker;
 import bigBang.library.client.Checkable;
 import bigBang.library.client.FieldValidator;
 import bigBang.library.client.FormField;
 import bigBang.library.client.Selectable;
 import bigBang.library.client.ValueSelectable;
+import bigBang.library.client.dataAccess.BigBangTypifiedListBroker;
 import bigBang.library.client.dataAccess.TypifiedListBroker;
 import bigBang.library.client.dataAccess.TypifiedListClient;
 import bigBang.library.client.event.CheckedStateChangedEvent;

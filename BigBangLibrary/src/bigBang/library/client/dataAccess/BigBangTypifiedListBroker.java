@@ -1,4 +1,4 @@
-package bigBang.library.client;
+package bigBang.library.client.dataAccess;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -11,8 +11,7 @@ import com.google.gwt.core.client.GWT;
 
 import bigBang.definitions.client.response.ResponseHandler;
 import bigBang.definitions.shared.TipifiedListItem;
-import bigBang.library.client.dataAccess.TypifiedListBroker;
-import bigBang.library.client.dataAccess.TypifiedListClient;
+import bigBang.library.client.BigBangAsyncCallback;
 import bigBang.library.interfaces.TipifiedListService;
 import bigBang.library.interfaces.TipifiedListServiceAsync;
 
