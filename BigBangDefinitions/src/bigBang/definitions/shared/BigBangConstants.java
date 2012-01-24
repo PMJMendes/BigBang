@@ -52,6 +52,7 @@ public class BigBangConstants {
 		public static final String SALES_VOLUMES = "5C4E267C-B306-482F-8636-9EE600C586B6";
 		public static final String CONTACT_TYPE = "228F6A73-1335-4C99-8DD0-9EEE012964BA";
 		public static final String CONTACT_DETAILS_TYPE = "03C5B78E-D71C-49F2-A079-9EC40111DCC0";
+		public static final String TYPIFIED_TEXT = "0F218912-1626-4A2C-BF68-9FE100F72735";
 	}
 
 	public static class OperationIds {
@@ -76,6 +77,29 @@ public class BigBangConstants {
 		public static class ManagerTransfer{
 			public static final String CREATE_MANAGER_TRANSFER = "C75EEC27-780C-4C0C-9FD7-9F090142CB10";
 			public static final String CANCEL_MANAGER_TRANSFER = "C8FCD8FD-B616-4252-942F-9F650155B3BC";
+		}
+
+		public static class InsurancePolicyProcess {
+			public static final String UPDATE_POLICY = "1F7B31EC-9388-4EA0-816C-9F81013A8ED4";
+			public static final String DELETE_POLICY = "";
+			public static final String CREATE_EXERCISE = "C86BB300-28C1-47EF-A48D-9FD4010F9149";
+			public static final String CREATE_RECEIPT = "C4117861-16EB-40DB-A771-9F8A00EA6B32";
+			public static final String CREATE_INSURED_OBJECT = "984226BB-33EA-4988-A802-9FD4010FC200";
+			public static final String VALIDATE_POLICY = "841E9154-8037-46F7-8B98-9FD3011A9605";
+			public static final String VOID_POLICY = "DF2C50EF-5E4A-475A-AB1E-9FD401143D8A";
+			public static final String TRANSFER_BROKERAGE = null;
+			public static final String CREATE_SUBSTITUTE_POLICY = null;
+			public static final String CREATE_CLIENT_INFO_REQUEST = null;
+			public static final String CREATE_COMPANY_INFO_REQUEST = null;
+			public static final String CREATE_INSURED_OBJECT_FROM_CLIENT = "783EFBDB-44DB-4CAA-BF88-9FD4010FDB91";
+			public static final String TRANSFER_MANAGER = "EF9C257E-323C-4BA0-A158-9F9000D8A755";
+			public static final String EXECUTE_DETAILED_CALCULATIONS = "7DC1A798-31AA-49A1-B2DC-9FD4010F7593";
+			public static final String CREATE_INFO_MANAGEMENT_PROCESS = null;
+			public static final String CREATE_SUB_POLICY = null;
+			public static final String CREATE_CREDIT_NOTE = "4CC51237-FC83-4B13-A8A9-9FD401100FE2";
+			public static final String CREATE_NEGOTIATION = null;
+			public static final String CREATE_HEALTH_EXPENSE = null;
+			public static final String CREATE_RISK_ANALISYS = null;
 		}
 
 	}
