@@ -2,6 +2,8 @@ package bigBang.client;
 
 import com.google.gwt.core.client.GWT;
 
+import bigBang.client.tests.TestsView;
+import bigBang.client.tests.TestsViewPresenter;
 import bigBang.definitions.client.dataAccess.DataBroker;
 import bigBang.library.client.Module;
 import bigBang.library.client.ViewPresenterFactory;
@@ -35,6 +37,16 @@ public class BigBangModule implements Module {
 	}
 
 	private void registerViewPresenters(){
+		ViewPresenterFactory.getInstance().registerViewPresenterInstantiator("TESTS_SECTION", new ViewPresenterInstantiator() {
+			
+			@Override
+			public ViewPresenter getInstance() {
+				TestsView view = (TestsView) GWT.create(TestsView.class);
+				ViewPresenter presenter = new TestsViewPresenter(view);
+				return presenter;
+			}
+		});
+		
 		ViewPresenterFactory.getInstance().registerViewPresenterInstantiator("MANAGER_TRANSFER", new ViewPresenterInstantiator() {
 
 			@Override

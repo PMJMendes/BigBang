@@ -42,6 +42,8 @@ public class MainViewController extends ViewPresenterController {
 			present("EXPENSE_SECTION", historyItem);
 		}else if(section.equalsIgnoreCase("riskanalisys")){
 			present("RISK_ANALISYS_SECTION", historyItem);
+		}else if(section.equalsIgnoreCase("tests")){
+			present("TESTS_SECTION", historyItem);
 		}else{
 			goToDefault();
 		}

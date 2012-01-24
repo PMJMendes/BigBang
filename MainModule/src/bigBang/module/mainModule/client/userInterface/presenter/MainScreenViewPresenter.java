@@ -1,5 +1,6 @@
 package bigBang.module.mainModule.client.userInterface.presenter;
 
+import Jewel.Web.client.Jewel_Web;
 import bigBang.library.client.EventBus;
 import bigBang.library.client.HasParameters;
 import bigBang.library.client.Session;
@@ -71,7 +72,8 @@ public class MainScreenViewPresenter implements ViewPresenter {
 					EventBus.getInstance().fireEvent(new LogoutEvent());
 					break;
 				case SHOW_PREFERENCES:
-					view.showPreferences(true);
+					//view.showPreferences(true); TODO FJVC
+					new Jewel_Web().onModuleLoad();
 					break;
 				}
 			}
