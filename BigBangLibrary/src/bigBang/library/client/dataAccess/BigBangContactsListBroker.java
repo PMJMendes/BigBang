@@ -88,6 +88,7 @@ public class BigBangContactsListBroker extends DataBroker<Contact> implements Co
 
 	@Override
 	public void registerClient(final ContactsBrokerClient client, final String ownerId) {
+		
 		if(!clients.containsKey(ownerId)){
 			List<ContactsBrokerClient> clientList = new ArrayList<ContactsBrokerClient>();
 			clients.put(ownerId, clientList);

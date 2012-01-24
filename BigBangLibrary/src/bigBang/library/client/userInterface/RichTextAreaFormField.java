@@ -49,9 +49,9 @@ public class RichTextAreaFormField extends FormField<String> {
 		wrapper = new HorizontalPanel();
 		initWidget(wrapper);
 		wrapper.setVerticalAlignment(HasVerticalAlignment.ALIGN_MIDDLE);
-		this.label = new Label();
-		this.label.getElement().getStyle().setMarginRight(5, Unit.PX);
-		wrapper.add(this.label);
+		//this.label = new Label();
+		//this.label.getElement().getStyle().setMarginRight(5, Unit.PX);
+		//wrapper.add(this.label);
 		wrapper.setCellHorizontalAlignment(this.label, HasHorizontalAlignment.ALIGN_RIGHT);
 		this.field = new RichTextArea();
 		this.field.setSize("400px", "300px");

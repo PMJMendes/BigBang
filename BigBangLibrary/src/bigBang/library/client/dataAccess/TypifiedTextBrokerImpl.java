@@ -1,13 +1,17 @@
 package bigBang.library.client.dataAccess;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.dev.util.collect.HashMap;
 
 import bigBang.definitions.client.dataAccess.DataBroker;
+import bigBang.definitions.client.dataAccess.DataBrokerClient;
+import bigBang.definitions.client.response.ResponseError;
 import bigBang.definitions.client.response.ResponseHandler;
+import bigBang.definitions.shared.BigBangConstants;
 import bigBang.definitions.shared.TypifiedText;
 import bigBang.library.client.BigBangAsyncCallback;
 import bigBang.library.interfaces.TypifiedTextService;
@@ -21,7 +25,7 @@ public class TypifiedTextBrokerImpl extends DataBroker<TypifiedText> implements 
 
 		public static TypifiedTextBroker getInstance(){
 			if(instance == null){
-				instance = GWT.create(TypifiedTextBrokerImpl.class);
+				instance = new TypifiedTextBrokerImpl();
 			}
 
 			return instance;
@@ -30,11 +34,12 @@ public class TypifiedTextBrokerImpl extends DataBroker<TypifiedText> implements 
 
 	protected final Integer NO_DATA_VERSION = new Integer(0);
 
-	protected TypifiedTextServiceAsync service;
-	protected Map<String, ArrayList<TypifiedTextClient>> clients;
+	protected Map<String, Boolean> dataRefreshRequirements;
+	protected Map<String, List<TypifiedTextClient>> clients;
 	protected Map<String, Integer> dataVersions;
-	protected Map<String, ArrayList<TypifiedText>> lists;
+	protected Map<String, List<TypifiedText>> texts;
 
+	protected TypifiedTextServiceAsync service;
 	/**
 	 * The class constructor
 	 */
@@ -42,110 +47,88 @@ public class TypifiedTextBrokerImpl extends DataBroker<TypifiedText> implements 
 
 	public TypifiedTextBrokerImpl(){
 
+		this.dataElementId = BigBangConstants.TypifiedListIds.TYPIFIED_TEXT;
 		this.service = TypifiedTextService.Util.getInstance();
-		this.clients = new HashMap<String, ArrayList<TypifiedTextClient>>();
+		this.clients = new HashMap<String, List<TypifiedTextClient>>();
 		this.dataVersions = new HashMap<String, Integer>();
-		this.lists = new HashMap<String, ArrayList<TypifiedText>>();
+		this.texts = new HashMap<String, List<TypifiedText>>();
+		this.dataRefreshRequirements = new HashMap<String, Boolean>();
 	}
 
 	@Override
-	public void registerClient(String tag, TypifiedTextClient client) {
-		if(!validTag(tag)){
-			return;
+	public void registerClient(final String tag, final TypifiedTextClient client) {
+
+		if(!this.clients.containsKey(tag)){
+			List<TypifiedTextClient> clientList = new ArrayList<TypifiedTextClient>();
+			clients.put(tag, clientList);
+			requireDataRefresh(tag);
+			dataVersions.put(tag, NO_DATA_VERSION);
+			getTexts(tag, new ResponseHandler<List<TypifiedText>>() {
+
+				@Override
+				public void onResponse(List<TypifiedText> response) {
+					clients.get(tag).add(client);
+					updateListClient(tag, client);
+				}
+
+				@Override
+				public void onError(Collection<ResponseError> errors) {
+
+				}
+			});
+
+		}else{
+			clients.get(tag).add(client);
+			updateListClient(tag, client);
 		}
-
-		if(this.clients.containsKey(tag)){
-			this.dataVersions.put(tag, NO_DATA_VERSION);
-			this.lists.put(tag, new ArrayList<TypifiedText>());
-
-			refreshListData(tag);
-			this.clients.put(tag, new ArrayList<TypifiedTextClient>());
-		}
-
-		List<TypifiedTextClient> clientList = this.clients.get(tag);
-
-		Integer listDataVersion = getListDataVersion(tag);
-
-		if(!isClientRegistered(tag, client))
-			clientList.add(client);
-
-		client.setTypifiedTexts(this.getTexts(tag));
-		client.setTypifiedDataVersionNumber(listDataVersion.intValue());
 	}
 
-	private Integer getListDataVersion(String tag) {
-		if(!validTag(tag)) {
-			return NO_DATA_VERSION;
+
+	@Override
+	public void unregisterClient(TypifiedTextClient client) {
+		
+		for(String tag : clients.keySet()){
+			List<TypifiedTextClient> clientList = clients.get(tag);
+			if(clientList.contains(client)){
+				unregisterClient(tag, client);
+			}
 		}
-
-		if(!this.lists.containsKey(tag))
-			throw new RuntimeException("There is no list registered with id \"" + tag + "\"");
-		return this.dataVersions.get(tag);
-	}
-
-	private boolean validTag(String tag) {
-
-		if(tag == null){
-			GWT.log("The list id is null");
-			return false;
-		}
-		if(tag.isEmpty()) {
-			GWT.log("The list id is empty");
-			return false;
-		}
-
-		return true;
+		
 	}
 
 	@Override
 	public void unregisterClient(String tag, TypifiedTextClient client) {
-		if(!validTag(tag)){
-			return;
-		}
-		if(clients.containsKey(tag)){
-			List<TypifiedTextClient> clientList = clients.get(tag);
-			clientList.remove(client);
+		if(!clients.containsKey(tag)){
+			throw new RuntimeException("The texts with the tag " + tag + " are not being managed by this broker.");
 
+		}
+
+		List<TypifiedTextClient> clientList = clients.get(tag);
+
+		if(clients.containsKey(tag)){
+			clientList.remove(client);
 			if(clientList.isEmpty()){
+				dataRefreshRequirements.remove(tag);
 				clients.remove(tag);
 				dataVersions.remove(tag);
-				lists.remove(tag);
+				texts.remove(tag);
 			}
 		}
 	}
 
 	@Override
-	public void refreshListData(final String tag) {
-		if(!validTag(tag)){
-			return;
+	public void requireDataRefresh() {
+		for(String tag : dataRefreshRequirements.keySet()){
+			requireDataRefresh(tag);
 		}
+	}
 
-		this.service.getTexts(tag, new BigBangAsyncCallback<TypifiedText[]>() {
-
-			@Override
-			public void onSuccess(TypifiedText[] result) {
-				TypifiedTextBrokerImpl.this.lists.put(tag, new ArrayList<TypifiedText>());
-				incrementListDataVersion(tag);
-				updateListClients(tag);
-			}
-
-			@Override
-			public void onFailure(Throwable caught){
-
-				super.onFailure(caught);
-			}
-
-
-		});
-
+	protected boolean requiresDataRefresh(String tag){
+		return this.dataRefreshRequirements.get(tag);
 	}
 
 	protected void updateListClients(String tag) {
-		if(!validTag(tag)){
-			return;
-		}
-
-		if(!this.lists.containsKey(tag)){
+		if(!this.texts.containsKey(tag)){
 			throw new RuntimeException("There if no list registered with id \"" + tag + "\"");
 		}
 
@@ -159,11 +142,8 @@ public class TypifiedTextBrokerImpl extends DataBroker<TypifiedText> implements 
 	}
 
 	protected void updateListClient(String tag, TypifiedTextClient client) {
-		if(!validTag(tag)){
-			return;
-		}
 
-		List<TypifiedText> texts = this.lists.get(tag);
+		List<TypifiedText> texts = this.texts.get(tag);
 		int currentDataVersion = this.dataVersions.get(tag).intValue();
 
 		if(!this.clients.get(tag).contains(client))
@@ -182,11 +162,8 @@ public class TypifiedTextBrokerImpl extends DataBroker<TypifiedText> implements 
 	}
 
 	protected Integer incrementListDataVersion(String tag) {
-		if(!validTag(tag)){
-			return NO_DATA_VERSION;
-		}
 
-		if(!this.lists.containsKey(tag)){
+		if(!this.texts.containsKey(tag)){
 			throw new RuntimeException("There if no list registered with id \"" + tag + "\"");
 		}
 
@@ -198,11 +175,8 @@ public class TypifiedTextBrokerImpl extends DataBroker<TypifiedText> implements 
 	}
 
 	private void setListDataVersion(String tag, Integer dataVersion) {
-		if(!validTag(tag)){
-			return;
-		}
 
-		if(tag == null || !this.lists.containsKey(tag))
+		if(tag == null || !this.texts.containsKey(tag))
 			throw new RuntimeException("There if no list registered with id \"" + tag + "\"");
 		if(dataVersion == null || dataVersion < NO_DATA_VERSION){
 			throw new RuntimeException("The version is not valid");
@@ -211,38 +185,15 @@ public class TypifiedTextBrokerImpl extends DataBroker<TypifiedText> implements 
 	}
 
 	@Override
-	public List<TypifiedText> getTexts(String tag) {
-		if(!this.lists.containsKey(tag)){
-			throw new RuntimeException("There if no list registered with id \"" + tag + "\"");
-		}
-		return lists.get(tag);
-	}
-
-	@Override
-	public TypifiedText getText(String tag, String textId) {
-		// TODO 
-		return null;
-	}
-
-	@Override
 	public void createText(final String tag, TypifiedText text, final ResponseHandler<TypifiedText> handler) {
-		if(!validTag(tag)){
-			return;
-		}
-
 		this.service.createText(text, new BigBangAsyncCallback<TypifiedText>() {
 
 			@Override
 			public void onSuccess(TypifiedText result) {
-				updateListClients(tag);
-				TypifiedTextBrokerImpl.this.lists.get(tag).add(result);
-				Integer version = TypifiedTextBrokerImpl.this.incrementListDataVersion(tag);
-
-				for(TypifiedTextClient client: TypifiedTextBrokerImpl.this.clients.get(tag)){
-					client.addText(result);
-					client.setTypifiedDataVersionNumber(version.intValue());
-				}
-
+				Collection<TypifiedText> textList = texts.get(result.tag);
+				textList.add(result);
+				incrementDataVersion(result.tag);
+				updateListClients(result.tag);
 				handler.onResponse(result);
 			}
 
@@ -257,88 +208,35 @@ public class TypifiedTextBrokerImpl extends DataBroker<TypifiedText> implements 
 
 	@Override
 	public void removeText(final String tag, final String textId, final ResponseHandler<TypifiedText> handler) {
-		if(!validTag(tag)){
-			return;
-		}
-
-		this.service.deleteText(textId, new BigBangAsyncCallback<Void>() {
+		service.deleteText(textId, new BigBangAsyncCallback<Void>() {
 
 			@Override
 			public void onSuccess(Void result) {
-				TypifiedText text = null;
-
-				for(TypifiedText i: TypifiedTextBrokerImpl.this.lists.get(tag)){
-					if(i.id.equalsIgnoreCase(textId)){
-						text = i;
-						TypifiedTextBrokerImpl.this.lists.remove(textId);
-						break;
+				for(Collection<TypifiedText> collection: texts.values()){
+					for(TypifiedText text : collection){
+						collection.remove(text);
+						incrementDataVersion(tag);
+						for(TypifiedTextClient client : clients.get(tag)){
+							client.removeText(text);
+							client.setTypifiedDataVersionNumber(getCurrentDataVersion());
+						}
+						handler.onResponse(null);
+						return;
 					}
 				}
-
-				if(text == null){
-					throw new RuntimeException("The typified text with id \"" + textId + "\" does no exist in list with tag \"" + tag + "\"");
-				}
-
-				Integer version = TypifiedTextBrokerImpl.this.incrementListDataVersion(tag);
-
-				for(TypifiedTextClient client : TypifiedTextBrokerImpl.this.clients.get(tag)){
-
-					client.removeText(text);
-					client.setTypifiedDataVersionNumber(version.intValue());
-				}
-
-				handler.onResponse(text);
+				handler.onResponse(null);
 			}
 
 			@Override
 			public void onFailure(Throwable caught){
-				handler.onError(new String[]{"The text could not be removed"});
+				handler.onError(new String[]{"Could not delete the typified text"});
 				super.onFailure(caught);
 			}
 		});
-	}
-
-	@Override
-	public void saveText(final String tag, final TypifiedText text, final ResponseHandler<TypifiedText> handler) {
-		if(!validTag(tag)){
-			return;
-		}
-		
-		this.service.saveText(text, new BigBangAsyncCallback<TypifiedText>() {
-
-			@Override
-			public void onSuccess(TypifiedText result) {
-				updateListClients(tag);
-				
-				TypifiedTextBrokerImpl.this.lists.get(tag).remove(text);
-				TypifiedTextBrokerImpl.this.lists.get(tag).add(result);
-				Integer version = TypifiedTextBrokerImpl.this.incrementListDataVersion(tag);
-				
-				for(TypifiedTextClient client: TypifiedTextBrokerImpl.this.clients.get(tag)){
-					client.updateText(result);
-					client.setTypifiedDataVersionNumber(version);
-				}
-				handler.onResponse(result);
-			}
-			
-			@Override
-			public void onFailure(Throwable caught){
-				handler.onError(new String[]{"The text could not be saved"});
-				super.onFailure(caught);
-				
-			}
-		
-		
-		
-		});
-
 	}
 
 	@Override
 	public boolean isClientRegistered(String tag, TypifiedTextClient client) {
-		if(!validTag(tag)){
-			return false;
-		}
 
 		if(clients.containsKey(tag)){
 			List<TypifiedTextClient> clientList = clients.get(tag);
@@ -348,27 +246,128 @@ public class TypifiedTextBrokerImpl extends DataBroker<TypifiedText> implements 
 	}
 
 	@Override
-	public void requireDataRefresh() {
-		// TODO Auto-generated method stub
-		
+	public void requireDataRefresh(String tag) {
+		if(!clients.containsKey(tag)){
+			throw new RuntimeException("The texts with tag " + tag + " are not being managed by this broker.");
+		}
+		dataRefreshRequirements.put(tag, true);
 	}
 
 	@Override
 	public void notifyItemCreation(String itemId) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void notifyItemDeletion(String itemId) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void notifyItemUpdate(String itemId) {
 		// TODO Auto-generated method stub
-		
+
+	}
+
+	@Override
+	public void getTexts(final String tag, final ResponseHandler<List<TypifiedText>> handler) {
+		if(!clients.containsKey(tag)){
+			throw new RuntimeException("The texts with tag " + tag + " are not being managed by this broker.");
+		}
+
+		if(requiresDataRefresh(tag)){
+			service.getTexts(tag, new BigBangAsyncCallback<TypifiedText[]>() {
+
+				@Override
+				public void onSuccess(TypifiedText[] result) {
+					List<TypifiedText> textList = new ArrayList<TypifiedText>();
+					for(int i = 0; i<result.length; i++){
+						textList.add(result[i]);
+					}
+					texts.put(tag, textList);
+					incrementDataVersion(tag);
+					updateListClients(tag);
+					handler.onResponse(textList);
+				}
+
+				public void onFailure(Throwable caught){
+					handler.onError(new String[]{ new String("Could not get the Typified Texts for the specified tag")});
+				}
+			});
+		}
+
+	}
+
+	@Override
+	public void getText(String tag, String textId,
+			ResponseHandler<TypifiedText> handler) {
+		List<TypifiedText> listTexts = texts.get(tag);
+
+		for(TypifiedText txt : listTexts){
+			if(txt.id == textId){
+				handler.onResponse(txt);
+				return;
+			}
+		}
+		handler.onError(new String[]{"Could not find the text with tag " +tag+ " and id " + textId});
+
+	}
+
+	@Override
+	public int incrementDataVersion(String tag) {
+		if(!clients.containsKey(tag)){
+			throw new RuntimeException("The texts with tag " + tag + " are not being managed by this broker.");
+		}
+
+		int newDataVersion = new Integer(dataVersions.get(tag).intValue()+1);
+		dataVersions.put(tag, newDataVersion);
+		return newDataVersion;
+
+
+	}
+
+	@Override
+	public void updateText(final String tag, final TypifiedText text, final ResponseHandler<TypifiedText> handler) {
+		getText(tag, text.id, new ResponseHandler<TypifiedText>() {
+
+			@Override
+			public void onResponse(final TypifiedText response) {
+				service.saveText(text, new BigBangAsyncCallback<TypifiedText>() {
+					@Override
+					public void onSuccess(TypifiedText result) {
+
+						List<TypifiedText> textList = texts.get(result.tag);
+
+						for(TypifiedText txt : textList){
+							if(txt.id.equalsIgnoreCase(result.id)){
+								textList.set(textList.indexOf(txt), result);
+								break;
+							}
+						}
+						updateListClients(result.tag);
+						handler.onResponse(result);
+					}
+					@Override
+					public void onFailure(Throwable caught){
+						handler.onError(new String[]{
+								new String("Could not save the text")
+						});
+						super.onFailure(caught);
+					}
+
+				});
+			}
+			@Override
+			public void onError(Collection<ResponseError> errors) {
+				handler.onError(new String[]{
+						new String("Could not get the original document")	
+					});
+			}
+
+		});
+
 	}
 
 }

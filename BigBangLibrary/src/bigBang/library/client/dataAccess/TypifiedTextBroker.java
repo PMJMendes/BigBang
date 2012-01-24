@@ -8,6 +8,8 @@ import bigBang.definitions.shared.TypifiedText;
 
 public interface TypifiedTextBroker extends DataBrokerInterface<TypifiedText>{
 
+
+	public int incrementDataVersion(String tag);
 	
 	public void registerClient(String tag, TypifiedTextClient client);
 	
@@ -15,16 +17,17 @@ public interface TypifiedTextBroker extends DataBrokerInterface<TypifiedText>{
 	
 	public boolean isClientRegistered(String tag, TypifiedTextClient client);
 	
-	public void refreshListData(String tag);
+	public void getTexts(String tag, ResponseHandler<List<TypifiedText>> handler);
 	
-	public List<TypifiedText> getTexts(String tag);
-	
-	public TypifiedText getText(String tag, String textId);
+	public void getText(String tag, String textId, ResponseHandler<TypifiedText> handler);
 	
 	public void createText(String tag, TypifiedText text, ResponseHandler<TypifiedText> handler);
 
 	public void removeText(String tag, String textId, ResponseHandler<TypifiedText> handler);
 	
-	public void saveText(String tag, TypifiedText text, ResponseHandler<TypifiedText> handler);
+	public void requireDataRefresh(String ownerId);
+	
+	public void updateText(String tag, TypifiedText text, ResponseHandler<TypifiedText> handler);
 
+	public void unregisterClient(TypifiedTextClient client);
 }
