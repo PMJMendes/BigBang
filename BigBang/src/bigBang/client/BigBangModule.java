@@ -11,6 +11,7 @@ import bigBang.library.client.ViewPresenterInstantiator;
 import bigBang.library.client.dataAccess.BigBangContactsListBroker;
 import bigBang.library.client.dataAccess.BigBangDocumentsBroker;
 import bigBang.library.client.dataAccess.HistoryBrokerImpl;
+import bigBang.library.client.dataAccess.TypifiedTextBrokerImpl;
 import bigBang.library.client.userInterface.presenter.ContactViewPresenter;
 import bigBang.library.client.userInterface.presenter.DocumentViewPresenter;
 import bigBang.library.client.userInterface.presenter.ManagerTransferViewPresenter;
@@ -91,6 +92,7 @@ public class BigBangModule implements Module {
 				new HistoryBrokerImpl()	,
 				new BigBangContactsListBroker(),
 				new BigBangDocumentsBroker(),
+				new TypifiedTextBrokerImpl()
 		};
 	}
 
