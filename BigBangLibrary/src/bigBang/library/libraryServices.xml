@@ -55,7 +55,7 @@
 </servlet-mapping>
 <servlet-mapping>
 	<servlet-name>TypifiedTextService</servlet-name>
-	<url-pattern>/bigbang/TypifiedListService</url-pattern>
+	<url-pattern>/bigbang/TypifiedTextService</url-pattern>
 </servlet-mapping>
 <servlet-mapping>
 	<servlet-name>ContactsService</servlet-name>
