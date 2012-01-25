@@ -22,6 +22,7 @@ public interface BigBangProcessService extends RemoteService {
 			return instance;
 		}
 	}
-	
+
+	public BigBangProcess getProcess(String dataObjectId) throws SessionExpiredException, BigBangException;
 	public BigBangProcess[] getSubProcesses(String dataObjectId) throws SessionExpiredException, BigBangException;
 }

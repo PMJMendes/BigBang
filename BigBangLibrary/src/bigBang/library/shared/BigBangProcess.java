@@ -12,4 +12,8 @@ public class BigBangProcess
 	public String processTypeId;
 	public String processId;
 	public String tag;
+	public String ownerDataId;
+	public String ownerDataTypeId;
+	public String ownerProcId;
+	public String ownerProcTypeId;
 }

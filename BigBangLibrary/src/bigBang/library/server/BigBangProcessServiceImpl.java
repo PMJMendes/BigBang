@@ -13,6 +13,7 @@ import Jewel.Petri.Constants;
 import Jewel.Petri.Interfaces.IProcess;
 import Jewel.Petri.Interfaces.IScript;
 import Jewel.Petri.Objects.PNProcess;
+import Jewel.Petri.SysObjects.JewelPetriException;
 import bigBang.library.interfaces.BigBangProcessService;
 import bigBang.library.shared.BigBangException;
 import bigBang.library.shared.BigBangProcess;
@@ -100,6 +101,45 @@ public class BigBangProcessServiceImpl
 		return lobjProcess;
 	}
 
+	public BigBangProcess getProcess(String dataObjectId)
+		throws SessionExpiredException, BigBangException
+	{
+        IProcess lobjProcess;
+        IScript lobjScript;
+        IProcess lobjParent;
+        IScript lobjSuper;
+        
+        BigBangProcess lobjResult;
+
+		if ( Engine.getCurrentUser() == null )
+			throw new SessionExpiredException();
+
+		lobjProcess = sGetProcessFromDataObject(UUID.fromString(dataObjectId));
+		try
+		{
+			lobjScript = lobjProcess.GetScript();
+			lobjParent = lobjProcess.GetParent();
+			lobjSuper = lobjParent.GetScript();
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangException(e.getMessage(), e);
+		}
+
+		lobjResult = new BigBangProcess();
+		lobjResult.dataTypeId = lobjScript.GetDataType().toString();
+		lobjResult.dataId = lobjProcess.GetDataKey().toString();
+		lobjResult.processTypeId = lobjScript.getKey().toString();
+		lobjResult.processId = lobjProcess.getKey().toString();
+		lobjResult.tag = lobjScript.getLabel();
+		lobjResult.ownerDataId = lobjParent.GetDataKey().toString();
+		lobjResult.ownerDataTypeId = lobjSuper.GetDataType().toString();
+		lobjResult.ownerProcId = lobjParent.getKey().toString();
+		lobjResult.ownerProcTypeId = lobjParent.GetScriptID().toString();
+
+		return lobjResult;
+	}
+
 	public BigBangProcess[] getSubProcesses(String dataObjectId)
 		throws SessionExpiredException, BigBangException
 	{
@@ -159,6 +199,10 @@ public class BigBangProcessServiceImpl
 				lobjResult.processTypeId = lobjScript.getKey().toString();
 				lobjResult.processId = lobjProcess.getKey().toString();
 				lobjResult.tag = lobjScript.getLabel();
+				lobjResult.ownerDataId = lobjParent.GetDataKey().toString();
+				lobjResult.ownerDataTypeId = lobjParent.GetScript().GetDataType().toString();
+				lobjResult.ownerProcId = lobjParent.getKey().toString();
+				lobjResult.ownerProcTypeId = lobjParent.GetScriptID().toString();
 				larrAux.add(lobjResult);
 			}
 		}
