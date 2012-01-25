@@ -13,7 +13,6 @@ import Jewel.Petri.Constants;
 import Jewel.Petri.Interfaces.IProcess;
 import Jewel.Petri.Interfaces.IScript;
 import Jewel.Petri.Objects.PNProcess;
-import Jewel.Petri.SysObjects.JewelPetriException;
 import bigBang.library.interfaces.BigBangProcessService;
 import bigBang.library.shared.BigBangException;
 import bigBang.library.shared.BigBangProcess;
