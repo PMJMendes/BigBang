@@ -14,12 +14,12 @@ public interface TransferManagerService
 {
 	public static class Util
 	{
-		private static TipifiedListServiceAsync instance;
+		private static TransferManagerServiceAsync instance;
 
-		public static TipifiedListServiceAsync getInstance()
+		public static TransferManagerServiceAsync getInstance()
 		{
 			if (instance == null)
-				instance = GWT.create(TipifiedListService.class);
+				instance = GWT.create(TransferManagerService.class);
 
 			return instance;
 		}

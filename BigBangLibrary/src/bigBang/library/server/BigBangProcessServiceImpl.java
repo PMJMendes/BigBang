@@ -13,9 +13,9 @@ import Jewel.Petri.Constants;
 import Jewel.Petri.Interfaces.IProcess;
 import Jewel.Petri.Interfaces.IScript;
 import Jewel.Petri.Objects.PNProcess;
+import bigBang.definitions.shared.BigBangProcess;
 import bigBang.library.interfaces.BigBangProcessService;
 import bigBang.library.shared.BigBangException;
-import bigBang.library.shared.BigBangProcess;
 import bigBang.library.shared.SessionExpiredException;
 
 public class BigBangProcessServiceImpl
