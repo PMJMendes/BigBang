@@ -15,8 +15,8 @@ import Jewel.Engine.Security.Password;
 import Jewel.Engine.SysObjects.ObjectBase;
 import Jewel.Petri.SysObjects.PetriEngine;
 
-import com.premiumminds.BigBang.Jewel.Library.JewelAuthenticator;
 import com.premiumminds.BigBang.Jewel.Objects.UserDecoration;
+import com.premiumminds.BigBang.Jewel.SysObjects.JewelAuthenticator;
 
 public class StaticFunctions
 {

@@ -1,4 +1,4 @@
-package com.premiumminds.BigBang.Jewel.Library;
+package com.premiumminds.BigBang.Jewel.SysObjects;
 
 import javax.mail.Address;
 import javax.mail.Message;
