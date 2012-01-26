@@ -89,7 +89,7 @@ public class MailConnector
 	
 				for ( i = 0; i < larrFolders.size(); i++ )
 				{
-					if ( "Big Bang".equals(larrFolders.get(i).getDisplayName()) )
+					if ( "bigbang".equals(larrFolders.get(i).getDisplayName()) )
 					{
 						lobjFolder = larrFolders.get(i);
 						Engine.getUserData().put("ExchangeFolder", lobjFolder);
