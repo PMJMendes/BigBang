@@ -33,6 +33,7 @@ public class BigBang_Tests
 //		TestSpecialGetAsImage.DoTest();
 //		TestSpecialGetSubProcs.DoTest();
 //		TestSpecialGetPermissions.DoTest();
+//		TestSpecialGetExchangeItems.DoTest();
 //
 //		TestHistoryGet.DoTest();
 //		TestHistoryUndo.DoTest();
@@ -44,6 +45,8 @@ public class BigBang_Tests
 //		TestMgrXferMassCreate.DoTest();
 //		TestMgrXferMassAccept.DoTest();
 //		TestMgrXferMassCancel.DoTest();
+//
+//		TestInfoReqCreate.DoTest();
 //
 //		TestContactGet.DoTest();
 //		TestContactCreate.DoTest();

@@ -35,8 +35,7 @@ public class TestInfoReqCreate
 		request.replylimit = 15;
 		request.toInfoId = "C6764677-0885-4BF3-8EB8-9FDD00D78FB5";
 		request.forwardUserIds = new String[] {"091B8442-B7B0-40FA-B517-9EB00068A390"};
-		request.internalBCCs = "joao.mendes@archon-se.com";
-		request.externalCCs = "francisco.cabrita@premium-minds.com";
+		request.externalCCs = "joao.mendes@archon-se.com";
 
 		Services.clientService.createInfoOrDocumentRequest(request, callback);
 	}

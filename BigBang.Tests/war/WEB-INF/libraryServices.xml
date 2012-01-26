@@ -25,6 +25,10 @@
 	<servlet-class>bigBang.library.server.DocuShareServiceImpl</servlet-class>
 </servlet>
 <servlet>
+	<servlet-name>ExchangeService</servlet-name>
+	<servlet-class>bigBang.library.server.ExchangeServiceImpl</servlet-class>
+</servlet>
+<servlet>
 	<servlet-name>ZipCodeService</servlet-name>
 	<servlet-class>bigBang.library.server.ZipCodeServiceImpl</servlet-class>
 </servlet>
@@ -68,6 +72,10 @@
 <servlet-mapping>
 	<servlet-name>DocuShareService</servlet-name>
 	<url-pattern>/bigbang_tests/DocuShareService</url-pattern>
+</servlet-mapping>
+<servlet-mapping>
+	<servlet-name>ExchangeService</servlet-name>
+	<url-pattern>/bigbang_tests/ExchangeService</url-pattern>
 </servlet-mapping>
 <servlet-mapping>
 	<servlet-name>ZipCodeService</servlet-name>
