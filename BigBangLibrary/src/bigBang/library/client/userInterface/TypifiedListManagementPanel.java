@@ -26,7 +26,7 @@ import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
-public class TypifiedListManagementPanel extends FilterableList<TipifiedListItem> implements TypifiedListClient {
+public class TypifiedListManagementPanel extends FilterableList<TipifiedListItem>  implements TypifiedListClient, TypifiedManagementPanel {
 
 	public static class TypifiedListEntry extends ListEntry<TipifiedListItem> {
 
@@ -145,7 +145,8 @@ public class TypifiedListManagementPanel extends FilterableList<TipifiedListItem
 
 		showFilterField(false);
 	}
-	
+
+	@Override
 	public String getListId(){
 		return this.listId;
 	}
@@ -174,6 +175,7 @@ public class TypifiedListManagementPanel extends FilterableList<TipifiedListItem
 		});
 	}
 
+	@Override
 	public void setListId(String listId){
 		if(this.listId != null) {
 			listBroker.unregisterClient(this.listId, this);
@@ -196,7 +198,7 @@ public class TypifiedListManagementPanel extends FilterableList<TipifiedListItem
 				}
 			});
 		}
-		
+
 		if(this.isAttached()){
 			listBroker.registerClient(TypifiedListManagementPanel.this.listId, TypifiedListManagementPanel.this);
 			listBroker.getListItems(TypifiedListManagementPanel.this.listId);
@@ -216,6 +218,7 @@ public class TypifiedListManagementPanel extends FilterableList<TipifiedListItem
 		});
 	}
 
+	@Override
 	public void setEditModeEnabled(boolean enabled){
 		this.editModeEnabled = enabled;
 		this.editButton.setText(enabled ? "Cancelar" : "Editar");
@@ -230,10 +233,12 @@ public class TypifiedListManagementPanel extends FilterableList<TipifiedListItem
 		return this.editModeEnabled;
 	}
 
+	@Override
 	public void setEditable(boolean editable) {
 		this.editable = editable;
 		this.editButton.setVisible(editable);
 	}
+
 
 	public void setReadOnly(boolean readonly) {
 		this.setEditModeEnabled(false);
@@ -325,4 +330,9 @@ public class TypifiedListManagementPanel extends FilterableList<TipifiedListItem
 		}
 	}
 
+	@Override
+	public FilterableList<TipifiedListItem> getList() {
+		return this;
+	}
+	
 }

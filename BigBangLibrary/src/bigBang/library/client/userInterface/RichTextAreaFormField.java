@@ -59,7 +59,7 @@ public class RichTextAreaFormField extends FormField<String> {
 		RichTextToolbar toolbar = new RichTextToolbar(this.field);
 		
 		VerticalPanel fieldWrapper = new VerticalPanel();
-		fieldWrapper.setSpacing(5);
+		//fieldWrapper.setSpacing(5);
 		fieldWrapper.setSize("100%", "100%");
 		fieldWrapper.add(toolbar);
 		fieldWrapper.add(this.field);

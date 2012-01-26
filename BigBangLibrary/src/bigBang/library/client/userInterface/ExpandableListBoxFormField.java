@@ -29,8 +29,13 @@ import com.google.gwt.user.client.ui.Widget;
 public class ExpandableListBoxFormField extends ListBoxFormField implements
 TypifiedListClient {
 
+	public enum ManagementPanelType{
+		TYPIFIED_LIST,
+		TYPIFIED_TEXT
+	}
+
 	protected Image expandImage;
-	protected TypifiedListManagementPanel list;
+	protected TypifiedManagementPanel managementPanel;
 	protected String selectedValueId;
 	protected int typifiedListDataVersion;
 	protected TypifiedListBroker typifiedListBroker;
@@ -57,9 +62,17 @@ TypifiedListClient {
 
 	public ExpandableListBoxFormField(final String listId,
 			final String listDescription) {
+
+		this(listId, listDescription, ManagementPanelType.TYPIFIED_LIST);
+	}
+
+	public ExpandableListBoxFormField(final String listId,
+			final String listDescription, ManagementPanelType type) {
 		super();
+
 		this.typifiedListBroker = BigBangTypifiedListBroker.Util.getInstance();
 		clearValues();
+
 
 		label.setText(listDescription);
 
@@ -71,69 +84,133 @@ TypifiedListClient {
 		expandImage = new Image(r.listExpandIcon());
 		expandImage.getElement().getStyle().setCursor(Cursor.POINTER);
 
-		final PopupPanel popup = new PopupPanel(true, "Listagem");
 
-		list = new TypifiedListManagementPanel(listId, listDescription) {
 
-			public void onCellDoubleClicked(
-					bigBang.library.client.userInterface.ListEntry<TipifiedListItem> entry) {
-				super.onCellDoubleClicked(entry);
-				popup.hidePopup();
+		if(type == ManagementPanelType.TYPIFIED_LIST){
+
+			final PopupPanel popup = new PopupPanel(true, "Listagem");
+
+			managementPanel = new TypifiedListManagementPanel(listId, listDescription) {
+
+				@Override
+				public void onCellDoubleClicked(
+						bigBang.library.client.userInterface.ListEntry<TipifiedListItem> entry) {
+					super.onCellDoubleClicked(entry);
+					popup.hidePopup();
+				};
 			};
-		};
 
-		list.addSelectionChangedEventHandler(new SelectionChangedEventHandler() {
+			managementPanel.getList().addSelectionChangedEventHandler(new SelectionChangedEventHandler() {
 
-			@Override
-			public void onSelectionChanged(SelectionChangedEvent event) {
-				Collection<? extends Selectable> selected = event.getSelected();
-				for (Selectable i : selected) {
-					@SuppressWarnings("unchecked")
-					ValueSelectable<TipifiedListItem> iv = (ValueSelectable<TipifiedListItem>) i;
-					if ((iv != null && iv.getValue() != null) && (!getValue().equals(iv.getValue().id))){
-						setValue(iv.getValue().id);
-					}
-					break;
-				}
-
-			}
-		});
-
-		expandImage.addClickHandler(new ClickHandler() {
-
-			@Override
-			public void onClick(ClickEvent event) {
-				popup.clear();
-				popup.add(list);
-				list.clearSelection();
-				for(ListEntry<TipifiedListItem> e : list) {
-					if(e.getValue().id.equals(ExpandableListBoxFormField.this.getValue())){
-						e.setSelected(true);
+				@Override
+				public void onSelectionChanged(SelectionChangedEvent event) {
+					Collection<? extends Selectable> selected = event.getSelected();
+					for (Selectable i : selected) {
+						@SuppressWarnings("unchecked")
+						ValueSelectable<TipifiedListItem> iv = (ValueSelectable<TipifiedListItem>) i;
+						if ((iv != null && iv.getValue() != null) && (!getValue().equals(iv.getValue().id))){
+							setValue(iv.getValue().id);
+						}
 						break;
 					}
+
 				}
-				list.clearFilters();
-				list.setEditModeEnabled(false);
-				popup.center();
-			}
-		});
+			});
 
-		wrapper.add(expandImage);
-		wrapper.add(unitsLabel);
-		wrapper.add(mandatoryIndicatorLabel);
-		setFieldWidth("150px");
+			expandImage.addClickHandler(new ClickHandler() {
 
-		setListId(listId, null);
+				@Override
+				public void onClick(ClickEvent event) {
+					popup.clear();
+					popup.add(managementPanel.getList());
+					managementPanel.getList().clearSelection();
+					for(ListEntry<TipifiedListItem> e : managementPanel.getList()) {
+						if(e.getValue().id.equals(ExpandableListBoxFormField.this.getValue())){
+							e.setSelected(true);
+							break;
+						}
+					}
+					managementPanel.getList().clearFilters();
+					managementPanel.setEditModeEnabled(false);
+					popup.center();
+				}
+			});
+
+			wrapper.add(expandImage);
+			wrapper.add(unitsLabel);
+			wrapper.add(mandatoryIndicatorLabel);
+			setFieldWidth("150px");
+
+			setListId(listId, null);
+		}
+		else if(type == ManagementPanelType.TYPIFIED_TEXT){
+
+			final PopupPanel popup = new PopupPanel(true, "");
+
+			managementPanel = new TypifiedTextManagementPanel(listId, listDescription){
+
+				@Override
+				public void onCellDoubleClicked(
+						bigBang.library.client.userInterface.ListEntry<TipifiedListItem> entry) {
+					getList().onCellDoubleClicked(entry);
+					popup.hidePopup();
+				};
+			};
+
+			managementPanel.getList().addSelectionChangedEventHandler(new SelectionChangedEventHandler() {
+
+				@Override
+				public void onSelectionChanged(SelectionChangedEvent event) {
+					Collection<? extends Selectable> selected = event.getSelected();
+					for (Selectable i : selected) {
+						@SuppressWarnings("unchecked")
+						ValueSelectable<TipifiedListItem> iv = (ValueSelectable<TipifiedListItem>) i;
+						if ((iv != null && iv.getValue() != null) && (!getValue().equals(iv.getValue().id))){
+							setValue(iv.getValue().id);
+						}
+						break;
+					}
+
+				}
+			});
+
+			expandImage.addClickHandler(new ClickHandler() {
+
+				@Override
+				public void onClick(ClickEvent event) {
+					popup.clear();
+					popup.add(managementPanel.asWidget());
+					managementPanel.getList().clearSelection();
+					for(ListEntry<TipifiedListItem> e : managementPanel.getList()) {
+						if(e.getValue().id.equals(ExpandableListBoxFormField.this.getValue())){
+							e.setSelected(true);
+							break;
+						}
+					}
+					managementPanel.getList().clearFilters();
+					managementPanel.setEditModeEnabled(false);
+					popup.center();
+				}
+			});
+
+			wrapper.add(expandImage);
+			wrapper.add(unitsLabel);
+			wrapper.add(mandatoryIndicatorLabel);
+			setFieldWidth("150px");
+
+			setListId(listId, null);
+
+		}
 	}
 
 	public void setListId(final String listId, ResponseHandler<Void> listReadyHandler){
 		hasServices = listId != null && !listId.equals("");
-		String currentListId = this.list.getListId();
+		String currentListId = this.managementPanel.getListId();
 		if(hasServices){
 			if(currentListId == null || !listId.equalsIgnoreCase(currentListId)){
-				this.list.setListId(listId);
-				list.setReadOnly(!this.hasServices);
-				list.setEditable(this.hasServices);
+				this.managementPanel.setListId(listId);
+				managementPanel.setReadOnly(!this.hasServices);
+				managementPanel.setEditable(this.hasServices);
 
 				if(this.isAttached()){
 					this.expectingResponseHandler = listReadyHandler;
@@ -164,19 +241,19 @@ TypifiedListClient {
 	}
 
 	public String getListId() {
-		return this.list.getListId();
+		return this.managementPanel.getListId();
 	}
 
 	public void setEditable(boolean editable) {
-		this.list.setEditable(editable);
+		this.managementPanel.setEditable(editable);
 	}
 
 	@Override
 	public void setReadOnly(boolean readonly) {
 		if(!locked){
 			super.setReadOnly(readonly);
-			list.setReadOnly(readonly);
-			list.setSelectableEntries(!readonly);
+			managementPanel.setReadOnly(readonly);
+			managementPanel.getList().setSelectableEntries(!readonly);
 		}
 	}
 
@@ -203,18 +280,18 @@ TypifiedListClient {
 
 	@Override
 	public void clear() {
-		if(list != null){
-			list.clearSelection();
+		if(managementPanel != null){
+			managementPanel.getList().clearSelection();
 		}
 		super.clear();
 	}
 
 	public void setPopupWidth(String width) {
-		list.setWidth(width);
+		managementPanel.getList().setWidth(width);
 	}
 
 	public void setPopupHeight(String height) {
-		list.setHeight(height);
+		managementPanel.getList().setHeight(height);
 	}
 
 	// TypifiedListClient methods
@@ -278,7 +355,7 @@ TypifiedListClient {
 	 * @return A collection of list items wrapped in value selectables
 	 */
 	public Collection<ValueSelectable<TipifiedListItem>> getListItems(){
-		ArrayList<ValueSelectable<TipifiedListItem>> result = new ArrayList<ValueSelectable<TipifiedListItem>>(this.list);
+		ArrayList<ValueSelectable<TipifiedListItem>> result = new ArrayList<ValueSelectable<TipifiedListItem>>(this.managementPanel.getList());
 		return result;
 	}
 

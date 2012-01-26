@@ -306,13 +306,12 @@ public class TypifiedTextBrokerImpl extends DataBroker<TypifiedText> implements 
 		List<TypifiedText> listTexts = texts.get(tag);
 
 		for(TypifiedText txt : listTexts){
-			if(txt.id == textId){
+			if(txt.id.equalsIgnoreCase(textId)){
 				handler.onResponse(txt);
 				return;
 			}
 		}
 		handler.onError(new String[]{"Could not find the text with tag " +tag+ " and id " + textId});
-
 	}
 
 	@Override
