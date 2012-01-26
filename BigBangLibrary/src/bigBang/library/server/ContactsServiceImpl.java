@@ -24,7 +24,6 @@ import bigBang.library.shared.BigBangException;
 import bigBang.library.shared.SessionExpiredException;
 
 import com.premiumminds.BigBang.Jewel.Constants;
-import com.premiumminds.BigBang.Jewel.ZipCodeBridge;
 import com.premiumminds.BigBang.Jewel.Data.ContactData;
 import com.premiumminds.BigBang.Jewel.Data.ContactInfoData;
 import com.premiumminds.BigBang.Jewel.Objects.GeneralSystem;
@@ -33,6 +32,7 @@ import com.premiumminds.BigBang.Jewel.Operations.Client.ManageClientData;
 import com.premiumminds.BigBang.Jewel.Operations.General.ManageInsurers;
 import com.premiumminds.BigBang.Jewel.Operations.General.ManageMediators;
 import com.premiumminds.BigBang.Jewel.Operations.Policy.ManagePolicyData;
+import com.premiumminds.BigBang.Jewel.SysObjects.ZipCodeBridge;
 
 public class ContactsServiceImpl
 	extends EngineImplementor

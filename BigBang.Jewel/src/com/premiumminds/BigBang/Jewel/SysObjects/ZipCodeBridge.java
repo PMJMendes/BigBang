@@ -1,7 +1,10 @@
-package com.premiumminds.BigBang.Jewel;
+package com.premiumminds.BigBang.Jewel.SysObjects;
 
 import java.sql.ResultSet;
 import java.util.UUID;
+
+import com.premiumminds.BigBang.Jewel.BigBangJewelException;
+import com.premiumminds.BigBang.Jewel.Constants;
 
 import Jewel.Engine.Engine;
 import Jewel.Engine.Constants.ObjectGUIDs;

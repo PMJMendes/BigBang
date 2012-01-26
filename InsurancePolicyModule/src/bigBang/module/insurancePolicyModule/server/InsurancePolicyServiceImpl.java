@@ -50,7 +50,6 @@ import bigBang.module.receiptModule.server.ReceiptServiceImpl;
 
 import com.premiumminds.BigBang.Jewel.Constants;
 import com.premiumminds.BigBang.Jewel.PolicyValidationException;
-import com.premiumminds.BigBang.Jewel.ZipCodeBridge;
 import com.premiumminds.BigBang.Jewel.Data.PolicyCoverageData;
 import com.premiumminds.BigBang.Jewel.Data.PolicyData;
 import com.premiumminds.BigBang.Jewel.Data.PolicyExerciseData;
@@ -80,6 +79,7 @@ import com.premiumminds.BigBang.Jewel.Operations.Policy.CreateReceipt;
 import com.premiumminds.BigBang.Jewel.Operations.Policy.DeletePolicy;
 import com.premiumminds.BigBang.Jewel.Operations.Policy.ManagePolicyData;
 import com.premiumminds.BigBang.Jewel.Operations.Policy.ValidatePolicy;
+import com.premiumminds.BigBang.Jewel.SysObjects.ZipCodeBridge;
 
 public class InsurancePolicyServiceImpl
 	extends SearchServiceBase

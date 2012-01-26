@@ -43,7 +43,6 @@ import bigBang.module.clientModule.shared.ClientSearchParameter;
 import bigBang.module.clientModule.shared.ClientSortParameter;
 
 import com.premiumminds.BigBang.Jewel.Constants;
-import com.premiumminds.BigBang.Jewel.ZipCodeBridge;
 import com.premiumminds.BigBang.Jewel.Data.ClientData;
 import com.premiumminds.BigBang.Jewel.Objects.AgendaItem;
 import com.premiumminds.BigBang.Jewel.Objects.ClientGroup;
@@ -58,6 +57,7 @@ import com.premiumminds.BigBang.Jewel.Operations.Client.ManageClientData;
 import com.premiumminds.BigBang.Jewel.Operations.Client.MergeIntoAnother;
 import com.premiumminds.BigBang.Jewel.Operations.General.CreateClient;
 import com.premiumminds.BigBang.Jewel.Operations.MgrXFer.AcceptXFer;
+import com.premiumminds.BigBang.Jewel.SysObjects.ZipCodeBridge;
 
 public class ClientServiceImpl
 	extends SearchServiceBase

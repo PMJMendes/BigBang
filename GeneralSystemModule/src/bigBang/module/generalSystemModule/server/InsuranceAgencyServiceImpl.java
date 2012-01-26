@@ -20,11 +20,11 @@ import bigBang.library.shared.SessionExpiredException;
 import bigBang.module.generalSystemModule.interfaces.InsuranceAgencyService;
 
 import com.premiumminds.BigBang.Jewel.Constants;
-import com.premiumminds.BigBang.Jewel.ZipCodeBridge;
 import com.premiumminds.BigBang.Jewel.Objects.GeneralSystem;
 import com.premiumminds.BigBang.Jewel.Operations.ContactOps;
 import com.premiumminds.BigBang.Jewel.Operations.DocOps;
 import com.premiumminds.BigBang.Jewel.Operations.General.ManageInsurers;
+import com.premiumminds.BigBang.Jewel.SysObjects.ZipCodeBridge;
 
 public class InsuranceAgencyServiceImpl
 	extends EngineImplementor

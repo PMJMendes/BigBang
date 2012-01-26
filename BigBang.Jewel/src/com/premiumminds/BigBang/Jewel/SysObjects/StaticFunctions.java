@@ -1,4 +1,4 @@
-package com.premiumminds.BigBang.Jewel;
+package com.premiumminds.BigBang.Jewel.SysObjects;
 
 import java.sql.ResultSet;
 import java.util.Hashtable;
@@ -15,8 +15,9 @@ import Jewel.Engine.Security.Password;
 import Jewel.Engine.SysObjects.ObjectBase;
 import Jewel.Petri.SysObjects.PetriEngine;
 
+import com.premiumminds.BigBang.Jewel.BigBangJewelException;
+import com.premiumminds.BigBang.Jewel.Constants;
 import com.premiumminds.BigBang.Jewel.Objects.UserDecoration;
-import com.premiumminds.BigBang.Jewel.SysObjects.JewelAuthenticator;
 
 public class StaticFunctions
 {
