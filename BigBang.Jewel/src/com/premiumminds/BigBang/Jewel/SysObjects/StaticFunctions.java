@@ -1,11 +1,16 @@
 package com.premiumminds.BigBang.Jewel.SysObjects;
 
+import java.net.URI;
 import java.sql.ResultSet;
 import java.util.Hashtable;
 import java.util.Properties;
 import java.util.UUID;
 
 import javax.mail.Session;
+
+import microsoft.exchange.webservices.data.ExchangeService;
+import microsoft.exchange.webservices.data.ExchangeVersion;
+import microsoft.exchange.webservices.data.WebCredentials;
 
 import Jewel.Engine.Engine;
 import Jewel.Engine.DataAccess.MasterDB;
@@ -28,6 +33,7 @@ public class StaticFunctions
 		Password lobjPass;
 		String lstrUser;
 		String lstrPwd;
+		String lstrEmail;
 		UserDecoration lobjDeco;
 		Hashtable<String, String> larrParams;
 		UUID lidParams;
@@ -35,7 +41,9 @@ public class StaticFunctions
         ResultSet lrs;
         ResultSet lrsParams;
 		ObjectBase lobjParam;
+		JewelAuthenticator lauth;
 		Properties lprops;
+		ExchangeService lsvc;
 
 		if ( pbNested )
 			return;
@@ -43,6 +51,8 @@ public class StaticFunctions
     	larrParams = new Hashtable<String, String>();
     	lobjDeco = null;
 
+    	ldb = null;
+    	lrs = null;
 		try
 		{
 			ldb = new MasterDB();
@@ -64,6 +74,20 @@ public class StaticFunctions
 
 	        ldb.Disconnect();
 
+		}
+		catch (Throwable e)
+		{
+			if ( lrs != null ) try { lrs.close(); } catch (Throwable e1) {}
+			if ( ldb != null ) try { ldb.Disconnect(); } catch (Throwable e1) {}
+			throw new BigBangJewelException(e.getMessage(), e);
+		}
+
+		if ( lobjDeco == null )
+			return;
+		lstrEmail = (String)lobjDeco.getAt(1);
+
+		try
+		{
 			lobjUser = User.GetInstance(pidNameSpace, pidUser);
 			if ( lobjUser.getAt(2) instanceof Password )
 				lobjPass = (Password)lobjUser.getAt(2);
@@ -77,10 +101,30 @@ public class StaticFunctions
 			throw new BigBangJewelException(e.getMessage(), e);
 		}
 
+		lauth = new JewelAuthenticator(lstrUser, lstrPwd);
+
 		lprops = new Properties();
 		lprops.put("mail.host", larrParams.get("SERVER"));
-		lprops.put("mail.from", (String)lobjDeco.getAt(1));
-		Engine.getUserData().put("MailSession", Session.getInstance(lprops, new JewelAuthenticator(lstrUser, lstrPwd)));
+		lprops.put("mail.from", lstrEmail);
+		lprops.put("mail.smtp.submitter", lauth.getPasswordAuthentication().getUserName());
+		lprops.put("mail.smtp.auth", "true");
+		lprops.put("mail.smtp.host", larrParams.get("SERVER"));
+		lprops.put("mail.smtp.port", "25");
+
+		Engine.getUserData().put("MailSession", Session.getInstance(lprops, lauth));
+
+		try
+		{
+			lsvc = new ExchangeService(ExchangeVersion.Exchange2007_SP1);
+			lsvc.setCredentials(new WebCredentials(lstrUser, lstrPwd));
+			lsvc.setUrl(new URI("https://" + larrParams.get("SERVER") + "/EWS/Exchange.asmx"));
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangJewelException(e.getMessage(), e);
+		}
+
+		Engine.getUserData().put("MailService", lsvc);
 	}
 
 	public static void DoStartup(UUID pidNameSpace)

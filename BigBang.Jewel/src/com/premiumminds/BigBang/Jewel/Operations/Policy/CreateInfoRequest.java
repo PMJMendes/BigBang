@@ -11,7 +11,7 @@ import com.premiumminds.BigBang.Jewel.BigBangJewelException;
 import com.premiumminds.BigBang.Jewel.Constants;
 import com.premiumminds.BigBang.Jewel.Objects.ContactInfo;
 import com.premiumminds.BigBang.Jewel.Objects.UserDecoration;
-import com.premiumminds.BigBang.Jewel.SysObjects.SendMail;
+import com.premiumminds.BigBang.Jewel.SysObjects.MailConnector;
 
 public class CreateInfoRequest
 	extends Operation
@@ -106,7 +106,7 @@ public class CreateInfoRequest
 					larrBCC[i] = EmailFromContactInfo(marrBCCs[i]);
 			}
 
-			SendMail.DoSendMail(larrReplyTo, larrTo, larrCC, larrBCC, mstrRequestHeader, mstrRequestBody);
+			MailConnector.DoSendMail(larrReplyTo, larrTo, larrCC, larrBCC, mstrRequestHeader, mstrRequestBody);
 		}
 		catch (Throwable e)
 		{
