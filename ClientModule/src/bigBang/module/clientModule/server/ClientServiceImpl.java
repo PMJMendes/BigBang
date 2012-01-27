@@ -400,7 +400,10 @@ public class ClientServiceImpl
 			throw new BigBangException(e.getMessage(), e);
 		}
 
-		return null;
+		request.id = lopCIR.midRequestObject.toString();
+		request.permissions = BigBangPermissionServiceImpl.sGetProcessPermissions(lopCIR.GetExternalProcess());
+
+		return request;
 	}
 
 	public Client mergeWithClient(String originalId, String receptorId)

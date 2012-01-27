@@ -33,6 +33,7 @@ public abstract class CreateInfoRequestBase
 	public String[] marrTos;
 	public String[] marrCCs;
 	public String[] marrBCCs;
+	public UUID midRequestObject;
 	private UUID midExternProcess;
 
 	public CreateInfoRequestBase(UUID pidProcess)
@@ -138,5 +139,8 @@ public abstract class CreateInfoRequestBase
 		{
 			throw new JewelPetriException(e.getMessage(), e);
 		}
+
+		midRequestObject = lobjRequest.getKey();
+		midExternProcess = lobjProc.getKey();
 	}
 }
