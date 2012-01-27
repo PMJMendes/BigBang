@@ -149,15 +149,15 @@ public class TypifiedTextBrokerImpl extends DataBroker<TypifiedText> implements 
 		if(!this.clients.get(tag).contains(client))
 			throw new RuntimeException("The typified list client is not registered for the list with id : " + tag);
 
-		int clientVersion = client.getTypifiedDataVersionNumber();
+		int clientVersion = client.getTypifiedTextDataVersionNumber();
 
 		if(clientVersion > currentDataVersion || clientVersion < this.NO_DATA_VERSION)
 			throw new RuntimeException("Unexpected exception. The client has an inconsistent version number " + clientVersion +
 					". Expected between "  + this.NO_DATA_VERSION + " and " + currentDataVersion + ".");
 
-		if(client.getTypifiedDataVersionNumber() < currentDataVersion){
+		if(client.getTypifiedTextDataVersionNumber() < currentDataVersion){
 			client.setTypifiedTexts(texts);
-			client.setTypifiedDataVersionNumber(currentDataVersion);			
+			client.setTypifiedTextDataVersionNumber(currentDataVersion);			
 		}
 	}
 
@@ -218,7 +218,7 @@ public class TypifiedTextBrokerImpl extends DataBroker<TypifiedText> implements 
 						incrementDataVersion(tag);
 						for(TypifiedTextClient client : clients.get(tag)){
 							client.removeText(text);
-							client.setTypifiedDataVersionNumber(getCurrentDataVersion());
+							client.setTypifiedTextDataVersionNumber(getCurrentDataVersion());
 						}
 						handler.onResponse(null);
 						return;

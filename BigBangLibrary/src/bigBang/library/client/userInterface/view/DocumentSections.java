@@ -61,7 +61,6 @@ public abstract class DocumentSections{
 				@Override
 				public void execute() {
 					fireAction(Action.DELETE);
-					
 				}
 			});
 			
@@ -70,7 +69,6 @@ public abstract class DocumentSections{
 				@Override
 				public void onEditRequest() {
 					fireAction(Action.EDIT);
-
 				}
 
 				@Override

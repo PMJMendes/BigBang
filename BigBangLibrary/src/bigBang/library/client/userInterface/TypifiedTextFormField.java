@@ -25,7 +25,7 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 public class TypifiedTextFormField extends FormField<String> implements TypifiedTextClient{
 
 	private TypifiedTextBroker broker;
-	private ExpandableListBoxFormField labels = new ExpandableListBoxFormField(BigBangConstants.TypifiedListIds.TYPIFIED_TEXT, "Etiqueta", ManagementPanelType.TYPIFIED_TEXT);
+	private ExpandableListBoxFormField labels = new ExpandableListBoxFormField(null,"Etiqueta", ManagementPanelType.TYPIFIED_TEXT);
 	private TextBoxFormField subject = new TextBoxFormField("Assunto");
 	private RichTextAreaFormField textBody = new RichTextAreaFormField();
 	private VerticalPanel wrapper = new VerticalPanel();
@@ -37,7 +37,6 @@ public class TypifiedTextFormField extends FormField<String> implements Typified
 		broker = (TypifiedTextBroker)DataBrokerManager.staticGetBroker(BigBangConstants.TypifiedListIds.TYPIFIED_TEXT);
 		labels.addValueChangeHandler(new ValueChangeHandler<String>() {
 
-			@Override
 			public void onValueChange(ValueChangeEvent<String> event) {
 
 				String id = event.getValue();
@@ -128,6 +127,20 @@ public class TypifiedTextFormField extends FormField<String> implements Typified
 		this.tag = tag;
 		broker.unregisterClient(this);
 		broker.registerClient(tag, this);
+		labels.setListId(BigBangConstants.TypifiedListIds.TYPIFIED_TEXT+"/"+tag, new ResponseHandler<Void>() {
+			
+			@Override
+			public void onResponse(Void response) {
+				// TODO Auto-generated method stub
+				
+			}
+
+			@Override
+			public void onError(Collection<ResponseError> errors) {
+				// TODO Auto-generated method stub
+				
+			}
+		});
 	}
 
 	@Override
@@ -139,8 +152,9 @@ public class TypifiedTextFormField extends FormField<String> implements Typified
 
 	@Override
 	public void setReadOnly(boolean readonly) {
-		// TODO Auto-generated method stub
-
+		
+		subject.setEditable(readonly);
+		textBody.setEditable(readonly);
 	}
 
 	@Override
@@ -154,20 +168,6 @@ public class TypifiedTextFormField extends FormField<String> implements Typified
 		// TODO Auto-generated method stub
 
 	}
-
-
-	@Override
-	public int getTypifiedDataVersionNumber() {
-		return broker.getCurrentDataVersion();
-	}
-
-
-	@Override
-	public void setTypifiedDataVersionNumber(int number) {
-		// TODO Auto-generated method stub
-
-	}
-
 
 	@Override
 	public void setTypifiedTexts(List<TypifiedText> texts) {
@@ -195,5 +195,18 @@ public class TypifiedTextFormField extends FormField<String> implements Typified
 	public void updateText(TypifiedText text) {
 		// TODO Auto-generated method stub
 
+	}
+
+	@Override
+	public int getTypifiedTextDataVersionNumber() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+
+	@Override
+	public void setTypifiedTextDataVersionNumber(int number) {
+		// TODO Auto-generated method stub
+		
 	}
 }

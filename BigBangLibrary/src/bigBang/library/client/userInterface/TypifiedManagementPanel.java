@@ -1,5 +1,7 @@
 package bigBang.library.client.userInterface;
 
+import java.util.List;
+
 import com.google.gwt.user.client.ui.Widget;
 
 import bigBang.definitions.shared.TipifiedListItem;
@@ -19,5 +21,9 @@ public interface  TypifiedManagementPanel {
 	public FilterableList<TipifiedListItem> getList();
 
 	Widget asWidget();
+	
+	public void setTag(String tag);
+	
+	public String getTag();
 
 }

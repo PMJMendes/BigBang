@@ -99,9 +99,7 @@ TypifiedListClient {
 					popup.hidePopup();
 				};
 			};
-
 			managementPanel.getList().addSelectionChangedEventHandler(new SelectionChangedEventHandler() {
-
 				@Override
 				public void onSelectionChanged(SelectionChangedEvent event) {
 					Collection<? extends Selectable> selected = event.getSelected();
@@ -131,7 +129,6 @@ TypifiedListClient {
 						}
 					}
 					managementPanel.getList().clearFilters();
-					managementPanel.setEditModeEnabled(false);
 					popup.center();
 				}
 			});
@@ -188,7 +185,6 @@ TypifiedListClient {
 						}
 					}
 					managementPanel.getList().clearFilters();
-					managementPanel.setEditModeEnabled(false);
 					popup.center();
 				}
 			});
@@ -287,11 +283,11 @@ TypifiedListClient {
 	}
 
 	public void setPopupWidth(String width) {
-		managementPanel.getList().setWidth(width);
+		managementPanel.asWidget().setWidth(width);
 	}
 
 	public void setPopupHeight(String height) {
-		managementPanel.getList().setHeight(height);
+		managementPanel.asWidget().setHeight(height);
 	}
 
 	// TypifiedListClient methods

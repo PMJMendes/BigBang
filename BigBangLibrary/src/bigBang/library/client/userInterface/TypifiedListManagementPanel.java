@@ -334,5 +334,17 @@ public class TypifiedListManagementPanel extends FilterableList<TipifiedListItem
 	public FilterableList<TipifiedListItem> getList() {
 		return this;
 	}
+
+	@Override
+	public void setTag(String tag) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public String getTag() {
+		// TODO Auto-generated method stub
+		return null;
+	}
 	
 }

@@ -9,12 +9,12 @@ public interface TypifiedTextClient {
 	/**
 	 * @return the version of the data held by the client
 	 */
-	public int getTypifiedDataVersionNumber();
+	public int getTypifiedTextDataVersionNumber();
 	
 	/**
 	 * @param number the data version number
 	 */
-	public void setTypifiedDataVersionNumber(int number);
+	public void setTypifiedTextDataVersionNumber(int number);
 	
 	/**
 	 * @param texts sets the texts
