@@ -103,6 +103,7 @@ public class TipifiedListServiceImpl
 	public TipifiedListItem[] getListItemsFilter(String listId, String filterId)
 		throws SessionExpiredException, BigBangException
 	{
+		UUID lidFilter;
 		UUID lidListRef;
         MasterDB ldb;
         ResultSet lrsItems;
@@ -112,6 +113,15 @@ public class TipifiedListServiceImpl
 
 		if ( Engine.getCurrentUser() == null )
 			throw new SessionExpiredException();
+
+		try
+		{
+			lidFilter = UUID.fromString(filterId);
+		}
+		catch (Throwable e)
+		{
+			lidFilter = null;
+		}
 
 		larrAux = new ArrayList<TipifiedListItem>();
 
@@ -128,7 +138,7 @@ public class TipifiedListServiceImpl
         try
         {
 	        lrsItems = Entity.GetInstance(lidListRef).SelectByMembers(ldb,
-	        		new int[] {1}, new java.lang.Object[] {UUID.fromString(filterId)}, new int[] {0});
+	        		new int[] {1}, new java.lang.Object[] { (lidFilter == null ? filterId : lidFilter) }, new int[] {0});
 		}
 		catch (Throwable e)
 		{
@@ -226,6 +236,7 @@ public class TipifiedListServiceImpl
 	public TipifiedListItem createListItemFiltered(String listId, String filterId, TipifiedListItem item)
 			throws SessionExpiredException, BigBangException
 	{
+		UUID lidFilter;
 		UUID lidListRef;
         MasterDB ldb;
 		ObjectBase lobjItem;
@@ -235,10 +246,19 @@ public class TipifiedListServiceImpl
 
 		try
 		{
+			lidFilter = UUID.fromString(filterId);
+		}
+		catch (Throwable e)
+		{
+			lidFilter = null;
+		}
+
+		try
+		{
 			lidListRef = Engine.FindEntity(Engine.getCurrentNameSpace(), UUID.fromString(listId));
 			lobjItem = Engine.GetWorkInstance(lidListRef, (UUID)null);
 			lobjItem.setAt(0, item.value);
-			lobjItem.setAt(1, UUID.fromString(filterId));
+			lobjItem.setAt(1, (lidFilter == null ? filterId : lidFilter));
 			ldb = new MasterDB();
 		}
 		catch (Throwable e)
