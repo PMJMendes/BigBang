@@ -18,7 +18,7 @@ public class UndoDeleteRiskAnalysis
 
 	protected UUID OpID()
 	{
-		return Constants.OPID_UndoDeleteRiskAnalysis;
+		return Constants.OPID_Policy_UndoDeleteRiskAnalysis;
 	}
 
 	public String ShortDesc()

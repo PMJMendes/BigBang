@@ -18,7 +18,7 @@ public class UndoDeleteCasualty
 
 	protected UUID OpID()
 	{
-		return Constants.OPID_UndoDeleteCasualty;
+		return Constants.OPID_Client_UndoDeleteCasualty;
 	}
 
 	public String ShortDesc()

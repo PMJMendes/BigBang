@@ -1,4 +1,4 @@
-package com.premiumminds.BigBang.Jewel.Operations.Policy;
+package com.premiumminds.BigBang.Jewel.Operations.MgrXFer;
 
 import java.sql.Timestamp;
 import java.util.Calendar;
@@ -12,15 +12,14 @@ import Jewel.Petri.Interfaces.IProcess;
 import Jewel.Petri.Interfaces.IScript;
 import Jewel.Petri.Objects.PNScript;
 import Jewel.Petri.SysObjects.JewelPetriException;
+import Jewel.Petri.SysObjects.Operation;
 import Jewel.Petri.SysObjects.UndoableOperation;
 
 import com.premiumminds.BigBang.Jewel.Constants;
 import com.premiumminds.BigBang.Jewel.Objects.AgendaItem;
 import com.premiumminds.BigBang.Jewel.Objects.MgrXFer;
-import com.premiumminds.BigBang.Jewel.Objects.Policy;
-import com.premiumminds.BigBang.Jewel.Operations.Client.TriggerAllowUndoClientMgrXFer;
 
-public class CreatePolicyMgrXFer
+public abstract class CreateMgrXfrBase
 	extends UndoableOperation
 {
 	private static final long serialVersionUID = 1L;
@@ -31,22 +30,23 @@ public class CreatePolicyMgrXFer
 	public UUID midCreatedSubproc;
 	public boolean mbDirectTransfer;
 	private UUID midOldManager;
-	private UUID midPolicy;
+	private UUID midObject;
 
-	public CreatePolicyMgrXFer(UUID pidProcess)
+	public CreateMgrXfrBase(UUID pidProcess)
 	{
 		super(pidProcess);
 	}
 
-	protected UUID OpID()
-	{
-		return Constants.OPID_CreateClientMgrXFer;
-	}
+	public abstract String getObjName();
+	public abstract String getArticle();
+	public abstract Operation getTriggeredOp(UUID pidProcess);
+	public abstract UUID getSafeObjType();
+	public abstract UUID getSafeProcType();
 
 	public String ShortDesc()
 	{
 		if ( mbDirectTransfer )
-			return "Alteração do Gestor de Apólice";
+			return "Alteração do gestor de " + getObjName();
 
 		return "Criação de Sub-Processo: Transferência de Gestor";
 	}
@@ -59,11 +59,13 @@ public class CreatePolicyMgrXFer
 		lstrBuffer = new StringBuilder();
 
 		if ( mbMassTransfer )
-			lstrBuffer.append("Esta apólice foi incluída num procedimento de transferência para um novo gestor.");
+			lstrBuffer.append(getDecoration("Este ")).append(getObjName()).
+					append(" foi incluído num procedimento de transferência para um novo gestor.");
 		else if ( mbDirectTransfer )
-			lstrBuffer.append("Foi alterado o gestor desta apólice.");
+			lstrBuffer.append("Foi alterado o gestor ").append(getDecoration("deste ")).append(getObjName()).append(".");
 		else
-			lstrBuffer.append("Foi iniciado o procedimento para transferir esta apólice para um novo gestor.");
+			lstrBuffer.append("Foi iniciado o procedimento para transferir ").append(getDecoration("este ")).append(getObjName()).
+					append(" para um novo gestor.");
 
 		lstrBuffer.append(pstrLineBreak).append("Gestor anterior: ");
 		try
@@ -100,7 +102,7 @@ public class CreatePolicyMgrXFer
 	{
 		Timestamp ldtAux;
 		Calendar ldtAux2;
-		String lstrPolicy;
+		String lstrObject;
 		String lstrUser;
 		MgrXFer lobjXFer;
 		IScript lobjScript;
@@ -119,19 +121,20 @@ public class CreatePolicyMgrXFer
     	if ( !mbMassTransfer )
     	{
     		if ( midNewManager.equals(midOldManager) )
-    			throw new JewelPetriException("Erro: O gestor indicado já é o gestor deste cliente.");
+    			throw new JewelPetriException("Erro: O gestor indicado já é o gestor deste " + getObjName() + ".");
 
     		if ( midNewManager.equals(Engine.getCurrentUser()) )
     		{
     			mbDirectTransfer = true;
-    			midPolicy = GetProcess().GetData().getKey();
+    			midObject = GetProcess().GetData().getKey();
     			try
     			{
-					lstrPolicy = Policy.GetInstance(Engine.getCurrentNameSpace(), midPolicy).getLabel();
+    				lstrObject = Engine.GetWorkInstance(Engine.FindEntity(Engine.getCurrentNameSpace(),
+    						getSafeObjType()), midObject).getLabel();
 				}
     			catch (Throwable e)
     			{
-    				lstrPolicy = "(erro a obter o nome do cliente)";
+    				lstrObject = "(erro a obter a identificação " + getDecoration("do ") + getObjName() + ")";
 				}
     			try
     			{
@@ -142,17 +145,19 @@ public class CreatePolicyMgrXFer
     				lstrUser = "(erro a obter o nome do utilizador)";
 				}
     			GetProcess().SetManagerID(midNewManager, pdb);
-    			TriggerOp(new TriggerAllowUndoClientMgrXFer(GetProcess().getKey()), pdb);
+    			TriggerOp(getTriggeredOp(GetProcess().getKey()), pdb);
 	    		try
 	    		{
 					lobjItem = AgendaItem.GetInstance(Engine.getCurrentNameSpace(), (UUID)null);
-					lobjItem.setAt(0, "Transferência de Gestor de Apólice");
+					lobjItem.setAt(0, "Transferência de Gestor de " + Character.toUpperCase(getObjName().charAt(0)) +
+							getObjName().substring(1));
 					lobjItem.setAt(1, midOldManager);
-					lobjItem.setAt(2, Constants.ProcID_Policy);
+					lobjItem.setAt(2, getSafeProcType());
 					lobjItem.setAt(3, ldtAux);
 					lobjItem.setAt(4, new Timestamp(ldtAux2.getTimeInMillis()));
 					lobjItem.setAt(5, Constants.UrgID_Completed);
-					lobjItem.setAt(6, "A gestão da apólice " + lstrPolicy + " foi transferida para " + lstrUser + ".");
+					lobjItem.setAt(6, "A gestão " + getDecoration("do ") + getObjName() + lstrObject + " foi transferida para " +
+							lstrUser + ".");
 					lobjItem.SaveToDb(pdb);
 					lobjItem.InitNew(new UUID[] {GetProcess().getKey()}, new UUID[] {}, pdb);
 	        	}
@@ -169,17 +174,19 @@ public class CreatePolicyMgrXFer
     			lobjXFer = MgrXFer.GetInstance(Engine.getCurrentNameSpace(), (UUID)null);
     			lobjXFer.setAt(1, GetProcess().GetManagerID());
     			lobjXFer.setAt(2, midNewManager);
-    			lobjXFer.setAt(3, "Transferência de Gestor de Apólice");
+    			lobjXFer.setAt(3, "Transferência de Gestor de " + Character.toUpperCase(getObjName().charAt(0)) +
+							getObjName().substring(1));
     			lobjXFer.setAt(4, Engine.getCurrentUser());
     			lobjXFer.setAt(5, false);
-				lobjXFer.setAt(6, Constants.ObjID_Policy);
+				lobjXFer.setAt(6, getSafeObjType());
     			lobjXFer.SaveToDb(pdb);
 
     			lobjScript = PNScript.GetInstance(Engine.getCurrentNameSpace(), Constants.ProcID_MgrXFer);
     			lobjProc = lobjScript.CreateInstance(Engine.getCurrentNameSpace(), lobjXFer.getKey(), GetProcess().getKey(), pdb);
 
 				lobjItem = AgendaItem.GetInstance(Engine.getCurrentNameSpace(), (UUID)null);
-				lobjItem.setAt(0, "Transferência de Gestor de Apólice");
+				lobjItem.setAt(0, "Transferência de Gestor de " + Character.toUpperCase(getObjName().charAt(0)) +
+							getObjName().substring(1));
 				lobjItem.setAt(1, midNewManager);
 				lobjItem.setAt(2, Constants.ProcID_MgrXFer);
 				lobjItem.setAt(3, ldtAux);
@@ -187,17 +194,18 @@ public class CreatePolicyMgrXFer
 				lobjItem.setAt(5, Constants.UrgID_Pending);
 				lobjItem.SaveToDb(pdb);
 				lobjItem.InitNew(new UUID[] {lobjProc.getKey()},
-						new UUID[] {Constants.OPID_AcceptXFer, Constants.OPID_CancelXFer}, pdb);
+						new UUID[] {Constants.OPID_MgrXFer_AcceptXFer, Constants.OPID_MgrXFer_CancelXFer}, pdb);
 
 				lobjItem = AgendaItem.GetInstance(Engine.getCurrentNameSpace(), (UUID)null);
-				lobjItem.setAt(0, "Transferência de Gestor de Apólice");
+				lobjItem.setAt(0, "Transferência de Gestor de " + Character.toUpperCase(getObjName().charAt(0)) +
+							getObjName().substring(1));
 				lobjItem.setAt(1, Engine.getCurrentUser());
 				lobjItem.setAt(2, Constants.ProcID_MgrXFer);
 				lobjItem.setAt(3, ldtAux);
 				lobjItem.setAt(4, new Timestamp(ldtAux2.getTimeInMillis()));
 				lobjItem.setAt(5, Constants.UrgID_Valid);
 				lobjItem.SaveToDb(pdb);
-				lobjItem.InitNew(new UUID[] {lobjProc.getKey()}, new UUID[] {Constants.OPID_CancelXFer}, pdb);
+				lobjItem.InitNew(new UUID[] {lobjProc.getKey()}, new UUID[] {Constants.OPID_MgrXFer_CancelXFer}, pdb);
         	}
     		catch (Throwable e)
     		{
@@ -268,10 +276,10 @@ public class CreatePolicyMgrXFer
 			return new UndoSet[0];
 
 		larrResult = new UndoSet[1];
-		larrResult[0].midType = Constants.ObjID_Policy;
+		larrResult[0].midType = getSafeObjType();
 		larrResult[0].marrDeleted = new UUID[0];
 		larrResult[0].marrChanged = new UUID[1];
-		larrResult[0].marrChanged[0] = midPolicy;
+		larrResult[0].marrChanged[0] = midObject;
 		larrResult[0].marrCreated = new UUID[0];
 		return larrResult;
 	}
@@ -279,5 +287,25 @@ public class CreatePolicyMgrXFer
 	public boolean LocalCanUndo()
 	{
 		return mbDirectTransfer && !mbMassTransfer;
+	}
+
+	private String getDecoration(String pstrArticle)
+	{
+		if ( "o".equals(getArticle()) )
+			return pstrArticle;
+
+		if ( "Este ".equals(pstrArticle) )
+			return "Esta ";
+
+		if ( "este ".equals(pstrArticle) )
+			return "esta ";
+
+		if ( "deste ".equals(pstrArticle) )
+			return "desta ";
+
+		if ( "do ".equals(pstrArticle) )
+			return "da ";
+
+		return pstrArticle;
 	}
 }

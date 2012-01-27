@@ -53,7 +53,7 @@ public class ManageCoefficients
 
 	protected UUID OpID()
 	{
-		return Constants.OPID_ManageCoefficients;
+		return Constants.OPID_General_ManageCoefficients;
 	}
 
 	public String ShortDesc()

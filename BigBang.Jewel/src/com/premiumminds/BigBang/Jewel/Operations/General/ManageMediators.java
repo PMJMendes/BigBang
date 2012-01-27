@@ -58,7 +58,7 @@ public class ManageMediators
 
 	protected UUID OpID()
 	{
-		return Constants.OPID_ManageMediators;
+		return Constants.OPID_General_ManageMediators;
 	}
 
 	public String ShortDesc()

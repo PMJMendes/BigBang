@@ -18,7 +18,7 @@ public class UndoAcceptXFer
 
 	protected UUID OpID()
 	{
-		return Constants.OPID_UndoAcceptXFer;
+		return Constants.OPID_MgrXFer_UndoAcceptXFer;
 	}
 
 	public String ShortDesc()

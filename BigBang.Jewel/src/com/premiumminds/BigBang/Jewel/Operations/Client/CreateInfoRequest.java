@@ -29,7 +29,7 @@ public class CreateInfoRequest
 
 	protected UUID OpID()
 	{
-		return Constants.OPID_CreateClientInfoRequest;
+		return Constants.OPID_Client_CreateInfoRequest;
 	}
 
 	public String ShortDesc()

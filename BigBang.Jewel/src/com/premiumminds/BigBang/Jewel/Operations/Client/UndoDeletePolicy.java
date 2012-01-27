@@ -18,7 +18,7 @@ public class UndoDeletePolicy
 
 	protected UUID OpID()
 	{
-		return Constants.OPID_UndoDeletePolicy;
+		return Constants.OPID_Client_UndoDeletePolicy;
 	}
 
 	public String ShortDesc()

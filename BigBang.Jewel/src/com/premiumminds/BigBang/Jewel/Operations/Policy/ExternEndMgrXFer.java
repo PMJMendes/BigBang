@@ -1,22 +1,22 @@
-package com.premiumminds.BigBang.Jewel.Operations.Client;
+package com.premiumminds.BigBang.Jewel.Operations.Policy;
 
 import java.util.UUID;
 
 import com.premiumminds.BigBang.Jewel.Constants;
 import com.premiumminds.BigBang.Jewel.Operations.MgrXFer.ExternEndMgrXFerBase;
 
-public class ExternEndClientMgrXFer
+public class ExternEndMgrXFer
 	extends ExternEndMgrXFerBase
 {
 	private static final long serialVersionUID = 1L;
 
-	public ExternEndClientMgrXFer(UUID pidProcess)
+	public ExternEndMgrXFer(UUID pidProcess)
 	{
 		super(pidProcess);
 	}
 
 	protected UUID OpID()
 	{
-		return Constants.OPID_ExternEndClientMgrXFer;
+		return Constants.OPID_Policy_ExternEndMgrXFer;
 	}
 }

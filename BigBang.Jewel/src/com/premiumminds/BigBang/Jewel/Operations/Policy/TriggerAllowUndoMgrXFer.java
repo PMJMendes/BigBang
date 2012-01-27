@@ -2,21 +2,22 @@ package com.premiumminds.BigBang.Jewel.Operations.Policy;
 
 import java.util.UUID;
 
-import com.premiumminds.BigBang.Jewel.Constants;
-import com.premiumminds.BigBang.Jewel.Operations.MgrXFer.ExternEndMgrXFerBase;
+import Jewel.Petri.SysObjects.SilentOperation;
 
-public class ExternEndPolicyMgrXFer
-	extends ExternEndMgrXFerBase
+import com.premiumminds.BigBang.Jewel.Constants;
+
+public class TriggerAllowUndoMgrXFer
+	extends SilentOperation
 {
 	private static final long serialVersionUID = 1L;
 
-	public ExternEndPolicyMgrXFer(UUID pidProcess)
+	public TriggerAllowUndoMgrXFer(UUID pidProcess)
 	{
 		super(pidProcess);
 	}
 
 	protected UUID OpID()
 	{
-		return Constants.OPID_ExternEndPolicyMgrXFer;
+		return Constants.OPID_Policy_TriggerAllowUndoMgrXFer;
 	}
 }

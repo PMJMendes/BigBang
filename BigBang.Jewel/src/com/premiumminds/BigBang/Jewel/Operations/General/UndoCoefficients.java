@@ -23,6 +23,6 @@ public class UndoCoefficients
 
 	protected UUID OpID()
 	{
-		return Constants.OPID_UndoCoefficients;
+		return Constants.OPID_General_UndoCoefficients;
 	}
 }

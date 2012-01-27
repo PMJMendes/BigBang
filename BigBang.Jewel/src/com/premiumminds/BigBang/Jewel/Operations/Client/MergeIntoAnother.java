@@ -27,7 +27,7 @@ public class MergeIntoAnother
 
 	protected UUID OpID()
 	{
-		return Constants.OPID_MergeIntoAnother;
+		return Constants.OPID_Client_MergeIntoAnother;
 	}
 
 	public String ShortDesc()

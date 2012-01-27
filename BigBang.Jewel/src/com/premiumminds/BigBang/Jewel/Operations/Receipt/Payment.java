@@ -20,7 +20,7 @@ public class Payment
 
 	protected UUID OpID()
 	{
-		return Constants.OPID_Payment;
+		return Constants.OPID_Receipt_Payment;
 	}
 
 	@Override

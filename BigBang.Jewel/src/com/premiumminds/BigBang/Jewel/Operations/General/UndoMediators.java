@@ -18,7 +18,7 @@ public class UndoMediators
 
 	protected UUID OpID()
 	{
-		return Constants.OPID_UndoMediators;
+		return Constants.OPID_General_UndoMediators;
 	}
 
 	public String ShortDesc()

@@ -24,7 +24,7 @@ public class DeleteReceipt
 
 	protected UUID OpID()
 	{
-		return Constants.OPID_DeleteReceipt;
+		return Constants.OPID_Receipt_DeleteReceipt;
 	}
 
 	public String ShortDesc()

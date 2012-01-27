@@ -21,7 +21,7 @@ public class AutoProcessSubs
 
 	protected UUID OpID()
 	{
-		return Constants.OPID_AutoProcessClientSubProcs;
+		return Constants.OPID_Client_AutoProcessSubProcs;
 	}
 
 	protected void Run(SQLServer pdb)

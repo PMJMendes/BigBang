@@ -33,7 +33,7 @@ import com.premiumminds.BigBang.Jewel.Objects.Mediator;
 import com.premiumminds.BigBang.Jewel.Objects.Policy;
 import com.premiumminds.BigBang.Jewel.Objects.SubLine;
 import com.premiumminds.BigBang.Jewel.Operations.Receipt.DeleteReceipt;
-import com.premiumminds.BigBang.Jewel.Operations.Receipt.ManageReceiptData;
+import com.premiumminds.BigBang.Jewel.Operations.Receipt.ManageData;
 
 public class ReceiptServiceImpl
 	extends SearchServiceBase
@@ -136,14 +136,14 @@ public class ReceiptServiceImpl
 	public Receipt editReceipt(Receipt receipt)
 		throws SessionExpiredException, BigBangException
 	{
-		ManageReceiptData lopMRD;
+		ManageData lopMRD;
 
 		if ( Engine.getCurrentUser() == null )
 			throw new SessionExpiredException();
 
 		try
 		{
-			lopMRD = new ManageReceiptData(UUID.fromString(receipt.processId));
+			lopMRD = new ManageData(UUID.fromString(receipt.processId));
 			lopMRD.mobjData = new ReceiptData();
 
 			lopMRD.mobjData.mid = UUID.fromString(receipt.id);
@@ -348,7 +348,7 @@ public class ReceiptServiceImpl
 			{
         		throw new BigBangException(e.getMessage(), e);
 			}
-			pstrBuffer.append(") [AuxPayment] WHERE [:Operation] = '").append(Constants.OPID_Payment);
+			pstrBuffer.append(") [AuxPayment] WHERE [:Operation] = '").append(Constants.OPID_Receipt_Payment);
 			if ( lParam.paymentFrom != null )
 				pstrBuffer.append("' AND [:Timestamp] >= '").append(lParam.paymentFrom).append("'");
 			if ( lParam.paymentTo != null )
@@ -481,7 +481,7 @@ public class ReceiptServiceImpl
 				throw new BigBangException(e.getMessage(), e);
 			}
 			pstrBuffer.append(") [AuxLogs] WHERE [:Process] = [Aux].[:Process] AND ")
-					.append("[:Operation] = '").append(Constants.OPID_Payment).append(")");
+					.append("[:Operation] = '").append(Constants.OPID_Receipt_Payment).append(")");
 		}
 
 		if ( lParam.order == SortOrder.ASC )

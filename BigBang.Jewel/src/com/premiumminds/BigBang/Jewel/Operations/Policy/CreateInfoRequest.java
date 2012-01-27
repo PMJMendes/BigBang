@@ -33,7 +33,7 @@ public class CreateInfoRequest
 
 	protected UUID OpID()
 	{
-		return Constants.OPID_CreatePolicyInfoRequest;
+		return Constants.OPID_Policy_CreateInfoRequest;
 	}
 
 	public String ShortDesc()

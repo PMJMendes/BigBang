@@ -28,10 +28,6 @@ import com.premiumminds.BigBang.Jewel.Data.ContactData;
 import com.premiumminds.BigBang.Jewel.Data.ContactInfoData;
 import com.premiumminds.BigBang.Jewel.Objects.GeneralSystem;
 import com.premiumminds.BigBang.Jewel.Operations.ContactOps;
-import com.premiumminds.BigBang.Jewel.Operations.Client.ManageClientData;
-import com.premiumminds.BigBang.Jewel.Operations.General.ManageInsurers;
-import com.premiumminds.BigBang.Jewel.Operations.General.ManageMediators;
-import com.premiumminds.BigBang.Jewel.Operations.Policy.ManagePolicyData;
 import com.premiumminds.BigBang.Jewel.SysObjects.ZipCodeBridge;
 
 public class ContactsServiceImpl
@@ -430,16 +426,16 @@ public class ContactsServiceImpl
 		throws BigBangException
 	{
 		if ( Constants.ObjID_Company.equals(pidOwnerType) )
-			return Constants.OPID_ManageCompanies;
+			return Constants.OPID_General_ManageCompanies;
 
 		if ( Constants.ObjID_Mediator.equals(pidOwnerType) )
-			return Constants.OPID_ManageMediators;
+			return Constants.OPID_General_ManageMediators;
 
 		if ( Constants.ObjID_Client.equals(pidOwnerType) )
-			return Constants.OPID_ManageClientData;
+			return Constants.OPID_Client_ManageData;
 
 		if ( Constants.ObjID_Policy.equals(pidOwnerType) )
-			return Constants.OPID_ManagePolicyData;
+			return Constants.OPID_Policy_ManageData;
 
 		throw new BigBangException("Erro: O objecto indicado não permite movimentos de Documentos.");
 	}
@@ -463,39 +459,39 @@ public class ContactsServiceImpl
 
 		lbFound = false;
 
-		if ( lobjResult instanceof ManageInsurers )
+		if ( lobjResult instanceof com.premiumminds.BigBang.Jewel.Operations.General.ManageInsurers )
 		{
-			((ManageInsurers)lobjResult).marrCreate = null;
-			((ManageInsurers)lobjResult).marrModify = null;
-			((ManageInsurers)lobjResult).marrDelete = null;
-			((ManageInsurers)lobjResult).mobjContactOps = pobjInner;
-			((ManageInsurers)lobjResult).mobjDocOps = null;
+			((com.premiumminds.BigBang.Jewel.Operations.General.ManageInsurers)lobjResult).marrCreate = null;
+			((com.premiumminds.BigBang.Jewel.Operations.General.ManageInsurers)lobjResult).marrModify = null;
+			((com.premiumminds.BigBang.Jewel.Operations.General.ManageInsurers)lobjResult).marrDelete = null;
+			((com.premiumminds.BigBang.Jewel.Operations.General.ManageInsurers)lobjResult).mobjContactOps = pobjInner;
+			((com.premiumminds.BigBang.Jewel.Operations.General.ManageInsurers)lobjResult).mobjDocOps = null;
 			lbFound = true;
 		}
 
-		if ( lobjResult instanceof ManageMediators )
+		if ( lobjResult instanceof com.premiumminds.BigBang.Jewel.Operations.General.ManageMediators )
 		{
-			((ManageMediators)lobjResult).marrCreate = null;
-			((ManageMediators)lobjResult).marrModify = null;
-			((ManageMediators)lobjResult).marrDelete = null;
-			((ManageMediators)lobjResult).mobjContactOps = pobjInner;
-			((ManageMediators)lobjResult).mobjDocOps = null;
+			((com.premiumminds.BigBang.Jewel.Operations.General.ManageMediators)lobjResult).marrCreate = null;
+			((com.premiumminds.BigBang.Jewel.Operations.General.ManageMediators)lobjResult).marrModify = null;
+			((com.premiumminds.BigBang.Jewel.Operations.General.ManageMediators)lobjResult).marrDelete = null;
+			((com.premiumminds.BigBang.Jewel.Operations.General.ManageMediators)lobjResult).mobjContactOps = pobjInner;
+			((com.premiumminds.BigBang.Jewel.Operations.General.ManageMediators)lobjResult).mobjDocOps = null;
 			lbFound = true;
 		}
 
-		if ( lobjResult instanceof ManageClientData )
+		if ( lobjResult instanceof com.premiumminds.BigBang.Jewel.Operations.Client.ManageData )
 		{
-			((ManageClientData)lobjResult).mobjData = null;
-			((ManageClientData)lobjResult).mobjContactOps = pobjInner;
-			((ManageClientData)lobjResult).mobjDocOps = null;
+			((com.premiumminds.BigBang.Jewel.Operations.Client.ManageData)lobjResult).mobjData = null;
+			((com.premiumminds.BigBang.Jewel.Operations.Client.ManageData)lobjResult).mobjContactOps = pobjInner;
+			((com.premiumminds.BigBang.Jewel.Operations.Client.ManageData)lobjResult).mobjDocOps = null;
 			lbFound = true;
 		}
 
-		if ( lobjResult instanceof ManagePolicyData )
+		if ( lobjResult instanceof com.premiumminds.BigBang.Jewel.Operations.Policy.ManageData )
 		{
-			((ManagePolicyData)lobjResult).mobjData = null;
-			((ManagePolicyData)lobjResult).mobjContactOps = pobjInner;
-			((ManagePolicyData)lobjResult).mobjDocOps = null;
+			((com.premiumminds.BigBang.Jewel.Operations.Policy.ManageData)lobjResult).mobjData = null;
+			((com.premiumminds.BigBang.Jewel.Operations.Policy.ManageData)lobjResult).mobjContactOps = pobjInner;
+			((com.premiumminds.BigBang.Jewel.Operations.Policy.ManageData)lobjResult).mobjDocOps = null;
 			lbFound = true;
 		}
 

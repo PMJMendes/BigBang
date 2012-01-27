@@ -6,19 +6,19 @@ import com.premiumminds.BigBang.Jewel.Constants;
 
 import Jewel.Petri.SysObjects.UndoOperation;
 
-public class UndoManageClientData
+public class UndoManageData
 	extends UndoOperation
 {
 	private static final long serialVersionUID = 1L;
 
-	public UndoManageClientData(UUID pidProcess)
+	public UndoManageData(UUID pidProcess)
 	{
 		super(pidProcess);
 	}
 
 	protected UUID OpID()
 	{
-		return Constants.OPID_UndoManageClientData;
+		return Constants.OPID_Client_UndoManageData;
 	}
 
 	public String ShortDesc()

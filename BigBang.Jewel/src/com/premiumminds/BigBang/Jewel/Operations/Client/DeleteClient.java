@@ -26,7 +26,7 @@ public class DeleteClient
 
 	protected UUID OpID()
 	{
-		return Constants.OPID_DeleteClient;
+		return Constants.OPID_Client_DeleteClient;
 	}
 
 	public String ShortDesc()

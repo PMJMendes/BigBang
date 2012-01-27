@@ -24,7 +24,7 @@ public class DeletePolicy
 
 	protected UUID OpID()
 	{
-		return Constants.OPID_DeletePolicy;
+		return Constants.OPID_Policy_DeletePolicy;
 	}
 
 	public String ShortDesc()

@@ -77,7 +77,7 @@ public class ManageLines
 
 	protected UUID OpID()
 	{
-		return Constants.OPID_ManageLines;
+		return Constants.OPID_General_ManageLines;
 	}
 
 	public String ShortDesc()

@@ -23,6 +23,6 @@ public class UndoClientGroups
 
 	protected UUID OpID()
 	{
-		return Constants.OPID_UndoGroups;
+		return Constants.OPID_General_UndoGroups;
 	}
 }

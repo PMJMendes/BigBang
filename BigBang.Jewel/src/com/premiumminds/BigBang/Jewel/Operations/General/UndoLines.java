@@ -18,7 +18,7 @@ public class UndoLines
 
 	protected UUID OpID()
 	{
-		return Constants.OPID_UndoLines;
+		return Constants.OPID_General_UndoLines;
 	}
 
 	public String ShortDesc()

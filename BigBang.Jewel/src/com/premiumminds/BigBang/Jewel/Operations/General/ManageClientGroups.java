@@ -42,7 +42,7 @@ public class ManageClientGroups
 
 	protected UUID OpID()
 	{
-		return Constants.OPID_ManageGroups;
+		return Constants.OPID_General_ManageGroups;
 	}
 
 	public String ShortDesc()

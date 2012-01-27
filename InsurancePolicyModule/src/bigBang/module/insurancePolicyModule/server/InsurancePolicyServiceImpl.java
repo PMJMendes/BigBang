@@ -74,10 +74,10 @@ import com.premiumminds.BigBang.Jewel.Operations.ContactOps;
 import com.premiumminds.BigBang.Jewel.Operations.DocOps;
 import com.premiumminds.BigBang.Jewel.Operations.Client.CreatePolicy;
 import com.premiumminds.BigBang.Jewel.Operations.MgrXFer.AcceptXFer;
-import com.premiumminds.BigBang.Jewel.Operations.Policy.CreatePolicyMgrXFer;
+import com.premiumminds.BigBang.Jewel.Operations.Policy.CreateMgrXFer;
 import com.premiumminds.BigBang.Jewel.Operations.Policy.CreateReceipt;
 import com.premiumminds.BigBang.Jewel.Operations.Policy.DeletePolicy;
-import com.premiumminds.BigBang.Jewel.Operations.Policy.ManagePolicyData;
+import com.premiumminds.BigBang.Jewel.Operations.Policy.ManageData;
 import com.premiumminds.BigBang.Jewel.Operations.Policy.ValidatePolicy;
 import com.premiumminds.BigBang.Jewel.SysObjects.ZipCodeBridge;
 
@@ -2199,12 +2199,12 @@ public class InsurancePolicyServiceImpl
 		private void CommitEdit(PolicyData pobjData)
 			throws BigBangException
 		{
-			ManagePolicyData lopMPD;
+			ManageData lopMPD;
 			int i;
 
 			try
 			{
-				lopMPD = new ManagePolicyData(mobjPolicy.midProcess);
+				lopMPD = new ManageData(mobjPolicy.midProcess);
 				lopMPD.mobjData = pobjData;
 
 				lopMPD.mobjContactOps = null;
@@ -3277,7 +3277,7 @@ public class InsurancePolicyServiceImpl
 		throws SessionExpiredException, BigBangException
 	{
 		Policy lobjPolicy;
-		CreatePolicyMgrXFer lobjCMX;
+		CreateMgrXFer lobjCMX;
 
 		if ( Engine.getCurrentUser() == null )
 			throw new SessionExpiredException();
@@ -3286,7 +3286,7 @@ public class InsurancePolicyServiceImpl
 		{
 			lobjPolicy = Policy.GetInstance(Engine.getCurrentNameSpace(), UUID.fromString(transfer.dataObjectIds[0]));
 
-			lobjCMX = new CreatePolicyMgrXFer(lobjPolicy.GetProcessID());
+			lobjCMX = new CreateMgrXFer(lobjPolicy.GetProcessID());
 			lobjCMX.midNewManager = UUID.fromString(transfer.newManagerId);
 			lobjCMX.mbMassTransfer = false;
 
@@ -3346,7 +3346,7 @@ public class InsurancePolicyServiceImpl
 		Policy lobjPolicy;
 		int i;
 		IScript lobjScript;
-		CreatePolicyMgrXFer lobjCMX;
+		CreateMgrXFer lobjCMX;
 		AcceptXFer lopAX;
 		AgendaItem lobjItem;
 
@@ -3407,7 +3407,7 @@ public class InsurancePolicyServiceImpl
 
 			for ( i = 0; i < larrProcessIDs.length; i++ )
 			{
-				lobjCMX = new CreatePolicyMgrXFer(larrProcessIDs[i]);
+				lobjCMX = new CreateMgrXFer(larrProcessIDs[i]);
 				lobjCMX.midNewManager = lidManager;
 				lobjCMX.mbMassTransfer = true;
 				lobjCMX.midTransferObject = lobjXFer.getKey();
@@ -3431,7 +3431,7 @@ public class InsurancePolicyServiceImpl
 				lobjItem.setAt(4, new Timestamp(ldtAux2.getTimeInMillis()));
 				lobjItem.setAt(5, Constants.UrgID_Valid);
 				lobjItem.SaveToDb(ldb);
-				lobjItem.InitNew(new UUID[] {lobjProc.getKey()}, new UUID[] {Constants.OPID_CancelXFer}, ldb);
+				lobjItem.InitNew(new UUID[] {lobjProc.getKey()}, new UUID[] {Constants.OPID_MgrXFer_CancelXFer}, ldb);
 
 				lobjItem = AgendaItem.GetInstance(Engine.getCurrentNameSpace(), (UUID)null);
 				lobjItem.setAt(0, "Transferência de Gestor de Apólice");
@@ -3442,7 +3442,7 @@ public class InsurancePolicyServiceImpl
 				lobjItem.setAt(5, Constants.UrgID_Pending);
 				lobjItem.SaveToDb(ldb);
 				lobjItem.InitNew(new UUID[] {lobjProc.getKey()},
-						new UUID[] {Constants.OPID_AcceptXFer, Constants.OPID_CancelXFer}, ldb);
+						new UUID[] {Constants.OPID_MgrXFer_AcceptXFer, Constants.OPID_MgrXFer_CancelXFer}, ldb);
 			}
 		}
 		catch (Throwable e)

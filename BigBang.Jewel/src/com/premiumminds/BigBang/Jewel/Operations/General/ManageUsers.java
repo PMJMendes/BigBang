@@ -50,7 +50,7 @@ public class ManageUsers
 
 	protected UUID OpID()
 	{
-		return Constants.OPID_ManageUsers;
+		return Constants.OPID_General_ManageUsers;
 	}
 
 	public String ShortDesc()

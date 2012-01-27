@@ -23,6 +23,6 @@ public class UndoCostCenters
 
 	protected UUID OpID()
 	{
-		return Constants.OPID_UndoCostCenters;
+		return Constants.OPID_General_UndoCostCenters;
 	}
 }

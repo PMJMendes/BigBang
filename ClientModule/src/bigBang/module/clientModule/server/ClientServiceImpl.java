@@ -53,10 +53,10 @@ import com.premiumminds.BigBang.Jewel.Objects.MgrXFer;
 import com.premiumminds.BigBang.Jewel.Objects.UserDecoration;
 import com.premiumminds.BigBang.Jewel.Operations.ContactOps;
 import com.premiumminds.BigBang.Jewel.Operations.DocOps;
-import com.premiumminds.BigBang.Jewel.Operations.Client.CreateClientMgrXFer;
+import com.premiumminds.BigBang.Jewel.Operations.Client.CreateMgrXFer;
 import com.premiumminds.BigBang.Jewel.Operations.Client.CreateInfoRequest;
 import com.premiumminds.BigBang.Jewel.Operations.Client.DeleteClient;
-import com.premiumminds.BigBang.Jewel.Operations.Client.ManageClientData;
+import com.premiumminds.BigBang.Jewel.Operations.Client.ManageData;
 import com.premiumminds.BigBang.Jewel.Operations.Client.MergeIntoAnother;
 import com.premiumminds.BigBang.Jewel.Operations.General.CreateClient;
 import com.premiumminds.BigBang.Jewel.Operations.MgrXFer.AcceptXFer;
@@ -232,14 +232,14 @@ public class ClientServiceImpl
 	public Client editClient(Client client)
 		throws SessionExpiredException, BigBangException
 	{
-		ManageClientData lopMD;
+		ManageData lopMD;
 
 		if ( Engine.getCurrentUser() == null )
 			throw new SessionExpiredException();
 
 		try
 		{
-			lopMD = new ManageClientData(UUID.fromString(client.processId));
+			lopMD = new ManageData(UUID.fromString(client.processId));
 			lopMD.mobjData = new ClientData();
 
 			lopMD.mobjData.mid = UUID.fromString(client.id);
@@ -301,7 +301,7 @@ public class ClientServiceImpl
 		throws SessionExpiredException, BigBangException
 	{
 		com.premiumminds.BigBang.Jewel.Objects.Client lobjClient;
-		CreateClientMgrXFer lobjCMX;
+		CreateMgrXFer lobjCMX;
 
 		if ( Engine.getCurrentUser() == null )
 			throw new SessionExpiredException();
@@ -311,7 +311,7 @@ public class ClientServiceImpl
 			lobjClient = com.premiumminds.BigBang.Jewel.Objects.Client.GetInstance(Engine.getCurrentNameSpace(),
 					UUID.fromString(transfer.dataObjectIds[0]));
 
-			lobjCMX = new CreateClientMgrXFer(lobjClient.GetProcessID());
+			lobjCMX = new CreateMgrXFer(lobjClient.GetProcessID());
 			lobjCMX.midNewManager = UUID.fromString(transfer.newManagerId);
 			lobjCMX.mbMassTransfer = false;
 
@@ -582,7 +582,7 @@ public class ClientServiceImpl
 		com.premiumminds.BigBang.Jewel.Objects.Client lobjClient;
 		int i;
 		IScript lobjScript;
-		CreateClientMgrXFer lobjCMX;
+		CreateMgrXFer lobjCMX;
 		AcceptXFer lopAX;
 		AgendaItem lobjItem;
 
@@ -644,7 +644,7 @@ public class ClientServiceImpl
 
 			for ( i = 0; i < larrProcessIDs.length; i++ )
 			{
-				lobjCMX = new CreateClientMgrXFer(larrProcessIDs[i]);
+				lobjCMX = new CreateMgrXFer(larrProcessIDs[i]);
 				lobjCMX.midNewManager = lidManager;
 				lobjCMX.mbMassTransfer = true;
 				lobjCMX.midTransferObject = lobjXFer.getKey();
@@ -668,7 +668,7 @@ public class ClientServiceImpl
 				lobjItem.setAt(4, new Timestamp(ldtAux2.getTimeInMillis()));
 				lobjItem.setAt(5, Constants.UrgID_Valid);
 				lobjItem.SaveToDb(ldb);
-				lobjItem.InitNew(new UUID[] {lobjProc.getKey()}, new UUID[] {Constants.OPID_CancelXFer}, ldb);
+				lobjItem.InitNew(new UUID[] {lobjProc.getKey()}, new UUID[] {Constants.OPID_MgrXFer_CancelXFer}, ldb);
 
 				lobjItem = AgendaItem.GetInstance(Engine.getCurrentNameSpace(), (UUID)null);
 				lobjItem.setAt(0, "Transferência de Gestor de Cliente");
@@ -679,7 +679,7 @@ public class ClientServiceImpl
 				lobjItem.setAt(5, Constants.UrgID_Pending);
 				lobjItem.SaveToDb(ldb);
 				lobjItem.InitNew(new UUID[] {lobjProc.getKey()},
-						new UUID[] {Constants.OPID_AcceptXFer, Constants.OPID_CancelXFer}, ldb);
+						new UUID[] {Constants.OPID_MgrXFer_AcceptXFer, Constants.OPID_MgrXFer_CancelXFer}, ldb);
 			}
 		}
 		catch (Throwable e)

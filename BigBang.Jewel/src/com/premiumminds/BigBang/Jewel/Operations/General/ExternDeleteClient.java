@@ -39,7 +39,7 @@ public class ExternDeleteClient
 
 	protected UUID OpID()
 	{
-		return Constants.OPID_TriggerDeleteClient;
+		return Constants.OPID_General_TriggerDeleteClient;
 	}
 
 	public String ShortDesc()

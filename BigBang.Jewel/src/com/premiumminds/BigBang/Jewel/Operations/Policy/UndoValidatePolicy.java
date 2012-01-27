@@ -18,7 +18,7 @@ public class UndoValidatePolicy
 
 	protected UUID OpID()
 	{
-		return Constants.OPID_UndoValidatePolicy;
+		return Constants.OPID_Policy_UndoValidatePolicy;
 	}
 
 	public String ShortDesc()

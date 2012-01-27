@@ -22,7 +22,7 @@ public class ExternResumeClient
 
 	protected UUID OpID()
 	{
-		return Constants.OPID_ExternResumeClient;
+		return Constants.OPID_Client_ExternResumeClient;
 	}
 
 	public String ShortDesc()

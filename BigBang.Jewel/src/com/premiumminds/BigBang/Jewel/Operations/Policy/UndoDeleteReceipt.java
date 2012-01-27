@@ -18,7 +18,7 @@ public class UndoDeleteReceipt
 
 	protected UUID OpID()
 	{
-		return Constants.OPID_UndoDeleteReceipt;
+		return Constants.OPID_Policy_UndoDeleteReceipt;
 	}
 
 	public String ShortDesc()

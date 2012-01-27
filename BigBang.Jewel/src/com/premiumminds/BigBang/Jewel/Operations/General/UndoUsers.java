@@ -18,7 +18,7 @@ public class UndoUsers
 
 	protected UUID OpID()
 	{
-		return Constants.OPID_UndoUsers;
+		return Constants.OPID_General_UndoUsers;
 	}
 
 	public String ShortDesc()

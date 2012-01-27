@@ -20,7 +20,7 @@ public class ExternResumePolicy
 
 	protected UUID OpID()
 	{
-		return Constants.OPID_ExternResumePolicy;
+		return Constants.OPID_Policy_ExternResumePolicy;
 	}
 
 	public String ShortDesc()

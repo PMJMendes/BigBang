@@ -20,10 +20,6 @@ import Jewel.Petri.SysObjects.UndoableOperation;
 import com.premiumminds.BigBang.Jewel.Constants;
 import com.premiumminds.BigBang.Jewel.Objects.AgendaItem;
 import com.premiumminds.BigBang.Jewel.Objects.MgrXFer;
-import com.premiumminds.BigBang.Jewel.Operations.Client.ExternEndClientMgrXFer;
-import com.premiumminds.BigBang.Jewel.Operations.Client.ExternUndoEndClientMgrXFer;
-import com.premiumminds.BigBang.Jewel.Operations.Policy.ExternEndPolicyMgrXFer;
-import com.premiumminds.BigBang.Jewel.Operations.Policy.ExternUndoEndPolicyMgrXFer;
 
 public class CancelXFer
 	extends UndoableOperation
@@ -43,7 +39,7 @@ public class CancelXFer
 
 	protected UUID OpID()
 	{
-		return Constants.OPID_CancelXFer;
+		return Constants.OPID_MgrXFer_CancelXFer;
 	}
 
 	public String ShortDesc()
@@ -230,7 +226,7 @@ public class CancelXFer
 			lobjItem.setAt(5, Constants.UrgID_Pending);
 			lobjItem.SaveToDb(pdb);
 			lobjItem.InitNew(new UUID[] {GetProcess().getKey()},
-					new UUID[] {Constants.OPID_AcceptXFer, Constants.OPID_CancelXFer}, pdb);
+					new UUID[] {Constants.OPID_MgrXFer_AcceptXFer, Constants.OPID_MgrXFer_CancelXFer}, pdb);
 
 			lobjItem = AgendaItem.GetInstance(Engine.getCurrentNameSpace(), (UUID)null);
 			lobjItem.setAt(0, lobjXFer.GetTag());
@@ -240,7 +236,7 @@ public class CancelXFer
 			lobjItem.setAt(4, new Timestamp(ldtAux2.getTimeInMillis()));
 			lobjItem.setAt(5, Constants.UrgID_Valid);
 			lobjItem.SaveToDb(pdb);
-			lobjItem.InitNew(new UUID[] {GetProcess().getKey()}, new UUID[] {Constants.OPID_CancelXFer}, pdb);
+			lobjItem.InitNew(new UUID[] {GetProcess().getKey()}, new UUID[] {Constants.OPID_MgrXFer_CancelXFer}, pdb);
 		}
 		catch (Throwable e)
 		{
@@ -261,10 +257,10 @@ public class CancelXFer
 		lopResult = null;
 
 		if ( Constants.ObjID_Client.equals(pidObjectType) )
-			lopResult = new ExternEndClientMgrXFer(pidProc);
+			lopResult = new com.premiumminds.BigBang.Jewel.Operations.Client.ExternEndMgrXFer(pidProc);
 
 		if ( Constants.ObjID_Policy.equals(pidObjectType) )
-			lopResult = new ExternEndPolicyMgrXFer(pidProc);
+			lopResult = new com.premiumminds.BigBang.Jewel.Operations.Policy.ExternEndMgrXFer(pidProc);
 
 		if ( lopResult != null )
 		{
@@ -285,10 +281,10 @@ public class CancelXFer
 		lopResult = null;
 
 		if ( Constants.ObjID_Client.equals(pidObjectType) )
-			lopResult = new ExternUndoEndClientMgrXFer(pidProc);
+			lopResult = new com.premiumminds.BigBang.Jewel.Operations.Client.ExternUndoEndMgrXFer(pidProc);
 
 		if ( Constants.ObjID_Policy.equals(pidObjectType) )
-			lopResult = new ExternUndoEndPolicyMgrXFer(pidProc);
+			lopResult = new com.premiumminds.BigBang.Jewel.Operations.Policy.ExternUndoEndMgrXFer(pidProc);
 
 		if ( lopResult != null )
 		{

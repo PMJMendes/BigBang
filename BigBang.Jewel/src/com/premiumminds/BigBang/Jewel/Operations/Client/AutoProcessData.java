@@ -25,7 +25,7 @@ public class AutoProcessData
 
 	protected UUID OpID()
 	{
-		return Constants.OPID_AutoProcessData;
+		return Constants.OPID_Client_AutoProcessData;
 	}
 
 	public String ShortDesc()

@@ -18,7 +18,7 @@ public class UndoDeleteQuoteRequest
 
 	protected UUID OpID()
 	{
-		return Constants.OPID_UndoDeleteQuoteRequest;
+		return Constants.OPID_Client_UndoDeleteQuoteRequest;
 	}
 
 	public String ShortDesc()

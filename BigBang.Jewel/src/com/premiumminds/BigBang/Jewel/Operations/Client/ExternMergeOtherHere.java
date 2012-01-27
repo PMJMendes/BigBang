@@ -45,7 +45,7 @@ public class ExternMergeOtherHere
 
 	protected UUID OpID()
 	{
-		return Constants.OPID_ExternMergeOtherHere;
+		return Constants.OPID_Client_ExternMergeOtherHere;
 	}
 
 	public String ShortDesc()

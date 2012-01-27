@@ -44,7 +44,7 @@ public class ExternDeletePolicy
 
 	protected UUID OpID()
 	{
-		return Constants.OPID_ExternDeletePolicy;
+		return Constants.OPID_Client_ExternDeletePolicy;
 	}
 
 	public String ShortDesc()

@@ -18,7 +18,7 @@ public class UndoMergeOtherHere
 
 	protected UUID OpID()
 	{
-		return Constants.OPID_UndoMergeOtherClientHere;
+		return Constants.OPID_Client_UndoMergeOtherHere;
 	}
 
 	public String ShortDesc()

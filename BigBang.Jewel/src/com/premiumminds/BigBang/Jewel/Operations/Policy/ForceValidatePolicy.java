@@ -24,7 +24,7 @@ public class ForceValidatePolicy
 
 	protected UUID OpID()
 	{
-		return Constants.OPID_ForceValidatePolicy;
+		return Constants.OPID_Policy_ForceValidatePolicy;
 	}
 
 	public String ShortDesc()

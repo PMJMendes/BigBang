@@ -38,7 +38,7 @@ public class CreateClient
 
 	protected UUID OpID()
 	{
-		return Constants.OPID_CreateClient;
+		return Constants.OPID_General_CreateClient;
 	}
 
 	public String ShortDesc()

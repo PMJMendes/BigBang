@@ -18,6 +18,6 @@ public class TriggerDisallowDelete
 
 	protected UUID OpID()
 	{
-		return Constants.OPID_TriggerDisallowDeletePolicy;
+		return Constants.OPID_Policy_TriggerDisallowDelete;
 	}
 }

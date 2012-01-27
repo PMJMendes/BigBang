@@ -22,7 +22,7 @@ import com.premiumminds.BigBang.Jewel.Objects.PolicyValue;
 import com.premiumminds.BigBang.Jewel.Operations.ContactOps;
 import com.premiumminds.BigBang.Jewel.Operations.DocOps;
 
-public class ManagePolicyData
+public class ManageData
 	extends UndoableOperation
 {
 	private static final long serialVersionUID = 1L;
@@ -34,14 +34,14 @@ public class ManagePolicyData
 	public transient UUID[] marrObjectIDs;
 	public transient UUID[] marrExerciseIDs;
 
-	public ManagePolicyData(UUID pidProcess)
+	public ManageData(UUID pidProcess)
 	{
 		super(pidProcess);
 	}
 
 	protected UUID OpID()
 	{
-		return Constants.OPID_ManagePolicyData;
+		return Constants.OPID_Policy_ManageData;
 	}
 
 	public String ShortDesc()

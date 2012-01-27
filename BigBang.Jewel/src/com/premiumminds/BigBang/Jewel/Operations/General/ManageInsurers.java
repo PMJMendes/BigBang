@@ -59,7 +59,7 @@ public class ManageInsurers
 
 	protected UUID OpID()
 	{
-		return Constants.OPID_ManageCompanies;
+		return Constants.OPID_General_ManageCompanies;
 	}
 
 	public String ShortDesc()

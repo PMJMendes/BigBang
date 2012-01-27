@@ -18,7 +18,7 @@ public class UndoManageData
 
 	protected UUID OpID()
 	{
-		return Constants.OPID_UndoManageReceiptData;
+		return Constants.OPID_Receipt_UndoManageData;
 	}
 
 	public String ShortDesc()

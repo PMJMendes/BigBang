@@ -18,7 +18,7 @@ public class UndoInsurers
 
 	protected UUID OpID()
 	{
-		return Constants.OPID_UndoCompanies;
+		return Constants.OPID_General_UndoCompanies;
 	}
 
 	public String ShortDesc()

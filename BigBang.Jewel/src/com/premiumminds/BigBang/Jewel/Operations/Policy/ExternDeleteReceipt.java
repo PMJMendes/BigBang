@@ -36,7 +36,7 @@ public class ExternDeleteReceipt
 
 	protected UUID OpID()
 	{
-		return Constants.OPID_ExternDeleteReceipt;
+		return Constants.OPID_Policy_ExternDeleteReceipt;
 	}
 
 	public String ShortDesc()

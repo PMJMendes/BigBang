@@ -42,7 +42,7 @@ public class CreatePolicy
 
 	protected UUID OpID()
 	{
-		return Constants.OPID_CreatePolicy;
+		return Constants.OPID_Client_CreatePolicy;
 	}
 
 	public String ShortDesc()

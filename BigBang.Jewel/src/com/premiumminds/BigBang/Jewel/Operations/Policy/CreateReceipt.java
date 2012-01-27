@@ -32,7 +32,7 @@ public class CreateReceipt
 
 	protected UUID OpID()
 	{
-		return Constants.OPID_CreateReceipt;
+		return Constants.OPID_Policy_CreateReceipt;
 	}
 
 	public String ShortDesc()

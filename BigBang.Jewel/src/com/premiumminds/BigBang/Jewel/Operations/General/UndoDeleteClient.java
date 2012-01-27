@@ -18,7 +18,7 @@ public class UndoDeleteClient
 
 	protected UUID OpID()
 	{
-		return Constants.OPID_UndoDeleteClient;
+		return Constants.OPID_General_UndoDeleteClient;
 	}
 
 	public String ShortDesc()

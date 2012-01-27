@@ -39,7 +39,7 @@ public class ManageCostCenters
 
 	protected UUID OpID()
 	{
-		return Constants.OPID_ManageCostCenters;
+		return Constants.OPID_General_ManageCostCenters;
 	}
 
 	public String ShortDesc()
