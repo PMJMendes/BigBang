@@ -1,6 +1,5 @@
 package bigBang.module.clientModule.server;
 
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.Calendar;
@@ -50,11 +49,10 @@ import com.premiumminds.BigBang.Jewel.Objects.ClientGroup;
 import com.premiumminds.BigBang.Jewel.Objects.ContactInfo;
 import com.premiumminds.BigBang.Jewel.Objects.GeneralSystem;
 import com.premiumminds.BigBang.Jewel.Objects.MgrXFer;
-import com.premiumminds.BigBang.Jewel.Objects.UserDecoration;
 import com.premiumminds.BigBang.Jewel.Operations.ContactOps;
 import com.premiumminds.BigBang.Jewel.Operations.DocOps;
-import com.premiumminds.BigBang.Jewel.Operations.Client.CreateMgrXFer;
 import com.premiumminds.BigBang.Jewel.Operations.Client.CreateInfoRequest;
+import com.premiumminds.BigBang.Jewel.Operations.Client.CreateMgrXFer;
 import com.premiumminds.BigBang.Jewel.Operations.Client.DeleteClient;
 import com.premiumminds.BigBang.Jewel.Operations.Client.ManageData;
 import com.premiumminds.BigBang.Jewel.Operations.Client.MergeIntoAnother;
@@ -349,17 +347,12 @@ public class ClientServiceImpl
 		com.premiumminds.BigBang.Jewel.Objects.Client lobjClient;
 		ObjectBase lobjType;
 		CreateInfoRequest lopCIR;
-		IEntity lrefDecos;
-        MasterDB ldb;
-        ResultSet lrs;
 		StringTokenizer lstrTok;
 		int i;
 
 		if ( Engine.getCurrentUser() == null )
 			throw new SessionExpiredException();
 
-		ldb = null;
-		lrs = null;
 		try
 		{
 			lobjClient = com.premiumminds.BigBang.Jewel.Objects.Client.GetInstance(Engine.getCurrentNameSpace(),
@@ -368,26 +361,16 @@ public class ClientServiceImpl
 					UUID.fromString(request.documentType));
 
 			lopCIR = new CreateInfoRequest(lobjClient.GetProcessID());
+			lopCIR.mlngDays = request.replylimit;
 			lopCIR.mstrRequestSubject = "Pedido de " + lobjType.getLabel();
 			lopCIR.mstrRequestBody = request.text;
 			if ( request.forwardUserIds == null )
-				lopCIR.marrReplyTos = null;
+				lopCIR.marrUsers = null;
 			else
 			{
-				lrefDecos = Entity.GetInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), Constants.ObjID_Decorations));
-				ldb = new MasterDB();
-				lopCIR.marrReplyTos = new String[request.forwardUserIds.length];
+				lopCIR.marrUsers = new UUID[request.forwardUserIds.length];
 				for ( i = 0; i < request.forwardUserIds.length; i++ )
-				{
-					lrs = lrefDecos.SelectByMembers(ldb, new int[] {0},
-							new java.lang.Object[] {UUID.fromString(request.forwardUserIds[i])}, new int[0]);
-				    if (lrs.next())
-						lopCIR.marrReplyTos[i] = (String)UserDecoration.GetInstance(Engine.getCurrentNameSpace(), lrs).getAt(1);
-				    else
-				    	lopCIR.marrReplyTos[i] = null;
-				    lrs.close();
-				}
-				ldb.Disconnect();
+					lopCIR.marrUsers[i] = UUID.fromString(request.forwardUserIds[i]);
 			}
 			lopCIR.marrTos = new String[] {(String)ContactInfo.GetInstance(Engine.getCurrentNameSpace(),
 					UUID.fromString(request.toInfoId)).getAt(2)};
@@ -414,8 +397,6 @@ public class ClientServiceImpl
 		}
 		catch (Throwable e)
 		{
-			if ( lrs != null ) try { lrs.close(); } catch (Throwable e1) {}
-			if ( ldb != null ) try { ldb.Disconnect(); } catch (Throwable e1) {}
 			throw new BigBangException(e.getMessage(), e);
 		}
 
