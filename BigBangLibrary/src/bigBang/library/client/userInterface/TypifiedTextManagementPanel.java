@@ -1,6 +1,5 @@
 package bigBang.library.client.userInterface;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
@@ -11,12 +10,10 @@ import bigBang.definitions.client.response.ResponseHandler;
 import bigBang.definitions.shared.BigBangConstants;
 import bigBang.definitions.shared.TipifiedListItem;
 import bigBang.definitions.shared.TypifiedText;
-import bigBang.definitions.shared.User;
 import bigBang.library.client.EventBus;
 import bigBang.library.client.Notification;
-import bigBang.library.client.Selectable;
-import bigBang.library.client.ValueSelectable;
 import bigBang.library.client.Notification.TYPE;
+import bigBang.library.client.ValueSelectable;
 import bigBang.library.client.dataAccess.BigBangTypifiedListBroker;
 import bigBang.library.client.dataAccess.DataBrokerManager;
 import bigBang.library.client.dataAccess.TypifiedListBroker;
@@ -27,7 +24,6 @@ import bigBang.library.client.event.NewNotificationEvent;
 import bigBang.library.client.event.SelectionChangedEvent;
 import bigBang.library.client.event.SelectionChangedEventHandler;
 import bigBang.library.client.userInterface.BigBangOperationsToolBar.SUB_MENU;
-import bigBang.library.client.userInterface.ChildContactsList.Entry;
 import bigBang.library.client.userInterface.TypifiedListManagementPanel.TypifiedListEntry;
 import bigBang.library.client.userInterface.view.View;
 
@@ -74,8 +70,25 @@ public class TypifiedTextManagementPanel extends View implements TypifiedTextCli
 		textBroker = (TypifiedTextBroker)DataBrokerManager.staticGetBroker(BigBangConstants.TypifiedListIds.TYPIFIED_TEXT);
 		listBroker = BigBangTypifiedListBroker.Util.getInstance();
 
-
 		//TOOLBAR
+		toolbar = new BigBangOperationsToolBar(){
+
+			@Override
+			public void onEditRequest() {
+				setEditable(true);
+			}
+
+			@Override
+			public void onSaveRequest(){
+				saveItem();
+			}
+			@Override
+			public void onCancelRequest() {
+				cancelChanges();
+			}
+
+		};
+		
 		delete = new MenuItem("Eliminar", new Command() {
 
 			@Override
@@ -94,35 +107,17 @@ public class TypifiedTextManagementPanel extends View implements TypifiedTextCli
 
 		});
 
-		toolbar = new BigBangOperationsToolBar(){
-
-			@Override
-			public void onEditRequest() {
-				setEditable(true);
-			}
-
-			@Override
-			public void onSaveRequest(){
-				saveItem();
-			}
-			@Override
-			public void onCancelRequest() {
-				cancelChanges();
-			}
-
-			@Override
-			public void setSaveModeEnabled(boolean enabled) {
-				super.setSaveModeEnabled(enabled);
-			}
-
-		};
-
+		toolbar.addItem(SUB_MENU.ADMIN, delete);
 		toolbar.hideAll();
+		
+		//toolbar.addSeparator();
 		toolbar.showItem(SUB_MENU.EDIT, true);
-		toolbar.addItem(delete);
-		delete.getElement().getStyle().setProperty("textAlign", "center");
-		delete.setEnabled(false);
-		toolbar.setHeight("21px");
+		//delete.setVisible(true);
+		toolbar.adminSubMenu.setVisible(true);
+		toolbar.showItem(SUB_MENU.ADMIN, true);
+		
+		//delete.getElement().getStyle().setProperty("textAlign", "center");
+		//toolbar.setHeight("21px");
 		toolbar.setWidth("100%");
 
 		//LIST
@@ -179,7 +174,7 @@ public class TypifiedTextManagementPanel extends View implements TypifiedTextCli
 						break;
 					}
 				}
-				
+
 				if(inNewTypifiedText){
 					setEditable(true);
 					inNewTypifiedText = false;
@@ -188,7 +183,7 @@ public class TypifiedTextManagementPanel extends View implements TypifiedTextCli
 					setEditable(false);
 				}
 			}
-	});
+		});
 
 		setListId(listId);
 		newTextButton = new Button("Novo");
@@ -229,392 +224,398 @@ public class TypifiedTextManagementPanel extends View implements TypifiedTextCli
 
 
 		toolbar.setSaveModeEnabled(false);
-}
-
-protected void cancelChanges() {
-		
-	TipifiedListItem item = list.getSelected().iterator().next().getValue();
-	
-	textBroker.getText(tag, item.id, new ResponseHandler<TypifiedText>() {
-		
-		@Override
-		public void onResponse(TypifiedText response) {
-		
-			label.setValue(response.label);
-			subject.setValue(response.subject);
-			textBody.setValue(response.text);
-			TypifiedTextManagementPanel.this.setEditable(false);
-		}
-		
-		@Override
-		public void onError(Collection<ResponseError> errors) {
-			EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não foi possível guardar o modelo seleccionado."), TYPE.ALERT_NOTIFICATION));
-		}
-	});
-
-	
-		
 	}
 
-protected void saveItem() {
-	
+	protected void cancelChanges() {
+
+		if(list.getSelected().size() < 1)
+			return;
+
 		TipifiedListItem item = list.getSelected().iterator().next().getValue();
-		
+
 		textBroker.getText(tag, item.id, new ResponseHandler<TypifiedText>() {
-			
+
 			@Override
 			public void onResponse(TypifiedText response) {
-			
-				
-				response.label = label.getValue();
-				response.subject = subject.getValue();
-				response.text = textBody.getValue();
-				
-				textBroker.updateText(tag, response, new ResponseHandler<TypifiedText>() {
-					
-					@Override
-					public void onResponse(TypifiedText response) {
-						EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Modelo guardado."), TYPE.TRAY_NOTIFICATION));
-						TypifiedTextManagementPanel.this.setEditable(false);
-					}
-					
-					@Override
-					public void onError(Collection<ResponseError> errors) {
-						EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não foi possível guardar o modelo seleccionado."), TYPE.ALERT_NOTIFICATION));
-					}
-				});
-				
+
+				label.setValue(response.label);
+				subject.setValue(response.subject);
+				textBody.setValue(response.text);
+				TypifiedTextManagementPanel.this.setEditable(false);
 			}
-			
+
 			@Override
 			public void onError(Collection<ResponseError> errors) {
 				EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não foi possível guardar o modelo seleccionado."), TYPE.ALERT_NOTIFICATION));
 			}
 		});
 
-		
-		
+
+
 	}
 
-protected void deleteItem() {
-
-	final TypifiedListEntry toDelete = (TypifiedListEntry) list.getSelected().iterator().next();
-	
-	System.out.println(toDelete.getValue().id);
-
-	textBroker.removeText(tag, toDelete.getValue().id, new ResponseHandler<TypifiedText>() {
-
-		@Override
-		public void onResponse(TypifiedText response) {
-			label.setValue("");
-			subject.setValue("");
-			textBody.setValue("");
-			EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Modelo eliminado."), TYPE.TRAY_NOTIFICATION));
-			TypifiedTextManagementPanel.this.setEditable(false);
-		}
-
-		@Override
-		public void onError(Collection<ResponseError> errors) {
-			EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não foi possível eliminar o modelo seleccionado."), TYPE.ALERT_NOTIFICATION));
-
-		}
-	});
-
-}
-
-protected void setupNewTypifiedText() {
+	protected void saveItem() {
 
 
-	subject.setValue("");
-	label.setValue("Novo Modelo");
-	textBody.setValue("");
+		if(list.getSelected().size() < 1)
+			return;
 
-	createNewText();
+		TipifiedListItem item = list.getSelected().iterator().next().getValue();
 
-}
-
-private void createNewText() {
-
-	TypifiedText newT = new TypifiedText();
-	newT.label = label.getValue();
-	newT.subject = subject.getValue();
-	newT.tag = tag;
-	newT.text = textBody.getValue();
-
-	textBroker.createText(tag, newT, new ResponseHandler<TypifiedText>() {
-
-		@Override
-		public void onResponse(TypifiedText response) {
-
-			//EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Modelo criado."), TYPE.TRAY_NOTIFICATION));
-		}
-
-		@Override
-		public void onError(Collection<ResponseError> errors) {
-
-			EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não foi possível criar o modelo."), TYPE.ALERT_NOTIFICATION));
-
-		}
-	});
-
-
-}
-
-@Override
-public int getTypifiedDataVersionNumber() {
-	return typifiedListDataVersion;
-}
-
-@Override
-public void setTypifiedDataVersionNumber(int number) {
-	this.typifiedListDataVersion = number;
-
-}
-
-@Override
-public void setTypifiedTexts(List<TypifiedText> texts) {
-	// TODO Auto-generated method stub
-
-}
-
-@Override
-public void removeText(TypifiedText text) {
-	
-	textBroker.getTexts(tag, new ResponseHandler<List<TypifiedText>>() {
-		
-		@Override
-		public void onResponse(List<TypifiedText> response) {
-			// TODO Auto-generated method stub
-			
-		}
-		
-		@Override
-		public void onError(Collection<ResponseError> errors) {
-			// TODO Auto-generated method stub
-			
-		}
-	});
-	listBroker.refreshListData(listId);
-
-
-
-}
-
-@Override
-public void addText(TypifiedText text) {
-
-	listBroker.refreshListData(listId);
-	TipifiedListItem temp = new TipifiedListItem();
-	temp.id = text.id;
-	temp.value = text.label;
-	selectedItem = temp;		
-	inNewTypifiedText = true;
-	
-}
-
-@Override
-public void updateText(TypifiedText text) {
-	
-textBroker.getTexts(tag, new ResponseHandler<List<TypifiedText>>() {
-		
-		@Override
-		public void onResponse(List<TypifiedText> response) {
-			// TODO Auto-generated method stub
-			
-		}
-		
-		@Override
-		public void onError(Collection<ResponseError> errors) {
-			// TODO Auto-generated method stub
-			
-		}
-	});
-	listBroker.refreshListData(listId);
-
-}
-
-@Override
-public String getListId() {
-	return this.listId;
-}
-
-@Override
-public void setListId(final String listId) {
-	if(listId != null) {
-		listBroker.unregisterClient(this.listId, this);
-		String[] splitted = listId.split("/");
-		setTag(splitted[1]);
-	}
-	this.listId = listId;
-	editable = listId != null && !listId.equals("");
-	list.clear();
-
-	if(this.attachHandlerRegistration == null){
-		this.attachHandlerRegistration = this.addAttachHandler(new AttachEvent.Handler() {
+		textBroker.getText(tag, item.id, new ResponseHandler<TypifiedText>() {
 
 			@Override
-			public void onAttachOrDetach(AttachEvent event) {
-				if(event.isAttached()){
-					listBroker.registerClient(TypifiedTextManagementPanel.this.listId, TypifiedTextManagementPanel.this);
-					listBroker.getListItems(TypifiedTextManagementPanel.this.listId);
-				}else{
-					listBroker.unregisterClient(TypifiedTextManagementPanel.this.listId, TypifiedTextManagementPanel.this);
+			public void onResponse(TypifiedText response) {
+
+
+				response.label = label.getValue();
+				response.subject = subject.getValue();
+				response.text = textBody.getValue();
+
+				textBroker.updateText(tag, response, new ResponseHandler<TypifiedText>() {
+
+					@Override
+					public void onResponse(TypifiedText response) {
+						EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Modelo guardado."), TYPE.TRAY_NOTIFICATION));
+						TypifiedTextManagementPanel.this.setEditable(false);
+					}
+
+					@Override
+					public void onError(Collection<ResponseError> errors) {
+						EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não foi possível guardar o modelo seleccionado."), TYPE.ALERT_NOTIFICATION));
+					}
+				});
+
+			}
+
+			@Override
+			public void onError(Collection<ResponseError> errors) {
+				EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não foi possível guardar o modelo seleccionado."), TYPE.ALERT_NOTIFICATION));
+			}
+		});
+
+
+
+	}
+
+	protected void deleteItem() {
+
+		final TypifiedListEntry toDelete = (TypifiedListEntry) list.getSelected().iterator().next();
+
+		System.out.println(toDelete.getValue().id);
+
+		textBroker.removeText(tag, toDelete.getValue().id, new ResponseHandler<TypifiedText>() {
+
+			@Override
+			public void onResponse(TypifiedText response) {
+				label.setValue("");
+				subject.setValue("");
+				textBody.setValue("");
+				EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Modelo eliminado."), TYPE.TRAY_NOTIFICATION));
+				TypifiedTextManagementPanel.this.setEditable(false);
+			}
+
+			@Override
+			public void onError(Collection<ResponseError> errors) {
+				EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não foi possível eliminar o modelo seleccionado."), TYPE.ALERT_NOTIFICATION));
+
+			}
+		});
+
+	}
+
+	protected void setupNewTypifiedText() {
+
+
+		subject.setValue("");
+		label.setValue("Novo Modelo");
+		textBody.setValue("");
+
+		createNewText();
+
+	}
+
+	private void createNewText() {
+
+		TypifiedText newT = new TypifiedText();
+		newT.label = label.getValue();
+		newT.subject = subject.getValue();
+		newT.tag = tag;
+		newT.text = textBody.getValue();
+
+		textBroker.createText(tag, newT, new ResponseHandler<TypifiedText>() {
+
+			@Override
+			public void onResponse(TypifiedText response) {
+
+				//EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Modelo criado."), TYPE.TRAY_NOTIFICATION));
+			}
+
+			@Override
+			public void onError(Collection<ResponseError> errors) {
+
+				EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não foi possível criar o modelo."), TYPE.ALERT_NOTIFICATION));
+
+			}
+		});
+
+
+	}
+
+	@Override
+	public int getTypifiedDataVersionNumber() {
+		return typifiedListDataVersion;
+	}
+
+	@Override
+	public void setTypifiedDataVersionNumber(int number) {
+		this.typifiedListDataVersion = number;
+
+	}
+
+	@Override
+	public void setTypifiedTexts(List<TypifiedText> texts) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void removeText(TypifiedText text) {
+
+		textBroker.getTexts(tag, new ResponseHandler<List<TypifiedText>>() {
+
+			@Override
+			public void onResponse(List<TypifiedText> response) {
+				// TODO Auto-generated method stub
+
+			}
+
+			@Override
+			public void onError(Collection<ResponseError> errors) {
+				// TODO Auto-generated method stub
+
+			}
+		});
+		listBroker.refreshListData(listId);
+
+
+
+	}
+
+	@Override
+	public void addText(TypifiedText text) {
+
+		listBroker.refreshListData(listId);
+		TipifiedListItem temp = new TipifiedListItem();
+		temp.id = text.id;
+		temp.value = text.label;
+		selectedItem = temp;		
+		inNewTypifiedText = true;
+
+	}
+
+	@Override
+	public void updateText(TypifiedText text) {
+
+		textBroker.getTexts(tag, new ResponseHandler<List<TypifiedText>>() {
+
+			@Override
+			public void onResponse(List<TypifiedText> response) {
+				// TODO Auto-generated method stub
+
+			}
+
+			@Override
+			public void onError(Collection<ResponseError> errors) {
+				// TODO Auto-generated method stub
+
+			}
+		});
+		listBroker.refreshListData(listId);
+
+	}
+
+	@Override
+	public String getListId() {
+		return this.listId;
+	}
+
+	@Override
+	public void setListId(final String listId) {
+		if(listId != null) {
+			listBroker.unregisterClient(this.listId, this);
+			String[] splitted = listId.split("/");
+			setTag(splitted[1]);
+		}
+		this.listId = listId;
+		editable = listId != null && !listId.equals("");
+		list.clear();
+
+		if(this.attachHandlerRegistration == null){
+			this.attachHandlerRegistration = this.addAttachHandler(new AttachEvent.Handler() {
+
+				@Override
+				public void onAttachOrDetach(AttachEvent event) {
+					if(event.isAttached()){
+						listBroker.registerClient(TypifiedTextManagementPanel.this.listId, TypifiedTextManagementPanel.this);
+						listBroker.getListItems(TypifiedTextManagementPanel.this.listId);
+					}else{
+						listBroker.unregisterClient(TypifiedTextManagementPanel.this.listId, TypifiedTextManagementPanel.this);
+					}
+				}
+			});
+		}
+
+		if(list.isAttached()){
+			listBroker.registerClient(listId, this);
+			listBroker.getListItems(listId);
+		}
+
+	}
+
+
+	@Override
+	public void setEditModeEnabled(boolean enabled) {
+		this.editModeEnabled = enabled;
+		list.showSearchField(!enabled);
+		for(ListEntry<TipifiedListItem> e : list.entries) {
+			((TypifiedListEntry) e).deleteButton.setVisible(enabled);
+		}
+	}
+
+	@Override
+	public void setEditable(boolean editable) {
+
+		this.editable = editable;
+		label.setReadOnly(!editable);
+		subject.setReadOnly(!editable);
+		textBody.setReadOnly(!editable);
+		toolbar.setSaveModeEnabled(editable);
+	}
+
+	@Override
+	public void setReadOnly(boolean readonly) {
+		this.setEditModeEnabled(false);
+	}
+
+	@Override
+	public void setTypifiedListItems(List<TipifiedListItem> items) {
+		{
+			Collection<ValueSelectable<TipifiedListItem>> selected = list.getSelected();
+			list.clear();
+			for(int i = 0; i < items.size(); i++) {
+				TypifiedListEntry entry = addEntry(items.get(i));
+				if(items.get(i).id.equalsIgnoreCase(selectedItem.id)){
+					entry.setSelected(true, true);
+					selectedItem.id = "";
+					selectedItem.value = "";
+				}
+				for(ValueSelectable<TipifiedListItem> s : selected){
+					if(entry.getValue().id.equalsIgnoreCase(s.getValue().id)){
+						entry.setSelected(true, true);
+						break;
+					}
 				}
 			}
+			setEditModeEnabled(isEditModeEnabled());
+			onChanged();	
+		}
+
+	}
+
+	@Override
+	public void removeItem(TipifiedListItem item) {
+
+		listBroker.refreshListData(listId);
+	}
+
+	@Override
+	public void addItem(TipifiedListItem item) {
+		addEntry(item);
+	}
+
+	@Override
+	public void updateItem(TipifiedListItem item) {
+		for(ValueSelectable<TipifiedListItem> i : list) {
+			if(i.getValue().id == item.id){
+				i.setValue(item);
+				((TypifiedListEntry)i).setInfo(item);
+				break;
+			}
+		}
+	}
+
+	protected TypifiedListEntry addEntry(TipifiedListItem item){
+		final TypifiedListEntry entry = new TypifiedListEntry(item);
+		entry.deleteButton.addClickHandler(new ClickHandler() {
+
+			@Override
+			public void onClick(ClickEvent event) {
+				deleteEntry(entry);
+			}
+		});
+		list.add(entry);
+		if(this.selectedValueId != null && this.selectedValueId.equalsIgnoreCase(item.id))
+			entry.setSelected(true);
+		setEditModeEnabled(editModeEnabled);
+		return entry;
+	}
+
+	private void deleteEntry(final TypifiedListEntry e){
+
+		listBroker.removeListItem(listId, e.getValue().id, new ResponseHandler<TipifiedListItem>() {
+
+			@Override
+			public void onResponse(TipifiedListItem response) {
+				list.remove(e);
+			}
+
+			@Override
+			public void onError(Collection<ResponseError> errors) {}
 		});
 	}
 
-	if(list.isAttached()){
-		listBroker.registerClient(listId, this);
-		listBroker.getListItems(listId);
+	private boolean isEditModeEnabled(){
+		return editModeEnabled;
 	}
 
-}
+	public void onChanged(){
 
-
-@Override
-public void setEditModeEnabled(boolean enabled) {
-	this.editModeEnabled = enabled;
-	list.showSearchField(!enabled);
-	for(ListEntry<TipifiedListItem> e : list.entries) {
-		((TypifiedListEntry) e).deleteButton.setVisible(enabled);
-	}
-}
-
-@Override
-public void setEditable(boolean editable) {
-
-	this.editable = editable;
-	label.setReadOnly(!editable);
-	subject.setReadOnly(!editable);
-	textBody.setReadOnly(!editable);
-	toolbar.setSaveModeEnabled(editable);
-	delete.setEnabled(editable);
-}
-
-@Override
-public void setReadOnly(boolean readonly) {
-	this.setEditModeEnabled(false);
-}
-
-@Override
-public void setTypifiedListItems(List<TipifiedListItem> items) {
-	{
-		Collection<ValueSelectable<TipifiedListItem>> selected = list.getSelected();
-		list.clear();
-		for(int i = 0; i < items.size(); i++) {
-			TypifiedListEntry entry = addEntry(items.get(i));
-			if(items.get(i).id.equalsIgnoreCase(selectedItem.id)){
-				entry.setSelected(true, true);
-				selectedItem.id = "";
-				selectedItem.value = "";
-			}
-			for(ValueSelectable<TipifiedListItem> s : selected){
-				if(entry.getValue().id.equalsIgnoreCase(s.getValue().id)){
-					entry.setSelected(true, true);
-					break;
-				}
-			}
-		}
-		setEditModeEnabled(isEditModeEnabled());
-		onChanged();	
 	}
 
-}
-
-@Override
-public void removeItem(TipifiedListItem item) {
-
-	listBroker.refreshListData(listId);
-}
-
-@Override
-public void addItem(TipifiedListItem item) {
-	addEntry(item);
-}
-
-@Override
-public void updateItem(TipifiedListItem item) {
-	for(ValueSelectable<TipifiedListItem> i : list) {
-		if(i.getValue().id == item.id){
-			i.setValue(item);
-			((TypifiedListEntry)i).setInfo(item);
-			break;
-		}
+	@Override
+	public FilterableList<TipifiedListItem> getList() {
+		return list;
 	}
-}
 
-protected TypifiedListEntry addEntry(TipifiedListItem item){
-	final TypifiedListEntry entry = new TypifiedListEntry(item);
-	entry.deleteButton.addClickHandler(new ClickHandler() {
+	@Override
+	protected void initializeView() {
+		return;
+	}
 
-		@Override
-		public void onClick(ClickEvent event) {
-			deleteEntry(entry);
-		}
-	});
-	list.add(entry);
-	if(this.selectedValueId != null && this.selectedValueId.equalsIgnoreCase(item.id))
-		entry.setSelected(true);
-	setEditModeEnabled(editModeEnabled);
-	return entry;
-}
+	protected void onCellDoubleClicked(bigBang.library.client.userInterface.ListEntry<TipifiedListItem> entry) {};
 
-private void deleteEntry(final TypifiedListEntry e){
-	
-	listBroker.removeListItem(listId, e.getValue().id, new ResponseHandler<TipifiedListItem>() {
+	public String getTag() {
+		return tag;
+	}
 
-		@Override
-		public void onResponse(TipifiedListItem response) {
-			list.remove(e);
-		}
+	public void setTag(String tag) {
+		this.tag = tag;
+		textBroker.unregisterClient(this);
+		textBroker.registerClient(tag, this);
+	}
 
-		@Override
-		public void onError(Collection<ResponseError> errors) {}
-	});
-}
+	@Override
+	public int getTypifiedTextDataVersionNumber() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
 
-private boolean isEditModeEnabled(){
-	return editModeEnabled;
-}
+	@Override
+	public void setTypifiedTextDataVersionNumber(int number) {
+		// TODO Auto-generated method stub
 
-public void onChanged(){
-
-}
-
-@Override
-public FilterableList<TipifiedListItem> getList() {
-	return list;
-}
-
-@Override
-protected void initializeView() {
-	return;
-}
-
-protected void onCellDoubleClicked(bigBang.library.client.userInterface.ListEntry<TipifiedListItem> entry) {};
-
-public String getTag() {
-	return tag;
-}
-
-public void setTag(String tag) {
-	this.tag = tag;
-	textBroker.unregisterClient(this);
-	textBroker.registerClient(tag, this);
-}
-
-@Override
-public int getTypifiedTextDataVersionNumber() {
-	// TODO Auto-generated method stub
-	return 0;
-}
-
-@Override
-public void setTypifiedTextDataVersionNumber(int number) {
-	// TODO Auto-generated method stub
-
-}
+	}
 
 
 }
