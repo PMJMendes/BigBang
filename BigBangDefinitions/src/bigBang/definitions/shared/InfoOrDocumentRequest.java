@@ -29,11 +29,12 @@ public class InfoOrDocumentRequest
 		public String motive;
 	}
 
-	public String ownerId;
-	public String documentType;
+	public String parentDataObjectId;
+	public String parentDataTypeId;
+	public String requestTypeId;
 	public String text;
 	public int replylimit;
-	public String toInfoId;
+	public String toContactInfoId;
 	public String[] forwardUserIds;
 	public String internalBCCs;
 	public String externalCCs;

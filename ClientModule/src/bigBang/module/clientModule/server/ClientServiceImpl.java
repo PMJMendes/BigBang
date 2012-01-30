@@ -34,6 +34,7 @@ import bigBang.definitions.shared.ZipCode;
 import bigBang.library.server.BigBangPermissionServiceImpl;
 import bigBang.library.server.ContactsServiceImpl;
 import bigBang.library.server.DocumentServiceImpl;
+import bigBang.library.server.InfoOrDocumentRequestServiceImpl;
 import bigBang.library.server.SearchServiceBase;
 import bigBang.library.server.TransferManagerServiceImpl;
 import bigBang.library.shared.BigBangException;
@@ -46,7 +47,6 @@ import com.premiumminds.BigBang.Jewel.Constants;
 import com.premiumminds.BigBang.Jewel.Data.ClientData;
 import com.premiumminds.BigBang.Jewel.Objects.AgendaItem;
 import com.premiumminds.BigBang.Jewel.Objects.ClientGroup;
-import com.premiumminds.BigBang.Jewel.Objects.ContactInfo;
 import com.premiumminds.BigBang.Jewel.Objects.GeneralSystem;
 import com.premiumminds.BigBang.Jewel.Objects.MgrXFer;
 import com.premiumminds.BigBang.Jewel.Operations.ContactOps;
@@ -345,7 +345,6 @@ public class ClientServiceImpl
 		throws SessionExpiredException, BigBangException
 	{
 		com.premiumminds.BigBang.Jewel.Objects.Client lobjClient;
-		ObjectBase lobjType;
 		CreateInfoRequest lopCIR;
 		StringTokenizer lstrTok;
 		int i;
@@ -356,24 +355,22 @@ public class ClientServiceImpl
 		try
 		{
 			lobjClient = com.premiumminds.BigBang.Jewel.Objects.Client.GetInstance(Engine.getCurrentNameSpace(),
-					UUID.fromString(request.ownerId));
-			lobjType = Engine.GetWorkInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), Constants.ObjID_DocType),
-					UUID.fromString(request.documentType));
+					UUID.fromString(request.parentDataObjectId));
 
 			lopCIR = new CreateInfoRequest(lobjClient.GetProcessID());
 			lopCIR.mlngDays = request.replylimit;
-			lopCIR.mstrRequestSubject = "Pedido de " + lobjType.getLabel();
+			lopCIR.midRequestType = UUID.fromString(request.requestTypeId);
 			lopCIR.mstrRequestBody = request.text;
 			if ( request.forwardUserIds == null )
-				lopCIR.marrUsers = null;
+				lopCIR.marrUsers = new UUID[] {Engine.getCurrentUser()};
 			else
 			{
-				lopCIR.marrUsers = new UUID[request.forwardUserIds.length];
+				lopCIR.marrUsers = new UUID[request.forwardUserIds.length + 1];
+				lopCIR.marrUsers[0] = Engine.getCurrentUser();
 				for ( i = 0; i < request.forwardUserIds.length; i++ )
-					lopCIR.marrUsers[i] = UUID.fromString(request.forwardUserIds[i]);
+					lopCIR.marrUsers[i + 1] = UUID.fromString(request.forwardUserIds[i]);
 			}
-			lopCIR.marrTos = new String[] {(String)ContactInfo.GetInstance(Engine.getCurrentNameSpace(),
-					UUID.fromString(request.toInfoId)).getAt(2)};
+			lopCIR.marrContactInfos = new UUID[] {UUID.fromString(request.toContactInfoId)};
 			if ( request.externalCCs == null )
 				lopCIR.marrCCs = null;
 			else
@@ -400,10 +397,7 @@ public class ClientServiceImpl
 			throw new BigBangException(e.getMessage(), e);
 		}
 
-		request.id = lopCIR.midRequestObject.toString();
-		request.permissions = BigBangPermissionServiceImpl.sGetProcessPermissions(lopCIR.GetExternalProcess());
-
-		return request;
+		return InfoOrDocumentRequestServiceImpl.sGetRequest(lopCIR.midRequestObject);
 	}
 
 	public Client mergeWithClient(String originalId, String receptorId)

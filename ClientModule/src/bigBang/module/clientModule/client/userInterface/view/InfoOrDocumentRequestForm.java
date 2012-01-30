@@ -43,7 +43,7 @@ public class InfoOrDocumentRequestForm extends FormView<InfoOrDocumentRequest> {
 			value = new InfoOrDocumentRequest();
 		}
 		InfoOrDocumentRequest request = value;
-		request.documentType = documentType.getValue();
+		request.requestTypeId = documentType.getValue();
 		request.text = text.getValue();
 		request.replylimit = Integer.parseInt(replyLimit.getValue());
 		request.forwardUserIds = new String[0];
@@ -58,7 +58,7 @@ public class InfoOrDocumentRequestForm extends FormView<InfoOrDocumentRequest> {
 			clearInfo();
 			return;
 		}
-		documentType.setValue(info.documentType);
+		documentType.setValue(info.requestTypeId);
 		text.setValue(info.text);
 		replyLimit.setValue(info.replylimit+"");
 		forwardReply.setValue(info.forwardUserIds.toString());

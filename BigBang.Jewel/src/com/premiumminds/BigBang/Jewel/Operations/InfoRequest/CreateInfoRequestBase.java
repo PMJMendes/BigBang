@@ -5,12 +5,6 @@ import java.sql.Timestamp;
 import java.util.Calendar;
 import java.util.UUID;
 
-import com.premiumminds.BigBang.Jewel.Constants;
-import com.premiumminds.BigBang.Jewel.Objects.AgendaItem;
-import com.premiumminds.BigBang.Jewel.Objects.InfoRequest;
-import com.premiumminds.BigBang.Jewel.Objects.UserDecoration;
-import com.premiumminds.BigBang.Jewel.SysObjects.MailConnector;
-
 import Jewel.Engine.Engine;
 import Jewel.Engine.DataAccess.SQLServer;
 import Jewel.Engine.Implementation.Entity;
@@ -21,19 +15,27 @@ import Jewel.Petri.Objects.PNScript;
 import Jewel.Petri.SysObjects.JewelPetriException;
 import Jewel.Petri.SysObjects.Operation;
 
+import com.premiumminds.BigBang.Jewel.Constants;
+import com.premiumminds.BigBang.Jewel.Objects.AgendaItem;
+import com.premiumminds.BigBang.Jewel.Objects.ContactInfo;
+import com.premiumminds.BigBang.Jewel.Objects.InfoRequest;
+import com.premiumminds.BigBang.Jewel.Objects.UserDecoration;
+import com.premiumminds.BigBang.Jewel.SysObjects.MailConnector;
+
 public abstract class CreateInfoRequestBase
 	extends Operation
 {
 	private static final long serialVersionUID = 1L;
 
 	public int mlngDays;
-	public String mstrRequestSubject;
+	public UUID midRequestType;
 	public String mstrRequestBody;
 	public UUID[] marrUsers;
-	public String[] marrTos;
+	public UUID[] marrContactInfos;
 	public String[] marrCCs;
 	public String[] marrBCCs;
 	public UUID midRequestObject;
+	private String mstrSubject;
 	private UUID midExternProcess;
 
 	public CreateInfoRequestBase(UUID pidProcess)
@@ -53,7 +55,7 @@ public abstract class CreateInfoRequestBase
 		lstrBuffer = new StringBuilder();
 
 		lstrBuffer.append("Foi enviado o seguinte pedido:").append(pstrLineBreak);
-		lstrBuffer.append(mstrRequestSubject).append(pstrLineBreak);
+		lstrBuffer.append(mstrSubject).append(pstrLineBreak);
 		lstrBuffer.append(mstrRequestBody).append(pstrLineBreak);
 
 		return lstrBuffer.toString();
@@ -71,6 +73,7 @@ public abstract class CreateInfoRequestBase
 		Calendar ldtAux2;
 		IEntity lrefDecos;
 		String[] larrReplyTos;
+		String[] larrTos;
 		int i;
         ResultSet lrs;
         InfoRequest lobjRequest;
@@ -86,6 +89,9 @@ public abstract class CreateInfoRequestBase
         lrs = null;
 		try
 		{
+			mstrSubject = Engine.GetWorkInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), Constants.ObjID_DocType),
+					midRequestType).getLabel();
+
 			lrefDecos = Entity.GetInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), Constants.ObjID_Decorations));
 			larrReplyTos = new String[marrUsers.length];
 			for ( i = 0; i < marrUsers.length; i++ )
@@ -97,6 +103,12 @@ public abstract class CreateInfoRequestBase
 			    	larrReplyTos[i] = null;
 			    lrs.close();
 			}
+
+			larrTos = new String[marrContactInfos.length];
+			for ( i = 0; i < marrContactInfos.length; i++ )
+			{
+				larrTos[i] = (String)ContactInfo.GetInstance(Engine.getCurrentNameSpace(), marrContactInfos[i]).getAt(2); 
+			}
 		}
 		catch (Throwable e)
 		{
@@ -106,17 +118,13 @@ public abstract class CreateInfoRequestBase
 
 		try
 		{
-			MailConnector.DoSendMail(larrReplyTos, marrTos, marrCCs, marrBCCs, mstrRequestSubject, mstrRequestBody);
-		}
-		catch (Throwable e)
-		{
-			throw new JewelPetriException(e.getMessage(), e);
-		}
-
-		try
-		{
 			lobjRequest = InfoRequest.GetInstance(Engine.getCurrentNameSpace(), (UUID)null);
+			lobjRequest.setAt(1, midRequestType);
+			lobjRequest.setText(mstrRequestBody);
+			lobjRequest.setAt(3, mlngDays);
+			lobjRequest.setAt(4, larrReplyTos[0]);
 			lobjRequest.SaveToDb(pdb);
+			lobjRequest.InitNew(marrUsers, marrContactInfos, marrCCs, marrBCCs, pdb);
 
 			lobjScript = PNScript.GetInstance(Engine.getCurrentNameSpace(), Constants.ProcID_InfoRequest);
 			lobjProc = lobjScript.CreateInstance(Engine.getCurrentNameSpace(), lobjRequest.getKey(), GetProcess().getKey(), pdb);
@@ -134,6 +142,15 @@ public abstract class CreateInfoRequestBase
 				lobjItem.InitNew(new UUID[] {lobjProc.getKey()}, new UUID[] {Constants.OPID_InfoReq_ReceiveReply,
 						Constants.OPID_InfoReq_RepeatRequest, Constants.OPID_InfoReq_CancelRequest}, pdb);
 			}
+		}
+		catch (Throwable e)
+		{
+			throw new JewelPetriException(e.getMessage(), e);
+		}
+
+		try
+		{
+			MailConnector.DoSendMail(larrReplyTos, larrTos, marrCCs, marrBCCs, mstrSubject, mstrRequestBody);
 		}
 		catch (Throwable e)
 		{

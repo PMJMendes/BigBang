@@ -48,39 +48,39 @@ public class AgendaItem
 	private UUID[] marrProcesses;
 
 	public void Initialize()
-			throws JewelEngineException
+		throws JewelEngineException
+	{
+		MasterDB ldb;
+
+		try
 		{
-			MasterDB ldb;
-
-			try
-			{
-				ldb = new MasterDB();
-			}
-			catch (Throwable e)
-			{
-				throw new JewelEngineException(e.getMessage(), e);
-			}
-
-			try
-			{
-				GetAgendaOpIDs(ldb);
-				GetAgendaProcIDs(ldb);
-			}
-			catch (Throwable e)
-			{
-				try { ldb.Disconnect(); } catch (Throwable e1) {}
-				throw new JewelEngineException(e.getMessage(), e);
-			}
-
-			try
-			{
-				ldb.Disconnect();
-			}
-			catch (Throwable e)
-			{
-				throw new JewelEngineException(e.getMessage(), e);
-			}
+			ldb = new MasterDB();
 		}
+		catch (Throwable e)
+		{
+			throw new JewelEngineException(e.getMessage(), e);
+		}
+
+		try
+		{
+			GetAgendaOpIDs(ldb);
+			GetAgendaProcIDs(ldb);
+		}
+		catch (Throwable e)
+		{
+			try { ldb.Disconnect(); } catch (Throwable e1) {}
+			throw new JewelEngineException(e.getMessage(), e);
+		}
+
+		try
+		{
+			ldb.Disconnect();
+		}
+		catch (Throwable e)
+		{
+			throw new JewelEngineException(e.getMessage(), e);
+		}
+	}
 
 	public UUID[] GetAgendaProcIDs()
 		throws JewelEngineException
@@ -236,7 +236,7 @@ public class AgendaItem
 		GetAgendaProcIDs(pdb);
 		if ( ((marrProcesses != null) && (marrProcesses.length > 0)) || 
 				((marrOperations != null) && (marrOperations.length > 0)) )
-			throw new BigBangJewelException("Erro: Não pode redefinir os processos de items de agenda pre-existentes.");
+			throw new BigBangJewelException("Erro: Não pode redefinir os processos de items de agenda pré-existentes.");
 		if ( getKey() == null )
 			throw new BigBangJewelException("Erro: Não pode definir o conjunto de processos para um item de agenda antes de gravar.");
 		if ( parrProcIDs.length == 0 )

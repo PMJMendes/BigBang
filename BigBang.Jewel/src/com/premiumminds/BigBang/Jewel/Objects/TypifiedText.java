@@ -76,8 +76,8 @@ public class TypifiedText
 	public void setText(String pstrText)
 		throws BigBangJewelException
 	{
-		FileXfer laux;
 		byte[] larrAux;
+		FileXfer laux;
 
 		mstrText = pstrText;
 

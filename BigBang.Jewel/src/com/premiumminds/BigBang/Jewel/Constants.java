@@ -54,6 +54,7 @@ public class Constants
 
 	// Info Request Objects
 	public static final UUID ObjID_InfoRequest    = UUID.fromString("1D10FF86-70B5-4362-A8F3-9F7C00BC6DE4");
+	public static final UUID ObjID_RequestAddress = UUID.fromString("C865EAD8-526A-4447-9CBB-9FE80109E9C5");
 
 	// Typified Lists
 	public static final UUID ObjID_ContactType    = UUID.fromString("228F6A73-1335-4C99-8DD0-9EEE012964BA");
@@ -75,6 +76,7 @@ public class Constants
 	public static final UUID ObjID_PolicyStatus   = UUID.fromString("EF9C2F88-2AC7-44CF-9AD6-9F98012A7236");
 	public static final UUID ObjID_ObjectType     = UUID.fromString("6ADF0A94-5004-41AF-A7FF-9F95013DABB8");
 	public static final UUID ObjID_ExercisePeriod = UUID.fromString("93315017-5744-4E43-95AB-9F9601200F1E");
+	public static final UUID ObjID_RequestType    = UUID.fromString("B437ECD7-11D2-4C55-B6DD-9FE80101ECC8");
 
 	public static final UUID ObjID_FieldType      = UUID.fromString("0D8E4FEE-AE4D-4429-A517-9EC900F80A20");
 	public static final UUID ObjID_FieldValues    = UUID.fromString("D50A75B9-5F44-4BF2-9060-9F960121503A");
@@ -220,6 +222,12 @@ public class Constants
 
 	// User Profiles
 	public static final UUID ProfileID_Root = UUID.fromString("061388D9-16A6-443F-A69E-9EB000685026");
+
+	// Email Usage Types
+	public static final UUID UsageID_To      = UUID.fromString("0A9B0272-7685-44F8-8F65-9FE8010B18EE");
+	public static final UUID UsageID_CC      = UUID.fromString("6457BD3C-7D2E-4830-944C-9FE8010B1DB6");
+	public static final UUID UsageID_BCC     = UUID.fromString("04708D74-AA0A-4A22-9E6F-9FE8010B21F0");
+	public static final UUID UsageID_ReplyTo = UUID.fromString("70AE501E-B15D-418F-9A39-9FE8010B2842");
 
 	// Client Types 
 	public static final UUID TypeID_Individual = UUID.fromString("462096E4-68A2-408A-963A-9EE600C9556A");
