@@ -46,7 +46,7 @@ public interface InsurancePolicyService extends SearchService {
 	public InsurancePolicy.TableSection savePage(InsurancePolicy.TableSection data)
 			throws SessionExpiredException, BigBangException;
 
-	public TipifiedListItem[] getPadItemsFilter(String listId, String policyId) throws SessionExpiredException, BigBangException;
+//	public TipifiedListItem[] getPadItemsFilter(String listId, String policyId) throws SessionExpiredException, BigBangException;
 
 	public InsuredObject getObjectInPad(String objectId) throws SessionExpiredException, BigBangException;
 	public InsuredObject createObjectInPad(String policyId) throws SessionExpiredException, BigBangException;

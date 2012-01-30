@@ -35,6 +35,7 @@ import bigBang.definitions.shared.SortOrder;
 import bigBang.definitions.shared.SortParameter;
 import bigBang.definitions.shared.TipifiedListItem;
 import bigBang.definitions.shared.ZipCode;
+import bigBang.library.interfaces.DependentItemSubService;
 import bigBang.library.server.BigBangPermissionServiceImpl;
 import bigBang.library.server.ContactsServiceImpl;
 import bigBang.library.server.DocumentServiceImpl;
@@ -83,7 +84,7 @@ import com.premiumminds.BigBang.Jewel.SysObjects.ZipCodeBridge;
 
 public class InsurancePolicyServiceImpl
 	extends SearchServiceBase
-	implements InsurancePolicyService
+	implements InsurancePolicyService, DependentItemSubService
 {
 	private static final long serialVersionUID = 1L;
 
