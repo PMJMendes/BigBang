@@ -1,10 +1,6 @@
 package bigBang.client.tests;
 
-import java.util.List;
-
-import bigBang.definitions.shared.TypifiedText;
 import bigBang.library.client.HasParameters;
-import bigBang.library.client.dataAccess.TypifiedTextBroker;
 import bigBang.library.client.userInterface.presenter.ViewPresenter;
 
 import com.google.gwt.user.client.ui.HasWidgets;

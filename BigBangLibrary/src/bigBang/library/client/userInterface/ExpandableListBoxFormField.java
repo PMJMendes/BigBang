@@ -156,7 +156,6 @@ TypifiedListClient {
 					popup.hidePopup();
 				};
 			};
-
 			managementPanel.getList().addSelectionChangedEventHandler(new SelectionChangedEventHandler() {
 
 				@Override
