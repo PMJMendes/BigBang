@@ -3,7 +3,6 @@ package bigbang.tests.client;
 import bigBang.definitions.shared.InsuredObject;
 import bigBang.definitions.shared.Remap;
 import bigBang.definitions.shared.TipifiedListItem;
-
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 public class TestObjectEdit
