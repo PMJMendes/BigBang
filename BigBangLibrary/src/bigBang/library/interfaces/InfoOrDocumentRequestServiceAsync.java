@@ -9,6 +9,7 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 public interface InfoOrDocumentRequestServiceAsync
 	extends Service
 {
+	void getRequest(String id, AsyncCallback<InfoOrDocumentRequest> callback);
 	void repeatRequest(InfoOrDocumentRequest request, AsyncCallback<InfoOrDocumentRequest> callback);
 	void receiveResponse(Response response, AsyncCallback<InfoOrDocumentRequest> callback);
 	void cancelRequest(Cancellation cancellation, AsyncCallback<Void> callback);

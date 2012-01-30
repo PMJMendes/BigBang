@@ -22,6 +22,4 @@ public class ReceiptStub
 	public String totalPremium;
 	public String maturityDate;
 	public String description;
-
-	public String processId;
 }

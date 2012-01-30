@@ -25,6 +25,7 @@ public interface InfoOrDocumentRequestService
 		}
 	}
 
+	public InfoOrDocumentRequest getRequest(String id) throws SessionExpiredException, BigBangException;
 	public InfoOrDocumentRequest repeatRequest(InfoOrDocumentRequest request) throws SessionExpiredException, BigBangException;
 	public InfoOrDocumentRequest receiveResponse(InfoOrDocumentRequest.Response response) throws SessionExpiredException, BigBangException;
 	public void cancelRequest(InfoOrDocumentRequest.Cancellation cancellation) throws SessionExpiredException, BigBangException;

@@ -9,8 +9,6 @@ public class ClientStub
 	public String clientNumber;
 	public String groupName;
 
-	public String processId;
-
 	public ClientStub(){}
 	
 	public ClientStub(ClientStub original) {

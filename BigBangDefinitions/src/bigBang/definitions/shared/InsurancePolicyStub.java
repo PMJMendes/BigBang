@@ -25,6 +25,4 @@ public class InsurancePolicyStub
 	public String statusId;
 	public String statusText;
 	public PolicyStatus statusIcon;
-
-	public String processId;
 }

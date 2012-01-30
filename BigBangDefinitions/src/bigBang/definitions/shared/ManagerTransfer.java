@@ -23,7 +23,8 @@ public class ManagerTransfer
 	public String newManagerId;
 	public boolean directTransfer; // (*) True se o newManagerId fôr o próprio utilizador
 	public boolean isMassTransfer; // True se a transferência fôr em massa. Não confiar no comprimento dos arrays ser 1!
-	public String processId; // ID do processo de transferência, ou null se fôr um direct transfer
 	public Status status; // (*)
 	// * - Por enquanto, estes dados são desconhecidos em GET
+
+//	NOTA: Numa direct transfer, os items herdados de ProcessBase (id, processId e permissions) vêm a null
 }

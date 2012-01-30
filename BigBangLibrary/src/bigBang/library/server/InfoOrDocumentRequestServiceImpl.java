@@ -14,6 +14,15 @@ public class InfoOrDocumentRequestServiceImpl
 {
 	private static final long serialVersionUID = 1L;
 
+	public InfoOrDocumentRequest getRequest(String id)
+		throws SessionExpiredException, BigBangException
+	{
+		if ( Engine.getCurrentUser() == null )
+			throw new SessionExpiredException();
+
+		return null;
+	}
+
 	public InfoOrDocumentRequest repeatRequest(InfoOrDocumentRequest request)
 		throws SessionExpiredException, BigBangException
 	{

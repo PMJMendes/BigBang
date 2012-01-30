@@ -74,6 +74,7 @@ public class GeneralSystemServiceImpl
 
 		lobjResult = new GeneralSystem();
 		lobjResult.id = lobjGenSys.getKey().toString();
+		lobjResult.processId = lobjGenSys.GetProcessID().toString();
 		lobjResult.permissions = BigBangPermissionServiceImpl.sGetProcessPermissions(lobjGenSys.GetProcessID());
 
 		return lobjResult;
