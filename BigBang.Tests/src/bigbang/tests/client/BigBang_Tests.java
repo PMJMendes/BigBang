@@ -46,7 +46,8 @@ public class BigBang_Tests
 //		TestMgrXferMassAccept.DoTest();
 //		TestMgrXferMassCancel.DoTest();
 //
-		TestInfoReqCreate.DoTest();
+//		TestInfoReqGet.DoTest();
+//		TestInfoReqCreate.DoTest();
 //
 //		TestContactGet.DoTest();
 //		TestContactCreate.DoTest();

@@ -16,6 +16,8 @@ import bigBang.library.interfaces.FileService;
 import bigBang.library.interfaces.FileServiceAsync;
 import bigBang.library.interfaces.HistoryService;
 import bigBang.library.interfaces.HistoryServiceAsync;
+import bigBang.library.interfaces.InfoOrDocumentRequestService;
+import bigBang.library.interfaces.InfoOrDocumentRequestServiceAsync;
 import bigBang.library.interfaces.TransferManagerService;
 import bigBang.library.interfaces.TransferManagerServiceAsync;
 import bigBang.library.interfaces.TypifiedTextService;
@@ -63,6 +65,8 @@ public class Services
 			GWT.create(BigBangPermissionService.class);
 	public static final TransferManagerServiceAsync transferManagerService =
 			GWT.create(TransferManagerService.class);
+	public static final InfoOrDocumentRequestServiceAsync infoOrDocumentRequestService =
+			GWT.create(InfoOrDocumentRequestService.class);
 	public static final TypifiedTextServiceAsync typifiedTextService =
 			GWT.create(TypifiedTextService.class);
 	public static final TasksServiceAsync tasksService =

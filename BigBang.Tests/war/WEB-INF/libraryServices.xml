@@ -48,6 +48,10 @@
 	<servlet-name>TransferManagerService</servlet-name>
 	<servlet-class>bigBang.library.server.TransferManagerServiceImpl</servlet-class>
 </servlet>
+<servlet>
+	<servlet-name>InfoOrDocumentRequestService</servlet-name>
+	<servlet-class>bigBang.library.server.InfoOrDocumentRequestServiceImpl</servlet-class>
+</servlet>
 
 <servlet-mapping>
 	<servlet-name>BigBangPermissionService</servlet-name>
@@ -96,4 +100,8 @@
 <servlet-mapping>
 	<servlet-name>TransferManagerService</servlet-name>
 	<url-pattern>/bigbang_tests/TransferManagerService</url-pattern>
+</servlet-mapping>
+<servlet-mapping>
+	<servlet-name>InfoOrDocumentRequestService</servlet-name>
+	<url-pattern>/bigbang_tests/InfoOrDocumentRequestService</url-pattern>
 </servlet-mapping>
