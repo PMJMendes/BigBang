@@ -6,6 +6,9 @@ delete from credite_egs.tblContacts;
 delete from credite_egs.tblMgrXFerProcs;
 delete from credite_egs.tblMgrXFers;
 
+delete from credite_egs.tblRequestAddresses;
+delete from credite_egs.tblInfoRequests;
+
 delete from credite_egs.tblBBReceipts;
 delete from credite_egs.tblBBPolicyValues;
 delete from credite_egs.tblExercises;
@@ -22,7 +25,7 @@ delete from credite_egs.tblAgendaOperations;
 delete from credite_egs.tblAgendaProcesses;
 delete from credite_egs.tblAgendaItems;
 
-delete from credite_egs.tblpolicyvalueitems;
+delete from credite_egs.tblPolicyValueItems;
 
 delete from credite_egs.tblPNLogs;
 delete from credite_egs.tblPNNodes;
@@ -36,6 +39,9 @@ delete from amartins.tblContacts;
 
 delete from amartins.tblMgrXFerProcs;
 delete from amartins.tblMgrXFers;
+
+delete from amartins.tblRequestAddresses;
+delete from amartins.tblInfoRequests;
 
 delete from amartins.tblBBReceipts;
 delete from amartins.tblBBPolicyValues;
@@ -53,7 +59,7 @@ delete from amartins.tblAgendaOperations;
 delete from amartins.tblAgendaProcesses;
 delete from amartins.tblAgendaItems;
 
-delete from amartins.tblpolicyvalueitems;
+delete from amartins.tblPolicyValueItems;
 
 delete from amartins.tblPNLogs;
 delete from amartins.tblPNNodes;
