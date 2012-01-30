@@ -195,6 +195,9 @@ public class TypifiedTextBrokerImpl extends DataBroker<TypifiedText> implements 
 				incrementDataVersion(result.tag);
 				updateListClients(result.tag);
 				handler.onResponse(result);
+				for(TypifiedTextClient client : clients.get(tag)){
+					client.addText(result);
+				}
 			}
 
 			@Override
@@ -216,6 +219,7 @@ public class TypifiedTextBrokerImpl extends DataBroker<TypifiedText> implements 
 					for(TypifiedText text : collection){
 						collection.remove(text);
 						incrementDataVersion(tag);
+						updateListClients(tag);
 						for(TypifiedTextClient client : clients.get(tag)){
 							client.removeText(text);
 							client.setTypifiedTextDataVersionNumber(getCurrentDataVersion());
@@ -345,8 +349,13 @@ public class TypifiedTextBrokerImpl extends DataBroker<TypifiedText> implements 
 								break;
 							}
 						}
+						incrementDataVersion(tag);
 						updateListClients(result.tag);
 						handler.onResponse(result);
+						
+						for(TypifiedTextClient client : clients.get(tag)){
+							client.updateText(result);
+						}
 					}
 					@Override
 					public void onFailure(Throwable caught){
