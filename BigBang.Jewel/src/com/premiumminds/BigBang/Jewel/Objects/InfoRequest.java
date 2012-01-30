@@ -158,7 +158,7 @@ public class InfoRequest
 		{
 			if ( pstrText == null )
 			{
-				setAt(3, (byte[])null);
+				setAt(2, (byte[])null);
 				return;
 			}
 
@@ -176,13 +176,13 @@ public class InfoRequest
 	{
 		FileXfer laux;
 
-		if ( getAt(3) == null )
+		if ( getAt(2) == null )
 			return null;
 
-    	if ( getAt(3) instanceof FileXfer )
-    		laux = (FileXfer)getAt(3);
+    	if ( getAt(2) instanceof FileXfer )
+    		laux = (FileXfer)getAt(2);
     	else
-        	laux = new FileXfer((byte[])getAt(3));
+        	laux = new FileXfer((byte[])getAt(2));
 
     	return new String(laux.getData());
 	}
@@ -235,7 +235,7 @@ public class InfoRequest
 
 			for ( i = 0; i < parrContactInfoIDs.length; i++ )
 			{
-				lstrAddr = (String)ContactInfo.GetInstance(getNameSpace(), parrContactInfoIDs[i]).getAt(1);
+				lstrAddr = (String)ContactInfo.GetInstance(getNameSpace(), parrContactInfoIDs[i]).getAt(2);
 
 				lobjAux = RequestAddress.GetInstance(getNameSpace(), (UUID)null);
 				lobjAux.setAt(0, lstrAddr);

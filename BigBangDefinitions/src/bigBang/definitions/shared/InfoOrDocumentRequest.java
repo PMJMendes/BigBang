@@ -32,6 +32,7 @@ public class InfoOrDocumentRequest
 	public String parentDataObjectId;
 	public String parentDataTypeId;
 	public String requestTypeId;
+	public String subject;
 	public String text;
 	public int replylimit;
 	public String toContactInfoId;

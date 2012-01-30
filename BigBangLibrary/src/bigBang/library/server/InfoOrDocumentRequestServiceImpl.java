@@ -60,6 +60,7 @@ public class InfoOrDocumentRequestServiceImpl
 		lobjResult.parentDataObjectId = lobjParent.GetDataKey().toString();
 		lobjResult.parentDataTypeId = lobjScript.GetDataType().toString();
 		lobjResult.requestTypeId = ((UUID)lobjRequest.getAt(1)).toString();
+		lobjResult.subject = (String)lobjRequest.getAt(5);
 		lobjResult.text = lobjRequest.getText();
 		lobjResult.replylimit = (Integer)lobjRequest.getAt(3);
 

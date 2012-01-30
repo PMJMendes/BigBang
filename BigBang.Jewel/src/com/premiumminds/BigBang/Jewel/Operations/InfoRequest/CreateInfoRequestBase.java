@@ -29,13 +29,13 @@ public abstract class CreateInfoRequestBase
 
 	public int mlngDays;
 	public UUID midRequestType;
+	public String mstrSubject;
 	public String mstrRequestBody;
 	public UUID[] marrUsers;
 	public UUID[] marrContactInfos;
 	public String[] marrCCs;
 	public String[] marrBCCs;
 	public UUID midRequestObject;
-	private String mstrSubject;
 	private UUID midExternProcess;
 
 	public CreateInfoRequestBase(UUID pidProcess)
@@ -89,9 +89,6 @@ public abstract class CreateInfoRequestBase
         lrs = null;
 		try
 		{
-			mstrSubject = Engine.GetWorkInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), Constants.ObjID_DocType),
-					midRequestType).getLabel();
-
 			lrefDecos = Entity.GetInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), Constants.ObjID_Decorations));
 			larrReplyTos = new String[marrUsers.length];
 			for ( i = 0; i < marrUsers.length; i++ )
@@ -123,6 +120,7 @@ public abstract class CreateInfoRequestBase
 			lobjRequest.setText(mstrRequestBody);
 			lobjRequest.setAt(3, mlngDays);
 			lobjRequest.setAt(4, larrReplyTos[0]);
+			lobjRequest.setAt(5, mstrSubject);
 			lobjRequest.SaveToDb(pdb);
 			lobjRequest.InitNew(marrUsers, marrContactInfos, marrCCs, marrBCCs, pdb);
 

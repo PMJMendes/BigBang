@@ -360,6 +360,7 @@ public class ClientServiceImpl
 			lopCIR = new CreateInfoRequest(lobjClient.GetProcessID());
 			lopCIR.mlngDays = request.replylimit;
 			lopCIR.midRequestType = UUID.fromString(request.requestTypeId);
+			lopCIR.mstrSubject = request.subject;
 			lopCIR.mstrRequestBody = request.text;
 			if ( request.forwardUserIds == null )
 				lopCIR.marrUsers = new UUID[] {Engine.getCurrentUser()};
