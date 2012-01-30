@@ -9,5 +9,5 @@ import com.google.gwt.user.client.rpc.RemoteService;
 public interface DependentItemSubService
 	extends RemoteService
 {
-	public TipifiedListItem[] getPadItemsFilter(String listId, String policyId) throws SessionExpiredException, BigBangException;
+	public TipifiedListItem[] getListItemsFilter(String listId, String filterId) throws SessionExpiredException, BigBangException;
 }

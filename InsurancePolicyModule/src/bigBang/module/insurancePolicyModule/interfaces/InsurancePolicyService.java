@@ -7,7 +7,7 @@ import bigBang.definitions.shared.InsuredObject;
 import bigBang.definitions.shared.ManagerTransfer;
 import bigBang.definitions.shared.Receipt;
 import bigBang.definitions.shared.Remap;
-import bigBang.definitions.shared.TipifiedListItem;
+import bigBang.library.interfaces.DependentItemSubService;
 import bigBang.library.interfaces.SearchService;
 import bigBang.library.shared.BigBangException;
 import bigBang.library.shared.SessionExpiredException;
@@ -17,7 +17,7 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 
 @RemoteServiceRelativePath("InsurancePolicyService")
-public interface InsurancePolicyService extends SearchService {
+public interface InsurancePolicyService extends SearchService, DependentItemSubService {
 
 	/**
 	 * Utility class for simplifying access to the instance of async service.
@@ -45,8 +45,6 @@ public interface InsurancePolicyService extends SearchService {
 			throws SessionExpiredException, BigBangException;
 	public InsurancePolicy.TableSection savePage(InsurancePolicy.TableSection data)
 			throws SessionExpiredException, BigBangException;
-
-//	public TipifiedListItem[] getPadItemsFilter(String listId, String policyId) throws SessionExpiredException, BigBangException;
 
 	public InsuredObject getObjectInPad(String objectId) throws SessionExpiredException, BigBangException;
 	public InsuredObject createObjectInPad(String policyId) throws SessionExpiredException, BigBangException;

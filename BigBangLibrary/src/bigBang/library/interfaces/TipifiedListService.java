@@ -9,7 +9,7 @@ import com.google.gwt.user.client.rpc.RemoteService;
 import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 
 @RemoteServiceRelativePath("TipifiedListService")
-public interface TipifiedListService extends RemoteService {
+public interface TipifiedListService extends RemoteService, DependentItemSubService {
 	/**
 	 * Utility class for simplifying access to the instance of async service.
 	 */
@@ -24,7 +24,6 @@ public interface TipifiedListService extends RemoteService {
 	}
 	
 	public TipifiedListItem[] getListItems(String listId) throws SessionExpiredException, BigBangException;
-	public TipifiedListItem[] getListItemsFilter(String listId, String filterId) throws SessionExpiredException, BigBangException;
 	public TipifiedListItem createListItem(String listId, TipifiedListItem item) throws SessionExpiredException, BigBangException;
 	public TipifiedListItem createListItemFiltered(String listId, String filterId, TipifiedListItem item)
 			throws SessionExpiredException, BigBangException;

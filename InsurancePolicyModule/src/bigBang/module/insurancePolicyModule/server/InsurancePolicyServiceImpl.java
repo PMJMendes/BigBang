@@ -2837,20 +2837,20 @@ public class InsurancePolicyServiceImpl
 		return data;
 	}
 
-	public TipifiedListItem[] getPadItemsFilter(String listId, String policyId)
+	public TipifiedListItem[] getListItemsFilter(String listId, String filterId)
 		throws SessionExpiredException, BigBangException
 	{
 		if ( Engine.getCurrentUser() == null )
 			throw new SessionExpiredException();
 
-		if ( policyId == null )
+		if ( filterId == null )
 			throw new BigBangException("Erro: Espaço de trabalho não existente.");
 
 		if ( Constants.ObjID_PolicyObject.equals(UUID.fromString(listId)) )
-			return GetScratchPadStorage().get(UUID.fromString(policyId)).GetObjects();
+			return GetScratchPadStorage().get(UUID.fromString(filterId)).GetObjects();
 
 		if ( Constants.ObjID_PolicyExercise.equals(UUID.fromString(listId)) )
-			return GetScratchPadStorage().get(UUID.fromString(policyId)).GetExercises();
+			return GetScratchPadStorage().get(UUID.fromString(filterId)).GetExercises();
 
 		throw new BigBangException("Erro: Lista inválida para o espaço de trabalho.");
 	}

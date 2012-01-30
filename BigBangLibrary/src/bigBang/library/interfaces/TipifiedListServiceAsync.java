@@ -5,10 +5,9 @@ import bigBang.definitions.shared.TipifiedListItem;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 public interface TipifiedListServiceAsync
-	extends Service
+	extends Service, DependentItemSubServiceAsync
 {
 	void getListItems(String listId, AsyncCallback<TipifiedListItem[]> callback);
-	void getListItemsFilter(String listId, String filterId, AsyncCallback<TipifiedListItem[]> callback);
 	void createListItem(String listId, TipifiedListItem item, AsyncCallback<TipifiedListItem> callback);
 	void createListItemFiltered(String listId, String filterId, TipifiedListItem item, AsyncCallback<TipifiedListItem> callback);
 	void saveListItem(String listId, TipifiedListItem item, AsyncCallback<TipifiedListItem> callback);

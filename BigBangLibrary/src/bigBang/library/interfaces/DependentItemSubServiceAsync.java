@@ -7,5 +7,5 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 public interface DependentItemSubServiceAsync
 	extends Service
 {
-	void getPadItemsFilter(String listId, String policyId, AsyncCallback<TipifiedListItem[]> callback);
+	void getListItemsFilter(String listId, String filterId, AsyncCallback<TipifiedListItem[]> callback);
 }

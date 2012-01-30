@@ -8,13 +8,13 @@ import bigBang.definitions.shared.InsuredObject;
 import bigBang.definitions.shared.ManagerTransfer;
 import bigBang.definitions.shared.Receipt;
 import bigBang.definitions.shared.Remap;
-import bigBang.definitions.shared.TipifiedListItem;
+import bigBang.library.interfaces.DependentItemSubServiceAsync;
 import bigBang.library.interfaces.SearchServiceAsync;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 public interface InsurancePolicyServiceAsync
-	extends SearchServiceAsync
+	extends SearchServiceAsync, DependentItemSubServiceAsync
 {
 	void getPolicy(String policyId, AsyncCallback<InsurancePolicy> callback);
 	void getPage(String policyId, String insuredObjectId, String exerciseId, AsyncCallback<TableSection> callback);
@@ -24,7 +24,6 @@ public interface InsurancePolicyServiceAsync
 	void updateHeader(InsurancePolicy policy, AsyncCallback<InsurancePolicy> callback);
 	void getPageForEdit(String policyId, String objectId, String exerciseId, AsyncCallback<TableSection> callback);
 	void savePage(InsurancePolicy.TableSection data, AsyncCallback<TableSection> callback);
-//	void getPadItemsFilter(String listId, String policyId, AsyncCallback<TipifiedListItem[]> callback);
 	void getObjectInPad(String objectId, AsyncCallback<InsuredObject> callback);
 	void createObjectInPad(String policyId, AsyncCallback<InsuredObject> callback);
 	void createObjectFromClientInPad(String policyId, AsyncCallback<InsuredObject> callback);
