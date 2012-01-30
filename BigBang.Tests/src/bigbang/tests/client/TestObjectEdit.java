@@ -74,7 +74,7 @@ public class TestObjectEdit
 			}
 		};
 
-		Services.insurancePolicyService.getPadItemsFilter("3A3316D2-9D7C-4FD1-8486-9F9C0012E119", gstrPad, callback);
+		Services.insurancePolicyService.getListItemsFilter("3A3316D2-9D7C-4FD1-8486-9F9C0012E119", gstrPad, callback);
 	}
 
 	private static void DoStep3(String tempObjectId)

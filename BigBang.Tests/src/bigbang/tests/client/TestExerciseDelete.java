@@ -74,7 +74,7 @@ public class TestExerciseDelete
 			}
 		};
 
-		Services.insurancePolicyService.getPadItemsFilter("DEE32F69-B33D-4427-AD5B-9F9C001607F2", gstrPad, callback);
+		Services.insurancePolicyService.getListItemsFilter("DEE32F69-B33D-4427-AD5B-9F9C001607F2", gstrPad, callback);
 	}
 
 	private static void DoStep3(String exerciseId)
