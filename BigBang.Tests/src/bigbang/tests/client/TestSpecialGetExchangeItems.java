@@ -1,6 +1,6 @@
 package bigbang.tests.client;
 
-import bigBang.library.shared.ExchangeItem;
+import bigBang.library.shared.ExchangeItemStub;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
@@ -13,14 +13,14 @@ public class TestSpecialGetExchangeItems
 
 	private static void DoStep1()
 	{
-		AsyncCallback<ExchangeItem[]> callback = new AsyncCallback<ExchangeItem[]>()
+		AsyncCallback<ExchangeItemStub[]> callback = new AsyncCallback<ExchangeItemStub[]>()
 		{
 			public void onFailure(Throwable caught)
 			{
 				return;
 			}
 
-			public void onSuccess(ExchangeItem[] result)
+			public void onSuccess(ExchangeItemStub[] result)
 			{
 				return;
 			}
