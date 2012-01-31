@@ -18,7 +18,7 @@ public class UndoCancelRequest
 
 	protected UUID OpID()
 	{
-		return Constants.OPID_InfoReq_CancelRequest;
+		return Constants.OPID_InfoReq_UndoCancelRequest;
 	}
 
 	public String ShortDesc()

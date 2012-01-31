@@ -19,6 +19,7 @@ import bigBang.library.shared.SessionExpiredException;
 import com.premiumminds.BigBang.Jewel.Constants;
 import com.premiumminds.BigBang.Jewel.Objects.InfoRequest;
 import com.premiumminds.BigBang.Jewel.Objects.RequestAddress;
+import com.premiumminds.BigBang.Jewel.Operations.InfoRequest.CancelRequest;
 import com.premiumminds.BigBang.Jewel.Operations.InfoRequest.RepeatRequest;
 
 public class InfoOrDocumentRequestServiceImpl
@@ -141,7 +142,24 @@ public class InfoOrDocumentRequestServiceImpl
 	public void cancelRequest(Cancellation cancellation)
 		throws SessionExpiredException, BigBangException
 	{
-			if ( Engine.getCurrentUser() == null )
-				throw new SessionExpiredException();
+		InfoRequest lobjRequest;
+		CancelRequest lopCR;
+
+		if ( Engine.getCurrentUser() == null )
+			throw new SessionExpiredException();
+
+		try
+		{
+			lobjRequest = InfoRequest.GetInstance(Engine.getCurrentNameSpace(), UUID.fromString(cancellation.requestId));
+
+			lopCR = new CancelRequest(lobjRequest.GetProcessID());
+			lopCR.midMotive = UUID.fromString(cancellation.motiveId);
+
+			lopCR.Execute();
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangException(e.getMessage(), e);
+		}
 	}
 }
