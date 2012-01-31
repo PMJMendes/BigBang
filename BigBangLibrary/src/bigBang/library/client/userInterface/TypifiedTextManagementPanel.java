@@ -23,7 +23,6 @@ import bigBang.library.client.dataAccess.TypifiedTextClient;
 import bigBang.library.client.event.NewNotificationEvent;
 import bigBang.library.client.event.SelectionChangedEvent;
 import bigBang.library.client.event.SelectionChangedEventHandler;
-import bigBang.library.client.userInterface.BigBangOperationsToolBar.SUB_MENU;
 import bigBang.library.client.userInterface.TypifiedListManagementPanel.TypifiedListEntry;
 import bigBang.library.client.userInterface.view.View;
 
@@ -39,13 +38,62 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 
 public class TypifiedTextManagementPanel extends View implements TypifiedTextClient, TypifiedListClient, TypifiedManagementPanel{
 
+
+	public class TypifiedTextOperationsToolbar extends BigBangOperationsToolBar{
+		
+		private MenuItem delete;
+		
+		public TypifiedTextOperationsToolbar(){
+			super();
+			delete = new MenuItem("Eliminar", new Command() {
+
+				@Override
+				public void execute() {
+					onDeleteRequest();
+				}
+
+			});
+			
+			this.addItem(SUB_MENU.ADMIN, delete);
+			this.hideAll();
+
+			//toolbar.addSeparator();
+			this.showItem(SUB_MENU.EDIT, true);
+			//delete.setVisible(true);
+			this.adminSubMenu.setVisible(true);
+			this.showItem(SUB_MENU.ADMIN, true);
+
+			//delete.getElement().getStyle().setProperty("textAlign", "center");
+			this.setHeight("21px");
+			this.setWidth("100%");
+			this.adminSubMenu.getElement().getStyle().setZIndex(12000);
+			
+			
+		}
+
+		@Override
+		public void onEditRequest() {
+			
+		}
+
+		@Override
+		public void onSaveRequest() {
+		}
+
+		@Override
+		public void onCancelRequest() {
+		}
+		
+		public void onDeleteRequest(){
+			
+		}
+	}
+	
 	private String listId;
 	private String tag;
 	private FilterableList<TipifiedListItem> list;
 	private String selectedValueId;
-	private boolean editModeEnabled, editable;
-	private BigBangOperationsToolBar toolbar;
-	private MenuItem delete;
+	private boolean editModeEnabled;
 	private int typifiedListDataVersion;
 	private HorizontalPanel mainWrapper;
 	protected TypifiedListBroker listBroker;
@@ -57,6 +105,7 @@ public class TypifiedTextManagementPanel extends View implements TypifiedTextCli
 	private RichTextAreaFormField textBody = new RichTextAreaFormField();
 	private boolean inNewTypifiedText = false;
 	private TipifiedListItem selectedItem = new TipifiedListItem();
+	private TypifiedTextOperationsToolbar toolbar;
 
 	public TypifiedTextManagementPanel(final String listId, String listDescription) {
 
@@ -71,7 +120,7 @@ public class TypifiedTextManagementPanel extends View implements TypifiedTextCli
 		listBroker = BigBangTypifiedListBroker.Util.getInstance();
 
 		//TOOLBAR
-		toolbar = new BigBangOperationsToolBar(){
+		toolbar = new TypifiedTextOperationsToolbar(){
 
 			@Override
 			public void onEditRequest() {
@@ -86,13 +135,9 @@ public class TypifiedTextManagementPanel extends View implements TypifiedTextCli
 			public void onCancelRequest() {
 				cancelChanges();
 			}
-
-		};
-		
-		delete = new MenuItem("Eliminar", new Command() {
-
+			
 			@Override
-			public void execute() {
+			public void onDeleteRequest() {
 				MessageBox.confirm("Eliminar Modelo", "Tem certeza que pretende eliminar o modelo seleccionado?", new MessageBox.ConfirmationCallback() {
 
 					@Override
@@ -102,23 +147,9 @@ public class TypifiedTextManagementPanel extends View implements TypifiedTextCli
 						}
 					}
 				});
-
 			}
 
-		});
-
-		toolbar.addItem(SUB_MENU.ADMIN, delete);
-		toolbar.hideAll();
-		
-		//toolbar.addSeparator();
-		toolbar.showItem(SUB_MENU.EDIT, true);
-		//delete.setVisible(true);
-		toolbar.adminSubMenu.setVisible(true);
-		toolbar.showItem(SUB_MENU.ADMIN, true);
-		
-		//delete.getElement().getStyle().setProperty("textAlign", "center");
-		//toolbar.setHeight("21px");
-		toolbar.setWidth("100%");
+		};
 
 		//LIST
 		list = new FilterableList<TipifiedListItem>(){
@@ -348,7 +379,6 @@ public class TypifiedTextManagementPanel extends View implements TypifiedTextCli
 			@Override
 			public void onResponse(TypifiedText response) {
 
-				//EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Modelo criado."), TYPE.TRAY_NOTIFICATION));
 			}
 
 			@Override
@@ -375,7 +405,6 @@ public class TypifiedTextManagementPanel extends View implements TypifiedTextCli
 
 	@Override
 	public void setTypifiedTexts(List<TypifiedText> texts) {
-		// TODO Auto-generated method stub
 
 	}
 
@@ -386,13 +415,13 @@ public class TypifiedTextManagementPanel extends View implements TypifiedTextCli
 
 			@Override
 			public void onResponse(List<TypifiedText> response) {
-				// TODO Auto-generated method stub
+
 
 			}
 
 			@Override
 			public void onError(Collection<ResponseError> errors) {
-				// TODO Auto-generated method stub
+
 
 			}
 		});
@@ -410,7 +439,6 @@ public class TypifiedTextManagementPanel extends View implements TypifiedTextCli
 		temp.id = text.id;
 		temp.value = text.label;
 		selectedItem = temp;		
-		inNewTypifiedText = true;
 
 	}
 
@@ -421,13 +449,11 @@ public class TypifiedTextManagementPanel extends View implements TypifiedTextCli
 
 			@Override
 			public void onResponse(List<TypifiedText> response) {
-				// TODO Auto-generated method stub
 
 			}
 
 			@Override
 			public void onError(Collection<ResponseError> errors) {
-				// TODO Auto-generated method stub
 
 			}
 		});
@@ -448,7 +474,6 @@ public class TypifiedTextManagementPanel extends View implements TypifiedTextCli
 			setTag(splitted[1]);
 		}
 		this.listId = listId;
-		editable = listId != null && !listId.equals("");
 		list.clear();
 
 		if(this.attachHandlerRegistration == null){
@@ -486,7 +511,6 @@ public class TypifiedTextManagementPanel extends View implements TypifiedTextCli
 	@Override
 	public void setEditable(boolean editable) {
 
-		this.editable = editable;
 		label.setReadOnly(!editable);
 		subject.setReadOnly(!editable);
 		textBody.setReadOnly(!editable);
@@ -509,6 +533,7 @@ public class TypifiedTextManagementPanel extends View implements TypifiedTextCli
 					entry.setSelected(true, true);
 					selectedItem.id = "";
 					selectedItem.value = "";
+					this.setEditable(true);
 				}
 				for(ValueSelectable<TipifiedListItem> s : selected){
 					if(entry.getValue().id.equalsIgnoreCase(s.getValue().id)){
@@ -607,13 +632,11 @@ public class TypifiedTextManagementPanel extends View implements TypifiedTextCli
 
 	@Override
 	public int getTypifiedTextDataVersionNumber() {
-		// TODO Auto-generated method stub
 		return 0;
 	}
 
 	@Override
 	public void setTypifiedTextDataVersionNumber(int number) {
-		// TODO Auto-generated method stub
 
 	}
 
