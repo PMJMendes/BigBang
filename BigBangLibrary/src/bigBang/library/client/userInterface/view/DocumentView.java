@@ -33,7 +33,8 @@ public class DocumentView extends View implements DocumentViewPresenter.Display{
 		wrapper.add(conts);
 		details.details.setSelectableEntries(false);
 		wrapper.add(details.details.getListContent());
-		wrapper.setWidth("100%");
+		
+		setSize("400px", "400px");
 	}
 
 	@Override

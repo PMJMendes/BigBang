@@ -1,6 +1,9 @@
 package bigBang.definitions.client.dataAccess;
 
+import java.util.Collection;
+
 import bigBang.definitions.client.response.ResponseHandler;
+import bigBang.definitions.shared.BigBangProcess;
 import bigBang.definitions.shared.Casualty;
 import bigBang.definitions.shared.Client;
 import bigBang.definitions.shared.InfoOrDocumentRequest;
@@ -71,5 +74,11 @@ public interface ClientProcessBroker extends DataBrokerInterface<Client>{
 	
 	public void cancelInfoOrDocumentRequest(InfoOrDocumentRequest.Cancellation cancellation, ResponseHandler<Void> handler);
 	
-	public void createManagerTransfer(String[] processIds, String[] dataObjectIds, String managerId, ResponseHandler<ManagerTransfer> handler);
+	public void createManagerTransfer(String[] dataObjectIds, String managerId, ResponseHandler<ManagerTransfer> handler);
+
+	void getClientSubProcesses(String clientId,
+			ResponseHandler<Collection<BigBangProcess>> handler);
+	
+	void getClientSubProcess(String clientId, String subProcessId, ResponseHandler<BigBangProcess> handler);
+
 }

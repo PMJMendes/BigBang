@@ -1,12 +1,12 @@
 package bigBang.module.tasksModule.client.userInterface.view;
 
-import org.gwt.mosaic.ui.client.MessageBox;
-
 import bigBang.definitions.shared.TaskStub;
 import bigBang.library.client.HasValueSelectables;
+import bigBang.library.client.ValueSelectable;
 import bigBang.library.client.userInterface.ListHeader;
 import bigBang.library.client.userInterface.view.View;
 import bigBang.module.tasksModule.client.userInterface.TaskSearchPanel;
+import bigBang.module.tasksModule.client.userInterface.TaskSearchPanel.Entry;
 import bigBang.module.tasksModule.client.userInterface.presenter.TasksSectionViewPresenter;
 
 import com.google.gwt.event.logical.shared.AttachEvent;
@@ -95,35 +95,33 @@ public class TasksSectionView extends View implements TasksSectionViewPresenter.
 	
 	@Override
 	public void addTaskListEntry(TaskStub task) {
-		// TODO Auto-generated method stub
-		
+		TaskSearchPanel.Entry entry = new Entry(task);
+		searchPanel.add(0, entry);
 	}
 	
 	@Override
 	public void updateTaskListEntry(TaskStub task) {
-		// TODO Auto-generated method stub
-		
+		for(ValueSelectable<TaskStub> entry : searchPanel){
+			if(entry.getValue().id.equalsIgnoreCase(task.id)){
+				entry.setValue(task);
+				break;
+			}
+		}
 	}
 	
 	@Override
 	public void removeTaskListEntry(String taskId) {
-		// TODO Auto-generated method stub
-		
+		for(ValueSelectable<TaskStub> entry : searchPanel){
+			if(entry.getValue().id.equalsIgnoreCase(taskId)){
+				searchPanel.remove(entry);
+				break;
+			}
+		}
 	}
 
 	@Override
 	public void setScreenDescription(String description) {
 		this.containerHeader.setText(description);
-	}
-
-	@Override
-	public void showErrorOnFetchingTask() {
-		MessageBox.error("", "Não é possível apresentar o item de agenda, neste momento.");
-	}
-
-	@Override
-	public void showErrorOnShowingScreen() {
-		MessageBox.error("", "Não é possível apresentar o item de agenda, neste momento.");
 	}
 
 }

@@ -58,10 +58,7 @@ public class ApplicationController {
 			
 			@Override
 			public void onSuccess() {
-//				ViewPresenter mainScreenPresenter = ViewPresenterFactory.getInstance().getViewPresenter("MAIN_SCREEN");
-//				mainScreenPresenter.go(mainContainer);
-				
-				new MainViewController(ApplicationController.this.mainContainer);
+				new MainViewController(mainContainer);
 				startNotificationsManager();
 			}
 			

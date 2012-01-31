@@ -2,9 +2,11 @@ package bigBang.module.clientModule.client.userInterface.view;
 
 import org.gwt.mosaic.ui.client.ToolButton;
 
+import bigBang.definitions.shared.BigBangProcess;
 import bigBang.definitions.shared.Client;
 import bigBang.definitions.shared.ClientStub;
 import bigBang.definitions.shared.Contact;
+import bigBang.definitions.shared.Document;
 import bigBang.definitions.shared.HistoryItemStub;
 import bigBang.definitions.shared.InsurancePolicyStub;
 import bigBang.library.client.HasEditableValue;
@@ -323,7 +325,17 @@ public class ClientSearchOperationView extends View implements ClientSearchOpera
 	public HasValueSelectables<Contact> getContactsList() {
 		return this.childrenPanel.contactsList;
 	}
+	
+	@Override
+	public HasValueSelectables<Document> getDocumentsList() {
+		return this.childrenPanel.documentsList;
+	}
 
+	@Override
+	public HasValueSelectables<BigBangProcess> getSubProcessesList() {
+		return this.childrenPanel.subProcessesList;
+	}
+	
 	/*## CHILDREN LISTS END ##*/
 	
 }

@@ -149,7 +149,7 @@ public class CreateInsurancePolicyViewPresenter implements ViewPresenter {
 				case MODALITY_CHANGED:
 					view.getInsurancePolicyForm().commit();
 					InsurancePolicy changedPolicy = view.getInsurancePolicyForm().getValue();
-					CreateInsurancePolicyViewPresenter.this.policyBroker.openPolicyResource(changedPolicy, new ResponseHandler<InsurancePolicy>() {
+					CreateInsurancePolicyViewPresenter.this.policyBroker.openPolicyResource(null, new ResponseHandler<InsurancePolicy>() { //TODO
 
 						@Override
 						public void onResponse(InsurancePolicy response) {

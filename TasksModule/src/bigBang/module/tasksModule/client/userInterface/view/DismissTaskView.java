@@ -2,34 +2,30 @@ package bigBang.module.tasksModule.client.userInterface.view;
 
 import com.google.gwt.event.dom.client.HasClickHandlers;
 import com.google.gwt.user.client.ui.Button;
-import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
 import bigBang.definitions.shared.Task;
+import bigBang.library.client.HasEditableValue;
 import bigBang.library.client.userInterface.view.View;
-import bigBang.module.tasksModule.client.userInterface.presenter.DismissTaskPresenter;
+import bigBang.module.tasksModule.client.userInterface.DismissTaskForm;
+import bigBang.module.tasksModule.client.userInterface.presenter.DismissTaskViewPresenter;
 
-public class DismissTaskView extends View implements DismissTaskPresenter.Display{
+public class DismissTaskView extends View implements DismissTaskViewPresenter.Display{
 
-
-	private Label longDescFF;
-	private Label datePFF;
+	private DismissTaskForm form;
 	private Button dismissButton;
-	
 	
 	public DismissTaskView(){
 		VerticalPanel wrapper = new VerticalPanel();
 		initWidget(wrapper);
-		longDescFF = new Label();
-		datePFF = new Label();
-		dismissButton = new Button("Tomei Conhecimento");
-		wrapper.setSpacing(10);
 		wrapper.setSize("100%", "100%");
-		wrapper.add(new Label("Data do Aviso"));
-		wrapper.add(datePFF);
-		wrapper.add(new Label("Descrição"));
-		wrapper.add(longDescFF);
-		wrapper.add(dismissButton);
+		
+		form = new DismissTaskForm();
+		form.setSize("100%", "100%");
+		dismissButton = new Button("Tomei Conhecimento");
+		form.addWidget(dismissButton);
+		
+		wrapper.add(form);
 	}
 	
 	@Override
@@ -38,34 +34,13 @@ public class DismissTaskView extends View implements DismissTaskPresenter.Displa
 	}
 	
 	@Override
-	public void showTask(Task dismissTask) {
-		
-		datePFF.setText(dismissTask.timeStamp);
-		longDescFF.setText(dismissTask.longDesc);
-		
-		
-	}
-
-	@Override
 	public HasClickHandlers getDismissButton() {
-		
 		return dismissButton;
-				
 	}
 	
-	public void clear(){
-		
-		datePFF.setText("");
-		longDescFF.setText("");
-		
-	}
-
 	@Override
-	public void lockView(boolean b) {
-		this.dismissButton.setEnabled(!b);
-		
+	public HasEditableValue<Task> getForm() {
+		return this.form;
 	}
-
-
-
+	
 }

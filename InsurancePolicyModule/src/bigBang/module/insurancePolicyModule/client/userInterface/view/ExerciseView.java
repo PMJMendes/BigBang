@@ -3,8 +3,8 @@ package bigBang.module.insurancePolicyModule.client.userInterface.view;
 import com.google.gwt.user.client.ui.SplitLayoutPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
-import bigBang.definitions.shared.Exercise;
 import bigBang.definitions.shared.InsurancePolicy;
+import bigBang.library.client.HasEditableValue;
 import bigBang.library.client.event.ActionInvokedEvent;
 import bigBang.library.client.event.ActionInvokedEventHandler;
 import bigBang.library.client.userInterface.ListHeader;
@@ -17,9 +17,10 @@ import bigBang.module.insurancePolicyModule.client.userInterface.presenter.Exerc
 
 public class ExerciseView extends View implements ExerciseViewPresenter.Display{
 	
-	ExerciseForm exerciseForm;
-	InsurancePolicyForm policyForm;
-	protected ActionInvokedEventHandler<Action> actionHandler;
+	private ExerciseForm exerciseForm;
+	private InsurancePolicyForm policyForm;
+	private ActionInvokedEventHandler<Action> actionHandler;
+	private ExerciseOperationsToolbar toolbar;	
 	
 	public ExerciseView(){
 		
@@ -55,7 +56,7 @@ public class ExerciseView extends View implements ExerciseViewPresenter.Display{
 		exerciseHeader.setHeight("30px");
 		exerciseFormWrapper.add(exerciseHeader);
 		
-		ExerciseOperationsToolbar toolbar = new ExerciseOperationsToolbar(){
+		toolbar = new ExerciseOperationsToolbar(){
 
 			@Override
 			public void onEditRequest() {
@@ -74,10 +75,10 @@ public class ExerciseView extends View implements ExerciseViewPresenter.Display{
 				actionHandler.onActionInvoked(new ActionInvokedEvent<ExerciseViewPresenter.Action>(Action.CANCEL));
 			}
 			
-			
-			
-			
-			
+			@Override
+			public void onDelete() {
+				actionHandler.onActionInvoked(new ActionInvokedEvent<ExerciseViewPresenter.Action>(Action.DELETE));
+			}
 		};
 		
 		exerciseForm.setSize("100%", "100%");
@@ -93,27 +94,9 @@ public class ExerciseView extends View implements ExerciseViewPresenter.Display{
 	}
 	
 	@Override
-	public void setExercise(Exercise exercise) {
-		exerciseForm.setValue(exercise);
-	}
-
-	@Override
-	public void setInsurancePolicy(InsurancePolicy policy) {
-		policyForm.setValue(policy);
-		
-	}
-
-	@Override
-	public void setReadOnly(boolean readOnly) {
-		exerciseForm.setReadOnly(readOnly);
-		
-	}
-
-	@Override
 	public void registerActionHandler(
 			ActionInvokedEventHandler<Action> actionInvokedEventHandler) {
 		this.actionHandler = actionInvokedEventHandler;
-		
 	}
 
 	@Override
@@ -122,14 +105,28 @@ public class ExerciseView extends View implements ExerciseViewPresenter.Display{
 	}
 
 	@Override
-	public void showError(String string) {
+	public HasEditableValue<InsurancePolicy> getPolicyForm() {
+		return this.policyForm;
 	}
-	
+
 	@Override
-	public void showMessage(String string) {
-		this.showMessage(string);
+	public void clearAllowedPermissions() {
+		this.toolbar.lockAll();
 	}
-	
-	
+
+	@Override
+	public void setSaveModeEnabled(boolean enabled) {
+		this.toolbar.setSaveModeEnabled(enabled);
+	}
+
+	@Override
+	public void allowEdit(boolean allow) {
+		this.toolbar.allowEdit(allow);
+	}
+
+	@Override
+	public void allowDelete(boolean allow) {
+		this.toolbar.allowDelete(allow);
+	}
 
 }

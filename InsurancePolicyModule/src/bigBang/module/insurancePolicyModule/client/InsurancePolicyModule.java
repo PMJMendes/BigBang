@@ -1,7 +1,6 @@
 package bigBang.module.insurancePolicyModule.client;
 
 import bigBang.definitions.client.dataAccess.DataBroker;
-import bigBang.library.client.HasParameters;
 import bigBang.library.client.Module;
 import bigBang.library.client.ViewPresenterFactory;
 import bigBang.library.client.ViewPresenterInstantiator;
@@ -10,11 +9,13 @@ import bigBang.module.insurancePolicyModule.client.dataAccess.ExerciseDataBroker
 import bigBang.module.insurancePolicyModule.client.dataAccess.InsurancePolicyProcessBrokerImpl;
 import bigBang.module.insurancePolicyModule.client.dataAccess.InsuredObjectDataBrokerImpl;
 import bigBang.module.insurancePolicyModule.client.userInterface.presenter.CreateReceiptViewPresenter;
+import bigBang.module.insurancePolicyModule.client.userInterface.presenter.ExerciseViewPresenter;
 import bigBang.module.insurancePolicyModule.client.userInterface.presenter.InsurancePolicyOperationsViewPresenter;
 import bigBang.module.insurancePolicyModule.client.userInterface.presenter.InsurancePolicySearchOperationViewPresenter;
 import bigBang.module.insurancePolicyModule.client.userInterface.presenter.InsurancePolicySectionViewPresenter;
 import bigBang.module.insurancePolicyModule.client.userInterface.presenter.InsuredObjectViewPresenter;
 import bigBang.module.insurancePolicyModule.client.userInterface.view.CreateReceiptView;
+import bigBang.module.insurancePolicyModule.client.userInterface.view.ExerciseView;
 import bigBang.module.insurancePolicyModule.client.userInterface.view.InsurancePolicyOperationsView;
 import bigBang.module.insurancePolicyModule.client.userInterface.view.InsurancePolicySearchOperationView;
 import bigBang.module.insurancePolicyModule.client.userInterface.view.InsurancePolicySectionView;
@@ -73,33 +74,16 @@ public class InsurancePolicyModule implements Module {
 			@Override
 			public ViewPresenter getInstance() {
 				InsuredObjectView view = (InsuredObjectView) GWT.create(InsuredObjectView.class);
-				InsuredObjectViewPresenter presenter = new InsuredObjectViewPresenter(view){
-
-					@Override
-					public void onSave() {
-						// TODO Auto-generated method stub
-
-					}
-
-					@Override
-					public void onCancel() {
-						// TODO Auto-generated method stub
-
-					}
-
-					@Override
-					public void onDelete() {
-						// TODO Auto-generated method stub
-
-					}
-
-					@Override
-					public void setParameters(HasParameters parameterHolder) {
-						// TODO Auto-generated method stub
-
-					}
-
-				};
+				InsuredObjectViewPresenter presenter = new InsuredObjectViewPresenter(view);
+				return presenter;
+			}
+		});
+		ViewPresenterFactory.getInstance().registerViewPresenterInstantiator("INSURANCE_POLICY_EXERCISE", new ViewPresenterInstantiator() {
+			
+			@Override
+			public ViewPresenter getInstance() {
+				ExerciseView view = (ExerciseView) GWT.create(ExerciseView.class);
+				ViewPresenter presenter = new ExerciseViewPresenter(view);
 				return presenter;
 			}
 		});

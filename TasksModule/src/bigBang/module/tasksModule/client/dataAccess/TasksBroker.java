@@ -10,6 +10,7 @@ public interface TasksBroker extends DataBrokerInterface<Task> {
 
 	public void getTask(String id, ResponseHandler<Task> handler);
 	public void getPendingTasksCount(ResponseHandler<Integer> handler);
+	public void dismissTask(String taskId, ResponseHandler<Void> handler);
 	public SearchDataBroker<TaskStub> getSearchBroker();
 
 }

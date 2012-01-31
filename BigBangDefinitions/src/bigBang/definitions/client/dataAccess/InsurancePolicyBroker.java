@@ -3,19 +3,17 @@ package bigBang.definitions.client.dataAccess;
 import java.util.Collection;
 
 import bigBang.definitions.client.response.ResponseHandler;
-import bigBang.definitions.shared.Exercise;
 import bigBang.definitions.shared.InsurancePolicy;
 import bigBang.definitions.shared.InsurancePolicyStub;
-import bigBang.definitions.shared.InsuredObject;
 import bigBang.definitions.shared.Receipt;
 
 public interface InsurancePolicyBroker extends DataBrokerInterface<InsurancePolicy> {
 
-	public boolean isTemp(InsurancePolicy policy);
+	public boolean isTemp(String policyId);
 
 	public void getPolicy(String policyId, ResponseHandler<InsurancePolicy> handler);
 
-	public void openPolicyResource(InsurancePolicy policy, ResponseHandler<InsurancePolicy> handler);
+	public void openPolicyResource(String policyId, ResponseHandler<InsurancePolicy> handler);
 
 	public void commitPolicy(InsurancePolicy policy, ResponseHandler<InsurancePolicy> handler);
 
@@ -35,22 +33,14 @@ public interface InsurancePolicyBroker extends DataBrokerInterface<InsurancePoli
 
 	public void remapItemId(String oldId, String newId, boolean inScratchPad);
 	
-	public String getTempMapping(String id);
-
 	public SearchDataBroker<InsurancePolicyStub> getSearchBroker();
 
-	//Insured Objects
-	public void createInsuredObject(String policyId, InsuredObject object, ResponseHandler<InsuredObject> handler);
+	public void discardTemp(String policyId);
 
-	public void updateInsuredObject(String policyId, InsuredObject object, ResponseHandler<InsuredObject> handler);
+	void validatePolicy(String policyId, ResponseHandler<Void> handler);
 
-	public void removeInsuredObject(String policyId, InsuredObject object, ResponseHandler<Void> handler);
+	public String getEffectiveId(String ownerId);
 
-	//Exercises
-	public void createExercise(String policyId, Exercise exercise, ResponseHandler<Exercise> handler);
-
-	public void updateExercise(String policyId, Exercise exercise, ResponseHandler<Exercise> handler);
-
-	public void removeExercise(String policyId, String exerciseId, ResponseHandler<Void> handler);
-
+	public String getFinalMapping(String ownerId);
+	
 }

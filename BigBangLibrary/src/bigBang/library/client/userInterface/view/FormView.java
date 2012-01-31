@@ -13,7 +13,6 @@ import com.google.gwt.dom.client.Style.Position;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.event.logical.shared.AttachEvent;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
@@ -78,6 +77,7 @@ public abstract class FormView<T> extends View implements Validatable, HasEditab
 		topToolbar.add(topButtonWrapper);
 		
 		mainWrapper.add(topToolbar, 0, 0);
+		setReadOnly(true);
 	}
 	
 	@Override

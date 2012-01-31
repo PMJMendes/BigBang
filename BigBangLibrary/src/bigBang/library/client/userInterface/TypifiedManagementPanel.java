@@ -1,10 +1,9 @@
 package bigBang.library.client.userInterface;
 
-import java.util.List;
-
 import com.google.gwt.user.client.ui.Widget;
 
 import bigBang.definitions.shared.TipifiedListItem;
+import bigBang.library.client.dataAccess.TypifiedListBroker;
 
 public interface  TypifiedManagementPanel {
 
@@ -25,5 +24,7 @@ public interface  TypifiedManagementPanel {
 	public void setTag(String tag);
 	
 	public String getTag();
+
+	void setTypifiedDataBroker(TypifiedListBroker broker);
 
 }

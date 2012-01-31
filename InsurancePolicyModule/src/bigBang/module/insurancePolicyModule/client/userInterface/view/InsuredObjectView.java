@@ -20,6 +20,7 @@ public class InsuredObjectView extends View implements InsuredObjectViewPresente
 
 	protected InsurancePolicyForm insurancePolicyForm;
 	protected InsuredObjectForm form;
+	private InsuredObjectOperationsToolbar toolbar;
 	protected ActionInvokedEventHandler<Action> actionHandler;
 	
 	public InsuredObjectView(){
@@ -53,7 +54,7 @@ public class InsuredObjectView extends View implements InsuredObjectViewPresente
 		objectHeader.setHeight("30px");
 		objectFormWrapper.add(objectHeader);
 
-		InsuredObjectOperationsToolbar toolbar = new InsuredObjectOperationsToolbar(){
+		this.toolbar = new InsuredObjectOperationsToolbar(){
 
 			@Override
 			public void onEditRequest() {
@@ -67,6 +68,11 @@ public class InsuredObjectView extends View implements InsuredObjectViewPresente
 
 			@Override
 			public void onCancelRequest() {
+				actionHandler.onActionInvoked(new ActionInvokedEvent<InsuredObjectViewPresenter.Action>(Action.CANCEL_EDIT));
+			}
+
+			@Override
+			public void onDeleteRequest() {
 				actionHandler.onActionInvoked(new ActionInvokedEvent<InsuredObjectViewPresenter.Action>(Action.DELETE));
 			}
 		};
@@ -83,7 +89,9 @@ public class InsuredObjectView extends View implements InsuredObjectViewPresente
 	}
 	
 	@Override
-	protected void initializeView() {}
+	protected void initializeView() {
+		return;
+	}
 
 	@Override
 	public HasEditableValue<InsuredObject> getInsuredObjectForm() {
@@ -96,21 +104,29 @@ public class InsuredObjectView extends View implements InsuredObjectViewPresente
 	}
 
 	@Override
-	public void setInsurancePolicy(InsurancePolicy policy) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void setInsuredObject(InsuredObject object) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
 	public void registerActionHandler(
 			ActionInvokedEventHandler<Action> actionInvokedEventHandler) {
 		this.actionHandler = actionInvokedEventHandler;
+	}
+
+	@Override
+	public void clearAllowedPermissions() {
+		this.toolbar.lockAll();
+	}
+
+	@Override
+	public void allowDelete(boolean allow) {
+		this.toolbar.allowDelete(allow);
+	}
+
+	@Override
+	public void setSaveModeEnabled(boolean enabled) {
+		toolbar.setSaveModeEnabled(enabled);
+	}
+
+	@Override
+	public void allowEdit(boolean allow) {
+		toolbar.allowEdit(allow);
 	}
 	
 }

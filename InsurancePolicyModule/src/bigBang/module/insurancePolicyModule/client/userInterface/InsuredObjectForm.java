@@ -3,6 +3,7 @@ package bigBang.module.insurancePolicyModule.client.userInterface;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
@@ -550,6 +551,7 @@ public class InsuredObjectForm extends FormView<InsuredObject> {
 			for(int i = 0; i < fields.length; i++) {
 				FixedField field = fields[i];
 				DynFormField formField = new DynFormField(field);
+				formField.setReadOnly(this.isReadOnly());
 				formField.setFieldWidth("175px");
 				formField.setValue(field.value);
 				this.dynamicFixedHeaderFields.add(formField);
@@ -560,11 +562,13 @@ public class InsuredObjectForm extends FormView<InsuredObject> {
 
 	protected void clearDynamicFixedHeaderData(){
 		this.dynamicHeaderSection.unregisterAllFormFields();
-		for(DynFormField f : this.dynamicFixedHeaderFields){
-			this.dynamicFixedHeaderFields.remove(f);
-			f.removeFromParent();
+		Iterator<DynFormField> iterator = this.dynamicFixedHeaderFields.iterator();
+		
+		while(iterator.hasNext()){
+			DynFormField field = iterator.next();
+			field.removeFromParent();
+			iterator.remove();
 		}
-		this.dynamicFixedHeaderFields.clear();	
 	}
 
 	protected FixedField[] getDynamicFixedFieldHeaderData(){
@@ -636,6 +640,7 @@ public class InsuredObjectForm extends FormView<InsuredObject> {
 
 		this.dynamicHeaderSection.addWidget(this.dynamicVariableHeaderDataTable, false);
 		this.dynamicVariableHeaderDataTable.render();
+		this.dynamicVariableHeaderDataTable.setReadOnly(this.isReadOnly());
 	}
 
 	protected void clearDynamicVariableHeaderData(){
@@ -668,6 +673,7 @@ public class InsuredObjectForm extends FormView<InsuredObject> {
 			for(int j = 0; j < covData.fixedFields.length; j++){
 				FixedField field = covData.fixedFields[j];
 				DynFormField formField = new DynFormField(field);
+				formField.setReadOnly(this.isReadOnly());
 				formField.setFieldWidth("175px");
 				formField.setValue(field.value);
 				section.addFormField(formField, j != (covData.fixedFields.length - 1));
@@ -719,6 +725,7 @@ public class InsuredObjectForm extends FormView<InsuredObject> {
 					}
 				}
 				table.render();
+				table.setReadOnly(this.isReadOnly());
 				section.addWidget(table, false);
 				this.coverageTables.put(covData.coverageId, table);
 			}
@@ -750,6 +757,15 @@ public class InsuredObjectForm extends FormView<InsuredObject> {
 		case OBSOLETE:
 			this.type.setReadOnly(true);
 			break;
+		}
+	}
+	
+	@Override
+	public void setReadOnly(boolean readOnly) {
+		super.setReadOnly(readOnly);
+		this.dynamicVariableHeaderDataTable.setReadOnly(readOnly);
+		for(TwoKeyTableView table : this.coverageTables.values()){
+			table.setReadOnly(readOnly);
 		}
 	}
 

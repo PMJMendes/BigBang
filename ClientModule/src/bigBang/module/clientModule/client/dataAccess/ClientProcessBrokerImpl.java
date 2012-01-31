@@ -1,6 +1,8 @@
 package bigBang.module.clientModule.client.dataAccess;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 import bigBang.definitions.client.dataAccess.ClientProcessBroker;
 import bigBang.definitions.client.dataAccess.ClientProcessDataBrokerClient;
@@ -10,6 +12,7 @@ import bigBang.definitions.client.dataAccess.SearchDataBroker;
 import bigBang.definitions.client.response.ResponseError;
 import bigBang.definitions.client.response.ResponseHandler;
 import bigBang.definitions.shared.BigBangConstants;
+import bigBang.definitions.shared.BigBangProcess;
 import bigBang.definitions.shared.Casualty;
 import bigBang.definitions.shared.Client;
 import bigBang.definitions.shared.InfoOrDocumentRequest;
@@ -22,6 +25,8 @@ import bigBang.definitions.shared.RiskAnalysis;
 import bigBang.library.client.BigBangAsyncCallback;
 import bigBang.library.client.EventBus;
 import bigBang.library.client.event.OperationWasExecutedEvent;
+import bigBang.library.interfaces.BigBangProcessService;
+import bigBang.library.interfaces.BigBangProcessServiceAsync;
 import bigBang.library.interfaces.InfoOrDocumentRequestService;
 import bigBang.library.interfaces.InfoOrDocumentRequestServiceAsync;
 import bigBang.module.clientModule.interfaces.ClientService;
@@ -30,6 +35,7 @@ import bigBang.module.clientModule.interfaces.ClientServiceAsync;
 public class ClientProcessBrokerImpl extends DataBroker<Client> implements ClientProcessBroker {
 
 	protected ClientServiceAsync service;
+	protected BigBangProcessServiceAsync subProcessesService;
 	protected SearchDataBroker<ClientStub> searchBroker;
 	protected boolean requiresRefresh = true;
 
@@ -39,6 +45,7 @@ public class ClientProcessBrokerImpl extends DataBroker<Client> implements Clien
 
 	public ClientProcessBrokerImpl(ClientServiceAsync service) {
 		this.service = service;
+		this.subProcessesService = BigBangProcessService.Util.getInstance();
 		this.dataElementId = BigBangConstants.EntityIds.CLIENT;
 		this.searchBroker = new ClientSearchDataBroker(this.service);
 	}
@@ -69,7 +76,6 @@ public class ClientProcessBrokerImpl extends DataBroker<Client> implements Clien
 					});
 					super.onFailure(caught);
 				}
-
 			});
 		}
 	}
@@ -175,8 +181,16 @@ public class ClientProcessBrokerImpl extends DataBroker<Client> implements Clien
 			public void onSuccess(RiskAnalysis result) {
 				//TODO
 				handler.onResponse(result);
-				
+
 				EventBus.getInstance().fireEvent(new OperationWasExecutedEvent(BigBangConstants.OperationIds.ClientProcess.CREATE_RISK_ANALISYS, clientId));				
+			}
+
+			@Override
+			public void onFailure(Throwable caught) {
+				handler.onError(new String[]{
+						new String("Could not create new Risk analisys")	
+				});
+				super.onFailure(caught);
 			}
 		});
 	}
@@ -190,8 +204,15 @@ public class ClientProcessBrokerImpl extends DataBroker<Client> implements Clien
 			public void onSuccess(QuoteRequest result) {
 				//TODO
 				handler.onResponse(result);
-				
 				EventBus.getInstance().fireEvent(new OperationWasExecutedEvent(BigBangConstants.OperationIds.ClientProcess.CREATE_QUOTE_REQUEST, clientId));
+			}
+
+			@Override
+			public void onFailure(Throwable caught) {
+				handler.onError(new String[]{
+						new String("Could not create new Quote Request")	
+				});
+				super.onFailure(caught);
 			}
 		});
 	}
@@ -205,8 +226,16 @@ public class ClientProcessBrokerImpl extends DataBroker<Client> implements Clien
 			public void onSuccess(Casualty result) {
 				//TODO
 				handler.onResponse(result);
-				
+
 				EventBus.getInstance().fireEvent(new OperationWasExecutedEvent(BigBangConstants.OperationIds.ClientProcess.CREATE_CASUALTY, clientId));
+			}
+
+			@Override
+			public void onFailure(Throwable caught) {
+				handler.onError(new String[]{
+						new String("Could not create new Casualty")	
+				});
+				super.onFailure(caught);			
 			}
 		});
 	}
@@ -223,10 +252,17 @@ public class ClientProcessBrokerImpl extends DataBroker<Client> implements Clien
 				for(DataBrokerClient<Client> bc : getClients()){
 					((ClientProcessDataBrokerClient) bc).updateClient(result);
 					((ClientProcessDataBrokerClient) bc).setDataVersionNumber(BigBangConstants.EntityIds.CLIENT, getCurrentDataVersion());
-					
-					EventBus.getInstance().fireEvent(new OperationWasExecutedEvent(BigBangConstants.OperationIds.ClientProcess.MERGE_CLIENT, result.id));
 				}
 				handler.onResponse(result);
+				EventBus.getInstance().fireEvent(new OperationWasExecutedEvent(BigBangConstants.OperationIds.ClientProcess.MERGE_CLIENT, result.id));
+			}
+
+			@Override
+			public void onFailure(Throwable caught) {
+				handler.onError(new String[]{
+						new String("Could not merge the clients")	
+				});
+				super.onFailure(caught);
 			}
 		});
 	}
@@ -239,10 +275,16 @@ public class ClientProcessBrokerImpl extends DataBroker<Client> implements Clien
 
 			@Override
 			public void onSuccess(InfoOrDocumentRequest result) {
-				//TODO
 				handler.onResponse(result);
-				
-//				EventBus.getInstance().fireEvent(new OperationWasExecutedEvent(BigBangConstants.OperationIds.ClientProcess.CREATE_INFO_REQUEST, result.));
+				EventBus.getInstance().fireEvent(new OperationWasExecutedEvent(BigBangConstants.OperationIds.ClientProcess.CREATE_INFO_REQUEST, result.id));
+			}
+
+			@Override
+			public void onFailure(Throwable caught) {
+				handler.onError(new String[]{
+						new String("Could not create new Info or Document Request")	
+				});
+				super.onFailure(caught);
 			}
 		});
 	}
@@ -255,8 +297,16 @@ public class ClientProcessBrokerImpl extends DataBroker<Client> implements Clien
 
 			@Override
 			public void onSuccess(InfoOrDocumentRequest result) {
-				//TODO
 				handler.onResponse(result);
+				//				EventBus.getInstance().fireEvent(new OperationWasExecutedEvent(BigBangConstants.OperationIds.ClientProcess., result.id)); TODO
+			}
+
+			@Override
+			public void onFailure(Throwable caught) {
+				handler.onError(new String[]{
+						new String("Could not repeat the request")	
+				});
+				super.onFailure(caught);
 			}
 		});
 	}
@@ -272,6 +322,14 @@ public class ClientProcessBrokerImpl extends DataBroker<Client> implements Clien
 				// TODO Auto-generated method stub
 				handler.onResponse(result);
 			}
+
+			@Override
+			public void onFailure(Throwable caught) {
+				handler.onError(new String[]{
+						new String("Could not receive the info or document request response")	
+				});
+				super.onFailure(caught);
+			}
 		});
 	}
 
@@ -285,23 +343,31 @@ public class ClientProcessBrokerImpl extends DataBroker<Client> implements Clien
 			public void onSuccess(Void result) {
 				// TODO Auto-generated method stub
 			}
+
+			@Override
+			public void onFailure(Throwable caught) {
+				handler.onError(new String[]{
+						new String("Could not cancel Info or Document request")	
+				});
+				super.onFailure(caught);
+			}
 		});
 	}
 
 	@Override
-	public void createManagerTransfer(String[] processIds, String [] dataObjectIds, String managerId,
+	public void createManagerTransfer(String[] dataObjectIds, String managerId,
 			final ResponseHandler<ManagerTransfer> handler) {
 		ManagerTransfer transfer = new ManagerTransfer();
 		transfer.newManagerId = managerId;
-		transfer.managedProcessIds = processIds;
 		transfer.dataObjectIds = dataObjectIds;
 
-		if(processIds.length > 1){
+		if(dataObjectIds.length > 1){
 			service.massCreateManagerTransfer(transfer, new BigBangAsyncCallback<ManagerTransfer>() {
 
 				@Override
 				public void onSuccess(ManagerTransfer result) {
 					for(int i = 0; i < result.dataObjectIds.length; i++) {
+						requireDataRefresh();
 						getClient(result.dataObjectIds[i], new ResponseHandler<Client>(){
 
 							@Override
@@ -314,12 +380,22 @@ public class ClientProcessBrokerImpl extends DataBroker<Client> implements Clien
 
 							@Override
 							public void onError(Collection<ResponseError> errors) {
+								return;
 							}
 						});
 					}
 					handler.onResponse(result);
 					EventBus.getInstance().fireEvent(new OperationWasExecutedEvent(BigBangConstants.OperationIds.ClientProcess.CREATE_MANAGER_TRANSFER, result.newManagerId));
 				}
+
+				@Override
+				public void onFailure(Throwable caught) {
+					handler.onError(new String[]{
+							new String("Could not create the manager transfer")	
+					});
+					super.onFailure(caught);
+				}
+
 			});
 		}else{
 			service.createManagerTransfer(transfer, new BigBangAsyncCallback<ManagerTransfer>() {
@@ -339,14 +415,74 @@ public class ClientProcessBrokerImpl extends DataBroker<Client> implements Clien
 
 							@Override
 							public void onError(Collection<ResponseError> errors) {
+								return;
 							}
 						});
 					}
 					handler.onResponse(result);
 					EventBus.getInstance().fireEvent(new OperationWasExecutedEvent(BigBangConstants.OperationIds.ClientProcess.CREATE_MANAGER_TRANSFER, result.newManagerId));
 				}
+
+				@Override
+				public void onFailure(Throwable caught) {
+					handler.onError(new String[]{
+							new String("Could not create manager transfer")	
+					});
+					super.onFailure(caught);
+				}
 			});
 		}
+	}
+
+	@Override
+	public void getClientSubProcesses(String clientId, final ResponseHandler<Collection<BigBangProcess>> handler){
+		this.subProcessesService.getSubProcesses(clientId, new BigBangAsyncCallback<BigBangProcess[]>() {
+
+			@Override
+			public void onSuccess(BigBangProcess[] result) {
+				List<BigBangProcess> processesList = new ArrayList<BigBangProcess>();
+				for(int i = 0; i < result.length; i++) {
+					processesList.add(result[i]);
+				}
+				handler.onResponse(processesList);
+			}
+
+			@Override
+			public void onFailure(Throwable caught) {
+				handler.onError(new String[]{
+						new String("Could not get the client subprocesses")
+				});
+				super.onFailure(caught);
+			}
+		});
+	}
+
+	@Override
+	public void getClientSubProcess(String clientId, final String subProcessId,
+			final ResponseHandler<BigBangProcess> handler) {
+		this.subProcessesService.getSubProcesses(clientId, new BigBangAsyncCallback<BigBangProcess[]>() {
+
+			@Override
+			public void onSuccess(BigBangProcess[] result) {
+				for(int i = 0; i < result.length; i++){
+					if(result[i].dataId.equalsIgnoreCase(subProcessId)){
+						handler.onResponse(result[i]);
+						return;
+					}
+				}
+				handler.onError(new String[]{
+						new String("Could not get the client subprocess")
+				});
+			}
+
+			@Override
+			public void onFailure(Throwable caught) {
+				handler.onError(new String[]{
+						new String("Could not get the client subprocess")
+				});
+				super.onFailure(caught);
+			}
+		});
 	}
 
 	@Override

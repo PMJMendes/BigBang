@@ -6,6 +6,8 @@ package bigBang.definitions.shared;
 public class BigBangConstants {
 
 	public static class EntityIds {
+		public static final String PROCESS = "1967E563-01AD-4683-9D66-9E1700B7DF07";
+
 		public static final String CLIENT_GROUP  = "DC89D454-CCCC-441E-BCE3-9EE600AFCCCD";
 		public static final String CLIENT = "D535A99E-149F-44DC-A28B-9EE600B240F5";
 		public static final String COST_CENTER = "4AF891C6-707B-43AE-98C3-9EB100C0419E";
@@ -40,6 +42,12 @@ public class BigBangConstants {
 		public static final String CASUALTY = "TODO";
 		public static final String COMPLAINT = "TODO";
 		public static final String EXPENSE = "TODO";
+
+		public static final String INFO_REQUEST = "TODO";
+
+		public static final String INSURANCE_POLICY_EXERCISES = "DEE32F69-B33D-4427-AD5B-9F9C001607F2";
+		public static final String INSURANCE_POLICY_INSURED_OBJECTS = "3A3316D2-9D7C-4FD1-8486-9F9C0012E119";
+		
 	}
 
 	public static class TypifiedListIds {
@@ -53,6 +61,7 @@ public class BigBangConstants {
 		public static final String CONTACT_TYPE = "228F6A73-1335-4C99-8DD0-9EEE012964BA";
 		public static final String CONTACT_DETAILS_TYPE = "03C5B78E-D71C-49F2-A079-9EC40111DCC0";
 		public static final String TYPIFIED_TEXT = "0F218912-1626-4A2C-BF68-9FE100F72735";
+		public static final String REQUEST_TYPE = "B437ECD7-11D2-4C55-B6DD-9FE80101ECC8";
 	}
 
 	public static class OperationIds {
@@ -77,6 +86,7 @@ public class BigBangConstants {
 		public static class ManagerTransfer{
 			public static final String CREATE_MANAGER_TRANSFER = "C75EEC27-780C-4C0C-9FD7-9F090142CB10";
 			public static final String CANCEL_MANAGER_TRANSFER = "C8FCD8FD-B616-4252-942F-9F650155B3BC";
+			public static final String ACCEPT_MANAGER_TRANSFER = "8B3AB41F-76F6-4311-8600-9F65014CF682";
 		}
 
 		public static class InsurancePolicyProcess {

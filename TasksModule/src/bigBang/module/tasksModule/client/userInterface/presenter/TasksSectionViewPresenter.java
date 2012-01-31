@@ -7,13 +7,17 @@ import bigBang.definitions.client.response.ResponseHandler;
 import bigBang.definitions.shared.BigBangConstants;
 import bigBang.definitions.shared.Task;
 import bigBang.definitions.shared.TaskStub;
+import bigBang.definitions.shared.TaskStub.Status;
 import bigBang.library.client.EventBus;
 import bigBang.library.client.HasOperationPermissions;
 import bigBang.library.client.HasParameters;
 import bigBang.library.client.HasValueSelectables;
+import bigBang.library.client.Notification;
+import bigBang.library.client.Notification.TYPE;
 import bigBang.library.client.ValueSelectable;
 import bigBang.library.client.ViewPresenterController;
 import bigBang.library.client.dataAccess.DataBrokerManager;
+import bigBang.library.client.event.NewNotificationEvent;
 import bigBang.library.client.event.OperationWasExecutedEvent;
 import bigBang.library.client.event.OperationWasExecutedEventHandler;
 import bigBang.library.client.event.SelectionChangedEvent;
@@ -23,7 +27,6 @@ import bigBang.library.client.history.NavigationHistoryManager;
 import bigBang.library.client.userInterface.presenter.ViewPresenter;
 import bigBang.module.tasksModule.client.OperationToViewPresenterIdMapper;
 import bigBang.module.tasksModule.client.dataAccess.TasksBroker;
-import bigBang.module.tasksModule.client.dataAccess.TasksDataBrokerClient;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.HasWidgets;
@@ -40,23 +43,19 @@ public class TasksSectionViewPresenter implements ViewPresenter {
 		void addTaskListEntry(TaskStub task);
 		void updateTaskListEntry(TaskStub task);
 		void removeTaskListEntry(String taskId);
-		
+
 		void clear();
 		void setScreenDescription(String description);
-		void showErrorOnFetchingTask();
-		void showErrorOnShowingScreen();
 	}
 
 	private Display view;
 	protected TasksBroker broker;
-	protected TasksDataBrokerClient brokerClient;
 	protected Task currentTask;
+	private ViewPresenterController controller;
 	private boolean bound = false;
 
 	public TasksSectionViewPresenter(Display view) {
 		this.broker = (TasksBroker)DataBrokerManager.Util.getInstance().getBroker(BigBangConstants.EntityIds.TASK);
-		this.brokerClient = getTasksBrokerClient();
-		this.broker.registerClient(brokerClient);
 		setView((UIObject) view);
 	}
 
@@ -72,59 +71,66 @@ public class TasksSectionViewPresenter implements ViewPresenter {
 		container.add(this.view.asWidget());
 		initializeController();
 	}
-	
+
 	private void initializeController(){
-		new ViewPresenterController(view.getOperationViewContainer()) {
+		this.controller = new ViewPresenterController(view.getOperationViewContainer()) {
 
 			@Override
 			protected void onNavigationHistoryEvent(NavigationHistoryItem historyItem) {
-				onParameters(historyItem);
+				return;
 			}
-			
+
 			@Override
 			public void onParameters(HasParameters parameters) {
-				if(parameters.getParameter("section").equalsIgnoreCase("tasks")){
+				String section = parameters.getParameter("section");
+				section = section == null ? new String() : section;
+				
+				if(section.equalsIgnoreCase("tasks")){
 					String taskId = parameters.getParameter("taskid");
-					if(taskId == null){
+					taskId = taskId == null ? new String() : taskId;
+					if(taskId.isEmpty()){
+						currentTask = null;
 						clearView();
 					}else{
 						showTaskWithId(taskId, parameters);
 					}
 				}
 			}
-			
+
 			private void showTaskWithId(String taskId, final HasParameters parameters){
 				TasksSectionViewPresenter.this.broker.getTask(taskId, new ResponseHandler<Task>() {
 
 					@Override
 					public void onResponse(Task response) {
-						String presenterId = getViewPresenterIdForTask(response);
-						if(presenterId == null){
-							view.showErrorOnShowingScreen();
-							view.setScreenDescription("");
-							clearPresentation();
+						currentTask = response;
+						if(response.status == Status.COMPLETED){
+							view.setScreenDescription("Notificação");
+							present("TASKS_DISMISS", parameters, true);
 						}else{
-							view.setScreenDescription(response.description);
-							parameters.setParameter("id", response.objectIds[0]);
-							
-							ViewPresenter presenter = present(presenterId, parameters, true);
-							
-							if(presenter instanceof HasOperationPermissions){
-								((HasOperationPermissions) presenter).setPermittedOperations(response.operationIds);
-							}else{
-								GWT.log("The ViewPresenter with id " + presenterId + " does not implement HasOperationPermissions");
+							String presenterId = getViewPresenterIdForTask(response);
+							if(presenterId == null){
+								onGetScreenFailed();
+							}else {
+								view.setScreenDescription(response.description);
+								parameters.setParameter("id", response.objectIds[0]);
+								ViewPresenter presenter = present(presenterId, parameters, true);
+
+								if(presenter instanceof HasOperationPermissions){
+									((HasOperationPermissions) presenter).setPermittedOperations(response.operationIds);
+								}else{
+									GWT.log("The ViewPresenter with id " + presenterId + " does not implement HasOperationPermissions");
+								}
 							}
 						}
 					}
 
 					@Override
 					public void onError(Collection<ResponseError> errors) {
-						view.showErrorOnFetchingTask();
-						clearView();
+						onGetTaskFailed();
 					}
 				});
 			}
-			
+
 			private void clearView(){
 				Collection<ValueSelectable<TaskStub>> selected = view.getTaskList().getSelected();
 				if(!selected.isEmpty()){
@@ -137,21 +143,14 @@ public class TasksSectionViewPresenter implements ViewPresenter {
 	}
 
 	private String getViewPresenterIdForTask(Task task){
-		String result = null;
-		for(int i = 0; i < task.operationIds.length; i++) {
-			if(result != null && !result.equalsIgnoreCase(task.operationIds[i])){
-				GWT.log("There is more than one presenter implementation for the operations required by the task with id:" + task.id);
-			}
-			result = OperationToViewPresenterIdMapper.getViewPresenterIdForOperationId(task.operationIds[i]);
-		}
-		return result;
+		return OperationToViewPresenterIdMapper.getViewPresenterIdForOperationId(task.operationIds[0]);
 	}
 
 	@Override
 	public void setParameters(HasParameters parameterHolder) {
-		return;
+		this.controller.onParameters(parameterHolder);
 	}
-	
+
 	public void bind() {
 		if(bound){return;}
 		bound = true;
@@ -164,9 +163,9 @@ public class TasksSectionViewPresenter implements ViewPresenter {
 				TaskStub selectedValue = selected == null ? null : selected.getValue();
 				NavigationHistoryItem navigationItem = NavigationHistoryManager.getInstance().getCurrentState();
 				if(selectedValue == null){
-					navigationItem.removeParameter("taskId");
+					navigationItem.removeParameter("taskid");
 				}else{
-					navigationItem.setParameter("taskId", selectedValue.id);
+					navigationItem.setParameter("taskid", selectedValue.id);
 				}
 				NavigationHistoryManager.getInstance().go(navigationItem);
 			}
@@ -177,53 +176,34 @@ public class TasksSectionViewPresenter implements ViewPresenter {
 
 			@Override
 			public void onOperationWasExecuted(String operationId, String processId) {
-				if(currentTask != null){
-					//TODO CHECKS
-					broker.getTask(currentTask.id, new ResponseHandler<Task>() {
-
-						@Override
-						public void onResponse(Task response) {
-						}
-
-						@Override
-						public void onError(Collection<ResponseError> errors) {}
-					});
-				}
+				operationWasExecuted(operationId, processId);
 			}
 		});
 	}
-
-	private TasksDataBrokerClient getTasksBrokerClient(){
-		return new TasksDataBrokerClient() {
-			
-			private int version;
-
-			@Override
-			public void setDataVersionNumber(String dataElementId, int number) {
-				this.version = number;
+	
+	private void operationWasExecuted(String operationId, String objectId){
+		if(currentTask != null && currentTask.objectIds[0].equalsIgnoreCase(objectId)){
+			for(int i = 0; i < currentTask.objectIds.length; i++) {
+				if(currentTask.operationIds[i].equalsIgnoreCase(operationId)){
+					view.removeTaskListEntry(currentTask.id);
+					break;
+				}
 			}
+		}
+	}
 
-			@Override
-			public int getDataVersion(String dataElementId) {
-				return this.version;
-			}
-
-			@Override
-			public void updateTask(Task task) {
-				//TODO
-			}
-
-			@Override
-			public void removeTask(String id) {
-				//TODO
-			}
-
-			@Override
-			public void addTask(Task task) {
-				// TODO Auto-generated method stub
-
-			}
-		};
+	private void onGetTaskFailed(){
+		EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não é possível apresentar o item de agenda, neste momento"), TYPE.ALERT_NOTIFICATION));
+		NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
+		item.removeParameter("taskid");
+		NavigationHistoryManager.getInstance().go(item);
+	}
+	
+	private void onGetScreenFailed(){
+		EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não é possível apresentar o item de agenda, neste momento"), TYPE.ALERT_NOTIFICATION));
+		NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
+		item.removeParameter("taskid");
+		NavigationHistoryManager.getInstance().go(item);
 	}
 
 }

@@ -17,7 +17,6 @@ public abstract class ViewPresenterController {
 	protected Map<String, ViewPresenter> presenters;
 	protected HasWidgets container;
 	protected NavigationHistoryItem dependencies;
-	private String currentPresenterId;
 	private ViewPresenter currentPresenter;
 
 	public ViewPresenterController(){
@@ -53,7 +52,7 @@ public abstract class ViewPresenterController {
 
 	protected void clearPresentation(){
 		this.container.clear();
-		this.currentPresenterId = null;
+		this.currentPresenter = null;
 	}
 
 	protected ViewPresenter present(String presenterId, HasParameters parameters){
@@ -64,37 +63,32 @@ public abstract class ViewPresenterController {
 		return this.present(presenterId, parameters, this.container, keepState);
 	}
 
-	protected ViewPresenter present(final String presenterId, final HasParameters parameters, final HasWidgets container, final boolean keepState){
+	protected ViewPresenter present(String presenterId, final HasParameters parameters, final HasWidgets container, final boolean keepState){
 		if(container == null){
 			throw new RuntimeException("Could not present the screen. There is no defined container.");
 		}
 
 		ViewPresenter result = null;
-		
-		if(!keepState || currentPresenterId == null || !currentPresenterId.equalsIgnoreCase(presenterId)){
+		presenterId = presenterId.toUpperCase();
+		boolean hasPresenterCached = this.presenters.containsKey(presenterId);
 
-			ViewPresenter presenter = null;
-			if(keepState && presenters.containsKey(presenterId)){
-				//Gets an already bound instance
-				presenter = presenters.get(presenterId);			
-			}else{
-				//Gets a new instance
-				presenter = ViewPresenterFactory.getInstance().getViewPresenter(presenterId);
-				presenters.put(presenterId, presenter);
-			}
-			if(this.currentPresenter != presenter){
-				presenter.go(container);
-			}
-			presenter.setParameters(parameters);
-			currentPresenterId = presenterId;
-			result = presenter;
-
-		}else if(currentPresenterId != null && currentPresenterId.equalsIgnoreCase(presenterId)){
+		if(keepState && hasPresenterCached){
+			//Keeps the instance
 			ViewPresenter presenter = presenters.get(presenterId);
-			presenter.setParameters(parameters);
+			result = presenter;
+		}else{
+			//Gets a new instance
+			ViewPresenter presenter = null;
+			presenter = ViewPresenterFactory.getInstance().getViewPresenter(presenterId);
+			presenters.put(presenterId, presenter);
 			result = presenter;
 		}
-		this.currentPresenter = result;
+
+		if(this.currentPresenter != result){
+			this.currentPresenter = result;
+			result.go(container);
+		}
+		this.currentPresenter.setParameters(parameters);
 		return result;
 	}
 
@@ -113,7 +107,7 @@ public abstract class ViewPresenterController {
 	} 
 
 	public abstract void onParameters(HasParameters parameters);
-	
+
 	protected abstract void onNavigationHistoryEvent(NavigationHistoryItem historyItem);
 
 }

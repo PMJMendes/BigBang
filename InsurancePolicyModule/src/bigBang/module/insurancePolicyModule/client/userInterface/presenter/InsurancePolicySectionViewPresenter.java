@@ -22,6 +22,7 @@ public class InsurancePolicySectionViewPresenter implements ViewPresenter{
 	}
 
 	private Display view;
+	private ViewPresenterController controller;
 
 	public InsurancePolicySectionViewPresenter(View view) {
 		this.setView(view);
@@ -41,7 +42,7 @@ public class InsurancePolicySectionViewPresenter implements ViewPresenter{
 
 	@Override
 	public void setParameters(HasParameters parameterHolder) {
-		return;
+		this.controller.onParameters(parameterHolder);
 	}
 
 	public void bind() {
@@ -56,11 +57,11 @@ public class InsurancePolicySectionViewPresenter implements ViewPresenter{
 	}
 
 	private void initializeController(){
-		new ViewPresenterController(view.getContainer()) {
+		this.controller = new ViewPresenterController(view.getContainer()) {
 
 			@Override
 			protected void onNavigationHistoryEvent(NavigationHistoryItem historyItem) {
-				onParameters(historyItem);
+				return;
 			}
 
 			@Override

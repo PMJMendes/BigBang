@@ -61,6 +61,8 @@ public class ClientOperationsViewPresenter implements ViewPresenter {
 					present("CLIENT_MERGE", parameters);
 				}else if(operation.equalsIgnoreCase("managertransfer")){
 					present("SINGLE_MANAGER_TRANSFER", parameters);
+				}else if(operation.equalsIgnoreCase("viewmanagertransfer")){
+					present("MANAGER_TRANSFER", parameters);
 				}else if(operation.equalsIgnoreCase("inforequest")){
 					present("CLIENT_INFO_OR_DOCUMENT_REQUEST", parameters);
 				}else if(operation.equalsIgnoreCase("documentmanagement")){

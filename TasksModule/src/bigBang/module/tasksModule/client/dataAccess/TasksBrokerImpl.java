@@ -25,7 +25,7 @@ public class TasksBrokerImpl extends DataBroker<Task> implements TasksBroker {
 		this.searchBroker = new TasksSearchDataBroker();
 		this.dataElementId = BigBangConstants.EntityIds.TASK;
 	}
-	
+
 	@Override
 	public void requireDataRefresh() {
 		this.refreshRequired = true;
@@ -45,6 +45,7 @@ public class TasksBrokerImpl extends DataBroker<Task> implements TasksBroker {
 
 			@Override
 			public void onError(Collection<ResponseError> errors) {
+				return;
 			}
 		});
 	}
@@ -71,6 +72,7 @@ public class TasksBrokerImpl extends DataBroker<Task> implements TasksBroker {
 
 			@Override
 			public void onError(Collection<ResponseError> errors) {
+				return;
 			}
 		});
 	}
@@ -83,11 +85,13 @@ public class TasksBrokerImpl extends DataBroker<Task> implements TasksBroker {
 			public void onSuccess(Task result) {
 				handler.onResponse(result);
 			}
-			
+
 			@Override
 			public void onFailure(Throwable caught) {
-				handler.onError(new String[]{});
-//				super.onFailure(caught);
+				handler.onError(new String[]{
+						new String("Could not get the task")
+				});
+				super.onFailure(caught);
 			}
 		});
 	}
@@ -106,6 +110,26 @@ public class TasksBrokerImpl extends DataBroker<Task> implements TasksBroker {
 	@Override
 	public SearchDataBroker<TaskStub> getSearchBroker() {
 		return this.searchBroker;
+	}
+
+	@Override
+	public void dismissTask(final String taskId, final ResponseHandler<Void> handler) {
+		this.service.dismissTask(taskId, new BigBangAsyncCallback<Void>() {
+
+			@Override
+			public void onSuccess(Void result) {
+				notifyItemDeletion(taskId);
+				handler.onResponse(null);
+			}
+
+			@Override
+			public void onFailure(Throwable caught) {
+				handler.onError(new String[]{
+						new String("Could not dismiss the task")	
+				});
+				super.onFailure(caught);
+			}
+		});
 	}
 
 }

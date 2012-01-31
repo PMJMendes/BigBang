@@ -4,13 +4,6 @@ import bigBang.definitions.client.dataAccess.ClientProcessDataBrokerClient;
 import bigBang.definitions.shared.BigBangConstants;
 import bigBang.definitions.shared.Client;
 import bigBang.library.client.userInterface.view.View;
-import bigBang.module.clientModule.client.userInterface.ClientChildrenLists.ContactsList;
-import bigBang.module.clientModule.client.userInterface.ClientChildrenLists.DocumentsList;
-import bigBang.module.clientModule.client.userInterface.ClientChildrenLists.HistoryList;
-import bigBang.module.clientModule.client.userInterface.ClientChildrenLists.InfoRequestList;
-import bigBang.module.clientModule.client.userInterface.ClientChildrenLists.InsurancePoliciesList;
-import bigBang.module.clientModule.client.userInterface.ClientChildrenLists.ManagerTransferList;
-
 import com.google.gwt.user.client.ui.StackPanel;
 
 public class ClientChildrenPanel extends View implements ClientProcessDataBrokerClient {
@@ -18,30 +11,27 @@ public class ClientChildrenPanel extends View implements ClientProcessDataBroker
 	protected Client client;
 	protected int clientDataVersion;
 	
-	public ClientChildrenLists.ContactsList contactsList;
-	public ClientChildrenLists.DocumentsList documentsList;
-	public ClientChildrenLists.InsurancePoliciesList insurancePoliciesList;
-	public ClientChildrenLists.InfoRequestList requestsList;
-	public ClientChildrenLists.ManagerTransferList managerTransfersList;
-	public ClientChildrenLists.HistoryList historyList;
+	public ClientContactsList contactsList;
+	public ClientDocumentsList documentsList;
+	public ClientPoliciesList insurancePoliciesList;
+	public ClientHistoryList historyList;
+	public ClientSubProcessesList subProcessesList;
 	
 	public ClientChildrenPanel(){
 		StackPanel wrapper = new StackPanel();
 		initWidget(wrapper);
 		wrapper.setSize("100%", "100%");
 		
-		contactsList = new ContactsList();
-		documentsList = new DocumentsList();
-		insurancePoliciesList = new InsurancePoliciesList();
-		requestsList = new InfoRequestList();
-		managerTransfersList = new ManagerTransferList();
-		historyList = new HistoryList();
+		contactsList = new ClientContactsList();
+		documentsList = new ClientDocumentsList();
+		insurancePoliciesList = new ClientPoliciesList();
+		historyList = new ClientHistoryList();
+		subProcessesList = new ClientSubProcessesList();
 		
 		wrapper.add(this.contactsList, "Contactos");
 		wrapper.add(this.documentsList, "Documentos");
 		wrapper.add(this.insurancePoliciesList, "Apólices");
-		wrapper.add(this.requestsList, "Pedidos de Informação");
-		wrapper.add(this.managerTransfersList, "Transferências de Gestor");
+		wrapper.add(this.subProcessesList, "Sub-Processos");
 		wrapper.add(this.historyList, "Histórico");
 	}
 	
@@ -61,8 +51,7 @@ public class ClientChildrenPanel extends View implements ClientProcessDataBroker
 			this.contactsList.setOwner(client.id);
 			this.documentsList.setOwner(client.id);	
 			this.insurancePoliciesList.setOwner(client.id);	
-			this.requestsList.setOwner(client.id);	
-			this.managerTransfersList.setOwner(client.id);
+			this.subProcessesList.setOwner(client.id);
 			this.historyList.setOwner(client.id);
 		}
 	}
@@ -75,8 +64,7 @@ public class ClientChildrenPanel extends View implements ClientProcessDataBroker
 		this.contactsList.clear();
 		this.documentsList.clear();
 		this.insurancePoliciesList.clear();
-		this.requestsList.clear();
-		this.managerTransfersList.clear();
+		this.subProcessesList.clear();
 		this.historyList.clear();
 	}
 

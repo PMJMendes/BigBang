@@ -102,7 +102,8 @@ public class BigBangContactsListBroker extends DataBroker<Contact> implements Co
 
 	@Override
 	public void unregisterClient(ContactsBrokerClient client) {
-		for(String ownerId : clients.keySet()){
+		Collection<String> keys = new ArrayList<String>(clients.keySet());
+		for(String ownerId : keys){
 			List<ContactsBrokerClient> clientList = clients.get(ownerId);
 			if(clientList.contains(client)){
 				unregisterClient(client, ownerId);

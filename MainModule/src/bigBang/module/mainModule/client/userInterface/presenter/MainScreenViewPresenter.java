@@ -1,14 +1,14 @@
 package bigBang.module.mainModule.client.userInterface.presenter;
 
-import Jewel.Web.client.Jewel_Web;
 import bigBang.library.client.EventBus;
 import bigBang.library.client.HasParameters;
 import bigBang.library.client.Session;
+import bigBang.library.client.ViewPresenterController;
 import bigBang.library.client.event.ActionInvokedEvent;
 import bigBang.library.client.event.ActionInvokedEventHandler;
 import bigBang.library.client.event.LogoutEvent;
-import bigBang.library.client.userInterface.MenuSection;
-import bigBang.library.client.userInterface.presenter.SectionViewPresenter;
+import bigBang.library.client.history.NavigationHistoryItem;
+import bigBang.library.client.history.NavigationHistoryManager;
 import bigBang.library.client.userInterface.presenter.ViewPresenter;
 import bigBang.library.client.userInterface.view.View;
 
@@ -17,30 +17,56 @@ import com.google.gwt.user.client.ui.UIObject;
 import com.google.gwt.user.client.ui.Widget;
 
 public class MainScreenViewPresenter implements ViewPresenter {
-	
+
 	public enum Action{
 		SHOW_PREFERENCES,
-		LOGOUT
+		HIDE_PREFERENCES,
+		BACKOFFICE,
+		LOGOUT,
+
+		SHOW_SECTION_TASKS, 
+		SHOW_SECTION_GENERAL_SYSTEM, 
+		SHOW_SECTION_CLIENT, 
+		SHOW_SECTION_INSURANCE_POLICY, 
+		SHOW_SECTION_RECEIPT, 
+		SHOW_SECTION_RISK_ANALISYS
+	}
+
+	public enum Section {
+		TASKS,
+		GENERAL_SYSTEM,
+		CLIENT,
+		RISK_ANALISYS,
+		INSURANCE_POLICY,
+		RECEIPT,
+		QUOTE_REQUEST,
+		CASUALTY,
+		EXPENSE,
+		COMPLAINT
 	}
 	
 	public interface Display {
 		Widget asWidget();
-		void createMenuSection(SectionViewPresenter sectionPresenter);
-		void showSection(MenuSection section) throws Exception;
+		void showSection(Section section);
 		void setUsername(String username);
 		void setDomain(String domain);
-		void showFirstSection();
+		void showBackOffice(boolean show);
+		HasWidgets getContainer();
+		HasWidgets getPreferencesContainer();
 		void registerActionHandler(ActionInvokedEventHandler<Action> handler);
 		void showPreferences(boolean show);
 	}
 
 	private Display view;
+	private ViewPresenterController preferencesController;
+	private ViewPresenterController controller;
+	private boolean bound = false;
 
 	public MainScreenViewPresenter(View view){
 		this.setView(view);
 		initializeView();
 	}
-	
+
 	private void initializeView(){
 		view.setUsername(Session.getUsername());
 		view.setDomain(Session.getDomain());
@@ -54,32 +80,135 @@ public class MainScreenViewPresenter implements ViewPresenter {
 	public void go(HasWidgets container) {
 		this.bind();
 		container.clear();
-		container.add(this.view.asWidget());		
+		container.add(this.view.asWidget());
+		initializeController();
 	}
-	
+
 	@Override
 	public void setParameters(HasParameters parameterHolder) {
-		return;
+		controller.onParameters(parameterHolder);
 	}
 
 	public void bind() {
+		if(bound){
+			return;
+		}
+
 		view.registerActionHandler(new ActionInvokedEventHandler<MainScreenViewPresenter.Action>() {
 
 			@Override
 			public void onActionInvoked(ActionInvokedEvent<Action> action) {
+				NavigationHistoryItem item = new NavigationHistoryItem();
+				
 				switch(action.getAction()){
 				case LOGOUT:
 					EventBus.getInstance().fireEvent(new LogoutEvent());
 					break;
 				case SHOW_PREFERENCES:
-					//view.showPreferences(true); TODO FJVC
-					new Jewel_Web().onModuleLoad();
+					if(preferencesController == null){
+						initializePreferencesController();
+					}
+					MainScreenViewPresenter.this.preferencesController.onParameters(null);
+					view.showPreferences(true);
+					break;
+				case HIDE_PREFERENCES:
+					view.showPreferences(false);
+					break;
+				case BACKOFFICE:
+					item.setParameter("section", "backoffice");
+					NavigationHistoryManager.getInstance().go(item);
+					break;
+				
+				case SHOW_SECTION_TASKS:
+					item.setParameter("section", "tasks");
+					NavigationHistoryManager.getInstance().go(item);
+					break;
+				case SHOW_SECTION_GENERAL_SYSTEM:
+					item.setParameter("section", "generalsystem");
+					NavigationHistoryManager.getInstance().go(item);
+					break;
+				case SHOW_SECTION_CLIENT:
+					item.setParameter("section", "client");
+					NavigationHistoryManager.getInstance().go(item);
+					break;
+				case SHOW_SECTION_INSURANCE_POLICY:
+					item.setParameter("section", "insurancepolicy");
+					NavigationHistoryManager.getInstance().go(item);
+					break;
+				case SHOW_SECTION_RECEIPT:
+					item.setParameter("section", "receipt");
+					NavigationHistoryManager.getInstance().go(item);
+					break;
+				case SHOW_SECTION_RISK_ANALISYS:
+					item.setParameter("section", "riskanalisys");
+					NavigationHistoryManager.getInstance().go(item);
 					break;
 				}
 			}
 		});
 
 		//APPLICATION-WIDE EVENTS
+
+		bound = true;
+	}
+
+	public HasWidgets getContainer(){
+		return view.getContainer();
+	}
+
+	private void initializeController(){
+		this.controller = new ViewPresenterController() {
+
+			@Override
+			public void onParameters(HasParameters parameters) {
+				view.showBackOffice(Session.isRoot());
+				
+				String section = parameters.getParameter("section");
+				section = section == null ? new String() : section;
+
+				if(section.equalsIgnoreCase("tasks")){
+					view.showSection(Section.TASKS);
+				}else if(section.equalsIgnoreCase("generalsystem")){
+					view.showSection(Section.GENERAL_SYSTEM);
+				}else if(section.equalsIgnoreCase("client")){
+					view.showSection(Section.CLIENT);
+				}else if(section.equalsIgnoreCase("insurancepolicy")){
+					view.showSection(Section.INSURANCE_POLICY);
+				}else if(section.equalsIgnoreCase("casualty")){
+					view.showSection(Section.CASUALTY);
+				}else if(section.equalsIgnoreCase("quoterequest")){
+					view.showSection(Section.QUOTE_REQUEST);
+				}else if(section.equalsIgnoreCase("expense")){
+					view.showSection(Section.EXPENSE);
+				}else if(section.equalsIgnoreCase("complaint")){
+					view.showSection(Section.COMPLAINT);
+				}else if(section.equalsIgnoreCase("receipt")){
+					view.showSection(Section.RECEIPT);
+				}else if(section.equalsIgnoreCase("riskanalisys")){
+					view.showSection(Section.RISK_ANALISYS);
+				}
+			}
+
+			@Override
+			protected void onNavigationHistoryEvent(NavigationHistoryItem historyItem) {
+				return;
+			}
+		};
+	}
+
+	private void initializePreferencesController(){
+		this.preferencesController = new ViewPresenterController(view.getPreferencesContainer()) {
+
+			@Override
+			public void onParameters(HasParameters parameters) {
+				present("CHANGE_PASSWORD", parameters);
+			}
+
+			@Override
+			protected void onNavigationHistoryEvent(NavigationHistoryItem historyItem) {
+				return;
+			}
+		};
 	}
 
 }

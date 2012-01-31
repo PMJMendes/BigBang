@@ -8,7 +8,6 @@ import bigBang.definitions.client.response.ResponseHandler;
 import bigBang.definitions.shared.BigBangConstants;
 import bigBang.definitions.shared.Client;
 import bigBang.definitions.shared.ClientStub;
-import bigBang.definitions.shared.ManagerTransfer;
 import bigBang.library.client.HasEditableValue;
 import bigBang.library.client.HasParameters;
 import bigBang.library.client.HasValueSelectables;
@@ -41,9 +40,9 @@ public class ClientManagerTransferOperationViewPresenter implements ViewPresente
 		boolean isFormValid();
 		void lockForm(boolean lock);
 		Collection<ClientStub> getSelectedClientStubs();
-		
+
 		HasValue<Client> getClientForm();
-		
+
 		//General
 		void clear();
 		void registerActionInvokedHandler(ActionInvokedEventHandler<Action> handler);
@@ -105,19 +104,19 @@ public class ClientManagerTransferOperationViewPresenter implements ViewPresente
 				}
 				String managerId = view.getForm().getValue();
 				
-				clientBroker.createManagerTransfer(clientProcessIds,clientIds, managerId, new ResponseHandler<ManagerTransfer>() {
-					
-					@Override
-					public void onResponse(ManagerTransfer response) {
-						view.showMessage("Foi criado um novo processo de Alteração de Gestor de Cliente.");
-						view.clear();
-					}
-					
-					@Override
-					public void onError(Collection<ResponseError> errors) {
-						view.showMessage("Não foi possível criar um novo processo de Alteração de Gestor de Cliente. Por favor tente de novo mais tarde.");
-					}
-				});
+//				clientBroker.createManagerTransfer(clientProcessIds,clientIds, managerId, new ResponseHandler<ManagerTransfer>() {
+//					
+//					@Override
+//					public void onResponse(ManagerTransfer response) {
+//						view.showMessage("Foi criado um novo processo de Alteração de Gestor de Cliente.");
+//						view.clear();
+//					}
+//					
+//					@Override
+//					public void onError(Collection<ResponseError> errors) {
+//						view.showMessage("Não foi possível criar um novo processo de Alteração de Gestor de Cliente. Por favor tente de novo mais tarde.");
+//					}
+//				});
 			}
 		});
 		view.getList().addSelectionChangedEventHandler(new SelectionChangedEventHandler() {
@@ -129,7 +128,7 @@ public class ClientManagerTransferOperationViewPresenter implements ViewPresente
 					@SuppressWarnings("unchecked")
 					ClientStub c = ((ValueSelectable<ClientStub>)event.getFirstSelected()).getValue();
 					clientBroker.getClient(c.id, new ResponseHandler<Client>() {
-						
+
 						@Override
 						public void onResponse(Client response) {
 							view.getClientForm().setValue(response);

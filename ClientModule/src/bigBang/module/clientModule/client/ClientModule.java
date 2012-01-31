@@ -7,18 +7,22 @@ import bigBang.library.client.ViewPresenterFactory;
 import bigBang.library.client.ViewPresenterInstantiator;
 import bigBang.library.client.userInterface.presenter.ViewPresenter;
 import bigBang.module.clientModule.client.dataAccess.ClientProcessBrokerImpl;
+import bigBang.module.clientModule.client.userInterface.presenter.ClientInfoOrDocumentRequestViewPresenter;
 import bigBang.module.clientModule.client.userInterface.presenter.ClientManagerTransferOperationViewPresenter;
 import bigBang.module.clientModule.client.userInterface.presenter.ClientMergeViewPresenter;
 import bigBang.module.clientModule.client.userInterface.presenter.ClientOperationsViewPresenter;
 import bigBang.module.clientModule.client.userInterface.presenter.ClientSearchOperationViewPresenter;
 import bigBang.module.clientModule.client.userInterface.presenter.ClientSectionViewPresenter;
 import bigBang.module.clientModule.client.userInterface.presenter.CreateInsurancePolicyViewPresenter;
+import bigBang.module.clientModule.client.userInterface.presenter.SingleClientManagerTransferViewPresenter;
+import bigBang.module.clientModule.client.userInterface.view.ClientInfoOrDocumentRequestView;
 import bigBang.module.clientModule.client.userInterface.view.ClientManagerTransferOperationView;
 import bigBang.module.clientModule.client.userInterface.view.ClientMergeView;
 import bigBang.module.clientModule.client.userInterface.view.ClientOperationsView;
 import bigBang.module.clientModule.client.userInterface.view.ClientSearchOperationView;
 import bigBang.module.clientModule.client.userInterface.view.ClientSectionView;
 import bigBang.module.clientModule.client.userInterface.view.CreateInsurancePolicyView;
+import bigBang.module.clientModule.client.userInterface.view.SingleClientManagerTransferView;
 
 import com.google.gwt.core.client.GWT;
 
@@ -66,6 +70,15 @@ public class ClientModule implements Module {
 				return presenter;
 			}
 		});
+		ViewPresenterFactory.getInstance().registerViewPresenterInstantiator("CLIENT_SINGLE_MANAGER_TRANSFER", new ViewPresenterInstantiator() {
+
+			@Override
+			public ViewPresenter getInstance() {
+				SingleClientManagerTransferView view = (SingleClientManagerTransferView) GWT.create(SingleClientManagerTransferView.class);
+				ViewPresenter presenter = new SingleClientManagerTransferViewPresenter(view);
+				return presenter;
+			}
+		});
 		ViewPresenterFactory.getInstance().registerViewPresenterInstantiator("CLIENT_MASS_MANAGER_TRANSFER", new ViewPresenterInstantiator() {
 
 			@Override
@@ -90,6 +103,15 @@ public class ClientModule implements Module {
 			public ViewPresenter getInstance() {
 				ClientMergeView view = (ClientMergeView) GWT.create(ClientMergeView.class);
 				ViewPresenter presenter = new ClientMergeViewPresenter(view);
+				return presenter;
+			}
+		});
+		ViewPresenterFactory.getInstance().registerViewPresenterInstantiator("CLIENT_INFO_OR_DOCUMENT_REQUEST", new ViewPresenterInstantiator() {
+
+			@Override
+			public ViewPresenter getInstance() {
+				ClientInfoOrDocumentRequestView view = (ClientInfoOrDocumentRequestView) GWT.create(ClientInfoOrDocumentRequestView.class);
+				ViewPresenter presenter = new ClientInfoOrDocumentRequestViewPresenter(view);
 				return presenter;
 			}
 		});

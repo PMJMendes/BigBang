@@ -1,28 +1,21 @@
 package bigBang.library.client.userInterface;
 
 
-import bigBang.definitions.shared.ManagerTransfer;
-import bigBang.definitions.shared.ManagerTransfer.Status;
-
 import com.google.gwt.user.client.Command;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.MenuBar;
 import com.google.gwt.user.client.ui.MenuItem;
 
-public class ManagerTransferToolBar extends MenuBar{
+public abstract class ManagerTransferToolBar extends MenuBar{
 
-	protected final String ACCEPT_TEXT = "Aceitar";
-	protected final String REJECT_TEXT = "Rejeitar";
-	protected final String CANCEL_TEXT = "Cancelar";
+	protected final String ACCEPT_TEXT = "Aceitar Transferência";
+	protected final String REJECT_TEXT = "Rejeitar Transferência";
+	protected final String CANCEL_TEXT = "Cancelar Transferência";
 	public MenuItem accept;
 	public MenuItem reject;
 	public MenuItem cancel;
 	private Command acceptC, rejectC, cancelC;
 
-
-
 	public ManagerTransferToolBar(boolean b) {
-
 		super(b);
 		createCommands();
 
@@ -32,57 +25,31 @@ public class ManagerTransferToolBar extends MenuBar{
 		this.addItem(this.accept);
 		this.addItem(this.reject);
 		this.addItem(this.cancel);
-
-
-
-
-
 	}
 
-
 	private void createCommands(){
-
 		acceptC = new Command(){
-
 			public void execute(){
 				accept();
 			}
 
 		};
-
 		rejectC = new Command(){
-
 			public void execute(){
 				reject();
 			}
-
 		};
-
 		cancelC = new Command(){
-
 			public void execute(){
 				cancel();
 			}
-
 		};
 	}
 
-	private void accept(){
+	public abstract void accept();
 
-		Window.alert("ACCEPTED");
-		//TODO
-	}
+	public abstract void reject();
 
-	private void reject(){
-
-		Window.alert("REJECTED");
-		//TODO
-	}
-
-	private void cancel(){
-
-		Window.alert("CANCELLED");
-		//TODO
-	}
+	public abstract void cancel();
 
 }

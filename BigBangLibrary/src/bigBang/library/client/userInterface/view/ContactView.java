@@ -109,8 +109,6 @@ public class ContactView extends View implements ContactViewPresenter.Display{
 	}
 
 	public ContactView(){
-
-		
 		wrapper = new VerticalPanel();
 		initWidget(wrapper);
 		wrapper.setWidth("100%");
@@ -175,7 +173,7 @@ public class ContactView extends View implements ContactViewPresenter.Display{
 		wrapper.add(contactIL.getListContent());
 		wrapper.add(childContactsButton);
 
-
+		setSize("400px", "400px");
 	}
 	
 	@Override

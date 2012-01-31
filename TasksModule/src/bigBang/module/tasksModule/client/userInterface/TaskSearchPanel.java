@@ -65,6 +65,11 @@ public class TaskSearchPanel extends SearchPanel<TaskStub> implements TasksDataB
 				statusIndicator.setResource(r.urgentSmallIcon());
 				statusIndicator.setTitle("Urgente");
 				break;
+			case COMPLETED:
+				this.getElement().getStyle().setBackgroundColor("#E6F8E0");
+				statusIndicator.setResource(r.completedSmallIcon());
+				statusIndicator.setTitle("Notificação");
+				break;
 			default:
 				statusIndicator.setVisible(false);
 				break;

@@ -4,12 +4,12 @@ package bigBang.library.client.userInterface;
 import bigBang.library.client.FieldValidator;
 import bigBang.library.client.FormField;
 
-import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.HasVerticalAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.PasswordTextBox;
+import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
 public class PasswordTextBoxFormField extends FormField<String> {
@@ -41,13 +41,18 @@ public class PasswordTextBoxFormField extends FormField<String> {
 
 	public PasswordTextBoxFormField(){
 		super();
-		HorizontalPanel wrapper = new HorizontalPanel();
-		initWidget(wrapper);
-		wrapper.setVerticalAlignment(HasVerticalAlignment.ALIGN_MIDDLE);
+		
+		VerticalPanel mainWrapper = new VerticalPanel();
+		initWidget(mainWrapper);
+
+		mainWrapper.add(this.label);
 		this.label = new Label();
-		this.label.getElement().getStyle().setMarginRight(5, Unit.PX);
-		wrapper.add(this.label);
-		wrapper.setCellWidth(this.label, "100px");
+		mainWrapper.add(this.label);
+		
+		HorizontalPanel wrapper = new HorizontalPanel();
+		mainWrapper.add(wrapper);
+		wrapper.setVerticalAlignment(HasVerticalAlignment.ALIGN_MIDDLE);
+		
 		wrapper.setCellHorizontalAlignment(this.label, HasHorizontalAlignment.ALIGN_RIGHT);
 		this.field = new PasswordTextBox();
 		wrapper.add((Widget) this.field);

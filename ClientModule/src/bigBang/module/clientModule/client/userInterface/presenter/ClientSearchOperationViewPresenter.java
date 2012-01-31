@@ -7,9 +7,11 @@ import bigBang.definitions.client.dataAccess.ClientProcessDataBrokerClient;
 import bigBang.definitions.client.response.ResponseError;
 import bigBang.definitions.client.response.ResponseHandler;
 import bigBang.definitions.shared.BigBangConstants;
+import bigBang.definitions.shared.BigBangProcess;
 import bigBang.definitions.shared.Client;
 import bigBang.definitions.shared.ClientStub;
 import bigBang.definitions.shared.Contact;
+import bigBang.definitions.shared.Document;
 import bigBang.definitions.shared.HistoryItemStub;
 import bigBang.definitions.shared.InsurancePolicyStub;
 import bigBang.library.client.EventBus;
@@ -82,6 +84,8 @@ public class ClientSearchOperationViewPresenter implements ViewPresenter {
 		//Children Lists
 		HasValueSelectables<HistoryItemStub> getHistoryList();
 		HasValueSelectables<Contact> getContactsList();
+		HasValueSelectables<Document> getDocumentsList();
+		HasValueSelectables<BigBangProcess> getSubProcessesList();
 		HasValueSelectables<InsurancePolicyStub> getPolicyList();
 
 		//General
@@ -226,9 +230,9 @@ public class ClientSearchOperationViewPresenter implements ViewPresenter {
 				}
 			}
 		});
-		
+
 		view.getHistoryList().addSelectionChangedEventHandler(new SelectionChangedEventHandler() {
-			
+
 			@Override
 			public void onSelectionChanged(SelectionChangedEvent event) {
 				@SuppressWarnings("unchecked")
@@ -236,7 +240,7 @@ public class ClientSearchOperationViewPresenter implements ViewPresenter {
 				HistoryItemStub item = selected == null ? null : selected.getValue();
 				String itemId = item == null ? null : item.id;
 				itemId = itemId == null ? new String() : itemId;
-				
+
 				if(!itemId.isEmpty()){
 					NavigationHistoryItem navItem = NavigationHistoryManager.getInstance().getCurrentState();
 					navItem.setParameter("operation", "clienthistory");
@@ -245,9 +249,9 @@ public class ClientSearchOperationViewPresenter implements ViewPresenter {
 				}
 			}
 		});
-		
+
 		view.getContactsList().addSelectionChangedEventHandler(new SelectionChangedEventHandler() {
-			
+
 			@Override
 			public void onSelectionChanged(SelectionChangedEvent event) {
 				@SuppressWarnings("unchecked")
@@ -255,13 +259,66 @@ public class ClientSearchOperationViewPresenter implements ViewPresenter {
 				Contact item = selected == null ? null : selected.getValue();
 				String itemId = item == null ? null : item.id;
 				itemId = itemId == null ? new String() : itemId;
-				
+
 				if(!itemId.isEmpty()){
 					NavigationHistoryItem navItem = NavigationHistoryManager.getInstance().getCurrentState();
-					navItem.setParameter("operation", "contactmanagement");
+					navItem.setParameter("show", "contactmanagement");
 					navItem.setParameter("contactid", itemId);
 					navItem.setParameter("ownertypeid", BigBangConstants.EntityIds.CLIENT);
 					NavigationHistoryManager.getInstance().go(navItem);
+				}
+			}
+		});
+		view.getDocumentsList().addSelectionChangedEventHandler(new SelectionChangedEventHandler() {
+
+			@Override
+			public void onSelectionChanged(SelectionChangedEvent event) {
+				@SuppressWarnings("unchecked")
+				ValueSelectable<Document> selected = (ValueSelectable<Document>) event.getFirstSelected();
+				Document item = selected == null ? null : selected.getValue();
+				String itemId = item == null ? null : item.id;
+				itemId = itemId == null ? new String() : itemId;
+
+				if(!itemId.isEmpty()){
+					NavigationHistoryItem navItem = NavigationHistoryManager.getInstance().getCurrentState();
+					navItem.setParameter("show", "documentmanagement");
+					navItem.setParameter("documentid", itemId);
+					navItem.setParameter("ownertypeid", BigBangConstants.EntityIds.CLIENT);
+					NavigationHistoryManager.getInstance().go(navItem);
+				}
+			}
+		});
+		view.getPolicyList().addSelectionChangedEventHandler(new SelectionChangedEventHandler() {
+
+			@Override
+			public void onSelectionChanged(SelectionChangedEvent event) {
+				@SuppressWarnings("unchecked")
+				ValueSelectable<InsurancePolicyStub> selected = (ValueSelectable<InsurancePolicyStub>) event.getFirstSelected();
+				InsurancePolicyStub item = selected == null ? null : selected.getValue();
+				String itemId = item == null ? null : item.id;
+				itemId = itemId == null ? new String() : itemId;
+
+				if(!itemId.isEmpty()){
+					NavigationHistoryItem navItem = NavigationHistoryManager.getInstance().getCurrentState();
+					navItem.setParameter("section", "insurancepolicy");
+					navItem.removeParameter("operation");
+					navItem.setParameter("id", itemId);
+					NavigationHistoryManager.getInstance().go(navItem);
+				}
+			}
+		});
+		view.getSubProcessesList().addSelectionChangedEventHandler(new SelectionChangedEventHandler() {
+			
+			@Override
+			public void onSelectionChanged(SelectionChangedEvent event) {
+				@SuppressWarnings("unchecked")
+				ValueSelectable<BigBangProcess> selected = (ValueSelectable<BigBangProcess>) event.getFirstSelected();
+				BigBangProcess item = selected == null ? null : selected.getValue();
+				String itemId = item == null ? null : item.dataId;
+				itemId = itemId == null ? new String() : itemId;
+
+				if(!itemId.isEmpty()){
+					goToSubProcess(item);
 				}
 			}
 		});
@@ -463,8 +520,24 @@ public class ClientSearchOperationViewPresenter implements ViewPresenter {
 			@Override
 			public void addClient(Client client) {
 				// TODO Auto-generated method stub
-
 			}
 		};
 	}
+	
+	private void goToSubProcess(BigBangProcess process){
+		String type = process.dataTypeId;
+		
+		if(type.equalsIgnoreCase(BigBangConstants.EntityIds.MANAGER_TRANSFER)){
+			NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
+			item.setParameter("operation", "viewmanagertransfer");
+			item.setParameter("transferid", process.dataId);
+			NavigationHistoryManager.getInstance().go(item);
+		}else if(type.equalsIgnoreCase(BigBangConstants.EntityIds.INFO_REQUEST)){
+			NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
+			item.setParameter("operation", "inforequest");
+			item.setParameter("requestid", process.dataId);
+			NavigationHistoryManager.getInstance().go(item);
+		}
+	}
+	
 }

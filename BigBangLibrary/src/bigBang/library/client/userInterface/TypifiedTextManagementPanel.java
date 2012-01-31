@@ -640,5 +640,12 @@ public class TypifiedTextManagementPanel extends View implements TypifiedTextCli
 
 	}
 
+	@Override
+	public void setTypifiedDataBroker(TypifiedListBroker broker) {
+		if(getListId() != null){
+			this.listBroker.unregisterClient(getListId(), this);
+		}
+		this.listBroker = broker;
+	}
 
 }

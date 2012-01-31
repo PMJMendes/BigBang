@@ -12,6 +12,7 @@ import com.google.gwt.core.client.GWT;
 import bigBang.definitions.client.response.ResponseHandler;
 import bigBang.definitions.shared.TipifiedListItem;
 import bigBang.library.client.BigBangAsyncCallback;
+import bigBang.library.interfaces.DependentItemSubServiceAsync;
 import bigBang.library.interfaces.TipifiedListService;
 import bigBang.library.interfaces.TipifiedListServiceAsync;
 
@@ -38,7 +39,7 @@ public class BigBangTypifiedListBroker implements TypifiedListBroker {
 
 	protected final Integer NO_DATA_VERSION = new Integer(0); 
 
-	protected TipifiedListServiceAsync service;
+	protected DependentItemSubServiceAsync service;
 	protected Map<String, ArrayList<TypifiedListClient>> clients;
 	protected Map<String, Integer> dataVersions;
 	protected Map<String, ArrayList<TipifiedListItem>> lists;
@@ -143,11 +144,11 @@ public class BigBangTypifiedListBroker implements TypifiedListBroker {
 		final String effectiveListId = tokenizer.nextToken();
 		if(tokenizer.hasMoreTokens()){
 			String dependencyListId = tokenizer.nextToken();
-			this.service.getListItemsFilter(effectiveListId, dependencyListId, new BigBangAsyncCallback<TipifiedListItem[]>() {
+			service.getListItemsFilter(effectiveListId, dependencyListId, new BigBangAsyncCallback<TipifiedListItem[]>() {
 
 				@Override
 				public void onSuccess(TipifiedListItem[] result) {
-					BigBangTypifiedListBroker.this.lists.put(listId, new ArrayList<TipifiedListItem>(Arrays.asList(result)));
+					lists.put(listId, new ArrayList<TipifiedListItem>(Arrays.asList(result)));
 					incrementListDataVersion(listId);
 					updateListClients(listId);
 				}
@@ -159,11 +160,11 @@ public class BigBangTypifiedListBroker implements TypifiedListBroker {
 				}
 			});
 		}else{
-			this.service.getListItems(effectiveListId, new BigBangAsyncCallback<TipifiedListItem[]>() {
+			((TipifiedListServiceAsync) this.service).getListItems(effectiveListId, new BigBangAsyncCallback<TipifiedListItem[]>() {
 
 				@Override
 				public void onSuccess(TipifiedListItem[] result) {
-					BigBangTypifiedListBroker.this.lists.put(effectiveListId, new ArrayList<TipifiedListItem>(Arrays.asList(result)));
+					lists.put(effectiveListId, new ArrayList<TipifiedListItem>(Arrays.asList(result)));
 					incrementListDataVersion(effectiveListId);
 					updateListClients(effectiveListId);
 				}
@@ -195,15 +196,15 @@ public class BigBangTypifiedListBroker implements TypifiedListBroker {
 			String effectiveListId = tokenizer.nextToken();
 			String dependencyId = tokenizer.nextToken();
 			
-			this.service.createListItemFiltered(effectiveListId, dependencyId, item, new BigBangAsyncCallback<TipifiedListItem>() {
+			((TipifiedListServiceAsync) this.service).createListItemFiltered(effectiveListId, dependencyId, item, new BigBangAsyncCallback<TipifiedListItem>() {
 
 				@Override
 				public void onSuccess(TipifiedListItem result) {
 					updateListClients(listId);
-					BigBangTypifiedListBroker.this.lists.get(listId).add(result);
-					Integer version = BigBangTypifiedListBroker.this.incrementListDataVersion(listId);
+					lists.get(listId).add(result);
+					Integer version = incrementListDataVersion(listId);
 
-					for(TypifiedListClient client : BigBangTypifiedListBroker.this.clients.get(listId)) {
+					for(TypifiedListClient client : clients.get(listId)) {
 						client.addItem(result);
 						client.setTypifiedDataVersionNumber(version.intValue());
 					}
@@ -218,15 +219,15 @@ public class BigBangTypifiedListBroker implements TypifiedListBroker {
 				}
 			});
 		}else{
-			this.service.createListItem(listId, item, new BigBangAsyncCallback<TipifiedListItem>() {
+			((TipifiedListServiceAsync) this.service).createListItem(listId, item, new BigBangAsyncCallback<TipifiedListItem>() {
 
 				@Override
 				public void onSuccess(TipifiedListItem result) {
 					updateListClients(listId);
-					BigBangTypifiedListBroker.this.lists.get(listId).add(result);
-					Integer version = BigBangTypifiedListBroker.this.incrementListDataVersion(listId);
+					lists.get(listId).add(result);
+					Integer version = incrementListDataVersion(listId);
 
-					for(TypifiedListClient client : BigBangTypifiedListBroker.this.clients.get(listId)) {
+					for(TypifiedListClient client : clients.get(listId)) {
 						client.addItem(result);
 						client.setTypifiedDataVersionNumber(version.intValue());
 					}
@@ -254,16 +255,16 @@ public class BigBangTypifiedListBroker implements TypifiedListBroker {
 			effectiveListId = tokenizer.nextToken();
 		}
 		
-		this.service.deleteListItem(effectiveListId, itemId, new BigBangAsyncCallback<Void>() {
+		((TipifiedListServiceAsync) this.service).deleteListItem(effectiveListId, itemId, new BigBangAsyncCallback<Void>() {
 
 			@Override
 			public void onSuccess(Void result) {
 				TipifiedListItem item = null;
 
-				for(TipifiedListItem i : BigBangTypifiedListBroker.this.lists.get(listId)) {
+				for(TipifiedListItem i : lists.get(listId)) {
 					if(i.id.equalsIgnoreCase(itemId)){
 						item = i;
-						BigBangTypifiedListBroker.this.lists.remove(itemId);
+						lists.remove(itemId);
 						break;
 					}
 				}
@@ -271,9 +272,9 @@ public class BigBangTypifiedListBroker implements TypifiedListBroker {
 				if(item == null)
 					throw new RuntimeException("The typified list item with id \"" + itemId + "\" does no exist in list with id \"" + listId + "\"");
 
-				Integer version = BigBangTypifiedListBroker.this.incrementListDataVersion(listId);
+				Integer version = incrementListDataVersion(listId);
 
-				for(TypifiedListClient client : BigBangTypifiedListBroker.this.clients.get(listId)) {
+				for(TypifiedListClient client : clients.get(listId)) {
 					client.removeItem(item);
 					client.setTypifiedDataVersionNumber(version.intValue());
 				}
@@ -295,17 +296,17 @@ public class BigBangTypifiedListBroker implements TypifiedListBroker {
 			return;
 		}
 
-		this.service.saveListItem(listId, item, new BigBangAsyncCallback<TipifiedListItem>() {
+		((TipifiedListServiceAsync) this.service).saveListItem(listId, item, new BigBangAsyncCallback<TipifiedListItem>() {
 
 			@Override
 			public void onSuccess(TipifiedListItem result) {
 				updateListClients(listId);
 
-				BigBangTypifiedListBroker.this.lists.get(listId).remove(item);
-				BigBangTypifiedListBroker.this.lists.get(listId).add(result);
-				Integer version = BigBangTypifiedListBroker.this.incrementListDataVersion(listId);
+				lists.get(listId).remove(item);
+				lists.get(listId).add(result);
+				Integer version = incrementListDataVersion(listId);
 
-				for(TypifiedListClient client : BigBangTypifiedListBroker.this.clients.get(listId)) {
+				for(TypifiedListClient client : clients.get(listId)) {
 					client.updateItem(result);
 					client.setTypifiedDataVersionNumber(version.intValue());
 				}

@@ -5,6 +5,8 @@ import com.google.gwt.resources.client.ImageResource;
 
 public interface Resources extends ClientBundle {
 
+	//IMAGES
+	
 	//@Source("images/validSmall.png")
 	//ImageResource validSmallIcon();
 	

@@ -156,6 +156,7 @@ TypifiedListClient {
 					popup.hidePopup();
 				};
 			};
+
 			managementPanel.getList().addSelectionChangedEventHandler(new SelectionChangedEventHandler() {
 
 				@Override
@@ -359,6 +360,17 @@ TypifiedListClient {
 	public Collection<ValueSelectable<TipifiedListItem>> getListItems(){
 		ArrayList<ValueSelectable<TipifiedListItem>> result = new ArrayList<ValueSelectable<TipifiedListItem>>(this.managementPanel.getList());
 		return result;
+	}
+	
+	/**
+	 *  
+	 */
+	public void setTypifiedDataBroker(TypifiedListBroker broker){
+		if(getListId() != null) {
+			this.typifiedListBroker.unregisterClient(getListId(), this);
+		}
+		this.typifiedListBroker = broker;
+		this.managementPanel.setTypifiedDataBroker(broker);
 	}
 
 }

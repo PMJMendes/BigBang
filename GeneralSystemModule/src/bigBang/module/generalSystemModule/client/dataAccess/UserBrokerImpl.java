@@ -41,6 +41,7 @@ public class UserBrokerImpl extends DataBroker<User> implements UserBroker {
 				public void onSuccess(User[] result) {
 					cache.clear();
 					for(int i = 0; i < result.length; i++){
+						result[i].id = result[i].id.toLowerCase();
 						cache.add(result[i].id, result[i]);
 					}
 					incrementDataVersion();
@@ -76,13 +77,13 @@ public class UserBrokerImpl extends DataBroker<User> implements UserBroker {
 	@Override
 	public void getUser(final String userId,
 			final ResponseHandler<User> handler) {
-		if(!cache.contains(userId)){
+		if(!cache.contains(userId.toLowerCase())){
 			this.requireDataRefresh();
 			this.getUsers(new ResponseHandler<User[]>() {
 
 				@Override
 				public void onResponse(User[] response) {
-					if(cache.contains(userId)){
+					if(cache.contains(userId.toLowerCase())){
 						handler.onResponse((User) cache.get(userId));
 					}else{
 						handler.onError(new String[]{"The requested user could not be found. id:" + userId});
@@ -107,6 +108,7 @@ public class UserBrokerImpl extends DataBroker<User> implements UserBroker {
 
 			@Override
 			public void onSuccess(User result) {
+				result.id = result.id.toLowerCase();
 				cache.add(result.id, result);
 				incrementDataVersion();
 				for(DataBrokerClient<User> c : UserBrokerImpl.this.getClients()){
@@ -133,6 +135,7 @@ public class UserBrokerImpl extends DataBroker<User> implements UserBroker {
 
 			@Override
 			public void onSuccess(User result) {
+				result.id = result.id.toLowerCase();
 				cache.update(result.id, result);
 				incrementDataVersion();
 				for(DataBrokerClient<User> c : UserBrokerImpl.this.getClients()){

@@ -22,8 +22,6 @@ import bigBang.library.client.userInterface.TwoKeyTableView;
 import bigBang.library.client.userInterface.view.FormView;
 import bigBang.library.client.userInterface.view.FormViewSection;
 
-
-
 public class ExerciseForm extends FormView<Exercise> {
 
 	public class DynFormField extends FormField<String> { 
@@ -119,25 +117,21 @@ public class ExerciseForm extends FormView<Exercise> {
 		@Override
 		public void clear() {
 			field.clear();
-
 		}
 
 		@Override
 		public void setReadOnly(boolean readonly) {
-			// TODO Auto-generated method stubfixedFormFields
-
+			this.field.setReadOnly(readonly);
 		}
 
 		@Override
 		public boolean isReadOnly() {
-			// TODO Auto-generated method stub
-			return false;
+			return this.field.isReadOnly();
 		}
 
 		@Override
 		public void setLabelWidth(String width) {
-			// TODO Auto-generated method stub
-
+			this.field.setLabelWidth(width);
 		}
 
 	}
@@ -182,8 +176,6 @@ public class ExerciseForm extends FormView<Exercise> {
 
 		dynamicVariableHeaderDataTable = new TwoKeyTableView();
 		dynamicHeaderSection = new FormViewSection("Header");
-
-
 	}
 
 	@Override
@@ -210,66 +202,41 @@ public class ExerciseForm extends FormView<Exercise> {
 			result.coverageData[i].variableFields = getVariableFields(coverageData[i].variableFields, dynamicVariableDataTable[i], coverageData[i].variableFields.length);
 		}
 
-
-
 		result.objects = objects;		
 
 		return result;
 	}
 
 	private VariableField[] getVariableFields(VariableField[] variables, TwoKeyTableView table, int ammountVar) {
-
-		
 		Field[] fields = table.getAllValues();
 
 		for(int i = 0; i < ammountVar; i++){
-			
 			for(int j = 0; j<fields.length/ammountVar; j++){
-
 				variables[i].data[j].value = fields[(i*ammountVar)+j].value;
-
 			}
-
-
-
 		}
-
-
-
 		return variables;
 	}
 
 	private CoverageData[] getCoverageData() {
-
 		int coverageCount = coverageFixedFormFields.length;
 		CoverageData[] coverages = coverageData;
 
-
 		for(int i = 0; i < coverageCount; i++){
-
 			for(int j = 0; j < coverageData[i].fixedFields.length; j++){
-
 				coverages[i].fixedFields[j].value = coverageFixedFormFields[i][j].getValue();
-
 			}
-
 		}
 		return coverages;
 	}
 
 	private FixedField[] getFixedFields() {
-
-
 		int numFixedFields = fixedFormFields.length;
 		FixedField[] fixedFields = new FixedField[numFixedFields];
 
-
 		for (int i = 0; i<numFixedFields; i++){
-
 			fixedFields[i]  = fixedFormFields[i].headerField;
-
 		}
-
 		return fixedFields;
 	}
 
@@ -330,21 +297,13 @@ public class ExerciseForm extends FormView<Exercise> {
 
 				setDynamicVariableData(info.objects, coverageData[i].variableFields, i);
 				coverageSections[i].addWidget(dynamicVariableDataTable[i], false);
-
 			}
-
 		}
-
-
-
 	}
 
 	private void setDynamicVariableData(InsuredObject[] objects2,
 			VariableField[] fields, int k) {
-
-
 		if(objects == null){
-			//clearDynamicVariableHeaderData();
 			return;
 		}
 		if(fields == null){
@@ -443,7 +402,6 @@ public class ExerciseForm extends FormView<Exercise> {
 		dynamicVariableHeaderDataTable = new TwoKeyTableView();
 
 		if(objects == null){
-			clearDynamicVariableHeaderData();
 			return;
 		}
 		if(fields == null){
@@ -507,19 +465,23 @@ public class ExerciseForm extends FormView<Exercise> {
 		this.dynamicVariableHeaderDataTable.render();
 	}
 
-	private void clearDynamicVariableHeaderData() {
-		// TODO Auto-generated method stub
-
-	}
-
 	protected void setDynamicHeaderData(InsuredObject[] objects, HeaderData headerData){
 		if(headerData == null) {return;}
 		setDynamicVariableHeaderData(objects, headerData.variableFields);
 	}
-
-
-
+	
+	@Override
+	public void setReadOnly(boolean readOnly) {
+		super.setReadOnly(readOnly);
+		for(int i = 0; this.coverageFixedFormFields != null && i < this.coverageFixedFormFields.length; i++){
+			for(int j = 0; j < this.coverageFixedFormFields[i].length; j++) {
+				this.coverageFixedFormFields[i][j].setReadOnly(readOnly);
+			}
+		}
+		this.dynamicVariableHeaderDataTable.setReadOnly(readOnly);
+		for(int i = 0; this.dynamicVariableDataTable != null && i < this.dynamicVariableDataTable.length; i++){
+			this.dynamicVariableDataTable[i].setReadOnly(readOnly);
+		}
+	}
 
 }
-
-

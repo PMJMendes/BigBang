@@ -10,10 +10,6 @@ import bigBang.library.client.EventBus;
 import bigBang.library.client.HasParameters;
 import bigBang.library.client.Session;
 import bigBang.library.client.event.LoginSuccessEvent;
-import bigBang.library.client.event.LogoutEvent;
-import bigBang.library.client.event.LogoutEventHandler;
-import bigBang.library.client.event.SessionExpiredEvent;
-import bigBang.library.client.event.SessionExpiredEventHandler;
 import bigBang.library.client.userInterface.presenter.ViewPresenter;
 import bigBang.module.loginModule.interfaces.AuthenticationService;
 import bigBang.module.loginModule.interfaces.AuthenticationServiceAsync;
@@ -112,6 +108,7 @@ public class LoginViewPresenter implements ViewPresenter {
 					Session.setUsername(loginResponse.userName);
 					Session.setDisplayName("TODO");
 					Session.setDomain(loginResponse.domain);
+					Session.setIsRoot(loginResponse.isSU);
 					
 					onLoginSuccess();
 					handler.onResponse(true);
@@ -143,6 +140,7 @@ public class LoginViewPresenter implements ViewPresenter {
 					Session.setUsername(loginResponse.userName);
 					Session.setDisplayName("TODO");
 					Session.setDomain(domain);
+					Session.setIsRoot(loginResponse.isSU);
 					
 					onLoginSuccess();
 				}
@@ -164,6 +162,7 @@ public class LoginViewPresenter implements ViewPresenter {
 				Session.setUsername(loginResponse.userName);
 				Session.setDisplayName("TODO");
 				Session.setDomain(domain);
+				Session.setIsRoot(loginResponse.isSU);
 
 				onLoginSuccess();
 			}
@@ -209,27 +208,6 @@ public class LoginViewPresenter implements ViewPresenter {
 		});
 		
 		//APPLICATION-WIDE
-		EventBus.getInstance().addHandler(LogoutEvent.TYPE, new LogoutEventHandler() {
-
-			@Override
-			public void onLogout(LogoutEvent event) {
-				service.logout(new BigBangAsyncCallback<String>() {
-
-					@Override
-					public void onSuccess(String result) {
-						GWT.log("logout");
-						Window.Location.reload();
-					}
-				});
-			}
-		});
-		EventBus.getInstance().addHandler(SessionExpiredEvent.TYPE, new SessionExpiredEventHandler() {
-
-			@Override
-			public void onSessionExpired() {
-				LoginViewPresenter.this.onSessionExpired();
-			}
-		});
 	}
 	
 	@Override
@@ -249,9 +227,4 @@ public class LoginViewPresenter implements ViewPresenter {
 		LoginViewPresenter.this.view.showErrorMessage("Não foi possível autenticar. Verifique se as credenciais de acesso inseridas são as correctas");
 	}
 	
-	private void onSessionExpired(){
-		GWT.log("The session expired");
-		Window.Location.reload();
-	}
-
 }

@@ -1,26 +1,41 @@
 package bigBang.library.client.userInterface.presenter;
 
-import bigBang.definitions.shared.BigBangConstants.EntityIds;
+import bigBang.definitions.shared.BigBangConstants;
 import bigBang.definitions.shared.ClientStub;
 import bigBang.definitions.shared.InsurancePolicyStub;
 import bigBang.definitions.shared.ManagerTransfer;
-import bigBang.definitions.shared.SearchResult;
+import bigBang.library.client.BigBangAsyncCallback;
+import bigBang.library.client.EventBus;
 import bigBang.library.client.HasParameters;
 import bigBang.library.client.HasValueSelectables;
+import bigBang.library.client.Notification;
+import bigBang.library.client.Notification.TYPE;
+import bigBang.library.client.Session;
+import bigBang.library.client.ValueSelectable;
+import bigBang.library.client.event.ActionInvokedEvent;
+import bigBang.library.client.event.ActionInvokedEventHandler;
+import bigBang.library.client.event.NewNotificationEvent;
+import bigBang.library.client.event.OperationWasExecutedEvent;
 import bigBang.library.client.event.SelectionChangedEvent;
 import bigBang.library.client.event.SelectionChangedEventHandler;
+import bigBang.library.client.history.NavigationHistoryItem;
+import bigBang.library.client.history.NavigationHistoryManager;
 import bigBang.library.client.userInterface.ListEntry;
-import bigBang.library.client.userInterface.view.ManagerTransferForm;
+import bigBang.library.interfaces.TransferManagerService;
+import bigBang.library.interfaces.TransferManagerServiceAsync;
 
+import com.google.gwt.user.client.ui.HasValue;
 import com.google.gwt.user.client.ui.HasWidgets;
 import com.google.gwt.user.client.ui.UIObject;
 import com.google.gwt.user.client.ui.Widget;
 
 public class ManagerTransferViewPresenter implements ViewPresenter{
 
-	private ManagerTransfer transfer;
-	private Display view;
-	private boolean bound = false;
+	public static enum Action {
+		ACCEPT,
+		REJECT,
+		CANCEL
+	}
 	
 	public static enum BarStatus{
 		ACCEPT_REJECT, 
@@ -29,50 +44,59 @@ public class ManagerTransferViewPresenter implements ViewPresenter{
 	}
 
 	public interface Display{
+		HasValue<ManagerTransfer> getForm();
+		void setObjectType(String type);
+		void setToolBarState(BarStatus status);
 
-		public ManagerTransferForm getForm();
-		public void setToolBarState(BarStatus status);
-		public HasValueSelectables<SearchResult> getList();
-		public void clearList();
-		public void addObject(ListEntry<SearchResult> object);
+		HasValueSelectables<Object> getList();
+		void addToList(ListEntry<Object> selectable);
+		void clearList();
+
+		void registerActionHandler(ActionInvokedEventHandler<Action> handler);
 		Widget asWidget();
-
 	}
-	
+
+	private ManagerTransfer transfer;
+	private Display view;
+	private TransferManagerServiceAsync managerTransferService;
+	private boolean bound = false;
+
 	public ManagerTransferViewPresenter(Display view){
+		this.managerTransferService = TransferManagerService.Util.getInstance();
 		setView((UIObject) view);
 	}
 
-	public void setManagerTransfer(ManagerTransfer transfer){
-
-		this.transfer = transfer;
-		view.getForm().clearInfo();
-		view.clearList();
-		view.getForm().setValue(this.transfer);
-		chooseToolBarState();
-		
-		fillList();
-	}
-
-	private void chooseToolBarState() {
-		// TODO COMPARISON OF USER ID WITH NEW MANAGER
-		view.setToolBarState(BarStatus.ACCEPT_REJECT);
+	@Override
+	public void setView(UIObject view) {
+		this.view = (Display)view;
 	}
 
 	@Override
 	public void go(HasWidgets container){
 		bind();
-		bound = true;
 		container.clear();
 		container.add(this.view.asWidget());
 	}
 
 	@Override
 	public void setParameters(HasParameters parameterHolder) {
-		// TODO Auto-generated method stub
+		String id = parameterHolder.getParameter("id");
+		id = id == null ? new String() : id;
+		String transferId = parameterHolder.getParameter("transferid");
+		transferId = transferId == null ? new String() : transferId;
+
+		if(!transferId.isEmpty()){
+			id = transferId;
+		}
 		
+		if(id.isEmpty()){
+			clearView();
+			onGetManagerTransferFailed();
+		}else{
+			showTransfer(id);
+		}
 	}
-	
+
 	public void bind(){
 		if(bound){
 			return;
@@ -81,52 +105,191 @@ public class ManagerTransferViewPresenter implements ViewPresenter{
 
 			@Override
 			public void onSelectionChanged(SelectionChangedEvent event) {
-				// TODO ONSELECTIONCHANGED nos objectos
-				System.out.println("MUDEI DE OBJECTO");
-				
+				@SuppressWarnings("unchecked")
+				ValueSelectable<Object> selected = (ValueSelectable<Object>) event.getFirstSelected();
+				Object selectedObject = selected == null ? null : selected.getValue();
+				if(selectedObject != null) {
+					navigateTo(selectedObject);
+				}
 			}
-			
-		});
-		
 
+		});
+
+		view.registerActionHandler(new ActionInvokedEventHandler<ManagerTransferViewPresenter.Action>() {
+
+			@Override
+			public void onActionInvoked(ActionInvokedEvent<Action> action) {
+				switch(action.getAction()){
+				case ACCEPT:
+					acceptTransfer();
+					break;
+				case REJECT:
+					rejectTransfer();
+					break;
+				case CANCEL:
+					cancelTransfer();
+					break;
+				}
+			}
+		});
+		bound = true;
 	}
 
-	@Override
-	public void setView(UIObject view) {
+	private void clearView() {
+		view.clearList();
+		view.getForm().setValue(null);
+		view.setToolBarState(BarStatus.NONE);
+	}
 
-		this.view = (Display)view;
+	private void showTransfer(String transferId) {
+		ManagerTransferViewPresenter.this.managerTransferService.getTransfer(transferId, new BigBangAsyncCallback<ManagerTransfer>() {
 
+			@Override
+			public void onSuccess(ManagerTransfer result) {
+				setManagerTransfer(result);
+			}
+		});
+	}
+
+	private void setManagerTransfer(ManagerTransfer transfer){
+		this.transfer = transfer;
+		view.clearList();
+		view.getForm().setValue(this.transfer);
+		chooseToolBarState();
+		fillList();
+	}
+
+	private void chooseToolBarState() {
+		if(this.transfer.newManagerId.equalsIgnoreCase(Session.getUserId())){
+			view.setToolBarState(BarStatus.ACCEPT_REJECT);
+		}else{
+			view.setToolBarState(BarStatus.CANCEL);
+		}
 	}
 
 	private void fillList(){
-
-
-		if(transfer.objectTypeId.compareTo(EntityIds.CLIENT) == 0){
-
-			view.getForm().setObjectType("Clientes");
+		if(transfer.objectTypeId.equalsIgnoreCase(BigBangConstants.EntityIds.CLIENT)){
+			view.setObjectType("Clientes");
 			for(int i = 0; i<transfer.objectStubs.length; i++){
 				ClientStub client = (ClientStub)transfer.objectStubs[i];
-				ListEntry<SearchResult> temp = new ListEntry<SearchResult>(client);
+				ListEntry<Object> temp = new ListEntry<Object>(client);
 				temp.setHeight("40px");
 				temp.setTitle(client.name);
 				temp.setText(client.clientNumber);
-				view.addObject(temp);
+				view.addToList(temp);
 			}
 
-		}else if(transfer.objectTypeId.compareTo(EntityIds.POLICY_INSURED_OBJECT) == 0){
+		}else if(transfer.objectTypeId.equalsIgnoreCase(BigBangConstants.EntityIds.POLICY_INSURED_OBJECT)){
 
-			view.getForm().setObjectType("Apólices");
+			view.setObjectType("Apólices");
 			for(int i = 0; i<transfer.objectStubs.length; i++){
 				InsurancePolicyStub policy = (InsurancePolicyStub)transfer.objectStubs[i];
-				ListEntry<SearchResult> temp = new ListEntry<SearchResult>(policy);
+				ListEntry<Object> temp = new ListEntry<Object>(policy);
 				temp.setHeight("40px");
 				temp.setTitle(policy.number);
 				temp.setText(policy.categoryName+" / " +policy.lineName + " / "+policy.subLineName);
-				view.addObject(temp);
+				view.addToList(temp);
 			}
 
 		}
 	}
+	
+	private void acceptTransfer(){
+		managerTransferService.acceptTransfer(this.transfer.id, new BigBangAsyncCallback<ManagerTransfer>() {
+
+			@Override
+			public void onSuccess(ManagerTransfer result) {
+				onAcceptTransferSuccess();
+			}
+			
+			@Override
+			public void onFailure(Throwable caught) {
+				onAcceptTransferFailed();
+				super.onFailure(caught);
+			}
+		});
+	}
+	
+	private void rejectTransfer(){
+		managerTransferService.cancelTransfer(this.transfer.id, new BigBangAsyncCallback<ManagerTransfer>() {
+
+			@Override
+			public void onSuccess(ManagerTransfer result) {
+				onRejectTransferSuccess();
+			}
+			
+			@Override
+			public void onFailure(Throwable caught) {
+				onRejectTransferFailed();
+				super.onFailure(caught);
+			}
+		});
+	}
+	
+	private void cancelTransfer(){
+		managerTransferService.cancelTransfer(this.transfer.id, new BigBangAsyncCallback<ManagerTransfer>() {
+
+			@Override
+			public void onSuccess(ManagerTransfer result) {
+				onCancelTransferSuccess();
+			}
+			
+			@Override
+			public void onFailure(Throwable caught) {
+				onCancelTransferFailed();
+				super.onFailure(caught);
+			}
+		});
+	}
+
+	private void navigateTo(Object object){
+		if(object instanceof ClientStub){
+			NavigationHistoryItem item = new NavigationHistoryItem();
+			item.setParameter("section", "client");
+			item.setParameter("operation", "search");
+			item.setParameter("id", ((ClientStub) object).id);
+			NavigationHistoryManager.getInstance().go(item);
+		}else if(object instanceof InsurancePolicyStub) {
+			NavigationHistoryItem item = new NavigationHistoryItem();
+			item.setParameter("section", "insurancepolicy");
+			item.setParameter("operation", "search");
+			item.setParameter("id", ((InsurancePolicyStub) object).id);
+			NavigationHistoryManager.getInstance().go(item);
+		}
+		//TODO important FJVC
+	}
+	
+	private void onGetManagerTransferFailed(){
+		EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não é possível apresentar a transferência de gestor"), TYPE.ALERT_NOTIFICATION));
+	}
+	
+	private void onAcceptTransferSuccess(){
+		EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "A transferência foi aceite"), TYPE.TRAY_NOTIFICATION));
+		EventBus.getInstance().fireEvent(new OperationWasExecutedEvent(BigBangConstants.OperationIds.ManagerTransfer.ACCEPT_MANAGER_TRANSFER, this.transfer.id));
+	}
+	
+	private void onAcceptTransferFailed(){
+		EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não foi possível aceitar a Transferência de Gestor"), TYPE.ALERT_NOTIFICATION));
+	}
+	
+	private void onRejectTransferSuccess(){
+		EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "A Transferência de Gestor foi rejeitada"), TYPE.TRAY_NOTIFICATION));
+		EventBus.getInstance().fireEvent(new OperationWasExecutedEvent(BigBangConstants.OperationIds.ManagerTransfer.CANCEL_MANAGER_TRANSFER, this.transfer.id));
+	}
+	
+	private void onRejectTransferFailed(){
+		EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não foi possível rejeitar a Transferência de Gestor"), TYPE.ALERT_NOTIFICATION));
+	}
+	
+	private void onCancelTransferSuccess(){
+		EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "A Transferência de Gestor foi cancelada"), TYPE.TRAY_NOTIFICATION));
+		EventBus.getInstance().fireEvent(new OperationWasExecutedEvent(BigBangConstants.OperationIds.ManagerTransfer.CANCEL_MANAGER_TRANSFER, this.transfer.id));
+	}
+	
+	private void onCancelTransferFailed(){
+		EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não foi possível cancelar a Transferência de Gestor"), TYPE.ALERT_NOTIFICATION));
+	}
+	
 }
 
 

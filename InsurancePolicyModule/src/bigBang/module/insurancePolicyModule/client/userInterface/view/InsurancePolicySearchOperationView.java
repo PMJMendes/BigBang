@@ -86,6 +86,11 @@ public class InsurancePolicySearchOperationView extends View implements Insuranc
 			public void onDelete() {
 				actionHandler.onActionInvoked(new ActionInvokedEvent<InsurancePolicySearchOperationViewPresenter.Action>(Action.DELETE));
 			}
+			
+			@Override
+			public void onValidate() {
+				actionHandler.onActionInvoked(new ActionInvokedEvent<InsurancePolicySearchOperationViewPresenter.Action>(Action.VALIDATE));
+			}
 
 			@Override
 			public void onCreateSubstitutePolicy() {
@@ -388,6 +393,11 @@ public class InsurancePolicySearchOperationView extends View implements Insuranc
 		
 	}
 	
+	@Override
+	public void allowValidatePolicy(boolean allow) {
+		toolbar.allowValidate(allow);
+	}
+	
 	/*## PERMISSIONS END ##*/
 
 	@Override
@@ -434,8 +444,7 @@ public class InsurancePolicySearchOperationView extends View implements Insuranc
 
 	@Override
 	public void removeFromList(ValueSelectable<InsurancePolicyStub> selectable) {
-		// TODO Auto-generated method stub
-		
+		this.searchPanel.remove(selectable);
 	}
 
 }

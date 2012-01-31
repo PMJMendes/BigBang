@@ -346,5 +346,13 @@ public class TypifiedListManagementPanel extends FilterableList<TipifiedListItem
 		// TODO Auto-generated method stub
 		return null;
 	}
+
+	@Override
+	public void setTypifiedDataBroker(TypifiedListBroker broker) {
+		if(getListId() != null){
+			this.listBroker.unregisterClient(getListId(), this);
+		}
+		this.listBroker = broker;
+	}
 	
 }

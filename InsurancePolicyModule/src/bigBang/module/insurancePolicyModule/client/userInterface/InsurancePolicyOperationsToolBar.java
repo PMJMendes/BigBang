@@ -18,6 +18,7 @@ public abstract class InsurancePolicyOperationsToolBar extends BigBangOperations
 
 	//EXECUTE
 	protected MenuItem detailedCalculations;
+	protected MenuItem validate;
 
 	//DATA
 	protected MenuItem managerTransfer;
@@ -106,6 +107,14 @@ public abstract class InsurancePolicyOperationsToolBar extends BigBangOperations
 			}
 		});
 		addItem(SUB_MENU.EXECUTE, detailedCalculations);
+		validate = new MenuItem("Validar Apólice", new Command() {
+
+			@Override
+			public void execute() {
+				onValidate();
+			}
+		});
+		addItem(SUB_MENU.EXECUTE, validate);
 
 		//DATA
 		managerTransfer = new MenuItem("Criar Transferência de Gestor", new Command() {
@@ -209,6 +218,10 @@ public abstract class InsurancePolicyOperationsToolBar extends BigBangOperations
 	public void allowDelete(boolean allow) {
 		this.deleteItem.setEnabled(allow);
 	}
+	
+	public void allowValidate(boolean allow) {
+		this.validate.setEnabled(allow);
+	}
 
 	public abstract void onVoidPolicy();
 
@@ -216,6 +229,8 @@ public abstract class InsurancePolicyOperationsToolBar extends BigBangOperations
 
 	public abstract void onDelete();
 
+	public abstract void onValidate();
+	
 	public abstract void onCreateSubstitutePolicy();
 
 	public abstract void onRequestInfoFromClient();
