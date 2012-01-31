@@ -938,7 +938,8 @@ public class InsurancePolicyServiceImpl
 
 			lobjObject = marrObjects.get(plngObject);
 			pobjResult.id = mid.toString() + ":" + Integer.toString(plngObject);
-			pobjResult.ownerId = ( mobjPolicy.mid == null ? mid.toString() : mobjPolicy.mid.toString() );
+//			pobjResult.ownerId = ( mobjPolicy.mid == null ? mid.toString() : mobjPolicy.mid.toString() );
+			pobjResult.ownerId = mid.toString();
 			pobjResult.unitIdentification = lobjObject.mstrName;
 			if ( (lobjObject.mstrAddress1 == null) && (lobjObject.mstrAddress2 == null) && (lobjObject.midZipCode == null) )
 				pobjResult.address = null;
