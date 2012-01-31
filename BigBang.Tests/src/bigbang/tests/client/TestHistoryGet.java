@@ -50,7 +50,7 @@ public class TestHistoryGet
 		};
 
 		parameter = new HistorySearchParameter();
-		parameter.dataObjectId = "31B97CAC-CADD-4F9F-8D62-9FB700201362";
+		parameter.dataObjectId = "AD5EEEE7-E646-4F9D-9E41-9FE80137FC19";
 		sorts = new HistorySortParameter();
 		sorts.field = HistorySortParameter.SortableField.TIMESTAMP;
 		sorts.order = SortOrder.DESC;
