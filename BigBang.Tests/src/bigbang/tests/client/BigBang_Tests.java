@@ -48,6 +48,7 @@ public class BigBang_Tests
 //
 //		TestInfoReqGet.DoTest();
 //		TestInfoReqCreate.DoTest();
+//		TestInfoReqRepeat.DoTest();
 //
 //		TestContactGet.DoTest();
 //		TestContactCreate.DoTest();
