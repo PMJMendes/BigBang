@@ -56,7 +56,8 @@ public abstract class CreateInfoRequestBase
 
 		lstrBuffer.append("Foi enviado o seguinte pedido:").append(pstrLineBreak);
 		lstrBuffer.append(mstrSubject).append(pstrLineBreak);
-		lstrBuffer.append(mstrRequestBody).append(pstrLineBreak);
+		lstrBuffer.append(mstrRequestBody).append(pstrLineBreak).append(pstrLineBreak);
+		lstrBuffer.append("Prazo limite de resposta: ").append(mlngDays).append(" dias.").append(pstrLineBreak);
 
 		return lstrBuffer.toString();
 	}

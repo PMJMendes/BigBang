@@ -19,6 +19,7 @@ import bigBang.library.shared.SessionExpiredException;
 import com.premiumminds.BigBang.Jewel.Constants;
 import com.premiumminds.BigBang.Jewel.Objects.InfoRequest;
 import com.premiumminds.BigBang.Jewel.Objects.RequestAddress;
+import com.premiumminds.BigBang.Jewel.Operations.InfoRequest.RepeatRequest;
 
 public class InfoOrDocumentRequestServiceImpl
 	extends EngineImplementor
@@ -103,10 +104,29 @@ public class InfoOrDocumentRequestServiceImpl
 	public InfoOrDocumentRequest repeatRequest(InfoOrDocumentRequest request)
 		throws SessionExpiredException, BigBangException
 	{
+		InfoRequest lobjRequest;
+		RepeatRequest lopRR;
+
 		if ( Engine.getCurrentUser() == null )
 			throw new SessionExpiredException();
 
-		return null;
+		try
+		{
+			lobjRequest = InfoRequest.GetInstance(Engine.getCurrentNameSpace(), UUID.fromString(request.id));
+
+			lopRR = new RepeatRequest(lobjRequest.GetProcessID());
+			lopRR.mlngDays = request.replylimit;
+			lopRR.mstrSubject = request.subject;
+			lopRR.mstrRequestBody = request.text;
+
+			lopRR.Execute();
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangException(e.getMessage(), e);
+		}
+
+		return InfoOrDocumentRequestServiceImpl.sGetRequest(lobjRequest.getKey());
 	}
 
 	public InfoOrDocumentRequest receiveResponse(Response response)
