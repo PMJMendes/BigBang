@@ -273,6 +273,11 @@ public class ListEntry<T> extends View implements ValueSelectable<T>, HasMetaDat
 		this.rightWidgetContainer.clear();
 		this.rightWidgetContainer.add(w);
 	}
+	
+	public Widget getRightWidget(){
+		return ((Widget)this.rightWidgetContainer);
+	}
+	
 
 	public HandlerRegistration addValueChangeHandler(
 			ValueChangeHandler<T> handler) {

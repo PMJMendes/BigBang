@@ -33,6 +33,7 @@ public class DocumentView extends View implements DocumentViewPresenter.Display{
 		wrapper.add(conts);
 		details.details.setSelectableEntries(false);
 		wrapper.add(details.details.getListContent());
+		setEditable(false);
 		
 		setSize("400px", "400px");
 	}
@@ -61,13 +62,11 @@ public class DocumentView extends View implements DocumentViewPresenter.Display{
 	@Override
 	public void createNewFile() {
 		middle.createNewFile();
-		top.delete.setEnabled(false);
 	}
 
 	@Override
 	public void createNewNote() {
 		middle.createNewNote();
-		top.delete.setEnabled(false);
 	}
 
 	@Override
@@ -100,7 +99,7 @@ public class DocumentView extends View implements DocumentViewPresenter.Display{
 		top.setEditable(b);
 		middle.setEditable(b);
 		top.getToolbar().setSaveModeEnabled(b);
-		top.enableDelete(b);
+		
 	}
 
 	@Override

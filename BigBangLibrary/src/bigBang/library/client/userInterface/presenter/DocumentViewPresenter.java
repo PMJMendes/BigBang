@@ -7,7 +7,6 @@ import bigBang.definitions.client.response.ResponseHandler;
 import bigBang.definitions.shared.BigBangConstants;
 import bigBang.definitions.shared.DocInfo;
 import bigBang.definitions.shared.Document;
-import bigBang.library.client.BigBangAsyncCallback;
 import bigBang.library.client.EventBus;
 import bigBang.library.client.HasParameters;
 import bigBang.library.client.Notification;
@@ -28,8 +27,6 @@ import bigBang.library.client.userInterface.view.DocumentSections.DetailsSection
 import bigBang.library.client.userInterface.view.DocumentSections.FileNoteSection;
 import bigBang.library.client.userInterface.view.DocumentSections.GeneralInfoSection;
 import bigBang.library.client.userInterface.view.FileUploadPopup;
-import bigBang.library.interfaces.FileService;
-import bigBang.library.server.FileServiceImpl;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.Window;
@@ -58,7 +55,6 @@ public class DocumentViewPresenter implements ViewPresenter, DocumentsBrokerClie
 		CHANGE_TO_NOTE, 
 		ADD_NEW_DETAIL, 
 		REMOVE_FILE, 
-		DELETE_DETAIL, 
 		DELETE, 
 		UPLOAD_SUCCESS, 
 		UPLOAD_BUTTON, 
@@ -155,7 +151,7 @@ public class DocumentViewPresenter implements ViewPresenter, DocumentsBrokerClie
 					navig.removeParameter("documentid");
 					navig.removeParameter("operation");
 					navig.removeParameter("ownertypeid");
-					navig.removeParameter("editpermission");
+					navig.removeParameter("show");
 					NavigationHistoryManager.getInstance().go(navig);
 					EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não é possível mostrar o documento pedido."), TYPE.ALERT_NOTIFICATION));
 				}
@@ -179,12 +175,10 @@ public class DocumentViewPresenter implements ViewPresenter, DocumentsBrokerClie
 
 			@Override
 			public void onDeleteRequest(Object object) {
-				//TODO APAGAR DA BD
-				List<DocInfo> list = view.getDetails().getList();
 
-				for(ValueSelectable<DocInfo> cont: list){
-					if(cont.getValue() == object) {
-						list.remove(cont);
+				for(ValueSelectable<DocInfo> cont: view.getDetails().getList()){
+					if(cont.getValue() == object) {;
+						view.getDetails().getList().remove(cont);
 						break;
 					}
 
@@ -285,12 +279,7 @@ public class DocumentViewPresenter implements ViewPresenter, DocumentsBrokerClie
 
 					@Override
 					public void onResponse(Void response) {
-						NavigationHistoryItem navig = NavigationHistoryManager.getInstance().getCurrentState();
-						navig.removeParameter("documentid");
-						navig.removeParameter("operation");
-						navig.removeParameter("ownertypeid");
-						navig.removeParameter("editpermission");
-						NavigationHistoryManager.getInstance().go(navig);
+						
 						EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Documento eliminado com sucesso."), TYPE.TRAY_NOTIFICATION));
 					}
 
@@ -421,7 +410,7 @@ public class DocumentViewPresenter implements ViewPresenter, DocumentsBrokerClie
 			navig.removeParameter("documentid");
 			navig.removeParameter("operation");
 			navig.removeParameter("ownertypeid");
-			navig.removeParameter("editpermission");
+			navig.removeParameter("show");
 			NavigationHistoryManager.getInstance().go(navig);
 			return;
 		}
@@ -436,7 +425,6 @@ public class DocumentViewPresenter implements ViewPresenter, DocumentsBrokerClie
 
 		if(doc == null){
 			view.getFileNote().generateNewDocument();
-			view.getGeneralInfo().enableDelete(false);
 			view.addDetail(null);
 			view.setSaveMode(true);
 			return;
@@ -518,7 +506,12 @@ public class DocumentViewPresenter implements ViewPresenter, DocumentsBrokerClie
 	@Override
 	public void removeDocument(String ownerId, Document document) {
 
-		NavigationHistoryItem navig = null;
+		NavigationHistoryItem navig = NavigationHistoryManager.getInstance().getCurrentState();
+		navig.removeParameter("documentid");
+		navig.removeParameter("operation");
+		navig.removeParameter("ownertypeid");
+		navig.removeParameter("show");
+		NavigationHistoryManager.getInstance().go(navig);
 
 	}
 

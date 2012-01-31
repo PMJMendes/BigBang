@@ -1,7 +1,7 @@
 package bigBang.library.client.userInterface.view;
 
 
-import org.gwt.mosaic.ui.client.ToolBar;
+import org.gwt.mosaic.ui.client.MessageBox;
 
 import bigBang.definitions.shared.BigBangConstants;
 import bigBang.definitions.shared.DocInfo;
@@ -10,6 +10,7 @@ import bigBang.library.client.event.ActionInvokedEvent;
 import bigBang.library.client.event.ActionInvokedEventHandler;
 import bigBang.library.client.event.DeleteRequestEvent;
 import bigBang.library.client.event.DeleteRequestEventHandler;
+import bigBang.library.client.resources.Resources;
 import bigBang.library.client.userInterface.BigBangOperationsToolBar;
 import bigBang.library.client.userInterface.BigBangOperationsToolBar.SUB_MENU;
 import bigBang.library.client.userInterface.ExpandableListBoxFormField;
@@ -18,11 +19,8 @@ import bigBang.library.client.userInterface.ListEntry;
 import bigBang.library.client.userInterface.TextAreaFormField;
 import bigBang.library.client.userInterface.TextBoxFormField;
 import bigBang.library.client.userInterface.presenter.DocumentViewPresenter.Action;
-import bigBang.library.client.resources.Resources;
 
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.event.dom.client.ChangeEvent;
-import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.MouseUpEvent;
@@ -30,18 +28,60 @@ import com.google.gwt.event.dom.client.MouseUpHandler;
 import com.google.gwt.resources.client.ImageResource;
 import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.ui.Button;
-import com.google.gwt.user.client.ui.FileUpload;
-import com.google.gwt.user.client.ui.FormPanel;
 import com.google.gwt.user.client.ui.HasVerticalAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.MenuItem;
-import com.google.gwt.user.client.ui.UIObject;
+import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
 
 public abstract class DocumentSections{
+	
+	public static class DocumentOperationsToolBar extends BigBangOperationsToolBar{
+		
+		private MenuItem delete;
+		
+		public DocumentOperationsToolBar(){
+			super();
+			delete = new MenuItem("Eliminar", new Command() {
+
+				@Override
+				public void execute() {
+					onDeleteRequest();
+				}
+
+			});
+			
+			this.addItem(SUB_MENU.ADMIN, delete);
+			this.hideAll();
+			this.showItem(SUB_MENU.EDIT, true);
+			this.adminSubMenu.setVisible(true);
+			this.showItem(SUB_MENU.ADMIN, true);
+			this.setHeight("21px");
+			this.setWidth("100%");
+			this.adminSubMenu.getElement().getStyle().setZIndex(12000);
+			
+		}
+
+		@Override
+		public void onEditRequest() {
+			
+		}
+
+		@Override
+		public void onSaveRequest() {
+		}
+
+		@Override
+		public void onCancelRequest() {
+		}
+		
+		public void onDeleteRequest(){
+			
+		}
+	}
 
 	public static class GeneralInfoSection extends View{
 		
@@ -50,21 +90,13 @@ public abstract class DocumentSections{
 		private ExpandableListBoxFormField docType;
 		Document doc = new Document();
 		ActionInvokedEventHandler<Action> actionHandler;
-		BigBangOperationsToolBar toolbar;
-		MenuItem delete;
+		DocumentOperationsToolBar toolbar;
 		
 		
 		public GeneralInfoSection(){
 
-			delete = new MenuItem("Eliminar", new Command() {
-				
-				@Override
-				public void execute() {
-					fireAction(Action.DELETE);
-				}
-			});
 			
-			toolbar = new BigBangOperationsToolBar(){
+			toolbar = new DocumentOperationsToolBar(){
 				
 				@Override
 				public void onEditRequest() {
@@ -72,9 +104,8 @@ public abstract class DocumentSections{
 				}
 
 				@Override
-				public void onSaveRequest() {
+				public void onSaveRequest(){
 					fireAction(Action.SAVE);
-
 				}
 				@Override
 				public void onCancelRequest() {
@@ -82,8 +113,16 @@ public abstract class DocumentSections{
 				}
 				
 				@Override
-				public void setSaveModeEnabled(boolean enabled) {
-					super.setSaveModeEnabled(enabled);
+				public void onDeleteRequest() {
+					MessageBox.confirm("Eliminar Modelo", "Tem certeza que pretende eliminar o documento seleccionado?", new MessageBox.ConfirmationCallback() {
+
+						@Override
+						public void onResult(boolean result) {
+							if(result){
+								fireAction(Action.DELETE);
+							}
+						}
+					});
 				}
 
 			};
@@ -91,11 +130,7 @@ public abstract class DocumentSections{
 			wrapper = new VerticalPanel();
 			initWidget(wrapper);
 			wrapper.setWidth("100%");
-			toolbar.hideAll();
 			toolbar.showItem(SUB_MENU.EDIT, true);
-			toolbar.addItem(delete);
-			delete.getElement().getStyle().setProperty("textAlign", "center");
-			delete.setEnabled(false);
 			toolbar.setHeight("21px");
 			toolbar.setWidth("100%");
 			wrapper.add(toolbar);
@@ -124,7 +159,7 @@ public abstract class DocumentSections{
 			this.doc = doc;
 			getName().setValue(doc.name);
 			getDocType().setValue(doc.docTypeId);
-
+			this.setEditable(false);
 			
 		}
 		
@@ -160,11 +195,6 @@ public abstract class DocumentSections{
 		public void setDocType(ExpandableListBoxFormField docType) {
 			this.docType = docType;
 		}
-
-		public void enableDelete(boolean b) {
-			delete.setEnabled(b);
-		}
-
 	}
 	
 	
@@ -531,21 +561,13 @@ public abstract class DocumentSections{
 			public DocumentDetailEntry(DocInfo docInfo) {
 				super(docInfo);
 			}
+			
 
 			@Override
 			public void setValue(DocInfo docInfo) {
 
 
 				if(docInfo == null){
-					Button add = new Button("Adicionar Detalhe");
-					add.addClickHandler(new ClickHandler() {
-
-						@Override
-						public void onClick(ClickEvent event) {
-							fireAction(Action.ADD_NEW_DETAIL);
-						}
-					});
-					add.setWidth("180px");
 					this.setLeftWidget(add);
 					super.setValue(docInfo);
 					return;	
@@ -566,6 +588,12 @@ public abstract class DocumentSections{
 						fireEvent(new DeleteRequestEvent(getValue()));
 					}
 				});
+				
+//				this.info.setWidth("10px");
+				this.info.setFieldWidth("190px");
+				this.infoValue.setFieldWidth("190px");
+				this.remove.setWidth("20px");
+				
 				this.setLeftWidget(getInfo());
 				this.setWidget(getInfoValue());
 				this.setRightWidget(remove);
@@ -581,6 +609,7 @@ public abstract class DocumentSections{
 				getInfo().setReadOnly(!editable);
 				getInfoValue().setReadOnly(!editable);
 				remove.setVisible(editable);
+				add.setVisible(editable);
 			}
 
 
@@ -608,18 +637,31 @@ public abstract class DocumentSections{
 		
 		List<DocInfo> details;
 		DocInfo[] docInfo;
-		VerticalPanel wrapper;
+		ScrollPanel wrapper;
+		VerticalPanel insideWrapper = new VerticalPanel();
 		private ActionInvokedEventHandler<Action> actionHandler;
 		private DeleteRequestEventHandler deleteHandler;
-		
+		private Button add;
 		
 		public DetailsSection(){
 			
-			wrapper = new VerticalPanel();
+
+			wrapper = new ScrollPanel();
 			initWidget(wrapper);
 			wrapper.setWidth("100%");
+			wrapper.add(insideWrapper);
 			details = new List<DocInfo>();
-			wrapper.add(details.getScrollable());
+			details.setWidth("100%");
+			insideWrapper.add(details.getScrollable());
+			add = new Button("Adicionar Detalhe");
+			add.addClickHandler(new ClickHandler() {
+
+				@Override
+				public void onClick(ClickEvent event) {
+					fireAction(Action.ADD_NEW_DETAIL);
+				}
+			});
+			add.setWidth("180px");
 			
 		}
 		
@@ -652,7 +694,7 @@ public abstract class DocumentSections{
 		}
 
 		public void setEditable(boolean b) {
-
+			
 			if(details.size() > 1){
 					for(int i = 0; i<details.size()-1; i++){
 						
@@ -663,6 +705,7 @@ public abstract class DocumentSections{
 		
 					details.get(details.size()-1).setVisible(b);
 				}
+			add.setVisible(b);
 		}
 			
 			

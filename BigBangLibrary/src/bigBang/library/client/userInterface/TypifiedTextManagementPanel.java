@@ -4,6 +4,7 @@ import java.util.Collection;
 import java.util.List;
 
 import org.gwt.mosaic.ui.client.MessageBox;
+import org.gwt.mosaic.ui.client.ToolButton;
 
 import bigBang.definitions.client.response.ResponseError;
 import bigBang.definitions.client.response.ResponseHandler;
@@ -99,7 +100,7 @@ public class TypifiedTextManagementPanel extends View implements TypifiedTextCli
 	protected TypifiedListBroker listBroker;
 	protected TypifiedTextBroker textBroker;
 	protected HandlerRegistration attachHandlerRegistration;
-	private Button newTextButton;
+	private ToolButton newTextButton;
 	private TextBoxFormField label = new TextBoxFormField("Etiqueta");
 	private TextBoxFormField subject = new TextBoxFormField("Assunto");
 	private RichTextAreaFormField textBody = new RichTextAreaFormField();
@@ -217,8 +218,14 @@ public class TypifiedTextManagementPanel extends View implements TypifiedTextCli
 		});
 
 		setListId(listId);
-		newTextButton = new Button("Novo");
-		newTextButton.setSize("80px", "27px");
+
+	
+		
+		VerticalPanel headerWrapper = new VerticalPanel();
+		headerWrapper.setSize("100%", "100%");
+		ListHeader header = new ListHeader();
+		header.showNewButton("Novo");
+		newTextButton = header.getNewButton();
 		newTextButton.addClickHandler(new ClickHandler() {
 
 			@Override
@@ -227,9 +234,6 @@ public class TypifiedTextManagementPanel extends View implements TypifiedTextCli
 
 			}
 		});
-		VerticalPanel headerWrapper = new VerticalPanel();
-		headerWrapper.setSize("100%", "100%");
-		ListHeader header = new ListHeader();
 		headerWrapper.add(header);
 		header.setText("Modelos");
 		header.setRightWidget(newTextButton);

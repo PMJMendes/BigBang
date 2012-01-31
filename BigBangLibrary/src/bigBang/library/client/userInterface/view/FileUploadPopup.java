@@ -1,5 +1,6 @@
 package bigBang.library.client.userInterface.view;
 
+import bigBang.library.client.userInterface.DocumentNavigationList;
 import bigBang.library.client.userInterface.presenter.DocumentViewPresenter.Action;
 
 import com.google.gwt.core.client.GWT;
@@ -23,12 +24,13 @@ public class FileUploadPopup
 	private FileUpload mfupMain;
 	private Button mbtnOk;
 	private Button mbtnCancel;
+	private Button docuShareButton;
 
 
 	public FileUploadPopup(final DocumentSections.FileNoteSection fileNoteSection)
 	{
 		super(false, true);
-
+		this.setStyleName("gwt-MenuBarPopup");
 		VerticalPanel lvert;
 		HorizontalPanel lhorz;
 
@@ -51,6 +53,9 @@ public class FileUploadPopup
 		lhorz.add(mbtnOk);
 		mbtnCancel = new Button();
 		mbtnCancel.setText("Cancel");
+		docuShareButton = new Button();
+		docuShareButton.setText("Ficheiro do DocuShare");
+		lhorz.add(docuShareButton);
 		lhorz.add(mbtnCancel);
 		lvert.add(lhorz);
 
@@ -101,6 +106,18 @@ public class FileUploadPopup
 				hide();
 	        }
 		});
+		
+		docuShareButton.addClickHandler(new ClickHandler() 
+		{
+			
+			public void onClick(ClickEvent event) {
+			
+				DocumentNavigationList list = new DocumentNavigationList();
+				hide();
+			}
+		});
+	
+		
 	}
 	
 	public void SetKey(String pstrKey)
