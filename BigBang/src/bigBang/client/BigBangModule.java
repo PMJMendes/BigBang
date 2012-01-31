@@ -11,6 +11,7 @@ import bigBang.library.client.ViewPresenterInstantiator;
 import bigBang.library.client.dataAccess.BigBangContactsListBroker;
 import bigBang.library.client.dataAccess.BigBangDocumentsBroker;
 import bigBang.library.client.dataAccess.HistoryBrokerImpl;
+import bigBang.library.client.dataAccess.SubProcessesBrokerImpl;
 import bigBang.library.client.dataAccess.TypifiedTextBrokerImpl;
 import bigBang.library.client.userInterface.presenter.ContactViewPresenter;
 import bigBang.library.client.userInterface.presenter.DocumentViewPresenter;
@@ -19,7 +20,7 @@ import bigBang.library.client.userInterface.presenter.UndoOperationViewPresenter
 import bigBang.library.client.userInterface.presenter.ViewPresenter;
 import bigBang.library.client.userInterface.view.ContactView;
 import bigBang.library.client.userInterface.view.DocumentView;
-import bigBang.library.client.userInterface.view.ManagerTransferView;
+import bigBang.library.client.userInterface.view.ManagerTransferWithToolbarView;
 import bigBang.library.client.userInterface.view.UndoOperationView;
 
 public class BigBangModule implements Module {
@@ -47,12 +48,11 @@ public class BigBangModule implements Module {
 				return presenter;
 			}
 		});
-		
 		ViewPresenterFactory.getInstance().registerViewPresenterInstantiator("MANAGER_TRANSFER", new ViewPresenterInstantiator() {
 
 			@Override
 			public ViewPresenter getInstance() {
-				ManagerTransferView view = (ManagerTransferView) GWT.create(ManagerTransferView.class);
+				ManagerTransferWithToolbarView view = (ManagerTransferWithToolbarView) GWT.create(ManagerTransferWithToolbarView.class);
 				ViewPresenter presenter = new ManagerTransferViewPresenter(view);
 				return presenter;
 			}
@@ -92,6 +92,7 @@ public class BigBangModule implements Module {
 				new HistoryBrokerImpl()	,
 				new BigBangContactsListBroker(),
 				new BigBangDocumentsBroker(),
+				new SubProcessesBrokerImpl(),
 				new TypifiedTextBrokerImpl()
 		};
 	}
