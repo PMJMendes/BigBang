@@ -71,7 +71,7 @@ public class ClientDocumentsList extends FilterableList<Document> implements Doc
 				@Override
 				public void onError(Collection<ResponseError> errors) {
 					// TODO Auto-generated method stub
-					
+
 				}
 			});
 		}
@@ -120,7 +120,7 @@ public class ClientDocumentsList extends FilterableList<Document> implements Doc
 
 	@Override
 	public void removeDocument(String ownerId, Document document) {
-		if(ownerId == null){
+		if(ownerId != null && this.ownerId != null && ownerId.equalsIgnoreCase(this.ownerId)){
 			for(ValueSelectable<Document> s : this) {
 				if(s.getValue().id.equalsIgnoreCase(document.id)){
 					remove(s);
@@ -131,16 +131,18 @@ public class ClientDocumentsList extends FilterableList<Document> implements Doc
 
 	@Override
 	public void addDocument(String ownerId, Document document) {
-		if(ownerId == null) {
+		if(ownerId != null && this.ownerId != null && ownerId.equalsIgnoreCase(this.ownerId)) {
 			addEntry(document);
 		}
 	}
 
 	@Override
 	public void updateDocument(String ownerId, Document document) {
-		for(ValueSelectable<Document> s : this){
-			if(s.getValue().id.equalsIgnoreCase(document.id)){
-				s.setValue(document);
+		if(ownerId != null && this.ownerId != null && ownerId.equalsIgnoreCase(this.ownerId)){
+			for(ValueSelectable<Document> s : this){
+				if(s.getValue().id.equalsIgnoreCase(document.id)){
+					s.setValue(document);
+				}
 			}
 		}
 	}
