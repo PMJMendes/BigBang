@@ -54,6 +54,8 @@ public class CancelRequest
 		{
 			throw new JewelPetriException(e.getMessage(), e);
 		}
+
+		GetProcess().Stop(pdb);
 	}
 
 	public String UndoDesc(String pstrLineBreak)
@@ -69,6 +71,7 @@ public class CancelRequest
 	protected void Undo(SQLServer pdb)
 		throws JewelPetriException
 	{
+		GetProcess().Restart(pdb);
 	}
 
 	public UndoSet[] GetSets()

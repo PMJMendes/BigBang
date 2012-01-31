@@ -313,6 +313,7 @@ public class DocOps
 			return new UndoableOperation.UndoSet[0];
 
 		larrResult = new UndoableOperation.UndoSet[1];
+		larrResult[0] = new UndoableOperation.UndoSet();
 		larrResult[0].midType = Constants.ObjID_Document;
 		larrResult[0].marrDeleted = new UUID[llngCreates];
 		larrResult[0].marrChanged = new UUID[llngModifies];
@@ -498,8 +499,11 @@ public class DocOps
 
 			lobjAux = Document.GetInstance(Engine.getCurrentNameSpace(), pobjData.mid);
 
-			for ( i = 0; i < pobjData.marrInfo.length; i++ )
-				lrefDocInfo.Delete(pdb, pobjData.marrInfo[i].mid);
+			if ( pobjData.marrInfo != null )
+			{
+				for ( i = 0; i < pobjData.marrInfo.length; i++ )
+					lrefDocInfo.Delete(pdb, pobjData.marrInfo[i].mid);
+			}
 
 			lrefDocuments.Delete(pdb, lobjAux.getKey());
 		}

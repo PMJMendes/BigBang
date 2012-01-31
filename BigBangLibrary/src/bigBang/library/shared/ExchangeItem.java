@@ -1,12 +1,10 @@
 package bigBang.library.shared;
 
-import java.io.Serializable;
-
 public class ExchangeItem
-	implements Serializable
+	extends ExchangeItemStub
 {
 	private static final long serialVersionUID = 1L;
 
-	public String id;
-	public String subject;
+	public String body;
+	public AttachmentStub[] attachments;
 }

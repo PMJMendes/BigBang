@@ -1,7 +1,9 @@
 package bigBang.library.interfaces;
 
+import bigBang.library.shared.Attachment;
 import bigBang.library.shared.BigBangException;
 import bigBang.library.shared.ExchangeItem;
+import bigBang.library.shared.ExchangeItemStub;
 import bigBang.library.shared.SessionExpiredException;
 
 import com.google.gwt.core.client.GWT;
@@ -25,5 +27,7 @@ public interface ExchangeService
 		}
 	}
 
-	ExchangeItem[] getItems() throws SessionExpiredException, BigBangException;
+	ExchangeItemStub[] getItems() throws SessionExpiredException, BigBangException;
+	ExchangeItem getItem(String id) throws SessionExpiredException, BigBangException;
+	Attachment getAttachment(String emailId, String attachmentId) throws SessionExpiredException, BigBangException;
 }

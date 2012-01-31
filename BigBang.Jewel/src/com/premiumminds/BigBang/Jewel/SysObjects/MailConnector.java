@@ -9,11 +9,15 @@ import javax.mail.Transport;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 
+import microsoft.exchange.webservices.data.EmailMessageSchema;
 import microsoft.exchange.webservices.data.ExchangeService;
 import microsoft.exchange.webservices.data.Folder;
 import microsoft.exchange.webservices.data.FolderView;
 import microsoft.exchange.webservices.data.Item;
+import microsoft.exchange.webservices.data.ItemId;
+import microsoft.exchange.webservices.data.ItemSchema;
 import microsoft.exchange.webservices.data.ItemView;
+import microsoft.exchange.webservices.data.PropertySet;
 import microsoft.exchange.webservices.data.WellKnownFolderName;
 import Jewel.Engine.Engine;
 
@@ -96,6 +100,59 @@ public class MailConnector
 						break;
 					}
 				}
+
+				if ( lobjFolder == null )
+				{
+					lobjFolder = new Folder(GetService());
+					lobjFolder.setDisplayName("bigbang");
+					lobjFolder.save(WellKnownFolderName.MsgFolderRoot);
+					Engine.getUserData().put("ExchangeFolder", lobjFolder);
+				}
+			}
+			catch (Throwable e)
+			{
+				throw new BigBangJewelException(e.getMessage(), e);
+			}
+		}
+
+		return lobjFolder;
+	}
+
+	private static Folder GetProcessedFolder()
+		throws BigBangJewelException
+	{
+		Folder lobjParent;
+		Folder lobjFolder;
+		ArrayList<Folder> larrFolders;
+		int i;
+
+		lobjFolder = (Folder)Engine.getUserData().get("ExchangeProcessedFolder");
+
+		if ( lobjFolder == null )
+		{
+			lobjParent = GetFolder();
+
+			try
+			{
+				larrFolders = GetService().findFolders(lobjParent.getId(), new FolderView(Integer.MAX_VALUE)).getFolders();
+	
+				for ( i = 0; i < larrFolders.size(); i++ )
+				{
+					if ( "tratados".equals(larrFolders.get(i).getDisplayName()) )
+					{
+						lobjFolder = larrFolders.get(i);
+						Engine.getUserData().put("ExchangeProcessedFolder", lobjFolder);
+						break;
+					}
+				}
+
+				if ( lobjFolder == null )
+				{
+					lobjFolder = new Folder(GetService());
+					lobjFolder.setDisplayName("tratados");
+					lobjFolder.save(lobjParent.getId());
+					Engine.getUserData().put("ExchangeProcessedFolder", lobjFolder);
+				}
 			}
 			catch (Throwable e)
 			{
@@ -172,5 +229,54 @@ public class MailConnector
 		}
 
 		return larrTmp.toArray(new Item[larrTmp.size()]);
+	}
+
+	public static Item DoGetItem(String pstrUniqueID)
+		throws BigBangJewelException
+	{
+		try
+		{
+			return Item.bind(GetService(), new ItemId(pstrUniqueID), new PropertySet(ItemSchema.Id, ItemSchema.Subject,
+					ItemSchema.Body, EmailMessageSchema.From, ItemSchema.DateTimeSent, ItemSchema.Attachments,
+					ItemSchema.MimeContent));
+		}
+		catch (Exception e)
+		{
+			throw new BigBangJewelException(e.getMessage(), e);
+		}
+	}
+
+	public static Item DoProcessItem(String pstrUniqueID)
+		throws BigBangJewelException
+	{
+		try
+		{
+			return Item.bind(GetService(), new ItemId(pstrUniqueID)).move(GetProcessedFolder().getId());
+		}
+		catch (BigBangJewelException e)
+		{
+			throw e;
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangJewelException(e.getMessage(), e);
+		}
+	}
+
+	public static Item DoUnprocessItem(String pstrUniqueID)
+		throws BigBangJewelException
+	{
+		try
+		{
+			return Item.bind(GetService(), new ItemId(pstrUniqueID)).move(GetFolder().getId());
+		}
+		catch (BigBangJewelException e)
+		{
+			throw e;
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangJewelException(e.getMessage(), e);
+		}
 	}
 }

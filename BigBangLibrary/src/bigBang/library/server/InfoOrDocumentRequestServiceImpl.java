@@ -17,9 +17,12 @@ import bigBang.library.shared.BigBangException;
 import bigBang.library.shared.SessionExpiredException;
 
 import com.premiumminds.BigBang.Jewel.Constants;
+import com.premiumminds.BigBang.Jewel.Data.DocumentData;
 import com.premiumminds.BigBang.Jewel.Objects.InfoRequest;
 import com.premiumminds.BigBang.Jewel.Objects.RequestAddress;
+import com.premiumminds.BigBang.Jewel.Operations.DocOps;
 import com.premiumminds.BigBang.Jewel.Operations.InfoRequest.CancelRequest;
+import com.premiumminds.BigBang.Jewel.Operations.InfoRequest.ReceiveReply;
 import com.premiumminds.BigBang.Jewel.Operations.InfoRequest.RepeatRequest;
 
 public class InfoOrDocumentRequestServiceImpl
@@ -133,10 +136,52 @@ public class InfoOrDocumentRequestServiceImpl
 	public InfoOrDocumentRequest receiveResponse(Response response)
 		throws SessionExpiredException, BigBangException
 	{
+		InfoRequest lobjRequest;
+		ReceiveReply lopRR;
+		int i;
+
 		if ( Engine.getCurrentUser() == null )
 			throw new SessionExpiredException();
 
-		return null;
+		try
+		{
+			lobjRequest = InfoRequest.GetInstance(Engine.getCurrentNameSpace(), UUID.fromString(response.requestId));
+
+			lopRR = new ReceiveReply(lobjRequest.GetProcessID());
+			lopRR.mstrNotes = response.notes;
+			lopRR.mstrEmailID = response.emailId;
+			if ( response.upgrades == null )
+				lopRR.mobjDocOps = null;
+			else
+			{
+				lopRR.mobjDocOps = new DocOps();
+				lopRR.mobjDocOps.marrModify = null;
+				lopRR.mobjDocOps.marrDelete = null;
+				lopRR.mobjDocOps.marrCreate = new DocumentData[response.upgrades.length];
+				for ( i = 0; i < response.upgrades.length; i++ )
+				{
+					lopRR.mobjDocOps.marrCreate[i] = new DocumentData();
+					lopRR.mobjDocOps.marrCreate[i].mstrName = response.upgrades[i].name;
+					lopRR.mobjDocOps.marrCreate[i].midOwnerType = PNProcess.GetInstance(Engine.getCurrentNameSpace(),
+							lobjRequest.GetProcessID()).GetScript().GetDataType();
+					lopRR.mobjDocOps.marrCreate[i].midOwnerId = null;
+					lopRR.mobjDocOps.marrCreate[i].midDocType = UUID.fromString(response.upgrades[i].docTypeId);
+					lopRR.mobjDocOps.marrCreate[i].mstrText = null;
+					lopRR.mobjDocOps.marrCreate[i].mobjFile = FileServiceImpl.GetFileXferStorage().
+							get(UUID.fromString(response.upgrades[i].storageId)).GetVarData();
+					lopRR.mobjDocOps.marrCreate[i].marrInfo = null;
+					lopRR.mobjDocOps.marrCreate[i].mobjPrevValues = null;
+				}
+			}
+
+			lopRR.Execute();
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangException(e.getMessage(), e);
+		}
+
+		return InfoOrDocumentRequestServiceImpl.sGetRequest(lobjRequest.getKey());
 	}
 
 	public void cancelRequest(Cancellation cancellation)

@@ -13,9 +13,20 @@ public class InfoOrDocumentRequest
 	{
 		private static final long serialVersionUID = 1L;
 
-		public String id;
+		public static class Upgrade
+			implements Serializable
+		{
+			private static final long serialVersionUID = 1L;
+
+			public String name;
+			public String docTypeId;
+			public String storageId;
+		}
+
 		public String requestId;
-		public String content;
+		public String notes;
+		public String emailId;
+		public Upgrade[] upgrades;
 	}
 
 	//The cancellation data
@@ -24,7 +35,6 @@ public class InfoOrDocumentRequest
 	{
 		private static final long serialVersionUID = 1L;
 
-//		public String id;
 		public String requestId;
 		public String motiveId;
 	}
