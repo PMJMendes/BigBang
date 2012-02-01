@@ -32,7 +32,8 @@ public class DocumentView extends View implements DocumentViewPresenter.Display{
 		ListHeader conts = new ListHeader("Detalhes");
 		wrapper.add(conts);
 		details.details.setSelectableEntries(false);
-		wrapper.add(details.details.getListContent());
+		wrapper.add(details);
+		wrapper.setCellHeight(details,"100%");
 		setEditable(false);
 		
 		setSize("400px", "400px");

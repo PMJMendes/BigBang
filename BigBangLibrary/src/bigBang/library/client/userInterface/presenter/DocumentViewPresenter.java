@@ -31,6 +31,7 @@ import bigBang.library.client.userInterface.view.FileUploadPopup;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.HasWidgets;
+import com.google.gwt.user.client.ui.PopupPanel.PositionCallback;
 import com.google.gwt.user.client.ui.UIObject;
 import com.google.gwt.user.client.ui.Widget;
 
@@ -256,8 +257,7 @@ public class DocumentViewPresenter implements ViewPresenter, DocumentsBrokerClie
 						view.getFileNote().getUploadDialog().SetKey(doc.fileStorageId);
 					else
 						view.getFileNote().getUploadDialog().SetKey(null);	
-
-					view.getFileNote().getUploadDialog().center();
+						view.getFileNote().getUploadDialog().center();
 					break;
 				}
 				case DOWNLOAD_FILE:{
@@ -306,10 +306,12 @@ public class DocumentViewPresenter implements ViewPresenter, DocumentsBrokerClie
 
 						@Override
 						public void onResponse(Document response) {
+							
 							EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Documento criado com sucesso."), TYPE.TRAY_NOTIFICATION));
 							NavigationHistoryItem navig = NavigationHistoryManager.getInstance().getCurrentState();
-							navig.setParameter("documentid", response.id);
+							navig.setParameter("documentid", doc.id);
 							NavigationHistoryManager.getInstance().go(navig);
+						
 						}
 
 						@Override
@@ -327,7 +329,9 @@ public class DocumentViewPresenter implements ViewPresenter, DocumentsBrokerClie
 						@Override
 						public void onResponse(Document response) {
 							EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Documento gravado com sucesso."), TYPE.TRAY_NOTIFICATION));
-							NavigationHistoryManager.getInstance().reload();
+							NavigationHistoryItem navig = NavigationHistoryManager.getInstance().getCurrentState();
+							navig.setParameter("documentid", doc.id);
+							NavigationHistoryManager.getInstance().go(navig);
 						}
 
 						@Override
@@ -355,10 +359,20 @@ public class DocumentViewPresenter implements ViewPresenter, DocumentsBrokerClie
 				newD.fileStorageId = view.getFileNote().getFileStorageId();
 				newD.fileName = view.getFileNote().getFileUploadFilename();
 
+				for(int i = 0; i<view.getDetails().getList().size()-1; i++){
+					
+					if(((DocumentDetailEntry)view.getDetails().getList().get(i)).getInfo().getValue() == null || ((DocumentDetailEntry)view.getDetails().getList().get(i)).getInfoValue().getValue() == null ){
+						view.getDetails().getList().remove(i);
+						i--;
+					}
+					
+				}
+				
 				newD.parameters = new DocInfo[view.getDetails().getList().size()-1];
 
 				for(int i = 0; i<view.getDetails().getList().size()-1; i++){
 
+					if(view.getDetails().getList().get(i).getText() != null && view.getDetails().getList().get(i).getText() != null)
 					newD.parameters[i] = new DocInfo();
 					newD.parameters[i].name = ((DocumentDetailEntry) view.getDetails().getList().get(i)).getInfo().getValue();
 					newD.parameters[i].value = ((DocumentDetailEntry) view.getDetails().getList().get(i)).getInfoValue().getValue();
@@ -517,16 +531,13 @@ public class DocumentViewPresenter implements ViewPresenter, DocumentsBrokerClie
 
 	@Override
 	public void addDocument(String ownerId, Document document) {
-
-		return;
+		
 	}
 
 	@Override
 	public void updateDocument(String ownerId, Document document) {
 
-		if(doc.id.equalsIgnoreCase(document.id)){
-			NavigationHistoryManager.getInstance().reload();
-		}
+		
 	}
 
 

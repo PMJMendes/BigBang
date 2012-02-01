@@ -112,7 +112,11 @@ public class FileUploadPopup
 			
 			public void onClick(ClickEvent event) {
 			
-				DocumentNavigationList list = new DocumentNavigationList();
+//				PopupPanel navigDocShare = new PopupPanel();
+//				DocumentNavigationList list = new DocumentNavigationList();
+//				navigDocShare.add(list);
+//				navigDocShare.setStyleName("gwt-MenuBarPopup");
+//				navigDocShare.setVisible(true);
 				hide();
 			}
 		});

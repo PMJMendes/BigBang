@@ -28,6 +28,7 @@ import com.google.gwt.event.dom.client.MouseUpHandler;
 import com.google.gwt.resources.client.ImageResource;
 import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.ui.Button;
+import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.HasVerticalAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Image;
@@ -35,14 +36,15 @@ import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.MenuItem;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
+import com.google.gwt.user.client.ui.Widget;
 
 
 public abstract class DocumentSections{
-	
+
 	public static class DocumentOperationsToolBar extends BigBangOperationsToolBar{
-		
+
 		private MenuItem delete;
-		
+
 		public DocumentOperationsToolBar(){
 			super();
 			delete = new MenuItem("Eliminar", new Command() {
@@ -53,7 +55,7 @@ public abstract class DocumentSections{
 				}
 
 			});
-			
+
 			this.addItem(SUB_MENU.ADMIN, delete);
 			this.hideAll();
 			this.showItem(SUB_MENU.EDIT, true);
@@ -62,12 +64,12 @@ public abstract class DocumentSections{
 			this.setHeight("21px");
 			this.setWidth("100%");
 			this.adminSubMenu.getElement().getStyle().setZIndex(12000);
-			
+
 		}
 
 		@Override
 		public void onEditRequest() {
-			
+
 		}
 
 		@Override
@@ -77,27 +79,27 @@ public abstract class DocumentSections{
 		@Override
 		public void onCancelRequest() {
 		}
-		
+
 		public void onDeleteRequest(){
-			
+
 		}
 	}
 
 	public static class GeneralInfoSection extends View{
-		
+
 		VerticalPanel wrapper;
 		private TextBoxFormField name;
 		private ExpandableListBoxFormField docType;
 		Document doc = new Document();
 		ActionInvokedEventHandler<Action> actionHandler;
 		DocumentOperationsToolBar toolbar;
-		
-		
+
+
 		public GeneralInfoSection(){
 
-			
+
 			toolbar = new DocumentOperationsToolBar(){
-				
+
 				@Override
 				public void onEditRequest() {
 					fireAction(Action.EDIT);
@@ -111,7 +113,7 @@ public abstract class DocumentSections{
 				public void onCancelRequest() {
 					fireAction(Action.CANCEL);
 				}
-				
+
 				@Override
 				public void onDeleteRequest() {
 					MessageBox.confirm("Eliminar Modelo", "Tem certeza que pretende eliminar o documento seleccionado?", new MessageBox.ConfirmationCallback() {
@@ -126,43 +128,43 @@ public abstract class DocumentSections{
 				}
 
 			};
-	
+
 			wrapper = new VerticalPanel();
 			initWidget(wrapper);
-			wrapper.setWidth("100%");
+			wrapper.setWidth("400px");
 			toolbar.showItem(SUB_MENU.EDIT, true);
 			toolbar.setHeight("21px");
 			toolbar.setWidth("100%");
 			wrapper.add(toolbar);
-			
+
 			setName(new TextBoxFormField("Nome"));
 			setDocType(new ExpandableListBoxFormField(BigBangConstants.TypifiedListIds.DOCUMENT_TYPE, "Tipo"));
-			
+
 			wrapper.add(getName());
 			wrapper.add(getDocType());
-			
+
 		}
-		
+
 		@Override
 		protected void initializeView() {
 			return;
 		}
-		
+
 		public void initHandler(ActionInvokedEventHandler<Action> actionHandler){
-			
+
 			this.actionHandler = actionHandler;
-			
+
 		}
-		
+
 		public void setDocument(Document doc){
 
 			this.doc = doc;
 			getName().setValue(doc.name);
 			getDocType().setValue(doc.docTypeId);
 			this.setEditable(false);
-			
+
 		}
-		
+
 		protected void fireAction(Action action){
 			if(this.actionHandler != null) {
 				actionHandler.onActionInvoked(new ActionInvokedEvent<Action>(action));
@@ -172,12 +174,12 @@ public abstract class DocumentSections{
 		public void setEditable(boolean b) {
 			getDocType().setReadOnly(!b);
 			getName().setReadOnly(!b);
-			
+
 		}
 
 		public BigBangOperationsToolBar getToolbar() {
 			return toolbar;
-			
+
 		}
 
 		public TextBoxFormField getName() {
@@ -196,8 +198,8 @@ public abstract class DocumentSections{
 			this.docType = docType;
 		}
 	}
-	
-	
+
+
 	public static class FileNoteSection extends View{
 
 		private static final int MAXCHAR = 250;
@@ -212,10 +214,10 @@ public abstract class DocumentSections{
 		private Button changeToFile;
 		private Button changeToNote;
 		private boolean isFileBoolean;
-		private TextBoxFormField filename;
+		private FilenameTextBoxFormField filename;
 		private Button removeFile;
 		private FileUploadPopup uploadDialog;
-		
+
 		public FileUploadPopup getUploadDialog() {
 			return uploadDialog;
 		}
@@ -223,25 +225,33 @@ public abstract class DocumentSections{
 		private Button uploadButton;
 		private String fileUploadFilename = null;
 		private String fileStorageId = null;
-		
+
 		private Image mimeImg;
-		
+
 		private Label charRemain;
 		private Label charRemainLabel;
-		
+
 		private HorizontalPanel filenameRemoveButton; 
-		
+
 		private ActionInvokedEventHandler<Action> actionHandler;
 		private boolean hasFile;
+
+		public class FilenameTextBoxFormField extends TextBoxFormField{
+			
+			public FilenameTextBoxFormField(String filename){
+				super(filename);
+				((Widget)super.field).setStylePrimaryName("linkFileText");
+			}
+		}
+
 		
 		public FileNoteSection(){
 			
 			uploadDialog = new FileUploadPopup(this);
-			
-			
+
 			wrapper = new VerticalPanel();
 			initWidget(wrapper);
-		
+
 			handler = new ClickHandler(){
 				@Override
 				public void onClick(ClickEvent event) {
@@ -274,7 +284,7 @@ public abstract class DocumentSections{
 			changeToFile.addClickHandler(handler);
 			changeToNote = new Button("Substituir por nota");
 			changeToNote.addClickHandler(handler);
-			
+
 			note = new TextAreaFormField("Nota");
 			charRemainP = new HorizontalPanel();
 			charRemain = new Label("Caracteres Restantes: ");
@@ -283,55 +293,61 @@ public abstract class DocumentSections{
 			charRemainP.add(charRemainLabel);
 			getNote().setMaxCharacters(MAXCHAR, charRemainLabel);
 
-			wrapper.setWidth("100%");
+			wrapper.setWidth("400px");
 			buttonsFileorNote = new HorizontalPanel();
+			buttonsFileorNote.setWidth("400px");
 			
+			note.setWidth("400px");
+			note.setFieldWidth("100%");
 			wrapper.add(getNote());
 			wrapper.add(charRemainP);
-			
+
 			buttonsFileorNote.add(isFile);
 			buttonsFileorNote.add(isText);
 			wrapper.add(buttonsFileorNote);
-			
+
 			removeFile = new Button("Apagar Ficheiro");
 			removeFile.addClickHandler(handler);
-			
-			filename = new TextBoxFormField("Nome do Ficheiro");
+
+			filename = new FilenameTextBoxFormField("Nome do Ficheiro");
 			getFilename().setEditable(false);
-			
+			filename.setFieldWidth("");
 			filename.addMouseUpHandler(new MouseUpHandler() {
-				
+
 				@Override
 				public void onMouseUp(MouseUpEvent event) {
 					fireAction(Action.DOWNLOAD_FILE);
 				}
 			});
-			
-			mimeImg = new Image();
-			
-			
-			filenameRemoveButton = new HorizontalPanel();
-			filenameRemoveButton.setVerticalAlignment(HasVerticalAlignment.ALIGN_MIDDLE);
 
+			mimeImg = new Image();
+
+
+			filenameRemoveButton = new HorizontalPanel();
 			filenameRemoveButton.add(mimeImg);
 			filenameRemoveButton.add(getFilename());
 			filenameRemoveButton.add(removeFile);
-			
-			
+			filenameRemoveButton.setWidth("400px");
+			filenameRemoveButton.setCellVerticalAlignment(mimeImg, HasVerticalAlignment.ALIGN_MIDDLE);
+			filenameRemoveButton.setCellVerticalAlignment(getFilename(), HasVerticalAlignment.ALIGN_MIDDLE);
+			filenameRemoveButton.setCellVerticalAlignment(removeFile, HasVerticalAlignment.ALIGN_MIDDLE);
+			filenameRemoveButton.setCellHorizontalAlignment(mimeImg, HasHorizontalAlignment.ALIGN_LEFT);
+			filenameRemoveButton.setCellHorizontalAlignment(getFilename(), HasHorizontalAlignment.ALIGN_LEFT);
+			filenameRemoveButton.setCellHorizontalAlignment(removeFile, HasHorizontalAlignment.ALIGN_LEFT);
 			wrapper.add(filenameRemoveButton);
 			changeFileNotePanel = new HorizontalPanel();
 			changeFileNotePanel.add(changeToFile);
 			changeFileNotePanel.add(changeToNote);
 			wrapper.add(changeFileNotePanel);
-			
+
 			uploadButton = new Button("Adicionar Ficheiro");
 			uploadButton.addClickHandler(handler);
-			
+
 			wrapper.add(uploadButton);
 			wrapper.add(filenameRemoveButton);
-			
+
 		}
-		
+
 		public Button getUploadButton() {
 			return uploadButton;
 		}
@@ -340,38 +356,38 @@ public abstract class DocumentSections{
 		protected void initializeView() {
 			return;
 		}
-		
+
 		public void initHandler(ActionInvokedEventHandler<Action> actionHandler){
-			
+
 			this.actionHandler = actionHandler;
-			
+
 		}
-		
+
 		public void generateNewDocument(){
-			
+
 			uploadButton.setVisible(false);
 			filename.setVisible(false);
 			removeFile.setVisible(false);
-			
+
 			changeToNote.setVisible(false);
 			getFilename().setVisible(false);
 			changeToFile.setVisible(false);
 			getNote().setVisible(false);
 			charRemainP.setVisible(false);
-			
+
 			isFile.setHeight("90px");
 			isFile.setWidth("90px");
-			
+
 			isText.setHeight("90px");
 			isText.setWidth("90px");
-			
+
 			isFile.setVisible(true);
 			isText.setVisible(true);
 			buttonsFileorNote.setVisible(true);
 
-			
+
 		}
-		
+
 		protected void fireAction(Action action){
 			if(this.actionHandler != null) {
 				actionHandler.onActionInvoked(new ActionInvokedEvent<Action>(action));
@@ -379,7 +395,7 @@ public abstract class DocumentSections{
 		}
 
 		public void createNewFile() {
-			
+
 			isFileBoolean = true;
 			getFilename().setVisible(true);
 			buttonsFileorNote.setVisible(false);
@@ -390,11 +406,11 @@ public abstract class DocumentSections{
 			filename.setVisible(false);
 			removeFile.setVisible(false);
 			uploadButton.setVisible(true);
-			
+
 		}
 
 		public void createNewNote() {
-			
+
 			uploadButton.setVisible(false);
 			isFileBoolean = false;
 			buttonsFileorNote.setVisible(false);
@@ -404,7 +420,7 @@ public abstract class DocumentSections{
 			charRemainP.setVisible(true);
 			removeFile.setVisible(false);
 			filename.setVisible(false);
-		
+
 		}
 
 		public Button getChangeToNote() {
@@ -412,7 +428,7 @@ public abstract class DocumentSections{
 		}
 
 		public void setDocumentFile(Document doc) {
-			
+
 			this.getFilename().setValue(doc.fileName);
 			mimeImg.setResource(getMimeImage(doc.mimeType));
 			mimeImg.setVisible(true);
@@ -420,20 +436,20 @@ public abstract class DocumentSections{
 			filename.setVisible(true);
 			hasFile = true;
 			uploadButton.setVisible(false);
-			
+
 		}
-		
+
 		public void setDocumentNote(Document doc){
-			
+
 			this.getNote().setValue(doc.text);
-			
+
 		}
 
 		private ImageResource getMimeImage(String mimeType) {
-			
+
 			Resources resources = GWT.create(Resources.class);
 			ImageResource mimeImage;
-			
+
 			if(mimeType.equalsIgnoreCase("text/plain")){
 				mimeImage = resources.txtIcon();
 			}
@@ -470,16 +486,16 @@ public abstract class DocumentSections{
 			}
 			else
 				mimeImage = resources.fileIcon();
-			
+
 			return mimeImage;
 		}
 
 		public void setEditable(boolean b) {
-			
-				isFile.setEnabled(b);
-				isText.setEnabled(b);
-				
-				
+
+			isFile.setEnabled(b);
+			isText.setEnabled(b);
+
+
 			if(!isFileBoolean()){
 				getNote().setReadOnly(!b);
 				changeToFile.setVisible(b);
@@ -489,12 +505,12 @@ public abstract class DocumentSections{
 			else{
 				removeFile.setVisible(b);
 			}
-			
+
 			if(!hasFile && isFileBoolean()){
 				changeToNote.setVisible(b);
 				removeFile.setVisible(false);
 			}
-			
+
 			if(isFileBoolean()){
 				changeToNote.setVisible(false);
 				changeToFile.setVisible(false);
@@ -503,15 +519,15 @@ public abstract class DocumentSections{
 		}
 
 		public void removeFile() {
-			
+
 			hasFile = false;
 			getFilename().setVisible(false);
 			mimeImg.setVisible(false);
 			removeFile.setVisible(false);
 			changeToNote.setVisible(true);
-			
+
 		}
-		
+
 		public void enableRemoveFile(boolean b){
 			removeFile.setVisible(b);
 		}
@@ -528,7 +544,7 @@ public abstract class DocumentSections{
 		public boolean isFileBoolean() {
 			return isFileBoolean;
 		}
-		
+
 		public String getFileUploadFilename() {
 			return fileUploadFilename;
 		}
@@ -550,9 +566,9 @@ public abstract class DocumentSections{
 		}
 
 	}
-	
+
 	public static class DetailsSection extends View{
-		
+
 		public class DocumentDetailEntry extends ListEntry<DocInfo>{
 
 			private TextBoxFormField  info;
@@ -561,7 +577,7 @@ public abstract class DocumentSections{
 			public DocumentDetailEntry(DocInfo docInfo) {
 				super(docInfo);
 			}
-			
+
 
 			@Override
 			public void setValue(DocInfo docInfo) {
@@ -576,24 +592,24 @@ public abstract class DocumentSections{
 
 				setInfo(new TextBoxFormField());
 				setInfoValue(new TextBoxFormField());
-
+				
 				getInfo().setValue(docInfo.name);
 				getInfoValue().setValue(docInfo.value);
-				
+
 				remove = new Button("X");
 				remove.addClickHandler(new ClickHandler() {
-					
+
 					@Override
 					public void onClick(ClickEvent event) {
 						fireEvent(new DeleteRequestEvent(getValue()));
 					}
 				});
-				
-//				this.info.setWidth("10px");
-				this.info.setFieldWidth("190px");
-				this.infoValue.setFieldWidth("190px");
+
+				//				this.info.setWidth("10px");
+				this.info.setFieldWidth("");
+				this.infoValue.setFieldWidth("");
 				this.remove.setWidth("20px");
-				
+
 				this.setLeftWidget(getInfo());
 				this.setWidget(getInfoValue());
 				this.setRightWidget(remove);
@@ -634,25 +650,21 @@ public abstract class DocumentSections{
 				this.infoValue = infoValue;
 			}
 		}
-		
+
 		List<DocInfo> details;
 		DocInfo[] docInfo;
-		ScrollPanel wrapper;
-		VerticalPanel insideWrapper = new VerticalPanel();
 		private ActionInvokedEventHandler<Action> actionHandler;
 		private DeleteRequestEventHandler deleteHandler;
 		private Button add;
-		
-		public DetailsSection(){
-			
 
-			wrapper = new ScrollPanel();
-			initWidget(wrapper);
-			wrapper.setWidth("100%");
-			wrapper.add(insideWrapper);
+
+		public DetailsSection(){
+
 			details = new List<DocInfo>();
-			details.setWidth("100%");
-			insideWrapper.add(details.getScrollable());
+			Widget widget = details.getScrollable();
+			initWidget(widget);
+			
+			widget.setSize("100%", "100%");
 			add = new Button("Adicionar Detalhe");
 			add.addClickHandler(new ClickHandler() {
 
@@ -662,27 +674,27 @@ public abstract class DocumentSections{
 				}
 			});
 			add.setWidth("180px");
-			
+
 		}
-		
+
 		@Override
 		protected void initializeView() {
 			return;
 		}
-		
+
 		public void initHandler(ActionInvokedEventHandler<Action> actionHandler){
-			
+
 			this.actionHandler = actionHandler;
-			
+
 		}
-		
+
 		protected void fireAction(Action action){
 			if(this.actionHandler != null) {
 				actionHandler.onActionInvoked(new ActionInvokedEvent<Action>(action));
 			}
 		}
-		
-		
+
+
 		public void addDocumentDetail(DocInfo docInfo){
 
 
@@ -694,27 +706,27 @@ public abstract class DocumentSections{
 		}
 
 		public void setEditable(boolean b) {
-			
+
 			if(details.size() > 1){
-					for(int i = 0; i<details.size()-1; i++){
-						
-						((DocumentDetailEntry)details.get(i)).getInfo().setReadOnly(!b);
-						((DocumentDetailEntry)details.get(i)).getInfoValue().setReadOnly(!b);
-						((DocumentDetailEntry)details.get(i)).remove.setVisible(b);
-					}
-		
-					details.get(details.size()-1).setVisible(b);
+				for(int i = 0; i<details.size()-1; i++){
+
+					((DocumentDetailEntry)details.get(i)).getInfo().setReadOnly(!b);
+					((DocumentDetailEntry)details.get(i)).getInfoValue().setReadOnly(!b);
+					((DocumentDetailEntry)details.get(i)).remove.setVisible(b);
 				}
+
+				details.get(details.size()-1).setVisible(b);
+			}
 			add.setVisible(b);
 		}
-			
-			
-		
-		 
+
+
+
+
 		public List<DocInfo> getList(){
-			
+
 			return details;
-			
+
 		}
 
 		public DocumentDetailEntry getNewDocumentDetailEntry() {
@@ -728,10 +740,10 @@ public abstract class DocumentSections{
 		public void registerDeleteHandler(
 				DeleteRequestEventHandler deleteRequestEventHandler) {
 			this.deleteHandler = deleteRequestEventHandler;
-			
+
 		}
-		
+
 	}
-	
+
 
 }
