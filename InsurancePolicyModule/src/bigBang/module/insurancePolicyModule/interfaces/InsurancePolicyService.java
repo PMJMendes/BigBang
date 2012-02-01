@@ -10,6 +10,7 @@ import bigBang.definitions.shared.Remap;
 import bigBang.library.interfaces.DependentItemSubService;
 import bigBang.library.interfaces.SearchService;
 import bigBang.library.shared.BigBangException;
+import bigBang.library.shared.CorruptedPadException;
 import bigBang.library.shared.SessionExpiredException;
 import bigBang.module.insurancePolicyModule.shared.BigBangPolicyValidationException;
 
@@ -31,33 +32,36 @@ public interface InsurancePolicyService extends SearchService, DependentItemSubS
 			return instance;
 		}
 	}
-	
+
 	public InsurancePolicy getPolicy(String policyId) throws SessionExpiredException, BigBangException;
 	public InsurancePolicy.TableSection getPage(String policyId, String insuredObjectId, String exerciseId)
 			throws SessionExpiredException, BigBangException;
 
 	public Remap[] openPolicyScratchPad(String policyId) throws SessionExpiredException, BigBangException;
-	public InsurancePolicy initPolicyInPad(InsurancePolicy policy) throws SessionExpiredException, BigBangException;
-	public InsurancePolicy getPolicyInPad(String policyId) throws SessionExpiredException, BigBangException;
-	public InsurancePolicy updateHeader(InsurancePolicy policy) throws SessionExpiredException, BigBangException;
+	public InsurancePolicy initPolicyInPad(InsurancePolicy policy)
+			throws SessionExpiredException, BigBangException, CorruptedPadException;
+	public InsurancePolicy getPolicyInPad(String policyId) throws SessionExpiredException, BigBangException, CorruptedPadException;
+	public InsurancePolicy updateHeader(InsurancePolicy policy)
+			throws SessionExpiredException, BigBangException, CorruptedPadException;
 
 	public InsurancePolicy.TableSection getPageForEdit(String policyId, String objectId, String exerciseId)
-			throws SessionExpiredException, BigBangException;
+			throws SessionExpiredException, BigBangException, CorruptedPadException;
 	public InsurancePolicy.TableSection savePage(InsurancePolicy.TableSection data)
-			throws SessionExpiredException, BigBangException;
+			throws SessionExpiredException, BigBangException, CorruptedPadException;
 
-	public InsuredObject getObjectInPad(String objectId) throws SessionExpiredException, BigBangException;
-	public InsuredObject createObjectInPad(String policyId) throws SessionExpiredException, BigBangException;
+	public InsuredObject getObjectInPad(String objectId) throws SessionExpiredException, BigBangException, CorruptedPadException;
+	public InsuredObject createObjectInPad(String policyId) throws SessionExpiredException, BigBangException, CorruptedPadException;
 	public InsuredObject createObjectFromClientInPad(String policyId) throws SessionExpiredException, BigBangException;
-	public InsuredObject updateObjectInPad(InsuredObject data) throws SessionExpiredException, BigBangException;
-	public void deleteObjectInPad(String objectId) throws SessionExpiredException, BigBangException;
+	public InsuredObject updateObjectInPad(InsuredObject data)
+			throws SessionExpiredException, BigBangException, CorruptedPadException;
+	public void deleteObjectInPad(String objectId) throws SessionExpiredException, BigBangException, CorruptedPadException;
 
-	public Exercise getExerciseInPad(String exerciseId) throws SessionExpiredException, BigBangException;
-	public Exercise createFirstExercise(String policyId) throws SessionExpiredException, BigBangException;
-	public Exercise updateExerciseInPad(Exercise data) throws SessionExpiredException, BigBangException;
-	public void deleteExerciseInPad(String exerciseId) throws SessionExpiredException, BigBangException;
+	public Exercise getExerciseInPad(String exerciseId) throws SessionExpiredException, BigBangException, CorruptedPadException;
+	public Exercise createFirstExercise(String policyId) throws SessionExpiredException, BigBangException, CorruptedPadException;
+	public Exercise updateExerciseInPad(Exercise data) throws SessionExpiredException, BigBangException, CorruptedPadException;
+	public void deleteExerciseInPad(String exerciseId) throws SessionExpiredException, BigBangException, CorruptedPadException;
 
-	public Remap[] commitPad(String policyId) throws SessionExpiredException, BigBangException;
+	public Remap[] commitPad(String policyId) throws SessionExpiredException, BigBangException, CorruptedPadException;
 	public Remap[] discardPad(String policyId) throws SessionExpiredException, BigBangException;
 
 	public void validatePolicy(String policyId) throws SessionExpiredException, BigBangException, BigBangPolicyValidationException;

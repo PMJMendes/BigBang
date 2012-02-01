@@ -42,6 +42,7 @@ import bigBang.library.server.DocumentServiceImpl;
 import bigBang.library.server.SearchServiceBase;
 import bigBang.library.server.TransferManagerServiceImpl;
 import bigBang.library.shared.BigBangException;
+import bigBang.library.shared.CorruptedPadException;
 import bigBang.library.shared.SessionExpiredException;
 import bigBang.module.insurancePolicyModule.interfaces.InsurancePolicyService;
 import bigBang.module.insurancePolicyModule.shared.BigBangPolicyValidationException;
@@ -660,7 +661,7 @@ public class InsurancePolicyServiceImpl
 		}
 
 		public void WriteResult(InsurancePolicy pobjResult)
-			throws BigBangException
+			throws CorruptedPadException
 		{
 			ArrayList<InsurancePolicy.HeaderField> larrHeaders;
 			ArrayList<InsurancePolicy.Coverage> larrAuxCoverages;
@@ -677,7 +678,7 @@ public class InsurancePolicyServiceImpl
 			int i, j;
 
 			if ( !mbValid )
-				throw new BigBangException("Ocorreu um erro interno. Os dados correntes não são válidos.");
+				throw new CorruptedPadException("Ocorreu um erro interno. Os dados correntes não são válidos.");
 
 			pobjResult.id = mid.toString();
 
@@ -833,7 +834,7 @@ public class InsurancePolicyServiceImpl
 		}
 
 		public void WritePage(InsurancePolicy.TableSection pobjResult, int plngObject, int plngExercise)
-			throws BigBangException
+			throws CorruptedPadException
 		{
 			int llngCoverages;
 			int llngColumns;
@@ -842,7 +843,7 @@ public class InsurancePolicyServiceImpl
 			int i, j;
 
 			if ( !mbValid )
-				throw new BigBangException("Ocorreu um erro interno. Os dados correntes não são válidos.");
+				throw new CorruptedPadException("Ocorreu um erro interno. Os dados correntes não são válidos.");
 
 			pobjResult.pageId = mid.toString() + ":" + Integer.toString(plngObject) + ":" + Integer.toString(plngExercise);
 
@@ -891,13 +892,13 @@ public class InsurancePolicyServiceImpl
 		}
 
 		public TipifiedListItem[] GetObjects()
-			throws BigBangException
+			throws CorruptedPadException
 		{
 			TipifiedListItem[] larrResult;
 			int i;
 
 			if ( !mbValid )
-				throw new BigBangException("Ocorreu um erro interno. Os dados correntes não são válidos.");
+				throw new CorruptedPadException("Ocorreu um erro interno. Os dados correntes não são válidos.");
 
 			larrResult = new TipifiedListItem[marrObjects.size()];
 			for ( i = 0; i < marrObjects.size(); i++ )
@@ -911,7 +912,7 @@ public class InsurancePolicyServiceImpl
 		}
 
 		public void WriteObject(InsuredObject pobjResult, int plngObject)
-			throws BigBangException
+			throws BigBangException, CorruptedPadException
 		{
 			PolicyObjectData lobjObject;
 			ObjectBase lobjZipCode;
@@ -934,7 +935,7 @@ public class InsurancePolicyServiceImpl
 			PadValue[] larrSortedVariable;
 
 			if ( !mbValid )
-				throw new BigBangException("Ocorreu um erro interno. Os dados correntes não são válidos.");
+				throw new CorruptedPadException("Ocorreu um erro interno. Os dados correntes não são válidos.");
 
 			lobjObject = marrObjects.get(plngObject);
 			pobjResult.id = mid.toString() + ":" + Integer.toString(plngObject);
@@ -1232,13 +1233,13 @@ public class InsurancePolicyServiceImpl
 		}
 
 		public TipifiedListItem[] GetExercises()
-			throws BigBangException
+			throws CorruptedPadException
 		{
 			TipifiedListItem[] larrResult;
 			int i;
 
 			if ( !mbValid )
-				throw new BigBangException("Ocorreu um erro interno. Os dados correntes não são válidos.");
+				throw new CorruptedPadException("Ocorreu um erro interno. Os dados correntes não são válidos.");
 
 			larrResult = new TipifiedListItem[marrExercises.size()];
 			for ( i = 0; i < marrExercises.size(); i++ )
@@ -1252,7 +1253,7 @@ public class InsurancePolicyServiceImpl
 		}
 
 		public void WriteExercise(Exercise pobjResult, int plngExercise)
-			throws BigBangException
+			throws CorruptedPadException
 		{
 			PolicyExerciseData lobjExercise;
 			int i, j, k;
@@ -1274,12 +1275,13 @@ public class InsurancePolicyServiceImpl
 			PadValue[] larrSortedVariable;
 
 			if ( !mbValid )
-				throw new BigBangException("Ocorreu um erro interno. Os dados correntes não são válidos.");
+				throw new CorruptedPadException("Ocorreu um erro interno. Os dados correntes não são válidos.");
 
 			lobjExercise = marrExercises.get(plngExercise);
 			pobjResult.id = mid.toString() + ":" + Integer.toString(plngExercise);
 			pobjResult.label = lobjExercise.mstrLabel;
-			pobjResult.ownerId = ( mobjPolicy.mid == null ? mid.toString() : mobjPolicy.mid.toString() );
+//			pobjResult.ownerId = ( mobjPolicy.mid == null ? mid.toString() : mobjPolicy.mid.toString() );
+			pobjResult.ownerId = mid.toString();
 			pobjResult.startDate = ( lobjExercise.mdtStart == null ? null : lobjExercise.mdtStart.toString().substring(0, 10) );
 			pobjResult.endDate = ( lobjExercise.mdtEnd == null ? null : lobjExercise.mdtEnd.toString().substring(0, 10) );
 
@@ -1508,12 +1510,12 @@ public class InsurancePolicyServiceImpl
 		}
 
 		public void UpdateInvariants(InsurancePolicy pobjSource)
-			throws BigBangException
+			throws BigBangException, CorruptedPadException
 		{
 			int i, j;
 
 			if ( !mbValid )
-				throw new BigBangException("Ocorreu um erro interno. Os dados correntes não são válidos.");
+				throw new CorruptedPadException("Ocorreu um erro interno. Os dados correntes não são válidos.");
 
 			if ( !mobjPolicy.midSubLine.equals(UUID.fromString(pobjSource.subLineId)) )
 				throw new BigBangException("Erro: Não pode alterar a modalidade da apólice.");
@@ -1578,12 +1580,12 @@ public class InsurancePolicyServiceImpl
 		}
 
 		public void UpdatePage(InsurancePolicy.TableSection pobjSource, int plngObject, int plngExercise)
-			throws BigBangException
+			throws BigBangException, CorruptedPadException
 		{
 			int i, j;
 
 			if ( !mbValid )
-				throw new BigBangException("Ocorreu um erro interno. Os dados correntes não são válidos.");
+				throw new CorruptedPadException("Ocorreu um erro interno. Os dados correntes não são válidos.");
 
 			if ( pobjSource.data == null )
 				return;
@@ -1603,14 +1605,14 @@ public class InsurancePolicyServiceImpl
 		}
 
 		public int CreateNewObject()
-			throws BigBangException
+			throws BigBangException, CorruptedPadException
 		{
 			PadObject lobjObject;
 			PadValue lobjValue;
 			int i, j, k;
 
 			if ( !mbValid )
-				throw new BigBangException("Ocorreu um erro interno. Os dados correntes não são válidos.");
+				throw new CorruptedPadException("Ocorreu um erro interno. Os dados correntes não são válidos.");
 
 			if ( !Constants.StatusID_InProgress.equals(mobjPolicy.midStatus) )
 				throw new BigBangException("Erro: Operação não suportada para apólices já validadas.");
@@ -1681,7 +1683,7 @@ public class InsurancePolicyServiceImpl
 		}
 
 		public void UpdateObject(InsuredObject pobjSource, int plngObject)
-			throws BigBangException
+			throws BigBangException, CorruptedPadException
 		{
 			UUID lidType;
 			UUID lidZipCode;
@@ -1689,7 +1691,7 @@ public class InsurancePolicyServiceImpl
 			int i, j, k, l;
 
 			if ( !mbValid )
-				throw new BigBangException("Ocorreu um erro interno. Os dados correntes não são válidos.");
+				throw new CorruptedPadException("Ocorreu um erro interno. Os dados correntes não são válidos.");
 
 			if ( (marrObjects.get(plngObject) == null) || marrObjects.get(plngObject).mbDeleted )
 				throw new BigBangException("Erro: Não pode alterar um objecto apagado.");
@@ -1833,12 +1835,12 @@ public class InsurancePolicyServiceImpl
 		}
 
 		public void DeleteObject(int plngObject)
-			throws BigBangException
+			throws CorruptedPadException
 		{
 			int i;
 
 			if ( !mbValid )
-				throw new BigBangException("Ocorreu um erro interno. Os dados correntes não são válidos.");
+				throw new CorruptedPadException("Ocorreu um erro interno. Os dados correntes não são válidos.");
 
 			mbValid = false;
 
@@ -1853,14 +1855,14 @@ public class InsurancePolicyServiceImpl
 		}
 
 		public int CreateNewExercise()
-			throws BigBangException
+			throws BigBangException, CorruptedPadException
 		{
 			PadExercise lobjObject;
 			PadValue lobjValue;
 			int i, j, k;
 
 			if ( !mbValid )
-				throw new BigBangException("Ocorreu um erro interno. Os dados correntes não são válidos.");
+				throw new CorruptedPadException("Ocorreu um erro interno. Os dados correntes não são válidos.");
 
 			if ( !Constants.StatusID_InProgress.equals(mobjPolicy.midStatus) )
 				throw new BigBangException("Erro: Operação não suportada para apólices já validadas.");
@@ -1923,7 +1925,7 @@ public class InsurancePolicyServiceImpl
 		}
 
 		public void UpdateExercise(Exercise pobjSource, int plngExercise)
-			throws BigBangException
+			throws BigBangException, CorruptedPadException
 		{
 			Timestamp ldtStart;
 			Timestamp ldtEnd;
@@ -1931,7 +1933,7 @@ public class InsurancePolicyServiceImpl
 			int i, j, k, l;
 
 			if ( !mbValid )
-				throw new BigBangException("Ocorreu um erro interno. Os dados correntes não são válidos.");
+				throw new CorruptedPadException("Ocorreu um erro interno. Os dados correntes não são válidos.");
 
 			if ( (marrExercises.get(plngExercise) == null) || marrExercises.get(plngExercise).mbDeleted )
 				throw new BigBangException("Erro: Não pode alterar um exercício apagado.");
@@ -2016,12 +2018,12 @@ public class InsurancePolicyServiceImpl
 		}
 
 		public void DeleteExercise(int plngExercise)
-			throws BigBangException
+			throws CorruptedPadException
 		{
 			int i;
 
 			if ( !mbValid )
-				throw new BigBangException("Ocorreu um erro interno. Os dados correntes não são válidos.");
+				throw new CorruptedPadException("Ocorreu um erro interno. Os dados correntes não são válidos.");
 
 			mbValid = false;
 
@@ -2036,13 +2038,13 @@ public class InsurancePolicyServiceImpl
 		}
 
 		public void CommitChanges()
-			throws BigBangException
+			throws BigBangException, CorruptedPadException 
 		{
 			PolicyData lobjData;
 			int i;
 
 			if ( !mbValid )
-				throw new BigBangException("Ocorreu um erro interno. Os dados correntes não são válidos.");
+				throw new CorruptedPadException("Ocorreu um erro interno. Os dados correntes não são válidos.");
 
 			lobjData = new PolicyData();
 			lobjData.Clone(mobjPolicy);
@@ -2709,7 +2711,7 @@ public class InsurancePolicyServiceImpl
 	}
 
 	public InsurancePolicy initPolicyInPad(InsurancePolicy policy)
-		throws SessionExpiredException, BigBangException
+		throws SessionExpiredException, BigBangException, CorruptedPadException
 	{
 		PolicyScratchPad lobjPad;
 
@@ -2730,7 +2732,7 @@ public class InsurancePolicyServiceImpl
 	}
 
 	public InsurancePolicy getPolicyInPad(String policyId)
-		throws SessionExpiredException, BigBangException
+		throws SessionExpiredException, BigBangException, CorruptedPadException
 	{
 		PolicyScratchPad lobjPad;
 		InsurancePolicy lobjPolicy;
@@ -2747,7 +2749,7 @@ public class InsurancePolicyServiceImpl
 	}
 
 	public InsurancePolicy updateHeader(InsurancePolicy policy)
-		throws SessionExpiredException, BigBangException
+		throws SessionExpiredException, BigBangException, CorruptedPadException
 	{
 		PolicyScratchPad lobjPad;
 
@@ -2765,7 +2767,7 @@ public class InsurancePolicyServiceImpl
 	}
 
 	public InsurancePolicy.TableSection getPageForEdit(String policyId, String objectId, String exerciseId)
-		throws SessionExpiredException, BigBangException
+		throws SessionExpiredException, BigBangException, CorruptedPadException
 	{
 		String[] larrAux;
 		UUID lidPad;
@@ -2813,7 +2815,7 @@ public class InsurancePolicyServiceImpl
 	}
 
 	public InsurancePolicy.TableSection savePage(InsurancePolicy.TableSection data)
-		throws SessionExpiredException, BigBangException
+		throws SessionExpiredException, BigBangException, CorruptedPadException
 	{
 		String[] larrAux;
 		UUID lidPad;
@@ -2847,17 +2849,24 @@ public class InsurancePolicyServiceImpl
 		if ( filterId == null )
 			throw new BigBangException("Erro: Espaço de trabalho não existente.");
 
-		if ( Constants.ObjID_PolicyObject.equals(UUID.fromString(listId)) )
-			return GetScratchPadStorage().get(UUID.fromString(filterId)).GetObjects();
+		try
+		{
+			if ( Constants.ObjID_PolicyObject.equals(UUID.fromString(listId)) )
+				return GetScratchPadStorage().get(UUID.fromString(filterId)).GetObjects();
 
-		if ( Constants.ObjID_PolicyExercise.equals(UUID.fromString(listId)) )
-			return GetScratchPadStorage().get(UUID.fromString(filterId)).GetExercises();
+			if ( Constants.ObjID_PolicyExercise.equals(UUID.fromString(listId)) )
+				return GetScratchPadStorage().get(UUID.fromString(filterId)).GetExercises();
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangException(e.getMessage(), e);
+		}
 
 		throw new BigBangException("Erro: Lista inválida para o espaço de trabalho.");
 	}
 
 	public InsuredObject getObjectInPad(String objectId)
-		throws SessionExpiredException, BigBangException
+		throws SessionExpiredException, BigBangException, CorruptedPadException
 	{
 		String[] larrAux;
 		UUID lidPad;
@@ -2882,7 +2891,7 @@ public class InsurancePolicyServiceImpl
 	}
 
 	public InsuredObject createObjectInPad(String policyId)
-		throws SessionExpiredException, BigBangException
+		throws SessionExpiredException, BigBangException, CorruptedPadException
 	{
 		PolicyScratchPad lobjPad;
 		InsuredObject lobjResult;
@@ -2910,7 +2919,7 @@ public class InsurancePolicyServiceImpl
 	}
 
 	public InsuredObject updateObjectInPad(InsuredObject data)
-		throws SessionExpiredException, BigBangException
+		throws SessionExpiredException, BigBangException, CorruptedPadException
 	{
 		PolicyScratchPad lobjPad;
 		String[] larrAux;
@@ -2934,7 +2943,7 @@ public class InsurancePolicyServiceImpl
 	}
 
 	public void deleteObjectInPad(String objectId)
-		throws SessionExpiredException, BigBangException
+		throws SessionExpiredException, BigBangException, CorruptedPadException
 	{
 		String[] larrAux;
 		UUID lidPad;
@@ -2953,7 +2962,7 @@ public class InsurancePolicyServiceImpl
 	}
 
 	public Exercise getExerciseInPad(String exerciseId)
-		throws SessionExpiredException, BigBangException
+		throws SessionExpiredException, BigBangException, CorruptedPadException
 	{
 		String[] larrAux;
 		UUID lidPad;
@@ -2978,7 +2987,7 @@ public class InsurancePolicyServiceImpl
 	}
 
 	public Exercise createFirstExercise(String policyId)
-		throws SessionExpiredException, BigBangException
+		throws SessionExpiredException, BigBangException, CorruptedPadException
 	{
 		PolicyScratchPad lobjPad;
 		Exercise lobjResult;
@@ -2999,7 +3008,7 @@ public class InsurancePolicyServiceImpl
 	}
 
 	public Exercise updateExerciseInPad(Exercise data)
-		throws SessionExpiredException, BigBangException
+		throws SessionExpiredException, BigBangException, CorruptedPadException
 	{
 		PolicyScratchPad lobjPad;
 		String[] larrAux;
@@ -3023,7 +3032,7 @@ public class InsurancePolicyServiceImpl
 	}
 
 	public void deleteExerciseInPad(String exerciseId)
-		throws SessionExpiredException, BigBangException
+		throws SessionExpiredException, BigBangException, CorruptedPadException
 	{
 		String[] larrAux;
 		UUID lidPad;
@@ -3042,7 +3051,7 @@ public class InsurancePolicyServiceImpl
 	}
 
 	public Remap[] commitPad(String policyId)
-		throws SessionExpiredException, BigBangException
+		throws SessionExpiredException, BigBangException, CorruptedPadException
 	{
 		PolicyScratchPad lrefPad;
 
