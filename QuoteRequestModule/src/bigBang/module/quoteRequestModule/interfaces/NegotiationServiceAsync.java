@@ -4,7 +4,7 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 
 import bigBang.definitions.shared.InfoOrDocumentRequest;
 import bigBang.definitions.shared.ExternalInfoRequest;
-import bigBang.definitions.shared.ExternalInfoRequest.Response;
+import bigBang.definitions.shared.ExternalInfoRequest.Incoming;
 import bigBang.definitions.shared.InsurancePolicy;
 import bigBang.definitions.shared.Negotiation;
 import bigBang.definitions.shared.Negotiation.Adjudication;
@@ -49,10 +49,10 @@ public interface NegotiationServiceAsync extends SearchServiceAsync {
 			AsyncCallback<ExternalInfoRequest> callback);
 
 	void closeInfoRequestFromInsuranceAgency(
-			bigBang.definitions.shared.ExternalInfoRequest.Cancellation cancellation,
+			bigBang.definitions.shared.ExternalInfoRequest.Closing cancellation,
 			AsyncCallback<Void> callback);
 
-	void receiveInfoRequestFromInsuranceAgencyResponse(Response response,
+	void receiveInfoRequestFromInsuranceAgencyResponse(Incoming response,
 			AsyncCallback<ExternalInfoRequest> callback);
 
 	void createPolicy(InsurancePolicy policy,

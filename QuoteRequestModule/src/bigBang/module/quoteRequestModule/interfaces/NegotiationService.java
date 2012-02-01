@@ -46,8 +46,8 @@ public interface NegotiationService extends SearchService {
 	//Request FROM insurance agency
 	public ExternalInfoRequest createInfoRequestFromInsuranceAgency(ExternalInfoRequest request) throws SessionExpiredException, BigBangException;
 	public ExternalInfoRequest repeatInfoRequestFromInsuranceAgency(ExternalInfoRequest request) throws SessionExpiredException, BigBangException;
-	public void closeInfoRequestFromInsuranceAgency(ExternalInfoRequest.Cancellation cancellation) throws SessionExpiredException, BigBangException;
-	public ExternalInfoRequest receiveInfoRequestFromInsuranceAgencyResponse(ExternalInfoRequest.Response response) throws SessionExpiredException, BigBangException;
+	public void closeInfoRequestFromInsuranceAgency(ExternalInfoRequest.Closing cancellation) throws SessionExpiredException, BigBangException;
+	public ExternalInfoRequest receiveInfoRequestFromInsuranceAgencyResponse(ExternalInfoRequest.Incoming response) throws SessionExpiredException, BigBangException;
 
 	public Negotiation deleteNegotiation(Negotiation.Deletion deletion) throws SessionExpiredException, BigBangException;
 }

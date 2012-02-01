@@ -167,7 +167,7 @@ public class NegotiationServiceImpl  extends RemoteServiceServlet implements Neg
 
 	@Override
 	public void closeInfoRequestFromInsuranceAgency(
-			bigBang.definitions.shared.ExternalInfoRequest.Cancellation cancellation)
+			bigBang.definitions.shared.ExternalInfoRequest.Closing cancellation)
 			throws SessionExpiredException, BigBangException {
 		// TODO Auto-generated method stub
 		
@@ -175,7 +175,7 @@ public class NegotiationServiceImpl  extends RemoteServiceServlet implements Neg
 
 	@Override
 	public ExternalInfoRequest receiveInfoRequestFromInsuranceAgencyResponse(
-			bigBang.definitions.shared.ExternalInfoRequest.Response response)
+			bigBang.definitions.shared.ExternalInfoRequest.Incoming response)
 			throws SessionExpiredException, BigBangException {
 		// TODO Auto-generated method stub
 		return null;
