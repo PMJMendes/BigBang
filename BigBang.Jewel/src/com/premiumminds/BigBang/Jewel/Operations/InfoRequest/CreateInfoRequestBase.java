@@ -136,7 +136,7 @@ public abstract class CreateInfoRequestBase
 				lobjItem.setAt(2, Constants.ProcID_InfoRequest);
 				lobjItem.setAt(3, ldtAux);
 				lobjItem.setAt(4, new Timestamp(ldtAux2.getTimeInMillis()));
-				lobjItem.setAt(5, Constants.UrgID_Pending);
+				lobjItem.setAt(5, Constants.UrgID_Valid);
 				lobjItem.SaveToDb(pdb);
 				lobjItem.InitNew(new UUID[] {lobjProc.getKey()}, new UUID[] {Constants.OPID_InfoReq_ReceiveReply,
 						Constants.OPID_InfoReq_RepeatRequest, Constants.OPID_InfoReq_CancelRequest}, pdb);

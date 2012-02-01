@@ -156,7 +156,7 @@ public class RepeatRequest
 				lobjNewItem.setAt(2, Constants.ProcID_InfoRequest);
 				lobjNewItem.setAt(3, ldtAux);
 				lobjNewItem.setAt(4, new Timestamp(ldtAux2.getTimeInMillis()));
-				lobjNewItem.setAt(5, Constants.UrgID_Pending);
+				lobjNewItem.setAt(5, Constants.UrgID_Valid);
 				lobjNewItem.SaveToDb(pdb);
 				lobjNewItem.InitNew(new UUID[] {GetProcess().getKey()}, new UUID[] {Constants.OPID_InfoReq_ReceiveReply,
 						Constants.OPID_InfoReq_RepeatRequest, Constants.OPID_InfoReq_CancelRequest}, pdb);
