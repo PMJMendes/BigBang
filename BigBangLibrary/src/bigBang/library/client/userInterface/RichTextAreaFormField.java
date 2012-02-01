@@ -16,7 +16,8 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 public class RichTextAreaFormField extends FormField<String> {
 
 	protected boolean hasDummyValue = false;
-	protected HorizontalPanel wrapper;
+	protected VerticalPanel wrapper;
+	protected HorizontalPanel textAndMandatory;
 	protected RichTextArea field;
 	
 	public RichTextAreaFormField(String label,FieldValidator<String> validator){
@@ -39,34 +40,30 @@ public class RichTextAreaFormField extends FormField<String> {
 		if(label == null || label.equals("")){
 			wrapper.setCellWidth(this.label, "0px");
 			this.label.setText("");
-		}else{
-			this.label.setText(label + ":");
-			wrapper.setCellWidth(this.label, "100px");
-		}
+		}else
+			this.label.setText(label);
 	}
 	
 	public RichTextAreaFormField(){
-		wrapper = new HorizontalPanel();
+		wrapper = new VerticalPanel();
 		initWidget(wrapper);
-		wrapper.setVerticalAlignment(HasVerticalAlignment.ALIGN_MIDDLE);
-		//this.label = new Label();
-		//this.label.getElement().getStyle().setMarginRight(5, Unit.PX);
-		//wrapper.add(this.label);
-		wrapper.setCellHorizontalAlignment(this.label, HasHorizontalAlignment.ALIGN_RIGHT);
+		this.label = new Label();
+		wrapper.add(this.label);
 		this.field = new RichTextArea();
 		this.field.setSize("400px", "300px");
 		
 		RichTextToolbar toolbar = new RichTextToolbar(this.field);
 		
 		VerticalPanel fieldWrapper = new VerticalPanel();
-		//fieldWrapper.setSpacing(5);
 		fieldWrapper.setSize("100%", "100%");
 		fieldWrapper.add(toolbar);
 		fieldWrapper.add(this.field);
 		fieldWrapper.setCellHeight(this.field, "100%");
-		
-		wrapper.add(fieldWrapper);
-		wrapper.add(mandatoryIndicatorLabel);
+		textAndMandatory = new HorizontalPanel();
+		textAndMandatory.setVerticalAlignment(HasVerticalAlignment.ALIGN_MIDDLE);
+		textAndMandatory.add(fieldWrapper);
+		textAndMandatory.add(mandatoryIndicatorLabel);
+		wrapper.add(textAndMandatory);
 		wrapper.add(errorMessageLabel);
 		setFieldWidth("400px");
 	}

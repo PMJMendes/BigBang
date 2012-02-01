@@ -75,7 +75,6 @@ TypifiedListClient {
 
 
 		label.setText(listDescription);
-
 		wrapper.clear();
 		wrapper.setVerticalAlignment(HasVerticalAlignment.ALIGN_MIDDLE);
 

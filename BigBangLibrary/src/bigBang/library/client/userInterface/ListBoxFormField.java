@@ -89,7 +89,7 @@ public class ListBoxFormField extends FormField<String> {
 		if(!editable)
 			return;
 		this.listBox.setEnabled(!readonly);
-		mandatoryIndicatorLabel.setVisible(!readonly);
+		mandatoryIndicatorLabel.setVisible(!readonly && isMandatory());
 	}
 
 	@Override

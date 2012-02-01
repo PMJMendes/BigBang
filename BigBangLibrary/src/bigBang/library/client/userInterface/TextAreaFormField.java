@@ -3,25 +3,25 @@ package bigBang.library.client.userInterface;
 import bigBang.library.client.FieldValidator;
 import bigBang.library.client.FormField;
 
-import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.BlurEvent;
 import com.google.gwt.event.dom.client.BlurHandler;
 import com.google.gwt.event.dom.client.FocusEvent;
 import com.google.gwt.event.dom.client.FocusHandler;
 import com.google.gwt.event.dom.client.KeyUpEvent;
 import com.google.gwt.event.dom.client.KeyUpHandler;
-import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.HasVerticalAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.TextArea;
 import com.google.gwt.user.client.ui.UIObject;
+import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
 public class TextAreaFormField extends FormField<String> {
 
 	protected boolean hasDummyValue = false;
-	protected HorizontalPanel wrapper;
+	protected VerticalPanel wrapper;
+	protected HorizontalPanel textAndMandatory;
 
 	public TextAreaFormField(String label,FieldValidator<String> validator){
 		this();
@@ -42,10 +42,8 @@ public class TextAreaFormField extends FormField<String> {
 	protected void setLabel(String label) {
 		if(label == null || label.equals("")){
 			this.label.setText("");
-
-		}else{
-			this.label.setText(label + ":");
-		}
+		}else
+			this.label.setText(label);
 	}
 
 	@Override
@@ -55,17 +53,17 @@ public class TextAreaFormField extends FormField<String> {
 
 	public TextAreaFormField(){
 		super();
-		wrapper = new HorizontalPanel();
+		wrapper = new VerticalPanel();
 		initWidget(wrapper);
 
-		wrapper.setVerticalAlignment(HasVerticalAlignment.ALIGN_MIDDLE);
+		textAndMandatory = new HorizontalPanel();
 		this.label = new Label();
-		this.label.getElement().getStyle().setMarginRight(5, Unit.PX);
 		wrapper.add(this.label);
-		wrapper.setCellHorizontalAlignment(this.label, HasHorizontalAlignment.ALIGN_RIGHT);
 		this.field = new TextArea();
-		wrapper.add((Widget) this.field);
-		wrapper.add(mandatoryIndicatorLabel);
+		textAndMandatory.setVerticalAlignment(HasVerticalAlignment.ALIGN_MIDDLE);
+		textAndMandatory.add((Widget) this.field);
+		textAndMandatory.add(mandatoryIndicatorLabel);
+		wrapper.add(textAndMandatory);
 		wrapper.add(errorMessageLabel);
 
 		setFieldWidth("400px");
@@ -92,7 +90,7 @@ public class TextAreaFormField extends FormField<String> {
 		field.setReadOnly(readOnly);
 		field.getElement().getStyle().setBorderColor(readOnly ? "transparent" : "gray");
 		field.getElement().getStyle().setBackgroundColor(readOnly ? "transparent" : "white");
-		mandatoryIndicatorLabel.setVisible(!readOnly);
+		mandatoryIndicatorLabel.setVisible(!readOnly && this.isMandatory());
 	}
 
 	public void setFieldHeight(String height){
