@@ -14,7 +14,7 @@ public class ExternalInfoRequest
 		public String requestId;
 		public String content;
 	}
-	
+
 	//The outgoing component of the conversation
 	public static class Outgoing
 		implements Serializable
@@ -24,7 +24,7 @@ public class ExternalInfoRequest
 		public String requestId;
 		public String content;
 	}
-	
+
 	//The closing data
 	public static class Closing
 		implements Serializable
