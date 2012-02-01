@@ -1,6 +1,7 @@
 package bigBang.module.quoteRequestModule.server;
 
-import bigBang.definitions.shared.InsuranceAgencyInfoRequest;
+import bigBang.definitions.shared.ExternalInfoRequest;
+import bigBang.definitions.shared.InfoOrDocumentRequest;
 import bigBang.definitions.shared.InsurancePolicy;
 import bigBang.definitions.shared.Negotiation;
 import bigBang.definitions.shared.SearchParameter;
@@ -117,16 +118,16 @@ public class NegotiationServiceImpl  extends RemoteServiceServlet implements Neg
 	}
 
 	@Override
-	public InsuranceAgencyInfoRequest createInfoRequestToInsuranceAgency(
-			InsuranceAgencyInfoRequest request) throws SessionExpiredException,
+	public InfoOrDocumentRequest createInfoRequestToInsuranceAgency(
+			InfoOrDocumentRequest request) throws SessionExpiredException,
 			BigBangException {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public InsuranceAgencyInfoRequest repeatInfoRequestToInsuranceAgency(
-			InsuranceAgencyInfoRequest request) throws SessionExpiredException,
+	public InfoOrDocumentRequest repeatInfoRequestToInsuranceAgency(
+			InfoOrDocumentRequest request) throws SessionExpiredException,
 			BigBangException {
 		// TODO Auto-generated method stub
 		return null;
@@ -134,31 +135,31 @@ public class NegotiationServiceImpl  extends RemoteServiceServlet implements Neg
 
 	@Override
 	public void cancelInfoRequestToInsuranceAgency(
-			bigBang.definitions.shared.InsuranceAgencyInfoRequest.Cancellation cancellation)
+			InfoOrDocumentRequest.Cancellation cancellation)
 			throws SessionExpiredException, BigBangException {
 		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
-	public InsuranceAgencyInfoRequest receiveInfoRequestToInsuranceAgencyResponse(
-			bigBang.definitions.shared.InsuranceAgencyInfoRequest.Response response)
+	public InfoOrDocumentRequest receiveInfoRequestToInsuranceAgencyResponse(
+			InfoOrDocumentRequest.Response response)
 			throws SessionExpiredException, BigBangException {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public InsuranceAgencyInfoRequest createInfoRequestFromInsuranceAgency(
-			InsuranceAgencyInfoRequest request) throws SessionExpiredException,
+	public ExternalInfoRequest createInfoRequestFromInsuranceAgency(
+			ExternalInfoRequest request) throws SessionExpiredException,
 			BigBangException {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public InsuranceAgencyInfoRequest repeatInfoRequestFromInsuranceAgency(
-			InsuranceAgencyInfoRequest request) throws SessionExpiredException,
+	public ExternalInfoRequest repeatInfoRequestFromInsuranceAgency(
+			ExternalInfoRequest request) throws SessionExpiredException,
 			BigBangException {
 		// TODO Auto-generated method stub
 		return null;
@@ -166,15 +167,15 @@ public class NegotiationServiceImpl  extends RemoteServiceServlet implements Neg
 
 	@Override
 	public void closeInfoRequestFromInsuranceAgency(
-			bigBang.definitions.shared.InsuranceAgencyInfoRequest.Cancellation cancellation)
+			bigBang.definitions.shared.ExternalInfoRequest.Cancellation cancellation)
 			throws SessionExpiredException, BigBangException {
 		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
-	public InsuranceAgencyInfoRequest receiveInfoRequestFromInsuranceAgencyResponse(
-			bigBang.definitions.shared.InsuranceAgencyInfoRequest.Response response)
+	public ExternalInfoRequest receiveInfoRequestFromInsuranceAgencyResponse(
+			bigBang.definitions.shared.ExternalInfoRequest.Response response)
 			throws SessionExpiredException, BigBangException {
 		// TODO Auto-generated method stub
 		return null;

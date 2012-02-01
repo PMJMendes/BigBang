@@ -3,7 +3,8 @@ package bigBang.module.quoteRequestModule.interfaces;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 
-import bigBang.definitions.shared.InsuranceAgencyInfoRequest;
+import bigBang.definitions.shared.InfoOrDocumentRequest;
+import bigBang.definitions.shared.ExternalInfoRequest;
 import bigBang.definitions.shared.InsurancePolicy;
 import bigBang.definitions.shared.Negotiation;
 import bigBang.definitions.shared.QuoteRequestInfoRequest;
@@ -37,16 +38,16 @@ public interface NegotiationService extends SearchService {
 	public QuoteRequestInfoRequest repeatSendQuoteRequest(QuoteRequestInfoRequest request) throws SessionExpiredException, BigBangException;
 	
 	//Request TO insurance agency
-	public InsuranceAgencyInfoRequest createInfoRequestToInsuranceAgency(InsuranceAgencyInfoRequest request) throws SessionExpiredException, BigBangException;
-	public InsuranceAgencyInfoRequest repeatInfoRequestToInsuranceAgency(InsuranceAgencyInfoRequest request) throws SessionExpiredException, BigBangException;
-	public void cancelInfoRequestToInsuranceAgency(InsuranceAgencyInfoRequest.Cancellation cancellation) throws SessionExpiredException, BigBangException;
-	public InsuranceAgencyInfoRequest receiveInfoRequestToInsuranceAgencyResponse(InsuranceAgencyInfoRequest.Response response) throws SessionExpiredException, BigBangException;
+	public InfoOrDocumentRequest createInfoRequestToInsuranceAgency(InfoOrDocumentRequest request) throws SessionExpiredException, BigBangException;
+	public InfoOrDocumentRequest repeatInfoRequestToInsuranceAgency(InfoOrDocumentRequest request) throws SessionExpiredException, BigBangException;
+	public void cancelInfoRequestToInsuranceAgency(InfoOrDocumentRequest.Cancellation cancellation) throws SessionExpiredException, BigBangException;
+	public InfoOrDocumentRequest receiveInfoRequestToInsuranceAgencyResponse(InfoOrDocumentRequest.Response response) throws SessionExpiredException, BigBangException;
 	
 	//Request FROM insurance agency
-	public InsuranceAgencyInfoRequest createInfoRequestFromInsuranceAgency(InsuranceAgencyInfoRequest request) throws SessionExpiredException, BigBangException;
-	public InsuranceAgencyInfoRequest repeatInfoRequestFromInsuranceAgency(InsuranceAgencyInfoRequest request) throws SessionExpiredException, BigBangException;
-	public void closeInfoRequestFromInsuranceAgency(InsuranceAgencyInfoRequest.Cancellation cancellation) throws SessionExpiredException, BigBangException;
-	public InsuranceAgencyInfoRequest receiveInfoRequestFromInsuranceAgencyResponse(InsuranceAgencyInfoRequest.Response response) throws SessionExpiredException, BigBangException;
+	public ExternalInfoRequest createInfoRequestFromInsuranceAgency(ExternalInfoRequest request) throws SessionExpiredException, BigBangException;
+	public ExternalInfoRequest repeatInfoRequestFromInsuranceAgency(ExternalInfoRequest request) throws SessionExpiredException, BigBangException;
+	public void closeInfoRequestFromInsuranceAgency(ExternalInfoRequest.Cancellation cancellation) throws SessionExpiredException, BigBangException;
+	public ExternalInfoRequest receiveInfoRequestFromInsuranceAgencyResponse(ExternalInfoRequest.Response response) throws SessionExpiredException, BigBangException;
 
 	public Negotiation deleteNegotiation(Negotiation.Deletion deletion) throws SessionExpiredException, BigBangException;
 }

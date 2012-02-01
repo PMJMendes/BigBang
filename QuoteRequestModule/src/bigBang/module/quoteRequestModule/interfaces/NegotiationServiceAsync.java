@@ -2,8 +2,9 @@ package bigBang.module.quoteRequestModule.interfaces;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
-import bigBang.definitions.shared.InsuranceAgencyInfoRequest;
-import bigBang.definitions.shared.InsuranceAgencyInfoRequest.Response;
+import bigBang.definitions.shared.InfoOrDocumentRequest;
+import bigBang.definitions.shared.ExternalInfoRequest;
+import bigBang.definitions.shared.ExternalInfoRequest.Response;
 import bigBang.definitions.shared.InsurancePolicy;
 import bigBang.definitions.shared.Negotiation;
 import bigBang.definitions.shared.Negotiation.Adjudication;
@@ -26,33 +27,33 @@ public interface NegotiationServiceAsync extends SearchServiceAsync {
 	void adjudicateNegotiation(Adjudication adjudication,
 			AsyncCallback<Adjudication> callback);
 
-	void createInfoRequestToInsuranceAgency(InsuranceAgencyInfoRequest request,
-			AsyncCallback<InsuranceAgencyInfoRequest> callback);
+	void createInfoRequestToInsuranceAgency(InfoOrDocumentRequest request,
+			AsyncCallback<InfoOrDocumentRequest> callback);
 
-	void repeatInfoRequestToInsuranceAgency(InsuranceAgencyInfoRequest request,
-			AsyncCallback<InsuranceAgencyInfoRequest> callback);
+	void repeatInfoRequestToInsuranceAgency(InfoOrDocumentRequest request,
+			AsyncCallback<InfoOrDocumentRequest> callback);
 
 	void cancelInfoRequestToInsuranceAgency(
-			bigBang.definitions.shared.InsuranceAgencyInfoRequest.Cancellation cancellation,
+			InfoOrDocumentRequest.Cancellation cancellation,
 			AsyncCallback<Void> callback);
 
-	void receiveInfoRequestToInsuranceAgencyResponse(Response response,
-			AsyncCallback<InsuranceAgencyInfoRequest> callback);
+	void receiveInfoRequestToInsuranceAgencyResponse(InfoOrDocumentRequest.Response response,
+			AsyncCallback<InfoOrDocumentRequest> callback);
 
 	void createInfoRequestFromInsuranceAgency(
-			InsuranceAgencyInfoRequest request,
-			AsyncCallback<InsuranceAgencyInfoRequest> callback);
+			ExternalInfoRequest request,
+			AsyncCallback<ExternalInfoRequest> callback);
 
 	void repeatInfoRequestFromInsuranceAgency(
-			InsuranceAgencyInfoRequest request,
-			AsyncCallback<InsuranceAgencyInfoRequest> callback);
+			ExternalInfoRequest request,
+			AsyncCallback<ExternalInfoRequest> callback);
 
 	void closeInfoRequestFromInsuranceAgency(
-			bigBang.definitions.shared.InsuranceAgencyInfoRequest.Cancellation cancellation,
+			bigBang.definitions.shared.ExternalInfoRequest.Cancellation cancellation,
 			AsyncCallback<Void> callback);
 
 	void receiveInfoRequestFromInsuranceAgencyResponse(Response response,
-			AsyncCallback<InsuranceAgencyInfoRequest> callback);
+			AsyncCallback<ExternalInfoRequest> callback);
 
 	void createPolicy(InsurancePolicy policy,
 			AsyncCallback<InsurancePolicy> callback);

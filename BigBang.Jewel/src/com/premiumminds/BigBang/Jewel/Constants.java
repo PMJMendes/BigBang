@@ -56,6 +56,9 @@ public class Constants
 	public static final UUID ObjID_InfoRequest          = UUID.fromString("1D10FF86-70B5-4362-A8F3-9F7C00BC6DE4");
 	public static final UUID ObjID_RequestAddress       = UUID.fromString("C865EAD8-526A-4447-9CBB-9FE80109E9C5");
 
+	// Extern Request Objects
+	public static final UUID ObjID_ExternRequest        = UUID.fromString("BD9E1BEA-D02B-40FE-BB3E-9FEA00CA7ECD");
+
 	// Typified Lists
 	public static final UUID ObjID_ContactType          = UUID.fromString("228F6A73-1335-4C99-8DD0-9EEE012964BA");
 	public static final UUID ObjID_CInfoType            = UUID.fromString("03C5B78E-D71C-49F2-A079-9EC40111DCC0");
@@ -85,12 +88,13 @@ public class Constants
 	public static final UUID ObjID_TypifiedText         = UUID.fromString("0F218912-1626-4A2C-BF68-9FE100F72735");
 
 	// Process Scripts
-	public static final UUID ProcID_GenSys      = UUID.fromString("37A989E2-9D1F-470C-A59E-9EB1008A97A5");
-	public static final UUID ProcID_Client      = UUID.fromString("100E701A-EDC5-4D9C-A221-9F09013D7954");
-	public static final UUID ProcID_Policy      = UUID.fromString("29145166-59AC-452E-8C2B-9F81013A39AC");
-	public static final UUID ProcID_Receipt     = UUID.fromString("62D0A72A-525E-450C-9917-9F8A00EB38AC");
-	public static final UUID ProcID_MgrXFer     = UUID.fromString("BBF5FFD1-4249-48AE-BB2D-9F6501420E7B");
-	public static final UUID ProcID_InfoRequest = UUID.fromString("5DBEF1CD-DEB8-4731-8C6F-9FE500F50BB9");
+	public static final UUID ProcID_GenSys        = UUID.fromString("37A989E2-9D1F-470C-A59E-9EB1008A97A5");
+	public static final UUID ProcID_Client        = UUID.fromString("100E701A-EDC5-4D9C-A221-9F09013D7954");
+	public static final UUID ProcID_Policy        = UUID.fromString("29145166-59AC-452E-8C2B-9F81013A39AC");
+	public static final UUID ProcID_Receipt       = UUID.fromString("62D0A72A-525E-450C-9917-9F8A00EB38AC");
+	public static final UUID ProcID_MgrXFer       = UUID.fromString("BBF5FFD1-4249-48AE-BB2D-9F6501420E7B");
+	public static final UUID ProcID_InfoRequest   = UUID.fromString("5DBEF1CD-DEB8-4731-8C6F-9FE500F50BB9");
+	public static final UUID ProcID_ExternRequest = UUID.fromString("83759D78-C30C-4928-B600-9FEA00CC2349");
 
 	// Operations
 
@@ -213,6 +217,13 @@ public class Constants
 	public static final UUID OPID_InfoReq_RepeatRequest              = UUID.fromString("342772ED-99A8-4662-9439-9FE500FABF29");
 	public static final UUID OPID_InfoReq_CancelRequest              = UUID.fromString("E4CAAC1D-C89F-4956-9F0E-9FE500FB443D");
 	public static final UUID OPID_InfoReq_UndoCancelRequest          = UUID.fromString("34144359-1DE1-43ED-A279-9FE500FBCEB8");
+
+	// Extern Request Operations
+	public static final UUID OPID_ExternReq_SendInformation          = UUID.fromString("870ADF31-4DA8-41D2-BECD-9FEA00CE0A05");
+	public static final UUID OPID_ExternReq_ReceiveAdditionalInfo    = UUID.fromString("18376BE2-9005-425A-98D0-9FEA00CE7865");
+	public static final UUID OPID_ExternReq_CloseProcess             = UUID.fromString("C8D7C92A-FA92-4A74-8A4F-9FEA00CEF1CB");
+	public static final UUID OPID_ExternReq_UndoReceiveAdditional    = UUID.fromString("6EDCCFBE-8F31-476C-A819-9FEA00E4F48C");
+	public static final UUID OPID_ExternReq_UndoCloseProcess         = UUID.fromString("6E1C0EFE-768E-4F60-BA1B-9FEA00E52E09");
 
 	// Urgency Levels
 	public static final UUID UrgID_Invalid   = UUID.fromString("6FDEA9C9-55E0-4214-8BC2-9EB1007E9BA5");
