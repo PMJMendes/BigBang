@@ -99,6 +99,9 @@ public class ReceiveReply
 
 		lstrResult = new StringBuilder("A resposta será retirada e o processo será reaberto.");
 
+		if ( mbFromEmail )
+			lstrResult.append(" O email recebido será re-disponibilizado para outra utilização.");
+
 		if ( mobjDocOps != null )
 			mobjDocOps.UndoDesc(lstrResult, pstrLineBreak);
 
@@ -110,6 +113,9 @@ public class ReceiveReply
 		StringBuilder lstrResult;
 
 		lstrResult = new StringBuilder("A resposta foi retirada e o processo foi reaberto.");
+
+		if ( mbFromEmail )
+			lstrResult.append(" O email recebido foi re-disponibilizado para outra utilização.");
 
 		if ( mobjDocOps != null )
 			mobjDocOps.UndoLongDesc(lstrResult, pstrLineBreak);
