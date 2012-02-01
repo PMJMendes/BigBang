@@ -1,14 +1,25 @@
 package com.premiumminds.BigBang.Jewel.Operations.InfoRequest;
 
+import java.sql.ResultSet;
+import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Hashtable;
 import java.util.UUID;
 
 import microsoft.exchange.webservices.data.Item;
+import Jewel.Engine.Engine;
 import Jewel.Engine.DataAccess.SQLServer;
+import Jewel.Engine.Implementation.Entity;
+import Jewel.Engine.Interfaces.IEntity;
+import Jewel.Engine.SysObjects.ObjectBase;
 import Jewel.Petri.SysObjects.JewelPetriException;
 import Jewel.Petri.SysObjects.UndoableOperation;
 
 import com.premiumminds.BigBang.Jewel.Constants;
+import com.premiumminds.BigBang.Jewel.Objects.AgendaItem;
+import com.premiumminds.BigBang.Jewel.Objects.InfoRequest;
+import com.premiumminds.BigBang.Jewel.Objects.RequestAddress;
 import com.premiumminds.BigBang.Jewel.Operations.DocOps;
 import com.premiumminds.BigBang.Jewel.SysObjects.MailConnector;
 
@@ -69,7 +80,44 @@ public class ReceiveReply
 	protected void Run(SQLServer pdb)
 		throws JewelPetriException
 	{
+		Hashtable<UUID, AgendaItem> larrItems;
+		IEntity lrefAux;
+		ResultSet lrs;
+		ObjectBase lobjAgendaProc;
 		Item lobjItem;
+
+		larrItems = new Hashtable<UUID, AgendaItem>();
+		lrs = null;
+		try
+		{
+			lrefAux = Entity.GetInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), Constants.ObjID_AgendaProcess));
+			lrs = lrefAux.SelectByMembers(pdb, new int[] {1}, new java.lang.Object[] {GetProcess().getKey()}, new int[0]);
+			while ( lrs.next() )
+			{
+				lobjAgendaProc = Engine.GetWorkInstance(lrefAux.getKey(), lrs);
+				larrItems.put((UUID)lobjAgendaProc.getAt(0),
+						AgendaItem.GetInstance(Engine.getCurrentNameSpace(), (UUID)lobjAgendaProc.getAt(0)));
+			}
+			lrs.close();
+		}
+		catch (Throwable e)
+		{
+			if ( lrs != null ) try { lrs.close(); } catch (Throwable e1) {}
+			throw new JewelPetriException(e.getMessage(), e);
+		}
+
+		try
+		{
+			for ( AgendaItem lobjAgendaItem: larrItems.values() )
+			{
+				lobjAgendaItem.ClearData(pdb);
+				lobjAgendaItem.getDefinition().Delete(pdb, lobjAgendaItem.getKey());
+			}
+		}
+		catch (Throwable e)
+		{
+			throw new JewelPetriException(e.getMessage(), e);
+		}
 
 		if ( mobjDocOps != null )
 			mobjDocOps.RunSubOp(pdb, GetProcess().GetParent().GetDataKey());
@@ -126,10 +174,54 @@ public class ReceiveReply
 	protected void Undo(SQLServer pdb)
 		throws JewelPetriException
 	{
+		InfoRequest lobjRequest;
+		Timestamp ldtAux;
+		Calendar ldtAux2;
+		RequestAddress[] larrAddresses;
+		int i;
+		UUID lidUser;
+		AgendaItem lobjNewItem;
+
 		GetProcess().Restart(pdb);
 
 		if ( mobjDocOps != null )
 			mobjDocOps.UndoSubOp(pdb, GetProcess().GetParent().GetDataKey());
+
+		try
+		{
+			lobjRequest = (InfoRequest)GetProcess().GetData();
+
+			ldtAux = new Timestamp(new java.util.Date().getTime());
+	    	ldtAux2 = Calendar.getInstance();
+	    	ldtAux2.setTimeInMillis(ldtAux.getTime());
+	    	ldtAux2.add(Calendar.DAY_OF_MONTH, (Integer)lobjRequest.getAt(3));
+
+			larrAddresses = lobjRequest.GetAddresses(pdb);
+			for ( i = 0; i < larrAddresses.length; i++ )
+			{
+				if ( Constants.UsageID_ReplyTo.equals(larrAddresses[i].getAt(2)) )
+				{
+					lidUser = (UUID)larrAddresses[i].getAt(3);
+					if ( lidUser == null )
+						continue;
+
+					lobjNewItem = AgendaItem.GetInstance(Engine.getCurrentNameSpace(), (UUID)null);
+					lobjNewItem.setAt(0, "Pedido de Informação ou Documento");
+					lobjNewItem.setAt(1, lidUser);
+					lobjNewItem.setAt(2, Constants.ProcID_InfoRequest);
+					lobjNewItem.setAt(3, ldtAux);
+					lobjNewItem.setAt(4, new Timestamp(ldtAux2.getTimeInMillis()));
+					lobjNewItem.setAt(5, Constants.UrgID_Pending);
+					lobjNewItem.SaveToDb(pdb);
+					lobjNewItem.InitNew(new UUID[] {GetProcess().getKey()}, new UUID[] {Constants.OPID_InfoReq_ReceiveReply,
+							Constants.OPID_InfoReq_RepeatRequest, Constants.OPID_InfoReq_CancelRequest}, pdb);
+				}
+			}
+		}
+		catch (Throwable e)
+		{
+			throw new JewelPetriException(e.getMessage(), e);
+		}
 
 		if ( mbFromEmail )
 		{
