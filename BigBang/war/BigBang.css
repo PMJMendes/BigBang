@@ -18,6 +18,12 @@ h1 {
 	z-index: 12000;
 }
 
+.linkFileText{
+	color: blue;
+	text-decoration:underline;
+	cursor: pointer;
+}
+
 .sendButton {
 	display: block;
 	font-size: 16pt;
