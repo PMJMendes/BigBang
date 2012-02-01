@@ -84,7 +84,7 @@ public class ClientSectionView extends View implements ClientSectionViewPresente
 		if(this.popupPanel != null){
 			if(show && !this.popupPanel.isAttached()){
 				this.popupPanel.center();
-			}else if(this.popupPanel.isAttached()){
+			}else if(this.popupPanel.isAttached() && !show){
 				this.popupPanel.hidePopup();
 				this.popupPanel.remove((Widget)this.overlayContainer);
 				this.popupPanel = null;
