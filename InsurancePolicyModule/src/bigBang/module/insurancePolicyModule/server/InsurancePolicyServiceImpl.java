@@ -2691,7 +2691,7 @@ public class InsurancePolicyServiceImpl
 		lobjResult = new InsurancePolicy.TableSection();
 		lobjResult.pageId = null;
 		lobjResult.data = larrFields.toArray(new InsurancePolicy.TableSection.TableField[larrFields.size()]);
-		return null;
+		return lobjResult;
 	}
 
 	public Remap[] openPolicyScratchPad(String policyId)
