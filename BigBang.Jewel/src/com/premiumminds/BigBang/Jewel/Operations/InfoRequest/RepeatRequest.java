@@ -67,8 +67,9 @@ public class RepeatRequest
 	protected void Run(SQLServer pdb)
 		throws JewelPetriException
 	{
-		Timestamp ldtAux;
-		Calendar ldtAux2;
+		Timestamp ldtNow;
+		Calendar ldtAux;
+		Timestamp ldtLimit;
 		InfoRequest lobjRequest;
 		RequestAddress[] larrAddresses;
 		ArrayList<String> larrTos;
@@ -83,10 +84,11 @@ public class RepeatRequest
 		ObjectBase lobjAgendaProc;
 		AgendaItem lobjNewItem;
 
-		ldtAux = new Timestamp(new java.util.Date().getTime());
-    	ldtAux2 = Calendar.getInstance();
-    	ldtAux2.setTimeInMillis(ldtAux.getTime());
-    	ldtAux2.add(Calendar.DAY_OF_MONTH, mlngDays);
+		ldtNow = new Timestamp(new java.util.Date().getTime());
+    	ldtAux = Calendar.getInstance();
+    	ldtAux.setTimeInMillis(ldtNow.getTime());
+    	ldtAux.add(Calendar.DAY_OF_MONTH, mlngDays);
+    	ldtLimit = new Timestamp(ldtAux.getTimeInMillis());
 
 		try
 		{
@@ -112,7 +114,7 @@ public class RepeatRequest
 				}
 			}
 
-			lobjRequest.setAt(3, mlngDays);
+			lobjRequest.setAt(5, ldtLimit);
 			lobjRequest.SaveToDb(pdb);
 		}
 		catch (Throwable e)
@@ -154,8 +156,8 @@ public class RepeatRequest
 				lobjNewItem.setAt(0, "Pedido de Informação ou Documento");
 				lobjNewItem.setAt(1, larrUsers.get(i));
 				lobjNewItem.setAt(2, Constants.ProcID_InfoRequest);
-				lobjNewItem.setAt(3, ldtAux);
-				lobjNewItem.setAt(4, new Timestamp(ldtAux2.getTimeInMillis()));
+				lobjNewItem.setAt(3, ldtNow);
+				lobjNewItem.setAt(4, ldtLimit);
 				lobjNewItem.setAt(5, Constants.UrgID_Valid);
 				lobjNewItem.SaveToDb(pdb);
 				lobjNewItem.InitNew(new UUID[] {GetProcess().getKey()}, new UUID[] {Constants.OPID_InfoReq_ReceiveReply,

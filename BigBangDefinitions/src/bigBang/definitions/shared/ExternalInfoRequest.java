@@ -12,7 +12,9 @@ public class ExternalInfoRequest
 		private static final long serialVersionUID = 1L;
 		
 		public String requestId;
-		public String content;
+		public String notes;
+		public String emailId;
+		public int replylimit;
 	}
 
 	//The outgoing component of the conversation
@@ -22,7 +24,10 @@ public class ExternalInfoRequest
 		private static final long serialVersionUID = 1L;
 		
 		public String requestId;
-		public String content;
+		public String subject;
+		public String text;
+		public boolean isFinal;
+		public int replylimit;
 	}
 
 	//The closing data
@@ -37,6 +42,10 @@ public class ExternalInfoRequest
 
 	private static final long serialVersionUID = 1L;
 
-	public String notes;
+	public String parentDataObjectId;
+	public String parentDataTypeId;
 	public String emailId;
+	public String subject;
+	public String text;
+	public int replylimit;
 }

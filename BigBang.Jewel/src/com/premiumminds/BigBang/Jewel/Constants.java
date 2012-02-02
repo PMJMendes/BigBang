@@ -224,6 +224,8 @@ public class Constants
 	public static final UUID OPID_ExternReq_CloseProcess             = UUID.fromString("C8D7C92A-FA92-4A74-8A4F-9FEA00CEF1CB");
 	public static final UUID OPID_ExternReq_UndoReceiveAdditional    = UUID.fromString("6EDCCFBE-8F31-476C-A819-9FEA00E4F48C");
 	public static final UUID OPID_ExternReq_UndoCloseProcess         = UUID.fromString("6E1C0EFE-768E-4F60-BA1B-9FEA00E52E09");
+	public static final UUID OPID_ExternReq_ExternAbortProcess       = UUID.fromString("CE0ECB00-E333-435D-8E0C-9FEA010EEACB");
+	public static final UUID OPID_ExternReq_AutoLockProcess          = UUID.fromString("FD7023DF-C4EE-4111-94AC-9FEA0111DD3D");
 
 	// Urgency Levels
 	public static final UUID UrgID_Invalid   = UUID.fromString("6FDEA9C9-55E0-4214-8BC2-9EB1007E9BA5");

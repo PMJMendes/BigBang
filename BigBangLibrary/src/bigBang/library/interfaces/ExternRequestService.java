@@ -1,6 +1,9 @@
 package bigBang.library.interfaces;
 
 import bigBang.definitions.shared.ExternalInfoRequest;
+import bigBang.definitions.shared.ExternalInfoRequest.Closing;
+import bigBang.definitions.shared.ExternalInfoRequest.Incoming;
+import bigBang.definitions.shared.ExternalInfoRequest.Outgoing;
 import bigBang.library.shared.BigBangException;
 import bigBang.library.shared.SessionExpiredException;
 
@@ -25,8 +28,8 @@ public interface ExternRequestService
 		}
 	}
 
-	public ExternRequestService getRequest(String id) throws SessionExpiredException, BigBangException;
-	public ExternRequestService repeatRequest(ExternRequestService request) throws SessionExpiredException, BigBangException;
-	public ExternRequestService receiveResponse(ExternalInfoRequest.Incoming response) throws SessionExpiredException, BigBangException;
-	public void cancelRequest(ExternalInfoRequest.Closing cancellation) throws SessionExpiredException, BigBangException;
+	public ExternalInfoRequest getRequest(String id) throws SessionExpiredException, BigBangException;
+	public ExternalInfoRequest sendInformation(Outgoing outgoing) throws SessionExpiredException, BigBangException;
+	public ExternalInfoRequest receiveAdditional(Incoming incoming) throws SessionExpiredException, BigBangException;
+	public void closeRequest(Closing closing) throws SessionExpiredException, BigBangException;
 }

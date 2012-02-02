@@ -1,5 +1,6 @@
 package bigBang.library.server;
 
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.UUID;
 
@@ -65,9 +66,10 @@ public class InfoOrDocumentRequestServiceImpl
 		lobjResult.parentDataObjectId = lobjParent.GetDataKey().toString();
 		lobjResult.parentDataTypeId = lobjScript.GetDataType().toString();
 		lobjResult.requestTypeId = ((UUID)lobjRequest.getAt(1)).toString();
-		lobjResult.subject = (String)lobjRequest.getAt(5);
+		lobjResult.subject = (String)lobjRequest.getAt(4);
 		lobjResult.text = lobjRequest.getText();
-		lobjResult.replylimit = (Integer)lobjRequest.getAt(3);
+		lobjResult.replylimit = (int)((((Timestamp)lobjRequest.getAt(5)).getTime() -
+				(new Timestamp(new java.util.Date().getTime())).getTime()) * 86400000L);
 
 		larrUsers = new ArrayList<String>();
 		larrInfos = new ArrayList<String>();
@@ -130,7 +132,7 @@ public class InfoOrDocumentRequestServiceImpl
 			throw new BigBangException(e.getMessage(), e);
 		}
 
-		return InfoOrDocumentRequestServiceImpl.sGetRequest(lobjRequest.getKey());
+		return sGetRequest(lobjRequest.getKey());
 	}
 
 	public InfoOrDocumentRequest receiveResponse(Response response)
@@ -181,7 +183,7 @@ public class InfoOrDocumentRequestServiceImpl
 			throw new BigBangException(e.getMessage(), e);
 		}
 
-		return InfoOrDocumentRequestServiceImpl.sGetRequest(lobjRequest.getKey());
+		return sGetRequest(lobjRequest.getKey());
 	}
 
 	public void cancelRequest(Cancellation cancellation)

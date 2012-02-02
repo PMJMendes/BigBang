@@ -30,7 +30,7 @@ public abstract class CreateInfoRequestBase
 	public int mlngDays;
 	public UUID midRequestType;
 	public String mstrSubject;
-	public String mstrRequestBody;
+	public String mstrBody;
 	public UUID[] marrUsers;
 	public UUID[] marrContactInfos;
 	public String[] marrCCs;
@@ -56,7 +56,7 @@ public abstract class CreateInfoRequestBase
 
 		lstrBuffer.append("Foi enviado o seguinte pedido:").append(pstrLineBreak);
 		lstrBuffer.append(mstrSubject).append(pstrLineBreak);
-		lstrBuffer.append(mstrRequestBody).append(pstrLineBreak).append(pstrLineBreak);
+		lstrBuffer.append(mstrBody).append(pstrLineBreak).append(pstrLineBreak);
 		lstrBuffer.append("Prazo limite de resposta: ").append(mlngDays).append(" dias.").append(pstrLineBreak);
 
 		return lstrBuffer.toString();
@@ -70,8 +70,9 @@ public abstract class CreateInfoRequestBase
 	protected void Run(SQLServer pdb)
 		throws JewelPetriException
 	{
-		Timestamp ldtAux;
-		Calendar ldtAux2;
+		Timestamp ldtNow;
+		Calendar ldtAux;
+		Timestamp ldtLimit;
 		IEntity lrefDecos;
 		String[] larrReplyTos;
 		String[] larrTos;
@@ -82,10 +83,11 @@ public abstract class CreateInfoRequestBase
 		IProcess lobjProc;
 		AgendaItem lobjItem;
 
-		ldtAux = new Timestamp(new java.util.Date().getTime());
-    	ldtAux2 = Calendar.getInstance();
-    	ldtAux2.setTimeInMillis(ldtAux.getTime());
-    	ldtAux2.add(Calendar.DAY_OF_MONTH, mlngDays);
+		ldtNow = new Timestamp(new java.util.Date().getTime());
+    	ldtAux = Calendar.getInstance();
+    	ldtAux.setTimeInMillis(ldtNow.getTime());
+    	ldtAux.add(Calendar.DAY_OF_MONTH, mlngDays);
+    	ldtLimit = new Timestamp(ldtAux.getTimeInMillis());
 
         lrs = null;
 		try
@@ -118,10 +120,10 @@ public abstract class CreateInfoRequestBase
 		{
 			lobjRequest = InfoRequest.GetInstance(Engine.getCurrentNameSpace(), (UUID)null);
 			lobjRequest.setAt(1, midRequestType);
-			lobjRequest.setText(mstrRequestBody);
-			lobjRequest.setAt(3, mlngDays);
-			lobjRequest.setAt(4, larrReplyTos[0]);
-			lobjRequest.setAt(5, mstrSubject);
+			lobjRequest.setText(mstrBody);
+			lobjRequest.setAt(3, larrReplyTos[0]);
+			lobjRequest.setAt(4, mstrSubject);
+			lobjRequest.setAt(5, ldtLimit);
 			lobjRequest.SaveToDb(pdb);
 			lobjRequest.InitNew(marrUsers, marrContactInfos, marrCCs, marrBCCs, pdb);
 
@@ -134,8 +136,8 @@ public abstract class CreateInfoRequestBase
 				lobjItem.setAt(0, "Pedido de Informação ou Documento");
 				lobjItem.setAt(1, marrUsers[i]);
 				lobjItem.setAt(2, Constants.ProcID_InfoRequest);
-				lobjItem.setAt(3, ldtAux);
-				lobjItem.setAt(4, new Timestamp(ldtAux2.getTimeInMillis()));
+				lobjItem.setAt(3, ldtNow);
+				lobjItem.setAt(4, ldtLimit);
 				lobjItem.setAt(5, Constants.UrgID_Valid);
 				lobjItem.SaveToDb(pdb);
 				lobjItem.InitNew(new UUID[] {lobjProc.getKey()}, new UUID[] {Constants.OPID_InfoReq_ReceiveReply,
@@ -149,7 +151,7 @@ public abstract class CreateInfoRequestBase
 
 		try
 		{
-			MailConnector.DoSendMail(larrReplyTos, larrTos, marrCCs, marrBCCs, mstrSubject, mstrRequestBody);
+			MailConnector.DoSendMail(larrReplyTos, larrTos, marrCCs, marrBCCs, mstrSubject, mstrBody);
 		}
 		catch (Throwable e)
 		{

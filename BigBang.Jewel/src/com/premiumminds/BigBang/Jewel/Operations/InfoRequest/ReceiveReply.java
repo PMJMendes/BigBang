@@ -3,7 +3,6 @@ package com.premiumminds.BigBang.Jewel.Operations.InfoRequest;
 import java.sql.ResultSet;
 import java.sql.Timestamp;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Hashtable;
 import java.util.UUID;
 
@@ -175,8 +174,7 @@ public class ReceiveReply
 		throws JewelPetriException
 	{
 		InfoRequest lobjRequest;
-		Timestamp ldtAux;
-		Calendar ldtAux2;
+		Timestamp ldtNow;
 		RequestAddress[] larrAddresses;
 		int i;
 		UUID lidUser;
@@ -187,14 +185,10 @@ public class ReceiveReply
 		if ( mobjDocOps != null )
 			mobjDocOps.UndoSubOp(pdb, GetProcess().GetParent().GetDataKey());
 
+		ldtNow = new Timestamp(new java.util.Date().getTime());
 		try
 		{
 			lobjRequest = (InfoRequest)GetProcess().GetData();
-
-			ldtAux = new Timestamp(new java.util.Date().getTime());
-	    	ldtAux2 = Calendar.getInstance();
-	    	ldtAux2.setTimeInMillis(ldtAux.getTime());
-	    	ldtAux2.add(Calendar.DAY_OF_MONTH, (Integer)lobjRequest.getAt(3));
 
 			larrAddresses = lobjRequest.GetAddresses(pdb);
 			for ( i = 0; i < larrAddresses.length; i++ )
@@ -209,8 +203,8 @@ public class ReceiveReply
 					lobjNewItem.setAt(0, "Pedido de Informação ou Documento");
 					lobjNewItem.setAt(1, lidUser);
 					lobjNewItem.setAt(2, Constants.ProcID_InfoRequest);
-					lobjNewItem.setAt(3, ldtAux);
-					lobjNewItem.setAt(4, new Timestamp(ldtAux2.getTimeInMillis()));
+					lobjNewItem.setAt(3, ldtNow);
+					lobjNewItem.setAt(4, lobjRequest.getAt(5));
 					lobjNewItem.setAt(5, Constants.UrgID_Valid);
 					lobjNewItem.SaveToDb(pdb);
 					lobjNewItem.InitNew(new UUID[] {GetProcess().getKey()}, new UUID[] {Constants.OPID_InfoReq_ReceiveReply,

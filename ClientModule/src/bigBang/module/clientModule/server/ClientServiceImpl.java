@@ -361,7 +361,7 @@ public class ClientServiceImpl
 			lopCIR.mlngDays = request.replylimit;
 			lopCIR.midRequestType = UUID.fromString(request.requestTypeId);
 			lopCIR.mstrSubject = request.subject;
-			lopCIR.mstrRequestBody = request.text;
+			lopCIR.mstrBody = request.text;
 			if ( request.forwardUserIds == null )
 				lopCIR.marrUsers = new UUID[] {Engine.getCurrentUser()};
 			else
