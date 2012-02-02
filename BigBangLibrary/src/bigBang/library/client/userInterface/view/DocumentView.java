@@ -8,7 +8,9 @@ import bigBang.library.client.userInterface.ListHeader;
 import bigBang.library.client.userInterface.presenter.DocumentViewPresenter;
 import bigBang.library.client.userInterface.presenter.DocumentViewPresenter.Action;
 import bigBang.library.client.userInterface.view.DocumentSections.DetailsSection.DocumentDetailEntry;
+import bigBang.library.shared.DocuShareItem;
 
+import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
 public class DocumentView extends View implements DocumentViewPresenter.Display{
@@ -126,6 +128,26 @@ public class DocumentView extends View implements DocumentViewPresenter.Display{
 
 		getGeneralInfo().toolbar.setSaveModeEnabled(b);
 
+	}
+	
+	@Override
+	protected void onDetach() {
+		
+		this.getFileNote().getUploadDialog().hidePopup();
+		if(this.getFileNote().getUploadDialog().getFileUploadPopupDisk() != null){
+			this.getFileNote().getUploadDialog().getFileUploadPopupDisk().hidePopup();
+		}
+		if(this.getFileNote().getUploadDialog().getFileUploadPopupDocuShare() != null){
+			this.getFileNote().getUploadDialog().getFileUploadPopupDocuShare().hidePopup();
+		}
+		super.onDetach();
+	}
+
+	@Override
+	public void registerValueChangeHandler(
+			ValueChangeHandler<DocuShareItem> valueChangeHandler) {
+		// TODO Auto-generated method stub
+		
 	}
 
 

@@ -19,6 +19,7 @@ import bigBang.library.client.userInterface.ListEntry;
 import bigBang.library.client.userInterface.TextAreaFormField;
 import bigBang.library.client.userInterface.TextBoxFormField;
 import bigBang.library.client.userInterface.presenter.DocumentViewPresenter.Action;
+import bigBang.library.client.userInterface.view.FileUploadPopup.TypeChooserPopup;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -216,9 +217,9 @@ public abstract class DocumentSections{
 		private boolean isFileBoolean;
 		private FilenameTextBoxFormField filename;
 		private Button removeFile;
-		private FileUploadPopup uploadDialog;
+		private FileUploadPopup.TypeChooserPopup uploadDialog;
 
-		public FileUploadPopup getUploadDialog() {
+		public FileUploadPopup.TypeChooserPopup getUploadDialog() {
 			return uploadDialog;
 		}
 
@@ -247,7 +248,7 @@ public abstract class DocumentSections{
 		
 		public FileNoteSection(){
 			
-			uploadDialog = new FileUploadPopup(this);
+			uploadDialog = new FileUploadPopup.TypeChooserPopup(this);
 
 			wrapper = new VerticalPanel();
 			initWidget(wrapper);
@@ -342,8 +343,8 @@ public abstract class DocumentSections{
 
 			uploadButton = new Button("Adicionar Ficheiro");
 			uploadButton.addClickHandler(handler);
-
-			wrapper.add(uploadButton);
+ 
+			wrapper.add(uploadButton); 
 			wrapper.add(filenameRemoveButton);
 
 		}
@@ -362,13 +363,18 @@ public abstract class DocumentSections{
 			this.actionHandler = actionHandler;
 
 		}
+		
+		public Image getMimeImage(){
+			return mimeImg;
+		}
 
 		public void generateNewDocument(){
 
+			mimeImg.setVisible(false);
 			uploadButton.setVisible(false);
 			filename.setVisible(false);
 			removeFile.setVisible(false);
-
+			
 			changeToNote.setVisible(false);
 			getFilename().setVisible(false);
 			changeToFile.setVisible(false);
@@ -396,6 +402,7 @@ public abstract class DocumentSections{
 
 		public void createNewFile() {
 
+			mimeImg.setVisible(false);
 			isFileBoolean = true;
 			getFilename().setVisible(true);
 			buttonsFileorNote.setVisible(false);
@@ -406,11 +413,13 @@ public abstract class DocumentSections{
 			filename.setVisible(false);
 			removeFile.setVisible(false);
 			uploadButton.setVisible(true);
+			mimeImg.setVisible(false);
 
 		}
 
 		public void createNewNote() {
 
+			mimeImg.setVisible(false);
 			uploadButton.setVisible(false);
 			isFileBoolean = false;
 			buttonsFileorNote.setVisible(false);
@@ -420,6 +429,8 @@ public abstract class DocumentSections{
 			charRemainP.setVisible(true);
 			removeFile.setVisible(false);
 			filename.setVisible(false);
+			mimeImg.setVisible(false);
+			getNote().setEditable(true);
 
 		}
 
@@ -431,7 +442,6 @@ public abstract class DocumentSections{
 
 			this.getFilename().setValue(doc.fileName);
 			mimeImg.setResource(getMimeImage(doc.mimeType));
-			mimeImg.setVisible(true);
 			changeToNote.setVisible(false);
 			filename.setVisible(true);
 			hasFile = true;
@@ -441,6 +451,7 @@ public abstract class DocumentSections{
 
 		public void setDocumentNote(Document doc){
 
+			mimeImg.setVisible(false);
 			this.getNote().setValue(doc.text);
 
 		}
@@ -487,6 +498,8 @@ public abstract class DocumentSections{
 			else
 				mimeImage = resources.fileIcon();
 
+			mimeImg.setVisible(true);
+			
 			return mimeImage;
 		}
 
@@ -522,7 +535,6 @@ public abstract class DocumentSections{
 
 			hasFile = false;
 			getFilename().setVisible(false);
-			mimeImg.setVisible(false);
 			removeFile.setVisible(false);
 			changeToNote.setVisible(true);
 
@@ -561,8 +573,11 @@ public abstract class DocumentSections{
 			this.fileStorageId = fileStorageId;
 		}
 
-		public void setUploadDialog(FileUploadPopup fileUploadPopup) {
-			uploadDialog = fileUploadPopup;
+		public void startUploadDialog() {
+			if(uploadDialog == null){
+				uploadDialog = new TypeChooserPopup(this);
+			}
+			
 		}
 
 	}
@@ -587,7 +602,6 @@ public abstract class DocumentSections{
 					this.setLeftWidget(add);
 					super.setValue(docInfo);
 					return;	
-
 				}
 
 				setInfo(new TextBoxFormField());
@@ -605,15 +619,13 @@ public abstract class DocumentSections{
 					}
 				});
 
-				//				this.info.setWidth("10px");
 				this.info.setFieldWidth("");
-				this.infoValue.setFieldWidth("");
+				this.infoValue.setFieldWidth("100%");
 				this.remove.setWidth("20px");
-
+				super.setValue(docInfo);
 				this.setLeftWidget(getInfo());
 				this.setWidget(getInfoValue());
 				this.setRightWidget(remove);
-				super.setValue(docInfo);
 			}
 
 			public void setEditable(boolean editable){
@@ -714,7 +726,8 @@ public abstract class DocumentSections{
 					((DocumentDetailEntry)details.get(i)).getInfoValue().setReadOnly(!b);
 					((DocumentDetailEntry)details.get(i)).remove.setVisible(b);
 				}
-
+			}
+			if(details.size() >= 1){
 				details.get(details.size()-1).setVisible(b);
 			}
 			add.setVisible(b);
