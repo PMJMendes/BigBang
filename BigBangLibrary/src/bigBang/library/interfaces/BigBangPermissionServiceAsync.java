@@ -8,4 +8,5 @@ public interface BigBangPermissionServiceAsync
 	extends Service
 {
 	void getProcessPermissions(String dataObjectId, AsyncCallback<Permission[]> callback);
+	void getGeneralOpPermissions(String dataTypeId, AsyncCallback<Permission[]> callback);
 }

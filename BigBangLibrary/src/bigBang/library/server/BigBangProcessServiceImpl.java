@@ -13,6 +13,7 @@ import Jewel.Petri.Constants;
 import Jewel.Petri.Interfaces.IProcess;
 import Jewel.Petri.Interfaces.IScript;
 import Jewel.Petri.Objects.PNProcess;
+import Jewel.Petri.Objects.PNScript;
 import bigBang.definitions.shared.BigBangProcess;
 import bigBang.library.interfaces.BigBangProcessService;
 import bigBang.library.shared.BigBangException;
@@ -98,6 +99,82 @@ public class BigBangProcessServiceImpl
 		}
 
 		return lobjProcess;
+	}
+
+	public static IScript sGetScriptFromObjectType(UUID pidDataType)
+		throws BigBangException
+	{
+		IEntity lrefScript;
+        MasterDB ldb;
+        ResultSet lrsScripts;
+		IScript lobjScript;
+
+        try
+		{
+			lrefScript = Entity.GetInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), Constants.ObjID_PNScript)); 
+			ldb = new MasterDB();
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangException(e.getMessage(), e);
+		}
+
+		try
+		{
+			lrsScripts = lrefScript.SelectByMembers(ldb, new int[] {Constants.FKClass_In_Script},
+					new java.lang.Object[] {pidDataType}, new int[0]);
+		}
+		catch (Throwable e)
+		{
+			try { ldb.Disconnect(); } catch (SQLException e1) {}
+			throw new BigBangException(e.getMessage(), e);
+		}
+
+		try
+		{
+			if ( lrsScripts.next() )
+			{
+				lobjScript = PNScript.GetInstance(Engine.getCurrentNameSpace(), lrsScripts);
+
+				if ( lrsScripts.next() )
+					throw new BigBangException("Unexpected: More than one script for data type.");
+			}
+			else
+				throw new BigBangException("Erro: Esse tipo de objecto não tem processo associado.");
+		}
+		catch (BigBangException e)
+		{
+			try { lrsScripts.close(); } catch (SQLException e1) {}
+			try { ldb.Disconnect(); } catch (SQLException e1) {}
+			throw e;
+		}
+		catch (Throwable e)
+		{
+			try { lrsScripts.close(); } catch (SQLException e1) {}
+			try { ldb.Disconnect(); } catch (SQLException e1) {}
+			throw new BigBangException(e.getMessage(), e);
+		}
+
+		try
+		{
+			lrsScripts.close();
+		}
+		catch (Throwable e)
+		{
+			try { ldb.Disconnect(); } catch (SQLException e1) {}
+			throw new BigBangException(e.getMessage(), e);
+		}
+
+		try
+		{
+			ldb.Disconnect();
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangException(e.getMessage(), e);
+		}
+
+		return lobjScript;
 	}
 
 	public BigBangProcess getProcess(String dataObjectId)
