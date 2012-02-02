@@ -676,6 +676,7 @@ public class InsurancePolicyServiceImpl
 				lobjCoInsurer = new InsurancePolicy.CoInsurer();
 				lobjCoInsurer.insuranceAgencyId = marrCoInsurers.get(i).midCompany.toString();
 				lobjCoInsurer.percent = marrCoInsurers.get(i).mdblPercent.toPlainString();
+				larrCoInsurers.add(lobjCoInsurer);
 			}
 			if ( larrCoInsurers.size() == 0 )
 				pobjResult.coInsurers = null;
