@@ -1,6 +1,7 @@
 package bigBang.library.client.userInterface.presenter;
 
 import java.util.Collection;
+import bigBang.library.shared.DocuShareItem;
 
 import bigBang.definitions.client.response.ResponseError;
 import bigBang.definitions.client.response.ResponseHandler;
@@ -27,8 +28,11 @@ import bigBang.library.client.userInterface.view.DocumentSections.DetailsSection
 import bigBang.library.client.userInterface.view.DocumentSections.FileNoteSection;
 import bigBang.library.client.userInterface.view.DocumentSections.GeneralInfoSection;
 import bigBang.library.client.userInterface.view.FileUploadPopup;
+import bigBang.library.client.userInterface.view.FileUploadPopup.Filetype;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.event.logical.shared.ValueChangeEvent;
+import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.HasWidgets;
 import com.google.gwt.user.client.ui.PopupPanel.PositionCallback;
@@ -45,7 +49,7 @@ public class DocumentViewPresenter implements ViewPresenter, DocumentsBrokerClie
 	private String ownerId;
 	private String documentId;
 	private String ownerTypeId;
-
+	
 	public static enum Action {
 		SAVE,
 		EDIT,
@@ -59,7 +63,7 @@ public class DocumentViewPresenter implements ViewPresenter, DocumentsBrokerClie
 		DELETE, 
 		UPLOAD_SUCCESS, 
 		UPLOAD_BUTTON, 
-		DOWNLOAD_FILE
+		DOWNLOAD_FILE, NEW_FILE_FROM_DISK, NEW_FILE_FROM_DOCUSHARE
 	}
 
 	public DocumentViewPresenter(Display view){
@@ -86,6 +90,7 @@ public class DocumentViewPresenter implements ViewPresenter, DocumentsBrokerClie
 		public void registerDeleteHandler(
 				DeleteRequestEventHandler deleteRequestEventHandler);
 		void setSaveMode(boolean b);
+		void registerValueChangeHandler(ValueChangeHandler<DocuShareItem> valueChangeHandler);
 
 	}
 
@@ -251,20 +256,38 @@ public class DocumentViewPresenter implements ViewPresenter, DocumentsBrokerClie
 					
 				}
 				case UPLOAD_BUTTON:{
-					view.getFileNote().setUploadDialog(new FileUploadPopup(view.getFileNote()));
-
-					if(doc != null)
-						view.getFileNote().getUploadDialog().SetKey(doc.fileStorageId);
-					else
-						view.getFileNote().getUploadDialog().SetKey(null);	
-						view.getFileNote().getUploadDialog().center();
+					
+					view.getFileNote().startUploadDialog();
+					view.getFileNote().getUploadDialog().center();
 					break;
 				}
 				case DOWNLOAD_FILE:{
 					downloadFile();
+					break;
 				}
+				
+				case NEW_FILE_FROM_DISK:{
+					view.getFileNote().getUploadDialog().setType(Filetype.DISK, doc != null ? doc.fileStorageId : null);
+					view.getFileNote().getUploadDialog().center();
+					break;
 				}
-
+				case NEW_FILE_FROM_DOCUSHARE:{
+					view.getFileNote().getUploadDialog().setType(Filetype.DOCUSHARE, doc != null ? doc.fileStorageId : null);
+					view.getFileNote().getUploadDialog().center();
+					break;
+				}
+				
+				}
+				
+//				view.registerValueChangeHandler(new ValueChangeHandler<DocuShareItem>({
+//					
+//					@Override
+//					public void onValueChange(ValueChangeEvent<DocuShareItem> event) {
+//						// TODO Auto-generated method stub
+//						
+//					}
+//				});
+				
 			}
 
 			private void downloadFile() {
@@ -391,6 +414,7 @@ public class DocumentViewPresenter implements ViewPresenter, DocumentsBrokerClie
 				view.getFileNote().setFileUploadFilename(null);
 				doc.mimeType = null;
 				
+				view.getFileNote().getMimeImage().setVisible(false);
 				view.getFileNote().removeFile();
 				view.getFileNote().getUploadButton().setVisible(true);
 
