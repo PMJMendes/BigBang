@@ -35,6 +35,7 @@ public class PolicyData
 	public UUID midManager;
 	public UUID midProcess;
 
+	public PolicyCoInsurerData[] marrCoInsurers;
 	public PolicyCoverageData[] marrCoverages;
 	public PolicyObjectData[] marrObjects;
 	public PolicyExerciseData[] marrExercises;

@@ -40,6 +40,7 @@ public class Constants
 
 	// Policy Objects
 	public static final UUID ObjID_Policy               = UUID.fromString("D0C5AE6B-D340-4171-B7A3-9F81011F5D42");
+	public static final UUID ObjID_PolicyCoInsurer      = UUID.fromString("A74A6A17-ACF6-463C-983B-9FEB00FA4957");
 	public static final UUID ObjID_PolicyCoverage       = UUID.fromString("AE5F9DD7-2863-4C5B-AE0B-9F9C00229D02");
 	public static final UUID ObjID_PolicyObject         = UUID.fromString("3A3316D2-9D7C-4FD1-8486-9F9C0012E119");
 	public static final UUID ObjID_PolicyExercise       = UUID.fromString("DEE32F69-B33D-4427-AD5B-9F9C001607F2");
@@ -282,6 +283,7 @@ public class Constants
 	public static final int Mandatory_In_Coverage = 2;
 	public static final int FKLine_In_SubLine = 1;
 	public static final int FKParent_In_Group = 1;
+	public static final int FKPolicy_In_CoInsurer = 0;
 	public static final int FKPolicy_In_PolicyCoverage = 0;
 	public static final int FKPolicy_In_Object = 1;
 	public static final int FKPolicy_In_Exercise = 1;

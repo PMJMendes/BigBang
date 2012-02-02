@@ -97,6 +97,15 @@ public class InsurancePolicy
 		public String coverageId;
 	}
 
+	public static class CoInsurer
+		implements Serializable
+	{
+		private static final long serialVersionUID = 1L;
+	
+		public String insuranceAgencyId;
+		public String percent;
+	}
+
 	public String managerId;
 	public String insuranceAgencyId;
 	public String startDate;
@@ -110,6 +119,9 @@ public class InsurancePolicy
 	public String inheritMediatorId;
 	public String inheritMediatorName;
 	public String premium; // Numérico com duas casas decimais: prémio comercial.
+
+	public CoInsurer[] coInsurers;
+
 	public Contact[] contacts;
 	public Document[] documents;
 

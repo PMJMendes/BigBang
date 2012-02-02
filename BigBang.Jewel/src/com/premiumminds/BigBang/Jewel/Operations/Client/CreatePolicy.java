@@ -22,6 +22,7 @@ import com.premiumminds.BigBang.Jewel.Constants;
 import com.premiumminds.BigBang.Jewel.Data.PolicyData;
 import com.premiumminds.BigBang.Jewel.Objects.AgendaItem;
 import com.premiumminds.BigBang.Jewel.Objects.Policy;
+import com.premiumminds.BigBang.Jewel.Objects.PolicyCoInsurer;
 import com.premiumminds.BigBang.Jewel.Objects.PolicyCoverage;
 import com.premiumminds.BigBang.Jewel.Objects.PolicyExercise;
 import com.premiumminds.BigBang.Jewel.Objects.PolicyObject;
@@ -56,12 +57,25 @@ public class CreatePolicy
 	public String LongDesc(String pstrLineBreak)
 	{
 		StringBuilder lstrResult;
+		int i;
 
 		lstrResult = new StringBuilder();
 		lstrResult.append("Foi criada a seguinte apólice:");
 		lstrResult.append(pstrLineBreak);
 
 		mobjData.Describe(lstrResult, pstrLineBreak);
+
+		if ( mobjData.marrCoInsurers != null )
+		{
+			lstrResult.append(pstrLineBreak).append("Co-Seguro:").append(pstrLineBreak);
+			for ( i = 0; i < mobjData.marrCoInsurers.length; i++ )
+			{
+				lstrResult.append("- ");
+				mobjData.marrValues[i].Describe(lstrResult, pstrLineBreak);
+				lstrResult.append(pstrLineBreak);
+			}
+			lstrResult.append(pstrLineBreak);
+		}
 
 		if ( mobjContactOps != null )
 			mobjContactOps.LongDesc(lstrResult, pstrLineBreak);
@@ -82,6 +96,7 @@ public class CreatePolicy
 	{
 		Policy lobjPolicy;
 		int i;
+		PolicyCoInsurer lobjCoInsurer;
 		PolicyCoverage lobjCoverage;
 		PolicyObject lobjObject;
 		PolicyExercise lobjExercise;
@@ -106,6 +121,18 @@ public class CreatePolicy
 			mobjData.ToObject(lobjPolicy);
 			lobjPolicy.SaveToDb(pdb);
 			mobjData.mid = lobjPolicy.getKey();
+
+			if ( mobjData.marrCoInsurers != null )
+			{
+				for ( i = 0; i < mobjData.marrCoInsurers.length; i++ )
+				{
+					mobjData.marrCoInsurers[i].midPolicy = mobjData.mid;
+					lobjCoInsurer = PolicyCoInsurer.GetInstance(Engine.getCurrentNameSpace(), (UUID)null);
+					mobjData.marrCoInsurers[i].ToObject(lobjCoInsurer);
+					lobjCoInsurer.SaveToDb(pdb);
+					mobjData.marrCoInsurers[i].mid = lobjCoInsurer.getKey();
+				}
+			}
 
 			if ( mobjData.marrCoverages != null )
 			{

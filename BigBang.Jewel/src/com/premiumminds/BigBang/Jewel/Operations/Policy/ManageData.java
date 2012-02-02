@@ -9,12 +9,14 @@ import Jewel.Petri.SysObjects.JewelPetriException;
 import Jewel.Petri.SysObjects.UndoableOperation;
 
 import com.premiumminds.BigBang.Jewel.Constants;
+import com.premiumminds.BigBang.Jewel.Data.PolicyCoInsurerData;
 import com.premiumminds.BigBang.Jewel.Data.PolicyCoverageData;
 import com.premiumminds.BigBang.Jewel.Data.PolicyData;
 import com.premiumminds.BigBang.Jewel.Data.PolicyExerciseData;
 import com.premiumminds.BigBang.Jewel.Data.PolicyObjectData;
 import com.premiumminds.BigBang.Jewel.Data.PolicyValueData;
 import com.premiumminds.BigBang.Jewel.Objects.Policy;
+import com.premiumminds.BigBang.Jewel.Objects.PolicyCoInsurer;
 import com.premiumminds.BigBang.Jewel.Objects.PolicyCoverage;
 import com.premiumminds.BigBang.Jewel.Objects.PolicyExercise;
 import com.premiumminds.BigBang.Jewel.Objects.PolicyObject;
@@ -53,6 +55,7 @@ public class ManageData
 	{
 		StringBuilder lstrResult;
 		int i;
+		boolean b;
 
 		lstrResult = new StringBuilder();
 
@@ -62,6 +65,38 @@ public class ManageData
 			{
 				lstrResult.append("Novos dados da apólice:").append(pstrLineBreak);
 				mobjData.Describe(lstrResult, pstrLineBreak);
+				lstrResult.append(pstrLineBreak);
+			}
+
+			if ( mobjData.marrCoInsurers != null )
+			{
+				lstrResult.append(pstrLineBreak).append("Co-Seguro:").append(pstrLineBreak);
+				b = false;
+				for ( i = 0; i < mobjData.marrCoInsurers.length; i++ )
+				{
+					if ( mobjData.marrCoInsurers[i].mbDeleted )
+					{
+						b = true;
+						continue;
+					}
+					lstrResult.append("- ");
+					mobjData.marrValues[i].Describe(lstrResult, pstrLineBreak);
+					if ( mobjData.marrValues[i].mbNew )
+						lstrResult.append(" (Nova)");
+					lstrResult.append(pstrLineBreak);
+				}
+				if ( b )
+				{
+					lstrResult.append("Co-Seguradoras removidas:").append(pstrLineBreak);
+					for ( i = 0; i < mobjData.marrCoInsurers.length; i++ )
+					{
+						if ( !mobjData.marrCoInsurers[i].mbDeleted )
+							continue;
+						lstrResult.append("- ");
+						mobjData.marrValues[i].Describe(lstrResult, pstrLineBreak);
+						lstrResult.append(pstrLineBreak);
+					}
+				}
 				lstrResult.append(pstrLineBreak);
 			}
 
@@ -142,6 +177,7 @@ public class ManageData
 	{
 		Policy lobjAux;
 		UUID lidOwner;
+		PolicyCoInsurer lobjCoInsurer;
 		PolicyCoverage lobjCoverage;
 		PolicyObject lobjObject;
 		PolicyExercise lobjExercise;
@@ -170,6 +206,41 @@ public class ManageData
 					mobjData.midSubLine = mobjData.mobjPrevValues.midSubLine;
 					mobjData.ToObject(lobjAux);
 					lobjAux.SaveToDb(pdb);
+				}
+
+				if ( mobjData.marrCoInsurers != null )
+				{
+					for ( i = 0; i < mobjData.marrCoInsurers.length; i++ )
+					{
+						if ( mobjData.marrCoInsurers[i].mbDeleted )
+						{
+							if ( mobjData.marrCoInsurers[i].mid == null )
+								continue;
+							lobjCoInsurer = PolicyCoInsurer.GetInstance(Engine.getCurrentNameSpace(),
+									mobjData.marrCoInsurers[i].mid);
+							mobjData.marrCoInsurers[i].FromObject(lobjCoInsurer);
+							mobjData.marrCoInsurers[i].mobjPrevValues = null;
+							lobjCoInsurer.getDefinition().Delete(pdb, lobjCoInsurer.getKey());
+						}
+						else if ( mobjData.marrCoInsurers[i].mbNew )
+						{
+							mobjData.marrCoInsurers[i].midPolicy = mobjData.mid;
+							lobjCoInsurer = PolicyCoInsurer.GetInstance(Engine.getCurrentNameSpace(), (UUID)null);
+							mobjData.marrCoInsurers[i].ToObject(lobjCoInsurer);
+							lobjCoInsurer.SaveToDb(pdb);
+							mobjData.marrCoInsurers[i].mid = lobjCoInsurer.getKey();
+						}
+						else
+						{
+							lobjCoInsurer = PolicyCoInsurer.GetInstance(Engine.getCurrentNameSpace(),
+									mobjData.marrCoInsurers[i].mid);
+							mobjData.marrCoInsurers[i].mobjPrevValues = new PolicyCoInsurerData();
+							mobjData.marrCoInsurers[i].mobjPrevValues.FromObject(lobjCoInsurer);
+							mobjData.marrCoInsurers[i].mobjPrevValues.mobjPrevValues = null;
+							mobjData.marrCoInsurers[i].ToObject(lobjCoInsurer);
+							lobjCoInsurer.SaveToDb(pdb);
+						}
+					}
 				}
 
 				if ( mobjData.marrCoverages != null )
@@ -475,6 +546,21 @@ public class ManageData
 				mobjData.mobjPrevValues.Describe(lstrResult, pstrLineBreak);
 			}
 
+			if ( mobjData.marrCoInsurers != null )
+			{
+				lstrResult.append(pstrLineBreak).append("Co-Seguro:").append(pstrLineBreak);
+				for ( i = 0; i < mobjData.marrCoInsurers.length; i++ )
+				{
+					if ( mobjData.marrValues[i].mbNew )
+						lstrResult.append("Valor removido - ");
+					else
+						lstrResult.append("Valor reposto - ");
+					mobjData.marrValues[i].Describe(lstrResult, pstrLineBreak);
+					lstrResult.append(pstrLineBreak);
+				}
+				lstrResult.append(pstrLineBreak);
+			}
+
 			if ( mobjData.marrCoverages != null )
 			{
 				for ( i = 0; i < mobjData.marrCoverages.length; i++ )
@@ -547,6 +633,7 @@ public class ManageData
 	{
 		Policy lobjAux;
 		UUID lidOwner;
+		PolicyCoInsurer lobjCoInsurer;
 		PolicyCoverage lobjCoverage;
 		PolicyObject lobjObject;
 		PolicyExercise lobjExercise;
@@ -566,6 +653,32 @@ public class ManageData
 
 					mobjData.mobjPrevValues.ToObject(lobjAux);
 					lobjAux.SaveToDb(pdb);
+				}
+
+				if ( mobjData.marrCoInsurers != null )
+				{
+					for ( i = 0; i < mobjData.marrCoInsurers.length; i++ )
+					{
+						if ( mobjData.marrCoInsurers[i].mbDeleted )
+						{
+							if ( mobjData.marrCoInsurers[i].mid == null )
+								continue;
+							lobjCoInsurer = PolicyCoInsurer.GetInstance(Engine.getCurrentNameSpace(), (UUID)null);
+							mobjData.marrCoInsurers[i].ToObject(lobjCoInsurer);
+							lobjCoInsurer.SaveToDb(pdb);
+						}
+						else if ( mobjData.marrCoInsurers[i].mbNew )
+						{
+							lobjCoInsurer = PolicyCoInsurer.GetInstance(Engine.getCurrentNameSpace(), mobjData.marrCoInsurers[i].mid);
+							lobjCoInsurer.getDefinition().Delete(pdb, lobjCoInsurer.getKey());
+						}
+						else
+						{
+							lobjCoInsurer = PolicyCoInsurer.GetInstance(Engine.getCurrentNameSpace(), mobjData.marrCoInsurers[i].mid);
+							mobjData.marrCoInsurers[i].mobjPrevValues.ToObject(lobjCoInsurer);
+							lobjCoInsurer.SaveToDb(pdb);
+						}
+					}
 				}
 
 				if ( mobjData.marrCoverages != null )

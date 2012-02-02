@@ -203,6 +203,78 @@ public class Policy
 		return larrAux.toArray(new Document[larrAux.size()]);
     }
 
+    public PolicyCoInsurer[] GetCurrentCoInsurers()
+    	throws BigBangJewelException
+    {
+		ArrayList<PolicyCoInsurer> larrAux;
+		IEntity lrefPolicyCoInsurers;
+        MasterDB ldb;
+        ResultSet lrsCoInsurers;
+
+		larrAux = new ArrayList<PolicyCoInsurer>();
+
+		try
+		{
+			lrefPolicyCoInsurers = Entity.GetInstance(Engine.FindEntity(Engine.getCurrentNameSpace(),
+					Constants.ObjID_PolicyCoInsurer)); 
+			ldb = new MasterDB();
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangJewelException(e.getMessage(), e);
+		}
+
+		try
+		{
+			lrsCoInsurers = lrefPolicyCoInsurers.SelectByMembers(ldb, new int[] {Constants.FKPolicy_In_CoInsurer},
+					new java.lang.Object[] {getKey()}, new int[0]);
+		}
+		catch (Throwable e)
+		{
+			try { ldb.Disconnect(); } catch (Throwable e1) {}
+			throw new BigBangJewelException(e.getMessage(), e);
+		}
+
+		try
+		{
+			while ( lrsCoInsurers.next() )
+				larrAux.add(PolicyCoInsurer.GetInstance(getNameSpace(), lrsCoInsurers));
+		}
+		catch (BigBangJewelException e)
+		{
+			try { lrsCoInsurers.close(); } catch (Throwable e1) {}
+			try { ldb.Disconnect(); } catch (Throwable e1) {}
+			throw e;
+		}
+		catch (Throwable e)
+		{
+			try { lrsCoInsurers.close(); } catch (Throwable e1) {}
+			try { ldb.Disconnect(); } catch (Throwable e1) {}
+			throw new BigBangJewelException(e.getMessage(), e);
+		}
+
+		try
+		{
+			lrsCoInsurers.close();
+		}
+		catch (Throwable e)
+		{
+			try { ldb.Disconnect(); } catch (Throwable e1) {}
+			throw new BigBangJewelException(e.getMessage(), e);
+		}
+
+		try
+		{
+			ldb.Disconnect();
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangJewelException(e.getMessage(), e);
+		}
+
+		return larrAux.toArray(new PolicyCoInsurer[larrAux.size()]);
+    }
+
     public PolicyCoverage[] GetCurrentCoverages()
     	throws BigBangJewelException
     {

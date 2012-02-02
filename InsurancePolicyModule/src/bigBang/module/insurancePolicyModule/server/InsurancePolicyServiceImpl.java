@@ -52,6 +52,7 @@ import bigBang.module.receiptModule.server.ReceiptServiceImpl;
 
 import com.premiumminds.BigBang.Jewel.Constants;
 import com.premiumminds.BigBang.Jewel.PolicyValidationException;
+import com.premiumminds.BigBang.Jewel.Data.PolicyCoInsurerData;
 import com.premiumminds.BigBang.Jewel.Data.PolicyCoverageData;
 import com.premiumminds.BigBang.Jewel.Data.PolicyData;
 import com.premiumminds.BigBang.Jewel.Data.PolicyExerciseData;
@@ -66,6 +67,7 @@ import com.premiumminds.BigBang.Jewel.Objects.Line;
 import com.premiumminds.BigBang.Jewel.Objects.Mediator;
 import com.premiumminds.BigBang.Jewel.Objects.MgrXFer;
 import com.premiumminds.BigBang.Jewel.Objects.Policy;
+import com.premiumminds.BigBang.Jewel.Objects.PolicyCoInsurer;
 import com.premiumminds.BigBang.Jewel.Objects.PolicyCoverage;
 import com.premiumminds.BigBang.Jewel.Objects.PolicyExercise;
 import com.premiumminds.BigBang.Jewel.Objects.PolicyObject;
@@ -91,7 +93,11 @@ public class InsurancePolicyServiceImpl
 
 	private static class PolicyScratchPad
 	{
-//		private static final UUID GUID_Empty = UUID.fromString("00000000-0000-0000-0000-000000000000");
+		private static class PadCoInsurer
+			extends PolicyCoInsurerData
+		{
+			private static final long serialVersionUID = 1L;
+		}
 
 		private static class PadField
 		{
@@ -147,6 +153,7 @@ public class InsurancePolicyServiceImpl
 
 		public UUID midClient;
 		public PolicyData mobjPolicy;
+		public ArrayList<PadCoInsurer> marrCoInsurers;
 		public ArrayList<PadCoverage> marrCoverages;
 		public ArrayList<PadObject> marrObjects;
 		public ArrayList<PadExercise> marrExercises;
@@ -166,6 +173,7 @@ public class InsurancePolicyServiceImpl
 		public void InitNew(InsurancePolicy pobjSource)
 			throws BigBangException
 		{
+			PadCoInsurer lobjCoInsurer;
 			com.premiumminds.BigBang.Jewel.Objects.Coverage[] larrAuxCoverages;
 			PadCoverage lobjCoverage;
 			Tax[] larrTaxes;
@@ -195,12 +203,25 @@ public class InsurancePolicyServiceImpl
 			mobjPolicy.mbCaseStudy = pobjSource.caseStudy;
 			mobjPolicy.mdblPremium = ( pobjSource.premium == null ? null : new BigDecimal(pobjSource.premium) );
 
+			marrCoInsurers = new ArrayList<PadCoInsurer>();
 			marrCoverages = new ArrayList<PadCoverage>();
 			marrObjects = new ArrayList<PadObject>();
 			marrExercises = new ArrayList<PadExercise>();
 			marrValues = new ArrayList<PadValue>();
 
 			mobjPolicy.mbModified = false;
+
+			if ( pobjSource.coInsurers != null )
+			{
+				for ( i = 0; i < pobjSource.coInsurers.length; i++ )
+				{
+					lobjCoInsurer = new PadCoInsurer();
+					lobjCoInsurer.midPolicy = mobjPolicy.mid;
+					lobjCoInsurer.midCompany = UUID.fromString(pobjSource.coInsurers[i].insuranceAgencyId);
+					lobjCoInsurer.mdblPercent = new BigDecimal(pobjSource.coInsurers[i].percent);
+					marrCoInsurers.add(lobjCoInsurer);
+				}
+			}
 
 			try
 			{
@@ -266,6 +287,8 @@ public class InsurancePolicyServiceImpl
 			throws BigBangException
 		{
 			Policy lobjAuxPolicy;
+			PolicyCoInsurer[] larrLocalCoInsurers;
+			PadCoInsurer lobjCoInsurer;
 			PolicyCoverage[] larrLocalCoverages;
 			com.premiumminds.BigBang.Jewel.Objects.Coverage[] larrAuxCoverages;
 			Hashtable<UUID, PadCoverage> lmapCoverages;
@@ -287,6 +310,7 @@ public class InsurancePolicyServiceImpl
 			if ( mbValid )
 				throw new BigBangException("Erro: Não pode inicializar o mesmo espaço de trabalho duas vezes.");
 
+			marrCoInsurers = new ArrayList<PadCoInsurer>();
 			marrCoverages = new ArrayList<PadCoverage>();
 			marrObjects = new ArrayList<PadObject>();
 			marrExercises = new ArrayList<PadExercise>();
@@ -300,6 +324,14 @@ public class InsurancePolicyServiceImpl
 				mobjPolicy.FromObject(lobjAuxPolicy);
 
 				mobjPolicy.mbModified = false;
+
+				larrLocalCoInsurers = lobjAuxPolicy.GetCurrentCoInsurers();
+				for ( i = 0; i < larrLocalCoInsurers.length; i++ )
+				{
+					lobjCoInsurer = new PadCoInsurer();
+					lobjCoInsurer.FromObject(larrLocalCoInsurers[i]);
+					marrCoInsurers.add(lobjCoInsurer);
+				}
 
 				larrLocalCoverages = lobjAuxPolicy.GetCurrentCoverages();
 				lmapCoverages = new Hashtable<UUID, PadCoverage>();
@@ -610,6 +642,9 @@ public class InsurancePolicyServiceImpl
 		public void WriteBasics(InsurancePolicy pobjResult)
 		{
 			SubLine lobjSubLine;
+			ArrayList<InsurancePolicy.CoInsurer> larrCoInsurers;
+			InsurancePolicy.CoInsurer lobjCoInsurer;
+			int i;
 
 			if ( !mbValid )
 				return;
@@ -632,6 +667,20 @@ public class InsurancePolicyServiceImpl
 			pobjResult.caseStudy = ( mobjPolicy.mbCaseStudy == null ? false : mobjPolicy.mbCaseStudy );
 			pobjResult.statusId = ( mobjPolicy.midStatus == null ? null : mobjPolicy.midStatus.toString() );
 			pobjResult.premium = ( mobjPolicy.mdblPremium == null ? null : mobjPolicy.mdblPremium.toPlainString() );
+
+			larrCoInsurers = new ArrayList<InsurancePolicy.CoInsurer>();
+			for ( i = 0; i < marrCoInsurers.size(); i++ )
+			{
+				if ( marrCoInsurers.get(i).mbDeleted )
+					continue;
+				lobjCoInsurer = new InsurancePolicy.CoInsurer();
+				lobjCoInsurer.insuranceAgencyId = marrCoInsurers.get(i).midCompany.toString();
+				lobjCoInsurer.percent = marrCoInsurers.get(i).mdblPercent.toPlainString();
+			}
+			if ( larrCoInsurers.size() == 0 )
+				pobjResult.coInsurers = null;
+			else
+				pobjResult.coInsurers = larrCoInsurers.toArray(new InsurancePolicy.CoInsurer[larrCoInsurers.size()]);
 
 			if ( mobjPolicy.midStatus != null )
 			{
@@ -1512,6 +1561,9 @@ public class InsurancePolicyServiceImpl
 		public void UpdateInvariants(InsurancePolicy pobjSource)
 			throws BigBangException, CorruptedPadException
 		{
+			Hashtable<UUID, PadCoInsurer> lmapCoInsurers;
+			UUID lidCompany;
+			PadCoInsurer lobjCoInsurer;
 			int i, j;
 
 			if ( !mbValid )
@@ -1539,6 +1591,37 @@ public class InsurancePolicyServiceImpl
 			mobjPolicy.mbModified = true;
 
 			mbValid = false;
+
+			j = -1;
+			lmapCoInsurers = new Hashtable<UUID, PadCoInsurer>();
+			if ( pobjSource.coInsurers != null )
+			{
+				for ( i = 0; i < pobjSource.coInsurers.length; i++ )
+				{
+					lidCompany = UUID.fromString(pobjSource.coInsurers[i].insuranceAgencyId);
+					j = FindCoInsurer(lidCompany, j + 1);
+					if ( j < 0 )
+					{
+						lobjCoInsurer = new PadCoInsurer();
+						lobjCoInsurer.midPolicy = mobjPolicy.mid;
+						lobjCoInsurer.midCompany = lidCompany;
+						lobjCoInsurer.mdblPercent = new BigDecimal(pobjSource.coInsurers[i].percent);
+						marrCoInsurers.add(lobjCoInsurer);
+					}
+					else
+					{
+						lobjCoInsurer = marrCoInsurers.get(j);
+						lobjCoInsurer.mdblPercent = new BigDecimal(pobjSource.coInsurers[i].percent);
+						lobjCoInsurer.mbDeleted = false;
+					}
+					lmapCoInsurers.put(lidCompany, lobjCoInsurer);
+				}
+			}
+			for ( i = 0; i < marrCoInsurers.size(); i++ )
+			{
+				if ( lmapCoInsurers.get(marrCoInsurers.get(i).midCompany) == null )
+					marrCoInsurers.get(i).mbDeleted = true;
+			}
 
 			j = -1;
 			if ( pobjSource.coverages != null )
@@ -2051,6 +2134,22 @@ public class InsurancePolicyServiceImpl
 
 			lobjData.mbModified = mobjPolicy.mbModified;
 
+			if ( marrCoInsurers.size() > 0 )
+			{
+				lobjData.marrCoInsurers = new PolicyCoInsurerData[marrCoInsurers.size()];
+				for ( i = 0; i < marrCoInsurers.size(); i++ )
+				{
+					lobjData.marrCoInsurers[i] = new PolicyCoInsurerData();
+					lobjData.marrCoInsurers[i].Clone(marrCoInsurers.get(i));
+					if ( marrCoInsurers.get(i).mbDeleted )
+						lobjData.marrCoInsurers[i].mbDeleted = true;
+					else if ( marrCoInsurers.get(i).mid == null )
+						lobjData.marrCoInsurers[i].mbNew = true;
+				}
+			}
+			else
+				lobjData.marrCoInsurers = null;
+
 			if ( marrCoverages.size() > 0 )
 			{
 				lobjData.marrCoverages = new PolicyCoverageData[marrCoverages.size()];
@@ -2117,6 +2216,25 @@ public class InsurancePolicyServiceImpl
 				CommitNew(lobjData);
 			else
 				CommitEdit(lobjData);
+		}
+
+		private int FindCoInsurer(UUID pidCompany, int plngStart)
+		{
+			int i;
+
+			for ( i = plngStart; i < marrCoInsurers.size(); i++ )
+			{
+				if ( marrCoInsurers.get(i).midCompany.equals(pidCompany) )
+					return i;
+			}
+
+			for ( i = 0; i < plngStart; i++ )
+			{
+				if ( marrCoInsurers.get(i).midCompany.equals(pidCompany) )
+					return i;
+			}
+
+			return -1;
 		}
 
 		private int FindCoverage(UUID pidCoverage, int plngStart)
@@ -2268,6 +2386,7 @@ public class InsurancePolicyServiceImpl
 		Line lobjLine;
 		Category lobjCategory;
 		ObjectBase lobjStatus;
+		PolicyCoInsurer[] larrCoInsurers;
 		PolicyValue[] larrLocalValues;
 		PolicyCoverage[] larrLocalCoverages;
 		Coverage[] larrCoverages;
@@ -2310,6 +2429,7 @@ public class InsurancePolicyServiceImpl
 			lobjCategory = Category.GetInstance(Engine.getCurrentNameSpace(), (UUID)lobjLine.getAt(1));
 			lobjStatus = Engine.GetWorkInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), Constants.ObjID_PolicyStatus),
 					(UUID)lobjPolicy.getAt(13));
+			larrCoInsurers = lobjPolicy.GetCurrentCoInsurers();
 			larrLocalValues = lobjPolicy.GetCurrentKeyedValues(null, null);
 			larrLocalCoverages = lobjPolicy.GetCurrentCoverages();
 			larrCoverages = lobjSubLine.GetCurrentCoverages();
@@ -2365,6 +2485,19 @@ public class InsurancePolicyServiceImpl
 		}
 		lobjResult.premium = (lobjPolicy.getAt(14) == null ? null : ((BigDecimal)lobjPolicy.getAt(14)).toPlainString());
 		lobjResult.managerId = lobjProc.GetManagerID().toString();
+
+		if ( larrCoInsurers.length > 0 )
+		{
+			lobjResult.coInsurers = new InsurancePolicy.CoInsurer[larrCoInsurers.length];
+			for ( i = 0; i < larrCoInsurers.length; i++ )
+			{
+				lobjResult.coInsurers[i] = new InsurancePolicy.CoInsurer();
+				lobjResult.coInsurers[i].insuranceAgencyId = ((UUID)larrCoInsurers[i].getAt(1)).toString();
+				lobjResult.coInsurers[i].percent = ((BigDecimal)larrCoInsurers[i].getAt(2)).toPlainString();
+			}
+		}
+		else
+			lobjResult.coInsurers = null;
 
 		larrAuxFields = new Hashtable<UUID, Tax>();
 		larrOutHeaders = new ArrayList<InsurancePolicy.HeaderField>();
