@@ -12,6 +12,7 @@ import Jewel.Petri.SysObjects.UndoableOperation;
 import com.premiumminds.BigBang.Jewel.Constants;
 import com.premiumminds.BigBang.Jewel.Data.ContactData;
 import com.premiumminds.BigBang.Jewel.Data.DocumentData;
+import com.premiumminds.BigBang.Jewel.Data.PolicyCoInsurerData;
 import com.premiumminds.BigBang.Jewel.Data.PolicyCoverageData;
 import com.premiumminds.BigBang.Jewel.Data.PolicyData;
 import com.premiumminds.BigBang.Jewel.Data.PolicyExerciseData;
@@ -20,6 +21,7 @@ import com.premiumminds.BigBang.Jewel.Data.PolicyValueData;
 import com.premiumminds.BigBang.Jewel.Objects.Contact;
 import com.premiumminds.BigBang.Jewel.Objects.Document;
 import com.premiumminds.BigBang.Jewel.Objects.Policy;
+import com.premiumminds.BigBang.Jewel.Objects.PolicyCoInsurer;
 import com.premiumminds.BigBang.Jewel.Objects.PolicyCoverage;
 import com.premiumminds.BigBang.Jewel.Objects.PolicyExercise;
 import com.premiumminds.BigBang.Jewel.Objects.PolicyObject;
@@ -87,6 +89,7 @@ public class ExternDeletePolicy
 		PolicyExercise[] larrExercises;
 		PolicyObject[] larrObjects;
 		PolicyCoverage[] larrCoverages;
+		PolicyCoInsurer[] larrCoInsurers;
 		int i, j;
 
 		try
@@ -133,6 +136,7 @@ public class ExternDeletePolicy
 			larrExercises = lobjAux.GetCurrentExercises();
 			larrObjects = lobjAux.GetCurrentObjects();
 			larrCoverages = lobjAux.GetCurrentCoverages();
+			larrCoInsurers = lobjAux.GetCurrentCoInsurers();
 
 			if ( (larrValues == null) || (larrValues.length == 0) )
 				mobjData.marrValues = null;
@@ -209,6 +213,19 @@ public class ExternDeletePolicy
 				}
 			}
 
+			if ( (larrCoInsurers == null) || (larrCoInsurers.length == 0) )
+				mobjData.marrCoInsurers = null;
+			else
+			{
+				mobjData.marrCoInsurers = new PolicyCoInsurerData[larrCoInsurers.length];
+				for ( i = 0; i < larrCoInsurers.length; i++ )
+				{
+					mobjData.marrCoInsurers[i] = new PolicyCoInsurerData();
+					mobjData.marrCoInsurers[i].FromObject(larrCoInsurers[i]);
+					larrCoInsurers[i].getDefinition().Delete(pdb, larrCoInsurers[i].getKey());
+				}
+			}
+
 			lobjAux.getDefinition().Delete(pdb, lobjAux.getKey());
 		}
 		catch (Throwable e)
@@ -246,6 +263,7 @@ public class ExternDeletePolicy
 	{
 		Policy lobjAux;
 		PNProcess lobjProcess;
+		PolicyCoInsurer lobjCoInsurer;
 		PolicyCoverage lobjCoverage;
 		PolicyObject lobjObject;
 		PolicyExercise lobjExercise;
@@ -259,6 +277,18 @@ public class ExternDeletePolicy
 			mobjData.ToObject(lobjAux);
 			lobjAux.SaveToDb(pdb);
 			mobjData.mid = lobjAux.getKey();
+
+			if ( mobjData.marrCoInsurers != null )
+			{
+				for ( i = 0; i < mobjData.marrCoInsurers.length; i++ )
+				{
+					lobjCoInsurer = PolicyCoInsurer.GetInstance(Engine.getCurrentNameSpace(), (UUID)null);
+					mobjData.marrCoInsurers[i].midPolicy = mobjData.mid;
+					mobjData.marrCoInsurers[i].ToObject(lobjCoInsurer);
+					lobjCoInsurer.SaveToDb(pdb);
+					mobjData.marrCoInsurers[i].mid = lobjCoInsurer.getKey();
+				}
+			}
 
 			if ( mobjData.marrCoverages != null )
 			{
