@@ -46,7 +46,7 @@ public class TestPolicyDelete
 		};
 
 		parameter = new InsurancePolicySearchParameter();
-		parameter.freeText = "-12868.1";
+		parameter.freeText = "-9813.2";
 
 		Services.insurancePolicyService.openSearch(new SearchParameter[] {parameter}, new SortParameter[] {}, 5, callback);
 	}

@@ -17,7 +17,7 @@ public class TestPolicyEdit
 
 	private static void DoStep1()
 	{
-		final String lstrPolicy = "588E0BE9-6E92-4711-B0CD-9FD50118C191";
+		final String lstrPolicy = "C452DA8E-3E11-40F2-8A29-9FEB01207DB8";
 
 		AsyncCallback<Remap[]> callback = new AsyncCallback<Remap[]> ()
 		{
@@ -107,6 +107,13 @@ public class TestPolicyEdit
 			{
 				testPolicy.extraData[i].value = Integer.toString(n);
 				n++;
+			}
+		}
+		if ( testPolicy.coInsurers != null )
+		{
+			for ( i = 0; i < testPolicy.coInsurers.length; i++ )
+			{
+				testPolicy.coInsurers[i].percent = Double.toString(50.0 - Double.parseDouble(testPolicy.coInsurers[i].percent));
 			}
 		}
 

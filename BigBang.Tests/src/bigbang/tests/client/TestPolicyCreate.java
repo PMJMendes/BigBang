@@ -102,6 +102,14 @@ public class TestPolicyCreate
 		testPolicy.maturityDay = 1;
 		testPolicy.maturityMonth = 1;
 
+		testPolicy.coInsurers = new InsurancePolicy.CoInsurer[2];
+		testPolicy.coInsurers[0] = new InsurancePolicy.CoInsurer();
+		testPolicy.coInsurers[0].insuranceAgencyId = "3B4CC294-74DB-4099-B219-9FB700200FB8";
+		testPolicy.coInsurers[0].percent = "30.5";
+		testPolicy.coInsurers[1] = new InsurancePolicy.CoInsurer();
+		testPolicy.coInsurers[1].insuranceAgencyId = "1901CD3D-2381-4936-98DE-9FB700200FB8";
+		testPolicy.coInsurers[1].percent = "23.45";
+
 		Services.insurancePolicyService.updateHeader(testPolicy, callback);
 	}
 
