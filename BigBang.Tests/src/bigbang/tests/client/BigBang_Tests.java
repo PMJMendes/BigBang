@@ -33,6 +33,7 @@ public class BigBang_Tests
 //		TestSpecialGetAsImage.DoTest();
 //		TestSpecialGetSubProcs.DoTest();
 //		TestSpecialGetPermissions.DoTest();
+//		TestSpecialGetGlobalPermissions.DoTest();
 //		TestSpecialGetExchangeItems.DoTest();
 //
 //		TestHistoryGet.DoTest();
@@ -49,7 +50,7 @@ public class BigBang_Tests
 //		TestInfoReqGet.DoTest();
 //		TestInfoReqCreate.DoTest();
 //		TestInfoReqRepeat.DoTest();
-		TestInfoReqReply.DoTest();
+//		TestInfoReqReply.DoTest();
 //		TestInfoReqCancel.DoTest();
 //
 //		TestContactGet.DoTest();
