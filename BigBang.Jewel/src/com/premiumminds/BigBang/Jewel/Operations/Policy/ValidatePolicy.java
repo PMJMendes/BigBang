@@ -63,6 +63,7 @@ public class ValidatePolicy
 		StringBuilder lstrBuilder;
 		int i;
 		PolicyCoverage[] larrCoverages;
+		Hashtable<UUID, UUID> larrTrueCoverages;
 		PolicyValue[] larrValues;
 		Hashtable<UUID, AgendaItem> larrItems;
 		ResultSet lrs;
@@ -85,8 +86,12 @@ public class ValidatePolicy
 			throw new JewelPetriException(e.getMessage(), e);
 		}
 
+		larrTrueCoverages = new Hashtable<UUID, UUID>();
 		for ( i = 0; i < larrCoverages.length; i++ )
 		{
+			if ( larrCoverages[i].GetCoverage().IsHeader() || larrCoverages[i].IsPresent() )
+				larrTrueCoverages.put(larrCoverages[i].GetCoverage().getKey(), larrCoverages[i].getKey());
+
 			if ( larrCoverages[i].GetCoverage().IsHeader() )
 				continue;
 			if ( larrCoverages[i].IsPresent() == null )
@@ -99,6 +104,9 @@ public class ValidatePolicy
 
 		for ( i = 0; i < larrValues.length; i++ )
 		{
+			if ( larrTrueCoverages.get(larrValues[i].GetTax().GetCoverage().getKey()) == null )
+				continue;
+
 			if ( larrValues[i].GetValue() == null )
 			{
 				if ( larrValues[i].GetTax().IsMandatory() )
