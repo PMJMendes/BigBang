@@ -8,6 +8,7 @@ public interface DocuShareServiceAsync
 	extends Service
 {
 	void getItems(String pstrFolder, boolean pbWithFolders, AsyncCallback<DocuShareItem[]> callback);
+	void getContext(String ownerId, String ownerTypeId, AsyncCallback<DocuShareItem[]> callback);
 	void getItem(String pstrItem, AsyncCallback<String> callback);
 	void getItemAsImage(String pstrItem, AsyncCallback<String> callback);
 }

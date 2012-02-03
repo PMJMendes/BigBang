@@ -16,6 +16,8 @@ import bigBang.library.shared.BigBangException;
 import bigBang.library.shared.DocuShareItem;
 import bigBang.library.shared.SessionExpiredException;
 
+import com.premiumminds.BigBang.Jewel.Constants;
+import com.premiumminds.BigBang.Jewel.Objects.Client;
 import com.xerox.docushare.DSContentElement;
 import com.xerox.docushare.DSFactory;
 import com.xerox.docushare.DSHandle;
@@ -129,6 +131,9 @@ public class DocuShareServiceImpl
 		if ( Engine.getCurrentUser() == null )
 			throw new SessionExpiredException();
 
+		if ( pbWithFolders )
+			return getItemsContext(pstrFolder, false);
+
 		lrefSession = GetSession();
 		if ( lrefSession == null )
 			return null;
@@ -148,19 +153,6 @@ public class DocuShareServiceImpl
 			while ( i.hasNext() )
 			{
 				lobjAux = i.nextObject();
-
-				if ( pbWithFolders )
-				{
-					if ( lobjAux instanceof DSCollection )
-					{
-						lobjTmp = new DocuShareItem();
-						lobjTmp.directory = true;
-						lobjTmp.handle = lobjAux.getHandle().toString();
-						lobjTmp.desc = lobjAux.getTitle();
-						larrFolders.add(lobjTmp);
-					}
-				}
-
 				if ( !(lobjAux instanceof DSCollection) )
 				{
 					lobjTmp = new DocuShareItem();
@@ -179,6 +171,31 @@ public class DocuShareServiceImpl
 		larrFolders.addAll(larrItems);
 
 		return larrFolders.toArray(new DocuShareItem[larrFolders.size()]);
+	}
+
+	public DocuShareItem[] getContext(String ownerId, String ownerTypeId)
+		throws SessionExpiredException, BigBangException 
+	{
+		String lstrHandle;
+
+		if ( Engine.getCurrentUser() == null )
+			throw new SessionExpiredException();
+
+		lstrHandle = null;
+
+		try
+		{
+			if ( Constants.ObjID_Client.equals(UUID.fromString(ownerTypeId)) )
+				lstrHandle = (String)Client.GetInstance(Engine.getCurrentNameSpace(), UUID.fromString(ownerId)).getAt(23);
+			if ( Constants.ObjID_Policy.equals(UUID.fromString(ownerTypeId)) )
+				lstrHandle = null; //TODO
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangException(e.getMessage(), e);
+		}
+
+		return getItemsContext(lstrHandle, true);
 	}
 
 	public String getItem(String pstrItem)
@@ -364,5 +381,91 @@ public class DocuShareServiceImpl
 //		FileServiceImpl.GetFileXferStorage().put(lidKey, lobjFile);
 
 		return null;//lidKey.toString();
+	}
+
+	private DocuShareItem[] getItemsContext(String pstrFolder, boolean pbInjectTSR)
+		throws SessionExpiredException, BigBangException
+	{
+		DSSession lrefSession;
+		DSHandle lhFolder;
+		DSCollection lobjFolder;
+		DSObjectIterator i;
+		ArrayList<DocuShareItem> larrFolders;
+		ArrayList<DocuShareItem> larrItems;
+		DocuShareItem lobjTmp;
+
+		if ( Engine.getCurrentUser() == null )
+			throw new SessionExpiredException();
+
+		lrefSession = GetSession();
+		if ( lrefSession == null )
+			return null;
+
+		larrFolders = new ArrayList<DocuShareItem>();
+		larrItems = new ArrayList<DocuShareItem>();
+
+		if ( pstrFolder == null )
+		{
+			lhFolder = new DSHandle("Collection-59066");
+			pbInjectTSR = false;
+		}
+		else
+			lhFolder = new DSHandle(pstrFolder);
+
+		if ( pbInjectTSR )
+		{
+			lobjTmp = new DocuShareItem();
+			lobjTmp.directory = true;
+			lobjTmp.handle = "Collection-59066";
+			lobjTmp.desc = "Temporary Scan Repository";
+			larrFolders.add(lobjTmp);
+		}
+
+		try
+		{
+			lobjFolder = (DSCollection)lrefSession.getObject(lhFolder);
+			i = lobjFolder.children(null);
+			while ( i.hasNext() )
+			{
+				lobjTmp = getItemAux(i.nextObject());
+
+				if ( lobjTmp.directory )
+					larrFolders.add(lobjTmp);
+				else
+					larrItems.add(lobjTmp);
+			}
+		}
+		catch (BigBangException e)
+		{
+			throw e;
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangException(e.getMessage(), e);
+		}
+
+		larrFolders.addAll(larrItems);
+
+		return larrFolders.toArray(new DocuShareItem[larrFolders.size()]);
+	}
+
+	private DocuShareItem getItemAux(DSObject lobjAux)
+		throws BigBangException
+	{
+		DocuShareItem lobjTmp;
+
+		lobjTmp = new DocuShareItem();
+		lobjTmp.directory = (lobjAux instanceof DSCollection);
+		lobjTmp.handle = lobjAux.getHandle().toString();
+		try
+		{
+			lobjTmp.desc = lobjAux.getTitle();
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangException("Erro a obter o nome de um item DocuShare.", e);
+		}
+
+		return lobjTmp;
 	}
 }
