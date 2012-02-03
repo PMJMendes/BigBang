@@ -639,35 +639,42 @@ public class InsurancePolicyServiceImpl
 			return larrResult;
 		}
 
-		public void WriteBasics(InsurancePolicy pobjResult)
+		public InsurancePolicy WriteBasics()
+			throws BigBangException, CorruptedPadException
 		{
+			InsurancePolicy lobjResult;
 			SubLine lobjSubLine;
 			ArrayList<InsurancePolicy.CoInsurer> larrCoInsurers;
 			InsurancePolicy.CoInsurer lobjCoInsurer;
 			int i;
 
 			if ( !mbValid )
-				return;
+				throw new CorruptedPadException("Ocorreu um erro interno. Os dados correntes não são válidos.");
 
-			pobjResult.number = mobjPolicy.mstrNumber;
-			pobjResult.clientId = ( midClient == null ? null : midClient.toString() );
-			pobjResult.subLineId = ( mobjPolicy.midSubLine == null ? null : mobjPolicy.midSubLine.toString() );
-			pobjResult.processId = ( mobjPolicy.midProcess == null ? null : mobjPolicy.midProcess.toString() );
-			pobjResult.insuranceAgencyId = ( mobjPolicy.midCompany == null ? null : mobjPolicy.midCompany.toString() );
-			pobjResult.startDate = ( mobjPolicy.mdtBeginDate == null ? null :
+			if ( mobjPolicy.mid == null )
+				lobjResult = new InsurancePolicy();
+			else
+				lobjResult = sGetPolicy(mobjPolicy.mid);
+
+			lobjResult.number = mobjPolicy.mstrNumber;
+			lobjResult.clientId = ( midClient == null ? null : midClient.toString() );
+			lobjResult.subLineId = ( mobjPolicy.midSubLine == null ? null : mobjPolicy.midSubLine.toString() );
+			lobjResult.processId = ( mobjPolicy.midProcess == null ? null : mobjPolicy.midProcess.toString() );
+			lobjResult.insuranceAgencyId = ( mobjPolicy.midCompany == null ? null : mobjPolicy.midCompany.toString() );
+			lobjResult.startDate = ( mobjPolicy.mdtBeginDate == null ? null :
 					mobjPolicy.mdtBeginDate.toString().substring(0, 10) );
-			pobjResult.durationId = ( mobjPolicy.midDuration == null ? null : mobjPolicy.midDuration.toString() );
-			pobjResult.fractioningId = ( mobjPolicy.midFractioning == null ? null : mobjPolicy.midFractioning.toString() );
-			pobjResult.maturityDay = mobjPolicy.mlngMaturityDay;
-			pobjResult.maturityMonth = mobjPolicy.mlngMaturityMonth;
-			pobjResult.expirationDate = ( mobjPolicy.mdtEndDate == null ? null :
+			lobjResult.durationId = ( mobjPolicy.midDuration == null ? null : mobjPolicy.midDuration.toString() );
+			lobjResult.fractioningId = ( mobjPolicy.midFractioning == null ? null : mobjPolicy.midFractioning.toString() );
+			lobjResult.maturityDay = mobjPolicy.mlngMaturityDay;
+			lobjResult.maturityMonth = mobjPolicy.mlngMaturityMonth;
+			lobjResult.expirationDate = ( mobjPolicy.mdtEndDate == null ? null :
 					mobjPolicy.mdtEndDate.toString().substring(0, 10));
-			pobjResult.notes = mobjPolicy.mstrNotes;
-			pobjResult.mediatorId = ( mobjPolicy.midMediator == null ? null : mobjPolicy.midMediator.toString() );
-			pobjResult.caseStudy = ( mobjPolicy.mbCaseStudy == null ? false : mobjPolicy.mbCaseStudy );
-			pobjResult.statusId = ( mobjPolicy.midStatus == null ? null : mobjPolicy.midStatus.toString() );
-			pobjResult.premium = ( mobjPolicy.mdblPremium == null ? null : mobjPolicy.mdblPremium.toPlainString() );
-			pobjResult.docushare = mobjPolicy.mstrDocuShare;
+			lobjResult.notes = mobjPolicy.mstrNotes;
+			lobjResult.mediatorId = ( mobjPolicy.midMediator == null ? null : mobjPolicy.midMediator.toString() );
+			lobjResult.caseStudy = ( mobjPolicy.mbCaseStudy == null ? false : mobjPolicy.mbCaseStudy );
+			lobjResult.statusId = ( mobjPolicy.midStatus == null ? null : mobjPolicy.midStatus.toString() );
+			lobjResult.premium = ( mobjPolicy.mdblPremium == null ? null : mobjPolicy.mdblPremium.toPlainString() );
+			lobjResult.docushare = mobjPolicy.mstrDocuShare;
 
 			larrCoInsurers = new ArrayList<InsurancePolicy.CoInsurer>();
 			for ( i = 0; i < marrCoInsurers.size(); i++ )
@@ -680,20 +687,20 @@ public class InsurancePolicyServiceImpl
 				larrCoInsurers.add(lobjCoInsurer);
 			}
 			if ( larrCoInsurers.size() == 0 )
-				pobjResult.coInsurers = null;
+				lobjResult.coInsurers = null;
 			else
-				pobjResult.coInsurers = larrCoInsurers.toArray(new InsurancePolicy.CoInsurer[larrCoInsurers.size()]);
+				lobjResult.coInsurers = larrCoInsurers.toArray(new InsurancePolicy.CoInsurer[larrCoInsurers.size()]);
 
 			if ( mobjPolicy.midStatus != null )
 			{
 				try
 				{
-					pobjResult.statusText = Engine.GetWorkInstance(Engine.FindEntity(Engine.getCurrentNameSpace(),
+					lobjResult.statusText = Engine.GetWorkInstance(Engine.FindEntity(Engine.getCurrentNameSpace(),
 							Constants.ObjID_PolicyStatus), mobjPolicy.midStatus).getLabel();
 				}
 				catch (Throwable e)
 				{
-					pobjResult.statusText = "(Erro a obter o estado da apólice.)";
+					lobjResult.statusText = "(Erro a obter o estado da apólice.)";
 				}
 			}
 
@@ -702,13 +709,15 @@ public class InsurancePolicyServiceImpl
 				try
 				{
 					lobjSubLine = SubLine.GetInstance(Engine.getCurrentNameSpace(), mobjPolicy.midSubLine);
-					pobjResult.lineId = lobjSubLine.getLine().getKey().toString();
-					pobjResult.categoryId = lobjSubLine.getLine().getCategory().getKey().toString();
+					lobjResult.lineId = lobjSubLine.getLine().getKey().toString();
+					lobjResult.categoryId = lobjSubLine.getLine().getCategory().getKey().toString();
 				}
 				catch (Throwable e)
 				{
 				}
 			}
+
+			return lobjResult;
 		}
 
 		public void WriteResult(InsurancePolicy pobjResult)
@@ -2375,10 +2384,9 @@ public class InsurancePolicyServiceImpl
         return larrAux;
 	}
 
-	public InsurancePolicy getPolicy(String policyId)
-		throws SessionExpiredException, BigBangException
+	public static InsurancePolicy sGetPolicy(UUID pidPolicy)
+		throws BigBangException
 	{
-		UUID lid;
 		Policy lobjPolicy;
 		InsurancePolicy lobjResult;
 		IProcess lobjProc;
@@ -2413,13 +2421,9 @@ public class InsurancePolicyServiceImpl
 		boolean lbColDone;
 		int i, j;
 
-		if ( Engine.getCurrentUser() == null )
-			throw new SessionExpiredException();
-
-		lid = UUID.fromString(policyId);
 		try
 		{
-			lobjPolicy = Policy.GetInstance(Engine.getCurrentNameSpace(), lid);
+			lobjPolicy = Policy.GetInstance(Engine.getCurrentNameSpace(), pidPolicy);
 			if ( lobjPolicy.GetProcessID() == null )
 				throw new BigBangException("Erro: Apólice sem processo de suporte. (Apólice n. "
 						+ lobjPolicy.getAt(0).toString() + ")");
@@ -2746,6 +2750,15 @@ public class InsurancePolicyServiceImpl
 		return lobjResult;
 	}
 
+	public InsurancePolicy getPolicy(String policyId)
+		throws SessionExpiredException, BigBangException
+	{
+		if ( Engine.getCurrentUser() == null )
+			throw new SessionExpiredException();
+
+		return sGetPolicy(UUID.fromString(policyId));
+	}
+
 	public InsurancePolicy.TableSection getPage(String policyId, String insuredObjectId, String exerciseId)
 		throws SessionExpiredException, BigBangException
 	{
@@ -2876,10 +2889,8 @@ public class InsurancePolicyServiceImpl
 		if ( Engine.getCurrentUser() == null )
 			throw new SessionExpiredException();
 
-		lobjPolicy = new InsurancePolicy();
-
 		lobjPad = GetScratchPadStorage().get(UUID.fromString(policyId));
-		lobjPad.WriteBasics(lobjPolicy);
+		lobjPolicy = lobjPad.WriteBasics();
 		lobjPad.WriteResult(lobjPolicy);
 		return lobjPolicy;
 	}
