@@ -138,6 +138,7 @@ public class ClientServiceImpl
 		lobjResult.maritalStatusId = (lobjClient.getAt(14) == null ? null : lobjClient.getAt(14).toString());
 		lobjResult.professionId = (lobjClient.getAt(15) == null ? null : lobjClient.getAt(15).toString());
 		lobjResult.notes = (String)lobjClient.getAt(20);
+		lobjResult.docushare = (String)lobjClient.getAt(23);
 
 		lobjResult.processId = lobjProc.getKey().toString();
 		lobjResult.managerId = lobjProc.GetManagerID().toString();

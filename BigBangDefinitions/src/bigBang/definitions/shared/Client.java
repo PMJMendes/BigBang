@@ -23,6 +23,7 @@ public class Client
 	public String maritalStatusId;
 	public String professionId;
 	public String notes;
+	public String docushare;
 	public Contact[] contacts;
 	public Document[] documents;
 
