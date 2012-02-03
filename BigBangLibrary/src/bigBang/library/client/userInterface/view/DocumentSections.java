@@ -248,8 +248,8 @@ public abstract class DocumentSections{
 		
 		public FileNoteSection(){
 			
-			uploadDialog = new FileUploadPopup.TypeChooserPopup(this);
-
+			uploadDialog = new FileUploadPopup.TypeChooserPopup();
+			
 			wrapper = new VerticalPanel();
 			initWidget(wrapper);
 
@@ -297,6 +297,7 @@ public abstract class DocumentSections{
 			wrapper.setWidth("400px");
 			buttonsFileorNote = new HorizontalPanel();
 			buttonsFileorNote.setWidth("400px");
+			buttonsFileorNote.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_LEFT);
 			
 			note.setWidth("400px");
 			note.setFieldWidth("100%");
@@ -511,7 +512,6 @@ public abstract class DocumentSections{
 
 			if(!isFileBoolean()){
 				getNote().setReadOnly(!b);
-				changeToFile.setVisible(b);
 				charRemainLabel.setVisible(b);
 				charRemain.setVisible(b);
 			}
@@ -520,7 +520,7 @@ public abstract class DocumentSections{
 			}
 
 			if(!hasFile && isFileBoolean()){
-				changeToNote.setVisible(b);
+				changeToNote.setVisible(false);
 				removeFile.setVisible(false);
 			}
 
@@ -558,6 +558,9 @@ public abstract class DocumentSections{
 		}
 
 		public String getFileUploadFilename() {
+			if(uploadDialog.getFileUploadPopupDisk() != null){
+				fileUploadFilename = uploadDialog.getFileUploadPopupDisk().getFilename();
+			}
 			return fileUploadFilename;
 		}
 
@@ -566,6 +569,9 @@ public abstract class DocumentSections{
 		}
 
 		public String getFileStorageId() {
+			if(uploadDialog.getFileUploadPopupDisk() != null){
+				fileStorageId = uploadDialog.getFileUploadPopupDisk().getFileStorageId();
+			}
 			return fileStorageId;
 		}
 
@@ -575,7 +581,8 @@ public abstract class DocumentSections{
 
 		public void startUploadDialog() {
 			if(uploadDialog == null){
-				uploadDialog = new TypeChooserPopup(this);
+				uploadDialog = new TypeChooserPopup();
+				uploadDialog.initHandler(actionHandler);
 			}
 			
 		}

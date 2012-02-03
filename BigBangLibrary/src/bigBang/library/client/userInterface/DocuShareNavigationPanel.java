@@ -27,11 +27,14 @@ import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
 public class DocuShareNavigationPanel extends View implements HasValue<DocuShareItem> {
-	
+
 	protected NavigationPanel navigationPanel;
 	protected DocuShareServiceAsync service;
 	protected FileServiceAsync fileService;
 	protected SelectionChangedEventHandler selectionHandler;
+	private String ownerId;
+	private String ownerTypeId;
+	private String filename;
 
 	public DocuShareNavigationPanel(){
 		this.service = DocuShareService.Util.getInstance();
@@ -64,10 +67,8 @@ public class DocuShareNavigationPanel extends View implements HasValue<DocuShare
 				}
 			}
 		};
-
-		navigateToDirectoryList(null, true);
 	}
-	
+
 	@Override
 	protected void initializeView() {}
 
@@ -103,7 +104,7 @@ public class DocuShareNavigationPanel extends View implements HasValue<DocuShare
 		list.setHeaderWidget(header); //TODO
 
 		header.getRefreshButton().addClickHandler(new ClickHandler() {
-			
+
 			@Override
 			public void onClick(ClickEvent event) {
 				fetchListContent(list, dirDesc, showSubFolders);
@@ -121,34 +122,56 @@ public class DocuShareNavigationPanel extends View implements HasValue<DocuShare
 		});
 		list.setSize("100%", "100%");
 		list.addSelectionChangedEventHandler(this.selectionHandler);
-		
+
 		fetchListContent(list, dirDesc, showSubFolders);
 	}
 
 	protected void fetchListContent(final DocumentNavigationList list, final String dirDesc, final boolean showSubFolders){
 		if(dirDesc == null){
 			navigationPanel.setHomeWidget(list);
+			list.showLoading(true);
+			service.getContext(ownerId, ownerTypeId, new BigBangAsyncCallback<DocuShareItem[]>() {
+
+				@Override
+				public void onSuccess(DocuShareItem[] result) {
+					for(int i = 0; i < result.length; i++){
+						list.addEntryForItem(result[i]);
+					}
+					list.showLoading(false);	
+				}
+
+				@Override
+				public void onFailure(Throwable caught) {
+					super.onFailure(caught);
+					showNoConnectionMessage();
+					list.showLoading(false);
+				}
+
+
+
+			});
+			navigationPanel.navigateTo(list);
 		}else{
 			navigationPanel.navigateTo(list);
-		}
-		list.showLoading(true);
-		service.getItems(dirDesc, showSubFolders, new BigBangAsyncCallback<DocuShareItem[]>() {
+			list.showLoading(true);
+			service.getItems(dirDesc, showSubFolders, new BigBangAsyncCallback<DocuShareItem[]>() {
 
-			@Override
-			public void onSuccess(DocuShareItem[] result) {
-				for(int i = 0; i < result.length; i++){
-					list.addEntryForItem(result[i]);
+				@Override
+				public void onSuccess(DocuShareItem[] result) {
+					for(int i = 0; i < result.length; i++){
+						list.addEntryForItem(result[i]);
+					}
+					list.showLoading(false);
 				}
-				list.showLoading(false);
-			}
 
-			@Override
-			public void onFailure(Throwable caught) {
-				super.onFailure(caught);
-				showNoConnectionMessage();
-				list.showLoading(false);
-			}
-		});
+				@Override
+				public void onFailure(Throwable caught) {
+					super.onFailure(caught);
+					showNoConnectionMessage();
+					list.showLoading(false);
+				}
+			});
+		}
 	}
 
 
@@ -167,13 +190,19 @@ public class DocuShareNavigationPanel extends View implements HasValue<DocuShare
 	@Override
 	public void setValue(DocuShareItem value) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void setValue(DocuShareItem value, boolean fireEvents) {
 		// TODO Auto-generated method stub
-		
+
+	}
+
+	public void setParameters(String ownerId, String ownerTypeId) {
+		this.ownerId = ownerId;
+		this.ownerTypeId = ownerTypeId;
+		navigateToDirectoryList(null, true);
 	}
 
 }

@@ -1,5 +1,7 @@
 package bigBang.library.client.userInterface.view;
 
+import bigBang.library.client.event.ActionInvokedEvent;
+import bigBang.library.client.event.ActionInvokedEventHandler;
 import bigBang.library.client.userInterface.DocuShareNavigationPanel;
 import bigBang.library.client.userInterface.DocumentNavigationList;
 import bigBang.library.client.userInterface.presenter.DocumentViewPresenter.Action;
@@ -8,6 +10,8 @@ import bigBang.library.client.userInterface.view.FileUploadPopup.FileUploadPopup
 import bigBang.library.client.userInterface.view.FileUploadPopup.Filetype;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.event.dom.client.ChangeEvent;
+import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.Button;
@@ -38,11 +42,11 @@ public abstract class FileUploadPopup
 		private HorizontalPanel buttonsPanel = new HorizontalPanel();
 		private Button fromDisk;
 		private Button fromDocuShare;
-		private DocumentSections.FileNoteSection fileNoteSection;
+		private ActionInvokedEventHandler<Action> actionHandler;
+
 		
-		public TypeChooserPopup(final DocumentSections.FileNoteSection fileNoteSection){
+		public TypeChooserPopup(){
 			super();
-			this.fileNoteSection = fileNoteSection;
 			
 			this.setSize("200px", "200px");
 			
@@ -53,17 +57,19 @@ public abstract class FileUploadPopup
 			
 			fromDisk.addClickHandler(new ClickHandler() {
 				
+			
 				@Override
 				public void onClick(ClickEvent event) {
-					fileNoteSection.fireAction(Action.NEW_FILE_FROM_DISK);
+					fireAction(Action.NEW_FILE_FROM_DISK);
 				}
+
 			});
 			
 			fromDocuShare.addClickHandler(new ClickHandler() {
 				
 				@Override
 				public void onClick(ClickEvent event) {
-					fileNoteSection.fireAction(Action.NEW_FILE_FROM_DOCUSHARE);					
+					fireAction(Action.NEW_FILE_FROM_DOCUSHARE);					
 				}
 			});
 			
@@ -73,17 +79,34 @@ public abstract class FileUploadPopup
 			
 			add(buttonsPanel);
 		}
+		
+
+		private void fireAction(Action action) {
+			if(this.actionHandler != null) {
+				actionHandler.onActionInvoked(new ActionInvokedEvent<Action>(action));
+			}
+		}
 
 		public void setType(Filetype type, String docId) {
+			
 			hidePopup();
+//			
+//			if(fileUploadPopupDisk != null && type == Filetype.DOCUSHARE){
+//				fileUploadPopupDisk.hidePopup();
+//			}
+//			
+//			if(fileUploadPopupDocuShare != null && type == Filetype.DISK){
+//				fileUploadPopupDocuShare.hidePopup();
+//			}
 			
 			if(type == Filetype.DISK){
-				fileUploadPopupDisk = new FileUploadPopupDisk(docId, fileNoteSection);
+				fileUploadPopupDisk = new FileUploadPopupDisk(docId);
 				fileUploadPopupDisk.center();
 			}
-			else
-				fileUploadPopupDocuShare = new FileUploadPopupDocuShare(docId, fileNoteSection);
+			else{
+				fileUploadPopupDocuShare = new FileUploadPopupDocuShare(docId);
 				fileUploadPopupDocuShare.center();
+			}
 		}
 		
 		public FileUploadPopupDisk getFileUploadPopupDisk() {
@@ -94,8 +117,11 @@ public abstract class FileUploadPopup
 		public FileUploadPopupDocuShare getFileUploadPopupDocuShare() {
 			return fileUploadPopupDocuShare;
 		}
-		
-		
+
+
+		public void initHandler(ActionInvokedEventHandler<Action> actionHandler) {
+			this.actionHandler = actionHandler;
+		}
 	}
 	
 	public static class FileUploadPopupDisk extends PopupPanel{
@@ -105,9 +131,22 @@ public abstract class FileUploadPopup
 		private FileUpload mfupMain;
 		private Button mbtnOk;
 		private Button mbtnCancel;
+		private String filename;
 		
+		public String getFilename() {
+			return filename;
+		}
+
+		public String getFileStorageId() {
+			return fileStorageId;
+		}
+
+
+		private String fileStorageId;
 		
-		public FileUploadPopupDisk(String key, final DocumentSections.FileNoteSection fileNoteSection){
+		private ActionInvokedEventHandler<Action> actionHandler;
+		
+		public FileUploadPopupDisk(String key){
 			
 			super();
 			this.getElement().getStyle().setZIndex(12000);
@@ -127,9 +166,23 @@ public abstract class FileUploadPopup
 			lvert.add(mfrmMain);
 			mfupMain = new FileUpload();
 			mfrmMain.setWidget(mfupMain);
+
+			mfupMain.addChangeHandler(new ChangeHandler() {
+				
+				@Override
+				public void onChange(ChangeEvent event) {
+					if(mfupMain.getFilename().isEmpty()){
+						mbtnOk.setEnabled(false);
+					}
+					else
+						mbtnOk.setEnabled(true);
+					
+				}
+			});
 			lhorz = new HorizontalPanel();
 			mbtnOk = new Button();
 			mbtnOk.setText("Ok");
+			mbtnOk.setEnabled(false);
 			lhorz.add(mbtnOk);
 			mbtnCancel = new Button();
 			mbtnCancel.setText("Cancel");
@@ -161,12 +214,14 @@ public abstract class FileUploadPopup
 					String fileStorageId = splitString[0];
 					String filename = splitString[1];
 					
-					fileNoteSection.setFileStorageId(fileStorageId);
-					fileNoteSection.setFileUploadFilename(filename);
-					fileNoteSection.fireAction(Action.UPLOAD_SUCCESS);
+					FileUploadPopupDisk.this.fileStorageId = fileStorageId;
+					FileUploadPopupDisk.this.filename = filename;
+					fireAction(Action.UPLOAD_SUCCESS);
 					
 					hidePopup();
 				}
+
+
 			});
 			mbtnOk.addClickHandler(new ClickHandler()
 			{
@@ -204,6 +259,18 @@ public abstract class FileUploadPopup
 			else
 				mlblError.setText(pstrError);
 		}
+		
+		private void fireAction(Action action) {
+			if(this.actionHandler != null) {
+				actionHandler.onActionInvoked(new ActionInvokedEvent<Action>(action));
+			}
+		}
+		
+		public void initHandler(ActionInvokedEventHandler<Action> actionHandler){
+
+			this.actionHandler = actionHandler;
+
+		}
 			
 	}
 	
@@ -211,16 +278,26 @@ public abstract class FileUploadPopup
 		
 		DocuShareNavigationPanel list = new DocuShareNavigationPanel();
 		VerticalPanel lvert;
-		public FileUploadPopupDocuShare(String docId, FileNoteSection fileNoteSection){
+		
+		public FileUploadPopupDocuShare(String docId){
 			super();
-			this.getElement().getStyle().setZIndex(12000);
 			
+			this.getElement().getStyle().setZIndex(12000);
 			lvert = new VerticalPanel();
 			lvert.add(list);
 			list.setSize("300px", "400px");
 			add(lvert);
 			
 		}
+		
+		public DocuShareNavigationPanel getList() {
+			return list;
+		}
+		
+		public void setParameters(String ownerId, String ownerTypeId){
+			list.setParameters(ownerId, ownerTypeId);
+		}
+
 	}
 }
 		

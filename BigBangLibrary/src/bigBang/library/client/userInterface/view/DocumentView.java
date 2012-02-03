@@ -8,6 +8,7 @@ import bigBang.library.client.userInterface.ListHeader;
 import bigBang.library.client.userInterface.presenter.DocumentViewPresenter;
 import bigBang.library.client.userInterface.presenter.DocumentViewPresenter.Action;
 import bigBang.library.client.userInterface.view.DocumentSections.DetailsSection.DocumentDetailEntry;
+import bigBang.library.client.userInterface.view.DocumentSections.FileNoteSection;
 import bigBang.library.shared.DocuShareItem;
 
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
@@ -59,6 +60,7 @@ public class DocumentView extends View implements DocumentViewPresenter.Display{
 		this.actionHandler = handler;
 		top.initHandler(handler);
 		middle.initHandler(handler);
+		middle.getUploadDialog().initHandler(handler);
 		details.initHandler(handler);
 	}
 
@@ -146,7 +148,7 @@ public class DocumentView extends View implements DocumentViewPresenter.Display{
 	@Override
 	public void registerValueChangeHandler(
 			ValueChangeHandler<DocuShareItem> valueChangeHandler) {
-		// TODO Auto-generated method stub
+		getFileNote().getUploadDialog().getFileUploadPopupDocuShare().list.addValueChangeHandler(valueChangeHandler);
 		
 	}
 

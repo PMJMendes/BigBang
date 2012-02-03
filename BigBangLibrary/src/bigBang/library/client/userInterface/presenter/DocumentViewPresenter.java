@@ -1,6 +1,8 @@
 package bigBang.library.client.userInterface.presenter;
 
 import java.util.Collection;
+
+import bigBang.library.server.DocuShareServiceImpl;
 import bigBang.library.shared.DocuShareItem;
 
 import bigBang.definitions.client.response.ResponseError;
@@ -8,6 +10,7 @@ import bigBang.definitions.client.response.ResponseHandler;
 import bigBang.definitions.shared.BigBangConstants;
 import bigBang.definitions.shared.DocInfo;
 import bigBang.definitions.shared.Document;
+import bigBang.library.client.BigBangAsyncCallback;
 import bigBang.library.client.EventBus;
 import bigBang.library.client.HasParameters;
 import bigBang.library.client.Notification;
@@ -29,6 +32,8 @@ import bigBang.library.client.userInterface.view.DocumentSections.FileNoteSectio
 import bigBang.library.client.userInterface.view.DocumentSections.GeneralInfoSection;
 import bigBang.library.client.userInterface.view.FileUploadPopup;
 import bigBang.library.client.userInterface.view.FileUploadPopup.Filetype;
+import bigBang.library.interfaces.DocuShareService;
+import bigBang.library.interfaces.DocuShareServiceAsync;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
@@ -45,6 +50,7 @@ public class DocumentViewPresenter implements ViewPresenter, DocumentsBrokerClie
 	private Document doc;
 	private boolean bound = false;
 	private DocumentsBroker broker;
+	protected DocuShareServiceAsync docuShareservice;
 	private int versionNumber;
 	private String ownerId;
 	private String documentId;
@@ -110,7 +116,6 @@ public class DocumentViewPresenter implements ViewPresenter, DocumentsBrokerClie
 	public void setParameters(HasParameters parameterHolder) {
 
 		broker.unregisterClient(this);
-
 		ownerId = parameterHolder.getParameter("id");
 		documentId = parameterHolder.getParameter("documentid");
 		ownerTypeId = parameterHolder.getParameter("ownertypeid");
@@ -244,17 +249,7 @@ public class DocumentViewPresenter implements ViewPresenter, DocumentsBrokerClie
 					removeDocument();
 					break;
 				}
-				case UPLOAD_SUCCESS:{
 
-					Document temp = getDocument();
-					view.getFileNote().getFilename().setValue(temp.fileName);
-					view.getFileNote().getChangeToNote().setVisible(false);
-					view.getFileNote().getUploadButton().setVisible(false);
-					view.getFileNote().enableRemoveFile(true);
-					view.getFileNote().getFilename().setVisible(true);
-					break;
-					
-				}
 				case UPLOAD_BUTTON:{
 					
 					view.getFileNote().startUploadDialog();
@@ -268,25 +263,66 @@ public class DocumentViewPresenter implements ViewPresenter, DocumentsBrokerClie
 				
 				case NEW_FILE_FROM_DISK:{
 					view.getFileNote().getUploadDialog().setType(Filetype.DISK, doc != null ? doc.fileStorageId : null);
+					view.getFileNote().getUploadDialog().getFileUploadPopupDisk().initHandler(new ActionInvokedEventHandler<DocumentViewPresenter.Action>() {
+						
+						@Override
+						public void onActionInvoked(ActionInvokedEvent<Action> action) {
+							
+							view.getFileNote().getFilename().setValue(view.getFileNote().getUploadDialog().getFileUploadPopupDisk().getFilename());
+							view.getFileNote().setFileStorageId(view.getFileNote().getUploadDialog().getFileUploadPopupDisk().getFileStorageId());
+							view.getFileNote().getChangeToNote().setVisible(false);
+							view.getFileNote().getUploadButton().setVisible(false);
+							view.getFileNote().enableRemoveFile(true);
+							view.getFileNote().getFilename().setVisible(true);
+							
+						}
+					});
 					view.getFileNote().getUploadDialog().center();
 					break;
 				}
 				case NEW_FILE_FROM_DOCUSHARE:{
 					view.getFileNote().getUploadDialog().setType(Filetype.DOCUSHARE, doc != null ? doc.fileStorageId : null);
+					view.getFileNote().getUploadDialog().getFileUploadPopupDocuShare().setParameters(ownerId, ownerTypeId);
 					view.getFileNote().getUploadDialog().center();
+					view.registerValueChangeHandler(new ValueChangeHandler<DocuShareItem>() {
+
+						@Override
+						public void onValueChange(
+								final ValueChangeEvent<DocuShareItem> event) {
+							docuShareservice = DocuShareService.Util.getInstance();
+							docuShareservice.getItem(event.getValue().handle, new BigBangAsyncCallback<String>() {
+
+								@Override
+								public void onSuccess(String result) {
+									
+									view.getFileNote().getFilename().setValue(event.getValue().desc);
+									view.getFileNote().setFileUploadFilename(event.getValue().desc);
+									view.getFileNote().setFileStorageId(result);
+									view.getFileNote().getChangeToNote().setVisible(false);
+									view.getFileNote().getUploadButton().setVisible(false);
+									view.getFileNote().enableRemoveFile(true);
+									view.getFileNote().getFilename().setVisible(true);
+									view.getFileNote().getUploadDialog().getFileUploadPopupDocuShare().hidePopup();
+									doc.fileStorageId = result;
+									
+								}
+								
+								@Override
+								public void onFailure(Throwable caught) {
+									EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não foi possível obter o ficheiro."), TYPE.TRAY_NOTIFICATION));
+									super.onFailure(caught);
+								}
+							});
+							
+						}
+						
+						
+					});
+					
 					break;
 				}
 				
 				}
-				
-//				view.registerValueChangeHandler(new ValueChangeHandler<DocuShareItem>({
-//					
-//					@Override
-//					public void onValueChange(ValueChangeEvent<DocuShareItem> event) {
-//						// TODO Auto-generated method stub
-//						
-//					}
-//				});
 				
 			}
 
