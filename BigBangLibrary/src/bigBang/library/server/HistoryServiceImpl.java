@@ -81,6 +81,8 @@ public class HistoryServiceImpl
 
 		if ( lobjResult.canUndo )
 			lobjResult.undoDescription = ((UndoableOperation)lobjOp).UndoDesc("<br />");
+		else if ( lobjLog.IsUndone() )
+			lobjResult.undoDescription = "Esta operação já foi revertida.";
 		else
 			lobjResult.undoDescription = "N/A";
 
