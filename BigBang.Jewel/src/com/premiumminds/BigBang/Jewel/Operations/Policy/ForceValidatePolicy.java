@@ -81,7 +81,7 @@ public class ForceValidatePolicy
 		try
 		{
 			lobjPolicy = Policy.GetInstance(Engine.getCurrentNameSpace(), midPolicy);
-			lobjPolicy.setAt(13, Constants.StatusID_Valid);
+			lobjPolicy.setAt(13, Constants.StatusID_InProgress);
 			lobjPolicy.SaveToDb(pdb);
 		}
 		catch (Throwable e)
