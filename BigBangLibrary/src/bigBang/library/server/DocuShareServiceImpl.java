@@ -456,23 +456,28 @@ public class DocuShareServiceImpl
 		return larrFolders.toArray(new DocuShareItem[larrFolders.size()]);
 	}
 
-	private DocuShareItem getItemAux(DSObject lobjAux)
+	private DocuShareItem getItemAux(DSObject pobjDSItem)
 		throws BigBangException
 	{
-		DocuShareItem lobjTmp;
+		DocuShareItem lobjResult;
 
-		lobjTmp = new DocuShareItem();
-		lobjTmp.directory = (lobjAux instanceof DSCollection);
-		lobjTmp.handle = lobjAux.getHandle().toString();
+		lobjResult = new DocuShareItem();
+		lobjResult.directory = (pobjDSItem instanceof DSCollection);
+		lobjResult.handle = pobjDSItem.getHandle().toString();
 		try
 		{
-			lobjTmp.desc = lobjAux.getTitle();
+			lobjResult.desc = pobjDSItem.getTitle();
+			if ( pobjDSItem instanceof DSDocument )
+			{
+				lobjResult.fileName = ((DSDocument)pobjDSItem).getOriginalFileName();
+				lobjResult.mimeType = ((DSDocument)pobjDSItem).getContentType();
+			}
 		}
 		catch (Throwable e)
 		{
-			throw new BigBangException("Erro a obter o nome de um item DocuShare.", e);
+			throw new BigBangException(e.getMessage(), e);
 		}
 
-		return lobjTmp;
+		return lobjResult;
 	}
 }

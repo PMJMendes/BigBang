@@ -10,4 +10,6 @@ public class DocuShareItem
 	public boolean directory;
 	public String handle;
 	public String desc;
+	public String fileName;
+	public String mimeType;
 }
