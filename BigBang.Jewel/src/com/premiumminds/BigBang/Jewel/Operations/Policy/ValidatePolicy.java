@@ -38,17 +38,17 @@ public class ValidatePolicy
 
 	protected UUID OpID()
 	{
-		return Constants.OPID_Policy_ForceValidatePolicy;
+		return Constants.OPID_Policy_ValidatePolicy;
 	}
 
 	public String ShortDesc()
 	{
-		return "Validação em Migração";
+		return "Validação da Apólice";
 	}
 
 	public String LongDesc(String pstrLineBreak)
 	{
-		return "Esta apólice foi migrada do Gescar e a sua validação foi forçada.";
+		return "A apólice foi validada.";
 	}
 
 	public UUID GetExternalProcess()
