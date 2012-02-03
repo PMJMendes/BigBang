@@ -90,7 +90,8 @@ public class ValidatePolicy
 		larrTrueCoverages = new Hashtable<UUID, UUID>();
 		for ( i = 0; i < larrCoverages.length; i++ )
 		{
-			if ( larrCoverages[i].GetCoverage().IsHeader() || larrCoverages[i].IsPresent() )
+			if ( larrCoverages[i].GetCoverage().IsHeader() ||
+					((larrCoverages[i].IsPresent() != null) && larrCoverages[i].IsPresent()) )
 				larrTrueCoverages.put(larrCoverages[i].GetCoverage().getKey(), larrCoverages[i].getKey());
 
 			if ( larrCoverages[i].GetCoverage().IsHeader() )
