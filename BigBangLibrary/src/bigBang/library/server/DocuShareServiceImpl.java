@@ -11,6 +11,7 @@ import javax.servlet.http.HttpSession;
 
 import Jewel.Engine.Engine;
 import Jewel.Engine.SysObjects.FileXfer;
+import Jewel.Petri.Objects.PNProcess;
 import bigBang.library.interfaces.DocuShareService;
 import bigBang.library.shared.BigBangException;
 import bigBang.library.shared.DocuShareItem;
@@ -18,6 +19,8 @@ import bigBang.library.shared.SessionExpiredException;
 
 import com.premiumminds.BigBang.Jewel.Constants;
 import com.premiumminds.BigBang.Jewel.Objects.Client;
+import com.premiumminds.BigBang.Jewel.Objects.Policy;
+import com.premiumminds.BigBang.Jewel.Objects.Receipt;
 import com.xerox.docushare.DSContentElement;
 import com.xerox.docushare.DSFactory;
 import com.xerox.docushare.DSHandle;
@@ -188,7 +191,11 @@ public class DocuShareServiceImpl
 			if ( Constants.ObjID_Client.equals(UUID.fromString(ownerTypeId)) )
 				lstrHandle = (String)Client.GetInstance(Engine.getCurrentNameSpace(), UUID.fromString(ownerId)).getAt(23);
 			if ( Constants.ObjID_Policy.equals(UUID.fromString(ownerTypeId)) )
-				lstrHandle = null; //TODO
+				lstrHandle = (String)Policy.GetInstance(Engine.getCurrentNameSpace(), UUID.fromString(ownerId)).getAt(15);
+			if ( Constants.ObjID_Receipt.equals(UUID.fromString(ownerTypeId)) )
+				lstrHandle = (String)((Policy)(PNProcess.GetInstance(Engine.getCurrentNameSpace(),
+						Receipt.GetInstance(Engine.getCurrentNameSpace(),
+						UUID.fromString(ownerId)).GetProcessID()).GetParent().GetData())).getAt(15);
 		}
 		catch (Throwable e)
 		{
