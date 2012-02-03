@@ -667,6 +667,7 @@ public class InsurancePolicyServiceImpl
 			pobjResult.caseStudy = ( mobjPolicy.mbCaseStudy == null ? false : mobjPolicy.mbCaseStudy );
 			pobjResult.statusId = ( mobjPolicy.midStatus == null ? null : mobjPolicy.midStatus.toString() );
 			pobjResult.premium = ( mobjPolicy.mdblPremium == null ? null : mobjPolicy.mdblPremium.toPlainString() );
+			pobjResult.docushare = mobjPolicy.mstrDocuShare;
 
 			larrCoInsurers = new ArrayList<InsurancePolicy.CoInsurer>();
 			for ( i = 0; i < marrCoInsurers.size(); i++ )
@@ -2485,6 +2486,7 @@ public class InsurancePolicyServiceImpl
 			break;
 		}
 		lobjResult.premium = (lobjPolicy.getAt(14) == null ? null : ((BigDecimal)lobjPolicy.getAt(14)).toPlainString());
+		lobjResult.docushare = (String)lobjPolicy.getAt(15);
 		lobjResult.managerId = lobjProc.GetManagerID().toString();
 
 		if ( larrCoInsurers.length > 0 )

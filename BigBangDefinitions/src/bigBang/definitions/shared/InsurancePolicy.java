@@ -119,6 +119,7 @@ public class InsurancePolicy
 	public String inheritMediatorId;
 	public String inheritMediatorName;
 	public String premium; // Numérico com duas casas decimais: prémio comercial.
+	public String docushare;
 
 	public CoInsurer[] coInsurers;
 

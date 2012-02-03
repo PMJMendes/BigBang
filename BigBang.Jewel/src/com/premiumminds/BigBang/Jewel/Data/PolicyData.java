@@ -31,6 +31,7 @@ public class PolicyData
 	public Boolean mbCaseStudy;
 	public UUID midStatus;
 	public BigDecimal mdblPremium;
+	public String mstrDocuShare;
 
 	public UUID midManager;
 	public UUID midProcess;
@@ -64,6 +65,7 @@ public class PolicyData
 		midProcess = pobjSource.midProcess;
 		midStatus = pobjSource.midStatus;
 		mdblPremium = pobjSource.mdblPremium;
+		mstrDocuShare = pobjSource.mstrDocuShare;
 	}
 
 	public void FromObject(ObjectBase pobjSource)
@@ -85,6 +87,7 @@ public class PolicyData
 		mbCaseStudy = (Boolean)pobjSource.getAt(12);
 		midStatus = (UUID)pobjSource.getAt(13);
 		mdblPremium = (BigDecimal)pobjSource.getAt(14);
+		mstrDocuShare = (String)pobjSource.getAt(15);
 	}
 
 	public void ToObject(ObjectBase pobjDest)
@@ -107,6 +110,7 @@ public class PolicyData
 			pobjDest.setAt(12, mbCaseStudy);
 			pobjDest.setAt(13, midStatus);
 			pobjDest.setAt(14, mdblPremium);
+//			pobjDest.setAt(15, mstrDocuShare); JMMM: Nunca gravar por cima disto
 		}
 		catch (Throwable e)
 		{

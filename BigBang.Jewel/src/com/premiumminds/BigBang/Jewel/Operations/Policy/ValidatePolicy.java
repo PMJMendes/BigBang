@@ -3,6 +3,7 @@ package com.premiumminds.BigBang.Jewel.Operations.Policy;
 import java.math.BigDecimal;
 import java.sql.ResultSet;
 import java.sql.Timestamp;
+import java.util.Calendar;
 import java.util.Hashtable;
 import java.util.UUID;
 
@@ -176,14 +177,32 @@ public class ValidatePolicy
 		throws JewelPetriException
 	{
 		Policy lobjPolicy;
+		AgendaItem lobjItem;
+		Timestamp ldtAux;
+		Calendar ldtAux2;
 
 		midPolicy = GetProcess().GetDataKey();
 
-		try
-		{
+		ldtAux = new Timestamp(new java.util.Date().getTime());
+    	ldtAux2 = Calendar.getInstance();
+    	ldtAux2.setTimeInMillis(ldtAux.getTime());
+    	ldtAux2.add(Calendar.DAY_OF_MONTH, 7);
+
+    	try
+    	{
 			lobjPolicy = Policy.GetInstance(Engine.getCurrentNameSpace(), midPolicy);
 			lobjPolicy.setAt(13, Constants.StatusID_InProgress);
 			lobjPolicy.SaveToDb(pdb);
+
+			lobjItem = AgendaItem.GetInstance(Engine.getCurrentNameSpace(), (UUID)null);
+			lobjItem.setAt(0, "Validação de Apólice");
+			lobjItem.setAt(1, GetProcess().GetManagerID());
+			lobjItem.setAt(2, Constants.ProcID_Policy);
+			lobjItem.setAt(3, ldtAux);
+			lobjItem.setAt(4, new Timestamp(ldtAux2.getTimeInMillis()));
+			lobjItem.setAt(5, Constants.UrgID_Pending);
+			lobjItem.SaveToDb(pdb);
+			lobjItem.InitNew(new UUID[] {GetProcess().getKey()}, new UUID[] {Constants.OPID_Policy_ValidatePolicy}, pdb);
 		}
 		catch (Throwable e)
 		{
