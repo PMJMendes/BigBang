@@ -45,12 +45,14 @@ import bigBang.library.shared.BigBangException;
 import bigBang.library.shared.CorruptedPadException;
 import bigBang.library.shared.SessionExpiredException;
 import bigBang.module.insurancePolicyModule.interfaces.InsurancePolicyService;
+import bigBang.module.insurancePolicyModule.shared.BigBangPolicyCalculationException;
 import bigBang.module.insurancePolicyModule.shared.BigBangPolicyValidationException;
 import bigBang.module.insurancePolicyModule.shared.InsurancePolicySearchParameter;
 import bigBang.module.insurancePolicyModule.shared.InsurancePolicySortParameter;
 import bigBang.module.receiptModule.server.ReceiptServiceImpl;
 
 import com.premiumminds.BigBang.Jewel.Constants;
+import com.premiumminds.BigBang.Jewel.PolicyCalculationException;
 import com.premiumminds.BigBang.Jewel.PolicyValidationException;
 import com.premiumminds.BigBang.Jewel.Data.PolicyCoInsurerData;
 import com.premiumminds.BigBang.Jewel.Data.PolicyCoverageData;
@@ -82,6 +84,7 @@ import com.premiumminds.BigBang.Jewel.Operations.Policy.CreateMgrXFer;
 import com.premiumminds.BigBang.Jewel.Operations.Policy.CreateReceipt;
 import com.premiumminds.BigBang.Jewel.Operations.Policy.DeletePolicy;
 import com.premiumminds.BigBang.Jewel.Operations.Policy.ManageData;
+import com.premiumminds.BigBang.Jewel.Operations.Policy.PerformComputations;
 import com.premiumminds.BigBang.Jewel.Operations.Policy.ValidatePolicy;
 import com.premiumminds.BigBang.Jewel.SysObjects.ZipCodeBridge;
 
@@ -3222,6 +3225,42 @@ public class InsurancePolicyServiceImpl
 		lrefPad = GetScratchPadStorage().get(UUID.fromString(policyId));
 		GetScratchPadStorage().remove(UUID.fromString(policyId));
 		return lrefPad.GetRemapFromPad(false);
+	}
+
+	public InsurancePolicy performCalculations(String policyId)
+		throws SessionExpiredException, BigBangException, BigBangPolicyCalculationException
+	{
+		Policy lobjPolicy;
+		PerformComputations lopPC;
+
+		if ( Engine.getCurrentUser() == null )
+			throw new SessionExpiredException();
+
+		try
+		{
+			lobjPolicy = Policy.GetInstance(Engine.getCurrentNameSpace(), UUID.fromString(policyId));
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangException(e.getMessage(), e);
+		}
+
+		lopPC = new PerformComputations(lobjPolicy.GetProcessID());
+
+		try
+		{
+			lopPC.Execute();
+		}
+		catch (PolicyCalculationException e)
+		{
+			throw new BigBangPolicyCalculationException(e.getMessage());
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangException(e.getMessage(), e);
+		}
+
+		return sGetPolicy(lobjPolicy.getKey());
 	}
 
 	public void validatePolicy(String policyId)

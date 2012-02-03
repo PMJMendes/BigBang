@@ -6,6 +6,7 @@ import java.util.UUID;
 
 import com.premiumminds.BigBang.Jewel.BigBangJewelException;
 import com.premiumminds.BigBang.Jewel.Constants;
+import com.premiumminds.BigBang.Jewel.SysObjects.DetailedBase;
 
 import Jewel.Engine.Engine;
 import Jewel.Engine.DataAccess.MasterDB;
@@ -628,5 +629,11 @@ public class Policy
 		}
 
 		return larrAux.toArray(new PolicyValue[larrAux.size()]);
+    }
+
+    public DetailedBase GetDetailedObject()
+    	throws BigBangJewelException
+    {
+    	return SubLine.GetInstance(getNameSpace(), (UUID)getAt(3)).GetDetailedObject(this);
     }
 }

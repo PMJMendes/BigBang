@@ -1,5 +1,6 @@
 package com.premiumminds.BigBang.Jewel.Objects;
 
+import java.lang.reflect.Constructor;
 import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.UUID;
@@ -12,11 +13,14 @@ import Jewel.Engine.SysObjects.ObjectBase;
 
 import com.premiumminds.BigBang.Jewel.BigBangJewelException;
 import com.premiumminds.BigBang.Jewel.Constants;
+import com.premiumminds.BigBang.Jewel.SysObjects.DetailedBase;
 
 public class SubLine
 	extends ObjectBase
 {
 	private Line mrefLine;
+    private Class<?> mrefClass;
+    private Constructor<?> mrefConst;
 
     public static SubLine GetInstance(UUID pidNameSpace, UUID pidKey)
 		throws BigBangJewelException
@@ -137,5 +141,25 @@ public class SubLine
 		}
 
 		return larrAux.toArray(new Coverage[larrAux.size()]);
+    }
+
+    public DetailedBase GetDetailedObject(Policy pobjPolicy)
+    	throws BigBangJewelException
+    {
+    	if ( getAt(4) == null )
+    		return null;
+
+		try
+		{
+			if ( mrefClass == null )
+				mrefClass = Class.forName(((String)getAt(4)).replaceAll("MADDS", "Jewel"));
+			if ( mrefConst == null )
+				mrefConst = mrefClass.getConstructor(new Class<?>[] {Policy.class});
+			return (DetailedBase)mrefConst.newInstance(new java.lang.Object[] {pobjPolicy});
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangJewelException(e.getMessage(), e);
+		}
     }
 }

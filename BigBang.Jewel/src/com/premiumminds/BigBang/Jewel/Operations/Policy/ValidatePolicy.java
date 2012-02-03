@@ -1,6 +1,5 @@
 package com.premiumminds.BigBang.Jewel.Operations.Policy;
 
-import java.math.BigDecimal;
 import java.sql.ResultSet;
 import java.sql.Timestamp;
 import java.util.Calendar;
@@ -19,10 +18,6 @@ import com.premiumminds.BigBang.Jewel.Constants;
 import com.premiumminds.BigBang.Jewel.PolicyValidationException;
 import com.premiumminds.BigBang.Jewel.Objects.AgendaItem;
 import com.premiumminds.BigBang.Jewel.Objects.Policy;
-import com.premiumminds.BigBang.Jewel.Objects.PolicyCoverage;
-import com.premiumminds.BigBang.Jewel.Objects.PolicyExercise;
-import com.premiumminds.BigBang.Jewel.Objects.PolicyObject;
-import com.premiumminds.BigBang.Jewel.Objects.PolicyValue;
 
 public class ValidatePolicy
 	extends UndoableOperation
@@ -30,7 +25,6 @@ public class ValidatePolicy
 	private static final long serialVersionUID = 1L;
 
 	private UUID midPolicy;
-	public String mstrErrors;
 
 	public ValidatePolicy(UUID pidProcess)
 	{
@@ -61,70 +55,33 @@ public class ValidatePolicy
 		throws JewelPetriException
 	{
 		Policy lobjPolicy;
-		StringBuilder lstrBuilder;
-		int i;
-		PolicyCoverage[] larrCoverages;
-		Hashtable<UUID, UUID> larrTrueCoverages;
-		PolicyValue[] larrValues;
 		Hashtable<UUID, AgendaItem> larrItems;
 		ResultSet lrs;
 		IEntity lrefAux;
 		ObjectBase lobjAgendaProc;
 
-		midPolicy = GetProcess().GetDataKey();
-
-		lstrBuilder = new StringBuilder();
-
 		try
 		{
-			lobjPolicy = Policy.GetInstance(Engine.getCurrentNameSpace(), midPolicy);
-
-			larrCoverages = lobjPolicy.GetCurrentCoverages();
-			larrValues = lobjPolicy.GetCurrentValues();
+			lobjPolicy = (Policy)GetProcess().GetData();
+			midPolicy = lobjPolicy.getKey();
 		}
 		catch (Throwable e)
 		{
 			throw new JewelPetriException(e.getMessage(), e);
 		}
 
-		larrTrueCoverages = new Hashtable<UUID, UUID>();
-		for ( i = 0; i < larrCoverages.length; i++ )
+		try
 		{
-			if ( larrCoverages[i].GetCoverage().IsHeader() ||
-					((larrCoverages[i].IsPresent() != null) && larrCoverages[i].IsPresent()) )
-				larrTrueCoverages.put(larrCoverages[i].GetCoverage().getKey(), larrCoverages[i].getKey());
-
-			if ( larrCoverages[i].GetCoverage().IsHeader() )
-				continue;
-			if ( larrCoverages[i].IsPresent() == null )
-				lstrBuilder.append("O indicador de presença da cobertura '").append(larrCoverages[i].GetCoverage().getLabel()).
-						append("' não está preenchido.\n");
-			else if ( larrCoverages[i].GetCoverage().IsMandatory() && !larrCoverages[i].IsPresent())
-				lstrBuilder.append("A cobertura '").append(larrCoverages[i].GetCoverage().getLabel()).
-						append("' é obrigatória mas não está presente.\n");
+			lobjPolicy.GetDetailedObject().Validate();
 		}
-
-		for ( i = 0; i < larrValues.length; i++ )
+		catch (PolicyValidationException e)
 		{
-			if ( larrTrueCoverages.get(larrValues[i].GetTax().GetCoverage().getKey()) == null )
-				continue;
-
-			if ( larrValues[i].GetValue() == null )
-			{
-				if ( larrValues[i].GetTax().IsMandatory() )
-				{
-					AppendTag(lstrBuilder, larrValues[i]);
-					lstrBuilder.append("é de preenchimento obrigatório, mas não está preenchido.\n");
-				}
-			}
-			else
-				CheckFormat(lstrBuilder, larrValues[i]);
+			throw e;
 		}
-
-		mstrErrors = lstrBuilder.toString();
-
-		if ( (mstrErrors != null) && (mstrErrors.length() != 0) )
-			throw new PolicyValidationException(mstrErrors);
+		catch (Throwable e)
+		{
+			throw new JewelPetriException(e.getMessage(), e);
+		}
 
 		try
 		{
@@ -182,8 +139,6 @@ public class ValidatePolicy
 		Timestamp ldtAux;
 		Calendar ldtAux2;
 
-		midPolicy = GetProcess().GetDataKey();
-
 		ldtAux = new Timestamp(new java.util.Date().getTime());
     	ldtAux2 = Calendar.getInstance();
     	ldtAux2.setTimeInMillis(ldtAux.getTime());
@@ -222,103 +177,5 @@ public class ValidatePolicy
 		lobjSet.marrDeleted = new UUID[] {};
 
 		return new UndoSet[] {lobjSet};
-	}
-
-	private void CheckFormat(StringBuilder pstrBuilder, PolicyValue pobjValue)
-	{
-		if ( Constants.FieldID_Text.equals(pobjValue.GetTax().GetFieldType()) )
-			return;
-
-		if ( Constants.FieldID_Number.equals(pobjValue.GetTax().GetFieldType()) )
-		{
-			try
-			{
-				new BigDecimal(pobjValue.GetValue());
-			}
-			catch (NumberFormatException e)
-			{
-				AppendTag(pstrBuilder, pobjValue);
-				pstrBuilder.append("é do tipo Número, e está incorrectamente preenchido.\n");
-			}
-		}
-
-		if ( Constants.FieldID_Boolean.equals(pobjValue.GetTax().GetFieldType()) )
-		{
-			if ( !("1".equals(pobjValue.GetValue())) && !("0".equals(pobjValue.GetValue())) )
-				pstrBuilder.append("é do tipo Sim ou Não, e está incorrectamente preenchido.\n");
-		}
-
-		if ( Constants.FieldID_Date.equals(pobjValue.GetTax().GetFieldType()) )
-		{
-			try
-			{
-				Timestamp.valueOf(pobjValue.GetValue() + " 00:00:00.0");
-			}
-			catch (IllegalArgumentException e)
-			{
-				AppendTag(pstrBuilder, pobjValue);
-				pstrBuilder.append("é do tipo Data, e está incorrectamente preenchido.\n");
-			}
-		}
-
-		if ( Constants.FieldID_List.equals(pobjValue.GetTax().GetFieldType()) )
-		{
-			try
-			{
-				UUID.fromString(pobjValue.GetValue());
-			}
-			catch (IllegalArgumentException e)
-			{
-				AppendTag(pstrBuilder, pobjValue);
-				pstrBuilder.append("é do tipo Lista, e está incorrectamente preenchido.\n");
-			}
-		}
-
-		if ( Constants.FieldID_Reference.equals(pobjValue.GetTax().GetFieldType()) )
-		{
-			try
-			{
-				UUID.fromString(pobjValue.GetValue());
-			}
-			catch (IllegalArgumentException e)
-			{
-				AppendTag(pstrBuilder, pobjValue);
-				pstrBuilder.append("é do tipo Referência, e está incorrectamente preenchido.\n");
-			}
-		}
-	}
-
-	private void AppendTag(StringBuilder pstrBuilder, PolicyValue pobjValue)
-	{
-		UUID lidObject;
-		UUID lidExercise;
-
-		pstrBuilder.append("O campo '").append(pobjValue.GetTax().getLabel()).append("' ");
-		if ( (lidObject = pobjValue.GetObjectID()) != null )
-		{
-			pstrBuilder.append("do objecto seguro '");
-			try
-			{
-				pstrBuilder.append(PolicyObject.GetInstance(Engine.getCurrentNameSpace(), lidObject).getLabel());
-			}
-			catch (Throwable e)
-			{
-				pstrBuilder.append("(Erro a obter o nome do objecto.)");
-			}
-			pstrBuilder.append("' ");
-		}
-		if ( (lidExercise = pobjValue.GetExerciseID()) != null )
-		{
-			pstrBuilder.append("para o exercício de '");
-			try
-			{
-				pstrBuilder.append(PolicyExercise.GetInstance(Engine.getCurrentNameSpace(), lidExercise).getLabel());
-			}
-			catch (Throwable e)
-			{
-				pstrBuilder.append("(Erro a obter o nome do exercício.)");
-			}
-			pstrBuilder.append("' ");
-		}
 	}
 }

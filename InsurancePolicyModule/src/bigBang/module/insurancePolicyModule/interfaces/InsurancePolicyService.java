@@ -12,6 +12,7 @@ import bigBang.library.interfaces.SearchService;
 import bigBang.library.shared.BigBangException;
 import bigBang.library.shared.CorruptedPadException;
 import bigBang.library.shared.SessionExpiredException;
+import bigBang.module.insurancePolicyModule.shared.BigBangPolicyCalculationException;
 import bigBang.module.insurancePolicyModule.shared.BigBangPolicyValidationException;
 
 import com.google.gwt.core.client.GWT;
@@ -64,7 +65,10 @@ public interface InsurancePolicyService extends SearchService, DependentItemSubS
 	public Remap[] commitPad(String policyId) throws SessionExpiredException, BigBangException, CorruptedPadException;
 	public Remap[] discardPad(String policyId) throws SessionExpiredException, BigBangException;
 
+	public InsurancePolicy performCalculations(String policyId) throws SessionExpiredException, BigBangException,
+			BigBangPolicyCalculationException;
 	public void validatePolicy(String policyId) throws SessionExpiredException, BigBangException, BigBangPolicyValidationException;
+
 	public InsuredObject includeObject(String policyId, InsuredObject object) throws SessionExpiredException, BigBangException;
 	public InsuredObject includeObjectFromClient(String policyId) throws SessionExpiredException, BigBangException;
 	public void excludeObject(String policyId, String objectId) throws SessionExpiredException, BigBangException;

@@ -35,6 +35,7 @@ public interface InsurancePolicyServiceAsync
 	void deleteExerciseInPad(String exerciseId, AsyncCallback<Void> callback);
 	void commitPad(String policyId, AsyncCallback<Remap[]> callback);
 	void discardPad(String policyId, AsyncCallback<Remap[]> callback);
+	void performCalculations(String policyId, AsyncCallback<InsurancePolicy> callback);
 	void validatePolicy(String policyId, AsyncCallback<Void> callback);
 	void includeObject(String policyId, InsuredObject object, AsyncCallback<InsuredObject> callback);
 	void includeObjectFromClient(String policyId, AsyncCallback<InsuredObject> callback);
