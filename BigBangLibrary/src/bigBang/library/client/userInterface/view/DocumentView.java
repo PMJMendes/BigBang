@@ -60,7 +60,6 @@ public class DocumentView extends View implements DocumentViewPresenter.Display{
 		this.actionHandler = handler;
 		top.initHandler(handler);
 		middle.initHandler(handler);
-		middle.getUploadDialog().initHandler(handler);
 		details.initHandler(handler);
 	}
 
@@ -135,12 +134,8 @@ public class DocumentView extends View implements DocumentViewPresenter.Display{
 	@Override
 	protected void onDetach() {
 		
-		this.getFileNote().getUploadDialog().hidePopup();
-		if(this.getFileNote().getUploadDialog().getFileUploadPopupDisk() != null){
-			this.getFileNote().getUploadDialog().getFileUploadPopupDisk().hidePopup();
-		}
-		if(this.getFileNote().getUploadDialog().getFileUploadPopupDocuShare() != null){
-			this.getFileNote().getUploadDialog().getFileUploadPopupDocuShare().hidePopup();
+		if(this.getFileNote().getUploadDialog() != null){
+			this.getFileNote().getUploadDialog().getUploadPopup().hidePopup();
 		}
 		super.onDetach();
 	}
@@ -148,7 +143,7 @@ public class DocumentView extends View implements DocumentViewPresenter.Display{
 	@Override
 	public void registerValueChangeHandler(
 			ValueChangeHandler<DocuShareItem> valueChangeHandler) {
-		getFileNote().getUploadDialog().getFileUploadPopupDocuShare().list.addValueChangeHandler(valueChangeHandler);
+		getFileNote().getUploadDialog().getUploadPopup().getList().addValueChangeHandler(valueChangeHandler);
 		
 	}
 

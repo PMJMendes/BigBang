@@ -3,11 +3,7 @@ package bigBang.library.client.userInterface.view;
 import bigBang.library.client.event.ActionInvokedEvent;
 import bigBang.library.client.event.ActionInvokedEventHandler;
 import bigBang.library.client.userInterface.DocuShareNavigationPanel;
-import bigBang.library.client.userInterface.DocumentNavigationList;
 import bigBang.library.client.userInterface.presenter.DocumentViewPresenter.Action;
-import bigBang.library.client.userInterface.view.DocumentSections.FileNoteSection;
-import bigBang.library.client.userInterface.view.FileUploadPopup.FileUploadPopupDisk;
-import bigBang.library.client.userInterface.view.FileUploadPopup.Filetype;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ChangeEvent;
@@ -15,7 +11,6 @@ import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.Button;
-import com.google.gwt.user.client.ui.DialogBox;
 import com.google.gwt.user.client.ui.FileUpload;
 import com.google.gwt.user.client.ui.FormPanel;
 import com.google.gwt.user.client.ui.FormPanel.SubmitCompleteEvent;
@@ -24,107 +19,18 @@ import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
-public abstract class FileUploadPopup
-	extends DialogBox
+public interface FileUploadPopup
 {
+
+	public FileUploadPopup getUploadPopup();
+	public DocuShareNavigationPanel getList();
+	public String getFileStorageId();
+	public void initHandler(ActionInvokedEventHandler<Action> actionHandler);
+	public String getFilename();
+	public void setParameters(String ownerId, String ownerTypeId);
+	public void hidePopup();
 	
-	public static enum Filetype{
-		DISK,
-		DOCUSHARE
-	}
-	
-	public static class TypeChooserPopup extends PopupPanel{
-		
-		private FileUploadPopupDisk fileUploadPopupDisk;
-		private FileUploadPopupDocuShare fileUploadPopupDocuShare;
-
-		//private FileUploadPopupDocushare fileUploadPopupDocushare;
-		private HorizontalPanel buttonsPanel = new HorizontalPanel();
-		private Button fromDisk;
-		private Button fromDocuShare;
-		private ActionInvokedEventHandler<Action> actionHandler;
-
-		
-		public TypeChooserPopup(){
-			super();
-			
-			this.setSize("200px", "200px");
-			
-			fromDisk = new Button("Disco Rígido");
-			fromDocuShare = new Button("DocuShare");
-			fromDisk.setSize("90px", "90px");
-			fromDocuShare.setSize("90px", "90px");
-			
-			fromDisk.addClickHandler(new ClickHandler() {
-				
-			
-				@Override
-				public void onClick(ClickEvent event) {
-					fireAction(Action.NEW_FILE_FROM_DISK);
-				}
-
-			});
-			
-			fromDocuShare.addClickHandler(new ClickHandler() {
-				
-				@Override
-				public void onClick(ClickEvent event) {
-					fireAction(Action.NEW_FILE_FROM_DOCUSHARE);					
-				}
-			});
-			
-			buttonsPanel.add(fromDisk);
-			buttonsPanel.add(fromDocuShare);
-			buttonsPanel.setSize("100%", "100%");
-			
-			add(buttonsPanel);
-		}
-		
-
-		private void fireAction(Action action) {
-			if(this.actionHandler != null) {
-				actionHandler.onActionInvoked(new ActionInvokedEvent<Action>(action));
-			}
-		}
-
-		public void setType(Filetype type, String docId) {
-			
-			hidePopup();
-//			
-//			if(fileUploadPopupDisk != null && type == Filetype.DOCUSHARE){
-//				fileUploadPopupDisk.hidePopup();
-//			}
-//			
-//			if(fileUploadPopupDocuShare != null && type == Filetype.DISK){
-//				fileUploadPopupDocuShare.hidePopup();
-//			}
-			
-			if(type == Filetype.DISK){
-				fileUploadPopupDisk = new FileUploadPopupDisk(docId);
-				fileUploadPopupDisk.center();
-			}
-			else{
-				fileUploadPopupDocuShare = new FileUploadPopupDocuShare(docId);
-				fileUploadPopupDocuShare.center();
-			}
-		}
-		
-		public FileUploadPopupDisk getFileUploadPopupDisk() {
-			return fileUploadPopupDisk;
-		}
-		
-		
-		public FileUploadPopupDocuShare getFileUploadPopupDocuShare() {
-			return fileUploadPopupDocuShare;
-		}
-
-
-		public void initHandler(ActionInvokedEventHandler<Action> actionHandler) {
-			this.actionHandler = actionHandler;
-		}
-	}
-	
-	public static class FileUploadPopupDisk extends PopupPanel{
+	public static class FileUploadPopupDisk extends PopupPanel implements FileUploadPopup{
 
 		private Label mlblError;
 		private FormPanel mfrmMain;
@@ -133,10 +39,12 @@ public abstract class FileUploadPopup
 		private Button mbtnCancel;
 		private String filename;
 		
+		@Override
 		public String getFilename() {
 			return filename;
 		}
 
+		@Override
 		public String getFileStorageId() {
 			return fileStorageId;
 		}
@@ -241,6 +149,7 @@ public abstract class FileUploadPopup
 		        }
 			});	
 			
+			this.center();
 		}
 		
 		public void SetKey(String pstrKey)
@@ -271,10 +180,24 @@ public abstract class FileUploadPopup
 			this.actionHandler = actionHandler;
 
 		}
+
+		@Override
+		public FileUploadPopup getUploadPopup() {
+			return this;
+		}
+
+		@Override
+		public void setParameters(String ownerId, String ownerTypeId) {
+		}
+
+		@Override
+		public DocuShareNavigationPanel getList() {
+			return null;
+		}
 			
 	}
 	
-	public static class FileUploadPopupDocuShare extends PopupPanel{
+	public static class FileUploadPopupDocuShare extends PopupPanel implements FileUploadPopup{
 		
 		DocuShareNavigationPanel list = new DocuShareNavigationPanel();
 		VerticalPanel lvert;
@@ -287,17 +210,42 @@ public abstract class FileUploadPopup
 			lvert.add(list);
 			list.setSize("300px", "400px");
 			add(lvert);
+			this.center();
 			
 		}
 		
+		@Override
 		public DocuShareNavigationPanel getList() {
 			return list;
 		}
 		
+		@Override
 		public void setParameters(String ownerId, String ownerTypeId){
 			list.setParameters(ownerId, ownerTypeId);
 		}
 
+		@Override
+		public FileUploadPopup getUploadPopup() {
+			return this;
+		}
+
+		@Override
+		public void initHandler(ActionInvokedEventHandler<Action> actionHandler) {
+			
+		}
+
+		@Override
+		public String getFileStorageId() {
+			return null;
+		}
+
+		@Override
+		public String getFilename() {
+			return null;
+		}
+
 	}
+
+
 }
 		

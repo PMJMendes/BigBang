@@ -2,9 +2,6 @@ package bigBang.library.client.userInterface.presenter;
 
 import java.util.Collection;
 
-import bigBang.library.server.DocuShareServiceImpl;
-import bigBang.library.shared.DocuShareItem;
-
 import bigBang.definitions.client.response.ResponseError;
 import bigBang.definitions.client.response.ResponseHandler;
 import bigBang.definitions.shared.BigBangConstants;
@@ -14,8 +11,8 @@ import bigBang.library.client.BigBangAsyncCallback;
 import bigBang.library.client.EventBus;
 import bigBang.library.client.HasParameters;
 import bigBang.library.client.Notification;
-import bigBang.library.client.ValueSelectable;
 import bigBang.library.client.Notification.TYPE;
+import bigBang.library.client.ValueSelectable;
 import bigBang.library.client.dataAccess.DataBrokerManager;
 import bigBang.library.client.dataAccess.DocumentsBroker;
 import bigBang.library.client.dataAccess.DocumentsBrokerClient;
@@ -25,22 +22,20 @@ import bigBang.library.client.event.DeleteRequestEventHandler;
 import bigBang.library.client.event.NewNotificationEvent;
 import bigBang.library.client.history.NavigationHistoryItem;
 import bigBang.library.client.history.NavigationHistoryManager;
-import bigBang.library.client.userInterface.List;
 import bigBang.library.client.userInterface.view.DocumentSections.DetailsSection;
 import bigBang.library.client.userInterface.view.DocumentSections.DetailsSection.DocumentDetailEntry;
 import bigBang.library.client.userInterface.view.DocumentSections.FileNoteSection;
 import bigBang.library.client.userInterface.view.DocumentSections.GeneralInfoSection;
 import bigBang.library.client.userInterface.view.FileUploadPopup;
-import bigBang.library.client.userInterface.view.FileUploadPopup.Filetype;
 import bigBang.library.interfaces.DocuShareService;
 import bigBang.library.interfaces.DocuShareServiceAsync;
+import bigBang.library.shared.DocuShareItem;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.HasWidgets;
-import com.google.gwt.user.client.ui.PopupPanel.PositionCallback;
 import com.google.gwt.user.client.ui.UIObject;
 import com.google.gwt.user.client.ui.Widget;
 
@@ -67,8 +62,7 @@ public class DocumentViewPresenter implements ViewPresenter, DocumentsBrokerClie
 		ADD_NEW_DETAIL, 
 		REMOVE_FILE, 
 		DELETE, 
-		UPLOAD_SUCCESS, 
-		UPLOAD_BUTTON, 
+		UPLOAD_SUCCESS,
 		DOWNLOAD_FILE, NEW_FILE_FROM_DISK, NEW_FILE_FROM_DOCUSHARE
 	}
 
@@ -149,10 +143,10 @@ public class DocumentViewPresenter implements ViewPresenter, DocumentsBrokerClie
 			broker.getDocument(ownerId, documentId, new ResponseHandler<Document>() {
 				@Override
 				public void onResponse(Document response) {
-
 					doc = response;
 					setDocument(doc);
 					view.getGeneralInfo().getToolbar().setSaveModeEnabled(false);
+					view.setEditable(false);
 
 				}
 
@@ -250,40 +244,33 @@ public class DocumentViewPresenter implements ViewPresenter, DocumentsBrokerClie
 					break;
 				}
 
-				case UPLOAD_BUTTON:{
-					
-					view.getFileNote().startUploadDialog();
-					view.getFileNote().getUploadDialog().center();
-					break;
-				}
 				case DOWNLOAD_FILE:{
 					downloadFile();
 					break;
 				}
 				
 				case NEW_FILE_FROM_DISK:{
-					view.getFileNote().getUploadDialog().setType(Filetype.DISK, doc != null ? doc.fileStorageId : null);
-					view.getFileNote().getUploadDialog().getFileUploadPopupDisk().initHandler(new ActionInvokedEventHandler<DocumentViewPresenter.Action>() {
+					view.getFileNote().setUploadDialog(new FileUploadPopup.FileUploadPopupDisk(doc != null ? doc.fileStorageId : null));
+					view.getFileNote().getUploadDialog().initHandler(new ActionInvokedEventHandler<DocumentViewPresenter.Action>() {
 						
 						@Override
 						public void onActionInvoked(ActionInvokedEvent<Action> action) {
 							
-							view.getFileNote().getFilename().setValue(view.getFileNote().getUploadDialog().getFileUploadPopupDisk().getFilename());
-							view.getFileNote().setFileStorageId(view.getFileNote().getUploadDialog().getFileUploadPopupDisk().getFileStorageId());
+							view.getFileNote().getFilename().setValue(view.getFileNote().getUploadDialog().getFilename());
+							view.getFileNote().setFileStorageId(view.getFileNote().getUploadDialog().getFileStorageId());
 							view.getFileNote().getChangeToNote().setVisible(false);
-							view.getFileNote().getUploadButton().setVisible(false);
 							view.getFileNote().enableRemoveFile(true);
 							view.getFileNote().getFilename().setVisible(true);
 							
 						}
 					});
-					view.getFileNote().getUploadDialog().center();
+					view.getFileNote().getUploadDialog();
 					break;
 				}
 				case NEW_FILE_FROM_DOCUSHARE:{
-					view.getFileNote().getUploadDialog().setType(Filetype.DOCUSHARE, doc != null ? doc.fileStorageId : null);
-					view.getFileNote().getUploadDialog().getFileUploadPopupDocuShare().setParameters(ownerId, ownerTypeId);
-					view.getFileNote().getUploadDialog().center();
+					
+					view.getFileNote().setUploadDialog(new FileUploadPopup.FileUploadPopupDocuShare(doc != null ? doc.fileStorageId : null));
+					view.getFileNote().getUploadDialog().getUploadPopup().setParameters(ownerId, ownerTypeId);
 					view.registerValueChangeHandler(new ValueChangeHandler<DocuShareItem>() {
 
 						@Override
@@ -299,11 +286,11 @@ public class DocumentViewPresenter implements ViewPresenter, DocumentsBrokerClie
 									view.getFileNote().setFileUploadFilename(event.getValue().desc);
 									view.getFileNote().setFileStorageId(result);
 									view.getFileNote().getChangeToNote().setVisible(false);
-									view.getFileNote().getUploadButton().setVisible(false);
 									view.getFileNote().enableRemoveFile(true);
 									view.getFileNote().getFilename().setVisible(true);
-									view.getFileNote().getUploadDialog().getFileUploadPopupDocuShare().hidePopup();
+									view.getFileNote().getUploadDialog().getUploadPopup().hidePopup();
 									doc.fileStorageId = result;
+									view.getFileNote().getFilename().setValue(event.getValue().desc);
 									
 								}
 								
@@ -452,7 +439,6 @@ public class DocumentViewPresenter implements ViewPresenter, DocumentsBrokerClie
 				
 				view.getFileNote().getMimeImage().setVisible(false);
 				view.getFileNote().removeFile();
-				view.getFileNote().getUploadButton().setVisible(true);
 
 			}
 		});
@@ -496,9 +482,11 @@ public class DocumentViewPresenter implements ViewPresenter, DocumentsBrokerClie
 	public void setDocument(Document doc) {
 
 		view.getDetails().getList().clear();
+		view.getFileNote().hideAll();
 
 		if(doc == null){
 			view.getFileNote().generateNewDocument();
+			view.setEditable(true);
 			view.addDetail(null);
 			view.setSaveMode(true);
 			return;

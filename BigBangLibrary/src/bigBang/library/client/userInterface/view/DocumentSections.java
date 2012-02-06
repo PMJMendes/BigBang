@@ -19,7 +19,8 @@ import bigBang.library.client.userInterface.ListEntry;
 import bigBang.library.client.userInterface.TextAreaFormField;
 import bigBang.library.client.userInterface.TextBoxFormField;
 import bigBang.library.client.userInterface.presenter.DocumentViewPresenter.Action;
-import bigBang.library.client.userInterface.view.FileUploadPopup.TypeChooserPopup;
+import bigBang.library.client.userInterface.view.FileUploadPopup.FileUploadPopupDisk;
+import bigBang.library.client.userInterface.view.FileUploadPopup.FileUploadPopupDocuShare;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -35,7 +36,6 @@ import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.MenuItem;
-import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
@@ -203,12 +203,18 @@ public abstract class DocumentSections{
 
 	public static class FileNoteSection extends View{
 
+		private VerticalPanel newFilePanel = new VerticalPanel();
+		private HorizontalPanel newFileOrNotePanel = new HorizontalPanel();
+		private VerticalPanel newNotePanel = new VerticalPanel();
+		private Label newNoteLabel = new Label("Nota");
+		private Label newFileLabel = new Label("Ficheiro");
+		
 		private static final int MAXCHAR = 250;
-		private Button isFile;
-		private Button isText;
+		private Button fileButton;
+		private Button newNote;
 		private TextAreaFormField note;
 		private VerticalPanel wrapper;
-		private HorizontalPanel buttonsFileorNote;
+		private Button docuShareFileButton;
 		private HorizontalPanel changeFileNotePanel;
 		private HorizontalPanel charRemainP;
 		private ClickHandler handler;
@@ -217,13 +223,12 @@ public abstract class DocumentSections{
 		private boolean isFileBoolean;
 		private FilenameTextBoxFormField filename;
 		private Button removeFile;
-		private FileUploadPopup.TypeChooserPopup uploadDialog;
+		private FileUploadPopup uploadDialog;
 
-		public FileUploadPopup.TypeChooserPopup getUploadDialog() {
+		public FileUploadPopup getUploadDialog() {
 			return uploadDialog;
 		}
-
-		private Button uploadButton;
+		
 		private String fileUploadFilename = null;
 		private String fileStorageId = null;
 
@@ -248,18 +253,16 @@ public abstract class DocumentSections{
 		
 		public FileNoteSection(){
 			
-			uploadDialog = new FileUploadPopup.TypeChooserPopup();
-			
 			wrapper = new VerticalPanel();
 			initWidget(wrapper);
 
 			handler = new ClickHandler(){
 				@Override
 				public void onClick(ClickEvent event) {
-					if(event.getSource() == isFile){
-						fireAction(Action.NEW_FILE);
+					if(event.getSource() == fileButton){
+						fireAction(Action.NEW_FILE_FROM_DISK);
 					}
-					else if(event.getSource() == isText){
+					else if(event.getSource() == newNote){
 						fireAction(Action.NEW_NOTE);
 					}
 					else if(event.getSource() == changeToFile){
@@ -271,16 +274,18 @@ public abstract class DocumentSections{
 					else if(event.getSource() == removeFile){
 						fireAction(Action.REMOVE_FILE);
 					}
-					else if(event.getSource() == uploadButton){
-						fireAction(Action.UPLOAD_BUTTON);
+					else if(event.getSource() == docuShareFileButton){
+						fireAction(Action.NEW_FILE_FROM_DOCUSHARE);
 					}
 				}
 
 			};
-			isFile = new Button("Novo Ficheiro");
-			isFile.addClickHandler(handler);
-			isText = new Button("Nova Nota");
-			isText.addClickHandler(handler);
+			fileButton = new Button("Upload de Ficheiro");
+			fileButton.addClickHandler(handler);
+			newNote = new Button("Nova Nota");
+			newNote.addClickHandler(handler);
+			docuShareFileButton = new Button("Ficheiro do DocuShare");
+			docuShareFileButton.addClickHandler(handler);
 			changeToFile = new Button("Substituir por ficheiro");
 			changeToFile.addClickHandler(handler);
 			changeToNote = new Button("Substituir por nota");
@@ -295,18 +300,37 @@ public abstract class DocumentSections{
 			getNote().setMaxCharacters(MAXCHAR, charRemainLabel);
 
 			wrapper.setWidth("400px");
-			buttonsFileorNote = new HorizontalPanel();
-			buttonsFileorNote.setWidth("400px");
-			buttonsFileorNote.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_LEFT);
 			
 			note.setWidth("400px");
 			note.setFieldWidth("100%");
 			wrapper.add(getNote());
 			wrapper.add(charRemainP);
 
-			buttonsFileorNote.add(isFile);
-			buttonsFileorNote.add(isText);
-			wrapper.add(buttonsFileorNote);
+			
+			newFileOrNotePanel.add(newFilePanel);
+			newFileOrNotePanel.setCellHorizontalAlignment(newFilePanel, HasHorizontalAlignment.ALIGN_CENTER);
+			newFileOrNotePanel.setCellWidth(newFilePanel, "50%");
+			newFileOrNotePanel.add(newNotePanel);
+			newFileOrNotePanel.setCellHorizontalAlignment(newNotePanel, HasHorizontalAlignment.ALIGN_CENTER);
+			newFileOrNotePanel.setCellWidth(newNotePanel, "50%");
+			newFileOrNotePanel.setWidth("400px");
+			newFilePanel.setWidth("100%");
+			newNotePanel.setWidth("100%");
+			
+			newFilePanel.add(newFileLabel);
+			newFilePanel.add(fileButton);
+			//newFilePanel.setCellHorizontalAlignment(fileButton, HasHorizontalAlignment.ALIGN_CENTER);
+			newFilePanel.setCellVerticalAlignment(fileButton, HasVerticalAlignment.ALIGN_MIDDLE);
+			newFilePanel.add(docuShareFileButton);
+			//newFilePanel.setCellHorizontalAlignment(docuShareFileButton, HasHorizontalAlignment.ALIGN_CENTER);
+			newFilePanel.setCellVerticalAlignment(docuShareFileButton, HasVerticalAlignment.ALIGN_MIDDLE);
+			
+			newNotePanel.add(newNoteLabel);
+			newNotePanel.add(newNote);
+			//newNotePanel.setCellHorizontalAlignment(newNote, HasHorizontalAlignment.ALIGN_CENTER);
+			newNotePanel.setCellVerticalAlignment(newNote, HasVerticalAlignment.ALIGN_MIDDLE);
+			
+			wrapper.add(newFileOrNotePanel);
 
 			removeFile = new Button("Apagar Ficheiro");
 			removeFile.addClickHandler(handler);
@@ -342,16 +366,9 @@ public abstract class DocumentSections{
 			changeFileNotePanel.add(changeToNote);
 			wrapper.add(changeFileNotePanel);
 
-			uploadButton = new Button("Adicionar Ficheiro");
-			uploadButton.addClickHandler(handler);
  
-			wrapper.add(uploadButton); 
 			wrapper.add(filenameRemoveButton);
 
-		}
-
-		public Button getUploadButton() {
-			return uploadButton;
 		}
 
 		@Override
@@ -371,29 +388,22 @@ public abstract class DocumentSections{
 
 		public void generateNewDocument(){
 
-			mimeImg.setVisible(false);
-			uploadButton.setVisible(false);
-			filename.setVisible(false);
-			removeFile.setVisible(false);
+			hideAll();
+			newFileOrNotePanel.setVisible(true);
 			
-			changeToNote.setVisible(false);
-			getFilename().setVisible(false);
-			changeToFile.setVisible(false);
-			getNote().setVisible(false);
-			charRemainP.setVisible(false);
-
-			isFile.setHeight("90px");
-			isFile.setWidth("90px");
-
-			isText.setHeight("90px");
-			isText.setWidth("90px");
-
-			isFile.setVisible(true);
-			isText.setVisible(true);
-			buttonsFileorNote.setVisible(true);
-
 
 		}
+		
+		
+		public void hideAll(){
+			
+			newFileOrNotePanel.setVisible(false);
+			changeFileNotePanel.setVisible(false);
+			charRemainP.setVisible(false);
+			filenameRemoveButton.setVisible(false);
+			note.setVisible(false);
+		}
+
 
 		protected void fireAction(Action action){
 			if(this.actionHandler != null) {
@@ -406,14 +416,12 @@ public abstract class DocumentSections{
 			mimeImg.setVisible(false);
 			isFileBoolean = true;
 			getFilename().setVisible(true);
-			buttonsFileorNote.setVisible(false);
 			changeToFile.setVisible(false);
 			getNote().setVisible(false);
 			changeToNote.setVisible(true);
 			charRemainP.setVisible(false);
 			filename.setVisible(false);
 			removeFile.setVisible(false);
-			uploadButton.setVisible(true);
 			mimeImg.setVisible(false);
 
 		}
@@ -421,9 +429,7 @@ public abstract class DocumentSections{
 		public void createNewNote() {
 
 			mimeImg.setVisible(false);
-			uploadButton.setVisible(false);
 			isFileBoolean = false;
-			buttonsFileorNote.setVisible(false);
 			getNote().setVisible(true);
 			changeToNote.setVisible(false);
 			changeToFile.setVisible(true);
@@ -446,8 +452,6 @@ public abstract class DocumentSections{
 			changeToNote.setVisible(false);
 			filename.setVisible(true);
 			hasFile = true;
-			uploadButton.setVisible(false);
-
 		}
 
 		public void setDocumentNote(Document doc){
@@ -506,9 +510,9 @@ public abstract class DocumentSections{
 
 		public void setEditable(boolean b) {
 
-			isFile.setEnabled(b);
-			isText.setEnabled(b);
-
+			fileButton.setEnabled(b);
+			newNote.setEnabled(b);
+			docuShareFileButton.setEnabled(b);
 
 			if(!isFileBoolean()){
 				getNote().setReadOnly(!b);
@@ -558,8 +562,8 @@ public abstract class DocumentSections{
 		}
 
 		public String getFileUploadFilename() {
-			if(uploadDialog.getFileUploadPopupDisk() != null){
-				fileUploadFilename = uploadDialog.getFileUploadPopupDisk().getFilename();
+			if(uploadDialog != null){
+				fileUploadFilename = uploadDialog.getUploadPopup().getFilename();
 			}
 			return fileUploadFilename;
 		}
@@ -569,8 +573,8 @@ public abstract class DocumentSections{
 		}
 
 		public String getFileStorageId() {
-			if(uploadDialog.getFileUploadPopupDisk() != null){
-				fileStorageId = uploadDialog.getFileUploadPopupDisk().getFileStorageId();
+			if(uploadDialog != null){
+				fileStorageId = uploadDialog.getUploadPopup().getFileStorageId();
 			}
 			return fileStorageId;
 		}
@@ -579,11 +583,15 @@ public abstract class DocumentSections{
 			this.fileStorageId = fileStorageId;
 		}
 
-		public void startUploadDialog() {
-			if(uploadDialog == null){
-				uploadDialog = new TypeChooserPopup();
-				uploadDialog.initHandler(actionHandler);
-			}
+
+		public void setUploadDialog(FileUploadPopupDisk fileUploadPopupDisk) {
+			uploadDialog = fileUploadPopupDisk;
+			
+		}
+		
+
+		public void setUploadDialog(FileUploadPopupDocuShare fileUploadPopupDocuShare) {
+			uploadDialog = fileUploadPopupDocuShare;
 			
 		}
 
