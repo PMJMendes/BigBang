@@ -18,6 +18,7 @@ import com.premiumminds.BigBang.Jewel.Constants;
 import com.premiumminds.BigBang.Jewel.PolicyValidationException;
 import com.premiumminds.BigBang.Jewel.Objects.AgendaItem;
 import com.premiumminds.BigBang.Jewel.Objects.Policy;
+import com.premiumminds.BigBang.Jewel.SysObjects.DetailedBase;
 
 public class ValidatePolicy
 	extends UndoableOperation
@@ -55,6 +56,7 @@ public class ValidatePolicy
 		throws JewelPetriException
 	{
 		Policy lobjPolicy;
+		DetailedBase lobjValidation;
 		Hashtable<UUID, AgendaItem> larrItems;
 		ResultSet lrs;
 		IEntity lrefAux;
@@ -72,7 +74,12 @@ public class ValidatePolicy
 
 		try
 		{
-			lobjPolicy.GetDetailedObject().Validate();
+			lobjValidation = lobjPolicy.GetDetailedObject();
+
+			if ( lobjValidation == null )
+				DetailedBase.DefaultValidate(lobjPolicy);
+			else
+				lobjValidation.Validate();
 		}
 		catch (PolicyValidationException e)
 		{

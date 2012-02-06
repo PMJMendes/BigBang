@@ -26,8 +26,23 @@ public abstract class DetailedBase
 		mobjPolicy = pobjPolicy;
 	}
 
-	protected abstract void InnerValidate() throws BigBangJewelException, PolicyValidationException;
-	protected abstract void InnerDoCalc() throws BigBangJewelException, PolicyCalculationException;
+	public static void DefaultValidate(Policy pobjPolicy)
+		throws BigBangJewelException, PolicyValidationException
+	{
+		StringBuilder lstrBuilder;
+		String lstrErrors;
+
+		lstrBuilder = new StringBuilder();
+		InnerDefaultValidate(lstrBuilder, pobjPolicy);
+		lstrErrors = lstrBuilder.toString();
+
+		if ( (lstrErrors != null) && (lstrErrors.length() != 0) )
+			throw new PolicyValidationException(lstrErrors);
+	}
+
+	protected abstract void InnerValidate(StringBuilder pstrBuilder, String pstrLineBreak)
+			throws BigBangJewelException, PolicyValidationException;
+	protected abstract String InnerDoCalc() throws BigBangJewelException, PolicyCalculationException;
 
 	public Policy getData()
 	{
@@ -38,19 +53,37 @@ public abstract class DetailedBase
 		throws BigBangJewelException, PolicyValidationException
 	{
 		StringBuilder lstrBuilder;
+		String lstrErrors;
+
+		lstrBuilder = new StringBuilder();
+		InnerDefaultValidate(lstrBuilder, mobjPolicy);
+		InnerValidate(lstrBuilder, "\n");
+		lstrErrors = lstrBuilder.toString();
+
+		if ( (lstrErrors != null) && (lstrErrors.length() != 0) )
+			throw new PolicyValidationException(lstrErrors);
+	}
+
+	public String DoCalc()
+		throws BigBangJewelException, PolicyCalculationException
+	{
+		return InnerDoCalc();
+	}
+
+	protected static void InnerDefaultValidate(StringBuilder pstrBuilder, Policy pobjPolicy)
+		throws BigBangJewelException
+	{
 		int i;
 		PolicyCoverage[] larrCoverages;
 		Hashtable<UUID, UUID> larrTrueCoverages;
 		PolicyValue[] larrValues;
-		String lstrErrors;
 
-
-		lstrBuilder = new StringBuilder();
+		pstrBuilder = new StringBuilder();
 
 		try
 		{
-			larrCoverages = mobjPolicy.GetCurrentCoverages();
-			larrValues = mobjPolicy.GetCurrentValues();
+			larrCoverages = pobjPolicy.GetCurrentCoverages();
+			larrValues = pobjPolicy.GetCurrentValues();
 		}
 		catch (Throwable e)
 		{
@@ -67,10 +100,10 @@ public abstract class DetailedBase
 			if ( larrCoverages[i].GetCoverage().IsHeader() )
 				continue;
 			if ( larrCoverages[i].IsPresent() == null )
-				lstrBuilder.append("O indicador de presença da cobertura '").append(larrCoverages[i].GetCoverage().getLabel()).
+				pstrBuilder.append("O indicador de presença da cobertura '").append(larrCoverages[i].GetCoverage().getLabel()).
 						append("' não está preenchido.\n");
 			else if ( larrCoverages[i].GetCoverage().IsMandatory() && !larrCoverages[i].IsPresent())
-				lstrBuilder.append("A cobertura '").append(larrCoverages[i].GetCoverage().getLabel()).
+				pstrBuilder.append("A cobertura '").append(larrCoverages[i].GetCoverage().getLabel()).
 						append("' é obrigatória mas não está presente.\n");
 		}
 
@@ -83,29 +116,16 @@ public abstract class DetailedBase
 			{
 				if ( larrValues[i].GetTax().IsMandatory() )
 				{
-					AppendTag(lstrBuilder, larrValues[i]);
-					lstrBuilder.append("é de preenchimento obrigatório, mas não está preenchido.\n");
+					AppendTag(pstrBuilder, larrValues[i]);
+					pstrBuilder.append("é de preenchimento obrigatório, mas não está preenchido.\n");
 				}
 			}
 			else
-				CheckFormat(lstrBuilder, larrValues[i]);
+				CheckFormat(pstrBuilder, larrValues[i]);
 		}
-
-		lstrErrors = lstrBuilder.toString();
-
-		if ( (lstrErrors != null) && (lstrErrors.length() != 0) )
-			throw new PolicyValidationException(lstrErrors);
-
-		InnerValidate();
 	}
 
-	public void DoCalc()
-		throws BigBangJewelException, PolicyCalculationException
-	{
-		InnerDoCalc();
-	}
-
-	protected void CheckFormat(StringBuilder pstrBuilder, PolicyValue pobjValue)
+	protected static void CheckFormat(StringBuilder pstrBuilder, PolicyValue pobjValue)
 	{
 		if ( Constants.FieldID_Text.equals(pobjValue.GetTax().GetFieldType()) )
 			return;
@@ -169,7 +189,7 @@ public abstract class DetailedBase
 		}
 	}
 
-	protected void AppendTag(StringBuilder pstrBuilder, PolicyValue pobjValue)
+	protected static void AppendTag(StringBuilder pstrBuilder, PolicyValue pobjValue)
 	{
 		UUID lidObject;
 		UUID lidExercise;

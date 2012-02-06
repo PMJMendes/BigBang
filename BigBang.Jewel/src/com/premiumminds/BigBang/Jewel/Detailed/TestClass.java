@@ -14,13 +14,14 @@ public class TestClass
 		super(pobjPolicy);
 	}
 
-	protected void InnerValidate()
+	protected void InnerValidate(StringBuilder pstrBuilder, String pstrLineBreak)
 		throws BigBangJewelException, PolicyValidationException
 	{
 	}
 
-	protected void InnerDoCalc()
+	protected String InnerDoCalc()
 		throws BigBangJewelException, PolicyCalculationException
 	{
+		throw new PolicyCalculationException("Esta modalidade não tem cálculos detalhados para efectuar.");
 	}
 }

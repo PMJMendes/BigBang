@@ -50,11 +50,9 @@ public class ForceValidatePolicy
 	{
 		Policy lobjPolicy;
 
-		midPolicy = GetProcess().GetDataKey();
-
 		try
 		{
-			lobjPolicy = Policy.GetInstance(Engine.getCurrentNameSpace(), midPolicy);
+			lobjPolicy = (Policy)GetProcess().GetData();
 			lobjPolicy.setAt(13, Constants.StatusID_Valid);
 			lobjPolicy.SaveToDb(pdb);
 		}
@@ -62,6 +60,8 @@ public class ForceValidatePolicy
 		{
 			throw new JewelPetriException(e.getMessage(), e);
 		}
+
+		midPolicy = lobjPolicy.getKey();
 	}
 
 	public String UndoDesc(String pstrLineBreak)
@@ -82,8 +82,6 @@ public class ForceValidatePolicy
 		Timestamp ldtAux;
 		Calendar ldtAux2;
 
-		midPolicy = GetProcess().GetDataKey();
-
 		ldtAux = new Timestamp(new java.util.Date().getTime());
     	ldtAux2 = Calendar.getInstance();
     	ldtAux2.setTimeInMillis(ldtAux.getTime());
@@ -91,7 +89,7 @@ public class ForceValidatePolicy
 
 		try
 		{
-			lobjPolicy = Policy.GetInstance(Engine.getCurrentNameSpace(), midPolicy);
+			lobjPolicy = (Policy)GetProcess().GetData();
 			lobjPolicy.setAt(13, Constants.StatusID_InProgress);
 			lobjPolicy.SaveToDb(pdb);
 

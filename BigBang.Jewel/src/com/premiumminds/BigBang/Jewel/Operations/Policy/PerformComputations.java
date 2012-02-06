@@ -9,6 +9,7 @@ import Jewel.Petri.SysObjects.Operation;
 import com.premiumminds.BigBang.Jewel.Constants;
 import com.premiumminds.BigBang.Jewel.PolicyCalculationException;
 import com.premiumminds.BigBang.Jewel.Objects.Policy;
+import com.premiumminds.BigBang.Jewel.SysObjects.DetailedBase;
 
 public class PerformComputations
 	extends Operation
@@ -27,7 +28,7 @@ public class PerformComputations
 
 	public String ShortDesc()
 	{
-		return null;
+		return "Execução de Cálculos";
 	}
 
 	public String LongDesc(String pstrLineBreak)
@@ -44,6 +45,7 @@ public class PerformComputations
 		throws JewelPetriException
 	{
 		Policy lobjPolicy;
+		DetailedBase lobjCalc;
 
 		try
 		{
@@ -56,7 +58,12 @@ public class PerformComputations
 
 		try
 		{
-			lobjPolicy.GetDetailedObject().DoCalc();
+			lobjCalc = lobjPolicy.GetDetailedObject();
+
+			if ( lobjCalc == null )
+				throw new PolicyCalculationException("Esta modalidade nao tem cálculos detalhados para efectuar.");
+
+			lobjCalc.DoCalc();
 		}
 		catch (PolicyCalculationException e)
 		{
