@@ -6,20 +6,29 @@ import java.util.Hashtable;
 import java.util.UUID;
 
 import Jewel.Engine.Engine;
+import Jewel.Engine.DataAccess.SQLServer;
 
 import com.premiumminds.BigBang.Jewel.BigBangJewelException;
 import com.premiumminds.BigBang.Jewel.Constants;
 import com.premiumminds.BigBang.Jewel.PolicyCalculationException;
 import com.premiumminds.BigBang.Jewel.PolicyValidationException;
+import com.premiumminds.BigBang.Jewel.Objects.Coverage;
 import com.premiumminds.BigBang.Jewel.Objects.Policy;
 import com.premiumminds.BigBang.Jewel.Objects.PolicyCoverage;
 import com.premiumminds.BigBang.Jewel.Objects.PolicyExercise;
 import com.premiumminds.BigBang.Jewel.Objects.PolicyObject;
 import com.premiumminds.BigBang.Jewel.Objects.PolicyValue;
+import com.premiumminds.BigBang.Jewel.Objects.Tax;
 
 public abstract class DetailedBase
 {
 	protected Policy mobjPolicy;
+	protected PolicyCoverage[] marrCoverages;
+	protected PolicyObject[] marrObjects;
+	protected PolicyExercise[] marrExercises;
+	protected PolicyValue[] marrValues;
+	protected Coverage[] marrCoverageDefs;
+	protected Tax[][] marrFieldDefs;
 
 	public DetailedBase(Policy pobjPolicy)
 	{
@@ -42,7 +51,7 @@ public abstract class DetailedBase
 
 	protected abstract void InnerValidate(StringBuilder pstrBuilder, String pstrLineBreak)
 			throws BigBangJewelException, PolicyValidationException;
-	protected abstract String InnerDoCalc() throws BigBangJewelException, PolicyCalculationException;
+	protected abstract String InnerDoCalc(SQLServer pdb) throws BigBangJewelException, PolicyCalculationException;
 
 	public Policy getData()
 	{
@@ -64,10 +73,22 @@ public abstract class DetailedBase
 			throw new PolicyValidationException(lstrErrors);
 	}
 
-	public String DoCalc()
+	public String DoCalc(SQLServer pdb)
 		throws BigBangJewelException, PolicyCalculationException
 	{
-		return InnerDoCalc();
+		int i;
+
+		marrCoverages = mobjPolicy.GetCurrentCoverages();
+		marrObjects = mobjPolicy.GetCurrentObjects();
+		marrExercises = mobjPolicy.GetCurrentExercises();
+		marrValues = mobjPolicy.GetCurrentValues();
+
+		marrCoverageDefs = mobjPolicy.GetSubLine().GetCurrentCoverages();
+		marrFieldDefs = new Tax[marrCoverageDefs.length][];
+		for ( i = 0; i < marrCoverageDefs.length; i++ )
+			marrFieldDefs[i] = marrCoverageDefs[i].GetCurrentTaxes();
+
+		return InnerDoCalc(pdb);
 	}
 
 	protected static void InnerDefaultValidate(StringBuilder pstrBuilder, Policy pobjPolicy)
@@ -221,5 +242,83 @@ public abstract class DetailedBase
 			}
 			pstrBuilder.append("' ");
 		}
+	}
+
+	protected UUID FindCoverageID(String pstrCoverageTag)
+	{
+		int i;
+
+		for ( i = 0; i < marrCoverageDefs.length; i++ )
+		{
+			if ( pstrCoverageTag.equals(marrCoverageDefs[i].GetTag()) )
+				return marrCoverageDefs[i].getKey();
+		}
+
+		return null;
+	}
+
+	protected UUID FindFieldID(String pstrCoverageTag, String pstrFieldTag)
+	{
+		int i, j;
+
+		for ( i = 0; i < marrCoverageDefs.length; i++ )
+		{
+			if ( pstrCoverageTag.equals(marrCoverageDefs[i].GetTag()) )
+			{
+				for ( j = 0; j < marrFieldDefs[i].length; j++ )
+				{
+					if ( pstrFieldTag.equals(marrFieldDefs[i][j].GetTag()) )
+						return marrFieldDefs[i][j].getKey();
+				}
+			}
+		}
+
+		return null;
+	}
+
+	protected int FindCoverage(UUID pidCoverage, int plngStart)
+	{
+		int i;
+
+		for ( i = plngStart; i < marrCoverages.length; i++ )
+		{
+			if ( marrCoverages[i].GetCoverage().getKey().equals(pidCoverage) )
+				return i;
+		}
+
+		for ( i = 0; i < plngStart; i++ )
+		{
+			if ( marrCoverages[i].GetCoverage().getKey().equals(pidCoverage) )
+				return i;
+		}
+
+		return -1;
+	}
+
+	protected int FindValue(UUID pidField, UUID pidObject, UUID pidExercise, int plngStart)
+	{
+		int i;
+
+		for ( i = plngStart; i < marrValues.length; i++ )
+		{
+			if ( (marrValues[i].GetTax().getKey().equals(pidField)) && 
+					(((marrValues[i].GetObjectID() == null) && (pidObject == null)) ||
+							(marrValues[i].GetObjectID().equals(pidObject))) &&
+					(((marrValues[i].GetExerciseID() == null) && (pidExercise == null)) ||
+							(marrValues[i].GetExerciseID().equals(pidExercise))) )
+				return i;
+		}
+
+		for ( i = 0; i < plngStart; i++ )
+		{
+			if ( (marrValues[i].GetTax().getKey().equals(pidField)) && 
+					(((marrValues[i].GetObjectID() == null) && (pidObject == null)) ||
+							(marrValues[i].GetObjectID().equals(pidObject))) &&
+					(((marrValues[i].GetExerciseID() == null) && (pidExercise == null)) ||
+							(marrValues[i].GetExerciseID().equals(pidExercise))) )
+				return i;
+		}
+
+		return -1;
 	}
 }

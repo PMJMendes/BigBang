@@ -93,4 +93,9 @@ public class Tax
 	{
 		return (Boolean)getAt(9);
 	}
+
+	public String GetTag()
+	{
+		return (String)getAt(10);
+	}
 }

@@ -16,6 +16,8 @@ public class PerformComputations
 {
 	private static final long serialVersionUID = 1L;
 
+	String mstrReport;
+
 	public PerformComputations(UUID pidProcess)
 	{
 		super(pidProcess);
@@ -33,7 +35,7 @@ public class PerformComputations
 
 	public String LongDesc(String pstrLineBreak)
 	{
-		return null;
+		return mstrReport;
 	}
 
 	public UUID GetExternalProcess()
@@ -63,7 +65,7 @@ public class PerformComputations
 			if ( lobjCalc == null )
 				throw new PolicyCalculationException("Esta modalidade nao tem cálculos detalhados para efectuar.");
 
-			lobjCalc.DoCalc();
+			mstrReport = lobjCalc.DoCalc(pdb);
 		}
 		catch (PolicyCalculationException e)
 		{
@@ -75,4 +77,8 @@ public class PerformComputations
 		}
 	}
 
+	protected boolean IsSilent()
+	{
+		return (mstrReport == null);
+	}
 }

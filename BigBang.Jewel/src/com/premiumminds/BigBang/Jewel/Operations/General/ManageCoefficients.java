@@ -576,33 +576,19 @@ public class ManageCoefficients
 		{
 			pstrString.append("Ramo: ");
 			lobjOwner = Coverage.GetInstance(Engine.getCurrentNameSpace(), pobjData.midCoverage);
-			try
-			{
-				lobjOwnerOwner = SubLine.GetInstance(Engine.getCurrentNameSpace(), (UUID)lobjOwner.getAt(1));
-				try
-				{
-					lobjOwnerOwnerOwner = Line.GetInstance(Engine.getCurrentNameSpace(), (UUID)lobjOwnerOwner.getAt(1));
-					pstrString.append(lobjOwnerOwnerOwner.getLabel());
-				}
-				catch (Throwable e)
-				{
-					pstrString.append(" (Erro a obter o ramo.)");
-				}
-				pstrString.append(pstrLineBreak);
-				pstrString.append("Modalidade: ");
-				pstrString.append(lobjOwnerOwner.getLabel());
-			}
-			catch (Throwable e)
-			{
-				pstrString.append(" (Erro a obter a modalidade.)");
-			}
+			lobjOwnerOwner = lobjOwner.GetSubLine();
+			lobjOwnerOwnerOwner = lobjOwnerOwner.getLine();
+			pstrString.append(lobjOwnerOwnerOwner.getLabel());
+			pstrString.append(pstrLineBreak);
+			pstrString.append("Modalidade: ");
+			pstrString.append(lobjOwnerOwner.getLabel());
 			pstrString.append(pstrLineBreak);
 			pstrString.append("Cobertura: ");
 			pstrString.append(lobjOwner.getLabel());
 		}
 		catch (Throwable e)
 		{
-			pstrString.append("(Erro a obter a cobertura.)");
+			pstrString.append("(Erro a obter o ramo.)");
 		}
 		pstrString.append(pstrLineBreak);
 

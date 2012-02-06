@@ -18,10 +18,6 @@ import com.premiumminds.BigBang.Jewel.SysObjects.DetailedBase;
 public class SubLine
 	extends ObjectBase
 {
-	private Line mrefLine;
-    private Class<?> mrefClass;
-    private Constructor<?> mrefConst;
-
     public static SubLine GetInstance(UUID pidNameSpace, UUID pidKey)
 		throws BigBangJewelException
 	{
@@ -47,6 +43,10 @@ public class SubLine
 	    	throw new BigBangJewelException(e.getMessage(), e);
 		}
 	}
+
+	private Line mrefLine;
+    private Class<?> mrefClass;
+    private Constructor<?> mrefConst;
 
     public void Initialize()
 		throws JewelEngineException

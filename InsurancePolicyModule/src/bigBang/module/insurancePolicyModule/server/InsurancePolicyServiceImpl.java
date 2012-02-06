@@ -2433,9 +2433,9 @@ public class InsurancePolicyServiceImpl
 			lobjProc = PNProcess.GetInstance(Engine.getCurrentNameSpace(), lobjPolicy.GetProcessID());
 			lobjClient = Client.GetInstance(Engine.getCurrentNameSpace(), lobjProc.GetParent().GetData().getKey());
 			lobjMed = Mediator.GetInstance(Engine.getCurrentNameSpace(), (UUID)lobjClient.getAt(8));
-			lobjSubLine = SubLine.GetInstance(Engine.getCurrentNameSpace(), (UUID)lobjPolicy.getAt(3));
-			lobjLine = Line.GetInstance(Engine.getCurrentNameSpace(), (UUID)lobjSubLine.getAt(1));
-			lobjCategory = Category.GetInstance(Engine.getCurrentNameSpace(), (UUID)lobjLine.getAt(1));
+			lobjSubLine = lobjPolicy.GetSubLine();
+			lobjLine = lobjSubLine.getLine();
+			lobjCategory = lobjLine.getCategory();
 			lobjStatus = Engine.GetWorkInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), Constants.ObjID_PolicyStatus),
 					(UUID)lobjPolicy.getAt(13));
 			larrCoInsurers = lobjPolicy.GetCurrentCoInsurers();
@@ -2787,7 +2787,7 @@ public class InsurancePolicyServiceImpl
 		try
 		{
 			lobjPolicy = Policy.GetInstance(Engine.getCurrentNameSpace(), UUID.fromString(policyId));
-			larrCoverages = SubLine.GetInstance(Engine.getCurrentNameSpace(), (UUID)lobjPolicy.getAt(3)).GetCurrentCoverages();
+			larrCoverages = lobjPolicy.GetSubLine().GetCurrentCoverages();
 
 			larrValues = lobjPolicy.GetCurrentKeyedValues(lidObject, lidExercise);
 			larrAuxFields = new Hashtable<UUID, Tax>();

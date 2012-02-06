@@ -356,10 +356,9 @@ public class TransferManagerServiceImpl
 	private static InsurancePolicyStub BuildPolicyStub(Policy pobjPolicy)
 	{
 		InsurancePolicyStub lobjResult;
-
 		IProcess lobjProcess;
 		Client lobjAuxClient;
-		SubLine lobjSubline;
+		SubLine lobjSubLine;
 		Line lobjLine;
 		Category lobjCategory;
 		ObjectBase lobjStatus;
@@ -382,33 +381,9 @@ public class TransferManagerServiceImpl
 			lobjAuxClient = null;
 		}
 
-		try
-		{
-			lobjSubline = SubLine.GetInstance(Engine.getCurrentNameSpace(), (UUID)pobjPolicy.getAt(3));
-			try
-			{
-				lobjLine = Line.GetInstance(Engine.getCurrentNameSpace(), (UUID)lobjSubline.getAt(1));
-				try
-				{
-					lobjCategory = Category.GetInstance(Engine.getCurrentNameSpace(), (UUID)lobjLine.getAt(1));
-				}
-				catch (BigBangJewelException e)
-				{
-					lobjCategory = null;
-				}
-			}
-			catch (Throwable e1)
-			{
-				lobjLine = null;
-				lobjCategory = null;
-			}
-		}
-		catch (Throwable e)
-		{
-			lobjSubline = null;
-			lobjLine = null;
-			lobjCategory = null;
-		}
+		lobjSubLine = pobjPolicy.GetSubLine();
+		lobjLine = lobjSubLine.getLine();
+		lobjCategory = lobjLine.getCategory();
 
 		try
 		{
@@ -427,12 +402,12 @@ public class TransferManagerServiceImpl
 		lobjResult.clientId = (lobjAuxClient == null ? null : lobjAuxClient.getKey().toString());
 		lobjResult.clientNumber = (lobjAuxClient == null ? "" : ((Integer)lobjAuxClient.getAt(1)).toString());
 		lobjResult.clientName = (lobjAuxClient == null ? "(Erro a obter o nome do cliente.)" : lobjAuxClient.getLabel());
-		lobjResult.categoryId = (lobjCategory == null ? null : lobjCategory.getKey().toString());
-		lobjResult.categoryName = (lobjCategory == null ? "(Erro a obter o nome da categoria.)" : lobjCategory.getLabel());
-		lobjResult.lineId = (lobjLine == null ? null : lobjLine.getKey().toString());
-		lobjResult.lineName = (lobjLine == null ? "(Erro a obter o nome do ramo.)" : lobjLine.getLabel());
-		lobjResult.subLineId = ((UUID)pobjPolicy.getAt(3)).toString();
-		lobjResult.subLineName = (lobjSubline == null ? "(Erro a obter o nome da modalidade.)" : lobjSubline.getLabel());
+		lobjResult.categoryId = lobjCategory.getKey().toString();
+		lobjResult.categoryName = lobjCategory.getLabel();
+		lobjResult.lineId = lobjLine.getKey().toString();
+		lobjResult.lineName = lobjLine.getLabel();
+		lobjResult.subLineId = lobjSubLine.getKey().toString();
+		lobjResult.subLineName = lobjSubLine.getLabel();
 		lobjResult.caseStudy = (Boolean)pobjPolicy.getAt(12);
 		lobjResult.statusId = ((UUID)pobjPolicy.getAt(13)).toString();
 		lobjResult.statusText = (lobjStatus == null ? "(Erro a obter o estado.)" : lobjStatus.getLabel());

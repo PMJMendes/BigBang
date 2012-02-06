@@ -42,9 +42,19 @@ public class Coverage
 		}
 	}
 
-	public void Initialize()	
+	private SubLine mrefSubLine;
+
+	public void Initialize()
 		throws JewelEngineException
 	{
+    	try
+    	{
+			mrefSubLine = SubLine.GetInstance(getNameSpace(), (UUID)getAt(1));
+		}
+    	catch (Throwable e)
+    	{
+    		throw new JewelEngineException(e.getMessage(), e);
+		}
 	}
 
 	public boolean IsHeader()
@@ -55,6 +65,11 @@ public class Coverage
 	public boolean IsMandatory()
 	{
 		return (Boolean)getAt(2);
+	}
+
+	public String GetTag()
+	{
+		return (String)getAt(4);
 	}
 
     public Tax[] GetCurrentTaxes()
@@ -128,5 +143,10 @@ public class Coverage
 		}
 
 		return larrAux.toArray(new Tax[larrAux.size()]);
+    }
+
+    public SubLine GetSubLine()
+    {
+    	return mrefSubLine;
     }
 }

@@ -68,10 +68,9 @@ public class ReceiptServiceImpl
 			lobjClient = Client.GetInstance(Engine.getCurrentNameSpace(), lobjProc.GetParent().GetParent().GetData().getKey());
 			lobjMed = Mediator.GetInstance(Engine.getCurrentNameSpace(),
 					(lobjPolicy.getAt(11) == null ?  (UUID)lobjClient.getAt(8) : (UUID)lobjPolicy.getAt(11)) );
-			lobjSubLine = SubLine.GetInstance(Engine.getCurrentNameSpace(), (UUID)lobjPolicy.getAt(3));
-			lobjLine = Line.GetInstance(Engine.getCurrentNameSpace(), (UUID)lobjSubLine.getAt(1));
-			lobjCategory = Engine.GetWorkInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), Constants.ObjID_LineCategory),
-					(UUID)lobjLine.getAt(1));
+			lobjSubLine = lobjPolicy.GetSubLine();
+			lobjLine = lobjSubLine.getLine();
+			lobjCategory = lobjLine.getCategory();
 			lobjType = Engine.GetWorkInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), Constants.ObjID_ReceiptType),
 					(UUID)lobjReceipt.getAt(1));
 			

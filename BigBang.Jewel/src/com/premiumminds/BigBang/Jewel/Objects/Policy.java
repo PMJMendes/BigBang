@@ -31,9 +31,19 @@ public class Policy
 		}
 	}
 
+    private SubLine mrefSubLine;
+
 	public void Initialize()
 		throws JewelEngineException
 	{
+		try
+		{
+			mrefSubLine = SubLine.GetInstance(getNameSpace(), (UUID)getAt(3));
+		}
+		catch (BigBangJewelException e)
+		{
+			throw new JewelEngineException(e.getMessage(), e);
+		}
 	}
 
 	public UUID GetProcessID()
@@ -629,6 +639,11 @@ public class Policy
 		}
 
 		return larrAux.toArray(new PolicyValue[larrAux.size()]);
+    }
+
+    public SubLine GetSubLine()
+    {
+    	return mrefSubLine;
     }
 
     public DetailedBase GetDetailedObject()
