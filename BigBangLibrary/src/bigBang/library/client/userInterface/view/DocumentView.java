@@ -8,7 +8,6 @@ import bigBang.library.client.userInterface.ListHeader;
 import bigBang.library.client.userInterface.presenter.DocumentViewPresenter;
 import bigBang.library.client.userInterface.presenter.DocumentViewPresenter.Action;
 import bigBang.library.client.userInterface.view.DocumentSections.DetailsSection.DocumentDetailEntry;
-import bigBang.library.client.userInterface.view.DocumentSections.FileNoteSection;
 import bigBang.library.shared.DocuShareItem;
 
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
@@ -39,7 +38,7 @@ public class DocumentView extends View implements DocumentViewPresenter.Display{
 		wrapper.setCellHeight(details,"100%");
 		setEditable(false);
 		
-		setSize("400px", "400px");
+		setSize("500px", "600px");
 	}
 
 	@Override
@@ -62,17 +61,6 @@ public class DocumentView extends View implements DocumentViewPresenter.Display{
 		middle.initHandler(handler);
 		details.initHandler(handler);
 	}
-
-	@Override
-	public void createNewFile() {
-		middle.createNewFile();
-	}
-
-	@Override
-	public void createNewNote() {
-		middle.createNewNote();
-	}
-
 	@Override
 	public void addDetail(DocInfo docInfo){
 

@@ -55,10 +55,6 @@ public class DocumentViewPresenter implements ViewPresenter, DocumentsBrokerClie
 		SAVE,
 		EDIT,
 		CANCEL,
-		NEW_FILE,
-		NEW_NOTE, 
-		CHANGE_TO_FILE, 
-		CHANGE_TO_NOTE, 
 		ADD_NEW_DETAIL, 
 		REMOVE_FILE, 
 		DELETE, 
@@ -77,8 +73,6 @@ public class DocumentViewPresenter implements ViewPresenter, DocumentsBrokerClie
 
 		Widget asWidget();
 		void registerActionHandler(ActionInvokedEventHandler<Action> handler);
-		void createNewFile();
-		void createNewNote();
 		void addDetail(DocInfo docInfo);
 		GeneralInfoSection getGeneralInfo();
 		FileNoteSection getFileNote();
@@ -118,7 +112,6 @@ public class DocumentViewPresenter implements ViewPresenter, DocumentsBrokerClie
 		if(ownerId == null){
 			EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não é possível mostrar um documento sem cliente associado."), TYPE.ALERT_NOTIFICATION));
 			view.getGeneralInfo().getToolbar().lockAll();
-			view.getFileNote().generateNewDocument();
 			view.addDetail(null);
 			view.setEditable(false);
 			return;
@@ -134,7 +127,6 @@ public class DocumentViewPresenter implements ViewPresenter, DocumentsBrokerClie
 			else{
 				EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não é possível criar o documento."), TYPE.ALERT_NOTIFICATION));
 				view.getGeneralInfo().getToolbar().lockAll();
-				view.getFileNote().generateNewDocument();
 				view.addDetail(null);
 				view.setEditable(false);
 			}
@@ -145,7 +137,6 @@ public class DocumentViewPresenter implements ViewPresenter, DocumentsBrokerClie
 				public void onResponse(Document response) {
 					doc = response;
 					setDocument(doc);
-					view.getGeneralInfo().getToolbar().setSaveModeEnabled(false);
 					view.setEditable(false);
 
 				}
@@ -200,9 +191,6 @@ public class DocumentViewPresenter implements ViewPresenter, DocumentsBrokerClie
 			public void onActionInvoked(ActionInvokedEvent<Action> action) {
 
 				switch(action.getAction()){
-				case NEW_FILE: 
-					view.createNewFile(); 
-					break;
 				case CANCEL:{
 					cancelChanges();
 					break;
@@ -211,24 +199,12 @@ public class DocumentViewPresenter implements ViewPresenter, DocumentsBrokerClie
 					view.setEditable(true);
 					break;
 				}
-				case NEW_NOTE:{
-					view.createNewNote();
-					break;
-				}
 				case SAVE:{
 					Document temp = getDocument();
 					temp.fileName = view.getFileNote().getFileUploadFilename();
 					temp.fileStorageId = view.getFileNote().getFileStorageId();
 					createUpdateDocument(temp);
 
-					break;
-				}
-				case CHANGE_TO_FILE: {
-					view.createNewFile(); 
-					break;
-				}
-				case CHANGE_TO_NOTE:{
-					view.createNewNote();
 					break;
 				}
 				case ADD_NEW_DETAIL:{
@@ -256,11 +232,7 @@ public class DocumentViewPresenter implements ViewPresenter, DocumentsBrokerClie
 						@Override
 						public void onActionInvoked(ActionInvokedEvent<Action> action) {
 							
-							view.getFileNote().getFilename().setValue(view.getFileNote().getUploadDialog().getFilename());
-							view.getFileNote().setFileStorageId(view.getFileNote().getUploadDialog().getFileStorageId());
-							view.getFileNote().getChangeToNote().setVisible(false);
-							view.getFileNote().enableRemoveFile(true);
-							view.getFileNote().getFilename().setVisible(true);
+							view.getFileNote().hasFile(true);
 							
 						}
 					});
@@ -285,7 +257,6 @@ public class DocumentViewPresenter implements ViewPresenter, DocumentsBrokerClie
 									view.getFileNote().getFilename().setValue(event.getValue().desc);
 									view.getFileNote().setFileUploadFilename(event.getValue().desc);
 									view.getFileNote().setFileStorageId(result);
-									view.getFileNote().getChangeToNote().setVisible(false);
 									view.getFileNote().enableRemoveFile(true);
 									view.getFileNote().getFilename().setVisible(true);
 									view.getFileNote().getUploadDialog().getUploadPopup().hidePopup();
@@ -482,26 +453,15 @@ public class DocumentViewPresenter implements ViewPresenter, DocumentsBrokerClie
 	public void setDocument(Document doc) {
 
 		view.getDetails().getList().clear();
-		view.getFileNote().hideAll();
 
 		if(doc == null){
-			view.getFileNote().generateNewDocument();
 			view.setEditable(true);
 			view.addDetail(null);
 			view.setSaveMode(true);
 			return;
 		}
-
-		if(doc.fileStorageId != null){
-			view.getFileNote().createNewFile();
-			view.getFileNote().setDocumentFile(doc);
-		}else if (doc.text != null){
-			view.getFileNote().createNewNote();
-			view.getFileNote().setDocumentNote(doc);
-		}
-		else{
-			view.getFileNote().generateNewDocument();
-		}
+		
+		view.getFileNote().setDocument(doc);
 		view.setValue(doc);
 		this.doc = doc;
 		DocInfo[] docInfo = doc.parameters;

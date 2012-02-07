@@ -9,6 +9,8 @@ import com.google.gwt.event.dom.client.FocusEvent;
 import com.google.gwt.event.dom.client.FocusHandler;
 import com.google.gwt.event.dom.client.KeyUpEvent;
 import com.google.gwt.event.dom.client.KeyUpHandler;
+import com.google.gwt.user.client.DOM;
+import com.google.gwt.user.client.Event;
 import com.google.gwt.user.client.ui.HasVerticalAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
@@ -22,6 +24,9 @@ public class TextAreaFormField extends FormField<String> {
 	protected boolean hasDummyValue = false;
 	protected VerticalPanel wrapper;
 	protected HorizontalPanel textAndMandatory;
+	protected int max;
+	protected Label remainCharsNum;
+
 
 	public TextAreaFormField(String label,FieldValidator<String> validator){
 		this();
@@ -53,6 +58,7 @@ public class TextAreaFormField extends FormField<String> {
 
 	public TextAreaFormField(){
 		super();
+		sinkEvents(Event.ONPASTE);
 		wrapper = new VerticalPanel();
 		initWidget(wrapper);
 
@@ -67,6 +73,19 @@ public class TextAreaFormField extends FormField<String> {
 		wrapper.add(errorMessageLabel);
 
 		setFieldWidth("400px");
+	}
+
+	@Override
+	public void onBrowserEvent(Event event) {
+		super.onBrowserEvent(event);
+		switch (DOM.eventGetType(event)) {
+		case Event.ONPASTE: {
+			if(max > 0){
+				textAreaContentChanged(max, remainCharsNum);
+			}
+			break;
+		}
+		}
 	}
 
 	@Override
@@ -127,13 +146,14 @@ public class TextAreaFormField extends FormField<String> {
 
 	public void setMaxCharacters(final int max, final Label remainCharsNum){
 
+		this.max = max;
+		this.remainCharsNum = remainCharsNum;
 
 		((TextArea)this.field).addKeyUpHandler(new KeyUpHandler() {
 
 			@Override
 			public void onKeyUp(KeyUpEvent event) {
 				textAreaContentChanged(max, remainCharsNum);
-
 			}
 		});
 
@@ -170,5 +190,9 @@ public class TextAreaFormField extends FormField<String> {
 		if (charsRemaining <= 0){
 			((TextArea)this.field).setText(((TextArea)this.field).getText().substring(0, max));
 		}
+	}
+
+	public TextArea getNativeField(){
+		return (TextArea)this.field;
 	}
 }
