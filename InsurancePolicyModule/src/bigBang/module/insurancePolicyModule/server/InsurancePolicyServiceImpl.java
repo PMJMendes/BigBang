@@ -1033,6 +1033,16 @@ public class InsurancePolicyServiceImpl
 					pobjResult.address.zipCode.country = (String)lobjZipCode.getAt(4);
 				}
 			}
+			pobjResult.typeId = lobjObject.midType.toString();
+			try
+			{
+				pobjResult.typeText = Engine.GetWorkInstance(Engine.FindEntity(Engine.getCurrentNameSpace(),
+						Constants.ObjID_ObjectType), lobjObject.midType).getLabel();
+			}
+			catch (Throwable e)
+			{
+				pobjResult.typeText = "(Erro a obter o nome do tipo.)";
+			}
 			pobjResult.inclusionDate = ( lobjObject.mdtInclusion == null ? null :
 					lobjObject.mdtInclusion.toString().substring(0, 10) ); 
 			pobjResult.exclusionDate = ( lobjObject.mdtExclusion == null ? null :
