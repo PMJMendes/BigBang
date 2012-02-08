@@ -99,8 +99,6 @@ public abstract class DetailedBase
 		Hashtable<UUID, UUID> larrTrueCoverages;
 		PolicyValue[] larrValues;
 
-		pstrBuilder = new StringBuilder();
-
 		try
 		{
 			larrCoverages = pobjPolicy.GetCurrentCoverages();
