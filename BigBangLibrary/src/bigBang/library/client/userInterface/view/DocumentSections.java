@@ -6,9 +6,10 @@ import org.gwt.mosaic.ui.client.MessageBox;
 import bigBang.definitions.shared.BigBangConstants;
 import bigBang.definitions.shared.DocInfo;
 import bigBang.definitions.shared.Document;
-import bigBang.library.client.FormField;
 import bigBang.library.client.event.ActionInvokedEvent;
 import bigBang.library.client.event.ActionInvokedEventHandler;
+import bigBang.library.client.event.ContentChangedEvent;
+import bigBang.library.client.event.ContentChangedEventHandler;
 import bigBang.library.client.event.DeleteRequestEvent;
 import bigBang.library.client.event.DeleteRequestEventHandler;
 import bigBang.library.client.resources.Resources;
@@ -27,12 +28,8 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.event.dom.client.KeyUpEvent;
-import com.google.gwt.event.dom.client.KeyUpHandler;
 import com.google.gwt.event.dom.client.MouseUpEvent;
 import com.google.gwt.event.dom.client.MouseUpHandler;
-import com.google.gwt.event.logical.shared.ValueChangeEvent;
-import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.resources.client.ImageResource;
 import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.ui.Button;
@@ -44,7 +41,6 @@ import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.MenuItem;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
-import com.google.gwt.user.client.ui.HasHorizontalAlignment.AutoHorizontalAlignmentConstant;
 
 
 public abstract class DocumentSections{
@@ -148,8 +144,8 @@ public abstract class DocumentSections{
 			setName(new TextBoxFormField("Nome"));
 			setDocType(new ExpandableListBoxFormField(BigBangConstants.TypifiedListIds.DOCUMENT_TYPE, "Tipo"));
 			
-			name.setWidth("100%");
-			name.setFieldWidth("100%");
+			name.setWidth("390px");
+			name.setFieldWidth("390px");
 			wrapper.add(getName());
 			wrapper.add(getDocType());
 
@@ -228,6 +224,7 @@ public abstract class DocumentSections{
 		private FilenameTextBoxFormField filename;
 		private Button removeFile;
 		private FileUploadPopup uploadDialog;
+		private ContentChangedEventHandler contentChangedHandler;
 
 		public FileUploadPopup getUploadDialog() {
 			return uploadDialog;
@@ -275,16 +272,19 @@ public abstract class DocumentSections{
 			};
 
 			fileButton = new Button("Upload de Ficheiro");
+			fileButton.setWidth("145px");
+			fileButton.getElement().getStyle().setMarginTop(5, Unit.PX);
 			fileButton.getElement().getStyle().setMarginLeft(5, Unit.PX);
 			fileButton.addClickHandler(handler);
 			docuShareFileButton = new Button("Ficheiro do DocuShare");
 			docuShareFileButton.addClickHandler(handler);
+			docuShareFileButton.setWidth("145px");
 			docuShareFileButton.getElement().getStyle().setMarginLeft(5, Unit.PX);
+			docuShareFileButton.getElement().getStyle().setMarginTop(5, Unit.PX);
 
 			noteLabel.getElement().getStyle().setMarginLeft(5, Unit.PX);
 			note = new TextAreaFormField();
 			note.getElement().getStyle().setMarginLeft(5, Unit.PX);
-			
 			
 			charRemainP = new HorizontalPanel();
 			charRemain = new Label("Caracteres Restantes: ");
@@ -297,23 +297,22 @@ public abstract class DocumentSections{
 			wrapper.setWidth("100%");
 			
 			note.setHeight("100%");
-			note.getNativeField().setWidth("100%");
-			note.getNativeField().setHeight("300px");
-			note.setWidth("100%");
+			note.getNativeField().setWidth("225px");
+			note.getNativeField().setHeight("100px");
 			
+			fileNotePanel.getElement().getStyle().setMarginTop(5, Unit.PX);
 			fileNotePanel.add(filePanel);
 			fileNotePanel.setCellHorizontalAlignment(filePanel, HasHorizontalAlignment.ALIGN_CENTER);
-			fileNotePanel.setCellWidth(filePanel, "50%");
+			fileNotePanel.setCellWidth(filePanel, "40%");
 			fileNotePanel.add(notePanel);
 			fileNotePanel.setCellHorizontalAlignment(notePanel, HasHorizontalAlignment.ALIGN_CENTER);
-			fileNotePanel.setCellWidth(notePanel, "50%");
+			fileNotePanel.setCellWidth(notePanel, "60%");
 			fileNotePanel.setCellHeight(notePanel, "100%");
 			fileNotePanel.setCellHeight(filePanel, "100%");
-			fileNotePanel.setWidth("100%");
-			filePanel.setWidth("100%");
+			fileNotePanel.setWidth("400px");
 			notePanel.setCellWidth(note, "100%");
-			notePanel.setWidth("100%");
-
+			
+			notePanel.getElement().getStyle().setProperty("borderLeft", "1px solid gray");		
 
 			fileLabel.getElement().getStyle().setMarginLeft(5, Unit.PX);
 			filePanel.add(fileLabel);
@@ -332,7 +331,8 @@ public abstract class DocumentSections{
 			removeFile.addClickHandler(handler);
 			removeFile.getElement().getStyle().setMarginLeft(5, Unit.PX);
 
-			filename = new FilenameTextBoxFormField("Nome do Ficheiro");
+			filename = new FilenameTextBoxFormField("Nome");
+			filename.getElement().getStyle().setMarginTop(5, Unit.PX);
 			getFilename().setEditable(false);
 			filename.setFieldWidth("");
 			filename.addMouseUpHandler(new MouseUpHandler() {
@@ -344,12 +344,13 @@ public abstract class DocumentSections{
 			});
 
 			mimeImg = new Image();
-			
-			
 
 			mimeImageFileName = new HorizontalPanel();
 			mimeImageFileName.add(mimeImg);
 			mimeImageFileName.add(filename);
+			mimeImageFileName.setCellVerticalAlignment(mimeImg, HasVerticalAlignment.ALIGN_MIDDLE);
+			mimeImageFileName.setCellVerticalAlignment(filename, HasVerticalAlignment.ALIGN_MIDDLE);
+			mimeImg.getElement().getStyle().setMarginLeft(5, Unit.PX);
 			filePanel.add(mimeImageFileName);
 			filePanel.add(removeFile);
 			
@@ -418,9 +419,8 @@ public abstract class DocumentSections{
 			}
 			else
 				mimeImage = resources.fileIcon();
-
+			
 			mimeImg.setVisible(true);
-
 			return mimeImage;
 		}
 
@@ -436,8 +436,11 @@ public abstract class DocumentSections{
 		public void removeFile() {
 
 			hasFile = false;
-			getFilename().setVisible(false);
+			mimeImageFileName.setVisible(false);
 			removeFile.setVisible(false);
+			notePanel.setVisible(true);
+			fileButton.setVisible(true);
+			docuShareFileButton.setVisible(true);
 
 		}
 
@@ -454,9 +457,6 @@ public abstract class DocumentSections{
 		}
 
 		public String getFileUploadFilename() {
-			if(uploadDialog != null){
-				fileUploadFilename = uploadDialog.getUploadPopup().getFilename();
-			}
 			return fileUploadFilename;
 		}
 
@@ -465,9 +465,6 @@ public abstract class DocumentSections{
 		}
 
 		public String getFileStorageId() {
-			if(uploadDialog != null){
-				fileStorageId = uploadDialog.getUploadPopup().getFileStorageId();
-			}
 			return fileStorageId;
 		}
 
@@ -491,35 +488,40 @@ public abstract class DocumentSections{
 			
 			if(doc.hasFile){
 				hasFile(true);
-				filename.setValue(doc.fileName);
-				fileButton.setVisible(false);
-				docuShareFileButton.setVisible(false);
+				filename.setValue(doc.fileName); 
 				mimeImg.setResource(getMimeImage(doc.mimeType));
-				mimeImageFileName.setVisible(true);
-				removeFile.setVisible(true);
-				hideNote();
+				
 			}
 			else{
 				hasFile(false);
-				filename.setVisible(false);
-				removeFile.setVisible(false);
-				fileButton.setVisible(true);
-				docuShareFileButton.setVisible(true);
-				mimeImageFileName.setVisible(false);
-				notePanel.setVisible(true);
+				note.fireEvent(new ContentChangedEvent());
 			}
+			
+			note.addHandler(contentChangedHandler, ContentChangedEvent.TYPE);
 			
 		}
 
 		public void hasFile(boolean b) {
-		
+
+			notePanel.setVisible(!b);
+			fileButton.setVisible(!b);
+			docuShareFileButton.setVisible(!b);
+			mimeImageFileName.setVisible(b);
+			removeFile.setVisible(b);
 			hasFile = b;
 			
 		}
+	
 		
-		private void hideNote(){
+		public void registerContentChangedHandler(
+				ContentChangedEventHandler contentChangedEventHandler) {
+			this.contentChangedHandler = contentChangedEventHandler;
+		}
+
+		public void lockFiles(boolean b) {
 			
-			notePanel.setVisible(false);
+			fileButton.setEnabled(!b);
+			docuShareFileButton.setEnabled(!b);
 			
 		}
 
@@ -556,7 +558,6 @@ public abstract class DocumentSections{
 
 				remove = new Button("X");
 				remove.addClickHandler(new ClickHandler() {
-
 					@Override
 					public void onClick(ClickEvent event) {
 						fireEvent(new DeleteRequestEvent(getValue()));
@@ -605,6 +606,7 @@ public abstract class DocumentSections{
 			public void setInfoValue(TextBoxFormField infoValue) {
 				this.infoValue = infoValue;
 			}
+			
 		}
 
 		List<DocInfo> details;
@@ -697,7 +699,6 @@ public abstract class DocumentSections{
 		public void registerDeleteHandler(
 				DeleteRequestEventHandler deleteRequestEventHandler) {
 			this.deleteHandler = deleteRequestEventHandler;
-
 		}
 
 	}

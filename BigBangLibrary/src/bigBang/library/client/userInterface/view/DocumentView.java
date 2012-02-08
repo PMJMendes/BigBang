@@ -3,6 +3,7 @@ package bigBang.library.client.userInterface.view;
 import bigBang.definitions.shared.DocInfo;
 import bigBang.definitions.shared.Document;
 import bigBang.library.client.event.ActionInvokedEventHandler;
+import bigBang.library.client.event.ContentChangedEventHandler;
 import bigBang.library.client.event.DeleteRequestEventHandler;
 import bigBang.library.client.userInterface.ListHeader;
 import bigBang.library.client.userInterface.presenter.DocumentViewPresenter;
@@ -38,7 +39,7 @@ public class DocumentView extends View implements DocumentViewPresenter.Display{
 		wrapper.setCellHeight(details,"100%");
 		setEditable(false);
 		
-		setSize("500px", "600px");
+		setSize("400px", "500px");
 	}
 
 	@Override
@@ -112,6 +113,7 @@ public class DocumentView extends View implements DocumentViewPresenter.Display{
 	}
 
 
+
 	@Override
 	public void setSaveMode(boolean b) {
 
@@ -132,6 +134,13 @@ public class DocumentView extends View implements DocumentViewPresenter.Display{
 	public void registerValueChangeHandler(
 			ValueChangeHandler<DocuShareItem> valueChangeHandler) {
 		getFileNote().getUploadDialog().getUploadPopup().getList().addValueChangeHandler(valueChangeHandler);
+		
+	}
+
+	@Override
+	public void registerContentChangedEventHandler(
+			ContentChangedEventHandler contentChangedEventHandler) {
+		getFileNote().registerContentChangedHandler(contentChangedEventHandler);
 		
 	}
 

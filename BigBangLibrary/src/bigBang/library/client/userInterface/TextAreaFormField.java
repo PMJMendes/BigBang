@@ -2,6 +2,8 @@ package bigBang.library.client.userInterface;
 
 import bigBang.library.client.FieldValidator;
 import bigBang.library.client.FormField;
+import bigBang.library.client.event.ContentChangedEvent;
+import bigBang.library.client.event.ContentChangedEventHandler;
 
 import com.google.gwt.event.dom.client.BlurEvent;
 import com.google.gwt.event.dom.client.BlurHandler;
@@ -78,6 +80,7 @@ public class TextAreaFormField extends FormField<String> {
 	@Override
 	public void onBrowserEvent(Event event) {
 		super.onBrowserEvent(event);
+		fireEvent(new ContentChangedEvent());
 		switch (DOM.eventGetType(event)) {
 		case Event.ONPASTE: {
 			if(max > 0){
@@ -86,6 +89,7 @@ public class TextAreaFormField extends FormField<String> {
 			break;
 		}
 		}
+		
 	}
 
 	@Override
@@ -153,6 +157,7 @@ public class TextAreaFormField extends FormField<String> {
 
 			@Override
 			public void onKeyUp(KeyUpEvent event) {
+				fireEvent(new ContentChangedEvent());
 				textAreaContentChanged(max, remainCharsNum);
 			}
 		});
@@ -163,6 +168,7 @@ public class TextAreaFormField extends FormField<String> {
 			@Override
 			public void onFocus(FocusEvent event) {
 				textAreaContentChanged(max, remainCharsNum);
+				fireEvent(new ContentChangedEvent());
 			}
 		});
 
@@ -171,7 +177,7 @@ public class TextAreaFormField extends FormField<String> {
 			@Override
 			public void onBlur(BlurEvent event) {
 				textAreaContentChanged(max, remainCharsNum);
-
+				fireEvent(new ContentChangedEvent());
 			}
 		});
 

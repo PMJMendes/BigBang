@@ -57,13 +57,6 @@ public class PopupPanel extends View implements HasWidgets {
 
 	public void add(Widget w) {
 		this.panel.add(w);
-		w.addHandler(new ResizeHandler() {
-			
-			@Override
-			public void onResize(ResizeEvent event) {
-				setSize(event.getWidth()+"px", event.getHeight()+"px");
-			}
-		}, ResizeEvent.getType());
 	}
 
 	public void clear() {
