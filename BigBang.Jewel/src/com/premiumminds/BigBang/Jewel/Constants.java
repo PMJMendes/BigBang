@@ -48,6 +48,7 @@ public class Constants
 
 	// Receipt Objects
 	public static final UUID ObjID_Receipt              = UUID.fromString("B24E4BF7-382C-40EE-8120-9F8A00DABB81");
+	public static final UUID ObjID_DebitNote            = UUID.fromString("812774ED-4016-4024-921C-9FF000EAC900");
 
 	// Manager Transfer Objects
 	public static final UUID ObjID_MgrXFer              = UUID.fromString("66EC1066-AD5A-430C-9A70-9F65013F5453");

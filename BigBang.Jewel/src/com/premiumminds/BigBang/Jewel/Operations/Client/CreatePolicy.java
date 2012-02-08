@@ -243,7 +243,8 @@ public class CreatePolicy
 
 		try
 		{
-			lrsPolicies = lrefPolicies.SelectByMembers(ldb, new int[] {0}, new java.lang.Object[] {lstrFilter}, new int[] {-1});
+			lrsPolicies = lrefPolicies.SelectByMembers(ldb, new int[] {0}, new java.lang.Object[] {lstrFilter},
+					new int[] {Integer.MIN_VALUE});
 		}
 		catch (Throwable e)
 		{
