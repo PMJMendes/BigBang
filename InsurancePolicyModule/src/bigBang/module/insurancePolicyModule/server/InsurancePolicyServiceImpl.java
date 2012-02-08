@@ -1721,8 +1721,8 @@ public class InsurancePolicyServiceImpl
 			if ( !mbValid )
 				throw new CorruptedPadException("Ocorreu um erro interno. Os dados correntes não são válidos.");
 
-			if ( !Constants.StatusID_InProgress.equals(mobjPolicy.midStatus) )
-				throw new BigBangException("Erro: Operação não suportada para apólices já validadas.");
+//			if ( !Constants.StatusID_InProgress.equals(mobjPolicy.midStatus) )
+//				throw new BigBangException("Erro: Operação não suportada para apólices já validadas.");
 
 			lobjObject = new PadObject();
 			try
