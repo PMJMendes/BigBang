@@ -4,16 +4,18 @@ import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.UUID;
 
-import com.premiumminds.BigBang.Jewel.BigBangJewelException;
-import com.premiumminds.BigBang.Jewel.Constants;
-import com.premiumminds.BigBang.Jewel.SysObjects.DetailedBase;
-
 import Jewel.Engine.Engine;
 import Jewel.Engine.DataAccess.MasterDB;
 import Jewel.Engine.Implementation.Entity;
 import Jewel.Engine.Interfaces.IEntity;
 import Jewel.Engine.SysObjects.JewelEngineException;
+import Jewel.Petri.Interfaces.IProcess;
+import Jewel.Petri.Objects.PNProcess;
 import Jewel.Petri.SysObjects.ProcessData;
+
+import com.premiumminds.BigBang.Jewel.BigBangJewelException;
+import com.premiumminds.BigBang.Jewel.Constants;
+import com.premiumminds.BigBang.Jewel.SysObjects.DetailedBase;
 
 public class Policy
 	extends ProcessData
@@ -644,6 +646,28 @@ public class Policy
     public SubLine GetSubLine()
     {
     	return mrefSubLine;
+    }
+
+    public Company GetCompany()
+    	throws BigBangJewelException
+    {
+		return Company.GetInstance(getNameSpace(), (UUID)getAt(2));
+    }
+
+    public Client GetClient()
+    	throws BigBangJewelException
+    {
+    	IProcess lobjProcess;
+
+    	try
+    	{
+			lobjProcess = PNProcess.GetInstance(getNameSpace(), GetProcessID());
+	    	return (Client)lobjProcess.GetParent().GetData();
+		}
+    	catch (Throwable e)
+    	{
+    		throw new BigBangJewelException(e.getMessage(), e);
+		}
     }
 
     public DetailedBase GetDetailedObject()

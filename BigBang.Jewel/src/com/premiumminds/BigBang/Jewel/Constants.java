@@ -11,6 +11,7 @@ public class Constants
 
 	// Objects
     public static final UUID ObjID_AppParams            = UUID.fromString("5485B660-A102-441A-912C-7B960584399F");
+    public static final UUID ObjID_Template             = UUID.fromString("F13322EE-E13E-4562-B723-9FF100F5E6BE");
 
 	// Agenda Objects
 	public static final UUID ObjID_AgendaItem           = UUID.fromString("F850E623-E686-4575-A2D8-9F640128FCD7");
@@ -268,6 +269,12 @@ public class Constants
 	// Policy Status Codes
 	public static final UUID StatusID_InProgress = UUID.fromString("6489D7DF-A090-40B9-BD5E-9F98012C8BED");
 	public static final UUID StatusID_Valid      = UUID.fromString("421E16B3-BE47-4D9C-9011-9F98012C945E");
+
+	// Template IDs
+	public static final UUID TID_DebitNote = UUID.fromString("BD024115-3572-41D4-B60C-9FF100F7E0C4");
+
+	// Document Types
+	public static final UUID DocID_DebitNote = UUID.fromString("785739A7-648C-4B51-9610-9FF10128C5CE");
 
 	// FK Constants
 	public static final int FKCostCenter_In_UserDecoration = 2;

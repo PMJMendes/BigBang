@@ -84,7 +84,7 @@ public class BigBang_Tests
 //		TestClientDelete.DoTest();
 //
 //		TestPolicyGet.DoTest();
-		TestPolicyCreate.DoTest();
+//		TestPolicyCreate.DoTest();
 //		TestPolicyEdit.DoTest();
 //		TestPolicyDelete.DoTest();
 //		TestPolicyValidate.DoTest();

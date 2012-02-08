@@ -1,5 +1,6 @@
 package bigBang.module.insurancePolicyModule.interfaces;
 
+import bigBang.definitions.shared.DebitNote;
 import bigBang.definitions.shared.Exercise;
 import bigBang.definitions.shared.InfoOrDocumentRequest;
 import bigBang.definitions.shared.InsurancePolicy;
@@ -75,6 +76,8 @@ public interface InsurancePolicyService extends SearchService, DependentItemSubS
 
 	public Exercise openNewExercise(String policyId, Exercise exercise) throws SessionExpiredException, BigBangException;
 	public Exercise editExercise(String policyId, Exercise exercise) throws SessionExpiredException, BigBangException;
+
+	public void createDebitNote(String policyId, DebitNote note) throws SessionExpiredException, BigBangException;
 
 	public InsurancePolicy voidPolicy(String policyId) throws SessionExpiredException, BigBangException;
 

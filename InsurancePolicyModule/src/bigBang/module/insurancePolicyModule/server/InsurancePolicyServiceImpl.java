@@ -21,6 +21,7 @@ import Jewel.Petri.Interfaces.IScript;
 import Jewel.Petri.Objects.PNProcess;
 import Jewel.Petri.Objects.PNScript;
 import bigBang.definitions.shared.Address;
+import bigBang.definitions.shared.DebitNote;
 import bigBang.definitions.shared.Exercise;
 import bigBang.definitions.shared.InfoOrDocumentRequest;
 import bigBang.definitions.shared.InsurancePolicy;
@@ -54,6 +55,7 @@ import bigBang.module.receiptModule.server.ReceiptServiceImpl;
 import com.premiumminds.BigBang.Jewel.Constants;
 import com.premiumminds.BigBang.Jewel.PolicyCalculationException;
 import com.premiumminds.BigBang.Jewel.PolicyValidationException;
+import com.premiumminds.BigBang.Jewel.Data.DebitNoteData;
 import com.premiumminds.BigBang.Jewel.Data.PolicyCoInsurerData;
 import com.premiumminds.BigBang.Jewel.Data.PolicyCoverageData;
 import com.premiumminds.BigBang.Jewel.Data.PolicyData;
@@ -80,6 +82,7 @@ import com.premiumminds.BigBang.Jewel.Operations.ContactOps;
 import com.premiumminds.BigBang.Jewel.Operations.DocOps;
 import com.premiumminds.BigBang.Jewel.Operations.Client.CreatePolicy;
 import com.premiumminds.BigBang.Jewel.Operations.MgrXFer.AcceptXFer;
+import com.premiumminds.BigBang.Jewel.Operations.Policy.CreateDebitNote;
 import com.premiumminds.BigBang.Jewel.Operations.Policy.CreateMgrXFer;
 import com.premiumminds.BigBang.Jewel.Operations.Policy.CreateReceipt;
 import com.premiumminds.BigBang.Jewel.Operations.Policy.DeletePolicy;
@@ -3523,6 +3526,40 @@ public class InsurancePolicyServiceImpl
 		}
 
 		return transfer;
+	}
+
+	public void createDebitNote(String policyId, DebitNote note)
+		throws SessionExpiredException, BigBangException
+	{
+		Policy lobjPolicy;
+		CreateDebitNote lopCDN;
+
+		if ( Engine.getCurrentUser() == null )
+			throw new SessionExpiredException();
+
+		try
+		{
+			lobjPolicy = Policy.GetInstance(Engine.getCurrentNameSpace(), UUID.fromString(policyId));
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangException(e.getMessage(), e);
+		}
+
+		lopCDN = new CreateDebitNote(lobjPolicy.GetProcessID());
+		lopCDN.mobjData = new DebitNoteData();
+		lopCDN.mobjData.midProcess = lobjPolicy.GetProcessID();
+		lopCDN.mobjData.mdblValue = new BigDecimal(note.value);
+		lopCDN.mobjData.mdtMaturity = Timestamp.valueOf(note.maturityDate + " 00:00:00.0");
+
+		try
+		{
+			lopCDN.Execute();
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangException(e.getMessage(), e);
+		}
 	}
 
 	@Override

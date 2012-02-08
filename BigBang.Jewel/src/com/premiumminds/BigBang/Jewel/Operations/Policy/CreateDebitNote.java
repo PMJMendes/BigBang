@@ -9,20 +9,26 @@ import Jewel.Engine.Engine;
 import Jewel.Engine.DataAccess.SQLServer;
 import Jewel.Engine.Implementation.Entity;
 import Jewel.Engine.Interfaces.IEntity;
+import Jewel.Petri.Objects.PNProcess;
 import Jewel.Petri.SysObjects.JewelPetriException;
 import Jewel.Petri.SysObjects.Operation;
 
 import com.premiumminds.BigBang.Jewel.BigBangJewelException;
 import com.premiumminds.BigBang.Jewel.Constants;
 import com.premiumminds.BigBang.Jewel.Data.DebitNoteData;
+import com.premiumminds.BigBang.Jewel.Data.DocInfoData;
+import com.premiumminds.BigBang.Jewel.Data.DocumentData;
 import com.premiumminds.BigBang.Jewel.Objects.DebitNote;
+import com.premiumminds.BigBang.Jewel.Operations.DocOps;
+import com.premiumminds.BigBang.Jewel.Reports.DebitNoteReport;
 
 public class CreateDebitNote
 	extends Operation
 {
 	private static final long serialVersionUID = 1L;
 
-	DebitNoteData mobjData;
+	public DebitNoteData mobjData;
+	public DocOps mobjDocOps;
 
 	public CreateDebitNote(UUID pidProcess)
 	{
@@ -59,15 +65,43 @@ public class CreateDebitNote
 		throws JewelPetriException
 	{
 		DebitNote lobjNote;
+		DebitNoteReport lrepDN;
+		DocumentData lobjDoc;
 
 		try
 		{
 			if ( mobjData.mstrNumber == null )
 				mobjData.mstrNumber = GetDebitNoteNumber(pdb);
+			if ( mobjData.mdtIssue == null )
+				mobjData.mdtIssue = new Timestamp(new java.util.Date().getTime());
 
 			lobjNote = DebitNote.GetInstance(Engine.getCurrentNameSpace(), (UUID)null);
 			mobjData.ToObject(lobjNote);
 			lobjNote.SaveToDb(pdb);
+
+			lrepDN = new DebitNoteReport();
+			lrepDN.mstrNumber = mobjData.mstrNumber;
+			lrepDN.midPolicy = PNProcess.GetInstance(Engine.getCurrentNameSpace(), mobjData.midProcess).GetDataKey();
+			lrepDN.mstrReceipt = null;
+			lrepDN.mdtMaturity = mobjData.mdtMaturity;
+			lrepDN.mdblValue = mobjData.mdblValue;
+			lrepDN.mdtDate = mobjData.mdtIssue;
+
+			lobjDoc = new DocumentData();
+			lobjDoc.mstrName = "Nota de Débito";
+			lobjDoc.midOwnerType = Constants.ObjID_Policy;
+			lobjDoc.midOwnerId = lrepDN.midPolicy;
+			lobjDoc.midDocType = Constants.DocID_DebitNote;
+			lobjDoc.mstrText = null;
+			lobjDoc.mobjFile = lrepDN.Generate().GetVarData();
+			lobjDoc.marrInfo = new DocInfoData[1];
+			lobjDoc.marrInfo[0] = new DocInfoData();
+			lobjDoc.marrInfo[0].mstrType = "Número";
+			lobjDoc.marrInfo[0].mstrValue = mobjData.mstrNumber;
+
+			mobjDocOps = new DocOps();
+			mobjDocOps.marrCreate = new DocumentData[]{lobjDoc};
+			mobjDocOps.RunSubOp(pdb, lrepDN.midPolicy);
 		}
 		catch (Throwable e)
 		{

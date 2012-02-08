@@ -1,5 +1,6 @@
 package bigBang.module.insurancePolicyModule.interfaces;
 
+import bigBang.definitions.shared.DebitNote;
 import bigBang.definitions.shared.Exercise;
 import bigBang.definitions.shared.InfoOrDocumentRequest;
 import bigBang.definitions.shared.InsurancePolicy;
@@ -42,6 +43,7 @@ public interface InsurancePolicyServiceAsync
 	void excludeObject(String policyId, String objectId, AsyncCallback<Void> callback);
 	void openNewExercise(String policyId, Exercise exercise, AsyncCallback<Exercise> callback);
 	void editExercise(String policyId, Exercise exercise, AsyncCallback<Exercise> callback);
+	void createDebitNote(String policyId, DebitNote note, AsyncCallback<Void> callback);
 	void voidPolicy(String policyId, AsyncCallback<InsurancePolicy> callback);
 	void createInfoOrDocumentRequest(InfoOrDocumentRequest request, AsyncCallback<InfoOrDocumentRequest> callback);
 	void createManagerTransfer(ManagerTransfer transfer, AsyncCallback<ManagerTransfer> callback);
