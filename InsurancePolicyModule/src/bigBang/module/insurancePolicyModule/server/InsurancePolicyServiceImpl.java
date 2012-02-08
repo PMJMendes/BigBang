@@ -960,21 +960,25 @@ public class InsurancePolicyServiceImpl
 		public TipifiedListItem[] GetObjects()
 			throws CorruptedPadException
 		{
-			TipifiedListItem[] larrResult;
+			ArrayList<TipifiedListItem> larrResult;
+			TipifiedListItem lobjItem;
 			int i;
 
 			if ( !mbValid )
 				throw new CorruptedPadException("Ocorreu um erro interno. Os dados correntes não são válidos.");
 
-			larrResult = new TipifiedListItem[marrObjects.size()];
+			larrResult = new ArrayList<TipifiedListItem>();
 			for ( i = 0; i < marrObjects.size(); i++ )
 			{
-				larrResult[i] = new TipifiedListItem();
-				larrResult[i].id = mid + ":" + i;
-				larrResult[i].value = marrObjects.get(i).mstrName;
+				if ( marrObjects.get(i).mbDeleted )
+					continue;
+				lobjItem = new TipifiedListItem();
+				lobjItem.id = mid + ":" + i;
+				lobjItem.value = marrObjects.get(i).mstrName;
+				larrResult.add(lobjItem);
 
 			}
-			return larrResult;
+			return larrResult.toArray(new TipifiedListItem[larrResult.size()]);
 		}
 
 		public void WriteObject(InsuredObject pobjResult, int plngObject)
@@ -1311,21 +1315,25 @@ public class InsurancePolicyServiceImpl
 		public TipifiedListItem[] GetExercises()
 			throws CorruptedPadException
 		{
-			TipifiedListItem[] larrResult;
+			ArrayList<TipifiedListItem> larrResult;
+			TipifiedListItem lobjItem;
 			int i;
 
 			if ( !mbValid )
 				throw new CorruptedPadException("Ocorreu um erro interno. Os dados correntes não são válidos.");
 
-			larrResult = new TipifiedListItem[marrExercises.size()];
+			larrResult = new ArrayList<TipifiedListItem>();
 			for ( i = 0; i < marrExercises.size(); i++ )
 			{
-				larrResult[i] = new TipifiedListItem();
-				larrResult[i].id = mid + ":" + i;
-				larrResult[i].value = marrExercises.get(i).mstrLabel;
+				if ( marrExercises.get(i).mbDeleted )
+					continue;
+				lobjItem = new TipifiedListItem();
+				lobjItem.id = mid + ":" + i;
+				lobjItem.value = marrExercises.get(i).mstrLabel;
+				larrResult.add(lobjItem);
 
 			}
-			return larrResult;
+			return larrResult.toArray(new TipifiedListItem[larrResult.size()]);
 		}
 
 		public void WriteExercise(Exercise pobjResult, int plngExercise)
