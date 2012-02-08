@@ -1,6 +1,7 @@
 package com.premiumminds.BigBang.Jewel.Data;
 
 import java.math.BigDecimal;
+import java.sql.Timestamp;
 import java.util.UUID;
 
 import Jewel.Engine.Engine;
@@ -8,7 +9,6 @@ import Jewel.Engine.SysObjects.ObjectBase;
 
 import com.premiumminds.BigBang.Jewel.BigBangJewelException;
 import com.premiumminds.BigBang.Jewel.Objects.Receipt;
-import com.sun.jmx.snmp.Timestamp;
 
 public class DebitNoteData
 	implements DataBridge
