@@ -138,12 +138,12 @@ public abstract class ReportBase
 			j = lstrResult.indexOf("}}");
 			if ( j < 0 )
 			{
-				lstrResult = lstrResult.replaceFirst("{{", "");
+				lstrResult = lstrResult.replaceFirst("\\{\\{", "");
 				continue;
 			}
 			if ( j < i )
 			{
-				lstrResult = lstrResult.replaceFirst("}}", "");
+				lstrResult = lstrResult.replaceFirst("\\}\\}", "");
 				continue;
 			}
 			lstrResult.replaceFirst(lstrResult.substring(i, j + 2), parrContents.get(lstrResult.substring(i + 2, j)));

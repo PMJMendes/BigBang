@@ -11,7 +11,7 @@ import Jewel.Engine.Implementation.Entity;
 import Jewel.Engine.Interfaces.IEntity;
 import Jewel.Petri.Objects.PNProcess;
 import Jewel.Petri.SysObjects.JewelPetriException;
-import Jewel.Petri.SysObjects.Operation;
+import Jewel.Petri.SysObjects.UndoableOperation;
 
 import com.premiumminds.BigBang.Jewel.BigBangJewelException;
 import com.premiumminds.BigBang.Jewel.Constants;
@@ -23,7 +23,7 @@ import com.premiumminds.BigBang.Jewel.Operations.DocOps;
 import com.premiumminds.BigBang.Jewel.Reports.DebitNoteReport;
 
 public class CreateDebitNote
-	extends Operation
+	extends UndoableOperation
 {
 	private static final long serialVersionUID = 1L;
 
@@ -78,6 +78,7 @@ public class CreateDebitNote
 			lobjNote = DebitNote.GetInstance(Engine.getCurrentNameSpace(), (UUID)null);
 			mobjData.ToObject(lobjNote);
 			lobjNote.SaveToDb(pdb);
+			mobjData.mid = lobjNote.getKey();
 
 			lrepDN = new DebitNoteReport();
 			lrepDN.mstrNumber = mobjData.mstrNumber;
@@ -161,5 +162,38 @@ public class CreateDebitNote
 		}
 
 		return lstrFilter.substring(0, lstrFilter.length() - 1) + llngResult;
+	}
+
+	public String UndoDesc(String pstrLineBreak)
+	{
+		return "A nota de débito será eliminada.";
+	}
+
+	public String UndoLongDesc(String pstrLineBreak)
+	{
+		return "A nota de débito criada foi eliminada.";
+	}
+
+	protected void Undo(SQLServer pdb)
+		throws JewelPetriException
+	{
+		DebitNote lobjNote;
+
+		mobjDocOps.UndoSubOp(pdb, null);
+
+		try
+		{
+			lobjNote = DebitNote.GetInstance(Engine.getCurrentNameSpace(), mobjData.mid);
+			lobjNote.getDefinition().Delete(pdb, lobjNote.getKey());
+		}
+		catch (Throwable e)
+		{
+			throw new JewelPetriException(e.getMessage(), e);
+		}
+	}
+
+	public UndoSet[] GetSets()
+	{
+		return new UndoSet[0];
 	}
 }
