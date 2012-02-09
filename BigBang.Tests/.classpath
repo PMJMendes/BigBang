@@ -13,5 +13,6 @@
 	<classpathentry combineaccessrules="false" kind="src" path="/ClientModule"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/TasksModule"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/GeneralSystemModule"/>
+	<classpathentry kind="lib" path="war/WEB-INF/lib/log4j-1.2.15.jar"/>
 	<classpathentry kind="output" path="war/WEB-INF/classes"/>
 </classpath>

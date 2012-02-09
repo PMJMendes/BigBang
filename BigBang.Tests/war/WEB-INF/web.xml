@@ -20,6 +20,14 @@
 	<listener>
 		<listener-class>bigbang.tests.server.Global</listener-class>
 	</listener>
+    <listener>
+    	<listener-class>bigbang.tests.server.ContextLog4jListener</listener-class>
+    </listener>
+
+    <context-param>
+    	<param-name>logger-config</param-name>
+    	<param-value>log4j.properties</param-value>
+    </context-param>
 
   <!-- Default page to serve -->
   <welcome-file-list>
