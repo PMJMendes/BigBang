@@ -315,6 +315,7 @@ public abstract class DocumentSections{
 			notePanel.getElement().getStyle().setProperty("borderLeft", "1px solid gray");		
 
 			fileLabel.getElement().getStyle().setMarginLeft(5, Unit.PX);
+			fileLabel.setWidth("145px");
 			filePanel.add(fileLabel);
 			filePanel.add(fileButton);
 			filePanel.setCellVerticalAlignment(fileButton, HasVerticalAlignment.ALIGN_MIDDLE);
@@ -332,9 +333,10 @@ public abstract class DocumentSections{
 			removeFile.getElement().getStyle().setMarginLeft(5, Unit.PX);
 
 			filename = new FilenameTextBoxFormField("Nome");
+			filename.setWidth("120px");
 			filename.getElement().getStyle().setMarginTop(5, Unit.PX);
 			getFilename().setEditable(false);
-			filename.setFieldWidth("");
+			filename.setFieldWidth("120px");
 			filename.addMouseUpHandler(new MouseUpHandler() {
 
 				@Override
@@ -344,13 +346,13 @@ public abstract class DocumentSections{
 			});
 
 			mimeImg = new Image();
-
+			
 			mimeImageFileName = new HorizontalPanel();
 			mimeImageFileName.add(mimeImg);
 			mimeImageFileName.add(filename);
+
 			mimeImageFileName.setCellVerticalAlignment(mimeImg, HasVerticalAlignment.ALIGN_MIDDLE);
 			mimeImageFileName.setCellVerticalAlignment(filename, HasVerticalAlignment.ALIGN_MIDDLE);
-			mimeImg.getElement().getStyle().setMarginLeft(5, Unit.PX);
 			filePanel.add(mimeImageFileName);
 			filePanel.add(removeFile);
 			
@@ -420,7 +422,9 @@ public abstract class DocumentSections{
 			else
 				mimeImage = resources.fileIcon();
 			
+			mimeImg.getElement().getStyle().setMarginLeft(5, Unit.PX);
 			mimeImg.setVisible(true);
+			
 			return mimeImage;
 		}
 
@@ -430,6 +434,9 @@ public abstract class DocumentSections{
 			fileButton.setEnabled(editable);
 			docuShareFileButton.setEnabled(editable);
 			removeFile.setEnabled(editable);
+			if(editable){
+				note.fireEvent(new ContentChangedEvent());
+			}
 
 		}
 
@@ -485,19 +492,26 @@ public abstract class DocumentSections{
 		}
 
 		public void setDocument(Document doc) {
+
+			note.addHandler(contentChangedHandler, ContentChangedEvent.TYPE);
+			
+			if(doc == null){
+				hasFile(false);
+				return;
+			}
 			
 			if(doc.hasFile){
 				hasFile(true);
+				fileStorageId = doc.fileStorageId;
 				filename.setValue(doc.fileName); 
 				mimeImg.setResource(getMimeImage(doc.mimeType));
-				
+				note.setValue(null);
 			}
 			else{
 				hasFile(false);
+				note.setValue(doc.text);
 				note.fireEvent(new ContentChangedEvent());
 			}
-			
-			note.addHandler(contentChangedHandler, ContentChangedEvent.TYPE);
 			
 		}
 

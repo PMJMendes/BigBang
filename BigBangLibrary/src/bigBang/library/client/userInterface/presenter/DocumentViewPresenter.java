@@ -187,17 +187,17 @@ public class DocumentViewPresenter implements ViewPresenter, DocumentsBrokerClie
 
 
 		});
+		
 
 
 		view.registerContentChangedEventHandler(new ContentChangedEventHandler() {
-
 			@Override
 			public void onContentChanged() {
 				if(view.getFileNote().getNote().getNativeField().getValue().length() > 0)
 					view.getFileNote().lockFiles(true);
-				else
+				else if(view.getGeneralInfo().getToolbar().isSaveModeEnabled()){
 					view.getFileNote().lockFiles(false);
-
+				}
 			}
 		});
 
@@ -226,7 +226,6 @@ public class DocumentViewPresenter implements ViewPresenter, DocumentsBrokerClie
 						temp.text = null;
 					}
 					createUpdateDocument(temp);
-
 					break;
 				}
 				case ADD_NEW_DETAIL:{
@@ -339,6 +338,7 @@ public class DocumentViewPresenter implements ViewPresenter, DocumentsBrokerClie
 
 				if(temp.id == null){
 
+					temp.fileName = view.getFileNote().getFilename().getValue();
 					temp.ownerId = ownerId;
 					temp.ownerTypeId = ownerTypeId;
 					broker.createDocument(temp, new ResponseHandler<Document>() {
@@ -348,7 +348,7 @@ public class DocumentViewPresenter implements ViewPresenter, DocumentsBrokerClie
 
 							EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Documento criado com sucesso."), TYPE.TRAY_NOTIFICATION));
 							NavigationHistoryItem navig = NavigationHistoryManager.getInstance().getCurrentState();
-							navig.setParameter("documentid", doc.id);
+							navig.setParameter("documentid", response.id);
 							NavigationHistoryManager.getInstance().go(navig);
 
 						}
@@ -369,7 +369,7 @@ public class DocumentViewPresenter implements ViewPresenter, DocumentsBrokerClie
 						public void onResponse(Document response) {
 							EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Documento gravado com sucesso."), TYPE.TRAY_NOTIFICATION));
 							NavigationHistoryItem navig = NavigationHistoryManager.getInstance().getCurrentState();
-							navig.setParameter("documentid", doc.id);
+							navig.setParameter("documentid", response.id);
 							NavigationHistoryManager.getInstance().go(navig);
 						}
 
@@ -475,9 +475,12 @@ public class DocumentViewPresenter implements ViewPresenter, DocumentsBrokerClie
 		view.getDetails().getList().clear();
 
 		if(doc == null){
+			doc = new Document();
+			view.setValue(doc);
 			view.setEditable(true);
 			view.addDetail(null);
 			view.setSaveMode(true);
+			view.getFileNote().setDocument(doc);
 			return;
 		}
 

@@ -27,6 +27,7 @@ public class DocumentView extends View implements DocumentViewPresenter.Display{
 
 		wrapper = new VerticalPanel();
 		initWidget(wrapper);
+		setSize("400px", "500px");
 		top = new DocumentSections.GeneralInfoSection();
 		middle = new DocumentSections.FileNoteSection();
 		details = new DocumentSections.DetailsSection();
@@ -39,7 +40,6 @@ public class DocumentView extends View implements DocumentViewPresenter.Display{
 		wrapper.setCellHeight(details,"100%");
 		setEditable(false);
 		
-		setSize("400px", "500px");
 	}
 
 	@Override
@@ -123,10 +123,7 @@ public class DocumentView extends View implements DocumentViewPresenter.Display{
 	
 	@Override
 	protected void onDetach() {
-		
-		if(this.getFileNote().getUploadDialog() != null){
-			this.getFileNote().getUploadDialog().getUploadPopup().hidePopup();
-		}
+
 		super.onDetach();
 	}
 

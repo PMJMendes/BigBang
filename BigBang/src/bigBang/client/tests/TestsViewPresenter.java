@@ -1,6 +1,7 @@
 package bigBang.client.tests;
 
 import bigBang.library.client.HasParameters;
+import bigBang.library.client.ViewPresenterFactory;
 import bigBang.library.client.userInterface.presenter.ViewPresenter;
 
 import com.google.gwt.user.client.ui.HasWidgets;
@@ -15,6 +16,8 @@ public class TestsViewPresenter implements ViewPresenter {
 		Widget asWidget();
 
 		void setTypifiedTexts(String tag);
+		HasWidgets getContainer();
+		void show();
 
 	}
 	
@@ -40,7 +43,11 @@ public class TestsViewPresenter implements ViewPresenter {
 	@Override
 	public void setParameters(HasParameters parameterHolder) {
 			
-		view.setTypifiedTexts("TEST");
+		ViewPresenter presenter = ViewPresenterFactory.getInstance().getViewPresenter("DOCUMENT");
+		
+		presenter.go(view.getContainer());
+		view.show();
+		presenter.setParameters(parameterHolder);
 		
 	}
 
