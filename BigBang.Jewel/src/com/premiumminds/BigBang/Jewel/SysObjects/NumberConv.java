@@ -58,20 +58,20 @@ public class NumberConv
 		{
 			llngAux1 = plngNumber / 100;
 			llngAux2 = plngNumber - 100 * llngAux1;
-			lstrAux1 = larrH[(int)llngAux1];
+			lstrAux1 = larrH[(int)llngAux1 - 1];
 			if (llngAux2 == 0) 
 				return lstrAux1;
 			return lstrAux1 + " e " + getAsText(llngAux2);
 		}
 
 		if (plngNumber < 20)
-			return larrU[(int)plngNumber];
+			return larrU[(int)plngNumber - 1];
 		llngAux1 = plngNumber / 10;
 		llngAux2 = plngNumber - 10 * llngAux1;
-		lstrAux1 = larrD[(int)llngAux1 - 1];
+		lstrAux1 = larrD[(int)llngAux1 - 2];
 		if (llngAux2 == 0)
 			return lstrAux1;
-		return lstrAux1 + " e " + larrU[(int)llngAux2];
+		return lstrAux1 + " e " + larrU[(int)llngAux2 - 1];
 	}
 
 	public static String getAsEuroText(double pdblAmount)

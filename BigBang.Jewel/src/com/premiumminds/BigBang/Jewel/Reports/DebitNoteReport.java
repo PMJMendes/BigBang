@@ -73,7 +73,7 @@ public class DebitNoteReport
 		larrParams.put("Number", mstrNumber);
 		larrParams.put("Company", lobjCompany.getLabel());
 		larrParams.put("Policy", (lobjPolicy.getLabel().startsWith("-") ? "(em emissão)" : lobjPolicy.getLabel()));
-		larrParams.put("Receipt", (mstrReceipt == null ? "(sem número)º" : mstrReceipt));
+		larrParams.put("Receipt", (mstrReceipt == null ? "(sem número)" : mstrReceipt));
 		larrParams.put("Line", lobjCategory.getLabel());
 		larrParams.put("Maturity", mdtMaturity.toString().substring(0, 10));
 		larrParams.put("Value", mdblValue.toPlainString());

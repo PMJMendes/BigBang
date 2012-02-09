@@ -21,6 +21,14 @@
 	<listener>
 		<listener-class>org.apache.commons.fileupload.servlet.FileCleanerCleanup</listener-class>
 	</listener>
+    <listener>
+    	<listener-class>bigBang.server.ContextLog4jListener</listener-class>
+    </listener>
+
+    <context-param>
+    	<param-name>logger-config</param-name>
+    	<param-value>log4j.properties</param-value>
+    </context-param>
 
 	<!-- Servlets -->
 	&loginServices;

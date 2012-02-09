@@ -197,17 +197,26 @@ public class HistoryServiceImpl
 			lobjResult.alteredEntities[i] = new HistoryItem.AlteredItem();
 			lobjResult.alteredEntities[i].typeId = larrAux[i].midType.toString();
 
-			lobjResult.alteredEntities[i].createdIds = new String[larrAux[i].marrCreated.length];
-			for ( j = 0; j < larrAux[i].marrCreated.length; j++ )
-				lobjResult.alteredEntities[i].createdIds[j] = larrAux[i].marrCreated[j].toString();
+			if ( larrAux[i].marrCreated != null )
+			{
+				lobjResult.alteredEntities[i].createdIds = new String[larrAux[i].marrCreated.length];
+				for ( j = 0; j < larrAux[i].marrCreated.length; j++ )
+					lobjResult.alteredEntities[i].createdIds[j] = larrAux[i].marrCreated[j].toString();
+			}
 
-			lobjResult.alteredEntities[i].modifiedIds = new String[larrAux[i].marrChanged.length];
-			for ( j = 0; j < larrAux[i].marrChanged.length; j++ )
-				lobjResult.alteredEntities[i].modifiedIds[j] = larrAux[i].marrChanged[j].toString();
+			if ( larrAux[i].marrChanged != null )
+			{
+				lobjResult.alteredEntities[i].modifiedIds = new String[larrAux[i].marrChanged.length];
+				for ( j = 0; j < larrAux[i].marrChanged.length; j++ )
+					lobjResult.alteredEntities[i].modifiedIds[j] = larrAux[i].marrChanged[j].toString();
+			}
 
-			lobjResult.alteredEntities[i].deletedIds = new String[larrAux[i].marrDeleted.length];
-			for ( j = 0; j < larrAux[i].marrDeleted.length; j++ )
-				lobjResult.alteredEntities[i].deletedIds[j] = larrAux[i].marrDeleted[j].toString();
+			if ( larrAux[i].marrDeleted != null )
+			{
+				lobjResult.alteredEntities[i].deletedIds = new String[larrAux[i].marrDeleted.length];
+				for ( j = 0; j < larrAux[i].marrDeleted.length; j++ )
+					lobjResult.alteredEntities[i].deletedIds[j] = larrAux[i].marrDeleted[j].toString();
+			}
 		}
 		return lobjResult;
 	}
