@@ -91,6 +91,7 @@ public class BigBang_Tests
 //		TestPolicyCalculations.DoTest();
 //		TestPolicyCreateDN.DoTest();
 //		TestPolicyChangeClient.DoTest();
+//		TestPolicyVoid.DoTest();
 //
 //		TestObjectGet.DoTest();
 //		TestObjectCreate.DoTest();
