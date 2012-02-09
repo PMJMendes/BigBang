@@ -15,6 +15,7 @@ import bigBang.library.shared.CorruptedPadException;
 import bigBang.library.shared.SessionExpiredException;
 import bigBang.module.insurancePolicyModule.shared.BigBangPolicyCalculationException;
 import bigBang.module.insurancePolicyModule.shared.BigBangPolicyValidationException;
+import bigBang.module.insurancePolicyModule.shared.PolicyVoiding;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
@@ -81,7 +82,7 @@ public interface InsurancePolicyService extends SearchService, DependentItemSubS
 
 	public void createDebitNote(String policyId, DebitNote note) throws SessionExpiredException, BigBangException;
 
-	public InsurancePolicy voidPolicy(String policyId) throws SessionExpiredException, BigBangException;
+	public InsurancePolicy voidPolicy(PolicyVoiding voiding) throws SessionExpiredException, BigBangException;
 
 	public InfoOrDocumentRequest createInfoOrDocumentRequest(InfoOrDocumentRequest request) throws SessionExpiredException, BigBangException;
 	public ManagerTransfer createManagerTransfer(ManagerTransfer transfer) throws SessionExpiredException, BigBangException;

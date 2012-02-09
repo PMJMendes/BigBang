@@ -11,6 +11,7 @@ import bigBang.definitions.shared.Receipt;
 import bigBang.definitions.shared.Remap;
 import bigBang.library.interfaces.DependentItemSubServiceAsync;
 import bigBang.library.interfaces.SearchServiceAsync;
+import bigBang.module.insurancePolicyModule.shared.PolicyVoiding;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
@@ -45,7 +46,7 @@ public interface InsurancePolicyServiceAsync
 	void editExercise(String policyId, Exercise exercise, AsyncCallback<Exercise> callback);
 	void transferToClient(String policyId, String newClientId, AsyncCallback<InsurancePolicy> callback);
 	void createDebitNote(String policyId, DebitNote note, AsyncCallback<Void> callback);
-	void voidPolicy(String policyId, AsyncCallback<InsurancePolicy> callback);
+	void voidPolicy(PolicyVoiding voiding, AsyncCallback<InsurancePolicy> callback);
 	void createInfoOrDocumentRequest(InfoOrDocumentRequest request, AsyncCallback<InfoOrDocumentRequest> callback);
 	void createManagerTransfer(ManagerTransfer transfer, AsyncCallback<ManagerTransfer> callback);
 	void createReceipt(String policyId, Receipt receipt, AsyncCallback<Receipt> callback);

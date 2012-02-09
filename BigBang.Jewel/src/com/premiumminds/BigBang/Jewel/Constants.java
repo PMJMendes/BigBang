@@ -84,6 +84,7 @@ public class Constants
 	public static final UUID ObjID_ExercisePeriod       = UUID.fromString("93315017-5744-4E43-95AB-9F9601200F1E");
 	public static final UUID ObjID_RequestType          = UUID.fromString("B437ECD7-11D2-4C55-B6DD-9FE80101ECC8");
 	public static final UUID ObjID_RequestCancelMotives = UUID.fromString("F79E335C-FD6F-43BE-8535-9FE900C1CAF4");
+	public static final UUID ObjID_PolicyVoidingMotives = UUID.fromString("B36C9AB7-0052-4C2E-B392-9FF200CF6022");
 
 	public static final UUID ObjID_FieldType            = UUID.fromString("0D8E4FEE-AE4D-4429-A517-9EC900F80A20");
 	public static final UUID ObjID_FieldValues          = UUID.fromString("D50A75B9-5F44-4BF2-9060-9F960121503A");
@@ -271,6 +272,7 @@ public class Constants
 	// Policy Status Codes
 	public static final UUID StatusID_InProgress = UUID.fromString("6489D7DF-A090-40B9-BD5E-9F98012C8BED");
 	public static final UUID StatusID_Valid      = UUID.fromString("421E16B3-BE47-4D9C-9011-9F98012C945E");
+	public static final UUID StatusID_Voided     = UUID.fromString("4F115B5C-0E23-444F-AA68-9F98012CA192");
 
 	// Template IDs
 	public static final UUID TID_DebitNote = UUID.fromString("BD024115-3572-41D4-B60C-9FF100F7E0C4");

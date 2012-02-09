@@ -50,6 +50,7 @@ import bigBang.module.insurancePolicyModule.shared.BigBangPolicyCalculationExcep
 import bigBang.module.insurancePolicyModule.shared.BigBangPolicyValidationException;
 import bigBang.module.insurancePolicyModule.shared.InsurancePolicySearchParameter;
 import bigBang.module.insurancePolicyModule.shared.InsurancePolicySortParameter;
+import bigBang.module.insurancePolicyModule.shared.PolicyVoiding;
 import bigBang.module.receiptModule.server.ReceiptServiceImpl;
 
 import com.premiumminds.BigBang.Jewel.Constants;
@@ -90,6 +91,7 @@ import com.premiumminds.BigBang.Jewel.Operations.Policy.ManageData;
 import com.premiumminds.BigBang.Jewel.Operations.Policy.PerformComputations;
 import com.premiumminds.BigBang.Jewel.Operations.Policy.TransferToClient;
 import com.premiumminds.BigBang.Jewel.Operations.Policy.ValidatePolicy;
+import com.premiumminds.BigBang.Jewel.Operations.Policy.VoidPolicy;
 import com.premiumminds.BigBang.Jewel.SysObjects.ZipCodeBridge;
 
 public class InsurancePolicyServiceImpl
@@ -3606,11 +3608,42 @@ public class InsurancePolicyServiceImpl
 		}
 	}
 
-	@Override
-	public InsurancePolicy voidPolicy(String policyId)
-			throws SessionExpiredException, BigBangException {
-		// TODO Auto-generated method stub
-		return null;
+	public InsurancePolicy voidPolicy(PolicyVoiding voiding)
+		throws SessionExpiredException, BigBangException
+	{
+		Policy lobjPolicy;
+		ObjectBase lobjMotive;
+		VoidPolicy lopVP;
+
+		if ( Engine.getCurrentUser() == null )
+			throw new SessionExpiredException();
+
+		try
+		{
+			lobjPolicy = Policy.GetInstance(Engine.getCurrentNameSpace(), UUID.fromString(voiding.policyId));
+			lobjMotive = Engine.GetWorkInstance(Engine.FindEntity(Engine.getCurrentNameSpace(),
+					Constants.ObjID_PolicyVoidingMotives), UUID.fromString(voiding.motiveId));
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangException(e.getMessage(), e);
+		}
+
+		lopVP = new VoidPolicy(lobjPolicy.GetProcessID());
+		lopVP.mdtEffectDate = Timestamp.valueOf(voiding.effectDate + " 00:00:00.0");
+		lopVP.mstrMotive = lobjMotive.getLabel();
+		lopVP.mstrNotes = voiding.notes;
+
+		try
+		{
+			lopVP.Execute();
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangException(e.getMessage(), e);
+		}
+
+		return getPolicy(voiding.policyId);
 	}
 
 	@Override
