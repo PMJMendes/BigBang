@@ -77,6 +77,8 @@ public interface InsurancePolicyService extends SearchService, DependentItemSubS
 	public Exercise openNewExercise(String policyId, Exercise exercise) throws SessionExpiredException, BigBangException;
 	public Exercise editExercise(String policyId, Exercise exercise) throws SessionExpiredException, BigBangException;
 
+	public InsurancePolicy transferToClient(String policyId, String newClientId) throws SessionExpiredException, BigBangException;
+
 	public void createDebitNote(String policyId, DebitNote note) throws SessionExpiredException, BigBangException;
 
 	public InsurancePolicy voidPolicy(String policyId) throws SessionExpiredException, BigBangException;

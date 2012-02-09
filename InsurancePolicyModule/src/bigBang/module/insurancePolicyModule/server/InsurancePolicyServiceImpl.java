@@ -88,6 +88,7 @@ import com.premiumminds.BigBang.Jewel.Operations.Policy.CreateReceipt;
 import com.premiumminds.BigBang.Jewel.Operations.Policy.DeletePolicy;
 import com.premiumminds.BigBang.Jewel.Operations.Policy.ManageData;
 import com.premiumminds.BigBang.Jewel.Operations.Policy.PerformComputations;
+import com.premiumminds.BigBang.Jewel.Operations.Policy.TransferToClient;
 import com.premiumminds.BigBang.Jewel.Operations.Policy.ValidatePolicy;
 import com.premiumminds.BigBang.Jewel.SysObjects.ZipCodeBridge;
 
@@ -3534,6 +3535,41 @@ public class InsurancePolicyServiceImpl
 		}
 
 		return transfer;
+	}
+
+	public InsurancePolicy transferToClient(String policyId, String newClientId)
+		throws SessionExpiredException, BigBangException
+	{
+		Policy lobjPolicy;
+		TransferToClient lopTTC;
+		Client lobjClient;
+
+		if ( Engine.getCurrentUser() == null )
+			throw new SessionExpiredException();
+
+		try
+		{
+			lobjPolicy = Policy.GetInstance(Engine.getCurrentNameSpace(), UUID.fromString(policyId));
+			lobjClient = Client.GetInstance(Engine.getCurrentNameSpace(), UUID.fromString(newClientId));
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangException(e.getMessage(), e);
+		}
+
+		lopTTC = new TransferToClient(lobjPolicy.GetProcessID());
+		lopTTC.midNewProcess = lobjClient.GetProcessID();
+
+		try
+		{
+			lopTTC.Execute();
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangException(e.getMessage(), e);
+		}
+
+		return getPolicy(policyId);
 	}
 
 	public void createDebitNote(String policyId, DebitNote note)

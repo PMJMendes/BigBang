@@ -43,6 +43,7 @@ public interface InsurancePolicyServiceAsync
 	void excludeObject(String policyId, String objectId, AsyncCallback<Void> callback);
 	void openNewExercise(String policyId, Exercise exercise, AsyncCallback<Exercise> callback);
 	void editExercise(String policyId, Exercise exercise, AsyncCallback<Exercise> callback);
+	void transferToClient(String policyId, String newClientId, AsyncCallback<InsurancePolicy> callback);
 	void createDebitNote(String policyId, DebitNote note, AsyncCallback<Void> callback);
 	void voidPolicy(String policyId, AsyncCallback<InsurancePolicy> callback);
 	void createInfoOrDocumentRequest(InfoOrDocumentRequest request, AsyncCallback<InfoOrDocumentRequest> callback);

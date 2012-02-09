@@ -201,6 +201,8 @@ public class Constants
 	public static final UUID OPID_Policy_UndoVoidPolicy              = UUID.fromString("3C1FD4F4-4100-4A22-A88C-9FD401145205");
 	public static final UUID OPID_Policy_DeletePolicy                = UUID.fromString("9B993DB1-CF37-4E34-965A-9F8200C986B9");
 	public static final UUID OPID_Policy_ExternResumePolicy          = UUID.fromString("0B95B090-DB27-4A4C-91EA-9FD301166C79");
+	public static final UUID OPID_Policy_TransferToClient            = UUID.fromString("E8DBFC9B-C24F-4F62-BE4E-9FF200B406C8");
+	public static final UUID OPID_Policy_UndoTransferToClient        = UUID.fromString("7D4D06DC-8652-4E4E-B1F8-9FF200B460A5");
 
 	// Receipt Operations
 	public static final UUID OPID_Receipt_ManageData                 = UUID.fromString("581AA15C-DF2C-4DF9-B3B3-9F8A00EDBADB");
