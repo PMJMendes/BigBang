@@ -686,6 +686,7 @@ public abstract class DocumentSections{
 			temp.setHeight("40px");
 			temp.addHandler(deleteHandler, DeleteRequestEvent.TYPE);
 			details.add(temp);
+			details.getScrollable().scrollToBottom();
 
 		}
 
@@ -719,7 +720,6 @@ public abstract class DocumentSections{
 			emptyd.name = "";
 			emptyd.value = "";
 			DocumentDetailEntry newD = new DocumentDetailEntry(emptyd);
-			details.getScrollable().scrollToBottom();
 			return newD;
 		}
 

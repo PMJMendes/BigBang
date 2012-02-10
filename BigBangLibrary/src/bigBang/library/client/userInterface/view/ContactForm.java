@@ -46,7 +46,7 @@ public class ContactForm extends FormView<Contact> {
 		public ContactInfoListEntry(ContactInfo value) {
 			super(value);
 			VerticalPanel wrapper = new VerticalPanel();
-			wrapper.setSize("100%", "500px");
+			wrapper.setSize("100%", "100%");
 			
 			typeField = new ExpandableListBoxFormField(ModuleConstants.ListIDs.ContactInfoTypes, "Tipo");
 			valueField = new TextBoxFormField("Valor");
