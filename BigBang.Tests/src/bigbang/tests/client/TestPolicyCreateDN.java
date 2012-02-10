@@ -1,11 +1,13 @@
 package bigbang.tests.client;
 
-import com.google.gwt.user.client.rpc.AsyncCallback;
-
 import bigBang.definitions.shared.DebitNote;
+
+import com.google.gwt.user.client.rpc.AsyncCallback;
 
 public class TestPolicyCreateDN
 {
+	private static String policy="988F0431-476B-4CE0-93A9-9FEC00D6006B";
+
 	public static void DoTest()
 	{
 		DoStep1();
@@ -32,6 +34,6 @@ public class TestPolicyCreateDN
 		note.value = "123.54";
 		note.maturityDate = "2012-03-31";
 
-		Services.insurancePolicyService.createDebitNote("988F0431-476B-4CE0-93A9-9FEC00D6006B", note, callback);
+		Services.insurancePolicyService.createDebitNote(policy, note, callback);
 	}
 }
