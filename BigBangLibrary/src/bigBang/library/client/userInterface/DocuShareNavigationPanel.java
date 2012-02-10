@@ -34,7 +34,6 @@ public class DocuShareNavigationPanel extends View implements HasValue<DocuShare
 	protected SelectionChangedEventHandler selectionHandler;
 	private String ownerId;
 	private String ownerTypeId;
-	private String filename;
 
 	public DocuShareNavigationPanel(){
 		this.service = DocuShareService.Util.getInstance();
@@ -99,6 +98,9 @@ public class DocuShareNavigationPanel extends View implements HasValue<DocuShare
 
 	protected void navigateToDirectoryList(final String dirDesc, final boolean showSubFolders){
 		final DocumentNavigationList list = new DocumentNavigationList();
+		list.showFilterField(false);
+		list.showSearchField(false);
+		list.getElement().getStyle().setBackgroundColor("white");
 		ListHeader header = new ListHeader();
 		header.showRefreshButton();
 		list.setHeaderWidget(header); //TODO

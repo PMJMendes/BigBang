@@ -33,7 +33,7 @@ public class NavigationPanel extends View {
 		
 		navigatables = new ArrayList<Widget>();
 		iterator = navigatables.listIterator();
-
+		
 		VerticalPanel wrapper = new VerticalPanel();
 		initWidget(wrapper);
 		wrapper.setSize("100%", "100%");

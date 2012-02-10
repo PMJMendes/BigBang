@@ -87,6 +87,7 @@ public class DocumentViewPresenter implements ViewPresenter, DocumentsBrokerClie
 		void setSaveMode(boolean b);
 		void registerValueChangeHandler(ValueChangeHandler<DocuShareItem> valueChangeHandler);
 		public void registerContentChangedEventHandler(ContentChangedEventHandler contentChangedEventHandler);
+		void clearAll();
 
 	}
 
@@ -106,6 +107,7 @@ public class DocumentViewPresenter implements ViewPresenter, DocumentsBrokerClie
 	public void setParameters(HasParameters parameterHolder) {
 
 		doc = null;
+		view.clearAll();
 		broker.unregisterClient(this);
 		ownerId = parameterHolder.getParameter("id");
 		documentId = parameterHolder.getParameter("documentid");
@@ -255,8 +257,9 @@ public class DocumentViewPresenter implements ViewPresenter, DocumentsBrokerClie
 
 							view.getFileNote().hasFile(true);
 							view.getFileNote().setFileStorageId(view.getFileNote().getUploadDialog().getFileStorageId());
+							doc.fileStorageId=view.getFileNote().getFileStorageId();
 							view.getFileNote().getFilename().setValue(view.getFileNote().getUploadDialog().getFilename());
-							view.getFileNote().getMimeImage().setVisible(false);
+							view.getFileNote().getMimeImage().setResource(view.getFileNote().getMimeImage(""));
 						}
 					});
 					
@@ -283,7 +286,7 @@ public class DocumentViewPresenter implements ViewPresenter, DocumentsBrokerClie
 									view.getFileNote().setFileStorageId(result);
 									doc.fileStorageId = result;
 									view.getFileNote().getUploadDialog().getUploadPopup().hidePopup();
-									view.getFileNote().getMimeImage().setVisible(false);
+									view.getFileNote().getMimeImage().setResource(view.getFileNote().getMimeImage(""));
 								}
 
 								@Override

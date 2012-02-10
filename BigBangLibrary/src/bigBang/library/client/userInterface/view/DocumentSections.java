@@ -120,7 +120,7 @@ public abstract class DocumentSections{
 
 				@Override
 				public void onDeleteRequest() {
-					MessageBox.confirm("Eliminar Modelo", "Tem certeza que pretende eliminar o documento seleccionado?", new MessageBox.ConfirmationCallback() {
+					MessageBox.confirm("Eliminar documento", "Tem certeza que pretende eliminar o documento seleccionado?", new MessageBox.ConfirmationCallback() {
 
 						@Override
 						public void onResult(boolean result) {
@@ -202,6 +202,11 @@ public abstract class DocumentSections{
 
 		public void setDocType(ExpandableListBoxFormField docType) {
 			this.docType = docType;
+		}
+
+		public void clearAll() {
+			name.clear();
+			docType.clear();
 		}
 	}
 
@@ -332,11 +337,12 @@ public abstract class DocumentSections{
 			removeFile.addClickHandler(handler);
 			removeFile.getElement().getStyle().setMarginLeft(5, Unit.PX);
 
-			filename = new FilenameTextBoxFormField("Nome");
-			filename.setWidth("120px");
+			filename = new FilenameTextBoxFormField("");
+			filename.setVisible(false);
+			filename.setWidth("100%");
 			filename.getElement().getStyle().setMarginTop(5, Unit.PX);
 			getFilename().setEditable(false);
-			filename.setFieldWidth("120px");
+			filename.setFieldWidth("");
 			filename.addMouseUpHandler(new MouseUpHandler() {
 
 				@Override
@@ -380,7 +386,7 @@ public abstract class DocumentSections{
 			}
 		}
 
-		private ImageResource getMimeImage(String mimeType) {
+		public ImageResource getMimeImage(String mimeType) {
 
 			Resources resources = GWT.create(Resources.class);
 			ImageResource mimeImage;
@@ -423,7 +429,6 @@ public abstract class DocumentSections{
 				mimeImage = resources.fileIcon();
 			
 			mimeImg.getElement().getStyle().setMarginLeft(5, Unit.PX);
-			mimeImg.setVisible(true);
 			
 			return mimeImage;
 		}
@@ -504,7 +509,9 @@ public abstract class DocumentSections{
 				hasFile(true);
 				fileStorageId = doc.fileStorageId;
 				filename.setValue(doc.fileName); 
+				filename.setVisible(true);
 				mimeImg.setResource(getMimeImage(doc.mimeType));
+				mimeImg.setVisible(true);
 				note.setValue(null);
 			}
 			else{
@@ -537,6 +544,11 @@ public abstract class DocumentSections{
 			fileButton.setEnabled(!b);
 			docuShareFileButton.setEnabled(!b);
 			
+		}
+
+		public void clearAll() {
+			note.clear();
+			filename.clear();
 		}
 
 
@@ -707,12 +719,19 @@ public abstract class DocumentSections{
 			emptyd.name = "";
 			emptyd.value = "";
 			DocumentDetailEntry newD = new DocumentDetailEntry(emptyd);
+			details.getScrollable().scrollToBottom();
 			return newD;
 		}
 
 		public void registerDeleteHandler(
 				DeleteRequestEventHandler deleteRequestEventHandler) {
 			this.deleteHandler = deleteRequestEventHandler;
+		}
+
+		public void clearAll() {
+		
+			details.clear();
+			
 		}
 
 	}

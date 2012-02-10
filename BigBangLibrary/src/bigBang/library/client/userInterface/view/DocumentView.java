@@ -141,5 +141,14 @@ public class DocumentView extends View implements DocumentViewPresenter.Display{
 		
 	}
 
+	@Override
+	public void clearAll() {
+		
+		top.clearAll();
+		middle.clearAll();
+		details.clearAll();
+		
+	}
+
 
 }
