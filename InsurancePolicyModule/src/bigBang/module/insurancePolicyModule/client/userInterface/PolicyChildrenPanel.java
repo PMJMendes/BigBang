@@ -3,7 +3,6 @@ package bigBang.module.insurancePolicyModule.client.userInterface;
 import java.util.List;
 
 import com.google.gwt.dom.client.Style.Unit;
-import com.google.gwt.event.logical.shared.AttachEvent;
 
 import bigBang.definitions.shared.BigBangConstants;
 import bigBang.definitions.shared.Contact;
@@ -46,23 +45,11 @@ public class PolicyChildrenPanel {
 			this.showSearchField(true);
 
 			this.broker = BigBangContactsListBroker.Util.getInstance();
-
-			this.addAttachHandler(new AttachEvent.Handler() {
-
-				@Override
-				public void onAttachOrDetach(AttachEvent event) {
-					if(event.isAttached()) {
-						setOwner(ownerId);
-					}else{
-						discardOwner();
-					}
-				}
-			});
 		}
 
 		public void setOwner(String ownerId){
 			discardOwner();
-			if(this.isAttached() && ownerId != null){
+			if(ownerId != null){
 				this.broker.registerClient(this, ownerId);
 			}
 			this.ownerId = ownerId;
@@ -166,24 +153,12 @@ public class PolicyChildrenPanel {
 			this.showSearchField(true);
 
 			broker = BigBangDocumentsBroker.Util.getInstance();
-
-			this.addAttachHandler(new AttachEvent.Handler() {
-
-				@Override
-				public void onAttachOrDetach(AttachEvent event) {
-					if(event.isAttached()) {
-						setOwner(ownerId);
-					}else{
-						discardOwner();
-					}
-				}
-			});
 		}
 
 		public void setOwner(String ownerId){
 			discardOwner();
-			if(this.isAttached() && ownerId != null){
-				this.broker.registerClient(this);
+			if(ownerId != null){
+				this.broker.registerClient(this, ownerId);
 			}
 			this.ownerId = ownerId;
 		}

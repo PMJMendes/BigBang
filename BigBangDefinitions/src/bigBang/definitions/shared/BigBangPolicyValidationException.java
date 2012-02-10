@@ -1,4 +1,4 @@
-package bigBang.module.insurancePolicyModule.shared;
+package bigBang.definitions.shared;
 
 public class BigBangPolicyValidationException
 	extends Exception

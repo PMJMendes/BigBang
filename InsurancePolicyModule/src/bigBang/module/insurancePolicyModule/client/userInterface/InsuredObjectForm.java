@@ -358,7 +358,7 @@ public class InsuredObjectForm extends FormView<InsuredObject> {
 		}
 	}
 
-	protected void showTypeSection(boolean show){
+	public void showTypeSection(boolean show){
 		this.typeSection.setVisible(show);
 	}
 
@@ -429,7 +429,7 @@ public class InsuredObjectForm extends FormView<InsuredObject> {
 	private CoverageData[] getCoverageData(Exercise[] exercises, CoverageData[] coverageData) {
 		for(int i = 0; i < coverageData.length; i++) {
 			String coverageId = coverageData[i].coverageId;
-			
+
 			//FIXED FIELDS
 			Collection<DynFormField> fixedFields = this.coverageFixedFields.get(coverageId);
 			if(fixedFields == null){continue;}
@@ -449,7 +449,7 @@ public class InsuredObjectForm extends FormView<InsuredObject> {
 			for(int j = 0; j < variableFields.length; j++) {
 				VariableField variableField = variableFields[j];
 				for(int k = 0; k < exercises.length; k++) {
-  					Field field = coverageTable.getValue(variableField.fieldId, exercises[k].id);
+					Field field = coverageTable.getValue(variableField.fieldId, exercises[k].id);
 					variableField.data[k].value = field == null ? null : field.value;
 				}
 			}
@@ -482,7 +482,7 @@ public class InsuredObjectForm extends FormView<InsuredObject> {
 		}
 		return headerData;
 	}
-	
+
 	@Override
 	public void setInfo(InsuredObject info) {
 		if(info == null){
@@ -545,9 +545,8 @@ public class InsuredObjectForm extends FormView<InsuredObject> {
 
 	protected void setDynamicFixedHeaderData(FixedField[] fields){
 		clearDynamicFixedHeaderData();
-		if(fields == null){
-			clearDynamicFixedHeaderData();
-		}else{
+		clearDynamicFixedHeaderData();
+		if(fields != null){
 			for(int i = 0; i < fields.length; i++) {
 				FixedField field = fields[i];
 				DynFormField formField = new DynFormField(field);
@@ -563,7 +562,7 @@ public class InsuredObjectForm extends FormView<InsuredObject> {
 	protected void clearDynamicFixedHeaderData(){
 		this.dynamicHeaderSection.unregisterAllFormFields();
 		Iterator<DynFormField> iterator = this.dynamicFixedHeaderFields.iterator();
-		
+
 		while(iterator.hasNext()){
 			DynFormField field = iterator.next();
 			field.removeFromParent();
@@ -572,14 +571,22 @@ public class InsuredObjectForm extends FormView<InsuredObject> {
 	}
 
 	protected FixedField[] getDynamicFixedFieldHeaderData(){
-		return null; //TODO
+		FixedField[] result = new FixedField[this.dynamicFixedHeaderFields.size()];
+		int i = 0;
+		for(DynFormField field : this.dynamicFixedHeaderFields){
+			FixedField f = field.headerField;
+			f.value = field.getValue();
+			result[i] = f;
+			i++;
+		}
+		return result;
 	}
 
 	protected void setDynamicVariableHeaderData(Exercise[] exercises, VariableField[] fields){
 		this.dynamicVariableHeaderDataTable.removeFromParent();
 
+		removeDynamicData();
 		if(exercises == null){
-			clearDynamicVariableHeaderData();
 			return;
 		}
 		if(fields == null){
@@ -643,13 +650,9 @@ public class InsuredObjectForm extends FormView<InsuredObject> {
 		this.dynamicVariableHeaderDataTable.setReadOnly(this.isReadOnly());
 	}
 
-	protected void clearDynamicVariableHeaderData(){
-		//TODO
-	}
-
 	protected void setDynamicData(Exercise[] exercises, CoverageData[] data){
+		removeDynamicData();
 		if(data == null) {
-			removeDynamicData();
 			return;
 		}
 		HeaderCell[] columnHeaders = new HeaderCell[exercises.length];
@@ -669,7 +672,7 @@ public class InsuredObjectForm extends FormView<InsuredObject> {
 
 			FormViewSection section = new FormViewSection("Cobertura " + covData.coverageLabel);
 			ArrayList<DynFormField> coverageFields = new ArrayList<DynFormField>();
-			
+
 			for(int j = 0; j < covData.fixedFields.length; j++){
 				FixedField field = covData.fixedFields[j];
 				DynFormField formField = new DynFormField(field);
@@ -729,6 +732,7 @@ public class InsuredObjectForm extends FormView<InsuredObject> {
 				section.addWidget(table, false);
 				this.coverageTables.put(covData.coverageId, table);
 			}
+			this.dynamicFieldSections.add(section);
 			addSection(section);
 		}
 	}
@@ -759,13 +763,17 @@ public class InsuredObjectForm extends FormView<InsuredObject> {
 			break;
 		}
 	}
-	
+
 	@Override
 	public void setReadOnly(boolean readOnly) {
 		super.setReadOnly(readOnly);
-		this.dynamicVariableHeaderDataTable.setReadOnly(readOnly);
-		for(TwoKeyTableView table : this.coverageTables.values()){
-			table.setReadOnly(readOnly);
+		if(this.dynamicVariableHeaderDataTable != null){
+			this.dynamicVariableHeaderDataTable.setReadOnly(readOnly);
+		}
+		if(this.coverageTables != null) {
+			for(TwoKeyTableView table : this.coverageTables.values()){
+				table.setReadOnly(readOnly);
+			}
 		}
 	}
 

@@ -2,6 +2,7 @@ package bigBang.module.insurancePolicyModule.client.userInterface;
 
 import java.util.Collection;
 
+import bigBang.definitions.client.dataAccess.InsurancePolicyBroker;
 import bigBang.definitions.client.dataAccess.InsuredObjectDataBroker;
 import bigBang.definitions.client.dataAccess.InsuredObjectDataBrokerClient;
 import bigBang.definitions.client.response.ResponseError;
@@ -21,59 +22,67 @@ public class InsuredObjectsList extends FilterableList<InsuredObjectStub> {
 		public Entry(InsuredObjectStub value) {
 			super(value);
 		}
-		
+
 		public <I extends Object> void setInfo(I info) {
 			InsuredObjectStub o = (InsuredObjectStub) info;
 			setTitle(o.unitIdentification);
 		};
 	}
-	
+
+	protected InsurancePolicyBroker insurancePolicyBroker;
 	protected InsuredObjectDataBrokerClient insuredObjectsBrokerClient;
 	protected InsuredObjectDataBroker insuredObjectsBroker;
-	
+
 	protected String ownerId;
-	
+
 	public InsuredObjectsList(){
 		this.insuredObjectsBrokerClient = getInsuredObjectsBrokerClient();
+		this.insurancePolicyBroker = (InsurancePolicyBroker) DataBrokerManager.Util.getInstance().getBroker(BigBangConstants.EntityIds.INSURANCE_POLICY);
 		this.insuredObjectsBroker = (InsuredObjectDataBroker) DataBrokerManager.Util.getInstance().getBroker(BigBangConstants.EntityIds.POLICY_INSURED_OBJECT);
 		this.insuredObjectsBroker.registerClient(this.insuredObjectsBrokerClient);
 	}
-	
+
 	public void setOwner(String ownerId){
 		this.ownerId = ownerId;
-		this.insuredObjectsBroker.getProcessInsuredObjects(ownerId, new ResponseHandler<Collection<InsuredObjectStub>>() {
-			
-			@Override
-			public void onResponse(Collection<InsuredObjectStub> response) {
-				clear();
-				for(InsuredObjectStub o : response){
-					addEntry(o);
-				}
+		if(ownerId == null) {
+			clear();
+		}else{
+			if(!insurancePolicyBroker.isTemp(ownerId)){
+				this.insuredObjectsBroker.getProcessInsuredObjects(ownerId, new ResponseHandler<Collection<InsuredObjectStub>>() {
+
+					@Override
+					public void onResponse(Collection<InsuredObjectStub> response) {
+						clear();
+						for(InsuredObjectStub o : response){
+							addEntry(o);
+						}
+					}
+
+					@Override
+					public void onError(Collection<ResponseError> errors) {
+						showErrorMessage("De momento não foi possível obter as unidades de risco para a apólice.");
+					}
+				});
 			}
-			
-			@Override
-			public void onError(Collection<ResponseError> errors) {
-				showErrorMessage("De momento não foi possível obter as unidades de risco para a apólice.");
-			}
-		});
+		}
 	}
-	
+
 	protected void addEntry(InsuredObjectStub object){
 		this.add(new Entry(object));
 	}
-	
+
 	protected InsuredObjectDataBrokerClient getInsuredObjectsBrokerClient(){
 		return new InsuredObjectDataBrokerClient() {
-			
+
 			protected int version;
-			
+
 			@Override
 			public void setDataVersionNumber(String dataElementId, int number) {
 				if(dataElementId.equalsIgnoreCase(BigBangConstants.EntityIds.POLICY_INSURED_OBJECT)){
 					version = number;
 				}
 			}
-			
+
 			@Override
 			public int getDataVersion(String dataElementId) {
 				if(dataElementId.equalsIgnoreCase(BigBangConstants.EntityIds.POLICY_INSURED_OBJECT)){
@@ -81,7 +90,7 @@ public class InsuredObjectsList extends FilterableList<InsuredObjectStub> {
 				}
 				return -1;
 			}
-			
+
 			@Override
 			public void updateInsuredObject(InsuredObject object) {
 				for(ValueSelectable<InsuredObjectStub> e : InsuredObjectsList.this){
@@ -91,7 +100,7 @@ public class InsuredObjectsList extends FilterableList<InsuredObjectStub> {
 					}
 				}
 			}
-			
+
 			@Override
 			public void removeInsuredObject(String id) {
 				for(ValueSelectable<InsuredObjectStub> e : InsuredObjectsList.this){
@@ -101,20 +110,28 @@ public class InsuredObjectsList extends FilterableList<InsuredObjectStub> {
 					}
 				}
 			}
-			
+
 			@Override
 			public void addInsuredObject(InsuredObject object) {
-				if(object != null && object.ownerId != null && ownerId != null && object.ownerId.equalsIgnoreCase(ownerId)){
+				String objectOwnerId = insurancePolicyBroker.getFinalMapping(object.ownerId);
+				String currentOwnerId = insurancePolicyBroker.getFinalMapping(InsuredObjectsList.this.ownerId);
+
+				if(object != null && objectOwnerId != null && ownerId != null && objectOwnerId.equalsIgnoreCase(currentOwnerId)){
 					InsuredObjectsList.this.addEntry(object);
 				}
 			}
 
 			@Override
 			public void remapItemId(String newId, String oldId) {
-				// TODO Auto-generated method stub
-				
+				return;
 			}
 		};
+	}
+
+	@Override
+	protected void onAttach() {
+		clearSelection();
+		super.onAttach();
 	}
 
 }

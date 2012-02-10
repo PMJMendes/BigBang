@@ -82,6 +82,7 @@ public class InsuredObjectView extends View implements InsuredObjectViewPresente
 		form = new InsuredObjectForm();
 		form.setSize("100%", "100%");
 		objectFormWrapper.add(form);
+		form.showTypeSection(false);
 		objectFormWrapper.setCellHeight(form, "100%");
 		mainWrapper.add(objectFormWrapper);
 

@@ -1,4 +1,4 @@
-package bigBang.module.insurancePolicyModule.shared;
+package bigBang.definitions.shared;
 
 import java.io.Serializable;
 

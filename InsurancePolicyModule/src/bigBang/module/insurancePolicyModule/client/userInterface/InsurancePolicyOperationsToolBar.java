@@ -12,7 +12,7 @@ public abstract class InsurancePolicyOperationsToolBar extends BigBangOperations
 	protected MenuItem riskAnalysis;
 	protected MenuItem healthExpense;
 	protected MenuItem negotiation;
-	protected MenuItem issueCreditNote;
+	protected MenuItem issueDebitNote;
 	protected MenuItem subPolicy;
 	protected MenuItem infoManagementProcess;
 
@@ -73,14 +73,14 @@ public abstract class InsurancePolicyOperationsToolBar extends BigBangOperations
 			}
 		});
 		addItem(SUB_MENU.CREATE, negotiation);
-		issueCreditNote = new MenuItem("Emitir Nota de Crédito", new Command() {
+		issueDebitNote = new MenuItem("Emitir Nota de Débito", new Command() {
 
 			@Override
 			public void execute() {
-				onIssueCreditNote();
+				onIssueDebitNote();
 			}
 		});
-		addItem(SUB_MENU.CREATE, issueCreditNote);
+		addItem(SUB_MENU.CREATE, issueDebitNote);
 		subPolicy = new MenuItem("Apólice Adesão", new Command() {
 
 			@Override
@@ -222,6 +222,62 @@ public abstract class InsurancePolicyOperationsToolBar extends BigBangOperations
 	public void allowValidate(boolean allow) {
 		this.validate.setEnabled(allow);
 	}
+	
+	public void allowVoidPolicy(boolean allow) {
+		this.voidPolicy.setEnabled(allow);
+	}
+
+	public void allowTransferBrokerage(boolean allow) {
+		this.brokerageTransfer.setEnabled(allow);
+	}
+
+	public void allowCreateSubstitutepolicy(boolean allow) {
+		this.substitutePolicy.setEnabled(allow);
+	}
+
+	public void allowRequestClientInfo(boolean allow) {
+		this.clientInfoRequestItem.setEnabled(allow);
+	}
+
+	public void allowRequestAgencyInfo(boolean allow) {
+		this.agencyInfoRequestItem.setEnabled(allow);
+	}
+
+	public void allowCreateInsuredObjectFromClient(boolean allow) {
+		this.clientAsInsuredObject.setEnabled(allow);
+	}
+
+	public void allowTransferManager(boolean allow) {
+		this.managerTransfer.setEnabled(allow);
+	}
+
+	public void allowExecuteDetailedalculations(boolean allow) {
+		this.detailedCalculations.setEnabled(allow);
+	}
+
+	public void allowCreateInfoManagementProcess(boolean allow) {
+		this.infoManagementProcess.setEnabled(allow);
+	}
+
+	public void allowCreateSubPolicy(boolean allow) {
+		this.subPolicy.setEnabled(allow);
+	}
+
+	public void allowIssueDebitNote(boolean allow) {
+		this.issueDebitNote.setEnabled(allow);
+	}
+
+	public void allowCreateNegotiation(boolean allow) {
+		this.negotiation.setEnabled(allow);
+	}
+
+	public void allowCreateHealthExpense(boolean allow) {
+		this.healthExpense.setEnabled(allow);
+	}
+
+	public void allowCreateRiskAnalisys(boolean allow) {
+		this.riskAnalysis.setEnabled(allow);
+	}
 
 	public abstract void onVoidPolicy();
 
@@ -251,7 +307,7 @@ public abstract class InsurancePolicyOperationsToolBar extends BigBangOperations
 
 	public abstract void onCreateSubPolicy();
 
-	public abstract void onIssueCreditNote();
+	public abstract void onIssueDebitNote();
 
 	public abstract void onCreateNegotiation();
 

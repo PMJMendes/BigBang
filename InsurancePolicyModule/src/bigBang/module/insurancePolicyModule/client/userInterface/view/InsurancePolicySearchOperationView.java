@@ -1,5 +1,9 @@
 package bigBang.module.insurancePolicyModule.client.userInterface.view;
 
+import org.gwt.mosaic.ui.client.MessageBox;
+import org.gwt.mosaic.ui.client.MessageBox.ConfirmationCallback;
+
+import bigBang.definitions.client.response.ResponseHandler;
 import bigBang.definitions.shared.Contact;
 import bigBang.definitions.shared.Document;
 import bigBang.definitions.shared.ExerciseStub;
@@ -143,8 +147,8 @@ public class InsurancePolicySearchOperationView extends View implements Insuranc
 			}
 
 			@Override
-			public void onIssueCreditNote() {
-				actionHandler.onActionInvoked(new ActionInvokedEvent<InsurancePolicySearchOperationViewPresenter.Action>(Action.ISSUE_CREDIT_NOTE));
+			public void onIssueDebitNote() {
+				actionHandler.onActionInvoked(new ActionInvokedEvent<InsurancePolicySearchOperationViewPresenter.Action>(Action.ISSUE_DEBIT_NOTE));
 			}
 
 			@Override
@@ -221,11 +225,7 @@ public class InsurancePolicySearchOperationView extends View implements Insuranc
 			@Override
 			public void onValueChange(ValueChangeEvent<InsurancePolicy> event) {
 				InsurancePolicy policy = event.getValue();
-				if(policy == null){
-					childrenPanel.clear();
-				}else{
-					childrenPanel.setPolicy(policy);
-				}
+				childrenPanel.setPolicy(policy);
 			}
 		});
 		slideWrapper.add(mainWrapper);
@@ -237,21 +237,21 @@ public class InsurancePolicySearchOperationView extends View implements Insuranc
 	protected void initializeView() {}
 	
 	@Override
+	public void confirm(String message, final ResponseHandler<Boolean> handler) {
+		MessageBox.confirm("", message, new ConfirmationCallback() {
+			
+			@Override
+			public void onResult(boolean result) {
+				handler.onResponse(result);
+			}
+		});
+	}
+	
+	@Override
 	public HasValueSelectables<InsurancePolicyStub> getList() {
 		return this.searchPanel;
 	}
 	
-	@Override
-	public void selectInsurancePolicy(String policyId) {
-		for(ValueSelectable<InsurancePolicyStub> selectable : this.searchPanel){
-			InsurancePolicyStub policy = selectable.getValue();
-			if(policy.id.equalsIgnoreCase(policyId)){
-				selectable.setSelected(true, false);
-				break;
-			}
-		}
-	}
-
 	@Override
 	public void scrollFormToTop() {
 		this.form.scrollToTop();
@@ -311,86 +311,72 @@ public class InsurancePolicySearchOperationView extends View implements Insuranc
 
 	@Override
 	public void allowVoidPolicy(boolean allow) {
-		// TODO Auto-generated method stub
-		
+		this.toolbar.allowVoidPolicy(allow);
 	}
 
 	@Override
 	public void allowTransferBrokerage(boolean allow) {
-		// TODO Auto-generated method stub
-		
+		this.toolbar.allowTransferBrokerage(allow);
 	}
 
 	@Override
 	public void allowCreateSubstitutePolicy(boolean allow) {
-		// TODO Auto-generated method stub
-		
+		this.toolbar.allowCreateSubstitutepolicy(allow);
 	}
 
 	@Override
 	public void allowRequestClientInfo(boolean allow) {
-		// TODO Auto-generated method stub
-		
+		this.toolbar.allowRequestClientInfo(allow);		
 	}
 
 	@Override
 	public void allowRequestAgencyInfo(boolean allow) {
-		// TODO Auto-generated method stub
-		
+		this.toolbar.allowRequestAgencyInfo(allow);
 	}
 
 	@Override
 	public void allowCreateInsuredObjectFromClient(boolean allow) {
-		// TODO Auto-generated method stub
-		
+		this.toolbar.allowCreateInsuredObjectFromClient(allow);
 	}
 
 	@Override
 	public void allowTransferManager(boolean allow) {
-		// TODO Auto-generated method stub
-		
+		this.toolbar.allowTransferManager(allow);
 	}
 
 	@Override
 	public void allowExecuteDetailedCalculations(boolean allow) {
-		// TODO Auto-generated method stub
-		
+		this.toolbar.allowExecuteDetailedalculations(allow);
 	}
 
 	@Override
 	public void allowCreateInfoManagementProcess(boolean allow) {
-		// TODO Auto-generated method stub
-		
+		this.toolbar.allowCreateInfoManagementProcess(allow);
 	}
 
 	@Override
 	public void allowCreateSubPolicy(boolean allow) {
-		// TODO Auto-generated method stub
-		
+		this.toolbar.allowCreateSubPolicy(allow);
 	}
 
 	@Override
-	public void allowIssueCreditNote(boolean allow) {
-		// TODO Auto-generated method stub
-		
+	public void allowIssueDebitNote(boolean allow) {
+		this.toolbar.allowIssueDebitNote(allow);
 	}
 
 	@Override
 	public void allowCreateNegotiation(boolean allow) {
-		// TODO Auto-generated method stub
-		
+		this.toolbar.allowCreateNegotiation(allow);
 	}
 
 	@Override
 	public void allowCreateHealthExpense(boolean allow) {
-		// TODO Auto-generated method stub
-		
+		this.toolbar.allowCreateHealthExpense(allow);
 	}
 
 	@Override
 	public void allowCreateRiskAnalisys(boolean allow) {
-		// TODO Auto-generated method stub
-		
+		this.toolbar.allowCreateRiskAnalisys(allow);
 	}
 	
 	@Override
@@ -402,18 +388,18 @@ public class InsurancePolicySearchOperationView extends View implements Insuranc
 
 	@Override
 	public HasValue<String> getInsuredObjectTableFilter() {
-		return this.form.getTable().getInsuredObjectFilterValue();
+		return this.form.getInsuredObjectsField();
 	}
 
 	@Override
 	public HasValue<String> getExerciseTableFilter() {
-		return this.form.getTable().getExerciseFilterValue();
+		return this.form.getExercisesField();
 	}
 
 	@Override
-	public TableSection getCurrentTablePage() {
-		return this.form.getTable().getData();
-	}
+	public com.google.gwt.user.client.ui.HasValue<TableSection> getCoverageTable() {
+		return this.form.getTable();
+	};
 
 	//Gets lists
 	

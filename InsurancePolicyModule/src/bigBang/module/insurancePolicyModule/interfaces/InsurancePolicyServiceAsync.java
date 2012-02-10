@@ -4,6 +4,7 @@ import bigBang.definitions.shared.DebitNote;
 import bigBang.definitions.shared.Exercise;
 import bigBang.definitions.shared.InfoOrDocumentRequest;
 import bigBang.definitions.shared.InsurancePolicy;
+import bigBang.definitions.shared.PolicyVoiding;
 import bigBang.definitions.shared.InsurancePolicy.TableSection;
 import bigBang.definitions.shared.InsuredObject;
 import bigBang.definitions.shared.ManagerTransfer;
@@ -11,7 +12,6 @@ import bigBang.definitions.shared.Receipt;
 import bigBang.definitions.shared.Remap;
 import bigBang.library.interfaces.DependentItemSubServiceAsync;
 import bigBang.library.interfaces.SearchServiceAsync;
-import bigBang.module.insurancePolicyModule.shared.PolicyVoiding;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
 

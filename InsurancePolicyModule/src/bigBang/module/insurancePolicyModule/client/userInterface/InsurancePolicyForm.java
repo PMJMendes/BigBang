@@ -210,7 +210,7 @@ public abstract class InsurancePolicyForm extends FormView<InsurancePolicy> {
 
 		exercises = new ExpandableListBoxFormField("Exercício");
 		insuredObjects = new ExpandableListBoxFormField("Unidade de Risco");
-		
+
 		exercises.setEditable(false);
 		insuredObjects.setEditable(false);
 
@@ -317,7 +317,6 @@ public abstract class InsurancePolicyForm extends FormView<InsurancePolicy> {
 
 		clearValue();
 		setValue(this.value);
-		this.table.setFilterable(false);
 	}
 
 	public abstract void onSubLineChanged(String subLineId);
@@ -492,7 +491,7 @@ public abstract class InsurancePolicyForm extends FormView<InsurancePolicy> {
 					}
 				});
 				this.insuredObjects.setTypifiedDataBroker((TypifiedListBroker) policyListBroker);
-				this.insuredObjects.setListId(BigBangConstants.EntityIds.INSURANCE_POLICY_INSURED_OBJECTS+"/"+info.id, new ResponseHandler<Void>() {
+				this.insuredObjects.setListId(BigBangConstants.EntityIds.INSURANCE_POLICY_INSURED_OBJECTS+"/"+policyBroker.getEffectiveId(info.id), new ResponseHandler<Void>() {
 
 					@Override
 					public void onResponse(Void response) {
@@ -598,6 +597,12 @@ public abstract class InsurancePolicyForm extends FormView<InsurancePolicy> {
 		}
 		if(this.table != null){
 			this.table.setReadOnly(readOnly);
+		}
+		if(this.exercises != null) {
+			this.exercises.setReadOnly(false);
+		}
+		if(this.insuredObjects != null) {
+			this.insuredObjects.setReadOnly(false);
 		}
 	}
 

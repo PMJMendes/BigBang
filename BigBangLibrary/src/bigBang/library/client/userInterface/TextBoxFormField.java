@@ -125,7 +125,7 @@ public class TextBoxFormField extends FormField<String> {
 	@Override
 	public String getValue() {
 		String value = super.getValue();
-		if(value != null && value.isEmpty()){
+		if((value != null && value.isEmpty()) || (value != null && value.equals("-"))){
 			value = null;
 		}
 		return value;

@@ -11,13 +11,14 @@ import bigBang.library.client.FieldValidator;
 import bigBang.library.client.FormField;
 import bigBang.library.client.userInterface.TwoKeyTable.Field;
 import bigBang.library.client.userInterface.TwoKeyTable.HeaderCell;
+import bigBang.library.client.userInterface.TwoKeyTable.Type;
 import bigBang.library.client.userInterface.view.View;
 
 public class TwoKeyTableView extends View {
 
 	public class DynFormField extends FormField<String> {
 
-		protected FormField<String> field;
+		protected FormField<?> field;
 		protected Field headerField;
 		protected String coverageId;
 
@@ -71,8 +72,8 @@ public class TwoKeyTableView extends View {
 					this.field = radioField;
 					break;
 				case DATE:
-					//				DatePickerFormField dateField = new DatePickerFormField(field.fieldName);
-					//				this.field = dateField;
+					DatePickerFormField dateField = new DatePickerFormField();
+					this.field = dateField;
 					break;
 				default:
 					break;
@@ -111,14 +112,24 @@ public class TwoKeyTableView extends View {
 			this.field.setFieldWidth(width);
 		}
 
+		@SuppressWarnings("unchecked")
 		@Override
 		public void setValue(String value, boolean fireEvents) {
-			this.field.setValue(value, fireEvents);
+			if(this.headerField.type == Type.DATE){
+				((DatePickerFormField) this.field).setValue(value);
+			}else{
+				((FormField<String>)this.field).setValue(value, fireEvents);
+			}
 		}
 
+		@SuppressWarnings("unchecked")
 		@Override
 		public String getValue() {
-			return this.field.getValue() == null ? null : this.field.getValue().toString();
+			if(this.headerField.type == Type.DATE){	
+				return ((DatePickerFormField)field).getStringValue();
+			}else{
+				return ((FormField<String>)field).getValue();
+			}
 		}
 	}
 
@@ -132,7 +143,7 @@ public class TwoKeyTableView extends View {
 		grid = new Grid();
 		initWidget(grid);
 	}
-	
+
 	@Override
 	protected void initializeView() {
 		return;
@@ -199,7 +210,7 @@ public class TwoKeyTableView extends View {
 	protected void clearFieldMaps(){
 		this.fields.clear();
 	}
-	
+
 	private void putField(String rowId, String columnId,
 			FormField<String> formField) {
 		Map<String, FormField<String>> columnFields = this.fields.get(rowId);
@@ -209,7 +220,7 @@ public class TwoKeyTableView extends View {
 		columnFields.put(columnId, formField);
 		this.fields.put(rowId, columnFields);
 	}
-	
+
 	private FormField<String> getField(String rowId, String columnId){
 		Map<String, FormField<String>> columnFields = this.fields.get(rowId);
 		if(columnFields == null){
@@ -222,21 +233,18 @@ public class TwoKeyTableView extends View {
 	private FormField<String> getFormField(Field value) {
 		return new DynFormField(value);
 	}
-	
+
 	public void setReadOnly(boolean readOnly){
-		
+
 		for(Map<String,FormField<String>> m: this.fields.values()){
-			
+
 			for(FormField<String> field: m.values()){
-				
+
 				field.setReadOnly(readOnly);
-				
+
 			}
-			
+
 		}
-		
-		
-		
 	}
 
 }

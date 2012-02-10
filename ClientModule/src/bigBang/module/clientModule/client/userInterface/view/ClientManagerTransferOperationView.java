@@ -1,14 +1,13 @@
 package bigBang.module.clientModule.client.userInterface.view;
 
-import java.util.ArrayList;
-import java.util.Collection;
-
 import org.gwt.mosaic.ui.client.MessageBox;
 
 import bigBang.definitions.shared.Client;
 import bigBang.definitions.shared.ClientStub;
 import bigBang.definitions.shared.SearchResult;
+import bigBang.definitions.shared.User;
 import bigBang.library.client.Checkable;
+import bigBang.library.client.HasCheckables;
 import bigBang.library.client.HasEditableValue;
 import bigBang.library.client.HasValueSelectables;
 import bigBang.library.client.ValueSelectable;
@@ -20,11 +19,11 @@ import bigBang.library.client.userInterface.BigBangOperationsToolBar;
 import bigBang.library.client.userInterface.FilterableList;
 import bigBang.library.client.userInterface.ListEntry;
 import bigBang.library.client.userInterface.ListHeader;
+import bigBang.library.client.userInterface.presenter.MassManagerTransferViewPresenter.Action;
 import bigBang.library.client.userInterface.view.View;
 import bigBang.module.clientModule.client.userInterface.ClientSearchPanel;
 import bigBang.module.clientModule.client.userInterface.ClientSearchPanelListEntry;
 import bigBang.module.clientModule.client.userInterface.presenter.ClientManagerTransferOperationViewPresenter;
-import bigBang.module.clientModule.client.userInterface.presenter.ClientManagerTransferOperationViewPresenter.Action;
 import bigBang.module.clientModule.shared.ModuleConstants;
 
 import com.google.gwt.user.client.Command;
@@ -33,7 +32,7 @@ import com.google.gwt.user.client.ui.MenuItem;
 import com.google.gwt.user.client.ui.SplitLayoutPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
-public class ClientManagerTransferOperationView extends View implements ClientManagerTransferOperationViewPresenter.Display {
+public class ClientManagerTransferOperationView extends View implements ClientManagerTransferOperationViewPresenter.Display<Client> {
 
 	protected static class SelectedList extends FilterableList<ClientStub> {
 
@@ -183,74 +182,122 @@ public class ClientManagerTransferOperationView extends View implements ClientMa
 	protected void initializeView() {
 		return;
 	}
-
-	@Override
-	public void clear() {
-		this.managerForm.clearInfo();
-		this.searchPanel.clearSelection();
-		for(Checkable c : this.searchPanel) {
-			c.setChecked(false, false);
-		}
-		this.clientForm.clearInfo();
-		this.selectedList.clear();
-	}
-
-	@Override
-	public void registerActionInvokedHandler(
-			ActionInvokedEventHandler<Action> handler) {
-		this.actionHandler = handler;
-	}
-
-	@Override
-	public void setReadOnly(boolean readOnly) {
-		this.managerForm.setReadOnly(readOnly);
-		this.clientForm.setReadOnly(readOnly);
-		this.toolbar.setEditionAvailable(!readOnly);
-		this.searchPanel.setCheckable(false);
-	}
-
-	@Override
-	public HasEditableValue<String> getForm() {
-		return this.managerForm;
-	}
-
-	@Override
-	public boolean isFormValid() {
-		return this.managerForm.validate();
-	}
-
-	@Override
-	public void lockForm(boolean lock) {
-		this.managerForm.lock(lock);
-	}
-
-	@Override
-	public Collection<ClientStub> getSelectedClientStubs() {
-		Collection<ClientStub> result = new ArrayList<ClientStub>();
-		for(ValueSelectable<ClientStub> c : this.selectedList){
-			result.add(c.getValue());
-		}
-		return result;
-	}
-
-	@Override
-	public HasValueSelectables<?> getList() {
-		return this.searchPanel;
-	}
-
-	@Override
-	public HasValueSelectables<?> getSelectedList() {
-		return this.selectedList;
-	}
-
-	@Override
-	public HasValue<Client> getClientForm() {
-		return this.clientForm;
-	}
+//
+//	@Override
+//	public void clear() {
+//		this.managerForm.clearInfo();
+//		this.searchPanel.clearSelection();
+//		for(Checkable c : this.searchPanel) {
+//			c.setChecked(false, false);
+//		}
+//		this.clientForm.clearInfo();
+//		this.selectedList.clear();
+//	}
+//
+//	@Override
+//	public void registerActionInvokedHandler(
+//			ActionInvokedEventHandler<Action> handler) {
+//		this.actionHandler = handler;
+//	}
+//
+//	@Override
+//	public void setReadOnly(boolean readOnly) {
+//		this.managerForm.setReadOnly(readOnly);
+//		this.clientForm.setReadOnly(readOnly);
+//		this.toolbar.setEditionAvailable(!readOnly);
+//		this.searchPanel.setCheckable(false);
+//	}
+//
+//	@Override
+//	public HasEditableValue<String> getForm() {
+//		return this.managerForm;
+//	}
+//
+//	@Override
+//	public boolean isFormValid() {
+//		return this.managerForm.validate();
+//	}
+//
+//	@Override
+//	public void lockForm(boolean lock) {
+//		this.managerForm.lock(lock);
+//	}
+//
+//	@Override
+//	public Collection<ClientStub> getSelectedClientStubs() {
+//		Collection<ClientStub> result = new ArrayList<ClientStub>();
+//		for(ValueSelectable<ClientStub> c : this.selectedList){
+//			result.add(c.getValue());
+//		}
+//		return result;
+//	}
+//
+//	@Override
+//	public HasValueSelectables<?> getList() {
+//		return this.searchPanel;
+//	}
+//
+//	@Override
+//	public HasValueSelectables<?> getSelectedList() {
+//		return this.selectedList;
+//	}
+//
+//	@Override
+//	public HasValue<Client> getClientForm() {
+//		return this.clientForm;
+//	}
 
 	@Override
 	public void showMessage(String string) {
 		MessageBox.info("", string);
+	}
+
+	@Override
+	public void setOperationFilter(String operationId) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public HasEditableValue<User> getNewManagerForm() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public HasEditableValue<Client> getSelectedProcessForm() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public HasValueSelectables<Client> getMainList() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public HasCheckables getCheckableMainList() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void allowTransfer(boolean allow) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void registerActionHandler(ActionInvokedEventHandler<Action> handler) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public HasValueSelectables<Client> getSelectedList() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

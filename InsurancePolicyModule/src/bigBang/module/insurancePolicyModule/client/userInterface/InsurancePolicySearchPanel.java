@@ -41,6 +41,7 @@ public class InsurancePolicySearchPanel extends SearchPanel<InsurancePolicyStub>
 		protected Label numberLabel;
 		protected Label clientLabel;
 		protected Label lineLabel;
+		protected Image statusIcon;
 		
 		public Entry(InsurancePolicyStub policy){
 			super(policy);
@@ -65,8 +66,12 @@ public class InsurancePolicySearchPanel extends SearchPanel<InsurancePolicyStub>
 					container.add(numberLabel);
 					container.add(lineLabel);
 					container.add(clientLabel);
-
+					
 					setWidget(container);
+					
+					statusIcon = new Image();
+					statusIcon.setTitle(value.statusText);
+					setRightWidget(statusIcon);
 				}
 				
 				numberLabel.setText("#" + value.number);
@@ -75,22 +80,20 @@ public class InsurancePolicySearchPanel extends SearchPanel<InsurancePolicyStub>
 				lineLabel.getElement().getStyle().setFontStyle(FontStyle.OBLIQUE);
 
 				Resources resources = GWT.create(Resources.class);
-				Image statusIcon = null;
 				switch(value.statusIcon){
 				case OBSOLETE:
-					statusIcon = new Image(resources.inactivePolicyIcon());
+					statusIcon.setResource(resources.inactivePolicyIcon());
 					break;
 				case PROVISIONAL:
-					statusIcon = new Image(resources.provisionalPolicyIcon());
+					statusIcon.setResource(resources.provisionalPolicyIcon());
 					break;
 				case VALID:
-					statusIcon = new Image(resources.activePolicyIcon());
+					statusIcon.setResource(resources.activePolicyIcon());
 					break;
 				default:
 					return;
 				}
-				statusIcon.setTitle(value.statusText);
-				setRightWidget(statusIcon);
+				
 				return;
 			}
 			throw new RuntimeException("The given policy was invalid (InsurancePolicySearchPanel.Entry)");
@@ -154,6 +157,9 @@ public class InsurancePolicySearchPanel extends SearchPanel<InsurancePolicyStub>
 
 		filtersContainer.clear();
 		filtersContainer.add(filtersPanel);
+
+		InsurancePolicyBroker broker = (InsurancePolicyBroker) DataBrokerManager.staticGetBroker(BigBangConstants.EntityIds.INSURANCE_POLICY);
+		broker.registerClient(this);
 	}
 
 	@Override

@@ -7,6 +7,7 @@ import bigBang.definitions.client.dataAccess.InsuredObjectDataBroker;
 import bigBang.definitions.client.response.ResponseError;
 import bigBang.definitions.client.response.ResponseHandler;
 import bigBang.definitions.shared.BigBangConstants;
+import bigBang.definitions.shared.BigBangPolicyValidationException;
 import bigBang.definitions.shared.Contact;
 import bigBang.definitions.shared.Document;
 import bigBang.definitions.shared.ExerciseStub;
@@ -34,6 +35,8 @@ import bigBang.library.client.history.NavigationHistoryManager;
 import bigBang.library.client.userInterface.presenter.ViewPresenter;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.event.logical.shared.ValueChangeEvent;
+import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.user.client.ui.HasValue;
 import com.google.gwt.user.client.ui.HasWidgets;
 import com.google.gwt.user.client.ui.UIObject;
@@ -60,7 +63,7 @@ ViewPresenter {
 		VALIDATE,
 		EXECUTE_DETAILED_CALCULATIONS,
 		CREATE_INFO_MANAGEMENT_PROCESS,
-		CREATE_SUB_POLICY, ISSUE_CREDIT_NOTE,
+		CREATE_SUB_POLICY, ISSUE_DEBIT_NOTE,
 		CREATE_NEGOTIATION, CREATE_HEALTH_EXPENSE,
 		CREATE_RISK_ANALISYS
 	}
@@ -69,7 +72,6 @@ ViewPresenter {
 		//Listtype filter text
 		HasValueSelectables<InsurancePolicyStub> getList();
 		void removeFromList(ValueSelectable<InsurancePolicyStub> selectable);
-		void selectInsurancePolicy(String policyId);
 
 		//Form
 		HasEditableValue<InsurancePolicy> getForm();
@@ -78,7 +80,7 @@ ViewPresenter {
 
 		HasValue<String> getInsuredObjectTableFilter();
 		HasValue<String> getExerciseTableFilter();
-		TableSection getCurrentTablePage();
+		HasValue<TableSection> getCoverageTable();
 
 		//Permissions
 		void clearAllowedPermissions();
@@ -98,7 +100,7 @@ ViewPresenter {
 		void allowExecuteDetailedCalculations(boolean allow);
 		void allowCreateInfoManagementProcess(boolean allow);
 		void allowCreateSubPolicy(boolean allow);
-		void allowIssueCreditNote(boolean allow);
+		void allowIssueDebitNote(boolean allow);
 		void allowCreateNegotiation(boolean allow);
 		void allowCreateHealthExpense(boolean allow);
 		void allowCreateRiskAnalisys(boolean allow);
@@ -113,13 +115,15 @@ ViewPresenter {
 		//General
 		void registerActionInvokedHandler(ActionInvokedEventHandler<Action> handler);
 		void setSaveModeEnabled(boolean enabled);
-
+		void confirm(String message, ResponseHandler<Boolean> handler);
+		
 		Widget asWidget();
 	}
 
 	protected Display view;
 	protected InsurancePolicyBroker broker;
 	protected InsuredObjectDataBroker insuredObjectBroker;
+	protected String currentInsuredObjectFilterId, currentExerciseFilterId;
 	protected boolean bound = false;
 
 	public InsurancePolicySearchOperationViewPresenter(Display view){
@@ -147,6 +151,8 @@ ViewPresenter {
 
 		if(policyId.isEmpty()){
 			clearView();
+		}else if(this.broker.isTemp(policyId)){
+			showScratchPadPolicy(policyId);
 		}else{
 			showPolicy(policyId);
 		}
@@ -189,7 +195,7 @@ ViewPresenter {
 
 						@Override
 						public void onResponse(InsurancePolicy response) {
-							showScratchPadPolicy(response);
+							NavigationHistoryManager.getInstance().reload();
 						}
 						@Override
 						public void onError(Collection<ResponseError> errors) {
@@ -234,7 +240,8 @@ ViewPresenter {
 					NavigationHistoryManager.getInstance().go(item);
 					break;
 				case CREATE_INSURED_OBJECT:
-					item.setParameter("operation", "createinsuredobject");
+					item.setParameter("operation", "viewinsuredobject");
+					item.setParameter("objectid", "new");
 					NavigationHistoryManager.getInstance().go(item);
 					break;
 				case CREATE_INSURED_OBJECT_FROM_CLIENT:
@@ -266,13 +273,13 @@ ViewPresenter {
 					NavigationHistoryManager.getInstance().go(item);
 					break;
 				case EXECUTE_DETAILED_CALCULATIONS:
-					//TODO
+					onExecuteDetailedCalculations();
 					break;
 				case VALIDATE:
 					onValidatePolicy();
 					break;
-				case ISSUE_CREDIT_NOTE:
-					item.setParameter("operation", "issuecreditnote");
+				case ISSUE_DEBIT_NOTE:
+					item.setParameter("show", "issuecreditnote");
 					NavigationHistoryManager.getInstance().go(item);
 					break;
 				case REQUEST_AGENCY_INFO:
@@ -292,10 +299,23 @@ ViewPresenter {
 					NavigationHistoryManager.getInstance().go(item);
 					break;
 				case VOID_POLICY:
-					item.setParameter("operation", "voidpolicy");
-					NavigationHistoryManager.getInstance().go(item);
+					onVoidPolicy();
 					break;
 				}
+			}
+		});
+		view.getInsuredObjectTableFilter().addValueChangeHandler(new ValueChangeHandler<String>() {
+
+			@Override
+			public void onValueChange(ValueChangeEvent<String> event) {
+				onTableFiltersChanged();
+			}
+		});
+		view.getExerciseTableFilter().addValueChangeHandler(new ValueChangeHandler<String>() {
+
+			@Override
+			public void onValueChange(ValueChangeEvent<String> event) {
+				onTableFiltersChanged();
 			}
 		});
 		view.getContactsList().addSelectionChangedEventHandler(new SelectionChangedEventHandler() {
@@ -367,100 +387,146 @@ ViewPresenter {
 	}
 
 	private void showPolicy(String policyId){
-		for(ValueSelectable<InsurancePolicyStub> entry : view.getList().getAll()){
-			InsurancePolicyStub listPolicy = entry.getValue();
-			if(listPolicy.id.equalsIgnoreCase(policyId) && !entry.isSelected()){
-				view.selectInsurancePolicy(policyId);
-				break;
+		if(broker.isTemp(policyId)){
+			showScratchPadPolicy(policyId);
+		}else{
+
+			this.currentExerciseFilterId = null;
+			this.currentInsuredObjectFilterId = null;
+
+			for(ValueSelectable<InsurancePolicyStub> entry : view.getList().getAll()){
+				InsurancePolicyStub listPolicy = entry.getValue();
+				if(listPolicy.id.equalsIgnoreCase(policyId)){
+					entry.setSelected(true, false);
+				}else if(entry.isSelected()){
+					entry.setSelected(false, false);
+				}
 			}
+
+			this.broker.getPolicy(policyId, new ResponseHandler<InsurancePolicy>() {
+
+				@Override
+				public void onResponse(InsurancePolicy response) {
+					view.allowEdit(PermissionChecker.hasPermission(response, BigBangConstants.OperationIds.InsurancePolicyProcess.UPDATE_POLICY));
+					view.allowDelete(PermissionChecker.hasPermission(response, BigBangConstants.OperationIds.InsurancePolicyProcess.DELETE_POLICY));
+					view.allowCreateExercise(PermissionChecker.hasPermission(response, BigBangConstants.OperationIds.InsurancePolicyProcess.CREATE_EXERCISE));
+					view.allowCreateInsuredObject(PermissionChecker.hasPermission(response, BigBangConstants.OperationIds.InsurancePolicyProcess.CREATE_INSURED_OBJECT));
+					view.allowCreateReceipt(PermissionChecker.hasPermission(response, BigBangConstants.OperationIds.InsurancePolicyProcess.CREATE_RECEIPT));
+					view.allowValidatePolicy(PermissionChecker.hasPermission(response, BigBangConstants.OperationIds.InsurancePolicyProcess.VALIDATE_POLICY));
+					view.allowVoidPolicy(PermissionChecker.hasPermission(response, BigBangConstants.OperationIds.InsurancePolicyProcess.VOID_POLICY));
+					view.allowTransferBrokerage(PermissionChecker.hasPermission(response, BigBangConstants.OperationIds.InsurancePolicyProcess.TRANSFER_BROKERAGE));
+					view.allowCreateSubstitutePolicy(PermissionChecker.hasPermission(response, BigBangConstants.OperationIds.InsurancePolicyProcess.CREATE_SUBSTITUTE_POLICY));
+					view.allowRequestClientInfo(PermissionChecker.hasPermission(response, BigBangConstants.OperationIds.InsurancePolicyProcess.CREATE_CLIENT_INFO_REQUEST));
+					view.allowRequestAgencyInfo(PermissionChecker.hasPermission(response, BigBangConstants.OperationIds.InsurancePolicyProcess.CREATE_COMPANY_INFO_REQUEST));
+					view.allowCreateInsuredObjectFromClient(PermissionChecker.hasPermission(response, BigBangConstants.OperationIds.InsurancePolicyProcess.CREATE_INSURED_OBJECT_FROM_CLIENT));
+					view.allowTransferManager(PermissionChecker.hasPermission(response, BigBangConstants.OperationIds.InsurancePolicyProcess.TRANSFER_MANAGER));
+					view.allowExecuteDetailedCalculations(PermissionChecker.hasPermission(response, BigBangConstants.OperationIds.InsurancePolicyProcess.EXECUTE_DETAILED_CALCULATIONS));
+					view.allowCreateInfoManagementProcess(PermissionChecker.hasPermission(response, BigBangConstants.OperationIds.InsurancePolicyProcess.CREATE_INFO_MANAGEMENT_PROCESS));
+					view.allowCreateSubPolicy(PermissionChecker.hasPermission(response, BigBangConstants.OperationIds.InsurancePolicyProcess.CREATE_SUB_POLICY));
+					view.allowIssueDebitNote(PermissionChecker.hasPermission(response, BigBangConstants.OperationIds.InsurancePolicyProcess.CREATE_DEBIT_NOTE));
+					view.allowCreateNegotiation(PermissionChecker.hasPermission(response, BigBangConstants.OperationIds.InsurancePolicyProcess.CREATE_NEGOTIATION));
+					view.allowCreateHealthExpense(PermissionChecker.hasPermission(response, BigBangConstants.OperationIds.InsurancePolicyProcess.CREATE_HEALTH_EXPENSE));
+					view.allowCreateRiskAnalisys(PermissionChecker.hasPermission(response, BigBangConstants.OperationIds.InsurancePolicyProcess.CREATE_RISK_ANALISYS));
+
+					view.setSaveModeEnabled(false);
+					view.getForm().setReadOnly(true);
+					view.getForm().setValue(response);
+
+					broker.getPage(response.id, view.getInsuredObjectTableFilter().getValue(), view.getExerciseTableFilter().getValue(), new ResponseHandler<InsurancePolicy.TableSection>() {
+
+						@Override
+						public void onResponse(TableSection response) {
+							view.getCoverageTable().setValue(response);
+						}
+
+						@Override
+						public void onError(Collection<ResponseError> errors) {
+							onGetPageFailed();
+						}
+					});
+				}
+
+				@Override
+				public void onError(Collection<ResponseError> errors) {
+					onGetPolicyFailed();
+				}
+			});
+
 		}
-
-		this.broker.getPolicy(policyId, new ResponseHandler<InsurancePolicy>() {
-
-			@Override
-			public void onResponse(InsurancePolicy response) {
-				view.allowEdit(PermissionChecker.hasPermission(response, BigBangConstants.OperationIds.InsurancePolicyProcess.UPDATE_POLICY));
-				view.allowDelete(PermissionChecker.hasPermission(response, BigBangConstants.OperationIds.InsurancePolicyProcess.DELETE_POLICY));
-				view.allowCreateExercise(PermissionChecker.hasPermission(response, BigBangConstants.OperationIds.InsurancePolicyProcess.CREATE_EXERCISE));
-				view.allowCreateInsuredObject(PermissionChecker.hasPermission(response, BigBangConstants.OperationIds.InsurancePolicyProcess.CREATE_INSURED_OBJECT));
-				view.allowCreateReceipt(PermissionChecker.hasPermission(response, BigBangConstants.OperationIds.InsurancePolicyProcess.CREATE_RECEIPT));
-				view.allowValidatePolicy(PermissionChecker.hasPermission(response, BigBangConstants.OperationIds.InsurancePolicyProcess.VALIDATE_POLICY));
-				view.allowVoidPolicy(PermissionChecker.hasPermission(response, BigBangConstants.OperationIds.InsurancePolicyProcess.VOID_POLICY));
-				view.allowTransferBrokerage(PermissionChecker.hasPermission(response, BigBangConstants.OperationIds.InsurancePolicyProcess.TRANSFER_BROKERAGE));
-				view.allowCreateSubstitutePolicy(PermissionChecker.hasPermission(response, BigBangConstants.OperationIds.InsurancePolicyProcess.CREATE_SUBSTITUTE_POLICY));
-				view.allowRequestClientInfo(PermissionChecker.hasPermission(response, BigBangConstants.OperationIds.InsurancePolicyProcess.CREATE_CLIENT_INFO_REQUEST));
-				view.allowRequestAgencyInfo(PermissionChecker.hasPermission(response, BigBangConstants.OperationIds.InsurancePolicyProcess.CREATE_COMPANY_INFO_REQUEST));
-				view.allowCreateInsuredObjectFromClient(PermissionChecker.hasPermission(response, BigBangConstants.OperationIds.InsurancePolicyProcess.CREATE_INSURED_OBJECT_FROM_CLIENT));
-				view.allowTransferManager(PermissionChecker.hasPermission(response, BigBangConstants.OperationIds.InsurancePolicyProcess.TRANSFER_MANAGER));
-				view.allowExecuteDetailedCalculations(PermissionChecker.hasPermission(response, BigBangConstants.OperationIds.InsurancePolicyProcess.EXECUTE_DETAILED_CALCULATIONS));
-				view.allowCreateInfoManagementProcess(PermissionChecker.hasPermission(response, BigBangConstants.OperationIds.InsurancePolicyProcess.CREATE_INFO_MANAGEMENT_PROCESS));
-				view.allowCreateSubPolicy(PermissionChecker.hasPermission(response, BigBangConstants.OperationIds.InsurancePolicyProcess.CREATE_SUB_POLICY));
-				view.allowIssueCreditNote(PermissionChecker.hasPermission(response, BigBangConstants.OperationIds.InsurancePolicyProcess.CREATE_CREDIT_NOTE));
-				view.allowCreateNegotiation(PermissionChecker.hasPermission(response, BigBangConstants.OperationIds.InsurancePolicyProcess.CREATE_NEGOTIATION));
-				view.allowCreateHealthExpense(PermissionChecker.hasPermission(response, BigBangConstants.OperationIds.InsurancePolicyProcess.CREATE_HEALTH_EXPENSE));
-				view.allowCreateRiskAnalisys(PermissionChecker.hasPermission(response, BigBangConstants.OperationIds.InsurancePolicyProcess.CREATE_RISK_ANALISYS));
-
-				view.setSaveModeEnabled(false);
-				view.getForm().setValue(response);
-				view.getForm().setReadOnly(true);
-			}
-
-			@Override
-			public void onError(Collection<ResponseError> errors) {
-				onGetPolicyFailed();
-			}
-		});
 	}
 
-	private void showScratchPadPolicy(InsurancePolicy policy){
-		view.clearAllowedPermissions();
+	private void showScratchPadPolicy(final String policyId){
+		if(broker.isTemp(policyId)){
+			broker.getPolicy(policyId, new ResponseHandler<InsurancePolicy>() {
 
-		boolean hasPermissions = true; //TODO IMPORTANT FJVC
-		view.allowEdit(hasPermissions);
-		view.allowDelete(hasPermissions);
-		view.allowDelete(false);
-		view.allowCreateExercise(false);
-		view.allowCreateInsuredObject(false);
-		view.allowCreateReceipt(false);
-		view.allowVoidPolicy(false);
-		view.allowTransferBrokerage(false);
-		view.allowCreateSubstitutePolicy(false);
-		view.allowRequestClientInfo(false);
-		view.allowRequestAgencyInfo(false);
-		view.allowCreateInsuredObjectFromClient(false);
-		view.allowTransferManager(false);
-		view.allowExecuteDetailedCalculations(false);
-		view.allowCreateInfoManagementProcess(false);
-		view.allowCreateSubPolicy(false);
-		view.allowIssueCreditNote(false);
-		view.allowCreateNegotiation(false);
-		view.allowCreateHealthExpense(false);
-		view.allowCreateRiskAnalisys(false);
+				@Override
+				public void onResponse(InsurancePolicy response) {
+					view.clearAllowedPermissions();
 
-		view.setSaveModeEnabled(true);
-		view.getForm().setValue(policy);
-		view.getForm().setReadOnly(false);
+					boolean hasPermissions = true; //TODO IMPORTANT FJVC
+					view.allowEdit(hasPermissions);
+					view.allowDelete(hasPermissions);
+					view.allowDelete(false);
+					view.allowCreateExercise(true);
+					view.allowCreateInsuredObject(true);
+					view.allowCreateReceipt(false);
+					view.allowVoidPolicy(false);
+					view.allowTransferBrokerage(false);
+					view.allowCreateSubstitutePolicy(false);
+					view.allowRequestClientInfo(false);
+					view.allowRequestAgencyInfo(false);
+					view.allowCreateInsuredObjectFromClient(false);
+					view.allowTransferManager(false);
+					view.allowExecuteDetailedCalculations(false);
+					view.allowCreateInfoManagementProcess(false);
+					view.allowCreateSubPolicy(false);
+					view.allowIssueDebitNote(false);
+					view.allowCreateNegotiation(false);
+					view.allowCreateHealthExpense(false);
+					view.allowCreateRiskAnalisys(false);
+
+					view.setSaveModeEnabled(true);
+					view.getForm().setValue(response);
+					view.getForm().setReadOnly(false);
+				}
+
+				@Override
+				public void onError(Collection<ResponseError> errors) {
+					onOpenPolicyResourceFailed();
+					broker.closePolicyResource(policyId, new ResponseHandler<Void>() {
+
+						@Override
+						public void onResponse(Void response) {
+							NavigationHistoryManager.getInstance().reload();
+						}
+
+						@Override
+						public void onError(Collection<ResponseError> errors) {
+							onClosePolicyResourceFailed();
+						}
+					});
+				}
+			});
+		}else{
+			showPolicy(policyId);
+		}
 	}
 
 
 	private void savePolicy(final InsurancePolicy policy){
-		this.broker.updatePolicy(policy, new ResponseHandler<InsurancePolicy>() {
+		broker.updatePolicy(policy, new ResponseHandler<InsurancePolicy>() {
 
 			@Override
-			public void onResponse(final InsurancePolicy policyResponse) {
-
-				broker.saveCoverageDetailsPage(policy.id, view.getInsuredObjectTableFilter().getValue(), view.getExerciseTableFilter().getValue(), view.getCurrentTablePage(), new ResponseHandler<TableSection>() {
+			public void onResponse(InsurancePolicy response) {
+				broker.saveCoverageDetailsPage(policy.id, currentInsuredObjectFilterId, currentExerciseFilterId, view.getCoverageTable().getValue(), new ResponseHandler<TableSection>(){
 
 					@Override
 					public void onResponse(TableSection response) {
-						broker.commitPolicy(policyResponse, new ResponseHandler<InsurancePolicy>() {
+						broker.commitPolicy(policy, new ResponseHandler<InsurancePolicy>() {
 
 							@Override
 							public void onResponse(InsurancePolicy response) {
-								NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
-								item.setParameter("id", response.id);
-								NavigationHistoryManager.getInstance().go(item);
-								EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Apólice guardada com sucesso."), TYPE.TRAY_NOTIFICATION));
+								onSavePolicySuccess();
 							}
 
 							@Override
@@ -474,6 +540,7 @@ ViewPresenter {
 					public void onError(Collection<ResponseError> errors) {
 						onSavePolicyFailed();
 					}
+
 				});
 			}
 
@@ -485,22 +552,52 @@ ViewPresenter {
 	}
 
 	private void onValidatePolicy(){
-		broker.validatePolicy(view.getForm().getValue().id, new ResponseHandler<Void>() {
+		try {
+			broker.validatePolicy(view.getForm().getValue().id, new ResponseHandler<Void>() {
 
-			@Override
-			public void onResponse(Void response) {
-				onValidationSuccess();
-				NavigationHistoryManager.getInstance().reload();
-			}
-
-			@Override
-			public void onError(Collection<ResponseError> errors) {
-				for(ResponseError error : errors){
-					onValidationFailed(error.description.replaceAll("(\r\n|\n)", "<br />"));
-					break;
+				@Override
+				public void onResponse(Void response) {
+					onValidationSuccess();
+					NavigationHistoryManager.getInstance().reload();
 				}
-			}
-		});
+
+				@Override
+				public void onError(Collection<ResponseError> errors) {
+					onValidationFailed("");
+				}
+			});
+		} catch (BigBangPolicyValidationException e) {
+			onValidationFailed(e.getMessage().replaceAll("(\r\n|\n)", "<br />"));
+		}
+	}
+
+	private void onExecuteDetailedCalculations(){
+		InsurancePolicy policy =  view.getForm().getValue();
+		String policyId = policy == null ? null : policy.id;
+
+		if(policyId != null) {
+			broker.executeDetailedCalculations(policyId, new ResponseHandler<InsurancePolicy>() {
+
+				@Override
+				public void onResponse(InsurancePolicy response) {
+					onExecuteDetailedCalculationsSuccess();
+					NavigationHistoryManager.getInstance().reload();
+				}
+
+				@Override
+				public void onError(Collection<ResponseError> errors) {
+					onExecuteDetailedCalculationsFailed();
+				}
+			});
+		}else {
+			onGetPolicyFailed();
+		}
+	}
+	
+	private void onVoidPolicy(){
+		NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
+		item.setParameter("show", "voidpolicy");
+		NavigationHistoryManager.getInstance().go(item);
 	}
 
 	private void showContact(Contact contact) {
@@ -511,12 +608,69 @@ ViewPresenter {
 		//TODO
 	}
 
+	private void onTableFiltersChanged(){
+		final String policyId = view.getForm().getValue().id;
+		final String objectFilterId = view.getInsuredObjectTableFilter().getValue();
+		final String exerciseFilterId =  view.getExerciseTableFilter().getValue();
+
+		if(broker.isTemp(policyId)){
+			broker.saveCoverageDetailsPage(policyId, currentInsuredObjectFilterId, currentExerciseFilterId, view.getCoverageTable().getValue(), new ResponseHandler<InsurancePolicy.TableSection>() {
+
+				@Override
+				public void onResponse(TableSection response) {
+					broker.getPage(policyId, objectFilterId, exerciseFilterId, new ResponseHandler<InsurancePolicy.TableSection>() {
+
+						@Override
+						public void onResponse(TableSection response) {
+							view.getCoverageTable().setValue(response);
+							currentInsuredObjectFilterId = objectFilterId;
+							currentExerciseFilterId = exerciseFilterId;
+						}
+
+						@Override
+						public void onError(Collection<ResponseError> errors) {
+							onGetPageFailed();
+						}
+					});
+				}
+
+				@Override
+				public void onError(Collection<ResponseError> errors) {
+					onSavePolicyFailed();
+				}
+			});
+		}else{
+			broker.getPage(policyId, objectFilterId, exerciseFilterId, new ResponseHandler<InsurancePolicy.TableSection>() {
+
+				@Override
+				public void onResponse(TableSection response) {
+					view.getCoverageTable().setValue(response);
+					currentInsuredObjectFilterId = objectFilterId;
+					currentExerciseFilterId = exerciseFilterId;
+				}
+
+				@Override
+				public void onError(Collection<ResponseError> errors) {
+					onGetPageFailed();
+				}
+			});
+		}
+	}
+
 	private void onValidationSuccess(){
 		EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "A apólice foi validada com sucesso"), TYPE.TRAY_NOTIFICATION));
 	}
 
 	private void onValidationFailed(String message){
 		EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "A apólice falhou a validação :<br><br>" + message), TYPE.ALERT_NOTIFICATION));
+	}
+
+	private void onExecuteDetailedCalculationsSuccess(){
+		EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Os cálculos detalhados foram executados com sucesso"), TYPE.TRAY_NOTIFICATION));
+	}
+
+	private void onExecuteDetailedCalculationsFailed(){
+		EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não foi possível executar os cálculos detalhados"), TYPE.ALERT_NOTIFICATION));
 	}
 
 	private void onGetPolicyFailed(){
@@ -561,6 +715,17 @@ ViewPresenter {
 		item.setParameter("operation", "history");
 		item.setParameter("historyitemid", historyItem.id);
 		NavigationHistoryManager.getInstance().go(item);
+	}
+
+	private void onGetPageFailed(){
+		view.getInsuredObjectTableFilter().setValue(currentInsuredObjectFilterId, false);
+		view.getExerciseTableFilter().setValue(currentExerciseFilterId, false);
+		EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não é possível apresentar a página na tabela de coberturas"), TYPE.ALERT_NOTIFICATION));
+	}
+
+	private void onSavePolicySuccess(){
+		EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Apólice guardada com sucesso"), TYPE.TRAY_NOTIFICATION));
+		NavigationHistoryManager.getInstance().reload();
 	}
 
 }

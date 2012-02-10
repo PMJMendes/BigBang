@@ -182,10 +182,10 @@ implements InsuredObjectDataBroker {
 	public void updateInsuredObject(InsuredObject object,
 			final ResponseHandler<InsuredObject> handler) {
 		String id = getEffectiveId(object.id);
-		String ownerId = getInsurancePolicyBroker().getEffectiveId(object.ownerId);
-		object.ownerId = ownerId;
 		if(isTemp(id)){
+			String tempId = object.id;
 			object.id = id;
+
 			policyService.updateObjectInPad(object, new BigBangAsyncCallback<InsuredObject>() {
 
 				@Override
@@ -207,6 +207,7 @@ implements InsuredObjectDataBroker {
 					super.onFailure(caught);
 				}
 			});
+			object.id = tempId;
 		}else{
 			handler.onError(new String[]{
 					new String("Cannot update insured object in policy not in editable mode")	
@@ -217,47 +218,48 @@ implements InsuredObjectDataBroker {
 	@Override
 	public void deleteInsuredObject(String objectId,
 			final ResponseHandler<Void> handler) {
-//		objectId = getEffectiveId(objectId);
-//		getInsuredObject(objectId, new ResponseHandler<InsuredObject>() {
-//
-//			@Override
-//			public void onResponse(final InsuredObject response) {
-//				String ownerId = response.ownerId;
-//				if(getInsurancePolicyBroker().isTemp(ownerId)){
-//					policyService.deleteObjectInPad(response.id, new BigBangAsyncCallback<Void>() {
-//
-//						@Override
-//						public void onSuccess(Void result) {
-//							incrementDataVersion();
-//							for(DataBrokerClient<InsuredObject> client : clients) {
-//								((InsuredObjectDataBrokerClient)client).removeInsuredObject(response.id);
-//								((InsuredObjectDataBrokerClient)client).setDataVersionNumber(getDataElementId(), getCurrentDataVersion());
-//							}
-//							handler.onResponse(null);
-//						}
-//
-//						@Override
-//						public void onFailure(Throwable caught) {
-//							handler.onError(new String[]{
-//									new String("Could not delete the object")	
-//							});
-//							super.onFailure(caught);
-//						}
-//					});				
-//				}else{
-//					handler.onError(new String[]{
-//							new String("Cannot delete the object")	
-//					});
-//				}
-//			}
-//
-//			@Override
-//			public void onError(Collection<ResponseError> errors) {
-//				handler.onError(new String[]{
-//						new String("Could not find the object")	
-//				});
-//			}
-//		});
+		objectId = getEffectiveId(objectId);
+		getInsuredObject(objectId, new ResponseHandler<InsuredObject>() {
+
+			@Override
+			public void onResponse(final InsuredObject response) {
+				String ownerId = response.ownerId;
+				if(getInsurancePolicyBroker().isTemp(ownerId)){
+					String tempId = getEffectiveId(response.id);
+					policyService.deleteObjectInPad(tempId, new BigBangAsyncCallback<Void>() {
+
+						@Override
+						public void onSuccess(Void result) {
+							incrementDataVersion();
+							for(DataBrokerClient<InsuredObject> client : clients) {
+								((InsuredObjectDataBrokerClient)client).removeInsuredObject(response.id);
+								((InsuredObjectDataBrokerClient)client).setDataVersionNumber(getDataElementId(), getCurrentDataVersion());
+							}
+							handler.onResponse(null);
+						}
+
+						@Override
+						public void onFailure(Throwable caught) {
+							handler.onError(new String[]{
+									new String("Could not delete the object")	
+							});
+							super.onFailure(caught);
+						}
+					});				
+				}else{
+					handler.onError(new String[]{
+							new String("Cannot delete the object")	
+					});
+				}
+			}
+
+			@Override
+			public void onError(Collection<ResponseError> errors) {
+				handler.onError(new String[]{
+						new String("Could not find the object")	
+				});
+			}
+		});
 	}
 
 	@Override

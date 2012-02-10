@@ -6,10 +6,12 @@ import java.util.Map;
 import bigBang.definitions.shared.BigBangConstants;
 import bigBang.definitions.shared.InsurancePolicy.ColumnHeader;
 import bigBang.definitions.shared.InsurancePolicy.Coverage;
+import bigBang.definitions.shared.InsurancePolicy.FieldType;
 import bigBang.definitions.shared.InsurancePolicy.TableSection;
 import bigBang.definitions.shared.InsurancePolicy.TableSection.TableField;
 import bigBang.library.client.FieldValidator;
 import bigBang.library.client.FormField;
+import bigBang.library.client.userInterface.DatePickerFormField;
 import bigBang.library.client.userInterface.ExpandableListBoxFormField;
 import bigBang.library.client.userInterface.RadioButtonFormField;
 import bigBang.library.client.userInterface.TextBoxFormField;
@@ -17,24 +19,26 @@ import bigBang.library.client.userInterface.view.View;
 
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
+import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.user.client.ui.Grid;
 import com.google.gwt.user.client.ui.HasValue;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
-import com.google.gwt.user.client.ui.Widget;
 
-public class PolicyFormTable extends View {
+public class PolicyFormTable extends View implements HasValue<TableSection> {
 
 	protected class Field extends FormField<String> {
 		public String id;
-		protected FormField<String> field;
+		protected FormField<?> field;
 		protected TableField tableField;
 		protected String coverageId;
+		protected FieldType type;
 
 		public Field(TableField tableField, ColumnHeader columnDefinition) {
 			super();
 			this.id = tableField.fieldId;
 			this.tableField = tableField;
+			this.type = columnDefinition.type;
 
 			switch(columnDefinition.type) {
 			case LIST:
@@ -79,9 +83,9 @@ public class PolicyFormTable extends View {
 				this.field = radioField;
 				break;
 			case DATE:
-				//				DatePickerFormField dateField = new DatePickerFormField();
-				//				this.field = dateField;
-				//				break;
+				DatePickerFormField dateField = new DatePickerFormField();
+				this.field = dateField;
+				break;
 			default:
 				break;
 			}
@@ -113,14 +117,24 @@ public class PolicyFormTable extends View {
 			this.field.setFieldWidth(width);
 		}
 
+		@SuppressWarnings("unchecked")
 		@Override
 		public void setValue(String value, boolean fireEvents) {
-			this.field.setValue(value, fireEvents);
+			if(this.type == FieldType.DATE){
+				((DatePickerFormField) this.field).setValue(value);
+			}else{
+				((FormField<String>)this.field).setValue(value, fireEvents);
+			}
 		}
 
+		@SuppressWarnings("unchecked")
 		@Override
 		public String getValue() {
-			return this.field.getValue();
+			if(this.type == FieldType.DATE){
+				return ((DatePickerFormField) this.field).getStringValue();
+			}else{
+				return ((FormField<String>)this.field).getValue();
+			}
 		}
 	}
 
@@ -128,9 +142,6 @@ public class PolicyFormTable extends View {
 	protected static final int DATA_COLUMN_OFFSET = 2;
 	protected static final int DATA_ROW_OFFSET = 1;
 
-	protected ExpandableListBoxFormField insuredObjectField;
-	protected ExpandableListBoxFormField exerciseField;
-	protected Widget filtersWrapper;
 	protected boolean forNewPolicy;
 
 	protected Coverage[] coverages;	
@@ -164,13 +175,6 @@ public class PolicyFormTable extends View {
 
 		HorizontalPanel filtersWrapper = new HorizontalPanel();
 		wrapper.add(filtersWrapper);
-		this.filtersWrapper = filtersWrapper;
-
-		this.insuredObjectField = new ExpandableListBoxFormField("Unidade de Risco");
-		filtersWrapper.add(insuredObjectField);
-
-		this.exerciseField = new ExpandableListBoxFormField("Exercício");
-		filtersWrapper.add(exerciseField);
 
 		grid = new Grid();
 		wrapper.add(grid);
@@ -178,25 +182,9 @@ public class PolicyFormTable extends View {
 
 		this.setReadOnly(false);
 	}
-	
+
 	@Override
 	protected void initializeView() {}
-
-	public HasValue<String> getInsuredObjectFilterValue(){
-		return this.insuredObjectField;
-	}
-
-	public HasValue<String> getExerciseFilterValue(){
-		return this.exerciseField;
-	}
-
-	public void setInsuredObjectFilterValue(String value){
-		this.insuredObjectField.setValue(value);
-	}
-
-	public void setExerciseFilterValue(String value) {
-		this.exerciseField.setValue(value);
-	}
 
 	public void setColumnDefinitions(ColumnHeader[] columns) {
 		clear();
@@ -215,6 +203,12 @@ public class PolicyFormTable extends View {
 
 	public void clear() {
 		//this.columnDefinitions = new 
+	}
+	
+	public void clearFields(){
+		for(String key : this.tableFields.keySet()){
+			this.tableFields.get(key).clear();
+		}
 	}
 
 	public void setCoverages(Coverage[] coverages){
@@ -269,6 +263,7 @@ public class PolicyFormTable extends View {
 			}
 		});
 		this.grid.setWidget(rowIndex, 0, radio);
+		radio.setReadOnly(this.readOnly);
 		this.grid.setText(rowIndex, 1, coverage.coverageName);
 		this.radioFields[rfIndex] = radio;
 	}
@@ -277,19 +272,21 @@ public class PolicyFormTable extends View {
 		if(section == null){return;}
 		this.section = section;
 
+		clearFields();
+		
 		for(int i = 0; i < section.data.length; i++) {
 			TableField tableField = section.data[i];
 			ColumnHeader column = columnDefinitions[tableField.columnIndex];
 			int coverageIndex = coverageIndexes.get(tableField.coverageId);
 
 			Field field = new Field(tableField, column);
-			field.setReadOnly(this.isReadOnly());
 			field.setValue(tableField.value);
 			Map<String, Field> coverageColumns = this.tableFields.get(tableField.coverageId);
 			coverageColumns.put(tableField.columnIndex+"", field);
 
 			field.setWidth("100%");
 			field.setFieldWidth("100%");
+			field.setReadOnly(readOnly);
 			this.grid.setWidget(DATA_ROW_OFFSET + coverageIndex, DATA_COLUMN_OFFSET + tableField.columnIndex, field);
 		}
 		refreshFields();
@@ -320,7 +317,7 @@ public class PolicyFormTable extends View {
 				nullifyCoverageAtIndex(i);
 			}else if(value.equalsIgnoreCase("0")){
 				disableCoverageAtIndex(i);
-			}else if(value.equalsIgnoreCase("1")){
+			}else if(value.equalsIgnoreCase("1") && !readOnly){
 				enableCoverageAtIndex(i);
 			}
 		}
@@ -348,25 +345,30 @@ public class PolicyFormTable extends View {
 	}
 
 	protected void nullifyCoverageAtIndex(int index){
-		disableCoverageAtIndex(index);
-		this.radioFields[index].setValue("", false);
-	}
+		this.radioFields[index].setValue(null, false);
+		Coverage coverage = coverages[index];
+		Map<String, Field> fields = this.tableFields.get(coverage.coverageId);
 
-	public void setFilterable(boolean filterable) {
-		this.filtersWrapper.setVisible(filterable);
+		for(Field f : fields.values()) {
+			f.clear();
+			f.setReadOnly(true);
+		}
 	}
 
 	public void setReadOnly(boolean readOnly) {
-		this.insuredObjectField.setReadOnly(readOnly);
-		this.exerciseField.setReadOnly(readOnly);
 		if(this.radioFields != null){
-			for(RadioButtonFormField f : this.radioFields){
+			
+			for(int i = 0; i < this.radioFields.length; i++) {
+				RadioButtonFormField f = this.radioFields[i];
 				f.setReadOnly(readOnly);
-			}
-		}
-		for(Map<String, Field> cf : this.tableFields.values()){
-			for(Field f : cf.values()){
-				f.setReadOnly(readOnly);
+				
+				boolean coverageIsEnabled = f.getValue() != null && f.getValue().equals("1");
+				
+				Coverage coverage = this.coverages[i];
+				
+				for(Field cf : this.tableFields.get(coverage.coverageId).values()){
+					cf.setReadOnly(!(!readOnly && coverageIsEnabled));
+				}
 			}
 		}
 		this.readOnly = readOnly;
@@ -374,6 +376,31 @@ public class PolicyFormTable extends View {
 
 	public boolean isReadOnly(){
 		return this.readOnly;
+	}
+
+	@Override
+	public HandlerRegistration addValueChangeHandler(
+			ValueChangeHandler<TableSection> handler) {
+		return addHandler(handler, ValueChangeEvent.getType());
+	}
+
+	@Override
+	public TableSection getValue() {
+		return getData();
+	}
+
+	@Override
+	public void setValue(TableSection value) {
+		setValue(value, true);
+	}
+
+	@Override
+	public void setValue(TableSection value, boolean fireEvents) {
+		TableSection oldValue = getValue();
+		setData(value);
+		if(fireEvents){
+			ValueChangeEvent.fireIfNotEqual(this, oldValue, value);
+		}
 	}
 
 }

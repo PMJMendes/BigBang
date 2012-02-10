@@ -1,11 +1,13 @@
 package bigBang.module.insurancePolicyModule.interfaces;
 
+import bigBang.definitions.shared.BigBangPolicyValidationException;
 import bigBang.definitions.shared.DebitNote;
 import bigBang.definitions.shared.Exercise;
 import bigBang.definitions.shared.InfoOrDocumentRequest;
 import bigBang.definitions.shared.InsurancePolicy;
 import bigBang.definitions.shared.InsuredObject;
 import bigBang.definitions.shared.ManagerTransfer;
+import bigBang.definitions.shared.PolicyVoiding;
 import bigBang.definitions.shared.Receipt;
 import bigBang.definitions.shared.Remap;
 import bigBang.library.interfaces.DependentItemSubService;
@@ -14,8 +16,6 @@ import bigBang.library.shared.BigBangException;
 import bigBang.library.shared.CorruptedPadException;
 import bigBang.library.shared.SessionExpiredException;
 import bigBang.module.insurancePolicyModule.shared.BigBangPolicyCalculationException;
-import bigBang.module.insurancePolicyModule.shared.BigBangPolicyValidationException;
-import bigBang.module.insurancePolicyModule.shared.PolicyVoiding;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;

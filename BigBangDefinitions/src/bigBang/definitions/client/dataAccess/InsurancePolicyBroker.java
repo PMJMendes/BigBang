@@ -3,8 +3,11 @@ package bigBang.definitions.client.dataAccess;
 import java.util.Collection;
 
 import bigBang.definitions.client.response.ResponseHandler;
+import bigBang.definitions.shared.DebitNote;
 import bigBang.definitions.shared.InsurancePolicy;
+import bigBang.definitions.shared.InsurancePolicy.TableSection;
 import bigBang.definitions.shared.InsurancePolicyStub;
+import bigBang.definitions.shared.PolicyVoiding;
 import bigBang.definitions.shared.Receipt;
 
 public interface InsurancePolicyBroker extends DataBrokerInterface<InsurancePolicy> {
@@ -36,11 +39,19 @@ public interface InsurancePolicyBroker extends DataBrokerInterface<InsurancePoli
 	public SearchDataBroker<InsurancePolicyStub> getSearchBroker();
 
 	public void discardTemp(String policyId);
+	
+	public void getPage(String policyId, String insuredObejctId, String exerciseId, ResponseHandler<TableSection> handler);
 
-	void validatePolicy(String policyId, ResponseHandler<Void> handler);
+	void validatePolicy(String policyId, ResponseHandler<Void> handler) throws bigBang.definitions.shared.BigBangPolicyValidationException;
+	
+	void executeDetailedCalculations(String policyId, ResponseHandler<InsurancePolicy> handler);
+	
+	void voidPolicy(PolicyVoiding voiding,	ResponseHandler<InsurancePolicy> responseHandler);
+	
+	void issueDebitNote(String policyId, DebitNote note, ResponseHandler<Void> handler);
 
 	public String getEffectiveId(String ownerId);
 
 	public String getFinalMapping(String ownerId);
-	
+
 }

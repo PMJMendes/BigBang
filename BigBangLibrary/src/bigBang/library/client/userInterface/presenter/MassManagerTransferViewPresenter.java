@@ -69,9 +69,8 @@ public abstract class MassManagerTransferViewPresenter<T> implements ViewPresent
 
 		if(ownerId.isEmpty()){
 			clearView();
-			onGetOwnerFailed();
 		}else{
-			showMassManagerTransferCreationScreen(ownerId);
+			showMassManagerTransferCreationScreen();
 		}
 	}
 
@@ -84,11 +83,12 @@ public abstract class MassManagerTransferViewPresenter<T> implements ViewPresent
 			public void onActionInvoked(ActionInvokedEvent<Action> action) {
 				switch(action.getAction()){
 				case TRANSFER:
+					String newManagerId = view.getNewManagerForm().getInfo().id;
 					ArrayList<T> affectedProcesses = new ArrayList<T>();
 					for(ValueSelectable<T> entry : view.getSelectedList().getAll()){
 						affectedProcesses.add(entry.getValue());
 					}
-					onTransfer(ownerId, affectedProcesses);
+					onTransfer(newManagerId, affectedProcesses);
 					break;
 				case CANCEL:
 					onCancel();
@@ -106,8 +106,8 @@ public abstract class MassManagerTransferViewPresenter<T> implements ViewPresent
 		view.getNewManagerForm().setReadOnly(true);
 	}
 
-	private void showMassManagerTransferCreationScreen(String ownerId){
-		checkOwnerPermission(ownerId, new ResponseHandler<Boolean>() {
+	private void showMassManagerTransferCreationScreen(){
+		checkUserPermission(new ResponseHandler<Boolean>() {
 
 			@Override
 			public void onResponse(Boolean response) {
@@ -121,19 +121,21 @@ public abstract class MassManagerTransferViewPresenter<T> implements ViewPresent
 
 			@Override
 			public void onError(Collection<ResponseError> errors) {
-				onGetOwnerFailed();
+				onUserLacksPermission();
 			}
 		});
 	}
 
-	protected abstract void onTransfer(String ownerId, Collection<T> affectedProcesses);
+	protected abstract void onTransfer(String newManagerId, Collection<T> affectedProcesses);
 
 	protected abstract void onCancel();
 	
-	protected abstract void checkOwnerPermission(String ownerId, ResponseHandler<Boolean> handler);
-
-	protected abstract void onGetOwnerFailed();
+	protected abstract void checkUserPermission(ResponseHandler<Boolean> handler);
 
 	protected abstract void onUserLacksPermission();
+	
+	protected abstract void onTransferSuccess();
+	
+	protected abstract void onTransferFailed();
 	
 }

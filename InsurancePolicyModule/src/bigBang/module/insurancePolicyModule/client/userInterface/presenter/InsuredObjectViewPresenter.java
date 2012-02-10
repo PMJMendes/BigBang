@@ -112,6 +112,7 @@ public class InsuredObjectViewPresenter implements ViewPresenter {
 					NavigationHistoryManager.Util.getInstance().reload();
 					break;
 				case DELETE:
+					onDelete();
 					break;
 				}
 			}
@@ -140,31 +141,131 @@ public class InsuredObjectViewPresenter implements ViewPresenter {
 
 					@Override
 					public void onResponse(InsurancePolicy policy) {
-						if(PermissionChecker.hasPermission(policy, BigBangConstants.OperationIds.InsurancePolicyProcess.UPDATE_POLICY)){
-//							if(!policyBroker.isTemp(policy)){
-////								policyBroker.openPolicyResource(policy, new ResponseHandler<InsurancePolicy>() { //TODO
-////
-////									@Override
-////									public void onResponse(
-////											InsurancePolicy response) {
-////										view.setSaveModeEnabled(true);
-////										view.getInsuredObjectForm().setReadOnly(false);
-////										view.allowEdit(true);
-////										view.allowDelete(true);
-////									}
-////
-////									@Override
-////									public void onError(
-////											Collection<ResponseError> errors) {
-////										onOpenResourceFailed();
-////									}
-////								});
-//							}else{
-//								view.setSaveModeEnabled(true);
-//								view.getInsuredObjectForm().setReadOnly(false);
-//								view.allowEdit(true);
-//								view.allowDelete(true);
-//							}
+						if(PermissionChecker.hasPermission(policy, BigBangConstants.OperationIds.InsurancePolicyProcess.UPDATE_POLICY) || policyBroker.isTemp(policy.id)){
+							if(!policyBroker.isTemp(policy.id)){
+								policyBroker.openPolicyResource(policy.id, new ResponseHandler<InsurancePolicy>() { //TODO
+
+									@Override
+									public void onResponse(
+											InsurancePolicy response) {
+										broker.getInsuredObject(object.id, new ResponseHandler<InsuredObject>() {
+
+											@Override
+											public void onResponse(
+													InsuredObject response) {
+												view.getInsuredObjectForm().setValue(response);
+												view.setSaveModeEnabled(true);
+												view.getInsuredObjectForm().setReadOnly(false);
+												view.allowEdit(true);
+												view.allowDelete(true);
+											}
+
+											@Override
+											public void onError(
+													Collection<ResponseError> errors) {
+												onGetObjectFailed();
+											}
+										});
+									}
+
+									@Override
+									public void onError(
+											Collection<ResponseError> errors) {
+										onOpenResourceFailed();
+									}
+								});
+							}else{
+								broker.getInsuredObject(object.id, new ResponseHandler<InsuredObject>() {
+
+									@Override
+									public void onResponse(
+											InsuredObject response) {
+										view.getInsuredObjectForm().setValue(response);
+										view.setSaveModeEnabled(true);
+										view.getInsuredObjectForm().setReadOnly(false);
+										view.allowEdit(true);
+										view.allowDelete(true);
+									}
+
+									@Override
+									public void onError(
+											Collection<ResponseError> errors) {
+										onGetObjectFailed();
+									}
+								});
+							}
+						}else {
+							onUserLacksEditPermission();
+						}
+					}
+
+					@Override
+					public void onError(Collection<ResponseError> errors) {
+						onGetOwnerFailed();
+					}
+				});
+			}
+
+			@Override
+			public void onError(Collection<ResponseError> errors) {
+				onGetObjectFailed();
+			}
+		});
+	}
+
+	private void onDelete(){
+		final String objectId = view.getInsuredObjectForm().getValue().id;
+		broker.getInsuredObject(objectId, new ResponseHandler<InsuredObject>() {
+
+			@Override
+			public void onResponse(final InsuredObject object) {
+				policyBroker.getPolicy(object.ownerId, new ResponseHandler<InsurancePolicy>() {
+
+					@Override
+					public void onResponse(InsurancePolicy policy) {
+						if(PermissionChecker.hasPermission(policy, BigBangConstants.OperationIds.InsurancePolicyProcess.UPDATE_POLICY) || policyBroker.isTemp(policy.id)){
+							if(!policyBroker.isTemp(policy.id)){
+								policyBroker.openPolicyResource(policy.id, new ResponseHandler<InsurancePolicy>() { //TODO
+
+									@Override
+									public void onResponse(
+											InsurancePolicy response) {
+										broker.deleteInsuredObject(objectId, new ResponseHandler<Void>() {
+
+											@Override
+											public void onResponse(Void response) {
+												onDeleteSuccess();
+											}
+
+											@Override
+											public void onError(
+													Collection<ResponseError> errors) {
+												onDeleteFailed();
+											}
+										});
+									}
+
+									@Override
+									public void onError(
+											Collection<ResponseError> errors) {
+										onOpenResourceFailed();
+									}
+								});
+							}else{
+								broker.deleteInsuredObject(objectId, new ResponseHandler<Void>() {
+
+									@Override
+									public void onResponse(Void response) {
+										onDeleteSuccess();
+									}
+
+									@Override
+									public void onError(
+											Collection<ResponseError> errors) {
+										onDeleteFailed();
+									}
+								});
+							}
 						}else {
 							onUserLacksEditPermission();
 						}
@@ -195,8 +296,10 @@ public class InsuredObjectViewPresenter implements ViewPresenter {
 					public void onResponse(InsurancePolicy policy) {
 						view.getInsuredObjectForm().setReadOnly(true);
 						view.setSaveModeEnabled(false);
-						view.allowEdit(PermissionChecker.hasPermission(policy, BigBangConstants.OperationIds.InsurancePolicyProcess.UPDATE_POLICY));
-						view.allowDelete(PermissionChecker.hasPermission(policy, BigBangConstants.OperationIds.InsurancePolicyProcess.UPDATE_POLICY));
+						boolean hasPermissions = PermissionChecker.hasPermission(policy, BigBangConstants.OperationIds.InsurancePolicyProcess.UPDATE_POLICY) ||
+								policyBroker.isTemp(policy.id);
+						view.allowEdit(hasPermissions);
+						view.allowDelete(hasPermissions);
 						view.getInsurancePolicyForm().setValue(policy);
 						view.getInsuredObjectForm().setValue(object);
 					}
@@ -215,31 +318,62 @@ public class InsuredObjectViewPresenter implements ViewPresenter {
 		});
 	}
 
-	private void showCreateObject(String ownerId) {
+	private void showCreateObject(final String ownerId) {
 		policyBroker.getPolicy(ownerId, new ResponseHandler<InsurancePolicy>() {
 
 			@Override
-			public void onResponse(InsurancePolicy response) {
-				boolean hasPermissions = PermissionChecker.hasPermission(response, BigBangConstants.OperationIds.InsurancePolicyProcess.UPDATE_POLICY);
+			public void onResponse(final InsurancePolicy policy) {
+				boolean hasPermissions = PermissionChecker.hasPermission(policy, BigBangConstants.OperationIds.InsurancePolicyProcess.CREATE_INSURED_OBJECT);
 
 				if(hasPermissions){
-					broker.createInsuredObject(null, new ResponseHandler<InsuredObject>() {
+					if(policyBroker.isTemp(ownerId)){
+						broker.createInsuredObject(policyBroker.getEffectiveId(ownerId), new ResponseHandler<InsuredObject>() {
 
-						@Override
-						public void onResponse(InsuredObject response) {
-							NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
-							item.setParameter("objectid", response.id);
-							NavigationHistoryManager.getInstance().go(item);
-						}
+							@Override
+							public void onResponse(InsuredObject object) {
+								view.getInsuredObjectForm().setReadOnly(false);
+								view.setSaveModeEnabled(true);
+								view.allowEdit(true);
+								view.allowDelete(true);
+								view.getInsurancePolicyForm().setValue(policy);
+								view.getInsuredObjectForm().setValue(object);
+							}
 
-						@Override
-						public void onError(Collection<ResponseError> errors) {
-							onCreateObjectFailed();
-							NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
-							item.removeParameter("id");
-							NavigationHistoryManager.getInstance().go(item);
-						}
-					});
+							@Override
+							public void onError(Collection<ResponseError> errors) {
+								onCreateObjectFailed();
+							}
+						});
+					}else{
+						policyBroker.openPolicyResource(ownerId, new ResponseHandler<InsurancePolicy>() {
+
+							@Override
+							public void onResponse(InsurancePolicy tempPolicy) {
+								broker.createInsuredObject(policyBroker.getEffectiveId(tempPolicy.id), new ResponseHandler<InsuredObject>() {
+
+									@Override
+									public void onResponse(InsuredObject object) {
+										view.getInsuredObjectForm().setReadOnly(false);
+										view.setSaveModeEnabled(true);
+										view.allowEdit(true);
+										view.allowDelete(true);
+										view.getInsurancePolicyForm().setValue(policy);
+										view.getInsuredObjectForm().setValue(object);
+									}
+
+									@Override
+									public void onError(Collection<ResponseError> errors) {
+										onCreateObjectFailed();
+									}
+								});
+							}
+
+							@Override
+							public void onError(Collection<ResponseError> errors) {
+								onOpenResourceFailed();
+							}
+						});
+					}
 				}else{
 					onUserLacksCreatePermission();
 				}
@@ -268,8 +402,11 @@ public class InsuredObjectViewPresenter implements ViewPresenter {
 	}
 
 	private void onSaveObjectSucces(){
-		EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Unidade de Risco guardada com sucesso"), TYPE.TRAY_NOTIFICATION));
-		NavigationHistoryManager.getInstance().reload();
+		EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Unidade de Risco guardada no espaço de trabalho"), TYPE.TRAY_NOTIFICATION));
+		NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
+		item.removeParameter("operation");
+		item.removeParameter("objectid");
+		NavigationHistoryManager.getInstance().go(item);
 	}
 
 	private void onGetOwnerFailed(){
@@ -289,11 +426,15 @@ public class InsuredObjectViewPresenter implements ViewPresenter {
 	}
 
 	private void onCreateObjectFailed(){
-		EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não é possível criar a Unidade de Risco"), TYPE.ALERT_NOTIFICATION));
+		EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não é possível criar a Unidade de Risco no espaço de trabalho"), TYPE.ALERT_NOTIFICATION));
+		NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
+		item.removeParameter("operation");
+		item.removeParameter("objectid");
+		NavigationHistoryManager.getInstance().go(item);
 	}
 
 	private void onSaveObjectFailed(){
-		EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não foi possível guardar a Unidade de Risco"), TYPE.ALERT_NOTIFICATION));
+		EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não foi possível guardar a Unidade de Risco no espaço de trabalho"), TYPE.ALERT_NOTIFICATION));
 	}
 
 	private void onUserLacksCreatePermission(){
@@ -306,6 +447,18 @@ public class InsuredObjectViewPresenter implements ViewPresenter {
 
 	private void onUserLacksEditPermission(){
 		EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não é possível editar apólice. Não tem as permissões necessárias"), TYPE.ALERT_NOTIFICATION));
+	}
+
+	private void onDeleteSuccess(){
+		EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "A Unidade de Risco foi eliminada no espaço de trabalho"), TYPE.TRAY_NOTIFICATION));
+		NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
+		item.removeParameter("operation");
+		item.removeParameter("objectid");
+		NavigationHistoryManager.getInstance().go(item);
+	}
+
+	private void onDeleteFailed(){
+		EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não foi possível eliminar a Unidade de Risco"), TYPE.ALERT_NOTIFICATION));
 	}
 
 }

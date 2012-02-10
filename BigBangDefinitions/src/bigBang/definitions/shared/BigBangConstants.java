@@ -62,6 +62,7 @@ public class BigBangConstants {
 		public static final String CONTACT_DETAILS_TYPE = "03C5B78E-D71C-49F2-A079-9EC40111DCC0";
 		public static final String TYPIFIED_TEXT = "0F218912-1626-4A2C-BF68-9FE100F72735";
 		public static final String REQUEST_TYPE = "B437ECD7-11D2-4C55-B6DD-9FE80101ECC8";
+		public static final String INSURANCE_POLICY_VOID_MOTIVES = "B36C9AB7-0052-4C2E-B392-9FF200CF6022";
 	}
 
 	public static class OperationIds {
@@ -106,7 +107,7 @@ public class BigBangConstants {
 			public static final String EXECUTE_DETAILED_CALCULATIONS = "7DC1A798-31AA-49A1-B2DC-9FD4010F7593";
 			public static final String CREATE_INFO_MANAGEMENT_PROCESS = null;
 			public static final String CREATE_SUB_POLICY = null;
-			public static final String CREATE_CREDIT_NOTE = "4CC51237-FC83-4B13-A8A9-9FD401100FE2";
+			public static final String CREATE_DEBIT_NOTE = "4CC51237-FC83-4B13-A8A9-9FD401100FE2";
 			public static final String CREATE_NEGOTIATION = null;
 			public static final String CREATE_HEALTH_EXPENSE = null;
 			public static final String CREATE_RISK_ANALISYS = null;

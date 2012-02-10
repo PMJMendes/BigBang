@@ -8,17 +8,21 @@ import bigBang.library.client.userInterface.presenter.ViewPresenter;
 import bigBang.module.insurancePolicyModule.client.dataAccess.ExerciseDataBrokerImpl;
 import bigBang.module.insurancePolicyModule.client.dataAccess.InsurancePolicyProcessBrokerImpl;
 import bigBang.module.insurancePolicyModule.client.dataAccess.InsuredObjectDataBrokerImpl;
+import bigBang.module.insurancePolicyModule.client.userInterface.presenter.CreateDebitNoteViewPresenter;
 import bigBang.module.insurancePolicyModule.client.userInterface.presenter.CreateReceiptViewPresenter;
 import bigBang.module.insurancePolicyModule.client.userInterface.presenter.ExerciseViewPresenter;
 import bigBang.module.insurancePolicyModule.client.userInterface.presenter.InsurancePolicyOperationsViewPresenter;
 import bigBang.module.insurancePolicyModule.client.userInterface.presenter.InsurancePolicySearchOperationViewPresenter;
 import bigBang.module.insurancePolicyModule.client.userInterface.presenter.InsurancePolicySectionViewPresenter;
+import bigBang.module.insurancePolicyModule.client.userInterface.presenter.InsurancePolicyVoidViewPresenter;
 import bigBang.module.insurancePolicyModule.client.userInterface.presenter.InsuredObjectViewPresenter;
+import bigBang.module.insurancePolicyModule.client.userInterface.view.CreateDebitNoteView;
 import bigBang.module.insurancePolicyModule.client.userInterface.view.CreateReceiptView;
 import bigBang.module.insurancePolicyModule.client.userInterface.view.ExerciseView;
 import bigBang.module.insurancePolicyModule.client.userInterface.view.InsurancePolicyOperationsView;
 import bigBang.module.insurancePolicyModule.client.userInterface.view.InsurancePolicySearchOperationView;
 import bigBang.module.insurancePolicyModule.client.userInterface.view.InsurancePolicySectionView;
+import bigBang.module.insurancePolicyModule.client.userInterface.view.InsurancePolicyVoidView;
 import bigBang.module.insurancePolicyModule.client.userInterface.view.InsuredObjectView;
 
 import com.google.gwt.core.client.GWT;
@@ -79,11 +83,29 @@ public class InsurancePolicyModule implements Module {
 			}
 		});
 		ViewPresenterFactory.getInstance().registerViewPresenterInstantiator("INSURANCE_POLICY_EXERCISE", new ViewPresenterInstantiator() {
-			
+
 			@Override
 			public ViewPresenter getInstance() {
 				ExerciseView view = (ExerciseView) GWT.create(ExerciseView.class);
 				ViewPresenter presenter = new ExerciseViewPresenter(view);
+				return presenter;
+			}
+		});
+		ViewPresenterFactory.getInstance().registerViewPresenterInstantiator("INSURANCE_POLICY_VOID", new ViewPresenterInstantiator() {
+
+			@Override
+			public ViewPresenter getInstance() {
+				InsurancePolicyVoidView view = (InsurancePolicyVoidView) GWT.create(InsurancePolicyVoidView.class);
+				ViewPresenter presenter = new InsurancePolicyVoidViewPresenter(view);
+				return presenter;
+			}
+		});
+		ViewPresenterFactory.getInstance().registerViewPresenterInstantiator("INSURANCE_POLICY_CREATE_DEBIT_NOTE", new ViewPresenterInstantiator() {
+
+			@Override
+			public ViewPresenter getInstance() {
+				CreateDebitNoteView view = (CreateDebitNoteView) GWT.create(CreateDebitNoteView.class);
+				ViewPresenter presenter = new CreateDebitNoteViewPresenter(view);
 				return presenter;
 			}
 		});

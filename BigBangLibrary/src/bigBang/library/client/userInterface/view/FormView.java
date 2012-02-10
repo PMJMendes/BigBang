@@ -294,14 +294,19 @@ public abstract class FormView<T> extends View implements Validatable, HasEditab
 	}
 
 	public void setValue(T value, boolean fireEvents) {
+		T oldValue = this.value;
+		this.value = value;
+		
 		if(value == null){
 			clearInfo();
 			clearValue();
-		}else
+		}else{
 			setInfo(value);
-		if(this.value != value && fireEvents)
+		}
+		
+		if(oldValue != value && fireEvents){
 			ValueChangeEvent.fire(this, value);
-		this.value = value;
+		}
 	}
 	
 	public Widget getContentPanel(){

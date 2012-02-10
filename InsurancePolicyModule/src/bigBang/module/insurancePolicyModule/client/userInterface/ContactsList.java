@@ -16,17 +16,17 @@ public class ContactsList extends FilterableList<Contact> implements ContactsBro
 		public Entry(Contact contact){
 			super(contact);
 		}
-		
+
 		public <I extends Object> void setInfo(I info) {
 			Contact contact = (Contact) info;
 			setTitle(contact.name);
 		};
 	}
-	
+
 	protected ContactsBroker broker;
 
 	public ContactsList(){
-		this.broker = new BigBangContactsListBroker();
+		this.broker = BigBangContactsListBroker.Util.getInstance();
 	}
 
 	@Override
@@ -90,7 +90,9 @@ public class ContactsList extends FilterableList<Contact> implements ContactsBro
 
 	public void setOwner(String owner){
 		broker.unregisterClient(this);
-		broker.registerClient(this, owner);
+		if(owner != null){
+			broker.registerClient(this, owner);
+		}
 	}
 
 }
