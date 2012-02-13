@@ -13,11 +13,13 @@ import bigBang.library.client.dataAccess.BigBangDocumentsBroker;
 import bigBang.library.client.dataAccess.HistoryBrokerImpl;
 import bigBang.library.client.dataAccess.SubProcessesBrokerImpl;
 import bigBang.library.client.dataAccess.TypifiedTextBrokerImpl;
+import bigBang.library.client.userInterface.presenter.ContactNavigationViewPresenter;
 import bigBang.library.client.userInterface.presenter.ContactViewPresenter;
 import bigBang.library.client.userInterface.presenter.DocumentViewPresenter;
 import bigBang.library.client.userInterface.presenter.ManagerTransferViewPresenter;
 import bigBang.library.client.userInterface.presenter.UndoOperationViewPresenter;
 import bigBang.library.client.userInterface.presenter.ViewPresenter;
+import bigBang.library.client.userInterface.view.ContactNavigationView;
 import bigBang.library.client.userInterface.view.ContactView;
 import bigBang.library.client.userInterface.view.DocumentView;
 import bigBang.library.client.userInterface.view.ManagerTransferWithToolbarView;
@@ -75,12 +77,21 @@ public class BigBangModule implements Module {
 				return presenter;
 			}
 		});
-		ViewPresenterFactory.getInstance().registerViewPresenterInstantiator("CONTACT", new ViewPresenterInstantiator() {
+		ViewPresenterFactory.getInstance().registerViewPresenterInstantiator("SINGLE_CONTACT", new ViewPresenterInstantiator() {
 
 			@Override
 			public ViewPresenter getInstance() {
 				ContactView view = (ContactView) GWT.create(ContactView.class);
 				ViewPresenter presenter = new ContactViewPresenter(view);
+				return presenter;
+			}
+		});
+		ViewPresenterFactory.getInstance().registerViewPresenterInstantiator("CONTACT", new ViewPresenterInstantiator() {
+
+			@Override
+			public ViewPresenter getInstance() {
+				ContactNavigationView view = (ContactNavigationView) GWT.create(ContactNavigationView.class);
+				ViewPresenter presenter = new ContactNavigationViewPresenter(view);
 				return presenter;
 			}
 		});

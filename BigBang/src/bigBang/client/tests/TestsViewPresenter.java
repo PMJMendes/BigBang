@@ -43,7 +43,7 @@ public class TestsViewPresenter implements ViewPresenter {
 	@Override
 	public void setParameters(HasParameters parameterHolder) {
 			
-		ViewPresenter presenter = ViewPresenterFactory.getInstance().getViewPresenter("DOCUMENT");
+		ViewPresenter presenter = ViewPresenterFactory.getInstance().getViewPresenter("CONTACT");
 		
 		presenter.go(view.getContainer());
 		view.show();
