@@ -5,6 +5,9 @@ import bigBang.library.client.HasParameters;
 import bigBang.library.client.ViewPresenterFactory;
 import bigBang.library.client.event.ActionInvokedEvent;
 import bigBang.library.client.event.ActionInvokedEventHandler;
+import bigBang.library.client.history.NavigationHistoryItem;
+import bigBang.library.client.history.NavigationHistoryManager;
+import bigBang.library.client.userInterface.NavigationPanel;
 import bigBang.library.client.userInterface.presenter.ContactViewPresenter.Action;
 
 import com.google.gwt.user.client.ui.HasWidgets;
@@ -63,7 +66,19 @@ public class ContactNavigationViewPresenter implements ViewPresenter{
 			@Override
 			public void onActionInvoked(ActionInvokedEvent<Action> action) {
 				
-				
+				switch (action.getAction()){
+					case REMOVE_OK:{
+						if(!((NavigationPanel)view).navigateBack()){
+							NavigationHistoryItem navig = NavigationHistoryManager.getInstance().getCurrentState();
+							navig.removeParameter("id");
+							navig.removeParameter("show");
+							navig.removeParameter("contactid");
+							navig.removeParameter("ownertypeid");
+							navig.removeParameter("editpermission");
+							NavigationHistoryManager.getInstance().go(navig);
+						}
+					}
+				}
 				
 			}
 		});

@@ -90,7 +90,7 @@ public class ContactViewPresenter implements ViewPresenter, ContactsBrokerClient
 		}
 		this.contact = contact;
 		view.setContact(contact);
-
+		
 		for(int i = 0; i<contact.info.length; i++){
 
 
@@ -301,6 +301,8 @@ public class ContactViewPresenter implements ViewPresenter, ContactsBrokerClient
 						@Override
 						public void onResponse(Contact response) {
 							EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Contacto criado com sucesso."), TYPE.TRAY_NOTIFICATION));
+							ContactViewPresenter.this.setContact(response);
+							contactId = response.id;
 							view.setSaveMode(false);
 							view.setEditable(false);
 							view.getToolbar().allowEdit(false);
@@ -324,6 +326,8 @@ public class ContactViewPresenter implements ViewPresenter, ContactsBrokerClient
 						@Override
 						public void onResponse(Contact response) {
 							EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Contacto gravado com sucesso."), TYPE.TRAY_NOTIFICATION));
+							ContactViewPresenter.this.setContact(response);
+							contactId = response.id;
 							view.setSaveMode(false);
 							view.setEditable(false);
 							view.getToolbar().allowEdit(false);
