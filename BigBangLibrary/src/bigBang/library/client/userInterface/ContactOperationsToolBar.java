@@ -1,5 +1,7 @@
 package bigBang.library.client.userInterface;
 
+import org.apache.tools.ant.types.Assertions.EnabledAssertion;
+
 import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.ui.MenuItem;
 
@@ -18,8 +20,9 @@ public abstract class ContactOperationsToolBar extends BigBangOperationsToolBar{
 			}
 		});
 		
-		addItem(deleteItem);
 		showItem(BigBangOperationsToolBar.SUB_MENU.EDIT, true);
+		showItem(SUB_MENU.ADMIN, true);
+		addItem(SUB_MENU.ADMIN, deleteItem);
 		showItem(SUB_MENU.CREATE, true);
 		addItem(SUB_MENU.CREATE, new MenuItem("Sub Contacto", new Command() {
 
@@ -34,7 +37,7 @@ public abstract class ContactOperationsToolBar extends BigBangOperationsToolBar{
 	public void allowEdit(boolean b){
 		
 		createMenuItem.setEnabled(b);
-		deleteItem.setEnabled(b);
+		adminMenuItem.setEnabled(b);
 		
 	}
 	

@@ -51,7 +51,6 @@ public class ContactView extends View implements ContactViewPresenter.Display{
 		@Override
 		public void setValue(ContactInfo contactinfo) {
 
-
 			if(contactinfo == null){
 				Button add = new Button("Adicionar Detalhe");
 				add.addClickHandler(new ClickHandler() {
@@ -70,7 +69,10 @@ public class ContactView extends View implements ContactViewPresenter.Display{
 			}
 
 			type = new ExpandableListBoxFormField(BigBangConstants.TypifiedListIds.CONTACT_DETAILS_TYPE, "");
+			type.setFieldWidth("100px");
 			infoValue = new TextBoxFormField();
+			infoValue.setFieldWidth("205px");
+			infoValue.setWidth("205px");
 
 			type.setValue(contactinfo.typeId);
 			infoValue.setValue(contactinfo.value);
@@ -109,9 +111,10 @@ public class ContactView extends View implements ContactViewPresenter.Display{
 	}
 
 	public ContactView(){
+		
 		wrapper = new VerticalPanel();
 		initWidget(wrapper);
-		wrapper.setWidth("100%");
+
 		//TOOLBAR
 		toolbar = new ContactOperationsToolBar() {
 
@@ -143,9 +146,13 @@ public class ContactView extends View implements ContactViewPresenter.Display{
 		};
 
 		name = new TextBoxFormField("Nome");
+		name.setFieldWidth("200px");
 		type = new ExpandableListBoxFormField(BigBangConstants.TypifiedListIds.CONTACT_TYPE, "Tipo");
+		type.setFieldWidth("155px");
 		address = new AddressFormField();
 
+		address.setWidth("400px");
+		
 		childContactsButton = new NavigationListEntry<Void>(null);
 		childContactsButton.getElement().getStyle().setProperty("borderTop", "1px solid gray");
 		childContactsButton.setTitle("Sub-Contactos");
@@ -170,10 +177,11 @@ public class ContactView extends View implements ContactViewPresenter.Display{
 		wrapper.add(conts);
 		contactIL = new List<ContactInfo>();
 		contactIL.setSelectableEntries(false);
-		wrapper.add(contactIL.getListContent());
+		contactIL.getScrollable().setHeight("148px");
+		wrapper.add(contactIL.getScrollable());
 		wrapper.add(childContactsButton);
 
-		setSize("400px", "400px");
+		setSize("100%", "100%");
 	}
 	
 	@Override
@@ -210,6 +218,7 @@ public class ContactView extends View implements ContactViewPresenter.Display{
 		temp.setHeight("40px");
 		temp.addHandler(deleteHandler, DeleteRequestEvent.TYPE);
 		contactIL.add(temp);
+		contactIL.getScrollable().scrollToBottom();
 
 	}
 
@@ -270,9 +279,15 @@ public class ContactView extends View implements ContactViewPresenter.Display{
 		newContact.info = new ContactInfo[contactIL.size()-1];
 		for(int i = 0; i<contactIL.size()-1; i++){
 			
-			newContact.info[i] = new ContactInfo();
-			newContact.info[i].typeId = ((ContactEntry) contactIL.get(i)).type.getValue();
-			newContact.info[i].value = ((ContactEntry) contactIL.get(i)).infoValue.getValue();
+			if(((ContactEntry) contactIL.get(i)).type.getValue() != null &&  ((ContactEntry) contactIL.get(i)).infoValue.getValue() != null){
+				newContact.info[i] = new ContactInfo();
+				newContact.info[i].typeId = ((ContactEntry) contactIL.get(i)).type.getValue();
+				newContact.info[i].value = ((ContactEntry) contactIL.get(i)).infoValue.getValue();
+			}
+			else{
+				contactIL.remove(i);
+				i--;
+			}
 			
 		}
 		

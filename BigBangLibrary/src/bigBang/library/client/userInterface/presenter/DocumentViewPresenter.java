@@ -571,7 +571,7 @@ public class DocumentViewPresenter implements ViewPresenter, DocumentsBrokerClie
 	@Override
 	public void updateDocument(String ownerId, Document document) {
 
-
+		return;
 	}
 
 

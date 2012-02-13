@@ -46,7 +46,7 @@ public class ContactForm extends FormView<Contact> {
 		public ContactInfoListEntry(ContactInfo value) {
 			super(value);
 			VerticalPanel wrapper = new VerticalPanel();
-			wrapper.setSize("100%", "100%");
+			wrapper.setSize("100%", "600px");
 			
 			typeField = new ExpandableListBoxFormField(ModuleConstants.ListIDs.ContactInfoTypes, "Tipo");
 			valueField = new TextBoxFormField("Valor");
@@ -79,6 +79,7 @@ public class ContactForm extends FormView<Contact> {
 	protected Contact contact;
 	
 	public ContactForm(){
+		setSize("400px", "500px");
 		infoFields = new ArrayList<Tuple<FormField<?>, FormField<?>>>();
 		
 		addSection("Informação do Contacto");
@@ -86,10 +87,8 @@ public class ContactForm extends FormView<Contact> {
 		addFormField(name);
 		
 		addSection("Detalhes");
-		//((CellPanel) this.currentSection.getContentWrapper()).setSpacing(0);
-		//((UIObject) this.currentSection.getContentWrapper()).getElement().getStyle().setMargin(0, Unit.PX);
 		this.contactInfoList = new List<ContactInfo>();
-		//this.contactInfoList.setSize("100%", "100%");
+		this.contactInfoList.setSize("100%", "100%");
 		//addWidget(this.contactInfoList.getListContent());
 		
 		infoType = new ExpandableListBoxFormField(ModuleConstants.ListIDs.ContactInfoTypes, "Tipo");
