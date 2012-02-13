@@ -1,4 +1,4 @@
-package bigBang.module.clientModule.client.userInterface;
+package bigBang.library.client.userInterface;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -12,13 +12,12 @@ import bigBang.library.client.ValueSelectable;
 import bigBang.library.client.dataAccess.BigBangDocumentsBroker;
 import bigBang.library.client.dataAccess.DocumentsBroker;
 import bigBang.library.client.dataAccess.DocumentsBrokerClient;
-import bigBang.library.client.userInterface.FilterableList;
-import bigBang.library.client.userInterface.ListEntry;
 
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.logical.shared.AttachEvent;
 
-public class ClientDocumentsList extends FilterableList<Document> implements DocumentsBrokerClient {
+public class DocumentsList extends FilterableList<Document> implements DocumentsBrokerClient {
 
 	public static class Entry extends ListEntry<Document> {
 
@@ -38,7 +37,7 @@ public class ClientDocumentsList extends FilterableList<Document> implements Doc
 	protected String ownerId;
 	protected DocumentsBroker broker;
 
-	public ClientDocumentsList(){
+	public DocumentsList(){
 		this.showFilterField(false);
 		this.showSearchField(true);
 
@@ -70,8 +69,7 @@ public class ClientDocumentsList extends FilterableList<Document> implements Doc
 
 				@Override
 				public void onError(Collection<ResponseError> errors) {
-					// TODO Auto-generated method stub
-
+					GWT.log("Could not get the documents for owner " + ownerId);
 				}
 			});
 		}

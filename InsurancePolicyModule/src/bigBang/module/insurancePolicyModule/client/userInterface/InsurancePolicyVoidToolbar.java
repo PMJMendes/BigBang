@@ -8,7 +8,7 @@ import bigBang.library.client.userInterface.BigBangOperationsToolBar;
 public abstract class InsurancePolicyVoidToolbar extends BigBangOperationsToolBar {
 
 	public InsurancePolicyVoidToolbar(){
-		MenuItem voidItem = new MenuItem("Anular Apólice", new Command() {
+		MenuItem voidItem = new MenuItem("Invalidar Apólice", new Command() {
 			
 			@Override
 			public void execute() {

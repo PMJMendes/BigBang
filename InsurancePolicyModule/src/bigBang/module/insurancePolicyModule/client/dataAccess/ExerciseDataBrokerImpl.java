@@ -35,7 +35,7 @@ implements ExerciseDataBroker {
 	protected InsurancePolicyServiceAsync policyService;
 	protected InsurancePolicyBroker policyBroker;
 	protected SearchDataBroker<ExerciseStub> searchBroker;
-	protected Map<String, String> tempExercises;
+	protected Map<String, String> exercisesInScratchPad;
 	protected boolean requiresRefresh;
 
 	public ExerciseDataBrokerImpl(){
@@ -43,7 +43,7 @@ implements ExerciseDataBroker {
 		this.service = PolicyExerciseService.Util.getInstance();
 		this.policyService = InsurancePolicyService.Util.getInstance();
 		this.searchBroker = new ExerciseSearchBroker(this.service);
-		this.tempExercises = new HashMap<String, String>();
+		this.exercisesInScratchPad = new HashMap<String, String>();
 	}
 
 	@Override
@@ -57,7 +57,6 @@ implements ExerciseDataBroker {
 
 			@Override
 			public void onResponse(Exercise response) {
-				cache.add(response.id, response);
 				incrementDataVersion();
 				for(DataBrokerClient<Exercise> bc : getClients()){
 					((ExerciseDataBrokerClient) bc).addExercise(response);
@@ -74,7 +73,6 @@ implements ExerciseDataBroker {
 
 	@Override
 	public void notifyItemDeletion(String itemId) {
-		cache.remove(itemId);
 		incrementDataVersion();
 		for(DataBrokerClient<Exercise> bc : getClients()){
 			((ExerciseDataBrokerClient) bc).removeExercise(itemId);
@@ -88,7 +86,6 @@ implements ExerciseDataBroker {
 
 			@Override
 			public void onResponse(Exercise response) {
-				cache.add(response.id, response);
 				incrementDataVersion();
 				for(DataBrokerClient<Exercise> bc : getClients()){
 					((ExerciseDataBrokerClient) bc).updateExercise(response);
@@ -104,39 +101,28 @@ implements ExerciseDataBroker {
 	}
 
 	@Override
-	public void getExercise(final String id, final ResponseHandler<Exercise> handler) {
-		policyService.getExerciseInPad(id, new BigBangAsyncCallback<Exercise>() {
+	public void getExercise(String id, final ResponseHandler<Exercise> handler) {
+		id = getEffectiveId(id);
+		if(isTemp(id)){
+			policyService.getExerciseInPad(id, new BigBangAsyncCallback<Exercise>() {
 
-			@Override
-			public void onSuccess(Exercise result) {
-				handler.onResponse(result);
-			}
+				@Override
+				public void onSuccess(Exercise result) {
+					result.id = getFinalMapping(result.id);
+					handler.onResponse(result);
+				}
 
-			@Override
-			public void onFailure(Throwable caught) {
-				service.getExercise(id, new BigBangAsyncCallback<Exercise>() {
+				@Override
+				public void onFailure(Throwable caught) {
+					handler.onError(new String[]{
+							new String("Could not get the requested exercise")	
+					});
+					super.onFailure(caught);
+				}
 
-					@Override
-					public void onSuccess(Exercise result) {
-						handler.onResponse(result);
-					}
-
-					@Override
-					public void onFailure(Throwable caught) {
-						handler.onError(new String[]{
-								new String("Could not get the exercise")
-						});
-						super.onFailure(caught);
-					}
-				});
-			}
-		});
-	}
-
-	@Override
-	public void createExercise(String ownerId, final ResponseHandler<Exercise> handler) {
-		if(getPolicyBroker().isTemp(ownerId)){
-			this.policyService.createFirstExercise(ownerId, new BigBangAsyncCallback<Exercise>() {
+			});
+		}else{
+			this.service.getExercise(id, new BigBangAsyncCallback<Exercise>() {
 
 				@Override
 				public void onSuccess(Exercise result) {
@@ -146,43 +132,81 @@ implements ExerciseDataBroker {
 				@Override
 				public void onFailure(Throwable caught) {
 					handler.onError(new String[]{
-							new String("Could not create exercise in scratch pad.")
+							new String("Could not get the requested exercise")	
 					});
 					super.onFailure(caught);
 				}
+
+			});
+		}
+	}
+
+	@Override
+	public void createExercise(String ownerId, final ResponseHandler<Exercise> handler) {
+		if(getInsurancePolicyBroker().isTemp(ownerId)){
+			ownerId = getInsurancePolicyBroker().getEffectiveId(ownerId);
+			policyService.createFirstExercise(ownerId, new BigBangAsyncCallback<Exercise>() {
+
+				@Override
+				public void onSuccess(Exercise result) {
+					exercisesInScratchPad.put(result.id, result.id);
+					incrementDataVersion();
+					for(DataBrokerClient<Exercise> client : clients) {
+						((ExerciseDataBrokerClient)client).addExercise(result);
+						((ExerciseDataBrokerClient)client).setDataVersionNumber(getDataElementId(), getCurrentDataVersion());
+					}
+					handler.onResponse(result);
+				}
+
+				@Override
+				public void onFailure(Throwable caught) {
+					handler.onError(new String[]{
+							new String("Could not create new exercise in scratchpad")	
+					});
+					super.onFailure(caught);
+				}
+
 			});
 		}else{
 			handler.onError(new String[]{
-					new String("Could not create exercise. The owner policy is not in scratch pad")
+					new String("Cannot create exercise in policy not in editable mode")	
 			});
 		}
 	}
 
 	@Override
 	public void deleteExercise(String exerciseId, final ResponseHandler<Void> handler) {
+		exerciseId = getEffectiveId(exerciseId);
 		getExercise(exerciseId, new ResponseHandler<Exercise>() {
 
 			@Override
-			public void onResponse(Exercise exercise) {
-				if(policyBroker.isTemp(exercise.ownerId)){
-					policyService.deleteExerciseInPad(exercise.id, new BigBangAsyncCallback<Void>() {
+			public void onResponse(final Exercise response) {
+				String ownerId = response.ownerId;
+				if(getInsurancePolicyBroker().isTemp(ownerId)){
+					String tempId = getEffectiveId(response.id);
+					policyService.deleteExerciseInPad(tempId, new BigBangAsyncCallback<Void>() {
 
 						@Override
 						public void onSuccess(Void result) {
+							incrementDataVersion();
+							for(DataBrokerClient<Exercise> client : clients) {
+								((ExerciseDataBrokerClient)client).removeExercise(response.id);
+								((ExerciseDataBrokerClient)client).setDataVersionNumber(getDataElementId(), getCurrentDataVersion());
+							}
 							handler.onResponse(null);
 						}
 
 						@Override
 						public void onFailure(Throwable caught) {
 							handler.onError(new String[]{
-									new String("Could not delete the exercise")
+									new String("Could not delete the exercise")	
 							});
 							super.onFailure(caught);
 						}
-					});
+					});				
 				}else{
 					handler.onError(new String[]{
-							new String("The owner of the exercise is not in editable mode")
+							new String("Cannot delete the exercise")	
 					});
 				}
 			}
@@ -198,21 +222,38 @@ implements ExerciseDataBroker {
 
 	@Override
 	public void updateExercise(Exercise exercise, final ResponseHandler<Exercise> handler) {
-		policyService.updateExerciseInPad(exercise, new BigBangAsyncCallback<Exercise>() {
+		String id = getEffectiveId(exercise.id);
+		if(isTemp(id)){
+			String tempId = exercise.id;
+			exercise.id = id;
 
-			@Override
-			public void onSuccess(Exercise result) {
-				handler.onResponse(result);
-			}
-			
-			@Override
-			public void onFailure(Throwable caught) {
-				handler.onError(new String[]{
-					new String("Could not update the exercise")	
-				});
-				super.onFailure(caught);
-			}
-		});
+			policyService.updateExerciseInPad(exercise, new BigBangAsyncCallback<Exercise>() {
+
+				@Override
+				public void onSuccess(Exercise result) {
+					result.id = getFinalMapping(result.id);
+					incrementDataVersion();
+					for(DataBrokerClient<Exercise> client : clients) {
+						((ExerciseDataBrokerClient)client).updateExercise(result);
+						((ExerciseDataBrokerClient)client).setDataVersionNumber(getDataElementId(), getCurrentDataVersion());
+					}
+					handler.onResponse(result);
+				}
+
+				@Override
+				public void onFailure(Throwable caught) {
+					handler.onError(new String[]{
+							new String()	
+					});
+					super.onFailure(caught);
+				}
+			});
+			exercise.id = tempId;
+		}else{
+			handler.onError(new String[]{
+					new String("Cannot update exercise in policy not in editable mode")	
+			});
+		}
 	}
 
 	@Override
@@ -239,10 +280,31 @@ implements ExerciseDataBroker {
 			}
 
 			@Override
-			public void onError(Collection<ResponseError> errors) {}
+			public void onError(Collection<ResponseError> errors) {
+				handler.onError(new String[]{
+						new String("Could not get the resquested process exercises")	
+				});
+			}
 		});
 	}
 
+	private String getEffectiveId(String id){
+		id = id.toLowerCase();
+		if(exercisesInScratchPad.containsKey(id)){
+			return exercisesInScratchPad.get(id);
+		}
+		return id;
+	}
+	
+	private String getFinalMapping(String tempId){
+		for(String key : exercisesInScratchPad.keySet()){
+			if(exercisesInScratchPad.get(key).equalsIgnoreCase(tempId)){
+				return key;
+			}
+		}
+		return tempId;
+	}
+	
 	@Override
 	public SearchDataBroker<ExerciseStub> getSearchBroker() {
 		return this.searchBroker;
@@ -255,13 +317,13 @@ implements ExerciseDataBroker {
 		newId = newId.toLowerCase();
 
 		if(newIdInScratchPad){
-			this.tempExercises.put(oldId, newId);
+			exercisesInScratchPad.put(oldId, newId);
 		}else{
-			this.tempExercises.remove(newId);
+			exercisesInScratchPad.remove(newId);
 		}
 	}
 
-	private InsurancePolicyBroker getPolicyBroker(){
+	private InsurancePolicyBroker getInsurancePolicyBroker(){
 		if(this.policyBroker == null){
 			this.policyBroker = (InsurancePolicyBroker) DataBrokerManager.staticGetBroker(BigBangConstants.EntityIds.INSURANCE_POLICY);
 		}
@@ -270,15 +332,7 @@ implements ExerciseDataBroker {
 
 	private boolean isTemp(String id){
 		id = id.toLowerCase();
-		return this.tempExercises.containsKey(id) || this.tempExercises.containsValue(id);
-	}
-	
-	private String getEffectiveId(String id){
-		id = id.toLowerCase();
-		if(this.tempExercises.containsKey(id)){
-			return this.tempExercises.get(id);
-		}
-		return id;
+		return exercisesInScratchPad.containsKey(id) || exercisesInScratchPad.containsValue(id); 
 	}
 	
 }

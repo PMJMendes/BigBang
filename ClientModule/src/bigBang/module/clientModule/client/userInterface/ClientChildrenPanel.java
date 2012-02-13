@@ -3,6 +3,10 @@ package bigBang.module.clientModule.client.userInterface;
 import bigBang.definitions.client.dataAccess.ClientProcessDataBrokerClient;
 import bigBang.definitions.shared.BigBangConstants;
 import bigBang.definitions.shared.Client;
+import bigBang.library.client.userInterface.ContactsList;
+import bigBang.library.client.userInterface.DocumentsList;
+import bigBang.library.client.userInterface.HistoryList;
+import bigBang.library.client.userInterface.SubProcessesList;
 import bigBang.library.client.userInterface.view.View;
 import com.google.gwt.user.client.ui.StackPanel;
 
@@ -11,22 +15,22 @@ public class ClientChildrenPanel extends View implements ClientProcessDataBroker
 	protected Client client;
 	protected int clientDataVersion;
 	
-	public ClientContactsList contactsList;
-	public ClientDocumentsList documentsList;
+	public ContactsList contactsList;
+	public DocumentsList documentsList;
 	public ClientPoliciesList insurancePoliciesList;
-	public ClientHistoryList historyList;
-	public ClientSubProcessesList subProcessesList;
+	public HistoryList historyList;
+	public SubProcessesList subProcessesList;
 	
 	public ClientChildrenPanel(){
 		StackPanel wrapper = new StackPanel();
 		initWidget(wrapper);
 		wrapper.setSize("100%", "100%");
 		
-		contactsList = new ClientContactsList();
-		documentsList = new ClientDocumentsList();
+		contactsList = new ContactsList();
+		documentsList = new DocumentsList();
 		insurancePoliciesList = new ClientPoliciesList();
-		historyList = new ClientHistoryList();
-		subProcessesList = new ClientSubProcessesList();
+		historyList = new HistoryList();
+		subProcessesList = new SubProcessesList();
 		
 		wrapper.add(this.contactsList, "Contactos");
 		wrapper.add(this.documentsList, "Documentos");

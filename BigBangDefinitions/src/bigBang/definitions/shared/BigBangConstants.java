@@ -95,7 +95,7 @@ public class BigBangConstants {
 			public static final String DELETE_POLICY = "";
 			public static final String CREATE_EXERCISE = "C86BB300-28C1-47EF-A48D-9FD4010F9149";
 			public static final String CREATE_RECEIPT = "C4117861-16EB-40DB-A771-9F8A00EA6B32";
-			public static final String CREATE_INSURED_OBJECT = "984226BB-33EA-4988-A802-9FD4010FC200";
+			public static final String INCLUDE_INSURED_OBJECT = "984226BB-33EA-4988-A802-9FD4010FC200";
 			public static final String VALIDATE_POLICY = "841E9154-8037-46F7-8B98-9FD3011A9605";
 			public static final String VOID_POLICY = "DF2C50EF-5E4A-475A-AB1E-9FD401143D8A";
 			public static final String TRANSFER_BROKERAGE = null;

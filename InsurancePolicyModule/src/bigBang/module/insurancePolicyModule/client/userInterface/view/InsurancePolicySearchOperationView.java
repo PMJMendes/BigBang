@@ -117,6 +117,11 @@ public class InsurancePolicySearchOperationView extends View implements Insuranc
 			}
 			
 			@Override
+			public void onIncludeInsuredObject() {
+				actionHandler.onActionInvoked(new ActionInvokedEvent<InsurancePolicySearchOperationViewPresenter.Action>(Action.INCLUDE_INSURED_OBJECT));
+			}
+			
+			@Override
 			public void onCreateExercise() {
 				actionHandler.onActionInvoked(new ActionInvokedEvent<InsurancePolicySearchOperationViewPresenter.Action>(Action.CREATE_EXERCISE));
 			}
@@ -300,8 +305,14 @@ public class InsurancePolicySearchOperationView extends View implements Insuranc
 		this.toolbar.allowDelete(allow);
 	}
 	
+	@Override
 	public void allowCreateInsuredObject(boolean allow) {
 		this.toolbar.allowCreateInsuredObject(allow);
+	}
+	
+	@Override
+	public void allowIncludeInsuredObject(boolean allow) {
+		this.toolbar.allowIncludeInsuredObject(allow);
 	}
 	
 	@Override

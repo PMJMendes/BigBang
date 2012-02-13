@@ -23,6 +23,7 @@ public abstract class InsurancePolicyOperationsToolBar extends BigBangOperations
 	//DATA
 	protected MenuItem managerTransfer;
 	protected MenuItem clientAsInsuredObject;
+	protected MenuItem includeInsuredObject;
 	protected MenuItem createInsuredObject;
 	protected MenuItem createExercise;
 
@@ -125,6 +126,14 @@ public abstract class InsurancePolicyOperationsToolBar extends BigBangOperations
 			}
 		});
 		addItem(SUB_MENU.DATA, managerTransfer);
+		includeInsuredObject = new MenuItem("Incluir Unidade de Risco", new Command() {
+
+			@Override
+			public void execute() {
+				onIncludeInsuredObject();
+			}
+		});
+		addItem(SUB_MENU.DATA, includeInsuredObject);
 		clientAsInsuredObject = new MenuItem("Criar Unidade de Risco a Partir do Cliente", new Command() {
 
 			@Override
@@ -141,7 +150,7 @@ public abstract class InsurancePolicyOperationsToolBar extends BigBangOperations
 			}
 		});
 		addItem(SUB_MENU.DATA, createInsuredObject);	
-		createExercise = new MenuItem("Criar Exercício", new Command() {
+		createExercise = new MenuItem("Abrir Exercício", new Command() {
 
 			@Override
 			public void execute() {
@@ -166,7 +175,7 @@ public abstract class InsurancePolicyOperationsToolBar extends BigBangOperations
 				onRequestInfoFromClient();
 			}
 		});
-		addItem(SUB_MENU.REQUESTS, clientInfoRequestItem);	
+		addItem(SUB_MENU.REQUESTS, clientInfoRequestItem);
 
 		//ADMIN
 		substitutePolicy = new MenuItem("Criar Apólice de Substituição", new Command() {
@@ -207,6 +216,10 @@ public abstract class InsurancePolicyOperationsToolBar extends BigBangOperations
 		this.receiptItem.setEnabled(allow);
 	};
 
+	public void allowIncludeInsuredObject(boolean allow){
+		this.includeInsuredObject.setEnabled(allow);
+	}
+	
 	public void allowCreateInsuredObject(boolean allow){
 		this.createInsuredObject.setEnabled(allow);
 	}
@@ -295,6 +308,8 @@ public abstract class InsurancePolicyOperationsToolBar extends BigBangOperations
 
 	public abstract void onCreateInsuredObject();
 	
+	public abstract void onIncludeInsuredObject();
+
 	public abstract void onCreateExercise();
 
 	public abstract void onCreateInsuredObjectFromClient();

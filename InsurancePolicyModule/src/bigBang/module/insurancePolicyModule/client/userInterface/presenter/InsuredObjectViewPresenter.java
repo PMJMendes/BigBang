@@ -323,7 +323,7 @@ public class InsuredObjectViewPresenter implements ViewPresenter {
 
 			@Override
 			public void onResponse(final InsurancePolicy policy) {
-				boolean hasPermissions = PermissionChecker.hasPermission(policy, BigBangConstants.OperationIds.InsurancePolicyProcess.CREATE_INSURED_OBJECT);
+				boolean hasPermissions = PermissionChecker.hasPermission(policy, BigBangConstants.OperationIds.InsurancePolicyProcess.INCLUDE_INSURED_OBJECT);
 
 				if(hasPermissions){
 					if(policyBroker.isTemp(ownerId)){

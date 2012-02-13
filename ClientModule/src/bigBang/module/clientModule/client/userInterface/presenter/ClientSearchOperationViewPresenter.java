@@ -121,6 +121,8 @@ public class ClientSearchOperationViewPresenter implements ViewPresenter {
 
 	@Override
 	public void setParameters(HasParameters parameterHolder) {
+		setup();
+		
 		String id = parameterHolder.getParameter("id");
 		id = id == null ? new String() : id;
 
@@ -335,6 +337,14 @@ public class ClientSearchOperationViewPresenter implements ViewPresenter {
 		view.getList().clearSelection();
 	}
 
+	private void setup(){
+		this.view.getContactsList().clearSelection();
+		this.view.getDocumentsList().clearSelection();
+		this.view.getPolicyList().clearSelection();
+		this.view.getSubProcessesList().clearSelection();
+		this.view.getHistoryList().clearSelection();
+	}
+	
 	private void setupNewClient(){
 		boolean hasPermission = true; //TODO check permission
 		if(hasPermission){

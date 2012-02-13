@@ -60,7 +60,7 @@ public class InsuredObjectsList extends FilterableList<InsuredObjectStub> {
 
 					@Override
 					public void onError(Collection<ResponseError> errors) {
-						showErrorMessage("De momento não foi possível obter as unidades de risco para a apólice.");
+						return;
 					}
 				});
 			}

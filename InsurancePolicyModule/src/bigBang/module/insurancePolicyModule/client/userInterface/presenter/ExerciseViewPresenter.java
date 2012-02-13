@@ -29,40 +29,42 @@ import com.google.gwt.user.client.ui.Widget;
 
 public class ExerciseViewPresenter implements ViewPresenter{
 
-	public static enum Action{
-		EDIT,
-		SAVE,
-		CANCEL,
-		DELETE
-	}
-
 	public static interface Display{
 		HasEditableValue<Exercise> getExerciseForm();
-		HasEditableValue<InsurancePolicy> getPolicyForm();
+		HasEditableValue<InsurancePolicy> getInsurancePolicyForm();
 
-		void clearAllowedPermissions();
+		//PERMISSIONS
 		void setSaveModeEnabled(boolean enabled);
+		void clearAllowedPermissions();
 		void allowEdit(boolean allow);
 		void allowDelete(boolean allow);
 
 		void registerActionHandler(ActionInvokedEventHandler<Action> actionInvokedEventHandler);
-		Widget asWidget();		
+		Widget asWidget();
+	}
+
+	public static enum Action{
+		EDIT,
+		SAVE,
+		CANCEL_EDIT,
+		DELETE
 	}
 
 	protected Display view;
+	protected boolean bound = false;
 	private ExerciseDataBroker broker;
 	private InsurancePolicyBroker policyBroker;
-	protected boolean bound = false;
+	protected String ownerId;
 
-	public ExerciseViewPresenter(Display view){
-		this.policyBroker = (InsurancePolicyBroker) DataBrokerManager.staticGetBroker(BigBangConstants.EntityIds.INSURANCE_POLICY);
-		this.broker = (ExerciseDataBroker) DataBrokerManager.staticGetBroker(BigBangConstants.EntityIds.POLICY_EXERCISE);
-		setView((UIObject) view);
+	public ExerciseViewPresenter(Display display){
+		broker = (ExerciseDataBroker) DataBrokerManager.staticGetBroker(BigBangConstants.EntityIds.POLICY_EXERCISE);
+		policyBroker = (InsurancePolicyBroker) DataBrokerManager.staticGetBroker(BigBangConstants.EntityIds.INSURANCE_POLICY);
+		setView((UIObject) display);		
 	}
 
 	@Override
 	public void setView(UIObject view) {
-		this.view = (Display) view;
+		this.view = (Display)view;
 	}
 
 	@Override
@@ -74,7 +76,7 @@ public class ExerciseViewPresenter implements ViewPresenter{
 
 	@Override
 	public void setParameters(HasParameters parameterHolder) {
-		String ownerId = parameterHolder.getParameter("id");
+		this.ownerId = parameterHolder.getParameter("id");
 		ownerId = ownerId == null ? new String() : ownerId;
 		String exerciseId = parameterHolder.getParameter("exerciseid");
 		exerciseId = exerciseId == null ? new String() : exerciseId;
@@ -86,51 +88,51 @@ public class ExerciseViewPresenter implements ViewPresenter{
 			clearView();
 			onGetExerciseFailed();
 		}else if(exerciseId.equalsIgnoreCase("new")){
-			showCreateExercise(ownerId);
+			showCreateExercise(this.ownerId);
 		}else{
 			showExercise(exerciseId);
 		}
 	}
 
-	private void bind() {
-		if(bound){
-			return;
-		}
+	public void bind() {
+		if(bound){return;}
 		this.view.registerActionHandler(new ActionInvokedEventHandler<Action>() {
 
 			@Override
 			public void onActionInvoked(ActionInvokedEvent<Action> action) {
-				Exercise value = view.getExerciseForm().getInfo();
 				switch(action.getAction()){
 				case SAVE:
+					Exercise value = view.getExerciseForm().getInfo();
 					saveExercise(value);
 					break;
-				case EDIT:{
-					view.getExerciseForm().setReadOnly(false);
-					break;}
-				case CANCEL:
-					NavigationHistoryManager.getInstance().reload();
+				case EDIT:
+					onEdit();
+					break;
+				case CANCEL_EDIT:
+					NavigationHistoryManager.Util.getInstance().reload();
 					break;
 				case DELETE:
-					deleteExercise(value.id);
+					onDelete();
 					break;
 				}
 			}
 		});
 
+		//APPLICATION-WIDE EVENTS
 		bound = true;
 	}
 
 	private void clearView(){
-		view.getPolicyForm().setValue(null);
-		view.getExerciseForm().setValue(null);
-		view.getPolicyForm().setReadOnly(true);
-		view.getExerciseForm().setReadOnly(true);
 		view.clearAllowedPermissions();
 		view.setSaveModeEnabled(false);
+		view.getInsurancePolicyForm().setValue(null);
+		view.getInsurancePolicyForm().setReadOnly(true);
+		view.getExerciseForm().setValue(null);
+		view.getExerciseForm().setReadOnly(true);
 	}
 
-	private void showExercise(String exerciseId){
+	private void onEdit(){
+		String exerciseId = view.getExerciseForm().getValue().id;
 		broker.getExercise(exerciseId, new ResponseHandler<Exercise>() {
 
 			@Override
@@ -139,14 +141,62 @@ public class ExerciseViewPresenter implements ViewPresenter{
 
 					@Override
 					public void onResponse(InsurancePolicy policy) {
-						view.getPolicyForm().setValue(policy);
-						view.getPolicyForm().setReadOnly(true);
-						view.getExerciseForm().setValue(exercise);
-						view.getExerciseForm().setReadOnly(true);
+						if(PermissionChecker.hasPermission(policy, BigBangConstants.OperationIds.InsurancePolicyProcess.UPDATE_POLICY) || policyBroker.isTemp(policy.id)){
+							if(!policyBroker.isTemp(policy.id)){
+								policyBroker.openPolicyResource(policy.id, new ResponseHandler<InsurancePolicy>() { //TODO
 
-						boolean hasPermission = PermissionChecker.hasPermission(policy, BigBangConstants.OperationIds.InsurancePolicyProcess.UPDATE_POLICY);
-						view.allowEdit(hasPermission);
-						view.allowDelete(hasPermission);
+									@Override
+									public void onResponse(
+											InsurancePolicy response) {
+										broker.getExercise(exercise.id, new ResponseHandler<Exercise>() {
+
+											@Override
+											public void onResponse(
+													Exercise response) {
+												view.getExerciseForm().setValue(response);
+												view.allowEdit(true);
+												view.allowDelete(true);
+												view.setSaveModeEnabled(true);
+												view.getExerciseForm().setReadOnly(false);
+											}
+
+											@Override
+											public void onError(
+													Collection<ResponseError> errors) {
+												onGetExerciseFailed();
+											}
+										});
+									}
+
+									@Override
+									public void onError(
+											Collection<ResponseError> errors) {
+										onOpenResourceFailed();
+									}
+								});
+							}else{
+								broker.getExercise(exercise.id, new ResponseHandler<Exercise>() {
+
+									@Override
+									public void onResponse(
+											Exercise response) {
+										view.getExerciseForm().setValue(response);
+										view.allowEdit(true);
+										view.allowDelete(true);
+										view.setSaveModeEnabled(true);
+										view.getExerciseForm().setReadOnly(false);
+									}
+
+									@Override
+									public void onError(
+											Collection<ResponseError> errors) {
+										onGetExerciseFailed();
+									}
+								});
+							}
+						}else {
+							onUserLacksEditPermission();
+						}
 					}
 
 					@Override
@@ -163,56 +213,185 @@ public class ExerciseViewPresenter implements ViewPresenter{
 		});
 	}
 
-	private void showCreateExercise(String ownerId){
+	private void onDelete(){
+		final String objectId = view.getExerciseForm().getValue().id;
+		broker.getExercise(objectId, new ResponseHandler<Exercise>() {
+
+			@Override
+			public void onResponse(final Exercise object) {
+				policyBroker.getPolicy(object.ownerId, new ResponseHandler<InsurancePolicy>() {
+
+					@Override
+					public void onResponse(InsurancePolicy policy) {
+						if(PermissionChecker.hasPermission(policy, BigBangConstants.OperationIds.InsurancePolicyProcess.UPDATE_POLICY) || policyBroker.isTemp(policy.id)){
+							if(!policyBroker.isTemp(policy.id)){
+								policyBroker.openPolicyResource(policy.id, new ResponseHandler<InsurancePolicy>() { //TODO
+
+									@Override
+									public void onResponse(
+											InsurancePolicy response) {
+										broker.deleteExercise(objectId, new ResponseHandler<Void>() {
+
+											@Override
+											public void onResponse(Void response) {
+												onDeleteSuccess();
+											}
+
+											@Override
+											public void onError(
+													Collection<ResponseError> errors) {
+												onDeleteFailed();
+											}
+										});
+									}
+
+									@Override
+									public void onError(
+											Collection<ResponseError> errors) {
+										onOpenResourceFailed();
+									}
+								});
+							}else{
+								broker.deleteExercise(objectId, new ResponseHandler<Void>() {
+
+									@Override
+									public void onResponse(Void response) {
+										onDeleteSuccess();
+									}
+
+									@Override
+									public void onError(
+											Collection<ResponseError> errors) {
+										onDeleteFailed();
+									}
+								});
+							}
+						}else {
+							onUserLacksEditPermission();
+						}
+					}
+
+					@Override
+					public void onError(Collection<ResponseError> errors) {
+						onGetOwnerFailed();
+					}
+				});
+			}
+
+			@Override
+			public void onError(Collection<ResponseError> errors) {
+				onGetExerciseFailed();
+			}
+		});
+	}
+
+	private void showExercise(String exerciseId){
+		broker.getExercise(exerciseId, new ResponseHandler<Exercise>() {
+
+			@Override
+			public void onResponse(final Exercise object) {
+				policyBroker.getPolicy(object.ownerId, new ResponseHandler<InsurancePolicy>() {
+
+					@Override
+					public void onResponse(InsurancePolicy policy) {
+						view.getExerciseForm().setReadOnly(true);
+						view.setSaveModeEnabled(false);
+						boolean hasPermissions = PermissionChecker.hasPermission(policy, BigBangConstants.OperationIds.InsurancePolicyProcess.UPDATE_POLICY) ||
+								policyBroker.isTemp(policy.id);
+						view.allowEdit(hasPermissions);
+						view.allowDelete(hasPermissions);
+						view.getInsurancePolicyForm().setValue(policy);
+						view.getExerciseForm().setValue(object);
+					}
+
+					@Override
+					public void onError(Collection<ResponseError> errors) {
+						onGetOwnerFailed();
+					}
+				});
+			}
+
+			@Override
+			public void onError(Collection<ResponseError> errors) {
+				onGetExerciseFailed();
+			}
+		});
+	}
+
+	private void showCreateExercise(final String ownerId) {
 		policyBroker.getPolicy(ownerId, new ResponseHandler<InsurancePolicy>() {
 
 			@Override
-			public void onResponse(InsurancePolicy policy) {
-				if(PermissionChecker.hasPermission(policy, BigBangConstants.OperationIds.InsurancePolicyProcess.UPDATE_POLICY)) {
-					broker.createExercise(policy.id, new ResponseHandler<Exercise>() {
+			public void onResponse(final InsurancePolicy policy) {
+				boolean hasPermissions = PermissionChecker.hasPermission(policy, BigBangConstants.OperationIds.InsurancePolicyProcess.CREATE_EXERCISE);
 
-						@Override
-						public void onResponse(Exercise exercise) {
-							view.getExerciseForm().setValue(exercise);
-							view.getExerciseForm().setReadOnly(false);
-							view.allowEdit(true);
-							view.allowDelete(true);
-							view.setSaveModeEnabled(true);
-						}
+				if(hasPermissions){
+					if(policyBroker.isTemp(ownerId)){
+						broker.createExercise(policyBroker.getEffectiveId(ownerId), new ResponseHandler<Exercise>() {
 
-						@Override
-						public void onError(Collection<ResponseError> errors) {
-							onCreateExerciseFailed();
-							NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
-							item.removeParameter("exerciseid");
-							item.removeParameter("operation");
-							NavigationHistoryManager.getInstance().go(item);
-						}
-					});
+							@Override
+							public void onResponse(Exercise object) {
+								view.getExerciseForm().setReadOnly(false);
+								view.setSaveModeEnabled(true);
+								view.allowEdit(true);
+								view.allowDelete(true);
+								view.getInsurancePolicyForm().setValue(policy);
+								view.getExerciseForm().setValue(object);
+							}
+
+							@Override
+							public void onError(Collection<ResponseError> errors) {
+								onCreateExerciseFailed();
+							}
+						});
+					}else{
+						policyBroker.openPolicyResource(ownerId, new ResponseHandler<InsurancePolicy>() {
+
+							@Override
+							public void onResponse(InsurancePolicy tempPolicy) {
+								broker.createExercise(policyBroker.getEffectiveId(tempPolicy.id), new ResponseHandler<Exercise>() {
+
+									@Override
+									public void onResponse(Exercise object) {
+										view.getExerciseForm().setReadOnly(false);
+										view.setSaveModeEnabled(true);
+										view.allowEdit(true);
+										view.allowDelete(true);
+										view.getInsurancePolicyForm().setValue(policy);
+										view.getExerciseForm().setValue(object);
+									}
+
+									@Override
+									public void onError(Collection<ResponseError> errors) {
+										onCreateExerciseFailed();
+									}
+								});
+							}
+
+							@Override
+							public void onError(Collection<ResponseError> errors) {
+								onOpenResourceFailed();
+							}
+						});
+					}
 				}else{
-					onUserLacksEditPermission();
+					onUserLacksCreatePermission();
 				}
 			}
 
 			@Override
 			public void onError(Collection<ResponseError> errors) {
 				onGetOwnerFailed();
-				NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
-				item.removeParameter("exerciseid");
-				item.removeParameter("operation");
-				NavigationHistoryManager.getInstance().go(item);
 			}
 		});
 	}
 
-	private void saveExercise(Exercise exercise) {
+	protected void saveExercise(Exercise exercise) {
 		broker.updateExercise(exercise, new ResponseHandler<Exercise>() {
 
 			@Override
 			public void onResponse(Exercise response) {
-				NavigationHistoryItem item = NavigationHistoryManager.Util.getInstance().getCurrentState();
-				item.setParameter("id", response.id);
-				NavigationHistoryManager.getInstance().go(item);
+				onSaveExerciseSuccess();
 			}
 
 			@Override
@@ -222,63 +401,64 @@ public class ExerciseViewPresenter implements ViewPresenter{
 		});
 	}
 
-	protected void deleteExercise(String exerciseId) {
-		broker.deleteExercise(exerciseId, new ResponseHandler<Void>() {
-
-			@Override
-			public void onResponse(Void response) {
-				onDeleteExerciseSuccess();
-				NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
-				item.removeParameter("exerciseid");
-				item.removeParameter("operation");
-				NavigationHistoryManager.Util.getInstance().go(item);
-			}
-
-			@Override
-			public void onError(Collection<ResponseError> errors) {
-				onDeleteExerciseFailed();
-			}
-		});
-	}
-	
-	private void onCreateExerciseSuccess(){
-		EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "O Exercício foi criado com sucesso"), TYPE.TRAY_NOTIFICATION));
-	}
-
 	private void onSaveExerciseSuccess(){
-		EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "O Exercício foi guardado com sucesso"), TYPE.TRAY_NOTIFICATION));
-	}
-
-	private void onDeleteExerciseSuccess(){
-		EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "O Exercício foi eliminado com sucesso"), TYPE.TRAY_NOTIFICATION));
-	}
-
-	private void onGetExerciseFailed(){
-		EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não é possível apresentar o exercício"), TYPE.ALERT_NOTIFICATION));
+		EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Exercício guardado no espaço de trabalho"), TYPE.TRAY_NOTIFICATION));
+		NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
+		item.removeParameter("operation");
+		item.removeParameter("exerciseid");
+		NavigationHistoryManager.getInstance().go(item);
 	}
 
 	private void onGetOwnerFailed(){
-		EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não é possível apresentar o exercício"), TYPE.ALERT_NOTIFICATION));
+		EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não foi possível obter a apólice a que pertence o Exercício"), TYPE.ALERT_NOTIFICATION));
+		NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
+		item.removeParameter("operation");
+		item.removeParameter("exerciseid");
+		NavigationHistoryManager.getInstance().go(item);
+	}
+
+	private void onGetExerciseFailed(){
+		EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não foi possível obter o Exercício"), TYPE.ALERT_NOTIFICATION));
+		NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
+		item.removeParameter("operation");
+		item.removeParameter("exerciseid");
+		NavigationHistoryManager.getInstance().go(item);
 	}
 
 	private void onCreateExerciseFailed(){
-		EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não foi possível criar o novo Exercício"), TYPE.ALERT_NOTIFICATION));
+		EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não é possível criar o Exercício no espaço de trabalho"), TYPE.ALERT_NOTIFICATION));
+		NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
+		item.removeParameter("operation");
+		item.removeParameter("exerciseid");
+		NavigationHistoryManager.getInstance().go(item);
 	}
 
 	private void onSaveExerciseFailed(){
-		EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não foi possível guardar o Exercício"), TYPE.ALERT_NOTIFICATION));
+		EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não foi possível guardar o Exercício no espaço de trabalho"), TYPE.ALERT_NOTIFICATION));
 	}
 
-	private void onDeleteExerciseFailed(){
-		EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não foi possível eliminar o Exercício"), TYPE.ALERT_NOTIFICATION));
+	private void onUserLacksCreatePermission(){
+		NavigationHistoryManager.getInstance().reload();
+	}
+
+	private void onOpenResourceFailed(){
+		EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não é possível editar apólice, assim como os respectivos Exercícios"), TYPE.ALERT_NOTIFICATION));
 	}
 
 	private void onUserLacksEditPermission(){
-		EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não dispõe de permissões para editar o exercício"), TYPE.ALERT_NOTIFICATION));
+		EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não é possível editar apólice. Não tem as permissões necessárias"), TYPE.ALERT_NOTIFICATION));
 	}
 
-	private void onResourceFailed(){
-		EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "De momento não é possível editar o exercício"), TYPE.ALERT_NOTIFICATION));
+	private void onDeleteSuccess(){
+		EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "O Exercício foi eliminado no espaço de trabalho"), TYPE.TRAY_NOTIFICATION));
+		NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
+		item.removeParameter("operation");
+		item.removeParameter("exerciseid");
+		NavigationHistoryManager.getInstance().go(item);
+	}
+
+	private void onDeleteFailed(){
+		EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não foi possível eliminar o Exercício"), TYPE.ALERT_NOTIFICATION));
 	}
 
 }

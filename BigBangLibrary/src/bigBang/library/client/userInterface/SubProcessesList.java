@@ -1,4 +1,4 @@
-package bigBang.module.clientModule.client.userInterface;
+package bigBang.library.client.userInterface;
 
 import java.util.Collection;
 
@@ -10,10 +10,8 @@ import bigBang.library.client.ValueSelectable;
 import bigBang.library.client.dataAccess.DataBrokerManager;
 import bigBang.library.client.dataAccess.SubProcessesBroker;
 import bigBang.library.client.dataAccess.SubProcessesBrokerClient;
-import bigBang.library.client.userInterface.FilterableList;
-import bigBang.library.client.userInterface.ListEntry;
 
-public class ClientSubProcessesList extends FilterableList<BigBangProcess> implements SubProcessesBrokerClient {
+public class SubProcessesList extends FilterableList<BigBangProcess> implements SubProcessesBrokerClient {
 
 	public static class Entry extends ListEntry<BigBangProcess> {
 
@@ -31,7 +29,7 @@ public class ClientSubProcessesList extends FilterableList<BigBangProcess> imple
 	private String ownerId;
 	private int dataVersion;
 
-	public ClientSubProcessesList(){
+	public SubProcessesList(){
 		this.broker = (SubProcessesBroker) DataBrokerManager.staticGetBroker(BigBangConstants.EntityIds.PROCESS);
 		this.showFilterField(false);
 		this.showSearchField(true);

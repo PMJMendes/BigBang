@@ -7,6 +7,9 @@ import bigBang.definitions.client.dataAccess.InsurancePolicyDataBrokerClient;
 import bigBang.definitions.shared.BigBangConstants;
 import bigBang.definitions.shared.InsurancePolicy;
 import bigBang.library.client.dataAccess.DataBrokerManager;
+import bigBang.library.client.userInterface.ContactsList;
+import bigBang.library.client.userInterface.DocumentsList;
+import bigBang.library.client.userInterface.HistoryList;
 import bigBang.library.client.userInterface.view.View;
 
 public class InsurancePolicyChildrenPanel extends View {

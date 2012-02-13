@@ -13,7 +13,7 @@ public class PermissionChecker {
 		for(int i = 0; i < permissions.length; i++) {
 			String instanceId = permissions[i].getOperationInstanceId();
 			String id = permissions[i].getOperationTypeId();
-			if((id != null && id.equalsIgnoreCase(permissionId)) || (instanceId != null && instanceId.equalsIgnoreCase(permissionId))){
+			if(id != null && id.equalsIgnoreCase(permissionId) && instanceId != null){
 				return true;
 			}
 		}

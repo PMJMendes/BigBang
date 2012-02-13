@@ -1,4 +1,4 @@
-package bigBang.module.insurancePolicyModule.client.userInterface;
+package bigBang.library.client.userInterface;
 
 import java.util.Collection;
 
@@ -13,12 +13,11 @@ import bigBang.definitions.shared.HistoryItemStub;
 import bigBang.definitions.shared.SortOrder;
 import bigBang.library.client.ValueSelectable;
 import bigBang.library.client.dataAccess.DataBrokerManager;
-import bigBang.library.client.userInterface.FilterableList;
-import bigBang.library.client.userInterface.ListEntry;
 import bigBang.library.shared.HistorySearchParameter;
 import bigBang.library.shared.HistorySortParameter;
 
 public class HistoryList extends FilterableList<HistoryItemStub> implements HistoryDataBrokerClient {
+
 	protected static class Entry extends ListEntry<HistoryItemStub>{
 
 		public Entry(HistoryItemStub value) {
@@ -33,48 +32,47 @@ public class HistoryList extends FilterableList<HistoryItemStub> implements Hist
 		};
 
 	}
-
+	
 	protected int dataVersion;
 	protected String ownerId;
 	protected HistoryBroker broker;
-
+	
 	public HistoryList(){
+		this.broker = ((HistoryBroker) DataBrokerManager.Util.getInstance().getBroker(BigBangConstants.EntityIds.HISTORY));
 		this.showFilterField(false);
 		this.showSearchField(true);
-
-		this.broker = ((HistoryBroker) DataBrokerManager.Util.getInstance().getBroker(BigBangConstants.EntityIds.HISTORY));
 	}
-
+	
 	@Override
 	protected void onAttach() {
 		super.onAttach();
 		setOwner(ownerId);
 	}
-
+	
 	@Override
 	protected void onDetach() {
 		super.onDetach();
 		discardOwner();
 	}
-
+	
 	public void setOwner(String ownerId) {
 		discardOwner();
 		if(ownerId == null) {return;}
 		if(ownerId != null){
 			this.broker.registerClient(this, ownerId);
-
+			
 			HistorySearchParameter parameter = new HistorySearchParameter();
 			parameter.dataObjectId = ownerId;
-
+			
 			HistorySearchParameter[] parameters = new HistorySearchParameter[]{
 					parameter
 			};
-
+			
 			HistorySortParameter sort = new HistorySortParameter(HistorySortParameter.SortableField.TIMESTAMP, SortOrder.DESC);
 			HistorySortParameter[] sorts = new HistorySortParameter[]{
 					sort
 			};
-
+			
 			this.broker.getSearchBroker().search(parameters, sorts, -1, new ResponseHandler<Search<HistoryItemStub>>() {
 
 				@Override
@@ -101,10 +99,9 @@ public class HistoryList extends FilterableList<HistoryItemStub> implements Hist
 		this.clear();
 		if(ownerId != null){
 			this.broker.unregisterClient(this, this.ownerId);
-			this.ownerId = null;
 		}
 	}
-
+	
 	@Override
 	public void setDataVersionNumber(String dataElementId, int number) {
 		if(dataElementId.equalsIgnoreCase(BigBangConstants.EntityIds.HISTORY)){
@@ -119,7 +116,7 @@ public class HistoryList extends FilterableList<HistoryItemStub> implements Hist
 		}
 		return -1;
 	}
-
+	
 	protected void addEntry(HistoryItemStub item) {
 		add(new Entry(item));
 	}
@@ -148,7 +145,7 @@ public class HistoryList extends FilterableList<HistoryItemStub> implements Hist
 	}
 
 	@Override
-	public void removeHistoryItem(String processId, HistoryItem item) {
+	public void removeHistoryItem(String objectId, HistoryItem item) {
 		for(ValueSelectable<HistoryItemStub> s : this) {
 			if(s.getValue().id.equalsIgnoreCase(item.id)){
 				remove(s);

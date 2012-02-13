@@ -45,6 +45,7 @@ public class ExerciseView extends View implements ExerciseViewPresenter.Display{
 		insurancePolicyFormWrapper.add(insurancePolicyFormHeader);
 		
 		policyForm.setSize("100%", "100%");
+		policyForm.setReadOnly(true);
 		insurancePolicyFormWrapper.add(policyForm);
 		insurancePolicyFormWrapper.setCellHeight(policyForm, "100%");
 		mainWrapper.addWest(insurancePolicyFormWrapper, 600);
@@ -72,7 +73,7 @@ public class ExerciseView extends View implements ExerciseViewPresenter.Display{
 
 			@Override
 			public void onCancelRequest() {
-				actionHandler.onActionInvoked(new ActionInvokedEvent<ExerciseViewPresenter.Action>(Action.CANCEL));
+				actionHandler.onActionInvoked(new ActionInvokedEvent<ExerciseViewPresenter.Action>(Action.CANCEL_EDIT));
 			}
 			
 			@Override
@@ -105,7 +106,7 @@ public class ExerciseView extends View implements ExerciseViewPresenter.Display{
 	}
 
 	@Override
-	public HasEditableValue<InsurancePolicy> getPolicyForm() {
+	public HasEditableValue<InsurancePolicy> getInsurancePolicyForm() {
 		return this.policyForm;
 	}
 

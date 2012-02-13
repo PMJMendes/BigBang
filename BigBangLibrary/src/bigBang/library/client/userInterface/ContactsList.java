@@ -1,4 +1,4 @@
-package bigBang.module.clientModule.client.userInterface;
+package bigBang.library.client.userInterface;
 
 import java.util.Collection;
 import java.util.List;
@@ -11,13 +11,11 @@ import bigBang.library.client.ValueSelectable;
 import bigBang.library.client.dataAccess.BigBangContactsListBroker;
 import bigBang.library.client.dataAccess.ContactsBroker;
 import bigBang.library.client.dataAccess.ContactsBrokerClient;
-import bigBang.library.client.userInterface.FilterableList;
-import bigBang.library.client.userInterface.ListEntry;
 
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.logical.shared.AttachEvent;
 
-public class ClientContactsList extends FilterableList<Contact> implements ContactsBrokerClient {
+public class ContactsList extends FilterableList<Contact> implements ContactsBrokerClient {
 
 	public static class Entry extends ListEntry<Contact> {
 
@@ -37,7 +35,7 @@ public class ClientContactsList extends FilterableList<Contact> implements Conta
 	protected String ownerId;
 	protected ContactsBroker broker;
 
-	public ClientContactsList(){
+	public ContactsList(){
 		this.showFilterField(false);
 		this.showSearchField(true);
 

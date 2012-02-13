@@ -151,17 +151,7 @@ public class ClientSearchOperationView extends View implements ClientSearchOpera
 			@Override
 			public void onValueChange(ValueChangeEvent<Client> event) {
 				Client client = event.getValue();
-				if(client != null){
-					if(client.id != null){
-						childrenPanel.setClient(event.getValue());
-					}else{
-						childrenPanel.clear();
-					}
-				}else{
-					childrenPanel.clear();
-					
-				}
-				childrenPanel.setReadOnly(client == null); //TODO FJVC
+				childrenPanel.setClient(client);
 			}
 		});
 

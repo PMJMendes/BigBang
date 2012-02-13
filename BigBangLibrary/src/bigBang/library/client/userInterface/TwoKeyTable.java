@@ -81,7 +81,7 @@ public class TwoKeyTable {
 		}
 		Field[] result = new Field[this.fields.length * this.fields[0].length];
 		for(int i = 0; i < this.fields.length; i++) {
-			for(int j = 0; j < this.fields[0].length; i++) {
+			for(int j = 0; j < this.fields[0].length; j++) {
 				result[(i * this.fields[0].length) + j] = this.fields[i][j];
 			}
 		}

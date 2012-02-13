@@ -235,7 +235,8 @@ public class ExerciseForm extends FormView<Exercise> {
 		FixedField[] fixedFields = new FixedField[numFixedFields];
 
 		for (int i = 0; i<numFixedFields; i++){
-			fixedFields[i]  = fixedFormFields[i].headerField;
+			fixedFields[i] = fixedFormFields[i].headerField;
+			fixedFields[i].value = fixedFormFields[i].getValue();
 		}
 		return fixedFields;
 	}
@@ -262,11 +263,13 @@ public class ExerciseForm extends FormView<Exercise> {
 		for (int i = 0; i<numFixedFields; i++){
 
 			fixedFormFields[i] = new DynFormField(headerData.fixedFields[i]);
+			fixedFormFields[i].setReadOnly(this.isReadOnly());
 			fixedFormFields[i].setValue(headerData.fixedFields[i].value);
 			addFormField(fixedFormFields[i]);
 		}
 
 		setDynamicHeaderData(info.objects, info.headerData);
+		dynamicVariableHeaderDataTable.setReadOnly(this.isReadOnly());
 		commonSection.addWidget(dynamicVariableHeaderDataTable, false);
 
 		//COVERAGES    
@@ -292,6 +295,7 @@ public class ExerciseForm extends FormView<Exercise> {
 				for(int j = 0; j < numFixedFields; j++){
 					coverageFixedFormFields[i][j] = new DynFormField(coverageData[i].fixedFields[j]);
 					coverageFixedFormFields[i][j].setValue(coverageData[i].fixedFields[j].value);
+					coverageFixedFormFields[i][j].setReadOnly(this.isReadOnly());
 					addFormField(coverageFixedFormFields[i][j]);
 				}
 
@@ -365,8 +369,7 @@ public class ExerciseForm extends FormView<Exercise> {
 
 		this.dynamicSection[k].addWidget(this.dynamicVariableDataTable[k], false);
 		this.dynamicVariableDataTable[k].render();
-
-
+		this.dynamicVariableDataTable[k].setReadOnly(this.isReadOnly());
 	}
 
 	private void clearFormFields() {
@@ -463,24 +466,31 @@ public class ExerciseForm extends FormView<Exercise> {
 
 		this.dynamicHeaderSection.addWidget(this.dynamicVariableHeaderDataTable, false);
 		this.dynamicVariableHeaderDataTable.render();
+		this.dynamicVariableHeaderDataTable.setReadOnly(this.isReadOnly());
 	}
 
 	protected void setDynamicHeaderData(InsuredObject[] objects, HeaderData headerData){
 		if(headerData == null) {return;}
 		setDynamicVariableHeaderData(objects, headerData.variableFields);
 	}
-	
+
 	@Override
 	public void setReadOnly(boolean readOnly) {
 		super.setReadOnly(readOnly);
-		for(int i = 0; this.coverageFixedFormFields != null && i < this.coverageFixedFormFields.length; i++){
-			for(int j = 0; j < this.coverageFixedFormFields[i].length; j++) {
-				this.coverageFixedFormFields[i][j].setReadOnly(readOnly);
+		if(this.coverageFixedFormFields != null){
+			for(int i = 0; this.coverageFixedFormFields != null && i < this.coverageFixedFormFields.length; i++){
+				for(int j = 0; j < this.coverageFixedFormFields[i].length; j++) {
+					this.coverageFixedFormFields[i][j].setReadOnly(readOnly);
+				}
 			}
 		}
-		this.dynamicVariableHeaderDataTable.setReadOnly(readOnly);
-		for(int i = 0; this.dynamicVariableDataTable != null && i < this.dynamicVariableDataTable.length; i++){
-			this.dynamicVariableDataTable[i].setReadOnly(readOnly);
+		if(this.dynamicVariableHeaderDataTable != null) {
+			this.dynamicVariableHeaderDataTable.setReadOnly(readOnly);
+		}
+		if(this.dynamicVariableDataTable != null) {
+			for(int i = 0; this.dynamicVariableDataTable != null && i < this.dynamicVariableDataTable.length; i++){
+				this.dynamicVariableDataTable[i].setReadOnly(readOnly);
+			}
 		}
 	}
 

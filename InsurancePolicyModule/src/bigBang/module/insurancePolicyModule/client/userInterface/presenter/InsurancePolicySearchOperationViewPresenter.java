@@ -51,6 +51,7 @@ ViewPresenter {
 		CANCEL_EDIT,
 		DELETE,
 		CREATE_RECEIPT,
+		INCLUDE_INSURED_OBJECT,
 		CREATE_INSURED_OBJECT,
 		CREATE_EXERCISE,
 		VOID_POLICY,
@@ -88,6 +89,7 @@ ViewPresenter {
 		void allowDelete(boolean allow);
 		void allowCreateReceipt(boolean allow);
 		void allowCreateInsuredObject(boolean allow);
+		void allowIncludeInsuredObject(boolean allow);
 		void allowCreateExercise(boolean allow);
 		void allowValidatePolicy(boolean allow);
 		void allowVoidPolicy(boolean allow);
@@ -146,6 +148,8 @@ ViewPresenter {
 
 	@Override
 	public void setParameters(HasParameters parameterHolder) {
+		setup();
+		
 		String policyId = parameterHolder.getParameter("id");
 		policyId = policyId == null ? new String() : policyId;
 
@@ -236,7 +240,12 @@ ViewPresenter {
 					NavigationHistoryManager.getInstance().go(item);
 					break;
 				case CREATE_EXERCISE:
-					item.setParameter("operation", "createexercise");
+					item.setParameter("operation", "viewexercise");
+					item.setParameter("objectid", "new");
+					NavigationHistoryManager.getInstance().go(item);
+					break;
+				case INCLUDE_INSURED_OBJECT:
+					item.setParameter("operation", "includeinsuredobject");
 					NavigationHistoryManager.getInstance().go(item);
 					break;
 				case CREATE_INSURED_OBJECT:
@@ -384,8 +393,21 @@ ViewPresenter {
 		view.getForm().setValue(null);
 		view.getForm().setReadOnly(true);
 		view.getList().clearSelection();
+		view.getContactsList().clearSelection();
+		view.getDocumentsList().clearSelection();
+		view.getHistoryList().clearSelection();
+		view.getExercisesList().clearSelection();
+		view.getObjectsList().clearSelection();
 	}
 
+	private void setup(){
+		view.getContactsList().clearSelection();
+		view.getDocumentsList().clearSelection();
+		view.getHistoryList().clearSelection();
+		view.getExercisesList().clearSelection();
+		view.getObjectsList().clearSelection();
+	}
+	
 	private void showPolicy(String policyId){
 		if(broker.isTemp(policyId)){
 			showScratchPadPolicy(policyId);
@@ -410,7 +432,8 @@ ViewPresenter {
 					view.allowEdit(PermissionChecker.hasPermission(response, BigBangConstants.OperationIds.InsurancePolicyProcess.UPDATE_POLICY));
 					view.allowDelete(PermissionChecker.hasPermission(response, BigBangConstants.OperationIds.InsurancePolicyProcess.DELETE_POLICY));
 					view.allowCreateExercise(PermissionChecker.hasPermission(response, BigBangConstants.OperationIds.InsurancePolicyProcess.CREATE_EXERCISE));
-					view.allowCreateInsuredObject(PermissionChecker.hasPermission(response, BigBangConstants.OperationIds.InsurancePolicyProcess.CREATE_INSURED_OBJECT));
+					view.allowIncludeInsuredObject(PermissionChecker.hasPermission(response, BigBangConstants.OperationIds.InsurancePolicyProcess.INCLUDE_INSURED_OBJECT));
+					view.allowCreateInsuredObject(broker.isTemp(response.id));
 					view.allowCreateReceipt(PermissionChecker.hasPermission(response, BigBangConstants.OperationIds.InsurancePolicyProcess.CREATE_RECEIPT));
 					view.allowValidatePolicy(PermissionChecker.hasPermission(response, BigBangConstants.OperationIds.InsurancePolicyProcess.VALIDATE_POLICY));
 					view.allowVoidPolicy(PermissionChecker.hasPermission(response, BigBangConstants.OperationIds.InsurancePolicyProcess.VOID_POLICY));
@@ -463,27 +486,10 @@ ViewPresenter {
 				public void onResponse(InsurancePolicy response) {
 					view.clearAllowedPermissions();
 
-					boolean hasPermissions = true; //TODO IMPORTANT FJVC
-					view.allowEdit(hasPermissions);
-					view.allowDelete(hasPermissions);
-					view.allowDelete(false);
+					view.allowEdit(true);
+					view.allowDelete(true);
 					view.allowCreateExercise(true);
 					view.allowCreateInsuredObject(true);
-					view.allowCreateReceipt(false);
-					view.allowVoidPolicy(false);
-					view.allowTransferBrokerage(false);
-					view.allowCreateSubstitutePolicy(false);
-					view.allowRequestClientInfo(false);
-					view.allowRequestAgencyInfo(false);
-					view.allowCreateInsuredObjectFromClient(false);
-					view.allowTransferManager(false);
-					view.allowExecuteDetailedCalculations(false);
-					view.allowCreateInfoManagementProcess(false);
-					view.allowCreateSubPolicy(false);
-					view.allowIssueDebitNote(false);
-					view.allowCreateNegotiation(false);
-					view.allowCreateHealthExpense(false);
-					view.allowCreateRiskAnalisys(false);
 
 					view.setSaveModeEnabled(true);
 					view.getForm().setValue(response);
@@ -601,11 +607,21 @@ ViewPresenter {
 	}
 
 	private void showContact(Contact contact) {
-		//TODO
+		NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
+		item.setParameter("show", "contactmanagement");
+		item.setParameter("ownerid", contact.ownerId);
+		item.setParameter("ownertypeid", contact.ownerTypeId);
+		item.setParameter("contactid", contact.id);
+		NavigationHistoryManager.getInstance().go(item);
 	}
 
 	private void showDocument(Document document){
-		//TODO
+		NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
+		item.setParameter("show", "documentmanagement");
+		item.setParameter("ownerid", document.ownerId);
+		item.setParameter("ownertypeid", document.ownerTypeId);
+		item.setParameter("documentid", document.id);
+		NavigationHistoryManager.getInstance().go(item);
 	}
 
 	private void onTableFiltersChanged(){
