@@ -17,12 +17,14 @@ import bigBang.library.client.userInterface.presenter.ContactNavigationViewPrese
 import bigBang.library.client.userInterface.presenter.ContactViewPresenter;
 import bigBang.library.client.userInterface.presenter.DocumentViewPresenter;
 import bigBang.library.client.userInterface.presenter.ManagerTransferViewPresenter;
+import bigBang.library.client.userInterface.presenter.SubContactListViewPresenter;
 import bigBang.library.client.userInterface.presenter.UndoOperationViewPresenter;
 import bigBang.library.client.userInterface.presenter.ViewPresenter;
 import bigBang.library.client.userInterface.view.ContactNavigationView;
 import bigBang.library.client.userInterface.view.ContactView;
 import bigBang.library.client.userInterface.view.DocumentView;
 import bigBang.library.client.userInterface.view.ManagerTransferWithToolbarView;
+import bigBang.library.client.userInterface.view.SubContactListView;
 import bigBang.library.client.userInterface.view.UndoOperationView;
 
 public class BigBangModule implements Module {
@@ -94,6 +96,17 @@ public class BigBangModule implements Module {
 				ViewPresenter presenter = new ContactNavigationViewPresenter(view);
 				return presenter;
 			}
+		});
+		
+		ViewPresenterFactory.getInstance().registerViewPresenterInstantiator("SUB_CONTACT_LIST", new ViewPresenterInstantiator() {
+
+			@Override
+			public ViewPresenter getInstance() {
+					SubContactListView view = (SubContactListView) GWT.create(SubContactListView.class);
+					ViewPresenter presenter = new SubContactListViewPresenter(view);
+					return presenter;
+			}
+			
 		});
 	}
 
