@@ -19,6 +19,12 @@ public class ContactNavigationView extends NavigationPanel implements ContactNav
 	@Override
 	public void setHomeWidget(UIObject view) {
 		super.setHomeWidget((Widget) view);
+		
+	}
+	
+	@Override
+	public void navigateTo(Widget w){
+		super.navigateTo(w);
 	}
 
 	@Override
