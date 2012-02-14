@@ -339,10 +339,10 @@ public abstract class DocumentSections{
 
 			filename = new FilenameTextBoxFormField("");
 			filename.setVisible(false);
-			filename.setWidth("100%");
+			filename.setWidth("300px");
 			filename.getElement().getStyle().setMarginTop(5, Unit.PX);
 			getFilename().setEditable(false);
-			filename.setFieldWidth("");
+			filename.setFieldWidth("300px");
 			filename.addMouseUpHandler(new MouseUpHandler() {
 
 				@Override
