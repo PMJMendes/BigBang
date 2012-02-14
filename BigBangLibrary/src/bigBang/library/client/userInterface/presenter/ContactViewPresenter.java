@@ -51,7 +51,7 @@ public class ContactViewPresenter implements ViewPresenter, ContactsBrokerClient
 		CREATE_CHILD_CONTACT,
 		SHOW_CHILD_CONTACTS,
 		ADD_NEW_DETAIL,
-		DELETE_DETAIL, DELETE, REMOVE_OK
+		DELETE_DETAIL, DELETE, REMOVE_OK, CHILD_SELECTED
 	}
 
 	public ContactViewPresenter(Display view){
@@ -230,11 +230,12 @@ public class ContactViewPresenter implements ViewPresenter, ContactsBrokerClient
 					break;
 
 				case CREATE_CHILD_CONTACT: 
-					fireAction(Action.CREATE_CHILD_CONTACT);
+					Contact temp2 = view.getContact();
+					createChildContact(temp2);
 					break;
 
 				case CANCEL:
-					NavigationHistoryManager.getInstance().reload();
+					fireAction(Action.CANCEL);
 					break;
 
 				case EDIT: 
@@ -248,6 +249,7 @@ public class ContactViewPresenter implements ViewPresenter, ContactsBrokerClient
 					createUpdateContact(temp);
 					break;
 				case SHOW_CHILD_CONTACTS: 
+					fireAction(Action.SHOW_CHILD_CONTACTS);
 					break;
 				case DELETE:{
 					MessageBox.confirm("Eliminar contacto", "Tem certeza que pretende eliminar o contacto seleccionado?", new MessageBox.ConfirmationCallback() {
@@ -352,6 +354,32 @@ public class ContactViewPresenter implements ViewPresenter, ContactsBrokerClient
 	}
 
 
+	protected void createChildContact(Contact temp) {
+
+		if(temp.id == null){
+			temp.ownerId = ownerId;
+			temp.ownerTypeId = ownerTypeId;
+			
+			broker.addContact(temp, new ResponseHandler<Contact>() {
+			
+			@Override
+			public void onResponse(Contact response) {
+				ContactViewPresenter.this.setContact(response);
+				fireAction(Action.CREATE_CHILD_CONTACT);
+			}
+			
+			@Override
+			public void onError(Collection<ResponseError> errors) {
+				EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não foi possível criar o sub-contacto."), TYPE.ALERT_NOTIFICATION));
+			}
+		
+			});
+		}else{
+			fireAction(Action.CREATE_CHILD_CONTACT);
+		}
+		
+	}
+
 	public void addNewDetail() {
 
 		ContactEntry temp = view.initializeContactEntry();
@@ -424,7 +452,6 @@ public class ContactViewPresenter implements ViewPresenter, ContactsBrokerClient
 	
 	public void registerActionHandler(ActionInvokedEventHandler<Action> handler) {
 		this.actionHandler = handler;
-
 	}
 
 }
