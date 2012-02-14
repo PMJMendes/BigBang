@@ -437,7 +437,7 @@ public class ContactsServiceImpl
 		if ( Constants.ObjID_Policy.equals(pidOwnerType) )
 			return Constants.OPID_Policy_ManageData;
 
-		throw new BigBangException("Erro: O objecto indicado não permite movimentos de Documentos.");
+		throw new BigBangException("Erro: O objecto indicado não permite movimentos de Contactos.");
 	}
 
 	private Operation BuildOuterOp(UUID pidProc, UUID pidOp, ContactOps pobjInner)
