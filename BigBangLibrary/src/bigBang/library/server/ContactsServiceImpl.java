@@ -26,7 +26,9 @@ import bigBang.library.shared.SessionExpiredException;
 import com.premiumminds.BigBang.Jewel.Constants;
 import com.premiumminds.BigBang.Jewel.Data.ContactData;
 import com.premiumminds.BigBang.Jewel.Data.ContactInfoData;
+import com.premiumminds.BigBang.Jewel.Objects.Company;
 import com.premiumminds.BigBang.Jewel.Objects.GeneralSystem;
+import com.premiumminds.BigBang.Jewel.Objects.Mediator;
 import com.premiumminds.BigBang.Jewel.Operations.ContactOps;
 import com.premiumminds.BigBang.Jewel.SysObjects.ZipCodeBridge;
 
@@ -217,8 +219,7 @@ public class ContactsServiceImpl
 		lopCOps.marrModify = null;
 		lopCOps.marrDelete = null;
 
-		lobjOp = BuildOuterOp(GetOwnerProc(UUID.fromString(contact.ownerTypeId), UUID.fromString(contact.ownerId)),
-				GetOpType(UUID.fromString(contact.ownerTypeId)), lopCOps);
+		lobjOp = BuildOuterOp(UUID.fromString(contact.ownerTypeId), UUID.fromString(contact.ownerId), lopCOps);
 
 		try
 		{
@@ -251,8 +252,7 @@ public class ContactsServiceImpl
 		lopCOps.marrCreate = null;
 		lopCOps.marrDelete = null;
 
-		lobjOp = BuildOuterOp(GetOwnerProc(UUID.fromString(contact.ownerTypeId), UUID.fromString(contact.ownerId)),
-				GetOpType(UUID.fromString(contact.ownerTypeId)), lopCOps);
+		lobjOp = BuildOuterOp(UUID.fromString(contact.ownerTypeId), UUID.fromString(contact.ownerId), lopCOps);
 
 		try
 		{
@@ -298,8 +298,7 @@ public class ContactsServiceImpl
 		lopCOps.marrCreate = null;
 		lopCOps.marrModify = null;
 
-		lobjOp = BuildOuterOp(GetOwnerProc(lobjData.midOwnerType, lobjData.midOwnerId),
-				GetOpType(lobjData.midOwnerType), lopCOps);
+		lobjOp = BuildOuterOp(lobjData.midOwnerType, lobjData.midOwnerId, lopCOps);
 
 		try
 		{
@@ -389,27 +388,26 @@ public class ContactsServiceImpl
 		return lobjAux;
 	}
 
-	private UUID GetOwnerProc(UUID pidOwnerType, UUID pidOwner)
+	private Operation BuildOuterOp(UUID pidOwnerType, UUID pidOwner, ContactOps pobjInner)
 		throws BigBangException
 	{
 		ObjectBase lobjOwner;
+		UUID lidTopType;
+		UUID lidProc;
+		UUID lidOp;
+		IOperation lobjOp;
+		Operation lobjResult;
+		boolean lbFound;
 
 		try
 		{
-			if ( Constants.ObjID_Company.equals(pidOwnerType) || Constants.ObjID_Mediator.equals(pidOwnerType) )
-				return GeneralSystem.GetAnyInstance(Engine.getCurrentNameSpace()).GetProcessID();
-
 			lobjOwner = Engine.GetWorkInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), pidOwnerType), pidOwner);
-		}
-		catch (Throwable e)
-		{
-			throw new BigBangException(e.getMessage(), e);
-		}
-		
-		try
-		{
 			while ( lobjOwner instanceof com.premiumminds.BigBang.Jewel.Objects.Contact )
 				lobjOwner = ((com.premiumminds.BigBang.Jewel.Objects.Contact)lobjOwner).getOwner();
+			lidTopType = lobjOwner.getDefinition().getDefObject().getKey();
+
+			if ( (lobjOwner instanceof Company) || (lobjOwner instanceof Mediator) )
+				lobjOwner = GeneralSystem.GetAnyInstance(Engine.getCurrentNameSpace());
 		}
 		catch (Throwable e)
 		{
@@ -417,40 +415,25 @@ public class ContactsServiceImpl
 		}
 
 		if ( lobjOwner instanceof ProcessData )
-			return ((ProcessData)lobjOwner).GetProcessID();
+			lidProc = ((ProcessData)lobjOwner).GetProcessID();
+		else
+			throw new BigBangException("Erro: O tipo de objecto indicado não suporta processos.");
 
-		throw new BigBangException("Erro: O tipo de objecto indicado não suporta processos.");
-	}
-
-	private UUID GetOpType(UUID pidOwnerType)
-		throws BigBangException
-	{
-		if ( Constants.ObjID_Company.equals(pidOwnerType) )
-			return Constants.OPID_General_ManageCompanies;
-
-		if ( Constants.ObjID_Mediator.equals(pidOwnerType) )
-			return Constants.OPID_General_ManageMediators;
-
-		if ( Constants.ObjID_Client.equals(pidOwnerType) )
-			return Constants.OPID_Client_ManageData;
-
-		if ( Constants.ObjID_Policy.equals(pidOwnerType) )
-			return Constants.OPID_Policy_ManageData;
-
-		throw new BigBangException("Erro: O objecto indicado não permite movimentos de Contactos.");
-	}
-
-	private Operation BuildOuterOp(UUID pidProc, UUID pidOp, ContactOps pobjInner)
-		throws BigBangException
-	{
-		IOperation lobjOp;
-		Operation lobjResult;
-		boolean lbFound;
+		if ( Constants.ObjID_Company.equals(lidTopType) )
+			lidOp = Constants.OPID_General_ManageCompanies;
+		else if ( Constants.ObjID_Mediator.equals(lidTopType) )
+			lidOp = Constants.OPID_General_ManageMediators;
+		else if ( Constants.ObjID_Client.equals(lidTopType) )
+			lidOp = Constants.OPID_Client_ManageData;
+		else if ( Constants.ObjID_Policy.equals(lidTopType) )
+			lidOp = Constants.OPID_Policy_ManageData;
+		else
+			throw new BigBangException("Erro: O objecto indicado não permite movimentos de Contactos.");
 
 		try
 		{
-			lobjOp = (IOperation)PNOperation.GetInstance(Engine.getCurrentNameSpace(), pidOp);
-			lobjResult = lobjOp.GetNewInstance(pidProc);
+			lobjOp = (IOperation)PNOperation.GetInstance(Engine.getCurrentNameSpace(), lidOp);
+			lobjResult = lobjOp.GetNewInstance(lidProc);
 		}
 		catch (Throwable e)
 		{
