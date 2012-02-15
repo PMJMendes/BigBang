@@ -57,14 +57,9 @@ public class TypifiedTextManagementPanel extends View implements TypifiedTextCli
 			
 			this.addItem(SUB_MENU.ADMIN, delete);
 			this.hideAll();
-
-			//toolbar.addSeparator();
 			this.showItem(SUB_MENU.EDIT, true);
-			//delete.setVisible(true);
 			this.adminSubMenu.setVisible(true);
 			this.showItem(SUB_MENU.ADMIN, true);
-
-			//delete.getElement().getStyle().setProperty("textAlign", "center");
 			this.setHeight("21px");
 			this.setWidth("100%");
 			this.adminSubMenu.getElement().getStyle().setZIndex(12000);
