@@ -1,0 +1,85 @@
+package com.premiumminds.BigBang.Jewel.Objects;
+
+import java.sql.ResultSet;
+import java.util.UUID;
+
+import com.premiumminds.BigBang.Jewel.BigBangJewelException;
+import com.premiumminds.BigBang.Jewel.Constants;
+
+import Jewel.Engine.Engine;
+import Jewel.Engine.SysObjects.JewelEngineException;
+import Jewel.Engine.SysObjects.ObjectBase;
+
+public class SubPolicyValue
+	extends ObjectBase
+{
+    public static SubPolicyValue GetInstance(UUID pidNameSpace, UUID pidKey)
+		throws BigBangJewelException
+	{
+		try
+		{
+			return (SubPolicyValue)Engine.GetWorkInstance(Engine.FindEntity(pidNameSpace, Constants.ObjID_SubPolicyValue), pidKey);
+		}
+	    catch (Throwable e)
+	    {
+	    	throw new BigBangJewelException(e.getMessage(), e);
+		}
+	}
+
+	public static SubPolicyValue GetInstance(UUID pidNameSpace, ResultSet prsObject)
+		throws BigBangJewelException
+	{
+	    try
+	    {
+			return (SubPolicyValue)Engine.GetWorkInstance(Engine.FindEntity(pidNameSpace, Constants.ObjID_SubPolicyValue), prsObject);
+		}
+	    catch (Throwable e)
+	    {
+	    	throw new BigBangJewelException(e.getMessage(), e);
+		}
+	}
+
+	private Tax mrefTax;
+
+	public void Initialize()
+		throws JewelEngineException
+	{
+		try
+		{
+			mrefTax = Tax.GetInstance(getNameSpace(), (UUID)getAt(2));
+		}
+		catch (Throwable e)
+		{
+			throw new JewelEngineException(e.getMessage(), e);
+		}
+	}
+
+    public String AfterSave() 
+    	throws JewelEngineException
+    {
+    	if ( mrefTax == null )
+    		Initialize();
+
+        return "";
+    }
+
+	public Tax GetTax()
+	{
+		return mrefTax;
+	}
+
+	public String GetValue()
+	{
+		return (String)getAt(0);
+	}
+
+	public UUID GetObjectID()
+	{
+		return (UUID)getAt(3);
+	}
+
+	public UUID GetExerciseID()
+	{
+		return (UUID)getAt(4);
+	}
+}

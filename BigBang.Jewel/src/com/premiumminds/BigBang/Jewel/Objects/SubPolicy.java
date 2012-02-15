@@ -9,23 +9,21 @@ import Jewel.Engine.DataAccess.MasterDB;
 import Jewel.Engine.Implementation.Entity;
 import Jewel.Engine.Interfaces.IEntity;
 import Jewel.Engine.SysObjects.JewelEngineException;
-import Jewel.Petri.Interfaces.IProcess;
 import Jewel.Petri.Objects.PNProcess;
 import Jewel.Petri.SysObjects.ProcessData;
 
 import com.premiumminds.BigBang.Jewel.BigBangJewelException;
 import com.premiumminds.BigBang.Jewel.Constants;
-import com.premiumminds.BigBang.Jewel.SysObjects.DetailedBase;
 
-public class Policy
+public class SubPolicy
 	extends ProcessData
 {
-    public static Policy GetInstance(UUID pidNameSpace, UUID pidKey)
+    public static SubPolicy GetInstance(UUID pidNameSpace, UUID pidKey)
 		throws BigBangJewelException
 	{
 	    try
 	    {
-			return (Policy)Engine.GetWorkInstance(Engine.FindEntity(pidNameSpace, Constants.ObjID_Policy), pidKey);
+			return (SubPolicy)Engine.GetWorkInstance(Engine.FindEntity(pidNameSpace, Constants.ObjID_SubPolicy), pidKey);
 		}
 	    catch (Throwable e)
 	    {
@@ -33,14 +31,14 @@ public class Policy
 		}
 	}
 
-    private SubLine mrefSubLine;
+    private Policy mrefOwner;
 
 	public void Initialize()
 		throws JewelEngineException
 	{
 		try
 		{
-			mrefSubLine = SubLine.GetInstance(getNameSpace(), (UUID)getAt(3));
+			mrefOwner = (Policy)PNProcess.GetInstance(getNameSpace(), GetProcessID()).GetData();
 		}
 		catch (Throwable e)
 		{
@@ -58,6 +56,11 @@ public class Policy
 		internalSetAt(1, pidProcess);
 	}
 
+    public Policy GetOwner()
+    {
+    	return mrefOwner;
+    }
+
     public Contact[] GetCurrentContacts()
     	throws BigBangJewelException
     {
@@ -74,7 +77,7 @@ public class Policy
 		larrMembers[0] = Constants.FKOwnerType_In_Contact;
 		larrMembers[1] = Constants.FKOwner_In_Contact;
 		larrParams = new java.lang.Object[2];
-		larrParams[0] = Constants.ObjID_Policy;
+		larrParams[0] = Constants.ObjID_SubPolicy;
 		larrParams[1] = getKey();
 
 		try
@@ -153,7 +156,7 @@ public class Policy
 		larrMembers[0] = Constants.FKOwnerType_In_Document;
 		larrMembers[1] = Constants.FKOwner_In_Document;
 		larrParams = new java.lang.Object[2];
-		larrParams[0] = Constants.ObjID_Policy;
+		larrParams[0] = Constants.ObjID_SubPolicy;
 		larrParams[1] = getKey();
 
 		try
@@ -216,91 +219,19 @@ public class Policy
 		return larrAux.toArray(new Document[larrAux.size()]);
     }
 
-    public PolicyCoInsurer[] GetCurrentCoInsurers()
+    public SubPolicyCoverage[] GetCurrentCoverages()
     	throws BigBangJewelException
     {
-		ArrayList<PolicyCoInsurer> larrAux;
-		IEntity lrefPolicyCoInsurers;
-        MasterDB ldb;
-        ResultSet lrsCoInsurers;
-
-		larrAux = new ArrayList<PolicyCoInsurer>();
-
-		try
-		{
-			lrefPolicyCoInsurers = Entity.GetInstance(Engine.FindEntity(Engine.getCurrentNameSpace(),
-					Constants.ObjID_PolicyCoInsurer)); 
-			ldb = new MasterDB();
-		}
-		catch (Throwable e)
-		{
-			throw new BigBangJewelException(e.getMessage(), e);
-		}
-
-		try
-		{
-			lrsCoInsurers = lrefPolicyCoInsurers.SelectByMembers(ldb, new int[] {Constants.FKPolicy_In_CoInsurer},
-					new java.lang.Object[] {getKey()}, new int[0]);
-		}
-		catch (Throwable e)
-		{
-			try { ldb.Disconnect(); } catch (Throwable e1) {}
-			throw new BigBangJewelException(e.getMessage(), e);
-		}
-
-		try
-		{
-			while ( lrsCoInsurers.next() )
-				larrAux.add(PolicyCoInsurer.GetInstance(getNameSpace(), lrsCoInsurers));
-		}
-		catch (BigBangJewelException e)
-		{
-			try { lrsCoInsurers.close(); } catch (Throwable e1) {}
-			try { ldb.Disconnect(); } catch (Throwable e1) {}
-			throw e;
-		}
-		catch (Throwable e)
-		{
-			try { lrsCoInsurers.close(); } catch (Throwable e1) {}
-			try { ldb.Disconnect(); } catch (Throwable e1) {}
-			throw new BigBangJewelException(e.getMessage(), e);
-		}
-
-		try
-		{
-			lrsCoInsurers.close();
-		}
-		catch (Throwable e)
-		{
-			try { ldb.Disconnect(); } catch (Throwable e1) {}
-			throw new BigBangJewelException(e.getMessage(), e);
-		}
-
-		try
-		{
-			ldb.Disconnect();
-		}
-		catch (Throwable e)
-		{
-			throw new BigBangJewelException(e.getMessage(), e);
-		}
-
-		return larrAux.toArray(new PolicyCoInsurer[larrAux.size()]);
-    }
-
-    public PolicyCoverage[] GetCurrentCoverages()
-    	throws BigBangJewelException
-    {
-		ArrayList<PolicyCoverage> larrAux;
-		IEntity lrefPolicyCoverages;
+		ArrayList<SubPolicyCoverage> larrAux;
+		IEntity lrefSubPolicyCoverages;
         MasterDB ldb;
         ResultSet lrsCoverages;
 
-		larrAux = new ArrayList<PolicyCoverage>();
+		larrAux = new ArrayList<SubPolicyCoverage>();
 
 		try
 		{
-			lrefPolicyCoverages = Entity.GetInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), Constants.ObjID_PolicyCoverage)); 
+			lrefSubPolicyCoverages = Entity.GetInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), Constants.ObjID_SubPolicyCoverage)); 
 			ldb = new MasterDB();
 		}
 		catch (Throwable e)
@@ -310,7 +241,7 @@ public class Policy
 
 		try
 		{
-			lrsCoverages = lrefPolicyCoverages.SelectByMembers(ldb, new int[] {Constants.FKPolicy_In_PolicyCoverage},
+			lrsCoverages = lrefSubPolicyCoverages.SelectByMembers(ldb, new int[] {Constants.FKSubPolicy_In_SubPolicyCoverage},
 					new java.lang.Object[] {getKey()}, new int[0]);
 		}
 		catch (Throwable e)
@@ -322,7 +253,7 @@ public class Policy
 		try
 		{
 			while ( lrsCoverages.next() )
-				larrAux.add(PolicyCoverage.GetInstance(getNameSpace(), lrsCoverages));
+				larrAux.add(SubPolicyCoverage.GetInstance(getNameSpace(), lrsCoverages));
 		}
 		catch (BigBangJewelException e)
 		{
@@ -356,22 +287,22 @@ public class Policy
 			throw new BigBangJewelException(e.getMessage(), e);
 		}
 
-		return larrAux.toArray(new PolicyCoverage[larrAux.size()]);
+		return larrAux.toArray(new SubPolicyCoverage[larrAux.size()]);
     }
 
-    public PolicyObject[] GetCurrentObjects()
+    public SubPolicyObject[] GetCurrentObjects()
     	throws BigBangJewelException
     {
-		ArrayList<PolicyObject> larrAux;
+		ArrayList<SubPolicyObject> larrAux;
 		IEntity lrefObjects;
         MasterDB ldb;
         ResultSet lrsObjects;
 
-		larrAux = new ArrayList<PolicyObject>();
+		larrAux = new ArrayList<SubPolicyObject>();
 
 		try
 		{
-			lrefObjects = Entity.GetInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), Constants.ObjID_PolicyObject)); 
+			lrefObjects = Entity.GetInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), Constants.ObjID_SubPolicyObject)); 
 			ldb = new MasterDB();
 		}
 		catch (Throwable e)
@@ -381,7 +312,7 @@ public class Policy
 
 		try
 		{
-			lrsObjects = lrefObjects.SelectByMembers(ldb, new int[] {Constants.FKPolicy_In_Object},
+			lrsObjects = lrefObjects.SelectByMembers(ldb, new int[] {Constants.FKSubPolicy_In_SubPolicyObject},
 					new java.lang.Object[] {getKey()}, new int[0]);
 		}
 		catch (Throwable e)
@@ -393,7 +324,7 @@ public class Policy
 		try
 		{
 			while ( lrsObjects.next() )
-				larrAux.add(PolicyObject.GetInstance(getNameSpace(), lrsObjects));
+				larrAux.add(SubPolicyObject.GetInstance(getNameSpace(), lrsObjects));
 		}
 		catch (BigBangJewelException e)
 		{
@@ -427,252 +358,166 @@ public class Policy
 			throw new BigBangJewelException(e.getMessage(), e);
 		}
 
-		return larrAux.toArray(new PolicyObject[larrAux.size()]);
+		return larrAux.toArray(new SubPolicyObject[larrAux.size()]);
     }
 
     public PolicyExercise[] GetCurrentExercises()
     	throws BigBangJewelException
     {
-		ArrayList<PolicyExercise> larrAux;
-		IEntity lrefExercises;
-        MasterDB ldb;
-        ResultSet lrsExercises;
-
-		larrAux = new ArrayList<PolicyExercise>();
-
-		try
-		{
-			lrefExercises = Entity.GetInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), Constants.ObjID_PolicyExercise)); 
-			ldb = new MasterDB();
-		}
-		catch (Throwable e)
-		{
-			throw new BigBangJewelException(e.getMessage(), e);
-		}
-
-		try
-		{
-			lrsExercises = lrefExercises.SelectByMembers(ldb, new int[] {Constants.FKPolicy_In_Exercise},
-					new java.lang.Object[] {getKey()}, new int[0]);
-		}
-		catch (Throwable e)
-		{
-			try { ldb.Disconnect(); } catch (Throwable e1) {}
-			throw new BigBangJewelException(e.getMessage(), e);
-		}
-
-		try
-		{
-			while ( lrsExercises.next() )
-				larrAux.add(PolicyExercise.GetInstance(getNameSpace(), lrsExercises));
-		}
-		catch (BigBangJewelException e)
-		{
-			try { lrsExercises.close(); } catch (Throwable e1) {}
-			try { ldb.Disconnect(); } catch (Throwable e1) {}
-			throw e;
-		}
-		catch (Throwable e)
-		{
-			try { lrsExercises.close(); } catch (Throwable e1) {}
-			try { ldb.Disconnect(); } catch (Throwable e1) {}
-			throw new BigBangJewelException(e.getMessage(), e);
-		}
-
-		try
-		{
-			lrsExercises.close();
-		}
-		catch (Throwable e)
-		{
-			try { ldb.Disconnect(); } catch (Throwable e1) {}
-			throw new BigBangJewelException(e.getMessage(), e);
-		}
-
-		try
-		{
-			ldb.Disconnect();
-		}
-		catch (Throwable e)
-		{
-			throw new BigBangJewelException(e.getMessage(), e);
-		}
-
-		return larrAux.toArray(new PolicyExercise[larrAux.size()]);
-    }
-
-    public PolicyValue[] GetCurrentValues()
-    	throws BigBangJewelException
-    {
-		ArrayList<PolicyValue> larrAux;
-		IEntity lrefContactInfo;
-        MasterDB ldb;
-        ResultSet lrsInfo;
-
-		larrAux = new ArrayList<PolicyValue>();
-
-		try
-		{
-			lrefContactInfo = Entity.GetInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), Constants.ObjID_PolicyValue)); 
-			ldb = new MasterDB();
-		}
-		catch (Throwable e)
-		{
-			throw new BigBangJewelException(e.getMessage(), e);
-		}
-
-		try
-		{
-			lrsInfo = lrefContactInfo.SelectByMembers(ldb, new int[] {Constants.FKPolicy_In_Value},
-					new java.lang.Object[] {getKey()}, new int[0]);
-		}
-		catch (Throwable e)
-		{
-			try { ldb.Disconnect(); } catch (Throwable e1) {}
-			throw new BigBangJewelException(e.getMessage(), e);
-		}
-
-		try
-		{
-			while ( lrsInfo.next() )
-				larrAux.add(PolicyValue.GetInstance(getNameSpace(), lrsInfo));
-		}
-		catch (BigBangJewelException e)
-		{
-			try { lrsInfo.close(); } catch (Throwable e1) {}
-			try { ldb.Disconnect(); } catch (Throwable e1) {}
-			throw e;
-		}
-		catch (Throwable e)
-		{
-			try { lrsInfo.close(); } catch (Throwable e1) {}
-			try { ldb.Disconnect(); } catch (Throwable e1) {}
-			throw new BigBangJewelException(e.getMessage(), e);
-		}
-
-		try
-		{
-			lrsInfo.close();
-		}
-		catch (Throwable e)
-		{
-			try { ldb.Disconnect(); } catch (Throwable e1) {}
-			throw new BigBangJewelException(e.getMessage(), e);
-		}
-
-		try
-		{
-			ldb.Disconnect();
-		}
-		catch (Throwable e)
-		{
-			throw new BigBangJewelException(e.getMessage(), e);
-		}
-
-		return larrAux.toArray(new PolicyValue[larrAux.size()]);
-    }
-
-    public PolicyValue[] GetCurrentKeyedValues(UUID pidObject, UUID pidExercise)
-    	throws BigBangJewelException
-    {
-		ArrayList<PolicyValue> larrAux;
-		IEntity lrefContactInfo;
-        MasterDB ldb;
-        ResultSet lrsInfo;
-
-		larrAux = new ArrayList<PolicyValue>();
-
-		try
-		{
-			lrefContactInfo = Entity.GetInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), Constants.ObjID_PolicyValue)); 
-			ldb = new MasterDB();
-		}
-		catch (Throwable e)
-		{
-			throw new BigBangJewelException(e.getMessage(), e);
-		}
-
-		try
-		{
-			lrsInfo = lrefContactInfo.SelectByMembers(ldb, new int[] {Constants.FKPolicy_In_Value, Constants.FKObject_In_Value,
-					Constants.FKExercise_In_Value}, new java.lang.Object[] {getKey(), pidObject, pidExercise}, new int[0]);
-		}
-		catch (Throwable e)
-		{
-			try { ldb.Disconnect(); } catch (Throwable e1) {}
-			throw new BigBangJewelException(e.getMessage(), e);
-		}
-
-		try
-		{
-			while ( lrsInfo.next() )
-				larrAux.add(PolicyValue.GetInstance(getNameSpace(), lrsInfo));
-		}
-		catch (BigBangJewelException e)
-		{
-			try { lrsInfo.close(); } catch (Throwable e1) {}
-			try { ldb.Disconnect(); } catch (Throwable e1) {}
-			throw e;
-		}
-		catch (Throwable e)
-		{
-			try { lrsInfo.close(); } catch (Throwable e1) {}
-			try { ldb.Disconnect(); } catch (Throwable e1) {}
-			throw new BigBangJewelException(e.getMessage(), e);
-		}
-
-		try
-		{
-			lrsInfo.close();
-		}
-		catch (Throwable e)
-		{
-			try { ldb.Disconnect(); } catch (Throwable e1) {}
-			throw new BigBangJewelException(e.getMessage(), e);
-		}
-
-		try
-		{
-			ldb.Disconnect();
-		}
-		catch (Throwable e)
-		{
-			throw new BigBangJewelException(e.getMessage(), e);
-		}
-
-		return larrAux.toArray(new PolicyValue[larrAux.size()]);
-    }
-
-    public SubLine GetSubLine()
-    {
-    	return mrefSubLine;
-    }
-
-    public Company GetCompany()
-    	throws BigBangJewelException
-    {
-		return Company.GetInstance(getNameSpace(), (UUID)getAt(2));
-    }
-
-    public Client GetClient()
-    	throws BigBangJewelException
-    {
-    	IProcess lobjProcess;
-
     	try
     	{
-			lobjProcess = PNProcess.GetInstance(getNameSpace(), GetProcessID());
-	    	return (Client)lobjProcess.GetParent().GetData();
+			return GetOwner().GetCurrentExercises();
+		}
+    	catch (BigBangJewelException e)
+    	{
+    		throw e;
 		}
     	catch (Throwable e)
     	{
-    		throw new BigBangJewelException(e.getMessage(), e);
+			throw new BigBangJewelException(e.getMessage(), e);
 		}
     }
 
-    public DetailedBase GetDetailedObject()
+    public SubPolicyValue[] GetCurrentValues()
     	throws BigBangJewelException
     {
-    	return SubLine.GetInstance(getNameSpace(), (UUID)getAt(3)).GetDetailedObject(this);
+		ArrayList<SubPolicyValue> larrAux;
+		IEntity lrefContactInfo;
+        MasterDB ldb;
+        ResultSet lrsInfo;
+
+		larrAux = new ArrayList<SubPolicyValue>();
+
+		try
+		{
+			lrefContactInfo = Entity.GetInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), Constants.ObjID_SubPolicyValue)); 
+			ldb = new MasterDB();
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangJewelException(e.getMessage(), e);
+		}
+
+		try
+		{
+			lrsInfo = lrefContactInfo.SelectByMembers(ldb, new int[] {Constants.FKSubPolicy_In_SubPolicyValue},
+					new java.lang.Object[] {getKey()}, new int[0]);
+		}
+		catch (Throwable e)
+		{
+			try { ldb.Disconnect(); } catch (Throwable e1) {}
+			throw new BigBangJewelException(e.getMessage(), e);
+		}
+
+		try
+		{
+			while ( lrsInfo.next() )
+				larrAux.add(SubPolicyValue.GetInstance(getNameSpace(), lrsInfo));
+		}
+		catch (BigBangJewelException e)
+		{
+			try { lrsInfo.close(); } catch (Throwable e1) {}
+			try { ldb.Disconnect(); } catch (Throwable e1) {}
+			throw e;
+		}
+		catch (Throwable e)
+		{
+			try { lrsInfo.close(); } catch (Throwable e1) {}
+			try { ldb.Disconnect(); } catch (Throwable e1) {}
+			throw new BigBangJewelException(e.getMessage(), e);
+		}
+
+		try
+		{
+			lrsInfo.close();
+		}
+		catch (Throwable e)
+		{
+			try { ldb.Disconnect(); } catch (Throwable e1) {}
+			throw new BigBangJewelException(e.getMessage(), e);
+		}
+
+		try
+		{
+			ldb.Disconnect();
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangJewelException(e.getMessage(), e);
+		}
+
+		return larrAux.toArray(new SubPolicyValue[larrAux.size()]);
+    }
+
+    public SubPolicyValue[] GetCurrentKeyedValues(UUID pidObject, UUID pidExercise)
+    	throws BigBangJewelException
+    {
+		ArrayList<SubPolicyValue> larrAux;
+		IEntity lrefContactInfo;
+        MasterDB ldb;
+        ResultSet lrsInfo;
+
+		larrAux = new ArrayList<SubPolicyValue>();
+
+		try
+		{
+			lrefContactInfo = Entity.GetInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), Constants.ObjID_SubPolicyValue)); 
+			ldb = new MasterDB();
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangJewelException(e.getMessage(), e);
+		}
+
+		try
+		{
+			lrsInfo = lrefContactInfo.SelectByMembers(ldb, new int[] {Constants.FKSubPolicy_In_SubPolicyValue,
+					Constants.FKObject_In_SubPolicyValue, Constants.FKExercise_In_SubPolicyValue}, new java.lang.Object[] {getKey(),
+					pidObject, pidExercise}, new int[0]);
+		}
+		catch (Throwable e)
+		{
+			try { ldb.Disconnect(); } catch (Throwable e1) {}
+			throw new BigBangJewelException(e.getMessage(), e);
+		}
+
+		try
+		{
+			while ( lrsInfo.next() )
+				larrAux.add(SubPolicyValue.GetInstance(getNameSpace(), lrsInfo));
+		}
+		catch (BigBangJewelException e)
+		{
+			try { lrsInfo.close(); } catch (Throwable e1) {}
+			try { ldb.Disconnect(); } catch (Throwable e1) {}
+			throw e;
+		}
+		catch (Throwable e)
+		{
+			try { lrsInfo.close(); } catch (Throwable e1) {}
+			try { ldb.Disconnect(); } catch (Throwable e1) {}
+			throw new BigBangJewelException(e.getMessage(), e);
+		}
+
+		try
+		{
+			lrsInfo.close();
+		}
+		catch (Throwable e)
+		{
+			try { ldb.Disconnect(); } catch (Throwable e1) {}
+			throw new BigBangJewelException(e.getMessage(), e);
+		}
+
+		try
+		{
+			ldb.Disconnect();
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangJewelException(e.getMessage(), e);
+		}
+
+		return larrAux.toArray(new SubPolicyValue[larrAux.size()]);
     }
 }
