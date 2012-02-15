@@ -1,12 +1,12 @@
 package bigbang.tests.client;
 
 import bigBang.definitions.shared.InsurancePolicy;
+import bigBang.definitions.shared.PolicyVoiding;
 import bigBang.definitions.shared.SearchParameter;
 import bigBang.definitions.shared.SearchResult;
 import bigBang.definitions.shared.SortParameter;
 import bigBang.library.shared.NewSearchResult;
 import bigBang.module.insurancePolicyModule.shared.InsurancePolicySearchParameter;
-import bigBang.module.insurancePolicyModule.shared.PolicyVoiding;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
