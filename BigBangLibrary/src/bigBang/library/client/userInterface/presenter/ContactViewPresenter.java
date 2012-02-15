@@ -21,14 +21,19 @@ import bigBang.library.client.event.ActionInvokedEvent;
 import bigBang.library.client.event.ActionInvokedEventHandler;
 import bigBang.library.client.event.DeleteRequestEventHandler;
 import bigBang.library.client.event.NewNotificationEvent;
+import bigBang.library.client.event.SelectionChangedEvent;
+import bigBang.library.client.event.SelectionChangedEventHandler;
 import bigBang.library.client.history.NavigationHistoryItem;
 import bigBang.library.client.history.NavigationHistoryManager;
 import bigBang.library.client.userInterface.ContactOperationsToolBar;
 import bigBang.library.client.userInterface.List;
+import bigBang.library.client.userInterface.ListEntry;
+import bigBang.library.client.userInterface.NavigationPanel;
 import bigBang.library.client.userInterface.view.ContactView;
 import bigBang.library.client.userInterface.view.ContactView.ContactEntry;
 
 import com.google.gwt.user.client.ui.HasWidgets;
+import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.UIObject;
 import com.google.gwt.user.client.ui.Widget;
 
@@ -49,9 +54,8 @@ public class ContactViewPresenter implements ViewPresenter, ContactsBrokerClient
 		EDIT,
 		CANCEL,
 		CREATE_CHILD_CONTACT,
-		SHOW_CHILD_CONTACTS,
 		ADD_NEW_DETAIL,
-		DELETE_DETAIL, DELETE, REMOVE_OK, CHILD_SELECTED
+		DELETE_DETAIL, DELETE, REMOVE_OK, CHILD_SELECTED, ERROR_SHOWING_CONTACT
 	}
 
 	public ContactViewPresenter(Display view){
@@ -77,6 +81,9 @@ public class ContactViewPresenter implements ViewPresenter, ContactsBrokerClient
 		public void registerDeleteHandler(
 				DeleteRequestEventHandler deleteRequestEventHandler);
 		ContactOperationsToolBar getToolbar();
+		void setSubContacts(Contact[] contacts);
+		List<Contact> getSubContactList();
+		public void addSubContact(Contact contact);
 	}
 
 	public void setContact(Contact contact){
@@ -90,7 +97,8 @@ public class ContactViewPresenter implements ViewPresenter, ContactsBrokerClient
 		}
 		this.contact = contact;
 		view.setContact(contact);
-		
+		view.setSubContacts(contact.subContacts);
+
 		for(int i = 0; i<contact.info.length; i++){
 
 
@@ -120,7 +128,7 @@ public class ContactViewPresenter implements ViewPresenter, ContactsBrokerClient
 
 	@Override
 	public void setParameters(HasParameters parameterHolder) {
-		
+
 		broker.unregisterClient(this);
 		ownerId = parameterHolder.getParameter("id");
 		contactId = parameterHolder.getParameter("contactid");
@@ -174,6 +182,7 @@ public class ContactViewPresenter implements ViewPresenter, ContactsBrokerClient
 							@Override
 							public void onError(Collection<ResponseError> errors) {
 								EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não é possível mostrar o contacto pedido."), TYPE.ALERT_NOTIFICATION));
+								fireAction(Action.ERROR_SHOWING_CONTACT);
 							}
 						});
 
@@ -181,7 +190,6 @@ public class ContactViewPresenter implements ViewPresenter, ContactsBrokerClient
 
 					@Override
 					public void onError(Collection<ResponseError> errors) {
-						
 
 					}
 				});
@@ -220,6 +228,7 @@ public class ContactViewPresenter implements ViewPresenter, ContactsBrokerClient
 
 		view.registerActionHandler(new ActionInvokedEventHandler<Action>(){
 
+
 			@Override
 			public void onActionInvoked(ActionInvokedEvent<Action> action) {
 
@@ -248,9 +257,7 @@ public class ContactViewPresenter implements ViewPresenter, ContactsBrokerClient
 					Contact temp = view.getContact();
 					createUpdateContact(temp);
 					break;
-				case SHOW_CHILD_CONTACTS: 
-					fireAction(Action.SHOW_CHILD_CONTACTS);
-					break;
+
 				case DELETE:{
 					MessageBox.confirm("Eliminar contacto", "Tem certeza que pretende eliminar o contacto seleccionado?", new MessageBox.ConfirmationCallback() {
 
@@ -271,25 +278,29 @@ public class ContactViewPresenter implements ViewPresenter, ContactsBrokerClient
 
 			private void deleteContact(Contact contact) {
 
-				broker.removeContact(contactId, new ResponseHandler<Void>() {
+				if(contactId != null){
+					broker.removeContact(contactId, new ResponseHandler<Void>() {
 
-					@Override
-					public void onResponse(Void response) {
-						fireAction(Action.REMOVE_OK);
-						EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Contacto eliminado com sucesso."), TYPE.TRAY_NOTIFICATION));
-					}
+						@Override
+						public void onResponse(Void response) {
+							fireAction(Action.REMOVE_OK);
+							EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Contacto eliminado com sucesso."), TYPE.TRAY_NOTIFICATION));
+						}
 
-					@Override
-					public void onError(Collection<ResponseError> errors) {
-						EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não foi possível eliminar o contacto."), TYPE.ALERT_NOTIFICATION));
-						view.setSaveMode(true);
-						view.setEditable(true);
-						view.getToolbar().allowEdit(true);
-					}
+						@Override
+						public void onError(Collection<ResponseError> errors) {
+							EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não foi possível eliminar o contacto."), TYPE.ALERT_NOTIFICATION));
+							view.setSaveMode(true);
+							view.setEditable(true);
+							view.getToolbar().allowEdit(true);
+						}
 
 
-				});
+					});
 
+				}
+				else
+					fireAction(Action.REMOVE_OK);
 			}
 
 			private void createUpdateContact(Contact temp) {
@@ -351,6 +362,14 @@ public class ContactViewPresenter implements ViewPresenter, ContactsBrokerClient
 
 		});
 
+		view.getSubContactList().addSelectionChangedEventHandler(new SelectionChangedEventHandler() {
+
+			@Override
+			public void onSelectionChanged(SelectionChangedEvent event) {
+				fireAction(Action.CHILD_SELECTED);
+			}
+		});
+
 	}
 
 
@@ -359,25 +378,25 @@ public class ContactViewPresenter implements ViewPresenter, ContactsBrokerClient
 		if(temp.id == null){
 			temp.ownerId = ownerId;
 			temp.ownerTypeId = ownerTypeId;
-			
+
 			broker.addContact(temp, new ResponseHandler<Contact>() {
-			
-			@Override
-			public void onResponse(Contact response) {
-				ContactViewPresenter.this.setContact(response);
-				fireAction(Action.CREATE_CHILD_CONTACT);
-			}
-			
-			@Override
-			public void onError(Collection<ResponseError> errors) {
-				EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não foi possível criar o sub-contacto."), TYPE.ALERT_NOTIFICATION));
-			}
-		
+
+				@Override
+				public void onResponse(Contact response) {
+					ContactViewPresenter.this.setContact(response);
+					fireAction(Action.CREATE_CHILD_CONTACT);
+				}
+
+				@Override
+				public void onError(Collection<ResponseError> errors) {
+					EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não foi possível criar o sub-contacto."), TYPE.ALERT_NOTIFICATION));
+				}
+
 			});
 		}else{
 			fireAction(Action.CREATE_CHILD_CONTACT);
 		}
-		
+
 	}
 
 	public void addNewDetail() {
@@ -417,30 +436,49 @@ public class ContactViewPresenter implements ViewPresenter, ContactsBrokerClient
 	@Override
 	public void setContactsDataVersionNumber(String ownerId, int number) {
 
-
+		return;
 	}
 
 	@Override
 	public void setContacts(String ownerId, java.util.List<Contact> contacts) {
 
 
+		return;
 	}
 
 	@Override
 	public void removeContact(String ownerId, String contactId) {
+
+		if(ownerId.equalsIgnoreCase(this.ownerId)){
+
+			for(ListEntry<Contact> c : view.getSubContactList()){
+				
+				if(c.getValue().id.equalsIgnoreCase(contactId)){
+					view.getSubContactList().remove(c.getValue());
+				}
+				
+			}
+		}
+		
 
 	}
 
 	@Override
 	public void addContact(String ownerId, Contact contact) {
 
+		if(ownerId.equalsIgnoreCase(this.ownerId)){
+			view.addSubContact(contact);
+		}
 
 	}
 
 	@Override
 	public void updateContact(String ownerId, Contact contact) {
 
-		return;
+		if(this.ownerId.equalsIgnoreCase(ownerId)){
+			view.getSubContactList().remove(new ListEntry<Contact>(contact));
+			view.getSubContactList().add(new ListEntry<Contact>(contact));
+		}
 
 	} 
 
@@ -449,7 +487,7 @@ public class ContactViewPresenter implements ViewPresenter, ContactsBrokerClient
 			actionHandler.onActionInvoked(new ActionInvokedEvent<Action>(action));
 		}
 	}
-	
+
 	public void registerActionHandler(ActionInvokedEventHandler<Action> handler) {
 		this.actionHandler = handler;
 	}

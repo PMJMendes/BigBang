@@ -3,7 +3,6 @@ package bigBang.library.client.userInterface.presenter;
 
 import bigBang.definitions.shared.BigBangConstants;
 import bigBang.definitions.shared.Contact;
-import bigBang.definitions.shared.ContactInfo;
 import bigBang.library.client.HasParameters;
 import bigBang.library.client.ViewPresenterFactory;
 import bigBang.library.client.event.ActionInvokedEvent;
@@ -13,7 +12,6 @@ import bigBang.library.client.history.NavigationHistoryManager;
 import bigBang.library.client.userInterface.ListEntry;
 import bigBang.library.client.userInterface.NavigationPanel;
 import bigBang.library.client.userInterface.presenter.ContactViewPresenter.Action;
-import bigBang.library.client.userInterface.view.ContactView.ContactEntry;
 
 import com.google.gwt.user.client.ui.HasWidgets;
 import com.google.gwt.user.client.ui.UIObject;
@@ -22,8 +20,6 @@ import com.google.gwt.user.client.ui.Widget;
 public class ContactNavigationViewPresenter implements ViewPresenter{
 
 	private Display view;
-	private boolean bound;
-	private HasParameters parameterHolder;
 
 	public ContactNavigationViewPresenter(Display view){
 
@@ -49,20 +45,18 @@ public class ContactNavigationViewPresenter implements ViewPresenter{
 	public void go(HasWidgets container) {
 
 		bind();
-		bound = true;
 		container.clear();
 		container.add(this.view.asWidget());
 
 	}
 
 	private void bind() {
-
+		
 	}
 
 	@Override
-	public void setParameters(HasParameters parameterHolder) {
+	public void setParameters(final HasParameters parameterHolder) {
 
-		this.parameterHolder = parameterHolder;
 		final ContactViewPresenter presenter = (ContactViewPresenter) ViewPresenterFactory.getInstance().getViewPresenter("SINGLE_CONTACT");
 		HasWidgets container = view.getNextContainer();
 		presenter.go(container);
@@ -87,34 +81,39 @@ public class ContactNavigationViewPresenter implements ViewPresenter{
 					break;
 				}
 
-				case SHOW_CHILD_CONTACTS:{
-					showChildContacts(presenter.getView().getContact().id, presenter.getView().getContact().ownerId);
+				case CREATE_CHILD_CONTACT:{
+					createShowChildContact(null,presenter.getView().getContact().id);
 					break;
 				}
-
-				case CREATE_CHILD_CONTACT:{
-					createChildContact(presenter.getView().getContact().id);
+				case CANCEL:{
+					presenter.setParameters(parameterHolder);	
 					break;
+				}
+				
+				case CHILD_SELECTED:{
+					@SuppressWarnings("unchecked")
+					Contact chosen = ((ListEntry<Contact>) presenter.getView().getSubContactList().getSelected().toArray()[0]).getValue(); 
+					createShowChildContact(chosen.id, chosen.ownerId);
 				}
 
 				}
 
 			}
 		});
-
 	}
 
-	protected void createChildContact(String ownerId) {
+	protected void createShowChildContact(String id, String ownerId) {
 
-		HasParameters newChildParameters = new HasParameters();
-		newChildParameters.setParameter("id", ownerId);
-		newChildParameters.setParameter("ownertypeid", BigBangConstants.EntityIds.CONTACT);
-		newChildParameters.setParameter("editpermission", "1");
+		final HasParameters showChildContact = new HasParameters();
+		showChildContact.setParameter("contactid", id);
+		showChildContact.setParameter("id", ownerId);
+		showChildContact.setParameter("ownertypeid", BigBangConstants.EntityIds.CONTACT);
+		showChildContact.setParameter("editpermission", "1");
 		final ContactViewPresenter newChildPresenter = (ContactViewPresenter) ViewPresenterFactory.getInstance().getViewPresenter("SINGLE_CONTACT");
 		HasWidgets newChildContainer = view.getNextContainer();
 		newChildPresenter.go(newChildContainer);
-		view.navigateTo((Widget) newChildContainer);
-		newChildPresenter.setParameters(newChildParameters);
+		view.navigateTo((Widget) newChildContainer); 
+		newChildPresenter.setParameters(showChildContact);
 		newChildPresenter.registerActionHandler(new ActionInvokedEventHandler<ContactViewPresenter.Action>() {
 
 			@Override
@@ -126,47 +125,31 @@ public class ContactNavigationViewPresenter implements ViewPresenter{
 					break;
 				}
 
-				case SHOW_CHILD_CONTACTS:{
-					showChildContacts(newChildPresenter.getView().getContact().id, newChildPresenter.getView().getContact().ownerId);
-					break;
-				}
-
 				case CREATE_CHILD_CONTACT:{
-					createChildContact(newChildPresenter.getView().getContact().id);
+					createShowChildContact(null, newChildPresenter.getView().getContact().id);
 					break;
 				}
-
+				case CANCEL: {
+					if (newChildPresenter.getView().getContact().id != null){
+						newChildPresenter.setParameters(showChildContact);
+					}
+					else
+						((NavigationPanel)view).navigateBack();
+					break;
 				}
-
-			}
-		});
-	}
-
-	protected void showChildContacts(String contactId, String ownerId) {
-
-		HasParameters parameters = new HasParameters();
-		parameters.setParameter("contactid", contactId);
-		parameters.setParameter("ownerid", ownerId);
-		HasWidgets contactListContainer = view.getNextContainer();
-		final SubContactListViewPresenter contactListPresenter = (SubContactListViewPresenter) ViewPresenterFactory.getInstance().getViewPresenter("SUB_CONTACT_LIST");
-		contactListPresenter.go(contactListContainer);
-		view.navigateTo((Widget) contactListContainer);
-		contactListPresenter.setParameters(parameters);
-		
-		contactListPresenter.registerActionHandler(new ActionInvokedEventHandler<ContactViewPresenter.Action>() {
-			
-			@SuppressWarnings("unchecked")
-			@Override
-			public void onActionInvoked(ActionInvokedEvent<Action> action) {
-				
-				switch(action.getAction()){
 				case CHILD_SELECTED:{
-					System.out.println("O ESCOLHIDO FOI O:" + ((ListEntry<Contact>) contactListPresenter.getView().getList().getSelected().toArray()[0]).getValue().name);
+					@SuppressWarnings("unchecked")
+					Contact chosen = ((ListEntry<Contact>) newChildPresenter.getView().getSubContactList().getSelected().toArray()[0]).getValue(); 
+					createShowChildContact(chosen.id, chosen.ownerId);
+				}
+				case ERROR_SHOWING_CONTACT:{
+					((NavigationPanel)view).navigateBack();
 				}
 				}
-				
+
 			}
 		});
 	}
+
 
 }

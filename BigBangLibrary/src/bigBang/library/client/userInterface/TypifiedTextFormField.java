@@ -69,7 +69,7 @@ public class TypifiedTextFormField extends FormField<String> implements Typified
 		labelPanel.add(labels);
 		labels.setEditable(false);
 		labels.setWidth("100%");
-		
+
 		wrapper.add(labelPanel);
 		subject.setWidth("100%");
 		subject.setFieldWidth("100%");
@@ -78,49 +78,7 @@ public class TypifiedTextFormField extends FormField<String> implements Typified
 		textBody.setLabelWidth("0px");
 		textBody.setFieldWidth("100%");
 		wrapper.add(textBody);
-
-
-		//		addListeners();
-
 	}
-
-
-	//	private void addListeners() {
-	//
-	////		cancelButton.addClickHandler(new ClickHandler() {
-	//
-	//			@Override
-	//			public void onClick(ClickEvent event) {
-	//
-	//				String id = labels.selectedValueId;
-	//				if(id == null || id.length() == 0){
-	//					clear();
-	//					return;
-	//				}
-	//
-	//				broker.getText(tag, id, new ResponseHandler<TypifiedText>() {
-	//
-	//					@Override
-	//					public void onResponse(TypifiedText response) {
-	//
-	//						labelText.setValue(response.label);
-	//						subject.setValue(response.subject);
-	//						textBody.setValue(response.text);
-	//					}
-	//
-	//					@Override
-	//					public void onError(Collection<ResponseError> errors) {
-	//						EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não foi possível mostrar o texto pedido."), TYPE.ALERT_NOTIFICATION));
-	//					}
-	//				});
-	//
-	//			}
-	//
-	//		});
-
-	//CREATE_BUTTON
-
-	//		createButton.addClickHandler(new ClickHandler() {
 
 	public void setTypifiedTexts(String tag){
 
@@ -128,17 +86,16 @@ public class TypifiedTextFormField extends FormField<String> implements Typified
 		broker.unregisterClient(this);
 		broker.registerClient(tag, this);
 		labels.setListId(BigBangConstants.TypifiedListIds.TYPIFIED_TEXT+"/"+tag, new ResponseHandler<Void>() {
-			
+
 			@Override
 			public void onResponse(Void response) {
-				// TODO Auto-generated method stub
-				
+
+
 			}
 
 			@Override
 			public void onError(Collection<ResponseError> errors) {
-				// TODO Auto-generated method stub
-				
+
 			}
 		});
 	}
@@ -152,33 +109,33 @@ public class TypifiedTextFormField extends FormField<String> implements Typified
 
 	@Override
 	public void setReadOnly(boolean readonly) {
-		
+
 		subject.setEditable(readonly);
 		textBody.setEditable(readonly);
 	}
 
 	@Override
 	public boolean isReadOnly() {
-		// TODO Auto-generated method stub
+
 		return false;
 	}
 
 	@Override
 	public void setLabelWidth(String width) {
-		// TODO Auto-generated method stub
+
 
 	}
 
 	@Override
 	public void setTypifiedTexts(List<TypifiedText> texts) {
-		// TODO Auto-generated method stub
+
 
 	}
 
 
 	@Override
 	public void removeText(TypifiedText text) {
-		// TODO Auto-generated method stub
+
 
 	}
 
@@ -193,20 +150,20 @@ public class TypifiedTextFormField extends FormField<String> implements Typified
 
 	@Override
 	public void updateText(TypifiedText text) {
-		// TODO Auto-generated method stub
+
 
 	}
 
 	@Override
 	public int getTypifiedTextDataVersionNumber() {
-		// TODO Auto-generated method stub
+
 		return 0;
 	}
 
 
 	@Override
 	public void setTypifiedTextDataVersionNumber(int number) {
-		// TODO Auto-generated method stub
-		
+
+
 	}
 }

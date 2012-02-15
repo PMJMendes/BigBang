@@ -90,7 +90,8 @@ public class SubContactListViewPresenter implements  ViewPresenter,ContactsBroke
 
 	@Override
 	public void updateContact(String ownerId, Contact contact) {
-		// TODO Auto-generated method stub
+		
+		return;
 		
 	}
 
@@ -138,8 +139,8 @@ public class SubContactListViewPresenter implements  ViewPresenter,ContactsBroke
 
 	@Override
 	public void setParameters(HasParameters parameterHolder) {
-		
 
+		broker.registerClient(this, ownerId);
 		contactId = parameterHolder.getParameter("contactid");
 		ownerId = parameterHolder.getParameter("ownerid");
 		

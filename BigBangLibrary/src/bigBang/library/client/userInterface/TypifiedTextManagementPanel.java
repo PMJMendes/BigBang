@@ -561,7 +561,7 @@ public class TypifiedTextManagementPanel extends View implements TypifiedTextCli
 	@Override
 	public void updateItem(TipifiedListItem item) {
 		for(ValueSelectable<TipifiedListItem> i : list) {
-			if(i.getValue().id == item.id){
+			if(i.getValue().id.equalsIgnoreCase(item.id)){
 				i.setValue(item);
 				((TypifiedListEntry)i).setInfo(item);
 				break;

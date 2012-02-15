@@ -7,15 +7,12 @@ import bigBang.library.client.event.ActionInvokedEvent;
 import bigBang.library.client.event.ActionInvokedEventHandler;
 import bigBang.library.client.event.DeleteRequestEvent;
 import bigBang.library.client.event.DeleteRequestEventHandler;
-import bigBang.library.client.event.SelectedStateChangedEvent;
-import bigBang.library.client.event.SelectedStateChangedEventHandler;
 import bigBang.library.client.userInterface.AddressFormField;
 import bigBang.library.client.userInterface.ContactOperationsToolBar;
 import bigBang.library.client.userInterface.ExpandableListBoxFormField;
 import bigBang.library.client.userInterface.List;
 import bigBang.library.client.userInterface.ListEntry;
 import bigBang.library.client.userInterface.ListHeader;
-import bigBang.library.client.userInterface.NavigationListEntry;
 import bigBang.library.client.userInterface.TextBoxFormField;
 import bigBang.library.client.userInterface.presenter.ContactViewPresenter;
 import bigBang.library.client.userInterface.presenter.ContactViewPresenter.Action;
@@ -24,20 +21,24 @@ import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.HorizontalPanel;
+import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.SplitLayoutPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
 public class ContactView extends View implements ContactViewPresenter.Display{
 
-	private VerticalPanel wrapper;
+	private SplitLayoutPanel wrapper;
+	private VerticalPanel wrapperRight;
+	private VerticalPanel wrapperLeft;
 	private ActionInvokedEventHandler<Action> actionHandler;
 	private DeleteRequestEventHandler deleteHandler;
-	private ListEntry<Void> childContactsButton;
 	private TextBoxFormField name;
 	private ExpandableListBoxFormField type;
 	private AddressFormField address;
 	private List<ContactInfo> contactIL;
 	private Contact contact;
 	private ContactOperationsToolBar toolbar;
+	private List<Contact> subContacts;
 
 	public class ContactEntry extends ListEntry<ContactInfo>{
 
@@ -112,9 +113,10 @@ public class ContactView extends View implements ContactViewPresenter.Display{
 
 	public ContactView(){
 		
-		wrapper = new VerticalPanel();
+		wrapper = new SplitLayoutPanel();
 		initWidget(wrapper);
-
+		
+		wrapperLeft = new VerticalPanel();
 		//TOOLBAR
 		toolbar = new ContactOperationsToolBar() {
 
@@ -153,35 +155,31 @@ public class ContactView extends View implements ContactViewPresenter.Display{
 
 		address.setWidth("400px");
 		
-		childContactsButton = new NavigationListEntry<Void>(null);
-		childContactsButton.getElement().getStyle().setProperty("borderTop", "1px solid gray");
-		childContactsButton.setTitle("Sub-Contactos");
-		childContactsButton.addSelectedStateChangedEventHandler(new SelectedStateChangedEventHandler() {
-
-			@Override
-			public void onSelectedStateChanged(SelectedStateChangedEvent event) {
-				if(event.getSelected()) {
-					fireAction(Action.SHOW_CHILD_CONTACTS);
-				}
-			}
-		});
-		
-		childContactsButton.setHeight("40px");
 		HorizontalPanel horz = new HorizontalPanel();
 		horz.add(type);
 		horz.add(name);
-		wrapper.add(toolbar);
-		wrapper.add(horz);
-		wrapper.add(address);
+		wrapperLeft.add(toolbar);
+		wrapperLeft.add(horz);
+		wrapperLeft.add(address);
 		ListHeader conts = new ListHeader("Detalhes");
-		wrapper.add(conts);
+		wrapperLeft.add(conts);
 		contactIL = new List<ContactInfo>();
 		contactIL.setSelectableEntries(false);
-		contactIL.getScrollable().setHeight("148px");
-		wrapper.add(contactIL.getScrollable());
-		wrapper.add(childContactsButton);
+		contactIL.getScrollable().setHeight("188px");
+		wrapperLeft.add(contactIL.getScrollable());
 
-		setSize("100%", "100%");
+		wrapper.addWest(wrapperLeft, 410);
+		
+		wrapperRight = new VerticalPanel();
+		subContacts = new List<Contact>();
+		ListHeader header = new ListHeader();
+		header.setText("Sub-Contactos");
+		wrapperRight.add(header);
+		subContacts.getScrollable().setSize("100%","440px");
+		wrapperRight.add(subContacts.getScrollable());
+		wrapperRight.setSize("100%", "100%");
+		wrapper.add(wrapperRight);
+		wrapper.setSize("820px", "500px");
 	}
 	
 	@Override
@@ -294,11 +292,10 @@ public class ContactView extends View implements ContactViewPresenter.Display{
 		return newContact;
 	}
 
-	@SuppressWarnings("unused")
-	private Contact getInfo() {
+	public Contact getInfo() {
 		return this.contact;
 	}
-
+ 
 	@Override
 	public void registerDeleteHandler(
 			DeleteRequestEventHandler deleteRequestEventHandler) {
@@ -314,5 +311,42 @@ public class ContactView extends View implements ContactViewPresenter.Display{
 	public void setSaveMode(boolean b) {
 		toolbar.setSaveModeEnabled(b);
 	}
+	
+	@Override
+	public void setSubContacts(Contact[] contacts) {
+	
+		subContacts.clear();
+		ListEntry<Contact> temp;
+		Label tempLabel;
+		for(int i = 0; i<contacts.length; i++){
+			temp = new ListEntry<Contact>(contacts[i]);
+			tempLabel = new Label(temp.getValue().name);
+			temp.setWidget(tempLabel);
+			subContacts.add(temp);
+		}
+	}
+	
+	@Override
+	public List<Contact> getSubContactList(){
+		
+		return subContacts;
+	}
+
+	@Override
+	public void addSubContact(Contact contact) {
+		
+		ListEntry<Contact> temp;
+		temp = new ListEntry<Contact>(contact);
+		Label tempLabel;
+		tempLabel = new Label(temp.getValue().name);
+		temp.setWidget(tempLabel);
+		subContacts.add(temp);
+		for(int i = 0; i<subContacts.size(); i++){
+			System.out.println(subContacts.get(i).getValue().name);
+		}
+		 
+	}
+	
+
 
 }
