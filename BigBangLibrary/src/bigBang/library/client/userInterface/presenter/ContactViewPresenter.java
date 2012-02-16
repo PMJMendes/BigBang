@@ -86,7 +86,6 @@ public class ContactViewPresenter implements ViewPresenter, ContactsBrokerClient
 		void setSubContacts(Contact[] contacts);
 		List<Contact> getSubContactList();
 		public void addSubContact(Contact contact);
-		void setContactIgnoreFields(Contact contact);
 	}
 
 	public void setContact(Contact contact){

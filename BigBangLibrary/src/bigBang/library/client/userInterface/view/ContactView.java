@@ -215,12 +215,7 @@ public class ContactView extends View implements ContactViewPresenter.Display{
 
 
 	}
-	
-	@Override
-	public void setContactIgnoreFields(Contact contact){
-		this.contact = contact;
-	}
-	
+
 	@Override
 	public void addContactInfo(ContactInfo contactinfo){
 
