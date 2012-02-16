@@ -19,19 +19,25 @@ import bigBang.library.client.userInterface.view.PopupPanel;
 import bigBang.library.client.userInterface.view.View;
 import bigBang.module.clientModule.client.userInterface.presenter.ClientSectionViewPresenter.Action;
 import bigBang.module.clientModule.client.userInterface.view.ClientSectionView;
+import bigBang.module.insurancePolicyModule.client.userInterface.CoInsuranceForm;
 
 public class TestsView extends View implements TestsViewPresenter.Display {
 
 	private VerticalPanel wrapper = new VerticalPanel();
-	private VerticalPanel container = new VerticalPanel();
-
-	private PopupPanel popupPanel;
-
-	private ActionInvokedEventHandler<Action> actionHandler;
+	private CoInsuranceForm form;
+//	private VerticalPanel container = new VerticalPanel();
+//
+//	private PopupPanel popupPanel;
+//
+//	private ActionInvokedEventHandler<Action> actionHandler;
 
 	public TestsView(){
 
 		initWidget(wrapper);
+		wrapper.setSize("100%", "100%");
+		form = new CoInsuranceForm();
+		form.setSize("100%", "100%");
+		wrapper.add(form);
 
 	}
 
@@ -47,21 +53,22 @@ public class TestsView extends View implements TestsViewPresenter.Display {
 
 	@Override
 	public HasWidgets getContainer() {
-		return container;
+//		return container;
+		return null;
 	}
 
 	@Override
 	public void show() {
-		this.popupPanel = new PopupPanel(){
-			@Override
-			protected void onDetach() {
-				super.onDetach();
-				actionHandler.onActionInvoked(new ActionInvokedEvent<Action>(Action.ON_OVERLAY_CLOSED));
-				TestsView.this.popupPanel = null;
-			}
-		};
-		this.popupPanel.add((Widget)this.container);
-		this.popupPanel.center();
+//		this.popupPanel = new PopupPanel(){
+//			@Override
+//			protected void onDetach() {
+//				super.onDetach();
+//				actionHandler.onActionInvoked(new ActionInvokedEvent<Action>(Action.ON_OVERLAY_CLOSED));
+//				TestsView.this.popupPanel = null;
+//			}
+//		};
+//		this.popupPanel.add((Widget)this.container);
+//		this.popupPanel.center();
 	}
 
 }

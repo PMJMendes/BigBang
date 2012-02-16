@@ -43,11 +43,11 @@ public class TestsViewPresenter implements ViewPresenter {
 	@Override
 	public void setParameters(HasParameters parameterHolder) {
 			
-		ViewPresenter presenter = ViewPresenterFactory.getInstance().getViewPresenter("CONTACT");
-		
-		presenter.go(view.getContainer());
+//		ViewPresenter presenter = ViewPresenterFactory.getInstance().getViewPresenter("CONTACT");
+//		
+//		presenter.go(view.getContainer());
 		view.show();
-		presenter.setParameters(parameterHolder);
+//		presenter.setParameters(parameterHolder);
 		
 	}
 
