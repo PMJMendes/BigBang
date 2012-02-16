@@ -51,7 +51,7 @@ public class ContactNavigationViewPresenter implements ViewPresenter{
 	}
 
 	private void bind() {
-		
+
 	}
 
 	@Override
@@ -69,15 +69,13 @@ public class ContactNavigationViewPresenter implements ViewPresenter{
 
 				switch (action.getAction()){
 				case REMOVE_OK:{
-					if(!((NavigationPanel)view).navigateBack()){
-						NavigationHistoryItem navig = NavigationHistoryManager.getInstance().getCurrentState();
-						navig.removeParameter("id");
-						navig.removeParameter("show");
-						navig.removeParameter("contactid");
-						navig.removeParameter("ownertypeid");
-						navig.removeParameter("editpermission");
-						NavigationHistoryManager.getInstance().go(navig);
-					}
+
+					NavigationHistoryItem navig = NavigationHistoryManager.getInstance().getCurrentState();
+					navig.removeParameter("show");
+					navig.removeParameter("contactid");
+					navig.removeParameter("ownertypeid");
+					NavigationHistoryManager.getInstance().go(navig);
+
 					break;
 				}
 
@@ -89,11 +87,20 @@ public class ContactNavigationViewPresenter implements ViewPresenter{
 					presenter.setParameters(parameterHolder);	
 					break;
 				}
-				
+
 				case CHILD_SELECTED:{
 					@SuppressWarnings("unchecked")
 					Contact chosen = ((ListEntry<Contact>) presenter.getView().getSubContactList().getSelected().toArray()[0]).getValue(); 
 					createShowChildContact(chosen.id, chosen.ownerId);
+					break;
+				}
+
+				case ERROR_SHOWING_CONTACT:{
+					NavigationHistoryItem navig = NavigationHistoryManager.getInstance().getCurrentState();
+					navig.removeParameter("show");
+					navig.removeParameter("contactid");
+					navig.removeParameter("ownertypeid");
+					NavigationHistoryManager.getInstance().go(navig);
 				}
 
 				}
@@ -104,12 +111,12 @@ public class ContactNavigationViewPresenter implements ViewPresenter{
 
 	protected void createShowChildContact(String id, String ownerId) {
 
-		final HasParameters showChildContact = new HasParameters();
+		HasParameters showChildContact = new HasParameters();
 		showChildContact.setParameter("contactid", id);
 		showChildContact.setParameter("id", ownerId);
 		showChildContact.setParameter("ownertypeid", BigBangConstants.EntityIds.CONTACT);
-		showChildContact.setParameter("editpermission", "1");
-		final ContactViewPresenter newChildPresenter = (ContactViewPresenter) ViewPresenterFactory.getInstance().getViewPresenter("SINGLE_CONTACT");
+		showChildContact.setParameter("editpermission", "1"); //TODO ISTO FICA ASSIM?
+		ContactViewPresenter newChildPresenter = (ContactViewPresenter) ViewPresenterFactory.getInstance().getViewPresenter("SINGLE_CONTACT");
 		HasWidgets newChildContainer = view.getNextContainer();
 		newChildPresenter.go(newChildContainer);
 		view.navigateTo((Widget) newChildContainer); 
@@ -124,26 +131,29 @@ public class ContactNavigationViewPresenter implements ViewPresenter{
 					((NavigationPanel)view).navigateBack();
 					break;
 				}
-
 				case CREATE_CHILD_CONTACT:{
-					createShowChildContact(null, newChildPresenter.getView().getContact().id);
+					createShowChildContact(null, ((ContactViewPresenter) action.getSource()).getView().getContact().id);
+					
 					break;
 				}
 				case CANCEL: {
-					if (newChildPresenter.getView().getContact().id != null){
-						newChildPresenter.setParameters(showChildContact);
+					if (((ContactViewPresenter) action.getSource()).getView().getContact().id != null){
+						((ContactViewPresenter) action.getSource()).setParameters(((ContactViewPresenter) action.getSource()).getParameters());
 					}
 					else
 						((NavigationPanel)view).navigateBack();
+					
 					break;
 				}
 				case CHILD_SELECTED:{
 					@SuppressWarnings("unchecked")
-					Contact chosen = ((ListEntry<Contact>) newChildPresenter.getView().getSubContactList().getSelected().toArray()[0]).getValue(); 
+					Contact chosen = ((ListEntry<Contact>) ((ContactViewPresenter) action.getSource()).getView().getSubContactList().getSelected().toArray()[0]).getValue(); 
 					createShowChildContact(chosen.id, chosen.ownerId);
+					break;
 				}
 				case ERROR_SHOWING_CONTACT:{
 					((NavigationPanel)view).navigateBack();
+					break;
 				}
 				}
 

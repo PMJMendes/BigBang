@@ -113,6 +113,7 @@ public class ContactView extends View implements ContactViewPresenter.Display{
 
 	public ContactView(){
 		
+		
 		wrapper = new SplitLayoutPanel();
 		initWidget(wrapper);
 		
@@ -183,6 +184,13 @@ public class ContactView extends View implements ContactViewPresenter.Display{
 	}
 	
 	@Override
+	protected void onAttach() {
+		super.onAttach();
+		if(contact != null)
+			fireAction(Action.ATTACHED);
+	}
+	
+	@Override
 	protected void initializeView() {
 		return;
 	}
@@ -206,6 +214,11 @@ public class ContactView extends View implements ContactViewPresenter.Display{
 		this.address.setValue(contact.address);
 
 
+	}
+	
+	@Override
+	public void setContactIgnoreFields(Contact contact){
+		this.contact = contact;
 	}
 	
 	@Override

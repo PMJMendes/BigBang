@@ -32,6 +32,7 @@ import bigBang.library.client.userInterface.NavigationPanel;
 import bigBang.library.client.userInterface.view.ContactView;
 import bigBang.library.client.userInterface.view.ContactView.ContactEntry;
 
+import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.user.client.ui.HasWidgets;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.UIObject;
@@ -47,15 +48,16 @@ public class ContactViewPresenter implements ViewPresenter, ContactsBrokerClient
 	private String ownerTypeId;
 	private String contactId;
 	private ActionInvokedEventHandler<Action> actionHandler;
+	private HasParameters parameterHolder;
 
 
 	public static enum Action{
 		SAVE,
 		EDIT,
-		CANCEL,
+		CANCEL, 
 		CREATE_CHILD_CONTACT,
 		ADD_NEW_DETAIL,
-		DELETE_DETAIL, DELETE, REMOVE_OK, CHILD_SELECTED, ERROR_SHOWING_CONTACT
+		DELETE_DETAIL, DELETE, REMOVE_OK, CHILD_SELECTED, ERROR_SHOWING_CONTACT, ATTACHED
 	}
 
 	public ContactViewPresenter(Display view){
@@ -72,7 +74,7 @@ public class ContactViewPresenter implements ViewPresenter, ContactsBrokerClient
 		public void setContact(Contact contacto);
 		public void addContactInfo(ContactInfo info);
 		void registerActionHandler(ActionInvokedEventHandler<Action> handler);
-		Widget asWidget();
+		Widget asWidget();  
 		public void setEditable(boolean b);
 		public List<ContactInfo> getContactInfoList();
 		public ContactEntry initializeContactEntry();
@@ -84,6 +86,7 @@ public class ContactViewPresenter implements ViewPresenter, ContactsBrokerClient
 		void setSubContacts(Contact[] contacts);
 		List<Contact> getSubContactList();
 		public void addSubContact(Contact contact);
+		void setContactIgnoreFields(Contact contact);
 	}
 
 	public void setContact(Contact contact){
@@ -129,6 +132,7 @@ public class ContactViewPresenter implements ViewPresenter, ContactsBrokerClient
 	@Override
 	public void setParameters(HasParameters parameterHolder) {
 
+		this.parameterHolder = parameterHolder;
 		broker.unregisterClient(this);
 		ownerId = parameterHolder.getParameter("id");
 		contactId = parameterHolder.getParameter("contactid");
@@ -236,6 +240,11 @@ public class ContactViewPresenter implements ViewPresenter, ContactsBrokerClient
 
 				case ADD_NEW_DETAIL: 
 					addNewDetail();
+					break;
+					
+				case ATTACHED:
+					parameterHolder.setParameter("contactid", view.getContact().id);
+					setParameters(parameterHolder);
 					break;
 
 				case CREATE_CHILD_CONTACT: 
@@ -366,7 +375,8 @@ public class ContactViewPresenter implements ViewPresenter, ContactsBrokerClient
 
 			@Override
 			public void onSelectionChanged(SelectionChangedEvent event) {
-				fireAction(Action.CHILD_SELECTED);
+				if (event.getSelected().size() > 0)
+						fireAction(Action.CHILD_SELECTED);
 			}
 		});
 
@@ -398,6 +408,7 @@ public class ContactViewPresenter implements ViewPresenter, ContactsBrokerClient
 		}
 
 	}
+	
 
 	public void addNewDetail() {
 
@@ -449,47 +460,34 @@ public class ContactViewPresenter implements ViewPresenter, ContactsBrokerClient
 	@Override
 	public void removeContact(String ownerId, String contactId) {
 
-		if(ownerId.equalsIgnoreCase(this.ownerId)){
-
-			for(ListEntry<Contact> c : view.getSubContactList()){
-				
-				if(c.getValue().id.equalsIgnoreCase(contactId)){
-					view.getSubContactList().remove(c.getValue());
-				}
-				
-			}
-		}
-		
-
+		return;
 	}
 
 	@Override
 	public void addContact(String ownerId, Contact contact) {
 
-		if(ownerId.equalsIgnoreCase(this.ownerId)){
-			view.addSubContact(contact);
-		}
-
+		return;
 	}
 
 	@Override
 	public void updateContact(String ownerId, Contact contact) {
 
-		if(this.ownerId.equalsIgnoreCase(ownerId)){
-			view.getSubContactList().remove(new ListEntry<Contact>(contact));
-			view.getSubContactList().add(new ListEntry<Contact>(contact));
-		}
 
+		return;
 	} 
 
 	protected void fireAction(Action action){
 		if(this.actionHandler != null) {
-			actionHandler.onActionInvoked(new ActionInvokedEvent<Action>(action));
+			actionHandler.onActionInvoked(new ActionInvokedEvent<Action>(action, this));
 		}
 	}
 
 	public void registerActionHandler(ActionInvokedEventHandler<Action> handler) {
 		this.actionHandler = handler;
+	}
+
+	public HasParameters getParameters() {
+		return this.parameterHolder;
 	}
 
 }
