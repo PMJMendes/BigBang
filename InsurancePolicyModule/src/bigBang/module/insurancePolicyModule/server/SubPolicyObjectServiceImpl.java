@@ -175,6 +175,15 @@ public class SubPolicyObjectServiceImpl
 		{
 			public int compare(PolicyExercise o1, PolicyExercise o2)
 			{
+				if ( o1.getAt(2) == null )
+				{
+					if ( o2.getAt(2) == null )
+						return 0;
+					return 1;
+				}
+				if ( o2.getAt(2) == null )
+					return -1;
+
 				return ((Timestamp)o1.getAt(2)).compareTo((Timestamp)o2.getAt(2));
 			}
 		});

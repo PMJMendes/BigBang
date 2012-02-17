@@ -1106,6 +1106,15 @@ public class InsurancePolicyServiceImpl
 			{
 				public int compare(PadExercise o1, PadExercise o2)
 				{
+					if ( o1.mdtStart == null )
+					{
+						if ( o2.mdtStart == null )
+							return 0;
+						return 1;
+					}
+					if ( o2.mdtStart == null )
+						return -1;
+
 					return o1.mdtStart.compareTo(o2.mdtStart);
 				}
 			});
