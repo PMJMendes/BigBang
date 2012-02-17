@@ -6,8 +6,10 @@ import Jewel.Engine.DataAccess.SQLServer;
 import Jewel.Petri.SysObjects.JewelPetriException;
 import Jewel.Petri.SysObjects.UndoableOperation;
 
+import com.premiumminds.BigBang.Jewel.BigBangJewelException;
 import com.premiumminds.BigBang.Jewel.Constants;
 import com.premiumminds.BigBang.Jewel.Objects.Policy;
+import com.premiumminds.BigBang.Jewel.Objects.SubPolicy;
 
 public class TransferToPolicy
 	extends UndoableOperation
@@ -60,6 +62,15 @@ public class TransferToPolicy
 		mstrNew = lobjNew.getLabel();
 
 		midSubPolicy = GetProcess().GetDataKey();
+
+		try
+		{
+			((SubPolicy)GetProcess().GetData()).ResetOwner();
+		}
+		catch (BigBangJewelException e)
+		{
+			throw new JewelPetriException(e.getMessage(), e);
+		}
 	}
 
 	public String UndoDesc(String pstrLineBreak)
@@ -76,6 +87,15 @@ public class TransferToPolicy
 		throws JewelPetriException
 	{
 		GetProcess().SetParentProcId(midOldProcess, pdb);
+
+		try
+		{
+			((SubPolicy)GetProcess().GetData()).ResetOwner();
+		}
+		catch (BigBangJewelException e)
+		{
+			throw new JewelPetriException(e.getMessage(), e);
+		}
 	}
 
 	public UndoSet[] GetSets()

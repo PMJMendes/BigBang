@@ -70,6 +70,21 @@ public class SubPolicy
     	return mrefOwner;
     }
 
+    public Policy ResetOwner()
+    	throws BigBangJewelException
+    {
+		try
+		{
+			mrefOwner = (Policy)PNProcess.GetInstance(getNameSpace(), GetProcessID()).GetParent().GetData();
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangJewelException(e.getMessage(), e);
+		}
+
+		return mrefOwner;
+    }
+
     public Contact[] GetCurrentContacts()
     	throws BigBangJewelException
     {
