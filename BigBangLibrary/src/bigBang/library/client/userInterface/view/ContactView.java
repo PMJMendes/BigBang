@@ -12,6 +12,7 @@ import bigBang.library.client.userInterface.ContactOperationsToolBar;
 import bigBang.library.client.userInterface.ExpandableListBoxFormField;
 import bigBang.library.client.userInterface.List;
 import bigBang.library.client.userInterface.ListEntry;
+import bigBang.library.client.userInterface.NavigationListEntry;
 import bigBang.library.client.userInterface.ListHeader;
 import bigBang.library.client.userInterface.TextBoxFormField;
 import bigBang.library.client.userInterface.presenter.ContactViewPresenter;
@@ -167,20 +168,21 @@ public class ContactView extends View implements ContactViewPresenter.Display{
 		contactIL = new List<ContactInfo>();
 		contactIL.setSelectableEntries(false);
 		contactIL.getScrollable().setHeight("188px");
+		wrapperLeft.setSize("100%", "100%");
 		wrapperLeft.add(contactIL.getScrollable());
 
 		wrapper.addWest(wrapperLeft, 410);
-		
+		wrapper.setWidgetMinSize(wrapperLeft, 410);
 		wrapperRight = new VerticalPanel();
 		subContacts = new List<Contact>();
 		ListHeader header = new ListHeader();
 		header.setText("Sub-Contactos");
-		wrapperRight.add(header);
-		subContacts.getScrollable().setSize("100%","440px");
-		wrapperRight.add(subContacts.getScrollable());
+		subContacts.setSize("100%","100%");
+		subContacts.setHeaderWidget(header);
+		wrapperRight.add(subContacts);
 		wrapperRight.setSize("100%", "100%");
 		wrapper.add(wrapperRight);
-		wrapper.setSize("820px", "500px");
+		wrapper.setSize("660px", "500px");
 	}
 	
 	@Override
@@ -324,10 +326,10 @@ public class ContactView extends View implements ContactViewPresenter.Display{
 	public void setSubContacts(Contact[] contacts) {
 	
 		subContacts.clear();
-		ListEntry<Contact> temp;
+		NavigationListEntry<Contact> temp;
 		Label tempLabel;
 		for(int i = 0; i<contacts.length; i++){
-			temp = new ListEntry<Contact>(contacts[i]);
+			temp = new NavigationListEntry<Contact>(contacts[i]);
 			tempLabel = new Label(temp.getValue().name);
 			temp.setWidget(tempLabel);
 			subContacts.add(temp);
@@ -343,8 +345,8 @@ public class ContactView extends View implements ContactViewPresenter.Display{
 	@Override
 	public void addSubContact(Contact contact) {
 		
-		ListEntry<Contact> temp;
-		temp = new ListEntry<Contact>(contact);
+		NavigationListEntry<Contact> temp;
+		temp = new NavigationListEntry<Contact>(contact);
 		Label tempLabel;
 		tempLabel = new Label(temp.getValue().name);
 		temp.setWidget(tempLabel);

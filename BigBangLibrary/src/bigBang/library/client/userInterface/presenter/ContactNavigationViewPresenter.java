@@ -20,6 +20,7 @@ import com.google.gwt.user.client.ui.Widget;
 public class ContactNavigationViewPresenter implements ViewPresenter{
 
 	private Display view;
+	private boolean hasPermissions = false;
 
 	public ContactNavigationViewPresenter(Display view){
 
@@ -57,6 +58,9 @@ public class ContactNavigationViewPresenter implements ViewPresenter{
 	@Override
 	public void setParameters(final HasParameters parameterHolder) {
 
+		if(parameterHolder.getParameter("editpermission") != null){
+			hasPermissions = true;
+		}
 		final ContactViewPresenter presenter = (ContactViewPresenter) ViewPresenterFactory.getInstance().getViewPresenter("SINGLE_CONTACT");
 		HasWidgets container = view.getNextContainer();
 		presenter.go(container);
@@ -115,7 +119,9 @@ public class ContactNavigationViewPresenter implements ViewPresenter{
 		showChildContact.setParameter("contactid", id);
 		showChildContact.setParameter("id", ownerId);
 		showChildContact.setParameter("ownertypeid", BigBangConstants.EntityIds.CONTACT);
-		showChildContact.setParameter("editpermission", "1"); //TODO ISTO FICA ASSIM?
+		if(hasPermissions ){
+			showChildContact.setParameter("editpermission", "1");
+		}
 		ContactViewPresenter newChildPresenter = (ContactViewPresenter) ViewPresenterFactory.getInstance().getViewPresenter("SINGLE_CONTACT");
 		HasWidgets newChildContainer = view.getNextContainer();
 		newChildPresenter.go(newChildContainer);
@@ -133,7 +139,7 @@ public class ContactNavigationViewPresenter implements ViewPresenter{
 				}
 				case CREATE_CHILD_CONTACT:{
 					createShowChildContact(null, ((ContactViewPresenter) action.getSource()).getView().getContact().id);
-					
+
 					break;
 				}
 				case CANCEL: {
@@ -142,7 +148,7 @@ public class ContactNavigationViewPresenter implements ViewPresenter{
 					}
 					else
 						((NavigationPanel)view).navigateBack();
-					
+
 					break;
 				}
 				case CHILD_SELECTED:{

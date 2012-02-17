@@ -71,4 +71,12 @@ public class TestsView extends View implements TestsViewPresenter.Display {
 //		this.popupPanel.center();
 	}
 
+	@Override
+	public void setMainCoInsuranceAgency(String string, String string2) {
+		form.setMainCoInsuranceAgency(string, string2);
+		
+	}
+
+
+
 }

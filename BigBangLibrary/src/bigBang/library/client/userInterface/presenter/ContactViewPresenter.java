@@ -94,7 +94,6 @@ public class ContactViewPresenter implements ViewPresenter, ContactsBrokerClient
 			view.addContactInfo(null);
 			view.setSaveMode(true);
 			view.setEditable(true);
-			view.getToolbar().allowEdit(true);
 			return;
 		}
 		this.contact = contact;
@@ -109,7 +108,6 @@ public class ContactViewPresenter implements ViewPresenter, ContactsBrokerClient
 		}
 		view.addContactInfo(null);
 		view.setEditable(false);
-		view.getToolbar().allowEdit(false);
 	}
 
 	@Override
@@ -143,7 +141,6 @@ public class ContactViewPresenter implements ViewPresenter, ContactsBrokerClient
 			view.getToolbar().lockAll();
 			view.setContact(null);
 			view.setEditable(false);
-			view.getToolbar().allowEdit(false);
 			return;
 		}
 		else{
@@ -153,13 +150,13 @@ public class ContactViewPresenter implements ViewPresenter, ContactsBrokerClient
 
 				if(hasPermissions){
 					setContact(null);
+					view.getToolbar().allowEdit(true);
 				}
 				else{
 					EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não é possível criar o contacto."), TYPE.ALERT_NOTIFICATION));
 					view.getToolbar().lockAll();
 					view.setContact(null);
 					view.setEditable(false);
-					view.getToolbar().allowEdit(false);
 				}
 			}
 			else
@@ -179,7 +176,6 @@ public class ContactViewPresenter implements ViewPresenter, ContactsBrokerClient
 								contact = response;
 								setContact(contact);
 								view.getToolbar().setSaveModeEnabled(false);
-								view.getToolbar().allowEdit(false);
 							}
 
 							@Override
@@ -258,7 +254,6 @@ public class ContactViewPresenter implements ViewPresenter, ContactsBrokerClient
 				case EDIT: 
 					view.setEditable(true);
 					view.setSaveMode(true);
-					view.getToolbar().allowEdit(true);
 					break;
 
 				case SAVE: 
@@ -300,7 +295,6 @@ public class ContactViewPresenter implements ViewPresenter, ContactsBrokerClient
 							EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não foi possível eliminar o contacto."), TYPE.ALERT_NOTIFICATION));
 							view.setSaveMode(true);
 							view.setEditable(true);
-							view.getToolbar().allowEdit(true);
 						}
 
 
@@ -326,8 +320,6 @@ public class ContactViewPresenter implements ViewPresenter, ContactsBrokerClient
 							contactId = response.id;
 							view.setSaveMode(false);
 							view.setEditable(false);
-							view.getToolbar().allowEdit(false);
-							view.setEditable(false);
 						}
 
 						@Override
@@ -335,7 +327,6 @@ public class ContactViewPresenter implements ViewPresenter, ContactsBrokerClient
 							EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não foi possível criar o contacto."), TYPE.ALERT_NOTIFICATION));
 							view.setSaveMode(true);
 							view.setEditable(true);
-							view.getToolbar().allowEdit(true);
 						}
 					});
 				}
@@ -351,7 +342,6 @@ public class ContactViewPresenter implements ViewPresenter, ContactsBrokerClient
 							contactId = response.id;
 							view.setSaveMode(false);
 							view.setEditable(false);
-							view.getToolbar().allowEdit(false);
 							view.setEditable(false);
 						}
 
@@ -360,7 +350,6 @@ public class ContactViewPresenter implements ViewPresenter, ContactsBrokerClient
 							EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não foi possível gravar o contacto."), TYPE.ALERT_NOTIFICATION));
 							view.setSaveMode(true);
 							view.setEditable(true);
-							view.getToolbar().allowEdit(true);
 						}
 					});
 				}
@@ -415,7 +404,6 @@ public class ContactViewPresenter implements ViewPresenter, ContactsBrokerClient
 		temp.setHeight("40px");
 		view.getContactInfoList().remove(view.getContactInfoList().size()-1);
 		temp.setEditable(true);
-		view.getToolbar().allowEdit(true);
 		view.addContactInfo(temp.getValue());
 		view.addContactInfo(null);
 

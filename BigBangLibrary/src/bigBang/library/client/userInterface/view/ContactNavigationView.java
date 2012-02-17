@@ -13,7 +13,7 @@ public class ContactNavigationView extends NavigationPanel implements ContactNav
 	public ContactNavigationView(){
 		
 		this.navBar.setText("Ficha de Contacto");
-		setSize("820px", "540px");
+		setSize("660px", "540px");
 	}
 
 	@Override
@@ -30,7 +30,7 @@ public class ContactNavigationView extends NavigationPanel implements ContactNav
 	@Override
 	public HasWidgets getNextContainer(){
 		SimplePanel panel = new SimplePanel();
-		panel.setSize("820px", "500px");
+		panel.setSize("660px", "500px");
 		return panel;
 	}
 
