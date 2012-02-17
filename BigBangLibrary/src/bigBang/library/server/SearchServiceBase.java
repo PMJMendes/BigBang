@@ -24,7 +24,7 @@ public abstract class SearchServiceBase
 {
 	private static final long serialVersionUID = 1L;
 
-	private static class SearchWSpace
+	protected static class SearchWSpace
 	{
         public static class Row
         {
@@ -266,7 +266,7 @@ public abstract class SearchServiceBase
 		GetSearchWSStorage().remove(UUID.fromString(workspaceId));
 	}
 
-	private NewSearchResult doOpenSearch(SearchWSpace prefWSpace, SearchParameter[] parameters, SortParameter[] sorts, int size)
+	protected NewSearchResult doOpenSearch(SearchWSpace prefWSpace, SearchParameter[] parameters, SortParameter[] sorts, int size)
 		throws BigBangException
 	{
 		StringBuilder lstrBuffer;
