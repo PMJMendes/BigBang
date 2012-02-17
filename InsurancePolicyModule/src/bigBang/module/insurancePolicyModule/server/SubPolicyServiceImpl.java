@@ -284,6 +284,9 @@ public class SubPolicyServiceImpl
 			{
 				lobjAuxPolicy = com.premiumminds.BigBang.Jewel.Objects.SubPolicy.GetInstance(Engine.getCurrentNameSpace(), pidSubPolicy);
 
+				midMainPolicy = PNProcess.GetInstance(Engine.getCurrentNameSpace(),
+						lobjAuxPolicy.GetProcessID()).GetParent().GetDataKey();
+
 				mobjSubPolicy = new SubPolicyData();
 				mobjSubPolicy.FromObject(lobjAuxPolicy);
 
@@ -2062,8 +2065,9 @@ public class SubPolicyServiceImpl
 						+ lobjSubPolicy.getLabel() + ")");
 			lobjProc = PNProcess.GetInstance(Engine.getCurrentNameSpace(), lobjSubPolicy.GetProcessID());
 			lobjMainPolicy = lobjSubPolicy.GetOwner();
-			lobjClient = Client.GetInstance(Engine.getCurrentNameSpace(), (UUID)lobjMainPolicy.getAt(2));
-			lobjMed = Mediator.GetInstance(Engine.getCurrentNameSpace(), (UUID)lobjMainPolicy.getAt(11));
+			lobjClient = Client.GetInstance(Engine.getCurrentNameSpace(), (UUID)lobjSubPolicy.getAt(2));
+			lobjMed = Mediator.GetInstance(Engine.getCurrentNameSpace(), ( lobjMainPolicy.getAt(11) == null ?
+					(UUID)lobjClient.getAt(8) : (UUID)lobjMainPolicy.getAt(11) ));
 			lobjStatus = Engine.GetWorkInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), Constants.ObjID_PolicyStatus),
 					(UUID)lobjSubPolicy.getAt(7));
 			larrLocalValues = lobjSubPolicy.GetCurrentKeyedValues(null, null);
@@ -2109,8 +2113,8 @@ public class SubPolicyServiceImpl
 			lobjResult.statusIcon = SubPolicyStub.PolicyStatus.OBSOLETE;
 			break;
 		}
-		lobjResult.premium = (lobjSubPolicy.getAt(14) == null ? null : ((BigDecimal)lobjSubPolicy.getAt(14)).toPlainString());
-		lobjResult.docushare = (String)lobjSubPolicy.getAt(15);
+		lobjResult.premium = (lobjSubPolicy.getAt(8) == null ? null : ((BigDecimal)lobjSubPolicy.getAt(8)).toPlainString());
+		lobjResult.docushare = (String)lobjSubPolicy.getAt(9);
 		lobjResult.managerId = lobjProc.GetManagerID().toString();
 
 		larrAuxFields = new Hashtable<UUID, Tax>();

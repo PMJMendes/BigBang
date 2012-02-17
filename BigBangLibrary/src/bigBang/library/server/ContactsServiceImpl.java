@@ -427,6 +427,8 @@ public class ContactsServiceImpl
 			lidOp = Constants.OPID_Client_ManageData;
 		else if ( Constants.ObjID_Policy.equals(lidTopType) )
 			lidOp = Constants.OPID_Policy_ManageData;
+		else if ( Constants.ObjID_SubPolicy.equals(lidTopType) )
+			lidOp = Constants.OPID_SubPolicy_ManageData;
 		else
 			throw new BigBangException("Erro: O objecto indicado não permite movimentos de Contactos.");
 
@@ -475,6 +477,14 @@ public class ContactsServiceImpl
 			((com.premiumminds.BigBang.Jewel.Operations.Policy.ManageData)lobjResult).mobjData = null;
 			((com.premiumminds.BigBang.Jewel.Operations.Policy.ManageData)lobjResult).mobjContactOps = pobjInner;
 			((com.premiumminds.BigBang.Jewel.Operations.Policy.ManageData)lobjResult).mobjDocOps = null;
+			lbFound = true;
+		}
+
+		if ( lobjResult instanceof com.premiumminds.BigBang.Jewel.Operations.SubPolicy.ManageData )
+		{
+			((com.premiumminds.BigBang.Jewel.Operations.SubPolicy.ManageData)lobjResult).mobjData = null;
+			((com.premiumminds.BigBang.Jewel.Operations.SubPolicy.ManageData)lobjResult).mobjContactOps = pobjInner;
+			((com.premiumminds.BigBang.Jewel.Operations.SubPolicy.ManageData)lobjResult).mobjDocOps = null;
 			lbFound = true;
 		}
 

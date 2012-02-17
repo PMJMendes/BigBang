@@ -101,6 +101,7 @@ public class Constants
 	public static final UUID ProcID_GenSys        = UUID.fromString("37A989E2-9D1F-470C-A59E-9EB1008A97A5");
 	public static final UUID ProcID_Client        = UUID.fromString("100E701A-EDC5-4D9C-A221-9F09013D7954");
 	public static final UUID ProcID_Policy        = UUID.fromString("29145166-59AC-452E-8C2B-9F81013A39AC");
+	public static final UUID ProcID_SubPolicy     = UUID.fromString("08C796D6-5622-4FF1-B3AB-9FF300F28ABC");
 	public static final UUID ProcID_Receipt       = UUID.fromString("62D0A72A-525E-450C-9917-9F8A00EB38AC");
 	public static final UUID ProcID_MgrXFer       = UUID.fromString("BBF5FFD1-4249-48AE-BB2D-9F6501420E7B");
 	public static final UUID ProcID_InfoRequest   = UUID.fromString("5DBEF1CD-DEB8-4731-8C6F-9FE500F50BB9");

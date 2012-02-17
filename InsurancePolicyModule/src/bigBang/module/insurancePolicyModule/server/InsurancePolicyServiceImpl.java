@@ -329,6 +329,8 @@ public class InsurancePolicyServiceImpl
 			{
 				lobjAuxPolicy = Policy.GetInstance(Engine.getCurrentNameSpace(), pidPolicy);
 
+				midClient = PNProcess.GetInstance(Engine.getCurrentNameSpace(), lobjAuxPolicy.GetProcessID()).GetParent().GetDataKey();
+
 				mobjPolicy = new PolicyData();
 				mobjPolicy.FromObject(lobjAuxPolicy);
 
@@ -1985,8 +1987,8 @@ public class InsurancePolicyServiceImpl
 			if ( !mbValid )
 				throw new CorruptedPadException("Ocorreu um erro interno. Os dados correntes não são válidos.");
 
-			if ( !Constants.StatusID_InProgress.equals(mobjPolicy.midStatus) )
-				throw new BigBangException("Erro: Operação não suportada para apólices já validadas.");
+//			if ( !Constants.StatusID_InProgress.equals(mobjPolicy.midStatus) )
+//				throw new BigBangException("Erro: Operação não suportada para apólices já validadas.");
 
 			lobjObject = new PadExercise();
 
@@ -3724,7 +3726,7 @@ public class InsurancePolicyServiceImpl
 			lobjXFer.InitNew(larrProcessIDs, ldb);
 
 			lobjScript = PNScript.GetInstance(Engine.getCurrentNameSpace(), Constants.ProcID_MgrXFer);
-			lobjProc = lobjScript.CreateInstance(Engine.getCurrentNameSpace(), lobjXFer.getKey(), null, ldb);
+			lobjProc = lobjScript.CreateInstance(Engine.getCurrentNameSpace(), lobjXFer.getKey(), null, null, ldb);
 
 			for ( i = 0; i < larrProcessIDs.length; i++ )
 			{

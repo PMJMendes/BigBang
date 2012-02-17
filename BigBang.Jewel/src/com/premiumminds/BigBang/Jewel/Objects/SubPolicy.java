@@ -38,13 +38,22 @@ public class SubPolicy
 	{
 		try
 		{
-			mrefOwner = (Policy)PNProcess.GetInstance(getNameSpace(), GetProcessID()).GetData();
+			mrefOwner = (Policy)PNProcess.GetInstance(getNameSpace(), GetProcessID()).GetParent().GetData();
 		}
 		catch (Throwable e)
 		{
 			throw new JewelEngineException(e.getMessage(), e);
 		}
 	}
+
+    public String AfterSave()
+    	throws JewelEngineException
+    {
+    	if ( mrefOwner == null )
+    		Initialize();
+
+        return "";
+    }
 
 	public UUID GetProcessID()
 	{

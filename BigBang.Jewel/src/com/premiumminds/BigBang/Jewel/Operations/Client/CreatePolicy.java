@@ -192,7 +192,8 @@ public class CreatePolicy
 				mobjDocOps.RunSubOp(pdb, lobjPolicy.getKey());
 
 			lobjScript = PNScript.GetInstance(Engine.getCurrentNameSpace(), Constants.ProcID_Policy);
-			lobjProc = lobjScript.CreateInstance(Engine.getCurrentNameSpace(), lobjPolicy.getKey(), GetProcess().getKey(), pdb);
+			lobjProc = lobjScript.CreateInstance(Engine.getCurrentNameSpace(), lobjPolicy.getKey(), GetProcess().getKey(),
+					GetContext(), pdb);
 			lobjProc.SetManagerID(mobjData.midManager, pdb);
 
 			ldtAux = new Timestamp(new java.util.Date().getTime());

@@ -150,8 +150,9 @@ public class CreateSubPolicy
 			if ( mobjDocOps != null )
 				mobjDocOps.RunSubOp(pdb, lobjPolicy.getKey());
 
-			lobjScript = PNScript.GetInstance(Engine.getCurrentNameSpace(), Constants.ProcID_Policy);
-			lobjProc = lobjScript.CreateInstance(Engine.getCurrentNameSpace(), lobjPolicy.getKey(), GetProcess().getKey(), pdb);
+			lobjScript = PNScript.GetInstance(Engine.getCurrentNameSpace(), Constants.ProcID_SubPolicy);
+			lobjProc = lobjScript.CreateInstance(Engine.getCurrentNameSpace(), lobjPolicy.getKey(), GetProcess().getKey(),
+					GetContext(), pdb);
 			lobjProc.SetManagerID(mobjData.midManager, pdb);
 
 			ldtAux = new Timestamp(new java.util.Date().getTime());
@@ -162,7 +163,7 @@ public class CreateSubPolicy
 			lobjItem = AgendaItem.GetInstance(Engine.getCurrentNameSpace(), (UUID)null);
 			lobjItem.setAt(0, "Validação de Apólice Adesão");
 			lobjItem.setAt(1, mobjData.midManager);
-			lobjItem.setAt(2, Constants.ProcID_Policy);
+			lobjItem.setAt(2, Constants.ProcID_SubPolicy);
 			lobjItem.setAt(3, ldtAux);
 			lobjItem.setAt(4, new Timestamp(ldtAux2.getTimeInMillis()));
 			lobjItem.setAt(5, Constants.UrgID_Pending);

@@ -109,7 +109,8 @@ public abstract class CreateExternRequestBase
 			lobjRequest.SaveToDb(pdb);
 
 			lobjScript = PNScript.GetInstance(Engine.getCurrentNameSpace(), Constants.ProcID_InfoRequest);
-			lobjProc = lobjScript.CreateInstance(Engine.getCurrentNameSpace(), lobjRequest.getKey(), GetProcess().getKey(), pdb);
+			lobjProc = lobjScript.CreateInstance(Engine.getCurrentNameSpace(), lobjRequest.getKey(), GetProcess().getKey(),
+					GetContext(), pdb);
 
 			lobjAgendaItem = AgendaItem.GetInstance(Engine.getCurrentNameSpace(), (UUID)null);
 			lobjAgendaItem.setAt(0, "Pedido Externo de Informação");

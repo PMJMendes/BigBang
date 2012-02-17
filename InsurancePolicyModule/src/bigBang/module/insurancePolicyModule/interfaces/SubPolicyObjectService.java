@@ -1,7 +1,9 @@
 package bigBang.module.insurancePolicyModule.interfaces;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 
+@RemoteServiceRelativePath("SubPolicyObjectService")
 public interface SubPolicyObjectService
 	extends PolicyObjectService
 {

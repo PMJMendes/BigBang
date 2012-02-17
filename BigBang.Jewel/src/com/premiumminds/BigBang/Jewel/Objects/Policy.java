@@ -48,6 +48,15 @@ public class Policy
 		}
 	}
 
+    public String AfterSave()
+    	throws JewelEngineException
+    {
+    	if ( mrefSubLine == null )
+    		Initialize();
+
+        return "";
+    }
+
 	public UUID GetProcessID()
 	{
 		return (UUID)getAt(1);

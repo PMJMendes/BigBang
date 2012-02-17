@@ -182,7 +182,8 @@ public abstract class CreateMgrXfrBase
     			lobjXFer.SaveToDb(pdb);
 
     			lobjScript = PNScript.GetInstance(Engine.getCurrentNameSpace(), Constants.ProcID_MgrXFer);
-    			lobjProc = lobjScript.CreateInstance(Engine.getCurrentNameSpace(), lobjXFer.getKey(), GetProcess().getKey(), pdb);
+    			lobjProc = lobjScript.CreateInstance(Engine.getCurrentNameSpace(), lobjXFer.getKey(), GetProcess().getKey(),
+    					GetContext(), pdb);
 
 				lobjItem = AgendaItem.GetInstance(Engine.getCurrentNameSpace(), (UUID)null);
 				lobjItem.setAt(0, "Transferência de Gestor de " + Character.toUpperCase(getObjName().charAt(0)) +

@@ -128,7 +128,8 @@ public abstract class CreateInfoRequestBase
 			lobjRequest.InitNew(marrUsers, marrContactInfos, marrCCs, marrBCCs, pdb);
 
 			lobjScript = PNScript.GetInstance(Engine.getCurrentNameSpace(), Constants.ProcID_InfoRequest);
-			lobjProc = lobjScript.CreateInstance(Engine.getCurrentNameSpace(), lobjRequest.getKey(), GetProcess().getKey(), pdb);
+			lobjProc = lobjScript.CreateInstance(Engine.getCurrentNameSpace(), lobjRequest.getKey(), GetProcess().getKey(),
+					GetContext(), pdb);
 
 			for ( i = 0; i < marrUsers.length; i++ )
 			{

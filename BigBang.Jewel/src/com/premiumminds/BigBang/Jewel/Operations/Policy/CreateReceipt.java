@@ -88,7 +88,8 @@ public class CreateReceipt
 				mobjDocOps.RunSubOp(pdb, lobjAux.getKey());
 
 			lobjScript = PNScript.GetInstance(Engine.getCurrentNameSpace(), Constants.ProcID_Receipt);
-			lobjProc = lobjScript.CreateInstance(Engine.getCurrentNameSpace(), lobjAux.getKey(), GetProcess().getKey(), pdb);
+			lobjProc = lobjScript.CreateInstance(Engine.getCurrentNameSpace(), lobjAux.getKey(), GetProcess().getKey(),
+					GetContext(), pdb);
 			lobjProc.SetManagerID(mobjData.midManager, pdb);
 
 			mobjData.mid = lobjAux.getKey();

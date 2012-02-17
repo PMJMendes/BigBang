@@ -620,7 +620,7 @@ public class ClientServiceImpl
 			lobjXFer.InitNew(larrProcessIDs, ldb);
 
 			lobjScript = PNScript.GetInstance(Engine.getCurrentNameSpace(), Constants.ProcID_MgrXFer);
-			lobjProc = lobjScript.CreateInstance(Engine.getCurrentNameSpace(), lobjXFer.getKey(), null, ldb);
+			lobjProc = lobjScript.CreateInstance(Engine.getCurrentNameSpace(), lobjXFer.getKey(), null, null, ldb);
 
 			for ( i = 0; i < larrProcessIDs.length; i++ )
 			{

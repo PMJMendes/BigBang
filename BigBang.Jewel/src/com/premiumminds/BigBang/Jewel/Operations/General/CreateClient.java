@@ -91,7 +91,8 @@ public class CreateClient
 				mobjDocOps.RunSubOp(pdb, lobjAux.getKey());
 
 			lobjScript = PNScript.GetInstance(Engine.getCurrentNameSpace(), Constants.ProcID_Client);
-			lobjProc = lobjScript.CreateInstance(Engine.getCurrentNameSpace(), lobjAux.getKey(), null, pdb);
+			lobjProc = lobjScript.CreateInstance(Engine.getCurrentNameSpace(), lobjAux.getKey(), null,
+					GetContext(), pdb);
 			lobjProc.SetManagerID(mobjData.midManager, pdb);
 
 			mobjData.mid = lobjAux.getKey();
