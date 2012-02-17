@@ -9,7 +9,7 @@ import bigBang.module.insurancePolicyModule.shared.ExerciseSearchParameter;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
-public class TestExerciseGet
+public class TestSubExerciseGet
 {
 	private static String tmpWorkspace;
 
@@ -47,9 +47,9 @@ public class TestExerciseGet
 		};
 
 		parameter = new ExerciseSearchParameter();
-		parameter.policyId = "54FF52B3-076D-4E3E-B825-9FD000C6AF77";
+		parameter.policyId = "2238CC33-CBBB-4FC1-A7E8-9FFA011E42DD";
 
-		Services.policyExerciseService.openSearch(new SearchParameter[] {parameter}, new SortParameter[] {}, 5, callback);
+		Services.subPolicyExerciseService.openSearch(new SearchParameter[] {parameter}, new SortParameter[] {}, 5, callback);
 	}
 
 	private static void DoStep2(SearchResult stub)
@@ -67,7 +67,7 @@ public class TestExerciseGet
 			}
 		};
 
-		Services.policyExerciseService.getExercise(stub.id, callback);
+		Services.subPolicyExerciseService.getExercise(stub.id, "2238CC33-CBBB-4FC1-A7E8-9FFA011E42DD", callback);
 	}
 
 	private static void DoStep3(String workspaceId)
@@ -85,6 +85,6 @@ public class TestExerciseGet
 			}
 		};
 
-		Services.policyExerciseService.closeSearch(workspaceId, callback);
+		Services.subPolicyExerciseService.closeSearch(workspaceId, callback);
 	}
 }

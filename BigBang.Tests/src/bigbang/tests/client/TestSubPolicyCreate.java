@@ -1,11 +1,11 @@
 package bigbang.tests.client;
 
-import bigBang.definitions.shared.InsurancePolicy;
 import bigBang.definitions.shared.Remap;
+import bigBang.definitions.shared.SubPolicy;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
-public class TestPolicyCreate
+public class TestSubPolicyCreate
 {
 	private static String gstrPad;
 
@@ -30,7 +30,7 @@ public class TestPolicyCreate
 				gstrPad = null;
 				for (i = 0; i < result.length; i++ )
 				{
-					if ( result[i].typeId.equalsIgnoreCase("D0C5AE6B-D340-4171-B7A3-9F81011F5D42") )
+					if ( result[i].typeId.equalsIgnoreCase("C7BC8D2F-BD61-43D5-9347-9FF300EE9986") )
 					{
 						for ( j = 0; j < result[i].remapIds.length; j++ )
 						{
@@ -51,58 +51,53 @@ public class TestPolicyCreate
 			}
 		};
 
-		Services.insurancePolicyService.openPolicyScratchPad(null, callback);
+		Services.subPolicyService.openSubPolicyScratchPad(null, callback);
 	}
 
 	private static void DoStep2()
 	{
-		InsurancePolicy newPolicy;
+		SubPolicy newPolicy;
 
-		AsyncCallback<InsurancePolicy> callback = new AsyncCallback<InsurancePolicy>()
+		AsyncCallback<SubPolicy> callback = new AsyncCallback<SubPolicy>()
 		{
 			public void onFailure(Throwable caught)
 			{
 				return;
 			}
 
-			public void onSuccess(InsurancePolicy result)
+			public void onSuccess(SubPolicy result)
 			{
 				DoStep3(result);
 			}
 		};
 
-		newPolicy = new InsurancePolicy();
+		newPolicy = new SubPolicy();
 		newPolicy.id = gstrPad;
-		newPolicy.subLineId = "34E19434-6106-4359-93FE-9EE90118CEE0";
+		newPolicy.mainPolicyId = "026CDFCF-17EB-41B6-ABEE-9FFA00FE0E40";
 
-		Services.insurancePolicyService.initPolicyInPad(newPolicy, callback);
+		Services.subPolicyService.initSubPolicyInPad(newPolicy, callback);
 	}
 
-	private static void DoStep3(InsurancePolicy testPolicy)
+	private static void DoStep3(SubPolicy testPolicy)
 	{
-		AsyncCallback<InsurancePolicy> callback = new AsyncCallback<InsurancePolicy>()
+		AsyncCallback<SubPolicy> callback = new AsyncCallback<SubPolicy>()
 		{
 			public void onFailure(Throwable caught)
 			{
 				return;
 			}
 
-			public void onSuccess(InsurancePolicy result)
+			public void onSuccess(SubPolicy result)
 			{
 				DoStep4();
 			}
 		};
 
-		testPolicy.clientId = "D7570502-0495-4E18-9CB3-9FB700201363";
-		testPolicy.caseStudy = false;
-		testPolicy.insuranceAgencyId = "F1EA00FA-36C5-44CB-B1EB-9FB700200FB8";
+		testPolicy.clientId = "5AD8DC0B-613B-4B5C-ACB1-9FB70020137E";
 		testPolicy.startDate = "2012-01-01";
-		testPolicy.durationId = "FFF15F7F-EB59-40D4-8E86-9F810157FD24";
 		testPolicy.fractioningId = "B8234D73-4432-45A0-B670-9F8101580CB5";
-		testPolicy.maturityDay = 1;
-		testPolicy.maturityMonth = 1;
 
-		Services.insurancePolicyService.updateHeader(testPolicy, callback);
+		Services.subPolicyService.updateHeader(testPolicy, callback);
 	}
 
 	private static void DoStep4()
@@ -120,6 +115,6 @@ public class TestPolicyCreate
 			}
 		};
 
-		Services.insurancePolicyService.commitPad(gstrPad, callback);
+		Services.subPolicyService.commitPad(gstrPad, callback);
 	}
 }

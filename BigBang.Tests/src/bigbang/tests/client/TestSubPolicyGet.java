@@ -1,10 +1,10 @@
 package bigbang.tests.client;
 
-import bigBang.definitions.shared.HistoryItem;
+import bigBang.definitions.shared.SubPolicy;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
-public class TestHistoryUndo
+public class TestSubPolicyGet
 {
 	public static void DoTest()
 	{
@@ -13,19 +13,19 @@ public class TestHistoryUndo
 
 	private static void DoStep1()
 	{
-		AsyncCallback<HistoryItem> callback = new AsyncCallback<HistoryItem> ()
+		AsyncCallback<SubPolicy> callback = new AsyncCallback<SubPolicy> ()
 		{
 			public void onFailure(Throwable caught)
 			{
 				return;
 			}
 
-			public void onSuccess(HistoryItem result)
+			public void onSuccess(SubPolicy result)
 			{
 				return;
 			}
 		};
 
-		Services.historyService.undo("90FF5A66-BCD0-40D8-BD3C-9FFA011DA999", callback);
+		Services.subPolicyService.getSubPolicy("F01F675F-CB85-46E2-90E1-9FFA010FB114", callback);
 	}
 }

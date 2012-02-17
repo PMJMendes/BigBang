@@ -1,15 +1,14 @@
 package bigbang.tests.client;
 
-import bigBang.definitions.shared.Exercise;
 import bigBang.definitions.shared.SearchParameter;
 import bigBang.definitions.shared.SearchResult;
 import bigBang.definitions.shared.SortParameter;
 import bigBang.library.shared.NewSearchResult;
-import bigBang.module.insurancePolicyModule.shared.ExerciseSearchParameter;
+import bigBang.module.insurancePolicyModule.shared.SubPolicySearchParameter;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
-public class TestExerciseGet
+public class TestSubPolicyDelete
 {
 	private static String tmpWorkspace;
 
@@ -20,7 +19,7 @@ public class TestExerciseGet
 
 	private static void DoStep1()
 	{
-		ExerciseSearchParameter parameter;
+		SubPolicySearchParameter parameter;
 
 		AsyncCallback<NewSearchResult> callback = new AsyncCallback<NewSearchResult>()
 		{
@@ -46,28 +45,28 @@ public class TestExerciseGet
 			}
 		};
 
-		parameter = new ExerciseSearchParameter();
-		parameter.policyId = "54FF52B3-076D-4E3E-B825-9FD000C6AF77";
+		parameter = new SubPolicySearchParameter();
+		parameter.freeText = "-2475.1.1";
 
-		Services.policyExerciseService.openSearch(new SearchParameter[] {parameter}, new SortParameter[] {}, 5, callback);
+		Services.subPolicyService.openSearch(new SearchParameter[] {parameter}, new SortParameter[] {}, 5, callback);
 	}
 
 	private static void DoStep2(SearchResult stub)
 	{
-		AsyncCallback<Exercise> callback = new AsyncCallback<Exercise>()
+		AsyncCallback<Void> callback = new AsyncCallback<Void>()
 		{
 			public void onFailure(Throwable caught)
 			{
 				return;
 			}
 
-			public void onSuccess(Exercise result)
+			public void onSuccess(Void result)
 			{
 				DoStep3(tmpWorkspace);
 			}
 		};
 
-		Services.policyExerciseService.getExercise(stub.id, callback);
+		Services.subPolicyService.deleteSubPolicy(stub.id, callback);
 	}
 
 	private static void DoStep3(String workspaceId)
@@ -85,6 +84,6 @@ public class TestExerciseGet
 			}
 		};
 
-		Services.policyExerciseService.closeSearch(workspaceId, callback);
+		Services.subPolicyService.closeSearch(workspaceId, callback);
 	}
 }

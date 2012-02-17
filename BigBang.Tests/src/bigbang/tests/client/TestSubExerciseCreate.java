@@ -1,11 +1,11 @@
 package bigbang.tests.client;
 
-import bigBang.definitions.shared.InsurancePolicy;
+import bigBang.definitions.shared.Exercise;
 import bigBang.definitions.shared.Remap;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
-public class TestPolicyCreate
+public class TestSubExerciseCreate
 {
 	private static String gstrPad;
 
@@ -16,7 +16,9 @@ public class TestPolicyCreate
 
 	private static void DoStep1()
 	{
-		AsyncCallback<Remap[]> callback = new AsyncCallback<Remap[]>()
+		final String lstrPolicy = "588E0BE9-6E92-4711-B0CD-9FD50118C191";
+
+		AsyncCallback<Remap[]> callback = new AsyncCallback<Remap[]> ()
 		{
 			public void onFailure(Throwable caught)
 			{
@@ -34,7 +36,7 @@ public class TestPolicyCreate
 					{
 						for ( j = 0; j < result[i].remapIds.length; j++ )
 						{
-							if ( result[i].remapIds[j].oldId == null )
+							if ( lstrPolicy.equalsIgnoreCase(result[i].remapIds[j].oldId) )
 							{
 								gstrPad = result[i].remapIds[j].newId;
 								break;
@@ -51,58 +53,45 @@ public class TestPolicyCreate
 			}
 		};
 
-		Services.insurancePolicyService.openPolicyScratchPad(null, callback);
+		Services.insurancePolicyService.openPolicyScratchPad(lstrPolicy, callback);
 	}
 
 	private static void DoStep2()
 	{
-		InsurancePolicy newPolicy;
-
-		AsyncCallback<InsurancePolicy> callback = new AsyncCallback<InsurancePolicy>()
+		AsyncCallback<Exercise> callback = new AsyncCallback<Exercise> ()
 		{
 			public void onFailure(Throwable caught)
 			{
 				return;
 			}
 
-			public void onSuccess(InsurancePolicy result)
+			public void onSuccess(Exercise result)
 			{
 				DoStep3(result);
 			}
 		};
 
-		newPolicy = new InsurancePolicy();
-		newPolicy.id = gstrPad;
-		newPolicy.subLineId = "34E19434-6106-4359-93FE-9EE90118CEE0";
-
-		Services.insurancePolicyService.initPolicyInPad(newPolicy, callback);
+		Services.insurancePolicyService.createFirstExercise(gstrPad, callback);
 	}
 
-	private static void DoStep3(InsurancePolicy testPolicy)
+	private static void DoStep3(Exercise exercise)
 	{
-		AsyncCallback<InsurancePolicy> callback = new AsyncCallback<InsurancePolicy>()
+		AsyncCallback<Exercise> callback = new AsyncCallback<Exercise> ()
 		{
 			public void onFailure(Throwable caught)
 			{
 				return;
 			}
 
-			public void onSuccess(InsurancePolicy result)
+			public void onSuccess(Exercise result)
 			{
 				DoStep4();
 			}
 		};
 
-		testPolicy.clientId = "D7570502-0495-4E18-9CB3-9FB700201363";
-		testPolicy.caseStudy = false;
-		testPolicy.insuranceAgencyId = "F1EA00FA-36C5-44CB-B1EB-9FB700200FB8";
-		testPolicy.startDate = "2012-01-01";
-		testPolicy.durationId = "FFF15F7F-EB59-40D4-8E86-9F810157FD24";
-		testPolicy.fractioningId = "B8234D73-4432-45A0-B670-9F8101580CB5";
-		testPolicy.maturityDay = 1;
-		testPolicy.maturityMonth = 1;
-
-		Services.insurancePolicyService.updateHeader(testPolicy, callback);
+		exercise.label = "Inácio";
+		exercise.startDate = "2011-12-01";
+		Services.insurancePolicyService.updateExerciseInPad(exercise, callback);
 	}
 
 	private static void DoStep4()

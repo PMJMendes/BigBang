@@ -1,15 +1,15 @@
 package bigbang.tests.client;
 
-import bigBang.definitions.shared.Exercise;
+import bigBang.definitions.shared.InsuredObject;
 import bigBang.definitions.shared.SearchParameter;
 import bigBang.definitions.shared.SearchResult;
 import bigBang.definitions.shared.SortParameter;
 import bigBang.library.shared.NewSearchResult;
-import bigBang.module.insurancePolicyModule.shared.ExerciseSearchParameter;
+import bigBang.module.insurancePolicyModule.shared.InsuredObjectSearchParameter;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
-public class TestExerciseGet
+public class TestSubObjectGet
 {
 	private static String tmpWorkspace;
 
@@ -20,7 +20,7 @@ public class TestExerciseGet
 
 	private static void DoStep1()
 	{
-		ExerciseSearchParameter parameter;
+		InsuredObjectSearchParameter parameter;
 
 		AsyncCallback<NewSearchResult> callback = new AsyncCallback<NewSearchResult>()
 		{
@@ -46,28 +46,28 @@ public class TestExerciseGet
 			}
 		};
 
-		parameter = new ExerciseSearchParameter();
-		parameter.policyId = "54FF52B3-076D-4E3E-B825-9FD000C6AF77";
+		parameter = new InsuredObjectSearchParameter();
+		parameter.policyId = "2238CC33-CBBB-4FC1-A7E8-9FFA011E42DD";
 
-		Services.policyExerciseService.openSearch(new SearchParameter[] {parameter}, new SortParameter[] {}, 5, callback);
+		Services.subPolicyObjectService.openSearch(new SearchParameter[] {parameter}, new SortParameter[] {}, 5, callback);
 	}
 
 	private static void DoStep2(SearchResult stub)
 	{
-		AsyncCallback<Exercise> callback = new AsyncCallback<Exercise>()
+		AsyncCallback<InsuredObject> callback = new AsyncCallback<InsuredObject>()
 		{
 			public void onFailure(Throwable caught)
 			{
 				return;
 			}
 
-			public void onSuccess(Exercise result)
+			public void onSuccess(InsuredObject result)
 			{
 				DoStep3(tmpWorkspace);
 			}
 		};
 
-		Services.policyExerciseService.getExercise(stub.id, callback);
+		Services.subPolicyObjectService.getObject(stub.id, callback);
 	}
 
 	private static void DoStep3(String workspaceId)
@@ -85,6 +85,6 @@ public class TestExerciseGet
 			}
 		};
 
-		Services.policyExerciseService.closeSearch(workspaceId, callback);
+		Services.subPolicyObjectService.closeSearch(workspaceId, callback);
 	}
 }

@@ -1,11 +1,11 @@
 package bigbang.tests.client;
 
-import bigBang.definitions.shared.Exercise;
+import bigBang.definitions.shared.InsuredObject;
 import bigBang.definitions.shared.Remap;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
-public class TestExerciseCreate
+public class TestSubObjectCreate
 {
 	private static String gstrPad;
 
@@ -16,7 +16,7 @@ public class TestExerciseCreate
 
 	private static void DoStep1()
 	{
-		final String lstrPolicy = "026CDFCF-17EB-41B6-ABEE-9FFA00FE0E40";
+		final String lstrPolicy = "2238CC33-CBBB-4FC1-A7E8-9FFA011E42DD";
 
 		AsyncCallback<Remap[]> callback = new AsyncCallback<Remap[]> ()
 		{
@@ -32,7 +32,7 @@ public class TestExerciseCreate
 				gstrPad = null;
 				for (i = 0; i < result.length; i++ )
 				{
-					if ( result[i].typeId.equalsIgnoreCase("D0C5AE6B-D340-4171-B7A3-9F81011F5D42") )
+					if ( result[i].typeId.equalsIgnoreCase("C7BC8D2F-BD61-43D5-9347-9FF300EE9986") )
 					{
 						for ( j = 0; j < result[i].remapIds.length; j++ )
 						{
@@ -53,46 +53,44 @@ public class TestExerciseCreate
 			}
 		};
 
-		Services.insurancePolicyService.openPolicyScratchPad(lstrPolicy, callback);
+		Services.subPolicyService.openSubPolicyScratchPad(lstrPolicy, callback);
 	}
 
 	private static void DoStep2()
 	{
-		AsyncCallback<Exercise> callback = new AsyncCallback<Exercise> ()
+		AsyncCallback<InsuredObject> callback = new AsyncCallback<InsuredObject> ()
 		{
 			public void onFailure(Throwable caught)
 			{
 				return;
 			}
 
-			public void onSuccess(Exercise result)
+			public void onSuccess(InsuredObject result)
 			{
 				DoStep3(result);
 			}
 		};
 
-		Services.insurancePolicyService.createFirstExercise(gstrPad, callback);
+		Services.subPolicyService.createObjectInPad(gstrPad, callback);
 	}
 
-	private static void DoStep3(Exercise exercise)
+	private static void DoStep3(InsuredObject object)
 	{
-		AsyncCallback<Exercise> callback = new AsyncCallback<Exercise> ()
+		AsyncCallback<InsuredObject> callback = new AsyncCallback<InsuredObject> ()
 		{
 			public void onFailure(Throwable caught)
 			{
 				return;
 			}
 
-			public void onSuccess(Exercise result)
+			public void onSuccess(InsuredObject result)
 			{
 				DoStep4();
 			}
 		};
 
-		exercise.label = "2013";
-		exercise.startDate = "2013-01-01";
-		exercise.endDate = "2013-12-31";
-		Services.insurancePolicyService.updateExerciseInPad(exercise, callback);
+		object.unitIdentification = "Peste";
+		Services.subPolicyService.updateObjectInPad(object, callback);
 	}
 
 	private static void DoStep4()
@@ -110,6 +108,6 @@ public class TestExerciseCreate
 			}
 		};
 
-		Services.insurancePolicyService.commitPad(gstrPad, callback);
+		Services.subPolicyService.commitPad(gstrPad, callback);
 	}
 }

@@ -1,11 +1,11 @@
 package bigbang.tests.client;
 
-import bigBang.definitions.shared.Exercise;
 import bigBang.definitions.shared.Remap;
+import bigBang.definitions.shared.TipifiedListItem;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
-public class TestExerciseCreate
+public class TestSubObjectDelete
 {
 	private static String gstrPad;
 
@@ -16,7 +16,7 @@ public class TestExerciseCreate
 
 	private static void DoStep1()
 	{
-		final String lstrPolicy = "026CDFCF-17EB-41B6-ABEE-9FFA00FE0E40";
+		final String lstrPolicy = "2238CC33-CBBB-4FC1-A7E8-9FFA011E42DD";
 
 		AsyncCallback<Remap[]> callback = new AsyncCallback<Remap[]> ()
 		{
@@ -32,7 +32,7 @@ public class TestExerciseCreate
 				gstrPad = null;
 				for (i = 0; i < result.length; i++ )
 				{
-					if ( result[i].typeId.equalsIgnoreCase("D0C5AE6B-D340-4171-B7A3-9F81011F5D42") )
+					if ( result[i].typeId.equalsIgnoreCase("C7BC8D2F-BD61-43D5-9347-9FF300EE9986") )
 					{
 						for ( j = 0; j < result[i].remapIds.length; j++ )
 						{
@@ -53,46 +53,46 @@ public class TestExerciseCreate
 			}
 		};
 
-		Services.insurancePolicyService.openPolicyScratchPad(lstrPolicy, callback);
+		Services.subPolicyService.openSubPolicyScratchPad(lstrPolicy, callback);
 	}
 
 	private static void DoStep2()
 	{
-		AsyncCallback<Exercise> callback = new AsyncCallback<Exercise> ()
+		AsyncCallback<TipifiedListItem[]> callback = new AsyncCallback<TipifiedListItem[]> ()
 		{
 			public void onFailure(Throwable caught)
 			{
 				return;
 			}
-
-			public void onSuccess(Exercise result)
+	
+			public void onSuccess(TipifiedListItem[] result)
 			{
-				DoStep3(result);
+				if ( (result != null) && (result.length > 0) )
+					DoStep3(result[0].id);
+				else
+					return;
 			}
 		};
 
-		Services.insurancePolicyService.createFirstExercise(gstrPad, callback);
+		Services.subPolicyService.getListItemsFilter("3A3316D2-9D7C-4FD1-8486-9F9C0012E119", gstrPad, callback);
 	}
 
-	private static void DoStep3(Exercise exercise)
+	private static void DoStep3(String tempObjectId)
 	{
-		AsyncCallback<Exercise> callback = new AsyncCallback<Exercise> ()
+		AsyncCallback<Void> callback = new AsyncCallback<Void>()
 		{
 			public void onFailure(Throwable caught)
 			{
 				return;
 			}
 
-			public void onSuccess(Exercise result)
+			public void onSuccess(Void result)
 			{
 				DoStep4();
 			}
 		};
 
-		exercise.label = "2013";
-		exercise.startDate = "2013-01-01";
-		exercise.endDate = "2013-12-31";
-		Services.insurancePolicyService.updateExerciseInPad(exercise, callback);
+		Services.subPolicyService.deleteObjectInPad(tempObjectId, callback);
 	}
 
 	private static void DoStep4()
@@ -110,6 +110,6 @@ public class TestExerciseCreate
 			}
 		};
 
-		Services.insurancePolicyService.commitPad(gstrPad, callback);
+		Services.subPolicyService.commitPad(gstrPad, callback);
 	}
 }

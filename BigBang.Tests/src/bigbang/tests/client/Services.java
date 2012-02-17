@@ -34,6 +34,12 @@ import bigBang.module.insurancePolicyModule.interfaces.PolicyExerciseService;
 import bigBang.module.insurancePolicyModule.interfaces.PolicyExerciseServiceAsync;
 import bigBang.module.insurancePolicyModule.interfaces.PolicyObjectService;
 import bigBang.module.insurancePolicyModule.interfaces.PolicyObjectServiceAsync;
+import bigBang.module.insurancePolicyModule.interfaces.SubPolicyExerciseService;
+import bigBang.module.insurancePolicyModule.interfaces.SubPolicyExerciseServiceAsync;
+import bigBang.module.insurancePolicyModule.interfaces.SubPolicyObjectService;
+import bigBang.module.insurancePolicyModule.interfaces.SubPolicyObjectServiceAsync;
+import bigBang.module.insurancePolicyModule.interfaces.SubPolicyService;
+import bigBang.module.insurancePolicyModule.interfaces.SubPolicyServiceAsync;
 import bigBang.module.loginModule.interfaces.AuthenticationService;
 import bigBang.module.loginModule.interfaces.AuthenticationServiceAsync;
 import bigBang.module.receiptModule.interfaces.ReceiptService;
@@ -83,6 +89,12 @@ public class Services
 			GWT.create(PolicyObjectService.class);
 	public static final PolicyExerciseServiceAsync policyExerciseService =
 			GWT.create(PolicyExerciseService.class);
+	public static final SubPolicyServiceAsync subPolicyService =
+			GWT.create(SubPolicyService.class);
+	public static final SubPolicyObjectServiceAsync subPolicyObjectService =
+			GWT.create(SubPolicyObjectService.class);
+	public static final SubPolicyExerciseServiceAsync subPolicyExerciseService =
+			GWT.create(SubPolicyExerciseService.class);
 	public static final ReceiptServiceAsync receiptService =
 			GWT.create(ReceiptService.class);
 }
