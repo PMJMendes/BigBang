@@ -60,6 +60,7 @@ import com.premiumminds.BigBang.Jewel.Objects.Tax;
 import com.premiumminds.BigBang.Jewel.Operations.Policy.CreateSubPolicy;
 import com.premiumminds.BigBang.Jewel.Operations.SubPolicy.DeleteSubPolicy;
 import com.premiumminds.BigBang.Jewel.Operations.SubPolicy.ManageData;
+import com.premiumminds.BigBang.Jewel.Operations.SubPolicy.TransferToPolicy;
 import com.premiumminds.BigBang.Jewel.SysObjects.ZipCodeBridge;
 
 public class SubPolicyServiceImpl
@@ -2805,11 +2806,40 @@ public class SubPolicyServiceImpl
 		
 	}
 
-	@Override
 	public SubPolicy transferToPolicy(String subPolicyId, String newPolicyId)
-			throws SessionExpiredException, BigBangException {
-		// TODO Auto-generated method stub
-		return null;
+		throws SessionExpiredException, BigBangException
+	{
+		com.premiumminds.BigBang.Jewel.Objects.SubPolicy lobjSubPolicy;
+		TransferToPolicy lopTTP;
+		Policy lobjPolicy;
+
+		if ( Engine.getCurrentUser() == null )
+			throw new SessionExpiredException();
+
+		try
+		{
+			lobjSubPolicy = com.premiumminds.BigBang.Jewel.Objects.SubPolicy.GetInstance(Engine.getCurrentNameSpace(),
+					UUID.fromString(subPolicyId));
+			lobjPolicy = Policy.GetInstance(Engine.getCurrentNameSpace(), UUID.fromString(newPolicyId));
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangException(e.getMessage(), e);
+		}
+
+		lopTTP = new TransferToPolicy(lobjSubPolicy.GetProcessID());
+		lopTTP.midNewProcess = lobjPolicy.GetProcessID();
+
+		try
+		{
+			lopTTP.Execute();
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangException(e.getMessage(), e);
+		}
+
+		return getSubPolicy(subPolicyId);
 	}
 
 	@Override
