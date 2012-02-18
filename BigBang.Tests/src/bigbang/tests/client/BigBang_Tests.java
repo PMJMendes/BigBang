@@ -107,7 +107,7 @@ public class BigBang_Tests
 //		TestSubPolicyCreate.DoTest();
 //		TestSubPolicyEdit.DoTest();
 //		TestSubPolicyDelete.DoTest();
-		TestSubPolicyChangePolicy.DoTest();
+//		TestSubPolicyChangePolicy.DoTest();
 //
 //		TestSubObjectGet.DoTest();
 //		TestSubObjectCreate.DoTest();

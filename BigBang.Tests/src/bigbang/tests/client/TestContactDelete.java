@@ -29,7 +29,7 @@ public class TestContactDelete
 			}
 		};
 
-		Services.contactsService.getContacts("57C7551F-B640-495B-8091-9FB700200FB8", callback);
+		Services.contactsService.getContacts("D7570502-0495-4E18-9CB3-9FB700201363", callback);
 	}
 
 	private static void DoStep2(Contact contact)
