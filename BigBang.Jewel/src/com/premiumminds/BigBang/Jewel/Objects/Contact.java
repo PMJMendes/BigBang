@@ -6,6 +6,7 @@ import java.util.UUID;
 
 import Jewel.Engine.Engine;
 import Jewel.Engine.DataAccess.MasterDB;
+import Jewel.Engine.DataAccess.SQLServer;
 import Jewel.Engine.Implementation.Entity;
 import Jewel.Engine.Interfaces.IEntity;
 import Jewel.Engine.SysObjects.JewelEngineException;
@@ -155,14 +156,13 @@ public class Contact
 		return larrAux.toArray(new ContactInfo[larrAux.size()]);
 	}
 
-	public Contact[] getCurrentSubContacts()
+	public Contact[] getCurrentSubContacts(SQLServer pdb)
 		throws BigBangJewelException
 	{
 		ArrayList<Contact> larrAux;
 		int[] larrMembers;
 		java.lang.Object[] larrParams;
 		IEntity lrefContactInfo;
-        MasterDB ldb;
         ResultSet lrsInfo;
 
 		larrAux = new ArrayList<Contact>();
@@ -177,20 +177,10 @@ public class Contact
 		try
 		{
 			lrefContactInfo = Entity.GetInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), Constants.ObjID_Contact)); 
-			ldb = new MasterDB();
+			lrsInfo = lrefContactInfo.SelectByMembers(pdb, larrMembers, larrParams, new int[0]);
 		}
 		catch (Throwable e)
 		{
-			throw new BigBangJewelException(e.getMessage(), e);
-		}
-
-		try
-		{
-			lrsInfo = lrefContactInfo.SelectByMembers(ldb, larrMembers, larrParams, new int[0]);
-		}
-		catch (Throwable e)
-		{
-			try { ldb.Disconnect(); } catch (Throwable e1) {}
 			throw new BigBangJewelException(e.getMessage(), e);
 		}
 
@@ -202,29 +192,17 @@ public class Contact
 		catch (BigBangJewelException e)
 		{
 			try { lrsInfo.close(); } catch (Throwable e1) {}
-			try { ldb.Disconnect(); } catch (Throwable e1) {}
 			throw e;
 		}
 		catch (Throwable e)
 		{
 			try { lrsInfo.close(); } catch (Throwable e1) {}
-			try { ldb.Disconnect(); } catch (Throwable e1) {}
 			throw new BigBangJewelException(e.getMessage(), e);
 		}
 
 		try
 		{
 			lrsInfo.close();
-		}
-		catch (Throwable e)
-		{
-			try { ldb.Disconnect(); } catch (Throwable e1) {}
-			throw new BigBangJewelException(e.getMessage(), e);
-		}
-
-		try
-		{
-			ldb.Disconnect();
 		}
 		catch (Throwable e)
 		{

@@ -8,6 +8,7 @@ import java.util.UUID;
 import Jewel.Engine.Engine;
 import Jewel.Engine.Constants.ObjectGUIDs;
 import Jewel.Engine.DataAccess.MasterDB;
+import Jewel.Engine.DataAccess.SQLServer;
 import Jewel.Engine.Implementation.Entity;
 import Jewel.Engine.Interfaces.IEntity;
 import Jewel.Engine.SysObjects.ObjectBase;
@@ -164,7 +165,7 @@ public class ContactsServiceImpl
 		{
 			while ( lrsContacts.next() )
 				larrAux.add(fromServer(com.premiumminds.BigBang.Jewel.Objects.Contact
-						.GetInstance(Engine.getCurrentNameSpace(), lrsContacts)));
+						.GetInstance(Engine.getCurrentNameSpace(), lrsContacts), ldb));
 		}
 		catch (BigBangException e)
 		{
@@ -310,7 +311,7 @@ public class ContactsServiceImpl
 		}
 	}
 
-	private Contact fromServer(com.premiumminds.BigBang.Jewel.Objects.Contact pobjContact)
+	private Contact fromServer(com.premiumminds.BigBang.Jewel.Objects.Contact pobjContact, SQLServer pdb)
 		throws BigBangException
 	{
 		Contact lobjAux;
@@ -364,7 +365,7 @@ public class ContactsServiceImpl
 
 		try
 		{
-			larrSubs = pobjContact.getCurrentSubContacts();
+			larrSubs = pobjContact.getCurrentSubContacts(pdb);
 		}
 		catch (Throwable e)
 		{
@@ -372,7 +373,7 @@ public class ContactsServiceImpl
 		}
 		lobjAux.subContacts = new Contact[larrSubs.length];
 		for ( i = 0; i < larrSubs.length; i++ )
-			lobjAux.subContacts[i] = fromServer(larrSubs[i]);
+			lobjAux.subContacts[i] = fromServer(larrSubs[i], pdb);
 
 		return lobjAux;
 	}

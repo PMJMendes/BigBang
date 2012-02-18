@@ -498,7 +498,7 @@ public class ContactOps
 
 			lobjAux = Contact.GetInstance(Engine.getCurrentNameSpace(), pobjData.mid);
 
-			larrCAux = lobjAux.getCurrentSubContacts();
+			larrCAux = lobjAux.getCurrentSubContacts(pdb);
 			pobjData.marrSubContacts = new ContactData[larrCAux.length];
 			for ( i = 0; i < larrCAux.length; i++ )
 			{
