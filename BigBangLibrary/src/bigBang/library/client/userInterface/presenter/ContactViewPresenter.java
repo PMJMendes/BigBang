@@ -56,8 +56,7 @@ public class ContactViewPresenter implements ViewPresenter, ContactsBrokerClient
 		EDIT,
 		CANCEL, 
 		CREATE_CHILD_CONTACT,
-		ADD_NEW_DETAIL,
-		DELETE_DETAIL, DELETE, REMOVE_OK, CHILD_SELECTED, ERROR_SHOWING_CONTACT, ATTACHED
+		ADD_NEW_DETAIL, DELETE, REMOVE_OK, CHILD_SELECTED, ERROR_SHOWING_CONTACT, ATTACHED
 	}
 
 	public ContactViewPresenter(Display view){

@@ -5,6 +5,7 @@ import bigBang.library.client.FormField;
 
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
+import com.google.gwt.user.client.ui.HasValue;
 import com.google.gwt.user.client.ui.HasVerticalAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.TextBox;
@@ -143,6 +144,10 @@ public class TextBoxFormField extends FormField<String> {
 
 	public void setTextAligment(TextAlignment alignment){
 		((TextBox)this.field).setAlignment(alignment);
+	}
+	
+	public HasValue<String> getTextBox(){
+		return field;
 	}
 
 }

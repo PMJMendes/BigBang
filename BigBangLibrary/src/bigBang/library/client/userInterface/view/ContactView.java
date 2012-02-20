@@ -92,6 +92,7 @@ public class ContactView extends View implements ContactViewPresenter.Display{
 			this.setRightWidget(remove);
 			super.setValue(contactinfo);
 		}
+		
 
 		public void setEditable(boolean editable){
 
@@ -107,8 +108,9 @@ public class ContactView extends View implements ContactViewPresenter.Display{
 
 		@Override
 		public ContactInfo getValue() {
-
-			return super.getValue();
+			
+			return value;
+			
 		}
 	}
 

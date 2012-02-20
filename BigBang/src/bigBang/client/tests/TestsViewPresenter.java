@@ -3,7 +3,7 @@ package bigBang.client.tests;
 import bigBang.library.client.HasParameters;
 import bigBang.library.client.ViewPresenterFactory;
 import bigBang.library.client.userInterface.presenter.ViewPresenter;
-import bigBang.module.insurancePolicyModule.client.userInterface.CoInsuranceForm;
+import bigBang.module.insurancePolicyModule.client.userInterface.CoInsurerSelection;
 
 import com.google.gwt.user.client.ui.HasWidgets;
 import com.google.gwt.user.client.ui.UIObject;
@@ -19,7 +19,7 @@ public class TestsViewPresenter implements ViewPresenter {
 		void setTypifiedTexts(String tag);
 		HasWidgets getContainer();
 		void show();
-		void setMainCoInsuranceAgency(String string, String string2);
+		void setMainCoInsuranceAgency(String string);
 
 	}
 	
@@ -49,7 +49,7 @@ public class TestsViewPresenter implements ViewPresenter {
 //		
 //		presenter.go(view.getContainer());
 		view.show();
-		view.setMainCoInsuranceAgency("", "100");
+		view.setMainCoInsuranceAgency("4e61a352-31a1-4a65-91c7-9fb700200fb8");
 		
 //		presenter.setParameters(parameterHolder);
 		
