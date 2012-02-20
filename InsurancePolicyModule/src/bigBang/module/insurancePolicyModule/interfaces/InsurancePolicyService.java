@@ -7,6 +7,7 @@ import bigBang.definitions.shared.InfoOrDocumentRequest;
 import bigBang.definitions.shared.InsurancePolicy;
 import bigBang.definitions.shared.InsuredObject;
 import bigBang.definitions.shared.ManagerTransfer;
+import bigBang.definitions.shared.Negotiation;
 import bigBang.definitions.shared.PolicyVoiding;
 import bigBang.definitions.shared.Receipt;
 import bigBang.definitions.shared.Remap;
@@ -76,26 +77,23 @@ public interface InsurancePolicyService extends SearchService, DependentItemSubS
 	public void excludeObject(String policyId, String objectId) throws SessionExpiredException, BigBangException;
 
 	public Exercise openNewExercise(String policyId, Exercise exercise) throws SessionExpiredException, BigBangException;
-	public Exercise editExercise(String policyId, Exercise exercise) throws SessionExpiredException, BigBangException;
 
 	public InsurancePolicy transferToClient(String policyId, String newClientId) throws SessionExpiredException, BigBangException;
 
 	public void createDebitNote(String policyId, DebitNote note) throws SessionExpiredException, BigBangException;
 
-	public InsurancePolicy voidPolicy(PolicyVoiding voiding) throws SessionExpiredException, BigBangException;
-
 	public InfoOrDocumentRequest createInfoOrDocumentRequest(InfoOrDocumentRequest request) throws SessionExpiredException, BigBangException;
 	public ManagerTransfer createManagerTransfer(ManagerTransfer transfer) throws SessionExpiredException, BigBangException;
 
 	public Receipt createReceipt(String policyId, Receipt receipt) throws SessionExpiredException, BigBangException;
+	public Negotiation createNegotiation(Negotiation negotiation) throws SessionExpiredException, BigBangException;
+
+	public InsurancePolicy voidPolicy(PolicyVoiding voiding) throws SessionExpiredException, BigBangException;
 
 	public void deletePolicy(String policyId) throws SessionExpiredException, BigBangException;
 
 	public ManagerTransfer massCreateManagerTransfer(ManagerTransfer transfer) throws SessionExpiredException, BigBangException;
 
-	
-	
 	//public RiskAnalisys createRiskAnalisys(String policyId, RiskAnalisys riskAnalisys) throws SessionExpiredException, BigBangException;
 	//public 
-	
 }

@@ -30,6 +30,7 @@ import bigBang.definitions.shared.InsurancePolicy;
 import bigBang.definitions.shared.InsurancePolicyStub;
 import bigBang.definitions.shared.InsuredObject;
 import bigBang.definitions.shared.ManagerTransfer;
+import bigBang.definitions.shared.Negotiation;
 import bigBang.definitions.shared.PolicyVoiding;
 import bigBang.definitions.shared.Receipt;
 import bigBang.definitions.shared.Remap;
@@ -59,6 +60,7 @@ import com.premiumminds.BigBang.Jewel.Constants;
 import com.premiumminds.BigBang.Jewel.PolicyCalculationException;
 import com.premiumminds.BigBang.Jewel.PolicyValidationException;
 import com.premiumminds.BigBang.Jewel.Data.DebitNoteData;
+import com.premiumminds.BigBang.Jewel.Data.NegotiationData;
 import com.premiumminds.BigBang.Jewel.Data.PolicyCoInsurerData;
 import com.premiumminds.BigBang.Jewel.Data.PolicyCoverageData;
 import com.premiumminds.BigBang.Jewel.Data.PolicyData;
@@ -88,6 +90,7 @@ import com.premiumminds.BigBang.Jewel.Operations.MgrXFer.AcceptXFer;
 import com.premiumminds.BigBang.Jewel.Operations.Policy.CreateDebitNote;
 import com.premiumminds.BigBang.Jewel.Operations.Policy.CreateInfoRequest;
 import com.premiumminds.BigBang.Jewel.Operations.Policy.CreateMgrXFer;
+import com.premiumminds.BigBang.Jewel.Operations.Policy.CreateNegotiation;
 import com.premiumminds.BigBang.Jewel.Operations.Policy.CreateReceipt;
 import com.premiumminds.BigBang.Jewel.Operations.Policy.DeletePolicy;
 import com.premiumminds.BigBang.Jewel.Operations.Policy.ManageData;
@@ -3363,196 +3366,6 @@ public class InsurancePolicyServiceImpl
 		return null;
 	}
 
-	@Override
-	public Exercise editExercise(String policyId, Exercise exercise)
-			throws SessionExpiredException, BigBangException {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	public InsurancePolicy editPolicy(InsurancePolicy policy)
-		throws SessionExpiredException, BigBangException
-	{
-//		ManagePolicyData lopMPD;
-//
-		if ( Engine.getCurrentUser() == null )
-			throw new SessionExpiredException();
-//
-//		try
-//		{
-//			lopMPD = new ManagePolicyData(UUID.fromString(policy.processId));
-//			lopMPD.mobjData = new PolicyData();
-//
-//			lopMPD.mobjData.mid = UUID.fromString(policy.id);
-//
-//			lopMPD.mobjData.mstrNumber = policy.number;
-//			lopMPD.mobjData.midCompany = UUID.fromString(policy.insuranceAgencyId);
-//			lopMPD.mobjData.midSubLine = UUID.fromString(policy.subLineId);
-//			lopMPD.mobjData.mdtBeginDate = ( policy.startDate == null ? null : Timestamp.valueOf(policy.startDate + " 00:00:00.0") );
-//			lopMPD.mobjData.midDuration = UUID.fromString(policy.durationId);
-//			lopMPD.mobjData.midFractioning = UUID.fromString(policy.fractioningId);
-//			lopMPD.mobjData.mlngMaturityDay = policy.maturityDay;
-//			lopMPD.mobjData.mlngMaturityMonth = policy.maturityMonth;
-//			lopMPD.mobjData.mdtEndDate = ( policy.expirationDate == null ? null :
-//					Timestamp.valueOf(policy.expirationDate + " 00:00:00.0") );
-//			lopMPD.mobjData.mstrNotes = policy.notes;
-//			lopMPD.mobjData.midMediator = ( policy.mediatorId == null ? null : UUID.fromString(policy.mediatorId) );
-//			lopMPD.mobjData.mbCaseStudy = policy.caseStudy;
-//
-//			lopMPD.mobjData.midManager = null;
-//			lopMPD.mobjData.midProcess = null;
-//
-//			lopMPD.mobjData.mobjPrevValues = null;
-//
-//			lopMPD.mobjContactOps = null;
-//			lopMPD.mobjDocOps = null;
-//
-//			lopMPD.Execute();
-//		}
-//		catch (Throwable e)
-//		{
-//			throw new BigBangException(e.getMessage(), e);
-//		}
-//
-//		policy.managerId = lopMPD.mobjData.midManager.toString();
-//		return policy;
-		throw new BigBangException("Erro: Operação de edição directa não suportada.");
-	}
-
-	public void deletePolicy(String policyId)
-		throws SessionExpiredException, BigBangException
-	{
-		Policy lobjPolicy;
-		DeletePolicy lobjDP;
-
-		if ( Engine.getCurrentUser() == null )
-			throw new SessionExpiredException();
-
-		try
-		{
-			lobjPolicy = Policy.GetInstance(Engine.getCurrentNameSpace(), UUID.fromString(policyId));
-
-			lobjDP = new DeletePolicy(lobjPolicy.GetProcessID());
-			lobjDP.midPolicy = UUID.fromString(policyId);
-			lobjDP.Execute();
-		}
-		catch (Throwable e)
-		{
-			throw new BigBangException(e.getMessage(), e);
-		}
-	}
-
-	public Receipt createReceipt(String policyId, Receipt receipt)
-		throws SessionExpiredException, BigBangException
-	{
-		Policy lobjPolicy;
-		CreateReceipt lopCR;
-
-		if ( Engine.getCurrentUser() == null )
-			throw new SessionExpiredException();
-
-		try
-		{
-			lobjPolicy = Policy.GetInstance(Engine.getCurrentNameSpace(), UUID.fromString(policyId));
-
-			lopCR = new CreateReceipt(lobjPolicy.GetProcessID());
-			lopCR.mobjData = new ReceiptData();
-
-			lopCR.mobjData.mid = null;
-
-			lopCR.mobjData.mstrNumber = receipt.number;
-			lopCR.mobjData.midType = UUID.fromString(receipt.typeId);
-			lopCR.mobjData.mdblTotal = new BigDecimal(receipt.totalPremium);
-			lopCR.mobjData.mdblCommercial = (receipt.salesPremium == null ? null : new BigDecimal(receipt.salesPremium));
-			lopCR.mobjData.mdblCommissions = (receipt.comissions == null ? new BigDecimal(0) : new BigDecimal(receipt.comissions));
-			lopCR.mobjData.mdblRetrocessions = (receipt.retrocessions == null ? new BigDecimal(0) :
-					new BigDecimal(receipt.retrocessions));
-			lopCR.mobjData.mdblFAT = (receipt.FATValue == null ? null : new BigDecimal(receipt.FATValue));
-			lopCR.mobjData.mdtIssue = Timestamp.valueOf(receipt.issueDate + " 00:00:00.0");
-			lopCR.mobjData.mdtMaturity = (receipt.maturityDate == null ? null :
-					Timestamp.valueOf(receipt.maturityDate + " 00:00:00.0"));
-			lopCR.mobjData.mdtEnd = (receipt.endDate == null ? null : Timestamp.valueOf(receipt.endDate + " 00:00:00.0"));
-			lopCR.mobjData.mdtDue = (receipt.dueDate == null ? null : Timestamp.valueOf(receipt.dueDate + " 00:00:00.0"));
-			lopCR.mobjData.midMediator = (receipt.mediatorId == null ? null : UUID.fromString(receipt.mediatorId));
-			lopCR.mobjData.mstrNotes = receipt.notes;
-			lopCR.mobjData.mstrDescription = receipt.description;
-
-			lopCR.mobjData.midManager = ( receipt.managerId == null ? null : UUID.fromString(receipt.managerId) );
-			lopCR.mobjData.midProcess = null;
-
-			lopCR.mobjData.mobjPrevValues = null;
-
-			if ( (receipt.contacts != null) && (receipt.contacts.length > 0) )
-			{
-				lopCR.mobjContactOps = new ContactOps();
-				lopCR.mobjContactOps.marrCreate = ContactsServiceImpl.BuildContactTree(receipt.contacts);
-			}
-			else
-				lopCR.mobjContactOps = null;
-			if ( (receipt.documents != null) && (receipt.documents.length > 0) )
-			{
-				lopCR.mobjDocOps = new DocOps();
-				lopCR.mobjDocOps.marrCreate = DocumentServiceImpl.BuildDocTree(receipt.documents);
-			}
-			else
-				lopCR.mobjDocOps = null;
-
-			lopCR.Execute();
-
-		}
-		catch (Throwable e)
-		{
-			throw new BigBangException(e.getMessage(), e);
-		}
-
-		return ReceiptServiceImpl.sGetReceipt(lopCR.mobjData.mid.toString());
-	}
-
-	public ManagerTransfer createManagerTransfer(ManagerTransfer transfer)
-		throws SessionExpiredException, BigBangException
-	{
-		Policy lobjPolicy;
-		CreateMgrXFer lobjCMX;
-
-		if ( Engine.getCurrentUser() == null )
-			throw new SessionExpiredException();
-
-		try
-		{
-			lobjPolicy = Policy.GetInstance(Engine.getCurrentNameSpace(), UUID.fromString(transfer.dataObjectIds[0]));
-
-			lobjCMX = new CreateMgrXFer(lobjPolicy.GetProcessID());
-			lobjCMX.midNewManager = UUID.fromString(transfer.newManagerId);
-			lobjCMX.mbMassTransfer = false;
-
-			lobjCMX.Execute();
-		}
-		catch (Throwable e)
-		{
-			throw new BigBangException(e.getMessage(), e);
-		}
-
-		transfer.objectTypeId = Constants.ObjID_Policy.toString();
-		transfer.objectStubs = new SearchResult[] {TransferManagerServiceImpl.sBuildStub(Constants.ObjID_Policy,
-				UUID.fromString(transfer.dataObjectIds[0]))};
-		transfer.managedProcessIds = new String[] {lobjPolicy.GetProcessID().toString()};
-		transfer.directTransfer = lobjCMX.mbDirectTransfer;
-		if ( transfer.directTransfer )
-		{
-			transfer.id = null;
-			transfer.processId = null;
-			transfer.status = ManagerTransfer.Status.DIRECT;
-		}
-		else
-		{
-			transfer.id = lobjCMX.midTransferObject.toString();
-			transfer.processId = lobjCMX.midCreatedSubproc.toString();
-			transfer.status = ManagerTransfer.Status.PENDING;
-		}
-
-		return transfer;
-	}
-
 	public InsurancePolicy transferToClient(String policyId, String newClientId)
 		throws SessionExpiredException, BigBangException
 	{
@@ -3622,44 +3435,6 @@ public class InsurancePolicyServiceImpl
 		}
 	}
 
-	public InsurancePolicy voidPolicy(PolicyVoiding voiding)
-		throws SessionExpiredException, BigBangException
-	{
-		Policy lobjPolicy;
-		ObjectBase lobjMotive;
-		VoidPolicy lopVP;
-
-		if ( Engine.getCurrentUser() == null )
-			throw new SessionExpiredException();
-
-		try
-		{
-			lobjPolicy = Policy.GetInstance(Engine.getCurrentNameSpace(), UUID.fromString(voiding.policyId));
-			lobjMotive = Engine.GetWorkInstance(Engine.FindEntity(Engine.getCurrentNameSpace(),
-					Constants.ObjID_PolicyVoidingMotives), UUID.fromString(voiding.motiveId));
-		}
-		catch (Throwable e)
-		{
-			throw new BigBangException(e.getMessage(), e);
-		}
-
-		lopVP = new VoidPolicy(lobjPolicy.GetProcessID());
-		lopVP.mdtEffectDate = Timestamp.valueOf(voiding.effectDate + " 00:00:00.0");
-		lopVP.mstrMotive = lobjMotive.getLabel();
-		lopVP.mstrNotes = voiding.notes;
-
-		try
-		{
-			lopVP.Execute();
-		}
-		catch (Throwable e)
-		{
-			throw new BigBangException(e.getMessage(), e);
-		}
-
-		return getPolicy(voiding.policyId);
-	}
-
 	public InfoOrDocumentRequest createInfoOrDocumentRequest(InfoOrDocumentRequest request)
 		throws SessionExpiredException, BigBangException
 	{
@@ -3717,6 +3492,229 @@ public class InsurancePolicyServiceImpl
 		}
 
 		return InfoOrDocumentRequestServiceImpl.sGetRequest(lopCIR.midRequestObject);
+	}
+
+	public ManagerTransfer createManagerTransfer(ManagerTransfer transfer)
+		throws SessionExpiredException, BigBangException
+	{
+		Policy lobjPolicy;
+		CreateMgrXFer lobjCMX;
+
+		if ( Engine.getCurrentUser() == null )
+			throw new SessionExpiredException();
+
+		try
+		{
+			lobjPolicy = Policy.GetInstance(Engine.getCurrentNameSpace(), UUID.fromString(transfer.dataObjectIds[0]));
+
+			lobjCMX = new CreateMgrXFer(lobjPolicy.GetProcessID());
+			lobjCMX.midNewManager = UUID.fromString(transfer.newManagerId);
+			lobjCMX.mbMassTransfer = false;
+
+			lobjCMX.Execute();
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangException(e.getMessage(), e);
+		}
+
+		transfer.objectTypeId = Constants.ObjID_Policy.toString();
+		transfer.objectStubs = new SearchResult[] {TransferManagerServiceImpl.sBuildStub(Constants.ObjID_Policy,
+				UUID.fromString(transfer.dataObjectIds[0]))};
+		transfer.managedProcessIds = new String[] {lobjPolicy.GetProcessID().toString()};
+		transfer.directTransfer = lobjCMX.mbDirectTransfer;
+		if ( transfer.directTransfer )
+		{
+			transfer.id = null;
+			transfer.processId = null;
+			transfer.status = ManagerTransfer.Status.DIRECT;
+		}
+		else
+		{
+			transfer.id = lobjCMX.midTransferObject.toString();
+			transfer.processId = lobjCMX.midCreatedSubproc.toString();
+			transfer.status = ManagerTransfer.Status.PENDING;
+		}
+
+		return transfer;
+	}
+
+	public Receipt createReceipt(String policyId, Receipt receipt)
+		throws SessionExpiredException, BigBangException
+	{
+		Policy lobjPolicy;
+		CreateReceipt lopCR;
+
+		if ( Engine.getCurrentUser() == null )
+			throw new SessionExpiredException();
+
+		try
+		{
+			lobjPolicy = Policy.GetInstance(Engine.getCurrentNameSpace(), UUID.fromString(policyId));
+
+			lopCR = new CreateReceipt(lobjPolicy.GetProcessID());
+			lopCR.mobjData = new ReceiptData();
+
+			lopCR.mobjData.mid = null;
+
+			lopCR.mobjData.mstrNumber = receipt.number;
+			lopCR.mobjData.midType = UUID.fromString(receipt.typeId);
+			lopCR.mobjData.mdblTotal = new BigDecimal(receipt.totalPremium);
+			lopCR.mobjData.mdblCommercial = (receipt.salesPremium == null ? null : new BigDecimal(receipt.salesPremium));
+			lopCR.mobjData.mdblCommissions = (receipt.comissions == null ? new BigDecimal(0) : new BigDecimal(receipt.comissions));
+			lopCR.mobjData.mdblRetrocessions = (receipt.retrocessions == null ? new BigDecimal(0) :
+					new BigDecimal(receipt.retrocessions));
+			lopCR.mobjData.mdblFAT = (receipt.FATValue == null ? null : new BigDecimal(receipt.FATValue));
+			lopCR.mobjData.mdtIssue = Timestamp.valueOf(receipt.issueDate + " 00:00:00.0");
+			lopCR.mobjData.mdtMaturity = (receipt.maturityDate == null ? null :
+					Timestamp.valueOf(receipt.maturityDate + " 00:00:00.0"));
+			lopCR.mobjData.mdtEnd = (receipt.endDate == null ? null : Timestamp.valueOf(receipt.endDate + " 00:00:00.0"));
+			lopCR.mobjData.mdtDue = (receipt.dueDate == null ? null : Timestamp.valueOf(receipt.dueDate + " 00:00:00.0"));
+			lopCR.mobjData.midMediator = (receipt.mediatorId == null ? null : UUID.fromString(receipt.mediatorId));
+			lopCR.mobjData.mstrNotes = receipt.notes;
+			lopCR.mobjData.mstrDescription = receipt.description;
+
+			lopCR.mobjData.midManager = ( receipt.managerId == null ? null : UUID.fromString(receipt.managerId) );
+			lopCR.mobjData.midProcess = null;
+
+			lopCR.mobjData.mobjPrevValues = null;
+
+			if ( (receipt.contacts != null) && (receipt.contacts.length > 0) )
+			{
+				lopCR.mobjContactOps = new ContactOps();
+				lopCR.mobjContactOps.marrCreate = ContactsServiceImpl.BuildContactTree(receipt.contacts);
+			}
+			else
+				lopCR.mobjContactOps = null;
+			if ( (receipt.documents != null) && (receipt.documents.length > 0) )
+			{
+				lopCR.mobjDocOps = new DocOps();
+				lopCR.mobjDocOps.marrCreate = DocumentServiceImpl.BuildDocTree(receipt.documents);
+			}
+			else
+				lopCR.mobjDocOps = null;
+
+			lopCR.Execute();
+
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangException(e.getMessage(), e);
+		}
+
+		return ReceiptServiceImpl.sGetReceipt(lopCR.mobjData.mid.toString());
+	}
+
+	public Negotiation createNegotiation(Negotiation negotiation)
+		throws SessionExpiredException, BigBangException
+	{
+		Policy lobjPolicy;
+		CreateNegotiation lopCN;
+
+		if ( Engine.getCurrentUser() == null )
+			throw new SessionExpiredException();
+
+		try
+		{
+			lobjPolicy = Policy.GetInstance(Engine.getCurrentNameSpace(), UUID.fromString(negotiation.ownerId));
+
+			lopCN = new CreateNegotiation(lobjPolicy.GetProcessID());
+			lopCN.mobjData = new NegotiationData();
+
+			lopCN.mobjData.mid = null;
+
+			lopCN.mobjData.mstrNotes = negotiation.notes;
+
+			lopCN.mobjData.midManager = null;
+			lopCN.mobjData.midProcess = null;
+
+			lopCN.mobjData.mobjPrevValues = null;
+
+			if ( (negotiation.contacts != null) && (negotiation.contacts.length > 0) )
+			{
+				lopCN.mobjContactOps = new ContactOps();
+				lopCN.mobjContactOps.marrCreate = ContactsServiceImpl.BuildContactTree(negotiation.contacts);
+			}
+			else
+				lopCN.mobjContactOps = null;
+			if ( (negotiation.documents != null) && (negotiation.documents.length > 0) )
+			{
+				lopCN.mobjDocOps = new DocOps();
+				lopCN.mobjDocOps.marrCreate = DocumentServiceImpl.BuildDocTree(negotiation.documents);
+			}
+			else
+				lopCN.mobjDocOps = null;
+
+			lopCN.Execute();
+
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangException(e.getMessage(), e);
+		}
+
+		return negotiation; //ReceiptServiceImpl.sGetReceipt(lopCR.mobjData.mid.toString());
+	}
+
+	public InsurancePolicy voidPolicy(PolicyVoiding voiding)
+		throws SessionExpiredException, BigBangException
+	{
+		Policy lobjPolicy;
+		ObjectBase lobjMotive;
+		VoidPolicy lopVP;
+
+		if ( Engine.getCurrentUser() == null )
+			throw new SessionExpiredException();
+
+		try
+		{
+			lobjPolicy = Policy.GetInstance(Engine.getCurrentNameSpace(), UUID.fromString(voiding.policyId));
+			lobjMotive = Engine.GetWorkInstance(Engine.FindEntity(Engine.getCurrentNameSpace(),
+					Constants.ObjID_PolicyVoidingMotives), UUID.fromString(voiding.motiveId));
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangException(e.getMessage(), e);
+		}
+
+		lopVP = new VoidPolicy(lobjPolicy.GetProcessID());
+		lopVP.mdtEffectDate = Timestamp.valueOf(voiding.effectDate + " 00:00:00.0");
+		lopVP.mstrMotive = lobjMotive.getLabel();
+		lopVP.mstrNotes = voiding.notes;
+
+		try
+		{
+			lopVP.Execute();
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangException(e.getMessage(), e);
+		}
+
+		return getPolicy(voiding.policyId);
+	}
+
+	public void deletePolicy(String policyId)
+		throws SessionExpiredException, BigBangException
+	{
+		Policy lobjPolicy;
+		DeletePolicy lobjDP;
+
+		if ( Engine.getCurrentUser() == null )
+			throw new SessionExpiredException();
+
+		try
+		{
+			lobjPolicy = Policy.GetInstance(Engine.getCurrentNameSpace(), UUID.fromString(policyId));
+
+			lobjDP = new DeletePolicy(lobjPolicy.GetProcessID());
+			lobjDP.midPolicy = UUID.fromString(policyId);
+			lobjDP.Execute();
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangException(e.getMessage(), e);
+		}
 	}
 
 	public ManagerTransfer massCreateManagerTransfer(ManagerTransfer transfer)

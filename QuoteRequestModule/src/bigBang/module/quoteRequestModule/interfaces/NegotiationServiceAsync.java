@@ -1,71 +1,26 @@
 package bigBang.module.quoteRequestModule.interfaces;
 
-import com.google.gwt.user.client.rpc.AsyncCallback;
-
-import bigBang.definitions.shared.InfoOrDocumentRequest;
 import bigBang.definitions.shared.ExternalInfoRequest;
-import bigBang.definitions.shared.ExternalInfoRequest.Incoming;
+import bigBang.definitions.shared.InfoOrDocumentRequest;
 import bigBang.definitions.shared.InsurancePolicy;
 import bigBang.definitions.shared.Negotiation;
-import bigBang.definitions.shared.Negotiation.Adjudication;
-import bigBang.definitions.shared.Negotiation.Cancellation;
-import bigBang.definitions.shared.Negotiation.Deletion;
-import bigBang.definitions.shared.QuoteRequestInfoRequest;
 import bigBang.library.interfaces.SearchServiceAsync;
 
-public interface NegotiationServiceAsync extends SearchServiceAsync {
+import com.google.gwt.user.client.rpc.AsyncCallback;
 
-	void getNegotiation(String negotiationId,
-			AsyncCallback<Negotiation> callback);
-
-	void cancelNegotiation(Cancellation cancellation,
-			AsyncCallback<Negotiation> callback);
-
-	void deleteNegotiation(Deletion deletion,
-			AsyncCallback<Negotiation> callback);
-
-	void adjudicateNegotiation(Adjudication adjudication,
-			AsyncCallback<Adjudication> callback);
-
-	void createInfoRequestToInsuranceAgency(InfoOrDocumentRequest request,
-			AsyncCallback<InfoOrDocumentRequest> callback);
-
-	void repeatInfoRequestToInsuranceAgency(InfoOrDocumentRequest request,
-			AsyncCallback<InfoOrDocumentRequest> callback);
-
-	void cancelInfoRequestToInsuranceAgency(
-			InfoOrDocumentRequest.Cancellation cancellation,
-			AsyncCallback<Void> callback);
-
-	void receiveInfoRequestToInsuranceAgencyResponse(InfoOrDocumentRequest.Response response,
-			AsyncCallback<InfoOrDocumentRequest> callback);
-
-	void createInfoRequestFromInsuranceAgency(
-			ExternalInfoRequest request,
-			AsyncCallback<ExternalInfoRequest> callback);
-
-	void repeatInfoRequestFromInsuranceAgency(
-			ExternalInfoRequest request,
-			AsyncCallback<ExternalInfoRequest> callback);
-
-	void closeInfoRequestFromInsuranceAgency(
-			bigBang.definitions.shared.ExternalInfoRequest.Closing cancellation,
-			AsyncCallback<Void> callback);
-
-	void receiveInfoRequestFromInsuranceAgencyResponse(Incoming response,
-			AsyncCallback<ExternalInfoRequest> callback);
-
-	void createPolicy(InsurancePolicy policy,
-			AsyncCallback<InsurancePolicy> callback);
-
-	void sendQuoteRequest(QuoteRequestInfoRequest request,
-			AsyncCallback<QuoteRequestInfoRequest> callback);
-
-	void receiveQuoteRequestResponse(
-			bigBang.definitions.shared.QuoteRequestInfoRequest.Response response,
-			AsyncCallback<bigBang.definitions.shared.QuoteRequestInfoRequest.Response> callback);
-
-	void repeatSendQuoteRequest(QuoteRequestInfoRequest request,
-			AsyncCallback<QuoteRequestInfoRequest> callback);
-
+public interface NegotiationServiceAsync
+	extends SearchServiceAsync
+{
+	void getNegotiation(String negotiationId, AsyncCallback<Negotiation> callback);
+	void editNegotiation(Negotiation negotiation, AsyncCallback<Negotiation> callback);
+	void sendQuoteRequest(Negotiation.QuoteRequestInfo request, AsyncCallback<Negotiation.QuoteRequestInfo> callback);
+	void repeatSendQuoteRequest(Negotiation.QuoteRequestInfo request, AsyncCallback<Negotiation.QuoteRequestInfo> callback);
+	void cancelNegotiation(Negotiation.Cancellation cancellation, AsyncCallback<Negotiation> callback);
+	void receiveResponse(Negotiation.Response response, AsyncCallback<Negotiation> callback);
+	void grantNegotiation(Negotiation.Grant adjudication, AsyncCallback<Negotiation.Grant> callback);
+	void createPolicy(Negotiation negotiation, AsyncCallback<InsurancePolicy> callback);
+	void createInfoRequest(InfoOrDocumentRequest request, AsyncCallback<InfoOrDocumentRequest> callback);
+	void createExternalRequest(ExternalInfoRequest request, AsyncCallback<ExternalInfoRequest> callback);
+	void closeNegotiation(Negotiation negotiation, AsyncCallback<Negotiation> callback);
+	void deleteNegotiation(Negotiation.Deletion deletion, AsyncCallback<Void> callback);
 }

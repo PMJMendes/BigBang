@@ -39,6 +39,9 @@ public class Constants
 	// Client Objects
 	public static final UUID ObjID_Client               = UUID.fromString("D535A99E-149F-44DC-A28B-9EE600B240F5");
 
+	// Negotiation Objects
+	public static final UUID ObjID_Negotiation          = UUID.fromString("0D50EB51-725D-4741-8618-9FFD00E918D3");
+
 	// Policy Objects
 	public static final UUID ObjID_Policy               = UUID.fromString("D0C5AE6B-D340-4171-B7A3-9F81011F5D42");
 	public static final UUID ObjID_PolicyCoInsurer      = UUID.fromString("A74A6A17-ACF6-463C-983B-9FEB00FA4957");
@@ -100,6 +103,7 @@ public class Constants
 	// Process Scripts
 	public static final UUID ProcID_GenSys        = UUID.fromString("37A989E2-9D1F-470C-A59E-9EB1008A97A5");
 	public static final UUID ProcID_Client        = UUID.fromString("100E701A-EDC5-4D9C-A221-9F09013D7954");
+	public static final UUID ProcID_Negotiation   = UUID.fromString("5A22FEB4-A96A-4BF6-B5EB-9FFD00EBD384");
 	public static final UUID ProcID_Policy        = UUID.fromString("29145166-59AC-452E-8C2B-9F81013A39AC");
 	public static final UUID ProcID_SubPolicy     = UUID.fromString("08C796D6-5622-4FF1-B3AB-9FF300F28ABC");
 	public static final UUID ProcID_Receipt       = UUID.fromString("62D0A72A-525E-450C-9917-9F8A00EB38AC");
@@ -158,6 +162,24 @@ public class Constants
 	public static final UUID OPID_Client_UndoDeleteCasualty           = UUID.fromString("A7FB514E-B632-4247-9BCE-9F8B012B2DF6");
 	public static final UUID OPID_Client_DeleteClient                 = UUID.fromString("2227C32A-0AF5-4ECC-B807-9F090143401F");
 	public static final UUID OPID_Client_ExternResumeClient           = UUID.fromString("380BC979-5C71-4991-A382-9F8801257EB5");
+
+	// Negotiation Operations
+	public static final UUID OPID_Negotiation_ManageData              = UUID.fromString("FA636D7A-FEF3-4F87-9D1A-9FFD010242ED");
+	public static final UUID OPID_Negotiation_UndoManageData          = UUID.fromString("8628348C-CAAE-4886-AE40-9FFD0102612E");
+	public static final UUID OPID_Negotiation_SendQuoteRequest        = UUID.fromString("A71B027F-716B-48B8-9FDC-9FFD0102962F");
+	public static final UUID OPID_Negotiation_RepeatQuoteRequest      = UUID.fromString("7F12F9E3-9F5D-4365-9F30-9FFD0102D342");
+	public static final UUID OPID_Negotiation_CancelNegotiation       = UUID.fromString("500AAB3B-9035-4F4F-B12E-9FFD0102F303");
+	public static final UUID OPID_Negotiation_UndoCancelNegotiation   = UUID.fromString("6E6BB71D-9F2C-4F3B-A9A4-9FFD01031517");
+	public static final UUID OPID_Negotiation_ReceiveQuote            = UUID.fromString("E43282B7-FBE2-49FB-B227-9FFD01035C99");
+	public static final UUID OPID_Negotiation_UndoReceiveQuote        = UUID.fromString("1756DE91-A0C6-4C0A-A03F-9FFD0103A47D");
+	public static final UUID OPID_Negotiation_CreateInfoRequest       = UUID.fromString("3280A4B4-BA71-418E-AF36-9FFD0104681E");
+	public static final UUID OPID_Negotiation_CreateExternRequest     = UUID.fromString("16FCE46C-EFE4-497A-BFB8-9FFD01048B6C");
+	public static final UUID OPID_Negotiation_ExternAllowGrant        = UUID.fromString("2E88EAFA-3C5B-485D-A94C-9FFD0104BEC3");
+	public static final UUID OPID_Negotiation_SendGrant               = UUID.fromString("65EB3752-A87B-4658-9FF1-9FFD0104EA07");
+	public static final UUID OPID_Negotiation_TriggerDisallowPolicies = UUID.fromString("684E6897-BF20-4F35-8EB1-9FFD01052561");
+	public static final UUID OPID_Negotiation_CreatePolicy            = UUID.fromString("2255D403-CADD-4B3E-B329-9FFD01055C53");
+	public static final UUID OPID_Negotiation_DeleteNegotiation       = UUID.fromString("796C9A67-2B7E-40D0-974A-9FFD0105890E");
+	public static final UUID OPID_Negotiation_ExternResumeNegotiation = UUID.fromString("1E5926C3-5F36-4FC6-810F-9FFD0105AB76");
 
 	// Policy Operations
 	public static final UUID OPID_Policy_AutoProcessSubProcs          = UUID.fromString("84A323A5-8F42-4913-B796-9FD301102BAC");

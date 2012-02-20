@@ -75,12 +75,11 @@ public interface SubPolicyService
 
 	public SubPolicy transferToPolicy(String subPolicyId, String newPolicyId) throws SessionExpiredException, BigBangException;
 
-	public SubPolicy voidSubPolicy(PolicyVoiding voiding) throws SessionExpiredException, BigBangException;
-
 	public InfoOrDocumentRequest createInfoOrDocumentRequest(InfoOrDocumentRequest request) throws SessionExpiredException, BigBangException;
 
 	public Receipt createReceipt(String policyId, Receipt receipt) throws SessionExpiredException, BigBangException;
 
-	public void deleteSubPolicy(String policyId) throws SessionExpiredException, BigBangException;
+	public SubPolicy voidSubPolicy(PolicyVoiding voiding) throws SessionExpiredException, BigBangException;
 
+	public void deleteSubPolicy(String policyId) throws SessionExpiredException, BigBangException;
 }

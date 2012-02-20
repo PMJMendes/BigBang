@@ -2,43 +2,80 @@ package bigBang.definitions.shared;
 
 import java.io.Serializable;
 
-public class Negotiation implements Serializable {
-
-	public static class Deletion implements Serializable {
-
+public class Negotiation
+	extends NegotiationStub
+{
+	public static class QuoteRequestInfo
+		implements Serializable
+	{
 		private static final long serialVersionUID = 1L;
 
-		public String id;
 		public String negotiationId;
-		public String motive;
-
+		public String[] attachedDocumentIds;
+		public int replylimit;
+		public String toContactInfoId;
+		public String[] forwardUserIds;
+		public String internalBCCs;
+		public String externalCCs;
 	}
-	
-	//The cancellation for a negotiation
-	public static class Cancellation implements Serializable {
 
+	public static class Cancellation
+		implements Serializable
+	{
 		private static final long serialVersionUID = 1L;
 
-		public String id;
-		public String internalMotive;
-		public String externalMotive;
+		public String negotiationId;
+		public String internalMotiveId;
+		public String externalMotiveId;
 		public boolean sendResponseToInsuranceAgency;
 	}
-	
-	//The adjudication for a negotiation
-	public static class Adjudication implements Serializable {
 
+	public static class Response
+		implements Serializable
+	{
 		private static final long serialVersionUID = 1L;
-		
-		public String id;
+
+		public static class Upgrade
+			implements Serializable
+		{
+			private static final long serialVersionUID = 1L;
+
+			public String name;
+			public String docTypeId;
+			public String storageId;
+		}
+
+		public String negotiationId;
+		public String notes;
+		public String emailId;
+		public Upgrade[] upgrades;
+	}
+
+	public static class Grant
+		implements Serializable
+	{
+		private static final long serialVersionUID = 1L;
+
+		public String negotiationId;
 		public String[] securedObjectIds;
 		public String[] lineIds;
 		public String effectiveDate;
 	}
-	
-	private static final long serialVersionUID = 1L;
-	
-	public String id;
-	public String ownerQuoteRequestId;
 
+	public static class Deletion
+		implements Serializable
+	{
+		private static final long serialVersionUID = 1L;
+
+		public String negotiationId;
+		public String motive;
+	}
+
+	private static final long serialVersionUID = 1L;
+
+	public String managerId;
+
+	public String notes;
+	public Contact[] contacts;
+	public Document[] documents;
 }

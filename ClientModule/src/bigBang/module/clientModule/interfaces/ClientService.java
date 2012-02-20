@@ -33,8 +33,8 @@ public interface ClientService
 	public Client getClient(String clientId) throws SessionExpiredException, BigBangException;
 
 	public Client createClient(Client client) throws SessionExpiredException, BigBangException;
-
 	public Client editClient(Client client) throws SessionExpiredException, BigBangException;
+
 	public Client mergeWithClient(String clientId, String receptorId) throws SessionExpiredException, BigBangException; //Returns the altered receptor client
 
 	public InfoOrDocumentRequest createInfoOrDocumentRequest(InfoOrDocumentRequest request) throws SessionExpiredException, BigBangException;

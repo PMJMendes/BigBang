@@ -4,6 +4,7 @@ import bigBang.definitions.shared.DebitNote;
 import bigBang.definitions.shared.Exercise;
 import bigBang.definitions.shared.InfoOrDocumentRequest;
 import bigBang.definitions.shared.InsurancePolicy;
+import bigBang.definitions.shared.Negotiation;
 import bigBang.definitions.shared.PolicyVoiding;
 import bigBang.definitions.shared.InsurancePolicy.TableSection;
 import bigBang.definitions.shared.InsuredObject;
@@ -43,13 +44,13 @@ public interface InsurancePolicyServiceAsync
 	void includeObjectFromClient(String policyId, AsyncCallback<InsuredObject> callback);
 	void excludeObject(String policyId, String objectId, AsyncCallback<Void> callback);
 	void openNewExercise(String policyId, Exercise exercise, AsyncCallback<Exercise> callback);
-	void editExercise(String policyId, Exercise exercise, AsyncCallback<Exercise> callback);
 	void transferToClient(String policyId, String newClientId, AsyncCallback<InsurancePolicy> callback);
 	void createDebitNote(String policyId, DebitNote note, AsyncCallback<Void> callback);
-	void voidPolicy(PolicyVoiding voiding, AsyncCallback<InsurancePolicy> callback);
 	void createInfoOrDocumentRequest(InfoOrDocumentRequest request, AsyncCallback<InfoOrDocumentRequest> callback);
 	void createManagerTransfer(ManagerTransfer transfer, AsyncCallback<ManagerTransfer> callback);
 	void createReceipt(String policyId, Receipt receipt, AsyncCallback<Receipt> callback);
+	void createNegotiation(Negotiation negotiation, AsyncCallback<Negotiation> callback);
+	void voidPolicy(PolicyVoiding voiding, AsyncCallback<InsurancePolicy> callback);
 	void deletePolicy(String policyId, AsyncCallback<Void> callback);
 	void massCreateManagerTransfer(ManagerTransfer transfer, AsyncCallback<ManagerTransfer> callback);
 }

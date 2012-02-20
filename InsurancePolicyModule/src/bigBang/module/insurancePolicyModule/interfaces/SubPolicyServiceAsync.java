@@ -37,8 +37,8 @@ public interface SubPolicyServiceAsync
 	void includeObjectFromClient(String subPolicyId, AsyncCallback<InsuredObject> callback);
 	void excludeObject(String subPolicyId, String objectId, AsyncCallback<Void> callback);
 	void transferToPolicy(String subPolicyId, String newPolicyId, AsyncCallback<SubPolicy> callback);
-	void voidSubPolicy(PolicyVoiding voiding, AsyncCallback<SubPolicy> callback);
 	void createInfoOrDocumentRequest(InfoOrDocumentRequest request, AsyncCallback<InfoOrDocumentRequest> callback);
 	void createReceipt(String subPolicyId, Receipt receipt, AsyncCallback<Receipt> callback);
+	void voidSubPolicy(PolicyVoiding voiding, AsyncCallback<SubPolicy> callback);
 	void deleteSubPolicy(String subPolicyId, AsyncCallback<Void> callback);
 }

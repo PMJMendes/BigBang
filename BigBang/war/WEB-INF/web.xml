@@ -8,6 +8,7 @@
     	<!ENTITY  taskServices SYSTEM "taskServices.xml" >
     	<!ENTITY  generalSystemServices SYSTEM "generalSystemServices.xml" >
     	<!ENTITY  clientServices SYSTEM "clientServices.xml" >
+    	<!ENTITY  quoteRequestServices SYSTEM "quoteRequestServices.xml" >
     	<!ENTITY  insurancePolicyServices SYSTEM "insurancePolicyServices.xml" >
     	<!ENTITY  receiptServices SYSTEM "receiptServices.xml" >
     	<!ENTITY  jewelWebServices SYSTEM "jewelWebServices.xml" >
@@ -36,6 +37,7 @@
 	&taskServices;
 	&generalSystemServices;
 	&clientServices;
+	&quoteRequestServices;
 	&insurancePolicyServices;
 	&receiptServices;
 	&jewelWebServices;
