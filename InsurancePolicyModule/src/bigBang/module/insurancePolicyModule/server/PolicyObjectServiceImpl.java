@@ -80,6 +80,22 @@ public class PolicyObjectServiceImpl
 			lobjPolicy = Policy.GetInstance(Engine.getCurrentNameSpace(), (UUID)lobjObject.getAt(1));
 
 			larrExercises = lobjPolicy.GetCurrentExercises();
+			java.util.Arrays.sort(larrExercises, new Comparator<PolicyExercise>()
+			{
+				public int compare(PolicyExercise o1, PolicyExercise o2)
+				{
+					if ( o1.getAt(2) == null )
+					{
+						if ( o2.getAt(2) == null )
+							return 0;
+						return 1;
+					}
+					if ( o2.getAt(2) == null )
+						return -1;
+
+					return ((Timestamp)o1.getAt(2)).compareTo((Timestamp)o2.getAt(2));
+				}
+			});
 
 			larrCoverages = lobjPolicy.GetCurrentCoverages();
 
@@ -171,22 +187,6 @@ public class PolicyObjectServiceImpl
 			lobjResult.electronicIdTag = (String)lobjObject.getAt(32);
 		}
 
-		java.util.Arrays.sort(larrExercises, new Comparator<PolicyExercise>()
-		{
-			public int compare(PolicyExercise o1, PolicyExercise o2)
-			{
-				if ( o1.getAt(2) == null )
-				{
-					if ( o2.getAt(2) == null )
-						return 0;
-					return 1;
-				}
-				if ( o2.getAt(2) == null )
-					return -1;
-
-				return ((Timestamp)o1.getAt(2)).compareTo((Timestamp)o2.getAt(2));
-			}
-		});
 		lobjResult.exercises = new InsuredObject.Exercise[larrExercises.length];
 		for ( i = 0; i < larrExercises.length; i++ )
 		{

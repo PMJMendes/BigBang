@@ -95,6 +95,7 @@ public class PolicyExerciseServiceImpl
 				((Timestamp)lobjExercise.getAt(2)).toString().substring(0, 10) );
 		lobjResult.endDate = ( lobjExercise.getAt(3) == null ? null :
 				((Timestamp)lobjExercise.getAt(3)).toString().substring(0, 10) );
+
 		lobjResult.objects = new Exercise.InsuredObject[larrObjects.length];
 		for ( i = 0; i < larrObjects.length; i++ )
 		{
