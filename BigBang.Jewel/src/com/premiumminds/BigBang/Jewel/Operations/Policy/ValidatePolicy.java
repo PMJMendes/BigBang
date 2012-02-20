@@ -135,7 +135,7 @@ public class ValidatePolicy
 
 	public String UndoLongDesc(String pstrLineBreak)
 	{
-		return "A validação forçada foi retirada.";
+		return "A validação da apólice foi retirada.";
 	}
 
 	protected void Undo(SQLServer pdb)

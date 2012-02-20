@@ -16,7 +16,7 @@ public class PerformComputations
 {
 	private static final long serialVersionUID = 1L;
 
-	String mstrReport;
+	private String mstrReport;
 
 	public PerformComputations(UUID pidProcess)
 	{

@@ -8,7 +8,6 @@ import Jewel.Petri.SysObjects.Operation;
 
 import com.premiumminds.BigBang.Jewel.Constants;
 import com.premiumminds.BigBang.Jewel.Data.ReceiptData;
-import com.premiumminds.BigBang.Jewel.Operations.Policy.ExternDeleteReceipt;
 
 public class DeleteReceipt
 	extends Operation
@@ -45,18 +44,31 @@ public class DeleteReceipt
 	protected void Run(SQLServer pdb)
 		throws JewelPetriException
 	{
-		ExternDeleteReceipt lobjOp;
+		UUID lidScript;
+		com.premiumminds.BigBang.Jewel.Operations.Policy.ExternDeleteReceipt lobjPOp;
+		com.premiumminds.BigBang.Jewel.Operations.SubPolicy.ExternDeleteReceipt lobjSPOp;
+		Operation lobjOp;
 
-		try
+		lidScript = GetProcess().GetParent().GetScriptID();
+
+		lobjOp = null;
+		if ( Constants.ProcID_Policy.equals(lidScript) )
 		{
-			lobjOp = new ExternDeleteReceipt(GetProcess().GetParent().getKey());
-			lobjOp.mobjData = new ReceiptData();
-			lobjOp.mobjData.mid = midReceipt;
-			TriggerOp(lobjOp, pdb);
+			lobjPOp = new com.premiumminds.BigBang.Jewel.Operations.Policy.ExternDeleteReceipt(GetProcess().GetParent().getKey());
+			lobjPOp.mobjData = new ReceiptData();
+			lobjPOp.mobjData.mid = midReceipt;
+			lobjOp = lobjPOp;
 		}
-		catch (Throwable e)
+		if ( Constants.ProcID_Policy.equals(lidScript) )
 		{
-			throw new JewelPetriException(e.getMessage(), e);
+			lobjSPOp = new com.premiumminds.BigBang.Jewel.Operations.SubPolicy.ExternDeleteReceipt(GetProcess().GetParent().getKey());
+			lobjSPOp.mobjData = new ReceiptData();
+			lobjSPOp.mobjData.mid = midReceipt;
+			lobjOp = lobjSPOp;
 		}
+		if ( lobjOp == null )
+			throw new JewelPetriException("Unexpected: Invalid parent process for recipt.");
+
+		TriggerOp(lobjOp, pdb);
 	}
 }

@@ -143,7 +143,7 @@ public class SubLine
 		return larrAux.toArray(new Coverage[larrAux.size()]);
     }
 
-    public DetailedBase GetDetailedObject(Policy pobjPolicy)
+    public DetailedBase GetDetailedObject(Policy pobjPolicy, SubPolicy pobjSubPolicy)
     	throws BigBangJewelException
     {
     	if ( getAt(4) == null )
@@ -154,8 +154,8 @@ public class SubLine
 			if ( mrefClass == null )
 				mrefClass = Class.forName(((String)getAt(4)).replaceAll("MADDS", "Jewel"));
 			if ( mrefConst == null )
-				mrefConst = mrefClass.getConstructor(new Class<?>[] {Policy.class});
-			return (DetailedBase)mrefConst.newInstance(new java.lang.Object[] {pobjPolicy});
+				mrefConst = mrefClass.getConstructor(new Class<?>[] {Policy.class, SubPolicy.class});
+			return (DetailedBase)mrefConst.newInstance(new java.lang.Object[] {pobjPolicy, pobjSubPolicy});
 		}
 		catch (Throwable e)
 		{

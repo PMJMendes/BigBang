@@ -682,6 +682,16 @@ public class Policy
     public DetailedBase GetDetailedObject()
     	throws BigBangJewelException
     {
-    	return SubLine.GetInstance(getNameSpace(), (UUID)getAt(3)).GetDetailedObject(this);
+    	return SubLine.GetInstance(getNameSpace(), (UUID)getAt(3)).GetDetailedObject(this, null);
+    }
+
+    public DetailedBase GetDetailedObject(SubPolicy pobjSubPolicy)
+    	throws BigBangJewelException
+    {
+    	DetailedBase lobjDetailed;
+
+    	lobjDetailed = SubLine.GetInstance(getNameSpace(), (UUID)getAt(3)).GetDetailedObject(this, pobjSubPolicy);
+
+    	return lobjDetailed;
     }
 }

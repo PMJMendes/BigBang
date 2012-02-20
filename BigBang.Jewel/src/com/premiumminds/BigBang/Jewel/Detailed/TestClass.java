@@ -11,17 +11,23 @@ import com.premiumminds.BigBang.Jewel.PolicyCalculationException;
 import com.premiumminds.BigBang.Jewel.PolicyValidationException;
 import com.premiumminds.BigBang.Jewel.Objects.Policy;
 import com.premiumminds.BigBang.Jewel.Objects.PolicyValue;
+import com.premiumminds.BigBang.Jewel.Objects.SubPolicy;
 import com.premiumminds.BigBang.Jewel.SysObjects.DetailedBase;
 
 public class TestClass
 	extends DetailedBase
 {
-	public TestClass(Policy pobjPolicy)
+	public TestClass(Policy pobjPolicy, SubPolicy pobjSubPolicy)
 	{
-		super(pobjPolicy);
+		super(pobjPolicy, pobjSubPolicy);
 	}
 
 	protected void InnerValidate(StringBuilder pstrBuilder, String pstrLineBreak)
+		throws BigBangJewelException, PolicyValidationException
+	{
+	}
+
+	protected void InnerSubValidate(StringBuilder pstrBuilder, String pstrLineBreak)
 		throws BigBangJewelException, PolicyValidationException
 	{
 	}
@@ -90,5 +96,11 @@ public class TestClass
 		}
 
 		return "Despesas Médicas no Estrangeiro: Calculada a nova franquia.";
+	}
+
+	protected String InnerDoSubCalc(SQLServer pdb)
+		throws BigBangJewelException, PolicyCalculationException
+	{
+		return "Não houve alterações.";
 	}
 }

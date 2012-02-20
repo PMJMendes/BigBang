@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Comparator;
 import java.util.Hashtable;
+import java.util.StringTokenizer;
 import java.util.UUID;
 
 import Jewel.Engine.Engine;
@@ -42,6 +43,7 @@ import bigBang.library.interfaces.DependentItemSubService;
 import bigBang.library.server.BigBangPermissionServiceImpl;
 import bigBang.library.server.ContactsServiceImpl;
 import bigBang.library.server.DocumentServiceImpl;
+import bigBang.library.server.InfoOrDocumentRequestServiceImpl;
 import bigBang.library.server.SearchServiceBase;
 import bigBang.library.server.TransferManagerServiceImpl;
 import bigBang.library.shared.BigBangException;
@@ -84,6 +86,7 @@ import com.premiumminds.BigBang.Jewel.Operations.DocOps;
 import com.premiumminds.BigBang.Jewel.Operations.Client.CreatePolicy;
 import com.premiumminds.BigBang.Jewel.Operations.MgrXFer.AcceptXFer;
 import com.premiumminds.BigBang.Jewel.Operations.Policy.CreateDebitNote;
+import com.premiumminds.BigBang.Jewel.Operations.Policy.CreateInfoRequest;
 import com.premiumminds.BigBang.Jewel.Operations.Policy.CreateMgrXFer;
 import com.premiumminds.BigBang.Jewel.Operations.Policy.CreateReceipt;
 import com.premiumminds.BigBang.Jewel.Operations.Policy.DeletePolicy;
@@ -3657,12 +3660,63 @@ public class InsurancePolicyServiceImpl
 		return getPolicy(voiding.policyId);
 	}
 
-	@Override
-	public InfoOrDocumentRequest createInfoOrDocumentRequest(
-			InfoOrDocumentRequest request) throws SessionExpiredException,
-			BigBangException {
-		// TODO Auto-generated method stub
-		return null;
+	public InfoOrDocumentRequest createInfoOrDocumentRequest(InfoOrDocumentRequest request)
+		throws SessionExpiredException, BigBangException
+	{
+		Policy lobjPolicy;
+		CreateInfoRequest lopCIR;
+		StringTokenizer lstrTok;
+		int i;
+
+		if ( Engine.getCurrentUser() == null )
+			throw new SessionExpiredException();
+
+		try
+		{
+			lobjPolicy = Policy.GetInstance(Engine.getCurrentNameSpace(), UUID.fromString(request.parentDataObjectId));
+
+			lopCIR = new CreateInfoRequest(lobjPolicy.GetProcessID());
+			lopCIR.mlngDays = request.replylimit;
+			lopCIR.midRequestType = UUID.fromString(request.requestTypeId);
+			lopCIR.mstrSubject = request.subject;
+			lopCIR.mstrBody = request.text;
+			if ( request.forwardUserIds == null )
+				lopCIR.marrUsers = new UUID[] {Engine.getCurrentUser()};
+			else
+			{
+				lopCIR.marrUsers = new UUID[request.forwardUserIds.length + 1];
+				lopCIR.marrUsers[0] = Engine.getCurrentUser();
+				for ( i = 0; i < request.forwardUserIds.length; i++ )
+					lopCIR.marrUsers[i + 1] = UUID.fromString(request.forwardUserIds[i]);
+			}
+			lopCIR.marrContactInfos = new UUID[] {UUID.fromString(request.toContactInfoId)};
+			if ( request.externalCCs == null )
+				lopCIR.marrCCs = null;
+			else
+			{
+				lstrTok = new StringTokenizer(request.externalCCs, ",;");
+				lopCIR.marrCCs = new String[lstrTok.countTokens()];
+				for ( i = 0; i < lopCIR.marrCCs.length; i++ )
+					lopCIR.marrCCs[i] = lstrTok.nextToken();
+			}
+			if ( request.internalBCCs == null )
+				lopCIR.marrBCCs = null;
+			else
+			{
+				lstrTok = new StringTokenizer(request.internalBCCs, ",;");
+				lopCIR.marrBCCs = new String[lstrTok.countTokens()];
+				for ( i = 0; i < lopCIR.marrBCCs.length; i++ )
+					lopCIR.marrBCCs[i] = lstrTok.nextToken();
+			}
+
+			lopCIR.Execute();
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangException(e.getMessage(), e);
+		}
+
+		return InfoOrDocumentRequestServiceImpl.sGetRequest(lopCIR.midRequestObject);
 	}
 
 	public ManagerTransfer massCreateManagerTransfer(ManagerTransfer transfer)

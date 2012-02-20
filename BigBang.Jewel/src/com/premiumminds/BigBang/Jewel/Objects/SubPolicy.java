@@ -14,6 +14,7 @@ import Jewel.Petri.SysObjects.ProcessData;
 
 import com.premiumminds.BigBang.Jewel.BigBangJewelException;
 import com.premiumminds.BigBang.Jewel.Constants;
+import com.premiumminds.BigBang.Jewel.SysObjects.DetailedBase;
 
 public class SubPolicy
 	extends ProcessData
@@ -543,5 +544,11 @@ public class SubPolicy
 		}
 
 		return larrAux.toArray(new SubPolicyValue[larrAux.size()]);
+    }
+
+    public DetailedBase GetDetailedObject()
+    	throws BigBangJewelException
+    {
+    	return GetOwner().GetDetailedObject(this);
     }
 }
