@@ -51,7 +51,7 @@ public class TestNegotiationDelete
 
 		parameter = new NegotiationSearchParameter();
 		parameter.ownerId = "026CDFCF-17EB-41B6-ABEE-9FFA00FE0E40";
-		parameter.freeText = "algumas";
+		parameter.freeText = "dif";
 		sorts = new NegotiationSortParameter();
 		sorts.field = NegotiationSortParameter.SortableField.RELEVANCE;
 		sorts.order = SortOrder.ASC;
