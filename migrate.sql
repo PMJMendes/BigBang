@@ -1312,6 +1312,8 @@ select CAST(CAST(NEWID() AS BINARY(10)) + CAST(GETDATE() AS BINARY(6)) AS UNIQUE
 Nome FullName, username Username, '258A1C88-C916-40CB-8CD5-9EB8007F2AEB' FKProfile
 from credegs..empresa.gestor where gestor not in (91, 98, 99);
 
+update bigbang.tblUsers set FullName=Username where FullName is null;
+
 insert into bigbang.tblUser2 (PK, FKUser, UserEmail, FKCostCenter, MigrationID)
 select CAST(CAST(NEWID() AS BINARY(10)) + CAST(GETDATE() AS BINARY(6)) AS UNIQUEIDENTIFIER) PK,
 u.PK FKUser, g.email UserEmail, c.PK FKCostCenter, g.gestor MigrationID
