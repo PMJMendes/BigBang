@@ -404,6 +404,8 @@ public class DocumentServiceImpl
 			lidOp = Constants.OPID_General_ManageMediators;
 		else if ( Constants.ObjID_Client.equals(lidTopType) )
 			lidOp = Constants.OPID_Client_ManageData;
+		else if ( Constants.ObjID_Negotiation.equals(lidTopType) )
+			lidOp = Constants.OPID_Negotiation_ManageData;
 		else if ( Constants.ObjID_Policy.equals(lidTopType) )
 			lidOp = Constants.OPID_Policy_ManageData;
 		else if ( Constants.ObjID_SubPolicy.equals(lidTopType) )
@@ -448,6 +450,14 @@ public class DocumentServiceImpl
 			((com.premiumminds.BigBang.Jewel.Operations.Client.ManageData)lobjResult).mobjData = null;
 			((com.premiumminds.BigBang.Jewel.Operations.Client.ManageData)lobjResult).mobjContactOps = null;
 			((com.premiumminds.BigBang.Jewel.Operations.Client.ManageData)lobjResult).mobjDocOps = pobjInner;
+			lbFound = true;
+		}
+
+		if ( lobjResult instanceof com.premiumminds.BigBang.Jewel.Operations.Negotiation.ManageData )
+		{
+			((com.premiumminds.BigBang.Jewel.Operations.Negotiation.ManageData)lobjResult).mobjData = null;
+			((com.premiumminds.BigBang.Jewel.Operations.Negotiation.ManageData)lobjResult).mobjContactOps = null;
+			((com.premiumminds.BigBang.Jewel.Operations.Negotiation.ManageData)lobjResult).mobjDocOps = pobjInner;
 			lbFound = true;
 		}
 

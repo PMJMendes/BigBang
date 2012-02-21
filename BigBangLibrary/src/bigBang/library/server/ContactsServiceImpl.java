@@ -426,6 +426,8 @@ public class ContactsServiceImpl
 			lidOp = Constants.OPID_General_ManageMediators;
 		else if ( Constants.ObjID_Client.equals(lidTopType) )
 			lidOp = Constants.OPID_Client_ManageData;
+		else if ( Constants.ObjID_Negotiation.equals(lidTopType) )
+			lidOp = Constants.OPID_Negotiation_ManageData;
 		else if ( Constants.ObjID_Policy.equals(lidTopType) )
 			lidOp = Constants.OPID_Policy_ManageData;
 		else if ( Constants.ObjID_SubPolicy.equals(lidTopType) )
@@ -470,6 +472,14 @@ public class ContactsServiceImpl
 			((com.premiumminds.BigBang.Jewel.Operations.Client.ManageData)lobjResult).mobjData = null;
 			((com.premiumminds.BigBang.Jewel.Operations.Client.ManageData)lobjResult).mobjContactOps = pobjInner;
 			((com.premiumminds.BigBang.Jewel.Operations.Client.ManageData)lobjResult).mobjDocOps = null;
+			lbFound = true;
+		}
+
+		if ( lobjResult instanceof com.premiumminds.BigBang.Jewel.Operations.Negotiation.ManageData )
+		{
+			((com.premiumminds.BigBang.Jewel.Operations.Negotiation.ManageData)lobjResult).mobjData = null;
+			((com.premiumminds.BigBang.Jewel.Operations.Negotiation.ManageData)lobjResult).mobjContactOps = pobjInner;
+			((com.premiumminds.BigBang.Jewel.Operations.Negotiation.ManageData)lobjResult).mobjDocOps = null;
 			lbFound = true;
 		}
 

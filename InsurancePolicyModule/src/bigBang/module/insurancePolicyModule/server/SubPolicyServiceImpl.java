@@ -3157,6 +3157,11 @@ public class SubPolicyServiceImpl
 			pstrBuffer.append(") [AuxOwner] WHERE [:Process:Data] = '").append(lParam.ownerId).append("')");
 		}
 
+		if ( lParam.clientId != null )
+		{
+			pstrBuffer.append(" AND [:Subscriber] = '").append(lParam.clientId).append("'");
+		}
+
 		return true;
 	}
 

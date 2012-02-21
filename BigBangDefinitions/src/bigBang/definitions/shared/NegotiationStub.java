@@ -9,5 +9,7 @@ public class NegotiationStub
 	public String ownerTypeId;
 
 	public String companyId;
+	public String companyName;
+
 	public String limitDate;
 }
