@@ -1,6 +1,8 @@
 package bigBang.library.client.userInterface;
 
 import com.google.gwt.dom.client.Style.Unit;
+import com.google.gwt.event.logical.shared.ValueChangeEvent;
+import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.HasVerticalAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
@@ -41,6 +43,13 @@ public class CheckBoxFormField extends FormField<Boolean> {
 		mainWrapper.add(wrapper);
 		wrapper.setVerticalAlignment(HasVerticalAlignment.ALIGN_MIDDLE);
 		this.field = new CheckBox();
+		this.field.addValueChangeHandler(new ValueChangeHandler<Boolean>() {
+			
+			@Override
+			public void onValueChange(ValueChangeEvent<Boolean> event) {
+				setValue(event.getValue(), true);
+			}
+		});
 		((UIObject) this.field).getElement().getStyle().setMargin(0, Unit.PX);
 		wrapper.add((Widget) this.field);
 		wrapper.add(unitsLabel);
