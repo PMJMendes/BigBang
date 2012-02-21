@@ -32,6 +32,7 @@ public class NegotiationData
 		midCompany = (UUID)pobjSource.getAt(0);
 		mstrNotes = (String)pobjSource.getAt(1);
 		mdtLimitDate = (Timestamp)pobjSource.getAt(2);
+		midProcess = (UUID)pobjSource.getAt(3);
 	}
 
 	public void ToObject(ObjectBase pobjDest)
@@ -42,6 +43,7 @@ public class NegotiationData
 			pobjDest.setAt(0, midCompany);
 			pobjDest.setAt(1, mstrNotes);
 			pobjDest.setAt(2, mdtLimitDate);
+			pobjDest.setAt(3, midProcess);
 		}
 		catch (Throwable e)
 		{

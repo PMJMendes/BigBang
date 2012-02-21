@@ -1,5 +1,6 @@
 package com.premiumminds.BigBang.Jewel.Operations.Policy;
 
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.UUID;
 
@@ -27,6 +28,7 @@ public class ExternDeleteNegotiation
 
 	public UUID midNegotiation;
 	public String mstrReason;
+	public Timestamp mdtAgendaDate;
 	private NegotiationData mobjData;
 	private ContactOps mobjContactOps;
 	private DocOps mobjDocOps;
@@ -93,7 +95,7 @@ public class ExternDeleteNegotiation
 			mobjData.FromObject(lobjAux);
 			mobjData.mobjPrevValues = null;
 
-			lobjProcess = PNProcess.GetInstance(Engine.getCurrentNameSpace(), lobjAux.GetProcessID());
+			lobjProcess = PNProcess.GetInstance(Engine.getCurrentNameSpace(), mobjData.midProcess);
 			lobjProcess.Stop(pdb);
 			lobjProcess.SetDataObjectID(null, pdb);
 
@@ -188,6 +190,7 @@ public class ExternDeleteNegotiation
 		}
 
 		lopERN = new ExternResumeNegotiation(lobjProcess.getKey());
+		lopERN.mdtAgendaDate = mdtAgendaDate;
 		TriggerOp(lopERN, pdb);
 	}
 
