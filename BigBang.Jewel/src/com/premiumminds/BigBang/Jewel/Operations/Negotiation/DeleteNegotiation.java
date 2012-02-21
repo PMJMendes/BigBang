@@ -55,7 +55,7 @@ public class DeleteNegotiation
 			lopPDN = new com.premiumminds.BigBang.Jewel.Operations.Policy.ExternDeleteNegotiation(GetProcess().GetParent().getKey());
 			lopPDN.midNegotiation = midNegotiation;
 			lopPDN.mstrReason = mstrReason;
-
+			TriggerOp(lopPDN, pdb);
 		}
 		else
 		{

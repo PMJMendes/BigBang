@@ -16,6 +16,7 @@ import com.premiumminds.BigBang.Jewel.Constants;
 import com.premiumminds.BigBang.Jewel.Data.NegotiationData;
 import com.premiumminds.BigBang.Jewel.Objects.AgendaItem;
 import com.premiumminds.BigBang.Jewel.Objects.Negotiation;
+import com.premiumminds.BigBang.Jewel.Objects.Policy;
 import com.premiumminds.BigBang.Jewel.Operations.ContactOps;
 import com.premiumminds.BigBang.Jewel.Operations.DocOps;
 
@@ -81,6 +82,8 @@ public class CreateNegotiation
 		{
 			if ( mobjData.midManager == null )
 				mobjData.midManager = GetProcess().GetManagerID();
+			if ( mobjData.midCompany == null )
+				mobjData.midCompany = (UUID)((Policy)GetProcess().GetData()).getAt(2);
 
 			lobjAux = Negotiation.GetInstance(Engine.getCurrentNameSpace(), (UUID)null);
 			mobjData.ToObject(lobjAux);

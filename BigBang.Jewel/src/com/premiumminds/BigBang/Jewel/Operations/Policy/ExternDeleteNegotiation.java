@@ -93,7 +93,7 @@ public class ExternDeleteNegotiation
 			mobjData.FromObject(lobjAux);
 			mobjData.mobjPrevValues = null;
 
-			lobjProcess = PNProcess.GetInstance(Engine.getCurrentNameSpace(), mobjData.midProcess);
+			lobjProcess = PNProcess.GetInstance(Engine.getCurrentNameSpace(), lobjAux.GetProcessID());
 			lobjProcess.Stop(pdb);
 			lobjProcess.SetDataObjectID(null, pdb);
 

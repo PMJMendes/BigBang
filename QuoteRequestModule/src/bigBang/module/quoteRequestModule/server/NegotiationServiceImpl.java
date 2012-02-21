@@ -40,21 +40,17 @@ public class NegotiationServiceImpl
 {
 	private static final long serialVersionUID = 1L;
 
-	public Negotiation getNegotiation(String negotiationId)
-		throws SessionExpiredException, BigBangException
+	public static Negotiation sGetNegotiation(UUID pidNegotiation)
+		throws BigBangException
 	{
 		com.premiumminds.BigBang.Jewel.Objects.Negotiation lobjNeg;
 		IProcess lobjProc;
 		Company lobjComp;
 		Negotiation lobjResult;
 
-		if ( Engine.getCurrentUser() == null )
-			throw new SessionExpiredException();
-
 		try
 		{
-			lobjNeg = com.premiumminds.BigBang.Jewel.Objects.Negotiation.GetInstance(Engine.getCurrentNameSpace(),
-					UUID.fromString(negotiationId));
+			lobjNeg = com.premiumminds.BigBang.Jewel.Objects.Negotiation.GetInstance(Engine.getCurrentNameSpace(), pidNegotiation);
 			lobjProc = PNProcess.GetInstance(Engine.getCurrentNameSpace(), lobjNeg.GetProcessID());
 			lobjComp = Company.GetInstance(Engine.getCurrentNameSpace(), (UUID)lobjNeg.getAt(0));
 
@@ -78,6 +74,15 @@ public class NegotiationServiceImpl
 		}
 
 		return lobjResult;
+	}
+
+	public Negotiation getNegotiation(String negotiationId)
+		throws SessionExpiredException, BigBangException
+	{
+		if ( Engine.getCurrentUser() == null )
+			throw new SessionExpiredException();
+
+		return sGetNegotiation(UUID.fromString(negotiationId));
 	}
 
 	public Negotiation editNegotiation(Negotiation negotiation)
@@ -326,7 +331,7 @@ public class NegotiationServiceImpl
 		lobjResult.ownerTypeId = (lobjScript == null ? null : lobjScript.GetDataType().toString());
 		lobjResult.companyId = ((UUID)parrValues[1]).toString();
 		lobjResult.companyName = (String)parrValues[2];
-		lobjResult.limitDate = ((Timestamp)parrValues[3]).toString().substring(0, 10);
+		lobjResult.limitDate = (parrValues[3] == null ? null : ((Timestamp)parrValues[3]).toString().substring(0, 10));
 		return lobjResult;
 	}
 

@@ -54,6 +54,7 @@ import bigBang.module.insurancePolicyModule.interfaces.InsurancePolicyService;
 import bigBang.module.insurancePolicyModule.shared.BigBangPolicyCalculationException;
 import bigBang.module.insurancePolicyModule.shared.InsurancePolicySearchParameter;
 import bigBang.module.insurancePolicyModule.shared.InsurancePolicySortParameter;
+import bigBang.module.quoteRequestModule.server.NegotiationServiceImpl;
 import bigBang.module.receiptModule.server.ReceiptServiceImpl;
 
 import com.premiumminds.BigBang.Jewel.Constants;
@@ -3653,7 +3654,7 @@ public class InsurancePolicyServiceImpl
 			throw new BigBangException(e.getMessage(), e);
 		}
 
-		return negotiation; //ReceiptServiceImpl.sGetReceipt(lopCR.mobjData.mid.toString());
+		return NegotiationServiceImpl.sGetNegotiation(lopCN.mobjData.mid);
 	}
 
 	public InsurancePolicy voidPolicy(PolicyVoiding voiding)
