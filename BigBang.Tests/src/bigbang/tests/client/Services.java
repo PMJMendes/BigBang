@@ -42,6 +42,8 @@ import bigBang.module.insurancePolicyModule.interfaces.SubPolicyService;
 import bigBang.module.insurancePolicyModule.interfaces.SubPolicyServiceAsync;
 import bigBang.module.loginModule.interfaces.AuthenticationService;
 import bigBang.module.loginModule.interfaces.AuthenticationServiceAsync;
+import bigBang.module.quoteRequestModule.interfaces.NegotiationService;
+import bigBang.module.quoteRequestModule.interfaces.NegotiationServiceAsync;
 import bigBang.module.receiptModule.interfaces.ReceiptService;
 import bigBang.module.receiptModule.interfaces.ReceiptServiceAsync;
 import bigBang.module.tasksModule.interfaces.TasksService;
@@ -83,6 +85,8 @@ public class Services
 			GWT.create(UserService.class);
 	public static final ClientServiceAsync clientService =
 			GWT.create(ClientService.class);
+	public static final NegotiationServiceAsync negotiationService =
+			GWT.create(NegotiationService.class);
 	public static final InsurancePolicyServiceAsync insurancePolicyService =
 			GWT.create(InsurancePolicyService.class);
 	public static final PolicyObjectServiceAsync policyObjectService =
