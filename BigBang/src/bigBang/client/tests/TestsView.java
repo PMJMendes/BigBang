@@ -1,29 +1,14 @@
 package bigBang.client.tests;
 
-import java.util.List;
+import bigBang.definitions.shared.InsurancePolicy.CoInsurer;
+import bigBang.library.client.userInterface.view.View;
+import bigBang.module.insurancePolicyModule.client.userInterface.CoInsurerSelection;
 
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.HasWidgets;
-import com.google.gwt.user.client.ui.RootPanel;
-import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
-import com.google.gwt.user.client.ui.Widget;
-
-import bigBang.definitions.shared.InsurancePolicy.CoInsurer;
-import bigBang.definitions.shared.TypifiedText;
-import bigBang.library.client.HasParameters;
-import bigBang.library.client.event.ActionInvokedEvent;
-import bigBang.library.client.event.ActionInvokedEventHandler;
-import bigBang.library.client.userInterface.TypifiedTextFormField;
-import bigBang.library.client.userInterface.presenter.DocumentViewPresenter;
-import bigBang.library.client.userInterface.view.DocumentView;
-import bigBang.library.client.userInterface.view.PopupPanel;
-import bigBang.library.client.userInterface.view.View;
-import bigBang.module.clientModule.client.userInterface.presenter.ClientSectionViewPresenter.Action;
-import bigBang.module.clientModule.client.userInterface.view.ClientSectionView;
-import bigBang.module.insurancePolicyModule.client.userInterface.CoInsurerSelection;
 
 public class TestsView extends View implements TestsViewPresenter.Display {
 
@@ -34,7 +19,9 @@ public class TestsView extends View implements TestsViewPresenter.Display {
 //	private PopupPanel popupPanel;
 //
 //	private ActionInvokedEventHandler<Action> actionHandler;
-
+	
+	private boolean bool = true;
+	
 	public TestsView(){
 
 		initWidget(wrapper);
@@ -43,19 +30,17 @@ public class TestsView extends View implements TestsViewPresenter.Display {
 		form.setSize("100%", "100%");
 		Button testGet = new Button("Get Value");
 		testGet.addClickHandler(new ClickHandler() {
-			
+
+
 			@Override
 			public void onClick(ClickEvent event) {
-				
-				CoInsurer[] coInsurers = form.getValue();
-				System.out.println();
-				System.out.println();
-				System.out.println();
-				for(CoInsurer coInsurer : coInsurers){
-					
-					System.out.println(coInsurer.insuranceAgencyId);
-					System.out.println(coInsurer.percent);
-					
+			
+				if(bool){
+					form.setMainCoInsuranceAgency("4e61a352-31a1-4a65-91c7-9fb700200fb8");
+					bool = false;
+				}else{
+					bool = true;
+					form.setMainCoInsuranceAgency("");
 				}
 				
 			}
@@ -99,24 +84,17 @@ public class TestsView extends View implements TestsViewPresenter.Display {
 	public void setMainCoInsuranceAgency(String string) {
 
 		
-		CoInsurer[] lol = new CoInsurer[3];
+		CoInsurer[] lol = new CoInsurer[1];
 		lol[0] = new CoInsurer();
-		lol[1] = new CoInsurer();
-		lol[2] = new CoInsurer();
 		
-		lol[0].insuranceAgencyId = "4e61a352-31a1-4a65-91c7-9fb700200fb8";
+		lol[0].insuranceAgencyId = "";
 		lol[0].percent = "45";
 		
-		lol[1].insuranceAgencyId = "4e61a352-31a1-4a65-91c7-9fb700200fb8";
-		lol[1].percent = "45";
-		
-		lol[2].insuranceAgencyId = "4e61a352-31a1-4a65-91c7-9fb700200fb8";
-		lol[2].percent = "45";
 		
 		
 		form.setMainCoInsuranceAgency(string);
 		form.setValue(lol);
-		
+
 		
 		
 	}

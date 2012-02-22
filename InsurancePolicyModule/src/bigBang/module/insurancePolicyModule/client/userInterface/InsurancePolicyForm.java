@@ -176,6 +176,8 @@ public abstract class InsurancePolicyForm extends FormView<InsurancePolicy> {
 
 	protected CheckBoxFormField caseStudy;
 	protected TextAreaFormField notes;
+	private CheckBoxFormField coInsurance;
+	private CoInsurerSelection coInsurers;
 
 	public InsurancePolicyForm(){
 		super();
@@ -200,6 +202,11 @@ public abstract class InsurancePolicyForm extends FormView<InsurancePolicy> {
 		endDate = new DatePickerFormField("Data de Fim");
 		fractioning = new ExpandableListBoxFormField(ModuleConstants.TypifiedListIds.FRACTIONING, "Fraccionamento");
 		caseStudy = new CheckBoxFormField("Case Study");
+
+		//CO-INSURANCE
+		coInsurance = new CheckBoxFormField("Co-Seguro");
+		coInsurers = new CoInsurerSelection();
+
 		notes = new TextAreaFormField();
 		notes.setSize("100%", "200px");
 		policyStatus = new TextBoxFormField("Estado");
@@ -265,6 +272,42 @@ public abstract class InsurancePolicyForm extends FormView<InsurancePolicy> {
 				subLine
 		};
 		addFormFieldGroup(group3, true);
+
+		//CO-INSURANCE
+
+		FormField<?>[] group4 = new FormField<?>[]{
+				coInsurance,
+				coInsurers
+		};
+
+		addFormFieldGroup(group4, true);
+
+		coInsurance.addValueChangeHandler(new ValueChangeHandler<Boolean>() {
+
+			@Override
+			public void onValueChange(ValueChangeEvent<Boolean> event) {
+
+				if(event.getValue()){
+					coInsurers.setMainCoInsuranceAgency(insuranceAgency.getValue());
+					coInsurers.setVisible(true);
+				}
+				else{
+					coInsurers.setVisible(false);
+				}
+
+			}
+		});
+
+
+		insuranceAgency.addValueChangeHandler(new ValueChangeHandler<String>() {
+
+			@Override
+			public void onValueChange(ValueChangeEvent<String> event) {
+
+				coInsurers.setMainCoInsuranceAgency(event.getValue());
+
+			}
+		});
 
 		this.headerFieldsSection = new FormViewSection("Informação Específica da Modalidade");
 		addSection(headerFieldsSection);
@@ -362,6 +405,15 @@ public abstract class InsurancePolicyForm extends FormView<InsurancePolicy> {
 		result.caseStudy = caseStudy.getValue();
 		result.notes = notes.getValue();
 
+		if(coInsurance.getValue()){
+			result.coInsurers = coInsurers.getValue();
+		}
+		else{
+			result.coInsurers = null;
+		}
+		coInsurers.clear();
+		
+		
 		result.headerFields = getHeaderFieldsInfo();
 		result.tableData = new TableSection[]{this.table.getData()};
 		result.coverages = this.table.getCoveragesData();
@@ -563,6 +615,21 @@ public abstract class InsurancePolicyForm extends FormView<InsurancePolicy> {
 			}else{
 				this.table.clear();
 			}
+
+
+			coInsurance.setWidth("343px");
+
+			if(info.coInsurers != null){
+				this.coInsurance.setValue(true);
+				this.coInsurers.setMainCoInsuranceAgency(info.insuranceAgencyId);
+				this.coInsurers.setValue(info.coInsurers);
+				this.coInsurers.setEditable(false);
+			}
+			else{
+				this.coInsurance.setValue(false);
+				this.coInsurers.setVisible(false);
+			}
+
 
 			setExtraFields(info.extraData);
 		}
