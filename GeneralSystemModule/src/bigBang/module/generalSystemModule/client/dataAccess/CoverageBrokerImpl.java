@@ -1,10 +1,13 @@
 package bigBang.module.generalSystemModule.client.dataAccess;
 
+import java.util.Collection;
+
 import bigBang.definitions.client.dataAccess.CoverageBroker;
 import bigBang.definitions.client.dataAccess.CoverageDataBrokerClient;
 import bigBang.definitions.client.dataAccess.DataBroker;
 import bigBang.definitions.client.dataAccess.DataBrokerCache;
 import bigBang.definitions.client.dataAccess.DataBrokerClient;
+import bigBang.definitions.client.response.ResponseError;
 import bigBang.definitions.client.response.ResponseHandler;
 import bigBang.definitions.shared.BigBangConstants;
 import bigBang.definitions.shared.Coverage;
@@ -22,9 +25,6 @@ CoverageBroker {
 	protected boolean needsRefresh = true;
 
 	protected DataBrokerCache linesCache;
-	protected DataBrokerCache subLinesCache;
-	protected DataBrokerCache coveragesCache;
-	protected DataBrokerCache taxesCache;
 
 	/**
 	 * The constructor
@@ -42,14 +42,8 @@ CoverageBroker {
 		this.service = service;
 
 		this.linesCache = this.cache;
-		this.subLinesCache = new DataBrokerCache();
-		this.coveragesCache = new DataBrokerCache();
-		this.taxesCache = new DataBrokerCache();
 
 		this.linesCache.setThreshold(0);
-		this.subLinesCache.setThreshold(0);
-		this.coveragesCache.setThreshold(0);
-		this.taxesCache.setThreshold(0);
 	}
 
 	@Override
@@ -66,21 +60,6 @@ CoverageBroker {
 					//Lines
 					for(int i = 0; i < result.length; i++) {
 						linesCache.add(result[i].id, result[i]);
-						SubLine[] subLines = result[i].subLines; 
-						//Sub lines
-						for(int j = 0; j < subLines.length; j++){
-							subLinesCache.add(subLines[j].id, subLines[j]);
-							Coverage[] coverages = subLines[j].coverages;
-							//Coverages
-							for(int k = 0; k < coverages.length; k++){
-								coveragesCache.add(coverages[k].id, coverages[k]);
-								Tax[] taxes = coverages[k].taxes;
-								//Taxes
-								for(int l = 0; l < taxes.length; l++){
-									taxesCache.add(taxes[l].id, taxes[l]);
-								}
-							}
-						}
 					}
 					for(DataBrokerClient<Line> c : getClients()) {
 						((CoverageDataBrokerClient) c).setLines(result);
@@ -92,7 +71,7 @@ CoverageBroker {
 		}else{
 			int size = linesCache.getNumberOfEntries();
 			Line[] lines = new Line[size];
-			
+
 			int i = 0;
 			for(Object o : this.linesCache.getEntries()){
 				lines[i] = (Line) o;
@@ -121,6 +100,14 @@ CoverageBroker {
 				}
 				handler.onResponse(result);
 			}
+
+			@Override
+			public void onFailure(Throwable caught){
+				handler.onError(new String[]{
+						new String("Could not create line.")	
+				});
+				super.onFailure(caught);
+			}
 		});
 	}
 
@@ -148,108 +135,578 @@ CoverageBroker {
 			@Override
 			public void onSuccess(Void result) {
 				linesCache.remove(lineId);
-				//TODO URGENT FJVC
+				incrementDataVersion();
+				for(DataBrokerClient<Line> c : CoverageBrokerImpl.this.getClients()){
+					((CoverageDataBrokerClient)c).removeLine(lineId);
+					((CoverageDataBrokerClient)c).setDataVersionNumber(getDataElementId(), getCurrentDataVersion());
+				}
 			}
 		});
 	}
 
 	@Override
-	public void getSubLines(String parentLineId,
-			ResponseHandler<SubLine[]> handler) {
-		// TODO Auto-generated method stub
+	public void getSubLines(final String parentLineId,
+			final ResponseHandler<SubLine[]> handler) {
+		if(needsRefresh()){
+			this.service.getLines(new BigBangAsyncCallback<Line[]>() {
 
+				@Override
+				public void onSuccess(Line[] result) {
+					linesCache.clear();
+
+					//Populates the caches
+
+					//Lines
+					for(int i = 0; i < result.length; i++) {
+						linesCache.add(result[i].id, result[i]);
+					}
+					for(DataBrokerClient<Line> c : getClients()) {
+						((CoverageDataBrokerClient) c).setLines(result);
+					}
+
+					handler.onResponse(getSubLinesLocal(parentLineId));
+					needsRefresh = false;
+				}
+			});
+		}else{
+
+			handler.onResponse(getSubLinesLocal(parentLineId));
+
+		}
+
+	}
+
+	private SubLine[] getSubLinesLocal(String parentLineId) {
+
+		for(Object o : linesCache.getEntries()){
+			if(((Line) o).id.equalsIgnoreCase(parentLineId)){
+				return ((Line) o).subLines;
+			}
+		}
+
+		return null;
 	}
 
 	@Override
 	public void getSubLine(String parentLineId, String subLineId,
 			ResponseHandler<SubLine> handler) {
-		// TODO Auto-generated method stub
+
+		SubLine[] subLines = getSubLinesLocal(parentLineId);
+
+		for(int i = 0; i<subLines.length; i++){
+			if(subLines[i].id.equalsIgnoreCase(subLineId)){
+				handler.onResponse(subLines[i]);
+				return;
+			}
+		}
+
+		throw new RuntimeException("The requested subline could not be found locally. id:\""+subLineId+"\"");
+	}
+
+	@Override
+	public void addSubLine(SubLine subLine, final ResponseHandler<SubLine> handler) {
+		this.service.createSubLine(subLine, new BigBangAsyncCallback<SubLine>() {
+
+			@Override
+			public void onSuccess(SubLine result) {
+
+				SubLine[] oldArray = getSubLinesLocal(result.lineId);
+				SubLine[] newArray = new SubLine[oldArray.length+1];
+
+				for(int i = 0; i<oldArray.length; i++){
+					newArray[i] = oldArray[i];
+				}
+				newArray[newArray.length-1] = result;
+
+				((Line)linesCache.get(result.lineId)).subLines = newArray;
+
+
+				for(DataBrokerClient<Line> c : getClients()){
+					((CoverageDataBrokerClient) c).addSubLine(result.lineId, result);
+				}
+				handler.onResponse(result);
+			}
+
+			@Override
+			public void onFailure(Throwable caught){
+				handler.onError(new String[]{
+						new String("Could not create subline.")	
+				});
+				super.onFailure(caught);
+			}
+
+
+		});
+	}
+
+	@Override
+	public void updateSubLine(SubLine subLine,
+			final ResponseHandler<SubLine> handler) {
+
+		this.service.saveSubLine(subLine, new BigBangAsyncCallback<SubLine>() {
+
+			@Override
+			public void onSuccess(SubLine result) {
+
+				SubLine[] subLines = getSubLinesLocal(result.lineId);
+
+				for(int i = 0; i<subLines.length; i++){
+					if(subLines[i].id.equalsIgnoreCase(result.id)){
+						subLines[i] = result;
+						break;
+					}
+				}
+
+				((Line)linesCache.get(result.lineId)).subLines = subLines;
+
+
+				for(DataBrokerClient<Line> c : getClients()){
+					((CoverageDataBrokerClient) c).updateSubLine(result.lineId, result);
+				}
+				handler.onResponse(result);
+			}
+
+			@Override
+			public void onFailure(Throwable caught){
+				handler.onError(new String[]{
+						new String("Could not update subline.")	
+				});
+				super.onFailure(caught);
+			}
+
+
+		});
+
 
 	}
 
 	@Override
-	public void addSubLine(String parentLineId, SubLine subLine, ResponseHandler<SubLine> handler) {
-		//TODO
+	public void removeSubLine(final String subLineId,
+			final ResponseHandler<Void> handler) {
+
+		service.deleteSubLine(subLineId, new BigBangAsyncCallback<Void>() {
+
+			@Override
+			public void onSuccess(Void result) {
+
+				SubLine[] oldArray = getSubLinesLocal(subLineId);
+				SubLine[] newArray = new SubLine[oldArray.length-1];
+				int curr = 0;
+				SubLine deleted = new SubLine();
+
+				for(int i = 0; i<oldArray.length; i++){
+					if(!oldArray[i].id.equalsIgnoreCase(subLineId)){
+						newArray[curr] = oldArray[i];
+						curr++;
+					}
+					else{
+						deleted = oldArray[i];
+					}
+
+				}
+
+				((Line)linesCache.get(subLineId)).subLines = newArray;
+
+
+				for(DataBrokerClient<Line> c : getClients()){
+					((CoverageDataBrokerClient) c).removeSubLine(deleted.lineId, deleted.id);
+				}
+				handler.onResponse(result);
+
+			}
+
+			@Override
+			public void onFailure(Throwable caught){
+				handler.onError(new String[]{
+						new String("Could not delete subline.")	
+				});
+				super.onFailure(caught);
+			}
+
+
+		});
+
 	}
 
 	@Override
-	public void updateSubLine(String parentLineId, String subLineId,
-			ResponseHandler<SubLine> handler) {
-		// TODO Auto-generated method stub
+	public void getCoverages(final String parentLineId, final String parentSubLineId,
+			final ResponseHandler<Coverage[]> handler) {
+
+		if(needsRefresh()){
+			this.service.getLines(new BigBangAsyncCallback<Line[]>() {
+
+				@Override
+				public void onSuccess(Line[] result) {
+					linesCache.clear();
+
+					//Populates the caches
+
+					//Lines
+					for(int i = 0; i < result.length; i++) {
+						linesCache.add(result[i].id, result[i]);
+					}
+					for(DataBrokerClient<Line> c : getClients()) {
+						((CoverageDataBrokerClient) c).setLines(result);
+					}
+
+					handler.onResponse(getCoveragesLocal(parentSubLineId, getSubLinesLocal(parentLineId)));
+					needsRefresh = false;
+				}
+			});
+		}else{
+
+			handler.onResponse(getCoveragesLocal(parentSubLineId, getSubLinesLocal(parentLineId)));
+
+		}
+
+	}
+
+	private Coverage[] getCoveragesLocal(String parentSubLineId,
+			SubLine[] subLinesLocal) {
+
+		for(int i = 0; i<subLinesLocal.length; i++){
+			if(subLinesLocal[i].id.equalsIgnoreCase(parentSubLineId)){
+				return ((Line)linesCache.get(subLinesLocal[i].lineId)).subLines[i].coverages;
+			}
+		}
+
+		return null;
 
 	}
 
 	@Override
-	public void removeSubLine(String parentLineId, String subLineId,
-			ResponseHandler<Void> handler) {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void getCoverages(String parentSubLineId,
-			ResponseHandler<Coverage[]> handler) {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void getCoverage(String parentSubLineId, String coverageId,
+	public void getCoverage(String parentLineId, String parentSubLineId, String coverageId,
 			ResponseHandler<Coverage> handler) {
-		// TODO Auto-generated method stub
+
+		Coverage[] coverages = getCoveragesLocal(parentSubLineId, getSubLinesLocal(parentLineId));
+
+		for(int i = 0; i<coverages.length; i++){
+			if(coverages[i].id.equalsIgnoreCase(coverageId)){
+				handler.onResponse(coverages[i]);
+				return;
+			}
+		}
+
+		throw new RuntimeException("The requested coverage could not be found locally. id:\""+coverageId+"\"");
+
 
 	}
 
 	@Override
-	public void addCoverage(String parentSubLineId, Coverage coverage, ResponseHandler<Coverage> handler){
-		//TODO
+	public void addCoverage(final String parentLineId, final Coverage coverage, final ResponseHandler<Coverage> handler){
+		this.service.createCoverage(coverage, new BigBangAsyncCallback<Coverage>() {
+
+			@Override
+			public void onSuccess(Coverage result) {
+
+				SubLine[] subLines = getSubLinesLocal(parentLineId);
+				Coverage[] oldArray = getCoveragesLocal(coverage.subLineId, subLines);
+				Coverage[] newArray = new Coverage[oldArray.length+1];
+
+
+				for(int i = 0; i<oldArray.length; i++){
+					newArray[i] = oldArray[i];
+				}
+				newArray[newArray.length-1] = result;
+
+				for(int i = 0; i<subLines.length; i++){
+					if(subLines[i].id.equalsIgnoreCase(coverage.subLineId)){
+						subLines[i].coverages = newArray;
+						break;
+					}
+				}
+
+				for(DataBrokerClient<Line> c : getClients()){
+					((CoverageDataBrokerClient) c).addCoverage(result.subLineId, result);
+				}
+				handler.onResponse(result);
+			}
+
+			@Override
+			public void onFailure(Throwable caught){
+				handler.onError(new String[]{
+						new String("Could not create coverage.")	
+				});
+				super.onFailure(caught);
+			}
+
+		});
 	}
 
 	@Override
-	public void updateCoverage(String parentSubLineId, String coverageId,
-			ResponseHandler<Coverage> handler) {
-		// TODO Auto-generated method stub
+	public void updateCoverage(final String parentLineId, final Coverage coverage,
+			final ResponseHandler<Coverage> handler) {
+		this.service.saveCoverage(coverage, new BigBangAsyncCallback<Coverage>() {
+
+			@Override
+			public void onSuccess(Coverage result) {
+
+				SubLine[] subLines = getSubLinesLocal(parentLineId);
+				Coverage[] coverages = getCoveragesLocal(coverage.subLineId, subLines);
+
+				for(int i = 0; i < coverages.length; i++){
+					if(coverages[i].id.equalsIgnoreCase(coverage.id)){
+						coverages[i] = coverage;
+					}
+				}
+
+				for(DataBrokerClient<Line> c : getClients()){
+					((CoverageDataBrokerClient) c).updateCoverage(result.subLineId, result);
+				}
+				handler.onResponse(result);
+
+			}
+
+			@Override
+			public void onFailure(Throwable caught){
+				handler.onError(new String[]{
+						new String("Could not save coverage.")	
+				});
+				super.onFailure(caught);
+			}
+		});
 
 	}
 
 	@Override
-	public void removeCoverage(String parentSubLineId, String coverageId,
-			ResponseHandler<Void> handler) {
-		// TODO Auto-generated method stub
+	public void removeCoverage(final String parentLineId, final String parentSubLineId, final String coverageId,
+			final ResponseHandler<Void> handler) {
+		service.deleteCoverage(coverageId, new BigBangAsyncCallback<Void>() {
+
+			@Override
+			public void onSuccess(Void result) {
+
+				SubLine[] subLines = getSubLinesLocal(parentLineId);
+				Coverage[] oldArray = getCoveragesLocal(parentSubLineId, subLines);
+				Coverage[] newArray = new Coverage[oldArray.length-1];
+				int curr = 0;
+				Coverage deleted = new Coverage();
+
+				for(int i = 0; i<oldArray.length; i++){
+					if(!oldArray[i].id.equalsIgnoreCase(coverageId)){
+						newArray[curr] = oldArray[i];
+						curr++;
+					}
+					else{
+						deleted = oldArray[i];
+					}
+				}
+
+				for(int i = 0; i<subLines.length; i++){
+					if(subLines[i].id.equalsIgnoreCase(parentSubLineId)){
+						subLines[i].coverages = newArray;
+						break;
+					}
+				}
+
+				for(DataBrokerClient<Line> c : getClients()){
+					((CoverageDataBrokerClient) c).removeCoverage(deleted.subLineId, deleted.id);
+				}
+				handler.onResponse(result);
+
+			}
+
+			@Override
+			public void onFailure(Throwable caught){
+				handler.onError(new String[]{
+						new String("Could not delete coverage.")	
+				});
+				super.onFailure(caught);
+			}
+
+		});
+
 
 	}
 
 	@Override
-	public void getTaxes(String parentCoverageId, ResponseHandler<Tax[]> handler) {
-		// TODO Auto-generated method stub
+	public void getTaxes(final String parentLineId, final String parentSubLineId, final String parentCoverageId, final ResponseHandler<Tax[]> handler) {
+
+		if(needsRefresh()){
+			this.service.getLines(new BigBangAsyncCallback<Line[]>() {
+
+				@Override
+				public void onSuccess(Line[] result) {
+					linesCache.clear();
+
+					//Populates the caches
+
+					//Lines
+					for(int i = 0; i < result.length; i++) {
+						linesCache.add(result[i].id, result[i]);
+					}
+					for(DataBrokerClient<Line> c : getClients()) {
+						((CoverageDataBrokerClient) c).setLines(result);
+					}
+
+					handler.onResponse(getTaxesLocal(parentCoverageId, getCoveragesLocal(parentSubLineId, getSubLinesLocal(parentLineId))));
+					needsRefresh = false;
+				}
+			});
+		}else{
+
+			handler.onResponse(getTaxesLocal(parentCoverageId, getCoveragesLocal(parentSubLineId, getSubLinesLocal(parentLineId))));
+
+		}
 
 	}
 
+	private Tax[] getTaxesLocal(String parentCoverageId,
+			Coverage[] coveragesLocal) {
+
+		for(int i = 0; i<coveragesLocal.length; i++){
+			if(coveragesLocal[i].id.equalsIgnoreCase(parentCoverageId)){
+				return coveragesLocal[i].taxes;
+			}
+		}
+
+		return null;
+	}
+
 	@Override
-	public void getTax(String taxId, String coverageId,
+	public void getTax(String parentLineId, String parentSubLineId, String parentCoverageId, String taxId, 
 			ResponseHandler<Tax> handler) {
-		// TODO Auto-generated method stub
+
+		Tax[] taxes = getTaxesLocal(parentCoverageId, getCoveragesLocal(parentSubLineId, getSubLinesLocal(parentLineId)));
+
+		for(int i = 0; i<taxes.length; i++){
+			if(taxes[i].id.equalsIgnoreCase(taxId)){
+				handler.onResponse(taxes[i]);
+				return;
+			}
+		}
+
+		throw new RuntimeException("The requested tax could not be found locally. id:\""+taxId+"\"");
+
 
 	}
 
 	@Override
-	public void addTax(String parentCoverageId, Tax tax,
-			ResponseHandler<Tax> handler) {
-		// TODO Auto-generated method stub
+	public void addTax(final String parentLineId, final String parentSubLineId, final Tax tax,
+			final ResponseHandler<Tax> handler) {
+		this.service.createTax(tax, new BigBangAsyncCallback<Tax>() {
+
+			@Override
+			public void onSuccess(Tax result) {
+
+				SubLine[] subLines = getSubLinesLocal(parentLineId);
+				Coverage[] coverages = getCoveragesLocal(parentSubLineId, subLines);
+				Tax[] oldArray = getTaxesLocal(tax.coverageId, coverages);
+				Tax[] newArray = new Tax[oldArray.length+1];
+
+				for(int i = 0; i<oldArray.length; i++){
+					newArray[i] = oldArray[i];
+				}
+				newArray[newArray.length-1] = tax;
+
+				for(int i = 0; i<coverages.length; i++){
+					if(coverages[i].id.equalsIgnoreCase(tax.id)){
+						coverages[i].taxes = newArray;
+					}
+				}
+
+				for(DataBrokerClient<Line> c : getClients()){
+					((CoverageDataBrokerClient) c).addTax(result.coverageId, result);
+				}
+
+			}
+
+			@Override
+			public void onFailure(Throwable caught){
+				handler.onError(new String[]{
+						new String("Could not create tax.")	
+				});
+				super.onFailure(caught);
+			}
+		});
+
+	}
+	@Override
+	public void updateTax(final String parentLineId, final String parentSubLineId, final Tax tax,
+			final ResponseHandler<Tax> handler) {
+		this.service.saveTax(tax, new BigBangAsyncCallback<Tax>() {
+
+			@Override
+			public void onSuccess(Tax result) {
+
+				SubLine[] subLines = getSubLinesLocal(parentLineId);
+				Coverage[] coverages = getCoveragesLocal(parentSubLineId, subLines);
+				Tax[] taxes = getTaxesLocal(tax.coverageId, coverages);
+
+				for(int i = 0; i<taxes.length; i++){
+					if(taxes[i].id.equalsIgnoreCase(tax.id)){
+						taxes[i] = tax;
+					}
+				}
+
+				for(DataBrokerClient<Line> c : getClients()){
+					((CoverageDataBrokerClient) c).updateTax(result.coverageId, result);
+				}
+				handler.onResponse(result);
+
+			}
+
+			@Override
+			public void onFailure(Throwable caught){
+				handler.onError(new String[]{
+						new String("Could not save tax.")	
+				});
+				super.onFailure(caught);
+			}
+
+		});
 
 	}
 
 	@Override
-	public void updateTax(String parentCoverageId, Tax tax,
-			ResponseHandler<Tax> handler) {
-		// TODO Auto-generated method stub
+	public void removeTax(final String parentLineId, final String parentSubLineId, final String parentCoverageId, final String taxId,
+			final ResponseHandler<Void> handler) {
+		
+		this.service.deleteTax(taxId, new BigBangAsyncCallback<Void>() {
 
-	}
-
-	@Override
-	public void removeTax(String parentCoverageId, String taxId,
-			ResponseHandler<Void> handler) {
-		// TODO Auto-generated method stub
+			@Override
+			public void onSuccess(Void result) {
+				
+				SubLine[] subLines = getSubLinesLocal(parentLineId);
+				Coverage[] coverages = getCoveragesLocal(parentSubLineId, subLines);
+				Tax[] oldArray = getTaxesLocal(parentCoverageId, coverages);
+				Tax[] newArray = new Tax[oldArray.length-1];
+				int curr = 0;
+				Tax deleted = new Tax();
+				
+				for(int i = 0; i<oldArray.length; i++){
+					if(!oldArray[i].id.equalsIgnoreCase(taxId)){
+						newArray[curr] = oldArray[i];
+					}
+					else{
+						deleted = oldArray[i];
+					}
+				}
+				
+				for(int i = 0; i<coverages.length; i++){
+					if(coverages[i].id.equalsIgnoreCase(parentCoverageId)){
+						coverages[i].taxes = newArray;
+						break;
+					}
+				}
+				for(DataBrokerClient<Line> c : getClients()){
+					((CoverageDataBrokerClient) c).removeTax(deleted.coverageId, deleted.id);
+				}
+				
+			}
+			
+			@Override
+			public void onFailure(Throwable caught){
+				handler.onError(new String[]{
+						new String("Could not delete coverage.")	
+				});
+				super.onFailure(caught);
+			}
+		
+		
+			
+			
+		});
 
 	}
 
@@ -265,23 +722,36 @@ CoverageBroker {
 	public boolean needsRefresh(){
 		return this.needsRefresh;
 	}
-	
+
 	@Override
 	public void notifyItemCreation(String itemId) {
 		requireDataRefresh();
-		//TODO FJVC
+		getLinesLocal();
 	}
 
 	@Override
 	public void notifyItemDeletion(String itemId) {
 		requireDataRefresh();
-		//TODO
+		getLinesLocal();
 	}
 
 	@Override
 	public void notifyItemUpdate(String itemId) {
 		requireDataRefresh();
-		//TODO
+		getLinesLocal();
 	}
+
+	public void getLinesLocal(){
+		getLines(new ResponseHandler<Line[]>() {
+
+			@Override
+			public void onResponse(Line[] response) {
+			}
+			@Override
+			public void onError(Collection<ResponseError> errors) {
+			}
+		});
+	}
+
 
 }

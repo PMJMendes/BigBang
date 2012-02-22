@@ -68,7 +68,7 @@ public interface CoverageBroker extends DataBrokerInterface<Line> {
 	 * @param subLine The sub line to be created
 	 * @param handler The handler to be notified on response
 	 */
-	public void addSubLine(String parentLineId, SubLine subLine, ResponseHandler<SubLine> handler);
+	public void addSubLine(SubLine subLine, ResponseHandler<SubLine> handler);
 	
 	/**
 	 * Updates a sub line for a given id
@@ -76,7 +76,7 @@ public interface CoverageBroker extends DataBrokerInterface<Line> {
 	 * @param subLineId The sub line id
 	 * @param handlerThe handler to be notified on response
 	 */
-	public void updateSubLine(String parentLineId, String subLineId, ResponseHandler<SubLine> handler);
+	public void updateSubLine(SubLine subLine, ResponseHandler<SubLine> handler);
 	
 	/**
 	 * Removes a sub line for a given id
@@ -84,7 +84,7 @@ public interface CoverageBroker extends DataBrokerInterface<Line> {
 	 * @param subLineId The sub line id
 	 * @param handler The handler to be notified on response
 	 */
-	public void removeSubLine(String parentLineId, String subLineId, ResponseHandler<Void> handler);
+	public void removeSubLine(String subLineId, ResponseHandler<Void> handler);
 	
 	
 	//COVERAGES
@@ -94,7 +94,7 @@ public interface CoverageBroker extends DataBrokerInterface<Line> {
 	 * @param parentSubLineId The parent line id
 	 * @param handler The handler to be notified on response
 	 */
-	public void getCoverages(String parentSubLineId, ResponseHandler<Coverage[]> handler);
+	public void getCoverages(String parentLineId, String parentSubLineId, ResponseHandler<Coverage[]> handler);
 	
 	/**
 	 * Fetches a coverage for a given parent line id
@@ -102,7 +102,7 @@ public interface CoverageBroker extends DataBrokerInterface<Line> {
 	 * @param coverageId The coverage id
 	 * @param handler The handler to be notified on response
 	 */
-	public void getCoverage(String parentSubLineId, String coverageId, ResponseHandler<Coverage> handler);
+	public void getCoverage(String parentLineId, String parentSubLineId, String coverageId, ResponseHandler<Coverage> handler);
 	
 	/**
 	 * Creates a new coverage
@@ -110,7 +110,7 @@ public interface CoverageBroker extends DataBrokerInterface<Line> {
 	 * @param coverage The coverage to be created
 	 * @param handler The handler to be notified on response
 	 */
-	public void addCoverage(String parentSubLineId, Coverage coverage, ResponseHandler<Coverage> handler);
+	public void addCoverage(String parentLineId, Coverage coverage, ResponseHandler<Coverage> handler);
 	
 	/**
 	 * Updates a coverage for a given id
@@ -118,7 +118,7 @@ public interface CoverageBroker extends DataBrokerInterface<Line> {
 	 * @param coverageId The coverage id
 	 * @param handlerThe handler to be notified on response
 	 */
-	public void updateCoverage(String parentSubLineId, String coverageId, ResponseHandler<Coverage> handler);
+	public void updateCoverage(String parentLineId, Coverage coverage, ResponseHandler<Coverage> handler);
 	
 	/**
 	 * Removes a coverage for a given id
@@ -126,7 +126,7 @@ public interface CoverageBroker extends DataBrokerInterface<Line> {
 	 * @param coverageId The coverage id
 	 * @param handler The handler to be notified on response
 	 */
-	public void removeCoverage(String parentSubLineId, String coverageId, ResponseHandler<Void> handler);
+	public void removeCoverage(String parentLineId, String parentSubLineId, String coverageId, ResponseHandler<Void> handler);
 	
 	
 	//Taxes
@@ -136,7 +136,7 @@ public interface CoverageBroker extends DataBrokerInterface<Line> {
 	 * @param parentCoverageId The parent coverage id
 	 * @param handler The handler to be notified on response
 	 */
-	public void getTaxes(String parentCoverageId, ResponseHandler<Tax[]> handler);
+	public void getTaxes(String parentLineId, String parentSubLineId, String parentCoverageId, ResponseHandler<Tax[]> handler);
 	
 	/**
 	 * Fetches a tax for a given parent coverage id
@@ -144,7 +144,7 @@ public interface CoverageBroker extends DataBrokerInterface<Line> {
 	 * @param taxID The tax id
 	 * @param handler The handler to be notified on response
 	 */
-	public void getTax(String taxId, String coverageId, ResponseHandler<Tax> handler);
+	public void getTax(String parentLineId, String parentSubLineId, String parentCoverageId, String taxId, ResponseHandler<Tax> handler);
 	
 	/**
 	 * Creates a new Tax
@@ -152,7 +152,7 @@ public interface CoverageBroker extends DataBrokerInterface<Line> {
 	 * @param tax The tax to be created
 	 * @param handler The handler to be notified on response
 	 */
-	public void addTax(String parentCoverageId, Tax tax, ResponseHandler<Tax> handler);
+	public void addTax(String parentLineId, String parentSubLineId, Tax tax, ResponseHandler<Tax> handler);
 	
 	/**
 	 * Updates a sub line for a given id
@@ -160,7 +160,7 @@ public interface CoverageBroker extends DataBrokerInterface<Line> {
 	 * @param tax The tax to be updated
 	 * @param handlerThe handler to be notified on response
 	 */
-	public void updateTax(String parentCoverageId, Tax tax, ResponseHandler<Tax> handler);
+	public void updateTax(String parentLineId, String parentSubLineId, Tax tax, ResponseHandler<Tax> handler);
 	
 	/**
 	 * Removes a sub line for a given id
@@ -168,6 +168,6 @@ public interface CoverageBroker extends DataBrokerInterface<Line> {
 	 * @param taxId The id of the tax to be removed
 	 * @param handler The handler to be notified on response
 	 */
-	public void removeTax(String parentCoverageId, String taxId, ResponseHandler<Void> handler);
+	public void removeTax(String parentLineId, String parentSubLineId, String parentCoverageId, String taxId, ResponseHandler<Void> handler);
 	
 }
