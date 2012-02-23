@@ -41,7 +41,7 @@ public interface CoverageDataBrokerClient extends DataBrokerClient<Line> {
 	 * @param parentLineId The line parent to the sub lines
 	 * @param subLines The sub lines to be set
 	 */
-	public void setSubLines(String parentLineId, SubLine[] subLines);
+	public void setSubLines(SubLine[] subLines);
 	
 	/**
 	 * Adds a sub line to the client
@@ -72,7 +72,7 @@ public interface CoverageDataBrokerClient extends DataBrokerClient<Line> {
 	 * @param parentSubLineId The id of the sub line parent to the coverage
 	 * @param coverages The coverages to be set
 	 */
-	public void setCoverages(String parentSubLineId, Coverage[] coverages);
+	public void setCoverages(Coverage[] coverages);
 	
 	/**
 	 * Adds a coverage to the client
@@ -103,7 +103,7 @@ public interface CoverageDataBrokerClient extends DataBrokerClient<Line> {
 	 * @param parentCoverageId The id of the coverage parent to the taxes
 	 * @param taxes The taxes to be set
 	 */
-	public void setTaxes(String parentCoverageId, Tax[] taxes);
+	public void setTaxes(Tax[] taxes);
 	
 	/**
 	 * Adds a tax to the client 

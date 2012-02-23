@@ -1,17 +1,33 @@
 package bigBang.module.generalSystemModule.client.userInterface;
 
+import java.util.Collection;
+
 import org.gwt.mosaic.ui.client.ToolButton;
 
+import bigBang.definitions.client.dataAccess.CoverageBroker;
+import bigBang.definitions.client.dataAccess.CoverageDataBrokerClient;
+import bigBang.definitions.client.dataAccess.DataBroker;
+import bigBang.definitions.client.response.ResponseError;
+import bigBang.definitions.client.response.ResponseHandler;
+import bigBang.definitions.shared.BigBangConstants;
 import bigBang.definitions.shared.Coverage;
+import bigBang.definitions.shared.Line;
 import bigBang.definitions.shared.SubLine;
+import bigBang.definitions.shared.Tax;
 import bigBang.library.client.BigBangAsyncCallback;
+import bigBang.library.client.EventBus;
+import bigBang.library.client.Notification;
 import bigBang.library.client.Selectable;
 import bigBang.library.client.ValueSelectable;
+import bigBang.library.client.Notification.TYPE;
+import bigBang.library.client.dataAccess.DataBrokerManager;
+import bigBang.library.client.event.NewNotificationEvent;
 import bigBang.library.client.resources.Resources;
 import bigBang.library.client.userInterface.FilterableList;
 import bigBang.library.client.userInterface.ListEntry;
 import bigBang.library.client.userInterface.ListHeader;
 import bigBang.library.client.userInterface.view.PopupPanel;
+import bigBang.module.generalSystemModule.client.userInterface.SubLineList.Entry;
 import bigBang.module.generalSystemModule.client.userInterface.view.CoverageForm;
 import bigBang.module.generalSystemModule.interfaces.CoveragesService;
 
@@ -24,7 +40,7 @@ import com.google.gwt.event.dom.client.HasClickHandlers;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Widget;
 
-public class CoverageList extends FilterableList<Coverage> {
+public class CoverageList extends FilterableList<Coverage> implements CoverageDataBrokerClient{
 
 	public static class Entry extends ListEntry<Coverage> {
 		protected Image editImage;
@@ -53,6 +69,7 @@ public class CoverageList extends FilterableList<Coverage> {
 		}
 	}
 
+	CoverageBroker broker;
 	private ToolButton newButton;
 	private CoverageForm form;
 	private PopupPanel popup;
@@ -60,11 +77,12 @@ public class CoverageList extends FilterableList<Coverage> {
 	private ClickHandler editHandler;
 	private DoubleClickHandler doubleClickHandler;
 
-	private String parentId;
-	private SubLineList parentList;
+	private String parentSubLineId;
+	private String parentLineId;
+	private String coverageId;
 
-	public CoverageList(SubLineList parentList){
-		this.parentList = parentList;
+	public CoverageList(){
+		broker = (CoverageBroker) DataBrokerManager.staticGetBroker(BigBangConstants.EntityIds.COVERAGE);
 		ListHeader header = new ListHeader();
 		header.setText("Coberturas");
 		header.showNewButton("Novo");
@@ -131,11 +149,46 @@ public class CoverageList extends FilterableList<Coverage> {
 		setReadOnly(true);
 	}
 
-	public void setParentId(String id) {
-		this.parentId = id;
-		if(parentId == null){
-			clear();
-		}
+	public void setLineId(String parentLineId){
+		this.parentLineId = parentLineId;
+	}
+
+	public void setCoverages(String parentLineId, String parentSubLineId, final String coverageId) {
+		clear();
+		this.parentLineId = parentLineId;
+		this.parentSubLineId = parentSubLineId;
+
+		broker.getCoverages(parentLineId, parentSubLineId, new ResponseHandler<Coverage[]>() {
+
+			@Override
+			public void onResponse(Coverage[] response) {
+
+				if(coverageId != null){
+					for(int i = 0; i<response.length; i++){
+						add(new Entry(response[i]));
+						if(get(i).getValue().id.equalsIgnoreCase(coverageId)){
+							get(i).setSelected(true, false);
+						}
+					}
+				}
+				else{
+					for(int i = 0; i<response.length; i++){
+						add(new Entry(response[i]));
+					}
+				}
+
+			}
+
+			@Override
+			public void onError(Collection<ResponseError> errors) {
+
+				EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não foi possível obter a lista de coberturas."), TYPE.ALERT_NOTIFICATION));
+
+			}
+		});
+
+
+
 	}
 
 	public boolean add(Entry e) {
@@ -159,22 +212,13 @@ public class CoverageList extends FilterableList<Coverage> {
 	}
 
 	private void createCoverage(Coverage coverage) {
-		coverage.subLineId = this.parentId;
-		CoveragesService.Util.getInstance().createCoverage(coverage, new BigBangAsyncCallback<Coverage>() {
 
-			@Override
-			public void onSuccess(Coverage result) {
-				Entry entry = new Entry(result);
-				add(entry);
-				bindUp();
-				entry.setSelected(true);
-				showForm(false);
-			}
-		});
+		//TODO
 	}
 
 	private void saveCoverage(Coverage coverage){
-		coverage.subLineId = this.parentId;
+		//TODO
+		coverage.subLineId = this.parentSubLineId;
 		CoveragesService.Util.getInstance().saveCoverage(coverage, new BigBangAsyncCallback<Coverage>() {
 
 			@Override
@@ -193,8 +237,8 @@ public class CoverageList extends FilterableList<Coverage> {
 	}
 
 	public void setReadOnly(boolean readonly) {
-		//TODO
-		this.readonly = readonly = false;
+
+		this.readonly = readonly;
 		this.form.setReadOnly(readonly);
 		this.newButton.setEnabled(!readonly);
 		for(ListEntry<Coverage> e : entries){
@@ -202,17 +246,132 @@ public class CoverageList extends FilterableList<Coverage> {
 		}
 	}
 
-	private void bindUp() {
-		for(Selectable s : parentList.getSelected()) {
-			@SuppressWarnings("unchecked")
-			ValueSelectable<SubLine> vs = (ValueSelectable<SubLine>) s;
+	@Override
+	public void setDataVersionNumber(String dataElementId, int number) {
+		return;
 
-			Coverage[] newArray = new Coverage[size()];
-			for(int i = 0; i < newArray.length; i++) {
-				newArray[i] = get(i).getValue();
+	}
+
+	@Override
+	public int getDataVersion(String dataElementId) {
+		return 0;
+	}
+
+	@Override
+	public void setLines(Line[] lines) {
+		if(parentLineId != null){
+			for(int i = 0; i<lines.length; i++){
+				if(lines[i].id.equalsIgnoreCase(parentLineId)){
+					setSubLines(lines[i].subLines);
+					break;
+				}
 			}
-			vs.getValue().coverages = newArray;
-			break;
 		}
+	}
+
+	@Override
+	public void addLine(Line line) {
+		return;
+	}
+
+	@Override
+	public void updateLine(Line line) {
+		return;
+	}
+
+	@Override
+	public void removeLine(String lineId) {
+		return;
+	}
+
+	@Override
+	public void setSubLines(SubLine[] subLines) {
+		if(this.parentSubLineId != null){
+			for(int i = 0; i<subLines.length; i++){
+				if(this.parentSubLineId.equalsIgnoreCase(subLines[i].id)){
+					setCoverages(subLines[i].coverages);
+				}
+			}
+		}
+	}
+
+	@Override
+	public void addSubLine(String parentLineId, SubLine subLine) {
+		return;
+	}
+
+	@Override
+	public void updateSubLine(String parentLineId, SubLine subLine) {
+		return;
+	}
+
+	@Override
+	public void removeSubLine(String parentLineId, String subLineId) {
+		return;	
+	}
+
+	@Override
+	public void setCoverages(Coverage[] coverages) {
+		clear();
+		if(this.coverageId != null){
+			for(int i = 0; i<coverages.length; i++){
+				add(new Entry(coverages[i]));
+				if(this.coverageId.equalsIgnoreCase(coverages[i].id)){
+					get(i).setSelected(true, false);
+				}
+			}
+		}
+		else{
+			for(int i = 0; i<coverages.length; i++){
+				add(new Entry(coverages[i]));
+			}
+		}
+
+	}
+
+	@Override
+	public void addCoverage(String parentSubLineId, Coverage coverage) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void updateCoverage(String parentSubLineId, Coverage coverage) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void removeCoverage(String parentSubLineId, String coverageId) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void setTaxes(Tax[] taxes) {
+		return;
+	}
+
+	@Override
+	public void addTax(String parentCoverageId, Tax tax) {
+		return;
+	}
+
+	@Override
+	public void updateTax(String parentCoverageId, Tax tax) {
+		return;
+	}
+
+	@Override
+	public void removeTax(String parentCoverageId, String taxId) {
+		return;		
+	}
+
+	public void setSubLineId(String subLineId) {
+		this.parentSubLineId = subLineId;
+	}
+
+	public void setId(String coverageId) {
+		this.coverageId = coverageId;
 	}
 }

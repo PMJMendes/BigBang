@@ -20,8 +20,8 @@ public class CoverageManagementOperationView extends View implements CoverageMan
 	
 	public CoverageManagementOperationView(){
 		lineList = new LineList();
-		subLineList = new SubLineList(lineList);
-		coverageList = new CoverageList(subLineList);
+		subLineList = new SubLineList();
+		coverageList = new CoverageList();
 
 		HorizontalPanel wrapper = new HorizontalPanel();
 		initWidget(wrapper);
@@ -59,6 +59,8 @@ public class CoverageManagementOperationView extends View implements CoverageMan
 	@Override
 	public void setReadOnly(boolean readOnly) {
 		this.lineList.setReadOnly(readOnly);
+		this.subLineList.setReadOnly(readOnly);
+		this.coverageList.setReadOnly(readOnly);
 	}
 
 	@Override
@@ -78,27 +80,55 @@ public class CoverageManagementOperationView extends View implements CoverageMan
 		this.lineList.refresh();
 	}
 
+
 	@Override
-	public void showSubLinesFor(Line line) {
-		subLineList.clear();
-		coverageList.clear();
-		if(line == null)
-			return;
-		this.subLineList.setParentId(line.id);
-		for(int i = 0; i < line.subLines.length; i++) {
-			subLineList.add(new SubLineList.Entry(line.subLines[i]));
-		}
+	public void setLine(String lineId) {
+	
+		
+		
+		lineList.setId(lineId);
+		lineList.refresh();
+		
+		subLineList.setId(null);
+		subLineList.setLineId(lineId);
+
+		
+		coverageList.setId(null);
+		coverageList.setSubLineId(null);
+		coverageList.setLineId(lineId);
+
 	}
 
 	@Override
-	public void showCoveragesFor(SubLine subLine) {
-		coverageList.clear();
-		if(subLine == null)
-			return;
-		this.coverageList.setParentId(subLine.id);
-		for(int i = 0; i < subLine.coverages.length; i++) {
-			coverageList.add(new CoverageList.Entry(subLine.coverages[i]));
-		}
+	public void setSubLine(String lineId, String subLineId) {
+		
+		
+		lineList.setId(lineId);
+		
+		subLineList.setId(subLineId);
+		subLineList.setLineId(lineId);
+		subLineList.setSubLines(lineId, subLineId);
+		
+		coverageList.setId(null);
+		coverageList.setLineId(lineId);
+		coverageList.setSubLineId(subLineId);
+		
+	}
+
+	@Override
+	public void setCoverage(String lineId, String subLineId, String coverageId) {
+		
+		
+		lineList.setId(lineId);
+		
+		subLineList.setLineId(lineId);
+		subLineList.setId(subLineId);
+		
+		coverageList.setId(coverageId);
+		coverageList.setLineId(lineId);
+		coverageList.setSubLineId(subLineId);
+		coverageList.setCoverages(lineId, subLineId, coverageId);
+		
 	}
 
 }

@@ -2,6 +2,8 @@ package bigBang.module.generalSystemModule.client.userInterface.presenter;
 
 import java.util.Collection;
 
+import sun.security.action.GetLongAction;
+
 import bigBang.definitions.shared.Coverage;
 import bigBang.definitions.shared.Line;
 import bigBang.definitions.shared.SubLine;
@@ -11,6 +13,9 @@ import bigBang.library.client.Selectable;
 import bigBang.library.client.ValueSelectable;
 import bigBang.library.client.event.SelectionChangedEvent;
 import bigBang.library.client.event.SelectionChangedEventHandler;
+import bigBang.library.client.history.NavigationHistoryItem;
+import bigBang.library.client.history.NavigationHistoryManager;
+import bigBang.library.client.userInterface.FilterableList;
 import bigBang.library.client.userInterface.presenter.ViewPresenter;
 import bigBang.library.client.userInterface.view.View;
 
@@ -20,19 +25,24 @@ import com.google.gwt.user.client.ui.Widget;
 
 public class CoverageManagementOperationViewPresenter implements ViewPresenter {
 	
+	private String lineId;
+	private String subLineId;
+	private String coverageId;
+	
 	public interface Display {
 		//Lists
 		HasValueSelectables<Line> getLineList();
 		HasValueSelectables<SubLine> getSubLineList();
 		HasValueSelectables<Coverage> getCoverageList();		
-		void showSubLinesFor(Line line);
-		void showCoveragesFor(SubLine subLine);
 		
 		//General
 		void refresh();
 		void setReadOnly(boolean readonly);
 		void clear();
 		Widget asWidget();
+		void setLine(String lineId);
+		void setSubLine(String subLineId, String lineId);
+		void setCoverage(String lineId, String subLineId, String coverageId);
 	}
 
 	private Display view;
@@ -56,8 +66,23 @@ public class CoverageManagementOperationViewPresenter implements ViewPresenter {
 
 	@Override
 	public void setParameters(HasParameters parameterHolder) {
-		// TODO Auto-generated method stub
 		
+		view.clear();
+		
+		lineId = parameterHolder.getParameter("lineid");
+		subLineId = parameterHolder.getParameter("sublineid");
+		coverageId = parameterHolder.getParameter("coverageid");
+		
+		
+		if(coverageId != null){
+			
+			view.setCoverage(lineId, subLineId, coverageId);
+			 
+		}else if(subLineId != null){
+			view.setSubLine(subLineId, lineId);
+		}
+		else
+			view.setLine(lineId);
 	}
 	
 	public void bind() {
@@ -70,12 +95,18 @@ public class CoverageManagementOperationViewPresenter implements ViewPresenter {
 			public void onSelectionChanged(SelectionChangedEvent event) {
 				Collection<? extends Selectable> selected = event.getSelected();
 				if(selected.size() == 0){
-					view.showSubLinesFor(null);
+					view.getLineList().clearSelection();
 					return;
 				}
 					
 				for(Selectable s : selected) {
-					view.showSubLinesFor(((ValueSelectable<Line>)s).getValue());
+					ValueSelectable<Line> vs = (ValueSelectable<Line>)s;
+					NavigationHistoryItem navig = NavigationHistoryManager.getInstance().getCurrentState();
+					navig.setParameter("lineId", vs.getValue().id);
+					navig.removeParameter("sublineid");
+					navig.removeParameter("coverageid");
+					NavigationHistoryManager.getInstance().go(navig);
+					view.setSubLine(lineId, (((ValueSelectable<Line>)s).getValue().id));
 					break;
 				}
 			}
@@ -85,14 +116,14 @@ public class CoverageManagementOperationViewPresenter implements ViewPresenter {
 			@SuppressWarnings("unchecked")
 			@Override
 			public void onSelectionChanged(SelectionChangedEvent event) {
+				
 				Collection<? extends Selectable> selected = event.getSelected();
 				if(selected.size() == 0){
-					view.showCoveragesFor(null);
-					return;
+					view.getSubLineList().clearSelection();
 				}
 				
 				for(Selectable s : selected) {
-					view.showCoveragesFor(((ValueSelectable<SubLine>)s).getValue());
+					view.setSubLine(lineId,((ValueSelectable<SubLine>)s).getValue().id);
 					break;
 				}
 			}

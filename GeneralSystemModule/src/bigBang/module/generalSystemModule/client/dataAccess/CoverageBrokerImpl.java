@@ -24,7 +24,7 @@ CoverageBroker {
 	protected CoveragesServiceAsync service;
 	protected boolean needsRefresh = true;
 
-	protected DataBrokerCache linesCache;
+	protected Line[] lines;
 
 	/**
 	 * The constructor
@@ -41,9 +41,6 @@ CoverageBroker {
 	public CoverageBrokerImpl(CoveragesServiceAsync service){
 		this.service = service;
 
-		this.linesCache = this.cache;
-
-		this.linesCache.setThreshold(0);
 	}
 
 	@Override
@@ -53,14 +50,12 @@ CoverageBroker {
 
 				@Override
 				public void onSuccess(Line[] result) {
-					linesCache.clear();
+					lines = result;
 
 					//Populates the caches
 
 					//Lines
-					for(int i = 0; i < result.length; i++) {
-						linesCache.add(result[i].id, result[i]);
-					}
+					
 					for(DataBrokerClient<Line> c : getClients()) {
 						((CoverageDataBrokerClient) c).setLines(result);
 					}
@@ -69,23 +64,14 @@ CoverageBroker {
 				}
 			});
 		}else{
-			int size = linesCache.getNumberOfEntries();
-			Line[] lines = new Line[size];
-
-			int i = 0;
-			for(Object o : this.linesCache.getEntries()){
-				lines[i] = (Line) o;
-				i++;
-			}
+		
 			handler.onResponse(lines);
 		}
 	}
 
 	@Override
 	public void getLine(String lineId, ResponseHandler<Line> handler) {
-		if(!linesCache.contains(lineId))
-			throw new RuntimeException("The requested line could not be found locally. id:\""+lineId+"\"");
-		handler.onResponse((Line) linesCache.get(lineId));
+		//TODO
 	}
 
 	@Override
@@ -94,7 +80,7 @@ CoverageBroker {
 
 			@Override
 			public void onSuccess(Line result) {
-				linesCache.add(result.id, result);
+				//lines.add(result.id, result);//TODO
 				for(DataBrokerClient<Line> c : getClients()){
 					((CoverageDataBrokerClient) c).addLine(result);
 				}
@@ -113,19 +99,7 @@ CoverageBroker {
 
 	@Override
 	public void updateLine(Line line, final ResponseHandler<Line> handler) {
-		if(!linesCache.contains(line.id))
-			throw new RuntimeException("The requested line could not be found locally. id:\""+line.id+"\"");
-		this.service.saveLine(line,  new BigBangAsyncCallback<Line>() {
-
-			@Override
-			public void onSuccess(Line result) {
-				linesCache.update(result.id, result);
-				for(DataBrokerClient<Line> c : getClients()){
-					((CoverageDataBrokerClient)c).updateLine(result);
-				}
-				handler.onResponse(result);
-			}
-		});
+		//TODO
 	}
 
 	@Override
@@ -134,7 +108,7 @@ CoverageBroker {
 
 			@Override
 			public void onSuccess(Void result) {
-				linesCache.remove(lineId);
+				//lines.remove(lineId);//TODO
 				incrementDataVersion();
 				for(DataBrokerClient<Line> c : CoverageBrokerImpl.this.getClients()){
 					((CoverageDataBrokerClient)c).removeLine(lineId);
@@ -152,14 +126,11 @@ CoverageBroker {
 
 				@Override
 				public void onSuccess(Line[] result) {
-					linesCache.clear();
+					lines = result;
 
 					//Populates the caches
 
 					//Lines
-					for(int i = 0; i < result.length; i++) {
-						linesCache.add(result[i].id, result[i]);
-					}
 					for(DataBrokerClient<Line> c : getClients()) {
 						((CoverageDataBrokerClient) c).setLines(result);
 					}
@@ -178,12 +149,7 @@ CoverageBroker {
 
 	private SubLine[] getSubLinesLocal(String parentLineId) {
 
-		for(Object o : linesCache.getEntries()){
-			if(((Line) o).id.equalsIgnoreCase(parentLineId)){
-				return ((Line) o).subLines;
-			}
-		}
-
+	//TODO
 		return null;
 	}
 
@@ -218,7 +184,7 @@ CoverageBroker {
 				}
 				newArray[newArray.length-1] = result;
 
-				((Line)linesCache.get(result.lineId)).subLines = newArray;
+			//	((Line)lines.get(result.lineId)).subLines = newArray;//TODO
 
 
 				for(DataBrokerClient<Line> c : getClients()){
@@ -257,7 +223,7 @@ CoverageBroker {
 					}
 				}
 
-				((Line)linesCache.get(result.lineId)).subLines = subLines;
+				//TODO ((Line)lines.get(result.lineId)).subLines = subLines;
 
 
 				for(DataBrokerClient<Line> c : getClients()){
@@ -305,7 +271,7 @@ CoverageBroker {
 
 				}
 
-				((Line)linesCache.get(subLineId)).subLines = newArray;
+				//TODO ((Line)lines.get(subLineId)).subLines = newArray;
 
 
 				for(DataBrokerClient<Line> c : getClients()){
@@ -337,14 +303,11 @@ CoverageBroker {
 
 				@Override
 				public void onSuccess(Line[] result) {
-					linesCache.clear();
+				 
+					lines = result;
 
-					//Populates the caches
 
 					//Lines
-					for(int i = 0; i < result.length; i++) {
-						linesCache.add(result[i].id, result[i]);
-					}
 					for(DataBrokerClient<Line> c : getClients()) {
 						((CoverageDataBrokerClient) c).setLines(result);
 					}
@@ -364,14 +327,8 @@ CoverageBroker {
 	private Coverage[] getCoveragesLocal(String parentSubLineId,
 			SubLine[] subLinesLocal) {
 
-		for(int i = 0; i<subLinesLocal.length; i++){
-			if(subLinesLocal[i].id.equalsIgnoreCase(parentSubLineId)){
-				return ((Line)linesCache.get(subLinesLocal[i].lineId)).subLines[i].coverages;
-			}
-		}
-
+		//TODO
 		return null;
-
 	}
 
 	@Override
@@ -527,14 +484,12 @@ CoverageBroker {
 
 				@Override
 				public void onSuccess(Line[] result) {
-					linesCache.clear();
+					lines = result;
 
 					//Populates the caches
 
 					//Lines
-					for(int i = 0; i < result.length; i++) {
-						linesCache.add(result[i].id, result[i]);
-					}
+				
 					for(DataBrokerClient<Line> c : getClients()) {
 						((CoverageDataBrokerClient) c).setLines(result);
 					}
