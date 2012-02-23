@@ -52,6 +52,10 @@
 	<servlet-name>InfoOrDocumentRequestService</servlet-name>
 	<servlet-class>bigBang.library.server.InfoOrDocumentRequestServiceImpl</servlet-class>
 </servlet>
+<servlet>
+	<servlet-name>ExternRequestService</servlet-name>
+	<servlet-class>bigBang.library.server.ExternRequestServiceImpl</servlet-class>
+</servlet>
 
 <servlet-mapping>
 	<servlet-name>BigBangPermissionService</servlet-name>
@@ -104,4 +108,8 @@
 <servlet-mapping>
 	<servlet-name>InfoOrDocumentRequestService</servlet-name>
 	<url-pattern>/bigbang_tests/InfoOrDocumentRequestService</url-pattern>
+</servlet-mapping>
+<servlet-mapping>
+	<servlet-name>ExternRequestService</servlet-name>
+	<url-pattern>/bigbang_tests/ExternRequestService</url-pattern>
 </servlet-mapping>
