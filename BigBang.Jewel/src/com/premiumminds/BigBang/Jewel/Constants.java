@@ -172,8 +172,9 @@ public class Constants
 	public static final UUID OPID_Negotiation_UndoCancelNegotiation   = UUID.fromString("6E6BB71D-9F2C-4F3B-A9A4-9FFD01031517");
 	public static final UUID OPID_Negotiation_ReceiveQuote            = UUID.fromString("E43282B7-FBE2-49FB-B227-9FFD01035C99");
 	public static final UUID OPID_Negotiation_UndoReceiveQuote        = UUID.fromString("1756DE91-A0C6-4C0A-A03F-9FFD0103A47D");
-	public static final UUID OPID_Negotiation_CreateInfoRequest       = UUID.fromString("3280A4B4-BA71-418E-AF36-9FFD0104681E");
 	public static final UUID OPID_Negotiation_CreateExternRequest     = UUID.fromString("16FCE46C-EFE4-497A-BFB8-9FFD01048B6C");
+	public static final UUID OPID_Negotiation_UndoCreateExternRequest = UUID.fromString("04BC7C61-E053-4E1B-91A7-A00000FA0B50");
+	public static final UUID OPID_Negotiation_CreateInfoRequest       = UUID.fromString("3280A4B4-BA71-418E-AF36-9FFD0104681E");
 	public static final UUID OPID_Negotiation_ExternAllowGrant        = UUID.fromString("2E88EAFA-3C5B-485D-A94C-9FFD0104BEC3");
 	public static final UUID OPID_Negotiation_SendGrant               = UUID.fromString("65EB3752-A87B-4658-9FF1-9FFD0104EA07");
 	public static final UUID OPID_Negotiation_TriggerDisallowPolicies = UUID.fromString("684E6897-BF20-4F35-8EB1-9FFD01052561");

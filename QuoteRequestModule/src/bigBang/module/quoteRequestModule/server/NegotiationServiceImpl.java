@@ -21,6 +21,8 @@ import bigBang.definitions.shared.SearchResult;
 import bigBang.definitions.shared.SortOrder;
 import bigBang.definitions.shared.SortParameter;
 import bigBang.library.server.BigBangPermissionServiceImpl;
+import bigBang.library.server.ExternRequestServiceImpl;
+import bigBang.library.server.FileServiceImpl;
 import bigBang.library.server.SearchServiceBase;
 import bigBang.library.shared.BigBangException;
 import bigBang.library.shared.SessionExpiredException;
@@ -29,8 +31,11 @@ import bigBang.module.quoteRequestModule.shared.NegotiationSearchParameter;
 import bigBang.module.quoteRequestModule.shared.NegotiationSortParameter;
 
 import com.premiumminds.BigBang.Jewel.Constants;
+import com.premiumminds.BigBang.Jewel.Data.DocumentData;
 import com.premiumminds.BigBang.Jewel.Data.NegotiationData;
 import com.premiumminds.BigBang.Jewel.Objects.Company;
+import com.premiumminds.BigBang.Jewel.Operations.DocOps;
+import com.premiumminds.BigBang.Jewel.Operations.Negotiation.CreateExternRequest;
 import com.premiumminds.BigBang.Jewel.Operations.Negotiation.DeleteNegotiation;
 import com.premiumminds.BigBang.Jewel.Operations.Negotiation.ManageData;
 
@@ -167,11 +172,57 @@ public class NegotiationServiceImpl
 		return null;
 	}
 
-	@Override
 	public ExternalInfoRequest createExternalRequest(ExternalInfoRequest request)
-			throws SessionExpiredException, BigBangException {
-		// TODO Auto-generated method stub
-		return null;
+		throws SessionExpiredException, BigBangException
+	{
+		CreateExternRequest lopCER;
+		com.premiumminds.BigBang.Jewel.Objects.Negotiation lobjNeg;
+		int i;
+
+		if ( Engine.getCurrentUser() == null )
+			throw new SessionExpiredException();
+
+		try
+		{
+			lobjNeg = com.premiumminds.BigBang.Jewel.Objects.Negotiation.GetInstance(Engine.getCurrentNameSpace(),
+					UUID.fromString(request.parentDataObjectId));
+
+			lopCER = new CreateExternRequest(lobjNeg.GetProcessID());
+			lopCER.mlngDays = request.replylimit;
+			lopCER.mstrSubject = request.subject;
+			lopCER.mstrBody = request.text;
+			lopCER.mstrEmailID = request.emailId;
+			if ( request.upgrades == null )
+				lopCER.mobjDocOps = null;
+			else
+			{
+				lopCER.mobjDocOps = new DocOps();
+				lopCER.mobjDocOps.marrModify = null;
+				lopCER.mobjDocOps.marrDelete = null;
+				lopCER.mobjDocOps.marrCreate = new DocumentData[request.upgrades.length];
+				for ( i = 0; i < request.upgrades.length; i++ )
+				{
+					lopCER.mobjDocOps.marrCreate[i] = new DocumentData();
+					lopCER.mobjDocOps.marrCreate[i].mstrName = request.upgrades[i].name;
+					lopCER.mobjDocOps.marrCreate[i].midOwnerType = Constants.ObjID_Negotiation;
+					lopCER.mobjDocOps.marrCreate[i].midOwnerId = lobjNeg.getKey();
+					lopCER.mobjDocOps.marrCreate[i].midDocType = UUID.fromString(request.upgrades[i].docTypeId);
+					lopCER.mobjDocOps.marrCreate[i].mstrText = null;
+					lopCER.mobjDocOps.marrCreate[i].mobjFile = FileServiceImpl.GetFileXferStorage().
+							get(UUID.fromString(request.upgrades[i].storageId)).GetVarData();
+					lopCER.mobjDocOps.marrCreate[i].marrInfo = null;
+					lopCER.mobjDocOps.marrCreate[i].mobjPrevValues = null;
+				}
+			}
+
+			lopCER.Execute();
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangException(e.getMessage(), e); 
+		}
+
+		return ExternRequestServiceImpl.sGetRequest(lopCER.midRequestObject);
 	}
 
 	@Override

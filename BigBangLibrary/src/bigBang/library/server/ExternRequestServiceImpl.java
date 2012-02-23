@@ -16,7 +16,6 @@ import bigBang.library.shared.BigBangException;
 import bigBang.library.shared.SessionExpiredException;
 
 import com.premiumminds.BigBang.Jewel.Objects.ExternRequest;
-import com.premiumminds.BigBang.Jewel.Objects.InfoRequest;
 import com.premiumminds.BigBang.Jewel.Operations.ExternRequest.CloseProcess;
 import com.premiumminds.BigBang.Jewel.Operations.ExternRequest.ReceiveAdditionalInfo;
 import com.premiumminds.BigBang.Jewel.Operations.ExternRequest.SendInformation;
@@ -30,7 +29,7 @@ public class ExternRequestServiceImpl
 	public static ExternalInfoRequest sGetRequest(UUID pid)
 		throws BigBangException
 	{
-		InfoRequest lobjRequest;
+		ExternRequest lobjRequest;
 		IProcess lobjProcess;
 		IProcess lobjParent;
 		IScript lobjScript;
@@ -38,8 +37,7 @@ public class ExternRequestServiceImpl
 
 		try
 		{
-			lobjRequest = InfoRequest.GetInstance(Engine.getCurrentNameSpace(), pid);
-			lobjRequest.GetAddresses();
+			lobjRequest = ExternRequest.GetInstance(Engine.getCurrentNameSpace(), pid);
 			lobjProcess = PNProcess.GetInstance(Engine.getCurrentNameSpace(), lobjRequest.GetProcessID());
 			lobjParent = lobjProcess.GetParent();
 			lobjScript = lobjParent.GetScript();

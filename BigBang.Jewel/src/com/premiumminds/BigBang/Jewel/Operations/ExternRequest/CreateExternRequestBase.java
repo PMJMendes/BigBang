@@ -10,6 +10,7 @@ import microsoft.exchange.webservices.data.Item;
 import com.premiumminds.BigBang.Jewel.Constants;
 import com.premiumminds.BigBang.Jewel.Objects.AgendaItem;
 import com.premiumminds.BigBang.Jewel.Objects.ExternRequest;
+import com.premiumminds.BigBang.Jewel.Operations.DocOps;
 import com.premiumminds.BigBang.Jewel.SysObjects.MailConnector;
 
 import Jewel.Engine.Engine;
@@ -29,10 +30,11 @@ public abstract class CreateExternRequestBase
 	public String mstrSubject;
 	public String mstrBody;
 	public String mstrEmailID;
+	public DocOps mobjDocOps;
+	public UUID midRequestObject;
 	private boolean mbFromEmail;
 	private String mstrFrom;
 	private String mstrNewEmailID;
-	public UUID midRequestObject;
 	private UUID midExternProcess;
 
 	public CreateExternRequestBase(UUID pidProcess)
@@ -108,7 +110,7 @@ public abstract class CreateExternRequestBase
 			lobjRequest.setAt(4, ldtLimit);
 			lobjRequest.SaveToDb(pdb);
 
-			lobjScript = PNScript.GetInstance(Engine.getCurrentNameSpace(), Constants.ProcID_InfoRequest);
+			lobjScript = PNScript.GetInstance(Engine.getCurrentNameSpace(), Constants.ProcID_ExternRequest);
 			lobjProc = lobjScript.CreateInstance(Engine.getCurrentNameSpace(), lobjRequest.getKey(), GetProcess().getKey(),
 					GetContext(), pdb);
 
@@ -126,6 +128,9 @@ public abstract class CreateExternRequestBase
 		{
 			throw new JewelPetriException(e.getMessage(), e);
 		}
+
+		if ( mobjDocOps != null )
+			mobjDocOps.RunSubOp(pdb, GetProcess().GetParent().GetDataKey());
 
 		midRequestObject = lobjRequest.getKey();
 		midExternProcess = lobjProc.getKey();
@@ -171,6 +176,9 @@ public abstract class CreateExternRequestBase
 		throws JewelPetriException
 	{
 		ExternAbortProcess lopEAP;
+
+		if ( mobjDocOps != null )
+			mobjDocOps.UndoSubOp(pdb, GetProcess().GetParent().GetDataKey());
 
 		lopEAP = new ExternAbortProcess(midExternProcess);
 		if ( mbFromEmail )

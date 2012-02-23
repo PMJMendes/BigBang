@@ -48,4 +48,5 @@ public class ExternalInfoRequest
 	public String subject;
 	public String text;
 	public int replylimit;
+	public AttachmentDocUpgrade[] upgrades;
 }
