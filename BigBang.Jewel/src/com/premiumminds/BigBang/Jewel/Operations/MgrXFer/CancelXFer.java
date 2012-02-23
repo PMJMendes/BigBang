@@ -26,8 +26,8 @@ public class CancelXFer
 {
 	private static final long serialVersionUID = 1L;
 
-	public boolean mbMassTransfer;
 	public UUID midParentProc;
+	private boolean mbMassTransfer;
 	private int mlngCount;
 	private UUID midNewManager;
 	private UUID[] marrOldManagers;
@@ -96,11 +96,8 @@ public class CancelXFer
 		if ( !(lobjData instanceof MgrXFer) )
 			throw new JewelPetriException("Inesperado: Dados da transferência do tipo errado.");
 		lobjXFer = (MgrXFer)lobjData;
-		if ( lobjXFer.IsMassTransfer() && !mbMassTransfer )
-			throw new JewelPetriException("Erro: Esta transferência de gestor faz parte de um processo de transferência em massa.");
-		if ( mbMassTransfer && !lobjXFer.IsMassTransfer() )
-			throw new JewelPetriException("Inesperado: Esta transferência de gestor não faz parte de um processo de transferência em massa.");
 
+		mbMassTransfer = lobjXFer.IsMassTransfer();
 		midNewManager = lobjXFer.GetNewManagerID();
 
 		if ( mbMassTransfer )

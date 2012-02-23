@@ -6,7 +6,6 @@ import Jewel.Engine.Engine;
 import Jewel.Engine.SysObjects.ObjectBase;
 import Jewel.Petri.Interfaces.IProcess;
 import Jewel.Petri.Objects.PNProcess;
-import Jewel.Petri.SysObjects.JewelPetriException;
 import bigBang.definitions.shared.ClientStub;
 import bigBang.definitions.shared.InsurancePolicyStub;
 import bigBang.definitions.shared.ManagerTransfer;
@@ -134,98 +133,8 @@ public class TransferManagerServiceImpl
 		MgrXFer lobjXFer;
 		UUID lidProc;
 		AcceptXFer lobjAX;
-		ManagerTransfer lobjResult;
-
-		if ( Engine.getCurrentUser() == null )
-			throw new SessionExpiredException();
-
-		try
-		{
-			lobjXFer = MgrXFer.GetInstance(Engine.getCurrentNameSpace(), UUID.fromString(transferId));
-			lidProc = lobjXFer.GetProcessID();
-
-			lobjAX = new AcceptXFer(lidProc);
-			lobjAX.mbMassTransfer = false;
-			lobjAX.Execute();
-		}
-		catch (Throwable e)
-		{
-			throw new BigBangException(e.getMessage(), e);
-		}
-
-		lobjResult = new ManagerTransfer();
-		lobjResult.id = lobjXFer.getKey().toString();
-		lobjResult.managedProcessIds = new String[] {lobjAX.midParentProc.toString()};
-		try
-		{
-			lobjResult.dataObjectIds = new String[] {PNProcess.GetInstance(Engine.getCurrentNameSpace(),
-					lobjAX.midParentProc).GetData().getKey().toString()};
-		}
-		catch (JewelPetriException e)
-		{
-			lobjResult.dataObjectIds = new String[] {null};
-		}
-		lobjResult.objectTypeId = lobjXFer.GetOuterObjectType().toString();
-		lobjResult.newManagerId = lobjXFer.GetNewManagerID().toString();
-		lobjResult.processId = lidProc.toString();
-		lobjResult.status = ManagerTransfer.Status.ACCEPTED;
-
-		return lobjResult;
-	}
-
-	public ManagerTransfer cancelTransfer(String transferId)
-		throws SessionExpiredException, BigBangException
-	{
-		MgrXFer lobjXFer;
-		UUID lidProc;
-		CancelXFer lobjCX;
-		ManagerTransfer lobjResult;
-
-		if ( Engine.getCurrentUser() == null )
-			throw new SessionExpiredException();
-
-		try
-		{
-			lobjXFer = MgrXFer.GetInstance(Engine.getCurrentNameSpace(), UUID.fromString(transferId));
-			lidProc = lobjXFer.GetProcessID();
-
-			lobjCX = new CancelXFer(lidProc);
-			lobjCX.mbMassTransfer = false;
-			lobjCX.Execute();
-		}
-		catch (Throwable e)
-		{
-			throw new BigBangException(e.getMessage(), e);
-		}
-
-		lobjResult = new ManagerTransfer();
-		lobjResult.id = lobjXFer.getKey().toString();
-		lobjResult.managedProcessIds = new String[] {lobjCX.midParentProc.toString()};
-		try
-		{
-			lobjResult.dataObjectIds = new String[] {PNProcess.GetInstance(Engine.getCurrentNameSpace(),
-					lobjCX.midParentProc).GetData().getKey().toString()};
-		}
-		catch (JewelPetriException e)
-		{
-			lobjResult.dataObjectIds = new String[] {null};
-		}
-		lobjResult.objectTypeId = lobjXFer.GetOuterObjectType().toString();
-		lobjResult.newManagerId = lobjXFer.GetNewManagerID().toString();
-		lobjResult.processId = lidProc.toString();
-		lobjResult.status = ManagerTransfer.Status.CANCELED;
-
-		return lobjResult;
-	}
-
-	public ManagerTransfer massAcceptTransfer(String transferId)
-		throws SessionExpiredException, BigBangException
-	{
-		MgrXFer lobjXFer;
-		UUID lidProc;
-		AcceptXFer lobjAX;
-		ManagerTransfer lobjResult;
 		UUID[] larrProcs;
+		ManagerTransfer lobjResult;
 		int i;
 
 		if ( Engine.getCurrentUser() == null )
@@ -237,7 +146,6 @@ public class TransferManagerServiceImpl
 			lidProc = lobjXFer.GetProcessID();
 
 			lobjAX = new AcceptXFer(lidProc);
-			lobjAX.mbMassTransfer = true;
 			lobjAX.Execute();
 		}
 		catch (Throwable e)
@@ -245,7 +153,10 @@ public class TransferManagerServiceImpl
 			throw new BigBangException(e.getMessage(), e);
 		}
 
-		larrProcs = lobjXFer.GetProcessIDs();
+		if ( lobjXFer.IsMassTransfer() )
+			larrProcs = lobjXFer.GetProcessIDs();
+		else
+			larrProcs = new UUID[] {lobjAX.midParentProc};
 
 		lobjResult = new ManagerTransfer();
 		lobjResult.id = lobjXFer.getKey().toString();
@@ -272,14 +183,14 @@ public class TransferManagerServiceImpl
 		return lobjResult;
 	}
 
-	public ManagerTransfer massCancelTransfer(String transferId)
+	public ManagerTransfer cancelTransfer(String transferId)
 		throws SessionExpiredException, BigBangException
 	{
 		MgrXFer lobjXFer;
 		UUID lidProc;
 		CancelXFer lobjCX;
-		ManagerTransfer lobjResult;
 		UUID[] larrProcs;
+		ManagerTransfer lobjResult;
 		int i;
 
 		if ( Engine.getCurrentUser() == null )
@@ -291,7 +202,6 @@ public class TransferManagerServiceImpl
 			lidProc = lobjXFer.GetProcessID();
 
 			lobjCX = new CancelXFer(lidProc);
-			lobjCX.mbMassTransfer = true;
 			lobjCX.Execute();
 		}
 		catch (Throwable e)
@@ -299,7 +209,10 @@ public class TransferManagerServiceImpl
 			throw new BigBangException(e.getMessage(), e);
 		}
 
-		larrProcs = lobjXFer.GetProcessIDs();
+		if ( lobjXFer.IsMassTransfer() )
+			larrProcs = lobjXFer.GetProcessIDs();
+		else
+			larrProcs = new UUID[] {lobjCX.midParentProc};
 
 		lobjResult = new ManagerTransfer();
 		lobjResult.id = lobjXFer.getKey().toString();

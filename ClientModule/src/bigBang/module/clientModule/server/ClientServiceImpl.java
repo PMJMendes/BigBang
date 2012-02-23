@@ -635,7 +635,6 @@ public class ClientServiceImpl
 			if ( lidManager.equals(Engine.getCurrentUser()) )
 			{
 				lopAX = new AcceptXFer(lobjProc.getKey());
-				lopAX.mbMassTransfer = true;
 				lopAX.Execute(ldb);
 			}
 			else
