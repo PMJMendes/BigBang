@@ -10,6 +10,7 @@ import Jewel.Engine.Engine;
 import Jewel.Engine.DataAccess.MasterDB;
 import Jewel.Engine.Implementation.Entity;
 import Jewel.Engine.Interfaces.IEntity;
+import Jewel.Petri.Constants;
 import bigBang.definitions.shared.SearchParameter;
 import bigBang.definitions.shared.SearchResult;
 import bigBang.definitions.shared.SortParameter;
@@ -271,8 +272,6 @@ public abstract class SearchServiceBase
 	{
 		StringBuilder lstrBuffer;
 		String lstrCriteria, lstrSort;
-		int[] larrMembers;
-		java.lang.Object[] larrValues;
 		IEntity lrefSteps;
 		NewSearchResult lobjResult;
 		SearchWSpace.Row lobjAux;
@@ -297,15 +296,13 @@ public abstract class SearchServiceBase
 				else
 				{
 					lstrBuffer.append("[PK] IN (SELECT [:Process:Data] FROM (");
-					larrMembers = new int[1];
-					larrMembers[0] = 1;
-					larrValues = new java.lang.Object[1];
-					larrValues[0] = prefWSpace.GetOpID();
 					try
 					{
 						lrefSteps = Entity.GetInstance(Engine.FindEntity(Engine.getCurrentNameSpace(),
 								Jewel.Petri.Constants.ObjID_PNStep));
-						lstrBuffer.append(lrefSteps.SQLForSelectMultiFiltered(larrMembers, larrValues));
+						lstrBuffer.append(lrefSteps.SQLForSelectForReports(new String[] {"[:Operation]", "[:Level]"},
+								new String[] {" = '" + prefWSpace.GetOpID() + "'", " != '" + Constants.LevelID_Invalid + "'"},
+								null));
 					}
 					catch (Throwable e)
 					{
