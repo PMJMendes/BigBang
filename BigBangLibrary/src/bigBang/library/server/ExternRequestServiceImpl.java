@@ -1,6 +1,7 @@
 package bigBang.library.server;
 
 import java.sql.Timestamp;
+import java.util.StringTokenizer;
 import java.util.UUID;
 
 import Jewel.Engine.Engine;
@@ -54,8 +55,9 @@ public class ExternRequestServiceImpl
 		lobjResult.parentDataTypeId = lobjScript.GetDataType().toString();
 		lobjResult.subject = (String)lobjRequest.getAt(1);
 		lobjResult.text = lobjRequest.getText();
+		lobjResult.originalFrom = (String)lobjRequest.getAt(3);
 		lobjResult.replylimit = (int)((((Timestamp)lobjRequest.getAt(4)).getTime() -
-				(new Timestamp(new java.util.Date().getTime())).getTime()) * 86400000L);
+				(new Timestamp(new java.util.Date().getTime())).getTime()) / 86400000L);
 
 		lobjResult.processId = lobjProcess.getKey().toString();
 		lobjResult.permissions = BigBangPermissionServiceImpl.sGetProcessPermissions(lobjProcess.getKey());
@@ -77,6 +79,8 @@ public class ExternRequestServiceImpl
 	{
 		ExternRequest lobjRequest;
 		SendInformation lopSI;
+		StringTokenizer lstrTok;
+		int i;
 
 		if ( Engine.getCurrentUser() == null )
 			throw new SessionExpiredException();
@@ -91,10 +95,37 @@ public class ExternRequestServiceImpl
 			lopSI.mlngDays = outgoing.replylimit;
 			lopSI.mstrSubject = outgoing.subject;
 			lopSI.mstrBody = outgoing.text;
-//			lopSI.marrUsers;
-//			lopSI.marrContactInfos; //TODO
-//			lopSI.marrCCs;
-//			lopSI.marrBCCs;
+			if ( outgoing.forwardUserIds == null )
+				lopSI.marrUsers = new UUID[] {Engine.getCurrentUser()};
+			else
+			{
+				lopSI.marrUsers = new UUID[outgoing.forwardUserIds.length + 1];
+				lopSI.marrUsers[0] = Engine.getCurrentUser();
+				for ( i = 0; i < outgoing.forwardUserIds.length; i++ )
+					lopSI.marrUsers[i + 1] = UUID.fromString(outgoing.forwardUserIds[i]);
+			}
+			if ( outgoing.toContactInfoId == null )
+				lopSI.marrContactInfos = null;
+			else
+				lopSI.marrContactInfos = new UUID[] {UUID.fromString(outgoing.toContactInfoId)};
+			if ( outgoing.externalCCs == null )
+				lopSI.marrCCs = null;
+			else
+			{
+				lstrTok = new StringTokenizer(outgoing.externalCCs, ",;");
+				lopSI.marrCCs = new String[lstrTok.countTokens()];
+				for ( i = 0; i < lopSI.marrCCs.length; i++ )
+					lopSI.marrCCs[i] = lstrTok.nextToken();
+			}
+			if ( outgoing.internalBCCs == null )
+				lopSI.marrBCCs = null;
+			else
+			{
+				lstrTok = new StringTokenizer(outgoing.internalBCCs, ",;");
+				lopSI.marrBCCs = new String[lstrTok.countTokens()];
+				for ( i = 0; i < lopSI.marrBCCs.length; i++ )
+					lopSI.marrBCCs[i] = lstrTok.nextToken();
+			}
 
 			lopSI.Execute();
 		}

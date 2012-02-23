@@ -291,6 +291,7 @@ public class Constants
 	public static final UUID OPID_ExternReq_UndoCloseProcess          = UUID.fromString("6E1C0EFE-768E-4F60-BA1B-9FEA00E52E09");
 	public static final UUID OPID_ExternReq_ExternAbortProcess        = UUID.fromString("CE0ECB00-E333-435D-8E0C-9FEA010EEACB");
 	public static final UUID OPID_ExternReq_AutoLockProcess           = UUID.fromString("FD7023DF-C4EE-4111-94AC-9FEA0111DD3D");
+	public static final UUID OPID_ExternReq_TriggerCloseProcess       = UUID.fromString("0CE5EA9B-2A72-434C-84AA-A00001275389");
 
 	// Urgency Levels
 	public static final UUID UrgID_Invalid   = UUID.fromString("6FDEA9C9-55E0-4214-8BC2-9EB1007E9BA5");
@@ -335,6 +336,9 @@ public class Constants
 
 	// Template IDs
 	public static final UUID TID_DebitNote = UUID.fromString("BD024115-3572-41D4-B60C-9FF100F7E0C4");
+
+	// Contact Info Types
+	public static final UUID CInfoID_Email = UUID.fromString("96467849-6FE1-4113-928C-9EDF00F40FB9");
 
 	// Document Types
 	public static final UUID DocID_DebitNote = UUID.fromString("785739A7-648C-4B51-9610-9FF10128C5CE");

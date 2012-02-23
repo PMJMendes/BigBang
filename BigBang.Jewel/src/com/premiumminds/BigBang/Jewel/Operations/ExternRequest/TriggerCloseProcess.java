@@ -17,32 +17,29 @@ import com.premiumminds.BigBang.Jewel.Constants;
 import com.premiumminds.BigBang.Jewel.Objects.AgendaItem;
 import com.premiumminds.BigBang.Jewel.Objects.ExternRequest;
 
-public class CloseProcess
+public class TriggerCloseProcess
 	extends UndoableOperation
 {
 	private static final long serialVersionUID = 1L;
 
-	public UUID midMotive;
-	private String mstrMotive;
-
-	public CloseProcess(UUID pidProcess)
+	public TriggerCloseProcess(UUID pidProcess)
 	{
 		super(pidProcess);
 	}
 
 	protected UUID OpID()
 	{
-		return Constants.OPID_ExternReq_CloseProcess;
+		return Constants.OPID_ExternReq_TriggerCloseProcess;
 	}
 
 	public String ShortDesc()
 	{
-		return "Fecho Manual do Processo";
+		return "Fecho por Resposta";
 	}
 
 	public String LongDesc(String pstrLineBreak)
 	{
-		return "O pedido foi fechado, pelo seguinte motivo:" + pstrLineBreak + mstrMotive;
+		return "O pedido foi fechado, tendo sido respondido.";
 	}
 
 	public UUID GetExternalProcess()
@@ -57,21 +54,6 @@ public class CloseProcess
 		IEntity lrefAux;
 		ResultSet lrs;
 		ObjectBase lobjAgendaProc;
-
-		if ( midMotive == null )
-			throw new JewelPetriException("Erro: É obrigatório indicar o motivo do encerramento do processo.");
-		else
-		{
-			try
-			{
-				mstrMotive = Engine.GetWorkInstance(Engine.FindEntity(Engine.getCurrentNameSpace(),
-						Constants.ObjID_RequestCancelMotives), midMotive).getLabel();
-			}
-			catch (Throwable e)
-			{
-				throw new JewelPetriException(e.getMessage(), e);
-			}
-		}
 
 		larrItems = new Hashtable<UUID, AgendaItem>();
 		lrs = null;

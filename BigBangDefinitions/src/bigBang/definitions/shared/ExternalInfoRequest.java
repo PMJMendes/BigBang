@@ -28,6 +28,10 @@ public class ExternalInfoRequest
 		public String text;
 		public boolean isFinal;
 		public int replylimit;
+		public String toContactInfoId;
+		public String[] forwardUserIds;
+		public String internalBCCs;
+		public String externalCCs;
 	}
 
 	//The closing data
@@ -47,6 +51,7 @@ public class ExternalInfoRequest
 	public String emailId;
 	public String subject;
 	public String text;
+	public String originalFrom;
 	public int replylimit;
 	public AttachmentDocUpgrade[] upgrades;
 }

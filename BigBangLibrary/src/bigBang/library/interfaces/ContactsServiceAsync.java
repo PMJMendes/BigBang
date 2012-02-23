@@ -11,4 +11,5 @@ public interface ContactsServiceAsync
 	void createContact(Contact contact, AsyncCallback<Contact> callback);
 	void saveContact(Contact contact, AsyncCallback<Contact> callback);
 	void deleteContact(String id, AsyncCallback<Void> callback);
+	void getFlatEmails(String ownerId, AsyncCallback<Contact[]> callback);
 }

@@ -29,4 +29,6 @@ public interface ContactsService
 	public Contact createContact(Contact contact) throws SessionExpiredException, BigBangException;
 	public Contact saveContact(Contact contact) throws SessionExpiredException, BigBangException;
 	public void deleteContact(String id) throws SessionExpiredException, BigBangException;
+
+	public Contact[] getFlatEmails(String ownerId) throws SessionExpiredException, BigBangException;
 }
