@@ -165,7 +165,7 @@ public class ContactsServiceImpl
 		{
 			while ( lrsContacts.next() )
 				larrAux.add(fromServer(com.premiumminds.BigBang.Jewel.Objects.Contact
-						.GetInstance(Engine.getCurrentNameSpace(), lrsContacts), ldb));
+						.GetInstance(Engine.getCurrentNameSpace(), lrsContacts), ldb, true));
 		}
 		catch (BigBangException e)
 		{
@@ -311,7 +311,91 @@ public class ContactsServiceImpl
 		}
 	}
 
-	private Contact fromServer(com.premiumminds.BigBang.Jewel.Objects.Contact pobjContact, SQLServer pdb)
+	public Contact[] getFlatEmails(String ownerId)
+		throws SessionExpiredException, BigBangException
+	{
+		ArrayList<Contact> larrAux;
+		int[] larrMembers;
+		java.lang.Object[] larrParams;
+		IEntity lrefContact;
+        MasterDB ldb;
+        ResultSet lrsContacts;
+        com.premiumminds.BigBang.Jewel.Objects.Contact lobjContact;
+
+		if ( Engine.getCurrentUser() == null )
+			throw new SessionExpiredException();
+
+		larrAux = new ArrayList<Contact>();
+
+		larrMembers = new int[1];
+		larrMembers[0] = Constants.FKOwner_In_Contact;
+		larrParams = new java.lang.Object[1];
+		larrParams[0] = UUID.fromString(ownerId);
+
+		try
+		{
+			lrefContact = Entity.GetInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), Constants.ObjID_Contact)); 
+			ldb = new MasterDB();
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangException(e.getMessage(), e);
+		}
+
+		try
+		{
+			lrsContacts = lrefContact.SelectByMembers(ldb, larrMembers, larrParams, new int[0]);
+		}
+		catch (Throwable e)
+		{
+			try { ldb.Disconnect(); } catch (SQLException e1) {}
+			throw new BigBangException(e.getMessage(), e);
+		}
+
+		try
+		{
+			while ( lrsContacts.next() )
+			{
+				lobjContact = com.premiumminds.BigBang.Jewel.Objects.Contact.GetInstance(Engine.getCurrentNameSpace(), lrsContacts);
+				innerGetFlatEmails(larrAux, lobjContact, ldb);
+			}
+		}
+		catch (BigBangException e)
+		{
+			try { lrsContacts.close(); } catch (SQLException e1) {}
+			try { ldb.Disconnect(); } catch (SQLException e1) {}
+			throw e;
+		}
+		catch (Throwable e)
+		{
+			try { lrsContacts.close(); } catch (SQLException e1) {}
+			try { ldb.Disconnect(); } catch (SQLException e1) {}
+			throw new BigBangException(e.getMessage(), e);
+		}
+
+		try
+		{
+			lrsContacts.close();
+		}
+		catch (Throwable e)
+		{
+			try { ldb.Disconnect(); } catch (SQLException e1) {}
+			throw new BigBangException(e.getMessage(), e);
+		}
+
+		try
+		{
+			ldb.Disconnect();
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangException(e.getMessage(), e);
+		}
+
+		return larrAux.toArray(new Contact[larrAux.size()]);
+	}
+
+	private Contact fromServer(com.premiumminds.BigBang.Jewel.Objects.Contact pobjContact, SQLServer pdb, boolean pbRecurse)
 		throws BigBangException
 	{
 		Contact lobjAux;
@@ -351,29 +435,37 @@ public class ContactsServiceImpl
 		}
 		lobjAux.typeId = ((UUID)pobjContact.getAt(6)).toString();
 
-		try
+		if ( pbRecurse )
 		{
-			larrInfo = pobjContact.getCurrentInfo();
-		}
-		catch (Throwable e)
-		{
-			throw new BigBangException(e.getMessage(), e);
-		}
-		lobjAux.info = new ContactInfo[larrInfo.length];
-		for ( i = 0; i < larrInfo.length; i++ )
-			lobjAux.info[i] = fromServer(larrInfo[i]);
+			try
+			{
+				larrInfo = pobjContact.getCurrentInfo();
+			}
+			catch (Throwable e)
+			{
+				throw new BigBangException(e.getMessage(), e);
+			}
+			lobjAux.info = new ContactInfo[larrInfo.length];
+			for ( i = 0; i < larrInfo.length; i++ )
+				lobjAux.info[i] = fromServer(larrInfo[i]);
 
-		try
-		{
-			larrSubs = pobjContact.getCurrentSubContacts(pdb);
+			try
+			{
+				larrSubs = pobjContact.getCurrentSubContacts(pdb);
+			}
+			catch (Throwable e)
+			{
+				throw new BigBangException(e.getMessage(), e);
+			}
+			lobjAux.subContacts = new Contact[larrSubs.length];
+			for ( i = 0; i < larrSubs.length; i++ )
+				lobjAux.subContacts[i] = fromServer(larrSubs[i], pdb, true);
 		}
-		catch (Throwable e)
+		else
 		{
-			throw new BigBangException(e.getMessage(), e);
+			lobjAux.info = null;
+			lobjAux.subContacts = null;
 		}
-		lobjAux.subContacts = new Contact[larrSubs.length];
-		for ( i = 0; i < larrSubs.length; i++ )
-			lobjAux.subContacts[i] = fromServer(larrSubs[i], pdb);
 
 		return lobjAux;
 	}
@@ -384,6 +476,7 @@ public class ContactsServiceImpl
 
 		lobjAux = new ContactInfo();
 
+		lobjAux.id = pobjContactInfo.getKey().toString();
 		lobjAux.typeId = ((UUID)pobjContactInfo.getAt(1)).toString();
 		lobjAux.value = (String)pobjContactInfo.getAt(2);
 		return lobjAux;
@@ -503,5 +596,48 @@ public class ContactsServiceImpl
 			throw new BigBangException("Erro: A operação pretendida não permite movimentos de Contactos.");
 
 		return lobjResult;
+	}
+
+	private void innerGetFlatEmails(ArrayList<Contact> parrBuffer, com.premiumminds.BigBang.Jewel.Objects.Contact pobjContact,
+			SQLServer pdb)
+		throws BigBangException
+	{
+		com.premiumminds.BigBang.Jewel.Objects.ContactInfo[] larrInfo;
+		Contact lobjContact;
+		ContactInfo lobjInfo;
+		com.premiumminds.BigBang.Jewel.Objects.Contact[] larrSubs;
+		int i;
+
+		try
+		{
+			larrInfo = pobjContact.getCurrentInfo();
+			larrSubs = pobjContact.getCurrentSubContacts(pdb);
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangException(e.getMessage(), e);
+		}
+
+		if ( larrInfo != null )
+		{
+			for ( i = 0; i < larrInfo.length; i++ )
+			{
+				if ( Constants.CInfoID_Email.equals(larrInfo[i].getAt(1)) )
+				{
+					lobjContact = fromServer(pobjContact, pdb, false);
+					lobjInfo = fromServer(larrInfo[i]);
+					lobjContact.info = new ContactInfo[] {lobjInfo};
+					parrBuffer.add(lobjContact);
+				}
+			}
+		}
+
+		if ( larrSubs != null )
+		{
+			for ( i = 0; i < larrSubs.length; i++ )
+			{
+				innerGetFlatEmails(parrBuffer, larrSubs[i], pdb);
+			}
+		}
 	}
 }
