@@ -67,7 +67,7 @@ public class StaticFunctions
 			lrsParams.close();
 
 			lrs = Entity.GetInstance(Engine.FindEntity(pidNameSpace, Constants.ObjID_Decorations))
-					.SelectByMembers(ldb, new int[] {0}, new java.lang.Object[] {pidUser}, new int[0]);
+					.SelectByMembers(ldb, new int[] {0}, new java.lang.Object[] {pidUser}, null);
 		    if (lrs.next())
 		    	lobjDeco = UserDecoration.GetInstance(pidNameSpace, lrs);
 		    lrs.close();

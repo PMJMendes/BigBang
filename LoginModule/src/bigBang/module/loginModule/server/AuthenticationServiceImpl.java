@@ -60,7 +60,7 @@ public class AuthenticationServiceImpl
 			lrefUser = Entity.GetInstance(Engine.FindEntity(lidNSpace, ObjectGUIDs.O_User));
 
 			ldb = new MasterDB();
-			lrs = lrefUser.SelectByMembers(ldb, larrMembers, larrParams, new int[0]);
+			lrs = lrefUser.SelectByMembers(ldb, larrMembers, larrParams, null);
 
 			if (lrs.next())
 			{
