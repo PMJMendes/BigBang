@@ -51,7 +51,11 @@ public class BigBang_Tests
 //		TestInfoReqReply.DoTest();
 //		TestInfoReqCancel.DoTest();
 //
+//		TestExternRequestGet.DoTest();
 //		TestExternRequestCreate.DoTest();
+//		TestExternRequestSend.DoTest();
+//		TestExternRequestReceive.DoTest();
+//		TestExternRequestClose.DoTest();
 //
 //		TestContactGet.DoTest();
 //		TestContactCreate.DoTest();
