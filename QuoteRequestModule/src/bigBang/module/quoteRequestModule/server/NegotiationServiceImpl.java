@@ -30,6 +30,7 @@ import bigBang.module.quoteRequestModule.interfaces.NegotiationService;
 import bigBang.module.quoteRequestModule.shared.NegotiationSearchParameter;
 import bigBang.module.quoteRequestModule.shared.NegotiationSortParameter;
 
+import com.premiumminds.BigBang.Jewel.BigBangJewelException;
 import com.premiumminds.BigBang.Jewel.Constants;
 import com.premiumminds.BigBang.Jewel.Data.DocumentData;
 import com.premiumminds.BigBang.Jewel.Data.NegotiationData;
@@ -38,6 +39,7 @@ import com.premiumminds.BigBang.Jewel.Operations.DocOps;
 import com.premiumminds.BigBang.Jewel.Operations.Negotiation.CreateExternRequest;
 import com.premiumminds.BigBang.Jewel.Operations.Negotiation.DeleteNegotiation;
 import com.premiumminds.BigBang.Jewel.Operations.Negotiation.ManageData;
+import com.premiumminds.BigBang.Jewel.Operations.Negotiation.SendGrant;
 
 public class NegotiationServiceImpl
 	extends SearchServiceBase
@@ -151,9 +153,26 @@ public class NegotiationServiceImpl
 		return null;
 	}
 
-	@Override
 	public Negotiation.Grant grantNegotiation(Negotiation.Grant adjudication)
-			throws SessionExpiredException, BigBangException {
+		throws SessionExpiredException, BigBangException
+	{
+		com.premiumminds.BigBang.Jewel.Objects.Negotiation lobjNegotiation;
+		SendGrant lopSG;
+
+		if ( Engine.getCurrentUser() == null )
+			throw new SessionExpiredException();
+
+		try
+		{
+			lobjNegotiation = com.premiumminds.BigBang.Jewel.Objects.Negotiation.GetInstance(Engine.getCurrentNameSpace(),
+					UUID.fromString(adjudication.negotiationId));
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangException(e.getMessage(), e);
+		}
+
+		lopSG = new SendGrant(lobjNegotiation.GetProcessID());
 		// TODO Auto-generated method stub
 		return null;
 	}

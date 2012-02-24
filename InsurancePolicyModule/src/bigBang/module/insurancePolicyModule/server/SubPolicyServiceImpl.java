@@ -5,7 +5,6 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Hashtable;
-import java.util.StringTokenizer;
 import java.util.UUID;
 
 import Jewel.Engine.Engine;
@@ -37,6 +36,7 @@ import bigBang.library.server.BigBangPermissionServiceImpl;
 import bigBang.library.server.ContactsServiceImpl;
 import bigBang.library.server.DocumentServiceImpl;
 import bigBang.library.server.InfoOrDocumentRequestServiceImpl;
+import bigBang.library.server.OutgoingHeaderBridge;
 import bigBang.library.server.SearchServiceBase;
 import bigBang.library.shared.BigBangException;
 import bigBang.library.shared.CorruptedPadException;
@@ -2966,8 +2966,6 @@ public class SubPolicyServiceImpl
 	{
 		com.premiumminds.BigBang.Jewel.Objects.SubPolicy lobjSubPolicy;
 		CreateInfoRequest lopCIR;
-		StringTokenizer lstrTok;
-		int i;
 
 		if ( Engine.getCurrentUser() == null )
 			throw new SessionExpiredException();
@@ -2982,34 +2980,7 @@ public class SubPolicyServiceImpl
 			lopCIR.midRequestType = UUID.fromString(request.requestTypeId);
 			lopCIR.mstrSubject = request.subject;
 			lopCIR.mstrBody = request.text;
-			if ( request.headers.forwardUserIds == null )
-				lopCIR.marrUsers = new UUID[] {Engine.getCurrentUser()};
-			else
-			{
-				lopCIR.marrUsers = new UUID[request.headers.forwardUserIds.length + 1];
-				lopCIR.marrUsers[0] = Engine.getCurrentUser();
-				for ( i = 0; i < request.headers.forwardUserIds.length; i++ )
-					lopCIR.marrUsers[i + 1] = UUID.fromString(request.headers.forwardUserIds[i]);
-			}
-			lopCIR.marrContactInfos = new UUID[] {UUID.fromString(request.headers.toContactInfoId)};
-			if ( request.headers.externalCCs == null )
-				lopCIR.marrCCs = null;
-			else
-			{
-				lstrTok = new StringTokenizer(request.headers.externalCCs, ",;");
-				lopCIR.marrCCs = new String[lstrTok.countTokens()];
-				for ( i = 0; i < lopCIR.marrCCs.length; i++ )
-					lopCIR.marrCCs[i] = lstrTok.nextToken();
-			}
-			if ( request.headers.internalBCCs == null )
-				lopCIR.marrBCCs = null;
-			else
-			{
-				lstrTok = new StringTokenizer(request.headers.internalBCCs, ",;");
-				lopCIR.marrBCCs = new String[lstrTok.countTokens()];
-				for ( i = 0; i < lopCIR.marrBCCs.length; i++ )
-					lopCIR.marrBCCs[i] = lstrTok.nextToken();
-			}
+			lopCIR.mobjHeaders = OutgoingHeaderBridge.toServer(request.headers);
 
 			lopCIR.Execute();
 		}

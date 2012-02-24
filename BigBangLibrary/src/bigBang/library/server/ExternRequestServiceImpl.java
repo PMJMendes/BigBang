@@ -1,7 +1,6 @@
 package bigBang.library.server;
 
 import java.sql.Timestamp;
-import java.util.StringTokenizer;
 import java.util.UUID;
 
 import Jewel.Engine.Engine;
@@ -79,8 +78,6 @@ public class ExternRequestServiceImpl
 	{
 		ExternRequest lobjRequest;
 		SendInformation lopSI;
-		StringTokenizer lstrTok;
-		int i;
 
 		if ( Engine.getCurrentUser() == null )
 			throw new SessionExpiredException();
@@ -95,37 +92,7 @@ public class ExternRequestServiceImpl
 			lopSI.mlngDays = outgoing.replylimit;
 			lopSI.mstrSubject = outgoing.subject;
 			lopSI.mstrBody = outgoing.text;
-			if ( outgoing.headers.forwardUserIds == null )
-				lopSI.marrUsers = new UUID[] {Engine.getCurrentUser()};
-			else
-			{
-				lopSI.marrUsers = new UUID[outgoing.headers.forwardUserIds.length + 1];
-				lopSI.marrUsers[0] = Engine.getCurrentUser();
-				for ( i = 0; i < outgoing.headers.forwardUserIds.length; i++ )
-					lopSI.marrUsers[i + 1] = UUID.fromString(outgoing.headers.forwardUserIds[i]);
-			}
-			if ( outgoing.headers.toContactInfoId == null )
-				lopSI.marrContactInfos = null;
-			else
-				lopSI.marrContactInfos = new UUID[] {UUID.fromString(outgoing.headers.toContactInfoId)};
-			if ( outgoing.headers.externalCCs == null )
-				lopSI.marrCCs = null;
-			else
-			{
-				lstrTok = new StringTokenizer(outgoing.headers.externalCCs, ",;");
-				lopSI.marrCCs = new String[lstrTok.countTokens()];
-				for ( i = 0; i < lopSI.marrCCs.length; i++ )
-					lopSI.marrCCs[i] = lstrTok.nextToken();
-			}
-			if ( outgoing.headers.internalBCCs == null )
-				lopSI.marrBCCs = null;
-			else
-			{
-				lstrTok = new StringTokenizer(outgoing.headers.internalBCCs, ",;");
-				lopSI.marrBCCs = new String[lstrTok.countTokens()];
-				for ( i = 0; i < lopSI.marrBCCs.length; i++ )
-					lopSI.marrBCCs[i] = lstrTok.nextToken();
-			}
+			lopSI.mobjHeaders = OutgoingHeaderBridge.toServer(outgoing.headers);
 
 			lopSI.Execute();
 		}

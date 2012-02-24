@@ -1,13 +1,11 @@
 package bigBang.module.insurancePolicyModule.server;
 
 import java.math.BigDecimal;
-import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Comparator;
 import java.util.Hashtable;
-import java.util.StringTokenizer;
 import java.util.UUID;
 
 import Jewel.Engine.Engine;
@@ -45,6 +43,7 @@ import bigBang.library.server.BigBangPermissionServiceImpl;
 import bigBang.library.server.ContactsServiceImpl;
 import bigBang.library.server.DocumentServiceImpl;
 import bigBang.library.server.InfoOrDocumentRequestServiceImpl;
+import bigBang.library.server.OutgoingHeaderBridge;
 import bigBang.library.server.SearchServiceBase;
 import bigBang.library.server.TransferManagerServiceImpl;
 import bigBang.library.shared.BigBangException;
@@ -3441,8 +3440,6 @@ public class InsurancePolicyServiceImpl
 	{
 		Policy lobjPolicy;
 		CreateInfoRequest lopCIR;
-		StringTokenizer lstrTok;
-		int i;
 
 		if ( Engine.getCurrentUser() == null )
 			throw new SessionExpiredException();
@@ -3456,37 +3453,7 @@ public class InsurancePolicyServiceImpl
 			lopCIR.midRequestType = UUID.fromString(request.requestTypeId);
 			lopCIR.mstrSubject = request.subject;
 			lopCIR.mstrBody = request.text;
-			if ( request.headers.forwardUserIds == null )
-				lopCIR.marrUsers = new UUID[] {Engine.getCurrentUser()};
-			else
-			{
-				lopCIR.marrUsers = new UUID[request.headers.forwardUserIds.length + 1];
-				lopCIR.marrUsers[0] = Engine.getCurrentUser();
-				for ( i = 0; i < request.headers.forwardUserIds.length; i++ )
-					lopCIR.marrUsers[i + 1] = UUID.fromString(request.headers.forwardUserIds[i]);
-			}
-			if ( request.headers.toContactInfoId == null )
-				lopCIR.marrContactInfos = null;
-			else
-				lopCIR.marrContactInfos = new UUID[] {UUID.fromString(request.headers.toContactInfoId)};
-			if ( request.headers.externalCCs == null )
-				lopCIR.marrCCs = null;
-			else
-			{
-				lstrTok = new StringTokenizer(request.headers.externalCCs, ",;");
-				lopCIR.marrCCs = new String[lstrTok.countTokens()];
-				for ( i = 0; i < lopCIR.marrCCs.length; i++ )
-					lopCIR.marrCCs[i] = lstrTok.nextToken();
-			}
-			if ( request.headers.internalBCCs == null )
-				lopCIR.marrBCCs = null;
-			else
-			{
-				lstrTok = new StringTokenizer(request.headers.internalBCCs, ",;");
-				lopCIR.marrBCCs = new String[lstrTok.countTokens()];
-				for ( i = 0; i < lopCIR.marrBCCs.length; i++ )
-					lopCIR.marrBCCs[i] = lstrTok.nextToken();
-			}
+			lopCIR.mobjHeaders = OutgoingHeaderBridge.toServer(request.headers);
 
 			lopCIR.Execute();
 		}
@@ -3834,7 +3801,7 @@ public class InsurancePolicyServiceImpl
 		}
 		catch (Throwable e)
 		{
-			try { ldb.Rollback(); } catch (SQLException e1) {}
+			try { ldb.Rollback(); } catch (Throwable e1) {}
 			try { ldb.Disconnect(); } catch (Throwable e1) {}
 			throw new BigBangException(e.getMessage(), e);
 		}
