@@ -30,8 +30,8 @@ public class TestExternRequestSend
 
 		outgoing = new ExternalInfoRequest.Outgoing();
 		outgoing.requestId = "0D867A6D-ADAE-41F8-8826-A00001005C32";
-		outgoing.subject = "Resposta";
-		outgoing.text = "Então é assim...";
+		outgoing.message.subject = "Resposta";
+		outgoing.message.text = "Então é assim...";
 		outgoing.isFinal = true;
 		outgoing.replylimit = 7;
 

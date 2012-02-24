@@ -45,8 +45,8 @@ public class TestInfoReqRepeat
 		};
 
 		request.replylimit = 21;
-		request.subject = "Segundo Pedido de Carta de Condução";
-		request.text = "Já disse para nos enviar uma cópia digital da sua carta de condução!";
+		request.message.subject = "Segundo Pedido de Carta de Condução";
+		request.message.text = "Já disse para nos enviar uma cópia digital da sua carta de condução!";
 		Services.infoOrDocumentRequestService.repeatRequest(request, callback);
 	}
 }

@@ -3,7 +3,7 @@ package bigbang.tests.client;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 import bigBang.definitions.shared.InfoOrDocumentRequest;
-import bigBang.definitions.shared.OutgoingHeaders;
+import bigBang.definitions.shared.OutgoingMessage;
 
 public class TestInfoReqCreate
 {
@@ -32,13 +32,12 @@ public class TestInfoReqCreate
 		request = new InfoOrDocumentRequest();
 		request.parentDataObjectId = "8F474C7D-DE85-4BEC-8139-9FB70020135F";
 		request.requestTypeId = "05D3096C-FC09-47F4-B6FD-9FE801358AD2";
-		request.subject = "Pedido de Carta de Condução";
-		request.text = "Por favor, envie-nos uma cópia digital da sua carta de condução.";
 		request.replylimit = 15;
-		request.headers = new OutgoingHeaders();
-		request.headers.toContactInfoId = "C6764677-0885-4BF3-8EB8-9FDD00D78FB5";
-		request.headers.forwardUserIds = new String[] {"091B8442-B7B0-40FA-B517-9EB00068A390"};
-		request.headers.externalCCs = "joao.mendes@archon-se.com";
+		request.message.toContactInfoId = "C6764677-0885-4BF3-8EB8-9FDD00D78FB5";
+		request.message.forwardUserIds = new String[] {"091B8442-B7B0-40FA-B517-9EB00068A390"};
+		request.message.externalCCs = "joao.mendes@archon-se.com";
+		request.message.subject = "Pedido de Carta de Condução";
+		request.message.text = "Por favor, envie-nos uma cópia digital da sua carta de condução.";
 
 		Services.clientService.createInfoOrDocumentRequest(request, callback);
 	}
