@@ -28,10 +28,7 @@ public class ExternalInfoRequest
 		public String text;
 		public boolean isFinal;
 		public int replylimit;
-		public String toContactInfoId;
-		public String[] forwardUserIds;
-		public String internalBCCs;
-		public String externalCCs;
+		public OutgoingHeaders headers;
 	}
 
 	//The closing data

@@ -13,6 +13,7 @@ import Jewel.Petri.Objects.PNProcess;
 import bigBang.definitions.shared.InfoOrDocumentRequest;
 import bigBang.definitions.shared.InfoOrDocumentRequest.Cancellation;
 import bigBang.definitions.shared.InfoOrDocumentRequest.Response;
+import bigBang.definitions.shared.OutgoingHeaders;
 import bigBang.library.interfaces.InfoOrDocumentRequestService;
 import bigBang.library.shared.BigBangException;
 import bigBang.library.shared.SessionExpiredException;
@@ -87,10 +88,11 @@ public class InfoOrDocumentRequestServiceImpl
 				larrUsers.add(((UUID)larrAddresses[i].getAt(3)).toString());
 		}
 
-		lobjResult.toContactInfoId = larrInfos.get(0);
-		lobjResult.forwardUserIds = larrUsers.toArray(new String[larrUsers.size()]);
-		lobjResult.internalBCCs = StringUtils.join(larrBCCs.toArray(new String[larrBCCs.size()]), ';');
-		lobjResult.externalCCs = StringUtils.join(larrCCs.toArray(new String[larrCCs.size()]), ';');
+		lobjResult.headers = new OutgoingHeaders();
+		lobjResult.headers.toContactInfoId = larrInfos.get(0);
+		lobjResult.headers.forwardUserIds = larrUsers.toArray(new String[larrUsers.size()]);
+		lobjResult.headers.internalBCCs = StringUtils.join(larrBCCs.toArray(new String[larrBCCs.size()]), ';');
+		lobjResult.headers.externalCCs = StringUtils.join(larrCCs.toArray(new String[larrCCs.size()]), ';');
 
 		lobjResult.processId = lobjProcess.getKey().toString();
 		lobjResult.permissions = BigBangPermissionServiceImpl.sGetProcessPermissions(lobjProcess.getKey());

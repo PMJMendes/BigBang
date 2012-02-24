@@ -95,33 +95,33 @@ public class ExternRequestServiceImpl
 			lopSI.mlngDays = outgoing.replylimit;
 			lopSI.mstrSubject = outgoing.subject;
 			lopSI.mstrBody = outgoing.text;
-			if ( outgoing.forwardUserIds == null )
+			if ( outgoing.headers.forwardUserIds == null )
 				lopSI.marrUsers = new UUID[] {Engine.getCurrentUser()};
 			else
 			{
-				lopSI.marrUsers = new UUID[outgoing.forwardUserIds.length + 1];
+				lopSI.marrUsers = new UUID[outgoing.headers.forwardUserIds.length + 1];
 				lopSI.marrUsers[0] = Engine.getCurrentUser();
-				for ( i = 0; i < outgoing.forwardUserIds.length; i++ )
-					lopSI.marrUsers[i + 1] = UUID.fromString(outgoing.forwardUserIds[i]);
+				for ( i = 0; i < outgoing.headers.forwardUserIds.length; i++ )
+					lopSI.marrUsers[i + 1] = UUID.fromString(outgoing.headers.forwardUserIds[i]);
 			}
-			if ( outgoing.toContactInfoId == null )
+			if ( outgoing.headers.toContactInfoId == null )
 				lopSI.marrContactInfos = null;
 			else
-				lopSI.marrContactInfos = new UUID[] {UUID.fromString(outgoing.toContactInfoId)};
-			if ( outgoing.externalCCs == null )
+				lopSI.marrContactInfos = new UUID[] {UUID.fromString(outgoing.headers.toContactInfoId)};
+			if ( outgoing.headers.externalCCs == null )
 				lopSI.marrCCs = null;
 			else
 			{
-				lstrTok = new StringTokenizer(outgoing.externalCCs, ",;");
+				lstrTok = new StringTokenizer(outgoing.headers.externalCCs, ",;");
 				lopSI.marrCCs = new String[lstrTok.countTokens()];
 				for ( i = 0; i < lopSI.marrCCs.length; i++ )
 					lopSI.marrCCs[i] = lstrTok.nextToken();
 			}
-			if ( outgoing.internalBCCs == null )
+			if ( outgoing.headers.internalBCCs == null )
 				lopSI.marrBCCs = null;
 			else
 			{
-				lstrTok = new StringTokenizer(outgoing.internalBCCs, ",;");
+				lstrTok = new StringTokenizer(outgoing.headers.internalBCCs, ",;");
 				lopSI.marrBCCs = new String[lstrTok.countTokens()];
 				for ( i = 0; i < lopSI.marrBCCs.length; i++ )
 					lopSI.marrBCCs[i] = lstrTok.nextToken();

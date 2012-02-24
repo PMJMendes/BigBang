@@ -75,7 +75,7 @@ public class SendInformation
 		ResultSet lrs;
 		IEntity lrefAux;
 		ObjectBase lobjAgendaProc;
-		TriggerCloseProcess lopCP;
+		TriggerCloseProcess lopTCP;
 		Timestamp ldtAux;
 		Calendar ldtAux2;
 		Timestamp ldtLimit;
@@ -123,8 +123,8 @@ public class SendInformation
 
 		if ( mbIsFinal )
 		{
-			lopCP = new TriggerCloseProcess(GetProcess().getKey());
-			TriggerOp(lopCP, pdb);
+			lopTCP = new TriggerCloseProcess(GetProcess().getKey());
+			TriggerOp(lopTCP, pdb);
 		}
 		else
 		{

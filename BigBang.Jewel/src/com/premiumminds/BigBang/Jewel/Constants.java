@@ -181,6 +181,8 @@ public class Constants
 	public static final UUID OPID_Negotiation_CreatePolicy            = UUID.fromString("2255D403-CADD-4B3E-B329-9FFD01055C53");
 	public static final UUID OPID_Negotiation_DeleteNegotiation       = UUID.fromString("796C9A67-2B7E-40D0-974A-9FFD0105890E");
 	public static final UUID OPID_Negotiation_ExternResumeNegotiation = UUID.fromString("1E5926C3-5F36-4FC6-810F-9FFD0105AB76");
+	public static final UUID OPID_Negotiation_CloseProcess            = UUID.fromString("8B449385-BAD2-416B-AA49-9FFD0125214A");
+	public static final UUID OPID_Negotiation_UndoCloseProcess        = UUID.fromString("B37BD1B9-BDF4-442E-AA77-9FFD0125C4AC");
 
 	// Policy Operations
 	public static final UUID OPID_Policy_AutoProcessSubProcs          = UUID.fromString("84A323A5-8F42-4913-B796-9FD301102BAC");

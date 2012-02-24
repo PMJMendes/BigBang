@@ -3456,30 +3456,30 @@ public class InsurancePolicyServiceImpl
 			lopCIR.midRequestType = UUID.fromString(request.requestTypeId);
 			lopCIR.mstrSubject = request.subject;
 			lopCIR.mstrBody = request.text;
-			if ( request.forwardUserIds == null )
+			if ( request.headers.forwardUserIds == null )
 				lopCIR.marrUsers = new UUID[] {Engine.getCurrentUser()};
 			else
 			{
-				lopCIR.marrUsers = new UUID[request.forwardUserIds.length + 1];
+				lopCIR.marrUsers = new UUID[request.headers.forwardUserIds.length + 1];
 				lopCIR.marrUsers[0] = Engine.getCurrentUser();
-				for ( i = 0; i < request.forwardUserIds.length; i++ )
-					lopCIR.marrUsers[i + 1] = UUID.fromString(request.forwardUserIds[i]);
+				for ( i = 0; i < request.headers.forwardUserIds.length; i++ )
+					lopCIR.marrUsers[i + 1] = UUID.fromString(request.headers.forwardUserIds[i]);
 			}
-			lopCIR.marrContactInfos = new UUID[] {UUID.fromString(request.toContactInfoId)};
-			if ( request.externalCCs == null )
+			lopCIR.marrContactInfos = new UUID[] {UUID.fromString(request.headers.toContactInfoId)};
+			if ( request.headers.externalCCs == null )
 				lopCIR.marrCCs = null;
 			else
 			{
-				lstrTok = new StringTokenizer(request.externalCCs, ",;");
+				lstrTok = new StringTokenizer(request.headers.externalCCs, ",;");
 				lopCIR.marrCCs = new String[lstrTok.countTokens()];
 				for ( i = 0; i < lopCIR.marrCCs.length; i++ )
 					lopCIR.marrCCs[i] = lstrTok.nextToken();
 			}
-			if ( request.internalBCCs == null )
+			if ( request.headers.internalBCCs == null )
 				lopCIR.marrBCCs = null;
 			else
 			{
-				lstrTok = new StringTokenizer(request.internalBCCs, ",;");
+				lstrTok = new StringTokenizer(request.headers.internalBCCs, ",;");
 				lopCIR.marrBCCs = new String[lstrTok.countTokens()];
 				for ( i = 0; i < lopCIR.marrBCCs.length; i++ )
 					lopCIR.marrBCCs[i] = lstrTok.nextToken();

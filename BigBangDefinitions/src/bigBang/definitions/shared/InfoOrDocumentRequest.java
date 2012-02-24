@@ -35,8 +35,5 @@ public class InfoOrDocumentRequest
 	public String subject;
 	public String text;
 	public int replylimit;
-	public String toContactInfoId;
-	public String[] forwardUserIds;
-	public String internalBCCs;
-	public String externalCCs;
+	public OutgoingHeaders headers;
 }

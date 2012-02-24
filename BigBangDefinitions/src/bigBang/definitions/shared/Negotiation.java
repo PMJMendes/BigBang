@@ -13,10 +13,7 @@ public class Negotiation
 		public String negotiationId;
 		public String[] attachedDocumentIds;
 		public int replylimit;
-		public String toContactInfoId;
-		public String[] forwardUserIds;
-		public String internalBCCs;
-		public String externalCCs;
+		public OutgoingHeaders headers;
 	}
 
 	public static class Cancellation
@@ -35,20 +32,10 @@ public class Negotiation
 	{
 		private static final long serialVersionUID = 1L;
 
-		public static class Upgrade
-			implements Serializable
-		{
-			private static final long serialVersionUID = 1L;
-
-			public String name;
-			public String docTypeId;
-			public String storageId;
-		}
-
 		public String negotiationId;
 		public String notes;
 		public String emailId;
-		public Upgrade[] upgrades;
+		public AttachmentDocUpgrade[] upgrades;
 	}
 
 	public static class Grant
@@ -60,6 +47,7 @@ public class Negotiation
 		public String[] securedObjectIds;
 		public String[] lineIds;
 		public String effectiveDate;
+		public OutgoingHeaders headers;
 	}
 
 	public static class Deletion
