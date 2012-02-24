@@ -1,6 +1,6 @@
 package bigbang.tests.client;
 
-import bigBang.definitions.shared.AttachmentDocUpgrade;
+import bigBang.definitions.shared.IncomingMessage;
 import bigBang.definitions.shared.InfoOrDocumentRequest;
 import bigBang.definitions.shared.InfoOrDocumentRequest.Response;
 import bigBang.library.shared.Attachment;
@@ -53,11 +53,11 @@ public class TestInfoReqReply
 
 		response = new Response();
 		response.requestId = "AD5EEEE7-E646-4F9D-9E41-9FE80137FC19";
-		response.emailId = "AAMkADg1OTUzYzcxLTVmZjQtNDU3Zi04Nzg3LWYwODFhMDE5MzlkNQBGAAAAAABr2ZTbJcmoQYK7SlFUwi1VBwCtSKTbKCtrR6MYTzZmb/1MAAADRQAbAAAjNXAn+Af6QrQHRLqsAzc5ABMoVdUQAAA=";
-		response.upgrades = new AttachmentDocUpgrade[] {new AttachmentDocUpgrade()};
-		response.upgrades[0].name = "Teste";
-		response.upgrades[0].docTypeId = "5ABB972E-9E7E-4733-9C1E-9F1300B4EB3A";
-		response.upgrades[0].storageId = attachment.storageId;
+		response.message.emailId = "AAMkADg1OTUzYzcxLTVmZjQtNDU3Zi04Nzg3LWYwODFhMDE5MzlkNQBGAAAAAABr2ZTbJcmoQYK7SlFUwi1VBwCtSKTbKCtrR6MYTzZmb/1MAAADRQAbAAAjNXAn+Af6QrQHRLqsAzc5ABMoVdUQAAA=";
+		response.message.upgrades = new IncomingMessage.AttachmentUpgrade[] {new IncomingMessage.AttachmentUpgrade()};
+		response.message.upgrades[0].name = "Teste";
+		response.message.upgrades[0].docTypeId = "5ABB972E-9E7E-4733-9C1E-9F1300B4EB3A";
+		response.message.upgrades[0].storageId = attachment.storageId;
 		Services.infoOrDocumentRequestService.receiveResponse(response, callback);
 	}
 }

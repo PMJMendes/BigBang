@@ -1,9 +1,8 @@
 package bigbang.tests.client;
 
-import com.google.gwt.user.client.rpc.AsyncCallback;
-
 import bigBang.definitions.shared.InfoOrDocumentRequest;
-import bigBang.definitions.shared.OutgoingMessage;
+
+import com.google.gwt.user.client.rpc.AsyncCallback;
 
 public class TestInfoReqCreate
 {

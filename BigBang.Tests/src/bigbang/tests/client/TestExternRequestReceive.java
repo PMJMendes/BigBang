@@ -30,8 +30,8 @@ public class TestExternRequestReceive
 
 		response = new ExternalInfoRequest.Incoming();
 		response.requestId = "0D867A6D-ADAE-41F8-8826-A00001005C32";
-		response.notes = null;
-		response.emailId = "AAMkADg1OTUzYzcxLTVmZjQtNDU3Zi04Nzg3LWYwODFhMDE5MzlkNQBGAAAAAABr2ZTbJcmoQYK7SlFUwi1VBwCtSKTbKCtrR6MYTzZmb/1MAAADRQAbAACtSKTbKCtrR6MYTzZmb/1MAAADRWwBAAA=";
+		response.message.notes = null;
+		response.message.emailId = "AAMkADg1OTUzYzcxLTVmZjQtNDU3Zi04Nzg3LWYwODFhMDE5MzlkNQBGAAAAAABr2ZTbJcmoQYK7SlFUwi1VBwCtSKTbKCtrR6MYTzZmb/1MAAADRQAbAACtSKTbKCtrR6MYTzZmb/1MAAADRWwBAAA=";
 		response.replylimit = 14;
 
 		Services.externRequestService.receiveAdditional(response, callback);

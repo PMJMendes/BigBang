@@ -31,11 +31,11 @@ public class TestExternRequestCreate
 		request = new ExternalInfoRequest();
 		request.parentDataObjectId = "D5697A30-26E4-4913-9EDE-9FFE011B6F30";
 		request.parentDataTypeId = "0D50EB51-725D-4741-8618-9FFD00E918D3";
-		request.emailId = "AAMkADg1OTUzYzcxLTVmZjQtNDU3Zi04Nzg3LWYwODFhMDE5MzlkNQBGAAAAAABr2ZTbJcmoQYK7SlFUwi1VBwCtSKTbKCtrR6MYTzZmb/1MAAADRQAbAAAjNXAn+Af6QrQHRLqsAzc5ABMr6TphAAA=";
 		request.subject = null;
-		request.text = null;
+		request.message.emailId = "AAMkADg1OTUzYzcxLTVmZjQtNDU3Zi04Nzg3LWYwODFhMDE5MzlkNQBGAAAAAABr2ZTbJcmoQYK7SlFUwi1VBwCtSKTbKCtrR6MYTzZmb/1MAAADRQAbAAAjNXAn+Af6QrQHRLqsAzc5ABMr6TphAAA=";
+		request.message.notes = null;
+		request.message.upgrades = null;
 		request.replylimit = 14;
-		request.upgrades = null;
 
 		Services.negotiationService.createExternalRequest(request, callback);
 	}
