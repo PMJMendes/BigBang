@@ -164,7 +164,7 @@ public class CoverageList extends FilterableList<Coverage> implements CoverageDa
 			public void onResponse(Coverage[] response) {
 
 				if(coverageId != null){
-					for(int i = 0; i<response.length; i++){
+					for(int i = 0; i<response.length; i++){  
 						add(new Entry(response[i]));
 						if(get(i).getValue().id.equalsIgnoreCase(coverageId)){
 							get(i).setSelected(true, false);

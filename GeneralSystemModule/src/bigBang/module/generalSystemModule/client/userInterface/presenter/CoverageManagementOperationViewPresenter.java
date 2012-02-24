@@ -24,17 +24,17 @@ import com.google.gwt.user.client.ui.UIObject;
 import com.google.gwt.user.client.ui.Widget;
 
 public class CoverageManagementOperationViewPresenter implements ViewPresenter {
-	
+
 	private String lineId;
 	private String subLineId;
 	private String coverageId;
-	
+
 	public interface Display {
 		//Lists
 		HasValueSelectables<Line> getLineList();
 		HasValueSelectables<SubLine> getSubLineList();
 		HasValueSelectables<Coverage> getCoverageList();		
-		
+
 		//General
 		void refresh();
 		void setReadOnly(boolean readonly);
@@ -47,7 +47,7 @@ public class CoverageManagementOperationViewPresenter implements ViewPresenter {
 
 	private Display view;
 	private boolean bound = false;
-	
+
 	public CoverageManagementOperationViewPresenter(Display view) {
 		setView((View) view);
 	}
@@ -66,30 +66,30 @@ public class CoverageManagementOperationViewPresenter implements ViewPresenter {
 
 	@Override
 	public void setParameters(HasParameters parameterHolder) {
-		
+
 		view.clear();
-		
+
 		lineId = parameterHolder.getParameter("lineid");
 		subLineId = parameterHolder.getParameter("sublineid");
 		coverageId = parameterHolder.getParameter("coverageid");
-		
-		
+
+
 		if(coverageId != null){
-			
+
 			view.setCoverage(lineId, subLineId, coverageId);
-			 
+
 		}else if(subLineId != null){
 			view.setSubLine(subLineId, lineId);
 		}
 		else
 			view.setLine(lineId);
 	}
-	
+
 	public void bind() {
 		if(bound){return;}
-		
+
 		view.getLineList().addSelectionChangedEventHandler(new SelectionChangedEventHandler() {
-			
+
 			@SuppressWarnings("unchecked")
 			@Override
 			public void onSelectionChanged(SelectionChangedEvent event) {
@@ -98,7 +98,7 @@ public class CoverageManagementOperationViewPresenter implements ViewPresenter {
 					view.getLineList().clearSelection();
 					return;
 				}
-					
+
 				for(Selectable s : selected) {
 					ValueSelectable<Line> vs = (ValueSelectable<Line>)s;
 					NavigationHistoryItem navig = NavigationHistoryManager.getInstance().getCurrentState();
@@ -106,30 +106,56 @@ public class CoverageManagementOperationViewPresenter implements ViewPresenter {
 					navig.removeParameter("sublineid");
 					navig.removeParameter("coverageid");
 					NavigationHistoryManager.getInstance().go(navig);
-					view.setSubLine(lineId, (((ValueSelectable<Line>)s).getValue().id));
 					break;
 				}
 			}
 		});
 		view.getSubLineList().addSelectionChangedEventHandler(new SelectionChangedEventHandler() {
-			
+
 			@SuppressWarnings("unchecked")
 			@Override
 			public void onSelectionChanged(SelectionChangedEvent event) {
-				
+
 				Collection<? extends Selectable> selected = event.getSelected();
 				if(selected.size() == 0){
 					view.getSubLineList().clearSelection();
 				}
-				
+
 				for(Selectable s : selected) {
-					view.setSubLine(lineId,((ValueSelectable<SubLine>)s).getValue().id);
+					ValueSelectable<SubLine> vs = (ValueSelectable<SubLine>)s;
+					NavigationHistoryItem navig = NavigationHistoryManager.getInstance().getCurrentState();
+					navig.setParameter("lineId", vs.getValue().lineId);
+					navig.setParameter("sublineid", vs.getValue().id);
+					navig.removeParameter("coverageid");
+					NavigationHistoryManager.getInstance().go(navig);
 					break;
 				}
 			}
 		});
-		
-		bound = true;
-	}
+		view.getCoverageList().addSelectionChangedEventHandler(new SelectionChangedEventHandler() {
 
+			@SuppressWarnings("unchecked")
+			@Override
+			public void onSelectionChanged(SelectionChangedEvent event) {
+				Collection<? extends Selectable> selected = event.getSelected();
+				if(selected.size() == 0){
+					view.getCoverageList().clearSelection();
+				}
+				
+				for(Selectable s : selected) {
+					ValueSelectable<Coverage> vs = (ValueSelectable<Coverage>)s;
+					NavigationHistoryItem navig = NavigationHistoryManager.getInstance().getCurrentState();
+					navig.setParameter("lineId", lineId);
+					navig.setParameter("sublineid", vs.getValue().subLineId);
+					navig.setParameter("coverageid", vs.getValue().id);
+					NavigationHistoryManager.getInstance().go(navig);
+					break;
+				}
+				
+			}
+		});
+
+		bound = true;
+
+	}
 }

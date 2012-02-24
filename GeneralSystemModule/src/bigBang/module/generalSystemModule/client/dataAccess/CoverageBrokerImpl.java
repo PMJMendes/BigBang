@@ -51,15 +51,19 @@ CoverageBroker {
 				public void onResponseSuccess(Line[] result) {
 					lines = result;
 
-					//Populates the caches
-
-					//Lines
 					
 					for(DataBrokerClient<Line> c : getClients()) {
 						((CoverageDataBrokerClient) c).setLines(result);
 					}
 					handler.onResponse(result);
 					needsRefresh = false;
+				}
+				@Override
+				public void onResponseFailure(Throwable caught){
+					handler.onError(new String[]{
+							new String("Could not get lines.")	
+					});
+					super.onResponseFailure(caught);
 				}
 			});
 		}else{
@@ -70,7 +74,14 @@ CoverageBroker {
 
 	@Override
 	public void getLine(String lineId, ResponseHandler<Line> handler) {
-		//TODO
+		
+		for(int i = 0; i<lines.length; i++){
+			if(lines[i].id.equalsIgnoreCase(lineId)){
+				handler.onResponse(lines[i]);
+				return;
+			}
+		}
+		
 	}
 
 	@Override
@@ -79,7 +90,14 @@ CoverageBroker {
 
 			@Override
 			public void onResponseSuccess(Line result) {
-				//lines.add(result.id, result);//TODO
+				Line[] newArray = new Line[lines.length+1];
+				
+				for(int i = 0; i<lines.length; i++){
+					newArray[i] = lines[i];
+				}
+				newArray[lines.length] = result;
+				lines = newArray;
+				
 				for(DataBrokerClient<Line> c : getClients()){
 					((CoverageDataBrokerClient) c).addLine(result);
 				}
@@ -87,18 +105,48 @@ CoverageBroker {
 			}
 
 			@Override
-			public void onFailure(Throwable caught){
+			public void onResponseFailure(Throwable caught){
 				handler.onError(new String[]{
 						new String("Could not create line.")	
 				});
-				super.onFailure(caught);
+				super.onResponseFailure(caught);
 			}
 		});
 	}
 
 	@Override
 	public void updateLine(Line line, final ResponseHandler<Line> handler) {
-		//TODO
+		
+		this.service.saveLine(line, new BigBangAsyncCallback<Line>() {
+
+			@Override
+			public void onResponseSuccess(Line result) {
+				for(int i = 0; i<lines.length; i++){
+					if(lines[i].id.equalsIgnoreCase(result.id)){
+						lines[i] = result;
+						break;
+					}
+				}
+				
+				for(DataBrokerClient<Line> c : getClients()){
+					((CoverageDataBrokerClient) c).addLine(result);
+				}
+				handler.onResponse(result);
+			}
+			
+			@Override
+			public void onResponseFailure(Throwable caught){
+				handler.onError(new String[]{
+						new String("Could not save line.")	
+				});
+				super.onResponseFailure(caught);
+			}
+		
+		});
+		
+		
+	
+		
 	}
 
 	@Override
@@ -107,12 +155,30 @@ CoverageBroker {
 
 			@Override
 			public void onResponseSuccess(Void result) {
-				//lines.remove(lineId);//TODO
-				incrementDataVersion();
+				
+				Line[] newArray = new Line[lines.length-1];
+				int curr = 0;
+				Line deleted = new Line();
+				
+				for(int i = 0; i< lines.length; i++){
+					if(!lineId.equalsIgnoreCase(lines[i].id)){
+						newArray[curr] = lines[i];
+						curr++;
+					}else
+						deleted = lines[i];
+				}
+				
 				for(DataBrokerClient<Line> c : CoverageBrokerImpl.this.getClients()){
 					((CoverageDataBrokerClient)c).removeLine(lineId);
-					((CoverageDataBrokerClient)c).setDataVersionNumber(getDataElementId(), getCurrentDataVersion());
 				}
+			}
+			
+			@Override
+			public void onResponseFailure(Throwable caught){
+				handler.onError(new String[]{
+						new String("Could not delete line.")	
+				});
+				super.onResponseFailure(caught);
 			}
 		});
 	}
@@ -127,9 +193,6 @@ CoverageBroker {
 				public void onResponseSuccess(Line[] result) {
 					lines = result;
 
-					//Populates the caches
-
-					//Lines
 					for(DataBrokerClient<Line> c : getClients()) {
 						((CoverageDataBrokerClient) c).setLines(result);
 					}
@@ -137,6 +200,15 @@ CoverageBroker {
 					handler.onResponse(getSubLinesLocal(parentLineId));
 					needsRefresh = false;
 				}
+				@Override
+				public void onResponseFailure(Throwable caught) {
+					handler.onError(new String[]{
+							new String("Could not get sublines.")	
+					});
+					super.onResponseFailure(caught);
+				}
+				
+				
 			});
 		}else{
 
@@ -148,7 +220,11 @@ CoverageBroker {
 
 	private SubLine[] getSubLinesLocal(String parentLineId) {
 
-	//TODO
+		for(int i=0; i<lines.length; i++){
+			if(lines[i].id.equalsIgnoreCase(parentLineId)){
+				return lines[i].subLines;
+			}
+		}
 		return null;
 	}
 
@@ -174,7 +250,6 @@ CoverageBroker {
 
 			@Override
 			public void onResponseSuccess(SubLine result) {
-
 				SubLine[] oldArray = getSubLinesLocal(result.lineId);
 				SubLine[] newArray = new SubLine[oldArray.length+1];
 
@@ -183,7 +258,12 @@ CoverageBroker {
 				}
 				newArray[newArray.length-1] = result;
 
-			//	((Line)lines.get(result.lineId)).subLines = newArray;//TODO
+				for(int i =0; i<lines.length; i++){
+					if(lines[i].id.equalsIgnoreCase(result.lineId)){
+						lines[i].subLines = newArray;
+						break;
+					}
+				}
 
 
 				for(DataBrokerClient<Line> c : getClients()){
@@ -193,11 +273,11 @@ CoverageBroker {
 			}
 
 			@Override
-			public void onFailure(Throwable caught){
+			public void onResponseFailure(Throwable caught){
 				handler.onError(new String[]{
 						new String("Could not create subline.")	
 				});
-				super.onFailure(caught);
+				super.onResponseFailure(caught);
 			}
 
 
@@ -212,7 +292,6 @@ CoverageBroker {
 
 			@Override
 			public void onResponseSuccess(SubLine result) {
-
 				SubLine[] subLines = getSubLinesLocal(result.lineId);
 
 				for(int i = 0; i<subLines.length; i++){
@@ -222,9 +301,6 @@ CoverageBroker {
 					}
 				}
 
-				//TODO ((Line)lines.get(result.lineId)).subLines = subLines;
-
-
 				for(DataBrokerClient<Line> c : getClients()){
 					((CoverageDataBrokerClient) c).updateSubLine(result.lineId, result);
 				}
@@ -232,11 +308,11 @@ CoverageBroker {
 			}
 
 			@Override
-			public void onFailure(Throwable caught){
+			public void onResponseFailure(Throwable caught){
 				handler.onError(new String[]{
 						new String("Could not update subline.")	
 				});
-				super.onFailure(caught);
+				super.onResponseFailure(caught);
 			}
 
 
@@ -270,7 +346,12 @@ CoverageBroker {
 
 				}
 
-				//TODO ((Line)lines.get(subLineId)).subLines = newArray;
+				for(int i = 0; i<lines.length; i++){
+					if(lines[i].id.equalsIgnoreCase(deleted.lineId)){
+						lines[i].subLines = newArray;
+						break;
+					}
+				}
 
 
 				for(DataBrokerClient<Line> c : getClients()){
@@ -281,11 +362,11 @@ CoverageBroker {
 			}
 
 			@Override
-			public void onFailure(Throwable caught){
+			public void onResponseFailure(Throwable caught){
 				handler.onError(new String[]{
 						new String("Could not delete subline.")	
 				});
-				super.onFailure(caught);
+				super.onResponseFailure(caught);
 			}
 
 
@@ -314,7 +395,17 @@ CoverageBroker {
 					handler.onResponse(getCoveragesLocal(parentSubLineId, getSubLinesLocal(parentLineId)));
 					needsRefresh = false;
 				}
+				
+				@Override
+				public void onResponseFailure(Throwable caught){
+					handler.onError(new String[]{
+							new String("Could not get coverages.")	
+					});
+					super.onResponseFailure(caught);
+				}
 			});
+			
+			
 		}else{
 
 			handler.onResponse(getCoveragesLocal(parentSubLineId, getSubLinesLocal(parentLineId)));
@@ -326,7 +417,11 @@ CoverageBroker {
 	private Coverage[] getCoveragesLocal(String parentSubLineId,
 			SubLine[] subLinesLocal) {
 
-		//TODO
+		for(int i =0; i<subLinesLocal.length; i++){
+			if(subLinesLocal[i].id.equalsIgnoreCase(parentSubLineId)){
+				return subLinesLocal[i].coverages;
+			}
+		}
 		return null;
 	}
 
@@ -379,11 +474,11 @@ CoverageBroker {
 			}
 
 			@Override
-			public void onFailure(Throwable caught){
+			public void onResponseFailure(Throwable caught){
 				handler.onError(new String[]{
 						new String("Could not create coverage.")	
 				});
-				super.onFailure(caught);
+				super.onResponseFailure(caught);
 			}
 
 		});
@@ -414,11 +509,11 @@ CoverageBroker {
 			}
 
 			@Override
-			public void onFailure(Throwable caught){
+			public void onResponseFailure(Throwable caught){
 				handler.onError(new String[]{
 						new String("Could not save coverage.")	
 				});
-				super.onFailure(caught);
+				super.onResponseFailure(caught);
 			}
 		});
 
@@ -463,11 +558,11 @@ CoverageBroker {
 			}
 
 			@Override
-			public void onFailure(Throwable caught){
+			public void onResponseFailure(Throwable caught){
 				handler.onError(new String[]{
 						new String("Could not delete coverage.")	
 				});
-				super.onFailure(caught);
+				super.onResponseFailure(caught);
 			}
 
 		});
@@ -484,10 +579,6 @@ CoverageBroker {
 				@Override
 				public void onResponseSuccess(Line[] result) {
 					lines = result;
-
-					//Populates the caches
-
-					//Lines
 				
 					for(DataBrokerClient<Line> c : getClients()) {
 						((CoverageDataBrokerClient) c).setLines(result);
@@ -495,6 +586,14 @@ CoverageBroker {
 
 					handler.onResponse(getTaxesLocal(parentCoverageId, getCoveragesLocal(parentSubLineId, getSubLinesLocal(parentLineId))));
 					needsRefresh = false;
+				}
+				
+				@Override
+				public void onResponseFailure(Throwable caught){
+					handler.onError(new String[]{
+							new String("Could not get taxes.")	
+					});
+					super.onResponseFailure(caught);
 				}
 			});
 		}else{
@@ -566,11 +665,11 @@ CoverageBroker {
 			}
 
 			@Override
-			public void onFailure(Throwable caught){
+			public void onResponseFailure(Throwable caught){
 				handler.onError(new String[]{
 						new String("Could not create tax.")	
 				});
-				super.onFailure(caught);
+				super.onResponseFailure(caught);
 			}
 		});
 
@@ -601,11 +700,11 @@ CoverageBroker {
 			}
 
 			@Override
-			public void onFailure(Throwable caught){
+			public void onResponseFailure(Throwable caught){
 				handler.onError(new String[]{
 						new String("Could not save tax.")	
 				});
-				super.onFailure(caught);
+				super.onResponseFailure(caught);
 			}
 
 		});
@@ -650,11 +749,11 @@ CoverageBroker {
 			}
 			
 			@Override
-			public void onFailure(Throwable caught){
+			public void onResponseFailure(Throwable caught){
 				handler.onError(new String[]{
 						new String("Could not delete coverage.")	
 				});
-				super.onFailure(caught);
+				super.onResponseFailure(caught);
 			}
 		
 		

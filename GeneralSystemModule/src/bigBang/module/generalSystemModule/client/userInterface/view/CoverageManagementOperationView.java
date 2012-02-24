@@ -84,8 +84,6 @@ public class CoverageManagementOperationView extends View implements CoverageMan
 	@Override
 	public void setLine(String lineId) {
 	
-		
-		
 		lineList.setId(lineId);
 		lineList.refresh();
 		
