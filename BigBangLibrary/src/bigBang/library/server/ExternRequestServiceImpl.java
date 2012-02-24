@@ -53,7 +53,7 @@ public class ExternRequestServiceImpl
 		lobjResult.parentDataObjectId = lobjParent.GetDataKey().toString();
 		lobjResult.parentDataTypeId = lobjScript.GetDataType().toString();
 		lobjResult.subject = (String)lobjRequest.getAt(1);
-		lobjResult.text = lobjRequest.getText();
+		lobjResult.message.notes = lobjRequest.getText();
 		lobjResult.originalFrom = (String)lobjRequest.getAt(3);
 		lobjResult.replylimit = (int)((((Timestamp)lobjRequest.getAt(4)).getTime() -
 				(new Timestamp(new java.util.Date().getTime())).getTime()) / 86400000L);
@@ -88,7 +88,7 @@ public class ExternRequestServiceImpl
 
 			lopSI = new SendInformation(lobjRequest.GetProcessID());
 
-			lopSI.mobjMessage = OutgoingHeaderBridge.toServer(outgoing.message);
+			lopSI.mobjMessage = MessageBridge.outgoingToServer(outgoing.message);
 			lopSI.mbIsFinal = outgoing.isFinal;
 			lopSI.mlngDays = outgoing.replylimit;
 
@@ -117,9 +117,8 @@ public class ExternRequestServiceImpl
 
 			lopRAI = new ReceiveAdditionalInfo(lobjRequest.GetProcessID());
 
+			lopRAI.mobjMessage = MessageBridge.incomingToServer(incoming.message, null);
 			lopRAI.mlngDays = incoming.replylimit;
-			lopRAI.mstrNotes = incoming.notes;
-			lopRAI.mstrEmailID = incoming.emailId;
 
 			lopRAI.Execute();
 		}

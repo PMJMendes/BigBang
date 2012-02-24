@@ -16,6 +16,7 @@ import Jewel.Petri.SysObjects.JewelPetriException;
 import Jewel.Petri.SysObjects.UndoableOperation;
 
 import com.premiumminds.BigBang.Jewel.Constants;
+import com.premiumminds.BigBang.Jewel.Data.IncomingMessageData;
 import com.premiumminds.BigBang.Jewel.Objects.AgendaItem;
 import com.premiumminds.BigBang.Jewel.Objects.ExternRequest;
 import com.premiumminds.BigBang.Jewel.SysObjects.MailConnector;
@@ -25,12 +26,9 @@ public class ReceiveAdditionalInfo
 {
 	private static final long serialVersionUID = 1L;
 
+	public IncomingMessageData mobjMessage;
 	public int mlngDays;
-	public String mstrNotes;
-	public String mstrEmailID;
 	private boolean mbFromEmail;
-	private String mstrSubject;
-	private String mstrBody;
 	private String mstrNewEmailID;
 	private Timestamp mdtPrevLimit;
 
@@ -55,13 +53,13 @@ public class ReceiveAdditionalInfo
 
 		lstrResult = new StringBuilder("A informação recebida foi a seguinte:");
 
-		if ( mstrNotes != null )
-			lstrResult.append(pstrLineBreak).append(mstrNotes);
+		if ( mobjMessage.mstrBody != null )
+			lstrResult.append(pstrLineBreak).append(mobjMessage.mstrBody);
 
 		if ( mbFromEmail )
 		{
-			lstrResult.append(pstrLineBreak).append(mstrSubject);
-			lstrResult.append(pstrLineBreak).append(mstrBody);
+			lstrResult.append(pstrLineBreak).append(mobjMessage.mstrSubject);
+			lstrResult.append(pstrLineBreak).append(mobjMessage.mstrBody);
 		}
 
 		return lstrResult.toString();
@@ -147,15 +145,15 @@ public class ReceiveAdditionalInfo
 			throw new JewelPetriException(e.getMessage(), e);
 		}
 
-		if ( mstrEmailID != null )
+		if ( mobjMessage.mstrEmailID != null )
 		{
 			mbFromEmail = true;
 			try
 			{
-				lobjItem = MailConnector.DoGetItem(mstrEmailID);
-				mstrSubject = lobjItem.getSubject();
-				mstrBody = lobjItem.getBody().toString();
-				mstrNewEmailID = MailConnector.DoProcessItem(mstrEmailID).getId().getUniqueId();
+				lobjItem = MailConnector.DoGetItem(mobjMessage.mstrEmailID);
+				mobjMessage.mstrSubject = lobjItem.getSubject();
+				mobjMessage.mstrBody = lobjItem.getBody().toString();
+				mstrNewEmailID = MailConnector.DoProcessItem(mobjMessage.mstrEmailID).getId().getUniqueId();
 			}
 			catch (Throwable e)
 			{

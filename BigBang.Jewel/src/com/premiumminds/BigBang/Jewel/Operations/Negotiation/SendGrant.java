@@ -29,6 +29,7 @@ public class SendGrant
 	private static final long serialVersionUID = 1L;
 
 	public OutgoingMessageData mobjMessage;
+	public Timestamp mdtEffectDate;
 	private boolean mbEmailSent;
 
 	public SendGrant(UUID pidProcess)
@@ -48,11 +49,23 @@ public class SendGrant
 
 	public String LongDesc(String pstrLineBreak)
 	{
-		if ( mbEmailSent )
-			return "A negociação foi adjudicada. Foi enviado o seguinte email para a seguradora com a confirmação:" +
-					pstrLineBreak + mobjMessage.mstrSubject + pstrLineBreak + mobjMessage.mstrBody;
+		StringBuilder lstrBuffer;
 
-		return "A negociação foi adjudicada.";
+		lstrBuffer = new StringBuilder();
+		lstrBuffer.append("A negociação foi adjudicada");
+
+		if ( mdtEffectDate != null )
+			lstrBuffer.append(" com data efeito a " + mdtEffectDate.toString().substring(0, 10));
+		lstrBuffer.append(".");
+
+		if ( mbEmailSent )
+		{
+			lstrBuffer.append(" Foi enviado o seguinte email para a seguradora com a confirmação:").append(pstrLineBreak);
+			lstrBuffer.append(mobjMessage.mstrSubject).append(pstrLineBreak);
+			lstrBuffer.append(mobjMessage.mstrBody).append(pstrLineBreak).append(pstrLineBreak);
+		}
+
+		return lstrBuffer.toString();
 	}
 
 	public UUID GetExternalProcess()

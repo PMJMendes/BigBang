@@ -6,13 +6,6 @@ import java.util.UUID;
 
 import microsoft.exchange.webservices.data.EmailMessage;
 import microsoft.exchange.webservices.data.Item;
-
-import com.premiumminds.BigBang.Jewel.Constants;
-import com.premiumminds.BigBang.Jewel.Objects.AgendaItem;
-import com.premiumminds.BigBang.Jewel.Objects.ExternRequest;
-import com.premiumminds.BigBang.Jewel.Operations.DocOps;
-import com.premiumminds.BigBang.Jewel.SysObjects.MailConnector;
-
 import Jewel.Engine.Engine;
 import Jewel.Engine.DataAccess.SQLServer;
 import Jewel.Petri.Interfaces.IProcess;
@@ -21,16 +14,20 @@ import Jewel.Petri.Objects.PNScript;
 import Jewel.Petri.SysObjects.JewelPetriException;
 import Jewel.Petri.SysObjects.UndoableOperation;
 
+import com.premiumminds.BigBang.Jewel.Constants;
+import com.premiumminds.BigBang.Jewel.Data.IncomingMessageData;
+import com.premiumminds.BigBang.Jewel.Objects.AgendaItem;
+import com.premiumminds.BigBang.Jewel.Objects.ExternRequest;
+import com.premiumminds.BigBang.Jewel.SysObjects.MailConnector;
+
 public abstract class CreateExternRequestBase
 	extends UndoableOperation
 {
 	private static final long serialVersionUID = 1L;
 
-	public int mlngDays;
 	public String mstrSubject;
-	public String mstrBody;
-	public String mstrEmailID;
-	public DocOps mobjDocOps;
+	public IncomingMessageData mobjMessage;
+	public int mlngDays;
 	public UUID midRequestObject;
 	private boolean mbFromEmail;
 	private String mstrFrom;
@@ -54,8 +51,8 @@ public abstract class CreateExternRequestBase
 		lstrBuffer = new StringBuilder();
 
 		lstrBuffer.append("Foi recebido o seguinte pedido:").append(pstrLineBreak);
-		lstrBuffer.append(mstrSubject).append(pstrLineBreak);
-		lstrBuffer.append(mstrBody).append(pstrLineBreak).append(pstrLineBreak);
+		lstrBuffer.append(mobjMessage.mstrSubject).append(pstrLineBreak);
+		lstrBuffer.append(mobjMessage.mstrBody).append(pstrLineBreak).append(pstrLineBreak);
 		lstrBuffer.append("Prazo limite de resposta: ").append(mlngDays).append(" dias.").append(pstrLineBreak);
 
 		return lstrBuffer.toString();
@@ -78,14 +75,14 @@ public abstract class CreateExternRequestBase
 		IProcess lobjProc;
 		AgendaItem lobjAgendaItem;
 
-		if ( mstrEmailID != null )
+		if ( mobjMessage.mstrEmailID != null )
 		{
 			mbFromEmail = true;
 			try
 			{
-				lobjItem = MailConnector.DoGetItem(mstrEmailID);
-				mstrSubject = lobjItem.getSubject();
-				mstrBody = lobjItem.getBody().toString();
+				lobjItem = MailConnector.DoGetItem(mobjMessage.mstrEmailID);
+				mobjMessage.mstrSubject = lobjItem.getSubject();
+				mobjMessage.mstrBody = lobjItem.getBody().toString();
 				if ( lobjItem instanceof EmailMessage )
 					mstrFrom = ((EmailMessage)lobjItem).getFrom().getAddress();
 			}
@@ -104,8 +101,8 @@ public abstract class CreateExternRequestBase
 		try
 		{
 			lobjRequest = ExternRequest.GetInstance(Engine.getCurrentNameSpace(), (UUID)null);
-			lobjRequest.setAt(1, mstrSubject);
-			lobjRequest.setText(mstrBody);
+			lobjRequest.setAt(1, mobjMessage.mstrSubject);
+			lobjRequest.setText(mobjMessage.mstrBody);
 			lobjRequest.setAt(3, mstrFrom);
 			lobjRequest.setAt(4, ldtLimit);
 			lobjRequest.SaveToDb(pdb);
@@ -129,8 +126,8 @@ public abstract class CreateExternRequestBase
 			throw new JewelPetriException(e.getMessage(), e);
 		}
 
-		if ( mobjDocOps != null )
-			mobjDocOps.RunSubOp(pdb, GetProcess().GetParent().GetDataKey());
+		if ( mobjMessage.mobjDocOps != null )
+			mobjMessage.mobjDocOps.RunSubOp(pdb, GetProcess().GetParent().GetDataKey());
 
 		midRequestObject = lobjRequest.getKey();
 		midExternProcess = lobjProc.getKey();
@@ -139,7 +136,7 @@ public abstract class CreateExternRequestBase
 		{
 			try
 			{
-				mstrNewEmailID = MailConnector.DoProcessItem(mstrEmailID).getId().getUniqueId();
+				mstrNewEmailID = MailConnector.DoProcessItem(mobjMessage.mstrEmailID).getId().getUniqueId();
 			}
 			catch (Throwable e)
 			{
@@ -177,8 +174,8 @@ public abstract class CreateExternRequestBase
 	{
 		ExternAbortProcess lopEAP;
 
-		if ( mobjDocOps != null )
-			mobjDocOps.UndoSubOp(pdb, GetProcess().GetParent().GetDataKey());
+		if ( mobjMessage.mobjDocOps != null )
+			mobjMessage.mobjDocOps.UndoSubOp(pdb, GetProcess().GetParent().GetDataKey());
 
 		lopEAP = new ExternAbortProcess(midExternProcess);
 		if ( mbFromEmail )

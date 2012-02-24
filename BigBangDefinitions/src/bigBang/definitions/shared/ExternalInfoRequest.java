@@ -12,9 +12,13 @@ public class ExternalInfoRequest
 		private static final long serialVersionUID = 1L;
 		
 		public String requestId;
-		public String notes;
-		public String emailId;
+		public IncomingMessage message;
 		public int replylimit;
+
+		public Incoming()
+		{
+			message = new IncomingMessage();
+		}
 	}
 
 	//The outgoing component of the conversation
@@ -48,10 +52,13 @@ public class ExternalInfoRequest
 
 	public String parentDataObjectId;
 	public String parentDataTypeId;
-	public String emailId;
 	public String subject;
-	public String text;
-	public String originalFrom;
+	public IncomingMessage message;
 	public int replylimit;
-	public AttachmentDocUpgrade[] upgrades;
+	public String originalFrom;
+
+	public ExternalInfoRequest()
+	{
+		message = new IncomingMessage();
+	}
 }

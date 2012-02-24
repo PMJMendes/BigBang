@@ -22,7 +22,7 @@ import bigBang.definitions.shared.SortOrder;
 import bigBang.definitions.shared.SortParameter;
 import bigBang.library.server.BigBangPermissionServiceImpl;
 import bigBang.library.server.ExternRequestServiceImpl;
-import bigBang.library.server.FileServiceImpl;
+import bigBang.library.server.MessageBridge;
 import bigBang.library.server.SearchServiceBase;
 import bigBang.library.shared.BigBangException;
 import bigBang.library.shared.SessionExpiredException;
@@ -30,12 +30,9 @@ import bigBang.module.quoteRequestModule.interfaces.NegotiationService;
 import bigBang.module.quoteRequestModule.shared.NegotiationSearchParameter;
 import bigBang.module.quoteRequestModule.shared.NegotiationSortParameter;
 
-import com.premiumminds.BigBang.Jewel.BigBangJewelException;
 import com.premiumminds.BigBang.Jewel.Constants;
-import com.premiumminds.BigBang.Jewel.Data.DocumentData;
 import com.premiumminds.BigBang.Jewel.Data.NegotiationData;
 import com.premiumminds.BigBang.Jewel.Objects.Company;
-import com.premiumminds.BigBang.Jewel.Operations.DocOps;
 import com.premiumminds.BigBang.Jewel.Operations.Negotiation.CreateExternRequest;
 import com.premiumminds.BigBang.Jewel.Operations.Negotiation.DeleteNegotiation;
 import com.premiumminds.BigBang.Jewel.Operations.Negotiation.ManageData;
@@ -153,7 +150,7 @@ public class NegotiationServiceImpl
 		return null;
 	}
 
-	public Negotiation.Grant grantNegotiation(Negotiation.Grant adjudication)
+	public Negotiation.Grant grantNegotiation(Negotiation.Grant grant)
 		throws SessionExpiredException, BigBangException
 	{
 		com.premiumminds.BigBang.Jewel.Objects.Negotiation lobjNegotiation;
@@ -165,7 +162,7 @@ public class NegotiationServiceImpl
 		try
 		{
 			lobjNegotiation = com.premiumminds.BigBang.Jewel.Objects.Negotiation.GetInstance(Engine.getCurrentNameSpace(),
-					UUID.fromString(adjudication.negotiationId));
+					UUID.fromString(grant.negotiationId));
 		}
 		catch (Throwable e)
 		{
@@ -173,7 +170,18 @@ public class NegotiationServiceImpl
 		}
 
 		lopSG = new SendGrant(lobjNegotiation.GetProcessID());
-		// TODO Auto-generated method stub
+		lopSG.mobjMessage = MessageBridge.outgoingToServer(grant.message);
+		lopSG.mdtEffectDate = ( grant.effectDate == null ? null : Timestamp.valueOf(grant.effectDate + " 00:00:00.0") );
+
+		try
+		{
+			lopSG.Execute();
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangException(e.getMessage(), e);
+		}
+
 		return null;
 	}
 
@@ -194,9 +202,8 @@ public class NegotiationServiceImpl
 	public ExternalInfoRequest createExternalRequest(ExternalInfoRequest request)
 		throws SessionExpiredException, BigBangException
 	{
-		CreateExternRequest lopCER;
 		com.premiumminds.BigBang.Jewel.Objects.Negotiation lobjNeg;
-		int i;
+		CreateExternRequest lopCER;
 
 		if ( Engine.getCurrentUser() == null )
 			throw new SessionExpiredException();
@@ -207,32 +214,9 @@ public class NegotiationServiceImpl
 					UUID.fromString(request.parentDataObjectId));
 
 			lopCER = new CreateExternRequest(lobjNeg.GetProcessID());
-			lopCER.mlngDays = request.replylimit;
 			lopCER.mstrSubject = request.subject;
-			lopCER.mstrBody = request.text;
-			lopCER.mstrEmailID = request.emailId;
-			if ( request.upgrades == null )
-				lopCER.mobjDocOps = null;
-			else
-			{
-				lopCER.mobjDocOps = new DocOps();
-				lopCER.mobjDocOps.marrModify = null;
-				lopCER.mobjDocOps.marrDelete = null;
-				lopCER.mobjDocOps.marrCreate = new DocumentData[request.upgrades.length];
-				for ( i = 0; i < request.upgrades.length; i++ )
-				{
-					lopCER.mobjDocOps.marrCreate[i] = new DocumentData();
-					lopCER.mobjDocOps.marrCreate[i].mstrName = request.upgrades[i].name;
-					lopCER.mobjDocOps.marrCreate[i].midOwnerType = Constants.ObjID_Negotiation;
-					lopCER.mobjDocOps.marrCreate[i].midOwnerId = lobjNeg.getKey();
-					lopCER.mobjDocOps.marrCreate[i].midDocType = UUID.fromString(request.upgrades[i].docTypeId);
-					lopCER.mobjDocOps.marrCreate[i].mstrText = null;
-					lopCER.mobjDocOps.marrCreate[i].mobjFile = FileServiceImpl.GetFileXferStorage().
-							get(UUID.fromString(request.upgrades[i].storageId)).GetVarData();
-					lopCER.mobjDocOps.marrCreate[i].marrInfo = null;
-					lopCER.mobjDocOps.marrCreate[i].mobjPrevValues = null;
-				}
-			}
+			lopCER.mobjMessage = MessageBridge.incomingToServer(request.message, Constants.ObjID_Negotiation);
+			lopCER.mlngDays = request.replylimit;
 
 			lopCER.Execute();
 		}

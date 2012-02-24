@@ -38,9 +38,12 @@ public class Negotiation
 		private static final long serialVersionUID = 1L;
 
 		public String negotiationId;
-		public String notes;
-		public String emailId;
-		public AttachmentDocUpgrade[] upgrades;
+		public IncomingMessage message;
+
+		public Response()
+		{
+			message = new IncomingMessage();
+		}
 	}
 
 	public static class Grant
@@ -50,9 +53,9 @@ public class Negotiation
 
 		public String negotiationId;
 		public OutgoingMessage message;
-		public String[] securedObjectIds;
-		public String[] lineIds;
-		public String effectiveDate;
+		public String effectDate;
+//		public String[] securedObjectIds;
+//		public String[] lineIds;
 
 		public Grant()
 		{

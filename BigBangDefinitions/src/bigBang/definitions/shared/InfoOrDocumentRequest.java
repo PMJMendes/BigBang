@@ -14,9 +14,12 @@ public class InfoOrDocumentRequest
 		private static final long serialVersionUID = 1L;
 
 		public String requestId;
-		public String notes;
-		public String emailId;
-		public AttachmentDocUpgrade[] upgrades;
+		public IncomingMessage message;
+
+		public Response()
+		{
+			message = new IncomingMessage();
+		}
 	}
 
 	//The cancellation data

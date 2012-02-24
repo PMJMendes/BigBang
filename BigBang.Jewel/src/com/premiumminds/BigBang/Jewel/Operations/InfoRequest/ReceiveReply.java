@@ -16,10 +16,10 @@ import Jewel.Petri.SysObjects.JewelPetriException;
 import Jewel.Petri.SysObjects.UndoableOperation;
 
 import com.premiumminds.BigBang.Jewel.Constants;
+import com.premiumminds.BigBang.Jewel.Data.IncomingMessageData;
 import com.premiumminds.BigBang.Jewel.Objects.AgendaItem;
 import com.premiumminds.BigBang.Jewel.Objects.InfoRequest;
 import com.premiumminds.BigBang.Jewel.Objects.RequestAddress;
-import com.premiumminds.BigBang.Jewel.Operations.DocOps;
 import com.premiumminds.BigBang.Jewel.SysObjects.MailConnector;
 
 public class ReceiveReply
@@ -27,12 +27,8 @@ public class ReceiveReply
 {
 	private static final long serialVersionUID = 1L;
 
-	public String mstrNotes;
-	public String mstrEmailID;
-	public DocOps mobjDocOps;
+	public IncomingMessageData mobjMessage;
 	private boolean mbFromEmail;
-	private String mstrSubject;
-	private String mstrBody;
 	private String mstrNewEmailID;
 
 	public ReceiveReply(UUID pidProcess)
@@ -56,17 +52,17 @@ public class ReceiveReply
 
 		lstrResult = new StringBuilder("A resposta ao pedido foi a seguinte:");
 
-		if ( mstrNotes != null )
-			lstrResult.append(pstrLineBreak).append(mstrNotes);
+		if ( mobjMessage.mstrBody != null )
+			lstrResult.append(pstrLineBreak).append(mobjMessage.mstrBody);
 
 		if ( mbFromEmail )
 		{
-			lstrResult.append(pstrLineBreak).append(mstrSubject);
-			lstrResult.append(pstrLineBreak).append(mstrBody);
+			lstrResult.append(pstrLineBreak).append(mobjMessage.mstrSubject);
+			lstrResult.append(pstrLineBreak).append(mobjMessage.mstrBody);
 		}
 
-		if ( mobjDocOps != null )
-			mobjDocOps.LongDesc(lstrResult, pstrLineBreak);
+		if ( mobjMessage.mobjDocOps != null )
+			mobjMessage.mobjDocOps.LongDesc(lstrResult, pstrLineBreak);
 
 		return lstrResult.toString();
 	}
@@ -118,20 +114,20 @@ public class ReceiveReply
 			throw new JewelPetriException(e.getMessage(), e);
 		}
 
-		if ( mobjDocOps != null )
-			mobjDocOps.RunSubOp(pdb, GetProcess().GetParent().GetDataKey());
+		if ( mobjMessage.mobjDocOps != null )
+			mobjMessage.mobjDocOps.RunSubOp(pdb, GetProcess().GetParent().GetDataKey());
 
 		GetProcess().Stop(pdb);
 
-		if ( mstrEmailID != null )
+		if ( mobjMessage.mstrEmailID != null )
 		{
 			mbFromEmail = true;
 			try
 			{
-				lobjItem = MailConnector.DoGetItem(mstrEmailID);
-				mstrSubject = lobjItem.getSubject();
-				mstrBody = lobjItem.getBody().toString();
-				mstrNewEmailID = MailConnector.DoProcessItem(mstrEmailID).getId().getUniqueId();
+				lobjItem = MailConnector.DoGetItem(mobjMessage.mstrEmailID);
+				mobjMessage.mstrSubject = lobjItem.getSubject();
+				mobjMessage.mstrBody = lobjItem.getBody().toString();
+				mstrNewEmailID = MailConnector.DoProcessItem(mobjMessage.mstrEmailID).getId().getUniqueId();
 			}
 			catch (Throwable e)
 			{
@@ -149,8 +145,8 @@ public class ReceiveReply
 		if ( mbFromEmail )
 			lstrResult.append(" O email recebido será re-disponibilizado para outra utilização.");
 
-		if ( mobjDocOps != null )
-			mobjDocOps.UndoDesc(lstrResult, pstrLineBreak);
+		if ( mobjMessage.mobjDocOps != null )
+			mobjMessage.mobjDocOps.UndoDesc(lstrResult, pstrLineBreak);
 
 		return lstrResult.toString();
 	}
@@ -164,8 +160,8 @@ public class ReceiveReply
 		if ( mbFromEmail )
 			lstrResult.append(" O email recebido foi re-disponibilizado para outra utilização.");
 
-		if ( mobjDocOps != null )
-			mobjDocOps.UndoLongDesc(lstrResult, pstrLineBreak);
+		if ( mobjMessage.mobjDocOps != null )
+			mobjMessage.mobjDocOps.UndoLongDesc(lstrResult, pstrLineBreak);
 
 		return lstrResult.toString();
 	}
@@ -182,8 +178,8 @@ public class ReceiveReply
 
 		GetProcess().Restart(pdb);
 
-		if ( mobjDocOps != null )
-			mobjDocOps.UndoSubOp(pdb, GetProcess().GetParent().GetDataKey());
+		if ( mobjMessage.mobjDocOps != null )
+			mobjMessage.mobjDocOps.UndoSubOp(pdb, GetProcess().GetParent().GetDataKey());
 
 		ldtNow = new Timestamp(new java.util.Date().getTime());
 		try
@@ -256,9 +252,9 @@ public class ReceiveReply
 
 		larrTally = new ArrayList<UndoSet>();
 
-		if ( mobjDocOps != null )
+		if ( mobjMessage.mobjDocOps != null )
 		{
-			larrAux = mobjDocOps.GetSubSet();
+			larrAux = mobjMessage.mobjDocOps.GetSubSet();
 			for ( j = 0; j < larrAux.length; j++ )
 			{
 				if ( !Constants.ObjID_Document.equals(larrAux[j].midType) )

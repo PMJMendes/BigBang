@@ -1,5 +1,6 @@
 package com.premiumminds.BigBang.Jewel.Operations.Negotiation;
 
-public class ReceiveQuote {
+public class ReceiveQuote
+{
 
 }

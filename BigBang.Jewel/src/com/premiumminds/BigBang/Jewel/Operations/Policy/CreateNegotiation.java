@@ -19,6 +19,7 @@ import com.premiumminds.BigBang.Jewel.Objects.Negotiation;
 import com.premiumminds.BigBang.Jewel.Objects.Policy;
 import com.premiumminds.BigBang.Jewel.Operations.ContactOps;
 import com.premiumminds.BigBang.Jewel.Operations.DocOps;
+import com.premiumminds.BigBang.Jewel.Operations.Negotiation.ExternAllowGrant;
 
 public class CreateNegotiation
 	extends Operation
@@ -98,6 +99,7 @@ public class CreateNegotiation
 			lobjProc = lobjScript.CreateInstance(Engine.getCurrentNameSpace(), lobjAux.getKey(), GetProcess().getKey(),
 					GetContext(), pdb);
 			lobjProc.SetManagerID(mobjData.midManager, pdb);
+			TriggerOp(new ExternAllowGrant(lobjProc.getKey()), pdb);
 
 			ldtAux = new Timestamp(new java.util.Date().getTime());
 	    	ldtAux2 = Calendar.getInstance();

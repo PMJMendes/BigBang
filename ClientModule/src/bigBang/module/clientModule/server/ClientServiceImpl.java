@@ -33,7 +33,7 @@ import bigBang.library.server.BigBangPermissionServiceImpl;
 import bigBang.library.server.ContactsServiceImpl;
 import bigBang.library.server.DocumentServiceImpl;
 import bigBang.library.server.InfoOrDocumentRequestServiceImpl;
-import bigBang.library.server.OutgoingHeaderBridge;
+import bigBang.library.server.MessageBridge;
 import bigBang.library.server.SearchServiceBase;
 import bigBang.library.server.TransferManagerServiceImpl;
 import bigBang.library.shared.BigBangException;
@@ -357,7 +357,7 @@ public class ClientServiceImpl
 
 			lopCIR = new CreateInfoRequest(lobjClient.GetProcessID());
 			lopCIR.midRequestType = UUID.fromString(request.requestTypeId);
-			lopCIR.mobjMessage = OutgoingHeaderBridge.toServer(request.message);
+			lopCIR.mobjMessage = MessageBridge.outgoingToServer(request.message);
 			lopCIR.mlngDays = request.replylimit;
 
 			lopCIR.Execute();
