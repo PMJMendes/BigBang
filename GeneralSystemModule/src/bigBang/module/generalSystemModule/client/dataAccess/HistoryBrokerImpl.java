@@ -118,7 +118,7 @@ HistoryBroker {
 			service.getItem(itemId, new BigBangAsyncCallback<HistoryItem>() {
 
 				@Override
-				public void onSuccess(HistoryItem result) {
+				public void onResponseSuccess(HistoryItem result) {
 					handler.onResponse(result);
 				}
 			});
@@ -132,7 +132,7 @@ HistoryBroker {
 		this.service.undo(undoItemId, new BigBangAsyncCallback<HistoryItem>() {
 
 			@Override
-			public void onSuccess(HistoryItem result) {
+			public void onResponseSuccess(HistoryItem result) {
 				if(cache.contains(result.id))
 					cache.update(result.id, result);
 				for(int i = 0; i < result.alteredEntities.length; i++) {

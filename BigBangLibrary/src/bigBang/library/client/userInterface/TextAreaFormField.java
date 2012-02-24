@@ -3,7 +3,6 @@ package bigBang.library.client.userInterface;
 import bigBang.library.client.FieldValidator;
 import bigBang.library.client.FormField;
 import bigBang.library.client.event.ContentChangedEvent;
-import bigBang.library.client.event.ContentChangedEventHandler;
 
 import com.google.gwt.event.dom.client.BlurEvent;
 import com.google.gwt.event.dom.client.BlurHandler;

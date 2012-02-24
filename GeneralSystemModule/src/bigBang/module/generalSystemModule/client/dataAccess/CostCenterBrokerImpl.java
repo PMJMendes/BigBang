@@ -42,7 +42,7 @@ public class CostCenterBrokerImpl extends DataBroker<CostCenter> implements Cost
 			this.service.getCostCenterList(new BigBangAsyncCallback<CostCenter[]>() {
 
 				@Override
-				public void onSuccess(CostCenter[] result) {
+				public void onResponseSuccess(CostCenter[] result) {
 					CostCenterBrokerImpl.this.cache.clear();
 					for(int i = 0; i < result.length; i++) {
 						cache.add(result[i].id, result[i]);
@@ -57,11 +57,11 @@ public class CostCenterBrokerImpl extends DataBroker<CostCenter> implements Cost
 				}
 
 				@Override
-				public void onFailure(Throwable caught) {
+				public void onResponseFailure(Throwable caught) {
 					handler.onError(new String[]{
 							new String("Could not get the cost centers list")	
 					});
-					super.onFailure(caught);
+					super.onResponseFailure(caught);
 				}
 
 			});
@@ -97,7 +97,7 @@ public class CostCenterBrokerImpl extends DataBroker<CostCenter> implements Cost
 		this.service.createCostCenter(costCenter, new BigBangAsyncCallback<CostCenter>() {
 
 			@Override
-			public void onSuccess(CostCenter result) {
+			public void onResponseSuccess(CostCenter result) {
 				cache.add(result.id, result);
 				incrementDataVersion();
 				for(DataBrokerClient<CostCenter> c : getClients()) {
@@ -108,11 +108,11 @@ public class CostCenterBrokerImpl extends DataBroker<CostCenter> implements Cost
 			}
 			
 			@Override
-			public void onFailure(Throwable caught) {
+			public void onResponseFailure(Throwable caught) {
 				handler.onError(new String[]{
 						new String("Could not create cost center")
 				});
-				super.onFailure(caught);
+				super.onResponseFailure(caught);
 			}
 			
 		});
@@ -124,7 +124,7 @@ public class CostCenterBrokerImpl extends DataBroker<CostCenter> implements Cost
 		this.service.saveCostCenter(costCenter, new BigBangAsyncCallback<CostCenter>() {
 
 			@Override
-			public void onSuccess(CostCenter result) {
+			public void onResponseSuccess(CostCenter result) {
 				cache.update(result.id, result);
 				incrementDataVersion();
 				for(DataBrokerClient<CostCenter> c : getClients()) {
@@ -135,11 +135,11 @@ public class CostCenterBrokerImpl extends DataBroker<CostCenter> implements Cost
 			}
 			
 			@Override
-			public void onFailure(Throwable caught) {
+			public void onResponseFailure(Throwable caught) {
 				handler.onError(new String[]{
 						new String("Could not update cost center")
 				});
-				super.onFailure(caught);
+				super.onResponseFailure(caught);
 			}
 			
 		});
@@ -151,7 +151,7 @@ public class CostCenterBrokerImpl extends DataBroker<CostCenter> implements Cost
 		service.deleteCostCenter(costCenterId, new BigBangAsyncCallback<Void>() {
 
 			@Override
-			public void onSuccess(Void result) {
+			public void onResponseSuccess(Void result) {
 				cache.remove(costCenterId);
 				incrementDataVersion();
 				for(DataBrokerClient<CostCenter> c : getClients()) {
@@ -162,11 +162,11 @@ public class CostCenterBrokerImpl extends DataBroker<CostCenter> implements Cost
 			}
 			
 			@Override
-			public void onFailure(Throwable caught) {
+			public void onResponseFailure(Throwable caught) {
 				handler.onError(new String[]{
 						new String("Could not delete cost center.")
 				});
-				super.onFailure(caught);
+				super.onResponseFailure(caught);
 			}
 			
 		});

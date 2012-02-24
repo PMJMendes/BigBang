@@ -278,7 +278,7 @@ public class DocumentViewPresenter implements ViewPresenter, DocumentsBrokerClie
 							docuShareservice.getItem(event.getValue().handle, new BigBangAsyncCallback<String>() {
 
 								@Override
-								public void onSuccess(String result) {
+								public void onResponseSuccess(String result) {
 
 									view.getFileNote().hasFile(true);
 									view.getFileNote().getFilename().setValue(event.getValue().desc);
@@ -290,9 +290,9 @@ public class DocumentViewPresenter implements ViewPresenter, DocumentsBrokerClie
 								}
 
 								@Override
-								public void onFailure(Throwable caught) {
+								public void onResponseFailure(Throwable caught) {
 									EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não foi possível obter o ficheiro."), TYPE.TRAY_NOTIFICATION));
-									super.onFailure(caught);
+									super.onResponseFailure(caught);
 								}
 							});
 

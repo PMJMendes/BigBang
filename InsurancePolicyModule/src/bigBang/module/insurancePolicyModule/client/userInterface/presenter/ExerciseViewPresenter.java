@@ -318,25 +318,25 @@ public class ExerciseViewPresenter implements ViewPresenter{
 		});
 	}
 
-	private void showCreateExercise(final String ownerId) {
+	private void showCreateExercise(String ownerId) {
 		policyBroker.getPolicy(ownerId, new ResponseHandler<InsurancePolicy>() {
 
 			@Override
 			public void onResponse(final InsurancePolicy policy) {
-				boolean hasPermissions = PermissionChecker.hasPermission(policy, BigBangConstants.OperationIds.InsurancePolicyProcess.CREATE_EXERCISE);
+				boolean hasPermissions = true; //PermissionChecker.hasPermission(policy, BigBangConstants.OperationIds.InsurancePolicyProcess.CREATE_EXERCISE);
 
 				if(hasPermissions){
-					if(policyBroker.isTemp(ownerId)){
-						broker.createExercise(policyBroker.getEffectiveId(ownerId), new ResponseHandler<Exercise>() {
+					if(policyBroker.isTemp(policy.id)){
+						broker.createExercise(policy.id, new ResponseHandler<Exercise>() {
 
 							@Override
-							public void onResponse(Exercise object) {
+							public void onResponse(Exercise exercise) {
 								view.getExerciseForm().setReadOnly(false);
-								view.setSaveModeEnabled(true);
 								view.allowEdit(true);
 								view.allowDelete(true);
+								view.setSaveModeEnabled(true);
 								view.getInsurancePolicyForm().setValue(policy);
-								view.getExerciseForm().setValue(object);
+								view.getExerciseForm().setValue(exercise);
 							}
 
 							@Override
@@ -345,18 +345,18 @@ public class ExerciseViewPresenter implements ViewPresenter{
 							}
 						});
 					}else{
-						policyBroker.openPolicyResource(ownerId, new ResponseHandler<InsurancePolicy>() {
+						policyBroker.openPolicyResource(policy.id, new ResponseHandler<InsurancePolicy>() {
 
 							@Override
 							public void onResponse(InsurancePolicy tempPolicy) {
-								broker.createExercise(policyBroker.getEffectiveId(tempPolicy.id), new ResponseHandler<Exercise>() {
+								broker.createExercise(tempPolicy.id, new ResponseHandler<Exercise>() {
 
 									@Override
 									public void onResponse(Exercise object) {
 										view.getExerciseForm().setReadOnly(false);
-										view.setSaveModeEnabled(true);
 										view.allowEdit(true);
 										view.allowDelete(true);
+										view.setSaveModeEnabled(true);
 										view.getInsurancePolicyForm().setValue(policy);
 										view.getExerciseForm().setValue(object);
 									}

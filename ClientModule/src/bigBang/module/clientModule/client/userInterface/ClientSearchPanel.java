@@ -34,7 +34,7 @@ import com.google.gwt.i18n.client.DateTimeFormat;
  */
 public class ClientSearchPanel extends SearchPanel<ClientStub> implements ClientProcessDataBrokerClient {
 
-	protected static enum Filters {
+	public static enum Filters {
 		MANAGER,
 		COST_CENTER,
 		MEDIATOR,

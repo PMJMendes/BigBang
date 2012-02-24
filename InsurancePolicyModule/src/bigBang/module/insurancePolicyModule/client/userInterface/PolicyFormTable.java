@@ -17,12 +17,14 @@ import bigBang.library.client.userInterface.RadioButtonFormField;
 import bigBang.library.client.userInterface.TextBoxFormField;
 import bigBang.library.client.userInterface.view.View;
 
+import com.google.gwt.dom.client.Style.Overflow;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.user.client.ui.Grid;
 import com.google.gwt.user.client.ui.HasValue;
 import com.google.gwt.user.client.ui.HorizontalPanel;
+import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
 public class PolicyFormTable extends View implements HasValue<TableSection> {
@@ -178,7 +180,6 @@ public class PolicyFormTable extends View implements HasValue<TableSection> {
 
 		grid = new Grid();
 		wrapper.add(grid);
-		grid.setSize("100%", "100%");
 
 		this.setReadOnly(false);
 	}
@@ -207,6 +208,10 @@ public class PolicyFormTable extends View implements HasValue<TableSection> {
 	
 	public void clearFields(){
 		for(String key : this.tableFields.keySet()){
+			Map<String, Field> coverageFields = this.tableFields.get(key);
+			for(Field f : coverageFields.values()) {
+				f.removeFromParent();
+			}
 			this.tableFields.get(key).clear();
 		}
 	}
@@ -284,8 +289,7 @@ public class PolicyFormTable extends View implements HasValue<TableSection> {
 			Map<String, Field> coverageColumns = this.tableFields.get(tableField.coverageId);
 			coverageColumns.put(tableField.columnIndex+"", field);
 
-			field.setWidth("100%");
-			field.setFieldWidth("100%");
+			field.setFieldWidth("175px");
 			field.setReadOnly(readOnly);
 			this.grid.setWidget(DATA_ROW_OFFSET + coverageIndex, DATA_COLUMN_OFFSET + tableField.columnIndex, field);
 		}
@@ -396,10 +400,9 @@ public class PolicyFormTable extends View implements HasValue<TableSection> {
 
 	@Override
 	public void setValue(TableSection value, boolean fireEvents) {
-		TableSection oldValue = getValue();
 		setData(value);
 		if(fireEvents){
-			ValueChangeEvent.fireIfNotEqual(this, oldValue, value);
+			ValueChangeEvent.fire(this, value);
 		}
 	}
 

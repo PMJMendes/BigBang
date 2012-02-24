@@ -60,7 +60,7 @@ public abstract class FormField<T> extends View implements HasValue<T>, Validata
 	}
 
 	public void setValue(T value, boolean fireEvents) {
-		field.setValue(value);
+		field.setValue(value, false);
 		if(fireEvents)
 			ValueChangeEvent.fire(this, value);
 	}

@@ -77,16 +77,16 @@ public class ChangePasswordViewPresenter implements ViewPresenter {
 			service.changePassword(view.getCurrentPassword().getValue(), newPassword, new BigBangAsyncCallback<String>() {
 
 				@Override
-				public void onSuccess(String result) {
+				public void onResponseSuccess(String result) {
 					onPasswordChangeSuccess();
 					clearView();
 				}
 				
 				@Override
-				public void onFailure(Throwable caught) {
+				public void onResponseFailure(Throwable caught) {
 					onPasswordChangeFailed();
 					clearView();
-					super.onFailure(caught);
+					super.onResponseFailure(caught);
 				}
 			});
 		}

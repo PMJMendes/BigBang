@@ -244,7 +244,7 @@ public abstract class DocumentSections{
 		private Label charRemainLabel;
 
 		private ActionInvokedEventHandler<Action> actionHandler;
-		private boolean hasFile;
+		protected boolean hasFile;
 
 		public class FilenameTextBoxFormField extends TextBoxFormField{
 

@@ -323,11 +323,11 @@ public class InsuredObjectViewPresenter implements ViewPresenter {
 
 			@Override
 			public void onResponse(final InsurancePolicy policy) {
-				boolean hasPermissions = PermissionChecker.hasPermission(policy, BigBangConstants.OperationIds.InsurancePolicyProcess.INCLUDE_INSURED_OBJECT);
+				boolean hasPermissions = true; //PermissionChecker.hasPermission(policy, BigBangConstants.OperationIds.InsurancePolicyProcess.INCLUDE_INSURED_OBJECT);
 
 				if(hasPermissions){
 					if(policyBroker.isTemp(ownerId)){
-						broker.createInsuredObject(policyBroker.getEffectiveId(ownerId), new ResponseHandler<InsuredObject>() {
+						broker.createInsuredObject(ownerId, new ResponseHandler<InsuredObject>() {
 
 							@Override
 							public void onResponse(InsuredObject object) {
@@ -349,7 +349,7 @@ public class InsuredObjectViewPresenter implements ViewPresenter {
 
 							@Override
 							public void onResponse(InsurancePolicy tempPolicy) {
-								broker.createInsuredObject(policyBroker.getEffectiveId(tempPolicy.id), new ResponseHandler<InsuredObject>() {
+								broker.createInsuredObject(tempPolicy.id, new ResponseHandler<InsuredObject>() {
 
 									@Override
 									public void onResponse(InsuredObject object) {
@@ -438,7 +438,11 @@ public class InsuredObjectViewPresenter implements ViewPresenter {
 	}
 
 	private void onUserLacksCreatePermission(){
-		NavigationHistoryManager.getInstance().reload();
+		EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não é possível criar a Unidade de Risco"), TYPE.ALERT_NOTIFICATION));
+		NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
+		item.removeParameter("operation");
+		item.removeParameter("objectid");
+		NavigationHistoryManager.getInstance().go(item);
 	}
 
 	private void onOpenResourceFailed(){

@@ -22,7 +22,7 @@ import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
-public class TypifiedTextFormField extends FormField<String> implements TypifiedTextClient{
+public class TypifiedTextFormField extends FormField<TypifiedText> implements TypifiedTextClient{
 
 	private TypifiedTextBroker broker;
 	private ExpandableListBoxFormField labels = new ExpandableListBoxFormField(null,"Etiqueta", ManagementPanelType.TYPIFIED_TEXT);
@@ -81,89 +81,97 @@ public class TypifiedTextFormField extends FormField<String> implements Typified
 	}
 
 	public void setTypifiedTexts(String tag){
-
+		if(this.tag != null){
+			broker.unregisterClient(this.tag, this);
+		}
+		tag = tag != null && tag.isEmpty() ? null : "@" + tag;
 		this.tag = tag;
-		broker.unregisterClient(this);
-		broker.registerClient(tag, this);
-		labels.setListId(BigBangConstants.TypifiedListIds.TYPIFIED_TEXT+"/"+tag, new ResponseHandler<Void>() {
+		if(this.tag != null){
+			broker.registerClient(tag, this);
+			labels.setListId(BigBangConstants.TypifiedListIds.TYPIFIED_TEXT+"/"+tag, new ResponseHandler<Void>() {
 
-			@Override
-			public void onResponse(Void response) {
+				@Override
+				public void onResponse(Void response) {
+					return;
+				}
 
-
-			}
-
-			@Override
-			public void onError(Collection<ResponseError> errors) {
-
-			}
-		});
+				@Override
+				public void onError(Collection<ResponseError> errors) {
+					return;
+				}
+			});
+		}
+	}
+	
+	@Override
+	public void setValue(TypifiedText value, boolean fireEvents) {
+		this.subject.setValue(value.subject);
+		this.textBody.setValue(value.text);
+		if(fireEvents)
+			ValueChangeEvent.fire(this, value);
+	}
+	
+	@Override
+	public TypifiedText getValue() {
+		TypifiedText result = new TypifiedText();
+		result.subject = this.subject.getValue();
+		result.text = this.textBody.getValue();
+		return result;
 	}
 
 	@Override
 	public void clear() {
-
 		subject.clear();
 		textBody.clear();
 	}
 
 	@Override
 	public void setReadOnly(boolean readonly) {
-
-		subject.setEditable(readonly);
-		textBody.setEditable(readonly);
+		subject.setReadOnly(readonly);
+		textBody.setReadOnly(readonly);
 	}
 
 	@Override
 	public boolean isReadOnly() {
-
-		return false;
+		return textBody.isReadOnly() || subject.isReadOnly();
 	}
 
 	@Override
 	public void setLabelWidth(String width) {
-
-
+		return;
 	}
 
 	@Override
 	public void setTypifiedTexts(List<TypifiedText> texts) {
-
-
+		return;
 	}
 
 
 	@Override
 	public void removeText(TypifiedText text) {
-
-
+		return;
 	}
 
 
 	@Override
 	public void addText(TypifiedText text) {
-
-
-
+		return;
 	}
 
 
 	@Override
 	public void updateText(TypifiedText text) {
-
-
+		return;
 	}
 
 	@Override
 	public int getTypifiedTextDataVersionNumber() {
-
 		return 0;
 	}
 
 
 	@Override
 	public void setTypifiedTextDataVersionNumber(int number) {
-
-
+		return;
 	}
 }

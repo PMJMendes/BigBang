@@ -33,7 +33,7 @@ public class SubProcessesBrokerImpl extends DataBroker<BigBangProcess>
 		service.getSubProcesses(ownerId, new BigBangAsyncCallback<BigBangProcess[]>() {
 
 			@Override
-			public void onSuccess(BigBangProcess[] result) {
+			public void onResponseSuccess(BigBangProcess[] result) {
 				Collection<BigBangProcess> subProcesses = new ArrayList<BigBangProcess>();
 				for(int i = 0; i < result.length; i++) {
 					subProcesses.add(result[i]);
@@ -47,11 +47,11 @@ public class SubProcessesBrokerImpl extends DataBroker<BigBangProcess>
 			}
 			
 			@Override
-			public void onFailure(Throwable caught) {
+			public void onResponseFailure(Throwable caught) {
 				handler.onError(new String[]{
 					new String("Could not get the sub processes")	
 				});
-				super.onFailure(caught);
+				super.onResponseFailure(caught);
 			}
 		});
 	}
@@ -61,16 +61,16 @@ public class SubProcessesBrokerImpl extends DataBroker<BigBangProcess>
 		service.getProcess(id, new BigBangAsyncCallback<BigBangProcess>() {
 
 			@Override
-			public void onSuccess(BigBangProcess result) {
+			public void onResponseSuccess(BigBangProcess result) {
 				handler.onResponse(result);
 			}
 
 			@Override
-			public void onFailure(Throwable caught) {
+			public void onResponseFailure(Throwable caught) {
 				handler.onError(new String[]{
 					new String("Could not get the sub process")	
 				});
-				super.onFailure(caught);
+				super.onResponseFailure(caught);
 			}
 		});
 	}

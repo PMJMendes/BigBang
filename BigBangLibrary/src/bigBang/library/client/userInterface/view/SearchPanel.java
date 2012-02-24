@@ -308,6 +308,10 @@ public abstract class SearchPanel<T extends SearchResult> extends FilterableList
 		}
 	}
 	
+	public SearchDataBroker<T> getSearchBroker(){
+		return this.broker;
+	}
+	
 	/**
 	 * Performs A search query to the class' defined search service
 	 */

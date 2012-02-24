@@ -65,7 +65,7 @@ public class LoginModule implements Module {
 				AuthenticationService.Util.getInstance().logout(new BigBangAsyncCallback<String>() {
 
 					@Override
-					public void onSuccess(String result) {
+					public void onResponseSuccess(String result) {
 						GWT.log("logout");
 						Window.Location.reload();
 					}

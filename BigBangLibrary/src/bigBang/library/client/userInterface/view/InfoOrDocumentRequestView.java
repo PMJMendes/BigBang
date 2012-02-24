@@ -1,6 +1,7 @@
 package bigBang.library.client.userInterface.view;
 
 import bigBang.definitions.shared.InfoOrDocumentRequest;
+import bigBang.definitions.shared.ProcessBase;
 import bigBang.library.client.HasEditableValue;
 import bigBang.library.client.event.ActionInvokedEvent;
 import bigBang.library.client.event.ActionInvokedEventHandler;
@@ -9,19 +10,18 @@ import bigBang.library.client.userInterface.ListHeader;
 import bigBang.library.client.userInterface.presenter.InfoOrDocumentRequestViewPresenter;
 import bigBang.library.client.userInterface.presenter.InfoOrDocumentRequestViewPresenter.Action;
 
-import com.google.gwt.user.client.ui.HasWidgets;
-import com.google.gwt.user.client.ui.SimplePanel;
+import com.google.gwt.user.client.ui.HasValue;
 import com.google.gwt.user.client.ui.SplitLayoutPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
-public abstract class InfoOrDocumentRequestView extends View implements InfoOrDocumentRequestViewPresenter.Display{
+public abstract class InfoOrDocumentRequestView<T extends ProcessBase> extends View implements InfoOrDocumentRequestViewPresenter.Display<T>{
 	
 	protected InfoOrDocumentRequestForm form;
 	protected InfoOrDocumentRequestOperationsToolbar toolbar;
 	protected ActionInvokedEventHandler<Action> actionHandler;
-	protected HasWidgets ownerFormContainer; 
+	protected FormView<T> ownerForm;
 	
-	public InfoOrDocumentRequestView(){
+	public InfoOrDocumentRequestView(FormView<T> ownerForm){
 		SplitLayoutPanel mainWrapper = new SplitLayoutPanel();
 		initWidget(mainWrapper);
 		mainWrapper.setSize("100%", "100%");
@@ -39,10 +39,9 @@ public abstract class InfoOrDocumentRequestView extends View implements InfoOrDo
 			}
 		};
 
-		SimplePanel ownerFormContainer = new SimplePanel();
-		ownerFormContainer.setSize("100%", "100%");
-		this.ownerFormContainer = ownerFormContainer;
-		mainWrapper.addWest(ownerFormContainer, 665);
+		this.ownerForm = ownerForm;
+		ownerForm.setReadOnly(true);
+		mainWrapper.addWest(ownerForm, 665);
 		
 		VerticalPanel requestFormWrapper = new VerticalPanel();
 		requestFormWrapper.setSize("100%", "100%");
@@ -80,6 +79,11 @@ public abstract class InfoOrDocumentRequestView extends View implements InfoOrDo
 	@Override
 	public void registerActionHandler(ActionInvokedEventHandler<Action> handler) {
 		this.actionHandler = handler;
+	}
+
+	@Override
+	public HasValue<T> getOwnerForm() {
+		return this.ownerForm;
 	}
 
 }

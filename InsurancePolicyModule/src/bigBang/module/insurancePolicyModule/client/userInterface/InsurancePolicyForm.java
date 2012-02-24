@@ -32,6 +32,7 @@ import bigBang.library.client.userInterface.view.FormViewSection;
 import bigBang.module.insurancePolicyModule.client.dataAccess.PolicyTypifiedListBroker;
 import bigBang.module.insurancePolicyModule.shared.ModuleConstants;
 
+import com.google.gwt.dom.client.Style.Overflow;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.i18n.client.DateTimeFormat;
@@ -181,7 +182,8 @@ public abstract class InsurancePolicyForm extends FormView<InsurancePolicy> {
 
 	public InsurancePolicyForm(){
 		super();
-
+		this.scrollWrapper.getElement().getStyle().setOverflowX(Overflow.SCROLL);
+		
 		headerFields = new HashMap<String, HeaderFormField>();
 		extraFields = new HashMap<String, HeaderFormField>();
 
@@ -679,5 +681,11 @@ public abstract class InsurancePolicyForm extends FormView<InsurancePolicy> {
 
 	public HasValue<String> getInsuredObjectsField(){
 		return this.insuredObjects;
+	}
+	
+	@Override
+	public void clearInfo() {
+		super.clearInfo();
+		this.table.clear();
 	}
 }

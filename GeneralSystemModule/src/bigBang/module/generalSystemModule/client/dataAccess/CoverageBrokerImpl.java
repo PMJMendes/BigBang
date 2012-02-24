@@ -5,7 +5,6 @@ import java.util.Collection;
 import bigBang.definitions.client.dataAccess.CoverageBroker;
 import bigBang.definitions.client.dataAccess.CoverageDataBrokerClient;
 import bigBang.definitions.client.dataAccess.DataBroker;
-import bigBang.definitions.client.dataAccess.DataBrokerCache;
 import bigBang.definitions.client.dataAccess.DataBrokerClient;
 import bigBang.definitions.client.response.ResponseError;
 import bigBang.definitions.client.response.ResponseHandler;
@@ -49,7 +48,7 @@ CoverageBroker {
 			this.service.getLines(new BigBangAsyncCallback<Line[]>() {
 
 				@Override
-				public void onSuccess(Line[] result) {
+				public void onResponseSuccess(Line[] result) {
 					lines = result;
 
 					//Populates the caches
@@ -79,7 +78,7 @@ CoverageBroker {
 		this.service.createLine(line, new BigBangAsyncCallback<Line>() {
 
 			@Override
-			public void onSuccess(Line result) {
+			public void onResponseSuccess(Line result) {
 				//lines.add(result.id, result);//TODO
 				for(DataBrokerClient<Line> c : getClients()){
 					((CoverageDataBrokerClient) c).addLine(result);
@@ -107,7 +106,7 @@ CoverageBroker {
 		this.service.deleteLine(lineId, new BigBangAsyncCallback<Void>() {
 
 			@Override
-			public void onSuccess(Void result) {
+			public void onResponseSuccess(Void result) {
 				//lines.remove(lineId);//TODO
 				incrementDataVersion();
 				for(DataBrokerClient<Line> c : CoverageBrokerImpl.this.getClients()){
@@ -125,7 +124,7 @@ CoverageBroker {
 			this.service.getLines(new BigBangAsyncCallback<Line[]>() {
 
 				@Override
-				public void onSuccess(Line[] result) {
+				public void onResponseSuccess(Line[] result) {
 					lines = result;
 
 					//Populates the caches
@@ -174,7 +173,7 @@ CoverageBroker {
 		this.service.createSubLine(subLine, new BigBangAsyncCallback<SubLine>() {
 
 			@Override
-			public void onSuccess(SubLine result) {
+			public void onResponseSuccess(SubLine result) {
 
 				SubLine[] oldArray = getSubLinesLocal(result.lineId);
 				SubLine[] newArray = new SubLine[oldArray.length+1];
@@ -212,7 +211,7 @@ CoverageBroker {
 		this.service.saveSubLine(subLine, new BigBangAsyncCallback<SubLine>() {
 
 			@Override
-			public void onSuccess(SubLine result) {
+			public void onResponseSuccess(SubLine result) {
 
 				SubLine[] subLines = getSubLinesLocal(result.lineId);
 
@@ -253,7 +252,7 @@ CoverageBroker {
 		service.deleteSubLine(subLineId, new BigBangAsyncCallback<Void>() {
 
 			@Override
-			public void onSuccess(Void result) {
+			public void onResponseSuccess(Void result) {
 
 				SubLine[] oldArray = getSubLinesLocal(subLineId);
 				SubLine[] newArray = new SubLine[oldArray.length-1];
@@ -302,7 +301,7 @@ CoverageBroker {
 			this.service.getLines(new BigBangAsyncCallback<Line[]>() {
 
 				@Override
-				public void onSuccess(Line[] result) {
+				public void onResponseSuccess(Line[] result) {
 				 
 					lines = result;
 
@@ -354,7 +353,7 @@ CoverageBroker {
 		this.service.createCoverage(coverage, new BigBangAsyncCallback<Coverage>() {
 
 			@Override
-			public void onSuccess(Coverage result) {
+			public void onResponseSuccess(Coverage result) {
 
 				SubLine[] subLines = getSubLinesLocal(parentLineId);
 				Coverage[] oldArray = getCoveragesLocal(coverage.subLineId, subLines);
@@ -396,7 +395,7 @@ CoverageBroker {
 		this.service.saveCoverage(coverage, new BigBangAsyncCallback<Coverage>() {
 
 			@Override
-			public void onSuccess(Coverage result) {
+			public void onResponseSuccess(Coverage result) {
 
 				SubLine[] subLines = getSubLinesLocal(parentLineId);
 				Coverage[] coverages = getCoveragesLocal(coverage.subLineId, subLines);
@@ -431,7 +430,7 @@ CoverageBroker {
 		service.deleteCoverage(coverageId, new BigBangAsyncCallback<Void>() {
 
 			@Override
-			public void onSuccess(Void result) {
+			public void onResponseSuccess(Void result) {
 
 				SubLine[] subLines = getSubLinesLocal(parentLineId);
 				Coverage[] oldArray = getCoveragesLocal(parentSubLineId, subLines);
@@ -483,7 +482,7 @@ CoverageBroker {
 			this.service.getLines(new BigBangAsyncCallback<Line[]>() {
 
 				@Override
-				public void onSuccess(Line[] result) {
+				public void onResponseSuccess(Line[] result) {
 					lines = result;
 
 					//Populates the caches
@@ -542,7 +541,7 @@ CoverageBroker {
 		this.service.createTax(tax, new BigBangAsyncCallback<Tax>() {
 
 			@Override
-			public void onSuccess(Tax result) {
+			public void onResponseSuccess(Tax result) {
 
 				SubLine[] subLines = getSubLinesLocal(parentLineId);
 				Coverage[] coverages = getCoveragesLocal(parentSubLineId, subLines);
@@ -582,7 +581,7 @@ CoverageBroker {
 		this.service.saveTax(tax, new BigBangAsyncCallback<Tax>() {
 
 			@Override
-			public void onSuccess(Tax result) {
+			public void onResponseSuccess(Tax result) {
 
 				SubLine[] subLines = getSubLinesLocal(parentLineId);
 				Coverage[] coverages = getCoveragesLocal(parentSubLineId, subLines);
@@ -620,7 +619,7 @@ CoverageBroker {
 		this.service.deleteTax(taxId, new BigBangAsyncCallback<Void>() {
 
 			@Override
-			public void onSuccess(Void result) {
+			public void onResponseSuccess(Void result) {
 				
 				SubLine[] subLines = getSubLinesLocal(parentLineId);
 				Coverage[] coverages = getCoveragesLocal(parentSubLineId, subLines);

@@ -42,7 +42,7 @@ public class InsuranceAgencyBrokerImpl extends DataBroker<InsuranceAgency> imple
 			this.service.getInsuranceAgencies(new BigBangAsyncCallback<InsuranceAgency[]>() {
 
 				@Override
-				public void onSuccess(InsuranceAgency[] result) {
+				public void onResponseSuccess(InsuranceAgency[] result) {
 					InsuranceAgencyBrokerImpl.this.cache.clear();
 					for(int i = 0; i < result.length; i++) {
 						cache.add(result[i].id, result[i]);
@@ -57,11 +57,11 @@ public class InsuranceAgencyBrokerImpl extends DataBroker<InsuranceAgency> imple
 				}
 				
 				@Override
-				public void onFailure(Throwable caught) {
+				public void onResponseFailure(Throwable caught) {
 					handler.onError(new String[]{
 						new String("Could not get insurance agencies list")	
 					});
-					super.onFailure(caught);
+					super.onResponseFailure(caught);
 				}
 				
 			});
@@ -94,7 +94,7 @@ public class InsuranceAgencyBrokerImpl extends DataBroker<InsuranceAgency> imple
 		this.service.createInsuranceAgency(agency, new BigBangAsyncCallback<InsuranceAgency>() {
 
 			@Override
-			public void onSuccess(InsuranceAgency result) {
+			public void onResponseSuccess(InsuranceAgency result) {
 				cache.add(result.id, result);
 				incrementDataVersion();
 				for(DataBrokerClient<InsuranceAgency> c : getClients()) {
@@ -105,11 +105,11 @@ public class InsuranceAgencyBrokerImpl extends DataBroker<InsuranceAgency> imple
 			}
 			
 			@Override
-			public void onFailure(Throwable caught) {
+			public void onResponseFailure(Throwable caught) {
 				handler.onError(new String[]{
 					new String("Could not create insurance agency")	
 				});
-				super.onFailure(caught);
+				super.onResponseFailure(caught);
 			}
 		});
 	}
@@ -120,7 +120,7 @@ public class InsuranceAgencyBrokerImpl extends DataBroker<InsuranceAgency> imple
 		this.service.saveInsuranceAgency(insuranceAgency, new BigBangAsyncCallback<InsuranceAgency>() {
 
 			@Override
-			public void onSuccess(InsuranceAgency result) {
+			public void onResponseSuccess(InsuranceAgency result) {
 				cache.update(result.id, result);
 				incrementDataVersion();
 				for(DataBrokerClient<InsuranceAgency> c : getClients()) {
@@ -131,11 +131,11 @@ public class InsuranceAgencyBrokerImpl extends DataBroker<InsuranceAgency> imple
 			}
 			
 			@Override
-			public void onFailure(Throwable caught) {
+			public void onResponseFailure(Throwable caught) {
 				handler.onError(new String[]{
 					new String("Could not update insurance agency")	
 				});
-				super.onFailure(caught);
+				super.onResponseFailure(caught);
 			}
 			
 		});
@@ -147,7 +147,7 @@ public class InsuranceAgencyBrokerImpl extends DataBroker<InsuranceAgency> imple
 		service.deleteInsuranceAgency(insuranceAgencyId, new BigBangAsyncCallback<Void>() {
 
 			@Override
-			public void onSuccess(Void result) {
+			public void onResponseSuccess(Void result) {
 				cache.remove(insuranceAgencyId);
 				incrementDataVersion();
 				for(DataBrokerClient<InsuranceAgency> c : getClients()) {
@@ -158,11 +158,11 @@ public class InsuranceAgencyBrokerImpl extends DataBroker<InsuranceAgency> imple
 			}
 			
 			@Override
-			public void onFailure(Throwable caught) {
+			public void onResponseFailure(Throwable caught) {
 				handler.onError(new String[]{
 						new String("Could not delete insurance agency")
 				});
-				super.onFailure(caught);
+				super.onResponseFailure(caught);
 			}
 			
 		});

@@ -145,7 +145,7 @@ public class ManagerTransferViewPresenter implements ViewPresenter{
 		ManagerTransferViewPresenter.this.managerTransferService.getTransfer(transferId, new BigBangAsyncCallback<ManagerTransfer>() {
 
 			@Override
-			public void onSuccess(ManagerTransfer result) {
+			public void onResponseSuccess(ManagerTransfer result) {
 				setManagerTransfer(result);
 			}
 		});
@@ -198,14 +198,14 @@ public class ManagerTransferViewPresenter implements ViewPresenter{
 		managerTransferService.acceptTransfer(this.transfer.id, new BigBangAsyncCallback<ManagerTransfer>() {
 
 			@Override
-			public void onSuccess(ManagerTransfer result) {
+			public void onResponseSuccess(ManagerTransfer result) {
 				onAcceptTransferSuccess();
 			}
 			
 			@Override
-			public void onFailure(Throwable caught) {
+			public void onResponseFailure(Throwable caught) {
 				onAcceptTransferFailed();
-				super.onFailure(caught);
+				super.onResponseFailure(caught);
 			}
 		});
 	}
@@ -214,14 +214,14 @@ public class ManagerTransferViewPresenter implements ViewPresenter{
 		managerTransferService.cancelTransfer(this.transfer.id, new BigBangAsyncCallback<ManagerTransfer>() {
 
 			@Override
-			public void onSuccess(ManagerTransfer result) {
+			public void onResponseSuccess(ManagerTransfer result) {
 				onRejectTransferSuccess();
 			}
 			
 			@Override
-			public void onFailure(Throwable caught) {
+			public void onResponseFailure(Throwable caught) {
 				onRejectTransferFailed();
-				super.onFailure(caught);
+				super.onResponseFailure(caught);
 			}
 		});
 	}
@@ -230,14 +230,14 @@ public class ManagerTransferViewPresenter implements ViewPresenter{
 		managerTransferService.cancelTransfer(this.transfer.id, new BigBangAsyncCallback<ManagerTransfer>() {
 
 			@Override
-			public void onSuccess(ManagerTransfer result) {
+			public void onResponseSuccess(ManagerTransfer result) {
 				onCancelTransferSuccess();
 			}
 			
 			@Override
-			public void onFailure(Throwable caught) {
+			public void onResponseFailure(Throwable caught) {
 				onCancelTransferFailed();
-				super.onFailure(caught);
+				super.onResponseFailure(caught);
 			}
 		});
 	}

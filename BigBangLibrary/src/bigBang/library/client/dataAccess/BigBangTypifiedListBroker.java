@@ -147,23 +147,23 @@ public class BigBangTypifiedListBroker implements TypifiedListBroker {
 			service.getListItemsFilter(effectiveListId, dependencyListId, new BigBangAsyncCallback<TipifiedListItem[]>() {
 
 				@Override
-				public void onSuccess(TipifiedListItem[] result) {
+				public void onResponseSuccess(TipifiedListItem[] result) {
 					lists.put(listId, new ArrayList<TipifiedListItem>(Arrays.asList(result)));
 					incrementListDataVersion(listId);
 					updateListClients(listId);
 				}
 
 				@Override
-				public void onFailure(Throwable caught) {
+				public void onResponseFailure(Throwable caught) {
 					// TODO Auto-generated method stub
-					super.onFailure(caught);
+					super.onResponseFailure(caught);
 				}
 			});
 		}else{
 			((TipifiedListServiceAsync) this.service).getListItems(effectiveListId, new BigBangAsyncCallback<TipifiedListItem[]>() {
 
 				@Override
-				public void onSuccess(TipifiedListItem[] result) {
+				public void onResponseSuccess(TipifiedListItem[] result) {
 					lists.put(effectiveListId, new ArrayList<TipifiedListItem>(Arrays.asList(result)));
 					incrementListDataVersion(effectiveListId);
 					updateListClients(effectiveListId);
@@ -195,11 +195,11 @@ public class BigBangTypifiedListBroker implements TypifiedListBroker {
 			StringTokenizer tokenizer = new StringTokenizer(listId, DEPENDENCY_DELIMITER);
 			String effectiveListId = tokenizer.nextToken();
 			String dependencyId = tokenizer.nextToken();
-			
+
 			((TipifiedListServiceAsync) this.service).createListItemFiltered(effectiveListId, dependencyId, item, new BigBangAsyncCallback<TipifiedListItem>() {
 
 				@Override
-				public void onSuccess(TipifiedListItem result) {
+				public void onResponseSuccess(TipifiedListItem result) {
 					updateListClients(listId);
 					lists.get(listId).add(result);
 					Integer version = incrementListDataVersion(listId);
@@ -213,16 +213,16 @@ public class BigBangTypifiedListBroker implements TypifiedListBroker {
 				}
 
 				@Override
-				public void onFailure(Throwable caught) {
+				public void onResponseFailure(Throwable caught) {
 					handler.onError(new String[]{"The item could not be created"});
-					super.onFailure(caught);
+					super.onResponseFailure(caught);
 				}
 			});
 		}else{
 			((TipifiedListServiceAsync) this.service).createListItem(listId, item, new BigBangAsyncCallback<TipifiedListItem>() {
 
 				@Override
-				public void onSuccess(TipifiedListItem result) {
+				public void onResponseSuccess(TipifiedListItem result) {
 					updateListClients(listId);
 					lists.get(listId).add(result);
 					Integer version = incrementListDataVersion(listId);
@@ -236,9 +236,9 @@ public class BigBangTypifiedListBroker implements TypifiedListBroker {
 				}
 
 				@Override
-				public void onFailure(Throwable caught) {
+				public void onResponseFailure(Throwable caught) {
 					handler.onError(new String[]{"The item could not be created"});
-					super.onFailure(caught);
+					super.onResponseFailure(caught);
 				}
 			});
 		}
@@ -254,11 +254,11 @@ public class BigBangTypifiedListBroker implements TypifiedListBroker {
 			StringTokenizer tokenizer = new StringTokenizer(listId, DEPENDENCY_DELIMITER);
 			effectiveListId = tokenizer.nextToken();
 		}
-		
+
 		((TipifiedListServiceAsync) this.service).deleteListItem(effectiveListId, itemId, new BigBangAsyncCallback<Void>() {
 
 			@Override
-			public void onSuccess(Void result) {
+			public void onResponseSuccess(Void result) {
 				TipifiedListItem item = null;
 
 				for(TipifiedListItem i : lists.get(listId)) {
@@ -282,9 +282,9 @@ public class BigBangTypifiedListBroker implements TypifiedListBroker {
 			}
 
 			@Override
-			public void onFailure(Throwable caught) {
+			public void onResponseFailure(Throwable caught) {
 				handler.onError(new String[]{"The item could not be removed"});
-				super.onFailure(caught);
+				super.onResponseFailure(caught);
 			}
 
 		});
@@ -299,7 +299,7 @@ public class BigBangTypifiedListBroker implements TypifiedListBroker {
 		((TipifiedListServiceAsync) this.service).saveListItem(listId, item, new BigBangAsyncCallback<TipifiedListItem>() {
 
 			@Override
-			public void onSuccess(TipifiedListItem result) {
+			public void onResponseSuccess(TipifiedListItem result) {
 				updateListClients(listId);
 
 				lists.get(listId).remove(item);
@@ -314,9 +314,9 @@ public class BigBangTypifiedListBroker implements TypifiedListBroker {
 			}
 
 			@Override
-			public void onFailure(Throwable caught) {
+			public void onResponseFailure(Throwable caught) {
 				handler.onError(new String[]{"The item could not be saved"});
-				super.onFailure(caught);
+				super.onResponseFailure(caught);
 			}
 		});
 	}
@@ -367,6 +367,7 @@ public class BigBangTypifiedListBroker implements TypifiedListBroker {
 			throw new RuntimeException("There if no list registered with id \"" + listId + "\"");
 
 		Integer currentVersionNumber = this.dataVersions.get(listId);
+		currentVersionNumber = currentVersionNumber == null ? 0 : currentVersionNumber;
 		Integer dataVersion = new Integer(currentVersionNumber.intValue() + 1);
 		setListDataVersion(listId, dataVersion);
 		return dataVersion;
@@ -386,8 +387,12 @@ public class BigBangTypifiedListBroker implements TypifiedListBroker {
 
 		List<TypifiedListClient> listClients = this.clients.get(listId);
 
-		for(TypifiedListClient client : listClients) {
-			this.updateListClient(listId, client);
+		if(listClients != null){
+			for(TypifiedListClient client : listClients) {
+				this.updateListClient(listId, client);
+			}
+		}else{
+			this.clients.remove(listId);
 		}
 	}
 
@@ -418,7 +423,7 @@ public class BigBangTypifiedListBroker implements TypifiedListBroker {
 			client.setTypifiedDataVersionNumber(currentDataVersion);
 		}
 	}
-	
+
 	/**
 	 * Returns true if the given id represents a list with a dependency
 	 * @param listId The id of the list

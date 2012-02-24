@@ -111,17 +111,17 @@ implements InsuredObjectDataBroker {
 			policyService.getObjectInPad(id, new BigBangAsyncCallback<InsuredObject>() {
 
 				@Override
-				public void onSuccess(InsuredObject result) {
+				public void onResponseSuccess(InsuredObject result) {
 					result.id = getFinalMapping(result.id);
 					handler.onResponse(result);
 				}
 
 				@Override
-				public void onFailure(Throwable caught) {
+				public void onResponseFailure(Throwable caught) {
 					handler.onError(new String[]{
 							new String("Could not get the requested insured object")	
 					});
-					super.onFailure(caught);
+					super.onResponseFailure(caught);
 				}
 
 			});
@@ -129,16 +129,16 @@ implements InsuredObjectDataBroker {
 			this.service.getObject(id, new BigBangAsyncCallback<InsuredObject>() {
 
 				@Override
-				public void onSuccess(InsuredObject result) {
+				public void onResponseSuccess(InsuredObject result) {
 					handler.onResponse(result);
 				}
 
 				@Override
-				public void onFailure(Throwable caught) {
+				public void onResponseFailure(Throwable caught) {
 					handler.onError(new String[]{
 							new String("Could not get the requested insured object")	
 					});
-					super.onFailure(caught);
+					super.onResponseFailure(caught);
 				}
 
 			});
@@ -152,7 +152,7 @@ implements InsuredObjectDataBroker {
 			policyService.createObjectInPad(ownerId, new BigBangAsyncCallback<InsuredObject>() {
 
 				@Override
-				public void onSuccess(InsuredObject result) {
+				public void onResponseSuccess(InsuredObject result) {
 					objectsInScratchPad.put(result.id, result.id);
 					incrementDataVersion();
 					for(DataBrokerClient<InsuredObject> client : clients) {
@@ -163,11 +163,11 @@ implements InsuredObjectDataBroker {
 				}
 
 				@Override
-				public void onFailure(Throwable caught) {
+				public void onResponseFailure(Throwable caught) {
 					handler.onError(new String[]{
 							new String("Could not create new insured object in scratchpad")	
 					});
-					super.onFailure(caught);
+					super.onResponseFailure(caught);
 				}
 
 			});
@@ -189,7 +189,7 @@ implements InsuredObjectDataBroker {
 			policyService.updateObjectInPad(object, new BigBangAsyncCallback<InsuredObject>() {
 
 				@Override
-				public void onSuccess(InsuredObject result) {
+				public void onResponseSuccess(InsuredObject result) {
 					result.id = getFinalMapping(result.id);
 					incrementDataVersion();
 					for(DataBrokerClient<InsuredObject> client : clients) {
@@ -200,11 +200,11 @@ implements InsuredObjectDataBroker {
 				}
 
 				@Override
-				public void onFailure(Throwable caught) {
+				public void onResponseFailure(Throwable caught) {
 					handler.onError(new String[]{
 							new String()	
 					});
-					super.onFailure(caught);
+					super.onResponseFailure(caught);
 				}
 			});
 			object.id = tempId;
@@ -229,7 +229,7 @@ implements InsuredObjectDataBroker {
 					policyService.deleteObjectInPad(tempId, new BigBangAsyncCallback<Void>() {
 
 						@Override
-						public void onSuccess(Void result) {
+						public void onResponseSuccess(Void result) {
 							incrementDataVersion();
 							for(DataBrokerClient<InsuredObject> client : clients) {
 								((InsuredObjectDataBrokerClient)client).removeInsuredObject(response.id);
@@ -239,11 +239,11 @@ implements InsuredObjectDataBroker {
 						}
 
 						@Override
-						public void onFailure(Throwable caught) {
+						public void onResponseFailure(Throwable caught) {
 							handler.onError(new String[]{
 									new String("Could not delete the object")	
 							});
-							super.onFailure(caught);
+							super.onResponseFailure(caught);
 						}
 					});				
 				}else{

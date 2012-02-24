@@ -38,7 +38,7 @@ public class UserBrokerImpl extends DataBroker<User> implements UserBroker {
 			service.getUsers(new BigBangAsyncCallback<User[]>() {
 
 				@Override
-				public void onSuccess(User[] result) {
+				public void onResponseSuccess(User[] result) {
 					cache.clear();
 					for(int i = 0; i < result.length; i++){
 						result[i].id = result[i].id.toLowerCase();
@@ -54,11 +54,11 @@ public class UserBrokerImpl extends DataBroker<User> implements UserBroker {
 				}
 
 				@Override
-				public void onFailure(Throwable caught) {
+				public void onResponseFailure(Throwable caught) {
 					handler.onError(new String[]{
 							"Could not fetch user list."
 					});
-					super.onFailure(caught);
+					super.onResponseFailure(caught);
 				}
 			});
 		}else{
@@ -107,7 +107,7 @@ public class UserBrokerImpl extends DataBroker<User> implements UserBroker {
 		this.service.addUser(user, new BigBangAsyncCallback<User>() {
 
 			@Override
-			public void onSuccess(User result) {
+			public void onResponseSuccess(User result) {
 				result.id = result.id.toLowerCase();
 				cache.add(result.id, result);
 				incrementDataVersion();
@@ -119,11 +119,11 @@ public class UserBrokerImpl extends DataBroker<User> implements UserBroker {
 			}
 
 			@Override
-			public void onFailure(Throwable caught) {
+			public void onResponseFailure(Throwable caught) {
 				handler.onError(new String[]{
 						"Could not create user"	
 				});
-				super.onFailure(caught);
+				super.onResponseFailure(caught);
 			}
 		});
 	}
@@ -134,7 +134,7 @@ public class UserBrokerImpl extends DataBroker<User> implements UserBroker {
 		this.service.saveUser(user, new BigBangAsyncCallback<User>() {
 
 			@Override
-			public void onSuccess(User result) {
+			public void onResponseSuccess(User result) {
 				result.id = result.id.toLowerCase();
 				cache.update(result.id, result);
 				incrementDataVersion();
@@ -146,11 +146,11 @@ public class UserBrokerImpl extends DataBroker<User> implements UserBroker {
 			}
 
 			@Override
-			public void onFailure(Throwable caught) {
+			public void onResponseFailure(Throwable caught) {
 				handler.onError(new String[]{
 						"Could not update user"	
 				});
-				super.onFailure(caught);
+				super.onResponseFailure(caught);
 			}
 		});
 	}
@@ -165,7 +165,7 @@ public class UserBrokerImpl extends DataBroker<User> implements UserBroker {
 				UserBrokerImpl.this.service.deleteUser(response, new BigBangAsyncCallback<Void>() {
 
 					@Override
-					public void onSuccess(Void result) {
+					public void onResponseSuccess(Void result) {
 						cache.remove(userId);
 						incrementDataVersion();
 						for(DataBrokerClient<User> c : UserBrokerImpl.this.getClients()){
@@ -176,11 +176,11 @@ public class UserBrokerImpl extends DataBroker<User> implements UserBroker {
 					}
 
 					@Override
-					public void onFailure(Throwable caught) {
+					public void onResponseFailure(Throwable caught) {
 						handler.onError(new String[]{
 								"Could not delete user"
 						});
-						super.onFailure(caught);
+						super.onResponseFailure(caught);
 					}
 				});
 			}

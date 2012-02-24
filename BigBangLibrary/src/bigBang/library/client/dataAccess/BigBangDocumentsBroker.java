@@ -182,7 +182,7 @@ public class BigBangDocumentsBroker extends DataBroker<Document> implements Docu
 			service.getDocuments(ownerId, new BigBangAsyncCallback<Document[]>() {
 
 				@Override
-				public void onSuccess(Document[] result) {
+				public void onResponseSuccess(Document[] result) {
 					List<Document> documentsList = new ArrayList<Document>();
 					for(int i = 0; i < result.length; i++) {
 						documentsList.add(result[i]);
@@ -194,11 +194,11 @@ public class BigBangDocumentsBroker extends DataBroker<Document> implements Docu
 				}
 				
 				@Override
-				public void onFailure(Throwable caught) {
+				public void onResponseFailure(Throwable caught) {
 					handler.onError(new String[]{
 							new String("Could not get the documents for the specified owner id")
 					});
-					super.onFailure(caught);
+					super.onResponseFailure(caught);
 				}
 				
 			});
@@ -233,16 +233,16 @@ public class BigBangDocumentsBroker extends DataBroker<Document> implements Docu
 					service.getDocument(documentId, new BigBangAsyncCallback<Document>() {
 
 						@Override
-						public void onSuccess(Document result) {
+						public void onResponseSuccess(Document result) {
 							handler.onResponse(result);
 						}
 						
 						@Override
-						public void onFailure(Throwable caught) {
+						public void onResponseFailure(Throwable caught) {
 							handler.onError(new String[]{
 								new String("Could not get the document")	
 							});
-							super.onFailure(caught);
+							super.onResponseFailure(caught);
 						}
 					});
 					hasDocument = true;
@@ -262,7 +262,7 @@ public class BigBangDocumentsBroker extends DataBroker<Document> implements Docu
 		service.createDocument(document, new BigBangAsyncCallback<Document>() {
 
 			@Override
-			public void onSuccess(Document result) {
+			public void onResponseSuccess(Document result) {
 				Collection<Document> documentsList = documents.get(result.ownerId);
 				documentsList.add(result);
 				incrementDataVersion(result.ownerId);
@@ -271,11 +271,11 @@ public class BigBangDocumentsBroker extends DataBroker<Document> implements Docu
 			}
 			
 			@Override
-			public void onFailure(Throwable caught) {
+			public void onResponseFailure(Throwable caught) {
 				handler.onError(new String[]{
 					new String("Could not create the document")
 				});
-				super.onFailure(caught);
+				super.onResponseFailure(caught);
 			}
 			
 		});
@@ -291,13 +291,13 @@ public class BigBangDocumentsBroker extends DataBroker<Document> implements Docu
 				service.saveDocument(document, new BigBangAsyncCallback<Document>() {
 
 					@Override
-					public void onSuccess(Document result) {
+					public void onResponseSuccess(Document result) {
 						if(response.fileStorageId != document.fileStorageId || 
 								(response.fileStorageId != null && document.fileStorageId != null && !document.fileStorageId.equalsIgnoreCase(response.fileStorageId))){
 							FileService.Util.getInstance().Discard(response.fileStorageId, new BigBangAsyncCallback<Void>() {
 
 								@Override
-								public void onSuccess(Void result) {
+								public void onResponseSuccess(Void result) {
 									return;
 								}
 							});
@@ -315,11 +315,11 @@ public class BigBangDocumentsBroker extends DataBroker<Document> implements Docu
 					}
 					
 					@Override
-					public void onFailure(Throwable caught) {
+					public void onResponseFailure(Throwable caught) {
 						handler.onError(new String[]{
 								new String("Could not save the document")
 						});
-						super.onFailure(caught);
+						super.onResponseFailure(caught);
 					}
 				});
 			}
@@ -338,7 +338,7 @@ public class BigBangDocumentsBroker extends DataBroker<Document> implements Docu
 		service.deleteDocument(documentId, new BigBangAsyncCallback<Void>() {
 
 			@Override
-			public void onSuccess(Void result) {
+			public void onResponseSuccess(Void result) {
 				for(Collection<Document> collection : documents.values()){
 					for(Document document : collection){
 						if(document.id.equalsIgnoreCase(documentId)){
@@ -357,11 +357,11 @@ public class BigBangDocumentsBroker extends DataBroker<Document> implements Docu
 			}
 			
 			@Override
-			public void onFailure(Throwable caught) {
+			public void onResponseFailure(Throwable caught) {
 				handler.onError(new String[]{
 						new String("Could not delete the document")
 				});
-				super.onFailure(caught);
+				super.onResponseFailure(caught);
 			}
 			
 		});
@@ -377,16 +377,16 @@ public class BigBangDocumentsBroker extends DataBroker<Document> implements Docu
 					FileService.Util.getInstance().Discard(response.fileStorageId, new BigBangAsyncCallback<Void>() {
 
 						@Override
-						public void onSuccess(Void result) {
+						public void onResponseSuccess(Void result) {
 							handler.onResponse(null);
 						}
 						
 						@Override
-						public void onFailure(Throwable caught) {
+						public void onResponseFailure(Throwable caught) {
 							handler.onError(new String[]{
 								new String("Could not close the document file resource")	
 							});
-							super.onFailure(caught);
+							super.onResponseFailure(caught);
 						}
 						
 					});

@@ -135,7 +135,7 @@ public class DocuShareNavigationPanel extends View implements HasValue<DocuShare
 			service.getContext(ownerId, ownerTypeId, new BigBangAsyncCallback<DocuShareItem[]>() {
 
 				@Override
-				public void onSuccess(DocuShareItem[] result) {
+				public void onResponseSuccess(DocuShareItem[] result) {
 					for(int i = 0; i < result.length; i++){
 						list.addEntryForItem(result[i]);
 					}
@@ -143,8 +143,8 @@ public class DocuShareNavigationPanel extends View implements HasValue<DocuShare
 				}
 
 				@Override
-				public void onFailure(Throwable caught) {
-					super.onFailure(caught);
+				public void onResponseFailure(Throwable caught) {
+					super.onResponseFailure(caught);
 					showNoConnectionMessage();
 					list.showLoading(false);
 				}
@@ -159,7 +159,7 @@ public class DocuShareNavigationPanel extends View implements HasValue<DocuShare
 			service.getItems(dirDesc, showSubFolders, new BigBangAsyncCallback<DocuShareItem[]>() {
 
 				@Override
-				public void onSuccess(DocuShareItem[] result) {
+				public void onResponseSuccess(DocuShareItem[] result) {
 					for(int i = 0; i < result.length; i++){
 						list.addEntryForItem(result[i]);
 					}
@@ -167,8 +167,8 @@ public class DocuShareNavigationPanel extends View implements HasValue<DocuShare
 				}
 
 				@Override
-				public void onFailure(Throwable caught) {
-					super.onFailure(caught);
+				public void onResponseFailure(Throwable caught) {
+					super.onResponseFailure(caught);
 					showNoConnectionMessage();
 					list.showLoading(false);
 				}

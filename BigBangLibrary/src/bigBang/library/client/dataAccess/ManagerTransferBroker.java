@@ -3,7 +3,6 @@ package bigBang.library.client.dataAccess;
 import java.util.Collection;
 
 import bigBang.definitions.client.dataAccess.DataBrokerInterface;
-import bigBang.definitions.client.response.ResponseHandler;
 import bigBang.definitions.shared.ManagerTransfer;
 
 public interface ManagerTransferBroker extends DataBrokerInterface<ManagerTransfer>{

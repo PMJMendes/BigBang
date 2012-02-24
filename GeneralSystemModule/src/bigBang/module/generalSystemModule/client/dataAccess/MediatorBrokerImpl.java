@@ -36,7 +36,7 @@ public class MediatorBrokerImpl extends DataBroker<Mediator> implements Mediator
 			service.getMediators(new BigBangAsyncCallback<Mediator[]>() {
 
 				@Override
-				public void onSuccess(Mediator[] result) {
+				public void onResponseSuccess(Mediator[] result) {
 					cache.clear();
 					for(int i = 0; i < result.length; i++){
 						cache.add(result[i].id, result[i]);
@@ -51,11 +51,11 @@ public class MediatorBrokerImpl extends DataBroker<Mediator> implements Mediator
 				}
 				
 				@Override
-				public void onFailure(Throwable caught) {
+				public void onResponseFailure(Throwable caught) {
 					handler.onError(new String[]{
 						new String("Could not get the mediators list")	
 					});
-					super.onFailure(caught);
+					super.onResponseFailure(caught);
 				}
 			});
 		}else{
@@ -89,7 +89,7 @@ public class MediatorBrokerImpl extends DataBroker<Mediator> implements Mediator
 		this.service.createMediator(mediator, new BigBangAsyncCallback<Mediator>() {
 
 			@Override
-			public void onSuccess(Mediator result) {
+			public void onResponseSuccess(Mediator result) {
 				cache.add(result.id, result);
 				incrementDataVersion();
 				for(DataBrokerClient<Mediator> c : MediatorBrokerImpl.this.getClients()){
@@ -100,11 +100,11 @@ public class MediatorBrokerImpl extends DataBroker<Mediator> implements Mediator
 			}
 			
 			@Override
-			public void onFailure(Throwable caught) {
+			public void onResponseFailure(Throwable caught) {
 				handler.onError(new String[]{
 					new String("Could not create mediator")	
 				});
-				super.onFailure(caught);
+				super.onResponseFailure(caught);
 			}
 		});
 	}
@@ -115,7 +115,7 @@ public class MediatorBrokerImpl extends DataBroker<Mediator> implements Mediator
 		this.service.saveMediator(mediator, new BigBangAsyncCallback<Mediator>() {
 
 			@Override
-			public void onSuccess(Mediator result) {
+			public void onResponseSuccess(Mediator result) {
 				cache.update(result.id, result);
 				incrementDataVersion();
 				for(DataBrokerClient<Mediator> c : MediatorBrokerImpl.this.getClients()){
@@ -126,11 +126,11 @@ public class MediatorBrokerImpl extends DataBroker<Mediator> implements Mediator
 			}
 			
 			@Override
-			public void onFailure(Throwable caught) {
+			public void onResponseFailure(Throwable caught) {
 				handler.onError(new String[]{
 					new String("Could not update mediator")	
 				});
-				super.onFailure(caught);
+				super.onResponseFailure(caught);
 			}
 		});
 	}
@@ -141,7 +141,7 @@ public class MediatorBrokerImpl extends DataBroker<Mediator> implements Mediator
 		this.service.deleteMediator(mediatorId, new BigBangAsyncCallback<Void>() {
 
 			@Override
-			public void onSuccess(Void result) {
+			public void onResponseSuccess(Void result) {
 				cache.remove(mediatorId);
 				incrementDataVersion();
 				for(DataBrokerClient<Mediator> c : MediatorBrokerImpl.this.getClients()){
@@ -152,11 +152,11 @@ public class MediatorBrokerImpl extends DataBroker<Mediator> implements Mediator
 			}
 			
 			@Override
-			public void onFailure(Throwable caught) {
+			public void onResponseFailure(Throwable caught) {
 				handler.onError(new String[]{
 					new String("Could not delete mediator")	
 				});
-				super.onFailure(caught);
+				super.onResponseFailure(caught);
 			}
 
 		});

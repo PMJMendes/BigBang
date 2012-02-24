@@ -32,7 +32,6 @@ import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.logical.shared.AttachEvent;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.user.client.Command;
-import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.MenuItem;
 import com.google.gwt.user.client.ui.VerticalPanel;
@@ -41,9 +40,9 @@ public class TypifiedTextManagementPanel extends View implements TypifiedTextCli
 
 
 	public class TypifiedTextOperationsToolbar extends BigBangOperationsToolBar{
-		
+
 		private MenuItem delete;
-		
+
 		public TypifiedTextOperationsToolbar(){
 			super();
 			delete = new MenuItem("Eliminar", new Command() {
@@ -54,7 +53,7 @@ public class TypifiedTextManagementPanel extends View implements TypifiedTextCli
 				}
 
 			});
-			
+
 			this.addItem(SUB_MENU.ADMIN, delete);
 			this.hideAll();
 			this.showItem(SUB_MENU.EDIT, true);
@@ -63,13 +62,13 @@ public class TypifiedTextManagementPanel extends View implements TypifiedTextCli
 			this.setHeight("21px");
 			this.setWidth("100%");
 			this.adminSubMenu.getElement().getStyle().setZIndex(12000);
-			
-			
+
+
 		}
 
 		@Override
 		public void onEditRequest() {
-			
+
 		}
 
 		@Override
@@ -79,12 +78,12 @@ public class TypifiedTextManagementPanel extends View implements TypifiedTextCli
 		@Override
 		public void onCancelRequest() {
 		}
-		
+
 		public void onDeleteRequest(){
-			
+
 		}
 	}
-	
+
 	private String listId;
 	private String tag;
 	private FilterableList<TipifiedListItem> list;
@@ -131,7 +130,7 @@ public class TypifiedTextManagementPanel extends View implements TypifiedTextCli
 			public void onCancelRequest() {
 				cancelChanges();
 			}
-			
+
 			@Override
 			public void onDeleteRequest() {
 				MessageBox.confirm("Eliminar Modelo", "Tem certeza que pretende eliminar o modelo seleccionado?", new MessageBox.ConfirmationCallback() {
@@ -214,8 +213,8 @@ public class TypifiedTextManagementPanel extends View implements TypifiedTextCli
 
 		setListId(listId);
 
-	
-		
+
+
 		VerticalPanel headerWrapper = new VerticalPanel();
 		headerWrapper.setSize("100%", "100%");
 		ListHeader header = new ListHeader();
@@ -624,8 +623,10 @@ public class TypifiedTextManagementPanel extends View implements TypifiedTextCli
 	}
 
 	public void setTag(String tag) {
+		if(this.tag != null){
+			textBroker.unregisterClient(this.tag, this);
+		}
 		this.tag = tag;
-		textBroker.unregisterClient(this);
 		textBroker.registerClient(tag, this);
 	}
 

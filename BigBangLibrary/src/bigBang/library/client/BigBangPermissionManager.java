@@ -32,13 +32,13 @@ public class BigBangPermissionManager {
 		service.getProcessPermissions(processId, new BigBangAsyncCallback<Permission[]>() {
 
 			@Override
-			public void onSuccess(Permission[] result) {
+			public void onResponseSuccess(Permission[] result) {
 				contexts.put(processId, result);
 				handler.onResponse(null);
 			}
 			
 			@Override
-			public void onFailure(Throwable caught) {
+			public void onResponseFailure(Throwable caught) {
 				handler.onResponse(null); //TODO FJVC
 			}
 		});
@@ -48,7 +48,7 @@ public class BigBangPermissionManager {
 		this.service.getProcessPermissions(processId, new BigBangAsyncCallback<Permission[]>() {
 
 			@Override
-			public void onSuccess(Permission[] result) {
+			public void onResponseSuccess(Permission[] result) {
 				handler.onResponse(result);
 			}
 		});	

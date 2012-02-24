@@ -1,36 +1,36 @@
 package bigBang.library.client.userInterface;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-
-import bigBang.definitions.shared.TipifiedListItem;
-import bigBang.library.client.Checkable;
-import bigBang.library.client.FieldValidator;
+//import java.util.ArrayList;
+//import java.util.Collection;
+//import java.util.List;
+//
+//import bigBang.definitions.shared.TipifiedListItem;
+//import bigBang.library.client.Checkable;
+//import bigBang.library.client.FieldValidator;
 import bigBang.library.client.FormField;
-import bigBang.library.client.Selectable;
-import bigBang.library.client.ValueSelectable;
-import bigBang.library.client.dataAccess.BigBangTypifiedListBroker;
-import bigBang.library.client.dataAccess.TypifiedListBroker;
-import bigBang.library.client.dataAccess.TypifiedListClient;
-import bigBang.library.client.event.CheckedStateChangedEvent;
-import bigBang.library.client.event.CheckedStateChangedEventHandler;
-import bigBang.library.client.event.SelectionChangedEvent;
-import bigBang.library.client.event.SelectionChangedEventHandler;
-import bigBang.library.client.resources.Resources;
-import bigBang.library.client.userInterface.view.PopupPanel;
-
-import com.google.gwt.core.client.GWT;
-import com.google.gwt.dom.client.Style.Cursor;
-import com.google.gwt.dom.client.Style.Unit;
-import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.user.client.ui.HasHorizontalAlignment;
-import com.google.gwt.user.client.ui.HasVerticalAlignment;
-import com.google.gwt.user.client.ui.HorizontalPanel;
-import com.google.gwt.user.client.ui.Image;
-import com.google.gwt.user.client.ui.Label;
-import com.google.gwt.user.client.ui.Widget;
+//import bigBang.library.client.Selectable;
+//import bigBang.library.client.ValueSelectable;
+//import bigBang.library.client.dataAccess.BigBangTypifiedListBroker;
+//import bigBang.library.client.dataAccess.TypifiedListBroker;
+//import bigBang.library.client.dataAccess.TypifiedListClient;
+//import bigBang.library.client.event.CheckedStateChangedEvent;
+//import bigBang.library.client.event.CheckedStateChangedEventHandler;
+//import bigBang.library.client.event.SelectionChangedEvent;
+//import bigBang.library.client.event.SelectionChangedEventHandler;
+//import bigBang.library.client.resources.Resources;
+//import bigBang.library.client.userInterface.view.PopupPanel;
+//
+//import com.google.gwt.core.client.GWT;
+//import com.google.gwt.dom.client.Style.Cursor;
+//import com.google.gwt.dom.client.Style.Unit;
+//import com.google.gwt.event.dom.client.ClickEvent;
+//import com.google.gwt.event.dom.client.ClickHandler;
+//import com.google.gwt.user.client.ui.HasHorizontalAlignment;
+//import com.google.gwt.user.client.ui.HasVerticalAlignment;
+//import com.google.gwt.user.client.ui.HorizontalPanel;
+//import com.google.gwt.user.client.ui.Image;
+//import com.google.gwt.user.client.ui.Label;
+//import com.google.gwt.user.client.ui.Widget;
 
 public class ExpandableMultipleListBoxFormField extends FormField<String[]> {
 

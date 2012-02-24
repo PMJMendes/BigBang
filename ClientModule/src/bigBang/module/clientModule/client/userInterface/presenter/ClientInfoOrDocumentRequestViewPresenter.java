@@ -6,13 +6,12 @@ import bigBang.definitions.client.dataAccess.ClientProcessBroker;
 import bigBang.definitions.client.response.ResponseError;
 import bigBang.definitions.client.response.ResponseHandler;
 import bigBang.definitions.shared.BigBangConstants;
-import bigBang.definitions.shared.BigBangProcess;
 import bigBang.definitions.shared.Client;
 import bigBang.definitions.shared.InfoOrDocumentRequest;
 import bigBang.library.client.EventBus;
-import bigBang.library.client.HasEditableValue;
 import bigBang.library.client.HasParameters;
 import bigBang.library.client.Notification;
+import bigBang.library.client.PermissionChecker;
 import bigBang.library.client.Notification.TYPE;
 import bigBang.library.client.dataAccess.DataBrokerManager;
 import bigBang.library.client.event.NewNotificationEvent;
@@ -21,68 +20,19 @@ import bigBang.library.client.history.NavigationHistoryManager;
 import bigBang.library.client.userInterface.presenter.InfoOrDocumentRequestViewPresenter;
 
 public class ClientInfoOrDocumentRequestViewPresenter extends
-		InfoOrDocumentRequestViewPresenter {
+		InfoOrDocumentRequestViewPresenter<Client> {
 
-	public static interface Display extends InfoOrDocumentRequestViewPresenter.Display {
-		HasEditableValue<Client> getOwnerForm();
-	}
-	
 	private ClientProcessBroker broker;
-	private String clientId;
 	
-	public ClientInfoOrDocumentRequestViewPresenter(Display view) {
+	public ClientInfoOrDocumentRequestViewPresenter(Display<Client> view) {
 		super(view);
 		this.broker = (ClientProcessBroker) DataBrokerManager.staticGetBroker(BigBangConstants.EntityIds.CLIENT);
 	}
 
 	@Override
 	public void setParameters(HasParameters parameterHolder) {
-		clientId = parameterHolder.getParameter("id");
-		clientId = clientId == null ? new String() : clientId;
-		String requestId = parameterHolder.getParameter("requestid");
-		requestId = requestId == null ? new String() : requestId;
-		
-		if(clientId.isEmpty()){
-			clearView();
-		}else{
-			if(requestId.isEmpty()){
-				showNewRequest();
-			}else{
-				showRequest(requestId);
-			}
-		}
-	}
-
-	private void showRequest(final String requestId){
-		broker.getClient(clientId, new ResponseHandler<Client>() {
-
-			@Override
-			public void onResponse(Client response) {
-				//TODO check permissions FJVC
-				broker.getClientSubProcess(clientId, requestId, new ResponseHandler<BigBangProcess>() {
-
-					@Override
-					public void onResponse(BigBangProcess response) {
-						//InfoOrDocumentRequest request = (InfoOrDocumentRequest) response; //TODO
-						//view.getForm().setValue(request);
-					}
-
-					@Override
-					public void onError(Collection<ResponseError> errors) {
-						onGetRequestFailed();
-					}
-				});
-			}
-
-			@Override
-			public void onError(Collection<ResponseError> errors) {
-				onGetClientFailed();
-			}
-		});
-	}
-	
-	private void showNewRequest(){
-		
+		parameterHolder.setParameter("ownertypeid", BigBangConstants.EntityIds.CLIENT);
+		super.setParameters(parameterHolder);
 	}
 	
 	@Override
@@ -107,16 +57,65 @@ public class ClientInfoOrDocumentRequestViewPresenter extends
 	}
 
 	@Override
+	protected InfoOrDocumentRequest getFormattedRequest(String ownerId,
+			String ownerTypeId) {
+		InfoOrDocumentRequest request = new InfoOrDocumentRequest();
+		request.parentDataObjectId = ownerId;
+		request.parentDataTypeId = ownerTypeId;
+		return request;
+	}
+
+	@Override
+	protected void showOwner(String ownerId, String ownerTypeId) {
+		broker.getClient(ownerId, new ResponseHandler<Client>() {
+
+			@Override
+			public void onResponse(Client response) {
+				view.getOwnerForm().setValue(response);
+			}
+
+			@Override
+			public void onError(Collection<ResponseError> errors) {
+				onGetOwnerFailed();
+			}
+		});
+	}
+
+	@Override
+	protected void checkOwnerPermissions(String ownerId, String ownerTypeId,
+			final ResponseHandler<Boolean> handler) {
+		broker.getClient(ownerId, new ResponseHandler<Client>() {
+
+			@Override
+			public void onResponse(Client response) {
+				handler.onResponse(PermissionChecker.hasPermission(response, BigBangConstants.OperationIds.ClientProcess.CREATE_INFO_REQUEST));
+			}
+
+			@Override
+			public void onError(Collection<ResponseError> errors) {
+				onUserLacksPermission();
+			}
+		});
+	}
+	
+	@Override
 	protected void onCancel() {
 		NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
 		item.removeParameter("operation");
+		item.removeParameter("ownerid");
+		item.removeParameter("ownertypeid");
+		item.removeParameter("requestid");
 		NavigationHistoryManager.getInstance().go(item);
 	}
 
-	private void onGetClientFailed(){
+	@Override
+	protected void onGetOwnerFailed(){
 		EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não foi possível obter o cliente"), TYPE.ALERT_NOTIFICATION));
 		NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
 		item.removeParameter("operation");
+		item.removeParameter("ownerid");
+		item.removeParameter("ownertypeid");
+		item.removeParameter("requestid");
 		NavigationHistoryManager.getInstance().go(item);
 	}
 	
@@ -124,6 +123,20 @@ public class ClientInfoOrDocumentRequestViewPresenter extends
 		EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não foi possível obter o pedido de informação"), TYPE.ALERT_NOTIFICATION));
 		NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
 		item.removeParameter("operation");
+		item.removeParameter("ownerid");
+		item.removeParameter("ownertypeid");
+		item.removeParameter("requestid");
+		NavigationHistoryManager.getInstance().go(item);
+	}
+
+	@Override
+	protected void onUserLacksPermission() {
+		EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não tem permissões para criar o Pedido de Informação"), TYPE.ALERT_NOTIFICATION));
+		NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
+		item.removeParameter("operation");
+		item.removeParameter("ownerid");
+		item.removeParameter("ownertypeid");
+		item.removeParameter("requestid");
 		NavigationHistoryManager.getInstance().go(item);
 	}
 	

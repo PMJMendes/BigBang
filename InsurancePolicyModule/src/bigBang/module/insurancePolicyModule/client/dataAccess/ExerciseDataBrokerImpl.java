@@ -107,17 +107,17 @@ implements ExerciseDataBroker {
 			policyService.getExerciseInPad(id, new BigBangAsyncCallback<Exercise>() {
 
 				@Override
-				public void onSuccess(Exercise result) {
+				public void onResponseSuccess(Exercise result) {
 					result.id = getFinalMapping(result.id);
 					handler.onResponse(result);
 				}
 
 				@Override
-				public void onFailure(Throwable caught) {
+				public void onResponseFailure(Throwable caught) {
 					handler.onError(new String[]{
 							new String("Could not get the requested exercise")	
 					});
-					super.onFailure(caught);
+					super.onResponseFailure(caught);
 				}
 
 			});
@@ -125,16 +125,16 @@ implements ExerciseDataBroker {
 			this.service.getExercise(id, new BigBangAsyncCallback<Exercise>() {
 
 				@Override
-				public void onSuccess(Exercise result) {
+				public void onResponseSuccess(Exercise result) {
 					handler.onResponse(result);
 				}
 
 				@Override
-				public void onFailure(Throwable caught) {
+				public void onResponseFailure(Throwable caught) {
 					handler.onError(new String[]{
 							new String("Could not get the requested exercise")	
 					});
-					super.onFailure(caught);
+					super.onResponseFailure(caught);
 				}
 
 			});
@@ -148,7 +148,7 @@ implements ExerciseDataBroker {
 			policyService.createFirstExercise(ownerId, new BigBangAsyncCallback<Exercise>() {
 
 				@Override
-				public void onSuccess(Exercise result) {
+				public void onResponseSuccess(Exercise result) {
 					exercisesInScratchPad.put(result.id, result.id);
 					incrementDataVersion();
 					for(DataBrokerClient<Exercise> client : clients) {
@@ -159,11 +159,11 @@ implements ExerciseDataBroker {
 				}
 
 				@Override
-				public void onFailure(Throwable caught) {
+				public void onResponseFailure(Throwable caught) {
 					handler.onError(new String[]{
 							new String("Could not create new exercise in scratchpad")	
 					});
-					super.onFailure(caught);
+					super.onResponseFailure(caught);
 				}
 
 			});
@@ -187,7 +187,7 @@ implements ExerciseDataBroker {
 					policyService.deleteExerciseInPad(tempId, new BigBangAsyncCallback<Void>() {
 
 						@Override
-						public void onSuccess(Void result) {
+						public void onResponseSuccess(Void result) {
 							incrementDataVersion();
 							for(DataBrokerClient<Exercise> client : clients) {
 								((ExerciseDataBrokerClient)client).removeExercise(response.id);
@@ -197,11 +197,11 @@ implements ExerciseDataBroker {
 						}
 
 						@Override
-						public void onFailure(Throwable caught) {
+						public void onResponseFailure(Throwable caught) {
 							handler.onError(new String[]{
 									new String("Could not delete the exercise")	
 							});
-							super.onFailure(caught);
+							super.onResponseFailure(caught);
 						}
 					});				
 				}else{
@@ -230,7 +230,7 @@ implements ExerciseDataBroker {
 			policyService.updateExerciseInPad(exercise, new BigBangAsyncCallback<Exercise>() {
 
 				@Override
-				public void onSuccess(Exercise result) {
+				public void onResponseSuccess(Exercise result) {
 					result.id = getFinalMapping(result.id);
 					incrementDataVersion();
 					for(DataBrokerClient<Exercise> client : clients) {
@@ -241,11 +241,11 @@ implements ExerciseDataBroker {
 				}
 
 				@Override
-				public void onFailure(Throwable caught) {
+				public void onResponseFailure(Throwable caught) {
 					handler.onError(new String[]{
 							new String()	
 					});
-					super.onFailure(caught);
+					super.onResponseFailure(caught);
 				}
 			});
 			exercise.id = tempId;

@@ -23,18 +23,12 @@ import bigBang.library.client.event.DeleteRequestEventHandler;
 import bigBang.library.client.event.NewNotificationEvent;
 import bigBang.library.client.event.SelectionChangedEvent;
 import bigBang.library.client.event.SelectionChangedEventHandler;
-import bigBang.library.client.history.NavigationHistoryItem;
-import bigBang.library.client.history.NavigationHistoryManager;
 import bigBang.library.client.userInterface.ContactOperationsToolBar;
 import bigBang.library.client.userInterface.List;
-import bigBang.library.client.userInterface.ListEntry;
-import bigBang.library.client.userInterface.NavigationPanel;
 import bigBang.library.client.userInterface.view.ContactView;
 import bigBang.library.client.userInterface.view.ContactView.ContactEntry;
 
-import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.user.client.ui.HasWidgets;
-import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.UIObject;
 import com.google.gwt.user.client.ui.Widget;
 

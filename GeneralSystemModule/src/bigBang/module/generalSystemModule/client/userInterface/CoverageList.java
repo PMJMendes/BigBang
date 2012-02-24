@@ -222,7 +222,7 @@ public class CoverageList extends FilterableList<Coverage> implements CoverageDa
 		CoveragesService.Util.getInstance().saveCoverage(coverage, new BigBangAsyncCallback<Coverage>() {
 
 			@Override
-			public void onSuccess(Coverage result) {
+			public void onResponseSuccess(Coverage result) {
 				updateEntry(result);
 				showForm(false);
 			}

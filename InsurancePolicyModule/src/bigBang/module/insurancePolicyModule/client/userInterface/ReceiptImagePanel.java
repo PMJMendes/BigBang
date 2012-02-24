@@ -96,7 +96,7 @@ public class ReceiptImagePanel extends View {
 		service.getItemAsImage(fileDesc, new BigBangAsyncCallback<String>() {
 
 			@Override
-			public void onSuccess(String result) {
+			public void onResponseSuccess(String result) {
 				panel.setImage(GWT.getModuleBaseURL() + FileService.GET_PREFIX + result);
 				panel.showLoading(false);
 			}
@@ -155,7 +155,7 @@ public class ReceiptImagePanel extends View {
 		service.getItems(dirDesc, showSubFolders, new BigBangAsyncCallback<DocuShareItem[]>() {
 
 			@Override
-			public void onSuccess(DocuShareItem[] result) {
+			public void onResponseSuccess(DocuShareItem[] result) {
 				for(int i = 0; i < result.length; i++){
 					list.addEntryForItem(result[i]);
 				}
@@ -163,8 +163,8 @@ public class ReceiptImagePanel extends View {
 			}
 
 			@Override
-			public void onFailure(Throwable caught) {
-				super.onFailure(caught);
+			public void onResponseFailure(Throwable caught) {
+				super.onResponseFailure(caught);
 				showNoConnectionMessage();
 				list.showLoading(false);
 			}

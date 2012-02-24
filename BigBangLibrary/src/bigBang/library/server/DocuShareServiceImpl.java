@@ -1,12 +1,8 @@
 package bigBang.library.server;
 
-import java.awt.image.BufferedImage;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
 import java.util.UUID;
 
-import javax.imageio.ImageIO;
 import javax.servlet.http.HttpSession;
 
 import Jewel.Engine.Engine;

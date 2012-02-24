@@ -127,7 +127,7 @@ public class InsurancePolicyProcessBrokerImpl extends DataBroker<InsurancePolicy
 			this.service.getPolicyInPad(policyId, new BigBangAsyncCallback<InsurancePolicy>() {
 
 				@Override
-				public void onSuccess(InsurancePolicy result) {
+				public void onResponseSuccess(InsurancePolicy result) {
 					result.id = getFinalMapping(result.id);
 					incrementDataVersion();
 					for(DataBrokerClient<InsurancePolicy> bc : getClients()){
@@ -139,21 +139,21 @@ public class InsurancePolicyProcessBrokerImpl extends DataBroker<InsurancePolicy
 				}
 
 				@Override
-				public void onFailure(Throwable caught) {
+				public void onResponseFailure(Throwable caught) {
 					if(caught instanceof CorruptedPadException){
 						onPadCorrupted(policyId);
 					}
 					handler.onError(new String[]{
 							new String("Could not get the policy")
 					});
-					super.onFailure(caught);
+					super.onResponseFailure(caught);
 				}
 			});
 		}else{
 			this.service.getPolicy(policyId, new BigBangAsyncCallback<InsurancePolicy>() {
 
 				@Override
-				public void onSuccess(InsurancePolicy result) {
+				public void onResponseSuccess(InsurancePolicy result) {
 					incrementDataVersion();
 					for(DataBrokerClient<InsurancePolicy> bc : getClients()){
 						((InsurancePolicyDataBrokerClient) bc).updateInsurancePolicy(result);
@@ -164,11 +164,11 @@ public class InsurancePolicyProcessBrokerImpl extends DataBroker<InsurancePolicy
 				}
 
 				@Override
-				public void onFailure(Throwable caught) {
+				public void onResponseFailure(Throwable caught) {
 					handler.onError(new String[]{
 							new String("Could not get the requested policy")
 					});
-					super.onFailure(caught);
+					super.onResponseFailure(caught);
 				}
 			});
 		}
@@ -184,7 +184,7 @@ public class InsurancePolicyProcessBrokerImpl extends DataBroker<InsurancePolicy
 			service.updateHeader(policy, new BigBangAsyncCallback<InsurancePolicy>() {
 
 				@Override
-				public void onSuccess(InsurancePolicy result) {
+				public void onResponseSuccess(InsurancePolicy result) {
 					result.id = getFinalMapping(result.id);
 					incrementDataVersion();
 					for(DataBrokerClient<InsurancePolicy> bc : getClients()){
@@ -196,14 +196,14 @@ public class InsurancePolicyProcessBrokerImpl extends DataBroker<InsurancePolicy
 				}
 
 				@Override
-				public void onFailure(Throwable caught) {
+				public void onResponseFailure(Throwable caught) {
 					if(caught instanceof CorruptedPadException){
 						onPadCorrupted(policyId);
 					}
 					handler.onError(new String[]{
 							new String("Could not save policy header")	
 					});
-					super.onFailure(caught);
+					super.onResponseFailure(caught);
 				}
 
 			});
@@ -221,7 +221,7 @@ public class InsurancePolicyProcessBrokerImpl extends DataBroker<InsurancePolicy
 		this.service.deletePolicy(policyId, new BigBangAsyncCallback<Void>() {
 
 			@Override
-			public void onSuccess(Void result) {
+			public void onResponseSuccess(Void result) {
 				String finalId = getFinalMapping(policyId);
 				incrementDataVersion();
 				for(DataBrokerClient<InsurancePolicy> bc : getClients()){
@@ -232,11 +232,11 @@ public class InsurancePolicyProcessBrokerImpl extends DataBroker<InsurancePolicy
 			}
 
 			@Override
-			public void onFailure(Throwable caught) {
+			public void onResponseFailure(Throwable caught) {
 				handler.onError(new String[]{
 						new String("Could not remove the insurance policy")	
 				});
-				super.onFailure(caught);
+				super.onResponseFailure(caught);
 			}
 		});
 	}
@@ -279,17 +279,17 @@ public class InsurancePolicyProcessBrokerImpl extends DataBroker<InsurancePolicy
 		this.service.createReceipt(policyId, receipt, new BigBangAsyncCallback<Receipt>() {
 
 			@Override
-			public void onSuccess(Receipt result) {
+			public void onResponseSuccess(Receipt result) {
 				handler.onResponse(result);
 				DataBrokerManager.Util.getInstance().getBroker(BigBangConstants.EntityIds.RECEIPT).notifyItemCreation(result.id);
 			}
 
 			@Override
-			public void onFailure(Throwable caught) {
+			public void onResponseFailure(Throwable caught) {
 				handler.onError(new String[]{
 						new String("Could not create receipt")	
 				});
-				super.onFailure(caught);
+				super.onResponseFailure(caught);
 			}
 
 		});
@@ -309,7 +309,7 @@ public class InsurancePolicyProcessBrokerImpl extends DataBroker<InsurancePolicy
 			service.openPolicyScratchPad(policyId, new BigBangAsyncCallback<Remap[]>() {
 
 				@Override
-				public void onSuccess(Remap[] result) {
+				public void onResponseSuccess(Remap[] result) {
 					//If new policy
 					if(result.length == 1 && result[0].remapIds.length == 1 && result[0].remapIds[0].oldId == null){
 						InsurancePolicy policy = new InsurancePolicy();
@@ -321,14 +321,14 @@ public class InsurancePolicyProcessBrokerImpl extends DataBroker<InsurancePolicy
 				}
 
 				@Override
-				public void onFailure(Throwable caught) {
+				public void onResponseFailure(Throwable caught) {
 					if(caught instanceof CorruptedPadException){
 						onPadCorrupted(policyId);
 					}
 					handler.onError(new String[]{
 							new String("Could not open the new policy resource")
 					});
-					super.onFailure(caught);
+					super.onResponseFailure(caught);
 				}
 
 			});
@@ -337,20 +337,20 @@ public class InsurancePolicyProcessBrokerImpl extends DataBroker<InsurancePolicy
 			service.openPolicyScratchPad(policyId, new BigBangAsyncCallback<Remap[]>() {
 
 				@Override
-				public void onSuccess(Remap[] result) {
+				public void onResponseSuccess(Remap[] result) {
 					doRemapping(result);
 					getPolicy(policyId, handler);
 				}
 
 				@Override
-				public void onFailure(Throwable caught) {
+				public void onResponseFailure(Throwable caught) {
 					if(caught instanceof CorruptedPadException){
 						onPadCorrupted(policyId);
 					}
 					handler.onError(new String[]{
 							new String("Could not open the policy resource")
 					});
-					super.onFailure(caught);
+					super.onResponseFailure(caught);
 				}
 
 			});
@@ -367,21 +367,21 @@ public class InsurancePolicyProcessBrokerImpl extends DataBroker<InsurancePolicy
 		this.service.commitPad(policyId, new BigBangAsyncCallback<Remap[]>() {
 
 			@Override
-			public void onSuccess(Remap[] result) {
+			public void onResponseSuccess(Remap[] result) {
 				String policyId = result[0].remapIds[0].newId;
 				doRemapping(result);
 				getPolicy(policyId, handler);
 			}
 
 			@Override
-			public void onFailure(Throwable caught) {
+			public void onResponseFailure(Throwable caught) {
 				if(caught instanceof CorruptedPadException){
 					onPadCorrupted(policyId);
 				}
 				handler.onError(new String[]{
 						new String("Could not commit the scratch pad")	
 				});
-				super.onFailure(caught);
+				super.onResponseFailure(caught);
 			}
 
 		});
@@ -394,17 +394,17 @@ public class InsurancePolicyProcessBrokerImpl extends DataBroker<InsurancePolicy
 			service.discardPad(policyId, new BigBangAsyncCallback<Remap[]>() {
 
 				@Override
-				public void onSuccess(Remap[] result) {
+				public void onResponseSuccess(Remap[] result) {
 					doRemapping(result);
 					handler.onResponse(null);
 				}
 
 				@Override
-				public void onFailure(Throwable caught) {
+				public void onResponseFailure(Throwable caught) {
 					handler.onError(new String[]{
 							new String("Could not close the policy resource")	
 					});
-					super.onFailure(caught);
+					super.onResponseFailure(caught);
 				}
 			});
 		}else{
@@ -423,35 +423,35 @@ public class InsurancePolicyProcessBrokerImpl extends DataBroker<InsurancePolicy
 			service.getPageForEdit(policyId, insuredObjectId, exerciseId, new BigBangAsyncCallback<InsurancePolicy.TableSection>() {
 
 				@Override
-				public void onSuccess(TableSection result) {
+				public void onResponseSuccess(TableSection result) {
 					handler.onResponse(result);
 				}
 
 				@Override
-				public void onFailure(Throwable caught) {
+				public void onResponseFailure(Throwable caught) {
 					if(caught instanceof CorruptedPadException){
 						onPadCorrupted(policyId);
 					}
 					handler.onError(new String[]{
 							new String("Could not get the requested page for edit")
 					});
-					super.onFailure(caught);
+					super.onResponseFailure(caught);
 				}
 			});
 		}else{
 			service.getPage(policyId, insuredObjectId, exerciseId, new BigBangAsyncCallback<InsurancePolicy.TableSection>() {
 
 				@Override
-				public void onSuccess(TableSection result) {
+				public void onResponseSuccess(TableSection result) {
 					handler.onResponse(result);
 				}
 
 				@Override
-				public void onFailure(Throwable caught) {
+				public void onResponseFailure(Throwable caught) {
 					handler.onError(new String[]{
 							new String("Could not get the requested page")
 					});
-					super.onFailure(caught);
+					super.onResponseFailure(caught);
 				}
 			});
 		}
@@ -466,19 +466,19 @@ public class InsurancePolicyProcessBrokerImpl extends DataBroker<InsurancePolicy
 			this.service.savePage(data, new BigBangAsyncCallback<InsurancePolicy.TableSection>() {
 
 				@Override
-				public void onSuccess(TableSection result) {
+				public void onResponseSuccess(TableSection result) {
 					handler.onResponse(result);
 				}
 
 				@Override
-				public void onFailure(Throwable caught) {
+				public void onResponseFailure(Throwable caught) {
 					if(caught instanceof CorruptedPadException){
 						onPadCorrupted(policyId);
 					}
 					handler.onError(new String[]{
 							new String("Coulg not save the page")	
 					});
-					super.onFailure(caught);
+					super.onResponseFailure(caught);
 				}
 			});
 		}else{
@@ -528,16 +528,16 @@ public class InsurancePolicyProcessBrokerImpl extends DataBroker<InsurancePolicy
 		service.validatePolicy(policyId, new BigBangAsyncCallback<Void>() {
 
 			@Override
-			public void onSuccess(Void result) {
+			public void onResponseSuccess(Void result) {
 				handler.onResponse(null);
 			}
 
 			@Override
-			public void onFailure(Throwable caught) {
+			public void onResponseFailure(Throwable caught) {
 				handler.onError(new String[]{
 						caught.getMessage()	
 				});
-				super.onFailure(caught);
+				super.onResponseFailure(caught);
 			}
 		});
 	}
@@ -547,16 +547,16 @@ public class InsurancePolicyProcessBrokerImpl extends DataBroker<InsurancePolicy
 		service.performCalculations(policyId, new BigBangAsyncCallback<InsurancePolicy>() {
 
 			@Override
-			public void onSuccess(InsurancePolicy result) {
+			public void onResponseSuccess(InsurancePolicy result) {
 				handler.onResponse(result);
 			}
 			
 			@Override
-			public void onFailure(Throwable caught) {
+			public void onResponseFailure(Throwable caught) {
 				handler.onError(new String[]{
 						new String("Could not perform detailed calculations")
 				});
-				super.onFailure(caught);
+				super.onResponseFailure(caught);
 			}
 		});
 	}
@@ -566,16 +566,16 @@ public class InsurancePolicyProcessBrokerImpl extends DataBroker<InsurancePolicy
 		service.voidPolicy(voiding, new BigBangAsyncCallback<InsurancePolicy>() {
 
 			@Override
-			public void onSuccess(InsurancePolicy result) {
+			public void onResponseSuccess(InsurancePolicy result) {
 				handler.onResponse(result);
 			}
 			
 			@Override
-			public void onFailure(Throwable caught) {
+			public void onResponseFailure(Throwable caught) {
 				handler.onError(new String[]{
 						new String("Could not void the policy")
 				});
-				super.onFailure(caught);
+				super.onResponseFailure(caught);
 			}
 		});
 	}
@@ -585,16 +585,16 @@ public class InsurancePolicyProcessBrokerImpl extends DataBroker<InsurancePolicy
 		service.createDebitNote(policyId, note, new BigBangAsyncCallback<Void>() {
 
 			@Override
-			public void onSuccess(Void result) {
+			public void onResponseSuccess(Void result) {
 				handler.onResponse(null);
 			}
 			
 			@Override
-			public void onFailure(Throwable caught) {
+			public void onResponseFailure(Throwable caught) {
 				handler.onError(new String[]{
 					new String("Could not issue debit note")	
 				});
-				super.onFailure(caught);
+				super.onResponseFailure(caught);
 			}
 		});
 	}
@@ -644,35 +644,35 @@ public class InsurancePolicyProcessBrokerImpl extends DataBroker<InsurancePolicy
 			service.getPageForEdit(policyId, insuredObjectId, exerciseId, new BigBangAsyncCallback<InsurancePolicy.TableSection>() {
 
 				@Override
-				public void onSuccess(TableSection result) {
+				public void onResponseSuccess(TableSection result) {
 					handler.onResponse(result);
 				}
 
 				@Override
-				public void onFailure(Throwable caught) {
+				public void onResponseFailure(Throwable caught) {
 					if(caught instanceof CorruptedPadException){
 						onPadCorrupted(policyId);
 					}
 					handler.onError(new String[]{
 							new String("Could not get the requested page")
 					});
-					super.onFailure(caught);
+					super.onResponseFailure(caught);
 				}
 			});
 		}else{
 			service.getPage(policyId, insuredObjectId, exerciseId, new BigBangAsyncCallback<InsurancePolicy.TableSection>() {
 
 				@Override
-				public void onSuccess(TableSection result) {
+				public void onResponseSuccess(TableSection result) {
 					handler.onResponse(result);
 				}
 
 				@Override
-				public void onFailure(Throwable caught) {
+				public void onResponseFailure(Throwable caught) {
 					handler.onError(new String[]{
 							new String("Could not get the requested page")
 					});
-					super.onFailure(caught);
+					super.onResponseFailure(caught);
 				}
 			});
 		}

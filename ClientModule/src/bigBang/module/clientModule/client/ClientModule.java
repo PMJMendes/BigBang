@@ -8,7 +8,7 @@ import bigBang.library.client.ViewPresenterInstantiator;
 import bigBang.library.client.userInterface.presenter.ViewPresenter;
 import bigBang.module.clientModule.client.dataAccess.ClientProcessBrokerImpl;
 import bigBang.module.clientModule.client.userInterface.presenter.ClientInfoOrDocumentRequestViewPresenter;
-import bigBang.module.clientModule.client.userInterface.presenter.ClientManagerTransferOperationViewPresenter;
+import bigBang.module.clientModule.client.userInterface.presenter.ClientMassManagerTransferViewPresenter;
 import bigBang.module.clientModule.client.userInterface.presenter.ClientMergeViewPresenter;
 import bigBang.module.clientModule.client.userInterface.presenter.ClientOperationsViewPresenter;
 import bigBang.module.clientModule.client.userInterface.presenter.ClientSearchOperationViewPresenter;
@@ -16,7 +16,7 @@ import bigBang.module.clientModule.client.userInterface.presenter.ClientSectionV
 import bigBang.module.clientModule.client.userInterface.presenter.CreateInsurancePolicyViewPresenter;
 import bigBang.module.clientModule.client.userInterface.presenter.SingleClientManagerTransferViewPresenter;
 import bigBang.module.clientModule.client.userInterface.view.ClientInfoOrDocumentRequestView;
-import bigBang.module.clientModule.client.userInterface.view.ClientManagerTransferOperationView;
+import bigBang.module.clientModule.client.userInterface.view.ClientMassManagerTransferView;
 import bigBang.module.clientModule.client.userInterface.view.ClientMergeView;
 import bigBang.module.clientModule.client.userInterface.view.ClientOperationsView;
 import bigBang.module.clientModule.client.userInterface.view.ClientSearchOperationView;
@@ -83,8 +83,8 @@ public class ClientModule implements Module {
 
 			@Override
 			public ViewPresenter getInstance() {
-				ClientManagerTransferOperationView view = (ClientManagerTransferOperationView) GWT.create(ClientManagerTransferOperationView.class);
-				ViewPresenter presenter = new ClientManagerTransferOperationViewPresenter(view);
+				ClientMassManagerTransferView view = (ClientMassManagerTransferView) GWT.create(ClientMassManagerTransferView.class);
+				ViewPresenter presenter = new ClientMassManagerTransferViewPresenter(view);
 				return presenter;
 			}
 		});

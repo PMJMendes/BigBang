@@ -102,7 +102,7 @@ public class ClientSectionViewPresenter implements ViewPresenter {
 					if(operation.equalsIgnoreCase("history")){
 						present("HISTORY", parameters);
 					}else if(operation.equalsIgnoreCase("massmanagertransfer")){
-						present("MANAGER_TRANSFER", parameters);
+						present("CLIENT_MASS_MANAGER_TRANSFER", parameters);
 					}else{
 						present("CLIENT_OPERATIONS", parameters);
 					}

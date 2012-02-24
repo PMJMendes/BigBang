@@ -5,10 +5,8 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import com.google.gwt.core.client.GWT;
 
 import bigBang.definitions.client.dataAccess.DataBroker;
-import bigBang.definitions.client.dataAccess.DataBrokerClient;
 import bigBang.definitions.client.response.ResponseError;
 import bigBang.definitions.client.response.ResponseHandler;
 import bigBang.definitions.shared.BigBangConstants;
@@ -189,7 +187,7 @@ public class TypifiedTextBrokerImpl extends DataBroker<TypifiedText> implements 
 		this.service.createText(text, new BigBangAsyncCallback<TypifiedText>() {
 
 			@Override
-			public void onSuccess(TypifiedText result) {
+			public void onResponseSuccess(TypifiedText result) {
 				Collection<TypifiedText> textList = texts.get(result.tag);
 				textList.add(result);
 				incrementDataVersion(result.tag);
@@ -201,9 +199,9 @@ public class TypifiedTextBrokerImpl extends DataBroker<TypifiedText> implements 
 			}
 
 			@Override
-			public void onFailure(Throwable caught) {
+			public void onResponseFailure(Throwable caught) {
 				handler.onError(new String[]{"The text could not be created"});
-				super.onFailure(caught);
+				super.onResponseFailure(caught);
 			}
 		});
 
@@ -214,7 +212,7 @@ public class TypifiedTextBrokerImpl extends DataBroker<TypifiedText> implements 
 		service.deleteText(textId, new BigBangAsyncCallback<Void>() {
 
 			@Override
-			public void onSuccess(Void result) {
+			public void onResponseSuccess(Void result) {
 				for(Collection<TypifiedText> collection: texts.values()){
 					for(TypifiedText text : collection){
 						collection.remove(text);
@@ -232,9 +230,9 @@ public class TypifiedTextBrokerImpl extends DataBroker<TypifiedText> implements 
 			}
 
 			@Override
-			public void onFailure(Throwable caught){
+			public void onResponseFailure(Throwable caught){
 				handler.onError(new String[]{"Could not delete the typified text"});
-				super.onFailure(caught);
+				super.onResponseFailure(caught);
 			}
 		});
 	}
@@ -285,7 +283,7 @@ public class TypifiedTextBrokerImpl extends DataBroker<TypifiedText> implements 
 			service.getTexts(tag, new BigBangAsyncCallback<TypifiedText[]>() {
 
 				@Override
-				public void onSuccess(TypifiedText[] result) {
+				public void onResponseSuccess(TypifiedText[] result) {
 					List<TypifiedText> textList = new ArrayList<TypifiedText>();
 					for(int i = 0; i<result.length; i++){
 						textList.add(result[i]);
@@ -296,7 +294,7 @@ public class TypifiedTextBrokerImpl extends DataBroker<TypifiedText> implements 
 					handler.onResponse(textList);
 				}
 
-				public void onFailure(Throwable caught){
+				public void onResponseFailure(Throwable caught){
 					handler.onError(new String[]{ new String("Could not get the Typified Texts for the specified tag")});
 				}
 			});
@@ -339,7 +337,7 @@ public class TypifiedTextBrokerImpl extends DataBroker<TypifiedText> implements 
 			public void onResponse(final TypifiedText response) {
 				service.saveText(text, new BigBangAsyncCallback<TypifiedText>() {
 					@Override
-					public void onSuccess(TypifiedText result) {
+					public void onResponseSuccess(TypifiedText result) {
 
 						List<TypifiedText> textList = texts.get(result.tag);
 
@@ -358,11 +356,11 @@ public class TypifiedTextBrokerImpl extends DataBroker<TypifiedText> implements 
 						}
 					}
 					@Override
-					public void onFailure(Throwable caught){
+					public void onResponseFailure(Throwable caught){
 						handler.onError(new String[]{
 								new String("Could not save the text")
 						});
-						super.onFailure(caught);
+						super.onResponseFailure(caught);
 					}
 
 				});

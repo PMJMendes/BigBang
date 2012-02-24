@@ -210,7 +210,7 @@ public class BigBangContactsListBroker extends DataBroker<Contact> implements Co
 			service.getContacts(ownerId, new BigBangAsyncCallback<Contact[]>() {
 
 				@Override
-				public void onSuccess(Contact[] result) {
+				public void onResponseSuccess(Contact[] result) {
 					List<Contact> contactsList = new ArrayList<Contact>();
 					for(int i = 0; i < result.length; i++) {
 						contactsList.add(result[i]);
@@ -222,11 +222,11 @@ public class BigBangContactsListBroker extends DataBroker<Contact> implements Co
 				}
 
 				@Override
-				public void onFailure(Throwable caught) {
+				public void onResponseFailure(Throwable caught) {
 					handler.onError(new String[]{
 							new String("Cannot get the contacts for the specified owner")	
 					});
-					super.onFailure(caught);
+					super.onResponseFailure(caught);
 				}
 			});
 		}else{
@@ -243,7 +243,7 @@ public class BigBangContactsListBroker extends DataBroker<Contact> implements Co
 		service.createContact(contact, new BigBangAsyncCallback<Contact>() {
 
 			@Override
-			public void onSuccess(Contact result) {
+			public void onResponseSuccess(Contact result) {
 				List<Contact> contactsList = contacts.get(result.ownerId);
 				contactsList.add(result);
 				incrementDataVersion(result.ownerId);
@@ -254,11 +254,11 @@ public class BigBangContactsListBroker extends DataBroker<Contact> implements Co
 				handler.onResponse(result);
 			}
 			@Override
-			public void onFailure(Throwable caught) {
+			public void onResponseFailure(Throwable caught) {
 				handler.onError(new String[]{
 						new String("Could not create the contact")
 				});
-				super.onFailure(caught);
+				super.onResponseFailure(caught);
 			}
 		});
 	}
@@ -270,7 +270,7 @@ public class BigBangContactsListBroker extends DataBroker<Contact> implements Co
 		}
 		service.saveContact(contact, new BigBangAsyncCallback<Contact>() {
 			@Override
-			public void onSuccess(Contact result) {
+			public void onResponseSuccess(Contact result) {
 				String ownerId = result.ownerId;
 				List<Contact> contactsList = contacts.get(ownerId);
 				for(Contact contact : contactsList){
@@ -289,11 +289,11 @@ public class BigBangContactsListBroker extends DataBroker<Contact> implements Co
 				handler.onResponse(result);
 			}
 			@Override
-			public void onFailure(Throwable caught) {
+			public void onResponseFailure(Throwable caught) {
 				handler.onError(new String[]{
 						new String("Could not updade the contact")
 				});
-				super.onFailure(caught);
+				super.onResponseFailure(caught);
 			}
 		});
 	}
@@ -304,7 +304,7 @@ public class BigBangContactsListBroker extends DataBroker<Contact> implements Co
 		service.deleteContact(contactId, new BigBangAsyncCallback<Void>() {
 
 			@Override
-			public void onSuccess(Void v) {
+			public void onResponseSuccess(Void v) {
 				String ownerId = null;
 				for(Collection<Contact> collection : contacts.values()){
 					for(Contact contact : collection) {
@@ -323,11 +323,11 @@ public class BigBangContactsListBroker extends DataBroker<Contact> implements Co
 				handler.onResponse(null);
 			}
 			@Override
-			public void onFailure(Throwable caught) {
+			public void onResponseFailure(Throwable caught) {
 				handler.onError(new String[]{
 						new String("Could not delete the contact")
 				});
-				super.onFailure(caught);
+				super.onResponseFailure(caught);
 			}
 		});
 	}

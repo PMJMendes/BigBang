@@ -148,10 +148,11 @@ ViewPresenter {
 
 	@Override
 	public void setParameters(HasParameters parameterHolder) {
-		setup();
-		
 		String policyId = parameterHolder.getParameter("id");
+		checkStatus(policyId);
 		policyId = policyId == null ? new String() : policyId;
+		
+		setup();
 
 		if(policyId.isEmpty()){
 			clearView();
@@ -241,7 +242,7 @@ ViewPresenter {
 					break;
 				case CREATE_EXERCISE:
 					item.setParameter("operation", "viewexercise");
-					item.setParameter("objectid", "new");
+					item.setParameter("exerciseid", "new");
 					NavigationHistoryManager.getInstance().go(item);
 					break;
 				case INCLUDE_INSURED_OBJECT:
@@ -387,6 +388,26 @@ ViewPresenter {
 		this.bound = true;
 	}
 
+	private void checkStatus(String nextPolicyId){
+		InsurancePolicy policy = view.getForm().getValue();
+		if(policy != null && policy.id != null){
+			if((nextPolicyId == null || !nextPolicyId.equalsIgnoreCase(policy.id)) && broker.isTemp(policy.id)){
+				broker.closePolicyResource(policy.id, new ResponseHandler<Void>() {
+
+					@Override
+					public void onResponse(Void response) {
+						return;
+					}
+
+					@Override
+					public void onError(Collection<ResponseError> errors) {
+						return;
+					}
+				});
+			}
+		}
+	}
+	
 	private void clearView(){
 		view.setSaveModeEnabled(false);
 		view.clearAllowedPermissions();

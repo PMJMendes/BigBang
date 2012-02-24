@@ -20,7 +20,6 @@ import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.HasClickHandlers;
 import com.google.gwt.user.client.Window;
-import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.HasValue;
 import com.google.gwt.user.client.ui.HasWidgets;
 import com.google.gwt.user.client.ui.UIObject;
@@ -101,7 +100,7 @@ public class LoginViewPresenter implements ViewPresenter {
 		service.getCurrentLoginData(new BigBangAsyncCallback<LoginResponse>() {
 
 			@Override
-			public void onSuccess(LoginResponse loginResponse) {
+			public void onResponseSuccess(LoginResponse loginResponse) {
 				if(loginResponse != null){
 					//LOGIN SUCCESS
 					Session.setUserId(loginResponse.userId);
@@ -126,9 +125,9 @@ public class LoginViewPresenter implements ViewPresenter {
 			return;
 		}
 
-		service.login(domain, new AsyncCallback<LoginResponse>() {
+		service.login(domain, new BigBangAsyncCallback<LoginResponse>() {
 
-			public void onSuccess(LoginResponse loginResponse) {
+			public void onResponseSuccess(LoginResponse loginResponse) {
 				if(loginResponse == null){
 					//LOGIN FAILED
 					view.getDomain().setValue(domain);
@@ -154,9 +153,9 @@ public class LoginViewPresenter implements ViewPresenter {
 	
 	private void checkLogin(String username, String password, final String domain){
 		view.showLoading(true);
-		service.login(username, password, domain, new AsyncCallback<LoginResponse>() {
+		service.login(username, password, domain, new BigBangAsyncCallback<LoginResponse>() {
 
-			public void onSuccess(LoginResponse loginResponse) {
+			public void onResponseSuccess(LoginResponse loginResponse) {
 				//LOGIN SUCCESS
 				Session.setUserId(loginResponse.userId);
 				Session.setUsername(loginResponse.userName);

@@ -36,7 +36,7 @@ public class SearchDataBrokerImpl<T extends SearchResult> extends DataBroker<T> 
 
 			@SuppressWarnings("unchecked")
 			@Override
-			public void onSuccess(NewSearchResult result) {
+			public void onResponseSuccess(NewSearchResult result) {
 				Collection<T> resultsCollection = new ArrayList<T>();
 				for(int i = 0; i < result.results.length; i++)
 					resultsCollection.add((T) result.results[i]);
@@ -55,7 +55,7 @@ public class SearchDataBrokerImpl<T extends SearchResult> extends DataBroker<T> 
 
 			@SuppressWarnings("unchecked")
 			@Override
-			public void onSuccess(NewSearchResult result) {
+			public void onResponseSuccess(NewSearchResult result) {
 				Collection<T> resultsCollection = new ArrayList<T>();
 				for(int i = 0; i < result.results.length; i++)
 					resultsCollection.add((T) result.results[i]);
@@ -74,7 +74,7 @@ public class SearchDataBrokerImpl<T extends SearchResult> extends DataBroker<T> 
 
 				@SuppressWarnings("unchecked")
 				@Override
-				public void onSuccess(NewSearchResult result) {
+				public void onResponseSuccess(NewSearchResult result) {
 					Collection<T> resultsCollection = new ArrayList<T>();
 					for(int i = 0; i < result.results.length; i++)
 						resultsCollection.add((T) result.results[i]);
@@ -93,7 +93,7 @@ public class SearchDataBrokerImpl<T extends SearchResult> extends DataBroker<T> 
 
 			@SuppressWarnings("unchecked")
 			@Override
-			public void onSuccess(SearchResult[] result) {
+			public void onResponseSuccess(SearchResult[] result) {
 				Search<T> currentSearch = workspaces.get(workspaceId);
 				Collection<T> resultsCollection = new ArrayList<T>();
 				for(int i = 0; i < result.length; i++)

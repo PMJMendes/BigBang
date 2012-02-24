@@ -1,13 +1,13 @@
 package bigBang.module.clientModule.client.userInterface;
 
 import bigBang.definitions.shared.ClientStub;
-import bigBang.library.client.userInterface.SearchPanelListEntry;
+import bigBang.library.client.userInterface.ListEntry;
 
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
-public class ClientSearchPanelListEntry extends SearchPanelListEntry<ClientStub> {
+public class ClientSearchPanelListEntry extends ListEntry<ClientStub> {
 
 	protected Label numberLabel;
 	protected Label nameLabel;
@@ -31,10 +31,16 @@ public class ClientSearchPanelListEntry extends SearchPanelListEntry<ClientStub>
 			numberLabel.setText("#" + value.clientNumber);
 			nameLabel.setText(value.name);
 			groupLabel.setText(value.groupName == null ? "-" : value.groupName);
+			setMetaData(new String[]{
+				value.name,
+				value.groupName,
+				value.clientNumber
+			});
 		}else{
 			numberLabel.setText("");
 			nameLabel.setText("Novo Cliente");
 			groupLabel.setText("");
+			setMetaData(new String[0]);
 		}
 	};
 	

@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
+import com.google.gwt.dom.client.Style.Overflow;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 
@@ -192,6 +193,8 @@ public class InsuredObjectForm extends FormView<InsuredObject> {
 	protected Collection<DynFormField> dynamicFixedHeaderFields;
 
 	public InsuredObjectForm(){
+		this.scrollWrapper.getElement().getStyle().setOverflowX(Overflow.SCROLL);
+		
 		this.coverageFixedFields = new HashMap<String, Collection<DynFormField>>();
 		this.coverageTables = new HashMap<String, TwoKeyTableView>();
 		this.dynamicFieldSections = new ArrayList<FormViewSection>();
@@ -545,7 +548,6 @@ public class InsuredObjectForm extends FormView<InsuredObject> {
 
 	protected void setDynamicFixedHeaderData(FixedField[] fields){
 		clearDynamicFixedHeaderData();
-		clearDynamicFixedHeaderData();
 		if(fields != null){
 			for(int i = 0; i < fields.length; i++) {
 				FixedField field = fields[i];
@@ -584,8 +586,10 @@ public class InsuredObjectForm extends FormView<InsuredObject> {
 
 	protected void setDynamicVariableHeaderData(Exercise[] exercises, VariableField[] fields){
 		this.dynamicVariableHeaderDataTable.removeFromParent();
-
 		removeDynamicData();
+
+		this.dynamicVariableHeaderDataTable = new TwoKeyTableView();
+
 		if(exercises == null){
 			return;
 		}
@@ -645,9 +649,9 @@ public class InsuredObjectForm extends FormView<InsuredObject> {
 			}
 		}
 
-		this.dynamicHeaderSection.addWidget(this.dynamicVariableHeaderDataTable, false);
 		this.dynamicVariableHeaderDataTable.render();
 		this.dynamicVariableHeaderDataTable.setReadOnly(this.isReadOnly());
+		this.dynamicHeaderSection.addWidget(this.dynamicVariableHeaderDataTable, false);
 	}
 
 	protected void setDynamicData(Exercise[] exercises, CoverageData[] data){

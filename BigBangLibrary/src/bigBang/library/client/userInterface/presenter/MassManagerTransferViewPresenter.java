@@ -5,54 +5,72 @@ import java.util.Collection;
 
 import bigBang.definitions.client.response.ResponseError;
 import bigBang.definitions.client.response.ResponseHandler;
-import bigBang.definitions.shared.User;
+import bigBang.definitions.shared.ClientStub;
+import bigBang.definitions.shared.ProcessBase;
+import bigBang.library.client.Checkable;
 import bigBang.library.client.HasCheckables;
 import bigBang.library.client.HasEditableValue;
 import bigBang.library.client.HasParameters;
 import bigBang.library.client.HasValueSelectables;
+import bigBang.library.client.Session;
 import bigBang.library.client.ValueSelectable;
 import bigBang.library.client.event.ActionInvokedEvent;
 import bigBang.library.client.event.ActionInvokedEventHandler;
+import bigBang.library.client.event.CheckedSelectionChangedEvent;
+import bigBang.library.client.event.CheckedSelectionChangedEventHandler;
 
+import com.google.gwt.user.client.ui.HasValue;
 import com.google.gwt.user.client.ui.HasWidgets;
 import com.google.gwt.user.client.ui.UIObject;
 import com.google.gwt.user.client.ui.Widget;
 
-public abstract class MassManagerTransferViewPresenter<T> implements ViewPresenter {
+public abstract class MassManagerTransferViewPresenter<T extends ProcessBase, T2 extends T> implements ViewPresenter {
 
 	public static enum Action {
 		TRANSFER,
-		CANCEL
+		CANCEL,
+		CLEAR_SELECTED_PROCESSES,
+		SELECT_ALL_PROCESSES
 	}
 
-	public interface Display<T> {
+	public interface Display<T extends ProcessBase, T2 extends T> {
 		void setOperationFilter(String operationId);
 
-		HasEditableValue<User> getNewManagerForm();
-		HasEditableValue<T> getSelectedProcessForm();
+		HasValue<String> getNewManagerForm();
+		HasEditableValue<T2> getSelectedProcessForm();
 
 		HasValueSelectables<T> getMainList();
 		HasValueSelectables<T> getSelectedList();
 		HasCheckables getCheckableMainList();
-
+		HasCheckables getCheckableSelectedList();
+		
+		void refreshMainList();
+		
+		void markAllForCheck();
+		void markForCheck(String id);
+		void markForUncheck(String id);
+		void addProcessToTransfer(ClientStub value);
+		void removeProcessFromTransfer(String id);
+		void removeAllProcessesFromTransfer();
+		
 		void allowTransfer(boolean allow);
 
 		void registerActionHandler(ActionInvokedEventHandler<Action> handler);
 		Widget asWidget();
 	}
-	
+
 	protected String ownerId;
-	private Display<T> view;
+	protected Display<T, T2> view;
 	private boolean bound = false;
-	
-	public MassManagerTransferViewPresenter(Display<T> view){
+
+	public MassManagerTransferViewPresenter(Display<T, T2> view){
 		setView((UIObject) view);
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	@Override
 	public void setView(UIObject view) {
-		this.view = (Display<T>) view;
+		this.view = (Display<T, T2>) view;
 	}
 
 	@Override
@@ -64,17 +82,11 @@ public abstract class MassManagerTransferViewPresenter<T> implements ViewPresent
 
 	@Override
 	public void setParameters(HasParameters parameterHolder) {
-		ownerId = parameterHolder.getParameter("id");
-		ownerId = ownerId == null ? new String() : ownerId;
-
-		if(ownerId.isEmpty()){
-			clearView();
-		}else{
-			showMassManagerTransferCreationScreen();
-		}
+		clearView();
+		showMassManagerTransferCreationScreen();
 	}
 
-	private void bind(){
+	protected void bind(){
 		if(bound){return;}
 
 		view.registerActionHandler(new ActionInvokedEventHandler<MassManagerTransferViewPresenter.Action>() {
@@ -83,7 +95,7 @@ public abstract class MassManagerTransferViewPresenter<T> implements ViewPresent
 			public void onActionInvoked(ActionInvokedEvent<Action> action) {
 				switch(action.getAction()){
 				case TRANSFER:
-					String newManagerId = view.getNewManagerForm().getInfo().id;
+					String newManagerId = view.getNewManagerForm().getValue();
 					ArrayList<T> affectedProcesses = new ArrayList<T>();
 					for(ValueSelectable<T> entry : view.getSelectedList().getAll()){
 						affectedProcesses.add(entry.getValue());
@@ -93,6 +105,50 @@ public abstract class MassManagerTransferViewPresenter<T> implements ViewPresent
 				case CANCEL:
 					onCancel();
 					break;
+				case CLEAR_SELECTED_PROCESSES:
+					view.removeAllProcessesFromTransfer();
+					break;
+				case SELECT_ALL_PROCESSES:
+					view.markAllForCheck();
+					break;
+				}
+			}
+		});
+		view.getCheckableMainList().addCheckedSelectionChangedEventHandler(new CheckedSelectionChangedEventHandler() {
+
+			@Override
+			public void onCheckedSelectionChanged(CheckedSelectionChangedEvent event) {
+				Checkable checkable = event.getChangedCheckable();
+
+				@SuppressWarnings("unchecked")
+				ValueSelectable<ClientStub> entry = (ValueSelectable<ClientStub>) checkable;
+				String id = entry.getValue().id;
+
+				if(checkable.isChecked()){
+					view.markForCheck(id);
+					view.addProcessToTransfer(entry.getValue());
+				}else{
+					view.markForUncheck(id);
+					view.removeProcessFromTransfer(id);
+				}
+			}
+		});
+		view.getCheckableSelectedList().addCheckedSelectionChangedEventHandler(new CheckedSelectionChangedEventHandler() {
+
+			@Override
+			public void onCheckedSelectionChanged(CheckedSelectionChangedEvent event) {
+				Checkable checkable = event.getChangedCheckable();
+
+				@SuppressWarnings("unchecked")
+				ValueSelectable<ClientStub> entry = (ValueSelectable<ClientStub>) checkable;
+
+				String id = entry.getValue().id;
+
+				if(checkable.isChecked()){
+					view.markForCheck(id);
+				}else{
+					view.markForUncheck(id);
+					view.removeProcessFromTransfer(id);
 				}
 			}
 		});
@@ -102,18 +158,19 @@ public abstract class MassManagerTransferViewPresenter<T> implements ViewPresent
 
 	private void clearView(){
 		view.getMainList().clearSelection();
-		view.getSelectedList().clearSelection();
-		view.getNewManagerForm().setReadOnly(true);
+		view.removeAllProcessesFromTransfer();
+		view.getNewManagerForm().setValue(null);
 	}
 
 	private void showMassManagerTransferCreationScreen(){
+		view.getNewManagerForm().setValue(Session.getUserId());
 		checkUserPermission(new ResponseHandler<Boolean>() {
 
 			@Override
 			public void onResponse(Boolean response) {
 				if(response){
 					view.allowTransfer(true);
-					view.getNewManagerForm().setReadOnly(false);
+					view.getNewManagerForm().setValue(null);
 				}else{
 					onUserLacksPermission();
 				}
@@ -129,13 +186,13 @@ public abstract class MassManagerTransferViewPresenter<T> implements ViewPresent
 	protected abstract void onTransfer(String newManagerId, Collection<T> affectedProcesses);
 
 	protected abstract void onCancel();
-	
+
 	protected abstract void checkUserPermission(ResponseHandler<Boolean> handler);
 
 	protected abstract void onUserLacksPermission();
-	
+
 	protected abstract void onTransferSuccess();
-	
+
 	protected abstract void onTransferFailed();
-	
+
 }

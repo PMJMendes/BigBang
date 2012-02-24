@@ -82,16 +82,16 @@ public class TasksBrokerImpl extends DataBroker<Task> implements TasksBroker {
 		service.getTask(id, new BigBangAsyncCallback<Task>() {
 
 			@Override
-			public void onSuccess(Task result) {
+			public void onResponseSuccess(Task result) {
 				handler.onResponse(result);
 			}
 
 			@Override
-			public void onFailure(Throwable caught) {
+			public void onResponseFailure(Throwable caught) {
 				handler.onError(new String[]{
 						new String("Could not get the task")
 				});
-				super.onFailure(caught);
+				super.onResponseFailure(caught);
 			}
 		});
 	}
@@ -101,7 +101,7 @@ public class TasksBrokerImpl extends DataBroker<Task> implements TasksBroker {
 		service.getPendingTasksCount(new BigBangAsyncCallback<Integer>() {
 
 			@Override
-			public void onSuccess(Integer result) {
+			public void onResponseSuccess(Integer result) {
 				handler.onResponse(result);
 			}
 		});
@@ -117,17 +117,17 @@ public class TasksBrokerImpl extends DataBroker<Task> implements TasksBroker {
 		this.service.dismissTask(taskId, new BigBangAsyncCallback<Void>() {
 
 			@Override
-			public void onSuccess(Void result) {
+			public void onResponseSuccess(Void result) {
 				notifyItemDeletion(taskId);
 				handler.onResponse(null);
 			}
 
 			@Override
-			public void onFailure(Throwable caught) {
+			public void onResponseFailure(Throwable caught) {
 				handler.onError(new String[]{
 						new String("Could not dismiss the task")	
 				});
-				super.onFailure(caught);
+				super.onResponseFailure(caught);
 			}
 		});
 	}

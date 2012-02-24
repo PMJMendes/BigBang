@@ -5,6 +5,7 @@ import java.util.Map;
 
 import com.google.gwt.user.client.ui.Grid;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
+import com.google.gwt.user.client.ui.ScrollPanel;
 
 import bigBang.definitions.shared.BigBangConstants;
 import bigBang.library.client.FieldValidator;
@@ -138,10 +139,14 @@ public class TwoKeyTableView extends View {
 	protected Map<String, Map<String, FormField<String>>> fields;
 
 	public TwoKeyTableView(){
+		ScrollPanel wrapper = new ScrollPanel();
+		initWidget(wrapper);
+		wrapper.setSize("100%", "100%");
+		
 		fields = new HashMap<String, Map<String,FormField<String>>>();
 		table = new TwoKeyTable();
 		grid = new Grid();
-		initWidget(grid);
+		wrapper.add(grid);
 	}
 
 	@Override
@@ -189,7 +194,7 @@ public class TwoKeyTableView extends View {
 				}
 				if(i > 0 && j == 0) {
 					grid.setText(i, j, table.getRowText(rowHeaders[i-1]));
-					grid.getCellFormatter().setHorizontalAlignment(i, j, HasHorizontalAlignment.ALIGN_RIGHT);
+					grid.getCellFormatter().setHorizontalAlignment(i, j, HasHorizontalAlignment.ALIGN_CENTER);
 				}
 				if(i > 0 && j > 0){
 					FormField<String> formField = getFormField(table.getValue(rowHeaders[i-1], columnHeaders[j-1]));
@@ -205,6 +210,7 @@ public class TwoKeyTableView extends View {
 				}
 			}
 		}
+		this.grid.getColumnFormatter().setWidth(0, "150px");
 	}
 
 	protected void clearFieldMaps(){

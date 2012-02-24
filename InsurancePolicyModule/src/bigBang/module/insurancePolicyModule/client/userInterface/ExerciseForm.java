@@ -1,5 +1,7 @@
 package bigBang.module.insurancePolicyModule.client.userInterface;
 
+import com.google.gwt.dom.client.Style.Overflow;
+
 import bigBang.definitions.shared.BigBangConstants;
 import bigBang.definitions.shared.Exercise;
 import bigBang.definitions.shared.Exercise.CoverageData;
@@ -162,7 +164,8 @@ public class ExerciseForm extends FormView<Exercise> {
 
 	public ExerciseForm(){
 		super();
-
+		this.scrollWrapper.getElement().getStyle().setOverflowX(Overflow.SCROLL);
+		
 		//COMMON SECTION
 		commonSection = new FormViewSection("Informação Geral");
 		label = new TextBoxFormField("Identificação");
@@ -244,7 +247,6 @@ public class ExerciseForm extends FormView<Exercise> {
 
 	@Override
 	public void setInfo(Exercise info) {
-
 		clearFormFields();
 
 		ownerId = info.ownerId;	
@@ -427,7 +429,6 @@ public class ExerciseForm extends FormView<Exercise> {
 			columnHeaders[i] = header;
 		}
 		dynamicVariableHeaderDataTable.setHeaders(rowHeaders, columnHeaders);
-
 
 		for(int i = 0; i < fields.length; i++){
 			VariableField field = fields[i];

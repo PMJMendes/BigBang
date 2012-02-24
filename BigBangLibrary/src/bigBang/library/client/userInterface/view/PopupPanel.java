@@ -5,8 +5,6 @@ import java.util.Iterator;
 import org.gwt.mosaic.ui.client.Caption;
 import org.gwt.mosaic.ui.client.WindowPanel;
 
-import com.google.gwt.event.logical.shared.ResizeEvent;
-import com.google.gwt.event.logical.shared.ResizeHandler;
 import com.google.gwt.user.client.ui.HasWidgets;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.Widget;

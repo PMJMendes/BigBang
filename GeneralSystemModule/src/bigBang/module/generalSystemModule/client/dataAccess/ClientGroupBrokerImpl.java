@@ -36,7 +36,7 @@ public class ClientGroupBrokerImpl extends DataBroker<ClientGroup> implements Cl
 			service.getClientGroupList(new BigBangAsyncCallback<ClientGroup[]>() {
 
 				@Override
-				public void onSuccess(ClientGroup[] result) {
+				public void onResponseSuccess(ClientGroup[] result) {
 					cache.clear();
 					for(int i = 0; i < result.length; i++){
 						cache.add(result[i].id, result[i]);
@@ -51,11 +51,11 @@ public class ClientGroupBrokerImpl extends DataBroker<ClientGroup> implements Cl
 				}
 				
 				@Override
-				public void onFailure(Throwable caught) {
+				public void onResponseFailure(Throwable caught) {
 					handler.onError(new String[]{
 						new String("Could not fetch the list of client groups")	
 					});
-					super.onFailure(caught);
+					super.onResponseFailure(caught);
 				}
 			});
 		}else{
@@ -81,7 +81,7 @@ public class ClientGroupBrokerImpl extends DataBroker<ClientGroup> implements Cl
 		service.createClientGroup(group, new BigBangAsyncCallback<ClientGroup>() {
 
 			@Override
-			public void onSuccess(ClientGroup result) {
+			public void onResponseSuccess(ClientGroup result) {
 				cache.add(result.id, result);
 				incrementDataVersion();
 				for(DataBrokerClient<ClientGroup> c : getClients()){
@@ -92,11 +92,11 @@ public class ClientGroupBrokerImpl extends DataBroker<ClientGroup> implements Cl
 			}
 			
 			@Override
-			public void onFailure(Throwable caught) {
+			public void onResponseFailure(Throwable caught) {
 				handler.onError(new String[]{
 					new String("Could not create client group.")	
 				});
-				super.onFailure(caught);
+				super.onResponseFailure(caught);
 			}
 		});
 	}
@@ -107,7 +107,7 @@ public class ClientGroupBrokerImpl extends DataBroker<ClientGroup> implements Cl
 		this.service.saveClientGroup(group, new BigBangAsyncCallback<ClientGroup>() {
 
 			@Override
-			public void onSuccess(ClientGroup result) {
+			public void onResponseSuccess(ClientGroup result) {
 				cache.update(result.id, result);
 				incrementDataVersion();
 				for(DataBrokerClient<ClientGroup> c : ClientGroupBrokerImpl.this.getClients()){
@@ -118,11 +118,11 @@ public class ClientGroupBrokerImpl extends DataBroker<ClientGroup> implements Cl
 			}
 			
 			@Override
-			public void onFailure(Throwable caught) {
+			public void onResponseFailure(Throwable caught) {
 				handler.onError(new String[]{
 						new String("Could not update client group")
 				});
-				super.onFailure(caught);
+				super.onResponseFailure(caught);
 			}
 		});
 	}
@@ -133,7 +133,7 @@ public class ClientGroupBrokerImpl extends DataBroker<ClientGroup> implements Cl
 		this.service.deleteClientGroup(groupId, new BigBangAsyncCallback<Void>() {
 
 			@Override
-			public void onSuccess(Void result) {
+			public void onResponseSuccess(Void result) {
 				cache.remove(groupId);
 				incrementDataVersion();
 				for(DataBrokerClient<ClientGroup> c : ClientGroupBrokerImpl.this.getClients()){
@@ -144,11 +144,11 @@ public class ClientGroupBrokerImpl extends DataBroker<ClientGroup> implements Cl
 			}
 			
 			@Override
-			public void onFailure(Throwable caught) {
+			public void onResponseFailure(Throwable caught) {
 				handler.onError(new String[]{
 						new String("Could not delete client group")
 				});
-				super.onFailure(caught);
+				super.onResponseFailure(caught);
 			}
 		});
 	}

@@ -187,7 +187,7 @@ public class LineList extends FilterableList<Line> implements CoverageDataBroker
 		CoveragesService.Util.getInstance().createLine(line, new BigBangAsyncCallback<Line>() {
 
 			@Override
-			public void onSuccess(Line result) {
+			public void onResponseSuccess(Line result) {
 				Entry entry = new Entry(result);
 				add(entry);
 				entry.setSelected(true);
@@ -201,7 +201,7 @@ public class LineList extends FilterableList<Line> implements CoverageDataBroker
 		CoveragesService.Util.getInstance().saveLine(line, new BigBangAsyncCallback<Line>() {
 
 			@Override
-			public void onSuccess(Line result) {
+			public void onResponseSuccess(Line result) {
 				updateEntry(result);
 				showForm(false);
 			}

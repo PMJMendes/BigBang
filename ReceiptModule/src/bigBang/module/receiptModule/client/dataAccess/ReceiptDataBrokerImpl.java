@@ -97,7 +97,7 @@ public class ReceiptDataBrokerImpl extends DataBroker<Receipt> implements Receip
 			this.service.getReceipt(id, new BigBangAsyncCallback<Receipt>() {
 
 				@Override
-				public void onSuccess(Receipt result) {
+				public void onResponseSuccess(Receipt result) {
 					cache.add(id, result);
 					incrementDataVersion();
 					for(DataBrokerClient<Receipt> bc : getClients()){
@@ -109,9 +109,9 @@ public class ReceiptDataBrokerImpl extends DataBroker<Receipt> implements Receip
 				}
 				
 				@Override
-				public void onFailure(Throwable caught) {
+				public void onResponseFailure(Throwable caught) {
 					handler.onError(new String[0]);
-					super.onFailure(caught);
+					super.onResponseFailure(caught);
 				}
 			});
 		}
@@ -122,7 +122,7 @@ public class ReceiptDataBrokerImpl extends DataBroker<Receipt> implements Receip
 		this.service.editReceipt(receipt, new BigBangAsyncCallback<Receipt>() {
 
 			@Override
-			public void onSuccess(Receipt result) {
+			public void onResponseSuccess(Receipt result) {
 				cache.add(receipt.id, receipt);
 				incrementDataVersion();
 				for(DataBrokerClient<Receipt> bc : getClients()){
@@ -133,9 +133,9 @@ public class ReceiptDataBrokerImpl extends DataBroker<Receipt> implements Receip
 			}
 			
 			@Override
-			public void onFailure(Throwable caught) {
+			public void onResponseFailure(Throwable caught) {
 				handler.onError(new String[0]);
-				super.onFailure(caught);
+				super.onResponseFailure(caught);
 			}
 		});
 	}
@@ -149,7 +149,7 @@ public class ReceiptDataBrokerImpl extends DataBroker<Receipt> implements Receip
 				service.deleteReceipt(id, new BigBangAsyncCallback<Void>() {
 
 					@Override
-					public void onSuccess(Void result) {
+					public void onResponseSuccess(Void result) {
 						cache.remove(id);
 						incrementDataVersion();
 						for(DataBrokerClient<Receipt> bc : getClients()){
@@ -160,9 +160,9 @@ public class ReceiptDataBrokerImpl extends DataBroker<Receipt> implements Receip
 					}
 					
 					@Override
-					public void onFailure(Throwable caught) {
+					public void onResponseFailure(Throwable caught) {
 						handler.onError(new String[0]);
-						super.onFailure(caught);
+						super.onResponseFailure(caught);
 					}
 				});		
 			}
