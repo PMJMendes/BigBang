@@ -3449,11 +3449,9 @@ public class InsurancePolicyServiceImpl
 			lobjPolicy = Policy.GetInstance(Engine.getCurrentNameSpace(), UUID.fromString(request.parentDataObjectId));
 
 			lopCIR = new CreateInfoRequest(lobjPolicy.GetProcessID());
-			lopCIR.mlngDays = request.replylimit;
 			lopCIR.midRequestType = UUID.fromString(request.requestTypeId);
-			lopCIR.mstrSubject = request.subject;
-			lopCIR.mstrBody = request.text;
-			lopCIR.mobjHeaders = OutgoingHeaderBridge.toServer(request.headers);
+			lopCIR.mobjMessage = OutgoingHeaderBridge.toServer(request.message);
+			lopCIR.mlngDays = request.replylimit;
 
 			lopCIR.Execute();
 		}

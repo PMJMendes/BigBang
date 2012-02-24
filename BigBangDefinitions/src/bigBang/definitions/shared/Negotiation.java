@@ -11,9 +11,14 @@ public class Negotiation
 		private static final long serialVersionUID = 1L;
 
 		public String negotiationId;
+		public OutgoingMessage message;
 		public String[] attachedDocumentIds;
 		public int replylimit;
-		public OutgoingHeaders headers;
+
+		public QuoteRequestInfo()
+		{
+			message = new OutgoingMessage();
+		}
 	}
 
 	public static class Cancellation
@@ -44,10 +49,15 @@ public class Negotiation
 		private static final long serialVersionUID = 1L;
 
 		public String negotiationId;
+		public OutgoingMessage message;
 		public String[] securedObjectIds;
 		public String[] lineIds;
 		public String effectiveDate;
-		public OutgoingHeaders headers;
+
+		public Grant()
+		{
+			message = new OutgoingMessage();
+		}
 	}
 
 	public static class Deletion

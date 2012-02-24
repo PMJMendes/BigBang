@@ -16,7 +16,7 @@ import Jewel.Petri.SysObjects.Operation;
 
 import com.premiumminds.BigBang.Jewel.BigBangJewelException;
 import com.premiumminds.BigBang.Jewel.Constants;
-import com.premiumminds.BigBang.Jewel.Data.OutgoingHeaderData;
+import com.premiumminds.BigBang.Jewel.Data.OutgoingMessageData;
 import com.premiumminds.BigBang.Jewel.Objects.AgendaItem;
 import com.premiumminds.BigBang.Jewel.Objects.ContactInfo;
 import com.premiumminds.BigBang.Jewel.Objects.Negotiation;
@@ -28,9 +28,8 @@ public class SendGrant
 {
 	private static final long serialVersionUID = 1L;
 
-	public OutgoingHeaderData mobjHeaders;
-	private String mstrSubject;
-	private String mstrBody;
+	public OutgoingMessageData mobjMessage;
+	private boolean mbEmailSent;
 
 	public SendGrant(UUID pidProcess)
 	{
@@ -49,7 +48,11 @@ public class SendGrant
 
 	public String LongDesc(String pstrLineBreak)
 	{
-		return null;
+		if ( mbEmailSent )
+			return "A negociação foi adjudicada. Foi enviado o seguinte email para a seguradora com a confirmação:" +
+					pstrLineBreak + mobjMessage.mstrSubject + pstrLineBreak + mobjMessage.mstrBody;
+
+		return "A negociação foi adjudicada.";
 	}
 
 	public UUID GetExternalProcess()
@@ -142,7 +145,7 @@ public class SendGrant
 			}
 		}
 
-		if ( mobjHeaders.marrContactInfos == null )
+		if ( mobjMessage.marrContactInfos == null )
 		{
 			if ( lobjNegotiation.getAt(4) == null )
 				larrTos = null;
@@ -151,13 +154,13 @@ public class SendGrant
 		}
 		else
 		{
-			larrTos = new String[mobjHeaders.marrContactInfos.length];
-			for ( i = 0; i < mobjHeaders.marrContactInfos.length; i++ )
+			larrTos = new String[mobjMessage.marrContactInfos.length];
+			for ( i = 0; i < mobjMessage.marrContactInfos.length; i++ )
 			{
 				try
 				{
 					larrTos[i] = (String)ContactInfo.GetInstance(Engine.getCurrentNameSpace(),
-							mobjHeaders.marrContactInfos[i]).getAt(2);
+							mobjMessage.marrContactInfos[i]).getAt(2);
 				}
 				catch (BigBangJewelException e)
 				{
@@ -172,10 +175,10 @@ public class SendGrant
 			try
 			{
 				lrefDecos = Entity.GetInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), Constants.ObjID_Decorations));
-				larrReplyTos = new String[mobjHeaders.marrUsers.length];
-				for ( i = 0; i < mobjHeaders.marrUsers.length; i++ )
+				larrReplyTos = new String[mobjMessage.marrUsers.length];
+				for ( i = 0; i < mobjMessage.marrUsers.length; i++ )
 				{
-					lrs = lrefDecos.SelectByMembers(pdb, new int[] {0}, new java.lang.Object[] {mobjHeaders.marrUsers[i]}, new int[0]);
+					lrs = lrefDecos.SelectByMembers(pdb, new int[] {0}, new java.lang.Object[] {mobjMessage.marrUsers[i]}, new int[0]);
 				    if (lrs.next())
 				    	larrReplyTos[i] = (String)UserDecoration.GetInstance(Engine.getCurrentNameSpace(), lrs).getAt(1);
 				    else
@@ -192,7 +195,8 @@ public class SendGrant
 
 			try
 			{
-				MailConnector.DoSendMail(larrReplyTos, larrTos, mobjHeaders.marrCCs, mobjHeaders.marrBCCs, mstrSubject, mstrBody);
+				MailConnector.DoSendMail(larrReplyTos, larrTos, mobjMessage.marrCCs, mobjMessage.marrBCCs,
+						mobjMessage.mstrSubject, mobjMessage.mstrBody);
 			}
 			catch (Throwable e)
 			{

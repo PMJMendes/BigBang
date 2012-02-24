@@ -17,7 +17,7 @@ import Jewel.Petri.SysObjects.Operation;
 
 import com.premiumminds.BigBang.Jewel.BigBangJewelException;
 import com.premiumminds.BigBang.Jewel.Constants;
-import com.premiumminds.BigBang.Jewel.Data.OutgoingHeaderData;
+import com.premiumminds.BigBang.Jewel.Data.OutgoingMessageData;
 import com.premiumminds.BigBang.Jewel.Objects.AgendaItem;
 import com.premiumminds.BigBang.Jewel.Objects.ContactInfo;
 import com.premiumminds.BigBang.Jewel.Objects.InfoRequest;
@@ -29,11 +29,9 @@ public abstract class CreateInfoRequestBase
 {
 	private static final long serialVersionUID = 1L;
 
-	public int mlngDays;
 	public UUID midRequestType;
-	public String mstrSubject;
-	public String mstrBody;
-	public OutgoingHeaderData mobjHeaders;
+	public OutgoingMessageData mobjMessage;
+	public int mlngDays;
 	public UUID midRequestObject;
 	private UUID midExternProcess;
 
@@ -54,8 +52,8 @@ public abstract class CreateInfoRequestBase
 		lstrBuffer = new StringBuilder();
 
 		lstrBuffer.append("Foi enviado o seguinte pedido:").append(pstrLineBreak);
-		lstrBuffer.append(mstrSubject).append(pstrLineBreak);
-		lstrBuffer.append(mstrBody).append(pstrLineBreak).append(pstrLineBreak);
+		lstrBuffer.append(mobjMessage.mstrSubject).append(pstrLineBreak);
+		lstrBuffer.append(mobjMessage.mstrBody).append(pstrLineBreak).append(pstrLineBreak);
 		lstrBuffer.append("Prazo limite de resposta: ").append(mlngDays).append(" dias.").append(pstrLineBreak);
 
 		return lstrBuffer.toString();
@@ -92,10 +90,10 @@ public abstract class CreateInfoRequestBase
 		try
 		{
 			lrefDecos = Entity.GetInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), Constants.ObjID_Decorations));
-			larrReplyTos = new String[mobjHeaders.marrUsers.length];
-			for ( i = 0; i < mobjHeaders.marrUsers.length; i++ )
+			larrReplyTos = new String[mobjMessage.marrUsers.length];
+			for ( i = 0; i < mobjMessage.marrUsers.length; i++ )
 			{
-				lrs = lrefDecos.SelectByMembers(pdb, new int[] {0}, new java.lang.Object[] {mobjHeaders.marrUsers[i]}, new int[0]);
+				lrs = lrefDecos.SelectByMembers(pdb, new int[] {0}, new java.lang.Object[] {mobjMessage.marrUsers[i]}, new int[0]);
 			    if (lrs.next())
 			    	larrReplyTos[i] = (String)UserDecoration.GetInstance(Engine.getCurrentNameSpace(), lrs).getAt(1);
 			    else
@@ -113,22 +111,22 @@ public abstract class CreateInfoRequestBase
 		{
 			lobjRequest = InfoRequest.GetInstance(Engine.getCurrentNameSpace(), (UUID)null);
 			lobjRequest.setAt(1, midRequestType);
-			lobjRequest.setText(mstrBody);
+			lobjRequest.setText(mobjMessage.mstrBody);
 			lobjRequest.setAt(3, larrReplyTos[0]);
-			lobjRequest.setAt(4, mstrSubject);
+			lobjRequest.setAt(4, mobjMessage.mstrSubject);
 			lobjRequest.setAt(5, ldtLimit);
 			lobjRequest.SaveToDb(pdb);
-			lobjRequest.InitNew(mobjHeaders.marrUsers, mobjHeaders.marrContactInfos, mobjHeaders.marrCCs, mobjHeaders.marrBCCs, pdb);
+			lobjRequest.InitNew(mobjMessage.marrUsers, mobjMessage.marrContactInfos, mobjMessage.marrCCs, mobjMessage.marrBCCs, pdb);
 
 			lobjScript = PNScript.GetInstance(Engine.getCurrentNameSpace(), Constants.ProcID_InfoRequest);
 			lobjProc = lobjScript.CreateInstance(Engine.getCurrentNameSpace(), lobjRequest.getKey(), GetProcess().getKey(),
 					GetContext(), pdb);
 
-			for ( i = 0; i < mobjHeaders.marrUsers.length; i++ )
+			for ( i = 0; i < mobjMessage.marrUsers.length; i++ )
 			{
 				lobjItem = AgendaItem.GetInstance(Engine.getCurrentNameSpace(), (UUID)null);
 				lobjItem.setAt(0, "Pedido de Informação ou Documento");
-				lobjItem.setAt(1, mobjHeaders.marrUsers[i]);
+				lobjItem.setAt(1, mobjMessage.marrUsers[i]);
 				lobjItem.setAt(2, Constants.ProcID_InfoRequest);
 				lobjItem.setAt(3, ldtNow);
 				lobjItem.setAt(4, ldtLimit);
@@ -143,17 +141,17 @@ public abstract class CreateInfoRequestBase
 			throw new JewelPetriException(e.getMessage(), e);
 		}
 
-		if ( mobjHeaders.marrContactInfos == null )
+		if ( mobjMessage.marrContactInfos == null )
 			larrTos = null;
 		else
 		{
-			larrTos = new String[mobjHeaders.marrContactInfos.length];
-			for ( i = 0; i < mobjHeaders.marrContactInfos.length; i++ )
+			larrTos = new String[mobjMessage.marrContactInfos.length];
+			for ( i = 0; i < mobjMessage.marrContactInfos.length; i++ )
 			{
 				try
 				{
 					larrTos[i] = (String)ContactInfo.GetInstance(Engine.getCurrentNameSpace(),
-							mobjHeaders.marrContactInfos[i]).getAt(2);
+							mobjMessage.marrContactInfos[i]).getAt(2);
 				}
 				catch (BigBangJewelException e)
 				{
@@ -167,7 +165,8 @@ public abstract class CreateInfoRequestBase
 
 			try
 			{
-				MailConnector.DoSendMail(larrReplyTos, larrTos, mobjHeaders.marrCCs, mobjHeaders.marrBCCs, mstrSubject, mstrBody);
+				MailConnector.DoSendMail(larrReplyTos, larrTos, mobjMessage.marrCCs, mobjMessage.marrBCCs,
+						mobjMessage.mstrSubject, mobjMessage.mstrBody);
 			}
 			catch (Throwable e)
 			{

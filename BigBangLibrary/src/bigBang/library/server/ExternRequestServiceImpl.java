@@ -88,11 +88,9 @@ public class ExternRequestServiceImpl
 
 			lopSI = new SendInformation(lobjRequest.GetProcessID());
 
+			lopSI.mobjMessage = OutgoingHeaderBridge.toServer(outgoing.message);
 			lopSI.mbIsFinal = outgoing.isFinal;
 			lopSI.mlngDays = outgoing.replylimit;
-			lopSI.mstrSubject = outgoing.subject;
-			lopSI.mstrBody = outgoing.text;
-			lopSI.mobjHeaders = OutgoingHeaderBridge.toServer(outgoing.headers);
 
 			lopSI.Execute();
 		}

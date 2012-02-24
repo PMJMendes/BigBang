@@ -2,7 +2,7 @@ package bigBang.module.clientModule.client.userInterface.view;
 
 import bigBang.definitions.shared.BigBangConstants;
 import bigBang.definitions.shared.InfoOrDocumentRequest;
-import bigBang.definitions.shared.OutgoingHeaders;
+import bigBang.definitions.shared.OutgoingMessage;
 import bigBang.library.client.userInterface.ExpandableListBoxFormField;
 import bigBang.library.client.userInterface.RichTextAreaFormField;
 import bigBang.library.client.userInterface.TextBoxFormField;
@@ -45,12 +45,11 @@ public class InfoOrDocumentRequestForm extends FormView<InfoOrDocumentRequest> {
 		}
 		InfoOrDocumentRequest request = value;
 		request.requestTypeId = documentType.getValue();
-		request.text = text.getValue();
 		request.replylimit = Integer.parseInt(replyLimit.getValue());
-		request.headers = new OutgoingHeaders();
-		request.headers.forwardUserIds = new String[0];
-		request.headers.internalBCCs = internalCCAddresses.getValue();
-		request.headers.externalCCs = externalCCAddresses.getValue();
+		request.message.forwardUserIds = new String[0];
+		request.message.internalBCCs = internalCCAddresses.getValue();
+		request.message.externalCCs = externalCCAddresses.getValue();
+		request.message.text = text.getValue();
 		return request;
 	}
 
@@ -61,11 +60,11 @@ public class InfoOrDocumentRequestForm extends FormView<InfoOrDocumentRequest> {
 			return;
 		}
 		documentType.setValue(info.requestTypeId);
-		text.setValue(info.text);
+		text.setValue(info.message.text);
 		replyLimit.setValue(info.replylimit+"");
-		forwardReply.setValue(info.headers.forwardUserIds.toString());
-		internalCCAddresses.setValue(info.headers.internalBCCs);
-		externalCCAddresses.setValue(info.headers.externalCCs);
+		forwardReply.setValue(info.message.forwardUserIds.toString());
+		internalCCAddresses.setValue(info.message.internalBCCs);
+		externalCCAddresses.setValue(info.message.externalCCs);
 	}
 
 }

@@ -24,11 +24,14 @@ public class ExternalInfoRequest
 		private static final long serialVersionUID = 1L;
 		
 		public String requestId;
-		public String subject;
-		public String text;
+		public OutgoingMessage message;
 		public boolean isFinal;
 		public int replylimit;
-		public OutgoingHeaders headers;
+
+		public Outgoing()
+		{
+			message = new OutgoingMessage();
+		}
 	}
 
 	//The closing data

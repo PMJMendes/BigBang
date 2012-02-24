@@ -32,8 +32,11 @@ public class InfoOrDocumentRequest
 	public String parentDataObjectId;
 	public String parentDataTypeId;
 	public String requestTypeId;
-	public String subject;
-	public String text;
+	public OutgoingMessage message;
 	public int replylimit;
-	public OutgoingHeaders headers;
+
+	public InfoOrDocumentRequest()
+	{
+		message = new OutgoingMessage();
+	}
 }

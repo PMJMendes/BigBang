@@ -16,7 +16,7 @@ import Jewel.Petri.SysObjects.Operation;
 
 import com.premiumminds.BigBang.Jewel.BigBangJewelException;
 import com.premiumminds.BigBang.Jewel.Constants;
-import com.premiumminds.BigBang.Jewel.Data.OutgoingHeaderData;
+import com.premiumminds.BigBang.Jewel.Data.OutgoingMessageData;
 import com.premiumminds.BigBang.Jewel.Objects.AgendaItem;
 import com.premiumminds.BigBang.Jewel.Objects.ContactInfo;
 import com.premiumminds.BigBang.Jewel.Objects.ExternRequest;
@@ -28,11 +28,9 @@ public class SendInformation
 {
 	private static final long serialVersionUID = 1L;
 
+	public OutgoingMessageData mobjMessage;
 	public boolean mbIsFinal;
 	public int mlngDays;
-	public String mstrSubject;
-	public String mstrBody;
-	public OutgoingHeaderData mobjHeaders;
 
 	public SendInformation(UUID pidProcess)
 	{
@@ -56,8 +54,8 @@ public class SendInformation
 		lstrBuffer = new StringBuilder();
 
 		lstrBuffer.append("A informação enviada foi a seguinte :").append(pstrLineBreak);
-		lstrBuffer.append(mstrSubject).append(pstrLineBreak);
-		lstrBuffer.append(mstrBody).append(pstrLineBreak).append(pstrLineBreak);
+		lstrBuffer.append(mobjMessage.mstrSubject).append(pstrLineBreak);
+		lstrBuffer.append(mobjMessage.mstrBody).append(pstrLineBreak).append(pstrLineBreak);
 
 		return lstrBuffer.toString();
 	}
@@ -154,7 +152,7 @@ public class SendInformation
 			}
 		}
 
-		if ( mobjHeaders.marrContactInfos == null )
+		if ( mobjMessage.marrContactInfos == null )
 		{
 			if ( lobjRequest.getAt(3) == null )
 				larrTos = null;
@@ -163,13 +161,13 @@ public class SendInformation
 		}
 		else
 		{
-			larrTos = new String[mobjHeaders.marrContactInfos.length];
-			for ( i = 0; i < mobjHeaders.marrContactInfos.length; i++ )
+			larrTos = new String[mobjMessage.marrContactInfos.length];
+			for ( i = 0; i < mobjMessage.marrContactInfos.length; i++ )
 			{
 				try
 				{
 					larrTos[i] = (String)ContactInfo.GetInstance(Engine.getCurrentNameSpace(),
-							mobjHeaders.marrContactInfos[i]).getAt(2);
+							mobjMessage.marrContactInfos[i]).getAt(2);
 				}
 				catch (BigBangJewelException e)
 				{
@@ -184,10 +182,10 @@ public class SendInformation
 			try
 			{
 				lrefDecos = Entity.GetInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), Constants.ObjID_Decorations));
-				larrReplyTos = new String[mobjHeaders.marrUsers.length];
-				for ( i = 0; i < mobjHeaders.marrUsers.length; i++ )
+				larrReplyTos = new String[mobjMessage.marrUsers.length];
+				for ( i = 0; i < mobjMessage.marrUsers.length; i++ )
 				{
-					lrs = lrefDecos.SelectByMembers(pdb, new int[] {0}, new java.lang.Object[] {mobjHeaders.marrUsers[i]}, new int[0]);
+					lrs = lrefDecos.SelectByMembers(pdb, new int[] {0}, new java.lang.Object[] {mobjMessage.marrUsers[i]}, new int[0]);
 				    if (lrs.next())
 				    	larrReplyTos[i] = (String)UserDecoration.GetInstance(Engine.getCurrentNameSpace(), lrs).getAt(1);
 				    else
@@ -204,7 +202,8 @@ public class SendInformation
 
 			try
 			{
-				MailConnector.DoSendMail(larrReplyTos, larrTos, mobjHeaders.marrCCs, mobjHeaders.marrBCCs, mstrSubject, mstrBody);
+				MailConnector.DoSendMail(larrReplyTos, larrTos, mobjMessage.marrCCs, mobjMessage.marrBCCs,
+						mobjMessage.mstrSubject, mobjMessage.mstrBody);
 			}
 			catch (Throwable e)
 			{

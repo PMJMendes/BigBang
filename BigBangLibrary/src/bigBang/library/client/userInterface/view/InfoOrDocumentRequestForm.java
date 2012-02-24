@@ -5,7 +5,6 @@ import com.google.gwt.event.logical.shared.ValueChangeHandler;
 
 import bigBang.definitions.shared.BigBangConstants;
 import bigBang.definitions.shared.InfoOrDocumentRequest;
-import bigBang.definitions.shared.OutgoingHeaders;
 import bigBang.definitions.shared.TypifiedText;
 import bigBang.library.client.userInterface.ExpandableListBoxFormField;
 import bigBang.library.client.userInterface.TextBoxFormField;
@@ -56,13 +55,12 @@ public class InfoOrDocumentRequestForm extends FormView<InfoOrDocumentRequest> {
 		InfoOrDocumentRequest request = value;
 		request.requestTypeId = requestType.getValue();
 		TypifiedText requestText = text.getValue();
-		request.subject = requestText.subject;
-		request.text = requestText.text;
 		request.replylimit = Integer.parseInt(replyLimit.getValue());
-		request.headers = new OutgoingHeaders();
-		request.headers.forwardUserIds = new String[0];
-		request.headers.internalBCCs = internalCCAddresses.getValue();
-		request.headers.externalCCs = externalCCAddresses.getValue();
+		request.message.forwardUserIds = new String[0];
+		request.message.internalBCCs = internalCCAddresses.getValue();
+		request.message.externalCCs = externalCCAddresses.getValue();
+		request.message.subject = requestText.subject;
+		request.message.text = requestText.text;
 		return request;
 	}
 
@@ -74,13 +72,13 @@ public class InfoOrDocumentRequestForm extends FormView<InfoOrDocumentRequest> {
 		}
 		requestType.setValue(info.requestTypeId);
 		TypifiedText requestText = new TypifiedText();
-		requestText.subject = info.subject;
-		requestText.text = info.text;
+		requestText.subject = info.message.subject;
+		requestText.text = info.message.text;
 		text.setValue(requestText);
 		replyLimit.setValue(info.replylimit+"");
 		//forwardReply.setValue(info.headers.forwardUserIds.toString()); TODO
-		internalCCAddresses.setValue(info.headers.internalBCCs);
-		externalCCAddresses.setValue(info.headers.externalCCs);
+		internalCCAddresses.setValue(info.message.internalBCCs);
+		externalCCAddresses.setValue(info.message.externalCCs);
 	}
 
 }

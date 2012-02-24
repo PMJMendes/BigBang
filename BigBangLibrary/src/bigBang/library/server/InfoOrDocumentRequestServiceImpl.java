@@ -13,7 +13,6 @@ import Jewel.Petri.Objects.PNProcess;
 import bigBang.definitions.shared.InfoOrDocumentRequest;
 import bigBang.definitions.shared.InfoOrDocumentRequest.Cancellation;
 import bigBang.definitions.shared.InfoOrDocumentRequest.Response;
-import bigBang.definitions.shared.OutgoingHeaders;
 import bigBang.library.interfaces.InfoOrDocumentRequestService;
 import bigBang.library.shared.BigBangException;
 import bigBang.library.shared.SessionExpiredException;
@@ -67,8 +66,6 @@ public class InfoOrDocumentRequestServiceImpl
 		lobjResult.parentDataObjectId = lobjParent.GetDataKey().toString();
 		lobjResult.parentDataTypeId = lobjScript.GetDataType().toString();
 		lobjResult.requestTypeId = ((UUID)lobjRequest.getAt(1)).toString();
-		lobjResult.subject = (String)lobjRequest.getAt(4);
-		lobjResult.text = lobjRequest.getText();
 		lobjResult.replylimit = (int)((((Timestamp)lobjRequest.getAt(5)).getTime() -
 				(new Timestamp(new java.util.Date().getTime())).getTime()) * 86400000L);
 
@@ -88,11 +85,12 @@ public class InfoOrDocumentRequestServiceImpl
 				larrUsers.add(((UUID)larrAddresses[i].getAt(3)).toString());
 		}
 
-		lobjResult.headers = new OutgoingHeaders();
-		lobjResult.headers.toContactInfoId = larrInfos.get(0);
-		lobjResult.headers.forwardUserIds = larrUsers.toArray(new String[larrUsers.size()]);
-		lobjResult.headers.internalBCCs = StringUtils.join(larrBCCs.toArray(new String[larrBCCs.size()]), ';');
-		lobjResult.headers.externalCCs = StringUtils.join(larrCCs.toArray(new String[larrCCs.size()]), ';');
+		lobjResult.message.toContactInfoId = larrInfos.get(0);
+		lobjResult.message.forwardUserIds = larrUsers.toArray(new String[larrUsers.size()]);
+		lobjResult.message.internalBCCs = StringUtils.join(larrBCCs.toArray(new String[larrBCCs.size()]), ';');
+		lobjResult.message.externalCCs = StringUtils.join(larrCCs.toArray(new String[larrCCs.size()]), ';');
+		lobjResult.message.subject = (String)lobjRequest.getAt(4);
+		lobjResult.message.text = lobjRequest.getText();
 
 		lobjResult.processId = lobjProcess.getKey().toString();
 		lobjResult.permissions = BigBangPermissionServiceImpl.sGetProcessPermissions(lobjProcess.getKey());
@@ -124,8 +122,8 @@ public class InfoOrDocumentRequestServiceImpl
 
 			lopRR = new RepeatRequest(lobjRequest.GetProcessID());
 			lopRR.mlngDays = request.replylimit;
-			lopRR.mstrSubject = request.subject;
-			lopRR.mstrRequestBody = request.text;
+			lopRR.mstrSubject = request.message.subject;
+			lopRR.mstrRequestBody = request.message.text;
 
 			lopRR.Execute();
 		}
