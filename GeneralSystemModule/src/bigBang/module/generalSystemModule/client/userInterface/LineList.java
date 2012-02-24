@@ -214,10 +214,7 @@ public class LineList extends FilterableList<Line> implements CoverageDataBroker
 
 			@Override
 			public void onResponse(Line[] response) {
-				for(int i = 0; i < response.length; i++) {
-					add(new Entry(response[i]));
-				}
-
+				setLines(response);
 			}
 
 			@Override
@@ -262,6 +259,7 @@ public class LineList extends FilterableList<Line> implements CoverageDataBroker
 
 	@Override
 	public void setLines(Line[] lines) {
+		clear();
 		if(this.lineId != null){
 			for(int i = 0; i<lines.length; i++){
 				add(new Entry(lines[i]));

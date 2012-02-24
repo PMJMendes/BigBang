@@ -163,22 +163,9 @@ public class CoverageList extends FilterableList<Coverage> implements CoverageDa
 			@Override
 			public void onResponse(Coverage[] response) {
 
-				if(coverageId != null){
-					for(int i = 0; i<response.length; i++){  
-						add(new Entry(response[i]));
-						if(get(i).getValue().id.equalsIgnoreCase(coverageId)){
-							get(i).setSelected(true, false);
-						}
-					}
-				}
-				else{
-					for(int i = 0; i<response.length; i++){
-						add(new Entry(response[i]));
-					}
-				}
+				setCoverages(response);
 
 			}
-
 			@Override
 			public void onError(Collection<ResponseError> errors) {
 
@@ -313,6 +300,7 @@ public class CoverageList extends FilterableList<Coverage> implements CoverageDa
 
 	@Override
 	public void setCoverages(Coverage[] coverages) {
+		clear();
 		if(this.coverageId != null){
 			for(int i = 0; i<coverages.length; i++){
 				add(new Entry(coverages[i]));

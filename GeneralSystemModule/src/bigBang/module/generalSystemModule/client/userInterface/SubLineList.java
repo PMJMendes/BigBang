@@ -156,20 +156,7 @@ public class SubLineList extends FilterableList<SubLine> implements CoverageData
 
 			@Override
 			public void onResponse(SubLine[] response) {
-				if(subLineId != null){
-					for(int i = 0; i<response.length; i++){
-						add(new Entry(response[i]));
-						if(response[i].id.equalsIgnoreCase(subLineId)){
-							get(i).setSelected(true, false);
-						}
-					}
-				}
-				else{
-					for(int i = 0; i<response.length; i++){
-						add(new Entry(response[i]));
-					}
-
-				}
+				setSubLines(response);
 
 			}
 
@@ -245,6 +232,7 @@ public class SubLineList extends FilterableList<SubLine> implements CoverageData
 
 	@Override
 	public void setLines(Line[] lines) {
+		clear();
 		for(int i = 0; i<lines.length; i++){
 			if(lines[i].id.equalsIgnoreCase(parentLineId)){
 				setSubLines(lines[i].subLines);
