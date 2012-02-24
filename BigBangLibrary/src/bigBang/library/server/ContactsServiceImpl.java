@@ -3,6 +3,7 @@ package bigBang.library.server;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.UUID;
 
 import Jewel.Engine.Engine;
@@ -321,6 +322,7 @@ public class ContactsServiceImpl
         MasterDB ldb;
         ResultSet lrsContacts;
         com.premiumminds.BigBang.Jewel.Objects.Contact lobjContact;
+        Contact[] larrResult;
 
 		if ( Engine.getCurrentUser() == null )
 			throw new SessionExpiredException();
@@ -392,7 +394,15 @@ public class ContactsServiceImpl
 			throw new BigBangException(e.getMessage(), e);
 		}
 
-		return larrAux.toArray(new Contact[larrAux.size()]);
+		larrResult = larrAux.toArray(new Contact[larrAux.size()]);
+		java.util.Arrays.sort(larrResult, new Comparator<Contact>()
+		{
+			public int compare(Contact o1, Contact o2)
+			{
+				return o1.name.compareTo(o2.name);
+			}
+		});
+		return larrResult;
 	}
 
 	private Contact fromServer(com.premiumminds.BigBang.Jewel.Objects.Contact pobjContact, SQLServer pdb, boolean pbRecurse)
