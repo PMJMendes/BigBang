@@ -15,6 +15,7 @@ import Jewel.Petri.Objects.PNScript;
 import Jewel.Petri.SysObjects.JewelPetriException;
 import Jewel.Petri.SysObjects.Operation;
 
+import com.premiumminds.BigBang.Jewel.BigBangJewelException;
 import com.premiumminds.BigBang.Jewel.Constants;
 import com.premiumminds.BigBang.Jewel.Objects.AgendaItem;
 import com.premiumminds.BigBang.Jewel.Objects.ContactInfo;
@@ -103,12 +104,6 @@ public abstract class CreateInfoRequestBase
 			    	larrReplyTos[i] = null;
 			    lrs.close();
 			}
-
-			larrTos = new String[marrContactInfos.length];
-			for ( i = 0; i < marrContactInfos.length; i++ )
-			{
-				larrTos[i] = (String)ContactInfo.GetInstance(Engine.getCurrentNameSpace(), marrContactInfos[i]).getAt(2); 
-			}
 		}
 		catch (Throwable e)
 		{
@@ -150,13 +145,35 @@ public abstract class CreateInfoRequestBase
 			throw new JewelPetriException(e.getMessage(), e);
 		}
 
-		try
+		if ( marrContactInfos == null )
+			larrTos = null;
+		else
 		{
-			MailConnector.DoSendMail(larrReplyTos, larrTos, marrCCs, marrBCCs, mstrSubject, mstrBody);
+			larrTos = new String[marrContactInfos.length];
+			for ( i = 0; i < marrContactInfos.length; i++ )
+			{
+				try
+				{
+					larrTos[i] = (String)ContactInfo.GetInstance(Engine.getCurrentNameSpace(), marrContactInfos[i]).getAt(2);
+				}
+				catch (BigBangJewelException e)
+				{
+					throw new JewelPetriException(e.getMessage(), e);
+				} 
+			}
 		}
-		catch (Throwable e)
+
+		if ( larrTos != null )
 		{
-			throw new JewelPetriException(e.getMessage(), e);
+
+			try
+			{
+				MailConnector.DoSendMail(larrReplyTos, larrTos, marrCCs, marrBCCs, mstrSubject, mstrBody);
+			}
+			catch (Throwable e)
+			{
+				throw new JewelPetriException(e.getMessage(), e);
+			}
 		}
 
 		midRequestObject = lobjRequest.getKey();

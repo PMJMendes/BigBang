@@ -3465,7 +3465,10 @@ public class InsurancePolicyServiceImpl
 				for ( i = 0; i < request.headers.forwardUserIds.length; i++ )
 					lopCIR.marrUsers[i + 1] = UUID.fromString(request.headers.forwardUserIds[i]);
 			}
-			lopCIR.marrContactInfos = new UUID[] {UUID.fromString(request.headers.toContactInfoId)};
+			if ( request.headers.toContactInfoId == null )
+				lopCIR.marrContactInfos = null;
+			else
+				lopCIR.marrContactInfos = new UUID[] {UUID.fromString(request.headers.toContactInfoId)};
 			if ( request.headers.externalCCs == null )
 				lopCIR.marrCCs = null;
 			else
