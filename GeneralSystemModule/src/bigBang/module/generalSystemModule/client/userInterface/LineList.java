@@ -25,6 +25,7 @@ import bigBang.library.client.userInterface.ListEntry;
 import bigBang.library.client.userInterface.ListHeader;
 import bigBang.library.client.userInterface.NavigationListEntry;
 import bigBang.library.client.userInterface.view.PopupPanel;
+import bigBang.module.generalSystemModule.client.userInterface.SubLineList.Entry;
 import bigBang.module.generalSystemModule.client.userInterface.view.LineForm;
 import bigBang.module.generalSystemModule.interfaces.CoveragesService;
 import com.google.gwt.core.client.GWT;
@@ -213,7 +214,6 @@ public class LineList extends FilterableList<Line> implements CoverageDataBroker
 
 			@Override
 			public void onResponse(Line[] response) {
-				clear();
 				for(int i = 0; i < response.length; i++) {
 					add(new Entry(response[i]));
 				}
@@ -262,7 +262,6 @@ public class LineList extends FilterableList<Line> implements CoverageDataBroker
 
 	@Override
 	public void setLines(Line[] lines) {
-		clear();
 		if(this.lineId != null){
 			for(int i = 0; i<lines.length; i++){
 				add(new Entry(lines[i]));
@@ -372,5 +371,38 @@ public class LineList extends FilterableList<Line> implements CoverageDataBroker
 	public void setId(String lineId) {
 		this.lineId = lineId;
 
+	}
+
+	public void setLines(final String lineId) {
+		
+		broker.getLines(new ResponseHandler<Line[]>() {
+			@Override
+			public void onResponse(Line[] response) {
+				if(lineId != null){
+					for(int i = 0; i<response.length; i++){
+						add(new Entry(response[i]));
+						if(response[i].id.equalsIgnoreCase(lineId)){
+							get(i).setSelected(true, false);
+						}
+					}
+				}
+				else{
+					for(int i = 0; i<response.length; i++){
+						add(new Entry(response[i]));
+					}
+
+				}
+
+			}
+
+			@Override
+			public void onError(Collection<ResponseError> errors) {
+
+				EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não foi possível obter a lista de modalidades."), TYPE.ALERT_NOTIFICATION));
+
+			}
+
+
+		});
 	}
 }

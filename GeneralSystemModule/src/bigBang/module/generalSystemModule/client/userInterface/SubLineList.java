@@ -152,13 +152,10 @@ public class SubLineList extends FilterableList<SubLine> implements CoverageData
 
 	public void setSubLines(String parentLineId, final String subLineId) {
 
-		this.parentLineId = parentLineId;
-
 		broker.getSubLines(parentLineId, new ResponseHandler<SubLine[]>() {
 
 			@Override
 			public void onResponse(SubLine[] response) {
-				clear();
 				if(subLineId != null){
 					for(int i = 0; i<response.length; i++){
 						add(new Entry(response[i]));
@@ -185,14 +182,6 @@ public class SubLineList extends FilterableList<SubLine> implements CoverageData
 
 
 		});
-
-
-		if(this.isEmpty()){
-			this.parentLineId = parentLineId;
-			if(parentLineId == null){
-				clear();
-			}
-		}
 	}
 
 	public boolean add(Entry e) {
@@ -284,7 +273,6 @@ public class SubLineList extends FilterableList<SubLine> implements CoverageData
 
 	@Override
 	public void setSubLines(SubLine[] subLines) {
-		clear();
 		if(this.subLineId != null){
 			for(int i = 0; i<subLines.length; i++){
 				add(new Entry(subLines[i]));

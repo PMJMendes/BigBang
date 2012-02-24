@@ -84,22 +84,29 @@ public class CoverageManagementOperationView extends View implements CoverageMan
 	@Override
 	public void setLine(String lineId) {
 	
-		lineList.setId(lineId);
-		lineList.refresh();
-		
-		subLineList.setId(null);
-		subLineList.setLineId(lineId);
-
+		clear();
 		
 		coverageList.setId(null);
 		coverageList.setSubLineId(null);
 		coverageList.setLineId(lineId);
+		
+		subLineList.setId(null);
+		subLineList.setLineId(lineId);
+		
+		lineList.setId(lineId);
+		lineList.setLines(lineId);
+
 
 	}
 
 	@Override
 	public void setSubLine(String lineId, String subLineId) {
 		
+		clear();
+		
+		coverageList.setId(null);
+		coverageList.setLineId(lineId);
+		coverageList.setSubLineId(subLineId);
 		
 		lineList.setId(lineId);
 		
@@ -107,15 +114,12 @@ public class CoverageManagementOperationView extends View implements CoverageMan
 		subLineList.setLineId(lineId);
 		subLineList.setSubLines(lineId, subLineId);
 		
-		coverageList.setId(null);
-		coverageList.setLineId(lineId);
-		coverageList.setSubLineId(subLineId);
-		
 	}
 
 	@Override
 	public void setCoverage(String lineId, String subLineId, String coverageId) {
 		
+		clear();
 		
 		lineList.setId(lineId);
 		

@@ -41,7 +41,7 @@ public class CoverageManagementOperationViewPresenter implements ViewPresenter {
 		void clear();
 		Widget asWidget();
 		void setLine(String lineId);
-		void setSubLine(String subLineId, String lineId);
+		void setSubLine(String lineId, String subLineId);
 		void setCoverage(String lineId, String subLineId, String coverageId);
 	}
 
@@ -79,10 +79,11 @@ public class CoverageManagementOperationViewPresenter implements ViewPresenter {
 			view.setCoverage(lineId, subLineId, coverageId);
 
 		}else if(subLineId != null){
-			view.setSubLine(subLineId, lineId);
+			view.setSubLine(lineId, subLineId);
 		}
-		else
+		else{
 			view.setLine(lineId);
+		}
 	}
 
 	public void bind() {
@@ -102,7 +103,7 @@ public class CoverageManagementOperationViewPresenter implements ViewPresenter {
 				for(Selectable s : selected) {
 					ValueSelectable<Line> vs = (ValueSelectable<Line>)s;
 					NavigationHistoryItem navig = NavigationHistoryManager.getInstance().getCurrentState();
-					navig.setParameter("lineId", vs.getValue().id);
+					navig.setParameter("lineid", vs.getValue().id);
 					navig.removeParameter("sublineid");
 					navig.removeParameter("coverageid");
 					NavigationHistoryManager.getInstance().go(navig);
@@ -124,7 +125,7 @@ public class CoverageManagementOperationViewPresenter implements ViewPresenter {
 				for(Selectable s : selected) {
 					ValueSelectable<SubLine> vs = (ValueSelectable<SubLine>)s;
 					NavigationHistoryItem navig = NavigationHistoryManager.getInstance().getCurrentState();
-					navig.setParameter("lineId", vs.getValue().lineId);
+					navig.setParameter("lineid", vs.getValue().lineId);
 					navig.setParameter("sublineid", vs.getValue().id);
 					navig.removeParameter("coverageid");
 					NavigationHistoryManager.getInstance().go(navig);
@@ -140,18 +141,19 @@ public class CoverageManagementOperationViewPresenter implements ViewPresenter {
 				Collection<? extends Selectable> selected = event.getSelected();
 				if(selected.size() == 0){
 					view.getCoverageList().clearSelection();
+					return;
 				}
-				
+
 				for(Selectable s : selected) {
 					ValueSelectable<Coverage> vs = (ValueSelectable<Coverage>)s;
 					NavigationHistoryItem navig = NavigationHistoryManager.getInstance().getCurrentState();
-					navig.setParameter("lineId", lineId);
+					navig.setParameter("lineid", lineId);
 					navig.setParameter("sublineid", vs.getValue().subLineId);
 					navig.setParameter("coverageid", vs.getValue().id);
 					NavigationHistoryManager.getInstance().go(navig);
 					break;
 				}
-				
+
 			}
 		});
 

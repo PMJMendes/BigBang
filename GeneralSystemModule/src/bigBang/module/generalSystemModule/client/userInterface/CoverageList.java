@@ -83,6 +83,7 @@ public class CoverageList extends FilterableList<Coverage> implements CoverageDa
 
 	public CoverageList(){
 		broker = (CoverageBroker) DataBrokerManager.staticGetBroker(BigBangConstants.EntityIds.COVERAGE);
+		broker.registerClient(this);
 		ListHeader header = new ListHeader();
 		header.setText("Coberturas");
 		header.showNewButton("Novo");
@@ -154,7 +155,6 @@ public class CoverageList extends FilterableList<Coverage> implements CoverageDa
 	}
 
 	public void setCoverages(String parentLineId, String parentSubLineId, final String coverageId) {
-		clear();
 		this.parentLineId = parentLineId;
 		this.parentSubLineId = parentSubLineId;
 
@@ -290,6 +290,7 @@ public class CoverageList extends FilterableList<Coverage> implements CoverageDa
 			for(int i = 0; i<subLines.length; i++){
 				if(this.parentSubLineId.equalsIgnoreCase(subLines[i].id)){
 					setCoverages(subLines[i].coverages);
+					break;
 				}
 			}
 		}
@@ -312,7 +313,6 @@ public class CoverageList extends FilterableList<Coverage> implements CoverageDa
 
 	@Override
 	public void setCoverages(Coverage[] coverages) {
-		clear();
 		if(this.coverageId != null){
 			for(int i = 0; i<coverages.length; i++){
 				add(new Entry(coverages[i]));
