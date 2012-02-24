@@ -117,7 +117,8 @@ public class ExternRequestServiceImpl
 
 			lopRAI = new ReceiveAdditionalInfo(lobjRequest.GetProcessID());
 
-			lopRAI.mobjMessage = MessageBridge.incomingToServer(incoming.message, null);
+			lopRAI.mobjMessage = MessageBridge.incomingToServer(incoming.message, PNProcess.GetInstance(Engine.getCurrentNameSpace(),
+					lobjRequest.GetProcessID()).GetParent().GetScript().GetDataType());
 			lopRAI.mlngDays = incoming.replylimit;
 
 			lopRAI.Execute();

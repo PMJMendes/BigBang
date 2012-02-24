@@ -36,6 +36,7 @@ import com.premiumminds.BigBang.Jewel.Objects.Company;
 import com.premiumminds.BigBang.Jewel.Operations.Negotiation.CreateExternRequest;
 import com.premiumminds.BigBang.Jewel.Operations.Negotiation.DeleteNegotiation;
 import com.premiumminds.BigBang.Jewel.Operations.Negotiation.ManageData;
+import com.premiumminds.BigBang.Jewel.Operations.Negotiation.ReceiveQuote;
 import com.premiumminds.BigBang.Jewel.Operations.Negotiation.SendGrant;
 
 public class NegotiationServiceImpl
@@ -143,11 +144,38 @@ public class NegotiationServiceImpl
 		return null;
 	}
 
-	@Override
 	public Negotiation receiveResponse(Negotiation.Response response)
-			throws SessionExpiredException, BigBangException {
-		// TODO Auto-generated method stub
-		return null;
+		throws SessionExpiredException, BigBangException
+	{
+		com.premiumminds.BigBang.Jewel.Objects.Negotiation lobjNeg;
+		ReceiveQuote lopRQ;
+
+		if ( Engine.getCurrentUser() == null )
+			throw new SessionExpiredException();
+
+		try
+		{
+			lobjNeg = com.premiumminds.BigBang.Jewel.Objects.Negotiation.GetInstance(Engine.getCurrentNameSpace(),
+					UUID.fromString(response.negotiationId));
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangException(e.getMessage(), e);
+		}
+
+		lopRQ = new ReceiveQuote(lobjNeg.GetProcessID());
+		lopRQ.mobjMessage = MessageBridge.incomingToServer(response.message, Constants.ObjID_Negotiation);
+
+		try
+		{
+			lopRQ.Execute();
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangException(e.getMessage(), e);
+		}
+
+		return sGetNegotiation(lobjNeg.getKey());
 	}
 
 	public Negotiation.Grant grantNegotiation(Negotiation.Grant grant)
