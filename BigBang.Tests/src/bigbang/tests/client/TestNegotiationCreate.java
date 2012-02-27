@@ -31,7 +31,7 @@ public class TestNegotiationCreate
 		negotiation = new Negotiation();
 		negotiation.ownerId = "026CDFCF-17EB-41B6-ABEE-9FFA00FE0E40";
 		negotiation.companyId = null;
-		negotiation.notes = "Algumas notas processuais.";
+		negotiation.notes = "Notas importantes.";
 
 		Services.insurancePolicyService.createNegotiation(negotiation, callback);
 	}
