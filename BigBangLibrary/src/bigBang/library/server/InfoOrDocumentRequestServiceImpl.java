@@ -7,6 +7,7 @@ import java.util.UUID;
 import org.apache.commons.lang.StringUtils;
 
 import Jewel.Engine.Engine;
+import Jewel.Engine.Implementation.User;
 import Jewel.Petri.Interfaces.IProcess;
 import Jewel.Petri.Interfaces.IScript;
 import Jewel.Petri.Objects.PNProcess;
@@ -80,11 +81,20 @@ public class InfoOrDocumentRequestServiceImpl
 			if ( Constants.UsageID_BCC.equals(larrAddresses[i].getAt(2)) )
 				larrCCs.add(larrAddresses[i].getLabel());
 			if ( Constants.UsageID_ReplyTo.equals(larrAddresses[i].getAt(2)) )
-				larrUsers.add(((UUID)larrAddresses[i].getAt(3)).toString());
+			{
+				try
+				{
+					larrUsers.add(User.GetInstance(Engine.getCurrentNameSpace(), (UUID)larrAddresses[i].getAt(3)).getFullName());
+				}
+				catch (Throwable e)
+				{
+					throw new BigBangException(e.getMessage(), e);
+				}
+			}
 		}
 
 		lobjResult.message.toContactInfoId = larrInfos.get(0);
-		lobjResult.message.forwardUserIds = larrUsers.toArray(new String[larrUsers.size()]);
+		lobjResult.message.forwardUserFullNames = larrUsers.toArray(new String[larrUsers.size()]);
 		lobjResult.message.internalBCCs = StringUtils.join(larrBCCs.toArray(new String[larrBCCs.size()]), ';');
 		lobjResult.message.externalCCs = StringUtils.join(larrCCs.toArray(new String[larrCCs.size()]), ';');
 		lobjResult.message.subject = (String)lobjRequest.getAt(4);
