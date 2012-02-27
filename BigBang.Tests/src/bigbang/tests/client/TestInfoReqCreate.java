@@ -33,7 +33,7 @@ public class TestInfoReqCreate
 		request.requestTypeId = "05D3096C-FC09-47F4-B6FD-9FE801358AD2";
 		request.replylimit = 15;
 		request.message.toContactInfoId = "C6764677-0885-4BF3-8EB8-9FDD00D78FB5";
-		request.message.forwardUserIds = new String[] {"091B8442-B7B0-40FA-B517-9EB00068A390"};
+		request.message.forwardUserFullNames = new String[] {"Administrator"};
 		request.message.externalCCs = "joao.mendes@archon-se.com";
 		request.message.subject = "Pedido de Carta de Condução";
 		request.message.text = "Por favor, envie-nos uma cópia digital da sua carta de condução.";
