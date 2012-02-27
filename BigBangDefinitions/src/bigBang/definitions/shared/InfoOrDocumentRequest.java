@@ -36,10 +36,11 @@ public class InfoOrDocumentRequest
 	public String parentDataTypeId;
 	public String requestTypeId;
 	public OutgoingMessage message;
-	public int replylimit;
+	public Integer replylimit;
 
 	public InfoOrDocumentRequest()
 	{
 		message = new OutgoingMessage();
 	}
+
 }

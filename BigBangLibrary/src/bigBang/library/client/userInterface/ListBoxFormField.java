@@ -41,7 +41,7 @@ public class ListBoxFormField extends FormField<String> {
 
 		this.listBox = new ListBox();
 		this.listBox.setHeight("20px");
-		
+
 		VerticalPanel mainWrapper = new VerticalPanel();
 		initWidget(mainWrapper);
 
@@ -57,7 +57,7 @@ public class ListBoxFormField extends FormField<String> {
 		setFieldWidth("150px");
 
 		clearValues();
-		
+
 		this.listBox.addChangeHandler(new ChangeHandler() {
 
 			@Override
@@ -67,11 +67,11 @@ public class ListBoxFormField extends FormField<String> {
 			}
 		});
 	}
-	
+
 	@Override
 	protected void initializeView() {
 		super.initializeView();
-		
+
 	}
 
 	private void setLabel(String label) {
@@ -151,14 +151,12 @@ public class ListBoxFormField extends FormField<String> {
 	@Override
 	public void setValue(String value, boolean fireEvents){
 		if(value == null){
-			if(isAttached()){
-				clear();
-			}
+			clear();
 			return;
 		}
 		for(int i = 0; i < this.listBox.getItemCount(); i++) {
 			String itemValue = this.listBox.getValue(i);
-			if(itemValue.equalsIgnoreCase(value)){
+			if(itemValue != null && itemValue.equalsIgnoreCase(value)){
 				if(isDifferentValue(itemValue)){
 					this.listBox.setSelectedIndex(i);
 					this.value = value;

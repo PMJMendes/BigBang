@@ -13,27 +13,39 @@ import com.google.gwt.event.dom.client.KeyDownHandler;
 import com.google.gwt.event.logical.shared.SelectionEvent;
 import com.google.gwt.event.logical.shared.SelectionHandler;
 import com.google.gwt.user.client.ui.MultiWordSuggestOracle;
-import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.SuggestBox;
 import com.google.gwt.user.client.ui.SuggestOracle;
 import com.google.gwt.user.client.ui.TextBox;
+import com.google.gwt.user.client.ui.VerticalPanel;
 
 import bigBang.library.client.FormField;
 
-public class AutoCompleteTextListFormField extends FormField<Collection<ListItem>> {
+public class AutoCompleteTextListFormField extends FormField<Collection<String>> {
 
-	List<String> itemsSelected = new ArrayList<String>();
+	protected MultiWordSuggestOracle oracle = new MultiWordSuggestOracle();
+	protected List<String> itemsSelected = new ArrayList<String>();
+	protected BulletList list;
+	public SuggestBox box;
+
+	public AutoCompleteTextListFormField(String label) {
+		this();
+		this.label.setText(label);
+	}
 
 	public AutoCompleteTextListFormField(){
-		SimplePanel panel = new SimplePanel();
+		super();
+		VerticalPanel panel = new VerticalPanel();
 		initWidget(panel);
-		final BulletList list = new BulletList();
+
+		panel.add(this.label);
+		
+		list = new BulletList();
 		list.setStyleName("token-input-list-facebook");
 		final ListItem item = new ListItem();
 		item.setStyleName("token-input-input-token-facebook");
 		final TextBox itemBox = new TextBox();
 		itemBox.getElement().setAttribute("style", "outline-color: -moz-use-text-color; outline-style: none; outline-width: medium;");
-		final SuggestBox box = new SuggestBox(getSuggestions(), itemBox);
+		box = new SuggestBox(getSuggestions(), itemBox);
 		item.add(box);
 		list.add(item);
 
@@ -42,12 +54,12 @@ public class AutoCompleteTextListFormField extends FormField<Collection<ListItem
 			public void onKeyDown(KeyDownEvent event) {
 				if (event.getNativeKeyCode() == KeyCodes.KEY_ENTER) {
 					// only allow manual entries with @ signs (assumed email addresses)
-					if (itemBox.getValue().contains("@"))
-						deselectItem(itemBox, list);
+//					if (itemBox.getValue().contains("@"))
+//						deselectItem(itemBox, list);
 				}
 				// handle backspace
 				if (event.getNativeKeyCode() == KeyCodes.KEY_BACKSPACE) {
-					if ("".equals(itemBox.getValue().trim())) {
+					if ("".equals(itemBox.getValue().trim()) && (list.getWidgetCount() - 2) >= 0) {
 						ListItem li = (ListItem) list.getWidget(list.getWidgetCount() - 2);
 						Paragraph p = (Paragraph) li.getWidget(0);
 						if (itemsSelected.contains(p.getText())) {
@@ -157,82 +169,38 @@ public class AutoCompleteTextListFormField extends FormField<Collection<ListItem
     }
 	
 	protected MultiWordSuggestOracle getSuggestions(){
-		MultiWordSuggestOracle oracle = new MultiWordSuggestOracle(); //TODO
-		oracle.add("Alef Arendsen");
-        oracle.add("David Jencks");
-        oracle.add("Alexey Belikov");
-        oracle.add("Bryan Vial");
-        oracle.add("Dror Bereznitsky");
-        oracle.add("David Moskowitz");
-        oracle.add("Oscar Chan");
-        oracle.add("Sergey Sundukovskiy");
-        oracle.add("John Newton");
-        oracle.add("Chris Buzzetta");
-        oracle.add("Peter Svensson");
-        oracle.add("Riccardo Ferretti");
-        oracle.add("Christian Parker");
-        oracle.add("Ann (Jaksa) Skaehill");
-        oracle.add("Justin Blue");
-        oracle.add("Sean Dawson");
-        oracle.add("Devaraj NS");
-        oracle.add("Robert Gadd");
-        oracle.add("Diego Campodonico");
-        oracle.add("Bryan Field-Elliot");
-        oracle.add("Scott Delap");
-        oracle.add("Kevin Koster");
-        oracle.add("Fernand Galiana");
-        oracle.add("Christopher Shuler");
-        oracle.add("Geir Magnusson Jr");
-        oracle.add("Tyler Hansen");
-        oracle.add("Olivier Lamy");
-        oracle.add("J. Thomas Richardson");
-        oracle.add("Russell Beattie");
-        oracle.add("Martin Ouellet");
-        oracle.add("Scott Ferguson");
-        oracle.add("Guillaume Laforge");
-        oracle.add("Eric Weidner");
-        oracle.add("Troy McKinnon");
-        oracle.add("Max Hays");
-        oracle.add("Phillip Rhodes");
-        oracle.add("Eugene Kulechov");
-        oracle.add("Bob Johnson");
-        oracle.add("Richard Tucker, PMP");
-        oracle.add("Mats Henricson");
-        oracle.add("Floyd Marinescu");
-        oracle.add("Ed Burns");
-        oracle.add("Michael Root");
-        oracle.add("Dana Busch");
-        oracle.add("Borislav Roussev");
-        oracle.add("Harris Tsim");
 		return oracle;
 	}
 
 	@Override
-	public void setValue(Collection<ListItem> value, boolean fireEvents) {
+	public void setValue(Collection<String> value, boolean fireEvents) {
 		// TODO Auto-generated method stub
 		super.setValue(value, fireEvents);
 	}
 	
 	@Override
-	public Collection<ListItem> getValue() {
-		// TODO Auto-generated method stub
-		return super.getValue();
+	public Collection<String> getValue() {
+		return this.itemsSelected;
 	}
 	
-	protected void setSuggestions(){
-		//TODO
+	public void setSuggestions(Collection<String> suggestions){
+		if(suggestions == null) {
+			oracle.clear();
+		}else{
+			for(String s : suggestions){
+				oracle.add(s);
+			}
+		}
 	}
 
 	@Override
 	public void clear() {
-		// TODO Auto-generated method stub
-
+		this.box.setValue(null);
 	}
 
 	@Override
 	public void setReadOnly(boolean readonly) {
-		// TODO Auto-generated method stub
-
+		//TODO
 	}
 
 	@Override

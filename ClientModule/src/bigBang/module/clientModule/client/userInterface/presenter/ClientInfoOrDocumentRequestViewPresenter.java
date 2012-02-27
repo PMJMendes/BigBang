@@ -139,5 +139,16 @@ public class ClientInfoOrDocumentRequestViewPresenter extends
 		item.removeParameter("requestid");
 		NavigationHistoryManager.getInstance().go(item);
 	}
+
+	@Override
+	protected void onGenericError() {
+		EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Ocorreu um erro ao apresentar o Pedido de Informação"), TYPE.ALERT_NOTIFICATION));
+		NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
+		item.removeParameter("operation");
+		item.removeParameter("ownerid");
+		item.removeParameter("ownertypeid");
+		item.removeParameter("requestid");
+		NavigationHistoryManager.getInstance().go(item);
+	}
 	
 }

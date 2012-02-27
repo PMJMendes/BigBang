@@ -1,5 +1,6 @@
 package bigBang.library.client.userInterface.view;
 
+import bigBang.definitions.shared.Contact;
 import bigBang.definitions.shared.InfoOrDocumentRequest;
 import bigBang.definitions.shared.ProcessBase;
 import bigBang.library.client.HasEditableValue;
@@ -86,4 +87,9 @@ public abstract class InfoOrDocumentRequestView<T extends ProcessBase> extends V
 		return this.ownerForm;
 	}
 
+	@Override
+	public void setAvailableContacts(Contact[] contacts) {
+		this.form.setAvailableContacts(contacts);
+	}
+	
 }
