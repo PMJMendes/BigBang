@@ -8,7 +8,7 @@ public class OutgoingMessage
 	private static final long serialVersionUID = 1L;
 
 	public String toContactInfoId;
-	public String[] forwardUserIds;
+	public String[] forwardUserFullNames;
 	public String internalBCCs;
 	public String externalCCs;
 
