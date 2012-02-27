@@ -91,6 +91,7 @@ public class BigBang_Tests
 //		TestNegotiationCreate.DoTest();
 //		TestNegotiationEdit.DoTest();
 //		TestNegotiationDelete.DoTest();
+//		TestNegotiationReceiveQuote.DoTest();
 //		TestNegotiationGrant.DoTest();
 //
 //		TestPolicyGet.DoTest();
