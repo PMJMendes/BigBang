@@ -130,14 +130,15 @@ public class ReceiveQuote
     	try
     	{
 			lobjNewAgendaItem = AgendaItem.GetInstance(Engine.getCurrentNameSpace(), (UUID)null);
-			lobjNewAgendaItem.setAt(0, "Negociação");
+			lobjNewAgendaItem.setAt(0, "Cotação Recebida");
 			lobjNewAgendaItem.setAt(1, Engine.getCurrentUser().toString());
 			lobjNewAgendaItem.setAt(2, Constants.ProcID_Negotiation);
 			lobjNewAgendaItem.setAt(3, ldtNow);
 			lobjNewAgendaItem.setAt(4, ldtLimit);
 			lobjNewAgendaItem.setAt(5, Constants.UrgID_Pending);
 			lobjNewAgendaItem.SaveToDb(pdb);
-			lobjNewAgendaItem.InitNew(new UUID[] {GetProcess().getKey()}, new UUID[] {Constants.OPID_Negotiation_SendGrant}, pdb);
+			lobjNewAgendaItem.InitNew(new UUID[] {GetProcess().getKey()}, new UUID[] {Constants.OPID_Negotiation_SendGrant,
+					Constants.OPID_Negotiation_CancelNegotiation}, pdb);
 		}
 		catch (Throwable e)
 		{
@@ -245,15 +246,15 @@ public class ReceiveQuote
     	try
     	{
 			lobjNewAgendaItem = AgendaItem.GetInstance(Engine.getCurrentNameSpace(), (UUID)null);
-			lobjNewAgendaItem.setAt(0, "Pedido Externo de Informação");
+			lobjNewAgendaItem.setAt(0, "Pedido de Cotação (Enviado) Criado");
 			lobjNewAgendaItem.setAt(1, Engine.getCurrentUser().toString());
-			lobjNewAgendaItem.setAt(2, Constants.ProcID_ExternRequest);
+			lobjNewAgendaItem.setAt(2, Constants.ProcID_Negotiation);
 			lobjNewAgendaItem.setAt(3, ldtNow);
 			lobjNewAgendaItem.setAt(4, mdtPrevLimit);
-			lobjNewAgendaItem.setAt(5, Constants.UrgID_Valid);
+			lobjNewAgendaItem.setAt(5, Constants.UrgID_Pending);
 			lobjNewAgendaItem.SaveToDb(pdb);
-			lobjNewAgendaItem.InitNew(new UUID[] {GetProcess().getKey()}, new UUID[] {Constants.OPID_ExternReq_ReceiveAdditionalInfo,
-					Constants.OPID_ExternReq_CloseProcess}, pdb);
+			lobjNewAgendaItem.InitNew(new UUID[] {GetProcess().getKey()}, new UUID[] {Constants.OPID_Negotiation_ReceiveQuote,
+					Constants.OPID_Negotiation_RepeatQuoteRequest, Constants.OPID_Negotiation_CancelNegotiation}, pdb);
 		}
 		catch (Throwable e)
 		{
