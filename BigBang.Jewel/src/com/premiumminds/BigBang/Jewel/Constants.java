@@ -39,6 +39,13 @@ public class Constants
 	// Client Objects
 	public static final UUID ObjID_Client               = UUID.fromString("D535A99E-149F-44DC-A28B-9EE600B240F5");
 
+	// Quote Request Objects
+	public static final UUID ObjID_QuoteRequest         = UUID.fromString("6ABD2A4A-ECBD-46A8-A4E6-A00500CDAE4A");
+	public static final UUID ObjID_QuoteRequestSubLine  = UUID.fromString("DC56BAB3-CEB5-4F5C-A23E-A00500FD2AB2");
+	public static final UUID ObjID_QuoteRequestCoverage = UUID.fromString("5BE87B3A-787B-4C02-BACF-A00500FF499B");
+	public static final UUID ObjID_QuoteRequestObject   = UUID.fromString("B594AB7F-573F-4401-A369-A00500F9D2D8");
+	public static final UUID ObjID_QuoteRequestValue    = UUID.fromString("2E9A755C-55C9-4A75-9BE1-A005010066F9");
+
 	// Negotiation Objects
 	public static final UUID ObjID_Negotiation          = UUID.fromString("0D50EB51-725D-4741-8618-9FFD00E918D3");
 
