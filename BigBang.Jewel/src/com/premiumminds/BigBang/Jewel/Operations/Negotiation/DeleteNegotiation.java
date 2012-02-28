@@ -42,8 +42,8 @@ public class DeleteNegotiation
 
 	public String LongDesc(String pstrLineBreak)
 	{
-		return "A negociação foi eliminada. A sua reposição foi/é possível a partir d" +
-				(mbFromPolicy ? "a apólice negociada" : "o pedido de cotação a que pertence") + ".";
+		return "A negociação foi eliminada. A sua reposição foi/é possível a partir da " +
+				(mbFromPolicy ? "apólice a que diz respeito" : "consulta de mercado a que pertence") + ".";
 	}
 
 	public UUID GetExternalProcess()
