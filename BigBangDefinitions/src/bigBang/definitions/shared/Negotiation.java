@@ -30,6 +30,11 @@ public class Negotiation
 		public String internalMotiveId;
 		public boolean sendResponseToInsuranceAgency;
 		public OutgoingMessage message;
+
+		public Cancellation()
+		{
+			message = new OutgoingMessage();
+		}
 	}
 
 	public static class Response
