@@ -57,6 +57,7 @@ import com.premiumminds.BigBang.Jewel.Data.SubPolicyData;
 import com.premiumminds.BigBang.Jewel.Data.SubPolicyObjectData;
 import com.premiumminds.BigBang.Jewel.Data.SubPolicyValueData;
 import com.premiumminds.BigBang.Jewel.Objects.Client;
+import com.premiumminds.BigBang.Jewel.Objects.Company;
 import com.premiumminds.BigBang.Jewel.Objects.Coverage;
 import com.premiumminds.BigBang.Jewel.Objects.Mediator;
 import com.premiumminds.BigBang.Jewel.Objects.Policy;
@@ -2061,6 +2062,7 @@ public class SubPolicyServiceImpl
 		SubPolicyValue[] larrLocalValues;
 		SubPolicyCoverage[] larrLocalCoverages;
 		Coverage[] larrCoverages;
+		Company lobjCompany;
 		Hashtable<UUID, Tax> larrAuxFields;
 		ArrayList<SubPolicy.HeaderField> larrOutHeaders;
 		ArrayList<SubPolicy.TableSection.TableField> larrOutFields;
@@ -2098,6 +2100,7 @@ public class SubPolicyServiceImpl
 			larrLocalValues = lobjSubPolicy.GetCurrentKeyedValues(null, null);
 			larrLocalCoverages = lobjSubPolicy.GetCurrentCoverages();
 			larrCoverages = lobjMainPolicy.GetSubLine().GetCurrentCoverages();
+			lobjCompany = lobjMainPolicy.GetCompany();
 		}
 		catch (Throwable e)
 		{
@@ -2122,6 +2125,10 @@ public class SubPolicyServiceImpl
 		lobjResult.notes = (String)lobjSubPolicy.getAt(6);
 		lobjResult.inheritMediatorId = lobjMed.getKey().toString();
 		lobjResult.inheritMediatorName = lobjMed.getLabel();
+		lobjResult.inheritCategoryName = lobjMainPolicy.GetSubLine().getLine().getCategory().getLabel();
+		lobjResult.inheritLineName = lobjMainPolicy.GetSubLine().getLine().getLabel();
+		lobjResult.inheritSubLineName = lobjMainPolicy.GetSubLine().getLabel();
+		lobjResult.inheritCompanyName = lobjCompany.getLabel();
 		lobjResult.statusId = lobjStatus.getKey().toString();
 		lobjResult.statusText = lobjStatus.getLabel();
 		switch ( (Integer)lobjStatus.getAt(1) )
@@ -3175,6 +3182,7 @@ public class SubPolicyServiceImpl
 	{
 		IProcess lobjProcess;
 		Policy lobjPolicy;
+		Company lobjCompany;
 		SubPolicyStub lobjResult;
 
 		try
@@ -3183,16 +3191,26 @@ public class SubPolicyServiceImpl
 			try
 			{
 				lobjPolicy = (Policy)lobjProcess.GetParent().GetData();
+				try
+				{
+					lobjCompany = lobjPolicy.GetCompany();
+				}
+				catch (Throwable e)
+				{
+					lobjCompany = null;
+				}
 			}
 			catch (Throwable e)
 			{
 				lobjPolicy = null;
+				lobjCompany = null;
 			}
 		}
 		catch (Throwable e)
 		{
 			lobjProcess = null;
 			lobjPolicy = null;
+			lobjCompany = null;
 		}
 
 		lobjResult = new SubPolicyStub();
@@ -3204,6 +3222,10 @@ public class SubPolicyServiceImpl
 		lobjResult.clientId = ((UUID)parrValues[2]).toString();
 		lobjResult.clientNumber = parrValues[3].toString();
 		lobjResult.clientName = (String)parrValues[4];
+		lobjResult.inheritCategoryName = (lobjPolicy == null ? "(Erro)" : lobjPolicy.GetSubLine().getLine().getCategory().getLabel());
+		lobjResult.inheritLineName = (lobjPolicy == null ? "(Erro)" : lobjPolicy.GetSubLine().getLine().getLabel());
+		lobjResult.inheritSubLineName = (lobjPolicy == null ? "(Erro)" : lobjPolicy.GetSubLine().getLabel());
+		lobjResult.inheritCompanyName = (lobjCompany == null ? "(Erro)" : lobjCompany.getLabel());
 		lobjResult.statusId = ((UUID)parrValues[5]).toString();
 		lobjResult.statusText = (String)parrValues[6];
 		switch ( (Integer)parrValues[7] )

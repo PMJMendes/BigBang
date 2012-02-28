@@ -17,6 +17,10 @@ public class SubPolicyStub
 	public String clientId;
 	public String clientNumber;
 	public String clientName;
+	public String inheritCategoryName;
+	public String inheritLineName;
+	public String inheritSubLineName;
+	public String inheritCompanyName;
 	public String statusId;
 	public String statusText;
 	public PolicyStatus statusIcon;
