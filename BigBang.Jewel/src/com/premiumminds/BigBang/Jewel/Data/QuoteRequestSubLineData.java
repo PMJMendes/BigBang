@@ -15,7 +15,7 @@ public class QuoteRequestSubLineData
 
 	public UUID mid;
 
-	public UUID midOwner;
+	public UUID midQuoteRequest;
 	public UUID midSubLine;
 
 	public boolean mbNew;
@@ -26,7 +26,7 @@ public class QuoteRequestSubLineData
 	public void Clone(QuoteRequestSubLineData pobjSource)
 	{
 		mid = pobjSource.mid;
-		midOwner = pobjSource.midOwner;
+		midQuoteRequest = pobjSource.midQuoteRequest;
 		midSubLine = pobjSource.midSubLine;
 	}
 
@@ -34,7 +34,7 @@ public class QuoteRequestSubLineData
 	{
 		mid = pobjSource.getKey();
 
-		midOwner = (UUID)pobjSource.getAt(0);
+		midQuoteRequest = (UUID)pobjSource.getAt(0);
 		midSubLine = (UUID)pobjSource.getAt(1);
 	}
 
@@ -43,7 +43,7 @@ public class QuoteRequestSubLineData
 	{
 		try
 		{
-			pobjDest.setAt(0, midOwner);
+			pobjDest.setAt(0, midQuoteRequest);
 			pobjDest.setAt(1, midSubLine);
 		}
 		catch (Throwable e)

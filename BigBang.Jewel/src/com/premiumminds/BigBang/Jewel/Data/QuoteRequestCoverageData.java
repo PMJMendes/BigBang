@@ -15,9 +15,10 @@ public class QuoteRequestCoverageData
 
 	public UUID mid;
 
-	public UUID midOwner;
+	public UUID midQRSubLine;
 	public UUID midCoverage;
 	public Boolean mbPresent;
+	public int mlngQRSubLine;
 
 	public boolean mbNew;
 	public boolean mbDeleted;
@@ -27,16 +28,17 @@ public class QuoteRequestCoverageData
 	public void Clone(QuoteRequestCoverageData pobjSource)
 	{
 		mid = pobjSource.mid;
-		midOwner = pobjSource.midOwner;
+		midQRSubLine = pobjSource.midQRSubLine;
 		midCoverage = pobjSource.midCoverage;
 		mbPresent = pobjSource.mbPresent;
+		mlngQRSubLine = pobjSource.mlngQRSubLine;
 	}
 
 	public void FromObject(ObjectBase pobjSource)
 	{
 		mid = pobjSource.getKey();
 
-		midOwner = (UUID)pobjSource.getAt(0);
+		midQRSubLine = (UUID)pobjSource.getAt(0);
 		midCoverage = (UUID)pobjSource.getAt(1);
 		mbPresent = (Boolean)pobjSource.getAt(2);
 	}
@@ -46,7 +48,7 @@ public class QuoteRequestCoverageData
 	{
 		try
 		{
-			pobjDest.setAt(0, midOwner);
+			pobjDest.setAt(0, midQRSubLine);
 			pobjDest.setAt(1, midCoverage);
 			pobjDest.setAt(2, mbPresent);
 		}

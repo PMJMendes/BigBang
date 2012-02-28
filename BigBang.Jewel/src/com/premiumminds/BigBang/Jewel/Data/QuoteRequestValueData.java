@@ -17,9 +17,10 @@ public class QuoteRequestValueData
 	public UUID mid;
 
 	public String mstrValue;
-	public UUID midOwner;
+	public UUID midQRSubLine;
 	public UUID midField;
 	public UUID midObject;
+	public int mlngQRSubLine;
 	public int mlngObject;
 
 	public boolean mbNew;
@@ -31,9 +32,10 @@ public class QuoteRequestValueData
 	{
 		mid = pobjSource.mid;
 		mstrValue = pobjSource.mstrValue;
-		midOwner = pobjSource.midOwner;
+		midQRSubLine = pobjSource.midQRSubLine;
 		midField = pobjSource.midField;
 		midObject = pobjSource.midObject;
+		mlngQRSubLine = pobjSource.mlngQRSubLine;
 		mlngObject = pobjSource.mlngObject;
 	}
 
@@ -42,7 +44,7 @@ public class QuoteRequestValueData
 		mid = pobjSource.getKey();
 
 		mstrValue = (String)pobjSource.getAt(0);
-		midOwner = (UUID)pobjSource.getAt(1);
+		midQRSubLine = (UUID)pobjSource.getAt(1);
 		midField = (UUID)pobjSource.getAt(2);
 		midObject = (UUID)pobjSource.getAt(3);
 	}
@@ -53,7 +55,7 @@ public class QuoteRequestValueData
 		try
 		{
 			pobjDest.setAt(0, mstrValue);
-			pobjDest.setAt(1, midOwner);
+			pobjDest.setAt(1, midQRSubLine);
 			pobjDest.setAt(2, midField);
 			pobjDest.setAt(3, midObject);
 		}
