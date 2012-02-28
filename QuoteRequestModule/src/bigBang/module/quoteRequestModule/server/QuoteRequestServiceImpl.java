@@ -2,22 +2,22 @@ package bigBang.module.quoteRequestModule.server;
 
 import java.util.UUID;
 
-import bigBang.definitions.shared.InfoOrDocumentRequest;
 import bigBang.definitions.shared.InsuredObject;
-import bigBang.definitions.shared.ManagerTransfer;
-import bigBang.definitions.shared.Negotiation;
 import bigBang.definitions.shared.QuoteRequest;
-import bigBang.definitions.shared.RiskAnalysis;
+import bigBang.definitions.shared.QuoteRequest.RequestSubLine;
+import bigBang.definitions.shared.QuoteRequest.TableSection;
+import bigBang.definitions.shared.Remap;
 import bigBang.definitions.shared.SearchParameter;
 import bigBang.definitions.shared.SearchResult;
 import bigBang.definitions.shared.SortParameter;
 import bigBang.library.server.SearchServiceBase;
 import bigBang.library.shared.BigBangException;
+import bigBang.library.shared.CorruptedPadException;
 import bigBang.library.shared.SessionExpiredException;
 import bigBang.module.quoteRequestModule.interfaces.QuoteRequestService;
 
 public class QuoteRequestServiceImpl
-	extends SearchServiceBase 
+	extends SearchServiceBase
 	implements QuoteRequestService
 {
 	private static final long serialVersionUID = 1L;
@@ -30,8 +30,116 @@ public class QuoteRequestServiceImpl
 	}
 
 	@Override
-	public QuoteRequest editRequest(QuoteRequest request)
+	public TableSection getPage(String requestId, String subLineId,
+			String objectId) throws SessionExpiredException, BigBangException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Remap[] openRequestScratchPad(String requestId)
 			throws SessionExpiredException, BigBangException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public QuoteRequest getRequestInPad(String requestId)
+			throws SessionExpiredException, BigBangException,
+			CorruptedPadException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public QuoteRequest updateHeader(QuoteRequest request)
+			throws SessionExpiredException, BigBangException,
+			CorruptedPadException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public RequestSubLine addSubLineToPad(String requestId, String subLineId)
+			throws SessionExpiredException, BigBangException,
+			CorruptedPadException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void deleteSubLineFromPad(String subLineId)
+			throws SessionExpiredException, BigBangException,
+			CorruptedPadException {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public TableSection getPageForEdit(String requestId, String subLineId,
+			String objectId) throws SessionExpiredException, BigBangException,
+			CorruptedPadException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public TableSection savePage(TableSection data)
+			throws SessionExpiredException, BigBangException,
+			CorruptedPadException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public InsuredObject getObjectInPad(String objectId)
+			throws SessionExpiredException, BigBangException,
+			CorruptedPadException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public InsuredObject createObjectInPad(String requestId)
+			throws SessionExpiredException, BigBangException,
+			CorruptedPadException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public InsuredObject createObjectFromClientInPad(String requestId)
+			throws SessionExpiredException, BigBangException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public InsuredObject updateObjectInPad(InsuredObject data)
+			throws SessionExpiredException, BigBangException,
+			CorruptedPadException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void deleteObjectInPad(String objectId)
+			throws SessionExpiredException, BigBangException,
+			CorruptedPadException {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public Remap[] commitPad(String requestId) throws SessionExpiredException,
+			BigBangException, CorruptedPadException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Remap[] discardPad(String requestId) throws SessionExpiredException,
+			BigBangException {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -41,49 +149,6 @@ public class QuoteRequestServiceImpl
 			BigBangException {
 		// TODO Auto-generated method stub
 		
-	}
-
-	@Override
-	public QuoteRequest closeRequest(String requestId)
-			throws SessionExpiredException, BigBangException {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public RiskAnalysis createRiskAnalisys(RiskAnalysis riskAnalisys)
-			throws SessionExpiredException, BigBangException {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public InsuredObject insertInsuredObject(InsuredObject object) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public ManagerTransfer[] createManagerTransfer(
-			String[] quoteRequestIds, String managerId)
-			throws SessionExpiredException, BigBangException {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public InfoOrDocumentRequest createInfoOrDocumentRequest(
-			InfoOrDocumentRequest request)
-			throws SessionExpiredException, BigBangException {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public Negotiation createNegotiation(Negotiation negotiation)
-			throws SessionExpiredException, BigBangException {
-		// TODO Auto-generated method stub
-		return null;
 	}
 
 	@Override

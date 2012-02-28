@@ -68,9 +68,9 @@ public class QuoteRequestForm extends FormView<QuoteRequest> implements ClientPr
 	@Override
 	public void setInfo(QuoteRequest info) {
 		this.processManager.setValue(info.managerId);
-		this.daysUntilReply.setValue(""+info.responseLimitInDays);
+//		this.daysUntilReply.setValue(""+info.responseLimitInDays);
 		this.caseStudyFlag.setValue(info.caseStudy);
-		this.notes.setValue(info.internalNotes);
+		this.notes.setValue(info.notes);
 		clientBroker.getClient(info.clientId, new ResponseHandler<Client>() {
 			
 			@Override

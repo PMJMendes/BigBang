@@ -1,13 +1,11 @@
 package bigBang.module.quoteRequestModule.interfaces;
 
-import bigBang.definitions.shared.InfoOrDocumentRequest;
-import bigBang.definitions.shared.ManagerTransfer;
-import bigBang.definitions.shared.Negotiation;
-import bigBang.definitions.shared.QuoteRequest;
-import bigBang.definitions.shared.RiskAnalysis;
 import bigBang.definitions.shared.InsuredObject;
+import bigBang.definitions.shared.QuoteRequest;
+import bigBang.definitions.shared.Remap;
 import bigBang.library.interfaces.SearchService;
 import bigBang.library.shared.BigBangException;
+import bigBang.library.shared.CorruptedPadException;
 import bigBang.library.shared.SessionExpiredException;
 
 import com.google.gwt.core.client.GWT;
@@ -31,16 +29,32 @@ public interface QuoteRequestService
 	}
 
 	public QuoteRequest getRequest(String requestId) throws SessionExpiredException, BigBangException;
+	public QuoteRequest.TableSection getPage(String requestId, String subLineId, String objectId)
+			throws SessionExpiredException, BigBangException;
 
-	public QuoteRequest editRequest(QuoteRequest request) throws SessionExpiredException, BigBangException;
-	public InsuredObject insertInsuredObject(InsuredObject object);
-	public QuoteRequest closeRequest(String requestId) throws SessionExpiredException, BigBangException;
-	
-	public Negotiation createNegotiation(Negotiation negotiation) throws SessionExpiredException, BigBangException;
-	public InfoOrDocumentRequest createInfoOrDocumentRequest(InfoOrDocumentRequest request) throws SessionExpiredException, BigBangException;
-	public ManagerTransfer[] createManagerTransfer(String[] quoteRequestIds, String managerId) throws SessionExpiredException, BigBangException;
+	public Remap[] openRequestScratchPad(String requestId) throws SessionExpiredException, BigBangException;
+	public QuoteRequest getRequestInPad(String requestId) throws SessionExpiredException, BigBangException, CorruptedPadException;
+	public QuoteRequest updateHeader(QuoteRequest request)
+			throws SessionExpiredException, BigBangException, CorruptedPadException;
 
-	public RiskAnalysis createRiskAnalisys(RiskAnalysis riskAnalisys) throws SessionExpiredException, BigBangException;
+	public QuoteRequest.RequestSubLine addSubLineToPad(String requestId, String subLineId)
+			throws SessionExpiredException, BigBangException, CorruptedPadException;
+	public void deleteSubLineFromPad(String subLineId) throws SessionExpiredException, BigBangException, CorruptedPadException;
+
+	public QuoteRequest.TableSection getPageForEdit(String requestId, String subLineId, String objectId)
+			throws SessionExpiredException, BigBangException, CorruptedPadException;
+	public QuoteRequest.TableSection savePage(QuoteRequest.TableSection data)
+			throws SessionExpiredException, BigBangException, CorruptedPadException;
+
+	public InsuredObject getObjectInPad(String objectId) throws SessionExpiredException, BigBangException, CorruptedPadException;
+	public InsuredObject createObjectInPad(String requestId) throws SessionExpiredException, BigBangException, CorruptedPadException;
+	public InsuredObject createObjectFromClientInPad(String requestId) throws SessionExpiredException, BigBangException;
+	public InsuredObject updateObjectInPad(InsuredObject data)
+			throws SessionExpiredException, BigBangException, CorruptedPadException;
+	public void deleteObjectInPad(String objectId) throws SessionExpiredException, BigBangException, CorruptedPadException;
+
+	public Remap[] commitPad(String requestId) throws SessionExpiredException, BigBangException, CorruptedPadException;
+	public Remap[] discardPad(String requestId) throws SessionExpiredException, BigBangException;
 
 	public void deleteRequest(String requestId) throws SessionExpiredException, BigBangException;
 }
