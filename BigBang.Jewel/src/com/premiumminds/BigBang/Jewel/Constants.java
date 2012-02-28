@@ -100,6 +100,8 @@ public class Constants
 
 	public static final UUID ObjID_TypifiedText         = UUID.fromString("0F218912-1626-4A2C-BF68-9FE100F72735");
 
+	public static final UUID ObjID_UNUSED = UUID.fromString("22D005B7-E628-4E06-A011-A00500B5E01E");
+
 	// Process Scripts
 	public static final UUID ProcID_GenSys        = UUID.fromString("37A989E2-9D1F-470C-A59E-9EB1008A97A5");
 	public static final UUID ProcID_Client        = UUID.fromString("100E701A-EDC5-4D9C-A221-9F09013D7954");

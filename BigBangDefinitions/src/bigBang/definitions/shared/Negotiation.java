@@ -28,8 +28,8 @@ public class Negotiation
 
 		public String negotiationId;
 		public String internalMotiveId;
-		public String externalMotiveId;
 		public boolean sendResponseToInsuranceAgency;
+		public OutgoingMessage message;
 	}
 
 	public static class Response

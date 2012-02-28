@@ -26,6 +26,7 @@ public class CancelNegotiation
 {
 	private static final long serialVersionUID = 1L;
 
+	public String mstrMotive;
 	public boolean mbSendNotification;
 	public OutgoingMessageData mobjMessage;
 	private boolean mbHadQuote;
@@ -52,10 +53,16 @@ public class CancelNegotiation
 
 		lstrBuilder = new StringBuilder();
 
-		lstrBuilder.append("A negociação foi cancelada sem adjudicação.");
+		lstrBuilder.append("A negociação foi cancelada ");
+
+		if ( mstrMotive != null )
+			lstrBuilder.append("pelo seguinte motivo: ").append(pstrLineBreak).append(mstrMotive);
+		else
+			lstrBuilder.append("sem adjudicação.");
 
 		if ( mbSendNotification )
-			lstrBuilder.append(" A seguradora foi notificada do facto.");
+			lstrBuilder.append(pstrLineBreak).append("A seguradora foi notificada com a seguinte mensagem:").append(pstrLineBreak).
+					append(mobjMessage.mstrBody);
 
 		return lstrBuilder.toString();
 	}

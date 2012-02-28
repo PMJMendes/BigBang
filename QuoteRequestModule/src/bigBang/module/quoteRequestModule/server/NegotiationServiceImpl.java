@@ -6,6 +6,7 @@ import java.util.UUID;
 import Jewel.Engine.Engine;
 import Jewel.Engine.Implementation.Entity;
 import Jewel.Engine.Interfaces.IEntity;
+import Jewel.Engine.SysObjects.ObjectBase;
 import Jewel.Petri.Interfaces.IProcess;
 import Jewel.Petri.Interfaces.IScript;
 import Jewel.Petri.Objects.PNProcess;
@@ -22,6 +23,7 @@ import bigBang.definitions.shared.SortOrder;
 import bigBang.definitions.shared.SortParameter;
 import bigBang.library.server.BigBangPermissionServiceImpl;
 import bigBang.library.server.ExternRequestServiceImpl;
+import bigBang.library.server.InfoOrDocumentRequestServiceImpl;
 import bigBang.library.server.MessageBridge;
 import bigBang.library.server.SearchServiceBase;
 import bigBang.library.shared.BigBangException;
@@ -33,7 +35,9 @@ import bigBang.module.quoteRequestModule.shared.NegotiationSortParameter;
 import com.premiumminds.BigBang.Jewel.Constants;
 import com.premiumminds.BigBang.Jewel.Data.NegotiationData;
 import com.premiumminds.BigBang.Jewel.Objects.Company;
+import com.premiumminds.BigBang.Jewel.Operations.Negotiation.CancelNegotiation;
 import com.premiumminds.BigBang.Jewel.Operations.Negotiation.CreateExternRequest;
+import com.premiumminds.BigBang.Jewel.Operations.Negotiation.CreateInfoRequest;
 import com.premiumminds.BigBang.Jewel.Operations.Negotiation.DeleteNegotiation;
 import com.premiumminds.BigBang.Jewel.Operations.Negotiation.ManageData;
 import com.premiumminds.BigBang.Jewel.Operations.Negotiation.ReceiveQuote;
@@ -137,11 +141,44 @@ public class NegotiationServiceImpl
 		return null;
 	}
 
-	@Override
 	public Negotiation cancelNegotiation(Negotiation.Cancellation cancellation)
-			throws SessionExpiredException, BigBangException {
-		// TODO Auto-generated method stub
-		return null;
+		throws SessionExpiredException, BigBangException
+	{
+		com.premiumminds.BigBang.Jewel.Objects.Negotiation lobjNeg;
+		ObjectBase lobjMotive;
+		CancelNegotiation lopCN;
+
+		if ( Engine.getCurrentUser() == null )
+			throw new SessionExpiredException();
+
+		try
+		{
+			lobjNeg = com.premiumminds.BigBang.Jewel.Objects.Negotiation.GetInstance(Engine.getCurrentNameSpace(),
+					UUID.fromString(cancellation.negotiationId));
+			lobjMotive = Engine.GetWorkInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), Constants.ObjID_RequestCancelMotives),
+					UUID.fromString(cancellation.internalMotiveId));
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangException(e.getMessage(), e);
+		}
+
+		lopCN = new CancelNegotiation(lobjNeg.GetProcessID());
+		lopCN.mstrMotive = lobjMotive.getLabel();
+		lopCN.mbSendNotification = cancellation.sendResponseToInsuranceAgency;
+		if ( lopCN.mbSendNotification )
+			lopCN.mobjMessage = MessageBridge.outgoingToServer(cancellation.message);
+
+		try
+		{
+			lopCN.Execute();
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangException(e.getMessage(), e);
+		}
+
+		return sGetNegotiation(lobjNeg.getKey());
 	}
 
 	public Negotiation receiveResponse(Negotiation.Response response)
@@ -220,11 +257,40 @@ public class NegotiationServiceImpl
 		return null;
 	}
 
-	@Override
 	public InfoOrDocumentRequest createInfoRequest(InfoOrDocumentRequest request)
-			throws SessionExpiredException, BigBangException {
-		// TODO Auto-generated method stub
-		return null;
+		throws SessionExpiredException, BigBangException
+	{
+		com.premiumminds.BigBang.Jewel.Objects.Negotiation lobjNeg;
+		CreateInfoRequest lopCIR;
+
+		if ( Engine.getCurrentUser() == null )
+			throw new SessionExpiredException();
+
+		try
+		{
+			lobjNeg = com.premiumminds.BigBang.Jewel.Objects.Negotiation.GetInstance(Engine.getCurrentNameSpace(),
+					UUID.fromString(request.parentDataObjectId));
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangException(e.getMessage(), e); 
+		}
+
+		lopCIR = new CreateInfoRequest(lobjNeg.GetProcessID());
+		lopCIR.midRequestType = UUID.fromString(request.requestTypeId);
+		lopCIR.mobjMessage = MessageBridge.outgoingToServer(request.message);
+		lopCIR.mlngDays = request.replylimit;
+
+		try
+		{
+			lopCIR.Execute();
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangException(e.getMessage(), e); 
+		}
+
+		return InfoOrDocumentRequestServiceImpl.sGetRequest(lopCIR.midRequestObject);
 	}
 
 	public ExternalInfoRequest createExternalRequest(ExternalInfoRequest request)

@@ -1,5 +1,7 @@
 package bigBang.module.quoteRequestModule.server;
 
+import java.util.UUID;
+
 import bigBang.definitions.shared.InfoOrDocumentRequest;
 import bigBang.definitions.shared.InsuredObject;
 import bigBang.definitions.shared.ManagerTransfer;
@@ -9,56 +11,16 @@ import bigBang.definitions.shared.RiskAnalysis;
 import bigBang.definitions.shared.SearchParameter;
 import bigBang.definitions.shared.SearchResult;
 import bigBang.definitions.shared.SortParameter;
+import bigBang.library.server.SearchServiceBase;
 import bigBang.library.shared.BigBangException;
-import bigBang.library.shared.NewSearchResult;
 import bigBang.library.shared.SessionExpiredException;
 import bigBang.module.quoteRequestModule.interfaces.QuoteRequestService;
 
-import com.google.gwt.user.server.rpc.RemoteServiceServlet;
-
 public class QuoteRequestServiceImpl
-	extends RemoteServiceServlet 
+	extends SearchServiceBase 
 	implements QuoteRequestService
 {
 	private static final long serialVersionUID = 1L;
-
-	@Override
-	public NewSearchResult openSearch(SearchParameter[] parameters,
-			SortParameter[] sorts, int size) throws SessionExpiredException,
-			BigBangException {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public NewSearchResult openForOperation(String opId,
-			SearchParameter[] parameters, SortParameter[] sorts, int size)
-			throws SessionExpiredException, BigBangException {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public NewSearchResult search(String workspaceId,
-			SearchParameter[] parameters, SortParameter[] sorts, int size)
-			throws SessionExpiredException, BigBangException {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public SearchResult[] getResults(String workspaceId, int from, int size)
-			throws SessionExpiredException, BigBangException {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public void closeSearch(String workspaceId) throws SessionExpiredException,
-			BigBangException {
-		// TODO Auto-generated method stub
-		
-	}
 
 	@Override
 	public QuoteRequest getRequest(String requestId)
@@ -120,6 +82,38 @@ public class QuoteRequestServiceImpl
 	@Override
 	public Negotiation createNegotiation(Negotiation negotiation)
 			throws SessionExpiredException, BigBangException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	protected UUID getObjectID() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	protected String[] getColumns() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	protected boolean buildFilter(StringBuilder pstrBuffer,
+			SearchParameter pParam) throws BigBangException {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	protected boolean buildSort(StringBuilder pstrBuffer, SortParameter pParam,
+			SearchParameter[] parrParams) throws BigBangException {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	protected SearchResult buildResult(UUID pid, Object[] parrValues) {
 		// TODO Auto-generated method stub
 		return null;
 	}
