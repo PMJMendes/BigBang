@@ -1,33 +1,29 @@
 package bigBang.module.generalSystemModule.client.userInterface;
 
-import java.util.Collection;
-
 import org.gwt.mosaic.ui.client.ToolButton;
 
 import bigBang.definitions.client.dataAccess.CoverageBroker;
 import bigBang.definitions.client.dataAccess.CoverageDataBrokerClient;
-import bigBang.definitions.client.response.ResponseError;
-import bigBang.definitions.client.response.ResponseHandler;
 import bigBang.definitions.shared.BigBangConstants;
 import bigBang.definitions.shared.Coverage;
 import bigBang.definitions.shared.Line;
 import bigBang.definitions.shared.SubLine;
 import bigBang.definitions.shared.Tax;
-import bigBang.library.client.BigBangAsyncCallback;
-import bigBang.library.client.EventBus;
-import bigBang.library.client.Notification;
-import bigBang.library.client.Notification.TYPE;
 import bigBang.library.client.dataAccess.DataBrokerManager;
-import bigBang.library.client.event.NewNotificationEvent;
+import bigBang.library.client.event.ActionInvokedEvent;
+import bigBang.library.client.event.ActionInvokedEventHandler;
 import bigBang.library.client.resources.Resources;
+import bigBang.library.client.userInterface.BigBangOperationsToolBar;
+import bigBang.library.client.userInterface.BigBangOperationsToolBar.SUB_MENU;
 import bigBang.library.client.userInterface.FilterableList;
 import bigBang.library.client.userInterface.ListEntry;
 import bigBang.library.client.userInterface.ListHeader;
 import bigBang.library.client.userInterface.NavigationListEntry;
+import bigBang.library.client.userInterface.view.FormView;
 import bigBang.library.client.userInterface.view.PopupPanel;
-import bigBang.module.generalSystemModule.client.userInterface.SubLineList.Entry;
+import bigBang.module.generalSystemModule.client.userInterface.presenter.CoverageManagementOperationViewPresenter.Action;
 import bigBang.module.generalSystemModule.client.userInterface.view.LineForm;
-import bigBang.module.generalSystemModule.interfaces.CoveragesService;
+
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.FontWeight;
 import com.google.gwt.dom.client.Style.Unit;
@@ -36,7 +32,10 @@ import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.DoubleClickEvent;
 import com.google.gwt.event.dom.client.DoubleClickHandler;
 import com.google.gwt.event.dom.client.HasClickHandlers;
+import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.ui.Image;
+import com.google.gwt.user.client.ui.MenuItem;
+import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
 public class LineList extends FilterableList<Line> implements CoverageDataBrokerClient{
@@ -59,7 +58,6 @@ public class LineList extends FilterableList<Line> implements CoverageDataBroker
 			Line line = (Line) info;
 			setTitle(line.categoryName);
 			setText(line.name);
-			setNavigatable(line.subLines != null && line.subLines.length > 0);
 		};
 
 		public void setEditable(boolean editable) {
@@ -77,15 +75,23 @@ public class LineList extends FilterableList<Line> implements CoverageDataBroker
 	}
 
 	private ToolButton newButton;
+	
 	private LineForm form;
 	private PopupPanel popup;
+	private VerticalPanel popupWrapper;
+	private BigBangOperationsToolBar toolbar;
+	private MenuItem delete;
+	
 	private boolean readonly;
 	private ClickHandler editHandler;
 	private DoubleClickHandler doubleClickHandler;
 	private CoverageBroker broker;
 	private String lineId;
+	
+	ActionInvokedEventHandler<Action> handler;
 
 	public LineList(){
+
 		broker = (CoverageBroker)DataBrokerManager.staticGetBroker(BigBangConstants.EntityIds.COVERAGE);
 		broker.registerClient(this);
 		ListHeader header = new ListHeader();
@@ -99,28 +105,63 @@ public class LineList extends FilterableList<Line> implements CoverageDataBroker
 			public void onClick(ClickEvent event) {
 				form.clearInfo();
 				form.setReadOnly(false);
+				toolbar.setSaveModeEnabled(true);
 				showForm(true);
 			}
 		});
 
 		this.form = new LineForm();
-		form.getSaveButton().addClickHandler(new ClickHandler() {
-
-			@Override
-			public void onClick(ClickEvent event) {
-				Line line = form.getValue();
-				if(line.id == null){
-					createLine(line);
-				}else{
-					saveLine(line);
-				}
-			}
-		});
-		this.popup = new PopupPanel("Ramo");
+		this.popup = new PopupPanel();
+		
 		Widget formContent = form.getNonScrollableContent();
 		formContent.setHeight("120px");
 		formContent.setWidth("650px");
-		popup.add(formContent);
+		toolbar = new BigBangOperationsToolBar(){
+
+			@Override
+			public void onEditRequest() {
+				form.setReadOnly(false);
+			}
+
+			@Override
+			public void onSaveRequest() {
+				form.setReadOnly(true);
+				toolbar.setSaveModeEnabled(false);
+				fireAction(Action.SAVE_LINE);
+			}
+
+			@Override
+			public void onCancelRequest() {
+			
+				if(form.getInfo().id == null){
+					popup.hidePopup();
+				}else{
+					form.setInfo(form.getValue());
+					toolbar.setSaveModeEnabled(false);
+					form.setReadOnly(true);
+				}
+				
+			}
+			
+		};
+		
+		toolbar.hideAll();
+		delete = new MenuItem("Eliminar", new Command() {
+			
+			@Override
+			public void execute() {
+				fireAction(Action.DELETE_LINE);
+			}
+		});
+		toolbar.addItem(SUB_MENU.ADMIN, delete);
+		toolbar.showItem(SUB_MENU.EDIT, true);
+		toolbar.showItem(SUB_MENU.ADMIN, true);
+		
+		popupWrapper = new VerticalPanel();
+		
+		popupWrapper.add(toolbar);
+		popupWrapper.add(formContent);
+		popup.add(popupWrapper);
 		popup.setWidth("650px");
 
 		header.showRefreshButton();
@@ -128,7 +169,7 @@ public class LineList extends FilterableList<Line> implements CoverageDataBroker
 
 			@Override
 			public void onClick(ClickEvent event) {
-				refresh();
+				fireAction(Action.REFRESH);
 			}
 		});
 
@@ -140,7 +181,9 @@ public class LineList extends FilterableList<Line> implements CoverageDataBroker
 			public void onClick(ClickEvent event) {
 				for(ListEntry<Line> e : entries) {
 					if(event.getSource() == ((Entry)e).editImage){
-						form.setValue(((Entry)e).getValue());
+						form.setInfo(((Entry)e).getValue());
+						form.setReadOnly(true);
+						toolbar.setSaveModeEnabled(false);
 						showForm(true);
 					}
 				}
@@ -161,6 +204,12 @@ public class LineList extends FilterableList<Line> implements CoverageDataBroker
 
 		setDoubleClickable(true);
 		setReadOnly(true);
+	}
+	
+	protected void fireAction(Action action){
+		if(this.handler != null) {
+			handler.onActionInvoked(new ActionInvokedEvent<Action>(action));
+		}
 	}
 
 	public boolean add(Entry e) {
@@ -183,51 +232,7 @@ public class LineList extends FilterableList<Line> implements CoverageDataBroker
 		popup.center();
 	}
 
-	private void createLine(Line line) {
-		//TODO
-		CoveragesService.Util.getInstance().createLine(line, new BigBangAsyncCallback<Line>() {
-
-			@Override
-			public void onResponseSuccess(Line result) {
-				Entry entry = new Entry(result);
-				add(entry);
-				entry.setSelected(true);
-				showForm(false);
-			}
-		});
-	}
-
-	private void saveLine(Line line){
-		//TODO
-		CoveragesService.Util.getInstance().saveLine(line, new BigBangAsyncCallback<Line>() {
-
-			@Override
-			public void onResponseSuccess(Line result) {
-				updateEntry(result);
-				showForm(false);
-			}
-		});
-	}
-
-	public void refresh() {
-		broker.getLines(new ResponseHandler<Line[]>() {
-
-			@Override
-			public void onResponse(Line[] response) {
-				setLines(response);
-			}
-
-			@Override
-			public void onError(Collection<ResponseError> errors) {
-
-				EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não foi possível obter a lista de ramos."), TYPE.ALERT_NOTIFICATION));
-
-			}
-		});
-	}
-
 	private void updateEntry(Line line) {
-		//TODO
 		for(ListEntry<Line> e : entries){
 			if(e.getValue().id.equals(line.id))
 				e.setValue(line);
@@ -247,13 +252,11 @@ public class LineList extends FilterableList<Line> implements CoverageDataBroker
 
 	@Override
 	public void setDataVersionNumber(String dataElementId, int number) {
-		// TODO Auto-generated method stub
-
+		return;
 	}
 
 	@Override
 	public int getDataVersion(String dataElementId) {
-		// TODO Auto-generated method stub
 		return 0;
 	}
 
@@ -265,6 +268,7 @@ public class LineList extends FilterableList<Line> implements CoverageDataBroker
 				add(new Entry(lines[i]));
 				if(this.lineId.equalsIgnoreCase(lines[i].id)){
 					get(i).setSelected(true, false);
+					
 				}
 			}
 		}
@@ -273,24 +277,33 @@ public class LineList extends FilterableList<Line> implements CoverageDataBroker
 				add(new Entry(lines[i]));
 			}
 		}
-
 	}
 
 	@Override
 	public void addLine(Line line) {
-		// TODO Auto-generated method stub
+		
+		this.add(new Entry(line));
+		return;
+		
 
 	}
 
 	@Override
 	public void updateLine(Line line) {
-		// TODO Auto-generated method stub
+		
+		updateEntry(line);
 
 	}
 
 	@Override
 	public void removeLine(String lineId) {
-		// TODO Auto-generated method stub
+		
+		for(int i = 0; i<this.size(); i++){
+			if(this.get(i).getValue().id.equalsIgnoreCase(lineId)){
+				this.remove(i);
+				return;
+			}
+		}
 
 	}
 
@@ -370,37 +383,19 @@ public class LineList extends FilterableList<Line> implements CoverageDataBroker
 		this.lineId = lineId;
 
 	}
-
-	public void setLines(final String lineId) {
-		
-		broker.getLines(new ResponseHandler<Line[]>() {
-			@Override
-			public void onResponse(Line[] response) {
-				if(lineId != null){
-					for(int i = 0; i<response.length; i++){
-						add(new Entry(response[i]));
-						if(response[i].id.equalsIgnoreCase(lineId)){
-							get(i).setSelected(true, false);
-						}
-					}
-				}
-				else{
-					for(int i = 0; i<response.length; i++){
-						add(new Entry(response[i]));
-					}
-
-				}
-
-			}
-
-			@Override
-			public void onError(Collection<ResponseError> errors) {
-
-				EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não foi possível obter a lista de modalidades."), TYPE.ALERT_NOTIFICATION));
-
-			}
-
-
-		});
+	
+	public void registerActionHandler(ActionInvokedEventHandler<Action> handler){
+	//	form.registerActionHandler(handler);
+		this.handler = handler;		
 	}
+	
+	public FormView<Line> getForm(){
+		return this.form;
+	}
+
+	public void closePopup() {
+		popup.hidePopup();
+		 
+	}
+	
 }

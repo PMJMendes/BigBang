@@ -69,9 +69,9 @@ CoverageBroker {
 		}else{
 		
 			handler.onResponse(lines);
-			for(DataBrokerClient<Line> c : getClients()) {
-				((CoverageDataBrokerClient) c).setLines(lines);
-			}
+//			for(DataBrokerClient<Line> c : getClients()) {
+//				((CoverageDataBrokerClient) c).setLines(lines);
+//			}
 		}
 	}
 
@@ -132,7 +132,7 @@ CoverageBroker {
 				}
 				
 				for(DataBrokerClient<Line> c : getClients()){
-					((CoverageDataBrokerClient) c).addLine(result);
+					((CoverageDataBrokerClient) c).updateLine(result);
 				}
 				handler.onResponse(result);
 			}
@@ -218,10 +218,10 @@ CoverageBroker {
 			
 
 			handler.onResponse(getSubLinesLocal(parentLineId));
-			
-			for(DataBrokerClient<Line> c : getClients()) {
-				((CoverageDataBrokerClient) c).setLines(lines);
-			}
+//			
+//			for(DataBrokerClient<Line> c : getClients()) {
+//				((CoverageDataBrokerClient) c).setLines(lines);
+//			}
 		}
 
 	}
@@ -417,9 +417,9 @@ CoverageBroker {
 		}else{
 
 			handler.onResponse(getCoveragesLocal(parentSubLineId, getSubLinesLocal(parentLineId)));
-			for(DataBrokerClient<Line> c : getClients()) {
-				((CoverageDataBrokerClient) c).setLines(lines);
-			}
+//			for(DataBrokerClient<Line> c : getClients()) {
+//				((CoverageDataBrokerClient) c).setLines(lines);
+//			}
 		}
 
 	}
@@ -609,9 +609,9 @@ CoverageBroker {
 		}else{
 
 			handler.onResponse(getTaxesLocal(parentCoverageId, getCoveragesLocal(parentSubLineId, getSubLinesLocal(parentLineId))));
-			for(DataBrokerClient<Line> c : getClients()) {
-				((CoverageDataBrokerClient) c).setLines(lines);
-			}
+//			for(DataBrokerClient<Line> c : getClients()) {
+//				((CoverageDataBrokerClient) c).setLines(lines);
+//			}
 		}
 
 	}

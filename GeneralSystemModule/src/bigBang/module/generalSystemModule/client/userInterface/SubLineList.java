@@ -20,6 +20,7 @@ import bigBang.library.client.Selectable;
 import bigBang.library.client.ValueSelectable;
 import bigBang.library.client.Notification.TYPE;
 import bigBang.library.client.dataAccess.DataBrokerManager;
+import bigBang.library.client.event.ActionInvokedEventHandler;
 import bigBang.library.client.event.NewNotificationEvent;
 import bigBang.library.client.resources.Resources;
 import bigBang.library.client.userInterface.FilterableList;
@@ -27,6 +28,7 @@ import bigBang.library.client.userInterface.ListEntry;
 import bigBang.library.client.userInterface.ListHeader;
 import bigBang.library.client.userInterface.NavigationListEntry;
 import bigBang.library.client.userInterface.view.PopupPanel;
+import bigBang.module.generalSystemModule.client.userInterface.presenter.CoverageManagementOperationViewPresenter.Action;
 import bigBang.module.generalSystemModule.client.userInterface.view.SubLineForm;
 import bigBang.module.generalSystemModule.interfaces.CoveragesService;
 
@@ -78,6 +80,7 @@ public class SubLineList extends FilterableList<SubLine> implements CoverageData
 
 	private String parentLineId;
 	private String subLineId;
+	private ActionInvokedEventHandler<Action> handler;
 
 	public SubLineList(){
 
@@ -150,27 +153,6 @@ public class SubLineList extends FilterableList<SubLine> implements CoverageData
 		setReadOnly(true);
 	}
 
-	public void setSubLines(String parentLineId, final String subLineId) {
-
-		broker.getSubLines(parentLineId, new ResponseHandler<SubLine[]>() {
-
-			@Override
-			public void onResponse(SubLine[] response) {
-				setSubLines(response);
-
-			}
-
-			@Override
-			public void onError(Collection<ResponseError> errors) {
-
-				EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não foi possível obter a lista de modalidades."), TYPE.ALERT_NOTIFICATION));
-
-			}
-
-
-		});
-	}
-
 	public boolean add(Entry e) {
 		e.setEditable(!readonly);
 		e.editImage.addClickHandler(this.editHandler);
@@ -210,12 +192,7 @@ public class SubLineList extends FilterableList<SubLine> implements CoverageData
 
 	public void setReadOnly(boolean readonly) {
 
-		this.readonly = readonly;
-		this.form.setReadOnly(readonly);
-		this.newButton.setEnabled(!readonly);
-		for(ListEntry<SubLine> e : entries){
-			((Entry) e).setEditable(!readonly);
-		}
+		
 	}
 
 	@Override
@@ -261,6 +238,7 @@ public class SubLineList extends FilterableList<SubLine> implements CoverageData
 
 	@Override
 	public void setSubLines(SubLine[] subLines) {
+		clear();
 		if(this.subLineId != null){
 			for(int i = 0; i<subLines.length; i++){
 				add(new Entry(subLines[i]));
@@ -341,5 +319,11 @@ public class SubLineList extends FilterableList<SubLine> implements CoverageData
 
 	public void setId(String subLineId) {
 		this.subLineId = subLineId;
+	}
+
+	public void registerActionHandler(
+			ActionInvokedEventHandler<bigBang.module.generalSystemModule.client.userInterface.presenter.CoverageManagementOperationViewPresenter.Action> handler) {
+		this.handler = handler;
+		
 	}
 }

@@ -21,6 +21,7 @@ import bigBang.library.client.Selectable;
 import bigBang.library.client.ValueSelectable;
 import bigBang.library.client.Notification.TYPE;
 import bigBang.library.client.dataAccess.DataBrokerManager;
+import bigBang.library.client.event.ActionInvokedEventHandler;
 import bigBang.library.client.event.NewNotificationEvent;
 import bigBang.library.client.resources.Resources;
 import bigBang.library.client.userInterface.FilterableList;
@@ -28,6 +29,7 @@ import bigBang.library.client.userInterface.ListEntry;
 import bigBang.library.client.userInterface.ListHeader;
 import bigBang.library.client.userInterface.view.PopupPanel;
 import bigBang.module.generalSystemModule.client.userInterface.SubLineList.Entry;
+import bigBang.module.generalSystemModule.client.userInterface.presenter.CoverageManagementOperationViewPresenter.Action;
 import bigBang.module.generalSystemModule.client.userInterface.view.CoverageForm;
 import bigBang.module.generalSystemModule.interfaces.CoveragesService;
 
@@ -41,7 +43,7 @@ import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Widget;
 
 public class CoverageList extends FilterableList<Coverage> implements CoverageDataBrokerClient{
-
+	
 	public static class Entry extends ListEntry<Coverage> {
 		protected Image editImage;
 
@@ -80,6 +82,7 @@ public class CoverageList extends FilterableList<Coverage> implements CoverageDa
 	private String parentSubLineId;
 	private String parentLineId;
 	private String coverageId;
+	private ActionInvokedEventHandler<Action> handler;
 
 	public CoverageList(){
 		broker = (CoverageBroker) DataBrokerManager.staticGetBroker(BigBangConstants.EntityIds.COVERAGE);
@@ -154,30 +157,6 @@ public class CoverageList extends FilterableList<Coverage> implements CoverageDa
 		this.parentLineId = parentLineId;
 	}
 
-	public void setCoverages(String parentLineId, String parentSubLineId, final String coverageId) {
-		this.parentLineId = parentLineId;
-		this.parentSubLineId = parentSubLineId;
-
-		broker.getCoverages(parentLineId, parentSubLineId, new ResponseHandler<Coverage[]>() {
-
-			@Override
-			public void onResponse(Coverage[] response) {
-
-				setCoverages(response);
-
-			}
-			@Override
-			public void onError(Collection<ResponseError> errors) {
-
-				EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não foi possível obter a lista de coberturas."), TYPE.ALERT_NOTIFICATION));
-
-			}
-		});
-
-
-
-	}
-
 	public boolean add(Entry e) {
 		e.setEditable(!readonly);
 		e.editImage.addClickHandler(this.editHandler);
@@ -199,21 +178,13 @@ public class CoverageList extends FilterableList<Coverage> implements CoverageDa
 	}
 
 	private void createCoverage(Coverage coverage) {
-
+		
 		//TODO
+		
 	}
 
 	private void saveCoverage(Coverage coverage){
-		//TODO
-		coverage.subLineId = this.parentSubLineId;
-		CoveragesService.Util.getInstance().saveCoverage(coverage, new BigBangAsyncCallback<Coverage>() {
-
-			@Override
-			public void onResponseSuccess(Coverage result) {
-				updateEntry(result);
-				showForm(false);
-			}
-		});
+		updateEntry(coverage);
 	}
 
 	private void updateEntry(Coverage coverage) {
@@ -361,5 +332,11 @@ public class CoverageList extends FilterableList<Coverage> implements CoverageDa
 
 	public void setId(String coverageId) {
 		this.coverageId = coverageId;
+	}
+
+	public void registerActionHandler(
+			ActionInvokedEventHandler<bigBang.module.generalSystemModule.client.userInterface.presenter.CoverageManagementOperationViewPresenter.Action> handler) {
+		this.handler = handler;
+		
 	}
 }

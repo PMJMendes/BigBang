@@ -4,6 +4,7 @@ import bigBang.definitions.shared.Coverage;
 import bigBang.definitions.shared.Line;
 import bigBang.definitions.shared.SubLine;
 import bigBang.library.client.HasValueSelectables;
+import bigBang.library.client.event.ActionInvokedEventHandler;
 import bigBang.library.client.userInterface.view.View;
 import bigBang.module.generalSystemModule.client.userInterface.CoverageList;
 import bigBang.module.generalSystemModule.client.userInterface.LineList;
@@ -14,6 +15,10 @@ import com.google.gwt.user.client.ui.HorizontalPanel;
 
 public class CoverageManagementOperationView extends View implements CoverageManagementOperationViewPresenter.Display {
 
+	enum Action{
+		
+	};
+	
 	private LineList lineList;
 	private SubLineList subLineList;
 	private CoverageList coverageList;
@@ -73,12 +78,6 @@ public class CoverageManagementOperationView extends View implements CoverageMan
 		this.subLineList.clearFilters();
 	}
 
-	@Override
-	public void refresh() {
-		this.subLineList.clear();
-		this.coverageList.clear();
-		this.lineList.refresh();
-	}
 
 
 	@Override
@@ -93,7 +92,6 @@ public class CoverageManagementOperationView extends View implements CoverageMan
 		subLineList.setLineId(lineId);
 		
 		lineList.setId(lineId);
-		lineList.setLines(lineId);
 
 
 	}
@@ -111,7 +109,6 @@ public class CoverageManagementOperationView extends View implements CoverageMan
 		
 		subLineList.setId(subLineId);
 		subLineList.setLineId(lineId);
-		subLineList.setSubLines(lineId, subLineId);
 		
 	}
 
@@ -128,8 +125,15 @@ public class CoverageManagementOperationView extends View implements CoverageMan
 		coverageList.setId(coverageId);
 		coverageList.setLineId(lineId);
 		coverageList.setSubLineId(subLineId);
-		coverageList.setCoverages(lineId, subLineId, coverageId);
 		
+	}
+
+	@Override
+	public void registerActionHandler(
+			ActionInvokedEventHandler<bigBang.module.generalSystemModule.client.userInterface.presenter.CoverageManagementOperationViewPresenter.Action> handler) {
+		lineList.registerActionHandler(handler);
+		subLineList.registerActionHandler(handler);
+		coverageList.registerActionHandler(handler);
 	}
 
 }
