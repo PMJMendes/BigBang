@@ -2,8 +2,9 @@ package bigBang.module.generalSystemModule.client.userInterface.presenter;
 
 import java.util.Collection;
 
+import org.gwt.mosaic.ui.client.MessageBox;
+
 import bigBang.definitions.client.dataAccess.CoverageBroker;
-import bigBang.definitions.client.dataAccess.CoverageDataBrokerClient;
 import bigBang.definitions.client.response.ResponseError;
 import bigBang.definitions.client.response.ResponseHandler;
 import bigBang.definitions.shared.BigBangConstants;
@@ -43,13 +44,14 @@ public class CoverageManagementOperationViewPresenter implements ViewPresenter {
 
 	public enum Action{
 		DELETE_LINE,
-		REFRESH, SAVE_LINE
+		REFRESH, SAVE_LINE, CANCEL_EDIT_LINE, EDIT_LINE
 	};
 
 	private CoverageBroker broker;
 	private String lineId; 
 	private String subLineId;
-	private String coverageId;
+	private String coverageId; 
+	private boolean ignoreListeners;
 
 	public interface Display {
 		//Lists
@@ -92,10 +94,11 @@ public class CoverageManagementOperationViewPresenter implements ViewPresenter {
 	public void setParameters(HasParameters parameterHolder) {
 
 		view.setReadOnly(false); //TODO ISTO TEM DE VIR DE FORA
-		
 		lineId = parameterHolder.getParameter("lineid");
 		subLineId = parameterHolder.getParameter("sublineid");
 		coverageId = parameterHolder.getParameter("coverageid");
+
+		ignoreListeners = true;
 
 		if(coverageId != null){
 			view.setCoverage(lineId, subLineId, coverageId);
@@ -103,9 +106,23 @@ public class CoverageManagementOperationViewPresenter implements ViewPresenter {
 
 				@Override
 				public void onResponse(Coverage[] response) {
-					
+					((LineList)view.getLineList()).setLineSelected(lineId);
 					((CoverageList)view.getCoverageList()).setCoverages(response);
-					
+
+					broker.getSubLines(lineId, new ResponseHandler<SubLine[]>() {
+
+						@Override
+						public void onResponse(SubLine[] response) {
+							((LineList)view.getLineList()).setLineSelected(lineId);
+							((SubLineList)view.getSubLineList()).setSubLines(response);
+							ignoreListeners = false;
+						}
+
+						@Override
+						public void onError(Collection<ResponseError> errors) {
+							EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não foi possível obter a lista pedida."), TYPE.ALERT_NOTIFICATION));
+						}
+					});
 				}
 
 				@Override
@@ -114,17 +131,19 @@ public class CoverageManagementOperationViewPresenter implements ViewPresenter {
 				}
 			});
 
+
+
 		}else if(subLineId != null){
+			((CoverageList)view.getCoverageList()).clear();
 			view.setSubLine(lineId, subLineId);
 			broker.getSubLines(lineId, new ResponseHandler<SubLine[]>() {
 
 				@Override
 				public void onResponse(SubLine[] response) {
-					if(subLineId != null){
-						((SubLineList)view.getSubLineList()).setSubLines(response);
-						((CoverageList)view.getCoverageList()).setSubLines(response);
-					}
-
+					((LineList)view.getLineList()).setLineSelected(lineId);
+					((SubLineList)view.getSubLineList()).setSubLines(response);
+					((CoverageList)view.getCoverageList()).setSubLines(response);
+					ignoreListeners = false;
 				}
 
 				@Override
@@ -136,13 +155,19 @@ public class CoverageManagementOperationViewPresenter implements ViewPresenter {
 		else{
 			view.setLine(lineId);
 			((CoverageList)view.getCoverageList()).clear();
+			((SubLineList)view.getSubLineList()).clear();
 			broker.getLines(new ResponseHandler<Line[]>() {
 
 				@Override
 				public void onResponse(Line[] response) {
 					if(lineId != null){
-						((LineList)view.getLineList()).setLines(response);
+						((LineList)view.getLineList()).setLineSelected(lineId);
 						((SubLineList)view.getSubLineList()).setLines(response);
+						ignoreListeners = false;
+					}
+					else{
+						((LineList)view.getLineList()).clearSelection();
+						ignoreListeners = false;
 					}
 				}
 
@@ -153,6 +178,7 @@ public class CoverageManagementOperationViewPresenter implements ViewPresenter {
 				}
 			});
 		}
+
 	}
 
 	public void bind() {
@@ -164,8 +190,7 @@ public class CoverageManagementOperationViewPresenter implements ViewPresenter {
 			@Override
 			public void onSelectionChanged(SelectionChangedEvent event) {
 				Collection<? extends Selectable> selected = event.getSelected();
-				if(selected.size() == 0){
-					view.getLineList().clearSelection();
+				if(selected.size() == 0 || ignoreListeners){
 					return;
 				}
 				for(Selectable s : selected) {
@@ -186,8 +211,8 @@ public class CoverageManagementOperationViewPresenter implements ViewPresenter {
 			public void onSelectionChanged(SelectionChangedEvent event) {
 
 				Collection<? extends Selectable> selected = event.getSelected();
-				if(selected.size() == 0){		
-					view.getSubLineList().clearSelection();
+				if(selected.size() == 0 || ignoreListeners){		
+					return;
 				}
 
 				for(Selectable s : selected) {
@@ -207,8 +232,7 @@ public class CoverageManagementOperationViewPresenter implements ViewPresenter {
 			@Override
 			public void onSelectionChanged(SelectionChangedEvent event) {
 				Collection<? extends Selectable> selected = event.getSelected();
-				if(selected.size() == 0){
-					view.getCoverageList().clearSelection();
+				if(selected.size() == 0 || ignoreListeners){
 					return;
 				}
 
@@ -233,27 +257,44 @@ public class CoverageManagementOperationViewPresenter implements ViewPresenter {
 				switch(action.getAction()){
 
 				case DELETE_LINE:{
-					String id = ((Entry)view.getLineList().getSelected().toArray()[0]).getValue().id;
+					final String id = ((Entry)view.getLineList().getSelected().toArray()[0]).getValue().id;
 
-					if(id != null){
-						broker.removeLine(id, new ResponseHandler<Line>() {
+					MessageBox.confirm("Eliminar Ramo", "Tem certeza que pretende eliminar o ramo?", new MessageBox.ConfirmationCallback() {
 
-							@Override
-							public void onResponse(Line response) {
+						@Override
+						public void onResult(boolean result) {
+							if(result){
 
-								EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Ramo eliminado com sucesso."), TYPE.TRAY_NOTIFICATION));
+								if(id != null){
+									broker.removeLine(id, new ResponseHandler<Line>() {
 
+										@Override
+										public void onResponse(Line response) {
+
+											EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Ramo eliminado com sucesso."), TYPE.TRAY_NOTIFICATION));
+											NavigationHistoryItem navig = NavigationHistoryManager.getInstance().getCurrentState();
+											((LineList)view.getLineList()).closePopup();
+											navig.removeParameter("lineid");
+											navig.removeParameter("sublineid");
+											navig.removeParameter("coverageid");
+											NavigationHistoryManager.getInstance().go(navig);
+
+										}
+
+										@Override
+										public void onError(Collection<ResponseError> errors) {
+											EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não foi possível eliminar o ramo."), TYPE.ALERT_NOTIFICATION));
+										}				
+
+									});
+								}else{	
+									((LineList)view.getLineList()).closePopup();
+								}
 							}
+						}
+					});
 
-							@Override
-							public void onError(Collection<ResponseError> errors) {
-								EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não foi possível eliminar o ramo."), TYPE.ALERT_NOTIFICATION));
-							}				
-
-						});
-					}else{	
-						((LineList)view.getLineList()).closePopup();
-					}
+					break;
 
 				}
 				case SAVE_LINE:{
@@ -264,6 +305,7 @@ public class CoverageManagementOperationViewPresenter implements ViewPresenter {
 							@Override
 							public void onResponse(Line response) {
 								EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Ramo guardado com sucesso."), TYPE.TRAY_NOTIFICATION));
+								((LineList)view.getLineList()).closePopup();
 							}
 
 							@Override
@@ -274,23 +316,34 @@ public class CoverageManagementOperationViewPresenter implements ViewPresenter {
 					}
 					else{
 						broker.addLine(newLine, new ResponseHandler<Line>() {
-							
+
 							@Override
 							public void onResponse(Line response) {
 								EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Ramo criado com sucesso."), TYPE.TRAY_NOTIFICATION));
-								((LineList)view.getLineList()).clearSelection();
-								((LineList)view.getLineList()).get(((LineList)view.getLineList()).size()-1).setSelected(true);
-								((LineList)view.getLineList()).getScrollable().scrollToBottom();
+								NavigationHistoryItem navig = NavigationHistoryManager.getInstance().getCurrentState();
+								((LineList)view.getLineList()).closePopup();
+								navig.setParameter("lineid", response.id);
+								navig.removeParameter("sublineid");
+								navig.removeParameter("coverageid");
+								NavigationHistoryManager.getInstance().go(navig);
 							}
-							
+
 							@Override
 							public void onError(Collection<ResponseError> errors) {
 								EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não foi possível criar o ramo."), TYPE.ALERT_NOTIFICATION));
 							}
 						});
 					}
+					break;
 				}
-
+				case EDIT_LINE:{
+					((LineList)view.getLineList()).getForm().setReadOnly(false);
+					break;
+				}
+				case CANCEL_EDIT_LINE:{
+					((LineList)view.getLineList()).getForm().revert();
+					break;
+				}
 
 				}
 

@@ -174,6 +174,7 @@ CoverageBroker {
 				for(DataBrokerClient<Line> c : CoverageBrokerImpl.this.getClients()){
 					((CoverageDataBrokerClient)c).removeLine(lineId);
 				}
+				handler.onResponse(deleted);
 			}
 			
 			@Override

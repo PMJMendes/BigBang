@@ -75,19 +75,19 @@ public class LineList extends FilterableList<Line> implements CoverageDataBroker
 	}
 
 	private ToolButton newButton;
-	
+
 	private LineForm form;
 	private PopupPanel popup;
 	private VerticalPanel popupWrapper;
 	private BigBangOperationsToolBar toolbar;
 	private MenuItem delete;
-	
+
 	private boolean readonly;
 	private ClickHandler editHandler;
 	private DoubleClickHandler doubleClickHandler;
 	private CoverageBroker broker;
 	private String lineId;
-	
+
 	ActionInvokedEventHandler<Action> handler;
 
 	public LineList(){
@@ -112,7 +112,7 @@ public class LineList extends FilterableList<Line> implements CoverageDataBroker
 
 		this.form = new LineForm();
 		this.popup = new PopupPanel();
-		
+
 		Widget formContent = form.getNonScrollableContent();
 		formContent.setHeight("120px");
 		formContent.setWidth("650px");
@@ -120,7 +120,7 @@ public class LineList extends FilterableList<Line> implements CoverageDataBroker
 
 			@Override
 			public void onEditRequest() {
-				form.setReadOnly(false);
+				fireAction(Action.EDIT_LINE);
 			}
 
 			@Override
@@ -132,22 +132,16 @@ public class LineList extends FilterableList<Line> implements CoverageDataBroker
 
 			@Override
 			public void onCancelRequest() {
-			
-				if(form.getInfo().id == null){
-					popup.hidePopup();
-				}else{
-					form.setInfo(form.getValue());
-					toolbar.setSaveModeEnabled(false);
-					form.setReadOnly(true);
-				}
 				
+				fireAction(Action.CANCEL_EDIT_LINE);
+
 			}
-			
+
 		};
-		
+
 		toolbar.hideAll();
 		delete = new MenuItem("Eliminar", new Command() {
-			
+
 			@Override
 			public void execute() {
 				fireAction(Action.DELETE_LINE);
@@ -156,9 +150,9 @@ public class LineList extends FilterableList<Line> implements CoverageDataBroker
 		toolbar.addItem(SUB_MENU.ADMIN, delete);
 		toolbar.showItem(SUB_MENU.EDIT, true);
 		toolbar.showItem(SUB_MENU.ADMIN, true);
-		
+
 		popupWrapper = new VerticalPanel();
-		
+
 		popupWrapper.add(toolbar);
 		popupWrapper.add(formContent);
 		popup.add(popupWrapper);
@@ -196,6 +190,7 @@ public class LineList extends FilterableList<Line> implements CoverageDataBroker
 				for(ListEntry<Line> e : entries) {
 					if(event.getSource() == e){
 						form.setValue(((Entry)e).getValue());
+						form.setReadOnly(true);
 						showForm(true);
 					}
 				}
@@ -205,7 +200,7 @@ public class LineList extends FilterableList<Line> implements CoverageDataBroker
 		setDoubleClickable(true);
 		setReadOnly(true);
 	}
-	
+
 	protected void fireAction(Action action){
 		if(this.handler != null) {
 			handler.onActionInvoked(new ActionInvokedEvent<Action>(action));
@@ -267,8 +262,8 @@ public class LineList extends FilterableList<Line> implements CoverageDataBroker
 			for(int i = 0; i<lines.length; i++){
 				add(new Entry(lines[i]));
 				if(this.lineId.equalsIgnoreCase(lines[i].id)){
-					get(i).setSelected(true, false);
-					
+					get(i).setSelected(true);
+
 				}
 			}
 		}
@@ -281,23 +276,23 @@ public class LineList extends FilterableList<Line> implements CoverageDataBroker
 
 	@Override
 	public void addLine(Line line) {
-		
+
 		this.add(new Entry(line));
 		return;
-		
+
 
 	}
 
 	@Override
 	public void updateLine(Line line) {
-		
+
 		updateEntry(line);
 
 	}
 
 	@Override
 	public void removeLine(String lineId) {
-		
+
 		for(int i = 0; i<this.size(); i++){
 			if(this.get(i).getValue().id.equalsIgnoreCase(lineId)){
 				this.remove(i);
@@ -383,19 +378,28 @@ public class LineList extends FilterableList<Line> implements CoverageDataBroker
 		this.lineId = lineId;
 
 	}
-	
+
 	public void registerActionHandler(ActionInvokedEventHandler<Action> handler){
-	//	form.registerActionHandler(handler);
+		//	form.registerActionHandler(handler);
 		this.handler = handler;		
 	}
-	
+
 	public FormView<Line> getForm(){
 		return this.form;
 	}
 
 	public void closePopup() {
 		popup.hidePopup();
-		 
 	}
-	
+
+	public void setLineSelected(String lineId2) {
+
+		for(int i = 0; i<this.size(); i++){
+			if(lineId2.equalsIgnoreCase(this.get(i).getValue().id)){
+				get(i).setSelected(true);
+			}else{
+				get(i).setSelected(false, false);
+			}
+		}
+	}
 }

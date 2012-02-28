@@ -192,7 +192,7 @@ public class SubLineList extends FilterableList<SubLine> implements CoverageData
 
 	public void setReadOnly(boolean readonly) {
 
-		
+
 	}
 
 	@Override
@@ -243,7 +243,7 @@ public class SubLineList extends FilterableList<SubLine> implements CoverageData
 			for(int i = 0; i<subLines.length; i++){
 				add(new Entry(subLines[i]));
 				if(this.subLineId.equalsIgnoreCase(subLines[i].id)){
-					get(i).setSelected(true, false);
+					get(i).setSelected(true);
 				}
 			}
 		}
@@ -324,6 +324,17 @@ public class SubLineList extends FilterableList<SubLine> implements CoverageData
 	public void registerActionHandler(
 			ActionInvokedEventHandler<bigBang.module.generalSystemModule.client.userInterface.presenter.CoverageManagementOperationViewPresenter.Action> handler) {
 		this.handler = handler;
-		
+
+	}
+
+	public void setSublineSelected(String subLineId2) {
+		for(int i = 0; i<this.size(); i++){
+			if(subLineId2.equalsIgnoreCase(this.get(i).getValue().id)){
+				get(i).setSelected(true);
+			}else{
+				get(i).setSelected(false, false);
+			}
+		}
+
 	}
 }

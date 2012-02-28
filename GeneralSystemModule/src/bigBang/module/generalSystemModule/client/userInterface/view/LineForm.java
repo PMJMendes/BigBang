@@ -27,7 +27,6 @@ public class LineForm extends FormView<Line> {
 
 	protected void onDelete() {
 		fireAction(Action.DELETE_LINE);
-		
 	}
 
 	@Override
@@ -45,17 +44,6 @@ public class LineForm extends FormView<Line> {
 		this.line = info != null ? (Line) info : new Line();
 		this.name.setValue(info.name);
 		this.category.setValue(info.categoryId);
-	}
-	
-	public void setValue(Line info){
-		super.setValue(info);
-		this.line = info != null ? (Line) info : new Line();
-		this.name.setValue(info.name);
-		this.category.setValue(info.categoryId);
-	}
-	
-	public Line getValue(){
-		return line;
 	}
 
 	@Override
