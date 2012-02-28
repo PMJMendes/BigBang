@@ -15,5 +15,6 @@
 	<classpathentry combineaccessrules="false" kind="src" path="/GeneralSystemModule"/>
 	<classpathentry kind="lib" path="war/WEB-INF/lib/log4j-1.2.15.jar"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/QuoteRequestModule"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/Jewel.Web"/>
 	<classpathentry kind="output" path="war/WEB-INF/classes"/>
 </classpath>
