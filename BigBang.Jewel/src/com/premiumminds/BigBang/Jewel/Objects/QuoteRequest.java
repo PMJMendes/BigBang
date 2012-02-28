@@ -13,16 +13,13 @@ public class QuoteRequest
 	{
 	}
 
-	@Override
-	public UUID GetProcessID() {
-		// TODO Auto-generated method stub
-		return null;
+	public UUID GetProcessID()
+	{
+		return (UUID)getAt(1);
 	}
 
-	@Override
-	public void SetProcessID(UUID pidProcess) {
-		// TODO Auto-generated method stub
-		
+	public void SetProcessID(UUID pidProcess)
+	{
+		internalSetAt(1, pidProcess);
 	}
-
 }
