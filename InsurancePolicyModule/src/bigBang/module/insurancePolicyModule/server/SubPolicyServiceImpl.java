@@ -2516,6 +2516,7 @@ public class SubPolicyServiceImpl
 		lobjPad = GetScratchPadStorage().get(UUID.fromString(subPolicy.id));
 		lobjPad.InitNew(subPolicy);
 
+		subPolicy = lobjPad.WriteBasics();
 		lobjPad.WriteResult(subPolicy);
 		return subPolicy;
 	}
