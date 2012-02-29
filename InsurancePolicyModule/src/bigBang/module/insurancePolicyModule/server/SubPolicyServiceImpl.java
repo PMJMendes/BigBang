@@ -1566,7 +1566,7 @@ public class SubPolicyServiceImpl
 
 			midMainPolicy = ( pobjSource.mainPolicyId == null ? null : UUID.fromString(pobjSource.mainPolicyId) );
 			mobjSubPolicy.mstrNumber = pobjSource.number;
-			mobjSubPolicy.midSubscriber = UUID.fromString(pobjSource.clientId);
+			mobjSubPolicy.midSubscriber = ( pobjSource.clientId == null ? null : UUID.fromString(pobjSource.clientId) );
 			mobjSubPolicy.mdtBeginDate = ( pobjSource.startDate == null ? null :
 					Timestamp.valueOf(pobjSource.startDate + " 00:00:00.0") );
 			mobjSubPolicy.midFractioning = UUID.fromString(pobjSource.fractioningId);
