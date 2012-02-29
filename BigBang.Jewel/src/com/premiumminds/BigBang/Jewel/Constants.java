@@ -112,6 +112,7 @@ public class Constants
 	// Process Scripts
 	public static final UUID ProcID_GenSys        = UUID.fromString("37A989E2-9D1F-470C-A59E-9EB1008A97A5");
 	public static final UUID ProcID_Client        = UUID.fromString("100E701A-EDC5-4D9C-A221-9F09013D7954");
+	public static final UUID ProcID_QuoteRequest  = UUID.fromString("E4F23C44-FEDF-440A-95D0-A00500D3B286");
 	public static final UUID ProcID_Negotiation   = UUID.fromString("5A22FEB4-A96A-4BF6-B5EB-9FFD00EBD384");
 	public static final UUID ProcID_Policy        = UUID.fromString("29145166-59AC-452E-8C2B-9F81013A39AC");
 	public static final UUID ProcID_SubPolicy     = UUID.fromString("08C796D6-5622-4FF1-B3AB-9FF300F28ABC");
