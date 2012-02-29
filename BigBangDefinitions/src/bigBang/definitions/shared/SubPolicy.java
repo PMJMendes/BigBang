@@ -89,6 +89,7 @@ public class SubPolicy
 	}
 
 	public String managerId;
+	public String managerName;
 	public String startDate;
 	public String fractioningId;
 	public String expirationDate;
