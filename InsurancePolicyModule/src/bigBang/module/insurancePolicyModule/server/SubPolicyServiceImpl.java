@@ -10,7 +10,9 @@ import java.util.UUID;
 import Jewel.Engine.Engine;
 import Jewel.Engine.Constants.ObjectGUIDs;
 import Jewel.Engine.Implementation.Entity;
+import Jewel.Engine.Implementation.User;
 import Jewel.Engine.Interfaces.IEntity;
+import Jewel.Engine.Interfaces.IUser;
 import Jewel.Engine.SysObjects.ObjectBase;
 import Jewel.Petri.Interfaces.IProcess;
 import Jewel.Petri.Objects.PNProcess;
@@ -599,6 +601,7 @@ public class SubPolicyServiceImpl
 			Client lobjClient;
 			IProcess lobjProc;
 			ObjectBase lobjStatus;
+			IUser lobjUser;
 			SubPolicy lobjResult;
 
 			if ( !mbValid )
@@ -617,9 +620,12 @@ public class SubPolicyServiceImpl
 				else
 					lobjClient = Client.GetInstance(Engine.getCurrentNameSpace(), mobjSubPolicy.midSubscriber);
 				if ( mobjSubPolicy.midProcess == null )
-					lobjProc = null;
+					lobjProc = PNProcess.GetInstance(Engine.getCurrentNameSpace(), lobjPolicy.GetProcessID());
 				else
 					lobjProc = PNProcess.GetInstance(Engine.getCurrentNameSpace(), mobjSubPolicy.midProcess);
+				lobjUser = User.GetInstance(Engine.getCurrentNameSpace(), lobjProc.GetManagerID());
+				if ( mobjSubPolicy.midProcess == null )
+					lobjProc = null;
 				lobjStatus = Engine.GetWorkInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), Constants.ObjID_PolicyStatus),
 						(mobjSubPolicy.midStatus == null ? Constants.StatusID_InProgress : mobjSubPolicy.midStatus));
 			}
@@ -639,7 +645,8 @@ public class SubPolicyServiceImpl
 			lobjResult.clientNumber = ( lobjClient == null ? null : ((Integer)lobjClient.getAt(1)).toString() );
 			lobjResult.clientName = ( lobjClient == null ? null : lobjClient.getLabel() );
 			lobjResult.processId = ( mobjSubPolicy.midProcess == null ? null : mobjSubPolicy.midProcess.toString() );
-			lobjResult.managerId = ( lobjProc == null ? null : lobjProc.GetManagerID().toString() );
+			lobjResult.managerId = lobjUser.getKey().toString();
+			lobjResult.managerName = lobjUser.getDisplayName();
 			lobjResult.startDate = ( mobjSubPolicy.mdtBeginDate == null ? null :
 					mobjSubPolicy.mdtBeginDate.toString().substring(0, 10) );
 			lobjResult.fractioningId = ( mobjSubPolicy.midFractioning == null ? null : mobjSubPolicy.midFractioning.toString() );
@@ -2104,6 +2111,7 @@ public class SubPolicyServiceImpl
 		SubPolicyCoverage[] larrLocalCoverages;
 		Coverage[] larrCoverages;
 		Company lobjCompany;
+		IUser lobjUser;
 		Hashtable<UUID, Tax> larrAuxFields;
 		ArrayList<SubPolicy.HeaderField> larrOutHeaders;
 		ArrayList<SubPolicy.TableSection.TableField> larrOutFields;
@@ -2142,6 +2150,7 @@ public class SubPolicyServiceImpl
 			larrLocalCoverages = lobjSubPolicy.GetCurrentCoverages();
 			larrCoverages = lobjMainPolicy.GetSubLine().GetCurrentCoverages();
 			lobjCompany = lobjMainPolicy.GetCompany();
+			lobjUser = User.GetInstance(Engine.getCurrentNameSpace(), lobjProc.GetManagerID());
 		}
 		catch (Throwable e)
 		{
@@ -2188,7 +2197,8 @@ public class SubPolicyServiceImpl
 		}
 		lobjResult.premium = (lobjSubPolicy.getAt(8) == null ? null : ((BigDecimal)lobjSubPolicy.getAt(8)).toPlainString());
 		lobjResult.docushare = (String)lobjSubPolicy.getAt(9);
-		lobjResult.managerId = lobjProc.GetManagerID().toString();
+		lobjResult.managerId = lobjUser.getKey().toString();
+		lobjResult.managerName = lobjUser.getDisplayName();
 
 		larrAuxFields = new Hashtable<UUID, Tax>();
 		larrOutHeaders = new ArrayList<SubPolicy.HeaderField>();
