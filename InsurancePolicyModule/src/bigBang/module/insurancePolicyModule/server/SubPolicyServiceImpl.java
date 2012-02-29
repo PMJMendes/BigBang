@@ -593,42 +593,83 @@ public class SubPolicyServiceImpl
 		public SubPolicy WriteBasics()
 			throws BigBangException, CorruptedPadException
 		{
+			Policy lobjPolicy;
+			Mediator lobjMed;
+			Company lobjCompany;
+			Client lobjClient;
+			IProcess lobjProc;
+			ObjectBase lobjStatus;
 			SubPolicy lobjResult;
 
 			if ( !mbValid )
 				throw new CorruptedPadException("Ocorreu um erro interno. Os dados correntes não são válidos.");
 
-			if ( mobjSubPolicy.mid == null )
-				lobjResult = new SubPolicy();
-			else
-				lobjResult = sGetSubPolicy(mobjSubPolicy.mid);
+			try
+			{
+				lobjPolicy = Policy.GetInstance(Engine.getCurrentNameSpace(), midMainPolicy);
+				lobjClient = (Client)PNProcess.GetInstance(Engine.getCurrentNameSpace(),
+						lobjPolicy.GetProcessID()).GetParent().GetData();
+				lobjMed = Mediator.GetInstance(Engine.getCurrentNameSpace(), (lobjPolicy.getAt(11) == null ?
+						(UUID)lobjClient.getAt(8) : (UUID)lobjPolicy.getAt(11)));
+				lobjCompany = lobjPolicy.GetCompany();
+				if ( mobjSubPolicy.midSubscriber == null )
+					lobjClient = null;
+				else
+					lobjClient = Client.GetInstance(Engine.getCurrentNameSpace(), mobjSubPolicy.midSubscriber);
+				if ( mobjSubPolicy.midProcess == null )
+					lobjProc = null;
+				else
+					lobjProc = PNProcess.GetInstance(Engine.getCurrentNameSpace(), mobjSubPolicy.midProcess);
+				lobjStatus = Engine.GetWorkInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), Constants.ObjID_PolicyStatus),
+						(mobjSubPolicy.midStatus == null ? Constants.StatusID_InProgress : mobjSubPolicy.midStatus));
+			}
+			catch (Throwable e)
+			{
+				throw new BigBangException(e.getMessage(), e);
+			}
+
+			lobjResult = new SubPolicy();
+
+			lobjResult.id = mid.toString();
 
 			lobjResult.number = mobjSubPolicy.mstrNumber;
-			lobjResult.mainPolicyId = ( midMainPolicy == null ? null : midMainPolicy.toString() );
+			lobjResult.mainPolicyId = lobjPolicy.getKey().toString();
+			lobjResult.mainPolicyNumber = lobjPolicy.getLabel();
 			lobjResult.clientId = ( mobjSubPolicy.midSubscriber == null ? null : mobjSubPolicy.midSubscriber.toString() );
+			lobjResult.clientNumber = ( lobjClient == null ? null : ((Integer)lobjClient.getAt(1)).toString() );
+			lobjResult.clientName = ( lobjClient == null ? null : lobjClient.getLabel() );
 			lobjResult.processId = ( mobjSubPolicy.midProcess == null ? null : mobjSubPolicy.midProcess.toString() );
+			lobjResult.managerId = ( lobjProc == null ? null : lobjProc.GetManagerID().toString() );
 			lobjResult.startDate = ( mobjSubPolicy.mdtBeginDate == null ? null :
 					mobjSubPolicy.mdtBeginDate.toString().substring(0, 10) );
 			lobjResult.fractioningId = ( mobjSubPolicy.midFractioning == null ? null : mobjSubPolicy.midFractioning.toString() );
 			lobjResult.expirationDate = ( mobjSubPolicy.mdtEndDate == null ? null :
 					mobjSubPolicy.mdtEndDate.toString().substring(0, 10));
 			lobjResult.notes = mobjSubPolicy.mstrNotes;
-			lobjResult.statusId = ( mobjSubPolicy.midStatus == null ? null : mobjSubPolicy.midStatus.toString() );
+			lobjResult.inheritMediatorId = lobjMed.getKey().toString();
+			lobjResult.inheritMediatorName = lobjMed.getLabel();
+			lobjResult.inheritCategoryName = lobjPolicy.GetSubLine().getLine().getCategory().getLabel();
+			lobjResult.inheritLineName = lobjPolicy.GetSubLine().getLine().getLabel();
+			lobjResult.inheritSubLineName = lobjPolicy.GetSubLine().getLabel();
+			lobjResult.inheritCompanyName = lobjCompany.getLabel();
+			lobjResult.statusId = lobjStatus.getKey().toString();
+			lobjResult.statusText = lobjStatus.getLabel();
+			switch ( (Integer)lobjStatus.getAt(1) )
+			{
+			case 0:
+				lobjResult.statusIcon = SubPolicyStub.PolicyStatus.PROVISIONAL;
+				break;
+
+			case 1:
+				lobjResult.statusIcon = SubPolicyStub.PolicyStatus.VALID;
+				break;
+
+			case 2:
+				lobjResult.statusIcon = SubPolicyStub.PolicyStatus.OBSOLETE;
+				break;
+			}
 			lobjResult.premium = ( mobjSubPolicy.mdblPremium == null ? null : mobjSubPolicy.mdblPremium.toPlainString() );
 			lobjResult.docushare = mobjSubPolicy.mstrDocuShare;
-
-			if ( mobjSubPolicy.midStatus != null )
-			{
-				try
-				{
-					lobjResult.statusText = Engine.GetWorkInstance(Engine.FindEntity(Engine.getCurrentNameSpace(),
-							Constants.ObjID_PolicyStatus), mobjSubPolicy.midStatus).getLabel();
-				}
-				catch (Throwable e)
-				{
-					lobjResult.statusText = "(Erro a obter o estado da apólice.)";
-				}
-			}
 
 			return lobjResult;
 		}
