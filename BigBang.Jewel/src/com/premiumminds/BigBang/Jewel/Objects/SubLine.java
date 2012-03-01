@@ -61,6 +61,11 @@ public class SubLine
 		}
 	}
 
+    public UUID getObjectType()
+    {
+    	return (UUID)getAt(2);
+    }
+
     public Line getLine()
     {
     	if ( mrefLine == null )

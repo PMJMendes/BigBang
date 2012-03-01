@@ -370,6 +370,10 @@ public class Constants
 	public static final int Mandatory_In_Coverage = 2;
 	public static final int FKLine_In_SubLine = 1;
 	public static final int FKParent_In_Group = 1;
+	public static final int FKRequest_In_ReqSubLine = 0;
+	public static final int FKRequest_In_ReqObject = 1;
+	public static final int FKReqSubLine_In_ReqCoverage = 0;
+	public static final int FKReqSubLine_In_ReqValue = 1;
 	public static final int FKPolicy_In_CoInsurer = 0;
 	public static final int FKPolicy_In_PolicyCoverage = 0;
 	public static final int FKPolicy_In_Object = 1;
