@@ -43,8 +43,11 @@ public class CoverageManagementOperationViewPresenter implements ViewPresenter {
 
 
 	public enum Action{
-		DELETE_LINE,
-		REFRESH, SAVE_LINE, CANCEL_EDIT_LINE, EDIT_LINE
+		REFRESH, 
+		NEW_LINE, SAVE_LINE, CANCEL_EDIT_LINE, EDIT_LINE, DELETE_LINE, DOUBLE_CLICK_LINE,
+		NEW_SUB_LINE, EDIT_SUB_LINE, SAVE_SUB_LINE, CANCEL_EDIT_SUB_LINE, DELETE_SUB_LINE, DOUBLE_CLICK_SUB_LINE,
+		EDIT_COVERAGE, NEW_COVERAGE, SAVE_COVERAGE, CANCEL_EDIT_COVERAGE, DELETE_COVERAGE, DOUBLE_CLICK_COVERAGE
+
 	};
 
 	private CoverageBroker broker;
@@ -153,6 +156,7 @@ public class CoverageManagementOperationViewPresenter implements ViewPresenter {
 			});
 		}
 		else{
+			((CoverageList)view.getCoverageList()).setReadOnly(true);
 			view.setLine(lineId);
 			((CoverageList)view.getCoverageList()).clear();
 			((SubLineList)view.getSubLineList()).clear();
@@ -166,6 +170,7 @@ public class CoverageManagementOperationViewPresenter implements ViewPresenter {
 						ignoreListeners = false;
 					}
 					else{
+						((SubLineList)view.getSubLineList()).setReadOnly(true);
 						((LineList)view.getLineList()).clearSelection();
 						ignoreListeners = false;
 					}
@@ -256,10 +261,28 @@ public class CoverageManagementOperationViewPresenter implements ViewPresenter {
 
 				switch(action.getAction()){
 
+				case REFRESH:{
+					broker.requireDataRefresh();
+
+					broker.getLines(new ResponseHandler<Line[]>() {
+
+						@Override
+						public void onResponse(Line[] response) {
+
+						}
+
+						@Override
+						public void onError(Collection<ResponseError> errors) {
+							EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não foi possível actualizar a lista de ramos."), TYPE.ALERT_NOTIFICATION));
+						}
+					});
+					break;
+				}
+
 				case DELETE_LINE:{
 					final String id = ((Entry)view.getLineList().getSelected().toArray()[0]).getValue().id;
 
-					MessageBox.confirm("Eliminar Ramo", "Tem certeza que pretende eliminar o ramo?", new MessageBox.ConfirmationCallback() {
+					MessageBox.confirm("Eliminar ramo", "Tem certeza que pretende eliminar o ramo?", new MessageBox.ConfirmationCallback() {
 
 						@Override
 						public void onResult(boolean result) {
@@ -298,6 +321,8 @@ public class CoverageManagementOperationViewPresenter implements ViewPresenter {
 
 				}
 				case SAVE_LINE:{
+					((LineList)view.getLineList()).getForm().setReadOnly(true);
+					((LineList)view.getLineList()).getToolbar().setSaveModeEnabled(false);
 					Line newLine = ((LineList)view.getLineList()).getForm().getInfo();
 					if(newLine.id != null){
 						broker.updateLine(newLine, new ResponseHandler<Line>() {
@@ -344,7 +369,274 @@ public class CoverageManagementOperationViewPresenter implements ViewPresenter {
 					((LineList)view.getLineList()).getForm().revert();
 					break;
 				}
+				case NEW_LINE:{
+					((LineList)view.getLineList()).getForm().clearInfo();
+					((LineList)view.getLineList()).getForm().setReadOnly(false);
+					((LineList)view.getLineList()).getToolbar().setSaveModeEnabled(true);
+					((LineList)view.getLineList()).showForm(true);
+					break;
+				}
+				case DOUBLE_CLICK_LINE:{
+					broker.getLine(((LineList)view.getLineList()).getClickedLine(), new ResponseHandler<Line>() {
 
+						@Override
+						public void onResponse(Line response) {
+							((LineList)view.getLineList()).getForm().setValue(response);
+							((LineList)view.getLineList()).getForm().setReadOnly(true);
+							((LineList)view.getLineList()).getToolbar().setSaveModeEnabled(false);
+							((LineList)view.getLineList()).showForm(true);
+						}
+
+						@Override
+						public void onError(Collection<ResponseError> errors) {
+
+							EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não é possível mostrar o ramo."), TYPE.ALERT_NOTIFICATION));
+
+						}
+					});
+
+					break;
+				}
+				case NEW_SUB_LINE:{
+					((SubLineList)view.getSubLineList()).getForm().clearInfo();
+					((SubLineList)view.getSubLineList()).getForm().setReadOnly(false);
+					((SubLineList)view.getSubLineList()).getToolBar().setSaveModeEnabled(true);
+					((SubLineList)view.getSubLineList()).showForm(true);
+					break;
+				}
+				case DOUBLE_CLICK_SUB_LINE:{
+
+					broker.getSubLine(lineId, ((SubLineList)view.getSubLineList()).getClickedSubLine(), new ResponseHandler<SubLine>() {
+
+						@Override
+						public void onResponse(SubLine response) {
+
+							((SubLineList)view.getSubLineList()).getForm().setValue(response);
+							((SubLineList)view.getSubLineList()).getForm().setReadOnly(true);
+							((SubLineList)view.getSubLineList()).getToolBar().setSaveModeEnabled(false);
+							((SubLineList)view.getSubLineList()).showForm(true);
+						}
+
+						@Override
+						public void onError(Collection<ResponseError> errors) {
+
+							EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não é possível mostrar a modalidade."), TYPE.ALERT_NOTIFICATION));
+
+						}
+					});	
+					break;
+				}
+				case EDIT_SUB_LINE:{
+					((SubLineList)view.getSubLineList()).getForm().setReadOnly(false);
+					break;
+				}
+				case SAVE_SUB_LINE:{
+					((SubLineList)view.getSubLineList()).getForm().setReadOnly(true);
+					((SubLineList)view.getSubLineList()).getToolBar().setSaveModeEnabled(false);
+					SubLine newSubLine = ((SubLineList)view.getSubLineList()).getForm().getInfo();
+					if(newSubLine.id != null){
+						broker.updateSubLine(newSubLine, new ResponseHandler<SubLine>() {
+
+							@Override
+							public void onResponse(SubLine response) {
+								EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Modalidade guardada com sucesso."), TYPE.TRAY_NOTIFICATION));
+								((SubLineList)view.getSubLineList()).closePopup();
+							}
+
+							@Override
+							public void onError(Collection<ResponseError> errors) {
+								EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não foi possível guardar a modalidade."), TYPE.ALERT_NOTIFICATION));
+							}
+						});
+					}
+					else{
+						newSubLine.lineId = lineId;
+						broker.addSubLine(newSubLine, new ResponseHandler<SubLine>() {
+
+							@Override
+							public void onResponse(SubLine response) {
+								EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Modalidade criada com sucesso."), TYPE.TRAY_NOTIFICATION));
+								NavigationHistoryItem navig = NavigationHistoryManager.getInstance().getCurrentState();
+								((SubLineList)view.getSubLineList()).closePopup();
+								navig.setParameter("lineid", response.lineId);
+								navig.setParameter("sublineid", response.id);
+								navig.removeParameter("coverageid");
+								NavigationHistoryManager.getInstance().go(navig);
+							}
+
+							@Override
+							public void onError(Collection<ResponseError> errors) {
+								EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não foi possível criar a modalidade."), TYPE.ALERT_NOTIFICATION));
+							}
+						});
+					}
+					break;
+
+				}
+				case CANCEL_EDIT_SUB_LINE:{
+					((SubLineList)view.getSubLineList()).getForm().revert();
+					break;
+				}
+				case DELETE_SUB_LINE:{
+					final String id = ((SubLineList.Entry)view.getSubLineList().getSelected().toArray()[0]).getValue().id;
+
+					MessageBox.confirm("Eliminar modalidade", "Tem certeza que pretende eliminar a modalidade?", new MessageBox.ConfirmationCallback() {
+
+						@Override
+						public void onResult(boolean result) {
+							if(result){
+
+								if(id != null){
+									broker.removeSubLine(lineId, id, new ResponseHandler<SubLine>() {
+
+										@Override
+										public void onResponse(SubLine response) {
+
+											EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Modalidade eliminada com sucesso."), TYPE.TRAY_NOTIFICATION));
+											NavigationHistoryItem navig = NavigationHistoryManager.getInstance().getCurrentState();
+											((SubLineList)view.getSubLineList()).closePopup();
+											navig.removeParameter("sublineid");
+											navig.removeParameter("coverageid");
+											NavigationHistoryManager.getInstance().go(navig);
+
+										}
+
+										@Override
+										public void onError(Collection<ResponseError> errors) {
+											EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não foi possível eliminar a modalidade."), TYPE.ALERT_NOTIFICATION));
+										}				
+
+									});
+								}else{	
+									((LineList)view.getLineList()).closePopup();
+								}
+							}
+						}
+					});
+
+					break;
+				}
+				case CANCEL_EDIT_COVERAGE:{
+					((CoverageList)view.getCoverageList()).getForm().revert();
+					break;
+				}
+				case EDIT_COVERAGE:{
+					((CoverageList)view.getCoverageList()).getForm().setReadOnly(false);
+					break;
+				}
+				case NEW_COVERAGE:{
+					((CoverageList)view.getCoverageList()).getForm().clearInfo();
+					((CoverageList)view.getCoverageList()).getForm().setReadOnly(false);
+					((CoverageList)view.getCoverageList()).getToolBar().setSaveModeEnabled(true);
+					((CoverageList)view.getCoverageList()).showForm(true);
+					break;
+				}
+				case SAVE_COVERAGE:{
+					((CoverageList)view.getCoverageList()).getForm().setReadOnly(true);
+					((CoverageList)view.getCoverageList()).getToolBar().setSaveModeEnabled(false);
+					Coverage newCoverage = ((CoverageList)view.getCoverageList()).getForm().getInfo();
+					if(newCoverage.id != null){
+						broker.updateCoverage(lineId, newCoverage, new ResponseHandler<Coverage>() {
+
+							@Override
+							public void onResponse(Coverage response) {
+								EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Cobertura guardada com sucesso."), TYPE.TRAY_NOTIFICATION));
+								((CoverageList)view.getCoverageList()).closePopup();
+							}
+
+							@Override
+							public void onError(Collection<ResponseError> errors) {
+								EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não foi possível guardar a cobertura."), TYPE.ALERT_NOTIFICATION));
+							}
+						});
+					}
+					else{
+						newCoverage.subLineId = subLineId;
+						broker.addCoverage(lineId, newCoverage, new ResponseHandler<Coverage>() {
+
+							@Override
+							public void onResponse(Coverage response) {
+								EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Cobertura criada com sucesso."), TYPE.TRAY_NOTIFICATION));
+								NavigationHistoryItem navig = NavigationHistoryManager.getInstance().getCurrentState();
+								((CoverageList)view.getCoverageList()).closePopup();
+								navig.setParameter("lineid", lineId);
+								navig.setParameter("sublineid", response.subLineId);
+								navig.setParameter("coverageid", response.id);				
+								NavigationHistoryManager.getInstance().go(navig);
+							}
+
+							@Override
+							public void onError(Collection<ResponseError> errors) {
+								EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não foi possível criar a cobertura."), TYPE.ALERT_NOTIFICATION));
+							}
+						});
+					}
+					break;
+				}
+				case DELETE_COVERAGE:{
+					
+					final String id = ((CoverageList.Entry)view.getCoverageList().getSelected().toArray()[0]).getValue().id;
+
+					MessageBox.confirm("Eliminar cobertura", "Tem certeza que pretende eliminar a cobertura?", new MessageBox.ConfirmationCallback() {
+
+						@Override
+						public void onResult(boolean result) {
+							if(result){
+
+								if(id != null){
+									broker.removeCoverage(lineId, subLineId, coverageId, new ResponseHandler<Coverage>() {
+
+										@Override
+										public void onResponse(Coverage response) {
+
+											EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Cobertura eliminada com sucesso."), TYPE.TRAY_NOTIFICATION));
+											NavigationHistoryItem navig = NavigationHistoryManager.getInstance().getCurrentState();
+											((CoverageList)view.getCoverageList()).closePopup();
+											navig.removeParameter("coverageid");
+											NavigationHistoryManager.getInstance().go(navig);
+
+										}
+
+										@Override
+										public void onError(Collection<ResponseError> errors) {
+											EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não foi possível eliminar a cobertura."), TYPE.ALERT_NOTIFICATION));
+										}				
+
+									});
+								}else{	
+									((CoverageList)view.getCoverageList()).closePopup();
+								}
+							}
+						}
+					});
+
+					break;
+
+					
+				}
+				case DOUBLE_CLICK_COVERAGE:{
+
+					broker.getCoverage(lineId, subLineId, ((CoverageList)view.getCoverageList()).getClickedCoverage(), new ResponseHandler<Coverage>() {
+
+						@Override
+						public void onResponse(Coverage response) {
+
+							((CoverageList)view.getCoverageList()).getForm().setValue(response);
+							((CoverageList)view.getCoverageList()).getForm().setReadOnly(true);
+							((CoverageList)view.getCoverageList()).getToolBar().setSaveModeEnabled(false);
+							((CoverageList)view.getCoverageList()).showForm(true);
+						}
+
+						@Override
+						public void onError(Collection<ResponseError> errors) {
+
+							EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não é possível mostrar a cobertura."), TYPE.ALERT_NOTIFICATION));
+
+						}
+					});	
+					break;
+				}
+				
 				}
 
 			}

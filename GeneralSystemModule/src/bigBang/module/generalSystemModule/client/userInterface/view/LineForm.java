@@ -1,32 +1,24 @@
 package bigBang.module.generalSystemModule.client.userInterface.view;
 
 import bigBang.definitions.shared.Line;
-import bigBang.library.client.event.ActionInvokedEvent;
-import bigBang.library.client.event.ActionInvokedEventHandler;
 import bigBang.library.client.userInterface.ExpandableListBoxFormField;
 import bigBang.library.client.userInterface.TextBoxFormField;
 import bigBang.library.client.userInterface.view.FormView;
 import bigBang.module.generalSystemModule.shared.ModuleConstants;
-import bigBang.module.generalSystemModule.client.userInterface.presenter.CoverageManagementOperationViewPresenter.Action;
 
 public class LineForm extends FormView<Line> {
 	
 	private TextBoxFormField name;
 	private ExpandableListBoxFormField category;
 	private Line line;
-	private ActionInvokedEventHandler<Action> actionHandler;
 	
 	public LineForm(){
 		
-		addSection("Ramo");
+		addSection("Detalhes do ramo");
 		name = new TextBoxFormField("Nome");
 		category = new ExpandableListBoxFormField(ModuleConstants.ListIDs.LineCategories, "Categoria");
 		addFormField(name);
 		addFormField(category);
-	}
-
-	protected void onDelete() {
-		fireAction(Action.DELETE_LINE);
 	}
 
 	@Override
@@ -50,16 +42,6 @@ public class LineForm extends FormView<Line> {
 	public void clearInfo() {
 		line = new Line();
 		super.clearInfo();
-	}
-	
-	protected void fireAction(Action action){
-		if(this.actionHandler != null) {
-			actionHandler.onActionInvoked(new ActionInvokedEvent<Action>(action));
-		}
-	}
-	
-	public void registerActionHandler(ActionInvokedEventHandler<Action> handler) {
-		this.actionHandler = handler;
 	}
 	
 	@Override

@@ -1,37 +1,26 @@
 package bigBang.module.generalSystemModule.client.userInterface;
 
-import java.util.Collection;
-
 import org.gwt.mosaic.ui.client.ToolButton;
 
 import bigBang.definitions.client.dataAccess.CoverageBroker;
 import bigBang.definitions.client.dataAccess.CoverageDataBrokerClient;
-import bigBang.definitions.client.dataAccess.DataBroker;
-import bigBang.definitions.client.response.ResponseError;
-import bigBang.definitions.client.response.ResponseHandler;
 import bigBang.definitions.shared.BigBangConstants;
 import bigBang.definitions.shared.Coverage;
 import bigBang.definitions.shared.Line;
 import bigBang.definitions.shared.SubLine;
 import bigBang.definitions.shared.Tax;
-import bigBang.library.client.BigBangAsyncCallback;
-import bigBang.library.client.EventBus;
-import bigBang.library.client.Notification;
-import bigBang.library.client.Selectable;
-import bigBang.library.client.ValueSelectable;
-import bigBang.library.client.Notification.TYPE;
 import bigBang.library.client.dataAccess.DataBrokerManager;
+import bigBang.library.client.event.ActionInvokedEvent;
 import bigBang.library.client.event.ActionInvokedEventHandler;
-import bigBang.library.client.event.NewNotificationEvent;
 import bigBang.library.client.resources.Resources;
+import bigBang.library.client.userInterface.BigBangOperationsToolBar;
+import bigBang.library.client.userInterface.BigBangOperationsToolBar.SUB_MENU;
 import bigBang.library.client.userInterface.FilterableList;
 import bigBang.library.client.userInterface.ListEntry;
 import bigBang.library.client.userInterface.ListHeader;
 import bigBang.library.client.userInterface.view.PopupPanel;
-import bigBang.module.generalSystemModule.client.userInterface.SubLineList.Entry;
 import bigBang.module.generalSystemModule.client.userInterface.presenter.CoverageManagementOperationViewPresenter.Action;
 import bigBang.module.generalSystemModule.client.userInterface.view.CoverageForm;
-import bigBang.module.generalSystemModule.interfaces.CoveragesService;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -39,11 +28,14 @@ import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.DoubleClickEvent;
 import com.google.gwt.event.dom.client.DoubleClickHandler;
 import com.google.gwt.event.dom.client.HasClickHandlers;
+import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.ui.Image;
+import com.google.gwt.user.client.ui.MenuItem;
+import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
 public class CoverageList extends FilterableList<Coverage> implements CoverageDataBrokerClient{
-	
+
 	public static class Entry extends ListEntry<Coverage> {
 		protected Image editImage;
 
@@ -79,12 +71,17 @@ public class CoverageList extends FilterableList<Coverage> implements CoverageDa
 	private ClickHandler editHandler;
 	private DoubleClickHandler doubleClickHandler;
 
+	private BigBangOperationsToolBar toolbar;
+
 	private String parentSubLineId;
 	private String parentLineId;
 	private String coverageId;
 	private ActionInvokedEventHandler<Action> handler;
+	private MenuItem delete;
+	private String clickedCoverage;
 
 	public CoverageList(){
+
 		broker = (CoverageBroker) DataBrokerManager.staticGetBroker(BigBangConstants.EntityIds.COVERAGE);
 		broker.registerClient(this);
 		ListHeader header = new ListHeader();
@@ -95,62 +92,101 @@ public class CoverageList extends FilterableList<Coverage> implements CoverageDa
 
 			@Override
 			public void onClick(ClickEvent event) {
-				form.clearInfo();
-				form.setReadOnly(false);
-				showForm(true);
+				fireAction(Action.NEW_COVERAGE);
 			}
 		});
 
 		this.form = new CoverageForm();
-		form.getSaveButton().addClickHandler(new ClickHandler() {
-
-			@Override
-			public void onClick(ClickEvent event) {
-				Coverage coverage = form.getValue();
-				if(coverage.id == null){
-					createCoverage(coverage);
-				}else{
-					saveCoverage(coverage);
-				}
-			}
-		});
-		this.popup = new PopupPanel("Cobertura");
+		this.popup = new PopupPanel("");
 		Widget formContent = form.getNonScrollableContent();
+		this.showFilterField(false);
 		formContent.setHeight("80px");
 		formContent.setWidth("650px");
-		popup.add(formContent);
+
+		toolbar = new BigBangOperationsToolBar(){
+
+			@Override
+			public void onEditRequest() {
+				fireAction(Action.EDIT_COVERAGE);
+
+			}
+
+			@Override
+			public void onSaveRequest() {
+				fireAction(Action.SAVE_COVERAGE);
+
+			}
+
+			@Override
+			public void onCancelRequest() {
+				fireAction(Action.CANCEL_EDIT_COVERAGE);
+
+			}
+
+		};
+
+		toolbar.hideAll();
+
+
+
+		delete = new MenuItem("Eliminar", new Command() {
+
+			@Override
+			public void execute() {
+				fireAction(Action.DELETE_COVERAGE);
+
+			}
+		});
+
+		toolbar.addItem(SUB_MENU.ADMIN, delete);
+		toolbar.showItem(SUB_MENU.EDIT, true);
+		toolbar.showItem(SUB_MENU.ADMIN, true);
+
+		VerticalPanel popupWrapper = new VerticalPanel();
+		popupWrapper.add(toolbar);
+		popupWrapper.add(formContent);
+
+		popup.add(popupWrapper);
 		popup.setWidth("650px");
 
 		setHeaderWidget(header);
 
 		editHandler = new ClickHandler() {
 
+
+
 			@Override
 			public void onClick(ClickEvent event) {
-				for(ListEntry<Coverage> e : entries) {
+				for(ListEntry<Coverage> e: entries){
 					if(event.getSource() == ((Entry)e).editImage){
-						form.setValue(((Entry)e).getValue());
-						showForm(true);
+						clickedCoverage = ((Entry)e).getValue().id;
 					}
 				}
+				fireAction(Action.DOUBLE_CLICK_COVERAGE);
 			}
 		};
 		doubleClickHandler = new DoubleClickHandler() {
 
 			@Override
 			public void onDoubleClick(DoubleClickEvent event) {
-				for(ListEntry<Coverage> e : entries) {
-					if(event.getSource() == e){
-						form.setValue(((Entry)e).getValue());
-						showForm(true);
-					}
-				}
+				clickedCoverage = ((Entry)CoverageList.this.getSelected().toArray()[0]).getValue().id;
+				fireAction(Action.DOUBLE_CLICK_COVERAGE);
 			}
 		};
 
 		setDoubleClickable(true);
-		showFilterField(false);		
+
 		setReadOnly(true);
+	}
+
+	public String getClickedCoverage(){
+		return clickedCoverage;
+	}
+	
+	protected void fireAction(Action action){
+		if(this.handler != null) {
+			handler.onActionInvoked(new ActionInvokedEvent<Action>(action));
+		}
 	}
 
 	public void setLineId(String parentLineId){
@@ -169,22 +205,12 @@ public class CoverageList extends FilterableList<Coverage> implements CoverageDa
 		return this.newButton;
 	}
 
-	private void showForm(boolean show) {
+	public void showForm(boolean show) {
 		if(!show){
 			popup.hidePopup();
 			return;
 		}
 		popup.center();
-	}
-
-	private void createCoverage(Coverage coverage) {
-		
-		//TODO
-		
-	}
-
-	private void saveCoverage(Coverage coverage){
-		updateEntry(coverage);
 	}
 
 	private void updateEntry(Coverage coverage) {
@@ -290,20 +316,30 @@ public class CoverageList extends FilterableList<Coverage> implements CoverageDa
 
 	@Override
 	public void addCoverage(String parentSubLineId, Coverage coverage) {
-		// TODO Auto-generated method stub
+		if(this.parentSubLineId.equalsIgnoreCase(parentSubLineId)){
+			this.add(new Entry(coverage));
+		}
 
 	}
 
 	@Override
 	public void updateCoverage(String parentSubLineId, Coverage coverage) {
-		// TODO Auto-generated method stub
+		if(this.parentSubLineId.equalsIgnoreCase(parentSubLineId)){
+			updateEntry(coverage);
+		}
 
 	}
 
 	@Override
 	public void removeCoverage(String parentSubLineId, String coverageId) {
-		// TODO Auto-generated method stub
-
+		if(this.parentSubLineId.equalsIgnoreCase(parentSubLineId)){
+			for(int i = 0; i<this.size(); i++){
+				if(this.get(i).getValue().id.equalsIgnoreCase(coverageId)){
+					this.remove(i);
+					return;
+				}
+			}
+		}
 	}
 
 	@Override
@@ -337,6 +373,19 @@ public class CoverageList extends FilterableList<Coverage> implements CoverageDa
 	public void registerActionHandler(
 			ActionInvokedEventHandler<bigBang.module.generalSystemModule.client.userInterface.presenter.CoverageManagementOperationViewPresenter.Action> handler) {
 		this.handler = handler;
+
+	}
+
+	public CoverageForm getForm() {
+		return form;
+	}
+
+	public BigBangOperationsToolBar getToolBar() {
+		return toolbar;
+	}
+
+	public void closePopup() {
+		popup.hidePopup();
 		
 	}
 }

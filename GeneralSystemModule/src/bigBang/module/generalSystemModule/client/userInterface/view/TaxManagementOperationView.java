@@ -6,6 +6,8 @@ import bigBang.definitions.shared.SubLine;
 import bigBang.definitions.shared.Tax;
 import bigBang.library.client.Selectable;
 import bigBang.library.client.ValueSelectable;
+import bigBang.library.client.event.ActionInvokedEvent;
+import bigBang.library.client.event.ActionInvokedEventHandler;
 import bigBang.library.client.event.SelectionChangedEvent;
 import bigBang.library.client.event.SelectionChangedEventHandler;
 import bigBang.library.client.resources.Resources;
@@ -18,6 +20,7 @@ import bigBang.library.client.userInterface.view.PopupPanel;
 import bigBang.library.client.userInterface.view.View;
 import bigBang.module.generalSystemModule.client.userInterface.TaxList;
 import bigBang.module.generalSystemModule.client.userInterface.presenter.TaxManagementOperationViewPresenter;
+import bigBang.module.generalSystemModule.client.userInterface.presenter.TaxManagementOperationViewPresenter.Action;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.HasClickHandlers;
@@ -40,6 +43,8 @@ public class TaxManagementOperationView extends View implements TaxManagementOpe
 	
 	private TaxList taxList;
 	private TaxForm form;
+
+	private ActionInvokedEventHandler<Action> handler;
 	
 	public TaxManagementOperationView(){
 		SplitLayoutPanel wrapper = new SplitLayoutPanel();
@@ -60,6 +65,7 @@ public class TaxManagementOperationView extends View implements TaxManagementOpe
 			};
 		};
 		lineList.setSize("100%", "100%");
+		lineList.showFilterField(false);
 		
 		subLineList = new FilterableList<SubLine>() {
 			protected void onAttach() {
@@ -72,11 +78,13 @@ public class TaxManagementOperationView extends View implements TaxManagementOpe
 			};
 		};
 		subLineList.setSize("100%", "100%");
+		subLineList.showFilterField(false);
 		
 		subLineList.addSelectionChangedEventHandler(new SelectionChangedEventHandler() {
 			
 			@Override
 			public void onSelectionChanged(SelectionChangedEvent event) {
+				fireAction(Action.SELECTED_SUBLINE);
 				for(Selectable s : event.getSelected()) {
 					@SuppressWarnings("unchecked")
 					SubLine subLine = ((ValueSelectable<SubLine>) s).getValue();
@@ -103,12 +111,14 @@ public class TaxManagementOperationView extends View implements TaxManagementOpe
 				super.onUnload();
 			};
 		};
+		coverageList.showFilterField(false);
 		coverageList.setSize("100%", "100%");
 		
 		lineList.addSelectionChangedEventHandler(new SelectionChangedEventHandler() {
 			
 			@Override
 			public void onSelectionChanged(SelectionChangedEvent event) {
+				fireAction(Action.SELECTED_LINE);
 				for(Selectable s : event.getSelected()) {
 					@SuppressWarnings("unchecked")
 					Line line = ((ValueSelectable<Line>) s).getValue();
@@ -123,6 +133,7 @@ public class TaxManagementOperationView extends View implements TaxManagementOpe
 			@Override
 			public void onSelectionChanged(SelectionChangedEvent event) {
 				for(Selectable s : event.getSelected()) {
+					fireAction(Action.SELECTED_COVERAGE);
 					@SuppressWarnings("unchecked")
 					Coverage coverage = ((ValueSelectable<Coverage>) s).getValue();
 					setTaxes(coverage.taxes);
@@ -225,14 +236,8 @@ public class TaxManagementOperationView extends View implements TaxManagementOpe
 	}
 	
 	@Override
-	public HasClickHandlers getSaveButton() {
-		return form.getSaveButton();
-	}
-
-
-	@Override
-	public HasClickHandlers getDeleteButton() {
-		return form.getDeleteButton();
+	public TaxList getList(){
+		return this.taxList;
 	}
 
 
@@ -240,7 +245,6 @@ public class TaxManagementOperationView extends View implements TaxManagementOpe
 	public HasValue<Tax> getTaxForm() {
 		return form;
 	}
-
 
 	@Override
 	public String getCurrentCoverageId() {
@@ -325,6 +329,19 @@ public class TaxManagementOperationView extends View implements TaxManagementOpe
 		this.subLineList.clearFilters();
 		this.taxList.clear();
 		this.taxList.clearFilters();
+	}
+	
+	@Override
+	public void registerActionHandler(
+			ActionInvokedEventHandler<Action> handler) {
+		this.handler = handler;
+		taxList.registerActionHandler(handler);
+	}
+	
+	protected void fireAction(Action action){
+		if(this.handler != null) {
+			handler.onActionInvoked(new ActionInvokedEvent<Action>(action));
+		}
 	}
 	
 }

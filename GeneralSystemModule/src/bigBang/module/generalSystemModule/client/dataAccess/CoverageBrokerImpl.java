@@ -331,15 +331,15 @@ CoverageBroker {
 	}
 
 	@Override
-	public void removeSubLine(final String subLineId,
-			final ResponseHandler<Void> handler) {
+	public void removeSubLine(final String lineId, final String subLineId,
+			final ResponseHandler<SubLine> handler) {
 
 		service.deleteSubLine(subLineId, new BigBangAsyncCallback<Void>() {
 
 			@Override
 			public void onResponseSuccess(Void result) {
 
-				SubLine[] oldArray = getSubLinesLocal(subLineId);
+				SubLine[] oldArray = getSubLinesLocal(lineId);
 				SubLine[] newArray = new SubLine[oldArray.length-1];
 				int curr = 0;
 				SubLine deleted = new SubLine();
@@ -366,7 +366,7 @@ CoverageBroker {
 				for(DataBrokerClient<Line> c : getClients()){
 					((CoverageDataBrokerClient) c).removeSubLine(deleted.lineId, deleted.id);
 				}
-				handler.onResponse(result);
+				handler.onResponse(deleted);
 
 			}
 
@@ -532,7 +532,7 @@ CoverageBroker {
 
 	@Override
 	public void removeCoverage(final String parentLineId, final String parentSubLineId, final String coverageId,
-			final ResponseHandler<Void> handler) {
+			final ResponseHandler<Coverage> handler) {
 		service.deleteCoverage(coverageId, new BigBangAsyncCallback<Void>() {
 
 			@Override
@@ -564,7 +564,7 @@ CoverageBroker {
 				for(DataBrokerClient<Line> c : getClients()){
 					((CoverageDataBrokerClient) c).removeCoverage(deleted.subLineId, deleted.id);
 				}
-				handler.onResponse(result);
+				handler.onResponse(deleted);
 
 			}
 

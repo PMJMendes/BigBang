@@ -1,28 +1,21 @@
 package bigBang.module.generalSystemModule.client.userInterface;
 
-import java.util.Collection;
 
 import org.gwt.mosaic.ui.client.ToolButton;
 
 import bigBang.definitions.client.dataAccess.CoverageBroker;
 import bigBang.definitions.client.dataAccess.CoverageDataBrokerClient;
-import bigBang.definitions.client.response.ResponseError;
-import bigBang.definitions.client.response.ResponseHandler;
 import bigBang.definitions.shared.BigBangConstants;
 import bigBang.definitions.shared.Coverage;
 import bigBang.definitions.shared.Line;
 import bigBang.definitions.shared.SubLine;
 import bigBang.definitions.shared.Tax;
-import bigBang.library.client.BigBangAsyncCallback;
-import bigBang.library.client.EventBus;
-import bigBang.library.client.Notification;
-import bigBang.library.client.Selectable;
-import bigBang.library.client.ValueSelectable;
-import bigBang.library.client.Notification.TYPE;
 import bigBang.library.client.dataAccess.DataBrokerManager;
+import bigBang.library.client.event.ActionInvokedEvent;
 import bigBang.library.client.event.ActionInvokedEventHandler;
-import bigBang.library.client.event.NewNotificationEvent;
 import bigBang.library.client.resources.Resources;
+import bigBang.library.client.userInterface.BigBangOperationsToolBar;
+import bigBang.library.client.userInterface.BigBangOperationsToolBar.SUB_MENU;
 import bigBang.library.client.userInterface.FilterableList;
 import bigBang.library.client.userInterface.ListEntry;
 import bigBang.library.client.userInterface.ListHeader;
@@ -30,7 +23,6 @@ import bigBang.library.client.userInterface.NavigationListEntry;
 import bigBang.library.client.userInterface.view.PopupPanel;
 import bigBang.module.generalSystemModule.client.userInterface.presenter.CoverageManagementOperationViewPresenter.Action;
 import bigBang.module.generalSystemModule.client.userInterface.view.SubLineForm;
-import bigBang.module.generalSystemModule.interfaces.CoveragesService;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -38,7 +30,10 @@ import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.DoubleClickEvent;
 import com.google.gwt.event.dom.client.DoubleClickHandler;
 import com.google.gwt.event.dom.client.HasClickHandlers;
+import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.ui.Image;
+import com.google.gwt.user.client.ui.MenuItem;
+import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
 public class SubLineList extends FilterableList<SubLine> implements CoverageDataBrokerClient{
@@ -54,7 +49,6 @@ public class SubLineList extends FilterableList<SubLine> implements CoverageData
 		public <I extends Object> void setInfo(I info) {
 			SubLine subLine = (SubLine) info;
 			setTitle(subLine.name);
-			setNavigatable(subLine.coverages != null && subLine.coverages.length > 0);
 		};
 
 		public void setEditable(boolean editable) {
@@ -73,6 +67,11 @@ public class SubLineList extends FilterableList<SubLine> implements CoverageData
 	private CoverageBroker broker;
 	private ToolButton newButton;
 	private SubLineForm form;
+
+	private String clickedSubline;
+
+	private BigBangOperationsToolBar toolbar;
+
 	private PopupPanel popup;
 	private boolean readonly;
 	private ClickHandler editHandler;
@@ -81,6 +80,7 @@ public class SubLineList extends FilterableList<SubLine> implements CoverageData
 	private String parentLineId;
 	private String subLineId;
 	private ActionInvokedEventHandler<Action> handler;
+	private MenuItem delete;
 
 	public SubLineList(){
 
@@ -95,30 +95,58 @@ public class SubLineList extends FilterableList<SubLine> implements CoverageData
 
 			@Override
 			public void onClick(ClickEvent event) {
-				form.clearInfo();
-				form.setReadOnly(false);
-				showForm(true);
+				fireAction(Action.NEW_SUB_LINE);
 			}
 		});
 
 		this.form = new SubLineForm();
-		form.getSaveButton().addClickHandler(new ClickHandler() {
+		this.popup = new PopupPanel("");
 
-			@Override
-			public void onClick(ClickEvent event) {
-				SubLine subLine = form.getValue();
-				if(subLine.id == null){
-					createSubLine(subLine);
-				}else{
-					saveSubLine(subLine);
-				}
-			}
-		});
-		this.popup = new PopupPanel("Modalidade");
 		Widget formContent = form.getNonScrollableContent();
 		formContent.setHeight("80px");
 		formContent.setWidth("650px");
-		popup.add(formContent);
+
+		toolbar = new BigBangOperationsToolBar(){
+
+			@Override
+			public void onEditRequest() {
+				fireAction(Action.EDIT_SUB_LINE);
+
+			}
+
+			@Override
+			public void onSaveRequest() {
+				fireAction(Action.SAVE_SUB_LINE);
+
+			}
+
+			@Override
+			public void onCancelRequest() {
+				fireAction(Action.CANCEL_EDIT_SUB_LINE);
+
+			}
+
+		};
+
+		toolbar.hideAll();
+		delete = new MenuItem("Eliminar", new Command() {
+
+			@Override
+			public void execute() {
+				fireAction(Action.DELETE_SUB_LINE);
+
+			}
+		});
+
+		toolbar.addItem(SUB_MENU.ADMIN, delete);
+		toolbar.showItem(SUB_MENU.EDIT, true);
+		toolbar.showItem(SUB_MENU.ADMIN, true);
+
+		VerticalPanel popupWrapper = new VerticalPanel();
+		popupWrapper.add(toolbar);
+		popupWrapper.add(formContent);
+
+		popup.add(popupWrapper);
 		popup.setWidth("650px");
 
 		setHeaderWidget(header);
@@ -127,30 +155,36 @@ public class SubLineList extends FilterableList<SubLine> implements CoverageData
 
 			@Override
 			public void onClick(ClickEvent event) {
-				for(ListEntry<SubLine> e : entries) {
+				for(ListEntry<SubLine> e: entries){
 					if(event.getSource() == ((Entry)e).editImage){
-						form.setValue(((Entry)e).getValue());
-						showForm(true);
+						clickedSubline = ((Entry)e).getValue().id;
 					}
 				}
+				fireAction(Action.DOUBLE_CLICK_SUB_LINE);
 			}
 		};
 		doubleClickHandler = new DoubleClickHandler() {
 
 			@Override
 			public void onDoubleClick(DoubleClickEvent event) {
-				for(ListEntry<SubLine> e : entries) {
-					if(event.getSource() == e){
-						form.setValue(((Entry)e).getValue());
-						showForm(true);
-					}
-				}
+				clickedSubline = ((Entry)SubLineList.this.getSelected().toArray()[0]).getValue().id;
+				fireAction(Action.DOUBLE_CLICK_SUB_LINE);
 			}
 		};
 
 		setDoubleClickable(true);
 
 		setReadOnly(true);
+	}
+
+	public String getClickedSubLine(){
+		return clickedSubline;
+	}
+
+	protected void fireAction(Action action){
+		if(this.handler != null) {
+			handler.onActionInvoked(new ActionInvokedEvent<Action>(action));
+		}
 	}
 
 	public boolean add(Entry e) {
@@ -165,22 +199,12 @@ public class SubLineList extends FilterableList<SubLine> implements CoverageData
 		return this.newButton;
 	}
 
-	private void showForm(boolean show) {
+	public void showForm(boolean show) {
 		if(!show){
 			popup.hidePopup();
 			return;
 		}
 		popup.center();
-	}
-
-	private void createSubLine(SubLine subLine) {
-		//TODO
-		subLine.lineId = this.parentLineId;
-	}
-
-	private void saveSubLine(SubLine subLine){
-		//TODO
-		subLine.lineId = this.parentLineId;
 	}
 
 	private void updateEntry(SubLine subLine) {
@@ -192,18 +216,24 @@ public class SubLineList extends FilterableList<SubLine> implements CoverageData
 
 	public void setReadOnly(boolean readonly) {
 
+		this.readonly = readonly;
+		this.form.setReadOnly(readonly);
+		this.newButton.setEnabled(!readonly);
+		for(ListEntry<SubLine> e : entries){
+			((Entry) e).setEditable(!readonly);
+		}
 
 	}
 
 	@Override
 	public void setDataVersionNumber(String dataElementId, int number) {
-		// TODO Auto-generated method stub
+
+		return;
 
 	}
 
 	@Override
 	public int getDataVersion(String dataElementId) {
-		// TODO Auto-generated method stub
 		return 0;
 	}
 
@@ -257,19 +287,29 @@ public class SubLineList extends FilterableList<SubLine> implements CoverageData
 
 	@Override
 	public void addSubLine(String parentLineId, SubLine subLine) {
-		// TODO Auto-generated method stub
+		if(this.parentLineId.equalsIgnoreCase(parentLineId)){
+			this.add(new Entry(subLine));
+		}
 
 	}
 
 	@Override
 	public void updateSubLine(String parentLineId, SubLine subLine) {
-		// TODO Auto-generated method stub
-
+		if(this.parentLineId.equalsIgnoreCase(parentLineId)){
+			updateEntry(subLine);
+		}
 	}
 
 	@Override
 	public void removeSubLine(String parentLineId, String subLineId) {
-		// TODO Auto-generated method stub
+		if(this.parentLineId.equalsIgnoreCase(parentLineId)){
+			for(int i = 0; i<this.size(); i++){
+				if(this.get(i).getValue().id.equalsIgnoreCase(subLineId)){
+					this.remove(i);
+					return;
+				}
+			}
+		}
 
 	}
 
@@ -306,7 +346,7 @@ public class SubLineList extends FilterableList<SubLine> implements CoverageData
 	@Override
 	public void updateTax(String parentCoverageId, Tax tax) {
 		return;		
-	}
+	} 
 
 	@Override
 	public void removeTax(String parentCoverageId, String taxId) {
@@ -336,5 +376,17 @@ public class SubLineList extends FilterableList<SubLine> implements CoverageData
 			}
 		}
 
+	}
+
+	public SubLineForm getForm(){
+		return form;
+	}
+
+	public BigBangOperationsToolBar getToolBar(){
+		return toolbar;
+	}
+
+	public void closePopup() {
+		popup.hidePopup();
 	}
 }

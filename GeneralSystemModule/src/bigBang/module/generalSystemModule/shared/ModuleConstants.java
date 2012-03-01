@@ -9,6 +9,9 @@ public class ModuleConstants
 		public static final String CommissionProfiles = "5F40713C-1FE7-4715-AC24-9EBB00E53392";
 		public static final String LineCategories     = "3FF829D9-5C33-4C91-A42B-9EC900F013CB";
 		public static final String FieldTypes         = "0D8E4FEE-AE4D-4429-A517-9EC900F80A20";
+		public static final String ObjectTypes 		  = "6ADF0A94-5004-41AF-A7FF-9F95013DABB8";
+		public static final String ExercisePeriod 	  = "93315017-5744-4E43-95AB-9F9601200F1E";
+		public static final String FieldValues        = "D50A75B9-5F44-4BF2-9060-9F960121503A";
 	}
 
 	public class ProcessTypeIDs

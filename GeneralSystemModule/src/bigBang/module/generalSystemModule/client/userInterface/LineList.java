@@ -21,6 +21,7 @@ import bigBang.library.client.userInterface.ListHeader;
 import bigBang.library.client.userInterface.NavigationListEntry;
 import bigBang.library.client.userInterface.view.FormView;
 import bigBang.library.client.userInterface.view.PopupPanel;
+import bigBang.module.generalSystemModule.client.userInterface.SubLineList.Entry;
 import bigBang.module.generalSystemModule.client.userInterface.presenter.CoverageManagementOperationViewPresenter.Action;
 import bigBang.module.generalSystemModule.client.userInterface.view.LineForm;
 
@@ -90,6 +91,8 @@ public class LineList extends FilterableList<Line> implements CoverageDataBroker
 
 	ActionInvokedEventHandler<Action> handler;
 
+	protected String clickedLine;
+
 	public LineList(){
 
 		broker = (CoverageBroker)DataBrokerManager.staticGetBroker(BigBangConstants.EntityIds.COVERAGE);
@@ -103,10 +106,7 @@ public class LineList extends FilterableList<Line> implements CoverageDataBroker
 
 			@Override
 			public void onClick(ClickEvent event) {
-				form.clearInfo();
-				form.setReadOnly(false);
-				toolbar.setSaveModeEnabled(true);
-				showForm(true);
+				fireAction(Action.NEW_LINE);
 			}
 		});
 
@@ -125,14 +125,12 @@ public class LineList extends FilterableList<Line> implements CoverageDataBroker
 
 			@Override
 			public void onSaveRequest() {
-				form.setReadOnly(true);
-				toolbar.setSaveModeEnabled(false);
 				fireAction(Action.SAVE_LINE);
 			}
 
 			@Override
 			public void onCancelRequest() {
-				
+
 				fireAction(Action.CANCEL_EDIT_LINE);
 
 			}
@@ -173,32 +171,32 @@ public class LineList extends FilterableList<Line> implements CoverageDataBroker
 
 			@Override
 			public void onClick(ClickEvent event) {
-				for(ListEntry<Line> e : entries) {
+				for(ListEntry<Line> e: entries){
 					if(event.getSource() == ((Entry)e).editImage){
-						form.setInfo(((Entry)e).getValue());
-						form.setReadOnly(true);
-						toolbar.setSaveModeEnabled(false);
-						showForm(true);
+						clickedLine = ((Entry)e).getValue().id;
 					}
 				}
+				fireAction(Action.DOUBLE_CLICK_LINE);
+
+
 			}
 		};
 		doubleClickHandler = new DoubleClickHandler() {
 
 			@Override
 			public void onDoubleClick(DoubleClickEvent event) {
-				for(ListEntry<Line> e : entries) {
-					if(event.getSource() == e){
-						form.setValue(((Entry)e).getValue());
-						form.setReadOnly(true);
-						showForm(true);
-					}
-				}
+
+				clickedLine = ((Entry)LineList.this.getSelected().toArray()[0]).getValue().id;
+				fireAction(Action.DOUBLE_CLICK_LINE);
 			}
 		};
 
 		setDoubleClickable(true);
 		setReadOnly(true);
+	}
+
+	public String getClickedLine(){
+		return clickedLine;
 	}
 
 	protected void fireAction(Action action){
@@ -219,7 +217,7 @@ public class LineList extends FilterableList<Line> implements CoverageDataBroker
 		return this.newButton;
 	}
 
-	private void showForm(boolean show) {
+	public void showForm(boolean show) {
 		if(!show){
 			popup.hidePopup();
 			return;
@@ -380,7 +378,6 @@ public class LineList extends FilterableList<Line> implements CoverageDataBroker
 	}
 
 	public void registerActionHandler(ActionInvokedEventHandler<Action> handler){
-		//	form.registerActionHandler(handler);
 		this.handler = handler;		
 	}
 
@@ -401,5 +398,9 @@ public class LineList extends FilterableList<Line> implements CoverageDataBroker
 				get(i).setSelected(false, false);
 			}
 		}
+	}
+
+	public BigBangOperationsToolBar getToolbar(){
+		return toolbar;
 	}
 }

@@ -84,7 +84,7 @@ public interface CoverageBroker extends DataBrokerInterface<Line> {
 	 * @param subLineId The sub line id
 	 * @param handler The handler to be notified on response
 	 */
-	public void removeSubLine(String subLineId, ResponseHandler<Void> handler);
+	public void removeSubLine(String lineId, String subLineId, ResponseHandler<SubLine> handler);
 	
 	
 	//COVERAGES
@@ -126,7 +126,7 @@ public interface CoverageBroker extends DataBrokerInterface<Line> {
 	 * @param coverageId The coverage id
 	 * @param handler The handler to be notified on response
 	 */
-	public void removeCoverage(String parentLineId, String parentSubLineId, String coverageId, ResponseHandler<Void> handler);
+	public void removeCoverage(String parentLineId, String parentSubLineId, String coverageId, ResponseHandler<Coverage> handler);
 	
 	
 	//Taxes

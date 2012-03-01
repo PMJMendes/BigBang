@@ -1,28 +1,27 @@
 package bigBang.module.generalSystemModule.client.userInterface.view;
 
-import com.google.gwt.event.dom.client.HasClickHandlers;
-import com.google.gwt.user.client.ui.Button;
-
 import bigBang.definitions.shared.SubLine;
+import bigBang.library.client.userInterface.ExpandableListBoxFormField;
 import bigBang.library.client.userInterface.TextBoxFormField;
 import bigBang.library.client.userInterface.view.FormView;
+import bigBang.module.generalSystemModule.shared.ModuleConstants;
 
 public class SubLineForm extends FormView<SubLine> {
 
 	private TextBoxFormField name;
-	private Button saveButton;
-	
+	private ExpandableListBoxFormField type, periodType;
 	private SubLine subLine;
 	
+	
 	public SubLineForm(){
-		addSection("Informação Geral");
-		
+		addSection("Detalhes da modalidade");
 		name = new TextBoxFormField("Nome");
-		
+		type = new ExpandableListBoxFormField(ModuleConstants.ListIDs.ObjectTypes, "Tipo de unidade de risco");
+		periodType = new ExpandableListBoxFormField(ModuleConstants.ListIDs.ExercisePeriod, "Tipo de período");
 		addFormField(name);
+		addFormField(type);
+		addFormField(periodType);
 		
-		saveButton = new Button("Guardar");
-		addButton(saveButton);
 	}
 	
 	@Override
@@ -30,6 +29,8 @@ public class SubLineForm extends FormView<SubLine> {
 		if(this.subLine == null)
 			this.subLine = new SubLine();
 		subLine.name = name.getValue();
+		subLine.objectTypeId = type.getValue();
+		subLine.exercisePeriodId = periodType.getValue();
 		return subLine;
 	}
 
@@ -37,6 +38,8 @@ public class SubLineForm extends FormView<SubLine> {
 	public void setInfo(SubLine info) {
 		this.subLine = info != null ? (SubLine) info : new SubLine();
 		this.name.setValue(info.name);
+		this.type.setValue(info.objectTypeId);
+		this.periodType.setValue(info.exercisePeriodId);
 	}
 
 	@Override
@@ -45,7 +48,4 @@ public class SubLineForm extends FormView<SubLine> {
 		super.clearInfo();
 	}
 
-	public HasClickHandlers getSaveButton() {
-		return saveButton;
-	}
 }
