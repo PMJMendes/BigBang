@@ -37,6 +37,9 @@ public class SubPolicy
 	public void Initialize()
 		throws JewelEngineException
 	{
+		if ( GetProcessID() == null )
+			return;
+
 		try
 		{
 			mrefOwner = (Policy)PNProcess.GetInstance(getNameSpace(), GetProcessID()).GetParent().GetData();
@@ -64,10 +67,32 @@ public class SubPolicy
 	public void SetProcessID(UUID pidProcess)
 	{
 		internalSetAt(1, pidProcess);
+
+    	if ( mrefOwner == null )
+    	{
+			try
+			{
+				Initialize();
+			}
+			catch (Throwable e)
+			{
+			}
+    	}
 	}
 
     public Policy GetOwner()
     {
+    	if ( mrefOwner == null )
+    	{
+			try
+			{
+				Initialize();
+			}
+			catch (Throwable e)
+			{
+			}
+    	}
+
     	return mrefOwner;
     }
 
