@@ -3,7 +3,6 @@ package bigBang.module.insurancePolicyModule.client.userInterface;
 import bigBang.definitions.shared.BigBangConstants;
 import bigBang.definitions.shared.InsurancePolicy.CoInsurer;
 import bigBang.library.client.EventBus;
-import bigBang.library.client.FieldValidator;
 import bigBang.library.client.FormField;
 import bigBang.library.client.Notification;
 import bigBang.library.client.Notification.TYPE;
@@ -245,7 +244,7 @@ public class CoInsurerSelection extends FormField<CoInsurer[]>{
 		initWidget(wrapper);
 		wrapper.setSize("340px", "200px");
 		coInsuranceAgencies = new List<CoInsurer>();
-		coInsuranceAgencies.getScrollable().setSize("340px", "200px");
+		coInsuranceAgencies.getScrollable().setSize("100%", "100%");
 		coInsuranceAgencies.setSelectableEntries(false);
 		wrapper.add(coInsuranceAgencies.getScrollable());
 

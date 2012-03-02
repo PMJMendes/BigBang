@@ -40,9 +40,16 @@ public abstract class InfoOrDocumentRequestView<T extends ProcessBase> extends V
 			}
 		};
 
+		VerticalPanel ownerWrapper = new VerticalPanel();
+		ownerWrapper.setSize("100%", "100%");
+		ListHeader ownerHeader = new ListHeader("Ficha de Processo");
+		ownerHeader.setHeight("30px");
+		ownerWrapper.add(ownerHeader);
 		this.ownerForm = ownerForm;
 		ownerForm.setReadOnly(true);
-		mainWrapper.addWest(ownerForm, 665);
+		ownerWrapper.add(ownerForm);
+		ownerWrapper.setCellHeight(ownerForm, "100%");
+		mainWrapper.addWest(ownerWrapper, 665);
 		
 		VerticalPanel requestFormWrapper = new VerticalPanel();
 		requestFormWrapper.setSize("100%", "100%");

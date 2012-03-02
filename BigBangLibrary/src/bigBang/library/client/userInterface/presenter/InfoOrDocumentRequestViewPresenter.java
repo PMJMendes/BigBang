@@ -119,6 +119,7 @@ public abstract class InfoOrDocumentRequestViewPresenter<T extends ProcessBase> 
 
 			@Override
 			public void onResponse(Boolean response) {
+				view.allowSend(response);
 				if(response){
 					showOwner(ownerId, ownerTypeId);
 					setContactsForOwner(ownerId);

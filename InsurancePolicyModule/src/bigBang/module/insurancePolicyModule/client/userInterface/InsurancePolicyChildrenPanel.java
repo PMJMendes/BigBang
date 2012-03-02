@@ -21,6 +21,7 @@ public class InsurancePolicyChildrenPanel extends View {
 	public DocumentsList documentsList;
 	public InsuredObjectsList insuredObjectsList;
 	public ExercisesList exercisesList;
+	public SubPoliciesList subPoliciesList;
 	public HistoryList historyList;
 
 	public InsurancePolicyChildrenPanel(){
@@ -32,12 +33,14 @@ public class InsurancePolicyChildrenPanel extends View {
 		documentsList = new DocumentsList();
 		insuredObjectsList = new InsuredObjectsList();
 		exercisesList = new ExercisesList();
+		subPoliciesList = new SubPoliciesList();
 		historyList = new HistoryList();
 
 		wrapper.add(contactsList, "Contactos");
 		wrapper.add(documentsList, "Documentos");
 		wrapper.add(insuredObjectsList, "Unidades de Risco");
 		wrapper.add(exercisesList, "Exercícios");
+		wrapper.add(subPoliciesList, "Apólices Adesão");
 		wrapper.add(historyList, "Histórico");
 
 		this.policyBrokerClient = getPolicyBrokerClient();
@@ -54,6 +57,7 @@ public class InsurancePolicyChildrenPanel extends View {
 		this.documentsList.setOwner(policyId);
 		this.insuredObjectsList.setOwner(policyId);
 		this.exercisesList.setOwner(policyId);
+		this.subPoliciesList.setOwner(policyId);
 		this.historyList.setOwner(policyId);
 	}
 

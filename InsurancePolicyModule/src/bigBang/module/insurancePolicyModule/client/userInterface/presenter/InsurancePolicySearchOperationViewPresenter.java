@@ -16,6 +16,7 @@ import bigBang.definitions.shared.InsurancePolicy;
 import bigBang.definitions.shared.InsurancePolicy.TableSection;
 import bigBang.definitions.shared.InsurancePolicyStub;
 import bigBang.definitions.shared.InsuredObjectStub;
+import bigBang.definitions.shared.SubPolicyStub;
 import bigBang.library.client.EventBus;
 import bigBang.library.client.HasEditableValue;
 import bigBang.library.client.HasParameters;
@@ -112,6 +113,7 @@ ViewPresenter {
 		HasValueSelectables<Document> getDocumentsList();
 		HasValueSelectables<InsuredObjectStub> getObjectsList();
 		HasValueSelectables<ExerciseStub> getExercisesList();
+		HasValueSelectables<SubPolicyStub> getSubPoliciesList();
 		HasValueSelectables<HistoryItemStub> getHistoryList();
 
 		//General
@@ -275,7 +277,9 @@ ViewPresenter {
 					NavigationHistoryManager.getInstance().go(item);
 					break;
 				case CREATE_SUB_POLICY:
-					item.setParameter("operation", "createsubpolicy");
+					item.setParameter("operation", "subpolicy");
+					item.setParameter("id", view.getForm().getValue().id);
+					item.setParameter("subpolicyid", "new");
 					NavigationHistoryManager.getInstance().go(item);
 					break;
 				case CREATE_SUBSTITUTE_POLICY:
@@ -369,6 +373,17 @@ ViewPresenter {
 				ExerciseStub selectedValue = event.getFirstSelected() == null ? null : ((ValueSelectable<ExerciseStub>)event.getFirstSelected()).getValue();
 				if(selectedValue != null) {
 					showExercise(selectedValue);
+				}
+			}
+		});
+		view.getSubPoliciesList().addSelectionChangedEventHandler(new SelectionChangedEventHandler() {
+			
+			@Override
+			public void onSelectionChanged(SelectionChangedEvent event) {
+				@SuppressWarnings("unchecked")
+				SubPolicyStub selectedValue = event.getFirstSelected() == null ? null : ((ValueSelectable<SubPolicyStub>) event.getFirstSelected()).getValue();
+				if(selectedValue != null) {
+					showSubPolicy(selectedValue);
 				}
 			}
 		});
@@ -744,6 +759,14 @@ ViewPresenter {
 		item.setParameter("operation", "viewexercise");
 		item.setParameter("id", view.getForm().getValue().id);
 		item.setParameter("exerciseid", exercise.id);
+		NavigationHistoryManager.getInstance().go(item);
+	}
+	
+	private void showSubPolicy(SubPolicyStub subPolicy){
+		NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
+		item.setParameter("operation", "subpolicy");
+		item.setParameter("id", view.getForm().getValue().id);
+		item.setParameter("subpolicyid", subPolicy.id);
 		NavigationHistoryManager.getInstance().go(item);
 	}
 

@@ -12,6 +12,7 @@ import com.google.gwt.event.dom.client.KeyDownEvent;
 import com.google.gwt.event.dom.client.KeyDownHandler;
 import com.google.gwt.event.logical.shared.SelectionEvent;
 import com.google.gwt.event.logical.shared.SelectionHandler;
+import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.user.client.ui.MultiWordSuggestOracle;
 import com.google.gwt.user.client.ui.SuggestBox;
 import com.google.gwt.user.client.ui.SuggestOracle;
@@ -25,6 +26,7 @@ public class AutoCompleteTextListFormField extends FormField<Collection<String>>
 	protected MultiWordSuggestOracle oracle = new MultiWordSuggestOracle();
 	protected List<String> itemsSelected = new ArrayList<String>();
 	protected BulletList list;
+	protected TextBox itemBox;
 	public SuggestBox box;
 
 	public AutoCompleteTextListFormField(String label) {
@@ -38,12 +40,12 @@ public class AutoCompleteTextListFormField extends FormField<Collection<String>>
 		initWidget(panel);
 
 		panel.add(this.label);
-		
+
 		list = new BulletList();
 		list.setStyleName("token-input-list-facebook");
 		final ListItem item = new ListItem();
 		item.setStyleName("token-input-input-token-facebook");
-		final TextBox itemBox = new TextBox();
+		itemBox = new TextBox();
 		itemBox.getElement().setAttribute("style", "outline-color: -moz-use-text-color; outline-style: none; outline-width: medium;");
 		box = new SuggestBox(getSuggestions(), itemBox);
 		item.add(box);
@@ -54,8 +56,8 @@ public class AutoCompleteTextListFormField extends FormField<Collection<String>>
 			public void onKeyDown(KeyDownEvent event) {
 				if (event.getNativeKeyCode() == KeyCodes.KEY_ENTER) {
 					// only allow manual entries with @ signs (assumed email addresses)
-//					if (itemBox.getValue().contains("@"))
-//						deselectItem(itemBox, list);
+					//					if (itemBox.getValue().contains("@"))
+					//						deselectItem(itemBox, list);
 				}
 				// handle backspace
 				if (event.getNativeKeyCode() == KeyCodes.KEY_BACKSPACE) {
@@ -83,7 +85,7 @@ public class AutoCompleteTextListFormField extends FormField<Collection<String>>
 		panel.add(list);
 
 		panel.addDomHandler(new ClickHandler() {
-			
+
 			@Override
 			public void onClick(ClickEvent event) {
 				box.setFocus(true);
@@ -108,25 +110,25 @@ public class AutoCompleteTextListFormField extends FormField<Collection<String>>
 	}
 
 	private void deselectItem(final TextBox itemBox, final BulletList list) {
-        if (itemBox.getValue() != null && !"".equals(itemBox.getValue().trim())) {
-            /** Change to the following structure:
-             * <li class="token-input-token-facebook">
-             * <p>What's New Scooby-Doo?</p>
-             * <span class="token-input-delete-token-facebook">x</span>
-             * </li>
-             */
+		if (itemBox.getValue() != null && !"".equals(itemBox.getValue().trim())) {
+			/** Change to the following structure:
+			 * <li class="token-input-token-facebook">
+			 * <p>What's New Scooby-Doo?</p>
+			 * <span class="token-input-delete-token-facebook">x</span>
+			 * </li>
+			 */
 
-            final ListItem displayItem = new ListItem();
-            displayItem.setStyleName("token-input-token-facebook");
-            Paragraph p = new Paragraph(itemBox.getValue());
+			final ListItem displayItem = new ListItem();
+			displayItem.setStyleName("token-input-token-facebook");
+			Paragraph p = new Paragraph(itemBox.getValue());
 
-            displayItem.addClickHandler(new ClickHandler() {
-                public void onClick(ClickEvent clickEvent) {
-                    displayItem.addStyleName("token-input-selected-token-facebook");
-                }
-            });
+			displayItem.addClickHandler(new ClickHandler() {
+				public void onClick(ClickEvent clickEvent) {
+					displayItem.addStyleName("token-input-selected-token-facebook");
+				}
+			});
 
-            /** TODO: Figure out how to select item and allow deleting with backspace key
+			/** TODO: Figure out how to select item and allow deleting with backspace key
             displayItem.addKeyDownHandler(new KeyDownHandler() {
                 public void onKeyDown(KeyDownEvent event) {
                     if (event.getNativeKeyCode() == KeyCodes.KEY_BACKSPACE) {
@@ -139,50 +141,59 @@ public class AutoCompleteTextListFormField extends FormField<Collection<String>>
                     displayItem.removeStyleName("token-input-selected-token-facebook");
                 }
             });
-            */
+			 */
 
-            Span span = new Span("x");
-            span.addClickHandler(new ClickHandler() {
-                public void onClick(ClickEvent clickEvent) {
-                    removeListItem(displayItem, list);
-                }
-            });
+			Span span = new Span("x");
+			span.addClickHandler(new ClickHandler() {
+				public void onClick(ClickEvent clickEvent) {
+					removeListItem(displayItem, list);
+				}
+			});
 
-            displayItem.add(p);
-            displayItem.add(span);
-            // hold the original value of the item selected
+			displayItem.add(p);
+			displayItem.add(span);
+			// hold the original value of the item selected
 
-            GWT.log("Adding selected item '" + itemBox.getValue() + "'", null);
-            itemsSelected.add(itemBox.getValue());
-            GWT.log("Total: " + itemsSelected, null);
+			GWT.log("Adding selected item '" + itemBox.getValue() + "'", null);
+			itemsSelected.add(itemBox.getValue());
+			GWT.log("Total: " + itemsSelected, null);
 
-            list.insert(displayItem, list.getWidgetCount() - 1);
-            itemBox.setValue("");
-            itemBox.setFocus(true);
-        }
-    }
+			list.insert(displayItem, list.getWidgetCount() - 1);
+			itemBox.setValue("");
+			itemBox.setFocus(true);
+		}
+	}
 
-    private void removeListItem(ListItem displayItem, BulletList list) {
-        GWT.log("Removing: " + displayItem.getWidget(0).getElement().getInnerHTML(), null);
-        itemsSelected.remove(displayItem.getWidget(0).getElement().getInnerHTML());
-        list.remove(displayItem);
-    }
-	
+	private void removeListItem(ListItem displayItem, BulletList list) {
+		GWT.log("Removing: " + displayItem.getWidget(0).getElement().getInnerHTML(), null);
+		itemsSelected.remove(displayItem.getWidget(0).getElement().getInnerHTML());
+		list.remove(displayItem);
+	}
+
 	protected MultiWordSuggestOracle getSuggestions(){
 		return oracle;
 	}
 
 	@Override
 	public void setValue(Collection<String> value, boolean fireEvents) {
-		// TODO Auto-generated method stub
-		super.setValue(value, fireEvents);
-	}
-	
+		if(value == null){
+			this.box.setValue("");
+			this.itemsSelected.clear();
+		}else{
+			for(String s : value){
+				ListItem item = new ListItem();
+				item.setText(s);
+				this.list.add(item);
+			}
+		}
+		if(fireEvents)
+			ValueChangeEvent.fire(this, value);	}
+
 	@Override
 	public Collection<String> getValue() {
 		return this.itemsSelected;
 	}
-	
+
 	public void setSuggestions(Collection<String> suggestions){
 		if(suggestions == null) {
 			oracle.clear();
@@ -200,13 +211,12 @@ public class AutoCompleteTextListFormField extends FormField<Collection<String>>
 
 	@Override
 	public void setReadOnly(boolean readonly) {
-		//TODO
+		this.itemBox.setReadOnly(readonly);
 	}
 
 	@Override
 	public boolean isReadOnly() {
-		// TODO Auto-generated method stub
-		return false;
+		return this.itemBox.isReadOnly();
 	}
 
 	@Override

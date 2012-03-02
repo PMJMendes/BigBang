@@ -47,6 +47,8 @@ public class BigBangConstants {
 
 		public static final String INSURANCE_POLICY_EXERCISES = "DEE32F69-B33D-4427-AD5B-9F9C001607F2";
 		public static final String INSURANCE_POLICY_INSURED_OBJECTS = "3A3316D2-9D7C-4FD1-8486-9F9C0012E119";
+
+		public static final String INSURANCE_SUB_POLICY = "C7BC8D2F-BD61-43D5-9347-9FF300EE9986";
 		
 	}
 
@@ -100,13 +102,13 @@ public class BigBangConstants {
 			public static final String VOID_POLICY = "DF2C50EF-5E4A-475A-AB1E-9FD401143D8A";
 			public static final String TRANSFER_BROKERAGE = null;
 			public static final String CREATE_SUBSTITUTE_POLICY = null;
-			public static final String CREATE_CLIENT_INFO_REQUEST = null;
-			public static final String CREATE_COMPANY_INFO_REQUEST = null;
+			public static final String CREATE_CLIENT_INFO_REQUEST = "DF06C139-4D61-44D1-81EE-9FD30118E9D3";
+			public static final String CREATE_COMPANY_INFO_REQUEST = "3F0120C1-F64E-4806-8AB2-9FD40110D264";
 			public static final String CREATE_INSURED_OBJECT_FROM_CLIENT = "783EFBDB-44DB-4CAA-BF88-9FD4010FDB91";
 			public static final String TRANSFER_MANAGER = "EF9C257E-323C-4BA0-A158-9F9000D8A755";
 			public static final String EXECUTE_DETAILED_CALCULATIONS = "7DC1A798-31AA-49A1-B2DC-9FD4010F7593";
 			public static final String CREATE_INFO_MANAGEMENT_PROCESS = null;
-			public static final String CREATE_SUB_POLICY = null;
+			public static final String CREATE_SUB_POLICY = "DF27A2DA-1B36-4F1C-B242-9FD40110F495";
 			public static final String CREATE_DEBIT_NOTE = "4CC51237-FC83-4B13-A8A9-9FD401100FE2";
 			public static final String CREATE_NEGOTIATION = null;
 			public static final String CREATE_HEALTH_EXPENSE = null;

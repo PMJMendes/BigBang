@@ -5,40 +5,37 @@ import java.util.HashMap;
 import java.util.Map;
 
 import bigBang.definitions.client.dataAccess.ClientProcessBroker;
-import bigBang.definitions.client.dataAccess.InsurancePolicyBroker;
+import bigBang.definitions.client.dataAccess.InsuranceSubPolicyBroker;
 import bigBang.definitions.client.response.ResponseError;
 import bigBang.definitions.client.response.ResponseHandler;
 import bigBang.definitions.shared.BigBangConstants;
 import bigBang.definitions.shared.Client;
-import bigBang.definitions.shared.InsurancePolicy;
-import bigBang.definitions.shared.InsurancePolicy.Coverage;
-import bigBang.definitions.shared.InsurancePolicy.ExtraField;
-import bigBang.definitions.shared.InsurancePolicy.HeaderField;
-import bigBang.definitions.shared.InsurancePolicy.TableSection;
+import bigBang.definitions.shared.SubPolicy;
+import bigBang.definitions.shared.SubPolicy.Coverage;
+import bigBang.definitions.shared.SubPolicy.ExtraField;
+import bigBang.definitions.shared.SubPolicy.HeaderField;
+import bigBang.definitions.shared.SubPolicy.TableSection;
 import bigBang.library.client.FieldValidator;
 import bigBang.library.client.FormField;
 import bigBang.library.client.dataAccess.BigBangTypifiedListBroker;
 import bigBang.library.client.dataAccess.DataBrokerManager;
 import bigBang.library.client.dataAccess.TypifiedListBroker;
-import bigBang.library.client.userInterface.CheckBoxFormField;
 import bigBang.library.client.userInterface.DatePickerFormField;
 import bigBang.library.client.userInterface.ExpandableListBoxFormField;
-import bigBang.library.client.userInterface.ListBoxFormField;
 import bigBang.library.client.userInterface.RadioButtonFormField;
 import bigBang.library.client.userInterface.TextAreaFormField;
 import bigBang.library.client.userInterface.TextBoxFormField;
 import bigBang.library.client.userInterface.view.FormView;
 import bigBang.library.client.userInterface.view.FormViewSection;
-import bigBang.module.insurancePolicyModule.client.dataAccess.PolicyTypifiedListBroker;
+import bigBang.module.insurancePolicyModule.client.dataAccess.SubPolicyTypifiedListBroker;
 import bigBang.module.insurancePolicyModule.shared.ModuleConstants;
 
 import com.google.gwt.dom.client.Style.Overflow;
-import com.google.gwt.event.logical.shared.ValueChangeEvent;
-import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.i18n.client.DateTimeFormat;
+import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.HasValue;
 
-public abstract class InsurancePolicyForm extends FormView<InsurancePolicy> {
+public class SubPolicyForm extends FormView<SubPolicy> {
 
 	protected static class HeaderFormField extends FormField<String> {
 
@@ -150,38 +147,34 @@ public abstract class InsurancePolicyForm extends FormView<InsurancePolicy> {
 		}
 	}
 
-	protected ExpandableListBoxFormField manager;
+	protected TextBoxFormField manager; //ro
 	protected TextBoxFormField number;
-	protected TextBoxFormField client;
-	protected ExpandableListBoxFormField insuranceAgency;
-	protected ExpandableListBoxFormField category;
-	protected ExpandableListBoxFormField line;
-	protected ExpandableListBoxFormField subLine;
-	protected ExpandableListBoxFormField mediator;
+	protected TextBoxFormField client; //PREVER ALTERAÇÃO
+	protected TextBoxFormField insuranceAgency;//ro
+	protected TextBoxFormField category;//ro
+	protected TextBoxFormField line;//ro
+	protected TextBoxFormField subLine;//ro
+	protected TextBoxFormField mediator;//ro
 	protected ExpandableListBoxFormField insuredObjects;
-	protected ExpandableListBoxFormField exercises;
-	protected TextBoxFormField policyStatus;
-	protected ListBoxFormField maturityDay;
-	protected ListBoxFormField maturityMonth;
+	protected ExpandableListBoxFormField exercises;//ro
+	protected TextBoxFormField policyStatus;//ro
 	protected DatePickerFormField startDate;
 	protected DatePickerFormField endDate;
-	protected ExpandableListBoxFormField duration;
 	protected ExpandableListBoxFormField fractioning;
 	protected TextBoxFormField premium;
-	protected PolicyFormTable table;
+	protected SubPolicyFormTable table;
 
+	protected Button selectClientButton;
+	
 	protected Map<String, HeaderFormField> headerFields;
-	protected FormViewSection headerFieldsSection, coInsurersSection;
+	protected FormViewSection headerFieldsSection;
 
 	protected Map<String, HeaderFormField> extraFields;
 	protected FormViewSection extraFieldsSection;
 
-	protected CheckBoxFormField caseStudy;
 	protected TextAreaFormField notes;
-	private CheckBoxFormField coInsurance;
-	private CoInsurerSelection coInsurers;
 
-	public InsurancePolicyForm(){
+	public SubPolicyForm(){
 		super();
 		this.scrollWrapper.getElement().getStyle().setOverflowX(Overflow.SCROLL);
 		
@@ -190,34 +183,39 @@ public abstract class InsurancePolicyForm extends FormView<InsurancePolicy> {
 
 		addSection("Apólice");
 		number  = new TextBoxFormField("Número");
-		client = new TextBoxFormField("Cliente");
 		number.setFieldWidth("175px");
-		manager = new ExpandableListBoxFormField(BigBangConstants.EntityIds.USER, "Gestor");
-		insuranceAgency = new ExpandableListBoxFormField(BigBangConstants.EntityIds.INSURANCE_AGENCY, "Seguradora");
-		mediator = new ExpandableListBoxFormField(BigBangConstants.EntityIds.MEDIATOR, "Mediador");
-		category = new ExpandableListBoxFormField(BigBangConstants.EntityIds.CATEGORY, "Categoria");
-		line = new ExpandableListBoxFormField("Ramo");
-		subLine = new ExpandableListBoxFormField("Modalidade");
-		maturityDay = new ListBoxFormField("Dia de Vencimento");
-		duration = new ExpandableListBoxFormField(ModuleConstants.TypifiedListIds.DURATION, "Duração");
-		maturityMonth = new ListBoxFormField("Mês de Vencimento");
+		client = new TextBoxFormField("Cliente");
+		manager = new TextBoxFormField("Gestor");
+		manager.setEditable(false);
+		manager.setFieldWidth("175px");
+		insuranceAgency = new TextBoxFormField("Seguradora");
+		insuranceAgency.setFieldWidth("175px");
+		insuranceAgency.setEditable(false);
+		mediator = new TextBoxFormField("Mediador");
+		mediator.setEditable(false);
+		mediator.setFieldWidth("175px");
+		category = new TextBoxFormField("Categoria");
+		category.setEditable(false);
+		category.setFieldWidth("175px");
+		line = new TextBoxFormField("Ramo");
+		line.setEditable(false);
+		line.setFieldWidth("175px");
+		subLine = new TextBoxFormField("Modalidade");
+		subLine.setEditable(false);
+		subLine.setFieldWidth("175px");
 		startDate = new DatePickerFormField("Data de Início");
 		endDate = new DatePickerFormField("Data de Fim");
 		fractioning = new ExpandableListBoxFormField(ModuleConstants.TypifiedListIds.FRACTIONING, "Fraccionamento");
 		premium = new TextBoxFormField("Prémio Comercial");
 		premium.setFieldWidth("175px");
-		caseStudy = new CheckBoxFormField("Case Study");
-
-		//CO-INSURANCE
-		coInsurance = new CheckBoxFormField("Co-Seguro");
-		coInsurers = new CoInsurerSelection();
-
+		
 		notes = new TextAreaFormField();
 		notes.setSize("100%", "200px");
 		policyStatus = new TextBoxFormField("Estado");
+		policyStatus.setFieldWidth("175px");
 		policyStatus.setFieldWidth("100%");
 		policyStatus.setEditable(false);
-		table = new PolicyFormTable();
+		table = new SubPolicyFormTable();
 		table.setSize("100%", "100%");
 
 		exercises = new ExpandableListBoxFormField("Exercício");
@@ -226,24 +224,11 @@ public abstract class InsurancePolicyForm extends FormView<InsurancePolicy> {
 		exercises.setEditable(false);
 		insuredObjects.setEditable(false);
 
-		maturityMonth.addItem("Janeiro", "1");
-		maturityMonth.addItem("Fevereiro", "2");
-		maturityMonth.addItem("Março", "3");
-		maturityMonth.addItem("Abril", "4");
-		maturityMonth.addItem("Maio", "5");
-		maturityMonth.addItem("Junho", "6");
-		maturityMonth.addItem("Julho", "7");
-		maturityMonth.addItem("Agosto", "8");
-		maturityMonth.addItem("Setembro", "9");
-		maturityMonth.addItem("Outubro", "10");
-		maturityMonth.addItem("Novembro", "11");
-		maturityMonth.addItem("Dezembro", "12");
-
-		for(int i = 1; i <= 31; i++){
-			maturityDay.addItem(i+"", i+"");
-		}
-
+		selectClientButton = new Button("Escolher Cliente Aderente");
+		selectClientButton.setWidth("191px");
+		
 		addFormField(client, false);
+		addWidget(selectClientButton);
 
 		addFormField(number, true);
 		addFormField(insuranceAgency, false);
@@ -252,75 +237,23 @@ public abstract class InsurancePolicyForm extends FormView<InsurancePolicy> {
 				number,
 				insuranceAgency,
 				policyStatus,
-				premium
+				manager
 		}, true);
 
-		FormField<?>[] group1 = new FormField<?>[]{
-				manager,
+		addFormFieldGroup(new FormField<?>[]{
 				mediator,
 				fractioning,
-				duration
-		};
-		addFormFieldGroup(group1, true);
-
-		FormField<?>[] group2 = new FormField<?>[]{
 				startDate,
-				endDate,
-				maturityDay,
-				maturityMonth
-		};
-		addFormFieldGroup(group2, true);
+				endDate
+		}, true);
 
-		FormField<?>[] group3 = new FormField<?>[]{
-				caseStudy,
+		addFormFieldGroup(new FormField<?>[]{
+				premium,
 				category,
 				line,
 				subLine
-		};
-		addFormFieldGroup(group3, true);
+		}, true);
 
-		//CO-INSURANCE
-
-		FormField<?>[] group4 = new FormField<?>[]{
-				coInsurance
-		};
-
-		addFormFieldGroup(group4, true);
-
-		coInsurance.addValueChangeHandler(new ValueChangeHandler<Boolean>() {
-
-			@Override
-			public void onValueChange(ValueChangeEvent<Boolean> event) {
-
-				if(event.getValue()){
-					coInsurers.setMainCoInsuranceAgency(insuranceAgency.getValue());
-					coInsurers.setVisible(true);
-					coInsurers.setHeight("200px");
-					coInsurersSection.setVisible(true);
-				}
-				else{
-					coInsurersSection.setVisible(false);
-					coInsurers.setVisible(false);
-				}
-
-			}
-		});
-
-
-		insuranceAgency.addValueChangeHandler(new ValueChangeHandler<String>() {
-
-			@Override
-			public void onValueChange(ValueChangeEvent<String> event) {
-
-				coInsurers.setMainCoInsuranceAgency(event.getValue());
-
-			}
-		});
-
-		this.coInsurersSection = new FormViewSection("Co-Seguro");
-		this.coInsurersSection.addFormField(this.coInsurers);
-		addSection(this.coInsurersSection);
-		
 		this.headerFieldsSection = new FormViewSection("Informação Específica da Modalidade");
 		addSection(headerFieldsSection);
 
@@ -336,45 +269,11 @@ public abstract class InsurancePolicyForm extends FormView<InsurancePolicy> {
 		addSection("Notas");
 		addFormField(notes);
 
-		category.addValueChangeHandler(new ValueChangeHandler<String>() {
-
-			@Override
-			public void onValueChange(ValueChangeEvent<String> event) {
-				if(event.getValue() == null || event.getValue().isEmpty()){
-					line.clearValues();
-				}else{
-					line.setListId(BigBangConstants.EntityIds.LINE+"/"+event.getValue(), null);
-				}
-			}
-		});
-		line.addValueChangeHandler(new ValueChangeHandler<String>() {
-
-			@Override
-			public void onValueChange(ValueChangeEvent<String> event) {
-				if(event.getValue() == null || event.getValue().isEmpty()){
-					subLine.clearValues();
-				}else{
-					subLine.setListId(BigBangConstants.EntityIds.SUB_LINE+"/"+event.getValue(), null);
-				}
-			}
-		});
-		subLine.addValueChangeHandler(new ValueChangeHandler<String>() {
-
-			@Override
-			public void onValueChange(ValueChangeEvent<String> event) {
-				String value = event.getValue();
-				onSubLineChanged(value);
-			}
-		});
-
-		this.manager.lock(true);
 		this.client.setEditable(false);
 
 		clearValue();
 		setValue(this.value);
 	}
-
-	public abstract void onSubLineChanged(String subLineId);
 
 	public void setForEdit(){
 		this.manager.setEditable(false);
@@ -391,41 +290,17 @@ public abstract class InsurancePolicyForm extends FormView<InsurancePolicy> {
 	}
 
 	@Override
-	public InsurancePolicy getInfo() {
-		InsurancePolicy result = this.value;
+	public SubPolicy getInfo() {
+		SubPolicy result = this.value;
 
+		result.clientId = "8b75501d-4c15-476b-8f80-9fd9017c7eff"; //TODO IMPORTANT FJVC 
 		result.managerId = manager.getValue();
 		result.number = number.getValue();
-		result.insuranceAgencyId = insuranceAgency.getValue();
-		result.categoryId = category.getValue();
-		result.lineId = line.getValue();
-		result.subLineId = subLine.getValue();
-		result.mediatorId = mediator.getValue();
-		try{
-			result.maturityDay = Integer.parseInt(maturityDay.getValue());
-		}catch(Exception e) {
-			result.maturityDay = -1;
-		}
-		try{
-			result.maturityMonth = Integer.parseInt(maturityMonth.getValue());
-		}catch(Exception e) {
-			result.maturityMonth = -1;
-		}
 		result.startDate = startDate.getValue() == null ? null : DateTimeFormat.getFormat("yyyy-MM-dd").format(startDate.getValue());
-		result.durationId = duration.getValue();
 		result.fractioningId = fractioning.getValue();
-		result.premium = premium.getValue();
-		result.caseStudy = caseStudy.getValue();
 		result.notes = notes.getValue();
-
-		if(coInsurance.getValue()){
-			result.coInsurers = coInsurers.getValue();
-		}
-		else{
-			result.coInsurers = null;
-		}
-		coInsurers.clear();
-		
+		result.premium = premium.getValue();
+		result.expirationDate = endDate.getStringValue();
 		
 		result.headerFields = getHeaderFieldsInfo();
 		result.tableData = new TableSection[]{this.table.getData()};
@@ -499,52 +374,25 @@ public abstract class InsurancePolicyForm extends FormView<InsurancePolicy> {
 	}
 
 	@Override
-	public void setInfo(final InsurancePolicy info) {
+	public void setInfo(final SubPolicy info) {
 		if(info == null) {
 			clearInfo();
 		}else{
-			this.manager.setValue(info.managerId);
+			this.manager.setValue(info.managerName);
 			this.number.setValue(info.number);
-			this.insuranceAgency.setValue(info.insuranceAgencyId);
-			this.category.setValue(info.categoryId, false);
+			this.insuranceAgency.setValue(info.inheritCompanyName);
+			this.category.setValue(info.inheritCategoryName);
+			this.line.setValue(info.inheritLineName);
+			this.subLine.setValue(info.inheritSubLineName);
 
-			String categoryId = info.categoryId == null ? "" : info.categoryId;
-			this.line.setListId(BigBangConstants.EntityIds.LINE+"/"+categoryId, new ResponseHandler<Void>() {
-
-				@Override
-				public void onResponse(Void response) {
-					String lineId = info.lineId == null ? "" : info.lineId;
-					line.setValue(lineId, false);
-					subLine.setListId(BigBangConstants.EntityIds.SUB_LINE+"/"+lineId, new ResponseHandler<Void>() {
-
-						@Override
-						public void onResponse(Void response) {
-							String subLineId = info.subLineId == null ? "" : info.subLineId;
-							subLine.setValue(subLineId, false);
-						}
-
-						@Override
-						public void onError(Collection<ResponseError> errors) {}
-					});
-				}
-
-				@Override
-				public void onError(Collection<ResponseError> errors) {}
-
-			});
-
-			this.mediator.setValue(info.mediatorId);
-			this.maturityDay.setValue(info.maturityDay+"");
-			this.maturityMonth.setValue(info.maturityMonth+"");
-			this.duration.setValue(info.durationId);
+			this.mediator.setValue(info.inheritMediatorName);
 			this.fractioning.setValue(info.fractioningId);
-			this.premium.setValue(info.premium);
 
-			if(((InsurancePolicyBroker)DataBrokerManager.staticGetBroker(BigBangConstants.EntityIds.INSURANCE_POLICY)).isTemp(info.id)){
-				PolicyTypifiedListBroker policyListBroker = PolicyTypifiedListBroker.Util.getInstance();
-				InsurancePolicyBroker policyBroker = (InsurancePolicyBroker) DataBrokerManager.staticGetBroker(BigBangConstants.EntityIds.INSURANCE_POLICY);
-				this.exercises.setTypifiedDataBroker((TypifiedListBroker) policyListBroker);
-				this.exercises.setListId(BigBangConstants.EntityIds.INSURANCE_POLICY_EXERCISES+"/"+policyBroker.getEffectiveId(info.id), new ResponseHandler<Void>() {
+			if(((InsuranceSubPolicyBroker)DataBrokerManager.staticGetBroker(BigBangConstants.EntityIds.INSURANCE_SUB_POLICY)).isTemp(info.id)){
+				SubPolicyTypifiedListBroker subPolicyListBroker = SubPolicyTypifiedListBroker.Util.getInstance();
+				InsuranceSubPolicyBroker subPolicyBroker = (InsuranceSubPolicyBroker) DataBrokerManager.staticGetBroker(BigBangConstants.EntityIds.INSURANCE_SUB_POLICY);
+				this.exercises.setTypifiedDataBroker((TypifiedListBroker) subPolicyListBroker);
+				this.exercises.setListId(BigBangConstants.EntityIds.INSURANCE_POLICY_EXERCISES+"/"+subPolicyBroker.getEffectiveId(info.id), new ResponseHandler<Void>() {
 
 					@Override
 					public void onResponse(Void response) {
@@ -556,8 +404,8 @@ public abstract class InsurancePolicyForm extends FormView<InsurancePolicy> {
 						return;
 					}
 				});
-				this.insuredObjects.setTypifiedDataBroker((TypifiedListBroker) policyListBroker);
-				this.insuredObjects.setListId(BigBangConstants.EntityIds.INSURANCE_POLICY_INSURED_OBJECTS+"/"+policyBroker.getEffectiveId(info.id), new ResponseHandler<Void>() {
+				this.insuredObjects.setTypifiedDataBroker((TypifiedListBroker) subPolicyListBroker);
+				this.insuredObjects.setListId(BigBangConstants.EntityIds.INSURANCE_POLICY_INSURED_OBJECTS+"/"+subPolicyBroker.getEffectiveId(info.id), new ResponseHandler<Void>() {
 
 					@Override
 					public void onResponse(Void response) {
@@ -604,7 +452,7 @@ public abstract class InsurancePolicyForm extends FormView<InsurancePolicy> {
 
 					@Override
 					public void onResponse(Client response) {
-						InsurancePolicyForm.this.client.setValue(response.name + " (" + response.clientNumber + ")");
+						SubPolicyForm.this.client.setValue(response.name + " (" + response.clientNumber + ")");
 					}
 
 					@Override
@@ -614,7 +462,6 @@ public abstract class InsurancePolicyForm extends FormView<InsurancePolicy> {
 
 
 			this.policyStatus.setValue(info.statusText);
-			this.caseStudy.setValue(info.caseStudy);
 			this.notes.setValue(info.notes);
 
 			if(info.startDate != null)
@@ -630,23 +477,11 @@ public abstract class InsurancePolicyForm extends FormView<InsurancePolicy> {
 				this.table.clear();
 			}
 
-			coInsurers.clear();
-			if(info.coInsurers != null){
-				this.coInsurance.setValue(true);
-				this.coInsurers.setMainCoInsuranceAgency(info.insuranceAgencyId);
-				this.coInsurers.setValue(info.coInsurers);
-				this.coInsurers.setEditable(false);
-			}
-			else{
-				this.coInsurance.setValue(false);
-				this.coInsurers.setVisible(false);
-			}
-
 			setExtraFields(info.extraData);
 		}
 	}
 
-	public PolicyFormTable getTable(){
+	public SubPolicyFormTable getTable(){
 		return this.table;
 	}
 
@@ -657,7 +492,7 @@ public abstract class InsurancePolicyForm extends FormView<InsurancePolicy> {
 	@Override
 	protected void clearValue() {
 		super.clearValue();
-		this.value = new InsurancePolicy();
+		this.value = new SubPolicy();
 	}
 
 	@Override

@@ -4,11 +4,11 @@ import java.util.HashMap;
 import java.util.Map;
 
 import bigBang.definitions.shared.BigBangConstants;
-import bigBang.definitions.shared.InsurancePolicy.ColumnHeader;
-import bigBang.definitions.shared.InsurancePolicy.Coverage;
+import bigBang.definitions.shared.SubPolicy.ColumnHeader;
+import bigBang.definitions.shared.SubPolicy.Coverage;
 import bigBang.definitions.shared.InsurancePolicy.FieldType;
-import bigBang.definitions.shared.InsurancePolicy.TableSection;
-import bigBang.definitions.shared.InsurancePolicy.TableSection.TableField;
+import bigBang.definitions.shared.SubPolicy.TableSection;
+import bigBang.definitions.shared.SubPolicy.TableSection.TableField;
 import bigBang.library.client.FieldValidator;
 import bigBang.library.client.FormField;
 import bigBang.library.client.userInterface.DatePickerFormField;
@@ -25,7 +25,7 @@ import com.google.gwt.user.client.ui.HasValue;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
-public class PolicyFormTable extends View implements HasValue<TableSection> {
+public class SubPolicyFormTable extends View implements HasValue<TableSection> {
 
 	protected class Field extends FormField<String> {
 		public String id;
@@ -157,11 +157,11 @@ public class PolicyFormTable extends View implements HasValue<TableSection> {
 
 	protected Grid grid;
 
-	public PolicyFormTable(){
+	public SubPolicyFormTable(){
 		this(true);
 	}
 
-	public PolicyFormTable(boolean forNewPolicy){
+	public SubPolicyFormTable(boolean forNewPolicy){
 		this.forNewPolicy = forNewPolicy;
 
 		columnDefinitions = new ColumnHeader[0];

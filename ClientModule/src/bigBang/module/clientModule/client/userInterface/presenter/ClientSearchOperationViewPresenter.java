@@ -346,6 +346,7 @@ public class ClientSearchOperationViewPresenter implements ViewPresenter {
 	}
 	
 	private void setupNewClient(){
+		clearNewClient();
 		boolean hasPermission = true; //TODO check permission
 		if(hasPermission){
 			Client client = new Client();

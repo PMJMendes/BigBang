@@ -111,8 +111,10 @@ public class DocumentsList extends FilterableList<Document> implements Documents
 	@Override
 	public void setDocuments(String ownerId, List<Document> documents) {
 		this.clear();
-		for(Document c : documents) {
-			addEntry(c);
+		if(documents != null){
+			for(Document c : documents) {
+				addEntry(c);
+			}
 		}
 	}
 
