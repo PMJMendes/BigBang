@@ -4,34 +4,42 @@ import bigBang.definitions.shared.Coverage;
 import bigBang.definitions.shared.Line;
 import bigBang.definitions.shared.SubLine;
 import bigBang.definitions.shared.Tax;
-import bigBang.library.client.Selectable;
 import bigBang.library.client.ValueSelectable;
 import bigBang.library.client.event.ActionInvokedEvent;
 import bigBang.library.client.event.ActionInvokedEventHandler;
-import bigBang.library.client.event.SelectionChangedEvent;
-import bigBang.library.client.event.SelectionChangedEventHandler;
 import bigBang.library.client.resources.Resources;
+import bigBang.library.client.userInterface.BigBangOperationsToolBar;
 import bigBang.library.client.userInterface.FilterableList;
 import bigBang.library.client.userInterface.ListEntry;
-import bigBang.library.client.userInterface.ListHeader;
 import bigBang.library.client.userInterface.NavigationListEntry;
 import bigBang.library.client.userInterface.NavigationPanel;
+import bigBang.library.client.userInterface.BigBangOperationsToolBar.SUB_MENU;
 import bigBang.library.client.userInterface.view.PopupPanel;
 import bigBang.library.client.userInterface.view.View;
 import bigBang.module.generalSystemModule.client.userInterface.TaxList;
+import bigBang.module.generalSystemModule.client.userInterface.TaxList.Entry;
 import bigBang.module.generalSystemModule.client.userInterface.presenter.TaxManagementOperationViewPresenter;
 import bigBang.module.generalSystemModule.client.userInterface.presenter.TaxManagementOperationViewPresenter.Action;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.dom.client.DoubleClickEvent;
+import com.google.gwt.event.dom.client.DoubleClickHandler;
 import com.google.gwt.event.dom.client.HasClickHandlers;
+import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.ui.HasValue;
 import com.google.gwt.user.client.ui.Image;
+import com.google.gwt.user.client.ui.MenuItem;
 import com.google.gwt.user.client.ui.SplitLayoutPanel;
+import com.google.gwt.user.client.ui.VerticalPanel;
+import com.google.gwt.user.client.ui.Widget;
 
 public class TaxManagementOperationView extends View implements TaxManagementOperationViewPresenter.Display {
 
+
 	private static final int LIST_WIDTH = 400; //PX
-	
+
 	@Override
 	public FilterableList<Line> getLineList() {
 		return lineList;
@@ -57,6 +65,7 @@ public class TaxManagementOperationView extends View implements TaxManagementOpe
 		return taxList;
 	}
 
+
 	@Override
 	public TaxForm getForm() {
 		return form;
@@ -65,72 +74,119 @@ public class TaxManagementOperationView extends View implements TaxManagementOpe
 	private FilterableList<Line> lineList;
 	private FilterableList<SubLine> subLineList;
 	private FilterableList<Coverage> coverageList;
-	
+
 	private boolean readOnly = false;
-	
+
 	private NavigationPanel navPanel;
 	private PopupPanel popup;
-	
+
 	private TaxList taxList;
 	private TaxForm form;
 
 	private ActionInvokedEventHandler<Action> handler;
-	
+	private BigBangOperationsToolBar toolbar;
+	private MenuItem delete;
+	private VerticalPanel popupWrapper;
+
+	private String clickedTax;
+	private ClickHandler editHandler;
+	private DoubleClickHandler doubleClickHandler;
+
 	public TaxManagementOperationView(){
 		SplitLayoutPanel wrapper = new SplitLayoutPanel();
 		initWidget(wrapper);
 		wrapper.setSize("100%", "100%");
-		
-		navPanel = new NavigationPanel();
+
+		navPanel = new NavigationPanel(){
+
+			@Override
+			public boolean navigateBack() {
+				taxList.clear();
+				return super.navigateBack();
+			}
+
+
+		};
+
+
+		this.form = new TaxForm();
+		this.popup = new PopupPanel();
+		popup.setSize("410px", "290px");
+		form.setSize("410px", "290px");
+		Widget formContent = form.getNonScrollableContent();
+		formContent.setSize("410px", "290px");
+
+		toolbar = new BigBangOperationsToolBar(){
+
+			@Override
+			public void onEditRequest() {
+				fireAction(Action.EDIT_TAX);
+
+			}
+
+			@Override
+			public void onSaveRequest() {
+				fireAction(Action.SAVE_TAX);
+
+			}
+
+			@Override
+			public void onCancelRequest() {
+				fireAction(Action.CANCEL_EDIT_TAX);
+
+			}
+
+		};
+
+		toolbar.hideAll();
+		delete = new MenuItem("Eliminar", new Command() {
+
+			@Override
+			public void execute() {
+				fireAction(Action.DELETE_TAX);
+
+			}
+		});
+
+		toolbar.addItem(SUB_MENU.ADMIN, delete);
+		toolbar.showItem(SUB_MENU.EDIT, true);
+		toolbar.showItem(SUB_MENU.ADMIN, true);
+
+		popupWrapper = new VerticalPanel();
+		popupWrapper.add(toolbar);
+		popupWrapper.add(formContent);
+
+		popup.add(popupWrapper);
+		popup.setHeight("410px");
+		popup.setWidth("290px");
+
+
+
 		navPanel.setSize("100%", "100%");
-		
+
 		lineList = new FilterableList<Line>() {
 			protected void onAttach() {
 				fireAction(Action.LINE_LIST_ATTACH);
+				super.onAttach();
 			};
 		};
 		lineList.setSize("100%", "100%");
 		lineList.showFilterField(false);
-		
+
 		subLineList = new FilterableList<SubLine>() {
 			protected void onAttach() {
-				ListHeader header = new ListHeader();
-				header.setText("Modalidades");
-				header.setHeight("25px");
-				setHeaderWidget(header);
-				clearSelection();
+				fireAction(Action.SUB_LINE_LIST_ATTACH);
 				super.onAttach();
 			};
 		};
 		subLineList.setSize("100%", "100%");
 		subLineList.showFilterField(false);
-		
-		subLineList.addSelectionChangedEventHandler(new SelectionChangedEventHandler() {
-			
-			@Override
-			public void onSelectionChanged(SelectionChangedEvent event) {
-				fireAction(Action.SELECTED_SUBLINE);
-				for(Selectable s : event.getSelected()) {
-					@SuppressWarnings("unchecked")
-					SubLine subLine = ((ValueSelectable<SubLine>) s).getValue();
-					setCoverages(subLine.coverages);
-					navPanel.navigateTo(coverageList);
-				}
-			}
-		});
-		
 		coverageList = new FilterableList<Coverage>() {
 			protected void onAttach() {
-				ListHeader header = new ListHeader();
-				header.setText("Coberturas");
-				header.setHeight("25px");
-				setHeaderWidget(header);
-				clearSelection();
-				if(!readOnly)
-					taxList.getNewButton().setEnabled(true);
+				fireAction(Action.COVERAGE_LIST_ATTACH);
 				super.onAttach();
 			};
-			
+
 			protected void onUnload() {
 				taxList.getNewButton().setEnabled(false);
 				super.onUnload();
@@ -138,48 +194,40 @@ public class TaxManagementOperationView extends View implements TaxManagementOpe
 		};
 		coverageList.showFilterField(false);
 		coverageList.setSize("100%", "100%");
-		
-		lineList.addSelectionChangedEventHandler(new SelectionChangedEventHandler() {
-			
-			@Override
-			public void onSelectionChanged(SelectionChangedEvent event) {
-				fireAction(Action.SELECTED_LINE);
-				for(Selectable s : event.getSelected()) {
-					@SuppressWarnings("unchecked")
-					Line line = ((ValueSelectable<Line>) s).getValue();
-					setSubLines(line.subLines);
-					navPanel.navigateTo(subLineList);
-				}
-			}
-		});
-		
-		coverageList.addSelectionChangedEventHandler(new SelectionChangedEventHandler() {
-			
-			@Override
-			public void onSelectionChanged(SelectionChangedEvent event) {
-				for(Selectable s : event.getSelected()) {
-					fireAction(Action.SELECTED_COVERAGE);
-					@SuppressWarnings("unchecked")
-					Coverage coverage = ((ValueSelectable<Coverage>) s).getValue();
-					setTaxes(coverage.taxes);
-				}
-			}
-		});
-		
+
 		navPanel.setHomeWidget(lineList);
 		wrapper.addWest(navPanel, LIST_WIDTH);
-		
+
 		form = new TaxForm();
 		taxList = new TaxList();
 		taxList.getNewButton().setEnabled(false);
 
-		popup = new PopupPanel("Imposto/Coeficiente");
-		popup.add(form.getNonScrollableContent());
-		popup.setWidth("650px");
-		
 		wrapper.add(taxList);
+
+
+		editHandler = new ClickHandler() {
+
+			@Override
+			public void onClick(ClickEvent event) {
+				for(ListEntry<Tax> e: taxList.getEntries()){
+					if(event.getSource() == ((Entry)e).getLeftWidget()){
+						clickedTax = ((Entry)e).getValue().id;
+					}
+				}
+				fireAction(Action.DOUBLE_CLICK_TAX);
+			}
+		};
+		doubleClickHandler = new DoubleClickHandler() {
+
+			@Override
+			public void onDoubleClick(DoubleClickEvent event) {
+				clickedTax = ((Entry)taxList.getSelected().toArray()[0]).getValue().id;
+				fireAction(Action.DOUBLE_CLICK_TAX);
+			}
+		};
+
 	}
-	
+
 	@Override
 	protected void initializeView() {
 		return;
@@ -188,6 +236,7 @@ public class TaxManagementOperationView extends View implements TaxManagementOpe
 	@Override
 	public void setReadOnly(boolean readOnly) {
 		this.readOnly = readOnly;
+
 	}
 
 
@@ -195,38 +244,38 @@ public class TaxManagementOperationView extends View implements TaxManagementOpe
 	public void setLines(Line[] lines) {
 		this.navPanel.navigateToFirst();
 		this.lineList.clear();
-		
+
 		for(int i = 0; i < lines.length; i++){
 			Line line = lines[i];
 			ListEntry<Line> lineEntry = (line.subLines == null || line.subLines.length == 0)
-										? new ListEntry<Line>(line) : new NavigationListEntry<Line>(line);
-			lineEntry.setTitle(line.name);
-			this.lineList.add(lineEntry);
-			if(line.subLines == null || line.subLines.length == 0){
-				lineEntry.setSelectable(false);
-				//lineEntry.setRightWidget(new Label("sem modalidades"));
-			}
+					? new ListEntry<Line>(line) : new NavigationListEntry<Line>(line);
+					lineEntry.setTitle(line.name);
+					this.lineList.add(lineEntry);
+					if(line.subLines == null || line.subLines.length == 0){
+						lineEntry.setSelectable(false);
+						//lineEntry.setRightWidget(new Label("sem modalidades"));
+					}
 		}
 	}
-	
-	private void setSubLines(SubLine[] subLines) {
+
+	public void setSubLines(SubLine[] subLines) {
 		this.subLineList.clear();
-		
+
 		for(int j = 0; j < subLines.length; j++) {
 			SubLine subLine = subLines[j];
 			ListEntry<SubLine> subLineEntry = (subLine.coverages == null || subLine.coverages.length == 0)
-			? new ListEntry<SubLine>(subLine) : new NavigationListEntry<SubLine>(subLine);
-			subLineEntry.setTitle(subLine.name);
-			this.subLineList.add(subLineEntry);
-			if(subLine.coverages == null || subLine.coverages.length == 0){
-				subLineEntry.setSelectable(false);
-			}
+					? new ListEntry<SubLine>(subLine) : new NavigationListEntry<SubLine>(subLine);
+					subLineEntry.setTitle(subLine.name);
+					this.subLineList.add(subLineEntry);
+					if(subLine.coverages == null || subLine.coverages.length == 0){
+						subLineEntry.setSelectable(false);
+					}
 		}
 	}
-	
-	private void setCoverages(Coverage[] coverages) {
+
+	public void setCoverages(Coverage[] coverages) {
 		this.coverageList.clear();
-		
+
 		for(int k = 0; k < coverages.length; k++) {
 			Coverage coverage = coverages[k];
 			ListEntry<Coverage> coverageEntry = new ListEntry<Coverage>(coverage);
@@ -234,23 +283,13 @@ public class TaxManagementOperationView extends View implements TaxManagementOpe
 			this.coverageList.add(coverageEntry);
 		}
 	}
-	
-	private void setTaxes(Tax[] taxes) {
+
+	@Override
+	public void setTaxes(Tax[] taxes) {
 		this.taxList.clear();
 		for(int k = 0; k < taxes.length; k++) {
 			Tax tax = taxes[k];
 			addTaxToList(tax, false);
-		}
-	}
-
-	@Override
-	public void showForm(boolean show) {
-		if(!show){
-			this.popup.hidePopup();
-			this.form.clearInfo();
-		}else{
-			this.form.clearInfo();
-			this.popup.center();
 		}
 	}
 
@@ -270,11 +309,11 @@ public class TaxManagementOperationView extends View implements TaxManagementOpe
 		Coverage c = getCurrentCoverage();
 		return c == null ? null : c.id; 
 	}
-	
+
 	private Coverage getCurrentCoverage(){
 		for(ValueSelectable<Coverage> c : this.coverageList.getSelected())
 			return c.getValue();
-		return null; 
+				return null; 
 	}
 
 
@@ -297,23 +336,31 @@ public class TaxManagementOperationView extends View implements TaxManagementOpe
 	public void addTaxToList(Tax tax){
 		addTaxToList(tax, true);
 	}
-	
+
+
 
 	public void addTaxToList(Tax tax, boolean insertInArray) {
+
 		ListEntry<Tax> taxEntry = new ListEntry<Tax>(tax){
+			protected Image editImage;
+
 			public <I extends Object> void setInfo(I info) {
 				Tax tax = (Tax) info;
 				setTitle(tax.name);
 			};
-			
+
 			@Override
 			public void setSelected(boolean selected, boolean fireEvents) {
+				if(editImage == null){
+					editImage = new Image();
+				}
 				super.setSelected(selected, fireEvents);
 				Resources r = GWT.create(Resources.class);
-				setLeftWidget(new Image(selected ? r.listEditIconSmallWhite() : r.listEditIconSmallBlack()));
+				editImage.setResource(selected ? r.listEditIconSmallWhite() : r.listEditIconSmallBlack());
+				setLeftWidget(editImage);
 			}
 		};
-		
+
 		taxEntry.setTitle(tax.name);
 		this.taxList.add(taxEntry);
 		if(insertInArray){
@@ -349,18 +396,48 @@ public class TaxManagementOperationView extends View implements TaxManagementOpe
 		this.taxList.clear();
 		this.taxList.clearFilters();
 	}
-	
+
 	@Override
 	public void registerActionHandler(
 			ActionInvokedEventHandler<Action> handler) {
 		this.handler = handler;
 		taxList.registerActionHandler(handler);
 	}
-	
+
 	protected void fireAction(Action action){
 		if(this.handler != null) {
 			handler.onActionInvoked(new ActionInvokedEvent<Action>(action));
 		}
 	}
-	
+
+	@Override
+	public boolean isReadOnly() {
+		return readOnly;
+	}
+
+
+
+
+	@Override
+	public void showForm(boolean b) {
+		if(!b){
+			popup.hidePopup();
+			return;
+		}
+		form.clearInfo();
+		popup.center();
+
+	}
+
+	@Override
+	public String getClickedTax() {
+		return clickedTax;
+	}
+
+	@Override
+	public BigBangOperationsToolBar getToolBar() {
+		return toolbar;
+	}
+
+
 }

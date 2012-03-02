@@ -1,90 +1,167 @@
 package bigBang.module.generalSystemModule.client.userInterface.view;
 
+import bigBang.definitions.shared.BigBangConstants;
 import bigBang.definitions.shared.Tax;
 import bigBang.library.client.FormField;
 import bigBang.library.client.userInterface.CheckBoxFormField;
+import bigBang.library.client.userInterface.DatePickerFormField;
 import bigBang.library.client.userInterface.ExpandableListBoxFormField;
+import bigBang.library.client.userInterface.RadioButtonFormField;
 import bigBang.library.client.userInterface.TextBoxFormField;
 import bigBang.library.client.userInterface.view.FormView;
-import bigBang.module.generalSystemModule.client.userInterface.LineList;
 import bigBang.module.generalSystemModule.shared.ModuleConstants;
 import bigBang.module.generalSystemModule.shared.formValidator.TaxFormValidator;
 
+import com.google.gwt.event.logical.shared.ValueChangeEvent;
+import com.google.gwt.event.logical.shared.ValueChangeHandler;
+
 public class TaxForm extends FormView<Tax> {
-	
+
 	private ExpandableListBoxFormField type;
-	private TextBoxFormField name, unitsLabel, defaultValue, columnOrder;
+	private TextBoxFormField name, unitsLabel, columnOrder;
+	private FormField<?> defaultValue;
 	private CheckBoxFormField variesByObject, variesByExercise, mandatory;
 	private ExpandableListBoxFormField refersToEntityId;
-	
+
 	private Tax tax;
-	
+
 	public TaxForm() {
+		this.setSize("410px", "290px");
 		name = new TextBoxFormField("Designação", new TaxFormValidator.NameValidator());
-		name.setFieldWidth("300px");
+		name.setFieldWidth("360px");
 		unitsLabel = new TextBoxFormField("Unidade");
 		unitsLabel.setFieldWidth("150px");
 		type = new ExpandableListBoxFormField(ModuleConstants.ListIDs.FieldTypes, "Tipo", new TaxFormValidator.UnitValidator());
-		refersToEntityId = new ExpandableListBoxFormField(ModuleConstants.ListIDs.FieldValues, "Refere-se a"); //TODO PROLLY WRONG LIST
+		refersToEntityId = new ExpandableListBoxFormField(ModuleConstants.ListIDs.ObjectIds, "Refere-se a");
 		variesByObject = new CheckBoxFormField("Varia por unidade de risco");
 		variesByExercise = new CheckBoxFormField("Varia por exercício");
 		mandatory = new CheckBoxFormField("Obrigatório");
-		defaultValue = new TextBoxFormField("Valor por defeito");
-		defaultValue.setFieldWidth("300px");
 		columnOrder = new TextBoxFormField("Índice da coluna");
 		columnOrder.setFieldWidth("100px");
-		
-		addSection("Detalhes do imposto/coeficiente");
+		defaultValue = new RadioButtonFormField("Valor por defeito");
+
+		addSection("Detalhes do campo");
 		addFormFieldGroup(new FormField<?>[]{
 				name,
 				unitsLabel,
-		}, true);
-		addFormFieldGroup(new FormField<?>[]{
-				variesByExercise,
-				variesByObject,
-				mandatory
-		}, true);
-		addFormFieldGroup(new FormField<?>[]{
-				variesByExercise,
-				variesByObject,
-				mandatory
-		}, true);
+		}, false);
+		
+		addFormFieldGroup(new FormField<?>[]{variesByExercise}, true);
+		addFormFieldGroup(new FormField<?>[]{variesByObject}, true);
+		addFormField(mandatory, false);
+		
 		addFormFieldGroup(new FormField<?>[]{
 				type,
 				refersToEntityId
 		}, true);
-	
-		addFormFieldGroup(new FormField<?>[]{
-				defaultValue,
-				columnOrder
-		}, true);
 		
+		addFormField(columnOrder, false);
+		addFormField(defaultValue, false);
+		
+		type.addValueChangeHandler(new ValueChangeHandler<String>() {
+			
+			@Override
+			public void onValueChange(ValueChangeEvent<String> event) {
+				refersToEntityId.setEditable(false);
+				if(event.getValue() == null){
+					defaultValue = new RadioButtonFormField("Valor por defeito");
+					return;
+				}
+
+					defaultValue.removeFromParent();
+				
+				if(event.getValue().equalsIgnoreCase(ModuleConstants.PolicyFieldTypes.DateType)){
+					defaultValue = new DatePickerFormField("Valor por defeito");	
+				}
+				else if(event.getValue().equalsIgnoreCase(ModuleConstants.PolicyFieldTypes.BooleanType)){
+					defaultValue = new RadioButtonFormField("Valor por defeito");
+					((RadioButtonFormField)defaultValue).addOption("1", "Sim");
+					((RadioButtonFormField)defaultValue).addOption("0", "Não");
+					((RadioButtonFormField)defaultValue).addOption("", "Não definido");
+					
+				}else if(event.getValue().equalsIgnoreCase(ModuleConstants.PolicyFieldTypes.ListType)){
+					defaultValue = new ExpandableListBoxFormField(ModuleConstants.ListIDs.FieldValues+"/"+BigBangConstants.EntityIds.TAX, "Valor por defeito");
+				}else if(event.getValue().equalsIgnoreCase(ModuleConstants.PolicyFieldTypes.NumericType)){
+					defaultValue = new TextBoxFormField("Valor por defeito");
+					defaultValue.setFieldWidth("150px");
+				}else if(event.getValue().equalsIgnoreCase(ModuleConstants.PolicyFieldTypes.ReferenceType)){
+					defaultValue = new ExpandableListBoxFormField(refersToEntityId.getValue(), "Valor por defeito");
+					refersToEntityId.setEditable(true);
+				}else {
+					//TEXT TYPE
+					defaultValue = new TextBoxFormField("Valor por defeito");
+				}
+				
+				TaxForm.this.addFormField(defaultValue, false);
+
+
+			}
+		}); 
 	}
 
 	@Override
 	public Tax getInfo() {
 		//TODO: O tipo do campo defaultValue mudou para String, para também poder aceitar GUIDs e texto. JMMM.
-//		tax.name = name.getValue();
-//		tax.defaultValue = /*0*/null;
-//		try{
-//			tax.defaultValue = /*Double.parseDouble(*/value.getValue()/*)*/;
-//		}catch(NumberFormatException e){
-//			tax.defaultValue = /*0*/null;
-//		}
-//		tax.fieldTypeId = type.getValue();
-//		return tax;
+		//		tax.name = name.getValue();
+		//		tax.defaultValue = /*0*/null;
+		//		try{
+		//			tax.defaultValue = /*Double.parseDouble(*/value.getValue()/*)*/;
+		//		}catch(NumberFormatException e){
+		//			tax.defaultValue = /*0*/null;
+		//		}
+		//		tax.fieldTypeId = type.getValue();
+		//		return tax;
 		return null;
 	}
 
 	@Override
 	public void setInfo(Tax info) {
-//		if(info == null)
-//			clearInfo();
-//		else
-//			tax = (Tax) info;
-//		this.name.setValue(tax.name);
-//		this.value.setValue(tax.defaultValue + "");
-//		this.type.setValue(tax.fieldTypeId);
+		
+		tax = info;
+		name.setValue(info.name);
+		type.setValue(info.fieldTypeId);
+		variesByExercise.setValue(info.variesByExercise);
+		variesByObject.setValue(info.variesByObject);
+		mandatory.setValue(info.mandatory);
+		refersToEntityId.setValue(info.refersToEntityId);
+		unitsLabel.setValue(info.unitsLabel);
+		columnOrder.setValue(""+info.columnOrder);
+		
+		if(info.fieldTypeId == null){
+			defaultValue = new RadioButtonFormField("Valor por defeito");
+			return;
+		}
+
+			defaultValue.removeFromParent();
+		
+		if(info.fieldTypeId.equalsIgnoreCase(ModuleConstants.PolicyFieldTypes.DateType)){
+			defaultValue = new DatePickerFormField("Valor por defeito");	
+			((DatePickerFormField)defaultValue).setValue(info.defaultValue);
+		}
+		else if(info.fieldTypeId.equalsIgnoreCase(ModuleConstants.PolicyFieldTypes.BooleanType)){
+			defaultValue = new RadioButtonFormField("Valor por defeito");
+			((RadioButtonFormField)defaultValue).addOption("1", "Sim");
+			((RadioButtonFormField)defaultValue).addOption("0", "Não");
+			((RadioButtonFormField)defaultValue).addOption("", "Não definido");
+			((RadioButtonFormField)defaultValue).setValue(info.defaultValue);
+		}else if(info.fieldTypeId.equalsIgnoreCase(ModuleConstants.PolicyFieldTypes.ListType)){
+			defaultValue = new ExpandableListBoxFormField(ModuleConstants.ListIDs.FieldValues+"/"+BigBangConstants.EntityIds.TAX, "Valor por defeito");
+			((ExpandableListBoxFormField)defaultValue).setValue(info.defaultValue);
+		}else if(info.fieldTypeId.equalsIgnoreCase(ModuleConstants.PolicyFieldTypes.NumericType)){
+			defaultValue = new TextBoxFormField("Valor por defeito");
+			defaultValue.setFieldWidth("150px");
+			((TextBoxFormField)defaultValue).setValue(info.defaultValue);
+		}else if(info.fieldTypeId.equalsIgnoreCase(ModuleConstants.PolicyFieldTypes.ReferenceType)){
+			defaultValue = new ExpandableListBoxFormField(refersToEntityId.getValue(), "Valor por defeito");
+			refersToEntityId.setEditable(true);
+			((ExpandableListBoxFormField)defaultValue).setValue(info.defaultValue);
+		}else {
+			//TEXT TYPE
+			defaultValue = new TextBoxFormField("Valor por defeito");
+			((TextBoxFormField)defaultValue).setValue(info.defaultValue);
+		}
+		TaxForm.this.addFormField(defaultValue, false);
+			
 	}
 
 	@Override

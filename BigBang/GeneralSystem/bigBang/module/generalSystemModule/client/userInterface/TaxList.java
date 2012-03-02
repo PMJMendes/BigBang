@@ -2,14 +2,7 @@ package bigBang.module.generalSystemModule.client.userInterface;
 
 import org.gwt.mosaic.ui.client.ToolButton;
 
-import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.user.client.Command;
-import com.google.gwt.user.client.ui.Label;
-import com.google.gwt.user.client.ui.MenuItem;
-import com.google.gwt.user.client.ui.VerticalPanel;
-import com.google.gwt.user.client.ui.Widget;
-
+import bigBang.definitions.client.dataAccess.CoverageBroker;
 import bigBang.definitions.client.dataAccess.CoverageDataBrokerClient;
 import bigBang.definitions.shared.BigBangConstants;
 import bigBang.definitions.shared.Coverage;
@@ -19,18 +12,25 @@ import bigBang.definitions.shared.Tax;
 import bigBang.library.client.dataAccess.DataBrokerManager;
 import bigBang.library.client.event.ActionInvokedEvent;
 import bigBang.library.client.event.ActionInvokedEventHandler;
-import bigBang.library.client.event.SelectionChangedEvent;
-import bigBang.library.client.event.SelectionChangedEventHandler;
 import bigBang.library.client.userInterface.BigBangOperationsToolBar;
+import bigBang.library.client.userInterface.BigBangOperationsToolBar.SUB_MENU;
 import bigBang.library.client.userInterface.FilterableList;
+import bigBang.library.client.userInterface.List;
 import bigBang.library.client.userInterface.ListEntry;
 import bigBang.library.client.userInterface.ListHeader;
-import bigBang.library.client.userInterface.BigBangOperationsToolBar.SUB_MENU;
 import bigBang.library.client.userInterface.view.PopupPanel;
+import bigBang.module.generalSystemModule.client.userInterface.LineList.Entry;
 import bigBang.module.generalSystemModule.client.userInterface.presenter.TaxManagementOperationViewPresenter.Action;
-import bigBang.module.generalSystemModule.client.userInterface.view.SubLineForm;
 import bigBang.module.generalSystemModule.client.userInterface.view.TaxForm;
-import bigBang.definitions.client.dataAccess.CoverageBroker;
+
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.dom.client.DoubleClickHandler;
+import com.google.gwt.user.client.Command;
+import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.MenuItem;
+import com.google.gwt.user.client.ui.VerticalPanel;
+import com.google.gwt.user.client.ui.Widget;
 
 public class TaxList extends FilterableList<Tax> implements CoverageDataBrokerClient {
 
@@ -56,17 +56,14 @@ public class TaxList extends FilterableList<Tax> implements CoverageDataBrokerCl
 	private ToolButton newButton;
 
 	CoverageBroker broker;
-
+	private DoubleClickHandler doubleClickHandler;
 	private String parentLineId;
 	private String parentSubLineId;
 	private String coverageId;
 	private String taxId;
-	private TaxForm form;
-	private BigBangOperationsToolBar toolbar;
-	private PopupPanel popup;
-	private MenuItem delete;
 	
 	private ActionInvokedEventHandler<Action> handler;
+	private boolean readonly;
 
 	public TaxList(){
 		
@@ -74,62 +71,15 @@ public class TaxList extends FilterableList<Tax> implements CoverageDataBrokerCl
 		broker.registerClient(this);
 		ListHeader header  = new ListHeader();
 		this.showFilterField(false);
-		header.setText("Impostos e Coeficientes");
+		header.setText("Campos da cobertura");
 		header.showNewButton("Novo");
 		this.newButton = header.getNewButton();
 		
-		this.form = new TaxForm();
-		this.popup = new PopupPanel("");
-
-		Widget formContent = form.getNonScrollableContent();
-		formContent.setHeight("80px");
-		formContent.setWidth("650px");
-
-		toolbar = new BigBangOperationsToolBar(){
-
-			@Override
-			public void onEditRequest() {
-				fireAction(Action.EDIT_TAX);
-
-			}
-
-			@Override
-			public void onSaveRequest() {
-				fireAction(Action.SAVE_TAX);
-
-			}
-
-			@Override
-			public void onCancelRequest() {
-				fireAction(Action.CANCEL_EDIT_TAX);
-
-			}
-
-		};
-
-		toolbar.hideAll();
-		delete = new MenuItem("Eliminar", new Command() {
-
-			@Override
-			public void execute() {
-				fireAction(Action.DELETE_SUB_LINE);
-
-			}
-		});
-
-		toolbar.addItem(SUB_MENU.ADMIN, delete);
-		toolbar.showItem(SUB_MENU.EDIT, true);
-		toolbar.showItem(SUB_MENU.ADMIN, true);
-
-		VerticalPanel popupWrapper = new VerticalPanel();
-		popupWrapper.add(toolbar);
-		popupWrapper.add(formContent);
-
-		popup.add(popupWrapper);
-		popup.setWidth("650px");
-
 		
 		setHeaderWidget(header);
+		
+		setReadOnly(true);
+		
 		
 		
 		this.newButton.addClickHandler(new ClickHandler() {
@@ -137,15 +87,18 @@ public class TaxList extends FilterableList<Tax> implements CoverageDataBrokerCl
 			@Override
 			public void onClick(ClickEvent event) {
 				fireAction(Action.NEW_TAX);
-				
 			}
 		});
-	
-		
-		
-		
+
+
 	}
 
+	public void setReadOnly(boolean readonly) {
+
+		this.readonly = readonly;
+		this.newButton.setEnabled(!readonly);
+	}
+	
 	public ToolButton getNewButton(){
 		return this.newButton;
 	}
@@ -317,17 +270,9 @@ public class TaxList extends FilterableList<Tax> implements CoverageDataBrokerCl
 		}
 	}
 
-	public TaxForm getForm() {
-		return form;
+	public java.util.List<ListEntry<Tax>> getEntries() {
+		return entries;
 	}
 
-	public BigBangOperationsToolBar getToolbar() {
-		return toolbar;	
-	}
-
-	public void showForm(boolean b) {
-		this.popup.center();
-		
-	}
 
 }

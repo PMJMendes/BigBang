@@ -153,8 +153,6 @@ public class CoverageList extends FilterableList<Coverage> implements CoverageDa
 
 		editHandler = new ClickHandler() {
 
-
-
 			@Override
 			public void onClick(ClickEvent event) {
 				for(ListEntry<Coverage> e: entries){
