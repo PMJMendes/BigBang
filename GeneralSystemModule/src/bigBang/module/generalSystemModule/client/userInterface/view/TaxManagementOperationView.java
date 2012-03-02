@@ -32,6 +32,36 @@ public class TaxManagementOperationView extends View implements TaxManagementOpe
 
 	private static final int LIST_WIDTH = 400; //PX
 	
+	@Override
+	public FilterableList<Line> getLineList() {
+		return lineList;
+	}
+
+	@Override
+	public FilterableList<SubLine> getSubLineList() {
+		return subLineList;
+	}
+
+	@Override
+	public FilterableList<Coverage> getCoverageList() {
+		return coverageList;
+	}
+
+	@Override
+	public NavigationPanel getNavPanel() {
+		return navPanel;
+	}
+
+	@Override
+	public TaxList getTaxList() {
+		return taxList;
+	}
+
+	@Override
+	public TaxForm getForm() {
+		return form;
+	}
+
 	private FilterableList<Line> lineList;
 	private FilterableList<SubLine> subLineList;
 	private FilterableList<Coverage> coverageList;
@@ -56,12 +86,7 @@ public class TaxManagementOperationView extends View implements TaxManagementOpe
 		
 		lineList = new FilterableList<Line>() {
 			protected void onAttach() {
-				ListHeader header = new ListHeader();
-				header.setText("Ramos");
-				header.setHeight("25px");
-				setHeaderWidget(header);
-				clearSelection();
-				super.onAttach();
+				fireAction(Action.LINE_LIST_ATTACH);
 			};
 		};
 		lineList.setSize("100%", "100%");
@@ -234,12 +259,6 @@ public class TaxManagementOperationView extends View implements TaxManagementOpe
 	public HasClickHandlers getNewButton() {
 		return taxList.getNewButton();
 	}
-	
-	@Override
-	public TaxList getList(){
-		return this.taxList;
-	}
-
 
 	@Override
 	public HasValue<Tax> getTaxForm() {

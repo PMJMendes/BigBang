@@ -6,7 +6,9 @@ import bigBang.definitions.client.dataAccess.CoverageBroker;
 import bigBang.definitions.client.response.ResponseError;
 import bigBang.definitions.client.response.ResponseHandler;
 import bigBang.definitions.shared.BigBangConstants;
+import bigBang.definitions.shared.Coverage;
 import bigBang.definitions.shared.Line;
+import bigBang.definitions.shared.SubLine;
 import bigBang.definitions.shared.Tax;
 import bigBang.library.client.EventBus;
 import bigBang.library.client.HasParameters;
@@ -16,10 +18,14 @@ import bigBang.library.client.dataAccess.DataBrokerManager;
 import bigBang.library.client.event.ActionInvokedEvent;
 import bigBang.library.client.event.ActionInvokedEventHandler;
 import bigBang.library.client.event.NewNotificationEvent;
+import bigBang.library.client.userInterface.FilterableList;
+import bigBang.library.client.userInterface.ListHeader;
+import bigBang.library.client.userInterface.NavigationPanel;
 import bigBang.library.client.userInterface.presenter.ViewPresenter;
 import bigBang.module.generalSystemModule.client.userInterface.LineList;
 import bigBang.module.generalSystemModule.client.userInterface.TaxList;
 import bigBang.module.generalSystemModule.client.userInterface.presenter.CoverageManagementOperationViewPresenter.Action;
+import bigBang.module.generalSystemModule.client.userInterface.view.TaxForm;
 
 import com.google.gwt.event.dom.client.HasClickHandlers;
 import com.google.gwt.user.client.ui.HasValue;
@@ -30,7 +36,7 @@ import com.google.gwt.user.client.ui.Widget;
 public class TaxManagementOperationViewPresenter implements ViewPresenter{
 	
 	public enum Action{
-		DELETE_TAX, SELECTED_COVERAGE, SELECTED_LINE, SELECTED_SUBLINE, NEW_TAX, EDIT_TAX, SAVE_TAX, CANCEL_EDIT_TAX, DELETE_SUB_LINE;
+		DELETE_TAX, SELECTED_COVERAGE, SELECTED_LINE, SELECTED_SUBLINE, NEW_TAX, EDIT_TAX, SAVE_TAX, CANCEL_EDIT_TAX, DELETE_SUB_LINE, LINE_LIST_ATTACH;
 	}
 	
 	public interface Display {
@@ -59,9 +65,20 @@ public class TaxManagementOperationViewPresenter implements ViewPresenter{
 		void setReadOnly(boolean readOnly);
 		Widget asWidget();
 
-		TaxList getList();
 
 		void registerActionHandler(ActionInvokedEventHandler<Action> handler);
+
+		FilterableList<SubLine> getSubLineList();
+
+		FilterableList<Coverage> getCoverageList();
+
+		NavigationPanel getNavPanel();
+
+		TaxList getTaxList();
+
+		TaxForm getForm();
+
+		FilterableList<Line> getLineList();
 	}
 	
 	private String lineId; 
@@ -120,11 +137,18 @@ public class TaxManagementOperationViewPresenter implements ViewPresenter{
 
 				switch(action.getAction()){
 				case NEW_TAX: {
-					view.getList().getForm().clearInfo();
-					view.getList().getForm().setReadOnly(false);
-					view.getList().getToolbar().setSaveModeEnabled(true);
-					view.getList().showForm(true);
+					view.getTaxList().getForm().clearInfo();
+					view.getTaxList().getForm().setReadOnly(false);
+					view.getTaxList().getToolbar().setSaveModeEnabled(true);
+					view.getTaxList().showForm(true);
 					break;
+				}
+				case LINE_LIST_ATTACH:{
+					ListHeader header = new ListHeader();
+					header.setText("Ramos");
+					header.setHeight("25px");
+					view.getLineList().setHeaderWidget(header);
+					view.getLineList().clearSelection();
 				}
 				}
 			}
