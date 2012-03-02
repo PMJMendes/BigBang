@@ -2742,7 +2742,7 @@ public class InsurancePolicyServiceImpl
 			}
 			lobjAuxCoverage.variability = larrVariability.toArray(new InsurancePolicy.Coverage.Variability[larrVariability.size()]);
 			larrOutCoverages.add(lobjAuxCoverage);
-			larrAuxCoverages.put(larrCoverages[j].getKey(), larrCoverages[j]);
+			larrAuxCoverages.put(larrCoverages[i].getKey(), larrCoverages[i]);
 		}
 
 		lobjSection = new InsurancePolicy.TableSection();

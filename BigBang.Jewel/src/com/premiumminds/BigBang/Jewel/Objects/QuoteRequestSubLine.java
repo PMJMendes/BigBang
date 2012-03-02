@@ -214,4 +214,75 @@ public class QuoteRequestSubLine
 
 		return larrAux.toArray(new QuoteRequestValue[larrAux.size()]);
 	}
+
+    public QuoteRequestValue[] GetCurrentKeyedValues(UUID pidObject)
+    	throws BigBangJewelException
+    {
+		ArrayList<QuoteRequestValue> larrAux;
+		IEntity lrefRequestValues;
+        MasterDB ldb;
+        ResultSet lrsValues;
+
+		larrAux = new ArrayList<QuoteRequestValue>();
+
+		try
+		{
+			lrefRequestValues = Entity.GetInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), Constants.ObjID_QuoteRequestValue)); 
+			ldb = new MasterDB();
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangJewelException(e.getMessage(), e);
+		}
+
+		try
+		{
+			lrsValues = lrefRequestValues.SelectByMembers(ldb, new int[] {Constants.FKReqSubLine_In_ReqValue,
+					Constants.FKObject_In_ReqValue}, new java.lang.Object[] {getKey(), pidObject}, new int[0]);
+		}
+		catch (Throwable e)
+		{
+			try { ldb.Disconnect(); } catch (Throwable e1) {}
+			throw new BigBangJewelException(e.getMessage(), e);
+		}
+
+		try
+		{
+			while ( lrsValues.next() )
+				larrAux.add(QuoteRequestValue.GetInstance(getNameSpace(), lrsValues));
+		}
+		catch (BigBangJewelException e)
+		{
+			try { lrsValues.close(); } catch (Throwable e1) {}
+			try { ldb.Disconnect(); } catch (Throwable e1) {}
+			throw e;
+		}
+		catch (Throwable e)
+		{
+			try { lrsValues.close(); } catch (Throwable e1) {}
+			try { ldb.Disconnect(); } catch (Throwable e1) {}
+			throw new BigBangJewelException(e.getMessage(), e);
+		}
+
+		try
+		{
+			lrsValues.close();
+		}
+		catch (Throwable e)
+		{
+			try { ldb.Disconnect(); } catch (Throwable e1) {}
+			throw new BigBangJewelException(e.getMessage(), e);
+		}
+
+		try
+		{
+			ldb.Disconnect();
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangJewelException(e.getMessage(), e);
+		}
+
+		return larrAux.toArray(new QuoteRequestValue[larrAux.size()]);
+    }
 }

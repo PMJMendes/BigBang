@@ -18,6 +18,9 @@ public class QuoteRequestSubLineData
 	public UUID midQuoteRequest;
 	public UUID midSubLine;
 
+	public QuoteRequestCoverageData[] marrCoverages;
+	public QuoteRequestValueData[] marrValues;
+
 	public boolean mbNew;
 	public boolean mbDeleted;
 

@@ -84,7 +84,7 @@ public class CreateQuoteRequest
 		QuoteRequestValue lobjValue;
 		IScript lobjScript;
 		IProcess lobjProc;
-		int i;
+		int i, j;
 
 		try
 		{
@@ -100,30 +100,6 @@ public class CreateQuoteRequest
 			lobjQuoteReq.SaveToDb(pdb);
 			mobjData.mid = lobjQuoteReq.getKey();
 
-			if ( mobjData.marrSubLines != null )
-			{
-				for ( i = 0; i < mobjData.marrSubLines.length; i++ )
-				{
-					mobjData.marrSubLines[i].midQuoteRequest = mobjData.mid;
-					lobjQRSubLine = QuoteRequestSubLine.GetInstance(Engine.getCurrentNameSpace(), (UUID)null);
-					mobjData.marrSubLines[i].ToObject(lobjQRSubLine);
-					lobjQRSubLine.SaveToDb(pdb);
-					mobjData.marrSubLines[i].mid = lobjQRSubLine.getKey();
-				}
-			}
-
-			if ( mobjData.marrCoverages != null )
-			{
-				for ( i = 0; i < mobjData.marrCoverages.length; i++ )
-				{
-					mobjData.marrCoverages[i].midQRSubLine = mobjData.marrSubLines[mobjData.marrCoverages[i].mlngQRSubLine].mid;
-					lobjCoverage = QuoteRequestCoverage.GetInstance(Engine.getCurrentNameSpace(), (UUID)null);
-					mobjData.marrCoverages[i].ToObject(lobjCoverage);
-					lobjCoverage.SaveToDb(pdb);
-					mobjData.marrCoverages[i].mid = lobjCoverage.getKey();
-				}
-			}
-
 			if ( mobjData.marrObjects != null )
 			{
 				for ( i = 0; i < mobjData.marrObjects.length; i++ )
@@ -136,17 +112,41 @@ public class CreateQuoteRequest
 				}
 			}
 
-			if ( mobjData.marrValues != null )
+			if ( mobjData.marrSubLines != null )
 			{
-				for ( i = 0; i < mobjData.marrValues.length; i++ )
+				for ( i = 0; i < mobjData.marrSubLines.length; i++ )
 				{
-					mobjData.marrValues[i].midQRSubLine = mobjData.marrSubLines[mobjData.marrValues[i].mlngQRSubLine].mid;
-					mobjData.marrValues[i].midObject = ( mobjData.marrValues[i].mlngObject < 0 ? null :
-							mobjData.marrObjects[mobjData.marrValues[i].mlngObject].mid );
-					lobjValue = QuoteRequestValue.GetInstance(Engine.getCurrentNameSpace(), (UUID)null);
-					mobjData.marrValues[i].ToObject(lobjValue);
-					lobjValue.SaveToDb(pdb);
-					mobjData.marrValues[i].mid = lobjValue.getKey();
+					mobjData.marrSubLines[i].midQuoteRequest = mobjData.mid;
+					lobjQRSubLine = QuoteRequestSubLine.GetInstance(Engine.getCurrentNameSpace(), (UUID)null);
+					mobjData.marrSubLines[i].ToObject(lobjQRSubLine);
+					lobjQRSubLine.SaveToDb(pdb);
+					mobjData.marrSubLines[i].mid = lobjQRSubLine.getKey();
+
+					if ( mobjData.marrSubLines[i].marrCoverages != null )
+					{
+						for ( j = 0; j < mobjData.marrSubLines[i].marrCoverages.length; j++ )
+						{
+							mobjData.marrSubLines[i].marrCoverages[j].midQRSubLine = mobjData.marrSubLines[i].mid;
+							lobjCoverage = QuoteRequestCoverage.GetInstance(Engine.getCurrentNameSpace(), (UUID)null);
+							mobjData.marrSubLines[i].marrCoverages[j].ToObject(lobjCoverage);
+							lobjCoverage.SaveToDb(pdb);
+							mobjData.marrSubLines[i].marrCoverages[j].mid = lobjCoverage.getKey();
+						}
+					}
+
+					if ( mobjData.marrSubLines[i].marrValues != null )
+					{
+						for ( j = 0; j < mobjData.marrSubLines[i].marrValues.length; j++ )
+						{
+							mobjData.marrSubLines[i].marrValues[j].midQRSubLine = mobjData.marrSubLines[i].mid;
+							mobjData.marrSubLines[i].marrValues[j].midObject = ( mobjData.marrSubLines[i].marrValues[j].mlngObject < 0 ?
+									null : mobjData.marrObjects[mobjData.marrSubLines[i].marrValues[j].mlngObject].mid );
+							lobjValue = QuoteRequestValue.GetInstance(Engine.getCurrentNameSpace(), (UUID)null);
+							mobjData.marrSubLines[i].marrValues[j].ToObject(lobjValue);
+							lobjValue.SaveToDb(pdb);
+							mobjData.marrSubLines[i].marrValues[j].mid = lobjValue.getKey();
+						}
+					}
 				}
 			}
 

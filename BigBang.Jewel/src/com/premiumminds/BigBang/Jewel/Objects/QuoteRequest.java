@@ -117,6 +117,22 @@ public class QuoteRequest
 		return larrAux.toArray(new QuoteRequestSubLine[larrAux.size()]);
     }
 
+    public QuoteRequestSubLine GetSubLineByID(UUID pidSubLine)
+    	throws BigBangJewelException
+    {
+    	QuoteRequestSubLine[] larrSubLines;
+    	int i;
+
+    	larrSubLines = GetCurrentSubLines();
+    	for( i = 0; i < larrSubLines.length; i++ )
+    	{
+    		if ( larrSubLines[i].GetSubLine().getKey().equals(pidSubLine) )
+    			return larrSubLines[i];
+    	}
+
+    	return null;
+    }
+
 	public QuoteRequestObject[] GetCurrentObjects()
 		throws BigBangJewelException
 	{

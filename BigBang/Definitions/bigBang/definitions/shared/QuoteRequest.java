@@ -42,7 +42,7 @@ public class QuoteRequest
 		public String coverageId;
 		public String coverageName;
 		public boolean mandatory;
-		public Boolean presentInPolicy;
+		public Boolean presentInRequestSubLine;
 		public Variability[] variability;
 	}
 

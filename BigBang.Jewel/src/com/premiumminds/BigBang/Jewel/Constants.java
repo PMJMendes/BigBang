@@ -374,6 +374,7 @@ public class Constants
 	public static final int FKRequest_In_ReqObject = 1;
 	public static final int FKReqSubLine_In_ReqCoverage = 0;
 	public static final int FKReqSubLine_In_ReqValue = 1;
+	public static final int FKObject_In_ReqValue = 3;
 	public static final int FKPolicy_In_CoInsurer = 0;
 	public static final int FKPolicy_In_PolicyCoverage = 0;
 	public static final int FKPolicy_In_Object = 1;

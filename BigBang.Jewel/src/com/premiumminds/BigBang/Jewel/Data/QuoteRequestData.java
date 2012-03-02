@@ -25,9 +25,7 @@ public class QuoteRequestData
 	public UUID midProcess;
 
 	public QuoteRequestSubLineData[] marrSubLines;
-	public QuoteRequestCoverageData[] marrCoverages;
 	public QuoteRequestObjectData[] marrObjects;
-	public QuoteRequestValueData[] marrValues;
 
 	public boolean mbModified;
 

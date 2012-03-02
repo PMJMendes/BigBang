@@ -2390,7 +2390,7 @@ public class SubPolicyServiceImpl
 			}
 			lobjAuxCoverage.variability = larrVariability.toArray(new SubPolicy.Coverage.Variability[larrVariability.size()]);
 			larrOutCoverages.add(lobjAuxCoverage);
-			larrAuxCoverages.put(larrCoverages[j].getKey(), larrCoverages[j]);
+			larrAuxCoverages.put(larrCoverages[i].getKey(), larrCoverages[i]);
 		}
 
 		lobjSection = new SubPolicy.TableSection();
