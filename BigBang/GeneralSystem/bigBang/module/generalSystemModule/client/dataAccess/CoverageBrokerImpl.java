@@ -657,13 +657,13 @@ CoverageBroker {
 
 				SubLine[] subLines = getSubLinesLocal(parentLineId);
 				Coverage[] coverages = getCoveragesLocal(parentSubLineId, subLines);
-				Tax[] oldArray = getTaxesLocal(tax.coverageId, coverages);
+				Tax[] oldArray = getTaxesLocal(result.coverageId, coverages);
 				Tax[] newArray = new Tax[oldArray.length+1];
 
 				for(int i = 0; i<oldArray.length; i++){
 					newArray[i] = oldArray[i];
 				}
-				newArray[newArray.length-1] = tax;
+				newArray[newArray.length-1] = result;
 
 				for(int i = 0; i<coverages.length; i++){
 					if(coverages[i].id.equalsIgnoreCase(tax.id)){
@@ -674,6 +674,8 @@ CoverageBroker {
 				for(DataBrokerClient<Line> c : getClients()){
 					((CoverageDataBrokerClient) c).addTax(result.coverageId, result);
 				}
+				
+				onResponseSuccess(result);
 
 			}
 
@@ -700,8 +702,8 @@ CoverageBroker {
 				Tax[] taxes = getTaxesLocal(tax.coverageId, coverages);
 
 				for(int i = 0; i<taxes.length; i++){
-					if(taxes[i].id.equalsIgnoreCase(tax.id)){
-						taxes[i] = tax;
+					if(taxes[i].id.equalsIgnoreCase(result.id)){
+						taxes[i] = result;
 					}
 				}
 
@@ -726,7 +728,7 @@ CoverageBroker {
 
 	@Override
 	public void removeTax(final String parentLineId, final String parentSubLineId, final String parentCoverageId, final String taxId,
-			final ResponseHandler<Void> handler) {
+			final ResponseHandler<Tax> handler) {
 		
 		this.service.deleteTax(taxId, new BigBangAsyncCallback<Void>() {
 
@@ -758,6 +760,7 @@ CoverageBroker {
 				for(DataBrokerClient<Line> c : getClients()){
 					((CoverageDataBrokerClient) c).removeTax(deleted.coverageId, deleted.id);
 				}
+				handler.onResponse(deleted);
 				
 			}
 			

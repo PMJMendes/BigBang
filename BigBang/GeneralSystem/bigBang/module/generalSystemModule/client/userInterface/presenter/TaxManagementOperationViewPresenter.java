@@ -39,7 +39,7 @@ import com.google.gwt.user.client.ui.Widget;
 public class TaxManagementOperationViewPresenter implements ViewPresenter{
 
 	public enum Action{
-		DELETE_TAX, NEW_TAX, EDIT_TAX, SAVE_TAX, CANCEL_EDIT_TAX, DELETE_SUB_LINE, LINE_LIST_ATTACH, SUB_LINE_LIST_ATTACH, COVERAGE_LIST_ATTACH, DOUBLE_CLICK_TAX;
+		DELETE_TAX, NEW_TAX, EDIT_TAX, SAVE_TAX, CANCEL_EDIT_TAX, LINE_LIST_ATTACH, SUB_LINE_LIST_ATTACH, COVERAGE_LIST_ATTACH, DOUBLE_CLICK_TAX;
 	}
 
 	public interface Display {
@@ -60,9 +60,7 @@ public class TaxManagementOperationViewPresenter implements ViewPresenter{
 
 		//List
 		void removeTaxFromList(Tax tax);
-		void addTaxToList(Tax tax);
 		void updateTaxInList(Tax tax);		
-
 
 
 		void setReadOnly(boolean readOnly);
@@ -99,7 +97,6 @@ public class TaxManagementOperationViewPresenter implements ViewPresenter{
 	private String lineId; 
 	private String subLineId;
 	private String coverageId; 
-	private String taxId;
 
 	CoverageBroker broker;
 	private Display view;
@@ -126,6 +123,7 @@ public class TaxManagementOperationViewPresenter implements ViewPresenter{
 	public void setParameters(HasParameters parameterHolder) {
 
 		view.setReadOnly(false); //TODO ISTO TEM DE VIR DE FORA
+		view.getTaxList().setReadOnly(false);
 		broker.getLines(new ResponseHandler<Line[]>() {
 
 			@Override
@@ -143,7 +141,7 @@ public class TaxManagementOperationViewPresenter implements ViewPresenter{
 
 	public void bind() {
 		if(bound){return;}
-		
+
 		view.registerActionHandler(new ActionInvokedEventHandler<TaxManagementOperationViewPresenter.Action>() {
 
 			@Override
@@ -152,7 +150,10 @@ public class TaxManagementOperationViewPresenter implements ViewPresenter{
 
 				switch(action.getAction()){
 				case NEW_TAX: {
+					view.getForm().setValue(new Tax());
+					view.getForm().setCoverageId(coverageId);
 					view.getForm().setReadOnly(false);
+					view.getToolBar().setSaveModeEnabled(true);
 					view.showForm(true);
 					break;
 				}
@@ -183,15 +184,16 @@ public class TaxManagementOperationViewPresenter implements ViewPresenter{
 					break;
 				}
 				case DOUBLE_CLICK_TAX:{
-					System.out.println("ACONTECUE");
 					broker.getTax(lineId, subLineId, coverageId,  view.getClickedTax(), new ResponseHandler<Tax>() {
 
 						@Override
 						public void onResponse(Tax response) {
-							view.getForm().setValue(response);
+							view.getForm().setCoverageId(response.coverageId);
 							view.getForm().setReadOnly(true);
 							view.getToolBar().setSaveModeEnabled(false);
 							view.showForm(true);
+							view.getForm().setValue(response);
+
 						}
 
 						@Override
@@ -203,12 +205,97 @@ public class TaxManagementOperationViewPresenter implements ViewPresenter{
 					});	
 					break;
 				}
+				case CANCEL_EDIT_TAX:{
+					if(view.getForm().getValue().id == null){
+						view.showForm(false);
+						return;
+					}
+					view.getForm().revert();
+					view.getForm().setReadOnly(true);
+					view.getToolBar().setSaveModeEnabled(false);
+					break;
+				}
+				case EDIT_TAX:{
+					view.getForm().setReadOnly(false);
+					break;
+				}
+
+				case SAVE_TAX:{
+
+					Tax newTax = view.getForm().getInfo();
+					if(newTax.id == null){
+						broker.addTax(lineId, subLineId, view.getForm().getInfo(), new ResponseHandler<Tax>(){
+
+							@Override
+							public void onResponse(Tax response) {
+								view.showForm(false);
+								EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Campo de cobertura criado com sucesso."), TYPE.TRAY_NOTIFICATION));
+							}
+
+							@Override
+							public void onError(Collection<ResponseError> errors) {
+								EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não foi possível criar o campo de cobertura."), TYPE.ALERT_NOTIFICATION));
+
+							}
+
+
+						});
+					}
+					else{
+						broker.updateTax(lineId, subLineId, newTax, new ResponseHandler<Tax>(){
+
+							@Override
+							public void onResponse(Tax response) {
+								view.showForm(false);
+								EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Campo de cobertura gravado com sucesso."), TYPE.TRAY_NOTIFICATION));
+							}
+
+							@Override
+							public void onError(Collection<ResponseError> errors) {
+								EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não foi possível gravar o campo de cobertura."), TYPE.ALERT_NOTIFICATION));
+
+							}
+
+
+						});
+					}
+					break;
+				}
+				case DELETE_TAX:{
+					if(view.getForm().getInfo().id != null){
+						broker.removeTax(lineId,subLineId, coverageId, view.getClickedTax(), new ResponseHandler<Tax>(){
+
+							@Override
+							public void onResponse(Tax response) {
+							
+								view.showForm(false);
+								EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Campo de cobertura eliminado com sucesso."), TYPE.TRAY_NOTIFICATION));
+								
+							}
+
+							@Override
+							public void onError(Collection<ResponseError> errors) {
+								
+								EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não foi possível eliminar o campo de cobertura."), TYPE.ALERT_NOTIFICATION));
+							}
+							
+							
+							
+							
+						});
+					}
+					else{
+						view.showForm(false);
+					}
+				}
 				}
 			}
+
+
 		});
 
 		view.getSubLineList().addSelectionChangedEventHandler(new SelectionChangedEventHandler() {
-			
+
 			@Override
 			public void onSelectionChanged(SelectionChangedEvent event) {
 				for(Selectable s : event.getSelected()) {
@@ -217,12 +304,13 @@ public class TaxManagementOperationViewPresenter implements ViewPresenter{
 					subLineId = subLine.id;
 					view.setCoverages(subLine.coverages);
 					view.getNavPanel().navigateTo(view.getCoverageList());
+					view.getTaxList().setSubLineId(subLineId);
 				}
 			}
 		});
-		
+
 		view.getLineList().addSelectionChangedEventHandler(new SelectionChangedEventHandler() {
-			
+
 			@Override
 			public void onSelectionChanged(SelectionChangedEvent event) {
 				for(Selectable s : event.getSelected()) {
@@ -231,12 +319,13 @@ public class TaxManagementOperationViewPresenter implements ViewPresenter{
 					lineId = line.id;
 					view.setSubLines(line.subLines);
 					view.getNavPanel().navigateTo(view.getSubLineList());
+					view.getTaxList().setLineId(lineId);
 				}
 			}
 		});
-		
+
 		view.getCoverageList().addSelectionChangedEventHandler(new SelectionChangedEventHandler() {
-			
+
 			@Override
 			public void onSelectionChanged(SelectionChangedEvent event) {
 				for(Selectable s : event.getSelected()) {
@@ -244,6 +333,7 @@ public class TaxManagementOperationViewPresenter implements ViewPresenter{
 					Coverage coverage = ((ValueSelectable<Coverage>) s).getValue();
 					coverageId = coverage.id;
 					view.setTaxes(coverage.taxes);
+					view.getTaxList().setCoverageId(coverageId);
 				}
 			}
 		});

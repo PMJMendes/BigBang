@@ -174,9 +174,11 @@ public class LineList extends FilterableList<Line> implements CoverageDataBroker
 				for(ListEntry<Line> e: entries){
 					if(event.getSource() == ((Entry)e).editImage){
 						clickedLine = ((Entry)e).getValue().id;
+						fireAction(Action.DOUBLE_CLICK_LINE);
+						break;
 					}
 				}
-				fireAction(Action.DOUBLE_CLICK_LINE);
+				
 
 
 			}
@@ -185,7 +187,6 @@ public class LineList extends FilterableList<Line> implements CoverageDataBroker
 
 			@Override
 			public void onDoubleClick(DoubleClickEvent event) {
-
 				clickedLine = ((Entry)LineList.this.getSelected().toArray()[0]).getValue().id;
 				fireAction(Action.DOUBLE_CLICK_LINE);
 			}
@@ -235,7 +236,7 @@ public class LineList extends FilterableList<Line> implements CoverageDataBroker
 	public void setReadOnly(boolean readonly) {
 
 		this.readonly = readonly;
-		this.form.setReadOnly(readonly);
+		//this.form.setReadOnly(readonly);
 		this.newButton.setEnabled(!readonly);
 		for(ListEntry<Line> e : entries){
 			((Entry) e).setEditable(!readonly);

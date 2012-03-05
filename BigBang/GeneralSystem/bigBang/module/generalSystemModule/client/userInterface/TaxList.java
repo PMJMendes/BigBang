@@ -12,6 +12,7 @@ import bigBang.definitions.shared.Tax;
 import bigBang.library.client.dataAccess.DataBrokerManager;
 import bigBang.library.client.event.ActionInvokedEvent;
 import bigBang.library.client.event.ActionInvokedEventHandler;
+import bigBang.library.client.resources.Resources;
 import bigBang.library.client.userInterface.BigBangOperationsToolBar;
 import bigBang.library.client.userInterface.BigBangOperationsToolBar.SUB_MENU;
 import bigBang.library.client.userInterface.FilterableList;
@@ -23,10 +24,13 @@ import bigBang.module.generalSystemModule.client.userInterface.LineList.Entry;
 import bigBang.module.generalSystemModule.client.userInterface.presenter.TaxManagementOperationViewPresenter.Action;
 import bigBang.module.generalSystemModule.client.userInterface.view.TaxForm;
 
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.dom.client.DoubleClickEvent;
 import com.google.gwt.event.dom.client.DoubleClickHandler;
 import com.google.gwt.user.client.Command;
+import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.MenuItem;
 import com.google.gwt.user.client.ui.VerticalPanel;
@@ -35,35 +39,43 @@ import com.google.gwt.user.client.ui.Widget;
 public class TaxList extends FilterableList<Tax> implements CoverageDataBrokerClient {
 
 	public static class Entry extends ListEntry <Tax> {
-
-		private Label label;
+		protected Image editImage;
 
 		public Entry(Tax tax) {
 			super(tax);
-			setRightWidget(label);
-			setInfo(tax);
+			setLeftWidget(editImage);
 		}
 
 		public <I extends Object> void setInfo(I info) {
-			if(label == null)
-				label = new Label();
 			Tax tax = (Tax) info;
 			setTitle(tax.name);
-			label.setText(tax.defaultValue + "TODO $");
 		};
+		
+		public void setEditable(boolean editable) {
+			editImage.setVisible(editable);
+		}
+
+		@Override
+		public void setSelected(boolean selected, boolean fireEvents) {
+			if(editImage == null)
+				editImage = new Image();
+			Resources r = GWT.create(Resources.class);
+			super.setSelected(selected, fireEvents);
+			editImage.setResource(selected ? r.listEditIconSmallWhite() : r.listEditIconSmallBlack());
+		}
 	}
 
 	private ToolButton newButton;
-
 	CoverageBroker broker;
 	private DoubleClickHandler doubleClickHandler;
 	private String parentLineId;
 	private String parentSubLineId;
 	private String coverageId;
 	private String taxId;
-	
 	private ActionInvokedEventHandler<Action> handler;
 	private boolean readonly;
+	private String clickedTax;
+	private ClickHandler editHandler;
 
 	public TaxList(){
 		
@@ -74,6 +86,30 @@ public class TaxList extends FilterableList<Tax> implements CoverageDataBrokerCl
 		header.setText("Campos da cobertura");
 		header.showNewButton("Novo");
 		this.newButton = header.getNewButton();
+		
+
+		this.editHandler = new ClickHandler() {
+
+			@Override
+			public void onClick(ClickEvent event) {
+				for(ListEntry<Tax> e: entries){
+					if(event.getSource() == ((Entry)e).editImage){
+						clickedTax = ((Entry)e).getValue().id;
+						fireAction(Action.DOUBLE_CLICK_TAX);
+						break;
+					}
+				}
+				
+			}
+		};
+		this.doubleClickHandler = new DoubleClickHandler() {
+
+			@Override
+			public void onDoubleClick(DoubleClickEvent event) {
+				clickedTax = ((Entry)getSelected().toArray()[0]).getValue().id;
+				fireAction(Action.DOUBLE_CLICK_TAX);
+			}
+		};
 		
 		
 		setHeaderWidget(header);
@@ -92,9 +128,15 @@ public class TaxList extends FilterableList<Tax> implements CoverageDataBrokerCl
 
 
 	}
+	public boolean add(Entry e) {
+		e.setEditable(!readonly);
+		e.editImage.addClickHandler(this.editHandler);
+		e.setDoubleClickable(true);
+		e.addHandler(doubleClickHandler, DoubleClickEvent.getType());
+		return super.add(e);
+	}
 
 	public void setReadOnly(boolean readonly) {
-
 		this.readonly = readonly;
 		this.newButton.setEnabled(!readonly);
 	}
@@ -124,7 +166,6 @@ public class TaxList extends FilterableList<Tax> implements CoverageDataBrokerCl
 				}
 			}
 		}
-
 	}
 
 	@Override
@@ -272,6 +313,22 @@ public class TaxList extends FilterableList<Tax> implements CoverageDataBrokerCl
 
 	public java.util.List<ListEntry<Tax>> getEntries() {
 		return entries;
+	}
+
+
+	public String getClickedTax() {
+		return clickedTax;
+	}
+	public void setLineId(String lineId) {
+		this.parentLineId = lineId;
+		
+	}
+	public void setSubLineId(String subLineId) {
+		this.parentSubLineId = subLineId;
+		
+	}
+	public void setCoverageId(String coverageId2) {
+		this.coverageId = coverageId2;
 	}
 
 

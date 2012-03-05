@@ -367,6 +367,7 @@ public class CoverageManagementOperationViewPresenter implements ViewPresenter {
 				}
 				case CANCEL_EDIT_LINE:{
 					((LineList)view.getLineList()).getForm().revert();
+					((LineList)view.getLineList()).getForm().setReadOnly(true);
 					break;
 				}
 				case NEW_LINE:{
@@ -382,9 +383,9 @@ public class CoverageManagementOperationViewPresenter implements ViewPresenter {
 						@Override
 						public void onResponse(Line response) {
 							((LineList)view.getLineList()).getForm().setValue(response);
+							((LineList)view.getLineList()).showForm(true);
 							((LineList)view.getLineList()).getForm().setReadOnly(true);
 							((LineList)view.getLineList()).getToolbar().setSaveModeEnabled(false);
-							((LineList)view.getLineList()).showForm(true);
 						}
 
 						@Override
@@ -412,9 +413,9 @@ public class CoverageManagementOperationViewPresenter implements ViewPresenter {
 						public void onResponse(SubLine response) {
 
 							((SubLineList)view.getSubLineList()).getForm().setValue(response);
+							((SubLineList)view.getSubLineList()).showForm(true);
 							((SubLineList)view.getSubLineList()).getForm().setReadOnly(true);
 							((SubLineList)view.getSubLineList()).getToolBar().setSaveModeEnabled(false);
-							((SubLineList)view.getSubLineList()).showForm(true);
 						}
 
 						@Override
@@ -475,6 +476,7 @@ public class CoverageManagementOperationViewPresenter implements ViewPresenter {
 				}
 				case CANCEL_EDIT_SUB_LINE:{
 					((SubLineList)view.getSubLineList()).getForm().revert();
+					((SubLineList)view.getSubLineList()).getForm().setReadOnly(true);
 					break;
 				}
 				case DELETE_SUB_LINE:{
@@ -518,6 +520,7 @@ public class CoverageManagementOperationViewPresenter implements ViewPresenter {
 				}
 				case CANCEL_EDIT_COVERAGE:{
 					((CoverageList)view.getCoverageList()).getForm().revert();
+					((CoverageList)view.getCoverageList()).getForm().setReadOnly(true);
 					break;
 				}
 				case EDIT_COVERAGE:{
@@ -622,9 +625,9 @@ public class CoverageManagementOperationViewPresenter implements ViewPresenter {
 						public void onResponse(Coverage response) {
 
 							((CoverageList)view.getCoverageList()).getForm().setValue(response);
+							((CoverageList)view.getCoverageList()).showForm(true);
 							((CoverageList)view.getCoverageList()).getForm().setReadOnly(true);
 							((CoverageList)view.getCoverageList()).getToolBar().setSaveModeEnabled(false);
-							((CoverageList)view.getCoverageList()).showForm(true);
 						}
 
 						@Override

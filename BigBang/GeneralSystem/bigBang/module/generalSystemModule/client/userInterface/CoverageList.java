@@ -158,9 +158,11 @@ public class CoverageList extends FilterableList<Coverage> implements CoverageDa
 				for(ListEntry<Coverage> e: entries){
 					if(event.getSource() == ((Entry)e).editImage){
 						clickedCoverage = ((Entry)e).getValue().id;
+						fireAction(Action.DOUBLE_CLICK_COVERAGE);
+						break;
 					}
 				}
-				fireAction(Action.DOUBLE_CLICK_COVERAGE);
+				
 			}
 		};
 		doubleClickHandler = new DoubleClickHandler() {
@@ -221,7 +223,7 @@ public class CoverageList extends FilterableList<Coverage> implements CoverageDa
 	public void setReadOnly(boolean readonly) {
 
 		this.readonly = readonly;
-		this.form.setReadOnly(readonly);
+		//this.form.setReadOnly(readonly);
 		this.newButton.setEnabled(!readonly);
 		for(ListEntry<Coverage> e : entries){
 			((Entry) e).setEditable(!readonly);

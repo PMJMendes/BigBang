@@ -88,10 +88,6 @@ public class TaxManagementOperationView extends View implements TaxManagementOpe
 	private MenuItem delete;
 	private VerticalPanel popupWrapper;
 
-	private String clickedTax;
-	private ClickHandler editHandler;
-	private DoubleClickHandler doubleClickHandler;
-
 	public TaxManagementOperationView(){
 		SplitLayoutPanel wrapper = new SplitLayoutPanel();
 		initWidget(wrapper);
@@ -198,34 +194,10 @@ public class TaxManagementOperationView extends View implements TaxManagementOpe
 		navPanel.setHomeWidget(lineList);
 		wrapper.addWest(navPanel, LIST_WIDTH);
 
-		form = new TaxForm();
 		taxList = new TaxList();
 		taxList.getNewButton().setEnabled(false);
 
 		wrapper.add(taxList);
-
-
-		editHandler = new ClickHandler() {
-
-			@Override
-			public void onClick(ClickEvent event) {
-				for(ListEntry<Tax> e: taxList.getEntries()){
-					if(event.getSource() == ((Entry)e).getLeftWidget()){
-						clickedTax = ((Entry)e).getValue().id;
-					}
-				}
-				fireAction(Action.DOUBLE_CLICK_TAX);
-			}
-		};
-		doubleClickHandler = new DoubleClickHandler() {
-
-			@Override
-			public void onDoubleClick(DoubleClickEvent event) {
-				clickedTax = ((Entry)taxList.getSelected().toArray()[0]).getValue().id;
-				fireAction(Action.DOUBLE_CLICK_TAX);
-			}
-		};
-
 	}
 
 	@Override
@@ -236,7 +208,6 @@ public class TaxManagementOperationView extends View implements TaxManagementOpe
 	@Override
 	public void setReadOnly(boolean readOnly) {
 		this.readOnly = readOnly;
-
 	}
 
 
@@ -289,7 +260,7 @@ public class TaxManagementOperationView extends View implements TaxManagementOpe
 		this.taxList.clear();
 		for(int k = 0; k < taxes.length; k++) {
 			Tax tax = taxes[k];
-			addTaxToList(tax, false);
+			taxList.add(new Entry(tax));
 		}
 	}
 
@@ -329,50 +300,6 @@ public class TaxManagementOperationView extends View implements TaxManagementOpe
 			if(s.getValue().id.equals(tax.id))
 				taxList.remove(s);
 		}
-	}
-
-
-	@Override
-	public void addTaxToList(Tax tax){
-		addTaxToList(tax, true);
-	}
-
-
-
-	public void addTaxToList(Tax tax, boolean insertInArray) {
-
-		ListEntry<Tax> taxEntry = new ListEntry<Tax>(tax){
-			protected Image editImage;
-
-			public <I extends Object> void setInfo(I info) {
-				Tax tax = (Tax) info;
-				setTitle(tax.name);
-			};
-
-			@Override
-			public void setSelected(boolean selected, boolean fireEvents) {
-				if(editImage == null){
-					editImage = new Image();
-				}
-				super.setSelected(selected, fireEvents);
-				Resources r = GWT.create(Resources.class);
-				editImage.setResource(selected ? r.listEditIconSmallWhite() : r.listEditIconSmallBlack());
-				setLeftWidget(editImage);
-			}
-		};
-
-		taxEntry.setTitle(tax.name);
-		this.taxList.add(taxEntry);
-		if(insertInArray){
-			Coverage c = this.getCurrentCoverage();
-			Tax[] newArray = new Tax[c.taxes.length + 1];
-			for(int i = 0; i < c.taxes.length; i++){
-				newArray[i] = c.taxes[i];
-			}
-			newArray[c.taxes.length == 0 ? 0 : c.taxes.length - 1] = tax;
-			c.taxes = newArray;
-		}
-		taxList.getScrollable().scrollToBottom();
 	}
 
 
@@ -424,14 +351,12 @@ public class TaxManagementOperationView extends View implements TaxManagementOpe
 			popup.hidePopup();
 			return;
 		}
-		form.clearInfo();
 		popup.center();
-
 	}
 
 	@Override
 	public String getClickedTax() {
-		return clickedTax;
+		return taxList.getClickedTax();
 	}
 
 	@Override

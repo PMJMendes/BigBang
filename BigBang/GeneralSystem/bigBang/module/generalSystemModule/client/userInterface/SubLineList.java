@@ -158,9 +158,11 @@ public class SubLineList extends FilterableList<SubLine> implements CoverageData
 				for(ListEntry<SubLine> e: entries){
 					if(event.getSource() == ((Entry)e).editImage){
 						clickedSubline = ((Entry)e).getValue().id;
+						fireAction(Action.DOUBLE_CLICK_SUB_LINE);
+						break;
 					}
 				}
-				fireAction(Action.DOUBLE_CLICK_SUB_LINE);
+				
 			}
 		};
 		doubleClickHandler = new DoubleClickHandler() {
@@ -217,7 +219,7 @@ public class SubLineList extends FilterableList<SubLine> implements CoverageData
 	public void setReadOnly(boolean readonly) {
 
 		this.readonly = readonly;
-		this.form.setReadOnly(readonly);
+
 		this.newButton.setEnabled(!readonly);
 		for(ListEntry<SubLine> e : entries){
 			((Entry) e).setEditable(!readonly);

@@ -168,6 +168,6 @@ public interface CoverageBroker extends DataBrokerInterface<Line> {
 	 * @param taxId The id of the tax to be removed
 	 * @param handler The handler to be notified on response
 	 */
-	public void removeTax(String parentLineId, String parentSubLineId, String parentCoverageId, String taxId, ResponseHandler<Void> handler);
+	public void removeTax(String parentLineId, String parentSubLineId, String parentCoverageId, String taxId, ResponseHandler<Tax> handler);
 	
 }
