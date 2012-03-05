@@ -418,9 +418,6 @@ CoverageBroker {
 		}else{
 
 			handler.onResponse(getCoveragesLocal(parentSubLineId, getSubLinesLocal(parentLineId)));
-//			for(DataBrokerClient<Line> c : getClients()) {
-//				((CoverageDataBrokerClient) c).setLines(lines);
-//			}
 		}
 
 	}
@@ -666,8 +663,9 @@ CoverageBroker {
 				newArray[newArray.length-1] = result;
 
 				for(int i = 0; i<coverages.length; i++){
-					if(coverages[i].id.equalsIgnoreCase(tax.id)){
+					if(coverages[i].id.equalsIgnoreCase(result.coverageId)){
 						coverages[i].taxes = newArray;
+						break;
 					}
 				}
 
@@ -675,7 +673,7 @@ CoverageBroker {
 					((CoverageDataBrokerClient) c).addTax(result.coverageId, result);
 				}
 				
-				onResponseSuccess(result);
+				handler.onResponse(result);
 
 			}
 

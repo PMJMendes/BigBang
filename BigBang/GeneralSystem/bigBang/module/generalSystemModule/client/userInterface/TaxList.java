@@ -268,7 +268,6 @@ public class TaxList extends FilterableList<Tax> implements CoverageDataBrokerCl
 		if(this.coverageId.equalsIgnoreCase(parentCoverageId)){
 			updateEntry(tax);
 		}
-
 	}
 
 	@Override

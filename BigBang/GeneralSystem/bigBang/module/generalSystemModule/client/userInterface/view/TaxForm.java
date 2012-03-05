@@ -126,7 +126,7 @@ public class TaxForm extends FormView<Tax> {
 	public void setReadOnly(boolean readOnly) {
 		this.readOnly = readOnly;
 		super.setReadOnly(readOnly);
-		if(type.getValue() != null && !type.getValue().equalsIgnoreCase(ModuleConstants.PolicyFieldTypes.ReferenceType)){
+		if(type != null && type.getValue() != null && !type.getValue().equalsIgnoreCase(ModuleConstants.PolicyFieldTypes.ReferenceType)){
 			refersToEntityId.setReadOnly(true);
 		}
 	};

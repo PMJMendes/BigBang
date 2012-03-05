@@ -170,7 +170,7 @@ public class TaxManagementOperationViewPresenter implements ViewPresenter{
 					header.setText("Modalidades");
 					header.setHeight("25px");
 					view.getSubLineList().setHeaderWidget(header);
-					view.getLineList().clearSelection();
+					view.getSubLineList().clearSelection();
 					break;
 				}
 				case COVERAGE_LIST_ATTACH:{
@@ -221,7 +221,6 @@ public class TaxManagementOperationViewPresenter implements ViewPresenter{
 				}
 
 				case SAVE_TAX:{
-
 					Tax newTax = view.getForm().getInfo();
 					if(newTax.id == null){
 						broker.addTax(lineId, subLineId, view.getForm().getInfo(), new ResponseHandler<Tax>(){
