@@ -24,6 +24,7 @@ public interface TipifiedListService extends RemoteService, DependentItemSubServ
 	}
 	
 	public TipifiedListItem[] getListItems(String listId) throws SessionExpiredException, BigBangException;
+	public TipifiedListItem getSingleItem(String listId, String itemId) throws SessionExpiredException, BigBangException;
 	public TipifiedListItem createListItem(String listId, TipifiedListItem item) throws SessionExpiredException, BigBangException;
 	public TipifiedListItem createListItemFiltered(String listId, String filterId, TipifiedListItem item)
 			throws SessionExpiredException, BigBangException;

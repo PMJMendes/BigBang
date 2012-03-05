@@ -8,6 +8,7 @@ public interface TipifiedListServiceAsync
 	extends Service, DependentItemSubServiceAsync
 {
 	void getListItems(String listId, AsyncCallback<TipifiedListItem[]> callback);
+	void getSingleItem(String listId, String itemId, AsyncCallback<TipifiedListItem> callback);
 	void createListItem(String listId, TipifiedListItem item, AsyncCallback<TipifiedListItem> callback);
 	void createListItemFiltered(String listId, String filterId, TipifiedListItem item, AsyncCallback<TipifiedListItem> callback);
 	void saveListItem(String listId, TipifiedListItem item, AsyncCallback<TipifiedListItem> callback);

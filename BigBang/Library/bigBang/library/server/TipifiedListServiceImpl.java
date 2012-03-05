@@ -100,6 +100,32 @@ public class TipifiedListServiceImpl
 		return larrAux.toArray(new TipifiedListItem[larrAux.size()]);
 	}
 
+	public TipifiedListItem getSingleItem(String listId, String itemId)
+		throws SessionExpiredException, BigBangException
+	{
+		ObjectBase lobjBase;
+		TipifiedListItem lobjResult;
+
+		if ( Engine.getCurrentUser() == null )
+			throw new SessionExpiredException();
+
+		try
+		{
+			lobjBase = Engine.GetWorkInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), UUID.fromString(listId)),
+					UUID.fromString(itemId));
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangException(e.getMessage(), e);
+		}
+
+		lobjResult = new TipifiedListItem();
+		lobjResult.id = lobjBase.getKey().toString();
+		lobjResult.value = lobjBase.getLabel();
+
+		return lobjResult;
+	}
+
 	public TipifiedListItem[] getListItemsFilter(String listId, String filterId)
 		throws SessionExpiredException, BigBangException
 	{
