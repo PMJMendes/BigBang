@@ -27,13 +27,19 @@ import bigBang.library.client.userInterface.TextAreaFormField;
 import bigBang.library.client.userInterface.TextBoxFormField;
 import bigBang.library.client.userInterface.view.FormView;
 import bigBang.library.client.userInterface.view.FormViewSection;
+import bigBang.library.client.userInterface.view.PopupPanel;
 import bigBang.module.insurancePolicyModule.client.dataAccess.SubPolicyTypifiedListBroker;
+import bigBang.module.insurancePolicyModule.client.userInterface.presenter.SubPolicyClientSelectionViewPresenter;
+import bigBang.module.insurancePolicyModule.client.userInterface.view.SubPolicyClientSelectionView;
 import bigBang.module.insurancePolicyModule.shared.ModuleConstants;
 
 import com.google.gwt.dom.client.Style.Overflow;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.HasValue;
+import com.google.gwt.user.client.ui.SimplePanel;
 
 public class SubPolicyForm extends FormView<SubPolicy> {
 
@@ -224,7 +230,14 @@ public class SubPolicyForm extends FormView<SubPolicy> {
 		exercises.setEditable(false);
 		insuredObjects.setEditable(false);
 
-		selectClientButton = new Button("Escolher Cliente Aderente");
+		selectClientButton = new Button("Escolher Cliente Aderente", new ClickHandler() {
+			
+			@Override
+			public void onClick(ClickEvent event) {
+				showClientSelection();
+			}
+		});
+
 		selectClientButton.setWidth("191px");
 		
 		addFormField(client, false);
@@ -531,5 +544,27 @@ public class SubPolicyForm extends FormView<SubPolicy> {
 	public void clearInfo() {
 		super.clearInfo();
 		this.table.clear();
+	}
+	
+	private void showClientSelection(){
+		SubPolicyClientSelectionView view = new SubPolicyClientSelectionView();
+		SubPolicyClientSelectionViewPresenter presenter = new SubPolicyClientSelectionViewPresenter(view){
+
+			@Override
+			public void onClientSelected(Client client) {
+				SubPolicy info = getInfo();
+				info.clientId = client.id;
+				info.clientName = client.name;
+				info.clientNumber = client.clientNumber;
+				setInfo(info);
+			}
+			
+		};
+		SimplePanel wrapper = new SimplePanel();
+		wrapper.setSize("900px", "600px");
+		presenter.go(wrapper);
+		PopupPanel popup = new PopupPanel();
+		popup.add(wrapper);
+		popup.center();
 	}
 }

@@ -1,20 +1,20 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
-	<classpathentry excluding="**/*.xml|**/.svn/" kind="src" path="BigBang"/>
-	<classpathentry excluding="**/*.xml|**/.svn/" kind="src" path="Definitions"/>
-	<classpathentry excluding="**/*.xml|**/.svn/" kind="src" path="Library"/>
-	<classpathentry excluding="**/*.xml|**/.svn/" kind="src" path="Login"/>
-	<classpathentry excluding="**/*.xml|**/.svn/" kind="src" path="MainModule"/>
-	<classpathentry excluding="**/*.xml|**/.svn/" kind="src" path="Tasks"/>
-	<classpathentry excluding="**/*.xml|**/.svn/" kind="src" path="GeneralSystem"/>
-	<classpathentry excluding="**/*.xml|**/.svn/" kind="src" path="Clients"/>
-	<classpathentry excluding="**/*.xml|**/.svn/" kind="src" path="InsurancePolicies"/>
-	<classpathentry excluding="**/*.xml|**/.svn/" kind="src" path="Casualties"/>
-	<classpathentry excluding="**/*.xml|**/.svn/" kind="src" path="Complaints"/>
-	<classpathentry excluding="**/*.xml|**/.svn/" kind="src" path="Expenses"/>
-	<classpathentry excluding="**/*.xml|**/.svn/" kind="src" path="QuoteRequests"/>
-	<classpathentry excluding="**/*.xml|**/.svn/" kind="src" path="Receipts"/>
-	<classpathentry excluding="**/*.xml|**/.svn/" kind="src" path="RiskAnalyses"/>
+	<classpathentry excluding="**/.svn/" kind="src" path="BigBang"/>
+	<classpathentry excluding="**/.svn/" kind="src" path="Definitions"/>
+	<classpathentry excluding="**/.svn/" kind="src" path="Library"/>
+	<classpathentry excluding="**/.svn/" kind="src" path="Login"/>
+	<classpathentry excluding="**/.svn/" kind="src" path="MainModule"/>
+	<classpathentry excluding="**/.svn/" kind="src" path="Tasks"/>
+	<classpathentry excluding="**/.svn/" kind="src" path="GeneralSystem"/>
+	<classpathentry excluding="**/.svn/" kind="src" path="Clients"/>
+	<classpathentry excluding="**/.svn/" kind="src" path="InsurancePolicies"/>
+	<classpathentry excluding="**/.svn/" kind="src" path="Casualties"/>
+	<classpathentry excluding="**/.svn/" kind="src" path="Complaints"/>
+	<classpathentry excluding="**/.svn/" kind="src" path="Expenses"/>
+	<classpathentry excluding="**/.svn/" kind="src" path="QuoteRequests"/>
+	<classpathentry excluding="**/.svn/" kind="src" path="Receipts"/>
+	<classpathentry excluding="**/.svn/" kind="src" path="RiskAnalyses"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="con" path="com.google.gwt.eclipse.core.GWT_CONTAINER"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/BigBang.Jewel"/>
