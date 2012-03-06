@@ -410,10 +410,10 @@ implements InsuranceSubPolicyBroker {
 	}
 
 	@Override
-	public void removeSubPolicy(String id,
+	public void removeSubPolicy(String id, String reason,
 			final ResponseHandler<String> handler) {
 		final String subPolicyId = getFinalMapping(id);
-		this.service.deleteSubPolicy(subPolicyId, new BigBangAsyncCallback<Void>() {
+		this.service.deleteSubPolicy(subPolicyId, reason, new BigBangAsyncCallback<Void>() {
 
 			@Override
 			public void onResponseSuccess(Void result) {

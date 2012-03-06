@@ -197,7 +197,7 @@ public class ClientSearchOperationViewPresenter implements ViewPresenter {
 					if(inClientCreation()){
 						clearNewClient();
 					}else{
-						item.setParameter("operation", "delete");
+						item.setParameter("show", "delete");
 						NavigationHistoryManager.getInstance().go(item);
 					}
 					break;

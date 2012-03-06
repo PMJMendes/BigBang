@@ -28,6 +28,8 @@ public class ExpandableSelectionFormField extends FormField<String> {
 	protected ExpandableSelectionFormFieldPanel selectionPanel;
 	protected TypifiedListBroker broker;
 	protected String listId, value;
+	protected Image expandImage;
+	protected boolean readOnly = false;
 
 	public ExpandableSelectionFormField(String listId){
 		this(listId, new String());
@@ -73,18 +75,22 @@ public class ExpandableSelectionFormField extends FormField<String> {
 				popup.hidePopup();
 			}
 		});
-		
-		Resources r = GWT.create(Resources.class);
-		Image expandImage = new Image(r.listExpandIcon());
-		expandImage.getElement().getStyle().setCursor(Cursor.POINTER);
-		
-		expandImage.addClickHandler(new ClickHandler() {
+
+		ClickHandler expandClickHandler = new ClickHandler() {
 			
 			@Override
 			public void onClick(ClickEvent event) {
-				popup.center();
+				if(!isReadOnly()){
+					popup.center();
+				}
 			}
-		});
+		};
+		
+		this.valueDisplayName.addClickHandler(expandClickHandler);
+		
+		Resources r = GWT.create(Resources.class);
+		expandImage = new Image(r.listExpandIcon());
+		expandImage.addClickHandler(expandClickHandler);
 		innerWrapper.add(expandImage);
 		innerWrapper.add(this.unitsLabel);
 		innerWrapper.add(mandatoryIndicatorLabel);
@@ -139,13 +145,16 @@ public class ExpandableSelectionFormField extends FormField<String> {
 
 	@Override
 	public void setReadOnly(boolean readonly) {
+		this.readOnly = readonly;
 		this.selectionPanel.setReadOnly(readonly);
 		this.valueDisplayName.getElement().getStyle().setProperty("border", readonly ? "" : "1px gray dotted");
+		this.expandImage.setVisible(!readonly);
+		this.valueDisplayName.getElement().getStyle().setCursor(readonly ? Cursor.AUTO : Cursor.POINTER);
 	}
 
 	@Override
 	public boolean isReadOnly() {
-		return this.selectionPanel.isReadOnly();
+		return this.readOnly;
 	}
 
 	@Override

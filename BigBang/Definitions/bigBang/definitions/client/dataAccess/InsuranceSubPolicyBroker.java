@@ -30,7 +30,7 @@ public interface InsuranceSubPolicyBroker extends
 
 	public void updateSubPolicy(SubPolicy subPolicy, ResponseHandler<SubPolicy> handler);
 
-	public void removeSubPolicy(String subPolicyId, ResponseHandler<String> handler);
+	public void removeSubPolicy(String subPolicyId, String reason, ResponseHandler<String> handler);
 	
 	public void createReceipt(String subPolicyId, Receipt receipt, ResponseHandler<Receipt> handler);
 
