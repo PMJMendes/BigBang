@@ -66,7 +66,7 @@ public class TestSubPolicyDelete
 			}
 		};
 
-		Services.subPolicyService.deleteSubPolicy(stub.id, callback);
+		Services.subPolicyService.deleteSubPolicy(stub.id, "Porque Sim!", callback);
 	}
 
 	private static void DoStep3(String workspaceId)
