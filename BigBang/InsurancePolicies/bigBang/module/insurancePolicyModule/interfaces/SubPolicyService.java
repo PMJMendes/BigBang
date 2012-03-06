@@ -81,5 +81,5 @@ public interface SubPolicyService
 
 	public SubPolicy voidSubPolicy(PolicyVoiding voiding) throws SessionExpiredException, BigBangException;
 
-	public void deleteSubPolicy(String policyId) throws SessionExpiredException, BigBangException;
+	public void deleteSubPolicy(String policyId, String reason) throws SessionExpiredException, BigBangException;
 }

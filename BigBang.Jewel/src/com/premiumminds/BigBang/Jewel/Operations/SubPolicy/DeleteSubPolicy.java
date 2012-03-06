@@ -7,7 +7,6 @@ import Jewel.Petri.SysObjects.JewelPetriException;
 import Jewel.Petri.SysObjects.Operation;
 
 import com.premiumminds.BigBang.Jewel.Constants;
-import com.premiumminds.BigBang.Jewel.Data.SubPolicyData;
 import com.premiumminds.BigBang.Jewel.Operations.Policy.ExternDeleteSubPolicy;
 
 public class DeleteSubPolicy
@@ -15,7 +14,8 @@ public class DeleteSubPolicy
 {
 	private static final long serialVersionUID = 1L;
 
-	public UUID midSubPolicy;
+	public transient UUID midSubPolicy;
+	public transient String mstrReason;
 
 	public DeleteSubPolicy(UUID pidProcess)
 	{
@@ -50,8 +50,8 @@ public class DeleteSubPolicy
 		try
 		{
 			lobjOp = new ExternDeleteSubPolicy(GetProcess().GetParent().getKey());
-			lobjOp.mobjData = new SubPolicyData();
-			lobjOp.mobjData.mid = midSubPolicy;
+			lobjOp.midSubPolicy = midSubPolicy;
+			lobjOp.mstrReason = mstrReason;
 			TriggerOp(lobjOp, pdb);
 		}
 		catch (Throwable e)

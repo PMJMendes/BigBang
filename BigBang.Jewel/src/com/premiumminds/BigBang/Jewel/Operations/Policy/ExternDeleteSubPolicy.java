@@ -33,10 +33,12 @@ public class ExternDeleteSubPolicy
 {
 	private static final long serialVersionUID = 1L;
 
-	public SubPolicyData mobjData;
-	public ContactOps mobjContactOps;
-	public DocOps mobjDocOps;
-	public PolicyExerciseData[] marrAuxExercises;
+	public UUID midSubPolicy;
+	public String mstrReason;
+	private SubPolicyData mobjData;
+	private ContactOps mobjContactOps;
+	private DocOps mobjDocOps;
+	private PolicyExerciseData[] marrAuxExercises;
 
 	public ExternDeleteSubPolicy(UUID pidProcess)
 	{
@@ -69,6 +71,13 @@ public class ExternDeleteSubPolicy
 		if ( mobjDocOps != null )
 			mobjDocOps.LongDesc(lstrResult, pstrLineBreak);
 
+		lstrResult.append("Razão: ");
+		if ( mstrReason != null )
+			lstrResult.append(mstrReason);
+		else
+			lstrResult.append("(não indicada)");
+		lstrResult.append(pstrLineBreak);
+
 		return lstrResult.toString();
 	}
 
@@ -77,7 +86,6 @@ public class ExternDeleteSubPolicy
 		return mobjData.midProcess;
 	}
 
-	@Override
 	protected void Run(SQLServer pdb) throws JewelPetriException
 	{
 		SubPolicy lobjAux;
@@ -92,7 +100,8 @@ public class ExternDeleteSubPolicy
 
 		try
 		{
-			lobjAux = SubPolicy.GetInstance(Engine.getCurrentNameSpace(), mobjData.mid);
+			lobjAux = SubPolicy.GetInstance(Engine.getCurrentNameSpace(), midSubPolicy);
+			mobjData = new SubPolicyData();
 			mobjData.FromObject(lobjAux);
 			mobjData.mobjPrevValues = null;
 

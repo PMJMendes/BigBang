@@ -40,5 +40,5 @@ public interface SubPolicyServiceAsync
 	void createInfoOrDocumentRequest(InfoOrDocumentRequest request, AsyncCallback<InfoOrDocumentRequest> callback);
 	void createReceipt(String subPolicyId, Receipt receipt, AsyncCallback<Receipt> callback);
 	void voidSubPolicy(PolicyVoiding voiding, AsyncCallback<SubPolicy> callback);
-	void deleteSubPolicy(String subPolicyId, AsyncCallback<Void> callback);
+	void deleteSubPolicy(String subPolicyId, String reason, AsyncCallback<Void> callback);
 }

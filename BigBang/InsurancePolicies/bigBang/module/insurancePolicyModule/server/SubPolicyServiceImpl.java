@@ -3116,7 +3116,7 @@ public class SubPolicyServiceImpl
 		return ReceiptServiceImpl.sGetReceipt(lopCR.mobjData.mid.toString());
 	}
 
-	public void deleteSubPolicy(String policyId)
+	public void deleteSubPolicy(String policyId, String reason)
 		throws SessionExpiredException, BigBangException
 	{
 		com.premiumminds.BigBang.Jewel.Objects.SubPolicy lobjPolicy;
@@ -3132,6 +3132,7 @@ public class SubPolicyServiceImpl
 
 			lobjDSP = new DeleteSubPolicy(lobjPolicy.GetProcessID());
 			lobjDSP.midSubPolicy = UUID.fromString(policyId);
+			lobjDSP.mstrReason = reason;
 			lobjDSP.Execute();
 		}
 		catch (Throwable e)
