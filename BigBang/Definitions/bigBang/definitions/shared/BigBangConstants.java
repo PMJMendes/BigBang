@@ -50,6 +50,8 @@ public class BigBangConstants {
 		public static final String INSURANCE_POLICY_INSURED_OBJECTS = "3A3316D2-9D7C-4FD1-8486-9F9C0012E119";
 
 		public static final String INSURANCE_SUB_POLICY = "C7BC8D2F-BD61-43D5-9347-9FF300EE9986";
+
+		public static final String NEGOTIATION = "0D50EB51-725D-4741-8618-9FFD00E918D3";
 		
 	}
 
@@ -111,11 +113,19 @@ public class BigBangConstants {
 			public static final String CREATE_INFO_MANAGEMENT_PROCESS = null;
 			public static final String CREATE_SUB_POLICY = "DF27A2DA-1B36-4F1C-B242-9FD40110F495";
 			public static final String CREATE_DEBIT_NOTE = "4CC51237-FC83-4B13-A8A9-9FD401100FE2";
-			public static final String CREATE_NEGOTIATION = null;
+			public static final String CREATE_NEGOTIATION = "852BF3BF-F04A-494D-A308-9FD4011152C4";
 			public static final String CREATE_HEALTH_EXPENSE = null;
 			public static final String CREATE_RISK_ANALISYS = null;
 		}
 
+		
+		public static class NegotiationProcess{
+
+			public static final String DELETE_NEGOTIATION = "796C9A67-2B7E-40D0-974A-9FFD0105890E";
+			public static final String UPDATE_NEGOTIATION = "FA636D7A-FEF3-4F87-9D1A-9FFD010242ED";
+			
+		}
+		
 	}
 
 	//Session related constants

@@ -7,6 +7,7 @@ import bigBang.definitions.shared.DebitNote;
 import bigBang.definitions.shared.InsurancePolicy;
 import bigBang.definitions.shared.InsurancePolicy.TableSection;
 import bigBang.definitions.shared.InsurancePolicyStub;
+import bigBang.definitions.shared.Negotiation;
 import bigBang.definitions.shared.PolicyVoiding;
 import bigBang.definitions.shared.Receipt;
 
@@ -53,5 +54,7 @@ public interface InsurancePolicyBroker extends DataBrokerInterface<InsurancePoli
 	public String getEffectiveId(String ownerId);
 
 	public String getFinalMapping(String ownerId);
+	
+	public void createNegotiation(Negotiation negotiation, ResponseHandler<Negotiation> handler);
 
 }

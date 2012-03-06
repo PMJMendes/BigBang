@@ -269,7 +269,8 @@ ViewPresenter {
 					NavigationHistoryManager.getInstance().go(item);
 					break;
 				case CREATE_NEGOTIATION:
-					item.setParameter("operation", "createnegotiation");
+					item.setParameter("operation", "negotiation");
+					item.setParameter("negotiationid", "new");
 					NavigationHistoryManager.getInstance().go(item);
 					break;
 				case CREATE_RISK_ANALISYS:

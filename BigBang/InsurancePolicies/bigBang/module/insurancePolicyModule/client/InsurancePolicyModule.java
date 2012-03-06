@@ -121,6 +121,15 @@ public class InsurancePolicyModule implements Module {
 				return presenter;
 			}
 		});
+		
+		ViewPresenterFactory.getInstance().registerViewPresenterInstantiator("INSURANCE_POLICY_NEGOTIATION", new ViewPresenterInstantiator() {
+			
+			@Override
+			public ViewPresenter getInstance() {
+				// TODO Auto-generated method stub
+				return null;
+			}
+		});
 	} 
 
 	public boolean isInitialized() {

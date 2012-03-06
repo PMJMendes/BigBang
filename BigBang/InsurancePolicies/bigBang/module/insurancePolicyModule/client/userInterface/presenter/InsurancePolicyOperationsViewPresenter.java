@@ -63,6 +63,8 @@ public class InsurancePolicyOperationsViewPresenter implements ViewPresenter {
 					present("INSURANCE_POLICY_EXERCISE", parameters);
 				}else if(operation.equalsIgnoreCase("subpolicy")){
 					present("INSURANCE_POLICY_SUB_POLICY", parameters);
+				}else if(operation.equalsIgnoreCase("negotiation")){
+					present("INSURANCE_POLICY_NEGOTIATION", parameters);
 				}else{
 					goToDefault();
 				}

@@ -22,6 +22,7 @@ import bigBang.definitions.shared.InsurancePolicy;
 import bigBang.definitions.shared.InsurancePolicy.TableSection;
 import bigBang.definitions.shared.BigBangPolicyValidationException;
 import bigBang.definitions.shared.InsurancePolicyStub;
+import bigBang.definitions.shared.Negotiation;
 import bigBang.definitions.shared.PolicyVoiding;
 import bigBang.definitions.shared.Receipt;
 import bigBang.definitions.shared.Remap;
@@ -687,6 +688,27 @@ public class InsurancePolicyProcessBrokerImpl extends DataBroker<InsurancePolicy
 			@Override
 			public void onError(Collection<ResponseError> errors) {}
 		});
+	}
+
+	@Override
+	public void createNegotiation(Negotiation negotiation, final ResponseHandler<Negotiation> handler) {
+		service.createNegotiation(negotiation, new BigBangAsyncCallback<Negotiation>() {
+
+			@Override
+			public void onResponseSuccess(Negotiation result) {
+				handler.onResponse(result);
+				DataBrokerManager.Util.getInstance().getBroker(BigBangConstants.EntityIds.NEGOTIATION).notifyItemCreation(result.id);
+			}
+			
+			@Override
+			public void onFailure(Throwable caught) {
+				handler.onError(new String[]{
+						new String("Could not save the negotiation")
+				});
+				super.onResponseFailure(caught);
+			}
+		});
+		
 	}
 
 }
