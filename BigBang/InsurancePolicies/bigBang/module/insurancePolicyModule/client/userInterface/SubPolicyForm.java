@@ -4,12 +4,10 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
-import bigBang.definitions.client.dataAccess.ClientProcessBroker;
 import bigBang.definitions.client.dataAccess.InsuranceSubPolicyBroker;
 import bigBang.definitions.client.response.ResponseError;
 import bigBang.definitions.client.response.ResponseHandler;
 import bigBang.definitions.shared.BigBangConstants;
-import bigBang.definitions.shared.Client;
 import bigBang.definitions.shared.SubPolicy;
 import bigBang.definitions.shared.SubPolicy.Coverage;
 import bigBang.definitions.shared.SubPolicy.ExtraField;
@@ -22,24 +20,21 @@ import bigBang.library.client.dataAccess.DataBrokerManager;
 import bigBang.library.client.dataAccess.TypifiedListBroker;
 import bigBang.library.client.userInterface.DatePickerFormField;
 import bigBang.library.client.userInterface.ExpandableListBoxFormField;
+import bigBang.library.client.userInterface.ExpandableSelectionFormField;
 import bigBang.library.client.userInterface.RadioButtonFormField;
 import bigBang.library.client.userInterface.TextAreaFormField;
 import bigBang.library.client.userInterface.TextBoxFormField;
 import bigBang.library.client.userInterface.view.FormView;
 import bigBang.library.client.userInterface.view.FormViewSection;
-import bigBang.library.client.userInterface.view.PopupPanel;
 import bigBang.module.insurancePolicyModule.client.dataAccess.SubPolicyTypifiedListBroker;
 import bigBang.module.insurancePolicyModule.client.userInterface.presenter.SubPolicyClientSelectionViewPresenter;
 import bigBang.module.insurancePolicyModule.client.userInterface.view.SubPolicyClientSelectionView;
 import bigBang.module.insurancePolicyModule.shared.ModuleConstants;
 
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Overflow;
-import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.i18n.client.DateTimeFormat;
-import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.HasValue;
-import com.google.gwt.user.client.ui.SimplePanel;
 
 public class SubPolicyForm extends FormView<SubPolicy> {
 
@@ -155,7 +150,7 @@ public class SubPolicyForm extends FormView<SubPolicy> {
 
 	protected TextBoxFormField manager; //ro
 	protected TextBoxFormField number;
-	protected TextBoxFormField client; //PREVER ALTERAÇÃO
+	protected ExpandableSelectionFormField client;
 	protected TextBoxFormField insuranceAgency;//ro
 	protected TextBoxFormField category;//ro
 	protected TextBoxFormField line;//ro
@@ -170,8 +165,6 @@ public class SubPolicyForm extends FormView<SubPolicy> {
 	protected TextBoxFormField premium;
 	protected SubPolicyFormTable table;
 
-	protected Button selectClientButton;
-	
 	protected Map<String, HeaderFormField> headerFields;
 	protected FormViewSection headerFieldsSection;
 
@@ -187,10 +180,15 @@ public class SubPolicyForm extends FormView<SubPolicy> {
 		headerFields = new HashMap<String, HeaderFormField>();
 		extraFields = new HashMap<String, HeaderFormField>();
 
-		addSection("Apólice");
+		addSection("Apólice Adesão");
 		number  = new TextBoxFormField("Número");
 		number.setFieldWidth("175px");
-		client = new TextBoxFormField("Cliente");
+		
+		SubPolicyClientSelectionView view = (SubPolicyClientSelectionView) GWT.create(SubPolicyClientSelectionView.class);
+		SubPolicyClientSelectionViewPresenter presenter = new SubPolicyClientSelectionViewPresenter(view);
+		presenter.go();
+		client = new ExpandableSelectionFormField(BigBangConstants.EntityIds.CLIENT, "Cliente Aderente", presenter); //TODO
+		client.setFieldWidth("547px");
 		manager = new TextBoxFormField("Gestor");
 		manager.setEditable(false);
 		manager.setFieldWidth("175px");
@@ -230,19 +228,7 @@ public class SubPolicyForm extends FormView<SubPolicy> {
 		exercises.setEditable(false);
 		insuredObjects.setEditable(false);
 
-		selectClientButton = new Button("Escolher Cliente Aderente", new ClickHandler() {
-			
-			@Override
-			public void onClick(ClickEvent event) {
-				showClientSelection();
-			}
-		});
-
-		selectClientButton.setWidth("191px");
-		
 		addFormField(client, false);
-		addWidget(selectClientButton);
-
 		addFormField(number, true);
 		addFormField(insuranceAgency, false);
 
@@ -282,8 +268,6 @@ public class SubPolicyForm extends FormView<SubPolicy> {
 		addSection("Notas");
 		addFormField(notes);
 
-		this.client.setEditable(false);
-
 		clearValue();
 		setValue(this.value);
 	}
@@ -306,7 +290,7 @@ public class SubPolicyForm extends FormView<SubPolicy> {
 	public SubPolicy getInfo() {
 		SubPolicy result = this.value;
 
-		result.clientId = "8b75501d-4c15-476b-8f80-9fd9017c7eff"; //TODO IMPORTANT FJVC 
+		result.clientId = client.getValue();
 		result.managerId = manager.getValue();
 		result.number = number.getValue();
 		result.startDate = startDate.getValue() == null ? null : DateTimeFormat.getFormat("yyyy-MM-dd").format(startDate.getValue());
@@ -393,6 +377,7 @@ public class SubPolicyForm extends FormView<SubPolicy> {
 		}else{
 			this.manager.setValue(info.managerName);
 			this.number.setValue(info.number);
+			this.client.setValue(info.clientId);
 			this.insuranceAgency.setValue(info.inheritCompanyName);
 			this.category.setValue(info.inheritCategoryName);
 			this.line.setValue(info.inheritLineName);
@@ -458,21 +443,6 @@ public class SubPolicyForm extends FormView<SubPolicy> {
 					}
 				});
 			}
-
-			if(info.clientId != null) {
-				ClientProcessBroker clientBroker = ((ClientProcessBroker) DataBrokerManager.Util.getInstance().getBroker(BigBangConstants.EntityIds.CLIENT));
-				clientBroker.getClient(info.clientId, new ResponseHandler<Client>() {
-
-					@Override
-					public void onResponse(Client response) {
-						SubPolicyForm.this.client.setValue(response.name + " (" + response.clientNumber + ")");
-					}
-
-					@Override
-					public void onError(Collection<ResponseError> errors) {}
-				});
-			}
-
 
 			this.policyStatus.setValue(info.statusText);
 			this.notes.setValue(info.notes);
@@ -546,25 +516,4 @@ public class SubPolicyForm extends FormView<SubPolicy> {
 		this.table.clear();
 	}
 	
-	private void showClientSelection(){
-		SubPolicyClientSelectionView view = new SubPolicyClientSelectionView();
-		SubPolicyClientSelectionViewPresenter presenter = new SubPolicyClientSelectionViewPresenter(view){
-
-			@Override
-			public void onClientSelected(Client client) {
-				SubPolicy info = getInfo();
-				info.clientId = client.id;
-				info.clientName = client.name;
-				info.clientNumber = client.clientNumber;
-				setInfo(info);
-			}
-			
-		};
-		SimplePanel wrapper = new SimplePanel();
-		wrapper.setSize("900px", "600px");
-		presenter.go(wrapper);
-		PopupPanel popup = new PopupPanel();
-		popup.add(wrapper);
-		popup.center();
-	}
 }

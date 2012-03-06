@@ -1,5 +1,6 @@
 package bigBang.library.client.dataAccess;
 
+import java.util.Collection;
 import java.util.List;
 
 import bigBang.definitions.client.response.ResponseHandler;
@@ -40,8 +41,10 @@ public interface TypifiedListBroker {
 	 * @return the list items
 	 */
 	public List<TipifiedListItem> getListItems(String listId);
+	
+	public void getListItems(String listId, ResponseHandler<Collection<TipifiedListItem>> handler);
 
-	public TipifiedListItem getListItem(String listId, String itemId);
+	public void getListItem(String listId, String itemId, ResponseHandler<TipifiedListItem> handler);
 	
 	/**
 	 * @param listId the id for the typified list into which the item will be inserted

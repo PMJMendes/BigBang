@@ -25,7 +25,6 @@ public class NavigationHistoryManager implements HasValueChangeHandlers<Navigati
 
 	private HandlerManager handlerManager;
 
-
 	private NavigationHistoryManager(){
 		this.handlerManager = new HandlerManager(this);
 		History.addValueChangeHandler(new ValueChangeHandler<String>() {

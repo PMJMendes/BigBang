@@ -1,60 +1,161 @@
 package bigBang.library.client.userInterface;
 
-import com.google.gwt.event.logical.shared.ValueChangeEvent;
-import com.google.gwt.user.client.ui.Label;
+import java.util.Collection;
 
+import com.google.gwt.core.client.GWT;
+import com.google.gwt.dom.client.Style.Cursor;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.logical.shared.ValueChangeEvent;
+import com.google.gwt.event.logical.shared.ValueChangeHandler;
+import com.google.gwt.user.client.ui.HorizontalPanel;
+import com.google.gwt.user.client.ui.Image;
+import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.VerticalPanel;
+
+import bigBang.definitions.client.response.ResponseError;
+import bigBang.definitions.client.response.ResponseHandler;
+import bigBang.definitions.shared.TipifiedListItem;
 import bigBang.library.client.FormField;
+import bigBang.library.client.dataAccess.BigBangTypifiedListBroker;
+import bigBang.library.client.dataAccess.TypifiedListBroker;
+import bigBang.library.client.resources.Resources;
+import bigBang.library.client.userInterface.view.PopupPanel;
 
 public class ExpandableSelectionFormField extends FormField<String> {
-	
+
 	protected Label valueDisplayName;
 	protected ExpandableSelectionFormFieldPanel selectionPanel;
-	
-	public ExpandableSelectionFormField(){
-		this.selectionPanel = new TypifiedListSelectionPanel();
+	protected TypifiedListBroker broker;
+	protected String listId, value;
+
+	public ExpandableSelectionFormField(String listId){
+		this(listId, new String());
 	}
 	
-	public ExpandableSelectionFormField(ExpandableSelectionFormFieldPanel selectionPanel){
+	public ExpandableSelectionFormField(String listId, String label){
+		this(listId, label, new TypifiedListSelectionPanel());
+	}
+	
+	public ExpandableSelectionFormField(String listId, String label, ExpandableSelectionFormFieldPanel selectionPanel){
 		super();
+		
+		VerticalPanel wrapper = new VerticalPanel();
+		initWidget(wrapper);
+		wrapper.setSize("100%", "100%");
+		
+		label = label == null ? "" : label;
+		this.label.setText(label);
+		
+		HorizontalPanel innerWrapper = new HorizontalPanel();
+		
+		this.valueDisplayName = new Label();
+		this.valueDisplayName.setWidth("150px");
+		innerWrapper.add(this.valueDisplayName);
+		
+		this.listId = listId;
+		
+		this.broker = BigBangTypifiedListBroker.Util.getInstance();
 		this.selectionPanel = selectionPanel;
+		this.selectionPanel.setListId(listId);
+		
+		final PopupPanel popup = new PopupPanel();
+		popup.add(selectionPanel);
+		
+		selectionPanel.addValueChangeHandler(new ValueChangeHandler<String>() {
+
+			@Override
+			public void onValueChange(ValueChangeEvent<String> event) {
+				String value = event.getValue();
+				if(!(value != null && value.equals("CANCELLED_SELECTION"))){
+					ExpandableSelectionFormField.this.setValue(event.getValue());
+				}
+				popup.hidePopup();
+			}
+		});
+		
+		Resources r = GWT.create(Resources.class);
+		Image expandImage = new Image(r.listExpandIcon());
+		expandImage.getElement().getStyle().setCursor(Cursor.POINTER);
+		
+		expandImage.addClickHandler(new ClickHandler() {
+			
+			@Override
+			public void onClick(ClickEvent event) {
+				popup.center();
+			}
+		});
+		innerWrapper.add(expandImage);
+		innerWrapper.add(this.unitsLabel);
+		innerWrapper.add(mandatoryIndicatorLabel);
+		
+		wrapper.add(this.label);
+		wrapper.add(innerWrapper);
+		
+		setValue(null, false);
+		setReadOnly(false);
 	}
-	
+
 	public String getValue() {
-		return field.getValue();
+		return this.value;
 	}
 
 	public void setValue(String value) {
 		this.setValue(value, true);
 	}
 
-	public void setValue(String value, boolean fireEvents) {
-		field.setValue(value, false);
-		if(fireEvents)
-			ValueChangeEvent.fire(this, value);
+	public void setValue(String value, final boolean fireEvents) {
+		if(value == null) {
+			this.value = null;
+			this.valueDisplayName.setText("-");
+			if(fireEvents){
+				ValueChangeEvent.fire(this, value);
+			}
+		} else {
+			broker.getListItem(this.listId, value, new ResponseHandler<TipifiedListItem>() {
+				
+				@Override
+				public void onResponse(TipifiedListItem response) {
+					ExpandableSelectionFormField.this.value = response.id;
+					ExpandableSelectionFormField.this.valueDisplayName.setText(response.value == null ? "" : response.value);
+					if(fireEvents){
+						ValueChangeEvent.fire(ExpandableSelectionFormField.this, ExpandableSelectionFormField.this.value);
+					}
+				}
+				
+				@Override
+				public void onError(Collection<ResponseError> errors) {
+					setValue(null, fireEvents);
+					GWT.log("Could not get the requested typified list item");
+				}
+			});
+		}
 	}
-	
+
 	@Override
 	public void clear() {
-		// TODO Auto-generated method stub
-
+		setValue(null);
 	}
 
 	@Override
 	public void setReadOnly(boolean readonly) {
-		// TODO Auto-generated method stub
-
+		this.selectionPanel.setReadOnly(readonly);
+		this.valueDisplayName.getElement().getStyle().setProperty("border", readonly ? "" : "1px gray dotted");
 	}
 
 	@Override
 	public boolean isReadOnly() {
-		// TODO Auto-generated method stub
-		return false;
+		return this.selectionPanel.isReadOnly();
 	}
 
 	@Override
 	public void setLabelWidth(String width) {
-		// TODO Auto-generated method stub
-
+		this.label.setWidth(width);
+	}
+	
+	@Override
+	public void setFieldWidth(String width) {
+		this.valueDisplayName.setWidth(width);
 	}
 
 }

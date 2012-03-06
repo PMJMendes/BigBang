@@ -4,6 +4,7 @@ import java.util.Collection;
 
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
+import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.user.client.ui.HasWidgets;
 import com.google.gwt.user.client.ui.UIObject;
 import com.google.gwt.user.client.ui.Widget;
@@ -23,9 +24,10 @@ import bigBang.library.client.event.ActionInvokedEvent;
 import bigBang.library.client.event.ActionInvokedEventHandler;
 import bigBang.library.client.event.SelectionChangedEvent;
 import bigBang.library.client.event.SelectionChangedEventHandler;
+import bigBang.library.client.userInterface.ExpandableSelectionFormFieldPanel;
 import bigBang.library.client.userInterface.presenter.ViewPresenter;
 
-public abstract class SubPolicyClientSelectionViewPresenter implements ViewPresenter {
+public class SubPolicyClientSelectionViewPresenter extends ExpandableSelectionFormFieldPanel implements ViewPresenter {
 
 	public static enum Action {
 		CONFIRM,
@@ -61,6 +63,12 @@ public abstract class SubPolicyClientSelectionViewPresenter implements ViewPrese
 		bind();
 		container.clear();
 		container.add(this.view.asWidget());
+	}
+	
+	public void go() {
+		bind();
+		this.view.asWidget().setSize("900px", "600px");
+		initWidget(this.view.asWidget());
 	}
 
 	@Override
@@ -123,7 +131,7 @@ public abstract class SubPolicyClientSelectionViewPresenter implements ViewPrese
 					onClientSelected(view.getForm().getValue());
 					break;
 				case CANCEL:
-					onClientSelected(null);
+					onSelectionCancelled();
 					break;
 				}
 			}
@@ -131,7 +139,64 @@ public abstract class SubPolicyClientSelectionViewPresenter implements ViewPrese
 
 		bound = true;
 	}
+	
+	protected void onClientSelected(Client client){
+		ValueChangeEvent.fire(this, client == null ? null : client.id);
+	}
 
-	public abstract void onClientSelected(Client client);
+	protected void onSelectionCancelled(){
+		ValueChangeEvent.fire(this, "CANCELLED_SELECTION");
+	}
+	
+	@Override
+	public String getValue() {
+		return view.getForm().getValue().id;
+	}
+
+	@Override
+	public void setValue(String value) {
+		setValue(value, true);
+	}
+
+	@Override
+	public void setValue(String value, final boolean fireEvents) {
+		this.clientBroker.getClient(value, new ResponseHandler<Client>() {
+
+			@Override
+			public void onResponse(Client response) {
+				view.getForm().setValue(response);
+				if(fireEvents) {
+					ValueChangeEvent.fire(SubPolicyClientSelectionViewPresenter.this, response.id);
+				}
+			}
+
+			@Override
+			public void onError(Collection<ResponseError> errors) {
+				onResponse(null);
+			}
+		});
+	}
+
+	@Override
+	public HandlerRegistration addValueChangeHandler(
+			ValueChangeHandler<String> handler) {
+		return addHandler(handler, ValueChangeEvent.getType());
+	}
+
+	@Override
+	public void setListId(String listId) {
+		return;
+	}
+
+	@Override
+	public void setReadOnly(boolean readOnly) {
+	//TODO
+	}
+
+	@Override
+	public boolean isReadOnly() {
+		// TODO Auto-generated method stub
+		return false;
+	}
 
 }

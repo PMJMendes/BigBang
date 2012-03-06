@@ -2,6 +2,7 @@ package bigBang.library.client.dataAccess;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -180,9 +181,68 @@ public class BigBangTypifiedListBroker implements TypifiedListBroker {
 	}
 
 	@Override
-	public TipifiedListItem getListItem(String listId, String itemId) {
-		//TODO
-		return null;
+	public void getListItems(final String listId, final ResponseHandler<Collection<TipifiedListItem>> handler) {
+		if(!validListId(listId)){
+			handler.onError(new String[]{
+					new String("The given list id is invalid : " + listId)	
+			});
+			return;
+		}
+		StringTokenizer tokenizer = new StringTokenizer(listId, DEPENDENCY_DELIMITER);
+		final String effectiveListId = tokenizer.nextToken();
+		if(tokenizer.hasMoreTokens()){
+			String dependencyListId = tokenizer.nextToken();
+			service.getListItemsFilter(effectiveListId, dependencyListId, new BigBangAsyncCallback<TipifiedListItem[]>() {
+
+				@Override
+				public void onResponseSuccess(TipifiedListItem[] result) {
+					handler.onResponse(new ArrayList<TipifiedListItem>(Arrays.asList(result)));
+				}
+
+				@Override
+				public void onResponseFailure(Throwable caught) {
+					handler.onError(new String[]{
+							new String("Could not get the list items for list " + listId)	
+					});
+					super.onResponseFailure(caught);
+				}
+			});
+		}else{
+			((TipifiedListServiceAsync) this.service).getListItems(effectiveListId, new BigBangAsyncCallback<TipifiedListItem[]>() {
+
+				@Override
+				public void onResponseSuccess(TipifiedListItem[] result) {
+					handler.onResponse(new ArrayList<TipifiedListItem>(Arrays.asList(result)));
+				}
+
+				@Override
+				public void onResponseFailure(Throwable caught) {
+					handler.onError(new String[]{
+							new String("Could not get the list items for list " + listId)	
+					});
+					super.onResponseFailure(caught);
+				}
+			});
+		}
+	}
+
+	@Override
+	public void getListItem(String listId, String itemId, final ResponseHandler<TipifiedListItem> handler) {
+		((TipifiedListServiceAsync) this.service).getSingleItem(listId, itemId, new BigBangAsyncCallback<TipifiedListItem>() {
+
+			@Override
+			public void onResponseSuccess(TipifiedListItem result) {
+				handler.onResponse(result);
+			}
+
+			@Override
+			public void onResponseFailure(Throwable caught) {
+				handler.onError(new String[]{
+						new String("Could not get the listItem")	
+				});
+				super.onResponseFailure(caught);
+			}
+		});
 	}
 
 	@Override
