@@ -404,12 +404,16 @@ public class DocumentServiceImpl
 			lidOp = Constants.OPID_General_ManageMediators;
 		else if ( Constants.ObjID_Client.equals(lidTopType) )
 			lidOp = Constants.OPID_Client_ManageData;
+		else if ( Constants.ObjID_QuoteRequest.equals(lidTopType) )
+			lidOp = Constants.OPID_QuoteRequest_ManageData;
 		else if ( Constants.ObjID_Negotiation.equals(lidTopType) )
 			lidOp = Constants.OPID_Negotiation_ManageData;
 		else if ( Constants.ObjID_Policy.equals(lidTopType) )
 			lidOp = Constants.OPID_Policy_ManageData;
 		else if ( Constants.ObjID_SubPolicy.equals(lidTopType) )
 			lidOp = Constants.OPID_SubPolicy_ManageData;
+		else if ( Constants.ObjID_Receipt.equals(lidTopType) )
+			lidOp = Constants.OPID_Receipt_ManageData;
 		else
 			throw new BigBangException("Erro: O objecto indicado não permite movimentos de Documentos.");
 
@@ -453,6 +457,14 @@ public class DocumentServiceImpl
 			lbFound = true;
 		}
 
+		if ( lobjResult instanceof com.premiumminds.BigBang.Jewel.Operations.QuoteRequest.ManageData )
+		{
+			((com.premiumminds.BigBang.Jewel.Operations.QuoteRequest.ManageData)lobjResult).mobjData = null;
+			((com.premiumminds.BigBang.Jewel.Operations.QuoteRequest.ManageData)lobjResult).mobjContactOps = null;
+			((com.premiumminds.BigBang.Jewel.Operations.QuoteRequest.ManageData)lobjResult).mobjDocOps = pobjInner;
+			lbFound = true;
+		}
+
 		if ( lobjResult instanceof com.premiumminds.BigBang.Jewel.Operations.Negotiation.ManageData )
 		{
 			((com.premiumminds.BigBang.Jewel.Operations.Negotiation.ManageData)lobjResult).mobjData = null;
@@ -474,6 +486,14 @@ public class DocumentServiceImpl
 			((com.premiumminds.BigBang.Jewel.Operations.SubPolicy.ManageData)lobjResult).mobjData = null;
 			((com.premiumminds.BigBang.Jewel.Operations.SubPolicy.ManageData)lobjResult).mobjContactOps = null;
 			((com.premiumminds.BigBang.Jewel.Operations.SubPolicy.ManageData)lobjResult).mobjDocOps = pobjInner;
+			lbFound = true;
+		}
+
+		if ( lobjResult instanceof com.premiumminds.BigBang.Jewel.Operations.Receipt.ManageData )
+		{
+			((com.premiumminds.BigBang.Jewel.Operations.Receipt.ManageData)lobjResult).mobjData = null;
+			((com.premiumminds.BigBang.Jewel.Operations.Receipt.ManageData)lobjResult).mobjContactOps = null;
+			((com.premiumminds.BigBang.Jewel.Operations.Receipt.ManageData)lobjResult).mobjDocOps = pobjInner;
 			lbFound = true;
 		}
 
