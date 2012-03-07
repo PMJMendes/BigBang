@@ -27,5 +27,5 @@ public interface QuoteRequestServiceAsync
 	void deleteObjectInPad(String objectId, AsyncCallback<Void> callback);
 	void commitPad(String requestId, AsyncCallback<Remap[]> callback);
 	void discardPad(String requestId, AsyncCallback<Remap[]> callback);
-	void deleteRequest(String requestId, AsyncCallback<Void> callback);
+	void deleteRequest(String requestId, String reason, AsyncCallback<Void> callback);
 }

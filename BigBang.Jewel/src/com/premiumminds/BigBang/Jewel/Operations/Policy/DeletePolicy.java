@@ -15,7 +15,8 @@ public class DeletePolicy
 {
 	private static final long serialVersionUID = 1L;
 
-	public UUID midPolicy;
+	public transient UUID midPolicy;
+	public transient String mstrReason;
 
 	public DeletePolicy(UUID pidProcess)
 	{

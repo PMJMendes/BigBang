@@ -50,6 +50,7 @@ import com.premiumminds.BigBang.Jewel.Objects.QuoteRequestValue;
 import com.premiumminds.BigBang.Jewel.Objects.SubLine;
 import com.premiumminds.BigBang.Jewel.Objects.Tax;
 import com.premiumminds.BigBang.Jewel.Operations.Client.CreateQuoteRequest;
+import com.premiumminds.BigBang.Jewel.Operations.QuoteRequest.DeleteQuoteRequest;
 import com.premiumminds.BigBang.Jewel.Operations.QuoteRequest.ManageData;
 import com.premiumminds.BigBang.Jewel.SysObjects.ZipCodeBridge;
 
@@ -2361,7 +2362,7 @@ public class QuoteRequestServiceImpl
 
 		try
 		{
-			if ( Constants.ObjID_PolicyObject.equals(UUID.fromString(listId)) )
+			if ( Constants.ObjID_QuoteRequestObject.equals(UUID.fromString(listId)) )
 				return GetScratchPadStorage().get(UUID.fromString(filterId)).GetObjects();
 		}
 		catch (Throwable e)
@@ -2497,11 +2498,29 @@ public class QuoteRequestServiceImpl
 		return lrefPad.GetRemapFromPad(false);
 	}
 
-	@Override
-	public void deleteRequest(String requestId) throws SessionExpiredException,
-			BigBangException {
-		// TODO Auto-generated method stub
-		
+	public void deleteRequest(String requestId, String reason)
+		throws SessionExpiredException, BigBangException
+	{
+		com.premiumminds.BigBang.Jewel.Objects.QuoteRequest lobjRequest;
+		DeleteQuoteRequest lobjDQR;
+
+		if ( Engine.getCurrentUser() == null )
+			throw new SessionExpiredException();
+
+		try
+		{
+			lobjRequest = com.premiumminds.BigBang.Jewel.Objects.QuoteRequest.GetInstance(Engine.getCurrentNameSpace(),
+					UUID.fromString(requestId));
+
+			lobjDQR = new DeleteQuoteRequest(lobjRequest.GetProcessID());
+			lobjDQR.midRequest = UUID.fromString(requestId);
+			lobjDQR.mstrReason = reason;
+			lobjDQR.Execute();
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangException(e.getMessage(), e);
+		}
 	}
 
 	protected UUID getObjectID()

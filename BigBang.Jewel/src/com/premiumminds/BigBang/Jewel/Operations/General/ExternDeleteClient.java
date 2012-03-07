@@ -6,6 +6,7 @@ import java.util.UUID;
 import Jewel.Engine.Engine;
 import Jewel.Engine.DataAccess.SQLServer;
 import Jewel.Engine.Implementation.Entity;
+import Jewel.Engine.Interfaces.IEntity;
 import Jewel.Petri.Objects.PNProcess;
 import Jewel.Petri.SysObjects.JewelPetriException;
 import Jewel.Petri.SysObjects.UndoableOperation;
@@ -81,7 +82,7 @@ public class ExternDeleteClient
 	protected void Run(SQLServer pdb)
 		throws JewelPetriException
 	{
-		Entity lrefClients;
+		IEntity lrefClients;
 		Client lobjAux;
 		Contact[] larrContacts;
 		Document[] larrDocs;

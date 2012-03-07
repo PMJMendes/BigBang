@@ -57,5 +57,5 @@ public interface QuoteRequestService
 	public Remap[] commitPad(String requestId) throws SessionExpiredException, BigBangException, CorruptedPadException;
 	public Remap[] discardPad(String requestId) throws SessionExpiredException, BigBangException;
 
-	public void deleteRequest(String requestId) throws SessionExpiredException, BigBangException;
+	public void deleteRequest(String requestId, String reason) throws SessionExpiredException, BigBangException;
 }
