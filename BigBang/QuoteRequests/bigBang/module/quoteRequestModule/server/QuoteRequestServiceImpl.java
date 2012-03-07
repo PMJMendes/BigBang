@@ -50,6 +50,7 @@ import com.premiumminds.BigBang.Jewel.Objects.QuoteRequestValue;
 import com.premiumminds.BigBang.Jewel.Objects.SubLine;
 import com.premiumminds.BigBang.Jewel.Objects.Tax;
 import com.premiumminds.BigBang.Jewel.Operations.Client.CreateQuoteRequest;
+import com.premiumminds.BigBang.Jewel.Operations.QuoteRequest.ManageData;
 import com.premiumminds.BigBang.Jewel.SysObjects.ZipCodeBridge;
 
 public class QuoteRequestServiceImpl
@@ -1627,36 +1628,6 @@ public class QuoteRequestServiceImpl
 				}
 			}
 
-//			if ( marrCoverages.size() > 0 )
-//			{
-//				lobjData.marrCoverages = new QuoteRequestCoverageData[marrCoverages.size()];
-//				for ( j = 0; j < marrCoverages.size(); j++ )
-//				{
-//					lobjData.marrCoverages[j] = new QuoteRequestCoverageData();
-//					lobjData.marrCoverages[j].Clone(marrCoverages.get(j));
-//					if ( marrCoverages.get(j).mid == null )
-//						lobjData.marrCoverages[j].mbNew = true;
-//				}
-//			}
-//			else
-//				lobjData.marrCoverages = null;
-//
-//			if ( marrValues.size() > 0 )
-//			{
-//				lobjData.marrValues = new QuoteRequestValueData[marrValues.size()];
-//				for ( j = 0; j < marrValues.size(); j++ )
-//				{
-//					lobjData.marrValues[j] = new QuoteRequestValueData();
-//					lobjData.marrValues[j].Clone(marrValues.get(j));
-//					if ( marrValues.get(j).mbDeleted )
-//						lobjData.marrValues[j].mbDeleted = true;
-//					else if ( marrValues.get(j).mid == null )
-//						lobjData.marrValues[j].mbNew = true;
-//				}
-//			}
-//			else
-//				lobjData.marrValues = null;
-
 			if ( mobjQuoteRequest.mid == null )
 				CommitNew(lobjData);
 			else
@@ -1700,30 +1671,30 @@ public class QuoteRequestServiceImpl
 		private void CommitEdit(QuoteRequestData pobjData)
 			throws BigBangException
 		{
-//			ManageData lopMPD;
-//			int i;
-//
-//			try
-//			{
-//				lopMPD = new ManageData(mobjQuoteRequest.midProcess);
-//				lopMPD.mobjData = pobjData;
-//
-//				lopMPD.mobjContactOps = null;
-//				lopMPD.mobjDocOps = null;
-//
-//				lopMPD.Execute();
-//
-//				if ( lopMPD.mobjData.marrObjects != null )
-//				{
-//					for ( i = 0; i < lopMPD.mobjData.marrObjects.length; i++ )
-//						if ( lopMPD.mobjData.marrObjects[i].mbNew )
-//							marrObjects.get(i).mid = lopMPD.mobjData.marrObjects[i].mid;
-//				}
-//			}
-//			catch (Throwable e)
-//			{
-//				throw new BigBangException(e.getMessage(), e);
-//			}
+			ManageData lopMPD;
+			int i;
+
+			try
+			{
+				lopMPD = new ManageData(mobjQuoteRequest.midProcess);
+				lopMPD.mobjData = pobjData;
+
+				lopMPD.mobjContactOps = null;
+				lopMPD.mobjDocOps = null;
+
+				lopMPD.Execute();
+
+				if ( lopMPD.mobjData.marrObjects != null )
+				{
+					for ( i = 0; i < lopMPD.mobjData.marrObjects.length; i++ )
+						if ( lopMPD.mobjData.marrObjects[i].mbNew )
+							marrObjects.get(i).mid = lopMPD.mobjData.marrObjects[i].mid;
+				}
+			}
+			catch (Throwable e)
+			{
+				throw new BigBangException(e.getMessage(), e);
+			}
 		}
 	}
 

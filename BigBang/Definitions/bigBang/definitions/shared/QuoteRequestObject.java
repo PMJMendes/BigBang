@@ -42,7 +42,10 @@ public class QuoteRequestObject
 	}
 
 	public static class SubLineData
+		implements Serializable
 	{
+		private static final long serialVersionUID = 1L;
+
 		public String subLineId;
 		public String headerText;
 		public HeaderData headerData;
