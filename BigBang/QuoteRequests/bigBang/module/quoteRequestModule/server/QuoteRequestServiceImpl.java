@@ -2741,7 +2741,7 @@ public class QuoteRequestServiceImpl
 		lobjResult.clientId = (lobjClient == null ? null : lobjClient.getKey().toString());
 		lobjResult.clientNumber = (lobjClient == null ? "" : ((Integer)lobjClient.getAt(1)).toString());
 		lobjResult.clientName = (lobjClient == null ? "(Erro)" : lobjClient.getLabel());
-		lobjResult.caseStudy = (Boolean)parrValues[8];
+		lobjResult.caseStudy = (Boolean)parrValues[2];
 		lobjResult.processId = (lobjProcess == null ? null : lobjProcess.getKey().toString());
 		lobjResult.isOpen = (lobjProcess == null ? false : lobjProcess.IsRunning());
 		return lobjResult;
