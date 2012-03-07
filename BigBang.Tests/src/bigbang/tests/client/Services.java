@@ -46,6 +46,10 @@ import bigBang.module.loginModule.interfaces.AuthenticationService;
 import bigBang.module.loginModule.interfaces.AuthenticationServiceAsync;
 import bigBang.module.quoteRequestModule.interfaces.NegotiationService;
 import bigBang.module.quoteRequestModule.interfaces.NegotiationServiceAsync;
+import bigBang.module.quoteRequestModule.interfaces.QuoteRequestObjectService;
+import bigBang.module.quoteRequestModule.interfaces.QuoteRequestObjectServiceAsync;
+import bigBang.module.quoteRequestModule.interfaces.QuoteRequestService;
+import bigBang.module.quoteRequestModule.interfaces.QuoteRequestServiceAsync;
 import bigBang.module.receiptModule.interfaces.ReceiptService;
 import bigBang.module.receiptModule.interfaces.ReceiptServiceAsync;
 import bigBang.module.tasksModule.interfaces.TasksService;
@@ -89,6 +93,10 @@ public class Services
 			GWT.create(UserService.class);
 	public static final ClientServiceAsync clientService =
 			GWT.create(ClientService.class);
+	public static final QuoteRequestServiceAsync quoteRequestService =
+			GWT.create(QuoteRequestService.class);
+	public static final QuoteRequestObjectServiceAsync quoteRequestObjectService =
+			GWT.create(QuoteRequestObjectService.class);
 	public static final NegotiationServiceAsync negotiationService =
 			GWT.create(NegotiationService.class);
 	public static final InsurancePolicyServiceAsync insurancePolicyService =
