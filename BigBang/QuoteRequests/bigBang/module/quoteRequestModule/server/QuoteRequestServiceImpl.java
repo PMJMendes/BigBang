@@ -464,15 +464,32 @@ public class QuoteRequestServiceImpl
 		public QuoteRequest WriteBasics()
 			throws BigBangException, CorruptedPadException
 		{
+			Client lobjClient;
 			QuoteRequest lobjResult;
 
 			if ( !mbValid )
 				throw new CorruptedPadException("Ocorreu um erro interno. Os dados correntes não são válidos.");
 
+			if ( midClient == null )
+				lobjClient = null;
+			else
+			{
+				try
+				{
+					lobjClient = Client.GetInstance(Engine.getCurrentNameSpace(), midClient);
+				}
+				catch (Throwable e)
+				{
+					throw new BigBangException(e.getMessage(), e);
+				}
+			}
+
 			lobjResult = new QuoteRequest();
 
 			lobjResult.processNumber = mobjQuoteRequest.mstrNumber;
-			lobjResult.clientId = ( midClient == null ? null : midClient.toString() );
+			lobjResult.clientId = ( lobjClient == null ? null : lobjClient.getKey().toString() );
+			lobjResult.clientName = ( lobjClient == null ? null : lobjClient.getLabel() );
+			lobjResult.clientNumber = ( lobjClient == null ? null : ((Integer)lobjClient.getAt(1)).toString() );
 			lobjResult.processId = ( mobjQuoteRequest.midProcess == null ? null : mobjQuoteRequest.midProcess.toString() );
 			lobjResult.mediatorId = ( mobjQuoteRequest.midMediator == null ? null : mobjQuoteRequest.midMediator.toString() );
 			lobjResult.notes = mobjQuoteRequest.mstrNotes;
