@@ -45,10 +45,12 @@ public class QuoteRequestObjectServiceImpl
 		ObjectBase lobjType;
 		QuoteRequestObject lobjResult;
 		QuoteRequest lobjRequest;
-		QuoteRequestSubLine[] larrSubLines;
+		QuoteRequestSubLine[] larrLocalSubLines;
 		QuoteRequestCoverage[][] larrAllCoverages;
 		QuoteRequestValue[][] larrValues;
 		int i, j, k;
+		ArrayList<QuoteRequestObject.SubLineData> larrSubLines;
+		QuoteRequestObject.SubLineData lobjSubLine;
 		ArrayList<QuoteRequestCoverage> larrLocalCoverages;
 		QuoteRequestCoverage[] larrCoverages;
 		QuoteRequestCoverage lobjHeaderCoverage;
@@ -73,14 +75,14 @@ public class QuoteRequestObjectServiceImpl
 					(UUID)lobjObject.getAt(2));
 			lobjRequest = QuoteRequest.GetInstance(Engine.getCurrentNameSpace(), (UUID)lobjObject.getAt(1));
 
-			larrSubLines = lobjRequest.GetCurrentSubLines();
+			larrLocalSubLines = lobjRequest.GetCurrentSubLines();
 
-			larrAllCoverages = new QuoteRequestCoverage[larrSubLines.length][];
-			larrValues = new QuoteRequestValue[larrSubLines.length][];
-			for ( i = 0; i < larrSubLines.length; i++ )
+			larrAllCoverages = new QuoteRequestCoverage[larrLocalSubLines.length][];
+			larrValues = new QuoteRequestValue[larrLocalSubLines.length][];
+			for ( i = 0; i < larrLocalSubLines.length; i++ )
 			{
-				larrAllCoverages[i] = larrSubLines[i].GetCurrentCoverages();
-				larrValues[i] = larrSubLines[i].GetCurrentKeyedValues(lidObject);
+				larrAllCoverages[i] = larrLocalSubLines[i].GetCurrentCoverages();
+				larrValues[i] = larrLocalSubLines[i].GetCurrentKeyedValues(lidObject);
 			}
 		}
 		catch (Throwable e)
@@ -161,13 +163,16 @@ public class QuoteRequestObjectServiceImpl
 			lobjResult.electronicIdTag = (String)lobjObject.getAt(32);
 		}
 
-		lobjResult.objectData = new QuoteRequestObject.SubLineData[larrSubLines.length];
-		for ( i = 0; i < larrSubLines.length; i++ )
+		larrSubLines = new ArrayList<QuoteRequestObject.SubLineData>();
+		for ( i = 0; i < larrLocalSubLines.length; i++ )
 		{
-			lobjResult.objectData[i] = new QuoteRequestObject.SubLineData();
-			lobjResult.objectData[i].subLineId = larrSubLines[i].getKey().toString();
-			lobjResult.objectData[i].headerText = larrSubLines[i].GetSubLine().getLine().getCategory().getLabel() + " / " +
-					larrSubLines[i].GetSubLine().getLine().getLabel() + " / " + larrSubLines[i].GetSubLine().getLabel();
+			if ( !lobjType.getKey().equals((UUID)larrLocalSubLines[i].GetSubLine().getAt(2)) )
+				continue;
+
+			lobjSubLine = new QuoteRequestObject.SubLineData();
+			lobjSubLine.subLineId = larrLocalSubLines[i].getKey().toString();
+			lobjSubLine.headerText = larrLocalSubLines[i].GetSubLine().getLine().getCategory().getLabel() + " / " +
+					larrLocalSubLines[i].GetSubLine().getLine().getLabel() + " / " + larrLocalSubLines[i].GetSubLine().getLabel();
 
 			lobjHeaderCoverage = null;
 			larrLocalCoverages = new ArrayList<QuoteRequestCoverage>();
@@ -190,12 +195,12 @@ public class QuoteRequestObjectServiceImpl
 					return 1;
 				}
 			});
-			lobjResult.objectData[i].coverageData = new QuoteRequestObject.CoverageData[larrCoverages.length];
+			lobjSubLine.coverageData = new QuoteRequestObject.CoverageData[larrCoverages.length];
 			for ( j = 0; j < larrCoverages.length; j++ )
 			{
-				lobjResult.objectData[i].coverageData[j] = new QuoteRequestObject.CoverageData();
-				lobjResult.objectData[i].coverageData[j].coverageId = larrCoverages[j].GetCoverage().getKey().toString();
-				lobjResult.objectData[i].coverageData[j].coverageLabel = larrCoverages[j].GetCoverage().getLabel();
+				lobjSubLine.coverageData[j] = new QuoteRequestObject.CoverageData();
+				lobjSubLine.coverageData[j].coverageId = larrCoverages[j].GetCoverage().getKey().toString();
+				lobjSubLine.coverageData[j].coverageLabel = larrCoverages[j].GetCoverage().getLabel();
 				larrAuxFixed = new ArrayList<QuoteRequestObject.CoverageData.FixedField>();
 				for ( k = 0; k < larrValues[i].length; k++ )
 				{
@@ -213,9 +218,9 @@ public class QuoteRequestObjectServiceImpl
 					lobjFixed.value = larrValues[i][k].getLabel();
 					larrAuxFixed.add(lobjFixed);
 				}
-				lobjResult.objectData[i].coverageData[j].fixedFields =
+				lobjSubLine.coverageData[j].fixedFields =
 						larrAuxFixed.toArray(new QuoteRequestObject.CoverageData.FixedField[larrAuxFixed.size()]);
-				java.util.Arrays.sort(lobjResult.objectData[i].coverageData[j].fixedFields,
+				java.util.Arrays.sort(lobjSubLine.coverageData[j].fixedFields,
 						new Comparator<QuoteRequestObject.CoverageData.FixedField>()
 				{
 					public int compare(QuoteRequestObject.CoverageData.FixedField o1, QuoteRequestObject.CoverageData.FixedField o2)
@@ -230,7 +235,7 @@ public class QuoteRequestObjectServiceImpl
 			}
 			if ( lobjHeaderCoverage != null )
 			{
-				lobjResult.objectData[i].headerData = new QuoteRequestObject.CoverageData();
+				lobjSubLine.headerData = new QuoteRequestObject.CoverageData();
 				larrAuxFixed = new ArrayList<QuoteRequestObject.CoverageData.FixedField>();
 				for ( k = 0; k < larrValues[i].length; k++ )
 				{
@@ -248,9 +253,9 @@ public class QuoteRequestObjectServiceImpl
 					lobjFixed.value = larrValues[i][k].getLabel();
 					larrAuxFixed.add(lobjFixed);
 				}
-				lobjResult.objectData[i].headerData.fixedFields =
+				lobjSubLine.headerData.fixedFields =
 						larrAuxFixed.toArray(new QuoteRequestObject.CoverageData.FixedField[larrAuxFixed.size()]);
-				java.util.Arrays.sort(lobjResult.objectData[i].headerData.fixedFields,
+				java.util.Arrays.sort(lobjSubLine.headerData.fixedFields,
 						new Comparator<QuoteRequestObject.CoverageData.FixedField>()
 				{
 					public int compare(QuoteRequestObject.CoverageData.FixedField o1, QuoteRequestObject.CoverageData.FixedField o2)
@@ -263,8 +268,11 @@ public class QuoteRequestObjectServiceImpl
 					}
 				});
 			}
+
+			larrSubLines.add(lobjSubLine);
 		}
 
+		lobjResult.objectData = larrSubLines.toArray(new QuoteRequestObject.SubLineData[larrSubLines.size()]);
 		java.util.Arrays.sort(lobjResult.objectData, new Comparator<QuoteRequestObject.SubLineData>()
 		{
 			public int compare(QuoteRequestObject.SubLineData o1, QuoteRequestObject.SubLineData o2)
