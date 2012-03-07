@@ -10,4 +10,5 @@ public class QuoteRequestStub
 	public String clientNumber;
 	public String clientName;
 	public boolean caseStudy;
+	public boolean isOpen;
 }

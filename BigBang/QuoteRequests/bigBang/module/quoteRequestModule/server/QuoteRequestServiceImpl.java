@@ -8,16 +8,19 @@ import java.util.UUID;
 
 import Jewel.Engine.Engine;
 import Jewel.Engine.Constants.ObjectGUIDs;
+import Jewel.Engine.Implementation.Entity;
+import Jewel.Engine.Interfaces.IEntity;
 import Jewel.Engine.SysObjects.ObjectBase;
 import Jewel.Petri.Interfaces.IProcess;
 import Jewel.Petri.Objects.PNProcess;
 import bigBang.definitions.shared.Address;
-import bigBang.definitions.shared.InsurancePolicy;
 import bigBang.definitions.shared.QuoteRequest;
 import bigBang.definitions.shared.QuoteRequestObject;
+import bigBang.definitions.shared.QuoteRequestStub;
 import bigBang.definitions.shared.Remap;
 import bigBang.definitions.shared.SearchParameter;
 import bigBang.definitions.shared.SearchResult;
+import bigBang.definitions.shared.SortOrder;
 import bigBang.definitions.shared.SortParameter;
 import bigBang.definitions.shared.TipifiedListItem;
 import bigBang.definitions.shared.ZipCode;
@@ -27,7 +30,10 @@ import bigBang.library.server.SearchServiceBase;
 import bigBang.library.shared.BigBangException;
 import bigBang.library.shared.CorruptedPadException;
 import bigBang.library.shared.SessionExpiredException;
+import bigBang.module.insurancePolicyModule.server.InsurancePolicyServiceImpl;
 import bigBang.module.quoteRequestModule.interfaces.QuoteRequestService;
+import bigBang.module.quoteRequestModule.shared.QuoteRequestSearchParameter;
+import bigBang.module.quoteRequestModule.shared.QuoteRequestSortParameter;
 
 import com.premiumminds.BigBang.Jewel.Constants;
 import com.premiumminds.BigBang.Jewel.Data.QuoteRequestCoverageData;
@@ -471,6 +477,7 @@ public class QuoteRequestServiceImpl
 			lobjResult.notes = mobjQuoteRequest.mstrNotes;
 			lobjResult.caseStudy = ( mobjQuoteRequest.mbCaseStudy == null ? false : mobjQuoteRequest.mbCaseStudy );
 			lobjResult.docushare = mobjQuoteRequest.mstrDocuShare;
+			lobjResult.isOpen = true;
 
 			return lobjResult;
 		}
@@ -519,7 +526,7 @@ public class QuoteRequestServiceImpl
 					lobjHeader = new QuoteRequest.HeaderField();
 					lobjHeader.fieldId = marrSubLines.get(i).marrValues.get(j).midField.toString();
 					lobjHeader.fieldName = marrSubLines.get(i).marrValues.get(j).mrefField.mstrLabel;
-					lobjHeader.type = GetFieldTypeByID(marrSubLines.get(i).marrValues.get(j).mrefField.midType);
+					lobjHeader.type = InsurancePolicyServiceImpl.GetFieldTypeByID(marrSubLines.get(i).marrValues.get(j).mrefField.midType);
 					lobjHeader.unitsLabel = marrSubLines.get(i).marrValues.get(j).mrefField.mstrUnits;
 					lobjHeader.refersToId = ( marrSubLines.get(i).marrValues.get(j).mrefField.midRefersTo == null ? null :
 						marrSubLines.get(i).marrValues.get(j).mrefField.midRefersTo.toString() );
@@ -570,7 +577,7 @@ public class QuoteRequestServiceImpl
 
 						lobjColumn = new QuoteRequest.ColumnHeader();
 						lobjColumn.label = marrSubLines.get(i).marrCoverages.get(j).marrFields[k].mstrLabel;
-						lobjColumn.type = GetFieldTypeByID(marrSubLines.get(i).marrCoverages.get(j).marrFields[k].midType);
+						lobjColumn.type = InsurancePolicyServiceImpl.GetFieldTypeByID(marrSubLines.get(i).marrCoverages.get(j).marrFields[k].midType);
 						lobjColumn.unitsLabel = marrSubLines.get(i).marrCoverages.get(j).marrFields[k].mstrUnits;
 						lobjColumn.refersToId = ( marrSubLines.get(i).marrCoverages.get(j).marrFields[k].midRefersTo == null ? null :
 							marrSubLines.get(i).marrCoverages.get(j).marrFields[k].midRefersTo.toString() );
@@ -617,7 +624,7 @@ public class QuoteRequestServiceImpl
 					lobjExtraField = new QuoteRequest.ExtraField();
 					lobjExtraField.fieldId = marrSubLines.get(i).marrValues.get(j).midField.toString();
 					lobjExtraField.fieldName = marrSubLines.get(i).marrValues.get(j).mrefField.mstrLabel;
-					lobjExtraField.type = GetFieldTypeByID(marrSubLines.get(i).marrValues.get(j).mrefField.midType);
+					lobjExtraField.type = InsurancePolicyServiceImpl.GetFieldTypeByID(marrSubLines.get(i).marrValues.get(j).mrefField.midType);
 					lobjExtraField.unitsLabel = marrSubLines.get(i).marrValues.get(j).mrefField.mstrUnits;
 					lobjExtraField.refersToId = ( marrSubLines.get(i).marrValues.get(j).mrefField.midRefersTo == null ? null :
 						marrSubLines.get(i).marrValues.get(j).mrefField.midRefersTo.toString() );
@@ -790,7 +797,7 @@ public class QuoteRequestServiceImpl
 				lobjHeader = new QuoteRequest.HeaderField();
 				lobjHeader.fieldId = marrSubLines.get(plngSubLine).marrValues.get(i).midField.toString();
 				lobjHeader.fieldName = marrSubLines.get(plngSubLine).marrValues.get(i).mrefField.mstrLabel;
-				lobjHeader.type = GetFieldTypeByID(marrSubLines.get(plngSubLine).marrValues.get(i).mrefField.midType);
+				lobjHeader.type = InsurancePolicyServiceImpl.GetFieldTypeByID(marrSubLines.get(plngSubLine).marrValues.get(i).mrefField.midType);
 				lobjHeader.unitsLabel = marrSubLines.get(plngSubLine).marrValues.get(i).mrefField.mstrUnits;
 				lobjHeader.refersToId = ( marrSubLines.get(plngSubLine).marrValues.get(i).mrefField.midRefersTo == null ? null :
 					marrSubLines.get(plngSubLine).marrValues.get(i).mrefField.midRefersTo.toString() );
@@ -841,7 +848,7 @@ public class QuoteRequestServiceImpl
 
 					lobjColumn = new QuoteRequest.ColumnHeader();
 					lobjColumn.label = marrSubLines.get(plngSubLine).marrCoverages.get(i).marrFields[j].mstrLabel;
-					lobjColumn.type = GetFieldTypeByID(marrSubLines.get(plngSubLine).marrCoverages.get(i).marrFields[j].midType);
+					lobjColumn.type = InsurancePolicyServiceImpl.GetFieldTypeByID(marrSubLines.get(plngSubLine).marrCoverages.get(i).marrFields[j].midType);
 					lobjColumn.unitsLabel = marrSubLines.get(plngSubLine).marrCoverages.get(i).marrFields[j].mstrUnits;
 					lobjColumn.refersToId = ( marrSubLines.get(plngSubLine).marrCoverages.get(i).marrFields[j].midRefersTo == null ? null :
 						marrSubLines.get(plngSubLine).marrCoverages.get(i).marrFields[j].midRefersTo.toString() );
@@ -888,7 +895,7 @@ public class QuoteRequestServiceImpl
 				lobjExtraField = new QuoteRequest.ExtraField();
 				lobjExtraField.fieldId = marrSubLines.get(plngSubLine).marrValues.get(i).midField.toString();
 				lobjExtraField.fieldName = marrSubLines.get(plngSubLine).marrValues.get(i).mrefField.mstrLabel;
-				lobjExtraField.type = GetFieldTypeByID(marrSubLines.get(plngSubLine).marrValues.get(i).mrefField.midType);
+				lobjExtraField.type = InsurancePolicyServiceImpl.GetFieldTypeByID(marrSubLines.get(plngSubLine).marrValues.get(i).mrefField.midType);
 				lobjExtraField.unitsLabel = marrSubLines.get(plngSubLine).marrValues.get(i).mrefField.mstrUnits;
 				lobjExtraField.refersToId = ( marrSubLines.get(plngSubLine).marrValues.get(i).mrefField.midRefersTo == null ? null :
 					marrSubLines.get(plngSubLine).marrValues.get(i).mrefField.midRefersTo.toString() );
@@ -1095,7 +1102,7 @@ public class QuoteRequestServiceImpl
 					lobjFixed = new QuoteRequestObject.CoverageData.FixedField();
 					lobjFixed.fieldId = lobjValue.mrefField.midField.toString();
 					lobjFixed.fieldName = lobjValue.mrefField.mstrLabel;
-					lobjFixed.type = GetFieldTypeByID(lobjValue.mrefField.midType);
+					lobjFixed.type = InsurancePolicyServiceImpl.GetFieldTypeByID(lobjValue.mrefField.midType);
 					lobjFixed.unitsLabel = lobjValue.mrefField.mstrUnits;
 					lobjFixed.refersToId = ( lobjValue.mrefField.midRefersTo == null ? null :
 							lobjValue.mrefField.midRefersTo.toString() );
@@ -1789,6 +1796,7 @@ public class QuoteRequestServiceImpl
 		lobjResult.id = lobjRequest.getKey().toString();
 		lobjResult.processId = lobjProc.getKey().toString();
 		lobjResult.processNumber = (String)lobjRequest.getAt(0);
+		lobjResult.isOpen = lobjProc.IsRunning();
 		lobjResult.clientId = lobjClient.getKey().toString();
 		lobjResult.clientNumber = ((Integer)lobjClient.getAt(1)).toString();
 		lobjResult.clientName = lobjClient.getLabel();
@@ -1835,7 +1843,7 @@ public class QuoteRequestServiceImpl
 					lobjHeader = new QuoteRequest.HeaderField();
 					lobjHeader.fieldId = lobjTax.getKey().toString();
 					lobjHeader.fieldName = lobjTax.getLabel();
-					lobjHeader.type = GetFieldTypeByID((UUID)lobjTax.getAt(2));
+					lobjHeader.type = InsurancePolicyServiceImpl.GetFieldTypeByID((UUID)lobjTax.getAt(2));
 					lobjHeader.unitsLabel = (String)lobjTax.getAt(3);
 					lobjHeader.refersToId = ( lobjTax.getAt(7) == null ? null : ((UUID)lobjTax.getAt(7)).toString() );
 					lobjHeader.value = larrLocalValues[j].getLabel();
@@ -1855,7 +1863,7 @@ public class QuoteRequestServiceImpl
 					lobjExtra = new QuoteRequest.ExtraField();
 					lobjExtra.fieldId = lobjTax.getKey().toString();
 					lobjExtra.fieldName = lobjTax.getLabel();
-					lobjExtra.type = GetFieldTypeByID((UUID)lobjTax.getAt(2));
+					lobjExtra.type = InsurancePolicyServiceImpl.GetFieldTypeByID((UUID)lobjTax.getAt(2));
 					lobjExtra.unitsLabel = (String)lobjTax.getAt(3);
 					lobjExtra.refersToId = ( lobjTax.getAt(7) == null ? null : ((UUID)lobjTax.getAt(7)).toString() );
 					lobjExtra.coverageId = lobjTax.GetCoverage().getKey().toString();
@@ -1899,7 +1907,7 @@ public class QuoteRequestServiceImpl
 					{
 						lobjColumnHeader = new QuoteRequest.ColumnHeader();
 						lobjColumnHeader.label = larrTaxes[k].getLabel();
-						lobjColumnHeader.type = GetFieldTypeByID((UUID)larrTaxes[k].getAt(2));
+						lobjColumnHeader.type = InsurancePolicyServiceImpl.GetFieldTypeByID((UUID)larrTaxes[k].getAt(2));
 						lobjColumnHeader.unitsLabel = (String)larrTaxes[k].getAt(3);
 						lobjColumnHeader.refersToId = ( larrTaxes[k].getAt(7) == null ? null :
 								((UUID)larrTaxes[k].getAt(7)).toString() );
@@ -1935,7 +1943,7 @@ public class QuoteRequestServiceImpl
 					{
 						lobjColumnHeader = new QuoteRequest.ColumnHeader();
 						lobjColumnHeader.label = larrTaxes[k].getLabel();
-						lobjColumnHeader.type = GetFieldTypeByID((UUID)larrTaxes[k].getAt(2));
+						lobjColumnHeader.type = InsurancePolicyServiceImpl.GetFieldTypeByID((UUID)larrTaxes[k].getAt(2));
 						lobjColumnHeader.unitsLabel = (String)larrTaxes[k].getAt(3);
 						lobjColumnHeader.refersToId = ( larrTaxes[k].getAt(7) == null ? null :
 								((UUID)larrTaxes[k].getAt(7)).toString() );
@@ -1953,7 +1961,7 @@ public class QuoteRequestServiceImpl
 						lobjHeader = new QuoteRequest.HeaderField();
 						lobjHeader.fieldId = larrTaxes[k].getKey().toString();
 						lobjHeader.fieldName = larrTaxes[k].getLabel();
-						lobjHeader.type = GetFieldTypeByID((UUID)larrTaxes[k].getAt(2));
+						lobjHeader.type = InsurancePolicyServiceImpl.GetFieldTypeByID((UUID)larrTaxes[k].getAt(2));
 						lobjHeader.unitsLabel = (String)larrTaxes[k].getAt(3);
 						lobjHeader.refersToId = ( larrTaxes[k].getAt(7) == null ? null :
 								((UUID)larrTaxes[k].getAt(7)).toString() );
@@ -1974,7 +1982,7 @@ public class QuoteRequestServiceImpl
 						lobjExtra = new QuoteRequest.ExtraField();
 						lobjExtra.fieldId = larrTaxes[k].getKey().toString();
 						lobjExtra.fieldName = larrTaxes[k].getLabel();
-						lobjExtra.type = GetFieldTypeByID((UUID)larrTaxes[k].getAt(2));
+						lobjExtra.type = InsurancePolicyServiceImpl.GetFieldTypeByID((UUID)larrTaxes[k].getAt(2));
 						lobjExtra.unitsLabel = (String)larrTaxes[k].getAt(3);
 						lobjExtra.refersToId = ( larrTaxes[k].getAt(7) == null ? null : ((UUID)larrTaxes[k].getAt(7)).toString() );
 						lobjExtra.coverageId = larrTaxes[k].GetCoverage().getKey().toString();
@@ -2508,52 +2516,258 @@ public class QuoteRequestServiceImpl
 		
 	}
 
-	@Override
-	protected UUID getObjectID() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	protected String[] getColumns() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	protected boolean buildFilter(StringBuilder pstrBuffer,
-			SearchParameter pParam) throws BigBangException {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	@Override
-	protected boolean buildSort(StringBuilder pstrBuffer, SortParameter pParam,
-			SearchParameter[] parrParams) throws BigBangException {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	@Override
-	protected SearchResult buildResult(UUID pid, Object[] parrValues) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	private static InsurancePolicy.FieldType GetFieldTypeByID(UUID pidFieldType)
+	protected UUID getObjectID()
 	{
-		if ( Constants.FieldID_Boolean.equals(pidFieldType) )
-			return InsurancePolicy.FieldType.BOOLEAN;
-		if ( Constants.FieldID_Date.equals(pidFieldType) )
-			return InsurancePolicy.FieldType.DATE;
-		if ( Constants.FieldID_List.equals(pidFieldType) )
-			return InsurancePolicy.FieldType.LIST;
-		if ( Constants.FieldID_Number.equals(pidFieldType) )
-			return InsurancePolicy.FieldType.NUMERIC;
-		if ( Constants.FieldID_Reference.equals(pidFieldType) )
-			return InsurancePolicy.FieldType.REFERENCE;
-		if ( Constants.FieldID_Text.equals(pidFieldType) )
-			return InsurancePolicy.FieldType.TEXT;
-		return null;
+		return Constants.ObjID_QuoteRequest;
+	}
+
+	protected String[] getColumns()
+	{
+		return new String[] {"[:Number]", "[:Process]", "[:Case Study]"};
+	}
+
+	protected boolean buildFilter(StringBuilder pstrBuffer, SearchParameter pParam)
+		throws BigBangException
+	{
+		QuoteRequestSearchParameter lParam;
+		String lstrAux;
+		IEntity lrefClients;
+		IEntity lrefQRSubLines;
+		IEntity lrefNegotiations;
+
+		if ( !(pParam instanceof QuoteRequestSearchParameter) )
+			return false;
+		lParam = (QuoteRequestSearchParameter)pParam;
+
+		if ( !lParam.includeClosed )
+		{
+			pstrBuffer.append(" AND [:Process:Running] = 1");
+		}
+
+		if ( (lParam.freeText != null) && (lParam.freeText.trim().length() > 0) )
+		{
+			lstrAux = lParam.freeText.trim().replace("'", "''").replace(" ", "%");
+			pstrBuffer.append(" AND [:Number] LIKE N'%").append(lstrAux).append("%'");
+		}
+
+		if ( lParam.ownerId != null )
+		{
+			pstrBuffer.append(" AND [:Process:Parent] IN (SELECT [:Process] FROM (");
+			try
+			{
+				lrefClients = Entity.GetInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), Constants.ObjID_Client));
+				pstrBuffer.append(lrefClients.SQLForSelectMulti());
+			}
+			catch (Throwable e)
+			{
+        		throw new BigBangException(e.getMessage(), e);
+			}
+			pstrBuffer.append(") [AuxOwner] WHERE [:Process:Data] = '").append(lParam.ownerId).append("')");
+		}
+
+		if ( lParam.subLineId != null )
+		{
+			pstrBuffer.append(" AND [PK] IN (SELECT [:Quote Request] FROM (");
+			try
+			{
+				lrefQRSubLines = Entity.GetInstance(Engine.FindEntity(Engine.getCurrentNameSpace(),
+						Constants.ObjID_QuoteRequestSubLine));
+				pstrBuffer.append(lrefQRSubLines.SQLForSelectMulti());
+			}
+			catch (Throwable e)
+			{
+        		throw new BigBangException(e.getMessage(), e);
+			}
+			pstrBuffer.append(") [AuxSubLines] WHERE [:Sub Line] = '").append(lParam.subLineId).append("')");
+		}
+		else if ( lParam.lineId != null )
+		{
+			pstrBuffer.append(" AND [PK] IN (SELECT [:Quote Request] FROM (");
+			try
+			{
+				lrefQRSubLines = Entity.GetInstance(Engine.FindEntity(Engine.getCurrentNameSpace(),
+						Constants.ObjID_QuoteRequestSubLine));
+				pstrBuffer.append(lrefQRSubLines.SQLForSelectMulti());
+			}
+			catch (Throwable e)
+			{
+        		throw new BigBangException(e.getMessage(), e);
+			}
+			pstrBuffer.append(") [AuxSubLines] WHERE [:Sub Line:Line] = '").append(lParam.lineId).append("'");
+		}
+		else if ( lParam.categoryId != null )
+		{
+			pstrBuffer.append(" AND [PK] IN (SELECT [:Quote Request] FROM (");
+			try
+			{
+				lrefQRSubLines = Entity.GetInstance(Engine.FindEntity(Engine.getCurrentNameSpace(),
+						Constants.ObjID_QuoteRequestSubLine));
+				pstrBuffer.append(lrefQRSubLines.SQLForSelectMulti());
+			}
+			catch (Throwable e)
+			{
+        		throw new BigBangException(e.getMessage(), e);
+			}
+			pstrBuffer.append(") [AuxSubLines] WHERE [:Sub Line:Line:Category] = '").append(lParam.categoryId).append("'");
+		}
+
+		if ( lParam.insuranceAgencyId != null )
+		{
+			pstrBuffer.append(" AND [:Process] IN (SELECT [:Process:Parent] FROM (");
+			try
+			{
+				lrefNegotiations = Entity.GetInstance(Engine.FindEntity(Engine.getCurrentNameSpace(),
+						Constants.ObjID_Negotiation));
+				pstrBuffer.append(lrefNegotiations.SQLForSelectMulti());
+			}
+			catch (Throwable e)
+			{
+        		throw new BigBangException(e.getMessage(), e);
+			}
+			pstrBuffer.append(") [AuxNegotiations] WHERE [:Company] = '").append(lParam.insuranceAgencyId).append("'");
+		}
+
+		if ( lParam.mediatorId != null )
+		{
+			pstrBuffer.append(" AND [:Mediator] = '").append(lParam.mediatorId).append("'");
+		}
+
+		if ( lParam.managerId != null )
+		{
+			pstrBuffer.append(" AND [:Process:Manager] = '").append(lParam.managerId).append("'");
+		}
+
+		if ( lParam.caseStudy != null )
+		{
+			pstrBuffer.append(" AND [:Case Study] = ").append(lParam.caseStudy ? "1" : "0");
+		}
+
+		return true;
+	}
+
+	protected boolean buildSort(StringBuilder pstrBuffer, SortParameter pParam, SearchParameter[] parrParams)
+		throws BigBangException
+	{
+		QuoteRequestSortParameter lParam;
+		IEntity lrefClients;
+
+		if ( !(pParam instanceof QuoteRequestSortParameter) )
+			return false;
+		lParam = (QuoteRequestSortParameter)pParam;
+
+		if ( lParam.field == QuoteRequestSortParameter.SortableField.RELEVANCE )
+		{
+			if ( !buildRelevanceSort(pstrBuffer, parrParams) )
+				return false;
+		}
+
+		if ( lParam.field == QuoteRequestSortParameter.SortableField.NUMBER )
+			pstrBuffer.append("[:Number]");
+
+		if ( lParam.field == QuoteRequestSortParameter.SortableField.CLIENT_NAME )
+		{
+			pstrBuffer.append("(SELECT [:Name] FROM (");
+			try
+			{
+				lrefClients = Entity.GetInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), Constants.ObjID_Client));
+				pstrBuffer.append(lrefClients.SQLForSelectMulti());
+			}
+			catch (Throwable e)
+			{
+        		throw new BigBangException(e.getMessage(), e);
+			}
+			pstrBuffer.append(") [AuxClients] WHERE [:Process] = [Aux].[:Process:Parent])");
+		}
+
+		if ( lParam.field == QuoteRequestSortParameter.SortableField.CLIENT_NUMBER )
+		{
+			pstrBuffer.append("(SELECT [:Number] FROM (");
+			try
+			{
+				lrefClients = Entity.GetInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), Constants.ObjID_Client));
+				pstrBuffer.append(lrefClients.SQLForSelectMulti());
+			}
+			catch (Throwable e)
+			{
+        		throw new BigBangException(e.getMessage(), e);
+			}
+			pstrBuffer.append(") [AuxClients] WHERE [:Process] = [Aux].[:Process:Parent])");
+		}
+
+		if ( lParam.order == SortOrder.ASC )
+			pstrBuffer.append(" ASC");
+
+		if ( lParam.order == SortOrder.DESC )
+			pstrBuffer.append(" DESC");
+
+		return true;
+	}
+
+	protected SearchResult buildResult(UUID pid, Object[] parrValues)
+	{
+		IProcess lobjProcess;
+		QuoteRequestStub lobjResult;
+		Client lobjClient;
+
+		try
+		{
+			lobjProcess = PNProcess.GetInstance(Engine.getCurrentNameSpace(), (UUID)parrValues[1]);
+			try
+			{
+				lobjClient = (Client)lobjProcess.GetParent().GetData();
+			}
+			catch (Throwable e)
+			{
+				lobjClient = null;
+			}
+		}
+		catch (Throwable e)
+		{
+			lobjProcess = null;
+			lobjClient = null;
+		}
+
+		lobjResult = new QuoteRequestStub();
+
+		lobjResult.id = pid.toString();
+		lobjResult.processNumber = (String)parrValues[0];
+		lobjResult.clientId = (lobjClient == null ? null : lobjClient.getKey().toString());
+		lobjResult.clientNumber = (lobjClient == null ? "" : ((Integer)lobjClient.getAt(1)).toString());
+		lobjResult.clientName = (lobjClient == null ? "(Erro)" : lobjClient.getLabel());
+		lobjResult.caseStudy = (Boolean)parrValues[8];
+		lobjResult.processId = (lobjProcess == null ? null : lobjProcess.getKey().toString());
+		lobjResult.isOpen = (lobjProcess == null ? false : lobjProcess.IsRunning());
+		return lobjResult;
+	}
+
+	private boolean buildRelevanceSort(StringBuilder pstrBuffer, SearchParameter[] parrParams)
+		throws BigBangException
+	{
+		QuoteRequestSearchParameter lParam;
+		String lstrAux;
+		boolean lbFound;
+		int i;
+
+		if ( (parrParams == null) || (parrParams.length == 0) )
+			return false;
+
+		lbFound = false;
+		for ( i = 0; i < parrParams.length; i++ )
+		{
+			if ( !(parrParams[i] instanceof QuoteRequestSearchParameter) )
+				continue;
+			lParam = (QuoteRequestSearchParameter)parrParams[i];
+			if ( (lParam.freeText == null) || (lParam.freeText.trim().length() == 0) )
+				continue;
+			lstrAux = lParam.freeText.trim().replace("'", "''").replace(" ", "%");
+			if ( lbFound )
+				pstrBuffer.append(" + ");
+			lbFound = true;
+			pstrBuffer.append("CASE WHEN [:Number] LIKE N'%").append(lstrAux).append("%' THEN ")
+					.append("-PATINDEX(N'%").append(lstrAux).append("%', [:Number]) ELSE ")
+					.append("0 END");
+		}
+
+		return lbFound;
 	}
 }
