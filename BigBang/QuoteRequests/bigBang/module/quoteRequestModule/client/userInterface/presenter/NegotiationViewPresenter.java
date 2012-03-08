@@ -9,11 +9,11 @@ import bigBang.definitions.shared.BigBangConstants;
 import bigBang.definitions.shared.Contact;
 import bigBang.definitions.shared.Document;
 import bigBang.definitions.shared.Negotiation;
-import bigBang.definitions.shared.Negotiation.Deletion;
 import bigBang.definitions.shared.ProcessBase;
 import bigBang.library.client.EventBus;
 import bigBang.library.client.HasEditableValue;
 import bigBang.library.client.HasParameters;
+import bigBang.library.client.HasValueSelectables;
 import bigBang.library.client.Notification;
 import bigBang.library.client.Notification.TYPE;
 import bigBang.library.client.dataAccess.DataBrokerManager;
@@ -22,6 +22,8 @@ import bigBang.library.client.event.ActionInvokedEventHandler;
 import bigBang.library.client.event.NewNotificationEvent;
 import bigBang.library.client.history.NavigationHistoryItem;
 import bigBang.library.client.history.NavigationHistoryManager;
+import bigBang.library.client.userInterface.List;
+import bigBang.library.client.userInterface.ListEntry;
 import bigBang.library.client.userInterface.presenter.ViewPresenter;
 
 import com.google.gwt.user.client.ui.HasValue;
@@ -44,6 +46,10 @@ public abstract class NegotiationViewPresenter implements ViewPresenter{
 		void registerActionHandler(ActionInvokedEventHandler<Action> handler);
 
 		HasValue<ProcessBase> getOwnerForm();
+		
+		HasValueSelectables<Contact> getContactList();
+		
+		HasValueSelectables<Document> getDocumentList();
 
 		HasEditableValue<Negotiation> getForm();
 
@@ -56,10 +62,6 @@ public abstract class NegotiationViewPresenter implements ViewPresenter{
 		void allowEdit(boolean b);
 
 		void allowDelete(boolean b);
-
-		String getContactId();
-
-		String getDocumentId();
 
 		void applyOwnerToList(String negotiationId);
 
@@ -110,11 +112,7 @@ public abstract class NegotiationViewPresenter implements ViewPresenter{
 					break;
 				}
 				case DELETE:{
-					//LANÇA A FORM DO DELETE
-					Deletion deletion = new Deletion();
-					deletion.negotiationId = view.getForm().getValue().id;
-					//TODO create form to delete;
-					removeNegotiation(deletion);
+					removeNegotiation();
 					break;
 				}
 				case EDIT:{
@@ -134,11 +132,15 @@ public abstract class NegotiationViewPresenter implements ViewPresenter{
 					break;
 				}
 				case SELECTION_CHANGED_CONTACT:{
-					//TODO
+					@SuppressWarnings("unchecked")
+					Contact contact = ((ListEntry<Contact>)view.getContactList().getSelected().toArray()[0]).getValue();
+					showContact(contact);
 					break;
 				}
 				case SELECTION_CHANGED_DOCUMENT:{
-					//TODO
+					@SuppressWarnings("unchecked")
+					Document document = ((ListEntry<Document>)view.getDocumentList().getSelected().toArray()[0]).getValue();
+					showDocument(document);
 					break;
 				}
 				}
@@ -154,7 +156,6 @@ public abstract class NegotiationViewPresenter implements ViewPresenter{
 
 		hasPermissions = true; //TODO TEM DE VIR DE FORA
 		negotiationId = parameterHolder.getParameter("negotiationid");
-		ownerTypeId = parameterHolder.getParameter("ownertypeid");
 
 		if(negotiationId == null){
 			EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não é possível mostrar a negociação."), TYPE.ALERT_NOTIFICATION));
@@ -220,23 +221,29 @@ public abstract class NegotiationViewPresenter implements ViewPresenter{
 		});
 	}
 
-	protected void removeNegotiation(Deletion delete){
-		negotiationBroker.removeNegotiation(delete, new ResponseHandler<String>() {
-
-			@Override
-			public void onResponse(String response) {
-				
-
-			}
-
-			@Override
-			public void onError(Collection<ResponseError> errors) {
-				// TODO Auto-generated method stub
-
-			}
-		});
+	protected void removeNegotiation(){
+		NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
+		item.setParameter("show", "deletenegotiation");
+		NavigationHistoryManager.getInstance().go(item);
 	}
 
+	private void showContact(Contact contact) {
+		NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
+		item.setParameter("show", "contactmanagement");
+		item.setParameter("ownerid", contact.ownerId);
+		item.setParameter("ownertypeid", contact.ownerTypeId);
+		item.setParameter("contactid", contact.id);
+		NavigationHistoryManager.getInstance().go(item);
+	}
+
+	private void showDocument(Document document){
+		NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
+		item.setParameter("show", "documentmanagement");
+		item.setParameter("ownerid", document.ownerId);
+		item.setParameter("ownertypeid", document.ownerTypeId);
+		item.setParameter("documentid", document.id);
+		NavigationHistoryManager.getInstance().go(item);
+	}
 
 
 }

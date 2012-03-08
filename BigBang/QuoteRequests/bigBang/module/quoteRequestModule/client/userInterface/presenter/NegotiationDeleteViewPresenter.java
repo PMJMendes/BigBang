@@ -107,7 +107,7 @@ public class NegotiationDeleteViewPresenter implements ViewPresenter {
 
 	protected void onDeleteNegotiation() {
 		
-		broker.removeNegotiation((Deletion) view.getForm(), new ResponseHandler<String>() {
+		broker.removeNegotiation((Deletion) view.getForm().getInfo(), new ResponseHandler<String>() {
 
 			@Override
 			public void onResponse(String response) {

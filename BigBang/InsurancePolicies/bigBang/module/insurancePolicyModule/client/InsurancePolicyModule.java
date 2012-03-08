@@ -31,6 +31,8 @@ import bigBang.module.insurancePolicyModule.client.userInterface.view.InsuranceP
 import bigBang.module.insurancePolicyModule.client.userInterface.view.InsuredObjectView;
 import bigBang.module.insurancePolicyModule.client.userInterface.view.SubPolicyDeleteView;
 import bigBang.module.insurancePolicyModule.client.userInterface.view.SubPolicyView;
+import bigBang.module.quoteRequestModule.client.userInterface.presenter.NegotiationDeleteViewPresenter;
+import bigBang.module.quoteRequestModule.client.userInterface.view.NegotiationDeleteView;
 
 import com.google.gwt.core.client.GWT;
 
@@ -140,6 +142,15 @@ public class InsurancePolicyModule implements Module {
 			public ViewPresenter getInstance() {
 				InsurancePolicyNegotiationView<?> view = (InsurancePolicyNegotiationView<?>) GWT.create(InsurancePolicyNegotiationView.class); 
 				InsurancePolicyNegotiationViewPresenter presenter = new InsurancePolicyNegotiationViewPresenter(view);
+				return presenter;
+			}
+		});
+		ViewPresenterFactory.getInstance().registerViewPresenterInstantiator("INSURANCE_POLICY_NEGOTIATION_DELETE", new ViewPresenterInstantiator() {
+			
+			@Override
+			public ViewPresenter getInstance() {
+				NegotiationDeleteView view = (NegotiationDeleteView) GWT.create(NegotiationDeleteView.class); 
+				NegotiationDeleteViewPresenter presenter = new NegotiationDeleteViewPresenter(view);
 				return presenter;
 			}
 		});

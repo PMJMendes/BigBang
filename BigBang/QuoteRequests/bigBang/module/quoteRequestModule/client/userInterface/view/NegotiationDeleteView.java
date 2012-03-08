@@ -33,7 +33,7 @@ public class NegotiationDeleteView extends View implements NegotiationDeleteView
 			
 			@Override
 			public void onCancelRequest() {
-				actionHandler.onActionInvoked(new ActionInvokedEvent<NegotiationDeleteViewPresenter.Action>(Action.DELETE));
+				actionHandler.onActionInvoked(new ActionInvokedEvent<NegotiationDeleteViewPresenter.Action>(Action.CANCEL));
 			}
 		};
 		

@@ -36,7 +36,7 @@ public class InsurancePolicyNegotiationViewPresenter extends NegotiationViewPres
 	public void setParameters(final HasParameters parameterHolder){
 		
 		ownerId = parameterHolder.getParameter("policyid");
-		ownerTypeId = parameterHolder.getParameter("ownertypeid");
+		ownerTypeId = BigBangConstants.EntityIds.INSURANCE_POLICY;
 		insurancePolicyBroker.getPolicy(ownerId, new ResponseHandler<InsurancePolicy>() {
 			
 			@Override

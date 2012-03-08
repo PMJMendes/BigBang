@@ -10,6 +10,7 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 import bigBang.definitions.shared.Contact;
 import bigBang.definitions.shared.Document;
 import bigBang.definitions.shared.ProcessBase;
+import bigBang.library.client.HasValueSelectables;
 import bigBang.library.client.event.ActionInvokedEvent;
 import bigBang.library.client.event.ActionInvokedEventHandler;
 import bigBang.library.client.event.SelectionChangedEvent;
@@ -17,6 +18,7 @@ import bigBang.library.client.event.SelectionChangedEventHandler;
 import bigBang.library.client.userInterface.BigBangOperationsToolBar.SUB_MENU;
 import bigBang.library.client.userInterface.ContactsList;
 import bigBang.library.client.userInterface.DocumentsList;
+import bigBang.library.client.userInterface.List;
 import bigBang.library.client.userInterface.ListEntry;
 import bigBang.library.client.userInterface.ListHeader;
 import bigBang.library.client.userInterface.view.FormView;
@@ -35,8 +37,6 @@ public abstract class NegotiationView<T> extends View implements NegotiationView
 	protected DocumentsList documents;
 	protected ContactsList contacts;
 	protected ListHeader ownerHeader;
-	private String selectedContactId;
-	protected String selectedDocumentId;
 
 	public NegotiationView(FormView<T> ownerForm){
 		SplitLayoutPanel mainWrapper = new SplitLayoutPanel();
@@ -88,11 +88,9 @@ public abstract class NegotiationView<T> extends View implements NegotiationView
 		documents = new DocumentsList();
 
 		contacts.addSelectionChangedEventHandler(new SelectionChangedEventHandler() {
-			@SuppressWarnings("unchecked")
 			@Override
 			public void onSelectionChanged(SelectionChangedEvent event) {
 				if(contacts.getSelected().size()>0){
-					selectedContactId = ((ListEntry<Contact>)event.getSource()).getValue().id;
 					fireAction(Action.SELECTION_CHANGED_CONTACT);
 				}
 			}
@@ -100,11 +98,9 @@ public abstract class NegotiationView<T> extends View implements NegotiationView
 		
 		documents.addSelectionChangedEventHandler(new SelectionChangedEventHandler() {
 
-			@SuppressWarnings("unchecked")
 			@Override
 			public void onSelectionChanged(SelectionChangedEvent event) {
 				if(documents.getSelected().size() > 0){
-					selectedDocumentId = ((ListEntry<Document>)event.getSource()).getValue().id;
 					fireAction(Action.SELECTION_CHANGED_DOCUMENT);
 				}
 
@@ -144,18 +140,6 @@ public abstract class NegotiationView<T> extends View implements NegotiationView
 		mainWrapper.add(negotiationWrapper);
 
 	}
-
-
-	@Override
-	public String getDocumentId(){
-		return selectedDocumentId;
-	}
-
-	@Override
-	public String getContactId(){
-		return selectedContactId;
-	}
-
 	protected void fireAction(Action action){
 		if(this.handler != null) {
 			handler.onActionInvoked(new ActionInvokedEvent<Action>(action));
@@ -210,6 +194,16 @@ public abstract class NegotiationView<T> extends View implements NegotiationView
 	public void applyOwnerToList(String negotiationId) {
 		contacts.setOwner(negotiationId);
 		documents.setOwner(negotiationId);
+	}
+	
+	@Override
+	public HasValueSelectables<Contact> getContactList() {
+		return contacts;
+	}
+	
+	@Override
+	public HasValueSelectables<Document> getDocumentList() {
+		return documents;
 	}
 	
 }

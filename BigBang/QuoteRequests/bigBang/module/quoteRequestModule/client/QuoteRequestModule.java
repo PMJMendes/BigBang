@@ -7,9 +7,11 @@ import bigBang.library.client.ViewPresenterFactory;
 import bigBang.library.client.ViewPresenterInstantiator;
 import bigBang.library.client.userInterface.presenter.ViewPresenter;
 import bigBang.module.quoteRequestModule.client.dataAccess.NegotiationBrokerImpl;
+import bigBang.module.quoteRequestModule.client.userInterface.presenter.NegotiationDeleteViewPresenter;
 import bigBang.module.quoteRequestModule.client.userInterface.presenter.QuoteRequestOperationsViewPresenter;
 import bigBang.module.quoteRequestModule.client.userInterface.presenter.QuoteRequestSearchOperationViewPresenter;
 import bigBang.module.quoteRequestModule.client.userInterface.presenter.QuoteRequestSectionViewPresenter;
+import bigBang.module.quoteRequestModule.client.userInterface.view.NegotiationDeleteView;
 import bigBang.module.quoteRequestModule.client.userInterface.view.QuoteRequestOperationsView;
 import bigBang.module.quoteRequestModule.client.userInterface.view.QuoteRequestSearchOperationView;
 import bigBang.module.quoteRequestModule.client.userInterface.view.QuoteRequestSectionView;
@@ -55,6 +57,16 @@ public class QuoteRequestModule implements Module {
 				QuoteRequestSearchOperationView quoteRequestSearchOperationView = (QuoteRequestSearchOperationView) GWT.create(QuoteRequestSearchOperationView.class);
 				QuoteRequestSearchOperationViewPresenter quoteRequestSearchOperationViewPresenter = new QuoteRequestSearchOperationViewPresenter(quoteRequestSearchOperationView);
 				return quoteRequestSearchOperationViewPresenter;
+			}
+		});
+		
+		ViewPresenterFactory.getInstance().registerViewPresenterInstantiator("QUOTE_REQUEST_NEGOTIATION_DELETE", new ViewPresenterInstantiator() {
+			
+			@Override
+			public ViewPresenter getInstance() {
+				NegotiationDeleteView view = (NegotiationDeleteView) GWT.create(NegotiationDeleteView.class); 
+				NegotiationDeleteViewPresenter presenter = new NegotiationDeleteViewPresenter(view);
+				return presenter;
 			}
 		});
 	}
