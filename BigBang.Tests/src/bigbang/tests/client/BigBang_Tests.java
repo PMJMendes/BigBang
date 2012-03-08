@@ -91,6 +91,7 @@ public class BigBang_Tests
 //		TestQuoteRequestCreate.DoTest();
 //		TestQuoteRequestEdit.DoTest();
 //		TestQuoteRequestDelete.DoTest();
+//		TestQuoteRequestClose.DoTest();
 //
 //		TestQRObjectGet.DoTest();
 //		TestQRObjectCreate.DoTest();
