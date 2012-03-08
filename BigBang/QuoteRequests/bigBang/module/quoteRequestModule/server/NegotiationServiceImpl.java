@@ -113,7 +113,7 @@ public class NegotiationServiceImpl
 			throw new BigBangException(e.getMessage(), e);
 		}
 
-		lopMD = new ManageData(UUID.fromString(negotiation.processId));
+		lopMD = new ManageData(lobjNeg.GetProcessID());
 		lopMD.mobjData = new NegotiationData();
 		lopMD.mobjData.FromObject(lobjNeg);
 
