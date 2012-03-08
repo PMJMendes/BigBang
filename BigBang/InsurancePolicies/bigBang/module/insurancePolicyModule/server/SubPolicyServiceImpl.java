@@ -33,7 +33,6 @@ import bigBang.definitions.shared.SubPolicy.TableSection;
 import bigBang.definitions.shared.SubPolicyStub;
 import bigBang.definitions.shared.TipifiedListItem;
 import bigBang.definitions.shared.ZipCode;
-import bigBang.library.interfaces.DependentItemSubService;
 import bigBang.library.server.BigBangPermissionServiceImpl;
 import bigBang.library.server.ContactsServiceImpl;
 import bigBang.library.server.DocumentServiceImpl;
@@ -83,7 +82,7 @@ import com.premiumminds.BigBang.Jewel.SysObjects.ZipCodeBridge;
 
 public class SubPolicyServiceImpl
 	extends SearchServiceBase
-	implements SubPolicyService, DependentItemSubService
+	implements SubPolicyService
 {
 	private static final long serialVersionUID = 1L;
 

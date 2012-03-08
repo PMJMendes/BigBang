@@ -24,7 +24,6 @@ import bigBang.definitions.shared.SortOrder;
 import bigBang.definitions.shared.SortParameter;
 import bigBang.definitions.shared.TipifiedListItem;
 import bigBang.definitions.shared.ZipCode;
-import bigBang.library.interfaces.DependentItemSubService;
 import bigBang.library.server.BigBangPermissionServiceImpl;
 import bigBang.library.server.SearchServiceBase;
 import bigBang.library.shared.BigBangException;
@@ -56,7 +55,7 @@ import com.premiumminds.BigBang.Jewel.SysObjects.ZipCodeBridge;
 
 public class QuoteRequestServiceImpl
 	extends SearchServiceBase
-	implements QuoteRequestService, DependentItemSubService
+	implements QuoteRequestService
 {
 	private static final long serialVersionUID = 1L;
 
