@@ -3590,8 +3590,9 @@ public class InsurancePolicyServiceImpl
 			lopCN.mobjData = new NegotiationData();
 
 			lopCN.mobjData.mid = null;
-
 			lopCN.mobjData.mstrNotes = negotiation.notes;
+			lopCN.mobjData.mdtLimitDate = (negotiation.limitDate == null ? null :
+					Timestamp.valueOf(negotiation.limitDate + " 00:00:00.0"));
 
 			lopCN.mobjData.midManager = null;
 			lopCN.mobjData.midProcess = null;
