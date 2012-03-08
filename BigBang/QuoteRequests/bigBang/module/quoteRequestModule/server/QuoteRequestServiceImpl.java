@@ -207,7 +207,7 @@ public class QuoteRequestServiceImpl
 			PadObject lobjObject;
 			QuoteRequestValue[] larrAuxValues;
 			PadValue lobjValue;
-			int i, j, k;
+			int i, j, k, l;
 
 			if ( mbValid )
 				throw new BigBangException("Erro: Não pode inicializar o mesmo espaço de trabalho duas vezes.");
@@ -253,29 +253,29 @@ public class QuoteRequestServiceImpl
 					lobjSubLine.marrValues = new ArrayList<PadValue>();
 
 					larrLocalCoverages = larrLocalSubLines[i].GetCurrentCoverages();
-					for ( i = 0 ; i < larrLocalCoverages.length; i++ )
+					for ( j = 0 ; j < larrLocalCoverages.length; j++ )
 					{
 						lobjCoverage = new PadCoverage();
-						lobjCoverage.FromObject(larrLocalCoverages[i]);
-						lobjCoverage.mstrLabel = larrLocalCoverages[i].GetCoverage().getLabel();
-						lobjCoverage.mbIsHeader = larrLocalCoverages[i].GetCoverage().IsHeader();
-						lobjCoverage.mbMandatory = larrLocalCoverages[i].GetCoverage().IsMandatory();
-						larrTaxes = larrLocalCoverages[i].GetCoverage().GetCurrentTaxes();
+						lobjCoverage.FromObject(larrLocalCoverages[j]);
+						lobjCoverage.mstrLabel = larrLocalCoverages[j].GetCoverage().getLabel();
+						lobjCoverage.mbIsHeader = larrLocalCoverages[j].GetCoverage().IsHeader();
+						lobjCoverage.mbMandatory = larrLocalCoverages[j].GetCoverage().IsMandatory();
+						larrTaxes = larrLocalCoverages[j].GetCoverage().GetCurrentTaxes();
 						larrFields = new ArrayList<PadField>();
-						for ( j = 0; j < larrTaxes.length; j++ )
+						for ( k = 0; k < larrTaxes.length; k++ )
 						{
 							lobjField = new PadField();
-							lobjField.midField = larrTaxes[j].getKey();
-							lobjField.mlngColIndex = larrTaxes[j].GetColumnOrder();
-							lobjField.mstrLabel = larrTaxes[j].getLabel();
-							lobjField.midType = (UUID)larrTaxes[j].getAt(2);
-							lobjField.mstrUnits = (String)larrTaxes[j].getAt(3);
-							lobjField.mstrDefault = (String)larrTaxes[j].getAt(4);
-							lobjField.midRefersTo = (UUID)larrTaxes[j].getAt(7);
-							lobjField.mbVariesByObject = larrTaxes[j].GetVariesByObject();
+							lobjField.midField = larrTaxes[k].getKey();
+							lobjField.mlngColIndex = larrTaxes[k].GetColumnOrder();
+							lobjField.mstrLabel = larrTaxes[k].getLabel();
+							lobjField.midType = (UUID)larrTaxes[k].getAt(2);
+							lobjField.mstrUnits = (String)larrTaxes[k].getAt(3);
+							lobjField.mstrDefault = (String)larrTaxes[k].getAt(4);
+							lobjField.midRefersTo = (UUID)larrTaxes[k].getAt(7);
+							lobjField.mbVariesByObject = larrTaxes[k].GetVariesByObject();
 							larrFields.add(lobjField);
-							lmapCoverages.put(larrTaxes[j].getKey(), lobjCoverage);
-							lmapFields.put(larrTaxes[j].getKey(), lobjField);
+							lmapCoverages.put(larrTaxes[k].getKey(), lobjCoverage);
+							lmapFields.put(larrTaxes[k].getKey(), lobjField);
 						}
 						lobjCoverage.marrFields = larrFields.toArray(new PadField[larrFields.size()]);
 						lobjSubLine.marrCoverages.add(lobjCoverage);
@@ -283,47 +283,47 @@ public class QuoteRequestServiceImpl
 
 					larrAuxCoverages = SubLine.GetInstance(Engine.getCurrentNameSpace(),
 							lobjSubLine.midSubLine).GetCurrentCoverages();
-					for ( i = 0 ; i < larrAuxCoverages.length; i++ )
+					for ( j = 0 ; j < larrAuxCoverages.length; j++ )
 					{
-						if ( lobjSubLine.FindCoverage(larrAuxCoverages[i].getKey(), 0) >= 0 )
+						if ( lobjSubLine.FindCoverage(larrAuxCoverages[j].getKey(), 0) >= 0 )
 							continue;
 						lobjCoverage = new PadCoverage();
 						lobjCoverage.mid = null;
 						lobjCoverage.midQRSubLine = lobjSubLine.mid;
-						lobjCoverage.midCoverage = larrAuxCoverages[i].getKey();
-						lobjCoverage.mstrLabel = larrAuxCoverages[i].getLabel();
-						lobjCoverage.mbIsHeader = larrAuxCoverages[i].IsHeader();
-						lobjCoverage.mbMandatory = larrAuxCoverages[i].IsMandatory();
+						lobjCoverage.midCoverage = larrAuxCoverages[j].getKey();
+						lobjCoverage.mstrLabel = larrAuxCoverages[j].getLabel();
+						lobjCoverage.mbIsHeader = larrAuxCoverages[j].IsHeader();
+						lobjCoverage.mbMandatory = larrAuxCoverages[j].IsMandatory();
 						if ( lobjCoverage.mbMandatory )
 							lobjCoverage.mbPresent = true;
 						else
 							lobjCoverage.mbPresent = null;
-						larrTaxes = larrAuxCoverages[i].GetCurrentTaxes();
+						larrTaxes = larrAuxCoverages[j].GetCurrentTaxes();
 						larrFields = new ArrayList<PadField>();
-						for ( j = 0; j < larrTaxes.length; j++ )
+						for ( k = 0; k < larrTaxes.length; k++ )
 						{
 							lobjField = new PadField();
-							lobjField.midField = larrTaxes[j].getKey();
-							lobjField.mlngColIndex = larrTaxes[j].GetColumnOrder();
-							lobjField.mstrLabel = larrTaxes[j].getLabel();
-							lobjField.midType = (UUID)larrTaxes[j].getAt(2);
-							lobjField.mstrUnits = (String)larrTaxes[j].getAt(3);
-							lobjField.mstrDefault = (String)larrTaxes[j].getAt(4);
-							lobjField.midRefersTo = (UUID)larrTaxes[j].getAt(7);
-							lobjField.mbVariesByObject = larrTaxes[j].GetVariesByObject();
+							lobjField.midField = larrTaxes[k].getKey();
+							lobjField.mlngColIndex = larrTaxes[k].GetColumnOrder();
+							lobjField.mstrLabel = larrTaxes[k].getLabel();
+							lobjField.midType = (UUID)larrTaxes[k].getAt(2);
+							lobjField.mstrUnits = (String)larrTaxes[k].getAt(3);
+							lobjField.mstrDefault = (String)larrTaxes[k].getAt(4);
+							lobjField.midRefersTo = (UUID)larrTaxes[k].getAt(7);
+							lobjField.mbVariesByObject = larrTaxes[k].GetVariesByObject();
 							larrFields.add(lobjField);
-							lmapCoverages.put(larrTaxes[j].getKey(), lobjCoverage);
-							lmapFields.put(larrTaxes[j].getKey(), lobjField);
+							lmapCoverages.put(larrTaxes[k].getKey(), lobjCoverage);
+							lmapFields.put(larrTaxes[k].getKey(), lobjField);
 						}
 						lobjCoverage.marrFields = larrFields.toArray(new PadField[larrFields.size()]);
 						lobjSubLine.marrCoverages.add(lobjCoverage);
 					}
 
 					larrAuxValues = larrLocalSubLines[i].GetCurrentValues();
-					for ( i = 0 ; i < larrAuxValues.length; i++ )
+					for ( j = 0 ; j < larrAuxValues.length; j++ )
 					{
 						lobjValue = new PadValue();
-						lobjValue.FromObject(larrAuxValues[i]);
+						lobjValue.FromObject(larrAuxValues[j]);
 						lobjValue.mrefCoverage = lmapCoverages.get(lobjValue.midField);
 						lobjValue.mrefField = lmapFields.get(lobjValue.midField);
 						lobjValue.mlngObject = ( lobjValue.midObject == null ? -1 : lmapObjects.get(lobjValue.midObject) );
@@ -331,26 +331,26 @@ public class QuoteRequestServiceImpl
 						lobjSubLine.marrValues.add(lobjValue);
 					}
 
-					for ( i = 0 ; i < lobjSubLine.marrCoverages.size(); i++ )
+					for ( j = 0 ; j < lobjSubLine.marrCoverages.size(); j++ )
 					{
-						for ( j = 0; j < lobjSubLine.marrCoverages.get(i).marrFields.length; j++ )
+						for ( k = 0; k < lobjSubLine.marrCoverages.get(j).marrFields.length; k++ )
 						{
-							lobjField = lobjSubLine.marrCoverages.get(i).marrFields[j];
+							lobjField = lobjSubLine.marrCoverages.get(j).marrFields[k];
 							if ( lobjField.mbVariesByObject )
 							{
-								for ( k = 0; k < marrObjects.size(); k++ )
+								for ( l = 0; l < marrObjects.size(); l++ )
 								{
-									if ( lobjSubLine.FindValue(lobjField.midField, k, 0) >= 0 )
+									if ( lobjSubLine.FindValue(lobjField.midField, l, 0) >= 0 )
 										continue;
 									lobjValue = new PadValue();
 									lobjValue.mid = null;
 									lobjValue.mstrValue = lobjField.mstrDefault;
 									lobjValue.midQRSubLine = lobjSubLine.mid;
 									lobjValue.midField = lobjField.midField;
-									lobjValue.midObject = marrObjects.get(k).mid;
-									lobjValue.mrefCoverage = lobjSubLine.marrCoverages.get(i);
+									lobjValue.midObject = marrObjects.get(l).mid;
+									lobjValue.mrefCoverage = lobjSubLine.marrCoverages.get(j);
 									lobjValue.mrefField = lobjField;
-									lobjValue.mlngObject = k;
+									lobjValue.mlngObject = l;
 									lobjValue.mbDeleted = false;
 									lobjSubLine.marrValues.add(lobjValue);
 								}
@@ -365,7 +365,7 @@ public class QuoteRequestServiceImpl
 								lobjValue.midQRSubLine = lobjSubLine.mid;
 								lobjValue.midField = lobjField.midField;
 								lobjValue.midObject = null;
-								lobjValue.mrefCoverage = lobjSubLine.marrCoverages.get(i);
+								lobjValue.mrefCoverage = lobjSubLine.marrCoverages.get(j);
 								lobjValue.mrefField = lobjField;
 								lobjValue.mlngObject = -1;
 								lobjValue.mbDeleted = false;
@@ -1377,7 +1377,7 @@ public class QuoteRequestServiceImpl
 				throw new BigBangException(e.getMessage(), e);
 			}
 
-			llngIndex = marrObjects.size();
+			llngIndex = marrSubLines.size();
 			marrSubLines.add(lobjSubLine);
 
 			return llngIndex;
@@ -1623,14 +1623,14 @@ public class QuoteRequestServiceImpl
 			if ( marrObjects.size() > 0 )
 			{
 				lobjData.marrObjects = new QuoteRequestObjectData[marrObjects.size()];
-				for ( j = 0; j < marrObjects.size(); j++ )
+				for ( i = 0; i < marrObjects.size(); i++ )
 				{
-					lobjData.marrObjects[j] = new QuoteRequestObjectData();
-					lobjData.marrObjects[j].Clone(marrObjects.get(j));
-					if ( marrObjects.get(j).mbDeleted )
-						lobjData.marrObjects[j].mbDeleted = true;
-					else if ( marrObjects.get(j).mid == null )
-						lobjData.marrObjects[j].mbNew = true;
+					lobjData.marrObjects[i] = new QuoteRequestObjectData();
+					lobjData.marrObjects[i].Clone(marrObjects.get(i));
+					if ( marrObjects.get(i).mbDeleted )
+						lobjData.marrObjects[i].mbDeleted = true;
+					else if ( marrObjects.get(i).mid == null )
+						lobjData.marrObjects[i].mbNew = true;
 				}
 			}
 			else
@@ -1641,9 +1641,48 @@ public class QuoteRequestServiceImpl
 				lobjData.marrSubLines = new QuoteRequestSubLineData[marrSubLines.size()];
 				for ( i = 0; i < marrSubLines.size(); i++ )
 				{
-					
+					lobjData.marrSubLines[i] = new QuoteRequestSubLineData();
+					lobjData.marrSubLines[i].Clone(marrSubLines.get(i));
+					if ( marrSubLines.get(i).mbDeleted )
+						lobjData.marrSubLines[i].mbDeleted = true;
+					else if ( marrSubLines.get(i).mid == null )
+						lobjData.marrSubLines[i].mbNew = true;
+
+					if ( marrSubLines.get(i).marrCoverages.size() > 0 )
+					{
+						lobjData.marrSubLines[i].marrCoverages = new QuoteRequestCoverageData[marrSubLines.get(i).marrCoverages.size()];
+						for ( j = 0; j < marrSubLines.get(i).marrCoverages.size(); j++ )
+						{
+							lobjData.marrSubLines[i].marrCoverages[j] = new QuoteRequestCoverageData();
+							lobjData.marrSubLines[i].marrCoverages[j].Clone(marrSubLines.get(i).marrCoverages.get(j));
+							if ( marrSubLines.get(i).marrCoverages.get(j).mbDeleted || marrSubLines.get(i).mbDeleted )
+								lobjData.marrSubLines[i].marrCoverages[j].mbDeleted = true;
+							else if ( (marrSubLines.get(i).marrCoverages.get(j).mid == null) || (marrSubLines.get(i).mid == null) )
+								lobjData.marrSubLines[i].marrCoverages[j].mbNew = true;
+						}
+					}
+					else
+						lobjData.marrSubLines[i].marrCoverages = null;
+
+					if ( marrSubLines.get(i).marrValues.size() > 0 )
+					{
+						lobjData.marrSubLines[i].marrValues = new QuoteRequestValueData[marrSubLines.get(i).marrValues.size()];
+						for ( j = 0; j < marrSubLines.get(i).marrValues.size(); j++ )
+						{
+							lobjData.marrSubLines[i].marrValues[j] = new QuoteRequestValueData();
+							lobjData.marrSubLines[i].marrValues[j].Clone(marrSubLines.get(i).marrValues.get(j));
+							if ( marrSubLines.get(i).marrValues.get(j).mbDeleted || marrSubLines.get(i).mbDeleted )
+								lobjData.marrSubLines[i].marrValues[j].mbDeleted = true;
+							else if ( (marrSubLines.get(i).marrValues.get(j).mid == null) || (marrSubLines.get(i).mid == null) )
+								lobjData.marrSubLines[i].marrValues[j].mbNew = true;
+						}
+					}
+					else
+						lobjData.marrSubLines[i].marrCoverages = null;
 				}
 			}
+			else
+				lobjData.marrSubLines = null;
 
 			if ( mobjQuoteRequest.mid == null )
 				CommitNew(lobjData);
@@ -1654,29 +1693,52 @@ public class QuoteRequestServiceImpl
 		private void CommitNew(QuoteRequestData pobjData)
 			throws BigBangException
 		{
-			CreateQuoteRequest lopCC;
-			int i;
+			CreateQuoteRequest lopCQR;
+			int i, j;
 
 			if ( midClient == null )
 				throw new BigBangException("Erro: Não preencheu o identificador do cliente.");
 
 			try
 			{
-				lopCC = new CreateQuoteRequest(Client.GetInstance(Engine.getCurrentNameSpace(), midClient).GetProcessID());
-				lopCC.mobjData = pobjData;
+				lopCQR = new CreateQuoteRequest(Client.GetInstance(Engine.getCurrentNameSpace(), midClient).GetProcessID());
+				lopCQR.mobjData = pobjData;
 
-				lopCC.mobjContactOps = null;
-				lopCC.mobjDocOps = null;
+				lopCQR.mobjContactOps = null;
+				lopCQR.mobjDocOps = null;
 
-				lopCC.Execute();
+				lopCQR.Execute();
 
-				mobjQuoteRequest.mid = lopCC.mobjData.mid;
+				mobjQuoteRequest.mid = lopCQR.mobjData.mid;
 
-				if ( lopCC.mobjData.marrObjects != null )
+				if ( lopCQR.mobjData.marrObjects != null )
 				{
-					for ( i = 0; i < lopCC.mobjData.marrObjects.length; i++ )
-						if ( lopCC.mobjData.marrObjects[i].mbNew )
-							marrObjects.get(i).mid = lopCC.mobjData.marrObjects[i].mid;
+					for ( i = 0; i < lopCQR.mobjData.marrObjects.length; i++ )
+						if ( lopCQR.mobjData.marrObjects[i].mbNew )
+							marrObjects.get(i).mid = lopCQR.mobjData.marrObjects[i].mid;
+				}
+
+				if ( lopCQR.mobjData.marrSubLines != null )
+				{
+					for ( i = 0; i < lopCQR.mobjData.marrSubLines.length; i++ )
+					{
+						if ( lopCQR.mobjData.marrSubLines[i].mbNew )
+							marrSubLines.get(i).mid = lopCQR.mobjData.marrSubLines[i].mid;
+
+						if ( lopCQR.mobjData.marrSubLines[i].marrCoverages != null )
+						{
+							for ( j = 0; j < lopCQR.mobjData.marrSubLines[i].marrCoverages.length; j++ )
+								if ( lopCQR.mobjData.marrSubLines[i].marrCoverages[j].mbNew )
+									marrSubLines.get(i).marrCoverages.get(j).mid = lopCQR.mobjData.marrSubLines[i].marrCoverages[j].mid;
+						}
+
+						if ( lopCQR.mobjData.marrSubLines[i].marrValues != null )
+						{
+							for ( j = 0; j < lopCQR.mobjData.marrSubLines[i].marrValues.length; j++ )
+								if ( lopCQR.mobjData.marrSubLines[i].marrValues[j].mbNew )
+									marrSubLines.get(i).marrValues.get(j).mid = lopCQR.mobjData.marrSubLines[i].marrValues[j].mid;
+						}
+					}
 				}
 			}
 			catch (Throwable e)
@@ -1688,24 +1750,47 @@ public class QuoteRequestServiceImpl
 		private void CommitEdit(QuoteRequestData pobjData)
 			throws BigBangException
 		{
-			ManageData lopMPD;
-			int i;
+			ManageData lopMD;
+			int i, j;
 
 			try
 			{
-				lopMPD = new ManageData(mobjQuoteRequest.midProcess);
-				lopMPD.mobjData = pobjData;
+				lopMD = new ManageData(mobjQuoteRequest.midProcess);
+				lopMD.mobjData = pobjData;
 
-				lopMPD.mobjContactOps = null;
-				lopMPD.mobjDocOps = null;
+				lopMD.mobjContactOps = null;
+				lopMD.mobjDocOps = null;
 
-				lopMPD.Execute();
+				lopMD.Execute();
 
-				if ( lopMPD.mobjData.marrObjects != null )
+				if ( lopMD.mobjData.marrObjects != null )
 				{
-					for ( i = 0; i < lopMPD.mobjData.marrObjects.length; i++ )
-						if ( lopMPD.mobjData.marrObjects[i].mbNew )
-							marrObjects.get(i).mid = lopMPD.mobjData.marrObjects[i].mid;
+					for ( i = 0; i < lopMD.mobjData.marrObjects.length; i++ )
+						if ( lopMD.mobjData.marrObjects[i].mbNew )
+							marrObjects.get(i).mid = lopMD.mobjData.marrObjects[i].mid;
+				}
+
+				if ( lopMD.mobjData.marrSubLines != null )
+				{
+					for ( i = 0; i < lopMD.mobjData.marrSubLines.length; i++ )
+					{
+						if ( lopMD.mobjData.marrSubLines[i].mbNew )
+							marrSubLines.get(i).mid = lopMD.mobjData.marrSubLines[i].mid;
+
+						if ( lopMD.mobjData.marrSubLines[i].marrCoverages != null )
+						{
+							for ( j = 0; j < lopMD.mobjData.marrSubLines[i].marrCoverages.length; j++ )
+								if ( lopMD.mobjData.marrSubLines[i].marrCoverages[j].mbNew )
+									marrSubLines.get(i).marrCoverages.get(j).mid = lopMD.mobjData.marrSubLines[i].marrCoverages[j].mid;
+						}
+
+						if ( lopMD.mobjData.marrSubLines[i].marrValues != null )
+						{
+							for ( j = 0; j < lopMD.mobjData.marrSubLines[i].marrValues.length; j++ )
+								if ( lopMD.mobjData.marrSubLines[i].marrValues[j].mbNew )
+									marrSubLines.get(i).marrValues.get(j).mid = lopMD.mobjData.marrSubLines[i].marrValues[j].mid;
+						}
+					}
 				}
 			}
 			catch (Throwable e)
