@@ -49,6 +49,7 @@ import com.premiumminds.BigBang.Jewel.Objects.QuoteRequestValue;
 import com.premiumminds.BigBang.Jewel.Objects.SubLine;
 import com.premiumminds.BigBang.Jewel.Objects.Tax;
 import com.premiumminds.BigBang.Jewel.Operations.Client.CreateQuoteRequest;
+import com.premiumminds.BigBang.Jewel.Operations.QuoteRequest.CloseProcess;
 import com.premiumminds.BigBang.Jewel.Operations.QuoteRequest.DeleteQuoteRequest;
 import com.premiumminds.BigBang.Jewel.Operations.QuoteRequest.ManageData;
 import com.premiumminds.BigBang.Jewel.SysObjects.ZipCodeBridge;
@@ -2580,6 +2581,40 @@ public class QuoteRequestServiceImpl
 		lrefPad = GetScratchPadStorage().get(UUID.fromString(requestId));
 		GetScratchPadStorage().remove(UUID.fromString(requestId));
 		return lrefPad.GetRemapFromPad(false);
+	}
+
+	public QuoteRequest closeProcess(String requestId, String notes)
+		throws SessionExpiredException, BigBangException
+	{
+		com.premiumminds.BigBang.Jewel.Objects.QuoteRequest lobjRequest;
+		CloseProcess lopCP;
+		
+		if ( Engine.getCurrentUser() == null )
+			throw new SessionExpiredException();
+
+		try
+		{
+			lobjRequest = com.premiumminds.BigBang.Jewel.Objects.QuoteRequest.GetInstance(Engine.getCurrentNameSpace(),
+					UUID.fromString(requestId));
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangException(e.getMessage(), e);
+		}
+
+		lopCP = new CloseProcess(lobjRequest.GetProcessID());
+		lopCP.mstrNotes = notes;
+
+		try
+		{
+			lopCP.Execute();
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangException(e.getMessage(), e);
+		}
+
+		return sGetRequest(lobjRequest.getKey());
 	}
 
 	public void deleteRequest(String requestId, String reason)
