@@ -107,6 +107,7 @@ public class NegotiationServiceImpl
 			lopMD = new ManageData(UUID.fromString(negotiation.processId));
 			lopMD.mobjData = new NegotiationData();
 
+			lopMD.mobjData.midProcess = UUID.fromString(negotiation.processId);
 			lopMD.mobjData.mid = UUID.fromString(negotiation.id);
 			lopMD.mobjData.midCompany = UUID.fromString(negotiation.companyId);
 			lopMD.mobjData.mstrNotes = negotiation.notes;
