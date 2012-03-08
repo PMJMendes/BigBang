@@ -1,11 +1,11 @@
 package bigbang.tests.client;
 
-import bigBang.definitions.shared.QuoteRequestObject;
 import bigBang.definitions.shared.Remap;
+import bigBang.definitions.shared.TipifiedListItem;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
-public class TestQRObjectCreate
+public class TestQRObjectDelete
 {
 	private static String gstrPad;
 
@@ -58,39 +58,41 @@ public class TestQRObjectCreate
 
 	private static void DoStep2()
 	{
-		AsyncCallback<QuoteRequestObject> callback = new AsyncCallback<QuoteRequestObject> ()
+		AsyncCallback<TipifiedListItem[]> callback = new AsyncCallback<TipifiedListItem[]> ()
 		{
 			public void onFailure(Throwable caught)
 			{
 				return;
 			}
-
-			public void onSuccess(QuoteRequestObject result)
+	
+			public void onSuccess(TipifiedListItem[] result)
 			{
-				DoStep3(result);
+				if ( (result != null) && (result.length > 0) )
+					DoStep3(result[0].id);
+				else
+					DoStep4();
 			}
 		};
 
-		Services.quoteRequestService.createObjectInPad(gstrPad, "CD709854-DB59-424B-904A-9F9501403847", callback);
+		Services.quoteRequestService.getListItemsFilter("B594AB7F-573F-4401-A369-A00500F9D2D8", gstrPad, callback);
 	}
 
-	private static void DoStep3(QuoteRequestObject object)
+	private static void DoStep3(String tempObjectId)
 	{
-		AsyncCallback<QuoteRequestObject> callback = new AsyncCallback<QuoteRequestObject> ()
+		AsyncCallback<Void> callback = new AsyncCallback<Void>()
 		{
 			public void onFailure(Throwable caught)
 			{
 				return;
 			}
 
-			public void onSuccess(QuoteRequestObject result)
+			public void onSuccess(Void result)
 			{
 				DoStep4();
 			}
 		};
 
-		object.unitIdentification = "Peste";
-		Services.quoteRequestService.updateObjectInPad(object, callback);
+		Services.quoteRequestService.deleteObjectInPad(tempObjectId, callback);
 	}
 
 	private static void DoStep4()

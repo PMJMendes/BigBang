@@ -1,11 +1,11 @@
 package bigbang.tests.client;
 
-import bigBang.definitions.shared.QuoteRequestObject;
+import bigBang.definitions.shared.QuoteRequest;
 import bigBang.definitions.shared.Remap;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
-public class TestQRObjectCreate
+public class TestQRSubLineCreate
 {
 	private static String gstrPad;
 
@@ -58,42 +58,23 @@ public class TestQRObjectCreate
 
 	private static void DoStep2()
 	{
-		AsyncCallback<QuoteRequestObject> callback = new AsyncCallback<QuoteRequestObject> ()
+		AsyncCallback<QuoteRequest.RequestSubLine> callback = new AsyncCallback<QuoteRequest.RequestSubLine> ()
 		{
 			public void onFailure(Throwable caught)
 			{
 				return;
 			}
 
-			public void onSuccess(QuoteRequestObject result)
+			public void onSuccess(QuoteRequest.RequestSubLine result)
 			{
-				DoStep3(result);
+				DoStep3();
 			}
 		};
 
-		Services.quoteRequestService.createObjectInPad(gstrPad, "CD709854-DB59-424B-904A-9F9501403847", callback);
+		Services.quoteRequestService.addSubLineToPad(gstrPad, "34E19434-6106-4359-93FE-9EE90118CEE0", callback);
 	}
 
-	private static void DoStep3(QuoteRequestObject object)
-	{
-		AsyncCallback<QuoteRequestObject> callback = new AsyncCallback<QuoteRequestObject> ()
-		{
-			public void onFailure(Throwable caught)
-			{
-				return;
-			}
-
-			public void onSuccess(QuoteRequestObject result)
-			{
-				DoStep4();
-			}
-		};
-
-		object.unitIdentification = "Peste";
-		Services.quoteRequestService.updateObjectInPad(object, callback);
-	}
-
-	private static void DoStep4()
+	private static void DoStep3()
 	{
 		AsyncCallback<Remap[]> callback = new AsyncCallback<Remap[]>()
 		{

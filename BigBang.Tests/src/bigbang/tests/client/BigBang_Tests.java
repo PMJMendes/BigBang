@@ -94,6 +94,11 @@ public class BigBang_Tests
 //
 //		TestQRObjectGet.DoTest();
 //		TestQRObjectCreate.DoTest();
+//		TestQRObjectEdit.DoTest();
+//		TestQRObjectDelete.DoTest();
+//
+//		TestQRSubLineCreate.DoTest();
+//		TestQRSubLineDelete.DoTest();
 //
 //		TestNegotiationGet.DoTest();
 //		TestNegotiationCreate.DoTest();

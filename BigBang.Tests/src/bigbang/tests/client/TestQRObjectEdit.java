@@ -2,10 +2,11 @@ package bigbang.tests.client;
 
 import bigBang.definitions.shared.QuoteRequestObject;
 import bigBang.definitions.shared.Remap;
+import bigBang.definitions.shared.TipifiedListItem;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
-public class TestQRObjectCreate
+public class TestQRObjectEdit
 {
 	private static String gstrPad;
 
@@ -58,25 +59,28 @@ public class TestQRObjectCreate
 
 	private static void DoStep2()
 	{
-		AsyncCallback<QuoteRequestObject> callback = new AsyncCallback<QuoteRequestObject> ()
+		AsyncCallback<TipifiedListItem[]> callback = new AsyncCallback<TipifiedListItem[]> ()
 		{
 			public void onFailure(Throwable caught)
 			{
 				return;
 			}
-
-			public void onSuccess(QuoteRequestObject result)
+	
+			public void onSuccess(TipifiedListItem[] result)
 			{
-				DoStep3(result);
+				if ( (result != null) && (result.length > 0) )
+					DoStep3(result[0].id);
+				else
+					DoStep5();
 			}
 		};
 
-		Services.quoteRequestService.createObjectInPad(gstrPad, "CD709854-DB59-424B-904A-9F9501403847", callback);
+		Services.quoteRequestService.getListItemsFilter("B594AB7F-573F-4401-A369-A00500F9D2D8", gstrPad, callback);
 	}
 
-	private static void DoStep3(QuoteRequestObject object)
+	private static void DoStep3(String tempObjectId)
 	{
-		AsyncCallback<QuoteRequestObject> callback = new AsyncCallback<QuoteRequestObject> ()
+		AsyncCallback<QuoteRequestObject> callback = new AsyncCallback<QuoteRequestObject>()
 		{
 			public void onFailure(Throwable caught)
 			{
@@ -85,15 +89,55 @@ public class TestQRObjectCreate
 
 			public void onSuccess(QuoteRequestObject result)
 			{
-				DoStep4();
+				DoStep4(result);
 			}
 		};
 
-		object.unitIdentification = "Peste";
+		Services.quoteRequestService.getObjectInPad(tempObjectId, callback);
+	}
+
+	private static void DoStep4(QuoteRequestObject object)
+	{
+		int i, j, k;
+
+		AsyncCallback<QuoteRequestObject> callback = new AsyncCallback<QuoteRequestObject>()
+		{
+			public void onFailure(Throwable caught)
+			{
+				return;
+			}
+
+			public void onSuccess(QuoteRequestObject result)
+			{
+				DoStep5();
+			}
+		};
+
+		object.unitIdentification = "Teste";
+
+		if ( object.objectData != null )
+		{
+			for ( i = 0; i < object.objectData.length; i++ )
+			{
+				if ( (object.objectData[i].headerData != null) && (object.objectData[i].headerData.fixedFields != null) )
+					for ( j = 0; j < object.objectData[i].headerData.fixedFields.length; j++ )
+						object.objectData[i].headerData.fixedFields[j].value = null;
+
+				if ( object.objectData[i].coverageData != null )
+				{
+					for ( j = 0; j < object.objectData[i].coverageData.length; j++ )
+					{
+						if ( object.objectData[i].coverageData[j].fixedFields != null )
+							for ( k = 0; k < object.objectData[i].coverageData[j].fixedFields.length; k++ )
+								object.objectData[i].coverageData[j].fixedFields[k].value = null;
+					}
+				}
+			}
+		}
 		Services.quoteRequestService.updateObjectInPad(object, callback);
 	}
 
-	private static void DoStep4()
+	private static void DoStep5()
 	{
 		AsyncCallback<Remap[]> callback = new AsyncCallback<Remap[]>()
 		{
