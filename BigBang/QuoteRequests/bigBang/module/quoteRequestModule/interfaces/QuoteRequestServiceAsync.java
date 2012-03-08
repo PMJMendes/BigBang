@@ -3,12 +3,13 @@ package bigBang.module.quoteRequestModule.interfaces;
 import bigBang.definitions.shared.QuoteRequest;
 import bigBang.definitions.shared.QuoteRequestObject;
 import bigBang.definitions.shared.Remap;
+import bigBang.library.interfaces.DependentItemSubServiceAsync;
 import bigBang.library.interfaces.SearchServiceAsync;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 public interface QuoteRequestServiceAsync
-	extends SearchServiceAsync
+	extends SearchServiceAsync, DependentItemSubServiceAsync
 {
 	void getRequest(String requestId, AsyncCallback<QuoteRequest> callback);
 	void getPage(String requestId, String subLineId, String objectId, AsyncCallback<QuoteRequest.TableSection> callback);

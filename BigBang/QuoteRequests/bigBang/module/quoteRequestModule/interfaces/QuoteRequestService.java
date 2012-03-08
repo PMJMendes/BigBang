@@ -3,6 +3,7 @@ package bigBang.module.quoteRequestModule.interfaces;
 import bigBang.definitions.shared.QuoteRequest;
 import bigBang.definitions.shared.QuoteRequestObject;
 import bigBang.definitions.shared.Remap;
+import bigBang.library.interfaces.DependentItemSubService;
 import bigBang.library.interfaces.SearchService;
 import bigBang.library.shared.BigBangException;
 import bigBang.library.shared.CorruptedPadException;
@@ -13,7 +14,7 @@ import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 
 @RemoteServiceRelativePath("QuoteRequestService")
 public interface QuoteRequestService
-	extends SearchService
+	extends SearchService, DependentItemSubService
 {
 	/**
 	 * Utility class for simplifying access to the instance of async service.
