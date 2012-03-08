@@ -4,18 +4,17 @@ import bigBang.definitions.shared.BigBangConstants;
 import bigBang.definitions.shared.Negotiation;
 import bigBang.library.client.userInterface.DatePickerFormField;
 import bigBang.library.client.userInterface.ExpandableListBoxFormField;
-import bigBang.library.client.userInterface.TextBoxFormField;
+import bigBang.library.client.userInterface.TextAreaFormField;
 import bigBang.library.client.userInterface.view.FormView;
-
-import com.google.gwt.user.client.ui.SplitLayoutPanel;
-import com.google.gwt.user.client.ui.VerticalPanel;
 
 public class NegotiationForm extends FormView<Negotiation>{
 	
 	ExpandableListBoxFormField company;
 	ExpandableListBoxFormField manager;
 	DatePickerFormField endDate;
-	TextBoxFormField notes;
+	TextAreaFormField notes;
+	boolean isInsurancePolicy;
+	
 	
 	public NegotiationForm(){
 		
@@ -24,28 +23,31 @@ public class NegotiationForm extends FormView<Negotiation>{
 		company = new ExpandableListBoxFormField(BigBangConstants.EntityIds.INSURANCE_AGENCY, "Seguradora");
 		manager = new ExpandableListBoxFormField(BigBangConstants.EntityIds.USER, "Gestor");
 		endDate = new DatePickerFormField("Data Limite");
-		notes = new TextBoxFormField("Notas");
+		notes = new TextAreaFormField("Notas");
 		
-		VerticalPanel wrapper = new VerticalPanel();
+		notes.setFieldHeight("75px");
+		notes.setFieldWidth("475px");
 		
-		wrapper.add(company);
-		wrapper.add(manager);
-		wrapper.add(endDate);
-		wrapper.add(notes); 
+		manager.lock(true);
 		
+		addFormField(company);
+		addFormField(manager);
+		addFormField(endDate);
+		addFormField(notes); 
 		
-		SplitLayoutPanel split = new SplitLayoutPanel();
-		
-		split.add(wrapper);
-		
-		addWidget(split);
 		}
 	
+	public void setInsurancePolicyLocked(boolean b){
+		company.lock(b);
+	}
 	
 	@Override
 	public Negotiation getInfo() {
 		
-		Negotiation newNeg = getValue(); 
+		if(value == null){
+			value = new Negotiation();
+		}
+		Negotiation newNeg = value;
 		newNeg.companyId = company.getValue();
 		newNeg.managerId = manager.getValue();
 		newNeg.limitDate = endDate.getStringValue();
@@ -63,6 +65,6 @@ public class NegotiationForm extends FormView<Negotiation>{
 		notes.setValue(info.notes);
 		
 	}
-	
+ 
 
 }

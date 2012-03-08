@@ -271,6 +271,7 @@ ViewPresenter {
 				case CREATE_NEGOTIATION:
 					item.setParameter("operation", "negotiation");
 					item.setParameter("negotiationid", "new");
+					item.setParameter("ownertypeid", BigBangConstants.EntityIds.NEGOTIATION);
 					NavigationHistoryManager.getInstance().go(item);
 					break;
 				case CREATE_RISK_ANALISYS:

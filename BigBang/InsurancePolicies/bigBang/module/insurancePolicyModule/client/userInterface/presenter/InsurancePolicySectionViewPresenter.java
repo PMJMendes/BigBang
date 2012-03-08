@@ -130,6 +130,9 @@ public class InsurancePolicySectionViewPresenter implements ViewPresenter{
 				}else if(show.equalsIgnoreCase("documentmanagement")){
 					present("DOCUMENT", parameters);
 					view.showOverlayViewContainer(true);
+				}else if(show.equalsIgnoreCase("deletenegotiation")){
+					present("NEGOTIATION_DELETE", parameters);
+					view.showOverlayViewContainer(true);
 				}
 			}
 			

@@ -12,6 +12,7 @@ import bigBang.module.insurancePolicyModule.client.dataAccess.InsuredObjectDataB
 import bigBang.module.insurancePolicyModule.client.userInterface.presenter.CreateDebitNoteViewPresenter;
 import bigBang.module.insurancePolicyModule.client.userInterface.presenter.CreateReceiptViewPresenter;
 import bigBang.module.insurancePolicyModule.client.userInterface.presenter.ExerciseViewPresenter;
+import bigBang.module.insurancePolicyModule.client.userInterface.presenter.InsurancePolicyNegotiationViewPresenter;
 import bigBang.module.insurancePolicyModule.client.userInterface.presenter.InsurancePolicyOperationsViewPresenter;
 import bigBang.module.insurancePolicyModule.client.userInterface.presenter.InsurancePolicySearchOperationViewPresenter;
 import bigBang.module.insurancePolicyModule.client.userInterface.presenter.InsurancePolicySectionViewPresenter;
@@ -21,6 +22,7 @@ import bigBang.module.insurancePolicyModule.client.userInterface.presenter.SubPo
 import bigBang.module.insurancePolicyModule.client.userInterface.view.CreateDebitNoteView;
 import bigBang.module.insurancePolicyModule.client.userInterface.view.CreateReceiptView;
 import bigBang.module.insurancePolicyModule.client.userInterface.view.ExerciseView;
+import bigBang.module.insurancePolicyModule.client.userInterface.view.InsurancePolicyNegotiationView;
 import bigBang.module.insurancePolicyModule.client.userInterface.view.InsurancePolicyOperationsView;
 import bigBang.module.insurancePolicyModule.client.userInterface.view.InsurancePolicySearchOperationView;
 import bigBang.module.insurancePolicyModule.client.userInterface.view.InsurancePolicySectionView;
@@ -126,8 +128,9 @@ public class InsurancePolicyModule implements Module {
 			
 			@Override
 			public ViewPresenter getInstance() {
-				// TODO Auto-generated method stub
-				return null;
+				InsurancePolicyNegotiationView<?> view = (InsurancePolicyNegotiationView<?>) GWT.create(InsurancePolicyNegotiationView.class); 
+				InsurancePolicyNegotiationViewPresenter presenter = new InsurancePolicyNegotiationViewPresenter(view);
+				return presenter;
 			}
 		});
 	} 
