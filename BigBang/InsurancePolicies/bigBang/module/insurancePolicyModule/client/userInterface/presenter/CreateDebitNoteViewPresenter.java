@@ -63,7 +63,7 @@ public class CreateDebitNoteViewPresenter implements ViewPresenter {
 
 	@Override
 	public void setParameters(HasParameters parameterHolder) {
-		ownerId = parameterHolder.getParameter("id");
+		ownerId = parameterHolder.getParameter("policyid");
 
 		if(ownerId == null){
 			onGetOwnerFailed();

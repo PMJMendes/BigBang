@@ -109,7 +109,7 @@ public class DocumentViewPresenter implements ViewPresenter, DocumentsBrokerClie
 		doc = null;
 		view.clearAll();
 		broker.unregisterClient(this);
-		ownerId = parameterHolder.getParameter("id");
+		ownerId = parameterHolder.getParameter("ownerid");
 		documentId = parameterHolder.getParameter("documentid");
 		ownerTypeId = parameterHolder.getParameter("ownertypeid");
 		boolean hasPermissions = parameterHolder.getParameter("editpermission") != null;
@@ -150,7 +150,6 @@ public class DocumentViewPresenter implements ViewPresenter, DocumentsBrokerClie
 				public void onError(Collection<ResponseError> errors) {
 					NavigationHistoryItem navig = NavigationHistoryManager.getInstance().getCurrentState();
 					navig.removeParameter("documentid");
-					navig.removeParameter("operation");
 					navig.removeParameter("ownertypeid");
 					navig.removeParameter("show");
 					NavigationHistoryManager.getInstance().go(navig);
@@ -462,7 +461,6 @@ public class DocumentViewPresenter implements ViewPresenter, DocumentsBrokerClie
 		if(doc == null){
 			NavigationHistoryItem navig = NavigationHistoryManager.getInstance().getCurrentState();
 			navig.removeParameter("documentid");
-			navig.removeParameter("operation");
 			navig.removeParameter("ownertypeid");
 			navig.removeParameter("show");
 			NavigationHistoryManager.getInstance().go(navig);
@@ -556,7 +554,6 @@ public class DocumentViewPresenter implements ViewPresenter, DocumentsBrokerClie
 
 		NavigationHistoryItem navig = NavigationHistoryManager.getInstance().getCurrentState();
 		navig.removeParameter("documentid");
-		navig.removeParameter("operation");
 		navig.removeParameter("ownertypeid");
 		navig.removeParameter("show");
 		NavigationHistoryManager.getInstance().go(navig);

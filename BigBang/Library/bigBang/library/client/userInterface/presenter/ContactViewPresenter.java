@@ -124,7 +124,7 @@ public class ContactViewPresenter implements ViewPresenter, ContactsBrokerClient
 
 		this.parameterHolder = parameterHolder;
 		broker.unregisterClient(this);
-		ownerId = parameterHolder.getParameter("id");
+		ownerId = parameterHolder.getParameter("ownerid");
 		contactId = parameterHolder.getParameter("contactid");
 		ownerTypeId= parameterHolder.getParameter("ownertypeid");
 		boolean hasPermissions = parameterHolder.getParameter("editpermission") != null;

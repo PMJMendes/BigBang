@@ -64,26 +64,26 @@ public class GeneralSystemSectionViewPresenter implements ViewPresenter {
 			public void onParameters(HasParameters parameters) {
 				String section = parameters.getParameter("section");
 				if(section != null && section.equalsIgnoreCase("generalsystem")){
-					String operation = parameters.getParameter("operation");
-					operation = operation == null ? "" : operation;
+					String display = parameters.peekInStackParameter("display");
+					display = display == null ? "" : display;
 
-					if(operation.equalsIgnoreCase("history")){
+					if(display.equalsIgnoreCase("history")){
 						present("HISTORY", parameters);
-					}else if(operation.equalsIgnoreCase("user")){
+					}else if(display.equalsIgnoreCase("user")){
 						present("GENERAL_SYSTEM_USER_MANAGEMENT", parameters);
-					}else if(operation.equalsIgnoreCase("costcenter")){
+					}else if(display.equalsIgnoreCase("costcenter")){
 						present("GENERAL_SYSTEM_COST_CENTER_MANAGEMENT", parameters);
-					}else if(operation.equalsIgnoreCase("clientgroup")){
+					}else if(display.equalsIgnoreCase("clientgroup")){
 						present("GENERAL_SYSTEM_CLIENT_GROUP_MANAGEMENT", parameters);
-					}else if(operation.equalsIgnoreCase("coverage")){
+					}else if(display.equalsIgnoreCase("coverage")){
 						present("GENERAL_SYSTEM_COVERAGE_MANAGEMENT", parameters);
-					}else if(operation.equalsIgnoreCase("insuranceagency")){
+					}else if(display.equalsIgnoreCase("insuranceagency")){
 						present("GENERAL_SYSTEM_INSURANCE_AGENCY_MANAGEMENT", parameters);
-					}else if(operation.equalsIgnoreCase("mediator")){
+					}else if(display.equalsIgnoreCase("mediator")){
 						present("GENERAL_SYSTEM_MEDIATOR_MANAGEMENT", parameters);
-					}else if(operation.equalsIgnoreCase("tax")){
+					}else if(display.equalsIgnoreCase("tax")){
 						present("GENERAL_SYSTEM_TAX_MANAGEMENT", parameters);
-					}else if(operation.equalsIgnoreCase("user")){
+					}else if(display.equalsIgnoreCase("user")){
 						present("GENERAL_SYSTEM_USER_MANAGEMENT", parameters);
 					}else{
 						goToDefault();
@@ -93,7 +93,8 @@ public class GeneralSystemSectionViewPresenter implements ViewPresenter {
 			
 			private void goToDefault(){
 				NavigationHistoryItem item = navigationManager.getCurrentState();
-				item.setParameter("operation", "history");
+				item.setStackParameter("display");
+				item.pushIntoStackParameter("display", "history");
 				navigationManager.go(item);
 			}
 			

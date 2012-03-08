@@ -90,6 +90,7 @@ public class ExpandableSelectionFormField extends FormField<String> {
 		
 		Resources r = GWT.create(Resources.class);
 		expandImage = new Image(r.listExpandIcon());
+		expandImage.getElement().getStyle().setCursor(Cursor.POINTER);
 		expandImage.addClickHandler(expandClickHandler);
 		innerWrapper.add(expandImage);
 		innerWrapper.add(this.unitsLabel);

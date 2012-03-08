@@ -123,7 +123,7 @@ public class ClientSearchOperationViewPresenter implements ViewPresenter {
 	public void setParameters(HasParameters parameterHolder) {
 		setup();
 		
-		String id = parameterHolder.getParameter("id");
+		String id = parameterHolder.getParameter("clientid");
 		id = id == null ? new String() : id;
 
 		if(inClientCreation()){
@@ -154,9 +154,9 @@ public class ClientSearchOperationViewPresenter implements ViewPresenter {
 
 				NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
 				if(clientId.isEmpty()){
-					item.removeParameter("id");
+					item.removeParameter("clientid");
 				}else{
-					item.setParameter("id", clientId);
+					item.setParameter("clientid", clientId);
 				}
 				NavigationHistoryManager.getInstance().go(item);
 			}
@@ -167,10 +167,10 @@ public class ClientSearchOperationViewPresenter implements ViewPresenter {
 			@Override
 			public void onActionInvoked(ActionInvokedEvent<Action> action) {
 				NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
-
+				
 				switch(action.getAction()){
 				case NEW:
-					item.setParameter("id", "new");
+					item.setParameter("clientid", "new");
 					NavigationHistoryManager.getInstance().go(item);
 					break;
 				case EDIT:
@@ -202,31 +202,31 @@ public class ClientSearchOperationViewPresenter implements ViewPresenter {
 					}
 					break;
 				case CREATE_CASUALTY:
-					item.setParameter("operation", "createcasualty");
+					item.pushIntoStackParameter("display", "createcasualty");
 					NavigationHistoryManager.getInstance().go(item);
 					break;
 				case CREATE_POLICY:
-					item.setParameter("operation", "createpolicy");
+					item.pushIntoStackParameter("display", "createpolicy");
 					NavigationHistoryManager.getInstance().go(item);
 					break;
 				case CREATE_QUOTE_REQUEST:
-					item.setParameter("operation", "createquoterequest");
+					item.pushIntoStackParameter("display", "createquoterequest");
 					NavigationHistoryManager.getInstance().go(item);
 					break;
 				case CREATE_RISK_ANALISYS:
-					item.setParameter("operation", "createriskanalisys");
+					item.pushIntoStackParameter("display", "createriskanalisys");
 					NavigationHistoryManager.getInstance().go(item);
 					break;
 				case MERGE_WITH_CLIENT:
-					item.setParameter("operation", "merge");
+					item.pushIntoStackParameter("display", "merge");
 					NavigationHistoryManager.getInstance().go(item);
 					break;
 				case REQUIRE_INFO_DOCUMENT:
-					item.setParameter("operation", "inforequest");
+					item.pushIntoStackParameter("display", "inforequest");
 					NavigationHistoryManager.getInstance().go(item);
 					break;
 				case TRANSFER_MANAGER:
-					item.setParameter("show", "managertransfer");
+					item.pushIntoStackParameter("display", "managertransfer");
 					NavigationHistoryManager.getInstance().go(item);
 					break;
 				}
@@ -245,7 +245,7 @@ public class ClientSearchOperationViewPresenter implements ViewPresenter {
 
 				if(!itemId.isEmpty()){
 					NavigationHistoryItem navItem = NavigationHistoryManager.getInstance().getCurrentState();
-					navItem.setParameter("operation", "clienthistory");
+					navItem.pushIntoStackParameter("display", "clienthistory");
 					navItem.setParameter("historyItemId", itemId);
 					NavigationHistoryManager.getInstance().go(navItem);
 				}
@@ -303,8 +303,8 @@ public class ClientSearchOperationViewPresenter implements ViewPresenter {
 				if(!itemId.isEmpty()){
 					NavigationHistoryItem navItem = NavigationHistoryManager.getInstance().getCurrentState();
 					navItem.setParameter("section", "insurancepolicy");
-					navItem.removeParameter("operation");
-					navItem.setParameter("id", itemId);
+					navItem.popFromStackParameter("display");
+					navItem.setParameter("clientid", itemId);
 					NavigationHistoryManager.getInstance().go(navItem);
 				}
 			}
@@ -443,7 +443,7 @@ public class ClientSearchOperationViewPresenter implements ViewPresenter {
 			@Override
 			public void onResponse(Client response) {
 				NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
-				item.setParameter("id", response.id);
+				item.setParameter("clientid", response.id);
 				NavigationHistoryManager.getInstance().go(item);
 				EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Cliente criado com sucesso."), TYPE.TRAY_NOTIFICATION));
 			}
@@ -461,7 +461,7 @@ public class ClientSearchOperationViewPresenter implements ViewPresenter {
 			@Override
 			public void onResponse(Client response) {
 				NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
-				item.setParameter("id", response.id);
+				item.setParameter("clientid", response.id);
 				NavigationHistoryManager.getInstance().go(item);
 				EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Cliente guardado com sucesso."), TYPE.TRAY_NOTIFICATION));
 			}
@@ -476,7 +476,7 @@ public class ClientSearchOperationViewPresenter implements ViewPresenter {
 	private void onGetClientFailed(){
 		EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "De momento não foi possível obter Cliente seleccionado"), TYPE.ALERT_NOTIFICATION));
 		NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
-		item.removeParameter("id");
+		item.removeParameter("clientid");
 		NavigationHistoryManager.getInstance().go(item);
 	}
 
@@ -540,12 +540,12 @@ public class ClientSearchOperationViewPresenter implements ViewPresenter {
 		
 		if(type.equalsIgnoreCase(BigBangConstants.EntityIds.MANAGER_TRANSFER)){
 			NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
-			item.setParameter("operation", "viewmanagertransfer");
+			item.pushIntoStackParameter("display", "viewmanagertransfer");
 			item.setParameter("transferid", process.dataId);
 			NavigationHistoryManager.getInstance().go(item);
 		}else if(type.equalsIgnoreCase(BigBangConstants.EntityIds.INFO_REQUEST)){
 			NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
-			item.setParameter("operation", "inforequest");
+			item.pushIntoStackParameter("display", "inforequest");
 			item.setParameter("requestid", process.dataId);
 			NavigationHistoryManager.getInstance().go(item);
 		}

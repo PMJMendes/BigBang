@@ -66,7 +66,7 @@ public abstract class InfoOrDocumentRequestViewPresenter<T extends ProcessBase> 
 
 	@Override
 	public void setParameters(HasParameters parameterHolder) {
-		String ownerId = parameterHolder.getParameter("id");
+		String ownerId = parameterHolder.getParameter("ownerid");
 		ownerId = ownerId == null ? new String() : ownerId;
 		String ownerTypeId = parameterHolder.getParameter("ownerTypeId");
 		ownerTypeId = ownerTypeId == null ? new String() : ownerTypeId;

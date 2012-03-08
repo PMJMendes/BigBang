@@ -80,7 +80,7 @@ public class UndoOperationViewPresenter implements ViewPresenter {
 
 	@Override
 	public void setParameters(HasParameters parameterHolder) {
-		String objectId = parameterHolder.getParameter("id");
+		String objectId = parameterHolder.getParameter("historyownerid");
 		objectId = objectId == null ? new String() : objectId;
 		String itemId = parameterHolder.getParameter("historyitemid");
 		itemId = itemId == null ? new String() : itemId;
@@ -205,31 +205,66 @@ public class UndoOperationViewPresenter implements ViewPresenter {
 		if(auxObjectType == null || auxObjectId == null){
 			onNavigateToAuxiliaryProcess();
 		}else{
-			String section = null;
 			if(auxObjectType.equalsIgnoreCase(BigBangConstants.EntityIds.CLIENT)){
-				section = new String("client");
+				NavigationHistoryItem navigationItem = new NavigationHistoryItem();
+				navigationItem.setParameter("section", "client");
+				navigationItem.pushIntoStackParameter("display", "search");
+				navigationItem.setParameter("clientid", auxObjectId);
+				NavigationHistoryManager.getInstance().go(navigationItem);
+				
 			}else if(auxObjectType.equalsIgnoreCase(BigBangConstants.EntityIds.INSURANCE_POLICY)){
-				section = new String("insurancepolicy");
+				NavigationHistoryItem navigationItem = new NavigationHistoryItem();
+				navigationItem.setParameter("section", "insurancepolicy");
+				navigationItem.pushIntoStackParameter("display", "search");
+				navigationItem.setParameter("policyid", auxObjectId);
+				NavigationHistoryManager.getInstance().go(navigationItem);
+				
 			}else if(auxObjectType.equalsIgnoreCase(BigBangConstants.EntityIds.RECEIPT)){
-				section = new String("receipt");
+				NavigationHistoryItem navigationItem = new NavigationHistoryItem();
+				navigationItem.setParameter("section", "receipt");
+				navigationItem.pushIntoStackParameter("display", "search");
+				navigationItem.setParameter("receiptid", auxObjectId);
+				NavigationHistoryManager.getInstance().go(navigationItem);
+	
 			}else if(auxObjectType.equalsIgnoreCase(BigBangConstants.EntityIds.CASUALTY)){
-				section = new String("casualty");
+				NavigationHistoryItem navigationItem = new NavigationHistoryItem();
+				navigationItem.setParameter("section", "casualty");
+				navigationItem.pushIntoStackParameter("display", "search");
+				navigationItem.setParameter("casualtyid", auxObjectId);
+				NavigationHistoryManager.getInstance().go(navigationItem);
+
 			}else if(auxObjectType.equalsIgnoreCase(BigBangConstants.EntityIds.QUOTE_REQUEST)){
-				section = new String("quoterequest");
+				NavigationHistoryItem navigationItem = new NavigationHistoryItem();
+				navigationItem.setParameter("section", "quoterequest");
+				navigationItem.pushIntoStackParameter("display", "search");
+				navigationItem.setParameter("quoterequestid", auxObjectId);
+				NavigationHistoryManager.getInstance().go(navigationItem);
+
 			}if(auxObjectType.equalsIgnoreCase(BigBangConstants.EntityIds.COMPLAINT)){
-				section = new String("complaint");
+				NavigationHistoryItem navigationItem = new NavigationHistoryItem();
+				navigationItem.setParameter("section", "complaint");
+				navigationItem.pushIntoStackParameter("display", "search");
+				navigationItem.setParameter("complaintid", auxObjectId);
+				NavigationHistoryManager.getInstance().go(navigationItem);
+
 			}if(auxObjectType.equalsIgnoreCase(BigBangConstants.EntityIds.EXPENSE)){
-				section = new String("expense");
+				NavigationHistoryItem navigationItem = new NavigationHistoryItem();
+				navigationItem.setParameter("section", "expense");
+				navigationItem.pushIntoStackParameter("display", "search");
+				navigationItem.setParameter("expenseid", auxObjectId);
+				NavigationHistoryManager.getInstance().go(navigationItem);
+
 			}if(auxObjectType.equalsIgnoreCase(BigBangConstants.EntityIds.RISK_ANALISYS)){
-				section = new String("riskanalisys");
+				NavigationHistoryItem navigationItem = new NavigationHistoryItem();
+				navigationItem.setParameter("section", "riskanalisys");
+				navigationItem.pushIntoStackParameter("display", "search");
+				navigationItem.setParameter("riskanalisysid", auxObjectId);
+				NavigationHistoryManager.getInstance().go(navigationItem);
+
 			}else{
 				onNavigateToAuxiliaryProcessFailed();
 				return;
 			}
-			NavigationHistoryItem navigationItem = new NavigationHistoryItem();
-			navigationItem.setParameter("section", section);
-			navigationItem.setParameter("id", auxObjectId);
-			NavigationHistoryManager.getInstance().go(navigationItem);
 		}
 	}
 	

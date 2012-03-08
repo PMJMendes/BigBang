@@ -246,14 +246,16 @@ public class ManagerTransferViewPresenter implements ViewPresenter{
 		if(object instanceof ClientStub){
 			NavigationHistoryItem item = new NavigationHistoryItem();
 			item.setParameter("section", "client");
-			item.setParameter("operation", "search");
-			item.setParameter("id", ((ClientStub) object).id);
+			item.setStackParameter("display");
+			item.pushIntoStackParameter("display", "search");
+			item.setParameter("clientid", ((ClientStub) object).id);
 			NavigationHistoryManager.getInstance().go(item);
 		}else if(object instanceof InsurancePolicyStub) {
 			NavigationHistoryItem item = new NavigationHistoryItem();
 			item.setParameter("section", "insurancepolicy");
-			item.setParameter("operation", "search");
-			item.setParameter("id", ((InsurancePolicyStub) object).id);
+			item.setStackParameter("display");
+			item.pushIntoStackParameter("display", "search");
+			item.setParameter("policyid", ((InsurancePolicyStub) object).id);
 			NavigationHistoryManager.getInstance().go(item);
 		}
 		//TODO important FJVC

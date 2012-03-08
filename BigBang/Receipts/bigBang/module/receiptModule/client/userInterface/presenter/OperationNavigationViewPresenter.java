@@ -38,10 +38,10 @@ public class OperationNavigationViewPresenter implements ViewPresenter {
 
 	@Override
 	public void setParameters(HasParameters parameterHolder) {
-		String operation = parameterHolder.getParameter("operation");
-		operation = operation == null ? new String() : operation;
+		String display = parameterHolder.peekInStackParameter("display");
+		display = display == null ? new String() : display;
 
-		if(operation.equalsIgnoreCase("somethingsomething")){ //TODO
+		if(display.equalsIgnoreCase("somethingsomething")){ //TODO
 
 		}else{
 			//present("RECEIPT_SEARCH", parameterHolder.getParameters(new String[]{"id"}));
@@ -61,11 +61,11 @@ public class OperationNavigationViewPresenter implements ViewPresenter {
 				String section = parameters.getParameter("section");
 				section = section == null ? new String() : section;
 				if(section.equalsIgnoreCase("receipt")){
-					String operation = parameters.getParameter("operation");
+					String display = parameters.peekInStackParameter("display");
 					
-					if(operation.equalsIgnoreCase("search")){
+					if(display.equalsIgnoreCase("search")){
 						present("RECEIPT_SEARCH", parameters);
-					}else if(operation.equalsIgnoreCase("showhistory")){
+					}else if(display.equalsIgnoreCase("showhistory")){
 						present("HISTORY", parameters);
 					}else{
 						goToDefault();
@@ -76,7 +76,8 @@ public class OperationNavigationViewPresenter implements ViewPresenter {
 			private void goToDefault(){
 				NavigationHistoryItem item = new NavigationHistoryItem();
 				item.setParameter("section", "receipt");
-				item.setParameter("operation", "search");
+				item.setStackParameter("display");
+				item.pushIntoStackParameter("display", "search");
 				navigationManager.go(item);
 			}
 		};

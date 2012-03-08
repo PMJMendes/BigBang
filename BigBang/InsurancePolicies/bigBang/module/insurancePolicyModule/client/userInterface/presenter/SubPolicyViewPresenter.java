@@ -7,17 +7,27 @@ import bigBang.definitions.client.dataAccess.InsuranceSubPolicyBroker;
 import bigBang.definitions.client.response.ResponseError;
 import bigBang.definitions.client.response.ResponseHandler;
 import bigBang.definitions.shared.BigBangConstants;
+import bigBang.definitions.shared.Contact;
+import bigBang.definitions.shared.Document;
+import bigBang.definitions.shared.ExerciseStub;
+import bigBang.definitions.shared.HistoryItemStub;
 import bigBang.definitions.shared.InsurancePolicy;
+import bigBang.definitions.shared.InsuredObjectStub;
 import bigBang.definitions.shared.SubPolicy;
 import bigBang.library.client.EventBus;
 import bigBang.library.client.HasEditableValue;
 import bigBang.library.client.HasParameters;
+import bigBang.library.client.HasValueSelectables;
 import bigBang.library.client.Notification;
+import bigBang.library.client.PermissionChecker;
 import bigBang.library.client.Notification.TYPE;
+import bigBang.library.client.ValueSelectable;
 import bigBang.library.client.dataAccess.DataBrokerManager;
 import bigBang.library.client.event.ActionInvokedEvent;
 import bigBang.library.client.event.ActionInvokedEventHandler;
 import bigBang.library.client.event.NewNotificationEvent;
+import bigBang.library.client.event.SelectionChangedEvent;
+import bigBang.library.client.event.SelectionChangedEventHandler;
 import bigBang.library.client.history.NavigationHistoryItem;
 import bigBang.library.client.history.NavigationHistoryManager;
 import bigBang.library.client.userInterface.presenter.ViewPresenter;
@@ -51,6 +61,12 @@ public class SubPolicyViewPresenter implements ViewPresenter {
 		HasEditableValue<SubPolicy> getForm();
 		HasValue<InsurancePolicy> getParentPolicyForm();
 
+		HasValueSelectables<Contact> getContactsList();
+		HasValueSelectables<Document> getDocumentsList();
+		HasValueSelectables<ExerciseStub> getExercisesList();
+		HasValueSelectables<InsuredObjectStub> getInsuredObjectsList();
+		HasValueSelectables<HistoryItemStub> getHistoryList();
+		
 		void setSaveModeEnabled(boolean enabled);
 		void registerActionHandler(ActionInvokedEventHandler<Action> handler);
 
@@ -69,8 +85,6 @@ public class SubPolicyViewPresenter implements ViewPresenter {
 		void allowVoid(boolean allow);
 		void allowDelete(boolean allow);
 		
-		void confirmDelete(ResponseHandler<Boolean> handler);
-
 		Widget asWidget();
 	}
 
@@ -103,7 +117,7 @@ public class SubPolicyViewPresenter implements ViewPresenter {
 
 		String subPolicyId = parameterHolder.getParameter("subpolicyid");
 		subPolicyId = subPolicyId == null ? new String() : subPolicyId;
-		String parentPolicyId = parameterHolder.getParameter("id");
+		String parentPolicyId = parameterHolder.getParameter("policyid");
 		parentPolicyId = parentPolicyId == null ? new String() : parentPolicyId;
 
 		if(parentPolicyId .isEmpty()) {
@@ -174,6 +188,39 @@ public class SubPolicyViewPresenter implements ViewPresenter {
 			}
 		});
 
+		SelectionChangedEventHandler selectionChangedHandler = new SelectionChangedEventHandler() {
+			
+			@Override
+			public void onSelectionChanged(SelectionChangedEvent event) {
+				Object source = event.getSource();
+				ValueSelectable<?> selectable = (ValueSelectable<?>) event.getFirstSelected();
+				
+				if(selectable == null) {
+					return;
+				}
+				
+				Object value = selectable.getValue();
+				
+				if(source == view.getContactsList()){
+					showContact((Contact) value);
+				}else if(source == view.getDocumentsList()){
+					showDocument((Document) value);
+				}else if(source == view.getInsuredObjectsList()){
+					showInsuredObject((InsuredObjectStub) value);
+				}else if(source == view.getExercisesList()){
+					showExercise((ExerciseStub) value);
+				}else if(source == view.getHistoryList()){
+					showHistory((HistoryItemStub) value);
+				}
+			}
+		};
+		
+		view.getContactsList().addSelectionChangedEventHandler(selectionChangedHandler);
+		view.getDocumentsList().addSelectionChangedEventHandler(selectionChangedHandler);
+		view.getInsuredObjectsList().addSelectionChangedEventHandler(selectionChangedHandler);
+		view.getExercisesList().addSelectionChangedEventHandler(selectionChangedHandler);
+		view.getHistoryList().addSelectionChangedEventHandler(selectionChangedHandler);
+		
 		bound = true;
 	}
 
@@ -193,6 +240,8 @@ public class SubPolicyViewPresenter implements ViewPresenter {
 					@Override
 					public void onResponse(SubPolicy initializedSubPolicy) {
 						view.getForm().setValue(initializedSubPolicy);
+						view.setSaveModeEnabled(true);
+						view.getForm().setReadOnly(false);
 					}
 
 					@Override
@@ -215,6 +264,9 @@ public class SubPolicyViewPresenter implements ViewPresenter {
 
 			@Override
 			public void onResponse(SubPolicy response) {
+				//TODO permissions
+				view.allowDelete(PermissionChecker.hasPermission(response, BigBangConstants.OperationIds.InsuranceSubPolicyProcess.DELETE_SUB_POLICY));
+				
 				view.getForm().setReadOnly(true);
 				view.setSaveModeEnabled(false);
 				view.getForm().setValue(response);
@@ -239,7 +291,7 @@ public class SubPolicyViewPresenter implements ViewPresenter {
 
 							@Override
 							public void onResponse(SubPolicy response) {
-								//TODO permissions
+								view.allowDelete(PermissionChecker.hasPermission(response, BigBangConstants.OperationIds.InsuranceSubPolicyProcess.DELETE_SUB_POLICY));
 								view.getForm().setReadOnly(false);
 								view.setSaveModeEnabled(true);
 							}
@@ -257,6 +309,7 @@ public class SubPolicyViewPresenter implements ViewPresenter {
 					}
 				});
 			}else{
+				view.allowDelete(PermissionChecker.hasPermission(subPolicy, BigBangConstants.OperationIds.InsuranceSubPolicyProcess.DELETE_SUB_POLICY));
 				view.allowEdit(true);
 				view.getForm().setReadOnly(false);
 				view.setSaveModeEnabled(true);
@@ -311,54 +364,46 @@ public class SubPolicyViewPresenter implements ViewPresenter {
 	}
 
 	protected void onCancel(){
-		SubPolicy subPolicy = view.getForm().getValue();
+		final SubPolicy subPolicy = view.getForm().getValue();
 
 		if(subPolicy != null && subPolicyBroker.isTemp(subPolicy.id)){
 			subPolicyBroker.closeSubPolicyResource(subPolicy.id, new ResponseHandler<Void>() {
 
 				@Override
 				public void onResponse(Void response) {
-					return;
+					subPolicyBroker.getSubPolicy(subPolicy.id, new ResponseHandler<SubPolicy>() {
+
+						@Override
+						public void onResponse(SubPolicy response) {
+							NavigationHistoryManager.getInstance().reload();
+						}
+
+						@Override
+						public void onError(Collection<ResponseError> errors) {
+							NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
+							item.removeParameter("subpolicyid");
+							item.popFromStackParameter("display");
+							NavigationHistoryManager.getInstance().go(item);
+						}
+					});
+
 				}
 
 				@Override
 				public void onError(Collection<ResponseError> errors) {
-					return;
+					NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
+					item.removeParameter("subpolicyid");
+					item.popFromStackParameter("display");
+					NavigationHistoryManager.getInstance().go(item);
 				}
 			});
 		}
-		NavigationHistoryManager.getInstance().reload();
 	}
 
 	protected void onDelete(){
-		view.confirmDelete(new ResponseHandler<Boolean>(){
-
-			@Override
-			public void onResponse(Boolean response) {
-				if(response) {
-					SubPolicy subPolicy = view.getForm().getValue();
-					if(subPolicy != null) {
-//						subPolicyBroker.removeSubPolicy(subPolicy.id, new ResponseHandler<String>() {
-//
-//							@Override
-//							public void onResponse(String response) {
-//								onDeleteSubPolicySuccess();
-//							}
-//
-//							@Override
-//							public void onError(Collection<ResponseError> errors) {
-//								onDeleteSubPolicyFailed();
-//							}
-//						});
-					}
-				}
-			}
-
-			@Override
-			public void onError(Collection<ResponseError> errors) {
-				onResponse(false);
-			}
-		});
+		NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
+		item.setParameter("show", "deletesubpolicy");
+		NavigationHistoryManager.getInstance().go(item);
 	}
 
 	protected void makeTemp(SubPolicy subPolicy, final ResponseHandler<Void> handler){
@@ -394,12 +439,57 @@ public class SubPolicyViewPresenter implements ViewPresenter {
 			});
 		}
 	}
+	
+	protected void showContact(Contact contact){
+		NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
+		item.setParameter("show", "contactmanagement");
+		item.setParameter("contactownertypeid", contact.ownerTypeId);
+		item.setParameter("contactid", contact.id);
+		item.setParameter("contactownerid", contact.ownerId);
+		NavigationHistoryManager.getInstance().go(item);
+	}
+	
+	protected void showDocument(Document document){
+		NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
+		item.setParameter("show", "documentmanagement");
+		item.setParameter("documentownertypeid", document.ownerTypeId);
+		item.setParameter("documentid", document.id);
+		item.setParameter("documentownerid", document.ownerId);
+		NavigationHistoryManager.getInstance().go(item);
+	}
+	
+	protected void showInsuredObject(InsuredObjectStub insuredObject){
+		NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
+		item.pushIntoStackParameter("display", "subpolicyobject");
+		item.setParameter("subpolicyobjectownertypeid", BigBangConstants.EntityIds.INSURANCE_SUB_POLICY);
+		item.setParameter("subpolicyobjectid", insuredObject.id);
+		
+		//TODO contact owner id
+		NavigationHistoryManager.getInstance().go(item);
+	}
+	
+	protected void showExercise(ExerciseStub exercise){
+		NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
+		item.pushIntoStackParameter("display", "subpolicyexercise");
+		item.setParameter("ownertypeid", BigBangConstants.EntityIds.INSURANCE_SUB_POLICY);
+		item.setParameter("exerciseid", exercise.id);
+		//TODO contact owner id
+		NavigationHistoryManager.getInstance().go(item);
+	}
+	
+	protected void showHistory(HistoryItemStub historyItem) {
+		NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
+		item.pushIntoStackParameter("display", "history");
+		item.setParameter("historyownerid", view.getForm().getValue().id);
+		item.setParameter("historyitemid", historyItem.id);
+		NavigationHistoryManager.getInstance().go(item);
+	}
 
 	private void onGetParentFailed(){
 		EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não foi possível obter a Apólice Principal"), TYPE.ALERT_NOTIFICATION));
 		NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
 		item.removeParameter("subpolicyid");
-		item.removeParameter("operation");
+		item.popFromStackParameter("display");
 		NavigationHistoryManager.getInstance().go(item);
 	}
 
@@ -407,7 +497,7 @@ public class SubPolicyViewPresenter implements ViewPresenter {
 		EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não foi possível obter a Apólice Adesão"), TYPE.ALERT_NOTIFICATION));
 		NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
 		item.removeParameter("subpolicyid");
-		item.removeParameter("operation");
+		item.popFromStackParameter("display");
 		NavigationHistoryManager.getInstance().go(item);
 	}
 
@@ -415,22 +505,10 @@ public class SubPolicyViewPresenter implements ViewPresenter {
 		EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não foi possível criar a Apólice Adesão"), TYPE.ALERT_NOTIFICATION));
 		NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
 		item.removeParameter("subpolicyid");
-		item.removeParameter("operation");
+		item.popFromStackParameter("display");
 		NavigationHistoryManager.getInstance().go(item);
 	}
 
-	private void onDeleteSubPolicyFailed(){
-		EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não foi possível eliminar a Apólice Adesão"), TYPE.ALERT_NOTIFICATION));
-	}
-	
-	private void onDeleteSubPolicySuccess(){
-		EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "A Apólice Adesão foi eliminada com sucesso"), TYPE.TRAY_NOTIFICATION));
-		NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
-		item.removeParameter("subpolicyid");
-		item.removeParameter("operation");
-		NavigationHistoryManager.getInstance().go(item);
-	}
-	
 	private void onSaveSubPolicySuccess(){
 		EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "A Apólice Adesão foi guardada com sucesso"), TYPE.TRAY_NOTIFICATION));
 	}

@@ -18,6 +18,7 @@ import bigBang.module.insurancePolicyModule.client.userInterface.presenter.Insur
 import bigBang.module.insurancePolicyModule.client.userInterface.presenter.InsurancePolicySectionViewPresenter;
 import bigBang.module.insurancePolicyModule.client.userInterface.presenter.InsurancePolicyVoidViewPresenter;
 import bigBang.module.insurancePolicyModule.client.userInterface.presenter.InsuredObjectViewPresenter;
+import bigBang.module.insurancePolicyModule.client.userInterface.presenter.SubPolicyDeleteViewPresenter;
 import bigBang.module.insurancePolicyModule.client.userInterface.presenter.SubPolicyViewPresenter;
 import bigBang.module.insurancePolicyModule.client.userInterface.view.CreateDebitNoteView;
 import bigBang.module.insurancePolicyModule.client.userInterface.view.CreateReceiptView;
@@ -28,6 +29,7 @@ import bigBang.module.insurancePolicyModule.client.userInterface.view.InsuranceP
 import bigBang.module.insurancePolicyModule.client.userInterface.view.InsurancePolicySectionView;
 import bigBang.module.insurancePolicyModule.client.userInterface.view.InsurancePolicyVoidView;
 import bigBang.module.insurancePolicyModule.client.userInterface.view.InsuredObjectView;
+import bigBang.module.insurancePolicyModule.client.userInterface.view.SubPolicyDeleteView;
 import bigBang.module.insurancePolicyModule.client.userInterface.view.SubPolicyView;
 
 import com.google.gwt.core.client.GWT;
@@ -123,9 +125,17 @@ public class InsurancePolicyModule implements Module {
 				return presenter;
 			}
 		});
-		
+		ViewPresenterFactory.getInstance().registerViewPresenterInstantiator("INSURANCE_POLICY_SUB_POLICY_DELETE", new ViewPresenterInstantiator() {
+
+			@Override
+			public ViewPresenter getInstance() {
+				SubPolicyDeleteView view = (SubPolicyDeleteView) GWT.create(SubPolicyDeleteView.class);
+				SubPolicyDeleteViewPresenter presenter = new SubPolicyDeleteViewPresenter(view);
+				return presenter;
+			}
+		});
 		ViewPresenterFactory.getInstance().registerViewPresenterInstantiator("INSURANCE_POLICY_NEGOTIATION", new ViewPresenterInstantiator() {
-			
+
 			@Override
 			public ViewPresenter getInstance() {
 				InsurancePolicyNegotiationView<?> view = (InsurancePolicyNegotiationView<?>) GWT.create(InsurancePolicyNegotiationView.class); 

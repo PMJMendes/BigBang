@@ -35,7 +35,7 @@ public class InsurancePolicyNegotiationViewPresenter extends NegotiationViewPres
 	@Override
 	public void setParameters(final HasParameters parameterHolder){
 		
-		ownerId = parameterHolder.getParameter("id");
+		ownerId = parameterHolder.getParameter("policyid");
 		ownerTypeId = parameterHolder.getParameter("ownertypeid");
 		insurancePolicyBroker.getPolicy(ownerId, new ResponseHandler<InsurancePolicy>() {
 			

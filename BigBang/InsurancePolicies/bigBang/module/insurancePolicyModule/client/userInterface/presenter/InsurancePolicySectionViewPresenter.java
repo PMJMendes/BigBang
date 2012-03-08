@@ -94,11 +94,10 @@ public class InsurancePolicySectionViewPresenter implements ViewPresenter{
 			public void onParameters(HasParameters parameters) {
 				String section = parameters.getParameter("section");
 				if(section != null && section.equalsIgnoreCase("insurancepolicy")){
-					String operation = parameters.getParameter("operation");
-					operation = operation == null ? "" : operation;
+					String display = parameters.peekInStackParameter("display");
+					display = display == null ? "" : display;
 
-					//MASS OPERATIONS
-					if(operation.equalsIgnoreCase("history")){
+					if(display.equalsIgnoreCase("history")){
 						present("HISTORY", parameters);
 					}else {
 						present("INSURANCE_POLICY_OPERATIONS", parameters);
@@ -129,6 +128,9 @@ public class InsurancePolicySectionViewPresenter implements ViewPresenter{
 					view.showOverlayViewContainer(true);
 				}else if(show.equalsIgnoreCase("documentmanagement")){
 					present("DOCUMENT", parameters);
+					view.showOverlayViewContainer(true);
+				}else if(show.equalsIgnoreCase("deletesubpolicy")){
+					present("INSURANCE_POLICY_SUB_POLICY_DELETE", parameters);
 					view.showOverlayViewContainer(true);
 				}else if(show.equalsIgnoreCase("deletenegotiation")){
 					present("NEGOTIATION_DELETE", parameters);

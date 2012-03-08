@@ -90,7 +90,7 @@ public class ClientGroupManagementOperationViewPresenter implements ViewPresente
 	
 	@Override
 	public void setParameters(HasParameters parameterHolder) {
-		String groupId = parameterHolder.getParameter("id");
+		String groupId = parameterHolder.getParameter("groupid");
 		groupId = groupId == null ? new String() : groupId;
 
 		if(inClientGroupCreation()){
@@ -126,9 +126,9 @@ public class ClientGroupManagementOperationViewPresenter implements ViewPresente
 
 				NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
 				if(groupId.isEmpty()){
-					item.removeParameter("id");
+					item.removeParameter("groupid");
 				}else{
-					item.setParameter("id", groupId);
+					item.setParameter("groupid", groupId);
 				}
 				NavigationHistoryManager.getInstance().go(item);
 			}
@@ -141,7 +141,7 @@ public class ClientGroupManagementOperationViewPresenter implements ViewPresente
 				switch(action.getAction()){
 				case NEW:
 					NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
-					item.setParameter("id", "new");
+					item.setParameter("groupid", "new");
 					NavigationHistoryManager.getInstance().go(item);
 					break;
 				case DELETE:
@@ -157,7 +157,7 @@ public class ClientGroupManagementOperationViewPresenter implements ViewPresente
 					if(info.id.equalsIgnoreCase("new")){
 						createClientGroup(info);
 					}else{
-						saveCostCenter(info);
+						saveClientGroup(info);
 					}
 					break;
 				case CANCEL_EDIT:
@@ -280,7 +280,7 @@ public class ClientGroupManagementOperationViewPresenter implements ViewPresente
 			@Override
 			public void onResponse(ClientGroup response) {
 				NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
-				item.setParameter("id", response.id);
+				item.setParameter("groupid", response.id);
 				NavigationHistoryManager.getInstance().go(item);
 				EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Grupo de Clientes criado com sucesso."), TYPE.TRAY_NOTIFICATION));
 			}
@@ -292,13 +292,13 @@ public class ClientGroupManagementOperationViewPresenter implements ViewPresente
 		});
 	}
 
-	public void saveCostCenter(ClientGroup c) {
+	public void saveClientGroup(ClientGroup c) {
 		this.clientGroupBroker.updateClientGroup(c, new ResponseHandler<ClientGroup>() {
 
 			@Override
 			public void onResponse(ClientGroup response) {
 				NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
-				item.setParameter("id", response.id);
+				item.setParameter("groupid", response.id);
 				NavigationHistoryManager.getInstance().go(item);
 				EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Grupo de Clientes guardado com sucesso."), TYPE.TRAY_NOTIFICATION));
 			}
@@ -319,7 +319,7 @@ public class ClientGroupManagementOperationViewPresenter implements ViewPresente
 				@Override
 				public void onResponse(ClientGroup response) {
 					NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
-					item.removeParameter("id");
+					item.removeParameter("groupid");
 					NavigationHistoryManager.getInstance().go(item);
 					EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Grupo de Clientes eliminado com sucesso."), TYPE.TRAY_NOTIFICATION));
 				}
@@ -335,7 +335,7 @@ public class ClientGroupManagementOperationViewPresenter implements ViewPresente
 	private void onGetClientGroupFailed(){
 		EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "De momento não foi possível obter o Grupo de Clientes seleccionado"), TYPE.ALERT_NOTIFICATION));
 		NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
-		item.removeParameter("id");
+		item.removeParameter("groupid");
 		NavigationHistoryManager.getInstance().go(item);
 	}
 

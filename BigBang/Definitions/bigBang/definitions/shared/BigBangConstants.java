@@ -97,25 +97,34 @@ public class BigBangConstants {
 
 		public static class InsurancePolicyProcess {
 			public static final String UPDATE_POLICY = "1F7B31EC-9388-4EA0-816C-9F81013A8ED4";
-			public static final String DELETE_POLICY = "";
+			public static final String DELETE_POLICY = "9B993DB1-CF37-4E34-965A-9F8200C986B9";
 			public static final String CREATE_EXERCISE = "C86BB300-28C1-47EF-A48D-9FD4010F9149";
 			public static final String CREATE_RECEIPT = "C4117861-16EB-40DB-A771-9F8A00EA6B32";
 			public static final String INCLUDE_INSURED_OBJECT = "984226BB-33EA-4988-A802-9FD4010FC200";
 			public static final String VALIDATE_POLICY = "841E9154-8037-46F7-8B98-9FD3011A9605";
 			public static final String VOID_POLICY = "DF2C50EF-5E4A-475A-AB1E-9FD401143D8A";
-			public static final String TRANSFER_BROKERAGE = null;
-			public static final String CREATE_SUBSTITUTE_POLICY = null;
+			public static final String TRANSFER_BROKERAGE = "9568FAA4-ADBF-41AE-8FB9-9FD401140765";
+			public static final String CREATE_SUBSTITUTE_POLICY = "66504952-BCFD-4B6A-B8F0-9FD401138D07";
 			public static final String CREATE_CLIENT_INFO_REQUEST = "DF06C139-4D61-44D1-81EE-9FD30118E9D3";
 			public static final String CREATE_COMPANY_INFO_REQUEST = "3F0120C1-F64E-4806-8AB2-9FD40110D264";
 			public static final String CREATE_INSURED_OBJECT_FROM_CLIENT = "783EFBDB-44DB-4CAA-BF88-9FD4010FDB91";
 			public static final String TRANSFER_MANAGER = "EF9C257E-323C-4BA0-A158-9F9000D8A755";
 			public static final String EXECUTE_DETAILED_CALCULATIONS = "7DC1A798-31AA-49A1-B2DC-9FD4010F7593";
-			public static final String CREATE_INFO_MANAGEMENT_PROCESS = null;
+			public static final String CREATE_INFO_MANAGEMENT_PROCESS = "5A89B28E-3098-490F-8AD0-9FD401109F6D";
 			public static final String CREATE_SUB_POLICY = "DF27A2DA-1B36-4F1C-B242-9FD40110F495";
 			public static final String CREATE_DEBIT_NOTE = "4CC51237-FC83-4B13-A8A9-9FD401100FE2";
 			public static final String CREATE_NEGOTIATION = "852BF3BF-F04A-494D-A308-9FD4011152C4";
 			public static final String CREATE_HEALTH_EXPENSE = null;
 			public static final String CREATE_RISK_ANALISYS = null;
+		}
+		
+		public static class InsuranceSubPolicyProcess {
+			public static final String EDIT_SUB_POLICY = "F8F2980B-5591-4BD1-8DD1-9FF3010015D1";
+			public static final String DELETE_SUB_POLICY = "CB4B3B9F-AACF-45A7-AD58-9FF3011AD0C2";
+			public static final String CREATE_RECEIPT = null;
+			public static final String VALIDATE = null;
+			public static final String PERFORM_CALCULATIONS = null;
+			public static final String VOID = null;
 		}
 
 		

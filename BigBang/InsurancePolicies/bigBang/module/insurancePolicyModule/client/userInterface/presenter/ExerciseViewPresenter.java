@@ -76,7 +76,7 @@ public class ExerciseViewPresenter implements ViewPresenter{
 
 	@Override
 	public void setParameters(HasParameters parameterHolder) {
-		this.ownerId = parameterHolder.getParameter("id");
+		this.ownerId = parameterHolder.getParameter("policyid");
 		ownerId = ownerId == null ? new String() : ownerId;
 		String exerciseId = parameterHolder.getParameter("exerciseid");
 		exerciseId = exerciseId == null ? new String() : exerciseId;
@@ -404,7 +404,7 @@ public class ExerciseViewPresenter implements ViewPresenter{
 	private void onSaveExerciseSuccess(){
 		EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Exercício guardado no espaço de trabalho"), TYPE.TRAY_NOTIFICATION));
 		NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
-		item.removeParameter("operation");
+		item.popFromStackParameter("display");
 		item.removeParameter("exerciseid");
 		NavigationHistoryManager.getInstance().go(item);
 	}
@@ -412,7 +412,7 @@ public class ExerciseViewPresenter implements ViewPresenter{
 	private void onGetOwnerFailed(){
 		EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não foi possível obter a apólice a que pertence o Exercício"), TYPE.ALERT_NOTIFICATION));
 		NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
-		item.removeParameter("operation");
+		item.popFromStackParameter("display");
 		item.removeParameter("exerciseid");
 		NavigationHistoryManager.getInstance().go(item);
 	}
@@ -420,7 +420,7 @@ public class ExerciseViewPresenter implements ViewPresenter{
 	private void onGetExerciseFailed(){
 		EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não foi possível obter o Exercício"), TYPE.ALERT_NOTIFICATION));
 		NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
-		item.removeParameter("operation");
+		item.popFromStackParameter("display");
 		item.removeParameter("exerciseid");
 		NavigationHistoryManager.getInstance().go(item);
 	}
@@ -428,7 +428,7 @@ public class ExerciseViewPresenter implements ViewPresenter{
 	private void onCreateExerciseFailed(){
 		EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não é possível criar o Exercício no espaço de trabalho"), TYPE.ALERT_NOTIFICATION));
 		NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
-		item.removeParameter("operation");
+		item.popFromStackParameter("display");
 		item.removeParameter("exerciseid");
 		NavigationHistoryManager.getInstance().go(item);
 	}
@@ -452,7 +452,7 @@ public class ExerciseViewPresenter implements ViewPresenter{
 	private void onDeleteSuccess(){
 		EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "O Exercício foi eliminado no espaço de trabalho"), TYPE.TRAY_NOTIFICATION));
 		NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
-		item.removeParameter("operation");
+		item.popFromStackParameter("display");
 		item.removeParameter("exerciseid");
 		NavigationHistoryManager.getInstance().go(item);
 	}

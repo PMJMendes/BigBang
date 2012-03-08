@@ -25,7 +25,9 @@ import bigBang.definitions.shared.SubPolicyStub;
 import bigBang.definitions.shared.Remap.RemapId;
 import bigBang.definitions.shared.SubPolicy.TableSection;
 import bigBang.library.client.BigBangAsyncCallback;
+import bigBang.library.client.EventBus;
 import bigBang.library.client.dataAccess.DataBrokerManager;
+import bigBang.library.client.event.OperationWasExecutedEvent;
 import bigBang.library.shared.CorruptedPadException;
 import bigBang.module.insurancePolicyModule.interfaces.SubPolicyService;
 import bigBang.module.insurancePolicyModule.interfaces.SubPolicyServiceAsync;
@@ -251,6 +253,7 @@ implements InsuranceSubPolicyBroker {
 				String subPolicyId = result[0].remapIds[0].newId;
 				doRemapping(result);
 				getSubPolicy(subPolicyId, handler);
+				EventBus.getInstance().fireEvent(new OperationWasExecutedEvent(BigBangConstants.OperationIds.InsuranceSubPolicyProcess.EDIT_SUB_POLICY, subPolicyId));
 			}
 
 			@Override
@@ -424,6 +427,7 @@ implements InsuranceSubPolicyBroker {
 					((InsuranceSubPolicyDataBrokerClient) bc).setDataVersionNumber(BigBangConstants.EntityIds.INSURANCE_SUB_POLICY, getCurrentDataVersion());
 				}
 				handler.onResponse(finalId);
+				EventBus.getInstance().fireEvent(new OperationWasExecutedEvent(BigBangConstants.OperationIds.InsuranceSubPolicyProcess.DELETE_SUB_POLICY, subPolicyId));
 			}
 
 			@Override
@@ -439,13 +443,14 @@ implements InsuranceSubPolicyBroker {
 	@Override
 	public void createReceipt(String id, Receipt receipt,
 			final ResponseHandler<Receipt> handler) {
-		String subPolicyId = getFinalMapping(id);
+		final String subPolicyId = getFinalMapping(id);
 		this.service.createReceipt(subPolicyId, receipt, new BigBangAsyncCallback<Receipt>() {
 
 			@Override
 			public void onResponseSuccess(Receipt result) {
 				handler.onResponse(result);
 				DataBrokerManager.Util.getInstance().getBroker(BigBangConstants.EntityIds.RECEIPT).notifyItemCreation(result.id);
+				EventBus.getInstance().fireEvent(new OperationWasExecutedEvent(BigBangConstants.OperationIds.InsuranceSubPolicyProcess.CREATE_RECEIPT, subPolicyId));
 			}
 
 			@Override
@@ -530,7 +535,7 @@ implements InsuranceSubPolicyBroker {
 	}
 
 	@Override
-	public void validateSubPolicy(String subPolicyId,
+	public void validateSubPolicy(final String subPolicyId,
 			final ResponseHandler<Void> handler)
 					throws BigBangPolicyValidationException {
 		service.validateSubPolicy(subPolicyId, new BigBangAsyncCallback<Void>() {
@@ -538,6 +543,7 @@ implements InsuranceSubPolicyBroker {
 			@Override
 			public void onResponseSuccess(Void result) {
 				handler.onResponse(null);
+				EventBus.getInstance().fireEvent(new OperationWasExecutedEvent(BigBangConstants.OperationIds.InsuranceSubPolicyProcess.VALIDATE, subPolicyId));
 			}
 
 			@Override
@@ -558,6 +564,7 @@ implements InsuranceSubPolicyBroker {
 			@Override
 			public void onResponseSuccess(SubPolicy result) {
 				handler.onResponse(result);
+				EventBus.getInstance().fireEvent(new OperationWasExecutedEvent(BigBangConstants.OperationIds.InsuranceSubPolicyProcess.PERFORM_CALCULATIONS, result.id));
 			}
 			
 			@Override
@@ -578,6 +585,7 @@ implements InsuranceSubPolicyBroker {
 			@Override
 			public void onResponseSuccess(SubPolicy result) {
 				handler.onResponse(result);
+				EventBus.getInstance().fireEvent(new OperationWasExecutedEvent(BigBangConstants.OperationIds.InsuranceSubPolicyProcess.VOID, result.id));
 			}
 			
 			@Override

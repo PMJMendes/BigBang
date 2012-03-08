@@ -50,14 +50,14 @@ public class CasualtyOperationsViewPresenter implements ViewPresenter {
 			
 			@Override
 			public void onParameters(HasParameters parameters) {
-				String operation = parameters.getParameter("operation");
-				operation = operation == null ? new String() : operation;
+				String display = parameters.peekInStackParameter("display");
+				display = display == null ? new String() : display;
 
-				if(operation.equalsIgnoreCase("search")){
+				if(display.equalsIgnoreCase("search")){
 					present("CASUALTY_SEARCH", parameters);
-				}else if(operation.equalsIgnoreCase("managertransfer")){
+				}else if(display.equalsIgnoreCase("managertransfer")){
 					present("MANAGER_TRANSFER", parameters);
-				}else if(operation.equalsIgnoreCase("casualtyhistory")){
+				}else if(display.equalsIgnoreCase("casualtyhistory")){
 					present("HISTORY", parameters);
 				}else{
 					goToDefault();
@@ -66,7 +66,8 @@ public class CasualtyOperationsViewPresenter implements ViewPresenter {
 
 			private void goToDefault(){
 				NavigationHistoryItem item = navigationManager.getCurrentState();
-				item.setParameter("operation", "search");
+				item.setStackParameter("display");
+				item.pushIntoStackParameter("display", "search");
 				navigationManager.go(item);
 			}
 		};

@@ -90,7 +90,7 @@ public class InsuranceAgencyManagementOperationViewPresenter implements ViewPres
 	
 	@Override
 	public void setParameters(HasParameters parameterHolder) {
-		String agencyId = parameterHolder.getParameter("id");
+		String agencyId = parameterHolder.getParameter("companyid");
 		agencyId = agencyId == null ? new String() : agencyId;
 
 		if(inInsuranceAgencyCreation()){
@@ -126,9 +126,9 @@ public class InsuranceAgencyManagementOperationViewPresenter implements ViewPres
 
 				NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
 				if(agencyId.isEmpty()){
-					item.removeParameter("id");
+					item.removeParameter("companyid");
 				}else{
-					item.setParameter("id", agencyId);
+					item.setParameter("companyid", agencyId);
 				}
 				NavigationHistoryManager.getInstance().go(item);
 			}
@@ -141,7 +141,7 @@ public class InsuranceAgencyManagementOperationViewPresenter implements ViewPres
 				switch(action.getAction()){
 				case NEW:
 					NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
-					item.setParameter("id", "new");
+					item.setParameter("companyid", "new");
 					NavigationHistoryManager.getInstance().go(item);
 					break;
 				case DELETE:
@@ -279,7 +279,7 @@ public class InsuranceAgencyManagementOperationViewPresenter implements ViewPres
 			@Override
 			public void onResponse(InsuranceAgency response) {
 				NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
-				item.setParameter("id", response.id);
+				item.setParameter("companyid", response.id);
 				NavigationHistoryManager.getInstance().go(item);
 				EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Seguradora criada com sucesso."), TYPE.TRAY_NOTIFICATION));
 			}
@@ -297,7 +297,7 @@ public class InsuranceAgencyManagementOperationViewPresenter implements ViewPres
 			@Override
 			public void onResponse(InsuranceAgency response) {
 				NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
-				item.setParameter("id", response.id);
+				item.setParameter("companyid", response.id);
 				NavigationHistoryManager.getInstance().go(item);
 				EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Seguradora guardada com sucesso."), TYPE.TRAY_NOTIFICATION));
 			}
@@ -318,7 +318,7 @@ public class InsuranceAgencyManagementOperationViewPresenter implements ViewPres
 				@Override
 				public void onResponse(InsuranceAgency response) {
 					NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
-					item.removeParameter("id");
+					item.removeParameter("companyid");
 					NavigationHistoryManager.getInstance().go(item);
 					EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Seguradora eliminada com sucesso."), TYPE.TRAY_NOTIFICATION));
 				}
@@ -334,7 +334,7 @@ public class InsuranceAgencyManagementOperationViewPresenter implements ViewPres
 	private void onGetInsuranceAgencyFailed(){
 		EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "De momento não foi possível obter a seguradora seleccionada"), TYPE.ALERT_NOTIFICATION));
 		NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
-		item.removeParameter("id");
+		item.removeParameter("companyid");
 		NavigationHistoryManager.getInstance().go(item);
 	}
 

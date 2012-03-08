@@ -47,6 +47,7 @@ public class NavigationHistoryItem extends HasParameters{
 		}
 	}
 
+	@Override
 	public void setParameter(String tokenParameterId, String value){
 		tokenParameterId = tokenParameterId.toLowerCase();
 		if(value != null){
@@ -65,6 +66,7 @@ public class NavigationHistoryItem extends HasParameters{
 		}
 	}
 
+	@Override
 	public void removeParameter(String tokenParameterId){
 		super.removeParameter(tokenParameterId);
 		tokens.remove(tokenParameterId);
@@ -74,6 +76,7 @@ public class NavigationHistoryItem extends HasParameters{
 		return getParameter(null);
 	}
 
+	@Override
 	public String getParameter(String tokenParameterId){
 		String result = null;
 		if(tokenParameterId == null){
@@ -84,6 +87,7 @@ public class NavigationHistoryItem extends HasParameters{
 		return result;
 	}
 	
+	@Override
 	public Collection<String> getAvailableParameters(){
 		return this.tokens;
 	}
@@ -91,10 +95,19 @@ public class NavigationHistoryItem extends HasParameters{
 	private String serializeToken(){
 		StringBuilder builder = new StringBuilder();
 		for(String token : tokens){
-			String value = super.getParameter(token);
+			String value = parameters.get(token);
 			builder.append(token + VALUE_DELIMITER + value + PARAMETER_DELIMITER);
 		}
 		return builder.toString();
 	}
 
+	@Override
+	public void setStackParameter(String parameterId) {
+		parameterId = parameterId.toLowerCase();
+		if(!tokens.contains(parameterId)){
+			tokens.add(parameterId);
+		}
+		super.setStackParameter(parameterId);
+	}
+	
 }

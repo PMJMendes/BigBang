@@ -117,7 +117,7 @@ public class ContactNavigationViewPresenter implements ViewPresenter{
 
 		HasParameters showChildContact = new HasParameters();
 		showChildContact.setParameter("contactid", id);
-		showChildContact.setParameter("id", ownerId);
+		showChildContact.setParameter("ownerid", ownerId);
 		showChildContact.setParameter("ownertypeid", BigBangConstants.EntityIds.CONTACT);
 		if(hasPermissions ){
 			showChildContact.setParameter("editpermission", "1");

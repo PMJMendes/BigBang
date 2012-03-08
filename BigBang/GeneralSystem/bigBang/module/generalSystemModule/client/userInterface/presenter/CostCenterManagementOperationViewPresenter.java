@@ -90,7 +90,7 @@ public class CostCenterManagementOperationViewPresenter implements ViewPresenter
 
 	@Override
 	public void setParameters(HasParameters parameterHolder) {
-		String costCenterId = parameterHolder.getParameter("id");
+		String costCenterId = parameterHolder.getParameter("costcenterid");
 		costCenterId = costCenterId == null ? new String() : costCenterId;
 
 		if(inCostCenterCreation()){
@@ -126,9 +126,9 @@ public class CostCenterManagementOperationViewPresenter implements ViewPresenter
 
 				NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
 				if(costCenterId.isEmpty()){
-					item.removeParameter("id");
+					item.removeParameter("costcenterid");
 				}else{
-					item.setParameter("id", costCenterId);
+					item.setParameter("costcenterid", costCenterId);
 				}
 				NavigationHistoryManager.getInstance().go(item);
 			}
@@ -141,7 +141,7 @@ public class CostCenterManagementOperationViewPresenter implements ViewPresenter
 				switch(action.getAction()){
 				case NEW:
 					NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
-					item.setParameter("id", "new");
+					item.setParameter("costcenterid", "new");
 					NavigationHistoryManager.getInstance().go(item);
 					break;
 				case DELETE:
@@ -279,7 +279,7 @@ public class CostCenterManagementOperationViewPresenter implements ViewPresenter
 			@Override
 			public void onResponse(CostCenter response) {
 				NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
-				item.setParameter("id", response.id);
+				item.setParameter("costcenterid", response.id);
 				NavigationHistoryManager.getInstance().go(item);
 				EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Centro de Custo criado com sucesso."), TYPE.TRAY_NOTIFICATION));
 			}
@@ -297,7 +297,7 @@ public class CostCenterManagementOperationViewPresenter implements ViewPresenter
 			@Override
 			public void onResponse(CostCenter response) {
 				NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
-				item.setParameter("id", response.id);
+				item.setParameter("costcenterid", response.id);
 				NavigationHistoryManager.getInstance().go(item);
 				EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Centro de Custo guardado com sucesso."), TYPE.TRAY_NOTIFICATION));
 			}
@@ -318,7 +318,7 @@ public class CostCenterManagementOperationViewPresenter implements ViewPresenter
 				@Override
 				public void onResponse(CostCenter response) {
 					NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
-					item.removeParameter("id");
+					item.removeParameter("costcenterid");
 					NavigationHistoryManager.getInstance().go(item);
 					EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Centro de Custo eliminado com sucesso."), TYPE.TRAY_NOTIFICATION));
 				}
@@ -334,7 +334,7 @@ public class CostCenterManagementOperationViewPresenter implements ViewPresenter
 	private void onGetCostCenterFailed(){
 		EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "De momento não foi possível obter o Centro de Custo seleccionado"), TYPE.ALERT_NOTIFICATION));
 		NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
-		item.removeParameter("id");
+		item.removeParameter("costcenterid");
 		NavigationHistoryManager.getInstance().go(item);
 	}
 

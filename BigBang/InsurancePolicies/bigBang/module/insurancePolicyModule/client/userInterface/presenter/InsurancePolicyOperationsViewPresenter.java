@@ -50,20 +50,20 @@ public class InsurancePolicyOperationsViewPresenter implements ViewPresenter {
 
 			@Override
 			public void onParameters(HasParameters parameters) {
-				String operation = parameters.getParameter("operation");
-				operation = operation == null ? new String() : operation;
+				String display = parameters.peekInStackParameter("display");
+				display = display == null ? new String() : display;
 
-				if(operation.equalsIgnoreCase("search")){
+				if(display.equalsIgnoreCase("search")){
 					present("INSURANCE_POLICY_SEARCH", parameters);
-				}else if(operation.equalsIgnoreCase("createreceipt")){
+				}else if(display.equalsIgnoreCase("createreceipt")){
 					present("INSURANCE_POLICY_CREATE_RECEIPT", parameters);
-				}else if(operation.equalsIgnoreCase("viewinsuredobject")){
+				}else if(display.equalsIgnoreCase("viewinsuredobject")){
 					present("INSURANCE_POLICY_INSURED_OBJECT", parameters);
-				}else if(operation.equalsIgnoreCase("viewexercise")){
+				}else if(display.equalsIgnoreCase("viewexercise")){
 					present("INSURANCE_POLICY_EXERCISE", parameters);
-				}else if(operation.equalsIgnoreCase("subpolicy")){
+				}else if(display.equalsIgnoreCase("subpolicy")){
 					present("INSURANCE_POLICY_SUB_POLICY", parameters);
-				}else if(operation.equalsIgnoreCase("negotiation")){
+				}else if(display.equalsIgnoreCase("negotiation")){
 					present("INSURANCE_POLICY_NEGOTIATION", parameters);
 				}else{
 					goToDefault();
@@ -72,7 +72,8 @@ public class InsurancePolicyOperationsViewPresenter implements ViewPresenter {
 
 			private void goToDefault(){
 				NavigationHistoryItem item = navigationManager.getCurrentState();
-				item.setParameter("operation", "search");
+				item.setStackParameter("display");
+				item.pushIntoStackParameter("display", "search");
 				navigationManager.go(item);
 			}
 		};

@@ -50,26 +50,26 @@ public class ClientOperationsViewPresenter implements ViewPresenter {
 
 			@Override
 			public void onParameters(HasParameters parameters) {
-				String operation = parameters.getParameter("operation");
-				operation = operation == null ? new String() : operation;
+				String display = parameters.peekInStackParameter("display");
+				display = display == null ? new String() : display;
 
-				if(operation.equalsIgnoreCase("search")){
+				if(display.equalsIgnoreCase("search")){
 					present("CLIENT_SEARCH", parameters);
-				}else if(operation.equalsIgnoreCase("createpolicy")){
+				}else if(display.equalsIgnoreCase("createpolicy")){
 					present("CLIENT_CREATE_INSURANCE_POLICY", parameters);
-				}else if(operation.equalsIgnoreCase("merge")){
+				}else if(display.equalsIgnoreCase("merge")){
 					present("CLIENT_MERGE", parameters);
-				}else if(operation.equalsIgnoreCase("managertransfer")){
+				}else if(display.equalsIgnoreCase("managertransfer")){
 					present("SINGLE_MANAGER_TRANSFER", parameters);
-				}else if(operation.equalsIgnoreCase("viewmanagertransfer")){
+				}else if(display.equalsIgnoreCase("viewmanagertransfer")){
 					present("MANAGER_TRANSFER", parameters);
-				}else if(operation.equalsIgnoreCase("inforequest")){
+				}else if(display.equalsIgnoreCase("inforequest")){
 					present("CLIENT_INFO_OR_DOCUMENT_REQUEST", parameters);
-				}else if(operation.equalsIgnoreCase("documentmanagement")){
+				}else if(display.equalsIgnoreCase("documentmanagement")){
 					present("DOCUMENT", parameters);
-				}else if(operation.equalsIgnoreCase("contactmanagement")){
+				}else if(display.equalsIgnoreCase("contactmanagement")){
 					present("CONTACT", parameters);
-				}else if(operation.equalsIgnoreCase("clienthistory")){
+				}else if(display.equalsIgnoreCase("clienthistory")){
 					present("HISTORY", parameters);
 				}else{
 					goToDefault();
@@ -78,7 +78,8 @@ public class ClientOperationsViewPresenter implements ViewPresenter {
 
 			private void goToDefault(){
 				NavigationHistoryItem item = navigationManager.getCurrentState();
-				item.setParameter("operation", "search");
+				item.setStackParameter("display");
+				item.pushIntoStackParameter("display", "search");
 				navigationManager.go(item);
 			}
 		};

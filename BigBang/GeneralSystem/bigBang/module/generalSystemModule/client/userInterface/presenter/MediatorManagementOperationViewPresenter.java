@@ -91,7 +91,7 @@ public class MediatorManagementOperationViewPresenter implements ViewPresenter {
 
 	@Override
 	public void setParameters(HasParameters parameterHolder) {
-		String mediatorId = parameterHolder.getParameter("id");
+		String mediatorId = parameterHolder.getParameter("mediatorid");
 		mediatorId = mediatorId == null ? new String() : mediatorId;
 
 		if(inMediatorCreation()){
@@ -127,9 +127,9 @@ public class MediatorManagementOperationViewPresenter implements ViewPresenter {
 
 				NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
 				if(mediatorId.isEmpty()){
-					item.removeParameter("id");
+					item.removeParameter("mediatorid");
 				}else{
-					item.setParameter("id", mediatorId);
+					item.setParameter("mediatorid", mediatorId);
 				}
 				NavigationHistoryManager.getInstance().go(item);
 			}
@@ -142,7 +142,7 @@ public class MediatorManagementOperationViewPresenter implements ViewPresenter {
 				switch(action.getAction()){
 				case NEW:
 					NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
-					item.setParameter("id", "new");
+					item.setParameter("mediatorid", "new");
 					NavigationHistoryManager.getInstance().go(item);
 					break;
 				case DELETE:
@@ -281,7 +281,7 @@ public class MediatorManagementOperationViewPresenter implements ViewPresenter {
 			@Override
 			public void onResponse(Mediator response) {
 				NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
-				item.setParameter("id", response.id);
+				item.setParameter("mediatorid", response.id);
 				NavigationHistoryManager.getInstance().go(item);
 				EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Mediador criado com sucesso."), TYPE.TRAY_NOTIFICATION));
 			}
@@ -299,7 +299,7 @@ public class MediatorManagementOperationViewPresenter implements ViewPresenter {
 			@Override
 			public void onResponse(Mediator response) {
 				NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
-				item.setParameter("id", response.id);
+				item.setParameter("mediatorid", response.id);
 				NavigationHistoryManager.getInstance().go(item);
 				EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Mediador guardado com sucesso."), TYPE.TRAY_NOTIFICATION));
 			}
@@ -320,7 +320,7 @@ public class MediatorManagementOperationViewPresenter implements ViewPresenter {
 				@Override
 				public void onResponse(Mediator response) {
 					NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
-					item.removeParameter("id");
+					item.removeParameter("mediatorid");
 					NavigationHistoryManager.getInstance().go(item);
 					EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Mediador eliminado com sucesso."), TYPE.TRAY_NOTIFICATION));
 				}
@@ -336,7 +336,7 @@ public class MediatorManagementOperationViewPresenter implements ViewPresenter {
 	private void onGetMediatorFailed(){
 		EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "De momento não foi possível obter o mediador seleccionado"), TYPE.ALERT_NOTIFICATION));
 		NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
-		item.removeParameter("id");
+		item.removeParameter("mediatorid");
 		NavigationHistoryManager.getInstance().go(item);
 	}
 

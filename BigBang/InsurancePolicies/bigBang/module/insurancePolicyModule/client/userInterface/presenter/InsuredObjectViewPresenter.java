@@ -76,7 +76,7 @@ public class InsuredObjectViewPresenter implements ViewPresenter {
 
 	@Override
 	public void setParameters(HasParameters parameterHolder) {
-		this.ownerId = parameterHolder.getParameter("id");
+		this.ownerId = parameterHolder.getParameter("policyid");
 		ownerId = ownerId == null ? new String() : ownerId;
 		String objectId = parameterHolder.getParameter("objectid");
 		objectId = objectId == null ? new String() : objectId;
@@ -404,7 +404,7 @@ public class InsuredObjectViewPresenter implements ViewPresenter {
 	private void onSaveObjectSucces(){
 		EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Unidade de Risco guardada no espaço de trabalho"), TYPE.TRAY_NOTIFICATION));
 		NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
-		item.removeParameter("operation");
+		item.popFromStackParameter("display");
 		item.removeParameter("objectid");
 		NavigationHistoryManager.getInstance().go(item);
 	}
@@ -412,7 +412,7 @@ public class InsuredObjectViewPresenter implements ViewPresenter {
 	private void onGetOwnerFailed(){
 		EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não foi possível obter a apólice a que pertence a Unidade de Risco"), TYPE.ALERT_NOTIFICATION));
 		NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
-		item.removeParameter("operation");
+		item.popFromStackParameter("display");
 		item.removeParameter("objectid");
 		NavigationHistoryManager.getInstance().go(item);
 	}
@@ -420,7 +420,7 @@ public class InsuredObjectViewPresenter implements ViewPresenter {
 	private void onGetObjectFailed(){
 		EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não foi possível obter a Unidade de Risco"), TYPE.ALERT_NOTIFICATION));
 		NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
-		item.removeParameter("operation");
+		item.popFromStackParameter("display");
 		item.removeParameter("objectid");
 		NavigationHistoryManager.getInstance().go(item);
 	}
@@ -428,8 +428,7 @@ public class InsuredObjectViewPresenter implements ViewPresenter {
 	private void onCreateObjectFailed(){
 		EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não é possível criar a Unidade de Risco no espaço de trabalho"), TYPE.ALERT_NOTIFICATION));
 		NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
-		item.removeParameter("operation");
-		item.removeParameter("objectid");
+		item.popFromStackParameter("display");		item.removeParameter("objectid");
 		NavigationHistoryManager.getInstance().go(item);
 	}
 
@@ -440,7 +439,7 @@ public class InsuredObjectViewPresenter implements ViewPresenter {
 	private void onUserLacksCreatePermission(){
 		EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não é possível criar a Unidade de Risco"), TYPE.ALERT_NOTIFICATION));
 		NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
-		item.removeParameter("operation");
+		item.popFromStackParameter("display");
 		item.removeParameter("objectid");
 		NavigationHistoryManager.getInstance().go(item);
 	}
@@ -456,7 +455,7 @@ public class InsuredObjectViewPresenter implements ViewPresenter {
 	private void onDeleteSuccess(){
 		EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "A Unidade de Risco foi eliminada no espaço de trabalho"), TYPE.TRAY_NOTIFICATION));
 		NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
-		item.removeParameter("operation");
+		item.popFromStackParameter("display");
 		item.removeParameter("objectid");
 		NavigationHistoryManager.getInstance().go(item);
 	}

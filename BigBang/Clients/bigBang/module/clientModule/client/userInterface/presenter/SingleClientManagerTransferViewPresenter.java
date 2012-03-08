@@ -66,7 +66,7 @@ public class SingleClientManagerTransferViewPresenter implements ViewPresenter {
 
 	@Override
 	public void setParameters(HasParameters parameterHolder) {
-		this.currentClientId = parameterHolder.getParameter("id");
+		this.currentClientId = parameterHolder.getParameter("clientid");
 		this.currentClientId = this.currentClientId == null ? new String() : this.currentClientId;
 		
 		if(this.currentClientId.isEmpty()){

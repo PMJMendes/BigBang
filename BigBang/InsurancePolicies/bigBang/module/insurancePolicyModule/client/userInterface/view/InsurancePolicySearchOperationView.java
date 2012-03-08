@@ -4,6 +4,7 @@ import org.gwt.mosaic.ui.client.MessageBox;
 import org.gwt.mosaic.ui.client.MessageBox.ConfirmationCallback;
 
 import bigBang.definitions.client.response.ResponseHandler;
+import bigBang.definitions.shared.BigBangProcess;
 import bigBang.definitions.shared.Contact;
 import bigBang.definitions.shared.Document;
 import bigBang.definitions.shared.ExerciseStub;
@@ -440,6 +441,11 @@ public class InsurancePolicySearchOperationView extends View implements Insuranc
 		return this.childrenPanel.subPoliciesList;
 	}
 
+	@Override
+	public HasValueSelectables<BigBangProcess> getSubProcessesList() {
+		return this.childrenPanel.subProcessesList;
+	}
+	
 	@Override
 	public HasValueSelectables<HistoryItemStub> getHistoryList() {
 		return this.childrenPanel.historyList;

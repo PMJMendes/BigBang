@@ -62,7 +62,7 @@ public class InsurancePolicyVoidViewPresenter implements ViewPresenter {
 
 	@Override
 	public void setParameters(HasParameters parameterHolder) {
-		String ownerId = parameterHolder.getParameter("id");
+		String ownerId = parameterHolder.getParameter("policyid");
 		ownerId = ownerId == null ? new String() : ownerId;
 		
 		clearView();

@@ -45,7 +45,7 @@ public class ClientInfoOrDocumentRequestViewPresenter extends
 				view.getForm().setValue(response);
 				onSendRequestSuccess();
 				NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
-				item.removeParameter("operation");
+				item.popFromStackParameter("display");
 				NavigationHistoryManager.getInstance().go(item);
 			}
 			
@@ -101,7 +101,7 @@ public class ClientInfoOrDocumentRequestViewPresenter extends
 	@Override
 	protected void onCancel() {
 		NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
-		item.removeParameter("operation");
+		item.popFromStackParameter("display");
 		item.removeParameter("ownerid");
 		item.removeParameter("ownertypeid");
 		item.removeParameter("requestid");
@@ -112,7 +112,7 @@ public class ClientInfoOrDocumentRequestViewPresenter extends
 	protected void onGetOwnerFailed(){
 		EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não foi possível obter o cliente"), TYPE.ALERT_NOTIFICATION));
 		NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
-		item.removeParameter("operation");
+		item.popFromStackParameter("display");
 		item.removeParameter("ownerid");
 		item.removeParameter("ownertypeid");
 		item.removeParameter("requestid");
@@ -122,7 +122,7 @@ public class ClientInfoOrDocumentRequestViewPresenter extends
 	private void onGetRequestFailed(){
 		EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não foi possível obter o pedido de informação"), TYPE.ALERT_NOTIFICATION));
 		NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
-		item.removeParameter("operation");
+		item.popFromStackParameter("display");
 		item.removeParameter("ownerid");
 		item.removeParameter("ownertypeid");
 		item.removeParameter("requestid");
@@ -133,7 +133,7 @@ public class ClientInfoOrDocumentRequestViewPresenter extends
 	protected void onUserLacksPermission() {
 		EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não tem permissões para criar o Pedido de Informação"), TYPE.ALERT_NOTIFICATION));
 		NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
-		item.removeParameter("operation");
+		item.popFromStackParameter("display");
 		item.removeParameter("ownerid");
 		item.removeParameter("ownertypeid");
 		item.removeParameter("requestid");
@@ -144,7 +144,7 @@ public class ClientInfoOrDocumentRequestViewPresenter extends
 	protected void onGenericError() {
 		EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Ocorreu um erro ao apresentar o Pedido de Informação"), TYPE.ALERT_NOTIFICATION));
 		NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
-		item.removeParameter("operation");
+		item.popFromStackParameter("display");
 		item.removeParameter("ownerid");
 		item.removeParameter("ownertypeid");
 		item.removeParameter("requestid");

@@ -72,13 +72,13 @@ public class CasualtySectionViewPresenter implements ViewPresenter {
 			public void onParameters(HasParameters parameters) {
 				String section = parameters.getParameter("section");
 				if(section != null && section.equalsIgnoreCase("casualty")){
-					String operation = parameters.getParameter("operation");
-					operation = operation == null ? "" : operation;
+					String display = parameters.peekInStackParameter("display");
+					display = display == null ? "" : display;
 
 					//MASS OPERATIONS
-					if(operation.equalsIgnoreCase("history")){
+					if(display.equalsIgnoreCase("history")){
 						present("HISTORY", parameters);
-					}else if(operation.equalsIgnoreCase("massmanagertransfer")){
+					}else if(display.equalsIgnoreCase("massmanagertransfer")){
 						present("MANAGER_TRANSFER", parameters);
 					}else{
 						present("CASUALTY_OPERATIONS", parameters);

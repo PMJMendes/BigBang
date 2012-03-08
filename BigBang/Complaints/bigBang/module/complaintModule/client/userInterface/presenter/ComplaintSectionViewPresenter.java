@@ -67,8 +67,8 @@ public class ComplaintSectionViewPresenter implements ViewPresenter {
 			public void onParameters(HasParameters parameters) {
 				String section = parameters.getParameter("section");
 				if(section != null && section.equalsIgnoreCase("complaint")){
-					String operation = parameters.getParameter("operation");
-					operation = operation == null ? "" : operation;
+					String display = parameters.peekInStackParameter("display");
+					display = display == null ? "" : display;
 
 					//MASS OPERATIONS
 					present("COMPLAINT_OPERATIONS", parameters);

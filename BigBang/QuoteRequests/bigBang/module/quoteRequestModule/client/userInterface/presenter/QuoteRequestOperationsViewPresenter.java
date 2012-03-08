@@ -45,10 +45,10 @@ public class QuoteRequestOperationsViewPresenter implements ViewPresenter {
 			
 			@Override
 			public void onParameters(HasParameters parameters) {
-				String operation = parameters.getParameter("operation");
-				operation = operation == null ? new String() : operation;
+				String display = parameters.peekInStackParameter("display");
+				display = display == null ? new String() : display;
 
-				if(operation.equalsIgnoreCase("search")){
+				if(display.equalsIgnoreCase("search")){
 					present("QUOTE_REQUEST_SEARCH", parameters);
 				}else{
 					goToDefault();
@@ -57,7 +57,8 @@ public class QuoteRequestOperationsViewPresenter implements ViewPresenter {
 
 			private void goToDefault(){
 				NavigationHistoryItem item = navigationManager.getCurrentState();
-				item.setParameter("operation", "search");
+				item.setStackParameter("display");
+				item.pushIntoStackParameter("display", "search");
 				navigationManager.go(item);
 			}
 			

@@ -8,6 +8,7 @@ import bigBang.definitions.client.response.ResponseError;
 import bigBang.definitions.client.response.ResponseHandler;
 import bigBang.definitions.shared.BigBangConstants;
 import bigBang.definitions.shared.BigBangPolicyValidationException;
+import bigBang.definitions.shared.BigBangProcess;
 import bigBang.definitions.shared.Contact;
 import bigBang.definitions.shared.Document;
 import bigBang.definitions.shared.ExerciseStub;
@@ -115,7 +116,8 @@ ViewPresenter {
 		HasValueSelectables<ExerciseStub> getExercisesList();
 		HasValueSelectables<SubPolicyStub> getSubPoliciesList();
 		HasValueSelectables<HistoryItemStub> getHistoryList();
-
+		HasValueSelectables<BigBangProcess> getSubProcessesList();
+		
 		//General
 		void registerActionInvokedHandler(ActionInvokedEventHandler<Action> handler);
 		void setSaveModeEnabled(boolean enabled);
@@ -150,7 +152,7 @@ ViewPresenter {
 
 	@Override
 	public void setParameters(HasParameters parameterHolder) {
-		String policyId = parameterHolder.getParameter("id");
+		String policyId = parameterHolder.getParameter("policyid");
 		checkStatus(policyId);
 		policyId = policyId == null ? new String() : policyId;
 		
@@ -182,9 +184,9 @@ ViewPresenter {
 
 				NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
 				if(selectedPolicyId.isEmpty()){
-					item.removeParameter("id");
+					item.removeParameter("policyid");
 				}else{
-					item.setParameter("id", selectedPolicyId);
+					item.setParameter("policyid", selectedPolicyId);
 				}
 				NavigationHistoryManager.getInstance().go(item);
 			}
@@ -217,7 +219,7 @@ ViewPresenter {
 						@Override
 						public void onResponse(Void response) {
 							NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
-							item.setParameter("id", policyId);
+							item.setParameter("policyid", policyId);
 							NavigationHistoryManager.getInstance().go(item);
 						}
 
@@ -235,57 +237,57 @@ ViewPresenter {
 					savePolicy(info);
 					break;
 				case DELETE:
-					item.setParameter("operation", "delete");
+					item.pushIntoStackParameter("display", "delete");
 					NavigationHistoryManager.getInstance().go(item);
 					break;
 				case CREATE_RECEIPT:
-					item.setParameter("operation", "createreceipt");
+					item.pushIntoStackParameter("display", "createreceipt");
 					NavigationHistoryManager.getInstance().go(item);
 					break;
 				case CREATE_EXERCISE:
-					item.setParameter("operation", "viewexercise");
+					item.pushIntoStackParameter("display", "viewexercise");
 					item.setParameter("exerciseid", "new");
 					NavigationHistoryManager.getInstance().go(item);
 					break;
 				case INCLUDE_INSURED_OBJECT:
-					item.setParameter("operation", "includeinsuredobject");
+					item.pushIntoStackParameter("display", "includeinsuredobject");
 					NavigationHistoryManager.getInstance().go(item);
 					break;
 				case CREATE_INSURED_OBJECT:
-					item.setParameter("operation", "viewinsuredobject");
+					item.pushIntoStackParameter("display", "viewinsuredobject");
 					item.setParameter("objectid", "new");
 					NavigationHistoryManager.getInstance().go(item);
 					break;
 				case CREATE_INSURED_OBJECT_FROM_CLIENT:
-					item.setParameter("operation", "createinsuredobjectfromclient");
+					item.pushIntoStackParameter("display", "createinsuredobjectfromclient");
 					NavigationHistoryManager.getInstance().go(item);
 					break;
 				case CREATE_HEALTH_EXPENSE:
-					item.setParameter("operation", "createhealthexpense");
+					item.pushIntoStackParameter("display", "createhealthexpense");
 					NavigationHistoryManager.getInstance().go(item);
 					break;
 				case CREATE_INFO_MANAGEMENT_PROCESS:
-					item.setParameter("operation", "createinfomanagementprocess");
+					item.pushIntoStackParameter("display", "createinfomanagementprocess");
 					NavigationHistoryManager.getInstance().go(item);
 					break;
 				case CREATE_NEGOTIATION:
-					item.setParameter("operation", "negotiation");
+					item.pushIntoStackParameter("display", "negotiation");
 					item.setParameter("negotiationid", "new");
 					item.setParameter("ownertypeid", BigBangConstants.EntityIds.NEGOTIATION);
 					NavigationHistoryManager.getInstance().go(item);
 					break;
 				case CREATE_RISK_ANALISYS:
-					item.setParameter("operation", "createriskanalisys");
+					item.pushIntoStackParameter("display", "createriskanalisys");
 					NavigationHistoryManager.getInstance().go(item);
 					break;
 				case CREATE_SUB_POLICY:
-					item.setParameter("operation", "subpolicy");
-					item.setParameter("id", view.getForm().getValue().id);
+					item.pushIntoStackParameter("display", "subpolicy");
+					item.setParameter("policyid", view.getForm().getValue().id);
 					item.setParameter("subpolicyid", "new");
 					NavigationHistoryManager.getInstance().go(item);
 					break;
 				case CREATE_SUBSTITUTE_POLICY:
-					item.setParameter("operation", "createsubstitutepolicy");
+					item.pushIntoStackParameter("display", "createsubstitutepolicy");
 					NavigationHistoryManager.getInstance().go(item);
 					break;
 				case EXECUTE_DETAILED_CALCULATIONS:
@@ -299,19 +301,19 @@ ViewPresenter {
 					NavigationHistoryManager.getInstance().go(item);
 					break;
 				case REQUEST_AGENCY_INFO:
-					item.setParameter("operation", "requestagencyinfo");
+					item.pushIntoStackParameter("display", "requestagencyinfo");
 					NavigationHistoryManager.getInstance().go(item);
 					break;
 				case REQUEST_CLIENT_INFO:
-					item.setParameter("operation", "requestclientinfo");
+					item.pushIntoStackParameter("display", "requestclientinfo");
 					NavigationHistoryManager.getInstance().go(item);
 					break;
 				case TRANSFER_BROKERAGE:
-					item.setParameter("operation", "brokeragetransfer");
+					item.pushIntoStackParameter("display", "brokeragetransfer");
 					NavigationHistoryManager.getInstance().go(item);
 					break;
 				case TRANSFER_MANAGER:
-					item.setParameter("operation", "managertransfer");
+					item.pushIntoStackParameter("display", "managertransfer");
 					NavigationHistoryManager.getInstance().go(item);
 					break;
 				case VOID_POLICY:
@@ -386,6 +388,17 @@ ViewPresenter {
 				SubPolicyStub selectedValue = event.getFirstSelected() == null ? null : ((ValueSelectable<SubPolicyStub>) event.getFirstSelected()).getValue();
 				if(selectedValue != null) {
 					showSubPolicy(selectedValue);
+				}
+			}
+		});
+		view.getSubProcessesList().addSelectionChangedEventHandler(new SelectionChangedEventHandler() {
+			
+			@Override
+			public void onSelectionChanged(SelectionChangedEvent event) {
+				@SuppressWarnings("unchecked")
+				BigBangProcess selectedValue = event.getFirstSelected() == null ? null : ((ValueSelectable<BigBangProcess>) event.getFirstSelected()).getValue();
+				if(selectedValue != null) {
+					showSubProcess(selectedValue);
 				}
 			}
 		});
@@ -661,6 +674,18 @@ ViewPresenter {
 		item.setParameter("documentid", document.id);
 		NavigationHistoryManager.getInstance().go(item);
 	}
+	
+	private void showSubProcess(BigBangProcess process){
+		String type = process.dataTypeId;
+		
+		NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
+		
+		if(type.equalsIgnoreCase(BigBangConstants.EntityIds.NEGOTIATION)){
+			item.pushIntoStackParameter("display", "negotiation");
+			item.setParameter("negotiationid", process.ownerDataId);
+			NavigationHistoryManager.getInstance().go(item);
+		}
+	}
 
 	private void onTableFiltersChanged(){
 		final String policyId = view.getForm().getValue().id;
@@ -730,7 +755,7 @@ ViewPresenter {
 	private void onGetPolicyFailed(){
 		EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "De momento não foi possível obter a Apólice seleccionada"), TYPE.ALERT_NOTIFICATION));
 		NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
-		item.removeParameter("id");
+		item.removeParameter("policyid");
 		NavigationHistoryManager.getInstance().go(item);
 	}
 
@@ -750,31 +775,31 @@ ViewPresenter {
 
 	private void showInsuredObject(InsuredObjectStub object) {
 		NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
-		item.setParameter("operation", "viewinsuredobject");
-		item.setParameter("id", view.getForm().getValue().id);
+		item.pushIntoStackParameter("display", "viewinsuredobject");
+		item.setParameter("policyid", view.getForm().getValue().id);
 		item.setParameter("objectid", object.id);
 		NavigationHistoryManager.getInstance().go(item);
 	}
 
 	private void showExercise(ExerciseStub exercise) {
 		NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
-		item.setParameter("operation", "viewexercise");
-		item.setParameter("id", view.getForm().getValue().id);
+		item.pushIntoStackParameter("display", "viewexercise");
+		item.setParameter("policyid", view.getForm().getValue().id);
 		item.setParameter("exerciseid", exercise.id);
 		NavigationHistoryManager.getInstance().go(item);
 	}
 	
 	private void showSubPolicy(SubPolicyStub subPolicy){
 		NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
-		item.setParameter("operation", "subpolicy");
-		item.setParameter("id", view.getForm().getValue().id);
+		item.pushIntoStackParameter("display", "subpolicy");
+		item.setParameter("policyid", view.getForm().getValue().id);
 		item.setParameter("subpolicyid", subPolicy.id);
 		NavigationHistoryManager.getInstance().go(item);
 	}
 
 	private void showHistory(HistoryItemStub historyItem) {
 		NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
-		item.setParameter("operation", "history");
+		item.pushIntoStackParameter("display", "history");
 		item.setParameter("historyitemid", historyItem.id);
 		NavigationHistoryManager.getInstance().go(item);
 	}

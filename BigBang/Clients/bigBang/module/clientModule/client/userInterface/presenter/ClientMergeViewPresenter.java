@@ -69,7 +69,7 @@ public class ClientMergeViewPresenter implements ViewPresenter {
 
 	@Override
 	public void setParameters(HasParameters parameterHolder) {
-		String sourceId = parameterHolder.getParameter("id");
+		String sourceId = parameterHolder.getParameter("clientid");
 		sourceId = sourceId == null ? new String() : sourceId;
 		String targetId = parameterHolder.getParameter("targetid");
 		targetId = targetId == null ? new String() : targetId;
@@ -185,8 +185,9 @@ public class ClientMergeViewPresenter implements ViewPresenter {
 
 		NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
 		item.removeParameter("targetid");
-		item.setParameter("operation", "search");
-		item.removeParameter("id");
+		item.setStackParameter("display");
+		item.pushIntoStackParameter("display", "search");
+		item.removeParameter("clientid");
 		NavigationHistoryManager.getInstance().go(item);
 	}
 
@@ -201,8 +202,9 @@ public class ClientMergeViewPresenter implements ViewPresenter {
 	private void onMergeOperationSuccess(String targetId){
 		NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
 		item.removeParameter("targetid");
-		item.setParameter("operation", "search");
-		item.setParameter("id", targetId);
+		item.setStackParameter("display");
+		item.pushIntoStackParameter("display", "search");
+		item.setParameter("clientid", targetId);
 		NavigationHistoryManager.getInstance().go(item);
 		EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "O cliente foi fundido com sucesso."), TYPE.TRAY_NOTIFICATION));
 	}
@@ -210,7 +212,8 @@ public class ClientMergeViewPresenter implements ViewPresenter {
 	private void onMergeOperationCancelled(){
 		NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
 		item.removeParameter("targetid");
-		item.setParameter("operation", "search");
+		item.setStackParameter("display");
+		item.pushIntoStackParameter("display", "search");
 		NavigationHistoryManager.getInstance().go(item);
 	}
 

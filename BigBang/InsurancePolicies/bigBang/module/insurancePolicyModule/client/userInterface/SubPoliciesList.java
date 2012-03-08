@@ -57,7 +57,7 @@ public class SubPoliciesList extends FilterableList<SubPolicyStub>  implements I
 
 					statusIcon = new Image();
 					statusIcon.setTitle(value.statusText);
-					setRightWidget(statusIcon);
+					setLeftWidget(statusIcon);
 				}
 
 				numberLabel.setText("#" + value.number);

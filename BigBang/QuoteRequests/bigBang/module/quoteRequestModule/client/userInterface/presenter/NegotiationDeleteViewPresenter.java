@@ -113,7 +113,7 @@ public class NegotiationDeleteViewPresenter implements ViewPresenter {
 			public void onResponse(String response) {
 				NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
 				item.removeParameter("show");
-				item.removeParameter("operation");
+				item.popFromStackParameter("display");
 				item.removeParameter("negotiationid");
 				item.removeParameter("ownertypeid");
 				NavigationHistoryManager.getInstance().go(item);

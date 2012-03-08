@@ -66,13 +66,13 @@ public class CreateReceiptViewPresenter implements ViewPresenter {
 
 	@Override
 	public void setParameters(HasParameters parameterHolder) {
-		String policyId = parameterHolder.getParameter("id");
+		String policyId = parameterHolder.getParameter("policyid");
 		this.policyId = policyId == null ? new String() : policyId;
 		
-		if(policyId.isEmpty()){
+		if(this.policyId.isEmpty()){
 			onReceiptCreationFailed();
 		}else{
-			createReceipt(policyId);
+			createReceipt(this.policyId);
 		}
 	}
 	
@@ -118,7 +118,7 @@ public class CreateReceiptViewPresenter implements ViewPresenter {
 	
 	private void onReceiptCreationCancelled(){
 		NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
-		item.setParameter("operation", "search");
+		item.pushIntoStackParameter("display", "search");
 		NavigationHistoryManager.getInstance().go(item);
 	}
 	
@@ -128,7 +128,7 @@ public class CreateReceiptViewPresenter implements ViewPresenter {
 	
 	private void onReceiptCreated(){
 		NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
-		item.setParameter("operation", "search");
+		item.pushIntoStackParameter("display", "search");
 		NavigationHistoryManager.getInstance().go(item);
 		EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "O recibo foi criado com sucesso."), TYPE.TRAY_NOTIFICATION));
 	}

@@ -67,11 +67,11 @@ public class ExpenseSectionViewPresenter implements ViewPresenter {
 			public void onParameters(HasParameters parameters) {
 				String section = parameters.getParameter("section");
 				if(section != null && section.equalsIgnoreCase("expense")){
-					String operation = parameters.getParameter("operation");
-					operation = operation == null ? "" : operation;
+					String display = parameters.getParameter("display");
+					display = display == null ? "" : display;
 
 					//MASS OPERATIONS
-					if(operation.equalsIgnoreCase("history")){
+					if(display.equalsIgnoreCase("history")){
 						present("HISTORY", parameters);
 					}else{
 						present("EXPENSE_OPERATIONS", parameters);

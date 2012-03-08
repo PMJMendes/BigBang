@@ -91,7 +91,7 @@ public class UserManagementOperationViewPresenter implements ViewPresenter {
 
 	@Override
 	public void setParameters(HasParameters parameterHolder) {
-		String userId = parameterHolder.getParameter("id");
+		String userId = parameterHolder.getParameter("userid");
 		userId = userId == null ? new String() : userId;
 
 		if(inUserCreation()){
@@ -127,9 +127,9 @@ public class UserManagementOperationViewPresenter implements ViewPresenter {
 
 				NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
 				if(userId.isEmpty()){
-					item.removeParameter("id");
+					item.removeParameter("userid");
 				}else{
-					item.setParameter("id", userId);
+					item.setParameter("userid", userId);
 				}
 				NavigationHistoryManager.getInstance().go(item);
 			}
@@ -142,7 +142,7 @@ public class UserManagementOperationViewPresenter implements ViewPresenter {
 				switch(action.getAction()){
 				case NEW:
 					NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
-					item.setParameter("id", "new");
+					item.setParameter("userid", "new");
 					NavigationHistoryManager.getInstance().go(item);
 					break;
 				case DELETE:
@@ -282,7 +282,7 @@ public class UserManagementOperationViewPresenter implements ViewPresenter {
 			@Override
 			public void onResponse(User response) {
 				NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
-				item.setParameter("id", response.id);
+				item.setParameter("userid", response.id);
 				NavigationHistoryManager.getInstance().go(item);
 				EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Utilizador criado com sucesso."), TYPE.TRAY_NOTIFICATION));
 			}
@@ -300,7 +300,7 @@ public class UserManagementOperationViewPresenter implements ViewPresenter {
 			@Override
 			public void onResponse(User response) {
 				NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
-				item.setParameter("id", response.id);
+				item.setParameter("userid", response.id);
 				NavigationHistoryManager.getInstance().go(item);
 				EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Utilizador guardado com sucesso."), TYPE.TRAY_NOTIFICATION));
 			}
@@ -321,7 +321,7 @@ public class UserManagementOperationViewPresenter implements ViewPresenter {
 				@Override
 				public void onResponse(User response) {
 					NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
-					item.removeParameter("id");
+					item.removeParameter("userid");
 					NavigationHistoryManager.getInstance().go(item);
 					EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Utilizador eliminado com sucesso."), TYPE.TRAY_NOTIFICATION));
 				}
@@ -337,7 +337,7 @@ public class UserManagementOperationViewPresenter implements ViewPresenter {
 	private void onGetUserFailed(){
 		EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "De momento não foi possível obter o utilizador seleccionado"), TYPE.ALERT_NOTIFICATION));
 		NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
-		item.removeParameter("id");
+		item.removeParameter("userid");
 		NavigationHistoryManager.getInstance().go(item);
 	}
 

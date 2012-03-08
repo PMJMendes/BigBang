@@ -11,6 +11,7 @@ import bigBang.definitions.client.dataAccess.ExerciseDataBrokerClient;
 import bigBang.definitions.client.dataAccess.InsurancePolicyBroker;
 import bigBang.definitions.client.dataAccess.Search;
 import bigBang.definitions.client.dataAccess.SearchDataBroker;
+import bigBang.definitions.client.dataAccess.SubPolicyExerciseDataBrokerClient;
 import bigBang.definitions.client.response.ResponseError;
 import bigBang.definitions.client.response.ResponseHandler;
 import bigBang.definitions.shared.BigBangConstants;
@@ -21,28 +22,35 @@ import bigBang.definitions.shared.SortOrder;
 import bigBang.definitions.shared.SortParameter;
 import bigBang.library.client.BigBangAsyncCallback;
 import bigBang.library.client.dataAccess.DataBrokerManager;
+import bigBang.library.client.dataAccess.SubPolicyExerciseDataBroker;
 import bigBang.module.insurancePolicyModule.interfaces.InsurancePolicyService;
 import bigBang.module.insurancePolicyModule.interfaces.InsurancePolicyServiceAsync;
 import bigBang.module.insurancePolicyModule.interfaces.PolicyExerciseService;
 import bigBang.module.insurancePolicyModule.interfaces.PolicyExerciseServiceAsync;
+import bigBang.module.insurancePolicyModule.interfaces.SubPolicyExerciseService;
+import bigBang.module.insurancePolicyModule.interfaces.SubPolicyExerciseServiceAsync;
 import bigBang.module.insurancePolicyModule.shared.ExerciseSearchParameter;
 import bigBang.module.insurancePolicyModule.shared.ExerciseSortParameter;
 
 public class ExerciseDataBrokerImpl extends DataBroker<Exercise>
-implements ExerciseDataBroker {
+implements ExerciseDataBroker, SubPolicyExerciseDataBroker {
 
 	protected PolicyExerciseServiceAsync service;
+	protected SubPolicyExerciseServiceAsync subPolicyExerciseService;
 	protected InsurancePolicyServiceAsync policyService;
 	protected InsurancePolicyBroker policyBroker;
 	protected SearchDataBroker<ExerciseStub> searchBroker;
+	protected SearchDataBroker<ExerciseStub> subPolicyExerciseSearchBroker;
 	protected Map<String, String> exercisesInScratchPad;
 	protected boolean requiresRefresh;
 
 	public ExerciseDataBrokerImpl(){
 		this.dataElementId = BigBangConstants.EntityIds.POLICY_EXERCISE;
+		this.subPolicyExerciseService = SubPolicyExerciseService.Util.getInstance();
 		this.service = PolicyExerciseService.Util.getInstance();
 		this.policyService = InsurancePolicyService.Util.getInstance();
 		this.searchBroker = new ExerciseSearchBroker(this.service);
+		this.subPolicyExerciseSearchBroker = new SubPolicyExerciseSearchBroker(this.subPolicyExerciseService);
 		this.exercisesInScratchPad = new HashMap<String, String>();
 	}
 
@@ -287,6 +295,63 @@ implements ExerciseDataBroker {
 			}
 		});
 	}
+	
+	@Override
+	public void getSubPolicyExercise(String exerciseId, final String subPolicyId,
+			final ResponseHandler<Exercise> handler) {
+		this.subPolicyExerciseService.getExercise(exerciseId, subPolicyId, new BigBangAsyncCallback<Exercise>() {
+
+			@Override
+			public void onResponseSuccess(Exercise result) {
+				incrementDataVersion();
+				for(DataBrokerClient<Exercise> client : clients) {
+					((SubPolicyExerciseDataBrokerClient)client).updateExercise(subPolicyId, result);
+					((SubPolicyExerciseDataBrokerClient)client).setDataVersionNumber(getDataElementId(), getCurrentDataVersion());
+				}
+				handler.onResponse(result);
+			}
+			
+			@Override
+			public void onResponseFailure(Throwable caught) {
+				handler.onError(new String[]{
+					new String("Could not get the sub policy exercise")	
+				});
+				super.onResponseFailure(caught);
+			}
+		});
+	}
+	
+	@Override
+	public void getSubPolicyExercises(String subPolicyId,
+			final ResponseHandler<Collection<ExerciseStub>> handler) {
+		ExerciseSearchParameter parameter= new ExerciseSearchParameter();
+		parameter.policyId = subPolicyId;
+
+		SearchParameter[] parameters = new SearchParameter[]{
+				parameter
+		};
+
+		SortParameter sort = new ExerciseSortParameter(ExerciseSortParameter.SortableField.STARTDATE, SortOrder.DESC);
+
+		SortParameter[] sorts = new SortParameter[]{
+				sort
+		};
+
+		this.getSubPolicyExerciseSearchBroker().search(parameters, sorts, -1, new ResponseHandler<Search<ExerciseStub>>() {
+
+			@Override
+			public void onResponse(Search<ExerciseStub> response) {
+				handler.onResponse(response.getResults());
+			}
+
+			@Override
+			public void onError(Collection<ResponseError> errors) {
+				handler.onError(new String[]{
+						new String("Could not get the resquested process exercises")	
+				});
+			}
+		});
+	}
 
 	private String getEffectiveId(String id){
 		id = id.toLowerCase();
@@ -310,6 +375,10 @@ implements ExerciseDataBroker {
 		return this.searchBroker;
 	}
 
+	public SearchDataBroker<ExerciseStub> getSubPolicyExerciseSearchBroker() {
+		return this.subPolicyExerciseSearchBroker;
+	}
+	
 	@Override
 	public void remapItemId(String oldId, String newId,
 			boolean newIdInScratchPad) {
@@ -334,5 +403,5 @@ implements ExerciseDataBroker {
 		id = id.toLowerCase();
 		return exercisesInScratchPad.containsKey(id) || exercisesInScratchPad.containsValue(id); 
 	}
-	
+
 }

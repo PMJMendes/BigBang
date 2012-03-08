@@ -10,6 +10,7 @@ import bigBang.library.client.dataAccess.DataBrokerManager;
 import bigBang.library.client.userInterface.ContactsList;
 import bigBang.library.client.userInterface.DocumentsList;
 import bigBang.library.client.userInterface.HistoryList;
+import bigBang.library.client.userInterface.SubProcessesList;
 import bigBang.library.client.userInterface.view.View;
 
 public class InsurancePolicyChildrenPanel extends View {
@@ -22,6 +23,7 @@ public class InsurancePolicyChildrenPanel extends View {
 	public InsuredObjectsList insuredObjectsList;
 	public ExercisesList exercisesList;
 	public SubPoliciesList subPoliciesList;
+	public SubProcessesList subProcessesList;
 	public HistoryList historyList;
 
 	public InsurancePolicyChildrenPanel(){
@@ -34,6 +36,7 @@ public class InsurancePolicyChildrenPanel extends View {
 		insuredObjectsList = new InsuredObjectsList();
 		exercisesList = new ExercisesList();
 		subPoliciesList = new SubPoliciesList();
+		subProcessesList = new SubProcessesList();
 		historyList = new HistoryList();
 
 		wrapper.add(contactsList, "Contactos");
@@ -41,6 +44,7 @@ public class InsurancePolicyChildrenPanel extends View {
 		wrapper.add(insuredObjectsList, "Unidades de Risco");
 		wrapper.add(exercisesList, "Exercícios");
 		wrapper.add(subPoliciesList, "Apólices Adesão");
+		wrapper.add(subProcessesList, "Sub-Processos");
 		wrapper.add(historyList, "Histórico");
 
 		this.policyBrokerClient = getPolicyBrokerClient();
@@ -58,6 +62,7 @@ public class InsurancePolicyChildrenPanel extends View {
 		this.insuredObjectsList.setOwner(policyId);
 		this.exercisesList.setOwner(policyId);
 		this.subPoliciesList.setOwner(policyId);
+		this.subProcessesList.setOwner(policyId);
 		this.historyList.setOwner(policyId);
 	}
 

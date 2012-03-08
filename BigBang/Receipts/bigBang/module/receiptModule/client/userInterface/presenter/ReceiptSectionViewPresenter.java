@@ -64,11 +64,11 @@ public class ReceiptSectionViewPresenter implements ViewPresenter {
 			public void onParameters(HasParameters parameters) {
 				String section = parameters.getParameter("section");
 				if(section != null && section.equalsIgnoreCase("receipt")){
-					String operation = parameters.getParameter("operation");
-					operation = operation == null ? "" : operation;
+					String display = parameters.peekInStackParameter("display");
+					display = display == null ? "" : display;
 
 					//MASS OPERATIONS
-					if(operation.equalsIgnoreCase("asddg")){
+					if(display.equalsIgnoreCase("asddg")){
 //						//SELECT IN TOOLBAR
 //						present("RECEIPT_MASS_OPERATION", historyItem, true);
 					}else{

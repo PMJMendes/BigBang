@@ -115,11 +115,11 @@ public class ReceiptSearchOperationViewPresenter implements ViewPresenter, Recei
 
 				if(selectedValue == null || selectedValue.id == null){
 					NavigationHistoryItem navigationItem = NavigationHistoryManager.getInstance().getCurrentState();
-					navigationItem.removeParameter("id");
+					navigationItem.removeParameter("receiptid");
 					NavigationHistoryManager.getInstance().go(navigationItem);
 				}else{
 					NavigationHistoryItem navigationItem = NavigationHistoryManager.getInstance().getCurrentState();
-					navigationItem.setParameter("id", selectedValue.id);
+					navigationItem.setParameter("receiptid", selectedValue.id);
 					NavigationHistoryManager.getInstance().go(navigationItem);
 				}
 			}
@@ -165,12 +165,12 @@ public class ReceiptSearchOperationViewPresenter implements ViewPresenter, Recei
 			
 			@Override
 			public void onParameters(HasParameters parameters) {
-				String operation = parameters.getParameter("operation");
-				operation = operation == null ? "" : operation;
+				String display = parameters.peekInStackParameter("display");
+				display = display == null ? "" : display;
 
 				//SEARCH
 				{
-					String receiptId = parameters.getParameter("id");
+					String receiptId = parameters.getParameter("receiptid");
 					receiptId = receiptId == null ? "" : receiptId;
 					if(!receiptId.isEmpty()){
 						showReceiptWithId(receiptId);

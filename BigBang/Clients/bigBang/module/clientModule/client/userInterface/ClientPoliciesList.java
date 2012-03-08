@@ -12,16 +12,23 @@ import bigBang.definitions.shared.InsurancePolicyStub;
 import bigBang.library.client.ValueSelectable;
 import bigBang.library.client.dataAccess.DataBrokerManager;
 import bigBang.library.client.userInterface.FilterableList;
-import bigBang.library.client.userInterface.ListEntry;
+import bigBang.module.insurancePolicyModule.client.userInterface.InsurancePolicySearchPanel;
 
 import com.google.gwt.event.logical.shared.AttachEvent;
 
 public class ClientPoliciesList extends FilterableList<InsurancePolicyStub> implements InsurancePolicyDataBrokerClient{
 
-	public static class Entry extends ListEntry<InsurancePolicyStub> { //InsurancePolicySearchPanel.Entry {
+	public static class Entry extends InsurancePolicySearchPanel.Entry {
 		public Entry(InsurancePolicyStub policy) {
 			super(policy);
 		}
+
+		public <I extends Object> void setInfo(I info) {
+			super.setInfo(info);
+			if(info != null){
+				setLeftWidget(this.statusIcon);
+			}
+		};
 	}
 
 	protected InsurancePolicyBroker broker;
@@ -125,7 +132,6 @@ public class ClientPoliciesList extends FilterableList<InsurancePolicyStub> impl
 
 	@Override
 	public void remapItemId(String oldId, String newId) {
-		// TODO Auto-generated method stub
-		
+		return;
 	}
 }
