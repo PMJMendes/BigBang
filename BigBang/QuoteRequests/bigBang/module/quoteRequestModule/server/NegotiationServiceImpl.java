@@ -97,6 +97,7 @@ public class NegotiationServiceImpl
 	public Negotiation editNegotiation(Negotiation negotiation)
 		throws SessionExpiredException, BigBangException
 	{
+		com.premiumminds.BigBang.Jewel.Objects.Negotiation lobjNeg;
 		ManageData lopMD;
 
 		if ( Engine.getCurrentUser() == null )
@@ -104,21 +105,29 @@ public class NegotiationServiceImpl
 
 		try
 		{
-			lopMD = new ManageData(UUID.fromString(negotiation.processId));
-			lopMD.mobjData = new NegotiationData();
+			lobjNeg = com.premiumminds.BigBang.Jewel.Objects.Negotiation.GetInstance(Engine.getCurrentNameSpace(),
+					UUID.fromString(negotiation.id));
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangException(e.getMessage(), e);
+		}
 
-			lopMD.mobjData.midProcess = UUID.fromString(negotiation.processId);
-			lopMD.mobjData.mid = UUID.fromString(negotiation.id);
-			lopMD.mobjData.midCompany = UUID.fromString(negotiation.companyId);
-			lopMD.mobjData.mstrNotes = negotiation.notes;
-			lopMD.mobjData.mdtLimitDate = (negotiation.limitDate == null ? null :
-					Timestamp.valueOf(negotiation.limitDate + " 00:00:00.0"));
+		lopMD = new ManageData(UUID.fromString(negotiation.processId));
+		lopMD.mobjData = new NegotiationData();
+		lopMD.mobjData.FromObject(lobjNeg);
 
-			lopMD.mobjContactOps = null;
-			lopMD.mobjDocOps = null;
+		lopMD.mobjData.midCompany = UUID.fromString(negotiation.companyId);
+		lopMD.mobjData.mstrNotes = negotiation.notes;
+		lopMD.mobjData.mdtLimitDate = (negotiation.limitDate == null ? null :
+				Timestamp.valueOf(negotiation.limitDate + " 00:00:00.0"));
 
+		lopMD.mobjContactOps = null;
+		lopMD.mobjDocOps = null;
+
+		try
+		{
 			lopMD.Execute();
-
 		}
 		catch (Throwable e)
 		{
