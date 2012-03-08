@@ -682,7 +682,7 @@ ViewPresenter {
 		
 		if(type.equalsIgnoreCase(BigBangConstants.EntityIds.NEGOTIATION)){
 			item.pushIntoStackParameter("display", "negotiation");
-			item.setParameter("negotiationid", process.ownerDataId);
+			item.setParameter("negotiationid", process.dataId);
 			NavigationHistoryManager.getInstance().go(item);
 		}
 	}
@@ -800,6 +800,7 @@ ViewPresenter {
 	private void showHistory(HistoryItemStub historyItem) {
 		NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
 		item.pushIntoStackParameter("display", "history");
+		item.setParameter("historyownerid", view.getForm().getValue().id);
 		item.setParameter("historyitemid", historyItem.id);
 		NavigationHistoryManager.getInstance().go(item);
 	}

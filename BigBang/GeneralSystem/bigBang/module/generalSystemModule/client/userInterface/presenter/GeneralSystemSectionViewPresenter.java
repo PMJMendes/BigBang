@@ -95,6 +95,7 @@ public class GeneralSystemSectionViewPresenter implements ViewPresenter {
 				NavigationHistoryItem item = navigationManager.getCurrentState();
 				item.setStackParameter("display");
 				item.pushIntoStackParameter("display", "history");
+				item.setParameter("historyownerid", "TODO"); //TODO FJVC
 				navigationManager.go(item);
 			}
 			

@@ -443,6 +443,7 @@ public class SubPolicyViewPresenter implements ViewPresenter {
 	protected void showContact(Contact contact){
 		NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
 		item.setParameter("show", "contactmanagement");
+		item.setParameter("ownerid", contact.ownerId);
 		item.setParameter("contactownertypeid", contact.ownerTypeId);
 		item.setParameter("contactid", contact.id);
 		item.setParameter("contactownerid", contact.ownerId);
@@ -452,6 +453,7 @@ public class SubPolicyViewPresenter implements ViewPresenter {
 	protected void showDocument(Document document){
 		NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
 		item.setParameter("show", "documentmanagement");
+		item.setParameter("ownerid", document.ownerId);
 		item.setParameter("documentownertypeid", document.ownerTypeId);
 		item.setParameter("documentid", document.id);
 		item.setParameter("documentownerid", document.ownerId);
@@ -481,6 +483,7 @@ public class SubPolicyViewPresenter implements ViewPresenter {
 		NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
 		item.pushIntoStackParameter("display", "history");
 		item.setParameter("historyownerid", view.getForm().getValue().id);
+		item.setParameter("hisotryownerid", view.getForm().getValue().id);
 		item.setParameter("historyitemid", historyItem.id);
 		NavigationHistoryManager.getInstance().go(item);
 	}

@@ -77,6 +77,7 @@ public class ContactNavigationViewPresenter implements ViewPresenter{
 					NavigationHistoryItem navig = NavigationHistoryManager.getInstance().getCurrentState();
 					navig.removeParameter("show");
 					navig.removeParameter("contactid");
+					navig.removeParameter("ownerid");
 					navig.removeParameter("ownertypeid");
 					NavigationHistoryManager.getInstance().go(navig);
 
@@ -103,6 +104,7 @@ public class ContactNavigationViewPresenter implements ViewPresenter{
 					NavigationHistoryItem navig = NavigationHistoryManager.getInstance().getCurrentState();
 					navig.removeParameter("show");
 					navig.removeParameter("contactid");
+					navig.removeParameter("ownerid");
 					navig.removeParameter("ownertypeid");
 					NavigationHistoryManager.getInstance().go(navig);
 				}

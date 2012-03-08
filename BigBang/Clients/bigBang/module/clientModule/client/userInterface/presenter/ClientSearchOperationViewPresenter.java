@@ -246,6 +246,7 @@ public class ClientSearchOperationViewPresenter implements ViewPresenter {
 				if(!itemId.isEmpty()){
 					NavigationHistoryItem navItem = NavigationHistoryManager.getInstance().getCurrentState();
 					navItem.pushIntoStackParameter("display", "clienthistory");
+					navItem.setParameter("historyownerid", view.getForm().getValue().id);
 					navItem.setParameter("historyItemId", itemId);
 					NavigationHistoryManager.getInstance().go(navItem);
 				}
@@ -265,6 +266,7 @@ public class ClientSearchOperationViewPresenter implements ViewPresenter {
 				if(!itemId.isEmpty()){
 					NavigationHistoryItem navItem = NavigationHistoryManager.getInstance().getCurrentState();
 					navItem.setParameter("show", "contactmanagement");
+					navItem.setParameter("ownerid", view.getForm().getValue().id);
 					navItem.setParameter("contactid", itemId);
 					navItem.setParameter("ownertypeid", BigBangConstants.EntityIds.CLIENT);
 					NavigationHistoryManager.getInstance().go(navItem);
@@ -284,6 +286,7 @@ public class ClientSearchOperationViewPresenter implements ViewPresenter {
 				if(!itemId.isEmpty()){
 					NavigationHistoryItem navItem = NavigationHistoryManager.getInstance().getCurrentState();
 					navItem.setParameter("show", "documentmanagement");
+					navItem.setParameter("ownerid", item.ownerId);
 					navItem.setParameter("documentid", itemId);
 					navItem.setParameter("ownertypeid", BigBangConstants.EntityIds.CLIENT);
 					NavigationHistoryManager.getInstance().go(navItem);
