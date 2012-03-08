@@ -15,6 +15,7 @@ import bigBang.library.client.HasEditableValue;
 import bigBang.library.client.HasParameters;
 import bigBang.library.client.HasValueSelectables;
 import bigBang.library.client.Notification;
+import bigBang.library.client.PermissionChecker;
 import bigBang.library.client.Notification.TYPE;
 import bigBang.library.client.dataAccess.DataBrokerManager;
 import bigBang.library.client.event.ActionInvokedEvent;
@@ -22,7 +23,6 @@ import bigBang.library.client.event.ActionInvokedEventHandler;
 import bigBang.library.client.event.NewNotificationEvent;
 import bigBang.library.client.history.NavigationHistoryItem;
 import bigBang.library.client.history.NavigationHistoryManager;
-import bigBang.library.client.userInterface.List;
 import bigBang.library.client.userInterface.ListEntry;
 import bigBang.library.client.userInterface.presenter.ViewPresenter;
 
@@ -46,9 +46,9 @@ public abstract class NegotiationViewPresenter implements ViewPresenter{
 		void registerActionHandler(ActionInvokedEventHandler<Action> handler);
 
 		HasValue<ProcessBase> getOwnerForm();
-		
+
 		HasValueSelectables<Contact> getContactList();
-		
+
 		HasValueSelectables<Document> getDocumentList();
 
 		HasEditableValue<Negotiation> getForm();
@@ -72,7 +72,7 @@ public abstract class NegotiationViewPresenter implements ViewPresenter{
 	private NegotiationBroker negotiationBroker;
 	private String negotiationId;
 	protected String ownerId;
-	private boolean hasPermissions;
+	//private boolean hasPermissions;
 	protected String ownerTypeId;
 	protected String managerId;
 	protected String companyId;
@@ -106,12 +106,29 @@ public abstract class NegotiationViewPresenter implements ViewPresenter{
 			public void onActionInvoked(ActionInvokedEvent<Action> action) {
 				switch(action.getAction()){
 				case CANCEL:{
+					if(view.getForm().getInfo().id == null){
+						NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
+						item.removeParameter("show");
+						item.popFromStackParameter("display");
+						item.removeParameter("negotiationid");
+						item.removeParameter("ownertypeid");
+						NavigationHistoryManager.getInstance().go(item);
+					}
 					view.getForm().revert();
 					view.setToolbarSaveMode(false);
 					view.getForm().setReadOnly(true);
 					break;
 				}
 				case DELETE:{
+					if(view.getForm().getInfo().id == null){
+						NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
+						item.removeParameter("show");
+						item.popFromStackParameter("display");
+						item.removeParameter("negotiationid");
+						item.removeParameter("ownertypeid");
+						NavigationHistoryManager.getInstance().go(item);
+						return;
+					}
 					removeNegotiation();
 					break;
 				}
@@ -154,7 +171,7 @@ public abstract class NegotiationViewPresenter implements ViewPresenter{
 	@Override
 	public void setParameters(HasParameters parameterHolder) {
 
-		hasPermissions = true; //TODO TEM DE VIR DE FORA
+		//hasPermissions = true; //TODO TEM DE VIR DE FORA
 		negotiationId = parameterHolder.getParameter("negotiationid");
 
 		if(negotiationId == null){
@@ -168,21 +185,24 @@ public abstract class NegotiationViewPresenter implements ViewPresenter{
 			newNeg.managerId = managerId;
 			newNeg.ownerId = ownerId;
 			view.getForm().setInfo(newNeg);
-			view.getForm().setReadOnly(!hasPermissions);
+			view.getForm().setReadOnly(false);
 			view.setToolbarSaveMode(true);
-			view.allowDelete(false);
-			view.allowEdit(!hasPermissions);
+			view.allowEdit(true);
 			//TODO BLOCK ALLOW CREATION ON DOCUMENT AND CONTACT LIST -> ventura
 		}else{
-			
+
 			negotiationBroker.getNegotiation(negotiationId, new ResponseHandler<Negotiation>() {
-				
+
 				@Override
 				public void onResponse(Negotiation response) {
 					view.getForm().setInfo(response);
 					view.applyOwnerToList(negotiationId);
+					view.getForm().setReadOnly(true);
+					view.setToolbarSaveMode(false);
+					view.allowDelete(PermissionChecker.hasPermission(response, BigBangConstants.OperationIds.NegotiationProcess.DELETE_NEGOTIATION));
+					view.allowEdit(PermissionChecker.hasPermission(response, BigBangConstants.OperationIds.NegotiationProcess.UPDATE_NEGOTIATION));
 				}
-				
+
 				@Override
 				public void onError(Collection<ResponseError> errors) {
 					EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não é possível mostrar a negociação."), TYPE.ALERT_NOTIFICATION));
@@ -190,12 +210,6 @@ public abstract class NegotiationViewPresenter implements ViewPresenter{
 					view.disableToolbar();
 				}
 			});
-			
-			view.getForm().setReadOnly(true);
-			view.setToolbarSaveMode(false);
-			view.allowDelete(hasPermissions);
-			view.allowEdit(hasPermissions);
-
 		}
 
 
