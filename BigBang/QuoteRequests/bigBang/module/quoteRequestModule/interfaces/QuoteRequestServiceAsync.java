@@ -1,5 +1,7 @@
 package bigBang.module.quoteRequestModule.interfaces;
 
+import bigBang.definitions.shared.InfoOrDocumentRequest;
+import bigBang.definitions.shared.ManagerTransfer;
 import bigBang.definitions.shared.QuoteRequest;
 import bigBang.definitions.shared.QuoteRequestObject;
 import bigBang.definitions.shared.Remap;
@@ -28,6 +30,9 @@ public interface QuoteRequestServiceAsync
 	void deleteObjectInPad(String objectId, AsyncCallback<Void> callback);
 	void commitPad(String requestId, AsyncCallback<Remap[]> callback);
 	void discardPad(String requestId, AsyncCallback<Remap[]> callback);
+	void createInfoOrDocumentRequest(InfoOrDocumentRequest request, AsyncCallback<InfoOrDocumentRequest> callback);
+	void createManagerTransfer(ManagerTransfer transfer, AsyncCallback<ManagerTransfer> callback);
 	void closeProcess(String requestId, String notes, AsyncCallback<QuoteRequest> callback);
 	void deleteRequest(String requestId, String reason, AsyncCallback<Void> callback);
+	void massCreateManagerTransfer(ManagerTransfer transfer, AsyncCallback<ManagerTransfer> callback);
 }
