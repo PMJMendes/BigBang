@@ -217,7 +217,7 @@ public abstract class BigBangOperationsToolBar extends OperationsToolBar {
 			this.createMenuItem.setVisible(show);
 			break;
 		case DATA:
-			this.adminMenuItem.setVisible(show);
+			this.dataMenuItem.setVisible(show);
 			break;
 		case REQUESTS:
 			this.requestMenuItem.setVisible(show);
