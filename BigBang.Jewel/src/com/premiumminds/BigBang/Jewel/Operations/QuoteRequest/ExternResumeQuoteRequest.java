@@ -25,7 +25,7 @@ public class ExternResumeQuoteRequest
 
 	public String ShortDesc()
 	{
-		return "Reposição da Apólice";
+		return "Reposição da Consulta de Mercado";
 	}
 
 	public String LongDesc(String pstrLineBreak)
