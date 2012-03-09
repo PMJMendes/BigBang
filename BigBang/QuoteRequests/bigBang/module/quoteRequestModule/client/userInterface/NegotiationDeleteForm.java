@@ -28,7 +28,7 @@ public class NegotiationDeleteForm extends FormView<Deletion>{
 
 	@Override
 	public void setInfo(Deletion info) {
-	
+		
 		value = info;
 		motive.setValue(info.motive);
 		

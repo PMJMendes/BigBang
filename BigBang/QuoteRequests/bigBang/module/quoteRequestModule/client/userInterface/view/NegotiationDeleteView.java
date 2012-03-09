@@ -57,4 +57,9 @@ public class NegotiationDeleteView extends View implements NegotiationDeleteView
 		this.actionHandler = handler;
 	}
 
+	@Override
+	public void clear() {
+		form.clearInfo();
+	}
+
 }

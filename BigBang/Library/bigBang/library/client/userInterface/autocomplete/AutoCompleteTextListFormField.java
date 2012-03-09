@@ -82,6 +82,7 @@ public class AutoCompleteTextListFormField extends FormField<Collection<String>>
 			}
 		});
 
+		
 		panel.add(list);
 
 		panel.addDomHandler(new ClickHandler() {

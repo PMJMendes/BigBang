@@ -1,12 +1,6 @@
 package bigBang.module.quoteRequestModule.client.userInterface.view;
 
 
-import com.google.gwt.user.client.ui.HasValue;
-import com.google.gwt.user.client.ui.SplitLayoutPanel;
-import com.google.gwt.user.client.ui.StackPanel;
-import com.google.gwt.user.client.ui.VerticalPanel;
-
-
 import bigBang.definitions.shared.Contact;
 import bigBang.definitions.shared.Document;
 import bigBang.definitions.shared.ProcessBase;
@@ -18,8 +12,6 @@ import bigBang.library.client.event.SelectionChangedEventHandler;
 import bigBang.library.client.userInterface.BigBangOperationsToolBar.SUB_MENU;
 import bigBang.library.client.userInterface.ContactsList;
 import bigBang.library.client.userInterface.DocumentsList;
-import bigBang.library.client.userInterface.List;
-import bigBang.library.client.userInterface.ListEntry;
 import bigBang.library.client.userInterface.ListHeader;
 import bigBang.library.client.userInterface.view.FormView;
 import bigBang.library.client.userInterface.view.View;
@@ -27,6 +19,11 @@ import bigBang.module.quoteRequestModule.client.userInterface.NegotiationForm;
 import bigBang.module.quoteRequestModule.client.userInterface.NegotiationOperationsToolBar;
 import bigBang.module.quoteRequestModule.client.userInterface.presenter.NegotiationViewPresenter;
 import bigBang.module.quoteRequestModule.client.userInterface.presenter.NegotiationViewPresenter.Action;
+
+import com.google.gwt.user.client.ui.HasValue;
+import com.google.gwt.user.client.ui.SplitLayoutPanel;
+import com.google.gwt.user.client.ui.StackPanel;
+import com.google.gwt.user.client.ui.VerticalPanel;
 
 public abstract class NegotiationView<T> extends View implements NegotiationViewPresenter.Display{
 
@@ -64,11 +61,12 @@ public abstract class NegotiationView<T> extends View implements NegotiationView
 			public void onDeleteRequest() {
 				fireAction(Action.DELETE);
 			}
-		};
 
-		toolbar.hideAll();
-		toolbar.showItem(SUB_MENU.EDIT, true);
-		toolbar.showItem(SUB_MENU.ADMIN, true);
+			@Override
+			public void onCancelNegotiationRequest() {
+				fireAction(Action.CANCEL_NEGOTIATION);
+			}
+		};
 
 		VerticalPanel ownerWrapper = new VerticalPanel();
 		ownerWrapper.setSize("100%", "100%");
@@ -130,7 +128,7 @@ public abstract class NegotiationView<T> extends View implements NegotiationView
 		negotiationInnerWrapper.setCellHeight(toolbar, "21px");
 		
 		childWrapper.setSize("100%", "100%");
-		;
+		
 		negotiationInnerWrapper.setCellHeight(form, "100%");
 		childWrapper.addEast(stackWrapper,260);
 		childWrapper.add(negotiationInnerWrapper);
@@ -186,6 +184,11 @@ public abstract class NegotiationView<T> extends View implements NegotiationView
 	@Override
 	public void allowDelete(boolean b){
 		toolbar.allowDelete(b);
+	}
+	
+	@Override
+	public void allowCancelNegotiation(boolean b){
+		toolbar.allowCancelNegotiation(b);
 	}
 	@Override
 	public abstract void setParentHeaderTitle(String title);

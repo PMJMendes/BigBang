@@ -129,6 +129,7 @@ public class TypifiedTextFormField extends FormField<TypifiedText> implements Ty
 	public void setReadOnly(boolean readonly) {
 		subject.setReadOnly(readonly);
 		textBody.setReadOnly(readonly);
+		labels.setReadOnly(readonly);
 	}
 
 	@Override

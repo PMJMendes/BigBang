@@ -223,6 +223,7 @@ public class ClientSearchOperationViewPresenter implements ViewPresenter {
 					break;
 				case REQUIRE_INFO_DOCUMENT:
 					item.pushIntoStackParameter("display", "inforequest");
+					item.setParameter("ownerid", view.getForm().getValue().id);
 					NavigationHistoryManager.getInstance().go(item);
 					break;
 				case TRANSFER_MANAGER:

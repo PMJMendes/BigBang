@@ -2,6 +2,7 @@ package bigBang.definitions.client.dataAccess;
 
 import bigBang.definitions.client.response.ResponseHandler;
 import bigBang.definitions.shared.Negotiation; 
+import bigBang.definitions.shared.Negotiation.Cancellation;
 import bigBang.definitions.shared.Negotiation.Deletion;
 
 public interface NegotiationBroker extends DataBrokerInterface<Negotiation>{
@@ -12,7 +13,10 @@ public interface NegotiationBroker extends DataBrokerInterface<Negotiation>{
 	void updateNegotiation(Negotiation negotiation,
 			ResponseHandler<Negotiation> handler);
 
-	void removeNegotiation(Deletion deletion, ResponseHandler<String> handler); 
+	void removeNegotiation(Deletion deletion, ResponseHandler<String> handler);
+
+	void cancelNegotiation(Cancellation cancellation,
+			ResponseHandler<Negotiation> handler); 
 	
 
 }

@@ -10,6 +10,7 @@ import bigBang.definitions.client.response.ResponseError;
 import bigBang.definitions.client.response.ResponseHandler;
 import bigBang.definitions.shared.BigBangConstants;
 import bigBang.definitions.shared.Negotiation;
+import bigBang.definitions.shared.Negotiation.Cancellation;
 import bigBang.definitions.shared.Negotiation.Deletion;
 import bigBang.library.client.BigBangAsyncCallback;
 import bigBang.library.client.EventBus;
@@ -130,6 +131,36 @@ public class NegotiationBrokerImpl extends DataBroker<Negotiation> implements Ne
 	}
 
 	@Override
+	public void cancelNegotiation(final Cancellation cancellation, final ResponseHandler<Negotiation> handler){
+
+		service.cancelNegotiation(cancellation, new BigBangAsyncCallback<Negotiation>() {
+
+			@Override
+			public void onResponseSuccess(Negotiation result) {
+				cache.remove(result.id);
+				cache.add(result.id, result);
+
+				for(DataBrokerClient<Negotiation> bc : getClients()){
+					((NegotiationBrokerClient)bc).updateNegotiation(result);
+					((NegotiationBrokerClient)bc).setDataVersionNumber(BigBangConstants.EntityIds.NEGOTIATION, getCurrentDataVersion());
+				}
+				handler.onResponse(result);
+				EventBus.getInstance().fireEvent(new OperationWasExecutedEvent(BigBangConstants.OperationIds.NegotiationProcess.CANCEL_NEGOTIATION, result.id));
+			}
+
+			@Override
+			public void onResponseFailure(Throwable caught) {
+				handler.onError((new String[]{
+						new String("Could not cancel the negotiation")
+				}));
+				super.onResponseFailure(caught);
+			}
+
+		});
+
+	}
+
+	@Override
 	public void requireDataRefresh() {
 		requiresRefresh = true;
 	}
@@ -159,7 +190,7 @@ public class NegotiationBrokerImpl extends DataBroker<Negotiation> implements Ne
 		if(cache.contains(itemId)){
 			cache.remove(itemId);
 		}
-		
+
 		for(DataBrokerClient<Negotiation> c: clients){
 			((NegotiationBrokerClient) c).removeNegotiation(itemId);
 		}

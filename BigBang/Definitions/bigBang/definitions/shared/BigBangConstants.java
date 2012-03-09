@@ -68,6 +68,7 @@ public class BigBangConstants {
 		public static final String TYPIFIED_TEXT = "0F218912-1626-4A2C-BF68-9FE100F72735";
 		public static final String REQUEST_TYPE = "B437ECD7-11D2-4C55-B6DD-9FE80101ECC8";
 		public static final String INSURANCE_POLICY_VOID_MOTIVES = "B36C9AB7-0052-4C2E-B392-9FF200CF6022";
+		public static final String NEGOTIATION_CANCEL_MOTIVES = "F79E335C-FD6F-43BE-8535-9FE900C1CAF4";
 	}
 
 	public static class OperationIds {
@@ -132,6 +133,7 @@ public class BigBangConstants {
 
 			public static final String DELETE_NEGOTIATION = "796C9A67-2B7E-40D0-974A-9FFD0105890E";
 			public static final String UPDATE_NEGOTIATION = "FA636D7A-FEF3-4F87-9D1A-9FFD010242ED";
+			public static final String CANCEL_NEGOTIATION = "500AAB3B-9035-4F4F-B12E-9FFD0102F303";
 			
 		}
 		

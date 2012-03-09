@@ -30,11 +30,12 @@ import com.google.gwt.user.client.ui.HasValue;
 import com.google.gwt.user.client.ui.HasWidgets;
 import com.google.gwt.user.client.ui.UIObject;
 import com.google.gwt.user.client.ui.Widget;
+import com.premiumminds.BigBang.Jewel.Operations.Negotiation.CancelNegotiation;
 
 public abstract class NegotiationViewPresenter implements ViewPresenter{
 
 	public static enum Action{
-		EDIT, SAVE, CANCEL, DELETE, SELECTION_CHANGED_CONTACT, SELECTION_CHANGED_DOCUMENT
+		EDIT, SAVE, CANCEL, DELETE, SELECTION_CHANGED_CONTACT, SELECTION_CHANGED_DOCUMENT, CANCEL_NEGOTIATION
 
 	}
 
@@ -62,6 +63,8 @@ public abstract class NegotiationViewPresenter implements ViewPresenter{
 		void allowEdit(boolean b);
 
 		void allowDelete(boolean b);
+		
+		void allowCancelNegotiation(boolean b);
 
 		void applyOwnerToList(String negotiationId);
 
@@ -160,6 +163,10 @@ public abstract class NegotiationViewPresenter implements ViewPresenter{
 					showDocument(document);
 					break;
 				}
+				case CANCEL_NEGOTIATION:{
+					cancelNegotiation();
+					break;
+				}
 				}
 
 			}
@@ -188,6 +195,7 @@ public abstract class NegotiationViewPresenter implements ViewPresenter{
 			view.getForm().setReadOnly(false);
 			view.setToolbarSaveMode(true);
 			view.allowEdit(true);
+			view.allowCancelNegotiation(false);
 			//TODO BLOCK ALLOW CREATION ON DOCUMENT AND CONTACT LIST -> ventura
 		}else{
 
@@ -201,6 +209,7 @@ public abstract class NegotiationViewPresenter implements ViewPresenter{
 					view.setToolbarSaveMode(false);
 					view.allowDelete(PermissionChecker.hasPermission(response, BigBangConstants.OperationIds.NegotiationProcess.DELETE_NEGOTIATION));
 					view.allowEdit(PermissionChecker.hasPermission(response, BigBangConstants.OperationIds.NegotiationProcess.UPDATE_NEGOTIATION));
+					view.allowCancelNegotiation(PermissionChecker.hasPermission(response, BigBangConstants.OperationIds.NegotiationProcess.CANCEL_NEGOTIATION));
 				}
 
 				@Override
@@ -238,6 +247,12 @@ public abstract class NegotiationViewPresenter implements ViewPresenter{
 	protected void removeNegotiation(){
 		NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
 		item.setParameter("show", "deletenegotiation");
+		NavigationHistoryManager.getInstance().go(item);
+	}
+	
+	protected void cancelNegotiation() {
+		NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
+		item.setParameter("show", "cancelnegotiation");
 		NavigationHistoryManager.getInstance().go(item);
 	}
 

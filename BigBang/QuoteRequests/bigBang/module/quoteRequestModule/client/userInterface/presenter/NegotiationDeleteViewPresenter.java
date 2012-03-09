@@ -46,6 +46,7 @@ public class NegotiationDeleteViewPresenter implements ViewPresenter {
 		HasEditableValue<Deletion> getForm();
 		void registerActionHandler(ActionInvokedEventHandler<Action> handler);
 		Widget asWidget();
+		void clear();
 	}
 	
 	
@@ -66,7 +67,7 @@ public class NegotiationDeleteViewPresenter implements ViewPresenter {
 	@Override
 	public void setParameters(HasParameters parameterHolder) {
 		
-		
+		view.clear();
 		Deletion toDelete = new Deletion();
 		toDelete.negotiationId = parameterHolder.getParameter("negotiationid");
 		view.getForm().setValue(toDelete);
