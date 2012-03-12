@@ -7,6 +7,12 @@ public class IncomingMessage
 {
 	private static final long serialVersionUID = 1L;
 
+	public static enum Kind
+	{
+		EMAIL,
+		NOTE
+	}
+
 	public static class AttachmentUpgrade
 		implements Serializable
 	{
@@ -17,6 +23,7 @@ public class IncomingMessage
 		public String storageId;
 	}
 
+	public Kind kind;
 	public String notes;
 	public String emailId;
 	public AttachmentUpgrade[] upgrades;
