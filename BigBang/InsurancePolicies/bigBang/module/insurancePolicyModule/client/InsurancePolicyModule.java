@@ -35,8 +35,10 @@ import bigBang.module.insurancePolicyModule.client.userInterface.view.SubPolicyD
 import bigBang.module.insurancePolicyModule.client.userInterface.view.SubPolicyView;
 import bigBang.module.quoteRequestModule.client.userInterface.presenter.NegotiationCancellationViewPresenter;
 import bigBang.module.quoteRequestModule.client.userInterface.presenter.NegotiationDeleteViewPresenter;
+import bigBang.module.quoteRequestModule.client.userInterface.presenter.NegotiationExternalRequestViewPresenter;
 import bigBang.module.quoteRequestModule.client.userInterface.view.NegotiationCancellationView;
 import bigBang.module.quoteRequestModule.client.userInterface.view.NegotiationDeleteView;
+import bigBang.module.quoteRequestModule.client.userInterface.view.NegotiationExternalRequestView;
 
 import com.google.gwt.core.client.GWT;
 
@@ -174,6 +176,16 @@ public class InsurancePolicyModule implements Module {
 			public ViewPresenter getInstance() {
 				InsurancePolicyTransferToClientView view = (InsurancePolicyTransferToClientView) GWT.create(InsurancePolicyTransferToClientView.class); 
 				InsurancePolicyTransferToClientViewPresenter presenter = new InsurancePolicyTransferToClientViewPresenter(view);
+				return presenter;
+			}
+		});
+		
+		ViewPresenterFactory.getInstance().registerViewPresenterInstantiator("INSURANCE_POLICY_NEGOTIATION_EXTERNAL_REQUEST", new ViewPresenterInstantiator() {
+			
+			@Override
+			public ViewPresenter getInstance() {
+				NegotiationExternalRequestView<?> view = (NegotiationExternalRequestView<?>) GWT.create(NegotiationExternalRequestView.class); 
+				NegotiationExternalRequestViewPresenter presenter = new NegotiationExternalRequestViewPresenter(view);
 				return presenter;
 			}
 		});

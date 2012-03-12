@@ -29,7 +29,6 @@ public class InsurancePolicyNegotiationViewPresenter extends NegotiationViewPres
 	public InsurancePolicyNegotiationViewPresenter(Display view) {
 		super(view);
 		insurancePolicyBroker = (InsurancePolicyBroker) DataBrokerManager.staticGetBroker(BigBangConstants.EntityIds.INSURANCE_POLICY);
-		
 	}
 	
 	@Override

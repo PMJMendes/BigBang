@@ -35,7 +35,7 @@ import com.premiumminds.BigBang.Jewel.Operations.Negotiation.CancelNegotiation;
 public abstract class NegotiationViewPresenter implements ViewPresenter{
 
 	public static enum Action{
-		EDIT, SAVE, CANCEL, DELETE, SELECTION_CHANGED_CONTACT, SELECTION_CHANGED_DOCUMENT, CANCEL_NEGOTIATION
+		EDIT, SAVE, CANCEL, DELETE, SELECTION_CHANGED_CONTACT, SELECTION_CHANGED_DOCUMENT, CANCEL_NEGOTIATION, EXTERNAL_REQUEST
 
 	}
 
@@ -67,6 +67,8 @@ public abstract class NegotiationViewPresenter implements ViewPresenter{
 		void allowCancelNegotiation(boolean b);
 
 		void applyOwnerToList(String negotiationId);
+
+		void allowExternalRequest(boolean hasPermission);
 
 	}
 
@@ -167,6 +169,9 @@ public abstract class NegotiationViewPresenter implements ViewPresenter{
 					cancelNegotiation();
 					break;
 				}
+				case EXTERNAL_REQUEST:
+					receiveExternalRequest();
+					break;
 				}
 
 			}
@@ -175,10 +180,16 @@ public abstract class NegotiationViewPresenter implements ViewPresenter{
 		bound = true;
 	}
 
+	protected void receiveExternalRequest() {
+		NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
+		item.pushIntoStackParameter("display", "negotiationexternalrequest");
+		item.setParameter("negotiationexternalrequestid", "new");
+		NavigationHistoryManager.getInstance().go(item);
+	}
+
 	@Override
 	public void setParameters(HasParameters parameterHolder) {
 
-		//hasPermissions = true; //TODO TEM DE VIR DE FORA
 		negotiationId = parameterHolder.getParameter("negotiationid");
 
 		if(negotiationId == null){
@@ -210,6 +221,7 @@ public abstract class NegotiationViewPresenter implements ViewPresenter{
 					view.allowDelete(PermissionChecker.hasPermission(response, BigBangConstants.OperationIds.NegotiationProcess.DELETE_NEGOTIATION));
 					view.allowEdit(PermissionChecker.hasPermission(response, BigBangConstants.OperationIds.NegotiationProcess.UPDATE_NEGOTIATION));
 					view.allowCancelNegotiation(PermissionChecker.hasPermission(response, BigBangConstants.OperationIds.NegotiationProcess.CANCEL_NEGOTIATION));
+					view.allowExternalRequest(PermissionChecker.hasPermission(response, BigBangConstants.OperationIds.NegotiationProcess.EXTERNAL_REQUEST));
 				}
 
 				@Override

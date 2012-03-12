@@ -66,6 +66,12 @@ public abstract class NegotiationView<T> extends View implements NegotiationView
 			public void onCancelNegotiationRequest() {
 				fireAction(Action.CANCEL_NEGOTIATION);
 			}
+
+			@Override
+			public void onExternalRequest() {
+				fireAction(Action.EXTERNAL_REQUEST);
+				
+			}
 		};
 
 		VerticalPanel ownerWrapper = new VerticalPanel();
@@ -190,7 +196,12 @@ public abstract class NegotiationView<T> extends View implements NegotiationView
 	public void allowCancelNegotiation(boolean b){
 		toolbar.allowCancelNegotiation(b);
 	}
+	
 	@Override
+	public void allowExternalRequest(boolean hasPermission) {
+		toolbar.allowExternalRequest(hasPermission);
+	}
+	
 	public abstract void setParentHeaderTitle(String title);
 
 	@Override
