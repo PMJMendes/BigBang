@@ -57,4 +57,8 @@ public interface InsurancePolicyBroker extends DataBrokerInterface<InsurancePoli
 	
 	public void createNegotiation(Negotiation negotiation, ResponseHandler<Negotiation> handler);
 
+	void transferToClient(String policyId, String newClientId,
+			ResponseHandler<InsurancePolicy> handler);
+
+	
 }

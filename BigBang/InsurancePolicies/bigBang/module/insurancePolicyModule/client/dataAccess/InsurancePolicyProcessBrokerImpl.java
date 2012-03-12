@@ -710,5 +710,32 @@ public class InsurancePolicyProcessBrokerImpl extends DataBroker<InsurancePolicy
 		});
 		
 	}
+	
+	@Override
+	public void transferToClient(String policyId, String newClientId, final ResponseHandler<InsurancePolicy> handler){
+		service.transferToClient(policyId, newClientId, new BigBangAsyncCallback<InsurancePolicy>() {
+
+			@Override
+			public void onResponseSuccess(InsurancePolicy result) {
+				incrementDataVersion();
+				for(DataBrokerClient<InsurancePolicy> bc : getClients()){
+					((InsurancePolicyDataBrokerClient) bc).updateInsurancePolicy(result);
+					((InsurancePolicyDataBrokerClient) bc).setDataVersionNumber(BigBangConstants.EntityIds.INSURANCE_POLICY, getCurrentDataVersion());
+				}
+				handler.onResponse(result);				
+			
+			}
+		
+			@Override
+			public void onResponseFailure(Throwable caught) {
+				handler.onError(new String[]{
+						new String("Could not transfer to client")
+				});
+				super.onResponseFailure(caught);
+			}
+		
+		
+		});
+	}
 
 }

@@ -192,6 +192,12 @@ public class InsurancePolicySearchOperationView extends View implements Insuranc
 			public void onCancelRequest() {
 				actionHandler.onActionInvoked(new ActionInvokedEvent<InsurancePolicySearchOperationViewPresenter.Action>(Action.CANCEL_EDIT));
 			}
+
+			@Override
+			public void onTransferToClient() {
+				actionHandler.onActionInvoked(new ActionInvokedEvent<InsurancePolicySearchOperationViewPresenter.Action>(Action.TRANSFER_TO_CLIENT));
+				
+			}
 			
 		};
 
@@ -456,4 +462,9 @@ public class InsurancePolicySearchOperationView extends View implements Insuranc
 		this.searchPanel.remove(selectable);
 	}
 
+	@Override
+	public void allowTransferToClient(boolean allow) {
+		toolbar.allowTransferToClient(allow);
+
+	}
 }

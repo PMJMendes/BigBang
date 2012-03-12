@@ -36,6 +36,7 @@ public abstract class InsurancePolicyOperationsToolBar extends BigBangOperations
 	protected MenuItem deleteItem;
 	protected MenuItem brokerageTransfer;
 	protected MenuItem voidPolicy;
+	private MenuItem clientTransfer;
 
 	//OTHER
 
@@ -210,6 +211,22 @@ public abstract class InsurancePolicyOperationsToolBar extends BigBangOperations
 			}
 		});
 		addItem(SUB_MENU.ADMIN, voidPolicy);
+		
+		clientTransfer = new MenuItem("Transferir para Cliente", new Command(){
+
+			@Override
+			public void execute() {
+				onTransferToClient();
+				
+			}
+			
+		});
+		addItem(SUB_MENU.ADMIN, clientTransfer);
+		
+	}
+	
+	public void allowTransferToClient(boolean allow){
+		this.clientTransfer.setEnabled(allow);
 	}
 
 	public void allowCreateReceipt(boolean allow){
@@ -331,5 +348,7 @@ public abstract class InsurancePolicyOperationsToolBar extends BigBangOperations
 	public abstract void onCreateRiskAnalysis();
 
 	public abstract void onCreateReceipt();
+	
+	public abstract void onTransferToClient();
 
 }

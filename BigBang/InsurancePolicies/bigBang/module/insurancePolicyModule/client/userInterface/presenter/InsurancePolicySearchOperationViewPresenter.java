@@ -68,7 +68,7 @@ ViewPresenter {
 		CREATE_INFO_MANAGEMENT_PROCESS,
 		CREATE_SUB_POLICY, ISSUE_DEBIT_NOTE,
 		CREATE_NEGOTIATION, CREATE_HEALTH_EXPENSE,
-		CREATE_RISK_ANALISYS
+		CREATE_RISK_ANALISYS, TRANSFER_TO_CLIENT
 	}
 
 	public interface Display {
@@ -108,6 +108,7 @@ ViewPresenter {
 		void allowCreateNegotiation(boolean allow);
 		void allowCreateHealthExpense(boolean allow);
 		void allowCreateRiskAnalisys(boolean allow);
+		void allowTransferToClient(boolean allow);
 
 		//children lists
 		HasValueSelectables<Contact> getContactsList();
@@ -318,6 +319,11 @@ ViewPresenter {
 				case VOID_POLICY:
 					onVoidPolicy();
 					break;
+					
+				case TRANSFER_TO_CLIENT:{
+					transferToClient();
+					break;
+				}
 				}
 			}
 		});
@@ -500,7 +506,9 @@ ViewPresenter {
 					view.allowCreateNegotiation(PermissionChecker.hasPermission(response, BigBangConstants.OperationIds.InsurancePolicyProcess.CREATE_NEGOTIATION));
 					view.allowCreateHealthExpense(PermissionChecker.hasPermission(response, BigBangConstants.OperationIds.InsurancePolicyProcess.CREATE_HEALTH_EXPENSE));
 					view.allowCreateRiskAnalisys(PermissionChecker.hasPermission(response, BigBangConstants.OperationIds.InsurancePolicyProcess.CREATE_RISK_ANALISYS));
-
+					view.allowTransferToClient(PermissionChecker.hasPermission(response, BigBangConstants.OperationIds.InsurancePolicyProcess.TRANSFER_TO_CLIENT));
+					
+					
 					view.setSaveModeEnabled(false);
 					view.getForm().setReadOnly(true);
 					view.getForm().setValue(response);
@@ -813,6 +821,12 @@ ViewPresenter {
 	private void onSavePolicySuccess(){
 		EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Apólice guardada com sucesso"), TYPE.TRAY_NOTIFICATION));
 		NavigationHistoryManager.getInstance().reload();
+	}
+	
+	private void transferToClient(){
+		NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
+		item.setParameter("show", "transfertoclient");
+		NavigationHistoryManager.getInstance().go(item);
 	}
 
 }

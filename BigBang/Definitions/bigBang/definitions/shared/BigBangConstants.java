@@ -117,6 +117,7 @@ public class BigBangConstants {
 			public static final String CREATE_NEGOTIATION = "852BF3BF-F04A-494D-A308-9FD4011152C4";
 			public static final String CREATE_HEALTH_EXPENSE = null;
 			public static final String CREATE_RISK_ANALISYS = null;
+			public static final String TRANSFER_TO_CLIENT = "E8DBFC9B-C24F-4F62-BE4E-9FF200B406C8";
 		}
 		
 		public static class InsuranceSubPolicyProcess {
