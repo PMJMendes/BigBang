@@ -303,10 +303,53 @@ public class Constants
 	public static final UUID OPID_SubPolicy_UndoTransferToPolicy        = UUID.fromString("063AF772-A40C-4895-9F95-9FF300FEA254");
 
 	// Receipt Operations
+	public static final UUID OPID_Receipt_AutoDisallowDelete            = UUID.fromString("C79AE4F9-F00E-40B1-9DF4-A01300C42A2C");
+	public static final UUID OPID_Receipt_AutoCheckDebitNote            = UUID.fromString("5594413C-34CB-465F-AA2E-A01300C4BBD8");
+	public static final UUID OPID_Receipt_TriggerDisallowDebitNote      = UUID.fromString("EB057F61-048B-4690-8DD7-A01300D256AD");
+	public static final UUID OPID_Receipt_ReceiveImage                  = UUID.fromString("E99A9029-BBF0-4E76-AC49-A01300C4FB8C");
+	public static final UUID OPID_Receipt_TriggerImageOnCreate          = UUID.fromString("D6A00787-5509-4F47-A681-A01300C56C1F");
+	public static final UUID OPID_Receipt_UndoReceiveImage              = UUID.fromString("38DB0FE1-B1DE-4C7B-B7CA-A01300C5BAC6");
 	public static final UUID OPID_Receipt_ManageData                    = UUID.fromString("581AA15C-DF2C-4DF9-B3B3-9F8A00EDBADB");
 	public static final UUID OPID_Receipt_UndoManageData                = UUID.fromString("6D530E4A-8585-433F-9BE9-9F8A00EDE805");
-	public static final UUID OPID_Receipt_DeleteReceipt                 = UUID.fromString("994D421F-E414-41EF-8D02-9F8A00EEE620");
+	public static final UUID OPID_Receipt_TransferToPolicy              = UUID.fromString("1434D98F-3A70-4654-86DA-A01300C64A49");
+	public static final UUID OPID_Receipt_UndoTransferToPolicy          = UUID.fromString("B1A231A4-ECEA-4DFE-A9E0-A01300C67694");
+	public static final UUID OPID_Receipt_ValidateReceipt               = UUID.fromString("47538724-7B79-4655-96D7-A01300C6A881");
+	public static final UUID OPID_Receipt_TriggerAutoValidate           = UUID.fromString("2A501358-24D2-4877-BA9C-A01300C6E1B7");
+	public static final UUID OPID_Receipt_UndoValidateReceipt           = UUID.fromString("2026BF51-58EE-4663-92A2-A01300C70FBF");
+	public static final UUID OPID_Receipt_ExternForceReverse            = UUID.fromString("5C10D8AF-8862-45B3-9CCC-A01300C79228");
+	public static final UUID OPID_Receipt_CreateDebitNote               = UUID.fromString("AE201DB6-6C90-461B-B594-A01300C7C092");
+	public static final UUID OPID_Receipt_UndoDebitNote                 = UUID.fromString("D0565F1D-F0B3-4FD8-AD3F-A01300C82715");
+	public static final UUID OPID_Receipt_CreatePaymentNotice           = UUID.fromString("102E9D79-A006-4757-ADBA-A01300C863B1");
+	public static final UUID OPID_Receipt_CreateSecondPaymentNotice     = UUID.fromString("6BC653FD-3265-4A3C-9307-A01300C8B2BC");
+	public static final UUID OPID_Receipt_ExternForceShortCircuit       = UUID.fromString("1EB5CA7C-01D0-4120-BAA2-A01300C8E4BD");
+	public static final UUID OPID_Receipt_CreateOrderNumberRequest      = UUID.fromString("7AC19720-D364-4FBD-A01F-A01300C92666");
+	public static final UUID OPID_Receipt_CreateDASRequest              = UUID.fromString("4CAD549D-2903-4A42-9767-A01300C98B51");
+	public static final UUID OPID_Receipt_CreateSignatureRequest        = UUID.fromString("563A630A-276A-48E8-96D3-A01300C9AF24");
+	public static final UUID OPID_Receipt_CreateRequestForReceipt       = UUID.fromString("2815599A-E132-4805-9D34-A01300C9DF96");
+	public static final UUID OPID_Receipt_CreateRequestForDuplicate     = UUID.fromString("BBF7D68B-29AB-43E1-902E-A01300CA0FC2");
+	public static final UUID OPID_Receipt_CreateRequestForEarlyDebit    = UUID.fromString("F777EB4E-DB06-4ADC-93C3-A01300CA6F47");
 	public static final UUID OPID_Receipt_Payment                       = UUID.fromString("F5F00701-69F7-4622-BB8C-9FB800DED93F");
+	public static final UUID OPID_Receipt_AssociateWithDebitNote        = UUID.fromString("1810BACF-DB6C-4D2E-8093-A01300CAD6C2");
+	public static final UUID OPID_Receipt_UndoPayment                   = UUID.fromString("826FF04D-10CF-444D-B795-A01300CB44C0");
+	public static final UUID OPID_Receipt_TriggerForceDAS               = UUID.fromString("8AC9B4DA-6144-4EFC-8EFC-A01300CB76D3");
+	public static final UUID OPID_Receipt_DASNotNecessary               = UUID.fromString("6E8D98B8-4901-4705-9C58-A01300CBA222");
+	public static final UUID OPID_Receipt_UndoDASNotNecessary           = UUID.fromString("C6810F5C-C983-4E4C-8851-A01300CBD7A5");
+	public static final UUID OPID_Receipt_ExternReceiveDAS              = UUID.fromString("EE580116-A45A-43AE-A2ED-A01300CBFDD9");
+	public static final UUID OPID_Receipt_ExternUndoReceiveDAS          = UUID.fromString("936CE1AD-007A-4F11-AFD2-A01300CC23A5");
+	public static final UUID OPID_Receipt_SendReceipt                   = UUID.fromString("002A20EF-A7B3-4DE7-B62C-A01300CC5450");
+	public static final UUID OPID_Receipt_ExternAllowSendPayment        = UUID.fromString("04C24A5B-5CED-4CC3-A983-A01300CC84EC");
+	public static final UUID OPID_Receipt_SendPayment                   = UUID.fromString("08799EDB-B874-49D5-B987-A01300CCAC59");
+	public static final UUID OPID_Receipt_InsurerAccounting             = UUID.fromString("A07D96EF-CF7E-4287-8C3B-A01300CD2AF5");
+	public static final UUID OPID_Receipt_UndoInsurerAccounting         = UUID.fromString("A153FBE9-046E-4AB3-A1CA-A01300CD5825");
+	public static final UUID OPID_Receipt_MediatorAccounting            = UUID.fromString("C7305673-3EC9-4B1A-A437-A01300CD7D57");
+	public static final UUID OPID_Receipt_UndoMediatorAccounting        = UUID.fromString("7859E03B-470B-4996-A701-A01300CDA907");
+	public static final UUID OPID_Receipt_NotPayedIndication            = UUID.fromString("3323CA57-827F-4EE5-94B7-A01300CDD793");
+	public static final UUID OPID_Receipt_UndoNotPayedIndication        = UUID.fromString("F8C9AB98-5369-45CD-832B-A01300CE5B02");
+	public static final UUID OPID_Receipt_SetReturnToInsurer            = UUID.fromString("9C9369BB-186D-433B-BD7B-A01300CE9125");
+	public static final UUID OPID_Receipt_UndoSetReturnToInsurer        = UUID.fromString("11981877-E4D0-439F-A411-A01300CEBB2C");
+	public static final UUID OPID_Receipt_ReturnToInsurer               = UUID.fromString("A34C65D4-0B2A-4083-BB16-A01300D3D013");
+	public static final UUID OPID_Receipt_DeleteReceipt                 = UUID.fromString("994D421F-E414-41EF-8D02-9F8A00EEE620");
+	public static final UUID OPID_Receipt_ExternResumeReceipt           = UUID.fromString("FFD66FBD-5C98-4134-9B6C-A01300CEE472");
 
 	// Manager Transfer Operations
 	public static final UUID OPID_MgrXFer_AcceptXFer                    = UUID.fromString("8B3AB41F-76F6-4311-8600-9F65014CF682");
