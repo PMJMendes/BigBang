@@ -2689,7 +2689,7 @@ public class SubPolicyServiceImpl
 
 		try
 		{
-			if ( Constants.ObjID_PolicyObject.equals(UUID.fromString(listId)) )
+			if ( Constants.ObjID_SubPolicyObject.equals(UUID.fromString(listId)) )
 				return GetScratchPadStorage().get(UUID.fromString(filterId)).GetObjects();
 
 			if ( Constants.ObjID_PolicyExercise.equals(UUID.fromString(listId)) )
