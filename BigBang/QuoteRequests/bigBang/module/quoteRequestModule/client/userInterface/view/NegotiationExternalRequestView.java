@@ -10,12 +10,18 @@ public class NegotiationExternalRequestView<T> extends ExternalRequestView<T>{
 	@SuppressWarnings("unchecked")
 	public NegotiationExternalRequestView() {
 		super((FormView<T>) new NegotiationForm());
+		
+		setParentHeaderTitle("Ficha da Negociação");
 	}
 
 	@Override
 	protected void initializeView() {
-		// TODO Auto-generated method stub
-		
+		return;
+	}
+	
+	@Override
+	public void setParentHeaderTitle(String title){
+		ownerHeader.setText(title);
 	}
 
 }

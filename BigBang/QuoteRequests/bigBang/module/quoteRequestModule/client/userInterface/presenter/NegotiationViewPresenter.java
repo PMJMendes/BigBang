@@ -182,8 +182,8 @@ public abstract class NegotiationViewPresenter implements ViewPresenter{
 
 	protected void receiveExternalRequest() {
 		NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
-		item.pushIntoStackParameter("display", "negotiationexternalrequest");
-		item.setParameter("negotiationexternalrequestid", "new");
+		item.pushIntoStackParameter("display", "externalrequest");
+		item.setParameter("externalrequestid", "new");
 		NavigationHistoryManager.getInstance().go(item);
 	}
 
@@ -207,6 +207,7 @@ public abstract class NegotiationViewPresenter implements ViewPresenter{
 			view.setToolbarSaveMode(true);
 			view.allowEdit(true);
 			view.allowCancelNegotiation(false);
+			view.allowExternalRequest(false);
 			//TODO BLOCK ALLOW CREATION ON DOCUMENT AND CONTACT LIST -> ventura
 		}else{
 
