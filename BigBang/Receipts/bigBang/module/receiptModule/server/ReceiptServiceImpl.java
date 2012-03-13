@@ -34,6 +34,7 @@ import com.premiumminds.BigBang.Jewel.Objects.Policy;
 import com.premiumminds.BigBang.Jewel.Objects.SubLine;
 import com.premiumminds.BigBang.Jewel.Operations.Receipt.DeleteReceipt;
 import com.premiumminds.BigBang.Jewel.Operations.Receipt.ManageData;
+import com.premiumminds.BigBang.Jewel.Operations.Receipt.TransferToPolicy;
 
 public class ReceiptServiceImpl
 	extends SearchServiceBase
@@ -182,6 +183,42 @@ public class ReceiptServiceImpl
 		}
 
 		return sGetReceipt(receipt.id);
+	}
+
+	public Receipt transferToPolicy(String receiptId, String newPolicyId)
+		throws SessionExpiredException, BigBangException
+	{
+		com.premiumminds.BigBang.Jewel.Objects.Receipt lobjReceipt;
+		TransferToPolicy lopTTP;
+		Policy lobjPolicy;
+
+		if ( Engine.getCurrentUser() == null )
+			throw new SessionExpiredException();
+
+		try
+		{
+			lobjReceipt = com.premiumminds.BigBang.Jewel.Objects.Receipt.GetInstance(Engine.getCurrentNameSpace(),
+					UUID.fromString(receiptId));
+			lobjPolicy = Policy.GetInstance(Engine.getCurrentNameSpace(), UUID.fromString(newPolicyId));
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangException(e.getMessage(), e);
+		}
+
+		lopTTP = new TransferToPolicy(lobjReceipt.GetProcessID());
+		lopTTP.midNewProcess = lobjPolicy.GetProcessID();
+
+		try
+		{
+			lopTTP.Execute();
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangException(e.getMessage(), e);
+		}
+
+		return sGetReceipt(receiptId);
 	}
 
 	public void deleteReceipt(String receiptId)
