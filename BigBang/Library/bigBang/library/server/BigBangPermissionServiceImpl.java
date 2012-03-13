@@ -26,7 +26,7 @@ public class BigBangPermissionServiceImpl
 	public static Permission[] sGetProcessPermissions(UUID pidProcess)
 		throws BigBangException
 	{
-		IProcess lrefProcess;
+		IProcess lobjProcess;
 		UUID lidProfile;
 		IOperation[] larrOps;
 		ArrayList<Permission> larrResult;
@@ -38,9 +38,9 @@ public class BigBangPermissionServiceImpl
 		ldb = null;
 		try
 		{
-			lrefProcess = PNProcess.GetInstance(Engine.getCurrentNameSpace(), pidProcess);
+			lobjProcess = PNProcess.GetInstance(Engine.getCurrentNameSpace(), pidProcess);
 			lidProfile = User.GetInstance(Engine.getCurrentNameSpace(), Engine.getCurrentUser()).getProfile().getKey();
-			larrOps = lrefProcess.GetScript().getOperations();
+			larrOps = lobjProcess.GetScript().getOperations();
 			larrResult = new ArrayList<Permission>();
 			ldb = new MasterDB();
 			for ( i = 0; i < larrOps.length; i++ )
@@ -50,8 +50,9 @@ public class BigBangPermissionServiceImpl
 
 				lobjAux = new Permission();
 				lobjAux.id = larrOps[i].getKey().toString();
-				lobjStep = lrefProcess.GetOperation(larrOps[i].getKey(), ldb);
-				if ( (lobjStep == null) || (Jewel.Petri.Constants.LevelID_Invalid.equals(lobjStep.GetLevel())) )
+				lobjStep = lobjProcess.GetOperation(larrOps[i].getKey(), ldb);
+				if ( (!lobjProcess.IsRunning()) || (lobjStep == null) ||
+						(Jewel.Petri.Constants.LevelID_Invalid.equals(lobjStep.GetLevel())) )
 					lobjAux.instanceId = null;
 				else
 					lobjAux.instanceId = lobjStep.getKey().toString();
