@@ -571,7 +571,7 @@ public class SubPolicyServiceImpl
 			larrResult[0].remapIds = new Remap.RemapId[1];
 			larrResult[0].remapIds[0] = new Remap.RemapId();
 			larrResult[0].remapIds[0].oldId = mid.toString();
-			larrResult[0].remapIds[0].newId = mobjSubPolicy.mid.toString();
+			larrResult[0].remapIds[0].newId = (mobjSubPolicy.mid == null ? null : mobjSubPolicy.mid.toString());
 			larrResult[0].remapIds[0].newIdIsInPad = false;
 
 			larrResult[1] = new Remap();
@@ -581,7 +581,7 @@ public class SubPolicyServiceImpl
 			{
 				larrResult[1].remapIds[i] = new Remap.RemapId();
 				larrResult[1].remapIds[i].oldId = mid.toString() + ":" + i;
-				if ( pbWithCommit && marrObjects.get(i).mbDeleted )
+				if ( (pbWithCommit && marrObjects.get(i).mbDeleted) || (marrObjects.get(i).mid == null) )
 					larrResult[1].remapIds[i].newId = null;
 				else
 					larrResult[1].remapIds[i].newId = marrObjects.get(i).mid.toString();
