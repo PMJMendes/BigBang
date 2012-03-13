@@ -30,4 +30,6 @@ public interface ReceiptService extends SearchService {
 	public Receipt transferToPolicy(String receiptId, String newPolicyId) throws SessionExpiredException, BigBangException;
 
 	public void deleteReceipt(String receiptId) throws SessionExpiredException, BigBangException;
+
+	public Receipt serialCreateReceipt(Receipt receipt, String docushareId) throws SessionExpiredException, BigBangException;
 }

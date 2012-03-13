@@ -12,4 +12,5 @@ public interface ReceiptServiceAsync
 	void editReceipt(Receipt receipt, AsyncCallback<Receipt> callback);
 	void transferToPolicy(String receiptId, String newPolicyId, AsyncCallback<Receipt> callback);
 	void deleteReceipt(String receiptId, AsyncCallback<Void> callback);
+	void serialCreateReceipt(Receipt receipt, String docushareId, AsyncCallback<Receipt> callback);
 }

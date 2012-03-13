@@ -18,6 +18,8 @@ import bigBang.definitions.shared.SearchResult;
 import bigBang.definitions.shared.SortOrder;
 import bigBang.definitions.shared.SortParameter;
 import bigBang.library.server.BigBangPermissionServiceImpl;
+import bigBang.library.server.ContactsServiceImpl;
+import bigBang.library.server.DocumentServiceImpl;
 import bigBang.library.server.SearchServiceBase;
 import bigBang.library.shared.BigBangException;
 import bigBang.library.shared.SessionExpiredException;
@@ -32,6 +34,9 @@ import com.premiumminds.BigBang.Jewel.Objects.Line;
 import com.premiumminds.BigBang.Jewel.Objects.Mediator;
 import com.premiumminds.BigBang.Jewel.Objects.Policy;
 import com.premiumminds.BigBang.Jewel.Objects.SubLine;
+import com.premiumminds.BigBang.Jewel.Operations.ContactOps;
+import com.premiumminds.BigBang.Jewel.Operations.DocOps;
+import com.premiumminds.BigBang.Jewel.Operations.Policy.CreateReceipt;
 import com.premiumminds.BigBang.Jewel.Operations.Receipt.DeleteReceipt;
 import com.premiumminds.BigBang.Jewel.Operations.Receipt.ManageData;
 import com.premiumminds.BigBang.Jewel.Operations.Receipt.TransferToPolicy;
@@ -243,6 +248,72 @@ public class ReceiptServiceImpl
 		{
 			throw new BigBangException(e.getMessage(), e);
 		}
+	}
+
+	public Receipt serialCreateReceipt(Receipt receipt, String docushareId)
+		throws SessionExpiredException, BigBangException
+	{
+		Policy lobjPolicy;
+		CreateReceipt lopCR;
+
+		if ( Engine.getCurrentUser() == null )
+			throw new SessionExpiredException();
+
+		try
+		{
+			lobjPolicy = Policy.GetInstance(Engine.getCurrentNameSpace(), UUID.fromString(receipt.policyId));
+
+			lopCR = new CreateReceipt(lobjPolicy.GetProcessID());
+			lopCR.mobjData = new ReceiptData();
+
+			lopCR.mobjData.mid = null;
+
+			lopCR.mobjData.mstrNumber = receipt.number;
+			lopCR.mobjData.midType = UUID.fromString(receipt.typeId);
+			lopCR.mobjData.mdblTotal = new BigDecimal(receipt.totalPremium);
+			lopCR.mobjData.mdblCommercial = (receipt.salesPremium == null ? null : new BigDecimal(receipt.salesPremium));
+			lopCR.mobjData.mdblCommissions = (receipt.comissions == null ? new BigDecimal(0) : new BigDecimal(receipt.comissions));
+			lopCR.mobjData.mdblRetrocessions = (receipt.retrocessions == null ? new BigDecimal(0) :
+					new BigDecimal(receipt.retrocessions));
+			lopCR.mobjData.mdblFAT = (receipt.FATValue == null ? null : new BigDecimal(receipt.FATValue));
+			lopCR.mobjData.mdtIssue = Timestamp.valueOf(receipt.issueDate + " 00:00:00.0");
+			lopCR.mobjData.mdtMaturity = (receipt.maturityDate == null ? null :
+					Timestamp.valueOf(receipt.maturityDate + " 00:00:00.0"));
+			lopCR.mobjData.mdtEnd = (receipt.endDate == null ? null : Timestamp.valueOf(receipt.endDate + " 00:00:00.0"));
+			lopCR.mobjData.mdtDue = (receipt.dueDate == null ? null : Timestamp.valueOf(receipt.dueDate + " 00:00:00.0"));
+			lopCR.mobjData.midMediator = (receipt.mediatorId == null ? null : UUID.fromString(receipt.mediatorId));
+			lopCR.mobjData.mstrNotes = receipt.notes;
+			lopCR.mobjData.mstrDescription = receipt.description;
+
+			lopCR.mobjData.midManager = ( receipt.managerId == null ? null : UUID.fromString(receipt.managerId) );
+			lopCR.mobjData.midProcess = null;
+
+			lopCR.mobjData.mobjPrevValues = null;
+
+			if ( (receipt.contacts != null) && (receipt.contacts.length > 0) )
+			{
+				lopCR.mobjContactOps = new ContactOps();
+				lopCR.mobjContactOps.marrCreate = ContactsServiceImpl.BuildContactTree(receipt.contacts);
+			}
+			else
+				lopCR.mobjContactOps = null;
+			if ( (receipt.documents != null) && (receipt.documents.length > 0) )
+			{
+				lopCR.mobjDocOps = new DocOps();
+				lopCR.mobjDocOps.marrCreate = DocumentServiceImpl.BuildDocTree(receipt.documents);
+			}
+			else
+				lopCR.mobjDocOps = null;
+
+			lopCR.Execute();
+
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangException(e.getMessage(), e);
+		}
+
+		return sGetReceipt(lopCR.mobjData.mid.toString());
 	}
 
 	protected UUID getObjectID()
