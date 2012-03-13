@@ -19,6 +19,7 @@ import com.premiumminds.BigBang.Jewel.Objects.Document;
 import com.premiumminds.BigBang.Jewel.Objects.Receipt;
 import com.premiumminds.BigBang.Jewel.Operations.ContactOps;
 import com.premiumminds.BigBang.Jewel.Operations.DocOps;
+import com.premiumminds.BigBang.Jewel.Operations.Receipt.ExternResumeReceipt;
 
 public class ExternDeleteReceipt
 	extends UndoableOperation
@@ -158,6 +159,7 @@ public class ExternDeleteReceipt
 	{
 		Receipt lobjAux;
 		PNProcess lobjProcess;
+		ExternResumeReceipt lopERR;
 
 		try
 		{
@@ -179,6 +181,9 @@ public class ExternDeleteReceipt
 		{
 			throw new JewelPetriException(e.getMessage(), e);
 		}
+
+		lopERR = new ExternResumeReceipt(lobjProcess.getKey());
+		TriggerOp(lopERR, pdb);
 	}
 
 	public UndoSet[] GetSets()
