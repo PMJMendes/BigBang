@@ -149,5 +149,6 @@ public class BigBang_Tests
 //		TestReceiptEdit.DoTest();
 //		TestReceiptDelete.DoTest();
 //		TestReceiptChangePolicy.DoTest();
+//		TestReceiptCreateSerial.DoTest();
 	}
 }
