@@ -38,7 +38,7 @@ public class DocuShareConnector
         {
         	try
         	{
-				lrefResult = DSFactory.createServer("192.168.0.3", 1099);
+				lrefResult = DSFactory.createServer("192.168.0.17", 1099);
 			}
         	catch (Throwable e)
         	{
@@ -194,7 +194,7 @@ public class DocuShareConnector
 			larrAux[0].open();
 			try
 			{
-				lobjFile = new FileXfer(lobjAux.getSize(), lobjAux.getContentType(), lobjAux.getOriginalFileName(), larrAux[0]);
+				lobjFile = new FileXfer((int)lobjAux.getSize(), lobjAux.getContentType(), lobjAux.getOriginalFileName(), larrAux[0]);
 			}
 			catch (Throwable e1)
 			{
