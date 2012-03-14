@@ -7,13 +7,18 @@ import Jewel.Petri.SysObjects.JewelPetriException;
 import Jewel.Petri.SysObjects.UndoableOperation;
 
 import com.premiumminds.BigBang.Jewel.Constants;
+import com.premiumminds.BigBang.Jewel.Data.DSBridgeData;
+import com.premiumminds.BigBang.Jewel.Data.DocumentData;
+import com.premiumminds.BigBang.Jewel.Operations.DocOps;
 
 public class TriggerImageOnCreate
 	extends UndoableOperation
 {
 	private static final long serialVersionUID = 1L;
 
+	public transient DSBridgeData mobjImage;
 	private UUID midReceipt;
+	private DocOps mobjDocOps;
 
 	public TriggerImageOnCreate(UUID pidProcess)
 	{
@@ -43,7 +48,26 @@ public class TriggerImageOnCreate
 	protected void Run(SQLServer pdb)
 		throws JewelPetriException
 	{
+		DocumentData lobjDoc;
+
 		midReceipt = GetProcess().GetDataKey();
+
+		lobjDoc = new DocumentData();
+		lobjDoc.mstrName = "Original";
+		lobjDoc.midOwnerType = Constants.ObjID_Receipt;
+		lobjDoc.midOwnerId = null;
+		lobjDoc.midDocType = Constants.DocID_ReceiptScan;
+		lobjDoc.mstrText = null;
+		lobjDoc.mobjDSBridge = new DSBridgeData();
+		lobjDoc.mobjDSBridge.mstrDSHandle = mobjImage.mstrDSHandle;
+		lobjDoc.mobjDSBridge.mstrDSLoc = mobjImage.mstrDSLoc;
+		lobjDoc.mobjDSBridge.mstrDSTitle = null;
+		lobjDoc.mobjDSBridge.mbDelete = true;
+
+		mobjDocOps = new DocOps();
+		mobjDocOps.marrCreate = new DocumentData[] {lobjDoc};
+
+		mobjDocOps.RunSubOp(pdb, midReceipt);
 	}
 
 	public String UndoDesc(String pstrLineBreak)
@@ -59,6 +83,7 @@ public class TriggerImageOnCreate
 	protected void Undo(SQLServer pdb)
 		throws JewelPetriException
 	{
+		mobjDocOps.UndoSubOp(pdb, midReceipt);
 	}
 
 	public UndoSet[] GetSets()

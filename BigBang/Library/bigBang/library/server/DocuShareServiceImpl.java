@@ -246,7 +246,7 @@ public class DocuShareServiceImpl
 
 		try
 		{
-			lobjFile = DocuShareConnector.getItem(pstrItem);
+			lobjFile = DocuShareConnector.getItemAsFile(pstrItem);
 		}
 		catch (Throwable e)
 		{

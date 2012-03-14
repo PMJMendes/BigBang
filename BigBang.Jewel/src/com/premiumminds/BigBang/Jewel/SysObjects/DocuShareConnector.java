@@ -12,6 +12,7 @@ import com.premiumminds.BigBang.Jewel.Constants;
 import com.premiumminds.BigBang.Jewel.Objects.Client;
 import com.premiumminds.BigBang.Jewel.Objects.Policy;
 import com.premiumminds.BigBang.Jewel.Objects.Receipt;
+import com.xerox.docushare.DSClass;
 import com.xerox.docushare.DSContentElement;
 import com.xerox.docushare.DSFactory;
 import com.xerox.docushare.DSHandle;
@@ -22,9 +23,14 @@ import com.xerox.docushare.DSServer;
 import com.xerox.docushare.DSSession;
 import com.xerox.docushare.object.DSCollection;
 import com.xerox.docushare.object.DSDocument;
+import com.xerox.docushare.property.DSLinkDesc;
+import com.xerox.docushare.property.DSProperties;
 
 public class DocuShareConnector
 {
+	private static DSHandle TEMPORARY_SCAN_REPOSITORY = new DSHandle("Collection-59066");
+	private static DSHandle REMOVED_ITEM_REPOSITORY = new DSHandle("Collection-116558");
+
 	private static DSServer GetServer()
 		throws BigBangJewelException
 	{
@@ -124,7 +130,7 @@ public class DocuShareConnector
 		larrItems = new ArrayList<DSObject>();
 
 		if ( pstrFolder == null )
-			lhFolder = new DSHandle("Collection-59066");
+			lhFolder = TEMPORARY_SCAN_REPOSITORY;
 		else
 			lhFolder = new DSHandle(pstrFolder);
 
@@ -175,7 +181,26 @@ public class DocuShareConnector
 		return ( lstrHandle == null ? null : getItemsContext(lstrHandle, true) );
 	}
 
-	public static FileXfer getItem(String pstrItem)
+	public static String getItemTitle(String pstrItem)
+		throws BigBangJewelException
+	{
+		DSSession lrefSession;
+		
+		lrefSession = GetSession();
+		if ( lrefSession == null )
+			return null;
+
+		try
+		{
+			return lrefSession.getObject(new DSHandle(pstrItem)).getTitle();
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangJewelException(e.getMessage(), e);
+		}
+	}
+
+	public static FileXfer getItemAsFile(String pstrItem)
 		throws BigBangJewelException
 	{
 		DSSession lrefSession;
@@ -209,6 +234,65 @@ public class DocuShareConnector
 		}
 
 		return lobjFile;
+	}
+
+	public static void createItem(FileXfer pobjFile, String pstrTitle, String pstrLocation)
+		throws BigBangJewelException
+	{
+		DSSession lrefSession;
+		DSCollection lobjTarget;
+		DSClass lobjClass;
+		DSProperties lobjProps;
+		DSContentElement[] larrContent;
+
+		lrefSession = GetSession();
+		if ( lrefSession == null )
+			return;
+
+		larrContent = new DSContentElement[] {new MemoryContentElement(pobjFile.getFileName(), pobjFile.getData())};
+
+		try
+		{
+			lobjTarget = (DSCollection)lrefSession.getObject((pstrLocation == null ? TEMPORARY_SCAN_REPOSITORY :
+					new DSHandle(pstrLocation)));
+
+			lobjClass = lrefSession.getDSClass(DSDocument.classname);
+			lobjProps = lobjClass.createPrototype();
+			lobjProps.setPropValue("Title", pstrTitle);
+
+			lrefSession.createDocument(lobjProps, null, null, larrContent, pobjFile.getContentType(),
+					DSLinkDesc.containment, lobjTarget, null, null);
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangJewelException(e.getMessage(), e);
+		}
+	}
+
+	public static void moveItem(String pstrItem, String pstrFrom, String pstrTo)
+		throws BigBangJewelException
+	{
+		DSSession lrefSession;
+		DSHandle lhFrom, lhTo;
+		DSObject lobjObject;
+		
+		lrefSession = GetSession();
+		if ( lrefSession == null )
+			return;
+
+		lhFrom = ( pstrFrom == null ? REMOVED_ITEM_REPOSITORY : new DSHandle(pstrFrom) );
+		lhTo = ( pstrTo == null ? REMOVED_ITEM_REPOSITORY : new DSHandle(pstrTo) );
+
+		try
+		{
+			lobjObject = lrefSession.getObject(new DSHandle(pstrItem));
+			lobjObject.addSource(DSLinkDesc.containment, lhTo);
+			lobjObject.removeSource(DSLinkDesc.containment, lhFrom);
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangJewelException(e.getMessage(), e);
+		}
 	}
 
 	public static void deleteItem(String pstrItem)
@@ -386,7 +470,7 @@ public class DocuShareConnector
 
 		if ( pstrFolder == null )
 		{
-			lhFolder = new DSHandle("Collection-59066");
+			lhFolder = TEMPORARY_SCAN_REPOSITORY;
 			pbInjectTSR = false;
 		}
 		else

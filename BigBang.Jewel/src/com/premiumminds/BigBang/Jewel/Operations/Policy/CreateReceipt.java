@@ -11,10 +11,12 @@ import Jewel.Petri.SysObjects.JewelPetriException;
 import Jewel.Petri.SysObjects.Operation;
 
 import com.premiumminds.BigBang.Jewel.Constants;
+import com.premiumminds.BigBang.Jewel.Data.DSBridgeData;
 import com.premiumminds.BigBang.Jewel.Data.ReceiptData;
 import com.premiumminds.BigBang.Jewel.Objects.Receipt;
 import com.premiumminds.BigBang.Jewel.Operations.ContactOps;
 import com.premiumminds.BigBang.Jewel.Operations.DocOps;
+import com.premiumminds.BigBang.Jewel.Operations.Receipt.TriggerImageOnCreate;
 
 public class CreateReceipt
 	extends Operation
@@ -22,6 +24,7 @@ public class CreateReceipt
 	private static final long serialVersionUID = 1L;
 
 	public ReceiptData mobjData;
+	public transient DSBridgeData mobjImage;
 	public ContactOps mobjContactOps;
 	public DocOps mobjDocOps;
 
@@ -70,6 +73,7 @@ public class CreateReceipt
 		Receipt lobjAux;
 		IScript lobjScript;
 		IProcess lobjProc; 
+		TriggerImageOnCreate lopTIOC;
 
 		try
 		{
@@ -99,6 +103,13 @@ public class CreateReceipt
 		catch (Throwable e)
 		{
 			throw new JewelPetriException(e.getMessage(), e);
+		}
+
+		if ( mobjImage != null )
+		{
+			lopTIOC = new TriggerImageOnCreate(lobjProc.getKey());
+			lopTIOC.mobjImage = mobjImage;
+			TriggerOp(lopTIOC, pdb);
 		}
 	}
 }

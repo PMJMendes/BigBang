@@ -5,6 +5,7 @@ import java.util.UUID;
 import Jewel.Engine.Engine;
 import Jewel.Engine.DataAccess.SQLServer;
 import Jewel.Engine.Implementation.Entity;
+import Jewel.Engine.SysObjects.FileXfer;
 import Jewel.Petri.SysObjects.JewelPetriException;
 import Jewel.Petri.SysObjects.SubOperation;
 import Jewel.Petri.SysObjects.UndoableOperation;
@@ -15,6 +16,7 @@ import com.premiumminds.BigBang.Jewel.Data.DocInfoData;
 import com.premiumminds.BigBang.Jewel.Data.DocumentData;
 import com.premiumminds.BigBang.Jewel.Objects.DocInfo;
 import com.premiumminds.BigBang.Jewel.Objects.Document;
+import com.premiumminds.BigBang.Jewel.SysObjects.DocuShareConnector;
 
 public class DocOps
 	extends SubOperation
@@ -338,6 +340,12 @@ public class DocOps
 		DocInfo lobjAuxInfo;
 		int i;
 
+		if ( pobjData.mobjDSBridge != null )
+		{
+			pobjData.mobjFile = DocuShareConnector.getItemAsFile(pobjData.mobjDSBridge.mstrDSHandle).GetVarData();
+			pobjData.mobjDSBridge.mstrDSTitle = DocuShareConnector.getItemTitle(pobjData.mobjDSBridge.mstrDSHandle);
+		}
+
 		lobjAux = Document.GetInstance(Engine.getCurrentNameSpace(), (UUID)null);
 		pobjData.midOwnerId = pidOwner;
 		pobjData.ToObject(lobjAux);
@@ -371,6 +379,14 @@ public class DocOps
 		}
 
 		pobjData.mobjPrevValues = null;
+
+		if ( pobjData.mobjDSBridge != null )
+		{
+			if ( pobjData.mobjDSBridge.mbDelete )
+				DocuShareConnector.deleteItem(pobjData.mobjDSBridge.mstrDSHandle);
+			else
+				DocuShareConnector.moveItem(pobjData.mobjDSBridge.mstrDSHandle, pobjData.mobjDSBridge.mstrDSLoc, null);
+		}
 	}
 
 	private void ModifyDocument(SQLServer pdb, DocumentData pobjData)
@@ -489,6 +505,15 @@ public class DocOps
 		Entity lrefDocuments;
 		Entity lrefDocInfo;
 		int i;
+
+		if ( pobjData.mobjDSBridge != null )
+		{
+			if ( pobjData.mobjDSBridge.mbDelete )
+				DocuShareConnector.createItem(new FileXfer(pobjData.mobjFile), pobjData.mobjDSBridge.mstrDSTitle,
+						pobjData.mobjDSBridge.mstrDSLoc);
+			else
+				DocuShareConnector.moveItem(pobjData.mobjDSBridge.mstrDSHandle, null, pobjData.mobjDSBridge.mstrDSLoc);
+		}
 
 		try
 		{

@@ -422,7 +422,8 @@ public class Constants
 	public static final UUID CInfoID_Email = UUID.fromString("96467849-6FE1-4113-928C-9EDF00F40FB9");
 
 	// Document Types
-	public static final UUID DocID_DebitNote = UUID.fromString("785739A7-648C-4B51-9610-9FF10128C5CE");
+	public static final UUID DocID_DebitNote   = UUID.fromString("785739A7-648C-4B51-9610-9FF10128C5CE");
+	public static final UUID DocID_ReceiptScan = UUID.fromString("041C081D-518F-4890-BEBF-A014011EFC8D");
 
 	// FK Constants
 	public static final int FKCostCenter_In_UserDecoration = 2;

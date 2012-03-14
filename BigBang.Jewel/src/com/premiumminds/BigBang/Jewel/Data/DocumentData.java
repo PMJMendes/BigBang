@@ -26,6 +26,8 @@ public class DocumentData
 
 	public DocumentData mobjPrevValues;
 
+	public DSBridgeData mobjDSBridge;
+
 	public void FromObject(ObjectBase pobjSource)
 	{
 		mid = pobjSource.getKey();

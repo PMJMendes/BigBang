@@ -11,6 +11,7 @@ import Jewel.Engine.Interfaces.IEntity;
 import Jewel.Engine.SysObjects.ObjectBase;
 import Jewel.Petri.Interfaces.IProcess;
 import Jewel.Petri.Objects.PNProcess;
+import bigBang.definitions.shared.DocuShareItem;
 import bigBang.definitions.shared.Receipt;
 import bigBang.definitions.shared.ReceiptStub;
 import bigBang.definitions.shared.SearchParameter;
@@ -28,6 +29,7 @@ import bigBang.module.receiptModule.shared.ReceiptSearchParameter;
 import bigBang.module.receiptModule.shared.ReceiptSortParameter;
 
 import com.premiumminds.BigBang.Jewel.Constants;
+import com.premiumminds.BigBang.Jewel.Data.DSBridgeData;
 import com.premiumminds.BigBang.Jewel.Data.ReceiptData;
 import com.premiumminds.BigBang.Jewel.Objects.Client;
 import com.premiumminds.BigBang.Jewel.Objects.Line;
@@ -250,7 +252,7 @@ public class ReceiptServiceImpl
 		}
 	}
 
-	public Receipt serialCreateReceipt(Receipt receipt, String docushareId)
+	public Receipt serialCreateReceipt(Receipt receipt, DocuShareItem source)
 		throws SessionExpiredException, BigBangException
 	{
 		Policy lobjPolicy;
@@ -290,6 +292,17 @@ public class ReceiptServiceImpl
 
 			lopCR.mobjData.mobjPrevValues = null;
 
+			if ( source != null )
+			{
+				lopCR.mobjImage = new DSBridgeData();
+				lopCR.mobjImage.mstrDSHandle = source.handle;
+				lopCR.mobjImage.mstrDSLoc = source.locationHandle;
+				lopCR.mobjImage.mstrDSTitle = null;
+				lopCR.mobjImage.mbDelete = true;
+			}
+			else
+				lopCR.mobjImage = null;
+
 			if ( (receipt.contacts != null) && (receipt.contacts.length > 0) )
 			{
 				lopCR.mobjContactOps = new ContactOps();
@@ -297,6 +310,7 @@ public class ReceiptServiceImpl
 			}
 			else
 				lopCR.mobjContactOps = null;
+
 			if ( (receipt.documents != null) && (receipt.documents.length > 0) )
 			{
 				lopCR.mobjDocOps = new DocOps();

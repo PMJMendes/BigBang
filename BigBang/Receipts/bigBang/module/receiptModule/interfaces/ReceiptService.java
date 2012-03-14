@@ -1,5 +1,6 @@
 package bigBang.module.receiptModule.interfaces;
 
+import bigBang.definitions.shared.DocuShareItem;
 import bigBang.definitions.shared.Receipt;
 import bigBang.library.interfaces.SearchService;
 import bigBang.library.shared.BigBangException;
@@ -31,5 +32,5 @@ public interface ReceiptService extends SearchService {
 
 	public void deleteReceipt(String receiptId) throws SessionExpiredException, BigBangException;
 
-	public Receipt serialCreateReceipt(Receipt receipt, String docushareId) throws SessionExpiredException, BigBangException;
+	public Receipt serialCreateReceipt(Receipt receipt, DocuShareItem source) throws SessionExpiredException, BigBangException;
 }

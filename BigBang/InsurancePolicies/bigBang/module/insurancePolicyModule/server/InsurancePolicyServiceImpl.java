@@ -3547,6 +3547,8 @@ public class InsurancePolicyServiceImpl
 
 			lopCR.mobjData.mobjPrevValues = null;
 
+			lopCR.mobjImage = null;
+
 			if ( (receipt.contacts != null) && (receipt.contacts.length > 0) )
 			{
 				lopCR.mobjContactOps = new ContactOps();
