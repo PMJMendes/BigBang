@@ -36,6 +36,8 @@ public class ExchangeItemSelectionViewPresenter implements ViewPresenter,
 		Widget asWidget();
 
 		void addEmailEntry(ExchangeItemStub email);
+
+		void clear();
 		
 	}
 	
@@ -69,6 +71,8 @@ public class ExchangeItemSelectionViewPresenter implements ViewPresenter,
 	@Override
 	public void setParameters(HasParameters parameterHolder) {
 	
+		view.clear();
+		
 		service.getItems(new BigBangAsyncCallback<ExchangeItemStub[]>() {
 
 			@Override
@@ -83,9 +87,6 @@ public class ExchangeItemSelectionViewPresenter implements ViewPresenter,
 			public void onResponseFailure(Throwable caught) {
 				super.onResponseFailure(caught);
 			};
-		
-		
-		
 		});
 		
 	}

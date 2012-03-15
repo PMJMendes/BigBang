@@ -90,9 +90,9 @@ public class IncomingMessageFormField extends FormField<IncomingMessage>{
 		wrapper.add(noteOrEmail);
 		popup = new PopupPanel();
 		ExchangeItemSelectionView itemView = (ExchangeItemSelectionView) GWT.create(ExchangeItemSelectionView.class);
-		ExchangeItemSelectionViewPresenter presenter = new ExchangeItemSelectionViewPresenter(itemView);
+		final ExchangeItemSelectionViewPresenter presenter = new ExchangeItemSelectionViewPresenter(itemView);
 		presenter.go(popup);
-		presenter.setParameters(null);
+		
 		
 		presenter.addValueChangeHandler(new ValueChangeHandler<IncomingMessage>() {
 			
@@ -108,6 +108,7 @@ public class IncomingMessageFormField extends FormField<IncomingMessage>{
 			@Override
 			public void onClick(ClickEvent event) {
 				popup.center();
+				presenter.setParameters(null);
 			}
 		});
 		
