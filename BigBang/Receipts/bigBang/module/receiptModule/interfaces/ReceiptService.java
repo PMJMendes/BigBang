@@ -27,6 +27,7 @@ public interface ReceiptService extends SearchService {
 	public Receipt getReceipt(String receiptId) throws SessionExpiredException, BigBangException;
 
 	public Receipt editReceipt(Receipt receipt) throws SessionExpiredException, BigBangException;
+	public Receipt receiveImage(String receiptId, DocuShareItem source) throws SessionExpiredException, BigBangException;
 
 	public Receipt transferToPolicy(String receiptId, String newPolicyId) throws SessionExpiredException, BigBangException;
 

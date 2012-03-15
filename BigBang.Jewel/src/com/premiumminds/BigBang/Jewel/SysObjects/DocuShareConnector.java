@@ -241,8 +241,8 @@ public class DocuShareConnector
 	{
 		DSSession lrefSession;
 		DSCollection lobjTarget;
-		DSClass lobjClass;
-		DSProperties lobjProps;
+		DSClass lobjDocClass;
+		DSProperties lobjDocProps;
 		DSContentElement[] larrContent;
 
 		lrefSession = GetSession();
@@ -256,11 +256,11 @@ public class DocuShareConnector
 			lobjTarget = (DSCollection)lrefSession.getObject((pstrLocation == null ? TEMPORARY_SCAN_REPOSITORY :
 					new DSHandle(pstrLocation)));
 
-			lobjClass = lrefSession.getDSClass(DSDocument.classname);
-			lobjProps = lobjClass.createPrototype();
-			lobjProps.setPropValue("Title", pstrTitle);
+			lobjDocClass = lrefSession.getDSClass(DSDocument.classname);
+			lobjDocProps = lobjDocClass.createPrototype();
+			lobjDocProps.setPropValue("title", pstrTitle);
 
-			lrefSession.createDocument(lobjProps, null, null, larrContent, pobjFile.getContentType(),
+			lrefSession.createDocument(lobjDocProps, null, null, larrContent, pobjFile.getContentType(),
 					DSLinkDesc.containment, lobjTarget, null, null);
 		}
 		catch (Throwable e)

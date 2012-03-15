@@ -41,6 +41,7 @@ import com.premiumminds.BigBang.Jewel.Operations.DocOps;
 import com.premiumminds.BigBang.Jewel.Operations.Policy.CreateReceipt;
 import com.premiumminds.BigBang.Jewel.Operations.Receipt.DeleteReceipt;
 import com.premiumminds.BigBang.Jewel.Operations.Receipt.ManageData;
+import com.premiumminds.BigBang.Jewel.Operations.Receipt.ReceiveImage;
 import com.premiumminds.BigBang.Jewel.Operations.Receipt.TransferToPolicy;
 
 public class ReceiptServiceImpl
@@ -49,10 +50,9 @@ public class ReceiptServiceImpl
 {
 	private static final long serialVersionUID = 1L;
 
-	public static Receipt sGetReceipt(String receiptId)
+	public static Receipt sGetReceipt(UUID pidReceipt)
 		throws BigBangException
 	{
-		UUID lid;
 		com.premiumminds.BigBang.Jewel.Objects.Receipt lobjReceipt;
 		Receipt lobjResult;
 		IProcess lobjProc;
@@ -64,10 +64,9 @@ public class ReceiptServiceImpl
 		ObjectBase lobjCategory;
 		ObjectBase lobjType;
 
-		lid = UUID.fromString(receiptId);
 		try
 		{
-			lobjReceipt = com.premiumminds.BigBang.Jewel.Objects.Receipt.GetInstance(Engine.getCurrentNameSpace(), lid);
+			lobjReceipt = com.premiumminds.BigBang.Jewel.Objects.Receipt.GetInstance(Engine.getCurrentNameSpace(), pidReceipt);
 			if ( lobjReceipt.GetProcessID() == null )
 				throw new BigBangException("Erro: Recibo sem processo de suporte. (Recibo n. "
 						+ lobjReceipt.getAt(0).toString() + ")");
@@ -137,7 +136,7 @@ public class ReceiptServiceImpl
 		if ( Engine.getCurrentUser() == null )
 			throw new SessionExpiredException();
 
-		return sGetReceipt(receiptId);
+		return sGetReceipt(UUID.fromString(receiptId));
 	}
 
 	public Receipt editReceipt(Receipt receipt)
@@ -189,7 +188,45 @@ public class ReceiptServiceImpl
 			throw new BigBangException(e.getMessage(), e);
 		}
 
-		return sGetReceipt(receipt.id);
+		return sGetReceipt(UUID.fromString(receipt.id));
+	}
+
+	public Receipt receiveImage(String receiptId, DocuShareItem source)
+		throws SessionExpiredException, BigBangException
+	{
+		com.premiumminds.BigBang.Jewel.Objects.Receipt lobjReceipt;
+		ReceiveImage lopRI;
+
+		if ( Engine.getCurrentUser() == null )
+			throw new SessionExpiredException();
+
+		try
+		{
+			lobjReceipt = com.premiumminds.BigBang.Jewel.Objects.Receipt.GetInstance(Engine.getCurrentNameSpace(),
+					UUID.fromString(receiptId));
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangException(e.getMessage(), e);
+		}
+
+		lopRI = new ReceiveImage(lobjReceipt.GetProcessID());
+		lopRI.mobjImage = new DSBridgeData();
+		lopRI.mobjImage.mstrDSHandle = source.handle;
+		lopRI.mobjImage.mstrDSLoc = source.locationHandle;
+		lopRI.mobjImage.mstrDSTitle = null;
+		lopRI.mobjImage.mbDelete = true;
+
+		try
+		{
+			lopRI.Execute();
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangException(e.getMessage(), e);
+		}
+
+		return sGetReceipt(lobjReceipt.getKey());
 	}
 
 	public Receipt transferToPolicy(String receiptId, String newPolicyId)
@@ -225,7 +262,7 @@ public class ReceiptServiceImpl
 			throw new BigBangException(e.getMessage(), e);
 		}
 
-		return sGetReceipt(receiptId);
+		return sGetReceipt(UUID.fromString(receiptId));
 	}
 
 	public void deleteReceipt(String receiptId)
@@ -327,7 +364,7 @@ public class ReceiptServiceImpl
 			throw new BigBangException(e.getMessage(), e);
 		}
 
-		return sGetReceipt(lopCR.mobjData.mid.toString());
+		return sGetReceipt(lopCR.mobjData.mid);
 	}
 
 	protected UUID getObjectID()

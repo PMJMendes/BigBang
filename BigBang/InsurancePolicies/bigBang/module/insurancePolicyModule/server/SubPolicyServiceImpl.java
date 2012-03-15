@@ -3112,7 +3112,7 @@ public class SubPolicyServiceImpl
 			throw new BigBangException(e.getMessage(), e);
 		}
 
-		return ReceiptServiceImpl.sGetReceipt(lopCR.mobjData.mid.toString());
+		return ReceiptServiceImpl.sGetReceipt(lopCR.mobjData.mid);
 	}
 
 	public void deleteSubPolicy(String policyId, String reason)

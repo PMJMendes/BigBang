@@ -43,6 +43,9 @@ public class MemoryContentElement
 	public void open()
 		throws DSContentElementException
 	{
+		if ( marrData == null )
+			marrData = new byte[0];
+
 		lstream = new ByteArrayInputStream(marrData);
 	}
 
@@ -64,18 +67,27 @@ public class MemoryContentElement
 	public long getContentLength()
 		throws DSContentElementException
 	{
+		if ( marrData == null )
+			marrData = new byte[0];
+
 		return marrData.length;
 	}
 
 	public int read(byte[] arg0, int arg1, int arg2)
 		throws IOException, DSContentElementException
 	{
+		if ( !isOpen() )
+			open();
+
 		return lstream.read(arg0, arg1, arg2);
 	}
 
 	public int read(byte[] arg0)
 		throws IOException, DSContentElementException
 	{
+		if ( !isOpen() )
+			open();
+
 		return lstream.read(arg0);
 	}
 
@@ -97,12 +109,18 @@ public class MemoryContentElement
 	public int available()
 		throws IOException, DSContentElementException
 	{
+		if ( !isOpen() )
+			open();
+
 		return lstream.available();
 	}
 
 	public void close()
 		throws IOException, DSContentElementException
 	{
+		if ( !isOpen() )
+			open();
+
 		lstream.close();
 		lstream = null;
 		marrData = null;
@@ -111,6 +129,9 @@ public class MemoryContentElement
 	public void close(boolean arg0)
 		throws IOException, DSContentElementException
 	{
+		if ( !isOpen() )
+			open();
+
 		lstream.close();
 		lstream = null;
 		if ( arg0 )
@@ -120,18 +141,27 @@ public class MemoryContentElement
 	public int read()
 		throws IOException, DSContentElementException
 	{
+		if ( !isOpen() )
+			open();
+
 		return lstream.read();
 	}
 
 	public void reset()
 		throws IOException, DSContentElementException
 	{
+		if ( !isOpen() )
+			open();
+
 		lstream.reset();
 	}
 
 	public long skip(long arg0)
 		throws IOException, DSContentElementException
 	{
+		if ( !isOpen() )
+			open();
+
 		return lstream.skip(arg0);
 	}
 }

@@ -3572,7 +3572,7 @@ public class InsurancePolicyServiceImpl
 			throw new BigBangException(e.getMessage(), e);
 		}
 
-		return ReceiptServiceImpl.sGetReceipt(lopCR.mobjData.mid.toString());
+		return ReceiptServiceImpl.sGetReceipt(lopCR.mobjData.mid);
 	}
 
 	public Negotiation createNegotiation(Negotiation negotiation)
