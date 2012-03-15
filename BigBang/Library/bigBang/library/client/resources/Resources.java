@@ -50,6 +50,9 @@ public interface Resources extends ClientBundle {
 	@Source("images/arrowUp1.png")
 	ImageResource arrowUpExpand();
 	
+	@Source("images/icon_attachment.gif")
+	ImageResource icon_attachment();
+	
 
 	//CONTACTS
 	@Source("images/contactsIcon.png")
