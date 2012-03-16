@@ -153,5 +153,6 @@ public class BigBang_Tests
 //		TestReceiptReceiveImage.DoTest();
 //		TestReceiptDebitNote.DoTest();
 //		TestReceiptValidate.DoTest();
+//		TestReceiptSetReturn.DoTest();
 	}
 }
