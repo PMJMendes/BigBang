@@ -18,6 +18,7 @@ public class AssociateWithDebitNote
 
 	public UUID midDebitNote;
 	private UUID midReceipt;
+	private String mstrDebitNote;
 
 	public AssociateWithDebitNote(UUID pidProcess)
 	{
@@ -36,7 +37,8 @@ public class AssociateWithDebitNote
 
 	public String LongDesc(String pstrLineBreak)
 	{
-		return "O recibo foi considerado pago por associação com a Nota de Débito n. " + " paga aquando da criação da apólice.";
+		return "O recibo foi considerado pago por associação com a Nota de Débito n. " + mstrDebitNote +
+				", paga aquando da criação da apólice.";
 	}
 
 	public UUID GetExternalProcess()
@@ -82,6 +84,7 @@ public class AssociateWithDebitNote
 		try
 		{
 			lobjNote = DebitNote.GetInstance(Engine.getCurrentNameSpace(), midDebitNote);
+			mstrDebitNote = lobjNote.getLabel();
 			lobjNote.setAt(5, null);
 			lobjNote.setAt(6, null);
 			lobjNote.SaveToDb(pdb);

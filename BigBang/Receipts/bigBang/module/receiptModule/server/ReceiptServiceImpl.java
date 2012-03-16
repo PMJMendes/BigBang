@@ -17,6 +17,7 @@ import Jewel.Petri.Objects.PNProcess;
 import bigBang.definitions.shared.DebitNote;
 import bigBang.definitions.shared.DocuShareItem;
 import bigBang.definitions.shared.Receipt;
+import bigBang.definitions.shared.Receipt.ReturnMessage;
 import bigBang.definitions.shared.ReceiptStub;
 import bigBang.definitions.shared.SearchParameter;
 import bigBang.definitions.shared.SearchResult;
@@ -47,6 +48,7 @@ import com.premiumminds.BigBang.Jewel.Operations.Receipt.AssociateWithDebitNote;
 import com.premiumminds.BigBang.Jewel.Operations.Receipt.DeleteReceipt;
 import com.premiumminds.BigBang.Jewel.Operations.Receipt.ManageData;
 import com.premiumminds.BigBang.Jewel.Operations.Receipt.ReceiveImage;
+import com.premiumminds.BigBang.Jewel.Operations.Receipt.SetReturnToInsurer;
 import com.premiumminds.BigBang.Jewel.Operations.Receipt.TransferToPolicy;
 import com.premiumminds.BigBang.Jewel.Operations.Receipt.ValidateReceipt;
 
@@ -268,7 +270,7 @@ public class ReceiptServiceImpl
 			throw new BigBangException(e.getMessage(), e);
 		}
 
-		return sGetReceipt(UUID.fromString(receiptId));
+		return sGetReceipt(lobjReceipt.getKey());
 	}
 
 	public Receipt validateReceipt(String receiptId)
@@ -301,7 +303,42 @@ public class ReceiptServiceImpl
 			throw new BigBangException(e.getMessage(), e);
 		}
 
-		return sGetReceipt(UUID.fromString(receiptId));
+		return sGetReceipt(lobjReceipt.getKey());
+	}
+
+	public Receipt setForReturn(ReturnMessage message)
+		throws SessionExpiredException, BigBangException
+	{
+		com.premiumminds.BigBang.Jewel.Objects.Receipt lobjReceipt;
+		SetReturnToInsurer lopSRTI;
+
+		if ( Engine.getCurrentUser() == null )
+			throw new SessionExpiredException();
+
+		try
+		{
+			lobjReceipt = com.premiumminds.BigBang.Jewel.Objects.Receipt.GetInstance(Engine.getCurrentNameSpace(),
+					UUID.fromString(message.receiptId));
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangException(e.getMessage(), e);
+		}
+
+		lopSRTI = new SetReturnToInsurer(lobjReceipt.GetProcessID());
+		lopSRTI.mstrSubject = message.subject;
+		lopSRTI.mstrText = message.text;
+
+		try
+		{
+			lopSRTI.Execute();
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangException(e.getMessage(), e);
+		}
+
+		return sGetReceipt(lobjReceipt.getKey());
 	}
 
 	public DebitNote[] getRelevantDebitNotes(String receiptId)
@@ -450,7 +487,7 @@ public class ReceiptServiceImpl
 			throw new BigBangException(e.getMessage(), e);
 		}
 
-		return sGetReceipt(UUID.fromString(receiptId));
+		return sGetReceipt(lobjReceipt.getKey());
 	}
 
 	public void deleteReceipt(String receiptId)

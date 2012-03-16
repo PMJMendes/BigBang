@@ -32,6 +32,7 @@ public interface ReceiptService extends SearchService {
 	public Receipt transferToPolicy(String receiptId, String newPolicyId) throws SessionExpiredException, BigBangException;
 
 	public Receipt validateReceipt(String receiptId) throws SessionExpiredException, BigBangException;
+	public Receipt setForReturn(Receipt.ReturnMessage message) throws SessionExpiredException, BigBangException;
 
 	public DebitNote[] getRelevantDebitNotes(String receiptId) throws SessionExpiredException, BigBangException;
 	public Receipt associateWithDebitNote(String receiptId, String debitNoteId) throws SessionExpiredException, BigBangException;

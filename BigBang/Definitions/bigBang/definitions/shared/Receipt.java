@@ -1,10 +1,22 @@
 package bigBang.definitions.shared;
 
+import java.io.Serializable;
+
 public class Receipt
 	extends ReceiptStub
 {
 	private static final long serialVersionUID = 1L;
-	
+
+	public static class ReturnMessage
+		implements Serializable
+	{
+		private static final long serialVersionUID = 1L;
+
+		public String receiptId;
+		public String subject; //Subject e text vêm do typified texts
+		public String text;
+	}
+
 	public String salesPremium;
 	public String comissions;
 	public String retrocessions;
