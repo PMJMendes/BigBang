@@ -401,7 +401,7 @@ public abstract class DocumentSections{
 					|| mimeType.equalsIgnoreCase("application/vnd.ms-excel")
 					|| mimeType.equalsIgnoreCase("application/x-excel")
 					|| mimeType.equalsIgnoreCase("application/x-msexcel")){
-				mimeImage = resources.pdfIcon();
+				mimeImage = resources.xlsIcon();
 			}
 			else if(mimeType.equalsIgnoreCase("application/msword")){
 				mimeImage = resources.docIcon();

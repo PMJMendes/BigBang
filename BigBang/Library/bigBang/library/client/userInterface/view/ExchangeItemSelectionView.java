@@ -1,85 +1,116 @@
 package bigBang.library.client.userInterface.view;
 
-import com.google.gwt.core.client.GWT;
-import com.google.gwt.dom.client.Style.FontStyle;
-import com.google.gwt.dom.client.Style.Unit;
-import com.google.gwt.resources.client.ImageResource;
-import com.google.gwt.user.client.ui.HorizontalPanel;
-import com.google.gwt.user.client.ui.Image;
-import com.google.gwt.user.client.ui.Label;
-import com.google.gwt.user.client.ui.SplitLayoutPanel;
-import com.google.gwt.user.client.ui.VerticalPanel;
-
+import bigBang.definitions.shared.BigBangConstants;
+import bigBang.definitions.shared.IncomingMessage.AttachmentUpgrade;
+import bigBang.library.client.HasValueSelectables;
+import bigBang.library.client.event.ActionInvokedEvent;
+import bigBang.library.client.event.ActionInvokedEventHandler;
+import bigBang.library.client.event.CheckedStateChangedEvent;
+import bigBang.library.client.event.CheckedStateChangedEventHandler;
 import bigBang.library.client.resources.Resources;
-import bigBang.library.client.userInterface.DatePickerFormField;
 import bigBang.library.client.userInterface.ExchangeItemSelectionToolbar;
 import bigBang.library.client.userInterface.ExpandableListBoxFormField;
 import bigBang.library.client.userInterface.FilterableList;
 import bigBang.library.client.userInterface.ListEntry;
 import bigBang.library.client.userInterface.ListHeader;
-import bigBang.library.client.userInterface.TextAreaFormField;
 import bigBang.library.client.userInterface.TextBoxFormField;
 import bigBang.library.client.userInterface.presenter.ExchangeItemSelectionViewPresenter;
+import bigBang.library.client.userInterface.presenter.ExchangeItemSelectionViewPresenter.Action;
 import bigBang.library.shared.AttachmentStub;
 import bigBang.library.shared.ExchangeItem;
 import bigBang.library.shared.ExchangeItemStub;
+
+import com.google.gwt.core.client.GWT;
+import com.google.gwt.dom.client.Style.FontStyle;
+import com.google.gwt.dom.client.Style.Unit;
+import com.google.gwt.resources.client.ImageResource;
+import com.google.gwt.user.client.ui.HTML;
+import com.google.gwt.user.client.ui.HasValue;
+import com.google.gwt.user.client.ui.HorizontalPanel;
+import com.google.gwt.user.client.ui.Image;
+import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.SplitLayoutPanel;
+import com.google.gwt.user.client.ui.VerticalPanel;
+import com.sun.xml.internal.bind.v2.runtime.unmarshaller.XsiNilLoader.Array;
 
 public class ExchangeItemSelectionView extends View implements ExchangeItemSelectionViewPresenter.Display{
 
 	FilterableList<ExchangeItemStub> emails;
 	FilterableList<AttachmentStub> attachments;
-	
-	protected TextBoxFormField chosenFrom;
-	protected DatePickerFormField chosenTimestamp;
-	protected TextBoxFormField chosenSubject;
-	protected TextAreaFormField body;
+	ExchangeItemForm centerForm;
+	private ActionInvokedEventHandler<Action> actionHandler;
+
 	private ExchangeItemSelectionToolbar toolbar;
-	
+
 	public static class AttachmentEntry extends ListEntry<AttachmentStub>{
-		
+
 		protected TextBoxFormField docName;
 		protected ExpandableListBoxFormField docType;
 		protected Image mimeImg;
 		protected Label filename;
-		protected Label size;
 		protected boolean initialized = false;
-		
+
+		public HasValue<String> getDocName(){
+			return docName;
+		}
+
+		public HasValue<String> getDocType(){
+			return docType;
+		}
+
 		public AttachmentEntry(AttachmentStub value) {
 			super(value);
 			setInfo(value);
-			setHeight("65px");
+			setHeight("75px");
 		}
 
 		public void setInfo(AttachmentStub item){
 			if(!initialized){
 				docName = new TextBoxFormField("Nome do documento");
-				docType = new ExpandableListBoxFormField("Tipo de documento");
+				docName.setFieldWidth("200px");
+				docName.setReadOnly(true);
+				docType = new ExpandableListBoxFormField(BigBangConstants.TypifiedListIds.DOCUMENT_TYPE, "Tipo de documento");
+				docType.setReadOnly(true);
 				mimeImg = new Image();
 				filename = getFormatedLabel();
-				size = getFormatedLabel();
-				
+				filename.getElement().getStyle().setFontSize(11, Unit.PX);
+
 				VerticalPanel wrapper = new VerticalPanel();
-				
+				this.setWidget(wrapper);
 				HorizontalPanel top = new HorizontalPanel();
 				top.add(docName);
 				top.add(docType);
-				
+
 				HorizontalPanel bottom = new HorizontalPanel();
 				bottom.add(mimeImg);
 				bottom.add(filename);
-				bottom.add(size);
-				
+
+
+				addCheckedStateChangedEventHandler(new CheckedStateChangedEventHandler() {
+
+					@Override
+					public void onCheckedStateChanged(CheckedStateChangedEvent event) {
+						docName.setReadOnly(!event.getChecked());
+						docType.setReadOnly(!event.getChecked());
+						if(!event.getChecked()){
+							docName.clear();
+							docType.clear();
+						}
+					}
+				});
+
 				wrapper.add(top);
 				wrapper.add(bottom);
 			}
-			
+
 			mimeImg.setResource(getMimeImage(item.mimeType));
-			filename.setText(item.fileName);
-			size.setText(item.size+ " kb");
-			
-			
+			mimeImg.setSize("18px", "18px");
+			filename.setText(item.fileName + " (" + item.size + "kb)");
+
+			setMetaData(new String[]{item.fileName});
+
 		}
-		
+
 		public ImageResource getMimeImage(String mimeType) {
 
 			Resources resources = GWT.create(Resources.class);
@@ -95,7 +126,7 @@ public class ExchangeItemSelectionView extends View implements ExchangeItemSelec
 					|| mimeType.equalsIgnoreCase("application/vnd.ms-excel")
 					|| mimeType.equalsIgnoreCase("application/x-excel")
 					|| mimeType.equalsIgnoreCase("application/x-msexcel")){
-				mimeImage = resources.pdfIcon();
+				mimeImage = resources.xlsIcon();
 			}
 			else if(mimeType.equalsIgnoreCase("application/msword")){
 				mimeImage = resources.docIcon();
@@ -121,28 +152,29 @@ public class ExchangeItemSelectionView extends View implements ExchangeItemSelec
 			}
 			else
 				mimeImage = resources.fileIcon();
-			
+
 			mimeImg.getElement().getStyle().setMarginLeft(5, Unit.PX);
-			
+
 			return mimeImage;
 		}
 
 	}
-	
+
 	public static class EmailEntry extends ListEntry<ExchangeItemStub>{
 
 		protected Label from;
 		protected Label timestamp;
+		protected Image hasAttachments;
 		protected Label subject;
-		protected Label bodyPreview;
+		protected HTML bodyPreview;
 		protected boolean initialized = false;
-		
+
 		public EmailEntry(ExchangeItemStub value) {
 			super(value);
 			setInfo(value);
-			setHeight("65px");
+			setHeight("70px");
 		}
-		
+
 		public void setInfo(ExchangeItemStub item){
 			if(!initialized){
 				from = getFormatedLabel();
@@ -152,40 +184,49 @@ public class ExchangeItemSelectionView extends View implements ExchangeItemSelec
 				HorizontalPanel top = new HorizontalPanel();
 				top.add(from);
 				top.add(timestamp);
-				top.setCellWidth(from, "80%");
-				top.setCellWidth(timestamp, "20%");
-				
+				if(item.attachmentCount > 0){
+					Resources resources = GWT.create(Resources.class);
+					hasAttachments = new Image(resources.icon_attachment());
+					top.add(hasAttachments);
+				}
+				top.setCellWidth(from, "200px");
+				top.setCellWidth(timestamp, "150px");
+
 				subject = getFormatedLabel();
 				subject.getElement().getStyle().setFontSize(11, Unit.PX);
-				
-				bodyPreview = getFormatedLabel();
+
+				bodyPreview = new HTML();
 				bodyPreview.getElement().getStyle().setFontSize(10, Unit.PX);
 				bodyPreview.getElement().getStyle().setFontStyle(FontStyle.OBLIQUE);
-				
+
 				VerticalPanel container = new VerticalPanel();
+				this.setWidget(container);
 				container.setSize("100%", "100%");
-				
+
+
 				container.add(top);
 				container.add(subject);
 				container.add(bodyPreview);
-				
+				container.setCellHeight(bodyPreview, "100%");
+
 				initialized = true;
 			}
-			from.setText("De: "+item.from);
+			from.setText(item.from);
 			timestamp.setText(item.timestamp);
 			subject.setText(item.subject);
-			bodyPreview.setText(item.bodyPreview);
-			
+			bodyPreview.setWordWrap(true);
+			bodyPreview.setHTML(item.bodyPreview);
+
+			setMetaData(new String[]{item.from, item.subject, item.timestamp});
 		}
 	}
-	
-	
+
+
 	public ExchangeItemSelectionView(){
 
 		SplitLayoutPanel wrapper = new SplitLayoutPanel();
 		initWidget(wrapper);
-		wrapper.setSize("900px", "650px");
-		
+		wrapper.setSize("1220px", "650px");
 		//LEFT
 		VerticalPanel leftWrapper = new VerticalPanel();
 		leftWrapper.setSize("100%", "100%");
@@ -195,9 +236,9 @@ public class ExchangeItemSelectionView extends View implements ExchangeItemSelec
 		emails.showFilterField(false);
 		leftWrapper.add(emails);
 		leftWrapper.setCellHeight(emails, "100%");
-		wrapper.addWest(leftWrapper, 200);
-		
-		
+		wrapper.addWest(leftWrapper, 330);
+
+
 		//RIGHT
 		SplitLayoutPanel insideWrapper = new SplitLayoutPanel();
 		VerticalPanel rightWrapper = new VerticalPanel();
@@ -209,71 +250,130 @@ public class ExchangeItemSelectionView extends View implements ExchangeItemSelec
 		attachments.showFilterField(false);
 		rightWrapper.add(attachments);
 		rightWrapper.setCellHeight(attachments, "100%");
-		insideWrapper.addEast(rightWrapper, 200);
-		
+		insideWrapper.addEast(rightWrapper, 440);
+
 		//CENTER
 		VerticalPanel centerWrapper = new VerticalPanel();
-		chosenFrom = new TextBoxFormField("De");
-		chosenFrom.setReadOnly(true);
-		chosenSubject = new TextBoxFormField("Assunto");
-		chosenSubject.setReadOnly(true);
-		chosenTimestamp = new DatePickerFormField("Data");
-		chosenTimestamp.setReadOnly(true);
-		body = new TextAreaFormField("Corpo da Mensagem");
-		body.setReadOnly(true);
-		centerWrapper.add(chosenFrom);
-		centerWrapper.add(chosenTimestamp);
-		centerWrapper.add(chosenSubject);
-		centerWrapper.add(body);
+		centerWrapper.setSize("100%", "100%");
+		centerForm = new ExchangeItemForm();
+		centerForm.setSize("100%", "100%");
+		centerWrapper.add(centerForm);
+		centerWrapper.setCellHeight(centerForm, "100%");
+		centerForm.setReadOnly(true);
 		insideWrapper.add(centerWrapper);
 		insideWrapper.setSize("100%", "100%");
 		VerticalPanel insideVerticalWrapper = new VerticalPanel();
 		insideVerticalWrapper.setSize("100%", "100%");
 
 		ListHeader centerHeader = new ListHeader("E-mail");
-		
+
 		insideVerticalWrapper.add(centerHeader);
 		//TOOLBAR
 		toolbar = new ExchangeItemSelectionToolbar(){
 
 			@Override
 			public void onCancelRequest() {
-				// TODO Auto-generated method stub
-				
+				fireAction(Action.CANCEL);
 			}
 
 			@Override
 			public void onConfirmRequest() {
-				// TODO Auto-generated method stub
-				
+				fireAction(Action.CONFIRM);
 			}
-			
+
 		};
-		
+
 		insideVerticalWrapper.add(toolbar);
 		insideVerticalWrapper.setSize("100%", "100%");
 		insideVerticalWrapper.setCellWidth(toolbar, "100%");
 		insideVerticalWrapper.add(insideWrapper);
 		insideVerticalWrapper.setCellHeight(insideWrapper, "100%");
-		
+
 		wrapper.add(insideVerticalWrapper);
 	}
-	
+
+
+	protected void fireAction(Action action){
+		if(this.actionHandler != null) {
+			actionHandler.onActionInvoked(new ActionInvokedEvent<Action>(action));
+		}
+	}
+
+	@Override
+	public void registerActionHandler(ActionInvokedEventHandler<Action> handler) {
+		this.actionHandler = handler;
+
+	}
+
 	@Override
 	public void addEmailEntry(ExchangeItemStub email){
 		EmailEntry entry = new EmailEntry(email);
 		emails.add(entry);
 	}
-	
+
 	@Override
 	protected void initializeView() {
-		
+
 	}
 
 	@Override
 	public void clear() {
-		// TODO Auto-generated method stub
-		
+
+		emails.clear();
+		attachments.clear();
+		centerForm.clearInfo();
+
 	}
+
+	@Override
+	public HasValueSelectables<ExchangeItemStub> getEmailList() {
+		return emails;
+	}
+
+	@Override
+	public HasValue<ExchangeItem> getForm() {
+		return centerForm;
+	}
+
+	@Override
+	public HasValueSelectables<AttachmentStub> getAttachmentList() {
+		return attachments;
+	}
+
+	@Override
+	public void setAttachments(AttachmentStub[] attachments) {
+		this.attachments.clear();
+		for(int i = 0; i<attachments.length; i++){
+			this.attachments.add(new AttachmentEntry(attachments[i]));
+		}
+	}
+
+
+	@Override
+	public AttachmentUpgrade[] getChecked() {
+
+
+		int ammount = attachments.getChecked().size();
+		AttachmentUpgrade[] attachs = new AttachmentUpgrade[ammount];
+		int counter = 0;
+
+		AttachmentUpgrade temp;
+
+		for(int i = 0; i<attachments.size(); i++){
+			if(attachments.get(i).isChecked()){
+				temp = new AttachmentUpgrade();
+				temp.docTypeId = ((AttachmentEntry)attachments.get(i)).getDocType().getValue();
+				temp.name =((AttachmentEntry)attachments.get(i)).getDocName().getValue();
+				attachs[counter] = temp;
+				counter++;
+			}
+		}
+
+
+
+
+		return attachs;
+	}
+
 
 }

@@ -452,7 +452,6 @@ public class ContactViewPresenter implements ViewPresenter, ContactsBrokerClient
 	@Override
 	public void updateContact(String ownerId, Contact contact) {
 
-
 		return;
 	} 
 

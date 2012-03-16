@@ -7,15 +7,18 @@ public class ExternalInfoRequestForm extends FormView<ExternalInfoRequest>{
 
 	TextBoxFormField requestSubject = new TextBoxFormField("Assunto do pedido");
 	TextBoxFormField replyLimit = new TextBoxFormField("Número de dias");
-	
 	IncomingMessageFormField messageFormField = new IncomingMessageFormField();
 
 	
 	public ExternalInfoRequestForm() {
+		
 		addSection("Detalhes do Pedido de Informação Externo");
 		addFormField(requestSubject);
 		addFormField(replyLimit);
+		messageFormField.setReadOnly(true);
 		addFormField(messageFormField);
+		replyLimit.setFieldWidth("50px");
+		
 	}
 	
 	@Override
@@ -29,6 +32,15 @@ public class ExternalInfoRequestForm extends FormView<ExternalInfoRequest>{
 		
 		//messageFormField.setValue(info.message);
 		
+	}
+	
+	@Override
+	public void setReadOnly(boolean readOnly) {
+		if(requestSubject == null){
+			return;
+		}
+		requestSubject.setReadOnly(readOnly);
+		replyLimit.setReadOnly(readOnly);
 	}
 
 }

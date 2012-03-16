@@ -8,6 +8,7 @@ import com.google.gwt.user.client.ui.HasVerticalAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.RichTextArea;
+import com.google.gwt.user.client.ui.UIObject;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
 
@@ -17,6 +18,8 @@ public class RichTextAreaFormField extends FormField<String> {
 	protected VerticalPanel wrapper;
 	protected HorizontalPanel textAndMandatory;
 	protected RichTextArea field;
+	private RichTextToolbar toolbar;
+	
 	
 	public RichTextAreaFormField(String label,FieldValidator<String> validator){
 		this();
@@ -50,7 +53,7 @@ public class RichTextAreaFormField extends FormField<String> {
 		this.field = new RichTextArea();
 		this.field.setSize("400px", "300px");
 		
-		RichTextToolbar toolbar = new RichTextToolbar(this.field);
+		toolbar = new RichTextToolbar(this.field);
 		
 		VerticalPanel fieldWrapper = new VerticalPanel();
 		fieldWrapper.setSize("100%", "100%");
@@ -141,6 +144,14 @@ public class RichTextAreaFormField extends FormField<String> {
 	@Override
 	public void setLabelWidth(String width) {
 		return;
+	}
+
+	public UIObject getNativeField() {
+		return field;
+	}
+
+	public void showToolbar(boolean b) {
+		toolbar.setVisible(b);
 	}
 
 }
