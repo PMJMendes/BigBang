@@ -4,15 +4,17 @@ import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.UUID;
 
-import com.premiumminds.BigBang.Jewel.BigBangJewelException;
-import com.premiumminds.BigBang.Jewel.Constants;
-
 import Jewel.Engine.Engine;
 import Jewel.Engine.DataAccess.MasterDB;
 import Jewel.Engine.Implementation.Entity;
 import Jewel.Engine.Interfaces.IEntity;
 import Jewel.Engine.SysObjects.JewelEngineException;
+import Jewel.Petri.Interfaces.IProcess;
+import Jewel.Petri.Objects.PNProcess;
 import Jewel.Petri.SysObjects.ProcessData;
+
+import com.premiumminds.BigBang.Jewel.BigBangJewelException;
+import com.premiumminds.BigBang.Jewel.Constants;
 
 public class Receipt
 	extends ProcessData
@@ -201,5 +203,34 @@ public class Receipt
 		}
 
 		return larrAux.toArray(new Document[larrAux.size()]);
+    }
+
+    public boolean canAutoValidate()
+    	throws BigBangJewelException
+    {
+    	IProcess lobjProcess;
+    	Client lobjClient;
+
+    	try
+    	{
+			lobjProcess = PNProcess.GetInstance(Engine.getCurrentNameSpace(), GetProcessID());
+
+	    	if ( lobjProcess.GetParent().GetData() instanceof SubPolicy )
+	    		return false;
+
+	    	lobjClient = (Client)lobjProcess.GetParent().GetParent().GetData();
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangJewelException(e.getMessage(), e);
+		}
+
+    	if ( Constants.ProfID_VIP.equals((UUID)lobjClient.getAt(9)) )
+    		return false;
+
+    	if ( Constants.RecType_Continuing.equals(getAt(1)) )
+    		return true;
+
+    	return false;
     }
 }

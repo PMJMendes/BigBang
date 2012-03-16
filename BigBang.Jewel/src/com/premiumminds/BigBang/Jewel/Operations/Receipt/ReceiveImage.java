@@ -9,6 +9,7 @@ import Jewel.Petri.SysObjects.UndoableOperation;
 import com.premiumminds.BigBang.Jewel.Constants;
 import com.premiumminds.BigBang.Jewel.Data.DSBridgeData;
 import com.premiumminds.BigBang.Jewel.Data.DocumentData;
+import com.premiumminds.BigBang.Jewel.Objects.Receipt;
 import com.premiumminds.BigBang.Jewel.Operations.DocOps;
 
 public class ReceiveImage
@@ -49,6 +50,9 @@ public class ReceiveImage
 		throws JewelPetriException
 	{
 		DocumentData lobjDoc;
+		Receipt lobjReceipt;
+		boolean b;
+		TriggerAutoValidate lopTAV;
 
 		midReceipt = GetProcess().GetDataKey();
 
@@ -68,6 +72,23 @@ public class ReceiveImage
 		mobjDocOps.marrCreate = new DocumentData[] {lobjDoc};
 
 		mobjDocOps.RunSubOp(pdb, midReceipt);
+
+		lobjReceipt = (Receipt)GetProcess().GetData();
+
+		try
+		{
+			b = lobjReceipt.canAutoValidate();
+		}
+		catch (Throwable e)
+		{
+			throw new JewelPetriException(e.getMessage(), e);
+		}
+
+		if ( b )
+		{
+			lopTAV = new TriggerAutoValidate(GetProcess().getKey());
+			TriggerOp(lopTAV, pdb);
+		}
 	}
 
 	public String UndoDesc(String pstrLineBreak)

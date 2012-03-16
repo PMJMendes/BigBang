@@ -420,6 +420,14 @@ public class Constants
 	public static final UUID StatusID_Valid      = UUID.fromString("421E16B3-BE47-4D9C-9011-9F98012C945E");
 	public static final UUID StatusID_Voided     = UUID.fromString("4F115B5C-0E23-444F-AA68-9F98012CA192");
 
+	// Receipt Types
+	public static final UUID RecType_Continuing = UUID.fromString("6B91D626-4CAD-4F53-8FD6-9F900111C39F");
+	public static final UUID RecType_New        = UUID.fromString("36564F0F-2180-4794-B0EC-9F900111D2A8");
+	public static final UUID RecType_Reversal   = UUID.fromString("BFC1AE6D-53E8-41AF-84BE-9F900111D967");
+	public static final UUID RecType_Casualty   = UUID.fromString("91E07F5F-56BA-4A65-9659-9F900111DF95");
+	public static final UUID RecType_Backcharge = UUID.fromString("4775B720-B90B-4279-B008-9F900111E6AD");
+	public static final UUID RecType_Adjustment = UUID.fromString("3B127029-C133-4EB4-AD1E-9F900111EF2A");
+
 	// Template IDs
 	public static final UUID TID_DebitNote = UUID.fromString("BD024115-3572-41D4-B60C-9FF100F7E0C4");
 

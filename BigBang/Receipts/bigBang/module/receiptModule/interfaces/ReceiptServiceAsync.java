@@ -14,6 +14,7 @@ public interface ReceiptServiceAsync
 	void editReceipt(Receipt receipt, AsyncCallback<Receipt> callback);
 	void receiveImage(String receiptId, DocuShareItem source, AsyncCallback<Receipt> callback);
 	void transferToPolicy(String receiptId, String newPolicyId, AsyncCallback<Receipt> callback);
+	void validateReceipt(String receiptId, AsyncCallback<Receipt> callback);
 	void getRelevantDebitNotes(String receiptId, AsyncCallback<DebitNote[]> callback);
 	void associateWithDebitNote(String receiptId, String debitNoteId, AsyncCallback<Receipt> callback);
 	void deleteReceipt(String receiptId, AsyncCallback<Void> callback);

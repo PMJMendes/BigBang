@@ -48,6 +48,7 @@ import com.premiumminds.BigBang.Jewel.Operations.Receipt.DeleteReceipt;
 import com.premiumminds.BigBang.Jewel.Operations.Receipt.ManageData;
 import com.premiumminds.BigBang.Jewel.Operations.Receipt.ReceiveImage;
 import com.premiumminds.BigBang.Jewel.Operations.Receipt.TransferToPolicy;
+import com.premiumminds.BigBang.Jewel.Operations.Receipt.ValidateReceipt;
 
 public class ReceiptServiceImpl
 	extends SearchServiceBase
@@ -261,6 +262,39 @@ public class ReceiptServiceImpl
 		try
 		{
 			lopTTP.Execute();
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangException(e.getMessage(), e);
+		}
+
+		return sGetReceipt(UUID.fromString(receiptId));
+	}
+
+	public Receipt validateReceipt(String receiptId)
+		throws SessionExpiredException, BigBangException
+	{
+		com.premiumminds.BigBang.Jewel.Objects.Receipt lobjReceipt;
+		ValidateReceipt lopVR;
+
+		if ( Engine.getCurrentUser() == null )
+			throw new SessionExpiredException();
+
+		try
+		{
+			lobjReceipt = com.premiumminds.BigBang.Jewel.Objects.Receipt.GetInstance(Engine.getCurrentNameSpace(),
+					UUID.fromString(receiptId));
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangException(e.getMessage(), e);
+		}
+
+		lopVR = new ValidateReceipt(lobjReceipt.GetProcessID());
+
+		try
+		{
+			lopVR.Execute();
 		}
 		catch (Throwable e)
 		{

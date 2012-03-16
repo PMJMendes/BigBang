@@ -31,6 +31,8 @@ public interface ReceiptService extends SearchService {
 	public Receipt receiveImage(String receiptId, DocuShareItem source) throws SessionExpiredException, BigBangException;
 	public Receipt transferToPolicy(String receiptId, String newPolicyId) throws SessionExpiredException, BigBangException;
 
+	public Receipt validateReceipt(String receiptId) throws SessionExpiredException, BigBangException;
+
 	public DebitNote[] getRelevantDebitNotes(String receiptId) throws SessionExpiredException, BigBangException;
 	public Receipt associateWithDebitNote(String receiptId, String debitNoteId) throws SessionExpiredException, BigBangException;
 
