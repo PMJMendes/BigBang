@@ -93,6 +93,7 @@ public class ExchangeServiceImpl
 		try
 		{
 			lobjItem = MailConnector.DoGetItem(id);
+			lobjItem.load();
 
 			lobjResult = new ExchangeItem();
 			lobjResult.id = lobjItem.getId().getUniqueId();
@@ -106,7 +107,6 @@ public class ExchangeServiceImpl
 				lobjResult.from = null;
 			lobjResult.timestamp = (new SimpleDateFormat("yyyy-MM-dd HH:mm:ss")).format(lobjItem.getDateTimeSent());
 			lobjResult.attachmentCount = lobjItem.getAttachments().getCount();
-			lobjItem.load();
 			lstrBody = lobjItem.getBody().toString();
 			if ( lstrBody.length() > 200 )
 				lobjResult.bodyPreview = lstrBody.substring(0, 200);
@@ -153,6 +153,7 @@ public class ExchangeServiceImpl
 		try
 		{
 			lobjItem = MailConnector.DoGetItem(emailId);
+			lobjItem.load();
 
 			for ( Attachment lobjAtt: lobjItem.getAttachments() )
 			{
