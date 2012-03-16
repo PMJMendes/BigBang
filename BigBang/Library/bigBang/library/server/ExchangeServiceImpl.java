@@ -49,6 +49,7 @@ public class ExchangeServiceImpl
 			larrResults = new ExchangeItemStub[larrItems.length];
 			for ( i = 0; i < larrResults.length; i++ )
 			{
+				larrItems[i].load();
 				larrResults[i] = new ExchangeItemStub();
 				larrResults[i].id = larrItems[i].getId().getUniqueId();
 				larrResults[i].subject = larrItems[i].getSubject();
@@ -61,7 +62,6 @@ public class ExchangeServiceImpl
 					larrResults[i].from = null;
 				larrResults[i].timestamp = (new SimpleDateFormat("yyyy-MM-dd HH:mm:ss")).format(larrItems[i].getDateTimeSent());
 				larrResults[i].attachmentCount = larrItems[i].getAttachments().getCount();
-				larrItems[i].load();
 				lstrBody = larrItems[i].getBody().toString();
 				if ( lstrBody.length() > 200 )
 					larrResults[i].bodyPreview = lstrBody.substring(0, 200);
