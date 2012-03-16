@@ -156,7 +156,16 @@ public class FilterableList<T> extends SortableList<T> {
 		String text = entry.getText().toUpperCase();
 		String title = entry.getTitle().toUpperCase();
 		String token = textBoxFilter.getValue().toUpperCase();
-		return !((text != null && text.contains(token)) || (title != null && title.contains(token)));
+		
+		boolean matches = ((text != null && text.contains(token)) || (title != null && title.contains(token)));
+		
+		if(entry.metaData != null) {
+			for(String meta : entry.metaData){
+				matches |= (meta != null && meta.contains(token));
+			}
+		}
+		
+		return !matches;
 	}
 	
 	/**
