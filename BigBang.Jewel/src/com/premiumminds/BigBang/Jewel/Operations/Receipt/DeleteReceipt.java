@@ -59,7 +59,7 @@ public class DeleteReceipt
 			lobjPOp.mobjData.mid = midReceipt;
 			lobjOp = lobjPOp;
 		}
-		if ( Constants.ProcID_Policy.equals(lidScript) )
+		if ( Constants.ProcID_SubPolicy.equals(lidScript) )
 		{
 			lobjSPOp = new com.premiumminds.BigBang.Jewel.Operations.SubPolicy.ExternDeleteReceipt(GetProcess().GetParent().getKey());
 			lobjSPOp.mobjData = new ReceiptData();

@@ -395,6 +395,11 @@ public class Constants
 	public static final UUID TypeID_Company    = UUID.fromString("C5B4F500-BB57-4BFD-8248-9EE600C95ABA");
 	public static final UUID TypeID_Other      = UUID.fromString("4098CF7A-B5EE-4C3F-973F-9EE600C961AA");
 
+	// Client Profiles
+	public static final UUID ProfID_Normal = UUID.fromString("9F871430-9BBC-449F-B125-9EE600BE5A9A");
+	public static final UUID ProfID_VIP    = UUID.fromString("63114D11-6087-4EFE-9A7E-9EE600BE52DA");
+	public static final UUID ProfID_Simple = UUID.fromString("51ED12A4-95A9-44B0-928D-A01500DC83EB");
+
 	// Object Types
 	public static final UUID ObjTypeID_Person    = UUID.fromString("EDD94689-EFED-4B50-AA6E-9F9501402700");
 	public static final UUID ObjTypeID_Group     = UUID.fromString("E04D67FA-F3D9-4597-96F0-9F950140323E");

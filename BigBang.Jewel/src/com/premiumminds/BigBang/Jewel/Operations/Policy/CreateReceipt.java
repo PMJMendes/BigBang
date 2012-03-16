@@ -13,9 +13,11 @@ import Jewel.Petri.SysObjects.Operation;
 import com.premiumminds.BigBang.Jewel.Constants;
 import com.premiumminds.BigBang.Jewel.Data.DSBridgeData;
 import com.premiumminds.BigBang.Jewel.Data.ReceiptData;
+import com.premiumminds.BigBang.Jewel.Objects.Client;
 import com.premiumminds.BigBang.Jewel.Objects.Receipt;
 import com.premiumminds.BigBang.Jewel.Operations.ContactOps;
 import com.premiumminds.BigBang.Jewel.Operations.DocOps;
+import com.premiumminds.BigBang.Jewel.Operations.Receipt.ExternForceShortCircuit;
 import com.premiumminds.BigBang.Jewel.Operations.Receipt.TriggerImageOnCreate;
 
 public class CreateReceipt
@@ -74,6 +76,8 @@ public class CreateReceipt
 		IScript lobjScript;
 		IProcess lobjProc; 
 		TriggerImageOnCreate lopTIOC;
+		ExternForceShortCircuit lopEFSC;
+		Client lobjClient;
 
 		try
 		{
@@ -110,6 +114,13 @@ public class CreateReceipt
 			lopTIOC = new TriggerImageOnCreate(lobjProc.getKey());
 			lopTIOC.mobjImage = mobjImage;
 			TriggerOp(lopTIOC, pdb);
+		}
+
+		lobjClient = (Client)GetProcess().GetParent().GetData();
+		if ( Constants.ProfID_Simple.equals((UUID)lobjClient.getAt(9)) )
+		{
+			lopEFSC = new ExternForceShortCircuit(lobjProc.getKey());
+			TriggerOp(lopEFSC, pdb);
 		}
 	}
 }
