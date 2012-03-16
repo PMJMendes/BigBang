@@ -161,7 +161,7 @@ public class FilterableList<T> extends SortableList<T> {
 		
 		if(entry.metaData != null) {
 			for(String meta : entry.metaData){
-				matches |= (meta != null && meta.contains(token));
+				matches |= (meta != null && meta.toUpperCase().contains(token));
 			}
 		}
 		
