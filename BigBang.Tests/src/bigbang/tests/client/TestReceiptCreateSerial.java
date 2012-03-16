@@ -31,7 +31,7 @@ public class TestReceiptCreateSerial
 		};
 
 		receipt = new Receipt();
-		receipt.number = "A123";
+		receipt.number = "A456";
 		receipt.policyId = "588E0BE9-6E92-4711-B0CD-9FD50118C191";
 		receipt.typeId = "6B91D626-4CAD-4F53-8FD6-9F900111C39F";
 		receipt.totalPremium = "153.42";
@@ -40,7 +40,7 @@ public class TestReceiptCreateSerial
 		receipt.issueDate = "2011-11-30";
 
 		source = new DocuShareItem();
-		source.handle = "Document-453484";
+		source.handle = "Document-454156";
 		source.locationHandle = null;
 
 		Services.receiptService.serialCreateReceipt(receipt, source, callback);
