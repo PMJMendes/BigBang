@@ -116,7 +116,7 @@ public class StaticFunctions
 		try
 		{
 			lsvc = new ExchangeService(ExchangeVersion.Exchange2007_SP1);
-			lsvc.setCredentials(new WebCredentials(larrParams.get("DOMAIN") + "\\" + lstrUser, lstrPwd));
+			lsvc.setCredentials(new WebCredentials(lstrUser, lstrPwd));
 			lsvc.setUrl(new URI("https://" + larrParams.get("SERVER") + "/EWS/Exchange.asmx"));
 		}
 		catch (Throwable e)
