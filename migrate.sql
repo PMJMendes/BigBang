@@ -129,6 +129,7 @@ insert into bigbang.tblMaritalStatuses (PK, StatusText) values ('BE742798-9D7F-4
 insert into bigbang.tblMaritalStatuses (PK, StatusText) values ('DB379F5C-9343-403B-B28A-9F0300C6DDFB', N'Viúvo');
 insert into bigbang.tblOpProfiles (PK, OpProfileName) values ('63114D11-6087-4EFE-9A7E-9EE600BE52DA', N'VIP');
 insert into bigbang.tblOpProfiles (PK, OpProfileName) values ('9F871430-9BBC-449F-B125-9EE600BE5A9A', N'Normal');
+insert into bigbang.tblOpProfiles (PK, OpProfileName) values ('51ED12A4-95A9-44B0-928D-A01500DC83EB', N'Simples');
 insert into bigbang.tblSex (PK, SexName) values ('77E22CFB-CA90-4918-B9B2-9F0300C39AE2', N'Feminino');
 insert into bigbang.tblSex (PK, SexName) values ('E86BA460-B499-4254-84F5-9F0300C3A256', N'Masculino');
 
