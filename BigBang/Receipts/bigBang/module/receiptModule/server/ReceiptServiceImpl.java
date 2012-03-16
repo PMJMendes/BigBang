@@ -1,16 +1,20 @@
 package bigBang.module.receiptModule.server;
 
 import java.math.BigDecimal;
+import java.sql.ResultSet;
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.UUID;
 
 import Jewel.Engine.Engine;
+import Jewel.Engine.DataAccess.MasterDB;
 import Jewel.Engine.Implementation.Entity;
 import Jewel.Engine.Interfaces.IEntity;
 import Jewel.Engine.SysObjects.ObjectBase;
 import Jewel.Petri.Interfaces.IProcess;
 import Jewel.Petri.Objects.PNProcess;
+import bigBang.definitions.shared.DebitNote;
 import bigBang.definitions.shared.DocuShareItem;
 import bigBang.definitions.shared.Receipt;
 import bigBang.definitions.shared.ReceiptStub;
@@ -39,6 +43,7 @@ import com.premiumminds.BigBang.Jewel.Objects.SubLine;
 import com.premiumminds.BigBang.Jewel.Operations.ContactOps;
 import com.premiumminds.BigBang.Jewel.Operations.DocOps;
 import com.premiumminds.BigBang.Jewel.Operations.Policy.CreateReceipt;
+import com.premiumminds.BigBang.Jewel.Operations.Receipt.AssociateWithDebitNote;
 import com.premiumminds.BigBang.Jewel.Operations.Receipt.DeleteReceipt;
 import com.premiumminds.BigBang.Jewel.Operations.Receipt.ManageData;
 import com.premiumminds.BigBang.Jewel.Operations.Receipt.ReceiveImage;
@@ -256,6 +261,155 @@ public class ReceiptServiceImpl
 		try
 		{
 			lopTTP.Execute();
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangException(e.getMessage(), e);
+		}
+
+		return sGetReceipt(UUID.fromString(receiptId));
+	}
+
+	public DebitNote[] getRelevantDebitNotes(String receiptId)
+		throws SessionExpiredException, BigBangException
+	{
+		ArrayList<DebitNote> larrNotes;
+		com.premiumminds.BigBang.Jewel.Objects.Receipt lobjReceipt;
+		IProcess lobjProcess;
+		IEntity lrefProcesses;
+        MasterDB ldb;
+        ResultSet lrsNotes;
+        com.premiumminds.BigBang.Jewel.Objects.DebitNote lobjAux;
+        DebitNote lobjNote;
+
+		if ( Engine.getCurrentUser() == null )
+			throw new SessionExpiredException();
+
+		larrNotes = new ArrayList<DebitNote>();
+
+		try
+		{
+			lobjReceipt = com.premiumminds.BigBang.Jewel.Objects.Receipt.GetInstance(Engine.getCurrentNameSpace(),
+					UUID.fromString(receiptId));
+			lobjProcess = PNProcess.GetInstance(Engine.getCurrentNameSpace(), lobjReceipt.GetProcessID());
+			lrefProcesses = Entity.GetInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), Constants.ObjID_DebitNote)); 
+			ldb = new MasterDB();
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangException(e.getMessage(), e);
+		}
+
+		try
+		{
+			lrsNotes = lrefProcesses.SelectByMembers(ldb, new int[] {Constants.FKProcess_In_DebitNote},
+					new java.lang.Object[] {lobjProcess.getKey()}, new int[] {4});
+		}
+		catch (Throwable e)
+		{
+			try { ldb.Disconnect(); } catch (Throwable e1) {}
+			throw new BigBangException(e.getMessage(), e);
+		}
+
+		try
+		{
+			while ( lrsNotes.next() )
+			{
+				lobjAux = com.premiumminds.BigBang.Jewel.Objects.DebitNote.GetInstance(Engine.getCurrentNameSpace(), lrsNotes);
+				lobjNote = new DebitNote();
+				lobjNote.id = lobjAux.getKey().toString();
+				lobjNote.number = lobjAux.getLabel();
+				lobjNote.value = ( lobjAux.getAt(2) == null ? null : ((BigDecimal)lobjAux.getAt(2)).toPlainString() );
+				lobjNote.maturityDate = ( lobjAux.getAt(3) == null ? null : ((Timestamp)lobjAux.getAt(3)).toString().substring(0, 10) );
+				larrNotes.add(lobjNote);
+			}
+		}
+		catch (Throwable e)
+		{
+			try { lrsNotes.close(); } catch (Throwable e1) {}
+			try { ldb.Disconnect(); } catch (Throwable e1) {}
+			throw new BigBangException(e.getMessage(), e);
+		}
+
+		try
+		{
+			lrsNotes.close();
+			lrsNotes = lrefProcesses.SelectByMembers(ldb, new int[] {Constants.FKProcess_In_DebitNote, Constants.FKReceipt_In_DebitNote},
+					new java.lang.Object[] {lobjProcess.GetParent().getKey(), null}, new int[] {4});
+		}
+		catch (Throwable e)
+		{
+			try { ldb.Disconnect(); } catch (Throwable e1) {}
+			throw new BigBangException(e.getMessage(), e);
+		}
+
+		try
+		{
+			while ( lrsNotes.next() )
+			{
+				lobjAux = com.premiumminds.BigBang.Jewel.Objects.DebitNote.GetInstance(Engine.getCurrentNameSpace(), lrsNotes);
+				lobjNote = new DebitNote();
+				lobjNote.id = lobjAux.getKey().toString();
+				lobjNote.number = lobjAux.getLabel();
+				lobjNote.value = ( lobjAux.getAt(2) == null ? null : ((BigDecimal)lobjAux.getAt(2)).toPlainString() );
+				lobjNote.maturityDate = ( lobjAux.getAt(3) == null ? null : ((Timestamp)lobjAux.getAt(3)).toString().substring(0, 10) );
+				larrNotes.add(lobjNote);
+			}
+		}
+		catch (Throwable e)
+		{
+			try { lrsNotes.close(); } catch (Throwable e1) {}
+			try { ldb.Disconnect(); } catch (Throwable e1) {}
+			throw new BigBangException(e.getMessage(), e);
+		}
+
+		try
+		{
+			lrsNotes.close();
+		}
+		catch (Throwable e)
+		{
+			try { ldb.Disconnect(); } catch (Throwable e1) {}
+			throw new BigBangException(e.getMessage(), e);
+		}
+
+		try
+		{
+			ldb.Disconnect();
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangException(e.getMessage(), e);
+		}
+
+		return larrNotes.toArray(new DebitNote[larrNotes.size()]);
+	}
+
+	public Receipt associateWithDebitNote(String receiptId, String debitNoteId)
+		throws SessionExpiredException, BigBangException
+	{
+		com.premiumminds.BigBang.Jewel.Objects.Receipt lobjReceipt;
+		AssociateWithDebitNote lopAWDN;
+
+		if ( Engine.getCurrentUser() == null )
+			throw new SessionExpiredException();
+
+		try
+		{
+			lobjReceipt = com.premiumminds.BigBang.Jewel.Objects.Receipt.GetInstance(Engine.getCurrentNameSpace(),
+					UUID.fromString(receiptId));
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangException(e.getMessage(), e);
+		}
+
+		lopAWDN = new AssociateWithDebitNote(lobjReceipt.GetProcessID());
+		lopAWDN.midDebitNote = UUID.fromString(debitNoteId);
+
+		try
+		{
+			lopAWDN.Execute();
 		}
 		catch (Throwable e)
 		{

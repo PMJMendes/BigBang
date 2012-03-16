@@ -1,5 +1,6 @@
 package bigBang.module.receiptModule.interfaces;
 
+import bigBang.definitions.shared.DebitNote;
 import bigBang.definitions.shared.DocuShareItem;
 import bigBang.definitions.shared.Receipt;
 import bigBang.library.interfaces.SearchService;
@@ -28,8 +29,10 @@ public interface ReceiptService extends SearchService {
 
 	public Receipt editReceipt(Receipt receipt) throws SessionExpiredException, BigBangException;
 	public Receipt receiveImage(String receiptId, DocuShareItem source) throws SessionExpiredException, BigBangException;
-
 	public Receipt transferToPolicy(String receiptId, String newPolicyId) throws SessionExpiredException, BigBangException;
+
+	public DebitNote[] getRelevantDebitNotes(String receiptId) throws SessionExpiredException, BigBangException;
+	public Receipt associateWithDebitNote(String receiptId, String debitNoteId) throws SessionExpiredException, BigBangException;
 
 	public void deleteReceipt(String receiptId) throws SessionExpiredException, BigBangException;
 

@@ -41,8 +41,9 @@ public class AutoCheckDebitNote
 		try
 		{
 			lrefDebitNotes = Entity.GetInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), Constants.ObjID_DebitNote));
-			lrsDebitNotes = lrefDebitNotes.SelectByMembers(pdb, new int[] {1}, new java.lang.Object[] {GetProcess().GetParent().getKey()},
-					null);
+			lrsDebitNotes = lrefDebitNotes.SelectByMembers(pdb,
+					new int[] {Constants.FKProcess_In_DebitNote, Constants.FKReceipt_In_DebitNote},
+					new java.lang.Object[] {GetProcess().GetParent().getKey(), null}, null);
 			if ( lrsDebitNotes.next() )
 				b = true;
 			lrsDebitNotes.close();

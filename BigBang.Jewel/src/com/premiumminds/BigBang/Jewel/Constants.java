@@ -462,4 +462,6 @@ public class Constants
 	public static final int FKSubPolicy_In_SubPolicyValue = 1;
 	public static final int FKObject_In_SubPolicyValue = 3;
 	public static final int FKExercise_In_SubPolicyValue = 4;
+	public static final int FKProcess_In_DebitNote = 1;
+	public static final int FKReceipt_In_DebitNote = 6;
 }

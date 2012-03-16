@@ -86,7 +86,7 @@ public class TransferToPolicy
 		lobjSet.midType = Constants.ObjID_Receipt;
 		lobjSet.marrChanged = new UUID[]{midReceipt};
 
-		return new UndoSet[]{lobjSet}; 
+		return new UndoSet[]{lobjSet};
 	}
 
 }

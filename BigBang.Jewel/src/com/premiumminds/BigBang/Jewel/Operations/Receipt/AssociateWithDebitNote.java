@@ -1,5 +1,105 @@
 package com.premiumminds.BigBang.Jewel.Operations.Receipt;
 
-public class AssociateWithDebitNote {
+import java.sql.Timestamp;
+import java.util.UUID;
 
+import Jewel.Engine.Engine;
+import Jewel.Engine.DataAccess.SQLServer;
+import Jewel.Petri.SysObjects.JewelPetriException;
+import Jewel.Petri.SysObjects.UndoableOperation;
+
+import com.premiumminds.BigBang.Jewel.Constants;
+import com.premiumminds.BigBang.Jewel.Objects.DebitNote;
+
+public class AssociateWithDebitNote
+	extends UndoableOperation
+{
+	private static final long serialVersionUID = 1L;
+
+	public UUID midDebitNote;
+	private UUID midReceipt;
+
+	public AssociateWithDebitNote(UUID pidProcess)
+	{
+		super(pidProcess);
+	}
+
+	protected UUID OpID()
+	{
+		return Constants.OPID_Receipt_AssociateWithDebitNote;
+	}
+
+	public String ShortDesc()
+	{
+		return "Cobrança via Nota de Débito";
+	}
+
+	public String LongDesc(String pstrLineBreak)
+	{
+		return "O recibo foi considerado pago por associação com a Nota de Débito n. " + " paga aquando da criação da apólice.";
+	}
+
+	public UUID GetExternalProcess()
+	{
+		return null;
+	}
+
+	protected void Run(SQLServer pdb)
+		throws JewelPetriException
+	{
+		DebitNote lobjNote;
+
+		midReceipt = GetProcess().GetDataKey();
+
+		try
+		{
+			lobjNote = DebitNote.GetInstance(Engine.getCurrentNameSpace(), midDebitNote);
+			lobjNote.setAt(5, new Timestamp(new java.util.Date().getTime()));
+			lobjNote.setAt(6, midReceipt);
+			lobjNote.SaveToDb(pdb);
+		}
+		catch (Throwable e)
+		{
+			throw new JewelPetriException(e.getMessage(), e);
+		}
+	}
+
+	public String UndoDesc(String pstrLineBreak)
+	{
+		return "A cobrança será retirada. A nota de débito será novamente disponibilizada.";
+	}
+
+	public String UndoLongDesc(String pstrLineBreak)
+	{
+		return "A cobrança foi retirada. A nota de débito foi disponibilizada para associação com outro recibo.";
+	}
+
+	protected void Undo(SQLServer pdb)
+		throws JewelPetriException
+	{
+		DebitNote lobjNote;
+
+		try
+		{
+			lobjNote = DebitNote.GetInstance(Engine.getCurrentNameSpace(), midDebitNote);
+			lobjNote.setAt(5, null);
+			lobjNote.setAt(6, null);
+			lobjNote.SaveToDb(pdb);
+		}
+		catch (Throwable e)
+		{
+			throw new JewelPetriException(e.getMessage(), e);
+		}
+	}
+
+	public UndoSet[] GetSets()
+	{
+		UndoSet lobjSet;
+
+		lobjSet = new UndoSet();
+		lobjSet.midType = Constants.ObjID_Receipt;
+		lobjSet.marrChanged = new UUID[]{midReceipt};
+
+		return new UndoSet[]{lobjSet};
+	}
 }
