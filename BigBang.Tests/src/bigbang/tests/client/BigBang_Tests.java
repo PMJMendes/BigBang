@@ -34,7 +34,7 @@ public class BigBang_Tests
 //		TestSpecialGetSubProcs.DoTest();
 //		TestSpecialGetPermissions.DoTest();
 //		TestSpecialGetGlobalPermissions.DoTest();
-		TestSpecialGetExchangeItems.DoTest();
+//		TestSpecialGetExchangeItems.DoTest();
 //
 //		TestHistoryGet.DoTest();
 //		TestHistoryUndo.DoTest();
