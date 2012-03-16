@@ -34,7 +34,7 @@ public class BigBang_Tests
 //		TestSpecialGetSubProcs.DoTest();
 //		TestSpecialGetPermissions.DoTest();
 //		TestSpecialGetGlobalPermissions.DoTest();
-//		TestSpecialGetExchangeItems.DoTest();
+		TestSpecialGetExchangeItems.DoTest();
 //
 //		TestHistoryGet.DoTest();
 //		TestHistoryUndo.DoTest();
@@ -151,5 +151,6 @@ public class BigBang_Tests
 //		TestReceiptChangePolicy.DoTest();
 //		TestReceiptCreateSerial.DoTest();
 //		TestReceiptReceiveImage.DoTest();
+//		TestReceiptDebitNote.DoTest();
 	}
 }

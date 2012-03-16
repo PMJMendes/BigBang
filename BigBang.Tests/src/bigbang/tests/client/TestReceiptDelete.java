@@ -33,7 +33,7 @@ public class TestReceiptDelete
 
 			public void onSuccess(NewSearchResult result)
 			{
-				if ( (result != null) && (result.results != null) && (result.results.length > 0) )
+				if ( result != null )
 				{
 					if ( (result.results != null) && (result.results.length > 0) )
 					{
@@ -49,7 +49,7 @@ public class TestReceiptDelete
 		};
 
 		search = new ReceiptSearchParameter();
-		search.ownerId = "F4D6391A-CBB3-4555-BCB1-9FA900BA4838";
+		search.freeText = "A123";
 		sort = new ReceiptSortParameter();
 		sort.field = ReceiptSortParameter.SortableField.NUMBER;
 		sort.order = SortOrder.ASC;
