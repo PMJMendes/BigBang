@@ -31,7 +31,6 @@ import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.SplitLayoutPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
-import com.sun.xml.internal.bind.v2.runtime.unmarshaller.XsiNilLoader.Array;
 
 public class ExchangeItemSelectionView extends View implements ExchangeItemSelectionViewPresenter.Display{
 
@@ -76,11 +75,11 @@ public class ExchangeItemSelectionView extends View implements ExchangeItemSelec
 				filename = getFormatedLabel();
 				filename.getElement().getStyle().setFontSize(11, Unit.PX);
 
-				
-				
+
+
 				VerticalPanel wrapper = new VerticalPanel();
 				this.setWidget(wrapper);
-				
+
 				HorizontalPanel bottom = new HorizontalPanel();
 				bottom.add(mimeImg);
 				bottom.add(filename);
@@ -104,7 +103,7 @@ public class ExchangeItemSelectionView extends View implements ExchangeItemSelec
 					}
 				});
 
-				
+
 			}
 
 			mimeImg.setResource(getMimeImage(item.mimeType));
@@ -368,13 +367,11 @@ public class ExchangeItemSelectionView extends View implements ExchangeItemSelec
 				temp = new AttachmentUpgrade();
 				temp.docTypeId = ((AttachmentEntry)attachments.get(i)).getDocType().getValue();
 				temp.name =((AttachmentEntry)attachments.get(i)).getDocName().getValue();
+				temp.attachmentId = ((AttachmentEntry)attachments.get(i)).getValue().id;
 				attachs[counter] = temp;
 				counter++;
 			}
 		}
-
-
-
 
 		return attachs;
 	}
