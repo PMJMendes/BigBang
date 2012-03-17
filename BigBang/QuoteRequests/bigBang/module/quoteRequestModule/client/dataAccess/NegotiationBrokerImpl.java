@@ -9,6 +9,7 @@ import bigBang.definitions.client.dataAccess.NegotiationBrokerClient;
 import bigBang.definitions.client.response.ResponseError;
 import bigBang.definitions.client.response.ResponseHandler;
 import bigBang.definitions.shared.BigBangConstants;
+import bigBang.definitions.shared.ExternalInfoRequest;
 import bigBang.definitions.shared.Negotiation;
 import bigBang.definitions.shared.Negotiation.Cancellation;
 import bigBang.definitions.shared.Negotiation.Deletion;
@@ -31,6 +32,27 @@ public class NegotiationBrokerImpl extends DataBroker<Negotiation> implements Ne
 		this.service = service;
 	}
 
+	@Override
+	public void createExternalInfoRequest(final ExternalInfoRequest request, final ResponseHandler<ExternalInfoRequest> handler){
+		service.createExternalRequest(request, new BigBangAsyncCallback<ExternalInfoRequest>() {
+			
+			@Override
+			public void onResponseSuccess(ExternalInfoRequest result) {
+		
+				handler.onResponse(result);
+				
+			}
+			
+			@Override
+			public void onResponseFailure(Throwable caught) {
+				handler.onError((new String[]{
+							new String("Could create the external request")
+					}));
+				super.onResponseFailure(caught);
+			}
+			
+		});
+	}
 
 	@Override
 	public void getNegotiation(final String negotiationId, final ResponseHandler<Negotiation> handler){
