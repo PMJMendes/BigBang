@@ -66,7 +66,7 @@ public class InfoOrDocumentRequestServiceImpl
 		lobjResult.parentDataTypeId = lobjScript.GetDataType().toString();
 		lobjResult.requestTypeId = ((UUID)lobjRequest.getAt(1)).toString();
 		lobjResult.replylimit = (int)((((Timestamp)lobjRequest.getAt(5)).getTime() -
-				(new Timestamp(new java.util.Date().getTime())).getTime()) * 86400000L);
+				(new Timestamp(new java.util.Date().getTime())).getTime()) / 86400000L);
 
 		larrUsers = new ArrayList<String>();
 		larrInfos = new ArrayList<String>();
