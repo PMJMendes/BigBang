@@ -59,7 +59,8 @@ public class ExchangeItemSelectionViewPresenter implements ViewPresenter,
 
 		void registerActionHandler(ActionInvokedEventHandler<Action> handler);
 
-		AttachmentUpgrade[] getChecked(); 
+		AttachmentUpgrade[] getChecked();
+
 		
 	}
 	
@@ -88,6 +89,8 @@ public class ExchangeItemSelectionViewPresenter implements ViewPresenter,
 				if(view.getEmailList().getSelected().size() > 0){
 					service.getItem(((EmailEntry) ((HasValueSelectables<ExchangeItemStub>)event.getSource()).getSelected().toArray()[0]).getValue().id, new BigBangAsyncCallback<ExchangeItem>() {
 	
+					
+
 						@Override
 						public void onResponseSuccess(ExchangeItem result) {
 							view.getForm().setValue(result);
@@ -184,6 +187,7 @@ public class ExchangeItemSelectionViewPresenter implements ViewPresenter,
 		
 		return newMessage;
 	}
+	
 
 	@Override
 	public void setValue(IncomingMessage value) {
