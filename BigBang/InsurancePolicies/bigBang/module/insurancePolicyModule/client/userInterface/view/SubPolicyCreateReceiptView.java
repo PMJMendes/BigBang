@@ -1,7 +1,15 @@
 package bigBang.module.insurancePolicyModule.client.userInterface.view;
 
-import bigBang.definitions.shared.InsurancePolicy;
+import com.google.gwt.user.client.ui.HasValue;
+import com.google.gwt.user.client.ui.SplitLayoutPanel;
+import com.google.gwt.user.client.ui.VerticalPanel;
+
+import bigBang.module.insurancePolicyModule.client.userInterface.SubPolicyForm;
+import bigBang.module.insurancePolicyModule.client.userInterface.presenter.SubPolicyCreateReceiptViewPresenter;
+import bigBang.module.insurancePolicyModule.client.userInterface.presenter.SubPolicyCreateReceiptViewPresenter.Action;
+import bigBang.module.receiptModule.client.userInterface.ReceiptForm;
 import bigBang.definitions.shared.Receipt;
+import bigBang.definitions.shared.SubPolicy;
 import bigBang.library.client.HasEditableValue;
 import bigBang.library.client.event.ActionInvokedEvent;
 import bigBang.library.client.event.ActionInvokedEventHandler;
@@ -9,23 +17,15 @@ import bigBang.library.client.userInterface.BigBangOperationsToolBar;
 import bigBang.library.client.userInterface.BigBangOperationsToolBar.SUB_MENU;
 import bigBang.library.client.userInterface.ListHeader;
 import bigBang.library.client.userInterface.view.View;
-import bigBang.module.insurancePolicyModule.client.userInterface.InsurancePolicyForm;
-import bigBang.module.insurancePolicyModule.client.userInterface.presenter.CreateReceiptViewPresenter;
-import bigBang.module.insurancePolicyModule.client.userInterface.presenter.CreateReceiptViewPresenter.Action;
-import bigBang.module.receiptModule.client.userInterface.ReceiptForm;
 
-import com.google.gwt.user.client.ui.HasValue;
-import com.google.gwt.user.client.ui.SplitLayoutPanel;
-import com.google.gwt.user.client.ui.VerticalPanel;
+public class SubPolicyCreateReceiptView extends View implements SubPolicyCreateReceiptViewPresenter.Display {
 
-public class CreateReceiptView extends View implements CreateReceiptViewPresenter.Display {
-	
 	private ReceiptForm form;
-	private InsurancePolicyForm ownerForm;
+	private SubPolicyForm ownerForm;
 	private ActionInvokedEventHandler<Action> handler;
 	private BigBangOperationsToolBar toolbar;
 	
-	public CreateReceiptView(){
+	public SubPolicyCreateReceiptView(){
 		SplitLayoutPanel wrapper = new SplitLayoutPanel();
 		initWidget(wrapper);
 		wrapper.setSize("100%", "100%");
@@ -46,12 +46,12 @@ public class CreateReceiptView extends View implements CreateReceiptViewPresente
 
 			@Override
 			public void onSaveRequest() {
-				handler.onActionInvoked(new ActionInvokedEvent<CreateReceiptViewPresenter.Action>(Action.SAVE));
+				handler.onActionInvoked(new ActionInvokedEvent<SubPolicyCreateReceiptViewPresenter.Action>(Action.SAVE));
 			}
 
 			@Override
 			public void onCancelRequest() {
-				handler.onActionInvoked(new ActionInvokedEvent<CreateReceiptViewPresenter.Action>(Action.CANCEL));
+				handler.onActionInvoked(new ActionInvokedEvent<SubPolicyCreateReceiptViewPresenter.Action>(Action.CANCEL));
 			}
 		};
 		toolbar.hideAll();
@@ -68,17 +68,11 @@ public class CreateReceiptView extends View implements CreateReceiptViewPresente
 		VerticalPanel ownerFormWrapper = new VerticalPanel();
 		ownerFormWrapper.setSize("100%", "100%");
 		
-		ListHeader ownerFormHeader = new ListHeader("Apólice");
+		ListHeader ownerFormHeader = new ListHeader("Apólice Adesão");
 		ownerFormHeader.setHeight("30px");
 		ownerFormWrapper.add(ownerFormHeader);
 		
-		ownerForm = new InsurancePolicyForm() {
-			
-			@Override
-			public void onSubLineChanged(String subLineId) {
-				return;
-			}
-		};
+		ownerForm = new SubPolicyForm();
 		ownerForm.setReadOnly(true);
 		ownerFormWrapper.add(ownerForm);
 		ownerFormWrapper.setCellHeight(ownerForm, "100%");
@@ -98,7 +92,7 @@ public class CreateReceiptView extends View implements CreateReceiptViewPresente
 	}
 
 	@Override
-	public HasValue<InsurancePolicy> getParentForm() {
+	public HasValue<SubPolicy> getParentForm() {
 		return this.ownerForm;
 	}
 
@@ -111,4 +105,5 @@ public class CreateReceiptView extends View implements CreateReceiptViewPresente
 	public void setSaveModeEnabled(boolean enabled) {
 		this.toolbar.setSaveModeEnabled(enabled);
 	}
+
 }

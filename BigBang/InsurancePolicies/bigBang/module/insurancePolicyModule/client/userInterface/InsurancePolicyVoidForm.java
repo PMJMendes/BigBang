@@ -18,7 +18,7 @@ public class InsurancePolicyVoidForm extends FormView<PolicyVoiding> {
 		effectiveDate = new DatePickerFormField("Data Efectiva da Anulação");
 		notes = new TextAreaFormField("Notas");
 		
-		addSection("Invalidação de Apólice");
+		addSection("Anulação de Apólice");
 		addFormField(motive);
 		addFormField(effectiveDate);
 		addFormField(notes);

@@ -9,6 +9,7 @@ import bigBang.definitions.client.dataAccess.DataBrokerClient;
 import bigBang.definitions.client.dataAccess.ExerciseDataBroker;
 import bigBang.definitions.client.dataAccess.ExerciseDataBrokerClient;
 import bigBang.definitions.client.dataAccess.InsurancePolicyBroker;
+import bigBang.definitions.client.dataAccess.InsuranceSubPolicyBroker;
 import bigBang.definitions.client.dataAccess.Search;
 import bigBang.definitions.client.dataAccess.SearchDataBroker;
 import bigBang.definitions.client.dataAccess.SubPolicyExerciseDataBrokerClient;
@@ -39,6 +40,7 @@ implements ExerciseDataBroker, SubPolicyExerciseDataBroker {
 	protected SubPolicyExerciseServiceAsync subPolicyExerciseService;
 	protected InsurancePolicyServiceAsync policyService;
 	protected InsurancePolicyBroker policyBroker;
+	protected InsuranceSubPolicyBroker subPolicyBroker;
 	protected SearchDataBroker<ExerciseStub> searchBroker;
 	protected SearchDataBroker<ExerciseStub> subPolicyExerciseSearchBroker;
 	protected Map<String, String> exercisesInScratchPad;
@@ -295,7 +297,7 @@ implements ExerciseDataBroker, SubPolicyExerciseDataBroker {
 			}
 		});
 	}
-	
+
 	@Override
 	public void getSubPolicyExercise(String exerciseId, final String subPolicyId,
 			final ResponseHandler<Exercise> handler) {
@@ -310,47 +312,51 @@ implements ExerciseDataBroker, SubPolicyExerciseDataBroker {
 				}
 				handler.onResponse(result);
 			}
-			
+
 			@Override
 			public void onResponseFailure(Throwable caught) {
 				handler.onError(new String[]{
-					new String("Could not get the sub policy exercise")	
+						new String("Could not get the sub policy exercise")	
 				});
 				super.onResponseFailure(caught);
 			}
 		});
 	}
-	
+
 	@Override
 	public void getSubPolicyExercises(String subPolicyId,
 			final ResponseHandler<Collection<ExerciseStub>> handler) {
 		ExerciseSearchParameter parameter= new ExerciseSearchParameter();
-		parameter.policyId = subPolicyId;
+		
+		if(getSubPolicyBroker().isTemp(subPolicyId)){
+			//TODO
+		}else{		
+			parameter.policyId = subPolicyId;
+			SearchParameter[] parameters = new SearchParameter[]{
+					parameter
+			};
 
-		SearchParameter[] parameters = new SearchParameter[]{
-				parameter
-		};
+			SortParameter sort = new ExerciseSortParameter(ExerciseSortParameter.SortableField.STARTDATE, SortOrder.DESC);
 
-		SortParameter sort = new ExerciseSortParameter(ExerciseSortParameter.SortableField.STARTDATE, SortOrder.DESC);
+			SortParameter[] sorts = new SortParameter[]{
+					sort
+			};
 
-		SortParameter[] sorts = new SortParameter[]{
-				sort
-		};
+			this.getSubPolicyExerciseSearchBroker().search(parameters, sorts, -1, new ResponseHandler<Search<ExerciseStub>>() {
 
-		this.getSubPolicyExerciseSearchBroker().search(parameters, sorts, -1, new ResponseHandler<Search<ExerciseStub>>() {
+				@Override
+				public void onResponse(Search<ExerciseStub> response) {
+					handler.onResponse(response.getResults());
+				}
 
-			@Override
-			public void onResponse(Search<ExerciseStub> response) {
-				handler.onResponse(response.getResults());
-			}
-
-			@Override
-			public void onError(Collection<ResponseError> errors) {
-				handler.onError(new String[]{
-						new String("Could not get the resquested process exercises")	
-				});
-			}
-		});
+				@Override
+				public void onError(Collection<ResponseError> errors) {
+					handler.onError(new String[]{
+							new String("Could not get the resquested process exercises")	
+					});
+				}
+			});
+		}
 	}
 
 	private String getEffectiveId(String id){
@@ -360,7 +366,7 @@ implements ExerciseDataBroker, SubPolicyExerciseDataBroker {
 		}
 		return id;
 	}
-	
+
 	private String getFinalMapping(String tempId){
 		for(String key : exercisesInScratchPad.keySet()){
 			if(exercisesInScratchPad.get(key).equalsIgnoreCase(tempId)){
@@ -369,7 +375,7 @@ implements ExerciseDataBroker, SubPolicyExerciseDataBroker {
 		}
 		return tempId;
 	}
-	
+
 	@Override
 	public SearchDataBroker<ExerciseStub> getSearchBroker() {
 		return this.searchBroker;
@@ -378,15 +384,17 @@ implements ExerciseDataBroker, SubPolicyExerciseDataBroker {
 	public SearchDataBroker<ExerciseStub> getSubPolicyExerciseSearchBroker() {
 		return this.subPolicyExerciseSearchBroker;
 	}
-	
+
 	@Override
 	public void remapItemId(String oldId, String newId,
 			boolean newIdInScratchPad) {
 		oldId = oldId.toLowerCase();
-		newId = newId.toLowerCase();
+		newId = newId == null ? null : newId.toLowerCase();
 
 		if(newIdInScratchPad){
 			exercisesInScratchPad.put(oldId, newId);
+		}else if(newId == null){
+			this.exercisesInScratchPad.remove(oldId);
 		}else{
 			exercisesInScratchPad.remove(newId);
 		}
@@ -397,6 +405,13 @@ implements ExerciseDataBroker, SubPolicyExerciseDataBroker {
 			this.policyBroker = (InsurancePolicyBroker) DataBrokerManager.staticGetBroker(BigBangConstants.EntityIds.INSURANCE_POLICY);
 		}
 		return this.policyBroker;
+	}
+
+	private InsuranceSubPolicyBroker getSubPolicyBroker(){
+		if(this.subPolicyBroker == null){
+			this.subPolicyBroker = (InsuranceSubPolicyBroker) DataBrokerManager.staticGetBroker(BigBangConstants.EntityIds.INSURANCE_SUB_POLICY);
+		}
+		return this.subPolicyBroker;
 	}
 
 	private boolean isTemp(String id){

@@ -2,7 +2,7 @@ package bigBang.module.insurancePolicyModule.client.userInterface;
 
 import java.util.Collection;
 
-import bigBang.definitions.client.dataAccess.InsurancePolicyBroker;
+import bigBang.definitions.client.dataAccess.InsuranceSubPolicyBroker;
 import bigBang.definitions.client.dataAccess.InsuredObjectDataBroker;
 import bigBang.definitions.client.dataAccess.InsuredObjectDataBrokerClient;
 import bigBang.definitions.client.response.ResponseError;
@@ -29,7 +29,7 @@ public class SubPolicyInsuredObjectsList extends FilterableList<InsuredObjectStu
 		};
 	}
 
-	protected InsurancePolicyBroker insurancePolicyBroker;
+	protected InsuranceSubPolicyBroker subPolicyBroker;
 	protected InsuredObjectDataBrokerClient insuredObjectsBrokerClient;
 	protected InsuredObjectDataBroker insuredObjectsBroker;
 
@@ -37,8 +37,8 @@ public class SubPolicyInsuredObjectsList extends FilterableList<InsuredObjectStu
 
 	public SubPolicyInsuredObjectsList(){
 		this.insuredObjectsBrokerClient = getInsuredObjectsBrokerClient();
-		this.insurancePolicyBroker = (InsurancePolicyBroker) DataBrokerManager.Util.getInstance().getBroker(BigBangConstants.EntityIds.INSURANCE_POLICY);
-		this.insuredObjectsBroker = (InsuredObjectDataBroker) DataBrokerManager.Util.getInstance().getBroker(BigBangConstants.EntityIds.POLICY_INSURED_OBJECT);
+		this.subPolicyBroker = (InsuranceSubPolicyBroker) DataBrokerManager.Util.getInstance().getBroker(BigBangConstants.EntityIds.INSURANCE_SUB_POLICY);
+		this.insuredObjectsBroker = (InsuredObjectDataBroker) DataBrokerManager.Util.getInstance().getBroker(BigBangConstants.EntityIds.INSURANCE_SUB_POLICY_INSURED_OBJECT);
 		this.insuredObjectsBroker.registerClient(this.insuredObjectsBrokerClient);
 		showFilterField(false);
 	}
@@ -47,24 +47,22 @@ public class SubPolicyInsuredObjectsList extends FilterableList<InsuredObjectStu
 		this.ownerId = ownerId;
 		if(ownerId == null) {
 			clear();
-		}else{
-			if(!insurancePolicyBroker.isTemp(ownerId)){
-				this.insuredObjectsBroker.getProcessInsuredObjects(ownerId, new ResponseHandler<Collection<InsuredObjectStub>>() {
+		}else if(!subPolicyBroker.isTemp(ownerId)){
+			this.insuredObjectsBroker.getProcessInsuredObjects(ownerId, new ResponseHandler<Collection<InsuredObjectStub>>() {
 
-					@Override
-					public void onResponse(Collection<InsuredObjectStub> response) {
-						clear();
-						for(InsuredObjectStub o : response){
-							addEntry(o);
-						}
+				@Override
+				public void onResponse(Collection<InsuredObjectStub> response) {
+					clear();
+					for(InsuredObjectStub o : response){
+						addEntry(o);
 					}
+				}
 
-					@Override
-					public void onError(Collection<ResponseError> errors) {
-						return;
-					}
-				});
-			}
+				@Override
+				public void onError(Collection<ResponseError> errors) {
+					return;
+				}
+			});
 		}
 	}
 
@@ -79,14 +77,14 @@ public class SubPolicyInsuredObjectsList extends FilterableList<InsuredObjectStu
 
 			@Override
 			public void setDataVersionNumber(String dataElementId, int number) {
-				if(dataElementId.equalsIgnoreCase(BigBangConstants.EntityIds.POLICY_INSURED_OBJECT)){
+				if(dataElementId.equalsIgnoreCase(BigBangConstants.EntityIds.INSURANCE_SUB_POLICY_INSURED_OBJECT)){
 					version = number;
 				}
 			}
 
 			@Override
 			public int getDataVersion(String dataElementId) {
-				if(dataElementId.equalsIgnoreCase(BigBangConstants.EntityIds.POLICY_INSURED_OBJECT)){
+				if(dataElementId.equalsIgnoreCase(BigBangConstants.EntityIds.INSURANCE_SUB_POLICY_INSURED_OBJECT)){
 					return version;
 				}
 				return -1;
@@ -114,8 +112,8 @@ public class SubPolicyInsuredObjectsList extends FilterableList<InsuredObjectStu
 
 			@Override
 			public void addInsuredObject(InsuredObject object) {
-				String objectOwnerId = insurancePolicyBroker.getFinalMapping(object.ownerId);
-				String currentOwnerId = insurancePolicyBroker.getFinalMapping(SubPolicyInsuredObjectsList.this.ownerId);
+				String objectOwnerId = subPolicyBroker.getFinalMapping(object.ownerId);
+				String currentOwnerId = subPolicyBroker.getFinalMapping(SubPolicyInsuredObjectsList.this.ownerId);
 
 				if(object != null && objectOwnerId != null && ownerId != null && objectOwnerId.equalsIgnoreCase(currentOwnerId)){
 					SubPolicyInsuredObjectsList.this.addEntry(object);

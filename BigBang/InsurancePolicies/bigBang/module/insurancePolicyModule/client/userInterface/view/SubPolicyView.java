@@ -7,6 +7,7 @@ import bigBang.definitions.shared.HistoryItemStub;
 import bigBang.definitions.shared.InsurancePolicy;
 import bigBang.definitions.shared.InsuredObjectStub;
 import bigBang.definitions.shared.SubPolicy;
+import bigBang.definitions.shared.SubPolicy.TableSection;
 import bigBang.library.client.HasEditableValue;
 import bigBang.library.client.HasValueSelectables;
 import bigBang.library.client.event.ActionInvokedEvent;
@@ -37,6 +38,7 @@ public class SubPolicyView extends View implements SubPolicyViewPresenter.Displa
 	public SubPolicyView(){
 		SplitLayoutPanel wrapper = new SplitLayoutPanel();
 		initWidget(wrapper);
+
 		wrapper.setSize("100%", "100%");
 
 		toolbar = new SubPolicyOperationsToolbar(){
@@ -216,8 +218,7 @@ public class SubPolicyView extends View implements SubPolicyViewPresenter.Displa
 
 	@Override
 	public void allowCreateInsuredObject(boolean allow) {
-		// TODO Auto-generated method stub
-
+		toolbar.allowCreateInsuredObject(allow);
 	}
 
 	@Override
@@ -240,38 +241,32 @@ public class SubPolicyView extends View implements SubPolicyViewPresenter.Displa
 
 	@Override
 	public void allowPerformCalculations(boolean allow) {
-		// TODO Auto-generated method stub
-
+		toolbar.allowPerformCalculations(allow);
 	}
 
 	@Override
 	public void allowValidate(boolean allow) {
-		// TODO Auto-generated method stub
-
+		toolbar.allowValidate(allow);
 	}
 
 	@Override
 	public void allowTransferToPolicy(boolean allow) {
-		// TODO Auto-generated method stub
-
+		toolbar.allowTransferToPolicy(allow);
 	}
 
 	@Override
 	public void allowCreateInfoOrDocumentRequest(boolean allow) {
-		// TODO Auto-generated method stub
-
+		toolbar.allowCreateInfoOrDocumentRequest(allow);
 	}
 
 	@Override
 	public void allowCreateReceipt(boolean allow) {
-		// TODO Auto-generated method stub
-
+		toolbar.allowCreateReceipt(allow);
 	}
 
 	@Override
 	public void allowVoid(boolean allow) {
-		// TODO Auto-generated method stub
-
+		toolbar.allowVoid(allow);
 	}
 
 	@Override
@@ -302,6 +297,31 @@ public class SubPolicyView extends View implements SubPolicyViewPresenter.Displa
 	@Override
 	public HasValueSelectables<HistoryItemStub> getHistoryList() {
 		return childrenPanel.historyList;
+	}
+
+	@Override
+	public HasValue<String> getInsuredObjectFilter() {
+		return this.form.getInsuredObjectsField();
+	}
+
+	@Override
+	public HasValue<String> getExerciseFilter() {
+		return this.form.getExercisesField();
+	}
+
+	@Override
+	public TableSection getCurrentTableSectionInfo() {
+		return this.form.getTable().getValue();
+	}
+	
+	@Override
+	public void setTableSectionInfo(TableSection info) {
+		this.form.getTable().setValue(info);
+	}
+
+	@Override
+	public void clearAllowedPermissions() {
+		this.toolbar.lockAll();
 	}
 
 }

@@ -1,7 +1,7 @@
 package bigBang.module.insurancePolicyModule.client.dataAccess;
 
 import bigBang.library.client.dataAccess.BigBangTypifiedListBroker;
-import bigBang.module.insurancePolicyModule.interfaces.InsurancePolicyService;
+import bigBang.module.insurancePolicyModule.interfaces.SubPolicyService;
 
 public class SubPolicyTypifiedListBroker extends BigBangTypifiedListBroker {
 
@@ -18,7 +18,7 @@ public class SubPolicyTypifiedListBroker extends BigBangTypifiedListBroker {
 	
 	public SubPolicyTypifiedListBroker(){
 		super();
-		service = InsurancePolicyService.Util.getInstance();
+		service = SubPolicyService.Util.getInstance();
 	}
 
 }

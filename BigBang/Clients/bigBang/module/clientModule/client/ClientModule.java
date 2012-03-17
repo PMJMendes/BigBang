@@ -15,6 +15,7 @@ import bigBang.module.clientModule.client.userInterface.presenter.ClientSearchOp
 import bigBang.module.clientModule.client.userInterface.presenter.ClientSectionViewPresenter;
 import bigBang.module.clientModule.client.userInterface.presenter.CreateInsurancePolicyViewPresenter;
 import bigBang.module.clientModule.client.userInterface.presenter.SingleClientManagerTransferViewPresenter;
+import bigBang.module.clientModule.client.userInterface.presenter.ViewClientInfoRequestViewPresenter;
 import bigBang.module.clientModule.client.userInterface.view.ClientInfoOrDocumentRequestView;
 import bigBang.module.clientModule.client.userInterface.view.ClientMassManagerTransferView;
 import bigBang.module.clientModule.client.userInterface.view.ClientMergeView;
@@ -23,6 +24,7 @@ import bigBang.module.clientModule.client.userInterface.view.ClientSearchOperati
 import bigBang.module.clientModule.client.userInterface.view.ClientSectionView;
 import bigBang.module.clientModule.client.userInterface.view.CreateInsurancePolicyView;
 import bigBang.module.clientModule.client.userInterface.view.SingleClientManagerTransferView;
+import bigBang.module.clientModule.client.userInterface.view.ViewClientInfoRequestView;
 
 import com.google.gwt.core.client.GWT;
 
@@ -112,6 +114,15 @@ public class ClientModule implements Module {
 			public ViewPresenter getInstance() {
 				ClientInfoOrDocumentRequestView view = (ClientInfoOrDocumentRequestView) GWT.create(ClientInfoOrDocumentRequestView.class);
 				ViewPresenter presenter = new ClientInfoOrDocumentRequestViewPresenter(view);
+				return presenter;
+			}
+		});
+		ViewPresenterFactory.getInstance().registerViewPresenterInstantiator("VIEW_CLIENT_INFO_OR_DOCUMENT_REQUEST", new ViewPresenterInstantiator() {
+
+			@Override
+			public ViewPresenter getInstance() {
+				ViewClientInfoRequestView view = (ViewClientInfoRequestView) GWT.create(ViewClientInfoRequestView.class);
+				ViewPresenter presenter = new ViewClientInfoRequestViewPresenter(view);
 				return presenter;
 			}
 		});

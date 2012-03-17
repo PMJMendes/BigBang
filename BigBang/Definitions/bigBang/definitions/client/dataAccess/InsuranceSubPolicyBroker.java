@@ -3,6 +3,8 @@ package bigBang.definitions.client.dataAccess;
 import java.util.Collection;
 
 import bigBang.definitions.client.response.ResponseHandler;
+import bigBang.definitions.shared.InfoOrDocumentRequest;
+import bigBang.definitions.shared.InsuredObject;
 import bigBang.definitions.shared.PolicyVoiding;
 import bigBang.definitions.shared.Receipt;
 import bigBang.definitions.shared.SubPolicy;
@@ -42,12 +44,24 @@ public interface InsuranceSubPolicyBroker extends
 	
 	public void getPage(String subPolicyId, String insuredObjectId, String exerciseId, ResponseHandler<TableSection> handler);
 
-	void validateSubPolicy(String subPolicyId, ResponseHandler<Void> handler) throws bigBang.definitions.shared.BigBangPolicyValidationException;
+	void validateSubPolicy(String subPolicyId, ResponseHandler<Void> handler);
+	
+	void includeInsuredObject(InsuredObject object, ResponseHandler<InsuredObject> handler);
+	
+	void includeObjectFromClient(String subPolicyId, ResponseHandler<InsuredObject> handler);
+	
+	void excludeObject(String subPolicyId, String objectId, ResponseHandler<Void> handler);
+	
+	void transferToInsurancePolicy(String subPolicyId, String newPolicyId, ResponseHandler<SubPolicy> handler);
+	
+	void createInfoOrDocumentRequest(InfoOrDocumentRequest request, ResponseHandler<InfoOrDocumentRequest> handler);
+	
+	void createReceipt(Receipt receipt, ResponseHandler<Receipt> handler);
 	
 	void executeDetailedCalculations(String subPolicyId, ResponseHandler<SubPolicy> handler);
 	
 	void voidSubPolicy(PolicyVoiding voiding, ResponseHandler<SubPolicy> responseHandler);
-	
+
 	public String getEffectiveId(String ownerId);
 
 	public String getFinalMapping(String ownerId);

@@ -32,7 +32,6 @@ import bigBang.library.client.event.SelectionChangedEventHandler;
 import bigBang.library.client.history.NavigationHistoryItem;
 import bigBang.library.client.history.NavigationHistoryManager;
 import bigBang.library.client.userInterface.presenter.ViewPresenter;
-import bigBang.module.insurancePolicyModule.client.userInterface.presenter.SubPolicyClientSelectionViewPresenter.Action;
 
 public class InsurancePolicyTransferToClientViewPresenter implements ViewPresenter{
 
@@ -156,22 +155,22 @@ public class InsurancePolicyTransferToClientViewPresenter implements ViewPresent
 		});
 	}
 
-protected void onTransferToClientCancelled() {
+	protected void onTransferToClientCancelled() {
 
-	NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
-	item.removeParameter("show");
-	NavigationHistoryManager.getInstance().go(item);
+		NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
+		item.removeParameter("show");
+		NavigationHistoryManager.getInstance().go(item);
 
-}
-@Override
-public void setParameters(HasParameters parameterHolder) {
-	policyId = parameterHolder.getParameter("policyid");
-	clearView();
-}
+	}
+	@Override
+	public void setParameters(HasParameters parameterHolder) {
+		policyId = parameterHolder.getParameter("policyid");
+		clearView();
+	}
 
-private void clearView(){
-	view.getList().clearSelection();
-	view.getForm().setValue(null);
-}
+	private void clearView(){
+		view.getList().clearSelection();
+		view.getForm().setValue(null);
+	}
 
 }

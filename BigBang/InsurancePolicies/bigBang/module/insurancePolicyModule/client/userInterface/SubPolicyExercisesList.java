@@ -24,7 +24,7 @@ public class SubPolicyExercisesList extends FilterableList<ExerciseStub> {
 
 		public <I extends Object> void setInfo(I info) {
 			ExerciseStub exercise = (ExerciseStub) info;
-			setTitle(exercise.label);
+			setTitle(exercise.label == null ? "" : exercise.label);
 		};
 	}
 
@@ -47,23 +47,21 @@ public class SubPolicyExercisesList extends FilterableList<ExerciseStub> {
 		if(ownerId == null) {
 			clear();
 		}else{
-			if(!insuranceSubPolicyBroker.isTemp(ownerId)){
-				this.exerciseBroker.getSubPolicyExercises(ownerId, new ResponseHandler<Collection<ExerciseStub>>() {
+			this.exerciseBroker.getSubPolicyExercises(ownerId, new ResponseHandler<Collection<ExerciseStub>>() {
 
-					@Override
-					public void onResponse(Collection<ExerciseStub> response) {
-						clear();
-						for(ExerciseStub e : response){
-							addEntry(e);
-						}
+				@Override
+				public void onResponse(Collection<ExerciseStub> response) {
+					clear();
+					for(ExerciseStub e : response){
+						addEntry(e);
 					}
+				}
 
-					@Override
-					public void onError(Collection<ResponseError> errors) {
-						return;
-					}
-				});
-			}
+				@Override
+				public void onError(Collection<ResponseError> errors) {
+					return;
+				}
+			});
 		}
 	}
 
@@ -73,7 +71,7 @@ public class SubPolicyExercisesList extends FilterableList<ExerciseStub> {
 
 	protected SubPolicyExerciseDataBrokerClient getSubPolicyExerciseBrokerClient(){
 		return new SubPolicyExerciseDataBrokerClient() {
-			
+
 			protected int version;
 
 			@Override
@@ -129,5 +127,5 @@ public class SubPolicyExercisesList extends FilterableList<ExerciseStub> {
 		clearSelection();
 		super.onAttach();
 	}
-	
+
 }

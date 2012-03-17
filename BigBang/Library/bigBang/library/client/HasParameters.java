@@ -88,9 +88,9 @@ public class HasParameters {
 		}else{
 			String serializedValue = parameters.get(parameterId);
 			if(serializedValue != null) {
-				String[] stackEntries = serializedValue.substring(2).split(".");
+				String[] stackEntries = serializedValue.substring(2).split("\\.");
 				String newStack = new String("s:");
-				for(int i = 0; i < stackEntries.length - 2; i++) {
+				for(int i = 0; i < stackEntries.length - 1; i++) {
 					newStack += stackEntries[i] + ".";
 				}
 				parameters.put(parameterId, newStack);

@@ -162,7 +162,6 @@ public class List<T> extends View implements HasValueSelectables<T>, java.util.L
 		};
 
 		clear();
-		disableTextSelection(true);
 	}
 
 	@Override

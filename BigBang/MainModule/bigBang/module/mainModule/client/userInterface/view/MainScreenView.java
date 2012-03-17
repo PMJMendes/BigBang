@@ -140,7 +140,6 @@ public class MainScreenView extends View implements MainScreenViewPresenter.Disp
 		this.preferencesContainer = preferencesWrapper;
 		
 		showBackOffice(false);
-		disableTextSelection(true);
 	}
 	
 	@Override

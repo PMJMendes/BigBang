@@ -7,12 +7,12 @@ import com.google.gwt.user.client.ui.HasWidgets;
 import com.google.gwt.user.client.ui.UIObject;
 import com.google.gwt.user.client.ui.Widget;
 
-import bigBang.definitions.client.dataAccess.InsurancePolicyBroker;
+import bigBang.definitions.client.dataAccess.InsuranceSubPolicyBroker;
 import bigBang.definitions.client.response.ResponseError;
 import bigBang.definitions.client.response.ResponseHandler;
 import bigBang.definitions.shared.BigBangConstants;
-import bigBang.definitions.shared.InsurancePolicy;
 import bigBang.definitions.shared.Receipt;
+import bigBang.definitions.shared.SubPolicy;
 import bigBang.library.client.EventBus;
 import bigBang.library.client.HasEditableValue;
 import bigBang.library.client.HasParameters;
@@ -26,7 +26,7 @@ import bigBang.library.client.history.NavigationHistoryItem;
 import bigBang.library.client.history.NavigationHistoryManager;
 import bigBang.library.client.userInterface.presenter.ViewPresenter;
 
-public class CreateReceiptViewPresenter implements ViewPresenter {
+public class SubPolicyCreateReceiptViewPresenter implements ViewPresenter {
 
 	public static enum Action {
 		SAVE,
@@ -35,7 +35,7 @@ public class CreateReceiptViewPresenter implements ViewPresenter {
 
 	public static interface Display {
 		HasEditableValue<Receipt> getForm();
-		HasValue<InsurancePolicy> getParentForm();
+		HasValue<SubPolicy> getParentForm();
 		void registerActionHandler(ActionInvokedEventHandler<Action> handler);
 		void setSaveModeEnabled(boolean enabled);
 		
@@ -44,11 +44,11 @@ public class CreateReceiptViewPresenter implements ViewPresenter {
 
 	protected boolean bound = false;
 	protected Display view;
-	protected InsurancePolicyBroker broker;
+	protected InsuranceSubPolicyBroker broker;
 
-	public CreateReceiptViewPresenter(Display view){
+	public SubPolicyCreateReceiptViewPresenter(Display view){
 		setView((UIObject) view);
-		broker = (InsurancePolicyBroker) DataBrokerManager.staticGetBroker(BigBangConstants.EntityIds.INSURANCE_POLICY);
+		broker = (InsuranceSubPolicyBroker) DataBrokerManager.staticGetBroker(BigBangConstants.EntityIds.INSURANCE_SUB_POLICY);
 	} 
 
 	@Override
@@ -65,7 +65,7 @@ public class CreateReceiptViewPresenter implements ViewPresenter {
 
 	@Override
 	public void setParameters(HasParameters parameterHolder) {
-		String ownerId = parameterHolder.getParameter("policyid");
+		String ownerId = parameterHolder.getParameter("subpolicyid");
 		if(ownerId == null || ownerId.isEmpty()){
 			onFailure();
 		}else{
@@ -76,7 +76,7 @@ public class CreateReceiptViewPresenter implements ViewPresenter {
 	protected void bind(){
 		if(bound) {return;}
 
-		view.registerActionHandler(new ActionInvokedEventHandler<CreateReceiptViewPresenter.Action>() {
+		view.registerActionHandler(new ActionInvokedEventHandler<SubPolicyCreateReceiptViewPresenter.Action>() {
 
 			@Override
 			public void onActionInvoked(ActionInvokedEvent<Action> action) {
@@ -98,22 +98,19 @@ public class CreateReceiptViewPresenter implements ViewPresenter {
 		view.getForm().setValue(null);
 		view.getParentForm().setValue(null);
 		view.setSaveModeEnabled(true);
-		broker.getPolicy(ownerId, new ResponseHandler<InsurancePolicy>() {
+		broker.getSubPolicy(ownerId, new ResponseHandler<SubPolicy>() {
 
 			@Override
-			public void onResponse(InsurancePolicy response) {
+			public void onResponse(SubPolicy response) {
 				view.getParentForm().setValue(response);
 				Receipt receipt = new Receipt();
 				receipt.policyId = response.id;
 				receipt.policyNumber = response.number;
-				receipt.categoryName = response.categoryName;
-				receipt.categoryId = response.categoryId;
-				receipt.lineName = response.lineName;
-				receipt.lineId = response.lineName;
-				receipt.subLineName = response.subLineName;
-				receipt.subLineId=  response.subLineId;
+				receipt.categoryName = response.inheritCategoryName;
 				receipt.managerId = response.managerId;
 				receipt.mediatorId = response.inheritMediatorId;
+				receipt.lineName = response.inheritLineName;
+				receipt.subLineName = response.inheritSubLineName;
 				receipt.clientName = response.clientName;
 				receipt.clientNumber = response.clientNumber;
 				receipt.clientId = response.clientId;
@@ -130,7 +127,7 @@ public class CreateReceiptViewPresenter implements ViewPresenter {
 
 	protected void onSave(){
 		Receipt receipt = view.getForm().getInfo();
-		broker.createReceipt(receipt.policyId, receipt, new ResponseHandler<Receipt>() {
+		broker.createReceipt(receipt, new ResponseHandler<Receipt>() {
 
 			@Override
 			public void onResponse(Receipt response) {

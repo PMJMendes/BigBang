@@ -549,7 +549,7 @@ public class ClientSearchOperationViewPresenter implements ViewPresenter {
 			NavigationHistoryManager.getInstance().go(item);
 		}else if(type.equalsIgnoreCase(BigBangConstants.EntityIds.INFO_REQUEST)){
 			NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
-			item.pushIntoStackParameter("display", "inforequest");
+			item.pushIntoStackParameter("display", "viewinforequest");
 			item.setParameter("requestid", process.dataId);
 			NavigationHistoryManager.getInstance().go(item);
 		}

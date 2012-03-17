@@ -45,13 +45,13 @@ public abstract class View extends Composite implements RightClickable, HasAllMo
 	}
 
 	protected abstract void initializeView();
-	
+
 	public void setRightClickable(boolean rightClickable) {
 		this.rightClickable = rightClickable;
 		//if(rightClickable)
-			sinkEvents(Event.ONCONTEXTMENU | Event.MOUSEEVENTS);
+		sinkEvents(Event.ONCONTEXTMENU | Event.MOUSEEVENTS);
 		//else
-			//unsinkEvents(Event.ONCONTEXTMENU);
+		//unsinkEvents(Event.ONCONTEXTMENU);
 	}
 
 	public boolean isRightClickable(){
@@ -72,24 +72,17 @@ public abstract class View extends Composite implements RightClickable, HasAllMo
 
 	public void onBrowserEvent(Event event) {
 		super.onBrowserEvent(event);
-
 		switch (DOM.eventGetType(event)) {
 		case Event.ONMOUSEUP:
 			if (DOM.eventGetButton(event) == Event.BUTTON_RIGHT) {
-				//if(this.rightClickable)
-					onRightClick(event);
+				onRightClick(event);
 			}
 			break;
 		case Event.ONDBLCLICK:
-			//if(this.doubleClickable)
-				onDoubleClick(event);
+			onDoubleClick(event);
 			break;
 		case Event.ONCONTEXTMENU:
-			//if(this.rightClickable)
-				onRightClick(event);
-			break;
-
-		default:
+			onRightClick(event);
 			break;
 		}
 	}
@@ -106,33 +99,33 @@ public abstract class View extends Composite implements RightClickable, HasAllMo
 
 	public void reset(){
 	}
-	
+
 	public void disableTextSelection(boolean disable){
-//		disableTextSelectInternal(this.getElement(), disable);
+		//		disableTextSelectInternal(this.getElement(), disable);
 	}
 
-//	private native static void disableTextSelectInternal(Element e, boolean disable)/*-{ 
-//		  if (disable) { 
-//		    e.ondrag = function () { return false; }; 
-//		    e.onselectstart = function () { return false; }; 
-//		  } else { 
-//		    e.ondrag = null; 
-//		    e.onselectstart = null; 
-//		} 
-//	}-*/;
+	//	private native static void disableTextSelectInternal(Element e, boolean disable)/*-{ 
+	//		  if (disable) { 
+	//		    e.ondrag = function () { return false; }; 
+	//		    e.onselectstart = function () { return false; }; 
+	//		  } else { 
+	//		    e.ondrag = null; 
+	//		    e.onselectstart = null; 
+	//		} 
+	//	}-*/;
 
 	public void showMessage(String message){
 		MessageBox.info("Informação", message);
 	}
-	
+
 	public void showErrorMessage(String message){
 		MessageBox.error("Erro", message);
 	}
-	
+
 	public void showWarningMessage(String message) {
 		MessageBox.alert("Aviso", message);
 	}
-	
+
 	@Override
 	public HandlerRegistration addMouseDownHandler(MouseDownHandler handler) {
 		return addDomHandler(handler, MouseDownEvent.getType());
@@ -162,5 +155,5 @@ public abstract class View extends Composite implements RightClickable, HasAllMo
 	public HandlerRegistration addMouseWheelHandler(MouseWheelHandler handler) {
 		return addDomHandler(handler, MouseWheelEvent.getType());
 	}
-	
+
 }

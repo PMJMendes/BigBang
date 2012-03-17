@@ -604,7 +604,9 @@ public class InsurancePolicyProcessBrokerImpl extends DataBroker<InsurancePolicy
 	public void remapItemId(String oldId, String newId, boolean newInScratchPad) {
 		if(newInScratchPad){
 			this.policiesInScratchPad.put(oldId, newId);
-		}else{
+		}else if(newId == null){
+			discardTemp(oldId);
+		}else {
 			this.policiesInScratchPad.remove(newId);
 		}
 		incrementDataVersion();

@@ -44,7 +44,7 @@ public class BigBangConstants {
 		public static final String COMPLAINT = "TODO";
 		public static final String EXPENSE = "TODO";
 
-		public static final String INFO_REQUEST = "TODO";
+		public static final String INFO_REQUEST = "1D10FF86-70B5-4362-A8F3-9F7C00BC6DE4";
 
 		public static final String INSURANCE_POLICY_EXERCISES = "DEE32F69-B33D-4427-AD5B-9F9C001607F2";
 		public static final String INSURANCE_POLICY_INSURED_OBJECTS = "3A3316D2-9D7C-4FD1-8486-9F9C0012E119";
@@ -52,6 +52,8 @@ public class BigBangConstants {
 		public static final String INSURANCE_SUB_POLICY = "C7BC8D2F-BD61-43D5-9347-9FF300EE9986";
 
 		public static final String NEGOTIATION = "0D50EB51-725D-4741-8618-9FFD00E918D3";
+
+		public static final String INSURANCE_SUB_POLICY_INSURED_OBJECT = "C3480E17-821B-4DCB-BF42-9FF800D1C470";
 		
 	}
 
@@ -73,6 +75,12 @@ public class BigBangConstants {
 
 	public static class OperationIds {
 
+		public static class InfoOrDocumentRequest {
+			public static final String REPEAT_REQUEST = "342772ED-99A8-4662-9439-9FE500FABF29";
+			public static final String RECEIVE_REPLY = "1497B196-8AE7-4E3F-8962-9FE500FAFEC6";
+			public static final String CANCEL_REQUEST = "E4CAAC1D-C89F-4956-9F0E-9FE500FB443D";
+		}
+		
 		public static class GeneralSystemProcess {
 			public static final String CREATE_CLIENT = "214118B8-C43C-4941-9D1E-9EB500A1381C";
 		}
@@ -123,10 +131,12 @@ public class BigBangConstants {
 		public static class InsuranceSubPolicyProcess {
 			public static final String EDIT_SUB_POLICY = "F8F2980B-5591-4BD1-8DD1-9FF3010015D1";
 			public static final String DELETE_SUB_POLICY = "CB4B3B9F-AACF-45A7-AD58-9FF3011AD0C2";
-			public static final String CREATE_RECEIPT = null;
-			public static final String VALIDATE = null;
-			public static final String PERFORM_CALCULATIONS = null;
-			public static final String VOID = null;
+			public static final String CREATE_RECEIPT = "2B9FED57-FA3B-4451-9EBC-9FF300F72555";
+			public static final String VALIDATE = "E22C1D4C-2AF6-485F-BC02-9FF3010B1C80";
+			public static final String PERFORM_CALCULATIONS = "85224AA5-3C12-470F-9539-9FF30101B35E";
+			public static final String VOID = "FA8BF9F2-FEB2-49C7-A408-9FF300F34C38";
+			public static final String TRANSFER_TO_POLICY = "E89D08A1-7BE7-4F2B-9E06-9FF3010A6138";
+			public static final String CREATE_INFO_OR_DOCUMENT_REQUEST = "E9507402-B03D-4544-B770-9FF300F64319";
 		}
 
 		

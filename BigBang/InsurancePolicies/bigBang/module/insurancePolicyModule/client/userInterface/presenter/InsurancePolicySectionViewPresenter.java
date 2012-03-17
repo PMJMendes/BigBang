@@ -141,6 +141,12 @@ public class InsurancePolicySectionViewPresenter implements ViewPresenter{
 				}else if(show.equalsIgnoreCase("transfertoclient")){
 					present("INSURANCE_POLICY_TRANSFER_TO_CLIENT", parameters);
 					view.showOverlayViewContainer(true);
+				}else if(show.equalsIgnoreCase("voidsubpolicy")){
+					present("INSURANCE_POLICY_SUB_POLICY_VOID", parameters);
+					view.showOverlayViewContainer(true);
+				}else if(show.equalsIgnoreCase("subpolicytransfertopolicy")){
+					present("INSURANCE_POLICY_SUB_POLICY_TRANSFER_TO_POLICY", parameters);
+					view.showOverlayViewContainer(true);
 				}
 			}
 			

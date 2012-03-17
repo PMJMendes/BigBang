@@ -65,10 +65,19 @@ public class InsurancePolicyOperationsViewPresenter implements ViewPresenter {
 					present("INSURANCE_POLICY_SUB_POLICY", parameters);
 				}else if(display.equalsIgnoreCase("negotiation")){
 					present("INSURANCE_POLICY_NEGOTIATION", parameters);
+				}else if(display.equalsIgnoreCase("viewsubpolicyexercise")){
+					present("INSURANCE_POLICY_SUB_POLICY_EXERCISE", parameters);
+				}else if(display.equalsIgnoreCase("viewsubpolicyobject")){
+					present("INSURANCE_POLICY_SUB_POLICY_INSURED_OBJECT", parameters);
 				}else if(display.equalsIgnoreCase("externalrequest")){
 					present("INSURANCE_POLICY_NEGOTIATION_EXTERNAL_REQUEST", parameters);
-				}
-				else{
+				}else if(display.equalsIgnoreCase("subpolicyinforequest")){
+					present("INSURANCE_POLICY_SUB_POLICY_INFO_REQUEST", parameters);
+				}else if(display.equalsIgnoreCase("subpolicytransfertopolicy")){
+					present("INSURANCE_POLICY_SUB_POLICY_TRANSFER_TO_POLICY", parameters);
+				}else if(display.equalsIgnoreCase("subpolicycreatereceipt")){
+					present("INSURANCE_POLICY_SUB_POLICY_CREATE_RECEIPT", parameters);
+				}else{
 					goToDefault();
 				}
 			}

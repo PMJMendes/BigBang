@@ -80,7 +80,7 @@ public class HistoryList extends FilterableList<HistoryItemStub> implements Hist
 					broker.getSearchBroker().disposeSearch(response.getWorkspaceId());
 					for(HistoryItemStub s : response.getResults()) {
 						addEntry(s);
-					}
+ 					}
 				}
 
 				@Override

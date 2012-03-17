@@ -119,16 +119,6 @@ public class ClientInfoOrDocumentRequestViewPresenter extends
 		NavigationHistoryManager.getInstance().go(item);
 	}
 	
-	private void onGetRequestFailed(){
-		EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não foi possível obter o pedido de informação"), TYPE.ALERT_NOTIFICATION));
-		NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
-		item.popFromStackParameter("display");
-		item.removeParameter("ownerid");
-		item.removeParameter("ownertypeid");
-		item.removeParameter("requestid");
-		NavigationHistoryManager.getInstance().go(item);
-	}
-
 	@Override
 	protected void onUserLacksPermission() {
 		EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não tem permissões para criar o Pedido de Informação"), TYPE.ALERT_NOTIFICATION));

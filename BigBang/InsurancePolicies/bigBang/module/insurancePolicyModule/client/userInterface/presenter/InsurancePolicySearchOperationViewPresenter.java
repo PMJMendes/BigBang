@@ -118,12 +118,12 @@ ViewPresenter {
 		HasValueSelectables<SubPolicyStub> getSubPoliciesList();
 		HasValueSelectables<HistoryItemStub> getHistoryList();
 		HasValueSelectables<BigBangProcess> getSubProcessesList();
-		
+
 		//General
 		void registerActionInvokedHandler(ActionInvokedEventHandler<Action> handler);
 		void setSaveModeEnabled(boolean enabled);
 		void confirm(String message, ResponseHandler<Boolean> handler);
-		
+
 		Widget asWidget();
 	}
 
@@ -156,7 +156,7 @@ ViewPresenter {
 		String policyId = parameterHolder.getParameter("policyid");
 		checkStatus(policyId);
 		policyId = policyId == null ? new String() : policyId;
-		
+
 		setup();
 
 		if(policyId.isEmpty()){
@@ -319,7 +319,7 @@ ViewPresenter {
 				case VOID_POLICY:
 					onVoidPolicy();
 					break;
-					
+
 				case TRANSFER_TO_CLIENT:{
 					transferToClient();
 					break;
@@ -386,7 +386,7 @@ ViewPresenter {
 			}
 		});
 		view.getSubPoliciesList().addSelectionChangedEventHandler(new SelectionChangedEventHandler() {
-			
+
 			@Override
 			public void onSelectionChanged(SelectionChangedEvent event) {
 				@SuppressWarnings("unchecked")
@@ -397,7 +397,7 @@ ViewPresenter {
 			}
 		});
 		view.getSubProcessesList().addSelectionChangedEventHandler(new SelectionChangedEventHandler() {
-			
+
 			@Override
 			public void onSelectionChanged(SelectionChangedEvent event) {
 				@SuppressWarnings("unchecked")
@@ -442,7 +442,7 @@ ViewPresenter {
 			}
 		}
 	}
-	
+
 	private void clearView(){
 		view.setSaveModeEnabled(false);
 		view.clearAllowedPermissions();
@@ -463,7 +463,7 @@ ViewPresenter {
 		view.getExercisesList().clearSelection();
 		view.getObjectsList().clearSelection();
 	}
-	
+
 	private void showPolicy(String policyId){
 		if(broker.isTemp(policyId)){
 			showScratchPadPolicy(policyId);
@@ -507,8 +507,8 @@ ViewPresenter {
 					view.allowCreateHealthExpense(PermissionChecker.hasPermission(response, BigBangConstants.OperationIds.InsurancePolicyProcess.CREATE_HEALTH_EXPENSE));
 					view.allowCreateRiskAnalisys(PermissionChecker.hasPermission(response, BigBangConstants.OperationIds.InsurancePolicyProcess.CREATE_RISK_ANALISYS));
 					view.allowTransferToClient(PermissionChecker.hasPermission(response, BigBangConstants.OperationIds.InsurancePolicyProcess.TRANSFER_TO_CLIENT));
-					
-					
+
+
 					view.setSaveModeEnabled(false);
 					view.getForm().setReadOnly(true);
 					view.getForm().setValue(response);
@@ -551,6 +551,7 @@ ViewPresenter {
 
 					view.setSaveModeEnabled(true);
 					view.getForm().setValue(response);
+
 					view.getForm().setReadOnly(false);
 				}
 
@@ -576,35 +577,55 @@ ViewPresenter {
 		}
 	}
 
+	protected void saveWorkState(final ResponseHandler<Void> handler){
+		final InsurancePolicy policy = view.getForm().getInfo(); 
+		if(broker.isTemp(policy.id)){
+			broker.updatePolicy(policy, new ResponseHandler<InsurancePolicy>() {
+
+				@Override
+				public void onResponse(InsurancePolicy response) {
+					broker.saveCoverageDetailsPage(policy.id, currentInsuredObjectFilterId, currentExerciseFilterId, view.getCoverageTable().getValue(), new ResponseHandler<TableSection>(){
+
+						@Override
+						public void onResponse(TableSection response) {
+							handler.onResponse(null);
+						}
+
+						@Override
+						public void onError(Collection<ResponseError> errors) {
+							handler.onError(new String[]{});
+						}
+
+					});
+				}
+
+				@Override
+				public void onError(Collection<ResponseError> errors) {
+					handler.onError(new String[]{});
+				}
+			});
+		} else {
+			handler.onResponse(null);
+		}
+	}
+
 
 	private void savePolicy(final InsurancePolicy policy){
-		broker.updatePolicy(policy, new ResponseHandler<InsurancePolicy>() {
+		saveWorkState(new ResponseHandler<Void>() {
 
 			@Override
-			public void onResponse(InsurancePolicy response) {
-				broker.saveCoverageDetailsPage(policy.id, currentInsuredObjectFilterId, currentExerciseFilterId, view.getCoverageTable().getValue(), new ResponseHandler<TableSection>(){
+			public void onResponse(Void response) {
+				broker.commitPolicy(policy, new ResponseHandler<InsurancePolicy>() {
 
 					@Override
-					public void onResponse(TableSection response) {
-						broker.commitPolicy(policy, new ResponseHandler<InsurancePolicy>() {
-
-							@Override
-							public void onResponse(InsurancePolicy response) {
-								onSavePolicySuccess();
-							}
-
-							@Override
-							public void onError(Collection<ResponseError> errors) {
-								onSavePolicyFailed();
-							}
-						});
+					public void onResponse(InsurancePolicy response) {
+						onSavePolicySuccess();
 					}
 
 					@Override
 					public void onError(Collection<ResponseError> errors) {
 						onSavePolicyFailed();
 					}
-
 				});
 			}
 
@@ -657,41 +678,85 @@ ViewPresenter {
 			onGetPolicyFailed();
 		}
 	}
-	
+
 	private void onVoidPolicy(){
-		NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
-		item.setParameter("show", "voidpolicy");
-		NavigationHistoryManager.getInstance().go(item);
+		saveWorkState(new ResponseHandler<Void>() {
+
+			@Override
+			public void onResponse(Void response) {
+				NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
+				item.setParameter("show", "voidpolicy");
+				NavigationHistoryManager.getInstance().go(item);
+			}
+
+			@Override
+			public void onError(Collection<ResponseError> errors) {
+				onResponse(null);
+			}
+		});
 	}
 
-	private void showContact(Contact contact) {
-		NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
-		item.setParameter("show", "contactmanagement");
-		item.setParameter("ownerid", contact.ownerId);
-		item.setParameter("ownertypeid", contact.ownerTypeId);
-		item.setParameter("contactid", contact.id);
-		NavigationHistoryManager.getInstance().go(item);
+	private void showContact(final Contact contact) {
+		saveWorkState(new ResponseHandler<Void>() {
+
+			@Override
+			public void onResponse(Void response) {
+				NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
+				item.setParameter("show", "contactmanagement");
+				item.setParameter("ownerid", contact.ownerId);
+				item.setParameter("ownertypeid", contact.ownerTypeId);
+				item.setParameter("contactid", contact.id);
+				NavigationHistoryManager.getInstance().go(item);
+			}
+
+			@Override
+			public void onError(Collection<ResponseError> errors) {
+				onResponse(null);
+			}
+		});
 	}
 
-	private void showDocument(Document document){
-		NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
-		item.setParameter("show", "documentmanagement");
-		item.setParameter("ownerid", document.ownerId);
-		item.setParameter("ownertypeid", document.ownerTypeId);
-		item.setParameter("documentid", document.id);
-		NavigationHistoryManager.getInstance().go(item);
+	private void showDocument(final Document document){
+		saveWorkState(new ResponseHandler<Void>() {
+
+			@Override
+			public void onResponse(Void response) {
+				NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
+				item.setParameter("show", "documentmanagement");
+				item.setParameter("ownerid", document.ownerId);
+				item.setParameter("ownertypeid", document.ownerTypeId);
+				item.setParameter("documentid", document.id);
+				NavigationHistoryManager.getInstance().go(item);
+			}
+
+			@Override
+			public void onError(Collection<ResponseError> errors) {
+				onResponse(null);
+			}
+		});
 	}
-	
-	private void showSubProcess(BigBangProcess process){
-		String type = process.dataTypeId;
-		
-		NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
-		
-		if(type.equalsIgnoreCase(BigBangConstants.EntityIds.NEGOTIATION)){
-			item.pushIntoStackParameter("display", "negotiation");
-			item.setParameter("negotiationid", process.dataId);
-			NavigationHistoryManager.getInstance().go(item);
-		}
+
+	private void showSubProcess(final BigBangProcess process){
+		saveWorkState(new ResponseHandler<Void>() {
+
+			@Override
+			public void onResponse(Void response) {
+				String type = process.dataTypeId;
+
+				NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
+
+				if(type.equalsIgnoreCase(BigBangConstants.EntityIds.NEGOTIATION)){
+					item.pushIntoStackParameter("display", "negotiation");
+					item.setParameter("negotiationid", process.dataId);
+					NavigationHistoryManager.getInstance().go(item);
+				}
+			}
+
+			@Override
+			public void onError(Collection<ResponseError> errors) {
+				onResponse(null);
+			}
+		});
 	}
 
 	private void onTableFiltersChanged(){
@@ -780,36 +845,80 @@ ViewPresenter {
 		GWT.log("Could not close a policy resource : " + NavigationHistoryManager.getInstance().getCurrentState());
 	}
 
-	private void showInsuredObject(InsuredObjectStub object) {
-		NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
-		item.pushIntoStackParameter("display", "viewinsuredobject");
-		item.setParameter("policyid", view.getForm().getValue().id);
-		item.setParameter("objectid", object.id);
-		NavigationHistoryManager.getInstance().go(item);
+	private void showInsuredObject(final InsuredObjectStub object) {
+		saveWorkState(new ResponseHandler<Void>() {
+
+			@Override
+			public void onResponse(Void response) {
+				NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
+				item.pushIntoStackParameter("display", "viewinsuredobject");
+				item.setParameter("policyid", view.getForm().getValue().id);
+				item.setParameter("objectid", object.id);
+				NavigationHistoryManager.getInstance().go(item);
+			}
+
+			@Override
+			public void onError(Collection<ResponseError> errors) {
+				onResponse(null);
+			}
+		});
 	}
 
-	private void showExercise(ExerciseStub exercise) {
-		NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
-		item.pushIntoStackParameter("display", "viewexercise");
-		item.setParameter("policyid", view.getForm().getValue().id);
-		item.setParameter("exerciseid", exercise.id);
-		NavigationHistoryManager.getInstance().go(item);
-	}
-	
-	private void showSubPolicy(SubPolicyStub subPolicy){
-		NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
-		item.pushIntoStackParameter("display", "subpolicy");
-		item.setParameter("policyid", view.getForm().getValue().id);
-		item.setParameter("subpolicyid", subPolicy.id);
-		NavigationHistoryManager.getInstance().go(item);
+	private void showExercise(final ExerciseStub exercise) {
+		saveWorkState(new ResponseHandler<Void>() {
+
+			@Override
+			public void onResponse(Void response) {
+				NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
+				item.pushIntoStackParameter("display", "viewexercise");
+				item.setParameter("policyid", view.getForm().getValue().id);
+				item.setParameter("exerciseid", exercise.id);
+				NavigationHistoryManager.getInstance().go(item);
+			}
+
+			@Override
+			public void onError(Collection<ResponseError> errors) {
+				onResponse(null);
+			}
+		});
 	}
 
-	private void showHistory(HistoryItemStub historyItem) {
-		NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
-		item.pushIntoStackParameter("display", "history");
-		item.setParameter("historyownerid", view.getForm().getValue().id);
-		item.setParameter("historyitemid", historyItem.id);
-		NavigationHistoryManager.getInstance().go(item);
+	private void showSubPolicy(final SubPolicyStub subPolicy){
+		saveWorkState(new ResponseHandler<Void>() {
+
+			@Override
+			public void onResponse(Void response) {
+				NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
+				item.pushIntoStackParameter("display", "subpolicy");
+				item.setParameter("policyid", view.getForm().getValue().id);
+				item.setParameter("subpolicyid", subPolicy.id);
+				NavigationHistoryManager.getInstance().go(item);
+			}
+
+			@Override
+			public void onError(Collection<ResponseError> errors) {
+				onResponse(null);
+			}
+		});
+	}
+
+	private void showHistory(final HistoryItemStub historyItem) {
+		saveWorkState(new ResponseHandler<Void>() {
+
+			@Override
+			public void onResponse(Void response) {
+				NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
+				item.pushIntoStackParameter("display", "history");
+				item.setParameter("historyownerid", view.getForm().getValue().id);
+				item.setParameter("historyitemid", historyItem.id);
+				NavigationHistoryManager.getInstance().go(item);
+			}
+
+			@Override
+			public void onError(Collection<ResponseError> errors) {
+				onResponse(null);
+			}
+		});
 	}
 
 	private void onGetPageFailed(){
@@ -822,7 +931,7 @@ ViewPresenter {
 		EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Apólice guardada com sucesso"), TYPE.TRAY_NOTIFICATION));
 		NavigationHistoryManager.getInstance().reload();
 	}
-	
+
 	private void transferToClient(){
 		NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
 		item.setParameter("show", "transfertoclient");

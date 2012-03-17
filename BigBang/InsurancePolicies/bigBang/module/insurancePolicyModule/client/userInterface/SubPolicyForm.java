@@ -15,12 +15,14 @@ import bigBang.definitions.shared.SubPolicy.HeaderField;
 import bigBang.definitions.shared.SubPolicy.TableSection;
 import bigBang.library.client.FieldValidator;
 import bigBang.library.client.FormField;
+import bigBang.library.client.ViewPresenterFactory;
 import bigBang.library.client.dataAccess.BigBangTypifiedListBroker;
 import bigBang.library.client.dataAccess.DataBrokerManager;
 import bigBang.library.client.dataAccess.TypifiedListBroker;
 import bigBang.library.client.userInterface.DatePickerFormField;
 import bigBang.library.client.userInterface.ExpandableListBoxFormField;
 import bigBang.library.client.userInterface.ExpandableSelectionFormField;
+import bigBang.library.client.userInterface.ExpandableSelectionFormFieldPanel;
 import bigBang.library.client.userInterface.RadioButtonFormField;
 import bigBang.library.client.userInterface.TextAreaFormField;
 import bigBang.library.client.userInterface.TextBoxFormField;
@@ -28,10 +30,8 @@ import bigBang.library.client.userInterface.view.FormView;
 import bigBang.library.client.userInterface.view.FormViewSection;
 import bigBang.module.insurancePolicyModule.client.dataAccess.SubPolicyTypifiedListBroker;
 import bigBang.module.insurancePolicyModule.client.userInterface.presenter.SubPolicyClientSelectionViewPresenter;
-import bigBang.module.insurancePolicyModule.client.userInterface.view.SubPolicyClientSelectionView;
 import bigBang.module.insurancePolicyModule.shared.ModuleConstants;
 
-import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Overflow;
 import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.user.client.ui.HasValue;
@@ -184,10 +184,9 @@ public class SubPolicyForm extends FormView<SubPolicy> {
 		number  = new TextBoxFormField("Número");
 		number.setFieldWidth("175px");
 		
-		SubPolicyClientSelectionView view = (SubPolicyClientSelectionView) GWT.create(SubPolicyClientSelectionView.class);
-		SubPolicyClientSelectionViewPresenter presenter = new SubPolicyClientSelectionViewPresenter(view);
-		presenter.go();
-		client = new ExpandableSelectionFormField(BigBangConstants.EntityIds.CLIENT, "Cliente Aderente", presenter); //TODO
+		ExpandableSelectionFormFieldPanel clientSelectionPanel = (ExpandableSelectionFormFieldPanel) ViewPresenterFactory.getInstance().getViewPresenter("INSURANCE_POLICY_SUB_POLICY_CLIENT_SELECTION");
+		((SubPolicyClientSelectionViewPresenter)clientSelectionPanel).go();
+		client = new ExpandableSelectionFormField(BigBangConstants.EntityIds.CLIENT, "Cliente Aderente", clientSelectionPanel); //TODO
 		client.setFieldWidth("547px");
 		manager = new TextBoxFormField("Gestor");
 		manager.setEditable(false);
@@ -288,8 +287,8 @@ public class SubPolicyForm extends FormView<SubPolicy> {
 
 	@Override
 	public SubPolicy getInfo() {
-		SubPolicy result = this.value;
-
+		SubPolicy result = this.getValue();
+		
 		result.clientId = client.getValue();
 		result.managerId = manager.getValue();
 		result.number = number.getValue();
@@ -374,6 +373,7 @@ public class SubPolicyForm extends FormView<SubPolicy> {
 	public void setInfo(final SubPolicy info) {
 		if(info == null) {
 			clearInfo();
+			clearValue();
 		}else{
 			this.manager.setValue(info.managerName);
 			this.number.setValue(info.number);
@@ -403,7 +403,7 @@ public class SubPolicyForm extends FormView<SubPolicy> {
 					}
 				});
 				this.insuredObjects.setTypifiedDataBroker((TypifiedListBroker) subPolicyListBroker);
-				this.insuredObjects.setListId(BigBangConstants.EntityIds.INSURANCE_POLICY_INSURED_OBJECTS+"/"+subPolicyBroker.getEffectiveId(info.id), new ResponseHandler<Void>() {
+				this.insuredObjects.setListId(BigBangConstants.EntityIds.INSURANCE_SUB_POLICY_INSURED_OBJECT+"/"+subPolicyBroker.getEffectiveId(info.id), new ResponseHandler<Void>() {
 
 					@Override
 					public void onResponse(Void response) {
@@ -417,7 +417,7 @@ public class SubPolicyForm extends FormView<SubPolicy> {
 				});
 			}else{
 				this.exercises.setTypifiedDataBroker(BigBangTypifiedListBroker.Util.getInstance());
-				this.exercises.setListId(BigBangConstants.EntityIds.INSURANCE_POLICY_EXERCISES+"/"+info.id, new ResponseHandler<Void>() {
+				this.exercises.setListId(BigBangConstants.EntityIds.INSURANCE_POLICY_EXERCISES+"/"+info.mainPolicyId, new ResponseHandler<Void>() {
 
 					@Override
 					public void onResponse(Void response) {
@@ -430,7 +430,7 @@ public class SubPolicyForm extends FormView<SubPolicy> {
 					}
 				});
 				this.insuredObjects.setTypifiedDataBroker(BigBangTypifiedListBroker.Util.getInstance());
-				this.insuredObjects.setListId(BigBangConstants.EntityIds.INSURANCE_POLICY_INSURED_OBJECTS+"/"+info.id, new ResponseHandler<Void>() {
+				this.insuredObjects.setListId(BigBangConstants.EntityIds.INSURANCE_SUB_POLICY_INSURED_OBJECT+"/"+info.id, new ResponseHandler<Void>() {
 
 					@Override
 					public void onResponse(Void response) {
