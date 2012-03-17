@@ -61,29 +61,34 @@ public class ExchangeItemSelectionView extends View implements ExchangeItemSelec
 		public AttachmentEntry(AttachmentStub value) {
 			super(value);
 			setInfo(value);
-			setHeight("75px");
+			setHeight("90px");
 		}
 
 		public void setInfo(AttachmentStub item){
 			if(!initialized){
-				docName = new TextBoxFormField("Nome do documento");
-				docName.setFieldWidth("200px");
+				docName = new TextBoxFormField();
+				docName.setFieldWidth("170px");
 				docName.setReadOnly(true);
-				docType = new ExpandableListBoxFormField(BigBangConstants.TypifiedListIds.DOCUMENT_TYPE, "Tipo de documento");
+				docType = new ExpandableListBoxFormField(BigBangConstants.TypifiedListIds.DOCUMENT_TYPE, "");
+				docType.showLabel(false);
 				docType.setReadOnly(true);
 				mimeImg = new Image();
 				filename = getFormatedLabel();
 				filename.getElement().getStyle().setFontSize(11, Unit.PX);
 
+				
+				
 				VerticalPanel wrapper = new VerticalPanel();
 				this.setWidget(wrapper);
-				HorizontalPanel top = new HorizontalPanel();
-				top.add(docName);
-				top.add(docType);
-
+				
 				HorizontalPanel bottom = new HorizontalPanel();
 				bottom.add(mimeImg);
 				bottom.add(filename);
+				wrapper.add(bottom);
+				wrapper.add(docName);
+				wrapper.add(docType);
+
+
 
 
 				addCheckedStateChangedEventHandler(new CheckedStateChangedEventHandler() {
@@ -99,8 +104,7 @@ public class ExchangeItemSelectionView extends View implements ExchangeItemSelec
 					}
 				});
 
-				wrapper.add(top);
-				wrapper.add(bottom);
+				
 			}
 
 			mimeImg.setResource(getMimeImage(item.mimeType));
@@ -250,7 +254,7 @@ public class ExchangeItemSelectionView extends View implements ExchangeItemSelec
 		attachments.showFilterField(false);
 		rightWrapper.add(attachments);
 		rightWrapper.setCellHeight(attachments, "100%");
-		insideWrapper.addEast(rightWrapper, 440);
+		insideWrapper.addEast(rightWrapper, 250);
 
 		//CENTER
 		VerticalPanel centerWrapper = new VerticalPanel();

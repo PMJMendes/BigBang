@@ -1,17 +1,7 @@
 package bigBang.library.client.userInterface;
 
 
-import org.gwt.mosaic.ui.client.ToolBar;
-
-import com.google.gwt.core.client.GWT;
-import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.event.logical.shared.ValueChangeEvent;
-import com.google.gwt.event.logical.shared.ValueChangeHandler;
-import com.google.gwt.user.client.rpc.AsyncCallback;
-import com.google.gwt.user.client.ui.Button;
-import com.google.gwt.user.client.ui.VerticalPanel;
-
+import bigBang.definitions.shared.BigBangConstants;
 import bigBang.definitions.shared.IncomingMessage;
 import bigBang.definitions.shared.IncomingMessage.AttachmentUpgrade;
 import bigBang.definitions.shared.IncomingMessage.Kind;
@@ -23,6 +13,15 @@ import bigBang.library.client.userInterface.view.PopupPanel;
 import bigBang.library.interfaces.ExchangeService;
 import bigBang.library.interfaces.ExchangeServiceAsync;
 import bigBang.library.shared.ExchangeItem;
+
+import com.google.gwt.core.client.GWT;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.logical.shared.ValueChangeEvent;
+import com.google.gwt.event.logical.shared.ValueChangeHandler;
+import com.google.gwt.user.client.ui.Button;
+import com.google.gwt.user.client.ui.HorizontalPanel;
+import com.google.gwt.user.client.ui.VerticalPanel;
 
 public class IncomingMessageFormField extends FormField<IncomingMessage>{
 
@@ -83,18 +82,26 @@ public class IncomingMessageFormField extends FormField<IncomingMessage>{
 		emailPanel.add(selectEmail);
 		emailPanel.add(from);
 		emailPanel.add(subject);
-		emailPanel.add(body);
-		body.field.setWidth("100%");
+
 		noteOrEmail.add(emailPanel);
 		noteOrEmail.add(notePanel);
 		noteOrEmail.add(right);
-
+		
 		attachList = new List<IncomingMessage.AttachmentUpgrade>();
-		ListHeader header = new ListHeader("Documentos");
+		attachList.setSize("100%", "100%");
+		ListHeader header = new ListHeader("Novos Documentos");
 		attachList.setHeaderWidget(header);
-		emailPanel.add(attachList);
-		emailPanel.setCellHeight(attachList, "100%");
+		HorizontalPanel emailAndDocs = new HorizontalPanel();
+		emailAndDocs.setSize("100%", "100%");
+		emailAndDocs.add(body);
+		emailAndDocs.add(attachList);
+		emailAndDocs.setCellHeight(body, "100%");
+		emailAndDocs.setCellWidth(body, "500px");
+		emailAndDocs.setCellWidth(attachList, "100%");
+		emailAndDocs.setCellHeight(attachList, "100%");
+		emailPanel.add(emailAndDocs);
 		wrapper.add(noteOrEmail);
+		
 		popup = new PopupPanel();
 		ExchangeItemSelectionView itemView = (ExchangeItemSelectionView) GWT.create(ExchangeItemSelectionView.class);
 		final ExchangeItemSelectionViewPresenter presenter = new ExchangeItemSelectionViewPresenter(itemView);
@@ -106,12 +113,10 @@ public class IncomingMessageFormField extends FormField<IncomingMessage>{
 			@Override
 			public void onValueChange(ValueChangeEvent<IncomingMessage> event) {
 				if(event.getValue() == null){
-					popup.clear();
 					popup.hidePopup();
 				}
 				else{
 					IncomingMessageFormField.this.setValue(event.getValue());
-					popup.clear();
 					popup.hidePopup();
 				}
 
@@ -141,7 +146,8 @@ public class IncomingMessageFormField extends FormField<IncomingMessage>{
 	@Override
 	public void setValue(final IncomingMessage value, final boolean fireEvents) {
 
-
+		attachList.clear();
+		
 		noteOrEmailRadioButton.setValue(value.kind.name());
 		if(value.emailId != null){
 			service.getItem(value.emailId, new BigBangAsyncCallback<ExchangeItem>() {
@@ -152,7 +158,17 @@ public class IncomingMessageFormField extends FormField<IncomingMessage>{
 					from.setValue(result.from);
 					subject.setValue(result.subject);
 					body.setValue(result.body);
-
+					
+					for(int i = 0; i<value.upgrades.length; i++){
+						ExpandableListBoxFormField type = new ExpandableListBoxFormField(BigBangConstants.TypifiedListIds.DOCUMENT_TYPE, value.upgrades[i].name);
+						type.setReadOnly(true);
+						ListEntry<AttachmentUpgrade> temp = new ListEntry<IncomingMessage.AttachmentUpgrade>(value.upgrades[i]);
+						type.setValue(value.upgrades[i].docTypeId);
+						temp.setWidget(type);
+						temp.setHeight("55px");
+						attachList.add(temp);
+					}
+					
 					if(fireEvents){
 						ValueChangeEvent.fire(IncomingMessageFormField.this, value);
 					}

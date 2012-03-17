@@ -1,10 +1,6 @@
 package bigBang.library.client.userInterface.view;
 
-import java.sql.Date;
-
-import bigBang.library.client.userInterface.DatePickerFormField;
 import bigBang.library.client.userInterface.RichTextAreaFormField;
-import bigBang.library.client.userInterface.TextAreaFormField;
 import bigBang.library.client.userInterface.TextBoxFormField;
 import bigBang.library.shared.ExchangeItem;
 
@@ -22,7 +18,7 @@ public class ExchangeItemForm extends FormView<ExchangeItem>{
 		subject = new TextBoxFormField("Assunto");
 		timestamp = new TextBoxFormField("Data");
 		body = new RichTextAreaFormField("Corpo da Mensagem");
-		body.getNativeField().setSize("400px", "310px");
+		body.getNativeField().setSize("600px", "310px");
 		body.showToolbar(false);
 		
 		addSection("Detalhes do E-mail");

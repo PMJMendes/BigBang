@@ -4,10 +4,14 @@ import bigBang.definitions.shared.IncomingMessage;
 import bigBang.definitions.shared.IncomingMessage.AttachmentUpgrade;
 import bigBang.definitions.shared.IncomingMessage.Kind;
 import bigBang.library.client.BigBangAsyncCallback;
+import bigBang.library.client.EventBus;
 import bigBang.library.client.HasParameters;
 import bigBang.library.client.HasValueSelectables;
+import bigBang.library.client.Notification;
+import bigBang.library.client.Notification.TYPE;
 import bigBang.library.client.event.ActionInvokedEvent;
 import bigBang.library.client.event.ActionInvokedEventHandler;
+import bigBang.library.client.event.NewNotificationEvent;
 import bigBang.library.client.event.SelectionChangedEvent;
 import bigBang.library.client.event.SelectionChangedEventHandler;
 import bigBang.library.client.userInterface.view.ExchangeItemSelectionView.EmailEntry;
@@ -80,20 +84,23 @@ public class ExchangeItemSelectionViewPresenter implements ViewPresenter,
 			@SuppressWarnings("unchecked")
 			@Override
 			public void onSelectionChanged(SelectionChangedEvent event) {
-				service.getItem(((EmailEntry) ((HasValueSelectables<ExchangeItemStub>)event.getSource()).getSelected().toArray()[0]).getValue().id, new BigBangAsyncCallback<ExchangeItem>() {
-
-					@Override
-					public void onResponseSuccess(ExchangeItem result) {
-						view.getForm().setValue(result);
-						view.setAttachments(result.attachments);
-					}
-					
-					@Override
-					public void onResponseFailure(Throwable caught) {
-						super.onResponseFailure(caught);
-					};
-				});
 				
+				if(view.getEmailList().getSelected().size() > 0){
+					service.getItem(((EmailEntry) ((HasValueSelectables<ExchangeItemStub>)event.getSource()).getSelected().toArray()[0]).getValue().id, new BigBangAsyncCallback<ExchangeItem>() {
+	
+						@Override
+						public void onResponseSuccess(ExchangeItem result) {
+							view.getForm().setValue(result);
+							view.setAttachments(result.attachments);
+						}
+						
+						@Override
+						public void onResponseFailure(Throwable caught) {
+							super.onResponseFailure(caught);
+						};
+					});
+					
+				}
 
 			}
 		});
@@ -108,13 +115,22 @@ public class ExchangeItemSelectionViewPresenter implements ViewPresenter,
 					break;
 				}
 				case CONFIRM:{
+					AttachmentUpgrade[] checked = view.getChecked();
+					
+					for(int i = 0; i<checked.length; i++){
+						if(checked[i].docTypeId == null || checked[i].name == null){
+							EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Todos os anexos a promover para documento devem ter nome e tipo."), TYPE.ALERT_NOTIFICATION));
+							return;
+						}
+					}
+					
 					ValueChangeEvent.fire(ExchangeItemSelectionViewPresenter.this, getValue());
 					break;
 				}
 				}
 			}
 		});
-		
+		bound = true;
 	}
 
 	@Override
