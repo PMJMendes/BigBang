@@ -23,14 +23,22 @@ public class ExternalInfoRequestForm extends FormView<ExternalInfoRequest>{
 	
 	@Override
 	public ExternalInfoRequest getInfo() {
-		// TODO Auto-generated method stub
-		return null;
+		
+		ExternalInfoRequest request = new ExternalInfoRequest();
+		request.message = messageFormField.getValue();
+		request.replylimit = Integer.parseInt(replyLimit.getValue());
+		request.subject = requestSubject.getValue();
+		
+		return request;
+		
 	}
 
 	@Override
 	public void setInfo(ExternalInfoRequest info) {
 		
-		//messageFormField.setValue(info.message);
+		requestSubject.setValue(info.subject);
+		messageFormField.setValue(info.message);
+		replyLimit.setValue(info.replylimit+"");
 		
 	}
 	
@@ -41,6 +49,10 @@ public class ExternalInfoRequestForm extends FormView<ExternalInfoRequest>{
 		}
 		requestSubject.setReadOnly(readOnly);
 		replyLimit.setReadOnly(readOnly);
+	}
+	
+	public IncomingMessageFormField getIncomingMessageFormField(){
+		return messageFormField;
 	}
 
 }

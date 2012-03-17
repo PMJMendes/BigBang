@@ -27,7 +27,6 @@ public class IncomingMessageFormField extends FormField<IncomingMessage>{
 
 	private TextAreaFormField notes = new TextAreaFormField();
 	private IncomingMessage message;
-	private ExchangeItem mail;
 	private RadioButtonFormField noteOrEmailRadioButton;
 	private Button selectEmail;
 	private TextBoxFormField subject;
@@ -41,6 +40,7 @@ public class IncomingMessageFormField extends FormField<IncomingMessage>{
 	PopupPanel popup = new PopupPanel();
 	private boolean readOnly;
 	private ExchangeServiceAsync service;
+	private ExchangeItemSelectionViewPresenter presenter;
 
 	public IncomingMessageFormField(){
 
@@ -73,7 +73,6 @@ public class IncomingMessageFormField extends FormField<IncomingMessage>{
 		notes.setSize("300px", "100%");
 		notePanel.add(notes);
 
-		mail = new ExchangeItem();
 		subject = new TextBoxFormField("Assunto");
 		from = new TextBoxFormField("De");
 		body = new RichTextAreaFormField("Corpo da Mensagem");
@@ -104,7 +103,7 @@ public class IncomingMessageFormField extends FormField<IncomingMessage>{
 		
 		popup = new PopupPanel();
 		ExchangeItemSelectionView itemView = (ExchangeItemSelectionView) GWT.create(ExchangeItemSelectionView.class);
-		final ExchangeItemSelectionViewPresenter presenter = new ExchangeItemSelectionViewPresenter(itemView);
+		presenter = new ExchangeItemSelectionViewPresenter(itemView);
 		presenter.go(popup);
 
 
@@ -117,6 +116,7 @@ public class IncomingMessageFormField extends FormField<IncomingMessage>{
 				}
 				else{
 					IncomingMessageFormField.this.setValue(event.getValue());
+					message = event.getValue();
 					popup.hidePopup();
 				}
 
@@ -146,6 +146,13 @@ public class IncomingMessageFormField extends FormField<IncomingMessage>{
 	@Override
 	public void setValue(final IncomingMessage value, final boolean fireEvents) {
 
+		message = value;
+		
+		if(value.kind == null){
+			clear();
+			return;
+		}
+		
 		attachList.clear();
 		
 		noteOrEmailRadioButton.setValue(value.kind.name());
@@ -195,21 +202,18 @@ public class IncomingMessageFormField extends FormField<IncomingMessage>{
 
 	@Override
 	public IncomingMessage getValue() {
-		IncomingMessage newMessage = super.getValue();
-
-		newMessage.kind = Kind.valueOf(noteOrEmailRadioButton.getValue());
-		newMessage.notes = notes.getValue();
-
-		return newMessage;
+		return message;
 	}
 
 	@Override
 	public void clear() {
+		message = new IncomingMessage();
 		from.clear();
 		subject.clear();
 		body.clear();
 		notes.clear();
 	}
+	
 
 	@Override
 	public void setReadOnly(boolean readonly) {
@@ -233,7 +237,7 @@ public class IncomingMessageFormField extends FormField<IncomingMessage>{
 		return;
 
 	}
-
+	
 }
 
 
