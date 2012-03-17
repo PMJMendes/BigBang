@@ -19,6 +19,7 @@ public class IncomingMessage
 		private static final long serialVersionUID = 1L;
 
 		public String name;
+		public String attachmentId;
 		public String docTypeId;
 		public String storageId;
 	}
