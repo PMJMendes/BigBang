@@ -39,6 +39,7 @@ public abstract class ExternalRequestViewPresenter implements ViewPresenter{
 	private ExternRequestServiceAsync service;
 	private NegotiationBroker broker;
 	private ExchangeServiceAsync exchangeService;
+	private int counter;
 
 	public static enum Action{
 		CANCEL,
@@ -50,7 +51,6 @@ public abstract class ExternalRequestViewPresenter implements ViewPresenter{
 		HasValue<ProcessBase> getOwnerForm();
 		HasEditableValue<ExternalInfoRequest> getForm();
 		void setToolbarSaveMode(boolean b);
-		void allowEdit(boolean b);
 		void registerActionHandler(
 				ActionInvokedEventHandler<Action> actionInvokedEventHandler);
 
@@ -71,14 +71,12 @@ public abstract class ExternalRequestViewPresenter implements ViewPresenter{
 			view.getForm().setInfo(externalRequest);
 			view.getForm().setReadOnly(false);
 			view.setToolbarSaveMode(true);
-			view.allowEdit(true);
 		}
 		else{
 			service.getRequest(externalRequestId, new BigBangAsyncCallback<ExternalInfoRequest>() {
 				@Override
 				public void onResponseSuccess(ExternalInfoRequest result) {
 					view.getForm().setValue(result);
-					view.allowEdit(false);
 				}
 
 				@Override
@@ -120,7 +118,7 @@ public abstract class ExternalRequestViewPresenter implements ViewPresenter{
 
 		view.registerActionHandler(new ActionInvokedEventHandler<Action>(){
 
-			private int counter;
+
 
 			@Override
 			public void onActionInvoked(
@@ -138,69 +136,85 @@ public abstract class ExternalRequestViewPresenter implements ViewPresenter{
 				}
 				case CONFIRM:{
 
-					final ExternalInfoRequest toSend = view.getForm().getInfo();
-					toSend.parentDataObjectId = ownerId;
-					toSend.parentDataTypeId = ownerTypeId;
-
-					for(int i = 0; i<toSend.message.upgrades.length; i++){
-
-						exchangeService.getAttachment(toSend.message.emailId, toSend.message.upgrades[i].attachmentId, new BigBangAsyncCallback<Attachment>() {
-						
-								public void onResponseSuccess(Attachment result) {
-									
-									for(int k = 0; k<toSend.message.upgrades.length; k++){
-										if(toSend.message.upgrades[k].attachmentId.equals(result.id)){
-											toSend.message.upgrades[k].storageId = result.storageId;
-											break;
-										}
-									}
-									
-									counter++;
-									if(counter == toSend.message.upgrades.length){
-										
-										broker.createExternalInfoRequest(toSend, new ResponseHandler<ExternalInfoRequest>() {
-
-											@Override
-											public void onResponse(ExternalInfoRequest response) {
-
-												EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Resposta ao pedido guardada com sucesso."), TYPE.TRAY_NOTIFICATION));
-												NavigationHistoryItem navig = NavigationHistoryManager.getInstance().getCurrentState();
-												navig.popFromStackParameter("display");
-												navig.removeParameter("externalrequestid");	
-												NavigationHistoryManager.getInstance().go(navig);
-												counter = 0;
-											}
-
-											@Override
-											public void onError(Collection<ResponseError> errors) {
-												EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não foi possível guardar a resposta ao pedido."), TYPE.ALERT_NOTIFICATION));
-												counter = 0;
-											}
-										});
-										
-									}
-									
-								};
-								
-								
-								public void onResponseFailure(Throwable caught) {
-									
-									super.onResponseFailure(caught);
-									
-								};
-						
-						});
-
-					}
+					ExternalInfoRequest toSend = view.getForm().getInfo();
+					saveExternalInformationRequest(toSend);
+				}
 
 
 				}
 
-				}
 
 			}
 
 		});
 
+	}
+
+	protected void saveExternalInformationRequest(final ExternalInfoRequest toSend) {
+		toSend.parentDataObjectId = ownerId;
+		toSend.parentDataTypeId = ownerTypeId;
+
+		if(toSend.message.upgrades != null && toSend.message.upgrades.length > 0){
+			for(int i = 0; i<toSend.message.upgrades.length; i++){
+
+				exchangeService.getAttachment(toSend.message.emailId, toSend.message.upgrades[i].attachmentId, new BigBangAsyncCallback<Attachment>() {
+
+					public void onResponseSuccess(Attachment result) {
+
+						for(int k = 0; k<toSend.message.upgrades.length; k++){
+							if(toSend.message.upgrades[k].attachmentId.equals(result.id)){
+								toSend.message.upgrades[k].storageId = result.storageId;
+								break;
+							}
+						}
+
+						counter++;
+						if(counter == toSend.message.upgrades.length){
+							
+							createExternalInfoRequest(toSend);
+
+						}
+
+					};
+
+
+					public void onResponseFailure(Throwable caught) {
+						EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não foi possível guardar a resposta ao pedido."), TYPE.ALERT_NOTIFICATION));
+						super.onResponseFailure(caught);
+
+					};
+				});
+
+			}
+
+
+		}
+
+		else{
+			createExternalInfoRequest(toSend);
+		}
+	}
+
+	protected void createExternalInfoRequest(ExternalInfoRequest toSend) {
+
+		broker.createExternalInfoRequest(toSend, new ResponseHandler<ExternalInfoRequest>() {
+
+			@Override
+			public void onResponse(ExternalInfoRequest response) {
+
+				EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Resposta ao pedido guardada com sucesso."), TYPE.TRAY_NOTIFICATION));
+				NavigationHistoryItem navig = NavigationHistoryManager.getInstance().getCurrentState();
+				navig.popFromStackParameter("display");
+				navig.removeParameter("externalrequestid");	
+				NavigationHistoryManager.getInstance().go(navig);
+				counter = 0;
+			}
+
+			@Override
+			public void onError(Collection<ResponseError> errors) {
+				EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não foi possível guardar a resposta ao pedido."), TYPE.ALERT_NOTIFICATION));
+				counter = 0;
+			}
+		});	
 	}
 }

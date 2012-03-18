@@ -9,7 +9,6 @@ public class InfoOrDocumentRequestReplyForm extends FormView<Response> {
 	
 	public InfoOrDocumentRequestReplyForm(){
 		incomingMessage = new IncomingMessageFormField();
-		incomingMessage.setReadOnly(true);
 		
 		addSection("Resposta a Pedido de Informação");
 		addFormField(incomingMessage);

@@ -13,6 +13,7 @@ import bigBang.library.client.userInterface.presenter.ExternalRequestViewPresent
 import bigBang.library.client.userInterface.presenter.ExternalRequestViewPresenter.Action;
 
 import com.google.gwt.user.client.ui.HasValue;
+import com.google.gwt.user.client.ui.HasVerticalAlignment;
 import com.google.gwt.user.client.ui.SplitLayoutPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
@@ -43,6 +44,7 @@ public abstract class ExternalRequestView<T> extends View implements ExternalReq
 
 		VerticalPanel right = new VerticalPanel();
 		right.setSize("100%", "100%");
+		
 		ListHeader externalRequestHeader = new ListHeader("Pedido de Informação Externo");
 		right.add(externalRequestHeader);
 		right.setCellWidth(externalRequestHeader, "100%");
@@ -110,11 +112,4 @@ public abstract class ExternalRequestView<T> extends View implements ExternalReq
 	public void setToolbarSaveMode(boolean b) {
 		toolbar.setSaveModeEnabled(b);
 	}
-
-	@Override
-	public void allowEdit(boolean b) {
-		form.setReadOnly(!b);
-
-	}
-
 }

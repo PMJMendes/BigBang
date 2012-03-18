@@ -20,6 +20,7 @@ import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.user.client.ui.Button;
+import com.google.gwt.user.client.ui.HasVerticalAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
@@ -49,13 +50,15 @@ public class IncomingMessageFormField extends FormField<IncomingMessage>{
 		VerticalPanel wrapper = new VerticalPanel();
 		initWidget(wrapper);
 
+		wrapper.setVerticalAlignment(HasVerticalAlignment.ALIGN_TOP);
+		wrapper.setSize("100%", "100%");
+		
 		VerticalPanel choices = new VerticalPanel();
 
 		noteOrEmailRadioButton = new RadioButtonFormField();
 		noteOrEmailRadioButton.addOption(Kind.EMAIL.name(), "E-mail");
 		noteOrEmailRadioButton.addOption(Kind.NOTE.name(), "Nota");
-
-		noteOrEmailRadioButton.setValue("EMAIL");
+		noteOrEmailRadioButton.setValue(Kind.EMAIL.name());
 
 		choices.add(noteOrEmailRadioButton);
 		wrapper.add(choices);
@@ -76,16 +79,28 @@ public class IncomingMessageFormField extends FormField<IncomingMessage>{
 		subject = new TextBoxFormField("Assunto");
 		from = new TextBoxFormField("De");
 		body = new RichTextAreaFormField("Corpo da Mensagem");
+		body.showToolbar(false);
 		attachList = new List<IncomingMessage.AttachmentUpgrade>();
 		selectEmail = new Button("Seleccionar E-mail");
 		emailPanel.add(selectEmail);
 		emailPanel.add(from);
+		from.setReadOnly(true);
 		emailPanel.add(subject);
-
+		subject.setReadOnly(true);
+		body.setReadOnly(true);
 		noteOrEmail.add(emailPanel);
 		noteOrEmail.add(notePanel);
 		noteOrEmail.add(right);
-		
+		noteOrEmail.setCellHeight(emailPanel, "100%");
+		noteOrEmail.setCellHeight(notePanel, "100%");
+
+		noteOrEmail.setVerticalAlignment(HasVerticalAlignment.ALIGN_TOP);
+		emailPanel.setVerticalAlignment(HasVerticalAlignment.ALIGN_TOP);
+		notePanel.setVerticalAlignment(HasVerticalAlignment.ALIGN_TOP);
+
+		notePanel.setSize("100%","100%");
+		emailPanel.setSize("100%", "100%");
+
 		attachList = new List<IncomingMessage.AttachmentUpgrade>();
 		attachList.setSize("100%", "100%");
 		ListHeader header = new ListHeader("Novos Documentos");
@@ -100,7 +115,7 @@ public class IncomingMessageFormField extends FormField<IncomingMessage>{
 		emailAndDocs.setCellHeight(attachList, "100%");
 		emailPanel.add(emailAndDocs);
 		wrapper.add(noteOrEmail);
-		
+
 		popup = new PopupPanel();
 		ExchangeItemSelectionView itemView = (ExchangeItemSelectionView) GWT.create(ExchangeItemSelectionView.class);
 		presenter = new ExchangeItemSelectionViewPresenter(itemView);
@@ -138,6 +153,7 @@ public class IncomingMessageFormField extends FormField<IncomingMessage>{
 			public void onValueChange(ValueChangeEvent<String> event) {
 				notePanel.setVisible(!event.getValue().equalsIgnoreCase(Kind.EMAIL.name()));
 				emailPanel.setVisible(event.getValue().equalsIgnoreCase(Kind.EMAIL.name()));
+				message.kind = event.getValue().equals(Kind.EMAIL.name()) ? Kind.EMAIL : Kind.NOTE;
 			}
 		});
 
@@ -147,14 +163,14 @@ public class IncomingMessageFormField extends FormField<IncomingMessage>{
 	public void setValue(final IncomingMessage value, final boolean fireEvents) {
 
 		message = value;
-		
-		if(value.kind == null){
+
+		if(value == null || value.kind == null){
 			clear();
 			return;
 		}
-		
+
 		attachList.clear();
-		
+
 		noteOrEmailRadioButton.setValue(value.kind.name());
 		if(value.emailId != null){
 			service.getItem(value.emailId, new BigBangAsyncCallback<ExchangeItem>() {
@@ -165,7 +181,7 @@ public class IncomingMessageFormField extends FormField<IncomingMessage>{
 					from.setValue(result.from);
 					subject.setValue(result.subject);
 					body.setValue(result.body);
-					
+
 					for(int i = 0; i<value.upgrades.length; i++){
 						ExpandableListBoxFormField type = new ExpandableListBoxFormField(BigBangConstants.TypifiedListIds.DOCUMENT_TYPE, value.upgrades[i].name);
 						type.setReadOnly(true);
@@ -175,7 +191,7 @@ public class IncomingMessageFormField extends FormField<IncomingMessage>{
 						temp.setHeight("55px");
 						attachList.add(temp);
 					}
-					
+
 					if(fireEvents){
 						ValueChangeEvent.fire(IncomingMessageFormField.this, value);
 					}
@@ -196,34 +212,35 @@ public class IncomingMessageFormField extends FormField<IncomingMessage>{
 			}
 		}
 
-
-
 	}
 
 	@Override
 	public IncomingMessage getValue() {
+		message.notes = notes.getValue();
 		return message;
 	}
 
 	@Override
 	public void clear() {
 		message = new IncomingMessage();
+		message.kind = Kind.EMAIL;
 		from.clear();
 		subject.clear();
 		body.clear();
 		notes.clear();
+		setValue(message);
+		
 	}
-	
+
 
 	@Override
 	public void setReadOnly(boolean readonly) {
 
 		readOnly = readonly;
-		from.setReadOnly(readonly);
-		subject.setReadOnly(readonly);
-		body.showToolbar(!readonly);
-		body.setReadOnly(readonly);
-		//notes.setReadOnly(readonly);
+		notes.setReadOnly(readonly);
+		selectEmail.setEnabled(!readonly);
+
+
 
 	}
 
@@ -237,7 +254,7 @@ public class IncomingMessageFormField extends FormField<IncomingMessage>{
 		return;
 
 	}
-	
+
 }
 
 
