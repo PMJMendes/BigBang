@@ -1,14 +1,18 @@
 package bigBang.module.clientModule.client.userInterface.view;
 
 import com.google.gwt.user.client.Command;
+import com.google.gwt.user.client.ui.HasValue;
 import com.google.gwt.user.client.ui.MenuItem;
 import com.google.gwt.user.client.ui.SplitLayoutPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
 import bigBang.definitions.shared.Client;
+import bigBang.definitions.shared.ExerciseStub;
 import bigBang.definitions.shared.InsurancePolicy;
 import bigBang.definitions.shared.InsurancePolicy.TableSection;
+import bigBang.definitions.shared.InsuredObjectStub;
 import bigBang.library.client.HasEditableValue;
+import bigBang.library.client.HasValueSelectables;
 import bigBang.library.client.event.ActionInvokedEvent;
 import bigBang.library.client.event.ActionInvokedEventHandler;
 import bigBang.library.client.userInterface.ListHeader;
@@ -47,7 +51,7 @@ public class CreateInsurancePolicyView extends View implements CreateInsurancePo
 
 			@Override
 			public void execute() {
-				actionHandler.onActionInvoked(new ActionInvokedEvent<CreateInsurancePolicyViewPresenter.Action>(Action.CREATE_POLICY));
+				actionHandler.onActionInvoked(new ActionInvokedEvent<CreateInsurancePolicyViewPresenter.Action>(Action.SAVE));
 			}
 		});
 		toolbar.addItem(createItem);
@@ -93,16 +97,6 @@ public class CreateInsurancePolicyView extends View implements CreateInsurancePo
 	protected void initializeView() {}
 
 	@Override
-	public TableSection getCurrentTableSection(){
-		return null; //this.insurancePolicyForm.getTable().getData();
-	}
-	
-	@Override
-	public boolean isInsurancePolicyFormValid() {
-		return this.insurancePolicyForm.validate();
-	}
-
-	@Override
 	public HasEditableValue<Client> getClientForm() {
 		return this.clientForm;
 	}
@@ -118,13 +112,33 @@ public class CreateInsurancePolicyView extends View implements CreateInsurancePo
 	}
 
 	@Override
-	public String getInsuredObjectFilter() {
-		return null; // this.insurancePolicyForm.getTable().getInsuredObjectFilterValue();
+	public HasValueSelectables<InsuredObjectStub> getInsuredObjectsList() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 	@Override
-	public String getExerciseFilter() {
-		return null; // this.insurancePolicyForm.getTable().getExerciseFilterValue();
+	public HasValueSelectables<ExerciseStub> getExercisesList() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public HasEditableValue<TableSection> getTable() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public HasValue<String> getInsuredObjectFilter() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public HasValue<String> getExerciseFilter() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 	
 }

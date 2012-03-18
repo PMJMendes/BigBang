@@ -130,6 +130,12 @@ public class ClientSectionViewPresenter implements ViewPresenter {
 				}else if(show.equalsIgnoreCase("documentmanagement")){
 					present("DOCUMENT", parameters);
 					view.showOverlayViewContainer(true);
+				}else if(show.equalsIgnoreCase("cancelinforequest")){
+					present("INFO_OR_DOCUMENT_REQUEST_CANCELLATION", parameters);
+					view.showOverlayViewContainer(true);
+				}else if(show.equalsIgnoreCase("replyinforequest")){
+					present("INFO_OR_DOCUMENT_REQUEST_REPLY", parameters);
+					view.showOverlayViewContainer(true);
 				}
 			}
 			

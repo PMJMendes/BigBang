@@ -8,61 +8,70 @@ import bigBang.definitions.client.response.ResponseError;
 import bigBang.definitions.client.response.ResponseHandler;
 import bigBang.definitions.shared.BigBangConstants;
 import bigBang.definitions.shared.Client;
+import bigBang.definitions.shared.ExerciseStub;
 import bigBang.definitions.shared.InsurancePolicy;
 import bigBang.definitions.shared.InsurancePolicy.TableSection;
+import bigBang.definitions.shared.InsuredObjectStub;
+import bigBang.library.client.EventBus;
 import bigBang.library.client.HasEditableValue;
 import bigBang.library.client.HasParameters;
+import bigBang.library.client.HasValueSelectables;
+import bigBang.library.client.Notification;
+import bigBang.library.client.Notification.TYPE;
+import bigBang.library.client.ValueSelectable;
 import bigBang.library.client.dataAccess.DataBrokerManager;
 import bigBang.library.client.event.ActionInvokedEvent;
 import bigBang.library.client.event.ActionInvokedEventHandler;
+import bigBang.library.client.event.NewNotificationEvent;
+import bigBang.library.client.event.SelectionChangedEvent;
+import bigBang.library.client.event.SelectionChangedEventHandler;
+import bigBang.library.client.history.NavigationHistoryItem;
+import bigBang.library.client.history.NavigationHistoryManager;
 import bigBang.library.client.userInterface.presenter.ViewPresenter;
 
+import com.google.gwt.event.logical.shared.ValueChangeEvent;
+import com.google.gwt.event.logical.shared.ValueChangeHandler;
+import com.google.gwt.user.client.ui.HasValue;
 import com.google.gwt.user.client.ui.HasWidgets;
 import com.google.gwt.user.client.ui.UIObject;
 import com.google.gwt.user.client.ui.Widget;
 
 public class CreateInsurancePolicyViewPresenter implements ViewPresenter {
-	
+
 	public enum Action {
-		CREATE_POLICY,
-		CANCEL_POLICY_CREATION,
-		MODALITY_CHANGED
+		SAVE,
+		CANCEL,
+		MODALITY_CHANGED,
+		CREATE_OBJECT,
+		CREATE_EXERCISE
 	}
-	
+
 	public interface Display {
 		HasEditableValue<Client> getClientForm();
 		HasEditableValue<InsurancePolicy> getInsurancePolicyForm();
-		TableSection getCurrentTableSection();	
-		
-		boolean isInsurancePolicyFormValid();
-		
+		HasValueSelectables<InsuredObjectStub> getInsuredObjectsList();
+		HasValueSelectables<ExerciseStub> getExercisesList();
+
+		//TABLE
+		HasEditableValue<TableSection>getTable();
+		HasValue<String> getInsuredObjectFilter();
+		HasValue<String> getExerciseFilter();
+
 		public void setActionHandler(ActionInvokedEventHandler<Action> handler);
 		Widget asWidget();
-		String getInsuredObjectFilter();
-		String getExerciseFilter();
 	}
-	
+
 	protected boolean bound;
 	protected Display view;
 	protected ClientProcessBroker clientBroker;
 	protected InsurancePolicyBroker policyBroker;
 	protected Client client;
-	
+	protected String currentInsuredObjectFilterId, currentExerciseFilterId;
+
 	public CreateInsurancePolicyViewPresenter(Display view){
 		setView((UIObject) view);
 		clientBroker = ((ClientProcessBroker) DataBrokerManager.Util.getInstance().getBroker(BigBangConstants.EntityIds.CLIENT));
 		policyBroker = ((InsurancePolicyBroker) DataBrokerManager.Util.getInstance().getBroker(BigBangConstants.EntityIds.INSURANCE_POLICY));
-	}
-
-	public void setClient(Client client){
-		this.client = client;
-		this.view.getClientForm().setValue(client);
-		
-		InsurancePolicy newPolicy = new InsurancePolicy();
-		newPolicy.clientId = client.id;
-		newPolicy.clientNumber = client.clientNumber;
-		newPolicy.clientName = client.name;
-		view.getInsurancePolicyForm().setValue(newPolicy);
 	}
 
 	@Override
@@ -79,91 +88,323 @@ public class CreateInsurancePolicyViewPresenter implements ViewPresenter {
 
 	@Override
 	public void setParameters(HasParameters parameterHolder) {
-		// TODO Auto-generated method stub
-		
+		String clientId = parameterHolder.getParameter("clientid");
+		String tempPolicyId = parameterHolder.getParameter("policyid");
+
+		if(client == null || clientId.isEmpty()) {
+			onFailure();
+		}else if(tempPolicyId == null || tempPolicyId.isEmpty()){
+			showPolicyInCreation(clientId, tempPolicyId);
+		}else{
+			showCreatePolicy(clientId);
+		}
 	}
-	
+
 	public void bind() {
 		if(bound){return;}
-		
+
 		view.setActionHandler(new ActionInvokedEventHandler<CreateInsurancePolicyViewPresenter.Action>() {
 
 			@Override
 			public void onActionInvoked(ActionInvokedEvent<Action> action) {
 				switch(action.getAction()) {
-				
-				case CREATE_POLICY:
-					InsurancePolicy policy = view.getInsurancePolicyForm().getInfo();
-					policyBroker.updatePolicy(policy, new ResponseHandler<InsurancePolicy>() {
 
-						@Override
-						public void onResponse(final InsurancePolicy response) {
-							String insuredObjectId = view.getInsuredObjectFilter();
-							String exerciseId = view.getExerciseFilter();
-							TableSection data = view.getCurrentTableSection();
-							
-							policyBroker.saveCoverageDetailsPage(response.id, insuredObjectId, exerciseId, data, new ResponseHandler<TableSection>() {
-
-								@Override
-								public void onResponse(TableSection sectionResponse) {
-									policyBroker.commitPolicy(response, new ResponseHandler<InsurancePolicy>() {
-
-										@Override
-										public void onResponse(InsurancePolicy response) {
-											view.getInsurancePolicyForm().setValue(response);
-											view.getInsurancePolicyForm().setReadOnly(true);
-										}
-
-										@Override
-										public void onError(Collection<ResponseError> errors) {
-											//TODO
-										}
-									});
-								}
-
-								@Override
-								public void onError(
-										Collection<ResponseError> errors) {
-									// TODO Auto-generated method stub
-								}
-							});
-						}
-
-						@Override
-						public void onError(Collection<ResponseError> errors) {
-						}
-					});
+				case SAVE:
+					onSave();
 					break;
-				
-				case CANCEL_POLICY_CREATION:
-					policyBroker.closePolicyResource(view.getInsurancePolicyForm().getValue().id, new ResponseHandler<Void>() {
 
-						@Override
-						public void onResponse(Void response) {}
-
-						@Override
-						public void onError(Collection<ResponseError> errors) {}
-					});
+				case CANCEL:
+					onCancel();
 					break;
-				
+
 				case MODALITY_CHANGED:
-					view.getInsurancePolicyForm().commit();
-					InsurancePolicy changedPolicy = view.getInsurancePolicyForm().getValue();
-					CreateInsurancePolicyViewPresenter.this.policyBroker.openPolicyResource(null, new ResponseHandler<InsurancePolicy>() { //TODO
+					onModalityChanged();
+					break;
 
-						@Override
-						public void onResponse(InsurancePolicy response) {
-							view.getInsurancePolicyForm().setValue(response, false);
-						}
+				case CREATE_OBJECT:
+					onCreateObject();
+					break;
 
-						@Override
-						public void onError(Collection<ResponseError> errors) {}
-					});
+				case CREATE_EXERCISE:
+					onCreateExercise();
 					break;
 				}
 			}
 		});
+
+		SelectionChangedEventHandler selectionChangedHandler = new SelectionChangedEventHandler() {
+
+			@Override
+			public void onSelectionChanged(SelectionChangedEvent event) {
+				ValueSelectable<?> selectable = (ValueSelectable<?>) event.getFirstSelected();
+				if(selectable != null){
+					if(event.getSource() == view.getInsuredObjectsList()){
+						
+					}else if(event.getSource() == view.getExercisesList()){
+						//TODO
+					}
+				}
+			}
+		};
+		view.getInsuredObjectsList().addSelectionChangedEventHandler(selectionChangedHandler);
+		view.getExercisesList().addSelectionChangedEventHandler(selectionChangedHandler);
+
+		ValueChangeHandler<String> filterChangedHandler = new ValueChangeHandler<String>() {
+
+			@Override
+			public void onValueChange(ValueChangeEvent<String> event) {
+				onFiltersChanged();
+			}
+		};
+		view.getInsuredObjectFilter().addValueChangeHandler(filterChangedHandler);
+		view.getExerciseFilter().addValueChangeHandler(filterChangedHandler);
+
 		bound = true;
+	}
+
+	private void onSave(){
+		InsurancePolicy policy = view.getInsurancePolicyForm().getInfo();
+		policyBroker.updatePolicy(policy, new ResponseHandler<InsurancePolicy>() {
+
+			@Override
+			public void onResponse(final InsurancePolicy response) {
+				String insuredObjectId = view.getInsuredObjectFilter().getValue();
+				String exerciseId = view.getExerciseFilter().getValue();
+				TableSection data = view.getTable().getValue();
+
+				policyBroker.saveCoverageDetailsPage(response.id, insuredObjectId, exerciseId, data, new ResponseHandler<TableSection>() {
+
+					@Override
+					public void onResponse(TableSection sectionResponse) {
+						policyBroker.commitPolicy(response, new ResponseHandler<InsurancePolicy>() {
+
+							@Override
+							public void onResponse(InsurancePolicy response) {
+								view.getInsurancePolicyForm().setValue(response);
+								view.getInsurancePolicyForm().setReadOnly(true);
+							}
+
+							@Override
+							public void onError(Collection<ResponseError> errors) {
+								//TODO
+							}
+						});
+					}
+
+					@Override
+					public void onError(
+							Collection<ResponseError> errors) {
+						// TODO Auto-generated method stub
+					}
+				});
+			}
+
+			@Override
+			public void onError(Collection<ResponseError> errors) {
+			}
+		});
+		//TODO
+	}
+
+	private void onCancel(){
+		InsurancePolicy policy = view.getInsurancePolicyForm().getValue();
+		String policyId = policy == null ? null : policy.id;
+
+		if(policyId != null && this.policyBroker.isTemp(policyId)){
+			this.policyBroker.closePolicyResource(policyId, new ResponseHandler<Void>() {
+
+				@Override
+				public void onResponse(Void response) {
+					return;
+				}
+
+				@Override
+				public void onError(Collection<ResponseError> errors) {
+					return;
+				}
+			});
+		}
+
+		NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
+		item.removeParameter("policyid");
+		item.popFromStackParameter("display");
+		NavigationHistoryManager.getInstance().go(item);
+	}
+
+	private void onModalityChanged(){
+		view.getInsurancePolicyForm().commit();
+		InsurancePolicy changedPolicy = view.getInsurancePolicyForm().getInfo();
+		CreateInsurancePolicyViewPresenter.this.policyBroker.openPolicyResource(null, new ResponseHandler<InsurancePolicy>() { //TODO
+
+			@Override
+			public void onResponse(InsurancePolicy response) {
+				view.getInsurancePolicyForm().setValue(response, false);
+			}
+
+			@Override
+			public void onError(Collection<ResponseError> errors) {}
+		});
+	}
+
+	protected void saveWorkState(final ResponseHandler<Void> handler){
+		final InsurancePolicy policy = view.getInsurancePolicyForm().getInfo(); 
+		if(policyBroker.isTemp(policy.id)){
+			policyBroker.updatePolicy(policy, new ResponseHandler<InsurancePolicy>() {
+
+				@Override
+				public void onResponse(InsurancePolicy response) {
+					policyBroker.saveCoverageDetailsPage(policy.id, currentInsuredObjectFilterId, currentExerciseFilterId, view.getTable().getValue(), new ResponseHandler<TableSection>(){
+
+						@Override
+						public void onResponse(TableSection response) {
+							handler.onResponse(null);
+						}
+
+						@Override
+						public void onError(Collection<ResponseError> errors) {
+							handler.onError(new String[]{});
+						}
+
+					});
+				}
+
+				@Override
+				public void onError(Collection<ResponseError> errors) {
+					handler.onError(new String[]{});
+				}
+			});
+		} else {
+			handler.onResponse(null);
+		}
+	}
+
+	private void onFiltersChanged(){
+		final String policyId = view.getInsurancePolicyForm().getValue().id;
+		final String objectFilterId = view.getInsuredObjectFilter().getValue();
+		final String exerciseFilterId =  view.getExerciseFilter().getValue();
+
+		if(policyBroker.isTemp(policyId)){
+			policyBroker.saveCoverageDetailsPage(policyId, currentInsuredObjectFilterId, currentExerciseFilterId, view.getTable().getValue(), new ResponseHandler<InsurancePolicy.TableSection>() {
+
+				@Override
+				public void onResponse(TableSection response) {
+					policyBroker.getPage(policyId, objectFilterId, exerciseFilterId, new ResponseHandler<InsurancePolicy.TableSection>() {
+
+						@Override
+						public void onResponse(TableSection response) {
+							view.getTable().setValue(response);
+							currentInsuredObjectFilterId = objectFilterId;
+							currentExerciseFilterId = exerciseFilterId;
+						}
+
+						@Override
+						public void onError(Collection<ResponseError> errors) {
+							onGetPageFailed();
+						}
+					});
+				}
+
+				@Override
+				public void onError(Collection<ResponseError> errors) {
+					onSaveStateFailed();
+				}
+			});
+		}else{
+			policyBroker.getPage(policyId, objectFilterId, exerciseFilterId, new ResponseHandler<InsurancePolicy.TableSection>() {
+
+				@Override
+				public void onResponse(TableSection response) {
+					view.getTable().setValue(response);
+					currentInsuredObjectFilterId = objectFilterId;
+					currentExerciseFilterId = exerciseFilterId;
+				}
+
+				@Override
+				public void onError(Collection<ResponseError> errors) {
+					onGetPageFailed();
+				}
+			});
+		}
+	}
+
+
+
+	private void onCreateObject(){
+		NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
+		item.pushIntoStackParameter("display", "viewinsuredobject");
+		item.setParameter("objectid", "new");
+		NavigationHistoryManager.getInstance().go(item);
+	}
+
+	private void onCreateExercise(){
+		NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
+		item.pushIntoStackParameter("display", "viewexercise");
+		item.setParameter("exerciseid", "new");
+		NavigationHistoryManager.getInstance().go(item);
+	}
+
+	private void showCreatePolicy(String ownerId) {
+		showOwner(ownerId);
+		//	private void setClient(Client client){ TODO eliminar
+		//		this.client = client;
+		//		this.view.getClientForm().setValue(client);
+		//		
+		//		InsurancePolicy newPolicy = new InsurancePolicy();
+		//		newPolicy.clientId = client.id;
+		//		newPolicy.clientNumber = client.clientNumber;
+		//		newPolicy.clientName = client.name;
+		//		view.getInsurancePolicyForm().setValue(newPolicy);
+		//	}
+	}
+
+	private void showPolicyInCreation(String ownerId, String policyId){
+		showOwner(ownerId);
+		//TODO
+	}
+
+	private void showOwner(String ownerId){
+		this.clientBroker.getClient(ownerId, new ResponseHandler<Client>() {
+
+			@Override
+			public void onResponse(Client response) {
+				view.getClientForm().setValue(response);
+			}
+
+			@Override
+			public void onError(Collection<ResponseError> errors) {
+				onFailure();
+			}
+		});
+	}
+
+	private void onFailure(){
+		EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não é possível criar a Apólice"), TYPE.ALERT_NOTIFICATION));
+		NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
+		item.removeParameter("policyid");
+		item.popFromStackParameter("display");
+		NavigationHistoryManager.getInstance().go(item);
+	}
+
+	private void onCreateSuccess(){
+		EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "A Apólice foi criada com Sucesso"), TYPE.TRAY_NOTIFICATION));
+		NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
+		item.removeParameter("policyid");
+		item.popFromStackParameter("display");
+		NavigationHistoryManager.getInstance().go(item);
+	}
+
+	private void onCreateFailed(){
+		EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não foi possível criar a Apólice"), TYPE.ALERT_NOTIFICATION));
+	}
+
+	private void onGetPageFailed(){
+		view.getInsuredObjectFilter().setValue(currentInsuredObjectFilterId, false);
+		view.getExerciseFilter().setValue(currentExerciseFilterId, false);
+		EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não é possível apresentar a página na tabela de coberturas"), TYPE.ALERT_NOTIFICATION));
+	}
+
+	private void onSaveStateFailed(){
+		EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "De momento não foi possível guardar as alterações à Apólice"), TYPE.ALERT_NOTIFICATION));
 	}
 
 }

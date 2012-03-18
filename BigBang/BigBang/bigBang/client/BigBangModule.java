@@ -13,15 +13,19 @@ import bigBang.library.client.dataAccess.BigBangDocumentsBroker;
 import bigBang.library.client.dataAccess.HistoryBrokerImpl;
 import bigBang.library.client.dataAccess.SubProcessesBrokerImpl;
 import bigBang.library.client.dataAccess.TypifiedTextBrokerImpl;
+import bigBang.library.client.userInterface.presenter.CancelInfoOrDocumentRequestViewPresenter;
 import bigBang.library.client.userInterface.presenter.ContactNavigationViewPresenter;
 import bigBang.library.client.userInterface.presenter.ContactViewPresenter;
 import bigBang.library.client.userInterface.presenter.DocumentViewPresenter;
+import bigBang.library.client.userInterface.presenter.InfoOrDocumentRequestReplyViewPresenter;
 import bigBang.library.client.userInterface.presenter.ManagerTransferViewPresenter;
 import bigBang.library.client.userInterface.presenter.UndoOperationViewPresenter;
 import bigBang.library.client.userInterface.presenter.ViewPresenter;
+import bigBang.library.client.userInterface.view.CancelInfoOrDocumentRequestView;
 import bigBang.library.client.userInterface.view.ContactNavigationView;
 import bigBang.library.client.userInterface.view.ContactView;
 import bigBang.library.client.userInterface.view.DocumentView;
+import bigBang.library.client.userInterface.view.InfoOrDocumentRequestReplyView;
 import bigBang.library.client.userInterface.view.ManagerTransferWithToolbarView;
 import bigBang.library.client.userInterface.view.UndoOperationView;
 
@@ -92,6 +96,24 @@ public class BigBangModule implements Module {
 			public ViewPresenter getInstance() {
 				ContactNavigationView view = (ContactNavigationView) GWT.create(ContactNavigationView.class);
 				ViewPresenter presenter = new ContactNavigationViewPresenter(view);
+				return presenter;
+			}
+		});
+		ViewPresenterFactory.getInstance().registerViewPresenterInstantiator("INFO_OR_DOCUMENT_REQUEST_CANCELLATION", new ViewPresenterInstantiator() {
+
+			@Override
+			public ViewPresenter getInstance() {
+				CancelInfoOrDocumentRequestView view = (CancelInfoOrDocumentRequestView) GWT.create(CancelInfoOrDocumentRequestView.class);
+				ViewPresenter presenter = new CancelInfoOrDocumentRequestViewPresenter(view);
+				return presenter;
+			}
+		});
+		ViewPresenterFactory.getInstance().registerViewPresenterInstantiator("INFO_OR_DOCUMENT_REQUEST_REPLY", new ViewPresenterInstantiator() {
+
+			@Override
+			public ViewPresenter getInstance() {
+				InfoOrDocumentRequestReplyView view = (InfoOrDocumentRequestReplyView) GWT.create(InfoOrDocumentRequestReplyView.class);
+				ViewPresenter presenter = new InfoOrDocumentRequestReplyViewPresenter(view);
 				return presenter;
 			}
 		});

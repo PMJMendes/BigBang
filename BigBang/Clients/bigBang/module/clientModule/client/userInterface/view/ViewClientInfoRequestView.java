@@ -17,14 +17,14 @@ import bigBang.library.client.HasValueSelectables;
 import bigBang.library.client.event.ActionInvokedEvent;
 import bigBang.library.client.event.ActionInvokedEventHandler;
 import bigBang.library.client.userInterface.ListHeader;
-import bigBang.library.client.userInterface.view.InfoOrDocumentRequestForm;
 import bigBang.library.client.userInterface.view.View;
+import bigBang.library.client.userInterface.view.ViewInfoOrDocumentRequestForm;
 
 public class ViewClientInfoRequestView extends View implements ViewClientInfoRequestViewPresenter.Display {
 
 	private ActionInvokedEventHandler<Action> handler;
 	private ClientFormView ownerForm;
-	private InfoOrDocumentRequestForm form;
+	private ViewInfoOrDocumentRequestForm form;
 	private InfoOrDocumentRequestChildrenPanel childrenPanel;
 	private ViewInfoOrDocumentRequestOperationsToolbar toolbar;
 	
@@ -74,10 +74,11 @@ public class ViewClientInfoRequestView extends View implements ViewClientInfoReq
 		};
 		formWrapper.add(toolbar);
 		
-		form = new InfoOrDocumentRequestForm();
+		form = new ViewInfoOrDocumentRequestForm();
 		form.setReadOnly(true);
 		form.setSize("100%", "100%");
 		formWrapper.add(form);
+		formWrapper.setCellHeight(form, "100%");
 		
 		SplitLayoutPanel requestWrapper = new SplitLayoutPanel();
 		requestWrapper.setSize("100%", "100%");
@@ -86,7 +87,7 @@ public class ViewClientInfoRequestView extends View implements ViewClientInfoReq
 		this.childrenPanel.setSize("100%", "100%");
 		requestWrapper.addEast(this.childrenPanel, 250);
 		
-		requestWrapper.add(form);
+		requestWrapper.add(formWrapper);
 		wrapper.add(requestWrapper);
 		
 		form.addValueChangeHandler(new ValueChangeHandler<InfoOrDocumentRequest>() {

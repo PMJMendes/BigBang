@@ -77,7 +77,7 @@ public class TypifiedListSelectionPanel extends
 		buttonWrapper.setSpacing(5);
 		buttonWrapper.add(confirmButton);
 		buttonWrapper.add(cancelButton);
-		header.setRightWidget(header);
+		header.setRightWidget(buttonWrapper);
 		
 		list = new FilterableList<TipifiedListItem>();
 		list.showFilterField(false);

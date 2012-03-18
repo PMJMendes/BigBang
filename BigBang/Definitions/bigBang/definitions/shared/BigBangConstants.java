@@ -71,6 +71,7 @@ public class BigBangConstants {
 		public static final String REQUEST_TYPE = "B437ECD7-11D2-4C55-B6DD-9FE80101ECC8";
 		public static final String INSURANCE_POLICY_VOID_MOTIVES = "B36C9AB7-0052-4C2E-B392-9FF200CF6022";
 		public static final String NEGOTIATION_CANCEL_MOTIVES = "F79E335C-FD6F-43BE-8535-9FE900C1CAF4";
+		public static final String INFO_REQUEST_CANCEL_MOTIVES = "F79E335C-FD6F-43BE-8535-9FE900C1CAF4";
 	}
 
 	public static class OperationIds {

@@ -190,7 +190,7 @@ public class ViewClientInfoRequestViewPresenter implements ViewPresenter {
 	
 	private void onReceiveResponse(){
 		NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
-		item.setParameter("show", "repeatinforequest");
+		item.setParameter("show", "replyinforequest");
 		NavigationHistoryManager.getInstance().go(item);
 	}
 	
@@ -203,7 +203,7 @@ public class ViewClientInfoRequestViewPresenter implements ViewPresenter {
 	private void showHistory(String processId, String historyItemId){
 		NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
 		item.pushIntoStackParameter("display", "clienthistory");
-		item.setParameter("hisotryownerid", processId);
+		item.setParameter("historyownerid", processId);
 		item.setParameter("historyitemid", historyItemId);
 		NavigationHistoryManager.getInstance().go(item);
 	}
@@ -217,6 +217,7 @@ public class ViewClientInfoRequestViewPresenter implements ViewPresenter {
 	
 	private void onRepeatSuccess(){
 		EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "O Pedido de Informação foi Repetido com Sucesso"), TYPE.TRAY_NOTIFICATION));
+		NavigationHistoryManager.getInstance().reload();
 	}
 	
 	private void onRepeatFailed(){
