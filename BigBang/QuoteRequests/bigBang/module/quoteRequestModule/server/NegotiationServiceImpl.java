@@ -82,6 +82,8 @@ public class NegotiationServiceImpl
 			throw new BigBangException(e.getMessage(), e);
 		}
 
+		lobjResult.permissions = BigBangPermissionServiceImpl.sGetProcessPermissions(lobjProc.getKey());
+
 		return lobjResult;
 	}
 
