@@ -1,4 +1,4 @@
-package bigBang.module.insurancePolicyModule.client.userInterface.presenter;
+package bigBang.library.client.userInterface.presenter;
 
 import java.util.Collection;
 
@@ -25,9 +25,8 @@ import bigBang.library.client.event.ActionInvokedEventHandler;
 import bigBang.library.client.event.SelectionChangedEvent;
 import bigBang.library.client.event.SelectionChangedEventHandler;
 import bigBang.library.client.userInterface.ExpandableSelectionFormFieldPanel;
-import bigBang.library.client.userInterface.presenter.ViewPresenter;
 
-public class SubPolicyMainPolicySelectionViewPresenter extends ExpandableSelectionFormFieldPanel implements ViewPresenter {
+public class InsurancePolicySelectionViewPresenter extends ExpandableSelectionFormFieldPanel implements ViewPresenter {
 
 	public static enum Action {
 		CONFIRM,
@@ -42,13 +41,14 @@ public class SubPolicyMainPolicySelectionViewPresenter extends ExpandableSelecti
 
 		void registerActionHandler(ActionInvokedEventHandler<Action> handler);
 		Widget asWidget();
+		void setOperationId(String operationId);
 	}
 
 	private Display view;
 	private boolean bound = false;
 	private InsurancePolicyBroker policyBroker;
 
-	public SubPolicyMainPolicySelectionViewPresenter(Display view){
+	public InsurancePolicySelectionViewPresenter(Display view){
 		policyBroker = (InsurancePolicyBroker) DataBrokerManager.staticGetBroker(BigBangConstants.EntityIds.INSURANCE_POLICY);
 		setView((UIObject)view);		
 	}
@@ -85,9 +85,9 @@ public class SubPolicyMainPolicySelectionViewPresenter extends ExpandableSelecti
 
 	private void bind() {
 		if(bound){return;}
-		
+
 		view.getList().addSelectionChangedEventHandler(new SelectionChangedEventHandler() {
-			
+
 			@Override
 			public void onSelectionChanged(SelectionChangedEvent event) {
 				@SuppressWarnings("unchecked")
@@ -112,9 +112,9 @@ public class SubPolicyMainPolicySelectionViewPresenter extends ExpandableSelecti
 				}
 			}
 		});
-		
+
 		view.getForm().addValueChangeHandler(new ValueChangeHandler<InsurancePolicy>() {
-			
+
 			@Override
 			public void onValueChange(ValueChangeEvent<InsurancePolicy> event) {
 				InsurancePolicy policy = event.getValue();
@@ -122,7 +122,7 @@ public class SubPolicyMainPolicySelectionViewPresenter extends ExpandableSelecti
 			}
 		});
 
-		view.registerActionHandler(new ActionInvokedEventHandler<SubPolicyMainPolicySelectionViewPresenter.Action>() {
+		view.registerActionHandler(new ActionInvokedEventHandler<InsurancePolicySelectionViewPresenter.Action>() {
 
 			@Override
 			public void onActionInvoked(ActionInvokedEvent<Action> action) {
@@ -139,7 +139,7 @@ public class SubPolicyMainPolicySelectionViewPresenter extends ExpandableSelecti
 
 		bound = true;
 	}
-	
+
 	protected void onPolicySelected(InsurancePolicy policy){
 		ValueChangeEvent.fire(this, policy == null ? null : policy.id);
 	}
@@ -147,7 +147,7 @@ public class SubPolicyMainPolicySelectionViewPresenter extends ExpandableSelecti
 	protected void onSelectionCancelled(){
 		ValueChangeEvent.fire(this, "CANCELLED_SELECTION");
 	}
-	
+
 	@Override
 	public String getValue() {
 		return view.getForm().getValue().id;
@@ -166,7 +166,7 @@ public class SubPolicyMainPolicySelectionViewPresenter extends ExpandableSelecti
 			public void onResponse(InsurancePolicy response) {
 				view.getForm().setValue(response);
 				if(fireEvents) {
-					ValueChangeEvent.fire(SubPolicyMainPolicySelectionViewPresenter.this, response.id);
+					ValueChangeEvent.fire(InsurancePolicySelectionViewPresenter.this, response.id);
 				}
 			}
 
@@ -190,13 +190,17 @@ public class SubPolicyMainPolicySelectionViewPresenter extends ExpandableSelecti
 
 	@Override
 	public void setReadOnly(boolean readOnly) {
-	//TODO
+		//TODO
 	}
 
 	@Override
 	public boolean isReadOnly() {
 		// TODO Auto-generated method stub
 		return false;
+	}
+
+	public void setOperationId(String operationId) {
+		view.setOperationId(operationId);		
 	}
 
 }

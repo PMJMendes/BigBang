@@ -1,4 +1,4 @@
-package bigBang.module.insurancePolicyModule.client.userInterface.view;
+package bigBang.library.client.userInterface.view;
 
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
@@ -15,39 +15,37 @@ import bigBang.library.client.HasValueSelectables;
 import bigBang.library.client.event.ActionInvokedEvent;
 import bigBang.library.client.event.ActionInvokedEventHandler;
 import bigBang.library.client.userInterface.ListHeader;
-import bigBang.library.client.userInterface.view.View;
+import bigBang.library.client.userInterface.presenter.InsurancePolicySelectionViewPresenter;
+import bigBang.library.client.userInterface.presenter.InsurancePolicySelectionViewPresenter.Action;
 import bigBang.module.insurancePolicyModule.client.userInterface.InsurancePolicyForm;
 import bigBang.module.insurancePolicyModule.client.userInterface.InsurancePolicySearchPanel;
-import bigBang.module.insurancePolicyModule.client.userInterface.presenter.SubPolicyMainPolicySelectionViewPresenter;
-import bigBang.module.insurancePolicyModule.client.userInterface.presenter.SubPolicyMainPolicySelectionViewPresenter.Action;
 
-public class SubPolicyMainPolicySelectionView extends View implements SubPolicyMainPolicySelectionViewPresenter.Display {
+public class InsurancePolicySelectionView extends View implements InsurancePolicySelectionViewPresenter.Display {
 
 	private InsurancePolicySearchPanel list;
 	private InsurancePolicyForm form;
-	private ActionInvokedEventHandler<SubPolicyMainPolicySelectionViewPresenter.Action> handler;
+	private ActionInvokedEventHandler<InsurancePolicySelectionViewPresenter.Action> handler;
 	private Button confirmButton, cancelButton;
 
-	public SubPolicyMainPolicySelectionView(){
+	public InsurancePolicySelectionView(){
 		SplitLayoutPanel wrapper = new SplitLayoutPanel();
 		initWidget(wrapper);
 		wrapper.setSize("100%", "100%");
 
 		list = new InsurancePolicySearchPanel();
-		list.setOperationId(BigBangConstants.OperationIds.InsurancePolicyProcess.CREATE_SUB_POLICY);
 
 		confirmButton = new Button("Confirmar", new ClickHandler() {
 
 			@Override
 			public void onClick(ClickEvent event) {
-				handler.onActionInvoked(new ActionInvokedEvent<SubPolicyMainPolicySelectionViewPresenter.Action>(Action.CONFIRM));
+				handler.onActionInvoked(new ActionInvokedEvent<InsurancePolicySelectionViewPresenter.Action>(Action.CONFIRM));
 			}
 		});
 		cancelButton = new Button("Cancelar", new ClickHandler() {
 
 			@Override
 			public void onClick(ClickEvent event) {
-				handler.onActionInvoked(new ActionInvokedEvent<SubPolicyMainPolicySelectionViewPresenter.Action>(Action.CANCEL));
+				handler.onActionInvoked(new ActionInvokedEvent<InsurancePolicySelectionViewPresenter.Action>(Action.CANCEL));
 			}
 		});
 
@@ -84,8 +82,6 @@ public class SubPolicyMainPolicySelectionView extends View implements SubPolicyM
 		
 		wrapper.addWest(listWrapper, 300);
 		wrapper.add(formWrapper);
-		
-		list.doSearch();
 	}
 
 	@Override
@@ -111,6 +107,12 @@ public class SubPolicyMainPolicySelectionView extends View implements SubPolicyM
 	@Override
 	public void registerActionHandler(ActionInvokedEventHandler<Action> handler) {
 		this.handler = handler;
+	}
+	
+	@Override
+	public void setOperationId(String operationId){
+		list.setOperationId(operationId);
+		list.doSearch();
 	}
 
 }

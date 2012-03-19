@@ -4,7 +4,9 @@ import bigBang.definitions.client.dataAccess.DataBroker;
 import bigBang.library.client.Module;
 import bigBang.library.client.ViewPresenterFactory;
 import bigBang.library.client.ViewPresenterInstantiator;
+import bigBang.library.client.userInterface.presenter.InsurancePolicySelectionViewPresenter;
 import bigBang.library.client.userInterface.presenter.ViewPresenter;
+import bigBang.library.client.userInterface.view.InsurancePolicySelectionView;
 import bigBang.module.insurancePolicyModule.client.dataAccess.ExerciseDataBrokerImpl;
 import bigBang.module.insurancePolicyModule.client.dataAccess.InsurancePolicyProcessBrokerImpl;
 import bigBang.module.insurancePolicyModule.client.dataAccess.InsuranceSubPolicyBrokerImpl;
@@ -27,7 +29,6 @@ import bigBang.module.insurancePolicyModule.client.userInterface.presenter.SubPo
 import bigBang.module.insurancePolicyModule.client.userInterface.presenter.SubPolicyDeleteViewPresenter;
 import bigBang.module.insurancePolicyModule.client.userInterface.presenter.SubPolicyExerciseViewPresenter;
 import bigBang.module.insurancePolicyModule.client.userInterface.presenter.SubPolicyInsuredObjectViewPresenter;
-import bigBang.module.insurancePolicyModule.client.userInterface.presenter.SubPolicyMainPolicySelectionViewPresenter;
 import bigBang.module.insurancePolicyModule.client.userInterface.presenter.SubPolicyTransferToPolicyViewPresenter;
 import bigBang.module.insurancePolicyModule.client.userInterface.presenter.SubPolicyViewPresenter;
 import bigBang.module.insurancePolicyModule.client.userInterface.presenter.SubPolicyVoidViewPresenter;
@@ -48,7 +49,6 @@ import bigBang.module.insurancePolicyModule.client.userInterface.view.SubPolicyC
 import bigBang.module.insurancePolicyModule.client.userInterface.view.SubPolicyDeleteView;
 import bigBang.module.insurancePolicyModule.client.userInterface.view.SubPolicyExerciseView;
 import bigBang.module.insurancePolicyModule.client.userInterface.view.SubPolicyInsuredObjectView;
-import bigBang.module.insurancePolicyModule.client.userInterface.view.SubPolicyMainPolicySelectionView;
 import bigBang.module.insurancePolicyModule.client.userInterface.view.SubPolicyTransferToPolicyView;
 import bigBang.module.insurancePolicyModule.client.userInterface.view.SubPolicyView;
 import bigBang.module.insurancePolicyModule.client.userInterface.view.SubPolicyVoidView;
@@ -233,8 +233,8 @@ public class InsurancePolicyModule implements Module {
 
 			@Override
 			public ViewPresenter getInstance() {
-				SubPolicyMainPolicySelectionView view = (SubPolicyMainPolicySelectionView) GWT.create(SubPolicyMainPolicySelectionView.class);
-				SubPolicyMainPolicySelectionViewPresenter presenter = new SubPolicyMainPolicySelectionViewPresenter(view);
+				InsurancePolicySelectionView view = (InsurancePolicySelectionView) GWT.create(InsurancePolicySelectionView.class);
+				InsurancePolicySelectionViewPresenter presenter = new InsurancePolicySelectionViewPresenter(view);
 				return presenter;
 			}
 		});

@@ -3,15 +3,16 @@ package bigBang.module.insurancePolicyModule.client.userInterface;
 import bigBang.definitions.shared.BigBangConstants;
 import bigBang.library.client.ViewPresenterFactory;
 import bigBang.library.client.userInterface.ExpandableSelectionFormField;
+import bigBang.library.client.userInterface.presenter.InsurancePolicySelectionViewPresenter;
 import bigBang.library.client.userInterface.view.FormView;
-import bigBang.module.insurancePolicyModule.client.userInterface.presenter.SubPolicyMainPolicySelectionViewPresenter;
 
 public class SubPolicyTransferToPolicyForm extends FormView<String> {
 
 	protected ExpandableSelectionFormField policy;
 	
 	public SubPolicyTransferToPolicyForm(){
-		SubPolicyMainPolicySelectionViewPresenter selectionPanel = (SubPolicyMainPolicySelectionViewPresenter) ViewPresenterFactory.getInstance().getViewPresenter("INSURANCE_POLICY_SUB_POLICY_MAIN_POLICY_SELECTION");
+		InsurancePolicySelectionViewPresenter selectionPanel = (InsurancePolicySelectionViewPresenter) ViewPresenterFactory.getInstance().getViewPresenter("INSURANCE_POLICY_SUB_POLICY_MAIN_POLICY_SELECTION");
+		selectionPanel.setOperationId(BigBangConstants.OperationIds.InsurancePolicyProcess.CREATE_SUB_POLICY);
 		selectionPanel.go();
 		policy = new ExpandableSelectionFormField(BigBangConstants.EntityIds.INSURANCE_POLICY, "Apólice Principal", selectionPanel);
 		
