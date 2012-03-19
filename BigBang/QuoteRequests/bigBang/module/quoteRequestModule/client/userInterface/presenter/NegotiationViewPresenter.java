@@ -40,7 +40,7 @@ import com.google.gwt.user.client.ui.Widget;
 public abstract class NegotiationViewPresenter implements ViewPresenter{
 
 	public static enum Action{
-		EDIT, SAVE, CANCEL, DELETE, SELECTION_CHANGED_CONTACT, SELECTION_CHANGED_DOCUMENT, CANCEL_NEGOTIATION, EXTERNAL_REQUEST
+		EDIT, SAVE, CANCEL, DELETE, SELECTION_CHANGED_CONTACT, SELECTION_CHANGED_DOCUMENT, CANCEL_NEGOTIATION, EXTERNAL_REQUEST, GRANT, RESPONSE
 
 	}
 
@@ -78,6 +78,10 @@ public abstract class NegotiationViewPresenter implements ViewPresenter{
 		void applyOwnerToList(String negotiationId);
 
 		void allowExternalRequest(boolean hasPermission);
+
+		void allowGrant(boolean hasPermission);
+		
+		void allowResponse(boolean hasPermission);
 
 	}
 
@@ -181,8 +185,18 @@ public abstract class NegotiationViewPresenter implements ViewPresenter{
 				case EXTERNAL_REQUEST:
 					receiveExternalRequest();
 					break;
+					
+				case GRANT:{
+					grant();
+					break;
 				}
-
+				
+				case RESPONSE:{
+					response();
+					break;
+				}
+				}
+				
 			}
 		});
 		
@@ -206,6 +220,18 @@ public abstract class NegotiationViewPresenter implements ViewPresenter{
 		view.getSubProcessList().addSelectionChangedEventHandler(selectionChangedHandler);
 		
 		bound = true;
+	}
+
+	protected void response() {
+		NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
+		item.setParameter("show", "responsenegotiation");
+		NavigationHistoryManager.getInstance().go(item);
+	}
+
+	protected void grant() {
+		NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
+		item.setParameter("show", "grantnegotiation");
+		NavigationHistoryManager.getInstance().go(item);
 	}
 
 	protected void receiveExternalRequest() {
@@ -236,6 +262,8 @@ public abstract class NegotiationViewPresenter implements ViewPresenter{
 			view.allowEdit(true);
 			view.allowCancelNegotiation(false);
 			view.allowExternalRequest(false);
+			view.allowGrant(false);
+			view.allowResponse(false);
 			//TODO BLOCK ALLOW CREATION ON DOCUMENT AND CONTACT LIST -> ventura
 		}else{
 
@@ -251,6 +279,8 @@ public abstract class NegotiationViewPresenter implements ViewPresenter{
 					view.allowEdit(PermissionChecker.hasPermission(response, BigBangConstants.OperationIds.NegotiationProcess.UPDATE_NEGOTIATION));
 					view.allowCancelNegotiation(PermissionChecker.hasPermission(response, BigBangConstants.OperationIds.NegotiationProcess.CANCEL_NEGOTIATION));
 					view.allowExternalRequest(PermissionChecker.hasPermission(response, BigBangConstants.OperationIds.NegotiationProcess.EXTERNAL_REQUEST));
+					view.allowGrant(PermissionChecker.hasPermission(response, BigBangConstants.OperationIds.NegotiationProcess.GRANT_NEGOTIATION));
+					view.allowResponse(PermissionChecker.hasPermission(response, BigBangConstants.OperationIds.NegotiationProcess.RECEIVE_QUOTE));
 				}
 
 				@Override

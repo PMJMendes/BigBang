@@ -13,6 +13,8 @@ import bigBang.definitions.shared.ExternalInfoRequest;
 import bigBang.definitions.shared.Negotiation;
 import bigBang.definitions.shared.Negotiation.Cancellation;
 import bigBang.definitions.shared.Negotiation.Deletion;
+import bigBang.definitions.shared.Negotiation.Grant;
+import bigBang.definitions.shared.Negotiation.Response;
 import bigBang.library.client.BigBangAsyncCallback;
 import bigBang.library.client.EventBus;
 import bigBang.library.client.event.OperationWasExecutedEvent;
@@ -180,6 +182,65 @@ public class NegotiationBrokerImpl extends DataBroker<Negotiation> implements Ne
 
 		});
 
+	}
+	
+	@Override
+	public void grantNegotiation(final Grant grant, final ResponseHandler<Negotiation> handler){
+			
+		service.grantNegotiation(grant, new BigBangAsyncCallback<Negotiation>() {
+			
+			@Override
+			public void onResponseSuccess(Negotiation result) {
+				cache.remove(result.id);
+				cache.add(result.id, result);
+
+				for(DataBrokerClient<Negotiation> bc : getClients()){
+					((NegotiationBrokerClient)bc).updateNegotiation(result);
+					((NegotiationBrokerClient)bc).setDataVersionNumber(BigBangConstants.EntityIds.NEGOTIATION, getCurrentDataVersion());
+				}
+				
+				handler.onResponse(result);
+				EventBus.getInstance().fireEvent(new OperationWasExecutedEvent(BigBangConstants.OperationIds.NegotiationProcess.GRANT_NEGOTIATION, grant.negotiationId));
+			}
+			
+			@Override
+			public void onResponseFailure(Throwable caught) {
+				handler.onError((new String[]{
+						new String("Could not grant the negotiation")
+				}));
+				super.onResponseFailure(caught);
+			}
+			
+		});
+	}
+	
+	@Override
+	public void receiveResponse(final Response response, final ResponseHandler<Negotiation> handler){
+
+		service.receiveResponse(response, new BigBangAsyncCallback<Negotiation>() {
+
+			@Override
+			public void onResponseSuccess(Negotiation result) {
+				cache.remove(result.id);
+				cache.add(result.id, result);
+
+				for(DataBrokerClient<Negotiation> bc : getClients()){
+					((NegotiationBrokerClient)bc).updateNegotiation(result);
+					((NegotiationBrokerClient)bc).setDataVersionNumber(BigBangConstants.EntityIds.NEGOTIATION, getCurrentDataVersion());
+				}
+				handler.onResponse(result);
+				EventBus.getInstance().fireEvent(new OperationWasExecutedEvent(BigBangConstants.OperationIds.NegotiationProcess.RECEIVE_QUOTE, result.id));
+			}
+
+			@Override
+			public void onResponseFailure(Throwable caught) {
+				handler.onError((new String[]{
+						new String("Could not receive response")
+				}));
+				super.onResponseFailure(caught);
+			}
+
+		});
 	}
 
 	@Override

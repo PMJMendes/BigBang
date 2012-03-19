@@ -5,6 +5,8 @@ import bigBang.definitions.shared.ExternalInfoRequest;
 import bigBang.definitions.shared.Negotiation; 
 import bigBang.definitions.shared.Negotiation.Cancellation;
 import bigBang.definitions.shared.Negotiation.Deletion;
+import bigBang.definitions.shared.Negotiation.Grant;
+import bigBang.definitions.shared.Negotiation.Response;
 
 public interface NegotiationBroker extends DataBrokerInterface<Negotiation>{
 
@@ -20,7 +22,11 @@ public interface NegotiationBroker extends DataBrokerInterface<Negotiation>{
 			ResponseHandler<Negotiation> handler);
 
 	void createExternalInfoRequest(ExternalInfoRequest request,
-			ResponseHandler<ExternalInfoRequest> handler); 
+			ResponseHandler<ExternalInfoRequest> handler);
+
+	void receiveResponse(Response response, ResponseHandler<Negotiation> handler);
+
+	void grantNegotiation(Grant grant, ResponseHandler<Negotiation> handler); 
 	
 
 }

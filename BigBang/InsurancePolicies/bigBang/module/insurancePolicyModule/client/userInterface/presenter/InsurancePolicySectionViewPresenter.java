@@ -147,6 +147,12 @@ public class InsurancePolicySectionViewPresenter implements ViewPresenter{
 				}else if(show.equalsIgnoreCase("subpolicytransfertopolicy")){
 					present("INSURANCE_POLICY_SUB_POLICY_TRANSFER_TO_POLICY", parameters);
 					view.showOverlayViewContainer(true);
+				}else if(show.equalsIgnoreCase("grantnegotiation")){
+					present("INSURANCE_POLICY_NEGOTIATION_GRANT", parameters);
+					view.showOverlayViewContainer(true);
+				}else if(show.equalsIgnoreCase("responsenegotiation")){
+					present("INSURANCE_POLICY_NEGOTIATION_RESPONSE", parameters);
+					view.showOverlayViewContainer(true);
 				}else if(show.equalsIgnoreCase("replyexternalrequest")){
 					present("EXTERNAL_INFO_OR_DOCUMENT_REQUEST_REPLY", parameters);
 					view.showOverlayViewContainer(true);

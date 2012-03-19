@@ -156,6 +156,8 @@ public class BigBangConstants {
 			public static final String UPDATE_NEGOTIATION = "FA636D7A-FEF3-4F87-9D1A-9FFD010242ED";
 			public static final String CANCEL_NEGOTIATION = "500AAB3B-9035-4F4F-B12E-9FFD0102F303";
 			public static final String EXTERNAL_REQUEST = "16FCE46C-EFE4-497A-BFB8-9FFD01048B6C";
+			public static final String GRANT_NEGOTIATION = "65EB3752-A87B-4658-9FF1-9FFD0104EA07";
+			public static final String RECEIVE_QUOTE = "E43282B7-FBE2-49FB-B227-9FFD01035C99";
 		}
 		
 	}

@@ -77,6 +77,16 @@ public abstract class NegotiationView<T> extends View implements NegotiationView
 				fireAction(Action.EXTERNAL_REQUEST);
 				
 			}
+
+			@Override
+			public void onGrant() {
+				fireAction(Action.GRANT);
+			}
+
+			@Override
+			public void onResponse() {
+				fireAction(Action.RESPONSE);				
+			}
 		};
 
 		VerticalPanel ownerWrapper = new VerticalPanel();
@@ -231,6 +241,15 @@ public abstract class NegotiationView<T> extends View implements NegotiationView
 	public HasValueSelectables<Document> getDocumentList() {
 		return documents;
 	}
+	@Override
+	public void allowGrant(boolean hasPermission) {
+		toolbar.allowGrant(hasPermission);
+	}
+	
+	@Override
+	public void allowResponse(boolean hasPermission) {
+		toolbar.allowResponse(hasPermission);
+	};
 	
 	@Override
 	public HasValueSelectables<BigBangProcess> getSubProcessList() {

@@ -9,11 +9,13 @@ import bigBang.library.client.userInterface.presenter.ViewPresenter;
 import bigBang.module.quoteRequestModule.client.dataAccess.NegotiationBrokerImpl;
 import bigBang.module.quoteRequestModule.client.userInterface.presenter.NegotiationDeleteViewPresenter;
 import bigBang.module.quoteRequestModule.client.userInterface.presenter.NegotiationExternalRequestViewPresenter;
+import bigBang.module.quoteRequestModule.client.userInterface.presenter.NegotiationGrantViewPresenter;
 import bigBang.module.quoteRequestModule.client.userInterface.presenter.QuoteRequestOperationsViewPresenter;
 import bigBang.module.quoteRequestModule.client.userInterface.presenter.QuoteRequestSearchOperationViewPresenter;
 import bigBang.module.quoteRequestModule.client.userInterface.presenter.QuoteRequestSectionViewPresenter;
 import bigBang.module.quoteRequestModule.client.userInterface.view.NegotiationDeleteView;
 import bigBang.module.quoteRequestModule.client.userInterface.view.NegotiationExternalRequestView;
+import bigBang.module.quoteRequestModule.client.userInterface.view.NegotiationGrantView;
 import bigBang.module.quoteRequestModule.client.userInterface.view.QuoteRequestOperationsView;
 import bigBang.module.quoteRequestModule.client.userInterface.view.QuoteRequestSearchOperationView;
 import bigBang.module.quoteRequestModule.client.userInterface.view.QuoteRequestSectionView;
@@ -68,6 +70,17 @@ public class QuoteRequestModule implements Module {
 			public ViewPresenter getInstance() {
 				NegotiationDeleteView view = (NegotiationDeleteView) GWT.create(NegotiationDeleteView.class); 
 				NegotiationDeleteViewPresenter presenter = new NegotiationDeleteViewPresenter(view);
+				return presenter;
+			}
+		});
+		
+
+		ViewPresenterFactory.getInstance().registerViewPresenterInstantiator("QUOTE_REQUEST_NEGOTIATION_GRANT", new ViewPresenterInstantiator() {
+			
+			@Override
+			public ViewPresenter getInstance() {
+				NegotiationGrantView view = (NegotiationGrantView) GWT.create(NegotiationGrantView.class); 
+				NegotiationGrantViewPresenter presenter = new NegotiationGrantViewPresenter(view);
 				return presenter;
 			}
 		});

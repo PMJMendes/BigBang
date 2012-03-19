@@ -153,6 +153,8 @@ public abstract class ExternalRequestViewPresenter implements ViewPresenter{
 	protected void saveExternalInformationRequest(final ExternalInfoRequest toSend) {
 		toSend.parentDataObjectId = ownerId;
 		toSend.parentDataTypeId = ownerTypeId;
+		
+		counter = 0;
 
 		if(toSend.message.upgrades != null && toSend.message.upgrades.length > 0){
 			for(int i = 0; i<toSend.message.upgrades.length; i++){

@@ -55,9 +55,13 @@ import bigBang.module.insurancePolicyModule.client.userInterface.view.SubPolicyV
 import bigBang.module.quoteRequestModule.client.userInterface.presenter.NegotiationCancellationViewPresenter;
 import bigBang.module.quoteRequestModule.client.userInterface.presenter.NegotiationDeleteViewPresenter;
 import bigBang.module.quoteRequestModule.client.userInterface.presenter.NegotiationExternalRequestViewPresenter;
+import bigBang.module.quoteRequestModule.client.userInterface.presenter.NegotiationGrantViewPresenter;
+import bigBang.module.quoteRequestModule.client.userInterface.presenter.NegotiationResponseViewPresenter;
 import bigBang.module.quoteRequestModule.client.userInterface.view.NegotiationCancellationView;
 import bigBang.module.quoteRequestModule.client.userInterface.view.NegotiationDeleteView;
 import bigBang.module.quoteRequestModule.client.userInterface.view.NegotiationExternalRequestView;
+import bigBang.module.quoteRequestModule.client.userInterface.view.NegotiationGrantView;
+import bigBang.module.quoteRequestModule.client.userInterface.view.NegotiationResponseView;
 
 import com.google.gwt.core.client.GWT;
 
@@ -276,6 +280,24 @@ public class InsurancePolicyModule implements Module {
 			public ViewPresenter getInstance() {
 				SubPolicyCreateReceiptView view = (SubPolicyCreateReceiptView) GWT.create(SubPolicyCreateReceiptView.class);
 				SubPolicyCreateReceiptViewPresenter presenter = new SubPolicyCreateReceiptViewPresenter(view);
+				return presenter;
+			}
+		});
+		ViewPresenterFactory.getInstance().registerViewPresenterInstantiator("INSURANCE_POLICY_NEGOTIATION_GRANT", new ViewPresenterInstantiator() {
+
+			@Override
+			public ViewPresenter getInstance() {
+				NegotiationGrantView view = (NegotiationGrantView ) GWT.create(NegotiationGrantView.class);
+				NegotiationGrantViewPresenter presenter = new NegotiationGrantViewPresenter(view);
+				return presenter;
+			}
+		});
+		ViewPresenterFactory.getInstance().registerViewPresenterInstantiator("INSURANCE_POLICY_NEGOTIATION_RESPONSE", new ViewPresenterInstantiator() {
+
+			@Override
+			public ViewPresenter getInstance() {
+				NegotiationResponseView view = (NegotiationResponseView ) GWT.create(NegotiationResponseView.class);
+				NegotiationResponseViewPresenter presenter = new NegotiationResponseViewPresenter(view);
 				return presenter;
 			}
 		});
