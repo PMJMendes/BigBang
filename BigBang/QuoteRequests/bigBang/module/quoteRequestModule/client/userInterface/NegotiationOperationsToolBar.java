@@ -61,7 +61,7 @@ public abstract class NegotiationOperationsToolBar extends BigBangOperationsTool
 		});
 		addItem(SUB_MENU.EXECUTE, grant);
 		
-		response = new MenuItem("Receber resposta da seguradora", new Command(){
+		response = new MenuItem("Receber cotação da seguradora", new Command(){
 
 			@Override
 			public void execute() {
