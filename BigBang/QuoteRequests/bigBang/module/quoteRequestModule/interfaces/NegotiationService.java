@@ -41,7 +41,7 @@ public interface NegotiationService
 
 	public Negotiation receiveResponse(Negotiation.Response response) throws SessionExpiredException, BigBangException;
 
-	public Negotiation.Grant grantNegotiation(Negotiation.Grant grant) throws SessionExpiredException, BigBangException;
+	public Negotiation grantNegotiation(Negotiation.Grant grant) throws SessionExpiredException, BigBangException;
 
 	public InsurancePolicy createPolicy(Negotiation negotiation) throws SessionExpiredException, BigBangException;
 

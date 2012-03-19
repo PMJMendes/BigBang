@@ -17,7 +17,7 @@ public interface NegotiationServiceAsync
 	void repeatSendQuoteRequest(Negotiation.QuoteRequestInfo request, AsyncCallback<Negotiation.QuoteRequestInfo> callback);
 	void cancelNegotiation(Negotiation.Cancellation cancellation, AsyncCallback<Negotiation> callback);
 	void receiveResponse(Negotiation.Response response, AsyncCallback<Negotiation> callback);
-	void grantNegotiation(Negotiation.Grant grant, AsyncCallback<Negotiation.Grant> callback);
+	void grantNegotiation(Negotiation.Grant grant, AsyncCallback<Negotiation> callback);
 	void createPolicy(Negotiation negotiation, AsyncCallback<InsurancePolicy> callback);
 	void createInfoRequest(InfoOrDocumentRequest request, AsyncCallback<InfoOrDocumentRequest> callback);
 	void createExternalRequest(ExternalInfoRequest request, AsyncCallback<ExternalInfoRequest> callback);

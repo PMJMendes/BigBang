@@ -225,7 +225,7 @@ public class NegotiationServiceImpl
 		return sGetNegotiation(lobjNeg.getKey());
 	}
 
-	public Negotiation.Grant grantNegotiation(Negotiation.Grant grant)
+	public Negotiation grantNegotiation(Negotiation.Grant grant)
 		throws SessionExpiredException, BigBangException
 	{
 		com.premiumminds.BigBang.Jewel.Objects.Negotiation lobjNegotiation;
@@ -257,7 +257,7 @@ public class NegotiationServiceImpl
 			throw new BigBangException(e.getMessage(), e);
 		}
 
-		return null;
+		return sGetNegotiation(lobjNegotiation.getKey());
 	}
 
 	@Override
