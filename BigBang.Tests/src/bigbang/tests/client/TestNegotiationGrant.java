@@ -1,9 +1,8 @@
 package bigbang.tests.client;
 
-import com.google.gwt.user.client.rpc.AsyncCallback;
-
 import bigBang.definitions.shared.Negotiation;
-import bigBang.definitions.shared.Negotiation.Grant;
+
+import com.google.gwt.user.client.rpc.AsyncCallback;
 
 public class TestNegotiationGrant
 {
@@ -14,16 +13,16 @@ public class TestNegotiationGrant
 
 	private static void DoStep1()
 	{
-		Grant grant;
+		Negotiation.Grant grant;
 
-		AsyncCallback<Grant> callback = new AsyncCallback<Grant>()
+		AsyncCallback<Negotiation> callback = new AsyncCallback<Negotiation>()
 		{
 			public void onFailure(Throwable caught)
 			{
 				return;
 			}
 
-			public void onSuccess(Grant result)
+			public void onSuccess(Negotiation result)
 			{
 				return;
 			}
