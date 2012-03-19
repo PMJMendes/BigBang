@@ -50,7 +50,7 @@ public class TransferToClient
 	{
 		Client lobjOld, lobjNew;
 
-		midOldProcess = GetProcess().getKey();
+		midOldProcess = GetProcess().GetParent().getKey();
 		lobjOld = (Client)GetProcess().GetParent().GetData();
 		mstrOld = ((Integer)lobjOld.getAt(1)).toString() + " - " + lobjOld.getLabel();
 

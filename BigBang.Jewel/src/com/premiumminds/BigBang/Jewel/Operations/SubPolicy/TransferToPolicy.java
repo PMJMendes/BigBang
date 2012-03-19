@@ -52,7 +52,7 @@ public class TransferToPolicy
 	{
 		Policy lobjOld, lobjNew;
 
-		midOldProcess = GetProcess().getKey();
+		midOldProcess = GetProcess().GetParent().getKey();
 		lobjOld = (Policy)GetProcess().GetParent().GetData();
 		mstrOld = lobjOld.getLabel();
 
