@@ -37,7 +37,7 @@ public class BigBang_Tests
 //		TestSpecialGetExchangeItems.DoTest();
 //
 //		TestHistoryGet.DoTest();
-//		TestHistoryUndo.DoTest();
+		TestHistoryUndo.DoTest();
 //
 //		TestMgrXferGet.DoTest();
 //		TestMgrXferCreate.DoTest();
