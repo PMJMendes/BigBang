@@ -892,6 +892,7 @@ public class ReceiptServiceImpl
 	{
 		IProcess lobjProcess;
 		Policy lobjPolicy;
+		SubPolicy lobjSubPolicy;
 		Client lobjClient;
 		ObjectBase lobjSubLine, lobjLine, lobjCategory;
 		ReceiptStub lobjResult;
@@ -901,7 +902,18 @@ public class ReceiptServiceImpl
 			lobjProcess = PNProcess.GetInstance(Engine.getCurrentNameSpace(), (UUID)parrValues[1]);
 			try
 			{
-				lobjPolicy = (Policy)lobjProcess.GetParent().GetData();
+				if ( Constants.ProcID_Policy.equals(lobjProcess.GetScriptID()) )
+				{
+					lobjPolicy = (Policy)lobjProcess.GetParent().GetData();
+					lobjSubPolicy = null;
+					lobjClient = (Client)lobjProcess.GetParent().GetParent().GetData();
+				}
+				else
+				{
+					lobjSubPolicy = (SubPolicy)lobjProcess.GetParent().GetData();
+					lobjPolicy = (Policy)lobjProcess.GetParent().GetParent().GetData();
+					lobjClient = Client.GetInstance(Engine.getCurrentNameSpace(), (UUID)lobjSubPolicy.getAt(2));
+				}
 				try
 				{
 					lobjSubLine = Engine.GetWorkInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), Constants.ObjID_SubLine),
