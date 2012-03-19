@@ -45,6 +45,7 @@ public class IncomingMessageFormField extends FormField<IncomingMessage>{
 
 	public IncomingMessageFormField(){
 
+		message = new IncomingMessage();
 		service = ExchangeService.Util.getInstance();
 		//POSITIONING
 		VerticalPanel wrapper = new VerticalPanel();
@@ -56,13 +57,14 @@ public class IncomingMessageFormField extends FormField<IncomingMessage>{
 		VerticalPanel choices = new VerticalPanel();
 
 		noteOrEmailRadioButton = new RadioButtonFormField();
-		noteOrEmailRadioButton.addOption(Kind.EMAIL.name(), "E-mail");
-		noteOrEmailRadioButton.addOption(Kind.NOTE.name(), "Nota");
-		noteOrEmailRadioButton.setValue(Kind.EMAIL.name());
+		noteOrEmailRadioButton.addOption(Kind.EMAIL.toString(), "E-mail");
+		noteOrEmailRadioButton.addOption(Kind.NOTE.toString(), "Nota");
+		noteOrEmailRadioButton.setValue(Kind.EMAIL.toString(), true);
+		
 
 		choices.add(noteOrEmailRadioButton);
 		wrapper.add(choices);
-
+		
 		VerticalPanel noteOrEmail = new VerticalPanel();
 
 		emailPanel  = new VerticalPanel();
@@ -147,16 +149,18 @@ public class IncomingMessageFormField extends FormField<IncomingMessage>{
 			}
 		});
 
+
+		
 		noteOrEmailRadioButton.addValueChangeHandler(new ValueChangeHandler<String>() {
 
 			@Override
 			public void onValueChange(ValueChangeEvent<String> event) {
-				notePanel.setVisible(!event.getValue().equalsIgnoreCase(Kind.EMAIL.name()));
-				emailPanel.setVisible(event.getValue().equalsIgnoreCase(Kind.EMAIL.name()));
-				message.kind = event.getValue().equals(Kind.EMAIL.name()) ? Kind.EMAIL : Kind.NOTE;
+				notePanel.setVisible(!event.getValue().equalsIgnoreCase(Kind.EMAIL.toString()));
+				emailPanel.setVisible(event.getValue().equalsIgnoreCase(Kind.EMAIL.toString()));
+				message.kind = event.getValue().equals(Kind.EMAIL.toString()) ? Kind.EMAIL : Kind.NOTE;
 			}
 		});
-
+		
 	}
 
 	@Override
@@ -171,7 +175,7 @@ public class IncomingMessageFormField extends FormField<IncomingMessage>{
 
 		attachList.clear();
 
-		noteOrEmailRadioButton.setValue(value.kind.name());
+		noteOrEmailRadioButton.setValue(value.kind.toString(), true);
 		if(value.emailId != null){
 			service.getItem(value.emailId, new BigBangAsyncCallback<ExchangeItem>() {
 

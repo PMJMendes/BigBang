@@ -264,6 +264,7 @@ public abstract class NegotiationViewPresenter implements ViewPresenter{
 			view.allowExternalRequest(false);
 			view.allowGrant(false);
 			view.allowResponse(false);
+			view.allowResponse(false);
 			//TODO BLOCK ALLOW CREATION ON DOCUMENT AND CONTACT LIST -> ventura
 		}else{
 

@@ -251,6 +251,7 @@ public class ExchangeItemSelectionView extends View implements ExchangeItemSelec
 		attachments.setCheckable(true);
 		attachments.setHeaderWidget(aHeader);
 		attachments.showFilterField(false);
+		attachments.setSelectableEntries(false);
 		rightWrapper.add(attachments);
 		rightWrapper.setCellHeight(attachments, "100%");
 		insideWrapper.addEast(rightWrapper, 250);

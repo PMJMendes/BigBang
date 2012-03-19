@@ -15,12 +15,6 @@ public class TestsViewPresenter implements ViewPresenter {
 	
 	public static interface Display {
 		Widget asWidget();
-
-		void setTypifiedTexts(String tag);
-		HasWidgets getContainer();
-		void show();
-		void setMainCoInsuranceAgency(String string);
-
 	}
 	
 	private Display view;
@@ -48,8 +42,6 @@ public class TestsViewPresenter implements ViewPresenter {
 //		ViewPresenter presenter = ViewPresenterFactory.getInstance().getViewPresenter("CONTACT");
 //		
 //		presenter.go(view.getContainer());
-		view.show();
-		view.setMainCoInsuranceAgency("4e61a352-31a1-4a65-91c7-9fb700200fb8");
 		
 //		presenter.setParameters(parameterHolder);
 		

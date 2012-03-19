@@ -16,12 +16,12 @@ import bigBang.library.client.history.NavigationHistoryItem;
 import bigBang.library.client.history.NavigationHistoryManager;
 import bigBang.library.client.userInterface.presenter.ViewExternalRequestViewPresenter;
 
-public class NegotiationViewExternalInfoRequestViewPresenter extends
+public class NegotiationExternalInfoRequestViewPresenter extends
 		ViewExternalRequestViewPresenter<Negotiation> {
 
 	protected NegotiationBroker negotiationBroker;
 	
-	public NegotiationViewExternalInfoRequestViewPresenter(
+	public NegotiationExternalInfoRequestViewPresenter(
 			bigBang.library.client.userInterface.presenter.ViewExternalRequestViewPresenter.Display<Negotiation> view) {
 		super(view);
 		this.negotiationBroker = (NegotiationBroker) DataBrokerManager.staticGetBroker(BigBangConstants.EntityIds.NEGOTIATION);
