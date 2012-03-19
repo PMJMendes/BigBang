@@ -19,6 +19,7 @@ public abstract class InsurancePolicyOperationsToolBar extends BigBangOperations
 	//EXECUTE
 	protected MenuItem detailedCalculations;
 	protected MenuItem validate;
+	protected MenuItem clientTransfer;
 
 	//DATA
 	protected MenuItem managerTransfer;
@@ -36,7 +37,6 @@ public abstract class InsurancePolicyOperationsToolBar extends BigBangOperations
 	protected MenuItem deleteItem;
 	protected MenuItem brokerageTransfer;
 	protected MenuItem voidPolicy;
-	private MenuItem clientTransfer;
 
 	//OTHER
 
@@ -221,7 +221,7 @@ public abstract class InsurancePolicyOperationsToolBar extends BigBangOperations
 			}
 			
 		});
-		addItem(SUB_MENU.ADMIN, clientTransfer);
+		addItem(SUB_MENU.EXECUTE, clientTransfer);
 		
 	}
 	
