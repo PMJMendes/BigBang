@@ -139,6 +139,7 @@ public class MessageBridge
 	{
 		IncomingMessageData lobjResult;
 		int i;
+		UUID lidFile;
 
 		lobjResult = new IncomingMessageData();
 
@@ -162,8 +163,11 @@ public class MessageBridge
 				lobjResult.mobjDocOps.marrCreate[i].midOwnerId = null;
 				lobjResult.mobjDocOps.marrCreate[i].midDocType = UUID.fromString(lobMessage.upgrades[i].docTypeId);
 				lobjResult.mobjDocOps.marrCreate[i].mstrText = null;
-				lobjResult.mobjDocOps.marrCreate[i].mobjFile = FileServiceImpl.GetFileXferStorage().
-						get(UUID.fromString(lobMessage.upgrades[i].storageId)).GetVarData();
+
+				lidFile = UUID.fromString(lobMessage.upgrades[i].storageId);
+				lobjResult.mobjDocOps.marrCreate[i].mobjFile = FileServiceImpl.GetFileXferStorage().get(lidFile).GetVarData();
+				FileServiceImpl.GetFileXferStorage().remove(lidFile);
+
 				lobjResult.mobjDocOps.marrCreate[i].marrInfo = null;
 				lobjResult.mobjDocOps.marrCreate[i].mobjPrevValues = null;
 			}
