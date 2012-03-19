@@ -948,23 +948,18 @@ public class ReceiptServiceImpl
 			catch (Throwable e)
 			{
 				lobjPolicy = null;
+				lobjSubPolicy = null;
+				lobjClient = null;
 				lobjSubLine = null;
 				lobjLine = null;
 				lobjCategory = null;
-			}
-			try
-			{
-				lobjClient = (Client)lobjProcess.GetParent().GetParent().GetData();
-			}
-			catch (Throwable e)
-			{
-				lobjClient = null;
 			}
 		}
 		catch (Throwable e)
 		{
 			lobjProcess = null;
 			lobjPolicy = null;
+			lobjSubPolicy = null;
 			lobjSubLine = null;
 			lobjLine = null;
 			lobjCategory = null;
@@ -978,8 +973,8 @@ public class ReceiptServiceImpl
 		lobjResult.clientId = (lobjClient == null ? null : lobjClient.getKey().toString());
 		lobjResult.clientNumber = (lobjClient == null ? "" : ((Integer)lobjClient.getAt(1)).toString());
 		lobjResult.clientName = (lobjClient == null ? "(Erro)" : lobjClient.getLabel());
-		lobjResult.policyId = (lobjPolicy == null ? null : lobjPolicy.getKey().toString());
-		lobjResult.policyNumber = (lobjPolicy == null ? "(Erro)" : lobjPolicy.getLabel());
+		lobjResult.policyId = (lobjSubPolicy == null ? (lobjPolicy == null ? null : lobjPolicy.getKey().toString()) : lobjSubPolicy.getKey().toString());
+		lobjResult.policyNumber = (lobjSubPolicy == null ? (lobjPolicy == null ? "(Erro)" : lobjPolicy.getLabel()) : lobjSubPolicy.getLabel());
 		lobjResult.categoryId = (lobjCategory == null ? null : lobjCategory.getKey().toString());
 		lobjResult.categoryName = (lobjCategory == null ? null : lobjCategory.getLabel());
 		lobjResult.lineId = (lobjLine == null ? null : lobjLine.getKey().toString());
