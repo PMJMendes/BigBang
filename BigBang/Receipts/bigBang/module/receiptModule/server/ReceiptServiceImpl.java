@@ -41,6 +41,7 @@ import com.premiumminds.BigBang.Jewel.Objects.Line;
 import com.premiumminds.BigBang.Jewel.Objects.Mediator;
 import com.premiumminds.BigBang.Jewel.Objects.Policy;
 import com.premiumminds.BigBang.Jewel.Objects.SubLine;
+import com.premiumminds.BigBang.Jewel.Objects.SubPolicy;
 import com.premiumminds.BigBang.Jewel.Operations.ContactOps;
 import com.premiumminds.BigBang.Jewel.Operations.DocOps;
 import com.premiumminds.BigBang.Jewel.Operations.Policy.CreateReceipt;
@@ -65,6 +66,7 @@ public class ReceiptServiceImpl
 		Receipt lobjResult;
 		IProcess lobjProc;
 		Policy lobjPolicy;
+		SubPolicy lobjSubPolicy;
 		Client lobjClient;
 		Mediator lobjMed;
 		SubLine lobjSubLine;
@@ -79,8 +81,18 @@ public class ReceiptServiceImpl
 				throw new BigBangException("Erro: Recibo sem processo de suporte. (Recibo n. "
 						+ lobjReceipt.getAt(0).toString() + ")");
 			lobjProc = PNProcess.GetInstance(Engine.getCurrentNameSpace(), lobjReceipt.GetProcessID());
-			lobjPolicy = Policy.GetInstance(Engine.getCurrentNameSpace(), lobjProc.GetParent().GetData().getKey());
-			lobjClient = Client.GetInstance(Engine.getCurrentNameSpace(), lobjProc.GetParent().GetParent().GetData().getKey());
+			if ( Constants.ProcID_Policy.equals(lobjProc.GetScriptID()) )
+			{
+				lobjPolicy = (Policy)lobjProc.GetParent().GetData();
+				lobjSubPolicy = null;
+				lobjClient = (Client)lobjProc.GetParent().GetParent().GetData();
+			}
+			else
+			{
+				lobjSubPolicy = (SubPolicy)lobjProc.GetParent().GetData();
+				lobjPolicy = (Policy)lobjProc.GetParent().GetParent().GetData();;
+				lobjClient = Client.GetInstance(Engine.getCurrentNameSpace(), (UUID)lobjSubPolicy.getAt(2));
+			}
 			lobjMed = Mediator.GetInstance(Engine.getCurrentNameSpace(),
 					(lobjPolicy.getAt(11) == null ?  (UUID)lobjClient.getAt(8) : (UUID)lobjPolicy.getAt(11)) );
 			lobjSubLine = lobjPolicy.GetSubLine();
@@ -102,8 +114,8 @@ public class ReceiptServiceImpl
 		lobjResult.clientId = lobjClient.getKey().toString();
 		lobjResult.clientNumber = ((Integer)lobjClient.getAt(1)).toString();
 		lobjResult.clientName = lobjClient.getLabel();
-		lobjResult.policyId = lobjPolicy.getKey().toString();
-		lobjResult.policyNumber = lobjPolicy.getLabel();
+		lobjResult.policyId = ( lobjSubPolicy == null ? lobjPolicy.getKey().toString() : lobjSubPolicy.getKey().toString() );
+		lobjResult.policyNumber = ( lobjSubPolicy == null ? lobjPolicy.getLabel() : lobjSubPolicy.getLabel() );
 		lobjResult.categoryId = lobjCategory.getKey().toString();
 		lobjResult.categoryName = lobjCategory.getLabel();
 		lobjResult.lineId = lobjLine.getKey().toString();
