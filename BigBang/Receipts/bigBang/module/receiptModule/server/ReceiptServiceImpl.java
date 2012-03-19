@@ -81,7 +81,7 @@ public class ReceiptServiceImpl
 				throw new BigBangException("Erro: Recibo sem processo de suporte. (Recibo n. "
 						+ lobjReceipt.getAt(0).toString() + ")");
 			lobjProc = PNProcess.GetInstance(Engine.getCurrentNameSpace(), lobjReceipt.GetProcessID());
-			if ( Constants.ProcID_Policy.equals(lobjProc.GetScriptID()) )
+			if ( Constants.ProcID_Policy.equals(lobjProc.GetParent().GetScriptID()) )
 			{
 				lobjPolicy = (Policy)lobjProc.GetParent().GetData();
 				lobjSubPolicy = null;
@@ -902,7 +902,7 @@ public class ReceiptServiceImpl
 			lobjProcess = PNProcess.GetInstance(Engine.getCurrentNameSpace(), (UUID)parrValues[1]);
 			try
 			{
-				if ( Constants.ProcID_Policy.equals(lobjProcess.GetScriptID()) )
+				if ( Constants.ProcID_Policy.equals(lobjProcess.GetParent().GetScriptID()) )
 				{
 					lobjPolicy = (Policy)lobjProcess.GetParent().GetData();
 					lobjSubPolicy = null;
