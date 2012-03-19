@@ -6,8 +6,10 @@ import bigBang.definitions.client.dataAccess.NegotiationBroker;
 import bigBang.definitions.client.response.ResponseError;
 import bigBang.definitions.client.response.ResponseHandler;
 import bigBang.definitions.shared.BigBangConstants;
+import bigBang.definitions.shared.BigBangProcess;
 import bigBang.definitions.shared.Contact;
 import bigBang.definitions.shared.Document;
+import bigBang.definitions.shared.HistoryItemStub;
 import bigBang.definitions.shared.Negotiation;
 import bigBang.definitions.shared.ProcessBase;
 import bigBang.library.client.EventBus;
@@ -16,11 +18,15 @@ import bigBang.library.client.HasParameters;
 import bigBang.library.client.HasValueSelectables;
 import bigBang.library.client.Notification;
 import bigBang.library.client.PermissionChecker;
+import bigBang.library.client.ValueSelectable;
 import bigBang.library.client.Notification.TYPE;
 import bigBang.library.client.dataAccess.DataBrokerManager;
+import bigBang.library.client.dataAccess.SubProcessesBroker;
 import bigBang.library.client.event.ActionInvokedEvent;
 import bigBang.library.client.event.ActionInvokedEventHandler;
 import bigBang.library.client.event.NewNotificationEvent;
+import bigBang.library.client.event.SelectionChangedEvent;
+import bigBang.library.client.event.SelectionChangedEventHandler;
 import bigBang.library.client.history.NavigationHistoryItem;
 import bigBang.library.client.history.NavigationHistoryManager;
 import bigBang.library.client.userInterface.ListEntry;
@@ -30,7 +36,6 @@ import com.google.gwt.user.client.ui.HasValue;
 import com.google.gwt.user.client.ui.HasWidgets;
 import com.google.gwt.user.client.ui.UIObject;
 import com.google.gwt.user.client.ui.Widget;
-import com.premiumminds.BigBang.Jewel.Operations.Negotiation.CancelNegotiation;
 
 public abstract class NegotiationViewPresenter implements ViewPresenter{
 
@@ -51,6 +56,10 @@ public abstract class NegotiationViewPresenter implements ViewPresenter{
 		HasValueSelectables<Contact> getContactList();
 
 		HasValueSelectables<Document> getDocumentList();
+		
+		HasValueSelectables<HistoryItemStub> getHistoryList();
+		
+		HasValueSelectables<BigBangProcess> getSubProcessList();
 
 		HasEditableValue<Negotiation> getForm();
 
@@ -176,7 +185,26 @@ public abstract class NegotiationViewPresenter implements ViewPresenter{
 
 			}
 		});
-
+		
+		SelectionChangedEventHandler selectionChangedHandler = new SelectionChangedEventHandler() {
+			
+			@Override
+			public void onSelectionChanged(SelectionChangedEvent event) {
+				ValueSelectable<?> selectable = (ValueSelectable<?>) event.getFirstSelected();
+				
+				if(selectable != null) {
+					
+					if(event.getSource() == view.getHistoryList()){ //HISTORY
+						showHistory(view.getForm().getValue().id, ((HistoryItemStub) selectable.getValue()).id);
+					} else if(event.getSource() == view.getSubProcessList()){ //SUB PROCESSES
+						showSubProcess(((BigBangProcess) selectable.getValue()).dataId);
+					}
+				}
+			}
+		};
+		view.getHistoryList().addSelectionChangedEventHandler(selectionChangedHandler);
+		view.getSubProcessList().addSelectionChangedEventHandler(selectionChangedHandler);
+		
 		bound = true;
 	}
 
@@ -287,5 +315,39 @@ public abstract class NegotiationViewPresenter implements ViewPresenter{
 		NavigationHistoryManager.getInstance().go(item);
 	}
 
+	private void showSubProcess(String subProcessId){
+		SubProcessesBroker subProcessBroker = (SubProcessesBroker) DataBrokerManager.staticGetBroker(BigBangConstants.EntityIds.PROCESS);
+		
+		subProcessBroker.getSubProcess(subProcessId, new ResponseHandler<BigBangProcess>() {
+			
+			@Override
+			public void onResponse(BigBangProcess response) {
+				String type = response.dataTypeId;
+				if(type.equalsIgnoreCase(BigBangConstants.EntityIds.EXTERNAL_INFO_REQUEST)) {
+					showExternalRequest(response.dataId);
+				}
+			}
+			
+			@Override
+			public void onError(Collection<ResponseError> errors) {
+				view.getSubProcessList().clearSelection();
+			}
+		});
+	}
+	
+	private void showExternalRequest(String requestId){
+		NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
+		item.pushIntoStackParameter("display", "viewnegotiationexternalrequest");
+		item.setParameter("externalrequestid", requestId);
+		NavigationHistoryManager.getInstance().go(item);
+	}
+	
+	private void showHistory(String ownerId, String itemId){
+		NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
+		item.pushIntoStackParameter("display", "history");
+		item.setParameter("historyownerid", ownerId);
+		item.setParameter("historyitemid", itemId);
+		NavigationHistoryManager.getInstance().go(item);
+	}
 
 }

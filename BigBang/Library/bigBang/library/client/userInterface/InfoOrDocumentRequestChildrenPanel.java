@@ -1,9 +1,8 @@
-package bigBang.module.clientModule.client.userInterface;
+package bigBang.library.client.userInterface;
 
 import com.google.gwt.user.client.ui.StackPanel;
 
 import bigBang.definitions.shared.InfoOrDocumentRequest;
-import bigBang.library.client.userInterface.HistoryList;
 import bigBang.library.client.userInterface.view.View;
 
 public class InfoOrDocumentRequestChildrenPanel extends View {

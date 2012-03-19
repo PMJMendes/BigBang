@@ -1,18 +1,21 @@
 package bigBang.module.quoteRequestModule.client.userInterface.view;
 
 
+import bigBang.definitions.shared.BigBangProcess;
 import bigBang.definitions.shared.Contact;
 import bigBang.definitions.shared.Document;
+import bigBang.definitions.shared.HistoryItemStub;
 import bigBang.definitions.shared.ProcessBase;
 import bigBang.library.client.HasValueSelectables;
 import bigBang.library.client.event.ActionInvokedEvent;
 import bigBang.library.client.event.ActionInvokedEventHandler;
 import bigBang.library.client.event.SelectionChangedEvent;
 import bigBang.library.client.event.SelectionChangedEventHandler;
-import bigBang.library.client.userInterface.BigBangOperationsToolBar.SUB_MENU;
 import bigBang.library.client.userInterface.ContactsList;
 import bigBang.library.client.userInterface.DocumentsList;
+import bigBang.library.client.userInterface.HistoryList;
 import bigBang.library.client.userInterface.ListHeader;
+import bigBang.library.client.userInterface.SubProcessesList;
 import bigBang.library.client.userInterface.view.FormView;
 import bigBang.library.client.userInterface.view.View;
 import bigBang.module.quoteRequestModule.client.userInterface.NegotiationForm;
@@ -33,6 +36,8 @@ public abstract class NegotiationView<T> extends View implements NegotiationView
 	protected FormView<T> ownerForm;
 	protected DocumentsList documents;
 	protected ContactsList contacts;
+	protected SubProcessesList subProcessesList;
+	protected HistoryList historyList;
 	protected ListHeader ownerHeader;
 
 	public NegotiationView(FormView<T> ownerForm){
@@ -110,10 +115,15 @@ public abstract class NegotiationView<T> extends View implements NegotiationView
 
 			}
 		});
+		
+		subProcessesList = new SubProcessesList();
+		historyList = new HistoryList();
 
 		StackPanel stackWrapper = new StackPanel();
 		stackWrapper.add(contacts, "Contactos");
 		stackWrapper.add(documents, "Documentos");
+		stackWrapper.add(subProcessesList, "Sub-Processos");
+		stackWrapper.add(historyList, "Histórico");
 
 		stackWrapper.setHeight("100%");
 		stackWrapper.setWidth("100%");
@@ -208,6 +218,8 @@ public abstract class NegotiationView<T> extends View implements NegotiationView
 	public void applyOwnerToList(String negotiationId) {
 		contacts.setOwner(negotiationId);
 		documents.setOwner(negotiationId);
+		subProcessesList.setOwner(negotiationId);
+		historyList.setOwner(negotiationId);
 	}
 	
 	@Override
@@ -218,6 +230,16 @@ public abstract class NegotiationView<T> extends View implements NegotiationView
 	@Override
 	public HasValueSelectables<Document> getDocumentList() {
 		return documents;
+	}
+	
+	@Override
+	public HasValueSelectables<BigBangProcess> getSubProcessList() {
+		return this.subProcessesList;
+	}
+	
+	@Override
+	public HasValueSelectables<HistoryItemStub> getHistoryList() {
+		return this.historyList;
 	}
 	
 }

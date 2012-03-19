@@ -1,9 +1,8 @@
-package bigBang.module.clientModule.client.userInterface;
+package bigBang.library.client.userInterface;
 
 import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.ui.MenuItem;
 
-import bigBang.library.client.userInterface.BigBangOperationsToolBar;
 
 public abstract class ViewInfoOrDocumentRequestOperationsToolbar extends
 		BigBangOperationsToolBar {

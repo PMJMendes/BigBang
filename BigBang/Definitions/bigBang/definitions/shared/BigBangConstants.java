@@ -54,6 +54,8 @@ public class BigBangConstants {
 		public static final String NEGOTIATION = "0D50EB51-725D-4741-8618-9FFD00E918D3";
 
 		public static final String INSURANCE_SUB_POLICY_INSURED_OBJECT = "C3480E17-821B-4DCB-BF42-9FF800D1C470";
+
+		public static final String EXTERNAL_INFO_REQUEST = "BD9E1BEA-D02B-40FE-BB3E-9FEA00CA7ECD";
 		
 	}
 
@@ -72,6 +74,7 @@ public class BigBangConstants {
 		public static final String INSURANCE_POLICY_VOID_MOTIVES = "B36C9AB7-0052-4C2E-B392-9FF200CF6022";
 		public static final String NEGOTIATION_CANCEL_MOTIVES = "F79E335C-FD6F-43BE-8535-9FE900C1CAF4";
 		public static final String INFO_REQUEST_CANCEL_MOTIVES = "F79E335C-FD6F-43BE-8535-9FE900C1CAF4";
+		public static final String EXTERNAL_INFO_REQUEST_CLOSING_MOTIVES = "F79E335C-FD6F-43BE-8535-9FE900C1CAF4";
 	}
 
 	public static class OperationIds {
@@ -80,6 +83,12 @@ public class BigBangConstants {
 			public static final String REPEAT_REQUEST = "342772ED-99A8-4662-9439-9FE500FABF29";
 			public static final String RECEIVE_REPLY = "1497B196-8AE7-4E3F-8962-9FE500FAFEC6";
 			public static final String CANCEL_REQUEST = "E4CAAC1D-C89F-4956-9F0E-9FE500FB443D";
+		}
+		
+		public static class ExternalInfoRequest {
+			public static final String REPLY = "870ADF31-4DA8-41D2-BECD-9FEA00CE0A05";
+			public static final String CONTINUE = "18376BE2-9005-425A-98D0-9FEA00CE7865";
+			public static final String CLOSE = "C8D7C92A-FA92-4A74-8A4F-9FEA00CEF1CB";
 		}
 		
 		public static class GeneralSystemProcess {

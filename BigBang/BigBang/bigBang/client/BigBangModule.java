@@ -17,6 +17,9 @@ import bigBang.library.client.userInterface.presenter.CancelInfoOrDocumentReques
 import bigBang.library.client.userInterface.presenter.ContactNavigationViewPresenter;
 import bigBang.library.client.userInterface.presenter.ContactViewPresenter;
 import bigBang.library.client.userInterface.presenter.DocumentViewPresenter;
+import bigBang.library.client.userInterface.presenter.ExternalRequestClosingViewPresenter;
+import bigBang.library.client.userInterface.presenter.ExternalRequestContinuationViewPresenter;
+import bigBang.library.client.userInterface.presenter.ExternalRequestReplyViewPresenter;
 import bigBang.library.client.userInterface.presenter.InfoOrDocumentRequestReplyViewPresenter;
 import bigBang.library.client.userInterface.presenter.ManagerTransferViewPresenter;
 import bigBang.library.client.userInterface.presenter.UndoOperationViewPresenter;
@@ -25,6 +28,9 @@ import bigBang.library.client.userInterface.view.CancelInfoOrDocumentRequestView
 import bigBang.library.client.userInterface.view.ContactNavigationView;
 import bigBang.library.client.userInterface.view.ContactView;
 import bigBang.library.client.userInterface.view.DocumentView;
+import bigBang.library.client.userInterface.view.ExternalRequestClosingView;
+import bigBang.library.client.userInterface.view.ExternalRequestContinuationView;
+import bigBang.library.client.userInterface.view.ExternalRequestReplyView;
 import bigBang.library.client.userInterface.view.InfoOrDocumentRequestReplyView;
 import bigBang.library.client.userInterface.view.ManagerTransferWithToolbarView;
 import bigBang.library.client.userInterface.view.UndoOperationView;
@@ -114,6 +120,33 @@ public class BigBangModule implements Module {
 			public ViewPresenter getInstance() {
 				InfoOrDocumentRequestReplyView view = (InfoOrDocumentRequestReplyView) GWT.create(InfoOrDocumentRequestReplyView.class);
 				ViewPresenter presenter = new InfoOrDocumentRequestReplyViewPresenter(view);
+				return presenter;
+			}
+		});
+		ViewPresenterFactory.getInstance().registerViewPresenterInstantiator("EXTERNAL_INFO_OR_DOCUMENT_REQUEST_REPLY", new ViewPresenterInstantiator() {
+
+			@Override
+			public ViewPresenter getInstance() {
+				ExternalRequestReplyView view = (ExternalRequestReplyView) GWT.create(ExternalRequestReplyView.class);
+				ViewPresenter presenter = new ExternalRequestReplyViewPresenter(view);
+				return presenter;
+			}
+		});
+		ViewPresenterFactory.getInstance().registerViewPresenterInstantiator("EXTERNAL_INFO_OR_DOCUMENT_REQUEST_CONTINUATION", new ViewPresenterInstantiator() {
+
+			@Override
+			public ViewPresenter getInstance() {
+				ExternalRequestContinuationView view = (ExternalRequestContinuationView) GWT.create(ExternalRequestContinuationView.class);
+				ViewPresenter presenter = new ExternalRequestContinuationViewPresenter(view);
+				return presenter;
+			}
+		});
+		ViewPresenterFactory.getInstance().registerViewPresenterInstantiator("EXTERNAL_INFO_OR_DOCUMENT_REQUEST_CLOSING", new ViewPresenterInstantiator() {
+
+			@Override
+			public ViewPresenter getInstance() {
+				ExternalRequestClosingView view = (ExternalRequestClosingView) GWT.create(ExternalRequestClosingView.class);
+				ViewPresenter presenter = new ExternalRequestClosingViewPresenter(view);
 				return presenter;
 			}
 		});

@@ -18,6 +18,7 @@ import bigBang.library.client.HasParameters;
 import bigBang.library.client.HasValueSelectables;
 import bigBang.library.client.Notification;
 import bigBang.library.client.Notification.TYPE;
+import bigBang.library.client.Session;
 import bigBang.library.client.ValueSelectable;
 import bigBang.library.client.dataAccess.DataBrokerManager;
 import bigBang.library.client.event.ActionInvokedEvent;
@@ -52,8 +53,10 @@ public class CreateInsurancePolicyViewPresenter implements ViewPresenter {
 		HasValueSelectables<InsuredObjectStub> getInsuredObjectsList();
 		HasValueSelectables<ExerciseStub> getExercisesList();
 
+		void setSaveModeEnabled(boolean enabled);
+		
 		//TABLE
-		HasEditableValue<TableSection>getTable();
+		HasValue<TableSection>getTable();
 		HasValue<String> getInsuredObjectFilter();
 		HasValue<String> getExerciseFilter();
 
@@ -65,7 +68,6 @@ public class CreateInsurancePolicyViewPresenter implements ViewPresenter {
 	protected Display view;
 	protected ClientProcessBroker clientBroker;
 	protected InsurancePolicyBroker policyBroker;
-	protected Client client;
 	protected String currentInsuredObjectFilterId, currentExerciseFilterId;
 
 	public CreateInsurancePolicyViewPresenter(Display view){
@@ -91,12 +93,14 @@ public class CreateInsurancePolicyViewPresenter implements ViewPresenter {
 		String clientId = parameterHolder.getParameter("clientid");
 		String tempPolicyId = parameterHolder.getParameter("policyid");
 
-		if(client == null || clientId.isEmpty()) {
+		view.setSaveModeEnabled(true);
+		
+		if(clientId == null || clientId.isEmpty()) {
 			onFailure();
 		}else if(tempPolicyId == null || tempPolicyId.isEmpty()){
-			showPolicyInCreation(clientId, tempPolicyId);
-		}else{
 			showCreatePolicy(clientId);
+		}else{
+			showPolicyInCreation(clientId, tempPolicyId);
 		}
 	}
 
@@ -139,9 +143,11 @@ public class CreateInsurancePolicyViewPresenter implements ViewPresenter {
 				ValueSelectable<?> selectable = (ValueSelectable<?>) event.getFirstSelected();
 				if(selectable != null){
 					if(event.getSource() == view.getInsuredObjectsList()){
-						
+						InsuredObjectStub object = (InsuredObjectStub) selectable.getValue();
+						showObject(object.id);
 					}else if(event.getSource() == view.getExercisesList()){
-						//TODO
+						ExerciseStub exercise = (ExerciseStub) selectable.getValue();
+						showExercise(exercise.id);
 					}
 				}
 			}
@@ -163,47 +169,30 @@ public class CreateInsurancePolicyViewPresenter implements ViewPresenter {
 	}
 
 	private void onSave(){
-		InsurancePolicy policy = view.getInsurancePolicyForm().getInfo();
-		policyBroker.updatePolicy(policy, new ResponseHandler<InsurancePolicy>() {
+		final InsurancePolicy policy = view.getInsurancePolicyForm().getInfo();
+		saveWorkState(new ResponseHandler<Void>() {
 
 			@Override
-			public void onResponse(final InsurancePolicy response) {
-				String insuredObjectId = view.getInsuredObjectFilter().getValue();
-				String exerciseId = view.getExerciseFilter().getValue();
-				TableSection data = view.getTable().getValue();
-
-				policyBroker.saveCoverageDetailsPage(response.id, insuredObjectId, exerciseId, data, new ResponseHandler<TableSection>() {
+			public void onResponse(Void response) {
+				policyBroker.commitPolicy(policy, new ResponseHandler<InsurancePolicy>() {
 
 					@Override
-					public void onResponse(TableSection sectionResponse) {
-						policyBroker.commitPolicy(response, new ResponseHandler<InsurancePolicy>() {
-
-							@Override
-							public void onResponse(InsurancePolicy response) {
-								view.getInsurancePolicyForm().setValue(response);
-								view.getInsurancePolicyForm().setReadOnly(true);
-							}
-
-							@Override
-							public void onError(Collection<ResponseError> errors) {
-								//TODO
-							}
-						});
+					public void onResponse(InsurancePolicy response) {
+						onCreateSuccess();
 					}
 
 					@Override
-					public void onError(
-							Collection<ResponseError> errors) {
-						// TODO Auto-generated method stub
+					public void onError(Collection<ResponseError> errors) {
+						onCreateFailed();
 					}
 				});
 			}
 
 			@Override
 			public void onError(Collection<ResponseError> errors) {
+				onCreateFailed();
 			}
 		});
-		//TODO
 	}
 
 	private void onCancel(){
@@ -232,17 +221,29 @@ public class CreateInsurancePolicyViewPresenter implements ViewPresenter {
 	}
 
 	private void onModalityChanged(){
-		view.getInsurancePolicyForm().commit();
-		InsurancePolicy changedPolicy = view.getInsurancePolicyForm().getInfo();
-		CreateInsurancePolicyViewPresenter.this.policyBroker.openPolicyResource(null, new ResponseHandler<InsurancePolicy>() { //TODO
-
+		saveWorkState(new ResponseHandler<Void>() {
+			
 			@Override
-			public void onResponse(InsurancePolicy response) {
-				view.getInsurancePolicyForm().setValue(response, false);
+			public void onResponse(Void response) {
+				InsurancePolicy changedPolicy = view.getInsurancePolicyForm().getInfo();
+				policyBroker.getPolicy(changedPolicy.id, new ResponseHandler<InsurancePolicy>() {
+					
+					@Override
+					public void onResponse(InsurancePolicy response) {
+						view.getInsurancePolicyForm().setValue(response);
+					}
+					
+					@Override
+					public void onError(Collection<ResponseError> errors) {
+						onFailure();
+					}
+				});
 			}
-
+			
 			@Override
-			public void onError(Collection<ResponseError> errors) {}
+			public void onError(Collection<ResponseError> errors) {
+				onSaveStateFailed();
+			}
 		});
 	}
 
@@ -327,8 +328,6 @@ public class CreateInsurancePolicyViewPresenter implements ViewPresenter {
 		}
 	}
 
-
-
 	private void onCreateObject(){
 		NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
 		item.pushIntoStackParameter("display", "viewinsuredobject");
@@ -344,30 +343,13 @@ public class CreateInsurancePolicyViewPresenter implements ViewPresenter {
 	}
 
 	private void showCreatePolicy(String ownerId) {
-		showOwner(ownerId);
-		//	private void setClient(Client client){ TODO eliminar
-		//		this.client = client;
-		//		this.view.getClientForm().setValue(client);
-		//		
-		//		InsurancePolicy newPolicy = new InsurancePolicy();
-		//		newPolicy.clientId = client.id;
-		//		newPolicy.clientNumber = client.clientNumber;
-		//		newPolicy.clientName = client.name;
-		//		view.getInsurancePolicyForm().setValue(newPolicy);
-		//	}
-	}
-
-	private void showPolicyInCreation(String ownerId, String policyId){
-		showOwner(ownerId);
-		//TODO
-	}
-
-	private void showOwner(String ownerId){
-		this.clientBroker.getClient(ownerId, new ResponseHandler<Client>() {
+		CreateInsurancePolicyViewPresenter.this.policyBroker.openPolicyResource(null, new ResponseHandler<InsurancePolicy>() {
 
 			@Override
-			public void onResponse(Client response) {
-				view.getClientForm().setValue(response);
+			public void onResponse(InsurancePolicy response) {
+				NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
+				item.setParameter("policyid", response.id);
+				NavigationHistoryManager.getInstance().go(item);
 			}
 
 			@Override
@@ -375,6 +357,45 @@ public class CreateInsurancePolicyViewPresenter implements ViewPresenter {
 				onFailure();
 			}
 		});
+	}
+
+	private void showPolicyInCreation(String ownerId, final String policyId){
+		clientBroker.getClient(ownerId, new ResponseHandler<Client>() {
+
+			@Override
+			public void onResponse(final Client client) {
+				view.getClientForm().setValue(client);
+				policyBroker.getPolicy(policyId, new ResponseHandler<InsurancePolicy>() {
+					
+					@Override
+					public void onResponse(InsurancePolicy policy) {
+						policy.clientId = client.id;
+						policy.clientNumber = client.clientNumber;
+						policy.clientName = client.name;
+						policy.managerId = Session.getUserId();
+						view.getInsurancePolicyForm().setValue(policy);
+					}
+					
+					@Override
+					public void onError(Collection<ResponseError> errors) {
+						onFailure();
+					}
+				});
+			}
+
+			@Override
+			public void onError(Collection<ResponseError> errors) {
+				onFailure();
+			}
+		});
+	}
+	
+	private void showObject(String objectId) {
+		//TODO
+	}
+	
+	private void showExercise(String exerciseId) {
+		//TODO
 	}
 
 	private void onFailure(){
