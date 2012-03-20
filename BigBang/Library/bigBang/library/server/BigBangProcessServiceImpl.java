@@ -9,6 +9,7 @@ import Jewel.Engine.Engine;
 import Jewel.Engine.DataAccess.MasterDB;
 import Jewel.Engine.Implementation.Entity;
 import Jewel.Engine.Interfaces.IEntity;
+import Jewel.Engine.SysObjects.ObjectBase;
 import Jewel.Petri.Constants;
 import Jewel.Petri.Interfaces.IProcess;
 import Jewel.Petri.Interfaces.IScript;
@@ -226,7 +227,7 @@ public class BigBangProcessServiceImpl
 		ArrayList<BigBangProcess> larrAux;
         IProcess lobjProcess;
         IScript lobjScript;
-        UUID lidData;
+        ObjectBase lobjData;
         BigBangProcess lobjResult;
 
 		if ( Engine.getCurrentUser() == null )
@@ -267,11 +268,12 @@ public class BigBangProcessServiceImpl
 				lobjScript = lobjProcess.GetScript();
 				if ( lobjScript.IsTopLevel() )
 					continue;
-				lidData = lobjProcess.GetDataKey();
+				lobjData = lobjProcess.GetData();
 
 				lobjResult = new BigBangProcess();
 				lobjResult.dataTypeId = lobjScript.GetDataType().toString();
-				lobjResult.dataId = ( lidData == null ? null : lidData.toString() );
+				lobjResult.dataId = ( lobjData == null ? null : lobjData.getKey().toString() );
+				lobjResult.dataLabel = ( lobjData == null ? null : lobjData.getLabel() );
 				lobjResult.processTypeId = lobjScript.getKey().toString();
 				lobjResult.processId = lobjProcess.getKey().toString();
 				lobjResult.tag = lobjScript.getLabel();
