@@ -107,7 +107,7 @@ public class ReceiptSearchOperationView extends View implements ReceiptSearchOpe
 
 			@Override
 			public void onSetForReturn() {
-				// TODO Auto-generated method stub
+				actionHandler.onActionInvoked(new ActionInvokedEvent<ReceiptSearchOperationViewPresenter.Action>(Action.SET_FOR_RETURN));
 
 			}
 
@@ -179,7 +179,7 @@ public class ReceiptSearchOperationView extends View implements ReceiptSearchOpe
 
 			@Override
 			public void onValidate() {
-				// TODO Auto-generated method stub
+				actionHandler.onActionInvoked(new ActionInvokedEvent<ReceiptSearchOperationViewPresenter.Action>(Action.VALIDATE));
 
 			}
 
@@ -277,6 +277,18 @@ public class ReceiptSearchOperationView extends View implements ReceiptSearchOpe
 	@Override
 	public void allowAssociateDebitNote(boolean hasPermission) {
 		operationsToolbar.allowAssociateDebitNote(hasPermission);
+		
+	}
+
+	@Override
+	public void allowValidate(boolean hasPermission) {
+		operationsToolbar.allowValidate(hasPermission);
+		
+	}
+
+	@Override
+	public void allowSetForReturn(boolean hasPermission) {
+		operationsToolbar.allowSetForReturn(hasPermission);
 		
 	}
 

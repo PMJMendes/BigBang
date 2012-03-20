@@ -165,6 +165,8 @@ public class BigBangConstants {
 			public static final String DELETE_RECEIPT = "994D421F-E414-41EF-8D02-9F8A00EEE620";
 			public static final String TRANSFER_TO_POLICY = "1434D98F-3A70-4654-86DA-A01300C64A49";
 			public static final String ASSOCIATE_WITH_DEBIT_NOTE = "1810BACF-DB6C-4D2E-8093-A01300CAD6C2";
+			public static final String SET_FOR_RETURN = "9C9369BB-186D-433B-BD7B-A01300CE9125";
+			public static final String VALIDATE = "47538724-7B79-4655-96D7-A01300C6A881";
 		}
 		
 		public static class QuoteRequestProcess {

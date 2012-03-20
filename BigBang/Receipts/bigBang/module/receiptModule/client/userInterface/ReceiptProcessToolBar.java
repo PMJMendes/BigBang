@@ -13,7 +13,9 @@ public abstract class ReceiptProcessToolBar extends BigBangOperationsToolBar {
 	//EXECUTE
 	//internal
 	protected MenuItem transferToPolicy;
+	//
 	protected MenuItem validate;
+	protected MenuItem setForReturn;
 	//client
 	protected MenuItem sendPaymentNotice;
 	protected MenuItem sendSecondPaymentNotice;
@@ -30,7 +32,6 @@ public abstract class ReceiptProcessToolBar extends BigBangOperationsToolBar {
 	protected MenuItem associateWithDebitNote;
 	protected MenuItem enterPayment;
 	protected MenuItem lackOfPaymentFlag;
-	protected MenuItem setForReturn;
 	protected MenuItem unnecessaryDASFlag;
 	
 	//REQUESTS
@@ -68,6 +69,7 @@ public abstract class ReceiptProcessToolBar extends BigBangOperationsToolBar {
 			}
 		});
 		addItem(SUB_MENU.EXECUTE, transferToPolicy);
+		this.executeSubMenu.addSeparator();
 		validate = new MenuItem("Validação", new Command() {
 			
 			@Override
@@ -76,6 +78,14 @@ public abstract class ReceiptProcessToolBar extends BigBangOperationsToolBar {
 			}
 		});
 		addItem(SUB_MENU.EXECUTE, validate);
+		setForReturn = new MenuItem("Marcar para Devolução", new Command() {
+			
+			@Override
+			public void execute() {
+				onSetForReturn();
+			}
+		});
+		addItem(SUB_MENU.EXECUTE, setForReturn);
 		this.executeSubMenu.addSeparator();
 		sendPaymentNotice = new MenuItem("Enviar Aviso de Cobrança", new Command() {
 			
@@ -169,14 +179,6 @@ public abstract class ReceiptProcessToolBar extends BigBangOperationsToolBar {
 			}
 		});
 		addItem(SUB_MENU.DATA, lackOfPaymentFlag);
-		setForReturn = new MenuItem("Marcar para Devolução", new Command() {
-			
-			@Override
-			public void execute() {
-				onSetForReturn();
-			}
-		});
-		addItem(SUB_MENU.DATA, setForReturn);
 		unnecessaryDASFlag = new MenuItem("Indicar DAS Desnecessária", new Command() {
 			
 			@Override
@@ -305,6 +307,14 @@ public abstract class ReceiptProcessToolBar extends BigBangOperationsToolBar {
 
 	public void allowAssociateDebitNote(boolean hasPermission) {
 		this.associateWithDebitNote.setEnabled(hasPermission);
+	}
+	
+	public void allowValidate(boolean allow){
+		this.validate.setEnabled(allow);
+	}
+	
+	public void allowSetForReturn(boolean allow){
+		this.setForReturn.setEnabled(allow);
 	}
 
 }

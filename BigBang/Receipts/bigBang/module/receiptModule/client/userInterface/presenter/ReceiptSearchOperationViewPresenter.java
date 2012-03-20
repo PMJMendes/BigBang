@@ -38,6 +38,7 @@ public class ReceiptSearchOperationViewPresenter implements ViewPresenter {
 		SAVE,
 		CANCEL,
 		DELETE, TRANSFER_TO_POLICY, ASSOCIATE_WITH_DEBIT_NOTE,
+		VALIDATE, SET_FOR_RETURN
 	}
 
 	public interface Display {
@@ -65,6 +66,10 @@ public class ReceiptSearchOperationViewPresenter implements ViewPresenter {
 		Widget asWidget();
 
 		void allowAssociateDebitNote(boolean hasPermission);
+
+		void allowValidate(boolean hasPermission);
+
+		void allowSetForReturn(boolean hasPermission);
 	}
 
 	protected Display view;
@@ -146,8 +151,14 @@ public class ReceiptSearchOperationViewPresenter implements ViewPresenter {
 				case ASSOCIATE_WITH_DEBIT_NOTE:
 					associateWithDebitNote();
 					break;
+				case SET_FOR_RETURN:
+					//TODO
+					break;
+				case VALIDATE:
+					//TODO
+					break;
 				}
-				
+
 			}
 		});
 
@@ -193,6 +204,8 @@ public class ReceiptSearchOperationViewPresenter implements ViewPresenter {
 				view.allowDelete(PermissionChecker.hasPermission(value, BigBangConstants.OperationIds.ReceiptProcess.DELETE_RECEIPT));
 				view.allowTransferToPolicy(PermissionChecker.hasPermission(value, BigBangConstants.OperationIds.ReceiptProcess.TRANSFER_TO_POLICY));
 				view.allowAssociateDebitNote(PermissionChecker.hasPermission(value, BigBangConstants.OperationIds.ReceiptProcess.ASSOCIATE_WITH_DEBIT_NOTE));
+				view.allowValidate(PermissionChecker.hasPermission(value, BigBangConstants.OperationIds.ReceiptProcess.VALIDATE));
+				view.allowSetForReturn(PermissionChecker.hasPermission(value, BigBangConstants.OperationIds.ReceiptProcess.SET_FOR_RETURN));
 				view.setSaveModeEnabled(false);
 				view.getForm().setReadOnly(true);
 				view.getForm().setValue(value);
