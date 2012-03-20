@@ -166,6 +166,7 @@ public class ReceiptSearchOperationViewPresenter implements ViewPresenter {
 
 			@Override
 			public void onResponse(Receipt value) {
+				view.clearAllowedPermissions();
 				view.allowEdit(PermissionChecker.hasPermission(value, BigBangConstants.OperationIds.ReceiptProcess.UPDATE_RECEIPT));
 				view.allowDelete(PermissionChecker.hasPermission(value, BigBangConstants.OperationIds.ReceiptProcess.DELETE_RECEIPT));
 

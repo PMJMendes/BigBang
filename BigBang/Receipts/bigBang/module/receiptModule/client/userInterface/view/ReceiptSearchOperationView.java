@@ -239,8 +239,6 @@ public class ReceiptSearchOperationView extends View implements ReceiptSearchOpe
 
 	@Override
 	public void clearAllowedPermissions() {
-		this.form.setReadOnly(true);
-		//this.childrenPanel.setReadOnly(true); todo
 		this.operationsToolbar.lockAll();
 	}
 
@@ -258,7 +256,6 @@ public class ReceiptSearchOperationView extends View implements ReceiptSearchOpe
 	@Override
 	public void allowEdit(boolean allow) {
 		this.operationsToolbar.setEditionAvailable(allow);
-		//this.childrenPanel.setReadOnly(!allow); todo
 	}
 
 	@Override
