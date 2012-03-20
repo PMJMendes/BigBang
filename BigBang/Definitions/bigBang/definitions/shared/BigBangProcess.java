@@ -9,6 +9,7 @@ public class BigBangProcess
 
 	public String dataTypeId;
 	public String dataId;
+	public String dataLabel;
 	public String processTypeId;
 	public String processId;
 	public String tag;
