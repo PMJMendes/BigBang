@@ -678,7 +678,7 @@ public class ReceiptServiceImpl
 
 		if ( lParam.ownerId != null )
 		{
-			pstrBuffer.append(" AND [:Process:Parent] IN (SELECT [:Process] FROM (");
+			pstrBuffer.append(" AND (([:Process:Parent] IN (SELECT [:Process] FROM (");
 			try
 			{
 				lrefPolicies = Entity.GetInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), Constants.ObjID_Policy));
@@ -688,7 +688,18 @@ public class ReceiptServiceImpl
 			{
         		throw new BigBangException(e.getMessage(), e);
 			}
-			pstrBuffer.append(") [AuxOwner] WHERE [:Process:Data] = '").append(lParam.ownerId).append("')");
+			pstrBuffer.append(") [AuxOwner] WHERE [:Process:Data] = '").append(lParam.ownerId).append("'))");
+			pstrBuffer.append(" OR ([:Process:Parent] IN (SELECT [:Process] FROM (");
+			try
+			{
+				lrefPolicies = Entity.GetInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), Constants.ObjID_SubPolicy));
+				pstrBuffer.append(lrefPolicies.SQLForSelectMulti());
+			}
+			catch (Throwable e)
+			{
+        		throw new BigBangException(e.getMessage(), e);
+			}
+			pstrBuffer.append(") [AuxOwner] WHERE [:Process:Data] = '").append(lParam.ownerId).append("')))");
 		}
 
 		if ( (lParam.typeIds != null ) && (lParam.typeIds.length > 0) )
