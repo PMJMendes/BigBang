@@ -160,6 +160,11 @@ public class BigBangConstants {
 			public static final String RECEIVE_QUOTE = "E43282B7-FBE2-49FB-B227-9FFD01035C99";
 		}
 		
+		public static class ReceiptProcess {
+			public static final String UPDATE_RECEIPT = "38DB0FE1-B1DE-4C7B-B7CA-A01300C5BAC6";
+			public static final String DELETE_RECEIPT = "994D421F-E414-41EF-8D02-9F8A00EEE620"; 
+		}
+		
 	}
 
 	//Session related constants

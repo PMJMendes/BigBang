@@ -1,5 +1,7 @@
 package bigBang.library.client.userInterface.view;
 
+import com.google.gwt.event.logical.shared.ValueChangeEvent;
+import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.user.client.ui.HasValue;
 import com.google.gwt.user.client.ui.SplitLayoutPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
@@ -94,6 +96,14 @@ public abstract class ViewExternalRequestView<T extends ProcessBase> extends Vie
 		
 		this.ownerForm.setReadOnly(true);
 		this.form.setReadOnly(true);
+		
+		this.form.addValueChangeHandler(new ValueChangeHandler<ExternalInfoRequest>() {
+			
+			@Override
+			public void onValueChange(ValueChangeEvent<ExternalInfoRequest> event) {
+				childrenPanel.setOwner(event.getValue());
+			}
+		});
 	}
 	
 	@Override

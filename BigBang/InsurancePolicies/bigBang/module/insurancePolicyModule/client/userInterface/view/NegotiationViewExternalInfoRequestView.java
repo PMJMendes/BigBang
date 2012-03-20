@@ -4,10 +4,10 @@ import bigBang.definitions.shared.Negotiation;
 import bigBang.library.client.userInterface.view.ViewExternalRequestView;
 import bigBang.module.quoteRequestModule.client.userInterface.NegotiationForm;
 
-public class NegotiationExternalInfoRequestView extends
+public class NegotiationViewExternalInfoRequestView extends
 		ViewExternalRequestView<Negotiation> {
 
-	public NegotiationExternalInfoRequestView() {
+	public NegotiationViewExternalInfoRequestView() {
 		super(new NegotiationForm());
 	}
 

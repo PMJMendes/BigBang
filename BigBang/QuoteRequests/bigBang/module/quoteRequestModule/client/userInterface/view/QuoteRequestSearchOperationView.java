@@ -5,7 +5,6 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 
 import bigBang.definitions.shared.Negotiation;
 import bigBang.definitions.shared.InsuredObject;
-import bigBang.library.client.userInterface.ContactsPreviewList;
 import bigBang.library.client.userInterface.FilterableList;
 import bigBang.library.client.userInterface.NavigationPanel;
 import bigBang.library.client.userInterface.view.View;
@@ -32,9 +31,6 @@ public class QuoteRequestSearchOperationView extends View implements QuoteReques
 		initWidget(mainWrapper);
 
 		mainWrapper.setSize("100%", "100%");
-		
-		ContactsPreviewList contactsList = new ContactsPreviewList();
-		mainWrapper.addEast(contactsList, 250);
 		
 		SplitLayoutPanel wrapper = new SplitLayoutPanel();
 		wrapper.setSize("100%", "100%");

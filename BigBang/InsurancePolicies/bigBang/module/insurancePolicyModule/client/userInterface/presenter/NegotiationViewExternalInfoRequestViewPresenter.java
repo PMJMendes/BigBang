@@ -16,12 +16,12 @@ import bigBang.library.client.history.NavigationHistoryItem;
 import bigBang.library.client.history.NavigationHistoryManager;
 import bigBang.library.client.userInterface.presenter.ViewExternalRequestViewPresenter;
 
-public class NegotiationExternalInfoRequestViewPresenter extends
+public class NegotiationViewExternalInfoRequestViewPresenter extends
 		ViewExternalRequestViewPresenter<Negotiation> {
 
-	protected NegotiationBroker negotiationBroker;
+protected NegotiationBroker negotiationBroker;
 	
-	public NegotiationExternalInfoRequestViewPresenter(
+	public NegotiationViewExternalInfoRequestViewPresenter(
 			bigBang.library.client.userInterface.presenter.ViewExternalRequestViewPresenter.Display<Negotiation> view) {
 		super(view);
 		this.negotiationBroker = (NegotiationBroker) DataBrokerManager.staticGetBroker(BigBangConstants.EntityIds.NEGOTIATION);
@@ -55,6 +55,8 @@ public class NegotiationExternalInfoRequestViewPresenter extends
 	protected void showHistory(String ownerId, String historyItemId) {
 		NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
 		item.pushIntoStackParameter("display", "history");
+		item.setParameter("historyownerid", ownerId);
+		item.setParameter("historyitemid", historyItemId);
 		NavigationHistoryManager.getInstance().go(item);
 	}
 

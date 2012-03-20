@@ -29,6 +29,7 @@ public abstract class InfoOrDocumentRequestOperationsToolbar extends
 				onCancelRequest();
 			}
 		});
+		addItem(cancelItem);
 	}
 	
 	@Override

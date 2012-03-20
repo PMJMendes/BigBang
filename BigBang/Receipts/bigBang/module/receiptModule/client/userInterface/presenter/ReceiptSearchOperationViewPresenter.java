@@ -2,22 +2,24 @@ package bigBang.module.receiptModule.client.userInterface.presenter;
 
 import java.util.Collection;
 
-import bigBang.definitions.client.dataAccess.ReceiptDataBrokerClient;
 import bigBang.definitions.client.dataAccess.ReceiptProcessDataBroker;
 import bigBang.definitions.client.response.ResponseError;
 import bigBang.definitions.client.response.ResponseHandler;
 import bigBang.definitions.shared.BigBangConstants;
 import bigBang.definitions.shared.Receipt;
 import bigBang.definitions.shared.ReceiptStub;
+import bigBang.library.client.EventBus;
 import bigBang.library.client.HasEditableValue;
-import bigBang.library.client.HasOperationPermissions;
 import bigBang.library.client.HasParameters;
 import bigBang.library.client.HasValueSelectables;
+import bigBang.library.client.Notification;
+import bigBang.library.client.Notification.TYPE;
+import bigBang.library.client.PermissionChecker;
 import bigBang.library.client.ValueSelectable;
-import bigBang.library.client.ViewPresenterController;
 import bigBang.library.client.dataAccess.DataBrokerManager;
 import bigBang.library.client.event.ActionInvokedEvent;
 import bigBang.library.client.event.ActionInvokedEventHandler;
+import bigBang.library.client.event.NewNotificationEvent;
 import bigBang.library.client.event.SelectionChangedEvent;
 import bigBang.library.client.event.SelectionChangedEventHandler;
 import bigBang.library.client.history.NavigationHistoryItem;
@@ -29,7 +31,7 @@ import com.google.gwt.user.client.ui.HasWidgets;
 import com.google.gwt.user.client.ui.UIObject;
 import com.google.gwt.user.client.ui.Widget;
 
-public class ReceiptSearchOperationViewPresenter implements ViewPresenter, ReceiptDataBrokerClient, HasOperationPermissions {
+public class ReceiptSearchOperationViewPresenter implements ViewPresenter {
 
 	public static enum Action {
 		EDIT,
@@ -41,24 +43,23 @@ public class ReceiptSearchOperationViewPresenter implements ViewPresenter, Recei
 	public interface Display {
 		//List
 		HasValueSelectables<?> getList();
-		void selectReceipt(Receipt receipt);
 
 		//Form
 		HasEditableValue<Receipt> getForm();
-		boolean isFormValid();
-		void lockForm(boolean lock);
 		void scrollFormToTop();
+		boolean isFormValid();
 
-		void allowUpdate(boolean allow);
+		//Permissions
+		void clearAllowedPermissions();
+		void allowEdit(boolean allow);
 		void allowDelete(boolean allow);
 
-		void clearAllowedPermissions();
-		void clear();
+		//Children Lists
+		//TODO
+
+		//General
 		void registerActionInvokedHandler(ActionInvokedEventHandler<Action> handler);
 		void setSaveModeEnabled(boolean enabled);
-		void setReadOnly(boolean readOnly);
-
-		void showErrorMessage(String message);
 
 		Widget asWidget();
 	}
@@ -66,8 +67,6 @@ public class ReceiptSearchOperationViewPresenter implements ViewPresenter, Recei
 	protected Display view;
 	protected boolean bound;
 	protected ReceiptProcessDataBroker receiptBroker;
-	protected int version;
-	protected ViewPresenterController controller;
 
 	public ReceiptSearchOperationViewPresenter(View view) {
 		setView(view);
@@ -84,26 +83,23 @@ public class ReceiptSearchOperationViewPresenter implements ViewPresenter, Recei
 		bind();
 		container.clear();
 		container.add(this.view.asWidget());
-		initializeController();
 	}
 
 	@Override
 	public void setParameters(HasParameters parameterHolder) {
-		controller.onParameters(parameterHolder);
-	}
+		String receiptId = parameterHolder.getParameter("receiptid");
 
-	@Override
-	public void setPermittedOperations(String[] operationIds) {
-		// TODO Auto-generated method stub
-
+		if(receiptId == null || receiptId.isEmpty()) {
+			clearView();
+		}else{
+			showReceipt(receiptId);
+		}
 	}
 
 	private void bind() {
 		if(bound)
 			return;
 
-		view.lockForm(true);
-		view.clearAllowedPermissions();
 		this.view.getList().addSelectionChangedEventHandler(new SelectionChangedEventHandler() {
 
 			@Override
@@ -130,22 +126,16 @@ public class ReceiptSearchOperationViewPresenter implements ViewPresenter, Recei
 			public void onActionInvoked(ActionInvokedEvent<Action> action) {
 				switch(action.getAction()){
 				case EDIT:
-					view.getForm().setReadOnly(false);
-					view.setSaveModeEnabled(true);
+					onEdit();
 					break;
 				case CANCEL:
-					view.getForm().revert();
-					view.getForm().setReadOnly(true);
-					view.setSaveModeEnabled(false);
+					onCancel();
 					break;
 				case DELETE:
 					deleteReceipt();
 					break;
 				case SAVE:
-					if(!view.isFormValid())
-						return;
-					Receipt info = view.getForm().getInfo();
-					saveReceipt(info);
+					onSave();
 					break;
 				}
 			}
@@ -155,143 +145,116 @@ public class ReceiptSearchOperationViewPresenter implements ViewPresenter, Recei
 		bound = true;
 	}
 
-	private void initializeController(){
-		this.controller = new ViewPresenterController() {
-
-			@Override
-			protected void onNavigationHistoryEvent(NavigationHistoryItem historyItem) {
-				return;
-			}
-			
-			@Override
-			public void onParameters(HasParameters parameters) {
-				String display = parameters.peekInStackParameter("display");
-				display = display == null ? "" : display;
-
-				//SEARCH
-				{
-					String receiptId = parameters.getParameter("receiptid");
-					receiptId = receiptId == null ? "" : receiptId;
-					if(!receiptId.isEmpty()){
-						showReceiptWithId(receiptId);
-					}else{
-						clearView();
-					}
-				}
-			}
-
-		};
-	}
-
 	private void clearView(){
 		view.clearAllowedPermissions();
 		view.getForm().setValue(null);
 		view.getList().clearSelection();
-		view.clear();
+		view.setSaveModeEnabled(false);
+		view.getForm().setReadOnly(true);
 	}
 
-	private void showReceiptWithId(String id){
-		//		BigBangPermissionManager.Util.getInstance().getProcessPermissions(selectedValue.processId, new ResponseHandler<Permission[]> () {
-		//
-		//			@Override
-		//			public void onResponse(Permission[] response) {
-		//				view.scrollFormToTop();
-		//				view.clearAllowedPermissions();
-		//				for(int i = 0; i < response.length; i++) {
-		//					Permission p = response[i];
-		//					if(p.instanceId == null){continue;}
-		//					if(p.id.equalsIgnoreCase(ModuleConstants.OpTypeIDs.CHANGE_RECEIPT_DATA)){
-		//						view.allowUpdate(true);
-		//					}else if(p.id.equalsIgnoreCase(ModuleConstants.OpTypeIDs.DELETE_RECEIPT)){
-		//						view.allowDelete(true);
-		//					}
-		//				}
-		receiptBroker.getReceipt(id, new ResponseHandler<Receipt>() {
+	private void showReceipt(String receiptId) {
+		for(ValueSelectable<?> selectable : view.getList().getAll()){
+			ReceiptStub receipt = (ReceiptStub) selectable.getValue();
+			if(receipt.id.equalsIgnoreCase(receiptId)){
+				selectable.setSelected(true, false);
+				break;
+			}
+		}
+
+		receiptBroker.getReceipt(receiptId, new ResponseHandler<Receipt>() {
 
 			@Override
 			public void onResponse(Receipt value) {
+				view.allowEdit(PermissionChecker.hasPermission(value, BigBangConstants.OperationIds.ReceiptProcess.UPDATE_RECEIPT));
+				view.allowDelete(PermissionChecker.hasPermission(value, BigBangConstants.OperationIds.ReceiptProcess.DELETE_RECEIPT));
+
+				view.setSaveModeEnabled(false);
+				view.getForm().setReadOnly(true);
 				view.getForm().setValue(value);
-				view.lockForm(value == null);
-				//TODO select in list
+				view.scrollFormToTop();
 			}
 
 			@Override
 			public void onError(Collection<ResponseError> errors) {
-				view.showErrorMessage("Não foi possível obter o recibo pedido.");
+				onGetReceiptFailed();
 			}
 		});
-		//			}
-		//
-		//			@Override
-		//			public void onError(Collection<ResponseError> errors) {
-		//				// TODO Auto-generated method stub
-		//			}
-		//
-		//		});
 	}
 
-	protected void saveReceipt(Receipt receipt){
+	protected void onEdit(){
+		view.getForm().setReadOnly(false);
+		view.setSaveModeEnabled(true);
+	}
+
+	protected void onCancel(){
+		view.getForm().revert();
+		view.getForm().setReadOnly(true);
+		view.setSaveModeEnabled(false);
+	}
+
+	protected void onSave() {
+		Receipt receipt = view.getForm().getInfo();
+
 		this.receiptBroker.updateReceipt(receipt, new ResponseHandler<Receipt>() {
 
 			@Override
 			public void onResponse(Receipt response) {
-				view.selectReceipt(response);
-				view.getForm().setValue(response);
-				view.getForm().setReadOnly(true);
-				view.setSaveModeEnabled(false);
+				onSaveSuccess();
 			}
 
 			@Override
 			public void onError(Collection<ResponseError> errors) {
-				view.showErrorMessage("De momento não foi possível guardar o recibo.");
+				onSaveFailed();
 			}
 		});
 	}
 
 	protected void deleteReceipt(){
 		Receipt receipt = view.getForm().getValue();
-		if(receipt == null || receipt.id == null){
-			return;
-		}
-		String id = receipt.id;
-		this.receiptBroker.removeReceipt(id, new ResponseHandler<String>() {
+
+		this.receiptBroker.removeReceipt(receipt.id, new ResponseHandler<String>() {
 
 			@Override
 			public void onResponse(String response) {
-				view.getList().clearSelection();
-				view.getForm().setValue(null);
+				onDeleteSuccess();
 			}
 
 			@Override
 			public void onError(Collection<ResponseError> errors) {
-				view.showErrorMessage("Não é possível eliminar o recibo.");
+				onDeleteFailed();
 			}
 		});
 	}
 
-	@Override
-	public void setDataVersionNumber(String dataElementId, int number) {
-		this.version = number;
+	protected void onGetReceiptFailed(){
+		EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não é possível apresentar o Recibo"), TYPE.ALERT_NOTIFICATION));
+		NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
+		item.removeParameter("receiptid");
+		NavigationHistoryManager.getInstance().go(item);
 	}
 
-	@Override
-	public int getDataVersion(String dataElementId) {
-		return this.version;
+	protected void onSaveSuccess(){
+		EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "O Recibo foi Guardado com Sucesso"), TYPE.TRAY_NOTIFICATION));
 	}
 
-	@Override
-	public void addReceipt(Receipt receipt) {
-		return;
+	protected void onSaveFailed(){
+		EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não foi possível Guardar o Recibo"), TYPE.ALERT_NOTIFICATION));
 	}
 
-	@Override
-	public void updateReceipt(Receipt receipt) {
-		return;
+	protected void onDeleteSuccess(){
+		EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "O Recibo foi Eliminado com Sucesso"), TYPE.TRAY_NOTIFICATION));
+		NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
+		item.removeParameter("receiptid");
+		NavigationHistoryManager.getInstance().go(item);
 	}
 
-	@Override
-	public void removeReceipt(String id) {
-		return;
+	protected void onDeleteFailed(){
+		EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não foi possível Eliminar o Recibo"), TYPE.ALERT_NOTIFICATION));
+	}
+
+	protected void onFailure(){
+		onGetReceiptFailed();
 	}
 
 }

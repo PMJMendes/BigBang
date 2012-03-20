@@ -43,7 +43,7 @@ public interface InsurancePolicyBroker extends DataBrokerInterface<InsurancePoli
 	
 	public void getPage(String policyId, String insuredObejctId, String exerciseId, ResponseHandler<TableSection> handler);
 
-	void validatePolicy(String policyId, ResponseHandler<Void> handler) throws bigBang.definitions.shared.BigBangPolicyValidationException;
+	void validatePolicy(String policyId, ResponseHandler<Void> handler);
 	
 	void executeDetailedCalculations(String policyId, ResponseHandler<InsurancePolicy> handler);
 	

@@ -24,7 +24,7 @@ public class ExternalInfoRequestChildrenPanel extends View {
 	@Override
 	protected void initializeView() {}
 
-	public void setPolicy(ExternalInfoRequest request){
+	public void setOwner(ExternalInfoRequest request){
 		this.externalRequest = request;
 		String requestId = request == null ? null : request.id;
 		this.historyList.setOwner(requestId);

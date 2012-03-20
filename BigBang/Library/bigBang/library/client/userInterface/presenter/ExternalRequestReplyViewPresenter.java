@@ -110,12 +110,24 @@ public class ExternalRequestReplyViewPresenter implements ViewPresenter {
 		message.requestId = ownerId;
 		view.getForm().setValue(message);
 		
-		ContactsServiceAsync contactsService = ContactsService.Util.getInstance();
-		contactsService.getFlatEmails(ownerId, new BigBangAsyncCallback<Contact[]>() {
+		ExternRequestService.Util.getInstance().getRequest(ownerId, new BigBangAsyncCallback<ExternalInfoRequest>() {
 
 			@Override
-			public void onResponseSuccess(Contact[] result) {
-				view.setAvailableContacts(result);
+			public void onResponseSuccess(ExternalInfoRequest result) {
+				ContactsServiceAsync contactsService = ContactsService.Util.getInstance();
+				contactsService.getFlatEmails(result.parentDataObjectId, new BigBangAsyncCallback<Contact[]>() {
+
+					@Override
+					public void onResponseSuccess(Contact[] result) {
+						view.setAvailableContacts(result);
+					}
+				});
+			}
+			
+			@Override
+			public void onResponseFailure(Throwable caught) {
+				ExternalRequestReplyViewPresenter.this.onFailure();
+				super.onResponseFailure(caught);
 			}
 		});
 		
@@ -139,7 +151,7 @@ public class ExternalRequestReplyViewPresenter implements ViewPresenter {
 	}
 	
 	protected void onSend() {
-		service.sendInformation(view.getForm().getValue(), new BigBangAsyncCallback<ExternalInfoRequest>() {
+		service.sendInformation(view.getForm().getInfo(), new BigBangAsyncCallback<ExternalInfoRequest>() {
 
 			@Override
 			public void onResponseSuccess(ExternalInfoRequest result) {

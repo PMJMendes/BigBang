@@ -16,7 +16,6 @@ import bigBang.definitions.shared.InsurancePolicyStub;
 import bigBang.definitions.shared.InsuredObjectStub;
 import bigBang.library.client.HasEditableValue;
 import bigBang.library.client.HasValueSelectables;
-import bigBang.library.client.ValueSelectable;
 import bigBang.library.client.event.ActionInvokedEvent;
 import bigBang.library.client.event.ActionInvokedEventHandler;
 import bigBang.library.client.userInterface.SlidePanel;
@@ -455,11 +454,6 @@ public class InsurancePolicySearchOperationView extends View implements Insuranc
 	@Override
 	public HasValueSelectables<HistoryItemStub> getHistoryList() {
 		return this.childrenPanel.historyList;
-	}
-
-	@Override
-	public void removeFromList(ValueSelectable<InsurancePolicyStub> selectable) {
-		this.searchPanel.remove(selectable);
 	}
 
 	@Override

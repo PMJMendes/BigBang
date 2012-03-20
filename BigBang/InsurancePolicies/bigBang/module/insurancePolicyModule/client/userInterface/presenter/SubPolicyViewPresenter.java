@@ -758,9 +758,8 @@ public class SubPolicyViewPresenter implements ViewPresenter {
 	
 	private void onValidateFailed(Collection<ResponseError> errors){
 		StringBuilder message = new StringBuilder("A validação falhou:");
-		for(ResponseError error : errors) {
-			message.append("<br/>"); //TODO
-			message.append(error.description);
+		for(ResponseError error : errors){
+			message.append(error.description.replaceAll("(\r\n|\n)", "<br />"));
 		}
 		EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", message.toString()), TYPE.ALERT_NOTIFICATION));
 	}

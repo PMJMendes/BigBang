@@ -7,7 +7,6 @@ import bigBang.definitions.client.dataAccess.InsuredObjectDataBroker;
 import bigBang.definitions.client.response.ResponseError;
 import bigBang.definitions.client.response.ResponseHandler;
 import bigBang.definitions.shared.BigBangConstants;
-import bigBang.definitions.shared.BigBangPolicyValidationException;
 import bigBang.definitions.shared.BigBangProcess;
 import bigBang.definitions.shared.Contact;
 import bigBang.definitions.shared.Document;
@@ -74,7 +73,6 @@ ViewPresenter {
 	public interface Display {
 		//Listtype filter text
 		HasValueSelectables<InsurancePolicyStub> getList();
-		void removeFromList(ValueSelectable<InsurancePolicyStub> selectable);
 
 		//Form
 		HasEditableValue<InsurancePolicy> getForm();
@@ -637,23 +635,21 @@ ViewPresenter {
 	}
 
 	private void onValidatePolicy(){
-		try {
-			broker.validatePolicy(view.getForm().getValue().id, new ResponseHandler<Void>() {
+		broker.validatePolicy(view.getForm().getValue().id, new ResponseHandler<Void>() {
 
-				@Override
-				public void onResponse(Void response) {
-					onValidationSuccess();
-					NavigationHistoryManager.getInstance().reload();
-				}
+			@Override
+			public void onResponse(Void response) {
+				onValidationSuccess();
+				NavigationHistoryManager.getInstance().reload();
+			}
 
-				@Override
-				public void onError(Collection<ResponseError> errors) {
-					onValidationFailed("");
+			@Override
+			public void onError(Collection<ResponseError> errors) {
+				for(ResponseError error : errors){
+					onValidationFailed(error.description.replaceAll("(\r\n|\n)", "<br />"));
 				}
-			});
-		} catch (BigBangPolicyValidationException e) {
-			onValidationFailed(e.getMessage().replaceAll("(\r\n|\n)", "<br />"));
-		}
+			}
+		});
 	}
 
 	private void onExecuteDetailedCalculations(){

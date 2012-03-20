@@ -10,7 +10,7 @@ public abstract class ExternalRequestReplyToolbar extends BigBangOperationsToolB
 	public ExternalRequestReplyToolbar() {
 		hideAll();
 		
-		send = new MenuItem("Enviar", new Command() {
+		send = new MenuItem("Enviar Resposta", new Command() {
 			
 			@Override
 			public void execute() {

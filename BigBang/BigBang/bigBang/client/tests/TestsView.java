@@ -8,8 +8,6 @@ import bigBang.library.client.userInterface.presenter.ViewPresenter;
 import bigBang.library.client.userInterface.view.PopupPanel;
 import bigBang.library.client.userInterface.view.View;
 import bigBang.module.insurancePolicyModule.client.userInterface.CoInsurerSelection;
-import bigBang.module.insurancePolicyModule.client.userInterface.presenter.NegotiationExternalInfoRequestViewPresenter;
-import bigBang.module.insurancePolicyModule.client.userInterface.view.NegotiationExternalInfoRequestView;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;

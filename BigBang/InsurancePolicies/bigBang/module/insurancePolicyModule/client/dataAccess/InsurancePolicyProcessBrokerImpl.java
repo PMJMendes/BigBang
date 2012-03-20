@@ -20,7 +20,6 @@ import bigBang.definitions.shared.BigBangConstants;
 import bigBang.definitions.shared.DebitNote;
 import bigBang.definitions.shared.InsurancePolicy;
 import bigBang.definitions.shared.InsurancePolicy.TableSection;
-import bigBang.definitions.shared.BigBangPolicyValidationException;
 import bigBang.definitions.shared.InsurancePolicyStub;
 import bigBang.definitions.shared.Negotiation;
 import bigBang.definitions.shared.PolicyVoiding;
@@ -525,7 +524,7 @@ public class InsurancePolicyProcessBrokerImpl extends DataBroker<InsurancePolicy
 	}
 
 	@Override
-	public void validatePolicy(String policyId, final ResponseHandler<Void> handler) throws BigBangPolicyValidationException {
+	public void validatePolicy(String policyId, final ResponseHandler<Void> handler) {
 		service.validatePolicy(policyId, new BigBangAsyncCallback<Void>() {
 
 			@Override

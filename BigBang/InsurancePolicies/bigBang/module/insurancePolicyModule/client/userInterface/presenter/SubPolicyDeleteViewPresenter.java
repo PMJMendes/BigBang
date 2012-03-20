@@ -122,7 +122,7 @@ public class SubPolicyDeleteViewPresenter implements ViewPresenter {
 				if(!PermissionChecker.hasPermission(response, BigBangConstants.OperationIds.InsuranceSubPolicyProcess.DELETE_SUB_POLICY)){
 					onDeleteFailed();
 				}else{
-					broker.removeSubPolicy(response.id, view.getForm().getValue(), new ResponseHandler<String>() {
+					broker.removeSubPolicy(response.id, view.getForm().getInfo(), new ResponseHandler<String>() {
 
 						@Override
 						public void onResponse(String response) {
