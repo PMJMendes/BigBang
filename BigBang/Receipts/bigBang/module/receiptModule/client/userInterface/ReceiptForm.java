@@ -70,6 +70,7 @@ public class ReceiptForm extends FormView<Receipt> implements ReceiptDataBrokerC
 		dueDate = new DatePickerFormField("Limite de Pagamento");
 		mediator = new ExpandableListBoxFormField(BigBangConstants.EntityIds.MEDIATOR, "Mediador");
 		manager = new ExpandableListBoxFormField(BigBangConstants.EntityIds.USER, "Gestor");
+		manager.setEditable(false);
 		description = new TextAreaFormField();
 		notes = new TextAreaFormField();
 

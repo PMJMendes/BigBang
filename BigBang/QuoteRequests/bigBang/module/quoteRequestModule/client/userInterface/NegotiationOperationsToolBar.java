@@ -4,7 +4,6 @@ import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.ui.MenuItem;
 
 import bigBang.library.client.userInterface.BigBangOperationsToolBar;
-import bigBang.library.client.userInterface.BigBangOperationsToolBar.SUB_MENU;
 
 public abstract class NegotiationOperationsToolBar extends BigBangOperationsToolBar{
 

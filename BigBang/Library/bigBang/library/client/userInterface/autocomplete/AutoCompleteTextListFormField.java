@@ -93,32 +93,10 @@ public class AutoCompleteTextListFormField extends FormField<Collection<String>>
 			}
 		}, ClickEvent.getType());
 		box.setFocus(true);
-		/* Div structure after a few elements have been added:
-             <ul class="token-input-list-facebook">
-                 <li class="token-input-token-facebook">
-                     <p>What's New Scooby-Doo?</p>
-                     <span class="token-input-delete-token-facebook">x</span>
-                 </li>
-                 <li class="token-input-token-facebook">
-                     <p>Fear Factor</p>
-                     <span class="token-input-delete-token-facebook">x</span>
-                  </li>
-                  <li class="token-input-input-token-facebook">
-                      <input type="text" style="outline-color: -moz-use-text-color; outline-style: none; outline-width: medium;"/>
-                  </li>
-             </ul>
-		 */
 	}
 
 	private void deselectItem(final TextBox itemBox, final BulletList list) {
 		if (itemBox.getValue() != null && !"".equals(itemBox.getValue().trim())) {
-			/** Change to the following structure:
-			 * <li class="token-input-token-facebook">
-			 * <p>What's New Scooby-Doo?</p>
-			 * <span class="token-input-delete-token-facebook">x</span>
-			 * </li>
-			 */
-
 			final ListItem displayItem = new ListItem();
 			displayItem.setStyleName("token-input-token-facebook");
 			Paragraph p = new Paragraph(itemBox.getValue());
@@ -129,20 +107,6 @@ public class AutoCompleteTextListFormField extends FormField<Collection<String>>
 				}
 			});
 
-			/** TODO: Figure out how to select item and allow deleting with backspace key
-            displayItem.addKeyDownHandler(new KeyDownHandler() {
-                public void onKeyDown(KeyDownEvent event) {
-                    if (event.getNativeKeyCode() == KeyCodes.KEY_BACKSPACE) {
-                        removeListItem(displayItem, list);
-                    }
-                }
-            });
-            displayItem.addBlurHandler(new BlurHandler() {
-                public void onBlur(BlurEvent blurEvent) {
-                    displayItem.removeStyleName("token-input-selected-token-facebook");
-                }
-            });
-			 */
 
 			Span span = new Span("x");
 			span.addClickHandler(new ClickHandler() {
@@ -179,12 +143,11 @@ public class AutoCompleteTextListFormField extends FormField<Collection<String>>
 	public void setValue(Collection<String> value, boolean fireEvents) {
 		if(value == null){
 			this.box.setValue("");
+			this.itemBox.setValue("");
 			this.itemsSelected.clear();
 		}else{
 			for(String s : value){
-				ListItem item = new ListItem();
-				item.setText(s);
-				this.list.add(item);
+				this.itemBox.setValue(this.itemBox.getValue() + " " + s);
 			}
 		}
 		if(fireEvents)

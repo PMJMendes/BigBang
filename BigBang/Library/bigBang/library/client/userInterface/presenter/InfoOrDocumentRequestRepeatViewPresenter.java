@@ -137,7 +137,7 @@ public class InfoOrDocumentRequestRepeatViewPresenter implements ViewPresenter {
 
 	protected void onCancel(){
 		NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
-		item.popFromStackParameter("display");
+		item.removeParameter("show");
 		NavigationHistoryManager.getInstance().go(item);
 	}
 
@@ -148,14 +148,14 @@ public class InfoOrDocumentRequestRepeatViewPresenter implements ViewPresenter {
 	protected void onSendSuccess(){
 		EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "A Repetição do Pedido foi enviada com Sucesso"), TYPE.TRAY_NOTIFICATION));
 		NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
-		item.popFromStackParameter("display");
+		item.removeParameter("show");
 		NavigationHistoryManager.getInstance().go(item);
 	}
 
 	protected void onFailure(){
 		EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não é possível Repetir o Pedido"), TYPE.ALERT_NOTIFICATION));
 		NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
-		item.popFromStackParameter("display");
+		item.removeParameter("show");
 		NavigationHistoryManager.getInstance().go(item);
 	}
 

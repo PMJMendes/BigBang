@@ -27,6 +27,7 @@ public class MainScreenViewPresenter implements ViewPresenter {
 		SHOW_SECTION_TASKS, 
 		SHOW_SECTION_GENERAL_SYSTEM, 
 		SHOW_SECTION_CLIENT, 
+		SHOW_SECTION_QUOTE_REQUEST,
 		SHOW_SECTION_INSURANCE_POLICY, 
 		SHOW_SECTION_RECEIPT, 
 		SHOW_SECTION_RISK_ANALISYS
@@ -129,6 +130,10 @@ public class MainScreenViewPresenter implements ViewPresenter {
 					break;
 				case SHOW_SECTION_CLIENT:
 					item.setParameter("section", "client");
+					NavigationHistoryManager.getInstance().go(item);
+					break;
+				case SHOW_SECTION_QUOTE_REQUEST:
+					item.setParameter("section", "quoterequest");
 					NavigationHistoryManager.getInstance().go(item);
 					break;
 				case SHOW_SECTION_INSURANCE_POLICY:

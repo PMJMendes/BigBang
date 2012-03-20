@@ -22,7 +22,7 @@ public class BigBangConstants {
 		public static final String COVERAGE = "007022A0-6DFA-498B-9DC4-9EC900F5219F";
 		public static final String HISTORY = "F63454DC-B63C-44EC-9E5E-9E1A01004BDB";
 		public static final String TASK = "F850E623-E686-4575-A2D8-9F640128FCD7";
-		public static final String QUOTE_REQUEST = ""; //TODO
+		public static final String QUOTE_REQUEST = "6ABD2A4A-ECBD-46A8-A4E6-A00500CDAE4A";
 		public static final String QUOTE_REQUEST_NEGOTIATION = ""; //TODO
 		public static final String INSURANCE_POLICY = "D0C5AE6B-D340-4171-B7A3-9F81011F5D42";
 		public static final String RISK_ANALISYS = ""; //TODO
@@ -165,6 +165,11 @@ public class BigBangConstants {
 			public static final String DELETE_RECEIPT = "994D421F-E414-41EF-8D02-9F8A00EEE620";
 			public static final String TRANSFER_TO_POLICY = "1434D98F-3A70-4654-86DA-A01300C64A49";
 			public static final String ASSOCIATE_WITH_DEBIT_NOTE = "1810BACF-DB6C-4D2E-8093-A01300CAD6C2";
+		}
+		
+		public static class QuoteRequestProcess {
+			public static final String UPDATE_QUOTE_REQUEST = "450E32C7-C544-4030-92C7-A00C0121D1B6";
+			public static final String DELETE_QUOTE_REQUEST = "57172AC9-8CDF-4C34-825F-A00C01294D35";
 		}
 		
 	}

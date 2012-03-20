@@ -20,6 +20,7 @@ import bigBang.library.client.userInterface.presenter.DocumentViewPresenter;
 import bigBang.library.client.userInterface.presenter.ExternalRequestClosingViewPresenter;
 import bigBang.library.client.userInterface.presenter.ExternalRequestContinuationViewPresenter;
 import bigBang.library.client.userInterface.presenter.ExternalRequestReplyViewPresenter;
+import bigBang.library.client.userInterface.presenter.InfoOrDocumentRequestRepeatViewPresenter;
 import bigBang.library.client.userInterface.presenter.InfoOrDocumentRequestReplyViewPresenter;
 import bigBang.library.client.userInterface.presenter.ManagerTransferViewPresenter;
 import bigBang.library.client.userInterface.presenter.UndoOperationViewPresenter;
@@ -31,6 +32,7 @@ import bigBang.library.client.userInterface.view.DocumentView;
 import bigBang.library.client.userInterface.view.ExternalRequestClosingView;
 import bigBang.library.client.userInterface.view.ExternalRequestContinuationView;
 import bigBang.library.client.userInterface.view.ExternalRequestReplyView;
+import bigBang.library.client.userInterface.view.InfoOrDocumentRequestRepeatView;
 import bigBang.library.client.userInterface.view.InfoOrDocumentRequestReplyView;
 import bigBang.library.client.userInterface.view.ManagerTransferWithToolbarView;
 import bigBang.library.client.userInterface.view.UndoOperationView;
@@ -120,6 +122,15 @@ public class BigBangModule implements Module {
 			public ViewPresenter getInstance() {
 				InfoOrDocumentRequestReplyView view = (InfoOrDocumentRequestReplyView) GWT.create(InfoOrDocumentRequestReplyView.class);
 				ViewPresenter presenter = new InfoOrDocumentRequestReplyViewPresenter(view);
+				return presenter;
+			}
+		});
+		ViewPresenterFactory.getInstance().registerViewPresenterInstantiator("INFO_OR_DOCUMENT_REQUEST_REPEAT", new ViewPresenterInstantiator() {
+
+			@Override
+			public ViewPresenter getInstance() {
+				InfoOrDocumentRequestRepeatView view = (InfoOrDocumentRequestRepeatView) GWT.create(InfoOrDocumentRequestRepeatView.class);
+				ViewPresenter presenter = new InfoOrDocumentRequestRepeatViewPresenter(view);
 				return presenter;
 			}
 		});

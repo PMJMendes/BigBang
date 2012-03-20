@@ -1,7 +1,6 @@
 package bigBang.module.quoteRequestModule.client.userInterface.presenter;
 
 import java.util.Collection;
-import java.util.concurrent.CancellationException;
 
 import bigBang.definitions.client.dataAccess.NegotiationBroker;
 import bigBang.definitions.client.dataAccess.UserBroker;
@@ -10,15 +9,14 @@ import bigBang.definitions.client.response.ResponseHandler;
 import bigBang.definitions.shared.BigBangConstants;
 import bigBang.definitions.shared.Contact;
 import bigBang.definitions.shared.Negotiation;
-import bigBang.definitions.shared.User;
 import bigBang.definitions.shared.Negotiation.Cancellation;
+import bigBang.definitions.shared.User;
 import bigBang.library.client.BigBangAsyncCallback;
 import bigBang.library.client.EventBus;
 import bigBang.library.client.HasEditableValue;
 import bigBang.library.client.HasParameters;
 import bigBang.library.client.Notification;
 import bigBang.library.client.Notification.TYPE;
-import bigBang.library.client.dataAccess.ContactsBroker;
 import bigBang.library.client.dataAccess.DataBrokerManager;
 import bigBang.library.client.event.ActionInvokedEvent;
 import bigBang.library.client.event.ActionInvokedEventHandler;

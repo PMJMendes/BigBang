@@ -151,6 +151,7 @@ public class MainScreenView extends View implements MainScreenViewPresenter.Disp
 		this.tabBar.addTab("Agenda");
 		this.tabBar.addTab("Sistema Geral");
 		this.tabBar.addTab("Clientes");
+		this.tabBar.addTab("C. de Mercado");
 		this.tabBar.addTab("Apólices");
 		this.tabBar.addTab("Recibos");
 		this.tabBar.addTab("Análises de Risco");
@@ -171,12 +172,15 @@ public class MainScreenView extends View implements MainScreenViewPresenter.Disp
 					actionHandler.onActionInvoked(new ActionInvokedEvent<MainScreenViewPresenter.Action>(Action.SHOW_SECTION_CLIENT));
 					break;
 				case 3:
-					actionHandler.onActionInvoked(new ActionInvokedEvent<MainScreenViewPresenter.Action>(Action.SHOW_SECTION_INSURANCE_POLICY));
+					actionHandler.onActionInvoked(new ActionInvokedEvent<MainScreenViewPresenter.Action>(Action.SHOW_SECTION_QUOTE_REQUEST));
 					break;
 				case 4:
-					actionHandler.onActionInvoked(new ActionInvokedEvent<MainScreenViewPresenter.Action>(Action.SHOW_SECTION_RECEIPT));
+					actionHandler.onActionInvoked(new ActionInvokedEvent<MainScreenViewPresenter.Action>(Action.SHOW_SECTION_INSURANCE_POLICY));
 					break;
 				case 5:
+					actionHandler.onActionInvoked(new ActionInvokedEvent<MainScreenViewPresenter.Action>(Action.SHOW_SECTION_RECEIPT));
+					break;
+				case 6:
 					actionHandler.onActionInvoked(new ActionInvokedEvent<MainScreenViewPresenter.Action>(Action.SHOW_SECTION_RISK_ANALISYS));
 					break;
 					//TODO
@@ -197,14 +201,17 @@ public class MainScreenView extends View implements MainScreenViewPresenter.Disp
 		case CLIENT:
 			this.tabBar.selectTab(2, false);
 			break;
-		case INSURANCE_POLICY:
+		case QUOTE_REQUEST:
 			this.tabBar.selectTab(3, false);
 			break;
-		case RECEIPT:
+		case INSURANCE_POLICY:
 			this.tabBar.selectTab(4, false);
 			break;
-		case RISK_ANALISYS:
+		case RECEIPT:
 			this.tabBar.selectTab(5, false);
+			break;
+		case RISK_ANALISYS:
+			this.tabBar.selectTab(6, false);
 			break;
 		}
 	}

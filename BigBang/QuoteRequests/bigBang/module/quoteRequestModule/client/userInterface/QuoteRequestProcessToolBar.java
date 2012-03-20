@@ -7,80 +7,111 @@ import com.google.gwt.user.client.ui.MenuItem;
 
 public abstract class QuoteRequestProcessToolBar extends BigBangOperationsToolBar {
 
+	//CREATE
+	protected MenuItem createNegotiation;
+	
+	//DATA
+	protected MenuItem includeObject, createObject;
+	
+	//EXECUTE
+	protected MenuItem sendReplyToClient;
+	
+	//REQUESTS
+	protected MenuItem clientInfoRequest;
+	
+	//ADMIN
+	protected MenuItem close, delete;
+	
 	public QuoteRequestProcessToolBar(){
 
 		//CREATE
-		addItem(SUB_MENU.CREATE, new MenuItem("Negociação", new Command() {
+		createNegotiation = new MenuItem("Negociação", new Command() {
 
 			@Override
 			public void execute() {
-				onCreateNegotiationButtonPressed();
+				onCreateNegotiation();
 			}
-		}));
+		});
+		addItem(SUB_MENU.CREATE, createNegotiation);
 
 		//DATA
-		addItem(SUB_MENU.DATA, new MenuItem("Inserir Objecto Seguro", new Command() {
+		includeObject =  new MenuItem("Inserir Unidade de Risco", new Command() {
 
 			@Override
 			public void execute() {
-				onInsertSecuredObjectButtonPressed();
+				onIncludeInsuredObject();
 			}
-		}));
+		});
+		addItem(SUB_MENU.DATA, includeObject);
+		
+		createObject =  new MenuItem("Criar Objecto Seguro", new Command() {
+
+			@Override
+			public void execute() {
+				onCreateInsuredObject();
+			}
+		});
+		addItem(SUB_MENU.DATA, createObject);
 
 		//EXECUTE
-		addItem(SUB_MENU.EXECUTE, new MenuItem("Enviar Resposta ao Cliente", new Command() {
+		sendReplyToClient = new MenuItem("Enviar Resposta ao Cliente", new Command() {
 
 			@Override
 			public void execute() {
-				onSendResponseToClientButtonPressed();
+				onSendResponseToClient();
 			}
-		}));
+		});
+		addItem(SUB_MENU.EXECUTE, sendReplyToClient);
 
-		addItem(SUB_MENU.EXECUTE, new MenuItem("Pedir Informação ou Documento", new Command() {
+		//REQUESTS
+		clientInfoRequest =  new MenuItem("Pedir Informação ou Documento", new Command() {
 
 			@Override
 			public void execute() {
-				onInfoOrDocumentRequestButtonPressed();
+				onInfoOrDocumentRequest();
 			}
-		}));
+		});
+		addItem(SUB_MENU.REQUESTS, clientInfoRequest);
 
 		//ADMIN
-		addItem(SUB_MENU.ADMIN, new MenuItem("Histórico", new Command() {
+		close =  new MenuItem("Fechar Processo", new Command() {
 
 			@Override
 			public void execute() {
-				onHistoryButtonPressed();
+				onCloseProcess();
 			}
-		}));
+		});
+		addItem(SUB_MENU.ADMIN, close);
 
-		addItem(SUB_MENU.ADMIN, new MenuItem("Fechar Processo", new Command() {
+		delete =  new MenuItem("Eliminar", new Command() {
 
 			@Override
 			public void execute() {
-				onCloseProcessButtonPressed();
+				onDelete();
 			}
-		}));
-
-		addItem(SUB_MENU.ADMIN, new MenuItem("Eliminar", new Command() {
-
-			@Override
-			public void execute() {
-				onDeleteButtonPressed();
-			}
-		}));	
+		});
+		addItem(SUB_MENU.ADMIN, delete);	
 	}
 
-	public abstract void onCreateNegotiationButtonPressed();
+	public abstract void onCreateNegotiation();
 	
-	public abstract void onInsertSecuredObjectButtonPressed();
+	public abstract void onIncludeInsuredObject();
 	
-	public abstract void onSendResponseToClientButtonPressed();
+	public abstract void onCreateInsuredObject();
 	
-	public abstract void onInfoOrDocumentRequestButtonPressed();
+	public abstract void onSendResponseToClient();
 	
-	public abstract void onHistoryButtonPressed();
+	public abstract void onInfoOrDocumentRequest();
 	
-	public abstract void onCloseProcessButtonPressed();
+	public abstract void onCloseProcess();
 	
-	public abstract void onDeleteButtonPressed();
+	public abstract void onDelete();
+	
+	public void allowEdit(boolean allow){
+		this.setEditionAvailable(allow);
+	}
+	
+	public void allowDelete(boolean allow) {
+		this.delete.setEnabled(allow);
+	}
 }

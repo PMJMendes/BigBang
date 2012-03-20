@@ -146,21 +146,9 @@ public abstract class ViewInfoOrDocumentRequestViewPresenter<T extends ProcessBa
 	protected abstract void showParent(String parentId);
 	
 	protected void onRepeatRequest(){
-		InfoOrDocumentRequest request = view.getForm().getValue();
-		this.requestService.repeatRequest(request, new BigBangAsyncCallback<InfoOrDocumentRequest>() {
-
-			@Override
-			public void onResponseSuccess(InfoOrDocumentRequest result) {
-				onRepeatSuccess();
-			}
-			
-			@Override
-			public void onResponseFailure(Throwable caught) {
-				onRepeatFailed();
-				super.onResponseFailure(caught);
-			}
-			
-		});
+		NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
+		item.setParameter("show", "repeatinforequest");
+		NavigationHistoryManager.getInstance().go(item);
 	}
 	
 	protected void onReceiveResponse(){

@@ -36,7 +36,7 @@ public class InfoOrDocumentRequestRepeatView extends View implements InfoOrDocum
 		wrapper.add(toolbar);
 		
 		form = new InfoOrDocumentRequestForm();
-		wrapper.add(form);
+		wrapper.add(form.getNonScrollableContent());
 	}
 	
 	@Override

@@ -25,7 +25,7 @@ import bigBang.library.client.history.NavigationHistoryManager;
 import bigBang.library.client.userInterface.presenter.ViewPresenter;
 
 public class NegotiationDeleteViewPresenter implements ViewPresenter {
-	
+
 	public static enum Action{
 		DELETE,
 		CANCEL
@@ -33,24 +33,24 @@ public class NegotiationDeleteViewPresenter implements ViewPresenter {
 
 	private NegotiationBroker broker;
 	private Display view;
-	private boolean bound;
-	
-	
+	private boolean bound = false;
+
+
 	public NegotiationDeleteViewPresenter(Display view){
 		this.broker = (NegotiationBroker) DataBrokerManager.staticGetBroker(BigBangConstants.EntityIds.NEGOTIATION);
 		setView((UIObject)view);
 	}
-	
-	
+
+
 	public static interface Display {
 		HasEditableValue<Deletion> getForm();
 		void registerActionHandler(ActionInvokedEventHandler<Action> handler);
 		Widget asWidget();
 		void clear();
 	}
-	
-	
-	
+
+
+
 	@Override
 	public void setView(UIObject view) {
 		this.view = (Display)view;
@@ -61,22 +61,23 @@ public class NegotiationDeleteViewPresenter implements ViewPresenter {
 		bind();
 		container.clear();
 		container.add(this.view.asWidget());
-		
+
 	}
 
 	@Override
 	public void setParameters(HasParameters parameterHolder) {
-		
+
 		view.clear();
 		Deletion toDelete = new Deletion();
 		toDelete.negotiationId = parameterHolder.getParameter("negotiationid");
 		view.getForm().setValue(toDelete);
-		
-		
+
+
 	}
-	
+
 	private void bind(){
-		
+		if(bound) {return;}
+
 		view.registerActionHandler(new ActionInvokedEventHandler<NegotiationDeleteViewPresenter.Action>() {
 
 			@Override
@@ -92,12 +93,10 @@ public class NegotiationDeleteViewPresenter implements ViewPresenter {
 					break;
 				}
 				}
-				
 			}
-		
-		
 		});
 		
+		bound = true;
 	}
 
 	protected void onCancel() {
@@ -107,7 +106,7 @@ public class NegotiationDeleteViewPresenter implements ViewPresenter {
 	}
 
 	protected void onDeleteNegotiation() {
-		
+
 		broker.removeNegotiation((Deletion) view.getForm().getInfo(), new ResponseHandler<String>() {
 
 			@Override
@@ -124,15 +123,9 @@ public class NegotiationDeleteViewPresenter implements ViewPresenter {
 			@Override
 			public void onError(Collection<ResponseError> errors) {
 				EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não foi possível eliminar a negociação."), TYPE.ALERT_NOTIFICATION));
-				
+
 			}
-		
-		
 		});
-		
-		
 	}
-	
-	
 
 }

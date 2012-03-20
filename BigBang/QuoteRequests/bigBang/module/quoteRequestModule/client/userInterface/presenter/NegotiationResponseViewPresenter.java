@@ -2,15 +2,10 @@ package bigBang.module.quoteRequestModule.client.userInterface.presenter;
 
 import java.util.Collection;
 
-import com.google.gwt.user.client.ui.HasWidgets;
-import com.google.gwt.user.client.ui.UIObject;
-import com.google.gwt.user.client.ui.Widget;
-
 import bigBang.definitions.client.dataAccess.NegotiationBroker;
 import bigBang.definitions.client.response.ResponseError;
 import bigBang.definitions.client.response.ResponseHandler;
 import bigBang.definitions.shared.BigBangConstants;
-import bigBang.definitions.shared.ExternalInfoRequest;
 import bigBang.definitions.shared.Negotiation;
 import bigBang.definitions.shared.Negotiation.Response;
 import bigBang.library.client.BigBangAsyncCallback;
@@ -29,9 +24,12 @@ import bigBang.library.client.userInterface.presenter.ViewPresenter;
 import bigBang.library.interfaces.ExchangeService;
 import bigBang.library.interfaces.ExchangeServiceAsync;
 import bigBang.library.shared.Attachment;
-import bigBang.module.quoteRequestModule.client.userInterface.presenter.NegotiationCancellationViewPresenter.Display;
 
-public class NegotiationResponseViewPresenter implements ViewPresenter{
+import com.google.gwt.user.client.ui.HasWidgets;
+import com.google.gwt.user.client.ui.UIObject;
+import com.google.gwt.user.client.ui.Widget;
+
+public class NegotiationResponseViewPresenter implements ViewPresenter {
 
 	private NegotiationBroker broker;
 	private Display view;
@@ -98,7 +96,7 @@ public class NegotiationResponseViewPresenter implements ViewPresenter{
 				
 			}
 		});
-		
+		bound = true;
 	}
 
 	protected void onResponse(Response toSend) {
