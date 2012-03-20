@@ -16,7 +16,6 @@ import com.google.gwt.user.client.ui.Widget;
 
 public class ReceiptSectionView extends View implements ReceiptSectionViewPresenter.Display{
 
-	private HasWidgets wrapper;
 	private PopupPanel popupPanel;
 	private HasWidgets overlayContainer;
 	private ActionInvokedEventHandler<Action> actionHandler;
@@ -37,18 +36,11 @@ public class ReceiptSectionView extends View implements ReceiptSectionViewPresen
 		wrapper.setCellHeight(operationViewContainer, "100%");
 		
 		this.overlayContainer = new SimplePanel();
-		
-		this.wrapper = wrapper;
 	}
 	
 	@Override
 	protected void initializeView() {
 		return;
-	}
-
-	@Override
-	public HasWidgets getContainer() {
-		return this.wrapper;
 	}
 
 	@Override

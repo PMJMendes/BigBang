@@ -20,15 +20,15 @@ public class ReceiptSectionViewPresenter implements ViewPresenter {
 	public static enum Action {
 		ON_OVERLAY_CLOSED
 	}
-	
+
 	public interface Display {
-		HasWidgets getContainer();
-		HasWidgets getOverlayViewContainer();
-		Widget asWidget();
-		void showOverlayViewContainer(boolean show);
-		void registerActionHandler(ActionInvokedEventHandler<Action> handler);
 		HasValue <Object> getOperationNavigationPanel();
 		HasWidgets getOperationViewContainer();
+		HasWidgets getOverlayViewContainer();
+		void showOverlayViewContainer(boolean show);
+
+		void registerActionHandler(ActionInvokedEventHandler<Action> handler);
+		Widget asWidget();
 	}
 
 	private Display view;
@@ -42,6 +42,7 @@ public class ReceiptSectionViewPresenter implements ViewPresenter {
 	@Override
 	public void setView(UIObject view) {
 		this.view = (Display) view;
+		this.initializeController();
 	}
 
 	@Override 
@@ -49,7 +50,6 @@ public class ReceiptSectionViewPresenter implements ViewPresenter {
 		this.bind();
 		container.clear();
 		container.add(this.view.asWidget());
-		this.initializeController();
 	}
 
 	@Override
@@ -80,13 +80,13 @@ public class ReceiptSectionViewPresenter implements ViewPresenter {
 	}
 
 	private void initializeController(){
-		this.controller = new ViewPresenterController(view.getContainer()) {
+		this.controller = new ViewPresenterController(view.getOperationViewContainer()) {
 
 			@Override
 			protected void onNavigationHistoryEvent(NavigationHistoryItem historyItem) {
 				return;
 			}
-			
+
 			@Override
 			public void onParameters(HasParameters parameters) {
 				String section = parameters.getParameter("section");
@@ -94,12 +94,10 @@ public class ReceiptSectionViewPresenter implements ViewPresenter {
 					String display = parameters.peekInStackParameter("display");
 					display = display == null ? "" : display;
 
-					//MASS OPERATIONS
-					if(display.equalsIgnoreCase("asddg")){
-//						//SELECT IN TOOLBAR
-//						present("RECEIPT_MASS_OPERATION", historyItem, true);
+					if(display.equalsIgnoreCase("history")){
+						present("HISTORY", parameters);
 					}else{
-						present("RECEIPT_SEARCH", parameters);
+						present("RECEIPT_OPERATIONS", parameters);
 					}
 				}
 				ReceiptSectionViewPresenter.this.overlayController.onParameters(parameters);
@@ -114,22 +112,21 @@ public class ReceiptSectionViewPresenter implements ViewPresenter {
 
 				if(show.isEmpty()){
 					view.showOverlayViewContainer(false);
-					
-				//OVERLAY VIEWS
+				
+					//OVERLAY VIEWS
 				}else if(show.equalsIgnoreCase("receipttransfertopolicy")){
 					present("RECEIPT_INSURANCE_POLICY_TRANSFER", parameters);
 					view.showOverlayViewContainer(true);
 				}
-				
+
 			}
 
 			@Override
 			protected void onNavigationHistoryEvent(
 					NavigationHistoryItem historyItem) {
 				return;
-				
 			}
-			
+
 		};
 	}
 

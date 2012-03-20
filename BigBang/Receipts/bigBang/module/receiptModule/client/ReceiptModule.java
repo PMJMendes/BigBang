@@ -9,11 +9,11 @@ import bigBang.library.client.userInterface.presenter.InsurancePolicySelectionVi
 import bigBang.library.client.userInterface.presenter.ViewPresenter;
 import bigBang.library.client.userInterface.view.InsurancePolicySelectionView;
 import bigBang.module.receiptModule.client.dataAccess.ReceiptDataBrokerImpl;
-import bigBang.module.receiptModule.client.userInterface.presenter.OperationNavigationViewPresenter;
+import bigBang.module.receiptModule.client.userInterface.presenter.ReceiptOperationsViewPresenter;
 import bigBang.module.receiptModule.client.userInterface.presenter.ReceiptSearchOperationViewPresenter;
 import bigBang.module.receiptModule.client.userInterface.presenter.ReceiptSectionViewPresenter;
 import bigBang.module.receiptModule.client.userInterface.presenter.ReceiptTransferToPolicyViewPresenter;
-import bigBang.module.receiptModule.client.userInterface.view.OperationNavigationView;
+import bigBang.module.receiptModule.client.userInterface.view.ReceiptOperationsView;
 import bigBang.module.receiptModule.client.userInterface.view.ReceiptSearchOperationView;
 import bigBang.module.receiptModule.client.userInterface.view.ReceiptSectionView;
 import bigBang.module.receiptModule.client.userInterface.view.ReceiptTransferToPolicyView;
@@ -45,12 +45,12 @@ public class ReceiptModule implements Module {
 				return receiptSectionViewPresenter;
 			}
 		});
-		ViewPresenterFactory.getInstance().registerViewPresenterInstantiator("RECEIPT_MASS_OPERATION", new ViewPresenterInstantiator() {
+		ViewPresenterFactory.getInstance().registerViewPresenterInstantiator("RECEIPT_OPERATIONS", new ViewPresenterInstantiator() {
 
 			@Override
 			public ViewPresenter getInstance() {
-				OperationNavigationView view = (OperationNavigationView) GWT.create(OperationNavigationView.class);
-				OperationNavigationViewPresenter presenter = new OperationNavigationViewPresenter(view);
+				ReceiptOperationsView view = (ReceiptOperationsView) GWT.create(ReceiptOperationsView.class);
+				ViewPresenter presenter = new ReceiptOperationsViewPresenter(view);
 				return presenter;
 			}
 		});
