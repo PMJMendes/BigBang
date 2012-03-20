@@ -17,11 +17,13 @@ public class SubProcessesList extends FilterableList<BigBangProcess> implements 
 
 		public Entry(BigBangProcess process){
 			super(process);
+			setHeight("40px");
 		}
 
 		public <I extends Object> void setInfo(I info) {
 			BigBangProcess process = (BigBangProcess) info;
 			setTitle(process.tag);
+			setText(process.dataLabel == null ? "-" : process.dataLabel);
 		};
 	}
 
@@ -43,6 +45,7 @@ public class SubProcessesList extends FilterableList<BigBangProcess> implements 
 
 				@Override
 				public void onResponse(Collection<BigBangProcess> response) {
+					clear();
 					for(BigBangProcess process : response) {
 						addEntry(process);
 					}

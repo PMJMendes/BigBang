@@ -6,15 +6,20 @@ import bigBang.definitions.client.dataAccess.DataBroker;
 import bigBang.definitions.client.dataAccess.DataBrokerClient;
 import bigBang.definitions.client.dataAccess.ReceiptDataBrokerClient;
 import bigBang.definitions.client.dataAccess.ReceiptProcessDataBroker;
+import bigBang.definitions.client.dataAccess.Search;
 import bigBang.definitions.client.dataAccess.SearchDataBroker;
 import bigBang.definitions.client.response.ResponseError;
 import bigBang.definitions.client.response.ResponseHandler;
 import bigBang.definitions.shared.BigBangConstants;
 import bigBang.definitions.shared.Receipt;
 import bigBang.definitions.shared.ReceiptStub;
+import bigBang.definitions.shared.SortOrder;
 import bigBang.library.client.BigBangAsyncCallback;
 import bigBang.module.receiptModule.interfaces.ReceiptService;
 import bigBang.module.receiptModule.interfaces.ReceiptServiceAsync;
+import bigBang.module.receiptModule.shared.ReceiptSearchParameter;
+import bigBang.module.receiptModule.shared.ReceiptSortParameter;
+import bigBang.module.receiptModule.shared.ReceiptSortParameter.SortableField;
 
 public class ReceiptDataBrokerImpl extends DataBroker<Receipt> implements ReceiptProcessDataBroker{
 
@@ -172,6 +177,38 @@ public class ReceiptDataBrokerImpl extends DataBroker<Receipt> implements Receip
 				handler.onError(new String[0]);
 			}
 		});
+	}
+	
+	@Override
+	public void getReceiptsForOwner(String ownerId,
+			final ResponseHandler<Collection<ReceiptStub>> handler) {
+		ReceiptSearchParameter parameter = new ReceiptSearchParameter();
+		parameter.ownerId = ownerId;
+		
+		ReceiptSearchParameter[] parameters = new ReceiptSearchParameter[]{
+				parameter
+		};
+		
+		ReceiptSortParameter sort = new ReceiptSortParameter(SortableField.NUMBER, SortOrder.ASC);
+		ReceiptSortParameter[] sorts = new ReceiptSortParameter[]{
+				sort
+		};
+		
+		getSearchBroker().search(parameters, sorts, -1, new ResponseHandler<Search<ReceiptStub>>() {
+
+			@Override
+			public void onResponse(Search<ReceiptStub> response) {
+				handler.onResponse(response.getResults());
+			}
+
+			@Override
+			public void onError(Collection<ResponseError> errors) {
+				handler.onError(new String[]{
+					new String("Could not get the receipts for the owner id")
+				});
+			}
+		});
+		
 	}
 
 	@Override

@@ -3,7 +3,6 @@ package bigBang.module.clientModule.client.userInterface.presenter;
 import java.util.Collection;
 
 import bigBang.definitions.client.dataAccess.ClientProcessBroker;
-import bigBang.definitions.client.dataAccess.ClientProcessDataBrokerClient;
 import bigBang.definitions.client.response.ResponseError;
 import bigBang.definitions.client.response.ResponseHandler;
 import bigBang.definitions.shared.BigBangConstants;
@@ -97,13 +96,10 @@ public class ClientSearchOperationViewPresenter implements ViewPresenter {
 
 	private Display view;
 	private ClientProcessBroker clientBroker;
-	private ClientProcessDataBrokerClient clientBrokerClient;
 	private boolean bound = false;
 
 	public ClientSearchOperationViewPresenter(View view){
 		this.clientBroker = (ClientProcessBroker) DataBrokerManager.Util.getInstance().getBroker(BigBangConstants.EntityIds.CLIENT);
-		this.clientBrokerClient = initializeClientBrokerClient();
-		this.clientBroker.registerClient(this.clientBrokerClient);
 		this.setView(view);
 	}
 
@@ -494,51 +490,6 @@ public class ClientSearchOperationViewPresenter implements ViewPresenter {
 		view.getForm().setReadOnly(false);
 	}
 
-	//TODO for when deleted
-	private ClientProcessDataBrokerClient initializeClientBrokerClient(){
-		return new ClientProcessDataBrokerClient() {
-
-			private int version;
-
-			@Override
-			public void setDataVersionNumber(String dataElementId, int number) {
-				this.version = number;
-			}
-
-			@Override
-			public int getDataVersion(String dataElementId) {
-				return this.version;
-			}
-
-			@Override
-			public void updateClient(Client client) {
-				Client currentClient = ClientSearchOperationViewPresenter.this.view.getForm().getValue();
-				String clientId = currentClient == null ? null : currentClient.id;
-
-				if(clientId != null && clientId.equalsIgnoreCase(client.id)){
-					ClientSearchOperationViewPresenter.this.view.getForm().setValue(client);
-					ClientSearchOperationViewPresenter.this.view.getForm().setReadOnly(true);
-				}
-			}
-
-			@Override
-			public void removeClient(String clientId) {
-				Client currentClient = ClientSearchOperationViewPresenter.this.view.getForm().getValue();
-				String currentClientId = currentClient == null ? null : currentClient.id;
-
-				if(currentClientId != null && currentClientId.equalsIgnoreCase(clientId)){
-					ClientSearchOperationViewPresenter.this.view.getForm().setValue(null);
-					ClientSearchOperationViewPresenter.this.view.getForm().setReadOnly(true);
-				}
-			}
-
-			@Override
-			public void addClient(Client client) {
-				// TODO Auto-generated method stub
-			}
-		};
-	}
-	
 	private void goToSubProcess(BigBangProcess process){
 		String type = process.dataTypeId;
 		

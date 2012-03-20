@@ -34,10 +34,6 @@ public abstract class InfoOrDocumentRequestViewPresenter<T extends ProcessBase> 
 		HasEditableValue<InfoOrDocumentRequest> getForm();
 		HasValue<T> getOwnerForm();
 		
-		//PERMISSIONS
-		void clearAllowedPermissions();
-		void allowSend(boolean allow);
-		
 		void setAvailableContacts(Contact[] contacts);
 		
 		void registerActionHandler(ActionInvokedEventHandler<Action> handler);
@@ -70,17 +66,13 @@ public abstract class InfoOrDocumentRequestViewPresenter<T extends ProcessBase> 
 		ownerId = ownerId == null ? new String() : ownerId;
 		String ownerTypeId = parameterHolder.getParameter("ownerTypeId");
 		ownerTypeId = ownerTypeId == null ? new String() : ownerTypeId;
-		String requestId = parameterHolder.getParameter("requestid");
-		requestId = requestId == null ? new String() : requestId;
 		
 		clearView();
 		
 		if(ownerId.isEmpty() || ownerTypeId.isEmpty()){
 			onGetOwnerFailed();
-		}else if(requestId.isEmpty()){
+		}else {
 			showCreateRequest(ownerId, ownerTypeId);
-		}else{
-			showRequest(ownerId, ownerTypeId, requestId);
 		}
 	}
 
@@ -107,7 +99,6 @@ public abstract class InfoOrDocumentRequestViewPresenter<T extends ProcessBase> 
 	}
 
 	protected void clearView(){
-		view.clearAllowedPermissions();
 		view.getOwnerForm().setValue(null);
 		view.getForm().setValue(null);
 		view.getForm().setReadOnly(true);
@@ -119,7 +110,6 @@ public abstract class InfoOrDocumentRequestViewPresenter<T extends ProcessBase> 
 
 			@Override
 			public void onResponse(Boolean response) {
-				view.allowSend(response);
 				if(response){
 					showOwner(ownerId, ownerTypeId);
 					setContactsForOwner(ownerId);
@@ -146,10 +136,6 @@ public abstract class InfoOrDocumentRequestViewPresenter<T extends ProcessBase> 
 				view.setAvailableContacts(result);
 			}
 		});
-	}
-	
-	protected void showRequest(String ownerId, String ownerTypeId, String requestId){
-		//TODO
 	}
 	
 	protected abstract InfoOrDocumentRequest getFormattedRequest(String ownerId, String ownerTypeId);

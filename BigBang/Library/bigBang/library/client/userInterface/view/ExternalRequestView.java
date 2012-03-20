@@ -13,7 +13,6 @@ import bigBang.library.client.userInterface.presenter.ExternalRequestViewPresent
 import bigBang.library.client.userInterface.presenter.ExternalRequestViewPresenter.Action;
 
 import com.google.gwt.user.client.ui.HasValue;
-import com.google.gwt.user.client.ui.HasVerticalAlignment;
 import com.google.gwt.user.client.ui.SplitLayoutPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 

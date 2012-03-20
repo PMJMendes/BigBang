@@ -6,6 +6,7 @@ import bigBang.definitions.shared.ExerciseStub;
 import bigBang.definitions.shared.HistoryItemStub;
 import bigBang.definitions.shared.InsurancePolicy;
 import bigBang.definitions.shared.InsuredObjectStub;
+import bigBang.definitions.shared.ReceiptStub;
 import bigBang.definitions.shared.SubPolicy;
 import bigBang.definitions.shared.SubPolicy.TableSection;
 import bigBang.library.client.HasEditableValue;
@@ -295,6 +296,11 @@ public class SubPolicyView extends View implements SubPolicyViewPresenter.Displa
 	}
 
 	@Override
+	public HasValueSelectables<ReceiptStub> getReceiptsList() {
+		return childrenPanel.receiptList;
+	}
+	
+	@Override
 	public HasValueSelectables<HistoryItemStub> getHistoryList() {
 		return childrenPanel.historyList;
 	}
@@ -323,5 +329,5 @@ public class SubPolicyView extends View implements SubPolicyViewPresenter.Displa
 	public void clearAllowedPermissions() {
 		this.toolbar.lockAll();
 	}
-
+	
 }

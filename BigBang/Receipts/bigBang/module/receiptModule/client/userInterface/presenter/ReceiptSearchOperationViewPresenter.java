@@ -156,9 +156,9 @@ public class ReceiptSearchOperationViewPresenter implements ViewPresenter {
 	private void showReceipt(String receiptId) {
 		for(ValueSelectable<?> selectable : view.getList().getAll()){
 			ReceiptStub receipt = (ReceiptStub) selectable.getValue();
-			if(receipt.id.equalsIgnoreCase(receiptId)){
-				selectable.setSelected(true, false);
-				break;
+			if(receipt.id.equalsIgnoreCase(receiptId) && !selectable.isSelected()){
+				selectable.setSelected(true, true);
+				return;
 			}
 		}
 
@@ -237,6 +237,7 @@ public class ReceiptSearchOperationViewPresenter implements ViewPresenter {
 
 	protected void onSaveSuccess(){
 		EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "O Recibo foi Guardado com Sucesso"), TYPE.TRAY_NOTIFICATION));
+		NavigationHistoryManager.getInstance().reload();
 	}
 
 	protected void onSaveFailed(){

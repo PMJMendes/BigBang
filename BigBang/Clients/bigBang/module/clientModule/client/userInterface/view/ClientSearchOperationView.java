@@ -242,7 +242,6 @@ public class ClientSearchOperationView extends View implements ClientSearchOpera
 	@Override
 	public void clearAllowedPermissions() {
 		this.form.setReadOnly(true);
-		this.childrenPanel.setReadOnly(true);
 		this.operationsToolbar.lockAll();
 	}
 	
@@ -254,7 +253,6 @@ public class ClientSearchOperationView extends View implements ClientSearchOpera
 	@Override
 	public void allowEdit(boolean allow) {
 		this.operationsToolbar.setEditionAvailable(allow);
-		this.childrenPanel.setReadOnly(!allow);
 	}
 
 	@Override

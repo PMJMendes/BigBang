@@ -161,7 +161,7 @@ public class BigBangConstants {
 		}
 		
 		public static class ReceiptProcess {
-			public static final String UPDATE_RECEIPT = "38DB0FE1-B1DE-4C7B-B7CA-A01300C5BAC6";
+			public static final String UPDATE_RECEIPT = "581AA15C-DF2C-4DF9-B3B3-9F8A00EDBADB";
 			public static final String DELETE_RECEIPT = "994D421F-E414-41EF-8D02-9F8A00EEE620"; 
 		}
 		

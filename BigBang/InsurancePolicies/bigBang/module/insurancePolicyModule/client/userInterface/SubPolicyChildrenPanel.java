@@ -16,6 +16,7 @@ public class SubPolicyChildrenPanel extends View {
 	public DocumentsList documentsList;
 	public SubPolicyInsuredObjectsList insuredObjectsList;
 	public SubPolicyExercisesList exercisesList;
+	public ReceiptsList receiptList;
 	public HistoryList historyList;
 
 	public SubPolicyChildrenPanel(){
@@ -27,12 +28,14 @@ public class SubPolicyChildrenPanel extends View {
 		documentsList = new DocumentsList();
 		insuredObjectsList = new SubPolicyInsuredObjectsList();
 		exercisesList = new SubPolicyExercisesList();
+		receiptList = new ReceiptsList();
 		historyList = new HistoryList();
 
 		wrapper.add(contactsList, "Contactos");
 		wrapper.add(documentsList, "Documentos");
 		wrapper.add(insuredObjectsList, "Unidades de Risco");
 		wrapper.add(exercisesList, "Exercícios");
+		wrapper.add(receiptList, "Recibos");
 		wrapper.add(historyList, "Histórico");
 	}
 
@@ -46,6 +49,7 @@ public class SubPolicyChildrenPanel extends View {
 		this.documentsList.setOwner(subPolicyId);
 		this.insuredObjectsList.setOwner(subPolicyId);
 		this.exercisesList.setOwner(subPolicyId);
+		this.receiptList.setOwner(subPolicyId);
 		this.historyList.setOwner(subPolicyId);
 	}
 

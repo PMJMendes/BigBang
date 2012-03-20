@@ -18,7 +18,6 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 public abstract class InfoOrDocumentRequestView<T extends ProcessBase> extends View implements InfoOrDocumentRequestViewPresenter.Display<T>{
 	
 	protected InfoOrDocumentRequestForm form;
-	protected InfoOrDocumentRequestOperationsToolbar toolbar;
 	protected ActionInvokedEventHandler<Action> actionHandler;
 	protected FormView<T> ownerForm;
 	
@@ -27,7 +26,7 @@ public abstract class InfoOrDocumentRequestView<T extends ProcessBase> extends V
 		initWidget(mainWrapper);
 		mainWrapper.setSize("100%", "100%");
 		
-		this.toolbar = new InfoOrDocumentRequestOperationsToolbar() {
+		InfoOrDocumentRequestOperationsToolbar toolbar = new InfoOrDocumentRequestOperationsToolbar() {
 			
 			@Override
 			public void onSendRequest() {
@@ -72,16 +71,6 @@ public abstract class InfoOrDocumentRequestView<T extends ProcessBase> extends V
 	@Override
 	public HasEditableValue<InfoOrDocumentRequest> getForm() {
 		return this.form;
-	}
-
-	@Override
-	public void clearAllowedPermissions() {
-		this.toolbar.lockAll();
-	}
-
-	@Override
-	public void allowSend(boolean allow) {
-		this.toolbar.allowSend(allow);
 	}
 
 	@Override

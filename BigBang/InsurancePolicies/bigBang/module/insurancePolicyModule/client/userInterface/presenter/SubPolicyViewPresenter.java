@@ -13,6 +13,7 @@ import bigBang.definitions.shared.ExerciseStub;
 import bigBang.definitions.shared.HistoryItemStub;
 import bigBang.definitions.shared.InsurancePolicy;
 import bigBang.definitions.shared.InsuredObjectStub;
+import bigBang.definitions.shared.ReceiptStub;
 import bigBang.definitions.shared.SubPolicy;
 import bigBang.definitions.shared.SubPolicy.TableSection;
 import bigBang.library.client.EventBus;
@@ -68,6 +69,7 @@ public class SubPolicyViewPresenter implements ViewPresenter {
 		HasValueSelectables<Document> getDocumentsList();
 		HasValueSelectables<ExerciseStub> getExercisesList();
 		HasValueSelectables<InsuredObjectStub> getInsuredObjectsList();
+		HasValueSelectables<ReceiptStub> getReceiptsList();
 		HasValueSelectables<HistoryItemStub> getHistoryList();
 
 		void setSaveModeEnabled(boolean enabled);
@@ -253,6 +255,8 @@ public class SubPolicyViewPresenter implements ViewPresenter {
 					showInsuredObject((InsuredObjectStub) value);
 				}else if(source == view.getExercisesList()){
 					showExercise((ExerciseStub) value);
+				}else if(source == view.getReceiptsList()){
+					showReceipt((ReceiptStub) value);
 				}else if(source == view.getHistoryList()){
 					showHistory((HistoryItemStub) value);
 				}
@@ -263,6 +267,7 @@ public class SubPolicyViewPresenter implements ViewPresenter {
 		view.getDocumentsList().addSelectionChangedEventHandler(selectionChangedHandler);
 		view.getInsuredObjectsList().addSelectionChangedEventHandler(selectionChangedHandler);
 		view.getExercisesList().addSelectionChangedEventHandler(selectionChangedHandler);
+		view.getReceiptsList().addSelectionChangedEventHandler(selectionChangedHandler);
 		view.getHistoryList().addSelectionChangedEventHandler(selectionChangedHandler);
 
 		bound = true;
@@ -638,6 +643,26 @@ public class SubPolicyViewPresenter implements ViewPresenter {
 			}
 		});
 
+	}
+	
+	protected void showReceipt(final ReceiptStub receiptItem) {
+		saveWorkState(new ResponseHandler<Void>() {
+
+			@Override
+			public void onResponse(Void response) {
+				NavigationHistoryItem item = new NavigationHistoryItem();
+				item.setParameter("section", "receipt");
+				item.setStackParameter("display");
+				item.pushIntoStackParameter("display", "search");
+				item.setParameter("receiptid", receiptItem.id);
+				NavigationHistoryManager.getInstance().go(item);
+			}
+
+			@Override
+			public void onError(Collection<ResponseError> errors) {
+				onResponse(null);
+			}
+		});
 	}
 
 	protected void showHistory(final HistoryItemStub historyItem) {

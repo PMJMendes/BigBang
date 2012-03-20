@@ -16,6 +16,7 @@ import bigBang.definitions.shared.InsurancePolicy;
 import bigBang.definitions.shared.InsurancePolicy.TableSection;
 import bigBang.definitions.shared.InsurancePolicyStub;
 import bigBang.definitions.shared.InsuredObjectStub;
+import bigBang.definitions.shared.ReceiptStub;
 import bigBang.definitions.shared.SubPolicyStub;
 import bigBang.library.client.EventBus;
 import bigBang.library.client.HasEditableValue;
@@ -114,6 +115,7 @@ ViewPresenter {
 		HasValueSelectables<InsuredObjectStub> getObjectsList();
 		HasValueSelectables<ExerciseStub> getExercisesList();
 		HasValueSelectables<SubPolicyStub> getSubPoliciesList();
+		HasValueSelectables<ReceiptStub> getReceiptsList();
 		HasValueSelectables<HistoryItemStub> getHistoryList();
 		HasValueSelectables<BigBangProcess> getSubProcessesList();
 
@@ -391,6 +393,17 @@ ViewPresenter {
 				SubPolicyStub selectedValue = event.getFirstSelected() == null ? null : ((ValueSelectable<SubPolicyStub>) event.getFirstSelected()).getValue();
 				if(selectedValue != null) {
 					showSubPolicy(selectedValue);
+				}
+			}
+		});
+		view.getReceiptsList().addSelectionChangedEventHandler(new SelectionChangedEventHandler() {
+
+			@Override
+			public void onSelectionChanged(SelectionChangedEvent event) {
+				@SuppressWarnings("unchecked")
+				ReceiptStub selectedValue = event.getFirstSelected() == null ? null : ((ValueSelectable<ReceiptStub>) event.getFirstSelected()).getValue();
+				if(selectedValue != null) {
+					showReceipt(selectedValue);
 				}
 			}
 		});
@@ -888,6 +901,26 @@ ViewPresenter {
 				item.pushIntoStackParameter("display", "subpolicy");
 				item.setParameter("policyid", view.getForm().getValue().id);
 				item.setParameter("subpolicyid", subPolicy.id);
+				NavigationHistoryManager.getInstance().go(item);
+			}
+
+			@Override
+			public void onError(Collection<ResponseError> errors) {
+				onResponse(null);
+			}
+		});
+	}
+	
+	private void showReceipt(final ReceiptStub receipt){
+		saveWorkState(new ResponseHandler<Void>() {
+
+			@Override
+			public void onResponse(Void response) {
+				NavigationHistoryItem item = new NavigationHistoryItem();
+				item.setParameter("section", "receipt");
+				item.setStackParameter("display");
+				item.pushIntoStackParameter("display", "search");
+				item.setParameter("receiptid", receipt.id);
 				NavigationHistoryManager.getInstance().go(item);
 			}
 
