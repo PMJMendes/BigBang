@@ -1,6 +1,7 @@
 package com.premiumminds.BigBang.Jewel.Objects;
 
 import java.sql.ResultSet;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.UUID;
 
@@ -34,6 +35,11 @@ public class Negotiation
 		throws JewelEngineException
 	{
 	}
+
+    public String getLabel()
+    {
+    	return ((Timestamp)getAt(2)).toString().substring(0, 10);
+    }
 
 	public UUID GetProcessID()
 	{

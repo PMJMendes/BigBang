@@ -32,6 +32,11 @@ public class ExternRequest
 	{
 	}
 
+    public String getLabel()
+    {
+    	return (String)getAt(1);
+    }
+
 	public UUID GetProcessID()
 	{
 		return (UUID)getAt(0);

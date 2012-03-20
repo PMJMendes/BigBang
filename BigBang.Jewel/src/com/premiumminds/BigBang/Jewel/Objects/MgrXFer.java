@@ -8,6 +8,7 @@ import Jewel.Engine.Engine;
 import Jewel.Engine.DataAccess.MasterDB;
 import Jewel.Engine.DataAccess.SQLServer;
 import Jewel.Engine.Implementation.Entity;
+import Jewel.Engine.Implementation.User;
 import Jewel.Engine.Interfaces.IEntity;
 import Jewel.Engine.SysObjects.JewelEngineException;
 import Jewel.Petri.SysObjects.ProcessData;
@@ -66,6 +67,22 @@ public class MgrXFer
 
 		marrProcessHolders = larrAux.toArray(new MgrXFerProcHolder[larrAux.size()]);
 	}
+
+    public String getLabel()
+    {
+    	User lobjUser;
+
+    	try
+    	{
+			lobjUser = User.GetInstance(Engine.getCurrentNameSpace(), (UUID)getAt(2));
+		}
+    	catch (JewelEngineException e)
+    	{
+    		return "(Erro)";
+		}
+
+    	return lobjUser.getDisplayName();
+    }
 
 	public UUID[] GetProcessIDs()
 	{

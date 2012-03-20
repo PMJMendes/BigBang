@@ -69,6 +69,11 @@ public class InfoRequest
 		}
 	}
 
+    public String getLabel()
+    {
+    	return (String)getAt(4);
+    }
+
 	public UUID GetProcessID()
 	{
 		return (UUID)getAt(0);
