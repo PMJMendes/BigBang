@@ -13,28 +13,16 @@ import bigBang.library.client.dataAccess.DataBrokerManager;
 import bigBang.library.client.event.ActionInvokedEvent;
 import bigBang.library.client.event.ActionInvokedEventHandler;
 import bigBang.library.client.resources.Resources;
-import bigBang.library.client.userInterface.BigBangOperationsToolBar;
-import bigBang.library.client.userInterface.BigBangOperationsToolBar.SUB_MENU;
 import bigBang.library.client.userInterface.FilterableList;
-import bigBang.library.client.userInterface.List;
 import bigBang.library.client.userInterface.ListEntry;
 import bigBang.library.client.userInterface.ListHeader;
-import bigBang.library.client.userInterface.view.PopupPanel;
-import bigBang.module.generalSystemModule.client.userInterface.LineList.Entry;
 import bigBang.module.generalSystemModule.client.userInterface.presenter.TaxManagementOperationViewPresenter.Action;
-import bigBang.module.generalSystemModule.client.userInterface.view.TaxForm;
-
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.DoubleClickEvent;
 import com.google.gwt.event.dom.client.DoubleClickHandler;
-import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.ui.Image;
-import com.google.gwt.user.client.ui.Label;
-import com.google.gwt.user.client.ui.MenuItem;
-import com.google.gwt.user.client.ui.VerticalPanel;
-import com.google.gwt.user.client.ui.Widget;
 
 public class TaxList extends FilterableList<Tax> implements CoverageDataBrokerClient {
 

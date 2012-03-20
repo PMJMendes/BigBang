@@ -1,7 +1,5 @@
 package bigBang.module.generalSystemModule.client.userInterface.view;
 
-import java.util.Date;
-
 import bigBang.definitions.shared.BigBangConstants;
 import bigBang.definitions.shared.Tax;
 import bigBang.library.client.FormField;

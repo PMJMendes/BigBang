@@ -1,7 +1,5 @@
 package bigBang.module.generalSystemModule.shared;
 
-import java.util.UUID;
-
 public class ModuleConstants
 {
 	public class EntityIDs{}

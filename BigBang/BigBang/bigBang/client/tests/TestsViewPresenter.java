@@ -1,10 +1,7 @@
 package bigBang.client.tests;
 
 import bigBang.library.client.HasParameters;
-import bigBang.library.client.ViewPresenterFactory;
 import bigBang.library.client.userInterface.presenter.ViewPresenter;
-import bigBang.module.insurancePolicyModule.client.userInterface.CoInsurerSelection;
-
 import com.google.gwt.user.client.ui.HasWidgets;
 import com.google.gwt.user.client.ui.UIObject;
 import com.google.gwt.user.client.ui.Widget;

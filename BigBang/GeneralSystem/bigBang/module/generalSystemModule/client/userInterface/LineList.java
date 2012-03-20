@@ -21,7 +21,6 @@ import bigBang.library.client.userInterface.ListHeader;
 import bigBang.library.client.userInterface.NavigationListEntry;
 import bigBang.library.client.userInterface.view.FormView;
 import bigBang.library.client.userInterface.view.PopupPanel;
-import bigBang.module.generalSystemModule.client.userInterface.SubLineList.Entry;
 import bigBang.module.generalSystemModule.client.userInterface.presenter.CoverageManagementOperationViewPresenter.Action;
 import bigBang.module.generalSystemModule.client.userInterface.view.LineForm;
 
