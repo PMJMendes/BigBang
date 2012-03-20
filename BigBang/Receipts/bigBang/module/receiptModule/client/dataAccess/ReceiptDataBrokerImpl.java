@@ -26,22 +26,22 @@ public class ReceiptDataBrokerImpl extends DataBroker<Receipt> implements Receip
 	protected ReceiptServiceAsync service;
 	protected SearchDataBroker<ReceiptStub> searchBroker;
 	protected boolean refreshRequired = true;
-	
+
 	public ReceiptDataBrokerImpl(){
 		this(ReceiptService.Util.getInstance());
 	}
-	
+
 	public ReceiptDataBrokerImpl(ReceiptServiceAsync service){
 		this.service = service;
 		this.dataElementId = BigBangConstants.EntityIds.RECEIPT;
 		this.searchBroker = new ReceiptSearchDataBroker(this.service);
 	}
-	
+
 	@Override
 	public void requireDataRefresh() {
 		this.refreshRequired = true;
 	}
-	
+
 	protected boolean isRefreshRequired(){
 		return this.refreshRequired;
 	}
@@ -112,7 +112,7 @@ public class ReceiptDataBrokerImpl extends DataBroker<Receipt> implements Receip
 					handler.onResponse(result);
 					refreshRequired = false;
 				}
-				
+
 				@Override
 				public void onResponseFailure(Throwable caught) {
 					handler.onError(new String[0]);
@@ -136,7 +136,7 @@ public class ReceiptDataBrokerImpl extends DataBroker<Receipt> implements Receip
 				}
 				handler.onResponse(result);
 			}
-			
+
 			@Override
 			public void onResponseFailure(Throwable caught) {
 				handler.onError(new String[0]);
@@ -163,7 +163,7 @@ public class ReceiptDataBrokerImpl extends DataBroker<Receipt> implements Receip
 						}
 						handler.onResponse(id);
 					}
-					
+
 					@Override
 					public void onResponseFailure(Throwable caught) {
 						handler.onError(new String[0]);
@@ -209,6 +209,32 @@ public class ReceiptDataBrokerImpl extends DataBroker<Receipt> implements Receip
 			}
 		});
 		
+	}
+
+	@Override
+	public void transferToInsurancePolicy(String receiptId, String newPolicyId, final ResponseHandler<Receipt> handler){
+		service.transferToPolicy(receiptId, newPolicyId, new BigBangAsyncCallback<Receipt>() {
+
+			@Override
+			public void onResponseSuccess(Receipt result) {
+				cache.add(result.id, result);
+				incrementDataVersion();
+				for(DataBrokerClient<Receipt> bc : getClients()){
+					((ReceiptDataBrokerClient) bc).updateReceipt(result);
+					((ReceiptDataBrokerClient) bc).setDataVersionNumber(BigBangConstants.EntityIds.RECEIPT, getCurrentDataVersion());
+				}
+				handler.onResponse(result);
+
+			}
+
+			@Override
+			public void onResponseFailure(Throwable caught) {
+				handler.onError(new String[]{
+						new String("Could not transfer receipt to insurance policy")
+				});
+				super.onResponseFailure(caught);
+			}
+		});
 	}
 
 	@Override

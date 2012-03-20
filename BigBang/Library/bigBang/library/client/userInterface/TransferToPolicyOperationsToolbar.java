@@ -1,16 +1,15 @@
-package bigBang.module.insurancePolicyModule.client.userInterface;
+package bigBang.library.client.userInterface;
 
 import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.ui.MenuItem;
 
-import bigBang.library.client.userInterface.BigBangOperationsToolBar;
 
-public abstract class SubPolicyTransferToPolicyOperationsToolbar extends
+public abstract class TransferToPolicyOperationsToolbar extends
 		BigBangOperationsToolBar {
 
 	protected MenuItem confirmTransfer, cancelTransfer;
 	
-	public SubPolicyTransferToPolicyOperationsToolbar(){
+	public TransferToPolicyOperationsToolbar(){
 		hideAll();
 		
 		confirmTransfer = new MenuItem("Confirmar Transferência", new Command() {

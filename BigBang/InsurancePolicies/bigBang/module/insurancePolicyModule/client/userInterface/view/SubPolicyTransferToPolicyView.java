@@ -3,12 +3,12 @@ package bigBang.module.insurancePolicyModule.client.userInterface.view;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
 import bigBang.module.insurancePolicyModule.client.userInterface.SubPolicyTransferToPolicyForm;
-import bigBang.module.insurancePolicyModule.client.userInterface.SubPolicyTransferToPolicyOperationsToolbar;
 import bigBang.module.insurancePolicyModule.client.userInterface.presenter.SubPolicyTransferToPolicyViewPresenter;
 import bigBang.module.insurancePolicyModule.client.userInterface.presenter.SubPolicyTransferToPolicyViewPresenter.Action;
 import bigBang.library.client.HasEditableValue;
 import bigBang.library.client.event.ActionInvokedEvent;
 import bigBang.library.client.event.ActionInvokedEventHandler;
+import bigBang.library.client.userInterface.TransferToPolicyOperationsToolbar;
 import bigBang.library.client.userInterface.view.View;
 
 public class SubPolicyTransferToPolicyView extends View implements SubPolicyTransferToPolicyViewPresenter.Display{
@@ -21,7 +21,7 @@ public class SubPolicyTransferToPolicyView extends View implements SubPolicyTran
 		initWidget(wrapper);
 		wrapper.setSize("100%", "100%");
 		
-		SubPolicyTransferToPolicyOperationsToolbar toolbar = new SubPolicyTransferToPolicyOperationsToolbar() {
+		TransferToPolicyOperationsToolbar toolbar = new TransferToPolicyOperationsToolbar() {
 			
 			@Override
 			public void onCancelRequest() {

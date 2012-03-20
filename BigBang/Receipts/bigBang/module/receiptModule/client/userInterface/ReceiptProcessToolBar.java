@@ -299,4 +299,8 @@ public abstract class ReceiptProcessToolBar extends BigBangOperationsToolBar {
 		this.deleteReceipt.setEnabled(allow);
 	}
 
+	public void allowTransfer(boolean allow) {
+		this.transferToPolicy.setEnabled(allow);
+	}
+
 }

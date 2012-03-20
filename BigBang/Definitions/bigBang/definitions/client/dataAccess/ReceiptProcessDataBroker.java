@@ -17,5 +17,8 @@ public interface ReceiptProcessDataBroker extends DataBrokerInterface<Receipt> {
 	public void getReceiptsForOwner(String ownerId, ResponseHandler<Collection<ReceiptStub>> handler);
 	
 	public SearchDataBroker<ReceiptStub> getSearchBroker();
+
+	void transferToInsurancePolicy(String receiptId, String newPolicyId,
+			ResponseHandler<Receipt> handler);
 	
 }

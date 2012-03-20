@@ -37,7 +37,7 @@ public class ReceiptSearchOperationViewPresenter implements ViewPresenter {
 		EDIT,
 		SAVE,
 		CANCEL,
-		DELETE,
+		DELETE, TRANSFER_TO_POLICY,
 	}
 
 	public interface Display {
@@ -53,6 +53,7 @@ public class ReceiptSearchOperationViewPresenter implements ViewPresenter {
 		void clearAllowedPermissions();
 		void allowEdit(boolean allow);
 		void allowDelete(boolean allow);
+		void allowTransferToPolicy(boolean allow);
 
 		//Children Lists
 		//TODO
@@ -137,12 +138,22 @@ public class ReceiptSearchOperationViewPresenter implements ViewPresenter {
 				case SAVE:
 					onSave();
 					break;
+				case TRANSFER_TO_POLICY:
+					transferToPolicy();
+					break;
 				}
+				
 			}
 		});
 
 		//APPLICATION-WIDE EVENTS
 		bound = true;
+	}
+
+	protected void transferToPolicy() {
+		NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
+		item.setParameter("show", "receipttransfertopolicy");
+		NavigationHistoryManager.getInstance().go(item);
 	}
 
 	private void clearView(){
@@ -169,6 +180,7 @@ public class ReceiptSearchOperationViewPresenter implements ViewPresenter {
 				view.clearAllowedPermissions();
 				view.allowEdit(PermissionChecker.hasPermission(value, BigBangConstants.OperationIds.ReceiptProcess.UPDATE_RECEIPT));
 				view.allowDelete(PermissionChecker.hasPermission(value, BigBangConstants.OperationIds.ReceiptProcess.DELETE_RECEIPT));
+				view.allowTransferToPolicy(PermissionChecker.hasPermission(value, BigBangConstants.OperationIds.ReceiptProcess.TRANSFER_TO_POLICY));
 
 				view.setSaveModeEnabled(false);
 				view.getForm().setReadOnly(true);
