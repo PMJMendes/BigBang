@@ -37,7 +37,7 @@ public class ReceiptSearchOperationViewPresenter implements ViewPresenter {
 		EDIT,
 		SAVE,
 		CANCEL,
-		DELETE, TRANSFER_TO_POLICY,
+		DELETE, TRANSFER_TO_POLICY, ASSOCIATE_WITH_DEBIT_NOTE,
 	}
 
 	public interface Display {
@@ -63,6 +63,8 @@ public class ReceiptSearchOperationViewPresenter implements ViewPresenter {
 		void setSaveModeEnabled(boolean enabled);
 
 		Widget asWidget();
+
+		void allowAssociateDebitNote(boolean hasPermission);
 	}
 
 	protected Display view;
@@ -141,6 +143,9 @@ public class ReceiptSearchOperationViewPresenter implements ViewPresenter {
 				case TRANSFER_TO_POLICY:
 					transferToPolicy();
 					break;
+				case ASSOCIATE_WITH_DEBIT_NOTE:
+					associateWithDebitNote();
+					break;
 				}
 				
 			}
@@ -148,6 +153,12 @@ public class ReceiptSearchOperationViewPresenter implements ViewPresenter {
 
 		//APPLICATION-WIDE EVENTS
 		bound = true;
+	}
+
+	protected void associateWithDebitNote() {
+		NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
+		item.setParameter("show", "associatewithdebitnote");
+		NavigationHistoryManager.getInstance().go(item);
 	}
 
 	protected void transferToPolicy() {
@@ -181,7 +192,7 @@ public class ReceiptSearchOperationViewPresenter implements ViewPresenter {
 				view.allowEdit(PermissionChecker.hasPermission(value, BigBangConstants.OperationIds.ReceiptProcess.UPDATE_RECEIPT));
 				view.allowDelete(PermissionChecker.hasPermission(value, BigBangConstants.OperationIds.ReceiptProcess.DELETE_RECEIPT));
 				view.allowTransferToPolicy(PermissionChecker.hasPermission(value, BigBangConstants.OperationIds.ReceiptProcess.TRANSFER_TO_POLICY));
-
+				view.allowAssociateDebitNote(PermissionChecker.hasPermission(value, BigBangConstants.OperationIds.ReceiptProcess.ASSOCIATE_WITH_DEBIT_NOTE));
 				view.setSaveModeEnabled(false);
 				view.getForm().setReadOnly(true);
 				view.getForm().setValue(value);

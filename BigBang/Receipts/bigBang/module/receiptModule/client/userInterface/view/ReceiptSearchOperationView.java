@@ -125,7 +125,7 @@ public class ReceiptSearchOperationView extends View implements ReceiptSearchOpe
 
 			@Override
 			public void onAssociateWithDebitNote() {
-				// TODO Auto-generated method stub
+				actionHandler.onActionInvoked(new ActionInvokedEvent<ReceiptSearchOperationViewPresenter.Action>(Action.ASSOCIATE_WITH_DEBIT_NOTE));
 
 			}
 
@@ -271,6 +271,12 @@ public class ReceiptSearchOperationView extends View implements ReceiptSearchOpe
 	@Override
 	public void allowTransferToPolicy(boolean allow) {
 		this.operationsToolbar.allowTransfer(allow);
+		
+	}
+
+	@Override
+	public void allowAssociateDebitNote(boolean hasPermission) {
+		operationsToolbar.allowAssociateDebitNote(hasPermission);
 		
 	}
 

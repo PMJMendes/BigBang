@@ -117,6 +117,9 @@ public class ReceiptSectionViewPresenter implements ViewPresenter {
 				}else if(show.equalsIgnoreCase("receipttransfertopolicy")){
 					present("RECEIPT_INSURANCE_POLICY_TRANSFER", parameters);
 					view.showOverlayViewContainer(true);
+				}else if(show.equalsIgnoreCase("associatewithdebitnote")){
+					present("RECEIPT_ASSOCIATE_DEBIT_NOTE", parameters);
+					view.showOverlayViewContainer(true);
 				}
 
 			}

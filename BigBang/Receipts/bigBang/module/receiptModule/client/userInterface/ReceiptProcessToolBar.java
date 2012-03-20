@@ -303,4 +303,8 @@ public abstract class ReceiptProcessToolBar extends BigBangOperationsToolBar {
 		this.transferToPolicy.setEnabled(allow);
 	}
 
+	public void allowAssociateDebitNote(boolean hasPermission) {
+		this.associateWithDebitNote.setEnabled(hasPermission);
+	}
+
 }

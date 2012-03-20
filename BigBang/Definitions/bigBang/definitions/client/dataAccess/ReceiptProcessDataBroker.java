@@ -3,6 +3,7 @@ package bigBang.definitions.client.dataAccess;
 import java.util.Collection;
 
 import bigBang.definitions.client.response.ResponseHandler;
+import bigBang.definitions.shared.DebitNote;
 import bigBang.definitions.shared.Receipt;
 import bigBang.definitions.shared.ReceiptStub;
 
@@ -20,5 +21,11 @@ public interface ReceiptProcessDataBroker extends DataBrokerInterface<Receipt> {
 
 	void transferToInsurancePolicy(String receiptId, String newPolicyId,
 			ResponseHandler<Receipt> handler);
+
+	void associateWithDebitNote(String receiptId, String debitNoteId,
+			ResponseHandler<Receipt> handler);
+
+	void getRelevantDebitNotes(String receiptId,
+			ResponseHandler<DebitNote[]> handler);
 	
 }

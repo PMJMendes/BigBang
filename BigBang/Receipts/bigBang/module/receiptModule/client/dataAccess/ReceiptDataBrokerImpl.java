@@ -11,6 +11,7 @@ import bigBang.definitions.client.dataAccess.SearchDataBroker;
 import bigBang.definitions.client.response.ResponseError;
 import bigBang.definitions.client.response.ResponseHandler;
 import bigBang.definitions.shared.BigBangConstants;
+import bigBang.definitions.shared.DebitNote;
 import bigBang.definitions.shared.Receipt;
 import bigBang.definitions.shared.ReceiptStub;
 import bigBang.definitions.shared.SortOrder;
@@ -178,22 +179,22 @@ public class ReceiptDataBrokerImpl extends DataBroker<Receipt> implements Receip
 			}
 		});
 	}
-	
+
 	@Override
 	public void getReceiptsForOwner(String ownerId,
 			final ResponseHandler<Collection<ReceiptStub>> handler) {
 		ReceiptSearchParameter parameter = new ReceiptSearchParameter();
 		parameter.ownerId = ownerId;
-		
+
 		ReceiptSearchParameter[] parameters = new ReceiptSearchParameter[]{
 				parameter
 		};
-		
+
 		ReceiptSortParameter sort = new ReceiptSortParameter(SortableField.NUMBER, SortOrder.ASC);
 		ReceiptSortParameter[] sorts = new ReceiptSortParameter[]{
 				sort
 		};
-		
+
 		getSearchBroker().search(parameters, sorts, -1, new ResponseHandler<Search<ReceiptStub>>() {
 
 			@Override
@@ -204,11 +205,11 @@ public class ReceiptDataBrokerImpl extends DataBroker<Receipt> implements Receip
 			@Override
 			public void onError(Collection<ResponseError> errors) {
 				handler.onError(new String[]{
-					new String("Could not get the receipts for the owner id")
+						new String("Could not get the receipts for the owner id")
 				});
 			}
 		});
-		
+
 	}
 
 	@Override
@@ -242,4 +243,49 @@ public class ReceiptDataBrokerImpl extends DataBroker<Receipt> implements Receip
 		return this.searchBroker;
 	}
 
+	@Override
+	public void associateWithDebitNote(String receiptId, String debitNoteId, final ResponseHandler<Receipt> handler){
+		service.associateWithDebitNote(receiptId, debitNoteId, new BigBangAsyncCallback<Receipt>() {
+			public void onResponseSuccess(Receipt result) {
+				cache.add(result.id, result);
+				incrementDataVersion();
+				for(DataBrokerClient<Receipt> bc : getClients()){
+					((ReceiptDataBrokerClient) bc).updateReceipt(result);
+					((ReceiptDataBrokerClient) bc).setDataVersionNumber(BigBangConstants.EntityIds.RECEIPT, getCurrentDataVersion());
+				}
+				handler.onResponse(result);
+			}
+
+
+			public void onResponseFailure(Throwable caught) {
+				handler.onError(new String[]{
+						new String("Could not associate receipt with debit note")
+				});
+				super.onResponseFailure(caught);
+			}
+		});
+	}
+
+	@Override
+	public void getRelevantDebitNotes(String receiptId, final ResponseHandler<DebitNote[]> handler){
+		service.getRelevantDebitNotes(receiptId, new BigBangAsyncCallback<DebitNote[]>() {
+
+			@Override
+			public void onResponseSuccess(DebitNote[] result) {
+				handler.onResponse(result);
+
+			}
+
+			@Override
+			public void onResponseFailure(Throwable caught) {
+				handler.onError(new String[]{
+						new String("Could not get relevant debit notes")
+				});
+				super.onResponseFailure(caught);
+			}
+
+		});
+
+	}
 }
+
