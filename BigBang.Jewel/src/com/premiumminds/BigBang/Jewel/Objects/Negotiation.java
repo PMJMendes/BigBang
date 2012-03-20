@@ -38,7 +38,7 @@ public class Negotiation
 
     public String getLabel()
     {
-    	return ((Timestamp)getAt(2)).toString().substring(0, 10);
+    	return ( getAt(2) == null ? null : ((Timestamp)getAt(2)).toString().substring(0, 10) );
     }
 
 	public UUID GetProcessID()
