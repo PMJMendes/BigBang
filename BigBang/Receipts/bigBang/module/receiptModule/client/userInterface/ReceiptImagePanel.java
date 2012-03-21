@@ -1,4 +1,4 @@
-package bigBang.module.insurancePolicyModule.client.userInterface;
+package bigBang.module.receiptModule.client.userInterface;
 
 import bigBang.library.client.BigBangAsyncCallback;
 import bigBang.library.client.ValueSelectable;

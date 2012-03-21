@@ -29,7 +29,6 @@ public class SerialReceiptCreationViewPresenter implements ViewPresenter{
 		void registerActionHandler(
 				ActionInvokedEventHandler<Action> actionInvokedEventHandler);
 
-		void fillDocuPanel();
 
 
 	}
@@ -71,6 +70,6 @@ public class SerialReceiptCreationViewPresenter implements ViewPresenter{
 
 	@Override
 	public void setParameters(HasParameters parameterHolder) {
-		view.fillDocuPanel();
+		//TODO
 	}
 }
