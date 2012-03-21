@@ -95,6 +95,8 @@ public class QuoteRequest
 	{
 		private static final long serialVersionUID = 1L;
 
+		public String categoryId;
+		public String lineId;
 		public String subLineId;
 		public String headerText;
 		public HeaderField[] headerFields;
