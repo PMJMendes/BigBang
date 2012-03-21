@@ -129,8 +129,11 @@ public class DocuShareNavigationPanel extends View implements HasValue<DocuShare
 	}
 
 	protected void fetchListContent(final DocumentNavigationList list, final String dirDesc, final boolean showSubFolders){
-		if(dirDesc == null){
+		if(dirDesc == null) {
 			navigationPanel.setHomeWidget(list);
+		}
+		
+		if(dirDesc == null && ownerId != null && ownerTypeId != null){
 			list.showLoading(true);
 			service.getContext(ownerId, ownerTypeId, new BigBangAsyncCallback<DocuShareItem[]>() {
 
@@ -154,7 +157,6 @@ public class DocuShareNavigationPanel extends View implements HasValue<DocuShare
 			});
 			navigationPanel.navigateTo(list);
 		}else{
-			navigationPanel.navigateTo(list);
 			list.showLoading(true);
 			service.getItems(dirDesc, showSubFolders, new BigBangAsyncCallback<DocuShareItem[]>() {
 
@@ -173,6 +175,7 @@ public class DocuShareNavigationPanel extends View implements HasValue<DocuShare
 					list.showLoading(false);
 				}
 			});
+			navigationPanel.navigateTo(list);
 		}
 	}
 

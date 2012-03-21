@@ -15,12 +15,14 @@ import bigBang.module.receiptModule.client.userInterface.presenter.ReceiptReturn
 import bigBang.module.receiptModule.client.userInterface.presenter.ReceiptSearchOperationViewPresenter;
 import bigBang.module.receiptModule.client.userInterface.presenter.ReceiptSectionViewPresenter;
 import bigBang.module.receiptModule.client.userInterface.presenter.ReceiptTransferToPolicyViewPresenter;
+import bigBang.module.receiptModule.client.userInterface.presenter.SerialReceiptCreationViewPresenter;
 import bigBang.module.receiptModule.client.userInterface.view.ReceiptOperationsView;
 import bigBang.module.receiptModule.client.userInterface.view.ReceiptAssociateWithDebitNoteView;
 import bigBang.module.receiptModule.client.userInterface.view.ReceiptReturnView;
 import bigBang.module.receiptModule.client.userInterface.view.ReceiptSearchOperationView;
 import bigBang.module.receiptModule.client.userInterface.view.ReceiptSectionView;
 import bigBang.module.receiptModule.client.userInterface.view.ReceiptTransferToPolicyView;
+import bigBang.module.receiptModule.client.userInterface.view.SerialReceiptCreationView;
 
 import com.google.gwt.core.client.GWT;
 
@@ -102,6 +104,14 @@ public class ReceiptModule implements Module {
 			public ViewPresenter getInstance() {
 				ReceiptReturnView view = (ReceiptReturnView) GWT.create(ReceiptReturnView.class);
 				ReceiptReturnViewPresenter presenter = new ReceiptReturnViewPresenter(view);
+				return presenter;
+			}
+		});
+		ViewPresenterFactory.getInstance().registerViewPresenterInstantiator("SERIAL_RECEIPT_CREATION", new ViewPresenterInstantiator(){
+			@Override
+			public ViewPresenter getInstance() {
+				SerialReceiptCreationView view = (SerialReceiptCreationView) GWT.create(SerialReceiptCreationView.class);
+				SerialReceiptCreationViewPresenter presenter = new SerialReceiptCreationViewPresenter(view);
 				return presenter;
 			}
 		});

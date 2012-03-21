@@ -37,9 +37,10 @@ public class ReceiptReturnView extends View implements ReceiptReturnViewPresente
 				
 			}
 		};
-		
+		toolbar.setHeight("21px");
 		wrapper.add(toolbar);
-		wrapper.add(form.getNonScrollableContent());
+		wrapper.add(form);
+		wrapper.setCellHeight(form, "100%");
 		
 	}
 

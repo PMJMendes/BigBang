@@ -96,7 +96,10 @@ public class ReceiptSectionViewPresenter implements ViewPresenter {
 
 					if(display.equalsIgnoreCase("history")){
 						present("HISTORY", parameters);
-					}else{
+					}else if(display.equalsIgnoreCase("serialreceiptcreation")){
+						present("SERIAL_RECEIPT_CREATION", parameters);
+					}
+					else{
 						present("RECEIPT_OPERATIONS", parameters);
 					}
 				}
@@ -112,7 +115,7 @@ public class ReceiptSectionViewPresenter implements ViewPresenter {
 
 				if(show.isEmpty()){
 					view.showOverlayViewContainer(false);
-				
+
 					//OVERLAY VIEWS
 				}else if(show.equalsIgnoreCase("receipttransfertopolicy")){
 					present("RECEIPT_INSURANCE_POLICY_TRANSFER", parameters);
