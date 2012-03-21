@@ -1,7 +1,11 @@
 package com.premiumminds.BigBang.Jewel.SysObjects;
 
+import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.UUID;
+
+import org.apache.pdfbox.pdmodel.PDDocument;
+import org.apache.pdfbox.pdmodel.PDPage;
 
 import Jewel.Engine.Engine;
 import Jewel.Engine.SysObjects.FileXfer;
@@ -236,6 +240,63 @@ public class DocuShareConnector
 		return lobjFile;
 	}
 
+	public static BufferedImage getItemAsImage(String pstrItem)
+		throws BigBangJewelException
+	{
+		DSSession lrefSession;
+		DSDocument lobjAux;
+		DSContentElement[] larrAux;
+		PDDocument lobjDocument;
+		PDPage lobjPage;
+		BufferedImage lobjImage;
+
+		lrefSession = GetSession();
+		if ( lrefSession == null )
+			return null;
+
+		try
+		{
+			lobjAux = (DSDocument)lrefSession.getObject(new DSHandle(pstrItem));
+			larrAux = lobjAux.getContentElements();
+			larrAux[0].open();
+			try
+			{
+				lobjDocument = PDDocument.load(larrAux[0]);
+			}
+			catch (Throwable e1)
+			{
+				try { larrAux[0].close(); } catch (Throwable e2) {}
+				throw e1;
+			}
+			try
+			{
+				larrAux[0].close();
+			}
+			catch (Throwable e1)
+			{
+				try { lobjDocument.close(); } catch (Throwable e2) {}
+				throw e1;
+			}
+			lobjPage = (PDPage)lobjDocument.getDocumentCatalog().getAllPages().get(0);
+			try
+			{
+				lobjImage = lobjPage.convertToImage(BufferedImage.TYPE_INT_ARGB, 200);
+			}
+			catch (Throwable e1)
+			{
+				try { lobjDocument.close(); } catch (Throwable e2) {}
+				throw e1;
+			}
+			lobjDocument.close();
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangJewelException(e.getMessage(), e);
+		}
+
+		return lobjImage;
+	}
+
 	public static void createItem(FileXfer pobjFile, String pstrTitle, String pstrLocation)
 		throws BigBangJewelException
 	{
@@ -386,69 +447,6 @@ public class DocuShareConnector
 //
 //		return lidKey.toString();
 //	}
-
-	public static String getItemAsImage(String pstrItem)
-		throws BigBangJewelException
-	{
-//		DSSession lrefSession;
-//		DSDocument lobjAux;
-//		DSContentElement[] larrAux;
-//		PdfDecoder lobjDecoder;
-//		BufferedImage lobjImage;
-//		ByteArrayOutputStream lstreamOutput;
-//		byte[] larrBuffer;
-//		ByteArrayInputStream lstreamInput;
-//		FileXfer lobjFile;
-//		UUID lidKey;
-//
-//		lrefSession = GetSession();
-//		if ( lrefSession == null )
-//			return null;
-//
-//		try
-//		{
-//			lobjAux = (DSDocument)lrefSession.getObject(new DSHandle(pstrItem));
-//			larrAux = lobjAux.getContentElements();
-//			larrAux[0].open();
-//			lobjDecoder = new PdfDecoder();
-//			try
-//			{
-//				lobjDecoder.openPdfFileFromInputStream(larrAux[0], false);
-//			}
-//			catch (Throwable e1)
-//			{
-//				try { larrAux[0].close(); } catch (Throwable e2) {}
-//				throw e1;
-//			}
-//			try
-//			{
-//				larrAux[0].close();
-//				lobjImage = lobjDecoder.getPageAsImage(1);
-////				lobjImage = lobjDecoder.getPageAsHiRes(1);
-//			}
-//			catch (Throwable e1)
-//			{
-//				lobjDecoder.closePdfFile();
-//				throw e1;
-//			}
-//			lobjDecoder.closePdfFile();
-//
-//			lstreamOutput = new ByteArrayOutputStream();
-//			ImageIO.write(lobjImage, "png", lstreamOutput);
-//			larrBuffer = lstreamOutput.toByteArray();
-//			lstreamInput = new ByteArrayInputStream(larrBuffer);
-//			lobjFile = new FileXfer(larrBuffer.length, "image/png", "pdfPage.png", lstreamInput);
-//		}
-//		catch (Throwable e)
-//		{
-//			throw new BigBangJewelException(e.getMessage(), e);
-//		}
-//
-//		lidKey = UUID.randomUUID();
-//		FileServiceImpl.GetFileXferStorage().put(lidKey, lobjFile);
-
-		return null;//lidKey.toString();
-	}
 
 	private static DSObject[] getItemsContext(String pstrFolder, boolean pbInjectTSR)
 		throws BigBangJewelException

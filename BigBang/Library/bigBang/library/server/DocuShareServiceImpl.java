@@ -1,6 +1,11 @@
 package bigBang.library.server;
 
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.util.UUID;
+
+import javax.imageio.ImageIO;
 
 import Jewel.Engine.Engine;
 import Jewel.Engine.SysObjects.FileXfer;
@@ -259,85 +264,45 @@ public class DocuShareServiceImpl
 		return lidKey.toString();
 	}
 
-//	public String getItemAsImage(String pstrItem)
-//		throws SessionExpiredException, BigBangException
-//	{
-//		DSSession lrefSession;
-//		DSDocument lobjAux;
-//		DSContentElement[] larrAux;
-//		PDDocument lobjDocument;
-//		PDPage lobjPage;
-//		BufferedImage lobjImage;
-//		ByteArrayOutputStream lstreamOutput;
-//		byte[] larrBuffer;
-//		ByteArrayInputStream lstreamInput;
-//		FileXfer lobjFile;
-//		UUID lidKey;
-//
-//		if ( Engine.getCurrentUser() == null )
-//			throw new SessionExpiredException();
-//
-//		lrefSession = GetSession();
-//		if ( lrefSession == null )
-//			return null;
-//
-//		try
-//		{
-//			lobjAux = (DSDocument)lrefSession.getObject(new DSHandle(pstrItem));
-//			larrAux = lobjAux.getContentElements();
-//			larrAux[0].open();
-//			try
-//			{
-//				lobjDocument = PDDocument.load(larrAux[0]);
-//			}
-//			catch (Throwable e1)
-//			{
-//				try { larrAux[0].close(); } catch (Throwable e2) {}
-//				throw e1;
-//			}
-//			try
-//			{
-//				larrAux[0].close();
-//			}
-//			catch (Throwable e1)
-//			{
-//				try { lobjDocument.close(); } catch (Throwable e2) {}
-//				throw e1;
-//			}
-//			lobjPage = (PDPage)lobjDocument.getDocumentCatalog().getAllPages().get(0);
-//			try
-//			{
-//				lobjImage = lobjPage.convertToImage(BufferedImage.TYPE_INT_ARGB, 200);
-//			}
-//			catch (Throwable e1)
-//			{
-//				try { lobjDocument.close(); } catch (Throwable e2) {}
-//				throw e1;
-//			}
-//			lobjDocument.close();
-//
-//			lstreamOutput = new ByteArrayOutputStream();
-//			ImageIO.write(lobjImage, "png", lstreamOutput);
-////			ImageIO.write(lobjImage, "jpg", lstreamOutput);
-//			larrBuffer = lstreamOutput.toByteArray();
-//			lstreamInput = new ByteArrayInputStream(larrBuffer);
-//			lobjFile = new FileXfer(larrBuffer.length, "image/png", "pdfPage.png", lstreamInput);
-////			lobjFile = new FileXfer(larrBuffer.length, "image/jpeg", "pdfPage.jpg", lstreamInput);
-//		}
-//		catch (Throwable e)
-//		{
-//			throw new BigBangException(e.getMessage(), e);
-//		}
-//
-//		lidKey = UUID.randomUUID();
-//		FileServiceImpl.GetFileXferStorage().put(lidKey, lobjFile);
-//
-//		return lidKey.toString();
-//	}
-
 	public String getItemAsImage(String pstrItem)
 		throws SessionExpiredException, BigBangException
 	{
+		BufferedImage lobjImage;
+		ByteArrayOutputStream lstreamOutput;
+		byte[] larrBuffer;
+		ByteArrayInputStream lstreamInput;
+		FileXfer lobjFile;
+		UUID lidKey;
+
+		if ( Engine.getCurrentUser() == null )
+			throw new SessionExpiredException();
+
+		try
+		{
+			lobjImage = DocuShareConnector.getItemAsImage(pstrItem);
+
+			lstreamOutput = new ByteArrayOutputStream();
+			ImageIO.write(lobjImage, "png", lstreamOutput);
+//			ImageIO.write(lobjImage, "jpg", lstreamOutput);
+			larrBuffer = lstreamOutput.toByteArray();
+			lstreamInput = new ByteArrayInputStream(larrBuffer);
+			lobjFile = new FileXfer(larrBuffer.length, "image/png", "pdfPage.png", lstreamInput);
+//			lobjFile = new FileXfer(larrBuffer.length, "image/jpeg", "pdfPage.jpg", lstreamInput);
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangException(e.getMessage(), e);
+		}
+
+		lidKey = UUID.randomUUID();
+		FileServiceImpl.GetFileXferStorage().put(lidKey, lobjFile);
+
+		return lidKey.toString();
+	}
+
+//	public String getItemAsImage(String pstrItem)
+//		throws SessionExpiredException, BigBangException
+//	{
 //		DSSession lrefSession;
 //		DSDocument lobjAux;
 //		DSContentElement[] larrAux;
@@ -397,9 +362,9 @@ public class DocuShareServiceImpl
 //
 //		lidKey = UUID.randomUUID();
 //		FileServiceImpl.GetFileXferStorage().put(lidKey, lobjFile);
-
-		return null;//lidKey.toString();
-	}
+//
+//		return lidKey.toString();
+//	}
 
 //	private DocuShareItem[] getItemsContext(String pstrFolder, boolean pbInjectTSR)
 //		throws SessionExpiredException, BigBangException
