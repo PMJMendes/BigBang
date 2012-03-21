@@ -120,6 +120,9 @@ public class ReceiptSectionViewPresenter implements ViewPresenter {
 				}else if(show.equalsIgnoreCase("associatewithdebitnote")){
 					present("RECEIPT_ASSOCIATE_DEBIT_NOTE", parameters);
 					view.showOverlayViewContainer(true);
+				}else if(show.equalsIgnoreCase("returnreceipt")){
+					present("RECEIPT_RETURN", parameters);
+					view.showOverlayViewContainer(true);
 				}
 
 			}

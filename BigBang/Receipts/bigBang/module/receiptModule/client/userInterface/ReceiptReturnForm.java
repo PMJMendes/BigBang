@@ -5,14 +5,15 @@ import bigBang.definitions.shared.TypifiedText;
 import bigBang.library.client.userInterface.TypifiedTextFormField;
 import bigBang.library.client.userInterface.view.FormView;
 
-public class ReceiptReturnMessageForm extends FormView<ReturnMessage>{
+public class ReceiptReturnForm extends FormView<ReturnMessage>{
 
 	private TypifiedTextFormField message = new TypifiedTextFormField();
 
 	
-	public ReceiptReturnMessageForm(){
+	public ReceiptReturnForm(){
 		
 		addSection("Detalhes da devolução");
+		message.setTypifiedTexts("RETURNRECEIPT");
 		addFormField(message);
 		
 	}
@@ -30,11 +31,28 @@ public class ReceiptReturnMessageForm extends FormView<ReturnMessage>{
 	@Override
 	public void setInfo(ReturnMessage info) {
 	
+		if(info == null){
+			clear();
+			return;
+		}
+		
 		TypifiedText newText = new TypifiedText();
 		newText.text = info.text;
 		newText.subject = info.subject;
 		message.setValue(newText);
 		
+		
+	}
+
+	private void clear() {
+		
+		ReturnMessage newMessage = new ReturnMessage();
+		
+		newMessage.text = "";
+		newMessage.subject = "";
+		newMessage.receiptId = "";
+		
+		setValue(newMessage);
 		
 	}
 

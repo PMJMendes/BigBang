@@ -11,11 +11,13 @@ import bigBang.library.client.userInterface.view.InsurancePolicySelectionView;
 import bigBang.module.receiptModule.client.dataAccess.ReceiptDataBrokerImpl;
 import bigBang.module.receiptModule.client.userInterface.presenter.ReceiptOperationsViewPresenter;
 import bigBang.module.receiptModule.client.userInterface.presenter.ReceiptAssociateWithDebitNoteViewPresenter;
+import bigBang.module.receiptModule.client.userInterface.presenter.ReceiptReturnViewPresenter;
 import bigBang.module.receiptModule.client.userInterface.presenter.ReceiptSearchOperationViewPresenter;
 import bigBang.module.receiptModule.client.userInterface.presenter.ReceiptSectionViewPresenter;
 import bigBang.module.receiptModule.client.userInterface.presenter.ReceiptTransferToPolicyViewPresenter;
 import bigBang.module.receiptModule.client.userInterface.view.ReceiptOperationsView;
 import bigBang.module.receiptModule.client.userInterface.view.ReceiptAssociateWithDebitNoteView;
+import bigBang.module.receiptModule.client.userInterface.view.ReceiptReturnView;
 import bigBang.module.receiptModule.client.userInterface.view.ReceiptSearchOperationView;
 import bigBang.module.receiptModule.client.userInterface.view.ReceiptSectionView;
 import bigBang.module.receiptModule.client.userInterface.view.ReceiptTransferToPolicyView;
@@ -91,6 +93,15 @@ public class ReceiptModule implements Module {
 			public ViewPresenter getInstance() {
 				ReceiptAssociateWithDebitNoteView view = (ReceiptAssociateWithDebitNoteView) GWT.create(ReceiptAssociateWithDebitNoteView.class);
 				ReceiptAssociateWithDebitNoteViewPresenter presenter = new ReceiptAssociateWithDebitNoteViewPresenter(view);
+				return presenter;
+			}
+		});
+		ViewPresenterFactory.getInstance().registerViewPresenterInstantiator("RECEIPT_RETURN", new ViewPresenterInstantiator() {
+			
+			@Override
+			public ViewPresenter getInstance() {
+				ReceiptReturnView view = (ReceiptReturnView) GWT.create(ReceiptReturnView.class);
+				ReceiptReturnViewPresenter presenter = new ReceiptReturnViewPresenter(view);
 				return presenter;
 			}
 		});

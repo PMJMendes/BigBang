@@ -5,6 +5,7 @@ import java.util.Collection;
 import bigBang.definitions.client.response.ResponseHandler;
 import bigBang.definitions.shared.DebitNote;
 import bigBang.definitions.shared.Receipt;
+import bigBang.definitions.shared.Receipt.ReturnMessage;
 import bigBang.definitions.shared.ReceiptStub;
 
 public interface ReceiptProcessDataBroker extends DataBrokerInterface<Receipt> {
@@ -27,5 +28,9 @@ public interface ReceiptProcessDataBroker extends DataBrokerInterface<Receipt> {
 
 	void getRelevantDebitNotes(String receiptId,
 			ResponseHandler<DebitNote[]> handler);
+
+	void setForReturn(ReturnMessage message, ResponseHandler<Receipt> handler);
+
+	void validateReceipt(String receiptId, ResponseHandler<Receipt> handler);
 	
 }

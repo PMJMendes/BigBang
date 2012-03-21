@@ -75,6 +75,7 @@ public class ReceiptSearchOperationViewPresenter implements ViewPresenter {
 	protected Display view;
 	protected boolean bound;
 	protected ReceiptProcessDataBroker receiptBroker;
+	private String receiptId;
 
 	public ReceiptSearchOperationViewPresenter(View view) {
 		setView(view);
@@ -95,7 +96,7 @@ public class ReceiptSearchOperationViewPresenter implements ViewPresenter {
 
 	@Override
 	public void setParameters(HasParameters parameterHolder) {
-		String receiptId = parameterHolder.getParameter("receiptid");
+		receiptId = parameterHolder.getParameter("receiptid");
 
 		if(receiptId == null || receiptId.isEmpty()) {
 			clearView();
@@ -152,10 +153,10 @@ public class ReceiptSearchOperationViewPresenter implements ViewPresenter {
 					associateWithDebitNote();
 					break;
 				case SET_FOR_RETURN:
-					//TODO
+					setForReturn();
 					break;
 				case VALIDATE:
-					//TODO
+					onValidate();
 					break;
 				}
 
@@ -164,6 +165,31 @@ public class ReceiptSearchOperationViewPresenter implements ViewPresenter {
 
 		//APPLICATION-WIDE EVENTS
 		bound = true;
+	}
+
+	protected void onValidate() {
+		
+		receiptBroker.validateReceipt(receiptId, new ResponseHandler<Receipt>() {
+			
+			@Override
+			public void onResponse(Receipt response) {
+				EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "O recibo foi validado com sucesso"), TYPE.TRAY_NOTIFICATION));
+				NavigationHistoryManager.getInstance().reload();
+			}
+			
+			@Override
+			public void onError(Collection<ResponseError> errors) {
+				EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não foi possível validar o recibo"), TYPE.ALERT_NOTIFICATION));
+				NavigationHistoryManager.getInstance().reload();
+			}
+		});
+		
+	}
+
+	protected void setForReturn() {
+		NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
+		item.setParameter("show", "returnreceipt");
+		NavigationHistoryManager.getInstance().go(item);
 	}
 
 	protected void associateWithDebitNote() {

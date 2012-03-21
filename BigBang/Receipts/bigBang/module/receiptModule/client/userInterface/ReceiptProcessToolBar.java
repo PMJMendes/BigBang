@@ -70,7 +70,7 @@ public abstract class ReceiptProcessToolBar extends BigBangOperationsToolBar {
 		});
 		addItem(SUB_MENU.EXECUTE, transferToPolicy);
 		this.executeSubMenu.addSeparator();
-		validate = new MenuItem("Validação", new Command() {
+		validate = new MenuItem("Validar", new Command() {
 			
 			@Override
 			public void execute() {

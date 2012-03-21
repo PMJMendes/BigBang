@@ -13,6 +13,7 @@ import bigBang.definitions.client.response.ResponseHandler;
 import bigBang.definitions.shared.BigBangConstants;
 import bigBang.definitions.shared.DebitNote;
 import bigBang.definitions.shared.Receipt;
+import bigBang.definitions.shared.Receipt.ReturnMessage;
 import bigBang.definitions.shared.ReceiptStub;
 import bigBang.definitions.shared.SortOrder;
 import bigBang.library.client.BigBangAsyncCallback;
@@ -283,9 +284,59 @@ public class ReceiptDataBrokerImpl extends DataBroker<Receipt> implements Receip
 				});
 				super.onResponseFailure(caught);
 			}
-
 		});
 
+	}
+
+	@Override
+	public void setForReturn(ReturnMessage message, final ResponseHandler<Receipt> handler){
+		service.setForReturn(message, new BigBangAsyncCallback<Receipt>() {
+
+			@Override
+			public void onResponseSuccess(Receipt result) {
+				cache.add(result.id, result);
+				incrementDataVersion();
+				for(DataBrokerClient<Receipt> bc : getClients()){
+					((ReceiptDataBrokerClient) bc).updateReceipt(result);
+					((ReceiptDataBrokerClient) bc).setDataVersionNumber(BigBangConstants.EntityIds.RECEIPT, getCurrentDataVersion());
+				}
+				handler.onResponse(result);
+
+			};
+
+			@Override
+			public void onResponseFailure(Throwable caught) {
+				handler.onError(new String[]{
+						new String("Could not set receipt for return")
+				});
+				super.onResponseFailure(caught);
+			}
+		});
+	}
+	
+	@Override
+	public void validateReceipt(String receiptId, final ResponseHandler<Receipt> handler){
+		service.validateReceipt(receiptId, new BigBangAsyncCallback<Receipt>() {
+
+			@Override
+			public void onResponseSuccess(Receipt result) {
+				cache.add(result.id, result);
+				incrementDataVersion();
+				for(DataBrokerClient<Receipt> bc : getClients()){
+					((ReceiptDataBrokerClient) bc).updateReceipt(result);
+					((ReceiptDataBrokerClient) bc).setDataVersionNumber(BigBangConstants.EntityIds.RECEIPT, getCurrentDataVersion());
+				}
+				handler.onResponse(result);
+			}
+			
+			@Override
+			public void onResponseFailure(Throwable caught) {
+				handler.onError(new String[]{
+						new String("Could not validate receipt")
+				});
+				super.onResponseFailure(caught);
+			}
+		});
 	}
 }
 
