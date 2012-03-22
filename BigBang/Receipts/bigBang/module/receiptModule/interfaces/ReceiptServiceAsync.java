@@ -1,15 +1,16 @@
 package bigBang.module.receiptModule.interfaces;
 
-import com.google.gwt.user.client.rpc.AsyncCallback;
-
 import bigBang.definitions.shared.DebitNote;
 import bigBang.definitions.shared.DocuShareItem;
 import bigBang.definitions.shared.Receipt;
 import bigBang.definitions.shared.Receipt.ReturnMessage;
+import bigBang.library.interfaces.ExactItemSubServiceAsync;
 import bigBang.library.interfaces.SearchServiceAsync;
 
+import com.google.gwt.user.client.rpc.AsyncCallback;
+
 public interface ReceiptServiceAsync
-	extends SearchServiceAsync
+	extends SearchServiceAsync, ExactItemSubServiceAsync
 {
 	void getReceipt(String receiptId, AsyncCallback<Receipt> callback);
 	void editReceipt(Receipt receipt, AsyncCallback<Receipt> callback);

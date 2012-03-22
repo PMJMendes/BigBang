@@ -3,6 +3,7 @@ package bigBang.module.receiptModule.interfaces;
 import bigBang.definitions.shared.DebitNote;
 import bigBang.definitions.shared.DocuShareItem;
 import bigBang.definitions.shared.Receipt;
+import bigBang.library.interfaces.ExactItemSubService;
 import bigBang.library.interfaces.SearchService;
 import bigBang.library.shared.BigBangException;
 import bigBang.library.shared.SessionExpiredException;
@@ -11,7 +12,9 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 
 @RemoteServiceRelativePath("ReceiptService")
-public interface ReceiptService extends SearchService {
+public interface ReceiptService
+	extends SearchService, ExactItemSubService
+{
 	/**
 	 * Utility class for simplifying access to the instance of async service.
 	 */

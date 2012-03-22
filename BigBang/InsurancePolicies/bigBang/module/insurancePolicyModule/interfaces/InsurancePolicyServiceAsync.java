@@ -4,20 +4,21 @@ import bigBang.definitions.shared.DebitNote;
 import bigBang.definitions.shared.Exercise;
 import bigBang.definitions.shared.InfoOrDocumentRequest;
 import bigBang.definitions.shared.InsurancePolicy;
-import bigBang.definitions.shared.Negotiation;
-import bigBang.definitions.shared.PolicyVoiding;
 import bigBang.definitions.shared.InsurancePolicy.TableSection;
 import bigBang.definitions.shared.InsuredObject;
 import bigBang.definitions.shared.ManagerTransfer;
+import bigBang.definitions.shared.Negotiation;
+import bigBang.definitions.shared.PolicyVoiding;
 import bigBang.definitions.shared.Receipt;
 import bigBang.definitions.shared.Remap;
 import bigBang.library.interfaces.DependentItemSubServiceAsync;
+import bigBang.library.interfaces.ExactItemSubServiceAsync;
 import bigBang.library.interfaces.SearchServiceAsync;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 public interface InsurancePolicyServiceAsync
-	extends SearchServiceAsync, DependentItemSubServiceAsync
+	extends SearchServiceAsync, DependentItemSubServiceAsync, ExactItemSubServiceAsync
 {
 	void getPolicy(String policyId, AsyncCallback<InsurancePolicy> callback);
 	void getPage(String policyId, String insuredObjectId, String exerciseId, AsyncCallback<TableSection> callback);

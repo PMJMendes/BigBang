@@ -1,6 +1,7 @@
 package bigBang.module.insurancePolicyModule.server;
 
 import java.math.BigDecimal;
+import java.sql.ResultSet;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -2800,6 +2801,124 @@ public class InsurancePolicyServiceImpl
 			throw new SessionExpiredException();
 
 		return sGetPolicy(UUID.fromString(policyId));
+	}
+
+	public SearchResult[] getExactResults(String label)
+		throws SessionExpiredException, BigBangException
+	{
+		ArrayList<SearchResult> larrResult;
+        IEntity lrefPolicies;
+        MasterDB ldb;
+        ResultSet lrsPolicies;
+        Policy lobjPolicy;
+		IProcess lobjProc;
+		Client lobjClient;
+		SubLine lobjSubLine;
+		Line lobjLine;
+		Category lobjCategory;
+		ObjectBase lobjStatus;
+		InsurancePolicyStub lobjStub;
+
+		if ( Engine.getCurrentUser() == null )
+			throw new SessionExpiredException();
+
+		larrResult = new ArrayList<SearchResult>();
+
+		try
+        {
+            lrefPolicies = Entity.GetInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), Constants.ObjID_Policy));
+            ldb = new MasterDB();
+        }
+        catch (Throwable e)
+        {
+            throw new BigBangException(e.getMessage(), e);
+        }
+
+        try
+        {
+            lrsPolicies = lrefPolicies.SelectByMembers(ldb, new int[] {0}, new java.lang.Object[] {"!" + label}, null);
+        }
+        catch (Throwable e)
+        {
+        	try {ldb.Disconnect();} catch (Throwable e1) {}
+            throw new BigBangException(e.getMessage(), e);
+        }
+
+        try
+        {
+            while (lrsPolicies.next())
+            {
+            	lobjPolicy = Policy.GetInstance(Engine.getCurrentNameSpace(), lrsPolicies);
+    			lobjProc = PNProcess.GetInstance(Engine.getCurrentNameSpace(), lobjPolicy.GetProcessID());
+    			lobjClient = Client.GetInstance(Engine.getCurrentNameSpace(), lobjProc.GetParent().GetData().getKey());
+    			lobjSubLine = lobjPolicy.GetSubLine();
+    			lobjLine = lobjSubLine.getLine();
+    			lobjCategory = lobjLine.getCategory();
+    			lobjStatus = Engine.GetWorkInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), Constants.ObjID_PolicyStatus),
+    					(UUID)lobjPolicy.getAt(13));
+
+            	lobjStub = new InsurancePolicyStub();
+
+            	lobjStub.id = lobjPolicy.getKey().toString();
+            	lobjStub.processId = lobjProc.getKey().toString();
+            	lobjStub.number = (String)lobjPolicy.getAt(0);
+            	lobjStub.clientId = lobjClient.getKey().toString();
+            	lobjStub.clientNumber = ((Integer)lobjClient.getAt(1)).toString();
+            	lobjStub.clientName = lobjClient.getLabel();
+            	lobjStub.categoryId = lobjCategory.getKey().toString();
+            	lobjStub.categoryName = lobjCategory.getLabel();
+            	lobjStub.lineId = lobjLine.getKey().toString();
+            	lobjStub.lineName = lobjLine.getLabel();
+            	lobjStub.subLineId = lobjSubLine.getKey().toString();
+            	lobjStub.subLineName = lobjSubLine.getLabel();
+            	lobjStub.caseStudy = (Boolean)lobjPolicy.getAt(12);
+            	lobjStub.statusId = lobjStatus.getKey().toString();
+            	lobjStub.statusText = lobjStatus.getLabel();
+        		switch ( (Integer)lobjStatus.getAt(1) )
+        		{
+        		case 0:
+        			lobjStub.statusIcon = InsurancePolicyStub.PolicyStatus.PROVISIONAL;
+        			break;
+
+        		case 1:
+        			lobjStub.statusIcon = InsurancePolicyStub.PolicyStatus.VALID;
+        			break;
+
+        		case 2:
+        			lobjStub.statusIcon = InsurancePolicyStub.PolicyStatus.OBSOLETE;
+        			break;
+        		}
+
+            	larrResult.add(lobjStub);
+            }
+        }
+        catch (Throwable e)
+        {
+        	try {lrsPolicies.close();} catch (Throwable e2) {}
+        	try {ldb.Disconnect();} catch (Throwable e1) {}
+            throw new BigBangException(e.getMessage(), e);
+        }
+
+        try
+        {
+            lrsPolicies.close();
+        }
+        catch (Throwable e)
+        {
+        	try {ldb.Disconnect();} catch (Throwable e1) {}
+            throw new BigBangException(e.getMessage(), e);
+        }
+
+        try
+        {
+            ldb.Disconnect();
+        }
+        catch (Throwable e)
+        {
+            throw new BigBangException(e.getMessage(), e);
+        }
+
+		return larrResult.toArray(new SearchResult[larrResult.size()]);
 	}
 
 	public InsurancePolicy.TableSection getPage(String policyId, String insuredObjectId, String exerciseId)

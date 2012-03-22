@@ -32,6 +32,19 @@ public class Receipt
 		}
 	}
 
+    public static Receipt GetInstance(UUID pidNameSpace, ResultSet prsObject)
+		throws BigBangJewelException
+	{
+	    try
+	    {
+			return (Receipt)Engine.GetWorkInstance(Engine.FindEntity(pidNameSpace, Constants.ObjID_Receipt), prsObject);
+		}
+	    catch (Throwable e)
+	    {
+	    	throw new BigBangJewelException(e.getMessage(), e);
+		}
+	}
+
 	public void Initialize()
 		throws JewelEngineException
 	{

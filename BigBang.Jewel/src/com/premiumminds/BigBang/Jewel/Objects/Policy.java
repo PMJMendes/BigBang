@@ -33,6 +33,19 @@ public class Policy
 		}
 	}
 
+    public static Policy GetInstance(UUID pidNameSpace, ResultSet prsObject)
+		throws BigBangJewelException
+	{
+	    try
+	    {
+			return (Policy)Engine.GetWorkInstance(Engine.FindEntity(pidNameSpace, Constants.ObjID_Policy), prsObject);
+		}
+	    catch (Throwable e)
+	    {
+	    	throw new BigBangJewelException(e.getMessage(), e);
+		}
+	}
+
     private SubLine mrefSubLine;
 
 	public void Initialize()

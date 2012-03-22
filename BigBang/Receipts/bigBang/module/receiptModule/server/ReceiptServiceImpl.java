@@ -159,6 +159,128 @@ public class ReceiptServiceImpl
 		return sGetReceipt(UUID.fromString(receiptId));
 	}
 
+	public SearchResult[] getExactResults(String label)
+		throws SessionExpiredException, BigBangException
+	{
+		ArrayList<SearchResult> larrResult;
+        IEntity lrefReceipts;
+        MasterDB ldb;
+        ResultSet lrsReceipts;
+        com.premiumminds.BigBang.Jewel.Objects.Receipt lobjReceipt;
+		IProcess lobjProc;
+		Policy lobjPolicy;
+		SubPolicy lobjSubPolicy;
+		Client lobjClient;
+		SubLine lobjSubLine;
+		Line lobjLine;
+		ObjectBase lobjCategory;
+		ObjectBase lobjType;
+		ReceiptStub lobjStub;
+
+		if ( Engine.getCurrentUser() == null )
+			throw new SessionExpiredException();
+
+		larrResult = new ArrayList<SearchResult>();
+
+		try
+        {
+            lrefReceipts = Entity.GetInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), Constants.ObjID_Receipt));
+            ldb = new MasterDB();
+        }
+        catch (Throwable e)
+        {
+            throw new BigBangException(e.getMessage(), e);
+        }
+
+        try
+        {
+            lrsReceipts = lrefReceipts.SelectByMembers(ldb, new int[] {0}, new java.lang.Object[] {"!" + label}, null);
+        }
+        catch (Throwable e)
+        {
+        	try {ldb.Disconnect();} catch (Throwable e1) {}
+            throw new BigBangException(e.getMessage(), e);
+        }
+
+        try
+        {
+            while (lrsReceipts.next())
+            {
+            	lobjReceipt = com.premiumminds.BigBang.Jewel.Objects.Receipt.GetInstance(Engine.getCurrentNameSpace(), lrsReceipts);
+    			lobjProc = PNProcess.GetInstance(Engine.getCurrentNameSpace(), lobjReceipt.GetProcessID());
+    			if ( Constants.ProcID_Policy.equals(lobjProc.GetParent().GetScriptID()) )
+    			{
+    				lobjPolicy = (Policy)lobjProc.GetParent().GetData();
+    				lobjSubPolicy = null;
+    				lobjClient = (Client)lobjProc.GetParent().GetParent().GetData();
+    			}
+    			else
+    			{
+    				lobjSubPolicy = (SubPolicy)lobjProc.GetParent().GetData();
+    				lobjPolicy = (Policy)lobjProc.GetParent().GetParent().GetData();;
+    				lobjClient = Client.GetInstance(Engine.getCurrentNameSpace(), (UUID)lobjSubPolicy.getAt(2));
+    			}
+    			lobjSubLine = lobjPolicy.GetSubLine();
+    			lobjLine = lobjSubLine.getLine();
+    			lobjCategory = lobjLine.getCategory();
+    			lobjType = Engine.GetWorkInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), Constants.ObjID_ReceiptType),
+    					(UUID)lobjReceipt.getAt(1));
+
+            	lobjStub = new ReceiptStub();
+
+            	lobjStub.id = lobjReceipt.getKey().toString();
+            	lobjStub.processId = lobjProc.getKey().toString();
+            	lobjStub.number = (String)lobjReceipt.getAt(0);
+            	lobjStub.clientId = lobjClient.getKey().toString();
+            	lobjStub.clientNumber = ((Integer)lobjClient.getAt(1)).toString();
+            	lobjStub.clientName = lobjClient.getLabel();
+            	lobjStub.policyId = ( lobjSubPolicy == null ? lobjPolicy.getKey().toString() : lobjSubPolicy.getKey().toString() );
+            	lobjStub.policyNumber = ( lobjSubPolicy == null ? lobjPolicy.getLabel() : lobjSubPolicy.getLabel() );
+            	lobjStub.categoryId = lobjCategory.getKey().toString();
+            	lobjStub.categoryName = lobjCategory.getLabel();
+            	lobjStub.lineId = lobjLine.getKey().toString();
+            	lobjStub.lineName = lobjLine.getLabel();
+            	lobjStub.subLineId = lobjSubLine.getKey().toString();
+            	lobjStub.subLineName = lobjSubLine.getLabel();
+            	lobjStub.typeId = lobjType.getKey().toString();
+            	lobjStub.typeName = (String)lobjType.getAt(1);
+            	lobjStub.totalPremium = ((BigDecimal)lobjReceipt.getAt(3)).toPlainString();
+            	lobjStub.maturityDate = (lobjReceipt.getAt(9) == null ? null :
+        				((Timestamp)lobjReceipt.getAt(9)).toString().substring(0, 10));
+            	lobjStub.description = (String)lobjReceipt.getAt(14);
+
+            	larrResult.add(lobjStub);
+            }
+        }
+        catch (Throwable e)
+        {
+        	try {lrsReceipts.close();} catch (Throwable e2) {}
+        	try {ldb.Disconnect();} catch (Throwable e1) {}
+            throw new BigBangException(e.getMessage(), e);
+        }
+
+        try
+        {
+            lrsReceipts.close();
+        }
+        catch (Throwable e)
+        {
+        	try {ldb.Disconnect();} catch (Throwable e1) {}
+            throw new BigBangException(e.getMessage(), e);
+        }
+
+        try
+        {
+            ldb.Disconnect();
+        }
+        catch (Throwable e)
+        {
+            throw new BigBangException(e.getMessage(), e);
+        }
+
+		return larrResult.toArray(new SearchResult[larrResult.size()]);
+	}
+
 	public Receipt editReceipt(Receipt receipt)
 		throws SessionExpiredException, BigBangException
 	{
