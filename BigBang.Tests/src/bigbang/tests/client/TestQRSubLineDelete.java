@@ -92,7 +92,7 @@ public class TestQRSubLineDelete
 			}
 		};
 
-		Services.quoteRequestService.deleteSubLineFromPad(subLine.subLineId, callback);
+		Services.quoteRequestService.deleteSubLineFromPad(subLine.qrslId, callback);
 	}
 
 	private static void DoStep4()
