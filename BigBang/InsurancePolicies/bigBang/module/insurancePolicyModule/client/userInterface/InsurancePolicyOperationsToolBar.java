@@ -203,7 +203,7 @@ public abstract class InsurancePolicyOperationsToolBar extends BigBangOperations
 			}
 		});
 		addItem(SUB_MENU.ADMIN, brokerageTransfer);
-		voidPolicy = new MenuItem("Invalidar Apólice", new Command() {
+		voidPolicy = new MenuItem("Anular Apólice", new Command() {
 
 			@Override
 			public void execute() {

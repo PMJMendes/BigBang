@@ -140,14 +140,14 @@ public class NegotiationServiceImpl
 	}
 
 	@Override
-	public Negotiation.QuoteRequestInfo sendQuoteRequest(Negotiation.QuoteRequestInfo request)
+	public Negotiation.CallForQuote sendCallForQuote(Negotiation.CallForQuote request)
 			throws SessionExpiredException, BigBangException {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public Negotiation.QuoteRequestInfo repeatSendQuoteRequest(Negotiation.QuoteRequestInfo request)
+	public Negotiation.CallForQuote repeatSendCallForQuote(Negotiation.CallForQuote request)
 			throws SessionExpiredException, BigBangException {
 		// TODO Auto-generated method stub
 		return null;

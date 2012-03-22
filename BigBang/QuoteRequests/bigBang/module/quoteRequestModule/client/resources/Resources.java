@@ -7,5 +7,11 @@ public interface Resources extends ClientBundle {
 
 	@Source("images/searchIcon1.png")
 	ImageResource searchIcon();
-
+	
+	@Source("images/active.png")
+	ImageResource activePolicyIcon();
+	
+	@Source("images/inactive.png")
+	ImageResource inactivePolicyIcon();
+	
 }

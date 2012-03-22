@@ -5,7 +5,7 @@ import java.io.Serializable;
 public class Negotiation
 	extends NegotiationStub
 {
-	public static class QuoteRequestInfo
+	public static class CallForQuote
 		implements Serializable
 	{
 		private static final long serialVersionUID = 1L;
@@ -15,7 +15,7 @@ public class Negotiation
 		public String[] attachedDocumentIds;
 		public int replylimit;
 
-		public QuoteRequestInfo()
+		public CallForQuote()
 		{
 			message = new OutgoingMessage();
 		}

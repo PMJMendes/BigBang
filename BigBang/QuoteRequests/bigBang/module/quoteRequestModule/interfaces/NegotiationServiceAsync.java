@@ -13,8 +13,8 @@ public interface NegotiationServiceAsync
 {
 	void getNegotiation(String negotiationId, AsyncCallback<Negotiation> callback);
 	void editNegotiation(Negotiation negotiation, AsyncCallback<Negotiation> callback);
-	void sendQuoteRequest(Negotiation.QuoteRequestInfo request, AsyncCallback<Negotiation.QuoteRequestInfo> callback);
-	void repeatSendQuoteRequest(Negotiation.QuoteRequestInfo request, AsyncCallback<Negotiation.QuoteRequestInfo> callback);
+	void sendCallForQuote(Negotiation.CallForQuote request, AsyncCallback<Negotiation.CallForQuote> callback);
+	void repeatSendCallForQuote(Negotiation.CallForQuote request, AsyncCallback<Negotiation.CallForQuote> callback);
 	void cancelNegotiation(Negotiation.Cancellation cancellation, AsyncCallback<Negotiation> callback);
 	void receiveResponse(Negotiation.Response response, AsyncCallback<Negotiation> callback);
 	void grantNegotiation(Negotiation.Grant grant, AsyncCallback<Negotiation> callback);

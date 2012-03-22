@@ -1,129 +1,184 @@
 package bigBang.module.quoteRequestModule.client.userInterface;
 
-import java.util.Collection;
+import java.util.Map;
 
 import bigBang.definitions.client.dataAccess.ClientProcessBroker;
-import bigBang.definitions.client.dataAccess.ClientProcessDataBrokerClient;
-import bigBang.definitions.client.response.ResponseError;
-import bigBang.definitions.client.response.ResponseHandler;
 import bigBang.definitions.shared.BigBangConstants;
-import bigBang.definitions.shared.Client;
 import bigBang.definitions.shared.QuoteRequest;
-import bigBang.library.client.dataAccess.DataBrokerManager;
+import bigBang.definitions.shared.QuoteRequest.RequestSubLine;
+import bigBang.library.client.FormField;
+import bigBang.library.client.event.AsyncRequest;
+import bigBang.library.client.event.AsyncRequestHandler;
+import bigBang.library.client.event.FiresAsyncRequests;
 import bigBang.library.client.userInterface.CheckBoxFormField;
 import bigBang.library.client.userInterface.ExpandableListBoxFormField;
 import bigBang.library.client.userInterface.TextAreaFormField;
 import bigBang.library.client.userInterface.TextBoxFormField;
 import bigBang.library.client.userInterface.view.FormView;
+import bigBang.library.client.userInterface.view.FormViewSection;
 
-public class QuoteRequestForm extends FormView<QuoteRequest> implements ClientProcessDataBrokerClient {
+public class QuoteRequestForm extends FormView<QuoteRequest> implements FiresAsyncRequests {
 
-	protected ExpandableListBoxFormField processManager;
-	protected TextBoxFormField daysUntilReply;
+	protected TextBoxFormField number;
+	protected TextBoxFormField client;
+	protected TextBoxFormField status;
+	protected ExpandableListBoxFormField manager;
+	protected TextBoxFormField inheritedMediator;
+	protected ExpandableListBoxFormField policiesMediator;
 	protected CheckBoxFormField caseStudyFlag;
 	protected TextAreaFormField notes;
-	
-	protected TextBoxFormField clientName;
-	protected TextBoxFormField clientNumber;
-	
-	protected ClientProcessBroker clientBroker;
-	
+
+	//Dynamic stuff
+	protected Map<String, FormViewSection> subLineSections;
+
+
 	public QuoteRequestForm(){
-		processManager = new ExpandableListBoxFormField("Gestor do Processo");
-		daysUntilReply = new TextBoxFormField("Prazo de resposta em dias");
-		caseStudyFlag = new CheckBoxFormField("Estudo de caso");
-		notes = new TextAreaFormField("Observações internas");
-		
+		number = new TextBoxFormField("Número");
+		number.setFieldWidth("175px");
+		client = new TextBoxFormField("Cliente");
+		client.setEditable(false);
+		status = new TextBoxFormField("Estado");
+		status.setFieldWidth("175px");
+		status.setEditable(false);
+		manager = new ExpandableListBoxFormField(BigBangConstants.EntityIds.USER, "Gestor");
+		inheritedMediator = new TextBoxFormField("Mediador do Cliente");
+		inheritedMediator.setEditable(false);
+		inheritedMediator.setFieldWidth("175px");
+		policiesMediator = new ExpandableListBoxFormField(BigBangConstants.EntityIds.MEDIATOR, "Mediador das Apólices");
+		caseStudyFlag = new CheckBoxFormField("Case Study");
+		notes = new TextAreaFormField();
+
 		addSection("Consulta de Mercado");
-		
-		addFormField(processManager);
-		addFormField(daysUntilReply);
-		addFormField(caseStudyFlag);
+
+		addFormField(client);
+		addFormFieldGroup(new FormField<?>[]{
+				number,
+				status,
+				manager
+		}, true);
+		addFormFieldGroup(new FormField<?>[]{
+				inheritedMediator,
+				policiesMediator,
+				caseStudyFlag
+		}, false);
+
+		addSection("Notas Internas");
+
 		addFormField(notes);
-		
-		clientName = new TextBoxFormField("Nome");
-		clientNumber = new TextBoxFormField("Nº");
-		
-		clientName.setEditable(false);
-		clientNumber.setEditable(false);
-		
-		addSection("Cliente");
-		
-		addFormField(clientName);
-		addFormField(clientNumber);
-		
-		daysUntilReply.setFieldWidth("50");
-		notes.setFieldHeight("150px");
-		
-		clientBroker = ((ClientProcessBroker)DataBrokerManager.Util.getInstance().getBroker(BigBangConstants.EntityIds.CLIENT));
-		//clientBroker.registerClient(this); // TODO
+
+		setupForCreation();
 	}
-	
+
+	public void setupForCreation() {
+		number.setEditable(true);
+		manager.setEditable(true);
+		policiesMediator.setEditable(true);
+		caseStudyFlag.setEditable(true);
+		notes.setEditable(true);
+	}
+
+	public void setupForOpenStatus() {
+		number.setEditable(false);
+		manager.setEditable(false);
+		policiesMediator.setEditable(true);
+		caseStudyFlag.setEditable(true);
+		notes.setEditable(true);
+	}
+
+	public void setupForClosedStatus(){
+		number.setEditable(false);
+		manager.setEditable(false);
+		policiesMediator.setEditable(false);
+		caseStudyFlag.setEditable(true);
+		notes.setEditable(false);
+	}
+
 	@Override
 	public QuoteRequest getInfo() {
-		QuoteRequest result = this.value;
+		QuoteRequest result = getValue();
+
+		if(result != null) {
+			result.processNumber = number.getValue();
+			result.managerId = manager.getValue();
+			result.mediatorId = policiesMediator.getValue();
+			result.caseStudy = caseStudyFlag.getValue();
+			result.requestData = getRequestData();
+		}
+
 		return result;
 	}
 
 	@Override
 	public void setInfo(QuoteRequest info) {
-		this.processManager.setValue(info.managerId);
-//		this.daysUntilReply.setValue(""+info.responseLimitInDays);
-		this.caseStudyFlag.setValue(info.caseStudy);
-		this.notes.setValue(info.notes);
-		clientBroker.getClient(info.clientId, new ResponseHandler<Client>() {
-			
-			@Override
-			public void onResponse(Client response) {
-				clientName.setValue(response.name);
-				clientNumber.setValue(response.clientNumber);
+		if(info == null) {
+			clearInfo();
+		}else{
+			if(!info.isOpen){
+				setupForClosedStatus();
 			}
-			
-			@Override
-			public void onError(Collection<ResponseError> errors) {
-				return;
-			}
-		});
+
+			number.setValue(info.processNumber);
+			client.setValue(info.clientName + " (" + info.clientNumber + ")");
+			status.setValue(info.isOpen ? "Aberta" : "Fechada");
+			manager.setValue(info.managerId);
+			inheritedMediator.setValue(info.inheritMediatorName);
+			policiesMediator.setValue(info.mediatorId);
+			caseStudyFlag.setValue(info.caseStudy);
+			setRequestData(info.requestData);
+		}
 	}
 
-	//Broker client methods
+	protected void setRequestData(RequestSubLine[] data){
+		clearRequestDataInfo();
+		for(RequestSubLine subLineData : data){
+			addSubLineDataSection(subLineData);
+		}
+	}
+
+	protected RequestSubLine[] getRequestData(){
+		RequestSubLine[] result = new RequestSubLine[this.subLineSections.size()];
+		
+//		int i = 0;
+//		for(RequestSubLine subLineData : data){
+//			addSubLineDataSection(subLineData);
+//		}
+		return null; //TODO
+	}
+
+	protected void clearRequestDataInfo() {
+		for(String subLineId : this.subLineSections.keySet()) {
+			FormViewSection section = this.subLineSections.get(subLineId);
+			removeSection(section);
+		}
+	}
+
+	protected void addSubLineDataSection(RequestSubLine subLinedata){
+		//TODO
+	}
 	
-	//CLIENT
-	protected int clientProcessDataVersion;
+	protected SubLineDataSection getSubLineDataSection(String subLineId){
+//		return this.subLineSections.get(subLineId); //TODO
+		return null;
+	}
 
-	@Override
-	public void setDataVersionNumber(String dataElementId, int number) {
-		if(dataElementId.equalsIgnoreCase(BigBangConstants.EntityIds.CLIENT)){
-			clientProcessDataVersion = number;
-		}
+	protected void removeSubLineDataSection(String subLineId){
+		//TODO
 	}
 
 	@Override
-	public int getDataVersion(String dataElementId) {
-		if(dataElementId.equalsIgnoreCase(BigBangConstants.EntityIds.CLIENT)){
-			return clientProcessDataVersion;
-		}
-		return -1;
+	public void clearInfo() {
+		super.clearInfo();
+		this.clearRequestDataInfo();
 	}
 
 	@Override
-	public void addClient(Client client) {
-		return;
+	public void registerRequestHandler(AsyncRequestHandler handler) {
+		addHandler(handler, AsyncRequest.TYPE);
 	}
 
 	@Override
-	public void updateClient(Client client) {
-		if(this.value.clientId != null && client.id.equalsIgnoreCase(this.value.clientId)){
-			this.clientName.setValue(client.name);
-			this.clientNumber.setValue(client.clientNumber);
-		}
-	}
-
-	@Override
-	public void removeClient(String clientId) {
-		if(value.clientId != null && clientId.equalsIgnoreCase(value.clientId)){
-			this.setValue(null, true);
-		}
+	public void fireRequest(AsyncRequest<?> request) {
+		fireEvent(request);
 	}
 
 }

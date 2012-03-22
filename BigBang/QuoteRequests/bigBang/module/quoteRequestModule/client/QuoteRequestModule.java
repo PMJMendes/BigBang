@@ -7,6 +7,7 @@ import bigBang.library.client.ViewPresenterFactory;
 import bigBang.library.client.ViewPresenterInstantiator;
 import bigBang.library.client.userInterface.presenter.ViewPresenter;
 import bigBang.module.quoteRequestModule.client.dataAccess.NegotiationBrokerImpl;
+import bigBang.module.quoteRequestModule.client.dataAccess.QuoteRequestBrokerImpl;
 import bigBang.module.quoteRequestModule.client.userInterface.presenter.NegotiationDeleteViewPresenter;
 import bigBang.module.quoteRequestModule.client.userInterface.presenter.NegotiationGrantViewPresenter;
 import bigBang.module.quoteRequestModule.client.userInterface.presenter.QuoteRequestOperationsViewPresenter;
@@ -88,6 +89,7 @@ public class QuoteRequestModule implements Module {
 	public DataBroker<?>[] getBrokerImplementations() {
 		
 		return new DataBroker<?>[]{
+				new QuoteRequestBrokerImpl(),
 				new NegotiationBrokerImpl()
 			};
 	}

@@ -29,6 +29,12 @@ h1 {
 	font-size: 16pt;
 }
 
+.bigBangDisclosurePanel {
+	border: none;
+	padding: 0px;
+	margin: 0px;
+}
+
 /** Most GWT widgets already have a style name defined */
 
 .gwt-TabBarItem {

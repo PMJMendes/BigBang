@@ -117,6 +117,8 @@ public class QuoteRequestSearchOperationView extends View implements QuoteReques
 		form.setSize("100%", "100%");
 		formWrapper.add(form);
 		formWrapper.setCellHeight(form, "100%");
+		
+		searchPanel.doSearch();
 	}
 
 	@Override

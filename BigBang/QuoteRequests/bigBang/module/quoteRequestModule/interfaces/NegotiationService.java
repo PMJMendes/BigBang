@@ -32,9 +32,9 @@ public interface NegotiationService
 
 	public Negotiation editNegotiation(Negotiation negotiation) throws SessionExpiredException, BigBangException;
 
-	public Negotiation.QuoteRequestInfo sendQuoteRequest(Negotiation.QuoteRequestInfo request)
+	public Negotiation.CallForQuote sendCallForQuote(Negotiation.CallForQuote request)
 			throws SessionExpiredException, BigBangException;
-	public Negotiation.QuoteRequestInfo repeatSendQuoteRequest(Negotiation.QuoteRequestInfo request)
+	public Negotiation.CallForQuote repeatSendCallForQuote(Negotiation.CallForQuote request)
 			throws SessionExpiredException, BigBangException;
 
 	public Negotiation cancelNegotiation(Negotiation.Cancellation cancellation) throws SessionExpiredException, BigBangException;

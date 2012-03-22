@@ -95,6 +95,8 @@ public class QuoteRequestSearchOperationViewPresenter implements ViewPresenter {
 		clearView();
 
 		if(quoteRequestId == null || quoteRequestId.isEmpty()) {
+			clearView();
+		}else{
 			showQuoteRequest(quoteRequestId);
 		}
 	}
@@ -171,15 +173,16 @@ public class QuoteRequestSearchOperationViewPresenter implements ViewPresenter {
 
 	protected void clearView(){
 		view.getForm().setValue(null);
-		view.getList().clearSelection();
+		view.getForm().setReadOnly(true);
 	}
 
 	protected void showQuoteRequest(String quoteRequestId) {
 		for(ValueSelectable<QuoteRequestStub> entry : view.getList().getAll()) {
 			QuoteRequestStub quoteRequest = entry.getValue();
-			if(quoteRequest.id.equalsIgnoreCase(quoteRequestId) && !entry.isSelected()){
-				entry.setSelected(true, true);
-				return;
+			if(quoteRequest.id.equalsIgnoreCase(quoteRequestId)){
+				entry.setSelected(true, false);
+			}else if(entry.isSelected()){
+				entry.setSelected(false, false);
 			}
 		}
 		broker.getQuoteRequest(quoteRequestId, new ResponseHandler<QuoteRequest>() {

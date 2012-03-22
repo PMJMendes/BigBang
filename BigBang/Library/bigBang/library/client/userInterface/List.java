@@ -421,7 +421,7 @@ public class List<T> extends View implements HasValueSelectables<T>, java.util.L
 		Collection<ValueSelectable<T>> selected = this.getSelected();
 		for(ValueSelectable<T> s : selected){
 			hasChanges |= s.isSelected();
-			s.setSelected(false, true);
+			if(s.isSelected()){s.setSelected(false, true);};
 		}
 		if(hasChanges && selectionChangeHandlerInitialized)
 			selectionChangedEventFireBypass(new SelectionChangedEvent(this.getSelected()));	

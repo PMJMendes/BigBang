@@ -19,11 +19,11 @@ public class FormViewSection extends View {
 
 	protected static final String DEFAULT_FIELD_HEIGHT = "45px";
 	
-	private ArrayList<FormField<?>> fields;
-	private Label headerLabel;
-	private HasWidgets content;
-	private HasWidgets currentContainer;
-	private Widget header;
+	protected ArrayList<FormField<?>> fields;
+	protected Label headerLabel;
+	protected HasWidgets content;
+	protected HasWidgets currentContainer;
+	protected Widget header;
 
 	public FormViewSection(String title){
 		fields = new ArrayList<FormField<?>>();
