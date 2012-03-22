@@ -17,7 +17,7 @@ public abstract class SerialReceiptCreationToolbar extends BigBangOperationsTool
 
 			@Override
 			public void execute() {
-				onSetForReturn();
+				saveReceipt();
 			}
 		});
 		addItem(confirm);
@@ -44,7 +44,7 @@ public abstract class SerialReceiptCreationToolbar extends BigBangOperationsTool
 		return;
 	}
 
-	public abstract void onSetForReturn();
+	public abstract void saveReceipt();
 
 
 	public void setEnabled(boolean b) {
