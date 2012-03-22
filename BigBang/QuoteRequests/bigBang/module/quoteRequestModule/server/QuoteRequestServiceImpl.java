@@ -105,6 +105,7 @@ public class QuoteRequestServiceImpl
 		{
 			private static final long serialVersionUID = 1L;
 
+			public transient SubLine mobjSubLine;
 			public transient String mstrLabel;
 			public transient UUID midObjectType;
 			public transient ArrayList<PadCoverage> marrCoverages;
@@ -261,6 +262,7 @@ public class QuoteRequestServiceImpl
 				{
 					lobjSubLine = new PadSubLine();
 					lobjSubLine.FromObject(larrLocalSubLines[i]);
+					lobjSubLine.mobjSubLine = larrLocalSubLines[i].GetSubLine();
 					lobjSubLine.mstrLabel = larrLocalSubLines[i].GetSubLine().getLine().getCategory().getLabel() + " / " +
 							larrLocalSubLines[i].GetSubLine().getLine().getLabel() + " / " +
 							larrLocalSubLines[i].GetSubLine().getLabel();
@@ -547,7 +549,10 @@ public class QuoteRequestServiceImpl
 					continue;
 
 				lobjSubLine = new QuoteRequest.RequestSubLine();
-				lobjSubLine.subLineId = mid.toString() + ":" + Integer.toString(i); //marrSubLines.get(i).midSubLine.toString();
+				lobjSubLine.qrslId = mid.toString() + ":" + Integer.toString(i); //marrSubLines.get(i).mid.toString();
+				lobjSubLine.categoryId = marrSubLines.get(i).mobjSubLine.getLine().getCategory().getKey().toString();
+				lobjSubLine.lineId = marrSubLines.get(i).mobjSubLine.getLine().getKey().toString();
+				lobjSubLine.sublineId = marrSubLines.get(i).mobjSubLine.getKey().toString();
 				lobjSubLine.headerText = marrSubLines.get(i).mstrLabel;
 
 				larrHeaders = new ArrayList<QuoteRequest.HeaderField>();
@@ -818,7 +823,10 @@ public class QuoteRequestServiceImpl
 			QuoteRequest.ExtraField lobjExtraField;
 			int i, j;
 
-			pobjResult.subLineId = mid.toString() + ":" + Integer.toString(plngSubLine); //marrSubLines.get(i).midSubLine.toString();
+			pobjResult.qrslId = mid.toString() + ":" + Integer.toString(plngSubLine); //marrSubLines.get(i).midSubLine.toString();
+			pobjResult.categoryId = marrSubLines.get(plngSubLine).mobjSubLine.getLine().getCategory().getKey().toString();
+			pobjResult.lineId = marrSubLines.get(plngSubLine).mobjSubLine.getLine().getKey().toString();
+			pobjResult.sublineId = marrSubLines.get(plngSubLine).mobjSubLine.getKey().toString();
 			pobjResult.headerText = marrSubLines.get(plngSubLine).mstrLabel;
 
 			larrHeaders = new ArrayList<QuoteRequest.HeaderField>();
@@ -1211,10 +1219,10 @@ public class QuoteRequestServiceImpl
 			{
 				for ( i = 0; i < pobjSource.requestData.length; i++ )
 				{
-					larrAux = pobjSource.requestData[i].subLineId.split(":");
+					larrAux = pobjSource.requestData[i].qrslId.split(":");
 					if ( larrAux.length != 2 )
 			            throw new IllegalArgumentException("Unexpected: Invalid temporary ID string: " +
-			            		pobjSource.requestData[i].subLineId);
+			            		pobjSource.requestData[i].qrslId);
 					if ( !mid.equals(UUID.fromString(larrAux[0])) )
 			            throw new IllegalArgumentException("Unexpected: Temporary ID string does not match pad ID.");
 					lobjSubLine = marrSubLines.get(Integer.parseInt(larrAux[1]));
@@ -1315,6 +1323,7 @@ public class QuoteRequestServiceImpl
 			try
 			{
 				lobjSource = SubLine.GetInstance(Engine.getCurrentNameSpace(), pidSubLine);
+				lobjSubLine.mobjSubLine = lobjSource;
 				lobjSubLine.mstrLabel = lobjSource.getLine().getCategory().getLabel() + " / " + lobjSource.getLine().getLabel() +
 						" / " + lobjSource.getLabel();
 				lobjSubLine.midObjectType = lobjSource.getObjectType();
@@ -1901,7 +1910,10 @@ public class QuoteRequestServiceImpl
 		for ( i = 0; i < larrSubLines.length; i++ )
 		{
 			lobjResult.requestData[i] = new QuoteRequest.RequestSubLine();
-			lobjResult.requestData[i].subLineId = larrSubLines[i].getKey().toString();
+			lobjResult.requestData[i].qrslId = larrSubLines[i].getKey().toString();
+			lobjResult.requestData[i].categoryId = larrSubLines[i].GetSubLine().getLine().getCategory().getKey().toString();
+			lobjResult.requestData[i].lineId = larrSubLines[i].GetSubLine().getLine().getKey().toString();
+			lobjResult.requestData[i].sublineId = larrSubLines[i].GetSubLine().getKey().toString();
 			lobjResult.requestData[i].headerText = larrSubLines[i].GetSubLine().getLine().getCategory().getLabel() + " / " +
 					larrSubLines[i].GetSubLine().getLine().getLabel() + " / " + larrSubLines[i].GetSubLine().getLabel();
 			try
