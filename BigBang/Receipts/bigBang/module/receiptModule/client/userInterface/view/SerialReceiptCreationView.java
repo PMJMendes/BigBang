@@ -1,15 +1,14 @@
 package bigBang.module.receiptModule.client.userInterface.view;
 
 import bigBang.library.client.event.ActionInvokedEventHandler;
-import bigBang.library.client.userInterface.ListHeader;
 import bigBang.library.client.userInterface.view.View;
-import bigBang.module.receiptModule.client.userInterface.ReceiptForm;
 import bigBang.module.receiptModule.client.userInterface.ReceiptImagePanel;
-import bigBang.module.receiptModule.client.userInterface.ReceiptNumberForm;
+import bigBang.module.receiptModule.client.userInterface.SerialReceiptCreationForm;
 import bigBang.module.receiptModule.client.userInterface.SerialReceiptCreationToolbar;
 import bigBang.module.receiptModule.client.userInterface.presenter.SerialReceiptCreationViewPresenter;
 import bigBang.module.receiptModule.client.userInterface.presenter.SerialReceiptCreationViewPresenter.Action;
 
+import com.google.gwt.user.client.ui.HasVerticalAlignment;
 import com.google.gwt.user.client.ui.SplitLayoutPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
@@ -17,9 +16,9 @@ public class SerialReceiptCreationView extends View implements SerialReceiptCrea
 
 	private SplitLayoutPanel wrapper;
 	private ReceiptImagePanel receiptPanel;
-	private ReceiptNumberForm receiptNumber;
-	private ReceiptForm receipt;
+	private SerialReceiptCreationForm form;
 	private SerialReceiptCreationToolbar toolbar;
+	private ActionInvokedEventHandler<Action> actionHandler;
 	
 	public SerialReceiptCreationView(){
 		wrapper = new SplitLayoutPanel();
@@ -44,29 +43,40 @@ public class SerialReceiptCreationView extends View implements SerialReceiptCrea
 			}
 			
 			@Override
-			public void onSetForReturn() {
+			public void saveReceipt() {
 				// TODO Auto-generated method stub
 				
 			}
 		};
 		
-		ListHeader header = new ListHeader("Verificar Número do Recibo");
-		header.setSize("100%", "30px");
 		right.setSize("100%", "100%");
-		receiptNumber = new ReceiptNumberForm();
-		//receiptNumber.setSize("100%", "100%");
-		receipt = new ReceiptForm();
-		right.add(header);
-		right.add(receiptNumber.getNonScrollableContent()); 
-		ListHeader lowHeader = new ListHeader("Ficha do Recibo");
-		lowHeader.setSize("100%", "30px");
-		right.add(lowHeader);
+		form = new SerialReceiptCreationForm(){
+
+			@Override
+			protected void onClickMarkAsInvalid() {
+				// TODO Auto-generated method stub
+				
+			}
+
+			@Override
+			protected void onClickVerifyPolicyNumber() {
+				// TODO Auto-generated method stub
+				
+			}
+
+			@Override
+			protected void onClickVerifyReceiptNumber() {
+				// TODO Auto-generated method stub
+				
+			}
+			
+		};
 		right.add(toolbar);
-		right.add(receipt);
-		right.setCellHeight(receipt, "100%");
+		right.add(form); 
+		right.setVerticalAlignment(HasVerticalAlignment.ALIGN_MIDDLE);
+		right.setCellHeight(form, "100%");
 		toolbar.setEnabled(false);
-		receipt.setReadOnly(true);
-		receiptNumber.setReadOnly(true);
+		form.setReadOnly(true);
 		
 		wrapper.add(right);
 	}
@@ -79,8 +89,7 @@ public class SerialReceiptCreationView extends View implements SerialReceiptCrea
 	@Override
 	public void registerActionHandler(
 			ActionInvokedEventHandler<Action> actionInvokedEventHandler) {
-		// TODO Auto-generated method stub
-		
+		this.actionHandler = actionInvokedEventHandler;
 	}
 
 }
