@@ -361,17 +361,20 @@ public class DocuShareConnector
 	{
 		DSSession lrefSession;
 
-		lrefSession = GetSession();
-		if ( lrefSession == null )
-			return;
+		if ( pstrItem == null ) //TODO Tirar isto
+		{
+			lrefSession = GetSession();
+			if ( lrefSession == null )
+				return;
 
-		try
-		{
-			lrefSession.deleteObject(new DSHandle(pstrItem), new DSSelectSet(), true);
-		}
-		catch (Throwable e)
-		{
-			throw new BigBangJewelException(e.getMessage(), e);
+			try
+			{
+				lrefSession.deleteObject(new DSHandle(pstrItem), new DSSelectSet(), true);
+			}
+			catch (Throwable e)
+			{
+				throw new BigBangJewelException(e.getMessage(), e);
+			}
 		}
 	}
 
