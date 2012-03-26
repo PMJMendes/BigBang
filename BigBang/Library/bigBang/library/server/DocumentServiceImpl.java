@@ -56,23 +56,23 @@ public class DocumentServiceImpl
 
 			if ( parrDocuments[i].source != null )
 			{
+				larrResult[i].mstrText = null;
 				larrResult[i].mobjDSBridge = new DSBridgeData();
 				larrResult[i].mobjDSBridge.mstrDSHandle = parrDocuments[i].source.handle;
 				larrResult[i].mobjDSBridge.mstrDSLoc = parrDocuments[i].source.locationHandle;
 				larrResult[i].mobjDSBridge.mstrDSTitle = null;
 				larrResult[i].mobjDSBridge.mbDelete = false;
 			}
-			else
-				larrResult[i].mobjDSBridge = null;
-
-			if ( parrDocuments[i].fileStorageId != null )
+			else if ( parrDocuments[i].fileStorageId != null )
 			{
+				larrResult[i].mobjDSBridge = null;
 				larrResult[i].mstrText = null;
 				larrResult[i].mobjFile = FileServiceImpl.GetFileXferStorage().
 						get(UUID.fromString(parrDocuments[i].fileStorageId)).GetVarData();
 			}
 			else
 			{
+				larrResult[i].mobjDSBridge = null;
 				larrResult[i].mstrText = parrDocuments[i].text;
 				larrResult[i].mobjFile = null;
 			}
