@@ -22,6 +22,7 @@ import bigBang.library.shared.BigBangException;
 import bigBang.library.shared.SessionExpiredException;
 
 import com.premiumminds.BigBang.Jewel.Constants;
+import com.premiumminds.BigBang.Jewel.Data.DSBridgeData;
 import com.premiumminds.BigBang.Jewel.Data.DocInfoData;
 import com.premiumminds.BigBang.Jewel.Data.DocumentData;
 import com.premiumminds.BigBang.Jewel.Objects.Company;
@@ -52,6 +53,18 @@ public class DocumentServiceImpl
 			larrResult[i].midOwnerType = UUID.fromString(parrDocuments[i].ownerTypeId);
 			larrResult[i].midOwnerId = UUID.fromString(parrDocuments[i].ownerId);
 			larrResult[i].midDocType = (parrDocuments[i].docTypeId == null ? null : UUID.fromString(parrDocuments[i].docTypeId));
+
+			if ( parrDocuments[i].source != null )
+			{
+				larrResult[i].mobjDSBridge = new DSBridgeData();
+				larrResult[i].mobjDSBridge.mstrDSHandle = parrDocuments[i].source.handle;
+				larrResult[i].mobjDSBridge.mstrDSLoc = parrDocuments[i].source.locationHandle;
+				larrResult[i].mobjDSBridge.mstrDSTitle = null;
+				larrResult[i].mobjDSBridge.mbDelete = false;
+			}
+			else
+				larrResult[i].mobjDSBridge = null;
+
 			if ( parrDocuments[i].fileStorageId != null )
 			{
 				larrResult[i].mstrText = null;

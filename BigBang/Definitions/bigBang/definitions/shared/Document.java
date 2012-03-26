@@ -17,10 +17,12 @@ public class Document
 	public String mimeType;
 	public String fileName;
 	public String fileStorageId;
+	public DocuShareItem source;
 	public DocInfo[] parameters;
 
 	public Document()
 	{
+		source = null;
 		parameters = new DocInfo[0];
 	}
 }
