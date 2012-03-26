@@ -1424,7 +1424,7 @@ public class ReceiptServiceImpl
 				throw new BigBangException(e.getMessage(), e);
 			}
 			pstrBuffer.append(") [AuxPols] WHERE [:Process] = [Aux].[:Process:Parent])) ELSE ");
-			pstrBuffer.append("0 END END END END END END"); // END"); Faz parte do trim por complexidade
+			pstrBuffer.append("0 END END END END END END"); // END"); O END a mais parte do trim por complexidade
 		}
 
 		return lbFound;
