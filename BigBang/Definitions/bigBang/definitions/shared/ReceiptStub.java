@@ -5,6 +5,14 @@ public class ReceiptStub
 {
 	private static final long serialVersionUID = 1L;
 
+	public static enum ReceiptStatus
+	{
+		NEW,
+		PAYABLE,
+		PAID,
+		ERROR
+	}
+
 	public String number;
 	public String clientId;
 	public String clientNumber;
@@ -22,4 +30,7 @@ public class ReceiptStub
 	public String totalPremium;
 	public String maturityDate;
 	public String description;
+	public String statusId;
+	public String statusText;
+	public ReceiptStatus statusIcon;
 }

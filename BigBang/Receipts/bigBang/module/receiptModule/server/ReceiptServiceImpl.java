@@ -73,6 +73,7 @@ public class ReceiptServiceImpl
 		Line lobjLine;
 		ObjectBase lobjCategory;
 		ObjectBase lobjType;
+		ObjectBase lobjStatus;
 
 		try
 		{
@@ -100,6 +101,8 @@ public class ReceiptServiceImpl
 			lobjCategory = lobjLine.getCategory();
 			lobjType = Engine.GetWorkInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), Constants.ObjID_ReceiptType),
 					(UUID)lobjReceipt.getAt(1));
+			lobjStatus = Engine.GetWorkInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), Constants.ObjID_ReceiptStatus),
+					getStatus(lobjReceipt.getKey()));
 			
 		}
 		catch (Throwable e)
@@ -128,6 +131,22 @@ public class ReceiptServiceImpl
 		lobjResult.maturityDate = (lobjReceipt.getAt(9) == null ? null :
 				((Timestamp)lobjReceipt.getAt(9)).toString().substring(0, 10));
 		lobjResult.description = (String)lobjReceipt.getAt(14);
+		lobjResult.statusId = lobjStatus.getKey().toString();
+		lobjResult.statusText= lobjStatus.getLabel();
+		switch ( (Integer)lobjStatus.getAt(1) )
+		{
+		case 0:
+			lobjResult.statusIcon = ReceiptStub.ReceiptStatus.NEW;
+			break;
+
+		case 1:
+			lobjResult.statusIcon = ReceiptStub.ReceiptStatus.PAYABLE;
+			break;
+
+		case 2:
+			lobjResult.statusIcon = ReceiptStub.ReceiptStatus.PAID;
+			break;
+		}
 		lobjResult.processId = lobjProc.getKey().toString();
 		lobjResult.salesPremium = (lobjReceipt.getAt(4) == null ? null : ((BigDecimal)lobjReceipt.getAt(4)).toPlainString());
 		lobjResult.comissions = ((BigDecimal)lobjReceipt.getAt(5)).toPlainString();
@@ -175,6 +194,7 @@ public class ReceiptServiceImpl
 		Line lobjLine;
 		ObjectBase lobjCategory;
 		ObjectBase lobjType;
+		ObjectBase lobjStatus;
 		ReceiptStub lobjStub;
 
 		if ( Engine.getCurrentUser() == null )
@@ -225,6 +245,8 @@ public class ReceiptServiceImpl
     			lobjCategory = lobjLine.getCategory();
     			lobjType = Engine.GetWorkInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), Constants.ObjID_ReceiptType),
     					(UUID)lobjReceipt.getAt(1));
+    			lobjStatus = Engine.GetWorkInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), Constants.ObjID_ReceiptStatus),
+    					getStatus(lobjReceipt.getKey()));
 
             	lobjStub = new ReceiptStub();
 
@@ -248,6 +270,22 @@ public class ReceiptServiceImpl
             	lobjStub.maturityDate = (lobjReceipt.getAt(9) == null ? null :
         				((Timestamp)lobjReceipt.getAt(9)).toString().substring(0, 10));
             	lobjStub.description = (String)lobjReceipt.getAt(14);
+            	lobjStub.statusId = lobjStatus.getKey().toString();
+            	lobjStub.statusText= lobjStatus.getLabel();
+    			switch ( (Integer)lobjStatus.getAt(1) )
+    			{
+    			case 0:
+    				lobjStub.statusIcon = ReceiptStub.ReceiptStatus.NEW;
+    				break;
+
+    			case 1:
+    				lobjStub.statusIcon = ReceiptStub.ReceiptStatus.PAYABLE;
+    				break;
+
+    			case 2:
+    				lobjStub.statusIcon = ReceiptStub.ReceiptStatus.PAID;
+    				break;
+    			}
 
             	larrResult.add(lobjStub);
             }
@@ -1027,7 +1065,7 @@ public class ReceiptServiceImpl
 		Policy lobjPolicy;
 		SubPolicy lobjSubPolicy;
 		Client lobjClient;
-		ObjectBase lobjSubLine, lobjLine, lobjCategory;
+		ObjectBase lobjSubLine, lobjLine, lobjCategory, lobjStatus;
 		ReceiptStub lobjResult;
 
 		try
@@ -1099,6 +1137,16 @@ public class ReceiptServiceImpl
 			lobjClient = null;
 		}
 
+		try
+		{
+			lobjStatus = Engine.GetWorkInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), Constants.ObjID_ReceiptStatus),
+					getStatus(pid));
+		}
+		catch (Throwable e)
+		{
+			lobjStatus = null;
+		}
+
 		lobjResult = new ReceiptStub();
 
 		lobjResult.id = pid.toString();
@@ -1122,6 +1170,28 @@ public class ReceiptServiceImpl
 		lobjResult.maturityDate = (parrValues[5] == null ? null : ((Timestamp)parrValues[5]).toString().substring(0, 10));
 		lobjResult.description = (String)parrValues[6];
 		lobjResult.processId = (lobjProcess == null ? null : lobjProcess.getKey().toString());
+		lobjResult.statusId = (lobjStatus == null ? null : lobjStatus.getKey().toString());
+		lobjResult.statusText= (lobjStatus == null ? null : lobjStatus.getLabel());
+		if ( lobjStatus == null )
+			lobjResult.statusIcon = ReceiptStub.ReceiptStatus.ERROR;
+		else
+		{
+			switch ( (Integer)lobjStatus.getAt(1) )
+			{
+			case 0:
+				lobjResult.statusIcon = ReceiptStub.ReceiptStatus.NEW;
+				break;
+
+			case 1:
+				lobjResult.statusIcon = ReceiptStub.ReceiptStatus.PAYABLE;
+				break;
+
+			case 2:
+				lobjResult.statusIcon = ReceiptStub.ReceiptStatus.PAID;
+				break;
+			}
+		}
+
 		return lobjResult;
 	}
 
@@ -1316,5 +1386,39 @@ public class ReceiptServiceImpl
 		}
 
 		return lbFound;
+	}
+
+	private static UUID getStatus(UUID pidReceipt)
+		throws BigBangException
+	{
+		com.premiumminds.BigBang.Jewel.Objects.Receipt lobjReceipt;
+		IProcess lobjProc;
+
+		try
+		{
+			lobjReceipt = com.premiumminds.BigBang.Jewel.Objects.Receipt.GetInstance(Engine.getCurrentNameSpace(), pidReceipt);
+			lobjProc = PNProcess.GetInstance(Engine.getCurrentNameSpace(), lobjReceipt.GetProcessID());
+
+			if ( !lobjProc.IsRunning() )
+				return Constants.StatusID_Closed;
+
+			if ( (lobjProc.GetValidOperation(Constants.OPID_Receipt_CreateDASRequest) != null) ||
+					(lobjProc.GetValidOperation(Constants.OPID_Receipt_ExternReceiveDAS) != null) )
+				return Constants.StatusID_DASPending;
+
+			if ( (lobjProc.GetLog(Constants.OPID_Receipt_Payment) != null) ||
+					(lobjProc.GetLog(Constants.OPID_Receipt_AssociateWithDebitNote) != null) )
+				return Constants.StatusID_Paid;
+
+			if ( (lobjProc.GetValidOperation(Constants.OPID_Receipt_Payment) != null) ||
+					(lobjProc.GetValidOperation(Constants.OPID_Receipt_AssociateWithDebitNote) != null) )
+				return Constants.StatusID_Payable;
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangException(e.getMessage(), e);
+		}
+
+		return Constants.StatusID_New;
 	}
 }

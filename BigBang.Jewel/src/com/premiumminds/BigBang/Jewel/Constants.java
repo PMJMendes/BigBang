@@ -101,6 +101,7 @@ public class Constants
 	public static final UUID ObjID_RequestType          = UUID.fromString("B437ECD7-11D2-4C55-B6DD-9FE80101ECC8");
 	public static final UUID ObjID_RequestCancelMotives = UUID.fromString("F79E335C-FD6F-43BE-8535-9FE900C1CAF4");
 	public static final UUID ObjID_PolicyVoidingMotives = UUID.fromString("B36C9AB7-0052-4C2E-B392-9FF200CF6022");
+	public static final UUID ObjID_ReceiptStatus        = UUID.fromString("35C78290-7FFE-4D7B-BD9D-A02000BC6D38");
 
 	public static final UUID ObjID_FieldType            = UUID.fromString("0D8E4FEE-AE4D-4429-A517-9EC900F80A20");
 	public static final UUID ObjID_FieldValues          = UUID.fromString("D50A75B9-5F44-4BF2-9060-9F960121503A");
@@ -427,6 +428,13 @@ public class Constants
 	public static final UUID RecType_Casualty   = UUID.fromString("91E07F5F-56BA-4A65-9659-9F900111DF95");
 	public static final UUID RecType_Backcharge = UUID.fromString("4775B720-B90B-4279-B008-9F900111E6AD");
 	public static final UUID RecType_Adjustment = UUID.fromString("3B127029-C133-4EB4-AD1E-9F900111EF2A");
+
+	// Receipt Status Codes
+	public static final UUID StatusID_New        = UUID.fromString("37C3A6F7-A579-4CD2-842E-A02000C337AA");
+	public static final UUID StatusID_Payable    = UUID.fromString("C359D3FF-9032-4B4D-8C34-A02000C3403D");
+	public static final UUID StatusID_DASPending = UUID.fromString("767EB803-6669-47EF-8649-A02000C3491F");
+	public static final UUID StatusID_Paid       = UUID.fromString("8C43ED6B-A047-4549-9922-A02000C35098");
+	public static final UUID StatusID_Closed     = UUID.fromString("B86D383A-70E9-4B03-87C7-A02000C35B32");
 
 	// Template IDs
 	public static final UUID TID_DebitNote = UUID.fromString("BD024115-3572-41D4-B60C-9FF100F7E0C4");
