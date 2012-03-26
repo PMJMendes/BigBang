@@ -796,9 +796,11 @@ public class ReceiptServiceImpl
 			pstrBuffer.append(" AND (");
 			pstrBuffer.append("([:Number] LIKE N'%").append(lstrAux).append("%')");
 			pstrBuffer.append(" OR ");
-			pstrBuffer.append("([:Type:Indicator] LIKE N'%").append(lstrAux).append("%')");
+			pstrBuffer.append("([:Type:Indicator] = N'").append(lstrAux).append("')");
 			pstrBuffer.append(" OR ");
 			pstrBuffer.append("(LEFT(CONVERT(NVARCHAR, [:Maturity Date], 120), 10) LIKE N'%").append(lstrAux).append("%')");
+			pstrBuffer.append(" OR ");
+			pstrBuffer.append("(CAST([:Total Premium] AS NVARCHAR(20)) LIKE N'%").append(lstrAux).append("%')");
 			pstrBuffer.append(" OR ");
 			pstrBuffer.append("([:Process:Parent] IN (SELECT [:Process] FROM (");
 			try
@@ -833,6 +835,43 @@ public class ReceiptServiceImpl
 			pstrBuffer.append("([:Name] LIKE N'%").append(lstrAux).append("%')");
 			pstrBuffer.append(" OR ");
 			pstrBuffer.append("(CAST([:Number] AS NVARCHAR(20)) LIKE N'%").append(lstrAux).append("%')");
+			pstrBuffer.append("))))))");
+			pstrBuffer.append(" OR ");
+			pstrBuffer.append("([:Process:Parent] IN (SELECT [:Process] FROM (");
+			try
+			{
+				lrefPolicies = Entity.GetInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), Constants.ObjID_SubPolicy));
+				pstrBuffer.append(lrefPolicies.SQLForSelectMulti());
+			}
+			catch (Throwable e)
+			{
+				throw new BigBangException(e.getMessage(), e);
+			}
+			pstrBuffer.append(") [AuxSPols] WHERE (");
+			pstrBuffer.append("([:Number] LIKE N'%").append(lstrAux).append("%')");
+			pstrBuffer.append(" OR ");
+			pstrBuffer.append("([:Subscriber:Name] LIKE N'%").append(lstrAux).append("%')");
+			pstrBuffer.append(" OR ");
+			pstrBuffer.append("(CAST([:Subscriber:Number] AS NVARCHAR(20)) LIKE N'%").append(lstrAux).append("%')");
+			pstrBuffer.append(" OR ");
+			pstrBuffer.append("([:Process:Parent] IN (SELECT [:Process] FROM (");
+			try
+			{
+				lrefPolicies = Entity.GetInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), Constants.ObjID_Policy));
+				pstrBuffer.append(lrefPolicies.SQLForSelectMulti());
+			}
+			catch (Throwable e)
+			{
+				throw new BigBangException(e.getMessage(), e);
+			}
+			pstrBuffer.append(") [AuxSMPols] WHERE (");
+			pstrBuffer.append("([:Number] LIKE N'%").append(lstrAux).append("%')");
+			pstrBuffer.append(" OR ");
+			pstrBuffer.append("([:SubLine:Name] LIKE N'%").append(lstrAux).append("%')");
+			pstrBuffer.append(" OR ");
+			pstrBuffer.append("([:SubLine:Line:Name] LIKE N'%").append(lstrAux).append("%')");
+			pstrBuffer.append(" OR ");
+			pstrBuffer.append("([:SubLine:Line:Category:Name] LIKE N'%").append(lstrAux).append("%')");
 			pstrBuffer.append(")))))))");
 		}
 
@@ -1226,6 +1265,7 @@ public class ReceiptServiceImpl
 			try
 			{
 				lrefPolicies = Entity.GetInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), Constants.ObjID_Policy));
+				lrefClients = Entity.GetInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), Constants.ObjID_Client));
 				pstrBuffer.append(lrefPolicies.SQLForSelectSingle());
 			}
 			catch (Throwable e)
@@ -1243,46 +1283,48 @@ public class ReceiptServiceImpl
 				throw new BigBangException(e.getMessage(), e);
 			}
 			pstrBuffer.append(") [AuxPols] WHERE [:Process] = [Aux].[:Process:Parent])) ELSE ");
-			pstrBuffer.append("CASE WHEN [:Process:Parent] IN (SELECT [:Process] FROM (");
-			try
-			{
-				pstrBuffer.append(lrefPolicies.SQLForSelectMulti());
-			}
-			catch (Throwable e)
-			{
-				throw new BigBangException(e.getMessage(), e);
-			}
-			pstrBuffer.append(") [AuxPols] WHERE [:Process:Parent] IN (SELECT [:Process] FROM (");
-			try
-			{
-				lrefClients = Entity.GetInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), Constants.ObjID_Client));
-				pstrBuffer.append(lrefClients.SQLForSelectSingle());
-			}
-			catch (Throwable e)
-			{
-				throw new BigBangException(e.getMessage(), e);
-			}
-			pstrBuffer.append(") [AuxClients] WHERE CAST([:Number] AS NVARCHAR(20)) LIKE N'%").append(lstrAux).append("%')) THEN ")
-					.append("-10000*PATINDEX(N'%").append(lstrAux).append("%', CAST((SELECT [AuxClients].[:Number] FROM (");
-			try
-			{
-				pstrBuffer.append(lrefPolicies.SQLForSelectMulti());
-			}
-			catch (Throwable e)
-			{
-				throw new BigBangException(e.getMessage(), e);
-			}
-			pstrBuffer.append(") [AuxPols], (");
-			try
-			{
-				pstrBuffer.append(lrefClients.SQLForSelectSingle());
-			}
-			catch (Throwable e)
-			{
-				throw new BigBangException(e.getMessage(), e);
-			}
-			pstrBuffer.append(") [AuxClients] WHERE [AuxPols].[:Process] = [Aux].[:Process:Parent] AND ")
-					.append("[AuxClients].[:Process] = [AuxPols].[:Process:Parent]) AS NVARCHAR(20))) ELSE ");
+
+//			//Retirado por complexidade
+//			pstrBuffer.append("CASE WHEN [:Process:Parent] IN (SELECT [:Process] FROM (");
+//			try
+//			{
+//				pstrBuffer.append(lrefPolicies.SQLForSelectMulti());
+//			}
+//			catch (Throwable e)
+//			{
+//				throw new BigBangException(e.getMessage(), e);
+//			}
+//			pstrBuffer.append(") [AuxPols] WHERE [:Process:Parent] IN (SELECT [:Process] FROM (");
+//			try
+//			{
+//				pstrBuffer.append(lrefClients.SQLForSelectSingle());
+//			}
+//			catch (Throwable e)
+//			{
+//				throw new BigBangException(e.getMessage(), e);
+//			}
+//			pstrBuffer.append(") [AuxClients] WHERE CAST([:Number] AS NVARCHAR(20)) LIKE N'%").append(lstrAux).append("%')) THEN ")
+//					.append("-10000*PATINDEX(N'%").append(lstrAux).append("%', CAST((SELECT [AuxClients].[:Number] FROM (");
+//			try
+//			{
+//				pstrBuffer.append(lrefPolicies.SQLForSelectMulti());
+//			}
+//			catch (Throwable e)
+//			{
+//				throw new BigBangException(e.getMessage(), e);
+//			}
+//			pstrBuffer.append(") [AuxPols], (");
+//			try
+//			{
+//				pstrBuffer.append(lrefClients.SQLForSelectSingle());
+//			}
+//			catch (Throwable e)
+//			{
+//				throw new BigBangException(e.getMessage(), e);
+//			}
+//			pstrBuffer.append(") [AuxClients] WHERE [AuxPols].[:Process] = [Aux].[:Process:Parent] AND ")
+//					.append("[AuxClients].[:Process] = [AuxPols].[:Process:Parent]) AS NVARCHAR(20))) ELSE ");
+
 			pstrBuffer.append("CASE WHEN [:Process:Parent] IN (SELECT [:Process] FROM (");
 			try
 			{
@@ -1382,7 +1424,7 @@ public class ReceiptServiceImpl
 				throw new BigBangException(e.getMessage(), e);
 			}
 			pstrBuffer.append(") [AuxPols] WHERE [:Process] = [Aux].[:Process:Parent])) ELSE ");
-			pstrBuffer.append("0 END END END END END END END");
+			pstrBuffer.append("0 END END END END END END"); // END"); Faz parte do trim por complexidade
 		}
 
 		return lbFound;
