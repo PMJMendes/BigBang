@@ -1448,8 +1448,8 @@ public class ReceiptServiceImpl
 					(lobjProc.GetValidOperation(Constants.OPID_Receipt_ExternReceiveDAS) != null) )
 				return Constants.StatusID_DASPending;
 
-			if ( (lobjProc.GetLog(Constants.OPID_Receipt_Payment) != null) ||
-					(lobjProc.GetLog(Constants.OPID_Receipt_AssociateWithDebitNote) != null) )
+			if ( (lobjProc.GetLiveLog(Constants.OPID_Receipt_Payment) != null) ||
+					(lobjProc.GetLiveLog(Constants.OPID_Receipt_AssociateWithDebitNote) != null) )
 				return Constants.StatusID_Paid;
 
 			if ( (lobjProc.GetValidOperation(Constants.OPID_Receipt_Payment) != null) ||
