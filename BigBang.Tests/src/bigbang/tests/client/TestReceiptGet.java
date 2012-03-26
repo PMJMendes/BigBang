@@ -55,7 +55,7 @@ public class TestReceiptGet
 		sorts.field = ReceiptSortParameter.SortableField.RELEVANCE;
 		sorts.order = SortOrder.ASC;
 
-		Services.receiptService.openSearch(new SearchParameter[] {parameter}, new SortParameter[] {sorts}, 5, callback);
+		Services.receiptService.openSearch(new SearchParameter[] {parameter}, new SortParameter[] {sorts}, 50, callback);
 	}
 
 	private static void DoStep2(SearchResult stub)
