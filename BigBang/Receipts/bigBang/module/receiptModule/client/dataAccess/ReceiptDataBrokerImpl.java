@@ -1,5 +1,6 @@
 package bigBang.module.receiptModule.client.dataAccess;
 
+import java.util.ArrayList;
 import java.util.Collection;
 
 import bigBang.definitions.client.dataAccess.DataBroker;
@@ -15,6 +16,7 @@ import bigBang.definitions.shared.DebitNote;
 import bigBang.definitions.shared.Receipt;
 import bigBang.definitions.shared.Receipt.ReturnMessage;
 import bigBang.definitions.shared.ReceiptStub;
+import bigBang.definitions.shared.SearchResult;
 import bigBang.definitions.shared.SortOrder;
 import bigBang.library.client.BigBangAsyncCallback;
 import bigBang.module.receiptModule.interfaces.ReceiptService;
@@ -335,6 +337,31 @@ public class ReceiptDataBrokerImpl extends DataBroker<Receipt> implements Receip
 						new String("Could not validate receipt")
 				});
 				super.onResponseFailure(caught);
+			}
+		});
+	}
+	
+	@Override
+	public void getReceiptsWithNumber(String label, final ResponseHandler<Collection<ReceiptStub>> handler){
+		service.getExactResults(label, new BigBangAsyncCallback<SearchResult[]>() {
+			
+			@Override
+			public void onResponseSuccess(SearchResult[] result) {
+				ArrayList<ReceiptStub> receipts = new ArrayList<ReceiptStub>();
+				
+				for(int i = 0; i<result.length; i++){
+					receipts.add((ReceiptStub) result[i]);
+				}
+				handler.onResponse(receipts);
+			}
+			@Override
+			public void onResponseFailure(Throwable caught) {
+				handler.onError(new String[]{
+						new String("Could not find exact results")
+				});
+				super.onResponseFailure(caught);
+
+				
 			}
 		});
 	}

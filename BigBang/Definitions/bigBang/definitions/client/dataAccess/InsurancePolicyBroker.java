@@ -60,5 +60,8 @@ public interface InsurancePolicyBroker extends DataBrokerInterface<InsurancePoli
 	void transferToClient(String policyId, String newClientId,
 			ResponseHandler<InsurancePolicy> handler);
 
+	void getInsurancePoliciesWithNumber(String label,
+			ResponseHandler<Collection<InsurancePolicyStub>> handler);
+
 	
 }

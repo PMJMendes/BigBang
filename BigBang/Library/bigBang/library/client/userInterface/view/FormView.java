@@ -163,6 +163,10 @@ public abstract class FormView<T> extends View implements Validatable, HasEditab
 		this.currentSection.addWidget(w);
 	}
 	
+	public void addWidget(Widget w, boolean inline) {
+		this.currentSection.addWidget(w, inline);
+	}
+	
 	//Disables all the input fields in the form
 	public void setReadOnly(boolean readOnly) {
 		this.isReadOnly = readOnly;

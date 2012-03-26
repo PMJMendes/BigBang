@@ -1,5 +1,6 @@
 package bigBang.module.insurancePolicyModule.client.dataAccess;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
@@ -24,9 +25,11 @@ import bigBang.definitions.shared.InsurancePolicyStub;
 import bigBang.definitions.shared.Negotiation;
 import bigBang.definitions.shared.PolicyVoiding;
 import bigBang.definitions.shared.Receipt;
+import bigBang.definitions.shared.ReceiptStub;
 import bigBang.definitions.shared.Remap;
 import bigBang.definitions.shared.Remap.RemapId;
 import bigBang.definitions.shared.SearchParameter;
+import bigBang.definitions.shared.SearchResult;
 import bigBang.definitions.shared.SortOrder;
 import bigBang.definitions.shared.SortParameter;
 import bigBang.library.client.BigBangAsyncCallback;
@@ -731,6 +734,32 @@ public class InsurancePolicyProcessBrokerImpl extends DataBroker<InsurancePolicy
 			public void onResponseFailure(Throwable caught) {
 				handler.onError(new String[]{
 						new String("Could not transfer to client")
+				});
+				super.onResponseFailure(caught);
+			}
+		
+		
+		});
+	}
+	
+	@Override
+	public void getInsurancePoliciesWithNumber(String label, final ResponseHandler<Collection<InsurancePolicyStub>> handler){
+		service.getExactResults(label, new BigBangAsyncCallback<SearchResult[]>() {
+
+			@Override
+			public void onResponseSuccess(SearchResult[] result) {
+				ArrayList<InsurancePolicyStub> stubs = new ArrayList<InsurancePolicyStub>();
+				
+				for(int i = 0; i<result.length; i++){
+					stubs.add((InsurancePolicyStub)result[i]);
+				}
+				handler.onResponse(stubs);
+			}
+			
+			@Override
+			public void onResponseFailure(Throwable caught) {
+				handler.onError(new String[]{
+						new String("Could not find exact results")
 				});
 				super.onResponseFailure(caught);
 			}

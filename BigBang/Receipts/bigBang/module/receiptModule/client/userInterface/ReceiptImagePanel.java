@@ -68,6 +68,10 @@ public class ReceiptImagePanel extends View {
 		navigateToDirectoryList(null, false);
 	}
 	
+	public NavigationPanel getNavigationPanel() {
+		return navigationPanel;
+	}
+
 	@Override
 	protected void initializeView() {}
 
@@ -111,8 +115,17 @@ public class ReceiptImagePanel extends View {
 		wrapper.add(new Label("O ficheiro não pode ser apresentado"));
 		navigationPanel.navigateTo(wrapper);
 	}
+	
+	public void showNoImageReceipt() {
+		VerticalPanel wrapper = new VerticalPanel();
+		wrapper.setSize("100%", "100%");
+		wrapper.setVerticalAlignment(HasVerticalAlignment.ALIGN_MIDDLE);
+		wrapper.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
+		wrapper.add(new Label("A inserir recibos sem imagem"));
+		navigationPanel.setHomeWidget(wrapper);
+	}
 
-	protected void navigateToDirectoryList(String dirDesc){
+	public void navigateToDirectoryList(String dirDesc){
 		navigateToDirectoryList(dirDesc, true);
 	}
 

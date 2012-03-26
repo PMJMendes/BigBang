@@ -32,5 +32,8 @@ public interface ReceiptProcessDataBroker extends DataBrokerInterface<Receipt> {
 	void setForReturn(ReturnMessage message, ResponseHandler<Receipt> handler);
 
 	void validateReceipt(String receiptId, ResponseHandler<Receipt> handler);
+
+	void getReceiptsWithNumber(String label,
+			ResponseHandler<Collection<ReceiptStub>> handler);
 	
 }

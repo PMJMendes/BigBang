@@ -176,6 +176,10 @@ public abstract class SerialReceiptCreationForm extends FormView<ReceiptPolicyWr
 	protected abstract void onClickVerifyPolicyNumber() ;
 	
 	protected abstract void onClickVerifyReceiptNumber();
+	
+	protected abstract void onEnterKeyReceiptNumber();
+	
+	protected abstract void onEnterKeyPolicyNumber();
 
 	@Override
 	public void setInfo(ReceiptPolicyWrapper info) {
