@@ -1,8 +1,8 @@
 package bigBang.module.quoteRequestModule.client.userInterface;
 
+import java.util.HashMap;
 import java.util.Map;
 
-import bigBang.definitions.client.dataAccess.ClientProcessBroker;
 import bigBang.definitions.shared.BigBangConstants;
 import bigBang.definitions.shared.QuoteRequest;
 import bigBang.definitions.shared.QuoteRequest.RequestSubLine;
@@ -29,7 +29,8 @@ public class QuoteRequestForm extends FormView<QuoteRequest> implements FiresAsy
 	protected TextAreaFormField notes;
 
 	//Dynamic stuff
-	protected Map<String, FormViewSection> subLineSections;
+	protected Map<String, SubLineDataSection> subLineSections;
+	protected FormViewSection notesSection;
 
 
 	public QuoteRequestForm(){
@@ -62,10 +63,12 @@ public class QuoteRequestForm extends FormView<QuoteRequest> implements FiresAsy
 				caseStudyFlag
 		}, false);
 
-		addSection("Notas Internas");
+		this.notesSection = new FormViewSection("Notas Internas");
+		this.notesSection.addFormField(notes);
+		addSection(this.notesSection);
 
-		addFormField(notes);
-
+		this.subLineSections = new HashMap<String, SubLineDataSection>();
+		
 		setupForCreation();
 	}
 
@@ -102,7 +105,7 @@ public class QuoteRequestForm extends FormView<QuoteRequest> implements FiresAsy
 			result.managerId = manager.getValue();
 			result.mediatorId = policiesMediator.getValue();
 			result.caseStudy = caseStudyFlag.getValue();
-			result.requestData = getRequestData();
+			result.requestData = getRequestSubLineData();
 		}
 
 		return result;
@@ -133,16 +136,19 @@ public class QuoteRequestForm extends FormView<QuoteRequest> implements FiresAsy
 		for(RequestSubLine subLineData : data){
 			addSubLineDataSection(subLineData);
 		}
+		addSection(notesSection);
 	}
 
-	protected RequestSubLine[] getRequestData(){
+	protected RequestSubLine[] getRequestSubLineData(){
 		RequestSubLine[] result = new RequestSubLine[this.subLineSections.size()];
 		
-//		int i = 0;
-//		for(RequestSubLine subLineData : data){
-//			addSubLineDataSection(subLineData);
-//		}
-		return null; //TODO
+		int i = 0;
+		for(SubLineDataSection section : this.subLineSections.values()) {
+			result[i] = section.getSubLineData();
+			i++;
+		}
+
+		return result;
 	}
 
 	protected void clearRequestDataInfo() {
@@ -153,16 +159,18 @@ public class QuoteRequestForm extends FormView<QuoteRequest> implements FiresAsy
 	}
 
 	protected void addSubLineDataSection(RequestSubLine subLinedata){
-		//TODO
+		SubLineDataSection section = new SubLineDataSection(subLinedata);
+		this.subLineSections.put(subLinedata.qrslId, section);
+		addSection(section);		
 	}
 	
 	protected SubLineDataSection getSubLineDataSection(String subLineId){
-//		return this.subLineSections.get(subLineId); //TODO
-		return null;
+		return this.subLineSections.get(subLineId);
 	}
 
 	protected void removeSubLineDataSection(String subLineId){
-		//TODO
+		this.removeSection(this.subLineSections.get(subLineId));
+		this.subLineSections.remove(subLineId);
 	}
 
 	@Override

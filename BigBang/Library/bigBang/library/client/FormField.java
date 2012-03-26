@@ -130,6 +130,10 @@ public abstract class FormField<T> extends View implements HasValue<T>, Validata
 		unitsLabel.setText(label);
 	}
 	
+	public void setLabelText(String labelText){
+		this.label.setText(labelText);
+	}
+	
 	public abstract void setLabelWidth(String width);
 	
 }

@@ -106,8 +106,7 @@ public class QuoteRequest
 		public TableSection[] tableData;
 		public ExtraField[] extraData;
 	}
-	
-	
+
 	public String managerId;
 	public String mediatorId;
 	public String inheritMediatorId;
