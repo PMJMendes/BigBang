@@ -49,7 +49,7 @@ public class TestReceiptDelete
 		};
 
 		search = new ReceiptSearchParameter();
-		search.freeText = "A123";
+		search.freeText = "T1";
 		sort = new ReceiptSortParameter();
 		sort.field = ReceiptSortParameter.SortableField.NUMBER;
 		sort.order = SortOrder.ASC;

@@ -1,6 +1,6 @@
 package bigbang.tests.client;
 
-import bigBang.definitions.shared.DocuShareItem;
+import bigBang.definitions.shared.DocuShareHandle;
 import bigBang.definitions.shared.Receipt;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -15,7 +15,7 @@ public class TestReceiptCreateSerial
 	private static void DoStep1()
 	{
 		Receipt receipt;
-		DocuShareItem source;
+		DocuShareHandle source;
 
 		AsyncCallback<Receipt> callback = new AsyncCallback<Receipt>()
 		{
@@ -31,16 +31,16 @@ public class TestReceiptCreateSerial
 		};
 
 		receipt = new Receipt();
-		receipt.number = "A456";
-		receipt.policyId = "588E0BE9-6E92-4711-B0CD-9FD50118C191";
+		receipt.number = "QQ003";
+		receipt.policyId = "01B7B31C-0EFF-4A93-84EE-A02000F26B1F";
 		receipt.typeId = "6B91D626-4CAD-4F53-8FD6-9F900111C39F";
 		receipt.totalPremium = "153.42";
 		receipt.comissions = "13.2";
 		receipt.retrocessions = "0";
 		receipt.issueDate = "2011-11-30";
 
-		source = new DocuShareItem();
-		source.handle = "Document-454156";
+		source = new DocuShareHandle();
+		source.handle = "Document-456130";
 		source.locationHandle = null;
 
 		Services.receiptService.serialCreateReceipt(receipt, source, callback);

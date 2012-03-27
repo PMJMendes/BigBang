@@ -29,12 +29,12 @@ public class TestReceiptCreate
 		};
 
 		receipt = new Receipt();
-		receipt.number = "ZZ333";
+		receipt.number = "QQ001";
 		receipt.typeId = "6B91D626-4CAD-4F53-8FD6-9F900111C39F";
 		receipt.totalPremium = "153.42";
 		receipt.comissions = "13.2";
 		receipt.retrocessions = "0";
 		receipt.issueDate = "2011-11-30";
-		Services.insurancePolicyService.createReceipt("01B7B31C-0EFF-4A93-84EE-A02000F26B1F", receipt, callback);
+		Services.insurancePolicyService.createReceipt("588E0BE9-6E92-4711-B0CD-9FD50118C191", receipt, callback);
 	}
 }

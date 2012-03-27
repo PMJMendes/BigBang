@@ -67,7 +67,7 @@ public class TestPolicyChangeClient
 			}
 		};
 
-		Services.insurancePolicyService.transferToClient(stub.id, "D7570502-0495-4E18-9CB3-9FB700201363", callback);
+		Services.insurancePolicyService.transferToClient(stub.id, "5AD8DC0B-613B-4B5C-ACB1-9FB70020137E", callback);
 	}
 
 	private static void DoStep3(String workspaceId)
