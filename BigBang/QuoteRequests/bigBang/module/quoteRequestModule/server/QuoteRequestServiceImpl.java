@@ -626,7 +626,7 @@ public class QuoteRequestServiceImpl
 				}
 				lobjSubLine.columns = larrColumns.toArray(new QuoteRequest.ColumnHeader[larrColumns.size()]);
 
-				if ( lobjSubLine.coverages.length * lobjSubLine.columns.length == 0 )
+				if ( lobjSubLine.coverages.length == 0 )
 					lobjSubLine.tableData = new QuoteRequest.TableSection[0];
 				else
 				{
@@ -900,7 +900,7 @@ public class QuoteRequestServiceImpl
 			}
 			pobjResult.columns = larrColumns.toArray(new QuoteRequest.ColumnHeader[larrColumns.size()]);
 
-			if ( pobjResult.coverages.length * pobjResult.columns.length == 0 )
+			if ( pobjResult.coverages.length == 0 )
 				pobjResult.tableData = new QuoteRequest.TableSection[0];
 			else
 			{
