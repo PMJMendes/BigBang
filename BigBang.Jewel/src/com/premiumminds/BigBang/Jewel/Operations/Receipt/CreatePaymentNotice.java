@@ -24,6 +24,7 @@ public class CreatePaymentNotice
 	private static final long serialVersionUID = 1L;
 
 	public transient UUID[] marrReceiptIDs;
+	public boolean mbUseSets;
 	public UUID midSet;
 	public UUID midSetClient;
 	public UUID midSetReceipt;
@@ -91,33 +92,36 @@ public class CreatePaymentNotice
 				mobjDocOps.marrCreate = new DocumentData[]{lobjDoc};
 			}
 
-			if ( midSet == null )
+			if ( mbUseSets )
 			{
-				lobjSet = PaymentNoticeSet.GetInstance(Engine.getCurrentNameSpace(), null);
-				lobjSet.setAt(0, new Timestamp(new java.util.Date().getTime()));
-				lobjSet.setAt(1, Engine.getCurrentUser());
-				lobjSet.setAt(2, (Timestamp)null);
-				lobjSet.SaveToDb(pdb);
-				midSet = lobjSet.getKey();
-			}
+				if ( midSet == null )
+				{
+					lobjSet = PaymentNoticeSet.GetInstance(Engine.getCurrentNameSpace(), null);
+					lobjSet.setAt(0, new Timestamp(new java.util.Date().getTime()));
+					lobjSet.setAt(1, Engine.getCurrentUser());
+					lobjSet.setAt(2, (Timestamp)null);
+					lobjSet.SaveToDb(pdb);
+					midSet = lobjSet.getKey();
+				}
 
-			if ( midSetClient == null )
-			{
-				lobjSetClient = PaymentNoticeClient.GetInstance(Engine.getCurrentNameSpace(), null);
-				lobjSetClient.setAt(0, midSet);
-				lobjSetClient.setAt(1, lidClient);
-				lobjSetClient.setAt(2, mobjDocOps.marrCreate[0].mobjFile);
-				lobjSetClient.setAt(3, false);
-				lobjSetClient.SaveToDb(pdb);
-				midSetClient = lobjSetClient.getKey();
-			}
+				if ( midSetClient == null )
+				{
+					lobjSetClient = PaymentNoticeClient.GetInstance(Engine.getCurrentNameSpace(), null);
+					lobjSetClient.setAt(0, midSet);
+					lobjSetClient.setAt(1, lidClient);
+					lobjSetClient.setAt(2, mobjDocOps.marrCreate[0].mobjFile);
+					lobjSetClient.setAt(3, false);
+					lobjSetClient.SaveToDb(pdb);
+					midSetClient = lobjSetClient.getKey();
+				}
 
-			lobjSetReceipt = PaymentNoticeReceipt.GetInstance(Engine.getCurrentNameSpace(), null);
-			lobjSetReceipt.setAt(0, midSetClient);
-			lobjSetReceipt.setAt(1, GetProcess().GetDataKey());
-			lobjSetReceipt.setAt(2, null);
-			lobjSetReceipt.SaveToDb(pdb);
-			midSetReceipt = lobjSetReceipt.getKey();
+				lobjSetReceipt = PaymentNoticeReceipt.GetInstance(Engine.getCurrentNameSpace(), null);
+				lobjSetReceipt.setAt(0, midSetClient);
+				lobjSetReceipt.setAt(1, GetProcess().GetDataKey());
+				lobjSetReceipt.setAt(2, null);
+				lobjSetReceipt.SaveToDb(pdb);
+				midSetReceipt = lobjSetReceipt.getKey();
+			}
 		}
 		catch (Throwable e)
 		{

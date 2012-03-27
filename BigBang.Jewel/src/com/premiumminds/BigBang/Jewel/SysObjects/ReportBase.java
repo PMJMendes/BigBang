@@ -2,7 +2,6 @@ package com.premiumminds.BigBang.Jewel.SysObjects;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.File;
 import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
@@ -121,7 +120,6 @@ Este código assume bué coisas:
 				}
 			}
 
-			lobjDoc.save(new File("tmp.docx"));
 			lobjOut = new ByteArrayOutputStream();
 			(new SaveToZipFile(lobjDoc)).save(lobjOut);
 //			lobjDoc.setFontMapper(new IdentityPlusMapper());

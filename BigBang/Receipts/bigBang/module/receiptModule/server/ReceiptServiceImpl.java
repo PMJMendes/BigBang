@@ -4,9 +4,7 @@ import java.math.BigDecimal;
 import java.sql.ResultSet;
 import java.sql.Timestamp;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Calendar;
-import java.util.Comparator;
 import java.util.Hashtable;
 import java.util.UUID;
 
@@ -535,6 +533,7 @@ public class ReceiptServiceImpl
 
 		lopCPN = new CreatePaymentNotice(lobjReceipt.GetProcessID());
 		lopCPN.marrReceiptIDs = new UUID[] {UUID.fromString(receiptId)};
+		lopCPN.mbUseSets = false;
 
 		try
 		{
@@ -799,7 +798,6 @@ public class ReceiptServiceImpl
 		return sGetReceipt(lopCR.mobjData.mid);
 	}
 
-	@Override
 	public void massCreatePaymentNotice(String[] receiptIds)
 		throws SessionExpiredException, BigBangException
 	{
@@ -856,6 +854,7 @@ public class ReceiptServiceImpl
 
 					lopCPN = new CreatePaymentNotice(lobjReceipt.GetProcessID());
 					lopCPN.marrReceiptIDs = larrFinal;
+					lopCPN.mbUseSets = true;
 					lopCPN.midSet = lidSet;
 					lopCPN.midSetClient = lidSetClient;
 					lopCPN.mobjDocOps = lopDocOps;
