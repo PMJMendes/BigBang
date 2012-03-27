@@ -85,6 +85,6 @@ public class DebitNoteReport
 		larrParams.put("Text", NumberConv.getAsEuroText(mdblValue.doubleValue()));
 		larrParams.put("Date", mdtDate.toString().substring(0, 10));
 
-		return Generate(larrParams);
+		return Generate(larrParams, null);
 	}
 }

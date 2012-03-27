@@ -4,7 +4,10 @@ import java.math.BigDecimal;
 import java.sql.ResultSet;
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
+import java.util.Comparator;
+import java.util.Hashtable;
 import java.util.UUID;
 
 import Jewel.Engine.Engine;
@@ -15,7 +18,7 @@ import Jewel.Engine.SysObjects.ObjectBase;
 import Jewel.Petri.Interfaces.IProcess;
 import Jewel.Petri.Objects.PNProcess;
 import bigBang.definitions.shared.DebitNote;
-import bigBang.definitions.shared.DocuShareItem;
+import bigBang.definitions.shared.DocuShareHandle;
 import bigBang.definitions.shared.Receipt;
 import bigBang.definitions.shared.Receipt.ReturnMessage;
 import bigBang.definitions.shared.ReceiptStub;
@@ -46,6 +49,7 @@ import com.premiumminds.BigBang.Jewel.Operations.ContactOps;
 import com.premiumminds.BigBang.Jewel.Operations.DocOps;
 import com.premiumminds.BigBang.Jewel.Operations.Policy.CreateReceipt;
 import com.premiumminds.BigBang.Jewel.Operations.Receipt.AssociateWithDebitNote;
+import com.premiumminds.BigBang.Jewel.Operations.Receipt.CreatePaymentNotice;
 import com.premiumminds.BigBang.Jewel.Operations.Receipt.DeleteReceipt;
 import com.premiumminds.BigBang.Jewel.Operations.Receipt.ManageData;
 import com.premiumminds.BigBang.Jewel.Operations.Receipt.ReceiveImage;
@@ -371,7 +375,7 @@ public class ReceiptServiceImpl
 		return sGetReceipt(UUID.fromString(receipt.id));
 	}
 
-	public Receipt receiveImage(String receiptId, DocuShareItem source)
+	public Receipt receiveImage(String receiptId, DocuShareHandle source)
 		throws SessionExpiredException, BigBangException
 	{
 		com.premiumminds.BigBang.Jewel.Objects.Receipt lobjReceipt;
@@ -504,6 +508,37 @@ public class ReceiptServiceImpl
 		try
 		{
 			lopSRTI.Execute();
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangException(e.getMessage(), e);
+		}
+
+		return sGetReceipt(lobjReceipt.getKey());
+	}
+
+	public Receipt createPaymentNotice(String receiptId)
+		throws SessionExpiredException, BigBangException
+	{
+		com.premiumminds.BigBang.Jewel.Objects.Receipt lobjReceipt;
+		CreatePaymentNotice lopCPN;
+
+		try
+		{
+			lobjReceipt = com.premiumminds.BigBang.Jewel.Objects.Receipt.GetInstance(Engine.getCurrentNameSpace(),
+					UUID.fromString(receiptId));
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangException(e.getMessage(), e);
+		}
+
+		lopCPN = new CreatePaymentNotice(lobjReceipt.GetProcessID());
+		lopCPN.marrReceiptIDs = new UUID[] {UUID.fromString(receiptId)};
+
+		try
+		{
+			lopCPN.Execute();
 		}
 		catch (Throwable e)
 		{
@@ -686,7 +721,7 @@ public class ReceiptServiceImpl
 		}
 	}
 
-	public Receipt serialCreateReceipt(Receipt receipt, DocuShareItem source)
+	public Receipt serialCreateReceipt(Receipt receipt, DocuShareHandle source)
 		throws SessionExpiredException, BigBangException
 	{
 		Policy lobjPolicy;
@@ -762,6 +797,81 @@ public class ReceiptServiceImpl
 		}
 
 		return sGetReceipt(lopCR.mobjData.mid);
+	}
+
+	@Override
+	public void massCreatePaymentNotice(String[] receiptIds)
+		throws SessionExpiredException, BigBangException
+	{
+		Hashtable<UUID, ArrayList<UUID>> larrReceipts;
+		com.premiumminds.BigBang.Jewel.Objects.Receipt lobjReceipt;
+		IProcess lobjProcess;
+		UUID lidClient;
+		ArrayList<UUID> larrByClient;
+		UUID[] larrFinal;
+		DocOps lopDocOps;
+		UUID lidSet;
+		UUID lidSetClient;
+		CreatePaymentNotice lopCPN;
+		int i;
+
+		larrReceipts = new Hashtable<UUID, ArrayList<UUID>>();
+		for ( i = 0; i < receiptIds.length; i++ )
+		{
+			try
+			{
+				lobjReceipt = com.premiumminds.BigBang.Jewel.Objects.Receipt.GetInstance(Engine.getCurrentNameSpace(),
+						UUID.fromString(receiptIds[i]));
+				lobjProcess = PNProcess.GetInstance(Engine.getCurrentNameSpace(), lobjReceipt.GetProcessID());
+				if ( Constants.ProcID_Policy.equals(lobjProcess.GetParent().GetScriptID()) )
+					lidClient = lobjProcess.GetParent().GetParent().GetDataKey();
+				else
+					lidClient = (UUID)lobjProcess.GetParent().GetData().getAt(2);
+			}
+			catch (Throwable e)
+			{
+				throw new BigBangException(e.getMessage(), e);
+			}
+			larrByClient = larrReceipts.get(lidClient);
+			if ( larrByClient == null )
+			{
+				larrByClient = new ArrayList<UUID>();
+				larrReceipts.put(lidClient, larrByClient);
+			}
+			larrByClient.add(lobjReceipt.getKey());
+		}
+
+		lidSet = null;
+		for(UUID lidC : larrReceipts.keySet())
+		{
+			lidSetClient = null;
+			lopDocOps = null;
+			larrByClient = larrReceipts.get(lidC);
+			larrFinal = larrByClient.toArray(new UUID[larrByClient.size()]);
+			for ( i = 0; i < larrFinal.length; i++ )
+			{
+				try
+				{
+					lobjReceipt = com.premiumminds.BigBang.Jewel.Objects.Receipt.GetInstance(Engine.getCurrentNameSpace(), larrFinal[i]);
+
+					lopCPN = new CreatePaymentNotice(lobjReceipt.GetProcessID());
+					lopCPN.marrReceiptIDs = larrFinal;
+					lopCPN.midSet = lidSet;
+					lopCPN.midSetClient = lidSetClient;
+					lopCPN.mobjDocOps = lopDocOps;
+
+					lopCPN.Execute();
+
+					lopDocOps = lopCPN.mobjDocOps;
+					lidSetClient = lopCPN.midSetClient;
+					lidSet = lopCPN.midSet;
+				}
+				catch (Throwable e)
+				{
+					throw new BigBangException(e.getMessage(), e);
+				}
+			}
+		}
 	}
 
 	protected UUID getObjectID()
