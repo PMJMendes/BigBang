@@ -807,7 +807,6 @@ public class ReceiptServiceImpl
 		UUID lidClient;
 		ArrayList<UUID> larrByClient;
 		UUID[] larrFinal;
-		DocOps lopDocOps;
 		UUID lidSet;
 		UUID lidSetClient;
 		CreatePaymentNotice lopCPN;
@@ -843,7 +842,6 @@ public class ReceiptServiceImpl
 		for(UUID lidC : larrReceipts.keySet())
 		{
 			lidSetClient = null;
-			lopDocOps = null;
 			larrByClient = larrReceipts.get(lidC);
 			larrFinal = larrByClient.toArray(new UUID[larrByClient.size()]);
 			for ( i = 0; i < larrFinal.length; i++ )
@@ -857,11 +855,9 @@ public class ReceiptServiceImpl
 					lopCPN.mbUseSets = true;
 					lopCPN.midSet = lidSet;
 					lopCPN.midSetClient = lidSetClient;
-					lopCPN.mobjDocOps = lopDocOps;
 
 					lopCPN.Execute();
 
-					lopDocOps = lopCPN.mobjDocOps;
 					lidSetClient = lopCPN.midSetClient;
 					lidSet = lopCPN.midSet;
 				}
