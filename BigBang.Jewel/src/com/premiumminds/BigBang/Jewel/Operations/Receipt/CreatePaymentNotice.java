@@ -53,7 +53,14 @@ public class CreatePaymentNotice
 
 	public String LongDesc(String pstrLineBreak)
 	{
-		return "";
+		StringBuilder lstrBuilder;
+
+		lstrBuilder = new StringBuilder("Foi gerado um aviso de cobrança para este recibo.");
+		lstrBuilder.append(pstrLineBreak).append(pstrLineBreak);
+
+		mobjDocOps.LongDesc(lstrBuilder, pstrLineBreak);
+
+		return lstrBuilder.toString();
 	}
 
 	public UUID GetExternalProcess()
