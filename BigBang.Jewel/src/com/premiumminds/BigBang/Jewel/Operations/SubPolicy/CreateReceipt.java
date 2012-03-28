@@ -1,12 +1,7 @@
 package com.premiumminds.BigBang.Jewel.Operations.SubPolicy;
 
+import java.math.BigDecimal;
 import java.util.UUID;
-
-import com.premiumminds.BigBang.Jewel.Constants;
-import com.premiumminds.BigBang.Jewel.Data.ReceiptData;
-import com.premiumminds.BigBang.Jewel.Objects.Receipt;
-import com.premiumminds.BigBang.Jewel.Operations.ContactOps;
-import com.premiumminds.BigBang.Jewel.Operations.DocOps;
 
 import Jewel.Engine.Engine;
 import Jewel.Engine.DataAccess.SQLServer;
@@ -15,6 +10,13 @@ import Jewel.Petri.Interfaces.IScript;
 import Jewel.Petri.Objects.PNScript;
 import Jewel.Petri.SysObjects.JewelPetriException;
 import Jewel.Petri.SysObjects.Operation;
+
+import com.premiumminds.BigBang.Jewel.Constants;
+import com.premiumminds.BigBang.Jewel.Data.ReceiptData;
+import com.premiumminds.BigBang.Jewel.Objects.Receipt;
+import com.premiumminds.BigBang.Jewel.Operations.ContactOps;
+import com.premiumminds.BigBang.Jewel.Operations.DocOps;
+import com.premiumminds.BigBang.Jewel.Operations.Receipt.ExternForceReverse;
 
 public class CreateReceipt
 	extends Operation
@@ -70,6 +72,7 @@ public class CreateReceipt
 		Receipt lobjAux;
 		IScript lobjScript;
 		IProcess lobjProc; 
+		int i;
 
 		try
 		{
@@ -80,6 +83,9 @@ public class CreateReceipt
 
 			lobjAux = Receipt.GetInstance(Engine.getCurrentNameSpace(), (UUID)null);
 			mobjData.ToObject(lobjAux);
+			for ( i = 3; i < 8; i++ )
+				if ( lobjAux.getAt(i) != null )
+					lobjAux.setAt(i, ((BigDecimal)lobjAux.getAt(i)).abs());
 			lobjAux.SaveToDb(pdb);
 
 			if ( mobjContactOps != null )
@@ -100,5 +106,8 @@ public class CreateReceipt
 		{
 			throw new JewelPetriException(e.getMessage(), e);
 		}
+
+		if ( lobjAux.isReverseCircuit() )
+			TriggerOp(new ExternForceReverse(GetProcess().getKey()), pdb);
 	}
 }

@@ -1,5 +1,6 @@
 package com.premiumminds.BigBang.Jewel.Operations.Policy;
 
+import java.math.BigDecimal;
 import java.util.UUID;
 
 import Jewel.Engine.Engine;
@@ -17,6 +18,7 @@ import com.premiumminds.BigBang.Jewel.Objects.Client;
 import com.premiumminds.BigBang.Jewel.Objects.Receipt;
 import com.premiumminds.BigBang.Jewel.Operations.ContactOps;
 import com.premiumminds.BigBang.Jewel.Operations.DocOps;
+import com.premiumminds.BigBang.Jewel.Operations.Receipt.ExternForceReverse;
 import com.premiumminds.BigBang.Jewel.Operations.Receipt.ExternForceShortCircuit;
 import com.premiumminds.BigBang.Jewel.Operations.Receipt.TriggerImageOnCreate;
 
@@ -78,6 +80,7 @@ public class CreateReceipt
 		TriggerImageOnCreate lopTIOC;
 		ExternForceShortCircuit lopEFSC;
 		Client lobjClient;
+		int i;
 
 		try
 		{
@@ -88,6 +91,9 @@ public class CreateReceipt
 
 			lobjAux = Receipt.GetInstance(Engine.getCurrentNameSpace(), (UUID)null);
 			mobjData.ToObject(lobjAux);
+			for ( i = 3; i < 8; i++ )
+				if ( lobjAux.getAt(i) != null )
+					lobjAux.setAt(i, ((BigDecimal)lobjAux.getAt(i)).abs());
 			lobjAux.SaveToDb(pdb);
 
 			if ( mobjContactOps != null )
@@ -122,5 +128,8 @@ public class CreateReceipt
 			lopEFSC = new ExternForceShortCircuit(lobjProc.getKey());
 			TriggerOp(lopEFSC, pdb);
 		}
+
+		if ( lobjAux.isReverseCircuit() )
+			TriggerOp(new ExternForceReverse(GetProcess().getKey()), pdb);
 	}
 }

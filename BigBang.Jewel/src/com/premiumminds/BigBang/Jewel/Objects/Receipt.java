@@ -246,4 +246,15 @@ public class Receipt
 
     	return false;
     }
+
+    public boolean isReverseCircuit()
+    {
+    	if ( Constants.RecType_Reversal.equals(getAt(1)) )
+    		return true;
+
+    	if ( Constants.RecType_Casualty.equals(getAt(1)) )
+    		return true;
+
+    	return false;
+    }
 }
