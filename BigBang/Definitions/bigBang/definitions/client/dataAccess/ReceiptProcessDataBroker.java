@@ -4,6 +4,7 @@ import java.util.Collection;
 
 import bigBang.definitions.client.response.ResponseHandler;
 import bigBang.definitions.shared.DebitNote;
+import bigBang.definitions.shared.DocuShareHandle;
 import bigBang.definitions.shared.Receipt;
 import bigBang.definitions.shared.Receipt.ReturnMessage;
 import bigBang.definitions.shared.ReceiptStub;
@@ -35,5 +36,10 @@ public interface ReceiptProcessDataBroker extends DataBrokerInterface<Receipt> {
 
 	void getReceiptsWithNumber(String label,
 			ResponseHandler<Collection<ReceiptStub>> handler);
+
+	void serialCreateReceipt(Receipt receipt, DocuShareHandle source,
+			ResponseHandler<Receipt> handler);
+	
+	void receiveImage(String receiptId, DocuShareHandle source, ResponseHandler<Receipt> handler);
 	
 }
