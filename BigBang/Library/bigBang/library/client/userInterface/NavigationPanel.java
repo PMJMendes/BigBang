@@ -7,13 +7,17 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
+import com.google.web.bindery.event.shared.HandlerRegistration;
 
+import bigBang.library.client.event.HasNavigationStateChangedHandlers;
 import bigBang.library.client.event.NavigationEvent;
 import bigBang.library.client.event.NavigationEventHandler;
+import bigBang.library.client.event.NavigationStateChangedEvent;
+import bigBang.library.client.event.NavigationStateChangedEventHandler;
 import bigBang.library.client.userInterface.SlidePanel.Direction;
 import bigBang.library.client.userInterface.view.View;
 
-public class NavigationPanel extends View {
+public class NavigationPanel extends View implements HasNavigationStateChangedHandlers{
 
 	public NavigationToolbar navBar;
 	protected SlidePanel slide;
@@ -104,7 +108,7 @@ public class NavigationPanel extends View {
 		return this.navigatables.size() > 0;
 	}
 
-	public void navigateTo(Widget w){
+	public void navigateTo(final Widget w){
 		//Removes all the next items
 		while(iterator.hasNext()){
 			iterator.next();
@@ -128,8 +132,10 @@ public class NavigationPanel extends View {
 			public void onSuccess(Void result) {
 				disableToolbarItems(false);
 				checkToolbarItems();
+				NavigationPanel.this.fireEvent(new NavigationStateChangedEvent(w));
 			}
 		});
+		
 	}
 
 	public boolean navigateForward(){
@@ -138,6 +144,7 @@ public class NavigationPanel extends View {
 			return false;
 		}
 		disableToolbarItems(true);
+		final Widget w = iterator.next();
 		this.slide.slideInto(iterator.next(), Direction.LEFT, new AsyncCallback<Void>() {
 
 			@Override
@@ -149,6 +156,7 @@ public class NavigationPanel extends View {
 			public void onSuccess(Void result) {
 				disableToolbarItems(false);
 				checkToolbarItems();
+				NavigationPanel.this.fireEvent(new NavigationStateChangedEvent(w));
 			}
 		});
 		return true;
@@ -163,7 +171,8 @@ public class NavigationPanel extends View {
 				return false;
 			}else{
 				disableToolbarItems(true);
-				this.slide.slideInto(iterator.previous(), Direction.RIGHT, new AsyncCallback<Void>() {
+				final Widget w = iterator.previous();
+				this.slide.slideInto(w, Direction.RIGHT, new AsyncCallback<Void>() {
 
 					@Override
 					public void onFailure(Throwable caught) {
@@ -174,6 +183,7 @@ public class NavigationPanel extends View {
 					public void onSuccess(Void result) {
 						disableToolbarItems(false);
 						checkToolbarItems();
+						NavigationPanel.this.fireEvent(new NavigationStateChangedEvent(w));
 					}
 				});
 				iterator.next();
@@ -187,7 +197,8 @@ public class NavigationPanel extends View {
 		while(iterator.hasPrevious())
 			iterator.previous();
 		disableToolbarItems(true);
-		this.slide.slideInto(iterator.next(), Direction.RIGHT, new AsyncCallback<Void>() {
+		final Widget w = iterator.next();
+		this.slide.slideInto(w, Direction.RIGHT, new AsyncCallback<Void>() {
 
 			@Override
 			public void onFailure(Throwable caught) {
@@ -198,6 +209,7 @@ public class NavigationPanel extends View {
 			public void onSuccess(Void result) {
 				disableToolbarItems(false);
 				checkToolbarItems();
+				NavigationPanel.this.fireEvent(new NavigationStateChangedEvent(w));
 			}
 		});
 	}
@@ -206,8 +218,9 @@ public class NavigationPanel extends View {
 		while(iterator.hasNext())
 			iterator.next();
 		iterator.previous();
+		final Widget w = iterator.next();
 		disableToolbarItems(true);
-		this.slide.slideInto(iterator.next(), Direction.LEFT, new AsyncCallback<Void>() {
+		this.slide.slideInto(w, Direction.LEFT, new AsyncCallback<Void>() {
 
 			@Override
 			public void onFailure(Throwable caught) {
@@ -218,6 +231,7 @@ public class NavigationPanel extends View {
 			public void onSuccess(Void result) {
 				disableToolbarItems(false);
 				checkToolbarItems();
+				NavigationPanel.this.fireEvent(new NavigationStateChangedEvent(w));
 			}
 		});
 		checkToolbarItems();
@@ -238,5 +252,15 @@ public class NavigationPanel extends View {
 	private void disableToolbarItems(boolean disable) {
 		navBar.nextButton.setEnabled(!disable);
 		navBar.prevButton.setEnabled(!disable);
+	}
+
+	@Override
+	public HandlerRegistration registerNavigationStateChangedHandler(
+			NavigationStateChangedEventHandler handler) {
+		return addHandler(handler, NavigationStateChangedEvent.TYPE);
+	}
+
+	public Widget getPrevious() {
+		return iterator.previous();
 	}
 }

@@ -150,4 +150,7 @@ public class TextBoxFormField extends FormField<String> {
 		return field;
 	}
 
+	public TextBox getNativeField(){
+		return (TextBox) field;
+	}
 }

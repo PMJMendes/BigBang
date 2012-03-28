@@ -264,4 +264,8 @@ public class ImageHandlerPanel extends View {
 	protected int getViewportWidth(){
 		return this.viewport.getOffsetWidth() - 20;
 	}
+	
+	public Image getImage(){
+		return image;
+	}
 }
