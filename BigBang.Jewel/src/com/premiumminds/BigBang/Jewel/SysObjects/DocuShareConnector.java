@@ -361,8 +361,8 @@ public class DocuShareConnector
 	{
 		DSSession lrefSession;
 
-		if ( pstrItem == null ) //TODO Tirar isto
-		{
+//		if ( pstrItem == null ) //TODO Tirar isto
+//		{
 			lrefSession = GetSession();
 			if ( lrefSession == null )
 				return;
@@ -375,7 +375,7 @@ public class DocuShareConnector
 			{
 				throw new BigBangJewelException(e.getMessage(), e);
 			}
-		}
+//		}
 	}
 
 //	public static String getItemAsImage(String pstrItem)
