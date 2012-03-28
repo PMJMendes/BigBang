@@ -199,8 +199,6 @@ public class InsurancePolicyServiceImpl
 			PadValue lobjValue;
 			int i, j;
 
-//			if ( mbValid )
-//				throw new BigBangException("Erro: Não pode inicializar o mesmo espaço de trabalho duas vezes.");
 			if ( mbValid && !mbIsNew )
 				throw new BigBangException("Erro: Não pode inicializar o espaço de trabalho numa edição de uma apólice existente.");
 			mbValid = false;
