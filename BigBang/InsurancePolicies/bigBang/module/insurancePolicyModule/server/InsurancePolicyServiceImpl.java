@@ -164,6 +164,7 @@ public class InsurancePolicyServiceImpl
 		}
 
 		public final UUID mid;
+		public boolean mbCreated;
 		public boolean mbValid;
 		public boolean mbIsNew;
 
@@ -178,6 +179,7 @@ public class InsurancePolicyServiceImpl
 		public PolicyScratchPad()
 		{
 			mid = UUID.randomUUID();
+			mbCreated = false;
 			mbValid = false;
 			mbIsNew = true;
 		}
@@ -199,9 +201,8 @@ public class InsurancePolicyServiceImpl
 			PadValue lobjValue;
 			int i, j;
 
-			if ( mbValid && !mbIsNew )
+			if ( mbCreated && !mbIsNew )
 				throw new BigBangException("Erro: Não pode inicializar o espaço de trabalho numa edição de uma apólice existente.");
-			mbValid = false;
 
 			midClient = ( pobjSource.clientId == null ? null : UUID.fromString(pobjSource.clientId) );
 			mobjPolicy = new PolicyData();
@@ -220,6 +221,8 @@ public class InsurancePolicyServiceImpl
 			mobjPolicy.midMediator = ( pobjSource.mediatorId == null ? null : UUID.fromString(pobjSource.mediatorId) );
 			mobjPolicy.mbCaseStudy = pobjSource.caseStudy;
 			mobjPolicy.mdblPremium = ( pobjSource.premium == null ? null : new BigDecimal(pobjSource.premium) );
+
+			mbValid = false;
 
 			marrCoInsurers = new ArrayList<PadCoInsurer>();
 			marrCoverages = new ArrayList<PadCoverage>();
@@ -298,6 +301,7 @@ public class InsurancePolicyServiceImpl
 				throw new BigBangException(e.getMessage(), e);
 			}
 
+			mbCreated = true;
 			mbValid = true;
 			mbIsNew = true;
 		}
@@ -326,7 +330,7 @@ public class InsurancePolicyServiceImpl
 			PadValue lobjValue;
 			int i, j, k, l;
 
-			if ( mbValid )
+			if ( mbCreated )
 				throw new BigBangException("Erro: Não pode inicializar o mesmo espaço de trabalho duas vezes.");
 
 			marrCoInsurers = new ArrayList<PadCoInsurer>();
@@ -556,6 +560,7 @@ public class InsurancePolicyServiceImpl
 				throw new BigBangException(e.getMessage(), e);
 			}
 
+			mbCreated = true;
 			mbValid = true;
 			mbIsNew = false;
 		}
@@ -620,6 +625,21 @@ public class InsurancePolicyServiceImpl
 			Remap[] larrResult;
 			int i;
 
+			if ( !mbValid )
+			{
+				larrResult = new Remap[1];
+
+				larrResult[0] = new Remap();
+				larrResult[0].typeId = Constants.ObjID_Policy.toString();
+				larrResult[0].remapIds = new Remap.RemapId[1];
+				larrResult[0].remapIds[0] = new Remap.RemapId();
+				larrResult[0].remapIds[0].oldId = mid.toString();
+				larrResult[0].remapIds[0].newId = null;
+				larrResult[0].remapIds[0].newIdIsInPad = true;
+
+				return larrResult;
+			}
+
 			larrResult = new Remap[3];
 
 			larrResult[0] = new Remap();
@@ -670,6 +690,13 @@ public class InsurancePolicyServiceImpl
 			InsurancePolicy.CoInsurer lobjCoInsurer;
 			int i;
 
+			if ( !mbCreated )
+			{
+				lobjResult = new InsurancePolicy();
+				lobjResult.id = mid.toString();
+				return lobjResult;
+			}
+
 			if ( !mbValid )
 				throw new CorruptedPadException("Ocorreu um erro interno. Os dados correntes não são válidos.");
 
@@ -678,6 +705,7 @@ public class InsurancePolicyServiceImpl
 			else
 				lobjResult = sGetPolicy(mobjPolicy.mid);
 
+			lobjResult.id = mid.toString();
 			lobjResult.number = mobjPolicy.mstrNumber;
 			lobjResult.clientId = ( midClient == null ? null : midClient.toString() );
 			lobjResult.subLineId = ( mobjPolicy.midSubLine == null ? null : mobjPolicy.midSubLine.toString() );
@@ -758,6 +786,9 @@ public class InsurancePolicyServiceImpl
 			InsurancePolicy.TableSection.TableField lobjTableField;
 			InsurancePolicy.ExtraField lobjExtraField;
 			int i, j;
+
+			if ( !mbCreated )
+				return;
 
 			if ( !mbValid )
 				throw new CorruptedPadException("Ocorreu um erro interno. Os dados correntes não são válidos.");
