@@ -13,6 +13,7 @@ import bigBang.definitions.client.response.ResponseError;
 import bigBang.definitions.client.response.ResponseHandler;
 import bigBang.definitions.shared.BigBangConstants;
 import bigBang.definitions.shared.DebitNote;
+import bigBang.definitions.shared.DocuShareHandle;
 import bigBang.definitions.shared.Receipt;
 import bigBang.definitions.shared.Receipt.ReturnMessage;
 import bigBang.definitions.shared.ReceiptStub;
@@ -315,7 +316,7 @@ public class ReceiptDataBrokerImpl extends DataBroker<Receipt> implements Receip
 			}
 		});
 	}
-	
+
 	@Override
 	public void validateReceipt(String receiptId, final ResponseHandler<Receipt> handler){
 		service.validateReceipt(receiptId, new BigBangAsyncCallback<Receipt>() {
@@ -330,7 +331,7 @@ public class ReceiptDataBrokerImpl extends DataBroker<Receipt> implements Receip
 				}
 				handler.onResponse(result);
 			}
-			
+
 			@Override
 			public void onResponseFailure(Throwable caught) {
 				handler.onError(new String[]{
@@ -340,15 +341,15 @@ public class ReceiptDataBrokerImpl extends DataBroker<Receipt> implements Receip
 			}
 		});
 	}
-	
+
 	@Override
 	public void getReceiptsWithNumber(String label, final ResponseHandler<Collection<ReceiptStub>> handler){
 		service.getExactResults(label, new BigBangAsyncCallback<SearchResult[]>() {
-			
+
 			@Override
 			public void onResponseSuccess(SearchResult[] result) {
 				ArrayList<ReceiptStub> receipts = new ArrayList<ReceiptStub>();
-				
+
 				for(int i = 0; i<result.length; i++){
 					receipts.add((ReceiptStub) result[i]);
 				}
@@ -361,9 +362,64 @@ public class ReceiptDataBrokerImpl extends DataBroker<Receipt> implements Receip
 				});
 				super.onResponseFailure(caught);
 
-				
+
 			}
 		});
+	}
+
+	@Override
+	public void serialCreateReceipt(Receipt receipt, DocuShareHandle source, final ResponseHandler<Receipt> handler){
+		service.serialCreateReceipt(receipt, source, new BigBangAsyncCallback<Receipt>() {
+
+			@Override
+			public void onResponseSuccess(Receipt result) {
+				cache.add(result.id, result);
+				incrementDataVersion();
+				for(DataBrokerClient<Receipt> bc : getClients()){
+					((ReceiptDataBrokerClient) bc).updateReceipt(result);
+					((ReceiptDataBrokerClient) bc).setDataVersionNumber(BigBangConstants.EntityIds.RECEIPT, getCurrentDataVersion());
+				}
+				handler.onResponse(result);
+			}
+
+			@Override
+			public void onResponseFailure(Throwable caught) {
+				handler.onError(new String[]{
+						new String("Could not save receipt (SerialCreateReceipt)")
+				});
+				super.onResponseFailure(caught);
+
+			}
+
+		});
+	}
+
+	@Override
+	public void receiveImage(String receiptId, DocuShareHandle source,
+			final ResponseHandler<Receipt> handler) {
+		service.receiveImage(receiptId, source, new BigBangAsyncCallback<Receipt>() {
+			
+			@Override
+			public void onResponseSuccess(Receipt result) {
+				cache.add(result.id, result);
+				incrementDataVersion();
+				for(DataBrokerClient<Receipt> bc : getClients()){
+					((ReceiptDataBrokerClient) bc).updateReceipt(result);
+					((ReceiptDataBrokerClient) bc).setDataVersionNumber(BigBangConstants.EntityIds.RECEIPT, getCurrentDataVersion());
+				}
+				handler.onResponse(result);
+			}
+			
+			@Override
+			public void onResponseFailure(Throwable caught) {
+				handler.onError(new String[]{
+						new String("Could not save receipt (SerialCreateReceipt)")
+				});
+				super.onResponseFailure(caught);
+			}
+		
+		});
+		
 	}
 }
 

@@ -1,11 +1,16 @@
 package bigBang.module.receiptModule.client.userInterface;
 
 import bigBang.library.client.BigBangAsyncCallback;
+import bigBang.library.client.EventBus;
+import bigBang.library.client.Notification;
 import bigBang.library.client.ValueSelectable;
+import bigBang.library.client.Notification.TYPE;
+import bigBang.library.client.event.NewNotificationEvent;
 import bigBang.library.client.event.SelectionChangedEvent;
 import bigBang.library.client.event.SelectionChangedEventHandler;
-import bigBang.library.client.userInterface.DocumentNavigationList;
+import bigBang.library.client.resources.Resources;
 import bigBang.library.client.userInterface.ImageHandlerPanel;
+import bigBang.library.client.userInterface.ListEntry;
 import bigBang.library.client.userInterface.ListHeader;
 import bigBang.library.client.userInterface.NavigationPanel;
 import bigBang.library.client.userInterface.view.View;
@@ -28,6 +33,7 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 public class ReceiptImagePanel extends View {
 
 	protected Image imagePanel;
+	DocuShareItem currentItem;
 	protected NavigationPanel navigationPanel;
 	protected DocuShareServiceAsync service;
 	protected FileServiceAsync fileService;
@@ -36,6 +42,8 @@ public class ReceiptImagePanel extends View {
 	public ReceiptImagePanel(){
 		this.service = DocuShareService.Util.getInstance();
 		this.fileService = FileService.Util.getInstance();
+
+		currentItem = new DocuShareItem();
 
 		VerticalPanel wrapper = new VerticalPanel();
 		initWidget(wrapper);
@@ -59,6 +67,7 @@ public class ReceiptImagePanel extends View {
 					if(item.directory){
 						navigateToDirectoryList(item.handle);
 					}else{
+						currentItem = item;
 						goToFile(item.handle);
 					}
 				}
@@ -67,7 +76,7 @@ public class ReceiptImagePanel extends View {
 
 		navigateToDirectoryList(null, false);
 	}
-	
+
 	public NavigationPanel getNavigationPanel() {
 		return navigationPanel;
 	}
@@ -89,6 +98,7 @@ public class ReceiptImagePanel extends View {
 
 		widget.add(label);
 		navigationPanel.setHomeWidget(widget);
+
 	}
 
 	protected void goToFile(String fileDesc){
@@ -104,6 +114,12 @@ public class ReceiptImagePanel extends View {
 				panel.setImage(GWT.getModuleBaseURL() + FileService.GET_PREFIX + result);
 				panel.showLoading(false);
 			}
+
+			@Override
+			public void onResponseFailure(Throwable caught) {
+
+				EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Erro. Tente novamente. Se persistir contacte o Suporte Técnico."), TYPE.ALERT_NOTIFICATION));				
+			}
 		});
 	}	
 
@@ -115,7 +131,7 @@ public class ReceiptImagePanel extends View {
 		wrapper.add(new Label("O ficheiro não pode ser apresentado"));
 		navigationPanel.navigateTo(wrapper);
 	}
-	
+
 	public void showNoImageReceipt() {
 		VerticalPanel wrapper = new VerticalPanel();
 		wrapper.setSize("100%", "100%");
@@ -130,13 +146,13 @@ public class ReceiptImagePanel extends View {
 	}
 
 	protected void navigateToDirectoryList(final String dirDesc, final boolean showSubFolders){
-		final DocumentNavigationList list = new DocumentNavigationList();
+		final ReceiptNavigationList list = new ReceiptNavigationList();
 		ListHeader header = new ListHeader();
 		header.showRefreshButton();
 		list.setHeaderWidget(header); //TODO
 
 		header.getRefreshButton().addClickHandler(new ClickHandler() {
-			
+
 			@Override
 			public void onClick(ClickEvent event) {
 				fetchListContent(list, dirDesc, showSubFolders);
@@ -154,16 +170,17 @@ public class ReceiptImagePanel extends View {
 		});
 		list.setSize("100%", "100%");
 		list.addSelectionChangedEventHandler(this.selectionHandler);
-		
+
 		fetchListContent(list, dirDesc, showSubFolders);
 	}
 
-	protected void fetchListContent(final DocumentNavigationList list, final String dirDesc, final boolean showSubFolders){
+	protected void fetchListContent(final ReceiptNavigationList list, final String dirDesc, final boolean showSubFolders){
 		if(dirDesc == null){
 			navigationPanel.setHomeWidget(list);
 		}else{
 			navigationPanel.navigateTo(list);
 		}
+		list.clear();
 		list.showLoading(true);
 		service.getItems(dirDesc, showSubFolders, new BigBangAsyncCallback<DocuShareItem[]>() {
 
@@ -182,6 +199,58 @@ public class ReceiptImagePanel extends View {
 				list.showLoading(false);
 			}
 		});
+	}
+
+	public DocuShareItem getCurrentItem(){
+		return currentItem;
+	}
+
+	public void removeSelected(String handler){
+		Object o = null;
+		
+		while(o instanceof ReceiptNavigationList == false){
+			o = navigationPanel.getPrevious();
+		}
+			
+		
+		ReceiptNavigationList list = (ReceiptNavigationList) o;
+		navigationPanel.setHomeWidget(list);
+		
+		for(ListEntry<DocuShareItem> item : list){
+			if(item.getValue().handle.equalsIgnoreCase(handler)){
+				list.remove(item);
+				break;
+			}
+		}
+	}
+
+	public void markReceipt(String handle) {
+		
+		Image hasProblems;
+		Resources resources = GWT.create(Resources.class);
+		hasProblems = new Image(resources.problem());
+		
+	Object o = null;
+		
+		while(o instanceof ReceiptNavigationList == false){
+			o = navigationPanel.getPrevious();
+		}
+			
+		
+		ReceiptNavigationList list = (ReceiptNavigationList) o;
+		navigationPanel.setHomeWidget(list);
+		
+		for(ListEntry<DocuShareItem> item : list){
+			if(item.getValue().handle.equalsIgnoreCase(handle)){
+				item.setLeftWidget(hasProblems);
+				list.remove(item);
+				list.add(list.size()-1, item);
+				break;
+			}
+		}
+		
+			
+
 	}
 
 }

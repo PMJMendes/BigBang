@@ -13,8 +13,12 @@ import bigBang.module.receiptModule.shared.ReceiptPolicyWrapper;
 
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.dom.client.KeyCodes;
+import com.google.gwt.event.dom.client.KeyUpEvent;
+import com.google.gwt.event.dom.client.KeyUpHandler;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.HorizontalPanel;
+import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ValueBoxBase.TextAlignment;
 
 
@@ -27,7 +31,7 @@ public abstract class SerialReceiptCreationForm extends FormView<ReceiptPolicyWr
 	private TextBoxFormField insurer;
 	private TextBoxFormField categoryLineSubline;
 	private TextBoxFormField status;
-	
+	private final static Label policyNumberProblem = new Label("A apólice pretendida não existe");
 	protected ExpandableListBoxFormField type;
 	protected TextBoxFormField totalPremium;
 	protected TextBoxFormField salesPremium;
@@ -46,13 +50,29 @@ public abstract class SerialReceiptCreationForm extends FormView<ReceiptPolicyWr
 	Button verifyReceiptNumber;
 	Button verifyPolicyNumber;
 	private Button markAsInvalid;
+	private Button newReceiptButton;
 	
 	
 	public SerialReceiptCreationForm(){
 		
 		addSection("Número do recibo");
 		receiptNumber = new TextBoxFormField("Número do recibo"); 
+		
 		receiptNumber.setFieldWidth("175px");
+		
+		receiptNumber.getNativeField().addKeyUpHandler(new KeyUpHandler() {
+			
+			@Override
+			public void onKeyUp(KeyUpEvent event) {
+				if(event.getNativeKeyCode() == KeyCodes.KEY_ENTER){
+					onClickVerifyReceiptNumber();
+				}
+				else if(isEditKey(event.getNativeKeyCode())){
+					onChangedReceiptNumber();
+				}
+			}
+		});
+		
 		addFormField(receiptNumber, true);
 		verifyReceiptNumber = new Button("Verificar");
 		verifyReceiptNumber.addClickHandler(new ClickHandler() {
@@ -62,11 +82,43 @@ public abstract class SerialReceiptCreationForm extends FormView<ReceiptPolicyWr
 				onClickVerifyReceiptNumber();
 			}
 		});
-		addWidget(verifyReceiptNumber);
+		
+		newReceiptButton = new Button("Novo Recibo");
+
+		HorizontalPanel newPanel = new HorizontalPanel();
+		newPanel.add(verifyReceiptNumber);
+		newPanel.add(newReceiptButton);
+		
+		newReceiptButton.addClickHandler(new ClickHandler() {
+			
+			@Override
+			public void onClick(ClickEvent event) {
+				onClickNewReceipt();			
+			}
+		});
+		
+		newPanel.setSpacing(5);
+		newPanel.setHeight("55px");
+		
+		addWidget(newPanel);
 		
 		addSection("Apólice");
 		policyNumber = new TextBoxFormField("Número da apólice");
 		policyNumber.setFieldWidth("175px");
+		
+		policyNumber.getNativeField().addKeyUpHandler(new KeyUpHandler() {
+			
+			@Override
+			public void onKeyUp(KeyUpEvent event) {
+				if(event.getNativeKeyCode() == KeyCodes.KEY_ENTER){
+					onClickVerifyPolicyNumber();
+				}
+				else if(isEditKey(event.getNativeKeyCode())){
+					onChangedPolicyNumber();
+				}
+			}
+		});
+		
 		addFormField(policyNumber, true);
 		HorizontalPanel buttonPanel = new HorizontalPanel();
 		verifyPolicyNumber = new Button("Verificar");
@@ -89,6 +141,8 @@ public abstract class SerialReceiptCreationForm extends FormView<ReceiptPolicyWr
 				onClickMarkAsInvalid();
 			}
 		});
+		policyNumberProblem.getElement().getStyle().setColor("RED");
+		buttonPanel.add(policyNumberProblem);
 		addWidget(buttonPanel, false);
 		client = new TextBoxFormField("Cliente");
 		client.setFieldWidth("400px");
@@ -168,9 +222,35 @@ public abstract class SerialReceiptCreationForm extends FormView<ReceiptPolicyWr
 		setPolicyReadOnly(true);
 		setReceiptReadOnly(true);		
 		enableMarkAsInvalid(false);
+		newReceiptButton.setEnabled(false);
 		
 	}
 	
+	protected boolean isEditKey(int nativeKeyCode) {
+		
+		switch(nativeKeyCode){
+		
+		case KeyCodes.KEY_DOWN:
+		case KeyCodes.KEY_UP:
+		case KeyCodes.KEY_LEFT:
+		case KeyCodes.KEY_RIGHT:
+		case KeyCodes.KEY_SHIFT:
+		case KeyCodes.KEY_CTRL:
+		case KeyCodes.KEY_ALT:
+		case KeyCodes.KEY_HOME:
+		case KeyCodes.KEY_END:
+			return false;
+		default:
+			return true;
+		}
+	}
+
+	protected abstract void onChangedPolicyNumber();
+
+	protected abstract void onChangedReceiptNumber();
+
+	protected abstract void onClickNewReceipt();
+
 	protected abstract void onClickMarkAsInvalid();
 
 	protected abstract void onClickVerifyPolicyNumber() ;
@@ -186,7 +266,7 @@ public abstract class SerialReceiptCreationForm extends FormView<ReceiptPolicyWr
 		
 		receiptNumber.setValue(info.receipt.number);
 		policyNumber.setValue(info.policy.number);
-		client.setValue("#"+info.receipt.clientNumber+"-"+info.receipt.clientName);
+		client.setValue("#"+info.policy.clientNumber+"-"+info.policy.clientName);
 		categoryLineSubline.setValue(info.policy.categoryName+"/"+info.policy.lineName+"/"+info.policy.subLineName);
 		insurer.setValue(info.insuranceAgencyName);
 		status.setValue(info.policy.statusText);
@@ -209,8 +289,8 @@ public abstract class SerialReceiptCreationForm extends FormView<ReceiptPolicyWr
 
 	@Override
 	public ReceiptPolicyWrapper getInfo() {
-		ReceiptPolicyWrapper newWrapper = value;
 		
+		ReceiptPolicyWrapper newWrapper = value;
 		newWrapper.receipt.typeId = type.getValue();
 		newWrapper.receipt.managerId = manager.getValue();
 		newWrapper.receipt.mediatorId = mediator.getValue();
@@ -225,8 +305,14 @@ public abstract class SerialReceiptCreationForm extends FormView<ReceiptPolicyWr
 		newWrapper.receipt.maturityDate = coverageStart.getStringValue();
 		newWrapper.receipt.description = description.getValue();
 		newWrapper.receipt.notes = notes.getValue();
+		newWrapper.receipt.policyId = newWrapper.policy.id;
+		
 		
 		return newWrapper;
+	}
+	
+	public void newReceiptEnabled(boolean enabled){
+		newReceiptButton.setEnabled(enabled);
 	}
 	
 	public void setReceiptNumberReadOnly(boolean readOnly){
@@ -265,6 +351,68 @@ public abstract class SerialReceiptCreationForm extends FormView<ReceiptPolicyWr
 		issueDate.setReadOnly(readonly);
 		description.setReadOnly(readonly);
 		notes.setReadOnly(readonly);
+	}
+
+	public String getReceiptNumber() {
+		return receiptNumber.getValue();
+		
+	}
+
+	public void setReceiptNumber(String id) {
+		receiptNumber.setValue(id);
+		
+	}
+
+	public void hideMarkAsEnable(boolean b) {
+		
+		markAsInvalid.setVisible(!b);
+		
+	}
+
+	public void enablePolicy(boolean b) {
+		policyNumber.setReadOnly(!b);
+		verifyPolicyNumber.setEnabled(b);
+		
+	}
+
+	public void setFocusOnPolicy() {
+		policyNumber.getNativeField().setFocus(true);
+		
+	}
+
+	public void setFocusOnReceipt() {
+		receiptNumber.getNativeField().setFocus(true);
+	}
+
+	public void clearPolicy() {
+		categoryLineSubline.clear();
+		insurer.clear();
+		client.clear();
+		status.clear();
+		
+	}
+
+	public void setPolicyNumber(String policyNumber2) {
+		policyNumber.setValue(policyNumber2);
+	}
+
+	public String getPolicyNumber() {
+		return policyNumber.getValue();
+	}
+
+	public void isPolicyNumberProblem(boolean b) {
+		if(b){
+			policyNumber.getNativeField().getElement().getStyle().setColor("RED");
+		}
+		else{
+			policyNumber.getNativeField().getElement().getStyle().setColor("BLACK");
+
+		}
+		
+	}
+
+	public void showLabel(boolean b) {
+		policyNumberProblem.setVisible(b);
 	}
 
 }
