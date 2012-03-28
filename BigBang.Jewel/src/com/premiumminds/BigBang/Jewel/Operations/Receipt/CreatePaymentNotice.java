@@ -1,15 +1,18 @@
 package com.premiumminds.BigBang.Jewel.Operations.Receipt;
 
+import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.util.UUID;
 
 import Jewel.Engine.Engine;
 import Jewel.Engine.DataAccess.SQLServer;
+import Jewel.Engine.SysObjects.FileXfer;
 import Jewel.Petri.SysObjects.JewelPetriException;
 import Jewel.Petri.SysObjects.Operation;
 
 import com.premiumminds.BigBang.Jewel.BigBangJewelException;
 import com.premiumminds.BigBang.Jewel.Constants;
+import com.premiumminds.BigBang.Jewel.Data.DocInfoData;
 import com.premiumminds.BigBang.Jewel.Data.DocumentData;
 import com.premiumminds.BigBang.Jewel.Objects.PaymentNoticeClient;
 import com.premiumminds.BigBang.Jewel.Objects.PaymentNoticeReceipt;
@@ -30,6 +33,8 @@ public class CreatePaymentNotice
 	private UUID midClient;
 	private DocOps mobjDocOps;
 //	private OutgoingMessageData mobjMessage;
+	private transient BigDecimal mdblTotal;
+	private transient int mlngCount;
 
 	public CreatePaymentNotice(UUID pidProcess)
 	{
@@ -64,11 +69,18 @@ public class CreatePaymentNotice
 		PaymentNoticeReceipt lobjSetReceipt;
 		byte[] lobjFileData;
 		DocumentData lobjDoc;
+		DocInfoData[] larrInfo;
 
 		if ( Constants.ProcID_Policy.equals(GetProcess().GetParent().GetScriptID()) )
 			midClient = GetProcess().GetParent().GetParent().GetDataKey();
 		else
 			midClient = (UUID)GetProcess().GetParent().GetData().getAt(2);
+
+		larrInfo = new DocInfoData[2];
+		larrInfo[0] = new DocInfoData();
+		larrInfo[0].mstrType = "Número de Recibos";
+		larrInfo[1] = new DocInfoData();
+		larrInfo[1].mstrType = "Total a Liquidar";
 
 		try
 		{
@@ -88,18 +100,27 @@ public class CreatePaymentNotice
 				{
 					lobjFileData = generateReport();
 
+					larrInfo[0].mstrValue = Integer.toString(mlngCount);
+					larrInfo[1].mstrValue = mdblTotal.toPlainString();
+
 					lobjSetClient = PaymentNoticeClient.GetInstance(Engine.getCurrentNameSpace(), null);
 					lobjSetClient.setAt(0, midSet);
 					lobjSetClient.setAt(1, midClient);
 					lobjSetClient.setAt(2, lobjFileData);
 					lobjSetClient.setAt(3, false);
+					lobjSetClient.setAt(4, mlngCount);
+					lobjSetClient.setAt(5, mdblTotal);
 					lobjSetClient.SaveToDb(pdb);
 					midSetClient = lobjSetClient.getKey();
 				}
 				else
 				{
 					lobjSetClient = PaymentNoticeClient.GetInstance(Engine.getCurrentNameSpace(), midSetClient);
+
 					lobjFileData = (byte[])lobjSetClient.getAt(2);
+
+					larrInfo[0].mstrValue = Integer.toString(((Integer)lobjSetClient.getAt(4)));
+					larrInfo[1].mstrValue = ((BigDecimal)lobjSetClient.getAt(5)).toPlainString();
 				}
 
 				lobjSetReceipt = PaymentNoticeReceipt.GetInstance(Engine.getCurrentNameSpace(), null);
@@ -112,6 +133,9 @@ public class CreatePaymentNotice
 			else
 			{
 				lobjFileData = generateReport();
+
+				larrInfo[0].mstrValue = Integer.toString(mlngCount);
+				larrInfo[1].mstrValue = mdblTotal.toPlainString();
 			}
 		}
 		catch (Throwable e)
@@ -126,6 +150,7 @@ public class CreatePaymentNotice
 		lobjDoc.midDocType = Constants.DocID_PaymentNotice;
 		lobjDoc.mstrText = null;
 		lobjDoc.mobjFile = lobjFileData;
+		lobjDoc.marrInfo = larrInfo;
 
 		mobjDocOps = new DocOps();
 		mobjDocOps.marrCreate = new DocumentData[]{lobjDoc};
@@ -137,10 +162,16 @@ public class CreatePaymentNotice
 		throws BigBangJewelException
 	{
 		PaymentNoticeReport lrepPN;
+		FileXfer lobjResult;
 
 		lrepPN = new PaymentNoticeReport();
 		lrepPN.midClient = midClient;
 		lrepPN.marrReceiptIDs = marrReceiptIDs;
-		return lrepPN.Generate().GetVarData();
+
+		lobjResult = lrepPN.Generate();
+		mdblTotal = lrepPN.mdblTotal;
+		mlngCount = lrepPN.mlngCount;
+
+		return lobjResult.GetVarData();
 	}
 }
