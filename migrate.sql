@@ -78,6 +78,8 @@ delete from bigbang.tblUsers;
 delete from bigbang.tblWorkspaces;
 /*delete from bigbang.tblProfiles;*/
 
+delete from bigbang.tblBanks;
+
 delete from bigbang.tblBBClientSubTypes;
 delete from bigbang.tblBBClientTypes;
 delete from bigbang.tblBBCompanySizes;
@@ -132,6 +134,11 @@ insert into bigbang.tblOpProfiles (PK, OpProfileName) values ('9F871430-9BBC-449
 insert into bigbang.tblOpProfiles (PK, OpProfileName) values ('51ED12A4-95A9-44B0-928D-A01500DC83EB', N'Simples');
 insert into bigbang.tblSex (PK, SexName) values ('77E22CFB-CA90-4918-B9B2-9F0300C39AE2', N'Feminino');
 insert into bigbang.tblSex (PK, SexName) values ('E86BA460-B499-4254-84F5-9F0300C3A256', N'Masculino');
+
+insert into bigbang.tblBanks (PK, BankName, BankCode)
+select CAST(CAST(NEWID() AS BINARY(10)) + CAST(GETDATE() AS BINARY(6)) AS UNIQUEIDENTIFIER) PK,
+Nome BankName, Sigla BankCode
+from credegs..empresa.bancos;
 
 /*insert into bigbang.tblProfiles (PK, PfName) values ('061388D9-16A6-443F-A69E-9EB000685026', N'Root');*/
 /*insert into bigbang.tblProfiles (PK, PfName) values ('258A1C88-C916-40CB-8CD5-9EB8007F2AEB', N'Sem Perfil');*/
