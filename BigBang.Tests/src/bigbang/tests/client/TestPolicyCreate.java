@@ -93,7 +93,8 @@ public class TestPolicyCreate
 			}
 		};
 
-		testPolicy.clientId = "22F5CC61-E9F8-4141-801E-9FB70020135F";
+		testPolicy.number = "-163.1";
+		testPolicy.clientId = "D7570502-0495-4E18-9CB3-9FB700201363";
 		testPolicy.caseStudy = false;
 		testPolicy.insuranceAgencyId = "F1EA00FA-36C5-44CB-B1EB-9FB700200FB8";
 		testPolicy.startDate = "2012-01-01";
