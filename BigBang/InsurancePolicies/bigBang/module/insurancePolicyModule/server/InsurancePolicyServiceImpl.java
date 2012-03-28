@@ -165,6 +165,7 @@ public class InsurancePolicyServiceImpl
 
 		public final UUID mid;
 		public boolean mbValid;
+		public boolean mbIsNew;
 
 		public UUID midClient;
 		public PolicyData mobjPolicy;
@@ -178,6 +179,7 @@ public class InsurancePolicyServiceImpl
 		{
 			mid = UUID.randomUUID();
 			mbValid = false;
+			mbIsNew = true;
 		}
 		
 		public UUID GetID()
@@ -197,8 +199,11 @@ public class InsurancePolicyServiceImpl
 			PadValue lobjValue;
 			int i, j;
 
-			if ( mbValid )
-				throw new BigBangException("Erro: Não pode inicializar o mesmo espaço de trabalho duas vezes.");
+//			if ( mbValid )
+//				throw new BigBangException("Erro: Não pode inicializar o mesmo espaço de trabalho duas vezes.");
+			if ( mbValid && !mbIsNew )
+				throw new BigBangException("Erro: Não pode inicializar o espaço de trabalho numa edição de uma apólice existente.");
+			mbValid = false;
 
 			midClient = ( pobjSource.clientId == null ? null : UUID.fromString(pobjSource.clientId) );
 			mobjPolicy = new PolicyData();
@@ -296,6 +301,7 @@ public class InsurancePolicyServiceImpl
 			}
 
 			mbValid = true;
+			mbIsNew = true;
 		}
 
 		public void OpenForEdit(UUID pidPolicy)
@@ -553,6 +559,7 @@ public class InsurancePolicyServiceImpl
 			}
 
 			mbValid = true;
+			mbIsNew = false;
 		}
 
 		public Remap[] GetRemapIntoPad()
