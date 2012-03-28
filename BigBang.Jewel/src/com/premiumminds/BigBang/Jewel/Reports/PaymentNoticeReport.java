@@ -25,6 +25,8 @@ public class PaymentNoticeReport
 {
 	public UUID midClient;
 	public UUID[] marrReceiptIDs;
+	public BigDecimal mdblTotal;
+	public int mlngCount;
 
 	protected UUID GetTemplateID()
 	{
@@ -39,8 +41,6 @@ public class PaymentNoticeReport
 		Timestamp ldtAux;
 		HashMap<String, String> larrParams;
 		String[][] larrTables;
-		int llngCount;
-		BigDecimal ldblTotal;
 		Receipt lobjReceipt;
 		IProcess lobjProc;
 		Policy lobjPolicy;
@@ -73,8 +73,8 @@ public class PaymentNoticeReport
 		larrParams.put("Date", ldtAux.toString().substring(0, 10));
 
 		larrTables = new String[marrReceiptIDs.length][];
-		llngCount = 0;
-		ldblTotal = new BigDecimal(0);
+		mlngCount = 0;
+		mdblTotal = new BigDecimal(0);
 		for ( i = 0; i < larrTables.length; i++ )
 		{
 			lobjReceipt = Receipt.GetInstance(Engine.getCurrentNameSpace(), marrReceiptIDs[i]);
@@ -108,12 +108,12 @@ public class PaymentNoticeReport
 			larrTables[i][7] = (lobjReceipt.getAt(11) == null ? "" : ((Timestamp)lobjReceipt.getAt(11)).toString().substring(0, 10));
 			larrTables[i][8] = (String)lobjReceipt.getAt(14);
 
-			llngCount++;
-			ldblTotal = ldblTotal.add((BigDecimal)lobjReceipt.getAt(3));
+			mlngCount++;
+			mdblTotal = mdblTotal.add((BigDecimal)lobjReceipt.getAt(3));
 		}
 
-		larrParams.put("Count", "" + llngCount + " recibo" + (llngCount == 1 ? "" : "s"));
-		larrParams.put("Total", ldblTotal.toPlainString());
+		larrParams.put("Count", "" + mlngCount + " recibo" + (mlngCount == 1 ? "" : "s"));
+		larrParams.put("Total", mdblTotal.toPlainString());
 
 		return Generate(larrParams, new String[][][] {larrTables});
 	}
