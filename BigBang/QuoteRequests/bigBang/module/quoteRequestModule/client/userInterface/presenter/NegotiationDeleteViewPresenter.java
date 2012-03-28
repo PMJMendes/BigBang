@@ -123,7 +123,6 @@ public class NegotiationDeleteViewPresenter implements ViewPresenter {
 			@Override
 			public void onError(Collection<ResponseError> errors) {
 				EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não foi possível eliminar a negociação."), TYPE.ALERT_NOTIFICATION));
-
 			}
 		});
 	}
