@@ -1310,6 +1310,10 @@ public class QuoteRequestServiceImpl
 			int llngIndex;
 			int i, j, k;
 
+			for ( i = 0; i < marrSubLines.size(); i++ )
+				if ( marrSubLines.get(i).midSubLine.equals(pidSubLine) )
+					throw new BigBangException("Não pode acrescentar uma cobertura já existente.");
+
 			if ( !mbValid )
 				throw new CorruptedPadException("Ocorreu um erro interno. Os dados correntes não são válidos.");
 
