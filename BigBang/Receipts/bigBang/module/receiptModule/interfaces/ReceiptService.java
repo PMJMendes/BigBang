@@ -43,8 +43,11 @@ public interface ReceiptService
 	public DebitNote[] getRelevantDebitNotes(String receiptId) throws SessionExpiredException, BigBangException;
 	public Receipt associateWithDebitNote(String receiptId, String debitNoteId) throws SessionExpiredException, BigBangException;
 
+	public Receipt sendReceipt(String receiptId)  throws SessionExpiredException, BigBangException;
+
 	public void deleteReceipt(String receiptId) throws SessionExpiredException, BigBangException;
 
 	public Receipt serialCreateReceipt(Receipt receipt, DocuShareHandle source) throws SessionExpiredException, BigBangException;
 	public void massCreatePaymentNotice(String[] receiptIds) throws SessionExpiredException, BigBangException;
+	public void massSendReceipt(String[] receiptIds) throws SessionExpiredException, BigBangException;
 }
