@@ -29,12 +29,10 @@ public class TestReceiptPayment
 		};
 
 		info = new Receipt.PaymentInfo();
-		info.receiptId = "6E2B850B-877D-4D8A-9D72-A02101388CE1";
+		info.receiptId = "B585A918-FD63-4E07-931B-A0210138DAAC";
 		info.payments = new Receipt.PaymentInfo.Payment[] {new Receipt.PaymentInfo.Payment()};
 		info.payments[0].paymentTypeId = "40B9ACC7-A99A-4DC2-BAEF-A02200EB59B3";
 		info.payments[0].value = "153.42";
 		Services.receiptService.markPayed(info, callback);
-
-		//"E33B3E31-38B0-4898-9773-A0210138BCEC", "B585A918-FD63-4E07-931B-A0210138DAAC"
 	}
 }

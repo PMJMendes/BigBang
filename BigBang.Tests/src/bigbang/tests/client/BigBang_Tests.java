@@ -156,5 +156,6 @@ public class BigBang_Tests
 //		TestReceiptSetReturn.DoTest();
 //		TestReceiptCreatePaymentNotice.DoTest();
 //		TestReceiptPayment.DoTest();
+//		TestReceiptSend.DoTest();
 	}
 }
