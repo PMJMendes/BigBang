@@ -3,7 +3,6 @@ package bigBang.module.receiptModule.interfaces;
 import bigBang.definitions.shared.DebitNote;
 import bigBang.definitions.shared.DocuShareHandle;
 import bigBang.definitions.shared.Receipt;
-import bigBang.definitions.shared.Receipt.ReturnMessage;
 import bigBang.library.interfaces.ExactItemSubServiceAsync;
 import bigBang.library.interfaces.SearchServiceAsync;
 
@@ -17,8 +16,9 @@ public interface ReceiptServiceAsync
 	void receiveImage(String receiptId, DocuShareHandle source, AsyncCallback<Receipt> callback);
 	void transferToPolicy(String receiptId, String newPolicyId, AsyncCallback<Receipt> callback);
 	void validateReceipt(String receiptId, AsyncCallback<Receipt> callback);
-	void setForReturn(ReturnMessage message, AsyncCallback<Receipt> callback);
+	void setForReturn(Receipt.ReturnMessage message, AsyncCallback<Receipt> callback);
 	void createPaymentNotice(String receiptId, AsyncCallback<Receipt> callback);
+	void markPayed(Receipt.PaymentInfo info, AsyncCallback<Receipt> callback);
 	void getRelevantDebitNotes(String receiptId, AsyncCallback<DebitNote[]> callback);
 	void associateWithDebitNote(String receiptId, String debitNoteId, AsyncCallback<Receipt> callback);
 	void deleteReceipt(String receiptId, AsyncCallback<Void> callback);

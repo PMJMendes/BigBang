@@ -18,7 +18,6 @@ import Jewel.Petri.Objects.PNProcess;
 import bigBang.definitions.shared.DebitNote;
 import bigBang.definitions.shared.DocuShareHandle;
 import bigBang.definitions.shared.Receipt;
-import bigBang.definitions.shared.Receipt.ReturnMessage;
 import bigBang.definitions.shared.ReceiptStub;
 import bigBang.definitions.shared.SearchParameter;
 import bigBang.definitions.shared.SearchResult;
@@ -36,6 +35,7 @@ import bigBang.module.receiptModule.shared.ReceiptSortParameter;
 
 import com.premiumminds.BigBang.Jewel.Constants;
 import com.premiumminds.BigBang.Jewel.Data.DSBridgeData;
+import com.premiumminds.BigBang.Jewel.Data.PaymentData;
 import com.premiumminds.BigBang.Jewel.Data.ReceiptData;
 import com.premiumminds.BigBang.Jewel.Objects.Client;
 import com.premiumminds.BigBang.Jewel.Objects.Line;
@@ -50,6 +50,7 @@ import com.premiumminds.BigBang.Jewel.Operations.Receipt.AssociateWithDebitNote;
 import com.premiumminds.BigBang.Jewel.Operations.Receipt.CreatePaymentNotice;
 import com.premiumminds.BigBang.Jewel.Operations.Receipt.DeleteReceipt;
 import com.premiumminds.BigBang.Jewel.Operations.Receipt.ManageData;
+import com.premiumminds.BigBang.Jewel.Operations.Receipt.Payment;
 import com.premiumminds.BigBang.Jewel.Operations.Receipt.ReceiveImage;
 import com.premiumminds.BigBang.Jewel.Operations.Receipt.SetReturnToInsurer;
 import com.premiumminds.BigBang.Jewel.Operations.Receipt.TransferToPolicy;
@@ -480,7 +481,7 @@ public class ReceiptServiceImpl
 		return sGetReceipt(lobjReceipt.getKey());
 	}
 
-	public Receipt setForReturn(ReturnMessage message)
+	public Receipt setForReturn(Receipt.ReturnMessage message)
 		throws SessionExpiredException, BigBangException
 	{
 		com.premiumminds.BigBang.Jewel.Objects.Receipt lobjReceipt;
@@ -538,6 +539,46 @@ public class ReceiptServiceImpl
 		try
 		{
 			lopCPN.Execute();
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangException(e.getMessage(), e);
+		}
+
+		return sGetReceipt(lobjReceipt.getKey());
+	}
+
+	public Receipt markPayed(Receipt.PaymentInfo info)
+		throws SessionExpiredException, BigBangException
+	{
+		com.premiumminds.BigBang.Jewel.Objects.Receipt lobjReceipt;
+		Payment lopP;
+		int i;
+
+		if ( Engine.getCurrentUser() == null )
+			throw new SessionExpiredException();
+
+		try
+		{
+			lobjReceipt = com.premiumminds.BigBang.Jewel.Objects.Receipt.GetInstance(Engine.getCurrentNameSpace(),
+					UUID.fromString(info.receiptId));
+
+			lopP = new Payment(lobjReceipt.GetProcessID());
+			lopP.marrData = new PaymentData[info.payments.length];
+			for ( i = 0; i < info.payments.length; i++ )
+			{
+				lopP.marrData[i] = new PaymentData();
+				lopP.marrData[i].midPaymentType = UUID.fromString(info.payments[i].paymentTypeId);
+				lopP.marrData[i].mdblValue = new BigDecimal(info.payments[i].value);
+				lopP.marrData[i].midBank = (info.payments[i].bankId == null ? null : UUID.fromString(info.payments[i].bankId));
+				lopP.marrData[i].mstrCheque = info.payments[i].chequeOrTransferNumber;
+				lopP.marrData[i].midReceipt = (info.payments[i].otherReceiptId == null ? null :
+						UUID.fromString(info.payments[i].otherReceiptId));
+				lopP.marrData[i].mbCreateCounter = info.payments[i].markOtherAsPayed;
+				lopP.marrData[i].midLog = null;
+			}
+
+			lopP.Execute();
 		}
 		catch (Throwable e)
 		{

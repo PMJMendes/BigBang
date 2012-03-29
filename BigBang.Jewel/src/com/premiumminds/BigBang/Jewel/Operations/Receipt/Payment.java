@@ -1,5 +1,6 @@
 package com.premiumminds.BigBang.Jewel.Operations.Receipt;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.UUID;
 
@@ -66,33 +67,54 @@ public class Payment
 	{
 		Receipt lobjReceipt;
 		Payment lopRemote;
+		BigDecimal ldblTotal;
 		int i;
 
 		midReceipt = GetProcess().GetDataKey();
 
-		if ( (marrData != null) && (marrData.length > 0) )
-		{
-			for ( i = 0; i < marrData.length; i++ )
-			{
-				if ( (marrData[i].midReceipt != null) && marrData[i].mbCreateCounter )
-				{
-					try
-					{
-						lobjReceipt = Receipt.GetInstance(Engine.getCurrentNameSpace(), marrData[i].midReceipt);
-					}
-					catch (BigBangJewelException e)
-					{
-						throw new JewelPetriException(e.getMessage(), e);
-					}
+		if ( (marrData == null) || (marrData.length == 0) )
+			throw new JewelPetriException("Erro: Deve especificar o(s) meio(s) de pagamento.");
 
-					lopRemote = new Payment(lobjReceipt.GetProcessID());
-					lopRemote.marrData = new PaymentData[] {marrData[i]};
-					lopRemote.marrData[0].mbCreateCounter = false;
-					lopRemote.Execute(pdb);
-					marrData[i].midLog = lopRemote.getLog().getKey();
+		ldblTotal = new BigDecimal(0);
+		for ( i = 0; i < marrData.length; i++ )
+		{
+			ldblTotal = ldblTotal.add(marrData[i].mdblValue);
+			if ( (marrData[i].midReceipt != null) && marrData[i].mbCreateCounter )
+			{
+				try
+				{
+					lobjReceipt = Receipt.GetInstance(Engine.getCurrentNameSpace(), marrData[i].midReceipt);
 				}
+				catch (BigBangJewelException e)
+				{
+					throw new JewelPetriException(e.getMessage(), e);
+				}
+
+				lopRemote = new Payment(lobjReceipt.GetProcessID());
+				lopRemote.marrData = new PaymentData[] {new PaymentData()};
+				lopRemote.marrData[0].midPaymentType = marrData[i].midPaymentType;
+				lopRemote.marrData[0].mdblValue = marrData[i].mdblValue;
+				lopRemote.marrData[0].midBank = null;
+				lopRemote.marrData[0].mstrCheque = null;
+				lopRemote.marrData[0].midReceipt = midReceipt;
+				lopRemote.marrData[0].mbCreateCounter = false;
+				lopRemote.marrData[0].midLog = null;
+				lopRemote.Execute(pdb);
+				marrData[i].midLog = lopRemote.getLog().getKey();
 			}
 		}
+
+		try
+		{
+			lobjReceipt = Receipt.GetInstance(Engine.getCurrentNameSpace(), midReceipt);
+		}
+		catch (BigBangJewelException e)
+		{
+			throw new JewelPetriException(e.getMessage(), e);
+		}
+
+		if ( ldblTotal.subtract((BigDecimal)lobjReceipt.getAt(3)).abs().compareTo(new BigDecimal(0.01)) > 0 )
+			throw new JewelPetriException("Erro: Valor total dos pagamentos não está correcto.");
 	}
 
 	public String UndoDesc(String pstrLineBreak)

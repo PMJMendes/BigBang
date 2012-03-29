@@ -17,6 +17,28 @@ public class Receipt
 		public String text;
 	}
 
+	public static class PaymentInfo
+		implements Serializable
+	{
+		private static final long serialVersionUID = 1L;
+
+		public static class Payment
+			implements Serializable
+		{
+			private static final long serialVersionUID = 1L;
+
+			public String paymentTypeId; // Obrigatorio
+			public String value; // Obrigatorio
+			public String bankId; // Só é útil para transferências e cheques, e mesmo assim, pode vir a null
+			public String chequeOrTransferNumber;  // Só é útil para transferências e cheques, e mesmo assim, pode vir a null
+			public String otherReceiptId; // Só é útil para conta corrente ou compensação 
+			public boolean markOtherAsPayed; // Só tem significado se o otherReceiptId estiver preenchido
+		}
+
+		public String receiptId;
+		public Payment[] payments;
+	}
+
 	public String salesPremium;
 	public String comissions;
 	public String retrocessions;
