@@ -421,5 +421,27 @@ public class ReceiptDataBrokerImpl extends DataBroker<Receipt> implements Receip
 		});
 		
 	}
+	
+	@Override
+	public void massCreatePaymentNotice(String[] receiptIds, final ResponseHandler<Void> handler){
+		service.massCreatePaymentNotice(receiptIds, new BigBangAsyncCallback<Void>() {
+
+			@Override
+			public void onResponseSuccess(Void result) {
+				handler.onResponse(null);
+			}
+			
+			@Override
+			public void onResponseFailure(Throwable caught) {
+				handler.onError(new String[]{
+						new String("Could not create the mass payment notice")
+				});
+				super.onResponseFailure(caught);
+			}
+			
+			
+			
+		});
+	}
 }
 

@@ -1,0 +1,224 @@
+package bigBang.module.receiptModule.client.userInterface.presenter;
+
+import java.util.Collection;
+
+import com.google.gwt.user.client.ui.HasWidgets;
+import com.google.gwt.user.client.ui.UIObject;
+import com.google.gwt.user.client.ui.Widget;
+
+import bigBang.definitions.client.dataAccess.ReceiptProcessDataBroker;
+import bigBang.definitions.client.response.ResponseError;
+import bigBang.definitions.client.response.ResponseHandler;
+import bigBang.definitions.shared.BigBangConstants;
+import bigBang.definitions.shared.Receipt;
+import bigBang.definitions.shared.ReceiptStub;
+import bigBang.library.client.Checkable;
+import bigBang.library.client.EventBus;
+import bigBang.library.client.HasCheckables;
+import bigBang.library.client.HasEditableValue;
+import bigBang.library.client.HasParameters;
+import bigBang.library.client.HasValueSelectables;
+import bigBang.library.client.Notification;
+import bigBang.library.client.Notification.TYPE;
+import bigBang.library.client.ValueSelectable;
+import bigBang.library.client.dataAccess.DataBrokerManager;
+import bigBang.library.client.event.ActionInvokedEvent;
+import bigBang.library.client.event.ActionInvokedEventHandler;
+import bigBang.library.client.event.CheckedSelectionChangedEvent;
+import bigBang.library.client.event.CheckedSelectionChangedEventHandler;
+import bigBang.library.client.event.NewNotificationEvent;
+import bigBang.library.client.history.NavigationHistoryManager;
+import bigBang.library.client.userInterface.presenter.ViewPresenter;
+
+
+public class MassCreatePaymentNoticeViewPresenter implements ViewPresenter{
+
+	private Display view;
+	private boolean bound = false;
+	protected ReceiptProcessDataBroker broker;
+
+	public MassCreatePaymentNoticeViewPresenter(Display view){
+		setView((UIObject) view);
+		broker = (ReceiptProcessDataBroker) DataBrokerManager.Util.getInstance().getBroker(BigBangConstants.EntityIds.RECEIPT);
+	}
+
+
+	public interface Display{
+
+		void addReceiptToCreateNotice(ReceiptStub value);
+		void removeReceiptToCreateNotice(String id);
+		HasCheckables getCheckableSelectedList();
+		HasEditableValue<Receipt> getReceiptForm();
+
+		HasValueSelectables<ReceiptStub> getMainList();
+		HasValueSelectables<ReceiptStub> getSelectedList();
+		HasCheckables getCheckableMainList();
+
+		void refreshMainLisT();
+
+		void markAllForCheck();
+		void markForCheck(String id);
+		void markForUncheck(String id);
+
+		void removeAllReceiptsFromCreateNotice();
+		Widget asWidget();
+		void registerActionHandler(
+				ActionInvokedEventHandler<Action> actionInvokedEventHandler);
+		void allowCreation(boolean b);
+
+	}
+
+	public enum Action{
+		SELECT_ALL, CREATE_PAYMENT_NOTICES, CLEAR
+
+	}
+
+	@Override
+	public void setView(UIObject view) {
+		this.view = (Display)view;
+
+	}
+
+	@Override
+	public void go(HasWidgets container) {
+		bind();
+		container.clear();
+		container.add(this.view.asWidget());
+
+	}
+
+	private void bind() {
+		if(bound){return;}
+
+		view.registerActionHandler(new ActionInvokedEventHandler<Action>() {
+
+			@Override
+			public void onActionInvoked(ActionInvokedEvent<Action> action) {
+				switch(action.getAction()){
+				case CLEAR:
+					view.removeAllReceiptsFromCreateNotice();
+					break;
+				case CREATE_PAYMENT_NOTICES:
+					createPaymentNotices(view.getSelectedList().getSelected());
+					break;
+				case SELECT_ALL:
+					view.markAllForCheck();
+					break;
+				}
+
+			}
+		});
+		view.getCheckableMainList().addCheckedSelectionChangedEventHandler(new CheckedSelectionChangedEventHandler() {
+
+			@Override
+			public void onCheckedSelectionChanged(CheckedSelectionChangedEvent event) {
+				Checkable checkable = event.getChangedCheckable();
+
+				@SuppressWarnings("unchecked")
+				ValueSelectable<ReceiptStub> entry = (ValueSelectable<ReceiptStub>) checkable;
+				String id = entry.getValue().id;
+
+				if(checkable.isChecked()){
+					view.markForCheck(id);
+					view.addReceiptToCreateNotice(entry.getValue());
+				}else{
+					view.markForUncheck(id);
+					view.removeReceiptToCreateNotice(id);
+				}
+
+			}
+		});
+
+		view.getCheckableSelectedList().addCheckedSelectionChangedEventHandler(new CheckedSelectionChangedEventHandler() {
+
+			@Override
+			public void onCheckedSelectionChanged(CheckedSelectionChangedEvent event) {
+				Checkable checkable = event.getChangedCheckable();
+
+				@SuppressWarnings("unchecked")
+				ValueSelectable<ReceiptStub> entry = (ValueSelectable<ReceiptStub>) checkable;
+				String id = entry.getValue().id;
+
+				if(checkable.isChecked()){
+					view.markForCheck(id);
+				}else{
+					view.markForUncheck(id);
+					view.removeReceiptToCreateNotice(id);
+				}
+
+			}
+		});
+	}
+
+	@Override
+	public void setParameters(HasParameters parameterHolder) {
+		clearView();
+		showMassCreatePaymentNoticeScreen();
+	}
+
+
+
+	private void showMassCreatePaymentNoticeScreen() {
+		checkUserPermission(new ResponseHandler<Boolean>() {
+
+			@Override
+			public void onResponse(Boolean response) {
+				if(response){
+					view.allowCreation(true);
+					view.getReceiptForm().setValue(null);
+				}else{
+					onUserLacksPermission();
+				}
+
+			}
+
+			@Override
+			public void onError(Collection<ResponseError> errors) {
+				onUserLacksPermission();
+			}
+		});
+	}
+
+	protected void onUserLacksPermission() {
+		EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não tem permissões para realizar esta operação"), TYPE.ALERT_NOTIFICATION));
+		NavigationHistoryManager.getInstance().reload();
+	}
+
+	private void clearView() {
+		view.getMainList().clearSelection();
+		view.removeAllReceiptsFromCreateNotice();
+		view.getReceiptForm().setValue(null);
+
+	}
+
+	public void createPaymentNotices(Collection<ValueSelectable<ReceiptStub>> collection){
+		String[] receiptIds = new String[collection.size()];
+
+		int i = 0;
+		for(ValueSelectable<ReceiptStub> r : collection){
+			receiptIds[i] = r.getValue().id;
+			i++;
+		}
+
+		broker.massCreatePaymentNotice(receiptIds, new ResponseHandler<Void>() {
+
+			@Override
+			public void onResponse(Void response) {
+				EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Notas de débito criadas com êxito"), TYPE.TRAY_NOTIFICATION));
+
+			}
+
+			@Override
+			public void onError(Collection<ResponseError> errors) {
+				EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Ocorreu um erro ao criar as notas de débito"), TYPE.ALERT_NOTIFICATION));				
+			}
+		});
+
+	}
+
+	protected void checkUserPermission(ResponseHandler<Boolean> handler) {
+		handler.onResponse(true); //TODO
+	}
+
+
+}
