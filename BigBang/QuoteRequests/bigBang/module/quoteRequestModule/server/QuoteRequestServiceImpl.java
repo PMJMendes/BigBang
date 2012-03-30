@@ -18,6 +18,7 @@ import Jewel.Petri.Interfaces.IProcess;
 import Jewel.Petri.Interfaces.IScript;
 import Jewel.Petri.Objects.PNProcess;
 import Jewel.Petri.Objects.PNScript;
+import Jewel.Petri.SysObjects.JewelPetriException;
 import bigBang.definitions.shared.Address;
 import bigBang.definitions.shared.InfoOrDocumentRequest;
 import bigBang.definitions.shared.ManagerTransfer;
@@ -483,18 +484,38 @@ public class QuoteRequestServiceImpl
 			throws BigBangException, CorruptedPadException
 		{
 			Client lobjClient;
+			Mediator lobjMed;
+			IProcess lobjProc;
 			QuoteRequest lobjResult;
 
 			if ( !mbValid )
 				throw new CorruptedPadException("Ocorreu um erro interno. Os dados correntes não são válidos.");
 
 			if ( midClient == null )
+			{
 				lobjClient = null;
+				lobjMed = null;
+			}
 			else
 			{
 				try
 				{
 					lobjClient = Client.GetInstance(Engine.getCurrentNameSpace(), midClient);
+					lobjMed = Mediator.GetInstance(Engine.getCurrentNameSpace(), (UUID)lobjClient.getAt(8));
+				}
+				catch (Throwable e)
+				{
+					throw new BigBangException(e.getMessage(), e);
+				}
+			}
+
+			if ( mobjQuoteRequest.midProcess == null )
+				lobjProc = null;
+			else
+			{
+				try
+				{
+					lobjProc = PNProcess.GetInstance(Engine.getCurrentNameSpace(), mobjQuoteRequest.midProcess);
 				}
 				catch (Throwable e)
 				{
@@ -504,12 +525,17 @@ public class QuoteRequestServiceImpl
 
 			lobjResult = new QuoteRequest();
 
+			lobjResult.id = mid.toString();
+			lobjResult.processId = ( lobjProc == null ? null : lobjProc.getKey().toString() );
+			lobjResult.managerId = ( lobjProc == null ? null : lobjProc.GetManagerID().toString() );
 			lobjResult.processNumber = mobjQuoteRequest.mstrNumber;
 			lobjResult.clientId = ( lobjClient == null ? null : lobjClient.getKey().toString() );
 			lobjResult.clientName = ( lobjClient == null ? null : lobjClient.getLabel() );
 			lobjResult.clientNumber = ( lobjClient == null ? null : ((Integer)lobjClient.getAt(1)).toString() );
 			lobjResult.processId = ( mobjQuoteRequest.midProcess == null ? null : mobjQuoteRequest.midProcess.toString() );
 			lobjResult.mediatorId = ( mobjQuoteRequest.midMediator == null ? null : mobjQuoteRequest.midMediator.toString() );
+			lobjResult.inheritMediatorId = ( lobjMed == null ? null : lobjMed.getKey().toString() );
+			lobjResult.inheritMediatorName = ( lobjMed == null ? null : lobjMed.getLabel() );
 			lobjResult.notes = mobjQuoteRequest.mstrNotes;
 			lobjResult.caseStudy = ( mobjQuoteRequest.mbCaseStudy == null ? false : mobjQuoteRequest.mbCaseStudy );
 			lobjResult.docushare = mobjQuoteRequest.mstrDocuShare;
