@@ -41,5 +41,8 @@ public interface ReceiptProcessDataBroker extends DataBrokerInterface<Receipt> {
 			ResponseHandler<Receipt> handler);
 	
 	void receiveImage(String receiptId, DocuShareHandle source, ResponseHandler<Receipt> handler);
+
+	void massCreatePaymentNotice(String[] receiptIds,
+			ResponseHandler<Void> handler);
 	
 }
