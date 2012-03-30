@@ -312,6 +312,10 @@ public abstract class SearchPanel<T extends SearchResult> extends FilterableList
 		return this.broker;
 	}
 	
+	public String getWorkspaceId(){
+		return workspaceId;
+	}
+	
 	/**
 	 * Performs A search query to the class' defined search service
 	 */
