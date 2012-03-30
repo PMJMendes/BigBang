@@ -439,7 +439,31 @@ public class ReceiptDataBrokerImpl extends DataBroker<Receipt> implements Receip
 				super.onResponseFailure(caught);
 			}
 			
+		});
+	}
+	
+	@Override
+	public void createPaymentNotice(String receiptId, final ResponseHandler<Receipt> handler){
+		service.createPaymentNotice(receiptId,new BigBangAsyncCallback<Receipt>() {
+
+			@Override
+			public void onResponseSuccess(Receipt result) {
+				cache.add(result.id, result);
+				incrementDataVersion();
+				for(DataBrokerClient<Receipt> bc : getClients()){
+					((ReceiptDataBrokerClient) bc).updateReceipt(result);
+					((ReceiptDataBrokerClient) bc).setDataVersionNumber(BigBangConstants.EntityIds.RECEIPT, getCurrentDataVersion());
+				}
+				handler.onResponse(result);
+			}
 			
+			@Override
+			public void onResponseFailure(Throwable caught) {
+				handler.onError(new String[]{
+						new String("Could not create payment notice")
+				});
+				super.onResponseFailure(caught);
+			}
 			
 		});
 	}

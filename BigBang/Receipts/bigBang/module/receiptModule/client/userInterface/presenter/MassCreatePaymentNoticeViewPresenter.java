@@ -27,6 +27,8 @@ import bigBang.library.client.event.ActionInvokedEventHandler;
 import bigBang.library.client.event.CheckedSelectionChangedEvent;
 import bigBang.library.client.event.CheckedSelectionChangedEventHandler;
 import bigBang.library.client.event.NewNotificationEvent;
+import bigBang.library.client.event.SelectionChangedEvent;
+import bigBang.library.client.event.SelectionChangedEventHandler;
 import bigBang.library.client.history.NavigationHistoryManager;
 import bigBang.library.client.userInterface.presenter.ViewPresenter;
 
@@ -146,6 +148,61 @@ public class MassCreatePaymentNoticeViewPresenter implements ViewPresenter{
 					view.removeReceiptToCreateNotice(id);
 				}
 
+			}
+		});
+		
+		view.getMainList().addSelectionChangedEventHandler(new SelectionChangedEventHandler() {
+			
+			@Override
+			public void onSelectionChanged(SelectionChangedEvent event) {
+				
+				@SuppressWarnings("unchecked")
+				ValueSelectable<ReceiptStub> selectable = (ValueSelectable<ReceiptStub>) event.getFirstSelected();
+				
+				if(selectable!= null){
+					view.getSelectedList().clearSelection();
+					broker.getReceipt(selectable.getValue().id, new ResponseHandler<Receipt>() {
+						
+						@Override
+						public void onResponse(Receipt response) {
+							view.getReceiptForm().setValue(response);
+						}
+						
+						@Override
+						public void onError(Collection<ResponseError> errors) {
+							EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não foi possível obter o Recibo seleccionado"), TYPE.ALERT_NOTIFICATION));
+						}
+					});
+				}
+				
+			}
+		});
+		
+		
+		view.getSelectedList().addSelectionChangedEventHandler(new SelectionChangedEventHandler() {
+			
+			@Override
+			public void onSelectionChanged(SelectionChangedEvent event) {
+				
+				@SuppressWarnings("unchecked")
+				ValueSelectable<ReceiptStub> selectable = (ValueSelectable<ReceiptStub>) event.getFirstSelected();
+				
+				if(selectable!= null){
+					view.getMainList().clearSelection();
+					broker.getReceipt(selectable.getValue().id, new ResponseHandler<Receipt>() {
+						
+						@Override
+						public void onResponse(Receipt response) {
+							view.getReceiptForm().setValue(response);
+						}
+						
+						@Override
+						public void onError(Collection<ResponseError> errors) {
+							EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não foi possível obter o Recibo seleccionado"), TYPE.ALERT_NOTIFICATION));
+						}
+					});
+				}
+				
 			}
 		});
 	}

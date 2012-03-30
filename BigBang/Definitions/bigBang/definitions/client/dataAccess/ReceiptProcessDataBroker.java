@@ -44,5 +44,7 @@ public interface ReceiptProcessDataBroker extends DataBrokerInterface<Receipt> {
 
 	void massCreatePaymentNotice(String[] receiptIds,
 			ResponseHandler<Void> handler);
+
+	void createPaymentNotice(String receiptId, ResponseHandler<Receipt> handler);
 	
 }

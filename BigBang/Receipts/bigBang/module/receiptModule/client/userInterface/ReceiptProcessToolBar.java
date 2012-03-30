@@ -317,4 +317,9 @@ public abstract class ReceiptProcessToolBar extends BigBangOperationsToolBar {
 		this.setForReturn.setEnabled(allow);
 	}
 
+	public void allowCreatePaymentNotice(boolean hasPermission) {
+		this.sendPaymentNotice.setEnabled(hasPermission);
+		
+	}
+
 }

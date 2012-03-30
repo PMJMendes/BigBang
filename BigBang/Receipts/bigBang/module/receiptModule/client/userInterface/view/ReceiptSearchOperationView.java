@@ -173,7 +173,7 @@ public class ReceiptSearchOperationView extends View implements ReceiptSearchOpe
 
 			@Override
 			public void onSendPaymentNotice() {
-				// TODO Auto-generated method stub
+				actionHandler.onActionInvoked(new ActionInvokedEvent<ReceiptSearchOperationViewPresenter.Action>(Action.ON_CREATE_PAYMENT_NOTE));
 
 			}
 
@@ -289,6 +289,12 @@ public class ReceiptSearchOperationView extends View implements ReceiptSearchOpe
 	@Override
 	public void allowSetForReturn(boolean hasPermission) {
 		operationsToolbar.allowSetForReturn(hasPermission);
+		
+	}
+
+	@Override
+	public void allowSendPaymentNotice(boolean hasPermission) {
+		operationsToolbar.allowCreatePaymentNotice(hasPermission);
 		
 	}
 

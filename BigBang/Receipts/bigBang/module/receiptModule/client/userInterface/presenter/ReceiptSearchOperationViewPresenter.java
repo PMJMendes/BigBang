@@ -38,7 +38,7 @@ public class ReceiptSearchOperationViewPresenter implements ViewPresenter {
 		SAVE,
 		CANCEL,
 		DELETE, TRANSFER_TO_POLICY, ASSOCIATE_WITH_DEBIT_NOTE,
-		VALIDATE, SET_FOR_RETURN
+		VALIDATE, SET_FOR_RETURN, ON_CREATE_PAYMENT_NOTE
 	}
 
 	public interface Display {
@@ -55,6 +55,10 @@ public class ReceiptSearchOperationViewPresenter implements ViewPresenter {
 		void allowEdit(boolean allow);
 		void allowDelete(boolean allow);
 		void allowTransferToPolicy(boolean allow);
+		void allowAssociateDebitNote(boolean hasPermission);
+		void allowValidate(boolean hasPermission);
+		void allowSetForReturn(boolean hasPermission);
+		void allowSendPaymentNotice(boolean hasPermission);
 
 		//Children Lists
 		//TODO
@@ -64,12 +68,6 @@ public class ReceiptSearchOperationViewPresenter implements ViewPresenter {
 		void setSaveModeEnabled(boolean enabled);
 
 		Widget asWidget();
-
-		void allowAssociateDebitNote(boolean hasPermission);
-
-		void allowValidate(boolean hasPermission);
-
-		void allowSetForReturn(boolean hasPermission);
 	}
 
 	protected Display view;
@@ -158,6 +156,9 @@ public class ReceiptSearchOperationViewPresenter implements ViewPresenter {
 				case VALIDATE:
 					onValidate();
 					break;
+				case ON_CREATE_PAYMENT_NOTE:
+					onCreatePaymentNote();
+					break;
 				}
 
 			}
@@ -165,6 +166,25 @@ public class ReceiptSearchOperationViewPresenter implements ViewPresenter {
 
 		//APPLICATION-WIDE EVENTS
 		bound = true;
+	}
+
+	protected void onCreatePaymentNote() {
+		receiptBroker.createPaymentNotice(receiptId, new ResponseHandler<Receipt>() {
+			
+			@Override
+			public void onResponse(Receipt response) {
+				EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Aviso de Cobrança enviado"), TYPE.TRAY_NOTIFICATION));
+				NavigationHistoryManager.getInstance().reload();
+				
+			}
+			
+			@Override
+			public void onError(Collection<ResponseError> errors) {
+				EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não foi possível criar nota de débito"), TYPE.ALERT_NOTIFICATION));
+				NavigationHistoryManager.getInstance().reload();
+			}
+		});
+		
 	}
 
 	protected void onValidate() {
@@ -232,6 +252,7 @@ public class ReceiptSearchOperationViewPresenter implements ViewPresenter {
 				view.allowAssociateDebitNote(PermissionChecker.hasPermission(value, BigBangConstants.OperationIds.ReceiptProcess.ASSOCIATE_WITH_DEBIT_NOTE));
 				view.allowValidate(PermissionChecker.hasPermission(value, BigBangConstants.OperationIds.ReceiptProcess.VALIDATE));
 				view.allowSetForReturn(PermissionChecker.hasPermission(value, BigBangConstants.OperationIds.ReceiptProcess.SET_FOR_RETURN));
+				view.allowSendPaymentNotice(PermissionChecker.hasPermission(value, BigBangConstants.OperationIds.ReceiptProcess.CREATE_PAYMENT_NOTICE));
 				view.setSaveModeEnabled(false);
 				view.getForm().setReadOnly(true);
 				view.getForm().setValue(value);

@@ -3,7 +3,13 @@ package bigBang.module.receiptModule.client.userInterface.view;
 import java.util.Collection;
 import java.util.Map;
 import java.util.TreeMap;
-
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.user.client.ui.Button;
+import com.google.gwt.user.client.ui.HasVerticalAlignment;
+import com.google.gwt.user.client.ui.HorizontalPanel;
+import com.google.gwt.user.client.ui.SplitLayoutPanel;
+import com.google.gwt.user.client.ui.VerticalPanel;
 import bigBang.definitions.client.dataAccess.ReceiptProcessDataBroker;
 import bigBang.definitions.client.dataAccess.Search;
 import bigBang.definitions.client.dataAccess.SearchDataBroker;
@@ -32,19 +38,11 @@ import bigBang.module.receiptModule.client.dataAccess.ReceiptSearchDataBroker;
 import bigBang.module.receiptModule.client.userInterface.ReceiptForm;
 import bigBang.module.receiptModule.client.userInterface.ReceiptSearchPanel;
 import bigBang.module.receiptModule.client.userInterface.presenter.MassCreatePaymentNoticeViewPresenter;
-import bigBang.module.receiptModule.client.userInterface.presenter.MassCreatePaymentNoticeViewPresenter.Action;
 import bigBang.module.receiptModule.shared.ModuleConstants;
 import bigBang.module.receiptModule.shared.ReceiptSearchParameter;
 import bigBang.module.receiptModule.shared.ReceiptSortParameter;
 import bigBang.module.receiptModule.shared.ReceiptSortParameter.SortableField;
-
-import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.user.client.ui.Button;
-import com.google.gwt.user.client.ui.HasVerticalAlignment;
-import com.google.gwt.user.client.ui.HorizontalPanel;
-import com.google.gwt.user.client.ui.SplitLayoutPanel;
-import com.google.gwt.user.client.ui.VerticalPanel;
+import bigBang.module.receiptModule.client.userInterface.presenter.MassCreatePaymentNoticeViewPresenter.Action;
 
 public class MassCreatePaymentNoticeView extends View implements MassCreatePaymentNoticeViewPresenter.Display{
 
@@ -66,7 +64,7 @@ public class MassCreatePaymentNoticeView extends View implements MassCreatePayme
 		@Override
 		public ListEntry<ReceiptStub> addEntry(ReceiptStub value) {
 			ListEntry<ReceiptStub> entry = new ReceiptSearchPanel.Entry(value);
-			entry.setChecked(true);
+			entry.setChecked(true, false);
 			this.add(entry);
 			return entry;
 		}
