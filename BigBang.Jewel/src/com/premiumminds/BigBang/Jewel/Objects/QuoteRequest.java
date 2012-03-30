@@ -284,7 +284,7 @@ public class QuoteRequest
     	larrSubLines = GetCurrentSubLines();
     	for( i = 0; i < larrSubLines.length; i++ )
     	{
-    		if ( larrSubLines[i].GetSubLine().getKey().equals(pidSubLine) )
+    		if ( larrSubLines[i].getKey().equals(pidSubLine) )
     			return larrSubLines[i];
     	}
 
