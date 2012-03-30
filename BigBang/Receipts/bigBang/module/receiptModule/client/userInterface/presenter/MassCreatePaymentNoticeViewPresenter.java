@@ -210,6 +210,7 @@ public class MassCreatePaymentNoticeViewPresenter implements ViewPresenter{
 	@Override
 	public void setParameters(HasParameters parameterHolder) {
 		clearView();
+		view.refreshMainLisT();
 		showMassCreatePaymentNoticeScreen();
 	}
 
@@ -261,13 +262,13 @@ public class MassCreatePaymentNoticeViewPresenter implements ViewPresenter{
 
 			@Override
 			public void onResponse(Void response) {
-				EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Notas de débito criadas com êxito"), TYPE.TRAY_NOTIFICATION));
-
+				EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Avisos de cobrança criados com êxito"), TYPE.TRAY_NOTIFICATION));
+				NavigationHistoryManager.getInstance().reload();
 			}
 
 			@Override
 			public void onError(Collection<ResponseError> errors) {
-				EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Ocorreu um erro ao criar as notas de débito"), TYPE.ALERT_NOTIFICATION));				
+				EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Ocorreu um erro ao enviar avisos de cobrança"), TYPE.ALERT_NOTIFICATION));				
 			}
 		});
 
