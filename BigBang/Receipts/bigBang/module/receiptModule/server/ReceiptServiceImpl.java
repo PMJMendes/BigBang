@@ -756,7 +756,7 @@ public class ReceiptServiceImpl
 
 		lopSR = new SendReceipt(lobjReceipt.GetProcessID());
 		lopSR.marrReceiptIDs = new UUID[] {UUID.fromString(receiptId)};
-		lopSR.mbUseGroups = false;
+		lopSR.mbUseSets = false;
 
 		try
 		{
@@ -883,6 +883,7 @@ public class ReceiptServiceImpl
 		UUID[] larrFinal;
 		UUID lidSet;
 		UUID lidSetClient;
+		DocOps lobjDocOps;
 		CreatePaymentNotice lopCPN;
 		int i;
 
@@ -916,6 +917,7 @@ public class ReceiptServiceImpl
 		for(UUID lidC : larrReceipts.keySet())
 		{
 			lidSetClient = null;
+			lobjDocOps = null;
 			larrByClient = larrReceipts.get(lidC);
 			larrFinal = larrByClient.toArray(new UUID[larrByClient.size()]);
 			for ( i = 0; i < larrFinal.length; i++ )
@@ -928,11 +930,13 @@ public class ReceiptServiceImpl
 					lopCPN.marrReceiptIDs = larrFinal;
 					lopCPN.mbUseSets = true;
 					lopCPN.midSet = lidSet;
-					lopCPN.midSetClient = lidSetClient;
+					lopCPN.midSetDocument = lidSetClient;
+					lopCPN.mobjDocOps = lobjDocOps;
 
 					lopCPN.Execute();
 
-					lidSetClient = lopCPN.midSetClient;
+					lobjDocOps = lopCPN.mobjDocOps;
+					lidSetClient = lopCPN.midSetDocument;
 					lidSet = lopCPN.midSet;
 				}
 				catch (Throwable e)
@@ -952,8 +956,10 @@ public class ReceiptServiceImpl
 		UUID lidClient;
 		ArrayList<UUID> larrByClient;
 		UUID[] larrFinal;
+		UUID lidSet;
+		UUID lidSetClient;
 		DocOps lobjDocOps;
-		SendReceipt lopCPN;
+		SendReceipt lopSR;
 		int i;
 
 		larrReceipts = new Hashtable<UUID, ArrayList<UUID>>();
@@ -982,8 +988,10 @@ public class ReceiptServiceImpl
 			larrByClient.add(lobjReceipt.getKey());
 		}
 
+		lidSet = null;
 		for(UUID lidC : larrReceipts.keySet())
 		{
+			lidSetClient = null;
 			lobjDocOps = null;
 			larrByClient = larrReceipts.get(lidC);
 			larrFinal = larrByClient.toArray(new UUID[larrByClient.size()]);
@@ -993,14 +1001,18 @@ public class ReceiptServiceImpl
 				{
 					lobjReceipt = com.premiumminds.BigBang.Jewel.Objects.Receipt.GetInstance(Engine.getCurrentNameSpace(), larrFinal[i]);
 
-					lopCPN = new SendReceipt(lobjReceipt.GetProcessID());
-					lopCPN.marrReceiptIDs = larrFinal;
-					lopCPN.mbUseGroups = true;
-					lopCPN.mobjDocOps = lobjDocOps;
+					lopSR = new SendReceipt(lobjReceipt.GetProcessID());
+					lopSR.marrReceiptIDs = larrFinal;
+					lopSR.mbUseSets = true;
+					lopSR.midSet = lidSet;
+					lopSR.midSetDocument = lidSetClient;
+					lopSR.mobjDocOps = lobjDocOps;
 
-					lopCPN.Execute();
+					lopSR.Execute();
 
-					lobjDocOps = lopCPN.mobjDocOps;
+					lobjDocOps = lopSR.mobjDocOps;
+					lidSetClient = lopSR.midSetDocument;
+					lidSet = lopSR.midSet;
 				}
 				catch (Throwable e)
 				{

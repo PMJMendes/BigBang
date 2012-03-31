@@ -1,6 +1,5 @@
 package com.premiumminds.BigBang.Jewel.Operations.Receipt;
 
-import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.util.UUID;
 
@@ -14,9 +13,9 @@ import com.premiumminds.BigBang.Jewel.BigBangJewelException;
 import com.premiumminds.BigBang.Jewel.Constants;
 import com.premiumminds.BigBang.Jewel.Data.DocInfoData;
 import com.premiumminds.BigBang.Jewel.Data.DocumentData;
-import com.premiumminds.BigBang.Jewel.Objects.PaymentNoticeClient;
-import com.premiumminds.BigBang.Jewel.Objects.PaymentNoticeReceipt;
-import com.premiumminds.BigBang.Jewel.Objects.PaymentNoticeSet;
+import com.premiumminds.BigBang.Jewel.Objects.PrintSet;
+import com.premiumminds.BigBang.Jewel.Objects.PrintSetDetail;
+import com.premiumminds.BigBang.Jewel.Objects.PrintSetDocument;
 import com.premiumminds.BigBang.Jewel.Operations.DocOps;
 import com.premiumminds.BigBang.Jewel.Reports.PaymentNoticeReport;
 
@@ -28,13 +27,11 @@ public class CreatePaymentNotice
 	public transient UUID[] marrReceiptIDs;
 	public boolean mbUseSets;
 	public UUID midSet;
-	public UUID midSetClient;
-	public UUID midSetReceipt;
+	public UUID midSetDocument;
+	public UUID midSetDetail;
+	public DocOps mobjDocOps;
 	private UUID midClient;
-	private DocOps mobjDocOps;
 //	private OutgoingMessageData mobjMessage;
-	private transient BigDecimal mdblTotal;
-	private transient int mlngCount;
 
 	public CreatePaymentNotice(UUID pidProcess)
 	{
@@ -71,78 +68,48 @@ public class CreatePaymentNotice
 	protected void Run(SQLServer pdb)
 		throws JewelPetriException
 	{
-		PaymentNoticeSet lobjSet;
-		PaymentNoticeClient lobjSetClient;
-		PaymentNoticeReceipt lobjSetReceipt;
-		byte[] lobjFileData;
-		DocumentData lobjDoc;
-		DocInfoData[] larrInfo;
+		PrintSet lobjSet;
+		PrintSetDocument lobjSetClient;
+		PrintSetDetail lobjSetReceipt;
 
 		if ( Constants.ProcID_Policy.equals(GetProcess().GetParent().GetScriptID()) )
 			midClient = GetProcess().GetParent().GetParent().GetDataKey();
 		else
 			midClient = (UUID)GetProcess().GetParent().GetData().getAt(2);
 
-		larrInfo = new DocInfoData[2];
-		larrInfo[0] = new DocInfoData();
-		larrInfo[0].mstrType = "Número de Recibos";
-		larrInfo[1] = new DocInfoData();
-		larrInfo[1].mstrType = "Total a Liquidar";
-
 		try
 		{
+			if ( mobjDocOps == null )
+				generateDocOp();
+
 			if ( mbUseSets )
 			{
 				if ( midSet == null )
 				{
-					lobjSet = PaymentNoticeSet.GetInstance(Engine.getCurrentNameSpace(), null);
-					lobjSet.setAt(0, new Timestamp(new java.util.Date().getTime()));
-					lobjSet.setAt(1, Engine.getCurrentUser());
-					lobjSet.setAt(2, (Timestamp)null);
+					lobjSet = PrintSet.GetInstance(Engine.getCurrentNameSpace(), null);
+					lobjSet.setAt(0, Constants.TID_PaymentNotice);
+					lobjSet.setAt(1, new Timestamp(new java.util.Date().getTime()));
+					lobjSet.setAt(2, Engine.getCurrentUser());
+					lobjSet.setAt(3, (Timestamp)null);
 					lobjSet.SaveToDb(pdb);
 					midSet = lobjSet.getKey();
 				}
 
-				if ( midSetClient == null )
+				if ( midSetDocument == null )
 				{
-					lobjFileData = generateReport();
-
-					larrInfo[0].mstrValue = Integer.toString(mlngCount);
-					larrInfo[1].mstrValue = mdblTotal.toPlainString();
-
-					lobjSetClient = PaymentNoticeClient.GetInstance(Engine.getCurrentNameSpace(), null);
+					lobjSetClient = PrintSetDocument.GetInstance(Engine.getCurrentNameSpace(), null);
 					lobjSetClient.setAt(0, midSet);
-					lobjSetClient.setAt(1, midClient);
-					lobjSetClient.setAt(2, lobjFileData);
-					lobjSetClient.setAt(3, false);
-					lobjSetClient.setAt(4, mlngCount);
-					lobjSetClient.setAt(5, mdblTotal);
+					lobjSetClient.setAt(1, mobjDocOps.marrCreate[0].mobjFile);
+					lobjSetClient.setAt(2, false);
 					lobjSetClient.SaveToDb(pdb);
-					midSetClient = lobjSetClient.getKey();
-				}
-				else
-				{
-					lobjSetClient = PaymentNoticeClient.GetInstance(Engine.getCurrentNameSpace(), midSetClient);
-
-					lobjFileData = (byte[])lobjSetClient.getAt(2);
-
-					larrInfo[0].mstrValue = Integer.toString(((Integer)lobjSetClient.getAt(4)));
-					larrInfo[1].mstrValue = ((BigDecimal)lobjSetClient.getAt(5)).toPlainString();
+					midSetDocument = lobjSetClient.getKey();
 				}
 
-				lobjSetReceipt = PaymentNoticeReceipt.GetInstance(Engine.getCurrentNameSpace(), null);
-				lobjSetReceipt.setAt(0, midSetClient);
-				lobjSetReceipt.setAt(1, GetProcess().GetDataKey());
-				lobjSetReceipt.setAt(2, null);
+				lobjSetReceipt = PrintSetDetail.GetInstance(Engine.getCurrentNameSpace(), null);
+				lobjSetReceipt.setAt(0, midSetDocument);
+				lobjSetReceipt.setAt(1, null);
 				lobjSetReceipt.SaveToDb(pdb);
-				midSetReceipt = lobjSetReceipt.getKey();
-			}
-			else
-			{
-				lobjFileData = generateReport();
-
-				larrInfo[0].mstrValue = Integer.toString(mlngCount);
-				larrInfo[1].mstrValue = mdblTotal.toPlainString();
+				midSetDetail = lobjSetReceipt.getKey();
 			}
 		}
 		catch (Throwable e)
@@ -150,35 +117,37 @@ public class CreatePaymentNotice
 			throw new JewelPetriException(e.getMessage(), e);
 		}
 
+		mobjDocOps.RunSubOp(pdb, GetProcess().GetDataKey());
+	}
+
+	private void generateDocOp()
+		throws BigBangJewelException
+	{
+		PaymentNoticeReport lrepPN;
+		FileXfer lobjFile;
+		DocumentData lobjDoc;
+
+		lrepPN = new PaymentNoticeReport();
+		lrepPN.midClient = midClient;
+		lrepPN.marrReceiptIDs = marrReceiptIDs;
+		lobjFile = lrepPN.Generate();
+
 		lobjDoc = new DocumentData();
 		lobjDoc.mstrName = "Aviso de Cobrança";
 		lobjDoc.midOwnerType = Constants.ObjID_Receipt;
 		lobjDoc.midOwnerId = null;
 		lobjDoc.midDocType = Constants.DocID_PaymentNotice;
 		lobjDoc.mstrText = null;
-		lobjDoc.mobjFile = lobjFileData;
-		lobjDoc.marrInfo = larrInfo;
+		lobjDoc.mobjFile = lobjFile.GetVarData();
+		lobjDoc.marrInfo = new DocInfoData[2];
+		lobjDoc.marrInfo[0] = new DocInfoData();
+		lobjDoc.marrInfo[0].mstrType = "Número de Recibos";
+		lobjDoc.marrInfo[0].mstrValue = Integer.toString(lrepPN.mlngCount);
+		lobjDoc.marrInfo[1] = new DocInfoData();
+		lobjDoc.marrInfo[1].mstrType = "Total a Liquidar";
+		lobjDoc.marrInfo[1].mstrValue = lrepPN.mdblTotal.toPlainString();
 
 		mobjDocOps = new DocOps();
 		mobjDocOps.marrCreate = new DocumentData[]{lobjDoc};
-
-		mobjDocOps.RunSubOp(pdb, GetProcess().GetDataKey());
-	}
-
-	private byte[] generateReport()
-		throws BigBangJewelException
-	{
-		PaymentNoticeReport lrepPN;
-		FileXfer lobjResult;
-
-		lrepPN = new PaymentNoticeReport();
-		lrepPN.midClient = midClient;
-		lrepPN.marrReceiptIDs = marrReceiptIDs;
-
-		lobjResult = lrepPN.Generate();
-		mdblTotal = lrepPN.mdblTotal;
-		mlngCount = lrepPN.mlngCount;
-
-		return lobjResult.GetVarData();
 	}
 }

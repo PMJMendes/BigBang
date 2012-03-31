@@ -9,21 +9,22 @@ import Jewel.Engine.SysObjects.ObjectBase;
 import com.premiumminds.BigBang.Jewel.BigBangJewelException;
 import com.premiumminds.BigBang.Jewel.Constants;
 
-public class PaymentNoticeReceipt
+public class PrintSetDocument
 	extends ObjectBase
 {
-    public static PaymentNoticeReceipt GetInstance(UUID pidNameSpace, UUID pidKey)
+    public static PrintSetDocument GetInstance(UUID pidNameSpace, UUID pidKey)
 		throws BigBangJewelException
 	{
 	    try
 	    {
-			return (PaymentNoticeReceipt)Engine.GetWorkInstance(Engine.FindEntity(pidNameSpace, Constants.ObjID_PaymentNoticeReceipt), pidKey);
+			return (PrintSetDocument)Engine.GetWorkInstance(Engine.FindEntity(pidNameSpace, Constants.ObjID_PrintSetDocument), pidKey);
 		}
 	    catch (Throwable e)
 	    {
 	    	throw new BigBangJewelException(e.getMessage(), e);
 		}
 	}
+
 	public void Initialize()
 		throws JewelEngineException
 	{

@@ -12,6 +12,9 @@ public class Constants
 	// Objects
     public static final UUID ObjID_AppParams            = UUID.fromString("5485B660-A102-441A-912C-7B960584399F");
     public static final UUID ObjID_Template             = UUID.fromString("F13322EE-E13E-4562-B723-9FF100F5E6BE");
+	public static final UUID ObjID_PrintSet             = UUID.fromString("FEBF3C68-0891-4B4D-AD90-A021010A219F");
+	public static final UUID ObjID_PrintSetDocument     = UUID.fromString("526FDF76-E1D2-4FA8-B048-A021010ADF38");
+	public static final UUID ObjID_PrintSetDetail       = UUID.fromString("6780283B-97E8-4ED3-B4BF-A021010B98C2");
 
 	// Agenda Objects
 	public static final UUID ObjID_AgendaItem           = UUID.fromString("F850E623-E686-4575-A2D8-9F640128FCD7");
@@ -66,9 +69,6 @@ public class Constants
 	// Receipt Objects
 	public static final UUID ObjID_Receipt              = UUID.fromString("B24E4BF7-382C-40EE-8120-9F8A00DABB81");
 	public static final UUID ObjID_DebitNote            = UUID.fromString("812774ED-4016-4024-921C-9FF000EAC900");
-	public static final UUID ObjID_PaymentNoticeSet     = UUID.fromString("FEBF3C68-0891-4B4D-AD90-A021010A219F");
-	public static final UUID ObjID_PaymentNoticeClient  = UUID.fromString("526FDF76-E1D2-4FA8-B048-A021010ADF38");
-	public static final UUID ObjID_PaymentNoticeReceipt = UUID.fromString("6780283B-97E8-4ED3-B4BF-A021010B98C2");
 
 	// Manager Transfer Objects
 	public static final UUID ObjID_MgrXFer              = UUID.fromString("66EC1066-AD5A-430C-9A70-9F65013F5453");

@@ -1,8 +1,9 @@
 package com.premiumminds.BigBang.Jewel.Operations.Receipt;
 
-import java.math.BigDecimal;
+import java.sql.Timestamp;
 import java.util.UUID;
 
+import Jewel.Engine.Engine;
 import Jewel.Engine.DataAccess.SQLServer;
 import Jewel.Engine.SysObjects.FileXfer;
 import Jewel.Petri.SysObjects.JewelPetriException;
@@ -12,6 +13,9 @@ import com.premiumminds.BigBang.Jewel.BigBangJewelException;
 import com.premiumminds.BigBang.Jewel.Constants;
 import com.premiumminds.BigBang.Jewel.Data.DocInfoData;
 import com.premiumminds.BigBang.Jewel.Data.DocumentData;
+import com.premiumminds.BigBang.Jewel.Objects.PrintSet;
+import com.premiumminds.BigBang.Jewel.Objects.PrintSetDetail;
+import com.premiumminds.BigBang.Jewel.Objects.PrintSetDocument;
 import com.premiumminds.BigBang.Jewel.Operations.DocOps;
 import com.premiumminds.BigBang.Jewel.Reports.ReceiptCoverLetterReport;
 
@@ -21,12 +25,13 @@ public class SendReceipt
 	private static final long serialVersionUID = 1L;
 
 	public transient UUID[] marrReceiptIDs;
-	public boolean mbUseGroups;
+	public boolean mbUseSets;
+	public UUID midSet;
+	public UUID midSetDocument;
+	public UUID midSetDetail;
 	public DocOps mobjDocOps;
 	private UUID midClient;
 //	private OutgoingMessageData mobjMessage;
-	private transient BigDecimal mdblTotal;
-	private transient int mlngCount;
 
 	public SendReceipt(UUID pidProcess)
 	{
@@ -63,6 +68,10 @@ public class SendReceipt
 	protected void Run(SQLServer pdb)
 		throws JewelPetriException
 	{
+		PrintSet lobjSet;
+		PrintSetDocument lobjSetClient;
+		PrintSetDetail lobjSetReceipt;
+
 		if ( Constants.ProcID_Policy.equals(GetProcess().GetParent().GetScriptID()) )
 			midClient = GetProcess().GetParent().GetParent().GetDataKey();
 		else
@@ -72,6 +81,36 @@ public class SendReceipt
 		{
 			if ( mobjDocOps == null )
 				generateDocOp();
+
+			if ( mbUseSets )
+			{
+				if ( midSet == null )
+				{
+					lobjSet = PrintSet.GetInstance(Engine.getCurrentNameSpace(), null);
+					lobjSet.setAt(0, Constants.TID_ReceiptCoverLetter);
+					lobjSet.setAt(1, new Timestamp(new java.util.Date().getTime()));
+					lobjSet.setAt(2, Engine.getCurrentUser());
+					lobjSet.setAt(3, (Timestamp)null);
+					lobjSet.SaveToDb(pdb);
+					midSet = lobjSet.getKey();
+				}
+
+				if ( midSetDocument == null )
+				{
+					lobjSetClient = PrintSetDocument.GetInstance(Engine.getCurrentNameSpace(), null);
+					lobjSetClient.setAt(0, midSet);
+					lobjSetClient.setAt(1, mobjDocOps.marrCreate[0].mobjFile);
+					lobjSetClient.setAt(2, false);
+					lobjSetClient.SaveToDb(pdb);
+					midSetDocument = lobjSetClient.getKey();
+				}
+
+				lobjSetReceipt = PrintSetDetail.GetInstance(Engine.getCurrentNameSpace(), null);
+				lobjSetReceipt.setAt(0, midSetDocument);
+				lobjSetReceipt.setAt(1, null);
+				lobjSetReceipt.SaveToDb(pdb);
+				midSetDetail = lobjSetReceipt.getKey();
+			}
 		}
 		catch (Throwable e)
 		{
@@ -84,7 +123,14 @@ public class SendReceipt
 	private void generateDocOp()
 		throws BigBangJewelException
 	{
+		ReceiptCoverLetterReport lrepRCL;
+		FileXfer lobjFile;
 		DocumentData lobjDoc;
+
+		lrepRCL = new ReceiptCoverLetterReport();
+		lrepRCL.midClient = midClient;
+		lrepRCL.marrReceiptIDs = marrReceiptIDs;
+		lobjFile = lrepRCL.Generate();
 
 		lobjDoc = new DocumentData();
 		lobjDoc.mstrName = "Envio de Recibo";
@@ -92,33 +138,16 @@ public class SendReceipt
 		lobjDoc.midOwnerId = null;
 		lobjDoc.midDocType = Constants.DocID_ReceiptCoverLetter;
 		lobjDoc.mstrText = null;
-		lobjDoc.mobjFile = generateReport();
+		lobjDoc.mobjFile = lobjFile.GetVarData();
 		lobjDoc.marrInfo = new DocInfoData[2];
 		lobjDoc.marrInfo[0] = new DocInfoData();
 		lobjDoc.marrInfo[0].mstrType = "Número de Recibos Enviados";
-		lobjDoc.marrInfo[0].mstrValue = Integer.toString(mlngCount);
+		lobjDoc.marrInfo[0].mstrValue = Integer.toString(lrepRCL.mlngCount);
 		lobjDoc.marrInfo[1] = new DocInfoData();
 		lobjDoc.marrInfo[1].mstrType = "Total de Prémios";
-		lobjDoc.marrInfo[1].mstrValue = mdblTotal.toPlainString();
+		lobjDoc.marrInfo[1].mstrValue = lrepRCL.mdblTotal.toPlainString();
 
 		mobjDocOps = new DocOps();
 		mobjDocOps.marrCreate = new DocumentData[]{lobjDoc};
-	}
-
-	private byte[] generateReport()
-		throws BigBangJewelException
-	{
-		ReceiptCoverLetterReport lrepRCL;
-		FileXfer lobjResult;
-
-		lrepRCL = new ReceiptCoverLetterReport();
-		lrepRCL.midClient = midClient;
-		lrepRCL.marrReceiptIDs = marrReceiptIDs;
-
-		lobjResult = lrepRCL.Generate();
-		mdblTotal = lrepRCL.mdblTotal;
-		mlngCount = lrepRCL.mlngCount;
-
-		return lobjResult.GetVarData();
 	}
 }

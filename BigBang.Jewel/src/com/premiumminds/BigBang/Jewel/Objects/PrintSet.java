@@ -11,15 +11,15 @@ import Jewel.Engine.SysObjects.ObjectBase;
 import com.premiumminds.BigBang.Jewel.BigBangJewelException;
 import com.premiumminds.BigBang.Jewel.Constants;
 
-public class PaymentNoticeSet
+public class PrintSet
 	extends ObjectBase
 {
-    public static PaymentNoticeSet GetInstance(UUID pidNameSpace, UUID pidKey)
+    public static PrintSet GetInstance(UUID pidNameSpace, UUID pidKey)
 		throws BigBangJewelException
 	{
 	    try
 	    {
-			return (PaymentNoticeSet)Engine.GetWorkInstance(Engine.FindEntity(pidNameSpace, Constants.ObjID_PaymentNoticeSet), pidKey);
+			return (PrintSet)Engine.GetWorkInstance(Engine.FindEntity(pidNameSpace, Constants.ObjID_PrintSet), pidKey);
 		}
 	    catch (Throwable e)
 	    {
@@ -28,17 +28,26 @@ public class PaymentNoticeSet
 	}
 
 	private User mrefUser;
+	private Template mrefTemplate;
 
 	public void Initialize()
 		throws JewelEngineException
 	{
-		mrefUser = User.GetInstance(getNameSpace(), (UUID)getAt(1));
+		try
+		{
+			mrefTemplate = Template.GetInstance(getNameSpace(), (UUID)getAt(0));
+		}
+		catch (Throwable e)
+		{
+			throw new JewelEngineException(e.getMessage(), e);
+		}
+		mrefUser = User.GetInstance(getNameSpace(), (UUID)getAt(2));
 	}
 
     public String AfterSave() 
     	throws JewelEngineException
     {
-    	if ( mrefUser == null )
+    	if ( (mrefUser == null) || (mrefTemplate == null) )
     		Initialize();
 
         return "";
@@ -46,6 +55,6 @@ public class PaymentNoticeSet
 
     public String getLabel()
     {
-    	return mrefUser.getDisplayName() + " @ " + ((Timestamp)getAt(0)).toString().substring(0, 17);
+    	return mrefTemplate.getLabel() + " @ " + ((Timestamp)getAt(0)).toString().substring(0, 17) + " (" + mrefUser.getDisplayName() + ")";
     }
 }
