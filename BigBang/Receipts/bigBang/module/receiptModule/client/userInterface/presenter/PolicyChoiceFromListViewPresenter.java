@@ -34,7 +34,7 @@ public abstract class PolicyChoiceFromListViewPresenter implements ViewPresenter
 	
 	public static enum Action{
 		CHOSEN_POLICY,
-		CANCEL, LIST_CHANGED
+		CANCEL, LIST_CHANGED, MARK_RECEIPT
 	}
 	
 	public PolicyChoiceFromListViewPresenter(Display view) {
@@ -60,6 +60,8 @@ public abstract class PolicyChoiceFromListViewPresenter implements ViewPresenter
 
 		HasEditableValue<InsurancePolicy> getForm();
 
+		void enableMarkReceipt(boolean b);
+
 	}
 
 	@Override
@@ -83,6 +85,9 @@ public abstract class PolicyChoiceFromListViewPresenter implements ViewPresenter
 			public void onActionInvoked(ActionInvokedEvent<Action> action) {
 				
 				switch(action.getAction()){
+				case MARK_RECEIPT:
+					onMarkReceipt();
+					break;
 				case CANCEL:
 					onCancel();
 					break;
@@ -120,6 +125,7 @@ public abstract class PolicyChoiceFromListViewPresenter implements ViewPresenter
 	}
 
 	protected abstract void onCancel();
+	protected abstract void onMarkReceipt();
 
 	@Override
 	public void setParameters(HasParameters parameterHolder) {
@@ -133,6 +139,10 @@ public abstract class PolicyChoiceFromListViewPresenter implements ViewPresenter
 	
 		view.fillList(collection);
 		
+	}
+
+	public void enableMarkReceipt(boolean b) {
+			view.enableMarkReceipt(b);
 	}
 
 }

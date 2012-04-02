@@ -144,6 +144,11 @@ public class SerialReceiptCreationViewPresenter implements ViewPresenter{
 			public void setReceipts(Collection<ReceiptStub> stubs) {
 				receiptView.fillList(stubs);				
 			}
+
+			@Override
+			protected void onNewReceipt() {
+				newReceipt();
+			}
 		};
 
 		receiptPresenter.go(popup);
@@ -171,9 +176,14 @@ public class SerialReceiptCreationViewPresenter implements ViewPresenter{
 				SerialReceiptCreationViewPresenter.this.getPolicy(policyView.getForm().getValue().id);
 			}
 
+			@Override
+			protected void onMarkReceipt() {
+				SerialReceiptCreationViewPresenter.this.onMarkReceipt();
+			}
+
 
 		};
-		
+
 		policyPresenter.go(popupPolicy);
 	}
 
@@ -292,8 +302,10 @@ public class SerialReceiptCreationViewPresenter implements ViewPresenter{
 		view.setReceiptNumber(tempReceiptNumber);
 		view.enableNewReceipt(true);
 		view.enablePolicy(true);
-		view.setFocusOnReceipt();
-
+		view.setFocusOnPolicy();
+		if(popup.isAttached()){
+			popup.hidePopup();
+		}
 	}
 
 	protected void onNoImage() {
@@ -303,6 +315,7 @@ public class SerialReceiptCreationViewPresenter implements ViewPresenter{
 		view.lockReceiptView(true);
 		view.hideMarkAsEnable(true);
 		view.setFocusOnReceipt();
+		policyPresenter.enableMarkReceipt(false);
 	}
 
 	protected void onHasImage() {
@@ -311,39 +324,46 @@ public class SerialReceiptCreationViewPresenter implements ViewPresenter{
 		view.enableReceiptNumber(false);
 		view.lockReceiptView(false);
 		view.hideMarkAsEnable(false);
+		policyPresenter.enableMarkReceipt(true);
 	}
 
 	protected void onVerifyReceipt() {
 
+
 		editing = true;
 		view.setFocusOnPolicy();
 		final String receiptId = view.getReceiptNumber();
-		view.clear();
-		view.setReceiptNumber(receiptId); 
+		
+		if(receiptId.length() == 0){return;}
+		
+			view.clear();
+			view.setReceiptNumber(receiptId); 
 
-		receiptBroker.getReceiptsWithNumber(receiptId, new ResponseHandler<Collection<ReceiptStub>>() {
+			receiptBroker.getReceiptsWithNumber(receiptId, new ResponseHandler<Collection<ReceiptStub>>() {
 
-			@Override
-			public void onResponse(Collection<ReceiptStub> response) {
+				@Override
+				public void onResponse(Collection<ReceiptStub> response) {
 
-				if(response.size() > 1){
-					receiptPresenter.setParameters(null);
-					receiptPresenter.fillList(response);
-					popup.center();
+					if(response.size() > 1){
+						receiptPresenter.setParameters(null);
+						receiptPresenter.fillList(response);
+						popup.center();
+					}
+					else if(response.size() == 1){
+						getReceipt(((ReceiptStub)response.toArray()[0]).id);
+					}
+					else{
+						view.enablePolicy(true);
+					}
 				}
-				else if(response.size() == 1){
-					getReceipt(((ReceiptStub)response.toArray()[0]).id);
-				}
-				else{
-					view.enablePolicy(true);
-				}
-			}
 
-			@Override
-			public void onError(Collection<ResponseError> errors) {
-				EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não foi possível obter os recibos."), TYPE.ALERT_NOTIFICATION));				
-			}
-		});
+				@Override
+				public void onError(Collection<ResponseError> errors) {
+					EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não foi possível obter os recibos."), TYPE.ALERT_NOTIFICATION));				
+				}
+			});
+
+		
 
 
 	}
@@ -392,7 +412,7 @@ public class SerialReceiptCreationViewPresenter implements ViewPresenter{
 								view.setReceiptReadOnly(false);
 								if(popup.isAttached())
 									popup.hidePopup();
-								
+
 								if(popupPolicy.isAttached())
 									popupPolicy.hidePopup();
 							}
@@ -405,7 +425,7 @@ public class SerialReceiptCreationViewPresenter implements ViewPresenter{
 								view.setReceiptReadOnly(false);
 								if(popup.isAttached())
 									popup.hidePopup();
-								
+
 								if(popupPolicy.isAttached())
 									popupPolicy.hidePopup();
 							}
@@ -420,7 +440,7 @@ public class SerialReceiptCreationViewPresenter implements ViewPresenter{
 						view.setReceiptReadOnly(false);
 						if(popupPolicy.isAttached())
 							popupPolicy.hidePopup();
-						
+
 						if(popupPolicy.isAttached())
 							popupPolicy.hidePopup();
 					}
@@ -528,9 +548,13 @@ public class SerialReceiptCreationViewPresenter implements ViewPresenter{
 	protected void onMarkReceipt() {
 
 		DocuShareItem currentItem = view.getSelectedDocuShareItem();
+		view.enableReceiptNumber(false);
 		view.markReceipt(currentItem);
 		view.enableMarkReceipt(false);
 		view.clear();
+		if(popupPolicy.isAttached()){
+			popupPolicy.hidePopup();
+		}
 
 	}
 

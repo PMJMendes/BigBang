@@ -9,7 +9,7 @@ public abstract class ReceiptProcessToolBar extends BigBangOperationsToolBar {
 
 	//CREATE
 	protected MenuItem issueDebitNote;
-	
+
 	//EXECUTE
 	//internal
 	protected MenuItem transferToPolicy;
@@ -26,14 +26,14 @@ public abstract class ReceiptProcessToolBar extends BigBangOperationsToolBar {
 	protected MenuItem sendPaymentToAgency;
 	//mediator
 	protected MenuItem sendPaymentToMediator;
-	
+
 	//DATA
 	protected MenuItem receivePhysicalReceipt;
 	protected MenuItem associateWithDebitNote;
 	protected MenuItem enterPayment;
 	protected MenuItem lackOfPaymentFlag;
 	protected MenuItem unnecessaryDASFlag;
-	
+
 	//REQUESTS
 	//client
 	protected MenuItem requestPurchaseOrderNumber;
@@ -43,26 +43,42 @@ public abstract class ReceiptProcessToolBar extends BigBangOperationsToolBar {
 	protected MenuItem requestPhysicalReceipt;
 	protected MenuItem requestPhysicalReceiptCopy;
 	protected MenuItem requestAdvanceDebit;
-	
+
 	//ADMIN
 	protected MenuItem deleteReceipt;
-	
+
 	//OTHER
 
 	public ReceiptProcessToolBar(){
 		//CREATE
 		issueDebitNote = new MenuItem("Nota de Débito", new Command() {
-			
+
 			@Override
 			public void execute() {
 				onCreateCreditNote();
 			}
 		});
 		addItem(SUB_MENU.CREATE, issueDebitNote);
-		
+
 		//EXECUTE
+		enterPayment = new MenuItem("Cobrança", new Command() {
+
+			@Override
+			public void execute() {
+				onEnterPayment();
+			}
+		});
+		addItem(SUB_MENU.EXECUTE, enterPayment);
+		returnToAgency = new MenuItem("Devolver à Seguradora", new Command() {
+
+			@Override
+			public void execute() {
+				onReturnToAgency();
+			}
+		});
+		addItem(SUB_MENU.EXECUTE, returnToAgency);
 		transferToPolicy = new MenuItem("Transferência para Outra Apólice", new Command() {
-			
+
 			@Override
 			public void execute() {
 				onTransferToPolicy();
@@ -71,7 +87,7 @@ public abstract class ReceiptProcessToolBar extends BigBangOperationsToolBar {
 		addItem(SUB_MENU.EXECUTE, transferToPolicy);
 		this.executeSubMenu.addSeparator();
 		validate = new MenuItem("Validar", new Command() {
-			
+
 			@Override
 			public void execute() {
 				onValidate();
@@ -79,7 +95,7 @@ public abstract class ReceiptProcessToolBar extends BigBangOperationsToolBar {
 		});
 		addItem(SUB_MENU.EXECUTE, validate);
 		setForReturn = new MenuItem("Marcar para Devolução", new Command() {
-			
+
 			@Override
 			public void execute() {
 				onSetForReturn();
@@ -88,7 +104,7 @@ public abstract class ReceiptProcessToolBar extends BigBangOperationsToolBar {
 		addItem(SUB_MENU.EXECUTE, setForReturn);
 		this.executeSubMenu.addSeparator();
 		sendPaymentNotice = new MenuItem("Enviar Aviso de Cobrança", new Command() {
-			
+
 			@Override
 			public void execute() {
 				onSendPaymentNotice();
@@ -96,7 +112,7 @@ public abstract class ReceiptProcessToolBar extends BigBangOperationsToolBar {
 		});
 		addItem(SUB_MENU.EXECUTE, sendPaymentNotice);
 		sendSecondPaymentNotice = new MenuItem("Enviar Segundo Aviso de Cobrança", new Command() {
-			
+
 			@Override
 			public void execute() {
 				onResendPaymentNotice();
@@ -104,7 +120,7 @@ public abstract class ReceiptProcessToolBar extends BigBangOperationsToolBar {
 		});
 		addItem(SUB_MENU.EXECUTE, sendSecondPaymentNotice);
 		sendReceipt = new MenuItem("Enviar Recibo", new Command() {
-			
+
 			@Override
 			public void execute() {
 				onSendReceipt();
@@ -112,7 +128,7 @@ public abstract class ReceiptProcessToolBar extends BigBangOperationsToolBar {
 		});
 		addItem(SUB_MENU.EXECUTE, sendReceipt);
 		sendPaymentToClient = new MenuItem("Enviar Pagamento ao Cliente", new Command() {
-			
+
 			@Override
 			public void execute() {
 				onSendPaymentToClient();
@@ -120,16 +136,16 @@ public abstract class ReceiptProcessToolBar extends BigBangOperationsToolBar {
 		});
 		addItem(SUB_MENU.EXECUTE, sendPaymentToClient);
 		this.executeSubMenu.addSeparator();
-		returnToAgency = new MenuItem("Devolver à Seguradora", new Command() {
-			
+		associateWithDebitNote = new MenuItem("Associar a Nota de Débito", new Command() {
+
 			@Override
 			public void execute() {
-				onReturnToAgency();
+				onAssociateWithDebitNote();
 			}
 		});
-		addItem(SUB_MENU.EXECUTE, returnToAgency);
+		addItem(SUB_MENU.EXECUTE, associateWithDebitNote);
 		sendPaymentToAgency = new MenuItem("Prestação de Contas", new Command() {
-			
+
 			@Override
 			public void execute() {
 				onSendPaymentToAgency();
@@ -138,41 +154,25 @@ public abstract class ReceiptProcessToolBar extends BigBangOperationsToolBar {
 		addItem(SUB_MENU.EXECUTE, sendPaymentToAgency);
 		this.executeSubMenu.addSeparator();
 		sendPaymentToMediator = new MenuItem("Retrocessão", new Command() {
-			
+
 			@Override
 			public void execute() {
 				onSendPaymentToMediator();
 			}
 		});
 		addItem(SUB_MENU.EXECUTE, sendPaymentToMediator);
-		
+
 		//DATA
 		receivePhysicalReceipt = new MenuItem("Associar Imagem", new Command() {
-			
+
 			@Override
 			public void execute() {
 				onReceivePhysicalReceipt();
 			}
 		});
 		addItem(SUB_MENU.DATA, receivePhysicalReceipt);
-		associateWithDebitNote = new MenuItem("Associar a Nota de Débito", new Command() {
-			
-			@Override
-			public void execute() {
-				onAssociateWithDebitNote();
-			}
-		});
-		addItem(SUB_MENU.DATA, associateWithDebitNote);
-		enterPayment = new MenuItem("Cobrança", new Command() {
-			
-			@Override
-			public void execute() {
-				onEnterPayment();
-			}
-		});
-		addItem(SUB_MENU.DATA, enterPayment);
 		lackOfPaymentFlag = new MenuItem("Indicar Falta de Pagamento", new Command() {
-			
+
 			@Override
 			public void execute() {
 				onLackOfPaymentFlag();
@@ -180,17 +180,17 @@ public abstract class ReceiptProcessToolBar extends BigBangOperationsToolBar {
 		});
 		addItem(SUB_MENU.DATA, lackOfPaymentFlag);
 		unnecessaryDASFlag = new MenuItem("Indicar DAS Desnecessária", new Command() {
-			
+
 			@Override
 			public void execute() {
 				onUnnecessaryDASFlag();
 			}
 		});
 		addItem(SUB_MENU.DATA, unnecessaryDASFlag);
-		
+
 		//REQUESTS
 		requestPurchaseOrderNumber = new MenuItem("Criar Pedido de Número de Encomenda", new Command() {
-			
+
 			@Override
 			public void execute() {
 				onRequestPurchaseOrderNumber();
@@ -198,7 +198,7 @@ public abstract class ReceiptProcessToolBar extends BigBangOperationsToolBar {
 		});
 		addItem(SUB_MENU.REQUESTS, requestPurchaseOrderNumber);
 		requestDAS = new MenuItem("Criar Pedido de DAS", new Command() {
-			
+
 			@Override
 			public void execute() {
 				onRequestDAS();
@@ -206,7 +206,7 @@ public abstract class ReceiptProcessToolBar extends BigBangOperationsToolBar {
 		});
 		addItem(SUB_MENU.REQUESTS, requestDAS);
 		requestSignature = new MenuItem("Criar Pedido de Assinatura", new Command() {
-			
+
 			@Override
 			public void execute() {
 				onRequestSignature();
@@ -215,7 +215,7 @@ public abstract class ReceiptProcessToolBar extends BigBangOperationsToolBar {
 		addItem(SUB_MENU.REQUESTS, requestSignature);
 		this.requestsSubMenu.addSeparator();
 		requestPhysicalReceipt = new MenuItem("Criar Pedido de Recibo Não Enviado", new Command() {
-			
+
 			@Override
 			public void execute() {
 				onRequestPhysicalReceipt();
@@ -223,7 +223,7 @@ public abstract class ReceiptProcessToolBar extends BigBangOperationsToolBar {
 		});
 		addItem(SUB_MENU.REQUESTS, requestPhysicalReceipt);
 		requestPhysicalReceiptCopy = new MenuItem("Criar Pedido de Segunda Via de Recibo", new Command() {
-			
+
 			@Override
 			public void execute() {
 				onRequestPhysicalReceiptCopy();
@@ -231,26 +231,26 @@ public abstract class ReceiptProcessToolBar extends BigBangOperationsToolBar {
 		});
 		addItem(SUB_MENU.REQUESTS, requestPhysicalReceiptCopy);
 		requestAdvanceDebit = new MenuItem("Criar Pedido de Débito Antecipado em Conta Efectiva", new Command() {
-			
+
 			@Override
 			public void execute() {
 				onRequestAdvanceDebit();
 			}
 		});
 		addItem(SUB_MENU.REQUESTS, requestAdvanceDebit);
-		
+
 		//ADMIN
 		deleteReceipt = new MenuItem("Eliminar", new Command() {
-			
+
 			@Override
 			public void execute() {
 				onDelete();
 			}
 		});
 		addItem(SUB_MENU.ADMIN, deleteReceipt);
-		
+
 	}
-	
+
 	public abstract void onDelete();
 
 	public abstract void onRequestAdvanceDebit();
@@ -308,18 +308,18 @@ public abstract class ReceiptProcessToolBar extends BigBangOperationsToolBar {
 	public void allowAssociateDebitNote(boolean hasPermission) {
 		this.associateWithDebitNote.setEnabled(hasPermission);
 	}
-	
+
 	public void allowValidate(boolean allow){
 		this.validate.setEnabled(allow);
 	}
-	
+
 	public void allowSetForReturn(boolean allow){
 		this.setForReturn.setEnabled(allow);
 	}
 
 	public void allowCreatePaymentNotice(boolean hasPermission) {
 		this.sendPaymentNotice.setEnabled(hasPermission);
-		
+
 	}
 
 }

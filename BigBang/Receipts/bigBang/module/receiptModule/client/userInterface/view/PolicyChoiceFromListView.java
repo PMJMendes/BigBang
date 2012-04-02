@@ -13,12 +13,15 @@ import bigBang.library.client.event.SelectionChangedEventHandler;
 import bigBang.library.client.userInterface.ListHeader;
 import bigBang.library.client.userInterface.view.View;
 import bigBang.module.insurancePolicyModule.client.userInterface.InsurancePolicyForm;
-import bigBang.module.receiptModule.client.userInterface.ChoiceFromListToolbar;
 import bigBang.module.receiptModule.client.userInterface.InsurancePolicyList;
 import bigBang.module.insurancePolicyModule.client.userInterface.InsurancePolicySearchPanel.Entry;
 import bigBang.module.receiptModule.client.userInterface.presenter.PolicyChoiceFromListViewPresenter;
 import bigBang.module.receiptModule.client.userInterface.presenter.PolicyChoiceFromListViewPresenter.Action;
 
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.user.client.ui.Button;
+import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.SplitLayoutPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
@@ -27,7 +30,8 @@ public class PolicyChoiceFromListView extends View implements PolicyChoiceFromLi
 	private InsurancePolicyForm form;
 	private InsurancePolicyList list;
 	private ActionInvokedEventHandler<Action> actionHandler;
-	private ChoiceFromListToolbar toolbar;
+	private Button confirm;
+	private Button markReceipt;
 	
 	@Override
 	protected void initializeView() {
@@ -46,9 +50,40 @@ public class PolicyChoiceFromListView extends View implements PolicyChoiceFromLi
 			@Override
 			public void onSubLineChanged(String subLineId) {
 				return;
-				
 			}
 		};
+		
+		markReceipt = new Button("Saltar Recibo");
+		
+		markReceipt.addClickHandler(new ClickHandler() {
+			
+			@Override
+			public void onClick(ClickEvent event) {
+				actionHandler.onActionInvoked(new ActionInvokedEvent<Action>(Action.MARK_RECEIPT));				
+			}
+		});
+		
+		Button cancel = new Button("Cancelar");
+		
+		cancel.addClickHandler(new ClickHandler() {
+			
+			@Override
+			public void onClick(ClickEvent event) {
+				actionHandler.onActionInvoked(new ActionInvokedEvent<Action>(Action.CANCEL));
+			}
+		});
+		
+		
+		confirm = new Button("Confirmar");
+		
+		confirm.addClickHandler(new ClickHandler() {
+			
+			@Override
+			public void onClick(ClickEvent event) {
+				actionHandler.onActionInvoked(new ActionInvokedEvent<Action>(Action.CHOSEN_POLICY));
+			}
+		});
+		
 		
 		
 		ListHeader listHeader = new ListHeader("Apólices");
@@ -63,27 +98,19 @@ public class PolicyChoiceFromListView extends View implements PolicyChoiceFromLi
 		});
 		
 		wrapper.addWest(list, 400);
+
+		HorizontalPanel buttons = new HorizontalPanel();
 		
-		toolbar = new ChoiceFromListToolbar() {
-			
-			@Override
-			public void onCancelRequest() {
-				actionHandler.onActionInvoked(new ActionInvokedEvent<Action>(Action.CANCEL));
-			}
-			
-			@Override
-			public void onConfirmChoice() {
-				actionHandler.onActionInvoked(new ActionInvokedEvent<Action>(Action.CHOSEN_POLICY));
-			}
-		};
+		buttons.add(confirm);
+		buttons.add(cancel);
+		buttons.add(markReceipt);
 		
 		ListHeader rightHeader = new ListHeader("Ficha da Apólice");
+		rightHeader.setRightWidget(buttons);
 		VerticalPanel rightWrapper = new VerticalPanel();
 		rightWrapper.add(rightHeader);
 		rightHeader.setWidth("100%");
-		rightWrapper.add(toolbar);
 		rightWrapper.setSize("100%", "100%");
-		toolbar.setWidth("100%");
 		rightWrapper.add(form);
 		rightWrapper.setCellHeight(form, "100%");
 		form.setReadOnly(true);
@@ -125,7 +152,12 @@ public class PolicyChoiceFromListView extends View implements PolicyChoiceFromLi
 
 	@Override
 	public void enableConfirm(boolean b) {
-		toolbar.enableConfirm(b);
+		confirm.setEnabled(b);
+	}
+	
+	@Override
+	public void enableMarkReceipt(boolean b){
+		markReceipt.setVisible(b);
 	}
 
 }

@@ -214,7 +214,7 @@ public class ReceiptImagePanel extends View {
 			
 		
 		ReceiptNavigationList list = (ReceiptNavigationList) o;
-		navigationPanel.setHomeWidget(list);
+		navigationPanel.navigateToFirst();
 		
 		for(ListEntry<DocuShareItem> item : list){
 			if(item.getValue().handle.equalsIgnoreCase(handler)){
@@ -230,7 +230,7 @@ public class ReceiptImagePanel extends View {
 		Resources resources = GWT.create(Resources.class);
 		hasProblems = new Image(resources.problem());
 		
-	Object o = null;
+		Object o = null;
 		
 		while(o instanceof ReceiptNavigationList == false){
 			o = navigationPanel.getPrevious();
@@ -238,7 +238,9 @@ public class ReceiptImagePanel extends View {
 			
 		
 		ReceiptNavigationList list = (ReceiptNavigationList) o;
-		navigationPanel.setHomeWidget(list);
+
+		navigationPanel.navigateToFirst();
+
 		
 		for(ListEntry<DocuShareItem> item : list){
 			if(item.getValue().handle.equalsIgnoreCase(handle)){

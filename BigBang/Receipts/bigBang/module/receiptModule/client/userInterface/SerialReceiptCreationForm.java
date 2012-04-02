@@ -271,8 +271,8 @@ public abstract class SerialReceiptCreationForm extends FormView<ReceiptPolicyWr
 		insurer.setValue(info.insuranceAgencyName);
 		status.setValue(info.policy.statusText);
 		type.setValue(info.receipt.typeId);
-		manager.setValue(info.receipt.managerId);
-		mediator.setValue(info.receipt.mediatorId);
+		manager.setValue(info.policy.managerId);
+		mediator.setValue(info.policy.mediatorId);
 		totalPremium.setValue(info.receipt.totalPremium);
 		salesPremium.setValue(info.receipt.salesPremium);
 		commission.setValue(info.receipt.comissions);
@@ -338,7 +338,7 @@ public abstract class SerialReceiptCreationForm extends FormView<ReceiptPolicyWr
 	
 	public void setReceiptReadOnly(boolean readonly){
 		type.setReadOnly(readonly);
-		manager.setReadOnly(readonly);
+		//manager.setReadOnly(readonly);
 		mediator.setReadOnly(readonly);
 		totalPremium.setReadOnly(readonly);
 		salesPremium.setReadOnly(readonly);

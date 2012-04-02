@@ -205,6 +205,8 @@ public class MassCreatePaymentNoticeViewPresenter implements ViewPresenter{
 				
 			}
 		});
+		
+		bound = true;
 	}
 
 	@Override

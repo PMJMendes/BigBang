@@ -263,4 +263,8 @@ public class NavigationPanel extends View implements HasNavigationStateChangedHa
 	public Widget getPrevious() {
 		return iterator.previous();
 	}
+	
+	public Widget getNext() {
+		return iterator.next();
+	}
 }

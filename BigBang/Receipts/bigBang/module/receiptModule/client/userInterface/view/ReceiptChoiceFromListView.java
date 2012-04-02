@@ -13,12 +13,15 @@ import bigBang.library.client.event.SelectionChangedEventHandler;
 import bigBang.library.client.userInterface.ListHeader;
 import bigBang.library.client.userInterface.view.View;
 import bigBang.module.insurancePolicyModule.client.userInterface.ReceiptsList;
-import bigBang.module.receiptModule.client.userInterface.ChoiceFromListToolbar;
 import bigBang.module.receiptModule.client.userInterface.ReceiptForm;
 import bigBang.module.receiptModule.client.userInterface.ReceiptSearchPanel.Entry;
 import bigBang.module.receiptModule.client.userInterface.presenter.ReceiptChoiceFromListViewPresenter;
 import bigBang.module.receiptModule.client.userInterface.presenter.ReceiptChoiceFromListViewPresenter.Action;
 
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.user.client.ui.Button;
+import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.SplitLayoutPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
@@ -27,7 +30,7 @@ public class ReceiptChoiceFromListView extends View implements ReceiptChoiceFrom
 	private ReceiptForm form;
 	private ReceiptsList list = new ReceiptsList();
 	private ActionInvokedEventHandler<Action> actionHandler;
-	private ChoiceFromListToolbar toolbar;
+	Button confirm;
 	
 	public ReceiptChoiceFromListView(){
 		
@@ -35,6 +38,43 @@ public class ReceiptChoiceFromListView extends View implements ReceiptChoiceFrom
 		initWidget(wrapper);
 		wrapper.setSize("1050px", "650px");
 		form = new ReceiptForm();
+		
+		Button newReceipt = new Button("Novo Recibo");
+		Button cancel = new Button("Cancelar");
+		confirm = new Button("Confirmar");
+		
+		HorizontalPanel buttons = new HorizontalPanel();
+		
+		buttons.setSpacing(5);
+		
+		buttons.add(confirm);
+		buttons.add(cancel);
+		buttons.add(newReceipt);
+		
+		confirm.addClickHandler(new ClickHandler() {
+			
+			@Override
+			public void onClick(ClickEvent event) {
+				actionHandler.onActionInvoked(new ActionInvokedEvent<ReceiptChoiceFromListViewPresenter.Action>(Action.CHOSEN_RECEIPT));
+			}
+		});
+		
+		cancel.addClickHandler(new ClickHandler() {
+			
+			@Override
+			public void onClick(ClickEvent event) {
+				actionHandler.onActionInvoked(new ActionInvokedEvent<ReceiptChoiceFromListViewPresenter.Action>(Action.CANCEL));
+				
+			}
+		});
+		
+		newReceipt.addClickHandler(new ClickHandler() {
+			
+			@Override
+			public void onClick(ClickEvent event) {
+				actionHandler.onActionInvoked(new ActionInvokedEvent<ReceiptChoiceFromListViewPresenter.Action>(Action.NEW_RECEIPT));
+			}
+		});
 		
 		ListHeader listHeader = new ListHeader("Recibos");
 		list.setHeaderWidget(listHeader);
@@ -49,26 +89,12 @@ public class ReceiptChoiceFromListView extends View implements ReceiptChoiceFrom
 		
 		wrapper.addWest(list, 400);
 		
-		toolbar = new ChoiceFromListToolbar() {
-			
-			@Override
-			public void onCancelRequest() {
-				actionHandler.onActionInvoked(new ActionInvokedEvent<ReceiptChoiceFromListViewPresenter.Action>(Action.CANCEL));
-			}
-			
-			@Override
-			public void onConfirmChoice() {
-				actionHandler.onActionInvoked(new ActionInvokedEvent<ReceiptChoiceFromListViewPresenter.Action>(Action.CHOSEN_RECEIPT));
-			}
-		};
-		
 		ListHeader rightHeader = new ListHeader("Ficha do Recibo");
 		VerticalPanel rightWrapper = new VerticalPanel();
+		rightHeader.setRightWidget(buttons);
 		rightWrapper.add(rightHeader);
 		rightHeader.setWidth("100%");
-		rightWrapper.add(toolbar);
 		rightWrapper.setSize("100%", "100%");
-		toolbar.setWidth("100%");
 		rightWrapper.add(form);
 		rightWrapper.setCellHeight(form, "100%");
 		form.setReadOnly(true);
@@ -116,7 +142,7 @@ public class ReceiptChoiceFromListView extends View implements ReceiptChoiceFrom
 
 	@Override
 	public void enableConfirm(boolean b) {
-		toolbar.enableConfirm(b);
+		confirm.setEnabled(b);
 	}
 
 }

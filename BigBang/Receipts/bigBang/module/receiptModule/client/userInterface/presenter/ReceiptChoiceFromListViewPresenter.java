@@ -28,13 +28,13 @@ import com.google.gwt.user.client.ui.Widget;
 
 public abstract class ReceiptChoiceFromListViewPresenter implements ViewPresenter{
 	
-	private Display view;
+	private Display view; 
 	private ReceiptProcessDataBroker broker;
 	private boolean bound = false;
 	
 	public static enum Action{
 		CHOSEN_RECEIPT,
-		CANCEL, LIST_CHANGED
+		CANCEL, LIST_CHANGED, NEW_RECEIPT
 	}
 	
 	public ReceiptChoiceFromListViewPresenter(Display view) {
@@ -84,6 +84,9 @@ public abstract class ReceiptChoiceFromListViewPresenter implements ViewPresente
 				case LIST_CHANGED:
 					listChanged();
 					break;
+				case NEW_RECEIPT:
+					onNewReceipt();
+					break;
 				}
 			}
 		});
@@ -112,6 +115,8 @@ public abstract class ReceiptChoiceFromListViewPresenter implements ViewPresente
 	}
 
 	protected abstract void onCancel();
+	
+	protected abstract void onNewReceipt();
 
 	@Override
 	public void setParameters(HasParameters parameterHolder) {

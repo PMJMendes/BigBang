@@ -81,7 +81,6 @@ public class ReceiptReturnViewPresenter implements ViewPresenter{
 					onCancel();
 					break;
 				}
-				
 			}
 		});
 		
@@ -97,7 +96,7 @@ public class ReceiptReturnViewPresenter implements ViewPresenter{
 
 	protected void onConfirm() {
 		ReturnMessage message = view.getForm().getInfo();
-		message.receiptId = receiptId;
+		
 		broker.setForReturn(message, new ResponseHandler<Receipt>() {
 			
 			@Override
@@ -137,7 +136,10 @@ public class ReceiptReturnViewPresenter implements ViewPresenter{
 	}
 	
 	protected void clearView(){
-		view.getForm().setValue(null);
+		
+		ReturnMessage message = new ReturnMessage();
+		message.receiptId = receiptId;
+		view.getForm().setValue(message);
 	}
 
 }
