@@ -176,7 +176,7 @@ public class QuoteRequestObjectServiceImpl
 
 			lobjHeaderCoverage = null;
 			larrLocalCoverages = new ArrayList<QuoteRequestCoverage>();
-			for ( j = 0; j < larrAllCoverages.length; j++ )
+			for ( j = 0; j < larrAllCoverages[i].length; j++ )
 			{
 				if ( larrAllCoverages[i][j].GetCoverage().IsHeader() )
 					lobjHeaderCoverage = larrAllCoverages[i][j];
