@@ -18,6 +18,7 @@ import Jewel.Engine.Interfaces.IEntity;
 import Jewel.Engine.SysObjects.ObjectBase;
 import Jewel.Petri.Interfaces.IProcess;
 import Jewel.Petri.Interfaces.IScript;
+import Jewel.Petri.Interfaces.IStep;
 import Jewel.Petri.Objects.PNProcess;
 import Jewel.Petri.Objects.PNScript;
 import bigBang.definitions.shared.Address;
@@ -2842,12 +2843,19 @@ public class InsurancePolicyServiceImpl
 	public SearchResult[] getExactResults(String label)
 		throws SessionExpiredException, BigBangException
 	{
+		return getExactResultsByOp(label, null);
+	}
+
+	public SearchResult[] getExactResultsByOp(String label, String operationId)
+		throws SessionExpiredException, BigBangException
+	{
 		ArrayList<SearchResult> larrResult;
         IEntity lrefPolicies;
         MasterDB ldb;
         ResultSet lrsPolicies;
         Policy lobjPolicy;
 		IProcess lobjProc;
+		IStep lobjStep;
 		Client lobjClient;
 		SubLine lobjSubLine;
 		Line lobjLine;
@@ -2886,6 +2894,14 @@ public class InsurancePolicyServiceImpl
             {
             	lobjPolicy = Policy.GetInstance(Engine.getCurrentNameSpace(), lrsPolicies);
     			lobjProc = PNProcess.GetInstance(Engine.getCurrentNameSpace(), lobjPolicy.GetProcessID());
+
+    			if ( operationId != null )
+    			{
+    				lobjStep = lobjProc.GetOperation(UUID.fromString(operationId), ldb);
+    				if ( (lobjStep == null) || (Jewel.Petri.Constants.LevelID_Invalid.equals(lobjStep.GetLevel())) )
+    					continue;
+    			}
+
     			lobjClient = Client.GetInstance(Engine.getCurrentNameSpace(), lobjProc.GetParent().GetData().getKey());
     			lobjSubLine = lobjPolicy.GetSubLine();
     			lobjLine = lobjSubLine.getLine();
@@ -2924,6 +2940,8 @@ public class InsurancePolicyServiceImpl
         			lobjStub.statusIcon = InsurancePolicyStub.PolicyStatus.OBSOLETE;
         			break;
         		}
+
+    			lobjStub.permissions = BigBangPermissionServiceImpl.sGetProcessPermissions(lobjProc.getKey());
 
             	larrResult.add(lobjStub);
             }

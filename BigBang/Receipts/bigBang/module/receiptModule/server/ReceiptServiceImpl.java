@@ -14,6 +14,7 @@ import Jewel.Engine.Implementation.Entity;
 import Jewel.Engine.Interfaces.IEntity;
 import Jewel.Engine.SysObjects.ObjectBase;
 import Jewel.Petri.Interfaces.IProcess;
+import Jewel.Petri.Interfaces.IStep;
 import Jewel.Petri.Objects.PNProcess;
 import bigBang.definitions.shared.DebitNote;
 import bigBang.definitions.shared.DocuShareHandle;
@@ -185,12 +186,19 @@ public class ReceiptServiceImpl
 	public SearchResult[] getExactResults(String label)
 		throws SessionExpiredException, BigBangException
 	{
+		return getExactResultsByOp(label, null);
+	}
+
+	public SearchResult[] getExactResultsByOp(String label, String operationId)
+		throws SessionExpiredException, BigBangException
+	{
 		ArrayList<SearchResult> larrResult;
         IEntity lrefReceipts;
         MasterDB ldb;
         ResultSet lrsReceipts;
         com.premiumminds.BigBang.Jewel.Objects.Receipt lobjReceipt;
 		IProcess lobjProc;
+		IStep lobjStep;
 		Policy lobjPolicy;
 		SubPolicy lobjSubPolicy;
 		Client lobjClient;
@@ -232,6 +240,14 @@ public class ReceiptServiceImpl
             {
             	lobjReceipt = com.premiumminds.BigBang.Jewel.Objects.Receipt.GetInstance(Engine.getCurrentNameSpace(), lrsReceipts);
     			lobjProc = PNProcess.GetInstance(Engine.getCurrentNameSpace(), lobjReceipt.GetProcessID());
+
+    			if ( operationId != null )
+    			{
+    				lobjStep = lobjProc.GetOperation(UUID.fromString(operationId), ldb);
+    				if ( (lobjStep == null) || (Jewel.Petri.Constants.LevelID_Invalid.equals(lobjStep.GetLevel())) )
+    					continue;
+    			}
+
     			if ( Constants.ProcID_Policy.equals(lobjProc.GetParent().GetScriptID()) )
     			{
     				lobjPolicy = (Policy)lobjProc.GetParent().GetData();
@@ -290,6 +306,8 @@ public class ReceiptServiceImpl
     				lobjStub.statusIcon = ReceiptStub.ReceiptStatus.PAID;
     				break;
     			}
+
+    			lobjStub.permissions = BigBangPermissionServiceImpl.sGetProcessPermissions(lobjProc.getKey());
 
             	larrResult.add(lobjStub);
             }

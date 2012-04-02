@@ -10,4 +10,5 @@ public interface ExactItemSubService
 	extends RemoteService
 {
 	SearchResult[] getExactResults(String label) throws SessionExpiredException, BigBangException;
+	SearchResult[] getExactResultsByOp(String label, String operationId) throws SessionExpiredException, BigBangException;
 }
