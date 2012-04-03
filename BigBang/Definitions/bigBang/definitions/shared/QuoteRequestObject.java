@@ -2,8 +2,6 @@ package bigBang.definitions.shared;
 
 import java.io.Serializable;
 
-import bigBang.definitions.shared.InsurancePolicy.FieldType;
-
 public class QuoteRequestObject
 	extends QuoteRequestObjectStub
 {
@@ -21,7 +19,7 @@ public class QuoteRequestObject
 
 			public String fieldId;
 			public String fieldName;
-			public FieldType type;
+			public InsurancePolicy.FieldType type;
 			public String unitsLabel;
 			public String refersToId;
 			public int columnIndex; // Informacional. Se -1, não está na tabela. Se 0 ou mais, na página identificada por tempObjectId
@@ -30,6 +28,17 @@ public class QuoteRequestObject
 		}
 
 		public FixedField[] fixedFields;
+	}
+
+	public static class ColumnHeader
+		implements Serializable
+	{
+		private static final long serialVersionUID = 1L;
+
+		public String label;
+		public InsurancePolicy.FieldType type;
+		public String unitsLabel;
+		public String refersToId;
 	}
 
 	public static class CoverageData
@@ -49,6 +58,7 @@ public class QuoteRequestObject
 		public String subLineId;
 		public String headerText;
 		public HeaderData headerData;
+		public ColumnHeader[] columnHeaders;
 		public CoverageData[] coverageData;
 	}
 

@@ -2,8 +2,6 @@ package bigBang.definitions.shared;
 
 import java.io.Serializable;
 
-import bigBang.definitions.shared.InsurancePolicy.FieldType;
-
 public class QuoteRequest
 	extends QuoteRequestStub
 {
@@ -16,7 +14,7 @@ public class QuoteRequest
 		
 		public String fieldId;
 		public String fieldName;
-		public FieldType type;
+		public InsurancePolicy.FieldType type;
 		public String unitsLabel;
 		public String refersToId;
 //		public boolean variesByObject; <- Not needed. Should always be false.
@@ -52,7 +50,7 @@ public class QuoteRequest
 		private static final long serialVersionUID = 1L;
 
 		public String label;
-		public FieldType type;
+		public InsurancePolicy.FieldType type;
 		public String unitsLabel;
 		public String refersToId;
 	}
