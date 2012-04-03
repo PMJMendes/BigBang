@@ -178,7 +178,6 @@ public class QuoteRequestObjectServiceImpl
 
 			lobjHeaderCoverage = null;
 			larrLocalCoverages = new ArrayList<QuoteRequestCoverage>();
-			larrOutColumns = new ArrayList<QuoteRequestObject.ColumnHeader>();
 			for ( j = 0; j < larrAllCoverages[i].length; j++ )
 			{
 				if ( larrAllCoverages[i][j].GetCoverage().IsHeader() )
@@ -199,6 +198,7 @@ public class QuoteRequestObjectServiceImpl
 				}
 			});
 			lobjSubLine.coverageData = new QuoteRequestObject.CoverageData[larrCoverages.length];
+			larrOutColumns = new ArrayList<QuoteRequestObject.ColumnHeader>();
 			for ( j = 0; j < larrCoverages.length; j++ )
 			{
 				lobjSubLine.coverageData[j] = new QuoteRequestObject.CoverageData();
@@ -250,10 +250,12 @@ public class QuoteRequestObjectServiceImpl
 					}
 				});
 			}
+
 			for ( j = larrOutColumns.size() - 1; j >= 0; j-- )
 				if ( larrOutColumns.get(j) == null )
 					larrOutColumns.remove(j);
 			lobjSubLine.columnHeaders = larrOutColumns.toArray(new QuoteRequestObject.ColumnHeader[larrOutColumns.size()]);
+
 			if ( lobjHeaderCoverage != null )
 			{
 				lobjSubLine.headerData = new QuoteRequestObject.CoverageData();

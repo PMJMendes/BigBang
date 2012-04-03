@@ -18,7 +18,6 @@ import Jewel.Petri.Interfaces.IProcess;
 import Jewel.Petri.Interfaces.IScript;
 import Jewel.Petri.Objects.PNProcess;
 import Jewel.Petri.Objects.PNScript;
-import Jewel.Petri.SysObjects.JewelPetriException;
 import bigBang.definitions.shared.Address;
 import bigBang.definitions.shared.InfoOrDocumentRequest;
 import bigBang.definitions.shared.ManagerTransfer;
@@ -1024,6 +1023,8 @@ public class QuoteRequestServiceImpl
 			QuoteRequestObject.CoverageData.FixedField lobjFixed;
 			PadValue lobjValue;
 			ArrayList<QuoteRequestObject.CoverageData.FixedField> larrAuxFixed;
+			ArrayList<QuoteRequestObject.ColumnHeader> larrOutColumns;
+			QuoteRequestObject.ColumnHeader lobjColumnHeader;
 
 			if ( !mbValid )
 				throw new CorruptedPadException("Ocorreu um erro interno. Os dados correntes não são válidos.");
@@ -1140,6 +1141,7 @@ public class QuoteRequestServiceImpl
 				});
 				lobjSubLine.coverageData = new QuoteRequestObject.CoverageData[larrSortedCoverages.length];
 				larrFixed = new Hashtable<UUID, ArrayList<QuoteRequestObject.CoverageData.FixedField>>();
+				larrOutColumns = new ArrayList<QuoteRequestObject.ColumnHeader>();
 				for ( j = 0; j < larrSortedCoverages.length; j++ )
 				{
 					lobjSubLine.coverageData[j] = new QuoteRequestObject.CoverageData();
@@ -1177,6 +1179,19 @@ public class QuoteRequestServiceImpl
 					lobjFixed.columnIndex = lobjValue.mrefField.mlngColIndex;
 					lobjFixed.value = lobjValue.mstrValue;
 					larrFixed.get(lobjValue.mrefCoverage.midCoverage).add(lobjFixed);
+
+					if ( lobjFixed.columnIndex >= 0 )
+					{
+						while ( larrOutColumns.size() <= lobjFixed.columnIndex )
+							larrOutColumns.add(null);
+						lobjColumnHeader = new QuoteRequestObject.ColumnHeader();
+						lobjColumnHeader.index = lobjFixed.columnIndex;
+						lobjColumnHeader.label = lobjFixed.fieldName;
+						lobjColumnHeader.type = lobjFixed.type;
+						lobjColumnHeader.unitsLabel = lobjFixed.unitsLabel;
+						lobjColumnHeader.refersToId = lobjFixed.refersToId;
+						larrOutColumns.set(lobjColumnHeader.index, lobjColumnHeader);
+					}
 				}
 
 				for ( j = 0; j < lobjSubLine.coverageData.length; j++ )
@@ -1197,6 +1212,12 @@ public class QuoteRequestServiceImpl
 						}
 					});
 				}
+
+				for ( j = larrOutColumns.size() - 1; j >= 0; j-- )
+					if ( larrOutColumns.get(j) == null )
+						larrOutColumns.remove(j);
+				lobjSubLine.columnHeaders = larrOutColumns.toArray(new QuoteRequestObject.ColumnHeader[larrOutColumns.size()]);
+
 				if ( lobjHeaderCoverage != null )
 				{
 					larrAuxFixed = larrFixed.get(lobjHeaderCoverage.midCoverage);
