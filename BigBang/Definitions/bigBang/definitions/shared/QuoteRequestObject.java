@@ -35,6 +35,7 @@ public class QuoteRequestObject
 	{
 		private static final long serialVersionUID = 1L;
 
+		public int index;
 		public String label;
 		public InsurancePolicy.FieldType type;
 		public String unitsLabel;
