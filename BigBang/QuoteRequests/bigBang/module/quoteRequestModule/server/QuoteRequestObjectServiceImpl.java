@@ -51,8 +51,10 @@ public class QuoteRequestObjectServiceImpl
 		int i, j, k;
 		ArrayList<QuoteRequestObject.SubLineData> larrSubLines;
 		QuoteRequestObject.SubLineData lobjSubLine;
+		ArrayList<QuoteRequestObject.ColumnHeader> larrOutColumns;
 		ArrayList<QuoteRequestCoverage> larrLocalCoverages;
 		QuoteRequestCoverage[] larrCoverages;
+		QuoteRequestObject.ColumnHeader lobjColumnHeader;
 		QuoteRequestCoverage lobjHeaderCoverage;
 		ArrayList<QuoteRequestObject.CoverageData.FixedField> larrAuxFixed;
 		QuoteRequestObject.CoverageData.FixedField lobjFixed;
@@ -176,6 +178,7 @@ public class QuoteRequestObjectServiceImpl
 
 			lobjHeaderCoverage = null;
 			larrLocalCoverages = new ArrayList<QuoteRequestCoverage>();
+			larrOutColumns = new ArrayList<QuoteRequestObject.ColumnHeader>();
 			for ( j = 0; j < larrAllCoverages[i].length; j++ )
 			{
 				if ( larrAllCoverages[i][j].GetCoverage().IsHeader() )
@@ -207,6 +210,20 @@ public class QuoteRequestObjectServiceImpl
 					if ( !larrValues[i][k].GetTax().GetCoverage().getKey().equals(larrCoverages[j].GetCoverage().getKey()) )
 						continue;
 
+					if ( larrValues[i][k].GetTax().GetColumnOrder() >= 0 )
+					{
+						while ( larrOutColumns.size() <= larrValues[i][k].GetTax().GetColumnOrder() )
+							larrOutColumns.add(null);
+						lobjColumnHeader = new QuoteRequestObject.ColumnHeader();
+						lobjColumnHeader.index = larrValues[i][k].GetTax().GetColumnOrder();
+						lobjColumnHeader.label = larrValues[i][k].GetTax().getLabel();
+						lobjColumnHeader.type = InsurancePolicyServiceImpl.GetFieldTypeByID((UUID)larrValues[i][k].GetTax().getAt(2));
+						lobjColumnHeader.unitsLabel = (String)larrValues[i][k].GetTax().getAt(3);
+						lobjColumnHeader.refersToId = ( larrValues[i][k].GetTax().getAt(7) == null ? null :
+								((UUID)larrValues[i][k].GetTax().getAt(7)).toString() );
+						larrOutColumns.set(lobjColumnHeader.index, lobjColumnHeader);
+					}
+
 					lobjFixed = new QuoteRequestObject.CoverageData.FixedField();
 					lobjFixed.fieldId = larrValues[i][k].GetTax().getKey().toString();
 					lobjFixed.fieldName = larrValues[i][k].GetTax().getLabel();
@@ -233,6 +250,10 @@ public class QuoteRequestObjectServiceImpl
 					}
 				});
 			}
+			for ( j = larrOutColumns.size() - 1; j >= 0; j-- )
+				if ( larrOutColumns.get(j) == null )
+					larrOutColumns.remove(j);
+			lobjSubLine.columnHeaders = larrOutColumns.toArray(new QuoteRequestObject.ColumnHeader[larrOutColumns.size()]);
 			if ( lobjHeaderCoverage != null )
 			{
 				lobjSubLine.headerData = new QuoteRequestObject.CoverageData();
