@@ -81,6 +81,9 @@ public class Payment
 			ldblTotal = ldblTotal.add(marrData[i].mdblValue);
 			if ( (marrData[i].midReceipt != null) && marrData[i].mbCreateCounter )
 			{
+				if ( midReceipt.equals(marrData[i].midReceipt) )
+					throw new JewelPetriException("Erro: Não pode compensar um recibo consigo próprio.");
+
 				try
 				{
 					lobjReceipt = Receipt.GetInstance(Engine.getCurrentNameSpace(), marrData[i].midReceipt);
