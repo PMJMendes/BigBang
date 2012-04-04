@@ -1416,6 +1416,9 @@ public class QuoteRequestServiceImpl
 								if ( marrObjects.get(k).mbDeleted )
 									continue;
 
+								if ( !marrObjects.get(k).midType.equals(lobjSubLine.midObjectType) )
+									continue;
+
 								lobjValue = new PadValue();
 								lobjValue.mid = null;
 								lobjValue.mstrValue = (String)larrTaxes[j].getAt(4);
@@ -1621,6 +1624,9 @@ public class QuoteRequestServiceImpl
 			for ( i = 0; i < marrSubLines.size(); i++ )
 			{
 				lobjSubLine = marrSubLines.get(i);
+
+				if ( !lobjObject.midType.equals(lobjSubLine.midObjectType) )
+					continue;
 
 				l = -1;
 				if ( pobjSource.objectData[i].headerData != null )
