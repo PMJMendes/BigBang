@@ -137,7 +137,7 @@ public class ClientFormView extends FormView<Client> implements ClientProcessDat
 				profession
 		}, true);
 
-		companySection = new FormViewSection("Informação Específica a Companhias");
+		companySection = new FormViewSection("Informação Específica a Empresas");
 		addSection(companySection);
 		addFormFieldGroup(new FormField<?>[]{
 				numberOfWorkers,

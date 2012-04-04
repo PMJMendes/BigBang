@@ -4,7 +4,7 @@ import bigBang.library.client.userInterface.NavigationItem;
 
 import com.google.gwt.event.shared.GwtEvent;
 
-public class NavigationEvent extends GwtEvent<NavigationEventHandler> {
+public class NavigationRequestEvent extends GwtEvent<NavigationRequestEventHandler> {
 		
 		public enum Navigation {
 			NEXT,
@@ -19,16 +19,16 @@ public class NavigationEvent extends GwtEvent<NavigationEventHandler> {
 		protected NavigationItem navigateTo;
 		protected Navigation navigation;
 		
-		public NavigationEvent(Navigation n){
+		public NavigationRequestEvent(Navigation n){
 			this(n, (NavigationItem)null);
 		}
 		
-		public NavigationEvent(Navigation n, NavigationItem to){
+		public NavigationRequestEvent(Navigation n, NavigationItem to){
 			this.navigation = n;
 			this.navigateTo = to;
 		}
 		
-		public NavigationEvent(Navigation n, String to){
+		public NavigationRequestEvent(Navigation n, String to){
 			this.navigation = n;
 			this.navigateToId = to;
 		}
@@ -45,16 +45,16 @@ public class NavigationEvent extends GwtEvent<NavigationEventHandler> {
 			return this.navigation;
 		}
 		
-		public static final Type<NavigationEventHandler> TYPE = new Type<NavigationEventHandler>(); 
+		public static final Type<NavigationRequestEventHandler> TYPE = new Type<NavigationRequestEventHandler>(); 
 		
 
 		@Override
-		public com.google.gwt.event.shared.GwtEvent.Type<NavigationEventHandler> getAssociatedType() {
+		public com.google.gwt.event.shared.GwtEvent.Type<NavigationRequestEventHandler> getAssociatedType() {
 			return TYPE;
 		}
 
 		@Override
-		protected void dispatch(NavigationEventHandler handler) {
+		protected void dispatch(NavigationRequestEventHandler handler) {
 			handler.onNavigationEvent(this);
 		}
 	}

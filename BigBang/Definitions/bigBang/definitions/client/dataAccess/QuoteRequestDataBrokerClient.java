@@ -8,5 +8,6 @@ public interface QuoteRequestDataBrokerClient extends
 	public void addQuoteRequest(QuoteRequest request);
 	public void updateQuoteRequest(QuoteRequest request);
 	public void removeQuoteRequest(String id);
+	public void remapItemId(String oldId, String newId);
 	
 }

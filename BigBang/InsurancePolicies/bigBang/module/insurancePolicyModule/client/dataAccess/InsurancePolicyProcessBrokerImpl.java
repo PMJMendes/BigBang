@@ -25,7 +25,6 @@ import bigBang.definitions.shared.InsurancePolicyStub;
 import bigBang.definitions.shared.Negotiation;
 import bigBang.definitions.shared.PolicyVoiding;
 import bigBang.definitions.shared.Receipt;
-import bigBang.definitions.shared.ReceiptStub;
 import bigBang.definitions.shared.Remap;
 import bigBang.definitions.shared.Remap.RemapId;
 import bigBang.definitions.shared.SearchParameter;
@@ -491,6 +490,27 @@ public class InsurancePolicyProcessBrokerImpl extends DataBroker<InsurancePolicy
 		}
 	}
 
+	@Override
+	public void initPolicy(InsurancePolicy policy,
+			final ResponseHandler<InsurancePolicy> handler) {
+		policy.id = getEffectiveId(policy.id);
+		service.initPolicyInPad(policy, new BigBangAsyncCallback<InsurancePolicy>() {
+
+			@Override
+			public void onResponseSuccess(InsurancePolicy result) {
+				handler.onResponse(result);
+			}
+			
+			@Override
+			public void onResponseFailure(Throwable caught) {
+				handler.onError(new String[]{
+					new String("Could not initialize the policy")	
+				});
+				super.onResponseFailure(caught);
+			}
+		});
+	}
+	
 	@Override
 	public boolean isTemp(String policyId) {
 		return this.policiesInScratchPad.containsKey(policyId) || this.policiesInScratchPad.containsValue(policyId);

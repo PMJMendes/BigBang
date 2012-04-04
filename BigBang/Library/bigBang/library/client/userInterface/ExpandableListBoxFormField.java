@@ -221,6 +221,14 @@ TypifiedListClient {
 					this.typifiedListBroker.unregisterClient(listId, this);
 				}
 			}
+		}else{
+			if(currentListId != null) {
+				typifiedListBroker.unregisterClient(currentListId, this);
+			}
+			currentListId = null;
+			clearValues();
+			managementPanel.setListId(null);
+			
 		}
 	}
 

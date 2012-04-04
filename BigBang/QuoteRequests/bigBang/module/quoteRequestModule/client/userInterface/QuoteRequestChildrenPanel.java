@@ -8,7 +8,6 @@ import bigBang.library.client.userInterface.DocumentsList;
 import bigBang.library.client.userInterface.HistoryList;
 import bigBang.library.client.userInterface.SubProcessesList;
 import bigBang.library.client.userInterface.view.View;
-import bigBang.module.insurancePolicyModule.client.userInterface.InsuredObjectsList;
 
 public class QuoteRequestChildrenPanel extends View {
 
@@ -16,7 +15,7 @@ public class QuoteRequestChildrenPanel extends View {
 	
 	public ContactsList contactsList;
 	public DocumentsList documentsList;
-	public InsuredObjectsList insuredObjectsList;
+	public QuoteRequestInsuredObjectsList insuredObjectsList;
 	public SubProcessesList subProcessesList;
 	public HistoryList historyList;
 	
@@ -27,7 +26,7 @@ public class QuoteRequestChildrenPanel extends View {
 		
 		contactsList = new ContactsList();
 		documentsList = new DocumentsList();
-		insuredObjectsList = new InsuredObjectsList();
+		insuredObjectsList = new QuoteRequestInsuredObjectsList();
 		subProcessesList = new SubProcessesList();
 		historyList = new HistoryList();
 		

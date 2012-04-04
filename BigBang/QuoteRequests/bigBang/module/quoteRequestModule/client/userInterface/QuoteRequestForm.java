@@ -3,10 +3,16 @@ package bigBang.module.quoteRequestModule.client.userInterface;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.google.gwt.dom.client.Style.Overflow;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
+
+import bigBang.definitions.client.response.ResponseError;
 import bigBang.definitions.shared.BigBangConstants;
 import bigBang.definitions.shared.QuoteRequest;
 import bigBang.definitions.shared.QuoteRequest.RequestSubLine;
 import bigBang.library.client.FormField;
+import bigBang.library.client.HasParameters;
 import bigBang.library.client.event.AsyncRequest;
 import bigBang.library.client.event.AsyncRequestHandler;
 import bigBang.library.client.event.FiresAsyncRequests;
@@ -30,6 +36,7 @@ public class QuoteRequestForm extends FormView<QuoteRequest> implements FiresAsy
 
 	//Dynamic stuff
 	protected Map<String, SubLineDataSection> subLineSections;
+	protected AddSubLineSection addSubLineSection;
 	protected FormViewSection notesSection;
 
 
@@ -68,7 +75,16 @@ public class QuoteRequestForm extends FormView<QuoteRequest> implements FiresAsy
 		addSection(this.notesSection);
 
 		this.subLineSections = new HashMap<String, SubLineDataSection>();
-		
+		this.addSubLineSection = new AddSubLineSection();
+		this.addSubLineSection.getConfirmButton().addClickHandler(new ClickHandler() {
+
+			@Override
+			public void onClick(ClickEvent event) {
+				onAddSubLineSection(addSubLineSection.getSubLineId());
+			}
+		});
+
+		scrollWrapper.getElement().getStyle().setOverflow(Overflow.SCROLL);
 		setupForCreation();
 	}
 
@@ -134,14 +150,15 @@ public class QuoteRequestForm extends FormView<QuoteRequest> implements FiresAsy
 	protected void setRequestData(RequestSubLine[] data){
 		clearRequestDataInfo();
 		for(RequestSubLine subLineData : data){
-			addSubLineDataSection(subLineData);
+			addSubLineDataSection(subLineData, true);
 		}
+		addSection(addSubLineSection);
 		addSection(notesSection);
 	}
 
 	protected RequestSubLine[] getRequestSubLineData(){
 		RequestSubLine[] result = new RequestSubLine[this.subLineSections.size()];
-		
+
 		int i = 0;
 		for(SubLineDataSection section : this.subLineSections.values()) {
 			result[i] = section.getSubLineData();
@@ -156,14 +173,39 @@ public class QuoteRequestForm extends FormView<QuoteRequest> implements FiresAsy
 			FormViewSection section = this.subLineSections.get(subLineId);
 			removeSection(section);
 		}
+		this.subLineSections.clear();
 	}
 
-	protected void addSubLineDataSection(RequestSubLine subLinedata){
-		SubLineDataSection section = new SubLineDataSection(subLinedata);
+	protected void addSubLineDataSection(final RequestSubLine subLinedata, boolean collapsed){
+		SubLineDataSection section = new SubLineDataSection(this.value.id, subLinedata, collapsed);
 		this.subLineSections.put(subLinedata.qrslId, section);
-		addSection(section);		
+		section.getRemoveButton().addClickHandler(new ClickHandler() {
+
+			@Override
+			public void onClick(ClickEvent event) {
+				HasParameters parameters = new HasParameters();
+				parameters.setParameter("operation", "deleteSubLine");
+				parameters.setParameter("subLineId", subLinedata.qrslId);
+				fireRequest(new AsyncRequest<Void>(parameters) {
+
+					@Override
+					public void onResponse(Void response) {
+						removeSubLineDataSection(subLinedata.qrslId);
+					}
+
+					@Override
+					public void onError(ResponseError error) {
+						return;
+					}
+				});
+			}
+		});
+		addSection(section);
+		section.setReadOnly(this.isReadOnly());
+		addSection(addSubLineSection);
+		addSection(notesSection);
 	}
-	
+
 	protected SubLineDataSection getSubLineDataSection(String subLineId){
 		return this.subLineSections.get(subLineId);
 	}
@@ -177,6 +219,40 @@ public class QuoteRequestForm extends FormView<QuoteRequest> implements FiresAsy
 	public void clearInfo() {
 		super.clearInfo();
 		this.clearRequestDataInfo();
+	}
+
+	@Override
+	public void setReadOnly(boolean readOnly) {
+		super.setReadOnly(readOnly);
+		if(this.addSubLineSection != null) {
+			showAddSubLine(!readOnly);
+		}
+	}
+
+	protected void showAddSubLine(boolean show) {
+		this.addSubLineSection.setVisible(show);
+		this.addSubLineSection.clear();
+	}
+
+	protected void onAddSubLineSection(String subLineId){
+		if(!this.subLineSections.containsKey(subLineId)){
+			HasParameters parameters = new HasParameters();
+			parameters.setParameter("operation", "getsublinedefinition");
+			parameters.setParameter("subLineId", subLineId);
+			fireRequest(new AsyncRequest<RequestSubLine>(parameters) {
+
+				@Override
+				public void onResponse(RequestSubLine response) {
+					addSubLineDataSection(response, false);
+					addSubLineSection.clear();
+				}
+
+				@Override
+				public void onError(ResponseError error) {
+					return;
+				}
+			});
+		}
 	}
 
 	@Override

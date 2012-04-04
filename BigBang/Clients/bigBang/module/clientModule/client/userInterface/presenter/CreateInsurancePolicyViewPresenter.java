@@ -54,7 +54,7 @@ public class CreateInsurancePolicyViewPresenter implements ViewPresenter {
 		HasValueSelectables<ExerciseStub> getExercisesList();
 
 		void setSaveModeEnabled(boolean enabled);
-		
+
 		//TABLE
 		HasValue<TableSection>getTable();
 		HasValue<String> getInsuredObjectFilter();
@@ -94,7 +94,7 @@ public class CreateInsurancePolicyViewPresenter implements ViewPresenter {
 		String tempPolicyId = parameterHolder.getParameter("policyid");
 
 		view.setSaveModeEnabled(true);
-		
+
 		if(clientId == null || clientId.isEmpty()) {
 			onFailure();
 		}else if(tempPolicyId == null || tempPolicyId.isEmpty()){
@@ -221,28 +221,17 @@ public class CreateInsurancePolicyViewPresenter implements ViewPresenter {
 	}
 
 	private void onModalityChanged(){
-		saveWorkState(new ResponseHandler<Void>() {
-			
+		InsurancePolicy changedPolicy = view.getInsurancePolicyForm().getInfo();
+		policyBroker.initPolicy(changedPolicy, new ResponseHandler<InsurancePolicy>() {
+
 			@Override
-			public void onResponse(Void response) {
-				InsurancePolicy changedPolicy = view.getInsurancePolicyForm().getInfo();
-				policyBroker.getPolicy(changedPolicy.id, new ResponseHandler<InsurancePolicy>() {
-					
-					@Override
-					public void onResponse(InsurancePolicy response) {
-						view.getInsurancePolicyForm().setValue(response);
-					}
-					
-					@Override
-					public void onError(Collection<ResponseError> errors) {
-						onFailure();
-					}
-				});
+			public void onResponse(InsurancePolicy response) {
+				view.getInsurancePolicyForm().setValue(response);
 			}
-			
+
 			@Override
 			public void onError(Collection<ResponseError> errors) {
-				onSaveStateFailed();
+				onFailure();
 			}
 		});
 	}
@@ -366,7 +355,7 @@ public class CreateInsurancePolicyViewPresenter implements ViewPresenter {
 			public void onResponse(final Client client) {
 				view.getClientForm().setValue(client);
 				policyBroker.getPolicy(policyId, new ResponseHandler<InsurancePolicy>() {
-					
+
 					@Override
 					public void onResponse(InsurancePolicy policy) {
 						policy.clientId = client.id;
@@ -375,7 +364,7 @@ public class CreateInsurancePolicyViewPresenter implements ViewPresenter {
 						policy.managerId = Session.getUserId();
 						view.getInsurancePolicyForm().setValue(policy);
 					}
-					
+
 					@Override
 					public void onError(Collection<ResponseError> errors) {
 						onFailure();
@@ -389,11 +378,11 @@ public class CreateInsurancePolicyViewPresenter implements ViewPresenter {
 			}
 		});
 	}
-	
+
 	private void showObject(String objectId) {
 		//TODO
 	}
-	
+
 	private void showExercise(String exerciseId) {
 		//TODO
 	}

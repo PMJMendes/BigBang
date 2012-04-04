@@ -9,9 +9,9 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.web.bindery.event.shared.HandlerRegistration;
 
+import bigBang.library.client.event.NavigationRequestEvent;
+import bigBang.library.client.event.NavigationRequestEventHandler;
 import bigBang.library.client.event.HasNavigationStateChangedHandlers;
-import bigBang.library.client.event.NavigationEvent;
-import bigBang.library.client.event.NavigationEventHandler;
 import bigBang.library.client.event.NavigationStateChangedEvent;
 import bigBang.library.client.event.NavigationStateChangedEventHandler;
 import bigBang.library.client.userInterface.SlidePanel.Direction;
@@ -46,10 +46,10 @@ public class NavigationPanel extends View implements HasNavigationStateChangedHa
 		navBar.setText(navBarTitle);
 		wrapper.add(navBar);
 
-		navBar.addNavigationEventHandler(new NavigationEventHandler() {
+		navBar.addNavigationEventHandler(new NavigationRequestEventHandler() {
 
 			@Override
-			public void onNavigationEvent(NavigationEvent event) {
+			public void onNavigationEvent(NavigationRequestEvent event) {
 				switch(event.getNavigationCommand()) {
 				case NEXT:
 					navigateForward();

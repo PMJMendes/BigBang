@@ -46,7 +46,7 @@ public class GenericFormField extends FormField<String> {
 			myField = new ExpandableListBoxFormField("");
 			break;
 		case NUMBER:
-			myField = new TextAreaFormField();
+			myField = new TextBoxFormField();
 			break;
 		case DATE:
 			myField = new DatePickerFormField();
@@ -188,7 +188,7 @@ public class GenericFormField extends FormField<String> {
 			((FormField<String>)myField).setValue(value);
 			break;
 		case DATE:
-			((FormField<String>)myField).setValue(value);
+			((DatePickerFormField)myField).setValue(value);
 			break;
 		}
 	}

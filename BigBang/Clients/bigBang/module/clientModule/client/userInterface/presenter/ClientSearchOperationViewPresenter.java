@@ -13,6 +13,7 @@ import bigBang.definitions.shared.Contact;
 import bigBang.definitions.shared.Document;
 import bigBang.definitions.shared.HistoryItemStub;
 import bigBang.definitions.shared.InsurancePolicyStub;
+import bigBang.definitions.shared.QuoteRequestStub;
 import bigBang.library.client.EventBus;
 import bigBang.library.client.HasEditableValue;
 import bigBang.library.client.HasParameters;
@@ -86,6 +87,7 @@ public class ClientSearchOperationViewPresenter implements ViewPresenter {
 		HasValueSelectables<Document> getDocumentsList();
 		HasValueSelectables<BigBangProcess> getSubProcessesList();
 		HasValueSelectables<InsurancePolicyStub> getPolicyList();
+		HasValueSelectables<QuoteRequestStub> getQuoteRequestList();
 
 		//General
 		void registerActionInvokedHandler(ActionInvokedEventHandler<Action> handler);
@@ -207,6 +209,7 @@ public class ClientSearchOperationViewPresenter implements ViewPresenter {
 					break;
 				case CREATE_QUOTE_REQUEST:
 					item.pushIntoStackParameter("display", "createquoterequest");
+					item.setParameter("quoterequestid", "new");
 					NavigationHistoryManager.getInstance().go(item);
 					break;
 				case CREATE_RISK_ANALISYS:
@@ -304,7 +307,7 @@ public class ClientSearchOperationViewPresenter implements ViewPresenter {
 					NavigationHistoryItem navItem = NavigationHistoryManager.getInstance().getCurrentState();
 					navItem.setParameter("section", "insurancepolicy");
 					navItem.popFromStackParameter("display");
-					navItem.setParameter("clientid", itemId);
+					navItem.setParameter("policyid", itemId);
 					NavigationHistoryManager.getInstance().go(navItem);
 				}
 			}
@@ -321,6 +324,21 @@ public class ClientSearchOperationViewPresenter implements ViewPresenter {
 
 				if(!itemId.isEmpty()){
 					goToSubProcess(item);
+				}
+			}
+		});
+		view.getQuoteRequestList().addSelectionChangedEventHandler(new SelectionChangedEventHandler() {
+			
+			@Override
+			public void onSelectionChanged(SelectionChangedEvent event) {
+				@SuppressWarnings("unchecked")
+				ValueSelectable<QuoteRequestStub> selected = (ValueSelectable<QuoteRequestStub>) event.getFirstSelected();
+				QuoteRequestStub item = selected == null ? null : selected.getValue();
+				String itemId = item == null ? null : item.id;
+				itemId = itemId == null ? new String() : itemId;
+
+				if(!itemId.isEmpty()){
+					goToQuoteRequest(itemId);
 				}
 			}
 		});
@@ -504,6 +522,14 @@ public class ClientSearchOperationViewPresenter implements ViewPresenter {
 			item.setParameter("requestid", process.dataId);
 			NavigationHistoryManager.getInstance().go(item);
 		}
+	}
+	
+	private void goToQuoteRequest(String requestId){
+		NavigationHistoryItem navItem = NavigationHistoryManager.getInstance().getCurrentState();
+		navItem.setParameter("section", "quoterequest");
+		navItem.popFromStackParameter("display");
+		navItem.setParameter("quoterequestid", requestId);
+		NavigationHistoryManager.getInstance().go(navItem);
 	}
 	
 }

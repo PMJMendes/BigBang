@@ -24,6 +24,7 @@ public class FormViewSection extends View {
 	protected HasWidgets content;
 	protected HasWidgets currentContainer;
 	protected Widget header;
+	protected boolean readOnly = false;
 
 	public FormViewSection(String title){
 		fields = new ArrayList<FormField<?>>();
@@ -59,7 +60,7 @@ public class FormViewSection extends View {
 		return this.fields;
 	}
 
-	private Widget getSectionHeader(String text) {
+	protected Widget getSectionHeader(String text) {
 		VerticalPanel headerWrapper = new VerticalPanel();
 		headerWrapper.setVerticalAlignment(HasVerticalAlignment.ALIGN_MIDDLE);
 		headerWrapper.setWidth("100%");
@@ -163,6 +164,15 @@ public class FormViewSection extends View {
 
 	public HasWidgets getContentWrapper() {
 		return this.content;
+	}
+	
+	public void setReadOnly(boolean readOnly){
+		for(FormField<?> f : getFields()){
+			f.setReadOnly(readOnly);
+			if(readOnly)
+				f.setInvalid(false);
+		}
+		this.readOnly = readOnly;
 	}
 
 }

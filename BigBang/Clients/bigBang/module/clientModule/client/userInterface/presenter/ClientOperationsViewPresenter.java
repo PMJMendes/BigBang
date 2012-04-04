@@ -73,6 +73,10 @@ public class ClientOperationsViewPresenter implements ViewPresenter {
 					present("CONTACT", parameters);
 				}else if(display.equalsIgnoreCase("clienthistory")){
 					present("HISTORY", parameters);
+				}else if(display.equalsIgnoreCase("createquoterequest")){
+					present("CLIENT_CREATE_QUOTE_REQUEST", parameters);
+				}else if(display.equalsIgnoreCase("viewinsuredobject")){
+					present("QUOTE_REQUEST_INSURED_OBJECT", parameters);
 				}else{
 					goToDefault();
 				}

@@ -56,6 +56,8 @@ public class BigBangConstants {
 		public static final String INSURANCE_SUB_POLICY_INSURED_OBJECT = "C3480E17-821B-4DCB-BF42-9FF800D1C470";
 
 		public static final String EXTERNAL_INFO_REQUEST = "BD9E1BEA-D02B-40FE-BB3E-9FEA00CA7ECD";
+
+		public static final String QUOTE_REQUEST_INSURED_OBJECT = "B594AB7F-573F-4401-A369-A00500F9D2D8";
 		
 	}
 
@@ -173,6 +175,7 @@ public class BigBangConstants {
 		public static class QuoteRequestProcess {
 			public static final String UPDATE_QUOTE_REQUEST = "450E32C7-C544-4030-92C7-A00C0121D1B6";
 			public static final String DELETE_QUOTE_REQUEST = "57172AC9-8CDF-4C34-825F-A00C01294D35";
+			public static final String CLOSE_QUOTE_REQUEST = "2E49B889-594C-49A6-B25D-A00C012876B8";
 		}
 		
 	}

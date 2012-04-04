@@ -80,7 +80,6 @@ public class ClientProcessBrokerImpl extends DataBroker<Client> implements Clien
 		}
 	}
 
-
 	@Override
 	public void addClient(Client client, final ResponseHandler<Client> handler) {
 		this.service.createClient(client, new BigBangAsyncCallback<Client>() {

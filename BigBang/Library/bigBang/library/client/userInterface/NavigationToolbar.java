@@ -1,8 +1,8 @@
 package bigBang.library.client.userInterface;
 
-import bigBang.library.client.event.NavigationEvent;
-import bigBang.library.client.event.NavigationEvent.Navigation;
-import bigBang.library.client.event.NavigationEventHandler;
+import bigBang.library.client.event.NavigationRequestEvent;
+import bigBang.library.client.event.NavigationRequestEvent.Navigation;
+import bigBang.library.client.event.NavigationRequestEventHandler;
 
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
@@ -22,7 +22,7 @@ public class NavigationToolbar extends ListHeader {
 			
 			@Override
 			public void onClick(ClickEvent event) {
-				fireEvent(new NavigationEvent(Navigation.NEXT));
+				fireEvent(new NavigationRequestEvent(Navigation.NEXT));
 			}
 		});
 
@@ -31,7 +31,7 @@ public class NavigationToolbar extends ListHeader {
 			
 			@Override
 			public void onClick(ClickEvent event) {
-				fireEvent(new NavigationEvent(Navigation.PREVIOUS));
+				fireEvent(new NavigationRequestEvent(Navigation.PREVIOUS));
 			}
 		});
 		showNext(true);
@@ -54,7 +54,7 @@ public class NavigationToolbar extends ListHeader {
 		setLeftWidget(prevButton);
 	}
 	
-	public HandlerRegistration addNavigationEventHandler(NavigationEventHandler h) {
-		return addHandler(h, NavigationEvent.TYPE);
+	public HandlerRegistration addNavigationEventHandler(NavigationRequestEventHandler h) {
+		return addHandler(h, NavigationRequestEvent.TYPE);
 	}
 }

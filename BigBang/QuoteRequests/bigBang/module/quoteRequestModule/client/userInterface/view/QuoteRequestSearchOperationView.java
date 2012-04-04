@@ -4,13 +4,14 @@ import bigBang.definitions.shared.BigBangProcess;
 import bigBang.definitions.shared.Contact;
 import bigBang.definitions.shared.Document;
 import bigBang.definitions.shared.HistoryItemStub;
-import bigBang.definitions.shared.InsuredObjectStub;
 import bigBang.definitions.shared.QuoteRequest;
+import bigBang.definitions.shared.QuoteRequestObjectStub;
 import bigBang.definitions.shared.QuoteRequestStub;
 import bigBang.library.client.HasEditableValue;
 import bigBang.library.client.HasValueSelectables;
 import bigBang.library.client.event.ActionInvokedEvent;
 import bigBang.library.client.event.ActionInvokedEventHandler;
+import bigBang.library.client.event.FiresAsyncRequests;
 import bigBang.library.client.userInterface.view.View;
 import bigBang.module.quoteRequestModule.client.userInterface.QuoteRequestChildrenPanel;
 import bigBang.module.quoteRequestModule.client.userInterface.QuoteRequestForm;
@@ -19,6 +20,8 @@ import bigBang.module.quoteRequestModule.client.userInterface.QuoteRequestSearch
 import bigBang.module.quoteRequestModule.client.userInterface.presenter.QuoteRequestSearchOperationViewPresenter;
 import bigBang.module.quoteRequestModule.client.userInterface.presenter.QuoteRequestSearchOperationViewPresenter.Action;
 
+import com.google.gwt.event.logical.shared.ValueChangeEvent;
+import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.user.client.ui.SplitLayoutPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
@@ -36,14 +39,14 @@ public class QuoteRequestSearchOperationView extends View implements QuoteReques
 		SplitLayoutPanel wrapper = new SplitLayoutPanel();
 		initWidget(wrapper);
 		wrapper.setSize("100%", "100%");
-		
+
 		searchPanel = new QuoteRequestSearchPanel();
 		wrapper.addWest(searchPanel, 400);
-		
+
 		SplitLayoutPanel quoteRequestWrapper = new SplitLayoutPanel();
 		quoteRequestWrapper.setSize("100%", "100%");
 		wrapper.add(quoteRequestWrapper);
-		
+
 		childrenPanel = new QuoteRequestChildrenPanel();
 		childrenPanel.setSize("100%", "100%");
 		quoteRequestWrapper.addEast(childrenPanel, 250);
@@ -85,8 +88,37 @@ public class QuoteRequestSearchOperationView extends View implements QuoteReques
 
 			@Override
 			public void onCreateInsuredObject() {
-				// TODO Auto-generated method stub
+				handler.onActionInvoked(new ActionInvokedEvent<QuoteRequestSearchOperationViewPresenter.Action>(Action.CREATE_INSURED_OBJECT));
 
+			}
+			
+			@Override
+			public void onCreatePersonObject() {
+				handler.onActionInvoked(new ActionInvokedEvent<QuoteRequestSearchOperationViewPresenter.Action>(Action.CREATE_PERSON_INSURED_OBJECT));
+				
+			}
+			
+			@Override
+			public void onCreateCompanyObject() {
+				handler.onActionInvoked(new ActionInvokedEvent<QuoteRequestSearchOperationViewPresenter.Action>(Action.CREATE_COMPANY_INSURED_OBJECT));
+				
+			}
+			
+			@Override
+			public void onCreateEquipmentObject() {
+				handler.onActionInvoked(new ActionInvokedEvent<QuoteRequestSearchOperationViewPresenter.Action>(Action.CREATE_EQUIPMENT_INSURED_OBJECT));
+				
+			}
+			
+			@Override
+			public void onCreateAnimalObject() {
+				handler.onActionInvoked(new ActionInvokedEvent<QuoteRequestSearchOperationViewPresenter.Action>(Action.CREATE_ANIMAL_INSURED_OBJECT));				
+			}
+			
+			@Override
+			public void onCreateLocationObject() {
+				handler.onActionInvoked(new ActionInvokedEvent<QuoteRequestSearchOperationViewPresenter.Action>(Action.CREATE_LOCATION_INSURED_OBJECT));
+				
 			}
 
 			@Override
@@ -108,12 +140,19 @@ public class QuoteRequestSearchOperationView extends View implements QuoteReques
 
 			@Override
 			public void onCloseProcess() {
-				// TODO Auto-generated method stub
+				handler.onActionInvoked(new ActionInvokedEvent<QuoteRequestSearchOperationViewPresenter.Action>(Action.CLOSE));
 			}
 		};
 		formWrapper.add(toolbar);
 				
 		form = new QuoteRequestForm();
+		form.addValueChangeHandler(new ValueChangeHandler<QuoteRequest>() {
+			
+			@Override
+			public void onValueChange(ValueChangeEvent<QuoteRequest> event) {
+				childrenPanel.setOwner(event.getValue());
+			}
+		});
 		form.setSize("100%", "100%");
 		formWrapper.add(form);
 		formWrapper.setCellHeight(form, "100%");
@@ -135,6 +174,11 @@ public class QuoteRequestSearchOperationView extends View implements QuoteReques
 	public HasEditableValue<QuoteRequest> getForm() {
 		return form;
 	}
+	
+	@Override
+	public FiresAsyncRequests getFormAsFiresAsyncRequests() {
+		return form;
+	}
 
 	@Override
 	public void clearAllowedPermissions() {
@@ -150,6 +194,16 @@ public class QuoteRequestSearchOperationView extends View implements QuoteReques
 	public void allowDelete(boolean allow) {
 		toolbar.allowDelete(allow);
 	}
+	
+	@Override
+	public void allowClose(boolean allow) {
+		toolbar.allowClose(allow);
+	}
+	
+	@Override
+	public void allowCreateInsuredObject(boolean allow) {
+		toolbar.allowCreateInsuredObject(allow);
+	}
 
 	@Override
 	public HasValueSelectables<Contact> getContactsList() {
@@ -162,7 +216,7 @@ public class QuoteRequestSearchOperationView extends View implements QuoteReques
 	}
 	
 	@Override
-	public HasValueSelectables<InsuredObjectStub> getObjectsList() {
+	public HasValueSelectables<QuoteRequestObjectStub> getObjectsList() {
 		return childrenPanel.insuredObjectsList;
 	}
 

@@ -40,6 +40,7 @@ public class InsuredObjectsList extends FilterableList<InsuredObjectStub> {
 		this.insurancePolicyBroker = (InsurancePolicyBroker) DataBrokerManager.Util.getInstance().getBroker(BigBangConstants.EntityIds.INSURANCE_POLICY);
 		this.insuredObjectsBroker = (InsuredObjectDataBroker) DataBrokerManager.Util.getInstance().getBroker(BigBangConstants.EntityIds.POLICY_INSURED_OBJECT);
 		this.insuredObjectsBroker.registerClient(this.insuredObjectsBrokerClient);
+		showFilterField(false);
 	}
 
 	public void setOwner(String ownerId){

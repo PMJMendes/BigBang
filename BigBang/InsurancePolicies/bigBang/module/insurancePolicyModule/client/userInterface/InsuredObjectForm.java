@@ -226,8 +226,8 @@ public class InsuredObjectForm extends FormView<InsuredObject> {
 		this.addSection(this.typeSection);
 
 		this.type.addOption(BigBangConstants.EntityIds.INSURED_OBJECT_TYPE_PERSON, "Pessoa");
-		this.type.addOption(BigBangConstants.EntityIds.INSURED_OBJECT_TYPE_COMPANY, "Companhia");
-		this.type.addOption(BigBangConstants.EntityIds.INSURED_OBJECT_TYPE_EQUIPMENT, "Equipamento");
+		this.type.addOption(BigBangConstants.EntityIds.INSURED_OBJECT_TYPE_COMPANY, "Empresa ou Grupo");
+		this.type.addOption(BigBangConstants.EntityIds.INSURED_OBJECT_TYPE_EQUIPMENT, "Objecto ou Equipamento");
 		this.type.addOption(BigBangConstants.EntityIds.INSURED_OBJECT_TYPE_PLACE, "Local");
 		this.type.addOption(BigBangConstants.EntityIds.INSURED_OBJECT_TYPE_ANIMAL, "Animal");
 		this.type.addValueChangeHandler(new ValueChangeHandler<String>() {
@@ -259,7 +259,7 @@ public class InsuredObjectForm extends FormView<InsuredObject> {
 		this.addSection(this.personSection);
 
 		//company fields
-		this.companySection = new FormViewSection("Companhia");
+		this.companySection = new FormViewSection("Empresa ou Grupo");
 		this.companyTaxNumber = new TextBoxFormField("NIPC");
 		this.companyTaxNumber.setFieldWidth("200px");
 		this.companyCAE = new ExpandableListBoxFormField(BigBangConstants.TypifiedListIds.CAEs, "CAE Principal");
@@ -287,7 +287,7 @@ public class InsuredObjectForm extends FormView<InsuredObject> {
 		this.addSection(this.companySection);
 
 		//equipment fields
-		this.equipmentSection = new FormViewSection("Equipamento");
+		this.equipmentSection = new FormViewSection("Objecto ou Equipamento");
 		this.equipmentMakeAndModel = new TextBoxFormField("Marca e Modelo");
 		this.equipmentDescription = new TextAreaFormField("Descrição");
 		this.equipmentFirstRegistryDate = new DatePickerFormField("Data do Primeiro Registo");

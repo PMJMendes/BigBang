@@ -5,7 +5,7 @@ import com.google.gwt.event.shared.GwtEvent;
 import bigBang.definitions.client.response.ResponseError;
 import bigBang.library.client.HasParameters;
 
-public abstract class AsyncRequest<T> extends GwtEvent<AsyncRequestHandler> {
+public abstract class AsyncRequest<T extends Object> extends GwtEvent<AsyncRequestHandler> {
 
 	public static Type<AsyncRequestHandler> TYPE = new Type<AsyncRequestHandler>();
 	
@@ -13,6 +13,10 @@ public abstract class AsyncRequest<T> extends GwtEvent<AsyncRequestHandler> {
 	
 	public AsyncRequest(HasParameters parameters){
 		this.parameters = parameters;
+	}
+	
+	public HasParameters getParameters(){
+		return this.parameters;
 	}
 	
 	public void reply(T response){
@@ -32,9 +36,10 @@ public abstract class AsyncRequest<T> extends GwtEvent<AsyncRequestHandler> {
 		return TYPE;
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	protected void dispatch(AsyncRequestHandler handler) {
-		handler.onRequest(this.parameters);
+		handler.onRequest((AsyncRequest<Object>) this);
 	}
 	
 }

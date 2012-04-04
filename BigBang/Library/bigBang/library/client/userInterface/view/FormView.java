@@ -171,11 +171,7 @@ public abstract class FormView<T> extends View implements Validatable, HasEditab
 	public void setReadOnly(boolean readOnly) {
 		this.isReadOnly = readOnly;
 		for(FormViewSection s : sections){
-			for(FormField<?> f : s.getFields()){
-				f.setReadOnly(readOnly);
-				if(readOnly)
-					f.setInvalid(false);
-			}
+			s.setReadOnly(readOnly);
 		}
 	}
 

@@ -244,5 +244,10 @@ public class QuoteRequestSearchPanel extends SearchPanel<QuoteRequestStub> imple
 		}
 		this.quoteRequestsToRemove.add(id);
 	}
+	
+	@Override
+	public void remapItemId(String oldId, String newId) {
+		return;
+	}
 
 }

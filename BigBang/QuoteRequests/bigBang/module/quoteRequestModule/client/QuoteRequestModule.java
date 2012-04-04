@@ -8,13 +8,20 @@ import bigBang.library.client.ViewPresenterInstantiator;
 import bigBang.library.client.userInterface.presenter.ViewPresenter;
 import bigBang.module.quoteRequestModule.client.dataAccess.NegotiationBrokerImpl;
 import bigBang.module.quoteRequestModule.client.dataAccess.QuoteRequestBrokerImpl;
+import bigBang.module.quoteRequestModule.client.dataAccess.QuoteRequestInsuredObjectBrokerImpl;
 import bigBang.module.quoteRequestModule.client.userInterface.presenter.NegotiationDeleteViewPresenter;
 import bigBang.module.quoteRequestModule.client.userInterface.presenter.NegotiationGrantViewPresenter;
+import bigBang.module.quoteRequestModule.client.userInterface.presenter.QuoteRequestCloseViewPresenter;
+import bigBang.module.quoteRequestModule.client.userInterface.presenter.QuoteRequestDeleteViewPresenter;
+import bigBang.module.quoteRequestModule.client.userInterface.presenter.QuoteRequestObjectViewPresenter;
 import bigBang.module.quoteRequestModule.client.userInterface.presenter.QuoteRequestOperationsViewPresenter;
 import bigBang.module.quoteRequestModule.client.userInterface.presenter.QuoteRequestSearchOperationViewPresenter;
 import bigBang.module.quoteRequestModule.client.userInterface.presenter.QuoteRequestSectionViewPresenter;
 import bigBang.module.quoteRequestModule.client.userInterface.view.NegotiationDeleteView;
 import bigBang.module.quoteRequestModule.client.userInterface.view.NegotiationGrantView;
+import bigBang.module.quoteRequestModule.client.userInterface.view.QuoteRequestCloseView;
+import bigBang.module.quoteRequestModule.client.userInterface.view.QuoteRequestDeleteView;
+import bigBang.module.quoteRequestModule.client.userInterface.view.QuoteRequestObjectView;
 import bigBang.module.quoteRequestModule.client.userInterface.view.QuoteRequestOperationsView;
 import bigBang.module.quoteRequestModule.client.userInterface.view.QuoteRequestSearchOperationView;
 import bigBang.module.quoteRequestModule.client.userInterface.view.QuoteRequestSectionView;
@@ -62,9 +69,9 @@ public class QuoteRequestModule implements Module {
 				return quoteRequestSearchOperationViewPresenter;
 			}
 		});
-		
+
 		ViewPresenterFactory.getInstance().registerViewPresenterInstantiator("QUOTE_REQUEST_NEGOTIATION_DELETE", new ViewPresenterInstantiator() {
-			
+
 			@Override
 			public ViewPresenter getInstance() {
 				NegotiationDeleteView view = (NegotiationDeleteView) GWT.create(NegotiationDeleteView.class); 
@@ -72,10 +79,10 @@ public class QuoteRequestModule implements Module {
 				return presenter;
 			}
 		});
-		
+
 
 		ViewPresenterFactory.getInstance().registerViewPresenterInstantiator("QUOTE_REQUEST_NEGOTIATION_GRANT", new ViewPresenterInstantiator() {
-			
+
 			@Override
 			public ViewPresenter getInstance() {
 				NegotiationGrantView view = (NegotiationGrantView) GWT.create(NegotiationGrantView.class); 
@@ -83,22 +90,53 @@ public class QuoteRequestModule implements Module {
 				return presenter;
 			}
 		});
+
+		ViewPresenterFactory.getInstance().registerViewPresenterInstantiator("QUOTE_REQUEST_INSURED_OBJECT", new ViewPresenterInstantiator() {
+
+			@Override
+			public ViewPresenter getInstance() {
+				QuoteRequestObjectView view = (QuoteRequestObjectView) GWT.create(QuoteRequestObjectView.class); 
+				QuoteRequestObjectViewPresenter presenter = new QuoteRequestObjectViewPresenter(view);
+				return presenter;
+			}
+		});
+		
+		ViewPresenterFactory.getInstance().registerViewPresenterInstantiator("QUOTE_REQUEST_DELETE", new ViewPresenterInstantiator() {
+
+			@Override
+			public ViewPresenter getInstance() {
+				QuoteRequestDeleteView view = (QuoteRequestDeleteView) GWT.create(QuoteRequestDeleteView.class);
+				ViewPresenter presenter = new QuoteRequestDeleteViewPresenter(view);
+				return presenter;
+			}
+		});
+		ViewPresenterFactory.getInstance().registerViewPresenterInstantiator("QUOTE_REQUEST_CLOSE", new ViewPresenterInstantiator() {
+
+			@Override
+			public ViewPresenter getInstance() {
+				QuoteRequestCloseView view = (QuoteRequestCloseView) GWT.create(QuoteRequestCloseView.class);
+				ViewPresenter presenter = new QuoteRequestCloseViewPresenter(view);
+				return presenter;
+			}
+		});
 	}
 
 	@Override
 	public DataBroker<?>[] getBrokerImplementations() {
+		QuoteRequestInsuredObjectBrokerImpl requestObjectsBroker = new QuoteRequestInsuredObjectBrokerImpl();
 		
 		return new DataBroker<?>[]{
-				new QuoteRequestBrokerImpl(),
-				new NegotiationBrokerImpl()
-			};
+				new QuoteRequestBrokerImpl(requestObjectsBroker),
+				new NegotiationBrokerImpl(),
+				requestObjectsBroker
+		};
 	}
 
 	@Override
 	public String[] getBrokerDependencies() {
 		return new String[]{
 				BigBangConstants.EntityIds.NEGOTIATION,
-			};
+		};
 	}
 
 }

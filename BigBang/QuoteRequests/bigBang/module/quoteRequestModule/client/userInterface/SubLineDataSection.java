@@ -1,8 +1,18 @@
 package bigBang.module.quoteRequestModule.client.userInterface;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.google.gwt.dom.client.Style.Unit;
+import com.google.gwt.event.dom.client.HasClickHandlers;
+import com.google.gwt.event.logical.shared.ValueChangeEvent;
+import com.google.gwt.event.logical.shared.ValueChangeHandler;
+import com.google.gwt.user.client.ui.Button;
+
+import bigBang.definitions.client.dataAccess.QuoteRequestBroker;
+import bigBang.definitions.client.response.ResponseError;
+import bigBang.definitions.client.response.ResponseHandler;
 import bigBang.definitions.shared.BigBangConstants;
 import bigBang.definitions.shared.QuoteRequest.ColumnHeader;
 import bigBang.definitions.shared.QuoteRequest.Coverage;
@@ -11,27 +21,46 @@ import bigBang.definitions.shared.QuoteRequest.HeaderField;
 import bigBang.definitions.shared.QuoteRequest.RequestSubLine;
 import bigBang.definitions.shared.QuoteRequest.TableSection;
 import bigBang.definitions.shared.QuoteRequest.TableSection.TableField;
+import bigBang.library.client.FormField;
+import bigBang.library.client.dataAccess.BigBangTypifiedListBroker;
+import bigBang.library.client.dataAccess.DataBrokerManager;
+import bigBang.library.client.dataAccess.TypifiedListBroker;
+import bigBang.library.client.userInterface.ExpandableListBoxFormField;
 import bigBang.library.client.userInterface.GenericFormField;
 import bigBang.library.client.userInterface.GenericFormField.TYPE;
 import bigBang.library.client.userInterface.TwoKeyTable.Field;
-import bigBang.library.client.userInterface.TwoKeyTable.HeaderCell;
-import bigBang.library.client.userInterface.TwoKeyTableView;
+import bigBang.library.client.userInterface.TwoKeyTable.Type;
 import bigBang.library.client.userInterface.view.CollapsibleFormViewSection;
+import bigBang.module.quoteRequestModule.client.dataAccess.QuoteRequestTypifiedListBroker;
 
 public class SubLineDataSection extends CollapsibleFormViewSection {
 
 	protected RequestSubLine value;
+	protected String requestId;
+	protected TableSection currentTableSection;
 
-	protected TwoKeyTableView table;
+	protected Button removeButton;
+	protected SubLineSectionTable table;
 	protected Map<String, GenericFormField> headerFields, extraFields;
+	protected ExpandableListBoxFormField insuredObjectsList;
 
-	public SubLineDataSection(RequestSubLine data) {
-		super("");
-		this.expand();
-		table = new TwoKeyTableView();
+	public SubLineDataSection(String quoteRequestId, RequestSubLine data, boolean collapsed) {
+		super("", collapsed);
+		insuredObjectsList = new ExpandableListBoxFormField("Unidade de Risco");
+		insuredObjectsList.addValueChangeHandler(new ValueChangeHandler<String>() {
+
+			@Override
+			public void onValueChange(ValueChangeEvent<String> event) {
+				onInsuredObjectFilterChanged(event.getValue());
+			}
+		});
+		table = new SubLineSectionTable();
 		headerFields = new HashMap<String, GenericFormField>();
 		extraFields = new HashMap<String, GenericFormField>();
+		removeButton = new Button("Remover Ramo");
+		removeButton.getElement().getStyle().setMarginTop(20, Unit.PX);
 		setSubLineData(data);
+		setQuoteRequestId(quoteRequestId);
 	}
 
 	public void setSubLineData(RequestSubLine data){
@@ -44,26 +73,41 @@ public class SubLineDataSection extends CollapsibleFormViewSection {
 		if(this.value != null){
 			setHeaderText(data.headerText);
 			setHeaderFields(data.headerFields);
-			setTableData(data.coverages, data.columns, data.tableData);
+			addFormField(this.insuredObjectsList);
+			TableSection section = data.tableData.length > 0 ? data.tableData[0] : null;
+			if(section != null){
+				setTableData(data.coverages, data.columns, section);
+			}else{
+				clearTableData();
+			}
+			this.insuredObjectsList.setVisible(section != null);
 			setExtraFields(data.extraData);
 		}
+
+		addWidget(removeButton);
 	}
 
 	public RequestSubLine getSubLineData(){
 		RequestSubLine result = this.value;
 
 		if(result != null){
+			onInsuredObjectFilterChanged(insuredObjectsList.getValue());
 			result.headerFields = getHeaderFields();
-			result.tableData = getTableSections();
+			if(this.table != null) {
+				result.tableData = getTableSections();
+			}
 			result.extraData = getExtraFields();
+			result.coverages = getCoverages();
 		}
 
-		return null;
+		return result;
 	}
 
 	public void setHeaderFields(HeaderField[] headerFields){
+		this.headerFields.clear();
+		for(int i = 0; i < headerFields.length; i++) {
+			HeaderField headerField = headerFields[i];
 
-		for(HeaderField headerField : headerFields) {
 			GenericFormField formField = null;
 
 			switch(headerField.type) {
@@ -93,7 +137,9 @@ public class SubLineDataSection extends CollapsibleFormViewSection {
 			formField.setUnitsLabel(headerField.unitsLabel);
 			formField.setValue(headerField.value);
 			formField.setLabel(headerField.fieldName);
-			addFormField(formField, true);
+			formField.setReadOnly(this.readOnly);
+			this.headerFields.put(headerField.fieldId, formField);
+			addFormField(formField, i < (headerFields.length - 1));
 		}
 	}
 
@@ -101,7 +147,7 @@ public class SubLineDataSection extends CollapsibleFormViewSection {
 		for(HeaderField headerField : this.value.headerFields) {
 			String fieldId = headerField.fieldId;
 			GenericFormField formField = this.headerFields.get(fieldId);
-			headerField.value = formField.getValue();
+			headerField.value = formField == null ? null : formField.getValue();
 		}
 		return this.value.headerFields;
 	}
@@ -114,7 +160,7 @@ public class SubLineDataSection extends CollapsibleFormViewSection {
 	}
 
 	public void setExtraFields(ExtraField[] extraFields){
-
+		this.extraFields.clear();
 		for(ExtraField extraField : extraFields) {
 			GenericFormField formField = null;
 
@@ -145,6 +191,8 @@ public class SubLineDataSection extends CollapsibleFormViewSection {
 			formField.setUnitsLabel(extraField.unitsLabel);
 			formField.setValue(extraField.value);
 			formField.setLabel(extraField.fieldName);
+			formField.setReadOnly(readOnly);
+			this.extraFields.put(extraField.fieldId, formField);
 			addFormField(formField, true);
 		}
 	}
@@ -165,36 +213,65 @@ public class SubLineDataSection extends CollapsibleFormViewSection {
 		this.extraFields.clear();
 	}
 
-	public void setTableData(Coverage[] coverages, ColumnHeader[] headers, TableSection[] tableSections){
-		this.table = new TwoKeyTableView();
-		
-		HeaderCell[] headerCells = new HeaderCell[headers.length];
-		for(int i = 0; i < headers.length; i++) {
-			headerCells[i].id = i+"";
-			String unit = headers[i].unitsLabel;
-			headerCells[i].text = headers[i].label + (unit == null ? "" : " ("+unit+")");
-		}
-		
-		HeaderCell[] rowCells = new HeaderCell[coverages.length];
-		for(int i = 0; i < coverages.length; i++) {
-			rowCells[i].id = coverages[i].coverageId;
-		}
-		
-		this.table.setHeaders(rowCells, headerCells);
-		
-		for(TableSection tableSection : tableSections) {
-			for(TableField tableField : tableSection.data) {
-				Field realTableField = new Field();
-				realTableField.id = tableField.fieldId;
-//				realTableField.type = 0
-				
-				table.setValue(tableField.coverageId, tableField.columnIndex+"", realTableField);
+	public void setTableData(Coverage[] coverages, ColumnHeader[] headers, TableSection tableSection){
+		this.table = new SubLineSectionTable();
+
+		Coverage[] coverageHeaders = getCoverages() == null ? coverages : getCoverages();
+
+		this.table.setHeaders(coverageHeaders, headers);
+		setTableData(headers, tableSection);
+
+		addWidget(this.table);
+	}
+
+	public  void setTableData(ColumnHeader[] headers, TableSection tableSection){
+		for(TableField tableField : tableSection.data) {
+			Field realTableField = new Field();
+			realTableField.id = tableField.fieldId;
+			realTableField.value = tableField.value;
+
+			switch(headers[tableField.columnIndex].type) {
+			case TEXT:
+				realTableField.type = Type.TEXT;
+				break;
+			case BOOLEAN:
+				realTableField.type = Type.BOOLEAN;
+				break;
+			case DATE:
+				realTableField.type = Type.DATE;
+				break;
+			case LIST:
+				realTableField.type = Type.LIST;
+				break;
+			case NUMERIC:
+				realTableField.type = Type.NUMERIC;
+				break;
+			case REFERENCE:
+				realTableField.type = Type.REFERENCE;
+				break;
 			}
+
+			table.setValue(tableField.coverageId, tableField.columnIndex+"", realTableField);
 		}
+		this.currentTableSection = tableSection;
+		this.table.setReadOnly(this.readOnly);
+		this.table.render();
+	}
+
+	public TableSection getCurrentTableSection() {
+		TableSection result = this.currentTableSection;
+
+		for(TableField tableField : this.currentTableSection.data) {
+			Field realTableField = table.getValue(tableField.coverageId, tableField.columnIndex+"");
+			tableField.value = realTableField.value;
+		}
+
+		return result;
 	}
 
 	public TableSection[] getTableSections(){
-		return null; //TODO
+		//TODO return null;
+		return null;
 	}
 
 	public void clearTableData(){
@@ -204,21 +281,110 @@ public class SubLineDataSection extends CollapsibleFormViewSection {
 		this.table = null;
 	}
 
-	public ColumnHeader[] getColumnHeaders() {
-		return null;
-	}
-
-	public void clearColumnHeaders(){
-		//TODO
-	}
-
 	public Coverage[] getCoverages(){
-		//TODO
-		return null;
+		return this.table != null ? this.table.getCoverages() : null;
 	}
 
-	public void clearCoverages(){
-		//TODO
+	@Override
+	public void setReadOnly(boolean readOnly) {
+		super.setReadOnly(readOnly);
+
+		if(this.headerFields != null) {
+			for(FormField<?> formField : this.headerFields.values()) {
+				formField.setReadOnly(readOnly);
+			}
+		}
+
+		if(this.table != null) {
+			this.table.setReadOnly(readOnly);
+		}
+
+		if(this.extraFields != null) {
+			for(FormField<?> formField : this.extraFields.values()) {
+				formField.setReadOnly(readOnly);
+			}
+		}
+
+		this.insuredObjectsList.setReadOnly(false);
+
+		this.removeButton.setVisible(!readOnly);
+	}
+
+	public HasClickHandlers getRemoveButton() {
+		return this.removeButton;
+	}
+
+	public void setQuoteRequestId(String id) {
+		this.requestId = id;
+		QuoteRequestBroker broker = (QuoteRequestBroker) DataBrokerManager.staticGetBroker(BigBangConstants.EntityIds.QUOTE_REQUEST);
+
+		if(broker.isTemp(id)) {
+			QuoteRequestTypifiedListBroker quoteRequestTypifiedListBroker = QuoteRequestTypifiedListBroker.Util.getInstance();
+			this.insuredObjectsList.setTypifiedDataBroker((TypifiedListBroker) quoteRequestTypifiedListBroker);
+			this.insuredObjectsList.setListId(BigBangConstants.EntityIds.QUOTE_REQUEST_INSURED_OBJECT + "/" + broker.getEffectiveId(id), new ResponseHandler<Void>() {
+
+				@Override
+				public void onResponse(Void response) {
+					return;
+				}
+
+				@Override
+				public void onError(Collection<ResponseError> errors) {
+					return;
+				}
+			});
+		}else{
+			this.insuredObjectsList.setTypifiedDataBroker(BigBangTypifiedListBroker.Util.getInstance());
+			this.insuredObjectsList.setListId(BigBangConstants.EntityIds.QUOTE_REQUEST_INSURED_OBJECT + "/" + id, new ResponseHandler<Void>() {
+
+				@Override
+				public void onResponse(Void response) {
+					return;
+				}
+
+				@Override
+				public void onError(Collection<ResponseError> errors) {
+					return;
+				}
+			});
+		}
+	}
+
+	protected void onInsuredObjectFilterChanged(String newValue) {
+		if(this.table != null) {
+			newValue = newValue == null ? null : newValue.isEmpty() ? null : newValue;
+			QuoteRequestBroker broker = (QuoteRequestBroker) DataBrokerManager.staticGetBroker(BigBangConstants.EntityIds.QUOTE_REQUEST);
+
+			if(broker.isTemp(requestId)) {
+				broker.saveCoverageDetailsPage(requestId, value.qrslId, newValue, getCurrentTableSection(), new ResponseHandler<TableSection>() {
+
+					@Override
+					public void onResponse(TableSection response) {
+						return;
+					}
+
+					@Override
+					public void onError(Collection<ResponseError> errors) {
+						return;
+					}
+				});
+			}
+
+			broker.openCoverageDetailsPage(this.requestId, this.value.qrslId, newValue, new ResponseHandler<TableSection>() {
+
+				@Override
+				public void onResponse(TableSection response) {
+					table.clearValues();
+					setTableData(value.columns, response);
+				}
+
+				@Override
+				public void onError(Collection<ResponseError> errors) {
+					return;
+				}
+
+			});
+		}
 	}
 
 }

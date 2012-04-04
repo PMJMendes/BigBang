@@ -9,6 +9,7 @@ import bigBang.definitions.shared.Contact;
 import bigBang.definitions.shared.Document;
 import bigBang.definitions.shared.HistoryItemStub;
 import bigBang.definitions.shared.InsurancePolicyStub;
+import bigBang.definitions.shared.QuoteRequestStub;
 import bigBang.library.client.HasEditableValue;
 import bigBang.library.client.HasSelectables;
 import bigBang.library.client.HasValueSelectables;
@@ -322,6 +323,11 @@ public class ClientSearchOperationView extends View implements ClientSearchOpera
 	@Override
 	public HasValueSelectables<BigBangProcess> getSubProcessesList() {
 		return this.childrenPanel.subProcessesList;
+	}
+	
+	@Override
+	public HasValueSelectables<QuoteRequestStub> getQuoteRequestList() {
+		return this.childrenPanel.quoteRequestsList;
 	}
 	
 	/*## CHILDREN LISTS END ##*/

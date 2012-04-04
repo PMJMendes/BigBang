@@ -52,8 +52,8 @@ public class InsuredObjectViewPresenter implements ViewPresenter {
 
 	protected Display view;
 	protected boolean bound = false;
-	private InsuredObjectDataBroker broker;
-	private InsurancePolicyBroker policyBroker;
+	protected InsuredObjectDataBroker broker;
+	protected InsurancePolicyBroker policyBroker;
 	protected String ownerId;
 
 	public InsuredObjectViewPresenter(Display display){

@@ -116,7 +116,9 @@ public class TwoKeyTableView extends View {
 		@SuppressWarnings("unchecked")
 		@Override
 		public void setValue(String value, boolean fireEvents) {
-			if(this.headerField.type == Type.DATE){
+			if(this.headerField == null) {
+				return;
+			} else if(this.headerField.type == Type.DATE){
 				((DatePickerFormField) this.field).setValue(value);
 			}else{
 				((FormField<String>)this.field).setValue(value, fireEvents);
@@ -126,7 +128,9 @@ public class TwoKeyTableView extends View {
 		@SuppressWarnings("unchecked")
 		@Override
 		public String getValue() {
-			if(this.headerField.type == Type.DATE){	
+			if(this.headerField == null) {
+				return null;
+			} else if(this.headerField.type == Type.DATE){	
 				return ((DatePickerFormField)field).getStringValue();
 			}else{
 				return ((FormField<String>)field).getValue();
@@ -137,6 +141,7 @@ public class TwoKeyTableView extends View {
 	protected TwoKeyTable table; 
 	protected Grid grid;
 	protected Map<String, Map<String, FormField<String>>> fields;
+	protected boolean readOnly = false;
 
 	public TwoKeyTableView(){
 		ScrollPanel wrapper = new ScrollPanel();
@@ -165,8 +170,10 @@ public class TwoKeyTableView extends View {
 	public Field getValue(String rowId, String columnId) {
 		Field field = table.getValue(rowId, columnId);
 		FormField<String> formField = getField(rowId, columnId);		
-		String value = formField == null ? field.value : formField.getValue();
-		field.value = value;
+		String value = formField == null ? (field != null ? field.value : null) : formField.getValue();
+		if(field != null){
+			field.value = value;
+		}
 		table.setValue(rowId, columnId, field);
 		return table.getValue(rowId, columnId);
 	}
@@ -217,7 +224,7 @@ public class TwoKeyTableView extends View {
 		this.fields.clear();
 	}
 
-	private void putField(String rowId, String columnId,
+	protected void putField(String rowId, String columnId,
 			FormField<String> formField) {
 		Map<String, FormField<String>> columnFields = this.fields.get(rowId);
 		if(columnFields == null){
@@ -227,7 +234,7 @@ public class TwoKeyTableView extends View {
 		this.fields.put(rowId, columnFields);
 	}
 
-	private FormField<String> getField(String rowId, String columnId){
+	protected FormField<String> getField(String rowId, String columnId){
 		Map<String, FormField<String>> columnFields = this.fields.get(rowId);
 		if(columnFields == null){
 			return null;
@@ -236,12 +243,12 @@ public class TwoKeyTableView extends View {
 		return result;
 	}
 
-	private FormField<String> getFormField(Field value) {
+	protected FormField<String> getFormField(Field value) {
 		return new DynFormField(value);
 	}
 
 	public void setReadOnly(boolean readOnly){
-
+		this.readOnly = readOnly;
 		for(Map<String,FormField<String>> m: this.fields.values()){
 
 			for(FormField<String> field: m.values()){

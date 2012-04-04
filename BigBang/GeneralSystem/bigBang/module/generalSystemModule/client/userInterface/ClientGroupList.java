@@ -6,8 +6,8 @@ import bigBang.definitions.shared.BigBangConstants;
 import bigBang.definitions.shared.ClientGroup;
 import bigBang.library.client.ValueSelectable;
 import bigBang.library.client.dataAccess.DataBrokerManager;
-import bigBang.library.client.event.NavigationEvent;
-import bigBang.library.client.event.NavigationEventHandler;
+import bigBang.library.client.event.NavigationRequestEvent;
+import bigBang.library.client.event.NavigationRequestEventHandler;
 import bigBang.library.client.userInterface.FilterableList;
 import bigBang.library.client.userInterface.ListEntry;
 import bigBang.library.client.userInterface.ListHeader;
@@ -102,13 +102,13 @@ public class ClientGroupList extends FilterableList<ClientGroup> implements Clie
 
 	@Override
 	protected HandlerRegistration bindEntry(ListEntry<ClientGroup> e) {
-		e.addHandler(new NavigationEventHandler() {
+		e.addHandler(new NavigationRequestEventHandler() {
 
 			@Override
-			public void onNavigationEvent(NavigationEvent event) {
+			public void onNavigationEvent(NavigationRequestEvent event) {
 
 			}
-		}, NavigationEvent.TYPE);
+		}, NavigationRequestEvent.TYPE);
 		return super.bindEntry(e);
 
 	}

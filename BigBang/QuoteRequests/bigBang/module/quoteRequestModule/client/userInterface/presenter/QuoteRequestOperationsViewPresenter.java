@@ -50,7 +50,9 @@ public class QuoteRequestOperationsViewPresenter implements ViewPresenter {
 
 				if(display.equalsIgnoreCase("search")){
 					present("QUOTE_REQUEST_SEARCH", parameters);
-				}else{
+				}else if(display.equalsIgnoreCase("viewinsuredobject")){
+					present("QUOTE_REQUEST_INSURED_OBJECT", parameters);
+				} else {
 					goToDefault();
 				}
 			}
