@@ -2,6 +2,7 @@ package bigBang.library.client.userInterface;
 
 import bigBang.definitions.shared.BigBangConstants;
 import bigBang.definitions.shared.DocInfo;
+import bigBang.definitions.shared.DocuShareHandle;
 import bigBang.definitions.shared.Document;
 import bigBang.library.client.event.ContentChangedEvent;
 import bigBang.library.client.event.ContentChangedEventHandler;
@@ -135,9 +136,9 @@ public abstract class DocumentForm extends FormView<Document>{
 	private Button docuShareFileButton;
 	private HorizontalPanel charRemainP;
 	private ClickHandler handler;
-	private FilenameTextBoxFormField filename;
+	protected FilenameTextBoxFormField filename;
 	private Button removeFile;
-	private FileUploadPopup uploadDialog;
+	protected FileUploadPopup uploadDialog;
 	private Image mimeImg;
 	private Label charRemain;
 	private Label charRemainLabel;
@@ -149,6 +150,11 @@ public abstract class DocumentForm extends FormView<Document>{
 	List<DocInfo> details;
 	DocInfo[] docInfo;
 	//private DeleteRequestEventHandler deleteHandler;
+	private boolean initialized = false;
+	protected String fileStorageId;
+	private boolean hasFile;
+	protected String mimeType;
+	protected DocuShareHandle docushareHandle;
 
 
 	public DocumentForm(){
@@ -269,19 +275,22 @@ public abstract class DocumentForm extends FormView<Document>{
 		addSection("Detalhes");
 		currentSection.getElement().getStyle().setPadding(0, Unit.PX);
 		details = new List<DocInfo>();
+		details.setSelectableEntries(false);
 		details.setSize("100%", "300px");
 		add = new Button("Adicionar Detalhe");
 		add.addClickHandler(handler);
 		addWidget(details);
-  
+
 		//ADDHANDLERS
 		note.addHandler(new ContentChangedEventHandler() {
 
 			@Override
 			public void onContentChanged() {
-				if(note.getValue().length() > 0){
-					fileButton.setEnabled(false);
-					docuShareFileButton.setEnabled(false);
+				if(note.getValue() != null){
+					if(note.getValue().length() > 0){
+						fileButton.setEnabled(false);
+						docuShareFileButton.setEnabled(false);
+					}
 				}else{
 					fileButton.setEnabled(true);
 					docuShareFileButton.setEnabled(true);
@@ -289,6 +298,8 @@ public abstract class DocumentForm extends FormView<Document>{
 			}
 		}, ContentChangedEvent.TYPE);
 
+
+		initialized = true;
 	}
 
 
@@ -322,6 +333,9 @@ public abstract class DocumentForm extends FormView<Document>{
 
 			@Override
 			public void onValueChange(ValueChangeEvent<DocuShareItem> event) {
+				docushareHandle = new DocuShareHandle();
+				docushareHandle.handle = event.getValue().handle;
+				docushareHandle.locationHandle = uploadDialog.getDirectoryHandle();
 				onDocushareItemChanged(event.getValue());
 			}
 		};
@@ -358,16 +372,18 @@ public abstract class DocumentForm extends FormView<Document>{
 		newDoc.name = name.getValue();
 		newDoc.docTypeId = docType.getValue();
 		newDoc.fileName = filename.getValue();
-		//TODO FILESTORAGEID;
-		//TODO HASFILE;
-		//TODO MIMETYPE;
-		newDoc.parameters = new DocInfo[details.size()];
-		int curr = 0;
+		newDoc.fileStorageId = fileStorageId;
+		newDoc.hasFile = hasFile;
+		newDoc.mimeType = mimeType;
+		newDoc.parameters = new DocInfo[details.size()-1];
+		int curr = details.size()-1;
 		for(ListEntry<DocInfo> temp : details){
-			newDoc.parameters[curr] = temp.getValue();
-			curr++;
+			if(curr == 0)
+				break;
+			newDoc.parameters[details.size()-1-curr] = temp.getValue();
+			curr--;
 		}
-		//TODO DOCUSHAREHANDLE
+		newDoc.source = docushareHandle;
 		newDoc.text = note.getValue();
 
 		return newDoc;
@@ -387,17 +403,40 @@ public abstract class DocumentForm extends FormView<Document>{
 		}
 		details.add(new DocumentDetailEntry(null));
 
+		fileStorageId = info.fileStorageId;
+		hasFile = info.hasFile;
+		mimeType = info.mimeType;
+		docushareHandle = info.source;
 
 	}
 
-	private void isFile(boolean b) {
+	public void isFile(boolean b) {
 
+		hasFile = b;
 		fileButton.setVisible(!b);
 		docuShareFileButton.setVisible(!b);
 		removeFile.setVisible(b);
 		filename.setVisible(b);
 		note.setReadOnly(b);
-		mimeImg.setVisible(b);
+		mimeImageFileName.setVisible(b);
+		
+		if(b){
+			notePanel.setVisible(false);
+			filename.setWidth("300px");
+			filename.setFieldWidth("300px");
+		}else{
+			if(note.getValue() != null){
+				fileButton.setEnabled(false);
+				docuShareFileButton.setEnabled(false);
+			}
+			else{
+				fileButton.setEnabled(true);
+				docuShareFileButton.setEnabled(true);
+			}
+			notePanel.setVisible(true);
+			filename.setWidth("100px");
+			filename.setFieldWidth("100px");
+		}
 
 	}
 
@@ -448,14 +487,46 @@ public abstract class DocumentForm extends FormView<Document>{
 		else
 			mimeImage = resources.fileIcon();
 
-		//		mimeImg.getElement().getStyle().setMarginLeft(5, Unit.PX);
 
 		return mimeImage;
 	}
 
+
+	@Override 
+	public void clearInfo() {
+		details.clear();
+		super.clearInfo();
+	}
+
+	@Override
+	public void setReadOnly(boolean readOnly) {
+
+		if(initialized){
+			note.setReadOnly(readOnly);
+			removeFile.setEnabled(!readOnly);
+			docuShareFileButton.setEnabled(!readOnly);
+			fileButton.setEnabled(!readOnly);
+			for(int i = 0; i < details.size()-1; i++){
+				((DocumentDetailEntry) details.get(i)).info.setReadOnly(readOnly);
+				((DocumentDetailEntry) details.get(i)).infoValue.setReadOnly(readOnly);
+				((DocumentDetailEntry) details.get(i)).remove.setEnabled(!readOnly);
+			}
+			details.get(details.size()-1).setVisible(!readOnly);
+		}
+		super.setReadOnly(readOnly);
+	}
+
 	protected abstract void onDownloadFile();
 
-	protected abstract void onPressedRemoveFile();
+	protected void onPressedRemoveFile(){
+		
+		isFile(false);
+		fileStorageId = null;
+		filename.setValue("");
+		mimeType = "";
+		docushareHandle = null;
+		
+	}
 
 	protected abstract void onSubmitComplete(String results);
 
@@ -463,8 +534,38 @@ public abstract class DocumentForm extends FormView<Document>{
 
 	protected void onRemoveListEntry(DocumentDetailEntry documentDetailEntry) {
 
-
 		details.remove(documentDetailEntry);
+	}
+
+
+	public String getFileStorageId() {
+		return fileStorageId;
+	}
+
+
+	public void setFilename(String string) {
+		filename.setValue(string);
+	}
+
+
+	public void setFileStorageId(String string) {
+		fileStorageId = string;
+	}
+
+
+	public FileUploadPopup getUploadPopup() {
+		return uploadDialog;
+	}
+
+
+	public void setMimeType(String mimeType2) {
+		mimeType = mimeType2;
+		
+	}
+
+
+	public DocuShareHandle getDocuShareHandle() {
+		return docushareHandle;
 	}
 
 }

@@ -1,7 +1,9 @@
 package bigBang.library.client.userInterface.view;
 
+import bigBang.definitions.shared.DocuShareHandle;
 import bigBang.definitions.shared.Document;
 import bigBang.library.client.HasEditableValue;
+import bigBang.library.client.event.ActionInvokedEvent;
 import bigBang.library.client.event.ActionInvokedEventHandler;
 import bigBang.library.client.userInterface.DocumentForm;
 import bigBang.library.client.userInterface.DocumentOperationsToolBar;
@@ -17,73 +19,75 @@ public class DocumentView extends View implements DocumentViewPresenter.Display{
 	private DocumentForm form;
 	ActionInvokedEventHandler<Action> actionHandler;
 	private DocumentOperationsToolBar toolbar;
-	
+	protected String fileInfo;
+	protected DocuShareItem docuShareItem;
+
 	public DocumentView(){
 
 		wrapper = new VerticalPanel();
 		initWidget(wrapper);
 		wrapper.setSize("100%", "100%");
 		toolbar = new DocumentOperationsToolBar() {
-			
+
 			@Override
 			public void onSaveRequest() {
-				// TODO Auto-generated method stub
-				
+				actionHandler.onActionInvoked(new ActionInvokedEvent<DocumentViewPresenter.Action>(Action.SAVE));
 			}
-			
+
 			@Override
 			public void onEditRequest() {
-				// TODO Auto-generated method stub
-				
+				form.setReadOnly(false);
 			}
-			
+
 			@Override
 			public void onDeleteRequest() {
-				// TODO Auto-generated method stub
-				
+				actionHandler.onActionInvoked(new ActionInvokedEvent<DocumentViewPresenter.Action>(Action.DELETE));
 			}
-			
+
 			@Override
 			public void onCancelRequest() {
-				// TODO Auto-generated method stub
-				
+				actionHandler.onActionInvoked(new ActionInvokedEvent<Action>(Action.CANCEL));
 			}
 		};
-		
+
 		wrapper.add(toolbar);
-		
+
 		form = new DocumentForm() {
-			
+
 			@Override
 			protected void onSubmitComplete(String results) {
-				// TODO Auto-generated method stub
-				
+				fileInfo = results;
+				uploadDialog.hidePopup();
+				actionHandler.onActionInvoked(new ActionInvokedEvent<DocumentViewPresenter.Action>(Action.NEW_FILE_FROM_DISK));
 			}
-			
-			@Override
-			protected void onPressedRemoveFile() {
-				// TODO Auto-generated method stub
-				
-			}
-			
+
 			@Override
 			protected void onDownloadFile() {
-				// TODO Auto-generated method stub
-				
+				actionHandler.onActionInvoked(new ActionInvokedEvent<DocumentViewPresenter.Action>(Action.DOWNLOAD_FILE));
 			}
-			
+
 			@Override
 			protected void onDocushareItemChanged(DocuShareItem value) {
-				// TODO Auto-generated method stub
-				
+				docuShareItem = value;
+				uploadDialog.hidePopup();
+				actionHandler.onActionInvoked(new ActionInvokedEvent<DocumentViewPresenter.Action>(Action.NEW_FILE_FROM_DOCUSHARE));
 			}
 		};
-		
+
 		form.getNonScrollableContent().setSize("400px", "700px");
 		wrapper.add(form.getNonScrollableContent());
 		wrapper.setCellHeight(form, "100%");
 	}
 
+	@Override
+	public String getFileInfo(){
+		return fileInfo;
+	}
+
+	@Override
+	public DocuShareHandle getDocuShareHandle(){
+		return form.getDocuShareHandle();
+	}
 	@Override
 	protected void initializeView() {
 		return;
@@ -94,9 +98,9 @@ public class DocumentView extends View implements DocumentViewPresenter.Display{
 	@Override
 	public void registerActionHandler(ActionInvokedEventHandler<Action> handler) {
 		this.actionHandler = handler;
-		
+
 	}
-	
+
 	@Override
 	protected void onDetach() {
 
@@ -106,9 +110,8 @@ public class DocumentView extends View implements DocumentViewPresenter.Display{
 
 	@Override
 	public void clear() {
-		
+
 		form.clearInfo();
-		
 	}
 
 	@Override
@@ -123,8 +126,49 @@ public class DocumentView extends View implements DocumentViewPresenter.Display{
 
 	@Override
 	public void lockToolbar(boolean b) {
-		// TODO Auto-generated method stub
-		
+		this.toolbar.setLocked(b);
+	}
+
+	@Override
+	public String getCurrentFileStorageId() {
+		return form.getFileStorageId();
+	}
+
+	@Override
+	public void hasFile(boolean b) {
+		form.isFile(b);
+
+	}
+
+	@Override
+	public void setFilename(String string) {
+		form.setFilename(string);
+	}
+
+	@Override
+	public void setFileStorageId(String string) {
+		form.setFileStorageId(string);
+
+	}
+
+	@Override
+	public String getLocationHandle() {
+		return form.getUploadPopup().getDirectoryHandle();
+	}
+
+	@Override
+	public void setMimeType(String mimeType) {
+		form.setMimeType(mimeType);
+	}
+	
+	@Override
+	public void setToolBarSaveMode(boolean b){
+		toolbar.setSaveModeEnabled(b);
+	}
+
+	@Override
+	public DocuShareItem getDocuShareItem() {
+		return docuShareItem;
 	}
 
 

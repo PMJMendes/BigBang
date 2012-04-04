@@ -37,5 +37,10 @@ public abstract class DocumentOperationsToolBar extends BigBangOperationsToolBar
 	public abstract void onCancelRequest();
 	
 	public abstract void onDeleteRequest();
+
+	public void setLocked(boolean b) {
+		adminMenuItem.setEnabled(!b);
+		editCancelMenuItem.setEnabled(!b);
+	}
 	
 }
