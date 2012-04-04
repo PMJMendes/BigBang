@@ -22,8 +22,10 @@ public interface ReceiptServiceAsync
 	void getRelevantDebitNotes(String receiptId, AsyncCallback<DebitNote[]> callback);
 	void associateWithDebitNote(String receiptId, String debitNoteId, AsyncCallback<Receipt> callback);
 	void sendReceipt(String receiptId, AsyncCallback<Receipt> callback);
+	void insurerAccouting(String receiptId, AsyncCallback<Receipt> callback);
 	void deleteReceipt(String receiptId, AsyncCallback<Void> callback);
 	void serialCreateReceipt(Receipt receipt, DocuShareHandle source, AsyncCallback<Receipt> callback);
 	void massCreatePaymentNotice(String[] receiptIds, AsyncCallback<Void> callback);
 	void massSendReceipt(String[] receiptIds, AsyncCallback<Void> callback);
+	void massInsurerAccounting(String[] receiptIds, AsyncCallback<Void> callback);
 }

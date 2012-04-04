@@ -37,17 +37,19 @@ public interface ReceiptService
 	public Receipt validateReceipt(String receiptId) throws SessionExpiredException, BigBangException;
 	public Receipt setForReturn(Receipt.ReturnMessage message) throws SessionExpiredException, BigBangException;
 
-	public Receipt createPaymentNotice(String receiptId)  throws SessionExpiredException, BigBangException;
+	public Receipt createPaymentNotice(String receiptId) throws SessionExpiredException, BigBangException;
 
-	public Receipt markPayed(Receipt.PaymentInfo info)  throws SessionExpiredException, BigBangException;
+	public Receipt markPayed(Receipt.PaymentInfo info) throws SessionExpiredException, BigBangException;
 	public DebitNote[] getRelevantDebitNotes(String receiptId) throws SessionExpiredException, BigBangException;
 	public Receipt associateWithDebitNote(String receiptId, String debitNoteId) throws SessionExpiredException, BigBangException;
 
-	public Receipt sendReceipt(String receiptId)  throws SessionExpiredException, BigBangException;
+	public Receipt sendReceipt(String receiptId) throws SessionExpiredException, BigBangException;
+	public Receipt insurerAccouting(String receiptId) throws SessionExpiredException, BigBangException;
 
 	public void deleteReceipt(String receiptId) throws SessionExpiredException, BigBangException;
 
 	public Receipt serialCreateReceipt(Receipt receipt, DocuShareHandle source) throws SessionExpiredException, BigBangException;
 	public void massCreatePaymentNotice(String[] receiptIds) throws SessionExpiredException, BigBangException;
 	public void massSendReceipt(String[] receiptIds) throws SessionExpiredException, BigBangException;
+	public void massInsurerAccounting(String[] receiptIds) throws SessionExpiredException, BigBangException;
 }
