@@ -52,6 +52,7 @@ import com.premiumminds.BigBang.Jewel.Operations.Receipt.CreatePaymentNotice;
 import com.premiumminds.BigBang.Jewel.Operations.Receipt.DeleteReceipt;
 import com.premiumminds.BigBang.Jewel.Operations.Receipt.InsurerAccounting;
 import com.premiumminds.BigBang.Jewel.Operations.Receipt.ManageData;
+import com.premiumminds.BigBang.Jewel.Operations.Receipt.MediatorAccounting;
 import com.premiumminds.BigBang.Jewel.Operations.Receipt.Payment;
 import com.premiumminds.BigBang.Jewel.Operations.Receipt.ReceiveImage;
 import com.premiumminds.BigBang.Jewel.Operations.Receipt.SendReceipt;
@@ -819,6 +820,36 @@ public class ReceiptServiceImpl
 		return sGetReceipt(lobjReceipt.getKey());
 	}
 
+	public Receipt mediatorAccounting(String receiptId)
+		throws SessionExpiredException, BigBangException
+	{
+		com.premiumminds.BigBang.Jewel.Objects.Receipt lobjReceipt;
+		MediatorAccounting lopMA;
+
+		try
+		{
+			lobjReceipt = com.premiumminds.BigBang.Jewel.Objects.Receipt.GetInstance(Engine.getCurrentNameSpace(),
+					UUID.fromString(receiptId));
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangException(e.getMessage(), e);
+		}
+
+		lopMA = new MediatorAccounting(lobjReceipt.GetProcessID());
+
+		try
+		{
+			lopMA.Execute();
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangException(e.getMessage(), e);
+		}
+
+		return sGetReceipt(lobjReceipt.getKey());
+	}
+
 	public void deleteReceipt(String receiptId)
 		throws SessionExpiredException, BigBangException
 	{
@@ -1112,10 +1143,10 @@ public class ReceiptServiceImpl
 		}
 
 		lidSet = null;
-		for(UUID lidC : larrReceipts.keySet())
+		for(UUID lidI : larrReceipts.keySet())
 		{
 			lidMap = null;
-			larrByInsurer = larrReceipts.get(lidC);
+			larrByInsurer = larrReceipts.get(lidI);
 			larrFinal = larrByInsurer.toArray(new UUID[larrByInsurer.size()]);
 			for ( i = 0; i < larrFinal.length; i++ )
 			{
@@ -1131,6 +1162,88 @@ public class ReceiptServiceImpl
 
 					lidMap = lopIA.midMap;
 					lidSet = lopIA.midSet;
+				}
+				catch (Throwable e)
+				{
+					throw new BigBangException(e.getMessage(), e);
+				}
+			}
+		}
+	}
+
+	public void massMediatorAccounting(String[] receiptIds)
+		throws SessionExpiredException, BigBangException
+	{
+		Hashtable<UUID, ArrayList<UUID>> larrReceipts;
+		com.premiumminds.BigBang.Jewel.Objects.Receipt lobjReceipt;
+		IProcess lobjProcess;
+		UUID lidMediator;
+		ArrayList<UUID> larrByMediator;
+		UUID[] larrFinal;
+		UUID lidSet;
+		UUID lidMap;
+		MediatorAccounting lopMA;
+		int i;
+
+		larrReceipts = new Hashtable<UUID, ArrayList<UUID>>();
+		for ( i = 0; i < receiptIds.length; i++ )
+		{
+			try
+			{
+				lobjReceipt = com.premiumminds.BigBang.Jewel.Objects.Receipt.GetInstance(Engine.getCurrentNameSpace(),
+						UUID.fromString(receiptIds[i]));
+				lobjProcess = PNProcess.GetInstance(Engine.getCurrentNameSpace(), lobjReceipt.GetProcessID());
+				lidMediator = (UUID)lobjReceipt.getAt(12);
+				if ( lidMediator == null )
+				{
+					if ( Constants.ProcID_Policy.equals(lobjProcess.GetParent().GetScriptID()) )
+					{
+						lidMediator = (UUID)lobjProcess.GetParent().GetData().getAt(11);
+						if ( lidMediator == null )
+							lidMediator = (UUID)lobjProcess.GetParent().GetParent().GetData().getAt(8);
+					}
+					else
+					{
+						lidMediator = (UUID)lobjProcess.GetParent().GetParent().GetData().getAt(11);
+						if ( lidMediator == null )
+							lidMediator = (UUID)lobjProcess.GetParent().GetParent().GetParent().GetData().getAt(8);
+					}
+				}
+
+			}
+			catch (Throwable e)
+			{
+				throw new BigBangException(e.getMessage(), e);
+			}
+			larrByMediator = larrReceipts.get(lidMediator);
+			if ( larrByMediator == null )
+			{
+				larrByMediator = new ArrayList<UUID>();
+				larrReceipts.put(lidMediator, larrByMediator);
+			}
+			larrByMediator.add(lobjReceipt.getKey());
+		}
+
+		lidSet = null;
+		for(UUID lidM : larrReceipts.keySet())
+		{
+			lidMap = null;
+			larrByMediator = larrReceipts.get(lidM);
+			larrFinal = larrByMediator.toArray(new UUID[larrByMediator.size()]);
+			for ( i = 0; i < larrFinal.length; i++ )
+			{
+				try
+				{
+					lobjReceipt = com.premiumminds.BigBang.Jewel.Objects.Receipt.GetInstance(Engine.getCurrentNameSpace(), larrFinal[i]);
+
+					lopMA = new MediatorAccounting(lobjReceipt.GetProcessID());
+					lopMA.midSet = lidSet;
+					lopMA.midMap = lidMap;
+
+					lopMA.Execute();
+
+					lidMap = lopMA.midMap;
+					lidSet = lopMA.midSet;
 				}
 				catch (Throwable e)
 				{

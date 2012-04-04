@@ -10,111 +10,114 @@ public class Constants
     public static final UUID NSID_AMartins = UUID.fromString("90CB8FFB-1555-49D8-9594-9E15008EDC72");
 
 	// Objects
-    public static final UUID ObjID_AppParams               = UUID.fromString("5485B660-A102-441A-912C-7B960584399F");
-    public static final UUID ObjID_Template                = UUID.fromString("F13322EE-E13E-4562-B723-9FF100F5E6BE");
-	public static final UUID ObjID_PrintSet                = UUID.fromString("FEBF3C68-0891-4B4D-AD90-A021010A219F");
-	public static final UUID ObjID_PrintSetDocument        = UUID.fromString("526FDF76-E1D2-4FA8-B048-A021010ADF38");
-	public static final UUID ObjID_PrintSetDetail          = UUID.fromString("6780283B-97E8-4ED3-B4BF-A021010B98C2");
+    public static final UUID ObjID_AppParams                = UUID.fromString("5485B660-A102-441A-912C-7B960584399F");
+    public static final UUID ObjID_Template                 = UUID.fromString("F13322EE-E13E-4562-B723-9FF100F5E6BE");
+	public static final UUID ObjID_PrintSet                 = UUID.fromString("FEBF3C68-0891-4B4D-AD90-A021010A219F");
+	public static final UUID ObjID_PrintSetDocument         = UUID.fromString("526FDF76-E1D2-4FA8-B048-A021010ADF38");
+	public static final UUID ObjID_PrintSetDetail           = UUID.fromString("6780283B-97E8-4ED3-B4BF-A021010B98C2");
 
 	// Agenda Objects
-	public static final UUID ObjID_AgendaItem              = UUID.fromString("F850E623-E686-4575-A2D8-9F640128FCD7");
-	public static final UUID ObjID_AgendaProcess           = UUID.fromString("3620AAEE-A950-421C-A5D3-9F640135D7D8");
-	public static final UUID ObjID_AgendaOp                = UUID.fromString("3C01C389-71FE-43A8-AEE7-9F640135635D");
+	public static final UUID ObjID_AgendaItem               = UUID.fromString("F850E623-E686-4575-A2D8-9F640128FCD7");
+	public static final UUID ObjID_AgendaProcess            = UUID.fromString("3620AAEE-A950-421C-A5D3-9F640135D7D8");
+	public static final UUID ObjID_AgendaOp                 = UUID.fromString("3C01C389-71FE-43A8-AEE7-9F640135635D");
 
 	// General Objects
-	public static final UUID ObjID_GenSys                  = UUID.fromString("628F5DA6-434F-46A8-9C88-9EB1008A689A");
+	public static final UUID ObjID_GenSys                   = UUID.fromString("628F5DA6-434F-46A8-9C88-9EB1008A689A");
 
-	public static final UUID ObjID_CostCenter              = UUID.fromString("4AF891C6-707B-43AE-98C3-9EB100C0419E");
-	public static final UUID ObjID_Decorations             = UUID.fromString("87C6A1DB-2381-47E4-ADE5-9EB800836FF7");
-	public static final UUID ObjID_Company                 = UUID.fromString("7B203DCA-FFAC-46B2-B849-9EBC009DB127");
-	public static final UUID ObjID_Mediator                = UUID.fromString("8A33B9DD-001A-401F-AA7E-9EBB00E9D24F");
-	public static final UUID ObjID_Contact                 = UUID.fromString("2085F9FD-7FCE-46C0-99FD-9EC400FFBA5C");
-	public static final UUID ObjID_ContactInfo             = UUID.fromString("069434F6-8EE7-4DFE-96C9-9EC401014608");
-	public static final UUID ObjID_Document                = UUID.fromString("794F44DB-191A-4E17-9217-9ECC012A8AC2");
-	public static final UUID ObjID_DocInfo                 = UUID.fromString("75620A04-D0C7-43D4-8425-9ECC012C0E91");
-	public static final UUID ObjID_LineCategory            = UUID.fromString("3FF829D9-5C33-4C91-A42B-9EC900F013CB");
-	public static final UUID ObjID_Line                    = UUID.fromString("A9A1CE62-06A1-4761-A1FC-9EC900F234B0");
-	public static final UUID ObjID_SubLine                 = UUID.fromString("FBCD74E1-A280-4443-9BB4-9EC900F4A4B9");
-	public static final UUID ObjID_Coverage                = UUID.fromString("007022A0-6DFA-498B-9DC4-9EC900F5219F");
-	public static final UUID ObjID_Tax                     = UUID.fromString("43644146-07C4-4E63-9E87-9EC900F6EB73");
-	public static final UUID ObjID_ClientGroup             = UUID.fromString("DC89D454-CCCC-441E-BCE3-9EE600AFCCCD");
+	public static final UUID ObjID_CostCenter               = UUID.fromString("4AF891C6-707B-43AE-98C3-9EB100C0419E");
+	public static final UUID ObjID_Decorations              = UUID.fromString("87C6A1DB-2381-47E4-ADE5-9EB800836FF7");
+	public static final UUID ObjID_Company                  = UUID.fromString("7B203DCA-FFAC-46B2-B849-9EBC009DB127");
+	public static final UUID ObjID_Mediator                 = UUID.fromString("8A33B9DD-001A-401F-AA7E-9EBB00E9D24F");
+	public static final UUID ObjID_Contact                  = UUID.fromString("2085F9FD-7FCE-46C0-99FD-9EC400FFBA5C");
+	public static final UUID ObjID_ContactInfo              = UUID.fromString("069434F6-8EE7-4DFE-96C9-9EC401014608");
+	public static final UUID ObjID_Document                 = UUID.fromString("794F44DB-191A-4E17-9217-9ECC012A8AC2");
+	public static final UUID ObjID_DocInfo                  = UUID.fromString("75620A04-D0C7-43D4-8425-9ECC012C0E91");
+	public static final UUID ObjID_LineCategory             = UUID.fromString("3FF829D9-5C33-4C91-A42B-9EC900F013CB");
+	public static final UUID ObjID_Line                     = UUID.fromString("A9A1CE62-06A1-4761-A1FC-9EC900F234B0");
+	public static final UUID ObjID_SubLine                  = UUID.fromString("FBCD74E1-A280-4443-9BB4-9EC900F4A4B9");
+	public static final UUID ObjID_Coverage                 = UUID.fromString("007022A0-6DFA-498B-9DC4-9EC900F5219F");
+	public static final UUID ObjID_Tax                      = UUID.fromString("43644146-07C4-4E63-9E87-9EC900F6EB73");
+	public static final UUID ObjID_ClientGroup              = UUID.fromString("DC89D454-CCCC-441E-BCE3-9EE600AFCCCD");
 
 	// Client Objects
-	public static final UUID ObjID_Client                  = UUID.fromString("D535A99E-149F-44DC-A28B-9EE600B240F5");
+	public static final UUID ObjID_Client                   = UUID.fromString("D535A99E-149F-44DC-A28B-9EE600B240F5");
 
 	// Quote Request Objects
-	public static final UUID ObjID_QuoteRequest            = UUID.fromString("6ABD2A4A-ECBD-46A8-A4E6-A00500CDAE4A");
-	public static final UUID ObjID_QuoteRequestSubLine     = UUID.fromString("DC56BAB3-CEB5-4F5C-A23E-A00500FD2AB2");
-	public static final UUID ObjID_QuoteRequestCoverage    = UUID.fromString("5BE87B3A-787B-4C02-BACF-A00500FF499B");
-	public static final UUID ObjID_QuoteRequestObject      = UUID.fromString("B594AB7F-573F-4401-A369-A00500F9D2D8");
-	public static final UUID ObjID_QuoteRequestValue       = UUID.fromString("2E9A755C-55C9-4A75-9BE1-A005010066F9");
+	public static final UUID ObjID_QuoteRequest             = UUID.fromString("6ABD2A4A-ECBD-46A8-A4E6-A00500CDAE4A");
+	public static final UUID ObjID_QuoteRequestSubLine      = UUID.fromString("DC56BAB3-CEB5-4F5C-A23E-A00500FD2AB2");
+	public static final UUID ObjID_QuoteRequestCoverage     = UUID.fromString("5BE87B3A-787B-4C02-BACF-A00500FF499B");
+	public static final UUID ObjID_QuoteRequestObject       = UUID.fromString("B594AB7F-573F-4401-A369-A00500F9D2D8");
+	public static final UUID ObjID_QuoteRequestValue        = UUID.fromString("2E9A755C-55C9-4A75-9BE1-A005010066F9");
 
 	// Negotiation Objects
-	public static final UUID ObjID_Negotiation             = UUID.fromString("0D50EB51-725D-4741-8618-9FFD00E918D3");
+	public static final UUID ObjID_Negotiation              = UUID.fromString("0D50EB51-725D-4741-8618-9FFD00E918D3");
 
 	// Policy Objects
-	public static final UUID ObjID_Policy                  = UUID.fromString("D0C5AE6B-D340-4171-B7A3-9F81011F5D42");
-	public static final UUID ObjID_PolicyCoInsurer         = UUID.fromString("A74A6A17-ACF6-463C-983B-9FEB00FA4957");
-	public static final UUID ObjID_PolicyCoverage          = UUID.fromString("AE5F9DD7-2863-4C5B-AE0B-9F9C00229D02");
-	public static final UUID ObjID_PolicyObject            = UUID.fromString("3A3316D2-9D7C-4FD1-8486-9F9C0012E119");
-	public static final UUID ObjID_PolicyExercise          = UUID.fromString("DEE32F69-B33D-4427-AD5B-9F9C001607F2");
-	public static final UUID ObjID_PolicyValue             = UUID.fromString("F1D23471-0AA8-40A3-A691-9F9C001843CC");
+	public static final UUID ObjID_Policy                   = UUID.fromString("D0C5AE6B-D340-4171-B7A3-9F81011F5D42");
+	public static final UUID ObjID_PolicyCoInsurer          = UUID.fromString("A74A6A17-ACF6-463C-983B-9FEB00FA4957");
+	public static final UUID ObjID_PolicyCoverage           = UUID.fromString("AE5F9DD7-2863-4C5B-AE0B-9F9C00229D02");
+	public static final UUID ObjID_PolicyObject             = UUID.fromString("3A3316D2-9D7C-4FD1-8486-9F9C0012E119");
+	public static final UUID ObjID_PolicyExercise           = UUID.fromString("DEE32F69-B33D-4427-AD5B-9F9C001607F2");
+	public static final UUID ObjID_PolicyValue              = UUID.fromString("F1D23471-0AA8-40A3-A691-9F9C001843CC");
 
 	// Sub-Policy Objects
-	public static final UUID ObjID_SubPolicy               = UUID.fromString("C7BC8D2F-BD61-43D5-9347-9FF300EE9986");
-	public static final UUID ObjID_SubPolicyCoverage       = UUID.fromString("53EF35E5-AACD-4916-A212-9FF800CEAA89");
-	public static final UUID ObjID_SubPolicyObject         = UUID.fromString("C3480E17-821B-4DCB-BF42-9FF800D1C470");
-	public static final UUID ObjID_SubPolicyValue          = UUID.fromString("523A1872-89AE-491F-BBF4-9FF800D69B6A");
+	public static final UUID ObjID_SubPolicy                = UUID.fromString("C7BC8D2F-BD61-43D5-9347-9FF300EE9986");
+	public static final UUID ObjID_SubPolicyCoverage        = UUID.fromString("53EF35E5-AACD-4916-A212-9FF800CEAA89");
+	public static final UUID ObjID_SubPolicyObject          = UUID.fromString("C3480E17-821B-4DCB-BF42-9FF800D1C470");
+	public static final UUID ObjID_SubPolicyValue           = UUID.fromString("523A1872-89AE-491F-BBF4-9FF800D69B6A");
 
 	// Receipt Objects
-	public static final UUID ObjID_Receipt                 = UUID.fromString("B24E4BF7-382C-40EE-8120-9F8A00DABB81");
-	public static final UUID ObjID_DebitNote               = UUID.fromString("812774ED-4016-4024-921C-9FF000EAC900");
-	public static final UUID ObjID_InsurerAccountingSet    = UUID.fromString("93E5E190-9A9E-4A3D-BF43-A02900CA48F7");
-	public static final UUID ObjID_InsurerAccountingMap    = UUID.fromString("47166D34-899D-4B6B-92FD-A02900D53271");
-	public static final UUID ObjID_InsurerAccountingDetail = UUID.fromString("D1A14730-C986-4F4A-9FE3-A02900D68135");
+	public static final UUID ObjID_Receipt                  = UUID.fromString("B24E4BF7-382C-40EE-8120-9F8A00DABB81");
+	public static final UUID ObjID_DebitNote                = UUID.fromString("812774ED-4016-4024-921C-9FF000EAC900");
+	public static final UUID ObjID_InsurerAccountingSet     = UUID.fromString("93E5E190-9A9E-4A3D-BF43-A02900CA48F7");
+	public static final UUID ObjID_InsurerAccountingMap     = UUID.fromString("47166D34-899D-4B6B-92FD-A02900D53271");
+	public static final UUID ObjID_InsurerAccountingDetail  = UUID.fromString("D1A14730-C986-4F4A-9FE3-A02900D68135");
+	public static final UUID ObjID_MediatorAccountingSet    = UUID.fromString("539A2C1F-59DD-4B60-81F8-A02900F8E72F");
+	public static final UUID ObjID_MediatorAccountingMap    = UUID.fromString("FFA5422A-E194-411B-AAA1-A02900FA19DC");
+	public static final UUID ObjID_MediatorAccountingDetail = UUID.fromString("0FBA21E1-741C-4DCE-8482-A02900FDBA69");
 
 	// Manager Transfer Objects
-	public static final UUID ObjID_MgrXFer                 = UUID.fromString("66EC1066-AD5A-430C-9A70-9F65013F5453");
-	public static final UUID ObjID_MgrXFerProc             = UUID.fromString("324A0D54-4ED9-4925-97D2-9F6D0135A37E");
+	public static final UUID ObjID_MgrXFer                  = UUID.fromString("66EC1066-AD5A-430C-9A70-9F65013F5453");
+	public static final UUID ObjID_MgrXFerProc              = UUID.fromString("324A0D54-4ED9-4925-97D2-9F6D0135A37E");
 
 	// Info Request Objects
-	public static final UUID ObjID_InfoRequest             = UUID.fromString("1D10FF86-70B5-4362-A8F3-9F7C00BC6DE4");
-	public static final UUID ObjID_RequestAddress          = UUID.fromString("C865EAD8-526A-4447-9CBB-9FE80109E9C5");
+	public static final UUID ObjID_InfoRequest              = UUID.fromString("1D10FF86-70B5-4362-A8F3-9F7C00BC6DE4");
+	public static final UUID ObjID_RequestAddress           = UUID.fromString("C865EAD8-526A-4447-9CBB-9FE80109E9C5");
 
 	// Extern Request Objects
-	public static final UUID ObjID_ExternRequest           = UUID.fromString("BD9E1BEA-D02B-40FE-BB3E-9FEA00CA7ECD");
+	public static final UUID ObjID_ExternRequest            = UUID.fromString("BD9E1BEA-D02B-40FE-BB3E-9FEA00CA7ECD");
 
 	// Typified Lists
-	public static final UUID ObjID_ContactType             = UUID.fromString("228F6A73-1335-4C99-8DD0-9EEE012964BA");
-	public static final UUID ObjID_CInfoType               = UUID.fromString("03C5B78E-D71C-49F2-A079-9EC40111DCC0");
-	public static final UUID ObjID_DocType                 = UUID.fromString("B4DBEE18-FA81-471D-A9F5-9ECC012A028D");
-	public static final UUID ObjID_CommProfile             = UUID.fromString("5F40713C-1FE7-4715-AC24-9EBB00E53392");
-	public static final UUID ObjID_ClientType              = UUID.fromString("40A63D68-E2A6-40AB-B3A4-9EE600B91EBE");
-	public static final UUID ObjID_ClientSubtype           = UUID.fromString("1907DB1B-6F75-4715-A210-9EE600B9D072");
-	public static final UUID ObjID_OpProfile               = UUID.fromString("11921769-CDF3-447A-8E6B-9ECA01761BAA");
-	public static final UUID ObjID_Sex                     = UUID.fromString("2549E951-2747-4300-982E-9ECA01756B91");
-	public static final UUID ObjID_MaritalStatus           = UUID.fromString("B560424E-1DF9-46CA-8B67-9ECA01774B00");
-	public static final UUID ObjID_Profession              = UUID.fromString("088C8CCE-A1D1-4976-808F-9ECA0177AB56");
-	public static final UUID ObjID_CAE                     = UUID.fromString("14B89884-475A-4357-BB7D-9EE600C3CE6E");
-	public static final UUID ObjID_Size                    = UUID.fromString("5E489662-2AAF-4348-95E0-9EE600C4A71F");
-	public static final UUID ObjID_SalesVolume             = UUID.fromString("5C4E267C-B306-482F-8636-9EE600C586B6");
-	public static final UUID ObjID_Durations               = UUID.fromString("A522A5B3-245B-4F8B-97F1-9F810120FAB6");
-	public static final UUID ObjID_Fractioning             = UUID.fromString("28B2D442-2CF3-4E14-8430-9F8101229DA8");
-	public static final UUID ObjID_ReceiptType             = UUID.fromString("AFE7CC47-B44F-442D-8CF4-9F8A00DB2637");
-	public static final UUID ObjID_PolicyStatus            = UUID.fromString("EF9C2F88-2AC7-44CF-9AD6-9F98012A7236");
-	public static final UUID ObjID_ObjectType              = UUID.fromString("6ADF0A94-5004-41AF-A7FF-9F95013DABB8");
-	public static final UUID ObjID_ExercisePeriod          = UUID.fromString("93315017-5744-4E43-95AB-9F9601200F1E");
-	public static final UUID ObjID_RequestType             = UUID.fromString("B437ECD7-11D2-4C55-B6DD-9FE80101ECC8");
-	public static final UUID ObjID_RequestCancelMotives    = UUID.fromString("F79E335C-FD6F-43BE-8535-9FE900C1CAF4");
-	public static final UUID ObjID_PolicyVoidingMotives    = UUID.fromString("B36C9AB7-0052-4C2E-B392-9FF200CF6022");
-	public static final UUID ObjID_ReceiptStatus           = UUID.fromString("35C78290-7FFE-4D7B-BD9D-A02000BC6D38");
-	public static final UUID ObjID_PaymentType             = UUID.fromString("C480B530-C6E2-49A0-BE15-A02200E88280");
-	public static final UUID ObjID_Bank                    = UUID.fromString("9954EADC-D7BE-4858-B1DE-A02200F45247");
+	public static final UUID ObjID_ContactType              = UUID.fromString("228F6A73-1335-4C99-8DD0-9EEE012964BA");
+	public static final UUID ObjID_CInfoType                = UUID.fromString("03C5B78E-D71C-49F2-A079-9EC40111DCC0");
+	public static final UUID ObjID_DocType                  = UUID.fromString("B4DBEE18-FA81-471D-A9F5-9ECC012A028D");
+	public static final UUID ObjID_CommProfile              = UUID.fromString("5F40713C-1FE7-4715-AC24-9EBB00E53392");
+	public static final UUID ObjID_ClientType               = UUID.fromString("40A63D68-E2A6-40AB-B3A4-9EE600B91EBE");
+	public static final UUID ObjID_ClientSubtype            = UUID.fromString("1907DB1B-6F75-4715-A210-9EE600B9D072");
+	public static final UUID ObjID_OpProfile                = UUID.fromString("11921769-CDF3-447A-8E6B-9ECA01761BAA");
+	public static final UUID ObjID_Sex                      = UUID.fromString("2549E951-2747-4300-982E-9ECA01756B91");
+	public static final UUID ObjID_MaritalStatus            = UUID.fromString("B560424E-1DF9-46CA-8B67-9ECA01774B00");
+	public static final UUID ObjID_Profession               = UUID.fromString("088C8CCE-A1D1-4976-808F-9ECA0177AB56");
+	public static final UUID ObjID_CAE                      = UUID.fromString("14B89884-475A-4357-BB7D-9EE600C3CE6E");
+	public static final UUID ObjID_Size                     = UUID.fromString("5E489662-2AAF-4348-95E0-9EE600C4A71F");
+	public static final UUID ObjID_SalesVolume              = UUID.fromString("5C4E267C-B306-482F-8636-9EE600C586B6");
+	public static final UUID ObjID_Durations                = UUID.fromString("A522A5B3-245B-4F8B-97F1-9F810120FAB6");
+	public static final UUID ObjID_Fractioning              = UUID.fromString("28B2D442-2CF3-4E14-8430-9F8101229DA8");
+	public static final UUID ObjID_ReceiptType              = UUID.fromString("AFE7CC47-B44F-442D-8CF4-9F8A00DB2637");
+	public static final UUID ObjID_PolicyStatus             = UUID.fromString("EF9C2F88-2AC7-44CF-9AD6-9F98012A7236");
+	public static final UUID ObjID_ObjectType               = UUID.fromString("6ADF0A94-5004-41AF-A7FF-9F95013DABB8");
+	public static final UUID ObjID_ExercisePeriod           = UUID.fromString("93315017-5744-4E43-95AB-9F9601200F1E");
+	public static final UUID ObjID_RequestType              = UUID.fromString("B437ECD7-11D2-4C55-B6DD-9FE80101ECC8");
+	public static final UUID ObjID_RequestCancelMotives     = UUID.fromString("F79E335C-FD6F-43BE-8535-9FE900C1CAF4");
+	public static final UUID ObjID_PolicyVoidingMotives     = UUID.fromString("B36C9AB7-0052-4C2E-B392-9FF200CF6022");
+	public static final UUID ObjID_ReceiptStatus            = UUID.fromString("35C78290-7FFE-4D7B-BD9D-A02000BC6D38");
+	public static final UUID ObjID_PaymentType              = UUID.fromString("C480B530-C6E2-49A0-BE15-A02200E88280");
+	public static final UUID ObjID_Bank                     = UUID.fromString("9954EADC-D7BE-4858-B1DE-A02200F45247");
 
-	public static final UUID ObjID_FieldType               = UUID.fromString("0D8E4FEE-AE4D-4429-A517-9EC900F80A20");
-	public static final UUID ObjID_FieldValues             = UUID.fromString("D50A75B9-5F44-4BF2-9060-9F960121503A");
+	public static final UUID ObjID_FieldType                = UUID.fromString("0D8E4FEE-AE4D-4429-A517-9EC900F80A20");
+	public static final UUID ObjID_FieldValues              = UUID.fromString("D50A75B9-5F44-4BF2-9060-9F960121503A");
 
-	public static final UUID ObjID_TypifiedText            = UUID.fromString("0F218912-1626-4A2C-BF68-9FE100F72735");
+	public static final UUID ObjID_TypifiedText             = UUID.fromString("0F218912-1626-4A2C-BF68-9FE100F72735");
 
 	public static final UUID ObjID_UNUSED = UUID.fromString("22D005B7-E628-4E06-A011-A00500B5E01E");
 

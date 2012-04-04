@@ -45,6 +45,7 @@ public interface ReceiptService
 
 	public Receipt sendReceipt(String receiptId) throws SessionExpiredException, BigBangException;
 	public Receipt insurerAccouting(String receiptId) throws SessionExpiredException, BigBangException;
+	public Receipt mediatorAccounting(String receiptId) throws SessionExpiredException, BigBangException;
 
 	public void deleteReceipt(String receiptId) throws SessionExpiredException, BigBangException;
 
@@ -52,4 +53,5 @@ public interface ReceiptService
 	public void massCreatePaymentNotice(String[] receiptIds) throws SessionExpiredException, BigBangException;
 	public void massSendReceipt(String[] receiptIds) throws SessionExpiredException, BigBangException;
 	public void massInsurerAccounting(String[] receiptIds) throws SessionExpiredException, BigBangException;
+	public void massMediatorAccounting(String[] receiptIds) throws SessionExpiredException, BigBangException;
 }
