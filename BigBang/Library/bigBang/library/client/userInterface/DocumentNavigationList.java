@@ -4,6 +4,16 @@ import bigBang.library.shared.DocuShareItem;
 
 public class DocumentNavigationList extends FilterableList<DocuShareItem> {
 
+	private String location;
+	
+	public String getLocation() {
+		return location;
+	}
+
+	public void setLocation(String location) {
+		this.location = location;
+	}
+
 	protected class DocumentEntry extends ListEntry<DocuShareItem> {
 
 		public DocumentEntry(DocuShareItem value) {

@@ -1,5 +1,6 @@
 package bigBang.library.client.userInterface;
 
+import bigBang.definitions.shared.DocuShareHandle;
 import bigBang.library.client.BigBangAsyncCallback;
 import bigBang.library.client.ValueSelectable;
 import bigBang.library.client.event.SelectionChangedEvent;
@@ -34,6 +35,8 @@ public class DocuShareNavigationPanel extends View implements HasValue<DocuShare
 	protected SelectionChangedEventHandler selectionHandler;
 	private String ownerId;
 	private String ownerTypeId;
+	private DocumentNavigationList list;
+	private String fileHandle;
 
 	public DocuShareNavigationPanel(){
 		this.service = DocuShareService.Util.getInstance();
@@ -61,6 +64,7 @@ public class DocuShareNavigationPanel extends View implements HasValue<DocuShare
 					if(item.directory){
 						navigateToDirectoryList(item.handle, true);
 					}else{
+						fileHandle = item.handle;
 						ValueChangeEvent.fire(DocuShareNavigationPanel.this, item);
 					}
 				}
@@ -97,13 +101,14 @@ public class DocuShareNavigationPanel extends View implements HasValue<DocuShare
 	}
 
 	protected void navigateToDirectoryList(final String dirDesc, final boolean showSubFolders){
-		final DocumentNavigationList list = new DocumentNavigationList();
+		list = new DocumentNavigationList();
+		list.setLocation(dirDesc);
 		list.showFilterField(false);
 		list.showSearchField(false);
 		list.getElement().getStyle().setBackgroundColor("white");
 		ListHeader header = new ListHeader();
 		header.showRefreshButton();
-		list.setHeaderWidget(header); //TODO
+		list.setHeaderWidget(header); 
 
 		header.getRefreshButton().addClickHandler(new ClickHandler() {
 
@@ -126,6 +131,10 @@ public class DocuShareNavigationPanel extends View implements HasValue<DocuShare
 		list.addSelectionChangedEventHandler(this.selectionHandler);
 
 		fetchListContent(list, dirDesc, showSubFolders);
+	}
+
+	public DocumentNavigationList getList() {
+		return list;
 	}
 
 	protected void fetchListContent(final DocumentNavigationList list, final String dirDesc, final boolean showSubFolders){
@@ -186,28 +195,38 @@ public class DocuShareNavigationPanel extends View implements HasValue<DocuShare
 		return addHandler(handler, ValueChangeEvent.getType());
 	}
 
-	@Override
-	public DocuShareItem getValue() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public void setValue(DocuShareItem value) {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void setValue(DocuShareItem value, boolean fireEvents) {
-		// TODO Auto-generated method stub
-
-	}
 
 	public void setParameters(String ownerId, String ownerTypeId) {
 		this.ownerId = ownerId;
 		this.ownerTypeId = ownerTypeId;
 		navigateToDirectoryList(null, true);
+	}
+
+	public DocuShareHandle getDocuShareHandle() {
+			DocuShareHandle handle = new DocuShareHandle();
+			handle.locationHandle = getList().getLocation();
+			handle.handle = getHandle();
+			return handle;
+	}
+
+	private String getHandle() {
+		return fileHandle;
+	}
+
+	@Override
+	public DocuShareItem getValue() {
+		return null;
+	}
+
+	@Override
+	public void setValue(DocuShareItem value) {
+		return;
+		
+	}
+
+	@Override
+	public void setValue(DocuShareItem value, boolean fireEvents) {
+		return;
 	}
 
 }

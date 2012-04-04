@@ -17,6 +17,7 @@ import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.event.dom.client.KeyUpEvent;
 import com.google.gwt.event.dom.client.KeyUpHandler;
 import com.google.gwt.user.client.ui.Button;
+import com.google.gwt.user.client.ui.HasVerticalAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ValueBoxBase.TextAlignment;
@@ -86,6 +87,7 @@ public abstract class SerialReceiptCreationForm extends FormView<ReceiptPolicyWr
 		newReceiptButton = new Button("Novo Recibo");
 
 		HorizontalPanel newPanel = new HorizontalPanel();
+		newPanel.setVerticalAlignment(HasVerticalAlignment.ALIGN_MIDDLE);
 		newPanel.add(verifyReceiptNumber);
 		newPanel.add(newReceiptButton);
 		
@@ -121,6 +123,7 @@ public abstract class SerialReceiptCreationForm extends FormView<ReceiptPolicyWr
 		
 		addFormField(policyNumber, true);
 		HorizontalPanel buttonPanel = new HorizontalPanel();
+		buttonPanel.setVerticalAlignment(HasVerticalAlignment.ALIGN_MIDDLE);
 		verifyPolicyNumber = new Button("Verificar");
 		buttonPanel.add(verifyPolicyNumber);
 		verifyPolicyNumber.addClickHandler(new ClickHandler() {

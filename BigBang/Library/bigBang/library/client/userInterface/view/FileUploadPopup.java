@@ -1,6 +1,5 @@
 package bigBang.library.client.userInterface.view;
 
-import bigBang.library.client.event.ActionInvokedEvent;
 import bigBang.library.client.event.ActionInvokedEventHandler;
 import bigBang.library.client.userInterface.DocuShareNavigationPanel;
 import bigBang.library.client.userInterface.presenter.DocumentViewPresenter.Action;
@@ -13,8 +12,6 @@ import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.FileUpload;
 import com.google.gwt.user.client.ui.FormPanel;
-import com.google.gwt.user.client.ui.FormPanel.SubmitCompleteEvent;
-import com.google.gwt.user.client.ui.FormPanel.SubmitCompleteHandler;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.VerticalPanel;
@@ -23,9 +20,7 @@ public interface FileUploadPopup
 {
 
 	public FileUploadPopup getUploadPopup();
-	public DocuShareNavigationPanel getList();
 	public String getFileStorageId();
-	public void initHandler(ActionInvokedEventHandler<Action> actionHandler);
 	public String getFilename();
 	public void setParameters(String ownerId, String ownerTypeId);
 	public void hidePopup();
@@ -38,6 +33,10 @@ public interface FileUploadPopup
 		private Button mbtnOk;
 		private Button mbtnCancel;
 		private String filename;
+		
+		public FormPanel getSubmitForm(){
+			return mfrmMain;
+		}
 		
 		@Override
 		public String getFilename() {
@@ -101,36 +100,38 @@ public interface FileUploadPopup
 			
 			SetKey(key);
 
-			mfrmMain.addSubmitCompleteHandler(new SubmitCompleteHandler()
-			{
-				public void onSubmitComplete(SubmitCompleteEvent event)
-				{
-					String lstrResults;
-
-					mbtnOk.setEnabled(true);
-					mbtnCancel.setEnabled(true);
-
-					lstrResults = event.getResults();
-					if ( lstrResults.startsWith("!") )
-					{
-						SetError(lstrResults.substring(1));
-						return;
-					}
-
-					String [] splitString =  lstrResults.split("!");
-					
-					String fileStorageId = splitString[0];
-					String filename = splitString[1];
-					
-					FileUploadPopupDisk.this.fileStorageId = fileStorageId;
-					FileUploadPopupDisk.this.filename = filename;
-					fireAction(Action.UPLOAD_SUCCESS);
-					
-					hidePopup();
-				}
-
-
-			});
+//			mfrmMain.addSubmitCompleteHandler(new SubmitCompleteHandler()
+//			{
+//				public void onSubmitComplete(SubmitCompleteEvent event)
+//				{
+//					String lstrResults;
+//
+//					mbtnOk.setEnabled(true);
+//					mbtnCancel.setEnabled(true);
+//
+//					lstrResults = event.getResults();
+//					if ( lstrResults.startsWith("!") )
+//					{
+//						SetError(lstrResults.substring(1));
+//						return;
+//					}
+//
+//					String [] splitString =  lstrResults.split("!");
+//					
+//					String fileStorageId = splitString[0];
+//					String filename = splitString[1];
+//					
+//					FileUploadPopupDisk.this.fileStorageId = fileStorageId;
+//					FileUploadPopupDisk.this.filename = filename;
+//					fireAction(Action.UPLOAD_SUCCESS);
+//					
+//					hidePopup();
+//				}
+//
+//
+//			});
+			
+			
 			mbtnOk.addClickHandler(new ClickHandler()
 			{
 				public void onClick(ClickEvent event)
@@ -169,12 +170,6 @@ public interface FileUploadPopup
 				mlblError.setText(pstrError);
 		}
 		
-		private void fireAction(Action action) {
-			if(this.actionHandler != null) {
-				actionHandler.onActionInvoked(new ActionInvokedEvent<Action>(action));
-			}
-		}
-		
 		public void initHandler(ActionInvokedEventHandler<Action> actionHandler){
 
 			this.actionHandler = actionHandler;
@@ -189,11 +184,6 @@ public interface FileUploadPopup
 		@Override
 		public void setParameters(String ownerId, String ownerTypeId) {
 		}
-
-		@Override
-		public DocuShareNavigationPanel getList() {
-			return null;
-		}
 			
 	}
 	
@@ -202,9 +192,8 @@ public interface FileUploadPopup
 		DocuShareNavigationPanel list = new DocuShareNavigationPanel();
 		VerticalPanel lvert;
 		
-		public FileUploadPopupDocuShare(String docId){
+		public FileUploadPopupDocuShare(){
 			super();
-			
 			this.getElement().getStyle().setZIndex(12000);
 			lvert = new VerticalPanel();
 			lvert.add(list);
@@ -213,25 +202,19 @@ public interface FileUploadPopup
 			this.center();
 			
 		}
-		
-		@Override
-		public DocuShareNavigationPanel getList() {
-			return list;
-		}
-		
+
 		@Override
 		public void setParameters(String ownerId, String ownerTypeId){
 			list.setParameters(ownerId, ownerTypeId);
+		}
+		
+		public DocuShareNavigationPanel getPanel(){
+			return list;
 		}
 
 		@Override
 		public FileUploadPopup getUploadPopup() {
 			return this;
-		}
-
-		@Override
-		public void initHandler(ActionInvokedEventHandler<Action> actionHandler) {
-			
 		}
 
 		@Override
@@ -243,9 +226,6 @@ public interface FileUploadPopup
 		public String getFilename() {
 			return null;
 		}
-
 	}
-
-
 }
 		
