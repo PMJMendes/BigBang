@@ -463,8 +463,8 @@ public class Constants
 	public static final UUID TID_ReceiptReturnLetter = UUID.fromString("13931DA8-6208-4074-ABD5-A0290116442A");
 
 	// Contact Types
-	public static final UUID CtTypeID_General       = UUID.fromString("");
-	public static final UUID CtTypeID_ReceiptReturn = UUID.fromString("");
+	public static final UUID CtTypeID_General       = UUID.fromString("00000000-0000-0000-0000-000000000000");
+	public static final UUID CtTypeID_ReceiptReturn = UUID.fromString("00000000-0000-0000-0000-000000000000");
 
 	// Contact Info Types
 	public static final UUID CInfoID_Email = UUID.fromString("96467849-6FE1-4113-928C-9EDF00F40FB9");
