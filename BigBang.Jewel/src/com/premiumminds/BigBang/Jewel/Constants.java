@@ -447,20 +447,35 @@ public class Constants
 	public static final UUID StatusID_Paid       = UUID.fromString("8C43ED6B-A047-4549-9922-A02000C35098");
 	public static final UUID StatusID_Closed     = UUID.fromString("B86D383A-70E9-4B03-87C7-A02000C35B32");
 
+	// Receipt Payment Types
+	public static final UUID PayID_Cheque          = UUID.fromString("06EA2F87-BB0C-4B02-BCDB-A02200EB462D");
+	public static final UUID PayID_CurrentAccount  = UUID.fromString("637DBB57-3EFE-4728-BAB8-A02200EB4EC9");
+	public static final UUID PayID_Cash            = UUID.fromString("40B9ACC7-A99A-4DC2-BAEF-A02200EB59B3");
+	public static final UUID PayID_DirectToInsurer = UUID.fromString("A44F6D02-83A2-4D96-BF5F-A02200EB6857");
+	public static final UUID PayID_BankTransfer    = UUID.fromString("5E1BEB0E-FABC-44F4-97BB-A02200EB78A5");
+	public static final UUID PayID_Compensation    = UUID.fromString("AF1779DA-BB19-4BBD-B1FA-A02200EB84B6");
+	public static final UUID PayID_FromTheInsurer  = UUID.fromString("9FD1C899-B395-4744-974B-A02200EB9014");
+
 	// Template IDs
-	public static final UUID TID_DebitNote          = UUID.fromString("BD024115-3572-41D4-B60C-9FF100F7E0C4");
-	public static final UUID TID_PaymentNotice      = UUID.fromString("1852C013-F43F-4BBD-9895-A0200107AF84");
-	public static final UUID TID_ReceiptCoverLetter = UUID.fromString("874B735A-E564-47A8-B902-A02300E5ED8F");
+	public static final UUID TID_DebitNote           = UUID.fromString("BD024115-3572-41D4-B60C-9FF100F7E0C4");
+	public static final UUID TID_PaymentNotice       = UUID.fromString("1852C013-F43F-4BBD-9895-A0200107AF84");
+	public static final UUID TID_ReceiptCoverLetter  = UUID.fromString("874B735A-E564-47A8-B902-A02300E5ED8F");
+	public static final UUID TID_ReceiptReturnLetter = UUID.fromString("13931DA8-6208-4074-ABD5-A0290116442A");
+
+	// Contact Types
+	public static final UUID CtTypeID_General       = UUID.fromString("");
+	public static final UUID CtTypeID_ReceiptReturn = UUID.fromString("");
 
 	// Contact Info Types
 	public static final UUID CInfoID_Email = UUID.fromString("96467849-6FE1-4113-928C-9EDF00F40FB9");
 
 	// Document Types
-	public static final UUID DocID_DebitNote          = UUID.fromString("785739A7-648C-4B51-9610-9FF10128C5CE");
-	public static final UUID DocID_ReceiptScan        = UUID.fromString("041C081D-518F-4890-BEBF-A014011EFC8D");
-	public static final UUID DocID_CutReceiptImage    = UUID.fromString("EE2BD86C-D93D-40E2-BC32-A021011074AF");
-	public static final UUID DocID_PaymentNotice      = UUID.fromString("1D69CC65-7BE8-493C-858E-A02100D78299");
-	public static final UUID DocID_ReceiptCoverLetter = UUID.fromString("C47E392F-82E1-46D0-9F2A-A02300F4B244");
+	public static final UUID DocID_DebitNote           = UUID.fromString("785739A7-648C-4B51-9610-9FF10128C5CE");
+	public static final UUID DocID_ReceiptScan         = UUID.fromString("041C081D-518F-4890-BEBF-A014011EFC8D");
+	public static final UUID DocID_CutReceiptImage     = UUID.fromString("EE2BD86C-D93D-40E2-BC32-A021011074AF");
+	public static final UUID DocID_PaymentNotice       = UUID.fromString("1D69CC65-7BE8-493C-858E-A02100D78299");
+	public static final UUID DocID_ReceiptCoverLetter  = UUID.fromString("C47E392F-82E1-46D0-9F2A-A02300F4B244");
+	public static final UUID DocID_ReceiptReturnLetter = UUID.fromString("CBCC510A-7DE0-41DA-A8E5-A029011CACE4");
 
 	// FK Constants
 	public static final int FKCostCenter_In_UserDecoration = 2;
