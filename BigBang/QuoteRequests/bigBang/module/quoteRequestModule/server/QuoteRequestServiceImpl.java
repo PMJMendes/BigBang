@@ -1621,9 +1621,9 @@ public class QuoteRequestServiceImpl
 
 			mbValid = false;
 
-			for ( i = 0; i < marrSubLines.size(); i++ )
+			for ( i = 0; i < pobjSource.objectData.length; i++ )
 			{
-				lobjSubLine = marrSubLines.get(i);
+				lobjSubLine = marrSubLines.get(Integer.parseInt(pobjSource.objectData[i].subLineId.split(":")[1]));
 
 				if ( !lobjObject.midType.equals(lobjSubLine.midObjectType) )
 					continue;
