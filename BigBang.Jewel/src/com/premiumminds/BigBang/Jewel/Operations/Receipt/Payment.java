@@ -9,7 +9,6 @@ import Jewel.Engine.DataAccess.SQLServer;
 import Jewel.Petri.SysObjects.JewelPetriException;
 import Jewel.Petri.SysObjects.UndoableOperation;
 
-import com.premiumminds.BigBang.Jewel.BigBangJewelException;
 import com.premiumminds.BigBang.Jewel.Constants;
 import com.premiumminds.BigBang.Jewel.Data.PaymentData;
 import com.premiumminds.BigBang.Jewel.Objects.Receipt;
@@ -88,7 +87,7 @@ public class Payment
 				{
 					lobjReceipt = Receipt.GetInstance(Engine.getCurrentNameSpace(), marrData[i].midReceipt);
 				}
-				catch (BigBangJewelException e)
+				catch (Throwable e)
 				{
 					throw new JewelPetriException(e.getMessage(), e);
 				}
@@ -111,7 +110,7 @@ public class Payment
 		{
 			lobjReceipt = Receipt.GetInstance(Engine.getCurrentNameSpace(), midReceipt);
 		}
-		catch (BigBangJewelException e)
+		catch (Throwable e)
 		{
 			throw new JewelPetriException(e.getMessage(), e);
 		}
@@ -185,7 +184,7 @@ public class Payment
 					{
 						lobjReceipt = Receipt.GetInstance(Engine.getCurrentNameSpace(), marrData[i].midReceipt);
 					}
-					catch (BigBangJewelException e)
+					catch (Throwable e)
 					{
 						throw new JewelPetriException(e.getMessage(), e);
 					}

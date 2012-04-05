@@ -55,6 +55,7 @@ import com.premiumminds.BigBang.Jewel.Operations.Receipt.ManageData;
 import com.premiumminds.BigBang.Jewel.Operations.Receipt.MediatorAccounting;
 import com.premiumminds.BigBang.Jewel.Operations.Receipt.Payment;
 import com.premiumminds.BigBang.Jewel.Operations.Receipt.ReceiveImage;
+import com.premiumminds.BigBang.Jewel.Operations.Receipt.ReturnToInsurer;
 import com.premiumminds.BigBang.Jewel.Operations.Receipt.SendReceipt;
 import com.premiumminds.BigBang.Jewel.Operations.Receipt.SetReturnToInsurer;
 import com.premiumminds.BigBang.Jewel.Operations.Receipt.TransferToPolicy;
@@ -850,6 +851,38 @@ public class ReceiptServiceImpl
 		return sGetReceipt(lobjReceipt.getKey());
 	}
 
+	public Receipt returnToInsurer(String receiptId)
+		throws SessionExpiredException, BigBangException
+	{
+		com.premiumminds.BigBang.Jewel.Objects.Receipt lobjReceipt;
+		ReturnToInsurer lopRTI;
+
+		try
+		{
+			lobjReceipt = com.premiumminds.BigBang.Jewel.Objects.Receipt.GetInstance(Engine.getCurrentNameSpace(),
+					UUID.fromString(receiptId));
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangException(e.getMessage(), e);
+		}
+
+		lopRTI = new ReturnToInsurer(lobjReceipt.GetProcessID());
+		lopRTI.marrReceiptIDs = new UUID[] {UUID.fromString(receiptId)};
+		lopRTI.mbUseSets = false;
+
+		try
+		{
+			lopRTI.Execute();
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangException(e.getMessage(), e);
+		}
+
+		return sGetReceipt(lobjReceipt.getKey());
+	}
+
 	public void deleteReceipt(String receiptId)
 		throws SessionExpiredException, BigBangException
 	{
@@ -1244,6 +1277,81 @@ public class ReceiptServiceImpl
 
 					lidMap = lopMA.midMap;
 					lidSet = lopMA.midSet;
+				}
+				catch (Throwable e)
+				{
+					throw new BigBangException(e.getMessage(), e);
+				}
+			}
+		}
+	}
+
+	public void massReturnToInsurer(String[] receiptIds)
+		throws SessionExpiredException, BigBangException
+	{
+		Hashtable<UUID, ArrayList<UUID>> larrReceipts;
+		com.premiumminds.BigBang.Jewel.Objects.Receipt lobjReceipt;
+		IProcess lobjProcess;
+		UUID lidInsurer;
+		ArrayList<UUID> larrByInsurer;
+		UUID[] larrFinal;
+		UUID lidSet;
+		UUID lidSetInsurer;
+		DocOps lobjDocOps;
+		ReturnToInsurer lopRTI;
+		int i;
+
+		larrReceipts = new Hashtable<UUID, ArrayList<UUID>>();
+		for ( i = 0; i < receiptIds.length; i++ )
+		{
+			try
+			{
+				lobjReceipt = com.premiumminds.BigBang.Jewel.Objects.Receipt.GetInstance(Engine.getCurrentNameSpace(),
+						UUID.fromString(receiptIds[i]));
+				lobjProcess = PNProcess.GetInstance(Engine.getCurrentNameSpace(), lobjReceipt.GetProcessID());
+				if ( Constants.ProcID_Policy.equals(lobjProcess.GetParent().GetScriptID()) )
+					lidInsurer = (UUID)lobjProcess.GetParent().GetData().getAt(2);
+				else
+					lidInsurer = (UUID)lobjProcess.GetParent().GetParent().GetData().getAt(2);
+			}
+			catch (Throwable e)
+			{
+				throw new BigBangException(e.getMessage(), e);
+			}
+			larrByInsurer = larrReceipts.get(lidInsurer);
+			if ( larrByInsurer == null )
+			{
+				larrByInsurer = new ArrayList<UUID>();
+				larrReceipts.put(lidInsurer, larrByInsurer);
+			}
+			larrByInsurer.add(lobjReceipt.getKey());
+		}
+
+		lidSet = null;
+		for(UUID lidC : larrReceipts.keySet())
+		{
+			lidSetInsurer = null;
+			lobjDocOps = null;
+			larrByInsurer = larrReceipts.get(lidC);
+			larrFinal = larrByInsurer.toArray(new UUID[larrByInsurer.size()]);
+			for ( i = 0; i < larrFinal.length; i++ )
+			{
+				try
+				{
+					lobjReceipt = com.premiumminds.BigBang.Jewel.Objects.Receipt.GetInstance(Engine.getCurrentNameSpace(), larrFinal[i]);
+
+					lopRTI = new ReturnToInsurer(lobjReceipt.GetProcessID());
+					lopRTI.marrReceiptIDs = larrFinal;
+					lopRTI.mbUseSets = true;
+					lopRTI.midSet = lidSet;
+					lopRTI.midSetDocument = lidSetInsurer;
+					lopRTI.mobjDocOps = lobjDocOps;
+
+					lopRTI.Execute();
+
+					lobjDocOps = lopRTI.mobjDocOps;
+					lidSetInsurer = lopRTI.midSetDocument;
+					lidSet = lopRTI.midSet;
 				}
 				catch (Throwable e)
 				{

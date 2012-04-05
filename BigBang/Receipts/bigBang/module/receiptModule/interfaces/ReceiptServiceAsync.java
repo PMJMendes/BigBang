@@ -24,10 +24,12 @@ public interface ReceiptServiceAsync
 	void sendReceipt(String receiptId, AsyncCallback<Receipt> callback);
 	void insurerAccouting(String receiptId, AsyncCallback<Receipt> callback);
 	void mediatorAccounting(String receiptId, AsyncCallback<Receipt> callback);
+	void returnToInsurer(String receiptId, AsyncCallback<Receipt> callback);
 	void deleteReceipt(String receiptId, AsyncCallback<Void> callback);
 	void serialCreateReceipt(Receipt receipt, DocuShareHandle source, AsyncCallback<Receipt> callback);
 	void massCreatePaymentNotice(String[] receiptIds, AsyncCallback<Void> callback);
 	void massSendReceipt(String[] receiptIds, AsyncCallback<Void> callback);
 	void massInsurerAccounting(String[] receiptIds, AsyncCallback<Void> callback);
 	void massMediatorAccounting(String[] receiptIds, AsyncCallback<Void> callback);
+	void massReturnToInsurer(String[] receiptIds, AsyncCallback<Void> callback);
 }
