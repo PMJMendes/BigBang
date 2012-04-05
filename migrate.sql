@@ -87,7 +87,7 @@ delete from bigbang.tblBBSalesVolumes;
 delete from bigbang.tblCommissionProfiles;
 delete from bigbang.tblContactInfoType;
 delete from bigbang.tblContactTypes;
-delete from bigbang.tblDocTypes;
+/*delete from bigbang.tblDocTypes;*/
 delete from bigbang.tblMaritalStatuses;
 delete from bigbang.tblOpProfiles;
 delete from bigbang.tblProfessions;
@@ -124,7 +124,7 @@ insert into bigbang.tblCommissionProfiles (PK, ProfileName) values ('CECC8014-20
 insert into bigbang.tblCommissionProfiles (PK, ProfileName) values ('C5BE51A9-7E0F-4970-962A-9EFC0135E9E1', N'Angariação');
 insert into bigbang.tblCommissionProfiles (PK, ProfileName) values ('071CE678-956B-4D41-94DE-9EFC013688B5', N'Especial');
 insert into bigbang.tblCommissionProfiles (PK, ProfileName) values ('C7236BA7-73AD-40ED-B6DC-9EFC013691C8', N'Negociado');
-insert into bigbang.tblDocTypes (PK, DocType) values ('5ABB972E-9E7E-4733-9C1E-9F1300B4EB3A', N'Carta de Condução');
+/*insert into bigbang.tblDocTypes (PK, DocType) values ('5ABB972E-9E7E-4733-9C1E-9F1300B4EB3A', N'Carta de Condução');*/
 insert into bigbang.tblMaritalStatuses (PK, StatusText) values ('9ED463DB-ABC5-46EE-82A7-9F0300C6D631', N'Casado');
 insert into bigbang.tblMaritalStatuses (PK, StatusText) values ('BFB58864-4B91-4078-AF9F-9F0300C6E52D', N'Divorciado');
 insert into bigbang.tblMaritalStatuses (PK, StatusText) values ('BE742798-9D7F-4B23-BFBA-9F0300C6CFA5', N'Solteiro');
