@@ -461,6 +461,7 @@ public class Constants
 	public static final UUID TID_PaymentNotice       = UUID.fromString("1852C013-F43F-4BBD-9895-A0200107AF84");
 	public static final UUID TID_ReceiptCoverLetter  = UUID.fromString("874B735A-E564-47A8-B902-A02300E5ED8F");
 	public static final UUID TID_ReceiptReturnLetter = UUID.fromString("13931DA8-6208-4074-ABD5-A0290116442A");
+	public static final UUID TID_PaymentCoverLetter  = UUID.fromString("08014404-6149-4EBB-88EA-A02A00E8069F");
 
 	// Contact Types
 	public static final UUID CtTypeID_ReceiptReturn = UUID.fromString("BA706479-AE31-4E69-A7F0-9EEE01336CA4");
@@ -475,6 +476,7 @@ public class Constants
 	public static final UUID DocID_PaymentNotice       = UUID.fromString("1D69CC65-7BE8-493C-858E-A02100D78299");
 	public static final UUID DocID_ReceiptCoverLetter  = UUID.fromString("C47E392F-82E1-46D0-9F2A-A02300F4B244");
 	public static final UUID DocID_ReceiptReturnLetter = UUID.fromString("CBCC510A-7DE0-41DA-A8E5-A029011CACE4");
+	public static final UUID DocID_PaymentCoverLetter  = UUID.fromString("18E61B06-BD30-4338-82B2-A02A00E88AF7");
 
 	// FK Constants
 	public static final int FKCostCenter_In_UserDecoration = 2;

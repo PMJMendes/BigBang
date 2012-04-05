@@ -56,6 +56,7 @@ import com.premiumminds.BigBang.Jewel.Operations.Receipt.MediatorAccounting;
 import com.premiumminds.BigBang.Jewel.Operations.Receipt.Payment;
 import com.premiumminds.BigBang.Jewel.Operations.Receipt.ReceiveImage;
 import com.premiumminds.BigBang.Jewel.Operations.Receipt.ReturnToInsurer;
+import com.premiumminds.BigBang.Jewel.Operations.Receipt.SendPayment;
 import com.premiumminds.BigBang.Jewel.Operations.Receipt.SendReceipt;
 import com.premiumminds.BigBang.Jewel.Operations.Receipt.SetReturnToInsurer;
 import com.premiumminds.BigBang.Jewel.Operations.Receipt.TransferToPolicy;
@@ -791,6 +792,38 @@ public class ReceiptServiceImpl
 		return sGetReceipt(lobjReceipt.getKey());
 	}
 
+	public Receipt sendPayment(String receiptId)
+		throws SessionExpiredException, BigBangException
+	{
+		com.premiumminds.BigBang.Jewel.Objects.Receipt lobjReceipt;
+		SendPayment lopSP;
+
+		try
+		{
+			lobjReceipt = com.premiumminds.BigBang.Jewel.Objects.Receipt.GetInstance(Engine.getCurrentNameSpace(),
+					UUID.fromString(receiptId));
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangException(e.getMessage(), e);
+		}
+
+		lopSP = new SendPayment(lobjReceipt.GetProcessID());
+		lopSP.marrReceiptIDs = new UUID[] {UUID.fromString(receiptId)};
+		lopSP.mbUseSets = false;
+
+		try
+		{
+			lopSP.Execute();
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangException(e.getMessage(), e);
+		}
+
+		return sGetReceipt(lobjReceipt.getKey());
+	}
+
 	public Receipt insurerAccouting(String receiptId)
 		throws SessionExpiredException, BigBangException
 	{
@@ -1115,6 +1148,81 @@ public class ReceiptServiceImpl
 					lobjReceipt = com.premiumminds.BigBang.Jewel.Objects.Receipt.GetInstance(Engine.getCurrentNameSpace(), larrFinal[i]);
 
 					lopSR = new SendReceipt(lobjReceipt.GetProcessID());
+					lopSR.marrReceiptIDs = larrFinal;
+					lopSR.mbUseSets = true;
+					lopSR.midSet = lidSet;
+					lopSR.midSetDocument = lidSetClient;
+					lopSR.mobjDocOps = lobjDocOps;
+
+					lopSR.Execute();
+
+					lobjDocOps = lopSR.mobjDocOps;
+					lidSetClient = lopSR.midSetDocument;
+					lidSet = lopSR.midSet;
+				}
+				catch (Throwable e)
+				{
+					throw new BigBangException(e.getMessage(), e);
+				}
+			}
+		}
+	}
+
+	public void massSendPayment(String[] receiptIds)
+		throws SessionExpiredException, BigBangException
+	{
+		Hashtable<UUID, ArrayList<UUID>> larrReceipts;
+		com.premiumminds.BigBang.Jewel.Objects.Receipt lobjReceipt;
+		IProcess lobjProcess;
+		UUID lidClient;
+		ArrayList<UUID> larrByClient;
+		UUID[] larrFinal;
+		UUID lidSet;
+		UUID lidSetClient;
+		DocOps lobjDocOps;
+		SendPayment lopSR;
+		int i;
+
+		larrReceipts = new Hashtable<UUID, ArrayList<UUID>>();
+		for ( i = 0; i < receiptIds.length; i++ )
+		{
+			try
+			{
+				lobjReceipt = com.premiumminds.BigBang.Jewel.Objects.Receipt.GetInstance(Engine.getCurrentNameSpace(),
+						UUID.fromString(receiptIds[i]));
+				lobjProcess = PNProcess.GetInstance(Engine.getCurrentNameSpace(), lobjReceipt.GetProcessID());
+				if ( Constants.ProcID_Policy.equals(lobjProcess.GetParent().GetScriptID()) )
+					lidClient = lobjProcess.GetParent().GetParent().GetDataKey();
+				else
+					lidClient = (UUID)lobjProcess.GetParent().GetData().getAt(2);
+			}
+			catch (Throwable e)
+			{
+				throw new BigBangException(e.getMessage(), e);
+			}
+			larrByClient = larrReceipts.get(lidClient);
+			if ( larrByClient == null )
+			{
+				larrByClient = new ArrayList<UUID>();
+				larrReceipts.put(lidClient, larrByClient);
+			}
+			larrByClient.add(lobjReceipt.getKey());
+		}
+
+		lidSet = null;
+		for(UUID lidC : larrReceipts.keySet())
+		{
+			lidSetClient = null;
+			lobjDocOps = null;
+			larrByClient = larrReceipts.get(lidC);
+			larrFinal = larrByClient.toArray(new UUID[larrByClient.size()]);
+			for ( i = 0; i < larrFinal.length; i++ )
+			{
+				try
+				{
+					lobjReceipt = com.premiumminds.BigBang.Jewel.Objects.Receipt.GetInstance(Engine.getCurrentNameSpace(), larrFinal[i]);
+
+					lopSR = new SendPayment(lobjReceipt.GetProcessID());
 					lopSR.marrReceiptIDs = larrFinal;
 					lopSR.mbUseSets = true;
 					lopSR.midSet = lidSet;
