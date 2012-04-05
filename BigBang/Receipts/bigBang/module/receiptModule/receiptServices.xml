@@ -2,8 +2,16 @@
 	<servlet-name>ReceiptService</servlet-name>
 	<servlet-class>bigBang.module.receiptModule.server.ReceiptServiceImpl</servlet-class>
 </servlet>
+<servlet>
+	<servlet-name>SignatureRequestService</servlet-name>
+	<servlet-class>bigBang.module.receiptModule.server.SignatureRequestServiceImpl</servlet-class>
+</servlet>
 
 <servlet-mapping>
 	<servlet-name>ReceiptService</servlet-name>
 	<url-pattern>/bigbang/ReceiptService</url-pattern>
+</servlet-mapping>
+<servlet-mapping>
+	<servlet-name>SignatureRequestService</servlet-name>
+	<url-pattern>/bigbang/SignatureRequestService</url-pattern>
 </servlet-mapping>
