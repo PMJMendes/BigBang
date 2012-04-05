@@ -52,8 +52,21 @@ public class SetReturnToInsurer
 
 		midReceipt = GetProcess().GetDataKey();
 
-		lstrText = (mstrSubject + " | " + mstrText);
-		if ( lstrText.length() > 250 )
+		if ( mstrSubject != null )
+		{
+			if ( mstrText != null )
+				lstrText = (mstrSubject + " | " + mstrText);
+			else
+				lstrText = mstrSubject;
+		}
+		else
+		{
+			if ( mstrText != null )
+				lstrText = mstrText;
+			else
+				lstrText = null;
+		}
+		if ( (lstrText != null) && (lstrText.length() > 250) )
 			lstrText = lstrText.substring(0, 250);
 
 		try

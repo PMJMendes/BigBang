@@ -49,6 +49,7 @@ public class ReceiptReturnLetterReport
 		Policy lobjPolicy;
 		Category lobjCat;
 		boolean lbUseContact;
+		String lstrText;
 		int i;
 
 		lobjCompany = Company.GetInstance(Engine.getCurrentNameSpace(), midInsurer);
@@ -88,7 +89,7 @@ public class ReceiptReturnLetterReport
 		larrParams.put("ContactAddress2", (lbUseContact ? (lobjContact.getAt(4) == null ? "" : (String)lobjContact.getAt(4)) :
 				(lobjCompany.getAt(7) == null ? "" : (String)lobjCompany.getAt(7))));
 		larrParams.put("ContactZipCode", (lobjZipCode == null ? "" : (String)lobjZipCode.getAt(0)));
-		larrParams.put("ContactZipLocal", (lobjZipCode == null ? "" : (String)lobjZipCode.getAt(1)));
+		larrParams.put("ContactZipLocal", ((lobjZipCode == null) || (lobjZipCode.getAt(1) == null) ? "" : (String)lobjZipCode.getAt(1)));
 		larrParams.put("Date", ldtAux.toString().substring(0, 10));
 
 		larrTables = new String[marrReceiptIDs.length][];
@@ -112,6 +113,14 @@ public class ReceiptReturnLetterReport
 			{
 				throw new BigBangJewelException(e.getMessage(), e);
 			}
+			if ( lobjReceipt.getAt(15) == null )
+				lstrText = "";
+			else
+			{
+				lstrText = (String)lobjReceipt.getAt(15);
+				if ( lstrText.indexOf('|') > 0 )
+					lstrText = lstrText.split("|")[1].trim();
+			}
 
 			larrTables[i] = new String[6];
 			larrTables[i][0] = lobjReceipt.getLabel();
@@ -119,7 +128,7 @@ public class ReceiptReturnLetterReport
 			larrTables[i][2] = lobjCat.getLabel();
 			larrTables[i][3] = ((BigDecimal)lobjReceipt.getAt(3)).toPlainString();
 			larrTables[i][4] = (String)lobjType.getAt(1);
-			larrTables[i][5] = (lobjReceipt.getAt(15) == null ? "" : (String)lobjReceipt.getAt(15));
+			larrTables[i][5] = (lobjReceipt.getAt(15) == null ? "" : lstrText);
 
 			mlngCount++;
 			mdblTotal = mdblTotal.add((BigDecimal)lobjReceipt.getAt(3));
