@@ -38,7 +38,7 @@ public class ReceiptSearchOperationViewPresenter implements ViewPresenter {
 		SAVE,
 		CANCEL,
 		DELETE, TRANSFER_TO_POLICY, ASSOCIATE_WITH_DEBIT_NOTE,
-		VALIDATE, SET_FOR_RETURN, ON_CREATE_PAYMENT_NOTE
+		VALIDATE, SET_FOR_RETURN, ON_CREATE_PAYMENT_NOTE, PAYMENT_TO_CLIENT, RETURN_TO_AGENCY
 	}
 
 	public interface Display {
@@ -59,7 +59,8 @@ public class ReceiptSearchOperationViewPresenter implements ViewPresenter {
 		void allowValidate(boolean hasPermission);
 		void allowSetForReturn(boolean hasPermission);
 		void allowSendPaymentNotice(boolean hasPermission);
-
+		void allowPaymentToClient(boolean hasPermission);
+		void allowReturnToInsurer(boolean hasPermission);
 		//Children Lists
 		//TODO
 
@@ -68,6 +69,8 @@ public class ReceiptSearchOperationViewPresenter implements ViewPresenter {
 		void setSaveModeEnabled(boolean enabled);
 
 		Widget asWidget();
+
+
 	}
 
 	protected Display view;
@@ -159,13 +162,56 @@ public class ReceiptSearchOperationViewPresenter implements ViewPresenter {
 				case ON_CREATE_PAYMENT_NOTE:
 					onCreatePaymentNote();
 					break;
+				case PAYMENT_TO_CLIENT:
+					onPaymentToClient();
+					break;
+				case RETURN_TO_AGENCY:
+					onReturnToAgency();
+					break;
 				}
+				
 
 			}
 		});
 
 		//APPLICATION-WIDE EVENTS
 		bound = true;
+	}
+
+	protected void onReturnToAgency() {
+		receiptBroker.returnToInsurer(receiptId, new ResponseHandler<Receipt>() {
+			
+			@Override
+			public void onResponse(Receipt response) {
+				EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Recibo devolvido à seguradora"), TYPE.TRAY_NOTIFICATION));
+				NavigationHistoryManager.getInstance().reload();
+			}
+			
+			@Override
+			public void onError(Collection<ResponseError> errors) {
+				EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não foi possível devolver o recibo"), TYPE.ALERT_NOTIFICATION));
+				NavigationHistoryManager.getInstance().reload();
+			}
+		});
+		
+	}
+
+	protected void onPaymentToClient() {
+		receiptBroker.sendPayment(receiptId, new ResponseHandler<Receipt>() {
+			
+			@Override
+			public void onResponse(Receipt response) {
+				EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Pagamento efectuado ao cliente"), TYPE.TRAY_NOTIFICATION));
+				NavigationHistoryManager.getInstance().reload();
+			}
+			
+			@Override
+			public void onError(Collection<ResponseError> errors) {
+				EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não foi possível enviar o pagamento ao cliente"), TYPE.ALERT_NOTIFICATION));
+				NavigationHistoryManager.getInstance().reload();
+			}
+		});
+		
 	}
 
 	protected void onCreatePaymentNote() {
@@ -253,6 +299,8 @@ public class ReceiptSearchOperationViewPresenter implements ViewPresenter {
 				view.allowValidate(PermissionChecker.hasPermission(value, BigBangConstants.OperationIds.ReceiptProcess.VALIDATE));
 				view.allowSetForReturn(PermissionChecker.hasPermission(value, BigBangConstants.OperationIds.ReceiptProcess.SET_FOR_RETURN));
 				view.allowSendPaymentNotice(PermissionChecker.hasPermission(value, BigBangConstants.OperationIds.ReceiptProcess.CREATE_PAYMENT_NOTICE));
+				view.allowPaymentToClient(PermissionChecker.hasPermission(value, BigBangConstants.OperationIds.ReceiptProcess.SEND_PAYMENT_TO_CLIENT));
+				view.allowReturnToInsurer(PermissionChecker.hasPermission(value, BigBangConstants.OperationIds.ReceiptProcess.RETURN_TO_AGENCY));
 				view.setSaveModeEnabled(false);
 				view.getForm().setReadOnly(true);
 				view.getForm().setValue(value);

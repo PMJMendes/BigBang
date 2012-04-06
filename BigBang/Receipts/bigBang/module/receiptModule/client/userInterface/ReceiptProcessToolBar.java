@@ -322,4 +322,13 @@ public abstract class ReceiptProcessToolBar extends BigBangOperationsToolBar {
 
 	}
 
+	public void allowPaymentToClient(boolean hasPermission) {
+		this.sendPaymentToClient.setEnabled(hasPermission);
+		
+	}
+	
+	public void allowReturnToAgency(boolean hasPermission){
+		this.returnToAgency.setEnabled(hasPermission);
+	}
+
 }

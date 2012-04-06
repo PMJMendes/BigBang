@@ -467,5 +467,77 @@ public class ReceiptDataBrokerImpl extends DataBroker<Receipt> implements Receip
 			
 		});
 	}
+	
+	@Override
+	public void sendPayment(String receiptId, final ResponseHandler<Receipt> handler){
+		service.sendPayment(receiptId, new BigBangAsyncCallback<Receipt>() {
+			@Override
+			public void onResponseSuccess(Receipt result) {
+				cache.add(result.id, result);
+				incrementDataVersion();
+				for(DataBrokerClient<Receipt> bc : getClients()){
+					((ReceiptDataBrokerClient) bc).updateReceipt(result);
+					((ReceiptDataBrokerClient) bc).setDataVersionNumber(BigBangConstants.EntityIds.RECEIPT, getCurrentDataVersion());
+				}
+				handler.onResponse(result);
+			}
+			
+			@Override
+			public void onResponseFailure(Throwable caught) {
+				handler.onError(new String[]{
+						new String("Could not send payment")
+				});
+				super.onResponseFailure(caught);
+			}
+		});
+	}
+
+	@Override
+	public void returnToInsurer(String receiptId, final
+			ResponseHandler<Receipt> handler) {
+		service.returnToInsurer(receiptId, new BigBangAsyncCallback<Receipt>() {
+			@Override
+			public void onResponseSuccess(Receipt result) {
+				cache.add(result.id, result);
+				incrementDataVersion();
+				for(DataBrokerClient<Receipt> bc : getClients()){
+					((ReceiptDataBrokerClient) bc).updateReceipt(result);
+					((ReceiptDataBrokerClient) bc).setDataVersionNumber(BigBangConstants.EntityIds.RECEIPT, getCurrentDataVersion());
+				}
+				handler.onResponse(result);
+			}
+			
+			@Override
+			public void onResponseFailure(Throwable caught) {
+				handler.onError(new String[]{
+						new String("Could not return to insurer")
+				});
+				super.onResponseFailure(caught);
+			}
+		});
+		
+	}
+
+	@Override
+	public void massReturnToInsurer(String[] receiptIds,
+			final ResponseHandler<Void> handler) {
+		service.massReturnToInsurer(receiptIds, new BigBangAsyncCallback<Void>() {
+		
+			@Override
+			public void onResponseSuccess(Void result) {
+				handler.onResponse(null);
+			}
+			
+			@Override
+			public void onResponseFailure(Throwable caught) {
+				handler.onError(new String[]{
+						new String("Could not mass return receipts to insurer")
+				});
+				super.onResponseFailure(caught);
+			}
+			
+		});
+		
+	}
 }
 

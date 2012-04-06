@@ -4,6 +4,14 @@ import java.util.Collection;
 import java.util.Map;
 import java.util.TreeMap;
 
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.user.client.ui.Button;
+import com.google.gwt.user.client.ui.HasVerticalAlignment;
+import com.google.gwt.user.client.ui.HorizontalPanel;
+import com.google.gwt.user.client.ui.SplitLayoutPanel;
+import com.google.gwt.user.client.ui.VerticalPanel;
+
 import bigBang.definitions.client.dataAccess.ReceiptProcessDataBroker;
 import bigBang.definitions.client.dataAccess.Search;
 import bigBang.definitions.client.dataAccess.SearchDataBroker;
@@ -30,22 +38,14 @@ import bigBang.library.client.userInterface.view.View;
 import bigBang.module.receiptModule.client.dataAccess.ReceiptSearchDataBroker;
 import bigBang.module.receiptModule.client.userInterface.ReceiptForm;
 import bigBang.module.receiptModule.client.userInterface.ReceiptSearchPanel;
-import bigBang.module.receiptModule.client.userInterface.presenter.MassCreatePaymentNoticeViewPresenter;
-import bigBang.module.receiptModule.client.userInterface.presenter.MassCreatePaymentNoticeViewPresenter.Action;
+import bigBang.module.receiptModule.client.userInterface.presenter.MassReturnToInsurerViewPresenter;
+import bigBang.module.receiptModule.client.userInterface.presenter.MassReturnToInsurerViewPresenter.Action;
 import bigBang.module.receiptModule.shared.ModuleConstants;
 import bigBang.module.receiptModule.shared.ReceiptSearchParameter;
 import bigBang.module.receiptModule.shared.ReceiptSortParameter;
 import bigBang.module.receiptModule.shared.ReceiptSortParameter.SortableField;
 
-import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.user.client.ui.Button;
-import com.google.gwt.user.client.ui.HasVerticalAlignment;
-import com.google.gwt.user.client.ui.HorizontalPanel;
-import com.google.gwt.user.client.ui.SplitLayoutPanel;
-import com.google.gwt.user.client.ui.VerticalPanel;
-
-public class MassCreatePaymentNoticeView extends View implements MassCreatePaymentNoticeViewPresenter.Display{
+public class MassReturnToInsurerView extends View implements MassReturnToInsurerViewPresenter.Display{
 
 	protected static enum Filters {
 		TYPES,
@@ -111,7 +111,7 @@ public class MassCreatePaymentNoticeView extends View implements MassCreatePayme
 				}
 			});
 
-			this.setOperationId(BigBangConstants.OperationIds.ReceiptProcess.RETURN_TO_AGENCY);
+			this.setOperationId(BigBangConstants.OperationIds.ReceiptProcess.CREATE_PAYMENT_NOTICE);
 			filtersContainer.clear();
 			filtersContainer.add(filtersPanel);
 			doSearch();
@@ -159,22 +159,16 @@ public class MassCreatePaymentNoticeView extends View implements MassCreatePayme
 
 			doSearch(parameters, sorts);
 		}
-
 	}
-
-	@Override
-	protected void initializeView() {
-		return;
-	}
-
+	
 	protected ActionInvokedEventHandler<Action> actionHandler;
 	protected CheckableReceiptsSearchPanel searchPanel;
 	protected SelectedReceiptsList selectedReceipts;
 	protected ReceiptForm receiptForm;
-	protected Button createPNotice;
-
-	public MassCreatePaymentNoticeView(){
-
+	protected Button returnReceipts;
+	
+	public MassReturnToInsurerView(){
+		
 		SplitLayoutPanel wrapper = new SplitLayoutPanel();
 		initWidget(wrapper);
 		wrapper.setSize("100%", "100%");
@@ -198,17 +192,17 @@ public class MassCreatePaymentNoticeView extends View implements MassCreatePayme
 		searchPanelWrapper.add(selectAllButton);
 		wrapper.addWest(searchPanelWrapper, 400);
 
-		createPNotice = new Button("Criar Avisos de Cobrança");
+		returnReceipts = new Button("Devolver recibos");
 
 		HorizontalPanel sendClearWrapper = new HorizontalPanel();
 		sendClearWrapper.setVerticalAlignment(HasVerticalAlignment.ALIGN_MIDDLE);
 		sendClearWrapper.setHeight("100%");
-		sendClearWrapper.add(createPNotice);
-		createPNotice.addClickHandler(new ClickHandler() {
+		sendClearWrapper.add(returnReceipts);
+		returnReceipts.addClickHandler(new ClickHandler() {
 
 			@Override
 			public void onClick(ClickEvent event) {
-				actionHandler.onActionInvoked(new ActionInvokedEvent<Action>(Action.CREATE_PAYMENT_NOTICES));
+				actionHandler.onActionInvoked(new ActionInvokedEvent<Action>(Action.MASS_RETURN_TO_INSURER));
 			}
 		});
 
@@ -227,11 +221,11 @@ public class MassCreatePaymentNoticeView extends View implements MassCreatePayme
 			}
 		};
 		
-		applyPaymentNoticeCreationForm.addSection("Criar Avisos de Cobrança");
+		applyPaymentNoticeCreationForm.addSection("Devolver recibos");
 		
 		
 		VerticalPanel selectedListWrapper = new VerticalPanel();
-		selectedListWrapper.add(new ListHeader("Criar Avisos de Cobrança"));
+		selectedListWrapper.add(new ListHeader("Devolver recibos"));
 		selectedListWrapper.setSize("100%", "100%");
 		applyPaymentNoticeCreationForm.addWidget(sendClearWrapper);
 		selectedListWrapper.add(applyPaymentNoticeCreationForm.getNonScrollableContent());
@@ -260,17 +254,18 @@ public class MassCreatePaymentNoticeView extends View implements MassCreatePayme
 		receiptWrapper.add(receiptForm);
 		receiptWrapper.setCellHeight(receiptForm,"100%");
 		wrapper.add(receiptWrapper);
-
+		
+		
 	}
-
-	@Override 
-	public void addReceiptToCreateNotice(ReceiptStub value) {
+	
+	@Override
+	public void addReceiptToReturn(ReceiptStub value) {
 		this.selectedReceipts.addEntry(value);
 		searchPanel.markForCheck(value.id);
 	}
 
 	@Override
-	public void removeReceiptToCreateNotice(String id){
+	public void removeReceiptToReturn(String id) {
 		for(ValueSelectable<ReceiptStub> entry : this.selectedReceipts){
 			if(id.equalsIgnoreCase(entry.getValue().id)){
 				this.selectedReceipts.remove(entry);
@@ -281,7 +276,7 @@ public class MassCreatePaymentNoticeView extends View implements MassCreatePayme
 	}
 
 	@Override
-	public HasCheckables getCheckableSelectedList(){
+	public HasCheckables getCheckableSelectedList() {
 		return this.selectedReceipts;
 	}
 
@@ -306,10 +301,8 @@ public class MassCreatePaymentNoticeView extends View implements MassCreatePayme
 	}
 
 	@Override
-	public void refreshMainLisT() {
-
+	public void refreshMainList() {
 		searchPanel.doSearch();
-
 	}
 
 	@Override
@@ -348,21 +341,30 @@ public class MassCreatePaymentNoticeView extends View implements MassCreatePayme
 	}
 
 	@Override
-	public void removeAllReceiptsFromCreateNotice() {
+	public void removeAllReceiptsFromReturn() {
 		while(!this.selectedReceipts.isEmpty()){
 			this.selectedReceipts.get(0).setChecked(false, true);
 		}
+		
 	}
 
 	@Override
 	public void registerActionHandler(
-			ActionInvokedEventHandler<Action> actionInvokedEventHandler) {
-		this.actionHandler = actionInvokedEventHandler;
+			ActionInvokedEventHandler<Action> actionInvockedEventHandker) {
+		this.actionHandler = actionInvockedEventHandker;
+		
 	}
 
 	@Override
 	public void allowCreation(boolean b) {
-		createPNotice.setEnabled(b);
+		returnReceipts.setEnabled(b);
 	}
 
+	@Override
+	protected void initializeView() {
+		return;
+	}
+	
 }
+
+

@@ -57,6 +57,8 @@ public class ReceiptOperationsViewPresenter implements ViewPresenter {
 					present("RECEIPT_SEARCH", parameters);
 				}else if(display.equalsIgnoreCase("masspaymentnoticecreation")){
 					present("MASS_PAYMENT_NOTICE_CREATION", parameters);
+				}else if(display.equalsIgnoreCase("massreceiptreturn")){
+					present("MASS_RECEIPT_RETURN_TO_AGENCY", parameters);
 				}else{
 					goToDefault();
 				}

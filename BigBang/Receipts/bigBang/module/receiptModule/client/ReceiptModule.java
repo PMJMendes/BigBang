@@ -10,6 +10,7 @@ import bigBang.library.client.userInterface.presenter.ViewPresenter;
 import bigBang.library.client.userInterface.view.InsurancePolicySelectionView;
 import bigBang.module.receiptModule.client.dataAccess.ReceiptDataBrokerImpl;
 import bigBang.module.receiptModule.client.userInterface.presenter.MassCreatePaymentNoticeViewPresenter;
+import bigBang.module.receiptModule.client.userInterface.presenter.MassReturnToInsurerViewPresenter;
 import bigBang.module.receiptModule.client.userInterface.presenter.ReceiptOperationsViewPresenter;
 import bigBang.module.receiptModule.client.userInterface.presenter.ReceiptAssociateWithDebitNoteViewPresenter;
 import bigBang.module.receiptModule.client.userInterface.presenter.ReceiptReturnViewPresenter;
@@ -18,6 +19,7 @@ import bigBang.module.receiptModule.client.userInterface.presenter.ReceiptSectio
 import bigBang.module.receiptModule.client.userInterface.presenter.ReceiptTransferToPolicyViewPresenter;
 import bigBang.module.receiptModule.client.userInterface.presenter.SerialReceiptCreationViewPresenter;
 import bigBang.module.receiptModule.client.userInterface.view.MassCreatePaymentNoticeView;
+import bigBang.module.receiptModule.client.userInterface.view.MassReturnToInsurerView;
 import bigBang.module.receiptModule.client.userInterface.view.ReceiptOperationsView;
 import bigBang.module.receiptModule.client.userInterface.view.ReceiptAssociateWithDebitNoteView;
 import bigBang.module.receiptModule.client.userInterface.view.ReceiptReturnView;
@@ -122,6 +124,14 @@ public class ReceiptModule implements Module {
 			public ViewPresenter getInstance() {
 				MassCreatePaymentNoticeView view = (MassCreatePaymentNoticeView) GWT.create(MassCreatePaymentNoticeView.class);
 				MassCreatePaymentNoticeViewPresenter presenter = new MassCreatePaymentNoticeViewPresenter(view);
+				return presenter;
+			}
+		});
+		ViewPresenterFactory.getInstance().registerViewPresenterInstantiator("MASS_RECEIPT_RETURN_TO_AGENCY", new ViewPresenterInstantiator(){
+			@Override
+			public ViewPresenter getInstance() {
+				MassReturnToInsurerView view = (MassReturnToInsurerView) GWT.create(MassReturnToInsurerView.class);
+				MassReturnToInsurerViewPresenter presenter = new MassReturnToInsurerViewPresenter(view);
 				return presenter;
 			}
 		});

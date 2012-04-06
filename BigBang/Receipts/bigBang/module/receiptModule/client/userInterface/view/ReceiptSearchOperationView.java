@@ -143,8 +143,7 @@ public class ReceiptSearchOperationView extends View implements ReceiptSearchOpe
 
 			@Override
 			public void onReturnToAgency() {
-				// TODO Auto-generated method stub
-
+				actionHandler.onActionInvoked(new ActionInvokedEvent<ReceiptSearchOperationViewPresenter.Action>(Action.RETURN_TO_AGENCY));
 			}
 
 			@Override
@@ -155,8 +154,7 @@ public class ReceiptSearchOperationView extends View implements ReceiptSearchOpe
 
 			@Override
 			public void onSendPaymentToClient() {
-				// TODO Auto-generated method stub
-
+				actionHandler.onActionInvoked(new ActionInvokedEvent<ReceiptSearchOperationViewPresenter.Action>(Action.PAYMENT_TO_CLIENT));
 			}
 
 			@Override
@@ -295,6 +293,18 @@ public class ReceiptSearchOperationView extends View implements ReceiptSearchOpe
 	@Override
 	public void allowSendPaymentNotice(boolean hasPermission) {
 		operationsToolbar.allowCreatePaymentNotice(hasPermission);
+		
+	}
+
+	@Override
+	public void allowPaymentToClient(boolean hasPermission) {
+		operationsToolbar.allowPaymentToClient(hasPermission);
+		
+	}
+
+	@Override
+	public void allowReturnToInsurer(boolean hasPermission) {
+		operationsToolbar.allowReturnToAgency(hasPermission);
 		
 	}
 

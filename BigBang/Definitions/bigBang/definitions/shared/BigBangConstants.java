@@ -170,6 +170,8 @@ public class BigBangConstants {
 			public static final String ASSOCIATE_WITH_DEBIT_NOTE = "1810BACF-DB6C-4D2E-8093-A01300CAD6C2";
 			public static final String SET_FOR_RETURN = "9C9369BB-186D-433B-BD7B-A01300CE9125";
 			public static final String VALIDATE = "47538724-7B79-4655-96D7-A01300C6A881";
+			public static final String SEND_PAYMENT_TO_CLIENT = "08799EDB-B874-49D5-B987-A01300CCAC59";
+			public static final String RETURN_TO_AGENCY = "A34C65D4-0B2A-4083-BB16-A01300D3D013";
 		}
 		
 		public static class QuoteRequestProcess {

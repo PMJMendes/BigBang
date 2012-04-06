@@ -46,5 +46,11 @@ public interface ReceiptProcessDataBroker extends DataBrokerInterface<Receipt> {
 			ResponseHandler<Void> handler);
 
 	void createPaymentNotice(String receiptId, ResponseHandler<Receipt> handler);
+
+	void sendPayment(String receiptId, ResponseHandler<Receipt> handler);
+	
+	void returnToInsurer(String receiptId, ResponseHandler<Receipt> handler);
+	
+	void massReturnToInsurer(String[] receiptIds, ResponseHandler<Void> handler);
 	
 }
