@@ -53,4 +53,6 @@ public interface ReceiptProcessDataBroker extends DataBrokerInterface<Receipt> {
 	
 	void massReturnToInsurer(String[] receiptIds, ResponseHandler<Void> handler);
 	
+	void createSignatureRequest(String receiptId, ResponseHandler<Receipt> handler);
+	
 }

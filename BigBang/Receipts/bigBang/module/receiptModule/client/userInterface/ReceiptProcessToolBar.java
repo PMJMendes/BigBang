@@ -330,5 +330,9 @@ public abstract class ReceiptProcessToolBar extends BigBangOperationsToolBar {
 	public void allowReturnToAgency(boolean hasPermission){
 		this.returnToAgency.setEnabled(hasPermission);
 	}
+	
+	public void allowCreateSignatureRequest(boolean hasPermission){
+		this.requestSignature.setEnabled(hasPermission);
+	}
 
 }

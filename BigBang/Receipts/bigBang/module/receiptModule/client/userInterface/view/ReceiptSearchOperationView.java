@@ -83,8 +83,7 @@ public class ReceiptSearchOperationView extends View implements ReceiptSearchOpe
 
 			@Override
 			public void onRequestSignature() {
-				// TODO Auto-generated method stub
-
+				actionHandler.onActionInvoked(new ActionInvokedEvent<ReceiptSearchOperationViewPresenter.Action>(Action.CREATE_SIGNATURE_REQUEST));
 			}
 
 			@Override
@@ -305,6 +304,12 @@ public class ReceiptSearchOperationView extends View implements ReceiptSearchOpe
 	@Override
 	public void allowReturnToInsurer(boolean hasPermission) {
 		operationsToolbar.allowReturnToAgency(hasPermission);
+		
+	}
+
+	@Override
+	public void allowCreateSignatureRequest(boolean hasPermission) {
+		operationsToolbar.allowCreateSignatureRequest(hasPermission);
 		
 	}
 

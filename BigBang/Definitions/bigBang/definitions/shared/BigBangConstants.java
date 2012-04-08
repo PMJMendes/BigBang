@@ -172,6 +172,7 @@ public class BigBangConstants {
 			public static final String VALIDATE = "47538724-7B79-4655-96D7-A01300C6A881";
 			public static final String SEND_PAYMENT_TO_CLIENT = "08799EDB-B874-49D5-B987-A01300CCAC59";
 			public static final String RETURN_TO_AGENCY = "A34C65D4-0B2A-4083-BB16-A01300D3D013";
+			public static final String CREATE_SIGNATURE_REQUEST = "563A630A-276A-48E8-96D3-A01300C9AF24";
 		}
 		
 		public static class QuoteRequestProcess {

@@ -398,7 +398,7 @@ public class ReceiptDataBrokerImpl extends DataBroker<Receipt> implements Receip
 	public void receiveImage(String receiptId, DocuShareHandle source,
 			final ResponseHandler<Receipt> handler) {
 		service.receiveImage(receiptId, source, new BigBangAsyncCallback<Receipt>() {
-			
+
 			@Override
 			public void onResponseSuccess(Receipt result) {
 				cache.add(result.id, result);
@@ -409,7 +409,7 @@ public class ReceiptDataBrokerImpl extends DataBroker<Receipt> implements Receip
 				}
 				handler.onResponse(result);
 			}
-			
+
 			@Override
 			public void onResponseFailure(Throwable caught) {
 				handler.onError(new String[]{
@@ -417,11 +417,11 @@ public class ReceiptDataBrokerImpl extends DataBroker<Receipt> implements Receip
 				});
 				super.onResponseFailure(caught);
 			}
-		
+
 		});
-		
+
 	}
-	
+
 	@Override
 	public void massCreatePaymentNotice(String[] receiptIds, final ResponseHandler<Void> handler){
 		service.massCreatePaymentNotice(receiptIds, new BigBangAsyncCallback<Void>() {
@@ -430,7 +430,7 @@ public class ReceiptDataBrokerImpl extends DataBroker<Receipt> implements Receip
 			public void onResponseSuccess(Void result) {
 				handler.onResponse(null);
 			}
-			
+
 			@Override
 			public void onResponseFailure(Throwable caught) {
 				handler.onError(new String[]{
@@ -438,10 +438,10 @@ public class ReceiptDataBrokerImpl extends DataBroker<Receipt> implements Receip
 				});
 				super.onResponseFailure(caught);
 			}
-			
+
 		});
 	}
-	
+
 	@Override
 	public void createPaymentNotice(String receiptId, final ResponseHandler<Receipt> handler){
 		service.createPaymentNotice(receiptId,new BigBangAsyncCallback<Receipt>() {
@@ -456,7 +456,7 @@ public class ReceiptDataBrokerImpl extends DataBroker<Receipt> implements Receip
 				}
 				handler.onResponse(result);
 			}
-			
+
 			@Override
 			public void onResponseFailure(Throwable caught) {
 				handler.onError(new String[]{
@@ -464,10 +464,10 @@ public class ReceiptDataBrokerImpl extends DataBroker<Receipt> implements Receip
 				});
 				super.onResponseFailure(caught);
 			}
-			
+
 		});
 	}
-	
+
 	@Override
 	public void sendPayment(String receiptId, final ResponseHandler<Receipt> handler){
 		service.sendPayment(receiptId, new BigBangAsyncCallback<Receipt>() {
@@ -481,7 +481,7 @@ public class ReceiptDataBrokerImpl extends DataBroker<Receipt> implements Receip
 				}
 				handler.onResponse(result);
 			}
-			
+
 			@Override
 			public void onResponseFailure(Throwable caught) {
 				handler.onError(new String[]{
@@ -506,7 +506,7 @@ public class ReceiptDataBrokerImpl extends DataBroker<Receipt> implements Receip
 				}
 				handler.onResponse(result);
 			}
-			
+
 			@Override
 			public void onResponseFailure(Throwable caught) {
 				handler.onError(new String[]{
@@ -515,19 +515,19 @@ public class ReceiptDataBrokerImpl extends DataBroker<Receipt> implements Receip
 				super.onResponseFailure(caught);
 			}
 		});
-		
+
 	}
 
 	@Override
 	public void massReturnToInsurer(String[] receiptIds,
 			final ResponseHandler<Void> handler) {
 		service.massReturnToInsurer(receiptIds, new BigBangAsyncCallback<Void>() {
-		
+
 			@Override
 			public void onResponseSuccess(Void result) {
 				handler.onResponse(null);
 			}
-			
+
 			@Override
 			public void onResponseFailure(Throwable caught) {
 				handler.onError(new String[]{
@@ -535,9 +535,34 @@ public class ReceiptDataBrokerImpl extends DataBroker<Receipt> implements Receip
 				});
 				super.onResponseFailure(caught);
 			}
-			
+
 		});
-		
+
+	}
+
+	@Override
+	public void createSignatureRequest(String receiptId,
+			final ResponseHandler<Receipt> handler) {
+		service.createSignatureRequest(receiptId, new BigBangAsyncCallback<Receipt>() {
+			@Override
+			public void onResponseSuccess(Receipt result) {
+				cache.add(result.id, result);
+				incrementDataVersion();
+				for(DataBrokerClient<Receipt> bc : getClients()){
+					((ReceiptDataBrokerClient) bc).updateReceipt(result);
+					((ReceiptDataBrokerClient) bc).setDataVersionNumber(BigBangConstants.EntityIds.RECEIPT, getCurrentDataVersion());
+				}
+				handler.onResponse(result);
+			}
+
+			@Override
+			public void onResponseFailure(Throwable caught) {
+				handler.onError(new String[]{
+						new String("Could not create signature request")
+				});
+				super.onResponseFailure(caught);
+			}
+		});
 	}
 }
 

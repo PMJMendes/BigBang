@@ -38,7 +38,7 @@ public class ReceiptSearchOperationViewPresenter implements ViewPresenter {
 		SAVE,
 		CANCEL,
 		DELETE, TRANSFER_TO_POLICY, ASSOCIATE_WITH_DEBIT_NOTE,
-		VALIDATE, SET_FOR_RETURN, ON_CREATE_PAYMENT_NOTE, PAYMENT_TO_CLIENT, RETURN_TO_AGENCY
+		VALIDATE, SET_FOR_RETURN, ON_CREATE_PAYMENT_NOTE, PAYMENT_TO_CLIENT, RETURN_TO_AGENCY, CREATE_SIGNATURE_REQUEST
 	}
 
 	public interface Display {
@@ -61,6 +61,7 @@ public class ReceiptSearchOperationViewPresenter implements ViewPresenter {
 		void allowSendPaymentNotice(boolean hasPermission);
 		void allowPaymentToClient(boolean hasPermission);
 		void allowReturnToInsurer(boolean hasPermission);
+		void allowCreateSignatureRequest(boolean hasPermission);
 		//Children Lists
 		//TODO
 
@@ -69,6 +70,8 @@ public class ReceiptSearchOperationViewPresenter implements ViewPresenter {
 		void setSaveModeEnabled(boolean enabled);
 
 		Widget asWidget();
+
+
 
 
 	}
@@ -168,6 +171,9 @@ public class ReceiptSearchOperationViewPresenter implements ViewPresenter {
 				case RETURN_TO_AGENCY:
 					onReturnToAgency();
 					break;
+				case CREATE_SIGNATURE_REQUEST:
+					onCreateSignatureRequest();
+					break;
 				}
 				
 
@@ -176,6 +182,24 @@ public class ReceiptSearchOperationViewPresenter implements ViewPresenter {
 
 		//APPLICATION-WIDE EVENTS
 		bound = true;
+	}
+
+	protected void onCreateSignatureRequest() {
+		receiptBroker.createSignatureRequest(receiptId, new ResponseHandler<Receipt>() {
+			
+			@Override
+			public void onResponse(Receipt response) {
+				EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Pedido de assinatura criado"), TYPE.TRAY_NOTIFICATION));
+				NavigationHistoryManager.getInstance().reload();
+			}
+			
+			@Override
+			public void onError(Collection<ResponseError> errors) {
+				EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não foi possível criar o pedido de assinatura"), TYPE.ALERT_NOTIFICATION));
+				NavigationHistoryManager.getInstance().reload();
+			}
+		});
+		
 	}
 
 	protected void onReturnToAgency() {
@@ -301,6 +325,7 @@ public class ReceiptSearchOperationViewPresenter implements ViewPresenter {
 				view.allowSendPaymentNotice(PermissionChecker.hasPermission(value, BigBangConstants.OperationIds.ReceiptProcess.CREATE_PAYMENT_NOTICE));
 				view.allowPaymentToClient(PermissionChecker.hasPermission(value, BigBangConstants.OperationIds.ReceiptProcess.SEND_PAYMENT_TO_CLIENT));
 				view.allowReturnToInsurer(PermissionChecker.hasPermission(value, BigBangConstants.OperationIds.ReceiptProcess.RETURN_TO_AGENCY));
+				view.allowCreateSignatureRequest(PermissionChecker.hasPermission(value, BigBangConstants.OperationIds.ReceiptProcess.CREATE_SIGNATURE_REQUEST));
 				view.setSaveModeEnabled(false);
 				view.getForm().setReadOnly(true);
 				view.getForm().setValue(value);
