@@ -160,5 +160,12 @@ public class BigBang_Tests
 //		TestReceiptInsurerAccounting.DoTest();
 //		TestReceiptMediatorAccounting.DoTest();
 //		TestReceiptReturnToInsurer.DoTest();
+//		TestReceiptCreateSignatureRequest.DoTest();
+//		TestReceiptSendPayment.DoTest();
+//
+//		TestSigReqGet.DoTest();
+//		TestSigReqRepeat.DoTest();
+//		TestSigReqReply.DoTest();
+//		TestSigReqCancel.DoTest();
 	}
 }

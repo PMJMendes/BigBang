@@ -33,6 +33,6 @@ public class TestReceiptReceiveImage
 		source.handle = "Document-456132";
 		source.locationHandle = null;
 
-		Services.receiptService.receiveImage("9C3511F4-B2C4-4E6D-BBBA-A02101302172", source, callback);
+		Services.receiptService.receiveImage("D8A120C8-810A-4A7B-9FC3-A02D010E8584", source, callback);
 	}
 }

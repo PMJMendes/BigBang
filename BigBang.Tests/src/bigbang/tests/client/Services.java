@@ -52,6 +52,8 @@ import bigBang.module.quoteRequestModule.interfaces.QuoteRequestService;
 import bigBang.module.quoteRequestModule.interfaces.QuoteRequestServiceAsync;
 import bigBang.module.receiptModule.interfaces.ReceiptService;
 import bigBang.module.receiptModule.interfaces.ReceiptServiceAsync;
+import bigBang.module.receiptModule.interfaces.SignatureRequestService;
+import bigBang.module.receiptModule.interfaces.SignatureRequestServiceAsync;
 import bigBang.module.tasksModule.interfaces.TasksService;
 import bigBang.module.tasksModule.interfaces.TasksServiceAsync;
 
@@ -113,4 +115,6 @@ public class Services
 			GWT.create(SubPolicyExerciseService.class);
 	public static final ReceiptServiceAsync receiptService =
 			GWT.create(ReceiptService.class);
+	public static final SignatureRequestServiceAsync signatureRequestService =
+			GWT.create(SignatureRequestService.class);
 }

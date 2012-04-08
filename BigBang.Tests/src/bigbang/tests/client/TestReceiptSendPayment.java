@@ -4,7 +4,7 @@ import bigBang.definitions.shared.Receipt;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
-public class TestReceiptPayment
+public class TestReceiptSendPayment
 {
 	public static void DoTest()
 	{
@@ -13,8 +13,6 @@ public class TestReceiptPayment
 
 	private static void DoStep1()
 	{
-		Receipt.PaymentInfo info;
-
 		AsyncCallback<Receipt> callback = new AsyncCallback<Receipt>()
 		{
 			public void onFailure(Throwable caught)
@@ -28,11 +26,6 @@ public class TestReceiptPayment
 			}
 		};
 
-		info = new Receipt.PaymentInfo();
-		info.receiptId = "D8A120C8-810A-4A7B-9FC3-A02D010E8584";
-		info.payments = new Receipt.PaymentInfo.Payment[] {new Receipt.PaymentInfo.Payment()};
-		info.payments[0].paymentTypeId = "9FD1C899-B395-4744-974B-A02200EB9014";
-		info.payments[0].value = "-153.42";
-		Services.receiptService.markPayed(info, callback);
+		Services.receiptService.sendPayment("D8A120C8-810A-4A7B-9FC3-A02D010E8584", callback);
 	}
 }
