@@ -108,6 +108,6 @@ public class CreateReceipt
 		}
 
 		if ( lobjAux.isReverseCircuit() )
-			TriggerOp(new ExternForceReverse(GetProcess().getKey()), pdb);
+			TriggerOp(new ExternForceReverse(lobjProc.getKey()), pdb);
 	}
 }

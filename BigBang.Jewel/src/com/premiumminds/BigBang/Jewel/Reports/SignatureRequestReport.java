@@ -100,7 +100,7 @@ public class SignatureRequestReport
 			larrTables[i] = new String[9];
 			larrTables[i][0] = (lobjSubPolicy == null ? lobjPolicy.getLabel() : lobjSubPolicy.getLabel());
 			larrTables[i][1] = lobjReceipt.getLabel();
-			larrTables[i][2] = lobjPolicy.GetSubLine().getLine().getLabel();
+			larrTables[i][2] = lobjPolicy.GetSubLine().getLine().getCategory().getLabel();
 			larrTables[i][3] = (String)lobjPolicy.GetCompany().getAt(1);
 			larrTables[i][4] = ((BigDecimal)lobjReceipt.getAt(3)).toPlainString();
 			larrTables[i][5] = (String)lobjReceipt.getAt(14);

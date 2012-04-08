@@ -138,8 +138,8 @@ public class PaymentCoverLetterReport
 			larrTables[i][0] = (lobjSubPolicy == null ? lobjPolicy.getLabel() : lobjSubPolicy.getLabel());
 			larrTables[i][1] = lobjReceipt.getLabel();
 			larrTables[i][2] = ((BigDecimal)lobjReceipt.getAt(3)).negate().toPlainString();
-			larrTables[i][3] = (lobjData == null ? "" : lobjData.mstrCheque);
-			larrTables[i][4] = (lobjMode == null ? "" : lobjMode.getLabel());
+			larrTables[i][3] = (lobjMode == null ? "" : lobjMode.getLabel());
+			larrTables[i][4] = (lobjData == null ? "" : lobjData.mstrCheque);
 			larrTables[i][5] = (lobjBank == null ? "" : (String)lobjBank.getAt(1));
 
 			mlngCount++;

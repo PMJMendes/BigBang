@@ -144,7 +144,7 @@ public class CancelRequest
 					lobjNewItem.setAt(1, Engine.getCurrentUser() /*lidUser*/);
 					lobjNewItem.setAt(2, Constants.ProcID_SignatureRequest);
 					lobjNewItem.setAt(3, ldtAux);
-					lobjNewItem.setAt(4, lobjRequest.getAt(5));
+					lobjNewItem.setAt(4, lobjRequest.getAt(1));
 					lobjNewItem.setAt(5, Constants.UrgID_Valid);
 					lobjNewItem.SaveToDb(pdb);
 					lobjNewItem.InitNew(new UUID[] {GetProcess().getKey()}, new UUID[] {Constants.OPID_SigReq_ReceiveReply,

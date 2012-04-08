@@ -28,6 +28,7 @@ public class SignatureRequestServiceImpl
 	{
 		com.premiumminds.BigBang.Jewel.Objects.SignatureRequest lobjRequest;
 		IProcess lobjProcess;
+		UUID lidReceipt;
 //		RequestAddress[] larrAddresses;
 		SignatureRequest lobjResult;
 //		ArrayList<String> larrUsers;
@@ -41,6 +42,7 @@ public class SignatureRequestServiceImpl
 			lobjRequest = com.premiumminds.BigBang.Jewel.Objects.SignatureRequest.GetInstance(Engine.getCurrentNameSpace(), pid);
 //			larrAddresses = lobjRequest.GetAddresses();
 			lobjProcess = PNProcess.GetInstance(Engine.getCurrentNameSpace(), lobjRequest.GetProcessID());
+			lidReceipt = lobjProcess.GetParent().GetDataKey();
 		}
 		catch (Throwable e)
 		{
@@ -50,8 +52,9 @@ public class SignatureRequestServiceImpl
 		lobjResult = new SignatureRequest();
 		lobjResult.id = lobjRequest.getKey().toString();
 
-		lobjResult.replylimit = (int)((((Timestamp)lobjRequest.getAt(5)).getTime() -
+		lobjResult.replylimit = (int)((((Timestamp)lobjRequest.getAt(1)).getTime() -
 				(new Timestamp(new java.util.Date().getTime())).getTime()) / 86400000L);
+		lobjResult.receiptId = lidReceipt.toString();
 
 //		larrUsers = new ArrayList<String>();
 //		larrInfos = new ArrayList<String>();
