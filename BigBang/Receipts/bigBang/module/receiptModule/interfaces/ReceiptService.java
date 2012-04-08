@@ -43,8 +43,11 @@ public interface ReceiptService
 	public DebitNote[] getRelevantDebitNotes(String receiptId) throws SessionExpiredException, BigBangException;
 	public Receipt associateWithDebitNote(String receiptId, String debitNoteId) throws SessionExpiredException, BigBangException;
 
-	public Receipt sendReceipt(String receiptId) throws SessionExpiredException, BigBangException;
+	public Receipt createSignatureRequest(String receiptId) throws SessionExpiredException, BigBangException;
 	public Receipt sendPayment(String receiptId) throws SessionExpiredException, BigBangException;
+
+	public Receipt sendReceipt(String receiptId) throws SessionExpiredException, BigBangException;
+
 	public Receipt insurerAccouting(String receiptId) throws SessionExpiredException, BigBangException;
 	public Receipt mediatorAccounting(String receiptId) throws SessionExpiredException, BigBangException;
 

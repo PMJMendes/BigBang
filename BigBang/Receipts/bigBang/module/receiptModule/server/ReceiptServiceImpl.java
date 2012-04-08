@@ -49,6 +49,7 @@ import com.premiumminds.BigBang.Jewel.Operations.DocOps;
 import com.premiumminds.BigBang.Jewel.Operations.Policy.CreateReceipt;
 import com.premiumminds.BigBang.Jewel.Operations.Receipt.AssociateWithDebitNote;
 import com.premiumminds.BigBang.Jewel.Operations.Receipt.CreatePaymentNotice;
+import com.premiumminds.BigBang.Jewel.Operations.Receipt.CreateSignatureRequest;
 import com.premiumminds.BigBang.Jewel.Operations.Receipt.DeleteReceipt;
 import com.premiumminds.BigBang.Jewel.Operations.Receipt.InsurerAccounting;
 import com.premiumminds.BigBang.Jewel.Operations.Receipt.ManageData;
@@ -545,6 +546,9 @@ public class ReceiptServiceImpl
 		com.premiumminds.BigBang.Jewel.Objects.Receipt lobjReceipt;
 		CreatePaymentNotice lopCPN;
 
+		if ( Engine.getCurrentUser() == null )
+			throw new SessionExpiredException();
+
 		try
 		{
 			lobjReceipt = com.premiumminds.BigBang.Jewel.Objects.Receipt.GetInstance(Engine.getCurrentNameSpace(),
@@ -760,11 +764,14 @@ public class ReceiptServiceImpl
 		return sGetReceipt(lobjReceipt.getKey());
 	}
 
-	public Receipt sendReceipt(String receiptId)
+	public Receipt createSignatureRequest(String receiptId)
 		throws SessionExpiredException, BigBangException
 	{
 		com.premiumminds.BigBang.Jewel.Objects.Receipt lobjReceipt;
-		SendReceipt lopSR;
+		CreateSignatureRequest lopCSR;
+
+		if ( Engine.getCurrentUser() == null )
+			throw new SessionExpiredException();
 
 		try
 		{
@@ -776,13 +783,13 @@ public class ReceiptServiceImpl
 			throw new BigBangException(e.getMessage(), e);
 		}
 
-		lopSR = new SendReceipt(lobjReceipt.GetProcessID());
-		lopSR.marrReceiptIDs = new UUID[] {UUID.fromString(receiptId)};
-		lopSR.mbUseSets = false;
+		lopCSR = new CreateSignatureRequest(lobjReceipt.GetProcessID());
+		lopCSR.marrReceiptIDs = new UUID[] {UUID.fromString(receiptId)};
+		lopCSR.mbUseSets = false;
 
 		try
 		{
-			lopSR.Execute();
+			lopCSR.Execute();
 		}
 		catch (Throwable e)
 		{
@@ -797,6 +804,9 @@ public class ReceiptServiceImpl
 	{
 		com.premiumminds.BigBang.Jewel.Objects.Receipt lobjReceipt;
 		SendPayment lopSP;
+
+		if ( Engine.getCurrentUser() == null )
+			throw new SessionExpiredException();
 
 		try
 		{
@@ -824,11 +834,49 @@ public class ReceiptServiceImpl
 		return sGetReceipt(lobjReceipt.getKey());
 	}
 
+	public Receipt sendReceipt(String receiptId)
+		throws SessionExpiredException, BigBangException
+	{
+		com.premiumminds.BigBang.Jewel.Objects.Receipt lobjReceipt;
+		SendReceipt lopSR;
+
+		if ( Engine.getCurrentUser() == null )
+			throw new SessionExpiredException();
+
+		try
+		{
+			lobjReceipt = com.premiumminds.BigBang.Jewel.Objects.Receipt.GetInstance(Engine.getCurrentNameSpace(),
+					UUID.fromString(receiptId));
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangException(e.getMessage(), e);
+		}
+
+		lopSR = new SendReceipt(lobjReceipt.GetProcessID());
+		lopSR.marrReceiptIDs = new UUID[] {UUID.fromString(receiptId)};
+		lopSR.mbUseSets = false;
+
+		try
+		{
+			lopSR.Execute();
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangException(e.getMessage(), e);
+		}
+
+		return sGetReceipt(lobjReceipt.getKey());
+	}
+
 	public Receipt insurerAccouting(String receiptId)
 		throws SessionExpiredException, BigBangException
 	{
 		com.premiumminds.BigBang.Jewel.Objects.Receipt lobjReceipt;
 		InsurerAccounting lopIA;
+
+		if ( Engine.getCurrentUser() == null )
+			throw new SessionExpiredException();
 
 		try
 		{
@@ -860,6 +908,9 @@ public class ReceiptServiceImpl
 		com.premiumminds.BigBang.Jewel.Objects.Receipt lobjReceipt;
 		MediatorAccounting lopMA;
 
+		if ( Engine.getCurrentUser() == null )
+			throw new SessionExpiredException();
+
 		try
 		{
 			lobjReceipt = com.premiumminds.BigBang.Jewel.Objects.Receipt.GetInstance(Engine.getCurrentNameSpace(),
@@ -889,6 +940,9 @@ public class ReceiptServiceImpl
 	{
 		com.premiumminds.BigBang.Jewel.Objects.Receipt lobjReceipt;
 		ReturnToInsurer lopRTI;
+
+		if ( Engine.getCurrentUser() == null )
+			throw new SessionExpiredException();
 
 		try
 		{
@@ -1033,6 +1087,9 @@ public class ReceiptServiceImpl
 		CreatePaymentNotice lopCPN;
 		int i;
 
+		if ( Engine.getCurrentUser() == null )
+			throw new SessionExpiredException();
+
 		larrReceipts = new Hashtable<UUID, ArrayList<UUID>>();
 		for ( i = 0; i < receiptIds.length; i++ )
 		{
@@ -1107,6 +1164,9 @@ public class ReceiptServiceImpl
 		DocOps lobjDocOps;
 		SendReceipt lopSR;
 		int i;
+
+		if ( Engine.getCurrentUser() == null )
+			throw new SessionExpiredException();
 
 		larrReceipts = new Hashtable<UUID, ArrayList<UUID>>();
 		for ( i = 0; i < receiptIds.length; i++ )
@@ -1183,6 +1243,9 @@ public class ReceiptServiceImpl
 		SendPayment lopSR;
 		int i;
 
+		if ( Engine.getCurrentUser() == null )
+			throw new SessionExpiredException();
+
 		larrReceipts = new Hashtable<UUID, ArrayList<UUID>>();
 		for ( i = 0; i < receiptIds.length; i++ )
 		{
@@ -1257,6 +1320,9 @@ public class ReceiptServiceImpl
 		InsurerAccounting lopIA;
 		int i;
 
+		if ( Engine.getCurrentUser() == null )
+			throw new SessionExpiredException();
+
 		larrReceipts = new Hashtable<UUID, ArrayList<UUID>>();
 		for ( i = 0; i < receiptIds.length; i++ )
 		{
@@ -1325,6 +1391,9 @@ public class ReceiptServiceImpl
 		UUID lidMap;
 		MediatorAccounting lopMA;
 		int i;
+
+		if ( Engine.getCurrentUser() == null )
+			throw new SessionExpiredException();
 
 		larrReceipts = new Hashtable<UUID, ArrayList<UUID>>();
 		for ( i = 0; i < receiptIds.length; i++ )
@@ -1408,6 +1477,9 @@ public class ReceiptServiceImpl
 		DocOps lobjDocOps;
 		ReturnToInsurer lopRTI;
 		int i;
+
+		if ( Engine.getCurrentUser() == null )
+			throw new SessionExpiredException();
 
 		larrReceipts = new Hashtable<UUID, ArrayList<UUID>>();
 		for ( i = 0; i < receiptIds.length; i++ )

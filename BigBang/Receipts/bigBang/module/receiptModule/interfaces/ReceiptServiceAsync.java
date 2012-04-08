@@ -21,8 +21,9 @@ public interface ReceiptServiceAsync
 	void markPayed(Receipt.PaymentInfo info, AsyncCallback<Receipt> callback);
 	void getRelevantDebitNotes(String receiptId, AsyncCallback<DebitNote[]> callback);
 	void associateWithDebitNote(String receiptId, String debitNoteId, AsyncCallback<Receipt> callback);
-	void sendReceipt(String receiptId, AsyncCallback<Receipt> callback);
+	void createSignatureRequest(String receiptId, AsyncCallback<Receipt> callback);
 	void sendPayment(String receiptId, AsyncCallback<Receipt> callback);
+	void sendReceipt(String receiptId, AsyncCallback<Receipt> callback);
 	void insurerAccouting(String receiptId, AsyncCallback<Receipt> callback);
 	void mediatorAccounting(String receiptId, AsyncCallback<Receipt> callback);
 	void returnToInsurer(String receiptId, AsyncCallback<Receipt> callback);
