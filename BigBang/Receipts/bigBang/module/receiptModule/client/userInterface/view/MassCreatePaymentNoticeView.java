@@ -111,7 +111,7 @@ public class MassCreatePaymentNoticeView extends View implements MassCreatePayme
 				}
 			});
 
-			this.setOperationId(BigBangConstants.OperationIds.ReceiptProcess.RETURN_TO_AGENCY);
+			this.setOperationId(BigBangConstants.OperationIds.ReceiptProcess.CREATE_PAYMENT_NOTICE);
 			filtersContainer.clear();
 			filtersContainer.add(filtersPanel);
 			doSearch();
@@ -307,9 +307,7 @@ public class MassCreatePaymentNoticeView extends View implements MassCreatePayme
 
 	@Override
 	public void refreshMainLisT() {
-
 		searchPanel.doSearch();
-
 	}
 
 	@Override

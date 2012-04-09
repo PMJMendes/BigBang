@@ -193,6 +193,7 @@ public class MassReturnToInsurerViewPresenter implements ViewPresenter{
 			public void onSelectionChanged(SelectionChangedEvent event) {
 				
 				@SuppressWarnings("unchecked")
+				final
 				ValueSelectable<ReceiptStub> selectable = (ValueSelectable<ReceiptStub>) event.getFirstSelected();
 				
 				if(selectable!= null){
@@ -201,6 +202,7 @@ public class MassReturnToInsurerViewPresenter implements ViewPresenter{
 						
 						@Override
 						public void onResponse(Receipt response) {
+							selectable.setSelected(true, true);
 							view.getReceiptForm().setValue(response);
 						}
 						
@@ -220,6 +222,7 @@ public class MassReturnToInsurerViewPresenter implements ViewPresenter{
 			public void onSelectionChanged(SelectionChangedEvent event) {
 				
 				@SuppressWarnings("unchecked")
+				final
 				ValueSelectable<ReceiptStub> selectable = (ValueSelectable<ReceiptStub>) event.getFirstSelected();
 				
 				if(selectable!= null){
@@ -228,6 +231,7 @@ public class MassReturnToInsurerViewPresenter implements ViewPresenter{
 						
 						@Override
 						public void onResponse(Receipt response) {
+							selectable.setSelected(true, true);
 							view.getReceiptForm().setValue(response);
 						}
 						

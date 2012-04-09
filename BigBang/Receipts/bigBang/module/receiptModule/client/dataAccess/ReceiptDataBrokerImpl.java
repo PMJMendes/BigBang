@@ -542,11 +542,8 @@ public class ReceiptDataBrokerImpl extends DataBroker<Receipt> implements Receip
 	}
 
 	@Override
-	public void createSignatureRequest(String receiptId,
+	public void createSignatureRequest(SignatureRequest request,
 			final ResponseHandler<Receipt> handler) {
-		SignatureRequest request;
-		request = new SignatureRequest();
-		request.receiptId = receiptId;
 		service.createSignatureRequest(request, new BigBangAsyncCallback<Receipt>() {
 			@Override
 			public void onResponseSuccess(Receipt result) {

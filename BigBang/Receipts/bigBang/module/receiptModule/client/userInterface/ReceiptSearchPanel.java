@@ -32,7 +32,7 @@ import bigBang.module.receiptModule.shared.ReceiptSortParameter;
 import bigBang.module.receiptModule.shared.ReceiptSortParameter.SortableField;
 
 public class ReceiptSearchPanel extends SearchPanel<ReceiptStub> implements ReceiptDataBrokerClient {
-
+	
 	public static class Entry extends ListEntry<ReceiptStub> {
 
 		protected Label numberLabel;
@@ -42,12 +42,15 @@ public class ReceiptSearchPanel extends SearchPanel<ReceiptStub> implements Rece
 		protected Label premiumLabel;
 		protected Label maturityDateLabel;
 		protected boolean initialized = false;
+
+
 		
 		public Entry(ReceiptStub value) {
 			super(value);
 			setHeight("65px");
 		}
 		
+		@Override
 		public <I extends Object> void setInfo(I info) {
 			if(!initialized){
 				numberLabel = getFormatedLabel();
@@ -87,7 +90,6 @@ public class ReceiptSearchPanel extends SearchPanel<ReceiptStub> implements Rece
 
 				((UIObject) rightWidgetContainer).setSize("100%", "100%");
 				setRightWidget(rightContainer);
-				initialized = true;
 			}
 
 			ReceiptStub r = (ReceiptStub) info;
@@ -108,14 +110,17 @@ public class ReceiptSearchPanel extends SearchPanel<ReceiptStub> implements Rece
 			this.premiumLabel.setTitle("Prémio total");
 			this.maturityDateLabel.setText(r.maturityDate == null ? "" : r.maturityDate);
 			this.maturityDateLabel.setTitle("Data de Vigência");
-			
+			initialized = true;
 			setSelected(this.isSelected(), false);
+			
 		};
 
 		@Override
 		public void setSelected(boolean selected, boolean b) {
 			super.setSelected(selected, b);
-			if(!initialized) {return;}
+			if(!initialized) {
+				return;
+			}
 			if(selected){
 				this.maturityDateLabel.getElement().getStyle().setColor("white");
 				this.lineLabel.getElement().getStyle().setColor("white");

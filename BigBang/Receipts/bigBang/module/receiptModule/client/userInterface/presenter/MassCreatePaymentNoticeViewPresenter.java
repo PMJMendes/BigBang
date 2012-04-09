@@ -157,14 +157,16 @@ public class MassCreatePaymentNoticeViewPresenter implements ViewPresenter{
 			public void onSelectionChanged(SelectionChangedEvent event) {
 				
 				@SuppressWarnings("unchecked")
+				final
 				ValueSelectable<ReceiptStub> selectable = (ValueSelectable<ReceiptStub>) event.getFirstSelected();
 				
 				if(selectable!= null){
-					view.getSelectedList().clearSelection();
+//					view.getSelectedList().clearSelection();
 					broker.getReceipt(selectable.getValue().id, new ResponseHandler<Receipt>() {
 						
 						@Override
 						public void onResponse(Receipt response) {
+//							selectable.setSelected(true, true);
 							view.getReceiptForm().setValue(response);
 						}
 						
@@ -185,14 +187,16 @@ public class MassCreatePaymentNoticeViewPresenter implements ViewPresenter{
 			public void onSelectionChanged(SelectionChangedEvent event) {
 				
 				@SuppressWarnings("unchecked")
+				final
 				ValueSelectable<ReceiptStub> selectable = (ValueSelectable<ReceiptStub>) event.getFirstSelected();
 				
 				if(selectable!= null){
-					view.getMainList().clearSelection();
+//					view.getMainList().clearSelection();
 					broker.getReceipt(selectable.getValue().id, new ResponseHandler<Receipt>() {
 						
 						@Override
 						public void onResponse(Receipt response) {
+//							selectable.setSelected(true, true);
 							view.getReceiptForm().setValue(response);
 						}
 						
@@ -212,7 +216,7 @@ public class MassCreatePaymentNoticeViewPresenter implements ViewPresenter{
 	@Override
 	public void setParameters(HasParameters parameterHolder) {
 		clearView();
-		view.refreshMainLisT();
+//		view.refreshMainLisT();
 		showMassCreatePaymentNoticeScreen();
 	}
 
@@ -245,7 +249,7 @@ public class MassCreatePaymentNoticeViewPresenter implements ViewPresenter{
 	}
 
 	private void clearView() {
-		view.getMainList().clearSelection();
+//		view.getMainList().clearSelection();
 		view.removeAllReceiptsFromCreateNotice();
 		view.getReceiptForm().setValue(null);
 

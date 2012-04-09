@@ -8,6 +8,7 @@ import bigBang.definitions.shared.DocuShareHandle;
 import bigBang.definitions.shared.Receipt;
 import bigBang.definitions.shared.Receipt.ReturnMessage;
 import bigBang.definitions.shared.ReceiptStub;
+import bigBang.definitions.shared.SignatureRequest;
 
 public interface ReceiptProcessDataBroker extends DataBrokerInterface<Receipt> {
 
@@ -52,7 +53,8 @@ public interface ReceiptProcessDataBroker extends DataBrokerInterface<Receipt> {
 	void returnToInsurer(String receiptId, ResponseHandler<Receipt> handler);
 	
 	void massReturnToInsurer(String[] receiptIds, ResponseHandler<Void> handler);
-	
-	void createSignatureRequest(String receiptId, ResponseHandler<Receipt> handler);
+
+	void createSignatureRequest(SignatureRequest request,
+			ResponseHandler<Receipt> handler);
 	
 }
