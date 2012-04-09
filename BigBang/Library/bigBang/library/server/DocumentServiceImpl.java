@@ -427,6 +427,8 @@ public class DocumentServiceImpl
 			lidOp = Constants.OPID_SubPolicy_ManageData;
 		else if ( Constants.ObjID_Receipt.equals(lidTopType) )
 			lidOp = Constants.OPID_Receipt_ManageData;
+		else if ( Constants.ObjID_Casualty.equals(lidTopType) )
+			lidOp = Constants.OPID_Casualty_ManageData;
 		else
 			throw new BigBangException("Erro: O objecto indicado não permite movimentos de Documentos.");
 
@@ -507,6 +509,14 @@ public class DocumentServiceImpl
 			((com.premiumminds.BigBang.Jewel.Operations.Receipt.ManageData)lobjResult).mobjData = null;
 			((com.premiumminds.BigBang.Jewel.Operations.Receipt.ManageData)lobjResult).mobjContactOps = null;
 			((com.premiumminds.BigBang.Jewel.Operations.Receipt.ManageData)lobjResult).mobjDocOps = pobjInner;
+			lbFound = true;
+		}
+
+		if ( lobjResult instanceof com.premiumminds.BigBang.Jewel.Operations.Casualty.ManageData )
+		{
+			((com.premiumminds.BigBang.Jewel.Operations.Casualty.ManageData)lobjResult).mobjData = null;
+			((com.premiumminds.BigBang.Jewel.Operations.Casualty.ManageData)lobjResult).mobjContactOps = null;
+			((com.premiumminds.BigBang.Jewel.Operations.Casualty.ManageData)lobjResult).mobjDocOps = pobjInner;
 			lbFound = true;
 		}
 
