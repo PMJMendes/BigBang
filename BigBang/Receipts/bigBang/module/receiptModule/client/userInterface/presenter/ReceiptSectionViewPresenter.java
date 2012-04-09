@@ -96,10 +96,7 @@ public class ReceiptSectionViewPresenter implements ViewPresenter {
 
 					if(display.equalsIgnoreCase("history")){
 						present("HISTORY", parameters);
-					}else if(display.equalsIgnoreCase("serialreceiptcreation")){
-						present("SERIAL_RECEIPT_CREATION", parameters);
-					}
-					else{
+					}else{
 						present("RECEIPT_OPERATIONS", parameters);
 					}
 				}
@@ -126,8 +123,12 @@ public class ReceiptSectionViewPresenter implements ViewPresenter {
 				}else if(show.equalsIgnoreCase("returnreceipt")){
 					present("RECEIPT_RETURN", parameters);
 					view.showOverlayViewContainer(true);
+				}else if(show.equalsIgnoreCase("cancelsignaturerequest")){
+					present("CANCEL_SIGNATURE_REQUEST", parameters);
+					view.showOverlayViewContainer(true);
+				}else if(show.equalsIgnoreCase("createsignaturerequest")){
+					present("CREATE_SIGNATURE_REQUEST", parameters);
 				}
-
 			}
 
 			@Override

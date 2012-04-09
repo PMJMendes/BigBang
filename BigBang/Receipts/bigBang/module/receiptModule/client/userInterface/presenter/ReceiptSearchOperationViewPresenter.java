@@ -185,23 +185,9 @@ public class ReceiptSearchOperationViewPresenter implements ViewPresenter {
 	}
 
 	protected void onCreateSignatureRequest() {
-		
-		//TODO
-//		receiptBroker.createSignatureRequest(receiptId, new ResponseHandler<Receipt>() {
-//			
-//			@Override
-//			public void onResponse(Receipt response) {
-//				EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Pedido de assinatura criado"), TYPE.TRAY_NOTIFICATION));
-//				NavigationHistoryManager.getInstance().reload();
-//			}
-//			
-//			@Override
-//			public void onError(Collection<ResponseError> errors) {
-//				EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não foi possível criar o pedido de assinatura"), TYPE.ALERT_NOTIFICATION));
-//				NavigationHistoryManager.getInstance().reload();
-//			}
-//		});
-//		
+		NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
+		item.setParameter("show", "signaturerequest");
+		NavigationHistoryManager.getInstance().go(item);	
 	}
 
 	protected void onReturnToAgency() {

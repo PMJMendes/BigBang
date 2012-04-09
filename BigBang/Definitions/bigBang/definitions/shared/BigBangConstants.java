@@ -58,6 +58,8 @@ public class BigBangConstants {
 		public static final String EXTERNAL_INFO_REQUEST = "BD9E1BEA-D02B-40FE-BB3E-9FEA00CA7ECD";
 
 		public static final String QUOTE_REQUEST_INSURED_OBJECT = "B594AB7F-573F-4401-A369-A00500F9D2D8";
+
+		public static final String SIGNATURE_REQUEST = "A864FABC-8DCE-4D97-9A50-A02A00F7CBB5";
 		
 	}
 
@@ -179,6 +181,12 @@ public class BigBangConstants {
 			public static final String UPDATE_QUOTE_REQUEST = "450E32C7-C544-4030-92C7-A00C0121D1B6";
 			public static final String DELETE_QUOTE_REQUEST = "57172AC9-8CDF-4C34-825F-A00C01294D35";
 			public static final String CLOSE_QUOTE_REQUEST = "2E49B889-594C-49A6-B25D-A00C012876B8";
+		}
+
+		public static class SignatureRequestProcess {
+			public static final String REPEAT_SIGNATURE_REQUEST = "C22398E7-D1E7-4F27-94A9-A02A01007804";
+			public static final String CANCEL_SIGNATURE_REQUEST = "03E8D6B1-04B8-4B1B-9FFA-A02A01013616";
+			public static final String RECEIVE_REPLY = "4AAD2648-E6D7-47AF-A91E-A02A0100B3A5";
 		}
 		
 	}

@@ -18,6 +18,7 @@ import bigBang.module.receiptModule.client.userInterface.presenter.ReceiptSearch
 import bigBang.module.receiptModule.client.userInterface.presenter.ReceiptSectionViewPresenter;
 import bigBang.module.receiptModule.client.userInterface.presenter.ReceiptTransferToPolicyViewPresenter;
 import bigBang.module.receiptModule.client.userInterface.presenter.SerialReceiptCreationViewPresenter;
+import bigBang.module.receiptModule.client.userInterface.presenter.SignatureRequestViewPresenter;
 import bigBang.module.receiptModule.client.userInterface.view.MassCreatePaymentNoticeView;
 import bigBang.module.receiptModule.client.userInterface.view.MassReturnToInsurerView;
 import bigBang.module.receiptModule.client.userInterface.view.ReceiptOperationsView;
@@ -27,6 +28,7 @@ import bigBang.module.receiptModule.client.userInterface.view.ReceiptSearchOpera
 import bigBang.module.receiptModule.client.userInterface.view.ReceiptSectionView;
 import bigBang.module.receiptModule.client.userInterface.view.ReceiptTransferToPolicyView;
 import bigBang.module.receiptModule.client.userInterface.view.SerialReceiptCreationView;
+import bigBang.module.receiptModule.client.userInterface.view.SignatureRequestView;
 
 import com.google.gwt.core.client.GWT;
 
@@ -135,6 +137,30 @@ public class ReceiptModule implements Module {
 				return presenter;
 			}
 		});
+		ViewPresenterFactory.getInstance().registerViewPresenterInstantiator("SIGNATURE_REQUEST", new ViewPresenterInstantiator(){
+			@Override
+			public ViewPresenter getInstance() {
+				SignatureRequestView view = (SignatureRequestView) GWT.create(SignatureRequestView.class);
+				SignatureRequestViewPresenter presenter = new SignatureRequestViewPresenter(view);
+				return presenter;
+			}
+		});
+//		ViewPresenterFactory.getInstance().registerViewPresenterInstantiator("CANCEL_SIGNATURE_REQUEST", new ViewPresenterInstantiator(){
+//			@Override
+//			public ViewPresenter getInstance() {
+//				CancelSignatureRequestView view = (CancelSignatureRequestView) GWT.create(CancelSignatureRequestView.class);
+//				CancelSignatureRequestViewPresenter presenter = new CancelSignatureRequestViewPresenter(view);
+//				return presenter;
+//			}
+//		});
+//		ViewPresenterFactory.getInstance().registerViewPresenterInstantiator("CREATE_SIGNATURE_REQUEST", new ViewPresenterInstantiator(){
+//			@Override
+//			public ViewPresenter getInstance() {
+//				CreateSignatureRequestView view = (CreateSignatureRequestView) GWT.create(CreateSignatureRequestView.class);
+//				CreateSignatureRequestViewPresenter presenter = new CreateSignatureRequestViewPresenter(view);
+//				return presenter;
+//			}
+//		});
 	}
 
 	@Override
