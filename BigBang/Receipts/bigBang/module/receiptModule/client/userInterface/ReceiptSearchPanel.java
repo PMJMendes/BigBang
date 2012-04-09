@@ -41,8 +41,7 @@ public class ReceiptSearchPanel extends SearchPanel<ReceiptStub> implements Rece
 		protected Label lineLabel;
 		protected Label premiumLabel;
 		protected Label maturityDateLabel;
-		protected boolean initialized = false;
-
+		protected boolean initialized;
 
 		
 		public Entry(ReceiptStub value) {
