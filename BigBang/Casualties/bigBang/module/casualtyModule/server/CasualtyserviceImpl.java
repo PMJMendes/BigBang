@@ -1,5 +1,6 @@
 package bigBang.module.casualtyModule.server;
 
+import bigBang.definitions.shared.Casualty;
 import bigBang.definitions.shared.SearchParameter;
 import bigBang.definitions.shared.SearchResult;
 import bigBang.definitions.shared.SortParameter;
@@ -48,6 +49,24 @@ public class CasualtyserviceImpl extends RemoteServiceServlet implements Casualt
 	@Override
 	public void closeSearch(String workspaceId) throws SessionExpiredException,
 			BigBangException {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public Casualty getCasualty(String casualtyId) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Casualty updateCasualty(Casualty casualty) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void deleteCasualty(String casualtyId) {
 		// TODO Auto-generated method stub
 		
 	}

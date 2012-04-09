@@ -1,5 +1,6 @@
 package bigBang.module.casualtyModule.interfaces;
 
+import bigBang.definitions.shared.Casualty;
 import bigBang.library.interfaces.SearchService;
 
 import com.google.gwt.core.client.GWT;
@@ -19,4 +20,10 @@ public interface CasualtyService extends SearchService {
 			return instance;
 		}
 	}
+	
+	public Casualty getCasualty(String casualtyId);
+	
+	public Casualty updateCasualty(Casualty casualty);
+	
+	public void deleteCasualty(String casualtyId);
 }
