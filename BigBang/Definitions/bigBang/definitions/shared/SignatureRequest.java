@@ -31,7 +31,7 @@ public class SignatureRequest
 	}
 
 	public String receiptId;
-	public Integer replylimit;
+	public int replylimit;
 	public OutgoingMessage message; // ATENÇÃO: Por enquanto, isto não é para usar!
 
 	public SignatureRequest()

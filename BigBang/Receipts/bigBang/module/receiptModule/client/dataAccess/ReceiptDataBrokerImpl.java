@@ -18,6 +18,7 @@ import bigBang.definitions.shared.Receipt;
 import bigBang.definitions.shared.Receipt.ReturnMessage;
 import bigBang.definitions.shared.ReceiptStub;
 import bigBang.definitions.shared.SearchResult;
+import bigBang.definitions.shared.SignatureRequest;
 import bigBang.definitions.shared.SortOrder;
 import bigBang.library.client.BigBangAsyncCallback;
 import bigBang.module.receiptModule.interfaces.ReceiptService;
@@ -543,7 +544,10 @@ public class ReceiptDataBrokerImpl extends DataBroker<Receipt> implements Receip
 	@Override
 	public void createSignatureRequest(String receiptId,
 			final ResponseHandler<Receipt> handler) {
-		service.createSignatureRequest(receiptId, new BigBangAsyncCallback<Receipt>() {
+		SignatureRequest request;
+		request = new SignatureRequest();
+		request.receiptId = receiptId;
+		service.createSignatureRequest(request, new BigBangAsyncCallback<Receipt>() {
 			@Override
 			public void onResponseSuccess(Receipt result) {
 				cache.add(result.id, result);

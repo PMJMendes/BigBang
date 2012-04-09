@@ -22,6 +22,7 @@ import bigBang.definitions.shared.Receipt;
 import bigBang.definitions.shared.ReceiptStub;
 import bigBang.definitions.shared.SearchParameter;
 import bigBang.definitions.shared.SearchResult;
+import bigBang.definitions.shared.SignatureRequest;
 import bigBang.definitions.shared.SortOrder;
 import bigBang.definitions.shared.SortParameter;
 import bigBang.library.server.BigBangPermissionServiceImpl;
@@ -764,7 +765,7 @@ public class ReceiptServiceImpl
 		return sGetReceipt(lobjReceipt.getKey());
 	}
 
-	public Receipt createSignatureRequest(String receiptId)
+	public Receipt createSignatureRequest(SignatureRequest request)
 		throws SessionExpiredException, BigBangException
 	{
 		com.premiumminds.BigBang.Jewel.Objects.Receipt lobjReceipt;
@@ -776,7 +777,7 @@ public class ReceiptServiceImpl
 		try
 		{
 			lobjReceipt = com.premiumminds.BigBang.Jewel.Objects.Receipt.GetInstance(Engine.getCurrentNameSpace(),
-					UUID.fromString(receiptId));
+					UUID.fromString(request.receiptId));
 		}
 		catch (Throwable e)
 		{
@@ -784,7 +785,8 @@ public class ReceiptServiceImpl
 		}
 
 		lopCSR = new CreateSignatureRequest(lobjReceipt.GetProcessID());
-		lopCSR.marrReceiptIDs = new UUID[] {UUID.fromString(receiptId)};
+		lopCSR.marrReceiptIDs = new UUID[] {UUID.fromString(request.receiptId)};
+		lopCSR.mlngDays = request.replylimit;
 		lopCSR.mbUseSets = false;
 
 		try

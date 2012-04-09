@@ -3,6 +3,7 @@ package bigBang.module.receiptModule.interfaces;
 import bigBang.definitions.shared.DebitNote;
 import bigBang.definitions.shared.DocuShareHandle;
 import bigBang.definitions.shared.Receipt;
+import bigBang.definitions.shared.SignatureRequest;
 import bigBang.library.interfaces.ExactItemSubServiceAsync;
 import bigBang.library.interfaces.SearchServiceAsync;
 
@@ -21,7 +22,7 @@ public interface ReceiptServiceAsync
 	void markPayed(Receipt.PaymentInfo info, AsyncCallback<Receipt> callback);
 	void getRelevantDebitNotes(String receiptId, AsyncCallback<DebitNote[]> callback);
 	void associateWithDebitNote(String receiptId, String debitNoteId, AsyncCallback<Receipt> callback);
-	void createSignatureRequest(String receiptId, AsyncCallback<Receipt> callback);
+	void createSignatureRequest(SignatureRequest request, AsyncCallback<Receipt> callback);
 	void sendPayment(String receiptId, AsyncCallback<Receipt> callback);
 	void sendReceipt(String receiptId, AsyncCallback<Receipt> callback);
 	void insurerAccouting(String receiptId, AsyncCallback<Receipt> callback);

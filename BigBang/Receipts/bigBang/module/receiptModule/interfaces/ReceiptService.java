@@ -3,6 +3,7 @@ package bigBang.module.receiptModule.interfaces;
 import bigBang.definitions.shared.DebitNote;
 import bigBang.definitions.shared.DocuShareHandle;
 import bigBang.definitions.shared.Receipt;
+import bigBang.definitions.shared.SignatureRequest;
 import bigBang.library.interfaces.ExactItemSubService;
 import bigBang.library.interfaces.SearchService;
 import bigBang.library.shared.BigBangException;
@@ -43,7 +44,7 @@ public interface ReceiptService
 	public DebitNote[] getRelevantDebitNotes(String receiptId) throws SessionExpiredException, BigBangException;
 	public Receipt associateWithDebitNote(String receiptId, String debitNoteId) throws SessionExpiredException, BigBangException;
 
-	public Receipt createSignatureRequest(String receiptId) throws SessionExpiredException, BigBangException;
+	public Receipt createSignatureRequest(SignatureRequest request) throws SessionExpiredException, BigBangException;
 	public Receipt sendPayment(String receiptId) throws SessionExpiredException, BigBangException;
 
 	public Receipt sendReceipt(String receiptId) throws SessionExpiredException, BigBangException;
