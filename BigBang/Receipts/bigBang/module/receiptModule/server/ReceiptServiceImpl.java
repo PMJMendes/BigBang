@@ -51,6 +51,7 @@ import com.premiumminds.BigBang.Jewel.Operations.Policy.CreateReceipt;
 import com.premiumminds.BigBang.Jewel.Operations.Receipt.AssociateWithDebitNote;
 import com.premiumminds.BigBang.Jewel.Operations.Receipt.CreatePaymentNotice;
 import com.premiumminds.BigBang.Jewel.Operations.Receipt.CreateSignatureRequest;
+import com.premiumminds.BigBang.Jewel.Operations.Receipt.DASNotNecessary;
 import com.premiumminds.BigBang.Jewel.Operations.Receipt.DeleteReceipt;
 import com.premiumminds.BigBang.Jewel.Operations.Receipt.InsurerAccounting;
 import com.premiumminds.BigBang.Jewel.Operations.Receipt.ManageData;
@@ -756,6 +757,39 @@ public class ReceiptServiceImpl
 		try
 		{
 			lopAWDN.Execute();
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangException(e.getMessage(), e);
+		}
+
+		return sGetReceipt(lobjReceipt.getKey());
+	}
+
+	public Receipt setDASNotNecessary(String receiptId)
+		throws SessionExpiredException, BigBangException
+	{
+		com.premiumminds.BigBang.Jewel.Objects.Receipt lobjReceipt;
+		DASNotNecessary lopDNN;
+
+		if ( Engine.getCurrentUser() == null )
+			throw new SessionExpiredException();
+
+		try
+		{
+			lobjReceipt = com.premiumminds.BigBang.Jewel.Objects.Receipt.GetInstance(Engine.getCurrentNameSpace(),
+					UUID.fromString(receiptId));
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangException(e.getMessage(), e);
+		}
+
+		lopDNN = new DASNotNecessary(lobjReceipt.GetProcessID());
+
+		try
+		{
+			lopDNN.Execute();
 		}
 		catch (Throwable e)
 		{

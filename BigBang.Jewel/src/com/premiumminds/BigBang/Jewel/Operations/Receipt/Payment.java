@@ -1,7 +1,9 @@
 package com.premiumminds.BigBang.Jewel.Operations.Receipt;
 
 import java.math.BigDecimal;
+import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.UUID;
 
 import Jewel.Engine.Engine;
@@ -68,6 +70,7 @@ public class Payment
 		Payment lopRemote;
 		BigDecimal ldblTotal;
 		int i;
+		Calendar ldtToday;
 
 		midReceipt = GetProcess().GetDataKey();
 
@@ -117,6 +120,14 @@ public class Payment
 
 		if ( ldblTotal.subtract((BigDecimal)lobjReceipt.getAt(3)).abs().compareTo(new BigDecimal(0.01)) > 0 )
 			throw new JewelPetriException("Erro: Valor total dos pagamentos não está correcto.");
+
+		ldtToday = Calendar.getInstance();
+		ldtToday.set(Calendar.HOUR_OF_DAY, 0);
+		ldtToday.set(Calendar.MINUTE, 0);
+		ldtToday.set(Calendar.SECOND, 0);
+		ldtToday.set(Calendar.MILLISECOND, 0);
+		if ( ldtToday.getTime().getTime() > ((Timestamp)lobjReceipt.getAt(11)).getTime() )
+			TriggerOp(new TriggerForceDAS(GetProcess().getKey()), pdb);
 	}
 
 	public String UndoDesc(String pstrLineBreak)
