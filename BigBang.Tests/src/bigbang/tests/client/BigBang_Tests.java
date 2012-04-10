@@ -168,6 +168,9 @@ public class BigBang_Tests
 //		TestSigReqReply.DoTest();
 //		TestSigReqCancel.DoTest();
 
-		TestCasualtyCreate.DoTest();
+//		TestCasualtyGet.DoTest();
+//		TestCasualtyCreate.DoTest();
+//		TestCasualtyEdit.DoTest();
+//		TestCasualtyDelete.DoTest();
 	}
 }

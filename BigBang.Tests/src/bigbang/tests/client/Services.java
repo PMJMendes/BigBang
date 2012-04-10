@@ -24,6 +24,8 @@ import bigBang.library.interfaces.TransferManagerService;
 import bigBang.library.interfaces.TransferManagerServiceAsync;
 import bigBang.library.interfaces.TypifiedTextService;
 import bigBang.library.interfaces.TypifiedTextServiceAsync;
+import bigBang.module.casualtyModule.interfaces.CasualtyService;
+import bigBang.module.casualtyModule.interfaces.CasualtyServiceAsync;
 import bigBang.module.clientModule.interfaces.ClientService;
 import bigBang.module.clientModule.interfaces.ClientServiceAsync;
 import bigBang.module.generalSystemModule.interfaces.CoveragesService;
@@ -117,4 +119,6 @@ public class Services
 			GWT.create(ReceiptService.class);
 	public static final SignatureRequestServiceAsync signatureRequestService =
 			GWT.create(SignatureRequestService.class);
+	public static final CasualtyServiceAsync casualtyService =
+			GWT.create(CasualtyService.class);
 }
