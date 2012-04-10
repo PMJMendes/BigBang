@@ -94,7 +94,7 @@ public class CancelSignatureRequestViewPresenter implements ViewPresenter{
 	}
 
 	protected void onCancelSignatureRequest() {
-		broker.cancelRequest(view.getForm().getValue(), new ResponseHandler<Void>() {
+		broker.cancelRequest(view.getForm().getInfo(), new ResponseHandler<Void>() {
 
 			@Override
 			public void onResponse(Void response) {

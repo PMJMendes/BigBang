@@ -10,6 +10,7 @@ import bigBang.library.client.userInterface.presenter.ViewPresenter;
 import bigBang.library.client.userInterface.view.InsurancePolicySelectionView;
 import bigBang.module.quoteRequestModule.client.userInterface.presenter.MarkForPaymentViewPresenter;
 import bigBang.module.receiptModule.client.dataAccess.ReceiptDataBrokerImpl;
+import bigBang.module.receiptModule.client.dataAccess.SignatureRequestBrokerImpl;
 import bigBang.module.receiptModule.client.userInterface.presenter.MassAgentAccountingViewPresenter;
 import bigBang.module.receiptModule.client.userInterface.presenter.CancelSignatureRequestViewPresenter;
 import bigBang.module.receiptModule.client.userInterface.presenter.CreateSignatureRequestViewPresenter;
@@ -220,7 +221,8 @@ public class ReceiptModule implements Module {
 	@Override
 	public DataBroker<?>[] getBrokerImplementations() {
 		return new DataBroker<?>[]{
-				new ReceiptDataBrokerImpl()	
+				new ReceiptDataBrokerImpl(), 
+				new SignatureRequestBrokerImpl()
 		};
 	}
 

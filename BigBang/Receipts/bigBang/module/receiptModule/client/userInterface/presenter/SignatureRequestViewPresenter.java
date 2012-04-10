@@ -120,7 +120,11 @@ public class SignatureRequestViewPresenter implements ViewPresenter{
 			
 			@Override
 			public void onResponse(SignatureRequest response) {
-				NavigationHistoryManager.getInstance().reload();	
+				NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
+				item.popFromStackParameter("display");
+				item.removeParameter("signaturerequestid");
+				NavigationHistoryManager.getInstance().go(item);
+				EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Resposta recebida com sucesso."), TYPE.TRAY_NOTIFICATION));
 			}
 			
 			@Override
@@ -145,7 +149,7 @@ public class SignatureRequestViewPresenter implements ViewPresenter{
 			
 			@Override
 			public void onResponse(SignatureRequest response) {
-				view.getForm().setInfo(response);
+				view.getForm().setValue(response);
 				view.getForm().setReadOnly(true);
 				view.allowCancel(PermissionChecker.hasPermission(response, BigBangConstants.OperationIds.SignatureRequestProcess.CANCEL_SIGNATURE_REQUEST));
 				view.allowReceiveResponse(PermissionChecker.hasPermission(response, BigBangConstants.OperationIds.SignatureRequestProcess.RECEIVE_REPLY));

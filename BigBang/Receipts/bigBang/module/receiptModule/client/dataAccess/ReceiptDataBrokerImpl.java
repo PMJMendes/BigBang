@@ -42,7 +42,6 @@ public class ReceiptDataBrokerImpl extends DataBroker<Receipt> implements Receip
 		this.service = service;
 		this.dataElementId = BigBangConstants.EntityIds.RECEIPT;
 		this.searchBroker = new ReceiptSearchDataBroker(this.service);
-		cache.setThreshold(0);
 	}
 
 	@Override

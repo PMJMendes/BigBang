@@ -1,19 +1,24 @@
 package bigBang.module.receiptModule.client.userInterface.view;
 
+import bigBang.definitions.shared.BigBangProcess;
+import bigBang.definitions.shared.Contact;
+import bigBang.definitions.shared.Document;
+import bigBang.definitions.shared.HistoryItemStub;
 import bigBang.definitions.shared.Receipt;
 import bigBang.library.client.HasEditableValue;
 import bigBang.library.client.HasValueSelectables;
 import bigBang.library.client.event.ActionInvokedEvent;
 import bigBang.library.client.event.ActionInvokedEventHandler;
-import bigBang.library.client.userInterface.DocumentsPreviewList;
 import bigBang.library.client.userInterface.view.View;
-import bigBang.module.receiptModule.client.userInterface.ReceiptChildrenLists;
+import bigBang.module.receiptModule.client.userInterface.ReceiptChildrenPanel;
 import bigBang.module.receiptModule.client.userInterface.ReceiptForm;
 import bigBang.module.receiptModule.client.userInterface.ReceiptProcessToolBar;
 import bigBang.module.receiptModule.client.userInterface.ReceiptSearchPanel;
 import bigBang.module.receiptModule.client.userInterface.presenter.ReceiptSearchOperationViewPresenter;
 import bigBang.module.receiptModule.client.userInterface.presenter.ReceiptSearchOperationViewPresenter.Action;
 
+import com.google.gwt.event.logical.shared.ValueChangeEvent;
+import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.user.client.ui.SplitLayoutPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
@@ -24,16 +29,14 @@ public class ReceiptSearchOperationView extends View implements ReceiptSearchOpe
 	protected ReceiptSearchPanel searchPanel;
 	protected ReceiptForm form;
 	protected ReceiptProcessToolBar operationsToolbar;
-	protected DocumentsPreviewList documentsList;
 	protected ActionInvokedEventHandler<Action> actionHandler;
-	protected ReceiptChildrenLists childrenLists;
+	protected ReceiptChildrenPanel childrenPanel;
+	
 
 	public ReceiptSearchOperationView() {
 		SplitLayoutPanel mainWrapper = new SplitLayoutPanel();
 		initWidget(mainWrapper);
 		mainWrapper.setSize("100%", "100%");
-
-		childrenLists = new ReceiptChildrenLists();
 
 		this.searchPanel = new ReceiptSearchPanel();
 		mainWrapper.addWest(this.searchPanel, SEARCH_PANEL_WIDTH);
@@ -197,10 +200,10 @@ public class ReceiptSearchOperationView extends View implements ReceiptSearchOpe
 
 		SplitLayoutPanel contentWrapper = new SplitLayoutPanel();
 		contentWrapper.setSize("100%", "100%");
-
-		documentsList = new DocumentsPreviewList();
-		documentsList.setHeight("100%");
-		contentWrapper.addEast(documentsList, 300);
+		
+		childrenPanel = new ReceiptChildrenPanel();
+		childrenPanel.setHeight("100%");
+		contentWrapper.addEast(childrenPanel, 300);
 
 		contentWrapper.add(formWrapper);
 
@@ -209,6 +212,15 @@ public class ReceiptSearchOperationView extends View implements ReceiptSearchOpe
 		if(!bigBang.definitions.client.Constants.DEBUG){
 			searchPanel.doSearch();
 		}
+		
+		form.addValueChangeHandler(new ValueChangeHandler<Receipt>() {
+			
+			@Override
+			public void onValueChange(ValueChangeEvent<Receipt> event) {
+				Receipt receipt = event.getValue();
+				childrenPanel.setReceipt(receipt);
+			}
+		});
 	}
 
 	@Override
@@ -328,6 +340,26 @@ public class ReceiptSearchOperationView extends View implements ReceiptSearchOpe
 	public void allowCreateSignatureRequest(boolean hasPermission) {
 		operationsToolbar.allowCreateSignatureRequest(hasPermission);
 		
+	}
+	
+	@Override
+	public HasValueSelectables<Contact> getContactsList() {
+		return this.childrenPanel.contactsList;
+	}
+
+	@Override
+	public HasValueSelectables<Document> getDocumentsList() {
+		return this.childrenPanel.documentsList;
+	}
+	
+	@Override
+	public HasValueSelectables<BigBangProcess> getSubProcessesList() {
+		return this.childrenPanel.subProcessesList;
+	}
+	
+	@Override
+	public HasValueSelectables<HistoryItemStub> getHistoryList() {
+		return this.childrenPanel.historyList;
 	}
 
 }

@@ -13,7 +13,7 @@ public class SignatureRequestCancellationForm extends FormView<SignatureRequest.
 	public SignatureRequestCancellationForm() {
 		
 		addSection("Cancelamento de Pedido de Assinatura");
-		motive = new ExpandableListBoxFormField(BigBangConstants.TypifiedListIds.INFO_REQUEST_CANCEL_MOTIVES);
+		motive = new ExpandableListBoxFormField(BigBangConstants.TypifiedListIds.INFO_REQUEST_CANCEL_MOTIVES, "Motivo do cancelamento");
 		addFormField(motive);
 		
 	}

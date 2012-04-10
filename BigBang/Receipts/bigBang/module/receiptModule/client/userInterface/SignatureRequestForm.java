@@ -22,7 +22,7 @@ public class SignatureRequestForm extends FormView<SignatureRequest>{
 		try{
 			signature.replylimit = Integer.parseInt(replyLimit.getValue());
 		}catch(NumberFormatException e){
-			
+			return null;
 		}
 		return signature;
 	}

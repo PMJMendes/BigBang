@@ -6,6 +6,10 @@ import bigBang.definitions.client.dataAccess.ReceiptProcessDataBroker;
 import bigBang.definitions.client.response.ResponseError;
 import bigBang.definitions.client.response.ResponseHandler;
 import bigBang.definitions.shared.BigBangConstants;
+import bigBang.definitions.shared.BigBangProcess;
+import bigBang.definitions.shared.Contact;
+import bigBang.definitions.shared.Document;
+import bigBang.definitions.shared.HistoryItemStub;
 import bigBang.definitions.shared.Receipt;
 import bigBang.definitions.shared.ReceiptStub;
 import bigBang.library.client.EventBus;
@@ -79,6 +83,14 @@ public class ReceiptSearchOperationViewPresenter implements ViewPresenter {
 
 		Widget asWidget();
 
+		HasValueSelectables<Document> getDocumentsList();
+
+		HasValueSelectables<Contact> getContactsList();
+
+		HasValueSelectables<BigBangProcess> getSubProcessesList();
+
+		HasValueSelectables<HistoryItemStub> getHistoryList();
+
 
 
 
@@ -109,7 +121,7 @@ public class ReceiptSearchOperationViewPresenter implements ViewPresenter {
 	@Override
 	public void setParameters(HasParameters parameterHolder) {
 		receiptId = parameterHolder.getParameter("receiptid");
-
+		
 		if(receiptId == null || receiptId.isEmpty()) {
 			clearView();
 		}else{
@@ -195,8 +207,52 @@ public class ReceiptSearchOperationViewPresenter implements ViewPresenter {
 					onCreateSignatureRequest();
 					break;
 				}
-				
 
+			}
+		});
+
+		view.getContactsList().addSelectionChangedEventHandler(new SelectionChangedEventHandler() {
+
+			@Override
+			public void onSelectionChanged(SelectionChangedEvent event) {
+				@SuppressWarnings("unchecked")
+				Contact selectedValue = event.getFirstSelected() == null ? null : ((ValueSelectable<Contact>) event.getFirstSelected()).getValue();
+				if(selectedValue != null) {
+					showContact(selectedValue);
+				}
+			}
+		});
+		view.getDocumentsList().addSelectionChangedEventHandler(new SelectionChangedEventHandler() {
+
+			@Override
+			public void onSelectionChanged(SelectionChangedEvent event) {
+				@SuppressWarnings("unchecked")
+				Document selectedValue = event.getFirstSelected() == null ? null : ((ValueSelectable<Document>) event.getFirstSelected()).getValue();
+				if(selectedValue != null) {
+					showDocument(selectedValue);
+				}
+			}
+		});
+		view.getSubProcessesList().addSelectionChangedEventHandler(new SelectionChangedEventHandler() {
+
+			@Override
+			public void onSelectionChanged(SelectionChangedEvent event) {
+				@SuppressWarnings("unchecked")
+				BigBangProcess selectedValue = event.getFirstSelected() == null ? null : ((ValueSelectable<BigBangProcess>) event.getFirstSelected()).getValue();
+				if(selectedValue != null) {
+					showSubProcess(selectedValue);
+				}
+			}
+		});
+		view.getHistoryList().addSelectionChangedEventHandler(new SelectionChangedEventHandler() {
+
+			@Override
+			public void onSelectionChanged(SelectionChangedEvent event) {
+				@SuppressWarnings("unchecked")
+				HistoryItemStub selectedValue = event.getFirstSelected() == null ? null : ((ValueSelectable<HistoryItemStub>) event.getFirstSelected()).getValue();
+				if(selectedValue != null) {
+					showHistory(selectedValue);
+				}
 			}
 		});
 
@@ -212,76 +268,76 @@ public class ReceiptSearchOperationViewPresenter implements ViewPresenter {
 
 	protected void onReturnToAgency() {
 		receiptBroker.returnToInsurer(receiptId, new ResponseHandler<Receipt>() {
-			
+
 			@Override
 			public void onResponse(Receipt response) {
 				EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Recibo devolvido à seguradora"), TYPE.TRAY_NOTIFICATION));
 				NavigationHistoryManager.getInstance().reload();
 			}
-			
+
 			@Override
 			public void onError(Collection<ResponseError> errors) {
 				EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não foi possível devolver o recibo"), TYPE.ALERT_NOTIFICATION));
 				NavigationHistoryManager.getInstance().reload();
 			}
 		});
-		
+
 	}
 
 	protected void onPaymentToClient() {
 		receiptBroker.sendPayment(receiptId, new ResponseHandler<Receipt>() {
-			
+
 			@Override
 			public void onResponse(Receipt response) {
 				EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Pagamento efectuado ao cliente"), TYPE.TRAY_NOTIFICATION));
 				NavigationHistoryManager.getInstance().reload();
 			}
-			
+
 			@Override
 			public void onError(Collection<ResponseError> errors) {
 				EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não foi possível enviar o pagamento ao cliente"), TYPE.ALERT_NOTIFICATION));
 				NavigationHistoryManager.getInstance().reload();
 			}
 		});
-		
+
 	}
 
 	protected void onCreatePaymentNote() {
 		receiptBroker.createPaymentNotice(receiptId, new ResponseHandler<Receipt>() {
-			
+
 			@Override
 			public void onResponse(Receipt response) {
 				EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Aviso de Cobrança enviado"), TYPE.TRAY_NOTIFICATION));
 				NavigationHistoryManager.getInstance().reload();
-				
+
 			}
-			
+
 			@Override
 			public void onError(Collection<ResponseError> errors) {
 				EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não foi possível criar nota de débito"), TYPE.ALERT_NOTIFICATION));
 				NavigationHistoryManager.getInstance().reload();
 			}
 		});
-		
+
 	}
 
 	protected void onValidate() {
-		
+
 		receiptBroker.validateReceipt(receiptId, new ResponseHandler<Receipt>() {
-			
+
 			@Override
 			public void onResponse(Receipt response) {
 				EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "O recibo foi validado com sucesso"), TYPE.TRAY_NOTIFICATION));
 				NavigationHistoryManager.getInstance().reload();
 			}
-			
+
 			@Override
 			public void onError(Collection<ResponseError> errors) {
 				EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não foi possível validar o recibo"), TYPE.ALERT_NOTIFICATION));
 				NavigationHistoryManager.getInstance().reload();
 			}
 		});
-		
+
 	}
 
 	protected void setForReturn() {
@@ -313,9 +369,10 @@ public class ReceiptSearchOperationViewPresenter implements ViewPresenter {
 	private void showReceipt(String receiptId) {
 		for(ValueSelectable<?> selectable : view.getList().getAll()){
 			ReceiptStub receipt = (ReceiptStub) selectable.getValue();
-			if(receipt.id.equalsIgnoreCase(receiptId) && !selectable.isSelected()){
-				selectable.setSelected(true, true);
-				return;
+			if(receipt.id.equalsIgnoreCase(receiptId)){
+				selectable.setSelected(true, false);
+			}else if(selectable.isSelected()){
+				selectable.setSelected(false, false);
 			}
 		}
 
@@ -395,7 +452,7 @@ public class ReceiptSearchOperationViewPresenter implements ViewPresenter {
 			}
 		});
 	}
-	
+
 	protected void onMarkForPayment(){
 		NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
 		item.pushIntoStackParameter("display", "markforpayment");
@@ -417,39 +474,39 @@ public class ReceiptSearchOperationViewPresenter implements ViewPresenter {
 			}
 		});
 	}
-	
+
 	protected void onInsurerAccounting(){
 		String receiptId  =view.getForm().getValue().id;
 		receiptBroker.insurerAccounting(receiptId, new ResponseHandler<Void>() {
-			
+
 			@Override
 			public void onResponse(Void response) {
 				onInsurerAccountingSuccess();
 			}
-			
+
 			@Override
 			public void onError(Collection<ResponseError> errors) {
 				onInsurerAccountingFailed();
 			}
 		});
 	}
-	
+
 	protected void onAgentAccounting(){
 		String receiptId = view.getForm().getValue().id;
 		receiptBroker.agentAccounting(receiptId, new ResponseHandler<Void>() {
-			
+
 			@Override
 			public void onResponse(Void response) {
 				onAgentAccountingSuccess();
 			}
-			
+
 			@Override
 			public void onError(Collection<ResponseError> errors) {
 				onAgentAccountingFailed();
 			}
 		});
 	}
-	
+
 	protected void onGetReceiptFailed(){
 		EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não é possível apresentar o Recibo"), TYPE.ALERT_NOTIFICATION));
 		NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
@@ -476,31 +533,31 @@ public class ReceiptSearchOperationViewPresenter implements ViewPresenter {
 	protected void onDeleteFailed(){
 		EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não foi possível Eliminar o Recibo"), TYPE.ALERT_NOTIFICATION));
 	}
-	
+
 	protected void onSendReceiptFailed() {
 		EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não foi possível Enviar o Recibo"), TYPE.ALERT_NOTIFICATION));
 	}
-	
+
 	protected void onSendReceiptSuccess(){
 		EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "O Recibo foi Enviado com Sucesso"), TYPE.TRAY_NOTIFICATION));
 		NavigationHistoryManager.getInstance().reload();
 	}
-	
+
 	protected void onInsurerAccountingSuccess(){
 		EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "A Prestação de Contas com a Seguradora foi efectuada com Sucesso"), TYPE.TRAY_NOTIFICATION));
 		NavigationHistoryManager.getInstance().reload();
 	}
-	
+
 	protected void onInsurerAccountingFailed(){
 		EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não foi possível Prestar Contas com a Seguradora"), TYPE.ALERT_NOTIFICATION));
 
 	}
-	
+
 	protected void onAgentAccountingSuccess(){
 		EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "A Prestação de Contas com o Mediador foi efectuada com Sucesso"), TYPE.TRAY_NOTIFICATION));
 		NavigationHistoryManager.getInstance().reload();
 	}
-	
+
 	protected void onAgentAccountingFailed(){
 		EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não foi possível Prestar Contas com o Mediador"), TYPE.ALERT_NOTIFICATION));
 
@@ -508,6 +565,47 @@ public class ReceiptSearchOperationViewPresenter implements ViewPresenter {
 
 	protected void onFailure(){
 		onGetReceiptFailed();
+	}
+
+	private void showContact(final Contact contact) {
+
+		NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
+		item.setParameter("show", "contactmanagement");
+		item.setParameter("ownerid", contact.ownerId);
+		item.setParameter("ownertypeid", contact.ownerTypeId);
+		item.setParameter("contactid", contact.id);
+		NavigationHistoryManager.getInstance().go(item);
+	}
+
+	private void showDocument(final Document document){
+		NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
+		item.setParameter("show", "documentmanagement");
+		item.setParameter("ownerid", document.ownerId);
+		item.setParameter("ownertypeid", document.ownerTypeId);
+		item.setParameter("documentid", document.id);
+		NavigationHistoryManager.getInstance().go(item);
+	}
+
+
+	private void showSubProcess(final BigBangProcess process){
+		String type = process.dataTypeId;
+		NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
+
+		if(type.equalsIgnoreCase(BigBangConstants.EntityIds.SIGNATURE_REQUEST)){
+			item.pushIntoStackParameter("display", "signaturerequest");
+			item.setParameter("signaturerequestid", process.dataId);
+			NavigationHistoryManager.getInstance().go(item);
+		}
+	}
+
+	private void showHistory(final HistoryItemStub historyItem) {
+
+		NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
+		item.pushIntoStackParameter("display", "history");
+		item.setParameter("historyownerid", view.getForm().getValue().id);
+		item.setParameter("historyitemid", historyItem.id);
+		NavigationHistoryManager.getInstance().go(item);
+
 	}
 
 }

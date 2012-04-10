@@ -140,6 +140,12 @@ public class ReceiptSectionViewPresenter implements ViewPresenter {
 				}else if(show.equalsIgnoreCase("createsignaturerequest")){
 					present("CREATE_SIGNATURE_REQUEST", parameters);
 					view.showOverlayViewContainer(true);
+				}else if(show.equalsIgnoreCase("contactmanagement")){
+					present("CONTACT", parameters);
+					view.showOverlayViewContainer(true);
+				}else if(show.equalsIgnoreCase("documentmanagement")){
+					present("DOCUMENT", parameters);
+					view.showOverlayViewContainer(true);
 				}
 			}
 

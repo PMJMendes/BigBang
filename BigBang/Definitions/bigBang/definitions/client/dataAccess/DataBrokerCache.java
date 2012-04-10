@@ -46,6 +46,7 @@ public class DataBrokerCache {
 	protected final int CLEAN_THRESHOLD = 10;
 
 	protected int threshold;
+	protected boolean enabled = true;
 	protected int tick;
 	protected Map<String, CacheEntry> store;
 	protected Mechanism mechanism;
@@ -111,20 +112,21 @@ public class DataBrokerCache {
 		}
 		return result;
 	}
-	
+
 	/**
 	 * Adds a given item to the cache
 	 * @param id The id used to access the item
 	 * @param o The item
 	 */
 	public void add(String id, Object o){
-		if(threshold != 0 && store.size() == threshold){
-			clean();
+		if(enabled) {
+			if(threshold != 0 && store.size() == threshold){
+				clean();
+			}
+			CacheEntry entry = new CacheEntry(o);
+			store.put(id, entry);
+			entry.accessTick = this.tick;
 		}
-		CacheEntry entry = new CacheEntry(o);
-		store.put(id, entry);
-		entry.accessTick = this.tick;
-
 	}
 
 	/**
@@ -133,13 +135,15 @@ public class DataBrokerCache {
 	 * @param o The item
 	 */
 	public void update(String id, Object o){
-		this.tick++;
-		if(!contains(id))
-			throw new RuntimeException("The item with id=\"" + id + "\" could not be found in cache.");
-		CacheEntry e = store.get(id);
-		e.value = o;
-		e.timesAccessed++;
-		e.accessTick = this.tick;
+		if(enabled) {
+			this.tick++;
+			if(!contains(id))
+				throw new RuntimeException("The item with id=\"" + id + "\" could not be found in cache.");
+			CacheEntry e = store.get(id);
+			e.value = o;
+			e.timesAccessed++;
+			e.accessTick = this.tick;
+		}
 	}
 
 	/**
@@ -147,9 +151,11 @@ public class DataBrokerCache {
 	 * @param id The item id
 	 */
 	public void remove(String id) {
-		store.remove(id);
+		if(enabled) {
+			store.remove(id);
+		}
 	}
-	
+
 	/**
 	 * Gets the number of occupied entries in the cache.
 	 * @return The number of cache entries
@@ -257,6 +263,11 @@ public class DataBrokerCache {
 	 */
 	public void clear() {
 		store.clear();
+	}
+
+	public void setEnabled(boolean enabled) {
+		this.clear();
+		this.enabled = false;
 	}
 
 }

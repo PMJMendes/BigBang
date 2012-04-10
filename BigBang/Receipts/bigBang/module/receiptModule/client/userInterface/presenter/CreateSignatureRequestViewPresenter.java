@@ -95,7 +95,7 @@ public class CreateSignatureRequestViewPresenter implements ViewPresenter{
 	}
 
 	protected void onCreateSignatureRequest() {
-		broker.createSignatureRequest(view.getForm().getValue(), new ResponseHandler<Receipt>() {
+		broker.createSignatureRequest(view.getForm().getInfo(), new ResponseHandler<Receipt>() {
 			
 			@Override
 			public void onResponse(Receipt response) {

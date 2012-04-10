@@ -40,8 +40,8 @@ public class CancelSignatureRequestView extends View implements CancelSignatureR
 		form = new SignatureRequestCancellationForm();
 		wrapper.setSize("100%", "100%");
 		wrapper.add(toolbar);
-		wrapper.add(form);
-		wrapper.setCellHeight(form, "100%");
+		wrapper.add(form.getNonScrollableContent());
+		wrapper.setCellHeight(form.getNonScrollableContent(), "100%");
 	}
 
 	@Override
