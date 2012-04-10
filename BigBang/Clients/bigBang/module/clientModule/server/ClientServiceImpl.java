@@ -513,7 +513,7 @@ public class ClientServiceImpl
 		lopCC.mobjData.mstrDescription = casualty.description;
 		lopCC.mobjData.mstrNotes = casualty.internalNotes;
 		lopCC.mobjData.mbCaseStudy = casualty.caseStudy;
-		lopCC.mobjData.midManager = UUID.fromString(casualty.managerId);
+		lopCC.mobjData.midManager = (casualty.managerId == null ? null : UUID.fromString(casualty.managerId));
 		lopCC.mobjData.mobjPrevValues = null;
 		lopCC.mobjContactOps = null;
 		lopCC.mobjDocOps = null;

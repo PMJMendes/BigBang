@@ -2,6 +2,7 @@ package com.premiumminds.BigBang.Jewel.Operations.Client;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Calendar;
 import java.util.UUID;
 
 import Jewel.Engine.Engine;
@@ -77,6 +78,9 @@ public class CreateCasualty
 		IScript lobjScript;
 		IProcess lobjProc; 
 
+		if ( mobjData.midManager == null )
+			mobjData.midManager = Engine.getCurrentUser();
+
 		try
 		{
 			mobjData.mstrNumber = GetNewCasualtyNumber();
@@ -91,8 +95,7 @@ public class CreateCasualty
 				mobjDocOps.RunSubOp(pdb, lobjAux.getKey());
 
 			lobjScript = PNScript.GetInstance(Engine.getCurrentNameSpace(), Constants.ProcID_Casualty);
-			lobjProc = lobjScript.CreateInstance(Engine.getCurrentNameSpace(), lobjAux.getKey(), null,
-					GetContext(), pdb);
+			lobjProc = lobjScript.CreateInstance(Engine.getCurrentNameSpace(), lobjAux.getKey(), GetProcess().getKey(), GetContext(), pdb);
 			lobjProc.SetManagerID(mobjData.midManager, pdb);
 
 			mobjData.mid = lobjAux.getKey();
@@ -106,7 +109,6 @@ public class CreateCasualty
 		}
 	}
 
-	@SuppressWarnings("deprecation")
 	private String GetNewCasualtyNumber()
 		throws BigBangJewelException
 	{
@@ -119,11 +121,11 @@ public class CreateCasualty
         String lstrAux;
         int llngAux;
 
-        mlngYear = new java.util.Date().getYear();
+        mlngYear = Calendar.getInstance().get(Calendar.YEAR);
 
 		try
 		{
-	        lstrFilter = Integer.toString(mlngYear) + "/%";
+	        lstrFilter = Integer.toString(mlngYear) + "%";
 			lrefCasualties = Entity.GetInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), Constants.ObjID_Casualty)); 
 			ldb = new MasterDB();
 		}
