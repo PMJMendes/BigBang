@@ -186,7 +186,7 @@ public class ReceiptSearchOperationViewPresenter implements ViewPresenter {
 
 	protected void onCreateSignatureRequest() {
 		NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
-		item.setParameter("show", "signaturerequest");
+		item.setParameter("show", "createsignaturerequest");
 		NavigationHistoryManager.getInstance().go(item);	
 	}
 

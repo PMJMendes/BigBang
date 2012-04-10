@@ -9,6 +9,7 @@ public class SignatureRequestForm extends FormView<SignatureRequest>{
 	private TextBoxFormField replyLimit;
 
 	public SignatureRequestForm(){
+		//this.setSize("100%", "140px");
 		addSection("Pedido de assinatura");
 		replyLimit = new TextBoxFormField("Prazo de Resposta (dias)");
 		replyLimit.setFieldWidth("70px");

@@ -20,7 +20,7 @@ public class NegotiationCancellationForm extends FormView<Cancellation>{
 	public NegotiationCancellationForm(){
 		
 		addSection("Cancelamento de Negociação");
-		internalMotive = new ExpandableListBoxFormField(BigBangConstants.TypifiedListIds.NEGOTIATION_CANCEL_MOTIVES , "Motivo");
+		internalMotive = new ExpandableListBoxFormField(BigBangConstants.TypifiedListIds.INFO_REQUEST_CANCEL_MOTIVES , "Motivo");
 		sendResponse = new CheckBoxFormField("Enviar mensagem à seguradora");
 		sendResponse.addValueChangeHandler(new ValueChangeHandler<Boolean>() {
 			
