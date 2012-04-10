@@ -1,6 +1,5 @@
 package bigBang.module.casualtyModule.server;
 
-<<<<<<< .working
 import java.sql.Timestamp;
 import java.util.Calendar;
 import java.util.UUID;
@@ -16,9 +15,6 @@ import Jewel.Petri.SysObjects.JewelPetriException;
 import bigBang.definitions.shared.Casualty;
 import bigBang.definitions.shared.CasualtyStub;
 import bigBang.definitions.shared.ManagerTransfer;
-=======
-import bigBang.definitions.shared.Casualty;
->>>>>>> .merge-right.r1374
 import bigBang.definitions.shared.SearchParameter;
 import bigBang.definitions.shared.SearchResult;
 import bigBang.definitions.shared.SortParameter;
@@ -133,7 +129,7 @@ public class CasualtyServiceImpl
 			throw new BigBangException(e.getMessage(), e);
 		}
 
-		return CasualtyServiceImpl.sGetCasualty(lopMD.mobjData.mid);
+		return sGetCasualty(lopMD.mobjData.mid);
 	}
 
 	public ManagerTransfer createManagerTransfer(ManagerTransfer transfer)
@@ -215,7 +211,6 @@ public class CasualtyServiceImpl
 		}
 	}
 
-<<<<<<< .working
 	public ManagerTransfer massCreateManagerTransfer(ManagerTransfer transfer)
 		throws SessionExpiredException, BigBangException
 	{
@@ -439,24 +434,4 @@ public class CasualtyServiceImpl
 		lobjResult.processId = (lobjProcess == null ? null : lobjProcess.getKey().toString());
 		return lobjResult;
 	}
-=======
-	@Override
-	public Casualty getCasualty(String casualtyId) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public Casualty updateCasualty(Casualty casualty) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public void deleteCasualty(String casualtyId) {
-		// TODO Auto-generated method stub
-		
-	}
-
->>>>>>> .merge-right.r1374
 }
