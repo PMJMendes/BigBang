@@ -294,7 +294,6 @@ public abstract class FormView<T> extends View implements Validatable, HasEditab
 	}
 
 	public void setValue(T value, boolean fireEvents) {
-		T oldValue = this.value;
 		this.value = value;
 		
 		if(value == null){
@@ -304,7 +303,7 @@ public abstract class FormView<T> extends View implements Validatable, HasEditab
 			setInfo(value);
 		}
 		
-		if(oldValue != value && fireEvents){
+		if(fireEvents){
 			ValueChangeEvent.fire(this, value);
 		}
 	}
