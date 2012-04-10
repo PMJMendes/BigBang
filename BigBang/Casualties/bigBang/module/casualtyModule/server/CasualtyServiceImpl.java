@@ -410,8 +410,8 @@ public class CasualtyServiceImpl
 		{
 			lstrAux = lParam.freeText.trim().replace("'", "''").replace(" ", "%");
 			pstrBuffer.append(" AND ([:Number] LIKE N'%").append(lstrAux).append("%'")
-					.append(" OR [:Process:Parent] IN (SELECT [:Process] FROM (")
-					.append(" OR (LEFT(CONVERT(NVARCHAR, [:Date], 120), 10) LIKE N'%").append(lstrAux).append("%')");
+					.append(" OR (LEFT(CONVERT(NVARCHAR, [:Date], 120), 10) LIKE N'%").append(lstrAux).append("%')")
+					.append(" OR [:Process:Parent] IN (SELECT [:Process] FROM (");
 			try
 			{
 				lrefClients = Entity.GetInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), Constants.ObjID_Client));
