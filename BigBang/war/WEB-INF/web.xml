@@ -11,6 +11,7 @@
     	<!ENTITY  quoteRequestServices SYSTEM "quoteRequestServices.xml" >
     	<!ENTITY  insurancePolicyServices SYSTEM "insurancePolicyServices.xml" >
     	<!ENTITY  receiptServices SYSTEM "receiptServices.xml" >
+    	<!ENTITY  casualtyServices SYSTEM "casualtyServices.xml" >
     	<!ENTITY  jewelWebServices SYSTEM "jewelWebServices.xml" >
     ]  >
 
@@ -40,6 +41,7 @@
 	&quoteRequestServices;
 	&insurancePolicyServices;
 	&receiptServices;
+	&casualtyServices;
 	&jewelWebServices;
 
 	<servlet>
