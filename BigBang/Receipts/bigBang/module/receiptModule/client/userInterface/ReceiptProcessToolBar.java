@@ -144,7 +144,7 @@ public abstract class ReceiptProcessToolBar extends BigBangOperationsToolBar {
 			}
 		});
 		addItem(SUB_MENU.EXECUTE, associateWithDebitNote);
-		sendPaymentToAgency = new MenuItem("Prestação de Contas", new Command() {
+		sendPaymentToAgency = new MenuItem("Prestação de Contas à Seguradora", new Command() {
 
 			@Override
 			public void execute() {
@@ -320,6 +320,22 @@ public abstract class ReceiptProcessToolBar extends BigBangOperationsToolBar {
 	public void allowCreatePaymentNotice(boolean hasPermission) {
 		this.sendPaymentNotice.setEnabled(hasPermission);
 
+	}
+
+	public void allowMarkForPayment(boolean allow) {
+		this.enterPayment.setEnabled(allow);
+	}
+
+	public void allowSendReceipt(boolean allow) {
+		this.sendReceipt.setEnabled(allow);
+	}
+
+	public void allowInsurerAccounting(boolean allow) {
+		this.sendPaymentToAgency.setEnabled(allow);
+	}
+
+	public void allowAgentAccounting(boolean allow) {
+		this.sendPaymentToMediator.setEnabled(allow);
 	}
 
 	public void allowPaymentToClient(boolean hasPermission) {

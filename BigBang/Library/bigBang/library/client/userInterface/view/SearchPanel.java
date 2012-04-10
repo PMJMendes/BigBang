@@ -218,7 +218,11 @@ public abstract class SearchPanel<T extends SearchResult> extends FilterableList
 					@Override
 					public void onError(Collection<ResponseError> errors) {}
 				};
-				this.broker.search(parameters, sorts, this.pageSize, handler);
+				if(this.operationId == null){
+					this.broker.search(parameters, sorts, this.pageSize, handler);
+				}else{
+					this.broker.searchOpenForOperation(this.operationId, parameters, sorts, this.pageSize, handler);
+				}
 			}
 		} catch (RuntimeException e) {
 			GWT.log(e.getMessage());

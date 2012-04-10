@@ -8,10 +8,14 @@ import bigBang.library.client.ViewPresenterInstantiator;
 import bigBang.library.client.userInterface.presenter.InsurancePolicySelectionViewPresenter;
 import bigBang.library.client.userInterface.presenter.ViewPresenter;
 import bigBang.library.client.userInterface.view.InsurancePolicySelectionView;
+import bigBang.module.quoteRequestModule.client.userInterface.presenter.MarkForPaymentViewPresenter;
 import bigBang.module.receiptModule.client.dataAccess.ReceiptDataBrokerImpl;
+import bigBang.module.receiptModule.client.userInterface.presenter.MassAgentAccountingViewPresenter;
 import bigBang.module.receiptModule.client.userInterface.presenter.CancelSignatureRequestViewPresenter;
 import bigBang.module.receiptModule.client.userInterface.presenter.CreateSignatureRequestViewPresenter;
 import bigBang.module.receiptModule.client.userInterface.presenter.MassCreatePaymentNoticeViewPresenter;
+import bigBang.module.receiptModule.client.userInterface.presenter.MassInsurerAccountingViewPresenter;
+import bigBang.module.receiptModule.client.userInterface.presenter.MassSendReceiptViewPresenter;
 import bigBang.module.receiptModule.client.userInterface.presenter.MassReturnToInsurerViewPresenter;
 import bigBang.module.receiptModule.client.userInterface.presenter.ReceiptOperationsViewPresenter;
 import bigBang.module.receiptModule.client.userInterface.presenter.ReceiptAssociateWithDebitNoteViewPresenter;
@@ -19,11 +23,16 @@ import bigBang.module.receiptModule.client.userInterface.presenter.ReceiptReturn
 import bigBang.module.receiptModule.client.userInterface.presenter.ReceiptSearchOperationViewPresenter;
 import bigBang.module.receiptModule.client.userInterface.presenter.ReceiptSectionViewPresenter;
 import bigBang.module.receiptModule.client.userInterface.presenter.ReceiptTransferToPolicyViewPresenter;
+import bigBang.module.receiptModule.client.userInterface.presenter.SerialMarkForPaymentViewPresenter;
 import bigBang.module.receiptModule.client.userInterface.presenter.SerialReceiptCreationViewPresenter;
+import bigBang.module.receiptModule.client.userInterface.view.MarkForPaymentView;
+import bigBang.module.receiptModule.client.userInterface.view.MassAgentAccountingView;
 import bigBang.module.receiptModule.client.userInterface.presenter.SignatureRequestViewPresenter;
 import bigBang.module.receiptModule.client.userInterface.view.CancelSignatureRequestView;
 import bigBang.module.receiptModule.client.userInterface.view.CreateSignatureRequestView;
 import bigBang.module.receiptModule.client.userInterface.view.MassCreatePaymentNoticeView;
+import bigBang.module.receiptModule.client.userInterface.view.MassInsurerAccountingView;
+import bigBang.module.receiptModule.client.userInterface.view.MassSendReceiptView;
 import bigBang.module.receiptModule.client.userInterface.view.MassReturnToInsurerView;
 import bigBang.module.receiptModule.client.userInterface.view.ReceiptOperationsView;
 import bigBang.module.receiptModule.client.userInterface.view.ReceiptAssociateWithDebitNoteView;
@@ -31,6 +40,7 @@ import bigBang.module.receiptModule.client.userInterface.view.ReceiptReturnView;
 import bigBang.module.receiptModule.client.userInterface.view.ReceiptSearchOperationView;
 import bigBang.module.receiptModule.client.userInterface.view.ReceiptSectionView;
 import bigBang.module.receiptModule.client.userInterface.view.ReceiptTransferToPolicyView;
+import bigBang.module.receiptModule.client.userInterface.view.SerialMarkForPaymentView;
 import bigBang.module.receiptModule.client.userInterface.view.SerialReceiptCreationView;
 import bigBang.module.receiptModule.client.userInterface.view.SignatureRequestView;
 
@@ -130,6 +140,46 @@ public class ReceiptModule implements Module {
 			public ViewPresenter getInstance() {
 				MassCreatePaymentNoticeView view = (MassCreatePaymentNoticeView) GWT.create(MassCreatePaymentNoticeView.class);
 				MassCreatePaymentNoticeViewPresenter presenter = new MassCreatePaymentNoticeViewPresenter(view);
+				return presenter;
+			}
+		});
+		ViewPresenterFactory.getInstance().registerViewPresenterInstantiator("RECEIPT_MARK_FOR_PAYMENT", new ViewPresenterInstantiator(){
+			@Override
+			public ViewPresenter getInstance() {
+				MarkForPaymentView view = (MarkForPaymentView) GWT.create(MarkForPaymentView.class);
+				MarkForPaymentViewPresenter presenter = new MarkForPaymentViewPresenter(view);
+				return presenter;
+			}
+		});
+		ViewPresenterFactory.getInstance().registerViewPresenterInstantiator("SERIAL_RECEIPT_MARK_FOR_PAYMENT", new ViewPresenterInstantiator(){
+			@Override
+			public ViewPresenter getInstance() {
+				SerialMarkForPaymentView view = (SerialMarkForPaymentView) GWT.create(SerialMarkForPaymentView.class);
+				SerialMarkForPaymentViewPresenter presenter = new SerialMarkForPaymentViewPresenter(view);
+				return presenter;
+			}
+		});
+		ViewPresenterFactory.getInstance().registerViewPresenterInstantiator("MASS_SEND_RECEIPT_TO_CLIENT", new ViewPresenterInstantiator(){
+			@Override
+			public ViewPresenter getInstance() {
+				MassSendReceiptView view = (MassSendReceiptView) GWT.create(MassSendReceiptView.class);
+				MassSendReceiptViewPresenter presenter = new MassSendReceiptViewPresenter(view);
+				return presenter;
+			}
+		});
+		ViewPresenterFactory.getInstance().registerViewPresenterInstantiator("MASS_INSURER_ACCOUNTING", new ViewPresenterInstantiator(){
+			@Override
+			public ViewPresenter getInstance() {
+				MassInsurerAccountingView view = (MassInsurerAccountingView) GWT.create(MassInsurerAccountingView.class);
+				MassInsurerAccountingViewPresenter presenter = new MassInsurerAccountingViewPresenter(view);
+				return presenter;
+			}
+		});
+		ViewPresenterFactory.getInstance().registerViewPresenterInstantiator("MASS_AGENT_ACCOUNTING", new ViewPresenterInstantiator(){
+			@Override
+			public ViewPresenter getInstance() {
+				MassAgentAccountingView view = (MassAgentAccountingView) GWT.create(MassAgentAccountingView.class);
+				MassAgentAccountingViewPresenter presenter = new MassAgentAccountingViewPresenter(view);
 				return presenter;
 			}
 		});

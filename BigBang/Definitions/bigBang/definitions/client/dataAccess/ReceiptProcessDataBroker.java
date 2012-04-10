@@ -6,6 +6,7 @@ import bigBang.definitions.client.response.ResponseHandler;
 import bigBang.definitions.shared.DebitNote;
 import bigBang.definitions.shared.DocuShareHandle;
 import bigBang.definitions.shared.Receipt;
+import bigBang.definitions.shared.Receipt.PaymentInfo;
 import bigBang.definitions.shared.Receipt.ReturnMessage;
 import bigBang.definitions.shared.ReceiptStub;
 import bigBang.definitions.shared.SignatureRequest;
@@ -13,13 +14,13 @@ import bigBang.definitions.shared.SignatureRequest;
 public interface ReceiptProcessDataBroker extends DataBrokerInterface<Receipt> {
 
 	public void getReceipt(String id, ResponseHandler<Receipt> handler);
-	
+
 	public void updateReceipt(Receipt receipt, ResponseHandler<Receipt> handler);
-	
+
 	public void removeReceipt(String id, ResponseHandler<String> handler);
-	
+
 	public void getReceiptsForOwner(String ownerId, ResponseHandler<Collection<ReceiptStub>> handler);
-	
+
 	public SearchDataBroker<ReceiptStub> getSearchBroker();
 
 	void transferToInsurancePolicy(String receiptId, String newPolicyId,
@@ -40,13 +41,27 @@ public interface ReceiptProcessDataBroker extends DataBrokerInterface<Receipt> {
 
 	void serialCreateReceipt(Receipt receipt, DocuShareHandle source,
 			ResponseHandler<Receipt> handler);
-	
+
 	void receiveImage(String receiptId, DocuShareHandle source, ResponseHandler<Receipt> handler);
 
 	void massCreatePaymentNotice(String[] receiptIds,
 			ResponseHandler<Void> handler);
 
 	void createPaymentNotice(String receiptId, ResponseHandler<Receipt> handler);
+
+	void markPayed(PaymentInfo paymentInfo, ResponseHandler<Receipt> handler);
+
+	void sendReceipt(String receiptId, ResponseHandler<Void> handler);
+
+	void sendReceipt(String[] receiptIds, ResponseHandler<Void> handler);
+
+	void insurerAccounting(String receiptId, ResponseHandler<Void> handler);
+
+	void insurerAccounting(String[] receiptIds, ResponseHandler<Void> handler);
+
+	void agentAccounting(String receiptId, ResponseHandler<Void> handler);
+
+	void agentAccounting(String[] receiptIds, ResponseHandler<Void> handler);
 
 	void sendPayment(String receiptId, ResponseHandler<Receipt> handler);
 	

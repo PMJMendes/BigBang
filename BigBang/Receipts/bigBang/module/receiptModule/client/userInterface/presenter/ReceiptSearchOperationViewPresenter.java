@@ -38,7 +38,11 @@ public class ReceiptSearchOperationViewPresenter implements ViewPresenter {
 		SAVE,
 		CANCEL,
 		DELETE, TRANSFER_TO_POLICY, ASSOCIATE_WITH_DEBIT_NOTE,
-		VALIDATE, SET_FOR_RETURN, ON_CREATE_PAYMENT_NOTE, PAYMENT_TO_CLIENT, RETURN_TO_AGENCY, CREATE_SIGNATURE_REQUEST
+		VALIDATE, SET_FOR_RETURN, ON_CREATE_PAYMENT_NOTE,
+		MARK_FOR_PAYMENT,
+		SEND_RECEIPT,
+		INSURER_ACCOUNTING, AGENT_ACCOUNTING,
+		PAYMENT_TO_CLIENT, RETURN_TO_AGENCY, CREATE_SIGNATURE_REQUEST
 	}
 
 	public interface Display {
@@ -59,6 +63,10 @@ public class ReceiptSearchOperationViewPresenter implements ViewPresenter {
 		void allowValidate(boolean hasPermission);
 		void allowSetForReturn(boolean hasPermission);
 		void allowSendPaymentNotice(boolean hasPermission);
+		void allowMarkForPayment(boolean allow);
+		void allowSendReceipt(boolean allow);
+		void allowInsurerAccounting(boolean allow);
+		void allowAgentAccounting(boolean allow);
 		void allowPaymentToClient(boolean hasPermission);
 		void allowReturnToInsurer(boolean hasPermission);
 		void allowCreateSignatureRequest(boolean hasPermission);
@@ -164,6 +172,18 @@ public class ReceiptSearchOperationViewPresenter implements ViewPresenter {
 					break;
 				case ON_CREATE_PAYMENT_NOTE:
 					onCreatePaymentNote();
+					break;
+				case MARK_FOR_PAYMENT:
+					onMarkForPayment();
+					break;
+				case SEND_RECEIPT:
+					onSendReceipt();
+					break;
+				case INSURER_ACCOUNTING:
+					onInsurerAccounting();
+					break;
+				case AGENT_ACCOUNTING:
+					onAgentAccounting();
 					break;
 				case PAYMENT_TO_CLIENT:
 					onPaymentToClient();
@@ -311,6 +331,10 @@ public class ReceiptSearchOperationViewPresenter implements ViewPresenter {
 				view.allowValidate(PermissionChecker.hasPermission(value, BigBangConstants.OperationIds.ReceiptProcess.VALIDATE));
 				view.allowSetForReturn(PermissionChecker.hasPermission(value, BigBangConstants.OperationIds.ReceiptProcess.SET_FOR_RETURN));
 				view.allowSendPaymentNotice(PermissionChecker.hasPermission(value, BigBangConstants.OperationIds.ReceiptProcess.CREATE_PAYMENT_NOTICE));
+				view.allowMarkForPayment(PermissionChecker.hasPermission(value, BigBangConstants.OperationIds.ReceiptProcess.MARK_FOR_PAYMENT));
+				view.allowSendReceipt(PermissionChecker.hasPermission(value, BigBangConstants.OperationIds.ReceiptProcess.SEND_RECEIPT));
+				view.allowInsurerAccounting(PermissionChecker.hasPermission(value, BigBangConstants.OperationIds.ReceiptProcess.INSURER_ACCOUNTING));
+				view.allowAgentAccounting(PermissionChecker.hasPermission(value, BigBangConstants.OperationIds.ReceiptProcess.AGENT_ACCOUNTING));
 				view.allowPaymentToClient(PermissionChecker.hasPermission(value, BigBangConstants.OperationIds.ReceiptProcess.SEND_PAYMENT_TO_CLIENT));
 				view.allowReturnToInsurer(PermissionChecker.hasPermission(value, BigBangConstants.OperationIds.ReceiptProcess.RETURN_TO_AGENCY));
 				view.allowCreateSignatureRequest(PermissionChecker.hasPermission(value, BigBangConstants.OperationIds.ReceiptProcess.CREATE_SIGNATURE_REQUEST));
@@ -371,7 +395,61 @@ public class ReceiptSearchOperationViewPresenter implements ViewPresenter {
 			}
 		});
 	}
+	
+	protected void onMarkForPayment(){
+		NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
+		item.pushIntoStackParameter("display", "markforpayment");
+		NavigationHistoryManager.getInstance().go(item);
+	}
 
+	protected void onSendReceipt(){
+		String receiptId = view.getForm().getValue().id;
+		receiptBroker.sendReceipt(receiptId, new ResponseHandler<Void>() {
+
+			@Override
+			public void onResponse(Void response) {
+				onSendReceiptSuccess();
+			}
+
+			@Override
+			public void onError(Collection<ResponseError> errors) {
+				onSendReceiptFailed();
+			}
+		});
+	}
+	
+	protected void onInsurerAccounting(){
+		String receiptId  =view.getForm().getValue().id;
+		receiptBroker.insurerAccounting(receiptId, new ResponseHandler<Void>() {
+			
+			@Override
+			public void onResponse(Void response) {
+				onInsurerAccountingSuccess();
+			}
+			
+			@Override
+			public void onError(Collection<ResponseError> errors) {
+				onInsurerAccountingFailed();
+			}
+		});
+	}
+	
+	protected void onAgentAccounting(){
+		String receiptId = view.getForm().getValue().id;
+		receiptBroker.agentAccounting(receiptId, new ResponseHandler<Void>() {
+			
+			@Override
+			public void onResponse(Void response) {
+				onAgentAccountingSuccess();
+			}
+			
+			@Override
+			public void onError(Collection<ResponseError> errors) {
+				onAgentAccountingFailed();
+			}
+		});
+	}
+	
 	protected void onGetReceiptFailed(){
 		EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não é possível apresentar o Recibo"), TYPE.ALERT_NOTIFICATION));
 		NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
@@ -397,6 +475,35 @@ public class ReceiptSearchOperationViewPresenter implements ViewPresenter {
 
 	protected void onDeleteFailed(){
 		EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não foi possível Eliminar o Recibo"), TYPE.ALERT_NOTIFICATION));
+	}
+	
+	protected void onSendReceiptFailed() {
+		EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não foi possível Enviar o Recibo"), TYPE.ALERT_NOTIFICATION));
+	}
+	
+	protected void onSendReceiptSuccess(){
+		EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "O Recibo foi Enviado com Sucesso"), TYPE.TRAY_NOTIFICATION));
+		NavigationHistoryManager.getInstance().reload();
+	}
+	
+	protected void onInsurerAccountingSuccess(){
+		EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "A Prestação de Contas com a Seguradora foi efectuada com Sucesso"), TYPE.TRAY_NOTIFICATION));
+		NavigationHistoryManager.getInstance().reload();
+	}
+	
+	protected void onInsurerAccountingFailed(){
+		EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não foi possível Prestar Contas com a Seguradora"), TYPE.ALERT_NOTIFICATION));
+
+	}
+	
+	protected void onAgentAccountingSuccess(){
+		EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "A Prestação de Contas com o Mediador foi efectuada com Sucesso"), TYPE.TRAY_NOTIFICATION));
+		NavigationHistoryManager.getInstance().reload();
+	}
+	
+	protected void onAgentAccountingFailed(){
+		EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não foi possível Prestar Contas com o Mediador"), TYPE.ALERT_NOTIFICATION));
+
 	}
 
 	protected void onFailure(){

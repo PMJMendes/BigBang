@@ -30,7 +30,8 @@ public class MainScreenViewPresenter implements ViewPresenter {
 		SHOW_SECTION_QUOTE_REQUEST,
 		SHOW_SECTION_INSURANCE_POLICY, 
 		SHOW_SECTION_RECEIPT, 
-		SHOW_SECTION_RISK_ANALISYS
+		SHOW_SECTION_RISK_ANALISYS,
+		SHOW_SECTION_CASUALTY
 	}
 
 	public enum Section {
@@ -146,6 +147,10 @@ public class MainScreenViewPresenter implements ViewPresenter {
 					break;
 				case SHOW_SECTION_RISK_ANALISYS:
 					item.setParameter("section", "riskanalisys");
+					NavigationHistoryManager.getInstance().go(item);
+					break;
+				case SHOW_SECTION_CASUALTY:
+					item.setParameter("section", "casualty");
 					NavigationHistoryManager.getInstance().go(item);
 					break;
 				}

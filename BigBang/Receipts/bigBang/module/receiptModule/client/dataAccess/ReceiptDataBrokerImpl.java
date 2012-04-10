@@ -15,6 +15,7 @@ import bigBang.definitions.shared.BigBangConstants;
 import bigBang.definitions.shared.DebitNote;
 import bigBang.definitions.shared.DocuShareHandle;
 import bigBang.definitions.shared.Receipt;
+import bigBang.definitions.shared.Receipt.PaymentInfo;
 import bigBang.definitions.shared.Receipt.ReturnMessage;
 import bigBang.definitions.shared.ReceiptStub;
 import bigBang.definitions.shared.SearchResult;
@@ -41,6 +42,7 @@ public class ReceiptDataBrokerImpl extends DataBroker<Receipt> implements Receip
 		this.service = service;
 		this.dataElementId = BigBangConstants.EntityIds.RECEIPT;
 		this.searchBroker = new ReceiptSearchDataBroker(this.service);
+		cache.setThreshold(0);
 	}
 
 	@Override
@@ -560,6 +562,154 @@ public class ReceiptDataBrokerImpl extends DataBroker<Receipt> implements Receip
 			public void onResponseFailure(Throwable caught) {
 				handler.onError(new String[]{
 						new String("Could not create signature request")
+				});
+				super.onResponseFailure(caught);
+			}
+		});
+	}
+	
+	@Override
+	public void markPayed(PaymentInfo paymentInfo,
+			final ResponseHandler<Receipt> handler) {
+		service.markPayed(paymentInfo, new BigBangAsyncCallback<Receipt>() {
+
+			@Override
+			public void onResponseSuccess(Receipt result) {
+				notifyItemUpdate(result.id);
+				handler.onResponse(result);
+			}
+			
+			@Override
+			public void onResponseFailure(Throwable caught) {
+				handler.onError(new String[]{
+					new String("Could not mark for Payment")	
+				});
+				super.onResponseFailure(caught);
+			}
+		});
+	}
+
+	@Override
+	public void sendReceipt(String receiptId, final ResponseHandler<Void> handler) {
+		service.sendReceipt(receiptId, new BigBangAsyncCallback<Receipt>() {
+
+			@Override
+			public void onResponseSuccess(Receipt result) {
+				handler.onResponse(null);
+				notifyItemUpdate(result.id);
+			}
+			
+			@Override
+			public void onResponseFailure(Throwable caught) {
+				handler.onError(new String[]{
+						new String("Could not send the receipt")
+				});
+				super.onResponseFailure(caught);
+			}
+		});
+	}
+
+	@Override
+	public void sendReceipt(final String[] receiptIds, final ResponseHandler<Void> handler) {
+		service.massSendReceipt(receiptIds, new BigBangAsyncCallback<Void>() {
+
+			@Override
+			public void onResponseSuccess(Void result) {
+				handler.onResponse(null);
+				for(String id : receiptIds) {
+					notifyItemUpdate(id);
+				}
+			}
+			
+			@Override
+			public void onResponseFailure(Throwable caught) {
+				handler.onError(new String[]{
+						new String("Could not send the receipt")
+				});
+				super.onResponseFailure(caught);
+			}
+		});
+	}
+	
+	
+	@Override
+	public void insurerAccounting(String receiptId, final ResponseHandler<Void> handler) {
+		service.insurerAccouting(receiptId, new BigBangAsyncCallback<Receipt>() {
+
+			@Override
+			public void onResponseSuccess(Receipt result) {
+				handler.onResponse(null);
+				notifyItemUpdate(result.id);
+			}
+			
+			@Override
+			public void onResponseFailure(Throwable caught) {
+				handler.onError(new String[]{
+						new String("Could not send the receipt")
+				});
+				super.onResponseFailure(caught);
+			}
+		});
+	}
+	
+	@Override
+	public void insurerAccounting(final String[] receiptIds, final ResponseHandler<Void> handler) {
+		service.massInsurerAccounting(receiptIds, new BigBangAsyncCallback<Void>() {
+
+			@Override
+			public void onResponseSuccess(Void result) {
+				handler.onResponse(null);
+				for(String id : receiptIds) {
+					notifyItemUpdate(id);
+				}
+			}
+			
+			@Override
+			public void onResponseFailure(Throwable caught) {
+				handler.onError(new String[]{
+						new String("Could not perform the insurer accounting")
+				});
+				super.onResponseFailure(caught);
+			}
+		});
+	}
+
+	@Override
+	public void agentAccounting(String receiptId, final ResponseHandler<Void> handler) {
+		service.mediatorAccounting(receiptId, new BigBangAsyncCallback<Receipt>() {
+
+			@Override
+			public void onResponseSuccess(Receipt result) {
+				handler.onResponse(null);
+				notifyItemUpdate(result.id);
+			}
+			
+			@Override
+			public void onResponseFailure(Throwable caught) {
+				handler.onError(new String[]{
+						new String("Could not send the accoutning to the mediator")
+				});
+				super.onResponseFailure(caught);
+			}
+		});
+	}
+	
+	@Override
+	public void agentAccounting(final String[] receiptIds, final ResponseHandler<Void> handler) {
+		service.massMediatorAccounting(receiptIds, new BigBangAsyncCallback<Void>() {
+
+			@Override
+			public void onResponseSuccess(Void result) {
+				handler.onResponse(null);
+				for(String id : receiptIds) {
+					notifyItemUpdate(id);
+				}
+			}
+			
+			@Override
+			public void onResponseFailure(Throwable caught) {
+				handler.onError(new String[]{
+						new String("Could not perform the mediator accounting")
 				});
 				super.onResponseFailure(caught);
 			}

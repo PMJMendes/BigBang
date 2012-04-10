@@ -1,6 +1,8 @@
 package bigBang.library.client.userInterface;
 
-import com.google.gwt.core.client.GWT;
+import java.util.ArrayList;
+import java.util.List;
+
 import com.google.gwt.event.logical.shared.HasValueChangeHandlers;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
@@ -14,12 +16,25 @@ public class DockPanel extends Composite implements HasValue <Object>, HasValueC
 
 	private DockItem selectedItem;
 	private HorizontalPanel toolbarPanel;
+	private List<DockItem> dockItems;
+	private ValueChangeHandler<Boolean> valueChangeHandler;
 	
+
 	private boolean valueChangeHandlerInitialized = false;
 
 	public DockPanel(){
 		this.toolbarPanel  = new HorizontalPanel();
 		this.toolbarPanel.setStyleName("dockPanelItemsWrapper");
+
+		this.dockItems = new ArrayList<DockItem>();
+		valueChangeHandler = new ValueChangeHandler<Boolean>() {
+
+			@Override
+			public void onValueChange(ValueChangeEvent<Boolean> event) {
+				DockItem item = (DockItem) event.getSource();
+				setValue(item.getRepresentedValue());
+			}
+		};		
 
 		ScrollPanel scrollPanel = new ScrollPanel();
 		scrollPanel.setWidth("100%");
@@ -32,38 +47,29 @@ public class DockPanel extends Composite implements HasValue <Object>, HasValueC
 
 	public void addItem(final DockItem item){
 		this.toolbarPanel.add(item);
-		item.addValueChangeHandler(new ValueChangeHandler<Boolean>() {
+		this.dockItems.add(item);
+		item.addValueChangeHandler(this.valueChangeHandler);
+	}
 
-			public void onValueChange(ValueChangeEvent<Boolean> event) {
-				if(item == selectedItem){
-					item.setDown(true);
-					return;
+	protected void setSelectedItem(DockItem item){
+		if(item != null){
+			for(DockItem dockItem : this.dockItems) {
+				if(dockItem == item) {
+					if(!item.isDown()) {
+						item.setDown(true);
+					}
+				}else{
+					if(dockItem.isDown()){
+						dockItem.setDown(false);
+					}
 				}
-				
-				if(event.getValue())
-					setSelectedItem(item);					
 			}
-			
-		});
-		if(this.selectedItem == null)
-			this.setSelectedItem(item);
-	}
-
-	public void setSelectedItem(DockItem item){
-		if(item.equals(this.selectedItem))
-			return;		
-
-		if(this.selectedItem != null) 
-			this.selectedItem.setDown(false);
-
-		if(item.getParent().equals(this.toolbarPanel))
-			this.selectedItem = item;
-		item.setDown(true);
-		setValue(item.getRepresentedValue());
-	}
-
-	public void addSpecialItem(DockItem item){
-		this.toolbarPanel.add(item);
+		}else{
+			for(DockItem dockItem : this.dockItems) {
+				dockItem.setDown(false);
+			}
+		}
+		this.selectedItem = item;
 	}
 
 	public HandlerRegistration addValueChangeHandler(
@@ -76,7 +82,7 @@ public class DockPanel extends Composite implements HasValue <Object>, HasValueC
 	}
 
 	public Object getValue() {
-		return this.selectedItem.getRepresentedValue();
+		return this.selectedItem == null ? null : this.selectedItem.getRepresentedValue();
 	}
 
 	public void setValue(Object value) {
@@ -84,21 +90,24 @@ public class DockPanel extends Composite implements HasValue <Object>, HasValueC
 	}
 
 	public void setValue(Object value, boolean fireEvents) {
-		//if(getValue() == value)
-		//	return;
-
-		if(fireEvents)
-			ValueChangeEvent.fire(this, getValue());
-		
-		int nItems = toolbarPanel.getWidgetCount();
-		for(int i = 0; i < nItems; i++){
-			DockItem item = ((DockItem)toolbarPanel.getWidget(i));
-			if(item.getRepresentedValue() == value){
-				this.setSelectedItem(item);
-				return;
+		if(value != null) {
+			for(DockItem item : this.dockItems) {
+				if(item.getRepresentedValue().equals(value)){
+					setSelectedItem(item);
+					break;
+				}
 			}
+		}else{
+			setSelectedItem(null);
 		}
-		GWT.log("The value does not exist in the DockPanel");
+
+		if(fireEvents){
+			ValueChangeEvent.fire(this, value);
+		}
 	}
 
+	public Object getSelectedValue(){
+		return this.selectedItem == null ? null : selectedItem.getRepresentedValue();
+	}
+	
 }

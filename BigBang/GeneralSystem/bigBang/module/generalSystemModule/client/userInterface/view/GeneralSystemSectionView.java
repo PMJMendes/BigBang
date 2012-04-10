@@ -1,8 +1,11 @@
 package bigBang.module.generalSystemModule.client.userInterface.view;
 
+import bigBang.library.client.event.ActionInvokedEventHandler;
 import bigBang.library.client.userInterface.DockPanel;
 import bigBang.library.client.userInterface.view.View;
 import bigBang.module.generalSystemModule.client.userInterface.presenter.GeneralSystemSectionViewPresenter;
+import bigBang.module.generalSystemModule.client.userInterface.presenter.GeneralSystemSectionViewPresenter.Action;
+import bigBang.module.generalSystemModule.client.userInterface.presenter.GeneralSystemSectionViewPresenter.SectionOperation;
 
 import com.google.gwt.user.client.ui.HasValue;
 import com.google.gwt.user.client.ui.HasWidgets;
@@ -50,6 +53,37 @@ public class GeneralSystemSectionView extends View implements GeneralSystemSecti
 
 	public HasWidgets getOperationViewContainer() {
 		return operationViewContainer;
+	}
+
+	@Override
+	public HasWidgets getOverlayViewContainer() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void showOverlayViewContainer(boolean show) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void selectOperation(SectionOperation operation) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void registerActionHandler(ActionInvokedEventHandler<Action> handler) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void registerOperationSelectionHandler(
+			ActionInvokedEventHandler<SectionOperation> handler) {
+		// TODO Auto-generated method stub
+		
 	}
 
 //	public void selectOperation(OperationViewPresenter p) {

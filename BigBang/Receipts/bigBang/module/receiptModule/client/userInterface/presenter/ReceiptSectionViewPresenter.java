@@ -96,7 +96,18 @@ public class ReceiptSectionViewPresenter implements ViewPresenter {
 
 					if(display.equalsIgnoreCase("history")){
 						present("HISTORY", parameters);
-					}else{
+					}else if(display.equalsIgnoreCase("serialreceiptcreation")){
+						present("SERIAL_RECEIPT_CREATION", parameters);
+					}else if(display.equalsIgnoreCase("serialmarkforpayment")){
+						present("SERIAL_RECEIPT_MARK_FOR_PAYMENT", parameters);
+					}else if(display.equalsIgnoreCase("masssendreceipt")){
+						present("MASS_SEND_RECEIPT_TO_CLIENT", parameters);
+					}else if(display.equalsIgnoreCase("massinsureraccounting")){
+						present("MASS_INSURER_ACCOUNTING", parameters);
+					}else if(display.equalsIgnoreCase("massagentaccounting")){
+						present("MASS_AGENT_ACCOUNTING", parameters);
+					}
+					else{
 						present("RECEIPT_OPERATIONS", parameters);
 					}
 				}

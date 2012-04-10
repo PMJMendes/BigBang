@@ -20,7 +20,6 @@ import bigBang.definitions.shared.InfoOrDocumentRequest.Cancellation;
 import bigBang.definitions.shared.InfoOrDocumentRequest.Response;
 import bigBang.definitions.shared.ClientStub;
 import bigBang.definitions.shared.ManagerTransfer;
-import bigBang.definitions.shared.QuoteRequest;
 import bigBang.definitions.shared.RiskAnalysis;
 import bigBang.library.client.BigBangAsyncCallback;
 import bigBang.library.client.EventBus;
@@ -195,29 +194,7 @@ public class ClientProcessBrokerImpl extends DataBroker<Client> implements Clien
 	}
 
 	@Override
-	public void createQuoteRequest(final String clientId, QuoteRequest quoteRequest,
-			final ResponseHandler<QuoteRequest> handler) {
-//		service.createQuoteRequest(clientId, quoteRequest, new BigBangAsyncCallback<QuoteRequest>() {
-//
-//			@Override
-//			public void onResponseSuccess(QuoteRequest result) {
-//				//TODO
-//				handler.onResponse(result);
-//				EventBus.getInstance().fireEvent(new OperationWasExecutedEvent(BigBangConstants.OperationIds.ClientProcess.CREATE_QUOTE_REQUEST, clientId));
-//			}
-//
-//			@Override
-//			public void onResponseFailure(Throwable caught) {
-//				handler.onError(new String[]{
-//						new String("Could not create new Quote Request")	
-//				});
-//				super.onResponseFailure(caught);
-//			}
-//		});
-	}
-
-	@Override
-	public void createCasualty(final String clientId, Casualty casualty,
+	public void createCasualty(Casualty casualty,
 			final ResponseHandler<Casualty> handler) {
 		service.createCasualty(casualty, new BigBangAsyncCallback<Casualty>() {
 
@@ -226,7 +203,7 @@ public class ClientProcessBrokerImpl extends DataBroker<Client> implements Clien
 				//TODO
 				handler.onResponse(result);
 
-				EventBus.getInstance().fireEvent(new OperationWasExecutedEvent(BigBangConstants.OperationIds.ClientProcess.CREATE_CASUALTY, clientId));
+				EventBus.getInstance().fireEvent(new OperationWasExecutedEvent(BigBangConstants.OperationIds.ClientProcess.CREATE_CASUALTY, result.clientId));
 			}
 
 			@Override

@@ -39,6 +39,7 @@ public class QuoteRequestInsuredObjectsList extends FilterableList<QuoteRequestO
 		this.quoteRequestBroker = (QuoteRequestBroker) DataBrokerManager.Util.getInstance().getBroker(BigBangConstants.EntityIds.QUOTE_REQUEST);
 		this.quoteRequestObjectsBroker = (QuoteRequestObjectDataBroker) DataBrokerManager.Util.getInstance().getBroker(BigBangConstants.EntityIds.QUOTE_REQUEST_INSURED_OBJECT);
 		this.objectBrokerClient = getObjectBrokerClient();
+		this.quoteRequestObjectsBroker.registerClient(this.objectBrokerClient);
 		showFilterField(false);
 	}
 
@@ -94,7 +95,9 @@ public class QuoteRequestInsuredObjectsList extends FilterableList<QuoteRequestO
 
 			@Override
 			public void updateQuoteRequestObject(QuoteRequestObject object) {
-				if(ownerId != null && object.ownerId.equalsIgnoreCase(ownerId)) {
+				String ownerId = quoteRequestBroker.getFinalMapping(QuoteRequestInsuredObjectsList.this.ownerId);
+				String objectOwnerId = quoteRequestBroker.getFinalMapping(object.ownerId);
+				if(ownerId != null && objectOwnerId.equalsIgnoreCase(ownerId)) {
 					for(ValueSelectable<QuoteRequestObjectStub> entry : QuoteRequestInsuredObjectsList.this) {
 						if(entry.getValue().id.equalsIgnoreCase(object.id)) {
 							entry.setValue(object);
@@ -121,7 +124,9 @@ public class QuoteRequestInsuredObjectsList extends FilterableList<QuoteRequestO
 
 			@Override
 			public void addQuoteRequestObject(QuoteRequestObject object) {
-				if(ownerId != null && object.ownerId.equalsIgnoreCase(ownerId)) {
+				String ownerId = quoteRequestBroker.getFinalMapping(QuoteRequestInsuredObjectsList.this.ownerId);
+				String objectOwnerId = quoteRequestBroker.getFinalMapping(object.ownerId);
+				if(ownerId != null && objectOwnerId.equalsIgnoreCase(ownerId)) {
 					addEntry(object);
 				}
 			}

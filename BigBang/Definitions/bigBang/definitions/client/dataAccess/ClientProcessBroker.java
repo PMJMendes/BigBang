@@ -9,7 +9,6 @@ import bigBang.definitions.shared.Client;
 import bigBang.definitions.shared.InfoOrDocumentRequest;
 import bigBang.definitions.shared.ClientStub;
 import bigBang.definitions.shared.ManagerTransfer;
-import bigBang.definitions.shared.QuoteRequest;
 import bigBang.definitions.shared.RiskAnalysis;
 
 /**
@@ -60,9 +59,7 @@ public interface ClientProcessBroker extends DataBrokerInterface<Client>{
 	 */
 	public void createRiskAnalisys(String clientId, RiskAnalysis riskAnalisys, ResponseHandler<RiskAnalysis> handler);
 
-	public void createQuoteRequest(String clientId, QuoteRequest quoteRequest, ResponseHandler<QuoteRequest> handler);
-	
-	public void createCasualty(String clientId, Casualty casualty, ResponseHandler<Casualty> handler);
+	public void createCasualty(Casualty casualty, ResponseHandler<Casualty> handler);
 	
 	public void mergeWithClient(String originalId, String receptorId, ResponseHandler<Client> handler);
 	

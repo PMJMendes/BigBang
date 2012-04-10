@@ -11,6 +11,8 @@ import com.google.gwt.user.client.ui.Widget;
 public class CasualtySearchOperationViewPresenter implements ViewPresenter {
 
 	public interface Display {
+		
+		
 		Widget asWidget();
 	}
 

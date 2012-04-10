@@ -118,8 +118,7 @@ public class ReceiptSearchOperationView extends View implements ReceiptSearchOpe
 
 			@Override
 			public void onEnterPayment() {
-				// TODO Auto-generated method stub
-
+				actionHandler.onActionInvoked(new ActionInvokedEvent<ReceiptSearchOperationViewPresenter.Action>(Action.MARK_FOR_PAYMENT));
 			}
 
 			@Override
@@ -136,8 +135,7 @@ public class ReceiptSearchOperationView extends View implements ReceiptSearchOpe
 
 			@Override
 			public void onSendPaymentToMediator() {
-				// TODO Auto-generated method stub
-
+				actionHandler.onActionInvoked(new ActionInvokedEvent<ReceiptSearchOperationViewPresenter.Action>(Action.AGENT_ACCOUNTING));
 			}
 
 			@Override
@@ -147,7 +145,7 @@ public class ReceiptSearchOperationView extends View implements ReceiptSearchOpe
 
 			@Override
 			public void onSendPaymentToAgency() {
-				// TODO Auto-generated method stub
+				actionHandler.onActionInvoked(new ActionInvokedEvent<ReceiptSearchOperationViewPresenter.Action>(Action.INSURER_ACCOUNTING));
 
 			}
 
@@ -158,8 +156,7 @@ public class ReceiptSearchOperationView extends View implements ReceiptSearchOpe
 
 			@Override
 			public void onSendReceipt() {
-				// TODO Auto-generated method stub
-
+				actionHandler.onActionInvoked(new ActionInvokedEvent<ReceiptSearchOperationViewPresenter.Action>(Action.SEND_RECEIPT));
 			}
 
 			@Override
@@ -294,7 +291,27 @@ public class ReceiptSearchOperationView extends View implements ReceiptSearchOpe
 		operationsToolbar.allowCreatePaymentNotice(hasPermission);
 		
 	}
+	
+	@Override
+	public void allowMarkForPayment(boolean allow) {
+		operationsToolbar.allowMarkForPayment(allow);
+	}
+	
+	@Override
+	public void allowSendReceipt(boolean allow) {
+		operationsToolbar.allowSendReceipt(allow);
+	}
 
+	@Override
+	public void allowInsurerAccounting(boolean allow) {
+		operationsToolbar.allowInsurerAccounting(allow);
+	}
+	
+	@Override
+	public void allowAgentAccounting(boolean allow) {
+		this.operationsToolbar.allowAgentAccounting(allow);
+	}
+	
 	@Override
 	public void allowPaymentToClient(boolean hasPermission) {
 		operationsToolbar.allowPaymentToClient(hasPermission);

@@ -1,14 +1,20 @@
 package bigBang.module.clientModule.client.userInterface.view;
 
+import org.gwt.mosaic.ui.client.MessageBox;
+
 import bigBang.library.client.event.ActionInvokedEvent;
 import bigBang.library.client.event.ActionInvokedEventHandler;
+import bigBang.library.client.userInterface.DockItem;
 import bigBang.library.client.userInterface.DockPanel;
 import bigBang.library.client.userInterface.view.PopupPanel;
 import bigBang.library.client.userInterface.view.View;
 import bigBang.module.clientModule.client.userInterface.presenter.ClientSectionViewPresenter;
 import bigBang.module.clientModule.client.userInterface.presenter.ClientSectionViewPresenter.Action;
+import bigBang.module.clientModule.client.userInterface.presenter.ClientSectionViewPresenter.SectionOperation;
 
-import com.google.gwt.user.client.ui.HasValue;
+import com.google.gwt.event.logical.shared.ValueChangeEvent;
+import com.google.gwt.event.logical.shared.ValueChangeHandler;
+import com.google.gwt.user.client.ui.AbstractImagePrototype;
 import com.google.gwt.user.client.ui.HasWidgets;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
@@ -21,6 +27,7 @@ public class ClientSectionView extends View implements ClientSectionViewPresente
 	private PopupPanel popupPanel;
 	private HasWidgets overlayContainer;
 	private ActionInvokedEventHandler<Action> actionHandler;
+	private ActionInvokedEventHandler<SectionOperation> operationSelectionHandler;
 
 	public ClientSectionView(){
 		VerticalPanel panel = new VerticalPanel();
@@ -29,12 +36,20 @@ public class ClientSectionView extends View implements ClientSectionViewPresente
 
 		this.operationDock = new DockPanel();
 		panel.add(this.operationDock);
+		initializeDock();
+		this.operationDock.addValueChangeHandler(new ValueChangeHandler<Object>() {
+			
+			@Override
+			public void onValueChange(ValueChangeEvent<Object> event) {
+				operationSelectionHandler.onActionInvoked(new ActionInvokedEvent<ClientSectionViewPresenter.SectionOperation>((SectionOperation)event.getValue()));
+			}
+		});
 
 		this.operationViewContainer = new SimplePanel();
 		this.operationViewContainer.setSize("100%", "100%");
 		panel.add(operationViewContainer);
 		panel.setCellHeight(operationViewContainer, "100%");
-		
+
 		this.overlayContainer = new SimplePanel();
 	}
 
@@ -43,19 +58,17 @@ public class ClientSectionView extends View implements ClientSectionViewPresente
 		return;
 	}
 
-	//	public void createOperationNavigationItem(OperationViewPresenter p, boolean enabled) {
-	//		AbstractImagePrototype icon = p.getOperation().getIcon();
-	//		if(icon == null)
-	//			icon = MessageBox.MESSAGEBOX_IMAGES.dialogInformation();
-	//		DockItem item = new DockItem(p.getOperation().getShortDescription(), icon, null, p);
-	//		item.setEnabled(enabled);
-	//		item.setTitle(p.getOperation().getDescription());
-	//		item.setSize("100px", "52px");
-	//		this.operationDock.addItem(item);
-	//	}
+	public void initializeDock() {
+		addDockItem("Pesquisa", null, SectionOperation.OPERATIONS);
+		addDockItem("Transf. Gestor", null, SectionOperation.MASS_MANAGER_TRANSFER);
+	}
 
-	public HasValue <Object> getOperationNavigationPanel() {
-		return operationDock;
+	protected void addDockItem(String text, AbstractImagePrototype icon, final ClientSectionViewPresenter.SectionOperation action){
+		if(icon == null)
+			icon = MessageBox.MESSAGEBOX_IMAGES.dialogInformation();
+		DockItem item = new DockItem(text, icon, action);
+		item.setTitle(text);
+		this.operationDock.addItem(item);
 	}
 
 	public HasWidgets getOperationViewContainer() {
@@ -80,7 +93,7 @@ public class ClientSectionView extends View implements ClientSectionViewPresente
 			};
 			this.popupPanel.add((Widget)this.overlayContainer);
 		}
-		
+
 		if(this.popupPanel != null){
 			if(show && !this.popupPanel.isAttached()){
 				this.popupPanel.center();
@@ -92,13 +105,20 @@ public class ClientSectionView extends View implements ClientSectionViewPresente
 		}
 	}
 
-	//	public void selectOperation(OperationViewPresenter p) {
-	//		this.operationDock.setValue(p);
-	//	}
-	
 	@Override
 	public void registerActionHandler(ActionInvokedEventHandler<Action> handler){
 		this.actionHandler = handler;
 	}
-	
+
+	@Override
+	public void selectOperation(SectionOperation operation) {
+		this.operationDock.setValue(operation, false);
+	}
+
+	@Override
+	public void registerOperationSelectionHandler(
+			ActionInvokedEventHandler<SectionOperation> handler) {
+		this.operationSelectionHandler = handler;
+	}
+
 }

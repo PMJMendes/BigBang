@@ -78,6 +78,8 @@ public class BigBangConstants {
 		public static final String INSURANCE_POLICY_VOID_MOTIVES = "B36C9AB7-0052-4C2E-B392-9FF200CF6022";
 		public static final String INFO_REQUEST_CANCEL_MOTIVES = "F79E335C-FD6F-43BE-8535-9FE900C1CAF4";
 		public static final String EXTERNAL_INFO_REQUEST_CLOSING_MOTIVES = "F79E335C-FD6F-43BE-8535-9FE900C1CAF4";
+		public static final String RECEIPT_PAYMENT_TYPES = "C480B530-C6E2-49A0-BE15-A02200E88280";
+		public static final String BANK = "9954EADC-D7BE-4858-B1DE-A02200F45247";
 	}
 
 	public static class OperationIds {
@@ -171,9 +173,23 @@ public class BigBangConstants {
 			public static final String ASSOCIATE_WITH_DEBIT_NOTE = "1810BACF-DB6C-4D2E-8093-A01300CAD6C2";
 			public static final String SET_FOR_RETURN = "9C9369BB-186D-433B-BD7B-A01300CE9125";
 			public static final String VALIDATE = "47538724-7B79-4655-96D7-A01300C6A881";
+			public static final String MARK_FOR_PAYMENT = "F5F00701-69F7-4622-BB8C-9FB800DED93F";
+			public static final String SEND_RECEIPT = "002A20EF-A7B3-4DE7-B62C-A01300CC5450";
+			public static final String INSURER_ACCOUNTING = "A07D96EF-CF7E-4287-8C3B-A01300CD2AF5";
+			public static final String AGENT_ACCOUNTING = "C7305673-3EC9-4B1A-A437-A01300CD7D57";
 			public static final String SEND_PAYMENT_TO_CLIENT = "08799EDB-B874-49D5-B987-A01300CCAC59";
 			public static final String RETURN_TO_AGENCY = "A34C65D4-0B2A-4083-BB16-A01300D3D013";
 			public static final String CREATE_SIGNATURE_REQUEST = "563A630A-276A-48E8-96D3-A01300C9AF24";
+			
+			public static class PaymentType {
+				public static final String CHEQUE = "06EA2F87-BB0C-4B02-BCDB-A02200EB462D";
+				public static final String CURRENT_ACCOUNT = "637DBB57-3EFE-4728-BAB8-A02200EB4EC9";
+				public static final String CASH = "40B9ACC7-A99A-4DC2-BAEF-A02200EB59B3";
+				public static final String DIRECT_TO_INSURER = "A44F6D02-83A2-4D96-BF5F-A02200EB6857";
+				public static final String BANK_TRANSFER = "5E1BEB0E-FABC-44F4-97BB-A02200EB78A5";
+				public static final String COMPENSATION = "AF1779DA-BB19-4BBD-B1FA-A02200EB84B6";
+				public static final String FROM_THE_INSURER = "9FD1C899-B395-4744-974B-A02200EB9014";
+			}
 		}
 		
 		public static class QuoteRequestProcess {

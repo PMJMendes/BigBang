@@ -332,6 +332,24 @@ public class QuoteRequestSearchOperationViewPresenter implements ViewPresenter {
 		});
 	}
 
+	protected void saveWorkState(){
+		QuoteRequest request = view.getForm().getValue();
+		if(request != null && broker.isTemp(request.id)) {
+			broker.updateQuoteRequest(view.getForm().getInfo(), new ResponseHandler<QuoteRequest>() {
+
+				@Override
+				public void onResponse(QuoteRequest response) {
+					return;
+				}
+
+				@Override
+				public void onError(Collection<ResponseError> errors) {
+					return;
+				}
+			});
+		}
+	}
+
 	protected void onCancel(){
 		broker.closeRequestResource(view.getForm().getValue().id, new ResponseHandler<Void>() {
 
@@ -352,14 +370,15 @@ public class QuoteRequestSearchOperationViewPresenter implements ViewPresenter {
 		navItem.setParameter("show", "deleterequest");
 		NavigationHistoryManager.getInstance().go(navItem);
 	}
-	
+
 	protected void onClose(){
 		NavigationHistoryItem navItem = NavigationHistoryManager.getInstance().getCurrentState();
 		navItem.setParameter("show", "closerequest");
 		NavigationHistoryManager.getInstance().go(navItem);
 	}
-	
+
 	protected void onCreateInsuredObject(String objectType){
+		saveWorkState();
 		NavigationHistoryItem navItem = NavigationHistoryManager.getInstance().getCurrentState();
 		navItem.pushIntoStackParameter("display", "viewinsuredobject");
 		navItem.setParameter("objectid", "new");
@@ -368,6 +387,7 @@ public class QuoteRequestSearchOperationViewPresenter implements ViewPresenter {
 	}
 
 	protected void showObject(String objectId) {
+		saveWorkState();
 		NavigationHistoryItem navItem = NavigationHistoryManager.getInstance().getCurrentState();
 		navItem.pushIntoStackParameter("display", "viewinsuredobject");
 		navItem.setParameter("objectid", objectId);
@@ -375,6 +395,7 @@ public class QuoteRequestSearchOperationViewPresenter implements ViewPresenter {
 	}
 
 	protected void showSubProcess(BigBangProcess process){
+		saveWorkState();
 		String type = process.dataTypeId;
 
 		if(type.equalsIgnoreCase(BigBangConstants.EntityIds.NEGOTIATION)){
@@ -385,18 +406,21 @@ public class QuoteRequestSearchOperationViewPresenter implements ViewPresenter {
 	}
 
 	protected void showNegotiation(String negotiationId) {
+		saveWorkState();
 		NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
 		item.pushIntoStackParameter("negotiation", negotiationId);
 		NavigationHistoryManager.getInstance().go(item);
 	}
 
 	protected void showInfoRequest(String requestId) {
+		saveWorkState();
 		NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
 		item.pushIntoStackParameter("viewinforequest", requestId);
 		NavigationHistoryManager.getInstance().go(item);
 	}
 
 	protected void showHistory(String historyItemId){
+		saveWorkState();
 		NavigationHistoryItem navItem = NavigationHistoryManager.getInstance().getCurrentState();
 		navItem.pushIntoStackParameter("display", "history");
 		navItem.setParameter("historyownerid", view.getForm().getValue().id);
@@ -405,6 +429,7 @@ public class QuoteRequestSearchOperationViewPresenter implements ViewPresenter {
 	}
 
 	protected void onGetQuoteRequestFailed(){
+		saveWorkState();
 		EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não é possível Apresentar a Consulta de Mercado"), TYPE.ALERT_NOTIFICATION));
 		NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
 		item.removeParameter("quoterequestid");
@@ -424,7 +449,7 @@ public class QuoteRequestSearchOperationViewPresenter implements ViewPresenter {
 		EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não é possível editar a Consulta de Mercado"), TYPE.TRAY_NOTIFICATION));
 		NavigationHistoryManager.getInstance().reload();
 	}
-	
+
 	protected void onGetSubLineDefinitionFailed(){
 		EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não é possível acrescentar a Modalidade à Consulta de Mercado"), TYPE.ALERT_NOTIFICATION));
 	}
