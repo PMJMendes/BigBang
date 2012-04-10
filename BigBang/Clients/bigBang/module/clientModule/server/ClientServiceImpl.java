@@ -15,6 +15,7 @@ import Jewel.Petri.Interfaces.IProcess;
 import Jewel.Petri.Interfaces.IScript;
 import Jewel.Petri.Objects.PNProcess;
 import Jewel.Petri.Objects.PNScript;
+import Jewel.Petri.SysObjects.JewelPetriException;
 import bigBang.definitions.shared.Address;
 import bigBang.definitions.shared.Casualty;
 import bigBang.definitions.shared.Client;
@@ -38,11 +39,14 @@ import bigBang.library.server.SearchServiceBase;
 import bigBang.library.server.TransferManagerServiceImpl;
 import bigBang.library.shared.BigBangException;
 import bigBang.library.shared.SessionExpiredException;
+import bigBang.module.casualtyModule.server.CasualtyServiceImpl;
 import bigBang.module.clientModule.interfaces.ClientService;
 import bigBang.module.clientModule.shared.ClientSearchParameter;
 import bigBang.module.clientModule.shared.ClientSortParameter;
 
+import com.premiumminds.BigBang.Jewel.BigBangJewelException;
 import com.premiumminds.BigBang.Jewel.Constants;
+import com.premiumminds.BigBang.Jewel.Data.CasualtyData;
 import com.premiumminds.BigBang.Jewel.Data.ClientData;
 import com.premiumminds.BigBang.Jewel.Objects.AgendaItem;
 import com.premiumminds.BigBang.Jewel.Objects.ClientGroup;
@@ -50,6 +54,7 @@ import com.premiumminds.BigBang.Jewel.Objects.GeneralSystem;
 import com.premiumminds.BigBang.Jewel.Objects.MgrXFer;
 import com.premiumminds.BigBang.Jewel.Operations.ContactOps;
 import com.premiumminds.BigBang.Jewel.Operations.DocOps;
+import com.premiumminds.BigBang.Jewel.Operations.Client.CreateCasualty;
 import com.premiumminds.BigBang.Jewel.Operations.Client.CreateInfoRequest;
 import com.premiumminds.BigBang.Jewel.Operations.Client.CreateMgrXFer;
 import com.premiumminds.BigBang.Jewel.Operations.Client.DeleteClient;
@@ -477,18 +482,51 @@ public class ClientServiceImpl
 		return null;
 	}
 
-	@Override
 	public QuoteRequest createQuoteRequest(String clientId, QuoteRequest request)
-			throws SessionExpiredException, BigBangException {
-		// TODO Auto-generated method stub
-		return null;
+		throws SessionExpiredException, BigBangException
+	{
+		throw new BigBangException("Erro: Operação de crição directa não suportada.");
 	}
 
-	@Override
 	public Casualty createCasualty(String clientId, Casualty casualty)
-			throws SessionExpiredException, BigBangException {
-		// TODO Auto-generated method stub
-		return null;
+		throws SessionExpiredException, BigBangException
+	{
+		com.premiumminds.BigBang.Jewel.Objects.Client lobjClient;
+		CreateCasualty lopCC;
+
+		if ( Engine.getCurrentUser() == null )
+			throw new SessionExpiredException();
+
+		try
+		{
+			lobjClient = com.premiumminds.BigBang.Jewel.Objects.Client.GetInstance(Engine.getCurrentNameSpace(), UUID.fromString(clientId));
+		}
+		catch (BigBangJewelException e)
+		{
+			throw new BigBangException(e.getMessage(), e);
+		}
+
+		lopCC = new CreateCasualty(lobjClient.GetProcessID());
+		lopCC.mobjData = new CasualtyData();
+		lopCC.mobjData.mdtCasualtyDate = Timestamp.valueOf(casualty.casualtyDate + " 00:00:00.0");
+		lopCC.mobjData.mstrDescription = casualty.description;
+		lopCC.mobjData.mstrNotes = casualty.internalNotes;
+		lopCC.mobjData.mbCaseStudy = casualty.caseStudy;
+		lopCC.mobjData.midManager = UUID.fromString(casualty.managerId);
+		lopCC.mobjData.mobjPrevValues = null;
+		lopCC.mobjContactOps = null;
+		lopCC.mobjDocOps = null;
+
+		try
+		{
+			lopCC.Execute();
+		}
+		catch (JewelPetriException e)
+		{
+			throw new BigBangException(e.getMessage(), e);
+		}
+
+		return CasualtyServiceImpl.sGetCasualty(lopCC.mobjData.mid);
 	}
 
 	public void deleteClient(String clientId, String reason)

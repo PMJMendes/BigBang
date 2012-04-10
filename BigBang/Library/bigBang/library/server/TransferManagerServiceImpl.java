@@ -1,11 +1,13 @@
 package bigBang.library.server;
 
+import java.sql.Timestamp;
 import java.util.UUID;
 
 import Jewel.Engine.Engine;
 import Jewel.Engine.SysObjects.ObjectBase;
 import Jewel.Petri.Interfaces.IProcess;
 import Jewel.Petri.Objects.PNProcess;
+import bigBang.definitions.shared.CasualtyStub;
 import bigBang.definitions.shared.ClientStub;
 import bigBang.definitions.shared.InsurancePolicyStub;
 import bigBang.definitions.shared.ManagerTransfer;
@@ -16,6 +18,7 @@ import bigBang.library.shared.SessionExpiredException;
 
 import com.premiumminds.BigBang.Jewel.BigBangJewelException;
 import com.premiumminds.BigBang.Jewel.Constants;
+import com.premiumminds.BigBang.Jewel.Objects.Casualty;
 import com.premiumminds.BigBang.Jewel.Objects.Category;
 import com.premiumminds.BigBang.Jewel.Objects.Client;
 import com.premiumminds.BigBang.Jewel.Objects.ClientGroup;
@@ -51,6 +54,9 @@ public class TransferManagerServiceImpl
 
 		if ( lobjAux instanceof Policy )
 			return BuildPolicyStub((Policy)lobjAux);
+
+		if ( lobjAux instanceof Casualty )
+			return BuildCasualtyStub((Casualty)lobjAux);
 
 		throw new BigBangException("Erro: Objecto não suporta transferências de gestor.");
 	}
@@ -341,6 +347,45 @@ public class TransferManagerServiceImpl
 				break;
 			}
 		}
+		lobjResult.processId = (lobjProcess == null ? null : lobjProcess.getKey().toString());
+
+		return lobjResult;
+	}
+
+	private static CasualtyStub BuildCasualtyStub(Casualty pobjCasualty)
+	{
+		IProcess lobjProcess;
+		Client lobjAuxClient;
+		CasualtyStub lobjResult;
+
+		try
+		{
+			lobjProcess = PNProcess.GetInstance(Engine.getCurrentNameSpace(), pobjCasualty.GetProcessID());
+			try
+			{
+				lobjAuxClient = (Client)lobjProcess.GetParent().GetData();
+			}
+			catch (Throwable e)
+			{
+				lobjAuxClient = null;
+			}
+		}
+		catch (Throwable e)
+		{
+			lobjProcess = null;
+			lobjAuxClient = null;
+		}
+
+		lobjResult = new CasualtyStub();
+
+		lobjResult.id = pobjCasualty.getKey().toString();
+		lobjResult.processNumber = pobjCasualty.getLabel();
+		lobjResult.clientId = (lobjAuxClient == null ? null : lobjAuxClient.getKey().toString());
+		lobjResult.clientNumber = (lobjAuxClient == null ? "" : ((Integer)lobjAuxClient.getAt(1)).toString());
+		lobjResult.clientName = (lobjAuxClient == null ? "(Erro)" : lobjAuxClient.getLabel());
+		lobjResult.casualtyDate = ((Timestamp)pobjCasualty.getAt(2)).toString().substring(0, 10);
+		lobjResult.caseStudy = (Boolean)pobjCasualty.getAt(5);
+		lobjResult.isOpen = lobjProcess.IsRunning();
 		lobjResult.processId = (lobjProcess == null ? null : lobjProcess.getKey().toString());
 
 		return lobjResult;
