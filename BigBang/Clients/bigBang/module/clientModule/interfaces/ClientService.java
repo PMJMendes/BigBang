@@ -4,7 +4,6 @@ import bigBang.definitions.shared.Casualty;
 import bigBang.definitions.shared.Client;
 import bigBang.definitions.shared.InfoOrDocumentRequest;
 import bigBang.definitions.shared.ManagerTransfer;
-import bigBang.definitions.shared.QuoteRequest;
 import bigBang.definitions.shared.RiskAnalysis;
 import bigBang.library.interfaces.SearchService;
 import bigBang.library.shared.BigBangException;
@@ -40,9 +39,8 @@ public interface ClientService
 	public InfoOrDocumentRequest createInfoOrDocumentRequest(InfoOrDocumentRequest request) throws SessionExpiredException, BigBangException;
 	public ManagerTransfer createManagerTransfer(ManagerTransfer transfer) throws SessionExpiredException, BigBangException;
 
-	public QuoteRequest createQuoteRequest(String clientId, QuoteRequest request) throws SessionExpiredException, BigBangException;
 	public RiskAnalysis createRiskAnalisys(String clientId, RiskAnalysis riskAnalisys) throws SessionExpiredException, BigBangException;
-	public Casualty createCasualty(String clientId, Casualty casualty) throws SessionExpiredException, BigBangException;
+	public Casualty createCasualty(Casualty casualty) throws SessionExpiredException, BigBangException;
 
 	public void deleteClient(String clientId, String reason) throws SessionExpiredException, BigBangException;
 

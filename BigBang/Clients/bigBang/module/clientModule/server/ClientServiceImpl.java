@@ -488,7 +488,7 @@ public class ClientServiceImpl
 		throw new BigBangException("Erro: Operação de crição directa não suportada.");
 	}
 
-	public Casualty createCasualty(String clientId, Casualty casualty)
+	public Casualty createCasualty(Casualty casualty)
 		throws SessionExpiredException, BigBangException
 	{
 		com.premiumminds.BigBang.Jewel.Objects.Client lobjClient;
@@ -499,7 +499,8 @@ public class ClientServiceImpl
 
 		try
 		{
-			lobjClient = com.premiumminds.BigBang.Jewel.Objects.Client.GetInstance(Engine.getCurrentNameSpace(), UUID.fromString(clientId));
+			lobjClient = com.premiumminds.BigBang.Jewel.Objects.Client.GetInstance(Engine.getCurrentNameSpace(),
+					UUID.fromString(casualty.clientId));
 		}
 		catch (BigBangJewelException e)
 		{

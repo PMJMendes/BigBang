@@ -4,7 +4,6 @@ import bigBang.definitions.shared.Casualty;
 import bigBang.definitions.shared.Client;
 import bigBang.definitions.shared.InfoOrDocumentRequest;
 import bigBang.definitions.shared.ManagerTransfer;
-import bigBang.definitions.shared.QuoteRequest;
 import bigBang.definitions.shared.RiskAnalysis;
 import bigBang.library.interfaces.SearchServiceAsync;
 
@@ -19,9 +18,8 @@ public interface ClientServiceAsync
 	void mergeWithClient(String clientId, String receptorId, AsyncCallback<Client> callback);
 	void createInfoOrDocumentRequest(InfoOrDocumentRequest request, AsyncCallback<InfoOrDocumentRequest> callback);
 	void createManagerTransfer(ManagerTransfer transfer, AsyncCallback<ManagerTransfer> callback);
-	void createQuoteRequest(String processId, QuoteRequest request, AsyncCallback<QuoteRequest> callback);
 	void createRiskAnalisys(String clientId, RiskAnalysis riskAnalisys, AsyncCallback<RiskAnalysis> callback);
-	void createCasualty(String clientId, Casualty casualty, AsyncCallback<Casualty> callback);
+	void createCasualty(Casualty casualty, AsyncCallback<Casualty> callback);
 	void deleteClient(String clientId, String reason, AsyncCallback<Void> callback);
 	void massCreateManagerTransfer(ManagerTransfer transfer, AsyncCallback<ManagerTransfer> callback);
 }

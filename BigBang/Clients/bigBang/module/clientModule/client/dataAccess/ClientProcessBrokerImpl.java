@@ -197,29 +197,29 @@ public class ClientProcessBrokerImpl extends DataBroker<Client> implements Clien
 	@Override
 	public void createQuoteRequest(final String clientId, QuoteRequest quoteRequest,
 			final ResponseHandler<QuoteRequest> handler) {
-		service.createQuoteRequest(clientId, quoteRequest, new BigBangAsyncCallback<QuoteRequest>() {
-
-			@Override
-			public void onResponseSuccess(QuoteRequest result) {
-				//TODO
-				handler.onResponse(result);
-				EventBus.getInstance().fireEvent(new OperationWasExecutedEvent(BigBangConstants.OperationIds.ClientProcess.CREATE_QUOTE_REQUEST, clientId));
-			}
-
-			@Override
-			public void onResponseFailure(Throwable caught) {
-				handler.onError(new String[]{
-						new String("Could not create new Quote Request")	
-				});
-				super.onResponseFailure(caught);
-			}
-		});
+//		service.createQuoteRequest(clientId, quoteRequest, new BigBangAsyncCallback<QuoteRequest>() {
+//
+//			@Override
+//			public void onResponseSuccess(QuoteRequest result) {
+//				//TODO
+//				handler.onResponse(result);
+//				EventBus.getInstance().fireEvent(new OperationWasExecutedEvent(BigBangConstants.OperationIds.ClientProcess.CREATE_QUOTE_REQUEST, clientId));
+//			}
+//
+//			@Override
+//			public void onResponseFailure(Throwable caught) {
+//				handler.onError(new String[]{
+//						new String("Could not create new Quote Request")	
+//				});
+//				super.onResponseFailure(caught);
+//			}
+//		});
 	}
 
 	@Override
 	public void createCasualty(final String clientId, Casualty casualty,
 			final ResponseHandler<Casualty> handler) {
-		service.createCasualty(clientId, casualty, new BigBangAsyncCallback<Casualty>() {
+		service.createCasualty(casualty, new BigBangAsyncCallback<Casualty>() {
 
 			@Override
 			public void onResponseSuccess(Casualty result) {
