@@ -114,6 +114,7 @@ public class CasualtyServiceImpl
 		lopMD = new ManageData(lobjCasualty.GetProcessID());
 		lopMD.mobjData = new CasualtyData();
 		lopMD.mobjData.mid = lobjCasualty.getKey();
+		lopMD.mobjData.mstrNumber = casualty.processNumber;
 		lopMD.mobjData.mdtCasualtyDate = Timestamp.valueOf(casualty.casualtyDate + " 00:00:00.0");
 		lopMD.mobjData.mstrDescription = casualty.description;
 		lopMD.mobjData.mstrNotes = casualty.internalNotes;
