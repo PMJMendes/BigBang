@@ -162,6 +162,7 @@ public class BigBang_Tests
 //		TestReceiptReturnToInsurer.DoTest();
 //		TestReceiptCreateSignatureRequest.DoTest();
 //		TestReceiptSendPayment.DoTest();
+//		TestReceiptNoDAS.DoTest();
 //
 //		TestSigReqGet.DoTest();
 //		TestSigReqRepeat.DoTest();
