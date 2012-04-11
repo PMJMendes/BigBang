@@ -52,6 +52,8 @@ import bigBang.module.quoteRequestModule.interfaces.QuoteRequestObjectService;
 import bigBang.module.quoteRequestModule.interfaces.QuoteRequestObjectServiceAsync;
 import bigBang.module.quoteRequestModule.interfaces.QuoteRequestService;
 import bigBang.module.quoteRequestModule.interfaces.QuoteRequestServiceAsync;
+import bigBang.module.receiptModule.interfaces.DASRequestService;
+import bigBang.module.receiptModule.interfaces.DASRequestServiceAsync;
 import bigBang.module.receiptModule.interfaces.ReceiptService;
 import bigBang.module.receiptModule.interfaces.ReceiptServiceAsync;
 import bigBang.module.receiptModule.interfaces.SignatureRequestService;
@@ -119,6 +121,8 @@ public class Services
 			GWT.create(ReceiptService.class);
 	public static final SignatureRequestServiceAsync signatureRequestService =
 			GWT.create(SignatureRequestService.class);
+	public static final DASRequestServiceAsync dasRequestService =
+			GWT.create(DASRequestService.class);
 	public static final CasualtyServiceAsync casualtyService =
 			GWT.create(CasualtyService.class);
 }

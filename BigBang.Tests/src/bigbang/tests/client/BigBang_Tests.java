@@ -163,12 +163,18 @@ public class BigBang_Tests
 //		TestReceiptCreateSignatureRequest.DoTest();
 //		TestReceiptSendPayment.DoTest();
 //		TestReceiptNoDAS.DoTest();
+//		TestReceiptCreateDASRequest.DoTest();
 //
 //		TestSigReqGet.DoTest();
 //		TestSigReqRepeat.DoTest();
 //		TestSigReqReply.DoTest();
 //		TestSigReqCancel.DoTest();
-
+//
+//		TestDASReqGet.DoTest();
+//		TestDASReqRepeat.DoTest();
+//		TestDASReqReply.DoTest();
+//		TestDASReqCancel.DoTest();
+//
 //		TestCasualtyGet.DoTest();
 //		TestCasualtyCreate.DoTest();
 //		TestCasualtyEdit.DoTest();
