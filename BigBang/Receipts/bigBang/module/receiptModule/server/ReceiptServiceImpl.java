@@ -16,6 +16,7 @@ import Jewel.Engine.SysObjects.ObjectBase;
 import Jewel.Petri.Interfaces.IProcess;
 import Jewel.Petri.Interfaces.IStep;
 import Jewel.Petri.Objects.PNProcess;
+import bigBang.definitions.shared.DASRequest;
 import bigBang.definitions.shared.DebitNote;
 import bigBang.definitions.shared.DocuShareHandle;
 import bigBang.definitions.shared.Receipt;
@@ -49,6 +50,7 @@ import com.premiumminds.BigBang.Jewel.Operations.ContactOps;
 import com.premiumminds.BigBang.Jewel.Operations.DocOps;
 import com.premiumminds.BigBang.Jewel.Operations.Policy.CreateReceipt;
 import com.premiumminds.BigBang.Jewel.Operations.Receipt.AssociateWithDebitNote;
+import com.premiumminds.BigBang.Jewel.Operations.Receipt.CreateDASRequest;
 import com.premiumminds.BigBang.Jewel.Operations.Receipt.CreatePaymentNotice;
 import com.premiumminds.BigBang.Jewel.Operations.Receipt.CreateSignatureRequest;
 import com.premiumminds.BigBang.Jewel.Operations.Receipt.DASNotNecessary;
@@ -790,6 +792,40 @@ public class ReceiptServiceImpl
 		try
 		{
 			lopDNN.Execute();
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangException(e.getMessage(), e);
+		}
+
+		return sGetReceipt(lobjReceipt.getKey());
+	}
+
+	public Receipt createDASRequest(DASRequest request)
+		throws SessionExpiredException, BigBangException
+	{
+		com.premiumminds.BigBang.Jewel.Objects.Receipt lobjReceipt;
+		CreateDASRequest lopCDR;
+
+		if ( Engine.getCurrentUser() == null )
+			throw new SessionExpiredException();
+
+		try
+		{
+			lobjReceipt = com.premiumminds.BigBang.Jewel.Objects.Receipt.GetInstance(Engine.getCurrentNameSpace(),
+					UUID.fromString(request.receiptId));
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangException(e.getMessage(), e);
+		}
+
+		lopCDR = new CreateDASRequest(lobjReceipt.GetProcessID());
+		lopCDR.mlngDays = request.replylimit;
+
+		try
+		{
+			lopCDR.Execute();
 		}
 		catch (Throwable e)
 		{

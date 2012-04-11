@@ -1,5 +1,6 @@
 package bigBang.module.receiptModule.interfaces;
 
+import bigBang.definitions.shared.DASRequest;
 import bigBang.definitions.shared.DebitNote;
 import bigBang.definitions.shared.DocuShareHandle;
 import bigBang.definitions.shared.Receipt;
@@ -23,6 +24,7 @@ public interface ReceiptServiceAsync
 	void getRelevantDebitNotes(String receiptId, AsyncCallback<DebitNote[]> callback);
 	void associateWithDebitNote(String receiptId, String debitNoteId, AsyncCallback<Receipt> callback);
 	void setDASNotNecessary(String receiptId, AsyncCallback<Receipt> callback);
+	void createDASRequest(DASRequest request, AsyncCallback<Receipt> callback);
 	void createSignatureRequest(SignatureRequest request, AsyncCallback<Receipt> callback);
 	void sendPayment(String receiptId, AsyncCallback<Receipt> callback);
 	void sendReceipt(String receiptId, AsyncCallback<Receipt> callback);

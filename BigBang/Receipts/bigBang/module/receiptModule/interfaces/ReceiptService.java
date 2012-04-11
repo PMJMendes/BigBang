@@ -1,5 +1,6 @@
 package bigBang.module.receiptModule.interfaces;
 
+import bigBang.definitions.shared.DASRequest;
 import bigBang.definitions.shared.DebitNote;
 import bigBang.definitions.shared.DocuShareHandle;
 import bigBang.definitions.shared.Receipt;
@@ -45,6 +46,7 @@ public interface ReceiptService
 	public Receipt associateWithDebitNote(String receiptId, String debitNoteId) throws SessionExpiredException, BigBangException;
 
 	public Receipt setDASNotNecessary(String receiptId) throws SessionExpiredException, BigBangException;
+	public Receipt createDASRequest(DASRequest request) throws SessionExpiredException, BigBangException;
 
 	public Receipt createSignatureRequest(SignatureRequest request) throws SessionExpiredException, BigBangException;
 	public Receipt sendPayment(String receiptId) throws SessionExpiredException, BigBangException;
