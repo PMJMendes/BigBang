@@ -26,7 +26,7 @@ public class TestDASReqCancel
 			}
 		};
 
-		Services.dasRequestService.getRequest("E37CB9FA-DD33-454E-8B59-A02D0111BA37", callback);
+		Services.dasRequestService.getRequest("53315D30-4E6E-4839-8B82-A03001104942", callback);
 	}
 
 	private static void DoStep2(DASRequest request)

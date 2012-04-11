@@ -29,7 +29,7 @@ public class TestDASReqReply
 		};
 
 		response = new DASRequest.Response();
-		response.requestId = "E37CB9FA-DD33-454E-8B59-A02D0111BA37";
+		response.requestId = "53315D30-4E6E-4839-8B82-A03001104942";
 		Services.dasRequestService.receiveResponse(response, callback);
 	}
 }
