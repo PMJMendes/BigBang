@@ -299,6 +299,7 @@ public abstract class InsurancePolicyForm extends FormView<InsurancePolicy> {
 					coInsurersSection.setVisible(true);
 				}
 				else{
+					coInsurers.clear();
 					coInsurersSection.setVisible(false);
 					coInsurers.setVisible(false);
 				}
@@ -503,6 +504,18 @@ public abstract class InsurancePolicyForm extends FormView<InsurancePolicy> {
 		if(info == null) {
 			clearInfo();
 		}else{
+			this.coInsurers.clear();
+			if(info.coInsurers != null){
+				this.coInsurance.setValue(true);
+				this.coInsurers.setMainCoInsuranceAgency(info.insuranceAgencyId);
+				this.coInsurers.setValue(info.coInsurers);
+				this.coInsurers.setEditable(false);
+			}
+			else{
+				this.coInsurance.setValue(false);
+				this.coInsurers.setVisible(false);
+			}
+			
 			this.manager.setValue(info.managerId);
 			this.number.setValue(info.number);
 			this.insuranceAgency.setValue(info.insuranceAgencyId);
@@ -628,18 +641,6 @@ public abstract class InsurancePolicyForm extends FormView<InsurancePolicy> {
 				this.table.setData(info.tableData[0]);
 			}else{
 				this.table.clear();
-			}
-
-			coInsurers.clear();
-			if(info.coInsurers != null){
-				this.coInsurance.setValue(true);
-				this.coInsurers.setMainCoInsuranceAgency(info.insuranceAgencyId);
-				this.coInsurers.setValue(info.coInsurers);
-				this.coInsurers.setEditable(false);
-			}
-			else{
-				this.coInsurance.setValue(false);
-				this.coInsurers.setVisible(false);
 			}
 
 			setExtraFields(info.extraData);

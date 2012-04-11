@@ -3,6 +3,7 @@ package bigBang.definitions.client.dataAccess;
 import java.util.Collection;
 
 import bigBang.definitions.client.response.ResponseHandler;
+import bigBang.definitions.shared.DASRequest;
 import bigBang.definitions.shared.DebitNote;
 import bigBang.definitions.shared.DocuShareHandle;
 import bigBang.definitions.shared.Receipt;
@@ -71,5 +72,10 @@ public interface ReceiptProcessDataBroker extends DataBrokerInterface<Receipt> {
 
 	void createSignatureRequest(SignatureRequest request,
 			ResponseHandler<Receipt> handler);
+
+	void setDASNotNecessary(String receiptId, ResponseHandler<Receipt> handler);
+
+	public void createDASRequest(DASRequest request,
+			ResponseHandler<Receipt> responseHandler);
 	
 }

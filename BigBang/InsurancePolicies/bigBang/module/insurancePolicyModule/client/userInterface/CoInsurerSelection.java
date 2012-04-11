@@ -165,7 +165,7 @@ public class CoInsurerSelection extends FormField<CoInsurer[]>{
 				@Override
 				public void onValueChange(ValueChangeEvent<String> event) {
 
-					if(event.getValue().length() > 0){
+					if(event.getValue() != null && event.getValue().length() > 0){
 						for(int i = 0; i<coInsuranceAgencies.size()-1; i++){
 							if(coInsuranceAgencies.get(i).getValue().insuranceAgencyId != null){
 								if(!((ExpandableListBoxFormField)event.getSource()).equals(((CoInsuranceListEntry)coInsuranceAgencies.get(i)).agency) 
@@ -205,9 +205,6 @@ public class CoInsurerSelection extends FormField<CoInsurer[]>{
 		}
 
 	}
-
-
-
 
 	protected void addNewCoInsuranceAgency() {
 

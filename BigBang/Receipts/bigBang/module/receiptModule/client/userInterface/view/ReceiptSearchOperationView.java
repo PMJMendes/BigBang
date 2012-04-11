@@ -91,8 +91,7 @@ public class ReceiptSearchOperationView extends View implements ReceiptSearchOpe
 
 			@Override
 			public void onRequestDAS() {
-				// TODO Auto-generated method stub
-
+				//TODO
 			}
 
 			@Override
@@ -103,8 +102,7 @@ public class ReceiptSearchOperationView extends View implements ReceiptSearchOpe
 
 			@Override
 			public void onUnnecessaryDASFlag() {
-				// TODO Auto-generated method stub
-
+				actionHandler.onActionInvoked(new ActionInvokedEvent<ReceiptSearchOperationViewPresenter.Action>(Action.SET_DAS_NOT_NECESSARY));
 			}
 
 			@Override
@@ -340,6 +338,11 @@ public class ReceiptSearchOperationView extends View implements ReceiptSearchOpe
 	public void allowCreateSignatureRequest(boolean hasPermission) {
 		operationsToolbar.allowCreateSignatureRequest(hasPermission);
 		
+	}
+	
+	@Override
+	public void allowSetDASDesnecessary(boolean hasPermission){
+		operationsToolbar.allowSetDASDesnecessary(hasPermission);
 	}
 	
 	@Override

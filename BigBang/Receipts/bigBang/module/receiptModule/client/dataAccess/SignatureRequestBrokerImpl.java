@@ -32,25 +32,21 @@ public class SignatureRequestBrokerImpl extends DataBroker<SignatureRequest> imp
 	@Override
 	public void requireDataRefresh() {
 		// TODO Auto-generated method stub
-
 	}
 
 	@Override
 	public void notifyItemCreation(String itemId) {
 		// TODO Auto-generated method stub
-
 	}
 
 	@Override
 	public void notifyItemDeletion(String itemId) {
 		// TODO Auto-generated method stub
-
 	}
 
 	@Override
 	public void notifyItemUpdate(String itemId) {
 		// TODO Auto-generated method stub
-
 	}
 
 	@Override

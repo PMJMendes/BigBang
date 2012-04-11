@@ -7,7 +7,6 @@ public class BigBangConstants {
 
 	public static class EntityIds {
 		public static final String PROCESS = "1967E563-01AD-4683-9D66-9E1700B7DF07";
-
 		public static final String CLIENT_GROUP  = "DC89D454-CCCC-441E-BCE3-9EE600AFCCCD";
 		public static final String CLIENT = "D535A99E-149F-44DC-A28B-9EE600B240F5";
 		public static final String COST_CENTER = "4AF891C6-707B-43AE-98C3-9EB100C0419E";
@@ -29,12 +28,9 @@ public class BigBangConstants {
 		public static final String RECEIPT = "B24E4BF7-382C-40EE-8120-9F8A00DABB81";
 		public static final String POLICY_INSURED_OBJECT = "3A3316D2-9D7C-4FD1-8486-9F9C0012E119";
 		public static final String POLICY_EXERCISE = "DEE32F69-B33D-4427-AD5B-9F9C001607F2";
-
 		public static final String MANAGER_TRANSFER = "66EC1066-AD5A-430C-9A70-9F65013F5453";
-		
 		public static final String CONTACT = "2085F9FD-7FCE-46C0-99FD-9EC400FFBA5C";
 		public static final String DOCUMENT = "794F44DB-191A-4E17-9217-9ECC012A8AC2";
-		
 		public static final String INSURED_OBJECT_TYPE_PERSON    = "EDD94689-EFED-4B50-AA6E-9F9501402700";
 		public static final String INSURED_OBJECT_TYPE_COMPANY     = "E04D67FA-F3D9-4597-96F0-9F950140323E";
 		public static final String INSURED_OBJECT_TYPE_EQUIPMENT = "E3E7B018-6F07-42DA-8B54-9F9501402D25";
@@ -43,23 +39,16 @@ public class BigBangConstants {
 		public static final String CASUALTY = "6C9562DE-D8C6-4CEC-A4DA-A02E00C735E9";
 		public static final String COMPLAINT = "TODO";
 		public static final String EXPENSE = "TODO";
-
 		public static final String INFO_REQUEST = "1D10FF86-70B5-4362-A8F3-9F7C00BC6DE4";
-
 		public static final String INSURANCE_POLICY_EXERCISES = "DEE32F69-B33D-4427-AD5B-9F9C001607F2";
 		public static final String INSURANCE_POLICY_INSURED_OBJECTS = "3A3316D2-9D7C-4FD1-8486-9F9C0012E119";
-
 		public static final String INSURANCE_SUB_POLICY = "C7BC8D2F-BD61-43D5-9347-9FF300EE9986";
-
 		public static final String NEGOTIATION = "0D50EB51-725D-4741-8618-9FFD00E918D3";
-
 		public static final String INSURANCE_SUB_POLICY_INSURED_OBJECT = "C3480E17-821B-4DCB-BF42-9FF800D1C470";
-
 		public static final String EXTERNAL_INFO_REQUEST = "BD9E1BEA-D02B-40FE-BB3E-9FEA00CA7ECD";
-
 		public static final String QUOTE_REQUEST_INSURED_OBJECT = "B594AB7F-573F-4401-A369-A00500F9D2D8";
-
 		public static final String SIGNATURE_REQUEST = "A864FABC-8DCE-4D97-9A50-A02A00F7CBB5";
+		public static final String DAS_REQUEST = "F7137CCF-744D-4BD8-918A-A03000F0F182";
 		
 	}
 
@@ -211,6 +200,14 @@ public class BigBangConstants {
 			public static final String UPDATE_CASUALTY = "574AE481-418F-4159-BE7D-A02E010397DF";
 			public static final String DELETE_CASUALTY = "21AEC620-C547-404A-8956-A02E0109A821";
 			public static final String CLOSE_CASUALTY = "4FC7D258-3CBB-4174-AD53-A02E01094F3D";
+		}
+
+		public static class DASRequestProcess{
+
+			public static final String CANCEL_DAS_REQUEST = "27BE85A3-F216-49F2-A54B-A03000F2A27A";
+			
+			
+			
 		}
 		
 	}

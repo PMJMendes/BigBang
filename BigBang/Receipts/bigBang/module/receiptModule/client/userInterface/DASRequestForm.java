@@ -1,34 +1,36 @@
 package bigBang.module.receiptModule.client.userInterface;
 
-import bigBang.definitions.shared.SignatureRequest;
+import bigBang.definitions.shared.DASRequest;
 import bigBang.library.client.userInterface.TextBoxFormField;
 import bigBang.library.client.userInterface.view.FormView;
 
-public class SignatureRequestForm extends FormView<SignatureRequest>{
+public class DASRequestForm extends FormView<DASRequest>{
 
 	private TextBoxFormField replyLimit;
 
-	public SignatureRequestForm(){
-		addSection("Pedido de assinatura");
+	public DASRequestForm(){
+		addSection("Declaração de Ausência de Sinistro");
 		replyLimit = new TextBoxFormField("Prazo de Resposta (dias)");
 		replyLimit.setFieldWidth("70px");
 		addFormField(replyLimit);
 	}
 
 	@Override
-	public SignatureRequest getInfo() {
-		SignatureRequest signature = value;
+	public DASRequest getInfo() {
+		DASRequest request = value;
 		try{
-			signature.replylimit = Integer.parseInt(replyLimit.getValue());
-		}catch(NumberFormatException e){
+			request.replylimit = Integer.parseInt(replyLimit.getValue());
+		}catch( NumberFormatException e){
 			return null;
 		}
-		return signature;
+
+		return request;
 	}
 
 	@Override
-	public void setInfo(SignatureRequest info) {
+	public void setInfo(DASRequest info) {
 		replyLimit.setValue(""+info.replylimit);
+
 	}
 
 }

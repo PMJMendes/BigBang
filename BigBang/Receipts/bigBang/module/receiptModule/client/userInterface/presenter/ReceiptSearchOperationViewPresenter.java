@@ -46,7 +46,7 @@ public class ReceiptSearchOperationViewPresenter implements ViewPresenter {
 		MARK_FOR_PAYMENT,
 		SEND_RECEIPT,
 		INSURER_ACCOUNTING, AGENT_ACCOUNTING,
-		PAYMENT_TO_CLIENT, RETURN_TO_AGENCY, CREATE_SIGNATURE_REQUEST
+		PAYMENT_TO_CLIENT, RETURN_TO_AGENCY, CREATE_SIGNATURE_REQUEST, SET_DAS_NOT_NECESSARY
 	}
 
 	public interface Display {
@@ -74,6 +74,7 @@ public class ReceiptSearchOperationViewPresenter implements ViewPresenter {
 		void allowPaymentToClient(boolean hasPermission);
 		void allowReturnToInsurer(boolean hasPermission);
 		void allowCreateSignatureRequest(boolean hasPermission);
+		void allowSetDASDesnecessary(boolean hasPermission);
 		//Children Lists
 		//TODO
 
@@ -90,6 +91,7 @@ public class ReceiptSearchOperationViewPresenter implements ViewPresenter {
 		HasValueSelectables<BigBangProcess> getSubProcessesList();
 
 		HasValueSelectables<HistoryItemStub> getHistoryList();
+
 
 
 
@@ -206,6 +208,9 @@ public class ReceiptSearchOperationViewPresenter implements ViewPresenter {
 				case CREATE_SIGNATURE_REQUEST:
 					onCreateSignatureRequest();
 					break;
+				case SET_DAS_NOT_NECESSARY:
+					setDasNotNecessary();
+					break;
 				}
 
 			}
@@ -258,6 +263,24 @@ public class ReceiptSearchOperationViewPresenter implements ViewPresenter {
 
 		//APPLICATION-WIDE EVENTS
 		bound = true;
+	}
+
+	protected void setDasNotNecessary() {
+		receiptBroker.setDASNotNecessary(receiptId, new ResponseHandler<Receipt>() {
+			
+			@Override
+			public void onResponse(Receipt response) {
+				EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Indicação de DAS desnecessária efectuada."), TYPE.TRAY_NOTIFICATION));
+				NavigationHistoryManager.getInstance().reload();
+			}
+			
+			@Override
+			public void onError(Collection<ResponseError> errors) {
+				EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não foi possível indicar DAS como desnecessária"), TYPE.ALERT_NOTIFICATION));
+				NavigationHistoryManager.getInstance().reload();				
+			}
+		});
+		
 	}
 
 	protected void onCreateSignatureRequest() {
@@ -395,6 +418,7 @@ public class ReceiptSearchOperationViewPresenter implements ViewPresenter {
 				view.allowPaymentToClient(PermissionChecker.hasPermission(value, BigBangConstants.OperationIds.ReceiptProcess.SEND_PAYMENT_TO_CLIENT));
 				view.allowReturnToInsurer(PermissionChecker.hasPermission(value, BigBangConstants.OperationIds.ReceiptProcess.RETURN_TO_AGENCY));
 				view.allowCreateSignatureRequest(PermissionChecker.hasPermission(value, BigBangConstants.OperationIds.ReceiptProcess.CREATE_SIGNATURE_REQUEST));
+				view.allowSetDASDesnecessary(PermissionChecker.hasPermission(value, BigBangConstants.OperationIds.ReceiptProcess.SET_DAS_NOT_NECESSARY));
 				view.setSaveModeEnabled(false);
 				view.getForm().setReadOnly(true);
 				view.getForm().setValue(value);

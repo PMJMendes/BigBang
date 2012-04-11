@@ -3,6 +3,7 @@ package bigBang.module.receiptModule.client.dataAccess;
 import java.util.ArrayList;
 import java.util.Collection;
 
+
 import bigBang.definitions.client.dataAccess.DataBroker;
 import bigBang.definitions.client.dataAccess.DataBrokerClient;
 import bigBang.definitions.client.dataAccess.ReceiptDataBrokerClient;
@@ -12,6 +13,7 @@ import bigBang.definitions.client.dataAccess.SearchDataBroker;
 import bigBang.definitions.client.response.ResponseError;
 import bigBang.definitions.client.response.ResponseHandler;
 import bigBang.definitions.shared.BigBangConstants;
+import bigBang.definitions.shared.DASRequest;
 import bigBang.definitions.shared.DebitNote;
 import bigBang.definitions.shared.DocuShareHandle;
 import bigBang.definitions.shared.Receipt;
@@ -42,6 +44,7 @@ public class ReceiptDataBrokerImpl extends DataBroker<Receipt> implements Receip
 		this.service = service;
 		this.dataElementId = BigBangConstants.EntityIds.RECEIPT;
 		this.searchBroker = new ReceiptSearchDataBroker(this.service);
+		this.cache.setEnabled(false);
 	}
 
 	@Override
@@ -731,6 +734,55 @@ public class ReceiptDataBrokerImpl extends DataBroker<Receipt> implements Receip
 			public void onResponseFailure(Throwable caught) {
 				handler.onError(new String[]{
 						new String("Could not perform the mediator accounting")
+				});
+				super.onResponseFailure(caught);
+			}
+		});
+	}
+
+	@Override
+	public void setDASNotNecessary(String receiptId, final ResponseHandler<Receipt> handler){
+		service.setDASNotNecessary(receiptId, new BigBangAsyncCallback<Receipt>() {
+			@Override
+			public void onResponseSuccess(Receipt result) {
+				cache.add(result.id, result);
+				incrementDataVersion();
+				for(DataBrokerClient<Receipt> bc : getClients()){
+					((ReceiptDataBrokerClient) bc).updateReceipt(result);
+					((ReceiptDataBrokerClient) bc).setDataVersionNumber(BigBangConstants.EntityIds.RECEIPT, getCurrentDataVersion());
+				}
+				handler.onResponse(result);
+			}
+
+			@Override
+			public void onResponseFailure(Throwable caught) {
+				handler.onError(new String[]{
+						new String("Could not set DAS as not necessary")
+				});
+				super.onResponseFailure(caught);
+			}
+		});
+	}
+
+	@Override
+	public void createDASRequest(DASRequest request,
+			final ResponseHandler<Receipt> handler) {
+		service.createDASRequest(request, new BigBangAsyncCallback<Receipt>() {
+			@Override
+			public void onResponseSuccess(Receipt result) {
+				cache.add(result.id, result);
+				incrementDataVersion();
+				for(DataBrokerClient<Receipt> bc : getClients()){
+					((ReceiptDataBrokerClient) bc).updateReceipt(result);
+					((ReceiptDataBrokerClient) bc).setDataVersionNumber(BigBangConstants.EntityIds.RECEIPT, getCurrentDataVersion());
+				}
+				handler.onResponse(result);
+			}
+
+			@Override
+			public void onResponseFailure(Throwable caught) {
+				handler.onError(new String[]{
+						new String("Could not create DAS request")
 				});
 				super.onResponseFailure(caught);
 			}
