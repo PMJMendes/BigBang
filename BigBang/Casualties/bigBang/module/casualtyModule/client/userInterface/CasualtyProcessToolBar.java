@@ -1,78 +1,110 @@
 package bigBang.module.casualtyModule.client.userInterface;
 
 import com.google.gwt.user.client.Command;
-import com.google.gwt.user.client.ui.MenuBar;
 import com.google.gwt.user.client.ui.MenuItem;
 
-import bigBang.library.client.userInterface.OperationsToolBar;
+import bigBang.library.client.userInterface.BigBangOperationsToolBar;
 
-public class CasualtyProcessToolBar extends OperationsToolBar {
+public abstract class CasualtyProcessToolBar extends BigBangOperationsToolBar {
+	
+	//CREATE
+	protected MenuItem subCasualty;
+	
+	//ADMIN
+	protected MenuItem delete, close;
+	
 	
 	public CasualtyProcessToolBar(){
-		addItem("Operações", new Command() {
+
+		//CREATE
+		subCasualty = new MenuItem("Sub-Sinistro", new Command() {
 			
 			@Override
 			public void execute() {
-				// TODO Auto-generated method stub
-				
+				onCreateSubCasualty();
 			}
 		});
-		addSeparator();
+		addItem(SUB_MENU.CREATE, subCasualty);
 		
-		MenuBar newSubMenu = new MenuBar(true);
-		MenuItem newMenuItem = new MenuItem("Criar", newSubMenu);
-		newSubMenu.addItem("Sub-Sinistro", new Command() {
-
+		//ADMIN
+		close = new MenuItem("Encerrar", new Command() {
+			
 			@Override
 			public void execute() {
-				// TODO Auto-generated method stub
-
+				onClose();
 			}
 		});
+		addItem(SUB_MENU.ADMIN, close);
 		
-		addItem(newMenuItem);
-		
-		MenuBar executeSubMenu = new MenuBar(true);
-		MenuItem executeMenuItem = new MenuItem("Sinistro", executeSubMenu);
-		executeSubMenu.addItem("Pedir Informação ou Documento ao Cliente", new Command() {
-
+		delete = new MenuItem("Eliminar", new Command() {
+			
 			@Override
 			public void execute() {
-				// TODO Auto-generated method stub
-
+				onDelete();
 			}
 		});
+		addItem(SUB_MENU.ADMIN, delete);
 		
-		addItem(executeMenuItem);
-		
-		MenuBar casualtySubMenu = new MenuBar(true);
-		MenuItem policyMenuItem = new MenuItem("Outras", casualtySubMenu);
-		casualtySubMenu.addItem("Encerrar", new Command() {
+//		MenuBar executeSubMenu = new MenuBar(true);
+//		MenuItem executeMenuItem = new MenuItem("Sinistro", executeSubMenu);
+//		executeSubMenu.addItem("Pedir Informação ou Documento ao Cliente", new Command() {
+//
+//			@Override
+//			public void execute() {
+//				// TODO Auto-generated method stub
+//
+//			}
+//		});
+//		
+//		addItem(executeMenuItem);
+//		
+//		MenuBar casualtySubMenu = new MenuBar(true);
+//		MenuItem policyMenuItem = new MenuItem("Outras", casualtySubMenu);
+//		casualtySubMenu.addItem("Encerrar", new Command() {
+//
+//			@Override
+//			public void execute() {
+//				// TODO Auto-generated method stub
+//
+//			}
+//		});
+//		casualtySubMenu.addItem("Reabrir", new Command() {
+//
+//			@Override
+//			public void execute() {
+//				// TODO Auto-generated method stub
+//
+//			}
+//		});
+//		casualtySubMenu.addItem("Eliminar", new Command() {
+//
+//			@Override
+//			public void execute() {
+//				// TODO Auto-generated method stub
+//
+//			}
+//		});
+//		
+//		addItem(policyMenuItem);
+	}
+	
+	public abstract void onCreateSubCasualty();
+	
+	public abstract void onClose();
+	
+	public abstract void onDelete();	
+	
 
-			@Override
-			public void execute() {
-				// TODO Auto-generated method stub
-
-			}
-		});
-		casualtySubMenu.addItem("Reabrir", new Command() {
-
-			@Override
-			public void execute() {
-				// TODO Auto-generated method stub
-
-			}
-		});
-		casualtySubMenu.addItem("Eliminar", new Command() {
-
-			@Override
-			public void execute() {
-				// TODO Auto-generated method stub
-
-			}
-		});
-		
-		addItem(policyMenuItem);
+	public void allowCreateSubCasualty(boolean allow){
+		this.subCasualty.setEnabled(allow);
+	}
+	
+	public void allowDelete(boolean allow){
+		this.delete.setEnabled(allow);
+	}
+	
+	public void allowClose(boolean allow){
+		this.close.setEnabled(allow);
 	}
 
 }

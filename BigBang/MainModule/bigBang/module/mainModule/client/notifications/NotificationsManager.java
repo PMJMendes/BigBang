@@ -6,12 +6,13 @@ import bigBang.library.client.EventBus;
 import bigBang.library.client.Notification;
 import bigBang.library.client.event.NewNotificationEvent;
 import bigBang.library.client.event.NewNotificationEventHandler;
+import bigBang.library.client.resources.Resources;
 import bigBang.module.mainModule.client.userInterface.InfoPanel;
 import bigBang.module.mainModule.client.userInterface.InfoPanel.InfoPanelType;
 
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.user.client.ui.Button;
 
 public class NotificationsManager {
 	
@@ -31,17 +32,22 @@ public class NotificationsManager {
 				}
 			}); 
 			InfoPanel.show(InfoPanelType.TRAY_NOTIFICATION, info);
+		}
+	}
+	
+	public void showInfoTrayNotification(final Notification notification){
+		Resources resources = GWT.create(Resources.class);
+		if(notification.getCaption() != null || notification.getContent() != null) {
+			InfoPanel info = new InfoPanel(resources.info(), notification.getCaption(), notification.getContent(), new ClickHandler() {
+				
+				public void onClick(ClickEvent event) {
+					if(notification.getEvent() != null)
+						EventBus.getInstance().fireEvent(notification.getEvent());
+				}
+			}); 
+			InfoPanel.show(InfoPanelType.TRAY_NOTIFICATION, info);
 			return;
 		}
-		
-		InfoPanel info = new InfoPanel(new Button("here"), new ClickHandler() {
-		
-			public void onClick(ClickEvent event) {
-				if(notification.getEvent() != null)
-					EventBus.getInstance().fireEvent(notification.getEvent());
-			}
-		}); 
-		InfoPanel.show(InfoPanelType.TRAY_NOTIFICATION, info);
 	}
 
 	public void enableTrayNotifications(){
@@ -71,6 +77,9 @@ public class NotificationsManager {
 							break;
 						case TRAY_NOTIFICATION:
 							showTrayNotification(event.getNotification());
+							break;
+						case INFO_TRAY_NOTIFICATION:
+							showInfoTrayNotification(event.getNotification());
 							break;
 						}
 					}

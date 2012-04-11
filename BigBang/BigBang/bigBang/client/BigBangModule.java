@@ -23,7 +23,7 @@ import bigBang.library.client.userInterface.presenter.ExternalRequestReplyViewPr
 import bigBang.library.client.userInterface.presenter.InfoOrDocumentRequestRepeatViewPresenter;
 import bigBang.library.client.userInterface.presenter.InfoOrDocumentRequestReplyViewPresenter;
 import bigBang.library.client.userInterface.presenter.ManagerTransferViewPresenter;
-import bigBang.library.client.userInterface.presenter.UndoOperationViewPresenter;
+import bigBang.library.client.userInterface.presenter.HistoryViewPresenter;
 import bigBang.library.client.userInterface.presenter.ViewPresenter;
 import bigBang.library.client.userInterface.view.CancelInfoOrDocumentRequestView;
 import bigBang.library.client.userInterface.view.ContactNavigationView;
@@ -35,7 +35,7 @@ import bigBang.library.client.userInterface.view.ExternalRequestReplyView;
 import bigBang.library.client.userInterface.view.InfoOrDocumentRequestRepeatView;
 import bigBang.library.client.userInterface.view.InfoOrDocumentRequestReplyView;
 import bigBang.library.client.userInterface.view.ManagerTransferWithToolbarView;
-import bigBang.library.client.userInterface.view.UndoOperationView;
+import bigBang.library.client.userInterface.view.HistoryView;
 
 public class BigBangModule implements Module {
 
@@ -75,8 +75,8 @@ public class BigBangModule implements Module {
 
 			@Override
 			public ViewPresenter getInstance() {
-				UndoOperationView view = (UndoOperationView) GWT.create(UndoOperationView.class);
-				UndoOperationViewPresenter presenter = new UndoOperationViewPresenter(view);
+				HistoryView view = (HistoryView) GWT.create(HistoryView.class);
+				HistoryViewPresenter presenter = new HistoryViewPresenter(view);
 				return presenter;
 			}
 		});

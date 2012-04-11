@@ -1,15 +1,21 @@
 package bigBang.module.insurancePolicyModule.client.userInterface.view;
 
+import org.gwt.mosaic.ui.client.MessageBox;
+
 import bigBang.library.client.event.ActionInvokedEvent;
 import bigBang.library.client.event.ActionInvokedEventHandler;
+import bigBang.library.client.userInterface.DockItem;
 import bigBang.library.client.userInterface.DockPanel;
 import bigBang.library.client.userInterface.view.PopupPanel;
 import bigBang.library.client.userInterface.view.View;
 import bigBang.module.insurancePolicyModule.client.userInterface.presenter.InsurancePolicySectionViewPresenter;
 import bigBang.module.insurancePolicyModule.client.userInterface.presenter.InsurancePolicySectionViewPresenter.Action;
+import bigBang.module.insurancePolicyModule.client.userInterface.presenter.InsurancePolicySectionViewPresenter.SectionOperation;
 
 
-import com.google.gwt.user.client.ui.HasValue;
+import com.google.gwt.event.logical.shared.ValueChangeEvent;
+import com.google.gwt.event.logical.shared.ValueChangeHandler;
+import com.google.gwt.user.client.ui.AbstractImagePrototype;
 import com.google.gwt.user.client.ui.HasWidgets;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
@@ -22,6 +28,7 @@ public class InsurancePolicySectionView extends View implements InsurancePolicyS
 	private PopupPanel popupPanel;
 	private HasWidgets overlayContainer;
 	private ActionInvokedEventHandler<Action> actionHandler;
+	private ActionInvokedEventHandler<SectionOperation> operationSelectionHandler;
 
 	public InsurancePolicySectionView(){
 		VerticalPanel panel = new VerticalPanel();
@@ -30,12 +37,20 @@ public class InsurancePolicySectionView extends View implements InsurancePolicyS
 
 		this.operationDock = new DockPanel();
 		panel.add(this.operationDock);
+		initializeDock();
+		this.operationDock.addValueChangeHandler(new ValueChangeHandler<Object>() {
+			
+			@Override
+			public void onValueChange(ValueChangeEvent<Object> event) {
+				operationSelectionHandler.onActionInvoked(new ActionInvokedEvent<InsurancePolicySectionViewPresenter.SectionOperation>((SectionOperation)event.getValue()));
+			}
+		});
 
 		this.operationViewContainer = new SimplePanel();
 		this.operationViewContainer.setSize("100%", "100%");
 		panel.add(operationViewContainer);
 		panel.setCellHeight(operationViewContainer, "100%");
-		
+
 		this.overlayContainer = new SimplePanel();
 	}
 
@@ -44,19 +59,17 @@ public class InsurancePolicySectionView extends View implements InsurancePolicyS
 		return;
 	}
 
-	//	public void createOperationNavigationItem(OperationViewPresenter p, boolean enabled) {
-	//		AbstractImagePrototype icon = p.getOperation().getIcon();
-	//		if(icon == null)
-	//			icon = MessageBox.MESSAGEBOX_IMAGES.dialogInformation();
-	//		DockItem item = new DockItem(p.getOperation().getShortDescription(), icon, null, p);
-	//		item.setEnabled(enabled);
-	//		item.setTitle(p.getOperation().getDescription());
-	//		item.setSize("100px", "52px");
-	//		this.operationDock.addItem(item);
-	//	}
+	public void initializeDock() {
+		addDockItem("Pesquisa", null, SectionOperation.OPERATIONS);
+		addDockItem("Transf. Gestor", null, SectionOperation.MASS_MANAGER_TRANSFER);
+	}
 
-	public HasValue <Object> getOperationNavigationPanel() {
-		return operationDock;
+	protected void addDockItem(String text, AbstractImagePrototype icon, final InsurancePolicySectionViewPresenter.SectionOperation action){
+		if(icon == null)
+			icon = MessageBox.MESSAGEBOX_IMAGES.dialogInformation();
+		DockItem item = new DockItem(text, icon, action);
+		item.setTitle(text);
+		this.operationDock.addItem(item);
 	}
 
 	public HasWidgets getOperationViewContainer() {
@@ -81,7 +94,7 @@ public class InsurancePolicySectionView extends View implements InsurancePolicyS
 			};
 			this.popupPanel.add((Widget)this.overlayContainer);
 		}
-		
+
 		if(this.popupPanel != null){
 			if(show && !this.popupPanel.isAttached()){
 				this.popupPanel.center();
@@ -93,13 +106,20 @@ public class InsurancePolicySectionView extends View implements InsurancePolicyS
 		}
 	}
 
-	//	public void selectOperation(OperationViewPresenter p) {
-	//		this.operationDock.setValue(p);
-	//	}
-	
 	@Override
 	public void registerActionHandler(ActionInvokedEventHandler<Action> handler){
 		this.actionHandler = handler;
+	}
+
+	@Override
+	public void selectOperation(SectionOperation operation) {
+		this.operationDock.setValue(operation, false);
+	}
+
+	@Override
+	public void registerOperationSelectionHandler(
+			ActionInvokedEventHandler<SectionOperation> handler) {
+		this.operationSelectionHandler = handler;
 	}
 
 }

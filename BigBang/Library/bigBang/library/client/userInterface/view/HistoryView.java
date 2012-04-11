@@ -11,6 +11,7 @@ import bigBang.definitions.client.response.ResponseHandler;
 import bigBang.definitions.shared.BigBangConstants;
 import bigBang.definitions.shared.HistoryItem;
 import bigBang.definitions.shared.HistoryItemStub;
+import bigBang.definitions.shared.SortOrder;
 import bigBang.definitions.shared.SortParameter;
 import bigBang.library.client.HasValueSelectables;
 import bigBang.library.client.ValueSelectable;
@@ -20,16 +21,18 @@ import bigBang.library.client.event.ActionInvokedEventHandler;
 import bigBang.library.client.userInterface.ListEntry;
 import bigBang.library.client.userInterface.ListHeader;
 import bigBang.library.client.userInterface.UndoOperationsToolbar;
-import bigBang.library.client.userInterface.presenter.UndoOperationViewPresenter;
-import bigBang.library.client.userInterface.presenter.UndoOperationViewPresenter.Action;
+import bigBang.library.client.userInterface.presenter.HistoryViewPresenter;
+import bigBang.library.client.userInterface.presenter.HistoryViewPresenter.Action;
 import bigBang.library.shared.HistorySearchParameter;
+import bigBang.library.shared.HistorySortParameter;
+import bigBang.library.shared.HistorySortParameter.SortableField;
 
 import com.google.gwt.user.client.ui.HasValue;
 import com.google.gwt.user.client.ui.SplitLayoutPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
 
-public class UndoOperationView extends View implements UndoOperationViewPresenter.Display {
+public class HistoryView extends View implements HistoryViewPresenter.Display {
 
 	public class UndoItemList extends SearchPanel<HistoryItemStub>  implements HistoryDataBrokerClient {
 
@@ -49,7 +52,8 @@ public class UndoOperationView extends View implements UndoOperationViewPresente
 			if(currentObjectId != null){
 				HistorySearchParameter parameter = new HistorySearchParameter();
 				parameter.dataObjectId = this.currentObjectId;
-				doSearch(new HistorySearchParameter[]{parameter}, new SortParameter[0]);
+				HistorySortParameter sort = new HistorySortParameter(SortableField.TIMESTAMP, SortOrder.DESC);
+				doSearch(new HistorySearchParameter[]{parameter}, new SortParameter[]{sort});
 			}
 			itemIdToSelect = null;
 		}
@@ -198,7 +202,7 @@ public class UndoOperationView extends View implements UndoOperationViewPresente
 	protected ActionInvokedEventHandler<Action> actionHandler;
 	protected Status status;
 
-	public UndoOperationView(){
+	public HistoryView(){
 		SplitLayoutPanel wrapper = new SplitLayoutPanel();
 		initWidget(wrapper);
 		wrapper.setSize("100%", "100%");
@@ -215,12 +219,12 @@ public class UndoOperationView extends View implements UndoOperationViewPresente
 
 			@Override
 			public void onUndo() {
-				actionHandler.onActionInvoked(new ActionInvokedEvent<UndoOperationViewPresenter.Action>(Action.REVERT_OPERATION));
+				actionHandler.onActionInvoked(new ActionInvokedEvent<HistoryViewPresenter.Action>(Action.REVERT_OPERATION));
 			}
 
 			@Override
 			public void onNavigateToAuxiliaryProcess() {
-				actionHandler.onActionInvoked(new ActionInvokedEvent<UndoOperationViewPresenter.Action>(Action.NAVIGATE_TO_AUXILIARY_PROCESS));
+				actionHandler.onActionInvoked(new ActionInvokedEvent<HistoryViewPresenter.Action>(Action.NAVIGATE_TO_AUXILIARY_PROCESS));
 			}
 		};
 		formWrapper.add(toolbar);

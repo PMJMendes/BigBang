@@ -1,22 +1,35 @@
 package bigBang.module.generalSystemModule.client.userInterface.view;
 
+import org.gwt.mosaic.ui.client.MessageBox;
+
+import bigBang.library.client.event.ActionInvokedEvent;
 import bigBang.library.client.event.ActionInvokedEventHandler;
+import bigBang.library.client.userInterface.DockItem;
 import bigBang.library.client.userInterface.DockPanel;
+import bigBang.library.client.userInterface.view.PopupPanel;
 import bigBang.library.client.userInterface.view.View;
 import bigBang.module.generalSystemModule.client.userInterface.presenter.GeneralSystemSectionViewPresenter;
 import bigBang.module.generalSystemModule.client.userInterface.presenter.GeneralSystemSectionViewPresenter.Action;
 import bigBang.module.generalSystemModule.client.userInterface.presenter.GeneralSystemSectionViewPresenter.SectionOperation;
 
-import com.google.gwt.user.client.ui.HasValue;
+import com.google.gwt.event.logical.shared.ValueChangeEvent;
+import com.google.gwt.event.logical.shared.ValueChangeHandler;
+import com.google.gwt.user.client.ui.AbstractImagePrototype;
 import com.google.gwt.user.client.ui.HasWidgets;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
+import com.google.gwt.user.client.ui.Widget;
 
 public class GeneralSystemSectionView extends View implements GeneralSystemSectionViewPresenter.Display {
 
+
 	private DockPanel operationDock;
 	private SimplePanel operationViewContainer;
-	
+	private PopupPanel popupPanel;
+	private HasWidgets overlayContainer;
+	private ActionInvokedEventHandler<Action> actionHandler;
+	private ActionInvokedEventHandler<SectionOperation> operationSelectionHandler;
+
 	public GeneralSystemSectionView(){
 		VerticalPanel panel = new VerticalPanel();
 		initWidget(panel);
@@ -24,31 +37,45 @@ public class GeneralSystemSectionView extends View implements GeneralSystemSecti
 
 		this.operationDock = new DockPanel();
 		panel.add(this.operationDock);
-		
+		initializeDock();
+		this.operationDock.addValueChangeHandler(new ValueChangeHandler<Object>() {
+			
+			@Override
+			public void onValueChange(ValueChangeEvent<Object> event) {
+				operationSelectionHandler.onActionInvoked(new ActionInvokedEvent<GeneralSystemSectionViewPresenter.SectionOperation>((SectionOperation)event.getValue()));
+			}
+		});
+
 		this.operationViewContainer = new SimplePanel();
 		this.operationViewContainer.setSize("100%", "100%");
 		panel.add(operationViewContainer);
 		panel.setCellHeight(operationViewContainer, "100%");
+
+		this.overlayContainer = new SimplePanel();
 	}
 
 	@Override
 	protected void initializeView() {
 		return;
 	}
-	
-//	public void createOperationNavigationItem(OperationViewPresenter p, boolean enabled) {
-//		AbstractImagePrototype icon = p.getOperation().getIcon();
-//		if(icon == null)
-//			icon = MessageBox.MESSAGEBOX_IMAGES.dialogInformation();
-//		DockItem item = new DockItem(p.getOperation().getShortDescription(), icon, null, p);
-//		item.setEnabled(enabled);
-//		item.setTitle(p.getOperation().getDescription());
-//		item.setSize("100px", "52px");
-//		this.operationDock.addItem(item);
-//	}
 
-	public HasValue <Object> getOperationNavigationPanel() {
-		return operationDock;
+	public void initializeDock() {
+		addDockItem("Histórico", null, SectionOperation.HISTORY);
+		addDockItem("Centros de Custo", null, SectionOperation.COST_CENTER);
+		addDockItem("Utilizadores", null, SectionOperation.USER);
+		addDockItem("Seguradoras", null, SectionOperation.AGENCY);
+		addDockItem("Mediadores", null, SectionOperation.MEDIATOR);
+		addDockItem("Ramos e Coberturas", null, SectionOperation.COVERAGE);
+		addDockItem("Campos das Apólices", null, SectionOperation.TAX);
+		addDockItem("Grupos de Clientes", null, SectionOperation.GROUP);
+	}
+
+	protected void addDockItem(String text, AbstractImagePrototype icon, final GeneralSystemSectionViewPresenter.SectionOperation action){
+		if(icon == null)
+			icon = MessageBox.MESSAGEBOX_IMAGES.dialogInformation();
+		DockItem item = new DockItem(text, icon, action);
+		item.setTitle(text);
+		this.operationDock.addItem(item);
 	}
 
 	public HasWidgets getOperationViewContainer() {
@@ -57,37 +84,49 @@ public class GeneralSystemSectionView extends View implements GeneralSystemSecti
 
 	@Override
 	public HasWidgets getOverlayViewContainer() {
-		// TODO Auto-generated method stub
-		return null;
+		return this.overlayContainer;
 	}
 
 	@Override
 	public void showOverlayViewContainer(boolean show) {
-		// TODO Auto-generated method stub
-		
+		if(show && this.popupPanel == null){
+			this.popupPanel = new PopupPanel(){
+				@Override
+				protected void onDetach() {
+					super.onDetach();
+					actionHandler.onActionInvoked(new ActionInvokedEvent<Action>(Action.ON_OVERLAY_CLOSED));
+					GeneralSystemSectionView.this.popupPanel = null;
+				}
+			};
+			this.popupPanel.add((Widget)this.overlayContainer);
+		}
+
+		if(this.popupPanel != null){
+			if(show && !this.popupPanel.isAttached()){
+				this.popupPanel.center();
+			}else if(this.popupPanel.isAttached() && !show){
+				this.popupPanel.hidePopup();
+				this.popupPanel.remove((Widget)this.overlayContainer);
+				this.popupPanel = null;
+			}
+		}
+	}
+
+	@Override
+	public void registerActionHandler(ActionInvokedEventHandler<Action> handler){
+		this.actionHandler = handler;
 	}
 
 	@Override
 	public void selectOperation(SectionOperation operation) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void registerActionHandler(ActionInvokedEventHandler<Action> handler) {
-		// TODO Auto-generated method stub
-		
+		this.operationDock.setValue(operation, false);
 	}
 
 	@Override
 	public void registerOperationSelectionHandler(
 			ActionInvokedEventHandler<SectionOperation> handler) {
-		// TODO Auto-generated method stub
-		
+		this.operationSelectionHandler = handler;
 	}
 
-//	public void selectOperation(OperationViewPresenter p) {
-//		this.operationDock.setValue(p);
-//	}
 	
 }

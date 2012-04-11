@@ -8,30 +8,28 @@ import bigBang.library.client.history.NavigationHistoryItem;
 import bigBang.library.client.history.NavigationHistoryManager;
 import bigBang.library.client.userInterface.presenter.ViewPresenter;
 import bigBang.library.client.userInterface.view.View;
-
-import com.google.gwt.event.logical.shared.ValueChangeEvent;
-import com.google.gwt.event.logical.shared.ValueChangeHandler;
-import com.google.gwt.user.client.ui.HasValue;
 import com.google.gwt.user.client.ui.HasWidgets;
 import com.google.gwt.user.client.ui.UIObject;
 import com.google.gwt.user.client.ui.Widget;
 
 public class InsurancePolicySectionViewPresenter implements ViewPresenter{
-
-	public static enum Action {
-		ON_OVERLAY_CLOSED
-	}
 	
-	public interface Display {
-		HasValue <Object> getOperationNavigationPanel();
+	public static enum Action {
+		ON_OVERLAY_CLOSED,
+	}
+
+	public static enum SectionOperation {
+		OPERATIONS,
+		MASS_MANAGER_TRANSFER
+	}
+
+	public static interface Display {
 		HasWidgets getOperationViewContainer();
 		HasWidgets getOverlayViewContainer();
 		void showOverlayViewContainer(boolean show);
-		
-		//void selectOperation(OperationViewPresenter p);
-
-		//void createOperationNavigationItem(OperationViewPresenter operationPresenter, boolean enabled);
+		void selectOperation(SectionOperation operation);
 		void registerActionHandler(ActionInvokedEventHandler<Action> handler);
+		void registerOperationSelectionHandler(ActionInvokedEventHandler<SectionOperation> handler);
 		Widget asWidget();
 	}
 
@@ -61,12 +59,6 @@ public class InsurancePolicySectionViewPresenter implements ViewPresenter{
 	}
 
 	public void bind() {
-		this.view.getOperationNavigationPanel().addValueChangeHandler(new ValueChangeHandler<Object>() {
-
-			public void onValueChange(ValueChangeEvent<Object> event) {
-				((ViewPresenter)event.getValue()).go(view.getOperationViewContainer());
-			}
-		});
 		this.view.registerActionHandler(new ActionInvokedEventHandler<Action>() {
 
 			@Override
@@ -78,6 +70,32 @@ public class InsurancePolicySectionViewPresenter implements ViewPresenter{
 					NavigationHistoryManager.getInstance().go(item);
 					break;
 				}
+			}
+		});
+		
+		this.view.registerOperationSelectionHandler(new ActionInvokedEventHandler<InsurancePolicySectionViewPresenter.SectionOperation>() {
+
+			@Override
+			public void onActionInvoked(ActionInvokedEvent<SectionOperation> action) {
+
+				NavigationHistoryItem item = new NavigationHistoryItem();
+				item.setParameter("section", "insurancepolicy");
+				item.setStackParameter("display");
+
+				if(action.getAction() == null) {
+					item.pushIntoStackParameter("display", "search");
+				}else{
+					switch(action.getAction()) {
+					case OPERATIONS:
+						item.pushIntoStackParameter("display", "search");
+						break;
+					case MASS_MANAGER_TRANSFER:
+						item.pushIntoStackParameter("display", "massmanagertransfer");
+						break;
+					}
+				}
+
+				NavigationHistoryManager.getInstance().go(item);
 			}
 		});
 	}
@@ -97,9 +115,11 @@ public class InsurancePolicySectionViewPresenter implements ViewPresenter{
 					String display = parameters.peekInStackParameter("display");
 					display = display == null ? "" : display;
 
-					if(display.equalsIgnoreCase("history")){
-						present("HISTORY", parameters);
+					if(display.equalsIgnoreCase("massmanagertransfer")){
+						view.selectOperation(SectionOperation.OPERATIONS);
+						present("POLICY_MASS_MANAGER_TRANSFER", parameters);
 					}else {
+						view.selectOperation(SectionOperation.OPERATIONS);
 						present("INSURANCE_POLICY_OPERATIONS", parameters);
 					}
 				}

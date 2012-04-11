@@ -1,14 +1,20 @@
 package bigBang.module.receiptModule.client.userInterface.view;
 
+import org.gwt.mosaic.ui.client.MessageBox;
+
 import bigBang.library.client.event.ActionInvokedEvent;
 import bigBang.library.client.event.ActionInvokedEventHandler;
+import bigBang.library.client.userInterface.DockItem;
 import bigBang.library.client.userInterface.DockPanel;
 import bigBang.library.client.userInterface.view.PopupPanel;
 import bigBang.library.client.userInterface.view.View;
 import bigBang.module.receiptModule.client.userInterface.presenter.ReceiptSectionViewPresenter;
 import bigBang.module.receiptModule.client.userInterface.presenter.ReceiptSectionViewPresenter.Action;
+import bigBang.module.receiptModule.client.userInterface.presenter.ReceiptSectionViewPresenter.SectionOperation;
 
-import com.google.gwt.user.client.ui.HasValue;
+import com.google.gwt.event.logical.shared.ValueChangeEvent;
+import com.google.gwt.event.logical.shared.ValueChangeHandler;
+import com.google.gwt.user.client.ui.AbstractImagePrototype;
 import com.google.gwt.user.client.ui.HasWidgets;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
@@ -16,38 +22,68 @@ import com.google.gwt.user.client.ui.Widget;
 
 public class ReceiptSectionView extends View implements ReceiptSectionViewPresenter.Display{
 
+	private DockPanel operationDock;
+	private SimplePanel operationViewContainer;
 	private PopupPanel popupPanel;
 	private HasWidgets overlayContainer;
 	private ActionInvokedEventHandler<Action> actionHandler;
-	private DockPanel operationDock;
-	private SimplePanel operationViewContainer;
-	
+	private ActionInvokedEventHandler<SectionOperation> operationSelectionHandler;
+
 	public ReceiptSectionView(){
-		VerticalPanel wrapper = new VerticalPanel();
-		initWidget(wrapper);
-		wrapper.setSize("100%", "100%");
-		
-		operationDock = new DockPanel();
-		wrapper.add(operationDock);
-		
+		VerticalPanel panel = new VerticalPanel();
+		initWidget(panel);
+		panel.setSize("100%", "100%");
+
+		this.operationDock = new DockPanel();
+		panel.add(this.operationDock);
+		initializeDock();
+		this.operationDock.addValueChangeHandler(new ValueChangeHandler<Object>() {
+			
+			@Override
+			public void onValueChange(ValueChangeEvent<Object> event) {
+				operationSelectionHandler.onActionInvoked(new ActionInvokedEvent<ReceiptSectionViewPresenter.SectionOperation>((SectionOperation)event.getValue()));
+			}
+		});
+
 		this.operationViewContainer = new SimplePanel();
 		this.operationViewContainer.setSize("100%", "100%");
-		wrapper.add(operationViewContainer);
-		wrapper.setCellHeight(operationViewContainer, "100%");
-		
+		panel.add(operationViewContainer);
+		panel.setCellHeight(operationViewContainer, "100%");
+
 		this.overlayContainer = new SimplePanel();
 	}
-	
+
 	@Override
 	protected void initializeView() {
 		return;
+	}
+
+	public void initializeDock() {
+		addDockItem("Pesquisa", null, SectionOperation.OPERATIONS);
+		addDockItem("Criação em Série", null, SectionOperation.SERIAL_RECEIPT_CREATION);
+		addDockItem("Cobranças", null, SectionOperation.SERIAL_RECEIPT_MARK_FOR_PAYMENT);
+		addDockItem("Prestações de Contas", null, SectionOperation.MASS_INSURER_ACCOUNTING);
+		addDockItem("Retrocessões", null, SectionOperation.MASS_AGENT_ACCOUNTING);
+		addDockItem("Envio dos Recibos", null, SectionOperation.MASS_SEND_RECEIPT_TO_CLIENT);
+	}
+
+	protected void addDockItem(String text, AbstractImagePrototype icon, final ReceiptSectionViewPresenter.SectionOperation action){
+		if(icon == null)
+			icon = MessageBox.MESSAGEBOX_IMAGES.dialogInformation();
+		DockItem item = new DockItem(text, icon, action);
+		item.setTitle(text);
+		this.operationDock.addItem(item);
+	}
+
+	public HasWidgets getOperationViewContainer() {
+		return operationViewContainer;
 	}
 
 	@Override
 	public HasWidgets getOverlayViewContainer() {
 		return this.overlayContainer;
 	}
-	
+
 	@Override
 	public void showOverlayViewContainer(boolean show) {
 		if(show && this.popupPanel == null){
@@ -61,7 +97,7 @@ public class ReceiptSectionView extends View implements ReceiptSectionViewPresen
 			};
 			this.popupPanel.add((Widget)this.overlayContainer);
 		}
-		
+
 		if(this.popupPanel != null){
 			if(show && !this.popupPanel.isAttached()){
 				this.popupPanel.center();
@@ -72,19 +108,21 @@ public class ReceiptSectionView extends View implements ReceiptSectionViewPresen
 			}
 		}
 	}
-	
+
 	@Override
 	public void registerActionHandler(ActionInvokedEventHandler<Action> handler){
 		this.actionHandler = handler;
 	}
 
 	@Override
-	public HasValue<Object> getOperationNavigationPanel() {
-		return operationDock;
+	public void selectOperation(SectionOperation operation) {
+		this.operationDock.setValue(operation, false);
 	}
 
 	@Override
-	public HasWidgets getOperationViewContainer() {
-		return operationViewContainer;
+	public void registerOperationSelectionHandler(
+			ActionInvokedEventHandler<SectionOperation> handler) {
+		this.operationSelectionHandler = handler;
 	}
+
 }

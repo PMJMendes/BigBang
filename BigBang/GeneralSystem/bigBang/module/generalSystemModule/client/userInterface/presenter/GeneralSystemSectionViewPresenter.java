@@ -2,13 +2,12 @@ package bigBang.module.generalSystemModule.client.userInterface.presenter;
 
 import bigBang.library.client.HasParameters;
 import bigBang.library.client.ViewPresenterController;
+import bigBang.library.client.event.ActionInvokedEvent;
 import bigBang.library.client.event.ActionInvokedEventHandler;
 import bigBang.library.client.history.NavigationHistoryItem;
+import bigBang.library.client.history.NavigationHistoryManager;
 import bigBang.library.client.userInterface.presenter.ViewPresenter;
 
-import com.google.gwt.event.logical.shared.ValueChangeEvent;
-import com.google.gwt.event.logical.shared.ValueChangeHandler;
-import com.google.gwt.user.client.ui.HasValue;
 import com.google.gwt.user.client.ui.HasWidgets;
 import com.google.gwt.user.client.ui.UIObject;
 import com.google.gwt.user.client.ui.Widget;
@@ -20,7 +19,6 @@ public class GeneralSystemSectionViewPresenter implements ViewPresenter {
 	}
 
 	public static enum SectionOperation {
-		OPERATIONS,
 		HISTORY,
 		USER,
 		AGENCY,
@@ -44,7 +42,7 @@ public class GeneralSystemSectionViewPresenter implements ViewPresenter {
 	private Display view;
 	private ViewPresenterController controller;
 	private ViewPresenterController overlayController;
-	
+
 	public GeneralSystemSectionViewPresenter(Display view) {
 		this.setView((UIObject)view);
 	}
@@ -53,7 +51,7 @@ public class GeneralSystemSectionViewPresenter implements ViewPresenter {
 	public void setView(UIObject view) {
 		this.view = (Display) view;
 	}
-	
+
 	@Override
 	public void go(HasWidgets container) {
 		this.bind();
@@ -61,24 +59,75 @@ public class GeneralSystemSectionViewPresenter implements ViewPresenter {
 		container.add(this.view.asWidget());
 		initializeController();
 	}
-	
+
 	@Override
 	public void setParameters(HasParameters parameterHolder) {
 		this.controller.onParameters(parameterHolder);
 	}
-	
+
 	private void bind() {
-//		this.view.getOperationNavigationPanel().addValueChangeHandler(new ValueChangeHandler<Object>() {
-//			
-//			public void onValueChange(ValueChangeEvent<Object> event) {
-//				((ViewPresenter)event.getValue()).go(view.getOperationViewContainer());
-//			}
-//		});
+		this.view.registerActionHandler(new ActionInvokedEventHandler<GeneralSystemSectionViewPresenter.Action>() {
+
+			@Override
+			public void onActionInvoked(ActionInvokedEvent<Action> action) {
+				switch(action.getAction()){
+				case ON_OVERLAY_CLOSED:
+					NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
+					item.removeParameter("show");
+					NavigationHistoryManager.getInstance().go(item);
+					break;
+				}
+			}
+		});
+
+		this.view.registerOperationSelectionHandler(new ActionInvokedEventHandler<GeneralSystemSectionViewPresenter.SectionOperation>() {
+
+			@Override
+			public void onActionInvoked(ActionInvokedEvent<SectionOperation> action) {
+
+				NavigationHistoryItem item = new NavigationHistoryItem();
+				item.setParameter("section", "generalsystem");
+				item.setStackParameter("display");
+
+				if(action.getAction() == null) {
+					item.pushIntoStackParameter("display", "search");
+				}else{
+					switch(action.getAction()) {
+					case HISTORY:
+						item.pushIntoStackParameter("display", "history");
+						break;
+					case COST_CENTER:
+						item.pushIntoStackParameter("display", "costcenter");
+						break;
+					case USER:
+						item.pushIntoStackParameter("display", "user");
+						break;
+					case MEDIATOR:
+						item.pushIntoStackParameter("display", "mediator");
+						break;
+					case AGENCY:
+						item.pushIntoStackParameter("display", "insuranceagency");
+						break;
+					case TAX:
+						item.pushIntoStackParameter("display", "tax");
+						break;
+					case COVERAGE:
+						item.pushIntoStackParameter("display", "coverage");
+						break;
+					case GROUP:
+						item.pushIntoStackParameter("display", "clientgroup");
+						break;
+					}
+				}
+
+				NavigationHistoryManager.getInstance().go(item);
+			}
+		});
 	}
 
 	private void initializeController(){
 		this.controller = new ViewPresenterController(view.getOperationViewContainer()) {
-			
+
 			@Override
 			public void onParameters(HasParameters parameters) {
 				String section = parameters.getParameter("section");
@@ -109,8 +158,9 @@ public class GeneralSystemSectionViewPresenter implements ViewPresenter {
 						goToDefault();
 					}
 				}
+				GeneralSystemSectionViewPresenter.this.overlayController.onParameters(parameters);
 			}
-			
+
 			private void goToDefault(){
 				NavigationHistoryItem item = navigationManager.getCurrentState();
 				item.setStackParameter("display");
@@ -118,7 +168,7 @@ public class GeneralSystemSectionViewPresenter implements ViewPresenter {
 				item.setParameter("historyownerid", "TODO"); //TODO FJVC
 				navigationManager.go(item);
 			}
-			
+
 			@Override
 			protected void onNavigationHistoryEvent(NavigationHistoryItem historyItem) {
 				return;
@@ -134,7 +184,7 @@ public class GeneralSystemSectionViewPresenter implements ViewPresenter {
 				if(show.isEmpty()){
 					view.showOverlayViewContainer(false);
 
-				//OVERLAY VIEWS
+					//OVERLAY VIEWS
 				}else if(show.equalsIgnoreCase("contactmanagement")){
 					present("CONTACT", parameters);
 					view.showOverlayViewContainer(true);
@@ -150,5 +200,5 @@ public class GeneralSystemSectionViewPresenter implements ViewPresenter {
 			}
 		};
 	}
-	
+
 }

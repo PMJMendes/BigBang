@@ -2,30 +2,41 @@ package bigBang.module.casualtyModule.client.userInterface.presenter;
 
 import bigBang.library.client.HasParameters;
 import bigBang.library.client.ViewPresenterController;
+import bigBang.library.client.event.ActionInvokedEvent;
+import bigBang.library.client.event.ActionInvokedEventHandler;
 import bigBang.library.client.history.NavigationHistoryItem;
+import bigBang.library.client.history.NavigationHistoryManager;
 import bigBang.library.client.userInterface.presenter.ViewPresenter;
 import bigBang.library.client.userInterface.view.View;
 
-import com.google.gwt.event.logical.shared.ValueChangeEvent;
-import com.google.gwt.event.logical.shared.ValueChangeHandler;
-import com.google.gwt.user.client.ui.HasValue;
 import com.google.gwt.user.client.ui.HasWidgets;
 import com.google.gwt.user.client.ui.UIObject;
 import com.google.gwt.user.client.ui.Widget;
 
 public class CasualtySectionViewPresenter implements ViewPresenter {
 
-	public interface Display {
-		HasValue <Object> getOperationNavigationPanel();
+	public static enum Action {
+		ON_OVERLAY_CLOSED,
+	}
+
+	public static enum SectionOperation {
+		OPERATIONS,
+		MASS_MANAGER_TRANSFER
+	}
+
+	public static interface Display {
 		HasWidgets getOperationViewContainer();
-//		void selectOperation(OperationViewPresenter p);
-//		
-//		void createOperationNavigationItem(OperationViewPresenter operationPresenter, boolean enabled);
+		HasWidgets getOverlayViewContainer();
+		void showOverlayViewContainer(boolean show);
+		void selectOperation(SectionOperation operation);
+		void registerActionHandler(ActionInvokedEventHandler<Action> handler);
+		void registerOperationSelectionHandler(ActionInvokedEventHandler<SectionOperation> handler);
 		Widget asWidget();
 	}
 	
 	private Display view;
 	private ViewPresenterController controller;
+	private ViewPresenterController overlayController;
 	
 	public CasualtySectionViewPresenter(View view) {
 		this.setView(view);
@@ -50,14 +61,45 @@ public class CasualtySectionViewPresenter implements ViewPresenter {
 	}
 
 	public void bind() {
-		this.view.getOperationNavigationPanel().addValueChangeHandler(new ValueChangeHandler<Object>() {
-			
-			public void onValueChange(ValueChangeEvent<Object> event) {
-				((ViewPresenter)event.getValue()).go(view.getOperationViewContainer());
+		this.view.registerActionHandler(new ActionInvokedEventHandler<CasualtySectionViewPresenter.Action>() {
+
+			@Override
+			public void onActionInvoked(ActionInvokedEvent<Action> action) {
+				switch(action.getAction()){
+				case ON_OVERLAY_CLOSED:
+					NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
+					item.removeParameter("show");
+					NavigationHistoryManager.getInstance().go(item);
+					break;
+				}
 			}
 		});
-		
-		//APPLICATION-WIDE EVENTS
+
+		this.view.registerOperationSelectionHandler(new ActionInvokedEventHandler<CasualtySectionViewPresenter.SectionOperation>() {
+
+			@Override
+			public void onActionInvoked(ActionInvokedEvent<SectionOperation> action) {
+
+				NavigationHistoryItem item = new NavigationHistoryItem();
+				item.setParameter("section", "casualty");
+				item.setStackParameter("display");
+
+				if(action.getAction() == null) {
+					item.pushIntoStackParameter("display", "search");
+				}else{
+					switch(action.getAction()) {
+					case OPERATIONS:
+						item.pushIntoStackParameter("display", "search");
+						break;
+					case MASS_MANAGER_TRANSFER:
+						item.pushIntoStackParameter("display", "massmanagertransfer");
+						break;
+					}
+				}
+
+				NavigationHistoryManager.getInstance().go(item);
+			}
+		});
 	}
 	
 	private void initializeController(){
@@ -76,14 +118,40 @@ public class CasualtySectionViewPresenter implements ViewPresenter {
 					display = display == null ? "" : display;
 
 					//MASS OPERATIONS
-					if(display.equalsIgnoreCase("history")){
-						present("HISTORY", parameters);
-					}else if(display.equalsIgnoreCase("massmanagertransfer")){
+					if(display.equalsIgnoreCase("massmanagertransfer")){
+						view.selectOperation(SectionOperation.MASS_MANAGER_TRANSFER);
 						present("MANAGER_TRANSFER", parameters);
 					}else{
+						view.selectOperation(SectionOperation.OPERATIONS);
 						present("CASUALTY_OPERATIONS", parameters);
 					}
 				}
+				CasualtySectionViewPresenter.this.overlayController.onParameters(parameters);
+			}
+		};
+		this.overlayController = new ViewPresenterController(view.getOverlayViewContainer()) {
+
+			@Override
+			public void onParameters(HasParameters parameters) {
+				String show = parameters.getParameter("show");
+				show = show == null ? new String() : show;
+
+				if(show.isEmpty()){
+					view.showOverlayViewContainer(false);
+
+					//OVERLAY VIEWS
+				}else if(show.equalsIgnoreCase("contactmanagement")){
+					present("CONTACT", parameters);
+					view.showOverlayViewContainer(true);
+				}else if(show.equalsIgnoreCase("documentmanagement")){
+					present("DOCUMENT", parameters);
+					view.showOverlayViewContainer(true);
+				}
+			}
+
+			@Override
+			protected void onNavigationHistoryEvent(NavigationHistoryItem historyItem) {
+				return;
 			}
 		};
 	}

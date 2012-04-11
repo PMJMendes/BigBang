@@ -40,7 +40,7 @@ public class BigBangConstants {
 		public static final String INSURED_OBJECT_TYPE_EQUIPMENT = "E3E7B018-6F07-42DA-8B54-9F9501402D25";
 		public static final String INSURED_OBJECT_TYPE_PLACE      = "CD709854-DB59-424B-904A-9F9501403847";
 		public static final String INSURED_OBJECT_TYPE_ANIMAL    = "7A9A0E31-668A-4113-A03E-9F9501403E6E";
-		public static final String CASUALTY = "TODO";
+		public static final String CASUALTY = "6C9562DE-D8C6-4CEC-A4DA-A02E00C735E9";
 		public static final String COMPLAINT = "TODO";
 		public static final String EXPENSE = "TODO";
 
@@ -180,6 +180,7 @@ public class BigBangConstants {
 			public static final String SEND_PAYMENT_TO_CLIENT = "08799EDB-B874-49D5-B987-A01300CCAC59";
 			public static final String RETURN_TO_AGENCY = "A34C65D4-0B2A-4083-BB16-A01300D3D013";
 			public static final String CREATE_SIGNATURE_REQUEST = "563A630A-276A-48E8-96D3-A01300C9AF24";
+			public static final String CREATE_DAS_REQUEST = "4CAD549D-2903-4A42-9767-A01300C98B51";
 			
 			public static class PaymentType {
 				public static final String CHEQUE = "06EA2F87-BB0C-4B02-BCDB-A02200EB462D";
@@ -202,6 +203,12 @@ public class BigBangConstants {
 			public static final String REPEAT_SIGNATURE_REQUEST = "C22398E7-D1E7-4F27-94A9-A02A01007804";
 			public static final String CANCEL_SIGNATURE_REQUEST = "03E8D6B1-04B8-4B1B-9FFA-A02A01013616";
 			public static final String RECEIVE_REPLY = "4AAD2648-E6D7-47AF-A91E-A02A0100B3A5";
+		}
+		
+		public static class CasualtyProcess {
+			public static final String UPDATE_CASUALTY = "574AE481-418F-4159-BE7D-A02E010397DF";
+			public static final String DELETE_CASUALTY = "21AEC620-C547-404A-8956-A02E0109A821";
+			public static final String CLOSE_CASUALTY = "4FC7D258-3CBB-4174-AD53-A02E01094F3D";
 		}
 		
 	}

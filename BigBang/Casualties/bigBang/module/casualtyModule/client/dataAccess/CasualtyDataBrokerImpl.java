@@ -6,10 +6,12 @@ import bigBang.definitions.client.dataAccess.CasualtyDataBroker;
 import bigBang.definitions.client.dataAccess.CasualtyDataBrokerClient;
 import bigBang.definitions.client.dataAccess.DataBroker;
 import bigBang.definitions.client.dataAccess.DataBrokerClient;
+import bigBang.definitions.client.dataAccess.SearchDataBroker;
 import bigBang.definitions.client.response.ResponseError;
 import bigBang.definitions.client.response.ResponseHandler;
 import bigBang.definitions.shared.BigBangConstants;
 import bigBang.definitions.shared.Casualty;
+import bigBang.definitions.shared.CasualtyStub;
 import bigBang.library.client.BigBangAsyncCallback;
 import bigBang.module.casualtyModule.interfaces.CasualtyService;
 import bigBang.module.casualtyModule.interfaces.CasualtyServiceAsync;
@@ -18,8 +20,10 @@ public class CasualtyDataBrokerImpl extends DataBroker<Casualty> implements
 CasualtyDataBroker {
 
 	protected CasualtyServiceAsync service;
+	protected SearchDataBroker<CasualtyStub> searchBroker;
 
 	public CasualtyDataBrokerImpl(){
+		this.searchBroker = new CasualtySearchBrokerImpl();
 		this.service = CasualtyService.Util.getInstance();
 		this.dataElementId = BigBangConstants.EntityIds.CASUALTY;
 	}
@@ -143,6 +147,11 @@ CasualtyDataBroker {
 	@Override
 	public void requireDataRefresh() {
 		return;
+	}
+
+	@Override
+	public SearchDataBroker<CasualtyStub> getSearchBroker() {
+		return this.searchBroker;
 	}
 
 }

@@ -59,7 +59,7 @@ public class HistoryList extends FilterableList<HistoryItemStub> implements Hist
 		discardOwner();
 		if(ownerId == null) {return;}
 		if(ownerId != null){
-			this.broker.registerClient(this, ownerId);
+//			this.broker.registerClient(this, ownerId);
 			
 			HistorySearchParameter parameter = new HistorySearchParameter();
 			parameter.dataObjectId = ownerId;
@@ -98,7 +98,7 @@ public class HistoryList extends FilterableList<HistoryItemStub> implements Hist
 	public void discardOwner(){
 		this.clear();
 		if(ownerId != null){
-			this.broker.unregisterClient(this, this.ownerId);
+//			this.broker.unregisterClient(this, this.ownerId);
 		}
 	}
 	
@@ -156,7 +156,7 @@ public class HistoryList extends FilterableList<HistoryItemStub> implements Hist
 	
 	@Override
 	public void refreshHistory() {
-		broker.requireDataRefresh(this.ownerId);
+//		broker.requireDataRefresh(this.ownerId);
 		this.setOwner(this.ownerId);
 	}
 	

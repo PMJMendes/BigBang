@@ -566,7 +566,7 @@ public class ReceiptDataBrokerImpl extends DataBroker<Receipt> implements Receip
 			}
 		});
 	}
-	
+
 	@Override
 	public void markPayed(PaymentInfo paymentInfo,
 			final ResponseHandler<Receipt> handler) {
@@ -574,14 +574,19 @@ public class ReceiptDataBrokerImpl extends DataBroker<Receipt> implements Receip
 
 			@Override
 			public void onResponseSuccess(Receipt result) {
-				notifyItemUpdate(result.id);
+				cache.add(result.id, result);
+				incrementDataVersion();
+				for(DataBrokerClient<Receipt> bc : getClients()){
+					((ReceiptDataBrokerClient) bc).updateReceipt(result);
+					((ReceiptDataBrokerClient) bc).setDataVersionNumber(BigBangConstants.EntityIds.RECEIPT, getCurrentDataVersion());
+				}
 				handler.onResponse(result);
 			}
-			
+
 			@Override
 			public void onResponseFailure(Throwable caught) {
 				handler.onError(new String[]{
-					new String("Could not mark for Payment")	
+						new String("Could not mark for Payment")	
 				});
 				super.onResponseFailure(caught);
 			}
@@ -594,10 +599,15 @@ public class ReceiptDataBrokerImpl extends DataBroker<Receipt> implements Receip
 
 			@Override
 			public void onResponseSuccess(Receipt result) {
+				incrementDataVersion();
+				cache.add(result.id, result);
+				for(DataBrokerClient<Receipt> bc : getClients()){
+					((ReceiptDataBrokerClient) bc).updateReceipt(result);
+					((ReceiptDataBrokerClient) bc).setDataVersionNumber(BigBangConstants.EntityIds.RECEIPT, getCurrentDataVersion());
+				}
 				handler.onResponse(null);
-				notifyItemUpdate(result.id);
 			}
-			
+
 			@Override
 			public void onResponseFailure(Throwable caught) {
 				handler.onError(new String[]{
@@ -614,12 +624,13 @@ public class ReceiptDataBrokerImpl extends DataBroker<Receipt> implements Receip
 
 			@Override
 			public void onResponseSuccess(Void result) {
-				handler.onResponse(null);
+				incrementDataVersion();
 				for(String id : receiptIds) {
-					notifyItemUpdate(id);
+					cache.remove(id);
 				}
+				handler.onResponse(null);
 			}
-			
+
 			@Override
 			public void onResponseFailure(Throwable caught) {
 				handler.onError(new String[]{
@@ -629,18 +640,23 @@ public class ReceiptDataBrokerImpl extends DataBroker<Receipt> implements Receip
 			}
 		});
 	}
-	
-	
+
+
 	@Override
 	public void insurerAccounting(String receiptId, final ResponseHandler<Void> handler) {
 		service.insurerAccouting(receiptId, new BigBangAsyncCallback<Receipt>() {
 
 			@Override
 			public void onResponseSuccess(Receipt result) {
+				incrementDataVersion();
+				cache.add(result.id, result);
+				for(DataBrokerClient<Receipt> bc : getClients()){
+					((ReceiptDataBrokerClient) bc).updateReceipt(result);
+					((ReceiptDataBrokerClient) bc).setDataVersionNumber(BigBangConstants.EntityIds.RECEIPT, getCurrentDataVersion());
+				}
 				handler.onResponse(null);
-				notifyItemUpdate(result.id);
 			}
-			
+
 			@Override
 			public void onResponseFailure(Throwable caught) {
 				handler.onError(new String[]{
@@ -650,7 +666,7 @@ public class ReceiptDataBrokerImpl extends DataBroker<Receipt> implements Receip
 			}
 		});
 	}
-	
+
 	@Override
 	public void insurerAccounting(final String[] receiptIds, final ResponseHandler<Void> handler) {
 		service.massInsurerAccounting(receiptIds, new BigBangAsyncCallback<Void>() {
@@ -659,10 +675,10 @@ public class ReceiptDataBrokerImpl extends DataBroker<Receipt> implements Receip
 			public void onResponseSuccess(Void result) {
 				handler.onResponse(null);
 				for(String id : receiptIds) {
-					notifyItemUpdate(id);
+					cache.remove(id);
 				}
 			}
-			
+
 			@Override
 			public void onResponseFailure(Throwable caught) {
 				handler.onError(new String[]{
@@ -679,10 +695,15 @@ public class ReceiptDataBrokerImpl extends DataBroker<Receipt> implements Receip
 
 			@Override
 			public void onResponseSuccess(Receipt result) {
+				incrementDataVersion();
+				cache.add(result.id, result);
+				for(DataBrokerClient<Receipt> bc : getClients()){
+					((ReceiptDataBrokerClient) bc).updateReceipt(result);
+					((ReceiptDataBrokerClient) bc).setDataVersionNumber(BigBangConstants.EntityIds.RECEIPT, getCurrentDataVersion());
+				}
 				handler.onResponse(null);
-				notifyItemUpdate(result.id);
 			}
-			
+
 			@Override
 			public void onResponseFailure(Throwable caught) {
 				handler.onError(new String[]{
@@ -692,19 +713,20 @@ public class ReceiptDataBrokerImpl extends DataBroker<Receipt> implements Receip
 			}
 		});
 	}
-	
+
 	@Override
 	public void agentAccounting(final String[] receiptIds, final ResponseHandler<Void> handler) {
 		service.massMediatorAccounting(receiptIds, new BigBangAsyncCallback<Void>() {
 
 			@Override
 			public void onResponseSuccess(Void result) {
-				handler.onResponse(null);
+				incrementDataVersion();
 				for(String id : receiptIds) {
-					notifyItemUpdate(id);
+					cache.remove(id);
 				}
+				handler.onResponse(null);
 			}
-			
+
 			@Override
 			public void onResponseFailure(Throwable caught) {
 				handler.onError(new String[]{

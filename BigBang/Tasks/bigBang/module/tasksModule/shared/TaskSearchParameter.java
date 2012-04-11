@@ -6,7 +6,7 @@ public class TaskSearchParameter
 	extends SearchParameter
 {
 	private static final long serialVersionUID = 1L;
-
+	
 	public String processId;
 	public String operationId;
 	public String afterTimestamp;

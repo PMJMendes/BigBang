@@ -80,8 +80,9 @@ public class ClientSectionViewPresenter implements ViewPresenter {
 			@Override
 			public void onActionInvoked(ActionInvokedEvent<SectionOperation> action) {
 
-				NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
+				NavigationHistoryItem item = new NavigationHistoryItem();
 				item.setStackParameter("display");
+				item.setParameter("section", "client");
 
 				if(action.getAction() == null) {
 					item.pushIntoStackParameter("display", "search");

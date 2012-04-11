@@ -19,7 +19,7 @@ public class DockItem extends ToggleButton implements NavigationItem {
 		setLabel(text, image);
 		if(handler != null)
 			this.addClickHandler(handler);
-		this.setSize("150px", "35px");
+		this.setHeight("35px");
 		this.representedValue = value;
 	}
 
@@ -27,20 +27,20 @@ public class DockItem extends ToggleButton implements NavigationItem {
 		super();
 		setLabel(text, image);
 		this.addClickHandler(handler);
-		this.setSize("150px", "35px");
+		this.setHeight("35px");
 	}
 
 	public DockItem(String text, AbstractImagePrototype image){
 		super();
 		setLabel(text, image);
-		this.setSize("150px", "35px");
+		this.setHeight("35px");
 	}
 
 	public DockItem(String text, AbstractImagePrototype image, Object value){
 		super();
 		setLabel(text, image);
 		setRepresentedValue(value);
-		this.setSize("150px", "35px");
+		this.setHeight("35px");
 	}
 	
 	private void setLabel(String text, AbstractImagePrototype image){

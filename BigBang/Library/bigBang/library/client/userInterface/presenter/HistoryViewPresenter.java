@@ -29,7 +29,7 @@ import com.google.gwt.user.client.ui.HasWidgets;
 import com.google.gwt.user.client.ui.UIObject;
 import com.google.gwt.user.client.ui.Widget;
 
-public class UndoOperationViewPresenter implements ViewPresenter {
+public class HistoryViewPresenter implements ViewPresenter {
 
 	public static enum Action {
 		REVERT_OPERATION,
@@ -60,7 +60,7 @@ public class UndoOperationViewPresenter implements ViewPresenter {
 	protected HistoryBroker historyBroker;
 	private boolean bound = false;
 
-	public UndoOperationViewPresenter(Display view) {
+	public HistoryViewPresenter(Display view) {
 		this.historyBroker = (HistoryBroker) DataBrokerManager.staticGetBroker(BigBangConstants.EntityIds.HISTORY);
 		setView((View) view);
 	}
@@ -98,7 +98,7 @@ public class UndoOperationViewPresenter implements ViewPresenter {
 	private void bind() {
 		if(bound)
 			return;
-		view.registerActionHandler(new ActionInvokedEventHandler<UndoOperationViewPresenter.Action>() {
+		view.registerActionHandler(new ActionInvokedEventHandler<HistoryViewPresenter.Action>() {
 
 			@Override
 			public void onActionInvoked(ActionInvokedEvent<Action> action) {

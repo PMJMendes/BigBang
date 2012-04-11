@@ -29,12 +29,15 @@ import com.google.gwt.event.logical.shared.CloseHandler;
 import com.google.gwt.event.logical.shared.ResizeEvent;
 import com.google.gwt.event.logical.shared.ResizeHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
+import com.google.gwt.resources.client.ImageResource;
 import com.google.gwt.user.client.Event;
 import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.DecoratedPopupPanel;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HasText;
+import com.google.gwt.user.client.ui.HorizontalPanel;
+import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.RootPanel;
@@ -219,6 +222,10 @@ ResizeHandler, CloseHandler<PopupPanel> {
 		this(caption, description, false, h);
 	}
 	
+	public InfoPanel(ImageResource image, String caption, String description, ClickHandler h) {
+		this(image, caption, description, false, h);
+	}
+	
 	public InfoPanel(Widget w) {
 		this(w, false, null);
 	}
@@ -284,6 +291,91 @@ ResizeHandler, CloseHandler<PopupPanel> {
 		setAnimationEnabled(true);
 
 		this.widget = w;
+
+		final FlowPanel panel = new FlowPanel();
+		panel.setStyleName(DEFAULT_STYLENAME + "-panel");
+		if (autoHide) {
+			final int width = Window.getClientWidth();
+			panel.setPixelSize(Math.max(width / 3, WIDTH), HEIGHT);
+			resizeHandlerRegistration = Window.addResizeHandler(this);
+		} else {
+			panel.setPixelSize(WIDTH, HEIGHT);
+		}
+		DOM.setStyleAttribute(panel.getElement(), "overflow", "hidden");
+
+		SimplePanel div1 = new SimplePanel();
+		div1.add(this.widget);
+		
+		panel.add(div1);
+		
+		
+		this.addDomHandler(new ClickHandler() {
+			
+			public void onClick(ClickEvent event) {
+				hide();
+				if(clickHandler != null) {
+					clickHandler.onClick(event);
+				}
+			}
+		}, ClickEvent.getType());
+		
+		DOM.setStyleAttribute(panel.getElement(), "cursor", "pointer");
+		
+		setWidget(panel);
+
+		addStyleName(DEFAULT_STYLENAME);
+		DOM.setIntStyleAttribute(getElement(), "zIndex", Integer.MAX_VALUE);
+	}
+	
+	protected InfoPanel(ImageResource image, String caption, String description, final boolean autoHide, final ClickHandler clickHandler) {
+		super(autoHide, false); // modal=false
+		ensureDebugId("mosaicInfoPanel-simplePopup");
+
+		setAnimationEnabled(true);
+
+		this.caption = new Label(caption);
+		this.caption.setStyleName(DEFAULT_STYLENAME + "-caption");
+
+		this.description = new Label(description);
+		this.description.setStyleName(DEFAULT_STYLENAME + "-description");
+		
+		HorizontalPanel wrapper = new HorizontalPanel();
+		this.widget = wrapper;
+		
+		wrapper.setSpacing(5);
+		wrapper.add(new Image(image));
+		
+		final FlowPanel contentPanel = new FlowPanel();
+		contentPanel.setStyleName(DEFAULT_STYLENAME + "-panel");
+		if (autoHide) {
+			final int width = Window.getClientWidth();
+			contentPanel.setPixelSize(Math.max(width / 3, WIDTH), HEIGHT);
+			resizeHandlerRegistration = Window.addResizeHandler(this);
+		} else {
+			contentPanel.setPixelSize(WIDTH, HEIGHT);
+		}
+		DOM.setStyleAttribute(contentPanel.getElement(), "overflow", "hidden");
+
+		SimplePanel contentDiv1 = new SimplePanel();
+		contentDiv1.add(this.caption);
+
+		SimplePanel contentDiv2 = new SimplePanel();
+		contentDiv2.add(this.description);
+
+		contentPanel.add(contentDiv1);
+		contentPanel.add(contentDiv2);
+
+		this.addDomHandler(new ClickHandler() {
+			
+			public void onClick(ClickEvent event) {
+				hide();
+				if(clickHandler != null) {
+					clickHandler.onClick(event);
+				}
+			}
+		}, ClickEvent.getType());
+		
+		wrapper.add(contentPanel);
 
 		final FlowPanel panel = new FlowPanel();
 		panel.setStyleName(DEFAULT_STYLENAME + "-panel");
