@@ -57,6 +57,8 @@ public class ReceiptOperationsViewPresenter implements ViewPresenter {
 					present("RECEIPT_SEARCH", parameters);
 				}else if(display.equalsIgnoreCase("markforpayment")){
 					present("RECEIPT_MARK_FOR_PAYMENT", parameters);
+				}else if(display.equalsIgnoreCase("history")){
+					present("HISTORY", parameters);
 				}else if(display.equalsIgnoreCase("signaturerequest")){
 					present("SIGNATURE_REQUEST", parameters);
 				}
