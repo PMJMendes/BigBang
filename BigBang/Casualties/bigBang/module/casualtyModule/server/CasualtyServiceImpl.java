@@ -35,6 +35,7 @@ import com.premiumminds.BigBang.Jewel.Data.CasualtyData;
 import com.premiumminds.BigBang.Jewel.Objects.AgendaItem;
 import com.premiumminds.BigBang.Jewel.Objects.Client;
 import com.premiumminds.BigBang.Jewel.Objects.MgrXFer;
+import com.premiumminds.BigBang.Jewel.Operations.Casualty.CloseProcess;
 import com.premiumminds.BigBang.Jewel.Operations.Casualty.CreateMgrXFer;
 import com.premiumminds.BigBang.Jewel.Operations.Casualty.DeleteCasualty;
 import com.premiumminds.BigBang.Jewel.Operations.Casualty.ManageData;
@@ -181,6 +182,39 @@ public class CasualtyServiceImpl
 		}
 
 		return transfer;
+	}
+
+	public Casualty closeProcess(String casualtyId)
+		throws SessionExpiredException, BigBangException
+	{
+		com.premiumminds.BigBang.Jewel.Objects.Casualty lobjCasualty;
+		CloseProcess lobjDC;
+
+		if ( Engine.getCurrentUser() == null )
+			throw new SessionExpiredException();
+
+		try
+		{
+			lobjCasualty = com.premiumminds.BigBang.Jewel.Objects.Casualty.GetInstance(Engine.getCurrentNameSpace(),
+					UUID.fromString(casualtyId));
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangException(e.getMessage(), e);
+		}
+
+		lobjDC = new CloseProcess(lobjCasualty.GetProcessID());
+
+		try
+		{
+			lobjDC.Execute();
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangException(e.getMessage(), e);
+		}
+
+		return sGetCasualty(lobjCasualty.getKey());
 	}
 
 	public void deleteCasualty(String casualtyId, String reason)

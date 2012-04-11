@@ -30,6 +30,8 @@ public interface CasualtyService extends SearchService {
 
 	public ManagerTransfer createManagerTransfer(ManagerTransfer transfer) throws SessionExpiredException, BigBangException;
 
+	public Casualty closeProcess(String casualtyId) throws SessionExpiredException, BigBangException;
+
 	public void deleteCasualty(String casualtyId, String reason) throws SessionExpiredException, BigBangException;
 
 	public ManagerTransfer massCreateManagerTransfer(ManagerTransfer transfer) throws SessionExpiredException, BigBangException;
