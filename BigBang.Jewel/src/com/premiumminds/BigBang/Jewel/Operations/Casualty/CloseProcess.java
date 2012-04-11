@@ -41,6 +41,7 @@ public class CloseProcess
 	protected void Run(SQLServer pdb)
 		throws JewelPetriException
 	{
+		GetProcess().Stop(pdb);
 	}
 
 	public String UndoDesc(String pstrLineBreak)
@@ -56,6 +57,7 @@ public class CloseProcess
 	protected void Undo(SQLServer pdb)
 		throws JewelPetriException
 	{
+		GetProcess().Restart(pdb);
 	}
 
 	public UndoSet[] GetSets()
