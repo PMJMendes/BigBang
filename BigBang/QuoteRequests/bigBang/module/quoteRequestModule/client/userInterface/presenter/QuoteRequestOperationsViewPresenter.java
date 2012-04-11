@@ -52,6 +52,8 @@ public class QuoteRequestOperationsViewPresenter implements ViewPresenter {
 					present("QUOTE_REQUEST_SEARCH", parameters);
 				}else if(display.equalsIgnoreCase("viewinsuredobject")){
 					present("QUOTE_REQUEST_INSURED_OBJECT", parameters);
+				}else if(display.equalsIgnoreCase("history")){
+					present("HISTORY", parameters);
 				} else {
 					goToDefault();
 				}
