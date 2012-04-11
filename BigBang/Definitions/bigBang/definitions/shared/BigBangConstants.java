@@ -180,7 +180,9 @@ public class BigBangConstants {
 			public static final String SEND_PAYMENT_TO_CLIENT = "08799EDB-B874-49D5-B987-A01300CCAC59";
 			public static final String RETURN_TO_AGENCY = "A34C65D4-0B2A-4083-BB16-A01300D3D013";
 			public static final String CREATE_SIGNATURE_REQUEST = "563A630A-276A-48E8-96D3-A01300C9AF24";
+			public static final String SET_DAS_NOT_NECESSARY = "6E8D98B8-4901-4705-9C58-A01300CBA222";
 			public static final String CREATE_DAS_REQUEST = "4CAD549D-2903-4A42-9767-A01300C98B51";
+			
 			
 			public static class PaymentType {
 				public static final String CHEQUE = "06EA2F87-BB0C-4B02-BCDB-A02200EB462D";
