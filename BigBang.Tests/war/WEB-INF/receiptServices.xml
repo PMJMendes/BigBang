@@ -6,6 +6,10 @@
 	<servlet-name>SignatureRequestService</servlet-name>
 	<servlet-class>bigBang.module.receiptModule.server.SignatureRequestServiceImpl</servlet-class>
 </servlet>
+<servlet>
+	<servlet-name>DASRequestService</servlet-name>
+	<servlet-class>bigBang.module.receiptModule.server.DASRequestServiceImpl</servlet-class>
+</servlet>
 
 <servlet-mapping>
 	<servlet-name>ReceiptService</servlet-name>
@@ -14,4 +18,8 @@
 <servlet-mapping>
 	<servlet-name>SignatureRequestService</servlet-name>
 	<url-pattern>/bigbang_tests/SignatureRequestService</url-pattern>
+</servlet-mapping>
+<servlet-mapping>
+	<servlet-name>DASRequestService</servlet-name>
+	<url-pattern>/bigbang_tests/DASRequestService</url-pattern>
 </servlet-mapping>
