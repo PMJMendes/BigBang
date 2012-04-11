@@ -398,6 +398,12 @@ public class DocOps
 		Entity lrefDocInfo;
 		DocInfo[] larrCIAux;
 
+		if ( pobjData.mobjDSBridge != null )
+		{
+			pobjData.mobjFile = DocuShareConnector.getItemAsFile(pobjData.mobjDSBridge.mstrDSHandle).GetVarData();
+			pobjData.mobjDSBridge.mstrDSTitle = DocuShareConnector.getItemTitle(pobjData.mobjDSBridge.mstrDSHandle);
+		}
+
 		try
 		{
 			lrefDocInfo = Entity.GetInstance(Engine.FindEntity(Engine.getCurrentNameSpace(),
@@ -457,6 +463,14 @@ public class DocOps
 				}
 				pobjData.marrInfo[i].mid = lobjAuxInfo.getKey();
 			}
+		}
+
+		if ( pobjData.mobjDSBridge != null )
+		{
+			if ( pobjData.mobjDSBridge.mbDelete )
+				DocuShareConnector.deleteItem(pobjData.mobjDSBridge.mstrDSHandle);
+			else
+				DocuShareConnector.moveItem(pobjData.mobjDSBridge.mstrDSHandle, pobjData.mobjDSBridge.mstrDSLoc, null);
 		}
 	}
 
@@ -545,6 +559,15 @@ public class DocOps
 		DocInfo lobjAuxInfo;
 		int i;
 		Entity lrefDocInfo;
+
+		if ( pobjData.mobjDSBridge != null )
+		{
+			if ( pobjData.mobjDSBridge.mbDelete )
+				DocuShareConnector.createItem(new FileXfer(pobjData.mobjFile), pobjData.mobjDSBridge.mstrDSTitle,
+						pobjData.mobjDSBridge.mstrDSLoc);
+			else
+				DocuShareConnector.moveItem(pobjData.mobjDSBridge.mstrDSHandle, null, pobjData.mobjDSBridge.mstrDSLoc);
+		}
 
 		try
 		{
