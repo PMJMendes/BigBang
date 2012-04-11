@@ -93,6 +93,9 @@ public class Constants
 	// Signature Request Objects
 	public static final UUID ObjID_SignatureRequest         = UUID.fromString("A864FABC-8DCE-4D97-9A50-A02A00F7CBB5");
 
+	// DAS Requset Objects
+	public static final UUID ObjID_DASRequest               = UUID.fromString("F7137CCF-744D-4BD8-918A-A03000F0F182");
+
 	// Typified Lists
 	public static final UUID ObjID_ContactType              = UUID.fromString("228F6A73-1335-4C99-8DD0-9EEE012964BA");
 	public static final UUID ObjID_CInfoType                = UUID.fromString("03C5B78E-D71C-49F2-A079-9EC40111DCC0");
@@ -140,6 +143,7 @@ public class Constants
 	public static final UUID ProcID_InfoRequest      = UUID.fromString("5DBEF1CD-DEB8-4731-8C6F-9FE500F50BB9");
 	public static final UUID ProcID_ExternRequest    = UUID.fromString("83759D78-C30C-4928-B600-9FEA00CC2349");
 	public static final UUID ProcID_SignatureRequest = UUID.fromString("D705396D-10CE-42E5-BB24-A02A00FF6115");
+	public static final UUID ProcID_DASRequest       = UUID.fromString("41F2CCA4-5114-4A1F-8E97-A03000F1F404");
 
 	// Operations
 
@@ -427,6 +431,13 @@ public class Constants
 	public static final UUID OPID_SigReq_CancelRequest                  = UUID.fromString("03E8D6B1-04B8-4B1B-9FFA-A02A01013616");
 	public static final UUID OPID_SigReq_UndoCancelRequest              = UUID.fromString("E0123F30-F89B-473F-8208-A02A0101B054");
 
+	// DAS Request Operations
+	public static final UUID OPID_DASRequest_ReceiveReply               = UUID.fromString("5217F6B9-7117-43CA-AA20-A03000F278C8");
+	public static final UUID OPID_DASRequest_UndoReceiveReply           = UUID.fromString("8772A924-B997-4C64-B9F5-A03000F2D2B8");
+	public static final UUID OPID_DASRequest_RepeatRequest              = UUID.fromString("D9757AE7-7F2F-4A29-BF7F-A03000F2533D");
+	public static final UUID OPID_DASRequest_CancelRequest              = UUID.fromString("27BE85A3-F216-49F2-A54B-A03000F2A27A");
+	public static final UUID OPID_DASRequest_UndoCancelRequest          = UUID.fromString("435C94A8-F8C8-4FA0-9149-A03000F30495");
+
 	// Urgency Levels
 	public static final UUID UrgID_Invalid   = UUID.fromString("6FDEA9C9-55E0-4214-8BC2-9EB1007E9BA5");
 	public static final UUID UrgID_Valid     = UUID.fromString("7925EF60-80FC-4EA2-96A0-9EB1007EA1FF");
@@ -504,6 +515,7 @@ public class Constants
 	public static final UUID TID_ReceiptReturnLetter = UUID.fromString("13931DA8-6208-4074-ABD5-A0290116442A");
 	public static final UUID TID_PaymentCoverLetter  = UUID.fromString("08014404-6149-4EBB-88EA-A02A00E8069F");
 	public static final UUID TID_SignatureRequest    = UUID.fromString("4D2CDC36-F897-49A3-BF46-A02A010C0925");
+	public static final UUID TID_DASRequest          = UUID.fromString("FBB27FB9-81CC-46DC-A2C2-A0300100AA93");
 
 	// Contact Types
 	public static final UUID CtTypeID_ReceiptReturn = UUID.fromString("BA706479-AE31-4E69-A7F0-9EEE01336CA4");
@@ -520,6 +532,7 @@ public class Constants
 	public static final UUID DocID_ReceiptReturnLetter    = UUID.fromString("CBCC510A-7DE0-41DA-A8E5-A029011CACE4");
 	public static final UUID DocID_PaymentCoverLetter     = UUID.fromString("18E61B06-BD30-4338-82B2-A02A00E88AF7");
 	public static final UUID DocID_SignatureRequestLetter = UUID.fromString("7D054350-6B89-4742-91E5-A02A01105D11");
+	public static final UUID DocID_DASRequestLetter       = UUID.fromString("9F722D93-12BF-4D33-92A3-A0300100FA21");
 
 	// FK Constants
 	public static final int FKCostCenter_In_UserDecoration = 2;

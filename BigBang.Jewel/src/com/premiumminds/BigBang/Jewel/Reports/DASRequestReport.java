@@ -9,6 +9,7 @@ import Jewel.Engine.Engine;
 import Jewel.Engine.Constants.ObjectGUIDs;
 import Jewel.Engine.SysObjects.FileXfer;
 import Jewel.Engine.SysObjects.ObjectBase;
+import Jewel.Petri.Interfaces.ILog;
 import Jewel.Petri.Interfaces.IProcess;
 import Jewel.Petri.Objects.PNProcess;
 
@@ -20,17 +21,15 @@ import com.premiumminds.BigBang.Jewel.Objects.Receipt;
 import com.premiumminds.BigBang.Jewel.Objects.SubPolicy;
 import com.premiumminds.BigBang.Jewel.SysObjects.ReportBase;
 
-public class SignatureRequestReport
+public class DASRequestReport
 	extends ReportBase
 {
 	public UUID midClient;
-	public UUID[] marrReceiptIDs;
-	public BigDecimal mdblTotal;
-	public int mlngCount;
+	public UUID midReceipt;
 
 	protected UUID GetTemplateID()
 	{
-		return Constants.TID_SignatureRequest;
+		return Constants.TID_DASRequest;
 	}
 
 	public FileXfer Generate()
@@ -45,7 +44,7 @@ public class SignatureRequestReport
 		IProcess lobjProc;
 		Policy lobjPolicy;
 		SubPolicy lobjSubPolicy;
-		int i;
+		ILog lobjLog;
 
 		lobjClient = Client.GetInstance(Engine.getCurrentNameSpace(), midClient);
 		if ( lobjClient.getAt(4) == null )
@@ -72,45 +71,43 @@ public class SignatureRequestReport
 		larrParams.put("ClientZipLocal", (lobjZipCode == null ? "" : (String)lobjZipCode.getAt(1)));
 		larrParams.put("Date", ldtAux.toString().substring(0, 10));
 
-		larrTables = new String[marrReceiptIDs.length][];
-		mlngCount = 0;
-		mdblTotal = new BigDecimal(0);
-		for ( i = 0; i < larrTables.length; i++ )
+		larrTables = new String[1][];
+		lobjReceipt = Receipt.GetInstance(Engine.getCurrentNameSpace(), midReceipt);
+		try
 		{
-			lobjReceipt = Receipt.GetInstance(Engine.getCurrentNameSpace(), marrReceiptIDs[i]);
-			try
+			lobjProc = PNProcess.GetInstance(Engine.getCurrentNameSpace(), lobjReceipt.GetProcessID());
+			if ( Constants.ProcID_Policy.equals(lobjProc.GetParent().GetScriptID()) )
 			{
-				lobjProc = PNProcess.GetInstance(Engine.getCurrentNameSpace(), lobjReceipt.GetProcessID());
-				if ( Constants.ProcID_Policy.equals(lobjProc.GetParent().GetScriptID()) )
-				{
-					lobjPolicy = (Policy)lobjProc.GetParent().GetData();
-					lobjSubPolicy = null;
-				}
-				else
-				{
-					lobjPolicy = (Policy)lobjProc.GetParent().GetParent().GetData();
-					lobjSubPolicy = (SubPolicy)lobjProc.GetParent().GetData();
-				}
+				lobjPolicy = (Policy)lobjProc.GetParent().GetData();
+				lobjSubPolicy = null;
 			}
-			catch (Throwable e)
+			else
 			{
-				throw new BigBangJewelException(e.getMessage(), e);
+				lobjPolicy = (Policy)lobjProc.GetParent().GetParent().GetData();
+				lobjSubPolicy = (SubPolicy)lobjProc.GetParent().GetData();
 			}
-
-			larrTables[i] = new String[9];
-			larrTables[i][0] = (lobjSubPolicy == null ? lobjPolicy.getLabel() : lobjSubPolicy.getLabel());
-			larrTables[i][1] = lobjReceipt.getLabel();
-			larrTables[i][2] = lobjPolicy.GetSubLine().getLine().getCategory().getLabel();
-			larrTables[i][3] = (String)lobjPolicy.GetCompany().getAt(1);
-			larrTables[i][4] = ((BigDecimal)lobjReceipt.getAt(3)).toPlainString();
-			larrTables[i][5] = (String)lobjReceipt.getAt(14);
-
-			mlngCount++;
-			mdblTotal = mdblTotal.add((BigDecimal)lobjReceipt.getAt(3));
+			lobjLog = lobjProc.GetLiveLog(Constants.OPID_Receipt_Payment);
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangJewelException(e.getMessage(), e);
 		}
 
-		larrParams.put("Count", "" + mlngCount + " recibo" + (mlngCount == 1 ? "" : "s"));
-		larrParams.put("Total", mdblTotal.toPlainString());
+		larrTables[0] = new String[9];
+		larrTables[0][0] = (lobjSubPolicy == null ? lobjPolicy.getLabel() : lobjSubPolicy.getLabel());
+		larrTables[0][1] = lobjReceipt.getLabel();
+		larrTables[0][2] = lobjPolicy.GetSubLine().getLine().getCategory().getLabel();
+		larrTables[0][3] = (String)lobjPolicy.GetCompany().getAt(1);
+		larrTables[0][4] = ((BigDecimal)lobjReceipt.getAt(3)).toPlainString();
+		larrTables[0][5] = (String)lobjReceipt.getAt(14);
+
+		larrParams.put("Count", "1 recibo");
+		larrParams.put("Total", ((BigDecimal)lobjReceipt.getAt(3)).toPlainString());
+
+		larrParams.put("Policy", (lobjSubPolicy == null ? lobjPolicy.getLabel() : lobjSubPolicy.getLabel()));
+		larrParams.put("Company", (String)lobjPolicy.GetCompany().getLabel());
+		larrParams.put("DueDate", ((Timestamp)lobjReceipt.getAt(11)).toString().substring(0, 10));
+		larrParams.put("PayDate", lobjLog.GetTimestamp().toString().substring(0, 10));
 
 		return Generate(larrParams, new String[][][] {larrTables});
 	}
