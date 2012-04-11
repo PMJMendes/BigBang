@@ -1,10 +1,10 @@
 package bigbang.tests.client;
 
-import bigBang.definitions.shared.HistoryItem;
+import bigBang.definitions.shared.Casualty;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
-public class TestHistoryUndo
+public class TestCasualtyClose
 {
 	public static void DoTest()
 	{
@@ -13,19 +13,19 @@ public class TestHistoryUndo
 
 	private static void DoStep1()
 	{
-		AsyncCallback<HistoryItem> callback = new AsyncCallback<HistoryItem> ()
+		AsyncCallback<Casualty> callback = new AsyncCallback<Casualty>()
 		{
 			public void onFailure(Throwable caught)
 			{
 				return;
 			}
 
-			public void onSuccess(HistoryItem result)
+			public void onSuccess(Casualty result)
 			{
 				return;
 			}
 		};
 
-		Services.historyService.undo("70BCDB6D-1B1D-4606-8335-A030011E08B7", callback);
+		Services.casualtyService.closeProcess("1FEC1DDE-B053-4C30-BB20-A02F00CDCB90", callback);
 	}
 }
