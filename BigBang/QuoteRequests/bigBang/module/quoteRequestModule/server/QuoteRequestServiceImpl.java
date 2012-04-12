@@ -3086,9 +3086,9 @@ public class QuoteRequestServiceImpl
 			pstrBuffer.append(" AND [:Process:Manager] = '").append(lParam.managerId).append("'");
 		}
 
-		if ( lParam.caseStudy != null )
+		if ( (lParam.caseStudy != null) && lParam.caseStudy )
 		{
-			pstrBuffer.append(" AND [:Case Study] = ").append(lParam.caseStudy ? "1" : "0");
+			pstrBuffer.append(" AND [:Case Study] = 1");
 		}
 
 		return true;
