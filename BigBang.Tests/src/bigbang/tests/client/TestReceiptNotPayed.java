@@ -1,10 +1,10 @@
 package bigbang.tests.client;
 
-import bigBang.definitions.shared.HistoryItem;
+import bigBang.definitions.shared.Receipt;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
-public class TestHistoryUndo
+public class TestReceiptNotPayed
 {
 	public static void DoTest()
 	{
@@ -13,19 +13,19 @@ public class TestHistoryUndo
 
 	private static void DoStep1()
 	{
-		AsyncCallback<HistoryItem> callback = new AsyncCallback<HistoryItem> ()
+		AsyncCallback<Receipt> callback = new AsyncCallback<Receipt>()
 		{
 			public void onFailure(Throwable caught)
 			{
 				return;
 			}
 
-			public void onSuccess(HistoryItem result)
+			public void onSuccess(Receipt result)
 			{
 				return;
 			}
 		};
 
-		Services.historyService.undo("C8E808F0-B0F5-4FE3-A443-A0310108D40B", callback);
+		Services.receiptService.markNotPayed("066862C5-C2CE-4AEB-9C33-A02D01286505", callback);
 	}
 }
