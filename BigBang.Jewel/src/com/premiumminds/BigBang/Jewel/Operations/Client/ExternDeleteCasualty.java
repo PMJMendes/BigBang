@@ -1,5 +1,6 @@
 package com.premiumminds.BigBang.Jewel.Operations.Client;
 
+import java.util.ArrayList;
 import java.util.UUID;
 
 import Jewel.Engine.Engine;
@@ -7,6 +8,7 @@ import Jewel.Engine.DataAccess.SQLServer;
 import Jewel.Petri.Objects.PNProcess;
 import Jewel.Petri.SysObjects.JewelPetriException;
 import Jewel.Petri.SysObjects.UndoableOperation;
+import Jewel.Petri.SysObjects.UndoableOperation.UndoSet;
 
 import com.premiumminds.BigBang.Jewel.Constants;
 import com.premiumminds.BigBang.Jewel.Data.CasualtyData;
@@ -192,6 +194,164 @@ public class ExternDeleteCasualty
 
 	public UndoSet[] GetSets()
 	{
-		return null;
+		UndoSet[] larrResult;
+		UndoSet lobjContacts, lobjDocs;
+		int llngSize;
+		int i;
+
+		lobjContacts = GetContactSet();
+		lobjDocs = GetDocSet();
+
+		llngSize = 1;
+		if ( lobjContacts != null )
+			llngSize++;
+		if ( lobjDocs != null )
+			llngSize++;
+
+		larrResult = new UndoSet[llngSize];
+
+		larrResult[0] = new UndoSet();
+		larrResult[0].midType = Constants.ObjID_Casualty;
+		larrResult[0].marrDeleted = new UUID[0];
+		larrResult[0].marrChanged = new UUID[0];
+		larrResult[0].marrCreated = new UUID[1];
+		larrResult[0].marrCreated[0] = mobjData.mid;
+		i = 1;
+
+		if ( lobjContacts != null )
+		{
+			larrResult[i] = lobjContacts;
+			i++;
+		}
+
+		if ( lobjDocs != null )
+		{
+			larrResult[i] = lobjDocs;
+			i++;
+		}
+
+		return larrResult;
+	}
+
+	private UndoSet GetContactSet()
+	{
+		int llngCreates, llngModifies, llngDeletes;
+		ArrayList<UndoSet> larrTally;
+		UndoSet[] larrAux;
+		UndoSet lobjResult;
+		int i, j, iD, iM, iC;
+
+		llngCreates = 0;
+		llngModifies = 0;
+		llngDeletes = 0;
+
+		larrTally = new ArrayList<UndoSet>();
+
+		if ( mobjContactOps != null )
+		{
+			larrAux = mobjContactOps.GetSubSet();
+			for ( j = 0; j < larrAux.length; j++ )
+			{
+				if ( !Constants.ObjID_Contact.equals(larrAux[j].midType) )
+					continue;
+				llngDeletes += larrAux[j].marrDeleted.length;
+				llngModifies += larrAux[j].marrChanged.length;
+				llngCreates += larrAux[j].marrCreated.length;
+				larrTally.add(larrAux[j]);
+			}
+		}
+
+		if ( llngDeletes + llngModifies + llngCreates == 0)
+			return null;
+
+		larrAux = larrTally.toArray(new UndoSet[larrTally.size()]);
+
+		lobjResult = new UndoSet();
+		lobjResult.midType = Constants.ObjID_Contact;
+		lobjResult.marrDeleted = new UUID[llngDeletes];
+		lobjResult.marrChanged = new UUID[llngModifies];
+		lobjResult.marrCreated = new UUID[llngCreates];
+
+		iD = 0;
+		iM = 0;
+		iC = 0;
+
+		for ( i = 0; i < larrAux.length; i++ )
+		{
+			for ( j = 0; j < larrAux[i].marrDeleted.length; j++ )
+				lobjResult.marrDeleted[iD + j] = larrAux[i].marrDeleted[j];
+			iD += larrAux[i].marrDeleted.length;
+
+			for ( j = 0; j < larrAux[i].marrChanged.length; j++ )
+				lobjResult.marrChanged[iM + j] = larrAux[i].marrChanged[j];
+			iM += larrAux[i].marrChanged.length;
+
+			for ( j = 0; j < larrAux[i].marrCreated.length; j++ )
+				lobjResult.marrCreated[iC + j] = larrAux[i].marrCreated[j];
+			iC += larrAux[i].marrCreated.length;
+		}
+
+		return lobjResult;
+	}
+
+	private UndoSet GetDocSet()
+	{
+		int llngCreates, llngModifies, llngDeletes;
+		ArrayList<UndoSet> larrTally;
+		UndoSet[] larrAux;
+		UndoSet lobjResult;
+		int i, j, iD, iM, iC;
+
+		llngCreates = 0;
+		llngModifies = 0;
+		llngDeletes = 0;
+
+		larrTally = new ArrayList<UndoSet>();
+
+		if ( mobjDocOps != null )
+		{
+			larrAux = mobjDocOps.GetSubSet();
+			for ( j = 0; j < larrAux.length; j++ )
+			{
+				if ( !Constants.ObjID_Document.equals(larrAux[j].midType) )
+					continue;
+				llngDeletes += larrAux[j].marrDeleted.length;
+				llngModifies += larrAux[j].marrChanged.length;
+				llngCreates += larrAux[j].marrCreated.length;
+				larrTally.add(larrAux[j]);
+			}
+		}
+
+		if ( llngDeletes + llngModifies + llngCreates == 0)
+			return null;
+
+		larrAux = larrTally.toArray(new UndoSet[larrTally.size()]);
+
+		lobjResult = new UndoSet();
+		lobjResult.midType = Constants.ObjID_Document;
+		lobjResult.marrDeleted = new UUID[llngDeletes];
+		lobjResult.marrChanged = new UUID[llngModifies];
+		lobjResult.marrCreated = new UUID[llngCreates];
+
+		iD = 0;
+		iM = 0;
+		iC = 0;
+
+		for ( i = 0; i < larrAux.length; i++ )
+		{
+			for ( j = 0; j < larrAux[i].marrDeleted.length; j++ )
+				lobjResult.marrDeleted[iD + j] = larrAux[i].marrDeleted[j];
+			iD += larrAux[i].marrDeleted.length;
+
+			for ( j = 0; j < larrAux[i].marrChanged.length; j++ )
+				lobjResult.marrChanged[iM + j] = larrAux[i].marrChanged[j];
+			iM += larrAux[i].marrChanged.length;
+
+			for ( j = 0; j < larrAux[i].marrCreated.length; j++ )
+				lobjResult.marrCreated[iC + j] = larrAux[i].marrCreated[j];
+			iC += larrAux[i].marrCreated.length;
+		}
+
+		return lobjResult;
 	}
 }
