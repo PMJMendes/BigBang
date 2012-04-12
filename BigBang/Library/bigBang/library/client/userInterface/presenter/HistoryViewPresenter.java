@@ -224,20 +224,23 @@ public class HistoryViewPresenter implements ViewPresenter {
 			}else if(auxObjectType.equalsIgnoreCase(BigBangConstants.EntityIds.QUOTE_REQUEST)){
 				navigateToQuoteRequest(auxObjectId);
 
-			}if(auxObjectType.equalsIgnoreCase(BigBangConstants.EntityIds.COMPLAINT)){
+			}else if(auxObjectType.equalsIgnoreCase(BigBangConstants.EntityIds.COMPLAINT)){
 				navigateToComplaint(auxObjectId);
 
-			}if(auxObjectType.equalsIgnoreCase(BigBangConstants.EntityIds.EXPENSE)){
+			}else if(auxObjectType.equalsIgnoreCase(BigBangConstants.EntityIds.EXPENSE)){
 				navigateToExpense(auxObjectId);
 
-			}if(auxObjectType.equalsIgnoreCase(BigBangConstants.EntityIds.RISK_ANALISYS)){
+			}else if(auxObjectType.equalsIgnoreCase(BigBangConstants.EntityIds.RISK_ANALISYS)){
 				navigateToRiskAnalysis(auxObjectId);
 
-			}if(auxObjectType.equalsIgnoreCase(BigBangConstants.EntityIds.NEGOTIATION)){
+			}else if(auxObjectType.equalsIgnoreCase(BigBangConstants.EntityIds.NEGOTIATION)){
 				navigateToNegotiation(auxObjectId);
 				
-			}if(auxObjectType.equalsIgnoreCase(BigBangConstants.EntityIds.SIGNATURE_REQUEST)){
+			}else if(auxObjectType.equalsIgnoreCase(BigBangConstants.EntityIds.SIGNATURE_REQUEST)){
 				navigateToSignatureRequest(auxObjectId);
+				
+			}else if(auxObjectType.equalsIgnoreCase(BigBangConstants.EntityIds.DAS_REQUEST)){
+				navigateToDASRequest(auxObjectId);
 				
 			}else{
 				onNavigateToAuxiliaryProcessFailed();
@@ -246,6 +249,15 @@ public class HistoryViewPresenter implements ViewPresenter {
 		}
 	}
 	
+	private void navigateToDASRequest(String auxObjectId) {
+		NavigationHistoryItem navigationItem = new NavigationHistoryItem();
+		navigationItem.setStackParameter("display");
+		navigationItem.setParameter("section", "receipt");
+		navigationItem.pushIntoStackParameter("display", "dasrequest");
+		navigationItem.setParameter("dasrequestid", auxObjectId);
+		NavigationHistoryManager.getInstance().go(navigationItem);		
+	}
+
 	private void navigateToSignatureRequest(String auxObjectId) {
 		NavigationHistoryItem navigationItem = new NavigationHistoryItem();
 		navigationItem.setStackParameter("display");

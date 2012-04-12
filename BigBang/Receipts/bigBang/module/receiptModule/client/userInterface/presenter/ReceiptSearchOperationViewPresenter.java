@@ -46,7 +46,7 @@ public class ReceiptSearchOperationViewPresenter implements ViewPresenter {
 		MARK_FOR_PAYMENT,
 		SEND_RECEIPT,
 		INSURER_ACCOUNTING, AGENT_ACCOUNTING,
-		PAYMENT_TO_CLIENT, RETURN_TO_AGENCY, CREATE_SIGNATURE_REQUEST, SET_DAS_NOT_NECESSARY
+		PAYMENT_TO_CLIENT, RETURN_TO_AGENCY, CREATE_SIGNATURE_REQUEST, SET_DAS_NOT_NECESSARY, REQUEST_DAS
 	}
 
 	public interface Display {
@@ -91,6 +91,8 @@ public class ReceiptSearchOperationViewPresenter implements ViewPresenter {
 		HasValueSelectables<BigBangProcess> getSubProcessesList();
 
 		HasValueSelectables<HistoryItemStub> getHistoryList();
+
+		void allowRequestDAS(boolean hasPermission);
 
 
 
@@ -211,6 +213,9 @@ public class ReceiptSearchOperationViewPresenter implements ViewPresenter {
 				case SET_DAS_NOT_NECESSARY:
 					setDasNotNecessary();
 					break;
+				case REQUEST_DAS:
+					requestDas();
+					break;
 				}
 
 			}
@@ -263,6 +268,12 @@ public class ReceiptSearchOperationViewPresenter implements ViewPresenter {
 
 		//APPLICATION-WIDE EVENTS
 		bound = true;
+	}
+
+	protected void requestDas() {
+		NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
+		item.setParameter("show", "createdasrequest");
+		NavigationHistoryManager.getInstance().go(item);	
 	}
 
 	protected void setDasNotNecessary() {
@@ -419,6 +430,7 @@ public class ReceiptSearchOperationViewPresenter implements ViewPresenter {
 				view.allowReturnToInsurer(PermissionChecker.hasPermission(value, BigBangConstants.OperationIds.ReceiptProcess.RETURN_TO_AGENCY));
 				view.allowCreateSignatureRequest(PermissionChecker.hasPermission(value, BigBangConstants.OperationIds.ReceiptProcess.CREATE_SIGNATURE_REQUEST));
 				view.allowSetDASDesnecessary(PermissionChecker.hasPermission(value, BigBangConstants.OperationIds.ReceiptProcess.SET_DAS_NOT_NECESSARY));
+				view.allowRequestDAS(PermissionChecker.hasPermission(value, BigBangConstants.OperationIds.ReceiptProcess.CREATE_DAS_REQUEST));
 				view.setSaveModeEnabled(false);
 				view.getForm().setReadOnly(true);
 				view.getForm().setValue(value);
@@ -618,6 +630,11 @@ public class ReceiptSearchOperationViewPresenter implements ViewPresenter {
 		if(type.equalsIgnoreCase(BigBangConstants.EntityIds.SIGNATURE_REQUEST)){
 			item.pushIntoStackParameter("display", "signaturerequest");
 			item.setParameter("signaturerequestid", process.dataId);
+			NavigationHistoryManager.getInstance().go(item);
+			
+		}else if(type.equalsIgnoreCase(BigBangConstants.EntityIds.DAS_REQUEST)){
+			item.pushIntoStackParameter("display", "dasrequest");
+			item.setParameter("dasrequestid", process.dataId);
 			NavigationHistoryManager.getInstance().go(item);
 		}
 	}

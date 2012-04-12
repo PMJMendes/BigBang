@@ -11,7 +11,7 @@ public class DASRequestCancellationForm extends FormView<DASRequest.Cancellation
 	private ExpandableListBoxFormField motive;
 	
 	public DASRequestCancellationForm(){
-		addSection("Cancelamento de Declaração de Ausência de Sinistro");
+		addSection("Cancelamento de DAS");
 		motive = new ExpandableListBoxFormField(BigBangConstants.TypifiedListIds.INFO_REQUEST_CANCEL_MOTIVES, "Motivo do cancelamento");
 		addFormField(motive);
 		

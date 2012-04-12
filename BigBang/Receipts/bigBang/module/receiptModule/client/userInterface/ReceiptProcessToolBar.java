@@ -355,4 +355,8 @@ public abstract class ReceiptProcessToolBar extends BigBangOperationsToolBar {
 		this.unnecessaryDASFlag.setEnabled(hasPermission);
 	}
 
+	public void allowRequestDAS(boolean hasPermission) {
+		this.requestDAS.setEnabled(hasPermission);
+	}
+
 }

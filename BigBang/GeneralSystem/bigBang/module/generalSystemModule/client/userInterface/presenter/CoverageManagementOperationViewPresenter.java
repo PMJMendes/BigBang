@@ -280,6 +280,10 @@ public class CoverageManagementOperationViewPresenter implements ViewPresenter {
 				}
 
 				case DELETE_LINE:{
+					if(((LineList)view.getLineList()).getForm().getInfo().id == null){
+						((LineList)view.getLineList()).showForm(false);
+						return;
+					}
 					final String id = ((Entry)view.getLineList().getSelected().toArray()[0]).getValue().id;
 
 					MessageBox.confirm("Eliminar ramo", "Tem certeza que pretende eliminar o ramo?", new MessageBox.ConfirmationCallback() {
@@ -321,8 +325,6 @@ public class CoverageManagementOperationViewPresenter implements ViewPresenter {
 
 				}
 				case SAVE_LINE:{
-					((LineList)view.getLineList()).getForm().setReadOnly(true);
-					((LineList)view.getLineList()).getToolbar().setSaveModeEnabled(false);
 					Line newLine = ((LineList)view.getLineList()).getForm().getInfo();
 					if(newLine.id != null){
 						broker.updateLine(newLine, new ResponseHandler<Line>() {
@@ -366,6 +368,10 @@ public class CoverageManagementOperationViewPresenter implements ViewPresenter {
 					break;
 				}
 				case CANCEL_EDIT_LINE:{
+					if(((LineList)view.getLineList()).getForm().getInfo().id == null){
+						((LineList)view.getLineList()).showForm(false);
+						return;
+					}
 					((LineList)view.getLineList()).getForm().revert();
 					((LineList)view.getLineList()).getForm().setReadOnly(true);
 					break;
@@ -432,8 +438,6 @@ public class CoverageManagementOperationViewPresenter implements ViewPresenter {
 					break;
 				}
 				case SAVE_SUB_LINE:{
-					((SubLineList)view.getSubLineList()).getForm().setReadOnly(true);
-					((SubLineList)view.getSubLineList()).getToolBar().setSaveModeEnabled(false);
 					SubLine newSubLine = ((SubLineList)view.getSubLineList()).getForm().getInfo();
 					if(newSubLine.id != null){
 						broker.updateSubLine(newSubLine, new ResponseHandler<SubLine>() {
@@ -475,11 +479,19 @@ public class CoverageManagementOperationViewPresenter implements ViewPresenter {
 
 				}
 				case CANCEL_EDIT_SUB_LINE:{
+					if(((SubLineList)view.getSubLineList()).getForm().getInfo().id == null){
+						((SubLineList)view.getSubLineList()).showForm(false);
+						return;
+					}
 					((SubLineList)view.getSubLineList()).getForm().revert();
 					((SubLineList)view.getSubLineList()).getForm().setReadOnly(true);
 					break;
 				}
 				case DELETE_SUB_LINE:{
+					if(((SubLineList)view.getSubLineList()).getForm().getInfo().id == null){
+						((SubLineList)view.getSubLineList()).showForm(false);
+						return;
+					}
 					final String id = ((SubLineList.Entry)view.getSubLineList().getSelected().toArray()[0]).getValue().id;
 
 					MessageBox.confirm("Eliminar modalidade", "Tem certeza que pretende eliminar a modalidade?", new MessageBox.ConfirmationCallback() {
@@ -519,6 +531,10 @@ public class CoverageManagementOperationViewPresenter implements ViewPresenter {
 					break;
 				}
 				case CANCEL_EDIT_COVERAGE:{
+					if(((CoverageList)view.getCoverageList()).getForm().getInfo().id == null){
+						((CoverageList)view.getCoverageList()).showForm(false);
+						return;
+					}
 					((CoverageList)view.getCoverageList()).getForm().revert();
 					((CoverageList)view.getCoverageList()).getForm().setReadOnly(true);
 					break;
@@ -535,8 +551,6 @@ public class CoverageManagementOperationViewPresenter implements ViewPresenter {
 					break;
 				}
 				case SAVE_COVERAGE:{
-					((CoverageList)view.getCoverageList()).getForm().setReadOnly(true);
-					((CoverageList)view.getCoverageList()).getToolBar().setSaveModeEnabled(false);
 					Coverage newCoverage = ((CoverageList)view.getCoverageList()).getForm().getInfo();
 					if(newCoverage.id != null){
 						broker.updateCoverage(lineId, newCoverage, new ResponseHandler<Coverage>() {
@@ -577,7 +591,10 @@ public class CoverageManagementOperationViewPresenter implements ViewPresenter {
 					break;
 				}
 				case DELETE_COVERAGE:{
-					
+					if(((CoverageList)view.getCoverageList()).getForm().getInfo().id == null){
+						((CoverageList)view.getCoverageList()).showForm(false);
+						return;
+					}
 					final String id = ((CoverageList.Entry)view.getCoverageList().getSelected().toArray()[0]).getValue().id;
 
 					MessageBox.confirm("Eliminar cobertura", "Tem certeza que pretende eliminar a cobertura?", new MessageBox.ConfirmationCallback() {

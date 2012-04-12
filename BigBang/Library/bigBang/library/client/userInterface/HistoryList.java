@@ -77,6 +77,7 @@ public class HistoryList extends FilterableList<HistoryItemStub> implements Hist
 
 				@Override
 				public void onResponse(Search<HistoryItemStub> response) {
+					HistoryList.this.clear();
 					broker.getSearchBroker().disposeSearch(response.getWorkspaceId());
 					for(HistoryItemStub s : response.getResults()) {
 						addEntry(s);
@@ -96,7 +97,6 @@ public class HistoryList extends FilterableList<HistoryItemStub> implements Hist
 	}
 
 	public void discardOwner(){
-		this.clear();
 		if(ownerId != null){
 //			this.broker.unregisterClient(this, this.ownerId);
 		}

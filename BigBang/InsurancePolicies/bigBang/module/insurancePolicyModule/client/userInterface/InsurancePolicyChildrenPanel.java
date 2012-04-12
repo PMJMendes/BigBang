@@ -6,6 +6,7 @@ import bigBang.definitions.client.dataAccess.InsurancePolicyBroker;
 import bigBang.definitions.client.dataAccess.InsurancePolicyDataBrokerClient;
 import bigBang.definitions.shared.BigBangConstants;
 import bigBang.definitions.shared.InsurancePolicy;
+import bigBang.library.client.PermissionChecker;
 import bigBang.library.client.dataAccess.DataBrokerManager;
 import bigBang.library.client.userInterface.ContactsList;
 import bigBang.library.client.userInterface.DocumentsList;
@@ -60,8 +61,14 @@ public class InsurancePolicyChildrenPanel extends View {
 	public void setPolicy(InsurancePolicy policy){
 		this.insurancePolicy = policy;
 		String policyId = policy == null ? null : policy.id;
+		
+		boolean allow = policy != null ? PermissionChecker.hasPermission(policy, BigBangConstants.OperationIds.InsurancePolicyProcess.UPDATE_POLICY) : false;
 		this.contactsList.setOwner(policyId);
-		this.documentsList.setOwner(policyId);
+		this.contactsList.setOwnerType(BigBangConstants.EntityIds.INSURANCE_POLICY);
+		this.contactsList.allowCreation(allow);
+		this.documentsList.setOwner(policyId);	
+		this.documentsList.setOwnerType(BigBangConstants.EntityIds.INSURANCE_POLICY);
+		this.documentsList.allowCreation(allow);
 		this.insuredObjectsList.setOwner(policyId);
 		this.exercisesList.setOwner(policyId);
 		this.subPoliciesList.setOwner(policyId);

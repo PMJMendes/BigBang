@@ -9,8 +9,12 @@ import bigBang.library.client.userInterface.presenter.InsurancePolicySelectionVi
 import bigBang.library.client.userInterface.presenter.ViewPresenter;
 import bigBang.library.client.userInterface.view.InsurancePolicySelectionView;
 import bigBang.module.quoteRequestModule.client.userInterface.presenter.MarkForPaymentViewPresenter;
+import bigBang.module.receiptModule.client.dataAccess.DASRequestBrokerImpl;
 import bigBang.module.receiptModule.client.dataAccess.ReceiptDataBrokerImpl;
 import bigBang.module.receiptModule.client.dataAccess.SignatureRequestBrokerImpl;
+import bigBang.module.receiptModule.client.userInterface.presenter.CancelDASRequestViewPresenter;
+import bigBang.module.receiptModule.client.userInterface.presenter.CreateDASRequestViewPresenter;
+import bigBang.module.receiptModule.client.userInterface.presenter.DASRequestViewPresenter;
 import bigBang.module.receiptModule.client.userInterface.presenter.MassAgentAccountingViewPresenter;
 import bigBang.module.receiptModule.client.userInterface.presenter.CancelSignatureRequestViewPresenter;
 import bigBang.module.receiptModule.client.userInterface.presenter.CreateSignatureRequestViewPresenter;
@@ -29,8 +33,11 @@ import bigBang.module.receiptModule.client.userInterface.presenter.SerialReceipt
 import bigBang.module.receiptModule.client.userInterface.view.MarkForPaymentView;
 import bigBang.module.receiptModule.client.userInterface.view.MassAgentAccountingView;
 import bigBang.module.receiptModule.client.userInterface.presenter.SignatureRequestViewPresenter;
+import bigBang.module.receiptModule.client.userInterface.view.CancelDASRequestView;
 import bigBang.module.receiptModule.client.userInterface.view.CancelSignatureRequestView;
+import bigBang.module.receiptModule.client.userInterface.view.CreateDASRequestView;
 import bigBang.module.receiptModule.client.userInterface.view.CreateSignatureRequestView;
+import bigBang.module.receiptModule.client.userInterface.view.DASRequestView;
 import bigBang.module.receiptModule.client.userInterface.view.MassCreatePaymentNoticeView;
 import bigBang.module.receiptModule.client.userInterface.view.MassInsurerAccountingView;
 import bigBang.module.receiptModule.client.userInterface.view.MassSendReceiptView;
@@ -216,13 +223,38 @@ public class ReceiptModule implements Module {
 				return presenter;
 			}
 		});
+		ViewPresenterFactory.getInstance().registerViewPresenterInstantiator("DAS_REQUEST", new ViewPresenterInstantiator(){
+			@Override
+			public ViewPresenter getInstance() {
+				DASRequestView view = (DASRequestView) GWT.create(DASRequestView.class);
+				DASRequestViewPresenter presenter = new DASRequestViewPresenter(view);
+				return presenter;
+			}
+		});
+		ViewPresenterFactory.getInstance().registerViewPresenterInstantiator("CANCEL_DAS_REQUEST", new ViewPresenterInstantiator(){
+			@Override
+			public ViewPresenter getInstance() {
+				CancelDASRequestView view = (CancelDASRequestView) GWT.create(CancelDASRequestView.class);
+				CancelDASRequestViewPresenter presenter = new CancelDASRequestViewPresenter(view);
+				return presenter;
+			}
+		});
+		ViewPresenterFactory.getInstance().registerViewPresenterInstantiator("CREATE_DAS_REQUEST", new ViewPresenterInstantiator(){
+			@Override
+			public ViewPresenter getInstance() {
+				CreateDASRequestView view = (CreateDASRequestView) GWT.create(CreateDASRequestView.class);
+				CreateDASRequestViewPresenter presenter = new CreateDASRequestViewPresenter(view);
+				return presenter;
+			}
+		});
 	}
 
 	@Override
 	public DataBroker<?>[] getBrokerImplementations() {
 		return new DataBroker<?>[]{
 				new ReceiptDataBrokerImpl(), 
-				new SignatureRequestBrokerImpl()
+				new SignatureRequestBrokerImpl(),
+				new DASRequestBrokerImpl()
 		};
 	}
 

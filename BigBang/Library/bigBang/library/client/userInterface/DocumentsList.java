@@ -12,10 +12,15 @@ import bigBang.library.client.ValueSelectable;
 import bigBang.library.client.dataAccess.BigBangDocumentsBroker;
 import bigBang.library.client.dataAccess.DocumentsBroker;
 import bigBang.library.client.dataAccess.DocumentsBrokerClient;
+import bigBang.library.client.history.NavigationHistoryItem;
+import bigBang.library.client.history.NavigationHistoryManager;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Unit;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.logical.shared.AttachEvent;
+import com.google.gwt.user.client.ui.Button;
 
 public class DocumentsList extends FilterableList<Document> implements DocumentsBrokerClient {
 
@@ -36,10 +41,26 @@ public class DocumentsList extends FilterableList<Document> implements Documents
 	protected int documentsDataVersion;
 	protected String ownerId;
 	protected DocumentsBroker broker;
+	private String ownerTypeId;
+	private Button createNew;
 
 	public DocumentsList(){
+		
+		createNew = new Button("Criar novo Documento");
+		createNew.setEnabled(false);
+		createNew.addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent event) {
+				createNewDocument();
+			}
+		});
+		
 		this.showFilterField(false);
 		this.showSearchField(true);
+		
+		headerContainer.add(createNew);
+		createNew.setWidth("100%");
+		createNew.setHeight("32px");
 
 		broker = BigBangDocumentsBroker.Util.getInstance();
 
@@ -54,6 +75,15 @@ public class DocumentsList extends FilterableList<Document> implements Documents
 				}
 			}
 		});
+	}
+
+	protected void createNewDocument() {
+		NavigationHistoryItem navItem = NavigationHistoryManager.getInstance().getCurrentState();
+		navItem.setParameter("show", "documentmanagement");
+		navItem.setParameter("ownerid", ownerId );
+		navItem.setParameter("ownertypeid", ownerTypeId);
+		navItem.setParameter("editpermission", createNew.isEnabled() ? "1" : "0");
+		NavigationHistoryManager.getInstance().go(navItem);
 	}
 
 	public void setOwner(final String ownerId){
@@ -150,6 +180,14 @@ public class DocumentsList extends FilterableList<Document> implements Documents
 	@Override
 	public int getDocumentsDataVersionNumber(String ownerId) {
 		return this.documentsDataVersion;
+	}
+
+	public void setOwnerType(String client) {
+		ownerTypeId = client;
+	}
+	
+	public void allowCreation(boolean hasPermission) {
+		createNew.setEnabled(hasPermission);
 	}
 
 }

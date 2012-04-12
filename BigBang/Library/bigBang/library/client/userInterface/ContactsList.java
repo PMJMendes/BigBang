@@ -11,9 +11,14 @@ import bigBang.library.client.ValueSelectable;
 import bigBang.library.client.dataAccess.BigBangContactsListBroker;
 import bigBang.library.client.dataAccess.ContactsBroker;
 import bigBang.library.client.dataAccess.ContactsBrokerClient;
+import bigBang.library.client.history.NavigationHistoryItem;
+import bigBang.library.client.history.NavigationHistoryManager;
 
 import com.google.gwt.dom.client.Style.Unit;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.logical.shared.AttachEvent;
+import com.google.gwt.user.client.ui.Button;
 
 public class ContactsList extends FilterableList<Contact> implements ContactsBrokerClient {
 
@@ -34,10 +39,26 @@ public class ContactsList extends FilterableList<Contact> implements ContactsBro
 	protected int contactsDataVersion;
 	protected String ownerId;
 	protected ContactsBroker broker;
+	protected Button createNew;
+	private String ownerTypeId;
 
 	public ContactsList(){
+		
+		createNew = new Button("Criar novo contacto");
+		createNew.setEnabled(false);
+		createNew.addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent event) {
+				createNewContact();
+			}
+		});
+		
 		this.showFilterField(false);
 		this.showSearchField(true);
+		
+		headerContainer.add(createNew);
+		createNew.setWidth("100%");
+		createNew.setHeight("32px");
 
 		this.broker = BigBangContactsListBroker.Util.getInstance();
 
@@ -52,6 +73,15 @@ public class ContactsList extends FilterableList<Contact> implements ContactsBro
 				}
 			}
 		});
+	}
+
+	protected void createNewContact() {
+		NavigationHistoryItem navItem = NavigationHistoryManager.getInstance().getCurrentState();
+		navItem.setParameter("show", "contactmanagement");
+		navItem.setParameter("ownerid", ownerId);
+		navItem.setParameter("ownertypeid", ownerTypeId);
+		navItem.setParameter("editpermission", createNew.isEnabled() ? "1" : "0");
+		NavigationHistoryManager.getInstance().go(navItem);
 	}
 
 	public void setOwner(String ownerId){
@@ -146,5 +176,13 @@ public class ContactsList extends FilterableList<Contact> implements ContactsBro
 				s.setValue(contact);
 			}
 		}
+	}
+
+	public void setOwnerType(String client) {
+		ownerTypeId = client;
+	}
+
+	public void allowCreation(boolean hasPermission) {
+		createNew.setEnabled(hasPermission);
 	}
 }

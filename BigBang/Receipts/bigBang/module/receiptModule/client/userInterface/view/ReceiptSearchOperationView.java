@@ -91,7 +91,7 @@ public class ReceiptSearchOperationView extends View implements ReceiptSearchOpe
 
 			@Override
 			public void onRequestDAS() {
-				//TODO
+				actionHandler.onActionInvoked(new ActionInvokedEvent<ReceiptSearchOperationViewPresenter.Action>(Action.REQUEST_DAS));
 			}
 
 			@Override
@@ -343,6 +343,11 @@ public class ReceiptSearchOperationView extends View implements ReceiptSearchOpe
 	@Override
 	public void allowSetDASDesnecessary(boolean hasPermission){
 		operationsToolbar.allowSetDASDesnecessary(hasPermission);
+	}
+	
+	@Override
+	public void allowRequestDAS(boolean hasPermission){
+		operationsToolbar.allowRequestDAS(hasPermission);
 	}
 	
 	@Override

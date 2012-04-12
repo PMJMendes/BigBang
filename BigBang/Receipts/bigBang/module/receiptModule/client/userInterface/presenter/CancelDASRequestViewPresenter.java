@@ -44,7 +44,7 @@ public class CancelDASRequestViewPresenter implements ViewPresenter{
 		
 	}
 	
-	public CancelDASRequestViewPresenter(Display biew){
+	public CancelDASRequestViewPresenter(Display view){
 		broker = (DASRequestBroker) DataBrokerManager.staticGetBroker(BigBangConstants.EntityIds.DAS_REQUEST);
 		setView((UIObject)view);
 	}
@@ -102,12 +102,12 @@ public class CancelDASRequestViewPresenter implements ViewPresenter{
 				NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
 				item.removeParameter("show");
 				NavigationHistoryManager.getInstance().go(item);
-				EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Declaração de Ausência de Sinistro cancelada com sucesso."), TYPE.TRAY_NOTIFICATION));				
+				EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "DAS cancelada com sucesso."), TYPE.TRAY_NOTIFICATION));				
 			}
 			
 			@Override
 			public void onError(Collection<ResponseError> errors) {
-				EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não foi possível cancelar a Declaração de Ausência de Sinistro."), TYPE.ALERT_NOTIFICATION));
+				EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não foi possível cancelar a DAS."), TYPE.ALERT_NOTIFICATION));
 				
 			}
 		});		

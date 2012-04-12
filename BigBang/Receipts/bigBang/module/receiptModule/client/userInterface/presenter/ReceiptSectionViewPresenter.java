@@ -192,6 +192,12 @@ public class ReceiptSectionViewPresenter implements ViewPresenter {
 				}else if(show.equalsIgnoreCase("documentmanagement")){
 					present("DOCUMENT", parameters);
 					view.showOverlayViewContainer(true);
+				}else if(show.equalsIgnoreCase("canceldasrequest")){
+					present("CANCEL_DAS_REQUEST", parameters);
+					view.showOverlayViewContainer(true);
+				}else if(show.equalsIgnoreCase("createdasrequest")){
+					present("CREATE_DAS_REQUEST", parameters);
+					view.showOverlayViewContainer(true);
 				}
 			}
 

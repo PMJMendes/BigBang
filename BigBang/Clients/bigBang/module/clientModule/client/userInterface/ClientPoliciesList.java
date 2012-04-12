@@ -55,13 +55,13 @@ public class ClientPoliciesList extends FilterableList<InsurancePolicyStub> impl
 	}
 
 	public void setOwner(String ownerId){
-		discardOwner();
 		if(ownerId != null){
 			this.broker.registerClient(this);
 			broker.getClientPolicies(ownerId, new ResponseHandler<Collection<InsurancePolicyStub>>() {
 
 				@Override
 				public void onResponse(Collection<InsurancePolicyStub> response) {
+					ClientPoliciesList.this.clear();
 					for(InsurancePolicyStub s : response){
 						addEntry(s);
 					}
@@ -75,7 +75,6 @@ public class ClientPoliciesList extends FilterableList<InsurancePolicyStub> impl
 	}
 
 	public void discardOwner(){
-		this.clear();
 		if(ownerId != null) {
 			broker.unregisterClient(this);
 			this.ownerId = null;

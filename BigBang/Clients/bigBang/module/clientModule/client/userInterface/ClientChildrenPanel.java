@@ -1,6 +1,8 @@
 package bigBang.module.clientModule.client.userInterface;
 
+import bigBang.definitions.shared.BigBangConstants;
 import bigBang.definitions.shared.Client;
+import bigBang.library.client.PermissionChecker;
 import bigBang.library.client.userInterface.ContactsList;
 import bigBang.library.client.userInterface.DocumentsList;
 import bigBang.library.client.userInterface.HistoryList;
@@ -50,10 +52,17 @@ public class ClientChildrenPanel extends View  {
 
 	public void setClient(Client client){
 		this.client = client;
+		
 		String clientId = client == null ? null : client.id;
 		
+		boolean allow = client != null ? PermissionChecker.hasPermission(client, BigBangConstants.OperationIds.ClientProcess.UPDATE_CLIENT) : false;
+
 		this.contactsList.setOwner(clientId);
+		this.contactsList.setOwnerType(BigBangConstants.EntityIds.CLIENT);
+		this.contactsList.allowCreation(allow);
 		this.documentsList.setOwner(clientId);	
+		this.documentsList.setOwnerType(BigBangConstants.EntityIds.CLIENT);
+		this.documentsList.allowCreation(allow);
 		this.insurancePoliciesList.setOwner(clientId);	
 		this.quoteRequestsList.setOwner(clientId);
 		this.subProcessesList.setOwner(clientId);

@@ -1,6 +1,8 @@
 package bigBang.module.insurancePolicyModule.client.userInterface;
 
+import bigBang.definitions.shared.BigBangConstants;
 import bigBang.definitions.shared.SubPolicy;
+import bigBang.library.client.PermissionChecker;
 import bigBang.library.client.userInterface.ContactsList;
 import bigBang.library.client.userInterface.DocumentsList;
 import bigBang.library.client.userInterface.HistoryList;
@@ -45,8 +47,14 @@ public class SubPolicyChildrenPanel extends View {
 	public void setSubPolicy(SubPolicy subPolicy){
 		this.subPolicy = subPolicy;
 		String subPolicyId = subPolicy == null ? null : subPolicy.id;
+		
+		boolean allow = subPolicy != null ? PermissionChecker.hasPermission(subPolicy, BigBangConstants.OperationIds.InsuranceSubPolicyProcess.EDIT_SUB_POLICY) : false;
 		this.contactsList.setOwner(subPolicyId);
-		this.documentsList.setOwner(subPolicyId);
+		this.contactsList.setOwnerType(BigBangConstants.EntityIds.INSURANCE_SUB_POLICY);
+		this.contactsList.allowCreation(allow);
+		this.documentsList.setOwner(subPolicyId);	
+		this.documentsList.setOwnerType(BigBangConstants.EntityIds.INSURANCE_SUB_POLICY);
+		this.documentsList.allowCreation(allow);
 		this.insuredObjectsList.setOwner(subPolicyId);
 		this.exercisesList.setOwner(subPolicyId);
 		this.receiptList.setOwner(subPolicyId);

@@ -205,6 +205,8 @@ public class BigBangConstants {
 		public static class DASRequestProcess{
 
 			public static final String CANCEL_DAS_REQUEST = "27BE85A3-F216-49F2-A54B-A03000F2A27A";
+			public static final String RECEIVE_REPLY = "5217F6B9-7117-43CA-AA20-A03000F278C8";
+			public static final String REPEAT_DAS_REQUEST = "D9757AE7-7F2F-4A29-BF7F-A03000F2533D";
 			
 			
 			

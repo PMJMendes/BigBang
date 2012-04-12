@@ -61,6 +61,8 @@ public class ReceiptOperationsViewPresenter implements ViewPresenter {
 					present("HISTORY", parameters);
 				}else if(display.equalsIgnoreCase("signaturerequest")){
 					present("SIGNATURE_REQUEST", parameters);
+				}else if(display.equalsIgnoreCase("dasrequest")){
+					present("DAS_REQUEST", parameters);
 				}
 				else{
 					goToDefault();

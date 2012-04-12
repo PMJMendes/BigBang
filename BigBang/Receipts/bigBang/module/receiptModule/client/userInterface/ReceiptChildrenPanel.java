@@ -6,6 +6,7 @@ import bigBang.definitions.client.dataAccess.ReceiptDataBrokerClient;
 import bigBang.definitions.client.dataAccess.ReceiptProcessDataBroker;
 import bigBang.definitions.shared.BigBangConstants;
 import bigBang.definitions.shared.Receipt;
+import bigBang.library.client.PermissionChecker;
 import bigBang.library.client.dataAccess.DataBrokerManager;
 import bigBang.library.client.userInterface.ContactsList;
 import bigBang.library.client.userInterface.DocumentsList;
@@ -85,8 +86,14 @@ public class ReceiptChildrenPanel extends View{
 	public void setReceipt(Receipt receipt) {
 		this.receipt = receipt;
 		String receiptId = receipt == null ? null: receipt.id;
-		contactsList.setOwner(receiptId);
-		documentsList.setOwner(receiptId);
+		
+		boolean allow = receipt != null ? PermissionChecker.hasPermission(receipt, BigBangConstants.OperationIds.ReceiptProcess.UPDATE_RECEIPT) : false;
+		this.contactsList.setOwner(receiptId);
+		this.contactsList.setOwnerType(BigBangConstants.EntityIds.RECEIPT);
+		this.contactsList.allowCreation(allow);
+		this.documentsList.setOwner(receiptId);	
+		this.documentsList.setOwnerType(BigBangConstants.EntityIds.RECEIPT);
+		this.documentsList.allowCreation(allow);
 		subProcessesList.setOwner(receiptId);
 		historyList.setOwner(receiptId);
 	}

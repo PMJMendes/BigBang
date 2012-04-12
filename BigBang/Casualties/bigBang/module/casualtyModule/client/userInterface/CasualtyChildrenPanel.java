@@ -6,6 +6,7 @@ import bigBang.definitions.client.dataAccess.CasualtyDataBroker;
 import bigBang.definitions.client.dataAccess.CasualtyDataBrokerClient;
 import bigBang.definitions.shared.BigBangConstants;
 import bigBang.definitions.shared.Casualty;
+import bigBang.library.client.PermissionChecker;
 import bigBang.library.client.dataAccess.DataBrokerManager;
 import bigBang.library.client.userInterface.ContactsList;
 import bigBang.library.client.userInterface.DocumentsList;
@@ -48,8 +49,15 @@ public class CasualtyChildrenPanel extends View {
 	public void setCasualty(Casualty casualty){
 		this.casualty = casualty;
 		String casualtyId = casualty == null ? null : casualty.id;
+		
+		
+		boolean allow = casualty != null ? PermissionChecker.hasPermission(casualty, BigBangConstants.OperationIds.CasualtyProcess.UPDATE_CASUALTY) : false;
 		this.contactsList.setOwner(casualtyId);
-		this.documentsList.setOwner(casualtyId);
+		this.contactsList.setOwnerType(BigBangConstants.EntityIds.CASUALTY);
+		this.contactsList.allowCreation(allow);
+		this.documentsList.setOwner(casualtyId);	
+		this.documentsList.setOwnerType(BigBangConstants.EntityIds.CASUALTY);
+		this.documentsList.allowCreation(allow);
 		this.subProcessesList.setOwner(casualtyId);
 		this.historyList.setOwner(casualtyId);
 	}

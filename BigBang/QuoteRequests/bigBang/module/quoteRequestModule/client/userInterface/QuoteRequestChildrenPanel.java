@@ -2,7 +2,9 @@ package bigBang.module.quoteRequestModule.client.userInterface;
 
 import com.google.gwt.user.client.ui.StackPanel;
 
+import bigBang.definitions.shared.BigBangConstants;
 import bigBang.definitions.shared.QuoteRequest;
+import bigBang.library.client.PermissionChecker;
 import bigBang.library.client.userInterface.ContactsList;
 import bigBang.library.client.userInterface.DocumentsList;
 import bigBang.library.client.userInterface.HistoryList;
@@ -46,6 +48,13 @@ public class QuoteRequestChildrenPanel extends View {
 		this.owner = owner;
 		String ownerId = owner == null ? null : owner.id;
 		
+		boolean allow = owner != null ? PermissionChecker.hasPermission(owner, BigBangConstants.OperationIds.QuoteRequestProcess.UPDATE_QUOTE_REQUEST) : false;
+		this.contactsList.setOwner(ownerId);
+		this.contactsList.setOwnerType(BigBangConstants.EntityIds.QUOTE_REQUEST);
+		this.contactsList.allowCreation(allow);
+		this.documentsList.setOwner(ownerId);	
+		this.documentsList.setOwnerType(BigBangConstants.EntityIds.QUOTE_REQUEST);
+		this.documentsList.allowCreation(allow);
 		contactsList.setOwner(ownerId);
 		documentsList.setOwner(ownerId);
 		insuredObjectsList.setOwner(ownerId);
