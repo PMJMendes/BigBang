@@ -8,7 +8,6 @@ import Jewel.Engine.DataAccess.SQLServer;
 import Jewel.Petri.Objects.PNProcess;
 import Jewel.Petri.SysObjects.JewelPetriException;
 import Jewel.Petri.SysObjects.UndoableOperation;
-import Jewel.Petri.SysObjects.UndoableOperation.UndoSet;
 
 import com.premiumminds.BigBang.Jewel.Constants;
 import com.premiumminds.BigBang.Jewel.Data.CasualtyData;
