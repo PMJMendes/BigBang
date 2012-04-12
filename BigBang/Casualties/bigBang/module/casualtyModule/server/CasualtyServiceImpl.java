@@ -474,9 +474,9 @@ public class CasualtyServiceImpl
 			pstrBuffer.append((new Timestamp(ldtAux.getTimeInMillis())).toString().substring(0, 10)).append("'");
 		}
 
-		if ( lParam.caseStudy != null )
+		if ( (lParam.caseStudy != null) && lParam.caseStudy )
 		{
-			pstrBuffer.append(" AND [:Case Study] = ").append(lParam.caseStudy ? "1" : "0");
+			pstrBuffer.append(" AND [:Case Study] = 1");
 		}
 
 		if ( lParam.managerId != null )
