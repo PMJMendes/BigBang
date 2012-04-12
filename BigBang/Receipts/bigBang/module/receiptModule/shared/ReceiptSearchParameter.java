@@ -7,6 +7,8 @@ public class ReceiptSearchParameter
 {
 	private static final long serialVersionUID = 1L;
 
+	public String companyId;
+	public String mediatorId;
 	public String ownerId;
 	public String[] typeIds;
 	
