@@ -542,6 +542,12 @@ public class Constants
 	public static final UUID DocID_SignatureRequestLetter = UUID.fromString("7D054350-6B89-4742-91E5-A02A01105D11");
 	public static final UUID DocID_DASRequestLetter       = UUID.fromString("9F722D93-12BF-4D33-92A3-A0300100FA21");
 
+	// Report Types
+	public static final UUID RTypeID_Parameter   = UUID.fromString("EFF85260-CB13-4599-8EFD-A032010C4AED");
+	public static final UUID RTypeID_PrintSet    = UUID.fromString("F3B52F31-9C2F-4AD3-B566-A032010C5077");
+	public static final UUID RTypeID_Transaction = UUID.fromString("3108E23A-45C2-4F1C-983E-A032010C566E");
+	public static final UUID RTypeID_SubMenu     = UUID.fromString("7C398EAA-53D0-4DFB-B6B3-A032010C5CA8");
+
 	// FK Constants
 	public static final int FKCostCenter_In_UserDecoration = 2;
 	public static final int ZipCode_In_PostalCode = 0;
