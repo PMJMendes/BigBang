@@ -6,7 +6,9 @@ import bigBang.definitions.shared.Contact;
 import bigBang.definitions.shared.Document;
 import bigBang.definitions.shared.HistoryItemStub;
 import bigBang.definitions.shared.ProcessBase;
+import bigBang.library.client.HasSelectables;
 import bigBang.library.client.HasValueSelectables;
+import bigBang.library.client.ValueSelectable;
 import bigBang.library.client.event.ActionInvokedEvent;
 import bigBang.library.client.event.ActionInvokedEventHandler;
 import bigBang.library.client.event.SelectionChangedEvent;
@@ -75,7 +77,7 @@ public abstract class NegotiationView<T> extends View implements NegotiationView
 			@Override
 			public void onExternalRequest() {
 				fireAction(Action.EXTERNAL_REQUEST);
-				
+
 			}
 
 			@Override
@@ -100,9 +102,9 @@ public abstract class NegotiationView<T> extends View implements NegotiationView
 		ownerWrapper.setCellHeight(ownerForm, "100%");
 		mainWrapper.addWest(ownerWrapper, 665);
 
-		
+
 		SplitLayoutPanel childWrapper = new SplitLayoutPanel();
-		
+
 		contacts = new ContactsList();
 		documents = new DocumentsList();
 
@@ -114,7 +116,7 @@ public abstract class NegotiationView<T> extends View implements NegotiationView
 				}
 			}
 		});
-		
+
 		documents.addSelectionChangedEventHandler(new SelectionChangedEventHandler() {
 
 			@Override
@@ -125,7 +127,7 @@ public abstract class NegotiationView<T> extends View implements NegotiationView
 
 			}
 		});
-		
+
 		subProcessesList = new SubProcessesList();
 		historyList = new HistoryList();
 
@@ -137,28 +139,28 @@ public abstract class NegotiationView<T> extends View implements NegotiationView
 
 		stackWrapper.setHeight("100%");
 		stackWrapper.setWidth("100%");
-		
+
 		VerticalPanel negotiationWrapper = new VerticalPanel();
-		
+
 		negotiationWrapper.setSize("100%", "100%");
 		ListHeader negotiationHeader = new ListHeader("Negociação");
-		
+
 		negotiationWrapper.add(negotiationHeader);
 		negotiationHeader.setHeight("30px");
-		
+
 		VerticalPanel negotiationInnerWrapper = new VerticalPanel();
 		negotiationInnerWrapper.setSize("100%", "100%");
 		form = new NegotiationForm();
 		negotiationInnerWrapper.add(toolbar);
 		negotiationInnerWrapper.add(form);
 		negotiationInnerWrapper.setCellHeight(toolbar, "21px");
-		
+
 		childWrapper.setSize("100%", "100%");
-		
+
 		negotiationInnerWrapper.setCellHeight(form, "100%");
 		childWrapper.addEast(stackWrapper,260);
 		childWrapper.add(negotiationInnerWrapper);
-		
+
 		negotiationWrapper.add(childWrapper);
 		negotiationWrapper.setCellHeight(childWrapper, "100%");
 		mainWrapper.add(negotiationWrapper);
@@ -211,17 +213,17 @@ public abstract class NegotiationView<T> extends View implements NegotiationView
 	public void allowDelete(boolean b){
 		toolbar.allowDelete(b);
 	}
-	
+
 	@Override
 	public void allowCancelNegotiation(boolean b){
 		toolbar.allowCancelNegotiation(b);
 	}
-	
+
 	@Override
 	public void allowExternalRequest(boolean hasPermission) {
 		toolbar.allowExternalRequest(hasPermission);
 	}
-	
+
 	public abstract void setParentHeaderTitle(String title);
 
 	@Override
@@ -231,12 +233,12 @@ public abstract class NegotiationView<T> extends View implements NegotiationView
 		subProcessesList.setOwner(negotiationId);
 		historyList.setOwner(negotiationId);
 	}
-	
+
 	@Override
 	public HasValueSelectables<Contact> getContactList() {
 		return contacts;
 	}
-	
+
 	@Override
 	public HasValueSelectables<Document> getDocumentList() {
 		return documents;
@@ -245,20 +247,43 @@ public abstract class NegotiationView<T> extends View implements NegotiationView
 	public void allowGrant(boolean hasPermission) {
 		toolbar.allowGrant(hasPermission);
 	}
-	
+
 	@Override
 	public void allowResponse(boolean hasPermission) {
 		toolbar.allowResponse(hasPermission);
 	};
-	
+
 	@Override
 	public HasValueSelectables<BigBangProcess> getSubProcessList() {
 		return this.subProcessesList;
 	}
-	
+
 	@Override
 	public HasValueSelectables<HistoryItemStub> getHistoryList() {
 		return this.historyList;
 	}
+	@Override
+	public HasSelectables<ValueSelectable<Document>> getDocumentsList() {
+		return documents;
+	}
+	@Override
+	public HasSelectables<ValueSelectable<Contact>> getContactsList() {
+		return contacts;
+	}
+	@Override
+	public void enableDocumentCreation(boolean allow) {
+		documents.allowCreation(allow);
+		
+	}
+	@Override
+	public void enableContactCreation(boolean allow) {
+		contacts.allowCreation(allow);	
+	}
 	
+	@Override
+	public void setOwnerTypeId(String ownerTypeId){
+		contacts.setOwnerType(ownerTypeId);
+		documents.setOwnerType(ownerTypeId);
+	}
+
 }

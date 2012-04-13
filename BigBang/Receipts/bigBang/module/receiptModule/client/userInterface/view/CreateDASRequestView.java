@@ -1,7 +1,6 @@
 package bigBang.module.receiptModule.client.userInterface.view;
 
 import com.google.gwt.user.client.ui.VerticalPanel;
-import com.google.gwt.user.client.ui.Widget;
 
 import bigBang.definitions.shared.DASRequest;
 import bigBang.library.client.HasEditableValue;

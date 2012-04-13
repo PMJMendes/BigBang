@@ -81,6 +81,7 @@ public class DocumentsList extends FilterableList<Document> implements Documents
 		NavigationHistoryItem navItem = NavigationHistoryManager.getInstance().getCurrentState();
 		navItem.setParameter("show", "documentmanagement");
 		navItem.setParameter("ownerid", ownerId );
+		navItem.removeParameter("documentId");
 		navItem.setParameter("ownertypeid", ownerTypeId);
 		navItem.setParameter("editpermission", createNew.isEnabled() ? "1" : "0");
 		NavigationHistoryManager.getInstance().go(navItem);
@@ -182,8 +183,8 @@ public class DocumentsList extends FilterableList<Document> implements Documents
 		return this.documentsDataVersion;
 	}
 
-	public void setOwnerType(String client) {
-		ownerTypeId = client;
+	public void setOwnerType(String ownerType) {
+		ownerTypeId = ownerType;
 	}
 	
 	public void allowCreation(boolean hasPermission) {

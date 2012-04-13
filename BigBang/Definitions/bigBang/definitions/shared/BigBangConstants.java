@@ -171,6 +171,7 @@ public class BigBangConstants {
 			public static final String CREATE_SIGNATURE_REQUEST = "563A630A-276A-48E8-96D3-A01300C9AF24";
 			public static final String SET_DAS_NOT_NECESSARY = "6E8D98B8-4901-4705-9C58-A01300CBA222";
 			public static final String CREATE_DAS_REQUEST = "4CAD549D-2903-4A42-9767-A01300C98B51";
+			public static final String NOT_PAID_INDICATION = "3323CA57-827F-4EE5-94B7-A01300CDD793";
 			
 			
 			public static class PaymentType {

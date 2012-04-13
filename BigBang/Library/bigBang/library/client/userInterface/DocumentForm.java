@@ -102,7 +102,10 @@ public abstract class DocumentForm extends FormView<Document>{
 
 		@Override
 		public DocInfo getValue() {
-			return super.getValue();
+			DocInfo docInfo = new DocInfo();
+			docInfo.name = info.getValue();
+			docInfo.value = infoValue.getValue();
+			return docInfo;
 		}
 
 		public TextBoxFormField getInfo() {
@@ -244,6 +247,7 @@ public abstract class DocumentForm extends FormView<Document>{
 
 		removeFile = new Button("Remover/Substituir");
 		removeFile.addClickHandler(handler);
+		removeFile.setVisible(false);
 
 		filename = new FilenameTextBoxFormField("");
 		filename.setVisible(false);
@@ -367,7 +371,7 @@ public abstract class DocumentForm extends FormView<Document>{
 
 	@Override
 	public Document getInfo() {
-		Document newDoc = value;
+		Document newDoc = value == null ? new Document() : value;
 
 		newDoc.name = name.getValue();
 		newDoc.docTypeId = docType.getValue();
@@ -419,7 +423,7 @@ public abstract class DocumentForm extends FormView<Document>{
 		filename.setVisible(b);
 		note.setReadOnly(b);
 		mimeImageFileName.setVisible(b);
-		
+
 		if(b){
 			notePanel.setVisible(false);
 			filename.setWidth("300px");
@@ -506,6 +510,7 @@ public abstract class DocumentForm extends FormView<Document>{
 			removeFile.setEnabled(!readOnly);
 			docuShareFileButton.setEnabled(!readOnly);
 			fileButton.setEnabled(!readOnly);
+
 			for(int i = 0; i < details.size()-1; i++){
 				((DocumentDetailEntry) details.get(i)).info.setReadOnly(readOnly);
 				((DocumentDetailEntry) details.get(i)).infoValue.setReadOnly(readOnly);
@@ -513,19 +518,20 @@ public abstract class DocumentForm extends FormView<Document>{
 			}
 			details.get(details.size()-1).setVisible(!readOnly);
 		}
+
 		super.setReadOnly(readOnly);
 	}
 
 	protected abstract void onDownloadFile();
 
 	protected void onPressedRemoveFile(){
-		
+
 		isFile(false);
 		fileStorageId = null;
 		filename.setValue("");
 		mimeType = "";
 		docushareHandle = null;
-		
+
 	}
 
 	protected abstract void onSubmitComplete(String results);
@@ -560,7 +566,7 @@ public abstract class DocumentForm extends FormView<Document>{
 
 	public void setMimeType(String mimeType2) {
 		mimeType = mimeType2;
-		
+
 	}
 
 

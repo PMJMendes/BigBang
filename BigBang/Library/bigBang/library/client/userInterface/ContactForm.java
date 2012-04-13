@@ -1,4 +1,4 @@
-package bigBang.library.client.userInterface.view;
+package bigBang.library.client.userInterface;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -19,12 +19,8 @@ import bigBang.definitions.shared.Address;
 import bigBang.definitions.shared.Contact;
 import bigBang.definitions.shared.ContactInfo;
 import bigBang.library.client.FormField;
-import bigBang.library.client.userInterface.AddressFormField;
-import bigBang.library.client.userInterface.ExpandableListBoxFormField;
-import bigBang.library.client.userInterface.List;
-import bigBang.library.client.userInterface.ListEntry;
-import bigBang.library.client.userInterface.ListHeader;
-import bigBang.library.client.userInterface.TextBoxFormField;
+import bigBang.library.client.userInterface.view.FormView;
+import bigBang.library.client.userInterface.view.FormViewSection;
 import bigBang.library.shared.ModuleConstants;
 
 public class ContactForm extends FormView<Contact> {

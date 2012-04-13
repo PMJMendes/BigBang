@@ -80,6 +80,7 @@ public class ContactsList extends FilterableList<Contact> implements ContactsBro
 		navItem.setParameter("show", "contactmanagement");
 		navItem.setParameter("ownerid", ownerId);
 		navItem.setParameter("ownertypeid", ownerTypeId);
+		navItem.removeParameter("contactid");
 		navItem.setParameter("editpermission", createNew.isEnabled() ? "1" : "0");
 		NavigationHistoryManager.getInstance().go(navItem);
 	}

@@ -228,6 +228,47 @@ public class QuoteRequestSearchOperationViewPresenter implements ViewPresenter {
 				}
 			}
 		};
+		
+		view.getContactsList().addSelectionChangedEventHandler(new SelectionChangedEventHandler() {
+
+			@Override
+			public void onSelectionChanged(SelectionChangedEvent event) {
+				@SuppressWarnings("unchecked")
+				ValueSelectable<Contact> selected = (ValueSelectable<Contact>) event.getFirstSelected();
+				Contact item = selected == null ? null : selected.getValue();
+				String itemId = item == null ? null : item.id;
+				itemId = itemId == null ? new String() : itemId;
+
+				if(!itemId.isEmpty()){
+					NavigationHistoryItem navItem = NavigationHistoryManager.getInstance().getCurrentState();
+					navItem.setParameter("show", "contactmanagement");
+					navItem.setParameter("ownerid", view.getForm().getValue().id);
+					navItem.setParameter("contactid", itemId);
+					navItem.setParameter("ownertypeid", BigBangConstants.EntityIds.CLIENT);
+					NavigationHistoryManager.getInstance().go(navItem);
+				}
+			}
+		});
+		view.getDocumentsList().addSelectionChangedEventHandler(new SelectionChangedEventHandler() {
+
+			@Override
+			public void onSelectionChanged(SelectionChangedEvent event) {
+				@SuppressWarnings("unchecked")
+				ValueSelectable<Document> selected = (ValueSelectable<Document>) event.getFirstSelected();
+				Document item = selected == null ? null : selected.getValue();
+				String itemId = item == null ? null : item.id;
+				itemId = itemId == null ? new String() : itemId;
+
+				if(!itemId.isEmpty()){
+					NavigationHistoryItem navItem = NavigationHistoryManager.getInstance().getCurrentState();
+					navItem.setParameter("show", "documentmanagement");
+					navItem.setParameter("ownerid", item.ownerId);
+					navItem.setParameter("documentid", itemId);
+					navItem.setParameter("ownertypeid", BigBangConstants.EntityIds.CLIENT);
+					NavigationHistoryManager.getInstance().go(navItem);
+				}
+			}
+		});
 
 		view.getObjectsList().addSelectionChangedEventHandler(selectionChangedHandler);
 		view.getSubProcessesList().addSelectionChangedEventHandler(selectionChangedHandler);

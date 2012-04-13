@@ -788,5 +788,31 @@ public class ReceiptDataBrokerImpl extends DataBroker<Receipt> implements Receip
 			}
 		});
 	}
+
+	@Override
+	public void indicateNotPaid(String receiptId,
+			final ResponseHandler<Receipt> handler) {
+		service.markNotPayed(receiptId, new BigBangAsyncCallback<Receipt>() {
+			@Override
+			public void onResponseSuccess(Receipt result) {
+				cache.add(result.id, result);
+				incrementDataVersion();
+				for(DataBrokerClient<Receipt> bc : getClients()){
+					((ReceiptDataBrokerClient) bc).updateReceipt(result);
+					((ReceiptDataBrokerClient) bc).setDataVersionNumber(BigBangConstants.EntityIds.RECEIPT, getCurrentDataVersion());
+				}
+				handler.onResponse(result);
+			}
+
+			@Override
+			public void onResponseFailure(Throwable caught) {
+				handler.onError(new String[]{
+						new String("Could not set receipt as not paid")
+				});
+				super.onResponseFailure(caught);
+			}
+		});
+		
+	}
 }
 

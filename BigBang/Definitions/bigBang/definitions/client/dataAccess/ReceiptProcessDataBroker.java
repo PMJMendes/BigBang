@@ -78,4 +78,7 @@ public interface ReceiptProcessDataBroker extends DataBrokerInterface<Receipt> {
 	public void createDASRequest(DASRequest request,
 			ResponseHandler<Receipt> responseHandler);
 	
+	public void indicateNotPaid(String receiptId, 
+			ResponseHandler<Receipt> handler);
+	
 }

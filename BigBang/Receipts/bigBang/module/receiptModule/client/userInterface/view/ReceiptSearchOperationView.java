@@ -113,7 +113,7 @@ public class ReceiptSearchOperationView extends View implements ReceiptSearchOpe
 
 			@Override
 			public void onLackOfPaymentFlag() {
-				// TODO Auto-generated method stub
+				actionHandler.onActionInvoked(new ActionInvokedEvent<ReceiptSearchOperationViewPresenter.Action>(Action.NOT_PAYED_INDICATION));
 
 			}
 
@@ -368,6 +368,11 @@ public class ReceiptSearchOperationView extends View implements ReceiptSearchOpe
 	@Override
 	public HasValueSelectables<HistoryItemStub> getHistoryList() {
 		return this.childrenPanel.historyList;
+	}
+
+	@Override
+	public void allowSetNotPaid(boolean hasPermission) {
+		operationsToolbar.allowSetNotPaid(hasPermission);
 	}
 
 }

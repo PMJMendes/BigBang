@@ -137,6 +137,12 @@ public class QuoteRequestSectionViewPresenter implements ViewPresenter {
 				}else if(show.equalsIgnoreCase("deleterequest")){
 					present("QUOTE_REQUEST_DELETE", parameters);
 					view.showOverlayViewContainer(true);
+				}else if(show.equalsIgnoreCase("contactmanagement")){
+					present("CONTACT", parameters);
+					view.showOverlayViewContainer(true);
+				}else if(show.equalsIgnoreCase("documentmanagement")){
+					present("DOCUMENT", parameters);
+					view.showOverlayViewContainer(true);
 				}
 			}
 			

@@ -41,6 +41,7 @@ public class DocumentViewPresenter implements ViewPresenter, DocumentsBrokerClie
 	private String ownerId;
 	private String documentId;
 	private boolean newDocument;
+	private String ownerTypeId;
 
 	public static enum Action {
 		SAVE,
@@ -101,7 +102,7 @@ public class DocumentViewPresenter implements ViewPresenter, DocumentsBrokerClie
 		broker.unregisterClient(this);
 		ownerId = parameterHolder.getParameter("ownerid");
 		documentId = parameterHolder.getParameter("documentid");
-		parameterHolder.getParameter("ownertypeid");
+		ownerTypeId = parameterHolder.getParameter("ownertypeid");
 		boolean hasPermissions = parameterHolder.getParameter("editpermission") != null;
 
 		if(ownerId == null){
@@ -115,7 +116,12 @@ public class DocumentViewPresenter implements ViewPresenter, DocumentsBrokerClie
 		if(documentId == null){
 
 			if(hasPermissions){
-				view.getForm().setValue(null);
+				Document doc = new Document();
+				doc.ownerId = ownerId;
+				doc.ownerTypeId = ownerTypeId;
+				view.getForm().setValue(doc);
+				view.setToolBarSaveMode(true);
+				view.setEditable(true);
 				newDocument = true;
 			}
 			else{

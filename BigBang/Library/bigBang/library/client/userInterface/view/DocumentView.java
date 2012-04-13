@@ -110,7 +110,6 @@ public class DocumentView extends View implements DocumentViewPresenter.Display{
 
 	@Override
 	public void clear() {
-
 		form.clearInfo();
 	}
 
@@ -170,6 +169,7 @@ public class DocumentView extends View implements DocumentViewPresenter.Display{
 	public DocuShareItem getDocuShareItem() {
 		return docuShareItem;
 	}
+
 
 
 }

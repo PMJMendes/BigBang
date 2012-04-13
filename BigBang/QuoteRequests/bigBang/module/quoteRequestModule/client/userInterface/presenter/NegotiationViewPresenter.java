@@ -15,6 +15,7 @@ import bigBang.definitions.shared.ProcessBase;
 import bigBang.library.client.EventBus;
 import bigBang.library.client.HasEditableValue;
 import bigBang.library.client.HasParameters;
+import bigBang.library.client.HasSelectables;
 import bigBang.library.client.HasValueSelectables;
 import bigBang.library.client.Notification;
 import bigBang.library.client.PermissionChecker;
@@ -82,6 +83,16 @@ public abstract class NegotiationViewPresenter implements ViewPresenter{
 		void allowGrant(boolean hasPermission);
 		
 		void allowResponse(boolean hasPermission);
+
+		HasSelectables<ValueSelectable<Document>> getDocumentsList();
+
+		HasSelectables<ValueSelectable<Contact>> getContactsList();
+
+		void enableContactCreation(boolean allow);
+
+		void enableDocumentCreation(boolean allow);
+
+		void setOwnerTypeId(String negotiation);
 
 	}
 
@@ -216,6 +227,47 @@ public abstract class NegotiationViewPresenter implements ViewPresenter{
 				}
 			}
 		};
+		view.getContactsList().addSelectionChangedEventHandler(new SelectionChangedEventHandler() {
+
+			@Override
+			public void onSelectionChanged(SelectionChangedEvent event) {
+				@SuppressWarnings("unchecked")
+				ValueSelectable<Contact> selected = (ValueSelectable<Contact>) event.getFirstSelected();
+				Contact item = selected == null ? null : selected.getValue();
+				String itemId = item == null ? null : item.id;
+				itemId = itemId == null ? new String() : itemId;
+
+				if(!itemId.isEmpty()){
+					NavigationHistoryItem navItem = NavigationHistoryManager.getInstance().getCurrentState();
+					navItem.setParameter("show", "contactmanagement");
+					navItem.setParameter("ownerid", view.getForm().getValue().id);
+					navItem.setParameter("contactid", itemId);
+					navItem.setParameter("ownertypeid", BigBangConstants.EntityIds.CLIENT);
+					NavigationHistoryManager.getInstance().go(navItem);
+				}
+			}
+		});
+		view.getDocumentsList().addSelectionChangedEventHandler(new SelectionChangedEventHandler() {
+
+			@Override
+			public void onSelectionChanged(SelectionChangedEvent event) {
+				@SuppressWarnings("unchecked")
+				ValueSelectable<Document> selected = (ValueSelectable<Document>) event.getFirstSelected();
+				Document item = selected == null ? null : selected.getValue();
+				String itemId = item == null ? null : item.id;
+				itemId = itemId == null ? new String() : itemId;
+
+				if(!itemId.isEmpty()){
+					NavigationHistoryItem navItem = NavigationHistoryManager.getInstance().getCurrentState();
+					navItem.setParameter("show", "documentmanagement");
+					navItem.setParameter("ownerid", item.ownerId);
+					navItem.setParameter("documentid", itemId);
+					navItem.setParameter("ownertypeid", BigBangConstants.EntityIds.CLIENT);
+					NavigationHistoryManager.getInstance().go(navItem);
+				}
+			}
+		});
+		
 		view.getHistoryList().addSelectionChangedEventHandler(selectionChangedHandler);
 		view.getSubProcessList().addSelectionChangedEventHandler(selectionChangedHandler);
 		
@@ -245,6 +297,7 @@ public abstract class NegotiationViewPresenter implements ViewPresenter{
 	public void setParameters(HasParameters parameterHolder) {
 
 		negotiationId = parameterHolder.getParameter("negotiationid");
+		view.setOwnerTypeId(BigBangConstants.EntityIds.NEGOTIATION);
 
 		if(negotiationId == null){
 			EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não é possível mostrar a negociação."), TYPE.ALERT_NOTIFICATION));
@@ -282,6 +335,8 @@ public abstract class NegotiationViewPresenter implements ViewPresenter{
 					view.allowExternalRequest(PermissionChecker.hasPermission(response, BigBangConstants.OperationIds.NegotiationProcess.EXTERNAL_REQUEST));
 					view.allowGrant(PermissionChecker.hasPermission(response, BigBangConstants.OperationIds.NegotiationProcess.GRANT_NEGOTIATION));
 					view.allowResponse(PermissionChecker.hasPermission(response, BigBangConstants.OperationIds.NegotiationProcess.RECEIVE_QUOTE));
+					view.enableDocumentCreation(PermissionChecker.hasPermission(response, BigBangConstants.OperationIds.NegotiationProcess.UPDATE_NEGOTIATION));
+					view.enableContactCreation(PermissionChecker.hasPermission(response, BigBangConstants.OperationIds.NegotiationProcess.UPDATE_NEGOTIATION));
 				}
 
 				@Override
