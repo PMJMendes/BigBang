@@ -135,6 +135,7 @@ public class ReceiptSearchPanel extends SearchPanel<ReceiptStub> implements Rece
 	}
 	
 	protected static enum Filters {
+		AGENCY,
 		TYPES,
 		EMITED_FROM,
 		EMITED_TO,
@@ -169,6 +170,7 @@ public class ReceiptSearchPanel extends SearchPanel<ReceiptStub> implements Rece
 		sortOptions.put(ReceiptSortParameter.SortableField.PAYMENT_DATE, "Data de Pagamento");
 		
 		filtersPanel = new FiltersPanel(sortOptions);
+		filtersPanel.addTypifiedListField(Filters.AGENCY, BigBangConstants.EntityIds.INSURANCE_AGENCY, "Seguradora");
 		filtersPanel.addTypifiedListField(Filters.TYPES, ModuleConstants.TypifiedListIds.RECEIPT_TYPE, "Tipos");
 		filtersPanel.addDateField(Filters.EMITED_FROM, "Emitido de");
 		filtersPanel.addDateField(Filters.EMITED_TO, "Até");
@@ -200,11 +202,12 @@ public class ReceiptSearchPanel extends SearchPanel<ReceiptStub> implements Rece
 		ReceiptSearchParameter parameter = new ReceiptSearchParameter();
 		parameter.freeText = this.getFreeText();
 		String type = (String) filtersPanel.getFilterValue(Filters.TYPES);
+		parameter.companyId = (String) filtersPanel.getFilterValue(Filters.AGENCY);
 		parameter.typeIds = type == null ? new String[0] : new String[]{type};
 		parameter.emitedFrom = (String) filtersPanel.getFilterValue(Filters.EMITED_FROM);
 		parameter.emitedTo = (String) filtersPanel.getFilterValue(Filters.EMITED_TO);
 		parameter.maturityFrom = (String) filtersPanel.getFilterValue(Filters.MATURITY_FROM);
-		parameter.maturityTo = (String) filtersPanel.getFilterValue(Filters.EMITED_TO);
+		parameter.maturityTo = (String) filtersPanel.getFilterValue(Filters.MATURITY_TO);
 		parameter.paymentFrom = (String) filtersPanel.getFilterValue(Filters.PAYMENT_FROM);
 		parameter.paymentTo = (String) filtersPanel.getFilterValue(Filters.PAYMENT_TO);
 		parameter.categoryId = (String) filtersPanel.getFilterValue(Filters.CATEGORY);

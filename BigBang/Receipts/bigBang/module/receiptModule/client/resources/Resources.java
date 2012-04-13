@@ -8,4 +8,19 @@ public interface Resources extends ClientBundle {
 	@Source("images/searchIcon1.png")
 	ImageResource searchIcon();
 
+	@Source("images/managerIcon.png")
+	ImageResource managerIcon();
+	
+	@Source("images/receipt.png")
+	ImageResource massCreationIcon();
+	
+	@Source("images/payment.png")
+	ImageResource paymentIcon();
+	
+	@Source("images/sendReceipt.png")
+	ImageResource sendReceiptIcon();
+	
+	@Source("images/accountability.png")
+	ImageResource accountabilityIcon();
+	
 }

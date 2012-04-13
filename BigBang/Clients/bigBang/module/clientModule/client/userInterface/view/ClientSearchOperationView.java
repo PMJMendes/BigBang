@@ -3,6 +3,7 @@ package bigBang.module.clientModule.client.userInterface.view;
 import org.gwt.mosaic.ui.client.ToolButton;
 
 import bigBang.definitions.shared.BigBangProcess;
+import bigBang.definitions.shared.CasualtyStub;
 import bigBang.definitions.shared.Client;
 import bigBang.definitions.shared.ClientStub;
 import bigBang.definitions.shared.Contact;
@@ -328,6 +329,11 @@ public class ClientSearchOperationView extends View implements ClientSearchOpera
 	@Override
 	public HasValueSelectables<QuoteRequestStub> getQuoteRequestList() {
 		return this.childrenPanel.quoteRequestsList;
+	}
+
+	@Override
+	public HasValueSelectables<CasualtyStub> getCasualtyList() {
+		return this.childrenPanel.casualtiesList;
 	}
 	
 	/*## CHILDREN LISTS END ##*/

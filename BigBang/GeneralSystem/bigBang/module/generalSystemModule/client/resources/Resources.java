@@ -25,5 +25,8 @@ public interface Resources extends ClientBundle {
 	
 	@Source("images/taxesIcon1.png")
 	ImageResource taxesIcon();
+	
+	@Source("images/undoIcon.png")
+	ImageResource historyIcon();
 
 }

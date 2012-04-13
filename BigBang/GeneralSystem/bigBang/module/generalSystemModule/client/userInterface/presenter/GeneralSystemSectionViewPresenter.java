@@ -139,20 +139,28 @@ public class GeneralSystemSectionViewPresenter implements ViewPresenter {
 						view.selectOperation(SectionOperation.HISTORY);
 						present("HISTORY", parameters);
 					}else if(display.equalsIgnoreCase("user")){
+						view.selectOperation(SectionOperation.USER);
 						present("GENERAL_SYSTEM_USER_MANAGEMENT", parameters);
 					}else if(display.equalsIgnoreCase("costcenter")){
+						view.selectOperation(SectionOperation.COST_CENTER);
 						present("GENERAL_SYSTEM_COST_CENTER_MANAGEMENT", parameters);
 					}else if(display.equalsIgnoreCase("clientgroup")){
+						view.selectOperation(SectionOperation.GROUP);
 						present("GENERAL_SYSTEM_CLIENT_GROUP_MANAGEMENT", parameters);
 					}else if(display.equalsIgnoreCase("coverage")){
+						view.selectOperation(SectionOperation.COVERAGE);
 						present("GENERAL_SYSTEM_COVERAGE_MANAGEMENT", parameters);
 					}else if(display.equalsIgnoreCase("insuranceagency")){
+						view.selectOperation(SectionOperation.AGENCY);
 						present("GENERAL_SYSTEM_INSURANCE_AGENCY_MANAGEMENT", parameters);
 					}else if(display.equalsIgnoreCase("mediator")){
+						view.selectOperation(SectionOperation.MEDIATOR);
 						present("GENERAL_SYSTEM_MEDIATOR_MANAGEMENT", parameters);
 					}else if(display.equalsIgnoreCase("tax")){
+						view.selectOperation(SectionOperation.TAX);
 						present("GENERAL_SYSTEM_TAX_MANAGEMENT", parameters);
 					}else if(display.equalsIgnoreCase("user")){
+						view.selectOperation(SectionOperation.USER);
 						present("GENERAL_SYSTEM_USER_MANAGEMENT", parameters);
 					}else{
 						goToDefault();

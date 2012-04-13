@@ -19,6 +19,7 @@ public class ClientChildrenPanel extends View  {
 	public DocumentsList documentsList;
 	public ClientPoliciesList insurancePoliciesList;
 	public ClientQuoteRequestsList quoteRequestsList;
+	public ClientCasualtyList casualtiesList;
 	public HistoryList historyList;
 	public SubProcessesList subProcessesList;
 
@@ -31,6 +32,7 @@ public class ClientChildrenPanel extends View  {
 		documentsList = new DocumentsList();
 		insurancePoliciesList = new ClientPoliciesList();
 		quoteRequestsList = new ClientQuoteRequestsList();
+		casualtiesList = new ClientCasualtyList();
 		historyList = new HistoryList();
 		subProcessesList = new SubProcessesList();
 
@@ -38,6 +40,7 @@ public class ClientChildrenPanel extends View  {
 		wrapper.add(this.documentsList, "Documentos");
 		wrapper.add(this.insurancePoliciesList, "Apólices");
 		wrapper.add(this.quoteRequestsList, "Consultas de Mercado");
+		wrapper.add(this.casualtiesList, "Sinistros");
 		wrapper.add(this.subProcessesList, "Sub-Processos");
 		wrapper.add(this.historyList, "Histórico");
 	}
@@ -65,6 +68,7 @@ public class ClientChildrenPanel extends View  {
 		this.documentsList.allowCreation(allow);
 		this.insurancePoliciesList.setOwner(clientId);	
 		this.quoteRequestsList.setOwner(clientId);
+		this.casualtiesList.setOwner(clientId);
 		this.subProcessesList.setOwner(clientId);
 		this.historyList.setOwner(clientId);
 	}

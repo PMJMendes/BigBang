@@ -146,6 +146,12 @@ public class CasualtySectionViewPresenter implements ViewPresenter {
 				}else if(show.equalsIgnoreCase("documentmanagement")){
 					present("DOCUMENT", parameters);
 					view.showOverlayViewContainer(true);
+				}else if(show.equalsIgnoreCase("delete")){
+					present("CASUALTY_DELETE", parameters);
+					view.showOverlayViewContainer(true);
+				}else if(show.equalsIgnoreCase("close")){
+					present("CASUALTY_CLOSE", parameters);
+					view.showOverlayViewContainer(true);
 				}
 			}
 

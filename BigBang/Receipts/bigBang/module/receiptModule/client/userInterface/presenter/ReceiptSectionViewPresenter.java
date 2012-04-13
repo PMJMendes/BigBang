@@ -137,7 +137,7 @@ public class ReceiptSectionViewPresenter implements ViewPresenter {
 						view.selectOperation(SectionOperation.OPERATIONS);
 						present("RECEIPT_OPERATIONS", parameters);
 					}else if(display.equalsIgnoreCase("serialreceiptcreation")){
-						view.selectOperation(SectionOperation.OPERATIONS);
+						view.selectOperation(SectionOperation.SERIAL_RECEIPT_CREATION);
 						present("SERIAL_RECEIPT_CREATION", parameters);
 					}else if(display.equalsIgnoreCase("serialmarkforpayment")){
 						view.selectOperation(SectionOperation.SERIAL_RECEIPT_CREATION);

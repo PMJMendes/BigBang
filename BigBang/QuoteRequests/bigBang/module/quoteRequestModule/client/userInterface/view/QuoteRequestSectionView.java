@@ -2,6 +2,7 @@ package bigBang.module.quoteRequestModule.client.userInterface.view;
 
 import org.gwt.mosaic.ui.client.MessageBox;
 
+import bigBang.module.quoteRequestModule.client.resources.Resources;
 import bigBang.module.quoteRequestModule.client.userInterface.presenter.QuoteRequestSectionViewPresenter;
 import bigBang.module.quoteRequestModule.client.userInterface.presenter.QuoteRequestSectionViewPresenter.Action;
 import bigBang.module.quoteRequestModule.client.userInterface.presenter.QuoteRequestSectionViewPresenter.SectionOperation;
@@ -14,9 +15,10 @@ import bigBang.library.client.userInterface.view.PopupPanel;
 import bigBang.library.client.userInterface.view.View;
 
 
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
-import com.google.gwt.user.client.ui.AbstractImagePrototype;
+import com.google.gwt.resources.client.ImageResource;
 import com.google.gwt.user.client.ui.HasWidgets;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
@@ -61,13 +63,20 @@ public class QuoteRequestSectionView extends View implements QuoteRequestSection
 	}
 
 	public void initializeDock() {
-		addDockItem("Pesquisa", null, SectionOperation.OPERATIONS);
+		Resources r = GWT.create(Resources.class);
+		
+		addDockItem("Pesquisa", r.searchIcon(), SectionOperation.OPERATIONS);
 	}
 
-	protected void addDockItem(String text, AbstractImagePrototype icon, final QuoteRequestSectionViewPresenter.SectionOperation action){
-		if(icon == null)
-			icon = MessageBox.MESSAGEBOX_IMAGES.dialogInformation();
-		DockItem item = new DockItem(text, icon, action);
+	protected void addDockItem(String text, ImageResource icon, final QuoteRequestSectionViewPresenter.SectionOperation action){
+		DockItem item = null;
+
+		if(icon == null){
+			item = new DockItem(text, MessageBox.MESSAGEBOX_IMAGES.dialogInformation(), action);
+		}else{
+			item = new DockItem(text, icon, action);
+		}
+
 		item.setTitle(text);
 		this.operationDock.addItem(item);
 	}

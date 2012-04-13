@@ -129,7 +129,7 @@ public class QuoteRequestSearchPanel extends SearchPanel<QuoteRequestStub> imple
 		filtersPanel.addTypifiedListField(Filters.CATEGORY, BigBangConstants.EntityIds.CATEGORY, "Categoria");
 		filtersPanel.addTypifiedListField(Filters.LINE, BigBangConstants.EntityIds.LINE, "Ramo", Filters.CATEGORY);
 		filtersPanel.addTypifiedListField(Filters.SUBLINE, BigBangConstants.EntityIds.SUB_LINE, "Modalidade", Filters.LINE);
-		filtersPanel.addCheckBoxField(Filters.CASE_STUDY, "Case Study");
+		filtersPanel.addCheckBoxField(Filters.CASE_STUDY, "Apenas Case Study");
 
 		filtersPanel.getApplyButton().addClickHandler(new ClickHandler() {
 

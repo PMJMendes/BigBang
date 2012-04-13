@@ -13,12 +13,6 @@ public interface Resources extends ClientBundle {
 	@Source("images/clientManagerIcon1.png")
 	ImageResource clientManagerIcon();
 	
-	@Source("images/clientGroupIcon1.png")
-	ImageResource clientGroupIcon();
-	
-	@Source("images/mergeIcon1.png")
-	ImageResource mergeIcon();
-	
 	@Source("images/verticalColumnBackground1.png")
 	@ImageOptions(repeatStyle=RepeatStyle.Vertical)
 	ImageResource verticalColumnBackground1();

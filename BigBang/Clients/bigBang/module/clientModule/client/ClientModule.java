@@ -13,6 +13,7 @@ import bigBang.module.clientModule.client.userInterface.presenter.ClientMergeVie
 import bigBang.module.clientModule.client.userInterface.presenter.ClientOperationsViewPresenter;
 import bigBang.module.clientModule.client.userInterface.presenter.ClientSearchOperationViewPresenter;
 import bigBang.module.clientModule.client.userInterface.presenter.ClientSectionViewPresenter;
+import bigBang.module.clientModule.client.userInterface.presenter.CreateCasualtyViewPresenter;
 import bigBang.module.clientModule.client.userInterface.presenter.CreateInsurancePolicyViewPresenter;
 import bigBang.module.clientModule.client.userInterface.presenter.CreateQuoteRequestViewPresenter;
 import bigBang.module.clientModule.client.userInterface.presenter.SingleClientManagerTransferViewPresenter;
@@ -23,6 +24,7 @@ import bigBang.module.clientModule.client.userInterface.view.ClientMergeView;
 import bigBang.module.clientModule.client.userInterface.view.ClientOperationsView;
 import bigBang.module.clientModule.client.userInterface.view.ClientSearchOperationView;
 import bigBang.module.clientModule.client.userInterface.view.ClientSectionView;
+import bigBang.module.clientModule.client.userInterface.view.CreateCasualtyView;
 import bigBang.module.clientModule.client.userInterface.view.CreateInsurancePolicyView;
 import bigBang.module.clientModule.client.userInterface.view.CreateQuoteRequestView;
 import bigBang.module.clientModule.client.userInterface.view.SingleClientManagerTransferView;
@@ -134,6 +136,15 @@ public class ClientModule implements Module {
 			public ViewPresenter getInstance() {
 				CreateQuoteRequestView view = (CreateQuoteRequestView) GWT.create(CreateQuoteRequestView.class);
 				ViewPresenter presenter = new CreateQuoteRequestViewPresenter(view);
+				return presenter;
+			}
+		});
+		ViewPresenterFactory.getInstance().registerViewPresenterInstantiator("CLIENT_CREATE_CASUALTY", new ViewPresenterInstantiator() {
+
+			@Override
+			public ViewPresenter getInstance() {
+				CreateCasualtyView view = (CreateCasualtyView) GWT.create(CreateCasualtyView.class);
+				CreateCasualtyViewPresenter presenter = new CreateCasualtyViewPresenter(view);
 				return presenter;
 			}
 		});

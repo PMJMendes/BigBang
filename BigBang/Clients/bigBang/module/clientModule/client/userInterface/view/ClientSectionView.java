@@ -8,13 +8,15 @@ import bigBang.library.client.userInterface.DockItem;
 import bigBang.library.client.userInterface.DockPanel;
 import bigBang.library.client.userInterface.view.PopupPanel;
 import bigBang.library.client.userInterface.view.View;
+import bigBang.module.clientModule.client.resources.Resources;
 import bigBang.module.clientModule.client.userInterface.presenter.ClientSectionViewPresenter;
 import bigBang.module.clientModule.client.userInterface.presenter.ClientSectionViewPresenter.Action;
 import bigBang.module.clientModule.client.userInterface.presenter.ClientSectionViewPresenter.SectionOperation;
 
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
-import com.google.gwt.user.client.ui.AbstractImagePrototype;
+import com.google.gwt.resources.client.ImageResource;
 import com.google.gwt.user.client.ui.HasWidgets;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
@@ -38,7 +40,7 @@ public class ClientSectionView extends View implements ClientSectionViewPresente
 		panel.add(this.operationDock);
 		initializeDock();
 		this.operationDock.addValueChangeHandler(new ValueChangeHandler<Object>() {
-			
+
 			@Override
 			public void onValueChange(ValueChangeEvent<Object> event) {
 				operationSelectionHandler.onActionInvoked(new ActionInvokedEvent<ClientSectionViewPresenter.SectionOperation>((SectionOperation)event.getValue()));
@@ -59,14 +61,21 @@ public class ClientSectionView extends View implements ClientSectionViewPresente
 	}
 
 	public void initializeDock() {
-		addDockItem("Pesquisa", null, SectionOperation.OPERATIONS);
-		addDockItem("Transf. Gestor", null, SectionOperation.MASS_MANAGER_TRANSFER);
+		Resources r = GWT.create(Resources.class);
+		
+		addDockItem("Pesquisa", r.searchIcon(), SectionOperation.OPERATIONS);
+		addDockItem("Transf. Gestor", r.clientManagerIcon(), SectionOperation.MASS_MANAGER_TRANSFER);
 	}
 
-	protected void addDockItem(String text, AbstractImagePrototype icon, final ClientSectionViewPresenter.SectionOperation action){
-		if(icon == null)
-			icon = MessageBox.MESSAGEBOX_IMAGES.dialogInformation();
-		DockItem item = new DockItem(text, icon, action);
+	protected void addDockItem(String text, ImageResource icon, final ClientSectionViewPresenter.SectionOperation action){
+		DockItem item = null;
+
+		if(icon == null){
+			item = new DockItem(text, MessageBox.MESSAGEBOX_IMAGES.dialogInformation(), action);
+		}else{
+			item = new DockItem(text, icon, action);
+		}
+
 		item.setTitle(text);
 		this.operationDock.addItem(item);
 	}

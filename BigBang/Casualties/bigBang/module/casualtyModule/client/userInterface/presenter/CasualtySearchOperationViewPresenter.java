@@ -236,13 +236,13 @@ public class CasualtySearchOperationViewPresenter implements ViewPresenter {
 
 	protected void onDelete(){
 		NavigationHistoryItem navItem = NavigationHistoryManager.getInstance().getCurrentState();
-		navItem.setParameter("show", "deletecasualty");
+		navItem.setParameter("show", "delete");
 		NavigationHistoryManager.getInstance().go(navItem);
 	}
 
 	protected void onClose(){
 		NavigationHistoryItem navItem = NavigationHistoryManager.getInstance().getCurrentState();
-		navItem.setParameter("show", "closecasualty");
+		navItem.setParameter("show", "close");
 		NavigationHistoryManager.getInstance().go(navItem);
 	}
 

@@ -8,13 +8,15 @@ import bigBang.library.client.userInterface.DockItem;
 import bigBang.library.client.userInterface.DockPanel;
 import bigBang.library.client.userInterface.view.PopupPanel;
 import bigBang.library.client.userInterface.view.View;
+import bigBang.module.generalSystemModule.client.resources.Resources;
 import bigBang.module.generalSystemModule.client.userInterface.presenter.GeneralSystemSectionViewPresenter;
 import bigBang.module.generalSystemModule.client.userInterface.presenter.GeneralSystemSectionViewPresenter.Action;
 import bigBang.module.generalSystemModule.client.userInterface.presenter.GeneralSystemSectionViewPresenter.SectionOperation;
 
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
-import com.google.gwt.user.client.ui.AbstractImagePrototype;
+import com.google.gwt.resources.client.ImageResource;
 import com.google.gwt.user.client.ui.HasWidgets;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
@@ -60,20 +62,25 @@ public class GeneralSystemSectionView extends View implements GeneralSystemSecti
 	}
 
 	public void initializeDock() {
-		addDockItem("Histórico", null, SectionOperation.HISTORY);
-		addDockItem("Centros de Custo", null, SectionOperation.COST_CENTER);
-		addDockItem("Utilizadores", null, SectionOperation.USER);
-		addDockItem("Seguradoras", null, SectionOperation.AGENCY);
-		addDockItem("Mediadores", null, SectionOperation.MEDIATOR);
-		addDockItem("Ramos e Coberturas", null, SectionOperation.COVERAGE);
-		addDockItem("Campos das Apólices", null, SectionOperation.TAX);
-		addDockItem("Grupos de Clientes", null, SectionOperation.GROUP);
+		Resources r = GWT.create(Resources.class);
+		
+		addDockItem("Histórico", r.historyIcon(), SectionOperation.HISTORY);
+		addDockItem("Centros de Custo", r.costCenterIcon(), SectionOperation.COST_CENTER);
+		addDockItem("Utilizadores", r.userIcon(), SectionOperation.USER);
+		addDockItem("Seguradoras", r.insuranceAgencyIcon(), SectionOperation.AGENCY);
+		addDockItem("Mediadores", r.mediatorIcon(), SectionOperation.MEDIATOR);
+		addDockItem("Ramos e Coberturas", r.coveragesIcon(), SectionOperation.COVERAGE);
+		addDockItem("Campos das Apólices", r.taxesIcon(), SectionOperation.TAX);
+		addDockItem("Grupos de Clientes", r.clientGroupIcon(), SectionOperation.GROUP);
 	}
 
-	protected void addDockItem(String text, AbstractImagePrototype icon, final GeneralSystemSectionViewPresenter.SectionOperation action){
-		if(icon == null)
-			icon = MessageBox.MESSAGEBOX_IMAGES.dialogInformation();
-		DockItem item = new DockItem(text, icon, action);
+	protected void addDockItem(String text, ImageResource icon, final GeneralSystemSectionViewPresenter.SectionOperation action){
+		DockItem item = null;
+		if(icon == null){
+			item = new DockItem(text, MessageBox.MESSAGEBOX_IMAGES.dialogInformation(), action);
+		}else{
+			item = new DockItem(text, icon, action);
+		}
 		item.setTitle(text);
 		this.operationDock.addItem(item);
 	}

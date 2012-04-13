@@ -3,6 +3,7 @@ package bigBang.library.client.userInterface;
 import org.gwt.mosaic.ui.client.util.ButtonHelper.ButtonLabelType;
 
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.resources.client.ImageResource;
 import com.google.gwt.user.client.ui.AbstractImagePrototype;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
@@ -19,7 +20,7 @@ public class DockItem extends ToggleButton implements NavigationItem {
 		setLabel(text, image);
 		if(handler != null)
 			this.addClickHandler(handler);
-		this.setHeight("35px");
+		this.setHeight("30px");
 		this.representedValue = value;
 	}
 
@@ -27,20 +28,27 @@ public class DockItem extends ToggleButton implements NavigationItem {
 		super();
 		setLabel(text, image);
 		this.addClickHandler(handler);
-		this.setHeight("35px");
+		this.setHeight("30px");
 	}
 
 	public DockItem(String text, AbstractImagePrototype image){
 		super();
 		setLabel(text, image);
-		this.setHeight("35px");
+		this.setHeight("30px");
 	}
 
 	public DockItem(String text, AbstractImagePrototype image, Object value){
 		super();
 		setLabel(text, image);
 		setRepresentedValue(value);
-		this.setHeight("35px");
+		this.setHeight("30px");
+	}
+	
+	public DockItem(String text, ImageResource image, Object value){
+		super();
+		setLabel(text, AbstractImagePrototype.create(image));
+		setRepresentedValue(value);
+		this.setHeight("30px");
 	}
 	
 	private void setLabel(String text, AbstractImagePrototype image){

@@ -39,8 +39,8 @@ public class InsuranceAgencyForm extends FormView<InsuranceAgency> {
 		addFormField(ISPNumber);
 		addFormField(NIB);
 		
-		addSection("Códigos de Mediador");
-		ownMediatorCodeSection = currentSection;		
+		ownMediatorCodeSection = new FormViewSection("Códigos de Mediador");
+		addSection(ownMediatorCodeSection);
 		
 		addSection("Morada");
 		
@@ -103,8 +103,7 @@ public class InsuranceAgencyForm extends FormView<InsuranceAgency> {
 				TextBoxFormField field = new TextBoxFormField("1", new InsuranceAgencyFormValidator.OwnMediatorCodeValidator());
 				this.ownMediatorCodeList.add(field);
 				this.ownMediatorCodeSection.addFormField(field);
-			}else
-				this.ownMediatorCodeSection.clear();
+			}
 		}
 	}
 

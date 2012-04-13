@@ -2,9 +2,10 @@ package bigBang.module.casualtyModule.client.userInterface.view;
 
 import org.gwt.mosaic.ui.client.MessageBox;
 
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
-import com.google.gwt.user.client.ui.AbstractImagePrototype;
+import com.google.gwt.resources.client.ImageResource;
 import com.google.gwt.user.client.ui.HasWidgets;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
@@ -16,6 +17,7 @@ import bigBang.library.client.userInterface.DockItem;
 import bigBang.library.client.userInterface.DockPanel;
 import bigBang.library.client.userInterface.view.PopupPanel;
 import bigBang.library.client.userInterface.view.View;
+import bigBang.module.casualtyModule.client.resources.Resources;
 import bigBang.module.casualtyModule.client.userInterface.presenter.CasualtySectionViewPresenter;
 import bigBang.module.casualtyModule.client.userInterface.presenter.CasualtySectionViewPresenter.SectionOperation;
 import bigBang.module.casualtyModule.client.userInterface.presenter.CasualtySectionViewPresenter.Action;
@@ -58,14 +60,21 @@ public class CasualtySectionView extends View implements CasualtySectionViewPres
 	}
 
 	public void initializeDock() {
-		addDockItem("Pesquisa", null, SectionOperation.OPERATIONS);
-		addDockItem("Transf. Gestor", null, SectionOperation.MASS_MANAGER_TRANSFER);
+		Resources r = GWT.create(Resources.class);
+		
+		addDockItem("Pesquisa", r.searchIcon(), SectionOperation.OPERATIONS);
+		addDockItem("Transf. Gestor", r.managerIcon(), SectionOperation.MASS_MANAGER_TRANSFER);
 	}
 
-	protected void addDockItem(String text, AbstractImagePrototype icon, final CasualtySectionViewPresenter.SectionOperation action){
-		if(icon == null)
-			icon = MessageBox.MESSAGEBOX_IMAGES.dialogInformation();
-		DockItem item = new DockItem(text, icon, action);
+	protected void addDockItem(String text, ImageResource icon, final CasualtySectionViewPresenter.SectionOperation action){
+		DockItem item = null;
+		
+		if(icon == null){
+			item = new DockItem(text, MessageBox.MESSAGEBOX_IMAGES.dialogInformation(), action);
+		}else{
+			item = new DockItem(text, icon, action);
+		}
+
 		item.setTitle(text);
 		this.operationDock.addItem(item);
 	}

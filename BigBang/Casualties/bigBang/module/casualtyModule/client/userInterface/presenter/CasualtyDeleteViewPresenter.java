@@ -1,0 +1,164 @@
+package bigBang.module.casualtyModule.client.userInterface.presenter;
+
+import java.util.Collection;
+
+import com.google.gwt.user.client.ui.HasWidgets;
+import com.google.gwt.user.client.ui.UIObject;
+import com.google.gwt.user.client.ui.Widget;
+
+import bigBang.definitions.client.dataAccess.CasualtyDataBroker;
+import bigBang.definitions.client.response.ResponseError;
+import bigBang.definitions.client.response.ResponseHandler;
+import bigBang.definitions.shared.BigBangConstants;
+import bigBang.definitions.shared.Casualty;
+import bigBang.library.client.EventBus;
+import bigBang.library.client.HasEditableValue;
+import bigBang.library.client.HasParameters;
+import bigBang.library.client.Notification;
+import bigBang.library.client.Notification.TYPE;
+import bigBang.library.client.PermissionChecker;
+import bigBang.library.client.dataAccess.DataBrokerManager;
+import bigBang.library.client.event.ActionInvokedEvent;
+import bigBang.library.client.event.ActionInvokedEventHandler;
+import bigBang.library.client.event.NewNotificationEvent;
+import bigBang.library.client.history.NavigationHistoryItem;
+import bigBang.library.client.history.NavigationHistoryManager;
+import bigBang.library.client.userInterface.presenter.ViewPresenter;
+
+public class CasualtyDeleteViewPresenter implements ViewPresenter {
+
+	public static enum Action {
+		DELETE,
+		CANCEL
+	}
+
+	public static interface Display {
+		HasEditableValue<String> getForm();
+		void registerActionHandler(ActionInvokedEventHandler<Action> handler);
+		Widget asWidget();
+	}
+
+	protected CasualtyDataBroker broker;
+	protected Display view;
+	protected boolean bound = false;
+	protected String casualtyId;
+
+	public CasualtyDeleteViewPresenter(Display view){
+		this.broker = (CasualtyDataBroker) DataBrokerManager.staticGetBroker(BigBangConstants.EntityIds.CASUALTY);
+		setView((UIObject)view);
+	}
+
+	@Override
+	public void setView(UIObject view) {
+		this.view = (Display) view;
+	}
+
+	@Override
+	public void go(HasWidgets container) {
+		bind();
+		container.clear();
+		container.add(this.view.asWidget());
+	}
+
+	@Override
+	public void setParameters(HasParameters parameterHolder) {
+		clearView();
+
+		casualtyId = parameterHolder.getParameter("casualtyid");
+		if(casualtyId != null && !casualtyId.isEmpty()){
+			showDelete();
+		}else{
+			onDeleteFailed();
+		}
+	}
+
+	protected void bind() {
+		if(bound) {return;}
+
+		view.registerActionHandler(new ActionInvokedEventHandler<CasualtyDeleteViewPresenter.Action>() {
+
+			@Override
+			public void onActionInvoked(ActionInvokedEvent<Action> action) {
+				switch(action.getAction()){
+				case DELETE:
+					onDelete();
+					break;
+				case CANCEL:
+					onCancel();
+					break;
+				}				
+			}
+		});
+
+		bound = true;
+	}
+
+	protected void clearView(){
+		view.getForm().setValue(null);
+	}
+
+	protected void showDelete(){
+		this.broker.getCasualty(casualtyId, new ResponseHandler<Casualty>() {
+
+			@Override
+			public void onResponse(Casualty response) {
+				if(!PermissionChecker.hasPermission(response, BigBangConstants.OperationIds.CasualtyProcess.DELETE_CASUALTY)){
+					onDeleteFailed();
+				}
+			}
+
+			@Override
+			public void onError(Collection<ResponseError> errors) {
+				onDeleteFailed();
+			}
+		});
+	}
+
+	protected void onDelete(){
+		this.broker.getCasualty(casualtyId, new ResponseHandler<Casualty>() {
+
+			@Override
+			public void onResponse(Casualty response) {
+				broker.deleteCasualty(response.id, view.getForm().getInfo(), new ResponseHandler<Void>() {
+
+					@Override
+					public void onResponse(Void response) {
+						onDeleteSuccess();
+					}
+
+					@Override
+					public void onError(Collection<ResponseError> errors) {
+						onDeleteFailed();
+					}
+				});
+			}
+
+			@Override
+			public void onError(Collection<ResponseError> errors) {
+				onDeleteFailed();
+			}
+		});
+	}
+
+	protected void onCancel() {
+		NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
+		item.removeParameter("show");
+		NavigationHistoryManager.getInstance().go(item);
+	}
+
+	protected void onDeleteFailed(){
+		EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não foi possível eliminar o Sinistro"), TYPE.ALERT_NOTIFICATION));
+		NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
+		item.removeParameter("show");
+		NavigationHistoryManager.getInstance().go(item);
+	}
+
+	protected void onDeleteSuccess(){
+		EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Sinistro Eliminado com Sucesso"), TYPE.TRAY_NOTIFICATION));
+		NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
+		item.removeParameter("show");
+		item.removeParameter("casualtyid");
+		NavigationHistoryManager.getInstance().go(item);
+	}
+
+}

@@ -6,9 +6,13 @@ import bigBang.library.client.ViewPresenterFactory;
 import bigBang.library.client.ViewPresenterInstantiator;
 import bigBang.library.client.userInterface.presenter.ViewPresenter;
 import bigBang.module.casualtyModule.client.dataAccess.CasualtyDataBrokerImpl;
+import bigBang.module.casualtyModule.client.userInterface.presenter.CasualtyCloseViewPresenter;
+import bigBang.module.casualtyModule.client.userInterface.presenter.CasualtyDeleteViewPresenter;
 import bigBang.module.casualtyModule.client.userInterface.presenter.CasualtyOperationsViewPresenter;
 import bigBang.module.casualtyModule.client.userInterface.presenter.CasualtySearchOperationViewPresenter;
 import bigBang.module.casualtyModule.client.userInterface.presenter.CasualtySectionViewPresenter;
+import bigBang.module.casualtyModule.client.userInterface.view.CasualtyCloseView;
+import bigBang.module.casualtyModule.client.userInterface.view.CasualtyDeleteView;
 import bigBang.module.casualtyModule.client.userInterface.view.CasualtyOperationsView;
 import bigBang.module.casualtyModule.client.userInterface.view.CasualtySearchOperationView;
 import bigBang.module.casualtyModule.client.userInterface.view.CasualtySectionView;
@@ -54,6 +58,24 @@ public class CasualtyModule implements Module {
 				CasualtySearchOperationView casualtySearchOperationView = (CasualtySearchOperationView) GWT.create(CasualtySearchOperationView.class);
 				CasualtySearchOperationViewPresenter casualtySearchOperationViewPresenter = new CasualtySearchOperationViewPresenter(casualtySearchOperationView);
 				return casualtySearchOperationViewPresenter;
+			}
+		});
+		ViewPresenterFactory.getInstance().registerViewPresenterInstantiator("CASUALTY_DELETE", new ViewPresenterInstantiator() {
+
+			@Override
+			public ViewPresenter getInstance() {
+				CasualtyDeleteView view = (CasualtyDeleteView) GWT.create(CasualtyDeleteView.class);
+				CasualtyDeleteViewPresenter presenter = new CasualtyDeleteViewPresenter(view);
+				return presenter;
+			}
+		});
+		ViewPresenterFactory.getInstance().registerViewPresenterInstantiator("CASUALTY_CLOSE", new ViewPresenterInstantiator() {
+
+			@Override
+			public ViewPresenter getInstance() {
+				CasualtyCloseView view = (CasualtyCloseView) GWT.create(CasualtyCloseView.class);
+				CasualtyCloseViewPresenter presenter = new CasualtyCloseViewPresenter(view);
+				return presenter;
 			}
 		});
 	}

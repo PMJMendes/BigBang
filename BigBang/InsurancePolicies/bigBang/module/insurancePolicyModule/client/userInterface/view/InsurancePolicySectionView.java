@@ -8,14 +8,16 @@ import bigBang.library.client.userInterface.DockItem;
 import bigBang.library.client.userInterface.DockPanel;
 import bigBang.library.client.userInterface.view.PopupPanel;
 import bigBang.library.client.userInterface.view.View;
+import bigBang.module.insurancePolicyModule.client.resources.Resources;
 import bigBang.module.insurancePolicyModule.client.userInterface.presenter.InsurancePolicySectionViewPresenter;
 import bigBang.module.insurancePolicyModule.client.userInterface.presenter.InsurancePolicySectionViewPresenter.Action;
 import bigBang.module.insurancePolicyModule.client.userInterface.presenter.InsurancePolicySectionViewPresenter.SectionOperation;
 
 
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
-import com.google.gwt.user.client.ui.AbstractImagePrototype;
+import com.google.gwt.resources.client.ImageResource;
 import com.google.gwt.user.client.ui.HasWidgets;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
@@ -60,14 +62,20 @@ public class InsurancePolicySectionView extends View implements InsurancePolicyS
 	}
 
 	public void initializeDock() {
-		addDockItem("Pesquisa", null, SectionOperation.OPERATIONS);
-		addDockItem("Transf. Gestor", null, SectionOperation.MASS_MANAGER_TRANSFER);
+		Resources r = GWT.create(Resources.class);
+		
+		addDockItem("Pesquisa", r.searchIcon(), SectionOperation.OPERATIONS);
+		addDockItem("Transf. Gestor", r.managerIcon(), SectionOperation.MASS_MANAGER_TRANSFER);
 	}
 
-	protected void addDockItem(String text, AbstractImagePrototype icon, final InsurancePolicySectionViewPresenter.SectionOperation action){
-		if(icon == null)
-			icon = MessageBox.MESSAGEBOX_IMAGES.dialogInformation();
-		DockItem item = new DockItem(text, icon, action);
+	protected void addDockItem(String text, ImageResource icon, final InsurancePolicySectionViewPresenter.SectionOperation action){
+		DockItem item = null;
+		
+		if(icon == null){
+			item = new DockItem(text, MessageBox.MESSAGEBOX_IMAGES.dialogInformation(), action);
+		}else{
+			item = new DockItem(text, icon, action);
+		}
 		item.setTitle(text);
 		this.operationDock.addItem(item);
 	}

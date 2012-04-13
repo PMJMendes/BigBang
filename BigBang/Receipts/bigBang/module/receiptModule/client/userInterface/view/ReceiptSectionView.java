@@ -8,13 +8,15 @@ import bigBang.library.client.userInterface.DockItem;
 import bigBang.library.client.userInterface.DockPanel;
 import bigBang.library.client.userInterface.view.PopupPanel;
 import bigBang.library.client.userInterface.view.View;
+import bigBang.module.receiptModule.client.resources.Resources;
 import bigBang.module.receiptModule.client.userInterface.presenter.ReceiptSectionViewPresenter;
 import bigBang.module.receiptModule.client.userInterface.presenter.ReceiptSectionViewPresenter.Action;
 import bigBang.module.receiptModule.client.userInterface.presenter.ReceiptSectionViewPresenter.SectionOperation;
 
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
-import com.google.gwt.user.client.ui.AbstractImagePrototype;
+import com.google.gwt.resources.client.ImageResource;
 import com.google.gwt.user.client.ui.HasWidgets;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
@@ -59,18 +61,24 @@ public class ReceiptSectionView extends View implements ReceiptSectionViewPresen
 	}
 
 	public void initializeDock() {
-		addDockItem("Pesquisa", null, SectionOperation.OPERATIONS);
-		addDockItem("Criação em Série", null, SectionOperation.SERIAL_RECEIPT_CREATION);
-		addDockItem("Cobranças", null, SectionOperation.SERIAL_RECEIPT_MARK_FOR_PAYMENT);
-		addDockItem("Prestações de Contas", null, SectionOperation.MASS_INSURER_ACCOUNTING);
-		addDockItem("Retrocessões", null, SectionOperation.MASS_AGENT_ACCOUNTING);
-		addDockItem("Envio dos Recibos", null, SectionOperation.MASS_SEND_RECEIPT_TO_CLIENT);
+		Resources r = GWT.create(Resources.class);
+		
+		addDockItem("Pesquisa", r.searchIcon(), SectionOperation.OPERATIONS);
+		addDockItem("Criação em Série", r.massCreationIcon(), SectionOperation.SERIAL_RECEIPT_CREATION);
+		addDockItem("Cobranças", r.paymentIcon(), SectionOperation.SERIAL_RECEIPT_MARK_FOR_PAYMENT);
+		addDockItem("Prestações de Contas", r.accountabilityIcon(), SectionOperation.MASS_INSURER_ACCOUNTING);
+		addDockItem("Retrocessões", r.accountabilityIcon(), SectionOperation.MASS_AGENT_ACCOUNTING);
+		addDockItem("Envio dos Recibos", r.sendReceiptIcon(), SectionOperation.MASS_SEND_RECEIPT_TO_CLIENT);
 	}
 
-	protected void addDockItem(String text, AbstractImagePrototype icon, final ReceiptSectionViewPresenter.SectionOperation action){
-		if(icon == null)
-			icon = MessageBox.MESSAGEBOX_IMAGES.dialogInformation();
-		DockItem item = new DockItem(text, icon, action);
+	protected void addDockItem(String text, ImageResource icon, final ReceiptSectionViewPresenter.SectionOperation action){
+		DockItem item = null;
+
+		if(icon == null){
+			item = new DockItem(text, MessageBox.MESSAGEBOX_IMAGES.dialogInformation(), action);
+		}else{
+			item = new DockItem(text, icon, action);
+		}
 		item.setTitle(text);
 		this.operationDock.addItem(item);
 	}

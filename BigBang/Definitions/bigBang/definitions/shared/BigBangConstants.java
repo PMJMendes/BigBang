@@ -92,7 +92,7 @@ public class BigBangConstants {
 		public static class ClientProcess {
 			public static final String UPDATE_CLIENT = "AE3CC7F0-BE2C-4548-87B5-9F09014072B8";
 			public static final String DELETE_CLIENT = "2227C32A-0AF5-4ECC-B807-9F090143401F";
-			public static final String CREATE_CASUALTY = ""; //TODO
+			public static final String CREATE_CASUALTY = "6CCF24EB-AF80-4B63-A50A-9F8B012E01BB";
 			public static final String MERGE_CLIENT = "895BB8D7-1263-4230-B1C4-9F8801189ADF";
 			public static final String CREATE_INFO_REQUEST = "26185760-A862-4CE4-9620-9F090142B18A";
 			public static final String CREATE_MANAGER_TRANSFER = "C75EEC27-780C-4C0C-9FD7-9F090142CB10";

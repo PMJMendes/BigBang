@@ -90,6 +90,8 @@ public class CreateInsurancePolicyViewPresenter implements ViewPresenter {
 
 	@Override
 	public void setParameters(HasParameters parameterHolder) {
+		clearView();
+
 		String clientId = parameterHolder.getParameter("clientid");
 		String tempPolicyId = parameterHolder.getParameter("policyid");
 
@@ -168,6 +170,11 @@ public class CreateInsurancePolicyViewPresenter implements ViewPresenter {
 		bound = true;
 	}
 
+	private void clearView(){
+		view.getClientForm().setValue(null);
+		view.getInsurancePolicyForm().setValue(null);
+	}
+	
 	private void onSave(){
 		final InsurancePolicy policy = view.getInsurancePolicyForm().getInfo();
 		saveWorkState(new ResponseHandler<Void>() {

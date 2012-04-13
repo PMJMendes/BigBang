@@ -27,6 +27,11 @@ import bigBang.module.casualtyModule.shared.CasualtySortParameter.SortableField;
 public class CasualtySearchPanel extends SearchPanel<CasualtyStub> implements CasualtyDataBrokerClient {
 
 	public static enum Filters {
+		DATE_FROM,
+		DATE_TO,
+		CASE_STUDY,
+		MANAGER,
+		INCLUDE_CLOSED
 	} 
 
 	protected int casualtyDataVersionNumber;
@@ -50,18 +55,11 @@ public class CasualtySearchPanel extends SearchPanel<CasualtyStub> implements Ca
 		sortOptions.put(CasualtySortParameter.SortableField.CLIENT_NAME, "Nome de Cliente");
 		
 		filtersPanel = new FiltersPanel(sortOptions);
-//		filtersPanel.addTypifiedListField(Filters.MANAGER, BigBangConstants.EntityIds.USER, "Gestor");
-//		filtersPanel.addTypifiedListField(Filters.COST_CENTER, BigBangConstants.EntityIds.COST_CENTER, "Centro de Custo");
-//		filtersPanel.addTypifiedListField(Filters.MEDIATOR, BigBangConstants.EntityIds.MEDIATOR, "Mediador");
-//
-//		filtersPanel.addTypifiedListField(Filters.PROFESSION, ModuleConstants.ListIDs.Professions, "Profissão");
-//		filtersPanel.addTypifiedListField(Filters.OPERATIONAL_PROFILE, ModuleConstants.ListIDs.OperationalProfiles, "Perfil Op.");
-//		filtersPanel.addTypifiedListField(Filters.COMPANY_SIZE, ModuleConstants.ListIDs.CompanySizes, "Num. de Trab.");
-//		filtersPanel.addTypifiedListField(Filters.SALES_VOLUME, BigBangConstants.TypifiedListIds.SALES_VOLUMES, "Vol. de Vendas");
-//
-//		filtersPanel.addTypifiedListField(Filters.MARITAL_STATUS, ModuleConstants.ListIDs.MaritalStatuses, "Estado Civil");
-//		filtersPanel.addDateField(Filters.BORN_AFTER, "Nascido De");
-//		filtersPanel.addDateField(Filters.BORN_BEFORE, "Nascido Até");
+		filtersPanel.addDateField(Filters.DATE_FROM, "Ocorrido de");
+		filtersPanel.addDateField(Filters.DATE_TO, "Ocorrido até");
+		filtersPanel.addTypifiedListField(Filters.MANAGER, BigBangConstants.EntityIds.USER, "Gestor");
+		filtersPanel.addCheckBoxField(Filters.CASE_STUDY, "Apenas Case Study");
+		filtersPanel.addCheckBoxField(Filters.INCLUDE_CLOSED, "Incluir Encerrados");
 
 		filtersPanel.getApplyButton().addClickHandler(new ClickHandler() {
 
@@ -110,19 +108,11 @@ public class CasualtySearchPanel extends SearchPanel<CasualtyStub> implements Ca
 
 		p.freeText = this.getFreeText();
 
-//		p.managerId = (String) filtersPanel.getFilterValue(Filters.MANAGER);
-//		p.costCenterId = (String) filtersPanel.getFilterValue(Filters.COST_CENTER);
-//		p.mediatorId = (String) filtersPanel.getFilterValue(Filters.MEDIATOR);
-//		String profession = (String) filtersPanel.getFilterValue(Filters.PROFESSION);
-//		p.professionIds = profession == null ? new String[0] : new String[]{profession}; //TODO FILTERS FJVC
-//		p.opProfileId = (String) filtersPanel.getFilterValue(Filters.OPERATIONAL_PROFILE);
-//		p.workerSizeId = (String) filtersPanel.getFilterValue(Filters.COMPANY_SIZE);
-//		p.salesVolumeId = (String) filtersPanel.getFilterValue(Filters.SALES_VOLUME);
-//		p.maritalStatusId = (String) filtersPanel.getFilterValue(Filters.MARITAL_STATUS);
-//		Date bornAfter = (Date) filtersPanel.getFilterValue(Filters.BORN_AFTER);
-//		p.birthDateFrom = bornAfter == null ? null : DateTimeFormat.getFormat("yyyy-MM-dd").format(bornAfter);
-//		Date bornBefore = (Date) filtersPanel.getFilterValue(Filters.BORN_BEFORE);
-//		p.birthDateTo = bornBefore == null ? null : DateTimeFormat.getFormat("yyyy-MM-dd").format(bornBefore);
+		p.dateFrom = (String) filtersPanel.getFilterValue(Filters.DATE_FROM);
+		p.dateTo = (String) filtersPanel.getFilterValue(Filters.DATE_TO);
+		p.managerId = (String) filtersPanel.getFilterValue(Filters.MANAGER);
+		p.caseStudy = (Boolean) filtersPanel.getFilterValue(Filters.CASE_STUDY);
+		p.includeClosed = (Boolean) filtersPanel.getFilterValue(Filters.INCLUDE_CLOSED);
 
 		parameters[0] = p;
 

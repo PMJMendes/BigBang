@@ -7,6 +7,7 @@ import bigBang.definitions.client.response.ResponseError;
 import bigBang.definitions.client.response.ResponseHandler;
 import bigBang.definitions.shared.BigBangConstants;
 import bigBang.definitions.shared.BigBangProcess;
+import bigBang.definitions.shared.CasualtyStub;
 import bigBang.definitions.shared.Client;
 import bigBang.definitions.shared.ClientStub;
 import bigBang.definitions.shared.Contact;
@@ -19,6 +20,7 @@ import bigBang.library.client.HasEditableValue;
 import bigBang.library.client.HasParameters;
 import bigBang.library.client.HasValueSelectables;
 import bigBang.library.client.Notification;
+import bigBang.library.client.PermissionChecker;
 import bigBang.library.client.Session;
 import bigBang.library.client.ValueSelectable;
 import bigBang.library.client.Notification.TYPE;
@@ -88,6 +90,7 @@ public class ClientSearchOperationViewPresenter implements ViewPresenter {
 		HasValueSelectables<BigBangProcess> getSubProcessesList();
 		HasValueSelectables<InsurancePolicyStub> getPolicyList();
 		HasValueSelectables<QuoteRequestStub> getQuoteRequestList();
+		HasValueSelectables<CasualtyStub> getCasualtyList();
 
 		//General
 		void registerActionInvokedHandler(ActionInvokedEventHandler<Action> handler);
@@ -120,7 +123,7 @@ public class ClientSearchOperationViewPresenter implements ViewPresenter {
 	@Override
 	public void setParameters(HasParameters parameterHolder) {
 		setup();
-		
+
 		String id = parameterHolder.getParameter("clientid");
 		id = id == null ? new String() : id;
 
@@ -165,7 +168,7 @@ public class ClientSearchOperationViewPresenter implements ViewPresenter {
 			@Override
 			public void onActionInvoked(ActionInvokedEvent<Action> action) {
 				NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
-				
+
 				switch(action.getAction()){
 				case NEW:
 					item.setParameter("clientid", "new");
@@ -313,7 +316,7 @@ public class ClientSearchOperationViewPresenter implements ViewPresenter {
 			}
 		});
 		view.getSubProcessesList().addSelectionChangedEventHandler(new SelectionChangedEventHandler() {
-			
+
 			@Override
 			public void onSelectionChanged(SelectionChangedEvent event) {
 				@SuppressWarnings("unchecked")
@@ -328,7 +331,7 @@ public class ClientSearchOperationViewPresenter implements ViewPresenter {
 			}
 		});
 		view.getQuoteRequestList().addSelectionChangedEventHandler(new SelectionChangedEventHandler() {
-			
+
 			@Override
 			public void onSelectionChanged(SelectionChangedEvent event) {
 				@SuppressWarnings("unchecked")
@@ -339,6 +342,21 @@ public class ClientSearchOperationViewPresenter implements ViewPresenter {
 
 				if(!itemId.isEmpty()){
 					goToQuoteRequest(itemId);
+				}
+			}
+		});
+		view.getCasualtyList().addSelectionChangedEventHandler(new SelectionChangedEventHandler() {
+
+			@Override
+			public void onSelectionChanged(SelectionChangedEvent event) {
+				@SuppressWarnings("unchecked")
+				ValueSelectable<CasualtyStub> selected = (ValueSelectable<CasualtyStub>) event.getFirstSelected();
+				CasualtyStub item = selected == null ? null : selected.getValue();
+				String itemId = item == null ? null : item.id;
+				itemId = itemId == null ? new String() : itemId;
+
+				if(!itemId.isEmpty()){
+					goToCasualty(itemId);
 				}
 			}
 		});
@@ -362,7 +380,7 @@ public class ClientSearchOperationViewPresenter implements ViewPresenter {
 		this.view.getSubProcessesList().clearSelection();
 		this.view.getHistoryList().clearSelection();
 	}
-	
+
 	private void setupNewClient(){
 		clearNewClient();
 		boolean hasPermission = true; //TODO check permission
@@ -429,19 +447,16 @@ public class ClientSearchOperationViewPresenter implements ViewPresenter {
 			public void onResponse(Client response) {
 				view.clearAllowedPermissions();
 
-				boolean hasPermissions = true; //TODO IMPORTANT FJVC
-				view.allowEdit(hasPermissions);
-				view.allowDelete(hasPermissions);
-				view.allowCreate(true);
-				view.allowEdit(true);
-				view.allowDelete(true);
-				view.allowRequestInfoOrDocument(true);
-				view.allowManagerTransfer(true);
-				view.allowClientMerge(true);
-				view.allowCreatePolicy(true);
-				view.allowCreateRiskAnalysis(true);
-				view.allowCreateQuoteRequest(true);
-				view.allowcreateCasualty(true);
+				view.allowEdit(PermissionChecker.hasPermission(response, BigBangConstants.OperationIds.ClientProcess.UPDATE_CLIENT));
+				view.allowDelete(PermissionChecker.hasPermission(response, BigBangConstants.OperationIds.ClientProcess.DELETE_CLIENT));
+				view.allowCreate(true); //TODO
+				view.allowRequestInfoOrDocument(true); //TODO
+				view.allowManagerTransfer(PermissionChecker.hasPermission(response, BigBangConstants.OperationIds.ClientProcess.CREATE_MANAGER_TRANSFER));
+				view.allowClientMerge(PermissionChecker.hasPermission(response, BigBangConstants.OperationIds.ClientProcess.MERGE_CLIENT));
+				view.allowCreatePolicy(PermissionChecker.hasPermission(response, BigBangConstants.OperationIds.ClientProcess.CREATE_POLICY));
+				view.allowCreateRiskAnalysis(PermissionChecker.hasPermission(response, BigBangConstants.OperationIds.ClientProcess.CREATE_RISK_ANALISYS));
+				view.allowCreateQuoteRequest(PermissionChecker.hasPermission(response, BigBangConstants.OperationIds.ClientProcess.CREATE_QUOTE_REQUEST));
+				view.allowcreateCasualty(PermissionChecker.hasPermission(response, BigBangConstants.OperationIds.ClientProcess.CREATE_CASUALTY));
 
 				view.setSaveModeEnabled(false);
 				view.getForm().setValue(response);
@@ -510,7 +525,7 @@ public class ClientSearchOperationViewPresenter implements ViewPresenter {
 
 	private void goToSubProcess(BigBangProcess process){
 		String type = process.dataTypeId;
-		
+
 		if(type.equalsIgnoreCase(BigBangConstants.EntityIds.MANAGER_TRANSFER)){
 			NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
 			item.pushIntoStackParameter("display", "viewmanagertransfer");
@@ -523,7 +538,7 @@ public class ClientSearchOperationViewPresenter implements ViewPresenter {
 			NavigationHistoryManager.getInstance().go(item);
 		}
 	}
-	
+
 	private void goToQuoteRequest(String requestId){
 		NavigationHistoryItem navItem = NavigationHistoryManager.getInstance().getCurrentState();
 		navItem.setParameter("section", "quoterequest");
@@ -531,5 +546,12 @@ public class ClientSearchOperationViewPresenter implements ViewPresenter {
 		navItem.setParameter("quoterequestid", requestId);
 		NavigationHistoryManager.getInstance().go(navItem);
 	}
-	
+
+	private void goToCasualty(String casualtyId){
+		NavigationHistoryItem navItem = NavigationHistoryManager.getInstance().getCurrentState();
+		navItem.setParameter("section", "casualty");
+		navItem.popFromStackParameter("display");
+		navItem.setParameter("casualtyid", casualtyId);
+		NavigationHistoryManager.getInstance().go(navItem);
+	}
 }
