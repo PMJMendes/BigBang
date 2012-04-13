@@ -9,6 +9,7 @@ import org.apache.pdfbox.pdmodel.PDPage;
 
 import Jewel.Engine.Engine;
 import Jewel.Engine.SysObjects.FileXfer;
+import Jewel.Petri.Interfaces.IProcess;
 import Jewel.Petri.Objects.PNProcess;
 
 import com.premiumminds.BigBang.Jewel.BigBangJewelException;
@@ -16,6 +17,7 @@ import com.premiumminds.BigBang.Jewel.Constants;
 import com.premiumminds.BigBang.Jewel.Objects.Client;
 import com.premiumminds.BigBang.Jewel.Objects.Policy;
 import com.premiumminds.BigBang.Jewel.Objects.Receipt;
+import com.premiumminds.BigBang.Jewel.Objects.SubPolicy;
 import com.xerox.docushare.DSClass;
 import com.xerox.docushare.DSContentElement;
 import com.xerox.docushare.DSFactory;
@@ -163,6 +165,7 @@ public class DocuShareConnector
 		throws BigBangJewelException 
 	{
 		String lstrHandle;
+		IProcess lobjProcess;
 
 		lstrHandle = null;
 
@@ -172,17 +175,24 @@ public class DocuShareConnector
 				lstrHandle = (String)Client.GetInstance(Engine.getCurrentNameSpace(), UUID.fromString(ownerId)).getAt(23);
 			if ( Constants.ObjID_Policy.equals(UUID.fromString(ownerTypeId)) )
 				lstrHandle = (String)Policy.GetInstance(Engine.getCurrentNameSpace(), UUID.fromString(ownerId)).getAt(15);
+			if ( Constants.ObjID_SubPolicy.equals(UUID.fromString(ownerTypeId)) )
+				lstrHandle = (String)SubPolicy.GetInstance(Engine.getCurrentNameSpace(), UUID.fromString(ownerId)).getAt(9);
 			if ( Constants.ObjID_Receipt.equals(UUID.fromString(ownerTypeId)) )
-				lstrHandle = (String)((Policy)(PNProcess.GetInstance(Engine.getCurrentNameSpace(),
-						Receipt.GetInstance(Engine.getCurrentNameSpace(),
-						UUID.fromString(ownerId)).GetProcessID()).GetParent().GetData())).getAt(15);
+			{
+				lobjProcess = PNProcess.GetInstance(Engine.getCurrentNameSpace(), Receipt.GetInstance(Engine.getCurrentNameSpace(),
+						UUID.fromString(ownerId)).GetProcessID()).GetParent();
+				if ( Constants.ProcID_Policy.equals(lobjProcess.GetScriptID()) )
+					lstrHandle = (String)((Policy)(lobjProcess.GetData())).getAt(15);
+				else
+					lstrHandle = (String)((SubPolicy)(lobjProcess.GetData())).getAt(9);
+			}
 		}
 		catch (Throwable e)
 		{
 			throw new BigBangJewelException(e.getMessage(), e);
 		}
 
-		return ( lstrHandle == null ? null : getItemsContext(lstrHandle, true) );
+		return ( lstrHandle == null ? getItemsContext(null, false) : getItemsContext(lstrHandle, true) );
 	}
 
 	public static String getItemTitle(String pstrItem)
