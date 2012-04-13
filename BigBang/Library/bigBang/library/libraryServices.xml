@@ -1,4 +1,3 @@
-
 <servlet>
 	<servlet-name>BigBangPermissionService</servlet-name>
 	<servlet-class>bigBang.library.server.BigBangPermissionServiceImpl
@@ -56,6 +55,10 @@
 	<servlet-name>ExternRequestService</servlet-name>
 	<servlet-class>bigBang.library.server.ExternRequestServiceImpl</servlet-class>
 </servlet>
+<servlet>
+	<servlet-name>ReportService</servlet-name>
+	<servlet-class>bigBang.library.server.ReportServiceImpl</servlet-class>
+</servlet>
 
 <servlet-mapping>
 	<servlet-name>BigBangPermissionService</servlet-name>
@@ -112,4 +115,8 @@
 <servlet-mapping>
 	<servlet-name>ExternRequestService</servlet-name>
 	<url-pattern>/bigbang/ExternRequestService</url-pattern>
+</servlet-mapping>
+<servlet-mapping>
+	<servlet-name>ReportService</servlet-name>
+	<url-pattern>/bigbang/ReportService</url-pattern>
 </servlet-mapping>
