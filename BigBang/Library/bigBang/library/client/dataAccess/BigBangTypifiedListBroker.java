@@ -324,7 +324,7 @@ public class BigBangTypifiedListBroker implements TypifiedListBroker {
 				for(TipifiedListItem i : lists.get(listId)) {
 					if(i.id.equalsIgnoreCase(itemId)){
 						item = i;
-						lists.remove(itemId);
+						lists.get(listId).remove(i);
 						break;
 					}
 				}
