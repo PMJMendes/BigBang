@@ -1,13 +1,18 @@
 package bigBang.module.receiptModule.client.userInterface.view;
 
 import com.google.gwt.user.client.ui.SplitLayoutPanel;
+import com.google.gwt.user.client.ui.StackPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
 import bigBang.definitions.shared.DASRequest;
+import bigBang.definitions.shared.HistoryItemStub;
 import bigBang.definitions.shared.Receipt;
 import bigBang.library.client.HasEditableValue;
+import bigBang.library.client.HasSelectables;
+import bigBang.library.client.ValueSelectable;
 import bigBang.library.client.event.ActionInvokedEvent;
 import bigBang.library.client.event.ActionInvokedEventHandler;
+import bigBang.library.client.userInterface.HistoryList;
 import bigBang.library.client.userInterface.ListHeader;
 import bigBang.library.client.userInterface.view.View;
 import bigBang.module.receiptModule.client.userInterface.DASRequestForm;
@@ -23,6 +28,7 @@ public class DASRequestView extends View implements DASRequestViewPresenter.Disp
 	private ActionInvokedEventHandler<Action> handler;
 	protected ReceiptForm ownerForm;
 	protected ListHeader ownerHeader;
+	protected HistoryList historyList;
 	
 	public DASRequestView(){
 		
@@ -71,7 +77,19 @@ public class DASRequestView extends View implements DASRequestViewPresenter.Disp
 		dasRequestPanel.setCellHeight(form, "100%");
 		dasRequestPanel.setCellHeight(toolbar, "21px");
 		
-		mainWrapper.add(dasRequestPanel);
+		SplitLayoutPanel childWrapper = new SplitLayoutPanel();
+		historyList = new HistoryList();
+		StackPanel stackWrapper = new StackPanel();
+		stackWrapper.add(historyList, "Histórico");
+		
+		stackWrapper.setSize("100%", "100%");
+		
+		childWrapper.setSize("100%", "100%");
+		
+		childWrapper.addEast(stackWrapper, 260);
+		childWrapper.add(dasRequestPanel);
+		
+		mainWrapper.add(childWrapper);
 	}
 	
 	@Override
@@ -113,5 +131,17 @@ public class DASRequestView extends View implements DASRequestViewPresenter.Disp
 	protected void initializeView() {
 		return;
 	}
+
+	@Override
+	public HasSelectables<ValueSelectable<HistoryItemStub>> getHistoryList() {
+		return historyList;
+	}
+	
+	
+	@Override
+	public void applyOwnerToList(String negotiationId) {
+		historyList.setOwner(negotiationId);
+	}
+
 
 }

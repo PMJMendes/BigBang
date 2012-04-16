@@ -1,13 +1,14 @@
 package bigBang.module.receiptModule.client.userInterface.view;
 
-import com.google.gwt.user.client.ui.SplitLayoutPanel;
-import com.google.gwt.user.client.ui.VerticalPanel;
-
+import bigBang.definitions.shared.HistoryItemStub;
 import bigBang.definitions.shared.Receipt;
 import bigBang.definitions.shared.SignatureRequest;
 import bigBang.library.client.HasEditableValue;
+import bigBang.library.client.HasSelectables;
+import bigBang.library.client.ValueSelectable;
 import bigBang.library.client.event.ActionInvokedEvent;
 import bigBang.library.client.event.ActionInvokedEventHandler;
+import bigBang.library.client.userInterface.HistoryList;
 import bigBang.library.client.userInterface.ListHeader;
 import bigBang.library.client.userInterface.view.View;
 import bigBang.module.receiptModule.client.userInterface.ReceiptForm;
@@ -16,6 +17,10 @@ import bigBang.module.receiptModule.client.userInterface.SignatureRequestOperati
 import bigBang.module.receiptModule.client.userInterface.presenter.SignatureRequestViewPresenter;
 import bigBang.module.receiptModule.client.userInterface.presenter.SignatureRequestViewPresenter.Action;
 
+import com.google.gwt.user.client.ui.SplitLayoutPanel;
+import com.google.gwt.user.client.ui.StackPanel;
+import com.google.gwt.user.client.ui.VerticalPanel;
+
 public class SignatureRequestView extends View implements SignatureRequestViewPresenter.Display{
 
 	protected SignatureRequestForm form;
@@ -23,6 +28,8 @@ public class SignatureRequestView extends View implements SignatureRequestViewPr
 	private ActionInvokedEventHandler<Action> handler;
 	protected ReceiptForm ownerForm;
 	protected ListHeader ownerHeader;
+	protected HistoryList historyList;
+
 	
 	public SignatureRequestView(){
 		SplitLayoutPanel mainWrapper = new SplitLayoutPanel();
@@ -70,8 +77,27 @@ public class SignatureRequestView extends View implements SignatureRequestViewPr
 		signatureRequestPanel.setCellHeight(form, "100%");
 		signatureRequestPanel.setCellHeight(toolbar, "21px");
 		
-		mainWrapper.add(signatureRequestPanel);
+		SplitLayoutPanel childWrapper = new SplitLayoutPanel();
+		historyList = new HistoryList();
+		StackPanel stackWrapper = new StackPanel();
+		stackWrapper.add(historyList, "Histórico");
+		
+		stackWrapper.setSize("100%", "100%");
+		
+		childWrapper.setSize("100%", "100%");
+		
+		childWrapper.addEast(stackWrapper, 260);
+		childWrapper.add(signatureRequestPanel);
+		
+		mainWrapper.add(childWrapper);
 	}
+	
+	
+	@Override
+	public void applyOwnerToList(String negotiationId) {
+		historyList.setOwner(negotiationId);
+	}
+
 	
 	@Override
 	public void registerActionHandler(ActionInvokedEventHandler<Action> handler) {
@@ -112,5 +138,12 @@ public class SignatureRequestView extends View implements SignatureRequestViewPr
 	protected void initializeView() {
 		return;
 	}
+
+
+	@Override
+	public HasSelectables<ValueSelectable<HistoryItemStub>> getHistoryList() {
+		return historyList;
+	}
+
 
 }

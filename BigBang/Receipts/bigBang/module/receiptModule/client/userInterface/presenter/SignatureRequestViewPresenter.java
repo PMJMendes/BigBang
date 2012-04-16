@@ -2,30 +2,35 @@ package bigBang.module.receiptModule.client.userInterface.presenter;
 
 import java.util.Collection;
 
-import com.google.gwt.user.client.ui.HasWidgets;
-import com.google.gwt.user.client.ui.UIObject;
-import com.google.gwt.user.client.ui.Widget;
-
 import bigBang.definitions.client.dataAccess.ReceiptProcessDataBroker;
 import bigBang.definitions.client.dataAccess.SignatureRequestBroker;
 import bigBang.definitions.client.response.ResponseError;
 import bigBang.definitions.client.response.ResponseHandler;
 import bigBang.definitions.shared.BigBangConstants;
+import bigBang.definitions.shared.HistoryItemStub;
 import bigBang.definitions.shared.Receipt;
 import bigBang.definitions.shared.SignatureRequest;
 import bigBang.library.client.EventBus;
 import bigBang.library.client.HasEditableValue;
 import bigBang.library.client.HasParameters;
+import bigBang.library.client.HasSelectables;
 import bigBang.library.client.Notification;
-import bigBang.library.client.PermissionChecker;
 import bigBang.library.client.Notification.TYPE;
+import bigBang.library.client.PermissionChecker;
+import bigBang.library.client.ValueSelectable;
 import bigBang.library.client.dataAccess.DataBrokerManager;
 import bigBang.library.client.event.ActionInvokedEvent;
 import bigBang.library.client.event.ActionInvokedEventHandler;
 import bigBang.library.client.event.NewNotificationEvent;
+import bigBang.library.client.event.SelectionChangedEvent;
+import bigBang.library.client.event.SelectionChangedEventHandler;
 import bigBang.library.client.history.NavigationHistoryItem;
 import bigBang.library.client.history.NavigationHistoryManager;
 import bigBang.library.client.userInterface.presenter.ViewPresenter;
+
+import com.google.gwt.user.client.ui.HasWidgets;
+import com.google.gwt.user.client.ui.UIObject;
+import com.google.gwt.user.client.ui.Widget;
 
 public class SignatureRequestViewPresenter implements ViewPresenter{
 
@@ -56,6 +61,8 @@ public class SignatureRequestViewPresenter implements ViewPresenter{
 		void allowRepeatRequest(boolean hasPermission);
 		void disableToolbar();
 		HasEditableValue<Receipt> getOwnerForm();
+		HasSelectables<ValueSelectable<HistoryItemStub>> getHistoryList();
+		void applyOwnerToList(String negotiationId);
 	}
 	
 	@Override
@@ -93,7 +100,29 @@ public class SignatureRequestViewPresenter implements ViewPresenter{
 			}
 		});
 		
+		view.getHistoryList().addSelectionChangedEventHandler(new SelectionChangedEventHandler() {
+
+			@Override
+			public void onSelectionChanged(SelectionChangedEvent event) {
+				@SuppressWarnings("unchecked")
+				HistoryItemStub selectedValue = event.getFirstSelected() == null ? null : ((ValueSelectable<HistoryItemStub>) event.getFirstSelected()).getValue();
+				if(selectedValue != null) {
+					showHistory(selectedValue);
+				}
+			}
+		});
+		
 		bound = true;
+	}
+
+	private void showHistory(final HistoryItemStub historyItem) {
+
+		NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
+		item.pushIntoStackParameter("display", "history");
+		item.setParameter("historyownerid", view.getForm().getValue().id);
+		item.setParameter("historyitemid", historyItem.id);
+		NavigationHistoryManager.getInstance().go(item);
+
 	}
 
 	protected void repeatReceiveRequest() {
@@ -145,7 +174,7 @@ public class SignatureRequestViewPresenter implements ViewPresenter{
 	@Override
 	public void setParameters(HasParameters parameterHolder) {
 		signatureRequestId = parameterHolder.getParameter("signaturerequestid");
-		
+		view.applyOwnerToList(signatureRequestId);
 		signatureBroker.getRequest(signatureRequestId, new ResponseHandler<SignatureRequest>() {
 			
 			@Override
