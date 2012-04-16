@@ -14,8 +14,8 @@ public interface SubCasualtyService extends SearchService {
 	 * Utility class for simplifying access to the instance of async service.
 	 */
 	public static class Util {
-		private static SubCasualtyService instance;
-		public static SubCasualtyService getInstance(){
+		private static SubCasualtyServiceAsync instance;
+		public static SubCasualtyServiceAsync getInstance(){
 			if (instance == null) {
 				instance = GWT.create(SubCasualtyService.class);
 			}
