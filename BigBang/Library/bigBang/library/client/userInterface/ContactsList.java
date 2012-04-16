@@ -25,6 +25,7 @@ import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.logical.shared.AttachEvent;
 import com.google.gwt.user.client.ui.AbstractImagePrototype;
+import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
 public class ContactsList extends FilterableList<Contact> implements ContactsBrokerClient {
@@ -200,11 +201,13 @@ public class ContactsList extends FilterableList<Contact> implements ContactsBro
 				createNewContact();
 			}
 		});
-		createNew.setEnabled(false);
 		
+		createNew.setEnabled(false);
+		headerPanel.setWidth("100%");
 		headerPanel.add(createNew);
+		headerPanel.setCellHorizontalAlignment(createNew, HasHorizontalAlignment.ALIGN_RIGHT);
 		createNew.getElement().getStyle().setTop(4, Unit.PX);
-		createNew.getElement().getStyle().setLeft(182, Unit.PX);
+		createNew.getElement().getStyle().setRight(3, Unit.PX);
 		setHeaderWidget(headerPanel);
 	}
 }
