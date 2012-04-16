@@ -90,7 +90,7 @@ public class MediatorAccounting
 
 			if ( midMap == null )
 			{
-				lobjSetClient = MediatorAccountingMap.GetInstance(Engine.getCurrentNameSpace(), null);
+				lobjSetClient = MediatorAccountingMap.GetInstance(Engine.getCurrentNameSpace(), (UUID)null);
 				lobjSetClient.setAt(0, midSet);
 				lobjSetClient.setAt(1, midMediator);
 				lobjSetClient.setAt(2, (Timestamp)null);

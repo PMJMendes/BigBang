@@ -3,7 +3,7 @@ package bigBang.library.interfaces;
 import bigBang.definitions.shared.PrintSet;
 import bigBang.definitions.shared.Report;
 import bigBang.definitions.shared.ReportItem;
-import bigBang.definitions.shared.ReportItem.ReportParam;
+import bigBang.definitions.shared.ReportParam;
 import bigBang.definitions.shared.TransactionSet;
 import bigBang.library.shared.BigBangException;
 import bigBang.library.shared.SessionExpiredException;

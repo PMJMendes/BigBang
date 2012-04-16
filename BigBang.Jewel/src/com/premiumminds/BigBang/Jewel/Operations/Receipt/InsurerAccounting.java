@@ -78,7 +78,7 @@ public class InsurerAccounting
 
 			if ( midMap == null )
 			{
-				lobjSetClient = InsurerAccountingMap.GetInstance(Engine.getCurrentNameSpace(), null);
+				lobjSetClient = InsurerAccountingMap.GetInstance(Engine.getCurrentNameSpace(), (UUID)null);
 				lobjSetClient.setAt(0, midSet);
 				lobjSetClient.setAt(1, midInsurer);
 				lobjSetClient.setAt(2, (Timestamp)null);

@@ -10,22 +10,25 @@ import Jewel.Engine.Engine;
 import Jewel.Engine.SysObjects.JewelEngineException;
 import Jewel.Engine.SysObjects.ObjectBase;
 
-public class InsurerAccountingMap
+public class ReportParam
 	extends ObjectBase
 {
 	public static class I
 	{
-		public static int SET       = 0;
-		public static int INSURER   = 1;
-		public static int SETTLEDON = 2;
+		public static int LABEL       = 0;
+		public static int ORDER       = 1;
+		public static int OWNER       = 2;
+		public static int TYPE        = 3;
+		public static int UNITS       = 4;
+		public static int REFERENCETO = 5;
 	}
 
-    public static InsurerAccountingMap GetInstance(UUID pidNameSpace, UUID pidKey)
+    public static ReportParam GetInstance(UUID pidNameSpace, UUID pidKey)
 		throws BigBangJewelException
 	{
-	    try
-	    {
-			return (InsurerAccountingMap)Engine.GetWorkInstance(Engine.FindEntity(pidNameSpace, Constants.ObjID_InsurerAccountingMap), pidKey);
+		try
+		{
+			return (ReportParam)Engine.GetWorkInstance(Engine.FindEntity(pidNameSpace, Constants.ObjID_ReportParam), pidKey);
 		}
 	    catch (Throwable e)
 	    {
@@ -33,12 +36,12 @@ public class InsurerAccountingMap
 		}
 	}
 
-    public static InsurerAccountingMap GetInstance(UUID pidNameSpace, ResultSet prsObject)
+	public static ReportParam GetInstance(UUID pidNameSpace, ResultSet prsObject)
 		throws BigBangJewelException
 	{
 	    try
 	    {
-			return (InsurerAccountingMap)Engine.GetWorkInstance(Engine.FindEntity(pidNameSpace, Constants.ObjID_InsurerAccountingMap), prsObject);
+			return (ReportParam)Engine.GetWorkInstance(Engine.FindEntity(pidNameSpace, Constants.ObjID_ReportParam), prsObject);
 		}
 	    catch (Throwable e)
 	    {
@@ -49,10 +52,5 @@ public class InsurerAccountingMap
 	public void Initialize()
 		throws JewelEngineException
 	{
-	}
-
-	boolean isSettled()
-	{
-		return (getAt(I.SETTLEDON) != null);
 	}
 }

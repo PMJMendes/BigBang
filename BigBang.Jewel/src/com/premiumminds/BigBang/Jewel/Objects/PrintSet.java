@@ -1,5 +1,6 @@
 package com.premiumminds.BigBang.Jewel.Objects;
 
+import java.sql.ResultSet;
 import java.sql.Timestamp;
 import java.util.UUID;
 
@@ -14,12 +15,33 @@ import com.premiumminds.BigBang.Jewel.Constants;
 public class PrintSet
 	extends ObjectBase
 {
+	public static class I
+	{
+		public static int TEMPLATE  = 0;
+		public static int DATE      = 1;
+		public static int USER      = 2;
+		public static int PRINTEDON = 3;
+	}
+
     public static PrintSet GetInstance(UUID pidNameSpace, UUID pidKey)
 		throws BigBangJewelException
 	{
 	    try
 	    {
 			return (PrintSet)Engine.GetWorkInstance(Engine.FindEntity(pidNameSpace, Constants.ObjID_PrintSet), pidKey);
+		}
+	    catch (Throwable e)
+	    {
+	    	throw new BigBangJewelException(e.getMessage(), e);
+		}
+	}
+
+    public static PrintSet GetInstance(UUID pidNameSpace, ResultSet prsObject)
+		throws BigBangJewelException
+	{
+	    try
+	    {
+			return (PrintSet)Engine.GetWorkInstance(Engine.FindEntity(pidNameSpace, Constants.ObjID_PrintSet), prsObject);
 		}
 	    catch (Throwable e)
 	    {

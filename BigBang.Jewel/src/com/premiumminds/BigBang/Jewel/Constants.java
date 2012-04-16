@@ -96,6 +96,10 @@ public class Constants
 	// DAS Requset Objects
 	public static final UUID ObjID_DASRequest               = UUID.fromString("F7137CCF-744D-4BD8-918A-A03000F0F182");
 
+	// Report Objects
+	public static final UUID ObjID_ReportDef                = UUID.fromString("CA478376-2F58-4140-B5EE-A032010F48E5");
+	public static final UUID ObjID_ReportParam              = UUID.fromString("4D801865-DC6B-4A8F-8301-A032012782BF");
+
 	// Typified Lists
 	public static final UUID ObjID_ContactType              = UUID.fromString("228F6A73-1335-4C99-8DD0-9EEE012964BA");
 	public static final UUID ObjID_CInfoType                = UUID.fromString("03C5B78E-D71C-49F2-A079-9EC40111DCC0");
@@ -128,7 +132,6 @@ public class Constants
 
 	public static final UUID ObjID_TypifiedText             = UUID.fromString("0F218912-1626-4A2C-BF68-9FE100F72735");
 
-	public static final UUID ObjID_UNUSED = UUID.fromString("22D005B7-E628-4E06-A011-A00500B5E01E");
 
 	// Process Scripts
 	public static final UUID ProcID_GenSys           = UUID.fromString("37A989E2-9D1F-470C-A59E-9EB1008A97A5");

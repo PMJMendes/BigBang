@@ -7,8 +7,8 @@ public class PrintSet
 {
 	private static final long serialVersionUID = 1L;
 
-	String id;
-	String date;
-	String user;
-	String printDate;
+	public String id;
+	public String date;
+	public String user;
+	public String printDate;
 }
