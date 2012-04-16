@@ -79,6 +79,10 @@ public class Constants
 	// Casualty Objects
 	public static final UUID ObjID_Casualty                 = UUID.fromString("EFFA56DF-8F3C-4361-A584-A02E00C4F0C5");
 
+	// SubCasualty Objects
+	public static final UUID ObjID_SubCasualty                 = UUID.fromString("00000000-0000-0000-0000-000000000000");
+
+	
 	// Manager Transfer Objects
 	public static final UUID ObjID_MgrXFer                  = UUID.fromString("66EC1066-AD5A-430C-9A70-9F65013F5453");
 	public static final UUID ObjID_MgrXFerProc              = UUID.fromString("324A0D54-4ED9-4925-97D2-9F6D0135A37E");
