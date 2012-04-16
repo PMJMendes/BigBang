@@ -3,6 +3,10 @@ package bigBang.library.client.userInterface;
 import java.util.Collection;
 import java.util.List;
 
+import org.gwt.mosaic.ui.client.ToolButton;
+import org.gwt.mosaic.ui.client.util.ButtonHelper;
+import org.gwt.mosaic.ui.client.util.ButtonHelper.ButtonLabelType;
+
 import bigBang.definitions.client.response.ResponseError;
 import bigBang.definitions.client.response.ResponseHandler;
 import bigBang.definitions.shared.BigBangConstants;
@@ -13,12 +17,15 @@ import bigBang.library.client.dataAccess.ContactsBroker;
 import bigBang.library.client.dataAccess.ContactsBrokerClient;
 import bigBang.library.client.history.NavigationHistoryItem;
 import bigBang.library.client.history.NavigationHistoryManager;
+import bigBang.library.client.resources.Resources;
 
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.logical.shared.AttachEvent;
-import com.google.gwt.user.client.ui.Button;
+import com.google.gwt.user.client.ui.AbstractImagePrototype;
+import com.google.gwt.user.client.ui.VerticalPanel;
 
 public class ContactsList extends FilterableList<Contact> implements ContactsBrokerClient {
 
@@ -39,27 +46,21 @@ public class ContactsList extends FilterableList<Contact> implements ContactsBro
 	protected int contactsDataVersion;
 	protected String ownerId;
 	protected ContactsBroker broker;
-	protected Button createNew;
+	protected ToolButton createNew;
 	private String ownerTypeId;
+	private VerticalPanel headerPanel;
 
 	public ContactsList(){
 		
-		createNew = new Button("Criar novo contacto");
-		createNew.setEnabled(false);
-		createNew.addClickHandler(new ClickHandler() {
-			@Override
-			public void onClick(ClickEvent event) {
-				createNewContact();
-			}
-		});
+		headerPanel = new VerticalPanel();
+		setHeaderWidget(headerPanel);
+		headerPanel.setSize("100%", "100%");
 		
 		this.showFilterField(false);
 		this.showSearchField(true);
 		
-		headerContainer.add(createNew);
-		createNew.setWidth("100%");
-		createNew.setHeight("32px");
-
+		showNewButton("Novo");
+		
 		this.broker = BigBangContactsListBroker.Util.getInstance();
 
 		this.addAttachHandler(new AttachEvent.Handler() {
@@ -185,5 +186,25 @@ public class ContactsList extends FilterableList<Contact> implements ContactsBro
 
 	public void allowCreation(boolean hasPermission) {
 		createNew.setEnabled(hasPermission);
+	}
+	
+	public void showNewButton(String text){
+		Resources r = GWT.create(Resources.class);
+		createNew = new ToolButton(ButtonHelper.createButtonLabel(
+				AbstractImagePrototype.create(r.listNewIcon()), text,
+				ButtonLabelType.TEXT_ON_LEFT));
+		
+		createNew.addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent event) {
+				createNewContact();
+			}
+		});
+		createNew.setEnabled(false);
+		
+		headerPanel.add(createNew);
+		createNew.getElement().getStyle().setTop(4, Unit.PX);
+		createNew.getElement().getStyle().setLeft(182, Unit.PX);
+		setHeaderWidget(headerPanel);
 	}
 }

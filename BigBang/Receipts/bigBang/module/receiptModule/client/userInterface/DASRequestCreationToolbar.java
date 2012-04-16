@@ -9,7 +9,7 @@ public abstract class DASRequestCreationToolbar extends BigBangOperationsToolBar
 	
 	public DASRequestCreationToolbar() {
 		
-		MenuItem createItem = new MenuItem("Criar Declaração de Ausência de Sinistro", new Command() {
+		MenuItem createItem = new MenuItem("Criar Pedido de DAS", new Command() {
 
 			@Override
 			public void execute() {
