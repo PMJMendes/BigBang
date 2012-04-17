@@ -69,6 +69,8 @@ public class ReceiptSectionView extends View implements ReceiptSectionViewPresen
 		addDockItem("Prestações de Contas", r.accountabilityIcon(), SectionOperation.MASS_INSURER_ACCOUNTING);
 		addDockItem("Retrocessões", r.accountabilityIcon(), SectionOperation.MASS_AGENT_ACCOUNTING);
 		addDockItem("Envio dos Recibos", r.sendReceiptIcon(), SectionOperation.MASS_SEND_RECEIPT_TO_CLIENT);
+		addDockItem("Devoluções à Seguradora", r.returnIcon(), SectionOperation.MASS_RETURN_TO_INSURER);
+		addDockItem("Relatórios", null, SectionOperation.REPORT);
 	}
 
 	protected void addDockItem(String text, ImageResource icon, final ReceiptSectionViewPresenter.SectionOperation action){
@@ -79,6 +81,7 @@ public class ReceiptSectionView extends View implements ReceiptSectionViewPresen
 		}else{
 			item = new DockItem(text, icon, action);
 		}
+
 		item.setTitle(text);
 		this.operationDock.addItem(item);
 	}

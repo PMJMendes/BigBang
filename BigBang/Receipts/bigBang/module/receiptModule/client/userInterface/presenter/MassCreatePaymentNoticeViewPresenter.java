@@ -101,7 +101,7 @@ public class MassCreatePaymentNoticeViewPresenter implements ViewPresenter{
 					view.removeAllReceiptsFromCreateNotice();
 					break;
 				case CREATE_PAYMENT_NOTICES:
-					createPaymentNotices(view.getSelectedList().getSelected());
+					createPaymentNotices(view.getSelectedList().getAll());
 					break;
 				case SELECT_ALL:
 					view.markAllForCheck();

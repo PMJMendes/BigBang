@@ -6,16 +6,19 @@ import bigBang.library.client.ViewPresenterFactory;
 import bigBang.library.client.ViewPresenterInstantiator;
 import bigBang.library.client.userInterface.presenter.ViewPresenter;
 import bigBang.module.casualtyModule.client.dataAccess.CasualtyDataBrokerImpl;
+import bigBang.module.casualtyModule.client.dataAccess.SubCasualtyDataBrokerImpl;
 import bigBang.module.casualtyModule.client.userInterface.presenter.CasualtyCloseViewPresenter;
 import bigBang.module.casualtyModule.client.userInterface.presenter.CasualtyDeleteViewPresenter;
 import bigBang.module.casualtyModule.client.userInterface.presenter.CasualtyOperationsViewPresenter;
 import bigBang.module.casualtyModule.client.userInterface.presenter.CasualtySearchOperationViewPresenter;
 import bigBang.module.casualtyModule.client.userInterface.presenter.CasualtySectionViewPresenter;
+import bigBang.module.casualtyModule.client.userInterface.presenter.SubCasualtyViewPresenter;
 import bigBang.module.casualtyModule.client.userInterface.view.CasualtyCloseView;
 import bigBang.module.casualtyModule.client.userInterface.view.CasualtyDeleteView;
 import bigBang.module.casualtyModule.client.userInterface.view.CasualtyOperationsView;
 import bigBang.module.casualtyModule.client.userInterface.view.CasualtySearchOperationView;
 import bigBang.module.casualtyModule.client.userInterface.view.CasualtySectionView;
+import bigBang.module.casualtyModule.client.userInterface.view.SubCasualtyView;
 
 import com.google.gwt.core.client.GWT;
 
@@ -78,12 +81,22 @@ public class CasualtyModule implements Module {
 				return presenter;
 			}
 		});
+		ViewPresenterFactory.getInstance().registerViewPresenterInstantiator("SUB_CASUALTY_VIEW", new ViewPresenterInstantiator() {
+
+			@Override
+			public ViewPresenter getInstance() {
+				SubCasualtyView view = (SubCasualtyView) GWT.create(SubCasualtyView.class);
+				SubCasualtyViewPresenter presenter = new SubCasualtyViewPresenter(view);
+				return presenter;
+			}
+		});
 	}
 
 	@Override
 	public DataBroker<?>[] getBrokerImplementations() {
 		return new DataBroker<?>[]{
-				new CasualtyDataBrokerImpl()
+				new CasualtyDataBrokerImpl(),
+				new SubCasualtyDataBrokerImpl()
 		};
 	}
 

@@ -276,7 +276,22 @@ public class QuoteRequestBrokerImpl extends DataBroker<QuoteRequest> implements	
 					public void onResponseSuccess(Remap[] result) {
 						String finalId = result[0].remapIds[0].newId;
 						doRemapping(result);
-						getQuoteRequest(finalId, handler);
+						getQuoteRequest(finalId, new ResponseHandler<QuoteRequest>() {
+
+							@Override
+							public void onResponse(QuoteRequest response) {
+								incrementDataVersion();
+								for(DataBrokerClient<QuoteRequest> client : getClients()) {
+									((QuoteRequestDataBrokerClient) client).addQuoteRequest(response);
+									((QuoteRequestDataBrokerClient) client).setDataVersionNumber(getDataElementId(), getCurrentDataVersion());
+								}
+							}
+
+							@Override
+							public void onError(Collection<ResponseError> errors) {
+								handler.onError(errors);
+							}
+						});
 					}
 
 					@Override

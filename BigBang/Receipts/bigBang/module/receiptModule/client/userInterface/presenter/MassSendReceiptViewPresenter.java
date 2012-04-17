@@ -101,7 +101,7 @@ public class MassSendReceiptViewPresenter implements ViewPresenter{
 					view.removeAllReceiptsFromSendList();
 					break;
 				case SEND_RECEIPTS:
-					sendReceipts(view.getSelectedList().getSelected());
+					sendReceipts(view.getSelectedList().getAll());
 					break;
 				case SELECT_ALL:
 					view.markAllForCheck();

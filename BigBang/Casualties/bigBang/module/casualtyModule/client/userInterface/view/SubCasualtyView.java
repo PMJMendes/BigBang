@@ -1,0 +1,131 @@
+package bigBang.module.casualtyModule.client.userInterface.view;
+
+import com.google.gwt.user.client.ui.HasValue;
+import com.google.gwt.user.client.ui.SplitLayoutPanel;
+import com.google.gwt.user.client.ui.VerticalPanel;
+
+import bigBang.module.casualtyModule.client.userInterface.CasualtyForm;
+import bigBang.module.casualtyModule.client.userInterface.SubCasualtyChildrenPanel;
+import bigBang.module.casualtyModule.client.userInterface.SubCasualtyForm;
+import bigBang.module.casualtyModule.client.userInterface.SubCasualtyOperationsToolbar;
+import bigBang.module.casualtyModule.client.userInterface.presenter.SubCasualtyViewPresenter;
+import bigBang.module.casualtyModule.client.userInterface.presenter.SubCasualtyViewPresenter.Action;
+import bigBang.definitions.shared.Casualty;
+import bigBang.definitions.shared.SubCasualty;
+import bigBang.library.client.HasEditableValue;
+import bigBang.library.client.event.ActionInvokedEvent;
+import bigBang.library.client.event.ActionInvokedEventHandler;
+import bigBang.library.client.userInterface.ListHeader;
+import bigBang.library.client.userInterface.view.View;
+
+public class SubCasualtyView extends View implements SubCasualtyViewPresenter.Display {
+
+	protected CasualtyForm parentForm;
+	protected SubCasualtyForm form;
+	protected SubCasualtyOperationsToolbar toolbar;
+	protected SubCasualtyChildrenPanel childrenPanel;
+	protected ActionInvokedEventHandler<Action> actionHandler;
+	
+	public SubCasualtyView(){
+		SplitLayoutPanel wrapper = new SplitLayoutPanel();
+		initWidget(wrapper);
+		wrapper.setSize("100%", "100%");
+		
+		VerticalPanel parentWrapper = new VerticalPanel();
+		parentWrapper.setSize("100%", "100%");
+		wrapper.addWest(parentWrapper, 600);
+		
+		ListHeader parentHeader = new ListHeader("Sinistro");
+		parentWrapper.add(parentHeader);
+		
+		parentForm = new CasualtyForm();
+		parentForm.setSize("100%", "100%");
+		parentForm.setReadOnly(true);
+		parentWrapper.add(parentForm);
+		parentWrapper.setCellHeight(parentForm, "100%");
+		
+		SplitLayoutPanel subCasualtyWrapper = new SplitLayoutPanel();
+		subCasualtyWrapper.setSize("100%", "100%");
+		wrapper.add(subCasualtyWrapper);
+		
+		childrenPanel = new SubCasualtyChildrenPanel();
+		subCasualtyWrapper.addEast(childrenPanel, 250);
+		
+		VerticalPanel formWrapper = new VerticalPanel();
+		formWrapper.setSize("100%", "100%");
+		subCasualtyWrapper.add(formWrapper);
+		
+		ListHeader formHeader = new ListHeader("Sub-Sinistro");
+		formWrapper.add(formHeader);
+		
+		this.toolbar = new SubCasualtyOperationsToolbar() {
+			
+			@Override
+			public void onSaveRequest() {
+				actionHandler.onActionInvoked(new ActionInvokedEvent<SubCasualtyViewPresenter.Action>(Action.SAVE));
+			}
+			
+			@Override
+			public void onEditRequest() {
+				actionHandler.onActionInvoked(new ActionInvokedEvent<SubCasualtyViewPresenter.Action>(Action.EDIT));
+			}
+			
+			@Override
+			public void onCancelRequest() {
+				actionHandler.onActionInvoked(new ActionInvokedEvent<SubCasualtyViewPresenter.Action>(Action.CANCEL));
+			}
+			
+			@Override
+			public void onDelete() {
+				actionHandler.onActionInvoked(new ActionInvokedEvent<SubCasualtyViewPresenter.Action>(Action.DELETE));
+			}
+		};
+		formWrapper.add(this.toolbar);
+		
+		form = new SubCasualtyForm();
+		form.setSize("100%", "100%");
+		formWrapper.add(form);
+		formWrapper.setCellHeight(form, "100%");
+	}
+	
+	@Override
+	protected void initializeView() {
+		return;
+	}
+
+	@Override
+	public HasValue<Casualty> getParentForm() {
+		return this.parentForm;
+	}
+
+	@Override
+	public HasEditableValue<SubCasualty> getForm() {
+		return this.form;
+	}
+
+	@Override
+	public void registerActionHandler(ActionInvokedEventHandler<Action> handler) {
+		this.actionHandler = handler;
+	}
+
+	@Override
+	public void clearAllowedPermissions() {
+		this.toolbar.lockAll();
+	}
+
+	@Override
+	public void setSaveModeEnabled(boolean enabled) {
+		this.toolbar.setSaveModeEnabled(enabled);
+	}
+
+	@Override
+	public void allowEdit(boolean allow) {
+		this.toolbar.allowEdit(allow);
+	}
+
+	@Override
+	public void allowDelete(boolean allow) {
+		this.toolbar.allowDelete(allow);
+	}
+
+}

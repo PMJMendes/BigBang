@@ -1,5 +1,6 @@
 package bigBang.module.receiptModule.client.userInterface.presenter;
 
+import bigBang.definitions.shared.BigBangConstants;
 import bigBang.library.client.HasParameters;
 import bigBang.library.client.ViewPresenterController;
 import bigBang.library.client.event.ActionInvokedEvent;
@@ -25,7 +26,8 @@ public class ReceiptSectionViewPresenter implements ViewPresenter {
 		SERIAL_RECEIPT_MARK_FOR_PAYMENT,
 		MASS_SEND_RECEIPT_TO_CLIENT,
 		MASS_INSURER_ACCOUNTING,
-		MASS_AGENT_ACCOUNTING
+		MASS_AGENT_ACCOUNTING,
+		REPORT, MASS_RETURN_TO_INSURER
 	}
 
 	public static interface Display {
@@ -110,6 +112,12 @@ public class ReceiptSectionViewPresenter implements ViewPresenter {
 					case SERIAL_RECEIPT_MARK_FOR_PAYMENT:
 						item.pushIntoStackParameter("display", "serialmarkforpayment");
 						break;
+					case MASS_RETURN_TO_INSURER:
+						item.pushIntoStackParameter("display", "massreceiptreturn");
+						break;
+					case REPORT:
+						item.pushIntoStackParameter("display", "report");
+						break;
 					}
 				}
 
@@ -152,6 +160,13 @@ public class ReceiptSectionViewPresenter implements ViewPresenter {
 					}else if(display.equalsIgnoreCase("massagentaccounting")){
 						view.selectOperation(SectionOperation.MASS_AGENT_ACCOUNTING);
 						present("MASS_AGENT_ACCOUNTING", parameters);
+					}else if(display.equalsIgnoreCase("massreceiptreturn")){
+						view.selectOperation(SectionOperation.MASS_RETURN_TO_INSURER);
+						present("MASS_RECEIPT_RETURN_TO_AGENCY", parameters);
+					}else if(display.equalsIgnoreCase("report")){
+						view.selectOperation(SectionOperation.REPORT);
+						parameters.setParameter("processtypeid", BigBangConstants.EntityIds.RECEIPT);
+						present("REPORTS", parameters);
 					}
 					else{
 						present("RECEIPT_OPERATIONS", parameters);

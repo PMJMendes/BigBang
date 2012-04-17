@@ -21,7 +21,7 @@ public class SubCasualty
 	}
 
 	public SubCasualtyItem[] items; //Zero ou mais items
-	boolean hasJudicial;
+	public boolean hasJudicial;
 	public String text;
 	public String internalNotes;
 }

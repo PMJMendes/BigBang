@@ -37,6 +37,7 @@ public class BigBangConstants {
 		public static final String INSURED_OBJECT_TYPE_PLACE      = "CD709854-DB59-424B-904A-9F9501403847";
 		public static final String INSURED_OBJECT_TYPE_ANIMAL    = "7A9A0E31-668A-4113-A03E-9F9501403E6E";
 		public static final String CASUALTY = "6C9562DE-D8C6-4CEC-A4DA-A02E00C735E9";
+		public static final String SUB_CASUALTY = "D5FD2D1B-59FB-4171-961A-A02E0121C81B";
 		public static final String COMPLAINT = "TODO";
 		public static final String EXPENSE = "TODO";
 		public static final String INFO_REQUEST = "1D10FF86-70B5-4362-A8F3-9F7C00BC6DE4";
@@ -201,6 +202,12 @@ public class BigBangConstants {
 			public static final String UPDATE_CASUALTY = "574AE481-418F-4159-BE7D-A02E010397DF";
 			public static final String DELETE_CASUALTY = "21AEC620-C547-404A-8956-A02E0109A821";
 			public static final String CLOSE_CASUALTY = "4FC7D258-3CBB-4174-AD53-A02E01094F3D";
+		}
+		
+		public static class SubCasualtyProcess {
+			public static final String UPDATE_SUB_CASUALTY = ""; //TODO
+			public static final String DELETE_SUB_CASUALTY = "";
+			public static final String CLOSE_SUB_CASUALTY = "";
 		}
 
 		public static class DASRequestProcess{

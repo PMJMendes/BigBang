@@ -11,6 +11,7 @@ import bigBang.definitions.shared.CasualtyStub;
 import bigBang.definitions.shared.Contact;
 import bigBang.definitions.shared.Document;
 import bigBang.definitions.shared.HistoryItemStub;
+import bigBang.definitions.shared.SubCasualtyStub;
 import bigBang.library.client.HasEditableValue;
 import bigBang.library.client.HasValueSelectables;
 import bigBang.library.client.event.ActionInvokedEvent;
@@ -151,6 +152,11 @@ public class CasualtySearchOperationView extends View implements CasualtySearchO
 	}
 
 	@Override
+	public HasValueSelectables<SubCasualtyStub> getSubCasualtyList() {
+		return this.childrenPanel.subCasualtyList;
+	}
+	
+	@Override
 	public HasValueSelectables<BigBangProcess> getSubProcessesList() {
 		return this.childrenPanel.subProcessesList;
 	}
@@ -169,5 +175,5 @@ public class CasualtySearchOperationView extends View implements CasualtySearchO
 	public void registerActionHandler(ActionInvokedEventHandler<Action> handler) {
 		this.actionHandler = handler;
 	}
-	
+
 }

@@ -289,7 +289,23 @@ public class CreateQuoteRequestViewPresenter implements ViewPresenter {
 		});
 	}
 
+	protected void saveWorkState(){
+		broker.updateQuoteRequest(view.getForm().getInfo(), new ResponseHandler<QuoteRequest>() {
+			
+			@Override
+			public void onResponse(QuoteRequest response) {
+				return;
+			}
+			
+			@Override
+			public void onError(Collection<ResponseError> errors) {
+				return;
+			}
+		});
+	}
+	
 	protected void onCreateInsuredObject(String objectType){
+		saveWorkState();
 		NavigationHistoryItem navItem = NavigationHistoryManager.getInstance().getCurrentState();
 		navItem.pushIntoStackParameter("display", "viewinsuredobject");
 		navItem.setParameter("objectid", "new");
@@ -298,6 +314,7 @@ public class CreateQuoteRequestViewPresenter implements ViewPresenter {
 	}
 
 	protected void showInsuredObject(String objectId) {
+		saveWorkState();
 		NavigationHistoryItem navItem = NavigationHistoryManager.getInstance().getCurrentState();
 		navItem.pushIntoStackParameter("display", "viewinsuredobject");
 		navItem.setParameter("objectid", objectId);

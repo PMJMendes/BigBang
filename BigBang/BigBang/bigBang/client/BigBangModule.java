@@ -24,6 +24,7 @@ import bigBang.library.client.userInterface.presenter.InfoOrDocumentRequestRepea
 import bigBang.library.client.userInterface.presenter.InfoOrDocumentRequestReplyViewPresenter;
 import bigBang.library.client.userInterface.presenter.ManagerTransferViewPresenter;
 import bigBang.library.client.userInterface.presenter.HistoryViewPresenter;
+import bigBang.library.client.userInterface.presenter.ReportViewPresenter;
 import bigBang.library.client.userInterface.presenter.ViewPresenter;
 import bigBang.library.client.userInterface.view.CancelInfoOrDocumentRequestView;
 import bigBang.library.client.userInterface.view.ContactNavigationView;
@@ -36,6 +37,7 @@ import bigBang.library.client.userInterface.view.InfoOrDocumentRequestRepeatView
 import bigBang.library.client.userInterface.view.InfoOrDocumentRequestReplyView;
 import bigBang.library.client.userInterface.view.ManagerTransferWithToolbarView;
 import bigBang.library.client.userInterface.view.HistoryView;
+import bigBang.library.client.userInterface.view.ReportView;
 
 public class BigBangModule implements Module {
 
@@ -158,6 +160,15 @@ public class BigBangModule implements Module {
 			public ViewPresenter getInstance() {
 				ExternalRequestClosingView view = (ExternalRequestClosingView) GWT.create(ExternalRequestClosingView.class);
 				ViewPresenter presenter = new ExternalRequestClosingViewPresenter(view);
+				return presenter;
+			}
+		});
+		ViewPresenterFactory.getInstance().registerViewPresenterInstantiator("REPORTS", new ViewPresenterInstantiator() {
+
+			@Override
+			public ViewPresenter getInstance() {
+				ReportView view = (ReportView) GWT.create(ReportView.class);
+				ReportViewPresenter presenter = new ReportViewPresenter(view);
 				return presenter;
 			}
 		});

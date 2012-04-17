@@ -2,10 +2,10 @@ package bigBang.module.casualtyModule.client.userInterface;
 
 import com.google.gwt.user.client.ui.StackPanel;
 
-import bigBang.definitions.client.dataAccess.CasualtyDataBroker;
-import bigBang.definitions.client.dataAccess.CasualtyDataBrokerClient;
+import bigBang.definitions.client.dataAccess.SubCasualtyDataBroker;
+import bigBang.definitions.client.dataAccess.SubCasualtyDataBrokerClient;
 import bigBang.definitions.shared.BigBangConstants;
-import bigBang.definitions.shared.Casualty;
+import bigBang.definitions.shared.SubCasualty;
 import bigBang.library.client.PermissionChecker;
 import bigBang.library.client.dataAccess.DataBrokerManager;
 import bigBang.library.client.userInterface.ContactsList;
@@ -14,91 +14,87 @@ import bigBang.library.client.userInterface.HistoryList;
 import bigBang.library.client.userInterface.SubProcessesList;
 import bigBang.library.client.userInterface.view.View;
 
-public class CasualtyChildrenPanel extends View {
+public class SubCasualtyChildrenPanel extends View {
 
-	protected Casualty casualty;
-	protected CasualtyDataBrokerClient casualtyBrokerClient;
+	protected SubCasualty subCasualty;
+	protected SubCasualtyDataBrokerClient subCasualtyBrokerClient;
 
 	public ContactsList contactsList;
 	public DocumentsList documentsList;
-	public SubCasualtyList subCasualtyList;
 	public SubProcessesList subProcessesList;
 	public HistoryList historyList;
 
-	public CasualtyChildrenPanel(){
+	public SubCasualtyChildrenPanel(){
 		StackPanel wrapper = new StackPanel();
 		initWidget(wrapper);
 		wrapper.setSize("100%", "100%");
 
 		contactsList = new ContactsList();
 		documentsList = new DocumentsList();
-		subCasualtyList = new SubCasualtyList();
 		subProcessesList = new SubProcessesList();
 		historyList = new HistoryList();
 
 		wrapper.add(contactsList, "Contactos");
 		wrapper.add(documentsList, "Documentos");
-		wrapper.add(subCasualtyList, "Sub-Sinistros");
 		wrapper.add(subProcessesList, "Sub-Processos");
 		wrapper.add(historyList, "Histórico");
 
-		this.casualtyBrokerClient = getCasualtyBrokerClient();
-		((CasualtyDataBroker)DataBrokerManager.Util.getInstance().getBroker(BigBangConstants.EntityIds.CASUALTY)).registerClient(this.casualtyBrokerClient);
+		this.subCasualtyBrokerClient = getSubCasualtyBrokerClient();
+		((SubCasualtyDataBroker)DataBrokerManager.Util.getInstance().getBroker(BigBangConstants.EntityIds.SUB_CASUALTY)).registerClient(this.subCasualtyBrokerClient);
 	}
 
 	@Override
 	protected void initializeView() {}
 
-	public void setCasualty(Casualty casualty){
-		this.casualty = casualty;
-		String casualtyId = casualty == null ? null : casualty.id;
-		
-		
-		boolean allow = casualty != null ? PermissionChecker.hasPermission(casualty, BigBangConstants.OperationIds.CasualtyProcess.UPDATE_CASUALTY) : false;
-		this.contactsList.setOwner(casualtyId);
+	public void setSubCasualty(SubCasualty subCasualty){
+		this.subCasualty = subCasualty;
+		String subCasualtyId = subCasualty == null ? null : subCasualty.id;
+
+
+		boolean allow = subCasualty != null ? PermissionChecker.hasPermission(subCasualty, BigBangConstants.OperationIds.SubCasualtyProcess.UPDATE_SUB_CASUALTY) : false;
+		this.contactsList.setOwner(subCasualtyId);
 		this.contactsList.setOwnerType(BigBangConstants.EntityIds.CASUALTY);
 		this.contactsList.allowCreation(allow);
-		this.documentsList.setOwner(casualtyId);	
+		this.documentsList.setOwner(subCasualtyId);	
 		this.documentsList.setOwnerType(BigBangConstants.EntityIds.CASUALTY);
 		this.documentsList.allowCreation(allow);
-		this.subCasualtyList.setOwner(casualtyId);
-		this.subProcessesList.setOwner(casualtyId);
-		this.historyList.setOwner(casualtyId);
+		this.subProcessesList.setOwner(subCasualtyId);
+		this.historyList.setOwner(subCasualtyId);
 	}
 
-	protected CasualtyDataBrokerClient getCasualtyBrokerClient(){
-		return new CasualtyDataBrokerClient() {
+	protected SubCasualtyDataBrokerClient getSubCasualtyBrokerClient(){
+		return new SubCasualtyDataBrokerClient() {
 			protected int version;
 
 			@Override
 			public void setDataVersionNumber(String dataElementId, int number) {
-				if(dataElementId.equalsIgnoreCase(BigBangConstants.EntityIds.CASUALTY)){
+				if(dataElementId.equalsIgnoreCase(BigBangConstants.EntityIds.SUB_CASUALTY)){
 					this.version = number;
 				}
 			}
 
 			@Override
 			public int getDataVersion(String dataElementId) {
-				if(dataElementId.equalsIgnoreCase(BigBangConstants.EntityIds.CASUALTY)){
+				if(dataElementId.equalsIgnoreCase(BigBangConstants.EntityIds.SUB_CASUALTY)){
 					return this.version;
 				}
 				return -1;
 			}
 
 			@Override
-			public void updateCasualty(Casualty policy) {
+			public void updateSubCasualty(SubCasualty policy) {
 				return;
 			}
 
 			@Override
-			public void removeCasualty(String casualtyId) {
-				if(casualty != null && casualty.id != null && casualtyId.equalsIgnoreCase(casualty.id)){
-					setCasualty(null);
+			public void removeSubCasualty(String subCasualtyId) {
+				if(subCasualty != null && subCasualty.id != null && subCasualtyId.equalsIgnoreCase(subCasualty.id)){
+					setSubCasualty(null);
 				}
 			}
 
 			@Override
-			public void addCasualty(Casualty policy) {
+			public void addSubCasualty(SubCasualty policy) {
 				return;
 			}
 

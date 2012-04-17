@@ -10,7 +10,6 @@ import bigBang.module.generalSystemModule.client.GeneralSystemModule;
 import bigBang.module.insurancePolicyModule.client.InsurancePolicyModule;
 import bigBang.module.quoteRequestModule.client.QuoteRequestModule;
 import bigBang.module.receiptModule.client.ReceiptModule;
-import bigBang.module.riskAnalisysModule.client.RiskAnalisysModule;
 import bigBang.module.tasksModule.client.TasksModule;
 
 import com.google.gwt.core.client.EntryPoint;
@@ -45,7 +44,7 @@ public class BigBang implements EntryPoint {
 			moduleManager.registerModule((QuoteRequestModule) GWT.create(bigBang.module.quoteRequestModule.client.QuoteRequestModule.class));
 			moduleManager.registerModule((InsurancePolicyModule) GWT.create(bigBang.module.insurancePolicyModule.client.InsurancePolicyModule.class));
 			moduleManager.registerModule((ReceiptModule) GWT.create(bigBang.module.receiptModule.client.ReceiptModule.class));
-			moduleManager.registerModule((RiskAnalisysModule) GWT.create(bigBang.module.riskAnalisysModule.client.RiskAnalisysModule.class));
+//			moduleManager.registerModule((RiskAnalisysModule) GWT.create(bigBang.module.riskAnalisysModule.client.RiskAnalisysModule.class));
 			moduleManager.registerModule((CasualtyModule) GWT.create(bigBang.module.casualtyModule.client.CasualtyModule.class));
 			moduleManager.registerModule((ExpenseModule) GWT.create(bigBang.module.expenseModule.client.ExpenseModule.class));
 			moduleManager.registerModule((ComplaintModule) GWT.create(bigBang.module.complaintModule.client.ComplaintModule.class));

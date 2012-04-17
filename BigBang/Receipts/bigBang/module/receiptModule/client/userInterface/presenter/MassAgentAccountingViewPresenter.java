@@ -101,7 +101,7 @@ public class MassAgentAccountingViewPresenter implements ViewPresenter{
 					view.removeAllReceiptsFromAccountingList();
 					break;
 				case SEND_AGENT_ACCOUNTING:
-					sendAgentAccounting(view.getSelectedList().getSelected());
+					sendAgentAccounting(view.getSelectedList().getAll());
 					break;
 				case SELECT_ALL:
 					view.markAllForCheck();

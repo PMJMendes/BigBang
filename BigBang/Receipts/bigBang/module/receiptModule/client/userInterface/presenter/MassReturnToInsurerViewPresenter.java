@@ -138,7 +138,7 @@ public class MassReturnToInsurerViewPresenter implements ViewPresenter{
 					view.removeAllReceiptsFromReturn();
 					break;
 				case MASS_RETURN_TO_INSURER:
-					massReturnToInsurer(view.getSelectedList().getSelected());
+					massReturnToInsurer(view.getSelectedList().getAll());
 					break;
 				case SELECT_ALL:
 					view.markAllForCheck();

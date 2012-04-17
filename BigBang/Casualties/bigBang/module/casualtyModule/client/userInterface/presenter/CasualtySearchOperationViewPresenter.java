@@ -12,6 +12,7 @@ import bigBang.definitions.shared.Contact;
 import bigBang.definitions.shared.Document;
 import bigBang.definitions.shared.HistoryItemStub;
 import bigBang.definitions.shared.Casualty;
+import bigBang.definitions.shared.SubCasualtyStub;
 import bigBang.library.client.EventBus;
 import bigBang.library.client.HasEditableValue;
 import bigBang.library.client.HasParameters;
@@ -59,6 +60,7 @@ public class CasualtySearchOperationViewPresenter implements ViewPresenter {
 		//Children lists
 		HasValueSelectables<Contact> getContactsList();
 		HasValueSelectables<Document> getDocumentsList();
+		HasValueSelectables<SubCasualtyStub> getSubCasualtyList();
 		HasValueSelectables<BigBangProcess> getSubProcessesList();
 		HasValueSelectables<HistoryItemStub> getHistoryList();
 
@@ -153,7 +155,10 @@ public class CasualtySearchOperationViewPresenter implements ViewPresenter {
 			public void onSelectionChanged(SelectionChangedEvent event) {
 				ValueSelectable<?> selected = (ValueSelectable<?>) event.getFirstSelected();
 				if(selected != null) {				
-					if(event.getSource() == view.getSubProcessesList()) {
+					if(event.getSource() == view.getSubCasualtyList()) {
+						SubCasualtyStub process = (SubCasualtyStub) selected.getValue();
+						showSubCasualty(process.id);
+					} else if(event.getSource() == view.getSubProcessesList()) {
 						BigBangProcess process = (BigBangProcess) selected.getValue();
 						showSubProcess(process);
 					}else if(event.getSource() == view.getHistoryList()) {
@@ -164,6 +169,7 @@ public class CasualtySearchOperationViewPresenter implements ViewPresenter {
 			}
 		};
 
+		view.getSubCasualtyList().addSelectionChangedEventHandler(selectionChangedHandler);
 		view.getSubProcessesList().addSelectionChangedEventHandler(selectionChangedHandler);
 		view.getHistoryList().addSelectionChangedEventHandler(selectionChangedHandler);
 
@@ -246,6 +252,13 @@ public class CasualtySearchOperationViewPresenter implements ViewPresenter {
 		NavigationHistoryManager.getInstance().go(navItem);
 	}
 
+	protected void showSubCasualty(String id){
+		NavigationHistoryItem navItem = NavigationHistoryManager.getInstance().getCurrentState();
+		navItem.pushIntoStackParameter("display", "subcasualty");
+		navItem.setParameter("subcasualtyid", id);
+		NavigationHistoryManager.getInstance().go(navItem);
+	}
+	
 	protected void showSubProcess(BigBangProcess process){
 //		String type = process.dataTypeId;
 

@@ -101,7 +101,7 @@ public class MassInsurerAccountingViewPresenter implements ViewPresenter{
 					view.removeAllReceiptsFromAccountingList();
 					break;
 				case SEND_INSURER_ACCOUNTING:
-					sendInsurerAccounting(view.getSelectedList().getSelected());
+					sendInsurerAccounting(view.getSelectedList().getAll());
 					break;
 				case SELECT_ALL:
 					view.markAllForCheck();

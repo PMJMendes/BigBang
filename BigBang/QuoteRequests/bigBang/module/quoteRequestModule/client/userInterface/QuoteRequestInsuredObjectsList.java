@@ -44,11 +44,10 @@ public class QuoteRequestInsuredObjectsList extends FilterableList<QuoteRequestO
 	}
 
 	public void setOwner(String ownerId){
-		this.ownerId = ownerId;
 		if(ownerId == null) {
 			clear();
 		}else{
-			if(!quoteRequestBroker.isTemp(ownerId)){
+			if(!quoteRequestBroker.isTemp(ownerId) || !ownerId.equalsIgnoreCase(this.ownerId)){
 				this.quoteRequestObjectsBroker.getProcessQuoteRequestObjects(ownerId, new ResponseHandler<Collection<QuoteRequestObjectStub>>() {
 
 					@Override
@@ -66,6 +65,7 @@ public class QuoteRequestInsuredObjectsList extends FilterableList<QuoteRequestO
 				});
 			}
 		}
+		this.ownerId = ownerId;
 	}
 
 	protected void addEntry(QuoteRequestObjectStub object){

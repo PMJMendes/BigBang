@@ -31,7 +31,8 @@ public class MainScreenViewPresenter implements ViewPresenter {
 		SHOW_SECTION_INSURANCE_POLICY, 
 		SHOW_SECTION_RECEIPT, 
 		SHOW_SECTION_RISK_ANALISYS,
-		SHOW_SECTION_CASUALTY
+		SHOW_SECTION_CASUALTY,
+		SHOW_SECTION_EXPENSE
 	}
 
 	public enum Section {
@@ -46,7 +47,7 @@ public class MainScreenViewPresenter implements ViewPresenter {
 		EXPENSE,
 		COMPLAINT
 	}
-	
+
 	public interface Display {
 		Widget asWidget();
 		void showSection(Section section);
@@ -101,7 +102,7 @@ public class MainScreenViewPresenter implements ViewPresenter {
 			@Override
 			public void onActionInvoked(ActionInvokedEvent<Action> action) {
 				NavigationHistoryItem item = new NavigationHistoryItem();
-				
+
 				switch(action.getAction()){
 				case LOGOUT:
 					EventBus.getInstance().fireEvent(new LogoutEvent());
@@ -120,7 +121,7 @@ public class MainScreenViewPresenter implements ViewPresenter {
 					item.setParameter("section", "backoffice");
 					NavigationHistoryManager.getInstance().go(item);
 					break;
-				
+
 				case SHOW_SECTION_TASKS:
 					item.setParameter("section", "tasks");
 					NavigationHistoryManager.getInstance().go(item);
@@ -145,14 +146,18 @@ public class MainScreenViewPresenter implements ViewPresenter {
 					item.setParameter("section", "receipt");
 					NavigationHistoryManager.getInstance().go(item);
 					break;
-				case SHOW_SECTION_RISK_ANALISYS:
-					item.setParameter("section", "riskanalisys");
-					NavigationHistoryManager.getInstance().go(item);
-					break;
+					//				case SHOW_SECTION_RISK_ANALISYS:
+					//					item.setParameter("section", "riskanalisys");
+					//					NavigationHistoryManager.getInstance().go(item);
+					//					break;
 				case SHOW_SECTION_CASUALTY:
 					item.setParameter("section", "casualty");
 					NavigationHistoryManager.getInstance().go(item);
 					break;
+				case SHOW_SECTION_EXPENSE:
+					item.setParameter("section", "expense");
+					NavigationHistoryManager.getInstance().go(item);
+				break;
 				}
 			}
 		});
@@ -172,7 +177,7 @@ public class MainScreenViewPresenter implements ViewPresenter {
 			@Override
 			public void onParameters(HasParameters parameters) {
 				view.showBackOffice(Session.isRoot());
-				
+
 				String section = parameters.getParameter("section");
 				section = section == null ? new String() : section;
 
@@ -194,9 +199,9 @@ public class MainScreenViewPresenter implements ViewPresenter {
 					view.showSection(Section.COMPLAINT);
 				}else if(section.equalsIgnoreCase("receipt")){
 					view.showSection(Section.RECEIPT);
-				}else if(section.equalsIgnoreCase("riskanalisys")){
+				}/*else if(section.equalsIgnoreCase("riskanalisys")){
 					view.showSection(Section.RISK_ANALISYS);
-				}
+				}*/
 			}
 
 			@Override

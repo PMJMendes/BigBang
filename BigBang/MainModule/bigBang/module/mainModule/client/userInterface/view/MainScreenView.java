@@ -154,8 +154,9 @@ public class MainScreenView extends View implements MainScreenViewPresenter.Disp
 		this.tabBar.addTab("C. de Mercado");
 		this.tabBar.addTab("Apólices");
 		this.tabBar.addTab("Recibos");
-		this.tabBar.addTab("Análises de Risco");
+//		this.tabBar.addTab("Análises de Risco");
 		this.tabBar.addTab("Sinistros");
+		this.tabBar.addTab("Despesas de Saúde");
 		//TODO
 		
 		this.tabBar.addSelectionHandler(new SelectionHandler<Integer>() {
@@ -181,11 +182,14 @@ public class MainScreenView extends View implements MainScreenViewPresenter.Disp
 				case 5:
 					actionHandler.onActionInvoked(new ActionInvokedEvent<MainScreenViewPresenter.Action>(Action.SHOW_SECTION_RECEIPT));
 					break;
+//				case 6:
+//					actionHandler.onActionInvoked(new ActionInvokedEvent<MainScreenViewPresenter.Action>(Action.SHOW_SECTION_RISK_ANALISYS));
+//					break;
 				case 6:
-					actionHandler.onActionInvoked(new ActionInvokedEvent<MainScreenViewPresenter.Action>(Action.SHOW_SECTION_RISK_ANALISYS));
+					actionHandler.onActionInvoked(new ActionInvokedEvent<MainScreenViewPresenter.Action>(Action.SHOW_SECTION_CASUALTY));
 					break;
 				case 7:
-					actionHandler.onActionInvoked(new ActionInvokedEvent<MainScreenViewPresenter.Action>(Action.SHOW_SECTION_CASUALTY));
+					actionHandler.onActionInvoked(new ActionInvokedEvent<MainScreenViewPresenter.Action>(Action.SHOW_SECTION_EXPENSE));
 					break;
 					//TODO
 				}
@@ -214,10 +218,13 @@ public class MainScreenView extends View implements MainScreenViewPresenter.Disp
 		case RECEIPT:
 			this.tabBar.selectTab(5, false);
 			break;
-		case RISK_ANALISYS:
+//		case RISK_ANALISYS:
+//			this.tabBar.selectTab(6, false);
+//			break;
+		case CASUALTY:
 			this.tabBar.selectTab(6, false);
 			break;
-		case CASUALTY:
+		case EXPENSE:
 			this.tabBar.selectTab(7, false);
 			break;
 		}
