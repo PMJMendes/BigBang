@@ -130,6 +130,7 @@ public class Constants
 	public static final UUID ObjID_ReceiptStatus            = UUID.fromString("35C78290-7FFE-4D7B-BD9D-A02000BC6D38");
 	public static final UUID ObjID_PaymentType              = UUID.fromString("C480B530-C6E2-49A0-BE15-A02200E88280");
 	public static final UUID ObjID_Bank                     = UUID.fromString("9954EADC-D7BE-4858-B1DE-A02200F45247");
+	public static final UUID ObjID_DamageType               = UUID.fromString("6D2B02AF-A092-475F-85C7-A035012321FE");
 
 	public static final UUID ObjID_FieldType                = UUID.fromString("0D8E4FEE-AE4D-4429-A517-9EC900F80A20");
 	public static final UUID ObjID_FieldValues              = UUID.fromString("D50A75B9-5F44-4BF2-9060-9F960121503A");
