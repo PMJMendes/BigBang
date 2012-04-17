@@ -66,6 +66,47 @@ public class ExpenseSearchOperationView extends View implements ExpenseSearchOpe
 				actionHandler.onActionInvoked(new ActionInvokedEvent<ExpenseSearchOperationViewPresenter.Action>(Action.CANCEL));
 				
 			}
+
+			@Override
+			protected void onInfoFromInsurer() {
+				actionHandler.onActionInvoked(new ActionInvokedEvent<ExpenseSearchOperationViewPresenter.Action>(Action.INFO_FROM_INSURER));
+
+			}
+
+			@Override
+			protected void onInfoOrDocumentRequest() {
+				actionHandler.onActionInvoked(new ActionInvokedEvent<ExpenseSearchOperationViewPresenter.Action>(Action.INFO_OR_DOCUMENT_REQUEST));
+
+			}
+
+			@Override
+			protected void onValidate() {
+				actionHandler.onActionInvoked(new ActionInvokedEvent<ExpenseSearchOperationViewPresenter.Action>(Action.VALIDATE));
+
+			}
+
+			@Override
+			protected void onNotifyClient() {
+				actionHandler.onActionInvoked(new ActionInvokedEvent<ExpenseSearchOperationViewPresenter.Action>(Action.NOTIFY_CLIENT));
+
+			}
+
+			@Override
+			protected void participateToInsurer() {
+				actionHandler.onActionInvoked(new ActionInvokedEvent<ExpenseSearchOperationViewPresenter.Action>(Action.PARTICIPATE_TO_INSURER));
+
+			}
+
+			@Override
+			protected void onReturnToClient() {
+				actionHandler.onActionInvoked(new ActionInvokedEvent<ExpenseSearchOperationViewPresenter.Action>(Action.RETURN_TO_CLIENT));
+
+			}
+
+			@Override
+			public void onCloseProcess() {
+				actionHandler.onActionInvoked(new ActionInvokedEvent<ExpenseSearchOperationViewPresenter.Action>(Action.CLOSE_PROCESS));
+			}
 		};
 		
 		formWrapper.add(operationsToolbar);
@@ -168,5 +209,10 @@ public class ExpenseSearchOperationView extends View implements ExpenseSearchOpe
 	@Override
 	public void clear() {
 		form.clearInfo();
+	}
+
+	@Override
+	public void lockOptions() {
+		operationsToolbar.lockAll();
 	}
 }

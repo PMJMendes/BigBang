@@ -6,7 +6,11 @@ import bigBang.definitions.client.response.ResponseError;
 import bigBang.definitions.client.response.ResponseHandler;
 import bigBang.definitions.shared.BigBangConstants;
 import bigBang.definitions.shared.HealthExpense;
+import bigBang.library.client.EventBus;
 import bigBang.library.client.FormField;
+import bigBang.library.client.Notification;
+import bigBang.library.client.Notification.TYPE;
+import bigBang.library.client.event.NewNotificationEvent;
 import bigBang.library.client.userInterface.DatePickerFormField;
 import bigBang.library.client.userInterface.ExpandableListBoxFormField;
 import bigBang.library.client.userInterface.TextAreaFormField;
@@ -40,7 +44,7 @@ public class ExpenseForm extends FormView<HealthExpense>{
 		number = new TextBoxFormField("Número");
 		number.setFieldWidth("175px");
 
-		clientName = new TextBoxFormField("Cliente"); //TODO TEM DE APARECER COMO EM APOLICE
+		clientName = new TextBoxFormField("Cliente"); 
 		expenseDate = new DatePickerFormField("Data");
 		insuredObjectId = new ExpandableListBoxFormField("Unidade de Risco");
 		value = new TextBoxFormField("Valor");
@@ -115,14 +119,14 @@ public class ExpenseForm extends FormView<HealthExpense>{
 		manager.setValue(info.managerId);
 		settlement.setValue(info.settlement);
 		notes.setValue(info.notes);
-		clientName.setValue(info.clientName + " (" + info.clientNumber + ")");
+		clientName.setValue("#" + info.clientNumber + " - " + info.clientName);
 		expenseDate.setValue(info.expenseDate);
 
-		referenceNumber.setValue(info.referenceNumber + " - " + info.categoryName + "/" + info.lineName + "/" + info.subLineName);
+		referenceNumber.setValue("#"+info.referenceNumber + " - " + info.categoryName + "/" + info.lineName + "/" + info.subLineName);
 
 		String listId = info.referenceTypeId.equalsIgnoreCase(BigBangConstants.EntityIds.INSURANCE_POLICY) ? 
-				BigBangConstants.EntityIds.INSURANCE_POLICY+"/"+info.referenceId 
-				: BigBangConstants.EntityIds.INSURANCE_SUB_POLICY+"/"+info.referenceId;
+				BigBangConstants.EntityIds.INSURANCE_POLICY_INSURED_OBJECTS+"/"+info.referenceId 
+				: BigBangConstants.EntityIds.INSURANCE_SUB_POLICY_INSURED_OBJECT +"/"+info.referenceId;
 
 
 		insuredObjectId.setListId(listId, new ResponseHandler<Void>() {
@@ -133,7 +137,21 @@ public class ExpenseForm extends FormView<HealthExpense>{
 
 			@Override
 			public void onError(Collection<ResponseError> errors) {
+				EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não foi possível obter a lista de unidades de risco."), TYPE.ALERT_NOTIFICATION));
+			}
+		});
+		
+		listId = BigBangConstants.EntityIds.COVERAGE+"/"+info.referenceId;
+		coverageId.setListId(info.referenceId, new ResponseHandler<Void>() {
+			
+			@Override
+			public void onResponse(Void response) {
 				return;
+			}
+			
+			@Override
+			public void onError(Collection<ResponseError> errors) {
+				EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não foi possível obter a lista de coberturas."), TYPE.ALERT_NOTIFICATION));
 			}
 		});
 
@@ -152,6 +170,7 @@ public class ExpenseForm extends FormView<HealthExpense>{
 		expenseDate.setReadOnly(readonly);
 		value.setReadOnly(readonly);
 		settlement.setReadOnly(readonly);
+		notes.setReadOnly(readonly);
 
 	};
 
