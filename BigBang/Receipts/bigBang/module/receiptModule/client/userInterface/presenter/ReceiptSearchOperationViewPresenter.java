@@ -95,10 +95,6 @@ public class ReceiptSearchOperationViewPresenter implements ViewPresenter {
 
 		void allowRequestDAS(boolean hasPermission);
 
-
-
-
-
 	}
 
 	protected Display view;

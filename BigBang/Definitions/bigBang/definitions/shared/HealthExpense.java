@@ -8,4 +8,7 @@ public class HealthExpense
 	public String managerId;
 	public String settlement; //Em €
 	public String notes;
+	public String categoryName;
+	public String lineName;
+	public String subLineName;
 }

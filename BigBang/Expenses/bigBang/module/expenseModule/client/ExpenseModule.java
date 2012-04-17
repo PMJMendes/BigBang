@@ -1,10 +1,12 @@
 package bigBang.module.expenseModule.client;
 
 import bigBang.definitions.client.dataAccess.DataBroker;
+import bigBang.definitions.shared.BigBangConstants;
 import bigBang.library.client.Module;
 import bigBang.library.client.ViewPresenterFactory;
 import bigBang.library.client.ViewPresenterInstantiator;
 import bigBang.library.client.userInterface.presenter.ViewPresenter;
+import bigBang.module.expenseModule.client.dataAccess.ExpenseBrokerImpl;
 import bigBang.module.expenseModule.client.userInterface.presenter.ExpenseOperationsViewPresenter;
 import bigBang.module.expenseModule.client.userInterface.presenter.ExpenseSearchOperationViewPresenter;
 import bigBang.module.expenseModule.client.userInterface.presenter.ExpenseSectionViewPresenter;
@@ -59,14 +61,16 @@ public class ExpenseModule implements Module {
 
 	@Override
 	public DataBroker<?>[] getBrokerImplementations() {
-		// TODO Auto-generated method stub
-		return null;
+		return new DataBroker<?>[]{
+				new ExpenseBrokerImpl()
+				};
 	}
 
 	@Override
 	public String[] getBrokerDependencies() {
-		// TODO Auto-generated method stub
-		return null;
+		return new String[]{
+				BigBangConstants.EntityIds.EXPENSE
+		};
 	}
 
 }
