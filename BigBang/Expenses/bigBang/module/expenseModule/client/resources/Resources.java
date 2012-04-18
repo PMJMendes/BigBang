@@ -10,5 +10,11 @@ public interface Resources extends ClientBundle {
 	
 	@Source("images/managerIcon.png")
 	ImageResource managerIcon();
+	
+	@Source("images/active.png")
+	ImageResource active();
+	
+	@Source("images/inactive.png")
+	ImageResource inactive();
 
 }

@@ -128,7 +128,7 @@ public class BigBangConstants {
 			public static final String CREATE_SUB_POLICY = "DF27A2DA-1B36-4F1C-B242-9FD40110F495";
 			public static final String CREATE_DEBIT_NOTE = "4CC51237-FC83-4B13-A8A9-9FD401100FE2";
 			public static final String CREATE_NEGOTIATION = "852BF3BF-F04A-494D-A308-9FD4011152C4";
-			public static final String CREATE_HEALTH_EXPENSE = null;
+			public static final String CREATE_HEALTH_EXPENSE = "A7A22C6D-ED66-444D-9E5E-9FD40112D52C";
 			public static final String CREATE_RISK_ANALISYS = null;
 			public static final String TRANSFER_TO_CLIENT = "E8DBFC9B-C24F-4F62-BE4E-9FF200B406C8";
 		}

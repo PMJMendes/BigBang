@@ -70,7 +70,6 @@ public abstract class ExpenseProcessToolBar extends BigBangOperationsToolBar{
 			}
 		});
 
-		this.executeSubMenu.addSeparator();
 		//agency
 
 		participateToInsurer = new MenuItem("Participar à seguradora", new Command() {
@@ -81,7 +80,6 @@ public abstract class ExpenseProcessToolBar extends BigBangOperationsToolBar{
 			}
 		});
 		addItem(SUB_MENU.EXECUTE, participateToInsurer);
-		this.executeSubMenu.addSeparator();
 		
 		//other
 		validate = new MenuItem("Validar", new Command() {
@@ -96,7 +94,7 @@ public abstract class ExpenseProcessToolBar extends BigBangOperationsToolBar{
 		//REQUESTS
 		//client
 		
-		infoOrDocumentRequest = new MenuItem("Pedido de Informação ou Documento", new Command() {
+		infoOrDocumentRequest = new MenuItem("Pedido de Informação ao Cliente", new Command() {
 			
 			@Override
 			public void execute() {
@@ -104,10 +102,9 @@ public abstract class ExpenseProcessToolBar extends BigBangOperationsToolBar{
 			}
 		});
 		addItem(SUB_MENU.REQUESTS, infoOrDocumentRequest);
-		this.requestsSubMenu.addSeparator();
 		
 		//agency
-		infoFromInsurer = new MenuItem("Pedido de Informação da Seguradora", new Command() {
+		infoFromInsurer = new MenuItem("Pedido de Informação à Seguradora", new Command() {
 			
 			@Override
 			public void execute() {

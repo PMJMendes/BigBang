@@ -264,7 +264,7 @@ ViewPresenter {
 					NavigationHistoryManager.getInstance().go(item);
 					break;
 				case CREATE_HEALTH_EXPENSE:
-					item.pushIntoStackParameter("display", "createhealthexpense");
+					item.pushIntoStackParameter("display", "createexpense");
 					NavigationHistoryManager.getInstance().go(item);
 					break;
 				case CREATE_INFO_MANAGEMENT_PROCESS:

@@ -2,8 +2,10 @@ package bigBang.module.expenseModule.client.dataAccess;
 
 import bigBang.definitions.client.dataAccess.DataBroker;
 import bigBang.definitions.client.dataAccess.ExpenseDataBroker;
+import bigBang.definitions.client.dataAccess.SearchDataBroker;
 import bigBang.definitions.shared.BigBangConstants;
 import bigBang.definitions.shared.HealthExpense;
+import bigBang.definitions.shared.HealthExpenseStub;
 import bigBang.module.expenseModule.interfaces.ExpenseService;
 import bigBang.module.expenseModule.interfaces.ExpenseServiceAsync;
 
@@ -43,6 +45,13 @@ public class ExpenseBrokerImpl extends DataBroker<HealthExpense> implements Expe
 	public void notifyItemUpdate(String itemId) {
 		// TODO Auto-generated method stub
 		
+	}
+
+
+	@Override
+	public SearchDataBroker<HealthExpenseStub> getSearchBroker() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

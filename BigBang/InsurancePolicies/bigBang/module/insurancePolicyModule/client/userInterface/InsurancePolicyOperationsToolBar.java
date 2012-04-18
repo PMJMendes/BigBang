@@ -308,6 +308,7 @@ public abstract class InsurancePolicyOperationsToolBar extends BigBangOperations
 	public void allowCreateRiskAnalisys(boolean allow) {
 		this.riskAnalysis.setEnabled(allow);
 	}
+	
 
 	public abstract void onVoidPolicy();
 

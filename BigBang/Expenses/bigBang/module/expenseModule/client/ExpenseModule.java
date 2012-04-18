@@ -10,9 +10,11 @@ import bigBang.module.expenseModule.client.dataAccess.ExpenseBrokerImpl;
 import bigBang.module.expenseModule.client.userInterface.presenter.ExpenseOperationsViewPresenter;
 import bigBang.module.expenseModule.client.userInterface.presenter.ExpenseSearchOperationViewPresenter;
 import bigBang.module.expenseModule.client.userInterface.presenter.ExpenseSectionViewPresenter;
+import bigBang.module.expenseModule.client.userInterface.presenter.MassParticipateToInsurerViewPresenter;
 import bigBang.module.expenseModule.client.userInterface.view.ExpenseOperationsView;
 import bigBang.module.expenseModule.client.userInterface.view.ExpenseSearchOperationView;
 import bigBang.module.expenseModule.client.userInterface.view.ExpenseSectionView;
+import bigBang.module.expenseModule.client.userInterface.view.MassParticipateToInsurerView;
 
 import com.google.gwt.core.client.GWT;
 
@@ -55,6 +57,15 @@ public class ExpenseModule implements Module {
 				ExpenseSearchOperationView expenseSearchOperationView = (ExpenseSearchOperationView) GWT.create(ExpenseSearchOperationView.class);
 				ExpenseSearchOperationViewPresenter expenseSearchOperationViewPresenter = new ExpenseSearchOperationViewPresenter(expenseSearchOperationView);
 				return expenseSearchOperationViewPresenter;
+			}
+		});
+		ViewPresenterFactory.getInstance().registerViewPresenterInstantiator("MASS_PARTICIPATE_TO_INSURER", new ViewPresenterInstantiator() {
+
+			@Override
+			public ViewPresenter getInstance() {
+				MassParticipateToInsurerView view = (MassParticipateToInsurerView) GWT.create(MassParticipateToInsurerView.class);
+				MassParticipateToInsurerViewPresenter presenter = new MassParticipateToInsurerViewPresenter(view);
+				return presenter;
 			}
 		});
 	}

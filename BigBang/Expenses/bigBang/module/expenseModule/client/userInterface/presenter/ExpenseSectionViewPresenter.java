@@ -21,7 +21,7 @@ public class ExpenseSectionViewPresenter implements ViewPresenter {
 
 	public static enum SectionOperation {
 		OPERATIONS,
-		MASS_MANAGER_TRANSFER
+		MASS_MANAGER_TRANSFER, MASS_PARTICIPATE_TO_INSURER
 	}
 
 	public static interface Display {
@@ -33,15 +33,15 @@ public class ExpenseSectionViewPresenter implements ViewPresenter {
 		void registerOperationSelectionHandler(ActionInvokedEventHandler<SectionOperation> handler);
 		Widget asWidget();
 	}
-	
+
 	private Display view;
 	private ViewPresenterController controller;
 	private ViewPresenterController overlayController;
-	
+
 	public ExpenseSectionViewPresenter(View view) {
 		this.setView(view);
 	}
-	
+
 	@Override
 	public void setView(UIObject view) {
 		this.view = (Display) view;
@@ -54,7 +54,7 @@ public class ExpenseSectionViewPresenter implements ViewPresenter {
 		container.add(this.view.asWidget());
 		initializeController();
 	}
-	
+
 	@Override
 	public void setParameters(HasParameters parameterHolder) {
 		this.controller.onParameters(parameterHolder);
@@ -94,6 +94,9 @@ public class ExpenseSectionViewPresenter implements ViewPresenter {
 					case MASS_MANAGER_TRANSFER:
 						item.pushIntoStackParameter("display", "massmanagertransfer");
 						break;
+					case MASS_PARTICIPATE_TO_INSURER:
+						item.pushIntoStackParameter("display", "massparticipatetoinsurer");
+						break;
 					}
 				}
 
@@ -101,7 +104,7 @@ public class ExpenseSectionViewPresenter implements ViewPresenter {
 			}
 		});
 	}
-	
+
 	private void initializeController(){
 		this.controller = new ViewPresenterController(this.view.getOperationViewContainer()) {
 
@@ -109,7 +112,7 @@ public class ExpenseSectionViewPresenter implements ViewPresenter {
 			protected void onNavigationHistoryEvent(NavigationHistoryItem historyItem) {
 				return;
 			}
-			
+
 			@Override
 			public void onParameters(HasParameters parameters) {
 				String section = parameters.getParameter("section");
@@ -121,7 +124,11 @@ public class ExpenseSectionViewPresenter implements ViewPresenter {
 					if(display.equalsIgnoreCase("massmanagertransfer")){
 						view.selectOperation(SectionOperation.MASS_MANAGER_TRANSFER);
 						present("MANAGER_TRANSFER", parameters);
+					}else if(display.equalsIgnoreCase("massparticipatetoinsurer")){
+						view.selectOperation(SectionOperation.MASS_PARTICIPATE_TO_INSURER);
+						present("MASS_PARTICIPATE_TO_INSURER", parameters);
 					}else{
+					
 						view.selectOperation(SectionOperation.OPERATIONS);
 						present("EXPENSE_OPERATIONS", parameters);
 					}

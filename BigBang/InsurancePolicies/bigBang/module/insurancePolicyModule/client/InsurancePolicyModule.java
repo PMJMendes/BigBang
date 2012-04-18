@@ -13,6 +13,7 @@ import bigBang.module.insurancePolicyModule.client.dataAccess.InsuranceSubPolicy
 import bigBang.module.insurancePolicyModule.client.dataAccess.InsuredObjectDataBrokerImpl;
 import bigBang.module.insurancePolicyModule.client.dataAccess.SubPolicyInsuredObjectDataBrokerImpl;
 import bigBang.module.insurancePolicyModule.client.userInterface.presenter.CreateDebitNoteViewPresenter;
+import bigBang.module.insurancePolicyModule.client.userInterface.presenter.CreateExpenseViewPresenter;
 import bigBang.module.insurancePolicyModule.client.userInterface.presenter.CreateReceiptViewPresenter;
 import bigBang.module.insurancePolicyModule.client.userInterface.presenter.ExerciseViewPresenter;
 import bigBang.module.insurancePolicyModule.client.userInterface.presenter.InsurancePolicyNegotiationViewPresenter;
@@ -33,6 +34,7 @@ import bigBang.module.insurancePolicyModule.client.userInterface.presenter.SubPo
 import bigBang.module.insurancePolicyModule.client.userInterface.presenter.SubPolicyViewPresenter;
 import bigBang.module.insurancePolicyModule.client.userInterface.presenter.SubPolicyVoidViewPresenter;
 import bigBang.module.insurancePolicyModule.client.userInterface.view.CreateDebitNoteView;
+import bigBang.module.insurancePolicyModule.client.userInterface.view.CreateExpenseView;
 import bigBang.module.insurancePolicyModule.client.userInterface.view.CreateReceiptView;
 import bigBang.module.insurancePolicyModule.client.userInterface.view.ExerciseView;
 import bigBang.module.insurancePolicyModule.client.userInterface.view.InsurancePolicyNegotiationView;
@@ -307,6 +309,15 @@ public class InsurancePolicyModule implements Module {
 			public ViewPresenter getInstance() {
 				NegotiationViewExternalInfoRequestView view = (NegotiationViewExternalInfoRequestView) GWT.create(NegotiationViewExternalInfoRequestView.class);
 				ViewPresenter presenter = new NegotiationViewExternalInfoRequestViewPresenter(view);
+				return presenter;
+			}
+		});
+		ViewPresenterFactory.getInstance().registerViewPresenterInstantiator("INSURANCE_POLICY_CREATE_EXPENSE", new ViewPresenterInstantiator() {
+
+			@Override
+			public ViewPresenter getInstance() {
+				CreateExpenseView view = (CreateExpenseView) GWT.create(CreateExpenseView.class);
+				CreateExpenseViewPresenter presenter = new CreateExpenseViewPresenter(view);
 				return presenter;
 			}
 		});

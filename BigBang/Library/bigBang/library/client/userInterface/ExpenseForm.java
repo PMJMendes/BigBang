@@ -1,4 +1,4 @@
-package bigBang.module.expenseModule.client.userInterface;
+package bigBang.library.client.userInterface;
 
 import java.util.Collection;
 
@@ -11,10 +11,6 @@ import bigBang.library.client.FormField;
 import bigBang.library.client.Notification;
 import bigBang.library.client.Notification.TYPE;
 import bigBang.library.client.event.NewNotificationEvent;
-import bigBang.library.client.userInterface.DatePickerFormField;
-import bigBang.library.client.userInterface.ExpandableListBoxFormField;
-import bigBang.library.client.userInterface.TextAreaFormField;
-import bigBang.library.client.userInterface.TextBoxFormField;
 import bigBang.library.client.userInterface.view.FormView;
 
 public class ExpenseForm extends FormView<HealthExpense>{
@@ -122,7 +118,7 @@ public class ExpenseForm extends FormView<HealthExpense>{
 		clientName.setValue("#" + info.clientNumber + " - " + info.clientName);
 		expenseDate.setValue(info.expenseDate);
 
-		referenceNumber.setValue("#"+info.referenceNumber + " - " + info.categoryName + "/" + info.lineName + "/" + info.subLineName);
+		referenceNumber.setValue("#"+info.referenceNumber + " - " + info.categoryName + " / " + info.lineName + " / " + info.subLineName);
 
 		String listId = info.referenceTypeId.equalsIgnoreCase(BigBangConstants.EntityIds.INSURANCE_POLICY) ? 
 				BigBangConstants.EntityIds.INSURANCE_POLICY_INSURED_OBJECTS+"/"+info.referenceId 
