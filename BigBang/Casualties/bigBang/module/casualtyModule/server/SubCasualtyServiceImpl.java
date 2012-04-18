@@ -160,6 +160,7 @@ public class SubCasualtyServiceImpl
 
 		lopMD = new ManageData(lobjSubCasualty.GetProcessID());
 		lopMD.mobjData = new SubCasualtyData();
+		lopMD.mobjData.mid = lobjSubCasualty.getKey();
 		lopMD.mobjData.mstrNumber = subCasualty.number;
 		lopMD.mobjData.midPolicy = ( lbPolicy ? UUID.fromString(subCasualty.referenceId) : null );
 		lopMD.mobjData.midSubPolicy = ( lbPolicy ? null : UUID.fromString(subCasualty.referenceId) );
@@ -174,6 +175,8 @@ public class SubCasualtyServiceImpl
 			for ( i = 0; i < lopMD.mobjData.marrItems.length; i++ )
 			{
 				lopMD.mobjData.marrItems[i] = new SubCasualtyItemData();
+				lopMD.mobjData.marrItems[i].mid = ( subCasualty.items[i].id == null ? null : UUID.fromString(subCasualty.items[i].id) );
+				lopMD.mobjData.marrItems[i].midSubCasualty = lopMD.mobjData.mid;
 				lopMD.mobjData.marrItems[i].midPolicyObject = ( subCasualty.items[i].insuredObjectId == null ? null :
 						(lbPolicy ? UUID.fromString(subCasualty.items[i].insuredObjectId) : null) );
 				lopMD.mobjData.marrItems[i].midSubPolicyObject = ( subCasualty.items[i].insuredObjectId == null ? null :
