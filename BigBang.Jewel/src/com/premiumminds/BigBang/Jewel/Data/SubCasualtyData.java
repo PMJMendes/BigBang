@@ -24,6 +24,7 @@ public class SubCasualtyData
 	public String mstrInsurerProc;
 	public String mstrDescription;
 	public String mstrNotes;
+	public boolean mbHasJudicial;
 
 	public OutgoingMessageData mobjNotification;
 	public Timestamp mdtLimitDate;
@@ -31,7 +32,7 @@ public class SubCasualtyData
 	public UUID midManager;
 	public UUID midProcess;
 
-	SubCasualtyItemData[] marrItems;
+	public SubCasualtyItemData[] marrItems;
 
 	public SubCasualtyData mobjPrevValues;
 
@@ -39,12 +40,13 @@ public class SubCasualtyData
 	{
 		mid = pobjSource.getKey();
 
-		mstrNumber      = (String) pobjSource.getAt(SubCasualty.I.NUMBER);
-		midPolicy       = (UUID)   pobjSource.getAt(SubCasualty.I.POLICY);
-		midSubPolicy    = (UUID)   pobjSource.getAt(SubCasualty.I.SUBPOLICY);
-		mstrInsurerProc = (String) pobjSource.getAt(SubCasualty.I.INSURERPROCESS);
-		mstrDescription = (String) pobjSource.getAt(SubCasualty.I.DESCRIPTION);
-		mstrNotes       = (String) pobjSource.getAt(SubCasualty.I.NOTES);
+		mstrNumber      = (String)  pobjSource.getAt(SubCasualty.I.NUMBER);
+		midPolicy       = (UUID)    pobjSource.getAt(SubCasualty.I.POLICY);
+		midSubPolicy    = (UUID)    pobjSource.getAt(SubCasualty.I.SUBPOLICY);
+		mstrInsurerProc = (String)  pobjSource.getAt(SubCasualty.I.INSURERPROCESS);
+		mstrDescription = (String)  pobjSource.getAt(SubCasualty.I.DESCRIPTION);
+		mstrNotes       = (String)  pobjSource.getAt(SubCasualty.I.NOTES);
+		mbHasJudicial   = (Boolean) pobjSource.getAt(SubCasualty.I.HASJUDICIAL);
 	}
 
 	public void ToObject(ObjectBase pobjDest)
@@ -58,6 +60,7 @@ public class SubCasualtyData
 			pobjDest.setAt(SubCasualty.I.INSURERPROCESS, mstrInsurerProc);
 			pobjDest.setAt(SubCasualty.I.DESCRIPTION,    mstrDescription);
 			pobjDest.setAt(SubCasualty.I.NOTES,          mstrNotes);
+			pobjDest.setAt(SubCasualty.I.HASJUDICIAL,    mbHasJudicial);
 		}
 		catch (Throwable e)
 		{

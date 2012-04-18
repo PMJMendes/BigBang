@@ -31,6 +31,9 @@ public class SubCasualtyItemData
 	public BigDecimal mdblSettlement;
 	public boolean mbIsManual;
 
+	public boolean mbNew;
+	public boolean mbDeleted;
+
 	public SubCasualtyItemData mobjPrevValues;
 
 	public void FromObject(ObjectBase pobjSource)

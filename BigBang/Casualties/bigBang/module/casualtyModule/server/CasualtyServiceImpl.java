@@ -1,5 +1,6 @@
 package bigBang.module.casualtyModule.server;
 
+import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.util.Calendar;
 import java.util.UUID;
@@ -20,6 +21,7 @@ import bigBang.definitions.shared.ManagerTransfer;
 import bigBang.definitions.shared.SearchParameter;
 import bigBang.definitions.shared.SearchResult;
 import bigBang.definitions.shared.SortParameter;
+import bigBang.definitions.shared.SubCasualty;
 import bigBang.library.server.BigBangPermissionServiceImpl;
 import bigBang.library.server.SearchServiceBase;
 import bigBang.library.server.TransferManagerServiceImpl;
@@ -32,11 +34,14 @@ import bigBang.module.casualtyModule.shared.CasualtySortParameter;
 import com.premiumminds.BigBang.Jewel.BigBangJewelException;
 import com.premiumminds.BigBang.Jewel.Constants;
 import com.premiumminds.BigBang.Jewel.Data.CasualtyData;
+import com.premiumminds.BigBang.Jewel.Data.SubCasualtyData;
+import com.premiumminds.BigBang.Jewel.Data.SubCasualtyItemData;
 import com.premiumminds.BigBang.Jewel.Objects.AgendaItem;
 import com.premiumminds.BigBang.Jewel.Objects.Client;
 import com.premiumminds.BigBang.Jewel.Objects.MgrXFer;
 import com.premiumminds.BigBang.Jewel.Operations.Casualty.CloseProcess;
 import com.premiumminds.BigBang.Jewel.Operations.Casualty.CreateMgrXFer;
+import com.premiumminds.BigBang.Jewel.Operations.Casualty.CreateSubCasualty;
 import com.premiumminds.BigBang.Jewel.Operations.Casualty.DeleteCasualty;
 import com.premiumminds.BigBang.Jewel.Operations.Casualty.ManageData;
 import com.premiumminds.BigBang.Jewel.Operations.MgrXFer.AcceptXFer;
@@ -182,6 +187,83 @@ public class CasualtyServiceImpl
 		}
 
 		return transfer;
+	}
+
+	public SubCasualty createSubCasualty(SubCasualty subCasualty)
+		throws SessionExpiredException, BigBangException
+	{
+		com.premiumminds.BigBang.Jewel.Objects.Casualty lobjCasualty;
+		boolean lbPolicy;
+		CreateSubCasualty lopCSC;
+		int i;
+
+		if ( Engine.getCurrentUser() == null )
+			throw new SessionExpiredException();
+
+		try
+		{
+			lobjCasualty = com.premiumminds.BigBang.Jewel.Objects.Casualty.GetInstance(Engine.getCurrentNameSpace(),
+					UUID.fromString(subCasualty.casualtyId));
+		}
+		catch (BigBangJewelException e)
+		{
+			throw new BigBangException(e.getMessage(), e);
+		}
+
+		lbPolicy = (Constants.ObjID_Policy.equals(UUID.fromString(subCasualty.referenceTypeId)));
+
+		lopCSC = new CreateSubCasualty(lobjCasualty.GetProcessID());
+		lopCSC.mobjData = new SubCasualtyData();
+		lopCSC.mobjData.mstrNumber = null;
+		lopCSC.mobjData.midPolicy = ( lbPolicy ? UUID.fromString(subCasualty.referenceId) : null );
+		lopCSC.mobjData.midSubPolicy = ( lbPolicy ? null : UUID.fromString(subCasualty.referenceId) );
+		lopCSC.mobjData.mstrInsurerProc = subCasualty.insurerProcessNumber;
+		lopCSC.mobjData.mstrDescription = subCasualty.text;
+		lopCSC.mobjData.mstrNotes = subCasualty.internalNotes;
+		lopCSC.mobjData.mbHasJudicial = subCasualty.hasJudicial;
+
+		if ( subCasualty.items != null )
+		{
+			lopCSC.mobjData.marrItems = new SubCasualtyItemData[subCasualty.items.length];
+			for ( i = 0; i < lopCSC.mobjData.marrItems.length; i++ )
+			{
+				lopCSC.mobjData.marrItems[i] = new SubCasualtyItemData();
+				lopCSC.mobjData.marrItems[i].midPolicyObject = ( subCasualty.items[i].insuredObjectId == null ? null :
+						(lbPolicy ? UUID.fromString(subCasualty.items[i].insuredObjectId) : null) );
+				lopCSC.mobjData.marrItems[i].midSubPolicyObject = ( subCasualty.items[i].insuredObjectId == null ? null :
+						(lbPolicy ? null : UUID.fromString(subCasualty.items[i].insuredObjectId)) );
+				lopCSC.mobjData.marrItems[i].midPolicyCoverage = ( subCasualty.items[i].coverageId == null ? null :
+						(lbPolicy ? UUID.fromString(subCasualty.items[i].coverageId) : null) );
+				lopCSC.mobjData.marrItems[i].midSubPolicyCoverage = ( subCasualty.items[i].coverageId == null ? null :
+						(lbPolicy ? null : UUID.fromString(subCasualty.items[i].coverageId)) );
+				lopCSC.mobjData.marrItems[i].midType = ( subCasualty.items[i].damageTypeId == null ? null :
+						UUID.fromString(subCasualty.items[i].damageTypeId) );
+				lopCSC.mobjData.marrItems[i].mdblDamages = ( subCasualty.items[i].damages == null ? null :
+						new BigDecimal(subCasualty.items[i].damages) );
+				lopCSC.mobjData.marrItems[i].mdblSettlement = ( subCasualty.items[i].settlement == null ? null :
+						new BigDecimal(subCasualty.items[i].settlement) );
+				lopCSC.mobjData.marrItems[i].mbIsManual = subCasualty.items[i].isManual;
+
+				lopCSC.mobjData.marrItems[i].mbNew = !subCasualty.items[i].deleted;
+				lopCSC.mobjData.marrItems[i].mbDeleted = subCasualty.items[i].deleted;
+			}
+		}
+		else
+			lopCSC.mobjData.marrItems = null;
+
+		lopCSC.mobjContactOps = null;
+		lopCSC.mobjDocOps = null;
+
+		try
+		{
+			lopCSC.Execute();
+		}
+		catch (JewelPetriException e)
+		{
+			throw new BigBangException(e.getMessage(), e);
+		}
+
+		return SubCasualtyServiceImpl.sGetSubCasualty(lopCSC.mobjData.mid);
 	}
 
 	public Casualty closeProcess(String casualtyId)

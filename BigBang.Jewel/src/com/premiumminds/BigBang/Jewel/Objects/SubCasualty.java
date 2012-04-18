@@ -30,6 +30,7 @@ public class SubCasualty
 		public static int FROM           =  8;
 		public static int SUBJECT        =  9;
 		public static int LIMITDATE      = 10;
+		public static int HASJUDICIAL    = 11;
 	}
 
     public static SubCasualty GetInstance(UUID pidNameSpace, UUID pidKey)
@@ -229,5 +230,76 @@ public class SubCasualty
 		}
 
 		return larrAux.toArray(new Document[larrAux.size()]);
+    }
+
+    public SubCasualtyItem[] GetCurrentItems()
+    	throws BigBangJewelException
+    {
+		ArrayList<SubCasualtyItem> larrAux;
+		IEntity lrefItems;
+        MasterDB ldb;
+        ResultSet lrsItems;
+
+		larrAux = new ArrayList<SubCasualtyItem>();
+
+		try
+		{
+			lrefItems = Entity.GetInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), Constants.ObjID_SubCasualtyItem)); 
+			ldb = new MasterDB();
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangJewelException(e.getMessage(), e);
+		}
+
+		try
+		{
+			lrsItems = lrefItems.SelectByMembers(ldb, new int[] {SubCasualtyItem.I.SUBCASUALTY},
+					new java.lang.Object[] {getKey()}, new int[0]);
+		}
+		catch (Throwable e)
+		{
+			try { ldb.Disconnect(); } catch (Throwable e1) {}
+			throw new BigBangJewelException(e.getMessage(), e);
+		}
+
+		try
+		{
+			while ( lrsItems.next() )
+				larrAux.add(SubCasualtyItem.GetInstance(getNameSpace(), lrsItems));
+		}
+		catch (BigBangJewelException e)
+		{
+			try { lrsItems.close(); } catch (Throwable e1) {}
+			try { ldb.Disconnect(); } catch (Throwable e1) {}
+			throw e;
+		}
+		catch (Throwable e)
+		{
+			try { lrsItems.close(); } catch (Throwable e1) {}
+			try { ldb.Disconnect(); } catch (Throwable e1) {}
+			throw new BigBangJewelException(e.getMessage(), e);
+		}
+
+		try
+		{
+			lrsItems.close();
+		}
+		catch (Throwable e)
+		{
+			try { ldb.Disconnect(); } catch (Throwable e1) {}
+			throw new BigBangJewelException(e.getMessage(), e);
+		}
+
+		try
+		{
+			ldb.Disconnect();
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangJewelException(e.getMessage(), e);
+		}
+
+		return larrAux.toArray(new SubCasualtyItem[larrAux.size()]);
     }
 }
