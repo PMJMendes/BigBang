@@ -66,6 +66,7 @@ public class QuoteRequestSectionView extends View implements QuoteRequestSection
 		Resources r = GWT.create(Resources.class);
 		
 		addDockItem("Pesquisa", r.searchIcon(), SectionOperation.OPERATIONS);
+		addDockItem("Transf. Gestor", r.managerIcon(), SectionOperation.MASS_MANAGER_TRANSFER);
 	}
 
 	protected void addDockItem(String text, ImageResource icon, final QuoteRequestSectionViewPresenter.SectionOperation action){

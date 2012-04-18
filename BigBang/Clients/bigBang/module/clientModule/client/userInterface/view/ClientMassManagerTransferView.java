@@ -71,6 +71,7 @@ public class ClientMassManagerTransferView extends MassManagerTransferView<Clien
 			filtersContainer.add(filtersPanel);
 			
 			showSearchField(true);
+			setOperationId(BigBangConstants.OperationIds.ClientProcess.CREATE_MANAGER_TRANSFER);
 		}
 
 		@Override

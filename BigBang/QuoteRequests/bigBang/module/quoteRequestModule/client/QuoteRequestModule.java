@@ -13,18 +13,22 @@ import bigBang.module.quoteRequestModule.client.userInterface.presenter.Negotiat
 import bigBang.module.quoteRequestModule.client.userInterface.presenter.NegotiationGrantViewPresenter;
 import bigBang.module.quoteRequestModule.client.userInterface.presenter.QuoteRequestCloseViewPresenter;
 import bigBang.module.quoteRequestModule.client.userInterface.presenter.QuoteRequestDeleteViewPresenter;
+import bigBang.module.quoteRequestModule.client.userInterface.presenter.QuoteRequestMassManagerTransferViewPresenter;
 import bigBang.module.quoteRequestModule.client.userInterface.presenter.QuoteRequestObjectViewPresenter;
 import bigBang.module.quoteRequestModule.client.userInterface.presenter.QuoteRequestOperationsViewPresenter;
 import bigBang.module.quoteRequestModule.client.userInterface.presenter.QuoteRequestSearchOperationViewPresenter;
 import bigBang.module.quoteRequestModule.client.userInterface.presenter.QuoteRequestSectionViewPresenter;
+import bigBang.module.quoteRequestModule.client.userInterface.presenter.SingleQuoteRequestManagerTransferViewPresenter;
 import bigBang.module.quoteRequestModule.client.userInterface.view.NegotiationDeleteView;
 import bigBang.module.quoteRequestModule.client.userInterface.view.NegotiationGrantView;
 import bigBang.module.quoteRequestModule.client.userInterface.view.QuoteRequestCloseView;
 import bigBang.module.quoteRequestModule.client.userInterface.view.QuoteRequestDeleteView;
+import bigBang.module.quoteRequestModule.client.userInterface.view.QuoteRequestMassManagerTransferView;
 import bigBang.module.quoteRequestModule.client.userInterface.view.QuoteRequestObjectView;
 import bigBang.module.quoteRequestModule.client.userInterface.view.QuoteRequestOperationsView;
 import bigBang.module.quoteRequestModule.client.userInterface.view.QuoteRequestSearchOperationView;
 import bigBang.module.quoteRequestModule.client.userInterface.view.QuoteRequestSectionView;
+import bigBang.module.quoteRequestModule.client.userInterface.view.SingleQuoteRequestManagerTransferView;
 
 import com.google.gwt.core.client.GWT;
 
@@ -116,6 +120,24 @@ public class QuoteRequestModule implements Module {
 			public ViewPresenter getInstance() {
 				QuoteRequestCloseView view = (QuoteRequestCloseView) GWT.create(QuoteRequestCloseView.class);
 				ViewPresenter presenter = new QuoteRequestCloseViewPresenter(view);
+				return presenter;
+			}
+		});
+		ViewPresenterFactory.getInstance().registerViewPresenterInstantiator("QUOTE_REQUEST_MASS_MANAGER_TRANSFER", new ViewPresenterInstantiator() {
+
+			@Override
+			public ViewPresenter getInstance() {
+				QuoteRequestMassManagerTransferView view = (QuoteRequestMassManagerTransferView) GWT.create(QuoteRequestMassManagerTransferView.class);
+				QuoteRequestMassManagerTransferViewPresenter presenter = new QuoteRequestMassManagerTransferViewPresenter(view);
+				return presenter;
+			}
+		});
+		ViewPresenterFactory.getInstance().registerViewPresenterInstantiator("QUOTE_REQUEST_SINGLE_MANAGER_TRANSFER", new ViewPresenterInstantiator() {
+
+			@Override
+			public ViewPresenter getInstance() {
+				SingleQuoteRequestManagerTransferView view = (SingleQuoteRequestManagerTransferView) GWT.create(SingleQuoteRequestManagerTransferView.class);
+				SingleQuoteRequestManagerTransferViewPresenter presenter = new SingleQuoteRequestManagerTransferViewPresenter(view);
 				return presenter;
 			}
 		});

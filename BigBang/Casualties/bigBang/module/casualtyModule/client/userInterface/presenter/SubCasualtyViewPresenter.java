@@ -36,31 +36,31 @@ public class SubCasualtyViewPresenter implements ViewPresenter {
 		CANCEL,
 		DELETE
 	}
-	
+
 	public static interface Display {
 		HasValue<Casualty> getParentForm();
 		HasEditableValue<SubCasualty> getForm();
 		void registerActionHandler(ActionInvokedEventHandler<Action> handler);
-		
+
 		//PERMISSIONS
 		void clearAllowedPermissions();
 		void setSaveModeEnabled(boolean enabled);
 		void allowEdit(boolean allow);
 		void allowDelete(boolean allow);
-		
+
 		Widget asWidget();
 	}
-	
-	
+
+
 	protected boolean bound = false;
 	protected Display view;
 	protected SubCasualtyDataBroker broker;
-	
+
 	public SubCasualtyViewPresenter(Display view){
 		setView((UIObject) view);
 		this.broker = (SubCasualtyDataBroker) DataBrokerManager.staticGetBroker(BigBangConstants.EntityIds.SUB_CASUALTY);
 	}
-	
+
 	@Override
 	public void setView(UIObject view) {
 		this.view = (Display) view;
@@ -76,16 +76,21 @@ public class SubCasualtyViewPresenter implements ViewPresenter {
 	@Override
 	public void setParameters(HasParameters parameterHolder) {
 		clearView();
-		
+
 		String subCasualtyId = parameterHolder.getParameter("subcasualtyid");
-		
+		String casualtyId = parameterHolder.getParameter("casualtyid");
+
 		if(subCasualtyId != null && ! subCasualtyId.isEmpty()) {
-			showSubCasualty(subCasualtyId);
+			if(subCasualtyId.equalsIgnoreCase("new")) {
+				showCreateSubCasualty(casualtyId);
+			}else{
+				showSubCasualty(subCasualtyId);
+			}
 		}else{
 			onFailure();
 		}
 	}
-	
+
 	protected void clearView(){
 		view.setSaveModeEnabled(false);
 		view.clearAllowedPermissions();
@@ -93,10 +98,10 @@ public class SubCasualtyViewPresenter implements ViewPresenter {
 		view.getForm().setValue(null);
 		view.getForm().setReadOnly(true);
 	}
-	
+
 	protected void bind(){
 		view.registerActionHandler(new ActionInvokedEventHandler<SubCasualtyViewPresenter.Action>() {
-			
+
 			@Override
 			public void onActionInvoked(ActionInvokedEvent<Action> action) {
 				switch(action.getAction()) {
@@ -116,10 +121,10 @@ public class SubCasualtyViewPresenter implements ViewPresenter {
 			}
 		});
 	}
-	
+
 	protected void showSubCasualty(String subCasualtyId){
 		broker.getSubCasualty(subCasualtyId, new ResponseHandler<SubCasualty>() {
-			
+
 			@Override
 			public void onResponse(final SubCasualty subCasualty) {
 				CasualtyDataBroker casualtyBroker = (CasualtyDataBroker) DataBrokerManager.staticGetBroker(BigBangConstants.EntityIds.CASUALTY);
@@ -129,11 +134,11 @@ public class SubCasualtyViewPresenter implements ViewPresenter {
 					public void onResponse(Casualty casualty) {
 						view.getParentForm().setValue(casualty);
 						view.getForm().setValue(subCasualty);
-						
+
 						//TODO PERMISSIONS
 						view.allowEdit(PermissionChecker.hasPermission(casualty, BigBangConstants.OperationIds.SubCasualtyProcess.UPDATE_SUB_CASUALTY));
 						view.allowDelete(PermissionChecker.hasPermission(casualty, BigBangConstants.OperationIds.SubCasualtyProcess.DELETE_SUB_CASUALTY));
-						
+
 						view.getForm().setReadOnly(true);
 					}
 
@@ -143,48 +148,120 @@ public class SubCasualtyViewPresenter implements ViewPresenter {
 					}
 				});
 			}
-			
+
 			@Override
 			public void onError(Collection<ResponseError> errors) {
 				onGetSubCasualtyFailed();
 			}
 		});
 	}
-	
-	protected void onEdit(){
-		view.setSaveModeEnabled(true);
-		view.getForm().setReadOnly(false);
-	}
-	
-	protected void onSave() {
-		broker.updateSubCasualty(view.getForm().getInfo(), new ResponseHandler<SubCasualty>() {
+
+	protected void showCreateSubCasualty(String parentId){
+		CasualtyDataBroker casualtyBroker = (CasualtyDataBroker) DataBrokerManager.staticGetBroker(BigBangConstants.EntityIds.CASUALTY);
+		casualtyBroker.getCasualty(parentId, new ResponseHandler<Casualty>() {
 
 			@Override
-			public void onResponse(SubCasualty response) {
-				onSaveSuccess();
+			public void onResponse(Casualty casualty) {
+				view.getParentForm().setValue(casualty);
+
+				SubCasualty subCasualty = new SubCasualty();
+				subCasualty.casualtyId = casualty.id;
+
+				view.getForm().setValue(subCasualty);
+
+				//TODO PERMISSIONS
+				view.allowEdit(true);
+				view.allowDelete(true);
+
+				view.getForm().setReadOnly(false);
+				view.setSaveModeEnabled(true);
 			}
 
 			@Override
 			public void onError(Collection<ResponseError> errors) {
-				onSaveFailed();
+				onFailure();
 			}
 		});
 	}
-	
+
+	protected void onEdit(){
+		view.setSaveModeEnabled(true);
+		view.getForm().setReadOnly(false);
+	}
+
+	protected void onSave() {
+		SubCasualty subCasualty = view.getForm().getInfo();
+
+		if(subCasualty.id == null) {
+			CasualtyDataBroker casualtyBroker = (CasualtyDataBroker) DataBrokerManager.staticGetBroker(BigBangConstants.EntityIds.CASUALTY);
+			casualtyBroker.createSubCasualty(subCasualty, new ResponseHandler<SubCasualty>(){
+
+				@Override
+				public void onResponse(SubCasualty response) {
+					onCreateSubCasualtySuccess(response);
+				}
+
+				@Override
+				public void onError(Collection<ResponseError> errors) {
+					onCreateSubCasualtyFailed();
+				}
+			});
+		}else{
+			broker.updateSubCasualty(subCasualty, new ResponseHandler<SubCasualty>() {
+
+				@Override
+				public void onResponse(SubCasualty response) {
+					onSaveSuccess();
+				}
+
+				@Override
+				public void onError(Collection<ResponseError> errors) {
+					onSaveFailed();
+				}
+			});
+		}
+	}
+
 	protected void onCancel(){
-		NavigationHistoryManager.getInstance().reload();
+		SubCasualty subCasualty = view.getForm().getValue();
+		
+		if(subCasualty.id == null) {
+			NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
+			item.removeParameter("subcasualtyid");
+			item.popFromStackParameter("display");
+			NavigationHistoryManager.getInstance().go(item);
+		}else{
+			NavigationHistoryManager.getInstance().reload();
+		}
 	}
-	
+
 	protected void onDelete(){
-		//TODO
+		SubCasualty subCasualty = view.getForm().getValue();
+		
+		if(subCasualty.id == null) {
+			onCancel();
+		}else{
+			//TODO
+		}
 	}
-	
+
 	protected void onSaveSuccess(){
 		EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Sub-Sinistro Guardado com Sucesso"), TYPE.TRAY_NOTIFICATION));
 		NavigationHistoryManager.getInstance().reload();
 	}
-	
+
 	protected void onSaveFailed(){
+		EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não foi possível Guardar o Sub-Sinistro"), TYPE.ALERT_NOTIFICATION));
+	}
+
+	protected void onCreateSubCasualtySuccess(SubCasualty subCasualty){
+		EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Sub-Sinistro Criado com Sucesso"), TYPE.TRAY_NOTIFICATION));
+		NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
+		item.setParameter("subcasualtyid", subCasualty.id);
+		NavigationHistoryManager.getInstance().go(item);
+	}
+	
+	protected void onCreateSubCasualtyFailed(){
 		EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não foi possível Guardar o Sub-Sinistro"), TYPE.ALERT_NOTIFICATION));
 	}
 	
@@ -203,5 +280,5 @@ public class SubCasualtyViewPresenter implements ViewPresenter {
 		item.popFromStackParameter("display");
 		NavigationHistoryManager.getInstance().go(item);
 	}
-	
+
 }

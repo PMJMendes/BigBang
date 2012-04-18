@@ -20,6 +20,7 @@ public class QuoteRequestSectionViewPresenter implements ViewPresenter {
 
 	public static enum SectionOperation {
 		OPERATIONS,
+		MASS_MANAGER_TRANSFER
 	}
 
 	public static interface Display {
@@ -84,6 +85,9 @@ public class QuoteRequestSectionViewPresenter implements ViewPresenter {
 					item.pushIntoStackParameter("display", "search");
 				}else{
 					switch(action.getAction()) {
+					case MASS_MANAGER_TRANSFER:
+						item.pushIntoStackParameter("display", "massmanagertransfer");
+						break;
 					case OPERATIONS:
 						item.pushIntoStackParameter("display", "search");
 						break;
@@ -110,8 +114,9 @@ public class QuoteRequestSectionViewPresenter implements ViewPresenter {
 					String display = parameters.peekInStackParameter("display");
 					display = display == null ? "" : display;
 
-					if(display.equalsIgnoreCase("TODO")){
-						//present("HISTORY", parameters);
+					if(display.equalsIgnoreCase("massmanagertransfer")){
+						view.selectOperation(SectionOperation.MASS_MANAGER_TRANSFER);
+						present("QUOTE_REQUEST_MASS_MANAGER_TRANSFER", parameters);
 					}else {
 						view.selectOperation(SectionOperation.OPERATIONS);
 						present("QUOTE_REQUEST_OPERATIONS", parameters);
@@ -136,6 +141,9 @@ public class QuoteRequestSectionViewPresenter implements ViewPresenter {
 					view.showOverlayViewContainer(true);
 				}else if(show.equalsIgnoreCase("deleterequest")){
 					present("QUOTE_REQUEST_DELETE", parameters);
+					view.showOverlayViewContainer(true);
+				}else if(show.equalsIgnoreCase("managertransfer")){
+					present("QUOTE_REQUEST_SINGLE_MANAGER_TRANSFER", parameters);
 					view.showOverlayViewContainer(true);
 				}else if(show.equalsIgnoreCase("contactmanagement")){
 					present("CONTACT", parameters);

@@ -8,6 +8,7 @@ import bigBang.definitions.client.dataAccess.DataBroker;
 import bigBang.definitions.client.dataAccess.DataBrokerClient;
 import bigBang.definitions.client.dataAccess.Search;
 import bigBang.definitions.client.dataAccess.SearchDataBroker;
+import bigBang.definitions.client.dataAccess.SubCasualtyDataBroker;
 import bigBang.definitions.client.response.ResponseError;
 import bigBang.definitions.client.response.ResponseHandler;
 import bigBang.definitions.shared.BigBangConstants;
@@ -16,7 +17,9 @@ import bigBang.definitions.shared.CasualtyStub;
 import bigBang.definitions.shared.SearchParameter;
 import bigBang.definitions.shared.SortOrder;
 import bigBang.definitions.shared.SortParameter;
+import bigBang.definitions.shared.SubCasualty;
 import bigBang.library.client.BigBangAsyncCallback;
+import bigBang.library.client.dataAccess.DataBrokerManager;
 import bigBang.module.casualtyModule.interfaces.CasualtyService;
 import bigBang.module.casualtyModule.interfaces.CasualtyServiceAsync;
 import bigBang.module.casualtyModule.shared.CasualtySearchParameter;
@@ -210,26 +213,24 @@ CasualtyDataBroker {
 	}
 
 	@Override
-	public void reopen(String casualtyId, ResponseHandler<Void> handler) {
-//		service.(casualtyId, new BigBangAsyncCallback<Casualty>() {
-//
-//			@Override
-//			public void onResponseSuccess(Casualty result) {
-//				incrementDataVersion();
-//				for(DataBrokerClient<Casualty> client : clients) {
-//					((CasualtyDataBrokerClient) client).updateCasualty(result);
-//				}
-//				handler.onResponse(null);
-//			}
-//			
-//			@Override
-//			public void onResponseFailure(Throwable caught) {
-//				handler.onError(new String[]{
-//					new String("Could not close the process")	
-//				});
-//				super.onResponseFailure(caught);
-//			}
-//		});
+	public void createSubCasualty(SubCasualty subCasualty,
+			final ResponseHandler<SubCasualty> responseHandler) {
+		service.createSubCasualty(subCasualty, new BigBangAsyncCallback<SubCasualty>() {
+
+			@Override
+			public void onResponseSuccess(SubCasualty result) {
+				SubCasualtyDataBroker subCasualtyBroker = (SubCasualtyDataBroker) DataBrokerManager.staticGetBroker(BigBangConstants.EntityIds.SUB_CASUALTY);
+				subCasualtyBroker.notifyItemCreation(result.id);
+			}
+			
+			@Override
+			public void onResponseFailure(Throwable caught) {
+				responseHandler.onError(new String[]{
+						new String("Could not delete the sub casualty")
+				});
+				super.onResponseFailure(caught);
+			}
+		});
 	}
 
 }

@@ -4,8 +4,6 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.google.gwt.core.client.GWT;
-
 import bigBang.definitions.client.dataAccess.DataBroker;
 import bigBang.definitions.client.dataAccess.DataBrokerClient;
 import bigBang.definitions.client.dataAccess.QuoteRequestBroker;
@@ -18,6 +16,7 @@ import bigBang.definitions.client.response.ResponseHandler;
 import bigBang.definitions.shared.BigBangConstants;
 import bigBang.definitions.shared.InfoOrDocumentRequest;
 import bigBang.definitions.shared.InsuredObject;
+import bigBang.definitions.shared.ManagerTransfer;
 import bigBang.definitions.shared.QuoteRequest;
 import bigBang.definitions.shared.QuoteRequest.RequestSubLine;
 import bigBang.definitions.shared.QuoteRequest.TableSection;
@@ -27,12 +26,16 @@ import bigBang.definitions.shared.Remap.RemapId;
 import bigBang.definitions.shared.RiskAnalysis;
 import bigBang.definitions.shared.SortOrder;
 import bigBang.library.client.BigBangAsyncCallback;
+import bigBang.library.client.EventBus;
+import bigBang.library.client.event.OperationWasExecutedEvent;
 import bigBang.library.shared.CorruptedPadException;
 import bigBang.module.quoteRequestModule.interfaces.QuoteRequestService;
 import bigBang.module.quoteRequestModule.interfaces.QuoteRequestServiceAsync;
 import bigBang.module.quoteRequestModule.shared.QuoteRequestSearchParameter;
 import bigBang.module.quoteRequestModule.shared.QuoteRequestSortParameter;
 import bigBang.module.quoteRequestModule.shared.QuoteRequestSortParameter.SortableField;
+
+import com.google.gwt.core.client.GWT;
 
 public class QuoteRequestBrokerImpl extends DataBroker<QuoteRequest> implements	QuoteRequestBroker {
 
@@ -275,6 +278,9 @@ public class QuoteRequestBrokerImpl extends DataBroker<QuoteRequest> implements	
 					@Override
 					public void onResponseSuccess(Remap[] result) {
 						String finalId = result[0].remapIds[0].newId;
+						
+						final boolean newQuoteRequest = result[0].remapIds[0].oldId == null;
+						
 						doRemapping(result);
 						getQuoteRequest(finalId, new ResponseHandler<QuoteRequest>() {
 
@@ -282,9 +288,14 @@ public class QuoteRequestBrokerImpl extends DataBroker<QuoteRequest> implements	
 							public void onResponse(QuoteRequest response) {
 								incrementDataVersion();
 								for(DataBrokerClient<QuoteRequest> client : getClients()) {
-									((QuoteRequestDataBrokerClient) client).addQuoteRequest(response);
+									if(newQuoteRequest) {
+										((QuoteRequestDataBrokerClient) client).addQuoteRequest(response);
+									}else{
+										((QuoteRequestDataBrokerClient) client).updateQuoteRequest(response);
+									}
 									((QuoteRequestDataBrokerClient) client).setDataVersionNumber(getDataElementId(), getCurrentDataVersion());
 								}
+								handler.onResponse(response);
 							}
 
 							@Override
@@ -576,6 +587,86 @@ public class QuoteRequestBrokerImpl extends DataBroker<QuoteRequest> implements	
 				super.onResponseFailure(caught);
 			}
 		});
+	}
+	
+	@Override
+	public void createManagerTransfer(String[] dataObjectIds, String managerId,
+			final ResponseHandler<ManagerTransfer> handler) {
+		ManagerTransfer transfer = new ManagerTransfer();
+		transfer.newManagerId = managerId;
+		transfer.dataObjectIds = dataObjectIds;
+
+		if(dataObjectIds.length > 1){
+			service.massCreateManagerTransfer(transfer, new BigBangAsyncCallback<ManagerTransfer>() {
+
+				@Override
+				public void onResponseSuccess(ManagerTransfer result) {
+					for(int i = 0; i < result.dataObjectIds.length; i++) {
+						requireDataRefresh();
+						getQuoteRequest(result.dataObjectIds[i], new ResponseHandler<QuoteRequest>(){
+
+							@Override
+							public void onResponse(QuoteRequest response) {
+								for(DataBrokerClient<QuoteRequest> c : getClients()) {
+									QuoteRequestDataBrokerClient b = (QuoteRequestDataBrokerClient)c;
+									b.updateQuoteRequest(response);
+								}
+							}
+
+							@Override
+							public void onError(Collection<ResponseError> errors) {
+								return;
+							}
+						});
+					}
+					handler.onResponse(result);
+					EventBus.getInstance().fireEvent(new OperationWasExecutedEvent(BigBangConstants.OperationIds.QuoteRequestProcess.CREATE_MANAGER_TRANSFER, result.newManagerId));
+				}
+
+				@Override
+				public void onResponseFailure(Throwable caught) {
+					handler.onError(new String[]{
+							new String("Could not create the manager transfer")	
+					});
+					super.onResponseFailure(caught);
+				}
+
+			});
+		}else{
+			service.createManagerTransfer(transfer, new BigBangAsyncCallback<ManagerTransfer>() {
+
+				@Override
+				public void onResponseSuccess(ManagerTransfer result) {
+					for(int i = 0; i < result.dataObjectIds.length; i++) {
+						getQuoteRequest(result.dataObjectIds[i], new ResponseHandler<QuoteRequest>(){
+
+							@Override
+							public void onResponse(QuoteRequest response) {
+								for(DataBrokerClient<QuoteRequest> c : QuoteRequestBrokerImpl.this.clients) {
+									QuoteRequestDataBrokerClient b = (QuoteRequestDataBrokerClient)c;
+									b.updateQuoteRequest(response);
+								}
+							}
+
+							@Override
+							public void onError(Collection<ResponseError> errors) {
+								return;
+							}
+						});
+					}
+					handler.onResponse(result);
+					EventBus.getInstance().fireEvent(new OperationWasExecutedEvent(BigBangConstants.OperationIds.ClientProcess.CREATE_MANAGER_TRANSFER, result.newManagerId));
+				}
+
+				@Override
+				public void onResponseFailure(Throwable caught) {
+					handler.onError(new String[]{
+							new String("Could not create manager transfer")	
+					});
+					super.onResponseFailure(caught);
+				}
+			});
+		}		
 	}
 
 	@Override

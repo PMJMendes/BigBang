@@ -190,6 +190,7 @@ public class BigBangConstants {
 			public static final String UPDATE_QUOTE_REQUEST = "450E32C7-C544-4030-92C7-A00C0121D1B6";
 			public static final String DELETE_QUOTE_REQUEST = "57172AC9-8CDF-4C34-825F-A00C01294D35";
 			public static final String CLOSE_QUOTE_REQUEST = "2E49B889-594C-49A6-B25D-A00C012876B8";
+			public static final String CREATE_MANAGER_TRANSFER = "D47D25C0-E8AE-4AC7-AB76-A00C01252C9F";
 		}
 
 		public static class SignatureRequestProcess {
@@ -202,12 +203,13 @@ public class BigBangConstants {
 			public static final String UPDATE_CASUALTY = "574AE481-418F-4159-BE7D-A02E010397DF";
 			public static final String DELETE_CASUALTY = "21AEC620-C547-404A-8956-A02E0109A821";
 			public static final String CLOSE_CASUALTY = "4FC7D258-3CBB-4174-AD53-A02E01094F3D";
+			public static final String CREATE_SUB_CASUALTY = "5E84E2C5-5461-4D0D-9B77-A02E0107D0EA";
 		}
 		
 		public static class SubCasualtyProcess {
-			public static final String UPDATE_SUB_CASUALTY = ""; //TODO
-			public static final String DELETE_SUB_CASUALTY = "";
-			public static final String CLOSE_SUB_CASUALTY = "";
+			public static final String UPDATE_SUB_CASUALTY = "A1DE87C0-1878-4533-A82D-A03600FA6B23";
+			public static final String DELETE_SUB_CASUALTY = "207F3FEC-0CB2-47D4-868A-A03600FEE4FB";
+			public static final String CLOSE_SUB_CASUALTY = "9CD4186F-90A7-4523-8D2F-A03600FF750D";
 		}
 
 		public static class DASRequestProcess{

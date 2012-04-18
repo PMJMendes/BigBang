@@ -79,6 +79,10 @@ public class QuoteRequestSearchOperationView extends View implements QuoteReques
 				// TODO Auto-generated method stub
 
 			}
+			
+			public void onCreateManagerTransfer() {
+				handler.onActionInvoked(new ActionInvokedEvent<QuoteRequestSearchOperationViewPresenter.Action>(Action.CREATE_MANAGER_TRANSFER));
+			};
 
 			@Override
 			public void onIncludeInsuredObject() {
@@ -203,6 +207,11 @@ public class QuoteRequestSearchOperationView extends View implements QuoteReques
 	@Override
 	public void allowCreateInsuredObject(boolean allow) {
 		toolbar.allowCreateInsuredObject(allow);
+	}
+	
+	@Override
+	public void allowCreateManagerTransfer(boolean allow) {
+		toolbar.allowCreateManagerTransfer(allow);
 	}
 
 	@Override

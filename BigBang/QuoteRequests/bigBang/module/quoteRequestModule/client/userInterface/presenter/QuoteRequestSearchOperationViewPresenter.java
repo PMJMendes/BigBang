@@ -48,7 +48,7 @@ public class QuoteRequestSearchOperationViewPresenter implements ViewPresenter {
 		CANCEL,
 		DELETE,
 		CLOSE,
-		CREATE_INSURED_OBJECT, CREATE_PERSON_INSURED_OBJECT, CREATE_COMPANY_INSURED_OBJECT, CREATE_EQUIPMENT_INSURED_OBJECT, CREATE_LOCATION_INSURED_OBJECT, CREATE_ANIMAL_INSURED_OBJECT
+		CREATE_INSURED_OBJECT, CREATE_PERSON_INSURED_OBJECT, CREATE_COMPANY_INSURED_OBJECT, CREATE_EQUIPMENT_INSURED_OBJECT, CREATE_LOCATION_INSURED_OBJECT, CREATE_ANIMAL_INSURED_OBJECT, CREATE_MANAGER_TRANSFER
 	}
 
 	public interface Display {
@@ -62,6 +62,7 @@ public class QuoteRequestSearchOperationViewPresenter implements ViewPresenter {
 		void allowDelete(boolean allow);
 		void allowClose(boolean allow);
 		void allowCreateInsuredObject(boolean allow);
+		void allowCreateManagerTransfer(boolean allow);
 
 		//Children lists
 		HasValueSelectables<Contact> getContactsList();
@@ -164,6 +165,9 @@ public class QuoteRequestSearchOperationViewPresenter implements ViewPresenter {
 					break;
 				case CREATE_ANIMAL_INSURED_OBJECT:
 					onCreateInsuredObject(BigBangConstants.EntityIds.INSURED_OBJECT_TYPE_ANIMAL);
+					break;
+				case CREATE_MANAGER_TRANSFER:
+					onCreateManagerTransfer();
 					break;
 				default:
 					break;
@@ -278,6 +282,7 @@ public class QuoteRequestSearchOperationViewPresenter implements ViewPresenter {
 	}
 
 	protected void clearView(){
+		view.clearAllowedPermissions();
 		view.getForm().setValue(null);
 		view.getForm().setReadOnly(true);
 		view.getList().clearSelection();
@@ -308,6 +313,7 @@ public class QuoteRequestSearchOperationViewPresenter implements ViewPresenter {
 					view.allowDelete(PermissionChecker.hasPermission(response, BigBangConstants.OperationIds.QuoteRequestProcess.DELETE_QUOTE_REQUEST));
 					view.allowClose(PermissionChecker.hasPermission(response, BigBangConstants.OperationIds.QuoteRequestProcess.CLOSE_QUOTE_REQUEST));
 					view.allowCreateInsuredObject(false);
+					view.allowCreateManagerTransfer(PermissionChecker.hasPermission(response, BigBangConstants.OperationIds.QuoteRequestProcess.CREATE_MANAGER_TRANSFER));
 
 					view.getForm().setValue(response);
 				}
@@ -427,6 +433,12 @@ public class QuoteRequestSearchOperationViewPresenter implements ViewPresenter {
 		NavigationHistoryManager.getInstance().go(navItem);
 	}
 
+	protected void onCreateManagerTransfer(){
+		NavigationHistoryItem navItem = NavigationHistoryManager.getInstance().getCurrentState();
+		navItem.setParameter("show", "managertransfer");
+		NavigationHistoryManager.getInstance().go(navItem);
+	}
+	
 	protected void showObject(String objectId) {
 		saveWorkState();
 		NavigationHistoryItem navItem = NavigationHistoryManager.getInstance().getCurrentState();

@@ -57,6 +57,8 @@ public class CasualtyOperationsViewPresenter implements ViewPresenter {
 					present("CASUALTY_SEARCH", parameters);
 				}else if(display.equalsIgnoreCase("managertransfer")){
 					present("MANAGER_TRANSFER", parameters);
+				}else if(display.equalsIgnoreCase("subcasualty")){
+					present("SUB_CASUALTY_VIEW", parameters);
 				}else if(display.equalsIgnoreCase("history")){
 					present("HISTORY", parameters);
 				}else{

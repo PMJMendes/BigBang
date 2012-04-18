@@ -4,6 +4,7 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.HasVerticalAlignment;
+import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.UIObject;
@@ -23,7 +24,7 @@ public class CasualtySearchPanelListEntry extends ListEntry<CasualtyStub> {
 
 	public CasualtySearchPanelListEntry(CasualtyStub value) {
 		super(value);
-		setHeight("50px");
+		setHeight("40px");
 	}
 
 	@Override
@@ -36,6 +37,9 @@ public class CasualtySearchPanelListEntry extends ListEntry<CasualtyStub> {
 			clientLabel = getFormatedLabel();
 			this.clientLabel.getElement().getStyle().setFontSize(10, Unit.PX);
 
+			HorizontalPanel leftContainer = new HorizontalPanel();
+			leftContainer.setSize("100%", "100%");
+			
 			VerticalPanel container = new VerticalPanel();
 			container.setSize("100%", "100%");
 			container.add(numberLabel);
@@ -44,16 +48,21 @@ public class CasualtySearchPanelListEntry extends ListEntry<CasualtyStub> {
 			container.add(clientLabel);
 			setWidget(container);
 
-			VerticalPanel rightContainer = new VerticalPanel();
+			HorizontalPanel rightContainer = new HorizontalPanel();
 			rightContainer.setSize("100%", "100%");
-			rightContainer.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_RIGHT);
+			
+			VerticalPanel rightWrapper = new VerticalPanel();
+			rightContainer.add(rightWrapper);
+			rightWrapper.setSize("100%", "100%");
+			rightWrapper.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_RIGHT);
 
 			dateLabel = getFormatedLabel();
-			rightContainer.add(dateLabel);
-			rightContainer.setCellVerticalAlignment(dateLabel, HasVerticalAlignment.ALIGN_TOP);
-
+			rightWrapper.add(dateLabel);
+			rightWrapper.setCellVerticalAlignment(dateLabel, HasVerticalAlignment.ALIGN_TOP);
+			
 			openImage = new Image();
 			rightContainer.add(openImage);
+			openImage.getElement().getStyle().setMarginLeft(10, Unit.PX);
 			rightContainer.setCellVerticalAlignment(openImage, HasVerticalAlignment.ALIGN_MIDDLE);
 
 			((UIObject) rightWidgetContainer).setSize("100%", "100%");

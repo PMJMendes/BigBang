@@ -56,6 +56,7 @@ public class CasualtySearchOperationViewPresenter implements ViewPresenter {
 		void allowEdit(boolean allow);
 		void allowDelete(boolean allow);
 		void allowClose(boolean allow);
+		void allowCreateSubCasualty(boolean allow);
 
 		//Children lists
 		HasValueSelectables<Contact> getContactsList();
@@ -143,7 +144,7 @@ public class CasualtySearchOperationViewPresenter implements ViewPresenter {
 					onClose();
 					break;
 				case CREATE_SUB_CASUALTY:
-					//TODO
+					onCreateSubCasualty();
 					break;
 				}
 			}
@@ -205,7 +206,8 @@ public class CasualtySearchOperationViewPresenter implements ViewPresenter {
 					view.allowEdit(PermissionChecker.hasPermission(response, BigBangConstants.OperationIds.CasualtyProcess.UPDATE_CASUALTY));
 					view.allowDelete(PermissionChecker.hasPermission(response, BigBangConstants.OperationIds.CasualtyProcess.DELETE_CASUALTY));
 					view.allowClose(PermissionChecker.hasPermission(response, BigBangConstants.OperationIds.CasualtyProcess.CLOSE_CASUALTY));
-
+					view.allowCreateSubCasualty(PermissionChecker.hasPermission(response, BigBangConstants.OperationIds.CasualtyProcess.CREATE_SUB_CASUALTY));
+					
 					view.getForm().setValue(response);
 				}
 
@@ -249,6 +251,13 @@ public class CasualtySearchOperationViewPresenter implements ViewPresenter {
 	protected void onClose(){
 		NavigationHistoryItem navItem = NavigationHistoryManager.getInstance().getCurrentState();
 		navItem.setParameter("show", "close");
+		NavigationHistoryManager.getInstance().go(navItem);
+	}
+	
+	protected void onCreateSubCasualty(){
+		NavigationHistoryItem navItem = NavigationHistoryManager.getInstance().getCurrentState();
+		navItem.pushIntoStackParameter("display", "subcasualty");
+		navItem.setParameter("subcasualtyid", "new");
 		NavigationHistoryManager.getInstance().go(navItem);
 	}
 

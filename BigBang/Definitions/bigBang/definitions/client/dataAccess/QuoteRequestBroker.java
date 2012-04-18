@@ -5,6 +5,7 @@ import java.util.Collection;
 import bigBang.definitions.client.response.ResponseHandler;
 import bigBang.definitions.shared.InfoOrDocumentRequest;
 import bigBang.definitions.shared.InsuredObject;
+import bigBang.definitions.shared.ManagerTransfer;
 import bigBang.definitions.shared.QuoteRequest;
 import bigBang.definitions.shared.QuoteRequest.RequestSubLine;
 import bigBang.definitions.shared.QuoteRequestStub;
@@ -39,6 +40,8 @@ public interface QuoteRequestBroker extends DataBrokerInterface<QuoteRequest> {
 	public String getEffectiveId(String ownerId);
 	public String getFinalMapping(String ownerId);
 	public void remapItemId(String oldId, String newId, boolean newInScratchPad);
+	public void createManagerTransfer(String[] processIds, String newManagerId,
+			ResponseHandler<ManagerTransfer> responseHandler);
 	
 }
 

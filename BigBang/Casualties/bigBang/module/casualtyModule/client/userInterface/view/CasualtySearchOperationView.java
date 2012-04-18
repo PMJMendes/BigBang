@@ -140,6 +140,11 @@ public class CasualtySearchOperationView extends View implements CasualtySearchO
 	public void allowClose(boolean allow) {
 		this.operationsToolbar.allowClose(allow);
 	}
+	
+	@Override
+	public void allowCreateSubCasualty(boolean allow) {
+		this.operationsToolbar.allowCreateSubCasualty(allow);		
+	}
 
 	@Override
 	public HasValueSelectables<Contact> getContactsList() {

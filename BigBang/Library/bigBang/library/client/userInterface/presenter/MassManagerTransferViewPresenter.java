@@ -49,7 +49,7 @@ public abstract class MassManagerTransferViewPresenter<T extends ProcessBase, T2
 		void markAllForCheck();
 		void markForCheck(String id);
 		void markForUncheck(String id);
-		void addProcessToTransfer(ClientStub value);
+		void addProcessToTransfer(T value);
 		void removeProcessFromTransfer(String id);
 		void removeAllProcessesFromTransfer();
 		
@@ -121,7 +121,7 @@ public abstract class MassManagerTransferViewPresenter<T extends ProcessBase, T2
 				Checkable checkable = event.getChangedCheckable();
 
 				@SuppressWarnings("unchecked")
-				ValueSelectable<ClientStub> entry = (ValueSelectable<ClientStub>) checkable;
+				ValueSelectable<T> entry = (ValueSelectable<T>) checkable;
 				String id = entry.getValue().id;
 
 				if(checkable.isChecked()){

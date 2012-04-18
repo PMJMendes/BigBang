@@ -12,7 +12,7 @@ public abstract class QuoteRequestProcessToolBar extends BigBangOperationsToolBa
 	protected MenuItem createNegotiation;
 
 	//DATA
-	protected MenuItem includeObject, createObject, createPersonObject, createCompanyObject, createEquipmentObject, createLocationObject, createAnimalObject;
+	protected MenuItem createManagerTransfer, includeObject, createObject, createPersonObject, createCompanyObject, createEquipmentObject, createLocationObject, createAnimalObject;
 
 	//EXECUTE
 	protected MenuItem sendReplyToClient;
@@ -36,6 +36,15 @@ public abstract class QuoteRequestProcessToolBar extends BigBangOperationsToolBa
 		addItem(SUB_MENU.CREATE, createNegotiation);
 
 		//DATA
+		createManagerTransfer = new MenuItem("Criar Transferência de Gestor", new Command() {
+			
+			@Override
+			public void execute() {
+				onCreateManagerTransfer();
+			}
+		});
+		addItem(SUB_MENU.DATA, createManagerTransfer);
+		
 		includeObject =  new MenuItem("Inserir Unidade de Risco", new Command() {
 
 			@Override
@@ -139,6 +148,8 @@ public abstract class QuoteRequestProcessToolBar extends BigBangOperationsToolBa
 
 	public abstract void onIncludeInsuredObject();
 
+	public abstract void onCreateManagerTransfer();
+	
 	public abstract void onCreateInsuredObject();
 	
 	public abstract void onCreatePersonObject();
@@ -169,6 +180,10 @@ public abstract class QuoteRequestProcessToolBar extends BigBangOperationsToolBa
 	
 	public void allowClose(boolean allow) {
 		this.close.setEnabled(allow);
+	}
+	
+	public void allowCreateManagerTransfer(boolean allow) {
+		this.createManagerTransfer.setEnabled(allow);
 	}
 
 	public void allowCreateInsuredObject(boolean allow) {

@@ -6,6 +6,7 @@ import bigBang.definitions.client.dataAccess.QuoteRequestBroker;
 import bigBang.definitions.client.response.ResponseError;
 import bigBang.definitions.client.response.ResponseHandler;
 import bigBang.definitions.shared.BigBangConstants;
+import bigBang.definitions.shared.ManagerTransfer;
 import bigBang.definitions.shared.QuoteRequest;
 import bigBang.definitions.shared.QuoteRequestStub;
 import bigBang.library.client.EventBus;
@@ -40,19 +41,19 @@ public class QuoteRequestMassManagerTransferViewPresenter extends MassManagerTra
 			i++;
 		}
 		
-//		quoteRequestBroker.createManagerTransfer(processIds, newManagerId, new ResponseHandler<ManagerTransfer>() {
-//
-//			@Override
-//			public void onResponse(ManagerTransfer response) {
-//				onTransferSuccess();
-//				view.refreshMainList();
-//			}
-//
-//			@Override
-//			public void onError(Collection<ResponseError> errors) {
-//				onTransferFailed();
-//			}
-//		});
+		quoteRequestBroker.createManagerTransfer(processIds, newManagerId, new ResponseHandler<ManagerTransfer>() {
+
+			@Override
+			public void onResponse(ManagerTransfer response) {
+				onTransferSuccess();
+				view.refreshMainList();
+			}
+
+			@Override
+			public void onError(Collection<ResponseError> errors) {
+				onTransferFailed();
+			}
+		});
 	}
 	
 	protected void bind() {

@@ -70,7 +70,7 @@ public class ReceiptSectionView extends View implements ReceiptSectionViewPresen
 		addDockItem("Retrocessões", r.accountabilityIcon(), SectionOperation.MASS_AGENT_ACCOUNTING);
 		addDockItem("Envio dos Recibos", r.sendReceiptIcon(), SectionOperation.MASS_SEND_RECEIPT_TO_CLIENT);
 		addDockItem("Devoluções à Seguradora", r.returnIcon(), SectionOperation.MASS_RETURN_TO_INSURER);
-		addDockItem("Relatórios", null, SectionOperation.REPORT);
+		addDockItem("Relatórios", r.reportIcon(), SectionOperation.REPORT);
 	}
 
 	protected void addDockItem(String text, ImageResource icon, final ReceiptSectionViewPresenter.SectionOperation action){
