@@ -18,6 +18,9 @@ public class SubCasualty
 		public String damageTypeId; //Lista tipificada, campo obrigatório
 		public String damages; //Em €
 		public String settlement; //Em €
+		public boolean isManual;
+
+		public boolean deleted;
 	}
 
 	public SubCasualtyItem[] items; //Zero ou mais items
