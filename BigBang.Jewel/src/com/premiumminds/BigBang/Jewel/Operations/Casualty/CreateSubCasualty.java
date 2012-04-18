@@ -18,7 +18,8 @@ import Jewel.Petri.SysObjects.Operation;
 import com.premiumminds.BigBang.Jewel.BigBangJewelException;
 import com.premiumminds.BigBang.Jewel.Constants;
 import com.premiumminds.BigBang.Jewel.Data.SubCasualtyData;
-import com.premiumminds.BigBang.Jewel.Objects.Casualty;
+import com.premiumminds.BigBang.Jewel.Objects.SubCasualty;
+import com.premiumminds.BigBang.Jewel.Objects.SubCasualtyItem;
 import com.premiumminds.BigBang.Jewel.Operations.ContactOps;
 import com.premiumminds.BigBang.Jewel.Operations.DocOps;
 
@@ -73,9 +74,11 @@ public class CreateSubCasualty
 	protected void Run(SQLServer pdb)
 		throws JewelPetriException
 	{
-		Casualty lobjAux;
+		SubCasualty lobjAux;
 		IScript lobjScript;
-		IProcess lobjProc; 
+		IProcess lobjProc;
+		SubCasualtyItem lobjItem;
+		int i;
 
 		if ( mobjData.midManager == null )
 			mobjData.midManager = GetProcess().GetManagerID();
@@ -84,7 +87,7 @@ public class CreateSubCasualty
 		{
 			mobjData.mstrNumber = GetNewSubCasualtyNumber();
 
-			lobjAux = Casualty.GetInstance(Engine.getCurrentNameSpace(), (UUID)null);
+			lobjAux = SubCasualty.GetInstance(Engine.getCurrentNameSpace(), (UUID)null);
 			mobjData.ToObject(lobjAux);
 			lobjAux.SaveToDb(pdb);
 
@@ -93,7 +96,7 @@ public class CreateSubCasualty
 			if ( mobjDocOps != null )
 				mobjDocOps.RunSubOp(pdb, lobjAux.getKey());
 
-			lobjScript = PNScript.GetInstance(Engine.getCurrentNameSpace(), Constants.ProcID_Casualty);
+			lobjScript = PNScript.GetInstance(Engine.getCurrentNameSpace(), Constants.ProcID_SubCasualty);
 			lobjProc = lobjScript.CreateInstance(Engine.getCurrentNameSpace(), lobjAux.getKey(), GetProcess().getKey(), GetContext(), pdb);
 			lobjProc.SetManagerID(mobjData.midManager, pdb);
 
@@ -101,6 +104,20 @@ public class CreateSubCasualty
 			mobjData.midProcess = lobjProc.getKey();
 			mobjData.midManager = lobjProc.GetManagerID();
 			mobjData.mobjPrevValues = null;
+
+			if ( mobjData.marrItems != null )
+			{
+				for ( i = 0; i < mobjData.marrItems.length; i++ )
+				{
+					if ( mobjData.marrItems[i].mbNew )
+					{
+						lobjItem = SubCasualtyItem.GetInstance(Engine.getCurrentNameSpace(), (UUID)null);
+						mobjData.marrItems[i].midSubCasualty = mobjData.mid;
+						mobjData.marrItems[i].ToObject(lobjItem);
+						lobjItem.SaveToDb(pdb);
+					}
+				}
+			}
 		}
 		catch (Throwable e)
 		{
