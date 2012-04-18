@@ -115,6 +115,7 @@ public class CreateSubCasualty
 						mobjData.marrItems[i].midSubCasualty = mobjData.mid;
 						mobjData.marrItems[i].ToObject(lobjItem);
 						lobjItem.SaveToDb(pdb);
+						mobjData.marrItems[i].mid = lobjItem.getKey();
 					}
 				}
 			}

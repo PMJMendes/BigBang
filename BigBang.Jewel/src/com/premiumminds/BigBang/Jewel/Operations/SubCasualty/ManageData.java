@@ -10,7 +10,9 @@ import Jewel.Petri.SysObjects.UndoableOperation;
 
 import com.premiumminds.BigBang.Jewel.Constants;
 import com.premiumminds.BigBang.Jewel.Data.SubCasualtyData;
+import com.premiumminds.BigBang.Jewel.Data.SubCasualtyItemData;
 import com.premiumminds.BigBang.Jewel.Objects.SubCasualty;
+import com.premiumminds.BigBang.Jewel.Objects.SubCasualtyItem;
 import com.premiumminds.BigBang.Jewel.Operations.ContactOps;
 import com.premiumminds.BigBang.Jewel.Operations.DocOps;
 
@@ -69,7 +71,9 @@ public class ManageData
 		throws JewelPetriException
 	{
 		SubCasualty lobjAux;
+		SubCasualtyItem lobjItem;
 		UUID lidOwner;
+		int i;
 
 		lidOwner = null;
 		try
@@ -86,6 +90,37 @@ public class ManageData
 				mobjData.midManager = GetProcess().GetManagerID();
 				mobjData.ToObject(lobjAux);
 				lobjAux.SaveToDb(pdb);
+
+				if ( mobjData.marrItems != null )
+				{
+					for ( i = 0; i < mobjData.marrItems.length; i++ )
+					{
+						if ( mobjData.marrItems[i].mbDeleted )
+						{
+							if ( mobjData.marrItems[i].mid == null )
+								continue;
+							lobjItem = SubCasualtyItem.GetInstance(Engine.getCurrentNameSpace(), mobjData.marrItems[i].mid);
+							mobjData.marrItems[i].FromObject(lobjItem);
+							lobjItem.getDefinition().Delete(pdb, lobjItem.getKey());
+						}
+						else if ( mobjData.marrItems[i].mbNew )
+						{
+							lobjItem = SubCasualtyItem.GetInstance(Engine.getCurrentNameSpace(), (UUID)null);
+							mobjData.marrItems[i].midSubCasualty = mobjData.mid;
+							mobjData.marrItems[i].ToObject(lobjItem);
+							lobjItem.SaveToDb(pdb);
+							mobjData.marrItems[i].mid = lobjItem.getKey();
+						}
+						else
+						{
+							lobjItem = SubCasualtyItem.GetInstance(Engine.getCurrentNameSpace(), mobjData.marrItems[i].mid);
+							mobjData.marrItems[i].mobjPrevValues = new SubCasualtyItemData();
+							mobjData.marrItems[i].mobjPrevValues.FromObject(lobjItem);
+							mobjData.marrItems[i].ToObject(lobjItem);
+							lobjItem.SaveToDb(pdb);
+						}
+					}
+				}
 			}
 
 			if ( mobjContactOps != null )
@@ -147,7 +182,9 @@ public class ManageData
 		throws JewelPetriException
 	{
 		SubCasualty lobjAux;
+		SubCasualtyItem lobjItem;
 		UUID lidOwner;
+		int i;
 
 		lidOwner = null;
 		try
@@ -160,6 +197,32 @@ public class ManageData
 
 				mobjData.mobjPrevValues.ToObject(lobjAux);
 				lobjAux.SaveToDb(pdb);
+
+				if ( mobjData.marrItems != null )
+				{
+					for ( i = 0; i < mobjData.marrItems.length; i++ )
+					{
+						if ( mobjData.marrItems[i].mbDeleted )
+						{
+							if ( mobjData.marrItems[i].mid == null )
+								continue;
+							lobjItem = SubCasualtyItem.GetInstance(Engine.getCurrentNameSpace(), (UUID)null);
+							mobjData.marrItems[i].ToObject(lobjItem);
+							lobjItem.SaveToDb(pdb);
+						}
+						else if ( mobjData.marrItems[i].mbNew )
+						{
+							lobjItem = SubCasualtyItem.GetInstance(Engine.getCurrentNameSpace(), mobjData.marrItems[i].mid);
+							lobjItem.getDefinition().Delete(pdb, lobjItem.getKey());
+						}
+						else
+						{
+							lobjItem = SubCasualtyItem.GetInstance(Engine.getCurrentNameSpace(), mobjData.marrItems[i].mid);
+							mobjData.marrItems[i].mobjPrevValues.ToObject(lobjItem);
+							lobjItem.SaveToDb(pdb);
+						}
+					}
+				}
 			}
 
 			if ( mobjContactOps != null )

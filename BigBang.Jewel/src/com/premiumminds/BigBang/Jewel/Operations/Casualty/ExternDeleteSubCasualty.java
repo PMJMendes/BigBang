@@ -15,9 +15,11 @@ import com.premiumminds.BigBang.Jewel.Constants;
 import com.premiumminds.BigBang.Jewel.Data.ContactData;
 import com.premiumminds.BigBang.Jewel.Data.DocumentData;
 import com.premiumminds.BigBang.Jewel.Data.SubCasualtyData;
+import com.premiumminds.BigBang.Jewel.Data.SubCasualtyItemData;
 import com.premiumminds.BigBang.Jewel.Objects.Contact;
 import com.premiumminds.BigBang.Jewel.Objects.Document;
 import com.premiumminds.BigBang.Jewel.Objects.SubCasualty;
+import com.premiumminds.BigBang.Jewel.Objects.SubCasualtyItem;
 import com.premiumminds.BigBang.Jewel.Operations.ContactOps;
 import com.premiumminds.BigBang.Jewel.Operations.DocOps;
 import com.premiumminds.BigBang.Jewel.Operations.SubCasualty.ExternResumeSubCasualty;
@@ -83,9 +85,11 @@ public class ExternDeleteSubCasualty
 		throws JewelPetriException
 	{
 		IEntity lrefSubCasualties;
+		IEntity lrefSubCasualtyItems;
 		SubCasualty lobjAux;
 		Contact[] larrContacts;
 		Document[] larrDocs;
+		SubCasualtyItem[] larrItems;
 		PNProcess lobjProcess;
 		int i;
 
@@ -93,6 +97,8 @@ public class ExternDeleteSubCasualty
 		{
 			lrefSubCasualties = Entity.GetInstance(Engine.FindEntity(Engine.getCurrentNameSpace(),
 					Constants.ObjID_SubCasualty));
+			lrefSubCasualtyItems = Entity.GetInstance(Engine.FindEntity(Engine.getCurrentNameSpace(),
+					Constants.ObjID_SubCasualtyItem));
 
 			lobjAux = SubCasualty.GetInstance(Engine.getCurrentNameSpace(), midSubCasualty);
 			mobjData = new SubCasualtyData();
@@ -133,6 +139,21 @@ public class ExternDeleteSubCasualty
 				mobjDocOps.RunSubOp(pdb, null);
 			}
 
+			larrItems = lobjAux.GetCurrentItems();
+			if ( larrItems == null )
+				mobjData.marrItems = null;
+			else
+			{
+				mobjData.marrItems = new SubCasualtyItemData[larrItems.length];
+				for ( i = 0; i < larrItems.length; i++ )
+				{
+					mobjData.marrItems[i] = new SubCasualtyItemData();
+					mobjData.marrItems[i].FromObject(larrItems[i]);
+					mobjData.marrItems[i].mbDeleted = true;
+					lrefSubCasualtyItems.Delete(pdb, larrItems[i].getKey());
+				}
+			}
+
 			lrefSubCasualties.Delete(pdb, mobjData.mid);
 		}
 		catch (Throwable e)
@@ -168,8 +189,10 @@ public class ExternDeleteSubCasualty
 	protected void Undo(SQLServer pdb) throws JewelPetriException
 	{
 		SubCasualty lobjAux;
+		SubCasualtyItem lobjItem;
 		PNProcess lobjProcess;
 		ExternResumeSubCasualty lopERC;
+		int i;
 
 		try
 		{
@@ -178,14 +201,29 @@ public class ExternDeleteSubCasualty
 			lobjAux.SaveToDb(pdb);
 			mobjData.mid = lobjAux.getKey();
 
-			lobjProcess = PNProcess.GetInstance(Engine.getCurrentNameSpace(), mobjData.midProcess);
-			lobjProcess.SetDataObjectID(lobjAux.getKey(), pdb);
-			lobjProcess.Restart(pdb);
+			if ( mobjData.marrItems != null )
+			{
+				for ( i = 0; i < mobjData.marrItems.length; i++ )
+				{
+					if ( mobjData.marrItems[i].mbDeleted )
+					{
+						lobjItem = SubCasualtyItem.GetInstance(Engine.getCurrentNameSpace(), (UUID)null);
+						mobjData.marrItems[i].midSubCasualty = mobjData.mid;
+						mobjData.marrItems[i].ToObject(lobjItem);
+						lobjItem.SaveToDb(pdb);
+						mobjData.marrItems[i].mid = lobjItem.getKey();
+					}
+				}
+			}
 
 			if ( mobjContactOps != null )
 				mobjContactOps.UndoSubOp(pdb, lobjAux.getKey());
 			if ( mobjDocOps != null )
 				mobjDocOps.UndoSubOp(pdb, lobjAux.getKey());
+
+			lobjProcess = PNProcess.GetInstance(Engine.getCurrentNameSpace(), mobjData.midProcess);
+			lobjProcess.SetDataObjectID(lobjAux.getKey(), pdb);
+			lobjProcess.Restart(pdb);
 		}
 		catch (Throwable e)
 		{
