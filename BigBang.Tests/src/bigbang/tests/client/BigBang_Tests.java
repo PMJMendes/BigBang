@@ -181,5 +181,10 @@ public class BigBang_Tests
 //		TestCasualtyEdit.DoTest();
 //		TestCasualtyDelete.DoTest();
 //		TestCasualtyClose.DoTest();
+//
+//		TestSubCasualtyGet.DoTest();
+//		TestSubCasualtyCreate.DoTest();
+//		TestSubCasualtyEdit.DoTest();
+//		TestSubCasualtyDelete.DoTest();
 	}
 }

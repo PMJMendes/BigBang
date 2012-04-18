@@ -26,6 +26,8 @@ import bigBang.library.interfaces.TypifiedTextService;
 import bigBang.library.interfaces.TypifiedTextServiceAsync;
 import bigBang.module.casualtyModule.interfaces.CasualtyService;
 import bigBang.module.casualtyModule.interfaces.CasualtyServiceAsync;
+import bigBang.module.casualtyModule.interfaces.SubCasualtyService;
+import bigBang.module.casualtyModule.interfaces.SubCasualtyServiceAsync;
 import bigBang.module.clientModule.interfaces.ClientService;
 import bigBang.module.clientModule.interfaces.ClientServiceAsync;
 import bigBang.module.generalSystemModule.interfaces.CoveragesService;
@@ -125,4 +127,6 @@ public class Services
 			GWT.create(DASRequestService.class);
 	public static final CasualtyServiceAsync casualtyService =
 			GWT.create(CasualtyService.class);
+	public static final SubCasualtyServiceAsync subCasualtyService =
+			GWT.create(SubCasualtyService.class);
 }
