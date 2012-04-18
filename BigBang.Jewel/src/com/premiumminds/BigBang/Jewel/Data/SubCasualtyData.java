@@ -41,6 +41,7 @@ public class SubCasualtyData
 		mid = pobjSource.getKey();
 
 		mstrNumber      = (String)  pobjSource.getAt(SubCasualty.I.NUMBER);
+		midProcess      = (UUID)    pobjSource.getAt(SubCasualty.I.PROCESS);
 		midPolicy       = (UUID)    pobjSource.getAt(SubCasualty.I.POLICY);
 		midSubPolicy    = (UUID)    pobjSource.getAt(SubCasualty.I.SUBPOLICY);
 		mstrInsurerProc = (String)  pobjSource.getAt(SubCasualty.I.INSURERPROCESS);
@@ -55,6 +56,7 @@ public class SubCasualtyData
 		try
 		{
 			pobjDest.setAt(SubCasualty.I.NUMBER,         mstrNumber);
+			pobjDest.setAt(SubCasualty.I.PROCESS,        midProcess);
 			pobjDest.setAt(SubCasualty.I.POLICY,         midPolicy);
 			pobjDest.setAt(SubCasualty.I.SUBPOLICY,      midSubPolicy);
 			pobjDest.setAt(SubCasualty.I.INSURERPROCESS, mstrInsurerProc);
