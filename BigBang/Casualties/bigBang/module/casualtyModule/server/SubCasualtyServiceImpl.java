@@ -162,6 +162,7 @@ public class SubCasualtyServiceImpl
 		lopMD.mobjData = new SubCasualtyData();
 		lopMD.mobjData.mid = lobjSubCasualty.getKey();
 		lopMD.mobjData.mstrNumber = subCasualty.number;
+		lopMD.mobjData.midProcess = UUID.fromString(subCasualty.processId);
 		lopMD.mobjData.midPolicy = ( lbPolicy ? UUID.fromString(subCasualty.referenceId) : null );
 		lopMD.mobjData.midSubPolicy = ( lbPolicy ? null : UUID.fromString(subCasualty.referenceId) );
 		lopMD.mobjData.mstrInsurerProc = subCasualty.insurerProcessNumber;
