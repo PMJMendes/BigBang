@@ -83,6 +83,9 @@ public class Constants
 	public static final UUID ObjID_SubCasualty              = UUID.fromString("D5FD2D1B-59FB-4171-961A-A02E0121C81B");
 	public static final UUID ObjID_SubCasualtyItem          = UUID.fromString("A62F4F4F-7F10-4391-ABF4-A035012009A9");
 
+	// Expense Objects
+	public static final UUID ObjID_Expense                  = UUID.fromString("09963260-CDB1-4207-B856-A03800B8AFC8");
+
 	// Manager Transfer Objects
 	public static final UUID ObjID_MgrXFer                  = UUID.fromString("66EC1066-AD5A-430C-9A70-9F65013F5453");
 	public static final UUID ObjID_MgrXFerProc              = UUID.fromString("324A0D54-4ED9-4925-97D2-9F6D0135A37E");
