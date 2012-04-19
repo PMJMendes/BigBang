@@ -24,7 +24,7 @@ public abstract class SubPolicyOperationsToolbar extends BigBangOperationsToolBa
 
 	//CREATE
 	protected MenuItem createReceipt;
-
+	protected MenuItem healthExpense;
 
 	public SubPolicyOperationsToolbar(){
 		//CREATE
@@ -36,7 +36,15 @@ public abstract class SubPolicyOperationsToolbar extends BigBangOperationsToolBa
 			}
 		});
 		addItem(SUB_MENU.CREATE, createReceipt);
-
+		
+		healthExpense = new MenuItem("Despesa de Saúde", new Command() {
+			
+			@Override
+			public void execute() {
+				onCreateHealthExpense();
+			}
+		});
+		addItem(SUB_MENU.CREATE, healthExpense);
 		//EXECUTE
 		executeDetailedCalculations = new MenuItem("Cálculos Detalhados", new Command() {
 
@@ -102,6 +110,8 @@ public abstract class SubPolicyOperationsToolbar extends BigBangOperationsToolBa
 		addItem(SUB_MENU.DATA, createInsuredObject);
 	}
 
+	protected abstract void onCreateHealthExpense();
+
 	public void allowDelete(boolean allow){
 		this.deleteItem.setEnabled(allow);
 	}
@@ -157,6 +167,10 @@ public abstract class SubPolicyOperationsToolbar extends BigBangOperationsToolBa
 	public abstract void onCreateReceipt();
 
 	public abstract void onVoid();
+
+	public void allowCreateHealthExpense(boolean allow) {
+		this.healthExpense.setEnabled(allow);
+	}
 
 
 }

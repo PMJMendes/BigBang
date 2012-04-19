@@ -142,6 +142,7 @@ public class BigBangConstants {
 			public static final String VOID = "FA8BF9F2-FEB2-49C7-A408-9FF300F34C38";
 			public static final String TRANSFER_TO_POLICY = "E89D08A1-7BE7-4F2B-9E06-9FF3010A6138";
 			public static final String CREATE_INFO_OR_DOCUMENT_REQUEST = "E9507402-B03D-4544-B770-9FF300F64319";
+			public static final String CREATE_EXPENSE = "BDAD68E7-7BA6-43AD-B10A-9FF300F5EE50";
 		}
 
 		

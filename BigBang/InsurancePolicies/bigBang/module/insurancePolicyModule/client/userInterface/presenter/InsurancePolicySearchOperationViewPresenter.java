@@ -67,7 +67,7 @@ ViewPresenter {
 		EXECUTE_DETAILED_CALCULATIONS,
 		CREATE_INFO_MANAGEMENT_PROCESS,
 		CREATE_SUB_POLICY, ISSUE_DEBIT_NOTE,
-		CREATE_NEGOTIATION, CREATE_HEALTH_EXPENSE,
+		CREATE_NEGOTIATION, CREATE_EXPENSE,
 		CREATE_RISK_ANALISYS, TRANSFER_TO_CLIENT
 	}
 
@@ -263,7 +263,7 @@ ViewPresenter {
 					item.pushIntoStackParameter("display", "createinsuredobjectfromclient");
 					NavigationHistoryManager.getInstance().go(item);
 					break;
-				case CREATE_HEALTH_EXPENSE:
+				case CREATE_EXPENSE:
 					item.pushIntoStackParameter("display", "createexpense");
 					NavigationHistoryManager.getInstance().go(item);
 					break;

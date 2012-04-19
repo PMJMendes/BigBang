@@ -149,6 +149,10 @@ public class ExpenseForm extends FormView<Expense>{
 		settlement.setValue(info.settlement);
 		setSettlement(info.isManual);
 
+		if(info.id == null){
+			settleButton.setEnabled(true);
+		}
+		
 		notes.setValue(info.notes);
 		clientName.setValue("#" + info.clientNumber + " - " + info.clientName);
 		expenseDate.setValue(info.expenseDate);

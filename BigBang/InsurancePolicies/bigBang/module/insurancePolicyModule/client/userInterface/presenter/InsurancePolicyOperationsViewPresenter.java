@@ -83,6 +83,8 @@ public class InsurancePolicyOperationsViewPresenter implements ViewPresenter {
 					present("INSURANCE_POLICY_NEGOTIATION_VIEW_EXTERNAL_REQUEST", parameters);
 				}else if(display.equalsIgnoreCase("createexpense")){
 					present("INSURANCE_POLICY_CREATE_EXPENSE", parameters);
+				}else if(display.equalsIgnoreCase("createexpensesubpolicy")){
+					present("INSURANCE_POLICY_CREATE_EXPENSE_SUB_POLICY", parameters);
 				}else{
 					goToDefault();
 				}

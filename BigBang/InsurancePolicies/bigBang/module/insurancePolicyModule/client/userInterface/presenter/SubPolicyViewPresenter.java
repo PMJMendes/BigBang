@@ -58,7 +58,8 @@ public class SubPolicyViewPresenter implements ViewPresenter {
 		CREATE_INFO_OR_DOCUMENT_REQUEST,
 		CREATE_RECEIPT,
 		VOID,
-		DELETE
+		DELETE, 
+		CREATE_EXPENSE
 	}
 
 	public static interface Display {
@@ -90,7 +91,7 @@ public class SubPolicyViewPresenter implements ViewPresenter {
 		void allowCreateReceipt(boolean allow);
 		void allowVoid(boolean allow);
 		void allowDelete(boolean allow);
-
+		void allowCreateHealthExpense(boolean allow);
 		//Table
 		HasValue<String> getInsuredObjectFilter();
 		HasValue<String> getExerciseFilter();
@@ -198,6 +199,9 @@ public class SubPolicyViewPresenter implements ViewPresenter {
 				case CREATE_INFO_OR_DOCUMENT_REQUEST:
 					onCreateInfoOrDocumentRequest();
 					break;
+				case CREATE_EXPENSE:
+					onCreateExpense();
+					break;
 				}
 			}
 		});
@@ -273,6 +277,13 @@ public class SubPolicyViewPresenter implements ViewPresenter {
 		bound = true;
 	}
 
+	protected void onCreateExpense() {
+		NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
+		item.pushIntoStackParameter("display", "createexpensesubpolicy");
+		item.setParameter("objectid", "new");
+		NavigationHistoryManager.getInstance().go(item);
+	}
+
 	private void clearView(){
 		view.getForm().setValue(null);
 	}
@@ -327,7 +338,7 @@ public class SubPolicyViewPresenter implements ViewPresenter {
 					view.allowCreateInfoOrDocumentRequest(PermissionChecker.hasPermission(response, BigBangConstants.OperationIds.InsuranceSubPolicyProcess.CREATE_INFO_OR_DOCUMENT_REQUEST));
 					view.allowCreateReceipt(PermissionChecker.hasPermission(response, BigBangConstants.OperationIds.InsuranceSubPolicyProcess.CREATE_RECEIPT));
 					view.allowVoid(PermissionChecker.hasPermission(response, BigBangConstants.OperationIds.InsuranceSubPolicyProcess.VOID));
-					
+					view.allowCreateHealthExpense(PermissionChecker.hasPermission(response, BigBangConstants.OperationIds.InsuranceSubPolicyProcess.CREATE_EXPENSE));
 					view.getForm().setReadOnly(true);
 					view.setSaveModeEnabled(false);
 					view.getForm().setValue(response);

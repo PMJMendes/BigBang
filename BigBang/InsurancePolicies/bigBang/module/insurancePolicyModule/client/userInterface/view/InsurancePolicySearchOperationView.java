@@ -165,7 +165,7 @@ public class InsurancePolicySearchOperationView extends View implements Insuranc
 
 			@Override
 			public void onCreateHealthExpense() {
-				actionHandler.onActionInvoked(new ActionInvokedEvent<InsurancePolicySearchOperationViewPresenter.Action>(Action.CREATE_HEALTH_EXPENSE));
+				actionHandler.onActionInvoked(new ActionInvokedEvent<InsurancePolicySearchOperationViewPresenter.Action>(Action.CREATE_EXPENSE));
 			}
 
 			@Override

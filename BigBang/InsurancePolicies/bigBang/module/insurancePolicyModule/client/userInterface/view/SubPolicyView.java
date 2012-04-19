@@ -119,6 +119,11 @@ public class SubPolicyView extends View implements SubPolicyViewPresenter.Displa
 				actionHandler.onActionInvoked(new ActionInvokedEvent<SubPolicyViewPresenter.Action>(Action.VOID));
 			}
 
+			@Override
+			protected void onCreateHealthExpense() {
+				actionHandler.onActionInvoked(new ActionInvokedEvent<SubPolicyViewPresenter.Action>(Action.CREATE_EXPENSE));
+			}
+
 		};
 
 		VerticalPanel policyFormWrapper = new VerticalPanel();
@@ -328,6 +333,11 @@ public class SubPolicyView extends View implements SubPolicyViewPresenter.Displa
 	@Override
 	public void clearAllowedPermissions() {
 		this.toolbar.lockAll();
+	}
+
+	@Override
+	public void allowCreateHealthExpense(boolean allow) {
+		this.toolbar.allowCreateHealthExpense(allow);
 	}
 	
 }
