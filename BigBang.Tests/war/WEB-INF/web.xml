@@ -12,6 +12,7 @@
     	<!ENTITY  insurancePolicyServices SYSTEM "insurancePolicyServices.xml" > 
     	<!ENTITY  receiptServices SYSTEM "receiptServices.xml" > 
     	<!ENTITY  casualtyServices SYSTEM "casualtyServices.xml" > 
+    	<!ENTITY  expenseServices SYSTEM "expenseServices.xml" >
     ]  >
 
 <web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
@@ -46,6 +47,7 @@
 	&insurancePolicyServices;
 	&receiptServices;
 	&casualtyServices;
+	&expenseServices;
 
 	<servlet>
 		<servlet-name>remoteLoggingServiceImpl</servlet-name>
