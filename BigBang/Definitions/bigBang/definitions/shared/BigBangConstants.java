@@ -39,7 +39,7 @@ public class BigBangConstants {
 		public static final String CASUALTY = "6C9562DE-D8C6-4CEC-A4DA-A02E00C735E9";
 		public static final String SUB_CASUALTY = "D5FD2D1B-59FB-4171-961A-A02E0121C81B";
 		public static final String COMPLAINT = "TODO";
-		public static final String EXPENSE = "TODO";
+		public static final String EXPENSE = "09963260-CDB1-4207-B856-A03800B8AFC8";
 		public static final String INFO_REQUEST = "1D10FF86-70B5-4362-A8F3-9F7C00BC6DE4";
 		public static final String INSURANCE_POLICY_EXERCISES = "DEE32F69-B33D-4427-AD5B-9F9C001607F2";
 		public static final String INSURANCE_POLICY_INSURED_OBJECTS = "3A3316D2-9D7C-4FD1-8486-9F9C0012E119";

@@ -32,20 +32,19 @@ import bigBang.library.client.event.SelectionChangedEventHandler;
 import bigBang.library.client.history.NavigationHistoryManager;
 import bigBang.library.client.userInterface.presenter.ViewPresenter;
 
-public class MassParticipateToInsurerViewPresenter implements ViewPresenter {
-
+public class MassNotifyResultsClientViewPresenter implements ViewPresenter{
 	private Display view;
 	private boolean bound = false;
 	protected ExpenseDataBroker broker;
 	
-	public MassParticipateToInsurerViewPresenter(Display view){
+	public MassNotifyResultsClientViewPresenter(Display view){
 		setView((UIObject) view);
 		broker = (ExpenseDataBroker) DataBrokerManager.Util.getInstance().getBroker(BigBangConstants.EntityIds.EXPENSE);
 	}
 	
 	public interface Display{
-		void addExpenseToParticipate(ExpenseStub stub);
-		void removeExpenseToParticipate(String id);
+		void addExpenseToNotifyResults(ExpenseStub stub);
+		void removeExpenseToNotifyResults(String id);
 		HasCheckables getCheckableSelectedList();
 		HasEditableValue<Expense> getExpenseForm();
 		HasValueSelectables<ExpenseStub> getMainList();
@@ -55,14 +54,14 @@ public class MassParticipateToInsurerViewPresenter implements ViewPresenter {
 		void markAllForCheck();
 		void markForCheck(String id);
 		void markForUncheck(String id);
-		void removeAllExpensesToParticipate();
+		void removeAllExpensesToNotifyResults();
 		Widget asWidget();
 		void registerActionHandler(ActionInvokedEventHandler<Action> handler);
 		void allowCreation(boolean b);
 	}
 	
 	public enum Action{
-		SELECT_ALL, PARTICIPATE_TO_INSURER, CLEAR
+		SELECT_ALL, NOTIFY_RESULTS_CLIENT, CLEAR
 	}
 
 	@Override
@@ -81,16 +80,16 @@ public class MassParticipateToInsurerViewPresenter implements ViewPresenter {
 	private void bind() {
 		if(bound){return;}
 		
-		view.registerActionHandler(new ActionInvokedEventHandler<MassParticipateToInsurerViewPresenter.Action>() {
+		view.registerActionHandler(new ActionInvokedEventHandler<Action>() {
 			
 			@Override
 			public void onActionInvoked(ActionInvokedEvent<Action> action) {
 				switch(action.getAction()){
 				case CLEAR:
-					view.removeAllExpensesToParticipate();
+					view.removeAllExpensesToNotifyResults();
 					break;
-				case PARTICIPATE_TO_INSURER:
-					participateToInsurer(view.getSelectedList().getAll());
+				case NOTIFY_RESULTS_CLIENT:
+					notifyResults(view.getSelectedList().getAll());
 					break;
 				case SELECT_ALL:
 					view.markAllForCheck();
@@ -111,10 +110,10 @@ public class MassParticipateToInsurerViewPresenter implements ViewPresenter {
 				
 				if(checkable.isChecked()){
 					view.markForCheck(id);
-					view.addExpenseToParticipate(entry.getValue());
+					view.addExpenseToNotifyResults(entry.getValue());
 				}else{
 					view.markForUncheck(id);
-					view.removeExpenseToParticipate(id);
+					view.removeExpenseToNotifyResults(id);
 				}
 				
 			}
@@ -134,7 +133,7 @@ public class MassParticipateToInsurerViewPresenter implements ViewPresenter {
 					view.markForCheck(id);
 				}else{
 					view.markForUncheck(id);
-					view.removeExpenseToParticipate(id);
+					view.removeExpenseToNotifyResults(id);
 				}
 			}
 		});
@@ -168,7 +167,7 @@ public class MassParticipateToInsurerViewPresenter implements ViewPresenter {
 		bound = true;
 	}
 
-	protected void participateToInsurer(
+	protected void notifyResults(
 			Collection<ValueSelectable<ExpenseStub>> all) {
 		// TODO Auto-generated method stub
 		
@@ -177,12 +176,12 @@ public class MassParticipateToInsurerViewPresenter implements ViewPresenter {
 	@Override
 	public void setParameters(HasParameters parameterHolder) {
 		clearView();
-		showMassParticipateToInsurerScreen();
+		showMassNotifyResultsScreen();
 	}
 	
 
 	private void clearView() {
-		view.removeAllExpensesToParticipate();
+		view.removeAllExpensesToNotifyResults();
 		view.getExpenseForm().setValue(null);
 	}	
 	
@@ -192,7 +191,7 @@ public class MassParticipateToInsurerViewPresenter implements ViewPresenter {
 		NavigationHistoryManager.getInstance().reload();		
 	}
 
-	private void showMassParticipateToInsurerScreen() {
+	private void showMassNotifyResultsScreen() {
 		checkUserPermission(new ResponseHandler<Boolean>() {
 
 			@Override

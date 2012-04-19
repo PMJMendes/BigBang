@@ -4,7 +4,7 @@ import com.google.gwt.user.client.ui.HasValue;
 import com.google.gwt.user.client.ui.SplitLayoutPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
-import bigBang.definitions.shared.HealthExpense;
+import bigBang.definitions.shared.Expense;
 import bigBang.definitions.shared.InsurancePolicy;
 import bigBang.library.client.HasEditableValue;
 import bigBang.library.client.event.ActionInvokedEvent;
@@ -82,7 +82,7 @@ public class CreateExpenseView extends View implements CreateExpenseViewPresente
 	}
 
 	@Override
-	public HasEditableValue<HealthExpense> getForm() {
+	public HasEditableValue<Expense> getForm() {
 		return form;
 	}
 

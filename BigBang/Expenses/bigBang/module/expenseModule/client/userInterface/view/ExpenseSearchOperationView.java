@@ -8,7 +8,7 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 import bigBang.definitions.shared.BigBangProcess;
 import bigBang.definitions.shared.Contact;
 import bigBang.definitions.shared.Document;
-import bigBang.definitions.shared.HealthExpense;
+import bigBang.definitions.shared.Expense;
 import bigBang.definitions.shared.HistoryItemStub;
 import bigBang.library.client.HasEditableValue;
 import bigBang.library.client.HasValueSelectables;
@@ -129,11 +129,11 @@ public class ExpenseSearchOperationView extends View implements ExpenseSearchOpe
 			searchPanel.doSearch();
 		}
 		
-		form.addValueChangeHandler(new ValueChangeHandler<HealthExpense>() {
+		form.addValueChangeHandler(new ValueChangeHandler<Expense>() {
 			
 			@Override
-			public void onValueChange(ValueChangeEvent<HealthExpense> event) {
-				HealthExpense expense = event.getValue();
+			public void onValueChange(ValueChangeEvent<Expense> event) {
+				Expense expense = event.getValue();
 				childrenPanel.setExpense(expense);
 			}
 		});
@@ -151,7 +151,7 @@ public class ExpenseSearchOperationView extends View implements ExpenseSearchOpe
 	}
 	
 	@Override
-	public HasEditableValue<HealthExpense> getForm(){
+	public HasEditableValue<Expense> getForm(){
 		return form;
 	}
 	

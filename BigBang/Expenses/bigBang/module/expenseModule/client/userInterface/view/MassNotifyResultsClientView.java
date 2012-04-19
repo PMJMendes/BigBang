@@ -15,7 +15,6 @@ import bigBang.definitions.client.dataAccess.Search;
 import bigBang.definitions.client.dataAccess.SearchDataBroker;
 import bigBang.definitions.client.response.ResponseError;
 import bigBang.definitions.client.response.ResponseHandler;
-import bigBang.module.expenseModule.client.dataAccess.ExpenseSearchDataBroker;
 import bigBang.definitions.shared.BigBangConstants;
 import bigBang.definitions.shared.Expense;
 import bigBang.definitions.shared.ExpenseStub;
@@ -34,16 +33,17 @@ import bigBang.library.client.userInterface.ListHeader;
 import bigBang.library.client.userInterface.SelectedProcessesList;
 import bigBang.library.client.userInterface.view.FormView;
 import bigBang.library.client.userInterface.view.View;
+import bigBang.module.expenseModule.client.dataAccess.ExpenseSearchDataBroker;
 import bigBang.module.expenseModule.client.userInterface.ExpenseSearchPanel;
-import bigBang.module.expenseModule.client.userInterface.presenter.MassParticipateToInsurerViewPresenter;
-import bigBang.module.expenseModule.client.userInterface.presenter.MassParticipateToInsurerViewPresenter.Action;
+import bigBang.module.expenseModule.client.userInterface.presenter.MassNotifyResultsClientViewPresenter;
+import bigBang.module.expenseModule.client.userInterface.presenter.MassNotifyResultsClientViewPresenter.Action;
 
-public class MassParticipateToInsurerView extends View implements MassParticipateToInsurerViewPresenter.Display{
+public class MassNotifyResultsClientView extends View implements MassNotifyResultsClientViewPresenter.Display{
 
 	protected static enum Filters{
 		//TODO
 	}
-
+	
 	protected static class SelectedExpensesList extends SelectedProcessesList<ExpenseStub>{
 
 		@Override
@@ -85,10 +85,10 @@ public class MassParticipateToInsurerView extends View implements MassParticipat
 	protected CheckableExpensesSearchPanel searchPanel;
 	protected SelectedExpensesList selectedExpenses;
 	protected ExpenseForm expenseForm;
-	protected Button participateToInsurer;
-
-	public MassParticipateToInsurerView(){
-
+	protected Button notifyResultsToClient;
+	
+	public MassNotifyResultsClientView(){
+		
 		SplitLayoutPanel wrapper = new SplitLayoutPanel();
 		initWidget(wrapper);
 		wrapper.setSize("100%", "100%");
@@ -104,7 +104,7 @@ public class MassParticipateToInsurerView extends View implements MassParticipat
 
 			@Override
 			public void onClick(ClickEvent event) {
-				actionHandler.onActionInvoked(new ActionInvokedEvent<MassParticipateToInsurerViewPresenter.Action>(Action.SELECT_ALL));
+				actionHandler.onActionInvoked(new ActionInvokedEvent<Action>(Action.SELECT_ALL));
 			}
 		});
 
@@ -112,23 +112,23 @@ public class MassParticipateToInsurerView extends View implements MassParticipat
 		searchPanelWrapper.add(selectAllButton);
 		wrapper.addWest(searchPanelWrapper, 400);
 
-		participateToInsurer = new Button("Participar à Seguradora");
+		notifyResultsToClient = new Button("Notificar Resultados ao Segurado");
 
 		HorizontalPanel sendClearWrapper = new HorizontalPanel();
 		sendClearWrapper.setVerticalAlignment(HasVerticalAlignment.ALIGN_MIDDLE);
 		sendClearWrapper.setHeight("100%");
-		sendClearWrapper.add(participateToInsurer);
-		participateToInsurer.addClickHandler(new ClickHandler() {
+		sendClearWrapper.add(notifyResultsToClient);
+		notifyResultsToClient.addClickHandler(new ClickHandler() {
 
 			@Override
 			public void onClick(ClickEvent event) {
-				actionHandler.onActionInvoked(new ActionInvokedEvent<MassParticipateToInsurerViewPresenter.Action>(Action.PARTICIPATE_TO_INSURER));
+				actionHandler.onActionInvoked(new ActionInvokedEvent<Action>(Action.NOTIFY_RESULTS_CLIENT));
 			}
 		});
 
 		expenseForm = new ExpenseForm();
 
-		FormView<Void> participateToInsurerForm = new FormView<Void>(){
+		FormView<Void> notifyResultsToClient = new FormView<Void>(){
 
 			@Override
 			public Void getInfo() {
@@ -142,15 +142,15 @@ public class MassParticipateToInsurerView extends View implements MassParticipat
 
 		};
 
-		participateToInsurerForm.addSection("Participar à Seguradora");
+		notifyResultsToClient.addSection("Notificar Resultados ao Segurado");
 
 		VerticalPanel selectedListWrapper = new VerticalPanel();
-		selectedListWrapper.add(new ListHeader("Participar à Seguradora"));
+		selectedListWrapper.add(new ListHeader("Notificar Resultados ao Segurado"));
 		selectedListWrapper.setSize("100%", "100%");
-		participateToInsurerForm.addWidget(sendClearWrapper);
-		selectedListWrapper.add(participateToInsurerForm.getNonScrollableContent());
-		participateToInsurerForm.getNonScrollableContent().setSize("100%", "40px");
-		selectedListWrapper.setCellWidth(participateToInsurerForm, "100%");
+		notifyResultsToClient.addWidget(sendClearWrapper);
+		selectedListWrapper.add(notifyResultsToClient.getNonScrollableContent());
+		notifyResultsToClient.getNonScrollableContent().setSize("100%", "40px");
+		selectedListWrapper.setCellWidth(notifyResultsToClient, "100%");
 		Button clearButton = new Button("Limpar");
 		sendClearWrapper.add(clearButton);
 		sendClearWrapper.setSpacing(5);
@@ -158,7 +158,7 @@ public class MassParticipateToInsurerView extends View implements MassParticipat
 
 			@Override
 			public void onClick(ClickEvent event) {
-				actionHandler.onActionInvoked(new ActionInvokedEvent<MassParticipateToInsurerViewPresenter.Action>(Action.CLEAR));
+				actionHandler.onActionInvoked(new ActionInvokedEvent<Action>(Action.CLEAR));
 			}
 		});
 
@@ -180,14 +180,14 @@ public class MassParticipateToInsurerView extends View implements MassParticipat
 
 
 	@Override
-	public void addExpenseToParticipate(ExpenseStub stub) {
+	public void addExpenseToNotifyResults(ExpenseStub stub) {
 		selectedExpenses.addEntry(stub);
 		searchPanel.markForCheck(stub.id);
 
 	}
 
 	@Override
-	public void removeExpenseToParticipate(String id) {
+	public void removeExpenseToNotifyResults(String id) {
 		for(ValueSelectable<ExpenseStub> entry : selectedExpenses){
 			if(id.equalsIgnoreCase(entry.getValue().id)){
 				this.selectedExpenses.remove(entry);
@@ -264,7 +264,7 @@ public class MassParticipateToInsurerView extends View implements MassParticipat
 	}
 
 	@Override
-	public void removeAllExpensesToParticipate() {
+	public void removeAllExpensesToNotifyResults() {
 		while(!this.selectedExpenses.isEmpty()){
 			this.selectedExpenses.get(0).setChecked(false, true);
 		}
@@ -278,7 +278,7 @@ public class MassParticipateToInsurerView extends View implements MassParticipat
 
 	@Override
 	public void allowCreation(boolean b) {
-		participateToInsurer.setEnabled(b);
+		notifyResultsToClient.setEnabled(b);
 	}
 
 	@Override

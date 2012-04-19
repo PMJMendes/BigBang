@@ -4,12 +4,12 @@ import bigBang.definitions.client.dataAccess.DataBroker;
 import bigBang.definitions.client.dataAccess.ExpenseDataBroker;
 import bigBang.definitions.client.dataAccess.SearchDataBroker;
 import bigBang.definitions.shared.BigBangConstants;
-import bigBang.definitions.shared.HealthExpense;
-import bigBang.definitions.shared.HealthExpenseStub;
+import bigBang.definitions.shared.Expense;
+import bigBang.definitions.shared.ExpenseStub;
 import bigBang.module.expenseModule.interfaces.ExpenseService;
 import bigBang.module.expenseModule.interfaces.ExpenseServiceAsync;
 
-public class ExpenseBrokerImpl extends DataBroker<HealthExpense> implements ExpenseDataBroker{
+public class ExpenseBrokerImpl extends DataBroker<Expense> implements ExpenseDataBroker{
 
 	private ExpenseServiceAsync service;
 	
@@ -49,7 +49,7 @@ public class ExpenseBrokerImpl extends DataBroker<HealthExpense> implements Expe
 
 
 	@Override
-	public SearchDataBroker<HealthExpenseStub> getSearchBroker() {
+	public SearchDataBroker<ExpenseStub> getSearchBroker() {
 		// TODO Auto-generated method stub
 		return null;
 	}

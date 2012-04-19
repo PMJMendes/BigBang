@@ -5,7 +5,7 @@ import com.google.gwt.user.client.ui.StackPanel;
 import bigBang.definitions.client.dataAccess.ExpenseDataBroker;
 import bigBang.definitions.client.dataAccess.ExpenseDataBrokerClient;
 import bigBang.definitions.shared.BigBangConstants;
-import bigBang.definitions.shared.HealthExpense;
+import bigBang.definitions.shared.Expense;
 import bigBang.library.client.dataAccess.DataBrokerManager;
 import bigBang.library.client.userInterface.ContactsList;
 import bigBang.library.client.userInterface.DocumentsList;
@@ -15,7 +15,7 @@ import bigBang.library.client.userInterface.view.View;
 
 public class ExpenseChildrenPanel extends View{
 
-	protected HealthExpense expense;
+	protected Expense expense;
 	protected ExpenseDataBrokerClient expenseBrokerClient;
 	
 	public ContactsList contactsList;
@@ -63,7 +63,7 @@ public class ExpenseChildrenPanel extends View{
 			}
 			
 			@Override
-			public void updateExpense(HealthExpense expense) {
+			public void updateExpense(Expense expense) {
 				return;
 			}
 			
@@ -75,13 +75,13 @@ public class ExpenseChildrenPanel extends View{
 			}
 			
 			@Override
-			public void addExpense(HealthExpense expense) {
+			public void addExpense(Expense expense) {
 				return;
 			}
 		};
 	}
 	
-	public void setExpense(HealthExpense expense) {
+	public void setExpense(Expense expense) {
 		this.expense = expense;
 		String expenseId = expense == null ? null: expense.id;
 		

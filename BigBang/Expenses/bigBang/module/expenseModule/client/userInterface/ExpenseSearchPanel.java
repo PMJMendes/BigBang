@@ -18,16 +18,16 @@ import bigBang.module.expenseModule.client.resources.Resources;
 import bigBang.module.expenseModule.shared.ExpenseSortParameter;
 import bigBang.definitions.client.dataAccess.ExpenseDataBroker;
 import bigBang.definitions.shared.BigBangConstants;
-import bigBang.definitions.shared.HealthExpenseStub;
+import bigBang.definitions.shared.ExpenseStub;
 
 import bigBang.library.client.dataAccess.DataBrokerManager;
 import bigBang.library.client.userInterface.FiltersPanel;
 import bigBang.library.client.userInterface.ListEntry;
 import bigBang.library.client.userInterface.view.SearchPanel;
 
-public class ExpenseSearchPanel extends SearchPanel<HealthExpenseStub> {
+public class ExpenseSearchPanel extends SearchPanel<ExpenseStub> {
 
-	public static class Entry extends ListEntry<HealthExpenseStub>{
+	public static class Entry extends ListEntry<ExpenseStub>{
 
 		protected Label numberLabel;
 		protected Label clientLabel;
@@ -38,14 +38,14 @@ public class ExpenseSearchPanel extends SearchPanel<HealthExpenseStub> {
 		protected Label valueLabel;
 
 		
-		public Entry(HealthExpenseStub value) {
+		public Entry(ExpenseStub value) {
 			super(value);
 			setHeight("55px");
 			this.titleLabel.getElement().getStyle().setFontSize(11, Unit.PX);
 		}
 		
 		public <I extends Object> void setInfo(I info){
-			HealthExpenseStub value = (HealthExpenseStub)info;
+			ExpenseStub value = (ExpenseStub)info;
 			
 			if(value.id != null){
 				if(numberLabel == null){
@@ -134,12 +134,12 @@ public class ExpenseSearchPanel extends SearchPanel<HealthExpenseStub> {
 	
 	protected int dataVersion;
 	protected FiltersPanel filtersPanel;
-	protected Map<String, HealthExpenseStub> expensesToUpdate;
+	protected Map<String, ExpenseStub> expensesToUpdate;
 	protected Map<String, Void> expensesToRemove;
 	
 	public ExpenseSearchPanel() {
 		super((ExpenseSearchDataBroker) ((ExpenseDataBroker)DataBrokerManager.staticGetBroker(BigBangConstants.EntityIds.EXPENSE)).getSearchBroker());
-		expensesToUpdate = new HashMap<String, HealthExpenseStub>();
+		expensesToUpdate = new HashMap<String, ExpenseStub>();
 		expensesToRemove = new HashMap<String, Void>();
 		
 		Map<Enum<?>, String> sortOptions = new TreeMap<Enum<?>, String>(); 
@@ -162,7 +162,7 @@ public class ExpenseSearchPanel extends SearchPanel<HealthExpenseStub> {
 	}
 
 	@Override
-	public void onResults(Collection<HealthExpenseStub> results) {
+	public void onResults(Collection<ExpenseStub> results) {
 		// TODO Auto-generated method stub
 		
 	}

@@ -1,11 +1,11 @@
 package bigBang.definitions.client.dataAccess;
 
-import bigBang.definitions.shared.HealthExpense;
-import bigBang.definitions.shared.HealthExpenseStub;
+import bigBang.definitions.shared.Expense;
+import bigBang.definitions.shared.ExpenseStub;
 
 
-public interface ExpenseDataBroker extends DataBrokerInterface<HealthExpense>{
+public interface ExpenseDataBroker extends DataBrokerInterface<Expense>{
 
-	SearchDataBroker<HealthExpenseStub> getSearchBroker();
+	SearchDataBroker<ExpenseStub> getSearchBroker();
 
 }

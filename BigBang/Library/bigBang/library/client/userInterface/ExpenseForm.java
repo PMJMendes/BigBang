@@ -2,10 +2,18 @@ package bigBang.library.client.userInterface;
 
 import java.util.Collection;
 
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.user.client.ui.Button;
+import com.google.gwt.user.client.ui.HasVerticalAlignment;
+import com.google.gwt.user.client.ui.HorizontalPanel;
+import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.VerticalPanel;
+
 import bigBang.definitions.client.response.ResponseError;
 import bigBang.definitions.client.response.ResponseHandler;
 import bigBang.definitions.shared.BigBangConstants;
-import bigBang.definitions.shared.HealthExpense;
+import bigBang.definitions.shared.Expense;
 import bigBang.library.client.EventBus;
 import bigBang.library.client.FormField;
 import bigBang.library.client.Notification;
@@ -13,10 +21,12 @@ import bigBang.library.client.Notification.TYPE;
 import bigBang.library.client.event.NewNotificationEvent;
 import bigBang.library.client.userInterface.view.FormView;
 
-public class ExpenseForm extends FormView<HealthExpense>{
+public class ExpenseForm extends FormView<Expense>{
 
 	private ExpandableListBoxFormField manager;
 	private TextBoxFormField settlement;
+	private Label settleLabel;
+	private Button settleButton;
 	private TextAreaFormField notes;
 	private TextBoxFormField clientName;
 	private DatePickerFormField expenseDate;
@@ -34,6 +44,10 @@ public class ExpenseForm extends FormView<HealthExpense>{
 		settlement = new TextBoxFormField("Indemnização");
 		settlement.setUnitsLabel("€");
 		settlement.setFieldWidth("175px");
+		settleButton = new Button("Substituir");
+		settleButton.setHeight("22px");
+		settleLabel = new Label();
+		settleLabel.setText("Calculado Automaticamente");
 		referenceNumber = new TextBoxFormField("Apólice");
 		referenceNumber.setFieldWidth("400px");
 
@@ -59,19 +73,37 @@ public class ExpenseForm extends FormView<HealthExpense>{
 		addFormFieldGroup(new FormField<?>[]{
 				number,
 				isOpen,
+		}, true);
+		
+		addFormFieldGroup(new FormField<?>[]{
 				manager,
+				insuredObjectId,
 		}, true);
 
 		addFormFieldGroup(new FormField<?>[]{
-				insuredObjectId,	
 				coverageId,
 				expenseDate,	
-		}, true);
+		}, false);
 
-		addFormFieldGroup(new FormField<?>[]{
-				value,
-				settlement,
-		}, true);
+	
+		
+		HorizontalPanel settlementPanel = new HorizontalPanel();
+		VerticalPanel settlementVerticalPanel = new VerticalPanel();
+		settlementPanel.setVerticalAlignment(HasVerticalAlignment.ALIGN_MIDDLE);
+		settlementPanel.add(settlement);
+		settlementVerticalPanel.add(settleLabel);
+		settlementVerticalPanel.add(settleButton);
+		settlementPanel.add(settlementVerticalPanel);
+		settleButton.addClickHandler(new ClickHandler() {
+			
+			@Override
+			public void onClick(ClickEvent event) {
+				setSettlement(!getInfo().isManual);
+			}
+		});
+		
+addFormField(value, false);
+addWidget(settlementPanel, false);
 
 
 		notes = new TextAreaFormField();
@@ -90,9 +122,9 @@ public class ExpenseForm extends FormView<HealthExpense>{
 	}
 
 	@Override
-	public HealthExpense getInfo() {
+	public Expense getInfo() {
 
-		HealthExpense newExpense = super.value;
+		Expense newExpense = super.value;
 		newExpense.managerId = manager.getValue();
 		newExpense.settlement = settlement.getValue();
 		newExpense.notes = notes.getValue();
@@ -105,7 +137,7 @@ public class ExpenseForm extends FormView<HealthExpense>{
 	}
 
 	@Override
-	public void setInfo(HealthExpense info) {
+	public void setInfo(Expense info) {
 
 		if(info == null) {
 			clearInfo();
@@ -114,6 +146,8 @@ public class ExpenseForm extends FormView<HealthExpense>{
 
 		manager.setValue(info.managerId);
 		settlement.setValue(info.settlement);
+		setSettlement(info.isManual);
+				
 		notes.setValue(info.notes);
 		clientName.setValue("#" + info.clientNumber + " - " + info.clientName);
 		expenseDate.setValue(info.expenseDate);
@@ -153,6 +187,13 @@ public class ExpenseForm extends FormView<HealthExpense>{
 
 		isOpen.setValue(info.isOpen ? "Aberta" : "Fechada");
 		value.setValue(info.value);
+	}
+
+	private void setSettlement(boolean isManual) {
+		settleButton.setVisible(!isManual);
+		settleLabel.setVisible(!isManual);
+		settlement.setReadOnly(!isManual);
+		super.value.isManual = isManual;
 	}
 
 	@Override

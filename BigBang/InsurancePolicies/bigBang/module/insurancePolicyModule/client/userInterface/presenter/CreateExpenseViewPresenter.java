@@ -11,7 +11,7 @@ import bigBang.definitions.client.dataAccess.InsurancePolicyBroker;
 import bigBang.definitions.client.response.ResponseError;
 import bigBang.definitions.client.response.ResponseHandler;
 import bigBang.definitions.shared.BigBangConstants;
-import bigBang.definitions.shared.HealthExpense;
+import bigBang.definitions.shared.Expense;
 import bigBang.definitions.shared.InsurancePolicy;
 import bigBang.library.client.EventBus;
 import bigBang.library.client.HasEditableValue;
@@ -35,7 +35,7 @@ public class CreateExpenseViewPresenter implements ViewPresenter{
 	
 	public interface Display{
 		Widget asWidget();
-		HasEditableValue<HealthExpense> getForm();
+		HasEditableValue<Expense> getForm();
 		HasValue<InsurancePolicy> getInsuranceForm();
 		void registerActionHandler(ActionInvokedEventHandler<Action> handler);
 		void setToolBarSaveMode(boolean b);
@@ -123,7 +123,7 @@ public class CreateExpenseViewPresenter implements ViewPresenter{
 	}
 
 	protected void showExpense(InsurancePolicy response) {
-		HealthExpense expense = new HealthExpense();
+		Expense expense = new Expense();
 		expense.clientId = response.clientId;
 		expense.clientName = response.clientName;
 		expense.clientNumber = response.clientNumber;

@@ -21,7 +21,7 @@ public class ExpenseSectionViewPresenter implements ViewPresenter {
 
 	public static enum SectionOperation {
 		OPERATIONS,
-		MASS_MANAGER_TRANSFER, MASS_PARTICIPATE_TO_INSURER
+		MASS_MANAGER_TRANSFER, MASS_PARTICIPATE_TO_INSURER, MASS_NOTIFY_RESULTS_CLIENT
 	}
 
 	public static interface Display {
@@ -97,7 +97,11 @@ public class ExpenseSectionViewPresenter implements ViewPresenter {
 					case MASS_PARTICIPATE_TO_INSURER:
 						item.pushIntoStackParameter("display", "massparticipatetoinsurer");
 						break;
+					case MASS_NOTIFY_RESULTS_CLIENT:
+						item.pushIntoStackParameter("display", "massnotifyresultsclient");
+						break;
 					}
+					
 				}
 
 				NavigationHistoryManager.getInstance().go(item);
@@ -127,8 +131,10 @@ public class ExpenseSectionViewPresenter implements ViewPresenter {
 					}else if(display.equalsIgnoreCase("massparticipatetoinsurer")){
 						view.selectOperation(SectionOperation.MASS_PARTICIPATE_TO_INSURER);
 						present("MASS_PARTICIPATE_TO_INSURER", parameters);
+					}else if(display.equalsIgnoreCase("massnotifyresultsclient")){
+						view.selectOperation(SectionOperation.MASS_NOTIFY_RESULTS_CLIENT);
+						present("MASS_NOTIFY_RESULTS_CLIENT", parameters);
 					}else{
-					
 						view.selectOperation(SectionOperation.OPERATIONS);
 						present("EXPENSE_OPERATIONS", parameters);
 					}

@@ -5,8 +5,8 @@ import bigBang.definitions.shared.BigBangConstants;
 import bigBang.definitions.shared.BigBangProcess;
 import bigBang.definitions.shared.Contact;
 import bigBang.definitions.shared.Document;
-import bigBang.definitions.shared.HealthExpense;
-import bigBang.definitions.shared.HealthExpenseStub;
+import bigBang.definitions.shared.Expense;
+import bigBang.definitions.shared.ExpenseStub;
 import bigBang.definitions.shared.HistoryItemStub;
 import bigBang.library.client.HasEditableValue;
 import bigBang.library.client.HasParameters;
@@ -36,7 +36,7 @@ public class ExpenseSearchOperationViewPresenter implements ViewPresenter {
 
 		HasValueSelectables<?> getList();
 
-		HasEditableValue<HealthExpense> getForm();
+		HasEditableValue<Expense> getForm();
 
 		boolean isFormValid();
 
@@ -110,7 +110,7 @@ public class ExpenseSearchOperationViewPresenter implements ViewPresenter {
 	private void showExpense(String expenseId) {
 		
 		for(ValueSelectable<?> selectable : view.getList().getAll()){
-			HealthExpenseStub stub = (HealthExpenseStub) selectable.getValue();
+			ExpenseStub stub = (ExpenseStub) selectable.getValue();
 			if(stub.id.equalsIgnoreCase(expenseId)){
 				selectable.setSelected(true, false);
 			}else if(selectable.isSelected()){
