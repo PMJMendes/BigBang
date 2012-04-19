@@ -425,7 +425,6 @@ public abstract class InsurancePolicyForm extends FormView<InsurancePolicy> {
 		else{
 			result.coInsurers = null;
 		}
-		coInsurers.clear();
 		
 		
 		result.headerFields = getHeaderFieldsInfo();
