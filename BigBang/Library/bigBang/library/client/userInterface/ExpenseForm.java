@@ -74,7 +74,7 @@ public class ExpenseForm extends FormView<Expense>{
 				number,
 				isOpen,
 		}, true);
-		
+
 		addFormFieldGroup(new FormField<?>[]{
 				manager,
 				insuredObjectId,
@@ -85,8 +85,8 @@ public class ExpenseForm extends FormView<Expense>{
 				expenseDate,	
 		}, false);
 
-	
-		
+
+
 		HorizontalPanel settlementPanel = new HorizontalPanel();
 		VerticalPanel settlementVerticalPanel = new VerticalPanel();
 		settlementPanel.setVerticalAlignment(HasVerticalAlignment.ALIGN_MIDDLE);
@@ -95,15 +95,15 @@ public class ExpenseForm extends FormView<Expense>{
 		settlementVerticalPanel.add(settleButton);
 		settlementPanel.add(settlementVerticalPanel);
 		settleButton.addClickHandler(new ClickHandler() {
-			
+
 			@Override
 			public void onClick(ClickEvent event) {
 				setSettlement(!getInfo().isManual);
 			}
 		});
-		
-addFormField(value, false);
-addWidget(settlementPanel, false);
+
+		addFormField(value, false);
+		addWidget(settlementPanel, false);
 
 
 		notes = new TextAreaFormField();
@@ -116,7 +116,8 @@ addWidget(settlementPanel, false);
 		number.setReadOnly(true);
 		isOpen.setReadOnly(true);
 		manager.setReadOnly(true);
-		
+		settlement.setReadOnly(true);
+		settleButton.setEnabled(false);
 		initialized = true;
 
 	}
@@ -147,7 +148,7 @@ addWidget(settlementPanel, false);
 		manager.setValue(info.managerId);
 		settlement.setValue(info.settlement);
 		setSettlement(info.isManual);
-				
+
 		notes.setValue(info.notes);
 		clientName.setValue("#" + info.clientNumber + " - " + info.clientName);
 		expenseDate.setValue(info.expenseDate);
@@ -170,15 +171,15 @@ addWidget(settlementPanel, false);
 				EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não foi possível obter a lista de unidades de risco."), TYPE.ALERT_NOTIFICATION));
 			}
 		});
-		
+
 		listId = BigBangConstants.EntityIds.COVERAGE+"/"+info.referenceId;
 		coverageId.setListId(info.referenceId, new ResponseHandler<Void>() {
-			
+
 			@Override
 			public void onResponse(Void response) {
 				return;
 			}
-			
+
 			@Override
 			public void onError(Collection<ResponseError> errors) {
 				EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não foi possível obter a lista de coberturas."), TYPE.ALERT_NOTIFICATION));
@@ -202,12 +203,11 @@ addWidget(settlementPanel, false);
 		if(!initialized)
 			return;
 
-
 		coverageId.setReadOnly(readonly);
 		expenseDate.setReadOnly(readonly);
 		value.setReadOnly(readonly);
-		settlement.setReadOnly(readonly);
 		notes.setReadOnly(readonly);
+		settleButton.setEnabled(!readonly);
 
 	};
 

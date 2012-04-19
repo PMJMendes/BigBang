@@ -285,5 +285,11 @@ public abstract class NegotiationView<T> extends View implements NegotiationView
 		contacts.setOwnerType(ownerTypeId);
 		documents.setOwnerType(ownerTypeId);
 	}
+	
+	public void allowContactDocumentEdit(boolean hasPermission) {
+		contacts.allowCreation(hasPermission);
+		documents.allowCreation(hasPermission);
+		
+	};
 
 }

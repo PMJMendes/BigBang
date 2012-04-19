@@ -12,11 +12,13 @@ import bigBang.module.expenseModule.client.userInterface.presenter.ExpenseSearch
 import bigBang.module.expenseModule.client.userInterface.presenter.ExpenseSectionViewPresenter;
 import bigBang.module.expenseModule.client.userInterface.presenter.MassNotifyResultsClientViewPresenter;
 import bigBang.module.expenseModule.client.userInterface.presenter.MassParticipateToInsurerViewPresenter;
+import bigBang.module.expenseModule.client.userInterface.presenter.ReceiveResponseViewPresenter;
 import bigBang.module.expenseModule.client.userInterface.view.ExpenseOperationsView;
 import bigBang.module.expenseModule.client.userInterface.view.ExpenseSearchOperationView;
 import bigBang.module.expenseModule.client.userInterface.view.ExpenseSectionView;
 import bigBang.module.expenseModule.client.userInterface.view.MassNotifyResultsClientView;
 import bigBang.module.expenseModule.client.userInterface.view.MassParticipateToInsurerView;
+import bigBang.module.expenseModule.client.userInterface.view.ReceiveResponseView;
 
 import com.google.gwt.core.client.GWT;
 
@@ -69,12 +71,22 @@ public class ExpenseModule implements Module {
 				MassParticipateToInsurerViewPresenter presenter = new MassParticipateToInsurerViewPresenter(view);
 				return presenter;
 			}
-		});ViewPresenterFactory.getInstance().registerViewPresenterInstantiator("MASS_NOTIFY_RESULTS_CLIENT", new ViewPresenterInstantiator() {
+		});
+		ViewPresenterFactory.getInstance().registerViewPresenterInstantiator("MASS_NOTIFY_RESULTS_CLIENT", new ViewPresenterInstantiator() {
 
 			@Override
 			public ViewPresenter getInstance() {
 				MassNotifyResultsClientView view = (MassNotifyResultsClientView) GWT.create(MassNotifyResultsClientView.class);
 				MassNotifyResultsClientViewPresenter presenter = new MassNotifyResultsClientViewPresenter(view);
+				return presenter;
+			}
+		});
+		ViewPresenterFactory.getInstance().registerViewPresenterInstantiator("RECEIVE_RESPONSE", new ViewPresenterInstantiator() {
+
+			@Override
+			public ViewPresenter getInstance() {
+				ReceiveResponseView view = (ReceiveResponseView) GWT.create(ReceiveResponseView.class);
+				ReceiveResponseViewPresenter presenter = new ReceiveResponseViewPresenter(view);
 				return presenter;
 			}
 		});

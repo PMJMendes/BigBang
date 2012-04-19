@@ -21,13 +21,13 @@ public abstract class ExpenseProcessToolBar extends BigBangOperationsToolBar{
 	protected MenuItem notifyClient;
 	//other
 	protected MenuItem validate;
-	
 	//REQUESTS
 	//client
 	protected MenuItem infoOrDocumentRequest;
-	
 	//agency
 	protected MenuItem infoFromInsurer;
+	protected MenuItem receiveResponse;
+
 
 	public ExpenseProcessToolBar() {
 
@@ -113,9 +113,21 @@ public abstract class ExpenseProcessToolBar extends BigBangOperationsToolBar{
 		});
 		addItem(SUB_MENU.REQUESTS, infoFromInsurer);
 		
+		receiveResponse = new MenuItem("Receber Resposta", new Command() {
+			
+			@Override
+			public void execute() {
+				onReceiveResponse();
+			}
+		});
+		requestsSubMenu.addSeparator();
+		addItem(SUB_MENU.REQUESTS, receiveResponse);
+		
 		createMenuItem.setVisible(false);
 		dataMenuItem.setVisible(false);
 	}
+
+	protected abstract void onReceiveResponse();
 
 	protected abstract void onInfoFromInsurer();
 	
@@ -178,5 +190,10 @@ public abstract class ExpenseProcessToolBar extends BigBangOperationsToolBar{
 	public void allowInfoFromInsurer(boolean allow){
 		infoFromInsurer.setEnabled(allow);
 	}
+
+	public void allowReceiveResponse(boolean allow) {
+		receiveResponse.setEnabled(allow);
+	}
+
 
 }

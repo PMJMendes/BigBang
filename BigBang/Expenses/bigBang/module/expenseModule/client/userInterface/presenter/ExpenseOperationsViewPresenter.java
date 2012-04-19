@@ -50,6 +50,8 @@ public class ExpenseOperationsViewPresenter implements ViewPresenter {
 
 				if(display.equalsIgnoreCase("search")){
 					present("EXPENSE_SEARCH", parameters);
+				}else if(display.equalsIgnoreCase("history")){
+					present("HISTORY", parameters);
 				}else{
 					goToDefault();
 				}

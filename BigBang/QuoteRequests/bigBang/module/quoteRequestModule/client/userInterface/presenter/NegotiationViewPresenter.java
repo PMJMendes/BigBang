@@ -94,6 +94,8 @@ public abstract class NegotiationViewPresenter implements ViewPresenter{
 
 		void setOwnerTypeId(String negotiation);
 
+		void allowContactDocumentEdit(boolean hasPermission);
+
 	}
 
 	protected Display view;
@@ -318,7 +320,7 @@ public abstract class NegotiationViewPresenter implements ViewPresenter{
 			view.allowGrant(false);
 			view.allowResponse(false);
 			view.allowResponse(false);
-			//TODO BLOCK ALLOW CREATION ON DOCUMENT AND CONTACT LIST -> ventura
+			
 		}else{
 
 			negotiationBroker.getNegotiation(negotiationId, new ResponseHandler<Negotiation>() {
@@ -331,6 +333,7 @@ public abstract class NegotiationViewPresenter implements ViewPresenter{
 					view.setToolbarSaveMode(false);
 					view.allowDelete(PermissionChecker.hasPermission(response, BigBangConstants.OperationIds.NegotiationProcess.DELETE_NEGOTIATION));
 					view.allowEdit(PermissionChecker.hasPermission(response, BigBangConstants.OperationIds.NegotiationProcess.UPDATE_NEGOTIATION));
+					view.allowContactDocumentEdit(PermissionChecker.hasPermission(response, BigBangConstants.OperationIds.NegotiationProcess.UPDATE_NEGOTIATION));
 					view.allowCancelNegotiation(PermissionChecker.hasPermission(response, BigBangConstants.OperationIds.NegotiationProcess.CANCEL_NEGOTIATION));
 					view.allowExternalRequest(PermissionChecker.hasPermission(response, BigBangConstants.OperationIds.NegotiationProcess.EXTERNAL_REQUEST));
 					view.allowGrant(PermissionChecker.hasPermission(response, BigBangConstants.OperationIds.NegotiationProcess.GRANT_NEGOTIATION));

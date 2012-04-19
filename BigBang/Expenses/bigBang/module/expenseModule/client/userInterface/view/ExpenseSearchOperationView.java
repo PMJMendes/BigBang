@@ -25,24 +25,24 @@ import bigBang.module.expenseModule.client.userInterface.presenter.ExpenseSearch
 public class ExpenseSearchOperationView extends View implements ExpenseSearchOperationViewPresenter.Display {
 
 	protected static final int SEARCH_PANEL_WIDTH = 400; //PX 
-	
+
 	protected ExpenseSearchPanel searchPanel;
 	protected ExpenseForm form;
 	protected ExpenseProcessToolBar operationsToolbar;
 	protected ActionInvokedEventHandler<Action> actionHandler;
 	protected ExpenseChildrenPanel childrenPanel;
-	
+
 	public ExpenseSearchOperationView(){
 		SplitLayoutPanel mainWrapper = new SplitLayoutPanel();
 		initWidget(mainWrapper);
 		mainWrapper.setSize("100%", "100%");
-		
+
 		searchPanel = new ExpenseSearchPanel();
 		mainWrapper.addWest(searchPanel, SEARCH_PANEL_WIDTH);
-		
+
 		VerticalPanel formWrapper = new VerticalPanel();
 		formWrapper.setSize("100%", "100%");
-		
+
 		operationsToolbar = new ExpenseProcessToolBar(){
 
 			@Override
@@ -58,13 +58,13 @@ public class ExpenseSearchOperationView extends View implements ExpenseSearchOpe
 			@Override
 			public void onSaveRequest() {
 				actionHandler.onActionInvoked(new ActionInvokedEvent<ExpenseSearchOperationViewPresenter.Action>(Action.SAVE));
-				
+
 			}
 
 			@Override
 			public void onCancelRequest() {
 				actionHandler.onActionInvoked(new ActionInvokedEvent<ExpenseSearchOperationViewPresenter.Action>(Action.CANCEL));
-				
+
 			}
 
 			@Override
@@ -107,75 +107,80 @@ public class ExpenseSearchOperationView extends View implements ExpenseSearchOpe
 			public void onCloseProcess() {
 				actionHandler.onActionInvoked(new ActionInvokedEvent<ExpenseSearchOperationViewPresenter.Action>(Action.CLOSE_PROCESS));
 			}
+
+			@Override
+			protected void onReceiveResponse() {
+				actionHandler.onActionInvoked(new ActionInvokedEvent<ExpenseSearchOperationViewPresenter.Action>(Action.RECEIVE_RESPONSE));				
+			}
 		};
-		
+
 		formWrapper.add(operationsToolbar);
 		formWrapper.setCellHeight(operationsToolbar, "21px");
-		
+
 		form = new ExpenseForm();
 		formWrapper.add(form);
-		
+
 		SplitLayoutPanel contentWrapper = new SplitLayoutPanel();
 		contentWrapper.setSize("100%", "100%");
-		
+
 		childrenPanel = new ExpenseChildrenPanel();
 		childrenPanel.setHeight("100%");
 		contentWrapper.addEast(childrenPanel, 300);
-		
+
 		contentWrapper.add(formWrapper);
 		mainWrapper.add(contentWrapper);
-		
+
 		if(!bigBang.definitions.client.Constants.DEBUG){
 			searchPanel.doSearch();
 		}
-		
+
 		form.addValueChangeHandler(new ValueChangeHandler<Expense>() {
-			
+
 			@Override
 			public void onValueChange(ValueChangeEvent<Expense> event) {
 				Expense expense = event.getValue();
 				childrenPanel.setExpense(expense);
 			}
 		});
-		
+
 	}
 
 	@Override
 	protected void initializeView() {
 		return;
 	}
-	
+
 	@Override
 	public HasValueSelectables<?> getList(){
 		return searchPanel;
 	}
-	
+
 	@Override
 	public HasEditableValue<Expense> getForm(){
 		return form;
 	}
-	
+
 	@Override
 	public boolean isFormValid(){
 		return this.form.validate();
 	}
-	
+
 	@Override
 	public void clearAllowedPermissions() {
 		this.operationsToolbar.lockAll();
 	}
-	
+
 	@Override
 	public void registerActionInvokedHandler(
 			ActionInvokedEventHandler<Action> handler) {
 		this.actionHandler = handler;
 	}
-	
+
 	@Override
 	public void setSaveModeEnabled(boolean enabled) {
 		this.operationsToolbar.setSaveModeEnabled(enabled);
 	}
-	
+
 	@Override
 	public void allowEdit(boolean allow) {
 		this.operationsToolbar.setEditionAvailable(allow);
@@ -185,7 +190,12 @@ public class ExpenseSearchOperationView extends View implements ExpenseSearchOpe
 	public void allowDelete(boolean allow) {
 		this.operationsToolbar.allowDelete(allow);
 	}
-	
+
+	@Override
+	public void allowReceiveResponse(boolean allow){
+		this.operationsToolbar.allowReceiveResponse(allow);
+	}
+
 	@Override
 	public HasValueSelectables<Contact> getContactsList() {
 		return this.childrenPanel.contactsList;
@@ -195,12 +205,12 @@ public class ExpenseSearchOperationView extends View implements ExpenseSearchOpe
 	public HasValueSelectables<Document> getDocumentsList() {
 		return this.childrenPanel.documentsList;
 	}
-	
+
 	@Override
 	public HasValueSelectables<BigBangProcess> getSubProcessesList() {
 		return this.childrenPanel.subProcessesList;
 	}
-	
+
 	@Override
 	public HasValueSelectables<HistoryItemStub> getHistoryList() {
 		return this.childrenPanel.historyList;
@@ -214,5 +224,41 @@ public class ExpenseSearchOperationView extends View implements ExpenseSearchOpe
 	@Override
 	public void lockOptions() {
 		operationsToolbar.lockAll();
+	}
+
+	@Override
+	public void allowInfoFromInsurer(boolean allow) {
+		this.operationsToolbar.allowInfoFromInsurer(allow);
+
+	}
+
+	@Override
+	public void allowInfoOrDocumentRequest(boolean allow) {
+		this.operationsToolbar.allowInfoOrDocumentRequest(allow);
+
+	}
+
+	@Override
+	public void allowNotifyClient(boolean allow) {
+		this.operationsToolbar.allowNotifyClient(allow);
+
+	}
+
+	@Override
+	public void allowParticipateToInsurer(boolean allow) {
+		this.operationsToolbar.allowParticipateToInsurer(allow);
+
+
+	}
+
+	@Override
+	public void allowReturnToClient(boolean allow) {
+		this.operationsToolbar.allowReturnToClient(allow);
+
+	}
+
+	@Override
+	public void allowValidate(boolean allow) {
+		this.operationsToolbar.allowValidate(allow);
 	}
 }

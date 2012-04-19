@@ -17,6 +17,8 @@ import bigBang.library.client.event.ActionInvokedEvent;
 import bigBang.library.client.event.ActionInvokedEventHandler;
 import bigBang.library.client.event.SelectionChangedEvent;
 import bigBang.library.client.event.SelectionChangedEventHandler;
+import bigBang.library.client.history.NavigationHistoryItem;
+import bigBang.library.client.history.NavigationHistoryManager;
 import bigBang.library.client.userInterface.presenter.ViewPresenter;
 import bigBang.library.client.userInterface.view.View;
 import com.google.gwt.user.client.ui.HasWidgets;
@@ -28,40 +30,32 @@ public class ExpenseSearchOperationViewPresenter implements ViewPresenter {
 	public enum Action{
 		EDIT, SAVE, CANCEL, DELETE, INFO_FROM_INSURER,
 		INFO_OR_DOCUMENT_REQUEST, VALIDATE, 
-		PARTICIPATE_TO_INSURER, NOTIFY_CLIENT, RETURN_TO_CLIENT, CLOSE_PROCESS
+		PARTICIPATE_TO_INSURER, NOTIFY_CLIENT, RETURN_TO_CLIENT, CLOSE_PROCESS, RECEIVE_RESPONSE
 	}
 
 	public interface Display {
 		Widget asWidget();
-
 		HasValueSelectables<?> getList();
-
 		HasEditableValue<Expense> getForm();
-
 		boolean isFormValid();
-
 		void clearAllowedPermissions();
-
-		void registerActionInvokedHandler(
-				ActionInvokedEventHandler<Action> handler);
-
+		void registerActionInvokedHandler(ActionInvokedEventHandler<Action> handler);
 		void setSaveModeEnabled(boolean enabled);
-
 		void allowEdit(boolean allow);
-
 		void allowDelete(boolean allow);
-
 		HasValueSelectables<Contact> getContactsList();
-
 		HasValueSelectables<Document> getDocumentsList();
-
 		HasValueSelectables<BigBangProcess> getSubProcessesList();
-
 		HasValueSelectables<HistoryItemStub> getHistoryList();
-
 		void clear();
-
 		void lockOptions();
+		void allowReceiveResponse(boolean allow);
+		void allowInfoFromInsurer(boolean allow);
+		void allowInfoOrDocumentRequest(boolean allow);
+		void allowNotifyClient(boolean allow);
+		void allowParticipateToInsurer(boolean allow);
+		void allowReturnToClient(boolean allow);
+		void allowValidate(boolean allow);
 	}
 
 	protected boolean bound = false;
@@ -173,48 +167,67 @@ public class ExpenseSearchOperationViewPresenter implements ViewPresenter {
 				case VALIDATE:
 					onValidate();
 					break;
+				case RECEIVE_RESPONSE:
+					onReceiveResponse();
+					break;
 				}
 
 			}
 		});
 
+
 		view.getContactsList().addSelectionChangedEventHandler(new SelectionChangedEventHandler() {
 
 			@Override
 			public void onSelectionChanged(SelectionChangedEvent event) {
-				// TODO Auto-generated method stub
-
+				@SuppressWarnings("unchecked")
+				Contact selectedValue = event.getFirstSelected() == null ? null : ((ValueSelectable<Contact>) event.getFirstSelected()).getValue();
+				if(selectedValue != null) {
+					showContact(selectedValue);
+				}
 			}
 		});
-
 		view.getDocumentsList().addSelectionChangedEventHandler(new SelectionChangedEventHandler() {
 
 			@Override
 			public void onSelectionChanged(SelectionChangedEvent event) {
-				// TODO Auto-generated method stu b
-
+				@SuppressWarnings("unchecked")
+				Document selectedValue = event.getFirstSelected() == null ? null : ((ValueSelectable<Document>) event.getFirstSelected()).getValue();
+				if(selectedValue != null) {
+					showDocument(selectedValue);
+				}
 			}
 		});
-
-		view.getHistoryList().addSelectionChangedEventHandler(new SelectionChangedEventHandler() {
-
-			@Override
-			public void onSelectionChanged(SelectionChangedEvent event) {
-				// TODO Auto-generated method stub
-
-			}
-		});
-
 		view.getSubProcessesList().addSelectionChangedEventHandler(new SelectionChangedEventHandler() {
 
 			@Override
 			public void onSelectionChanged(SelectionChangedEvent event) {
-				// TODO Auto-generated method stub
+				@SuppressWarnings("unchecked")
+				BigBangProcess selectedValue = event.getFirstSelected() == null ? null : ((ValueSelectable<BigBangProcess>) event.getFirstSelected()).getValue();
+				if(selectedValue != null) {
+					showSubProcess(selectedValue);
+				}
+			}
+		});
+		view.getHistoryList().addSelectionChangedEventHandler(new SelectionChangedEventHandler() {
 
+			@Override
+			public void onSelectionChanged(SelectionChangedEvent event) {
+				@SuppressWarnings("unchecked")
+				HistoryItemStub selectedValue = event.getFirstSelected() == null ? null : ((ValueSelectable<HistoryItemStub>) event.getFirstSelected()).getValue();
+				if(selectedValue != null) {
+					showHistory(selectedValue);
+				}
 			}
 		});
 
 		bound = true;
+	}
+
+	protected void onReceiveResponse() {
+		NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
+		item.setParameter("show", "receiveresponse");
+		NavigationHistoryManager.getInstance().go(item);
 	}
 
 	protected void onCancel() {
@@ -270,6 +283,42 @@ public class ExpenseSearchOperationViewPresenter implements ViewPresenter {
 
 	protected void onCloseProcess() {
 		// TODO Auto-generated method stub
+
+	}
+	
+	private void showContact(final Contact contact) {
+
+		NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
+		item.setParameter("show", "contactmanagement");
+		item.setParameter("ownerid", contact.ownerId);
+		item.setParameter("ownertypeid", contact.ownerTypeId);
+		item.setParameter("contactid", contact.id);
+		NavigationHistoryManager.getInstance().go(item);
+	}
+
+	private void showDocument(final Document document){
+		NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
+		item.setParameter("show", "documentmanagement");
+		item.setParameter("ownerid", document.ownerId);
+		item.setParameter("ownertypeid", document.ownerTypeId);
+		item.setParameter("documentid", document.id);
+		NavigationHistoryManager.getInstance().go(item);
+	}
+
+
+	private void showSubProcess(final BigBangProcess process){
+	//	String type = process.dataTypeId;
+		//NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
+		//TODO
+	}
+
+	private void showHistory(final HistoryItemStub historyItem) {
+
+		NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
+		item.pushIntoStackParameter("display", "history");
+		item.setParameter("historyownerid", view.getForm().getValue().id);
+		item.setParameter("historyitemid", historyItem.id);
+		NavigationHistoryManager.getInstance().go(item);
 
 	}
 

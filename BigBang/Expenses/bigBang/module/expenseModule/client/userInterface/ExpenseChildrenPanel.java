@@ -6,6 +6,7 @@ import bigBang.definitions.client.dataAccess.ExpenseDataBroker;
 import bigBang.definitions.client.dataAccess.ExpenseDataBrokerClient;
 import bigBang.definitions.shared.BigBangConstants;
 import bigBang.definitions.shared.Expense;
+import bigBang.library.client.PermissionChecker;
 import bigBang.library.client.dataAccess.DataBrokerManager;
 import bigBang.library.client.userInterface.ContactsList;
 import bigBang.library.client.userInterface.DocumentsList;
@@ -85,8 +86,7 @@ public class ExpenseChildrenPanel extends View{
 		this.expense = expense;
 		String expenseId = expense == null ? null: expense.id;
 		
-		boolean allow = true; //TODO SET CORRECT PERMISSIONS;
-		//boolean allow = expense != null ? PermissionChecker.hasPermission(expense, BigBangConstants.OperationIds.ExpenseProcess.UPDATE_EXPENSE) : false;
+		boolean allow = expense != null ? PermissionChecker.hasPermission(expense, BigBangConstants.OperationIds.ExpenseProcess.UPDATE_EXPENSE) : false;
 
 		contactsList.setOwner(expenseId);
 		contactsList.setOwnerType(BigBangConstants.EntityIds.EXPENSE);

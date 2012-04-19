@@ -216,10 +216,22 @@ public class BigBangConstants {
 
 			public static final String CANCEL_DAS_REQUEST = "27BE85A3-F216-49F2-A54B-A03000F2A27A";
 			public static final String RECEIVE_REPLY = "5217F6B9-7117-43CA-AA20-A03000F278C8";
-			public static final String REPEAT_DAS_REQUEST = "D9757AE7-7F2F-4A29-BF7F-A03000F2533D";
+			public static final String REPEAT_DAS_REQUEST = "D9757AE7-7F2F-4A29-BF7F-A03000F2533D";	
 			
-			
-			
+		}
+		
+		public static class ExpenseProcess{
+			public static final String DELETE_EXPENSE = "B8A25252-7CC5-4468-9BDE-A03800C6480C";
+			public static final String UPDATE_EXPENSE = "2C9995DB-186C-40A4-91F2-A03800C0415E"; 
+			public static final String SEND_NOTIFICATION = "0E69C7E2-78B3-4A53-B6C5-A03800C0B1B6";
+			public static final String RECEIVE_ACCEPTANCE = "4649DEBD-80B1-43AA-A292-A03800C0D14B";
+			public static final String NOTIFY_CLIENT = "64F5A5D2-8A9D-48B4-9A8D-A03800C2CFFC";
+			public static final String RECEIVE_RETURN = "14EAD818-E313-4F80-B781-A03800C324EA";
+			public static final String RETURN_TO_CLIENT = "C675919E-A13D-459F-9E1F-A03800C3F021";
+			public static final String CREATE_INFO_REQUEST = "B2370F23-09C7-4B3B-BAA1-A03800C43B95";
+			public static final String CREATE_EXTERNAL_REQUEST = "9D618AB8-53F5-4D5C-8CB7-A03800C56E4F";
+			public static final String PAYMENT_VALIDATION = "8D11C94A-E3B7-45C9-AB9A-A03800C5AB4B";
+			public static final String CLOSE_PROCESS = "0EEB387C-661F-4FB0-8675-A03800C5DE73";
 		}
 		
 	}
