@@ -151,6 +151,7 @@ public class Constants
 	public static final UUID ProcID_Receipt          = UUID.fromString("62D0A72A-525E-450C-9917-9F8A00EB38AC");
 	public static final UUID ProcID_Casualty         = UUID.fromString("6C9562DE-D8C6-4CEC-A4DA-A02E00C735E9");
 	public static final UUID ProcID_SubCasualty      = UUID.fromString("80B7A9BC-8710-4063-A99E-A02E01220F4E");
+	public static final UUID ProcID_Expense          = UUID.fromString("A4EFBA8F-D669-4066-A31F-A03800BFB924");
 	public static final UUID ProcID_MgrXFer          = UUID.fromString("BBF5FFD1-4249-48AE-BB2D-9F6501420E7B");
 	public static final UUID ProcID_InfoRequest      = UUID.fromString("5DBEF1CD-DEB8-4731-8C6F-9FE500F50BB9");
 	public static final UUID ProcID_ExternRequest    = UUID.fromString("83759D78-C30C-4928-B600-9FEA00CC2349");
@@ -449,6 +450,26 @@ public class Constants
 	public static final UUID OPID_SubCasualty_ExternReopenProcess        = UUID.fromString("8B3C5B6C-D71F-44B3-BB65-A03600FF5B14");
 	public static final UUID OPID_SubCasualty_DeleteSubCasualty          = UUID.fromString("9CD4186F-90A7-4523-8D2F-A03600FF750D");
 	public static final UUID OPID_SubCasualty_ExternResumeSubCasualty    = UUID.fromString("76D0E948-4211-4753-BB35-A03600FF9D83");
+
+	// Expense Operations
+	public static final UUID OPID_Expense_AutoProcessSubs                = UUID.fromString("4B8CC46D-68E4-455B-A16F-A03800BFFFE5");
+	public static final UUID OPID_Expense_TriggerDisallowDelete          = UUID.fromString("F6D38624-32AA-47E2-A3B4-A03800C025D8");
+	public static final UUID OPID_Expense_ManageData                     = UUID.fromString("2C9995DB-186C-40A4-91F2-A03800C0415E");
+	public static final UUID OPID_Expense_UndoManageData                 = UUID.fromString("EA5FC2DE-4467-4F7E-8CFA-A03800C06038");
+	public static final UUID OPID_Expense_SendNotification               = UUID.fromString("0E69C7E2-78B3-4A53-B6C5-A03800C0B1B6");
+	public static final UUID OPID_Expense_ReceiveAcceptance              = UUID.fromString("4649DEBD-80B1-43AA-A292-A03800C0D14B");
+	public static final UUID OPID_Expense_UndoReceiveAcceptance          = UUID.fromString("DD308611-DCFB-40AB-AEA0-A03800C0F624");
+	public static final UUID OPID_Expense_NotifyClient                   = UUID.fromString("64F5A5D2-8A9D-48B4-9A8D-A03800C2CFFC");
+	public static final UUID OPID_Expense_ReceiveReturn                  = UUID.fromString("14EAD818-E313-4F80-B781-A03800C324EA");
+	public static final UUID OPID_Expense_UndoReceiveReturn              = UUID.fromString("DE92FC98-509C-4537-8647-A03800C34087");
+	public static final UUID OPID_Expense_ReturnToClient                 = UUID.fromString("C675919E-A13D-459F-9E1F-A03800C3F021");
+	public static final UUID OPID_Expense_CreateInfoRequest              = UUID.fromString("B2370F23-09C7-4B3B-BAA1-A03800C43B95");
+	public static final UUID OPID_Expense_CreateExternRequest            = UUID.fromString("9D618AB8-53F5-4D5C-8CB7-A03800C56E4F");
+	public static final UUID OPID_Expense_CreatePaymentValidation        = UUID.fromString("8D11C94A-E3B7-45C9-AB9A-A03800C5AB4B");
+	public static final UUID OPID_Expense_CloseProcess                   = UUID.fromString("0EEB387C-661F-4FB0-8675-A03800C5DE73");
+	public static final UUID OPID_Expense_UndoCloseProcess               = UUID.fromString("BB8902A3-C9BF-4D10-97E1-A03800C61F7B");
+	public static final UUID OPID_Expense_DeleteExpense                  = UUID.fromString("B8A25252-7CC5-4468-9BDE-A03800C6480C");
+	public static final UUID OPID_Expense_ExternResumeExpense            = UUID.fromString("6BEB3E92-8942-4C4C-BFBE-A03800C67760");
 
 	// Manager Transfer Operations
 	public static final UUID OPID_MgrXFer_AcceptXFer                     = UUID.fromString("8B3AB41F-76F6-4311-8600-9F65014CF682");
