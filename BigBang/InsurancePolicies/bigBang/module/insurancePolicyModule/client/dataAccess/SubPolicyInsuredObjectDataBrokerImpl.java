@@ -40,7 +40,7 @@ implements InsuredObjectDataBroker {
 	protected boolean requiresRefresh;
 
 	public SubPolicyInsuredObjectDataBrokerImpl(){
-		this.dataElementId = BigBangConstants.EntityIds.INSURANCE_SUB_POLICY_INSURED_OBJECT;
+		this.dataElementId = BigBangConstants.EntityIds.INSURANCE_SUB_POLICY_INSURED_OBJECTS;
 		this.service = SubPolicyObjectService.Util.getInstance();
 		this.subPolicyService = SubPolicyService.Util.getInstance();
 		this.searchBroker = new SubPolicyInsuredObjectSearchBroker(this.service);
@@ -62,7 +62,7 @@ implements InsuredObjectDataBroker {
 				incrementDataVersion();
 				for(DataBrokerClient<InsuredObject> bc : getClients()){
 					((InsuredObjectDataBrokerClient) bc).addInsuredObject(response);
-					((InsuredObjectDataBrokerClient) bc).setDataVersionNumber(BigBangConstants.EntityIds.INSURANCE_SUB_POLICY_INSURED_OBJECT, getCurrentDataVersion());
+					((InsuredObjectDataBrokerClient) bc).setDataVersionNumber(BigBangConstants.EntityIds.INSURANCE_SUB_POLICY_INSURED_OBJECTS, getCurrentDataVersion());
 				}
 			}
 
@@ -79,7 +79,7 @@ implements InsuredObjectDataBroker {
 		itemId = getEffectiveId(itemId);
 		for(DataBrokerClient<InsuredObject> bc : getClients()){
 			((InsuredObjectDataBrokerClient) bc).removeInsuredObject(itemId);
-			((InsuredObjectDataBrokerClient) bc).setDataVersionNumber(BigBangConstants.EntityIds.INSURANCE_SUB_POLICY_INSURED_OBJECT, getCurrentDataVersion());
+			((InsuredObjectDataBrokerClient) bc).setDataVersionNumber(BigBangConstants.EntityIds.INSURANCE_SUB_POLICY_INSURED_OBJECTS, getCurrentDataVersion());
 		}
 	}
 
@@ -93,7 +93,7 @@ implements InsuredObjectDataBroker {
 				incrementDataVersion();
 				for(DataBrokerClient<InsuredObject> bc : getClients()){
 					((InsuredObjectDataBrokerClient) bc).updateInsuredObject(response);
-					((InsuredObjectDataBrokerClient) bc).setDataVersionNumber(BigBangConstants.EntityIds.INSURANCE_SUB_POLICY_INSURED_OBJECT, getCurrentDataVersion());
+					((InsuredObjectDataBrokerClient) bc).setDataVersionNumber(BigBangConstants.EntityIds.INSURANCE_SUB_POLICY_INSURED_OBJECTS, getCurrentDataVersion());
 				}
 			}
 

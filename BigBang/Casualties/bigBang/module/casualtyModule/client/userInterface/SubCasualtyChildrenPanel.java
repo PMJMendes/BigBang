@@ -53,10 +53,10 @@ public class SubCasualtyChildrenPanel extends View {
 
 		boolean allow = subCasualty != null ? PermissionChecker.hasPermission(subCasualty, BigBangConstants.OperationIds.SubCasualtyProcess.UPDATE_SUB_CASUALTY) : false;
 		this.contactsList.setOwner(subCasualtyId);
-		this.contactsList.setOwnerType(BigBangConstants.EntityIds.CASUALTY);
+		this.contactsList.setOwnerType(BigBangConstants.EntityIds.SUB_CASUALTY);
 		this.contactsList.allowCreation(allow);
 		this.documentsList.setOwner(subCasualtyId);	
-		this.documentsList.setOwnerType(BigBangConstants.EntityIds.CASUALTY);
+		this.documentsList.setOwnerType(BigBangConstants.EntityIds.SUB_CASUALTY);
 		this.documentsList.allowCreation(allow);
 		this.subProcessesList.setOwner(subCasualtyId);
 		this.historyList.setOwner(subCasualtyId);

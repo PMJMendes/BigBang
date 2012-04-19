@@ -12,18 +12,27 @@ import bigBang.definitions.client.dataAccess.SubCasualtyDataBroker;
 import bigBang.definitions.client.response.ResponseError;
 import bigBang.definitions.client.response.ResponseHandler;
 import bigBang.definitions.shared.BigBangConstants;
+import bigBang.definitions.shared.BigBangProcess;
 import bigBang.definitions.shared.Casualty;
+import bigBang.definitions.shared.Contact;
+import bigBang.definitions.shared.Document;
+import bigBang.definitions.shared.HistoryItemStub;
 import bigBang.definitions.shared.SubCasualty;
+import bigBang.definitions.shared.SubCasualtyStub;
 import bigBang.library.client.EventBus;
 import bigBang.library.client.HasEditableValue;
 import bigBang.library.client.HasParameters;
+import bigBang.library.client.HasValueSelectables;
 import bigBang.library.client.Notification;
+import bigBang.library.client.ValueSelectable;
 import bigBang.library.client.Notification.TYPE;
 import bigBang.library.client.PermissionChecker;
 import bigBang.library.client.dataAccess.DataBrokerManager;
 import bigBang.library.client.event.ActionInvokedEvent;
 import bigBang.library.client.event.ActionInvokedEventHandler;
 import bigBang.library.client.event.NewNotificationEvent;
+import bigBang.library.client.event.SelectionChangedEvent;
+import bigBang.library.client.event.SelectionChangedEventHandler;
 import bigBang.library.client.history.NavigationHistoryItem;
 import bigBang.library.client.history.NavigationHistoryManager;
 import bigBang.library.client.userInterface.presenter.ViewPresenter;
@@ -42,6 +51,9 @@ public class SubCasualtyViewPresenter implements ViewPresenter {
 		HasEditableValue<SubCasualty> getForm();
 		void registerActionHandler(ActionInvokedEventHandler<Action> handler);
 
+		HasValueSelectables<BigBangProcess> getSubProcessesList();
+		HasValueSelectables<HistoryItemStub> getHistoryList();
+		
 		//PERMISSIONS
 		void clearAllowedPermissions();
 		void setSaveModeEnabled(boolean enabled);
@@ -120,6 +132,26 @@ public class SubCasualtyViewPresenter implements ViewPresenter {
 				}
 			}
 		});
+
+		SelectionChangedEventHandler selectionChangedHandler = new SelectionChangedEventHandler() {
+
+			@Override
+			public void onSelectionChanged(SelectionChangedEvent event) {
+				ValueSelectable<?> selected = (ValueSelectable<?>) event.getFirstSelected();
+				if(selected != null) {				
+					if(event.getSource() == view.getSubProcessesList()) {
+						BigBangProcess process = (BigBangProcess) selected.getValue();
+						showSubProcess(process);
+					}else if(event.getSource() == view.getHistoryList()) {
+						HistoryItemStub historyItem = (HistoryItemStub) selected.getValue();
+						showHistory(historyItem.id);
+					}
+				}
+			}
+		};
+
+		view.getSubProcessesList().addSelectionChangedEventHandler(selectionChangedHandler);
+		view.getHistoryList().addSelectionChangedEventHandler(selectionChangedHandler);
 	}
 
 	protected void showSubCasualty(String subCasualtyId){
@@ -136,8 +168,8 @@ public class SubCasualtyViewPresenter implements ViewPresenter {
 						view.getForm().setValue(subCasualty);
 
 						//TODO PERMISSIONS
-						view.allowEdit(PermissionChecker.hasPermission(casualty, BigBangConstants.OperationIds.SubCasualtyProcess.UPDATE_SUB_CASUALTY));
-						view.allowDelete(PermissionChecker.hasPermission(casualty, BigBangConstants.OperationIds.SubCasualtyProcess.DELETE_SUB_CASUALTY));
+						view.allowEdit(PermissionChecker.hasPermission(subCasualty, BigBangConstants.OperationIds.SubCasualtyProcess.UPDATE_SUB_CASUALTY));
+						view.allowDelete(PermissionChecker.hasPermission(subCasualty, BigBangConstants.OperationIds.SubCasualtyProcess.DELETE_SUB_CASUALTY));
 
 						view.getForm().setReadOnly(true);
 					}
@@ -241,8 +273,29 @@ public class SubCasualtyViewPresenter implements ViewPresenter {
 		if(subCasualty.id == null) {
 			onCancel();
 		}else{
-			//TODO
+			NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
+			item.setParameter("show", "deletesubcasualty");
+			NavigationHistoryManager.getInstance().go(item);
 		}
+	}
+
+	protected void showSubProcess(BigBangProcess process){
+//		String type = process.dataTypeId;
+
+		//TODO
+//		if(type.equalsIgnoreCase(BigBangConstants.EntityIds.NEGOTIATION)){
+//			showNegotiation(process.dataId);
+//		}else if(type.equalsIgnoreCase(BigBangConstants.EntityIds.INFO_REQUEST)) {
+//			showInfoRequest(process.dataId);
+//		}
+	}
+
+	protected void showHistory(String historyItemId){
+		NavigationHistoryItem navItem = NavigationHistoryManager.getInstance().getCurrentState();
+		navItem.pushIntoStackParameter("display", "history");
+		navItem.setParameter("historyownerid", view.getForm().getValue().id);
+		navItem.setParameter("historyItemId", historyItemId);
+		NavigationHistoryManager.getInstance().go(navItem);
 	}
 
 	protected void onSaveSuccess(){

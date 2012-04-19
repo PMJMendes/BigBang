@@ -36,12 +36,12 @@ public class CasualtyChildrenPanel extends View {
 		subProcessesList = new SubProcessesList();
 		historyList = new HistoryList();
 
+		wrapper.add(subCasualtyList, "Sub-Sinistros");
 		wrapper.add(contactsList, "Contactos");
 		wrapper.add(documentsList, "Documentos");
-		wrapper.add(subCasualtyList, "Sub-Sinistros");
 		wrapper.add(subProcessesList, "Sub-Processos");
 		wrapper.add(historyList, "Histórico");
-
+		
 		this.casualtyBrokerClient = getCasualtyBrokerClient();
 		((CasualtyDataBroker)DataBrokerManager.Util.getInstance().getBroker(BigBangConstants.EntityIds.CASUALTY)).registerClient(this.casualtyBrokerClient);
 	}

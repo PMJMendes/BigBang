@@ -38,7 +38,7 @@ public class SubPolicyInsuredObjectsList extends FilterableList<InsuredObjectStu
 	public SubPolicyInsuredObjectsList(){
 		this.insuredObjectsBrokerClient = getInsuredObjectsBrokerClient();
 		this.subPolicyBroker = (InsuranceSubPolicyBroker) DataBrokerManager.Util.getInstance().getBroker(BigBangConstants.EntityIds.INSURANCE_SUB_POLICY);
-		this.insuredObjectsBroker = (InsuredObjectDataBroker) DataBrokerManager.Util.getInstance().getBroker(BigBangConstants.EntityIds.INSURANCE_SUB_POLICY_INSURED_OBJECT);
+		this.insuredObjectsBroker = (InsuredObjectDataBroker) DataBrokerManager.Util.getInstance().getBroker(BigBangConstants.EntityIds.INSURANCE_SUB_POLICY_INSURED_OBJECTS);
 		this.insuredObjectsBroker.registerClient(this.insuredObjectsBrokerClient);
 		showFilterField(false);
 	}
@@ -77,14 +77,14 @@ public class SubPolicyInsuredObjectsList extends FilterableList<InsuredObjectStu
 
 			@Override
 			public void setDataVersionNumber(String dataElementId, int number) {
-				if(dataElementId.equalsIgnoreCase(BigBangConstants.EntityIds.INSURANCE_SUB_POLICY_INSURED_OBJECT)){
+				if(dataElementId.equalsIgnoreCase(BigBangConstants.EntityIds.INSURANCE_SUB_POLICY_INSURED_OBJECTS)){
 					version = number;
 				}
 			}
 
 			@Override
 			public int getDataVersion(String dataElementId) {
-				if(dataElementId.equalsIgnoreCase(BigBangConstants.EntityIds.INSURANCE_SUB_POLICY_INSURED_OBJECT)){
+				if(dataElementId.equalsIgnoreCase(BigBangConstants.EntityIds.INSURANCE_SUB_POLICY_INSURED_OBJECTS)){
 					return version;
 				}
 				return -1;

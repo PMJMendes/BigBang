@@ -12,12 +12,14 @@ import bigBang.module.casualtyModule.client.userInterface.presenter.CasualtyDele
 import bigBang.module.casualtyModule.client.userInterface.presenter.CasualtyOperationsViewPresenter;
 import bigBang.module.casualtyModule.client.userInterface.presenter.CasualtySearchOperationViewPresenter;
 import bigBang.module.casualtyModule.client.userInterface.presenter.CasualtySectionViewPresenter;
+import bigBang.module.casualtyModule.client.userInterface.presenter.SubCasualtyDeleteViewPresenter;
 import bigBang.module.casualtyModule.client.userInterface.presenter.SubCasualtyViewPresenter;
 import bigBang.module.casualtyModule.client.userInterface.view.CasualtyCloseView;
 import bigBang.module.casualtyModule.client.userInterface.view.CasualtyDeleteView;
 import bigBang.module.casualtyModule.client.userInterface.view.CasualtyOperationsView;
 import bigBang.module.casualtyModule.client.userInterface.view.CasualtySearchOperationView;
 import bigBang.module.casualtyModule.client.userInterface.view.CasualtySectionView;
+import bigBang.module.casualtyModule.client.userInterface.view.SubCasualtyDeleteView;
 import bigBang.module.casualtyModule.client.userInterface.view.SubCasualtyView;
 
 import com.google.gwt.core.client.GWT;
@@ -87,6 +89,15 @@ public class CasualtyModule implements Module {
 			public ViewPresenter getInstance() {
 				SubCasualtyView view = (SubCasualtyView) GWT.create(SubCasualtyView.class);
 				SubCasualtyViewPresenter presenter = new SubCasualtyViewPresenter(view);
+				return presenter;
+			}
+		});
+		ViewPresenterFactory.getInstance().registerViewPresenterInstantiator("SUB_CASUALTY_DELETE", new ViewPresenterInstantiator() {
+
+			@Override
+			public ViewPresenter getInstance() {
+				SubCasualtyDeleteView view = (SubCasualtyDeleteView) GWT.create(SubCasualtyDeleteView.class);
+				ViewPresenter presenter = new SubCasualtyDeleteViewPresenter(view);
 				return presenter;
 			}
 		});

@@ -17,7 +17,9 @@ public class SubLineForm extends FormView<SubLine> {
 		addSection("Detalhes da modalidade");
 		name = new TextBoxFormField("Nome");
 		type = new ExpandableListBoxFormField(ModuleConstants.ListIDs.ObjectTypes, "Tipo de unidade de risco");
+		type.setEditable(false);
 		periodType = new ExpandableListBoxFormField(ModuleConstants.ListIDs.ExercisePeriod, "Tipo de período");
+		periodType.setEditable(false);
 		addFormField(name);
 		addFormField(type);
 		addFormField(periodType);

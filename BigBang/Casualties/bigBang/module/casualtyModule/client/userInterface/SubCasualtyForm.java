@@ -4,12 +4,15 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.logical.shared.ValueChangeEvent;
+import com.google.gwt.event.logical.shared.ValueChangeHandler;
 
 import bigBang.definitions.shared.BigBangConstants;
 import bigBang.definitions.shared.SubCasualty;
 import bigBang.definitions.shared.SubCasualty.SubCasualtyItem;
 import bigBang.library.client.userInterface.CheckBoxFormField;
-import bigBang.library.client.userInterface.ExpandableListBoxFormField;
 import bigBang.library.client.userInterface.ExpandableSelectionFormField;
 import bigBang.library.client.userInterface.ListBoxFormField;
 import bigBang.library.client.userInterface.TextAreaFormField;
@@ -19,6 +22,7 @@ import bigBang.library.client.userInterface.presenter.InsuranceSubPolicySelectio
 import bigBang.library.client.userInterface.view.FormView;
 import bigBang.library.client.userInterface.view.FormViewSection;
 import bigBang.library.client.userInterface.view.InsurancePolicySelectionView;
+import bigBang.library.client.userInterface.view.InsuranceSubPolicySelectionView;
 
 public class SubCasualtyForm extends FormView<SubCasualty> {
 
@@ -33,6 +37,7 @@ public class SubCasualtyForm extends FormView<SubCasualty> {
 	protected FormViewSection notesSection, internalNotesSection;
 
 	protected Collection<SubCasualtyItemSection> subCasualtyItemSections;
+	protected NewSubCasualtyItemSection newItemSection;
 
 	public SubCasualtyForm(){
 		number = new TextBoxFormField("Número");
@@ -42,18 +47,17 @@ public class SubCasualtyForm extends FormView<SubCasualty> {
 		referenceType.addItem("Apólice nº", BigBangConstants.EntityIds.INSURANCE_POLICY);
 		referenceType.addItem("Apólice Adesão nº", BigBangConstants.EntityIds.INSURANCE_SUB_POLICY);
 		referenceType.removeItem(0); //Removes the empty value
-		
+
 		//POLICY REFERENCE
 		InsurancePolicySelectionViewPresenter policySelectionPanel = new InsurancePolicySelectionViewPresenter((InsurancePolicySelectionView) GWT.create(InsurancePolicySelectionView.class));
 		policySelectionPanel.go();
 		policyReference = new ExpandableSelectionFormField(BigBangConstants.EntityIds.INSURANCE_POLICY, "", policySelectionPanel);
 
 		//SUB POLICY REFERENCE
-//		InsuranceSubPolicySelectionViewPresenter subPolicySelectionPanel = new InsuranceSubPolicySelectionViewPresenter((InsuranceSubPolicySelectionView) GWT.create(InsuranceSubPolicySelectionView.class));
-//		subPolicySelectionPanel.go();
-//		subPolicyReference = new ExpandableSelectionFormField(BigBangConstants.EntityIds.INSURANCE_SUB_POLICY, "", subPolicySelectionPanel);
-		
-		
+		InsuranceSubPolicySelectionViewPresenter subPolicySelectionPanel = new InsuranceSubPolicySelectionViewPresenter((InsuranceSubPolicySelectionView) GWT.create(InsuranceSubPolicySelectionView.class));
+		subPolicySelectionPanel.go();
+		subPolicyReference = new ExpandableSelectionFormField(BigBangConstants.EntityIds.INSURANCE_SUB_POLICY, "", subPolicySelectionPanel);
+
 		insurerProcessNumber = new TextBoxFormField("Número de Processo na Seguradora");
 		insurerProcessNumber.setFieldWidth("175px");
 		status = new TextBoxFormField("Estado");
@@ -64,9 +68,25 @@ public class SubCasualtyForm extends FormView<SubCasualty> {
 		hasJudicial = new CheckBoxFormField("Tem processo Judicial");
 
 		addSection("Informação Geral");
-		addFormField(referenceType);
+		addFormField(referenceType, true);
 		addFormField(policyReference, true);
-		addFormField(subPolicyReference, false);
+		addFormField(subPolicyReference, true);
+
+		referenceType.addValueChangeHandler(new ValueChangeHandler<String>() {
+
+			@Override
+			public void onValueChange(ValueChangeEvent<String> event) {
+				String type = event.getValue();
+
+				if(type == null || type.equalsIgnoreCase(BigBangConstants.EntityIds.INSURANCE_POLICY)) {
+					policyReference.setVisible(true);
+					subPolicyReference.setVisible(false);
+				}else if(type.equalsIgnoreCase(BigBangConstants.EntityIds.INSURANCE_SUB_POLICY)){
+					policyReference.setVisible(false);
+					subPolicyReference.setVisible(true);
+				}
+			}
+		});
 
 		addFormField(number, true);
 		addFormField(insurerProcessNumber, true);
@@ -75,6 +95,40 @@ public class SubCasualtyForm extends FormView<SubCasualty> {
 
 		this.subCasualtyItemSections = new ArrayList<SubCasualtyItemSection>();
 
+		this.newItemSection = new NewSubCasualtyItemSection();
+		this.newItemSection.newButton.addClickHandler(new ClickHandler() {
+			
+			@Override
+			public void onClick(ClickEvent event) {
+				addSubCasualtyItemSection(new SubCasualtyItem());
+			}
+		});
+		
+		notesSection = new FormViewSection("Notas");
+		notesSection.addFormField(notes);
+		
+		internalNotesSection = new FormViewSection("Notas Internas");
+		internalNotesSection.addFormField(internalNotes);
+		
+		ValueChangeHandler<String> changeHandler = new ValueChangeHandler<String>() {
+
+			@Override
+			public void onValueChange(ValueChangeEvent<String> event) {
+				if(event.getSource() == referenceType) {
+					policyReference.setValue(null, true);
+					subPolicyReference.setValue(null, true);
+				}
+				
+				updateItemSections();
+			}
+		};
+		referenceType.addValueChangeHandler(changeHandler);
+		policyReference.addValueChangeHandler(changeHandler);
+		subPolicySelectionPanel.addValueChangeHandler(changeHandler);
+		
+		subPolicyReference.setVisible(false);
+		referenceType.setValue(BigBangConstants.EntityIds.INSURANCE_POLICY, true);
+		
 		setValue(new SubCasualty());
 	}
 
@@ -88,6 +142,10 @@ public class SubCasualtyForm extends FormView<SubCasualty> {
 			result.hasJudicial = hasJudicial.getValue();
 			result.text = notes.getValue();
 			result.internalNotes = internalNotes.getValue();
+			result.referenceTypeId = referenceType.getValue();
+			result.referenceId = result.referenceTypeId.equalsIgnoreCase(BigBangConstants.EntityIds.INSURANCE_POLICY) ? policyReference.getValue() : subPolicyReference.getValue();
+			result.text = notes.getValue();
+			result.internalNotes = internalNotes.getValue();
 			result.items = getSubCasualtyItems();
 		}
 
@@ -98,8 +156,20 @@ public class SubCasualtyForm extends FormView<SubCasualty> {
 	public void setInfo(SubCasualty info) {
 		if(info != null) {
 			number.setValue(info.number);
-//			reference.setLabelText(info.referenceTypeId.equalsIgnoreCase(BigBangConstants.EntityIds.INSURANCE_POLICY) ? "Apólice" : "Apólice Adesão"); //TODO
-//			reference.setValue("#" + info.referenceNumber + " - " + info.categoryName + " / " + info.lineName + " / " + info.subLineName);
+			referenceType.setValue(info.referenceTypeId, true);
+			if(info.referenceTypeId == null) {
+				referenceType.setValue(null, true);
+				policyReference.setValue(null);
+				subPolicyReference.setValue(null);
+			}else if(info.referenceTypeId.equalsIgnoreCase(BigBangConstants.EntityIds.INSURANCE_POLICY)) {
+				referenceType.setValue(BigBangConstants.EntityIds.INSURANCE_POLICY, true);
+				policyReference.setValue(info.referenceId);
+				subPolicyReference.setValue(null);
+			}else if(info.referenceTypeId.equalsIgnoreCase(BigBangConstants.EntityIds.INSURANCE_SUB_POLICY)){
+				referenceType.setValue(BigBangConstants.EntityIds.INSURANCE_SUB_POLICY, true);
+				policyReference.setValue(null);
+				subPolicyReference.setValue(info.referenceId);
+			}
 			insurerProcessNumber.setValue(info.insurerProcessNumber);
 			status.setValue(info.isOpen ? "Aberto" : "Fechado");
 			hasJudicial.setValue(info.hasJudicial);
@@ -108,12 +178,15 @@ public class SubCasualtyForm extends FormView<SubCasualty> {
 
 			setSubCasualtyItems(info.items);
 		}
+		
+		addLastFields();
 	}
 
 	protected void setSubCasualtyItems(SubCasualtyItem[] items) {
 		for(FormViewSection section : this.subCasualtyItemSections) {
 			removeSection(section);
 		}
+		this.subCasualtyItemSections.clear();
 
 		if(items != null) {
 			for(SubCasualtyItem item : items) {
@@ -124,22 +197,55 @@ public class SubCasualtyForm extends FormView<SubCasualty> {
 
 	protected SubCasualtyItem[] getSubCasualtyItems(){
 		SubCasualtyItem[] result = new SubCasualtyItem[subCasualtyItemSections.size()];
-		
+
 		int i = 0;
 		for(SubCasualtyItemSection section : subCasualtyItemSections) {
 			result[i] = section.getItem();
+			i++;
 		}
-		
+
 		return result;
 	}
 
 	protected void addSubCasualtyItemSection(SubCasualtyItem item){
-		SubCasualtyItemSection section = new SubCasualtyItemSection(item);
-		this.subCasualtyItemSections.add(section);
-		addSection(section);
+		if(!item.deleted) {
+			String referenceId = referenceType.getValue().equalsIgnoreCase(BigBangConstants.EntityIds.INSURANCE_POLICY) ? policyReference.getValue() : subPolicyReference.getValue();
+
+			final SubCasualtyItemSection section = new SubCasualtyItemSection(item, referenceType.getValue(), referenceId);
+			this.subCasualtyItemSections.add(section);
+			addSection(section);
+
+			section.getRemoveButton().addClickHandler(new ClickHandler() {
+
+				@Override
+				public void onClick(ClickEvent event) {
+					removeItemAndSection(section);
+				}
+			});
+			if(item.id == null){
+				section.expand();
+			}
+			addLastFields();
+		}
 	}
 	
+	protected void updateItemSections() {
+		String referenceId = referenceType.getValue().equalsIgnoreCase(BigBangConstants.EntityIds.INSURANCE_POLICY) ? policyReference.getValue() : subPolicyReference.getValue();
+		for(SubCasualtyItemSection section : subCasualtyItemSections) {
+			section.setReference(referenceType.getValue(), referenceId);
+		}
+	}
+	
+	protected void removeItemAndSection(SubCasualtyItemSection section){
+		section.setVisible(false);
+		SubCasualtyItem item = section.getItem();
+		item.deleted = true;
+		String referenceId = referenceType.getValue().equalsIgnoreCase(BigBangConstants.EntityIds.INSURANCE_POLICY) ? policyReference.getValue() : subPolicyReference.getValue();
+		section.setItem(item, referenceType.getValue(), referenceId);
+	}
+
 	protected void addLastFields() {
+		addSection(newItemSection);
 		addSection(notesSection);
 		addSection(internalNotesSection);
 	}

@@ -221,6 +221,7 @@ CasualtyDataBroker {
 			public void onResponseSuccess(SubCasualty result) {
 				SubCasualtyDataBroker subCasualtyBroker = (SubCasualtyDataBroker) DataBrokerManager.staticGetBroker(BigBangConstants.EntityIds.SUB_CASUALTY);
 				subCasualtyBroker.notifyItemCreation(result.id);
+				responseHandler.onResponse(result);
 			}
 			
 			@Override

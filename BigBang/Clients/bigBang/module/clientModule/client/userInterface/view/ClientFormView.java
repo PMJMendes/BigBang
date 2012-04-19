@@ -64,13 +64,16 @@ public class ClientFormView extends FormView<Client> implements ClientProcessDat
 		taxNumber.setFieldWidth("100px");
 		address = new AddressFormField();
 		group = new ExpandableListBoxFormField(BigBangConstants.EntityIds.CLIENT_GROUP, "Grupo", new ClientFormValidator.ClientGroupValidator());
+		group.setEditable(false);
 		NIB = new TextBoxFormField("NIB", new ClientFormValidator.NIBValidator());
 		NIB.setFieldWidth("200px");
 		mediator = new ExpandableListBoxFormField(BigBangConstants.EntityIds.MEDIATOR, "Mediador", new ClientFormValidator.MediatorValidator());
+		mediator.setEditable(false);
 		clientManager = new TextBoxFormField("Gestor de Cliente");
 		clientManager.setFieldWidth("100px");
 		clientManager.setEditable(false);
 		profile = new ExpandableListBoxFormField(ModuleConstants.ListIDs.OperationalProfiles, "Perfil Operacional", new ClientFormValidator.ProfileValidator());
+		profile.setEditable(false);
 		CAE = new ExpandableListBoxFormField(BigBangConstants.TypifiedListIds.CAEs, "CAE");
 		CAE.setPopupWidth("600px");
 		CAE.setReadOnly(true);

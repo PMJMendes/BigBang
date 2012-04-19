@@ -36,6 +36,7 @@ public class CasualtyForm extends FormView<Casualty> {
 		
 		caseStudy = new CheckBoxFormField("Case Study");
 		manager = new ExpandableListBoxFormField(BigBangConstants.EntityIds.USER, "Gestor");
+		manager.setEditable(false);
 		status = new TextBoxFormField("Estado");
 		status.setEditable(false);
 		status.setFieldWidth("175px");

@@ -22,8 +22,11 @@ public class AddSubLineSection extends FormViewSection {
 	public AddSubLineSection() {
 		super("Acrescentar Ramo à Consulta de Mercado");
 		category = new ExpandableListBoxFormField(BigBangConstants.EntityIds.CATEGORY, "Categoria");
+		category.setEditable(false);
 		line = new ExpandableListBoxFormField("Ramo");
+		line.setEditable(false);
 		subLine = new ExpandableListBoxFormField("Modalidade");
+		subLine.setEditable(false);
 		confirmButton.setEnabled(false);
 		confirmButton.getElement().getStyle().setMarginTop(20, Unit.PX);
 

@@ -193,11 +193,17 @@ public abstract class InsurancePolicyForm extends FormView<InsurancePolicy> {
 		client = new TextBoxFormField("Cliente");
 		number.setFieldWidth("175px");
 		manager = new ExpandableListBoxFormField(BigBangConstants.EntityIds.USER, "Gestor");
+		manager.setEditable(false);
 		insuranceAgency = new ExpandableListBoxFormField(BigBangConstants.EntityIds.INSURANCE_AGENCY, "Seguradora");
+		insuranceAgency.setEditable(false);
 		mediator = new ExpandableListBoxFormField(BigBangConstants.EntityIds.MEDIATOR, "Mediador");
+		mediator.setEditable(false);
 		category = new ExpandableListBoxFormField(BigBangConstants.EntityIds.CATEGORY, "Categoria");
+		category.setEditable(false);
 		line = new ExpandableListBoxFormField("Ramo");
+		line.setEditable(false);
 		subLine = new ExpandableListBoxFormField("Modalidade");
+		subLine.setEditable(false);
 		maturityDay = new ListBoxFormField("Dia de Vencimento");
 		duration = new ExpandableListBoxFormField(ModuleConstants.TypifiedListIds.DURATION, "Duração");
 		maturityMonth = new ListBoxFormField("Mês de Vencimento");

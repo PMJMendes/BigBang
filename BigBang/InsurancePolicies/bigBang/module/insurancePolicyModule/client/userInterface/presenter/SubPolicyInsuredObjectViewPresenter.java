@@ -58,7 +58,7 @@ public class SubPolicyInsuredObjectViewPresenter implements ViewPresenter {
 	protected String ownerId;
 
 	public SubPolicyInsuredObjectViewPresenter(Display display){
-		broker = (InsuredObjectDataBroker) DataBrokerManager.staticGetBroker(BigBangConstants.EntityIds.INSURANCE_SUB_POLICY_INSURED_OBJECT);
+		broker = (InsuredObjectDataBroker) DataBrokerManager.staticGetBroker(BigBangConstants.EntityIds.INSURANCE_SUB_POLICY_INSURED_OBJECTS);
 		subPolicyBroker = (InsuranceSubPolicyBroker) DataBrokerManager.staticGetBroker(BigBangConstants.EntityIds.INSURANCE_SUB_POLICY);
 		setView((UIObject) display);		
 	}

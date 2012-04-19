@@ -796,7 +796,7 @@ implements InsuranceSubPolicyBroker {
 				}
 
 				//OBJECTS
-			}else if(remap.typeId.equalsIgnoreCase(BigBangConstants.EntityIds.INSURANCE_SUB_POLICY_INSURED_OBJECT)){
+			}else if(remap.typeId.equalsIgnoreCase(BigBangConstants.EntityIds.INSURANCE_SUB_POLICY_INSURED_OBJECTS)){
 				for(int j = 0; j < remap.remapIds.length; j++){
 					RemapId remapId = remap.remapIds[j];
 					this.insuredObjectsBroker.remapItemId(remapId.oldId, remapId.newId, remapId.newIdIsInPad);

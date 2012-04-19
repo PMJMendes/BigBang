@@ -45,7 +45,7 @@ public class BigBangConstants {
 		public static final String INSURANCE_POLICY_INSURED_OBJECTS = "3A3316D2-9D7C-4FD1-8486-9F9C0012E119";
 		public static final String INSURANCE_SUB_POLICY = "C7BC8D2F-BD61-43D5-9347-9FF300EE9986";
 		public static final String NEGOTIATION = "0D50EB51-725D-4741-8618-9FFD00E918D3";
-		public static final String INSURANCE_SUB_POLICY_INSURED_OBJECT = "C3480E17-821B-4DCB-BF42-9FF800D1C470";
+		public static final String INSURANCE_SUB_POLICY_INSURED_OBJECTS = "C3480E17-821B-4DCB-BF42-9FF800D1C470";
 		public static final String EXTERNAL_INFO_REQUEST = "BD9E1BEA-D02B-40FE-BB3E-9FEA00CA7ECD";
 		public static final String QUOTE_REQUEST_INSURED_OBJECT = "B594AB7F-573F-4401-A369-A00500F9D2D8";
 		public static final String SIGNATURE_REQUEST = "A864FABC-8DCE-4D97-9A50-A02A00F7CBB5";
@@ -70,6 +70,9 @@ public class BigBangConstants {
 		public static final String EXTERNAL_INFO_REQUEST_CLOSING_MOTIVES = "F79E335C-FD6F-43BE-8535-9FE900C1CAF4";
 		public static final String RECEIPT_PAYMENT_TYPES = "C480B530-C6E2-49A0-BE15-A02200E88280";
 		public static final String BANK = "9954EADC-D7BE-4858-B1DE-A02200F45247";
+		public static final String DAMAGE_TYPE = "6D2B02AF-A092-475F-85C7-A035012321FE";
+		public static final String POLICY_COVERAGE = "AE5F9DD7-2863-4C5B-AE0B-9F9C00229D02";
+		public static final String SUB_POLICY_COVERAGE = "53EF35E5-AACD-4916-A212-9FF800CEAA89";
 	}
 
 	public static class OperationIds {
@@ -209,8 +212,8 @@ public class BigBangConstants {
 		
 		public static class SubCasualtyProcess {
 			public static final String UPDATE_SUB_CASUALTY = "A1DE87C0-1878-4533-A82D-A03600FA6B23";
-			public static final String DELETE_SUB_CASUALTY = "207F3FEC-0CB2-47D4-868A-A03600FEE4FB";
-			public static final String CLOSE_SUB_CASUALTY = "9CD4186F-90A7-4523-8D2F-A03600FF750D";
+			public static final String DELETE_SUB_CASUALTY = "9CD4186F-90A7-4523-8D2F-A03600FF750D";
+			public static final String CLOSE_SUB_CASUALTY = "207F3FEC-0CB2-47D4-868A-A03600FEE4FB";
 		}
 
 		public static class DASRequestProcess{

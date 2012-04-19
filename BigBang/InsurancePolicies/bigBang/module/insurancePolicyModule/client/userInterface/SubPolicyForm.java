@@ -403,7 +403,7 @@ public class SubPolicyForm extends FormView<SubPolicy> {
 					}
 				});
 				this.insuredObjects.setTypifiedDataBroker((TypifiedListBroker) subPolicyListBroker);
-				this.insuredObjects.setListId(BigBangConstants.EntityIds.INSURANCE_SUB_POLICY_INSURED_OBJECT+"/"+subPolicyBroker.getEffectiveId(info.id), new ResponseHandler<Void>() {
+				this.insuredObjects.setListId(BigBangConstants.EntityIds.INSURANCE_SUB_POLICY_INSURED_OBJECTS+"/"+subPolicyBroker.getEffectiveId(info.id), new ResponseHandler<Void>() {
 
 					@Override
 					public void onResponse(Void response) {
@@ -430,7 +430,7 @@ public class SubPolicyForm extends FormView<SubPolicy> {
 					}
 				});
 				this.insuredObjects.setTypifiedDataBroker(BigBangTypifiedListBroker.Util.getInstance());
-				this.insuredObjects.setListId(BigBangConstants.EntityIds.INSURANCE_SUB_POLICY_INSURED_OBJECT+"/"+info.id, new ResponseHandler<Void>() {
+				this.insuredObjects.setListId(BigBangConstants.EntityIds.INSURANCE_SUB_POLICY_INSURED_OBJECTS+"/"+info.id, new ResponseHandler<Void>() {
 
 					@Override
 					public void onResponse(Void response) {
