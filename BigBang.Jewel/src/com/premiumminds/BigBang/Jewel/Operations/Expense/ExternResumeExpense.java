@@ -1,4 +1,4 @@
-package com.premiumminds.BigBang.Jewel.Operations.Receipt;
+package com.premiumminds.BigBang.Jewel.Operations.Expense;
 
 import java.util.UUID;
 
@@ -8,29 +8,29 @@ import Jewel.Petri.SysObjects.Operation;
 
 import com.premiumminds.BigBang.Jewel.Constants;
 
-public class ExternResumeReceipt
+public class ExternResumeExpense
 	extends Operation
 {
 	private static final long serialVersionUID = 1L;
 
-	public ExternResumeReceipt(UUID pidProcess)
+	public ExternResumeExpense(UUID pidProcess)
 	{
 		super(pidProcess);
 	}
 
 	protected UUID OpID()
 	{
-		return Constants.OPID_Receipt_ExternResumeReceipt;
+		return Constants.OPID_Expense_ExternResumeExpense;
 	}
 
 	public String ShortDesc()
 	{
-		return "Reposição do Recibo";
+		return "Reposição da Despesa de Saúde";
 	}
 
 	public String LongDesc(String pstrLineBreak)
 	{
-		return "Após ter sido eliminado, este recibo foi reposto.";
+		return "Após ter sido eliminada, esta despesa foi reposta.";
 	}
 
 	public UUID GetExternalProcess()
@@ -38,7 +38,8 @@ public class ExternResumeReceipt
 		return null;
 	}
 
-	protected void Run(SQLServer pdb) throws JewelPetriException
+	protected void Run(SQLServer pdb)
+		throws JewelPetriException
 	{
 	}
 }
