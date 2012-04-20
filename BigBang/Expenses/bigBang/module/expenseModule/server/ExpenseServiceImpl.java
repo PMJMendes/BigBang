@@ -106,9 +106,9 @@ public class ExpenseServiceImpl
 		lobjResult.coverageName = ( lobjCoverage == null ? null : lobjCoverage.getLabel() );
 		lobjResult.value = ((BigDecimal)lobjExpense.getAt(7)).toPlainString();
 		lobjResult.isOpen =  lobjProcess.IsRunning();
-		lobjResult.categoryName = lobjCoverage == null ? "" : lobjCoverage.GetSubLine().getLine().getCategory().getLabel();
-		lobjResult.lineName = lobjCoverage.GetSubLine().getLine().getLabel();
-		lobjResult.subLineName = lobjCoverage.GetSubLine().getLabel();
+		lobjResult.categoryName = (lobjCoverage == null ? null : lobjCoverage.GetSubLine().getLine().getCategory().getLabel());
+		lobjResult.lineName = (lobjCoverage == null ? null : lobjCoverage.GetSubLine().getLine().getLabel());
+		lobjResult.subLineName = (lobjCoverage == null ? null : lobjCoverage.GetSubLine().getLabel());
 		lobjResult.managerId = lobjProcess.GetManagerID().toString();
 		lobjResult.settlement = ( lobjExpense.getAt(8) == null ? null : ((BigDecimal)lobjExpense.getAt(8)).toPlainString() );
 		lobjResult.isManual = (Boolean)lobjExpense.getAt(9);
