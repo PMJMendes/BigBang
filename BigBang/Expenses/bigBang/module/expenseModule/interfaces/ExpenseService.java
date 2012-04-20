@@ -1,6 +1,9 @@
 package bigBang.module.expenseModule.interfaces;
 
+import bigBang.definitions.shared.Expense;
 import bigBang.library.interfaces.SearchService;
+import bigBang.library.shared.BigBangException;
+import bigBang.library.shared.SessionExpiredException;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
@@ -19,4 +22,10 @@ public interface ExpenseService extends SearchService {
 			return instance;
 		}
 	}
+
+	public Expense getExpense(String expenseId) throws SessionExpiredException, BigBangException;
+
+	public Expense editExpense(Expense expense) throws SessionExpiredException, BigBangException;
+
+	public void deleteExpense(String expenseId, String reason) throws SessionExpiredException, BigBangException;
 }

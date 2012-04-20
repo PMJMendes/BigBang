@@ -3,6 +3,7 @@ package bigBang.module.insurancePolicyModule.interfaces;
 import bigBang.definitions.shared.BigBangPolicyValidationException;
 import bigBang.definitions.shared.DebitNote;
 import bigBang.definitions.shared.Exercise;
+import bigBang.definitions.shared.Expense;
 import bigBang.definitions.shared.InfoOrDocumentRequest;
 import bigBang.definitions.shared.InsurancePolicy;
 import bigBang.definitions.shared.InsuredObject;
@@ -89,6 +90,7 @@ public interface InsurancePolicyService
 	public ManagerTransfer createManagerTransfer(ManagerTransfer transfer) throws SessionExpiredException, BigBangException;
 
 	public Receipt createReceipt(String policyId, Receipt receipt) throws SessionExpiredException, BigBangException;
+	public Expense createExpense(Expense expense) throws SessionExpiredException, BigBangException;
 	public Negotiation createNegotiation(Negotiation negotiation) throws SessionExpiredException, BigBangException;
 
 	public InsurancePolicy voidPolicy(PolicyVoiding voiding) throws SessionExpiredException, BigBangException;

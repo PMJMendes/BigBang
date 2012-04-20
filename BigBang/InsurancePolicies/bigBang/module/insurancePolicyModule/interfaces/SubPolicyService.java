@@ -2,6 +2,7 @@ package bigBang.module.insurancePolicyModule.interfaces;
 
 import bigBang.definitions.shared.BigBangPolicyValidationException;
 import bigBang.definitions.shared.Exercise;
+import bigBang.definitions.shared.Expense;
 import bigBang.definitions.shared.InfoOrDocumentRequest;
 import bigBang.definitions.shared.InsuredObject;
 import bigBang.definitions.shared.PolicyVoiding;
@@ -78,6 +79,7 @@ public interface SubPolicyService
 	public InfoOrDocumentRequest createInfoOrDocumentRequest(InfoOrDocumentRequest request) throws SessionExpiredException, BigBangException;
 
 	public Receipt createReceipt(String policyId, Receipt receipt) throws SessionExpiredException, BigBangException;
+	public Expense createExpense(Expense expense) throws SessionExpiredException, BigBangException;
 
 	public SubPolicy voidSubPolicy(PolicyVoiding voiding) throws SessionExpiredException, BigBangException;
 

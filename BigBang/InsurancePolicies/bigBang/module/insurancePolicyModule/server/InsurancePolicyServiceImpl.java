@@ -25,6 +25,7 @@ import bigBang.definitions.shared.Address;
 import bigBang.definitions.shared.BigBangPolicyValidationException;
 import bigBang.definitions.shared.DebitNote;
 import bigBang.definitions.shared.Exercise;
+import bigBang.definitions.shared.Expense;
 import bigBang.definitions.shared.InfoOrDocumentRequest;
 import bigBang.definitions.shared.InsurancePolicy;
 import bigBang.definitions.shared.InsurancePolicyStub;
@@ -50,6 +51,7 @@ import bigBang.library.server.TransferManagerServiceImpl;
 import bigBang.library.shared.BigBangException;
 import bigBang.library.shared.CorruptedPadException;
 import bigBang.library.shared.SessionExpiredException;
+import bigBang.module.expenseModule.server.ExpenseServiceImpl;
 import bigBang.module.insurancePolicyModule.interfaces.InsurancePolicyService;
 import bigBang.module.insurancePolicyModule.shared.BigBangPolicyCalculationException;
 import bigBang.module.insurancePolicyModule.shared.InsurancePolicySearchParameter;
@@ -61,6 +63,7 @@ import com.premiumminds.BigBang.Jewel.Constants;
 import com.premiumminds.BigBang.Jewel.PolicyCalculationException;
 import com.premiumminds.BigBang.Jewel.PolicyValidationException;
 import com.premiumminds.BigBang.Jewel.Data.DebitNoteData;
+import com.premiumminds.BigBang.Jewel.Data.ExpenseData;
 import com.premiumminds.BigBang.Jewel.Data.NegotiationData;
 import com.premiumminds.BigBang.Jewel.Data.PolicyCoInsurerData;
 import com.premiumminds.BigBang.Jewel.Data.PolicyCoverageData;
@@ -89,6 +92,7 @@ import com.premiumminds.BigBang.Jewel.Operations.DocOps;
 import com.premiumminds.BigBang.Jewel.Operations.Client.CreatePolicy;
 import com.premiumminds.BigBang.Jewel.Operations.MgrXFer.AcceptXFer;
 import com.premiumminds.BigBang.Jewel.Operations.Policy.CreateDebitNote;
+import com.premiumminds.BigBang.Jewel.Operations.Policy.CreateExpense;
 import com.premiumminds.BigBang.Jewel.Operations.Policy.CreateInfoRequest;
 import com.premiumminds.BigBang.Jewel.Operations.Policy.CreateMgrXFer;
 import com.premiumminds.BigBang.Jewel.Operations.Policy.CreateNegotiation;
@@ -3746,6 +3750,58 @@ public class InsurancePolicyServiceImpl
 		}
 
 		return ReceiptServiceImpl.sGetReceipt(lopCR.mobjData.mid);
+	}
+
+	public Expense createExpense(Expense expense)
+		throws SessionExpiredException, BigBangException
+	{
+		Policy lobjPolicy;
+		CreateExpense lopCE;
+
+		if ( Engine.getCurrentUser() == null )
+			throw new SessionExpiredException();
+
+		if ( !Constants.ObjID_Policy.equals(UUID.fromString(expense.referenceTypeId)) )
+			throw new BigBangException("Erro: Tentativa de criar despesa de saúde de apólice adesão a partir de uma apólice.");
+
+		try
+		{
+			lobjPolicy = Policy.GetInstance(Engine.getCurrentNameSpace(), UUID.fromString(expense.referenceId));
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangException(e.getMessage(), e);
+		}
+
+		lopCE = new CreateExpense(lobjPolicy.GetProcessID());
+		lopCE.mobjData = new ExpenseData();
+		lopCE.mobjData.mid = null;
+		lopCE.mobjData.mstrNumber = null;
+		lopCE.mobjData.mdtDate = Timestamp.valueOf(expense.expenseDate + " 00:00:00.0");
+		lopCE.mobjData.midPolicyObject = (expense.insuredObjectId == null ? null : UUID.fromString(expense.insuredObjectId));
+		lopCE.mobjData.midSubPolicyObject = null;
+		lopCE.mobjData.midPolicyCoverage = (expense.coverageId == null ? null : UUID.fromString(expense.coverageId));
+		lopCE.mobjData.midSubPolicyCoverage = null;
+		lopCE.mobjData.mdblDamages = new BigDecimal(expense.value);
+		lopCE.mobjData.mdblSettlement = (expense.settlement == null ? null : new BigDecimal(expense.settlement));
+		lopCE.mobjData.mbIsManual = expense.isManual;
+		lopCE.mobjData.mstrNotes = expense.notes;
+		lopCE.mobjData.midManager = null;
+		lopCE.mobjData.midProcess = null;
+		lopCE.mobjData.mobjPrevValues = null;
+		lopCE.mobjContactOps = null;
+		lopCE.mobjDocOps = null;
+
+		try
+		{
+			lopCE.Execute();
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangException(e.getMessage(), e);
+		}
+
+		return ExpenseServiceImpl.sGetExpense(lopCE.mobjData.mid);
 	}
 
 	public Negotiation createNegotiation(Negotiation negotiation)

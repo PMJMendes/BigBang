@@ -1,6 +1,7 @@
 package bigBang.module.insurancePolicyModule.interfaces;
 
 import bigBang.definitions.shared.Exercise;
+import bigBang.definitions.shared.Expense;
 import bigBang.definitions.shared.InfoOrDocumentRequest;
 import bigBang.definitions.shared.InsuredObject;
 import bigBang.definitions.shared.PolicyVoiding;
@@ -39,6 +40,7 @@ public interface SubPolicyServiceAsync
 	void transferToPolicy(String subPolicyId, String newPolicyId, AsyncCallback<SubPolicy> callback);
 	void createInfoOrDocumentRequest(InfoOrDocumentRequest request, AsyncCallback<InfoOrDocumentRequest> callback);
 	void createReceipt(String subPolicyId, Receipt receipt, AsyncCallback<Receipt> callback);
+	void createExpense(Expense expense, AsyncCallback<Expense> callback);
 	void voidSubPolicy(PolicyVoiding voiding, AsyncCallback<SubPolicy> callback);
 	void deleteSubPolicy(String subPolicyId, String reason, AsyncCallback<Void> callback);
 }

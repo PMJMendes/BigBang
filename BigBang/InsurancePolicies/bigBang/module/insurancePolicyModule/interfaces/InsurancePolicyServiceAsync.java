@@ -2,6 +2,7 @@ package bigBang.module.insurancePolicyModule.interfaces;
 
 import bigBang.definitions.shared.DebitNote;
 import bigBang.definitions.shared.Exercise;
+import bigBang.definitions.shared.Expense;
 import bigBang.definitions.shared.InfoOrDocumentRequest;
 import bigBang.definitions.shared.InsurancePolicy;
 import bigBang.definitions.shared.InsurancePolicy.TableSection;
@@ -50,6 +51,7 @@ public interface InsurancePolicyServiceAsync
 	void createInfoOrDocumentRequest(InfoOrDocumentRequest request, AsyncCallback<InfoOrDocumentRequest> callback);
 	void createManagerTransfer(ManagerTransfer transfer, AsyncCallback<ManagerTransfer> callback);
 	void createReceipt(String policyId, Receipt receipt, AsyncCallback<Receipt> callback);
+	void createExpense(Expense expense, AsyncCallback<Expense> callback);
 	void createNegotiation(Negotiation negotiation, AsyncCallback<Negotiation> callback);
 	void voidPolicy(PolicyVoiding voiding, AsyncCallback<InsurancePolicy> callback);
 	void deletePolicy(String policyId, AsyncCallback<Void> callback);

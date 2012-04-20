@@ -19,6 +19,7 @@ import Jewel.Petri.Objects.PNProcess;
 import bigBang.definitions.shared.Address;
 import bigBang.definitions.shared.BigBangPolicyValidationException;
 import bigBang.definitions.shared.Exercise;
+import bigBang.definitions.shared.Expense;
 import bigBang.definitions.shared.InfoOrDocumentRequest;
 import bigBang.definitions.shared.InsuredObject;
 import bigBang.definitions.shared.PolicyVoiding;
@@ -42,6 +43,7 @@ import bigBang.library.server.SearchServiceBase;
 import bigBang.library.shared.BigBangException;
 import bigBang.library.shared.CorruptedPadException;
 import bigBang.library.shared.SessionExpiredException;
+import bigBang.module.expenseModule.server.ExpenseServiceImpl;
 import bigBang.module.insurancePolicyModule.interfaces.SubPolicyService;
 import bigBang.module.insurancePolicyModule.shared.BigBangPolicyCalculationException;
 import bigBang.module.insurancePolicyModule.shared.SubPolicySearchParameter;
@@ -51,6 +53,7 @@ import bigBang.module.receiptModule.server.ReceiptServiceImpl;
 import com.premiumminds.BigBang.Jewel.Constants;
 import com.premiumminds.BigBang.Jewel.PolicyCalculationException;
 import com.premiumminds.BigBang.Jewel.PolicyValidationException;
+import com.premiumminds.BigBang.Jewel.Data.ExpenseData;
 import com.premiumminds.BigBang.Jewel.Data.PolicyExerciseData;
 import com.premiumminds.BigBang.Jewel.Data.ReceiptData;
 import com.premiumminds.BigBang.Jewel.Data.SubPolicyCoverageData;
@@ -70,6 +73,7 @@ import com.premiumminds.BigBang.Jewel.Objects.Tax;
 import com.premiumminds.BigBang.Jewel.Operations.ContactOps;
 import com.premiumminds.BigBang.Jewel.Operations.DocOps;
 import com.premiumminds.BigBang.Jewel.Operations.Policy.CreateSubPolicy;
+import com.premiumminds.BigBang.Jewel.Operations.SubPolicy.CreateExpense;
 import com.premiumminds.BigBang.Jewel.Operations.SubPolicy.CreateInfoRequest;
 import com.premiumminds.BigBang.Jewel.Operations.SubPolicy.CreateReceipt;
 import com.premiumminds.BigBang.Jewel.Operations.SubPolicy.DeleteSubPolicy;
@@ -3113,6 +3117,59 @@ public class SubPolicyServiceImpl
 		}
 
 		return ReceiptServiceImpl.sGetReceipt(lopCR.mobjData.mid);
+	}
+
+	public Expense createExpense(Expense expense)
+		throws SessionExpiredException, BigBangException
+	{
+		com.premiumminds.BigBang.Jewel.Objects.SubPolicy lobjSubPolicy;
+		CreateExpense lopCE;
+
+		if ( Engine.getCurrentUser() == null )
+			throw new SessionExpiredException();
+
+		if ( !Constants.ObjID_SubPolicy.equals(UUID.fromString(expense.referenceTypeId)) )
+			throw new BigBangException("Erro: Tentativa de criar despesa de saúde de apólice a partir de uma apólice adesão.");
+
+		try
+		{
+			lobjSubPolicy = com.premiumminds.BigBang.Jewel.Objects.SubPolicy.GetInstance(Engine.getCurrentNameSpace(),
+					UUID.fromString(expense.referenceId));
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangException(e.getMessage(), e);
+		}
+
+		lopCE = new CreateExpense(lobjSubPolicy.GetProcessID());
+		lopCE.mobjData = new ExpenseData();
+		lopCE.mobjData.mid = null;
+		lopCE.mobjData.mstrNumber = null;
+		lopCE.mobjData.mdtDate = Timestamp.valueOf(expense.expenseDate + " 00:00:00.0");
+		lopCE.mobjData.midPolicyObject = null;
+		lopCE.mobjData.midSubPolicyObject = (expense.insuredObjectId == null ? null : UUID.fromString(expense.insuredObjectId));
+		lopCE.mobjData.midPolicyCoverage = null;
+		lopCE.mobjData.midSubPolicyCoverage = (expense.coverageId == null ? null : UUID.fromString(expense.coverageId));
+		lopCE.mobjData.mdblDamages = new BigDecimal(expense.value);
+		lopCE.mobjData.mdblSettlement = (expense.settlement == null ? null : new BigDecimal(expense.settlement));
+		lopCE.mobjData.mbIsManual = expense.isManual;
+		lopCE.mobjData.mstrNotes = expense.notes;
+		lopCE.mobjData.midManager = null;
+		lopCE.mobjData.midProcess = null;
+		lopCE.mobjData.mobjPrevValues = null;
+		lopCE.mobjContactOps = null;
+		lopCE.mobjDocOps = null;
+
+		try
+		{
+			lopCE.Execute();
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangException(e.getMessage(), e);
+		}
+
+		return ExpenseServiceImpl.sGetExpense(lopCE.mobjData.mid);
 	}
 
 	public void deleteSubPolicy(String policyId, String reason)
