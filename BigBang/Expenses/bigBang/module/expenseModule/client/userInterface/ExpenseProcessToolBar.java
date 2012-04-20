@@ -26,7 +26,8 @@ public abstract class ExpenseProcessToolBar extends BigBangOperationsToolBar{
 	protected MenuItem infoOrDocumentRequest;
 	//agency
 	protected MenuItem infoFromInsurer;
-	protected MenuItem receiveResponse;
+	protected MenuItem receiveAcceptance;
+	protected MenuItem receiveRejection;
 
 
 	public ExpenseProcessToolBar() {
@@ -112,22 +113,31 @@ public abstract class ExpenseProcessToolBar extends BigBangOperationsToolBar{
 			}
 		});
 		addItem(SUB_MENU.REQUESTS, infoFromInsurer);
-		
-		receiveResponse = new MenuItem("Receber Resposta", new Command() {
+		receiveAcceptance = new MenuItem("Receber Aceitação", new Command() {
 			
 			@Override
 			public void execute() {
-				onReceiveResponse();
+				onReceiveAcceptance();
+			}
+		});
+		receiveRejection = new MenuItem("Receber Rejeição", new Command() {
+			
+			@Override
+			public void execute() {
+				onReceiveRejection();
 			}
 		});
 		requestsSubMenu.addSeparator();
-		addItem(SUB_MENU.REQUESTS, receiveResponse);
+		addItem(SUB_MENU.REQUESTS, receiveAcceptance);
+		addItem(SUB_MENU.REQUESTS, receiveRejection);
 		
 		createMenuItem.setVisible(false);
 		dataMenuItem.setVisible(false);
 	}
 
-	protected abstract void onReceiveResponse();
+	protected abstract void onReceiveAcceptance();
+	
+	protected abstract void onReceiveRejection();
 
 	protected abstract void onInfoFromInsurer();
 	
@@ -191,8 +201,13 @@ public abstract class ExpenseProcessToolBar extends BigBangOperationsToolBar{
 		infoFromInsurer.setEnabled(allow);
 	}
 
-	public void allowReceiveResponse(boolean allow) {
-		receiveResponse.setEnabled(allow);
+	public void allowReceiveAcceptance(boolean allow) {
+		receiveAcceptance.setEnabled(allow);
+	}
+
+	public void allowReceiveRejection(boolean hasPermission) {
+		receiveRejection.setEnabled(hasPermission);
+		
 	}
 
 

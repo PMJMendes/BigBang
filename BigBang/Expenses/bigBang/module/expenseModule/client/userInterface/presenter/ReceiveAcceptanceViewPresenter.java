@@ -14,7 +14,7 @@ import bigBang.library.client.history.NavigationHistoryItem;
 import bigBang.library.client.history.NavigationHistoryManager;
 import bigBang.library.client.userInterface.presenter.ViewPresenter;
 
-public class ReceiveResponseViewPresenter implements ViewPresenter{
+public class ReceiveAcceptanceViewPresenter implements ViewPresenter{
 
 
 	public static enum Action{
@@ -34,7 +34,7 @@ public class ReceiveResponseViewPresenter implements ViewPresenter{
 		void clearForms();
 	}
 
-	public ReceiveResponseViewPresenter(Display view){
+	public ReceiveAcceptanceViewPresenter(Display view){
 		setView((UIObject)view);
 		broker = (ExpenseDataBroker) DataBrokerManager.staticGetBroker(BigBangConstants.EntityIds.EXPENSE);
 	}
@@ -54,7 +54,7 @@ public class ReceiveResponseViewPresenter implements ViewPresenter{
 	private void bind() {
 		if(bound){return;}
 		
-		view.registerActionHandler(new ActionInvokedEventHandler<ReceiveResponseViewPresenter.Action>() {
+		view.registerActionHandler(new ActionInvokedEventHandler<ReceiveAcceptanceViewPresenter.Action>() {
 			
 			@Override
 			public void onActionInvoked(ActionInvokedEvent<Action> action) {

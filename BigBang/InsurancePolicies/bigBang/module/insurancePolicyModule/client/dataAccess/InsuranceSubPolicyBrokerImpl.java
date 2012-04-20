@@ -17,6 +17,7 @@ import bigBang.definitions.client.dataAccess.SearchDataBroker;
 import bigBang.definitions.client.response.ResponseError;
 import bigBang.definitions.client.response.ResponseHandler;
 import bigBang.definitions.shared.BigBangConstants;
+import bigBang.definitions.shared.Expense;
 import bigBang.definitions.shared.InfoOrDocumentRequest;
 import bigBang.definitions.shared.InsuredObject;
 import bigBang.definitions.shared.PolicyVoiding;
@@ -474,7 +475,7 @@ implements InsuranceSubPolicyBroker {
 	public void remapItemId(String oldId, String newId, boolean newInScratchPad) {
 		oldId = oldId.toLowerCase();
 		newId = newId == null ? null : newId.toLowerCase();
-		
+
 		if(newInScratchPad){
 			this.subPoliciesInScratchPad.put(oldId, newId);
 		} else if(newId == null){
@@ -618,7 +619,7 @@ implements InsuranceSubPolicyBroker {
 			public void onResponseSuccess(InsuredObject result) {
 				insuredObjectsBroker.notifyItemCreation(result.id);
 			}
-			
+
 			@Override
 			public void onResponseFailure(Throwable caught) {
 				handler.onError(new String[]{
@@ -638,7 +639,7 @@ implements InsuranceSubPolicyBroker {
 			public void onResponseSuccess(InsuredObject result) {
 				insuredObjectsBroker.notifyItemCreation(result.id);
 			}
-			
+
 			@Override
 			public void onResponseFailure(Throwable caught) {
 				handler.onError(new String[]{
@@ -658,7 +659,7 @@ implements InsuranceSubPolicyBroker {
 			public void onResponseSuccess(Void result) {
 				insuredObjectsBroker.notifyItemDeletion(objectId);
 			}
-			
+
 			@Override
 			public void onResponseFailure(Throwable caught) {
 				handler.onError(new String[]{
@@ -684,7 +685,7 @@ implements InsuranceSubPolicyBroker {
 				}
 				handler.onResponse(result);
 			}
-			
+
 			@Override
 			public void onResponseFailure(Throwable caught) {
 				handler.onError(new String[]{
@@ -704,7 +705,7 @@ implements InsuranceSubPolicyBroker {
 			public void onResponseSuccess(InfoOrDocumentRequest result) {
 				handler.onResponse(result);
 			}
-			
+
 			@Override
 			public void onResponseFailure(Throwable caught) {
 				handler.onError(new String[]{
@@ -723,17 +724,17 @@ implements InsuranceSubPolicyBroker {
 			public void onResponseSuccess(Receipt result) {
 				handler.onResponse(result);
 			}
-			
+
 			@Override
 			public void onResponseFailure(Throwable caught) {
 				handler.onError(new String[]{
-					new String("Could not create the new Receipt")	
+						new String("Could not create the new Receipt")	
 				});
 				super.onResponseFailure(caught);
 			}
 		});
 	}
-	
+
 	@Override
 	public void getSubPoliciesForPolicy(String ownerId,
 			final ResponseHandler<Collection<SubPolicyStub>> responseHandler) {
@@ -822,6 +823,26 @@ implements InsuranceSubPolicyBroker {
 
 			@Override
 			public void onError(Collection<ResponseError> errors) {}
+		});
+	}
+
+	@Override
+	public void createExpense(Expense expense, final ResponseHandler<Expense> handler){
+		service.createExpense(expense, new BigBangAsyncCallback<Expense>() {
+
+			@Override
+			public void onResponseSuccess(Expense result) {
+				handler.onResponse(result);
+
+			}
+
+			@Override
+			public void onResponseFailure(Throwable caught) {
+				handler.onError(new String[]{
+						new String("Could not create the new Expense")	
+				});
+				super.onResponseFailure(caught);
+			}
 		});
 	}
 

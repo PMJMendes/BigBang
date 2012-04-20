@@ -21,6 +21,7 @@ import bigBang.definitions.shared.BigBangConstants;
 import bigBang.definitions.shared.DebitNote;
 import bigBang.definitions.shared.InsurancePolicy;
 import bigBang.definitions.shared.InsurancePolicy.TableSection;
+import bigBang.definitions.shared.Expense;
 import bigBang.definitions.shared.InsurancePolicyStub;
 import bigBang.definitions.shared.Negotiation;
 import bigBang.definitions.shared.PolicyVoiding;
@@ -785,6 +786,26 @@ public class InsurancePolicyProcessBrokerImpl extends DataBroker<InsurancePolicy
 			}
 		
 		
+		});
+	}
+	
+	@Override
+	public void createExpense(Expense expense, final ResponseHandler<Expense> handler){
+		service.createExpense(expense, new BigBangAsyncCallback<Expense>() {
+
+			@Override
+			public void onResponseSuccess(Expense result) {
+				handler.onResponse(result);
+
+			}
+
+			@Override
+			public void onResponseFailure(Throwable caught) {
+				handler.onError(new String[]{
+						new String("Could not create the new Expense")	
+				});
+				super.onResponseFailure(caught);
+			}
 		});
 	}
 

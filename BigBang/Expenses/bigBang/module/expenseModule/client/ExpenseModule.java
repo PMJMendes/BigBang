@@ -7,18 +7,20 @@ import bigBang.library.client.ViewPresenterFactory;
 import bigBang.library.client.ViewPresenterInstantiator;
 import bigBang.library.client.userInterface.presenter.ViewPresenter;
 import bigBang.module.expenseModule.client.dataAccess.ExpenseBrokerImpl;
+import bigBang.module.expenseModule.client.userInterface.presenter.ExpenseDeleteViewPresenter;
 import bigBang.module.expenseModule.client.userInterface.presenter.ExpenseOperationsViewPresenter;
 import bigBang.module.expenseModule.client.userInterface.presenter.ExpenseSearchOperationViewPresenter;
 import bigBang.module.expenseModule.client.userInterface.presenter.ExpenseSectionViewPresenter;
 import bigBang.module.expenseModule.client.userInterface.presenter.MassNotifyResultsClientViewPresenter;
 import bigBang.module.expenseModule.client.userInterface.presenter.MassParticipateToInsurerViewPresenter;
-import bigBang.module.expenseModule.client.userInterface.presenter.ReceiveResponseViewPresenter;
+import bigBang.module.expenseModule.client.userInterface.presenter.ReceiveAcceptanceViewPresenter;
+import bigBang.module.expenseModule.client.userInterface.view.ExpenseDeleteView;
 import bigBang.module.expenseModule.client.userInterface.view.ExpenseOperationsView;
 import bigBang.module.expenseModule.client.userInterface.view.ExpenseSearchOperationView;
 import bigBang.module.expenseModule.client.userInterface.view.ExpenseSectionView;
 import bigBang.module.expenseModule.client.userInterface.view.MassNotifyResultsClientView;
 import bigBang.module.expenseModule.client.userInterface.view.MassParticipateToInsurerView;
-import bigBang.module.expenseModule.client.userInterface.view.ReceiveResponseView;
+import bigBang.module.expenseModule.client.userInterface.view.ReceiveAcceptanceView;
 
 import com.google.gwt.core.client.GWT;
 
@@ -81,12 +83,21 @@ public class ExpenseModule implements Module {
 				return presenter;
 			}
 		});
-		ViewPresenterFactory.getInstance().registerViewPresenterInstantiator("RECEIVE_RESPONSE", new ViewPresenterInstantiator() {
+		ViewPresenterFactory.getInstance().registerViewPresenterInstantiator("RECEIVE_ACCEPTANCE", new ViewPresenterInstantiator() {
 
 			@Override
 			public ViewPresenter getInstance() {
-				ReceiveResponseView view = (ReceiveResponseView) GWT.create(ReceiveResponseView.class);
-				ReceiveResponseViewPresenter presenter = new ReceiveResponseViewPresenter(view);
+				ReceiveAcceptanceView view = (ReceiveAcceptanceView) GWT.create(ReceiveAcceptanceView.class);
+				ReceiveAcceptanceViewPresenter presenter = new ReceiveAcceptanceViewPresenter(view);
+				return presenter;
+			}
+		});
+		ViewPresenterFactory.getInstance().registerViewPresenterInstantiator("EXPENSE_DELETE", new ViewPresenterInstantiator() {
+
+			@Override
+			public ViewPresenter getInstance() {
+				ExpenseDeleteView view = (ExpenseDeleteView) GWT.create(ExpenseDeleteView.class);
+				ExpenseDeleteViewPresenter presenter = new ExpenseDeleteViewPresenter(view);
 				return presenter;
 			}
 		});
@@ -96,7 +107,7 @@ public class ExpenseModule implements Module {
 	public DataBroker<?>[] getBrokerImplementations() {
 		return new DataBroker<?>[]{
 				new ExpenseBrokerImpl()
-				};
+		};
 	}
 
 	@Override

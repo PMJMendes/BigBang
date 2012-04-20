@@ -9,17 +9,17 @@ import bigBang.library.client.event.ActionInvokedEventHandler;
 import bigBang.library.client.userInterface.RadioButtonFormField;
 import bigBang.library.client.userInterface.view.View;
 import bigBang.module.expenseModule.client.userInterface.ReceiveResponseToolbar;
-import bigBang.module.expenseModule.client.userInterface.presenter.ReceiveResponseViewPresenter;
-import bigBang.module.expenseModule.client.userInterface.presenter.ReceiveResponseViewPresenter.Action;
+import bigBang.module.expenseModule.client.userInterface.presenter.ReceiveAcceptanceViewPresenter;
+import bigBang.module.expenseModule.client.userInterface.presenter.ReceiveAcceptanceViewPresenter.Action;
 
-public class ReceiveResponseView extends View implements ReceiveResponseViewPresenter.Display{
+public class ReceiveAcceptanceView extends View implements ReceiveAcceptanceViewPresenter.Display{
 
 	private ReceiveResponseToolbar toolbar;
 	private ActionInvokedEventHandler<Action> actionHandler;
 	//FORMS
 	private RadioButtonFormField choice;
 	
-	public ReceiveResponseView(){
+	public ReceiveAcceptanceView(){
 		VerticalPanel wrapper = new VerticalPanel();
 		initWidget(wrapper);
 		
@@ -32,7 +32,7 @@ public class ReceiveResponseView extends View implements ReceiveResponseViewPres
 			
 			@Override
 			public void onCancelRequest() {
-				actionHandler.onActionInvoked(new ActionInvokedEvent<ReceiveResponseViewPresenter.Action>(Action.CANCEL));				
+				actionHandler.onActionInvoked(new ActionInvokedEvent<ReceiveAcceptanceViewPresenter.Action>(Action.CANCEL));				
 			}
 		};
 		

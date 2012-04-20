@@ -109,8 +109,14 @@ public class ExpenseSearchOperationView extends View implements ExpenseSearchOpe
 			}
 
 			@Override
-			protected void onReceiveResponse() {
-				actionHandler.onActionInvoked(new ActionInvokedEvent<ExpenseSearchOperationViewPresenter.Action>(Action.RECEIVE_RESPONSE));				
+			protected void onReceiveAcceptance() {
+				actionHandler.onActionInvoked(new ActionInvokedEvent<ExpenseSearchOperationViewPresenter.Action>(Action.RECEIVE_ACCEPTANCE));				
+			}
+
+			@Override
+			protected void onReceiveRejection() {
+				actionHandler.onActionInvoked(new ActionInvokedEvent<ExpenseSearchOperationViewPresenter.Action>(Action.RECEIVE_REJECTION));				
+				
 			}
 		};
 
@@ -192,11 +198,6 @@ public class ExpenseSearchOperationView extends View implements ExpenseSearchOpe
 	}
 
 	@Override
-	public void allowReceiveResponse(boolean allow){
-		this.operationsToolbar.allowReceiveResponse(allow);
-	}
-
-	@Override
 	public HasValueSelectables<Contact> getContactsList() {
 		return this.childrenPanel.contactsList;
 	}
@@ -260,5 +261,17 @@ public class ExpenseSearchOperationView extends View implements ExpenseSearchOpe
 	@Override
 	public void allowValidate(boolean allow) {
 		this.operationsToolbar.allowValidate(allow);
+	}
+
+	@Override
+	public void allowReceiveAcceptance(boolean allow) {
+		operationsToolbar.allowReceiveAcceptance(allow);
+		
+	}
+
+	@Override
+	public void allowReceiveRejection(boolean hasPermission) {
+		operationsToolbar.allowReceiveRejection(hasPermission);
+		
 	}
 }

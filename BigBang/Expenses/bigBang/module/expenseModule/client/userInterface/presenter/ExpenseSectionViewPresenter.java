@@ -159,8 +159,12 @@ public class ExpenseSectionViewPresenter implements ViewPresenter {
 				}else if(show.equalsIgnoreCase("documentmanagement")){
 					present("DOCUMENT", parameters);
 					view.showOverlayViewContainer(true);
-				}else if(show.equalsIgnoreCase("receiveresponse")){
-					present("RECEIVE_RESPONSE", parameters);
+				}else if(show.equalsIgnoreCase("receiveacceptance")){
+					present("RECEIVE_ACCEPTANCE", parameters);
+					view.showOverlayViewContainer(true);
+				}
+				else if(show.equalsIgnoreCase("deleteexpense")){
+					present("EXPENSE_DELETE", parameters);
 					view.showOverlayViewContainer(true);
 				}
 			}

@@ -4,6 +4,7 @@ import java.util.Collection;
 
 import bigBang.definitions.client.response.ResponseHandler;
 import bigBang.definitions.shared.DebitNote;
+import bigBang.definitions.shared.Expense;
 import bigBang.definitions.shared.InsurancePolicy;
 import bigBang.definitions.shared.InsurancePolicy.TableSection;
 import bigBang.definitions.shared.InsurancePolicyStub;
@@ -64,6 +65,8 @@ public interface InsurancePolicyBroker extends DataBrokerInterface<InsurancePoli
 
 	void getInsurancePoliciesWithNumber(String label,
 			ResponseHandler<Collection<InsurancePolicyStub>> handler);
+
+	void createExpense(Expense expense, ResponseHandler<Expense> handler);
 
 	
 }

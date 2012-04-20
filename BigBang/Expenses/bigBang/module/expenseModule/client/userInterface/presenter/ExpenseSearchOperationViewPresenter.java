@@ -1,6 +1,10 @@
 package bigBang.module.expenseModule.client.userInterface.presenter;
 
+import java.util.Collection;
+
 import bigBang.definitions.client.dataAccess.ExpenseDataBroker;
+import bigBang.definitions.client.response.ResponseError;
+import bigBang.definitions.client.response.ResponseHandler;
 import bigBang.definitions.shared.BigBangConstants;
 import bigBang.definitions.shared.BigBangProcess;
 import bigBang.definitions.shared.Contact;
@@ -8,13 +12,18 @@ import bigBang.definitions.shared.Document;
 import bigBang.definitions.shared.Expense;
 import bigBang.definitions.shared.ExpenseStub;
 import bigBang.definitions.shared.HistoryItemStub;
+import bigBang.library.client.EventBus;
 import bigBang.library.client.HasEditableValue;
 import bigBang.library.client.HasParameters;
 import bigBang.library.client.HasValueSelectables;
+import bigBang.library.client.Notification;
+import bigBang.library.client.PermissionChecker;
 import bigBang.library.client.ValueSelectable;
+import bigBang.library.client.Notification.TYPE;
 import bigBang.library.client.dataAccess.DataBrokerManager;
 import bigBang.library.client.event.ActionInvokedEvent;
 import bigBang.library.client.event.ActionInvokedEventHandler;
+import bigBang.library.client.event.NewNotificationEvent;
 import bigBang.library.client.event.SelectionChangedEvent;
 import bigBang.library.client.event.SelectionChangedEventHandler;
 import bigBang.library.client.history.NavigationHistoryItem;
@@ -30,7 +39,7 @@ public class ExpenseSearchOperationViewPresenter implements ViewPresenter {
 	public enum Action{
 		EDIT, SAVE, CANCEL, DELETE, INFO_FROM_INSURER,
 		INFO_OR_DOCUMENT_REQUEST, VALIDATE, 
-		PARTICIPATE_TO_INSURER, NOTIFY_CLIENT, RETURN_TO_CLIENT, CLOSE_PROCESS, RECEIVE_RESPONSE
+		PARTICIPATE_TO_INSURER, NOTIFY_CLIENT, RETURN_TO_CLIENT, CLOSE_PROCESS, RECEIVE_ACCEPTANCE, RECEIVE_REJECTION
 	}
 
 	public interface Display {
@@ -49,13 +58,14 @@ public class ExpenseSearchOperationViewPresenter implements ViewPresenter {
 		HasValueSelectables<HistoryItemStub> getHistoryList();
 		void clear();
 		void lockOptions();
-		void allowReceiveResponse(boolean allow);
+		void allowReceiveAcceptance(boolean allow);
 		void allowInfoFromInsurer(boolean allow);
 		void allowInfoOrDocumentRequest(boolean allow);
 		void allowNotifyClient(boolean allow);
 		void allowParticipateToInsurer(boolean allow);
 		void allowReturnToClient(boolean allow);
 		void allowValidate(boolean allow);
+		void allowReceiveRejection(boolean hasPermission);
 	}
 
 	protected boolean bound = false;
@@ -82,7 +92,7 @@ public class ExpenseSearchOperationViewPresenter implements ViewPresenter {
 
 	@Override
 	public void setParameters(HasParameters parameterHolder) {
-		expenseId = parameterHolder.getParameter("expenseId");
+		expenseId = parameterHolder.getParameter("expenseid");
 
 		if(expenseId == null || expenseId.isEmpty()){
 			clearView();
@@ -93,7 +103,7 @@ public class ExpenseSearchOperationViewPresenter implements ViewPresenter {
 	}
 
 	private void clearView() {
-		//TODO view.clearAllowedPermissions();
+		view.clearAllowedPermissions();
 		view.clear();
 		view.getForm().setValue(null);
 		view.getList().clearSelection();
@@ -112,8 +122,35 @@ public class ExpenseSearchOperationViewPresenter implements ViewPresenter {
 			}
 		}
 		
+		expenseBroker.getExpense(expenseId, new ResponseHandler<Expense>() {
+			
+			@Override
+			public void onResponse(Expense response) {
+				view.clearAllowedPermissions();
+				view.allowDelete(PermissionChecker.hasPermission(response, BigBangConstants.OperationIds.ExpenseProcess.DELETE_EXPENSE));
+				view.allowEdit(PermissionChecker.hasPermission(response, BigBangConstants.OperationIds.ExpenseProcess.UPDATE_EXPENSE));
+				view.allowInfoFromInsurer(PermissionChecker.hasPermission(response, BigBangConstants.OperationIds.ExpenseProcess.CREATE_INFO_REQUEST));
+				view.allowNotifyClient(PermissionChecker.hasPermission(response, BigBangConstants.OperationIds.ExpenseProcess.NOTIFY_CLIENT));
+				view.allowParticipateToInsurer(PermissionChecker.hasPermission(response, BigBangConstants.OperationIds.ExpenseProcess.SEND_NOTIFICATION));
+				view.allowReceiveAcceptance(PermissionChecker.hasPermission(response, BigBangConstants.OperationIds.ExpenseProcess.RECEIVE_ACCEPTANCE));
+				view.allowReceiveRejection(PermissionChecker.hasPermission(response, BigBangConstants.OperationIds.ExpenseProcess.RECEIVE_RETURN));
+				view.allowReturnToClient(PermissionChecker.hasPermission(response, BigBangConstants.OperationIds.ExpenseProcess.RETURN_TO_CLIENT));
+				view.allowValidate(PermissionChecker.hasPermission(response, BigBangConstants.OperationIds.ExpenseProcess.PAYMENT_VALIDATION));
+				
+				view.setSaveModeEnabled(false);
+				view.getForm().setReadOnly(true);
+				view.getForm().setValue(response);
+			}
+			
+			@Override
+			public void onError(Collection<ResponseError> errors) {
+				EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não é possível apresentar a Despesa de Saúde"), TYPE.ALERT_NOTIFICATION));
+				NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
+				item.removeParameter("expenseid");
+				NavigationHistoryManager.getInstance().go(item);
+			}
+		});
 		
-		//TODO BROKER GET CENAS
 		
 	}
 
@@ -124,8 +161,20 @@ public class ExpenseSearchOperationViewPresenter implements ViewPresenter {
 
 			@Override
 			public void onSelectionChanged(SelectionChangedEvent event) {
-				// TODO Auto-generated method stub
-
+				@SuppressWarnings("unchecked")
+				ValueSelectable<ExpenseStub> selected = (ValueSelectable<ExpenseStub>) event.getFirstSelected();
+				ExpenseStub stub = selected == null ? null : selected.getValue();
+				view.setSaveModeEnabled(false);
+				
+				if(stub == null || stub.id == null){
+					NavigationHistoryItem navigationItem = NavigationHistoryManager.getInstance().getCurrentState();
+					navigationItem.removeParameter("expenseid");
+					NavigationHistoryManager.getInstance().go(navigationItem);
+				}else{
+					NavigationHistoryItem navigationItem = NavigationHistoryManager.getInstance().getCurrentState();
+					navigationItem.setParameter("expenseid", stub.id);
+					NavigationHistoryManager.getInstance().go(navigationItem);
+				}
 			}
 		});
 
@@ -167,8 +216,11 @@ public class ExpenseSearchOperationViewPresenter implements ViewPresenter {
 				case VALIDATE:
 					onValidate();
 					break;
-				case RECEIVE_RESPONSE:
-					onReceiveResponse();
+				case RECEIVE_ACCEPTANCE:
+					onReceiveAcceptance();
+					break;
+				case RECEIVE_REJECTION:
+					onReceiveRejection();
 					break;
 				}
 
@@ -224,9 +276,15 @@ public class ExpenseSearchOperationViewPresenter implements ViewPresenter {
 		bound = true;
 	}
 
-	protected void onReceiveResponse() {
+	protected void onReceiveRejection() {
 		NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
-		item.setParameter("show", "receiveresponse");
+		item.setParameter("show", "receiverejection");
+		NavigationHistoryManager.getInstance().go(item);
+	}
+
+	protected void onReceiveAcceptance() {
+		NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
+		item.setParameter("show", "receiveacceptance");
 		NavigationHistoryManager.getInstance().go(item);
 	}
 
@@ -242,7 +300,21 @@ public class ExpenseSearchOperationViewPresenter implements ViewPresenter {
 	}
 
 	protected void onSave() {
-		// TODO Auto-generated method stub
+		Expense expense = view.getForm().getInfo();
+		
+		this.expenseBroker.updateExpense(expense, new ResponseHandler<Expense>() {
+			
+			@Override
+			public void onResponse(Expense response) {
+				EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "A Despesa de Saúde foi guardada com sucesso"), TYPE.TRAY_NOTIFICATION));
+				NavigationHistoryManager.getInstance().reload();
+			}
+			
+			@Override
+			public void onError(Collection<ResponseError> errors) {
+				EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não foi possível guardar a Despesa de Saúde"), TYPE.ALERT_NOTIFICATION));
+			}
+		});
 
 	}
 
@@ -277,8 +349,9 @@ public class ExpenseSearchOperationViewPresenter implements ViewPresenter {
 	}
 
 	protected void onDelete() {
-		// TODO Auto-generated method stub
-
+		NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
+		item.setParameter("show", "deleteexpense");
+		NavigationHistoryManager.getInstance().go(item);
 	}
 
 	protected void onCloseProcess() {

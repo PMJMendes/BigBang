@@ -86,8 +86,30 @@ public class CreateExpenseSubPolicyViewPresenter  implements ViewPresenter{
 	}
 
 	protected void onSave() {
-		// TODO Auto-generated method stub
+		broker.createExpense(view.getForm().getInfo(), new ResponseHandler<Expense>() {
+			
+			@Override
+			public void onResponse(Expense response) {
+				onCreateExpenseSuccess();
+			}
+			
+			@Override
+			public void onError(Collection<ResponseError> errors) {
+				onCreateExpenseFailed();
+			}
+		});
 		
+	}
+
+	protected void onCreateExpenseFailed() {
+		EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não foi possível criar a Despesa de Saúde"), TYPE.ALERT_NOTIFICATION));
+	}
+
+	protected void onCreateExpenseSuccess() {
+		EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "A Despesa de Saúde foi criada com Sucesso"), TYPE.TRAY_NOTIFICATION));
+		NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
+		item.popFromStackParameter("display");
+		NavigationHistoryManager.getInstance().go(item);
 	}
 
 	protected void onCancel() {
@@ -129,7 +151,7 @@ public class CreateExpenseSubPolicyViewPresenter  implements ViewPresenter{
 		expense.clientNumber = response.clientNumber;
 		expense.referenceId = response.id;
 		expense.referenceNumber = response.number;
-		expense.referenceTypeId = BigBangConstants.EntityIds.INSURANCE_POLICY;
+		expense.referenceTypeId = BigBangConstants.EntityIds.INSURANCE_SUB_POLICY;
 		expense.managerId = response.managerId;
 		expense.lineName = response.inheritLineName;
 		expense.subLineName = response.inheritSubLineName;
