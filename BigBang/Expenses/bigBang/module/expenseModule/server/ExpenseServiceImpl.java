@@ -53,6 +53,9 @@ public class ExpenseServiceImpl
 		Coverage lobjCoverage;
 		Expense lobjResult;
 
+		lobjInsured = null;
+		lobjPolCov = null;
+		lobjCoverage = null;
 		try
 		{
 			lobjExpense = com.premiumminds.BigBang.Jewel.Objects.Expense.GetInstance(Engine.getCurrentNameSpace(), pidExpense);
@@ -61,16 +64,24 @@ public class ExpenseServiceImpl
 			if ( Constants.ProcID_Policy.equals(lobjProcess.GetParent().GetScriptID()) )
 			{
 				lobjClient = (Client)lobjProcess.GetParent().GetParent().GetData();
-				lobjInsured = PolicyObject.GetInstance(Engine.getCurrentNameSpace(), (UUID)lobjExpense.getAt(3));
-				lobjPolCov = PolicyCoverage.GetInstance(Engine.getCurrentNameSpace(), (UUID)lobjExpense.getAt(5));
-				lobjCoverage = ((PolicyCoverage)lobjPolCov).GetCoverage();
+				if ( lobjExpense.getAt(3) != null )
+					lobjInsured = PolicyObject.GetInstance(Engine.getCurrentNameSpace(), (UUID)lobjExpense.getAt(3));
+				if ( lobjExpense.getAt(5) != null )
+				{
+					lobjPolCov = PolicyCoverage.GetInstance(Engine.getCurrentNameSpace(), (UUID)lobjExpense.getAt(5));
+					lobjCoverage = ((PolicyCoverage)lobjPolCov).GetCoverage();
+				}
 			}
 			else
 			{
 				lobjClient = Client.GetInstance(Engine.getCurrentNameSpace(), (UUID)lobjParent.getAt(2));
-				lobjInsured = SubPolicyObject.GetInstance(Engine.getCurrentNameSpace(), (UUID)lobjExpense.getAt(4));
-				lobjPolCov = SubPolicyCoverage.GetInstance(Engine.getCurrentNameSpace(), (UUID)lobjExpense.getAt(6));
-				lobjCoverage = ((SubPolicyCoverage)lobjPolCov).GetCoverage();
+				if ( lobjExpense.getAt(4) != null )
+					lobjInsured = SubPolicyObject.GetInstance(Engine.getCurrentNameSpace(), (UUID)lobjExpense.getAt(4));
+				if ( lobjExpense.getAt(6) != null )
+				{
+					lobjPolCov = SubPolicyCoverage.GetInstance(Engine.getCurrentNameSpace(), (UUID)lobjExpense.getAt(6));
+					lobjCoverage = ((SubPolicyCoverage)lobjPolCov).GetCoverage();
+				}
 			}
 		}
 		catch (Throwable e)
@@ -83,7 +94,7 @@ public class ExpenseServiceImpl
 		lobjResult.number = lobjExpense.getLabel();
 		lobjResult.processId = lobjProcess.getKey().toString();
 		lobjResult.clientId = ( lobjClient == null ? null : lobjClient.getKey().toString() );
-		lobjResult.clientNumber = ( lobjClient == null ? null : (String)lobjClient.getAt(1) );
+		lobjResult.clientNumber = ( lobjClient == null ? null : ((Integer)lobjClient.getAt(1)).toString() );
 		lobjResult.clientName = ( lobjClient == null ? null : lobjClient.getLabel() );
 		lobjResult.referenceId = ( lobjParent == null ? null : lobjParent.getKey().toString() );
 		lobjResult.referenceTypeId = ( lobjParent == null ? null : lobjParent.getDefinition().getDefObject().getKey().toString() );
@@ -99,7 +110,7 @@ public class ExpenseServiceImpl
 		lobjResult.lineName = lobjCoverage.GetSubLine().getLine().getLabel();
 		lobjResult.subLineName = lobjCoverage.GetSubLine().getLabel();
 		lobjResult.managerId = lobjProcess.GetManagerID().toString();
-		lobjResult.settlement = ((BigDecimal)lobjExpense.getAt(8)).toPlainString();
+		lobjResult.settlement = ( lobjExpense.getAt(8) == null ? null : ((BigDecimal)lobjExpense.getAt(8)).toPlainString() );
 		lobjResult.isManual = (Boolean)lobjExpense.getAt(9);
 		lobjResult.notes = (String)lobjExpense.getAt(10);
 
@@ -459,9 +470,15 @@ public class ExpenseServiceImpl
 		try
 		{
 			if ( Constants.ProcID_Policy.equals(lobjProcess.GetParent().GetScriptID()) )
-				lobjInsured = PolicyObject.GetInstance(Engine.getCurrentNameSpace(), (UUID)parrValues[3]);
+			{
+				if ( parrValues[3] != null )
+					lobjInsured = PolicyObject.GetInstance(Engine.getCurrentNameSpace(), (UUID)parrValues[3]);
+			}
 			else
-				lobjInsured = SubPolicyObject.GetInstance(Engine.getCurrentNameSpace(), (UUID)parrValues[4]);
+			{
+				if ( parrValues[4] != null )
+					lobjInsured = SubPolicyObject.GetInstance(Engine.getCurrentNameSpace(), (UUID)parrValues[4]);
+			}
 		}
 		catch (Throwable e)
 		{
@@ -472,13 +489,19 @@ public class ExpenseServiceImpl
 		{
 			if ( Constants.ProcID_Policy.equals(lobjProcess.GetParent().GetScriptID()) )
 			{
-				lobjPolCov = PolicyCoverage.GetInstance(Engine.getCurrentNameSpace(), (UUID)parrValues[5]);
-				lobjCoverage = ((PolicyCoverage)lobjPolCov).GetCoverage();
+				if ( parrValues[5] != null )
+				{
+					lobjPolCov = PolicyCoverage.GetInstance(Engine.getCurrentNameSpace(), (UUID)parrValues[5]);
+					lobjCoverage = ((PolicyCoverage)lobjPolCov).GetCoverage();
+				}
 			}
 			else
 			{
-				lobjPolCov = SubPolicyCoverage.GetInstance(Engine.getCurrentNameSpace(), (UUID)parrValues[6]);
-				lobjCoverage = ((SubPolicyCoverage)lobjPolCov).GetCoverage();
+				if ( parrValues[6] != null )
+				{
+					lobjPolCov = SubPolicyCoverage.GetInstance(Engine.getCurrentNameSpace(), (UUID)parrValues[6]);
+					lobjCoverage = ((SubPolicyCoverage)lobjPolCov).GetCoverage();
+				}
 			}
 		}
 		catch (Throwable e)
@@ -490,7 +513,7 @@ public class ExpenseServiceImpl
 		lobjResult.number = (String)parrValues[0];
 		lobjResult.processId = ((UUID)parrValues[1]).toString();
 		lobjResult.clientId = ( lobjClient == null ? null : lobjClient.getKey().toString() );
-		lobjResult.clientNumber = ( lobjClient == null ? null : (String)lobjClient.getAt(1) );
+		lobjResult.clientNumber = ( lobjClient == null ? null : ((Integer)lobjClient.getAt(1)).toString() );
 		lobjResult.clientName = ( lobjClient == null ? null : lobjClient.getLabel() );
 		lobjResult.referenceId = ( lobjParent == null ? null : lobjParent.getKey().toString() );
 		lobjResult.referenceTypeId = ( lobjParent == null ? null : lobjParent.getDefinition().getDefObject().getKey().toString() );
@@ -510,7 +533,7 @@ public class ExpenseServiceImpl
 		throws BigBangException
 	{
 		ExpenseSearchParameter lParam;
-//		String lstrAux;
+		String lstrAux;
 //		IEntity lrefPolicies;
 //		IEntity lrefClients;
 		boolean lbFound;
@@ -527,11 +550,13 @@ public class ExpenseServiceImpl
 			lParam = (ExpenseSearchParameter) parrParams[i];
 			if ( (lParam.freeText == null) || (lParam.freeText.trim().length() == 0) )
 				continue;
-//			lstrAux = lParam.freeText.trim().replace("'", "''").replace(" ", "%");
+			lstrAux = lParam.freeText.trim().replace("'", "''").replace(" ", "%");
 			if ( lbFound )
 				pstrBuffer.append(" + ");
 			lbFound = true;
-			pstrBuffer.append("0");
+			pstrBuffer.append("CASE WHEN [:Number] LIKE N'%").append(lstrAux).append("%' THEN ")
+					.append("-PATINDEX(N'%").append(lstrAux).append("%', [:Number]) ELSE ");
+			pstrBuffer.append("0 END");
 		}
 
 		return lbFound;
