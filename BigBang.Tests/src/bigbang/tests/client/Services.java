@@ -30,6 +30,8 @@ import bigBang.module.casualtyModule.interfaces.SubCasualtyService;
 import bigBang.module.casualtyModule.interfaces.SubCasualtyServiceAsync;
 import bigBang.module.clientModule.interfaces.ClientService;
 import bigBang.module.clientModule.interfaces.ClientServiceAsync;
+import bigBang.module.expenseModule.interfaces.ExpenseService;
+import bigBang.module.expenseModule.interfaces.ExpenseServiceAsync;
 import bigBang.module.generalSystemModule.interfaces.CoveragesService;
 import bigBang.module.generalSystemModule.interfaces.CoveragesServiceAsync;
 import bigBang.module.generalSystemModule.interfaces.UserService;
@@ -129,4 +131,6 @@ public class Services
 			GWT.create(CasualtyService.class);
 	public static final SubCasualtyServiceAsync subCasualtyService =
 			GWT.create(SubCasualtyService.class);
+	public static final ExpenseServiceAsync expenseService =
+			GWT.create(ExpenseService.class);
 }

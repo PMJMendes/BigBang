@@ -186,5 +186,10 @@ public class BigBang_Tests
 //		TestSubCasualtyCreate.DoTest();
 //		TestSubCasualtyEdit.DoTest();
 //		TestSubCasualtyDelete.DoTest();
+//
+//		TestExpenseGet.DoTest();
+//		TestExpenseCreate.DoTest();
+//		TestExpenseEdit.DoTest();
+//		TestExpenseDelete.DoTest();
 	}
 }
