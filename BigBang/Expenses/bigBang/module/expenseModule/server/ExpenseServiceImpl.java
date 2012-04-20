@@ -106,7 +106,7 @@ public class ExpenseServiceImpl
 		lobjResult.coverageName = ( lobjCoverage == null ? null : lobjCoverage.getLabel() );
 		lobjResult.value = ((BigDecimal)lobjExpense.getAt(7)).toPlainString();
 		lobjResult.isOpen =  lobjProcess.IsRunning();
-		lobjResult.categoryName = lobjCoverage.GetSubLine().getLine().getCategory().getLabel();
+		lobjResult.categoryName = lobjCoverage == null ? "" : lobjCoverage.GetSubLine().getLine().getCategory().getLabel();
 		lobjResult.lineName = lobjCoverage.GetSubLine().getLine().getLabel();
 		lobjResult.subLineName = lobjCoverage.GetSubLine().getLabel();
 		lobjResult.managerId = lobjProcess.GetManagerID().toString();
