@@ -2,9 +2,12 @@ package bigBang.module.expenseModule.server;
 
 import java.math.BigDecimal;
 import java.sql.Timestamp;
+import java.util.Calendar;
 import java.util.UUID;
 
 import Jewel.Engine.Engine;
+import Jewel.Engine.Implementation.Entity;
+import Jewel.Engine.Interfaces.IEntity;
 import Jewel.Engine.SysObjects.ObjectBase;
 import Jewel.Petri.Interfaces.IProcess;
 import Jewel.Petri.Objects.PNProcess;
@@ -18,6 +21,8 @@ import bigBang.library.server.SearchServiceBase;
 import bigBang.library.shared.BigBangException;
 import bigBang.library.shared.SessionExpiredException;
 import bigBang.module.expenseModule.interfaces.ExpenseService;
+import bigBang.module.expenseModule.shared.ExpenseSearchParameter;
+import bigBang.module.expenseModule.shared.ExpenseSortParameter;
 
 import com.premiumminds.BigBang.Jewel.Constants;
 import com.premiumminds.BigBang.Jewel.Data.ExpenseData;
@@ -219,13 +224,210 @@ public class ExpenseServiceImpl
 	protected boolean buildFilter(StringBuilder pstrBuffer, SearchParameter pParam)
 		throws BigBangException
 	{
-		return false;
+		ExpenseSearchParameter lParam;
+		String lstrAux;
+		IEntity lrefPolicies;
+		IEntity lrefObjects;
+		IEntity lrefCoverages;
+		IEntity lrefClients;
+        Calendar ldtAux;
+
+		if ( !(pParam instanceof ExpenseSearchParameter) )
+			return false;
+		lParam = (ExpenseSearchParameter)pParam;
+
+		if ( (lParam.freeText != null) && (lParam.freeText.trim().length() > 0) )
+		{
+			lstrAux = lParam.freeText.trim().replace("'", "''").replace(" ", "%");
+			pstrBuffer.append(" AND (");
+			pstrBuffer.append("([:Number] LIKE N'%").append(lstrAux).append("%')");
+			pstrBuffer.append(" OR ");
+			pstrBuffer.append("(CAST([:Damages] AS NVARCHAR(20)) LIKE N'%").append(lstrAux).append("%')");
+			pstrBuffer.append(" OR ");
+			pstrBuffer.append("(LEFT(CONVERT(NVARCHAR, [:Date], 120), 10) LIKE N'%").append(lstrAux).append("%')");
+			pstrBuffer.append(" OR ");
+			pstrBuffer.append("([:Process:Parent] IN (SELECT [:Process] FROM (");
+			try
+			{
+				lrefPolicies = Entity.GetInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), Constants.ObjID_Policy));
+				pstrBuffer.append(lrefPolicies.SQLForSelectMulti());
+			}
+			catch (Throwable e)
+			{
+				throw new BigBangException(e.getMessage(), e);
+			}
+			pstrBuffer.append(") [AuxPols] WHERE (");
+			pstrBuffer.append("([:Number] LIKE N'%").append(lstrAux).append("%')");
+			pstrBuffer.append(" OR ");
+			pstrBuffer.append("([PK] IN (SELECT [:Policy] FROM(");
+			try
+			{
+				lrefObjects = Entity.GetInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), Constants.ObjID_PolicyObject));
+				pstrBuffer.append(lrefObjects.SQLForSelectSingle());
+			}
+			catch (Throwable e)
+			{
+				throw new BigBangException(e.getMessage(), e);
+			}
+			pstrBuffer.append(") [AuxObjs] WHERE (");
+			pstrBuffer.append("([:Name] LIKE N'%").append(lstrAux).append("%')");
+			pstrBuffer.append(")))");
+			pstrBuffer.append(" OR ");
+			pstrBuffer.append("([PK] IN (SELECT [:Policy] FROM(");
+			try
+			{
+				lrefCoverages = Entity.GetInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), Constants.ObjID_PolicyCoverage));
+				pstrBuffer.append(lrefCoverages.SQLForSelectMulti());
+			}
+			catch (Throwable e)
+			{
+				throw new BigBangException(e.getMessage(), e);
+			}
+			pstrBuffer.append(") [AuxCovs] WHERE (");
+			pstrBuffer.append("([:Coverage:Name] LIKE N'%").append(lstrAux).append("%')");
+			pstrBuffer.append(")))");
+			pstrBuffer.append(" OR ");
+			pstrBuffer.append("([:Process:Parent] IN (SELECT [:Process] FROM (");
+			try
+			{
+				lrefClients = Entity.GetInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), Constants.ObjID_Client));
+				pstrBuffer.append(lrefClients.SQLForSelectSingle());
+			}
+			catch (Throwable e)
+			{
+				throw new BigBangException(e.getMessage(), e);
+			}
+			pstrBuffer.append(") [AuxClients] WHERE (");
+			pstrBuffer.append("([:Name] LIKE N'%").append(lstrAux).append("%')");
+			pstrBuffer.append(" OR ");
+			pstrBuffer.append("(CAST([:Number] AS NVARCHAR(20)) LIKE N'%").append(lstrAux).append("%')");
+			pstrBuffer.append("))))))");
+			pstrBuffer.append(" OR ");
+			pstrBuffer.append("([:Process:Parent] IN (SELECT [:Process] FROM (");
+			try
+			{
+				lrefPolicies = Entity.GetInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), Constants.ObjID_SubPolicy));
+				pstrBuffer.append(lrefPolicies.SQLForSelectMulti());
+			}
+			catch (Throwable e)
+			{
+				throw new BigBangException(e.getMessage(), e);
+			}
+			pstrBuffer.append(") [AuxSPols] WHERE (");
+			pstrBuffer.append("([:Number] LIKE N'%").append(lstrAux).append("%')");
+			pstrBuffer.append(" OR ");
+			pstrBuffer.append("([:Subscriber:Name] LIKE N'%").append(lstrAux).append("%')");
+			pstrBuffer.append(" OR ");
+			pstrBuffer.append("(CAST([:Subscriber:Number] AS NVARCHAR(20)) LIKE N'%").append(lstrAux).append("%')");
+			pstrBuffer.append(" OR ");
+			pstrBuffer.append("([PK] IN (SELECT [:Policy] FROM(");
+			try
+			{
+				lrefObjects = Entity.GetInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), Constants.ObjID_SubPolicyObject));
+				pstrBuffer.append(lrefObjects.SQLForSelectSingle());
+			}
+			catch (Throwable e)
+			{
+				throw new BigBangException(e.getMessage(), e);
+			}
+			pstrBuffer.append(") [AuxSObjs] WHERE (");
+			pstrBuffer.append("([:Name] LIKE N'%").append(lstrAux).append("%')");
+			pstrBuffer.append(")))");
+			pstrBuffer.append(" OR ");
+			pstrBuffer.append("([PK] IN (SELECT [:Policy] FROM(");
+			try
+			{
+				lrefCoverages = Entity.GetInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), Constants.ObjID_SubPolicyCoverage));
+				pstrBuffer.append(lrefCoverages.SQLForSelectMulti());
+			}
+			catch (Throwable e)
+			{
+				throw new BigBangException(e.getMessage(), e);
+			}
+			pstrBuffer.append(") [AuxSCovs] WHERE (");
+			pstrBuffer.append("([:Coverage:Name] LIKE N'%").append(lstrAux).append("%')");
+			pstrBuffer.append(")))");
+			pstrBuffer.append(" OR ");
+			pstrBuffer.append("([:Process:Parent] IN (SELECT [:Process] FROM (");
+			try
+			{
+				lrefPolicies = Entity.GetInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), Constants.ObjID_Policy));
+				pstrBuffer.append(lrefPolicies.SQLForSelectMulti());
+			}
+			catch (Throwable e)
+			{
+				throw new BigBangException(e.getMessage(), e);
+			}
+			pstrBuffer.append(") [AuxSMPols] WHERE (");
+			pstrBuffer.append("([:Number] LIKE N'%").append(lstrAux).append("%')");
+			pstrBuffer.append(")))))))");
+		}
+
+		if ( lParam.ownerId != null )
+		{
+			pstrBuffer.append(" AND (([:Process:Parent] IN (SELECT [:Process] FROM (");
+			try
+			{
+				lrefPolicies = Entity.GetInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), Constants.ObjID_Policy));
+				pstrBuffer.append(lrefPolicies.SQLForSelectMulti());
+			}
+			catch (Throwable e)
+			{
+        		throw new BigBangException(e.getMessage(), e);
+			}
+			pstrBuffer.append(") [AuxOwner] WHERE [:Process:Data] = '").append(lParam.ownerId).append("'))");
+			pstrBuffer.append(" OR ([:Process:Parent] IN (SELECT [:Process] FROM (");
+			try
+			{
+				lrefPolicies = Entity.GetInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), Constants.ObjID_SubPolicy));
+				pstrBuffer.append(lrefPolicies.SQLForSelectMulti());
+			}
+			catch (Throwable e)
+			{
+        		throw new BigBangException(e.getMessage(), e);
+			}
+			pstrBuffer.append(") [AuxOwner] WHERE [:Process:Data] = '").append(lParam.ownerId).append("')))");
+		}
+
+		if ( lParam.dateFrom != null )
+		{
+			pstrBuffer.append(" AND [:Date] >= '").append(lParam.dateFrom).append("'");
+		}
+
+		if ( lParam.dateTo != null )
+		{
+			pstrBuffer.append(" AND [:Date] < '");
+        	ldtAux = Calendar.getInstance();
+        	ldtAux.setTimeInMillis(Timestamp.valueOf(lParam.dateTo + " 00:00:00.0").getTime());
+        	ldtAux.add(Calendar.DAY_OF_MONTH, 1);
+			pstrBuffer.append((new Timestamp(ldtAux.getTimeInMillis())).toString().substring(0, 10)).append("'");
+		}
+
+		return true;
 	}
 
 	protected boolean buildSort(StringBuilder pstrBuffer, SortParameter pParam, SearchParameter[] parrParams)
 		throws BigBangException
 	{
-		return false;
+		ExpenseSortParameter lParam;
+
+		if ( !(pParam instanceof ExpenseSortParameter) )
+			return false;
+		lParam = (ExpenseSortParameter)pParam;
+
+		if ( lParam.field == ExpenseSortParameter.SortableField.RELEVANCE )
+		{
+			if ( !buildRelevanceSort(pstrBuffer, parrParams) )
+				return false;
+		}
+
+		if ( lParam.field == ExpenseSortParameter.SortableField.NUMBER )
+			pstrBuffer.append("[:Number]");
+
+		if ( lParam.field == ExpenseSortParameter.SortableField.DATE )
+			pstrBuffer.append("[:Date]");
+
+		return true;
 	}
 
 	protected SearchResult buildResult(UUID pid, Object[] parrValues)
@@ -302,5 +504,36 @@ public class ExpenseServiceImpl
 		lobjResult.isOpen =  lobjProcess.IsRunning();
 
 		return lobjResult;
+	}
+
+	private boolean buildRelevanceSort(StringBuilder pstrBuffer, SearchParameter[] parrParams)
+		throws BigBangException
+	{
+		ExpenseSearchParameter lParam;
+//		String lstrAux;
+//		IEntity lrefPolicies;
+//		IEntity lrefClients;
+		boolean lbFound;
+		int i;
+
+		if ( (parrParams == null) || (parrParams.length == 0) )
+			return false;
+
+		lbFound = false;
+		for ( i = 0; i < parrParams.length; i++ )
+		{
+			if ( !(parrParams[i] instanceof ExpenseSearchParameter) )
+				continue;
+			lParam = (ExpenseSearchParameter) parrParams[i];
+			if ( (lParam.freeText == null) || (lParam.freeText.trim().length() == 0) )
+				continue;
+//			lstrAux = lParam.freeText.trim().replace("'", "''").replace(" ", "%");
+			if ( lbFound )
+				pstrBuffer.append(" + ");
+			lbFound = true;
+			pstrBuffer.append("0");
+		}
+
+		return lbFound;
 	}
 }
