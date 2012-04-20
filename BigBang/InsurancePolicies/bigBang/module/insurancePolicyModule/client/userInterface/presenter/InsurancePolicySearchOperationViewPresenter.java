@@ -319,7 +319,6 @@ ViewPresenter {
 				case VOID_POLICY:
 					onVoidPolicy();
 					break;
-
 				case TRANSFER_TO_CLIENT:{
 					transferToClient();
 					break;
