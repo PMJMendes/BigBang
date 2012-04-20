@@ -320,7 +320,7 @@ public class ExpenseServiceImpl
 			pstrBuffer.append(" OR ");
 			pstrBuffer.append("(CAST([:Subscriber:Number] AS NVARCHAR(20)) LIKE N'%").append(lstrAux).append("%')");
 			pstrBuffer.append(" OR ");
-			pstrBuffer.append("([PK] IN (SELECT [:Policy] FROM(");
+			pstrBuffer.append("([PK] IN (SELECT [:Sub Policy] FROM(");
 			try
 			{
 				lrefObjects = Entity.GetInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), Constants.ObjID_SubPolicyObject));
@@ -334,7 +334,7 @@ public class ExpenseServiceImpl
 			pstrBuffer.append("([:Name] LIKE N'%").append(lstrAux).append("%')");
 			pstrBuffer.append(")))");
 			pstrBuffer.append(" OR ");
-			pstrBuffer.append("([PK] IN (SELECT [:Policy] FROM(");
+			pstrBuffer.append("([PK] IN (SELECT [:Sub Policy] FROM(");
 			try
 			{
 				lrefCoverages = Entity.GetInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), Constants.ObjID_SubPolicyCoverage));
