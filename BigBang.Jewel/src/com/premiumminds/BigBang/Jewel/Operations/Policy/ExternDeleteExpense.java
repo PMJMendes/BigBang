@@ -94,6 +94,7 @@ public class ExternDeleteExpense
 					Constants.ObjID_Expense));
 
 			lobjAux = Expense.GetInstance(Engine.getCurrentNameSpace(), midExpense);
+			mobjData = new ExpenseData();
 			mobjData.FromObject(lobjAux);
 			mobjData.mobjPrevValues = null;
 

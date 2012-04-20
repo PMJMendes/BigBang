@@ -42,6 +42,7 @@ public class ExpenseData
 		mid = pobjSource.getKey();
 
 		mstrNumber           =     (String) pobjSource.getAt(Expense.I.NUMBER);
+		midProcess           =       (UUID) pobjSource.getAt(Expense.I.PROCESS);
 		mdtDate              =  (Timestamp) pobjSource.getAt(Expense.I.DATE);
 		midPolicyObject      =       (UUID) pobjSource.getAt(Expense.I.POLICYOBJECT);
 		midSubPolicyObject   =       (UUID) pobjSource.getAt(Expense.I.SUBPOLICYOBJECT);
@@ -59,6 +60,7 @@ public class ExpenseData
 		try
 		{
 			pobjDest.setAt(Expense.I.NUMBER,             mstrNumber);
+			pobjDest.setAt(Expense.I.PROCESS,            midProcess);
 			pobjDest.setAt(Expense.I.DATE,               mdtDate);
 			pobjDest.setAt(Expense.I.POLICYOBJECT,       midPolicyObject);
 			pobjDest.setAt(Expense.I.SUBPOLICYOBJECT,    midSubPolicyObject);
