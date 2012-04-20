@@ -145,9 +145,7 @@ public class ExpenseSearchPanel extends SearchPanel<ExpenseStub> {
 		Map<Enum<?>, String> sortOptions = new TreeMap<Enum<?>, String>(); 
 		sortOptions.put(ExpenseSortParameter.SortableField.RELEVANCE, "Relevância");
 		sortOptions.put(ExpenseSortParameter.SortableField.NUMBER, "Número");
-		sortOptions.put(ExpenseSortParameter.SortableField.COVERAGE, "Cobertura");
-		sortOptions.put(ExpenseSortParameter.SortableField.EMISSION_DATE, "Data de Emissão");
-		sortOptions.put(ExpenseSortParameter.SortableField.VALUE, "Valor");
+		sortOptions.put(ExpenseSortParameter.SortableField.DATE, "Data da Despesa");
 		
 		filtersPanel = new FiltersPanel(sortOptions);
 		//filtersPanel.addTypifiedListField(Filters.CLIENT, BigBangConstants.EntityIds.CLIENT, "Cliente");
