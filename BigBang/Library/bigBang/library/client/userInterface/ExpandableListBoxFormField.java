@@ -39,7 +39,7 @@ TypifiedListClient {
 	protected String selectedValueId;
 	protected int typifiedListDataVersion;
 	protected TypifiedListBroker typifiedListBroker;
-	protected boolean locked = false;
+	protected boolean editable = false;
 	protected ResponseHandler<Void> expectingResponseHandler = null;
 
 	protected boolean hasServices;
@@ -260,18 +260,18 @@ TypifiedListClient {
 
 	@Override
 	public void setReadOnly(boolean readonly) {
-		if(!locked){
+		if(editable){
 			super.setReadOnly(readonly);
 			managementPanel.setReadOnly(readonly);
 			managementPanel.getList().setSelectableEntries(!readonly);
 		}
 	}
 
-	public void setEditable(boolean locked){
-		if(!locked){
+	public void setEditable(boolean editable){
+		if(!editable){
 			setReadOnly(true);
 		}
-		this.locked = locked;
+		this.editable = editable;
 	}
 
 	@Override
