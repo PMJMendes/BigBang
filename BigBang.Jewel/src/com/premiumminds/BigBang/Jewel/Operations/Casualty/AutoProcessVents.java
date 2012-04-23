@@ -47,6 +47,6 @@ public class AutoProcessVents
 		}
 
 		if ( b )
-			TriggerOp(new TriggerDisallowDelete(this.GetProcess().getKey()), pdb);
+			TriggerOp(new TriggerDisallowClose(this.GetProcess().getKey()), pdb);
 	}
 }
