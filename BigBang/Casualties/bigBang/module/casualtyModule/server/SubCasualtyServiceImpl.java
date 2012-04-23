@@ -32,6 +32,7 @@ import com.premiumminds.BigBang.Jewel.Objects.SubCasualtyItem;
 import com.premiumminds.BigBang.Jewel.Objects.SubPolicy;
 import com.premiumminds.BigBang.Jewel.Operations.SubCasualty.DeleteSubCasualty;
 import com.premiumminds.BigBang.Jewel.Operations.SubCasualty.ManageData;
+import com.premiumminds.BigBang.Jewel.Operations.SubCasualty.MarkForClosing;
 
 public class SubCasualtyServiceImpl
 	extends SearchServiceBase
@@ -214,6 +215,40 @@ public class SubCasualtyServiceImpl
 		}
 
 		return sGetSubCasualty(lopMD.mobjData.mid);
+	}
+
+	public SubCasualty markForClosing(String subCasualtyId, String revisorId)
+		throws SessionExpiredException, BigBangException
+	{
+		com.premiumminds.BigBang.Jewel.Objects.SubCasualty lobjSubCasualty;
+		MarkForClosing lopMFC;
+
+		if ( Engine.getCurrentUser() == null )
+			throw new SessionExpiredException();
+
+		try
+		{
+			lobjSubCasualty = com.premiumminds.BigBang.Jewel.Objects.SubCasualty.GetInstance(Engine.getCurrentNameSpace(),
+					UUID.fromString(subCasualtyId));
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangException(e.getMessage(), e);
+		}
+
+		lopMFC = new MarkForClosing(lobjSubCasualty.GetProcessID());
+		lopMFC.midRevisor = UUID.fromString(revisorId);
+
+		try
+		{
+			lopMFC.Execute();
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangException(e.getMessage(), e);
+		}
+
+		return sGetSubCasualty(lobjSubCasualty.getKey());
 	}
 
 	@Override

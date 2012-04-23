@@ -10,6 +10,7 @@ public interface SubCasualtyServiceAsync
 {
 	void getSubCasualty(String subCasualtyId, AsyncCallback<SubCasualty> callback);
 	void editSubCasualty(SubCasualty subCasualty, AsyncCallback<SubCasualty> callback);
+	void markForClosing(String subCasualtyId, String revisorId, AsyncCallback<SubCasualty> callback);
 	void closeProcess(String subCasualtyId, AsyncCallback<SubCasualty> callback);
 	void deleteSubCasualty(String subCasualtyId, String reason, AsyncCallback<Void> callback);
 }
