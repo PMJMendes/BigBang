@@ -4,7 +4,7 @@ import bigBang.definitions.shared.SubCasualty;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
-public class TestSubCasualtyMarkForClosing
+public class TestSubCasualtyCloseProcess
 {
 	public static void DoTest()
 	{
@@ -26,6 +26,6 @@ public class TestSubCasualtyMarkForClosing
 			}
 		};
 
-		Services.subCasualtyService.markForClosing("159CF71C-E602-4E06-A723-A03800B44526", "091B8442-B7B0-40FA-B517-9EB00068A390", callback );
+		Services.subCasualtyService.closeProcess("159CF71C-E602-4E06-A723-A03800B44526", callback );
 	}
 }
