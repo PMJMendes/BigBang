@@ -250,7 +250,7 @@ public class InsurancePolicyModule implements Module {
 
 			@Override
 			public ViewPresenter getInstance() {
-				NegotiationExternalRequestView<?> view = (NegotiationExternalRequestView<?>) GWT.create(NegotiationExternalRequestView.class); 
+				NegotiationExternalRequestView view = (NegotiationExternalRequestView) GWT.create(NegotiationExternalRequestView.class); 
 				NegotiationExternalRequestViewPresenter presenter = new NegotiationExternalRequestViewPresenter(view);
 				return presenter;
 			}

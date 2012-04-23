@@ -7,7 +7,10 @@ import bigBang.library.client.ViewPresenterFactory;
 import bigBang.library.client.ViewPresenterInstantiator;
 import bigBang.library.client.userInterface.presenter.ViewPresenter;
 import bigBang.module.expenseModule.client.dataAccess.ExpenseBrokerImpl;
+import bigBang.module.expenseModule.client.userInterface.ExpenseInfoOrDocumentRequestView;
 import bigBang.module.expenseModule.client.userInterface.presenter.ExpenseDeleteViewPresenter;
+import bigBang.module.expenseModule.client.userInterface.presenter.ExpenseExternalRequestViewPresenter;
+import bigBang.module.expenseModule.client.userInterface.presenter.ExpenseInfoOrDocumentRequestViewPresenter;
 import bigBang.module.expenseModule.client.userInterface.presenter.ExpenseOperationsViewPresenter;
 import bigBang.module.expenseModule.client.userInterface.presenter.ExpenseSearchOperationViewPresenter;
 import bigBang.module.expenseModule.client.userInterface.presenter.ExpenseSectionViewPresenter;
@@ -15,6 +18,7 @@ import bigBang.module.expenseModule.client.userInterface.presenter.MassNotifyRes
 import bigBang.module.expenseModule.client.userInterface.presenter.MassParticipateToInsurerViewPresenter;
 import bigBang.module.expenseModule.client.userInterface.presenter.ReceiveAcceptanceViewPresenter;
 import bigBang.module.expenseModule.client.userInterface.view.ExpenseDeleteView;
+import bigBang.module.expenseModule.client.userInterface.view.ExpenseExternalRequestView;
 import bigBang.module.expenseModule.client.userInterface.view.ExpenseOperationsView;
 import bigBang.module.expenseModule.client.userInterface.view.ExpenseSearchOperationView;
 import bigBang.module.expenseModule.client.userInterface.view.ExpenseSectionView;
@@ -98,6 +102,24 @@ public class ExpenseModule implements Module {
 			public ViewPresenter getInstance() {
 				ExpenseDeleteView view = (ExpenseDeleteView) GWT.create(ExpenseDeleteView.class);
 				ExpenseDeleteViewPresenter presenter = new ExpenseDeleteViewPresenter(view);
+				return presenter;
+			}
+		});
+		ViewPresenterFactory.getInstance().registerViewPresenterInstantiator("EXPENSE_INFO_OR_DOCUMENT_REQUEST", new ViewPresenterInstantiator() {
+
+			@Override
+			public ViewPresenter getInstance() {
+				ExpenseInfoOrDocumentRequestView view = (ExpenseInfoOrDocumentRequestView) GWT.create(ExpenseInfoOrDocumentRequestView.class);
+				ExpenseInfoOrDocumentRequestViewPresenter presenter = new ExpenseInfoOrDocumentRequestViewPresenter(view);
+				return presenter;
+			}
+		});
+		ViewPresenterFactory.getInstance().registerViewPresenterInstantiator("EXPENSE_EXTERNAL_REQUEST", new ViewPresenterInstantiator() {
+
+			@Override
+			public ViewPresenter getInstance() {
+				ExpenseExternalRequestView view = (ExpenseExternalRequestView) GWT.create(ExpenseExternalRequestView.class);
+				ExpenseExternalRequestViewPresenter presenter = new ExpenseExternalRequestViewPresenter(view);
 				return presenter;
 			}
 		});

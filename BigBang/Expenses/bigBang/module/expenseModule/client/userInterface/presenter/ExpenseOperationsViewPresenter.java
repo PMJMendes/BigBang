@@ -52,6 +52,10 @@ public class ExpenseOperationsViewPresenter implements ViewPresenter {
 					present("EXPENSE_SEARCH", parameters);
 				}else if(display.equalsIgnoreCase("history")){
 					present("HISTORY", parameters);
+				}else if(display.equalsIgnoreCase("inforequest")){
+					present("EXPENSE_INFO_OR_DOCUMENT_REQUEST", parameters);
+				}else if(display.equalsIgnoreCase("externalrequest")){
+					present("EXPENSE_EXTERNAL_REQUEST", parameters);
 				}else{
 					goToDefault();
 				}

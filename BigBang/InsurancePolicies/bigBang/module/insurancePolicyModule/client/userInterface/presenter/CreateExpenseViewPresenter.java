@@ -39,6 +39,7 @@ public class CreateExpenseViewPresenter implements ViewPresenter{
 		HasValue<InsurancePolicy> getInsuranceForm();
 		void registerActionHandler(ActionInvokedEventHandler<Action> handler);
 		void setToolBarSaveMode(boolean b);
+		void setFormCreateMode();
 	}
 	
 	private InsurancePolicyBroker broker;
@@ -157,6 +158,7 @@ public class CreateExpenseViewPresenter implements ViewPresenter{
 		expense.subLineName = response.subLineName;
 		expense.categoryName = response.categoryName;
 		view.getForm().setValue(expense);
+		view.setFormCreateMode();
 	}
 
 	protected void onErrorPolicy() {

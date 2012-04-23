@@ -15,11 +15,11 @@ import bigBang.library.client.dataAccess.DataBrokerManager;
 import bigBang.library.client.event.NewNotificationEvent;
 import bigBang.library.client.userInterface.presenter.ExternalRequestViewPresenter;
 
-public class NegotiationExternalRequestViewPresenter extends ExternalRequestViewPresenter{
+public class NegotiationExternalRequestViewPresenter extends ExternalRequestViewPresenter<Negotiation>{
 
 	private NegotiationBroker negotiationBroker;
 
-	public NegotiationExternalRequestViewPresenter(Display view) {
+	public NegotiationExternalRequestViewPresenter(Display<Negotiation> view) {
 		super(view);
 		negotiationBroker = (NegotiationBroker) DataBrokerManager.staticGetBroker(BigBangConstants.EntityIds.NEGOTIATION);
 	}

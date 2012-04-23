@@ -39,6 +39,7 @@ public class CreateExpenseSubPolicyViewPresenter  implements ViewPresenter{
 		HasValue <SubPolicy> getInsuranceForm();
 		void registerActionHandler(ActionInvokedEventHandler<Action> handler);
 		void setToolBarSaveMode(boolean b);
+		void setFormCreateMode();
 	}
 	
 	private InsuranceSubPolicyBroker broker;
@@ -157,6 +158,7 @@ public class CreateExpenseSubPolicyViewPresenter  implements ViewPresenter{
 		expense.subLineName = response.inheritSubLineName;
 		expense.categoryName = response.inheritCategoryName;
 		view.getForm().setValue(expense);
+		view.setFormCreateMode();
 	}
 
 	protected void onErrorPolicy() {

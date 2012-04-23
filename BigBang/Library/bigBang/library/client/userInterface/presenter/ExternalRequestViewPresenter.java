@@ -31,7 +31,7 @@ import com.google.gwt.user.client.ui.HasWidgets;
 import com.google.gwt.user.client.ui.UIObject;
 import com.google.gwt.user.client.ui.Widget;
 
-public abstract class ExternalRequestViewPresenter implements ViewPresenter{
+public abstract class ExternalRequestViewPresenter<T extends ProcessBase> implements ViewPresenter{
 
 	protected String ownerId;
 	protected String ownerTypeId;
@@ -46,7 +46,7 @@ public abstract class ExternalRequestViewPresenter implements ViewPresenter{
 		CONFIRM
 	}
 
-	public static interface Display{
+	public static interface Display<T extends ProcessBase>{
 		Widget asWidget();
 		HasValue<ProcessBase> getOwnerForm();
 		HasEditableValue<ExternalInfoRequest> getForm();
@@ -89,20 +89,21 @@ public abstract class ExternalRequestViewPresenter implements ViewPresenter{
 	}
 
 
-	protected Display view;
+	protected Display<T> view;
 	protected boolean bound = false;
 
 
-	public ExternalRequestViewPresenter(Display view){
+	public ExternalRequestViewPresenter(Display<T> view){
 		setView((UIObject)view);
 		service = ExternRequestService.Util.getInstance();
 		broker = (NegotiationBroker) DataBrokerManager.staticGetBroker(BigBangConstants.EntityIds.NEGOTIATION);
 		exchangeService = ExchangeService.Util.getInstance();
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public void setView(UIObject view){
-		this.view = (Display)view;
+		this.view = (Display<T>)view;
 	}
 	@Override
 	public void go(HasWidgets container){

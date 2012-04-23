@@ -20,7 +20,6 @@ public class ReceiveAcceptanceViewPresenter implements ViewPresenter{
 	public static enum Action{
 		CANCEL,
 		ACCEPT,
-		REFUSE
 	}
 
 	protected Display view;
@@ -65,19 +64,11 @@ public class ReceiveAcceptanceViewPresenter implements ViewPresenter{
 				case CANCEL:
 					onCancel();
 					break;
-				case REFUSE:
-					onRefuse();
-					break;
 				}
 			}
 		});
 		
 		bound = true;
-	}
-
-	protected void onRefuse() {
-		// TODO Auto-generated method stub
-		
 	}
 
 	protected void onCancel() {

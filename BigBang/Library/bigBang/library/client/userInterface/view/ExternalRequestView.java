@@ -16,7 +16,7 @@ import com.google.gwt.user.client.ui.HasValue;
 import com.google.gwt.user.client.ui.SplitLayoutPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
-public abstract class ExternalRequestView<T> extends View implements ExternalRequestViewPresenter.Display{
+public abstract class ExternalRequestView<T extends ProcessBase> extends View implements ExternalRequestViewPresenter.Display<T>{
 
 	private FormView<T> ownerForm;
 	private ExternalInfoRequestForm form;

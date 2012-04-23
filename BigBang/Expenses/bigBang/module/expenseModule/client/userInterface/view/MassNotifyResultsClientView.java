@@ -1,9 +1,13 @@
 package bigBang.module.expenseModule.client.userInterface.view;
 
 import java.util.Collection;
+import java.util.Date;
+import java.util.Map;
+import java.util.TreeMap;
 
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.HasVerticalAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
@@ -18,6 +22,8 @@ import bigBang.definitions.client.response.ResponseHandler;
 import bigBang.definitions.shared.BigBangConstants;
 import bigBang.definitions.shared.Expense;
 import bigBang.definitions.shared.ExpenseStub;
+import bigBang.definitions.shared.SearchParameter;
+import bigBang.definitions.shared.SortParameter;
 import bigBang.library.client.HasCheckables;
 import bigBang.library.client.HasEditableValue;
 import bigBang.library.client.HasValueSelectables;
@@ -37,12 +43,17 @@ import bigBang.module.expenseModule.client.dataAccess.ExpenseSearchDataBroker;
 import bigBang.module.expenseModule.client.userInterface.ExpenseSearchPanel;
 import bigBang.module.expenseModule.client.userInterface.presenter.MassNotifyResultsClientViewPresenter;
 import bigBang.module.expenseModule.client.userInterface.presenter.MassNotifyResultsClientViewPresenter.Action;
+import bigBang.module.expenseModule.shared.ExpenseSearchParameter;
+import bigBang.module.expenseModule.shared.ExpenseSortParameter;
+import bigBang.module.expenseModule.shared.ExpenseSortParameter.SortableField;
 
 public class MassNotifyResultsClientView extends View implements MassNotifyResultsClientViewPresenter.Display{
 
 	protected static enum Filters{
-		//TODO
+		EXPENSE_DATE_FROM,
+		EXPENSE_DATE_TO
 	}
+	
 	
 	protected static class SelectedExpensesList extends SelectedProcessesList<ExpenseStub>{
 
@@ -55,15 +66,38 @@ public class MassNotifyResultsClientView extends View implements MassNotifyResul
 		}
 
 	}
+	
+	
 
 	protected static class CheckableExpensesSearchPanel extends CheckableSearchPanel<ExpenseStub>{
 
-		public FiltersPanel filtersPanel;
+		protected FiltersPanel filtersPanel;
 
 		public CheckableExpensesSearchPanel(){
 			super((ExpenseSearchDataBroker) ((ExpenseDataBroker)DataBrokerManager.staticGetBroker(BigBangConstants.EntityIds.EXPENSE)).getSearchBroker());
-			//TODO
+			Map<Enum<?>, String> sortOptions = new TreeMap<Enum<?>, String>(); 
+			sortOptions.put(ExpenseSortParameter.SortableField.RELEVANCE, "Relevância");
+			sortOptions.put(ExpenseSortParameter.SortableField.NUMBER, "Número");
+			sortOptions.put(ExpenseSortParameter.SortableField.DATE, "Data da Despesa");
 
+			filtersPanel = new FiltersPanel(sortOptions);
+			filtersPanel.addDateField(Filters.EXPENSE_DATE_FROM, "De");
+			filtersPanel.addDateField(Filters.EXPENSE_DATE_TO, "Até");
+
+
+			filtersPanel.getApplyButton().addClickHandler(new ClickHandler() {
+
+				@Override
+				public void onClick(ClickEvent event) {
+					doSearch();
+				}
+			});
+
+			this.setOperationId(BigBangConstants.OperationIds.ExpenseProcess.NOTIFY_CLIENT);
+			filtersContainer.clear();
+			filtersContainer.add(filtersPanel);
+
+			doSearch();
 		}
 
 		@Override
@@ -75,8 +109,28 @@ public class MassNotifyResultsClientView extends View implements MassNotifyResul
 
 		@Override
 		public void doSearch() {
-			//TODO
+			if(this.workspaceId != null){
+				this.broker.disposeSearch(this.workspaceId);
+				this.workspaceId = null;
+			}
 
+			SearchParameter[] parameters = new SearchParameter[1];
+			ExpenseSearchParameter p = new ExpenseSearchParameter();
+
+			p.freeText = this.getFreeText();
+
+			Date dateFrom = (Date) filtersPanel.getFilterValue(Filters.EXPENSE_DATE_FROM);
+			p.dateFrom = dateFrom == null ? null : DateTimeFormat.getFormat("yyyy-MM-dd").format(dateFrom);
+			Date dateTo = (Date) filtersPanel.getFilterValue(Filters.EXPENSE_DATE_TO);
+			p.dateTo = dateTo == null ? null : DateTimeFormat.getFormat("yyyy-MM-dd").format(dateTo);
+		
+			parameters[0] = p;
+			
+			SortParameter[] sorts = new SortParameter[]{
+					new ExpenseSortParameter((SortableField) filtersPanel.getSelectedSortableField(), filtersPanel.getSortingOrder())
+			};
+			
+			doSearch(parameters, sorts);
 		}
 
 	}

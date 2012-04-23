@@ -116,7 +116,7 @@ public class ExpenseSearchOperationView extends View implements ExpenseSearchOpe
 			@Override
 			protected void onReceiveRejection() {
 				actionHandler.onActionInvoked(new ActionInvokedEvent<ExpenseSearchOperationViewPresenter.Action>(Action.RECEIVE_REJECTION));				
-				
+
 			}
 		};
 
@@ -266,12 +266,17 @@ public class ExpenseSearchOperationView extends View implements ExpenseSearchOpe
 	@Override
 	public void allowReceiveAcceptance(boolean allow) {
 		operationsToolbar.allowReceiveAcceptance(allow);
-		
+
 	}
 
 	@Override
 	public void allowReceiveRejection(boolean hasPermission) {
 		operationsToolbar.allowReceiveRejection(hasPermission);
-		
+
+	}
+
+	@Override
+	public void setEditMode() {
+		form.setUpdateMode();
 	}
 }

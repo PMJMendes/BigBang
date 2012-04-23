@@ -1,23 +1,20 @@
 package bigBang.module.expenseModule.client.userInterface.view;
 
-import com.google.gwt.event.logical.shared.ValueChangeEvent;
-import com.google.gwt.event.logical.shared.ValueChangeHandler;
-import com.google.gwt.user.client.ui.VerticalPanel;
-
 import bigBang.library.client.event.ActionInvokedEvent;
 import bigBang.library.client.event.ActionInvokedEventHandler;
-import bigBang.library.client.userInterface.RadioButtonFormField;
 import bigBang.library.client.userInterface.view.View;
+import bigBang.module.expenseModule.client.userInterface.ReceiveAcceptanceForm;
 import bigBang.module.expenseModule.client.userInterface.ReceiveResponseToolbar;
 import bigBang.module.expenseModule.client.userInterface.presenter.ReceiveAcceptanceViewPresenter;
 import bigBang.module.expenseModule.client.userInterface.presenter.ReceiveAcceptanceViewPresenter.Action;
+
+import com.google.gwt.user.client.ui.VerticalPanel;
 
 public class ReceiveAcceptanceView extends View implements ReceiveAcceptanceViewPresenter.Display{
 
 	private ReceiveResponseToolbar toolbar;
 	private ActionInvokedEventHandler<Action> actionHandler;
-	//FORMS
-	private RadioButtonFormField choice;
+	private ReceiveAcceptanceForm form;
 	
 	public ReceiveAcceptanceView(){
 		VerticalPanel wrapper = new VerticalPanel();
@@ -35,24 +32,8 @@ public class ReceiveAcceptanceView extends View implements ReceiveAcceptanceView
 				actionHandler.onActionInvoked(new ActionInvokedEvent<ReceiveAcceptanceViewPresenter.Action>(Action.CANCEL));				
 			}
 		};
-		
-		choice = new RadioButtonFormField();
-		choice.addOption("ACCEPT", "Aceite");
-		choice.addOption("REFUSED", "Não aceite");
+
 		wrapper.add(toolbar);
-		wrapper.add(choice);
-		
-		choice.addValueChangeHandler(new ValueChangeHandler<String>() {
-			
-			@Override
-			public void onValueChange(ValueChangeEvent<String> event) {
-				if(event.getValue().equalsIgnoreCase("ACCEPT")){
-					//TODO
-				}else{
-					//TODO
-				}
-			}
-		});
 	}
 	
 	

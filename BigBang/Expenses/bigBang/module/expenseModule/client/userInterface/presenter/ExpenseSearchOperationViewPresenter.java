@@ -66,6 +66,7 @@ public class ExpenseSearchOperationViewPresenter implements ViewPresenter {
 		void allowReturnToClient(boolean allow);
 		void allowValidate(boolean allow);
 		void allowReceiveRejection(boolean hasPermission);
+		void setEditMode();
 	}
 
 	protected boolean bound = false;
@@ -129,14 +130,14 @@ public class ExpenseSearchOperationViewPresenter implements ViewPresenter {
 				view.clearAllowedPermissions();
 				view.allowDelete(PermissionChecker.hasPermission(response, BigBangConstants.OperationIds.ExpenseProcess.DELETE_EXPENSE));
 				view.allowEdit(PermissionChecker.hasPermission(response, BigBangConstants.OperationIds.ExpenseProcess.UPDATE_EXPENSE));
-				view.allowInfoFromInsurer(PermissionChecker.hasPermission(response, BigBangConstants.OperationIds.ExpenseProcess.CREATE_INFO_REQUEST));
+				view.allowInfoFromInsurer(PermissionChecker.hasPermission(response, BigBangConstants.OperationIds.ExpenseProcess.CREATE_EXTERNAL_REQUEST));//TODO ESTE?
 				view.allowNotifyClient(PermissionChecker.hasPermission(response, BigBangConstants.OperationIds.ExpenseProcess.NOTIFY_CLIENT));
 				view.allowParticipateToInsurer(PermissionChecker.hasPermission(response, BigBangConstants.OperationIds.ExpenseProcess.SEND_NOTIFICATION));
 				view.allowReceiveAcceptance(PermissionChecker.hasPermission(response, BigBangConstants.OperationIds.ExpenseProcess.RECEIVE_ACCEPTANCE));
 				view.allowReceiveRejection(PermissionChecker.hasPermission(response, BigBangConstants.OperationIds.ExpenseProcess.RECEIVE_RETURN));
 				view.allowReturnToClient(PermissionChecker.hasPermission(response, BigBangConstants.OperationIds.ExpenseProcess.RETURN_TO_CLIENT));
 				view.allowValidate(PermissionChecker.hasPermission(response, BigBangConstants.OperationIds.ExpenseProcess.PAYMENT_VALIDATION));
-				
+				view.allowInfoOrDocumentRequest(PermissionChecker.hasPermission(response, BigBangConstants.OperationIds.ExpenseProcess.CREATE_INFO_REQUEST));//TODO OU ESTE?
 				view.setSaveModeEnabled(false);
 				view.getForm().setReadOnly(true);
 				view.getForm().setValue(response);
@@ -334,18 +335,23 @@ public class ExpenseSearchOperationViewPresenter implements ViewPresenter {
 	}
 
 	protected void onInfoOrDocumentRequest() {
-		// TODO Auto-generated method stub
-
+		NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
+		item.pushIntoStackParameter("display", "inforequest");
+		item.setParameter("ownerid", view.getForm().getValue().id);
+		NavigationHistoryManager.getInstance().go(item);
 	}
 
 	protected void onInfoFromInsurer() {
-		// TODO Auto-generated method stub
-
+		NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
+		item.pushIntoStackParameter("display", "externalrequest");
+		item.setParameter("externalrequestid", "new");
+		NavigationHistoryManager.getInstance().go(item);
 	}
 
 	protected void onEdit() {
 		view.getForm().setReadOnly(false);
 		view.setSaveModeEnabled(true);
+		view.setEditMode();
 	}
 
 	protected void onDelete() {

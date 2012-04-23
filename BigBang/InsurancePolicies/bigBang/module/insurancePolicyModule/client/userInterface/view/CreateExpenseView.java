@@ -106,4 +106,9 @@ public class CreateExpenseView extends View implements CreateExpenseViewPresente
 		toolbar.setSaveModeEnabled(b);
 	}
 
+	@Override
+	public void setFormCreateMode() {
+		form.setNewExpenseMode();
+	}
+
 }

@@ -105,7 +105,7 @@ public abstract class ExpenseProcessToolBar extends BigBangOperationsToolBar{
 		addItem(SUB_MENU.REQUESTS, infoOrDocumentRequest);
 		
 		//agency
-		infoFromInsurer = new MenuItem("Pedido de Informação à Seguradora", new Command() {
+		infoFromInsurer = new MenuItem("Pedido de Informação da Seguradora", new Command() {
 			
 			@Override
 			public void execute() {

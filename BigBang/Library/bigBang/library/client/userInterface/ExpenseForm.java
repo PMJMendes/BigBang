@@ -37,6 +37,7 @@ public class ExpenseForm extends FormView<Expense>{
 	private TextBoxFormField referenceNumber;
 	private TextBoxFormField number;
 	private boolean initialized;
+	private boolean tempIsManual;
 
 	public ExpenseForm() {
 
@@ -91,6 +92,7 @@ public class ExpenseForm extends FormView<Expense>{
 		VerticalPanel settlementVerticalPanel = new VerticalPanel();
 		settlementPanel.setVerticalAlignment(HasVerticalAlignment.ALIGN_MIDDLE);
 		settlementPanel.add(settlement);
+		registerFormField(settlement);
 		settlementVerticalPanel.add(settleLabel);
 		settlementVerticalPanel.add(settleButton);
 		settlementPanel.add(settlementVerticalPanel);
@@ -98,7 +100,9 @@ public class ExpenseForm extends FormView<Expense>{
 
 			@Override
 			public void onClick(ClickEvent event) {
-				setSettlement(!getInfo().isManual);
+				settlement.setEditable(true);
+				settlement.setReadOnly(false);
+				setManualSettlement(true);
 			}
 		});
 
@@ -111,28 +115,26 @@ public class ExpenseForm extends FormView<Expense>{
 		addFormField(notes);
 		notes.setFieldWidth("400px");
 
-		clientName.setReadOnly(true);
-		referenceNumber.setReadOnly(true);
-		number.setReadOnly(true);
-		isOpen.setReadOnly(true);
-		manager.setReadOnly(true);
-		settlement.setReadOnly(true);
+		clientName.setEditable(false);
+		referenceNumber.setEditable(false);
+		number.setEditable(false);
+		isOpen.setEditable(false);
+		manager.setEditable(false);
 		settleButton.setEnabled(false);
 		initialized = true;
-
 	}
 
 	@Override
 	public Expense getInfo() {
 
 		Expense newExpense = super.value;
-		newExpense.managerId = manager.getValue();
+		newExpense.managerId = manager.getValue();	
 		newExpense.settlement = settlement.getValue();
 		newExpense.notes = notes.getValue();
 		newExpense.expenseDate = expenseDate.getStringValue();
 		newExpense.insuredObjectId = insuredObjectId.getValue();
 		newExpense.value = value.getValue();
-
+		newExpense.isManual = tempIsManual;
 		return newExpense;
 
 	}
@@ -147,12 +149,10 @@ public class ExpenseForm extends FormView<Expense>{
 
 		manager.setValue(info.managerId);
 		settlement.setValue(info.settlement);
-		setSettlement(info.isManual);
+		setManualSettlement(info.isManual);
 
-		if(info.id == null){
-			settleButton.setEnabled(true);
-		}
-		
+		number.setValue(info.number);
+
 		notes.setValue(info.notes);
 		clientName.setValue("#" + info.clientNumber + " - " + info.clientName);
 		expenseDate.setValue(info.expenseDate);
@@ -189,30 +189,35 @@ public class ExpenseForm extends FormView<Expense>{
 				EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não foi possível obter a lista de coberturas."), TYPE.ALERT_NOTIFICATION));
 			}
 		});
-
+		settlement.setValue(info.settlement);
 		isOpen.setValue(info.isOpen ? "Aberta" : "Fechada");
 		value.setValue(info.value);
 	}
 
-	private void setSettlement(boolean isManual) {
+	private void setManualSettlement(boolean isManual) {
+		tempIsManual = isManual;
 		settleButton.setVisible(!isManual);
 		settleLabel.setVisible(!isManual);
-		settlement.setReadOnly(!isManual);
-		super.value.isManual = isManual;
+		settlement.setEditable(isManual);
 	}
 
 	@Override
 	public void setReadOnly(boolean readonly) {
-
+		super.setReadOnly(readonly); 
 		if(!initialized)
 			return;
-
-		coverageId.setReadOnly(readonly);
-		expenseDate.setReadOnly(readonly);
-		value.setReadOnly(readonly);
-		notes.setReadOnly(readonly);
 		settleButton.setEnabled(!readonly);
-
 	};
+
+	public void setNewExpenseMode(){
+		settlement.setEditable(false);
+		manager.setEditable(true);
+		settleButton.setEnabled(true);
+	}
+
+	public void setUpdateMode(){
+		manager.setEditable(false);
+	}
+
 
 }
