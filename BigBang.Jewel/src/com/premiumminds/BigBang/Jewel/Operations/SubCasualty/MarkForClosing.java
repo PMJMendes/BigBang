@@ -143,6 +143,6 @@ public class MarkForClosing
 
 	public UndoSet[] GetSets()
 	{
-		return null;
+		return new UndoSet[0];
 	}
 }
