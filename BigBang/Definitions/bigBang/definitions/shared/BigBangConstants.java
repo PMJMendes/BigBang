@@ -90,6 +90,13 @@ public class BigBangConstants {
 		}
 		
 		public static class GeneralSystemProcess {
+			public static final String MANAGE_COST_CENTERS = "39A4A919-F3D0-4966-8CBB-9EB100A38EE8";
+			public static final String MANAGE_USERS = "03F5BBC1-5AB5-45DF-BAEF-9EB500A043FD";
+			public static final String MANAGE_MEDIATORS = "EDA3659D-4BE9-4779-B0C9-9EB500A07726";
+			public static final String MANAGE_COMPANIES = "83081039-C3C0-4BAC-8B24-9EB500A0A3EB";
+			public static final String MANAGE_LINES = "7CE5A4B8-9E13-4F14-BDDA-9EB500A0D171";
+			public static final String MANAGE_COEFFICIENTS = "BF76CE8C-C9A7-408B-B623-9EB500A0F07";
+			public static final String MANAGE_GROUPS = "08E5A828-0AF2-4347-A57A-9EB500A11526";
 			public static final String CREATE_CLIENT = "214118B8-C43C-4941-9D1E-9EB500A1381C";
 		}
 

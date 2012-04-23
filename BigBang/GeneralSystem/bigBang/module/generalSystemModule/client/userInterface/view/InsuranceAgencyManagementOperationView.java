@@ -8,8 +8,8 @@ import bigBang.library.client.HasValueSelectables;
 import bigBang.library.client.ValueSelectable;
 import bigBang.library.client.event.ActionInvokedEvent;
 import bigBang.library.client.event.ActionInvokedEventHandler;
-import bigBang.library.client.userInterface.DocumentsPreviewList;
 import bigBang.library.client.userInterface.view.View;
+import bigBang.module.generalSystemModule.client.userInterface.InsuranceAgencyChildrenPanel;
 import bigBang.module.generalSystemModule.client.userInterface.InsuranceAgencyList;
 import bigBang.module.generalSystemModule.client.userInterface.InsuranceAgencyListEntry;
 import bigBang.module.generalSystemModule.client.userInterface.InsuranceAgencyOperationsToolbar;
@@ -32,7 +32,7 @@ public class InsuranceAgencyManagementOperationView extends View implements Insu
 	protected ToolButton newButton;
 	protected ActionInvokedEventHandler<InsuranceAgencyManagementOperationViewPresenter.Action> actionHandler;
 	protected InsuranceAgencyOperationsToolbar toolbar;
-//	protected InsuranceAgencyChildrenList childrenPanel;
+	protected InsuranceAgencyChildrenPanel childrenPanel;
 
 	public InsuranceAgencyManagementOperationView() {
 		SplitLayoutPanel wrapper = new SplitLayoutPanel();
@@ -96,21 +96,21 @@ public class InsuranceAgencyManagementOperationView extends View implements Insu
 		formWrapper.add(insuranceAgencyForm);
 		formWrapper.setCellHeight(insuranceAgencyForm, "100%");
 		
-//		this.childrenPanel = new  InsuranceAgencyChildrenPanel();
-//		this.childrenPanel.setSize("100%", "100%");
-//		
-//		contentWrapper.addEast(childrenPanel, 250);
+		this.childrenPanel = new  InsuranceAgencyChildrenPanel();
+		this.childrenPanel.setSize("100%", "100%");
+		
+		contentWrapper.addEast(childrenPanel, 250);
 		contentWrapper.add(formWrapper);
 
 		wrapper.add(contentWrapper);
 		
-//		this.insuranceAgencyForm.addValueChangeHandler(new ValueChangeHandler<InsuranceAgency>() {
-//			
-//			@Override
-//			public void onValueChange(ValueChangeEvent<InsuranceAgency> event) {
-//				childrenPanel.setOwner(event.getValue());
-//			}
-//		});
+		this.insuranceAgencyForm.addValueChangeHandler(new ValueChangeHandler<InsuranceAgency>() {
+			
+			@Override
+			public void onValueChange(ValueChangeEvent<InsuranceAgency> event) {
+				childrenPanel.setOwner(event.getValue());
+			}
+		});
 	}
 	
 	@Override

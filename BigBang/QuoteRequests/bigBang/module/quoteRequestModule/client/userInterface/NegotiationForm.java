@@ -28,7 +28,7 @@ public class NegotiationForm extends FormView<Negotiation>{
 		notes.setFieldHeight("75px");
 		notes.setFieldWidth("475px");
 		
-		manager.setEditable(true);
+		manager.setEditable(false);
 		
 		addFormField(company);
 		addFormField(manager);

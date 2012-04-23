@@ -39,7 +39,7 @@ TypifiedListClient {
 	protected String selectedValueId;
 	protected int typifiedListDataVersion;
 	protected TypifiedListBroker typifiedListBroker;
-	protected boolean editable = false;
+	protected boolean editable = true;
 	protected ResponseHandler<Void> expectingResponseHandler = null;
 
 	protected boolean hasServices;
