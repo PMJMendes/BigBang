@@ -212,7 +212,7 @@ TypifiedListClient {
 			if(currentListId == null || !listId.equalsIgnoreCase(currentListId)){
 				this.managementPanel.setListId(listId);
 				managementPanel.setReadOnly(!this.hasServices);
-				managementPanel.setEditable(this.hasServices);
+				managementPanel.allowEdition(this.hasServices);
 
 				if(this.isAttached()){
 					this.expectingResponseHandler = listReadyHandler;
@@ -254,8 +254,8 @@ TypifiedListClient {
 		return this.managementPanel.getListId();
 	}
 
-	public void setEditable(boolean editable) {
-		this.managementPanel.setEditable(editable);
+	public void allowEdition(boolean editable) {
+		this.managementPanel.allowEdition(editable);
 	}
 
 	@Override
@@ -267,8 +267,8 @@ TypifiedListClient {
 		}
 	}
 
-	public void lock(boolean locked){
-		if(locked){
+	public void setEditable(boolean locked){
+		if(!locked){
 			setReadOnly(true);
 		}
 		this.locked = locked;

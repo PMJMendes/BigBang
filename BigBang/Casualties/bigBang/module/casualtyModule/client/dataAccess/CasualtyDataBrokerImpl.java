@@ -14,6 +14,7 @@ import bigBang.definitions.client.response.ResponseHandler;
 import bigBang.definitions.shared.BigBangConstants;
 import bigBang.definitions.shared.Casualty;
 import bigBang.definitions.shared.CasualtyStub;
+import bigBang.definitions.shared.ManagerTransfer;
 import bigBang.definitions.shared.SearchParameter;
 import bigBang.definitions.shared.SortOrder;
 import bigBang.definitions.shared.SortParameter;
@@ -232,6 +233,52 @@ CasualtyDataBroker {
 				super.onResponseFailure(caught);
 			}
 		});
+	}
+
+	@Override
+	public void createManagerTransfer(String[] dataObjectIds,
+			String newManagerId, final ResponseHandler<ManagerTransfer> handler) {
+		ManagerTransfer transfer = new ManagerTransfer();
+		transfer.dataObjectIds = dataObjectIds;
+		transfer.newManagerId = newManagerId;
+
+		if(dataObjectIds.length == 1) {
+			service.createManagerTransfer(transfer, new BigBangAsyncCallback<ManagerTransfer>() {
+
+				@Override
+				public void onResponseSuccess(ManagerTransfer result) {
+					handler.onResponse(null);
+				}
+				
+				@Override
+				public void onResponseFailure(Throwable caught) {
+					handler.onError(new String[]{
+							new String("Could not transfer the process")
+					});
+					super.onResponseFailure(caught);
+				}
+			});
+		}else if(dataObjectIds.length > 1){
+			service.createManagerTransfer(transfer, new BigBangAsyncCallback<ManagerTransfer>() {
+
+				@Override
+				public void onResponseSuccess(ManagerTransfer result) {
+					handler.onResponse(null);
+				}
+				
+				@Override
+				public void onResponseFailure(Throwable caught) {
+					handler.onError(new String[]{
+							new String("Could not transfer the processes")
+					});
+					super.onResponseFailure(caught);
+				}
+			});
+		}else{
+			handler.onError(new String[]{
+				new String("Cannot transfer 0 processes")	
+			});
+		}
 	}
 
 }

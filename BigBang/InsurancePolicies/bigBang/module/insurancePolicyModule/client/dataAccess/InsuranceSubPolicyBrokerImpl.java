@@ -9,6 +9,7 @@ import com.google.gwt.core.client.GWT;
 import bigBang.definitions.client.dataAccess.DataBroker;
 import bigBang.definitions.client.dataAccess.DataBrokerClient;
 import bigBang.definitions.client.dataAccess.ExerciseDataBroker;
+import bigBang.definitions.client.dataAccess.ExpenseDataBroker;
 import bigBang.definitions.client.dataAccess.InsuranceSubPolicyBroker;
 import bigBang.definitions.client.dataAccess.InsuranceSubPolicyDataBrokerClient;
 import bigBang.definitions.client.dataAccess.InsuredObjectDataBroker;
@@ -279,9 +280,9 @@ implements InsuranceSubPolicyBroker {
 	}
 
 	@Override
-	public void closeSubPolicyResource(String subPolicyId,
+	public void closeSubPolicyResource(final String id,
 			final ResponseHandler<Void> handler) {
-		subPolicyId = getEffectiveId(subPolicyId);
+		String subPolicyId = getEffectiveId(id);
 		if(isTemp(subPolicyId)){
 			service.discardPad(subPolicyId, new BigBangAsyncCallback<Remap[]>() {
 
@@ -289,6 +290,7 @@ implements InsuranceSubPolicyBroker {
 				public void onResponseSuccess(Remap[] result) {
 					doRemapping(result);
 					handler.onResponse(null);
+					EventBus.getInstance().fireEvent(new OperationWasExecutedEvent(BigBangConstants.OperationIds.InsuranceSubPolicyProcess.CLOSE, id));
 				}
 
 				@Override
@@ -619,7 +621,7 @@ implements InsuranceSubPolicyBroker {
 			public void onResponseSuccess(InsuredObject result) {
 				insuredObjectsBroker.notifyItemCreation(result.id);
 			}
-
+			
 			@Override
 			public void onResponseFailure(Throwable caught) {
 				handler.onError(new String[]{
@@ -631,15 +633,16 @@ implements InsuranceSubPolicyBroker {
 	}
 
 	@Override
-	public void includeObjectFromClient(String subPolicyId,
+	public void includeObjectFromClient(final String subPolicyId,
 			final ResponseHandler<InsuredObject> handler) {
 		service.includeObjectFromClient(subPolicyId, new BigBangAsyncCallback<InsuredObject>() {
 
 			@Override
 			public void onResponseSuccess(InsuredObject result) {
 				insuredObjectsBroker.notifyItemCreation(result.id);
+				EventBus.getInstance().fireEvent(new OperationWasExecutedEvent(BigBangConstants.OperationIds.InsuranceSubPolicyProcess.INCLUDE_OBJECT_FROM_CLIENT, subPolicyId));
 			}
-
+			
 			@Override
 			public void onResponseFailure(Throwable caught) {
 				handler.onError(new String[]{
@@ -651,15 +654,16 @@ implements InsuranceSubPolicyBroker {
 	}
 
 	@Override
-	public void excludeObject(String subPolicyId, final String objectId,
+	public void excludeObject(final String subPolicyId, final String objectId,
 			final ResponseHandler<Void> handler) {
 		service.excludeObject(subPolicyId, objectId, new BigBangAsyncCallback<Void>() {
 
 			@Override
 			public void onResponseSuccess(Void result) {
 				insuredObjectsBroker.notifyItemDeletion(objectId);
+				EventBus.getInstance().fireEvent(new OperationWasExecutedEvent(BigBangConstants.OperationIds.InsuranceSubPolicyProcess.EXCLUDE_OBJECT, subPolicyId));
 			}
-
+			
 			@Override
 			public void onResponseFailure(Throwable caught) {
 				handler.onError(new String[]{
@@ -684,8 +688,9 @@ implements InsuranceSubPolicyBroker {
 					((InsuranceSubPolicyDataBrokerClient) bc).setDataVersionNumber(BigBangConstants.EntityIds.INSURANCE_SUB_POLICY, getCurrentDataVersion());
 				}
 				handler.onResponse(result);
+				EventBus.getInstance().fireEvent(new OperationWasExecutedEvent(BigBangConstants.OperationIds.InsuranceSubPolicyProcess.TRANSFER_TO_POLICY, result.id));
 			}
-
+			
 			@Override
 			public void onResponseFailure(Throwable caught) {
 				handler.onError(new String[]{
@@ -704,8 +709,10 @@ implements InsuranceSubPolicyBroker {
 			@Override
 			public void onResponseSuccess(InfoOrDocumentRequest result) {
 				handler.onResponse(result);
-			}
+				EventBus.getInstance().fireEvent(new OperationWasExecutedEvent(BigBangConstants.OperationIds.InsuranceSubPolicyProcess.CREATE_INFO_OR_DOCUMENT_REQUEST, result.id));
 
+			}
+			
 			@Override
 			public void onResponseFailure(Throwable caught) {
 				handler.onError(new String[]{
@@ -723,18 +730,19 @@ implements InsuranceSubPolicyBroker {
 			@Override
 			public void onResponseSuccess(Receipt result) {
 				handler.onResponse(result);
+				EventBus.getInstance().fireEvent(new OperationWasExecutedEvent(BigBangConstants.OperationIds.InsuranceSubPolicyProcess.CREATE_RECEIPT, result.id));
 			}
-
+			
 			@Override
 			public void onResponseFailure(Throwable caught) {
 				handler.onError(new String[]{
-						new String("Could not create the new Receipt")	
+					new String("Could not create the new Receipt")	
 				});
 				super.onResponseFailure(caught);
 			}
 		});
 	}
-
+	
 	@Override
 	public void getSubPoliciesForPolicy(String ownerId,
 			final ResponseHandler<Collection<SubPolicyStub>> responseHandler) {
@@ -833,7 +841,8 @@ implements InsuranceSubPolicyBroker {
 			@Override
 			public void onResponseSuccess(Expense result) {
 				handler.onResponse(result);
-
+				EventBus.getInstance().fireEvent(new OperationWasExecutedEvent(BigBangConstants.OperationIds.InsuranceSubPolicyProcess.CREATE_RECEIPT, result.id));
+				((ExpenseDataBroker) DataBrokerManager.staticGetBroker(BigBangConstants.EntityIds.EXPENSE)).notifyItemCreation(result.id);
 			}
 
 			@Override

@@ -44,17 +44,17 @@ public class QuoteRequestForm extends FormView<QuoteRequest> implements FiresAsy
 		number = new TextBoxFormField("Número");
 		number.setFieldWidth("175px");
 		client = new TextBoxFormField("Cliente");
-		client.setEditable(false);
+		client.allowEdition(false);
 		status = new TextBoxFormField("Estado");
 		status.setFieldWidth("175px");
-		status.setEditable(false);
+		status.allowEdition(false);
 		manager = new ExpandableListBoxFormField(BigBangConstants.EntityIds.USER, "Gestor");
-		manager.setEditable(false);
+		manager.allowEdition(false);
 		inheritedMediator = new TextBoxFormField("Mediador do Cliente");
-		inheritedMediator.setEditable(false);
+		inheritedMediator.allowEdition(false);
 		inheritedMediator.setFieldWidth("175px");
 		policiesMediator = new ExpandableListBoxFormField(BigBangConstants.EntityIds.MEDIATOR, "Mediador das Apólices");
-		policiesMediator.setEditable(false);
+		policiesMediator.allowEdition(false);
 		caseStudyFlag = new CheckBoxFormField("Case Study");
 		notes = new TextAreaFormField();
 
@@ -91,27 +91,27 @@ public class QuoteRequestForm extends FormView<QuoteRequest> implements FiresAsy
 	}
 
 	public void setupForCreation() {
-		number.setEditable(true);
-		manager.setEditable(true);
-		policiesMediator.setEditable(true);
-		caseStudyFlag.setEditable(true);
-		notes.setEditable(true);
+		number.allowEdition(true);
+		manager.allowEdition(true);
+		policiesMediator.allowEdition(true);
+		caseStudyFlag.allowEdition(true);
+		notes.allowEdition(true);
 	}
 
 	public void setupForOpenStatus() {
-		number.setEditable(false);
-		manager.setEditable(false);
-		policiesMediator.setEditable(true);
-		caseStudyFlag.setEditable(true);
-		notes.setEditable(true);
+		number.allowEdition(false);
+		manager.allowEdition(false);
+		policiesMediator.allowEdition(true);
+		caseStudyFlag.allowEdition(true);
+		notes.allowEdition(true);
 	}
 
 	public void setupForClosedStatus(){
-		number.setEditable(false);
-		manager.setEditable(false);
-		policiesMediator.setEditable(false);
-		caseStudyFlag.setEditable(true);
-		notes.setEditable(false);
+		number.allowEdition(false);
+		manager.allowEdition(false);
+		policiesMediator.allowEdition(false);
+		caseStudyFlag.allowEdition(true);
+		notes.allowEdition(false);
 	}
 
 	@Override

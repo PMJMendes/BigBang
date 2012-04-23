@@ -42,7 +42,7 @@ public class ReceiptForm extends FormView<Receipt> implements ReceiptDataBrokerC
 		number = new TextBoxFormField("Número");
 		number.setFieldWidth("200px");
 		type = new ExpandableListBoxFormField(ModuleConstants.TypifiedListIds.RECEIPT_TYPE, "Tipo");
-		type.setEditable(false);
+		type.allowEdition(false);
 		client = new TextBoxFormField("Cliente");
 		policy = new TextBoxFormField("Apólice");
 		totalPremium = new TextBoxFormField("Prémio Total");
@@ -70,17 +70,17 @@ public class ReceiptForm extends FormView<Receipt> implements ReceiptDataBrokerC
 		coverageEnd = new DatePickerFormField("Até");
 		dueDate = new DatePickerFormField("Limite de Pagamento");
 		mediator = new ExpandableListBoxFormField(BigBangConstants.EntityIds.MEDIATOR, "Mediador");
-		mediator.setEditable(false);
+		mediator.allowEdition(false);
 		manager = new ExpandableListBoxFormField(BigBangConstants.EntityIds.USER, "Gestor");
-		manager.setEditable(false);
+		manager.allowEdition(false);
 		description = new TextAreaFormField();
 		notes = new TextAreaFormField();
 
 		addSection("Informação Geral");
 		addFormField(client, false);
-		client.setEditable(false);
+		client.allowEdition(false);
 		addFormField(policy, false);
-		policy.setEditable(false);
+		policy.allowEdition(false);
 
 		addFormField(number, true);
 		addFormField(type, true);

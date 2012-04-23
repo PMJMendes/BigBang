@@ -5,7 +5,6 @@ import java.util.Collection;
 
 import bigBang.definitions.client.response.ResponseError;
 import bigBang.definitions.client.response.ResponseHandler;
-import bigBang.definitions.shared.ClientStub;
 import bigBang.definitions.shared.ProcessBase;
 import bigBang.library.client.Checkable;
 import bigBang.library.client.HasCheckables;
@@ -140,7 +139,7 @@ public abstract class MassManagerTransferViewPresenter<T extends ProcessBase, T2
 				Checkable checkable = event.getChangedCheckable();
 
 				@SuppressWarnings("unchecked")
-				ValueSelectable<ClientStub> entry = (ValueSelectable<ClientStub>) checkable;
+				ValueSelectable<T> entry = (ValueSelectable<T>) checkable;
 
 				String id = entry.getValue().id;
 

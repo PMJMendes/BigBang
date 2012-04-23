@@ -249,8 +249,8 @@ public class GenericFormField extends FormField<String> {
 		return myField.isMandatory();
 	}
 
-	public void setEditable(boolean editable) {
-		myField.setEditable(editable);
+	public void allowEdition(boolean editable) {
+		myField.allowEdition(editable);
 	}
 
 	public void showLabel(boolean show) {

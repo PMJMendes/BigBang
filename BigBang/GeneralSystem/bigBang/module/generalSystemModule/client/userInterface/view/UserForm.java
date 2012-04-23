@@ -29,8 +29,8 @@ public class UserForm extends FormView<User> {
 		role = new ExpandableListBoxFormField(BigBangConstants.EntityIds.USER_PROFILE, "Perfil", new UserFormValidator.UserProfileValidator());
 		costCenter = new ExpandableListBoxFormField(BigBangConstants.EntityIds.COST_CENTER, "Centro de Custo", new UserFormValidator.UserCostCenterValidator());
 
-		role.setEditable(false);
-		costCenter.setEditable(false);		
+		role.allowEdition(false);
+		costCenter.allowEdition(false);		
 		
 		addFormField(name);
 		addFormField(username);

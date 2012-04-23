@@ -59,13 +59,13 @@ public abstract class InsurancePolicyForm extends FormView<InsurancePolicy> {
 			switch(field.type) {
 			case LIST:
 				ExpandableListBoxFormField listField = new ExpandableListBoxFormField(field.fieldName);
-				listField.setEditable(true);
+				listField.allowEdition(true);
 				listField.setListId(BigBangConstants.TypifiedListIds.FIELD_VALUES+"/"+field.fieldId, null);
 				this.field = listField;
 				break;
 			case REFERENCE:
 				ExpandableListBoxFormField referenceListField = new ExpandableListBoxFormField(field.fieldName);
-				referenceListField.setEditable(true);
+				referenceListField.allowEdition(true);
 				referenceListField.setListId(field.refersToId, null);
 				this.field = referenceListField;
 				break;
@@ -193,17 +193,17 @@ public abstract class InsurancePolicyForm extends FormView<InsurancePolicy> {
 		client = new TextBoxFormField("Cliente");
 		number.setFieldWidth("175px");
 		manager = new ExpandableListBoxFormField(BigBangConstants.EntityIds.USER, "Gestor");
-		manager.setEditable(false);
+		manager.allowEdition(false);
 		insuranceAgency = new ExpandableListBoxFormField(BigBangConstants.EntityIds.INSURANCE_AGENCY, "Seguradora");
-		insuranceAgency.setEditable(false);
+		insuranceAgency.allowEdition(false);
 		mediator = new ExpandableListBoxFormField(BigBangConstants.EntityIds.MEDIATOR, "Mediador");
-		mediator.setEditable(false);
+		mediator.allowEdition(false);
 		category = new ExpandableListBoxFormField(BigBangConstants.EntityIds.CATEGORY, "Categoria");
-		category.setEditable(false);
+		category.allowEdition(false);
 		line = new ExpandableListBoxFormField("Ramo");
-		line.setEditable(false);
+		line.allowEdition(false);
 		subLine = new ExpandableListBoxFormField("Modalidade");
-		subLine.setEditable(false);
+		subLine.allowEdition(false);
 		maturityDay = new ListBoxFormField("Dia de Vencimento");
 		duration = new ExpandableListBoxFormField(ModuleConstants.TypifiedListIds.DURATION, "Duração");
 		maturityMonth = new ListBoxFormField("Mês de Vencimento");
@@ -222,15 +222,15 @@ public abstract class InsurancePolicyForm extends FormView<InsurancePolicy> {
 		notes.setSize("100%", "200px");
 		policyStatus = new TextBoxFormField("Estado");
 		policyStatus.setFieldWidth("100%");
-		policyStatus.setEditable(false);
+		policyStatus.allowEdition(false);
 		table = new PolicyFormTable();
 		table.setSize("100%", "100%");
 
 		exercises = new ExpandableListBoxFormField("Exercício");
 		insuredObjects = new ExpandableListBoxFormField("Unidade de Risco");
 
-		exercises.setEditable(false);
-		insuredObjects.setEditable(false);
+		exercises.allowEdition(false);
+		insuredObjects.allowEdition(false);
 
 		maturityMonth.addItem("Janeiro", "1");
 		maturityMonth.addItem("Fevereiro", "2");
@@ -374,8 +374,8 @@ public abstract class InsurancePolicyForm extends FormView<InsurancePolicy> {
 			}
 		});
 
-		this.manager.lock(true);
-		this.client.setEditable(false);
+		this.manager.setEditable(false);
+		this.client.allowEdition(false);
 
 		clearValue();
 		setValue(this.value);
@@ -384,17 +384,17 @@ public abstract class InsurancePolicyForm extends FormView<InsurancePolicy> {
 	public abstract void onSubLineChanged(String subLineId);
 
 	public void setForEdit(){
-		this.manager.setEditable(false);
-		this.category.setEditable(false);
-		this.line.setEditable(false);
-		this.subLine.setEditable(false);
+		this.manager.allowEdition(false);
+		this.category.allowEdition(false);
+		this.line.allowEdition(false);
+		this.subLine.allowEdition(false);
 	}
 
 	public void setForNew(){
-		this.manager.setEditable(true);
-		this.category.setEditable(true);
-		this.line.setEditable(true);
-		this.subLine.setEditable(true);
+		this.manager.allowEdition(true);
+		this.category.allowEdition(true);
+		this.line.allowEdition(true);
+		this.subLine.allowEdition(true);
 	}
 
 	@Override
@@ -514,7 +514,7 @@ public abstract class InsurancePolicyForm extends FormView<InsurancePolicy> {
 				this.coInsurance.setValue(true);
 				this.coInsurers.setMainCoInsuranceAgency(info.insuranceAgencyId);
 				this.coInsurers.setValue(info.coInsurers);
-				this.coInsurers.setEditable(false);
+				this.coInsurers.allowEdition(false);
 			}
 			else{
 				this.coInsurance.setValue(false);

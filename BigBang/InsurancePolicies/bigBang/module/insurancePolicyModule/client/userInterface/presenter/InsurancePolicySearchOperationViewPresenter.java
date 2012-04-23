@@ -313,7 +313,7 @@ ViewPresenter {
 					NavigationHistoryManager.getInstance().go(item);
 					break;
 				case TRANSFER_MANAGER:
-					item.pushIntoStackParameter("display", "managertransfer");
+					item.setParameter("show", "transfermanager");
 					NavigationHistoryManager.getInstance().go(item);
 					break;
 				case VOID_POLICY:

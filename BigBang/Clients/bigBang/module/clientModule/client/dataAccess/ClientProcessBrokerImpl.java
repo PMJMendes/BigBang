@@ -310,14 +310,14 @@ public class ClientProcessBrokerImpl extends DataBroker<Client> implements Clien
 	}
 
 	@Override
-	public void cancelInfoOrDocumentRequest(Cancellation cancellation,
+	public void cancelInfoOrDocumentRequest(final Cancellation cancellation,
 			final ResponseHandler<Void> handler) {
 		InfoOrDocumentRequestServiceAsync infoService = InfoOrDocumentRequestService.Util.getInstance();
 		infoService.cancelRequest(cancellation, new BigBangAsyncCallback<Void>() {
 
 			@Override
 			public void onResponseSuccess(Void result) {
-				// TODO Auto-generated method stub
+				EventBus.getInstance().fireEvent(new OperationWasExecutedEvent(BigBangConstants.OperationIds.InfoOrDocumentRequest.CANCEL_REQUEST, cancellation.requestId));
 			}
 
 			@Override

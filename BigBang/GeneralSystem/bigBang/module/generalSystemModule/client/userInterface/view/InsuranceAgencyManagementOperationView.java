@@ -18,6 +18,8 @@ import bigBang.module.generalSystemModule.client.userInterface.presenter.Insuran
 
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.logical.shared.ValueChangeEvent;
+import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.user.client.ui.SplitLayoutPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
@@ -28,9 +30,9 @@ public class InsuranceAgencyManagementOperationView extends View implements Insu
 	private InsuranceAgencyList insuranceAgencyList;
 	private InsuranceAgencyForm insuranceAgencyForm;
 	protected ToolButton newButton;
-	protected DocumentsPreviewList documentsPreviewList;
 	protected ActionInvokedEventHandler<InsuranceAgencyManagementOperationViewPresenter.Action> actionHandler;
 	protected InsuranceAgencyOperationsToolbar toolbar;
+//	protected InsuranceAgencyChildrenList childrenPanel;
 
 	public InsuranceAgencyManagementOperationView() {
 		SplitLayoutPanel wrapper = new SplitLayoutPanel();
@@ -94,13 +96,21 @@ public class InsuranceAgencyManagementOperationView extends View implements Insu
 		formWrapper.add(insuranceAgencyForm);
 		formWrapper.setCellHeight(insuranceAgencyForm, "100%");
 		
-		VerticalPanel sideWrapper = new VerticalPanel();
-		sideWrapper.setSize("100%", "100%");
-		
-		contentWrapper.addEast(sideWrapper, 250);
+//		this.childrenPanel = new  InsuranceAgencyChildrenPanel();
+//		this.childrenPanel.setSize("100%", "100%");
+//		
+//		contentWrapper.addEast(childrenPanel, 250);
 		contentWrapper.add(formWrapper);
 
 		wrapper.add(contentWrapper);
+		
+//		this.insuranceAgencyForm.addValueChangeHandler(new ValueChangeHandler<InsuranceAgency>() {
+//			
+//			@Override
+//			public void onValueChange(ValueChangeEvent<InsuranceAgency> event) {
+//				childrenPanel.setOwner(event.getValue());
+//			}
+//		});
 	}
 	
 	@Override

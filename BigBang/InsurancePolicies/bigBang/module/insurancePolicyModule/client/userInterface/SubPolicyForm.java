@@ -57,13 +57,13 @@ public class SubPolicyForm extends FormView<SubPolicy> {
 			switch(field.type) {
 			case LIST:
 				ExpandableListBoxFormField listField = new ExpandableListBoxFormField(field.fieldName);
-				listField.setEditable(true);
+				listField.allowEdition(true);
 				listField.setListId(BigBangConstants.TypifiedListIds.FIELD_VALUES+"/"+field.fieldId, null);
 				this.field = listField;
 				break;
 			case REFERENCE:
 				ExpandableListBoxFormField referenceListField = new ExpandableListBoxFormField(field.fieldName);
-				referenceListField.setEditable(true);
+				referenceListField.allowEdition(true);
 				referenceListField.setListId(field.refersToId, null);
 				this.field = referenceListField;
 				break;
@@ -189,22 +189,22 @@ public class SubPolicyForm extends FormView<SubPolicy> {
 		client = new ExpandableSelectionFormField(BigBangConstants.EntityIds.CLIENT, "Cliente Aderente", clientSelectionPanel); //TODO
 		client.setFieldWidth("547px");
 		manager = new TextBoxFormField("Gestor");
-		manager.setEditable(false);
+		manager.allowEdition(false);
 		manager.setFieldWidth("175px");
 		insuranceAgency = new TextBoxFormField("Seguradora");
 		insuranceAgency.setFieldWidth("175px");
-		insuranceAgency.setEditable(false);
+		insuranceAgency.allowEdition(false);
 		mediator = new TextBoxFormField("Mediador");
-		mediator.setEditable(false);
+		mediator.allowEdition(false);
 		mediator.setFieldWidth("175px");
 		category = new TextBoxFormField("Categoria");
-		category.setEditable(false);
+		category.allowEdition(false);
 		category.setFieldWidth("175px");
 		line = new TextBoxFormField("Ramo");
-		line.setEditable(false);
+		line.allowEdition(false);
 		line.setFieldWidth("175px");
 		subLine = new TextBoxFormField("Modalidade");
-		subLine.setEditable(false);
+		subLine.allowEdition(false);
 		subLine.setFieldWidth("175px");
 		startDate = new DatePickerFormField("Data de Início");
 		endDate = new DatePickerFormField("Data de Fim");
@@ -217,15 +217,15 @@ public class SubPolicyForm extends FormView<SubPolicy> {
 		policyStatus = new TextBoxFormField("Estado");
 		policyStatus.setFieldWidth("175px");
 		policyStatus.setFieldWidth("100%");
-		policyStatus.setEditable(false);
+		policyStatus.allowEdition(false);
 		table = new SubPolicyFormTable();
 		table.setSize("100%", "100%");
 
 		exercises = new ExpandableListBoxFormField("Exercício");
 		insuredObjects = new ExpandableListBoxFormField("Unidade de Risco");
 
-		exercises.setEditable(false);
-		insuredObjects.setEditable(false);
+		exercises.allowEdition(false);
+		insuredObjects.allowEdition(false);
 
 		addFormField(client, false);
 		addFormField(number, true);
@@ -272,17 +272,17 @@ public class SubPolicyForm extends FormView<SubPolicy> {
 	}
 
 	public void setForEdit(){
-		this.manager.setEditable(false);
-		this.category.setEditable(false);
-		this.line.setEditable(false);
-		this.subLine.setEditable(false);
+		this.manager.allowEdition(false);
+		this.category.allowEdition(false);
+		this.line.allowEdition(false);
+		this.subLine.allowEdition(false);
 	}
 
 	public void setForNew(){
-		this.manager.setEditable(true);
-		this.category.setEditable(true);
-		this.line.setEditable(true);
-		this.subLine.setEditable(true);
+		this.manager.allowEdition(true);
+		this.category.allowEdition(true);
+		this.line.allowEdition(true);
+		this.subLine.allowEdition(true);
 	}
 
 	@Override

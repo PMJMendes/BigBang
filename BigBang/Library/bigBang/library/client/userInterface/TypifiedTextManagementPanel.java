@@ -119,7 +119,7 @@ public class TypifiedTextManagementPanel extends View implements TypifiedTextCli
 
 			@Override
 			public void onEditRequest() {
-				setEditable(true);
+				allowEdition(true);
 			}
 
 			@Override
@@ -168,7 +168,7 @@ public class TypifiedTextManagementPanel extends View implements TypifiedTextCli
 			public void onAttachOrDetach(AttachEvent event) {
 				if(event.isAttached()){
 					list.getElement().getStyle().setBackgroundColor("white");
-					TypifiedTextManagementPanel.this.setEditable(false);
+					TypifiedTextManagementPanel.this.allowEdition(false);
 				}
 			}
 		});
@@ -202,11 +202,11 @@ public class TypifiedTextManagementPanel extends View implements TypifiedTextCli
 				}
 
 				if(inNewTypifiedText){
-					setEditable(true);
+					allowEdition(true);
 					inNewTypifiedText = false;
 				}
 				else{
-					setEditable(false);
+					allowEdition(false);
 				}
 			}
 		});
@@ -270,7 +270,7 @@ public class TypifiedTextManagementPanel extends View implements TypifiedTextCli
 				label.setValue(response.label);
 				subject.setValue(response.subject);
 				textBody.setValue(response.text);
-				TypifiedTextManagementPanel.this.setEditable(false);
+				TypifiedTextManagementPanel.this.allowEdition(false);
 			}
 
 			@Override
@@ -306,7 +306,7 @@ public class TypifiedTextManagementPanel extends View implements TypifiedTextCli
 					@Override
 					public void onResponse(TypifiedText response) {
 						EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Modelo guardado."), TYPE.TRAY_NOTIFICATION));
-						TypifiedTextManagementPanel.this.setEditable(false);
+						TypifiedTextManagementPanel.this.allowEdition(false);
 					}
 
 					@Override
@@ -341,7 +341,7 @@ public class TypifiedTextManagementPanel extends View implements TypifiedTextCli
 				subject.setValue("");
 				textBody.setValue("");
 				EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Modelo eliminado."), TYPE.TRAY_NOTIFICATION));
-				TypifiedTextManagementPanel.this.setEditable(false);
+				TypifiedTextManagementPanel.this.allowEdition(false);
 			}
 
 			@Override
@@ -507,7 +507,7 @@ public class TypifiedTextManagementPanel extends View implements TypifiedTextCli
 	}
 
 	@Override
-	public void setEditable(boolean editable) {
+	public void allowEdition(boolean editable) {
 
 		label.setReadOnly(!editable);
 		subject.setReadOnly(!editable);
@@ -531,7 +531,7 @@ public class TypifiedTextManagementPanel extends View implements TypifiedTextCli
 					entry.setSelected(true, true);
 					selectedItem.id = "";
 					selectedItem.value = "";
-					this.setEditable(true);
+					this.allowEdition(true);
 				}
 				for(ValueSelectable<TipifiedListItem> s : selected){
 					if(entry.getValue().id.equalsIgnoreCase(s.getValue().id)){

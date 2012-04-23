@@ -13,7 +13,7 @@ public interface  TypifiedManagementPanel {
 
 	void setEditModeEnabled(boolean enabled);
 
-	void setEditable(boolean editable);
+	void allowEdition(boolean editable);
 
 	void setReadOnly(boolean readonly);
 

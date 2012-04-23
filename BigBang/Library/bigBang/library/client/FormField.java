@@ -113,11 +113,17 @@ public abstract class FormField<T> extends View implements HasValue<T>, Validata
 	
 	/**
 	 * Sets whether or not this field can be edited at all by the user
-	 * @param editable if true, the field can be edited
+	 * @param allow if true, the field can be edited
 	 */
-	public void setEditable(boolean editable) {
-		setReadOnly(!editable);
+	public void allowEdition(boolean allow) {
+		setReadOnly(!allow);
+	}
+	
+	public void setEditable(boolean editable){
 		this.editable = editable;
+		if(!editable) {
+			this.setReadOnly(true);
+		}
 	}
 	
 	public void showLabel(boolean show) {

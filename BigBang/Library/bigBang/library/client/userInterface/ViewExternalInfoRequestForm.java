@@ -18,9 +18,9 @@ public class ViewExternalInfoRequestForm extends FormView<ExternalInfoRequest> {
 		body = new RichTextAreaFormField();
 		body.showToolbar(false);
 		
-		subject.setEditable(false);
-		from.setEditable(false);
-		replyLimit.setEditable(false);
+		subject.allowEdition(false);
+		from.allowEdition(false);
+		replyLimit.allowEdition(false);
 		
 		addSection("Informação do Pedido Externo");
 		addFormField(from, true);

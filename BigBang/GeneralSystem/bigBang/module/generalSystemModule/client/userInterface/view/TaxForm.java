@@ -34,9 +34,9 @@ public class TaxForm extends FormView<Tax> {
 		unitsLabel = new TextBoxFormField("Unidade");
 		unitsLabel.setFieldWidth("150px");
 		type = new ExpandableListBoxFormField(ModuleConstants.ListIDs.FieldTypes, "Tipo", new TaxFormValidator.UnitValidator());
-		type.setEditable(false);
+		type.allowEdition(false);
 		refersToEntityId = new ExpandableListBoxFormField(ModuleConstants.ListIDs.ObjectIds, "Refere-se a");
-		refersToEntityId.setEditable(false);
+		refersToEntityId.allowEdition(false);
 		variesByObject = new CheckBoxFormField("Varia por unidade de risco");
 		variesByExercise = new CheckBoxFormField("Varia por exercício");
 		mandatory = new CheckBoxFormField("Obrigatório");

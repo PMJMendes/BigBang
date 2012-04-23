@@ -234,7 +234,7 @@ public class TypifiedListManagementPanel extends FilterableList<TipifiedListItem
 	}
 
 	@Override
-	public void setEditable(boolean editable) {
+	public void allowEdition(boolean editable) {
 		this.editable = editable;
 		this.editButton.setVisible(editable);
 	}

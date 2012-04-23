@@ -28,7 +28,7 @@ public class NegotiationForm extends FormView<Negotiation>{
 		notes.setFieldHeight("75px");
 		notes.setFieldWidth("475px");
 		
-		manager.lock(true);
+		manager.setEditable(true);
 		
 		addFormField(company);
 		addFormField(manager);
@@ -38,7 +38,7 @@ public class NegotiationForm extends FormView<Negotiation>{
 		}
 	
 	public void setInsurancePolicyLocked(boolean b){
-		company.lock(b);
+		company.setEditable(!b);
 	}
 	
 	@Override

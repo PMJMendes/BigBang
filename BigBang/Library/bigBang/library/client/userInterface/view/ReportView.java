@@ -16,7 +16,6 @@ import bigBang.library.client.userInterface.ListHeader;
 import bigBang.library.client.userInterface.NavigationPanel;
 import bigBang.library.client.userInterface.presenter.ReportViewPresenter;
 import bigBang.library.client.userInterface.presenter.ReportViewPresenter.Action;
-import bigBang.library.client.userInterface.reports.ParamReportPanel;
 import bigBang.library.client.userInterface.reports.PrintSetReportPanel;
 import bigBang.library.client.userInterface.reports.ReportCategoryPanel;
 import bigBang.library.client.userInterface.reports.TransactionSetReportPanel;

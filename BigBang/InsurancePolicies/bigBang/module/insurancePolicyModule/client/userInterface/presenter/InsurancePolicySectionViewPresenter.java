@@ -116,8 +116,8 @@ public class InsurancePolicySectionViewPresenter implements ViewPresenter{
 					display = display == null ? "" : display;
 
 					if(display.equalsIgnoreCase("massmanagertransfer")){
-						view.selectOperation(SectionOperation.OPERATIONS);
-						present("POLICY_MASS_MANAGER_TRANSFER", parameters);
+						view.selectOperation(SectionOperation.MASS_MANAGER_TRANSFER);
+						present("INSURANCE_POLICY_CREATE_MASS_MANAGER_TRANSFER", parameters);
 					}else {
 						view.selectOperation(SectionOperation.OPERATIONS);
 						present("INSURANCE_POLICY_OPERATIONS", parameters);
@@ -181,6 +181,9 @@ public class InsurancePolicySectionViewPresenter implements ViewPresenter{
 					view.showOverlayViewContainer(true);
 				}else if(show.equalsIgnoreCase("closeexternalrequest")){
 					present("EXTERNAL_INFO_OR_DOCUMENT_REQUEST_CLOSING", parameters);
+					view.showOverlayViewContainer(true);
+				}else if(show.equalsIgnoreCase("transfermanager")){
+					present("INSURANCE_POLICY_MANAGER_TRANSFER", parameters);
 					view.showOverlayViewContainer(true);
 				}
 			}

@@ -83,6 +83,12 @@ public class CasualtySearchOperationView extends View implements CasualtySearchO
 
 			}
 			
+			@Override
+			public void onTransferManager() {
+				actionHandler.onActionInvoked(new ActionInvokedEvent<CasualtySearchOperationViewPresenter.Action>(Action.TRANSFER_MANAGER));
+				
+			}
+			
 		};
 		this.form = new CasualtyForm();
 
@@ -139,6 +145,11 @@ public class CasualtySearchOperationView extends View implements CasualtySearchO
 	@Override
 	public void allowClose(boolean allow) {
 		this.operationsToolbar.allowClose(allow);
+	}
+	
+	@Override
+	public void allowTransferManager(boolean allow) {
+		this.operationsToolbar.allowManagerTransfer(allow);
 	}
 	
 	@Override

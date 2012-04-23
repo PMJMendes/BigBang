@@ -51,13 +51,13 @@ public class InsuredObjectForm extends FormView<InsuredObject> {
 			switch(field.type) {
 			case LIST:
 				ExpandableListBoxFormField listField = new ExpandableListBoxFormField(field.fieldName);
-				listField.setEditable(true);
+				listField.allowEdition(true);
 				listField.setListId(BigBangConstants.TypifiedListIds.FIELD_VALUES+"/"+field.fieldId, null);
 				this.field = listField;
 				break;
 			case REFERENCE:
 				ExpandableListBoxFormField referenceListField = new ExpandableListBoxFormField(field.fieldName);
-				referenceListField.setEditable(true);
+				referenceListField.allowEdition(true);
 				referenceListField.setListId(field.refersToId, null);
 				this.field = referenceListField;
 				break;

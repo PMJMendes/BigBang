@@ -42,7 +42,7 @@ public class SubCasualtyForm extends FormView<SubCasualty> {
 	public SubCasualtyForm(){
 		number = new TextBoxFormField("Número");
 		number.setFieldWidth("175px");
-		number.setEditable(false);
+		number.allowEdition(false);
 		referenceType = new ListBoxFormField("");
 		referenceType.addItem("Apólice nº", BigBangConstants.EntityIds.INSURANCE_POLICY);
 		referenceType.addItem("Apólice Adesão nº", BigBangConstants.EntityIds.INSURANCE_SUB_POLICY);
@@ -61,7 +61,7 @@ public class SubCasualtyForm extends FormView<SubCasualty> {
 		insurerProcessNumber = new TextBoxFormField("Número de Processo na Seguradora");
 		insurerProcessNumber.setFieldWidth("175px");
 		status = new TextBoxFormField("Estado");
-		status.setEditable(false);
+		status.allowEdition(false);
 		status.setFieldWidth("175px");
 		notes = new TextAreaFormField();
 		internalNotes = new TextAreaFormField();

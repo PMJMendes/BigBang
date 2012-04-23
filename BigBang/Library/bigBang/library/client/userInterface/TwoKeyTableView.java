@@ -31,12 +31,12 @@ public class TwoKeyTableView extends View {
 				switch(field.type) {
 				case LIST:
 					ExpandableListBoxFormField listField = new ExpandableListBoxFormField(BigBangConstants.TypifiedListIds.FIELD_VALUES+"/"+field.id);
-					listField.setEditable(true);
+					listField.allowEdition(true);
 					this.field = listField;
 					break;
 				case REFERENCE:
 					ExpandableListBoxFormField referenceListField = new ExpandableListBoxFormField(field.reference);
-					referenceListField.setEditable(true);
+					referenceListField.allowEdition(true);
 					this.field = referenceListField;
 					break;
 				case NUMERIC:
@@ -81,7 +81,7 @@ public class TwoKeyTableView extends View {
 				}
 			}else{
 				TextBoxFormField textField = new TextBoxFormField();
-				textField.setEditable(false);
+				textField.allowEdition(false);
 				textField.setReadOnly(false);
 				this.field = textField;
 			}

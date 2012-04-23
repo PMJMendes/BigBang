@@ -111,7 +111,7 @@ public class InsurancePolicySearchPanel extends SearchPanel<InsurancePolicyStub>
 		}
 	}
 
-	protected static enum Filters {
+	public static enum Filters {
 		CATEGORY,
 		LINE,
 		SUBLINE,

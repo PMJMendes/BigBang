@@ -28,7 +28,7 @@ public class PaymentsForm extends FormView<Payment[]> {
 
 		totalLabel = new TextBoxFormField("Total");
 		totalLabel.setFieldWidth("175px");
-		totalLabel.setEditable(false);
+		totalLabel.allowEdition(false);
 		addWidget(totalLabel, true);
 		
 		confirmButton = new Button("Confirmar Cobrança");

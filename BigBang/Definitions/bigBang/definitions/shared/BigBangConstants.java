@@ -146,6 +146,9 @@ public class BigBangConstants {
 			public static final String TRANSFER_TO_POLICY = "E89D08A1-7BE7-4F2B-9E06-9FF3010A6138";
 			public static final String CREATE_INFO_OR_DOCUMENT_REQUEST = "E9507402-B03D-4544-B770-9FF300F64319";
 			public static final String CREATE_EXPENSE = "BDAD68E7-7BA6-43AD-B10A-9FF300F5EE50";
+			public static final String CLOSE = null;
+			public static final String INCLUDE_OBJECT_FROM_CLIENT = null;
+			public static final String EXCLUDE_OBJECT = null;
 		}
 
 		
@@ -208,6 +211,7 @@ public class BigBangConstants {
 			public static final String DELETE_CASUALTY = "21AEC620-C547-404A-8956-A02E0109A821";
 			public static final String CLOSE_CASUALTY = "4FC7D258-3CBB-4174-AD53-A02E01094F3D";
 			public static final String CREATE_SUB_CASUALTY = "5E84E2C5-5461-4D0D-9B77-A02E0107D0EA";
+			public static final String CREATE_MANAGER_TRANSFER = "C6E44C82-211F-494B-BC2A-A02E0104E0FB";
 		}
 		
 		public static class SubCasualtyProcess {

@@ -66,6 +66,8 @@ public interface InsurancePolicyBroker extends DataBrokerInterface<InsurancePoli
 	void getInsurancePoliciesWithNumber(String label,
 			ResponseHandler<Collection<InsurancePolicyStub>> handler);
 
+	void createManagerTransfer(String[] processIds, String newManagerId, ResponseHandler<Void> handler);
+
 	void createExpense(Expense expense, ResponseHandler<Expense> handler);
 
 	

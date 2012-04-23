@@ -44,7 +44,8 @@ public class CasualtySearchOperationViewPresenter implements ViewPresenter {
 		CANCEL,
 		DELETE,
 		CLOSE,
-		CREATE_SUB_CASUALTY
+		CREATE_SUB_CASUALTY,
+		TRANSFER_MANAGER
 	}
 
 	public interface Display {
@@ -57,6 +58,7 @@ public class CasualtySearchOperationViewPresenter implements ViewPresenter {
 		void allowDelete(boolean allow);
 		void allowClose(boolean allow);
 		void allowCreateSubCasualty(boolean allow);
+		void allowTransferManager(boolean allow);
 
 		//Children lists
 		HasValueSelectables<Contact> getContactsList();
@@ -146,6 +148,9 @@ public class CasualtySearchOperationViewPresenter implements ViewPresenter {
 				case CREATE_SUB_CASUALTY:
 					onCreateSubCasualty();
 					break;
+				case TRANSFER_MANAGER:
+					onTransferManager();
+					break;
 				}
 			}
 		});
@@ -207,6 +212,7 @@ public class CasualtySearchOperationViewPresenter implements ViewPresenter {
 					view.allowDelete(PermissionChecker.hasPermission(response, BigBangConstants.OperationIds.CasualtyProcess.DELETE_CASUALTY));
 					view.allowClose(PermissionChecker.hasPermission(response, BigBangConstants.OperationIds.CasualtyProcess.CLOSE_CASUALTY));
 					view.allowCreateSubCasualty(PermissionChecker.hasPermission(response, BigBangConstants.OperationIds.CasualtyProcess.CREATE_SUB_CASUALTY));
+					view.allowTransferManager(PermissionChecker.hasPermission(response, BigBangConstants.OperationIds.CasualtyProcess.CREATE_MANAGER_TRANSFER));
 					
 					view.getForm().setValue(response);
 				}
@@ -261,6 +267,12 @@ public class CasualtySearchOperationViewPresenter implements ViewPresenter {
 		NavigationHistoryManager.getInstance().go(navItem);
 	}
 
+	protected void onTransferManager(){
+		NavigationHistoryItem navItem = NavigationHistoryManager.getInstance().getCurrentState();
+		navItem.setParameter("show", "managertransfer");
+		NavigationHistoryManager.getInstance().go(navItem);
+	}
+	
 	protected void showSubCasualty(String id){
 		NavigationHistoryItem navItem = NavigationHistoryManager.getInstance().getCurrentState();
 		navItem.pushIntoStackParameter("display", "subcasualty");

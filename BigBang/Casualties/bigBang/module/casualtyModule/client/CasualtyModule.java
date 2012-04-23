@@ -9,6 +9,8 @@ import bigBang.module.casualtyModule.client.dataAccess.CasualtyDataBrokerImpl;
 import bigBang.module.casualtyModule.client.dataAccess.SubCasualtyDataBrokerImpl;
 import bigBang.module.casualtyModule.client.userInterface.presenter.CasualtyCloseViewPresenter;
 import bigBang.module.casualtyModule.client.userInterface.presenter.CasualtyDeleteViewPresenter;
+import bigBang.module.casualtyModule.client.userInterface.presenter.CasualtyManagerTransferViewPresenter;
+import bigBang.module.casualtyModule.client.userInterface.presenter.CasualtyMassManagerTransferViewPresenter;
 import bigBang.module.casualtyModule.client.userInterface.presenter.CasualtyOperationsViewPresenter;
 import bigBang.module.casualtyModule.client.userInterface.presenter.CasualtySearchOperationViewPresenter;
 import bigBang.module.casualtyModule.client.userInterface.presenter.CasualtySectionViewPresenter;
@@ -16,6 +18,8 @@ import bigBang.module.casualtyModule.client.userInterface.presenter.SubCasualtyD
 import bigBang.module.casualtyModule.client.userInterface.presenter.SubCasualtyViewPresenter;
 import bigBang.module.casualtyModule.client.userInterface.view.CasualtyCloseView;
 import bigBang.module.casualtyModule.client.userInterface.view.CasualtyDeleteView;
+import bigBang.module.casualtyModule.client.userInterface.view.CasualtyManagerTransferView;
+import bigBang.module.casualtyModule.client.userInterface.view.CasualtyMassManagerTransferView;
 import bigBang.module.casualtyModule.client.userInterface.view.CasualtyOperationsView;
 import bigBang.module.casualtyModule.client.userInterface.view.CasualtySearchOperationView;
 import bigBang.module.casualtyModule.client.userInterface.view.CasualtySectionView;
@@ -98,6 +102,24 @@ public class CasualtyModule implements Module {
 			public ViewPresenter getInstance() {
 				SubCasualtyDeleteView view = (SubCasualtyDeleteView) GWT.create(SubCasualtyDeleteView.class);
 				ViewPresenter presenter = new SubCasualtyDeleteViewPresenter(view);
+				return presenter;
+			}
+		});
+		ViewPresenterFactory.getInstance().registerViewPresenterInstantiator("CASUALTY_MASS_MANAGER_TRANSFER", new ViewPresenterInstantiator() {
+
+			@Override
+			public ViewPresenter getInstance() {
+				CasualtyMassManagerTransferView view = (CasualtyMassManagerTransferView) GWT.create(CasualtyMassManagerTransferView.class);
+				ViewPresenter presenter = new CasualtyMassManagerTransferViewPresenter(view);
+				return presenter;
+			}
+		});
+		ViewPresenterFactory.getInstance().registerViewPresenterInstantiator("CASUALTY_MANAGER_TRANSFER", new ViewPresenterInstantiator() {
+
+			@Override
+			public ViewPresenter getInstance() {
+				CasualtyManagerTransferView view = (CasualtyManagerTransferView) GWT.create(CasualtyManagerTransferView.class);
+				ViewPresenter presenter = new CasualtyManagerTransferViewPresenter(view);
 				return presenter;
 			}
 		});

@@ -5,6 +5,7 @@ import java.util.Collection;
 import bigBang.definitions.client.response.ResponseHandler;
 import bigBang.definitions.shared.Casualty;
 import bigBang.definitions.shared.CasualtyStub;
+import bigBang.definitions.shared.ManagerTransfer;
 import bigBang.definitions.shared.SubCasualty;
 
 public interface CasualtyDataBroker extends DataBrokerInterface<Casualty> {
@@ -24,5 +25,7 @@ public interface CasualtyDataBroker extends DataBrokerInterface<Casualty> {
 
 	public void createSubCasualty(SubCasualty subCasualty,
 			ResponseHandler<SubCasualty> responseHandler);
+	
+	public void createManagerTransfer(String[] dataObjectIds, String newManagerId, ResponseHandler<ManagerTransfer> handler);
 	
 }

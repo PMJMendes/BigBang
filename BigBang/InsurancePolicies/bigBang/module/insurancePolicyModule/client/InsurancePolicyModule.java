@@ -17,6 +17,8 @@ import bigBang.module.insurancePolicyModule.client.userInterface.presenter.Creat
 import bigBang.module.insurancePolicyModule.client.userInterface.presenter.CreateExpenseViewPresenter;
 import bigBang.module.insurancePolicyModule.client.userInterface.presenter.CreateReceiptViewPresenter;
 import bigBang.module.insurancePolicyModule.client.userInterface.presenter.ExerciseViewPresenter;
+import bigBang.module.insurancePolicyModule.client.userInterface.presenter.InsurancePolicyManagerTransferViewPresenter;
+import bigBang.module.insurancePolicyModule.client.userInterface.presenter.InsurancePolicyMassManagerTransferViewPresenter;
 import bigBang.module.insurancePolicyModule.client.userInterface.presenter.InsurancePolicyNegotiationViewPresenter;
 import bigBang.module.insurancePolicyModule.client.userInterface.presenter.InsurancePolicyOperationsViewPresenter;
 import bigBang.module.insurancePolicyModule.client.userInterface.presenter.InsurancePolicySearchOperationViewPresenter;
@@ -39,6 +41,8 @@ import bigBang.module.insurancePolicyModule.client.userInterface.view.CreateExpe
 import bigBang.module.insurancePolicyModule.client.userInterface.view.CreateExpenseView;
 import bigBang.module.insurancePolicyModule.client.userInterface.view.CreateReceiptView;
 import bigBang.module.insurancePolicyModule.client.userInterface.view.ExerciseView;
+import bigBang.module.insurancePolicyModule.client.userInterface.view.InsurancePolicyManagerTransferView;
+import bigBang.module.insurancePolicyModule.client.userInterface.view.InsurancePolicyMassManagerTransferView;
 import bigBang.module.insurancePolicyModule.client.userInterface.view.InsurancePolicyNegotiationView;
 import bigBang.module.insurancePolicyModule.client.userInterface.view.InsurancePolicyOperationsView;
 import bigBang.module.insurancePolicyModule.client.userInterface.view.InsurancePolicySearchOperationView;
@@ -329,6 +333,24 @@ public class InsurancePolicyModule implements Module {
 			public ViewPresenter getInstance() {
 				CreateExpenseSubPolicyView view = (CreateExpenseSubPolicyView) GWT.create(CreateExpenseSubPolicyView.class);
 				CreateExpenseSubPolicyViewPresenter presenter = new CreateExpenseSubPolicyViewPresenter(view);
+				return presenter;
+			}
+		});
+		ViewPresenterFactory.getInstance().registerViewPresenterInstantiator("INSURANCE_POLICY_CREATE_MASS_MANAGER_TRANSFER", new ViewPresenterInstantiator() {
+
+			@Override
+			public ViewPresenter getInstance() {
+				InsurancePolicyMassManagerTransferView view = (InsurancePolicyMassManagerTransferView) GWT.create(InsurancePolicyMassManagerTransferView.class);
+				ViewPresenter presenter = new InsurancePolicyMassManagerTransferViewPresenter(view);
+				return presenter;
+			}
+		});
+		ViewPresenterFactory.getInstance().registerViewPresenterInstantiator("INSURANCE_POLICY_MANAGER_TRANSFER", new ViewPresenterInstantiator() {
+
+			@Override
+			public ViewPresenter getInstance() {
+				InsurancePolicyManagerTransferView view = (InsurancePolicyManagerTransferView) GWT.create(InsurancePolicyManagerTransferView.class);
+				ViewPresenter presenter = new InsurancePolicyManagerTransferViewPresenter(view);
 				return presenter;
 			}
 		});

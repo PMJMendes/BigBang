@@ -120,7 +120,7 @@ public class CasualtySectionViewPresenter implements ViewPresenter {
 					//MASS OPERATIONS
 					if(display.equalsIgnoreCase("massmanagertransfer")){
 						view.selectOperation(SectionOperation.MASS_MANAGER_TRANSFER);
-						present("MANAGER_TRANSFER", parameters);
+						present("CASUALTY_MASS_MANAGER_TRANSFER", parameters);
 					}else{
 						view.selectOperation(SectionOperation.OPERATIONS);
 						present("CASUALTY_OPERATIONS", parameters);
@@ -154,6 +154,9 @@ public class CasualtySectionViewPresenter implements ViewPresenter {
 					view.showOverlayViewContainer(true);
 				}else if(show.equalsIgnoreCase("deletesubcasualty")){
 					present("SUB_CASUALTY_DELETE", parameters);
+					view.showOverlayViewContainer(true);
+				}else if(show.equalsIgnoreCase("managertransfer")){
+					present("CASUALTY_MANAGER_TRANSFER", parameters);
 					view.showOverlayViewContainer(true);
 				}
 			}

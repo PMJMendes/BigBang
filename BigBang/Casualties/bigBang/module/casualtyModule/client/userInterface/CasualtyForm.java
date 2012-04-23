@@ -22,9 +22,9 @@ public class CasualtyForm extends FormView<Casualty> {
 	
 	public CasualtyForm(){
 		number = new TextBoxFormField("Número de Processo");
-		number.setEditable(false);
+		number.allowEdition(false);
 		client = new TextBoxFormField("Cliente");
-		client.setEditable(false);
+		client.allowEdition(false);
 		date = new DatePickerFormField("Data");
 		description = new TextAreaFormField();
 		description.setFieldWidth("600px");
@@ -36,9 +36,9 @@ public class CasualtyForm extends FormView<Casualty> {
 		
 		caseStudy = new CheckBoxFormField("Case Study");
 		manager = new ExpandableListBoxFormField(BigBangConstants.EntityIds.USER, "Gestor");
-		manager.setEditable(false);
+		manager.allowEdition(false);
 		status = new TextBoxFormField("Estado");
-		status.setEditable(false);
+		status.allowEdition(false);
 		status.setFieldWidth("175px");
 		
 		addSection("Informação Geral");

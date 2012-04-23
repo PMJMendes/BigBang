@@ -4,7 +4,6 @@ import java.util.Map;
 
 import bigBang.definitions.shared.ReportParam;
 import bigBang.library.client.userInterface.FiltersPanel;
-import bigBang.library.client.userInterface.view.View;
 
 public class ParamReportPanel extends FiltersPanel {
 	

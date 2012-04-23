@@ -17,7 +17,7 @@ public class LineForm extends FormView<Line> {
 		addSection("Detalhes do ramo");
 		name = new TextBoxFormField("Nome");
 		category = new ExpandableListBoxFormField(ModuleConstants.ListIDs.LineCategories, "Categoria");
-		category.setEditable(false);
+		category.allowEdition(false);
 		addFormField(name);
 		addFormField(category);
 	}

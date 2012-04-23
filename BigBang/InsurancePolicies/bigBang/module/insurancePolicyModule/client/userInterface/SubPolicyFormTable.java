@@ -251,7 +251,7 @@ public class SubPolicyFormTable extends View implements HasValue<TableSection> {
 		}else if(coverage.presentInPolicy != null && !coverage.presentInPolicy){
 			radio.setValue("0");
 		}
-		radio.setEditable((!coverage.mandatory) || (coverage.presentInPolicy != null && !coverage.presentInPolicy));
+		radio.allowEdition((!coverage.mandatory) || (coverage.presentInPolicy != null && !coverage.presentInPolicy));
 
 		radio.addValueChangeHandler(new ValueChangeHandler<String>() {
 

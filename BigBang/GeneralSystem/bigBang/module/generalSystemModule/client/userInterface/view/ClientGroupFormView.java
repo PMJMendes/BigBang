@@ -17,7 +17,7 @@ public class ClientGroupFormView extends FormView<ClientGroup> {
 	public ClientGroupFormView(){
 		name = new TextBoxFormField("Nome");
 		parentGroup = new ExpandableListBoxFormField(BigBangConstants.EntityIds.CLIENT_GROUP, "Grupo pai");
-		parentGroup.setEditable(false);
+		parentGroup.allowEdition(false);
 		
 		addSection("Grupo de Clientes");
 		

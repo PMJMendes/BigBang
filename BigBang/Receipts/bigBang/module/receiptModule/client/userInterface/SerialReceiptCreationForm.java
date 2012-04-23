@@ -163,7 +163,7 @@ public abstract class SerialReceiptCreationForm extends FormView<ReceiptPolicyWr
 		addSection("Recibo");
 
 		type = new ExpandableListBoxFormField(ModuleConstants.TypifiedListIds.RECEIPT_TYPE, "Tipo");
-		type.setEditable(false);
+		type.allowEdition(false);
 		totalPremium = new TextBoxFormField("Prémio Total");
 		totalPremium.setUnitsLabel("€");
 		totalPremium.setFieldWidth("100px");
@@ -189,9 +189,9 @@ public abstract class SerialReceiptCreationForm extends FormView<ReceiptPolicyWr
 		coverageEnd = new DatePickerFormField("Até");
 		dueDate = new DatePickerFormField("Limite de Pagamento");
 		mediator = new ExpandableListBoxFormField(BigBangConstants.EntityIds.MEDIATOR, "Mediador");
-		mediator.setEditable(false);
+		mediator.allowEdition(false);
 		manager = new ExpandableListBoxFormField(BigBangConstants.EntityIds.USER, "Gestor");
-		manager.setEditable(false);
+		manager.allowEdition(false);
 		description = new TextAreaFormField();
 		notes = new TextAreaFormField();
 

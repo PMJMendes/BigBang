@@ -296,6 +296,7 @@ public class QuoteRequestBrokerImpl extends DataBroker<QuoteRequest> implements	
 									((QuoteRequestDataBrokerClient) client).setDataVersionNumber(getDataElementId(), getCurrentDataVersion());
 								}
 								handler.onResponse(response);
+								EventBus.getInstance().fireEvent(new OperationWasExecutedEvent(BigBangConstants.OperationIds.QuoteRequestProcess.UPDATE_QUOTE_REQUEST, response.id));
 							}
 
 							@Override
@@ -485,6 +486,7 @@ public class QuoteRequestBrokerImpl extends DataBroker<QuoteRequest> implements	
 					((QuoteRequestDataBrokerClient) bc).setDataVersionNumber(BigBangConstants.EntityIds.QUOTE_REQUEST, getCurrentDataVersion());
 				}
 				handler.onResponse(result);
+				EventBus.getInstance().fireEvent(new OperationWasExecutedEvent(BigBangConstants.OperationIds.QuoteRequestProcess.CLOSE_QUOTE_REQUEST, result.id));
 			}
 
 			@Override
@@ -509,6 +511,7 @@ public class QuoteRequestBrokerImpl extends DataBroker<QuoteRequest> implements	
 					((QuoteRequestDataBrokerClient) bc).setDataVersionNumber(BigBangConstants.EntityIds.QUOTE_REQUEST, getCurrentDataVersion());
 				}
 				handler.onResponse(null);
+				EventBus.getInstance().fireEvent(new OperationWasExecutedEvent(BigBangConstants.OperationIds.QuoteRequestProcess.DELETE_QUOTE_REQUEST, id));
 			}
 
 			@Override
@@ -611,6 +614,7 @@ public class QuoteRequestBrokerImpl extends DataBroker<QuoteRequest> implements	
 									QuoteRequestDataBrokerClient b = (QuoteRequestDataBrokerClient)c;
 									b.updateQuoteRequest(response);
 								}
+								EventBus.getInstance().fireEvent(new OperationWasExecutedEvent(BigBangConstants.OperationIds.QuoteRequestProcess.CREATE_MANAGER_TRANSFER, response.id));
 							}
 
 							@Override
@@ -646,6 +650,7 @@ public class QuoteRequestBrokerImpl extends DataBroker<QuoteRequest> implements	
 									QuoteRequestDataBrokerClient b = (QuoteRequestDataBrokerClient)c;
 									b.updateQuoteRequest(response);
 								}
+								EventBus.getInstance().fireEvent(new OperationWasExecutedEvent(BigBangConstants.OperationIds.QuoteRequestProcess.CREATE_MANAGER_TRANSFER, response.id));
 							}
 
 							@Override
