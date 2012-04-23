@@ -15,7 +15,6 @@ import bigBang.library.client.dataAccess.TypifiedListClient;
 import bigBang.library.client.userInterface.AddressFormField;
 import bigBang.library.client.userInterface.DatePickerFormField;
 import bigBang.library.client.userInterface.ExpandableListBoxFormField;
-import bigBang.library.client.userInterface.ListBoxFormField;
 import bigBang.library.client.userInterface.RadioButtonFormField;
 import bigBang.library.client.userInterface.TextAreaFormField;
 import bigBang.library.client.userInterface.TextBoxFormField;
@@ -34,9 +33,9 @@ public class ClientFormView extends FormView<Client> implements ClientProcessDat
 	private TextBoxFormField name;
 	private TextBoxFormField taxNumber;
 	private AddressFormField address;
-	private ListBoxFormField group;
+	private ExpandableListBoxFormField group;
 	private TextBoxFormField NIB;
-	private ListBoxFormField mediator;
+	private ExpandableListBoxFormField mediator;
 	private TextBoxFormField clientManager;
 	private ExpandableListBoxFormField profile;
 	private ExpandableListBoxFormField CAE;
@@ -71,7 +70,7 @@ public class ClientFormView extends FormView<Client> implements ClientProcessDat
 		mediator.allowEdition(false);
 		clientManager = new TextBoxFormField("Gestor de Cliente");
 		clientManager.setFieldWidth("100px");
-		clientManager.allowEdition(false);
+		clientManager.setEditable(false);
 		profile = new ExpandableListBoxFormField(ModuleConstants.ListIDs.OperationalProfiles, "Perfil Operacional", new ClientFormValidator.ProfileValidator());
 		profile.allowEdition(false);
 		CAE = new ExpandableListBoxFormField(BigBangConstants.TypifiedListIds.CAEs, "CAE");

@@ -81,7 +81,7 @@ public class TwoKeyTableView extends View {
 				}
 			}else{
 				TextBoxFormField textField = new TextBoxFormField();
-				textField.allowEdition(false);
+				textField.setEditable(false);
 				textField.setReadOnly(false);
 				this.field = textField;
 			}

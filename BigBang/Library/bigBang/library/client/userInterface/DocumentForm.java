@@ -252,7 +252,7 @@ public abstract class DocumentForm extends FormView<Document>{
 		filename = new FilenameTextBoxFormField("");
 		filename.setVisible(false);
 		filename.setWidth("120px");
-		filename.allowEdition(false);
+		filename.setEditable(false);
 		filename.setFieldWidth("120px");
 		filename.addMouseUpHandler(new MouseUpHandler() {
 

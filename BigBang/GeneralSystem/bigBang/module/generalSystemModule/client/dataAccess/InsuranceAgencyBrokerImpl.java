@@ -55,26 +55,26 @@ public class InsuranceAgencyBrokerImpl extends DataBroker<InsuranceAgency> imple
 					handler.onResponse(result);
 					needsRefresh = false;
 				}
-				
+
 				@Override
 				public void onResponseFailure(Throwable caught) {
 					handler.onError(new String[]{
-						new String("Could not get insurance agencies list")	
+							new String("Could not get insurance agencies list")	
 					});
 					super.onResponseFailure(caught);
 				}
-				
+
 			});
 		}else{
 			int size = this.cache.getNumberOfEntries();
 			InsuranceAgency[] agencies = new InsuranceAgency[size];
-			
+
 			int i = 0;
 			for(Object o : this.cache.getEntries()){
 				agencies[i] = ((InsuranceAgency) o);
 				i++;
 			}
-			
+
 			handler.onResponse(agencies);
 		}
 	}
@@ -82,9 +82,13 @@ public class InsuranceAgencyBrokerImpl extends DataBroker<InsuranceAgency> imple
 	@Override
 	public void getInsuranceAgency(String insuranceAgencyId,
 			ResponseHandler<InsuranceAgency> handler) {
-		if(!cache.contains(insuranceAgencyId))
-			throw new RuntimeException("The requested insurance agency could not be fould locally. id:\""+insuranceAgencyId+"\"");
-		handler.onResponse((InsuranceAgency) cache.get(insuranceAgencyId));
+		if(!cache.contains(insuranceAgencyId)){
+			handler.onError(new String[]{
+					new String("Could not find the insurance agency")
+			});
+		}else{
+			handler.onResponse((InsuranceAgency) cache.get(insuranceAgencyId));
+		}
 	}
 
 
@@ -103,11 +107,11 @@ public class InsuranceAgencyBrokerImpl extends DataBroker<InsuranceAgency> imple
 				}
 				handler.onResponse(result);
 			}
-			
+
 			@Override
 			public void onResponseFailure(Throwable caught) {
 				handler.onError(new String[]{
-					new String("Could not create insurance agency")	
+						new String("Could not create insurance agency")	
 				});
 				super.onResponseFailure(caught);
 			}
@@ -129,15 +133,15 @@ public class InsuranceAgencyBrokerImpl extends DataBroker<InsuranceAgency> imple
 				}
 				handler.onResponse(result);
 			}
-			
+
 			@Override
 			public void onResponseFailure(Throwable caught) {
 				handler.onError(new String[]{
-					new String("Could not update insurance agency")	
+						new String("Could not update insurance agency")	
 				});
 				super.onResponseFailure(caught);
 			}
-			
+
 		});
 	}
 
@@ -156,7 +160,7 @@ public class InsuranceAgencyBrokerImpl extends DataBroker<InsuranceAgency> imple
 				}
 				handler.onResponse(null);
 			}
-			
+
 			@Override
 			public void onResponseFailure(Throwable caught) {
 				handler.onError(new String[]{
@@ -164,7 +168,7 @@ public class InsuranceAgencyBrokerImpl extends DataBroker<InsuranceAgency> imple
 				});
 				super.onResponseFailure(caught);
 			}
-			
+
 		});
 	}
 
@@ -180,7 +184,7 @@ public class InsuranceAgencyBrokerImpl extends DataBroker<InsuranceAgency> imple
 	public boolean needsRefresh(){
 		return this.needsRefresh;
 	}
-	
+
 	@Override
 	public void notifyItemCreation(String itemId) {
 		requireDataRefresh();

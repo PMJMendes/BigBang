@@ -41,13 +41,13 @@ public class ExerciseForm extends FormView<Exercise> {
 			switch(fixedFields.type) {
 			case LIST:
 				ExpandableListBoxFormField listField = new ExpandableListBoxFormField(fixedFields.fieldName);
-				listField.allowEdition(true);
+				listField.setEditable(true);
 				listField.setListId(BigBangConstants.TypifiedListIds.FIELD_VALUES+"/"+fixedFields.fieldId, null);
 				field = listField;
 				break;
 			case REFERENCE:
 				ExpandableListBoxFormField referenceListField = new ExpandableListBoxFormField(fixedFields.fieldName);
-				referenceListField.allowEdition(true);
+				referenceListField.setEditable(true);
 				referenceListField.setListId(fixedFields.refersToId, null);
 				field = referenceListField;
 				break;

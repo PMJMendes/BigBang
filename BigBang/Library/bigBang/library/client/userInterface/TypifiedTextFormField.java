@@ -67,7 +67,7 @@ public class TypifiedTextFormField extends FormField<TypifiedText> implements Ty
 		initWidget(wrapper);
 
 		labelPanel.add(labels);
-		labels.allowEdition(false);
+		labels.setEditable(false);
 		labels.setWidth("100%");
 
 		wrapper.add(labelPanel);

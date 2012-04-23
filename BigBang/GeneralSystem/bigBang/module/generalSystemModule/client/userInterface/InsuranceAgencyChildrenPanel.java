@@ -47,7 +47,7 @@ public class InsuranceAgencyChildrenPanel extends View {
 		this.agency = owner;
 		String agencyId = owner == null ? null : owner.id;
 		
-		boolean allow = owner != null ? PermissionChecker.hasPermission(SessionGeneralSystem.getInstance(), BigBangConstants.OperationIds.GeneralSystemProcess.MANAGE_COMPANIES) && agencyId != null : false;
+		boolean allow = owner != null && SessionGeneralSystem.getInstance() != null ? PermissionChecker.hasPermission(SessionGeneralSystem.getInstance(), BigBangConstants.OperationIds.GeneralSystemProcess.MANAGE_COMPANIES) && agencyId != null : false;
 		this.contactsList.setOwner(agencyId);
 		this.contactsList.setOwnerType(BigBangConstants.EntityIds.INSURANCE_AGENCY);
 		this.contactsList.allowCreation(allow);

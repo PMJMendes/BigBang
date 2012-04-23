@@ -250,8 +250,8 @@ public class ContactView extends View implements ContactViewPresenter.Display{
 
 		this.name.setReadOnly(!editable);
 		this.type.setReadOnly(!editable);
-		this.type.allowEdition(editable);
-		this.address.allowEdition(editable);
+		this.type.setEditable(editable);
+		this.address.setEditable(editable);
 		int i;
 		ContactEntry temp;
 		for(i=0; i<contactIL.size(); i++){

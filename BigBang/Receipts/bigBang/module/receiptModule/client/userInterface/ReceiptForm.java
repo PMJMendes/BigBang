@@ -78,9 +78,9 @@ public class ReceiptForm extends FormView<Receipt> implements ReceiptDataBrokerC
 
 		addSection("Informação Geral");
 		addFormField(client, false);
-		client.allowEdition(false);
+		client.setEditable(false);
 		addFormField(policy, false);
-		policy.allowEdition(false);
+		policy.setEditable(false);
 
 		addFormField(number, true);
 		addFormField(type, true);

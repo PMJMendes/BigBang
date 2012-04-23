@@ -59,13 +59,13 @@ public abstract class InsurancePolicyForm extends FormView<InsurancePolicy> {
 			switch(field.type) {
 			case LIST:
 				ExpandableListBoxFormField listField = new ExpandableListBoxFormField(field.fieldName);
-				listField.allowEdition(true);
+				listField.setEditable(true);
 				listField.setListId(BigBangConstants.TypifiedListIds.FIELD_VALUES+"/"+field.fieldId, null);
 				this.field = listField;
 				break;
 			case REFERENCE:
 				ExpandableListBoxFormField referenceListField = new ExpandableListBoxFormField(field.fieldName);
-				referenceListField.allowEdition(true);
+				referenceListField.setEditable(true);
 				referenceListField.setListId(field.refersToId, null);
 				this.field = referenceListField;
 				break;
@@ -195,7 +195,7 @@ public abstract class InsurancePolicyForm extends FormView<InsurancePolicy> {
 		manager = new ExpandableListBoxFormField(BigBangConstants.EntityIds.USER, "Gestor");
 		manager.allowEdition(false);
 		insuranceAgency = new ExpandableListBoxFormField(BigBangConstants.EntityIds.INSURANCE_AGENCY, "Seguradora");
-		insuranceAgency.allowEdition(false);
+		insuranceAgency.setEditable(false);
 		mediator = new ExpandableListBoxFormField(BigBangConstants.EntityIds.MEDIATOR, "Mediador");
 		mediator.allowEdition(false);
 		category = new ExpandableListBoxFormField(BigBangConstants.EntityIds.CATEGORY, "Categoria");
@@ -222,7 +222,7 @@ public abstract class InsurancePolicyForm extends FormView<InsurancePolicy> {
 		notes.setSize("100%", "200px");
 		policyStatus = new TextBoxFormField("Estado");
 		policyStatus.setFieldWidth("100%");
-		policyStatus.allowEdition(false);
+		policyStatus.setEditable(false);
 		table = new PolicyFormTable();
 		table.setSize("100%", "100%");
 
@@ -375,7 +375,7 @@ public abstract class InsurancePolicyForm extends FormView<InsurancePolicy> {
 		});
 
 		this.manager.setEditable(false);
-		this.client.allowEdition(false);
+		this.client.setEditable(false);
 
 		clearValue();
 		setValue(this.value);
@@ -384,17 +384,17 @@ public abstract class InsurancePolicyForm extends FormView<InsurancePolicy> {
 	public abstract void onSubLineChanged(String subLineId);
 
 	public void setForEdit(){
-		this.manager.allowEdition(false);
-		this.category.allowEdition(false);
-		this.line.allowEdition(false);
-		this.subLine.allowEdition(false);
+		this.manager.setEditable(false);
+		this.category.setEditable(false);
+		this.line.setEditable(false);
+		this.subLine.setEditable(false);
 	}
 
 	public void setForNew(){
-		this.manager.allowEdition(true);
-		this.category.allowEdition(true);
-		this.line.allowEdition(true);
-		this.subLine.allowEdition(true);
+		this.manager.setEditable(true);
+		this.category.setEditable(true);
+		this.line.setEditable(true);
+		this.subLine.setEditable(true);
 	}
 
 	@Override
@@ -514,7 +514,7 @@ public abstract class InsurancePolicyForm extends FormView<InsurancePolicy> {
 				this.coInsurance.setValue(true);
 				this.coInsurers.setMainCoInsuranceAgency(info.insuranceAgencyId);
 				this.coInsurers.setValue(info.coInsurers);
-				this.coInsurers.allowEdition(false);
+				this.coInsurers.setEditable(false);
 			}
 			else{
 				this.coInsurance.setValue(false);
