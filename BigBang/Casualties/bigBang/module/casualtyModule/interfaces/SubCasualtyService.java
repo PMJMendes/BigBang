@@ -29,7 +29,7 @@ public interface SubCasualtyService extends SearchService {
 
 	public SubCasualty markForClosing(String subCasualtyId, String revisorId) throws SessionExpiredException, BigBangException;
 	public SubCasualty closeProcess(String subCasualtyId) throws SessionExpiredException, BigBangException;
+	public SubCasualty rejectClosing(String subCasualtyId, String reason) throws SessionExpiredException, BigBangException;
 
 	public void deleteSubCasualty(String subCasualtyId, String reason) throws SessionExpiredException, BigBangException;
-
 }

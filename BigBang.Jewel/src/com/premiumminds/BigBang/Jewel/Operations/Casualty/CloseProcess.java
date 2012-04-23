@@ -3,10 +3,13 @@ package com.premiumminds.BigBang.Jewel.Operations.Casualty;
 import java.util.UUID;
 
 import Jewel.Engine.DataAccess.SQLServer;
+import Jewel.Petri.Interfaces.IProcess;
 import Jewel.Petri.SysObjects.JewelPetriException;
 import Jewel.Petri.SysObjects.UndoableOperation;
 
 import com.premiumminds.BigBang.Jewel.Constants;
+import com.premiumminds.BigBang.Jewel.Operations.SubCasualty.ExternDisallowUndoClose;
+import com.premiumminds.BigBang.Jewel.Operations.SubCasualty.ExternReallowUndoClose;
 
 public class CloseProcess
 	extends UndoableOperation
@@ -41,6 +44,20 @@ public class CloseProcess
 	protected void Run(SQLServer pdb)
 		throws JewelPetriException
 	{
+		IProcess[] larrSubProcs;
+		int i;
+
+		larrSubProcs = GetProcess().GetCurrentSubProcesses(pdb);
+		for ( i = 0; i < larrSubProcs.length; i++ )
+		{
+			if ( !Constants.ProcID_SubCasualty.equals(larrSubProcs[i].GetScriptID()) )
+				continue;
+
+			if ( !larrSubProcs[i].IsRunning() )
+				larrSubProcs[i].Restart(pdb);
+			TriggerOp(new ExternDisallowUndoClose(larrSubProcs[i].getKey()), pdb);
+		}
+
 		GetProcess().Stop(pdb);
 	}
 
@@ -57,6 +74,20 @@ public class CloseProcess
 	protected void Undo(SQLServer pdb)
 		throws JewelPetriException
 	{
+		IProcess[] larrSubProcs;
+		int i;
+
+		larrSubProcs = GetProcess().GetCurrentSubProcesses(pdb);
+		for ( i = 0; i < larrSubProcs.length; i++ )
+		{
+			if ( !Constants.ProcID_SubCasualty.equals(larrSubProcs[i].GetScriptID()) )
+				continue;
+
+			if ( !larrSubProcs[i].IsRunning() )
+				larrSubProcs[i].Restart(pdb);
+			TriggerOp(new ExternReallowUndoClose(larrSubProcs[i].getKey()), pdb);
+		}
+
 		GetProcess().Restart(pdb);
 	}
 

@@ -17,14 +17,15 @@ import Jewel.Petri.SysObjects.UndoableOperation;
 
 import com.premiumminds.BigBang.Jewel.Constants;
 import com.premiumminds.BigBang.Jewel.Objects.AgendaItem;
+import com.premiumminds.BigBang.Jewel.Objects.SubCasualty;
 
 public class MarkForClosing
 	extends UndoableOperation
 {
 	private static final long serialVersionUID = 1L;
 
-	public UUID midRevisor;
-	private String mstrRevisor;
+	public UUID midReviewer;
+	private String mstrReviewer;
 	private String mstrScheduler;
 
 	public MarkForClosing(UUID pidProcess)
@@ -45,7 +46,7 @@ public class MarkForClosing
 	public String LongDesc(String pstrLineBreak)
 	{
 		return "O sub-sinistro foi marcado para revisão e encerramento por " + mstrScheduler + "." + pstrLineBreak +
-				"Revisor indicado: " + mstrRevisor + ".";
+				"Revisor indicado: " + mstrReviewer + ".";
 	}
 
 	public UUID GetExternalProcess()
@@ -59,26 +60,34 @@ public class MarkForClosing
 		AgendaItem lobjItem;
 		Timestamp ldtAux;
 		Calendar ldtAux2;
+		Timestamp ldtFinal;
+		SubCasualty lobjSubCasualty;
 
-		if ( midRevisor.equals(Engine.getCurrentUser()) )
+		if ( midReviewer.equals(Engine.getCurrentUser()) )
 			throw new JewelPetriException("Erro: Não se pode indicar a si próprio para rever o seu próprio processo.");
 
 		ldtAux = new Timestamp(new java.util.Date().getTime());
     	ldtAux2 = Calendar.getInstance();
     	ldtAux2.setTimeInMillis(ldtAux.getTime());
     	ldtAux2.add(Calendar.DAY_OF_MONTH, 7);
+    	ldtFinal = new Timestamp(ldtAux2.getTimeInMillis());
 
 		try
 		{
 			mstrScheduler = User.GetInstance(Engine.getCurrentNameSpace(), Engine.getCurrentUser()).getDisplayName();
-			mstrRevisor = User.GetInstance(Engine.getCurrentNameSpace(), midRevisor).getDisplayName();
+			mstrReviewer = User.GetInstance(Engine.getCurrentNameSpace(), midReviewer).getDisplayName();
+
+			lobjSubCasualty = (SubCasualty)GetProcess().GetData();
+			lobjSubCasualty.setAt(SubCasualty.I.REVIEWER, midReviewer);
+			lobjSubCasualty.setAt(SubCasualty.I.REVIEWDATE, ldtFinal);
+			lobjSubCasualty.SaveToDb(pdb);
 
 			lobjItem = AgendaItem.GetInstance(Engine.getCurrentNameSpace(), (UUID)null);
 			lobjItem.setAt(0, "Revisão de Processo de Sub-Sinistro");
-			lobjItem.setAt(1, midRevisor);
+			lobjItem.setAt(1, midReviewer);
 			lobjItem.setAt(2, Constants.ProcID_SubCasualty);
 			lobjItem.setAt(3, ldtAux);
-			lobjItem.setAt(4, new Timestamp(ldtAux2.getTimeInMillis()));
+			lobjItem.setAt(4, ldtFinal);
 			lobjItem.setAt(5, Constants.UrgID_Pending);
 			lobjItem.SaveToDb(pdb);
 			lobjItem.InitNew(new UUID[] {GetProcess().getKey()},
@@ -106,6 +115,7 @@ public class MarkForClosing
 		ResultSet lrs;
 		IEntity lrefAux;
 		ObjectBase lobjAgendaProc;
+		SubCasualty lobjSubCasualty;
 
 		larrItems = new Hashtable<UUID, AgendaItem>();
 		lrs = null;
@@ -134,6 +144,11 @@ public class MarkForClosing
 				lobjItem.ClearData(pdb);
 				lobjItem.getDefinition().Delete(pdb, lobjItem.getKey());
 			}
+
+			lobjSubCasualty = (SubCasualty)GetProcess().GetData();
+			lobjSubCasualty.setAt(SubCasualty.I.REVIEWER, null);
+			lobjSubCasualty.setAt(SubCasualty.I.REVIEWDATE, null);
+			lobjSubCasualty.SaveToDb(pdb);
 		}
 		catch (Throwable e)
 		{

@@ -449,6 +449,8 @@ public class Constants
 	public static final UUID OPID_SubCasualty_CloseProcess               = UUID.fromString("207F3FEC-0CB2-47D4-868A-A03600FEE4FB");
 	public static final UUID OPID_SubCasualty_UndoCloseProcess           = UUID.fromString("B7ADE091-68D5-446A-A66D-A03600FF2B14");
 	public static final UUID OPID_SubCasualty_ExternReopenProcess        = UUID.fromString("8B3C5B6C-D71F-44B3-BB65-A03600FF5B14");
+	public static final UUID OPID_SubCasualty_ExternDisallowUndoClose    = UUID.fromString("4E5E17C8-529D-4730-B454-A03C00F586F6");
+	public static final UUID OPID_SubCasualty_ExternReallowUndoClose     = UUID.fromString("A731A2C0-8B9B-404F-9EF0-A03C00F5B819");
 	public static final UUID OPID_SubCasualty_DeleteSubCasualty          = UUID.fromString("9CD4186F-90A7-4523-8D2F-A03600FF750D");
 	public static final UUID OPID_SubCasualty_ExternResumeSubCasualty    = UUID.fromString("76D0E948-4211-4753-BB35-A03600FF9D83");
 

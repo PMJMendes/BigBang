@@ -31,6 +31,8 @@ public class SubCasualty
 		public static int SUBJECT        =  9;
 		public static int LIMITDATE      = 10;
 		public static int HASJUDICIAL    = 11;
+		public static int REVIEWER       = 12;
+		public static int REVIEWDATE     = 13;
 	}
 
     public static SubCasualty GetInstance(UUID pidNameSpace, UUID pidKey)

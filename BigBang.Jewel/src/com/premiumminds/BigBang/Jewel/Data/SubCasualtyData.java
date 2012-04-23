@@ -25,6 +25,8 @@ public class SubCasualtyData
 	public String mstrDescription;
 	public String mstrNotes;
 	public boolean mbHasJudicial;
+	public UUID midReviewer;
+	public Timestamp mdtReviewDate;
 
 	public OutgoingMessageData mobjNotification;
 	public Timestamp mdtLimitDate;
@@ -40,14 +42,16 @@ public class SubCasualtyData
 	{
 		mid = pobjSource.getKey();
 
-		mstrNumber      = (String)  pobjSource.getAt(SubCasualty.I.NUMBER);
-		midProcess      = (UUID)    pobjSource.getAt(SubCasualty.I.PROCESS);
-		midPolicy       = (UUID)    pobjSource.getAt(SubCasualty.I.POLICY);
-		midSubPolicy    = (UUID)    pobjSource.getAt(SubCasualty.I.SUBPOLICY);
-		mstrInsurerProc = (String)  pobjSource.getAt(SubCasualty.I.INSURERPROCESS);
-		mstrDescription = (String)  pobjSource.getAt(SubCasualty.I.DESCRIPTION);
-		mstrNotes       = (String)  pobjSource.getAt(SubCasualty.I.NOTES);
-		mbHasJudicial   = (Boolean) pobjSource.getAt(SubCasualty.I.HASJUDICIAL);
+		mstrNumber      = (String)    pobjSource.getAt(SubCasualty.I.NUMBER);
+		midProcess      = (UUID)      pobjSource.getAt(SubCasualty.I.PROCESS);
+		midPolicy       = (UUID)      pobjSource.getAt(SubCasualty.I.POLICY);
+		midSubPolicy    = (UUID)      pobjSource.getAt(SubCasualty.I.SUBPOLICY);
+		mstrInsurerProc = (String)    pobjSource.getAt(SubCasualty.I.INSURERPROCESS);
+		mstrDescription = (String)    pobjSource.getAt(SubCasualty.I.DESCRIPTION);
+		mstrNotes       = (String)    pobjSource.getAt(SubCasualty.I.NOTES);
+		mbHasJudicial   = (Boolean)   pobjSource.getAt(SubCasualty.I.HASJUDICIAL);
+		midReviewer     = (UUID)      pobjSource.getAt(SubCasualty.I.REVIEWER);
+		mdtReviewDate   = (Timestamp) pobjSource.getAt(SubCasualty.I.REVIEWDATE);
 	}
 
 	public void ToObject(ObjectBase pobjDest)
@@ -63,6 +67,8 @@ public class SubCasualtyData
 			pobjDest.setAt(SubCasualty.I.DESCRIPTION,    mstrDescription);
 			pobjDest.setAt(SubCasualty.I.NOTES,          mstrNotes);
 			pobjDest.setAt(SubCasualty.I.HASJUDICIAL,    mbHasJudicial);
+			pobjDest.setAt(SubCasualty.I.REVIEWER,       midReviewer);
+			pobjDest.setAt(SubCasualty.I.REVIEWDATE,     mdtReviewDate);
 		}
 		catch (Throwable e)
 		{

@@ -33,6 +33,7 @@ import com.premiumminds.BigBang.Jewel.Objects.SubPolicy;
 import com.premiumminds.BigBang.Jewel.Operations.SubCasualty.DeleteSubCasualty;
 import com.premiumminds.BigBang.Jewel.Operations.SubCasualty.ManageData;
 import com.premiumminds.BigBang.Jewel.Operations.SubCasualty.MarkForClosing;
+import com.premiumminds.BigBang.Jewel.Operations.SubCasualty.RejectClosing;
 
 public class SubCasualtyServiceImpl
 	extends SearchServiceBase
@@ -237,7 +238,7 @@ public class SubCasualtyServiceImpl
 		}
 
 		lopMFC = new MarkForClosing(lobjSubCasualty.GetProcessID());
-		lopMFC.midRevisor = UUID.fromString(revisorId);
+		lopMFC.midReviewer = UUID.fromString(revisorId);
 
 		try
 		{
@@ -256,6 +257,40 @@ public class SubCasualtyServiceImpl
 			throws SessionExpiredException, BigBangException {
 		// TODO Auto-generated method stub
 		return null;
+	}
+
+	public SubCasualty rejectClosing(String subCasualtyId, String reason)
+		throws SessionExpiredException, BigBangException
+	{
+		com.premiumminds.BigBang.Jewel.Objects.SubCasualty lobjSubCasualty;
+		RejectClosing lopRC;
+
+		if ( Engine.getCurrentUser() == null )
+			throw new SessionExpiredException();
+
+		try
+		{
+			lobjSubCasualty = com.premiumminds.BigBang.Jewel.Objects.SubCasualty.GetInstance(Engine.getCurrentNameSpace(),
+					UUID.fromString(subCasualtyId));
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangException(e.getMessage(), e);
+		}
+
+		lopRC = new RejectClosing(lobjSubCasualty.GetProcessID());
+		lopRC.mstrReason = reason;
+
+		try
+		{
+			lopRC.Execute();
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangException(e.getMessage(), e);
+		}
+
+		return sGetSubCasualty(lobjSubCasualty.getKey());
 	}
 
 	public void deleteSubCasualty(String subCasualtyId, String reason)
