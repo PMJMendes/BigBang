@@ -24,6 +24,6 @@ public class TestExpenseDelete
 			}
 		};
 
-		Services.expenseService.deleteExpense("30538EB5-5A53-4201-8706-A039010FB953", "Porque sim", callback);
+		Services.expenseService.deleteExpense("5339582F-814A-4AC9-9510-A039013F313A", "Porque sim", callback);
 	}
 }
