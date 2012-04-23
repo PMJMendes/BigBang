@@ -29,7 +29,7 @@ public class TestSubCasualtyCreate
 		};
 
 		subCasualty = new SubCasualty();
-		subCasualty.casualtyId = "2F6691D3-C427-4097-ABD8-A03100C03F46";
+		subCasualty.casualtyId = "CA38CF67-FB1C-4213-9ABE-A03C011459A1";
 		subCasualty.referenceId = "01B7B31C-0EFF-4A93-84EE-A02000F26B1F";
 		subCasualty.referenceTypeId = "D0C5AE6B-D340-4171-B7A3-9F81011F5D42";
 		subCasualty.hasJudicial = false;

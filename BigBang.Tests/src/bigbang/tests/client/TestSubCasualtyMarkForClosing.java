@@ -26,6 +26,6 @@ public class TestSubCasualtyMarkForClosing
 			}
 		};
 
-		Services.subCasualtyService.markForClosing("159CF71C-E602-4E06-A723-A03800B44526", "091B8442-B7B0-40FA-B517-9EB00068A390", callback );
+		Services.subCasualtyService.markForClosing("9D0660C4-D6A8-48D2-9D65-A03C0116D5AF", "091B8442-B7B0-40FA-B517-9EB00068A390", callback );
 	}
 }
