@@ -1,9 +1,29 @@
 package bigBang.definitions.shared;
 
+import java.io.Serializable;
+
 public class Expense
 	extends ExpenseStub
 {
 	private static final long serialVersionUID = 1L;
+
+	public static class Acceptance
+		implements Serializable
+	{
+		private static final long serialVersionUID = 1L;
+
+		public String expenseId;
+		public String settlement; //Em €
+	}
+
+	public static class ReturnEx
+		implements Serializable
+	{
+		private static final long serialVersionUID = 1L;
+
+		public String expenseId;
+		public String reason;
+	}
 
 	public String categoryName;
 	public String lineName;

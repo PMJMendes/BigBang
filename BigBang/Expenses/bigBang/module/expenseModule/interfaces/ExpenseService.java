@@ -27,5 +27,11 @@ public interface ExpenseService extends SearchService {
 
 	public Expense editExpense(Expense expense) throws SessionExpiredException, BigBangException;
 
+	public Expense sendNotification(String expenseId) throws SessionExpiredException, BigBangException;
+	public Expense receiveAcceptance(Expense.Acceptance acceptance) throws SessionExpiredException, BigBangException;
+	public Expense receiveReturn(Expense.ReturnEx returnEx) throws SessionExpiredException, BigBangException;
+
 	public void deleteExpense(String expenseId, String reason) throws SessionExpiredException, BigBangException;
+
+	public void massSendNotification(String[] expenseIds) throws SessionExpiredException, BigBangException;
 }

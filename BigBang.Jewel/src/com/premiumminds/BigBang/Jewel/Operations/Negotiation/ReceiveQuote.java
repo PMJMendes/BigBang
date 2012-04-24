@@ -246,7 +246,7 @@ public class ReceiveQuote
     	try
     	{
 			lobjNewAgendaItem = AgendaItem.GetInstance(Engine.getCurrentNameSpace(), (UUID)null);
-			lobjNewAgendaItem.setAt(0, "Pedido de Cotação (Enviado) Criado");
+			lobjNewAgendaItem.setAt(0, "Resposta a Pedido de Cotação");
 			lobjNewAgendaItem.setAt(1, Engine.getCurrentUser().toString());
 			lobjNewAgendaItem.setAt(2, Constants.ProcID_Negotiation);
 			lobjNewAgendaItem.setAt(3, ldtNow);

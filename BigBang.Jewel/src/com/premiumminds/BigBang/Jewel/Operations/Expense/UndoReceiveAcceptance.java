@@ -1,5 +1,28 @@
 package com.premiumminds.BigBang.Jewel.Operations.Expense;
 
-public class UndoReceiveAcceptance {
+import java.util.UUID;
 
+import Jewel.Petri.SysObjects.UndoOperation;
+
+import com.premiumminds.BigBang.Jewel.Constants;
+
+public class UndoReceiveAcceptance
+	extends UndoOperation
+{
+	private static final long serialVersionUID = 1L;
+
+	public UndoReceiveAcceptance(UUID pidProcess)
+	{
+		super(pidProcess);
+	}
+
+	protected UUID OpID()
+	{
+		return Constants.OPID_Expense_UndoReceiveAcceptance;
+	}
+
+	public String ShortDesc()
+	{
+		return "Desfazer Recepção de Aceitação";
+	}
 }

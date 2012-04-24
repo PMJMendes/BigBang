@@ -47,7 +47,7 @@ public class ExpenseData
 		midPolicyObject      =       (UUID) pobjSource.getAt(Expense.I.POLICYOBJECT);
 		midSubPolicyObject   =       (UUID) pobjSource.getAt(Expense.I.SUBPOLICYOBJECT);
 		midPolicyCoverage    =       (UUID) pobjSource.getAt(Expense.I.POLICYCOVERAGE);
-		midSubPolicyCoverage =       (UUID) pobjSource.getAt(Expense.I.SUBOPOLICYCOVERAGE);
+		midSubPolicyCoverage =       (UUID) pobjSource.getAt(Expense.I.SUBPOLICYCOVERAGE);
 		mdblDamages          = (BigDecimal) pobjSource.getAt(Expense.I.DAMAGES);
 		mdblSettlement       = (BigDecimal) pobjSource.getAt(Expense.I.SETTLEMENT);
 		mbIsManual           =    (Boolean) pobjSource.getAt(Expense.I.MANUAL);
@@ -65,7 +65,7 @@ public class ExpenseData
 			pobjDest.setAt(Expense.I.POLICYOBJECT,       midPolicyObject);
 			pobjDest.setAt(Expense.I.SUBPOLICYOBJECT,    midSubPolicyObject);
 			pobjDest.setAt(Expense.I.POLICYCOVERAGE,     midPolicyCoverage);
-			pobjDest.setAt(Expense.I.SUBOPOLICYCOVERAGE, midSubPolicyCoverage);
+			pobjDest.setAt(Expense.I.SUBPOLICYCOVERAGE, midSubPolicyCoverage);
 			pobjDest.setAt(Expense.I.DAMAGES,            mdblDamages);
 			pobjDest.setAt(Expense.I.SETTLEMENT,         mdblSettlement);
 			pobjDest.setAt(Expense.I.MANUAL,             mbIsManual);

@@ -25,7 +25,7 @@ public class Expense
 		public static int POLICYOBJECT       =  3;
 		public static int SUBPOLICYOBJECT    =  4;
 		public static int POLICYCOVERAGE     =  5;
-		public static int SUBOPOLICYCOVERAGE =  6;
+		public static int SUBPOLICYCOVERAGE =  6;
 		public static int DAMAGES            =  7;
 		public static int SETTLEMENT         =  8;
 		public static int MANUAL             =  9;

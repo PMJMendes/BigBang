@@ -225,7 +225,7 @@ public class CancelNegotiation
 			}
 			else
 			{
-				lobjNewAgendaItem.setAt(0, "Pedido de Cotação (Enviado) Criado");
+				lobjNewAgendaItem.setAt(0, "Resposta a Pedido de Cotação");
 				lobjNewAgendaItem.SaveToDb(pdb);
 				lobjNewAgendaItem.InitNew(new UUID[] {GetProcess().getKey()}, new UUID[] {Constants.OPID_Negotiation_ReceiveQuote,
 						Constants.OPID_Negotiation_RepeatQuoteRequest, Constants.OPID_Negotiation_CancelNegotiation}, pdb);

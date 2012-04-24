@@ -2,7 +2,9 @@ package bigBang.module.expenseModule.server;
 
 import java.math.BigDecimal;
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Hashtable;
 import java.util.UUID;
 
 import Jewel.Engine.Engine;
@@ -12,6 +14,8 @@ import Jewel.Engine.SysObjects.ObjectBase;
 import Jewel.Petri.Interfaces.IProcess;
 import Jewel.Petri.Objects.PNProcess;
 import bigBang.definitions.shared.Expense;
+import bigBang.definitions.shared.Expense.Acceptance;
+import bigBang.definitions.shared.Expense.ReturnEx;
 import bigBang.definitions.shared.ExpenseStub;
 import bigBang.definitions.shared.SearchParameter;
 import bigBang.definitions.shared.SearchResult;
@@ -32,8 +36,12 @@ import com.premiumminds.BigBang.Jewel.Objects.PolicyCoverage;
 import com.premiumminds.BigBang.Jewel.Objects.PolicyObject;
 import com.premiumminds.BigBang.Jewel.Objects.SubPolicyCoverage;
 import com.premiumminds.BigBang.Jewel.Objects.SubPolicyObject;
+import com.premiumminds.BigBang.Jewel.Operations.DocOps;
 import com.premiumminds.BigBang.Jewel.Operations.Expense.DeleteExpense;
 import com.premiumminds.BigBang.Jewel.Operations.Expense.ManageData;
+import com.premiumminds.BigBang.Jewel.Operations.Expense.ReceiveAcceptance;
+import com.premiumminds.BigBang.Jewel.Operations.Expense.ReceiveReturn;
+import com.premiumminds.BigBang.Jewel.Operations.Expense.SendNotification;
 
 public class ExpenseServiceImpl
 	extends SearchServiceBase
@@ -189,6 +197,109 @@ public class ExpenseServiceImpl
 		return sGetExpense(lobjExpense.getKey());
 	}
 
+	public Expense sendNotification(String expenseId)
+		throws SessionExpiredException, BigBangException
+	{
+		com.premiumminds.BigBang.Jewel.Objects.Expense lobjExpense;
+		SendNotification lopSN;
+
+		if ( Engine.getCurrentUser() == null )
+			throw new SessionExpiredException();
+
+		try
+		{
+			lobjExpense = com.premiumminds.BigBang.Jewel.Objects.Expense.GetInstance(Engine.getCurrentNameSpace(),
+					UUID.fromString(expenseId));
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangException(e.getMessage(), e);
+		}
+
+		lopSN = new SendNotification(lobjExpense.GetProcessID());
+		lopSN.marrExpenseIDs = new UUID[] {UUID.fromString(expenseId)};
+		lopSN.mbUseSets = false;
+
+		try
+		{
+			lopSN.Execute();
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangException(e.getMessage(), e);
+		}
+
+		return sGetExpense(lobjExpense.getKey());
+	}
+
+	public Expense receiveAcceptance(Acceptance acceptance)
+		throws SessionExpiredException, BigBangException
+	{
+		com.premiumminds.BigBang.Jewel.Objects.Expense lobjExpense;
+		ReceiveAcceptance lopRA;
+
+		if ( Engine.getCurrentUser() == null )
+			throw new SessionExpiredException();
+
+		try
+		{
+			lobjExpense = com.premiumminds.BigBang.Jewel.Objects.Expense.GetInstance(Engine.getCurrentNameSpace(),
+					UUID.fromString(acceptance.expenseId));
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangException(e.getMessage(), e);
+		}
+
+		lopRA = new ReceiveAcceptance(lobjExpense.GetProcessID());
+		lopRA.mdblSettlement = (acceptance.settlement == null ? null : new BigDecimal(acceptance.settlement));
+
+		try
+		{
+			lopRA.Execute();
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangException(e.getMessage(), e);
+		}
+
+		return sGetExpense(lobjExpense.getKey());
+	}
+
+	public Expense receiveReturn(ReturnEx returnEx)
+		throws SessionExpiredException, BigBangException
+	{
+		com.premiumminds.BigBang.Jewel.Objects.Expense lobjExpense;
+		ReceiveReturn lopRA;
+
+		if ( Engine.getCurrentUser() == null )
+			throw new SessionExpiredException();
+
+		try
+		{
+			lobjExpense = com.premiumminds.BigBang.Jewel.Objects.Expense.GetInstance(Engine.getCurrentNameSpace(),
+					UUID.fromString(returnEx.expenseId));
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangException(e.getMessage(), e);
+		}
+
+		lopRA = new ReceiveReturn(lobjExpense.GetProcessID());
+		lopRA.mstrReason = returnEx.reason;
+
+		try
+		{
+			lopRA.Execute();
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangException(e.getMessage(), e);
+		}
+
+		return sGetExpense(lobjExpense.getKey());
+	}
+
 	public void deleteExpense(String expenseId, String reason)
 		throws SessionExpiredException, BigBangException
 	{
@@ -218,6 +329,84 @@ public class ExpenseServiceImpl
 		catch (Throwable e)
 		{
 			throw new BigBangException(e.getMessage(), e);
+		}
+	}
+
+	public void massSendNotification(String[] expenseIds)
+		throws SessionExpiredException, BigBangException
+	{
+		Hashtable<UUID, ArrayList<UUID>> larrExpenses;
+		com.premiumminds.BigBang.Jewel.Objects.Expense lobjExpense;
+		IProcess lobjProcess;
+		UUID lidCompany;
+		ArrayList<UUID> larrByCompany;
+		UUID[] larrFinal;
+		UUID lidSet;
+		UUID lidSetCompany;
+		DocOps lobjDocOps;
+		SendNotification lopSN;
+		int i;
+
+		if ( Engine.getCurrentUser() == null )
+			throw new SessionExpiredException();
+
+		larrExpenses = new Hashtable<UUID, ArrayList<UUID>>();
+		for ( i = 0; i < expenseIds.length; i++ )
+		{
+			try
+			{
+				lobjExpense = com.premiumminds.BigBang.Jewel.Objects.Expense.GetInstance(Engine.getCurrentNameSpace(),
+						UUID.fromString(expenseIds[i]));
+				lobjProcess = PNProcess.GetInstance(Engine.getCurrentNameSpace(), lobjExpense.GetProcessID());
+				if ( Constants.ProcID_Policy.equals(lobjProcess.GetParent().GetScriptID()) )
+					lidCompany = (UUID)lobjProcess.GetParent().GetData().getAt(2);
+				else
+					lidCompany = (UUID)lobjProcess.GetParent().GetParent().GetData().getAt(2);
+			}
+			catch (Throwable e)
+			{
+				throw new BigBangException(e.getMessage(), e);
+			}
+			larrByCompany = larrExpenses.get(lidCompany);
+			if ( larrByCompany == null )
+			{
+				larrByCompany = new ArrayList<UUID>();
+				larrExpenses.put(lidCompany, larrByCompany);
+			}
+			larrByCompany.add(lobjExpense.getKey());
+		}
+
+		lidSet = null;
+		for(UUID lidC : larrExpenses.keySet())
+		{
+			lidSetCompany = null;
+			lobjDocOps = null;
+			larrByCompany = larrExpenses.get(lidC);
+			larrFinal = larrByCompany.toArray(new UUID[larrByCompany.size()]);
+			for ( i = 0; i < larrFinal.length; i++ )
+			{
+				try
+				{
+					lobjExpense = com.premiumminds.BigBang.Jewel.Objects.Expense.GetInstance(Engine.getCurrentNameSpace(), larrFinal[i]);
+
+					lopSN = new SendNotification(lobjExpense.GetProcessID());
+					lopSN.marrExpenseIDs = larrFinal;
+					lopSN.mbUseSets = true;
+					lopSN.midSet = lidSet;
+					lopSN.midSetDocument = lidSetCompany;
+					lopSN.mobjDocOps = lobjDocOps;
+
+					lopSN.Execute();
+
+					lobjDocOps = lopSN.mobjDocOps;
+					lidSetCompany = lopSN.midSetDocument;
+					lidSet = lopSN.midSet;
+				}
+				catch (Throwable e)
+				{
+					throw new BigBangException(e.getMessage(), e);
+				}
+			}
 		}
 	}
 

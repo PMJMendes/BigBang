@@ -589,6 +589,7 @@ public class Constants
 	public static final UUID TID_PaymentCoverLetter  = UUID.fromString("08014404-6149-4EBB-88EA-A02A00E8069F");
 	public static final UUID TID_SignatureRequest    = UUID.fromString("4D2CDC36-F897-49A3-BF46-A02A010C0925");
 	public static final UUID TID_DASRequest          = UUID.fromString("FBB27FB9-81CC-46DC-A2C2-A0300100AA93");
+	public static final UUID TID_ExpenseMap          = UUID.fromString("19601CD2-9C7D-48E1-AA75-A03D00CD6E31");
 
 	// Contact Types
 	public static final UUID CtTypeID_ReceiptReturn = UUID.fromString("BA706479-AE31-4E69-A7F0-9EEE01336CA4");
@@ -606,6 +607,7 @@ public class Constants
 	public static final UUID DocID_PaymentCoverLetter     = UUID.fromString("18E61B06-BD30-4338-82B2-A02A00E88AF7");
 	public static final UUID DocID_SignatureRequestLetter = UUID.fromString("7D054350-6B89-4742-91E5-A02A01105D11");
 	public static final UUID DocID_DASRequestLetter       = UUID.fromString("9F722D93-12BF-4D33-92A3-A0300100FA21");
+	public static final UUID DocID_ExpenseRequest         = UUID.fromString("55825900-E20A-4519-BC4F-A03D00BF135A");
 
 	// Report Types
 	public static final UUID RTypeID_Parameter   = UUID.fromString("EFF85260-CB13-4599-8EFD-A032010C4AED");
