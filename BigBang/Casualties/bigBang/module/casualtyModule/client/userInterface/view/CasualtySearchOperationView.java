@@ -88,6 +88,12 @@ public class CasualtySearchOperationView extends View implements CasualtySearchO
 				actionHandler.onActionInvoked(new ActionInvokedEvent<CasualtySearchOperationViewPresenter.Action>(Action.TRANSFER_MANAGER));
 				
 			}
+
+			@Override
+			public void onInfoOrDocumentRequest() {
+				actionHandler.onActionInvoked(new ActionInvokedEvent<CasualtySearchOperationViewPresenter.Action>(Action.INFO_DOCUMENT_REQUEST));
+				
+			}
 			
 		};
 		this.form = new CasualtyForm();
@@ -190,6 +196,11 @@ public class CasualtySearchOperationView extends View implements CasualtySearchO
 	@Override
 	public void registerActionHandler(ActionInvokedEventHandler<Action> handler) {
 		this.actionHandler = handler;
+	}
+
+	@Override
+	public void allowInfoOrDocumentRequest(boolean hasPermission) {
+		operationsToolbar.allowInfoOrDocumentRequest(hasPermission);
 	}
 
 }

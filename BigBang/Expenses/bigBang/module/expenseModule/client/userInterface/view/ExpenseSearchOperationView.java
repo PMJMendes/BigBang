@@ -80,12 +80,6 @@ public class ExpenseSearchOperationView extends View implements ExpenseSearchOpe
 			}
 
 			@Override
-			protected void onValidate() {
-				actionHandler.onActionInvoked(new ActionInvokedEvent<ExpenseSearchOperationViewPresenter.Action>(Action.VALIDATE));
-
-			}
-
-			@Override
 			protected void onNotifyClient() {
 				actionHandler.onActionInvoked(new ActionInvokedEvent<ExpenseSearchOperationViewPresenter.Action>(Action.NOTIFY_CLIENT));
 
@@ -256,11 +250,6 @@ public class ExpenseSearchOperationView extends View implements ExpenseSearchOpe
 	public void allowReturnToClient(boolean allow) {
 		this.operationsToolbar.allowReturnToClient(allow);
 
-	}
-
-	@Override
-	public void allowValidate(boolean allow) {
-		this.operationsToolbar.allowValidate(allow);
 	}
 
 	@Override

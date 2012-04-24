@@ -61,6 +61,8 @@ public class CasualtyOperationsViewPresenter implements ViewPresenter {
 					present("SUB_CASUALTY_VIEW", parameters);
 				}else if(display.equalsIgnoreCase("history")){
 					present("HISTORY", parameters);
+				}else if(display.equalsIgnoreCase("inforequest")){
+					present("CASUALTY_CLIENT_INFO_OR_DOCUMENT_REQUEST", parameters);
 				}else{
 					goToDefault();
 				}

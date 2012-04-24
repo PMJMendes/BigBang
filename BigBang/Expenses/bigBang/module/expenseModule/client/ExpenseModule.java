@@ -17,6 +17,7 @@ import bigBang.module.expenseModule.client.userInterface.presenter.ExpenseSectio
 import bigBang.module.expenseModule.client.userInterface.presenter.MassNotifyResultsClientViewPresenter;
 import bigBang.module.expenseModule.client.userInterface.presenter.MassParticipateToInsurerViewPresenter;
 import bigBang.module.expenseModule.client.userInterface.presenter.ReceiveAcceptanceViewPresenter;
+import bigBang.module.expenseModule.client.userInterface.presenter.ReceiveReturnViewPresenter;
 import bigBang.module.expenseModule.client.userInterface.view.ExpenseDeleteView;
 import bigBang.module.expenseModule.client.userInterface.view.ExpenseExternalRequestView;
 import bigBang.module.expenseModule.client.userInterface.view.ExpenseOperationsView;
@@ -25,6 +26,7 @@ import bigBang.module.expenseModule.client.userInterface.view.ExpenseSectionView
 import bigBang.module.expenseModule.client.userInterface.view.MassNotifyResultsClientView;
 import bigBang.module.expenseModule.client.userInterface.view.MassParticipateToInsurerView;
 import bigBang.module.expenseModule.client.userInterface.view.ReceiveAcceptanceView;
+import bigBang.module.expenseModule.client.userInterface.view.ReceiveReturnView;
 
 import com.google.gwt.core.client.GWT;
 
@@ -93,6 +95,15 @@ public class ExpenseModule implements Module {
 			public ViewPresenter getInstance() {
 				ReceiveAcceptanceView view = (ReceiveAcceptanceView) GWT.create(ReceiveAcceptanceView.class);
 				ReceiveAcceptanceViewPresenter presenter = new ReceiveAcceptanceViewPresenter(view);
+				return presenter;
+			}
+		});
+		ViewPresenterFactory.getInstance().registerViewPresenterInstantiator("RECEIVE_RETURN", new ViewPresenterInstantiator() {
+
+			@Override
+			public ViewPresenter getInstance() {
+				ReceiveReturnView view = (ReceiveReturnView) GWT.create(ReceiveReturnView.class);
+				ReceiveReturnViewPresenter presenter = new ReceiveReturnViewPresenter(view);
 				return presenter;
 			}
 		});

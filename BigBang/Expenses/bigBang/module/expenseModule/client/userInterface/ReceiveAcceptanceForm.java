@@ -1,30 +1,37 @@
 package bigBang.module.expenseModule.client.userInterface;
 
-import bigBang.library.client.userInterface.TextAreaFormField;
+import bigBang.definitions.shared.Expense.Acceptance;
+import bigBang.library.client.userInterface.TextBoxFormField;
 import bigBang.library.client.userInterface.view.FormView;
 
-public class ReceiveAcceptanceForm extends FormView<String>{
+public class ReceiveAcceptanceForm extends FormView<Acceptance>{
 
-	private TextAreaFormField reason;
+	private TextBoxFormField value;
 	
 	public ReceiveAcceptanceForm(){
 		
 		addSection("Aceitação");
 		
-		reason = new TextAreaFormField("Motivo");
+		value = new TextBoxFormField("Indemnização");
 		
+		value.setFieldWidth("175px");
+		value.setUnitsLabel("€");
+		
+		addFormField(value);
 	}
 	
 	@Override
-	public String getInfo() {
+	public Acceptance getInfo() {
+
+		Acceptance acc = super.value;
+		acc.settlement = value.getValue();
 		
-		String reason = this.reason.getValue();
-		return reason;
+		return acc;
 	}
 
 	@Override
-	public void setInfo(String info) {
-		reason.setValue(info);
+	public void setInfo(Acceptance info) {
+		value.setValue(info.settlement);
 	}
 
 	

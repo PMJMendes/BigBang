@@ -13,6 +13,9 @@ public abstract class CasualtyProcessToolBar extends BigBangOperationsToolBar {
 	//DATA
 	protected MenuItem transferManager;
 	
+	//REQUESTS
+	protected MenuItem infoOrDocumentRequest;
+	
 	//ADMIN
 	protected MenuItem delete, close;
 
@@ -39,6 +42,15 @@ public abstract class CasualtyProcessToolBar extends BigBangOperationsToolBar {
 		});
 		addItem(SUB_MENU.DATA, transferManager);
 
+		//REQUESTS
+		infoOrDocumentRequest = new MenuItem("Pedido de Informação ao Cliente", new Command() {
+			
+			@Override
+			public void execute() {
+				onInfoOrDocumentRequest();
+			}
+		});
+		addItem(SUB_MENU.REQUESTS, infoOrDocumentRequest);
 		//ADMIN
 		close = new MenuItem("Encerrar", new Command() {
 
@@ -101,6 +113,8 @@ public abstract class CasualtyProcessToolBar extends BigBangOperationsToolBar {
 		//		addItem(policyMenuItem);
 	}
 
+	public abstract void onInfoOrDocumentRequest();
+
 	public abstract void onCreateSubCasualty();
 
 	public abstract void onClose();
@@ -124,6 +138,10 @@ public abstract class CasualtyProcessToolBar extends BigBangOperationsToolBar {
 
 	public void allowManagerTransfer(boolean allow){
 		this.transferManager.setEnabled(allow);
+	}
+
+	public void allowInfoOrDocumentRequest(boolean hasPermission) {
+		infoOrDocumentRequest.setEnabled(hasPermission);
 	}
 
 }

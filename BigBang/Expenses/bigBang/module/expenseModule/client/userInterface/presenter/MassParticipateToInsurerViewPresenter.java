@@ -37,12 +37,12 @@ public class MassParticipateToInsurerViewPresenter implements ViewPresenter {
 	private Display view;
 	private boolean bound = false;
 	protected ExpenseDataBroker broker;
-	
+
 	public MassParticipateToInsurerViewPresenter(Display view){
 		setView((UIObject) view);
 		broker = (ExpenseDataBroker) DataBrokerManager.Util.getInstance().getBroker(BigBangConstants.EntityIds.EXPENSE);
 	}
-	
+
 	public interface Display{
 		void addExpenseToParticipate(ExpenseStub stub);
 		void removeExpenseToParticipate(String id);
@@ -60,7 +60,7 @@ public class MassParticipateToInsurerViewPresenter implements ViewPresenter {
 		void registerActionHandler(ActionInvokedEventHandler<Action> handler);
 		void allowCreation(boolean b);
 	}
-	
+
 	public enum Action{
 		SELECT_ALL, PARTICIPATE_TO_INSURER, CLEAR
 	}
@@ -68,7 +68,7 @@ public class MassParticipateToInsurerViewPresenter implements ViewPresenter {
 	@Override
 	public void setView(UIObject view) {
 		this.view = (Display)view;
-		
+
 	}
 
 	@Override
@@ -80,9 +80,9 @@ public class MassParticipateToInsurerViewPresenter implements ViewPresenter {
 
 	private void bind() {
 		if(bound){return;}
-		
+
 		view.registerActionHandler(new ActionInvokedEventHandler<MassParticipateToInsurerViewPresenter.Action>() {
-			
+
 			@Override
 			public void onActionInvoked(ActionInvokedEvent<Action> action) {
 				switch(action.getAction()){
@@ -98,17 +98,17 @@ public class MassParticipateToInsurerViewPresenter implements ViewPresenter {
 				}	
 			}
 		});
-		
+
 		view.getCheckableMainList().addCheckedSelectionChangedEventHandler(new CheckedSelectionChangedEventHandler() {
-			
+
 			@Override
 			public void onCheckedSelectionChanged(CheckedSelectionChangedEvent event) {
 				Checkable checkable = event.getChangedCheckable();
-				
+
 				@SuppressWarnings("unchecked")
 				ValueSelectable<ExpenseStub> entry = (ValueSelectable<ExpenseStub>) checkable;
 				String id = entry.getValue().id;
-				
+
 				if(checkable.isChecked()){
 					view.markForCheck(id);
 					view.addExpenseToParticipate(entry.getValue());
@@ -116,20 +116,20 @@ public class MassParticipateToInsurerViewPresenter implements ViewPresenter {
 					view.markForUncheck(id);
 					view.removeExpenseToParticipate(id);
 				}
-				
+
 			}
 		});
-		
+
 		view.getCheckableSelectedList().addCheckedSelectionChangedEventHandler(new CheckedSelectionChangedEventHandler() {
-			
+
 			@Override
 			public void onCheckedSelectionChanged(CheckedSelectionChangedEvent event) {
 				Checkable checkable = event.getChangedCheckable();
-				
+
 				@SuppressWarnings("unchecked")
 				ValueSelectable<ExpenseStub> entry = (ValueSelectable<ExpenseStub>) checkable;
 				String id = entry.getValue().id;
-	
+
 				if(checkable.isChecked()){
 					view.markForCheck(id);
 				}else{
@@ -140,28 +140,52 @@ public class MassParticipateToInsurerViewPresenter implements ViewPresenter {
 		});
 
 		view.getMainList().addSelectionChangedEventHandler(new SelectionChangedEventHandler() {
-			
+
 			@Override
 			public void onSelectionChanged(SelectionChangedEvent event) {
 				@SuppressWarnings("unchecked")
 				final ValueSelectable<ExpenseStub> selectable = (ValueSelectable<ExpenseStub>) event.getFirstSelected();
-				
+
 				if(selectable != null){
-					//TODO
+					broker.getExpense(selectable.getValue().id, new ResponseHandler<Expense>() {
+
+						@Override
+						public void onResponse(Expense response) {
+							view.getExpenseForm().setValue(response);
+						}
+
+						@Override
+						public void onError(Collection<ResponseError> errors) {
+							EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não foi possível obter a Despesa de Saúde"), TYPE.ALERT_NOTIFICATION));
+
+						}
+					});
 				}
 			}
 		});
-		
+
 		view.getSelectedList().addSelectionChangedEventHandler(new SelectionChangedEventHandler() {
-			
+
 			@Override
 			public void onSelectionChanged(SelectionChangedEvent event) {
-			
+
 				@SuppressWarnings("unchecked")
 				final ValueSelectable<ExpenseStub> selectable = (ValueSelectable<ExpenseStub>) event.getFirstSelected();
-			
+
 				if(selectable != null){
-					//TODO
+					broker.getExpense(selectable.getValue().id, new ResponseHandler<Expense>() {
+
+						@Override
+						public void onResponse(Expense response) {
+							view.getExpenseForm().setValue(response);
+						}
+
+						@Override
+						public void onError(Collection<ResponseError> errors) {
+							EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não foi possível obter a Despesa de Saúde"), TYPE.ALERT_NOTIFICATION));
+
+						}
+					});
 				}
 			}
 		});
@@ -170,8 +194,29 @@ public class MassParticipateToInsurerViewPresenter implements ViewPresenter {
 
 	protected void participateToInsurer(
 			Collection<ValueSelectable<ExpenseStub>> all) {
-		// TODO Auto-generated method stub
-		
+
+		String[] toParticipate = new String[all.size()];
+		int counter = 0;
+
+		for(ValueSelectable<ExpenseStub> stub: all){
+			toParticipate[counter] = stub.getValue().id;
+			counter++;
+		}
+
+		broker.massSendNotification(toParticipate, new ResponseHandler<Void>() {
+
+			@Override
+			public void onResponse(Void response) {
+				EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Comunicações enviadas com sucesso"), TYPE.TRAY_NOTIFICATION));
+				NavigationHistoryManager.getInstance().reload();
+			}
+
+			@Override
+			public void onError(Collection<ResponseError> errors) {
+				EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não foi possível enviar as comunicações"), TYPE.ALERT_NOTIFICATION));
+			}
+		});
+
 	}
 
 	@Override
@@ -179,13 +224,13 @@ public class MassParticipateToInsurerViewPresenter implements ViewPresenter {
 		clearView();
 		showMassParticipateToInsurerScreen();
 	}
-	
+
 
 	private void clearView() {
 		view.removeAllExpensesToParticipate();
 		view.getExpenseForm().setValue(null);
 	}	
-	
+
 
 	protected void onUserLacksPermission() {
 		EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não tem permissões para realizar esta operação"), TYPE.ALERT_NOTIFICATION));
@@ -205,13 +250,13 @@ public class MassParticipateToInsurerViewPresenter implements ViewPresenter {
 			public void onError(Collection<ResponseError> errors) {
 				onUserLacksPermission();
 			}		
-				
+
 		});
-		
+
 	}
 
 	private void checkUserPermission(ResponseHandler<Boolean> responseHandler) {
 		responseHandler.onResponse(true);
 	}
-	
+
 }

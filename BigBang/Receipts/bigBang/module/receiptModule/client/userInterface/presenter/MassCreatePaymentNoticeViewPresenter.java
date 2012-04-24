@@ -150,73 +150,73 @@ public class MassCreatePaymentNoticeViewPresenter implements ViewPresenter{
 
 			}
 		});
-		
+
 		view.getMainList().addSelectionChangedEventHandler(new SelectionChangedEventHandler() {
-			
+
 			@Override
 			public void onSelectionChanged(SelectionChangedEvent event) {
-				
+
 				@SuppressWarnings("unchecked")
 				final
 				ValueSelectable<ReceiptStub> selectable = (ValueSelectable<ReceiptStub>) event.getFirstSelected();
-				
+
 				if(selectable!= null){
-//					view.getSelectedList().clearSelection();
+					//					view.getSelectedList().clearSelection();
 					broker.getReceipt(selectable.getValue().id, new ResponseHandler<Receipt>() {
-						
+
 						@Override
 						public void onResponse(Receipt response) {
-//							selectable.setSelected(true, true);
+							//							selectable.setSelected(true, true);
 							view.getReceiptForm().setValue(response);
 						}
-						
+
 						@Override
 						public void onError(Collection<ResponseError> errors) {
 							EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não foi possível obter o Recibo seleccionado"), TYPE.ALERT_NOTIFICATION));
 						}
 					});
 				}
-				
+
 			}
 		});
-		
-		
+
+
 		view.getSelectedList().addSelectionChangedEventHandler(new SelectionChangedEventHandler() {
-			
+
 			@Override
 			public void onSelectionChanged(SelectionChangedEvent event) {
-				
+
 				@SuppressWarnings("unchecked")
 				final
 				ValueSelectable<ReceiptStub> selectable = (ValueSelectable<ReceiptStub>) event.getFirstSelected();
-				
+
 				if(selectable!= null){
-//					view.getMainList().clearSelection();
+					//					view.getMainList().clearSelection();
 					broker.getReceipt(selectable.getValue().id, new ResponseHandler<Receipt>() {
-						
+
 						@Override
 						public void onResponse(Receipt response) {
-//							selectable.setSelected(true, true);
+							//							selectable.setSelected(true, true);
 							view.getReceiptForm().setValue(response);
 						}
-						
+
 						@Override
 						public void onError(Collection<ResponseError> errors) {
 							EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não foi possível obter o Recibo seleccionado"), TYPE.ALERT_NOTIFICATION));
 						}
 					});
 				}
-				
+
 			}
 		});
-		
+
 		bound = true;
 	}
 
 	@Override
 	public void setParameters(HasParameters parameterHolder) {
 		clearView();
-//		view.refreshMainLisT();
+		//		view.refreshMainLisT();
 		showMassCreatePaymentNoticeScreen();
 	}
 
@@ -249,7 +249,7 @@ public class MassCreatePaymentNoticeViewPresenter implements ViewPresenter{
 	}
 
 	private void clearView() {
-//		view.getMainList().clearSelection();
+		//		view.getMainList().clearSelection();
 		view.removeAllReceiptsFromCreateNotice();
 		view.getReceiptForm().setValue(null);
 

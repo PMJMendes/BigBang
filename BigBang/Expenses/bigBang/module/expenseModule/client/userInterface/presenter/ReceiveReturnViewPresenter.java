@@ -2,16 +2,12 @@ package bigBang.module.expenseModule.client.userInterface.presenter;
 
 import java.util.Collection;
 
-import com.google.gwt.user.client.ui.HasWidgets;
-import com.google.gwt.user.client.ui.UIObject;
-import com.google.gwt.user.client.ui.Widget;
-
 import bigBang.definitions.client.dataAccess.ExpenseDataBroker;
 import bigBang.definitions.client.response.ResponseError;
 import bigBang.definitions.client.response.ResponseHandler;
 import bigBang.definitions.shared.BigBangConstants;
 import bigBang.definitions.shared.Expense;
-import bigBang.definitions.shared.Expense.Acceptance;
+import bigBang.definitions.shared.Expense.ReturnEx;
 import bigBang.library.client.EventBus;
 import bigBang.library.client.HasEditableValue;
 import bigBang.library.client.HasParameters;
@@ -25,7 +21,11 @@ import bigBang.library.client.history.NavigationHistoryItem;
 import bigBang.library.client.history.NavigationHistoryManager;
 import bigBang.library.client.userInterface.presenter.ViewPresenter;
 
-public class ReceiveAcceptanceViewPresenter implements ViewPresenter{
+import com.google.gwt.user.client.ui.HasWidgets;
+import com.google.gwt.user.client.ui.UIObject;
+import com.google.gwt.user.client.ui.Widget;
+
+public class ReceiveReturnViewPresenter implements ViewPresenter{
 
 
 	public static enum Action{
@@ -41,10 +41,10 @@ public class ReceiveAcceptanceViewPresenter implements ViewPresenter{
 		Widget asWidget();
 		void registerActionHandler(ActionInvokedEventHandler<Action> handler);
 		void clearForms();
-		HasEditableValue<Acceptance> getForm();
+		HasEditableValue<ReturnEx> getForm();
 	}
 
-	public ReceiveAcceptanceViewPresenter(Display view){
+	public ReceiveReturnViewPresenter(Display view){
 		setView((UIObject)view);
 		broker = (ExpenseDataBroker) DataBrokerManager.staticGetBroker(BigBangConstants.EntityIds.EXPENSE);
 	}
@@ -64,7 +64,7 @@ public class ReceiveAcceptanceViewPresenter implements ViewPresenter{
 	private void bind() {
 		if(bound){return;}
 		
-		view.registerActionHandler(new ActionInvokedEventHandler<ReceiveAcceptanceViewPresenter.Action>() {
+		view.registerActionHandler(new ActionInvokedEventHandler<Action>() {
 			
 			@Override
 			public void onActionInvoked(ActionInvokedEvent<Action> action) {
@@ -89,20 +89,20 @@ public class ReceiveAcceptanceViewPresenter implements ViewPresenter{
 	}
 
 	protected void onAccept() {
-		Acceptance acceptance = view.getForm().getInfo();
-		broker.receiveAcceptance(acceptance, new ResponseHandler<Expense>() {
+		ReturnEx returnEx = view.getForm().getInfo();
+		broker.receiveReturn(returnEx, new ResponseHandler<Expense>() {
 			
 			@Override
 			public void onResponse(Expense response) {
 				NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
 				item.removeParameter("show");
 				NavigationHistoryManager.getInstance().go(item);
-				EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Aceitação recebida com sucesso."), TYPE.TRAY_NOTIFICATION));
+				EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Rejeição recebida com sucesso."), TYPE.TRAY_NOTIFICATION));
 			}
 			
 			@Override
 			public void onError(Collection<ResponseError> errors) {
-				EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não foi possível receber a Aceitação."), TYPE.ALERT_NOTIFICATION));
+				EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não foi possível receber a Rejeição."), TYPE.ALERT_NOTIFICATION));
 				
 			}
 		});
@@ -112,9 +112,9 @@ public class ReceiveAcceptanceViewPresenter implements ViewPresenter{
 	@Override
 	public void setParameters(HasParameters parameterHolder) {
 		view.clearForms();
-		Acceptance accept = new Acceptance();
-		accept.expenseId = parameterHolder.getParameter("expenseid");
-		view.getForm().setValue(accept);
+		ReturnEx reject = new ReturnEx();
+		reject.expenseId = parameterHolder.getParameter("expenseid");
+		view.getForm().setValue(reject);
 	}
 
 

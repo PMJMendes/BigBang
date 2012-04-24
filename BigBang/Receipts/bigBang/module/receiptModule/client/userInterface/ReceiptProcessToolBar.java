@@ -69,7 +69,7 @@ public abstract class ReceiptProcessToolBar extends BigBangOperationsToolBar {
 			}
 		});
 		addItem(SUB_MENU.EXECUTE, enterPayment);
-		returnToAgency = new MenuItem("Devolver à Seguradora", new Command() {
+		returnToAgency = new MenuItem("Devolução à Seguradora", new Command() {
 
 			@Override
 			public void execute() {
@@ -77,7 +77,7 @@ public abstract class ReceiptProcessToolBar extends BigBangOperationsToolBar {
 			}
 		});
 		addItem(SUB_MENU.EXECUTE, returnToAgency);
-		transferToPolicy = new MenuItem("Transferência para Outra Apólice", new Command() {
+		transferToPolicy = new MenuItem("Transferir para Apólice", new Command() {
 
 			@Override
 			public void execute() {

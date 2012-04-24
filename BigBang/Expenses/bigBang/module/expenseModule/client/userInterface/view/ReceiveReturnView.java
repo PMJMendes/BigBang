@@ -1,24 +1,24 @@
 package bigBang.module.expenseModule.client.userInterface.view;
 
-import bigBang.definitions.shared.Expense.Acceptance;
+import com.google.gwt.user.client.ui.VerticalPanel;
+
+import bigBang.definitions.shared.Expense.ReturnEx;
 import bigBang.library.client.HasEditableValue;
 import bigBang.library.client.event.ActionInvokedEvent;
 import bigBang.library.client.event.ActionInvokedEventHandler;
 import bigBang.library.client.userInterface.view.View;
-import bigBang.module.expenseModule.client.userInterface.ReceiveAcceptanceForm;
+import bigBang.module.expenseModule.client.userInterface.ReceiveReturnForm;
 import bigBang.module.expenseModule.client.userInterface.ReceiveResponseToolbar;
-import bigBang.module.expenseModule.client.userInterface.presenter.ReceiveAcceptanceViewPresenter;
-import bigBang.module.expenseModule.client.userInterface.presenter.ReceiveAcceptanceViewPresenter.Action;
+import bigBang.module.expenseModule.client.userInterface.presenter.ReceiveReturnViewPresenter;
+import bigBang.module.expenseModule.client.userInterface.presenter.ReceiveReturnViewPresenter.Action;;
 
-import com.google.gwt.user.client.ui.VerticalPanel;
-
-public class ReceiveAcceptanceView extends View implements ReceiveAcceptanceViewPresenter.Display{
+public class ReceiveReturnView  extends View implements ReceiveReturnViewPresenter.Display{
 
 	private ReceiveResponseToolbar toolbar;
 	private ActionInvokedEventHandler<Action> actionHandler;
-	private ReceiveAcceptanceForm form;
+	private ReceiveReturnForm form;
 	
-	public ReceiveAcceptanceView(){
+	public ReceiveReturnView(){
 		VerticalPanel wrapper = new VerticalPanel();
 		initWidget(wrapper);
 		
@@ -26,17 +26,17 @@ public class ReceiveAcceptanceView extends View implements ReceiveAcceptanceView
 			
 			@Override
 			protected void onConfirmResponse() {
-				actionHandler.onActionInvoked(new ActionInvokedEvent<ReceiveAcceptanceViewPresenter.Action>(Action.ACCEPT));				
+				actionHandler.onActionInvoked(new ActionInvokedEvent<Action>(Action.ACCEPT));				
 			}
 			
 			@Override
 			public void onCancelRequest() {
-				actionHandler.onActionInvoked(new ActionInvokedEvent<ReceiveAcceptanceViewPresenter.Action>(Action.CANCEL));				
+				actionHandler.onActionInvoked(new ActionInvokedEvent<Action>(Action.CANCEL));				
 			}
 		};
-		
+
 		wrapper.add(toolbar);
-		form = new ReceiveAcceptanceForm();
+		form = new ReceiveReturnForm();
 		wrapper.add(form.getNonScrollableContent());
 		wrapper.setCellHeight(form.getNonScrollableContent(), "100%");
 
@@ -61,7 +61,7 @@ public class ReceiveAcceptanceView extends View implements ReceiveAcceptanceView
 
 
 	@Override
-	public HasEditableValue<Acceptance> getForm() {
+	public HasEditableValue<ReturnEx> getForm() {
 		return form;
 	}
 

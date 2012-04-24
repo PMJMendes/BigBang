@@ -58,7 +58,7 @@ public class MassParticipateToInsurerView extends View implements MassParticipat
 
 		@Override
 		public ListEntry<ExpenseStub> addEntry(ExpenseStub value) {
-			ListEntry<ExpenseStub> entry = new ListEntry<ExpenseStub>(value);
+			ListEntry<ExpenseStub> entry = new ExpenseSearchPanel.Entry(value);
 			entry.setChecked(true, false);
 			this.add(entry);
 			return entry;
@@ -90,7 +90,7 @@ public class MassParticipateToInsurerView extends View implements MassParticipat
 				}
 			});
 
-			this.setOperationId(BigBangConstants.OperationIds.ExpenseProcess.NOTIFY_CLIENT);
+			this.setOperationId(BigBangConstants.OperationIds.ExpenseProcess.SEND_NOTIFICATION);
 			filtersContainer.clear();
 			filtersContainer.add(filtersPanel);
 

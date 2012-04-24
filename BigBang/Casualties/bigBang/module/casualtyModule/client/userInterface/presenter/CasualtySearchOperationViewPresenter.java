@@ -45,7 +45,7 @@ public class CasualtySearchOperationViewPresenter implements ViewPresenter {
 		DELETE,
 		CLOSE,
 		CREATE_SUB_CASUALTY,
-		TRANSFER_MANAGER
+		TRANSFER_MANAGER, INFO_DOCUMENT_REQUEST
 	}
 
 	public interface Display {
@@ -70,6 +70,7 @@ public class CasualtySearchOperationViewPresenter implements ViewPresenter {
 		void setSaveModeEnabled(boolean enabled);
 		void registerActionHandler(ActionInvokedEventHandler<Action> handler);
 		Widget asWidget();
+		void allowInfoOrDocumentRequest(boolean hasPermission);
 	}
 
 	protected CasualtyDataBroker broker;
@@ -151,6 +152,9 @@ public class CasualtySearchOperationViewPresenter implements ViewPresenter {
 				case TRANSFER_MANAGER:
 					onTransferManager();
 					break;
+				case INFO_DOCUMENT_REQUEST:
+					onInfoOrDocumentRequest();
+					break;
 				}
 			}
 		});
@@ -180,6 +184,13 @@ public class CasualtySearchOperationViewPresenter implements ViewPresenter {
 		view.getHistoryList().addSelectionChangedEventHandler(selectionChangedHandler);
 
 		bound = true;
+	}
+
+	protected void onInfoOrDocumentRequest() {
+		NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
+		item.pushIntoStackParameter("display", "inforequest");
+		item.setParameter("ownerid", view.getForm().getValue().id);
+		NavigationHistoryManager.getInstance().go(item);
 	}
 
 	protected void clearView(){
@@ -213,7 +224,7 @@ public class CasualtySearchOperationViewPresenter implements ViewPresenter {
 					view.allowClose(PermissionChecker.hasPermission(response, BigBangConstants.OperationIds.CasualtyProcess.CLOSE_CASUALTY));
 					view.allowCreateSubCasualty(PermissionChecker.hasPermission(response, BigBangConstants.OperationIds.CasualtyProcess.CREATE_SUB_CASUALTY));
 					view.allowTransferManager(PermissionChecker.hasPermission(response, BigBangConstants.OperationIds.CasualtyProcess.CREATE_MANAGER_TRANSFER));
-					
+					view.allowInfoOrDocumentRequest(PermissionChecker.hasPermission(response, BigBangConstants.OperationIds.CasualtyProcess.CREATE_INFO_REQUEST));
 					view.getForm().setValue(response);
 				}
 

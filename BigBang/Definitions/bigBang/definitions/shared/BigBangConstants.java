@@ -219,6 +219,7 @@ public class BigBangConstants {
 			public static final String CLOSE_CASUALTY = "4FC7D258-3CBB-4174-AD53-A02E01094F3D";
 			public static final String CREATE_SUB_CASUALTY = "5E84E2C5-5461-4D0D-9B77-A02E0107D0EA";
 			public static final String CREATE_MANAGER_TRANSFER = "C6E44C82-211F-494B-BC2A-A02E0104E0FB";
+			public static final String CREATE_INFO_REQUEST = "59FB24D3-979B-4C2E-A69E-A02E0104A04D";
 		}
 		
 		public static class SubCasualtyProcess {
@@ -245,7 +246,6 @@ public class BigBangConstants {
 			public static final String RETURN_TO_CLIENT = "C675919E-A13D-459F-9E1F-A03800C3F021";
 			public static final String CREATE_INFO_REQUEST = "B2370F23-09C7-4B3B-BAA1-A03800C43B95";
 			public static final String CREATE_EXTERNAL_REQUEST = "9D618AB8-53F5-4D5C-8CB7-A03800C56E4F";
-			public static final String PAYMENT_VALIDATION = "8D11C94A-E3B7-45C9-AB9A-A03800C5AB4B";
 			public static final String CLOSE_PROCESS = "0EEB387C-661F-4FB0-8675-A03800C5DE73";
 		}
 		

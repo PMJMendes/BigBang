@@ -9,6 +9,7 @@ import bigBang.module.casualtyModule.client.dataAccess.CasualtyDataBrokerImpl;
 import bigBang.module.casualtyModule.client.dataAccess.SubCasualtyDataBrokerImpl;
 import bigBang.module.casualtyModule.client.userInterface.presenter.CasualtyCloseViewPresenter;
 import bigBang.module.casualtyModule.client.userInterface.presenter.CasualtyDeleteViewPresenter;
+import bigBang.module.casualtyModule.client.userInterface.presenter.CasualtyInfoOrDocumentRequestViewPresenter;
 import bigBang.module.casualtyModule.client.userInterface.presenter.CasualtyManagerTransferViewPresenter;
 import bigBang.module.casualtyModule.client.userInterface.presenter.CasualtyMassManagerTransferViewPresenter;
 import bigBang.module.casualtyModule.client.userInterface.presenter.CasualtyOperationsViewPresenter;
@@ -18,6 +19,7 @@ import bigBang.module.casualtyModule.client.userInterface.presenter.SubCasualtyD
 import bigBang.module.casualtyModule.client.userInterface.presenter.SubCasualtyViewPresenter;
 import bigBang.module.casualtyModule.client.userInterface.view.CasualtyCloseView;
 import bigBang.module.casualtyModule.client.userInterface.view.CasualtyDeleteView;
+import bigBang.module.casualtyModule.client.userInterface.view.CasualtyInfoOrDocumentRequestView;
 import bigBang.module.casualtyModule.client.userInterface.view.CasualtyManagerTransferView;
 import bigBang.module.casualtyModule.client.userInterface.view.CasualtyMassManagerTransferView;
 import bigBang.module.casualtyModule.client.userInterface.view.CasualtyOperationsView;
@@ -120,6 +122,15 @@ public class CasualtyModule implements Module {
 			public ViewPresenter getInstance() {
 				CasualtyManagerTransferView view = (CasualtyManagerTransferView) GWT.create(CasualtyManagerTransferView.class);
 				ViewPresenter presenter = new CasualtyManagerTransferViewPresenter(view);
+				return presenter;
+			}
+		});
+		ViewPresenterFactory.getInstance().registerViewPresenterInstantiator("CASUALTY_CLIENT_INFO_OR_DOCUMENT_REQUEST", new ViewPresenterInstantiator() {
+
+			@Override
+			public ViewPresenter getInstance() {
+				CasualtyInfoOrDocumentRequestView view = (CasualtyInfoOrDocumentRequestView) GWT.create(CasualtyInfoOrDocumentRequestView.class);
+				ViewPresenter presenter = new CasualtyInfoOrDocumentRequestViewPresenter(view);
 				return presenter;
 			}
 		});

@@ -2,6 +2,7 @@ package bigBang.module.casualtyModule.client.dataAccess;
 
 import java.util.Collection;
 
+
 import bigBang.definitions.client.dataAccess.CasualtyDataBroker;
 import bigBang.definitions.client.dataAccess.CasualtyDataBrokerClient;
 import bigBang.definitions.client.dataAccess.DataBroker;
@@ -14,6 +15,7 @@ import bigBang.definitions.client.response.ResponseHandler;
 import bigBang.definitions.shared.BigBangConstants;
 import bigBang.definitions.shared.Casualty;
 import bigBang.definitions.shared.CasualtyStub;
+import bigBang.definitions.shared.InfoOrDocumentRequest;
 import bigBang.definitions.shared.ManagerTransfer;
 import bigBang.definitions.shared.SearchParameter;
 import bigBang.definitions.shared.SortOrder;
@@ -279,6 +281,16 @@ CasualtyDataBroker {
 				new String("Cannot transfer 0 processes")	
 			});
 		}
+	}
+
+	@Override
+	public void createInfoOrDocumentRequest(InfoOrDocumentRequest request,
+			ResponseHandler<InfoOrDocumentRequest> responseHandler) {
+	
+		responseHandler.onResponse(null);
+		//TODO
+		
+		
 	}
 
 }

@@ -16,19 +16,17 @@ public abstract class ExpenseProcessToolBar extends BigBangOperationsToolBar{
 	//EXECUTE
 	//agency
 	protected MenuItem participateToInsurer;
+	protected MenuItem receiveAcceptance;
+	protected MenuItem receiveRejection;
 	//client
 	protected MenuItem returnToClient;
 	protected MenuItem notifyClient;
 	//other
-	protected MenuItem validate;
 	//REQUESTS
 	//client
 	protected MenuItem infoOrDocumentRequest;
 	//agency
 	protected MenuItem infoFromInsurer;
-	protected MenuItem receiveAcceptance;
-	protected MenuItem receiveRejection;
-
 
 	public ExpenseProcessToolBar() {
 
@@ -53,24 +51,6 @@ public abstract class ExpenseProcessToolBar extends BigBangOperationsToolBar{
 
 		//EXECUTE
 
-		//client
-		returnToClient = new MenuItem("Devolver ao cliente", new Command() {
-
-			@Override
-			public void execute() {
-				onReturnToClient();
-			}
-		});
-		addItem(SUB_MENU.EXECUTE, returnToClient);
-
-		notifyClient = new MenuItem("Notificar resultados ao cliente", new Command() {
-
-			@Override
-			public void execute() {
-				onNotifyClient();
-			}
-		});
-
 		//agency
 
 		participateToInsurer = new MenuItem("Participar à seguradora", new Command() {
@@ -81,69 +61,78 @@ public abstract class ExpenseProcessToolBar extends BigBangOperationsToolBar{
 			}
 		});
 		addItem(SUB_MENU.EXECUTE, participateToInsurer);
-		
-		//other
-		validate = new MenuItem("Validar", new Command() {
-			
+		receiveAcceptance = new MenuItem("Receber Aceitação", new Command() {
+
 			@Override
 			public void execute() {
-				onValidate();
+				onReceiveAcceptance();
 			}
 		});
-		addItem(SUB_MENU.EXECUTE, validate);
+		addItem(SUB_MENU.EXECUTE, receiveAcceptance);
+		receiveRejection = new MenuItem("Receber Devolução", new Command() {
+
+			@Override
+			public void execute() {
+				onReceiveRejection();
+			}
+		});
+		addItem(SUB_MENU.EXECUTE, receiveRejection);
 		
+		executeSubMenu.addSeparator();
+		
+		//client
+		returnToClient = new MenuItem("Devolver ao cliente", new Command() {
+
+			@Override
+			public void execute() {
+				onReturnToClient();
+			}
+		});
+		addItem(SUB_MENU.EXECUTE, returnToClient);
+
+		notifyClient = new MenuItem("Notificar cliente", new Command() {
+
+			@Override
+			public void execute() {
+				onNotifyClient();
+			}
+		});
+		addItem(SUB_MENU.EXECUTE, notifyClient);
+
 		//REQUESTS
 		//client
-		
-		infoOrDocumentRequest = new MenuItem("Pedido de Informação ao Cliente", new Command() {
-			
+
+		infoOrDocumentRequest = new MenuItem("Criar Pedido de Informação ao Cliente", new Command() {
+
 			@Override
 			public void execute() {
 				onInfoOrDocumentRequest();
 			}
 		});
 		addItem(SUB_MENU.REQUESTS, infoOrDocumentRequest);
-		
+
 		//agency
-		infoFromInsurer = new MenuItem("Pedido de Informação da Seguradora", new Command() {
-			
+		infoFromInsurer = new MenuItem("Criar Pedido de Informação Externo da Seguradora", new Command() {
+
 			@Override
 			public void execute() {
 				onInfoFromInsurer();
 			}
 		});
 		addItem(SUB_MENU.REQUESTS, infoFromInsurer);
-		receiveAcceptance = new MenuItem("Receber Aceitação", new Command() {
-			
-			@Override
-			public void execute() {
-				onReceiveAcceptance();
-			}
-		});
-		receiveRejection = new MenuItem("Receber Rejeição", new Command() {
-			
-			@Override
-			public void execute() {
-				onReceiveRejection();
-			}
-		});
-		requestsSubMenu.addSeparator();
-		addItem(SUB_MENU.REQUESTS, receiveAcceptance);
-		addItem(SUB_MENU.REQUESTS, receiveRejection);
-		
+
+
 		createMenuItem.setVisible(false);
 		dataMenuItem.setVisible(false);
 	}
 
 	protected abstract void onReceiveAcceptance();
-	
+
 	protected abstract void onReceiveRejection();
 
 	protected abstract void onInfoFromInsurer();
-	
+
 	protected abstract void onInfoOrDocumentRequest();
-		
-	protected abstract void onValidate();
 
 	protected abstract void onNotifyClient();
 
@@ -188,15 +177,11 @@ public abstract class ExpenseProcessToolBar extends BigBangOperationsToolBar{
 	public void allowParticipateToInsurer(boolean allow){
 		participateToInsurer.setEnabled(allow);
 	}
-	
-	public void allowValidate(boolean allow){
-		validate.setEnabled(allow);
-	}
-	
+
 	public void allowInfoOrDocumentRequest(boolean allow){
 		infoOrDocumentRequest.setEnabled(allow);
 	}
-	
+
 	public void allowInfoFromInsurer(boolean allow){
 		infoFromInsurer.setEnabled(allow);
 	}
@@ -207,7 +192,7 @@ public abstract class ExpenseProcessToolBar extends BigBangOperationsToolBar{
 
 	public void allowReceiveRejection(boolean hasPermission) {
 		receiveRejection.setEnabled(hasPermission);
-		
+
 	}
 
 
