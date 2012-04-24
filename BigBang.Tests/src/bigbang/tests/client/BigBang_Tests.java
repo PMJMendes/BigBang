@@ -194,5 +194,8 @@ public class BigBang_Tests
 //		TestExpenseCreate.DoTest();
 //		TestExpenseEdit.DoTest();
 //		TestExpenseDelete.DoTest();
+//		TestExpenseSendNotification.DoTest();
+//		TestExpenseReceiveAcceptance.DoTest();
+//		TestExpenseReceiveReturn.DoTest();
 	}
 }
