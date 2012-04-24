@@ -105,7 +105,7 @@ public class ExpenseMapReport
 			larrTables[i][4] = ((BigDecimal)lobjExpense.getAt(Expense.I.DAMAGES)).toPlainString();
 
 			mlngCount++;
-			mdblTotal = mdblTotal.add((BigDecimal)lobjExpense.getAt(3));
+			mdblTotal = mdblTotal.add((BigDecimal)lobjExpense.getAt(Expense.I.DAMAGES));
 		}
 
 		larrParams.put("Count", "" + mlngCount + " despesa" + (mlngCount == 1 ? "" : "s"));
@@ -138,7 +138,10 @@ public class ExpenseMapReport
 				n = 0;
 				i = 0;
 				while ( (n == 0) && (i < o1.length) )
+				{
 					n = c.compare(o1[i], o2[i]);
+					i++;
+				}
 
 				return n;
 			}
