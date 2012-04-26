@@ -11,6 +11,7 @@ import bigBang.definitions.shared.CasualtyStub;
 import bigBang.definitions.shared.ClientStub;
 import bigBang.definitions.shared.InsurancePolicyStub;
 import bigBang.definitions.shared.ManagerTransfer;
+import bigBang.definitions.shared.QuoteRequestStub;
 import bigBang.definitions.shared.SearchResult;
 import bigBang.library.interfaces.TransferManagerService;
 import bigBang.library.shared.BigBangException;
@@ -25,6 +26,7 @@ import com.premiumminds.BigBang.Jewel.Objects.ClientGroup;
 import com.premiumminds.BigBang.Jewel.Objects.Line;
 import com.premiumminds.BigBang.Jewel.Objects.MgrXFer;
 import com.premiumminds.BigBang.Jewel.Objects.Policy;
+import com.premiumminds.BigBang.Jewel.Objects.QuoteRequest;
 import com.premiumminds.BigBang.Jewel.Objects.SubLine;
 import com.premiumminds.BigBang.Jewel.Operations.MgrXFer.AcceptXFer;
 import com.premiumminds.BigBang.Jewel.Operations.MgrXFer.CancelXFer;
@@ -51,6 +53,9 @@ public class TransferManagerServiceImpl
 
 		if ( lobjAux instanceof Client )
 			return BuildClientStub((Client)lobjAux);
+
+		if ( lobjAux instanceof QuoteRequest )
+			return BuildQuoteRequestStub((QuoteRequest)lobjAux);
 
 		if ( lobjAux instanceof Policy )
 			return BuildPolicyStub((Policy)lobjAux);
@@ -269,6 +274,43 @@ public class TransferManagerServiceImpl
 		}
 		lobjResult.processId = pobjClient.GetProcessID().toString();
 
+		return lobjResult;
+	}
+
+	private static QuoteRequestStub BuildQuoteRequestStub(QuoteRequest pobjRequest)
+	{
+		IProcess lobjProcess;
+		QuoteRequestStub lobjResult;
+		Client lobjClient;
+
+		try
+		{
+			lobjProcess = PNProcess.GetInstance(Engine.getCurrentNameSpace(), pobjRequest.GetProcessID());
+			try
+			{
+				lobjClient = (Client)lobjProcess.GetParent().GetData();
+			}
+			catch (Throwable e)
+			{
+				lobjClient = null;
+			}
+		}
+		catch (Throwable e)
+		{
+			lobjProcess = null;
+			lobjClient = null;
+		}
+
+		lobjResult = new QuoteRequestStub();
+
+		lobjResult.id = pobjRequest.getKey().toString();
+		lobjResult.processNumber = pobjRequest.getLabel();
+		lobjResult.clientId = (lobjClient == null ? null : lobjClient.getKey().toString());
+		lobjResult.clientNumber = (lobjClient == null ? "" : ((Integer)lobjClient.getAt(1)).toString());
+		lobjResult.clientName = (lobjClient == null ? "(Erro)" : lobjClient.getLabel());
+		lobjResult.caseStudy = (Boolean)pobjRequest.getAt(4);
+		lobjResult.processId = (lobjProcess == null ? null : lobjProcess.getKey().toString());
+		lobjResult.isOpen = (lobjProcess == null ? false : lobjProcess.IsRunning());
 		return lobjResult;
 	}
 
