@@ -29,7 +29,7 @@ public class TestExpenseReceiveAcceptance
 		};
 
 		acceptance = new Expense.Acceptance();
-		acceptance.expenseId = "27F3557D-C25D-4FC3-BFD3-A03C00B9811A";
+		acceptance.expenseId = "CB529531-736F-4E88-A3B4-A03C012A212E";
 		acceptance.settlement = "100.52";
 
 		Services.expenseService.receiveAcceptance(acceptance, callback);
