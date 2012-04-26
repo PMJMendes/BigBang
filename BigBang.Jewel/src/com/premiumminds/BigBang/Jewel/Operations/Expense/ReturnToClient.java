@@ -17,7 +17,7 @@ import com.premiumminds.BigBang.Jewel.Objects.PrintSet;
 import com.premiumminds.BigBang.Jewel.Objects.PrintSetDetail;
 import com.premiumminds.BigBang.Jewel.Objects.PrintSetDocument;
 import com.premiumminds.BigBang.Jewel.Operations.DocOps;
-import com.premiumminds.BigBang.Jewel.Reports.ExpenseNoticeReport;
+import com.premiumminds.BigBang.Jewel.Reports.ExpenseReturnReport;
 
 public class ReturnToClient
 	extends Operation
@@ -123,14 +123,14 @@ public class ReturnToClient
 	private void generateDocOp()
 		throws BigBangJewelException
 	{
-		ExpenseNoticeReport lrepPN;
+		ExpenseReturnReport lrepER;
 		FileXfer lobjFile;
 		DocumentData lobjDoc;
 
-		lrepPN = new ExpenseNoticeReport();
-		lrepPN.midClient = midClient;
-		lrepPN.marrExpenseIDs = marrExpenseIDs;
-		lobjFile = lrepPN.Generate();
+		lrepER = new ExpenseReturnReport();
+		lrepER.midClient = midClient;
+		lrepER.marrExpenseIDs = marrExpenseIDs;
+		lobjFile = lrepER.Generate();
 
 		lobjDoc = new DocumentData();
 		lobjDoc.mstrName = "Devolução de Despesas";
@@ -142,10 +142,10 @@ public class ReturnToClient
 		lobjDoc.marrInfo = new DocInfoData[2];
 		lobjDoc.marrInfo[0] = new DocInfoData();
 		lobjDoc.marrInfo[0].mstrType = "Número de Despesas";
-		lobjDoc.marrInfo[0].mstrValue = Integer.toString(lrepPN.mlngCount);
+		lobjDoc.marrInfo[0].mstrValue = Integer.toString(lrepER.mlngCount);
 		lobjDoc.marrInfo[1] = new DocInfoData();
 		lobjDoc.marrInfo[1].mstrType = "Valor Total";
-		lobjDoc.marrInfo[1].mstrValue = lrepPN.mdblTotal.toPlainString();
+		lobjDoc.marrInfo[1].mstrValue = lrepER.mdblTotal.toPlainString();
 
 		mobjDocOps = new DocOps();
 		mobjDocOps.marrCreate = new DocumentData[]{lobjDoc};
