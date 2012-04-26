@@ -29,7 +29,7 @@ public class TestExpenseReceiveReturn
 		};
 
 		returnEx = new Expense.ReturnEx();
-		returnEx.expenseId = "0D273CB9-122A-4DF5-B786-A03C00BB8E20";
+		returnEx.expenseId = "9F99D844-C525-4605-9955-A03F00E5F4AE";
 		returnEx.reason = "Pessoa segura mal identificada.";
 
 		Services.expenseService.receiveReturn(returnEx, callback);

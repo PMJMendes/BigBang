@@ -24,7 +24,6 @@ public class TestExpenseReturnToClient
 			}
 		};
 
-		Services.expenseService.massReturnToClient(new String[] {"0D273CB9-122A-4DF5-B786-A03C00BB8E20",
-				"FE45D90D-A41E-494C-B902-A03C00C159A9"}, callback);
+		Services.expenseService.massReturnToClient(new String[] {"9F99D844-C525-4605-9955-A03F00E5F4AE"}, callback);
 	}
 }

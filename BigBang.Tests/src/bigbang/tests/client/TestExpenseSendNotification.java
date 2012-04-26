@@ -24,7 +24,6 @@ public class TestExpenseSendNotification
 			}
 		};
 
-		Services.expenseService.massSendNotification(new String[] {"27F3557D-C25D-4FC3-BFD3-A03C00B9811A",
-				"0D273CB9-122A-4DF5-B786-A03C00BB8E20", "FE45D90D-A41E-494C-B902-A03C00C159A9"}, callback);
+		Services.expenseService.massSendNotification(new String[] {"9F99D844-C525-4605-9955-A03F00E5F4AE"}, callback);
 	}
 }
