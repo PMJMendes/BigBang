@@ -1358,7 +1358,7 @@ public class QuoteRequestServiceImpl
 			int i, j, k;
 
 			for ( i = 0; i < marrSubLines.size(); i++ )
-				if ( marrSubLines.get(i).midSubLine.equals(pidSubLine) )
+				if ( marrSubLines.get(i).midSubLine.equals(pidSubLine) && !marrSubLines.get(i).mbDeleted )
 					throw new BigBangException("Não pode acrescentar uma cobertura já existente.");
 
 			if ( !mbValid )
