@@ -26,7 +26,7 @@ public class TestExpenseEdit
 			}
 		};
 
-		Services.expenseService.getExpense("30538EB5-5A53-4201-8706-A039010FB953", callback);
+		Services.expenseService.getExpense("9F99D844-C525-4605-9955-A03F00E5F4AE", callback);
 	}
 
 	private static void DoStep2(Expense expense)
