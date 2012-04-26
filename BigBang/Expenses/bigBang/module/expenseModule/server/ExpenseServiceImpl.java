@@ -17,10 +17,15 @@ import bigBang.definitions.shared.Expense;
 import bigBang.definitions.shared.Expense.Acceptance;
 import bigBang.definitions.shared.Expense.ReturnEx;
 import bigBang.definitions.shared.ExpenseStub;
+import bigBang.definitions.shared.ExternalInfoRequest;
+import bigBang.definitions.shared.InfoOrDocumentRequest;
 import bigBang.definitions.shared.SearchParameter;
 import bigBang.definitions.shared.SearchResult;
 import bigBang.definitions.shared.SortParameter;
 import bigBang.library.server.BigBangPermissionServiceImpl;
+import bigBang.library.server.ExternRequestServiceImpl;
+import bigBang.library.server.InfoOrDocumentRequestServiceImpl;
+import bigBang.library.server.MessageBridge;
 import bigBang.library.server.SearchServiceBase;
 import bigBang.library.shared.BigBangException;
 import bigBang.library.shared.SessionExpiredException;
@@ -37,6 +42,8 @@ import com.premiumminds.BigBang.Jewel.Objects.PolicyObject;
 import com.premiumminds.BigBang.Jewel.Objects.SubPolicyCoverage;
 import com.premiumminds.BigBang.Jewel.Objects.SubPolicyObject;
 import com.premiumminds.BigBang.Jewel.Operations.DocOps;
+import com.premiumminds.BigBang.Jewel.Operations.Expense.CreateExternRequest;
+import com.premiumminds.BigBang.Jewel.Operations.Expense.CreateInfoRequest;
 import com.premiumminds.BigBang.Jewel.Operations.Expense.DeleteExpense;
 import com.premiumminds.BigBang.Jewel.Operations.Expense.ManageData;
 import com.premiumminds.BigBang.Jewel.Operations.Expense.NotifyClient;
@@ -370,6 +377,71 @@ public class ExpenseServiceImpl
 		}
 
 		return sGetExpense(lobjExpense.getKey());
+	}
+
+	public InfoOrDocumentRequest createInfoRequest(InfoOrDocumentRequest request)
+		throws SessionExpiredException, BigBangException
+	{
+		com.premiumminds.BigBang.Jewel.Objects.Expense lobjExpense;
+		CreateInfoRequest lopCIR;
+
+		if ( Engine.getCurrentUser() == null )
+			throw new SessionExpiredException();
+
+		try
+		{
+			lobjExpense = com.premiumminds.BigBang.Jewel.Objects.Expense.GetInstance(Engine.getCurrentNameSpace(),
+					UUID.fromString(request.parentDataObjectId));
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangException(e.getMessage(), e); 
+		}
+
+		lopCIR = new CreateInfoRequest(lobjExpense.GetProcessID());
+		lopCIR.midRequestType = UUID.fromString(request.requestTypeId);
+		lopCIR.mobjMessage = MessageBridge.outgoingToServer(request.message);
+		lopCIR.mlngDays = request.replylimit;
+
+		try
+		{
+			lopCIR.Execute();
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangException(e.getMessage(), e); 
+		}
+
+		return InfoOrDocumentRequestServiceImpl.sGetRequest(lopCIR.midRequestObject);
+	}
+
+	public ExternalInfoRequest createExternalRequest(ExternalInfoRequest request)
+		throws SessionExpiredException, BigBangException
+	{
+		com.premiumminds.BigBang.Jewel.Objects.Expense lobjExpense;
+		CreateExternRequest lopCER;
+
+		if ( Engine.getCurrentUser() == null )
+			throw new SessionExpiredException();
+
+		try
+		{
+			lobjExpense = com.premiumminds.BigBang.Jewel.Objects.Expense.GetInstance(Engine.getCurrentNameSpace(),
+					UUID.fromString(request.parentDataObjectId));
+
+			lopCER = new CreateExternRequest(lobjExpense.GetProcessID());
+			lopCER.mstrSubject = request.subject;
+			lopCER.mobjMessage = MessageBridge.incomingToServer(request.message, Constants.ObjID_Expense);
+			lopCER.mlngDays = request.replylimit;
+
+			lopCER.Execute();
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangException(e.getMessage(), e); 
+		}
+
+		return ExternRequestServiceImpl.sGetRequest(lopCER.midRequestObject);
 	}
 
 	public void deleteExpense(String expenseId, String reason)

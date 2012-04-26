@@ -1,6 +1,8 @@
 package bigBang.module.expenseModule.interfaces;
 
 import bigBang.definitions.shared.Expense;
+import bigBang.definitions.shared.ExternalInfoRequest;
+import bigBang.definitions.shared.InfoOrDocumentRequest;
 import bigBang.library.interfaces.SearchService;
 import bigBang.library.shared.BigBangException;
 import bigBang.library.shared.SessionExpiredException;
@@ -33,6 +35,9 @@ public interface ExpenseService extends SearchService {
 
 	public Expense notifyClient(String expenseId) throws SessionExpiredException, BigBangException;
 	public Expense returnToClient(String expenseId) throws SessionExpiredException, BigBangException;
+
+	public InfoOrDocumentRequest createInfoRequest(InfoOrDocumentRequest request) throws SessionExpiredException, BigBangException;
+	public ExternalInfoRequest createExternalRequest(ExternalInfoRequest request) throws SessionExpiredException, BigBangException;
 
 	public void deleteExpense(String expenseId, String reason) throws SessionExpiredException, BigBangException;
 

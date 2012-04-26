@@ -5,6 +5,8 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 import bigBang.definitions.shared.Expense;
 import bigBang.definitions.shared.Expense.Acceptance;
 import bigBang.definitions.shared.Expense.ReturnEx;
+import bigBang.definitions.shared.ExternalInfoRequest;
+import bigBang.definitions.shared.InfoOrDocumentRequest;
 import bigBang.library.interfaces.SearchServiceAsync;
 
 public interface ExpenseServiceAsync extends SearchServiceAsync
@@ -16,6 +18,8 @@ public interface ExpenseServiceAsync extends SearchServiceAsync
 	void receiveReturn(ReturnEx returnEx, AsyncCallback<Expense> callback);
 	void notifyClient(String expenseId, AsyncCallback<Expense> callback);
 	void returnToClient(String expenseId, AsyncCallback<Expense> callback);
+	void createInfoRequest(InfoOrDocumentRequest request, AsyncCallback<InfoOrDocumentRequest> callback);
+	void createExternalRequest(ExternalInfoRequest request, AsyncCallback<ExternalInfoRequest> callback);
 	void deleteExpense(String expenseId, String reason, AsyncCallback<Void> callback);
 	void massSendNotification(String[] expenseIds, AsyncCallback<Void> callback);
 	void massNotifyClient(String[] expenseIds, AsyncCallback<Void> callback);
