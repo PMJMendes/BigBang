@@ -174,16 +174,42 @@ public class CasualtySearchOperationViewPresenter implements ViewPresenter {
 					}else if(event.getSource() == view.getHistoryList()) {
 						HistoryItemStub historyItem = (HistoryItemStub) selected.getValue();
 						showHistory(historyItem.id);
+					}else if(event.getSource() == view.getContactsList()){
+						Contact contact = (Contact) selected.getValue();
+						showContact(contact.id);
+					}else if(event.getSource() == view.getDocumentsList()){
+						Document doc = (Document) selected.getValue();
+						showDocument(doc.id);
 					}
 				}
 			}
 		};
-
+		view.getDocumentsList().addSelectionChangedEventHandler(selectionChangedHandler);
+		view.getContactsList().addSelectionChangedEventHandler(selectionChangedHandler);
 		view.getSubCasualtyList().addSelectionChangedEventHandler(selectionChangedHandler);
 		view.getSubProcessesList().addSelectionChangedEventHandler(selectionChangedHandler);
 		view.getHistoryList().addSelectionChangedEventHandler(selectionChangedHandler);
 
 		bound = true;
+	}
+
+	protected void showDocument(String id) {
+		NavigationHistoryItem navItem = NavigationHistoryManager.getInstance().getCurrentState();
+		navItem.setParameter("show", "documentmanagement");
+		navItem.setParameter("ownerid", navItem.getParameter("casualtyid"));
+		navItem.setParameter("documentid", id);
+		navItem.setParameter("ownertypeid", BigBangConstants.EntityIds.CASUALTY);
+		NavigationHistoryManager.getInstance().go(navItem);
+		
+	}
+
+	protected void showContact(String id) {		NavigationHistoryItem navItem = NavigationHistoryManager.getInstance().getCurrentState();
+	navItem.setParameter("show", "contactmanagement");
+	navItem.setParameter("ownerid", navItem.getParameter("casualtyid"));
+	navItem.setParameter("contactid", id);
+	navItem.setParameter("ownertypeid", BigBangConstants.EntityIds.CASUALTY);
+	NavigationHistoryManager.getInstance().go(navItem);
+		
 	}
 
 	protected void onInfoOrDocumentRequest() {

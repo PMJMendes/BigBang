@@ -2,12 +2,12 @@ package bigBang.module.casualtyModule.client.userInterface.presenter;
 
 import java.util.Collection;
 
-import bigBang.definitions.client.dataAccess.CasualtyDataBroker;
+import bigBang.definitions.client.dataAccess.SubCasualtyDataBroker;
 import bigBang.definitions.client.response.ResponseError;
 import bigBang.definitions.client.response.ResponseHandler;
 import bigBang.definitions.shared.BigBangConstants;
-import bigBang.definitions.shared.Casualty;
 import bigBang.definitions.shared.InfoOrDocumentRequest;
+import bigBang.definitions.shared.SubCasualty;
 import bigBang.library.client.EventBus;
 import bigBang.library.client.HasParameters;
 import bigBang.library.client.Notification;
@@ -19,13 +19,13 @@ import bigBang.library.client.history.NavigationHistoryItem;
 import bigBang.library.client.history.NavigationHistoryManager;
 import bigBang.library.client.userInterface.presenter.InfoOrDocumentRequestViewPresenter;
 
-public class CasualtyInfoOrDocumentRequestViewPresenter extends InfoOrDocumentRequestViewPresenter<Casualty>{
+public class SubCasualtyInfoOrDocumentRequestViewPresenter extends InfoOrDocumentRequestViewPresenter<SubCasualty>{
 
-	private CasualtyDataBroker broker;
+	private SubCasualtyDataBroker broker;
 	
-	public CasualtyInfoOrDocumentRequestViewPresenter(Display<Casualty> view) {
+	public SubCasualtyInfoOrDocumentRequestViewPresenter(Display<SubCasualty> view) {
 		super(view);
-		broker = (CasualtyDataBroker) DataBrokerManager.staticGetBroker(BigBangConstants.EntityIds.CASUALTY);
+		broker = (SubCasualtyDataBroker) DataBrokerManager.staticGetBroker(BigBangConstants.EntityIds.SUB_CASUALTY);
 	}
 
 	@Override
@@ -39,10 +39,10 @@ public class CasualtyInfoOrDocumentRequestViewPresenter extends InfoOrDocumentRe
 
 	@Override
 	protected void showOwner(String ownerId, String ownerTypeId) {
-		broker.getCasualty(ownerId, new ResponseHandler<Casualty>() {
+		broker.getSubCasualty(ownerId, new ResponseHandler<SubCasualty>() {
 			
 			@Override
-			public void onResponse(Casualty response) {
+			public void onResponse(SubCasualty response) {
 				view.getOwnerForm().setValue(response);
 			}
 			
@@ -51,17 +51,16 @@ public class CasualtyInfoOrDocumentRequestViewPresenter extends InfoOrDocumentRe
 				onGetOwnerFailed();
 			}
 		});
-		
 	}
 
 	@Override
 	protected void checkOwnerPermissions(String ownerId, String ownerTypeId,
 			final ResponseHandler<Boolean> handler) {
-		broker.getCasualty(ownerId, new ResponseHandler<Casualty>() {
+		broker.getSubCasualty(ownerId, new ResponseHandler<SubCasualty>() {
 			
 			@Override
-			public void onResponse(Casualty response) {
-				handler.onResponse(PermissionChecker.hasPermission(response, BigBangConstants.OperationIds.CasualtyProcess.CREATE_INFO_REQUEST));
+			public void onResponse(SubCasualty response) {
+				handler.onResponse(PermissionChecker.hasPermission(response, BigBangConstants.OperationIds.SubCasualtyProcess.CREATE_EXTERNAL_INFO_REQUEST));
 			}
 			
 			@Override
@@ -104,7 +103,7 @@ public class CasualtyInfoOrDocumentRequestViewPresenter extends InfoOrDocumentRe
 
 	@Override
 	protected void onGetOwnerFailed() {
-		EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não foi possível obter o sinistro"), TYPE.ALERT_NOTIFICATION));
+		EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não foi possível obter o sub-sinistro"), TYPE.ALERT_NOTIFICATION));
 		NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
 		item.popFromStackParameter("display");
 		item.removeParameter("ownerid");
@@ -134,11 +133,11 @@ public class CasualtyInfoOrDocumentRequestViewPresenter extends InfoOrDocumentRe
 		item.removeParameter("requestid");
 		NavigationHistoryManager.getInstance().go(item);
 	}
-
+	
 	@Override
 	public void setParameters(HasParameters parameterHolder) {
-		parameterHolder.setParameter("ownertypeid", BigBangConstants.EntityIds.CASUALTY);
+		parameterHolder.setParameter("ownertypeid", BigBangConstants.EntityIds.SUB_CASUALTY);
 		super.setParameters(parameterHolder);
 	}
-	
+
 }

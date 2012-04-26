@@ -79,9 +79,25 @@ public class ExpenseInfoOrDocumentRequestViewPresenter extends InfoOrDocumentReq
 
 	@Override
 	protected void onSend() {
-		//InfoOrDocumentRequest request = view.getForm().getInfo();
+		InfoOrDocumentRequest request = view.getForm().getInfo();
+		broker.createInfoOrDocumentRequest(request, new ResponseHandler<InfoOrDocumentRequest>() {
+
+			@Override
+			public void onResponse(InfoOrDocumentRequest response) {
+				view.getForm().setValue(response);
+				onSendRequestSuccess();
+				NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
+				item.popFromStackParameter("display");
+				NavigationHistoryManager.getInstance().go(item);
+			}
+
+			@Override
+			public void onError(Collection<ResponseError> errors) {
+				onSendRequestFailed();
+			}
+		});
 		
-		//TODO BROKER PART;
+		
 	}
 
 	@Override

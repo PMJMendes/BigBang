@@ -14,6 +14,8 @@ import bigBang.module.casualtyModule.client.userInterface.presenter.SubCasualtyV
 import bigBang.module.casualtyModule.client.userInterface.presenter.SubCasualtyViewPresenter.Action;
 import bigBang.definitions.shared.BigBangProcess;
 import bigBang.definitions.shared.Casualty;
+import bigBang.definitions.shared.Contact;
+import bigBang.definitions.shared.Document;
 import bigBang.definitions.shared.HistoryItemStub;
 import bigBang.definitions.shared.SubCasualty;
 import bigBang.library.client.HasEditableValue;
@@ -84,6 +86,16 @@ public class SubCasualtyView extends View implements SubCasualtyViewPresenter.Di
 			public void onDelete() {
 				actionHandler.onActionInvoked(new ActionInvokedEvent<SubCasualtyViewPresenter.Action>(Action.DELETE));
 			}
+
+			@Override
+			protected void externalInfoRequest() {
+				actionHandler.onActionInvoked(new ActionInvokedEvent<SubCasualtyViewPresenter.Action>(Action.EXTERNAL_REQUEST));
+			}
+
+			@Override
+			protected void insurerInfoRequest() {
+				actionHandler.onActionInvoked(new ActionInvokedEvent<SubCasualtyViewPresenter.Action>(Action.INFO_OR_DOCUMENT_REQUEST));
+			}
 		};
 		formWrapper.add(this.toolbar);
 
@@ -151,4 +163,24 @@ public class SubCasualtyView extends View implements SubCasualtyViewPresenter.Di
 		return this.childrenPanel.historyList;
 	}
 
+	@Override
+	public void allowInfoOrDocumentRequest(boolean hasPermission) {
+		toolbar.allowInfoOrDocumentRequest(hasPermission);
+
+	}
+
+	@Override
+	public void allowInsurerInfoRequest(boolean hasPermission) {
+		toolbar.allowInsurerInfoRequest(hasPermission);
+	}
+
+	@Override
+	public HasValueSelectables<Contact> getContactsList() {
+		return childrenPanel.contactsList;
+	}
+
+	@Override
+	public HasValueSelectables<Document> getDocumentsList() {
+		return childrenPanel.documentsList;
+	}
 }

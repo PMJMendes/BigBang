@@ -11,12 +11,16 @@ import bigBang.definitions.client.dataAccess.SubCasualtyDataBrokerClient;
 import bigBang.definitions.client.response.ResponseError;
 import bigBang.definitions.client.response.ResponseHandler;
 import bigBang.definitions.shared.BigBangConstants;
+import bigBang.definitions.shared.ExternalInfoRequest;
+import bigBang.definitions.shared.InfoOrDocumentRequest;
 import bigBang.definitions.shared.SearchParameter;
 import bigBang.definitions.shared.SortOrder;
 import bigBang.definitions.shared.SortParameter;
 import bigBang.definitions.shared.SubCasualty;
 import bigBang.definitions.shared.SubCasualtyStub;
 import bigBang.library.client.BigBangAsyncCallback;
+import bigBang.library.client.EventBus;
+import bigBang.library.client.event.OperationWasExecutedEvent;
 import bigBang.module.casualtyModule.interfaces.SubCasualtyService;
 import bigBang.module.casualtyModule.interfaces.SubCasualtyServiceAsync;
 import bigBang.module.casualtyModule.shared.SubCasualtySearchParameter;
@@ -190,7 +194,7 @@ implements SubCasualtyDataBroker{
 			@Override
 			public void onError(Collection<ResponseError> errors) {
 				responseHandler.onError(new String[]{
-					new String("Could not get the sub casualties for the given owner")	
+						new String("Could not get the sub casualties for the given owner")	
 				});
 			}
 		});
@@ -200,4 +204,51 @@ implements SubCasualtyDataBroker{
 	public SearchDataBroker<SubCasualtyStub> getSearchBroker() {
 		return this.searchBroker;
 	}
+
+	@Override
+	public void createInfoOrDocumentRequest(InfoOrDocumentRequest request,
+			final ResponseHandler<InfoOrDocumentRequest> responseHandler) {
+		service.createInfoRequest(request, new BigBangAsyncCallback<InfoOrDocumentRequest>() {
+
+			@Override
+			public void onResponseSuccess(InfoOrDocumentRequest result) {
+				responseHandler.onResponse(result);
+				EventBus.getInstance().fireEvent(new OperationWasExecutedEvent(BigBangConstants.OperationIds.SubCasualtyProcess.CREATE_INSURER_INFO_REQUEST, result.id));
+
+			}
+
+			@Override
+			public void onResponseFailure(Throwable caught) {
+				responseHandler.onError(new String[]{
+						new String("Could not receive the info or document request response")	
+				});
+				super.onResponseFailure(caught);	
+			}
+		});
+	}
+
+	@Override
+	public void createExternalInfoRequest(ExternalInfoRequest toSend,
+			final ResponseHandler<ExternalInfoRequest> responseHandler) {
+		service.createExternalRequest(toSend, new BigBangAsyncCallback<ExternalInfoRequest>() {
+
+			@Override
+			public void onResponseSuccess(ExternalInfoRequest result) {
+				responseHandler.onResponse(result);
+				EventBus.getInstance().fireEvent(new OperationWasExecutedEvent(BigBangConstants.OperationIds.SubCasualtyProcess.CREATE_EXTERNAL_INFO_REQUEST, result.id));
+
+			}
+
+			@Override
+			public void onResponseFailure(Throwable caught) {
+				responseHandler.onError(new String[]{
+						new String("Could not receive the info or document request response")	
+				});
+				super.onResponseFailure(caught);	
+			}
+
+		});
+
+	}
+
 }

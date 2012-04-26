@@ -5,6 +5,8 @@ import bigBang.definitions.shared.Expense;
 import bigBang.definitions.shared.Expense.Acceptance;
 import bigBang.definitions.shared.Expense.ReturnEx;
 import bigBang.definitions.shared.ExpenseStub;
+import bigBang.definitions.shared.ExternalInfoRequest;
+import bigBang.definitions.shared.InfoOrDocumentRequest;
 
 
 public interface ExpenseDataBroker extends DataBrokerInterface<Expense>{
@@ -24,5 +26,16 @@ public interface ExpenseDataBroker extends DataBrokerInterface<Expense>{
 	void receiveReturn(ReturnEx returnEx, ResponseHandler<Expense> handler);
 	
 	void massSendNotification(String[] expenseIds, ResponseHandler<Void> handler);
+
+	void createExternalInfoRequest(ExternalInfoRequest toSend,
+			ResponseHandler<ExternalInfoRequest> responseHandler);
+
+	void createInfoOrDocumentRequest(InfoOrDocumentRequest request,
+			ResponseHandler<InfoOrDocumentRequest> responseHandler);
+
+	void notifyClient(String expenseId, ResponseHandler<Expense> responseHandler);
+
+	void returnToClient(String expenseId,
+			ResponseHandler<Expense> responseHandler);
 
 }

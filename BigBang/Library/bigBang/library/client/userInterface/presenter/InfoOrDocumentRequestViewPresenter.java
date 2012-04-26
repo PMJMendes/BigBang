@@ -62,6 +62,7 @@ public abstract class InfoOrDocumentRequestViewPresenter<T extends ProcessBase> 
 
 	@Override
 	public void setParameters(HasParameters parameterHolder) {
+		
 		String ownerId = parameterHolder.getParameter("ownerid");
 		ownerId = ownerId == null ? new String() : ownerId;
 		String ownerTypeId = parameterHolder.getParameter("ownerTypeId");
@@ -149,7 +150,7 @@ public abstract class InfoOrDocumentRequestViewPresenter<T extends ProcessBase> 
 	protected abstract void onCancel();
 
 	protected void onSendRequestFailed(){
-		EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não foi possível enviar o pedido de informação"), TYPE.ALERT_NOTIFICATION));
+		EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não foi possível enviar o Pedido de Informação"), TYPE.ALERT_NOTIFICATION));
 	}
 
 	protected void onSendRequestSuccess(){

@@ -226,6 +226,8 @@ public class BigBangConstants {
 			public static final String UPDATE_SUB_CASUALTY = "A1DE87C0-1878-4533-A82D-A03600FA6B23";
 			public static final String DELETE_SUB_CASUALTY = "9CD4186F-90A7-4523-8D2F-A03600FF750D";
 			public static final String CLOSE_SUB_CASUALTY = "207F3FEC-0CB2-47D4-868A-A03600FEE4FB";
+			public static final String CREATE_EXTERNAL_INFO_REQUEST = "7859A887-03B0-423A-B104-A03600FC360D";
+			public static final String CREATE_INSURER_INFO_REQUEST = "94DEF8C7-6740-4C66-85A3-A03600FC056A";
 		}
 
 		public static class DASRequestProcess{

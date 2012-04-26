@@ -310,7 +310,20 @@ public class ExpenseSearchOperationViewPresenter implements ViewPresenter {
 	}
 
 	protected void onReturnToClient() {
-		// TODO Auto-generated method stub
+		expenseBroker.returnToClient(expenseId, new ResponseHandler<Expense>() {
+			
+			@Override
+			public void onResponse(Expense response) {
+				EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Devolvido ao cliente com sucesso"), TYPE.TRAY_NOTIFICATION));
+				NavigationHistoryManager.getInstance().reload();				
+			}
+			
+			@Override
+			public void onError(Collection<ResponseError> errors) {
+				EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não foi possível devolver ao Cliente"), TYPE.ALERT_NOTIFICATION));
+				
+			}
+		});
 	}
 
 	protected void onParticipateToInsurer() {
@@ -330,7 +343,20 @@ public class ExpenseSearchOperationViewPresenter implements ViewPresenter {
 	}
 
 	protected void onNotifyClient() {
-		// TODO Auto-generated method stub
+		expenseBroker.notifyClient(expenseId, new ResponseHandler<Expense>(){
+
+			@Override
+			public void onResponse(Expense response) {
+				EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Cliente notificado com sucesso"), TYPE.TRAY_NOTIFICATION));
+				NavigationHistoryManager.getInstance().reload();				
+			}
+
+			@Override
+			public void onError(Collection<ResponseError> errors) {
+				EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não foi possível notificar o Cliente"), TYPE.ALERT_NOTIFICATION));
+			}
+			
+		});
 
 	}
 

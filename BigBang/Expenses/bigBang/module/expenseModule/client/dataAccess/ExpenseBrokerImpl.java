@@ -14,6 +14,8 @@ import bigBang.definitions.shared.Expense;
 import bigBang.definitions.shared.Expense.Acceptance;
 import bigBang.definitions.shared.Expense.ReturnEx;
 import bigBang.definitions.shared.ExpenseStub;
+import bigBang.definitions.shared.ExternalInfoRequest;
+import bigBang.definitions.shared.InfoOrDocumentRequest;
 import bigBang.library.client.BigBangAsyncCallback;
 import bigBang.library.client.EventBus;
 import bigBang.library.client.event.OperationWasExecutedEvent;
@@ -305,6 +307,115 @@ public class ExpenseBrokerImpl extends DataBroker<Expense> implements ExpenseDat
 			}
 
 		});
+	}
+
+
+	@Override
+	public void createExternalInfoRequest(ExternalInfoRequest toSend,
+			final ResponseHandler<ExternalInfoRequest> responseHandler) {
+		service.createExternalRequest(toSend, new BigBangAsyncCallback<ExternalInfoRequest>() {
+
+			@Override
+			public void onResponseSuccess(ExternalInfoRequest result) {
+				responseHandler.onResponse(result);
+				EventBus.getInstance().fireEvent(new OperationWasExecutedEvent(BigBangConstants.OperationIds.ExpenseProcess.CREATE_EXTERNAL_REQUEST, result.id));
+
+			}
+
+			@Override
+			public void onResponseFailure(Throwable caught) {
+				responseHandler.onError(new String[]{
+						new String("Could not receive the info or document request response")	
+				});
+				super.onResponseFailure(caught);	
+			}
+
+		});
+
+	}
+
+
+	@Override
+	public void createInfoOrDocumentRequest(InfoOrDocumentRequest request,
+			final ResponseHandler<InfoOrDocumentRequest> responseHandler) {
+		service.createInfoRequest(request, new BigBangAsyncCallback<InfoOrDocumentRequest>() {
+			@Override
+			public void onResponseSuccess(InfoOrDocumentRequest result) {
+				responseHandler.onResponse(result);
+				EventBus.getInstance().fireEvent(new OperationWasExecutedEvent(BigBangConstants.OperationIds.ExpenseProcess.CREATE_INFO_REQUEST, result.id));
+
+			}
+
+			@Override
+			public void onResponseFailure(Throwable caught) {
+				responseHandler.onError(new String[]{
+						new String("Could not receive the info or document request response")	
+				});
+				super.onResponseFailure(caught);	
+			}
+
+		});
+
+	}
+
+
+	@Override
+	public void notifyClient(String expenseId,
+			final ResponseHandler<Expense> responseHandler) {
+		service.notifyClient(expenseId, new BigBangAsyncCallback<Expense>() {
+
+			@Override
+			public void onResponseSuccess(Expense result){
+				cache.add(result.id, result);
+				incrementDataVersion();
+				for(DataBrokerClient<Expense> bc : getClients()){
+					((ExpenseDataBrokerClient) bc).updateExpense(result);
+					((ExpenseDataBrokerClient) bc).setDataVersionNumber(BigBangConstants.EntityIds.EXPENSE, getCurrentDataVersion());
+				}
+				responseHandler.onResponse(result);	
+				EventBus.getInstance().fireEvent(new OperationWasExecutedEvent(BigBangConstants.OperationIds.ExpenseProcess.NOTIFY_CLIENT,  result.id));
+
+			}
+
+			@Override
+			public void onResponseFailure(Throwable caught) {
+				responseHandler.onError(new String[]{
+						new String("Could not get receive return")
+				});
+				super.onResponseFailure(caught);
+			}
+
+		});
+
+	}
+
+	@Override
+	public void returnToClient(String expenseId, final ResponseHandler <Expense> responseHandler){
+		service.returnToClient(expenseId, new BigBangAsyncCallback<Expense>() {
+			@Override
+			public void onResponseSuccess(Expense result){
+				cache.add(result.id, result);
+				incrementDataVersion();
+				for(DataBrokerClient<Expense> bc : getClients()){
+					((ExpenseDataBrokerClient) bc).updateExpense(result);
+					((ExpenseDataBrokerClient) bc).setDataVersionNumber(BigBangConstants.EntityIds.EXPENSE, getCurrentDataVersion());
+				}
+				responseHandler.onResponse(result);	
+				EventBus.getInstance().fireEvent(new OperationWasExecutedEvent(BigBangConstants.OperationIds.ExpenseProcess.RETURN_TO_CLIENT,  result.id));
+
+			}
+
+			@Override
+			public void onResponseFailure(Throwable caught) {
+				responseHandler.onError(new String[]{
+						new String("Could not get receive return")
+				});
+				super.onResponseFailure(caught);
+			}
+
+		});
+
+
 	}
 
 }

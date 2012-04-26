@@ -9,6 +9,8 @@ import bigBang.definitions.client.response.ResponseHandler;
 import bigBang.definitions.shared.BigBangConstants;
 import bigBang.definitions.shared.BigBangProcess;
 import bigBang.definitions.shared.Casualty;
+import bigBang.definitions.shared.Contact;
+import bigBang.definitions.shared.Document;
 import bigBang.definitions.shared.HistoryItemStub;
 import bigBang.definitions.shared.SubCasualty;
 import bigBang.library.client.EventBus;
@@ -40,7 +42,7 @@ public class SubCasualtyViewPresenter implements ViewPresenter {
 		EDIT,
 		SAVE,
 		CANCEL,
-		DELETE
+		DELETE, INFO_OR_DOCUMENT_REQUEST, EXTERNAL_REQUEST
 	}
 
 	public static interface Display {
@@ -58,6 +60,10 @@ public class SubCasualtyViewPresenter implements ViewPresenter {
 		void allowDelete(boolean allow);
 
 		Widget asWidget();
+		void allowInfoOrDocumentRequest(boolean hasPermission);
+		void allowInsurerInfoRequest(boolean hasPermission);
+		HasValueSelectables<Contact> getContactsList();
+		HasValueSelectables<Document> getDocumentsList();
 	}
 
 
@@ -126,6 +132,12 @@ public class SubCasualtyViewPresenter implements ViewPresenter {
 				case DELETE:
 					onDelete();
 					break;
+				case EXTERNAL_REQUEST:
+					onInsurerInfoRequest();
+					break;
+				case INFO_OR_DOCUMENT_REQUEST:
+					onInfoOrDocumentRequest();
+					break;
 				}
 			}
 		});
@@ -142,13 +154,54 @@ public class SubCasualtyViewPresenter implements ViewPresenter {
 					}else if(event.getSource() == view.getHistoryList()) {
 						HistoryItemStub historyItem = (HistoryItemStub) selected.getValue();
 						showHistory(historyItem.id);
+					}else if(event.getSource() == view.getContactsList()){
+						Contact contact = (Contact) selected.getValue();
+						showContact(contact.id);
+					}else if(event.getSource() == view.getDocumentsList()){
+						Document doc = (Document) selected.getValue();
+						showDocument(doc.id);
 					}
 				}
 			}
 		};
 
+		view.getContactsList().addSelectionChangedEventHandler(selectionChangedHandler);
+		view.getDocumentsList().addSelectionChangedEventHandler(selectionChangedHandler);
 		view.getSubProcessesList().addSelectionChangedEventHandler(selectionChangedHandler);
 		view.getHistoryList().addSelectionChangedEventHandler(selectionChangedHandler);
+	}
+
+	protected void showDocument(String id) {
+		NavigationHistoryItem navItem = NavigationHistoryManager.getInstance().getCurrentState();
+		navItem.setParameter("show", "documentmanagement");
+		navItem.setParameter("ownerid", navItem.getParameter("subcasualtyid"));
+		navItem.setParameter("documentid", id);
+		navItem.setParameter("ownertypeid", BigBangConstants.EntityIds.SUB_CASUALTY);
+		NavigationHistoryManager.getInstance().go(navItem);
+	}
+
+	protected void showContact(String id) {
+		NavigationHistoryItem navItem = NavigationHistoryManager.getInstance().getCurrentState();
+		navItem.setParameter("show", "contactmanagement");
+		navItem.setParameter("ownerid", navItem.getParameter("subcasualtyid"));
+		navItem.setParameter("contactid", id);
+		navItem.setParameter("ownertypeid", BigBangConstants.EntityIds.SUB_CASUALTY);
+		NavigationHistoryManager.getInstance().go(navItem);
+	}
+
+	protected void onInfoOrDocumentRequest() {
+		NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
+		item.pushIntoStackParameter("display", "inforequestsubcasualty");
+		item.setParameter("ownerid", view.getForm().getValue().id);
+		NavigationHistoryManager.getInstance().go(item);		
+	}
+
+	protected void onInsurerInfoRequest() {
+		NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
+		item.pushIntoStackParameter("display", "insurerinfosubcasualty");
+		item.setParameter("ownerid", view.getForm().getValue().id);
+		item.setParameter("externalrequestid", "new");
+		NavigationHistoryManager.getInstance().go(item);			
 	}
 
 	protected void showSubCasualty(String subCasualtyId){
@@ -165,6 +218,8 @@ public class SubCasualtyViewPresenter implements ViewPresenter {
 						view.getForm().setValue(subCasualty);
 
 						//TODO PERMISSIONS
+						view.allowInfoOrDocumentRequest(PermissionChecker.hasPermission(subCasualty,BigBangConstants.OperationIds.SubCasualtyProcess.CREATE_EXTERNAL_INFO_REQUEST));
+						view.allowInsurerInfoRequest(PermissionChecker.hasPermission(subCasualty, BigBangConstants.OperationIds.SubCasualtyProcess.CREATE_INSURER_INFO_REQUEST));
 						view.allowEdit(PermissionChecker.hasPermission(subCasualty, BigBangConstants.OperationIds.SubCasualtyProcess.UPDATE_SUB_CASUALTY));
 						view.allowDelete(PermissionChecker.hasPermission(subCasualty, BigBangConstants.OperationIds.SubCasualtyProcess.DELETE_SUB_CASUALTY));
 

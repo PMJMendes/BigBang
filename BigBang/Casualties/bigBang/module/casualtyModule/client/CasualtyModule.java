@@ -16,6 +16,8 @@ import bigBang.module.casualtyModule.client.userInterface.presenter.CasualtyOper
 import bigBang.module.casualtyModule.client.userInterface.presenter.CasualtySearchOperationViewPresenter;
 import bigBang.module.casualtyModule.client.userInterface.presenter.CasualtySectionViewPresenter;
 import bigBang.module.casualtyModule.client.userInterface.presenter.SubCasualtyDeleteViewPresenter;
+import bigBang.module.casualtyModule.client.userInterface.presenter.SubCasualtyExternalRequestViewPresenter;
+import bigBang.module.casualtyModule.client.userInterface.presenter.SubCasualtyInfoOrDocumentRequestViewPresenter;
 import bigBang.module.casualtyModule.client.userInterface.presenter.SubCasualtyViewPresenter;
 import bigBang.module.casualtyModule.client.userInterface.view.CasualtyCloseView;
 import bigBang.module.casualtyModule.client.userInterface.view.CasualtyDeleteView;
@@ -26,6 +28,8 @@ import bigBang.module.casualtyModule.client.userInterface.view.CasualtyOperation
 import bigBang.module.casualtyModule.client.userInterface.view.CasualtySearchOperationView;
 import bigBang.module.casualtyModule.client.userInterface.view.CasualtySectionView;
 import bigBang.module.casualtyModule.client.userInterface.view.SubCasualtyDeleteView;
+import bigBang.module.casualtyModule.client.userInterface.view.SubCasualtyExternalRequestView;
+import bigBang.module.casualtyModule.client.userInterface.view.SubCasualtyInfoOrDocumentRequestView;
 import bigBang.module.casualtyModule.client.userInterface.view.SubCasualtyView;
 
 import com.google.gwt.core.client.GWT;
@@ -131,6 +135,24 @@ public class CasualtyModule implements Module {
 			public ViewPresenter getInstance() {
 				CasualtyInfoOrDocumentRequestView view = (CasualtyInfoOrDocumentRequestView) GWT.create(CasualtyInfoOrDocumentRequestView.class);
 				ViewPresenter presenter = new CasualtyInfoOrDocumentRequestViewPresenter(view);
+				return presenter;
+			}
+		});
+		ViewPresenterFactory.getInstance().registerViewPresenterInstantiator("SUB_CASUALTY_INFO_OR_DOCUMENT_REQUEST", new ViewPresenterInstantiator() {
+
+			@Override
+			public ViewPresenter getInstance() {
+				SubCasualtyInfoOrDocumentRequestView view = (SubCasualtyInfoOrDocumentRequestView) GWT.create(SubCasualtyInfoOrDocumentRequestView.class);
+				ViewPresenter presenter = new SubCasualtyInfoOrDocumentRequestViewPresenter(view);
+				return presenter;
+			}
+		});
+		ViewPresenterFactory.getInstance().registerViewPresenterInstantiator("SUB_CASUALTY_EXTERNAL_REQUEST", new ViewPresenterInstantiator() {
+
+			@Override
+			public ViewPresenter getInstance() {
+				SubCasualtyExternalRequestView view = (SubCasualtyExternalRequestView) GWT.create(SubCasualtyExternalRequestView.class);
+				ViewPresenter presenter = new SubCasualtyExternalRequestViewPresenter(view);
 				return presenter;
 			}
 		});

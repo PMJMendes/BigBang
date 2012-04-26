@@ -1,11 +1,5 @@
 package bigBang.library.client.userInterface.presenter;
 
-import java.util.Collection;
-
-import bigBang.definitions.client.dataAccess.NegotiationBroker;
-import bigBang.definitions.client.response.ResponseError;
-import bigBang.definitions.client.response.ResponseHandler;
-import bigBang.definitions.shared.BigBangConstants;
 import bigBang.definitions.shared.ExternalInfoRequest;
 import bigBang.definitions.shared.ProcessBase;
 import bigBang.library.client.BigBangAsyncCallback;
@@ -14,7 +8,6 @@ import bigBang.library.client.HasEditableValue;
 import bigBang.library.client.HasParameters;
 import bigBang.library.client.Notification;
 import bigBang.library.client.Notification.TYPE;
-import bigBang.library.client.dataAccess.DataBrokerManager;
 import bigBang.library.client.event.ActionInvokedEvent;
 import bigBang.library.client.event.ActionInvokedEventHandler;
 import bigBang.library.client.event.NewNotificationEvent;
@@ -37,9 +30,8 @@ public abstract class ExternalRequestViewPresenter<T extends ProcessBase> implem
 	protected String ownerTypeId;
 	private String externalRequestId;
 	private ExternRequestServiceAsync service;
-	private NegotiationBroker broker;
 	private ExchangeServiceAsync exchangeService;
-	private int counter;
+	protected int counter;
 
 	public static enum Action{
 		CANCEL,
@@ -81,6 +73,7 @@ public abstract class ExternalRequestViewPresenter<T extends ProcessBase> implem
 
 				@Override
 				public void onResponseFailure(Throwable caught) {
+					EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não é possível mostrar o pedido de informação externo."), TYPE.ALERT_NOTIFICATION));
 					super.onResponseFailure(caught);
 				}
 
@@ -96,7 +89,6 @@ public abstract class ExternalRequestViewPresenter<T extends ProcessBase> implem
 	public ExternalRequestViewPresenter(Display<T> view){
 		setView((UIObject)view);
 		service = ExternRequestService.Util.getInstance();
-		broker = (NegotiationBroker) DataBrokerManager.staticGetBroker(BigBangConstants.EntityIds.NEGOTIATION);
 		exchangeService = ExchangeService.Util.getInstance();
 	}
 
@@ -182,7 +174,7 @@ public abstract class ExternalRequestViewPresenter<T extends ProcessBase> implem
 
 
 					public void onResponseFailure(Throwable caught) {
-						EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não foi possível guardar a resposta ao pedido."), TYPE.ALERT_NOTIFICATION));
+						EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não foi possível guardar o Pedido de Informação Externo."), TYPE.ALERT_NOTIFICATION));
 						super.onResponseFailure(caught);
 
 					};
@@ -198,26 +190,5 @@ public abstract class ExternalRequestViewPresenter<T extends ProcessBase> implem
 		}
 	}
 
-	protected void createExternalInfoRequest(ExternalInfoRequest toSend) {
-
-		broker.createExternalInfoRequest(toSend, new ResponseHandler<ExternalInfoRequest>() {
-
-			@Override
-			public void onResponse(ExternalInfoRequest response) {
-
-				EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Resposta ao pedido guardada com sucesso."), TYPE.TRAY_NOTIFICATION));
-				NavigationHistoryItem navig = NavigationHistoryManager.getInstance().getCurrentState();
-				navig.popFromStackParameter("display");
-				navig.removeParameter("externalrequestid");	
-				NavigationHistoryManager.getInstance().go(navig);
-				counter = 0;
-			}
-
-			@Override
-			public void onError(Collection<ResponseError> errors) {
-				EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não foi possível guardar a resposta ao pedido."), TYPE.ALERT_NOTIFICATION));
-				counter = 0;
-			}
-		});	
-	}
+	protected abstract void createExternalInfoRequest(ExternalInfoRequest toSend);
 }
