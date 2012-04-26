@@ -31,6 +31,7 @@ public class ExpenseData
 	public BigDecimal mdblSettlement;
 	public boolean mbIsManual;
 	public String mstrNotes;
+	public String mstrRejection;
 
 	public UUID midManager;
 	public UUID midProcess;
@@ -52,6 +53,7 @@ public class ExpenseData
 		mdblSettlement       = (BigDecimal) pobjSource.getAt(Expense.I.SETTLEMENT);
 		mbIsManual           =    (Boolean) pobjSource.getAt(Expense.I.MANUAL);
 		mstrNotes            =     (String) pobjSource.getAt(Expense.I.NOTES);
+		mstrRejection        =     (String) pobjSource.getAt(Expense.I.REJECTION);
 	}
 
 	public void ToObject(ObjectBase pobjDest)
@@ -70,6 +72,7 @@ public class ExpenseData
 			pobjDest.setAt(Expense.I.SETTLEMENT,         mdblSettlement);
 			pobjDest.setAt(Expense.I.MANUAL,             mbIsManual);
 			pobjDest.setAt(Expense.I.NOTES,              mstrNotes);
+			pobjDest.setAt(Expense.I.REJECTION,          mstrRejection);
 		}
 		catch (Throwable e)
 		{
@@ -168,6 +171,9 @@ public class ExpenseData
 		else
 			pstrBuilder.append("Não indicado.");
 		pstrBuilder.append(pstrLineBreak);
+
+		if ( mstrRejection != null )
+			pstrBuilder.append("Motivo da rejeição:").append(pstrLineBreak).append(mstrRejection).append(pstrLineBreak);
 
 		pstrBuilder.append("Notas Internas: ");
 		if ( mstrNotes != null )

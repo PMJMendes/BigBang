@@ -25,11 +25,12 @@ public class Expense
 		public static int POLICYOBJECT       =  3;
 		public static int SUBPOLICYOBJECT    =  4;
 		public static int POLICYCOVERAGE     =  5;
-		public static int SUBPOLICYCOVERAGE =  6;
+		public static int SUBPOLICYCOVERAGE  =  6;
 		public static int DAMAGES            =  7;
 		public static int SETTLEMENT         =  8;
 		public static int MANUAL             =  9;
 		public static int NOTES              = 10;
+		public static int REJECTION          = 11;
 	}
 
     public static Expense GetInstance(UUID pidNameSpace, UUID pidKey)
