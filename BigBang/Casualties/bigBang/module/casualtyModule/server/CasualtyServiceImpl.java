@@ -17,12 +17,15 @@ import Jewel.Petri.Objects.PNScript;
 import Jewel.Petri.SysObjects.JewelPetriException;
 import bigBang.definitions.shared.Casualty;
 import bigBang.definitions.shared.CasualtyStub;
+import bigBang.definitions.shared.InfoOrDocumentRequest;
 import bigBang.definitions.shared.ManagerTransfer;
 import bigBang.definitions.shared.SearchParameter;
 import bigBang.definitions.shared.SearchResult;
 import bigBang.definitions.shared.SortParameter;
 import bigBang.definitions.shared.SubCasualty;
 import bigBang.library.server.BigBangPermissionServiceImpl;
+import bigBang.library.server.InfoOrDocumentRequestServiceImpl;
+import bigBang.library.server.MessageBridge;
 import bigBang.library.server.SearchServiceBase;
 import bigBang.library.server.TransferManagerServiceImpl;
 import bigBang.library.shared.BigBangException;
@@ -40,6 +43,7 @@ import com.premiumminds.BigBang.Jewel.Objects.AgendaItem;
 import com.premiumminds.BigBang.Jewel.Objects.Client;
 import com.premiumminds.BigBang.Jewel.Objects.MgrXFer;
 import com.premiumminds.BigBang.Jewel.Operations.Casualty.CloseProcess;
+import com.premiumminds.BigBang.Jewel.Operations.Casualty.CreateInfoRequest;
 import com.premiumminds.BigBang.Jewel.Operations.Casualty.CreateMgrXFer;
 import com.premiumminds.BigBang.Jewel.Operations.Casualty.CreateSubCasualty;
 import com.premiumminds.BigBang.Jewel.Operations.Casualty.DeleteCasualty;
@@ -141,6 +145,35 @@ public class CasualtyServiceImpl
 		}
 
 		return sGetCasualty(lopMD.mobjData.mid);
+	}
+
+	public InfoOrDocumentRequest createInfoOrDocumentRequest(InfoOrDocumentRequest request)
+		throws SessionExpiredException, BigBangException
+	{
+		com.premiumminds.BigBang.Jewel.Objects.QuoteRequest lobjRequest;
+		CreateInfoRequest lopCIR;
+
+		if ( Engine.getCurrentUser() == null )
+			throw new SessionExpiredException();
+
+		try
+		{
+			lobjRequest = com.premiumminds.BigBang.Jewel.Objects.QuoteRequest.GetInstance(Engine.getCurrentNameSpace(),
+					UUID.fromString(request.parentDataObjectId));
+
+			lopCIR = new CreateInfoRequest(lobjRequest.GetProcessID());
+			lopCIR.midRequestType = UUID.fromString(request.requestTypeId);
+			lopCIR.mobjMessage = MessageBridge.outgoingToServer(request.message);
+			lopCIR.mlngDays = request.replylimit;
+
+			lopCIR.Execute();
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangException(e.getMessage(), e);
+		}
+
+		return InfoOrDocumentRequestServiceImpl.sGetRequest(lopCIR.midRequestObject);
 	}
 
 	public ManagerTransfer createManagerTransfer(ManagerTransfer transfer)

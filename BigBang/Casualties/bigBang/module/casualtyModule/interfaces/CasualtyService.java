@@ -1,6 +1,7 @@
 package bigBang.module.casualtyModule.interfaces;
 
 import bigBang.definitions.shared.Casualty;
+import bigBang.definitions.shared.InfoOrDocumentRequest;
 import bigBang.definitions.shared.ManagerTransfer;
 import bigBang.definitions.shared.SubCasualty;
 import bigBang.library.interfaces.SearchService;
@@ -29,6 +30,7 @@ public interface CasualtyService extends SearchService {
 
 	public Casualty editCasualty(Casualty casualty) throws SessionExpiredException, BigBangException;
 
+	public InfoOrDocumentRequest createInfoOrDocumentRequest(InfoOrDocumentRequest request) throws SessionExpiredException, BigBangException;
 	public ManagerTransfer createManagerTransfer(ManagerTransfer transfer) throws SessionExpiredException, BigBangException;
 
 	public SubCasualty createSubCasualty(SubCasualty subCasualty) throws SessionExpiredException, BigBangException;
