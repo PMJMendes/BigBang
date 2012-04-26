@@ -96,7 +96,7 @@ public class TasksServiceImpl
 			{
 				lobjAux = Engine.GetWorkInstance(lidAgendaProcs, larrProcs[i]);
 				lobjProcess = PNProcess.GetInstance(Engine.getCurrentNameSpace(), (UUID)lobjAux.getAt(1));
-				lobjResult.objectIds[i] = lobjProcess.GetData().getKey().toString();
+				lobjResult.objectIds[i] = ( lobjProcess.GetDataKey() == null ? null : lobjProcess.GetData().getKey().toString() );
 			}
 			catch (Throwable e)
 			{
