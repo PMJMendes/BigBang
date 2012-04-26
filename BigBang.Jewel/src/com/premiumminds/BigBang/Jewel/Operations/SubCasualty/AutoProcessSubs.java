@@ -34,6 +34,8 @@ public class AutoProcessSubs
 
 		if ( GetProcess().GetLiveLog(Constants.OPID_SubCasualty_SendNotification, pdb) != null )
 			b = true;
+		else if ( GetProcess().GetLiveLog(Constants.OPID_SubCasualty_MarkForClosing, pdb) != null )
+			b = true;
 		else
 		{
 			larrSubs = GetProcess().GetCurrentSubProcesses(pdb);
