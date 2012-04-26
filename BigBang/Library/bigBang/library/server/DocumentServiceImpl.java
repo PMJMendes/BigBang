@@ -429,6 +429,12 @@ public class DocumentServiceImpl
 			lidOp = Constants.OPID_Receipt_ManageData;
 		else if ( Constants.ObjID_Casualty.equals(lidTopType) )
 			lidOp = Constants.OPID_Casualty_ManageData;
+		else if ( Constants.ObjID_Casualty.equals(lidTopType) )
+			lidOp = Constants.OPID_Casualty_ManageData;
+		else if ( Constants.ObjID_SubCasualty.equals(lidTopType) )
+			lidOp = Constants.OPID_SubCasualty_ManageData;
+		else if ( Constants.ObjID_Expense.equals(lidTopType) )
+			lidOp = Constants.OPID_Expense_ManageData;
 		else
 			throw new BigBangException("Erro: O objecto indicado não permite movimentos de Documentos.");
 
@@ -517,6 +523,22 @@ public class DocumentServiceImpl
 			((com.premiumminds.BigBang.Jewel.Operations.Casualty.ManageData)lobjResult).mobjData = null;
 			((com.premiumminds.BigBang.Jewel.Operations.Casualty.ManageData)lobjResult).mobjContactOps = null;
 			((com.premiumminds.BigBang.Jewel.Operations.Casualty.ManageData)lobjResult).mobjDocOps = pobjInner;
+			lbFound = true;
+		}
+
+		if ( lobjResult instanceof com.premiumminds.BigBang.Jewel.Operations.SubCasualty.ManageData )
+		{
+			((com.premiumminds.BigBang.Jewel.Operations.SubCasualty.ManageData)lobjResult).mobjData = null;
+			((com.premiumminds.BigBang.Jewel.Operations.SubCasualty.ManageData)lobjResult).mobjContactOps = null;
+			((com.premiumminds.BigBang.Jewel.Operations.SubCasualty.ManageData)lobjResult).mobjDocOps = pobjInner;
+			lbFound = true;
+		}
+
+		if ( lobjResult instanceof com.premiumminds.BigBang.Jewel.Operations.Expense.ManageData )
+		{
+			((com.premiumminds.BigBang.Jewel.Operations.Expense.ManageData)lobjResult).mobjData = null;
+			((com.premiumminds.BigBang.Jewel.Operations.Expense.ManageData)lobjResult).mobjContactOps = null;
+			((com.premiumminds.BigBang.Jewel.Operations.Expense.ManageData)lobjResult).mobjDocOps = pobjInner;
 			lbFound = true;
 		}
 
