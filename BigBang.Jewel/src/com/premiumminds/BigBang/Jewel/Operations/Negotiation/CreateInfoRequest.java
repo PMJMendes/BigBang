@@ -8,7 +8,6 @@ import com.premiumminds.BigBang.Jewel.Operations.InfoRequest.CreateInfoRequestBa
 public class CreateInfoRequest
 	extends CreateInfoRequestBase
 {
-
 	private static final long serialVersionUID = 1L;
 
 	public CreateInfoRequest(UUID pidProcess)

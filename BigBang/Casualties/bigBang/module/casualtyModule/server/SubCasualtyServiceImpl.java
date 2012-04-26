@@ -10,12 +10,17 @@ import Jewel.Engine.SysObjects.ObjectBase;
 import Jewel.Petri.Interfaces.IProcess;
 import Jewel.Petri.Objects.PNProcess;
 import Jewel.Petri.SysObjects.JewelPetriException;
+import bigBang.definitions.shared.ExternalInfoRequest;
+import bigBang.definitions.shared.InfoOrDocumentRequest;
 import bigBang.definitions.shared.SearchParameter;
 import bigBang.definitions.shared.SearchResult;
 import bigBang.definitions.shared.SortParameter;
 import bigBang.definitions.shared.SubCasualty;
 import bigBang.definitions.shared.SubCasualtyStub;
 import bigBang.library.server.BigBangPermissionServiceImpl;
+import bigBang.library.server.ExternRequestServiceImpl;
+import bigBang.library.server.InfoOrDocumentRequestServiceImpl;
+import bigBang.library.server.MessageBridge;
 import bigBang.library.server.SearchServiceBase;
 import bigBang.library.shared.BigBangException;
 import bigBang.library.shared.SessionExpiredException;
@@ -31,6 +36,8 @@ import com.premiumminds.BigBang.Jewel.Objects.Policy;
 import com.premiumminds.BigBang.Jewel.Objects.SubCasualtyItem;
 import com.premiumminds.BigBang.Jewel.Objects.SubPolicy;
 import com.premiumminds.BigBang.Jewel.Operations.SubCasualty.CloseProcess;
+import com.premiumminds.BigBang.Jewel.Operations.SubCasualty.CreateExternRequest;
+import com.premiumminds.BigBang.Jewel.Operations.SubCasualty.CreateInfoRequest;
 import com.premiumminds.BigBang.Jewel.Operations.SubCasualty.DeleteSubCasualty;
 import com.premiumminds.BigBang.Jewel.Operations.SubCasualty.ManageData;
 import com.premiumminds.BigBang.Jewel.Operations.SubCasualty.MarkForClosing;
@@ -217,6 +224,71 @@ public class SubCasualtyServiceImpl
 		}
 
 		return sGetSubCasualty(lopMD.mobjData.mid);
+	}
+
+	public InfoOrDocumentRequest createInfoRequest(InfoOrDocumentRequest request)
+		throws SessionExpiredException, BigBangException
+	{
+		com.premiumminds.BigBang.Jewel.Objects.SubCasualty lobjSubCasualty;
+		CreateInfoRequest lopCIR;
+
+		if ( Engine.getCurrentUser() == null )
+			throw new SessionExpiredException();
+
+		try
+		{
+			lobjSubCasualty = com.premiumminds.BigBang.Jewel.Objects.SubCasualty.GetInstance(Engine.getCurrentNameSpace(),
+					UUID.fromString(request.parentDataObjectId));
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangException(e.getMessage(), e); 
+		}
+
+		lopCIR = new CreateInfoRequest(lobjSubCasualty.GetProcessID());
+		lopCIR.midRequestType = UUID.fromString(request.requestTypeId);
+		lopCIR.mobjMessage = MessageBridge.outgoingToServer(request.message);
+		lopCIR.mlngDays = request.replylimit;
+
+		try
+		{
+			lopCIR.Execute();
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangException(e.getMessage(), e); 
+		}
+
+		return InfoOrDocumentRequestServiceImpl.sGetRequest(lopCIR.midRequestObject);
+	}
+
+	public ExternalInfoRequest createExternalRequest(ExternalInfoRequest request)
+		throws SessionExpiredException, BigBangException
+	{
+		com.premiumminds.BigBang.Jewel.Objects.SubCasualty lobjSubCasualty;
+		CreateExternRequest lopCER;
+
+		if ( Engine.getCurrentUser() == null )
+			throw new SessionExpiredException();
+
+		try
+		{
+			lobjSubCasualty = com.premiumminds.BigBang.Jewel.Objects.SubCasualty.GetInstance(Engine.getCurrentNameSpace(),
+					UUID.fromString(request.parentDataObjectId));
+
+			lopCER = new CreateExternRequest(lobjSubCasualty.GetProcessID());
+			lopCER.mstrSubject = request.subject;
+			lopCER.mobjMessage = MessageBridge.incomingToServer(request.message, Constants.ObjID_SubCasualty);
+			lopCER.mlngDays = request.replylimit;
+
+			lopCER.Execute();
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangException(e.getMessage(), e); 
+		}
+
+		return ExternRequestServiceImpl.sGetRequest(lopCER.midRequestObject);
 	}
 
 	public SubCasualty markForClosing(String subCasualtyId, String revisorId)
