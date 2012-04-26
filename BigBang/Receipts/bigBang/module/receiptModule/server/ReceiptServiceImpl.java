@@ -1758,6 +1758,104 @@ public class ReceiptServiceImpl
 			pstrBuffer.append(")))))))");
 		}
 
+		if ( lParam.companyId != null )
+		{
+			pstrBuffer.append(" AND (([:Process:Parent] IN (SELECT [:Process] FROM (");
+			try
+			{
+				lrefPolicies = Entity.GetInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), Constants.ObjID_Policy));
+				pstrBuffer.append(lrefPolicies.SQLForSelectSingle());
+			}
+			catch (Throwable e)
+			{
+        		throw new BigBangException(e.getMessage(), e);
+			}
+			pstrBuffer.append(") [AuxPols] WHERE [:Company] = '").append(lParam.companyId).append("'))");
+			pstrBuffer.append(" OR ([:Process:Parent] IN (SELECT [:Process] FROM (");
+			try
+			{
+				lrefPolicies = Entity.GetInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), Constants.ObjID_SubPolicy));
+				pstrBuffer.append(lrefPolicies.SQLForSelectMulti());
+			}
+			catch (Throwable e)
+			{
+        		throw new BigBangException(e.getMessage(), e);
+			}
+			pstrBuffer.append(") [AuxSPols] WHERE ([:Process:Parent] IN (SELECT [:Process] FROM (");
+			try
+			{
+				lrefPolicies = Entity.GetInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), Constants.ObjID_Policy));
+				pstrBuffer.append(lrefPolicies.SQLForSelectSingle());
+			}
+			catch (Throwable e)
+			{
+				throw new BigBangException(e.getMessage(), e);
+			}
+			pstrBuffer.append(") [AuxSMPols] WHERE [:Company] = '").append(lParam.companyId).append("')))))");
+		}
+
+		if ( lParam.mediatorId != null )
+		{
+			pstrBuffer.append(" AND ([:Mediator] = '").append(lParam.mediatorId).append("'");
+			pstrBuffer.append(" OR ([:Mediator] IS NULL");
+			pstrBuffer.append(" AND (([:Process:Parent] IN (SELECT [:Process] FROM (");
+			try
+			{
+				lrefPolicies = Entity.GetInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), Constants.ObjID_Policy));
+				pstrBuffer.append(lrefPolicies.SQLForSelectMulti());
+			}
+			catch (Throwable e)
+			{
+        		throw new BigBangException(e.getMessage(), e);
+			}
+			pstrBuffer.append(") [AuxPols] WHERE ([:Mediator] = '").append(lParam.mediatorId).append("'");
+			pstrBuffer.append(" OR ([:Mediator] IS NULL");
+			pstrBuffer.append(" AND ([:Process:Parent] IN (SELECT [:Process] FROM (");
+			try
+			{
+				lrefPolicies = Entity.GetInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), Constants.ObjID_Client));
+				pstrBuffer.append(lrefPolicies.SQLForSelectSingle());
+			}
+			catch (Throwable e)
+			{
+        		throw new BigBangException(e.getMessage(), e);
+			}
+			pstrBuffer.append(") [AuxCli] WHERE [:Mediator] = '").append(lParam.mediatorId).append("'))))))");
+			pstrBuffer.append(" OR ([:Process:Parent] IN (SELECT [:Process] FROM (");
+			try
+			{
+				lrefPolicies = Entity.GetInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), Constants.ObjID_SubPolicy));
+				pstrBuffer.append(lrefPolicies.SQLForSelectMulti());
+			}
+			catch (Throwable e)
+			{
+        		throw new BigBangException(e.getMessage(), e);
+			}
+			pstrBuffer.append(") [AuxSPols] WHERE ([:Process:Parent] IN (SELECT [:Process] FROM (");
+			try
+			{
+				lrefPolicies = Entity.GetInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), Constants.ObjID_Policy));
+				pstrBuffer.append(lrefPolicies.SQLForSelectSingle());
+			}
+			catch (Throwable e)
+			{
+				throw new BigBangException(e.getMessage(), e);
+			}
+			pstrBuffer.append(") [AuxSMPols] WHERE ([:Mediator] = '").append(lParam.mediatorId).append("'");
+			pstrBuffer.append(" OR ([:Mediator] IS NULL");
+			pstrBuffer.append(" AND ([:Process:Parent] IN (SELECT [:Process] FROM (");
+			try
+			{
+				lrefPolicies = Entity.GetInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), Constants.ObjID_Client));
+				pstrBuffer.append(lrefPolicies.SQLForSelectSingle());
+			}
+			catch (Throwable e)
+			{
+        		throw new BigBangException(e.getMessage(), e);
+			}
+			pstrBuffer.append(") [AuxCli] WHERE [:Mediator] = '").append(lParam.mediatorId).append("')))))))))))");
+		}
+
 		if ( lParam.ownerId != null )
 		{
 			pstrBuffer.append(" AND (([:Process:Parent] IN (SELECT [:Process] FROM (");
