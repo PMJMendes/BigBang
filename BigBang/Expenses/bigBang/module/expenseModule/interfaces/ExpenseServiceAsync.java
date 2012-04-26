@@ -14,6 +14,10 @@ public interface ExpenseServiceAsync extends SearchServiceAsync
 	void sendNotification(String expenseId, AsyncCallback<Expense> callback);
 	void receiveAcceptance(Acceptance acceptance, AsyncCallback<Expense> callback);
 	void receiveReturn(ReturnEx returnEx, AsyncCallback<Expense> callback);
+	void notifyClient(String expenseId, AsyncCallback<Expense> callback);
+	void returnToClient(String expenseId, AsyncCallback<Expense> callback);
 	void deleteExpense(String expenseId, String reason, AsyncCallback<Void> callback);
 	void massSendNotification(String[] expenseIds, AsyncCallback<Void> callback);
+	void massNotifyClient(String[] expenseIds, AsyncCallback<Void> callback);
+	void massReturnToClient(String[] expenseIds, AsyncCallback<Void> callback);
 }

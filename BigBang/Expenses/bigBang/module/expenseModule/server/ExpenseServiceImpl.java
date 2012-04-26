@@ -39,8 +39,10 @@ import com.premiumminds.BigBang.Jewel.Objects.SubPolicyObject;
 import com.premiumminds.BigBang.Jewel.Operations.DocOps;
 import com.premiumminds.BigBang.Jewel.Operations.Expense.DeleteExpense;
 import com.premiumminds.BigBang.Jewel.Operations.Expense.ManageData;
+import com.premiumminds.BigBang.Jewel.Operations.Expense.NotifyClient;
 import com.premiumminds.BigBang.Jewel.Operations.Expense.ReceiveAcceptance;
 import com.premiumminds.BigBang.Jewel.Operations.Expense.ReceiveReturn;
+import com.premiumminds.BigBang.Jewel.Operations.Expense.ReturnToClient;
 import com.premiumminds.BigBang.Jewel.Operations.Expense.SendNotification;
 
 public class ExpenseServiceImpl
@@ -300,6 +302,76 @@ public class ExpenseServiceImpl
 		return sGetExpense(lobjExpense.getKey());
 	}
 
+	public Expense notifyClient(String expenseId)
+		throws SessionExpiredException, BigBangException
+	{
+		com.premiumminds.BigBang.Jewel.Objects.Expense lobjExpense;
+		NotifyClient lopNC;
+
+		if ( Engine.getCurrentUser() == null )
+			throw new SessionExpiredException();
+
+		try
+		{
+			lobjExpense = com.premiumminds.BigBang.Jewel.Objects.Expense.GetInstance(Engine.getCurrentNameSpace(),
+					UUID.fromString(expenseId));
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangException(e.getMessage(), e);
+		}
+
+		lopNC = new NotifyClient(lobjExpense.GetProcessID());
+		lopNC.marrExpenseIDs = new UUID[] {UUID.fromString(expenseId)};
+		lopNC.mbUseSets = false;
+
+		try
+		{
+			lopNC.Execute();
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangException(e.getMessage(), e);
+		}
+
+		return sGetExpense(lobjExpense.getKey());
+	}
+
+	public Expense returnToClient(String expenseId)
+		throws SessionExpiredException, BigBangException
+	{
+		com.premiumminds.BigBang.Jewel.Objects.Expense lobjExpense;
+		ReturnToClient lopRTC;
+
+		if ( Engine.getCurrentUser() == null )
+			throw new SessionExpiredException();
+
+		try
+		{
+			lobjExpense = com.premiumminds.BigBang.Jewel.Objects.Expense.GetInstance(Engine.getCurrentNameSpace(),
+					UUID.fromString(expenseId));
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangException(e.getMessage(), e);
+		}
+
+		lopRTC = new ReturnToClient(lobjExpense.GetProcessID());
+		lopRTC.marrExpenseIDs = new UUID[] {UUID.fromString(expenseId)};
+		lopRTC.mbUseSets = false;
+
+		try
+		{
+			lopRTC.Execute();
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangException(e.getMessage(), e);
+		}
+
+		return sGetExpense(lobjExpense.getKey());
+	}
+
 	public void deleteExpense(String expenseId, String reason)
 		throws SessionExpiredException, BigBangException
 	{
@@ -401,6 +473,162 @@ public class ExpenseServiceImpl
 					lobjDocOps = lopSN.mobjDocOps;
 					lidSetCompany = lopSN.midSetDocument;
 					lidSet = lopSN.midSet;
+				}
+				catch (Throwable e)
+				{
+					throw new BigBangException(e.getMessage(), e);
+				}
+			}
+		}
+	}
+
+	public void massNotifyClient(String[] expenseIds)
+		throws SessionExpiredException, BigBangException
+	{
+		Hashtable<UUID, ArrayList<UUID>> larrExpenses;
+		com.premiumminds.BigBang.Jewel.Objects.Expense lobjExpense;
+		IProcess lobjProcess;
+		UUID lidClient;
+		ArrayList<UUID> larrByClient;
+		UUID[] larrFinal;
+		UUID lidSet;
+		UUID lidSetClient;
+		DocOps lobjDocOps;
+		NotifyClient lopNC;
+		int i;
+
+		if ( Engine.getCurrentUser() == null )
+			throw new SessionExpiredException();
+
+		larrExpenses = new Hashtable<UUID, ArrayList<UUID>>();
+		for ( i = 0; i < expenseIds.length; i++ )
+		{
+			try
+			{
+				lobjExpense = com.premiumminds.BigBang.Jewel.Objects.Expense.GetInstance(Engine.getCurrentNameSpace(),
+						UUID.fromString(expenseIds[i]));
+				lobjProcess = PNProcess.GetInstance(Engine.getCurrentNameSpace(), lobjExpense.GetProcessID());
+				if ( Constants.ProcID_Policy.equals(lobjProcess.GetParent().GetScriptID()) )
+					lidClient = lobjProcess.GetParent().GetParent().GetDataKey();
+				else
+					lidClient = (UUID)lobjProcess.GetParent().GetData().getAt(2);
+			}
+			catch (Throwable e)
+			{
+				throw new BigBangException(e.getMessage(), e);
+			}
+			larrByClient = larrExpenses.get(lidClient);
+			if ( larrByClient == null )
+			{
+				larrByClient = new ArrayList<UUID>();
+				larrExpenses.put(lidClient, larrByClient);
+			}
+			larrByClient.add(lobjExpense.getKey());
+		}
+
+		lidSet = null;
+		for(UUID lidC : larrExpenses.keySet())
+		{
+			lidSetClient = null;
+			lobjDocOps = null;
+			larrByClient = larrExpenses.get(lidC);
+			larrFinal = larrByClient.toArray(new UUID[larrByClient.size()]);
+			for ( i = 0; i < larrFinal.length; i++ )
+			{
+				try
+				{
+					lobjExpense = com.premiumminds.BigBang.Jewel.Objects.Expense.GetInstance(Engine.getCurrentNameSpace(), larrFinal[i]);
+
+					lopNC = new NotifyClient(lobjExpense.GetProcessID());
+					lopNC.marrExpenseIDs = larrFinal;
+					lopNC.mbUseSets = true;
+					lopNC.midSet = lidSet;
+					lopNC.midSetDocument = lidSetClient;
+					lopNC.mobjDocOps = lobjDocOps;
+
+					lopNC.Execute();
+
+					lobjDocOps = lopNC.mobjDocOps;
+					lidSetClient = lopNC.midSetDocument;
+					lidSet = lopNC.midSet;
+				}
+				catch (Throwable e)
+				{
+					throw new BigBangException(e.getMessage(), e);
+				}
+			}
+		}
+	}
+
+	public void massReturnToClient(String[] expenseIds)
+		throws SessionExpiredException, BigBangException
+	{
+		Hashtable<UUID, ArrayList<UUID>> larrExpenses;
+		com.premiumminds.BigBang.Jewel.Objects.Expense lobjExpense;
+		IProcess lobjProcess;
+		UUID lidClient;
+		ArrayList<UUID> larrByClient;
+		UUID[] larrFinal;
+		UUID lidSet;
+		UUID lidSetClient;
+		DocOps lobjDocOps;
+		ReturnToClient lopRTC;
+		int i;
+
+		if ( Engine.getCurrentUser() == null )
+			throw new SessionExpiredException();
+
+		larrExpenses = new Hashtable<UUID, ArrayList<UUID>>();
+		for ( i = 0; i < expenseIds.length; i++ )
+		{
+			try
+			{
+				lobjExpense = com.premiumminds.BigBang.Jewel.Objects.Expense.GetInstance(Engine.getCurrentNameSpace(),
+						UUID.fromString(expenseIds[i]));
+				lobjProcess = PNProcess.GetInstance(Engine.getCurrentNameSpace(), lobjExpense.GetProcessID());
+				if ( Constants.ProcID_Policy.equals(lobjProcess.GetParent().GetScriptID()) )
+					lidClient = lobjProcess.GetParent().GetParent().GetDataKey();
+				else
+					lidClient = (UUID)lobjProcess.GetParent().GetData().getAt(2);
+			}
+			catch (Throwable e)
+			{
+				throw new BigBangException(e.getMessage(), e);
+			}
+			larrByClient = larrExpenses.get(lidClient);
+			if ( larrByClient == null )
+			{
+				larrByClient = new ArrayList<UUID>();
+				larrExpenses.put(lidClient, larrByClient);
+			}
+			larrByClient.add(lobjExpense.getKey());
+		}
+
+		lidSet = null;
+		for(UUID lidC : larrExpenses.keySet())
+		{
+			lidSetClient = null;
+			lobjDocOps = null;
+			larrByClient = larrExpenses.get(lidC);
+			larrFinal = larrByClient.toArray(new UUID[larrByClient.size()]);
+			for ( i = 0; i < larrFinal.length; i++ )
+			{
+				try
+				{
+					lobjExpense = com.premiumminds.BigBang.Jewel.Objects.Expense.GetInstance(Engine.getCurrentNameSpace(), larrFinal[i]);
+
+					lopRTC = new ReturnToClient(lobjExpense.GetProcessID());
+					lopRTC.marrExpenseIDs = larrFinal;
+					lopRTC.mbUseSets = true;
+					lopRTC.midSet = lidSet;
+					lopRTC.midSetDocument = lidSetClient;
+					lopRTC.mobjDocOps = lobjDocOps;
+
+					lopRTC.Execute();
+
+					lobjDocOps = lopRTC.mobjDocOps;
+					lidSetClient = lopRTC.midSetDocument;
+					lidSet = lopRTC.midSet;
 				}
 				catch (Throwable e)
 				{
