@@ -46,7 +46,7 @@ public class TestQuoteRequestDelete
 		};
 
 		parameter = new QuoteRequestSearchParameter();
-		parameter.freeText = "+2475.1";
+		parameter.freeText = "24535";
 		parameter.includeClosed = true;
 
 		Services.quoteRequestService.openSearch(new SearchParameter[] {parameter}, new SortParameter[] {}, 5, callback);
