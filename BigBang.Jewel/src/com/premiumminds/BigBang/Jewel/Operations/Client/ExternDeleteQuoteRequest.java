@@ -153,8 +153,8 @@ public class ExternDeleteQuoteRequest
 					mobjData.marrSubLines[i] = new QuoteRequestSubLineData();
 					mobjData.marrSubLines[i].FromObject(larrSubLines[i]);
 
-					larrCoverages = larrSubLines[i].GetCurrentCoverages();
-					larrValues = larrSubLines[i].GetCurrentValues();
+					larrCoverages = larrSubLines[i].GetCurrentCoverages(pdb);
+					larrValues = larrSubLines[i].GetCurrentValues(pdb);
 
 					if ( (larrCoverages == null) || (larrCoverages.length == 0) )
 						mobjData.marrSubLines[i].marrCoverages = null;
