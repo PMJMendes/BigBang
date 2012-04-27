@@ -30,8 +30,8 @@ public class TestContactCreate
 		};
 
 		contact = new Contact();
-		contact.ownerTypeId = "D535A99E-149F-44DC-A28B-9EE600B240F5";
-		contact.ownerId = "8F474C7D-DE85-4BEC-8139-9FB70020135F";
+		contact.ownerTypeId = "EFFA56DF-8F3C-4361-A584-A02E00C4F0C5";
+		contact.ownerId = "CA38CF67-FB1C-4213-9ABE-A03C011459A1";
 		contact.name = "Teste";
 		contact.typeId = "04F6BC3C-0283-47F0-9670-9EEE013350D9";
 		contact.info = new ContactInfo[1];
