@@ -311,17 +311,17 @@ public class ExpenseSearchOperationViewPresenter implements ViewPresenter {
 
 	protected void onReturnToClient() {
 		expenseBroker.returnToClient(expenseId, new ResponseHandler<Expense>() {
-			
+
 			@Override
 			public void onResponse(Expense response) {
 				EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Devolvido ao cliente com sucesso"), TYPE.TRAY_NOTIFICATION));
 				NavigationHistoryManager.getInstance().reload();				
 			}
-			
+
 			@Override
 			public void onError(Collection<ResponseError> errors) {
 				EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não foi possível devolver ao Cliente"), TYPE.ALERT_NOTIFICATION));
-				
+
 			}
 		});
 	}
@@ -355,7 +355,7 @@ public class ExpenseSearchOperationViewPresenter implements ViewPresenter {
 			public void onError(Collection<ResponseError> errors) {
 				EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não foi possível notificar o Cliente"), TYPE.ALERT_NOTIFICATION));
 			}
-			
+
 		});
 
 	}
@@ -412,9 +412,20 @@ public class ExpenseSearchOperationViewPresenter implements ViewPresenter {
 
 
 	private void showSubProcess(final BigBangProcess process){
-		//	String type = process.dataTypeId;
-		//NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
-		//TODO
+		String type = process.dataTypeId;
+		
+		if(type.equalsIgnoreCase(BigBangConstants.EntityIds.INFO_REQUEST)){
+			NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
+			item.pushIntoStackParameter("display", "viewinforequest");
+			item.setParameter("requestid", process.dataId);
+			NavigationHistoryManager.getInstance().go(item);
+		}
+		else if(type.equalsIgnoreCase(BigBangConstants.EntityIds.EXTERNAL_INFO_REQUEST)){
+			NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
+			item.pushIntoStackParameter("display", "viewexternalrequest");
+			item.setParameter("requestid", process.dataId);
+			NavigationHistoryManager.getInstance().go(item);
+		}
 	}
 
 	private void showHistory(final HistoryItemStub historyItem) {

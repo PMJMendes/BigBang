@@ -18,8 +18,11 @@ import bigBang.library.client.EventBus;
 import bigBang.library.client.FormField;
 import bigBang.library.client.Notification;
 import bigBang.library.client.Notification.TYPE;
+import bigBang.library.client.dataAccess.BigBangTypifiedListBroker;
 import bigBang.library.client.event.NewNotificationEvent;
 import bigBang.library.client.userInterface.view.FormView;
+import bigBang.module.insurancePolicyModule.client.dataAccess.PolicyTypifiedListBroker;
+import bigBang.module.insurancePolicyModule.client.dataAccess.SubPolicyTypifiedListBroker;
 
 public class ExpenseForm extends FormView<Expense>{
 
@@ -135,6 +138,7 @@ public class ExpenseForm extends FormView<Expense>{
 		newExpense.insuredObjectId = insuredObjectId.getValue();
 		newExpense.value = value.getValue();
 		newExpense.isManual = tempIsManual;
+		newExpense.coverageId = coverageId.getValue();
 		return newExpense;
 
 	}
@@ -176,8 +180,15 @@ public class ExpenseForm extends FormView<Expense>{
 			}
 		});
 
-		listId = BigBangConstants.EntityIds.COVERAGE+"/"+info.referenceId;
-		coverageId.setListId(info.referenceId, new ResponseHandler<Void>() {
+		listId = info.referenceTypeId.equalsIgnoreCase(BigBangConstants.EntityIds.INSURANCE_POLICY) ? 
+				BigBangConstants.TypifiedListIds.POLICY_COVERAGE+"/"+info.referenceId 
+				: BigBangConstants.TypifiedListIds.SUB_POLICY_COVERAGE +"/"+info.referenceId;
+		
+		BigBangTypifiedListBroker listBroker = info.referenceTypeId.equalsIgnoreCase(BigBangConstants.EntityIds.INSURANCE_POLICY) ? 
+				PolicyTypifiedListBroker.Util.getInstance() : SubPolicyTypifiedListBroker.Util.getInstance();
+				
+		coverageId.setTypifiedDataBroker(listBroker);
+		coverageId.setListId(listId, new ResponseHandler<Void>() {
 
 			@Override
 			public void onResponse(Void response) {

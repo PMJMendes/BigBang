@@ -36,7 +36,7 @@ public class BigBangConstants {
 		public static final String INSURED_OBJECT_TYPE_EQUIPMENT = "E3E7B018-6F07-42DA-8B54-9F9501402D25";
 		public static final String INSURED_OBJECT_TYPE_PLACE      = "CD709854-DB59-424B-904A-9F9501403847";
 		public static final String INSURED_OBJECT_TYPE_ANIMAL    = "7A9A0E31-668A-4113-A03E-9F9501403E6E";
-		public static final String CASUALTY = "6C9562DE-D8C6-4CEC-A4DA-A02E00C735E9";
+		public static final String CASUALTY = "EFFA56DF-8F3C-4361-A584-A02E00C4F0C5";
 		public static final String SUB_CASUALTY = "D5FD2D1B-59FB-4171-961A-A02E0121C81B";
 		public static final String COMPLAINT = "TODO";
 		public static final String EXPENSE = "09963260-CDB1-4207-B856-A03800B8AFC8";

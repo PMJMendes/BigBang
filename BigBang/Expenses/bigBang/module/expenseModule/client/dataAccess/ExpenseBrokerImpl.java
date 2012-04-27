@@ -417,5 +417,46 @@ public class ExpenseBrokerImpl extends DataBroker<Expense> implements ExpenseDat
 
 
 	}
+	
+	@Override
+	public void massReturnToClient(String[] expenseIds, final ResponseHandler<Void> handler){
+		service.massReturnToClient(expenseIds, new BigBangAsyncCallback<Void>() {
+			
+			@Override
+			public void onResponseSuccess(Void result) {
+				handler.onResponse(null);
+				EventBus.getInstance().fireEvent(new OperationWasExecutedEvent(BigBangConstants.OperationIds.ExpenseProcess.RETURN_TO_CLIENT,  null));
+			}
+
+			@Override
+			public void onResponseFailure(Throwable caught) {
+				handler.onError(new String[]{
+						new String("Could not return to clients")
+				});
+				super.onResponseFailure(caught);
+			}
+		});
+	}
+
+
+	@Override
+	public void massNotifyClient(String[] toNotify,
+			final ResponseHandler<Void> responseHandler) {
+		service.massNotifyClient(toNotify, new BigBangAsyncCallback<Void>() {
+			@Override
+			public void onResponseSuccess(Void result) {
+				responseHandler.onResponse(null);
+				EventBus.getInstance().fireEvent(new OperationWasExecutedEvent(BigBangConstants.OperationIds.ExpenseProcess.NOTIFY_CLIENT,  null));
+			}
+
+			@Override
+			public void onResponseFailure(Throwable caught) {
+				responseHandler.onError(new String[]{
+						new String("Could not notify clients")
+				});
+				super.onResponseFailure(caught);
+			}
+		});
+	}
 
 }

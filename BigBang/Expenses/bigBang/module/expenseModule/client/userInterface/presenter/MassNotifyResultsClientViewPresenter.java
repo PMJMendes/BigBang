@@ -146,7 +146,19 @@ public class MassNotifyResultsClientViewPresenter implements ViewPresenter{
 				final ValueSelectable<ExpenseStub> selectable = (ValueSelectable<ExpenseStub>) event.getFirstSelected();
 				
 				if(selectable != null){
-					//TODO
+					broker.getExpense(selectable.getValue().id, new ResponseHandler<Expense>() {
+
+						@Override
+						public void onResponse(Expense response) {
+							view.getExpenseForm().setValue(response);
+						}
+
+						@Override
+						public void onError(Collection<ResponseError> errors) {
+							EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não foi possível obter a Despesa de Saúde"), TYPE.ALERT_NOTIFICATION));
+
+						}
+					});
 				}
 			}
 		});
@@ -160,7 +172,19 @@ public class MassNotifyResultsClientViewPresenter implements ViewPresenter{
 				final ValueSelectable<ExpenseStub> selectable = (ValueSelectable<ExpenseStub>) event.getFirstSelected();
 			
 				if(selectable != null){
-					//TODO
+					broker.getExpense(selectable.getValue().id, new ResponseHandler<Expense>() {
+
+						@Override
+						public void onResponse(Expense response) {
+							view.getExpenseForm().setValue(response);
+						}
+
+						@Override
+						public void onError(Collection<ResponseError> errors) {
+							EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não foi possível obter a Despesa de Saúde"), TYPE.ALERT_NOTIFICATION));
+
+						}
+					});
 				}
 			}
 		});
@@ -169,13 +193,35 @@ public class MassNotifyResultsClientViewPresenter implements ViewPresenter{
 
 	protected void notifyResults(
 			Collection<ValueSelectable<ExpenseStub>> all) {
-		// TODO Auto-generated method stub
+
+			String[] toNotify = new String[all.size()];
+			int counter = 0;
+
+			for(ValueSelectable<ExpenseStub> stub: all){
+				toNotify[counter] = stub.getValue().id;
+				counter++;
+			}
+
+			broker.massNotifyClient(toNotify, new ResponseHandler<Void>() {
+
+				@Override
+				public void onResponse(Void response) {
+					EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Comunicações enviadas com sucesso"), TYPE.TRAY_NOTIFICATION));
+					NavigationHistoryManager.getInstance().reload();
+				}
+
+				@Override
+				public void onError(Collection<ResponseError> errors) {
+					EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não foi possível enviar as comunicações"), TYPE.ALERT_NOTIFICATION));
+				}
+			});
 		
 	}
 
 	@Override
 	public void setParameters(HasParameters parameterHolder) {
 		clearView();
+		view.refreshMainList();
 		showMassNotifyResultsScreen();
 	}
 	

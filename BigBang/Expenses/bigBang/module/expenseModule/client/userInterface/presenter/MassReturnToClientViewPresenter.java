@@ -2,10 +2,6 @@ package bigBang.module.expenseModule.client.userInterface.presenter;
 
 import java.util.Collection;
 
-import com.google.gwt.user.client.ui.HasWidgets;
-import com.google.gwt.user.client.ui.UIObject;
-import com.google.gwt.user.client.ui.Widget;
-
 import bigBang.definitions.client.dataAccess.ExpenseDataBroker;
 import bigBang.definitions.client.response.ResponseError;
 import bigBang.definitions.client.response.ResponseHandler;
@@ -32,20 +28,23 @@ import bigBang.library.client.event.SelectionChangedEventHandler;
 import bigBang.library.client.history.NavigationHistoryManager;
 import bigBang.library.client.userInterface.presenter.ViewPresenter;
 
-public class MassParticipateToInsurerViewPresenter implements ViewPresenter {
+import com.google.gwt.user.client.ui.HasWidgets;
+import com.google.gwt.user.client.ui.UIObject;
+import com.google.gwt.user.client.ui.Widget;
 
+public class MassReturnToClientViewPresenter implements ViewPresenter{
 	private Display view;
 	private boolean bound = false;
 	protected ExpenseDataBroker broker;
-
-	public MassParticipateToInsurerViewPresenter(Display view){
+	
+	public MassReturnToClientViewPresenter(Display view){
 		setView((UIObject) view);
 		broker = (ExpenseDataBroker) DataBrokerManager.Util.getInstance().getBroker(BigBangConstants.EntityIds.EXPENSE);
 	}
-
+	
 	public interface Display{
-		void addExpenseToParticipate(ExpenseStub stub);
-		void removeExpenseToParticipate(String id);
+		void addExpenseToReturnToClient(ExpenseStub stub);
+		void removeExpenseToReturnToClient(String id);
 		HasCheckables getCheckableSelectedList();
 		HasEditableValue<Expense> getExpenseForm();
 		HasValueSelectables<ExpenseStub> getMainList();
@@ -55,20 +54,20 @@ public class MassParticipateToInsurerViewPresenter implements ViewPresenter {
 		void markAllForCheck();
 		void markForCheck(String id);
 		void markForUncheck(String id);
-		void removeAllExpensesToParticipate();
+		void removeAllExpensesToReturnToClient();
 		Widget asWidget();
 		void registerActionHandler(ActionInvokedEventHandler<Action> handler);
 		void allowCreation(boolean b);
 	}
-
+	
 	public enum Action{
-		SELECT_ALL, PARTICIPATE_TO_INSURER, CLEAR
+		SELECT_ALL, RETURN_TO_CLIENT, CLEAR
 	}
 
 	@Override
 	public void setView(UIObject view) {
 		this.view = (Display)view;
-
+		
 	}
 
 	@Override
@@ -80,17 +79,17 @@ public class MassParticipateToInsurerViewPresenter implements ViewPresenter {
 
 	private void bind() {
 		if(bound){return;}
-
-		view.registerActionHandler(new ActionInvokedEventHandler<MassParticipateToInsurerViewPresenter.Action>() {
-
+		
+		view.registerActionHandler(new ActionInvokedEventHandler<Action>() {
+			
 			@Override
 			public void onActionInvoked(ActionInvokedEvent<Action> action) {
 				switch(action.getAction()){
 				case CLEAR:
-					view.removeAllExpensesToParticipate();
+					view.removeAllExpensesToReturnToClient();
 					break;
-				case PARTICIPATE_TO_INSURER:
-					participateToInsurer(view.getSelectedList().getAll());
+				case RETURN_TO_CLIENT:
+					returnToClient(view.getSelectedList().getAll());
 					break;
 				case SELECT_ALL:
 					view.markAllForCheck();
@@ -98,54 +97,54 @@ public class MassParticipateToInsurerViewPresenter implements ViewPresenter {
 				}	
 			}
 		});
-
+		
 		view.getCheckableMainList().addCheckedSelectionChangedEventHandler(new CheckedSelectionChangedEventHandler() {
-
+			
 			@Override
 			public void onCheckedSelectionChanged(CheckedSelectionChangedEvent event) {
 				Checkable checkable = event.getChangedCheckable();
-
+				
 				@SuppressWarnings("unchecked")
 				ValueSelectable<ExpenseStub> entry = (ValueSelectable<ExpenseStub>) checkable;
 				String id = entry.getValue().id;
-
+				
 				if(checkable.isChecked()){
 					view.markForCheck(id);
-					view.addExpenseToParticipate(entry.getValue());
+					view.addExpenseToReturnToClient(entry.getValue());
 				}else{
 					view.markForUncheck(id);
-					view.removeExpenseToParticipate(id);
+					view.removeExpenseToReturnToClient(id);
 				}
-
+				
 			}
 		});
-
+		
 		view.getCheckableSelectedList().addCheckedSelectionChangedEventHandler(new CheckedSelectionChangedEventHandler() {
-
+			
 			@Override
 			public void onCheckedSelectionChanged(CheckedSelectionChangedEvent event) {
 				Checkable checkable = event.getChangedCheckable();
-
+				
 				@SuppressWarnings("unchecked")
 				ValueSelectable<ExpenseStub> entry = (ValueSelectable<ExpenseStub>) checkable;
 				String id = entry.getValue().id;
-
+	
 				if(checkable.isChecked()){
 					view.markForCheck(id);
 				}else{
 					view.markForUncheck(id);
-					view.removeExpenseToParticipate(id);
+					view.removeExpenseToReturnToClient(id);
 				}
 			}
 		});
 
 		view.getMainList().addSelectionChangedEventHandler(new SelectionChangedEventHandler() {
-
+			
 			@Override
 			public void onSelectionChanged(SelectionChangedEvent event) {
 				@SuppressWarnings("unchecked")
 				final ValueSelectable<ExpenseStub> selectable = (ValueSelectable<ExpenseStub>) event.getFirstSelected();
-
+				
 				if(selectable != null){
 					broker.getExpense(selectable.getValue().id, new ResponseHandler<Expense>() {
 
@@ -163,15 +162,15 @@ public class MassParticipateToInsurerViewPresenter implements ViewPresenter {
 				}
 			}
 		});
-
+		
 		view.getSelectedList().addSelectionChangedEventHandler(new SelectionChangedEventHandler() {
-
+			
 			@Override
 			public void onSelectionChanged(SelectionChangedEvent event) {
-
+			
 				@SuppressWarnings("unchecked")
 				final ValueSelectable<ExpenseStub> selectable = (ValueSelectable<ExpenseStub>) event.getFirstSelected();
-
+			
 				if(selectable != null){
 					broker.getExpense(selectable.getValue().id, new ResponseHandler<Expense>() {
 
@@ -192,53 +191,53 @@ public class MassParticipateToInsurerViewPresenter implements ViewPresenter {
 		bound = true;
 	}
 
-	protected void participateToInsurer(
+	protected void returnToClient(
 			Collection<ValueSelectable<ExpenseStub>> all) {
 
-		String[] toParticipate = new String[all.size()];
-		int counter = 0;
+			String[] toReturn = new String[all.size()];
+			int counter = 0;
 
-		for(ValueSelectable<ExpenseStub> stub: all){
-			toParticipate[counter] = stub.getValue().id;
-			counter++;
-		}
-
-		broker.massSendNotification(toParticipate, new ResponseHandler<Void>() {
-
-			@Override
-			public void onResponse(Void response) {
-				EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Comunicações enviadas com sucesso"), TYPE.TRAY_NOTIFICATION));
-				NavigationHistoryManager.getInstance().reload();
+			for(ValueSelectable<ExpenseStub> stub: all){
+				toReturn[counter] = stub.getValue().id;
+				counter++;
 			}
 
-			@Override
-			public void onError(Collection<ResponseError> errors) {
-				EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não foi possível enviar as comunicações"), TYPE.ALERT_NOTIFICATION));
-			}
-		});
+			broker.massReturnToClient(toReturn, new ResponseHandler<Void>() {
 
+				@Override
+				public void onResponse(Void response) {
+					EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Devoluções enviadas com sucesso"), TYPE.TRAY_NOTIFICATION));
+					NavigationHistoryManager.getInstance().reload();
+				}
+
+				@Override
+				public void onError(Collection<ResponseError> errors) {
+					EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não foi possível enviar as devoluções"), TYPE.ALERT_NOTIFICATION));
+				}
+			});
+		
 	}
 
 	@Override
 	public void setParameters(HasParameters parameterHolder) {
 		clearView();
 		view.refreshMainList();
-		showMassParticipateToInsurerScreen();
+		showMassReturnToClientScreen();
 	}
-
+	
 
 	private void clearView() {
-		view.removeAllExpensesToParticipate();
+		view.removeAllExpensesToReturnToClient();
 		view.getExpenseForm().setValue(null);
 	}	
-
+	
 
 	protected void onUserLacksPermission() {
 		EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não tem permissões para realizar esta operação"), TYPE.ALERT_NOTIFICATION));
 		NavigationHistoryManager.getInstance().reload();		
 	}
 
-	private void showMassParticipateToInsurerScreen() {
+	private void showMassReturnToClientScreen() {
 		checkUserPermission(new ResponseHandler<Boolean>() {
 
 			@Override
@@ -251,13 +250,14 @@ public class MassParticipateToInsurerViewPresenter implements ViewPresenter {
 			public void onError(Collection<ResponseError> errors) {
 				onUserLacksPermission();
 			}		
-
+				
 		});
-
+		
 	}
 
 	private void checkUserPermission(ResponseHandler<Boolean> responseHandler) {
 		responseHandler.onResponse(true);
+		//TODO
 	}
-
+	
 }

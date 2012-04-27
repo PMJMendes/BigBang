@@ -21,7 +21,7 @@ public class ExpenseSectionViewPresenter implements ViewPresenter {
 
 	public static enum SectionOperation {
 		OPERATIONS,
-		MASS_MANAGER_TRANSFER, MASS_PARTICIPATE_TO_INSURER, MASS_NOTIFY_RESULTS_CLIENT
+		MASS_PARTICIPATE_TO_INSURER, MASS_NOTIFY_RESULTS_CLIENT, MASS_RETURN_TO_CLIENT
 	}
 
 	public static interface Display {
@@ -81,7 +81,7 @@ public class ExpenseSectionViewPresenter implements ViewPresenter {
 			public void onActionInvoked(ActionInvokedEvent<SectionOperation> action) {
 
 				NavigationHistoryItem item = new NavigationHistoryItem();
-				item.setParameter("section", "casualty");
+				item.setParameter("section", "expense");
 				item.setStackParameter("display");
 
 				if(action.getAction() == null) {
@@ -91,16 +91,18 @@ public class ExpenseSectionViewPresenter implements ViewPresenter {
 					case OPERATIONS:
 						item.pushIntoStackParameter("display", "search");
 						break;
-					case MASS_MANAGER_TRANSFER:
-						item.pushIntoStackParameter("display", "massmanagertransfer");
-						break;
 					case MASS_PARTICIPATE_TO_INSURER:
 						item.pushIntoStackParameter("display", "massparticipatetoinsurer");
 						break;
 					case MASS_NOTIFY_RESULTS_CLIENT:
 						item.pushIntoStackParameter("display", "massnotifyresultsclient");
 						break;
+					case MASS_RETURN_TO_CLIENT:
+						item.pushIntoStackParameter("display", "massreturntoclient");
+						break;
 					}
+					
+					
 					
 				}
 
@@ -125,15 +127,15 @@ public class ExpenseSectionViewPresenter implements ViewPresenter {
 					display = display == null ? "" : display;
 
 					//MASS OPERATIONS
-					if(display.equalsIgnoreCase("massmanagertransfer")){
-						view.selectOperation(SectionOperation.MASS_MANAGER_TRANSFER);
-						present("MANAGER_TRANSFER", parameters);
-					}else if(display.equalsIgnoreCase("massparticipatetoinsurer")){
+					if(display.equalsIgnoreCase("massparticipatetoinsurer")){
 						view.selectOperation(SectionOperation.MASS_PARTICIPATE_TO_INSURER);
 						present("MASS_PARTICIPATE_TO_INSURER", parameters);
 					}else if(display.equalsIgnoreCase("massnotifyresultsclient")){
 						view.selectOperation(SectionOperation.MASS_NOTIFY_RESULTS_CLIENT);
 						present("MASS_NOTIFY_RESULTS_CLIENT", parameters);
+					}else if(display.equalsIgnoreCase("massreturntoclient")){
+						view.selectOperation(SectionOperation.MASS_RETURN_TO_CLIENT);
+						present("MASS_RETURN_TO_CLIENT", parameters);
 					}else{
 						view.selectOperation(SectionOperation.OPERATIONS);
 						present("EXPENSE_OPERATIONS", parameters);

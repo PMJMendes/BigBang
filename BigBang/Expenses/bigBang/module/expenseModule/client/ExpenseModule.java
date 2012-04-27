@@ -16,8 +16,10 @@ import bigBang.module.expenseModule.client.userInterface.presenter.ExpenseSearch
 import bigBang.module.expenseModule.client.userInterface.presenter.ExpenseSectionViewPresenter;
 import bigBang.module.expenseModule.client.userInterface.presenter.MassNotifyResultsClientViewPresenter;
 import bigBang.module.expenseModule.client.userInterface.presenter.MassParticipateToInsurerViewPresenter;
+import bigBang.module.expenseModule.client.userInterface.presenter.MassReturnToClientViewPresenter;
 import bigBang.module.expenseModule.client.userInterface.presenter.ReceiveAcceptanceViewPresenter;
 import bigBang.module.expenseModule.client.userInterface.presenter.ReceiveReturnViewPresenter;
+import bigBang.module.expenseModule.client.userInterface.presenter.ViewExpenseInfoRequestViewPresenter;
 import bigBang.module.expenseModule.client.userInterface.view.ExpenseDeleteView;
 import bigBang.module.expenseModule.client.userInterface.view.ExpenseExternalRequestView;
 import bigBang.module.expenseModule.client.userInterface.view.ExpenseOperationsView;
@@ -25,8 +27,10 @@ import bigBang.module.expenseModule.client.userInterface.view.ExpenseSearchOpera
 import bigBang.module.expenseModule.client.userInterface.view.ExpenseSectionView;
 import bigBang.module.expenseModule.client.userInterface.view.MassNotifyResultsClientView;
 import bigBang.module.expenseModule.client.userInterface.view.MassParticipateToInsurerView;
+import bigBang.module.expenseModule.client.userInterface.view.MassReturnToClientView;
 import bigBang.module.expenseModule.client.userInterface.view.ReceiveAcceptanceView;
 import bigBang.module.expenseModule.client.userInterface.view.ReceiveReturnView;
+import bigBang.module.expenseModule.client.userInterface.view.ViewExpenseInfoRequestView;
 
 import com.google.gwt.core.client.GWT;
 
@@ -131,6 +135,24 @@ public class ExpenseModule implements Module {
 			public ViewPresenter getInstance() {
 				ExpenseExternalRequestView view = (ExpenseExternalRequestView) GWT.create(ExpenseExternalRequestView.class);
 				ExpenseExternalRequestViewPresenter presenter = new ExpenseExternalRequestViewPresenter(view);
+				return presenter;
+			}
+		});
+		ViewPresenterFactory.getInstance().registerViewPresenterInstantiator("MASS_RETURN_TO_CLIENT", new ViewPresenterInstantiator() {
+
+			@Override
+			public ViewPresenter getInstance() {
+				MassReturnToClientView view = (MassReturnToClientView) GWT.create(MassReturnToClientView.class);
+				MassReturnToClientViewPresenter presenter = new MassReturnToClientViewPresenter(view);
+				return presenter;
+			}
+		});
+		ViewPresenterFactory.getInstance().registerViewPresenterInstantiator("VIEW_EXPENSE_INFO_OR_DOCUMENT_REQUEST", new ViewPresenterInstantiator() {
+
+			@Override
+			public ViewPresenter getInstance() {
+				ViewExpenseInfoRequestView view = (ViewExpenseInfoRequestView ) GWT.create(ViewExpenseInfoRequestView.class);
+				ViewPresenter presenter = new ViewExpenseInfoRequestViewPresenter(view);
 				return presenter;
 			}
 		});

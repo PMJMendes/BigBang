@@ -38,4 +38,9 @@ public interface ExpenseDataBroker extends DataBrokerInterface<Expense>{
 	void returnToClient(String expenseId,
 			ResponseHandler<Expense> responseHandler);
 
+	void massReturnToClient(String[] expenseIds, ResponseHandler<Void> handler);
+
+	void massNotifyClient(String[] toNotify,
+			ResponseHandler<Void> responseHandler);
+
 }

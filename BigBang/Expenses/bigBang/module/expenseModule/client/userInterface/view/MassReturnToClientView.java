@@ -5,15 +5,6 @@ import java.util.Date;
 import java.util.Map;
 import java.util.TreeMap;
 
-import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.i18n.client.DateTimeFormat;
-import com.google.gwt.user.client.ui.Button;
-import com.google.gwt.user.client.ui.HasVerticalAlignment;
-import com.google.gwt.user.client.ui.HorizontalPanel;
-import com.google.gwt.user.client.ui.SplitLayoutPanel;
-import com.google.gwt.user.client.ui.VerticalPanel;
-
 import bigBang.definitions.client.dataAccess.ExpenseDataBroker;
 import bigBang.definitions.client.dataAccess.Search;
 import bigBang.definitions.client.dataAccess.SearchDataBroker;
@@ -41,13 +32,22 @@ import bigBang.library.client.userInterface.view.FormView;
 import bigBang.library.client.userInterface.view.View;
 import bigBang.module.expenseModule.client.dataAccess.ExpenseSearchDataBroker;
 import bigBang.module.expenseModule.client.userInterface.ExpenseSearchPanel;
-import bigBang.module.expenseModule.client.userInterface.presenter.MassNotifyResultsClientViewPresenter;
-import bigBang.module.expenseModule.client.userInterface.presenter.MassNotifyResultsClientViewPresenter.Action;
+import bigBang.module.expenseModule.client.userInterface.presenter.MassReturnToClientViewPresenter;
+import bigBang.module.expenseModule.client.userInterface.presenter.MassReturnToClientViewPresenter.Action;
 import bigBang.module.expenseModule.shared.ExpenseSearchParameter;
 import bigBang.module.expenseModule.shared.ExpenseSortParameter;
 import bigBang.module.expenseModule.shared.ExpenseSortParameter.SortableField;
 
-public class MassNotifyResultsClientView extends View implements MassNotifyResultsClientViewPresenter.Display{
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.i18n.client.DateTimeFormat;
+import com.google.gwt.user.client.ui.Button;
+import com.google.gwt.user.client.ui.HasVerticalAlignment;
+import com.google.gwt.user.client.ui.HorizontalPanel;
+import com.google.gwt.user.client.ui.SplitLayoutPanel;
+import com.google.gwt.user.client.ui.VerticalPanel;
+
+public class MassReturnToClientView extends View implements MassReturnToClientViewPresenter.Display{
 
 	protected static enum Filters{
 		EXPENSE_DATE_FROM,
@@ -93,7 +93,7 @@ public class MassNotifyResultsClientView extends View implements MassNotifyResul
 				}
 			});
 
-			this.setOperationId(BigBangConstants.OperationIds.ExpenseProcess.NOTIFY_CLIENT);
+			this.setOperationId(BigBangConstants.OperationIds.ExpenseProcess.RETURN_TO_CLIENT);
 			filtersContainer.clear();
 			filtersContainer.add(filtersPanel);
 
@@ -141,7 +141,7 @@ public class MassNotifyResultsClientView extends View implements MassNotifyResul
 	protected ExpenseForm expenseForm;
 	protected Button notifyResultsToClient;
 	
-	public MassNotifyResultsClientView(){
+	public MassReturnToClientView(){
 		
 		SplitLayoutPanel wrapper = new SplitLayoutPanel();
 		initWidget(wrapper);
@@ -166,7 +166,7 @@ public class MassNotifyResultsClientView extends View implements MassNotifyResul
 		searchPanelWrapper.add(selectAllButton);
 		wrapper.addWest(searchPanelWrapper, 400);
 
-		notifyResultsToClient = new Button("Notificar Resultados ao Segurado");
+		notifyResultsToClient = new Button("Devolver ao Segurado");
 
 		HorizontalPanel sendClearWrapper = new HorizontalPanel();
 		sendClearWrapper.setVerticalAlignment(HasVerticalAlignment.ALIGN_MIDDLE);
@@ -176,7 +176,7 @@ public class MassNotifyResultsClientView extends View implements MassNotifyResul
 
 			@Override
 			public void onClick(ClickEvent event) {
-				actionHandler.onActionInvoked(new ActionInvokedEvent<Action>(Action.NOTIFY_RESULTS_CLIENT));
+				actionHandler.onActionInvoked(new ActionInvokedEvent<Action>(Action.RETURN_TO_CLIENT));
 			}
 		});
 
@@ -196,10 +196,10 @@ public class MassNotifyResultsClientView extends View implements MassNotifyResul
 
 		};
 
-		notifyResultsToClient.addSection("Notificar Resultados ao Segurado");
+		notifyResultsToClient.addSection("Devolver ao Segurado");
 
 		VerticalPanel selectedListWrapper = new VerticalPanel();
-		selectedListWrapper.add(new ListHeader("Notificar Resultados ao Segurado"));
+		selectedListWrapper.add(new ListHeader("Devolver ao Segurado"));
 		selectedListWrapper.setSize("100%", "100%");
 		notifyResultsToClient.addWidget(sendClearWrapper);
 		selectedListWrapper.add(notifyResultsToClient.getNonScrollableContent());
@@ -234,14 +234,14 @@ public class MassNotifyResultsClientView extends View implements MassNotifyResul
 
 
 	@Override
-	public void addExpenseToNotifyResults(ExpenseStub stub) {
+	public void addExpenseToReturnToClient(ExpenseStub stub) {
 		selectedExpenses.addEntry(stub);
 		searchPanel.markForCheck(stub.id);
 
 	}
 
 	@Override
-	public void removeExpenseToNotifyResults(String id) {
+	public void removeExpenseToReturnToClient(String id) {
 		for(ValueSelectable<ExpenseStub> entry : selectedExpenses){
 			if(id.equalsIgnoreCase(entry.getValue().id)){
 				this.selectedExpenses.remove(entry);
@@ -318,7 +318,7 @@ public class MassNotifyResultsClientView extends View implements MassNotifyResul
 	}
 
 	@Override
-	public void removeAllExpensesToNotifyResults() {
+	public void removeAllExpensesToReturnToClient() {
 		while(!this.selectedExpenses.isEmpty()){
 			this.selectedExpenses.get(0).setChecked(false, true);
 		}
