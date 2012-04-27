@@ -12,7 +12,7 @@ import bigBang.definitions.shared.Receipt.ReturnMessage;
 import bigBang.definitions.shared.ReceiptStub;
 import bigBang.definitions.shared.SignatureRequest;
 
-public interface ReceiptProcessDataBroker extends DataBrokerInterface<Receipt> {
+public interface ReceiptDataBroker extends DataBrokerInterface<Receipt> {
 
 	public void getReceipt(String id, ResponseHandler<Receipt> handler);
 

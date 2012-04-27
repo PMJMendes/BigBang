@@ -158,6 +158,12 @@ public class CasualtySectionViewPresenter implements ViewPresenter {
 				}else if(show.equalsIgnoreCase("managertransfer")){
 					present("CASUALTY_MANAGER_TRANSFER", parameters);
 					view.showOverlayViewContainer(true);
+				}else if(show.equalsIgnoreCase("subcasualtymarkforclosing")){
+					present("SUB_CASUALTY_MARK_FOR_CLOSING", parameters);
+					view.showOverlayViewContainer(true);
+				}else if(show.equalsIgnoreCase("subcasualtyrejectclose")){
+					present("SUB_CASUALTY_REJECT_CLOSING", parameters);
+					view.showOverlayViewContainer(true);
 				}
 			}
 

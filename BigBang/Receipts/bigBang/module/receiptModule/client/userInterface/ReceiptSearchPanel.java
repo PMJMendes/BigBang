@@ -16,7 +16,7 @@ import com.google.gwt.user.client.ui.UIObject;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
 import bigBang.definitions.client.dataAccess.ReceiptDataBrokerClient;
-import bigBang.definitions.client.dataAccess.ReceiptProcessDataBroker;
+import bigBang.definitions.client.dataAccess.ReceiptDataBroker;
 import bigBang.definitions.shared.BigBangConstants;
 import bigBang.definitions.shared.Receipt;
 import bigBang.definitions.shared.ReceiptStub;
@@ -154,7 +154,7 @@ public class ReceiptSearchPanel extends SearchPanel<ReceiptStub> implements Rece
 	protected Map<String, Void> receiptsToRemove;
 	
 	public ReceiptSearchPanel() {
-		super(((ReceiptProcessDataBroker)DataBrokerManager.Util.getInstance().getBroker(BigBangConstants.EntityIds.RECEIPT)).getSearchBroker());
+		super(((ReceiptDataBroker)DataBrokerManager.Util.getInstance().getBroker(BigBangConstants.EntityIds.RECEIPT)).getSearchBroker());
 		receiptsToRemove = new HashMap<String, Void>();
 		receiptsToUpdate = new HashMap<String, Receipt>();
 
@@ -193,7 +193,7 @@ public class ReceiptSearchPanel extends SearchPanel<ReceiptStub> implements Rece
 		filtersContainer.clear();
 		filtersContainer.add(filtersPanel);
 		
-		ReceiptProcessDataBroker broker = (ReceiptProcessDataBroker) DataBrokerManager.Util.getInstance().getBroker(BigBangConstants.EntityIds.RECEIPT);
+		ReceiptDataBroker broker = (ReceiptDataBroker) DataBrokerManager.Util.getInstance().getBroker(BigBangConstants.EntityIds.RECEIPT);
 		broker.registerClient(this);
 	}
 

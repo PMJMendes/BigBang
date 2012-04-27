@@ -9,6 +9,7 @@ import bigBang.library.client.ValueSelectable;
 import bigBang.library.client.event.ActionInvokedEvent;
 import bigBang.library.client.event.ActionInvokedEventHandler;
 import bigBang.library.client.userInterface.view.View;
+import bigBang.module.generalSystemModule.client.userInterface.MediatorChildrenPanel;
 import bigBang.module.generalSystemModule.client.userInterface.MediatorList;
 import bigBang.module.generalSystemModule.client.userInterface.MediatorListEntry;
 import bigBang.module.generalSystemModule.client.userInterface.MediatorOperationsToolbar;
@@ -17,6 +18,8 @@ import bigBang.module.generalSystemModule.client.userInterface.presenter.Mediato
 
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.logical.shared.ValueChangeEvent;
+import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.user.client.ui.SplitLayoutPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
@@ -29,6 +32,7 @@ public class MediatorManagementOperationView extends View implements MediatorMan
 	protected MediatorOperationsToolbar toolbar;
 	protected ToolButton newButton;
 	protected ActionInvokedEventHandler<MediatorManagementOperationViewPresenter.Action> actionHandler;
+	protected MediatorChildrenPanel childrenPanel;
 
 	public MediatorManagementOperationView() {
 		SplitLayoutPanel wrapper = new SplitLayoutPanel();
@@ -86,10 +90,21 @@ public class MediatorManagementOperationView extends View implements MediatorMan
 		formWrapper.add(toolbar);
 		formWrapper.setCellHeight(toolbar, "21px");
 
+		this.childrenPanel = new MediatorChildrenPanel();
+		this.childrenPanel.setSize("100%", "100%");
+		wrapper.addEast(this.childrenPanel, 250);
+		
 		mediatorForm = new MediatorForm();
 		formWrapper.add(mediatorForm);
-
 		wrapper.add(formWrapper);
+		
+		mediatorForm.addValueChangeHandler(new ValueChangeHandler<Mediator>() {
+			
+			@Override
+			public void onValueChange(ValueChangeEvent<Mediator> event) {
+				childrenPanel.setOwner(event.getValue());
+			}
+		});
 	}
 	
 	@Override

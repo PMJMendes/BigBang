@@ -129,6 +129,7 @@ implements SubCasualtyDataBroker{
 					((SubCasualtyDataBrokerClient) client).setDataVersionNumber(getDataElementId(), getCurrentDataVersion());
 				}
 				handler.onResponse(result);
+				EventBus.getInstance().fireEvent(new OperationWasExecutedEvent(BigBangConstants.OperationIds.SubCasualtyProcess.UPDATE_SUB_CASUALTY, result.id));
 			}
 
 			@Override
@@ -154,6 +155,7 @@ implements SubCasualtyDataBroker{
 					((SubCasualtyDataBrokerClient) client).setDataVersionNumber(getDataElementId(), getCurrentDataVersion());
 				}
 				handler.onResponse(null);
+				EventBus.getInstance().fireEvent(new OperationWasExecutedEvent(BigBangConstants.OperationIds.SubCasualtyProcess.DELETE_SUB_CASUALTY, subCasualtyId));
 			}
 
 			@Override
@@ -203,6 +205,69 @@ implements SubCasualtyDataBroker{
 	@Override
 	public SearchDataBroker<SubCasualtyStub> getSearchBroker() {
 		return this.searchBroker;
+	}
+
+	@Override
+	public void markForClosing(String subCasualtyId, String revisorId,
+			final ResponseHandler<Void> handler) {
+		service.markForClosing(subCasualtyId, revisorId, new BigBangAsyncCallback<SubCasualty>() {
+
+			@Override
+			public void onResponseSuccess(SubCasualty result) {
+				handler.onResponse(null);
+				EventBus.getInstance().fireEvent(new OperationWasExecutedEvent(BigBangConstants.OperationIds.SubCasualtyProcess.MARK_CLOSE_SUB_CASUALTY, result.id));
+			}
+			
+			@Override
+			public void onResponseFailure(Throwable caught) {
+				handler.onError(new String[]{
+						new String("Could not mark the closing")
+				});
+				super.onResponseFailure(caught);
+			}
+		});
+	}
+
+	@Override
+	public void closeSubCasualty(String subCasualtyId,
+			final ResponseHandler<Void> handler) {
+		service.closeProcess(subCasualtyId, new BigBangAsyncCallback<SubCasualty>() {
+
+			@Override
+			public void onResponseSuccess(SubCasualty result) {
+				handler.onResponse(null);
+				EventBus.getInstance().fireEvent(new OperationWasExecutedEvent(BigBangConstants.OperationIds.SubCasualtyProcess.CLOSE_SUB_CASUALTY, result.id));
+			}
+			
+			@Override
+			public void onResponseFailure(Throwable caught) {
+				handler.onError(new String[]{
+						new String("Could not close the sub casualty")
+				});
+				super.onResponseFailure(caught);
+			}
+		});
+	}
+
+	@Override
+	public void rejectCloseSubCasualty(String subCasualtyId, String reason,
+			final ResponseHandler<Void> handler) {
+		service.rejectClosing(subCasualtyId, reason, new BigBangAsyncCallback<SubCasualty>() {
+
+			@Override
+			public void onResponseSuccess(SubCasualty result) {
+				handler.onResponse(null);
+				EventBus.getInstance().fireEvent(new OperationWasExecutedEvent(BigBangConstants.OperationIds.SubCasualtyProcess.REJECT_CLOSE_SUB_CASUALTY, result.id));
+			}
+			
+			@Override
+			public void onResponseFailure(Throwable caught) {
+				handler.onError(new String[]{
+						new String("Could not reject the sub casualty closing")
+				});
+				super.onResponseFailure(caught);
+			}
+		});
 	}
 
 	@Override

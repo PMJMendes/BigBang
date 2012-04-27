@@ -25,7 +25,7 @@ import bigBang.library.client.event.SelectionChangedEventHandler;
 import bigBang.library.client.history.NavigationHistoryItem;
 import bigBang.library.client.history.NavigationHistoryManager;
 import bigBang.library.client.userInterface.presenter.ViewPresenter;
-import bigBang.module.tasksModule.client.OperationToViewPresenterIdMapper;
+import bigBang.module.tasksModule.client.TasksViewPresenterMapper;
 import bigBang.module.tasksModule.client.dataAccess.TasksBroker;
 
 import com.google.gwt.core.client.GWT;
@@ -143,7 +143,7 @@ public class TasksSectionViewPresenter implements ViewPresenter {
 	}
 
 	private String getViewPresenterIdForTask(Task task){
-		return OperationToViewPresenterIdMapper.getViewPresenterIdForOperationId(task.operationIds[0]);
+		return TasksViewPresenterMapper.getViewPresenterIdForObjectTypeId(task.objectTypeId);
 	}
 
 	@Override
@@ -186,6 +186,9 @@ public class TasksSectionViewPresenter implements ViewPresenter {
 			for(int i = 0; i < currentTask.objectIds.length; i++) {
 				if(currentTask.operationIds[i].equalsIgnoreCase(operationId)){
 					view.removeTaskListEntry(currentTask.id);
+					NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
+					item.removeParameter("taskid");
+					NavigationHistoryManager.getInstance().go(item);
 					break;
 				}
 			}

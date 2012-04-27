@@ -7,6 +7,7 @@ import bigBang.library.client.event.ActionInvokedEventHandler;
 import bigBang.library.client.history.NavigationHistoryItem;
 import bigBang.library.client.history.NavigationHistoryManager;
 import bigBang.library.client.userInterface.presenter.ViewPresenter;
+import bigBang.module.generalSystemModule.shared.SessionGeneralSystem;
 
 import com.google.gwt.user.client.ui.HasWidgets;
 import com.google.gwt.user.client.ui.UIObject;
@@ -137,6 +138,7 @@ public class GeneralSystemSectionViewPresenter implements ViewPresenter {
 
 					if(display.equalsIgnoreCase("history")){
 						view.selectOperation(SectionOperation.HISTORY);
+						parameters.setParameter("historyownerid", SessionGeneralSystem.getInstance().id);
 						present("HISTORY", parameters);
 					}else if(display.equalsIgnoreCase("user")){
 						view.selectOperation(SectionOperation.USER);

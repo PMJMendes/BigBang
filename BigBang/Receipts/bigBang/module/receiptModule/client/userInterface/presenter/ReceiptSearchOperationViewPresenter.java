@@ -2,7 +2,7 @@ package bigBang.module.receiptModule.client.userInterface.presenter;
 
 import java.util.Collection;
 
-import bigBang.definitions.client.dataAccess.ReceiptProcessDataBroker;
+import bigBang.definitions.client.dataAccess.ReceiptDataBroker;
 import bigBang.definitions.client.response.ResponseError;
 import bigBang.definitions.client.response.ResponseHandler;
 import bigBang.definitions.shared.BigBangConstants;
@@ -99,12 +99,12 @@ public class ReceiptSearchOperationViewPresenter implements ViewPresenter {
 
 	protected Display view;
 	protected boolean bound;
-	protected ReceiptProcessDataBroker receiptBroker;
+	protected ReceiptDataBroker receiptBroker;
 	private String receiptId;
 
 	public ReceiptSearchOperationViewPresenter(View view) {
 		setView(view);
-		this.receiptBroker = (ReceiptProcessDataBroker) DataBrokerManager.Util.getInstance().getBroker(BigBangConstants.EntityIds.RECEIPT);
+		this.receiptBroker = (ReceiptDataBroker) DataBrokerManager.Util.getInstance().getBroker(BigBangConstants.EntityIds.RECEIPT);
 	}
 
 	@Override

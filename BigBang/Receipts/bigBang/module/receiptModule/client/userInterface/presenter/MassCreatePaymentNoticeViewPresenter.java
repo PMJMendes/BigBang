@@ -6,7 +6,7 @@ import com.google.gwt.user.client.ui.HasWidgets;
 import com.google.gwt.user.client.ui.UIObject;
 import com.google.gwt.user.client.ui.Widget;
 
-import bigBang.definitions.client.dataAccess.ReceiptProcessDataBroker;
+import bigBang.definitions.client.dataAccess.ReceiptDataBroker;
 import bigBang.definitions.client.response.ResponseError;
 import bigBang.definitions.client.response.ResponseHandler;
 import bigBang.definitions.shared.BigBangConstants;
@@ -37,11 +37,11 @@ public class MassCreatePaymentNoticeViewPresenter implements ViewPresenter{
 
 	private Display view;
 	private boolean bound = false;
-	protected ReceiptProcessDataBroker broker;
+	protected ReceiptDataBroker broker;
 
 	public MassCreatePaymentNoticeViewPresenter(Display view){
 		setView((UIObject) view);
-		broker = (ReceiptProcessDataBroker) DataBrokerManager.Util.getInstance().getBroker(BigBangConstants.EntityIds.RECEIPT);
+		broker = (ReceiptDataBroker) DataBrokerManager.Util.getInstance().getBroker(BigBangConstants.EntityIds.RECEIPT);
 	}
 
 

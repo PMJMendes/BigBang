@@ -15,7 +15,11 @@ import bigBang.module.casualtyModule.client.userInterface.presenter.CasualtyMass
 import bigBang.module.casualtyModule.client.userInterface.presenter.CasualtyOperationsViewPresenter;
 import bigBang.module.casualtyModule.client.userInterface.presenter.CasualtySearchOperationViewPresenter;
 import bigBang.module.casualtyModule.client.userInterface.presenter.CasualtySectionViewPresenter;
+import bigBang.module.casualtyModule.client.userInterface.presenter.CasualtyTasksViewPresenter;
 import bigBang.module.casualtyModule.client.userInterface.presenter.SubCasualtyDeleteViewPresenter;
+import bigBang.module.casualtyModule.client.userInterface.presenter.SubCasualtyMarkForClosingViewPresenter;
+import bigBang.module.casualtyModule.client.userInterface.presenter.SubCasualtyRejectCloseViewPresenter;
+import bigBang.module.casualtyModule.client.userInterface.presenter.SubCasualtyTasksViewPresenter;
 import bigBang.module.casualtyModule.client.userInterface.presenter.SubCasualtyExternalRequestViewPresenter;
 import bigBang.module.casualtyModule.client.userInterface.presenter.SubCasualtyInfoOrDocumentRequestViewPresenter;
 import bigBang.module.casualtyModule.client.userInterface.presenter.SubCasualtyViewPresenter;
@@ -27,7 +31,11 @@ import bigBang.module.casualtyModule.client.userInterface.view.CasualtyMassManag
 import bigBang.module.casualtyModule.client.userInterface.view.CasualtyOperationsView;
 import bigBang.module.casualtyModule.client.userInterface.view.CasualtySearchOperationView;
 import bigBang.module.casualtyModule.client.userInterface.view.CasualtySectionView;
+import bigBang.module.casualtyModule.client.userInterface.view.CasualtyTasksView;
 import bigBang.module.casualtyModule.client.userInterface.view.SubCasualtyDeleteView;
+import bigBang.module.casualtyModule.client.userInterface.view.SubCasualtyMarkForClosingView;
+import bigBang.module.casualtyModule.client.userInterface.view.SubCasualtyRejectCloseView;
+import bigBang.module.casualtyModule.client.userInterface.view.SubCasualtyTasksView;
 import bigBang.module.casualtyModule.client.userInterface.view.SubCasualtyExternalRequestView;
 import bigBang.module.casualtyModule.client.userInterface.view.SubCasualtyInfoOrDocumentRequestView;
 import bigBang.module.casualtyModule.client.userInterface.view.SubCasualtyView;
@@ -135,6 +143,42 @@ public class CasualtyModule implements Module {
 			public ViewPresenter getInstance() {
 				CasualtyInfoOrDocumentRequestView view = (CasualtyInfoOrDocumentRequestView) GWT.create(CasualtyInfoOrDocumentRequestView.class);
 				ViewPresenter presenter = new CasualtyInfoOrDocumentRequestViewPresenter(view);
+				return presenter;
+			}
+		});
+		ViewPresenterFactory.getInstance().registerViewPresenterInstantiator("CASUALTY_TASKS", new ViewPresenterInstantiator() {
+
+			@Override
+			public ViewPresenter getInstance() {
+				CasualtyTasksView view = (CasualtyTasksView) GWT.create(CasualtyTasksView.class);
+				CasualtyTasksViewPresenter presenter =  new CasualtyTasksViewPresenter(view);
+				return presenter;
+			}
+		});
+		ViewPresenterFactory.getInstance().registerViewPresenterInstantiator("SUB_CASUALTY_TASKS", new ViewPresenterInstantiator() {
+
+			@Override
+			public ViewPresenter getInstance() {
+				SubCasualtyTasksView view = (SubCasualtyTasksView) GWT.create(SubCasualtyTasksView.class);
+				SubCasualtyTasksViewPresenter presenter =  new SubCasualtyTasksViewPresenter(view);
+				return presenter;
+			}
+		});
+		ViewPresenterFactory.getInstance().registerViewPresenterInstantiator("SUB_CASUALTY_MARK_FOR_CLOSING", new ViewPresenterInstantiator() {
+
+			@Override
+			public ViewPresenter getInstance() {
+				SubCasualtyMarkForClosingView view = (SubCasualtyMarkForClosingView) GWT.create(SubCasualtyMarkForClosingView.class);
+				ViewPresenter presenter = new SubCasualtyMarkForClosingViewPresenter(view);
+				return presenter;
+			}
+		});
+		ViewPresenterFactory.getInstance().registerViewPresenterInstantiator("SUB_CASUALTY_REJECT_CLOSING", new ViewPresenterInstantiator() {
+
+			@Override
+			public ViewPresenter getInstance() {
+				SubCasualtyRejectCloseView view = (SubCasualtyRejectCloseView) GWT.create(SubCasualtyRejectCloseView.class);
+				ViewPresenter presenter = new SubCasualtyRejectCloseViewPresenter(view);
 				return presenter;
 			}
 		});

@@ -7,7 +7,7 @@ import java.util.Collection;
 import bigBang.definitions.client.dataAccess.DataBroker;
 import bigBang.definitions.client.dataAccess.DataBrokerClient;
 import bigBang.definitions.client.dataAccess.ReceiptDataBrokerClient;
-import bigBang.definitions.client.dataAccess.ReceiptProcessDataBroker;
+import bigBang.definitions.client.dataAccess.ReceiptDataBroker;
 import bigBang.definitions.client.dataAccess.Search;
 import bigBang.definitions.client.dataAccess.SearchDataBroker;
 import bigBang.definitions.client.response.ResponseError;
@@ -32,7 +32,7 @@ import bigBang.module.receiptModule.shared.ReceiptSearchParameter;
 import bigBang.module.receiptModule.shared.ReceiptSortParameter;
 import bigBang.module.receiptModule.shared.ReceiptSortParameter.SortableField;
 
-public class ReceiptDataBrokerImpl extends DataBroker<Receipt> implements ReceiptProcessDataBroker{
+public class ReceiptDataBrokerImpl extends DataBroker<Receipt> implements ReceiptDataBroker{
 
 	protected ReceiptServiceAsync service;
 	protected SearchDataBroker<ReceiptStub> searchBroker;

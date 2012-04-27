@@ -167,6 +167,7 @@ public class BigBangConstants {
 			public static final String EXTERNAL_REQUEST = "16FCE46C-EFE4-497A-BFB8-9FFD01048B6C";
 			public static final String GRANT_NEGOTIATION = "65EB3752-A87B-4658-9FF1-9FFD0104EA07";
 			public static final String RECEIVE_QUOTE = "E43282B7-FBE2-49FB-B227-9FFD01035C99";
+			public static final String REPEAT_QUOTE_REQUEST = "7F12F9E3-9F5D-4365-9F30-9FFD0102D342";
 		}
 		
 		public static class ReceiptProcess {
@@ -205,6 +206,7 @@ public class BigBangConstants {
 			public static final String DELETE_QUOTE_REQUEST = "57172AC9-8CDF-4C34-825F-A00C01294D35";
 			public static final String CLOSE_QUOTE_REQUEST = "2E49B889-594C-49A6-B25D-A00C012876B8";
 			public static final String CREATE_MANAGER_TRANSFER = "D47D25C0-E8AE-4AC7-AB76-A00C01252C9F";
+			public static final String CREATE_INFO_OR_DOCUMENT_REQUEST = "113799FC-D92B-42DB-A472-A00C0124AB91";
 		}
 
 		public static class SignatureRequestProcess {
@@ -226,8 +228,8 @@ public class BigBangConstants {
 			public static final String UPDATE_SUB_CASUALTY = "A1DE87C0-1878-4533-A82D-A03600FA6B23";
 			public static final String DELETE_SUB_CASUALTY = "9CD4186F-90A7-4523-8D2F-A03600FF750D";
 			public static final String CLOSE_SUB_CASUALTY = "207F3FEC-0CB2-47D4-868A-A03600FEE4FB";
-			public static final String CREATE_EXTERNAL_INFO_REQUEST = "7859A887-03B0-423A-B104-A03600FC360D";
-			public static final String CREATE_INSURER_INFO_REQUEST = "94DEF8C7-6740-4C66-85A3-A03600FC056A";
+			public static final String REJECT_CLOSE_SUB_CASUALTY = "B7D949CE-7E2A-418B-AC4F-A03600FE57C9";
+			public static final String MARK_CLOSE_SUB_CASUALTY = "CDDBD0AC-B19E-4576-890B-A03600FE0E49";
 		}
 
 		public static class DASRequestProcess{
@@ -248,6 +250,7 @@ public class BigBangConstants {
 			public static final String RETURN_TO_CLIENT = "C675919E-A13D-459F-9E1F-A03800C3F021";
 			public static final String CREATE_INFO_REQUEST = "B2370F23-09C7-4B3B-BAA1-A03800C43B95";
 			public static final String CREATE_EXTERNAL_REQUEST = "9D618AB8-53F5-4D5C-8CB7-A03800C56E4F";
+			public static final String PAYMENT_VALIDATION = "8D11C94A-E3B7-45C9-AB9A-A03800C5AB4B";
 			public static final String CLOSE_PROCESS = "0EEB387C-661F-4FB0-8675-A03800C5DE73";
 		}
 		

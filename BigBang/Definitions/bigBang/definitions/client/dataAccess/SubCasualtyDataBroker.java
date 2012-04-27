@@ -27,4 +27,10 @@ public interface SubCasualtyDataBroker extends DataBrokerInterface<SubCasualty> 
 	public void createExternalInfoRequest(ExternalInfoRequest toSend,
 			ResponseHandler<ExternalInfoRequest> responseHandler);
 	
+	public void markForClosing(String subCasualtyId, String revisorId, ResponseHandler<Void> handler);
+	
+	public void closeSubCasualty(String subCasualtyId, ResponseHandler<Void> handler);
+	
+	public void rejectCloseSubCasualty(String subCasualtyId, String reason, ResponseHandler<Void> handler);
+	
 }

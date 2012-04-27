@@ -1,7 +1,7 @@
 package bigBang.module.receiptModule.client.userInterface;
 
 import bigBang.definitions.client.dataAccess.ReceiptDataBrokerClient;
-import bigBang.definitions.client.dataAccess.ReceiptProcessDataBroker;
+import bigBang.definitions.client.dataAccess.ReceiptDataBroker;
 import bigBang.definitions.shared.BigBangConstants;
 import bigBang.definitions.shared.Receipt;
 import bigBang.library.client.FormField;
@@ -113,7 +113,7 @@ public class ReceiptForm extends FormView<Receipt> implements ReceiptDataBrokerC
 
 		setValue(new Receipt());
 		
-		ReceiptProcessDataBroker broker = ((ReceiptProcessDataBroker) DataBrokerManager.Util.getInstance().getBroker(BigBangConstants.EntityIds.RECEIPT));
+		ReceiptDataBroker broker = ((ReceiptDataBroker) DataBrokerManager.Util.getInstance().getBroker(BigBangConstants.EntityIds.RECEIPT));
 		broker.registerClient(this);
 	}
 	

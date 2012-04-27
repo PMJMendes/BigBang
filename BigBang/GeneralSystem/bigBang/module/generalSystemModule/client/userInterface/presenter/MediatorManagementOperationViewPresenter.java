@@ -12,6 +12,7 @@ import bigBang.library.client.HasEditableValue;
 import bigBang.library.client.HasParameters;
 import bigBang.library.client.HasValueSelectables;
 import bigBang.library.client.Notification;
+import bigBang.library.client.PermissionChecker;
 import bigBang.library.client.Notification.TYPE;
 import bigBang.library.client.ValueSelectable;
 import bigBang.library.client.dataAccess.DataBrokerManager;
@@ -24,8 +25,8 @@ import bigBang.library.client.history.NavigationHistoryItem;
 import bigBang.library.client.history.NavigationHistoryManager;
 import bigBang.library.client.userInterface.presenter.ViewPresenter;
 import bigBang.library.client.userInterface.view.View;
-import bigBang.module.generalSystemModule.client.GeneralSystemProcess;
 import bigBang.module.generalSystemModule.shared.ModuleConstants;
+import bigBang.module.generalSystemModule.shared.SessionGeneralSystem;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.HasWidgets;
@@ -98,7 +99,7 @@ public class MediatorManagementOperationViewPresenter implements ViewPresenter {
 			clearNewMediator();
 		}
 		
-		boolean hasPermissions = GeneralSystemProcess.getInstance().hasPermission(ModuleConstants.OpTypeIDs.ManageMediators);
+		boolean hasPermissions = PermissionChecker.hasPermission(SessionGeneralSystem.getInstance(), ModuleConstants.OpTypeIDs.ManageMediators);
 		view.allowCreate(hasPermissions);
 		view.allowEdit(hasPermissions);
 		view.allowDelete(hasPermissions);
@@ -198,7 +199,7 @@ public class MediatorManagementOperationViewPresenter implements ViewPresenter {
 	}
 	
 	private void setupNewMediator(){
-		boolean hasPermissions = GeneralSystemProcess.getInstance().hasPermission(ModuleConstants.OpTypeIDs.ManageMediators);
+		boolean hasPermissions = PermissionChecker.hasPermission(SessionGeneralSystem.getInstance(), ModuleConstants.OpTypeIDs.ManageMediators);
 		if(hasPermissions){
 			Mediator mediator = new Mediator();
 			mediator.id = "new";
@@ -258,7 +259,7 @@ public class MediatorManagementOperationViewPresenter implements ViewPresenter {
 			public void onResponse(Mediator response) {
 				view.clearAllowedPermissions();
 
-				boolean hasPermissions = GeneralSystemProcess.getInstance().hasPermission(ModuleConstants.OpTypeIDs.ManageMediators);
+				boolean hasPermissions = PermissionChecker.hasPermission(SessionGeneralSystem.getInstance(), ModuleConstants.OpTypeIDs.ManageMediators);
 				view.allowEdit(hasPermissions);
 				view.allowDelete(hasPermissions);
 

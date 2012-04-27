@@ -3,7 +3,7 @@ package bigBang.module.receiptModule.client.userInterface;
 import com.google.gwt.user.client.ui.StackPanel;
 
 import bigBang.definitions.client.dataAccess.ReceiptDataBrokerClient;
-import bigBang.definitions.client.dataAccess.ReceiptProcessDataBroker;
+import bigBang.definitions.client.dataAccess.ReceiptDataBroker;
 import bigBang.definitions.shared.BigBangConstants;
 import bigBang.definitions.shared.Receipt;
 import bigBang.library.client.PermissionChecker;
@@ -40,7 +40,7 @@ public class ReceiptChildrenPanel extends View{
 		wrapper.add(historyList, "Histórico");
 		
 		receiptBrokerClient = getReceiptBrokerClient();
-		((ReceiptProcessDataBroker)DataBrokerManager.Util.getInstance().getBroker(BigBangConstants.EntityIds.RECEIPT)).registerClient(receiptBrokerClient);
+		((ReceiptDataBroker)DataBrokerManager.Util.getInstance().getBroker(BigBangConstants.EntityIds.RECEIPT)).registerClient(receiptBrokerClient);
 	}
 	
 	private ReceiptDataBrokerClient getReceiptBrokerClient() {

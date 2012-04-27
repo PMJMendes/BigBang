@@ -42,6 +42,9 @@ public class SubCasualtyViewPresenter implements ViewPresenter {
 		EDIT,
 		SAVE,
 		CANCEL,
+		MARK_FOR_CLOSING,
+		CLOSE,
+		REJECT_CLOSE,
 		DELETE, INFO_OR_DOCUMENT_REQUEST, EXTERNAL_REQUEST
 	}
 
@@ -58,6 +61,9 @@ public class SubCasualtyViewPresenter implements ViewPresenter {
 		void setSaveModeEnabled(boolean enabled);
 		void allowEdit(boolean allow);
 		void allowDelete(boolean allow);
+		void allowMarkForClosing(boolean allow);
+		void allowClose(boolean allow);
+		void allowRejectClose(boolean allow);
 
 		Widget asWidget();
 		void allowInfoOrDocumentRequest(boolean hasPermission);
@@ -131,6 +137,15 @@ public class SubCasualtyViewPresenter implements ViewPresenter {
 					break;
 				case DELETE:
 					onDelete();
+					break;
+				case MARK_FOR_CLOSING:
+					onMarkForClosing();
+					break;
+				case CLOSE:
+					onClose();
+					break;
+				case REJECT_CLOSE:
+					onRejectClosing();
 					break;
 				case EXTERNAL_REQUEST:
 					onInsurerInfoRequest();
@@ -222,7 +237,10 @@ public class SubCasualtyViewPresenter implements ViewPresenter {
 						view.allowInsurerInfoRequest(PermissionChecker.hasPermission(subCasualty, BigBangConstants.OperationIds.SubCasualtyProcess.CREATE_INSURER_INFO_REQUEST));
 						view.allowEdit(PermissionChecker.hasPermission(subCasualty, BigBangConstants.OperationIds.SubCasualtyProcess.UPDATE_SUB_CASUALTY));
 						view.allowDelete(PermissionChecker.hasPermission(subCasualty, BigBangConstants.OperationIds.SubCasualtyProcess.DELETE_SUB_CASUALTY));
-
+						view.allowMarkForClosing(PermissionChecker.hasPermission(subCasualty, BigBangConstants.OperationIds.SubCasualtyProcess.MARK_CLOSE_SUB_CASUALTY));
+						view.allowClose(PermissionChecker.hasPermission(subCasualty, BigBangConstants.OperationIds.SubCasualtyProcess.CLOSE_SUB_CASUALTY));
+						view.allowRejectClose(PermissionChecker.hasPermission(subCasualty, BigBangConstants.OperationIds.SubCasualtyProcess.REJECT_CLOSE_SUB_CASUALTY));
+						
 						view.getForm().setReadOnly(true);
 					}
 
@@ -331,6 +349,33 @@ public class SubCasualtyViewPresenter implements ViewPresenter {
 		}
 	}
 
+	protected void onMarkForClosing(){
+		NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
+		item.setParameter("show", "subcasualtymarkforclosing");
+		NavigationHistoryManager.getInstance().go(item);
+	}
+	
+	protected void onClose(){
+		broker.closeSubCasualty(view.getForm().getValue().id, new ResponseHandler<Void>() {
+
+			@Override
+			public void onResponse(Void response) {
+				onCloseSuccess();
+			}
+
+			@Override
+			public void onError(Collection<ResponseError> errors) {
+				onCloseFailed();
+			}
+		});
+	}
+	
+	protected void onRejectClosing(){
+		NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
+		item.setParameter("show", "subcasualtyrejectclose");
+		NavigationHistoryManager.getInstance().go(item);
+	}
+	
 	protected void showSubProcess(BigBangProcess process){
 //		String type = process.dataTypeId;
 
@@ -376,6 +421,15 @@ public class SubCasualtyViewPresenter implements ViewPresenter {
 		item.removeParameter("subcasualtyid");
 		item.popFromStackParameter("display");
 		NavigationHistoryManager.getInstance().go(item);
+	}
+	
+	protected void onCloseSuccess(){
+		EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Sub-Sinistro Encerrado com Sucesso"), TYPE.TRAY_NOTIFICATION));
+		NavigationHistoryManager.getInstance().reload();
+	}
+	
+	protected void onCloseFailed() {
+		EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não foi possível Encerrar o Sub-Sinistro"), TYPE.ALERT_NOTIFICATION));
 	}
 
 	protected void onFailure(){

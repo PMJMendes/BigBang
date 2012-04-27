@@ -212,6 +212,7 @@ public class SubCasualtyForm extends FormView<SubCasualty> {
 			String referenceId = referenceType.getValue().equalsIgnoreCase(BigBangConstants.EntityIds.INSURANCE_POLICY) ? policyReference.getValue() : subPolicyReference.getValue();
 
 			final SubCasualtyItemSection section = new SubCasualtyItemSection(item, referenceType.getValue(), referenceId);
+			section.setReadOnly(this.isReadOnly());
 			this.subCasualtyItemSections.add(section);
 			addSection(section);
 

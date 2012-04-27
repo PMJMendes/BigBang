@@ -13,6 +13,7 @@ import bigBang.library.client.HasParameters;
 import bigBang.library.client.HasValueSelectables;
 import bigBang.library.client.Notification;
 import bigBang.library.client.Notification.TYPE;
+import bigBang.library.client.PermissionChecker;
 import bigBang.library.client.ValueSelectable;
 import bigBang.library.client.dataAccess.DataBrokerManager;
 import bigBang.library.client.event.ActionInvokedEvent;
@@ -24,8 +25,8 @@ import bigBang.library.client.history.NavigationHistoryItem;
 import bigBang.library.client.history.NavigationHistoryManager;
 import bigBang.library.client.userInterface.presenter.ViewPresenter;
 import bigBang.library.client.userInterface.view.View;
-import bigBang.module.generalSystemModule.client.GeneralSystemProcess;
 import bigBang.module.generalSystemModule.shared.ModuleConstants;
+import bigBang.module.generalSystemModule.shared.SessionGeneralSystem;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.HasWidgets;
@@ -97,7 +98,7 @@ public class ClientGroupManagementOperationViewPresenter implements ViewPresente
 			clearNewClientGroup();
 		}
 		
-		boolean hasPermissions = GeneralSystemProcess.getInstance().hasPermission(ModuleConstants.OpTypeIDs.ManageClientGroups);
+		boolean hasPermissions = PermissionChecker.hasPermission(SessionGeneralSystem.getInstance(), ModuleConstants.OpTypeIDs.ManageClientGroups);
 		view.allowCreate(hasPermissions);
 		view.allowEdit(hasPermissions);
 		view.allowDelete(hasPermissions);
@@ -198,7 +199,7 @@ public class ClientGroupManagementOperationViewPresenter implements ViewPresente
 	}
 
 	private void setupNewClientGroup(){
-		boolean hasPermissions = GeneralSystemProcess.getInstance().hasPermission(ModuleConstants.OpTypeIDs.ManageClientGroups);
+		boolean hasPermissions = PermissionChecker.hasPermission(SessionGeneralSystem.getInstance(), ModuleConstants.OpTypeIDs.ManageClientGroups);
 		if(hasPermissions){
 			ClientGroup group = new ClientGroup();
 			group.id = "new";
@@ -257,7 +258,7 @@ public class ClientGroupManagementOperationViewPresenter implements ViewPresente
 			public void onResponse(ClientGroup response) {
 				view.clearAllowedPermissions();
 
-				boolean hasPermissions = GeneralSystemProcess.getInstance().hasPermission(ModuleConstants.OpTypeIDs.ManageClientGroups);
+				boolean hasPermissions = PermissionChecker.hasPermission(SessionGeneralSystem.getInstance(), ModuleConstants.OpTypeIDs.ManageClientGroups);
 				view.allowEdit(hasPermissions);
 				view.allowDelete(hasPermissions);
 

@@ -12,6 +12,7 @@ import bigBang.library.client.HasEditableValue;
 import bigBang.library.client.HasParameters;
 import bigBang.library.client.HasValueSelectables;
 import bigBang.library.client.Notification;
+import bigBang.library.client.PermissionChecker;
 import bigBang.library.client.Notification.TYPE;
 import bigBang.library.client.ValueSelectable;
 import bigBang.library.client.dataAccess.DataBrokerManager;
@@ -24,8 +25,8 @@ import bigBang.library.client.history.NavigationHistoryItem;
 import bigBang.library.client.history.NavigationHistoryManager;
 import bigBang.library.client.userInterface.presenter.ViewPresenter;
 import bigBang.library.client.userInterface.view.View;
-import bigBang.module.generalSystemModule.client.GeneralSystemProcess;
 import bigBang.module.generalSystemModule.shared.ModuleConstants;
+import bigBang.module.generalSystemModule.shared.SessionGeneralSystem;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.HasWidgets;
@@ -97,7 +98,7 @@ public class CostCenterManagementOperationViewPresenter implements ViewPresenter
 			clearNewCostCenter();
 		}
 		
-		boolean hasPermissions = GeneralSystemProcess.getInstance().hasPermission(ModuleConstants.OpTypeIDs.ManageCostCenters);
+		boolean hasPermissions = PermissionChecker.hasPermission(SessionGeneralSystem.getInstance(), ModuleConstants.OpTypeIDs.ManageCostCenters);
 		view.allowCreate(hasPermissions);
 		view.allowEdit(hasPermissions);
 		view.allowDelete(hasPermissions);
@@ -197,7 +198,7 @@ public class CostCenterManagementOperationViewPresenter implements ViewPresenter
 	}
 
 	private void setupNewCostCenter(){
-		boolean hasPermissions = GeneralSystemProcess.getInstance().hasPermission(ModuleConstants.OpTypeIDs.ManageCostCenters);
+		boolean hasPermissions = PermissionChecker.hasPermission(SessionGeneralSystem.getInstance(), ModuleConstants.OpTypeIDs.ManageCostCenters);
 		if(hasPermissions){
 			CostCenter costCenter = new CostCenter();
 			costCenter.id = "new";
@@ -256,7 +257,7 @@ public class CostCenterManagementOperationViewPresenter implements ViewPresenter
 			public void onResponse(CostCenter response) {
 				view.clearAllowedPermissions();
 
-				boolean hasPermissions = GeneralSystemProcess.getInstance().hasPermission(ModuleConstants.OpTypeIDs.ManageCostCenters);
+				boolean hasPermissions = PermissionChecker.hasPermission(SessionGeneralSystem.getInstance(), ModuleConstants.OpTypeIDs.ManageCostCenters);
 				view.allowEdit(hasPermissions);
 				view.allowDelete(hasPermissions);
 				

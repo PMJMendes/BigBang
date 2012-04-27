@@ -4,7 +4,7 @@ import java.util.Collection;
 
 import bigBang.definitions.client.dataAccess.InsuranceAgencyBroker;
 import bigBang.definitions.client.dataAccess.InsurancePolicyBroker;
-import bigBang.definitions.client.dataAccess.ReceiptProcessDataBroker;
+import bigBang.definitions.client.dataAccess.ReceiptDataBroker;
 import bigBang.definitions.client.response.ResponseError;
 import bigBang.definitions.client.response.ResponseHandler;
 import bigBang.definitions.shared.BigBangConstants;
@@ -52,7 +52,7 @@ public class SerialReceiptCreationViewPresenter implements ViewPresenter{
 	private Display view;
 	private boolean bound = false;
 	private InsurancePolicyBroker policyBroker;
-	private ReceiptProcessDataBroker receiptBroker;
+	private ReceiptDataBroker receiptBroker;
 	private ReceiptChoiceFromListViewPresenter receiptPresenter;
 	private InsuranceAgencyBroker agencyBroker;
 	private ReceiptChoiceFromListView receiptView;
@@ -121,7 +121,7 @@ public class SerialReceiptCreationViewPresenter implements ViewPresenter{
 
 	public SerialReceiptCreationViewPresenter(Display view){
 		agencyBroker = (InsuranceAgencyBroker) DataBrokerManager.staticGetBroker(BigBangConstants.EntityIds.INSURANCE_AGENCY);
-		receiptBroker = (ReceiptProcessDataBroker) DataBrokerManager.staticGetBroker(BigBangConstants.EntityIds.RECEIPT);
+		receiptBroker = (ReceiptDataBroker) DataBrokerManager.staticGetBroker(BigBangConstants.EntityIds.RECEIPT);
 		policyBroker = (InsurancePolicyBroker) DataBrokerManager.staticGetBroker(BigBangConstants.EntityIds.INSURANCE_POLICY);
 		setView((UIObject) view);
 

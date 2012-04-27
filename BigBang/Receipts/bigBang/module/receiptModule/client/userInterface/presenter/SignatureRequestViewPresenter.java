@@ -2,7 +2,7 @@ package bigBang.module.receiptModule.client.userInterface.presenter;
 
 import java.util.Collection;
 
-import bigBang.definitions.client.dataAccess.ReceiptProcessDataBroker;
+import bigBang.definitions.client.dataAccess.ReceiptDataBroker;
 import bigBang.definitions.client.dataAccess.SignatureRequestBroker;
 import bigBang.definitions.client.response.ResponseError;
 import bigBang.definitions.client.response.ResponseHandler;
@@ -43,13 +43,13 @@ public class SignatureRequestViewPresenter implements ViewPresenter{
 	protected Display view;
 	protected boolean bound = false;
 	private SignatureRequestBroker signatureBroker;
-	private ReceiptProcessDataBroker receiptBroker;
+	private ReceiptDataBroker receiptBroker;
 	private String signatureRequestId;
 	
 	public SignatureRequestViewPresenter(Display view) {
 		setView((UIObject) view);
 		signatureBroker = (SignatureRequestBroker) DataBrokerManager.staticGetBroker(BigBangConstants.EntityIds.SIGNATURE_REQUEST);
-		receiptBroker = (ReceiptProcessDataBroker) DataBrokerManager.staticGetBroker(BigBangConstants.EntityIds.RECEIPT);
+		receiptBroker = (ReceiptDataBroker) DataBrokerManager.staticGetBroker(BigBangConstants.EntityIds.RECEIPT);
 	}
 	
 	public static interface Display{

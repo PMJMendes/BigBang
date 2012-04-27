@@ -12,6 +12,7 @@ import bigBang.library.client.HasEditableValue;
 import bigBang.library.client.HasParameters;
 import bigBang.library.client.HasValueSelectables;
 import bigBang.library.client.Notification;
+import bigBang.library.client.PermissionChecker;
 import bigBang.library.client.ValueSelectable;
 import bigBang.library.client.Notification.TYPE;
 import bigBang.library.client.dataAccess.DataBrokerManager;
@@ -24,8 +25,8 @@ import bigBang.library.client.history.NavigationHistoryItem;
 import bigBang.library.client.history.NavigationHistoryManager;
 import bigBang.library.client.userInterface.presenter.ViewPresenter;
 import bigBang.library.client.userInterface.view.View;
-import bigBang.module.generalSystemModule.client.GeneralSystemProcess;
 import bigBang.module.generalSystemModule.shared.ModuleConstants;
+import bigBang.module.generalSystemModule.shared.SessionGeneralSystem;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.HasWidgets;
@@ -98,7 +99,7 @@ public class UserManagementOperationViewPresenter implements ViewPresenter {
 			clearNewUser();
 		}
 		
-		boolean hasPermissions = GeneralSystemProcess.getInstance().hasPermission(ModuleConstants.OpTypeIDs.ManageUsers);
+		boolean hasPermissions = PermissionChecker.hasPermission(SessionGeneralSystem.getInstance(), ModuleConstants.OpTypeIDs.ManageUsers);
 		view.allowCreate(hasPermissions);
 		view.allowEdit(hasPermissions);
 		view.allowDelete(hasPermissions);
@@ -198,7 +199,7 @@ public class UserManagementOperationViewPresenter implements ViewPresenter {
 	}
 
 	private void setupNewUser(){
-		boolean hasPermissions = GeneralSystemProcess.getInstance().hasPermission(ModuleConstants.OpTypeIDs.ManageUsers);
+		boolean hasPermissions = PermissionChecker.hasPermission(SessionGeneralSystem.getInstance(), ModuleConstants.OpTypeIDs.ManageUsers);
 		if(hasPermissions){
 			User user = new User();
 			user.id = "new";
@@ -259,7 +260,7 @@ public class UserManagementOperationViewPresenter implements ViewPresenter {
 			public void onResponse(User response) {
 				view.clearAllowedPermissions();
 
-				boolean hasPermissions = GeneralSystemProcess.getInstance().hasPermission(ModuleConstants.OpTypeIDs.ManageUsers);
+				boolean hasPermissions = PermissionChecker.hasPermission(SessionGeneralSystem.getInstance(), ModuleConstants.OpTypeIDs.ManageUsers);
 				view.allowEdit(hasPermissions);
 				view.allowDelete(hasPermissions);
 

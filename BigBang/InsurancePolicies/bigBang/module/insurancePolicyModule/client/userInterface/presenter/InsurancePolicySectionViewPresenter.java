@@ -156,7 +156,7 @@ public class InsurancePolicySectionViewPresenter implements ViewPresenter{
 					present("INSURANCE_POLICY_NEGOTIATION_DELETE", parameters);
 					view.showOverlayViewContainer(true);
 				}else if(show.equalsIgnoreCase("cancelnegotiation")){
-					present("INSURANCE_POLICY_NEGOTIATION_CANCEL", parameters);
+					present("NEGOTIATION_CANCEL", parameters);
 					view.showOverlayViewContainer(true);
 				}else if(show.equalsIgnoreCase("transfertoclient")){
 					present("INSURANCE_POLICY_TRANSFER_TO_CLIENT", parameters);
@@ -168,7 +168,7 @@ public class InsurancePolicySectionViewPresenter implements ViewPresenter{
 					present("INSURANCE_POLICY_SUB_POLICY_TRANSFER_TO_POLICY", parameters);
 					view.showOverlayViewContainer(true);
 				}else if(show.equalsIgnoreCase("grantnegotiation")){
-					present("INSURANCE_POLICY_NEGOTIATION_GRANT", parameters);
+					present("NEGOTIATION_GRANT", parameters);
 					view.showOverlayViewContainer(true);
 				}else if(show.equalsIgnoreCase("responsenegotiation")){
 					present("INSURANCE_POLICY_NEGOTIATION_RESPONSE", parameters);

@@ -6,7 +6,7 @@ import com.google.gwt.user.client.ui.HasWidgets;
 import com.google.gwt.user.client.ui.UIObject;
 import com.google.gwt.user.client.ui.Widget;
 
-import bigBang.definitions.client.dataAccess.ReceiptProcessDataBroker;
+import bigBang.definitions.client.dataAccess.ReceiptDataBroker;
 import bigBang.definitions.client.response.ResponseError;
 import bigBang.definitions.client.response.ResponseHandler;
 import bigBang.definitions.shared.BigBangConstants;
@@ -27,7 +27,7 @@ import bigBang.library.client.userInterface.presenter.ViewPresenter;
 
 public class CreateDASRequestViewPresenter implements ViewPresenter{
 
-	private ReceiptProcessDataBroker broker;
+	private ReceiptDataBroker broker;
 	private Display view;
 	private boolean bound;
 
@@ -45,7 +45,7 @@ public class CreateDASRequestViewPresenter implements ViewPresenter{
 	}
 
 	public CreateDASRequestViewPresenter(Display view){
-		broker = (ReceiptProcessDataBroker) DataBrokerManager.staticGetBroker(BigBangConstants.EntityIds.RECEIPT);
+		broker = (ReceiptDataBroker) DataBrokerManager.staticGetBroker(BigBangConstants.EntityIds.RECEIPT);
 		setView((UIObject)view);
 	}
 

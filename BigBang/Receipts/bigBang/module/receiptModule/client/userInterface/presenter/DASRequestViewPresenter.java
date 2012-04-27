@@ -3,7 +3,7 @@ package bigBang.module.receiptModule.client.userInterface.presenter;
 import java.util.Collection;
 
 import bigBang.definitions.client.dataAccess.DASRequestBroker;
-import bigBang.definitions.client.dataAccess.ReceiptProcessDataBroker;
+import bigBang.definitions.client.dataAccess.ReceiptDataBroker;
 import bigBang.definitions.client.response.ResponseError;
 import bigBang.definitions.client.response.ResponseHandler;
 import bigBang.definitions.shared.BigBangConstants;
@@ -43,13 +43,13 @@ public class DASRequestViewPresenter implements ViewPresenter{
 	protected Display view;
 	protected boolean bound = false;
 	private DASRequestBroker broker;
-	private ReceiptProcessDataBroker receiptBroker;
+	private ReceiptDataBroker receiptBroker;
 	private String dasRequestId;
 
 	public DASRequestViewPresenter(Display view){
 		setView((UIObject)view);
 		broker = (DASRequestBroker) DataBrokerManager.staticGetBroker(BigBangConstants.EntityIds.DAS_REQUEST);
-		receiptBroker = (ReceiptProcessDataBroker) DataBrokerManager.staticGetBroker(BigBangConstants.EntityIds.RECEIPT);
+		receiptBroker = (ReceiptDataBroker) DataBrokerManager.staticGetBroker(BigBangConstants.EntityIds.RECEIPT);
 	}
 
 	public static interface Display{

@@ -4,7 +4,7 @@ import java.util.Collection;
 import java.util.Map;
 import java.util.TreeMap;
 
-import bigBang.definitions.client.dataAccess.ReceiptProcessDataBroker;
+import bigBang.definitions.client.dataAccess.ReceiptDataBroker;
 import bigBang.definitions.client.dataAccess.Search;
 import bigBang.definitions.client.dataAccess.SearchDataBroker;
 import bigBang.definitions.client.response.ResponseError;
@@ -78,7 +78,7 @@ public class MassCreatePaymentNoticeView extends View implements MassCreatePayme
 
 
 		public CheckableReceiptsSearchPanel(){
-			super((ReceiptSearchDataBroker) ((ReceiptProcessDataBroker)DataBrokerManager.staticGetBroker(BigBangConstants.EntityIds.RECEIPT)).getSearchBroker());
+			super((ReceiptSearchDataBroker) ((ReceiptDataBroker)DataBrokerManager.staticGetBroker(BigBangConstants.EntityIds.RECEIPT)).getSearchBroker());
 
 			Map<Enum<?>, String> sortOptions = new TreeMap<Enum<?>, String>();
 			sortOptions.put(ReceiptSortParameter.SortableField.RELEVANCE, "Relevância");

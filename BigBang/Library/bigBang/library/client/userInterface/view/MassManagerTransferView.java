@@ -86,7 +86,6 @@ public abstract class MassManagerTransferView<T extends ProcessBase, T2 extends 
 		wrapper.addWest(searchPanelWrapper, 400);
 
 		this.managerSelection = new ExpandableListBoxFormField(BigBangConstants.EntityIds.USER, "Novo Gestor");
-		((ExpandableListBoxFormField) this.managerSelection).setEditable(false);
 		((ExpandableListBoxFormField) this.managerSelection).allowEdition(false);
 		this.transferButton = new Button("Transferir");
 

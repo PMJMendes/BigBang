@@ -14,6 +14,7 @@ import bigBang.module.receiptModule.client.dataAccess.ReceiptDataBrokerImpl;
 import bigBang.module.receiptModule.client.dataAccess.SignatureRequestBrokerImpl;
 import bigBang.module.receiptModule.client.userInterface.presenter.CancelDASRequestViewPresenter;
 import bigBang.module.receiptModule.client.userInterface.presenter.CreateDASRequestViewPresenter;
+import bigBang.module.receiptModule.client.userInterface.presenter.DASRequestTasksViewPresenter;
 import bigBang.module.receiptModule.client.userInterface.presenter.DASRequestViewPresenter;
 import bigBang.module.receiptModule.client.userInterface.presenter.MassAgentAccountingViewPresenter;
 import bigBang.module.receiptModule.client.userInterface.presenter.CancelSignatureRequestViewPresenter;
@@ -30,6 +31,7 @@ import bigBang.module.receiptModule.client.userInterface.presenter.ReceiptSectio
 import bigBang.module.receiptModule.client.userInterface.presenter.ReceiptTransferToPolicyViewPresenter;
 import bigBang.module.receiptModule.client.userInterface.presenter.SerialMarkForPaymentViewPresenter;
 import bigBang.module.receiptModule.client.userInterface.presenter.SerialReceiptCreationViewPresenter;
+import bigBang.module.receiptModule.client.userInterface.presenter.SignatureRequestTasksViewPresenter;
 import bigBang.module.receiptModule.client.userInterface.view.MarkForPaymentView;
 import bigBang.module.receiptModule.client.userInterface.view.MassAgentAccountingView;
 import bigBang.module.receiptModule.client.userInterface.presenter.SignatureRequestViewPresenter;
@@ -37,6 +39,7 @@ import bigBang.module.receiptModule.client.userInterface.view.CancelDASRequestVi
 import bigBang.module.receiptModule.client.userInterface.view.CancelSignatureRequestView;
 import bigBang.module.receiptModule.client.userInterface.view.CreateDASRequestView;
 import bigBang.module.receiptModule.client.userInterface.view.CreateSignatureRequestView;
+import bigBang.module.receiptModule.client.userInterface.view.DASRequestTasksView;
 import bigBang.module.receiptModule.client.userInterface.view.DASRequestView;
 import bigBang.module.receiptModule.client.userInterface.view.MassCreatePaymentNoticeView;
 import bigBang.module.receiptModule.client.userInterface.view.MassInsurerAccountingView;
@@ -50,6 +53,7 @@ import bigBang.module.receiptModule.client.userInterface.view.ReceiptSectionView
 import bigBang.module.receiptModule.client.userInterface.view.ReceiptTransferToPolicyView;
 import bigBang.module.receiptModule.client.userInterface.view.SerialMarkForPaymentView;
 import bigBang.module.receiptModule.client.userInterface.view.SerialReceiptCreationView;
+import bigBang.module.receiptModule.client.userInterface.view.SignatureRequestTasksView;
 import bigBang.module.receiptModule.client.userInterface.view.SignatureRequestView;
 
 import com.google.gwt.core.client.GWT;
@@ -244,6 +248,22 @@ public class ReceiptModule implements Module {
 			public ViewPresenter getInstance() {
 				CreateDASRequestView view = (CreateDASRequestView) GWT.create(CreateDASRequestView.class);
 				CreateDASRequestViewPresenter presenter = new CreateDASRequestViewPresenter(view);
+				return presenter;
+			}
+		});
+		ViewPresenterFactory.getInstance().registerViewPresenterInstantiator("DAS_REQUEST_TASKS", new ViewPresenterInstantiator(){
+			@Override
+			public ViewPresenter getInstance() {
+				DASRequestTasksView view = (DASRequestTasksView) GWT.create(DASRequestTasksView.class);
+				ViewPresenter presenter = new DASRequestTasksViewPresenter(view);
+				return presenter;
+			}
+		});
+		ViewPresenterFactory.getInstance().registerViewPresenterInstantiator("SIGNATURE_REQUEST_TASKS", new ViewPresenterInstantiator(){
+			@Override
+			public ViewPresenter getInstance() {
+				SignatureRequestTasksView view = (SignatureRequestTasksView) GWT.create(SignatureRequestTasksView.class);
+				ViewPresenter presenter = new SignatureRequestTasksViewPresenter(view);
 				return presenter;
 			}
 		});

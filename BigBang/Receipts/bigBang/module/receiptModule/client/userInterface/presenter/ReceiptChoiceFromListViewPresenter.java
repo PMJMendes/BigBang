@@ -2,7 +2,7 @@ package bigBang.module.receiptModule.client.userInterface.presenter;
 
 import java.util.Collection;
 
-import bigBang.definitions.client.dataAccess.ReceiptProcessDataBroker;
+import bigBang.definitions.client.dataAccess.ReceiptDataBroker;
 import bigBang.definitions.client.response.ResponseError;
 import bigBang.definitions.client.response.ResponseHandler;
 import bigBang.definitions.shared.BigBangConstants;
@@ -29,7 +29,7 @@ import com.google.gwt.user.client.ui.Widget;
 public abstract class ReceiptChoiceFromListViewPresenter implements ViewPresenter{
 	
 	private Display view; 
-	private ReceiptProcessDataBroker broker;
+	private ReceiptDataBroker broker;
 	private boolean bound = false;
 	
 	public static enum Action{
@@ -39,7 +39,7 @@ public abstract class ReceiptChoiceFromListViewPresenter implements ViewPresente
 	
 	public ReceiptChoiceFromListViewPresenter(Display view) {
 		
-		this.broker = (ReceiptProcessDataBroker) DataBrokerManager.staticGetBroker(BigBangConstants.EntityIds.RECEIPT);
+		this.broker = (ReceiptDataBroker) DataBrokerManager.staticGetBroker(BigBangConstants.EntityIds.RECEIPT);
 		setView((UIObject)view);
 		
 	}

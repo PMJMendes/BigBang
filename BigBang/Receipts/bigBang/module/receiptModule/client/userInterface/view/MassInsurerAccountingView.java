@@ -13,7 +13,7 @@ import com.google.gwt.user.client.ui.HasVerticalAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.SplitLayoutPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
-import bigBang.definitions.client.dataAccess.ReceiptProcessDataBroker;
+import bigBang.definitions.client.dataAccess.ReceiptDataBroker;
 import bigBang.definitions.client.dataAccess.Search;
 import bigBang.definitions.client.dataAccess.SearchDataBroker;
 import bigBang.definitions.client.response.ResponseError;
@@ -78,7 +78,7 @@ public class MassInsurerAccountingView extends View implements MassInsurerAccoun
 
 
 		public CheckableReceiptsSearchPanel(){
-			super((ReceiptSearchDataBroker) ((ReceiptProcessDataBroker)DataBrokerManager.staticGetBroker(BigBangConstants.EntityIds.RECEIPT)).getSearchBroker());
+			super((ReceiptSearchDataBroker) ((ReceiptDataBroker)DataBrokerManager.staticGetBroker(BigBangConstants.EntityIds.RECEIPT)).getSearchBroker());
 
 			Map<Enum<?>, String> sortOptions = new TreeMap<Enum<?>, String>();
 			sortOptions.put(ReceiptSortParameter.SortableField.RELEVANCE, "Relevância");

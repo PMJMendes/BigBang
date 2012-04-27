@@ -115,7 +115,7 @@ public abstract class QuoteRequestProcessToolBar extends BigBangOperationsToolBa
 		addItem(SUB_MENU.EXECUTE, sendReplyToClient);
 
 		//REQUESTS
-		clientInfoRequest =  new MenuItem("Pedir Informação ou Documento", new Command() {
+		clientInfoRequest =  new MenuItem("Criar Pedido de Informação ou Documento", new Command() {
 
 			@Override
 			public void execute() {
@@ -125,7 +125,7 @@ public abstract class QuoteRequestProcessToolBar extends BigBangOperationsToolBa
 		addItem(SUB_MENU.REQUESTS, clientInfoRequest);
 
 		//ADMIN
-		close =  new MenuItem("Fechar Processo", new Command() {
+		close =  new MenuItem("Encerrar Processo", new Command() {
 
 			@Override
 			public void execute() {
@@ -134,6 +134,7 @@ public abstract class QuoteRequestProcessToolBar extends BigBangOperationsToolBa
 		});
 		addItem(SUB_MENU.ADMIN, close);
 
+		adminSubMenu.addSeparator();
 		delete =  new MenuItem("Eliminar", new Command() {
 
 			@Override

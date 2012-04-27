@@ -2,9 +2,13 @@ package bigBang.module.generalSystemModule.client;
 
 import bigBang.definitions.client.dataAccess.DataBroker;
 import bigBang.definitions.shared.BigBangConstants;
+import bigBang.library.client.BigBangAsyncCallback;
+import bigBang.library.client.EventBus;
 import bigBang.library.client.Module;
 import bigBang.library.client.ViewPresenterFactory;
 import bigBang.library.client.ViewPresenterInstantiator;
+import bigBang.library.client.event.LoginSuccessEvent;
+import bigBang.library.client.event.LoginSuccessEventHandler;
 import bigBang.library.client.userInterface.presenter.ViewPresenter;
 import bigBang.module.generalSystemModule.client.dataAccess.ClientGroupBrokerImpl;
 import bigBang.module.generalSystemModule.client.dataAccess.CostCenterBrokerImpl;
@@ -28,6 +32,9 @@ import bigBang.module.generalSystemModule.client.userInterface.view.InsuranceAge
 import bigBang.module.generalSystemModule.client.userInterface.view.MediatorManagementOperationView;
 import bigBang.module.generalSystemModule.client.userInterface.view.TaxManagementOperationView;
 import bigBang.module.generalSystemModule.client.userInterface.view.UserManagementOperationView;
+import bigBang.module.generalSystemModule.interfaces.GeneralSystemService;
+import bigBang.module.generalSystemModule.shared.GeneralSystem;
+import bigBang.module.generalSystemModule.shared.SessionGeneralSystem;
 
 import com.google.gwt.core.client.GWT;
 
@@ -37,6 +44,7 @@ public class GeneralSystemModule implements Module {
 
 	@Override
 	public void initialize() {
+		initializeProcess();
 		registerViewPresenters();
 		initialized = true;
 	}
@@ -121,6 +129,22 @@ public class GeneralSystemModule implements Module {
 		});
 	}
 
+	protected void initializeProcess(){
+		EventBus.getInstance().addHandler(LoginSuccessEvent.TYPE, new LoginSuccessEventHandler() {
+			
+			@Override
+			public void onLoginSuccess(LoginSuccessEvent event) {
+				GeneralSystemService.Util.getInstance().getGeneralSystem(new BigBangAsyncCallback<GeneralSystem>() {
+
+					@Override
+					public void onResponseSuccess(GeneralSystem result) {
+						SessionGeneralSystem.setGeneralSystem(result);
+					}
+				});
+			}
+		});
+	}
+	
 	@Override
 	public DataBroker<?>[] getBrokerImplementations() {
 		return new DataBroker<?>[]{

@@ -88,6 +88,21 @@ public class SubCasualtyView extends View implements SubCasualtyViewPresenter.Di
 			}
 
 			@Override
+			public void onClose() {
+				actionHandler.onActionInvoked(new ActionInvokedEvent<SubCasualtyViewPresenter.Action>(Action.CLOSE));
+			}
+
+			@Override
+			public void onRejectClose() {
+				actionHandler.onActionInvoked(new ActionInvokedEvent<SubCasualtyViewPresenter.Action>(Action.REJECT_CLOSE));
+			}
+
+			@Override
+			public void onMarkForClosing() {
+				actionHandler.onActionInvoked(new ActionInvokedEvent<SubCasualtyViewPresenter.Action>(Action.MARK_FOR_CLOSING));
+			}
+
+			@Override
 			protected void externalInfoRequest() {
 				actionHandler.onActionInvoked(new ActionInvokedEvent<SubCasualtyViewPresenter.Action>(Action.EXTERNAL_REQUEST));
 			}
@@ -151,6 +166,21 @@ public class SubCasualtyView extends View implements SubCasualtyViewPresenter.Di
 	@Override
 	public void allowDelete(boolean allow) {
 		this.toolbar.allowDelete(allow);
+	}
+	
+	@Override
+	public void allowMarkForClosing(boolean allow) {
+		this.toolbar.allowMarkForClosing(allow);
+	}
+	
+	@Override
+	public void allowClose(boolean allow) {
+		this.toolbar.allowClose(allow);
+	}
+	
+	@Override
+	public void allowRejectClose(boolean allow){
+		this.toolbar.allowRejectClose(allow);
 	}
 
 	@Override

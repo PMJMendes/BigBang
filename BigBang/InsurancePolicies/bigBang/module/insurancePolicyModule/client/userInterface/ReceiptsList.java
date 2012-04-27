@@ -2,7 +2,7 @@ package bigBang.module.insurancePolicyModule.client.userInterface;
 
 import java.util.Collection;
 
-import bigBang.definitions.client.dataAccess.ReceiptProcessDataBroker;
+import bigBang.definitions.client.dataAccess.ReceiptDataBroker;
 import bigBang.definitions.client.response.ResponseError;
 import bigBang.definitions.client.response.ResponseHandler;
 import bigBang.definitions.shared.BigBangConstants;
@@ -21,11 +21,11 @@ public class ReceiptsList extends FilterableList<ReceiptStub> {
 		
 	}
 	
-	protected ReceiptProcessDataBroker broker;
+	protected ReceiptDataBroker broker;
 	protected String ownerId;
 	
 	public ReceiptsList(){
-		this.broker = (ReceiptProcessDataBroker) DataBrokerManager.staticGetBroker(BigBangConstants.EntityIds.RECEIPT);
+		this.broker = (ReceiptDataBroker) DataBrokerManager.staticGetBroker(BigBangConstants.EntityIds.RECEIPT);
 		showFilterField(false);
 	}
 	

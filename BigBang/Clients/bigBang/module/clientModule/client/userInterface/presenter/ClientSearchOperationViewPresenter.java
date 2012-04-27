@@ -309,7 +309,8 @@ public class ClientSearchOperationViewPresenter implements ViewPresenter {
 				if(!itemId.isEmpty()){
 					NavigationHistoryItem navItem = NavigationHistoryManager.getInstance().getCurrentState();
 					navItem.setParameter("section", "insurancepolicy");
-					navItem.popFromStackParameter("display");
+					navItem.setStackParameter("display");
+					navItem.pushIntoStackParameter("display", "search");
 					navItem.setParameter("policyid", itemId);
 					NavigationHistoryManager.getInstance().go(navItem);
 				}

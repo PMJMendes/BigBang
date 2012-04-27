@@ -1,0 +1,61 @@
+package bigBang.module.casualtyModule.client.userInterface;
+
+import com.google.gwt.user.client.Command;
+import com.google.gwt.user.client.ui.MenuItem;
+
+import bigBang.library.client.userInterface.BigBangOperationsToolBar;
+
+public abstract class SubCasualtyTasksOperationsToolbar extends BigBangOperationsToolBar {
+
+	protected MenuItem close, rejectClose;
+	
+	public SubCasualtyTasksOperationsToolbar(){
+		hideAll();
+		
+		close = new MenuItem("Encerrar", new Command() {
+			
+			@Override
+			public void execute() {
+				onClose();
+			}
+		});
+		addItem(close);
+		
+		rejectClose = new MenuItem("Rejeitar Encerramento", new Command() {
+			
+			@Override
+			public void execute() {
+				onRejectClose();
+			}
+		});
+		addItem(rejectClose);
+	}
+	
+	@Override
+	public void onEditRequest() {
+		return;
+	}
+
+	@Override
+	public void onSaveRequest() {
+		return;
+	}
+
+	@Override
+	public void onCancelRequest() {
+		return;
+	}
+	
+	public abstract void onClose();
+	
+	public abstract void onRejectClose();
+	
+	public void allowClose(boolean allow){
+		close.setVisible(allow);
+	}
+	
+	public void allowRejectClose(boolean allow) {
+		rejectClose.setVisible(allow);
+	}
+
+}

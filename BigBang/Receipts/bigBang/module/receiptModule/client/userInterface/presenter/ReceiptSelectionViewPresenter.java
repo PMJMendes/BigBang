@@ -9,7 +9,7 @@ import com.google.gwt.user.client.ui.HasWidgets;
 import com.google.gwt.user.client.ui.UIObject;
 import com.google.gwt.user.client.ui.Widget;
 
-import bigBang.definitions.client.dataAccess.ReceiptProcessDataBroker;
+import bigBang.definitions.client.dataAccess.ReceiptDataBroker;
 import bigBang.definitions.client.response.ResponseError;
 import bigBang.definitions.client.response.ResponseHandler;
 import bigBang.definitions.shared.BigBangConstants;
@@ -47,10 +47,10 @@ public class ReceiptSelectionViewPresenter extends ExpandableSelectionFormFieldP
 
 	private Display view;
 	private boolean bound = false;
-	private ReceiptProcessDataBroker receiptBroker;
+	private ReceiptDataBroker receiptBroker;
 
 	public ReceiptSelectionViewPresenter(Display view){
-		receiptBroker = (ReceiptProcessDataBroker) DataBrokerManager.staticGetBroker(BigBangConstants.EntityIds.RECEIPT);
+		receiptBroker = (ReceiptDataBroker) DataBrokerManager.staticGetBroker(BigBangConstants.EntityIds.RECEIPT);
 		setView((UIObject)view);		
 	}
 
