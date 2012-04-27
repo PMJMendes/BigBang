@@ -133,8 +133,6 @@ public class CancelNegotiation
 			throw new JewelPetriException(e.getMessage(), e);
 		}
 
-		GetProcess().Stop(pdb);
-
 		if ( mbSendNotification )
 		{
 			if ( mobjMessage.marrContactInfos == null )
@@ -185,6 +183,8 @@ public class CancelNegotiation
 				}
 			}
 		}
+
+		GetProcess().Stop(pdb);
 	}
 
 	public String UndoDesc(String pstrLineBreak)
