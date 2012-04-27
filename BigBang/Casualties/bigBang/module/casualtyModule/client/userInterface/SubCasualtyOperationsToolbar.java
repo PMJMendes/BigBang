@@ -8,10 +8,13 @@ import bigBang.library.client.userInterface.BigBangOperationsToolBar;
 public abstract class SubCasualtyOperationsToolbar extends BigBangOperationsToolBar {
 
 	protected MenuItem delete, markForClosing, close, rejectClose;
+	protected MenuItem internalInfoRequest;
+	protected MenuItem externalInfoRequesT;
 
 	public SubCasualtyOperationsToolbar(){
 		hideAll();
 		showItem(SUB_MENU.EDIT, true);
+		showItem(SUB_MENU.REQUESTS, true);
 		showItem(SUB_MENU.ADMIN, true);
 
 		markForClosing = new MenuItem("Marcar para Encerramento", new Command() {
@@ -51,7 +54,28 @@ public abstract class SubCasualtyOperationsToolbar extends BigBangOperationsTool
 			}
 		});
 		addItem(SUB_MENU.ADMIN, delete);
+		
+		internalInfoRequest = new MenuItem("Criação de Pedido de Informação à Seguradora", new Command() {
+			
+			@Override
+			public void execute() {
+				onInsurerInfoRequest();
+			}
+		});
+		addItem(SUB_MENU.REQUESTS, internalInfoRequest);
+		
+		externalInfoRequesT = new MenuItem("Criação de Pedido de Informação Externo da Seguradora", new Command() {
+			
+			@Override
+			public void execute() {
+				onExternalInfoRequest();
+			}
+		});
 	}
+
+	protected abstract void onInsurerInfoRequest();
+	
+	protected abstract void onExternalInfoRequest();
 
 	public abstract void onDelete();
 	
@@ -79,6 +103,14 @@ public abstract class SubCasualtyOperationsToolbar extends BigBangOperationsTool
 
 	public void allowRejectClose(boolean allow) {
 		this.rejectClose.setEnabled(allow);
+	}
+
+	public void allowInfoOrDocumentRequest(boolean hasPermission) {
+		internalInfoRequest.setEnabled(hasPermission);
+	}
+
+	public void allowInsurerInfoRequest(boolean hasPermission) {
+		externalInfoRequesT.setEnabled(hasPermission);
 	}
 
 }

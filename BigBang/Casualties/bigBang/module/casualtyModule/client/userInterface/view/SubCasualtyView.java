@@ -103,12 +103,12 @@ public class SubCasualtyView extends View implements SubCasualtyViewPresenter.Di
 			}
 
 			@Override
-			protected void externalInfoRequest() {
+			protected void onExternalInfoRequest() {
 				actionHandler.onActionInvoked(new ActionInvokedEvent<SubCasualtyViewPresenter.Action>(Action.EXTERNAL_REQUEST));
 			}
 
 			@Override
-			protected void insurerInfoRequest() {
+			protected void onInsurerInfoRequest() {
 				actionHandler.onActionInvoked(new ActionInvokedEvent<SubCasualtyViewPresenter.Action>(Action.INFO_OR_DOCUMENT_REQUEST));
 			}
 		};

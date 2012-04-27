@@ -230,6 +230,8 @@ public class BigBangConstants {
 			public static final String CLOSE_SUB_CASUALTY = "207F3FEC-0CB2-47D4-868A-A03600FEE4FB";
 			public static final String REJECT_CLOSE_SUB_CASUALTY = "B7D949CE-7E2A-418B-AC4F-A03600FE57C9";
 			public static final String MARK_CLOSE_SUB_CASUALTY = "CDDBD0AC-B19E-4576-890B-A03600FE0E49";
+			public static final String CREATE_EXTERNAL_INFO_REQUEST = "7859A887-03B0-423A-B104-A03600FC360D";
+			public static final String CREATE_INSURER_INFO_REQUEST = "94DEF8C7-6740-4C66-85A3-A03600FC056A";
 		}
 
 		public static class DASRequestProcess{
