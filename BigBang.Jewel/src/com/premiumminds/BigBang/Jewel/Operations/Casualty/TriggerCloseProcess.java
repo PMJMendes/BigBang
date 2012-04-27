@@ -11,19 +11,19 @@ import com.premiumminds.BigBang.Jewel.Constants;
 import com.premiumminds.BigBang.Jewel.Operations.SubCasualty.ExternDisallowUndoClose;
 import com.premiumminds.BigBang.Jewel.Operations.SubCasualty.ExternReallowUndoClose;
 
-public class AutoCloseProcess
+public class TriggerCloseProcess
 	extends UndoableOperation
 {
 	private static final long serialVersionUID = 1L;
 
-	public AutoCloseProcess(UUID pidProcess)
+	public TriggerCloseProcess(UUID pidProcess)
 	{
 		super(pidProcess);
 	}
 
 	protected UUID OpID()
 	{
-		return Constants.OPID_Casualty_AutoCloseProcess;
+		return Constants.OPID_Casualty_TriggerCloseProcess;
 	}
 
 	public String ShortDesc()

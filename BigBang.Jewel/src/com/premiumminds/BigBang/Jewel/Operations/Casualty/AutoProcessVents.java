@@ -49,6 +49,6 @@ public class AutoProcessVents
 		if ( b )
 			TriggerOp(new TriggerDisallowClose(GetProcess().getKey()), pdb);
 		else
-			TriggerOp(new AutoCloseProcess(GetProcess().getKey()), pdb);
+			TriggerOp(new TriggerCloseProcess(GetProcess().getKey()), pdb);
 	}
 }
