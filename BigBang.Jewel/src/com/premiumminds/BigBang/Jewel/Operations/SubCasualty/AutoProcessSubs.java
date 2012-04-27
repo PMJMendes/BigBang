@@ -8,7 +8,7 @@ import Jewel.Petri.SysObjects.JewelPetriException;
 import Jewel.Petri.SysObjects.SilentOperation;
 
 import com.premiumminds.BigBang.Jewel.Constants;
-import com.premiumminds.BigBang.Jewel.Operations.Casualty.TriggerDisallowDelete;
+import com.premiumminds.BigBang.Jewel.Operations.SubCasualty.TriggerDisallowDelete;
 
 public class AutoProcessSubs
 	extends SilentOperation
