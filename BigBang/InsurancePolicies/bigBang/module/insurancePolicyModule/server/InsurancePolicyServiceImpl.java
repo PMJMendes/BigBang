@@ -3210,6 +3210,12 @@ public class InsurancePolicyServiceImpl
 	public TipifiedListItem[] getListItemsFilter(String listId, String filterId)
 		throws SessionExpiredException, BigBangException
 	{
+		Policy lobjPolicy;
+		PolicyCoverage[] larrCoverages;
+		ArrayList<TipifiedListItem> larrResult;
+		TipifiedListItem lobjAux;
+		int i;
+
 		if ( Engine.getCurrentUser() == null )
 			throw new SessionExpiredException();
 
@@ -3223,6 +3229,23 @@ public class InsurancePolicyServiceImpl
 
 			if ( Constants.ObjID_PolicyExercise.equals(UUID.fromString(listId)) )
 				return GetScratchPadStorage().get(UUID.fromString(filterId)).GetExercises();
+
+			if ( Constants.ObjID_PolicyCoverage.equals(UUID.fromString(listId)) )
+			{
+				lobjPolicy = Policy.GetInstance(Engine.getCurrentNameSpace(), UUID.fromString(filterId));
+				larrCoverages = lobjPolicy.GetCurrentCoverages();
+				larrResult = new ArrayList<TipifiedListItem>();
+				for ( i = 0; i < larrCoverages.length; i++ )
+				{
+					if ( (larrCoverages[i].IsPresent() == null) || !larrCoverages[i].IsPresent() )
+						continue;
+					lobjAux = new TipifiedListItem();
+					lobjAux.id = larrCoverages[i].getKey().toString();
+					lobjAux.value = larrCoverages[i].GetCoverage().getLabel();
+					larrResult.add(lobjAux);
+				}
+				return larrResult.toArray(new TipifiedListItem[larrResult.size()]);
+			}
 		}
 		catch (Throwable e)
 		{
