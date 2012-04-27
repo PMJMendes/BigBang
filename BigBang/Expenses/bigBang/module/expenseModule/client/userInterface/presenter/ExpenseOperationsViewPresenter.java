@@ -58,6 +58,8 @@ public class ExpenseOperationsViewPresenter implements ViewPresenter {
 					present("EXPENSE_EXTERNAL_REQUEST", parameters);
 				}else if(display.equalsIgnoreCase("viewinforequest")){
 					present("VIEW_EXPENSE_INFO_OR_DOCUMENT_REQUEST", parameters);
+				}else if(display.equalsIgnoreCase("viewexternalrequest")){
+					present("VIEW_EXPENSE_EXTERNAL_REQUEST", parameters);
 				}else{
 					goToDefault();
 				}

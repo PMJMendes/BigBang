@@ -64,7 +64,6 @@ public class OutgoingMessageFormField extends FormField<OutgoingMessage>{
 		internalCCAddresses.setReadOnly(readonly);
 		externalCCAddresses.setReadOnly(readonly);
 		text.setReadOnly(readonly);
-		
 
 	}
 
@@ -118,7 +117,7 @@ public class OutgoingMessageFormField extends FormField<OutgoingMessage>{
 	}
 	
 	public void setAvailableContacts(Contact[] contacts) {
-		//TODO IMPORTANT ISTO É OBTIDO COM O GET FLAT EMAILS
+
 		this.to.clearValues();
 		if(contacts != null){
 			for(int i = 0; i < contacts.length; i++){

@@ -20,6 +20,7 @@ import bigBang.module.expenseModule.client.userInterface.presenter.MassReturnToC
 import bigBang.module.expenseModule.client.userInterface.presenter.ReceiveAcceptanceViewPresenter;
 import bigBang.module.expenseModule.client.userInterface.presenter.ReceiveReturnViewPresenter;
 import bigBang.module.expenseModule.client.userInterface.presenter.ViewExpenseInfoRequestViewPresenter;
+import bigBang.module.expenseModule.client.userInterface.presenter.ViewExternalInfoRequestViewPresenter;
 import bigBang.module.expenseModule.client.userInterface.view.ExpenseDeleteView;
 import bigBang.module.expenseModule.client.userInterface.view.ExpenseExternalRequestView;
 import bigBang.module.expenseModule.client.userInterface.view.ExpenseOperationsView;
@@ -31,6 +32,7 @@ import bigBang.module.expenseModule.client.userInterface.view.MassReturnToClient
 import bigBang.module.expenseModule.client.userInterface.view.ReceiveAcceptanceView;
 import bigBang.module.expenseModule.client.userInterface.view.ReceiveReturnView;
 import bigBang.module.expenseModule.client.userInterface.view.ViewExpenseInfoRequestView;
+import bigBang.module.expenseModule.client.userInterface.view.ViewExternalInfoRequestView;
 
 import com.google.gwt.core.client.GWT;
 
@@ -153,6 +155,15 @@ public class ExpenseModule implements Module {
 			public ViewPresenter getInstance() {
 				ViewExpenseInfoRequestView view = (ViewExpenseInfoRequestView ) GWT.create(ViewExpenseInfoRequestView.class);
 				ViewPresenter presenter = new ViewExpenseInfoRequestViewPresenter(view);
+				return presenter;
+			}
+		});
+		ViewPresenterFactory.getInstance().registerViewPresenterInstantiator("VIEW_EXPENSE_EXTERNAL_REQUEST", new ViewPresenterInstantiator() {
+
+			@Override
+			public ViewPresenter getInstance() {
+				ViewExternalInfoRequestView view = (ViewExternalInfoRequestView) GWT.create(ViewExternalInfoRequestView.class);
+				ViewPresenter presenter = new ViewExternalInfoRequestViewPresenter(view);
 				return presenter;
 			}
 		});

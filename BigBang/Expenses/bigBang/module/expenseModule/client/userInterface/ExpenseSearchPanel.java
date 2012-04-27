@@ -108,7 +108,7 @@ public class ExpenseSearchPanel extends SearchPanel<ExpenseStub> implements Expe
 
 				numberLabel.setText("#" + value.number);
 				clientLabel.setText("Cliente #" + value.clientNumber + "-" + value.clientName);
-				policyCoverageLabel.setText("Apólice #" + value.referenceNumber + (value.coverageName.compareTo("null") != 0 ?  "- / " + value.coverageName : ""));
+				policyCoverageLabel.setText("Apólice #" + value.referenceNumber + (value.coverageName !=null ?  "- / " + value.coverageName : ""));
 				policyCoverageLabel.setTitle("Apólice / Cobertura");
 				objectLabel.setText(value.insuredObjectName);
 

@@ -92,6 +92,7 @@ public class ExpenseSearchOperationViewPresenter implements ViewPresenter {
 
 	@Override
 	public void setParameters(HasParameters parameterHolder) {
+		setup();
 		expenseId = parameterHolder.getParameter("expenseid");
 
 		if(expenseId == null || expenseId.isEmpty()){
@@ -100,6 +101,13 @@ public class ExpenseSearchOperationViewPresenter implements ViewPresenter {
 			showExpense(expenseId);
 		}
 
+	}
+	
+	private void setup(){
+		this.view.getContactsList().clearSelection();
+		this.view.getDocumentsList().clearSelection();
+		this.view.getSubProcessesList().clearSelection();
+		this.view.getHistoryList().clearSelection();
 	}
 
 	private void clearView() {
@@ -423,7 +431,7 @@ public class ExpenseSearchOperationViewPresenter implements ViewPresenter {
 		else if(type.equalsIgnoreCase(BigBangConstants.EntityIds.EXTERNAL_INFO_REQUEST)){
 			NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
 			item.pushIntoStackParameter("display", "viewexternalrequest");
-			item.setParameter("requestid", process.dataId);
+			item.setParameter("externalrequestid", process.dataId);
 			NavigationHistoryManager.getInstance().go(item);
 		}
 	}
