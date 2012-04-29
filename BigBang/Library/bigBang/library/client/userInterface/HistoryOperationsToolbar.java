@@ -3,12 +3,12 @@ package bigBang.library.client.userInterface;
 import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.ui.MenuItem;
 
-public abstract class UndoOperationsToolbar extends BigBangOperationsToolBar {
+public abstract class HistoryOperationsToolbar extends BigBangOperationsToolBar {
 
 	private MenuItem undoItem;
 	private MenuItem navigateToAuxiliaryProcessItem;
 	
-	public UndoOperationsToolbar(){
+	public HistoryOperationsToolbar(){
 		hideAll();
 
 		this.undoItem = new MenuItem("Reverter", new Command() {

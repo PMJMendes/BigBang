@@ -54,6 +54,7 @@ public class ExternalInfoRequestForm extends FormView<ExternalInfoRequest>{
 			}
 			requestSubject.setReadOnly(readOnly);
 			replyLimit.setReadOnly(readOnly);
+			messageFormField.setReadOnly(readOnly);
 		}
 
 		public IncomingMessageFormField getIncomingMessageFormField(){

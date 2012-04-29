@@ -16,5 +16,14 @@ public interface Resources extends ClientBundle {
 	
 	@Source("images/inactive.png")
 	ImageResource inactive();
+	
+	@Source("images/return.png")
+	ImageResource returnToClient();
 
+	@Source("images/insurerNotification.png")
+	ImageResource notifyInsurer();
+	
+	@Source("images/clientNotification.png")
+	ImageResource notifyClient();
+	
 }

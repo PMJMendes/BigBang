@@ -543,7 +543,8 @@ public class ClientSearchOperationViewPresenter implements ViewPresenter {
 	private void goToQuoteRequest(String requestId){
 		NavigationHistoryItem navItem = NavigationHistoryManager.getInstance().getCurrentState();
 		navItem.setParameter("section", "quoterequest");
-		navItem.popFromStackParameter("display");
+		navItem.setStackParameter("display");
+		navItem.pushIntoStackParameter("display", "search");
 		navItem.setParameter("quoterequestid", requestId);
 		NavigationHistoryManager.getInstance().go(navItem);
 	}
@@ -551,7 +552,8 @@ public class ClientSearchOperationViewPresenter implements ViewPresenter {
 	private void goToCasualty(String casualtyId){
 		NavigationHistoryItem navItem = NavigationHistoryManager.getInstance().getCurrentState();
 		navItem.setParameter("section", "casualty");
-		navItem.popFromStackParameter("display");
+		navItem.setStackParameter("display");
+		navItem.pushIntoStackParameter("display", "search");
 		navItem.setParameter("casualtyid", casualtyId);
 		NavigationHistoryManager.getInstance().go(navItem);
 	}

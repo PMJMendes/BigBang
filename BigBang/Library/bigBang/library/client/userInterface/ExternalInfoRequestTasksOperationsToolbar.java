@@ -1,0 +1,75 @@
+package bigBang.library.client.userInterface;
+
+import com.google.gwt.user.client.Command;
+import com.google.gwt.user.client.ui.MenuItem;
+
+public abstract class ExternalInfoRequestTasksOperationsToolbar extends
+		BigBangOperationsToolBar {
+
+	protected MenuItem sendResponse, continueRequest, close;
+	
+	public ExternalInfoRequestTasksOperationsToolbar(){
+		hideAll();
+		
+		sendResponse = new MenuItem("Enviar Resposta", new Command() {
+			
+			@Override
+			public void execute() {
+				onSendResponse();
+			}
+		});
+		addItem(sendResponse);
+		
+		continueRequest = new MenuItem("Continuar Pedido", new Command() {
+			
+			@Override
+			public void execute() {
+				onContinue();
+			}
+		});
+		addItem(continueRequest);
+		
+		close = new MenuItem("Encerrar Pedido", new Command() {
+			
+			@Override
+			public void execute() {
+				onClose();
+			}
+		});
+		addItem(close);
+	}
+	
+	@Override
+	public void onEditRequest() {
+		return;
+	}
+
+	@Override
+	public void onSaveRequest() {
+		return;
+	}
+
+	@Override
+	public void onCancelRequest() {
+		return;
+	}
+	
+	public abstract void onSendResponse();
+	
+	public abstract void onContinue();
+	
+	public abstract void onClose();
+	
+	public void allowSendResponse(boolean allow) {
+		sendResponse.setVisible(allow);
+	}
+	
+	public void allowContinue(boolean allow) {
+		continueRequest.setVisible(allow);
+	}
+	
+	public void allowClose(boolean allow) {
+		close.setVisible(allow);
+	}
+
+}

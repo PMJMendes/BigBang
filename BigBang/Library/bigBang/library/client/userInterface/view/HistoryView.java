@@ -1,31 +1,18 @@
 package bigBang.library.client.userInterface.view;
 
-import java.util.Collection;
-
 import org.gwt.mosaic.ui.client.MessageBox;
 import org.gwt.mosaic.ui.client.MessageBox.ConfirmationCallback;
 
-import bigBang.definitions.client.dataAccess.HistoryBroker;
-import bigBang.definitions.client.dataAccess.HistoryDataBrokerClient;
 import bigBang.definitions.client.response.ResponseHandler;
-import bigBang.definitions.shared.BigBangConstants;
 import bigBang.definitions.shared.HistoryItem;
 import bigBang.definitions.shared.HistoryItemStub;
-import bigBang.definitions.shared.SortOrder;
-import bigBang.definitions.shared.SortParameter;
 import bigBang.library.client.HasValueSelectables;
-import bigBang.library.client.ValueSelectable;
-import bigBang.library.client.dataAccess.DataBrokerManager;
 import bigBang.library.client.event.ActionInvokedEvent;
 import bigBang.library.client.event.ActionInvokedEventHandler;
-import bigBang.library.client.userInterface.ListEntry;
-import bigBang.library.client.userInterface.ListHeader;
-import bigBang.library.client.userInterface.UndoOperationsToolbar;
+import bigBang.library.client.userInterface.HistoryOperationsToolbar;
+import bigBang.library.client.userInterface.HistorySearchPanel;
 import bigBang.library.client.userInterface.presenter.HistoryViewPresenter;
 import bigBang.library.client.userInterface.presenter.HistoryViewPresenter.Action;
-import bigBang.library.shared.HistorySearchParameter;
-import bigBang.library.shared.HistorySortParameter;
-import bigBang.library.shared.HistorySortParameter.SortableField;
 
 import com.google.gwt.user.client.ui.HasValue;
 import com.google.gwt.user.client.ui.SplitLayoutPanel;
@@ -34,161 +21,6 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 
 public class HistoryView extends View implements HistoryViewPresenter.Display {
 
-	public class UndoItemList extends SearchPanel<HistoryItemStub>  implements HistoryDataBrokerClient {
-
-		protected String currentObjectId;
-		protected int dataVersion;
-		protected String itemIdToSelect = null;
-
-		public UndoItemList(){
-			super(((HistoryBroker)DataBrokerManager.Util.getInstance().getBroker(BigBangConstants.EntityIds.HISTORY)).getSearchBroker());
-			ListHeader header = new ListHeader();
-			header.setText("Histórico");
-			setHeaderWidget(header);
-		}
-
-		@Override
-		public void doSearch() {
-			if(currentObjectId != null){
-				HistorySearchParameter parameter = new HistorySearchParameter();
-				parameter.dataObjectId = this.currentObjectId;
-				HistorySortParameter sort = new HistorySortParameter(SortableField.TIMESTAMP, SortOrder.DESC);
-				doSearch(new HistorySearchParameter[]{parameter}, new SortParameter[]{sort});
-			}
-			itemIdToSelect = null;
-		}
-
-		@Override
-		public void onResults(Collection<HistoryItemStub> results) {
-			for(HistoryItemStub s : results) {
-				UndoItemListEntry entry = new UndoItemListEntry(s);
-				add(entry);
-				if(this.itemIdToSelect != null && itemIdToSelect.equalsIgnoreCase(s.id)){
-					entry.setSelected(true, true);
-					this.itemIdToSelect = null;
-				}				
-			}
-		}
-
-		public void setObjectId(String id){
-			if(id == null){
-				currentObjectId = id;
-				HistoryBroker historyBroker = ((HistoryBroker)DataBrokerManager.Util.getInstance().getBroker(BigBangConstants.EntityIds.HISTORY));
-				historyBroker.unregisterClient(this);
-				clear();
-			}else if(currentObjectId == null || !id.equalsIgnoreCase(currentObjectId)){
-				currentObjectId = id;
-				HistoryBroker historyBroker = ((HistoryBroker)DataBrokerManager.Util.getInstance().getBroker(BigBangConstants.EntityIds.HISTORY));
-				historyBroker.unregisterClient(this);
-				historyBroker.registerClient(this, id);
-				doSearch();
-			}
-		}
-
-		@Override
-		public void setDataVersionNumber(String dataElementId, int number) {
-			if(!dataElementId.equalsIgnoreCase(this.currentObjectId))
-				throw new RuntimeException("A data version for a wrong entity was received");
-			this.dataVersion = number;
-		}
-
-		@Override
-		public int getDataVersion(String dataElementId) {
-			if(!dataElementId.equalsIgnoreCase(this.currentObjectId))
-				throw new RuntimeException("A data version for a wrong entity was requested");
-			return this.dataVersion;
-		}
-
-		@Override
-		public void setHistoryItems(String objectId, HistoryItem[] items) {}
-
-		@Override
-		public void addHistoryItem(String objectId, HistoryItem item) {}
-
-		@Override
-		public void updateHistoryItem(String objectId, HistoryItem item) {
-			if(!objectId.equalsIgnoreCase(this.currentObjectId))
-				throw new RuntimeException("A reference was made to a wrong entity type");
-			for(ValueSelectable<HistoryItemStub> i : this){
-				if(i.getValue().id.equalsIgnoreCase(item.id)){
-					i.setValue(item);
-					break;
-				}
-			}
-		}
-
-		@Override
-		public void removeHistoryItem(String objectId, HistoryItem item) {
-			if(!objectId.equalsIgnoreCase(this.currentObjectId))
-				throw new RuntimeException("A reference was made to a wrong entity type");
-			for(ValueSelectable<HistoryItemStub> i : this){
-				if(i.getValue().id.equalsIgnoreCase(item.id)){
-					remove(i);
-					break;
-				}
-			}
-		}
-
-		public void selectItem(String id){
-			for(ListEntry<HistoryItemStub> i : this){
-				if(i.getValue().id.equalsIgnoreCase(id)){
-					i.setSelected(true, true);
-					break;
-				}
-			}
-
-			//			if(id == null) {
-			//				return;
-			//			}
-			//			if(workspaceId == null) {
-			//				this.itemIdToSelect = id;
-			//				return;
-			//			}
-			//			boolean found = false;
-			//			boolean searchFinished = !hasResultsLeft();
-			//			while(!found && !searchFinished){
-			//				for(ListEntry<HistoryItemStub> i : this){
-			//					if(i.getValue().id.equalsIgnoreCase(id)){
-			//						i.setSelected(true, true);
-			//						found = true;
-			//						break;
-			//					}
-			//				}
-			//			}
-		}
-
-		@Override
-		public void refreshHistory() {
-			Collection<ValueSelectable<HistoryItemStub>> selected = getSelected();
-			String id = null;
-			if(selected != null){
-				for(ValueSelectable<HistoryItemStub> selectable : selected){
-					id = selectable.getValue().id;
-				}
-			}
-			this.doSearch();
-			if(id != null){
-				selectItem(id);
-			}
-		}
-
-	}
-
-	public class UndoItemListEntry extends ListEntry<HistoryItemStub> {
-
-		public UndoItemListEntry(HistoryItemStub value) {
-			super(value);
-		}
-
-		public <I extends Object> void setInfo(I info) {
-			HistoryItemStub value = (HistoryItemStub) info;
-			setTitle(value.opName);
-			setText(value.username + " (" + value.timeStamp.substring(0, 16) + ")");
-			setHeight("40px");
-		};
-
-	}
-
 	protected enum Status {
 		IDLE,
 		PENDING,
@@ -196,9 +28,9 @@ public class HistoryView extends View implements HistoryViewPresenter.Display {
 	}
 
 	private static final int LIST_WIDTH = 400; //PX 
-	private UndoItemList list;
-	private UndoForm form;
-	protected UndoOperationsToolbar toolbar;
+	private HistorySearchPanel list;
+	private HistoryItemForm form;
+	protected HistoryOperationsToolbar toolbar;
 	protected ActionInvokedEventHandler<Action> actionHandler;
 	protected Status status;
 
@@ -207,15 +39,15 @@ public class HistoryView extends View implements HistoryViewPresenter.Display {
 		initWidget(wrapper);
 		wrapper.setSize("100%", "100%");
 
-		this.list = new UndoItemList();
+		this.list = new HistorySearchPanel();
 		wrapper.addWest(list, LIST_WIDTH);
 
-		this.form = new UndoForm();
+		this.form = new HistoryItemForm();
 
 		VerticalPanel formWrapper = new VerticalPanel();
 		formWrapper.setSize("100%", "100%");
 
-		this.toolbar = new UndoOperationsToolbar() {
+		this.toolbar = new HistoryOperationsToolbar() {
 
 			@Override
 			public void onUndo() {

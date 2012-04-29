@@ -1,4 +1,4 @@
-package bigBang.module.expenseModule.client.userInterface;
+package bigBang.module.expenseModule.client.userInterface.view;
 
 import bigBang.definitions.shared.Expense;
 import bigBang.library.client.userInterface.ExpenseForm;

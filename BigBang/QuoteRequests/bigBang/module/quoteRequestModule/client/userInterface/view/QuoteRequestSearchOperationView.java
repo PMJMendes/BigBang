@@ -127,8 +127,7 @@ public class QuoteRequestSearchOperationView extends View implements QuoteReques
 
 			@Override
 			public void onInfoOrDocumentRequest() {
-				// TODO Auto-generated method stub
-
+				handler.onActionInvoked(new ActionInvokedEvent<QuoteRequestSearchOperationViewPresenter.Action>(Action.CREATE_INFO_OR_DOCUMENT_REQUEST));
 			}
 
 			@Override
@@ -212,6 +211,11 @@ public class QuoteRequestSearchOperationView extends View implements QuoteReques
 	@Override
 	public void allowCreateManagerTransfer(boolean allow) {
 		toolbar.allowCreateManagerTransfer(allow);
+	}
+	
+	@Override
+	public void allowCreateInfoorDocumentRequest(boolean allow) {
+		this.toolbar.allowCreateInfoRequest(allow);
 	}
 
 	@Override

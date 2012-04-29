@@ -17,6 +17,8 @@ import bigBang.module.insurancePolicyModule.client.userInterface.presenter.Creat
 import bigBang.module.insurancePolicyModule.client.userInterface.presenter.CreateExpenseViewPresenter;
 import bigBang.module.insurancePolicyModule.client.userInterface.presenter.CreateReceiptViewPresenter;
 import bigBang.module.insurancePolicyModule.client.userInterface.presenter.ExerciseViewPresenter;
+import bigBang.module.insurancePolicyModule.client.userInterface.presenter.InsurancePolicyClientInfoRequestViewPresenter;
+import bigBang.module.insurancePolicyModule.client.userInterface.presenter.InsurancePolicyCompanyInfoRequestViewPresenter;
 import bigBang.module.insurancePolicyModule.client.userInterface.presenter.InsurancePolicyManagerTransferViewPresenter;
 import bigBang.module.insurancePolicyModule.client.userInterface.presenter.InsurancePolicyMassManagerTransferViewPresenter;
 import bigBang.module.insurancePolicyModule.client.userInterface.presenter.InsurancePolicyNegotiationViewPresenter;
@@ -38,11 +40,13 @@ import bigBang.module.insurancePolicyModule.client.userInterface.presenter.SubPo
 import bigBang.module.insurancePolicyModule.client.userInterface.presenter.SubPolicyTransferToPolicyViewPresenter;
 import bigBang.module.insurancePolicyModule.client.userInterface.presenter.SubPolicyViewPresenter;
 import bigBang.module.insurancePolicyModule.client.userInterface.presenter.SubPolicyVoidViewPresenter;
+import bigBang.module.insurancePolicyModule.client.userInterface.presenter.ViewInsurancePolicyInfoRequestViewPresenter;
 import bigBang.module.insurancePolicyModule.client.userInterface.view.CreateDebitNoteView;
 import bigBang.module.insurancePolicyModule.client.userInterface.view.CreateExpenseSubPolicyView;
 import bigBang.module.insurancePolicyModule.client.userInterface.view.CreateExpenseView;
 import bigBang.module.insurancePolicyModule.client.userInterface.view.CreateReceiptView;
 import bigBang.module.insurancePolicyModule.client.userInterface.view.ExerciseView;
+import bigBang.module.insurancePolicyModule.client.userInterface.view.InsurancePolicyInfoRequestView;
 import bigBang.module.insurancePolicyModule.client.userInterface.view.InsurancePolicyManagerTransferView;
 import bigBang.module.insurancePolicyModule.client.userInterface.view.InsurancePolicyMassManagerTransferView;
 import bigBang.module.insurancePolicyModule.client.userInterface.view.InsurancePolicyNegotiationView;
@@ -64,6 +68,7 @@ import bigBang.module.insurancePolicyModule.client.userInterface.view.SubPolicyI
 import bigBang.module.insurancePolicyModule.client.userInterface.view.SubPolicyTransferToPolicyView;
 import bigBang.module.insurancePolicyModule.client.userInterface.view.SubPolicyView;
 import bigBang.module.insurancePolicyModule.client.userInterface.view.SubPolicyVoidView;
+import bigBang.module.insurancePolicyModule.client.userInterface.view.ViewInsurancePolicyInfoRequestView;
 import bigBang.module.quoteRequestModule.client.userInterface.presenter.NegotiationDeleteViewPresenter;
 import bigBang.module.quoteRequestModule.client.userInterface.presenter.NegotiationExternalRequestViewPresenter;
 import bigBang.module.quoteRequestModule.client.userInterface.presenter.NegotiationResponseViewPresenter;
@@ -350,6 +355,33 @@ public class InsurancePolicyModule implements Module {
 			public ViewPresenter getInstance() {
 				InsuranceSubPolicyTasksView view = (InsuranceSubPolicyTasksView) GWT.create(InsuranceSubPolicyTasksView.class);
 				ViewPresenter presenter  = new InsuranceSubPolicyTasksViewPresenter(view);
+				return presenter;
+			}
+		});
+		ViewPresenterFactory.getInstance().registerViewPresenterInstantiator("INSURANCE_POLICY_CREATE_COMPANY_INFO_REQUEST", new ViewPresenterInstantiator() {
+
+			@Override
+			public ViewPresenter getInstance() {
+				InsurancePolicyInfoRequestView view = (InsurancePolicyInfoRequestView) GWT.create(InsurancePolicyInfoRequestView.class);
+				InsurancePolicyCompanyInfoRequestViewPresenter presenter = new InsurancePolicyCompanyInfoRequestViewPresenter(view);
+				return presenter;
+			}
+		});
+		ViewPresenterFactory.getInstance().registerViewPresenterInstantiator("INSURANCE_POLICY_CREATE_CLIENT_INFO_REQUEST", new ViewPresenterInstantiator() {
+
+			@Override
+			public ViewPresenter getInstance() {
+				InsurancePolicyInfoRequestView view = (InsurancePolicyInfoRequestView) GWT.create(InsurancePolicyInfoRequestView.class);
+				InsurancePolicyClientInfoRequestViewPresenter presenter = new InsurancePolicyClientInfoRequestViewPresenter(view);
+				return presenter;
+			}
+		});
+		ViewPresenterFactory.getInstance().registerViewPresenterInstantiator("VIEW_INSURANCE_POLICY_INFO_REQUEST", new ViewPresenterInstantiator() {
+
+			@Override
+			public ViewPresenter getInstance() {
+				ViewInsurancePolicyInfoRequestView view = (ViewInsurancePolicyInfoRequestView) GWT.create(ViewInsurancePolicyInfoRequestView.class);
+				ViewInsurancePolicyInfoRequestViewPresenter presenter = new ViewInsurancePolicyInfoRequestViewPresenter(view);
 				return presenter;
 			}
 		});

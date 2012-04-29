@@ -239,13 +239,10 @@ public class IncomingMessageFormField extends FormField<IncomingMessage>{
 
 	@Override
 	public void setReadOnly(boolean readonly) {
-
 		readOnly = readonly;
 		notes.setReadOnly(readonly);
 		selectEmail.setEnabled(!readonly);
-
-
-
+		noteOrEmailRadioButton.setEditable(!readonly);
 	}
 
 	@Override

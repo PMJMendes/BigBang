@@ -201,6 +201,9 @@ public abstract class BigBangOperationsToolBar extends OperationsToolBar {
 		this.requestMenuItem.setVisible(false);
 		this.adminMenuItem.setVisible(false);
 		this.separator.setVisible(false);
+		for(MenuItem item : this.getMenuItems()) {
+			item.setVisible(false);
+		}
 	}
 
 	/**

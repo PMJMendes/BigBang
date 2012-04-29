@@ -1,11 +1,14 @@
 package bigBang.library.client.userInterface.presenter;
 
 import bigBang.definitions.shared.BigBangConstants;
+import bigBang.definitions.shared.CasualtyStub;
 import bigBang.definitions.shared.ClientStub;
 import bigBang.definitions.shared.InsurancePolicyStub;
 import bigBang.definitions.shared.ManagerTransfer;
+import bigBang.definitions.shared.QuoteRequestStub;
 import bigBang.library.client.BigBangAsyncCallback;
 import bigBang.library.client.EventBus;
+import bigBang.library.client.HasOperationPermissions;
 import bigBang.library.client.HasParameters;
 import bigBang.library.client.HasValueSelectables;
 import bigBang.library.client.Notification;
@@ -29,7 +32,7 @@ import com.google.gwt.user.client.ui.HasWidgets;
 import com.google.gwt.user.client.ui.UIObject;
 import com.google.gwt.user.client.ui.Widget;
 
-public class ManagerTransferViewPresenter implements ViewPresenter{
+public class ManagerTransferViewPresenter implements ViewPresenter, HasOperationPermissions {
 
 	public static enum Action {
 		ACCEPT,
@@ -174,20 +177,41 @@ public class ManagerTransferViewPresenter implements ViewPresenter{
 				ClientStub client = (ClientStub)transfer.objectStubs[i];
 				ListEntry<Object> temp = new ListEntry<Object>(client);
 				temp.setHeight("40px");
-				temp.setTitle(client.name);
-				temp.setText(client.clientNumber);
+				temp.setTitle("#" + client.clientNumber);
+				temp.setText(client.name);
 				view.addToList(temp);
 			}
 
-		}else if(transfer.objectTypeId.equalsIgnoreCase(BigBangConstants.EntityIds.POLICY_INSURED_OBJECT)){
+		}else if(transfer.objectTypeId.equalsIgnoreCase(BigBangConstants.EntityIds.INSURANCE_POLICY)){
 
 			view.setObjectType("Apólices");
 			for(int i = 0; i<transfer.objectStubs.length; i++){
 				InsurancePolicyStub policy = (InsurancePolicyStub)transfer.objectStubs[i];
 				ListEntry<Object> temp = new ListEntry<Object>(policy);
 				temp.setHeight("40px");
-				temp.setTitle(policy.number);
+				temp.setTitle("#" + policy.number);
 				temp.setText(policy.categoryName+" / " +policy.lineName + " / "+policy.subLineName);
+				view.addToList(temp);
+			}
+		}else if(transfer.objectTypeId.equalsIgnoreCase(BigBangConstants.EntityIds.QUOTE_REQUEST)){
+
+			view.setObjectType("Consultas de Mercado");
+			for(int i = 0; i<transfer.objectStubs.length; i++){
+				QuoteRequestStub request = (QuoteRequestStub)transfer.objectStubs[i];
+				ListEntry<Object> temp = new ListEntry<Object>(request);
+				temp.setHeight("40px");
+				temp.setTitle("#" + request.processNumber);
+				view.addToList(temp);
+			}
+
+		}else if(transfer.objectTypeId.equalsIgnoreCase(BigBangConstants.EntityIds.CASUALTY)){
+
+			view.setObjectType("Sinistros");
+			for(int i = 0; i<transfer.objectStubs.length; i++){
+				CasualtyStub casualty = (CasualtyStub)transfer.objectStubs[i];
+				ListEntry<Object> temp = new ListEntry<Object>(casualty);
+				temp.setHeight("40px");
+				temp.setTitle("#" + casualty.processNumber);
 				view.addToList(temp);
 			}
 
@@ -250,6 +274,7 @@ public class ManagerTransferViewPresenter implements ViewPresenter{
 			item.pushIntoStackParameter("display", "search");
 			item.setParameter("clientid", ((ClientStub) object).id);
 			NavigationHistoryManager.getInstance().go(item);
+			
 		}else if(object instanceof InsurancePolicyStub) {
 			NavigationHistoryItem item = new NavigationHistoryItem();
 			item.setParameter("section", "insurancepolicy");
@@ -257,8 +282,23 @@ public class ManagerTransferViewPresenter implements ViewPresenter{
 			item.pushIntoStackParameter("display", "search");
 			item.setParameter("policyid", ((InsurancePolicyStub) object).id);
 			NavigationHistoryManager.getInstance().go(item);
+			
+		}else if(object instanceof QuoteRequestStub) {
+			NavigationHistoryItem item = new NavigationHistoryItem();
+			item.setParameter("section", "quoterequest");
+			item.setStackParameter("display");
+			item.pushIntoStackParameter("display", "search");
+			item.setParameter("quoterequestid", ((QuoteRequestStub) object).id);
+			NavigationHistoryManager.getInstance().go(item);
+			
+		}else if(object instanceof CasualtyStub) {
+			NavigationHistoryItem item = new NavigationHistoryItem();
+			item.setParameter("section", "casualty");
+			item.setStackParameter("display");
+			item.pushIntoStackParameter("display", "search");
+			item.setParameter("casualtyid", ((CasualtyStub) object).id);
+			NavigationHistoryManager.getInstance().go(item);
 		}
-		//TODO important FJVC
 	}
 	
 	private void onGetManagerTransferFailed(){
@@ -290,6 +330,11 @@ public class ManagerTransferViewPresenter implements ViewPresenter{
 	
 	private void onCancelTransferFailed(){
 		EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não foi possível cancelar a Transferência de Gestor"), TYPE.ALERT_NOTIFICATION));
+	}
+
+	@Override
+	public void setPermittedOperations(String[] operationIds) {
+		return;
 	}
 	
 }

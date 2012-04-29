@@ -1,5 +1,6 @@
 package bigBang.module.insurancePolicyModule.client.userInterface.view;
 
+import bigBang.definitions.shared.BigBangProcess;
 import bigBang.definitions.shared.Contact;
 import bigBang.definitions.shared.Document;
 import bigBang.definitions.shared.ExerciseStub;
@@ -310,6 +311,11 @@ public class SubPolicyView extends View implements SubPolicyViewPresenter.Displa
 		return childrenPanel.historyList;
 	}
 
+	@Override
+	public HasValueSelectables<BigBangProcess> getSubProcessesList() {
+		return childrenPanel.subProcessesList;
+	}
+	
 	@Override
 	public HasValue<String> getInsuredObjectFilter() {
 		return this.form.getInsuredObjectsField();

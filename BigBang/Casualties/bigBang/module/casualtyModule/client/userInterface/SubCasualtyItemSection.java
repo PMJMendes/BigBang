@@ -12,9 +12,12 @@ import bigBang.definitions.shared.BigBangConstants;
 import bigBang.definitions.shared.SubCasualty;
 import bigBang.definitions.shared.SubCasualty.SubCasualtyItem;
 import bigBang.library.client.FormField;
+import bigBang.library.client.dataAccess.TypifiedListBroker;
 import bigBang.library.client.userInterface.ExpandableListBoxFormField;
 import bigBang.library.client.userInterface.TextBoxFormField;
 import bigBang.library.client.userInterface.view.CollapsibleFormViewSection;
+import bigBang.module.insurancePolicyModule.client.dataAccess.PolicyTypifiedListBroker;
+import bigBang.module.insurancePolicyModule.client.dataAccess.SubPolicyTypifiedListBroker;
 
 public class SubCasualtyItemSection extends CollapsibleFormViewSection {
 
@@ -69,6 +72,23 @@ public class SubCasualtyItemSection extends CollapsibleFormViewSection {
 			setReference(referenceTypeId, referenceId);
 
 			insuredObject.setValue(item.insuredObjectId);
+			coverage.setTypifiedDataBroker((TypifiedListBroker) (referenceTypeId.equalsIgnoreCase(BigBangConstants.EntityIds.INSURANCE_POLICY) ?
+																			PolicyTypifiedListBroker.Util.getInstance() :
+																			SubPolicyTypifiedListBroker.Util.getInstance()));
+			coverage.setListId((referenceTypeId.equalsIgnoreCase(BigBangConstants.EntityIds.INSURANCE_POLICY) ?
+												BigBangConstants.TypifiedListIds.POLICY_COVERAGE :
+												BigBangConstants.TypifiedListIds.SUB_POLICY_COVERAGE)+"/"+referenceId, new ResponseHandler<Void>() {
+													
+													@Override
+													public void onResponse(Void response) {
+														return;
+													}
+													
+													@Override
+													public void onError(Collection<ResponseError> errors) {
+														return;
+													}
+												});
 			coverage.setValue(item.coverageId);
 			damageType.setValue(item.damageTypeId);
 			damages.setValue(item.damages);

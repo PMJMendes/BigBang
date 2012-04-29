@@ -197,4 +197,8 @@ public abstract class QuoteRequestProcessToolBar extends BigBangOperationsToolBa
 		this.createAnimalObject.setEnabled(allow);
 	}
 
+	public void allowCreateInfoRequest(boolean allow) {
+		this.clientInfoRequest.setEnabled(allow);
+	}
+
 }

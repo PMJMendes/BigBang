@@ -5,6 +5,7 @@ import java.util.Collection;
 import bigBang.definitions.client.response.ResponseHandler;
 import bigBang.definitions.shared.DebitNote;
 import bigBang.definitions.shared.Expense;
+import bigBang.definitions.shared.InfoOrDocumentRequest;
 import bigBang.definitions.shared.InsurancePolicy;
 import bigBang.definitions.shared.InsurancePolicy.TableSection;
 import bigBang.definitions.shared.InsurancePolicyStub;
@@ -69,6 +70,12 @@ public interface InsurancePolicyBroker extends DataBrokerInterface<InsurancePoli
 	void createManagerTransfer(String[] processIds, String newManagerId, ResponseHandler<Void> handler);
 
 	void createExpense(Expense expense, ResponseHandler<Expense> handler);
+
+	public void createCompanyInfoRequest(InfoOrDocumentRequest request,
+			ResponseHandler<InfoOrDocumentRequest> responseHandler);
+	
+	public void createClientInfoRequest(InfoOrDocumentRequest request,
+			ResponseHandler<InfoOrDocumentRequest> responseHandler);
 
 	
 }

@@ -48,7 +48,9 @@ public class QuoteRequestSearchOperationViewPresenter implements ViewPresenter {
 		CANCEL,
 		DELETE,
 		CLOSE,
-		CREATE_INSURED_OBJECT, CREATE_PERSON_INSURED_OBJECT, CREATE_COMPANY_INSURED_OBJECT, CREATE_EQUIPMENT_INSURED_OBJECT, CREATE_LOCATION_INSURED_OBJECT, CREATE_ANIMAL_INSURED_OBJECT, CREATE_MANAGER_TRANSFER
+		CREATE_INSURED_OBJECT, CREATE_PERSON_INSURED_OBJECT, CREATE_COMPANY_INSURED_OBJECT, CREATE_EQUIPMENT_INSURED_OBJECT, CREATE_LOCATION_INSURED_OBJECT, CREATE_ANIMAL_INSURED_OBJECT,
+		CREATE_MANAGER_TRANSFER,
+		CREATE_INFO_OR_DOCUMENT_REQUEST
 	}
 
 	public interface Display {
@@ -63,6 +65,7 @@ public class QuoteRequestSearchOperationViewPresenter implements ViewPresenter {
 		void allowClose(boolean allow);
 		void allowCreateInsuredObject(boolean allow);
 		void allowCreateManagerTransfer(boolean allow);
+		void allowCreateInfoorDocumentRequest(boolean allow);
 
 		//Children lists
 		HasValueSelectables<Contact> getContactsList();
@@ -168,6 +171,9 @@ public class QuoteRequestSearchOperationViewPresenter implements ViewPresenter {
 					break;
 				case CREATE_MANAGER_TRANSFER:
 					onCreateManagerTransfer();
+					break;
+				case CREATE_INFO_OR_DOCUMENT_REQUEST:
+					onCreateInfoOrDocumentRequest();
 					break;
 				default:
 					break;
@@ -314,6 +320,7 @@ public class QuoteRequestSearchOperationViewPresenter implements ViewPresenter {
 					view.allowClose(PermissionChecker.hasPermission(response, BigBangConstants.OperationIds.QuoteRequestProcess.CLOSE_QUOTE_REQUEST));
 					view.allowCreateInsuredObject(false);
 					view.allowCreateManagerTransfer(PermissionChecker.hasPermission(response, BigBangConstants.OperationIds.QuoteRequestProcess.CREATE_MANAGER_TRANSFER));
+					view.allowCreateInfoorDocumentRequest(PermissionChecker.hasPermission(response, BigBangConstants.OperationIds.QuoteRequestProcess.CREATE_INFO_OR_DOCUMENT_REQUEST));
 
 					view.getForm().setValue(response);
 				}
@@ -436,6 +443,13 @@ public class QuoteRequestSearchOperationViewPresenter implements ViewPresenter {
 	protected void onCreateManagerTransfer(){
 		NavigationHistoryItem navItem = NavigationHistoryManager.getInstance().getCurrentState();
 		navItem.setParameter("show", "managertransfer");
+		NavigationHistoryManager.getInstance().go(navItem);
+	}
+	
+	protected void onCreateInfoOrDocumentRequest(){
+		NavigationHistoryItem navItem = NavigationHistoryManager.getInstance().getCurrentState();
+		navItem.pushIntoStackParameter("display", "inforequest");
+		navItem.setParameter("ownerid", view.getForm().getValue().id);
 		NavigationHistoryManager.getInstance().go(navItem);
 	}
 	

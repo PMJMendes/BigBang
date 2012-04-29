@@ -4,11 +4,11 @@ import com.google.gwt.user.client.ui.Label;
 
 import bigBang.definitions.shared.HistoryItem;
 
-public class UndoForm extends FormView<HistoryItem> {
+public class HistoryItemForm extends FormView<HistoryItem> {
 
 	private Label beforeDescription, afterDescription;
 	
-	public UndoForm(){
+	public HistoryItemForm(){
 		super();
 		beforeDescription = new Label();
 		afterDescription = new Label();

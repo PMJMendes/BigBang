@@ -301,12 +301,10 @@ ViewPresenter {
 					NavigationHistoryManager.getInstance().go(item);
 					break;
 				case REQUEST_AGENCY_INFO:
-					item.pushIntoStackParameter("display", "requestagencyinfo");
-					NavigationHistoryManager.getInstance().go(item);
+					onRequestCompanyInfo();
 					break;
 				case REQUEST_CLIENT_INFO:
-					item.pushIntoStackParameter("display", "requestclientinfo");
-					NavigationHistoryManager.getInstance().go(item);
+					onRequestClientInfo();
 					break;
 				case TRANSFER_BROKERAGE:
 					item.pushIntoStackParameter("display", "brokeragetransfer");
@@ -685,6 +683,20 @@ ViewPresenter {
 			onGetPolicyFailed();
 		}
 	}
+	
+	private void onRequestCompanyInfo(){
+		NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
+		item.pushIntoStackParameter("display", "companyinforequest");
+		item.setParameter("ownerid", view.getForm().getValue().id);
+		NavigationHistoryManager.getInstance().go(item);
+	}
+	
+	private void onRequestClientInfo(){
+		NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
+		item.pushIntoStackParameter("display", "clientinforequest");
+		item.setParameter("ownerid", view.getForm().getValue().id);
+		NavigationHistoryManager.getInstance().go(item);
+	}
 
 	private void onVoidPolicy(){
 		saveWorkState(new ResponseHandler<Void>() {
@@ -755,6 +767,10 @@ ViewPresenter {
 				if(type.equalsIgnoreCase(BigBangConstants.EntityIds.NEGOTIATION)){
 					item.pushIntoStackParameter("display", "negotiation");
 					item.setParameter("negotiationid", process.dataId);
+					NavigationHistoryManager.getInstance().go(item);
+				}else if(type.equalsIgnoreCase(BigBangConstants.EntityIds.INFO_REQUEST)){
+					item.pushIntoStackParameter("display", "viewinforequest");
+					item.setParameter("requestid", process.dataId);
 					NavigationHistoryManager.getInstance().go(item);
 				}
 			}

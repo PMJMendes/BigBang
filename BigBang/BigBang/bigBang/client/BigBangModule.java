@@ -17,11 +17,13 @@ import bigBang.library.client.userInterface.presenter.CancelInfoOrDocumentReques
 import bigBang.library.client.userInterface.presenter.ContactNavigationViewPresenter;
 import bigBang.library.client.userInterface.presenter.ContactViewPresenter;
 import bigBang.library.client.userInterface.presenter.DocumentViewPresenter;
+import bigBang.library.client.userInterface.presenter.ExternalInfoRequestTasksViewPresenter;
 import bigBang.library.client.userInterface.presenter.ExternalRequestClosingViewPresenter;
 import bigBang.library.client.userInterface.presenter.ExternalRequestContinuationViewPresenter;
 import bigBang.library.client.userInterface.presenter.ExternalRequestReplyViewPresenter;
 import bigBang.library.client.userInterface.presenter.InfoOrDocumentRequestRepeatViewPresenter;
 import bigBang.library.client.userInterface.presenter.InfoOrDocumentRequestReplyViewPresenter;
+import bigBang.library.client.userInterface.presenter.InfoRequestTasksViewPresenter;
 import bigBang.library.client.userInterface.presenter.ManagerTransferViewPresenter;
 import bigBang.library.client.userInterface.presenter.HistoryViewPresenter;
 import bigBang.library.client.userInterface.presenter.ReportViewPresenter;
@@ -30,11 +32,13 @@ import bigBang.library.client.userInterface.view.CancelInfoOrDocumentRequestView
 import bigBang.library.client.userInterface.view.ContactNavigationView;
 import bigBang.library.client.userInterface.view.ContactView;
 import bigBang.library.client.userInterface.view.DocumentView;
+import bigBang.library.client.userInterface.view.ExternalInfoRequestTasksView;
 import bigBang.library.client.userInterface.view.ExternalRequestClosingView;
 import bigBang.library.client.userInterface.view.ExternalRequestContinuationView;
 import bigBang.library.client.userInterface.view.ExternalRequestReplyView;
 import bigBang.library.client.userInterface.view.InfoOrDocumentRequestRepeatView;
 import bigBang.library.client.userInterface.view.InfoOrDocumentRequestReplyView;
+import bigBang.library.client.userInterface.view.InfoRequestTasksView;
 import bigBang.library.client.userInterface.view.ManagerTransferWithToolbarView;
 import bigBang.library.client.userInterface.view.HistoryView;
 import bigBang.library.client.userInterface.view.ReportView;
@@ -169,6 +173,24 @@ public class BigBangModule implements Module {
 			public ViewPresenter getInstance() {
 				ReportView view = (ReportView) GWT.create(ReportView.class);
 				ReportViewPresenter presenter = new ReportViewPresenter(view);
+				return presenter;
+			}
+		});
+		ViewPresenterFactory.getInstance().registerViewPresenterInstantiator("INFO_REQUEST_TASKS", new ViewPresenterInstantiator() {
+
+			@Override
+			public ViewPresenter getInstance() {
+				InfoRequestTasksView view = (InfoRequestTasksView) GWT.create(InfoRequestTasksView.class);
+				ViewPresenter presenter = new InfoRequestTasksViewPresenter(view);
+				return presenter;
+			}
+		});
+		ViewPresenterFactory.getInstance().registerViewPresenterInstantiator("EXTERNAL_INFO_REQUEST_TASKS", new ViewPresenterInstantiator() {
+
+			@Override
+			public ViewPresenter getInstance() {
+				ExternalInfoRequestTasksView view = (ExternalInfoRequestTasksView) GWT.create(ExternalInfoRequestTasksView.class);
+				ViewPresenter presenter = new ExternalInfoRequestTasksViewPresenter(view);
 				return presenter;
 			}
 		});

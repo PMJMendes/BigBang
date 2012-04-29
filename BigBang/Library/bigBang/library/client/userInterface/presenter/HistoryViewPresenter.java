@@ -95,6 +95,9 @@ public class HistoryViewPresenter implements ViewPresenter {
 			showHistory(objectId);
 			if(!itemId.isEmpty()){
 				showHistoryItem(objectId, itemId);
+			}else{
+				view.allowNavigateToAuxiliaryProcess(false);
+				view.allowUndo(false);
 			}
 		}
 	}
@@ -242,6 +245,9 @@ public class HistoryViewPresenter implements ViewPresenter {
 			}else if(auxObjectType.equalsIgnoreCase(BigBangConstants.EntityIds.DAS_REQUEST)){
 				navigateToDASRequest(auxObjectId);
 				
+			}else if(auxObjectType.equalsIgnoreCase(BigBangConstants.EntityIds.SUB_CASUALTY)){
+				navigateToSubCasualty(auxObjectId);
+				
 			}else{
 				onNavigateToAuxiliaryProcessFailed();
 				return;
@@ -249,6 +255,15 @@ public class HistoryViewPresenter implements ViewPresenter {
 		}
 	}
 	
+	private void navigateToSubCasualty(String auxObjectId) {
+		NavigationHistoryItem navigationItem = new NavigationHistoryItem();
+		navigationItem.setStackParameter("display");
+		navigationItem.setParameter("section", "casualty");
+		navigationItem.pushIntoStackParameter("display", "search");
+		navigationItem.setParameter("casualtyid", auxObjectId);
+		NavigationHistoryManager.getInstance().go(navigationItem);		
+	}
+
 	private void navigateToDASRequest(String auxObjectId) {
 		NavigationHistoryItem navigationItem = new NavigationHistoryItem();
 		navigationItem.setStackParameter("display");

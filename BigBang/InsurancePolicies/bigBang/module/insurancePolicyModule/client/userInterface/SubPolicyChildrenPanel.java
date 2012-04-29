@@ -6,6 +6,7 @@ import bigBang.library.client.PermissionChecker;
 import bigBang.library.client.userInterface.ContactsList;
 import bigBang.library.client.userInterface.DocumentsList;
 import bigBang.library.client.userInterface.HistoryList;
+import bigBang.library.client.userInterface.SubProcessesList;
 import bigBang.library.client.userInterface.view.View;
 
 import com.google.gwt.user.client.ui.StackPanel;
@@ -20,6 +21,7 @@ public class SubPolicyChildrenPanel extends View {
 	public SubPolicyExercisesList exercisesList;
 	public ReceiptsList receiptList;
 	public HistoryList historyList;
+	public SubProcessesList subProcessesList;
 
 	public SubPolicyChildrenPanel(){
 		StackPanel wrapper = new StackPanel();
@@ -31,6 +33,7 @@ public class SubPolicyChildrenPanel extends View {
 		insuredObjectsList = new SubPolicyInsuredObjectsList();
 		exercisesList = new SubPolicyExercisesList();
 		receiptList = new ReceiptsList();
+		subProcessesList = new SubProcessesList();
 		historyList = new HistoryList();
 
 		wrapper.add(contactsList, "Contactos");
@@ -38,6 +41,7 @@ public class SubPolicyChildrenPanel extends View {
 		wrapper.add(insuredObjectsList, "Unidades de Risco");
 		wrapper.add(exercisesList, "Exercícios");
 		wrapper.add(receiptList, "Recibos");
+		wrapper.add(subProcessesList, "Sub-Processos");
 		wrapper.add(historyList, "Histórico");
 	}
 
@@ -58,6 +62,7 @@ public class SubPolicyChildrenPanel extends View {
 		this.insuredObjectsList.setOwner(subPolicyId);
 		this.exercisesList.setOwner(subPolicyId);
 		this.receiptList.setOwner(subPolicyId);
+		this.subProcessesList.setOwner(subPolicyId);
 		this.historyList.setOwner(subPolicyId);
 	}
 

@@ -20,6 +20,7 @@ import bigBang.definitions.client.response.ResponseError;
 import bigBang.definitions.client.response.ResponseHandler;
 import bigBang.definitions.shared.BigBangConstants;
 import bigBang.definitions.shared.DebitNote;
+import bigBang.definitions.shared.InfoOrDocumentRequest;
 import bigBang.definitions.shared.InsurancePolicy;
 import bigBang.definitions.shared.InsurancePolicy.TableSection;
 import bigBang.definitions.shared.Expense;
@@ -863,6 +864,48 @@ public class InsurancePolicyProcessBrokerImpl extends DataBroker<InsurancePolicy
 			public void onResponseFailure(Throwable caught) {
 				handler.onError(new String[]{
 						new String("Could not create the new Expense")	
+				});
+				super.onResponseFailure(caught);
+			}
+		});
+	}
+
+	@Override
+	public void createCompanyInfoRequest(InfoOrDocumentRequest request,
+			final ResponseHandler<InfoOrDocumentRequest> responseHandler) {
+		service.createInfoOrDocumentRequest(request, new BigBangAsyncCallback<InfoOrDocumentRequest>() {
+
+			@Override
+			public void onResponseSuccess(InfoOrDocumentRequest result) {
+				responseHandler.onResponse(result);
+				EventBus.getInstance().fireEvent(new OperationWasExecutedEvent(BigBangConstants.OperationIds.InsurancePolicyProcess.CREATE_COMPANY_INFO_REQUEST, result.id));
+			}
+			
+			@Override
+			public void onResponseFailure(Throwable caught) {
+				responseHandler.onError(new String[]{
+					new String("Could not create de info request")	
+				});
+				super.onResponseFailure(caught);
+			}
+		});
+	}
+
+	@Override
+	public void createClientInfoRequest(InfoOrDocumentRequest request,
+			final ResponseHandler<InfoOrDocumentRequest> responseHandler) {
+		service.createInfoOrDocumentRequest(request, new BigBangAsyncCallback<InfoOrDocumentRequest>() {
+
+			@Override
+			public void onResponseSuccess(InfoOrDocumentRequest result) {
+				responseHandler.onResponse(result);
+				EventBus.getInstance().fireEvent(new OperationWasExecutedEvent(BigBangConstants.OperationIds.InsurancePolicyProcess.CREATE_CLIENT_INFO_REQUEST, result.id));
+			}
+			
+			@Override
+			public void onResponseFailure(Throwable caught) {
+				responseHandler.onError(new String[]{
+					new String("Could not create de info request")	
 				});
 				super.onResponseFailure(caught);
 			}

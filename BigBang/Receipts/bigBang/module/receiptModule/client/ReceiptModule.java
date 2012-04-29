@@ -28,6 +28,7 @@ import bigBang.module.receiptModule.client.userInterface.presenter.ReceiptAssoci
 import bigBang.module.receiptModule.client.userInterface.presenter.ReceiptReturnViewPresenter;
 import bigBang.module.receiptModule.client.userInterface.presenter.ReceiptSearchOperationViewPresenter;
 import bigBang.module.receiptModule.client.userInterface.presenter.ReceiptSectionViewPresenter;
+import bigBang.module.receiptModule.client.userInterface.presenter.ReceiptTasksViewPresenter;
 import bigBang.module.receiptModule.client.userInterface.presenter.ReceiptTransferToPolicyViewPresenter;
 import bigBang.module.receiptModule.client.userInterface.presenter.SerialMarkForPaymentViewPresenter;
 import bigBang.module.receiptModule.client.userInterface.presenter.SerialReceiptCreationViewPresenter;
@@ -50,6 +51,7 @@ import bigBang.module.receiptModule.client.userInterface.view.ReceiptAssociateWi
 import bigBang.module.receiptModule.client.userInterface.view.ReceiptReturnView;
 import bigBang.module.receiptModule.client.userInterface.view.ReceiptSearchOperationView;
 import bigBang.module.receiptModule.client.userInterface.view.ReceiptSectionView;
+import bigBang.module.receiptModule.client.userInterface.view.ReceiptTasksView;
 import bigBang.module.receiptModule.client.userInterface.view.ReceiptTransferToPolicyView;
 import bigBang.module.receiptModule.client.userInterface.view.SerialMarkForPaymentView;
 import bigBang.module.receiptModule.client.userInterface.view.SerialReceiptCreationView;
@@ -264,6 +266,14 @@ public class ReceiptModule implements Module {
 			public ViewPresenter getInstance() {
 				SignatureRequestTasksView view = (SignatureRequestTasksView) GWT.create(SignatureRequestTasksView.class);
 				ViewPresenter presenter = new SignatureRequestTasksViewPresenter(view);
+				return presenter;
+			}
+		});
+		ViewPresenterFactory.getInstance().registerViewPresenterInstantiator("RECEIPT_TASKS", new ViewPresenterInstantiator(){
+			@Override
+			public ViewPresenter getInstance() {
+				ReceiptTasksView view = (ReceiptTasksView) GWT.create(ReceiptTasksView.class);
+				ViewPresenter presenter = new ReceiptTasksViewPresenter(view);
 				return presenter;
 			}
 		});

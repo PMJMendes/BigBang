@@ -7,6 +7,7 @@ import bigBang.definitions.client.dataAccess.InsuranceSubPolicyBroker;
 import bigBang.definitions.client.response.ResponseError;
 import bigBang.definitions.client.response.ResponseHandler;
 import bigBang.definitions.shared.BigBangConstants;
+import bigBang.definitions.shared.BigBangProcess;
 import bigBang.definitions.shared.Contact;
 import bigBang.definitions.shared.Document;
 import bigBang.definitions.shared.ExerciseStub;
@@ -71,6 +72,7 @@ public class SubPolicyViewPresenter implements ViewPresenter {
 		HasValueSelectables<ExerciseStub> getExercisesList();
 		HasValueSelectables<InsuredObjectStub> getInsuredObjectsList();
 		HasValueSelectables<ReceiptStub> getReceiptsList();
+		HasValueSelectables<BigBangProcess> getSubProcessesList();
 		HasValueSelectables<HistoryItemStub> getHistoryList();
 
 		void setSaveModeEnabled(boolean enabled);
@@ -263,6 +265,8 @@ public class SubPolicyViewPresenter implements ViewPresenter {
 					showReceipt((ReceiptStub) value);
 				}else if(source == view.getHistoryList()){
 					showHistory((HistoryItemStub) value);
+				}else if(source == view.getSubProcessesList()){
+					showSubProcess((BigBangProcess) value);
 				}
 			}
 		};
@@ -666,6 +670,26 @@ public class SubPolicyViewPresenter implements ViewPresenter {
 				item.setStackParameter("display");
 				item.pushIntoStackParameter("display", "search");
 				item.setParameter("receiptid", receiptItem.id);
+				NavigationHistoryManager.getInstance().go(item);
+			}
+
+			@Override
+			public void onError(Collection<ResponseError> errors) {
+				onResponse(null);
+			}
+		});
+	}
+	
+	protected void showSubProcess(final BigBangProcess process){
+		saveWorkState(new ResponseHandler<Void>() {
+
+			@Override
+			public void onResponse(Void response) {
+				NavigationHistoryItem item = new NavigationHistoryItem();
+				if(process.dataTypeId.equalsIgnoreCase(BigBangConstants.EntityIds.INFO_REQUEST)) {
+					item.pushIntoStackParameter("display", "viewinforequest");
+					item.setParameter("requestid", process.dataId);
+				}
 				NavigationHistoryManager.getInstance().go(item);
 			}
 
