@@ -2,7 +2,6 @@ package bigBang.module.casualtyModule.client.dataAccess;
 
 import java.util.Collection;
 
-
 import bigBang.definitions.client.dataAccess.CasualtyDataBroker;
 import bigBang.definitions.client.dataAccess.CasualtyDataBrokerClient;
 import bigBang.definitions.client.dataAccess.DataBroker;
@@ -293,10 +292,25 @@ CasualtyDataBroker {
 
 	@Override
 	public void createInfoOrDocumentRequest(InfoOrDocumentRequest request,
-			ResponseHandler<InfoOrDocumentRequest> responseHandler) {
+			final ResponseHandler<InfoOrDocumentRequest> responseHandler) {
 	
-		responseHandler.onResponse(null);
-		//TODO
+		service.createInfoOrDocumentRequest(request, new BigBangAsyncCallback<InfoOrDocumentRequest>() {
+			
+			@Override
+			public void onResponseSuccess(InfoOrDocumentRequest result) {
+				responseHandler.onResponse(null);
+				EventBus.getInstance().fireEvent(new OperationWasExecutedEvent(BigBangConstants.OperationIds.CasualtyProcess.CREATE_INFO_REQUEST, result.id));
+			}
+			
+			@Override
+			public void onResponseFailure(Throwable caught) {
+				responseHandler.onError(new String[]{
+						new String("Could not transfer the process")
+				});
+				super.onResponseFailure(caught);
+			}
+
+		});
 		
 		
 	}

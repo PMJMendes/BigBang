@@ -55,8 +55,6 @@ public class CasualtyOperationsViewPresenter implements ViewPresenter {
 
 				if(display.equalsIgnoreCase("search")){
 					present("CASUALTY_SEARCH", parameters);
-				}else if(display.equalsIgnoreCase("managertransfer")){
-					present("MANAGER_TRANSFER", parameters);
 				}else if(display.equalsIgnoreCase("subcasualty")){
 					present("SUB_CASUALTY_VIEW", parameters);
 				}else if(display.equalsIgnoreCase("history")){
@@ -67,6 +65,12 @@ public class CasualtyOperationsViewPresenter implements ViewPresenter {
 					present("SUB_CASUALTY_INFO_OR_DOCUMENT_REQUEST", parameters);
 				}else if(display.equalsIgnoreCase("insurerinfosubcasualty")){
 					present("SUB_CASUALTY_EXTERNAL_REQUEST", parameters);
+				}else if(display.equalsIgnoreCase("viewinforequest")){
+					present("VIEW_CASUALTY_INFO_OR_DOCUMENT_REQUEST", parameters);
+				}else if(display.equalsIgnoreCase("viewsubcasualtyinforequest")){
+					present("VIEW_SUB_CASUALTY_INFO_OR_DOCUMENT_REQUEST", parameters);
+				}else if(display.equalsIgnoreCase("viewmanagertransfer")){
+					present("MANAGER_TRANSFER", parameters);
 				}else{
 					goToDefault();
 				}

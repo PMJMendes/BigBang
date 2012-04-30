@@ -318,14 +318,19 @@ public class CasualtySearchOperationViewPresenter implements ViewPresenter {
 	}
 	
 	protected void showSubProcess(BigBangProcess process){
-//		String type = process.dataTypeId;
+		String type = process.dataTypeId;
 
-		//TODO
-//		if(type.equalsIgnoreCase(BigBangConstants.EntityIds.NEGOTIATION)){
-//			showNegotiation(process.dataId);
-//		}else if(type.equalsIgnoreCase(BigBangConstants.EntityIds.INFO_REQUEST)) {
-//			showInfoRequest(process.dataId);
-//		}
+		if(type.equalsIgnoreCase(BigBangConstants.EntityIds.MANAGER_TRANSFER)){
+			NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
+			item.pushIntoStackParameter("display", "viewmanagertransfer");
+			item.setParameter("transferid", process.dataId);
+			NavigationHistoryManager.getInstance().go(item);
+		}else if(type.equalsIgnoreCase(BigBangConstants.EntityIds.INFO_REQUEST)){
+			NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
+			item.pushIntoStackParameter("display", "viewinforequest");
+			item.setParameter("requestid", process.dataId);
+			NavigationHistoryManager.getInstance().go(item);
+		}
 	}
 
 	protected void showHistory(String historyItemId){

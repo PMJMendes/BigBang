@@ -97,8 +97,10 @@ public class HistoryList extends FilterableList<HistoryItemStub> implements Hist
 	}
 
 	public void discardOwner(){
-		if(ownerId != null){
-//			this.broker.unregisterClient(this, this.ownerId);
+		this.clear();
+		if(ownerId != null) {
+			broker.unregisterClient(this);
+			this.ownerId = null;
 		}
 	}
 	

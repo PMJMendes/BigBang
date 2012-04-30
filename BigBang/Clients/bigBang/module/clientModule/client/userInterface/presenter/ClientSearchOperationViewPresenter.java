@@ -229,7 +229,7 @@ public class ClientSearchOperationViewPresenter implements ViewPresenter {
 					NavigationHistoryManager.getInstance().go(item);
 					break;
 				case TRANSFER_MANAGER:
-					item.pushIntoStackParameter("display", "managertransfer");
+					item.setParameter("show", "managertransfer");
 					NavigationHistoryManager.getInstance().go(item);
 					break;
 				}

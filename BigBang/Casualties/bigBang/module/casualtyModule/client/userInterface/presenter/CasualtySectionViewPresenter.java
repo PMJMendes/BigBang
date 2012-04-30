@@ -164,6 +164,15 @@ public class CasualtySectionViewPresenter implements ViewPresenter {
 				}else if(show.equalsIgnoreCase("subcasualtyrejectclose")){
 					present("SUB_CASUALTY_REJECT_CLOSING", parameters);
 					view.showOverlayViewContainer(true);
+				}else if(show.equalsIgnoreCase("cancelinforequest")){
+					present("INFO_OR_DOCUMENT_REQUEST_CANCELLATION", parameters);
+					view.showOverlayViewContainer(true);
+				}else if(show.equalsIgnoreCase("replyinforequest")){
+					present("INFO_OR_DOCUMENT_REQUEST_REPLY", parameters);
+					view.showOverlayViewContainer(true);
+				}else if(show.equalsIgnoreCase("repeatinforequest")){
+					present("INFO_OR_DOCUMENT_REQUEST_REPEAT", parameters);
+					view.showOverlayViewContainer(true);
 				}
 			}
 
