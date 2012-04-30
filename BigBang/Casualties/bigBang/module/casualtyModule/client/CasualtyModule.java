@@ -24,6 +24,7 @@ import bigBang.module.casualtyModule.client.userInterface.presenter.SubCasualtyE
 import bigBang.module.casualtyModule.client.userInterface.presenter.SubCasualtyInfoOrDocumentRequestViewPresenter;
 import bigBang.module.casualtyModule.client.userInterface.presenter.SubCasualtyViewPresenter;
 import bigBang.module.casualtyModule.client.userInterface.presenter.ViewCasualtyInfoRequestViewPresenter;
+import bigBang.module.casualtyModule.client.userInterface.presenter.ViewSubCasualtyExternalInfoRequestViewPresenter;
 import bigBang.module.casualtyModule.client.userInterface.presenter.ViewSubCasualtyInfoRequestViewPresenter;
 import bigBang.module.casualtyModule.client.userInterface.view.CasualtyCloseView;
 import bigBang.module.casualtyModule.client.userInterface.view.CasualtyDeleteView;
@@ -42,6 +43,7 @@ import bigBang.module.casualtyModule.client.userInterface.view.SubCasualtyExtern
 import bigBang.module.casualtyModule.client.userInterface.view.SubCasualtyInfoOrDocumentRequestView;
 import bigBang.module.casualtyModule.client.userInterface.view.SubCasualtyView;
 import bigBang.module.casualtyModule.client.userInterface.view.ViewCasualtyInfoRequestView;
+import bigBang.module.casualtyModule.client.userInterface.view.ViewSubCasualtyExternalInfoRequestView;
 import bigBang.module.casualtyModule.client.userInterface.view.ViewSubCasualtyInfoRequestView;
 
 import com.google.gwt.core.client.GWT;
@@ -219,6 +221,15 @@ public class CasualtyModule implements Module {
 			public ViewPresenter getInstance() {
 				ViewSubCasualtyInfoRequestView view = (ViewSubCasualtyInfoRequestView) GWT.create(ViewSubCasualtyInfoRequestView.class);
 				ViewPresenter presenter = new ViewSubCasualtyInfoRequestViewPresenter(view);
+				return presenter;
+			}
+		});
+		ViewPresenterFactory.getInstance().registerViewPresenterInstantiator("VIEW_SUB_CASUALTY_EXTERNAL_REQUEST", new ViewPresenterInstantiator() {
+
+			@Override
+			public ViewPresenter getInstance() {
+				ViewSubCasualtyExternalInfoRequestView view = (ViewSubCasualtyExternalInfoRequestView) GWT.create(ViewSubCasualtyExternalInfoRequestView.class);
+				ViewPresenter presenter = new ViewSubCasualtyExternalInfoRequestViewPresenter(view);
 				return presenter;
 			}
 		});

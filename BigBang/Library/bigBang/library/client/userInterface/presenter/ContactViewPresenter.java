@@ -123,6 +123,7 @@ public class ContactViewPresenter implements ViewPresenter, ContactsBrokerClient
 	public void setParameters(HasParameters parameterHolder) {
 
 		this.parameterHolder = parameterHolder;
+		view.setSaveMode(false);
 		broker.unregisterClient(this);
 		ownerId = parameterHolder.getParameter("ownerid");
 		contactId = parameterHolder.getParameter("contactid");
@@ -169,6 +170,7 @@ public class ContactViewPresenter implements ViewPresenter, ContactsBrokerClient
 								contact = response;
 								setContact(contact);
 								view.getToolbar().setSaveModeEnabled(false);
+								view.getToolbar().allowEdit(true);
 							}
 
 							@Override
@@ -188,7 +190,9 @@ public class ContactViewPresenter implements ViewPresenter, ContactsBrokerClient
 			}
 		}
 
-
+		if(!hasPermissions){
+			view.getToolbar().allowEdit(false);
+		}
 	}
 
 	public void bind() {

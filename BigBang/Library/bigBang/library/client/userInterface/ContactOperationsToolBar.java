@@ -35,6 +35,7 @@ public abstract class ContactOperationsToolBar extends BigBangOperationsToolBar{
 	public void allowEdit(boolean b){
 		
 		createMenuItem.setEnabled(b);
+		editCancelMenuItem.setEnabled(b);
 		adminMenuItem.setEnabled(b);
 		
 	}

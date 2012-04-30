@@ -71,6 +71,8 @@ public class CasualtyOperationsViewPresenter implements ViewPresenter {
 					present("VIEW_SUB_CASUALTY_INFO_OR_DOCUMENT_REQUEST", parameters);
 				}else if(display.equalsIgnoreCase("viewmanagertransfer")){
 					present("MANAGER_TRANSFER", parameters);
+				}else if(display.equalsIgnoreCase("viewsubcasualtyexternalrequest")){
+					present("VIEW_SUB_CASUALTY_EXTERNAL_REQUEST", parameters);
 				}else{
 					goToDefault();
 				}
