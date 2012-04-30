@@ -2,10 +2,14 @@ package com.premiumminds.BigBang.Jewel.Objects;
 
 import java.sql.ResultSet;
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.UUID;
 
 import Jewel.Engine.Engine;
+import Jewel.Engine.DataAccess.MasterDB;
+import Jewel.Engine.Implementation.Entity;
 import Jewel.Engine.Implementation.User;
+import Jewel.Engine.Interfaces.IEntity;
 import Jewel.Engine.SysObjects.JewelEngineException;
 import Jewel.Engine.SysObjects.ObjectBase;
 
@@ -78,5 +82,76 @@ public class PrintSet
     public String getLabel()
     {
     	return mrefTemplate.getLabel() + " @ " + ((Timestamp)getAt(0)).toString().substring(0, 17) + " (" + mrefUser.getDisplayName() + ")";
+    }
+
+    public PrintSetDocument[] getCurrentDocs()
+    	throws BigBangJewelException
+    {
+		ArrayList<PrintSetDocument> larrAux;
+		IEntity lrefDocuments;
+        MasterDB ldb;
+        ResultSet lrsDocuments;
+
+		larrAux = new ArrayList<PrintSetDocument>();
+
+		try
+		{
+			lrefDocuments = Entity.GetInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), Constants.ObjID_PrintSetDocument)); 
+			ldb = new MasterDB();
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangJewelException(e.getMessage(), e);
+		}
+
+		try
+		{
+			lrsDocuments = lrefDocuments.SelectByMembers(ldb, new int[] {PrintSetDocument.I.SET},
+					new java.lang.Object[] {getKey()}, new int[0]);
+		}
+		catch (Throwable e)
+		{
+			try { ldb.Disconnect(); } catch (Throwable e1) {}
+			throw new BigBangJewelException(e.getMessage(), e);
+		}
+
+		try
+		{
+			while ( lrsDocuments.next() )
+				larrAux.add(PrintSetDocument.GetInstance(getNameSpace(), lrsDocuments));
+		}
+		catch (BigBangJewelException e)
+		{
+			try { lrsDocuments.close(); } catch (Throwable e1) {}
+			try { ldb.Disconnect(); } catch (Throwable e1) {}
+			throw e;
+		}
+		catch (Throwable e)
+		{
+			try { lrsDocuments.close(); } catch (Throwable e1) {}
+			try { ldb.Disconnect(); } catch (Throwable e1) {}
+			throw new BigBangJewelException(e.getMessage(), e);
+		}
+
+		try
+		{
+			lrsDocuments.close();
+		}
+		catch (Throwable e)
+		{
+			try { ldb.Disconnect(); } catch (Throwable e1) {}
+			throw new BigBangJewelException(e.getMessage(), e);
+		}
+
+		try
+		{
+			ldb.Disconnect();
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangJewelException(e.getMessage(), e);
+		}
+
+		return larrAux.toArray(new PrintSetDocument[larrAux.size()]);
     }
 }

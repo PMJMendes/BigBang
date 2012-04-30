@@ -108,7 +108,7 @@ public class CreateDASRequest
 			lobjSet.SaveToDb(pdb);
 			lidSet = lobjSet.getKey();
 
-			lobjSetClient = PrintSetDocument.GetInstance(Engine.getCurrentNameSpace(), null);
+			lobjSetClient = PrintSetDocument.GetInstance(Engine.getCurrentNameSpace(), (UUID)null);
 			lobjSetClient.setAt(0, lidSet);
 			lobjSetClient.setAt(1, mobjDocOps.marrCreate[0].mobjFile);
 			lobjSetClient.setAt(2, false);

@@ -121,7 +121,7 @@ public class CreateSignatureRequest
 
 				if ( midSetDocument == null )
 				{
-					lobjSetClient = PrintSetDocument.GetInstance(Engine.getCurrentNameSpace(), null);
+					lobjSetClient = PrintSetDocument.GetInstance(Engine.getCurrentNameSpace(), (UUID)null);
 					lobjSetClient.setAt(0, midSet);
 					lobjSetClient.setAt(1, mobjDocOps.marrCreate[0].mobjFile);
 					lobjSetClient.setAt(2, false);

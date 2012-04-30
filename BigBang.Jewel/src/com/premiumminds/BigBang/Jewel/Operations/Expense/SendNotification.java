@@ -97,7 +97,7 @@ public class SendNotification
 
 				if ( midSetDocument == null )
 				{
-					lobjSetCompany = PrintSetDocument.GetInstance(Engine.getCurrentNameSpace(), null);
+					lobjSetCompany = PrintSetDocument.GetInstance(Engine.getCurrentNameSpace(), (UUID)null);
 					lobjSetCompany.setAt(0, midSet);
 					lobjSetCompany.setAt(1, mobjDocOps.marrCreate[0].mobjFile);
 					lobjSetCompany.setAt(2, false);
