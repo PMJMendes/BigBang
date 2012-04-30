@@ -150,7 +150,7 @@ public class CasualtyServiceImpl
 	public InfoOrDocumentRequest createInfoOrDocumentRequest(InfoOrDocumentRequest request)
 		throws SessionExpiredException, BigBangException
 	{
-		com.premiumminds.BigBang.Jewel.Objects.QuoteRequest lobjRequest;
+		com.premiumminds.BigBang.Jewel.Objects.Casualty lobjRequest;
 		CreateInfoRequest lopCIR;
 
 		if ( Engine.getCurrentUser() == null )
@@ -158,7 +158,7 @@ public class CasualtyServiceImpl
 
 		try
 		{
-			lobjRequest = com.premiumminds.BigBang.Jewel.Objects.QuoteRequest.GetInstance(Engine.getCurrentNameSpace(),
+			lobjRequest = com.premiumminds.BigBang.Jewel.Objects.Casualty.GetInstance(Engine.getCurrentNameSpace(),
 					UUID.fromString(request.parentDataObjectId));
 
 			lopCIR = new CreateInfoRequest(lobjRequest.GetProcessID());
