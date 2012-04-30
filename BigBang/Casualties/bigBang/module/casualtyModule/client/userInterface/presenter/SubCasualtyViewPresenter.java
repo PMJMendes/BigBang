@@ -381,13 +381,13 @@ public class SubCasualtyViewPresenter implements ViewPresenter {
 
 		if(type.equalsIgnoreCase(BigBangConstants.EntityIds.INFO_REQUEST)){
 			NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
-			item.pushIntoStackParameter("display", "viewinforequest");
+			item.pushIntoStackParameter("display", "viewsubcasualtyinforequest");
 			item.setParameter("requestid", process.dataId);
 			NavigationHistoryManager.getInstance().go(item);
 		}
 		else if(type.equalsIgnoreCase(BigBangConstants.EntityIds.EXTERNAL_INFO_REQUEST)){
 			NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
-			item.pushIntoStackParameter("display", "viewexternalrequest");
+			item.pushIntoStackParameter("display", "viewsubcasualtyexternalrequest");
 			item.setParameter("externalrequestid", process.dataId);
 			NavigationHistoryManager.getInstance().go(item);
 		}

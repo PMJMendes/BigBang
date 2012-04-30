@@ -118,7 +118,7 @@ public class CancelInfoOrDocumentRequestViewPresenter implements ViewPresenter {
 	}
 	
 	private void onCancellationSuccess(){
-		EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não foi possível cancelar o pedido de informação"), TYPE.ALERT_NOTIFICATION));
+		EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Pedido de Informação cancelado com sucesso"), TYPE.TRAY_NOTIFICATION));
 		NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
 		item.removeParameter("show");
 		item.popFromStackParameter("display");
