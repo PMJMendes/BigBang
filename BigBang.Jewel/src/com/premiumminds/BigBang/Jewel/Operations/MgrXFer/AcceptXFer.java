@@ -326,8 +326,14 @@ public class AcceptXFer
 		if ( Constants.ObjID_Client.equals(pidObjectType) )
 			lopResult = new com.premiumminds.BigBang.Jewel.Operations.Client.ExternEndMgrXFer(pidProc);
 
+		if ( Constants.ObjID_QuoteRequest.equals(pidObjectType) )
+			lopResult = new com.premiumminds.BigBang.Jewel.Operations.QuoteRequest.ExternEndMgrXFer(pidProc);
+
 		if ( Constants.ObjID_Policy.equals(pidObjectType) )
 			lopResult = new com.premiumminds.BigBang.Jewel.Operations.Policy.ExternEndMgrXFer(pidProc);
+
+		if ( Constants.ObjID_Casualty.equals(pidObjectType) )
+			lopResult = new com.premiumminds.BigBang.Jewel.Operations.Casualty.ExternEndMgrXFer(pidProc);
 
 		if ( lopResult != null )
 		{
@@ -350,8 +356,14 @@ public class AcceptXFer
 		if ( Constants.ObjID_Client.equals(pidObjectType) )
 			lopResult = new com.premiumminds.BigBang.Jewel.Operations.Client.ExternUndoEndMgrXFer(pidProc);
 
+		if ( Constants.ObjID_QuoteRequest.equals(pidObjectType) )
+			lopResult = new com.premiumminds.BigBang.Jewel.Operations.QuoteRequest.ExternUndoEndMgrXFer(pidProc);
+
 		if ( Constants.ObjID_Policy.equals(pidObjectType) )
 			lopResult = new com.premiumminds.BigBang.Jewel.Operations.Policy.ExternUndoEndMgrXFer(pidProc);
+
+		if ( Constants.ObjID_Casualty.equals(pidObjectType) )
+			lopResult = new com.premiumminds.BigBang.Jewel.Operations.Casualty.ExternUndoEndMgrXFer(pidProc);
 
 		if ( lopResult != null )
 		{
