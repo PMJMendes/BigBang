@@ -6,6 +6,7 @@ import bigBang.definitions.client.dataAccess.DataBroker;
 import bigBang.definitions.client.dataAccess.DataBrokerClient;
 import bigBang.definitions.client.dataAccess.ExpenseDataBroker;
 import bigBang.definitions.client.dataAccess.ExpenseDataBrokerClient;
+import bigBang.definitions.client.dataAccess.Search;
 import bigBang.definitions.client.dataAccess.SearchDataBroker;
 import bigBang.definitions.client.response.ResponseError;
 import bigBang.definitions.client.response.ResponseHandler;
@@ -16,11 +17,17 @@ import bigBang.definitions.shared.Expense.ReturnEx;
 import bigBang.definitions.shared.ExpenseStub;
 import bigBang.definitions.shared.ExternalInfoRequest;
 import bigBang.definitions.shared.InfoOrDocumentRequest;
+import bigBang.definitions.shared.SearchParameter;
+import bigBang.definitions.shared.SortOrder;
+import bigBang.definitions.shared.SortParameter;
 import bigBang.library.client.BigBangAsyncCallback;
 import bigBang.library.client.EventBus;
 import bigBang.library.client.event.OperationWasExecutedEvent;
 import bigBang.module.expenseModule.interfaces.ExpenseService;
 import bigBang.module.expenseModule.interfaces.ExpenseServiceAsync;
+import bigBang.module.expenseModule.shared.ExpenseSearchParameter;
+import bigBang.module.expenseModule.shared.ExpenseSortParameter;
+import bigBang.module.expenseModule.shared.ExpenseSortParameter.SortableField;
 
 public class ExpenseBrokerImpl extends DataBroker<Expense> implements ExpenseDataBroker{
 
@@ -455,6 +462,44 @@ public class ExpenseBrokerImpl extends DataBroker<Expense> implements ExpenseDat
 						new String("Could not notify clients")
 				});
 				super.onResponseFailure(caught);
+			}
+		});
+	}
+	
+	@Override
+	public void getExpensesForOwner(String ownerId,
+			final ResponseHandler<Collection<ExpenseStub>> handler) {
+		ExpenseSearchParameter parameter = new ExpenseSearchParameter();
+		parameter.ownerId = ownerId;
+		
+		SearchParameter[] parameters = new SearchParameter[]{
+				parameter
+		};
+		
+		ExpenseSortParameter sort = new ExpenseSortParameter(SortableField.NUMBER, SortOrder.DESC);
+		SortParameter[] sorts = new SortParameter[]{
+				sort
+		};
+		
+		getSearchBroker().search(parameters, sorts, -1, new ResponseHandler<Search<ExpenseStub>>() {
+
+			@Override
+			public void onResponse(Search<ExpenseStub> response) {
+				handler.onResponse(response.getResults());
+				service.closeSearch(response.getWorkspaceId(), new BigBangAsyncCallback<Void>() {
+
+					@Override
+					public void onResponseSuccess(Void result) {
+						return;
+					}
+				});
+			}
+
+			@Override
+			public void onError(Collection<ResponseError> errors) {
+				handler.onError(new String[]{
+						new String("Could not get the expenses for the given owner id")
+				});
 			}
 		});
 	}

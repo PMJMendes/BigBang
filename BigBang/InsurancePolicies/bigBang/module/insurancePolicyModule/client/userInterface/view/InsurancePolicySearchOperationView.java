@@ -8,6 +8,7 @@ import bigBang.definitions.shared.BigBangProcess;
 import bigBang.definitions.shared.Contact;
 import bigBang.definitions.shared.Document;
 import bigBang.definitions.shared.ExerciseStub;
+import bigBang.definitions.shared.ExpenseStub;
 import bigBang.definitions.shared.HistoryItemStub;
 import bigBang.definitions.shared.InsurancePolicy;
 import bigBang.definitions.shared.ReceiptStub;
@@ -450,6 +451,11 @@ public class InsurancePolicySearchOperationView extends View implements Insuranc
 	@Override
 	public HasValueSelectables<ReceiptStub> getReceiptsList() {
 		return this.childrenPanel.receiptsList;
+	}
+	
+	@Override
+	public HasValueSelectables<ExpenseStub> getExpensesList() {
+		return this.childrenPanel.expensesList;
 	}
 	
 	@Override

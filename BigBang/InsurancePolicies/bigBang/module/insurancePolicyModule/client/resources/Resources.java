@@ -20,4 +20,7 @@ public interface Resources extends ClientBundle {
 	@Source("images/inactive.png")
 	ImageResource inactivePolicyIcon();
 	
+	@Source("images/reportIcon.png")
+	ImageResource reportIcon();
+	
 }

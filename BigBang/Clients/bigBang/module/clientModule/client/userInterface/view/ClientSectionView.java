@@ -65,6 +65,7 @@ public class ClientSectionView extends View implements ClientSectionViewPresente
 		
 		addDockItem("Pesquisa", r.searchIcon(), SectionOperation.OPERATIONS);
 		addDockItem("Transf. Gestor", r.clientManagerIcon(), SectionOperation.MASS_MANAGER_TRANSFER);
+		addDockItem("Relatórios", r.reportIcon(), SectionOperation.REPORT);
 	}
 
 	protected void addDockItem(String text, ImageResource icon, final ClientSectionViewPresenter.SectionOperation action){

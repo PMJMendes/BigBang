@@ -19,6 +19,7 @@ import bigBang.library.client.HasEditableValue;
 import bigBang.library.client.HasParameters;
 import bigBang.library.client.HasValueSelectables;
 import bigBang.library.client.Notification;
+import bigBang.library.client.PermissionChecker;
 import bigBang.library.client.Notification.TYPE;
 import bigBang.library.client.ValueSelectable;
 import bigBang.library.client.dataAccess.DataBrokerManager;
@@ -225,6 +226,7 @@ public class MassInsurerAccountingViewPresenter implements ViewPresenter{
 					view.allowSend(true);
 					view.getReceiptForm().setValue(null);
 				}else{
+					view.allowSend(false);
 					onUserLacksPermission();
 				}
 
@@ -238,8 +240,7 @@ public class MassInsurerAccountingViewPresenter implements ViewPresenter{
 	}
 
 	protected void onUserLacksPermission() {
-		EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não tem permissões para realizar esta operação"), TYPE.ALERT_NOTIFICATION));
-		NavigationHistoryManager.getInstance().reload();
+//		EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não tem permissões para realizar esta operação"), TYPE.ALERT_NOTIFICATION));
 	}
 
 	private void clearView() {
@@ -271,8 +272,19 @@ public class MassInsurerAccountingViewPresenter implements ViewPresenter{
 		});
 	}
 
-	protected void checkUserPermission(ResponseHandler<Boolean> handler) {
-		handler.onResponse(true); //TODO
+	protected void checkUserPermission(final ResponseHandler<Boolean> handler) {
+		PermissionChecker.hasGeneralPermission(BigBangConstants.EntityIds.RECEIPT, BigBangConstants.OperationIds.ReceiptProcess.INSURER_ACCOUNTING, new ResponseHandler<Boolean>() {
+
+			@Override
+			public void onResponse(Boolean response) {
+				handler.onResponse(response);
+			}
+
+			@Override
+			public void onError(Collection<ResponseError> errors) {
+				handler.onResponse(false);
+			}
+		});
 	}
 
 	protected void onInsurerAccountingSuccess(){

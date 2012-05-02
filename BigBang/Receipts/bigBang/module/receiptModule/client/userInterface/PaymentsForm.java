@@ -142,5 +142,13 @@ public class PaymentsForm extends FormView<Payment[]> {
 		
 		totalLabel.setValue(total + "€");
 	}
+	
+	@Override
+	public void setReadOnly(boolean readOnly) {
+		super.setReadOnly(readOnly);
+		if(newButton != null) {
+			newButton.setEnabled(!readOnly);
+		}
+	}
 
 }

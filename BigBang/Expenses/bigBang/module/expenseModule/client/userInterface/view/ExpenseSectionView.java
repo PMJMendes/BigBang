@@ -67,6 +67,7 @@ public class ExpenseSectionView extends View implements ExpenseSectionViewPresen
 		addDockItem("Participações à Seguradora", r.notifyInsurer(), SectionOperation.MASS_PARTICIPATE_TO_INSURER);
 		addDockItem("Notificação dos Clientes", r.notifyClient(), SectionOperation.MASS_NOTIFY_RESULTS_CLIENT);
 		addDockItem("Devolução aos Clientes", r.returnToClient(), SectionOperation.MASS_RETURN_TO_CLIENT);
+		addDockItem("Relatórios", r.reportIcon(), SectionOperation.REPORT);
 	}
 
 	protected void addDockItem(String text, ImageResource icon, final ExpenseSectionViewPresenter.SectionOperation action){

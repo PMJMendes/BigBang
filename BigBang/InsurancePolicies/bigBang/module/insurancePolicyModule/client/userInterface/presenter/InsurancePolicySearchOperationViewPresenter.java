@@ -11,6 +11,7 @@ import bigBang.definitions.shared.BigBangProcess;
 import bigBang.definitions.shared.Contact;
 import bigBang.definitions.shared.Document;
 import bigBang.definitions.shared.ExerciseStub;
+import bigBang.definitions.shared.ExpenseStub;
 import bigBang.definitions.shared.HistoryItemStub;
 import bigBang.definitions.shared.InsurancePolicy;
 import bigBang.definitions.shared.InsurancePolicy.TableSection;
@@ -116,6 +117,7 @@ ViewPresenter {
 		HasValueSelectables<ExerciseStub> getExercisesList();
 		HasValueSelectables<SubPolicyStub> getSubPoliciesList();
 		HasValueSelectables<ReceiptStub> getReceiptsList();
+		HasValueSelectables<ExpenseStub> getExpensesList();
 		HasValueSelectables<HistoryItemStub> getHistoryList();
 		HasValueSelectables<BigBangProcess> getSubProcessesList();
 
@@ -401,6 +403,17 @@ ViewPresenter {
 				ReceiptStub selectedValue = event.getFirstSelected() == null ? null : ((ValueSelectable<ReceiptStub>) event.getFirstSelected()).getValue();
 				if(selectedValue != null) {
 					showReceipt(selectedValue);
+				}
+			}
+		});
+		view.getExpensesList().addSelectionChangedEventHandler(new SelectionChangedEventHandler() {
+
+			@Override
+			public void onSelectionChanged(SelectionChangedEvent event) {
+				@SuppressWarnings("unchecked")
+				ExpenseStub selectedValue = event.getFirstSelected() == null ? null : ((ValueSelectable<ExpenseStub>) event.getFirstSelected()).getValue();
+				if(selectedValue != null) {
+					showExpense(selectedValue);
 				}
 			}
 		});
@@ -935,6 +948,26 @@ ViewPresenter {
 				item.setStackParameter("display");
 				item.pushIntoStackParameter("display", "search");
 				item.setParameter("receiptid", receipt.id);
+				NavigationHistoryManager.getInstance().go(item);
+			}
+
+			@Override
+			public void onError(Collection<ResponseError> errors) {
+				onResponse(null);
+			}
+		});
+	}
+	
+	private void showExpense(final ExpenseStub expense){
+		saveWorkState(new ResponseHandler<Void>() {
+
+			@Override
+			public void onResponse(Void response) {
+				NavigationHistoryItem item = new NavigationHistoryItem();
+				item.setParameter("section", "expense");
+				item.setStackParameter("display");
+				item.pushIntoStackParameter("display", "search");
+				item.setParameter("expenseid", expense.id);
 				NavigationHistoryManager.getInstance().go(item);
 			}
 

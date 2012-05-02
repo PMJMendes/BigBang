@@ -19,6 +19,7 @@ import bigBang.library.client.HasEditableValue;
 import bigBang.library.client.HasParameters;
 import bigBang.library.client.Notification;
 import bigBang.library.client.Notification.TYPE;
+import bigBang.library.client.PermissionChecker;
 import bigBang.library.client.dataAccess.DataBrokerManager;
 import bigBang.library.client.event.ActionInvokedEvent;
 import bigBang.library.client.event.ActionInvokedEventHandler;
@@ -333,37 +334,37 @@ public class SerialReceiptCreationViewPresenter implements ViewPresenter{
 		editing = true;
 		view.setFocusOnPolicy();
 		final String receiptId = view.getReceiptNumber();
-		
+
 		if(receiptId.length() == 0){return;}
-		
-			view.clear();
-			view.setReceiptNumber(receiptId); 
 
-			receiptBroker.getReceiptsWithNumber(receiptId, new ResponseHandler<Collection<ReceiptStub>>() {
+		view.clear();
+		view.setReceiptNumber(receiptId); 
 
-				@Override
-				public void onResponse(Collection<ReceiptStub> response) {
+		receiptBroker.getReceiptsWithNumber(receiptId, new ResponseHandler<Collection<ReceiptStub>>() {
 
-					if(response.size() > 1){
-						receiptPresenter.setParameters(null);
-						receiptPresenter.fillList(response);
-						popup.center();
-					}
-					else if(response.size() == 1){
-						getReceipt(((ReceiptStub)response.toArray()[0]).id);
-					}
-					else{
-						view.enablePolicy(true);
-					}
+			@Override
+			public void onResponse(Collection<ReceiptStub> response) {
+
+				if(response.size() > 1){
+					receiptPresenter.setParameters(null);
+					receiptPresenter.fillList(response);
+					popup.center();
 				}
-
-				@Override
-				public void onError(Collection<ResponseError> errors) {
-					EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não foi possível obter os recibos."), TYPE.ALERT_NOTIFICATION));				
+				else if(response.size() == 1){
+					getReceipt(((ReceiptStub)response.toArray()[0]).id);
 				}
-			});
+				else{
+					view.enablePolicy(true);
+				}
+			}
 
-		
+			@Override
+			public void onError(Collection<ResponseError> errors) {
+				EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não foi possível obter os recibos."), TYPE.ALERT_NOTIFICATION));				
+			}
+		});
+
+
 
 
 	}
@@ -392,61 +393,65 @@ public class SerialReceiptCreationViewPresenter implements ViewPresenter{
 			@Override
 			public void onResponse(InsurancePolicy response) {
 
-				if(receiptPolicyWrapper.receipt == null){
-					receiptPolicyWrapper.receipt = new Receipt();
-					receiptPolicyWrapper.receipt.number = view.getReceiptNumber();
+				if(PermissionChecker.hasPermission(response, BigBangConstants.OperationIds.InsurancePolicyProcess.CREATE_RECEIPT)){
+
+					if(receiptPolicyWrapper.receipt == null){
+						receiptPolicyWrapper.receipt = new Receipt();
+						receiptPolicyWrapper.receipt.number = view.getReceiptNumber();
+					}
+					receiptPolicyWrapper.policy = response;
+
+					agencyBroker.getInsuranceAgencies(new ResponseHandler<InsuranceAgency[]>() {
+
+						@Override
+						public void onResponse(InsuranceAgency[] response) {
+							agencyBroker.getInsuranceAgency(receiptPolicyWrapper.policy.insuranceAgencyId, new ResponseHandler<InsuranceAgency>() {
+
+								@Override
+								public void onResponse(InsuranceAgency response) {
+									receiptPolicyWrapper.insuranceAgencyName = response.name;
+									view.getForm().setValue(receiptPolicyWrapper);
+									view.enableToolbar(true);
+									view.setReceiptReadOnly(false);
+									if(popup.isAttached())
+										popup.hidePopup();
+
+									if(popupPolicy.isAttached())
+										popupPolicy.hidePopup();
+								}
+
+								@Override
+								public void onError(Collection<ResponseError> errors) {
+									EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não foi possível obter o nome da seguradora."), TYPE.ALERT_NOTIFICATION));
+									view.getForm().setValue(receiptPolicyWrapper);
+									view.enableToolbar(true);
+									view.setReceiptReadOnly(false);
+									if(popup.isAttached())
+										popup.hidePopup();
+
+									if(popupPolicy.isAttached())
+										popupPolicy.hidePopup();
+								}
+							});
+						}
+
+						@Override
+						public void onError(Collection<ResponseError> errors) {
+							EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não foi possível obter o nome da seguradora."), TYPE.ALERT_NOTIFICATION));
+							view.getForm().setValue(receiptPolicyWrapper);
+							view.enableToolbar(true);
+							view.setReceiptReadOnly(false);
+							if(popupPolicy.isAttached())
+								popupPolicy.hidePopup();
+
+							if(popupPolicy.isAttached())
+								popupPolicy.hidePopup();
+						}
+					});
+
+				} else {
+					EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não é possível criar Recibos para a Apólice Especificada"), TYPE.ALERT_NOTIFICATION));
 				}
-				receiptPolicyWrapper.policy = response;
-
-				agencyBroker.getInsuranceAgencies(new ResponseHandler<InsuranceAgency[]>() {
-
-					@Override
-					public void onResponse(InsuranceAgency[] response) {
-						agencyBroker.getInsuranceAgency(receiptPolicyWrapper.policy.insuranceAgencyId, new ResponseHandler<InsuranceAgency>() {
-
-							@Override
-							public void onResponse(InsuranceAgency response) {
-								receiptPolicyWrapper.insuranceAgencyName = response.name;
-								view.getForm().setValue(receiptPolicyWrapper);
-								view.enableToolbar(true);
-								view.setReceiptReadOnly(false);
-								if(popup.isAttached())
-									popup.hidePopup();
-
-								if(popupPolicy.isAttached())
-									popupPolicy.hidePopup();
-							}
-
-							@Override
-							public void onError(Collection<ResponseError> errors) {
-								EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não foi possível obter o nome da seguradora."), TYPE.ALERT_NOTIFICATION));
-								view.getForm().setValue(receiptPolicyWrapper);
-								view.enableToolbar(true);
-								view.setReceiptReadOnly(false);
-								if(popup.isAttached())
-									popup.hidePopup();
-
-								if(popupPolicy.isAttached())
-									popupPolicy.hidePopup();
-							}
-						});
-					}
-
-					@Override
-					public void onError(Collection<ResponseError> errors) {
-						EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não foi possível obter o nome da seguradora."), TYPE.ALERT_NOTIFICATION));
-						view.getForm().setValue(receiptPolicyWrapper);
-						view.enableToolbar(true);
-						view.setReceiptReadOnly(false);
-						if(popupPolicy.isAttached())
-							popupPolicy.hidePopup();
-
-						if(popupPolicy.isAttached())
-							popupPolicy.hidePopup();
-					}
-				});
-
-
 
 			}
 

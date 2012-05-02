@@ -1,5 +1,7 @@
 package bigBang.definitions.client.dataAccess;
 
+import java.util.Collection;
+
 import bigBang.definitions.client.response.ResponseHandler;
 import bigBang.definitions.shared.Expense;
 import bigBang.definitions.shared.Expense.Acceptance;
@@ -43,4 +45,6 @@ public interface ExpenseDataBroker extends DataBrokerInterface<Expense>{
 	void massNotifyClient(String[] toNotify,
 			ResponseHandler<Void> responseHandler);
 
+	void getExpensesForOwner(String ownerId, ResponseHandler<Collection<ExpenseStub>> handler);
+	
 }

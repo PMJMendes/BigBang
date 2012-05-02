@@ -19,6 +19,7 @@ import bigBang.library.client.HasEditableValue;
 import bigBang.library.client.HasParameters;
 import bigBang.library.client.HasValueSelectables;
 import bigBang.library.client.Notification;
+import bigBang.library.client.PermissionChecker;
 import bigBang.library.client.ValueSelectable;
 import bigBang.library.client.Notification.TYPE;
 import bigBang.library.client.dataAccess.DataBrokerManager;
@@ -98,6 +99,7 @@ public class MassReturnToInsurerViewPresenter implements ViewPresenter{
 					view.allowCreation(true);
 					view.getReceiptForm().setValue(null);
 				}else{
+					view.allowCreation(false);
 					onUserLacksPermission();
 				}
 
@@ -111,12 +113,22 @@ public class MassReturnToInsurerViewPresenter implements ViewPresenter{
 		
 	}
 	
-	private void checkUserPermission(ResponseHandler<Boolean> responseHandler) {
-		responseHandler.onResponse(true); //TODO
+	private void checkUserPermission(final ResponseHandler<Boolean> responseHandler) {
+		PermissionChecker.hasGeneralPermission(BigBangConstants.EntityIds.RECEIPT, BigBangConstants.OperationIds.ReceiptProcess.RETURN_TO_AGENCY, new ResponseHandler<Boolean>() {
+
+			@Override
+			public void onResponse(Boolean response) {
+				responseHandler.onResponse(response);
+			}
+
+			@Override
+			public void onError(Collection<ResponseError> errors) {
+				onResponse(false);
+			}
+		});
 	}
 	protected void onUserLacksPermission() {
-		EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não tem permissões para realizar esta operação"), TYPE.ALERT_NOTIFICATION));
-		NavigationHistoryManager.getInstance().reload();
+//		EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não tem permissões para realizar esta operação"), TYPE.ALERT_NOTIFICATION));
 	}
 
 	private void clearView() {

@@ -137,7 +137,7 @@ public class MassParticipateToInsurerView extends View implements MassParticipat
 	protected CheckableExpensesSearchPanel searchPanel;
 	protected SelectedExpensesList selectedExpenses;
 	protected ExpenseForm expenseForm;
-	protected Button participateToInsurer;
+	protected Button participateToInsurer, clearButton;
 
 	public MassParticipateToInsurerView(){
 
@@ -203,7 +203,7 @@ public class MassParticipateToInsurerView extends View implements MassParticipat
 		selectedListWrapper.add(participateToInsurerForm.getNonScrollableContent());
 		participateToInsurerForm.getNonScrollableContent().setSize("100%", "40px");
 		selectedListWrapper.setCellWidth(participateToInsurerForm, "100%");
-		Button clearButton = new Button("Limpar");
+		clearButton = new Button("Limpar");
 		sendClearWrapper.add(clearButton);
 		sendClearWrapper.setSpacing(5);
 		clearButton.addClickHandler(new ClickHandler() {
@@ -331,6 +331,8 @@ public class MassParticipateToInsurerView extends View implements MassParticipat
 	@Override
 	public void allowCreation(boolean b) {
 		participateToInsurer.setEnabled(b);
+		clearButton.setEnabled(b);
+		searchPanel.setCheckable(b);
 	}
 
 	@Override

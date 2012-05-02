@@ -10,6 +10,7 @@ import bigBang.definitions.shared.InsurancePolicy;
 import bigBang.definitions.shared.InsurancePolicyStub;
 import bigBang.library.client.EventBus;
 import bigBang.library.client.Notification;
+import bigBang.library.client.PermissionChecker;
 import bigBang.library.client.Notification.TYPE;
 import bigBang.library.client.ValueSelectable;
 import bigBang.library.client.dataAccess.DataBrokerManager;
@@ -62,7 +63,7 @@ ViewPresenter {
 		this.view.setOperationFilter(BigBangConstants.OperationIds.InsurancePolicyProcess.TRANSFER_MANAGER);
 		this.view.refreshMainList();
 		this.view.getMainList().addSelectionChangedEventHandler(new SelectionChangedEventHandler() {
-			
+
 			@Override
 			public void onSelectionChanged(SelectionChangedEvent event) {
 				@SuppressWarnings("unchecked")
@@ -87,7 +88,7 @@ ViewPresenter {
 			}
 		});
 		this.view.getSelectedList().addSelectionChangedEventHandler(new SelectionChangedEventHandler() {
-			
+
 			@Override
 			public void onSelectionChanged(SelectionChangedEvent event) {
 				@SuppressWarnings("unchecked")
@@ -112,21 +113,31 @@ ViewPresenter {
 			}
 		});
 	}
-	
+
 	@Override
 	protected void onCancel() {
 		NavigationHistoryManager.getInstance().reload();
 	}
 
 	@Override
-	protected void checkUserPermission(ResponseHandler<Boolean> handler) {
-		handler.onResponse(true); //TODO
+	protected void checkUserPermission(final ResponseHandler<Boolean> handler) {
+		PermissionChecker.hasGeneralPermission(BigBangConstants.EntityIds.CLIENT, BigBangConstants.OperationIds.InsurancePolicyProcess.TRANSFER_MANAGER, new ResponseHandler<Boolean>() {
+
+			@Override
+			public void onResponse(Boolean response) {
+				handler.onResponse(response);
+			}
+
+			@Override
+			public void onError(Collection<ResponseError> errors) {
+				handler.onResponse(false);
+			}
+		});
 	}
 
 	@Override
 	protected void onUserLacksPermission() {
-		EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não tem permissões para realizar esta operação"), TYPE.ALERT_NOTIFICATION));
-		NavigationHistoryManager.getInstance().reload();
+//		EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não tem permissões para realizar esta operação"), TYPE.ALERT_NOTIFICATION));
 	}
 
 	@Override
@@ -139,7 +150,7 @@ ViewPresenter {
 	protected void onTransferFailed() {
 		EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não foi possível criar a Transferência de Gestor"), TYPE.ALERT_NOTIFICATION));
 	}
-	
+
 	protected void onGetPolicyFailed() {
 		EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não foi possível obter a Apólice seleccionada"), TYPE.ALERT_NOTIFICATION));
 	}

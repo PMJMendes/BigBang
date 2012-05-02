@@ -11,6 +11,7 @@ import bigBang.definitions.shared.CasualtyStub;
 import bigBang.definitions.shared.ManagerTransfer;
 import bigBang.library.client.EventBus;
 import bigBang.library.client.Notification;
+import bigBang.library.client.PermissionChecker;
 import bigBang.library.client.Notification.TYPE;
 import bigBang.library.client.ValueSelectable;
 import bigBang.library.client.dataAccess.DataBrokerManager;
@@ -22,10 +23,10 @@ import bigBang.library.client.userInterface.presenter.MassManagerTransferViewPre
 import bigBang.library.client.userInterface.presenter.ViewPresenter;
 
 public class CasualtyMassManagerTransferViewPresenter extends
-		MassManagerTransferViewPresenter<CasualtyStub, Casualty> implements ViewPresenter {
+MassManagerTransferViewPresenter<CasualtyStub, Casualty> implements ViewPresenter {
 
 	protected CasualtyDataBroker casualtyBroker;
-	
+
 	public CasualtyMassManagerTransferViewPresenter(
 			bigBang.library.client.userInterface.presenter.MassManagerTransferViewPresenter.Display<CasualtyStub, Casualty> view) {
 		super(view);
@@ -37,13 +38,13 @@ public class CasualtyMassManagerTransferViewPresenter extends
 			Collection<CasualtyStub> affectedProcesses) {
 
 		String[] processIds = new String[affectedProcesses.size()];
-		
+
 		int i = 0;
 		for(CasualtyStub c : affectedProcesses){
 			processIds[i] = c.id;
 			i++;
 		}
-		
+
 		casualtyBroker.createManagerTransfer(processIds, newManagerId, new ResponseHandler<ManagerTransfer>() {
 
 			@Override
@@ -58,13 +59,13 @@ public class CasualtyMassManagerTransferViewPresenter extends
 			}
 		});
 	}
-	
+
 	protected void bind() {
 		super.bind();
 		this.view.setOperationFilter(BigBangConstants.OperationIds.ClientProcess.CREATE_MANAGER_TRANSFER);
 		this.view.refreshMainList();
 		this.view.getMainList().addSelectionChangedEventHandler(new SelectionChangedEventHandler() {
-			
+
 			@Override
 			public void onSelectionChanged(SelectionChangedEvent event) {
 				@SuppressWarnings("unchecked")
@@ -89,7 +90,7 @@ public class CasualtyMassManagerTransferViewPresenter extends
 			}
 		});
 		this.view.getSelectedList().addSelectionChangedEventHandler(new SelectionChangedEventHandler() {
-			
+
 			@Override
 			public void onSelectionChanged(SelectionChangedEvent event) {
 				@SuppressWarnings("unchecked")
@@ -121,14 +122,24 @@ public class CasualtyMassManagerTransferViewPresenter extends
 	}
 
 	@Override
-	protected void checkUserPermission(ResponseHandler<Boolean> handler) {
-		handler.onResponse(true); //TODO
+	protected void checkUserPermission(final ResponseHandler<Boolean> handler) {
+		PermissionChecker.hasGeneralPermission(BigBangConstants.EntityIds.CLIENT, BigBangConstants.OperationIds.CasualtyProcess.CREATE_MANAGER_TRANSFER, new ResponseHandler<Boolean>() {
+
+			@Override
+			public void onResponse(Boolean response) {
+				handler.onResponse(response);
+			}
+
+			@Override
+			public void onError(Collection<ResponseError> errors) {
+				handler.onResponse(false);
+			}
+		});
 	}
 
 	@Override
 	protected void onUserLacksPermission() {
-		EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não tem permissões para realizar esta operação"), TYPE.ALERT_NOTIFICATION));
-		NavigationHistoryManager.getInstance().reload();
+//		EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não tem permissões para realizar esta operação"), TYPE.ALERT_NOTIFICATION));
 	}
 
 	@Override
@@ -141,7 +152,7 @@ public class CasualtyMassManagerTransferViewPresenter extends
 	protected void onTransferFailed() {
 		EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não foi possível criar a Transferência de Gestor"), TYPE.ALERT_NOTIFICATION));
 	}
-	
+
 	protected void onGetCasualtyFailed() {
 		EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não foi possível obter o Sinistro seleccionado"), TYPE.ALERT_NOTIFICATION));
 	}

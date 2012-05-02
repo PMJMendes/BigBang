@@ -39,6 +39,7 @@ public class ExercisesList extends FilterableList<ExerciseStub> {
 		this.insurancePolicyBroker = (InsurancePolicyBroker) DataBrokerManager.Util.getInstance().getBroker(BigBangConstants.EntityIds.INSURANCE_POLICY);
 		this.exerciseBroker = (ExerciseDataBroker) DataBrokerManager.Util.getInstance().getBroker(BigBangConstants.EntityIds.POLICY_EXERCISE);
 		this.exerciseBroker.registerClient(this.exerciseBrokerClient);
+		showFilterField(false);
 	}
 
 	public void setOwner(String ownerId){

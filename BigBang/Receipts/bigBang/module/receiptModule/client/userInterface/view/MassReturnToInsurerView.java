@@ -165,7 +165,7 @@ public class MassReturnToInsurerView extends View implements MassReturnToInsurer
 	protected CheckableReceiptsSearchPanel searchPanel;
 	protected SelectedReceiptsList selectedReceipts;
 	protected ReceiptForm receiptForm;
-	protected Button returnReceipts;
+	protected Button returnReceipts, clearButton;
 	
 	public MassReturnToInsurerView(){
 		
@@ -231,7 +231,7 @@ public class MassReturnToInsurerView extends View implements MassReturnToInsurer
 		selectedListWrapper.add(applyPaymentNoticeCreationForm.getNonScrollableContent());
 		applyPaymentNoticeCreationForm.getNonScrollableContent().setSize("100%", "40px");
 		selectedListWrapper.setCellWidth(applyPaymentNoticeCreationForm, "100%");
-		Button clearButton = new Button("Limpar");
+		clearButton = new Button("Limpar");
 		sendClearWrapper.add(clearButton);
 		sendClearWrapper.setSpacing(5);
 		clearButton.addClickHandler(new ClickHandler() {
@@ -358,6 +358,8 @@ public class MassReturnToInsurerView extends View implements MassReturnToInsurer
 	@Override
 	public void allowCreation(boolean b) {
 		returnReceipts.setEnabled(b);
+		clearButton.setEnabled(b);
+		searchPanel.setCheckable(b);
 	}
 
 	@Override

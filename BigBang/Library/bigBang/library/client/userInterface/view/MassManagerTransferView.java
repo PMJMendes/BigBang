@@ -57,10 +57,10 @@ public abstract class MassManagerTransferView<T extends ProcessBase, T2 extends 
 	protected ActionInvokedEventHandler<Action> actionHandler;
 	protected CheckableSearchPanel<T> searchPanel;
 	protected SelectedProcessesList<T> selectedList; 
-	protected HasValue<String> managerSelection;
+	protected ExpandableListBoxFormField managerSelection;
 	protected HasEditableValue<T2> selectedProcessForm;
 	protected BigBangOperationsToolBar toolbar;
-	protected Button transferButton;
+	protected Button transferButton, clearButton;
 
 	public MassManagerTransferView(HasEditableValue<T2> selectedProcessForm, CheckableSearchPanel<T> searchPanel, SelectedProcessesList<T> selectedList){
 		SplitLayoutPanel wrapper = new SplitLayoutPanel();
@@ -121,7 +121,7 @@ public abstract class MassManagerTransferView<T extends ProcessBase, T2 extends 
 		selectedListWrapper.setSize("100%", "100%");
 		selectedListWrapper.add(managerSelectionForm.getNonScrollableContent());
 		this.selectedList = selectedList;
-		Button clearButton = new Button("Limpar");
+		this.clearButton = new Button("Limpar");
 		managerSelectionWrapper.add(clearButton);
 		managerSelectionWrapper.setSpacing(5);
 		clearButton.addClickHandler(new ClickHandler() {
@@ -193,6 +193,9 @@ public abstract class MassManagerTransferView<T extends ProcessBase, T2 extends 
 	@Override
 	public void allowTransfer(boolean allow) {
 		this.transferButton.setEnabled(allow);
+		this.clearButton.setEnabled(allow);
+		this.managerSelection.setReadOnly(!allow);
+		this.searchPanel.setCheckable(allow);
 	}
 
 	@Override

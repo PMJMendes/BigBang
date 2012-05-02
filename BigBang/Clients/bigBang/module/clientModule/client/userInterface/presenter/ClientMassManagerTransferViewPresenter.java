@@ -11,6 +11,7 @@ import bigBang.definitions.shared.ClientStub;
 import bigBang.definitions.shared.ManagerTransfer;
 import bigBang.library.client.EventBus;
 import bigBang.library.client.Notification;
+import bigBang.library.client.PermissionChecker;
 import bigBang.library.client.Notification.TYPE;
 import bigBang.library.client.ValueSelectable;
 import bigBang.library.client.dataAccess.DataBrokerManager;
@@ -118,14 +119,24 @@ public class ClientMassManagerTransferViewPresenter extends MassManagerTransferV
 	}
 
 	@Override
-	protected void checkUserPermission(ResponseHandler<Boolean> handler) {
-		handler.onResponse(true); //TODO
+	protected void checkUserPermission(final ResponseHandler<Boolean> handler) {
+		PermissionChecker.hasGeneralPermission(BigBangConstants.EntityIds.CLIENT, BigBangConstants.OperationIds.ClientProcess.CREATE_MANAGER_TRANSFER, new ResponseHandler<Boolean>() {
+			
+			@Override
+			public void onResponse(Boolean response) {
+				handler.onResponse(response);
+			}
+			
+			@Override
+			public void onError(Collection<ResponseError> errors) {
+				handler.onResponse(false);
+			}
+		});
 	}
 
 	@Override
 	protected void onUserLacksPermission() {
-		EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não tem permissões para realizar esta operação"), TYPE.ALERT_NOTIFICATION));
-		NavigationHistoryManager.getInstance().reload();
+//		EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não tem permissões para realizar esta operação"), TYPE.ALERT_NOTIFICATION));
 	}
 
 	@Override

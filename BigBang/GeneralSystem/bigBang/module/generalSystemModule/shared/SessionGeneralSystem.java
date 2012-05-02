@@ -7,6 +7,9 @@ public class SessionGeneralSystem extends GeneralSystem {
 	protected static GeneralSystem instance;
 	
 	public static GeneralSystem getInstance() {
+		if(SessionGeneralSystem.instance == null) {
+			SessionGeneralSystem.instance = new GeneralSystem();
+		}
 		return SessionGeneralSystem.instance;
 	}
 	

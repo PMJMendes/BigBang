@@ -1,5 +1,6 @@
 package bigBang.module.expenseModule.client.userInterface.presenter;
 
+import bigBang.definitions.shared.BigBangConstants;
 import bigBang.library.client.HasParameters;
 import bigBang.library.client.ViewPresenterController;
 import bigBang.library.client.event.ActionInvokedEvent;
@@ -16,12 +17,13 @@ import com.google.gwt.user.client.ui.Widget;
 public class ExpenseSectionViewPresenter implements ViewPresenter {
 
 	public static enum Action {
-		ON_OVERLAY_CLOSED,
+		ON_OVERLAY_CLOSED
 	}
 
 	public static enum SectionOperation {
 		OPERATIONS,
-		MASS_PARTICIPATE_TO_INSURER, MASS_NOTIFY_RESULTS_CLIENT, MASS_RETURN_TO_CLIENT
+		MASS_PARTICIPATE_TO_INSURER, MASS_NOTIFY_RESULTS_CLIENT, MASS_RETURN_TO_CLIENT,
+		REPORT
 	}
 
 	public static interface Display {
@@ -100,6 +102,9 @@ public class ExpenseSectionViewPresenter implements ViewPresenter {
 					case MASS_RETURN_TO_CLIENT:
 						item.pushIntoStackParameter("display", "massreturntoclient");
 						break;
+					case REPORT:
+						item.pushIntoStackParameter("display", "report");
+						break;
 					}
 					
 					
@@ -136,6 +141,10 @@ public class ExpenseSectionViewPresenter implements ViewPresenter {
 					}else if(display.equalsIgnoreCase("massreturntoclient")){
 						view.selectOperation(SectionOperation.MASS_RETURN_TO_CLIENT);
 						present("MASS_RETURN_TO_CLIENT", parameters);
+					}else if(display.equalsIgnoreCase("report")){
+						view.selectOperation(SectionOperation.REPORT);
+						parameters.setParameter("processtypeid", BigBangConstants.EntityIds.EXPENSE);
+						present("REPORTS", parameters);
 					}else{
 						view.selectOperation(SectionOperation.OPERATIONS);
 						present("EXPENSE_OPERATIONS", parameters);

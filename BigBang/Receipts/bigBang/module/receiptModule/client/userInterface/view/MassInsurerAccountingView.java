@@ -175,7 +175,7 @@ public class MassInsurerAccountingView extends View implements MassInsurerAccoun
 	protected SelectedReceiptsList selectedReceipts;
 	protected ReceiptForm receiptForm;
 	protected BigBangOperationsToolBar toolbar;
-	protected Button createPNotice;
+	protected Button createPNotice, clearButton;
 
 	public MassInsurerAccountingView(){
 
@@ -241,7 +241,7 @@ public class MassInsurerAccountingView extends View implements MassInsurerAccoun
 		selectedListWrapper.add(applyPaymentNoticeCreationForm.getNonScrollableContent());
 		applyPaymentNoticeCreationForm.getNonScrollableContent().setSize("100%", "40px");
 		selectedListWrapper.setCellWidth(applyPaymentNoticeCreationForm, "100%");
-		Button clearButton = new Button("Limpar");
+		clearButton = new Button("Limpar");
 		sendClearWrapper.add(clearButton);
 		sendClearWrapper.setSpacing(5);
 		clearButton.addClickHandler(new ClickHandler() {
@@ -367,6 +367,8 @@ public class MassInsurerAccountingView extends View implements MassInsurerAccoun
 	@Override
 	public void allowSend(boolean b) {
 		createPNotice.setEnabled(b);
+		clearButton.setEnabled(b);
+		searchPanel.setCheckable(b);
 	}
 
 }

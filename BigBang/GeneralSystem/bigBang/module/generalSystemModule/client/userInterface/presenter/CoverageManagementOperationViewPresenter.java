@@ -16,6 +16,7 @@ import bigBang.library.client.HasParameters;
 import bigBang.library.client.HasValueSelectables;
 import bigBang.library.client.Notification;
 import bigBang.library.client.Notification.TYPE;
+import bigBang.library.client.PermissionChecker;
 import bigBang.library.client.Selectable;
 import bigBang.library.client.ValueSelectable;
 import bigBang.library.client.dataAccess.DataBrokerManager;
@@ -32,6 +33,7 @@ import bigBang.module.generalSystemModule.client.userInterface.LineList;
 import bigBang.module.generalSystemModule.client.userInterface.SubLineList;
 import bigBang.module.generalSystemModule.client.userInterface.CoverageList;
 import bigBang.module.generalSystemModule.client.userInterface.LineList.Entry;
+import bigBang.module.generalSystemModule.shared.SessionGeneralSystem;
 
 import com.google.gwt.user.client.ui.HasWidgets;
 import com.google.gwt.user.client.ui.UIObject;
@@ -96,7 +98,7 @@ public class CoverageManagementOperationViewPresenter implements ViewPresenter {
 	@Override
 	public void setParameters(HasParameters parameterHolder) {
 
-		view.setReadOnly(false); //TODO ISTO TEM DE VIR DE FORA
+		view.setReadOnly(PermissionChecker.hasPermission(SessionGeneralSystem.getInstance(), BigBangConstants.OperationIds.GeneralSystemProcess.MANAGE_LINES));
 		lineId = parameterHolder.getParameter("lineid");
 		subLineId = parameterHolder.getParameter("sublineid");
 		coverageId = parameterHolder.getParameter("coverageid");

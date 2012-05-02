@@ -1,5 +1,6 @@
 package bigBang.module.clientModule.client.userInterface.presenter;
 
+import bigBang.definitions.shared.BigBangConstants;
 import bigBang.library.client.HasParameters;
 import bigBang.library.client.ViewPresenterController;
 import bigBang.library.client.event.ActionInvokedEvent;
@@ -21,7 +22,8 @@ public class ClientSectionViewPresenter implements ViewPresenter {
 
 	public static enum SectionOperation {
 		OPERATIONS,
-		MASS_MANAGER_TRANSFER
+		MASS_MANAGER_TRANSFER,
+		REPORT
 	}
 
 	public static interface Display {
@@ -94,6 +96,9 @@ public class ClientSectionViewPresenter implements ViewPresenter {
 					case MASS_MANAGER_TRANSFER:
 						item.pushIntoStackParameter("display", "massmanagertransfer");
 						break;
+					case REPORT:
+						item.pushIntoStackParameter("display", "report");
+						break;
 					}
 				}
 
@@ -121,7 +126,11 @@ public class ClientSectionViewPresenter implements ViewPresenter {
 					if(display.equalsIgnoreCase("massmanagertransfer")){
 						view.selectOperation(SectionOperation.MASS_MANAGER_TRANSFER);
 						present("CLIENT_MASS_MANAGER_TRANSFER", parameters);
-					}else{
+					}else if(display.equalsIgnoreCase("report")){
+						view.selectOperation(SectionOperation.REPORT);
+						parameters.setParameter("processtypeid", BigBangConstants.EntityIds.CLIENT);
+						present("REPORTS", parameters);
+					}else {
 						view.selectOperation(SectionOperation.OPERATIONS);
 						present("CLIENT_OPERATIONS", parameters);
 					}

@@ -139,7 +139,7 @@ public class MassNotifyResultsClientView extends View implements MassNotifyResul
 	protected CheckableExpensesSearchPanel searchPanel;
 	protected SelectedExpensesList selectedExpenses;
 	protected ExpenseForm expenseForm;
-	protected Button notifyResultsToClient;
+	protected Button notifyResultsToClient, clearButton;
 	
 	public MassNotifyResultsClientView(){
 		
@@ -205,7 +205,7 @@ public class MassNotifyResultsClientView extends View implements MassNotifyResul
 		selectedListWrapper.add(notifyResultsToClient.getNonScrollableContent());
 		notifyResultsToClient.getNonScrollableContent().setSize("100%", "40px");
 		selectedListWrapper.setCellWidth(notifyResultsToClient, "100%");
-		Button clearButton = new Button("Limpar");
+		clearButton = new Button("Limpar");
 		sendClearWrapper.add(clearButton);
 		sendClearWrapper.setSpacing(5);
 		clearButton.addClickHandler(new ClickHandler() {
@@ -333,6 +333,8 @@ public class MassNotifyResultsClientView extends View implements MassNotifyResul
 	@Override
 	public void allowCreation(boolean b) {
 		notifyResultsToClient.setEnabled(b);
+		clearButton.setEnabled(b);
+		searchPanel.setCheckable(b);
 	}
 
 	@Override

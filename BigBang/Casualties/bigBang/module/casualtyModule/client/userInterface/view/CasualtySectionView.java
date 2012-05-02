@@ -64,6 +64,7 @@ public class CasualtySectionView extends View implements CasualtySectionViewPres
 		
 		addDockItem("Pesquisa", r.searchIcon(), SectionOperation.OPERATIONS);
 		addDockItem("Transf. Gestor", r.managerIcon(), SectionOperation.MASS_MANAGER_TRANSFER);
+		addDockItem("Relatórios", r.reportIcon(), SectionOperation.REPORT);
 	}
 
 	protected void addDockItem(String text, ImageResource icon, final CasualtySectionViewPresenter.SectionOperation action){

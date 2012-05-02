@@ -19,6 +19,7 @@ import bigBang.library.client.HasEditableValue;
 import bigBang.library.client.HasParameters;
 import bigBang.library.client.HasValueSelectables;
 import bigBang.library.client.Notification;
+import bigBang.library.client.PermissionChecker;
 import bigBang.library.client.Notification.TYPE;
 import bigBang.library.client.ValueSelectable;
 import bigBang.library.client.dataAccess.DataBrokerManager;
@@ -29,7 +30,6 @@ import bigBang.library.client.event.CheckedSelectionChangedEventHandler;
 import bigBang.library.client.event.NewNotificationEvent;
 import bigBang.library.client.event.SelectionChangedEvent;
 import bigBang.library.client.event.SelectionChangedEventHandler;
-import bigBang.library.client.history.NavigationHistoryManager;
 import bigBang.library.client.userInterface.presenter.ViewPresenter;
 
 
@@ -225,6 +225,7 @@ public class MassAgentAccountingViewPresenter implements ViewPresenter{
 					view.allowSend(true);
 					view.getReceiptForm().setValue(null);
 				}else{
+					view.allowSend(false);
 					onUserLacksPermission();
 				}
 
@@ -238,8 +239,7 @@ public class MassAgentAccountingViewPresenter implements ViewPresenter{
 	}
 
 	protected void onUserLacksPermission() {
-		EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não tem permissões para realizar esta operação"), TYPE.ALERT_NOTIFICATION));
-		NavigationHistoryManager.getInstance().reload();
+//		EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não tem permissões para realizar esta operação"), TYPE.ALERT_NOTIFICATION));
 	}
 
 	private void clearView() {
@@ -271,13 +271,23 @@ public class MassAgentAccountingViewPresenter implements ViewPresenter{
 		});
 	}
 
-	protected void checkUserPermission(ResponseHandler<Boolean> handler) {
-		handler.onResponse(true); //TODO
+	protected void checkUserPermission(final ResponseHandler<Boolean> handler) {
+		PermissionChecker.hasGeneralPermission(BigBangConstants.EntityIds.RECEIPT, BigBangConstants.OperationIds.ReceiptProcess.AGENT_ACCOUNTING, new ResponseHandler<Boolean>() {
+
+			@Override
+			public void onResponse(Boolean response) {
+				handler.onResponse(response);
+			}
+
+			@Override
+			public void onError(Collection<ResponseError> errors) {
+				onResponse(false);
+			}
+		});
 	}
 
 	protected void onAgentAccountingSuccess(){
 		EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "As Prestações de Contas foram Enviadas com Sucesso"), TYPE.TRAY_NOTIFICATION));
-		NavigationHistoryManager.getInstance().reload();
 	}
 	
 	protected void onAgentAccountingFailed(){

@@ -1,5 +1,6 @@
 package bigBang.module.quoteRequestModule.client.userInterface.presenter;
 
+import bigBang.definitions.shared.BigBangConstants;
 import bigBang.library.client.HasParameters;
 import bigBang.library.client.ViewPresenterController;
 import bigBang.library.client.event.ActionInvokedEvent;
@@ -8,6 +9,7 @@ import bigBang.library.client.history.NavigationHistoryItem;
 import bigBang.library.client.history.NavigationHistoryManager;
 import bigBang.library.client.userInterface.presenter.ViewPresenter;
 import bigBang.library.client.userInterface.view.View;
+
 import com.google.gwt.user.client.ui.HasWidgets;
 import com.google.gwt.user.client.ui.UIObject;
 import com.google.gwt.user.client.ui.Widget;
@@ -20,7 +22,8 @@ public class QuoteRequestSectionViewPresenter implements ViewPresenter {
 
 	public static enum SectionOperation {
 		OPERATIONS,
-		MASS_MANAGER_TRANSFER
+		MASS_MANAGER_TRANSFER,
+		REPORT
 	}
 
 	public static interface Display {
@@ -91,6 +94,9 @@ public class QuoteRequestSectionViewPresenter implements ViewPresenter {
 					case OPERATIONS:
 						item.pushIntoStackParameter("display", "search");
 						break;
+					case REPORT:
+						item.pushIntoStackParameter("display", "report");
+						break;
 					}
 				}
 
@@ -117,6 +123,10 @@ public class QuoteRequestSectionViewPresenter implements ViewPresenter {
 					if(display.equalsIgnoreCase("massmanagertransfer")){
 						view.selectOperation(SectionOperation.MASS_MANAGER_TRANSFER);
 						present("QUOTE_REQUEST_MASS_MANAGER_TRANSFER", parameters);
+					}else if(display.equalsIgnoreCase("report")){
+						view.selectOperation(SectionOperation.REPORT);
+						parameters.setParameter("processtypeid", BigBangConstants.EntityIds.QUOTE_REQUEST);
+						present("REPORTS", parameters);
 					}else {
 						view.selectOperation(SectionOperation.OPERATIONS);
 						present("QUOTE_REQUEST_OPERATIONS", parameters);

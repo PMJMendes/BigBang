@@ -171,6 +171,7 @@ public abstract class MassManagerTransferViewPresenter<T extends ProcessBase, T2
 					view.allowTransfer(true);
 					view.getNewManagerForm().setValue(null);
 				}else{
+					view.allowTransfer(false);
 					onUserLacksPermission();
 				}
 			}

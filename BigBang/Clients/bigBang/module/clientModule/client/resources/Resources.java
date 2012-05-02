@@ -16,5 +16,8 @@ public interface Resources extends ClientBundle {
 	@Source("images/verticalColumnBackground1.png")
 	@ImageOptions(repeatStyle=RepeatStyle.Vertical)
 	ImageResource verticalColumnBackground1();
+	
+	@Source("images/reportIcon.png")
+	ImageResource reportIcon();
 
 }

@@ -1,5 +1,6 @@
 package bigBang.module.insurancePolicyModule.client.userInterface.presenter;
 
+import bigBang.definitions.shared.BigBangConstants;
 import bigBang.library.client.HasParameters;
 import bigBang.library.client.ViewPresenterController;
 import bigBang.library.client.event.ActionInvokedEvent;
@@ -8,6 +9,7 @@ import bigBang.library.client.history.NavigationHistoryItem;
 import bigBang.library.client.history.NavigationHistoryManager;
 import bigBang.library.client.userInterface.presenter.ViewPresenter;
 import bigBang.library.client.userInterface.view.View;
+
 import com.google.gwt.user.client.ui.HasWidgets;
 import com.google.gwt.user.client.ui.UIObject;
 import com.google.gwt.user.client.ui.Widget;
@@ -20,7 +22,8 @@ public class InsurancePolicySectionViewPresenter implements ViewPresenter{
 
 	public static enum SectionOperation {
 		OPERATIONS,
-		MASS_MANAGER_TRANSFER
+		MASS_MANAGER_TRANSFER,
+		REPORT
 	}
 
 	public static interface Display {
@@ -92,6 +95,9 @@ public class InsurancePolicySectionViewPresenter implements ViewPresenter{
 					case MASS_MANAGER_TRANSFER:
 						item.pushIntoStackParameter("display", "massmanagertransfer");
 						break;
+					case REPORT:
+						item.pushIntoStackParameter("display", "report");
+						break;
 					}
 				}
 
@@ -118,6 +124,10 @@ public class InsurancePolicySectionViewPresenter implements ViewPresenter{
 					if(display.equalsIgnoreCase("massmanagertransfer")){
 						view.selectOperation(SectionOperation.MASS_MANAGER_TRANSFER);
 						present("INSURANCE_POLICY_CREATE_MASS_MANAGER_TRANSFER", parameters);
+					}else if(display.equalsIgnoreCase("report")){
+						view.selectOperation(SectionOperation.REPORT);
+						parameters.setParameter("processtypeid", BigBangConstants.EntityIds.INSURANCE_POLICY);
+						present("REPORTS", parameters);
 					}else {
 						view.selectOperation(SectionOperation.OPERATIONS);
 						present("INSURANCE_POLICY_OPERATIONS", parameters);

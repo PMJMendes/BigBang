@@ -26,4 +26,7 @@ public interface Resources extends ClientBundle {
 	@Source("images/clientNotification.png")
 	ImageResource notifyClient();
 	
+	@Source("images/reportIcon.png")
+	ImageResource reportIcon();
+	
 }

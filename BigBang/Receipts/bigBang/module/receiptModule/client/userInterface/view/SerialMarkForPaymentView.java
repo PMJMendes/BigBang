@@ -124,6 +124,7 @@ public class SerialMarkForPaymentView extends View implements SerialMarkForPayme
 	@Override
 	public void allowMarkForPayment(boolean allow) {
 		this.paymentsForm.confirmButton.setEnabled(allow);
+		this.paymentsForm.setReadOnly(!allow);
 	}
 	
 	@Override

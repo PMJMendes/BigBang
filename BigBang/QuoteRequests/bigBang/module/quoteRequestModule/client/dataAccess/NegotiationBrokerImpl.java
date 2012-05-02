@@ -40,9 +40,8 @@ public class NegotiationBrokerImpl extends DataBroker<Negotiation> implements Ne
 			
 			@Override
 			public void onResponseSuccess(ExternalInfoRequest result) {
-		
 				handler.onResponse(result);
-				
+				EventBus.getInstance().fireEvent(new OperationWasExecutedEvent(BigBangConstants.OperationIds.NegotiationProcess.EXTERNAL_REQUEST, result.id));
 			}
 			
 			@Override

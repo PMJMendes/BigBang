@@ -13,6 +13,7 @@ import bigBang.definitions.shared.Tax;
 import bigBang.library.client.EventBus;
 import bigBang.library.client.HasParameters;
 import bigBang.library.client.Notification;
+import bigBang.library.client.PermissionChecker;
 import bigBang.library.client.Notification.TYPE;
 import bigBang.library.client.Selectable;
 import bigBang.library.client.ValueSelectable;
@@ -29,6 +30,7 @@ import bigBang.library.client.userInterface.NavigationPanel;
 import bigBang.library.client.userInterface.presenter.ViewPresenter;
 import bigBang.module.generalSystemModule.client.userInterface.TaxList;
 import bigBang.module.generalSystemModule.client.userInterface.view.TaxForm;
+import bigBang.module.generalSystemModule.shared.SessionGeneralSystem;
 
 import com.google.gwt.event.dom.client.HasClickHandlers;
 import com.google.gwt.user.client.ui.HasValue;
@@ -122,8 +124,8 @@ public class TaxManagementOperationViewPresenter implements ViewPresenter{
 	@Override
 	public void setParameters(HasParameters parameterHolder) {
 
-		view.setReadOnly(false); //TODO ISTO TEM DE VIR DE FORA
-		view.getTaxList().setReadOnly(false);
+		view.setReadOnly(PermissionChecker.hasPermission(SessionGeneralSystem.getInstance(), BigBangConstants.OperationIds.GeneralSystemProcess.MANAGE_COEFFICIENTS));
+		view.getTaxList().setReadOnly(PermissionChecker.hasPermission(SessionGeneralSystem.getInstance(), BigBangConstants.OperationIds.GeneralSystemProcess.MANAGE_COEFFICIENTS));
 		broker.getLines(new ResponseHandler<Line[]>() {
 
 			@Override

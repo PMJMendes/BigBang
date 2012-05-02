@@ -19,6 +19,7 @@ import bigBang.library.client.HasEditableValue;
 import bigBang.library.client.HasParameters;
 import bigBang.library.client.HasValueSelectables;
 import bigBang.library.client.Notification;
+import bigBang.library.client.PermissionChecker;
 import bigBang.library.client.ValueSelectable;
 import bigBang.library.client.Notification.TYPE;
 import bigBang.library.client.dataAccess.DataBrokerManager;
@@ -233,8 +234,7 @@ public class MassNotifyResultsClientViewPresenter implements ViewPresenter{
 	
 
 	protected void onUserLacksPermission() {
-		EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não tem permissões para realizar esta operação"), TYPE.ALERT_NOTIFICATION));
-		NavigationHistoryManager.getInstance().reload();		
+//		EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não tem permissões para realizar esta operação"), TYPE.ALERT_NOTIFICATION));
 	}
 
 	private void showMassNotifyResultsScreen() {
@@ -242,7 +242,7 @@ public class MassNotifyResultsClientViewPresenter implements ViewPresenter{
 
 			@Override
 			public void onResponse(Boolean response) {
-				view.allowCreation(true);
+				view.allowCreation(response);
 				view.getExpenseForm().setValue(null);
 			}
 
@@ -255,8 +255,19 @@ public class MassNotifyResultsClientViewPresenter implements ViewPresenter{
 		
 	}
 
-	private void checkUserPermission(ResponseHandler<Boolean> responseHandler) {
-		responseHandler.onResponse(true);
+	private void checkUserPermission(final ResponseHandler<Boolean> responseHandler) {
+		PermissionChecker.hasGeneralPermission(BigBangConstants.EntityIds.EXPENSE, BigBangConstants.OperationIds.ExpenseProcess.NOTIFY_CLIENT, new ResponseHandler<Boolean>() {
+
+			@Override
+			public void onResponse(Boolean response) {
+				responseHandler.onResponse(response);
+			}
+
+			@Override
+			public void onError(Collection<ResponseError> errors) {
+				onResponse(false);
+			}
+		});
 	}
 	
 }

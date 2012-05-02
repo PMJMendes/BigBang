@@ -450,8 +450,8 @@ public class ClientSearchOperationViewPresenter implements ViewPresenter {
 
 				view.allowEdit(PermissionChecker.hasPermission(response, BigBangConstants.OperationIds.ClientProcess.UPDATE_CLIENT));
 				view.allowDelete(PermissionChecker.hasPermission(response, BigBangConstants.OperationIds.ClientProcess.DELETE_CLIENT));
-				view.allowCreate(true); //TODO
-				view.allowRequestInfoOrDocument(true); //TODO
+				view.allowCreate(PermissionChecker.hasPermission(response, BigBangConstants.OperationIds.GeneralSystemProcess.CREATE_CLIENT));
+				view.allowRequestInfoOrDocument(PermissionChecker.hasPermission(response, BigBangConstants.OperationIds.ClientProcess.CREATE_INFO_REQUEST));
 				view.allowManagerTransfer(PermissionChecker.hasPermission(response, BigBangConstants.OperationIds.ClientProcess.CREATE_MANAGER_TRANSFER));
 				view.allowClientMerge(PermissionChecker.hasPermission(response, BigBangConstants.OperationIds.ClientProcess.MERGE_CLIENT));
 				view.allowCreatePolicy(PermissionChecker.hasPermission(response, BigBangConstants.OperationIds.ClientProcess.CREATE_POLICY));

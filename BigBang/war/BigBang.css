@@ -37,6 +37,13 @@ h1 {
 
 /** Most GWT widgets already have a style name defined */
 
+.gwt-TabBar {
+	background-image: url("images/menubg.png") !important;
+	color: #003156 !important;
+	border-top: 1px solid white;
+	border-bottom: 1px solid white;
+}
+
 .gwt-TabBarItem {
 	min-width: 100px;
 	height: 25px !important;
@@ -44,8 +51,6 @@ h1 {
 	padding-top:10px !important;
 	background-image: url("images/menubg.png") !important;
 	color: #003156 !important;
-	border-top: 1px solid white;
-	border-bottom: 1px solid white;
 	border-left: 1px solid #c9def3;
 	border-right: 1px solid #97b3d2;
 }
