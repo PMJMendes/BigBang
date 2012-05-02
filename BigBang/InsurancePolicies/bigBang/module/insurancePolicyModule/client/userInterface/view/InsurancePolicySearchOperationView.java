@@ -211,7 +211,7 @@ public class InsurancePolicySearchOperationView extends View implements Insuranc
 				}
 			}
 		});
-		
+
 		SplitLayoutPanel formWrapper = new SplitLayoutPanel();
 		formWrapper.setSize("100%", "100%");
 				

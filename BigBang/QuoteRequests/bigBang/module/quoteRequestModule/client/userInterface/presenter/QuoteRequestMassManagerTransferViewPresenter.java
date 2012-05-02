@@ -120,7 +120,7 @@ public class QuoteRequestMassManagerTransferViewPresenter extends MassManagerTra
 
 	@Override
 	protected void checkUserPermission(final ResponseHandler<Boolean> handler) {
-		PermissionChecker.hasGeneralPermission(BigBangConstants.EntityIds.CLIENT, BigBangConstants.OperationIds.QuoteRequestProcess.CREATE_MANAGER_TRANSFER, new ResponseHandler<Boolean>() {
+		PermissionChecker.hasGeneralPermission(BigBangConstants.EntityIds.QUOTE_REQUEST, BigBangConstants.OperationIds.QuoteRequestProcess.CREATE_MANAGER_TRANSFER, new ResponseHandler<Boolean>() {
 
 			@Override
 			public void onResponse(Boolean response) {

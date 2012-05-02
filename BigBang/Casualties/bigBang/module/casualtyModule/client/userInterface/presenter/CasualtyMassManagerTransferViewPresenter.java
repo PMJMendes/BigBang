@@ -123,7 +123,7 @@ MassManagerTransferViewPresenter<CasualtyStub, Casualty> implements ViewPresente
 
 	@Override
 	protected void checkUserPermission(final ResponseHandler<Boolean> handler) {
-		PermissionChecker.hasGeneralPermission(BigBangConstants.EntityIds.CLIENT, BigBangConstants.OperationIds.CasualtyProcess.CREATE_MANAGER_TRANSFER, new ResponseHandler<Boolean>() {
+		PermissionChecker.hasGeneralPermission(BigBangConstants.EntityIds.CASUALTY, BigBangConstants.OperationIds.CasualtyProcess.CREATE_MANAGER_TRANSFER, new ResponseHandler<Boolean>() {
 
 			@Override
 			public void onResponse(Boolean response) {

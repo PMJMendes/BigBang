@@ -121,7 +121,7 @@ ViewPresenter {
 
 	@Override
 	protected void checkUserPermission(final ResponseHandler<Boolean> handler) {
-		PermissionChecker.hasGeneralPermission(BigBangConstants.EntityIds.CLIENT, BigBangConstants.OperationIds.InsurancePolicyProcess.TRANSFER_MANAGER, new ResponseHandler<Boolean>() {
+		PermissionChecker.hasGeneralPermission(BigBangConstants.EntityIds.INSURANCE_POLICY, BigBangConstants.OperationIds.InsurancePolicyProcess.TRANSFER_MANAGER, new ResponseHandler<Boolean>() {
 
 			@Override
 			public void onResponse(Boolean response) {

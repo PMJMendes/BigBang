@@ -195,7 +195,7 @@ public abstract class InsurancePolicyForm extends FormView<InsurancePolicy> {
 		manager = new ExpandableListBoxFormField(BigBangConstants.EntityIds.USER, "Gestor");
 		manager.allowEdition(false);
 		insuranceAgency = new ExpandableListBoxFormField(BigBangConstants.EntityIds.INSURANCE_AGENCY, "Seguradora");
-		insuranceAgency.setEditable(false);
+		insuranceAgency.allowEdition(false);
 		mediator = new ExpandableListBoxFormField(BigBangConstants.EntityIds.MEDIATOR, "Mediador");
 		mediator.allowEdition(false);
 		category = new ExpandableListBoxFormField(BigBangConstants.EntityIds.CATEGORY, "Categoria");
@@ -348,7 +348,7 @@ public abstract class InsurancePolicyForm extends FormView<InsurancePolicy> {
 			@Override
 			public void onValueChange(ValueChangeEvent<String> event) {
 				if(event.getValue() == null || event.getValue().isEmpty()){
-					line.clearValues();
+					line.setListId(null, null);
 				}else{
 					line.setListId(BigBangConstants.EntityIds.LINE+"/"+event.getValue(), null);
 				}
@@ -359,7 +359,7 @@ public abstract class InsurancePolicyForm extends FormView<InsurancePolicy> {
 			@Override
 			public void onValueChange(ValueChangeEvent<String> event) {
 				if(event.getValue() == null || event.getValue().isEmpty()){
-					subLine.clearValues();
+					subLine.setListId(null, null);
 				}else{
 					subLine.setListId(BigBangConstants.EntityIds.SUB_LINE+"/"+event.getValue(), null);
 				}
@@ -379,6 +379,8 @@ public abstract class InsurancePolicyForm extends FormView<InsurancePolicy> {
 
 		clearValue();
 		setValue(this.value);
+		
+		setForNew();
 	}
 
 	public abstract void onSubLineChanged(String subLineId);
@@ -388,6 +390,7 @@ public abstract class InsurancePolicyForm extends FormView<InsurancePolicy> {
 		this.category.setEditable(false);
 		this.line.setEditable(false);
 		this.subLine.setEditable(false);
+		this.insuranceAgency.setEditable(false);
 	}
 
 	public void setForNew(){
@@ -395,6 +398,7 @@ public abstract class InsurancePolicyForm extends FormView<InsurancePolicy> {
 		this.category.setEditable(true);
 		this.line.setEditable(true);
 		this.subLine.setEditable(true);
+		this.insuranceAgency.setEditable(true);
 	}
 
 	@Override
@@ -524,6 +528,7 @@ public abstract class InsurancePolicyForm extends FormView<InsurancePolicy> {
 			this.manager.setValue(info.managerId);
 			this.number.setValue(info.number);
 			this.insuranceAgency.setValue(info.insuranceAgencyId);
+
 			this.category.setValue(info.categoryId, false);
 
 			String categoryId = info.categoryId == null ? "" : info.categoryId;
@@ -531,25 +536,28 @@ public abstract class InsurancePolicyForm extends FormView<InsurancePolicy> {
 
 				@Override
 				public void onResponse(Void response) {
-					String lineId = info.lineId == null ? "" : info.lineId;
-					line.setValue(lineId, false);
-					subLine.setListId(BigBangConstants.EntityIds.SUB_LINE+"/"+lineId, new ResponseHandler<Void>() {
-
-						@Override
-						public void onResponse(Void response) {
-							String subLineId = info.subLineId == null ? "" : info.subLineId;
-							subLine.setValue(subLineId, false);
-						}
-
-						@Override
-						public void onError(Collection<ResponseError> errors) {}
-					});
+					return;
 				}
 
 				@Override
 				public void onError(Collection<ResponseError> errors) {}
 
 			});
+			
+			String lineId = info.lineId == null ? "" : info.lineId;
+			line.setValue(lineId, false);
+			subLine.setListId(BigBangConstants.EntityIds.SUB_LINE+"/"+lineId, new ResponseHandler<Void>() {
+
+				@Override
+				public void onResponse(Void response) {
+					return;
+				}
+
+				@Override
+				public void onError(Collection<ResponseError> errors) {}
+			});
+			String subLineId = info.subLineId == null ? "" : info.subLineId;
+			subLine.setValue(subLineId, false);
 
 			this.mediator.setValue(info.mediatorId);
 			this.maturityDay.setValue(info.maturityDay+"");
