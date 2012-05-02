@@ -1017,7 +1017,7 @@ public class InsurancePolicyServiceImpl
 			int i;
 
 			if ( !mbValid )
-				throw new CorruptedPadException("Ocorreu um erro interno. Os dados correntes não são válidos.");
+				return new TipifiedListItem[0];
 
 			larrResult = new ArrayList<TipifiedListItem>();
 			for ( i = 0; i < marrObjects.size(); i++ )
@@ -1381,7 +1381,7 @@ public class InsurancePolicyServiceImpl
 			int i;
 
 			if ( !mbValid )
-				throw new CorruptedPadException("Ocorreu um erro interno. Os dados correntes não são válidos.");
+				return new TipifiedListItem[0];
 
 			larrResult = new ArrayList<TipifiedListItem>();
 			for ( i = 0; i < marrExercises.size(); i++ )
