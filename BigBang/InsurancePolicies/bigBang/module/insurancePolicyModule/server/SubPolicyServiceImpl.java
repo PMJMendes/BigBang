@@ -409,6 +409,8 @@ public class SubPolicyServiceImpl
 				larrAuxValues = lobjAuxPolicy.GetCurrentValues();
 				for ( i = 0 ; i < larrAuxValues.length; i++ )
 				{
+					if ( (larrAuxValues[i].getAt(4) != null) && (lmapExercises.get(larrAuxValues[i].getAt(4)) == null) )
+						continue;
 					lobjValue = new PadValue();
 					lobjValue.FromObject(larrAuxValues[i]);
 					lobjValue.mrefCoverage = lmapCoverages.get(lobjValue.midField);
