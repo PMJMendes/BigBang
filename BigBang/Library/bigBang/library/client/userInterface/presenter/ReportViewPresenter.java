@@ -15,9 +15,12 @@ import bigBang.library.client.Notification.TYPE;
 import bigBang.library.client.ValueSelectable;
 import bigBang.library.client.event.ActionInvokedEvent;
 import bigBang.library.client.event.ActionInvokedEventHandler;
+import bigBang.library.client.event.NavigationRequestEvent;
+import bigBang.library.client.event.NavigationRequestEventHandler;
 import bigBang.library.client.event.NewNotificationEvent;
 import bigBang.library.client.event.SelectionChangedEvent;
 import bigBang.library.client.event.SelectionChangedEventHandler;
+import bigBang.library.client.userInterface.NavigationPanel;
 import bigBang.library.interfaces.ReportService;
 import bigBang.library.interfaces.ReportServiceAsync;
 
@@ -28,7 +31,7 @@ import com.google.gwt.user.client.ui.Widget;
 public class ReportViewPresenter implements ViewPresenter {
 
 	public static enum Action {
-		GENERATE_REPORT
+		GENERATE_REPORT, PRINT_SET_SELECTION_CHANGED
 	}
 
 	public static interface Display {
@@ -44,6 +47,10 @@ public class ReportViewPresenter implements ViewPresenter {
 		void clearReportSections();
 		void addReportSection(Section section);
 		void goHomeAndClear();
+		HasValueSelectables<PrintSet> getPrintSetPanel();
+		void setGenerateReportButtonEnabled(boolean b);
+		void showButton(boolean b);
+		NavigationPanel getNavigationPanel();
 	}
 
 	protected boolean bound;
@@ -93,11 +100,27 @@ public class ReportViewPresenter implements ViewPresenter {
 				case GENERATE_REPORT:
 					onGenerateReport();
 					break;
+				case PRINT_SET_SELECTION_CHANGED:
+					onPrintSetSelectionChanged();
+					break;
 				}
+			}
+		});
+		
+		view.getNavigationPanel().navBar.addNavigationEventHandler(new NavigationRequestEventHandler() {
+			
+			@Override
+			public void onNavigationEvent(NavigationRequestEvent event) {
+				view.showButton(false);
 			}
 		});
 
 		this.bound = true;
+	}
+
+	protected void onPrintSetSelectionChanged() {
+		view.setGenerateReportButtonEnabled(!view.getPrintSetPanel().getSelected().isEmpty());
+
 	}
 
 	protected void clearView() {
@@ -135,11 +158,13 @@ public class ReportViewPresenter implements ViewPresenter {
 					switch(item.type) {
 					case CATEGORY:
 						showCategory(item);
+						view.showButton(false);
 						break;
 					case PARAM:
 						showParamReport(item);
 						break;
 					case PRINTSET:
+						view.showButton(true);
 						showPrintSetReport(item);
 						break;
 					case TRANSACTIONSET:

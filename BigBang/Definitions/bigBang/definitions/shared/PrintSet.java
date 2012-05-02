@@ -11,4 +11,5 @@ public class PrintSet
 	public String date;
 	public String user;
 	public String printDate;
+	public String userName = "Muda-me";
 }

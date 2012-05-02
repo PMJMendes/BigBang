@@ -355,7 +355,8 @@ public class ReportServiceImpl
 		lobjResult.id = pobjSet.getKey().toString();
 		lobjResult.date = ((Timestamp)pobjSet.getAt(com.premiumminds.BigBang.Jewel.Objects.PrintSet.I.DATE)).toString().substring(0, 10);
 		lobjResult.user = ((UUID)pobjSet.getAt(com.premiumminds.BigBang.Jewel.Objects.PrintSet.I.USER)).toString();
-		lobjResult.printDate = ((Timestamp)pobjSet.getAt(com.premiumminds.BigBang.Jewel.Objects.PrintSet.I.PRINTEDON)).toString().substring(0, 10);
+		Object printDate = pobjSet.getAt(com.premiumminds.BigBang.Jewel.Objects.PrintSet.I.PRINTEDON);
+		lobjResult.printDate = printDate == null ? null : ((Timestamp)printDate).toString().substring(0, 10);
 
 		return lobjResult;
 	}
