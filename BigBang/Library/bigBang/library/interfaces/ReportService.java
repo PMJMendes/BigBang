@@ -36,7 +36,7 @@ public interface ReportService
 	TransactionSet[] getTransactionSets(String itemId) throws SessionExpiredException, BigBangException;
 	ReportItem[] getSubItems(String itemId) throws SessionExpiredException, BigBangException;
 
-	Report generateParamReport(String itemId, String[] paramValues) throws SessionExpiredException, BigBangException;
+	Report generateParamReport(String itemId, String[] paramValues) throws SessionExpiredException, BigBangException; //If parameter is boolean, true = "1", false="0"
 	Report generatePrintSetReport(String itemId, String printSetId) throws SessionExpiredException, BigBangException;
 	Report generateTransactionSetReport(String itemId, String transactionSetId) throws SessionExpiredException, BigBangException;
 

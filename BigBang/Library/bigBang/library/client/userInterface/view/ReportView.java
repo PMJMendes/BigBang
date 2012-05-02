@@ -1,5 +1,6 @@
 package bigBang.library.client.userInterface.view;
 
+
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.SplitLayoutPanel;
@@ -81,6 +82,11 @@ public class ReportView extends View implements ReportViewPresenter.Display {
 
 	@Override
 	public void createAndGoToReportParameters(ReportParam[] params) {
+		
+		for(int i = 0; i<10; i++){
+			
+		}
+		
 //		ParamReportPanel panel = new ParamReportPanel();
 //		panel.setAvailableParameters(params);
 //		
@@ -89,6 +95,7 @@ public class ReportView extends View implements ReportViewPresenter.Display {
 //		}else{
 //			navigationPanel.setHomeWidget(panel);
 //		}
+		
 	}
 
 	@Override

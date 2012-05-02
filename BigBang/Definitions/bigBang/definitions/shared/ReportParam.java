@@ -13,7 +13,7 @@ public class ReportParam
 		TEXT,
 		LIST,
 		REFERENCE,
-		BOOLEAN,
+		BOOLEAN, //true = "1", false="0" 
 		DATE
 	}
 
