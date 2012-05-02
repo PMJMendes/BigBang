@@ -1,9 +1,10 @@
 package bigBang.library.client.userInterface.reports;
 
 import bigBang.definitions.shared.PrintSet;
+import bigBang.library.client.userInterface.List;
 import bigBang.library.client.userInterface.view.View;
 
-public class PrintSetReportPanel extends View {
+public class PrintSetReportPanel extends List<PrintSet> {
 
 	@Override
 	protected void initializeView() {

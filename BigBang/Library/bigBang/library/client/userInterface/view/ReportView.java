@@ -1,6 +1,8 @@
 package bigBang.library.client.userInterface.view;
 
 
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.SplitLayoutPanel;
@@ -12,11 +14,13 @@ import bigBang.definitions.shared.ReportItem;
 import bigBang.definitions.shared.ReportParam;
 import bigBang.definitions.shared.TransactionSet;
 import bigBang.library.client.HasValueSelectables;
+import bigBang.library.client.event.ActionInvokedEvent;
 import bigBang.library.client.event.ActionInvokedEventHandler;
 import bigBang.library.client.userInterface.ListHeader;
 import bigBang.library.client.userInterface.NavigationPanel;
 import bigBang.library.client.userInterface.presenter.ReportViewPresenter;
 import bigBang.library.client.userInterface.presenter.ReportViewPresenter.Action;
+import bigBang.library.client.userInterface.reports.ParamReportPanel;
 import bigBang.library.client.userInterface.reports.PrintSetReportPanel;
 import bigBang.library.client.userInterface.reports.ReportCategoryPanel;
 import bigBang.library.client.userInterface.reports.TransactionSetReportPanel;
@@ -25,7 +29,9 @@ public class ReportView extends View implements ReportViewPresenter.Display {
 
 	protected NavigationPanel navigationPanel;
 	protected ActionInvokedEventHandler<Action> handler;
+	protected ParamReportPanel paramPanel;
 	protected VerticalPanel sectionsContainer;
+	private View panel;
 	
 	public ReportView(){
 		SplitLayoutPanel wrapper = new SplitLayoutPanel();
@@ -82,20 +88,29 @@ public class ReportView extends View implements ReportViewPresenter.Display {
 
 	@Override
 	public void createAndGoToReportParameters(ReportParam[] params) {
+
 		
-		for(int i = 0; i<10; i++){
-			
+		panel = new ParamReportPanel();
+		((ParamReportPanel)panel).setAvailableParameters(params);
+		
+		if(navigationPanel.hasHomeWidget()){
+			navigationPanel.navigateTo(panel);
+		}else{
+			navigationPanel.setHomeWidget(panel);
 		}
 		
-//		ParamReportPanel panel = new ParamReportPanel();
-//		panel.setAvailableParameters(params);
-//		
-//		if(navigationPanel.hasHomeWidget()){
-//			navigationPanel.navigateTo(panel);
-//		}else{
-//			navigationPanel.setHomeWidget(panel);
-//		}
+		((ParamReportPanel)panel).getButton().addClickHandler(new ClickHandler() {
+			
+			@Override
+			public void onClick(ClickEvent event) {
+				fireAction(Action.GENERATE_REPORT);
+			}
+		});
 		
+	}
+
+	protected void fireAction(Action generateReport) {
+		handler.onActionInvoked(new ActionInvokedEvent<ReportViewPresenter.Action>(generateReport));
 	}
 
 	@Override
@@ -112,32 +127,32 @@ public class ReportView extends View implements ReportViewPresenter.Display {
 
 	@Override
 	public void createAndGoToReportTransactions(TransactionSet[] transactionSets) {
-		TransactionSetReportPanel panel = new TransactionSetReportPanel();
-		panel.setTransationsSets(transactionSets);
+		
+		panel = new TransactionSetReportPanel();
+		((TransactionSetReportPanel)panel).setTransationsSets(transactionSets);
 		
 		if(navigationPanel.hasHomeWidget()){
 			navigationPanel.navigateTo(panel);
 		}else{
 			navigationPanel.setHomeWidget(panel);
 		}
+		//TODO BUTTON
+		//((TransactionSetReportPanel)panel).getButton();
 	}
 
 	@Override
 	public String[] getParameters() {
-		// TODO Auto-generated method stub
-		return null;
+		return ((ParamReportPanel)panel).getParameters();
 	}
 
 	@Override
 	public PrintSet getSelectedPrintSet() {
-		// TODO Auto-generated method stub
-		return null;
+		return ((PrintSetReportPanel)panel).getSelectedPrintSet();
 	}
 
 	@Override
 	public TransactionSet getSelectedTransactionSet() {
-		// TODO Auto-generated method stub
-		return null;
+		return ((TransactionSetReportPanel)panel).getSelectedTransactionSet();
 	}
 
 	@Override
