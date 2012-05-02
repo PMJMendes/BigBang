@@ -20,6 +20,8 @@ import bigBang.library.interfaces.HistoryService;
 import bigBang.library.interfaces.HistoryServiceAsync;
 import bigBang.library.interfaces.InfoOrDocumentRequestService;
 import bigBang.library.interfaces.InfoOrDocumentRequestServiceAsync;
+import bigBang.library.interfaces.ReportService;
+import bigBang.library.interfaces.ReportServiceAsync;
 import bigBang.library.interfaces.TransferManagerService;
 import bigBang.library.interfaces.TransferManagerServiceAsync;
 import bigBang.library.interfaces.TypifiedTextService;
@@ -95,6 +97,8 @@ public class Services
 			GWT.create(ExternRequestService.class);
 	public static final TypifiedTextServiceAsync typifiedTextService =
 			GWT.create(TypifiedTextService.class);
+	public static final ReportServiceAsync reportService =
+			GWT.create(ReportService.class);
 	public static final TasksServiceAsync tasksService =
 			GWT.create(TasksService.class);
 	public static final CoveragesServiceAsync coveragesService =
