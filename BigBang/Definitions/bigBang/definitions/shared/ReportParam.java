@@ -17,6 +17,7 @@ public class ReportParam
 		DATE
 	}
 
+	public String id;
 	public String label;
 	public ParamType type;
 	public String unitsLabel;
