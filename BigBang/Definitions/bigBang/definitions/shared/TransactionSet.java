@@ -11,4 +11,6 @@ public class TransactionSet
 	public String date;
 	public String user;
 	public boolean isComplete;
+
+	public String userName = "Muda-me";
 }
