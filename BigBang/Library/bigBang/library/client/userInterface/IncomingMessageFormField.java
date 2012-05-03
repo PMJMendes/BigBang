@@ -26,7 +26,7 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 
 public class IncomingMessageFormField extends FormField<IncomingMessage>{
 
-	private TextAreaFormField notes = new TextAreaFormField();
+	private RichTextAreaFormField notes;
 	private IncomingMessage message;
 	private RadioButtonFormField noteOrEmailRadioButton;
 	private Button selectEmail;
@@ -58,9 +58,7 @@ public class IncomingMessageFormField extends FormField<IncomingMessage>{
 
 		noteOrEmailRadioButton = new RadioButtonFormField();
 		noteOrEmailRadioButton.addOption(Kind.EMAIL.toString(), "E-mail");
-		noteOrEmailRadioButton.addOption(Kind.NOTE.toString(), "Nota");
-		noteOrEmailRadioButton.setValue(Kind.EMAIL.toString(), true);
-		
+		noteOrEmailRadioButton.addOption(Kind.NOTE.toString(), "Nota");		
 
 		choices.add(noteOrEmailRadioButton);
 		wrapper.add(choices);
@@ -74,8 +72,7 @@ public class IncomingMessageFormField extends FormField<IncomingMessage>{
 		notePanel.setVisible(false);
 
 
-		notes = new TextAreaFormField("Nota");
-		notes.setSize("300px", "100%");
+		notes = new RichTextAreaFormField();
 		notePanel.add(notes);
 
 		subject = new TextBoxFormField("Assunto");
@@ -160,22 +157,21 @@ public class IncomingMessageFormField extends FormField<IncomingMessage>{
 				message.kind = event.getValue().equals(Kind.EMAIL.toString()) ? Kind.EMAIL : Kind.NOTE;
 			}
 		});
-		
 	}
 
 	@Override
-	public void setValue(final IncomingMessage value, final boolean fireEvents) {
+	public void setValue(final IncomingMessage value) {
 
 		message = value;
 
-		if(value == null || value.kind == null){
+		if(value == null){
 			clear();
 			return;
 		}
 
 		attachList.clear();
-
-		noteOrEmailRadioButton.setValue(value.kind.toString(), true);
+		
+		noteOrEmailRadioButton.setValue(value.kind != null ? value.kind.toString() : Kind.NOTE.toString());
 		if(value.emailId != null){
 			service.getItem(value.emailId, new BigBangAsyncCallback<ExchangeItem>() {
 
@@ -196,9 +192,6 @@ public class IncomingMessageFormField extends FormField<IncomingMessage>{
 						attachList.add(temp);
 					}
 
-					if(fireEvents){
-						ValueChangeEvent.fire(IncomingMessageFormField.this, value);
-					}
 				}
 
 				@Override
@@ -209,11 +202,6 @@ public class IncomingMessageFormField extends FormField<IncomingMessage>{
 		}
 		else{
 			notes.setValue(value.notes);
-
-			if(fireEvents){
-				ValueChangeEvent.fire(IncomingMessageFormField.this, value);
-
-			}
 		}
 
 	}
@@ -221,19 +209,18 @@ public class IncomingMessageFormField extends FormField<IncomingMessage>{
 	@Override
 	public IncomingMessage getValue() {
 		message.notes = notes.getValue();
+		message.kind = noteOrEmailRadioButton.getValue().equals(Kind.EMAIL.name()) ? Kind.EMAIL : Kind.NOTE;
 		return message;
 	}
 
 	@Override
 	public void clear() {
 		message = new IncomingMessage();
-		message.kind = Kind.EMAIL;
 		from.clear();
 		subject.clear();
 		body.clear();
 		notes.clear();
 		setValue(message);
-		
 	}
 
 
@@ -241,6 +228,7 @@ public class IncomingMessageFormField extends FormField<IncomingMessage>{
 	public void setReadOnly(boolean readonly) {
 		readOnly = readonly;
 		notes.setReadOnly(readonly);
+		notes.showToolbar(!readonly);
 		selectEmail.setEnabled(!readonly);
 		noteOrEmailRadioButton.setEditable(!readonly);
 	}

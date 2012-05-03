@@ -1,6 +1,7 @@
 package bigBang.library.client.userInterface.presenter;
 
 import bigBang.definitions.shared.ExternalInfoRequest;
+import bigBang.definitions.shared.IncomingMessage.Kind;
 import bigBang.definitions.shared.ProcessBase;
 import bigBang.library.client.BigBangAsyncCallback;
 import bigBang.library.client.EventBus;
@@ -59,8 +60,9 @@ public abstract class ExternalRequestViewPresenter<T extends ProcessBase> implem
 			view.getForm().setReadOnly(true);
 		}
 		else if(externalRequestId.equalsIgnoreCase("new")){
-			ExternalInfoRequest externalRequest = new ExternalInfoRequest();
-			view.getForm().setInfo(externalRequest);
+			ExternalInfoRequest newR = new ExternalInfoRequest();
+			newR.message.kind = Kind.EMAIL;
+			view.getForm().setValue(newR);
 			view.getForm().setReadOnly(false);
 			view.setToolbarSaveMode(true);
 		}

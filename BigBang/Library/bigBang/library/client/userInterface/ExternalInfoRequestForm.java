@@ -24,41 +24,40 @@ public class ExternalInfoRequestForm extends FormView<ExternalInfoRequest>{
 	@Override
 	public ExternalInfoRequest getInfo() {
 
-		ExternalInfoRequest request = new ExternalInfoRequest();
+		ExternalInfoRequest request = value;
 		request.message = messageFormField.getValue();
 		try{
 			request.replylimit = Integer.parseInt(replyLimit.getValue());}
-			catch(NumberFormatException e){
-				request.replylimit = -1;
-			}
-		
-			request.subject = requestSubject.getValue();
-
-			return request;
-
+		catch(NumberFormatException e){
+			request.replylimit = -1;
 		}
 
-		@Override
-		public void setInfo(ExternalInfoRequest info) {
+		request.subject = requestSubject.getValue();
 
-			requestSubject.setValue(info.subject);
-			messageFormField.setValue(info.message);
-			replyLimit.setValue(info.replylimit+"");
-
-		}
-
-		@Override
-		public void setReadOnly(boolean readOnly) {
-			if(requestSubject == null){
-				return;
-			}
-			requestSubject.setReadOnly(readOnly);
-			replyLimit.setReadOnly(readOnly);
-			messageFormField.setReadOnly(readOnly);
-		}
-
-		public IncomingMessageFormField getIncomingMessageFormField(){
-			return messageFormField;
-		}
+		return request;
 
 	}
+
+	@Override
+	public void setInfo(ExternalInfoRequest info) {
+
+		requestSubject.setValue(info.subject);
+		messageFormField.setValue(info.message);
+		replyLimit.setValue(info.replylimit+"");
+	}
+
+	@Override
+	public void setReadOnly(boolean readOnly) {
+		if(requestSubject == null){
+			return;
+		}
+		requestSubject.setReadOnly(readOnly);
+		replyLimit.setReadOnly(readOnly);
+		messageFormField.setReadOnly(readOnly);
+	}
+
+	public IncomingMessageFormField getIncomingMessageFormField(){
+		return messageFormField;
+	}
+
+}
