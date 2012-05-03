@@ -16,8 +16,6 @@ import bigBang.definitions.shared.BigBangProcess;
 import bigBang.definitions.shared.Casualty;
 import bigBang.definitions.shared.Client;
 import bigBang.definitions.shared.InfoOrDocumentRequest;
-import bigBang.definitions.shared.InfoOrDocumentRequest.Cancellation;
-import bigBang.definitions.shared.InfoOrDocumentRequest.Response;
 import bigBang.definitions.shared.ClientStub;
 import bigBang.definitions.shared.ManagerTransfer;
 import bigBang.definitions.shared.RiskAnalysis;
@@ -26,8 +24,6 @@ import bigBang.library.client.EventBus;
 import bigBang.library.client.event.OperationWasExecutedEvent;
 import bigBang.library.interfaces.BigBangProcessService;
 import bigBang.library.interfaces.BigBangProcessServiceAsync;
-import bigBang.library.interfaces.InfoOrDocumentRequestService;
-import bigBang.library.interfaces.InfoOrDocumentRequestServiceAsync;
 import bigBang.module.clientModule.interfaces.ClientService;
 import bigBang.module.clientModule.interfaces.ClientServiceAsync;
 
@@ -259,71 +255,6 @@ public class ClientProcessBrokerImpl extends DataBroker<Client> implements Clien
 			public void onResponseFailure(Throwable caught) {
 				handler.onError(new String[]{
 						new String("Could not create new Info or Document Request")	
-				});
-				super.onResponseFailure(caught);
-			}
-		});
-	}
-
-	@Override
-	public void repeatRequest(InfoOrDocumentRequest request,
-			final ResponseHandler<InfoOrDocumentRequest> handler) {
-		InfoOrDocumentRequestServiceAsync infoService = InfoOrDocumentRequestService.Util.getInstance();
-		infoService.repeatRequest(request, new BigBangAsyncCallback<InfoOrDocumentRequest>() {
-
-			@Override
-			public void onResponseSuccess(InfoOrDocumentRequest result) {
-				handler.onResponse(result);
-				//				EventBus.getInstance().fireEvent(new OperationWasExecutedEvent(BigBangConstants.OperationIds.ClientProcess., result.id)); TODO
-			}
-
-			@Override
-			public void onResponseFailure(Throwable caught) {
-				handler.onError(new String[]{
-						new String("Could not repeat the request")	
-				});
-				super.onResponseFailure(caught);
-			}
-		});
-	}
-
-	@Override
-	public void receiveInfoOrDocumentRequestResponse(Response response,
-			final ResponseHandler<InfoOrDocumentRequest> handler) {
-		InfoOrDocumentRequestServiceAsync infoService = InfoOrDocumentRequestService.Util.getInstance();
-		infoService.receiveResponse(response, new BigBangAsyncCallback<InfoOrDocumentRequest>() {
-
-			@Override
-			public void onResponseSuccess(InfoOrDocumentRequest result) {
-				// TODO Auto-generated method stub
-				handler.onResponse(result);
-			}
-
-			@Override
-			public void onResponseFailure(Throwable caught) {
-				handler.onError(new String[]{
-						new String("Could not receive the info or document request response")	
-				});
-				super.onResponseFailure(caught);
-			}
-		});
-	}
-
-	@Override
-	public void cancelInfoOrDocumentRequest(final Cancellation cancellation,
-			final ResponseHandler<Void> handler) {
-		InfoOrDocumentRequestServiceAsync infoService = InfoOrDocumentRequestService.Util.getInstance();
-		infoService.cancelRequest(cancellation, new BigBangAsyncCallback<Void>() {
-
-			@Override
-			public void onResponseSuccess(Void result) {
-				EventBus.getInstance().fireEvent(new OperationWasExecutedEvent(BigBangConstants.OperationIds.InfoOrDocumentRequest.CANCEL_REQUEST, cancellation.requestId));
-			}
-
-			@Override
-			public void onResponseFailure(Throwable caught) {
-				handler.onError(new String[]{
-						new String("Could not cancel Info or Document request")	
 				});
 				super.onResponseFailure(caught);
 			}
