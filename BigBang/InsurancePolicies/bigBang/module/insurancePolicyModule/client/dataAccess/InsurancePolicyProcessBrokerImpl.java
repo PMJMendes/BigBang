@@ -291,6 +291,7 @@ public class InsurancePolicyProcessBrokerImpl extends DataBroker<InsurancePolicy
 			public void onResponseSuccess(Receipt result) {
 				handler.onResponse(result);
 				DataBrokerManager.Util.getInstance().getBroker(BigBangConstants.EntityIds.RECEIPT).notifyItemCreation(result.id);
+				EventBus.getInstance().fireEvent(new OperationWasExecutedEvent(BigBangConstants.OperationIds.InsurancePolicyProcess.CREATE_RECEIPT, result.id));
 			}
 
 			@Override
