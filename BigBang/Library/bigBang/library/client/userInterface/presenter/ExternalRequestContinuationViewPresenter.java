@@ -4,6 +4,7 @@ import com.google.gwt.user.client.ui.HasWidgets;
 import com.google.gwt.user.client.ui.UIObject;
 import com.google.gwt.user.client.ui.Widget;
 
+import bigBang.definitions.shared.BigBangConstants;
 import bigBang.definitions.shared.ExternalInfoRequest;
 import bigBang.definitions.shared.ExternalInfoRequest.Incoming;
 import bigBang.library.client.BigBangAsyncCallback;
@@ -15,6 +16,7 @@ import bigBang.library.client.Notification.TYPE;
 import bigBang.library.client.event.ActionInvokedEvent;
 import bigBang.library.client.event.ActionInvokedEventHandler;
 import bigBang.library.client.event.NewNotificationEvent;
+import bigBang.library.client.event.OperationWasExecutedEvent;
 import bigBang.library.client.history.NavigationHistoryItem;
 import bigBang.library.client.history.NavigationHistoryManager;
 import bigBang.library.interfaces.ExternRequestService;
@@ -104,11 +106,12 @@ public class ExternalRequestContinuationViewPresenter implements ViewPresenter {
 	}
 	
 	protected void onConfirm(){
-		Incoming incoming = view.getForm().getValue();
+		final Incoming incoming = view.getForm().getValue();
 		service.receiveAdditional(incoming, new BigBangAsyncCallback<ExternalInfoRequest>() {
 
 			@Override
 			public void onResponseSuccess(ExternalInfoRequest result) {
+				EventBus.getInstance().fireEvent(new OperationWasExecutedEvent(BigBangConstants.OperationIds.ExternalInfoRequest.CONTINUE, incoming.requestId));
 				onContinuationSuccess();
 			}
 			

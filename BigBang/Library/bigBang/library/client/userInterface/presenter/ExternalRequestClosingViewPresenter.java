@@ -1,5 +1,6 @@
 package bigBang.library.client.userInterface.presenter;
 
+import bigBang.definitions.shared.BigBangConstants;
 import bigBang.definitions.shared.ExternalInfoRequest.Closing;
 import bigBang.library.client.BigBangAsyncCallback;
 import bigBang.library.client.EventBus;
@@ -10,6 +11,7 @@ import bigBang.library.client.Notification.TYPE;
 import bigBang.library.client.event.ActionInvokedEvent;
 import bigBang.library.client.event.ActionInvokedEventHandler;
 import bigBang.library.client.event.NewNotificationEvent;
+import bigBang.library.client.event.OperationWasExecutedEvent;
 import bigBang.library.client.history.NavigationHistoryItem;
 import bigBang.library.client.history.NavigationHistoryManager;
 import bigBang.library.interfaces.ExternRequestService;
@@ -98,11 +100,12 @@ public class ExternalRequestClosingViewPresenter implements ViewPresenter {
 	}
 	
 	protected void onClose(){
-		Closing closing = view.getForm().getInfo();
+		final Closing closing = view.getForm().getInfo();
 		service.closeRequest(closing, new BigBangAsyncCallback<Void>() {
 
 			@Override
 			public void onResponseSuccess(Void result) {
+				EventBus.getInstance().fireEvent(new OperationWasExecutedEvent(BigBangConstants.OperationIds.ExternalInfoRequest.CLOSE, closing.requestId));
 				onCloseSuccess();
 			}
 			

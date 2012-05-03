@@ -20,6 +20,7 @@ import bigBang.library.client.dataAccess.DataBrokerManager;
 import bigBang.library.client.event.ActionInvokedEvent;
 import bigBang.library.client.event.ActionInvokedEventHandler;
 import bigBang.library.client.event.NewNotificationEvent;
+import bigBang.library.client.event.OperationWasExecutedEvent;
 import bigBang.library.client.history.NavigationHistoryItem;
 import bigBang.library.client.history.NavigationHistoryManager;
 import bigBang.library.interfaces.ContactsService;
@@ -151,10 +152,12 @@ public class ExternalRequestReplyViewPresenter implements ViewPresenter {
 	}
 	
 	protected void onSend() {
-		service.sendInformation(view.getForm().getInfo(), new BigBangAsyncCallback<ExternalInfoRequest>() {
+		final Outgoing request = view.getForm().getInfo();
+		service.sendInformation(request, new BigBangAsyncCallback<ExternalInfoRequest>() {
 
 			@Override
 			public void onResponseSuccess(ExternalInfoRequest result) {
+				EventBus.getInstance().fireEvent(new OperationWasExecutedEvent(BigBangConstants.OperationIds.ExternalInfoRequest.REPLY, request.requestId));
 				onSendSuccess();
 			}
 			

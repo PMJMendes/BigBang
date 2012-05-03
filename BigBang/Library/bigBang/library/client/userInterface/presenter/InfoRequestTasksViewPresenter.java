@@ -182,7 +182,7 @@ public class InfoRequestTasksViewPresenter implements ViewPresenter, HasOperatio
 
 			@Override
 			protected void onNavigationHistoryEvent(NavigationHistoryItem historyItem) {
-				return;
+				view.showOverlayViewContainer(false);
 			}
 		};
 	}

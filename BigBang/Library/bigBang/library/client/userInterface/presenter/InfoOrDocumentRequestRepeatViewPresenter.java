@@ -1,5 +1,6 @@
 package bigBang.library.client.userInterface.presenter;
 
+import bigBang.definitions.shared.BigBangConstants;
 import bigBang.definitions.shared.Contact;
 import bigBang.definitions.shared.InfoOrDocumentRequest;
 import bigBang.library.client.BigBangAsyncCallback;
@@ -11,6 +12,7 @@ import bigBang.library.client.Notification.TYPE;
 import bigBang.library.client.event.ActionInvokedEvent;
 import bigBang.library.client.event.ActionInvokedEventHandler;
 import bigBang.library.client.event.NewNotificationEvent;
+import bigBang.library.client.event.OperationWasExecutedEvent;
 import bigBang.library.client.history.NavigationHistoryItem;
 import bigBang.library.client.history.NavigationHistoryManager;
 import bigBang.library.interfaces.ContactsService;
@@ -120,11 +122,13 @@ public class InfoOrDocumentRequestRepeatViewPresenter implements ViewPresenter {
 	}
 
 	protected void onSend(){
-		service.repeatRequest(view.getForm().getInfo(), new BigBangAsyncCallback<InfoOrDocumentRequest>() {
+		final InfoOrDocumentRequest request = view.getForm().getInfo();
+		service.repeatRequest(request, new BigBangAsyncCallback<InfoOrDocumentRequest>() {
 
 			@Override
 			public void onResponseSuccess(InfoOrDocumentRequest result) {
 				onSendSuccess();
+				EventBus.getInstance().fireEvent(new OperationWasExecutedEvent(BigBangConstants.OperationIds.InfoOrDocumentRequest.REPEAT_REQUEST, request.id));
 			}
 
 			@Override

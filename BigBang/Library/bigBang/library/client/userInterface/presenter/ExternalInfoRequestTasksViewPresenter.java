@@ -183,7 +183,7 @@ public class ExternalInfoRequestTasksViewPresenter implements ViewPresenter,
 
 			@Override
 			protected void onNavigationHistoryEvent(NavigationHistoryItem historyItem) {
-				return;
+				view.showOverlayViewContainer(false);
 			}
 		};
 	}

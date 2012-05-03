@@ -1,5 +1,6 @@
 package bigBang.library.client.userInterface.presenter;
 
+import bigBang.definitions.shared.BigBangConstants;
 import bigBang.definitions.shared.InfoOrDocumentRequest;
 import bigBang.definitions.shared.InfoOrDocumentRequest.Cancellation;
 import bigBang.library.client.BigBangAsyncCallback;
@@ -11,6 +12,7 @@ import bigBang.library.client.Notification.TYPE;
 import bigBang.library.client.event.ActionInvokedEvent;
 import bigBang.library.client.event.ActionInvokedEventHandler;
 import bigBang.library.client.event.NewNotificationEvent;
+import bigBang.library.client.event.OperationWasExecutedEvent;
 import bigBang.library.client.history.NavigationHistoryItem;
 import bigBang.library.client.history.NavigationHistoryManager;
 import bigBang.library.interfaces.InfoOrDocumentRequestService;
@@ -92,11 +94,13 @@ public class CancelInfoOrDocumentRequestViewPresenter implements ViewPresenter {
 	}
 	
 	private void onConfirm(){
-		service.cancelRequest(view.getForm().getInfo(), new BigBangAsyncCallback<Void>() {
+		final Cancellation toCancel = view.getForm().getInfo();
+		service.cancelRequest(toCancel, new BigBangAsyncCallback<Void>() {
 
 			@Override
 			public void onResponseSuccess(Void result) {
 				onCancellationSuccess();
+				EventBus.getInstance().fireEvent(new OperationWasExecutedEvent(BigBangConstants.OperationIds.InfoOrDocumentRequest.CANCEL_REQUEST, toCancel.requestId));
 			}
 			
 			@Override
