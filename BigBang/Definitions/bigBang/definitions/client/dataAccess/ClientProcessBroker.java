@@ -65,12 +65,6 @@ public interface ClientProcessBroker extends DataBrokerInterface<Client>{
 	
 	public void createInfoOrDocumentRequest(InfoOrDocumentRequest request, ResponseHandler<InfoOrDocumentRequest> handler);
 	
-	public void repeatRequest(InfoOrDocumentRequest request, ResponseHandler<InfoOrDocumentRequest> handler);
-	
-	public void receiveInfoOrDocumentRequestResponse(InfoOrDocumentRequest.Response response, ResponseHandler<InfoOrDocumentRequest> handler);
-	
-	public void cancelInfoOrDocumentRequest(InfoOrDocumentRequest.Cancellation cancellation, ResponseHandler<Void> handler);
-	
 	public void createManagerTransfer(String[] dataObjectIds, String managerId, ResponseHandler<ManagerTransfer> handler);
 
 	void getClientSubProcesses(String clientId,
