@@ -110,4 +110,7 @@ public interface Resources extends ClientBundle {
 	@Source("images/fileicons/zip.png")
 	ImageResource zipIcon();
 	
+	@Source("images/complete.png")
+	ImageResource completeIcon();
+	
 }
