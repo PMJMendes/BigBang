@@ -390,6 +390,7 @@ public class ReceiptDataBrokerImpl extends DataBroker<Receipt> implements Receip
 					((ReceiptDataBrokerClient) bc).updateReceipt(result);
 					((ReceiptDataBrokerClient) bc).setDataVersionNumber(BigBangConstants.EntityIds.RECEIPT, getCurrentDataVersion());
 				}
+				EventBus.getInstance().fireEvent(new OperationWasExecutedEvent(BigBangConstants.OperationIds.InsurancePolicyProcess.CREATE_RECEIPT, result.id));
 				handler.onResponse(result);
 			}
 
@@ -467,7 +468,7 @@ public class ReceiptDataBrokerImpl extends DataBroker<Receipt> implements Receip
 					((ReceiptDataBrokerClient) bc).setDataVersionNumber(BigBangConstants.EntityIds.RECEIPT, getCurrentDataVersion());
 				}
 				handler.onResponse(result);
-				EventBus.getInstance().fireEvent(new OperationWasExecutedEvent(BigBangConstants.OperationIds.ReceiptProcess.TRANSFER_TO_POLICY, result.id));
+				EventBus.getInstance().fireEvent(new OperationWasExecutedEvent(BigBangConstants.OperationIds.ReceiptProcess.CREATE_PAYMENT_NOTICE, result.id));
 			}
 
 			@Override

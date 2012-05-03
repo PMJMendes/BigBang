@@ -66,18 +66,18 @@ public class DASRequestBrokerImpl extends DataBroker<DASRequest> implements DASR
 						((DASRequestBrokerClient)bc).updateDASRequest(result);
 						((DASRequestBrokerClient)bc).setDataVersionNumber(BigBangConstants.EntityIds.DAS_REQUEST, getCurrentDataVersion());
 					}
-					
+
 					handler.onResponse(result);
 					requiresRefresh = false;
 
 				}
-				
+
 				@Override
 				public void onResponseFailure(Throwable caught) {
 					handler.onError((new String[]{
 							new String("Could not get the requested DAS request")	
-						}));
-						super.onResponseFailure(caught);
+					}));
+					super.onResponseFailure(caught);
 				}
 			});
 	}
@@ -96,18 +96,19 @@ public class DASRequestBrokerImpl extends DataBroker<DASRequest> implements DASR
 					((DASRequestBrokerClient)bc).updateDASRequest(result);
 					((DASRequestBrokerClient)bc).setDataVersionNumber(BigBangConstants.EntityIds.DAS_REQUEST, getCurrentDataVersion());
 				}
-				
+
+				EventBus.getInstance().fireEvent(new OperationWasExecutedEvent(BigBangConstants.OperationIds.DASRequestProcess.REPEAT_DAS_REQUEST, result.id));
 				handler.onResponse(result);
 				requiresRefresh = false;
 
 			}
-			
+
 			@Override
 			public void onResponseFailure(Throwable caught) {
 				handler.onError((new String[]{
 						new String("Could not repeat the requested DAS request")	
-					}));
-					super.onResponseFailure(caught);
+				}));
+				super.onResponseFailure(caught);
 			}
 		});
 
@@ -127,18 +128,19 @@ public class DASRequestBrokerImpl extends DataBroker<DASRequest> implements DASR
 					((DASRequestBrokerClient)bc).updateDASRequest(result);
 					((DASRequestBrokerClient)bc).setDataVersionNumber(BigBangConstants.EntityIds.DAS_REQUEST, getCurrentDataVersion());
 				}
-				
+
+				EventBus.getInstance().fireEvent(new OperationWasExecutedEvent(BigBangConstants.OperationIds.DASRequestProcess.RECEIVE_REPLY, result.id));
 				handler.onResponse(result);
 				requiresRefresh = false;
 
 			}
-			
+
 			@Override
 			public void onResponseFailure(Throwable caught) {
 				handler.onError((new String[]{
 						new String("Could not receive the DAS request response")	
-					}));
-					super.onResponseFailure(caught);
+				}));
+				super.onResponseFailure(caught);
 			}
 		});
 
@@ -153,12 +155,12 @@ public class DASRequestBrokerImpl extends DataBroker<DASRequest> implements DASR
 			public void onResponseSuccess(Void result) {
 				cache.remove(request.requestId);
 				incrementDataVersion();
-				
+
 				for(DataBrokerClient<DASRequest> bc : getClients()){
 					((DASRequestBrokerClient)bc).removeDASRequest(request.requestId);
 					((DASRequestBrokerClient)bc).setDataVersionNumber(BigBangConstants.EntityIds.DAS_REQUEST, getCurrentDataVersion());
 				}
-				
+
 				handler.onResponse(null);
 				EventBus.getInstance().fireEvent(new OperationWasExecutedEvent(BigBangConstants.OperationIds.DASRequestProcess.CANCEL_DAS_REQUEST, request.requestId));
 
@@ -168,10 +170,10 @@ public class DASRequestBrokerImpl extends DataBroker<DASRequest> implements DASR
 			public void onResponseFailure(Throwable caught) {
 				handler.onError((new String[]{
 						new String("Could not cancel the the DAS request")	
-					}));
+				}));
 				super.onResponseFailure(caught);
 			}
-			
+
 		});
 
 	}
