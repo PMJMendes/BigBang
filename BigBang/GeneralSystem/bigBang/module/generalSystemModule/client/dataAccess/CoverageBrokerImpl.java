@@ -14,6 +14,8 @@ import bigBang.definitions.shared.Line;
 import bigBang.definitions.shared.SubLine;
 import bigBang.definitions.shared.Tax;
 import bigBang.library.client.BigBangAsyncCallback;
+import bigBang.library.client.EventBus;
+import bigBang.library.client.event.OperationWasExecutedEvent;
 import bigBang.module.generalSystemModule.interfaces.CoveragesService;
 import bigBang.module.generalSystemModule.interfaces.CoveragesServiceAsync;
 
@@ -103,7 +105,9 @@ CoverageBroker {
 				
 				for(DataBrokerClient<Line> c : getClients()){
 					((CoverageDataBrokerClient) c).addLine(result);
+					((CoverageDataBrokerClient) c).setDataVersionNumber(BigBangConstants.EntityIds.LINE, getCurrentDataVersion());
 				}
+				EventBus.getInstance().fireEvent(new OperationWasExecutedEvent(BigBangConstants.OperationIds.GeneralSystemProcess.MANAGE_LINES, result.id));
 				handler.onResponse(result);
 			}
 
@@ -133,7 +137,9 @@ CoverageBroker {
 				
 				for(DataBrokerClient<Line> c : getClients()){
 					((CoverageDataBrokerClient) c).updateLine(result);
+					((CoverageDataBrokerClient) c).setDataVersionNumber(BigBangConstants.EntityIds.LINE, getCurrentDataVersion());
 				}
+				EventBus.getInstance().fireEvent(new OperationWasExecutedEvent(BigBangConstants.OperationIds.GeneralSystemProcess.MANAGE_LINES, result.id));
 				handler.onResponse(result);
 			}
 			
@@ -173,7 +179,9 @@ CoverageBroker {
 				
 				for(DataBrokerClient<Line> c : CoverageBrokerImpl.this.getClients()){
 					((CoverageDataBrokerClient)c).removeLine(lineId);
+					((CoverageDataBrokerClient) c).setDataVersionNumber(BigBangConstants.EntityIds.LINE, getCurrentDataVersion());
 				}
+				EventBus.getInstance().fireEvent(new OperationWasExecutedEvent(BigBangConstants.OperationIds.GeneralSystemProcess.MANAGE_LINES, lineId));
 				handler.onResponse(deleted);
 			}
 			
@@ -277,7 +285,9 @@ CoverageBroker {
 
 				for(DataBrokerClient<Line> c : getClients()){
 					((CoverageDataBrokerClient) c).addSubLine(result.lineId, result);
+					((CoverageDataBrokerClient) c).setDataVersionNumber(BigBangConstants.EntityIds.SUB_LINE, getCurrentDataVersion());
 				}
+				EventBus.getInstance().fireEvent(new OperationWasExecutedEvent(BigBangConstants.OperationIds.GeneralSystemProcess.MANAGE_LINES, result.id));
 				handler.onResponse(result);
 			}
 
@@ -312,7 +322,9 @@ CoverageBroker {
 
 				for(DataBrokerClient<Line> c : getClients()){
 					((CoverageDataBrokerClient) c).updateSubLine(result.lineId, result);
+					((CoverageDataBrokerClient) c).setDataVersionNumber(BigBangConstants.EntityIds.SUB_LINE, getCurrentDataVersion());
 				}
+				EventBus.getInstance().fireEvent(new OperationWasExecutedEvent(BigBangConstants.OperationIds.GeneralSystemProcess.MANAGE_LINES, result.id));
 				handler.onResponse(result);
 			}
 
@@ -365,7 +377,9 @@ CoverageBroker {
 
 				for(DataBrokerClient<Line> c : getClients()){
 					((CoverageDataBrokerClient) c).removeSubLine(deleted.lineId, deleted.id);
+					((CoverageDataBrokerClient) c).setDataVersionNumber(BigBangConstants.EntityIds.SUB_LINE, getCurrentDataVersion());
 				}
+				EventBus.getInstance().fireEvent(new OperationWasExecutedEvent(BigBangConstants.OperationIds.GeneralSystemProcess.MANAGE_LINES, subLineId));
 				handler.onResponse(deleted);
 
 			}
@@ -477,7 +491,9 @@ CoverageBroker {
 
 				for(DataBrokerClient<Line> c : getClients()){
 					((CoverageDataBrokerClient) c).addCoverage(result.subLineId, result);
+					((CoverageDataBrokerClient) c).setDataVersionNumber(BigBangConstants.EntityIds.COVERAGE, getCurrentDataVersion());
 				}
+				EventBus.getInstance().fireEvent(new OperationWasExecutedEvent(BigBangConstants.OperationIds.GeneralSystemProcess.MANAGE_LINES, result.id));
 				handler.onResponse(result);
 			}
 
@@ -511,7 +527,9 @@ CoverageBroker {
 
 				for(DataBrokerClient<Line> c : getClients()){
 					((CoverageDataBrokerClient) c).updateCoverage(result.subLineId, result);
+					((CoverageDataBrokerClient) c).setDataVersionNumber(BigBangConstants.EntityIds.COVERAGE, getCurrentDataVersion());
 				}
+				EventBus.getInstance().fireEvent(new OperationWasExecutedEvent(BigBangConstants.OperationIds.GeneralSystemProcess.MANAGE_LINES, result.id));
 				handler.onResponse(result);
 
 			}
@@ -560,7 +578,9 @@ CoverageBroker {
 
 				for(DataBrokerClient<Line> c : getClients()){
 					((CoverageDataBrokerClient) c).removeCoverage(deleted.subLineId, deleted.id);
+					((CoverageDataBrokerClient) c).setDataVersionNumber(BigBangConstants.EntityIds.COVERAGE, getCurrentDataVersion());
 				}
+				EventBus.getInstance().fireEvent(new OperationWasExecutedEvent(BigBangConstants.OperationIds.GeneralSystemProcess.MANAGE_LINES, coverageId));
 				handler.onResponse(deleted);
 
 			}
@@ -671,7 +691,9 @@ CoverageBroker {
 
 				for(DataBrokerClient<Line> c : getClients()){
 					((CoverageDataBrokerClient) c).addTax(result.coverageId, result);
+					((CoverageDataBrokerClient) c).setDataVersionNumber(BigBangConstants.EntityIds.TAX, getCurrentDataVersion());
 				}
+				EventBus.getInstance().fireEvent(new OperationWasExecutedEvent(BigBangConstants.OperationIds.GeneralSystemProcess.MANAGE_LINES, result.id));
 				
 				handler.onResponse(result);
 
@@ -707,7 +729,9 @@ CoverageBroker {
 
 				for(DataBrokerClient<Line> c : getClients()){
 					((CoverageDataBrokerClient) c).updateTax(result.coverageId, result);
+					((CoverageDataBrokerClient) c).setDataVersionNumber(BigBangConstants.EntityIds.TAX, getCurrentDataVersion());
 				}
+				EventBus.getInstance().fireEvent(new OperationWasExecutedEvent(BigBangConstants.OperationIds.GeneralSystemProcess.MANAGE_LINES, result.id));
 				handler.onResponse(result);
 
 			}
@@ -757,7 +781,9 @@ CoverageBroker {
 				}
 				for(DataBrokerClient<Line> c : getClients()){
 					((CoverageDataBrokerClient) c).removeTax(deleted.coverageId, deleted.id);
+					((CoverageDataBrokerClient) c).setDataVersionNumber(BigBangConstants.EntityIds.COVERAGE, getCurrentDataVersion());
 				}
+				EventBus.getInstance().fireEvent(new OperationWasExecutedEvent(BigBangConstants.OperationIds.GeneralSystemProcess.MANAGE_LINES, taxId));
 				handler.onResponse(deleted);
 				
 			}

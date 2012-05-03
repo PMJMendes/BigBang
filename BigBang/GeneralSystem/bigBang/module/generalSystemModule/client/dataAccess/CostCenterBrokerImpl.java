@@ -11,6 +11,8 @@ import bigBang.definitions.client.response.ResponseHandler;
 import bigBang.definitions.shared.BigBangConstants;
 import bigBang.definitions.shared.CostCenter;
 import bigBang.library.client.BigBangAsyncCallback;
+import bigBang.library.client.EventBus;
+import bigBang.library.client.event.OperationWasExecutedEvent;
 import bigBang.module.generalSystemModule.interfaces.CostCenterService;
 import bigBang.module.generalSystemModule.interfaces.CostCenterServiceAsync;
 
@@ -104,6 +106,7 @@ public class CostCenterBrokerImpl extends DataBroker<CostCenter> implements Cost
 					((CostCenterDataBrokerClient) c).addCostCenter(result);
 					((CostCenterDataBrokerClient) c).setDataVersionNumber(getDataElementId(), getCurrentDataVersion());
 				}
+				EventBus.getInstance().fireEvent(new OperationWasExecutedEvent(BigBangConstants.OperationIds.GeneralSystemProcess.MANAGE_COST_CENTERS, result.id));
 				handler.onResponse(result);
 			}
 			
@@ -131,6 +134,7 @@ public class CostCenterBrokerImpl extends DataBroker<CostCenter> implements Cost
 					((CostCenterDataBrokerClient) c).updateCostCenter(result);
 					((CostCenterDataBrokerClient) c).setDataVersionNumber(getDataElementId(), getCurrentDataVersion());
 				}
+				EventBus.getInstance().fireEvent(new OperationWasExecutedEvent(BigBangConstants.OperationIds.GeneralSystemProcess.MANAGE_COST_CENTERS, result.id));
 				handler.onResponse(result);
 			}
 			
@@ -159,6 +163,7 @@ public class CostCenterBrokerImpl extends DataBroker<CostCenter> implements Cost
 					((CostCenterDataBrokerClient) c).setDataVersionNumber(getDataElementId(), getCurrentDataVersion());
 				}
 				handler.onResponse(null);
+				EventBus.getInstance().fireEvent(new OperationWasExecutedEvent(BigBangConstants.OperationIds.GeneralSystemProcess.MANAGE_COST_CENTERS, costCenterId));
 			}
 			
 			@Override

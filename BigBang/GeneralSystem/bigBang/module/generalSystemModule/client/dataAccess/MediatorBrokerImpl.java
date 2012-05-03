@@ -11,6 +11,8 @@ import bigBang.definitions.client.response.ResponseHandler;
 import bigBang.definitions.shared.BigBangConstants;
 import bigBang.definitions.shared.Mediator;
 import bigBang.library.client.BigBangAsyncCallback;
+import bigBang.library.client.EventBus;
+import bigBang.library.client.event.OperationWasExecutedEvent;
 import bigBang.module.generalSystemModule.interfaces.MediatorService;
 import bigBang.module.generalSystemModule.interfaces.MediatorServiceAsync;
 
@@ -97,6 +99,7 @@ public class MediatorBrokerImpl extends DataBroker<Mediator> implements Mediator
 					((MediatorDataBrokerClient)c).setDataVersionNumber(getDataElementId(), getCurrentDataVersion());
 				}
 				handler.onResponse(result);
+				EventBus.getInstance().fireEvent(new OperationWasExecutedEvent(BigBangConstants.OperationIds.GeneralSystemProcess.MANAGE_MEDIATORS, result.id));
 			}
 			
 			@Override
@@ -122,6 +125,7 @@ public class MediatorBrokerImpl extends DataBroker<Mediator> implements Mediator
 					((MediatorDataBrokerClient)c).updateMediator(result);
 					((MediatorDataBrokerClient)c).setDataVersionNumber(getDataElementId(), getCurrentDataVersion());
 				}
+				EventBus.getInstance().fireEvent(new OperationWasExecutedEvent(BigBangConstants.OperationIds.GeneralSystemProcess.MANAGE_MEDIATORS, result.id));
 				handler.onResponse(result);
 			}
 			
@@ -149,6 +153,8 @@ public class MediatorBrokerImpl extends DataBroker<Mediator> implements Mediator
 					((MediatorDataBrokerClient)c).setDataVersionNumber(getDataElementId(), getCurrentDataVersion());
 				}
 				handler.onResponse(null);
+				EventBus.getInstance().fireEvent(new OperationWasExecutedEvent(BigBangConstants.OperationIds.GeneralSystemProcess.MANAGE_MEDIATORS, mediatorId));
+
 			}
 			
 			@Override

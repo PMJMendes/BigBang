@@ -11,6 +11,8 @@ import bigBang.definitions.client.response.ResponseHandler;
 import bigBang.definitions.shared.BigBangConstants;
 import bigBang.definitions.shared.InsuranceAgency;
 import bigBang.library.client.BigBangAsyncCallback;
+import bigBang.library.client.EventBus;
+import bigBang.library.client.event.OperationWasExecutedEvent;
 import bigBang.module.generalSystemModule.interfaces.InsuranceAgencyService;
 import bigBang.module.generalSystemModule.interfaces.InsuranceAgencyServiceAsync;
 
@@ -105,6 +107,7 @@ public class InsuranceAgencyBrokerImpl extends DataBroker<InsuranceAgency> imple
 					((InsuranceAgencyDataBrokerClient) c).addInsuranceAgency(result);
 					((InsuranceAgencyDataBrokerClient) c).setDataVersionNumber(getDataElementId(), getCurrentDataVersion());
 				}
+				EventBus.getInstance().fireEvent(new OperationWasExecutedEvent(BigBangConstants.OperationIds.GeneralSystemProcess.MANAGE_COMPANIES, result.id));
 				handler.onResponse(result);
 			}
 
@@ -131,6 +134,7 @@ public class InsuranceAgencyBrokerImpl extends DataBroker<InsuranceAgency> imple
 					((InsuranceAgencyDataBrokerClient) c).updateInsuranceAgency(result);
 					((InsuranceAgencyDataBrokerClient) c).setDataVersionNumber(getDataElementId(), getCurrentDataVersion());
 				}
+				EventBus.getInstance().fireEvent(new OperationWasExecutedEvent(BigBangConstants.OperationIds.GeneralSystemProcess.MANAGE_COMPANIES, result.id));
 				handler.onResponse(result);
 			}
 
@@ -158,6 +162,7 @@ public class InsuranceAgencyBrokerImpl extends DataBroker<InsuranceAgency> imple
 					((InsuranceAgencyDataBrokerClient) c).removeInsuranceAgency(insuranceAgencyId);
 					((InsuranceAgencyDataBrokerClient) c).setDataVersionNumber(getDataElementId(), getCurrentDataVersion());
 				}
+				EventBus.getInstance().fireEvent(new OperationWasExecutedEvent(BigBangConstants.OperationIds.GeneralSystemProcess.MANAGE_COMPANIES, insuranceAgencyId));
 				handler.onResponse(null);
 			}
 

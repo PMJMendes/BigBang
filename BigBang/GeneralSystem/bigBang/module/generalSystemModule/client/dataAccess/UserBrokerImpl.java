@@ -13,6 +13,8 @@ import bigBang.definitions.client.response.ResponseHandler;
 import bigBang.definitions.shared.BigBangConstants;
 import bigBang.definitions.shared.User;
 import bigBang.library.client.BigBangAsyncCallback;
+import bigBang.library.client.EventBus;
+import bigBang.library.client.event.OperationWasExecutedEvent;
 import bigBang.module.generalSystemModule.interfaces.UserService;
 import bigBang.module.generalSystemModule.interfaces.UserServiceAsync;
 
@@ -115,6 +117,7 @@ public class UserBrokerImpl extends DataBroker<User> implements UserBroker {
 					((UserDataBrokerClient)c).addUser(result);
 					((UserDataBrokerClient)c).setDataVersionNumber(getDataElementId(), getCurrentDataVersion());
 				}
+				EventBus.getInstance().fireEvent(new OperationWasExecutedEvent(BigBangConstants.OperationIds.GeneralSystemProcess.MANAGE_USERS, result.id));
 				handler.onResponse(result);
 			}
 
@@ -142,6 +145,7 @@ public class UserBrokerImpl extends DataBroker<User> implements UserBroker {
 					((UserDataBrokerClient)c).updateUser(result);
 					((UserDataBrokerClient)c).setDataVersionNumber(getDataElementId(), getCurrentDataVersion());
 				}
+				EventBus.getInstance().fireEvent(new OperationWasExecutedEvent(BigBangConstants.OperationIds.GeneralSystemProcess.MANAGE_USERS, result.id));
 				handler.onResponse(result);
 			}
 
@@ -172,6 +176,7 @@ public class UserBrokerImpl extends DataBroker<User> implements UserBroker {
 							((UserDataBrokerClient)c).removeUser(userId);
 							((UserDataBrokerClient)c).setDataVersionNumber(getDataElementId(), getCurrentDataVersion());
 						}
+						EventBus.getInstance().fireEvent(new OperationWasExecutedEvent(BigBangConstants.OperationIds.GeneralSystemProcess.MANAGE_USERS, userId));
 						handler.onResponse(null);
 					}
 
