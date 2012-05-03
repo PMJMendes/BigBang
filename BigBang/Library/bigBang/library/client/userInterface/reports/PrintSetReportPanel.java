@@ -73,11 +73,6 @@ public class PrintSetReportPanel extends List<PrintSet> {
 		}
 	}
 
-	@Override
-	protected void initializeView() {
-		return;
-	}
-
 	public void setPrintSets(PrintSet[] printSets){
 		for(PrintSet printSet : printSets)
 			this.add(new Entry(printSet));

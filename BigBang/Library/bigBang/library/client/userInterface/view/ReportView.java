@@ -171,8 +171,24 @@ public class ReportView extends View implements ReportViewPresenter.Display {
 		}else{
 			navigationPanel.setHomeWidget(panel);
 		}
-		//TODO BUTTON
-		//((TransactionSetReportPanel)panel).getButton();
+		generateReport = new Button("Gerar Relatório");
+		generateReport.setEnabled(false);
+		generateReport.addClickHandler(new ClickHandler() {
+
+			@Override
+			public void onClick(ClickEvent event) {
+				fireAction(Action.GENERATE_REPORT);
+			}
+		});
+		navigationPanel.navBar.setRightWidget(generateReport);
+
+		((PrintSetReportPanel)panel).addSelectionChangedEventHandler(new SelectionChangedEventHandler() {
+
+			@Override
+			public void onSelectionChanged(SelectionChangedEvent event) {
+				fireAction(Action.TRANSACTION_SET_SELECTION_CHANGED);
+			}
+		});
 	}
 
 	@Override
@@ -219,5 +235,4 @@ public class ReportView extends View implements ReportViewPresenter.Display {
 	public void showButton(boolean b) {
 		generateReport.setVisible(b);
 	}
-
 }

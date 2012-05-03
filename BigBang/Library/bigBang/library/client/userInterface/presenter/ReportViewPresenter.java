@@ -31,7 +31,9 @@ import com.google.gwt.user.client.ui.Widget;
 public class ReportViewPresenter implements ViewPresenter {
 
 	public static enum Action {
-		GENERATE_REPORT, PRINT_SET_SELECTION_CHANGED
+		GENERATE_REPORT, 
+		PRINT_SET_SELECTION_CHANGED, 
+		TRANSACTION_SET_SELECTION_CHANGED
 	}
 
 	public static interface Display {
@@ -103,6 +105,9 @@ public class ReportViewPresenter implements ViewPresenter {
 				case PRINT_SET_SELECTION_CHANGED:
 					onPrintSetSelectionChanged();
 					break;
+				case TRANSACTION_SET_SELECTION_CHANGED:
+					onTransactionSetSelectionChanged();
+					break;
 				}
 			}
 		});
@@ -116,6 +121,11 @@ public class ReportViewPresenter implements ViewPresenter {
 		});
 
 		this.bound = true;
+	}
+
+	protected void onTransactionSetSelectionChanged() {
+		view.setGenerateReportButtonEnabled(!(view.getSelectedTransactionSet() == null));
+		
 	}
 
 	protected void onPrintSetSelectionChanged() {
