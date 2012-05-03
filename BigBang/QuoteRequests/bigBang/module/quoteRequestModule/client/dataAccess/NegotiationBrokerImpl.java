@@ -40,8 +40,8 @@ public class NegotiationBrokerImpl extends DataBroker<Negotiation> implements Ne
 			
 			@Override
 			public void onResponseSuccess(ExternalInfoRequest result) {
-				handler.onResponse(result);
 				EventBus.getInstance().fireEvent(new OperationWasExecutedEvent(BigBangConstants.OperationIds.NegotiationProcess.EXTERNAL_REQUEST, result.id));
+				handler.onResponse(result);
 			}
 			
 			@Override
@@ -103,9 +103,8 @@ public class NegotiationBrokerImpl extends DataBroker<Negotiation> implements Ne
 					((NegotiationBrokerClient)bc).updateNegotiation(result);
 					((NegotiationBrokerClient)bc).setDataVersionNumber(BigBangConstants.EntityIds.NEGOTIATION, getCurrentDataVersion());
 				}
-
-				handler.onResponse(result);
 				EventBus.getInstance().fireEvent(new OperationWasExecutedEvent(BigBangConstants.OperationIds.NegotiationProcess.UPDATE_NEGOTIATION, result.id));
+				handler.onResponse(result);
 
 			}
 
@@ -136,9 +135,8 @@ public class NegotiationBrokerImpl extends DataBroker<Negotiation> implements Ne
 					((NegotiationBrokerClient)bc).removeNegotiation(deletion.negotiationId);
 					((NegotiationBrokerClient)bc).setDataVersionNumber(BigBangConstants.EntityIds.NEGOTIATION, getCurrentDataVersion());
 				}
-
-				handler.onResponse(deletion.negotiationId);
 				EventBus.getInstance().fireEvent(new OperationWasExecutedEvent(BigBangConstants.OperationIds.NegotiationProcess.DELETE_NEGOTIATION, deletion.negotiationId));
+				handler.onResponse(deletion.negotiationId);
 			}
 
 			@Override
@@ -167,8 +165,8 @@ public class NegotiationBrokerImpl extends DataBroker<Negotiation> implements Ne
 					((NegotiationBrokerClient)bc).updateNegotiation(result);
 					((NegotiationBrokerClient)bc).setDataVersionNumber(BigBangConstants.EntityIds.NEGOTIATION, getCurrentDataVersion());
 				}
-				handler.onResponse(result);
 				EventBus.getInstance().fireEvent(new OperationWasExecutedEvent(BigBangConstants.OperationIds.NegotiationProcess.CANCEL_NEGOTIATION, result.id));
+				handler.onResponse(result);
 			}
 
 			@Override
@@ -197,9 +195,8 @@ public class NegotiationBrokerImpl extends DataBroker<Negotiation> implements Ne
 					((NegotiationBrokerClient)bc).updateNegotiation(result);
 					((NegotiationBrokerClient)bc).setDataVersionNumber(BigBangConstants.EntityIds.NEGOTIATION, getCurrentDataVersion());
 				}
-				
-				handler.onResponse(result);
 				EventBus.getInstance().fireEvent(new OperationWasExecutedEvent(BigBangConstants.OperationIds.NegotiationProcess.GRANT_NEGOTIATION, grant.negotiationId));
+				handler.onResponse(result);
 			}
 			
 			@Override
@@ -227,8 +224,8 @@ public class NegotiationBrokerImpl extends DataBroker<Negotiation> implements Ne
 					((NegotiationBrokerClient)bc).updateNegotiation(result);
 					((NegotiationBrokerClient)bc).setDataVersionNumber(BigBangConstants.EntityIds.NEGOTIATION, getCurrentDataVersion());
 				}
-				handler.onResponse(result);
 				EventBus.getInstance().fireEvent(new OperationWasExecutedEvent(BigBangConstants.OperationIds.NegotiationProcess.RECEIVE_QUOTE, result.id));
+				handler.onResponse(result);
 			}
 
 			@Override

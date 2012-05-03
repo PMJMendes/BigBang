@@ -295,8 +295,8 @@ public class QuoteRequestBrokerImpl extends DataBroker<QuoteRequest> implements	
 									}
 									((QuoteRequestDataBrokerClient) client).setDataVersionNumber(getDataElementId(), getCurrentDataVersion());
 								}
-								handler.onResponse(response);
 								EventBus.getInstance().fireEvent(new OperationWasExecutedEvent(BigBangConstants.OperationIds.QuoteRequestProcess.UPDATE_QUOTE_REQUEST, response.id));
+								handler.onResponse(response);
 							}
 
 							@Override
@@ -485,8 +485,8 @@ public class QuoteRequestBrokerImpl extends DataBroker<QuoteRequest> implements	
 					((QuoteRequestDataBrokerClient) bc).updateQuoteRequest(result);
 					((QuoteRequestDataBrokerClient) bc).setDataVersionNumber(BigBangConstants.EntityIds.QUOTE_REQUEST, getCurrentDataVersion());
 				}
-				handler.onResponse(result);
 				EventBus.getInstance().fireEvent(new OperationWasExecutedEvent(BigBangConstants.OperationIds.QuoteRequestProcess.CLOSE_QUOTE_REQUEST, result.id));
+				handler.onResponse(result);
 			}
 
 			@Override
@@ -510,8 +510,8 @@ public class QuoteRequestBrokerImpl extends DataBroker<QuoteRequest> implements	
 					((QuoteRequestDataBrokerClient) bc).removeQuoteRequest(id);
 					((QuoteRequestDataBrokerClient) bc).setDataVersionNumber(BigBangConstants.EntityIds.QUOTE_REQUEST, getCurrentDataVersion());
 				}
-				handler.onResponse(null);
 				EventBus.getInstance().fireEvent(new OperationWasExecutedEvent(BigBangConstants.OperationIds.QuoteRequestProcess.DELETE_QUOTE_REQUEST, id));
+				handler.onResponse(null);
 			}
 
 			@Override
@@ -623,8 +623,8 @@ public class QuoteRequestBrokerImpl extends DataBroker<QuoteRequest> implements	
 							}
 						});
 					}
-					handler.onResponse(result);
 					EventBus.getInstance().fireEvent(new OperationWasExecutedEvent(BigBangConstants.OperationIds.QuoteRequestProcess.CREATE_MANAGER_TRANSFER, result.newManagerId));
+					handler.onResponse(result);
 				}
 
 				@Override
@@ -659,8 +659,8 @@ public class QuoteRequestBrokerImpl extends DataBroker<QuoteRequest> implements	
 							}
 						});
 					}
-					handler.onResponse(result);
 					EventBus.getInstance().fireEvent(new OperationWasExecutedEvent(BigBangConstants.OperationIds.ClientProcess.CREATE_MANAGER_TRANSFER, result.newManagerId));
+					handler.onResponse(result);
 				}
 
 				@Override

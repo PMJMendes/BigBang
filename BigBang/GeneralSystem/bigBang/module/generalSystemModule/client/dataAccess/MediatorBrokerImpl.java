@@ -98,8 +98,9 @@ public class MediatorBrokerImpl extends DataBroker<Mediator> implements Mediator
 					((MediatorDataBrokerClient)c).addMediator(result);
 					((MediatorDataBrokerClient)c).setDataVersionNumber(getDataElementId(), getCurrentDataVersion());
 				}
-				handler.onResponse(result);
 				EventBus.getInstance().fireEvent(new OperationWasExecutedEvent(BigBangConstants.OperationIds.GeneralSystemProcess.MANAGE_MEDIATORS, result.id));
+
+				handler.onResponse(result);
 			}
 			
 			@Override
@@ -152,8 +153,9 @@ public class MediatorBrokerImpl extends DataBroker<Mediator> implements Mediator
 					((MediatorDataBrokerClient)c).removeMediator(mediatorId);
 					((MediatorDataBrokerClient)c).setDataVersionNumber(getDataElementId(), getCurrentDataVersion());
 				}
-				handler.onResponse(null);
 				EventBus.getInstance().fireEvent(new OperationWasExecutedEvent(BigBangConstants.OperationIds.GeneralSystemProcess.MANAGE_MEDIATORS, mediatorId));
+
+				handler.onResponse(null);
 
 			}
 			

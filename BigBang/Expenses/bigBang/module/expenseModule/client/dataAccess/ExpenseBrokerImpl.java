@@ -145,8 +145,9 @@ public class ExpenseBrokerImpl extends DataBroker<Expense> implements ExpenseDat
 					((ExpenseDataBrokerClient) bc).updateExpense(result);
 					((ExpenseDataBrokerClient) bc).setDataVersionNumber(BigBangConstants.EntityIds.EXPENSE, getCurrentDataVersion());
 				}
-				handler.onResponse(result);
 				EventBus.getInstance().fireEvent(new OperationWasExecutedEvent(BigBangConstants.OperationIds.ExpenseProcess.UPDATE_EXPENSE, result.id));
+
+				handler.onResponse(result);
 			}
 
 			@Override
@@ -176,8 +177,9 @@ public class ExpenseBrokerImpl extends DataBroker<Expense> implements ExpenseDat
 							((ExpenseDataBrokerClient) bc).deleteExpense(id);
 							((ExpenseDataBrokerClient) bc).setDataVersionNumber(BigBangConstants.EntityIds.EXPENSE, getCurrentDataVersion());
 						}
-						handler.onResponse(id);
 						EventBus.getInstance().fireEvent(new OperationWasExecutedEvent(BigBangConstants.OperationIds.ExpenseProcess.DELETE_EXPENSE,  id));
+
+						handler.onResponse(id);
 					}
 
 					@Override
@@ -222,8 +224,9 @@ public class ExpenseBrokerImpl extends DataBroker<Expense> implements ExpenseDat
 					((ExpenseDataBrokerClient) bc).updateExpense(result);
 					((ExpenseDataBrokerClient) bc).setDataVersionNumber(BigBangConstants.EntityIds.EXPENSE, getCurrentDataVersion());
 				}
-				handler.onResponse(result);	
 				EventBus.getInstance().fireEvent(new OperationWasExecutedEvent(BigBangConstants.OperationIds.ExpenseProcess.SEND_NOTIFICATION,  result.id));
+
+				handler.onResponse(result);	
 
 			}
 
@@ -250,8 +253,9 @@ public class ExpenseBrokerImpl extends DataBroker<Expense> implements ExpenseDat
 					((ExpenseDataBrokerClient) bc).updateExpense(result);
 					((ExpenseDataBrokerClient) bc).setDataVersionNumber(BigBangConstants.EntityIds.EXPENSE, getCurrentDataVersion());
 				}
-				handler.onResponse(result);	
 				EventBus.getInstance().fireEvent(new OperationWasExecutedEvent(BigBangConstants.OperationIds.ExpenseProcess.RECEIVE_ACCEPTANCE,  result.id));
+
+				handler.onResponse(result);	
 			}
 
 			@Override
@@ -278,8 +282,9 @@ public class ExpenseBrokerImpl extends DataBroker<Expense> implements ExpenseDat
 					((ExpenseDataBrokerClient) bc).updateExpense(result);
 					((ExpenseDataBrokerClient) bc).setDataVersionNumber(BigBangConstants.EntityIds.EXPENSE, getCurrentDataVersion());
 				}
-				handler.onResponse(result);	
 				EventBus.getInstance().fireEvent(new OperationWasExecutedEvent(BigBangConstants.OperationIds.ExpenseProcess.RECEIVE_RETURN,  result.id));
+
+				handler.onResponse(result);	
 
 			}
 
@@ -301,8 +306,9 @@ public class ExpenseBrokerImpl extends DataBroker<Expense> implements ExpenseDat
 
 			@Override
 			public void onResponseSuccess(Void result) {
-				handler.onResponse(null);
 				EventBus.getInstance().fireEvent(new OperationWasExecutedEvent(BigBangConstants.OperationIds.ExpenseProcess.SEND_NOTIFICATION,  null));
+
+				handler.onResponse(null);
 			}
 
 			@Override
@@ -324,8 +330,9 @@ public class ExpenseBrokerImpl extends DataBroker<Expense> implements ExpenseDat
 
 			@Override
 			public void onResponseSuccess(ExternalInfoRequest result) {
-				responseHandler.onResponse(result);
 				EventBus.getInstance().fireEvent(new OperationWasExecutedEvent(BigBangConstants.OperationIds.ExpenseProcess.CREATE_EXTERNAL_REQUEST, result.id));
+
+				responseHandler.onResponse(result);
 
 			}
 
@@ -348,8 +355,9 @@ public class ExpenseBrokerImpl extends DataBroker<Expense> implements ExpenseDat
 		service.createInfoRequest(request, new BigBangAsyncCallback<InfoOrDocumentRequest>() {
 			@Override
 			public void onResponseSuccess(InfoOrDocumentRequest result) {
-				responseHandler.onResponse(result);
 				EventBus.getInstance().fireEvent(new OperationWasExecutedEvent(BigBangConstants.OperationIds.ExpenseProcess.CREATE_INFO_REQUEST, result.id));
+
+				responseHandler.onResponse(result);
 
 			}
 
@@ -379,8 +387,9 @@ public class ExpenseBrokerImpl extends DataBroker<Expense> implements ExpenseDat
 					((ExpenseDataBrokerClient) bc).updateExpense(result);
 					((ExpenseDataBrokerClient) bc).setDataVersionNumber(BigBangConstants.EntityIds.EXPENSE, getCurrentDataVersion());
 				}
-				responseHandler.onResponse(result);	
 				EventBus.getInstance().fireEvent(new OperationWasExecutedEvent(BigBangConstants.OperationIds.ExpenseProcess.NOTIFY_CLIENT,  result.id));
+
+				responseHandler.onResponse(result);	
 
 			}
 
@@ -407,8 +416,9 @@ public class ExpenseBrokerImpl extends DataBroker<Expense> implements ExpenseDat
 					((ExpenseDataBrokerClient) bc).updateExpense(result);
 					((ExpenseDataBrokerClient) bc).setDataVersionNumber(BigBangConstants.EntityIds.EXPENSE, getCurrentDataVersion());
 				}
-				responseHandler.onResponse(result);	
 				EventBus.getInstance().fireEvent(new OperationWasExecutedEvent(BigBangConstants.OperationIds.ExpenseProcess.RETURN_TO_CLIENT,  result.id));
+
+				responseHandler.onResponse(result);	
 
 			}
 
@@ -431,8 +441,9 @@ public class ExpenseBrokerImpl extends DataBroker<Expense> implements ExpenseDat
 			
 			@Override
 			public void onResponseSuccess(Void result) {
-				handler.onResponse(null);
 				EventBus.getInstance().fireEvent(new OperationWasExecutedEvent(BigBangConstants.OperationIds.ExpenseProcess.RETURN_TO_CLIENT,  null));
+
+				handler.onResponse(null);
 			}
 
 			@Override
@@ -452,8 +463,9 @@ public class ExpenseBrokerImpl extends DataBroker<Expense> implements ExpenseDat
 		service.massNotifyClient(toNotify, new BigBangAsyncCallback<Void>() {
 			@Override
 			public void onResponseSuccess(Void result) {
-				responseHandler.onResponse(null);
 				EventBus.getInstance().fireEvent(new OperationWasExecutedEvent(BigBangConstants.OperationIds.ExpenseProcess.NOTIFY_CLIENT,  null));
+
+				responseHandler.onResponse(null);
 			}
 
 			@Override

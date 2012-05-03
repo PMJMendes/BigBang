@@ -259,10 +259,10 @@ implements InsuranceSubPolicyBroker {
 
 			@Override
 			public void onResponseSuccess(Remap[] result) {
+				EventBus.getInstance().fireEvent(new OperationWasExecutedEvent(BigBangConstants.OperationIds.InsuranceSubPolicyProcess.EDIT_SUB_POLICY, subPolicyId));
 				String subPolicyId = result[0].remapIds[0].newId;
 				doRemapping(result);
 				getSubPolicy(subPolicyId, handler);
-				EventBus.getInstance().fireEvent(new OperationWasExecutedEvent(BigBangConstants.OperationIds.InsuranceSubPolicyProcess.EDIT_SUB_POLICY, subPolicyId));
 			}
 
 			@Override
@@ -288,9 +288,9 @@ implements InsuranceSubPolicyBroker {
 
 				@Override
 				public void onResponseSuccess(Remap[] result) {
+					EventBus.getInstance().fireEvent(new OperationWasExecutedEvent(BigBangConstants.OperationIds.InsuranceSubPolicyProcess.CLOSE, id));
 					doRemapping(result);
 					handler.onResponse(null);
-					EventBus.getInstance().fireEvent(new OperationWasExecutedEvent(BigBangConstants.OperationIds.InsuranceSubPolicyProcess.CLOSE, id));
 				}
 
 				@Override
@@ -436,8 +436,8 @@ implements InsuranceSubPolicyBroker {
 					((InsuranceSubPolicyDataBrokerClient) bc).removeInsuranceSubPolicy(finalId);
 					((InsuranceSubPolicyDataBrokerClient) bc).setDataVersionNumber(BigBangConstants.EntityIds.INSURANCE_SUB_POLICY, getCurrentDataVersion());
 				}
-				handler.onResponse(finalId);
 				EventBus.getInstance().fireEvent(new OperationWasExecutedEvent(BigBangConstants.OperationIds.InsuranceSubPolicyProcess.DELETE_SUB_POLICY, subPolicyId));
+				handler.onResponse(finalId);
 			}
 
 			@Override
@@ -458,9 +458,9 @@ implements InsuranceSubPolicyBroker {
 
 			@Override
 			public void onResponseSuccess(Receipt result) {
+				EventBus.getInstance().fireEvent(new OperationWasExecutedEvent(BigBangConstants.OperationIds.InsuranceSubPolicyProcess.CREATE_RECEIPT, subPolicyId));
 				handler.onResponse(result);
 				DataBrokerManager.Util.getInstance().getBroker(BigBangConstants.EntityIds.RECEIPT).notifyItemCreation(result.id);
-				EventBus.getInstance().fireEvent(new OperationWasExecutedEvent(BigBangConstants.OperationIds.InsuranceSubPolicyProcess.CREATE_RECEIPT, subPolicyId));
 			}
 
 			@Override
@@ -556,8 +556,8 @@ implements InsuranceSubPolicyBroker {
 
 			@Override
 			public void onResponseSuccess(Void result) {
-				handler.onResponse(null);
 				EventBus.getInstance().fireEvent(new OperationWasExecutedEvent(BigBangConstants.OperationIds.InsuranceSubPolicyProcess.VALIDATE, subPolicyId));
+				handler.onResponse(null);
 			}
 
 			@Override
@@ -577,8 +577,8 @@ implements InsuranceSubPolicyBroker {
 
 			@Override
 			public void onResponseSuccess(SubPolicy result) {
-				handler.onResponse(result);
 				EventBus.getInstance().fireEvent(new OperationWasExecutedEvent(BigBangConstants.OperationIds.InsuranceSubPolicyProcess.PERFORM_CALCULATIONS, result.id));
+				handler.onResponse(result);
 			}
 
 			@Override
@@ -598,8 +598,8 @@ implements InsuranceSubPolicyBroker {
 
 			@Override
 			public void onResponseSuccess(SubPolicy result) {
-				handler.onResponse(result);
 				EventBus.getInstance().fireEvent(new OperationWasExecutedEvent(BigBangConstants.OperationIds.InsuranceSubPolicyProcess.VOID, result.id));
+				handler.onResponse(result);
 			}
 
 			@Override
@@ -639,8 +639,8 @@ implements InsuranceSubPolicyBroker {
 
 			@Override
 			public void onResponseSuccess(InsuredObject result) {
-				insuredObjectsBroker.notifyItemCreation(result.id);
 				EventBus.getInstance().fireEvent(new OperationWasExecutedEvent(BigBangConstants.OperationIds.InsuranceSubPolicyProcess.INCLUDE_OBJECT_FROM_CLIENT, subPolicyId));
+				insuredObjectsBroker.notifyItemCreation(result.id);
 			}
 			
 			@Override
@@ -660,8 +660,8 @@ implements InsuranceSubPolicyBroker {
 
 			@Override
 			public void onResponseSuccess(Void result) {
-				insuredObjectsBroker.notifyItemDeletion(objectId);
 				EventBus.getInstance().fireEvent(new OperationWasExecutedEvent(BigBangConstants.OperationIds.InsuranceSubPolicyProcess.EXCLUDE_OBJECT, subPolicyId));
+				insuredObjectsBroker.notifyItemDeletion(objectId);
 			}
 			
 			@Override
@@ -687,8 +687,8 @@ implements InsuranceSubPolicyBroker {
 					((InsuranceSubPolicyDataBrokerClient) bc).updateInsuranceSubPolicy(result);
 					((InsuranceSubPolicyDataBrokerClient) bc).setDataVersionNumber(BigBangConstants.EntityIds.INSURANCE_SUB_POLICY, getCurrentDataVersion());
 				}
-				handler.onResponse(result);
 				EventBus.getInstance().fireEvent(new OperationWasExecutedEvent(BigBangConstants.OperationIds.InsuranceSubPolicyProcess.TRANSFER_TO_POLICY, result.id));
+				handler.onResponse(result);
 			}
 			
 			@Override
@@ -708,8 +708,8 @@ implements InsuranceSubPolicyBroker {
 
 			@Override
 			public void onResponseSuccess(InfoOrDocumentRequest result) {
-				handler.onResponse(result);
 				EventBus.getInstance().fireEvent(new OperationWasExecutedEvent(BigBangConstants.OperationIds.InsuranceSubPolicyProcess.CREATE_INFO_OR_DOCUMENT_REQUEST, result.id));
+				handler.onResponse(result);
 
 			}
 			
@@ -729,8 +729,8 @@ implements InsuranceSubPolicyBroker {
 
 			@Override
 			public void onResponseSuccess(Receipt result) {
-				handler.onResponse(result);
 				EventBus.getInstance().fireEvent(new OperationWasExecutedEvent(BigBangConstants.OperationIds.InsuranceSubPolicyProcess.CREATE_RECEIPT, result.id));
+				handler.onResponse(result);
 			}
 			
 			@Override
@@ -840,8 +840,8 @@ implements InsuranceSubPolicyBroker {
 
 			@Override
 			public void onResponseSuccess(Expense result) {
-				handler.onResponse(result);
 				EventBus.getInstance().fireEvent(new OperationWasExecutedEvent(BigBangConstants.OperationIds.InsuranceSubPolicyProcess.CREATE_RECEIPT, result.id));
+				handler.onResponse(result);
 				((ExpenseDataBroker) DataBrokerManager.staticGetBroker(BigBangConstants.EntityIds.EXPENSE)).notifyItemCreation(result.id);
 			}
 

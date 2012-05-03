@@ -99,8 +99,8 @@ public class CancelInfoOrDocumentRequestViewPresenter implements ViewPresenter {
 
 			@Override
 			public void onResponseSuccess(Void result) {
-				onCancellationSuccess();
 				EventBus.getInstance().fireEvent(new OperationWasExecutedEvent(BigBangConstants.OperationIds.InfoOrDocumentRequest.CANCEL_REQUEST, toCancel.requestId));
+				onCancellationSuccess();
 			}
 			
 			@Override

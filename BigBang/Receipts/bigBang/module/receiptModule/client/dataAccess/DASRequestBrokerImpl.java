@@ -160,9 +160,8 @@ public class DASRequestBrokerImpl extends DataBroker<DASRequest> implements DASR
 					((DASRequestBrokerClient)bc).removeDASRequest(request.requestId);
 					((DASRequestBrokerClient)bc).setDataVersionNumber(BigBangConstants.EntityIds.DAS_REQUEST, getCurrentDataVersion());
 				}
-
-				handler.onResponse(null);
 				EventBus.getInstance().fireEvent(new OperationWasExecutedEvent(BigBangConstants.OperationIds.DASRequestProcess.CANCEL_DAS_REQUEST, request.requestId));
+				handler.onResponse(null);
 
 			}
 

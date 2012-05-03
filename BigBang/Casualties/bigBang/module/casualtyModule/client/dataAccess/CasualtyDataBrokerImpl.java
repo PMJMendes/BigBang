@@ -99,8 +99,8 @@ CasualtyDataBroker {
 				for(DataBrokerClient<Casualty> client : clients) {
 					((CasualtyDataBrokerClient) client).updateCasualty(result);
 				}
-				handler.onResponse(result);
 				EventBus.getInstance().fireEvent(new OperationWasExecutedEvent(BigBangConstants.OperationIds.CasualtyProcess.UPDATE_CASUALTY, result.id));
+				handler.onResponse(result);
 			}
 			
 			@Override
@@ -120,11 +120,11 @@ CasualtyDataBroker {
 			@Override
 			public void onResponseSuccess(Void result) {
 				incrementDataVersion();
+				EventBus.getInstance().fireEvent(new OperationWasExecutedEvent(BigBangConstants.OperationIds.CasualtyProcess.DELETE_CASUALTY, casualtyId));
 				handler.onResponse(result);
 				for(DataBrokerClient<Casualty> client : clients) {
 					((CasualtyDataBrokerClient) client).removeCasualty(casualtyId);
 				}
-				EventBus.getInstance().fireEvent(new OperationWasExecutedEvent(BigBangConstants.OperationIds.CasualtyProcess.DELETE_CASUALTY, casualtyId));
 			}
 			
 			@Override
@@ -202,11 +202,11 @@ CasualtyDataBroker {
 			@Override
 			public void onResponseSuccess(Casualty result) {
 				incrementDataVersion();
+				EventBus.getInstance().fireEvent(new OperationWasExecutedEvent(BigBangConstants.OperationIds.CasualtyProcess.CLOSE_CASUALTY, result.id));
 				handler.onResponse(null);
 				for(DataBrokerClient<Casualty> client : clients) {
 					((CasualtyDataBrokerClient) client).updateCasualty(result);
 				}
-				EventBus.getInstance().fireEvent(new OperationWasExecutedEvent(BigBangConstants.OperationIds.CasualtyProcess.CLOSE_CASUALTY, result.id));
 			}
 			
 			@Override
@@ -228,8 +228,8 @@ CasualtyDataBroker {
 			public void onResponseSuccess(SubCasualty result) {
 				SubCasualtyDataBroker subCasualtyBroker = (SubCasualtyDataBroker) DataBrokerManager.staticGetBroker(BigBangConstants.EntityIds.SUB_CASUALTY);
 				subCasualtyBroker.notifyItemCreation(result.id);
-				responseHandler.onResponse(result);
 				EventBus.getInstance().fireEvent(new OperationWasExecutedEvent(BigBangConstants.OperationIds.CasualtyProcess.CREATE_SUB_CASUALTY, result.id));
+				responseHandler.onResponse(result);
 			}
 			
 			@Override
@@ -254,8 +254,8 @@ CasualtyDataBroker {
 
 				@Override
 				public void onResponseSuccess(ManagerTransfer result) {
-					handler.onResponse(null);
 					EventBus.getInstance().fireEvent(new OperationWasExecutedEvent(BigBangConstants.OperationIds.CasualtyProcess.CREATE_MANAGER_TRANSFER, result.id));
+					handler.onResponse(null);
 				}
 				
 				@Override
@@ -271,8 +271,8 @@ CasualtyDataBroker {
 
 				@Override
 				public void onResponseSuccess(ManagerTransfer result) {
-					handler.onResponse(null);
 					EventBus.getInstance().fireEvent(new OperationWasExecutedEvent(BigBangConstants.OperationIds.CasualtyProcess.CREATE_MANAGER_TRANSFER, result.id));
+					handler.onResponse(null);
 				}
 				
 				@Override
@@ -298,8 +298,8 @@ CasualtyDataBroker {
 			
 			@Override
 			public void onResponseSuccess(InfoOrDocumentRequest result) {
-				responseHandler.onResponse(null);
 				EventBus.getInstance().fireEvent(new OperationWasExecutedEvent(BigBangConstants.OperationIds.CasualtyProcess.CREATE_INFO_REQUEST, result.id));
+				responseHandler.onResponse(null);
 			}
 			
 			@Override

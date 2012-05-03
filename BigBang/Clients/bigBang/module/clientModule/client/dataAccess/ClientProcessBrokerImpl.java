@@ -87,8 +87,8 @@ public class ClientProcessBrokerImpl extends DataBroker<Client> implements Clien
 					((ClientProcessDataBrokerClient) bc).addClient(result);
 					((ClientProcessDataBrokerClient) bc).setDataVersionNumber(BigBangConstants.EntityIds.CLIENT, getCurrentDataVersion());
 				}
-				handler.onResponse(result);
 				EventBus.getInstance().fireEvent(new OperationWasExecutedEvent(BigBangConstants.OperationIds.GeneralSystemProcess.CREATE_CLIENT, result.id));
+				handler.onResponse(result);
 			}
 
 			@Override
@@ -114,8 +114,9 @@ public class ClientProcessBrokerImpl extends DataBroker<Client> implements Clien
 					((ClientProcessDataBrokerClient) bc).updateClient(result);
 					((ClientProcessDataBrokerClient) bc).setDataVersionNumber(BigBangConstants.EntityIds.CLIENT, getCurrentDataVersion());
 				}
-				handler.onResponse(result);
 				EventBus.getInstance().fireEvent(new OperationWasExecutedEvent(BigBangConstants.OperationIds.ClientProcess.UPDATE_CLIENT, result.id));
+
+				handler.onResponse(result);
 			}
 
 			@Override
@@ -141,8 +142,9 @@ public class ClientProcessBrokerImpl extends DataBroker<Client> implements Clien
 					((ClientProcessDataBrokerClient) bc).removeClient(clientId);
 					((ClientProcessDataBrokerClient) bc).setDataVersionNumber(BigBangConstants.EntityIds.CLIENT, getCurrentDataVersion());
 				}
-				handler.onResponse(clientId);
 				EventBus.getInstance().fireEvent(new OperationWasExecutedEvent(BigBangConstants.OperationIds.ClientProcess.DELETE_CLIENT, clientId));
+
+				handler.onResponse(clientId);
 			}
 
 			@Override
@@ -174,9 +176,10 @@ public class ClientProcessBrokerImpl extends DataBroker<Client> implements Clien
 			@Override
 			public void onResponseSuccess(RiskAnalysis result) {
 				//TODO
+				EventBus.getInstance().fireEvent(new OperationWasExecutedEvent(BigBangConstants.OperationIds.ClientProcess.CREATE_RISK_ANALISYS, clientId));				
+
 				handler.onResponse(result);
 
-				EventBus.getInstance().fireEvent(new OperationWasExecutedEvent(BigBangConstants.OperationIds.ClientProcess.CREATE_RISK_ANALISYS, clientId));				
 			}
 
 			@Override
@@ -197,9 +200,10 @@ public class ClientProcessBrokerImpl extends DataBroker<Client> implements Clien
 			@Override
 			public void onResponseSuccess(Casualty result) {
 				//TODO
+				EventBus.getInstance().fireEvent(new OperationWasExecutedEvent(BigBangConstants.OperationIds.ClientProcess.CREATE_CASUALTY, result.clientId));
+
 				handler.onResponse(result);
 
-				EventBus.getInstance().fireEvent(new OperationWasExecutedEvent(BigBangConstants.OperationIds.ClientProcess.CREATE_CASUALTY, result.clientId));
 			}
 
 			@Override
@@ -225,8 +229,9 @@ public class ClientProcessBrokerImpl extends DataBroker<Client> implements Clien
 					((ClientProcessDataBrokerClient) bc).updateClient(result);
 					((ClientProcessDataBrokerClient) bc).setDataVersionNumber(BigBangConstants.EntityIds.CLIENT, getCurrentDataVersion());
 				}
-				handler.onResponse(result);
 				EventBus.getInstance().fireEvent(new OperationWasExecutedEvent(BigBangConstants.OperationIds.ClientProcess.MERGE_CLIENT, result.id));
+
+				handler.onResponse(result);
 			}
 
 			@Override
@@ -247,8 +252,9 @@ public class ClientProcessBrokerImpl extends DataBroker<Client> implements Clien
 
 			@Override
 			public void onResponseSuccess(InfoOrDocumentRequest result) {
-				handler.onResponse(result);
 				EventBus.getInstance().fireEvent(new OperationWasExecutedEvent(BigBangConstants.OperationIds.ClientProcess.CREATE_INFO_REQUEST, result.id));
+
+				handler.onResponse(result);
 			}
 
 			@Override
@@ -291,8 +297,8 @@ public class ClientProcessBrokerImpl extends DataBroker<Client> implements Clien
 							}
 						});
 					}
-					handler.onResponse(result);
 					EventBus.getInstance().fireEvent(new OperationWasExecutedEvent(BigBangConstants.OperationIds.ClientProcess.CREATE_MANAGER_TRANSFER, result.newManagerId));
+					handler.onResponse(result);
 				}
 
 				@Override
@@ -326,8 +332,9 @@ public class ClientProcessBrokerImpl extends DataBroker<Client> implements Clien
 							}
 						});
 					}
-					handler.onResponse(result);
 					EventBus.getInstance().fireEvent(new OperationWasExecutedEvent(BigBangConstants.OperationIds.ClientProcess.CREATE_MANAGER_TRANSFER, result.newManagerId));
+
+					handler.onResponse(result);
 				}
 
 				@Override

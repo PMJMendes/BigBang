@@ -236,8 +236,8 @@ public class InsurancePolicyProcessBrokerImpl extends DataBroker<InsurancePolicy
 					((InsurancePolicyDataBrokerClient) bc).removeInsurancePolicy(finalId);
 					((InsurancePolicyDataBrokerClient) bc).setDataVersionNumber(BigBangConstants.EntityIds.INSURANCE_POLICY, getCurrentDataVersion());
 				}
-				handler.onResponse(finalId);
 				EventBus.getInstance().fireEvent(new OperationWasExecutedEvent(BigBangConstants.OperationIds.InsurancePolicyProcess.DELETE_POLICY, finalId));
+				handler.onResponse(finalId);
 			}
 
 			@Override
@@ -289,9 +289,9 @@ public class InsurancePolicyProcessBrokerImpl extends DataBroker<InsurancePolicy
 
 			@Override
 			public void onResponseSuccess(Receipt result) {
+				EventBus.getInstance().fireEvent(new OperationWasExecutedEvent(BigBangConstants.OperationIds.InsurancePolicyProcess.CREATE_RECEIPT, result.id));
 				handler.onResponse(result);
 				DataBrokerManager.Util.getInstance().getBroker(BigBangConstants.EntityIds.RECEIPT).notifyItemCreation(result.id);
-				EventBus.getInstance().fireEvent(new OperationWasExecutedEvent(BigBangConstants.OperationIds.InsurancePolicyProcess.CREATE_RECEIPT, result.id));
 			}
 
 			@Override
@@ -378,10 +378,10 @@ public class InsurancePolicyProcessBrokerImpl extends DataBroker<InsurancePolicy
 
 			@Override
 			public void onResponseSuccess(Remap[] result) {
+				EventBus.getInstance().fireEvent(new OperationWasExecutedEvent(BigBangConstants.OperationIds.InsurancePolicyProcess.UPDATE_POLICY, policy.id));
 				String policyId = result[0].remapIds[0].newId;
 				doRemapping(result);
 				getPolicy(policyId, handler);
-				EventBus.getInstance().fireEvent(new OperationWasExecutedEvent(BigBangConstants.OperationIds.InsurancePolicyProcess.UPDATE_POLICY, policy.id));
 			}
 
 			@Override
@@ -561,9 +561,8 @@ public class InsurancePolicyProcessBrokerImpl extends DataBroker<InsurancePolicy
 
 			@Override
 			public void onResponseSuccess(Void result) {
-				handler.onResponse(null);
 				EventBus.getInstance().fireEvent(new OperationWasExecutedEvent(BigBangConstants.OperationIds.InsurancePolicyProcess.VALIDATE_POLICY, policyId));
-
+				handler.onResponse(null);
 			}
 
 			@Override
@@ -582,8 +581,8 @@ public class InsurancePolicyProcessBrokerImpl extends DataBroker<InsurancePolicy
 
 			@Override
 			public void onResponseSuccess(InsurancePolicy result) {
-				handler.onResponse(result);
 				EventBus.getInstance().fireEvent(new OperationWasExecutedEvent(BigBangConstants.OperationIds.InsurancePolicyProcess.EXECUTE_DETAILED_CALCULATIONS, policyId));
+				handler.onResponse(result);
 			}
 			
 			@Override
@@ -602,8 +601,8 @@ public class InsurancePolicyProcessBrokerImpl extends DataBroker<InsurancePolicy
 
 			@Override
 			public void onResponseSuccess(InsurancePolicy result) {
-				handler.onResponse(result);
 				EventBus.getInstance().fireEvent(new OperationWasExecutedEvent(BigBangConstants.OperationIds.InsurancePolicyProcess.VOID_POLICY, result.id));
+				handler.onResponse(result);
 			}
 			
 			@Override
@@ -622,8 +621,8 @@ public class InsurancePolicyProcessBrokerImpl extends DataBroker<InsurancePolicy
 
 			@Override
 			public void onResponseSuccess(Void result) {
-				handler.onResponse(null);
 				EventBus.getInstance().fireEvent(new OperationWasExecutedEvent(BigBangConstants.OperationIds.InsurancePolicyProcess.CREATE_DEBIT_NOTE, policyId));
+				handler.onResponse(null);
 			}
 			
 			@Override
@@ -734,9 +733,9 @@ public class InsurancePolicyProcessBrokerImpl extends DataBroker<InsurancePolicy
 
 			@Override
 			public void onResponseSuccess(Negotiation result) {
+				EventBus.getInstance().fireEvent(new OperationWasExecutedEvent(BigBangConstants.OperationIds.InsurancePolicyProcess.CREATE_NEGOTIATION, result.id));
 				handler.onResponse(result);
 				DataBrokerManager.Util.getInstance().getBroker(BigBangConstants.EntityIds.NEGOTIATION).notifyItemCreation(result.id);
-				EventBus.getInstance().fireEvent(new OperationWasExecutedEvent(BigBangConstants.OperationIds.InsurancePolicyProcess.CREATE_NEGOTIATION, result.id));
 			}
 			
 			@Override
@@ -761,8 +760,8 @@ public class InsurancePolicyProcessBrokerImpl extends DataBroker<InsurancePolicy
 					((InsurancePolicyDataBrokerClient) bc).updateInsurancePolicy(result);
 					((InsurancePolicyDataBrokerClient) bc).setDataVersionNumber(BigBangConstants.EntityIds.INSURANCE_POLICY, getCurrentDataVersion());
 				}
-				handler.onResponse(result);				
 				EventBus.getInstance().fireEvent(new OperationWasExecutedEvent(BigBangConstants.OperationIds.InsurancePolicyProcess.TRANSFER_TO_CLIENT, result.id));
+				handler.onResponse(result);				
 			}
 		
 			@Override
@@ -788,8 +787,8 @@ public class InsurancePolicyProcessBrokerImpl extends DataBroker<InsurancePolicy
 
 				@Override
 				public void onResponseSuccess(ManagerTransfer result) {
-					handler.onResponse(null);
 					EventBus.getInstance().fireEvent(new OperationWasExecutedEvent(BigBangConstants.OperationIds.InsurancePolicyProcess.TRANSFER_MANAGER, result.id));
+					handler.onResponse(null);
 				}
 				
 				@Override
@@ -805,8 +804,8 @@ public class InsurancePolicyProcessBrokerImpl extends DataBroker<InsurancePolicy
 
 				@Override
 				public void onResponseSuccess(ManagerTransfer result) {
-					handler.onResponse(null);
 					EventBus.getInstance().fireEvent(new OperationWasExecutedEvent(BigBangConstants.OperationIds.InsurancePolicyProcess.TRANSFER_MANAGER, result.id));
+					handler.onResponse(null);
 				}
 				
 				@Override
@@ -856,8 +855,9 @@ public class InsurancePolicyProcessBrokerImpl extends DataBroker<InsurancePolicy
 
 			@Override
 			public void onResponseSuccess(Expense result) {
-				handler.onResponse(result);
 				EventBus.getInstance().fireEvent(new OperationWasExecutedEvent(BigBangConstants.OperationIds.InsurancePolicyProcess.CREATE_HEALTH_EXPENSE, result.id));
+
+				handler.onResponse(result);
 				((ExpenseDataBroker) DataBrokerManager.staticGetBroker(BigBangConstants.EntityIds.EXPENSE)).notifyItemCreation(result.id);
 			}
 
@@ -878,8 +878,9 @@ public class InsurancePolicyProcessBrokerImpl extends DataBroker<InsurancePolicy
 
 			@Override
 			public void onResponseSuccess(InfoOrDocumentRequest result) {
-				responseHandler.onResponse(result);
 				EventBus.getInstance().fireEvent(new OperationWasExecutedEvent(BigBangConstants.OperationIds.InsurancePolicyProcess.CREATE_COMPANY_INFO_REQUEST, result.id));
+
+				responseHandler.onResponse(result);
 			}
 			
 			@Override
@@ -899,8 +900,9 @@ public class InsurancePolicyProcessBrokerImpl extends DataBroker<InsurancePolicy
 
 			@Override
 			public void onResponseSuccess(InfoOrDocumentRequest result) {
-				responseHandler.onResponse(result);
 				EventBus.getInstance().fireEvent(new OperationWasExecutedEvent(BigBangConstants.OperationIds.InsurancePolicyProcess.CREATE_CLIENT_INFO_REQUEST, result.id));
+
+				responseHandler.onResponse(result);
 			}
 			
 			@Override

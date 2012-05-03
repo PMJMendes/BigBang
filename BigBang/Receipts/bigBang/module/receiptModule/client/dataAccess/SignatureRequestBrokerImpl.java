@@ -97,9 +97,8 @@ public class SignatureRequestBrokerImpl extends DataBroker<SignatureRequest> imp
 					((SignatureRequestBrokerClient)bc).updateSignatureRequest(result);
 					((SignatureRequestBrokerClient)bc).setDataVersionNumber(BigBangConstants.EntityIds.SIGNATURE_REQUEST, getCurrentDataVersion());
 				}
-				
-				handler.onResponse(result);
 				EventBus.getInstance().fireEvent(new OperationWasExecutedEvent(BigBangConstants.OperationIds.SignatureRequestProcess.REPEAT_SIGNATURE_REQUEST, result.id));
+				handler.onResponse(result);
 			}
 			
 			@Override
@@ -127,9 +126,8 @@ public class SignatureRequestBrokerImpl extends DataBroker<SignatureRequest> imp
 					((SignatureRequestBrokerClient)bc).updateSignatureRequest(result);
 					((SignatureRequestBrokerClient)bc).setDataVersionNumber(BigBangConstants.EntityIds.SIGNATURE_REQUEST, getCurrentDataVersion());
 				}
-				
-				handler.onResponse(result);
 				EventBus.getInstance().fireEvent(new OperationWasExecutedEvent(BigBangConstants.OperationIds.SignatureRequestProcess.RECEIVE_REPLY, result.id));
+				handler.onResponse(result);
 			}
 			
 			@Override
@@ -156,9 +154,8 @@ public class SignatureRequestBrokerImpl extends DataBroker<SignatureRequest> imp
 					((SignatureRequestBrokerClient)bc).removeSignatureRequest(cancellation.requestId);
 					((SignatureRequestBrokerClient)bc).setDataVersionNumber(BigBangConstants.EntityIds.SIGNATURE_REQUEST, getCurrentDataVersion());
 				}
-				
-				handler.onResponse(null);
 				EventBus.getInstance().fireEvent(new OperationWasExecutedEvent(BigBangConstants.OperationIds.SignatureRequestProcess.CANCEL_SIGNATURE_REQUEST, cancellation.requestId));
+				handler.onResponse(null);
 				
 			}
 			

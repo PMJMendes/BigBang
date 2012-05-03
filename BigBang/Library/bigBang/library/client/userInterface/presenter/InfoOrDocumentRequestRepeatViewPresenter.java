@@ -127,8 +127,8 @@ public class InfoOrDocumentRequestRepeatViewPresenter implements ViewPresenter {
 
 			@Override
 			public void onResponseSuccess(InfoOrDocumentRequest result) {
-				onSendSuccess();
 				EventBus.getInstance().fireEvent(new OperationWasExecutedEvent(BigBangConstants.OperationIds.InfoOrDocumentRequest.REPEAT_REQUEST, request.id));
+				onSendSuccess();
 			}
 
 			@Override

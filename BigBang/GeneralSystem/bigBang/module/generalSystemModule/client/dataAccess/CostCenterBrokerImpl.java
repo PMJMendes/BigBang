@@ -162,8 +162,9 @@ public class CostCenterBrokerImpl extends DataBroker<CostCenter> implements Cost
 					((CostCenterDataBrokerClient) c).removeCostCenter(costCenterId);
 					((CostCenterDataBrokerClient) c).setDataVersionNumber(getDataElementId(), getCurrentDataVersion());
 				}
-				handler.onResponse(null);
 				EventBus.getInstance().fireEvent(new OperationWasExecutedEvent(BigBangConstants.OperationIds.GeneralSystemProcess.MANAGE_COST_CENTERS, costCenterId));
+
+				handler.onResponse(null);
 			}
 			
 			@Override

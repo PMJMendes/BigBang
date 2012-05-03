@@ -128,8 +128,8 @@ implements SubCasualtyDataBroker{
 					((SubCasualtyDataBrokerClient) client).updateSubCasualty(result);
 					((SubCasualtyDataBrokerClient) client).setDataVersionNumber(getDataElementId(), getCurrentDataVersion());
 				}
-				handler.onResponse(result);
 				EventBus.getInstance().fireEvent(new OperationWasExecutedEvent(BigBangConstants.OperationIds.SubCasualtyProcess.UPDATE_SUB_CASUALTY, result.id));
+				handler.onResponse(result);
 			}
 
 			@Override
@@ -154,8 +154,8 @@ implements SubCasualtyDataBroker{
 					((SubCasualtyDataBrokerClient) client).removeSubCasualty(subCasualtyId);
 					((SubCasualtyDataBrokerClient) client).setDataVersionNumber(getDataElementId(), getCurrentDataVersion());
 				}
-				handler.onResponse(null);
 				EventBus.getInstance().fireEvent(new OperationWasExecutedEvent(BigBangConstants.OperationIds.SubCasualtyProcess.DELETE_SUB_CASUALTY, subCasualtyId));
+				handler.onResponse(null);
 			}
 
 			@Override
@@ -214,8 +214,8 @@ implements SubCasualtyDataBroker{
 
 			@Override
 			public void onResponseSuccess(SubCasualty result) {
-				handler.onResponse(null);
 				EventBus.getInstance().fireEvent(new OperationWasExecutedEvent(BigBangConstants.OperationIds.SubCasualtyProcess.MARK_CLOSE_SUB_CASUALTY, result.id));
+				handler.onResponse(null);
 			}
 			
 			@Override
@@ -235,8 +235,8 @@ implements SubCasualtyDataBroker{
 
 			@Override
 			public void onResponseSuccess(SubCasualty result) {
-				handler.onResponse(null);
 				EventBus.getInstance().fireEvent(new OperationWasExecutedEvent(BigBangConstants.OperationIds.SubCasualtyProcess.CLOSE_SUB_CASUALTY, result.id));
+				handler.onResponse(null);
 			}
 			
 			@Override
@@ -256,8 +256,8 @@ implements SubCasualtyDataBroker{
 
 			@Override
 			public void onResponseSuccess(SubCasualty result) {
-				handler.onResponse(null);
 				EventBus.getInstance().fireEvent(new OperationWasExecutedEvent(BigBangConstants.OperationIds.SubCasualtyProcess.REJECT_CLOSE_SUB_CASUALTY, result.id));
+				handler.onResponse(null);
 			}
 			
 			@Override
@@ -277,9 +277,8 @@ implements SubCasualtyDataBroker{
 
 			@Override
 			public void onResponseSuccess(InfoOrDocumentRequest result) {
-				responseHandler.onResponse(result);
 				EventBus.getInstance().fireEvent(new OperationWasExecutedEvent(BigBangConstants.OperationIds.SubCasualtyProcess.CREATE_INSURER_INFO_REQUEST, result.id));
-
+				responseHandler.onResponse(result);
 			}
 
 			@Override
@@ -299,9 +298,8 @@ implements SubCasualtyDataBroker{
 
 			@Override
 			public void onResponseSuccess(ExternalInfoRequest result) {
-				responseHandler.onResponse(result);
 				EventBus.getInstance().fireEvent(new OperationWasExecutedEvent(BigBangConstants.OperationIds.SubCasualtyProcess.CREATE_EXTERNAL_INFO_REQUEST, result.id));
-
+				responseHandler.onResponse(result);
 			}
 
 			@Override
