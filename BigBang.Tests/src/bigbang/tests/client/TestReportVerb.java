@@ -2,7 +2,7 @@ package bigbang.tests.client;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
-public class TestSpecialPrint
+public class TestReportVerb
 {
 	public static void DoTest()
 	{
