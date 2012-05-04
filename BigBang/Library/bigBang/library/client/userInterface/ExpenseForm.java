@@ -164,7 +164,7 @@ public class ExpenseForm extends FormView<Expense>{
 		referenceNumber.setValue("#"+info.referenceNumber + " - " + info.categoryName + " / " + info.lineName + " / " + info.subLineName);
 
 		String listId = info.referenceTypeId.equalsIgnoreCase(BigBangConstants.EntityIds.INSURANCE_POLICY) ? 
-				BigBangConstants.EntityIds.INSURANCE_POLICY_INSURED_OBJECTS+"/"+info.referenceId 
+				BigBangConstants.EntityIds.INSURANCE_POLICY_INSURED_OBJECT+"/"+info.referenceId 
 				: BigBangConstants.EntityIds.INSURANCE_SUB_POLICY_INSURED_OBJECTS +"/"+info.referenceId;
 
 

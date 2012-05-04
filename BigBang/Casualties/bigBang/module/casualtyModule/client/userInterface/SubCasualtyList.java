@@ -49,7 +49,7 @@ public class SubCasualtyList extends FilterableList<SubCasualtyStub> implements 
 				numberLabel.getElement().getStyle().setFontSize(14, Unit.PX);
 				policyLabel = getFormatedLabel();
 				this.policyLabel.getElement().getStyle().setFontSize(10, Unit.PX);
-				this.policyLabel.setHeight("1em");
+				this.policyLabel.setHeight("1.2em");
 				this.policyLabel.setWordWrap(true);
 
 				HorizontalPanel leftContainer = new HorizontalPanel();

@@ -13,7 +13,6 @@ import bigBang.definitions.shared.HistoryItemStub;
 import bigBang.definitions.shared.InsurancePolicy;
 import bigBang.definitions.shared.ReceiptStub;
 import bigBang.definitions.shared.SubPolicyStub;
-import bigBang.definitions.shared.InsurancePolicy.TableSection;
 import bigBang.definitions.shared.InsurancePolicyStub;
 import bigBang.definitions.shared.InsuredObjectStub;
 import bigBang.library.client.HasEditableValue;
@@ -32,7 +31,6 @@ import bigBang.module.insurancePolicyModule.client.userInterface.presenter.Insur
 import com.google.gwt.event.logical.shared.AttachEvent;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
-import com.google.gwt.user.client.ui.HasValue;
 import com.google.gwt.user.client.ui.HasWidgets;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.SplitLayoutPanel;
@@ -405,21 +403,6 @@ public class InsurancePolicySearchOperationView extends View implements Insuranc
 	}
 	
 	/*## PERMISSIONS END ##*/
-
-	@Override
-	public HasValue<String> getInsuredObjectTableFilter() {
-		return this.form.getInsuredObjectsField();
-	}
-
-	@Override
-	public HasValue<String> getExerciseTableFilter() {
-		return this.form.getExercisesField();
-	}
-
-	@Override
-	public com.google.gwt.user.client.ui.HasValue<TableSection> getCoverageTable() {
-		return this.form.getTable();
-	};
 
 	//Gets lists
 	

@@ -77,6 +77,10 @@ public class ClientOperationsViewPresenter implements ViewPresenter {
 					present("CLIENT_CREATE_QUOTE_REQUEST", parameters);
 				}else if(display.equalsIgnoreCase("viewinsuredobject")){
 					present("QUOTE_REQUEST_INSURED_OBJECT", parameters);
+				}else if(display.equalsIgnoreCase("viewpolicyinsuredobject")){
+					present("INSURANCE_POLICY_INSURED_OBJECT", parameters);
+				}else if(display.equalsIgnoreCase("viewexercise")){
+					present("INSURANCE_POLICY_EXERCISE", parameters);
 				}else if(display.equalsIgnoreCase("createcasualty")){
 					present("CLIENT_CREATE_CASUALTY", parameters);
 				}else{

@@ -99,7 +99,7 @@ public class SubCasualtyItemSection extends CollapsibleFormViewSection {
 	public void setReference(String referenceTypeId, String referenceId){
 		if(referenceId != null) {
 			if(referenceTypeId.equalsIgnoreCase(BigBangConstants.EntityIds.INSURANCE_POLICY)) {
-				insuredObject.setListId(BigBangConstants.EntityIds.INSURANCE_POLICY_INSURED_OBJECTS + "/" + referenceId, new ResponseHandler<Void>() {
+				insuredObject.setListId(BigBangConstants.EntityIds.INSURANCE_POLICY_INSURED_OBJECT + "/" + referenceId, new ResponseHandler<Void>() {
 
 					@Override
 					public void onResponse(Void response) {

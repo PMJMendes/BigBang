@@ -3,7 +3,6 @@ package bigBang.module.clientModule.client.userInterface.view;
 import bigBang.definitions.shared.Client;
 import bigBang.definitions.shared.ExerciseStub;
 import bigBang.definitions.shared.InsurancePolicy;
-import bigBang.definitions.shared.InsurancePolicy.TableSection;
 import bigBang.definitions.shared.InsuredObjectStub;
 import bigBang.library.client.HasEditableValue;
 import bigBang.library.client.HasValueSelectables;
@@ -17,7 +16,6 @@ import bigBang.module.clientModule.client.userInterface.presenter.CreateInsuranc
 import bigBang.module.clientModule.client.userInterface.presenter.CreateInsurancePolicyViewPresenter.Action;
 import bigBang.module.insurancePolicyModule.client.userInterface.InsurancePolicyForm;
 
-import com.google.gwt.user.client.ui.HasValue;
 import com.google.gwt.user.client.ui.SplitLayoutPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
@@ -135,21 +133,6 @@ public class CreateInsurancePolicyView extends View implements CreateInsurancePo
 		return this.childrenPanel.exercisesList;
 	}
 
-	@Override
-	public HasValue<TableSection> getTable() {
-		return this.insurancePolicyForm.getTable();
-	}
-
-	@Override
-	public HasValue<String> getInsuredObjectFilter() {
-		return this.insurancePolicyForm.getInsuredObjectsField();
-	}
-
-	@Override
-	public HasValue<String> getExerciseFilter() {
-		return this.insurancePolicyForm.getExercisesField();
-	}
-	
 	@Override
 	public void setSaveModeEnabled(boolean enabled) {
 		this.toolbar.setSaveModeEnabled(enabled);

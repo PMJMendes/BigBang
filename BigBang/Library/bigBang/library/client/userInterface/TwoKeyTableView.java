@@ -147,7 +147,7 @@ public class TwoKeyTableView extends View {
 		ScrollPanel wrapper = new ScrollPanel();
 		initWidget(wrapper);
 		wrapper.setSize("100%", "100%");
-		
+
 		fields = new HashMap<String, Map<String,FormField<String>>>();
 		table = new TwoKeyTable();
 		grid = new Grid();
@@ -168,14 +168,18 @@ public class TwoKeyTableView extends View {
 	}
 
 	public Field getValue(String rowId, String columnId) {
-		Field field = table.getValue(rowId, columnId);
-		FormField<String> formField = getField(rowId, columnId);		
-		String value = formField == null ? (field != null ? field.value : null) : formField.getValue();
-		if(field != null){
-			field.value = value;
+		if(table != null) {
+			Field field = table.getValue(rowId, columnId);
+			FormField<String> formField = getField(rowId, columnId);		
+			String value = formField == null ? (field != null ? field.value : null) : formField.getValue();
+			if(field != null){
+				field.value = value;
+			}
+			table.setValue(rowId, columnId, field);
+			return table.getValue(rowId, columnId);
+		}else{
+			return null;
 		}
-		table.setValue(rowId, columnId, field);
-		return table.getValue(rowId, columnId);
 	}
 
 	public Field[] getAllValues(){

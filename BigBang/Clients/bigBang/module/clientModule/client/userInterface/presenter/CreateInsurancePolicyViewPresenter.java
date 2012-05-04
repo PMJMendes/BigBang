@@ -10,7 +10,6 @@ import bigBang.definitions.shared.BigBangConstants;
 import bigBang.definitions.shared.Client;
 import bigBang.definitions.shared.ExerciseStub;
 import bigBang.definitions.shared.InsurancePolicy;
-import bigBang.definitions.shared.InsurancePolicy.TableSection;
 import bigBang.definitions.shared.InsuredObjectStub;
 import bigBang.library.client.EventBus;
 import bigBang.library.client.HasEditableValue;
@@ -30,9 +29,6 @@ import bigBang.library.client.history.NavigationHistoryItem;
 import bigBang.library.client.history.NavigationHistoryManager;
 import bigBang.library.client.userInterface.presenter.ViewPresenter;
 
-import com.google.gwt.event.logical.shared.ValueChangeEvent;
-import com.google.gwt.event.logical.shared.ValueChangeHandler;
-import com.google.gwt.user.client.ui.HasValue;
 import com.google.gwt.user.client.ui.HasWidgets;
 import com.google.gwt.user.client.ui.UIObject;
 import com.google.gwt.user.client.ui.Widget;
@@ -54,11 +50,6 @@ public class CreateInsurancePolicyViewPresenter implements ViewPresenter {
 		HasValueSelectables<ExerciseStub> getExercisesList();
 
 		void setSaveModeEnabled(boolean enabled);
-
-		//TABLE
-		HasValue<TableSection>getTable();
-		HasValue<String> getInsuredObjectFilter();
-		HasValue<String> getExerciseFilter();
 
 		public void setActionHandler(ActionInvokedEventHandler<Action> handler);
 		Widget asWidget();
@@ -157,24 +148,15 @@ public class CreateInsurancePolicyViewPresenter implements ViewPresenter {
 		view.getInsuredObjectsList().addSelectionChangedEventHandler(selectionChangedHandler);
 		view.getExercisesList().addSelectionChangedEventHandler(selectionChangedHandler);
 
-		ValueChangeHandler<String> filterChangedHandler = new ValueChangeHandler<String>() {
-
-			@Override
-			public void onValueChange(ValueChangeEvent<String> event) {
-				onFiltersChanged();
-			}
-		};
-		view.getInsuredObjectFilter().addValueChangeHandler(filterChangedHandler);
-		view.getExerciseFilter().addValueChangeHandler(filterChangedHandler);
-
 		bound = true;
 	}
 
 	private void clearView(){
 		view.getClientForm().setValue(null);
 		view.getInsurancePolicyForm().setValue(null);
+		view.setSaveModeEnabled(true);
 	}
-	
+
 	private void onSave(){
 		final InsurancePolicy policy = view.getInsurancePolicyForm().getInfo();
 		saveWorkState(new ResponseHandler<Void>() {
@@ -245,88 +227,23 @@ public class CreateInsurancePolicyViewPresenter implements ViewPresenter {
 
 	protected void saveWorkState(final ResponseHandler<Void> handler){
 		final InsurancePolicy policy = view.getInsurancePolicyForm().getInfo(); 
-		if(policyBroker.isTemp(policy.id)){
-			policyBroker.updatePolicy(policy, new ResponseHandler<InsurancePolicy>() {
+		policyBroker.updatePolicy(policy, new ResponseHandler<InsurancePolicy>() {
 
-				@Override
-				public void onResponse(InsurancePolicy response) {
-					policyBroker.saveCoverageDetailsPage(policy.id, currentInsuredObjectFilterId, currentExerciseFilterId, view.getTable().getValue(), new ResponseHandler<TableSection>(){
+			@Override
+			public void onResponse(InsurancePolicy response) {
+				handler.onResponse(null);
+			}
 
-						@Override
-						public void onResponse(TableSection response) {
-							handler.onResponse(null);
-						}
-
-						@Override
-						public void onError(Collection<ResponseError> errors) {
-							handler.onError(new String[]{});
-						}
-
-					});
-				}
-
-				@Override
-				public void onError(Collection<ResponseError> errors) {
-					handler.onError(new String[]{});
-				}
-			});
-		} else {
-			handler.onResponse(null);
-		}
-	}
-
-	private void onFiltersChanged(){
-		final String policyId = view.getInsurancePolicyForm().getValue().id;
-		final String objectFilterId = view.getInsuredObjectFilter().getValue();
-		final String exerciseFilterId =  view.getExerciseFilter().getValue();
-
-		if(policyBroker.isTemp(policyId)){
-			policyBroker.saveCoverageDetailsPage(policyId, currentInsuredObjectFilterId, currentExerciseFilterId, view.getTable().getValue(), new ResponseHandler<InsurancePolicy.TableSection>() {
-
-				@Override
-				public void onResponse(TableSection response) {
-					policyBroker.getPage(policyId, objectFilterId, exerciseFilterId, new ResponseHandler<InsurancePolicy.TableSection>() {
-
-						@Override
-						public void onResponse(TableSection response) {
-							view.getTable().setValue(response);
-							currentInsuredObjectFilterId = objectFilterId;
-							currentExerciseFilterId = exerciseFilterId;
-						}
-
-						@Override
-						public void onError(Collection<ResponseError> errors) {
-							onGetPageFailed();
-						}
-					});
-				}
-
-				@Override
-				public void onError(Collection<ResponseError> errors) {
-					onSaveStateFailed();
-				}
-			});
-		}else{
-			policyBroker.getPage(policyId, objectFilterId, exerciseFilterId, new ResponseHandler<InsurancePolicy.TableSection>() {
-
-				@Override
-				public void onResponse(TableSection response) {
-					view.getTable().setValue(response);
-					currentInsuredObjectFilterId = objectFilterId;
-					currentExerciseFilterId = exerciseFilterId;
-				}
-
-				@Override
-				public void onError(Collection<ResponseError> errors) {
-					onGetPageFailed();
-				}
-			});
-		}
+			@Override
+			public void onError(Collection<ResponseError> errors) {
+				handler.onError(new String[]{});
+			}
+		});
 	}
 
 	private void onCreateObject(){
 		NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
-		item.pushIntoStackParameter("display", "viewinsuredobject");
+		item.pushIntoStackParameter("display", "viewpolicyinsuredobject");
 		item.setParameter("objectid", "new");
 		NavigationHistoryManager.getInstance().go(item);
 	}
@@ -360,11 +277,11 @@ public class CreateInsurancePolicyViewPresenter implements ViewPresenter {
 
 			@Override
 			public void onResponse(final Client client) {
-				view.getClientForm().setValue(client);
 				policyBroker.getPolicy(policyId, new ResponseHandler<InsurancePolicy>() {
 
 					@Override
 					public void onResponse(InsurancePolicy policy) {
+						view.getClientForm().setValue(client);
 						policy.clientId = client.id;
 						policy.clientNumber = client.clientNumber;
 						policy.clientName = client.name;
@@ -387,11 +304,17 @@ public class CreateInsurancePolicyViewPresenter implements ViewPresenter {
 	}
 
 	private void showObject(String objectId) {
-		//TODO
+		NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
+		item.pushIntoStackParameter("display", "viewpolicyinsuredobject");
+		item.setParameter("objectid", objectId);
+		NavigationHistoryManager.getInstance().go(item);
 	}
 
 	private void showExercise(String exerciseId) {
-		//TODO
+		NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
+		item.pushIntoStackParameter("display", "viewexercise");
+		item.setParameter("exerciseid", exerciseId);
+		NavigationHistoryManager.getInstance().go(item);
 	}
 
 	private void onFailure(){
@@ -412,16 +335,6 @@ public class CreateInsurancePolicyViewPresenter implements ViewPresenter {
 
 	private void onCreateFailed(){
 		EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não foi possível criar a Apólice"), TYPE.ALERT_NOTIFICATION));
-	}
-
-	private void onGetPageFailed(){
-		view.getInsuredObjectFilter().setValue(currentInsuredObjectFilterId, false);
-		view.getExerciseFilter().setValue(currentExerciseFilterId, false);
-		EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não é possível apresentar a página na tabela de coberturas"), TYPE.ALERT_NOTIFICATION));
-	}
-
-	private void onSaveStateFailed(){
-		EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "De momento não foi possível guardar as alterações à Apólice"), TYPE.ALERT_NOTIFICATION));
 	}
 
 }

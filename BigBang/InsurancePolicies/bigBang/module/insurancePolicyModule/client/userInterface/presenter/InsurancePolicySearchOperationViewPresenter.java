@@ -14,7 +14,6 @@ import bigBang.definitions.shared.ExerciseStub;
 import bigBang.definitions.shared.ExpenseStub;
 import bigBang.definitions.shared.HistoryItemStub;
 import bigBang.definitions.shared.InsurancePolicy;
-import bigBang.definitions.shared.InsurancePolicy.TableSection;
 import bigBang.definitions.shared.InsurancePolicyStub;
 import bigBang.definitions.shared.InsuredObjectStub;
 import bigBang.definitions.shared.ReceiptStub;
@@ -38,9 +37,6 @@ import bigBang.library.client.history.NavigationHistoryManager;
 import bigBang.library.client.userInterface.presenter.ViewPresenter;
 
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.event.logical.shared.ValueChangeEvent;
-import com.google.gwt.event.logical.shared.ValueChangeHandler;
-import com.google.gwt.user.client.ui.HasValue;
 import com.google.gwt.user.client.ui.HasWidgets;
 import com.google.gwt.user.client.ui.UIObject;
 import com.google.gwt.user.client.ui.Widget;
@@ -80,10 +76,6 @@ ViewPresenter {
 		HasEditableValue<InsurancePolicy> getForm();
 		void scrollFormToTop();
 		boolean isFormValid();
-
-		HasValue<String> getInsuredObjectTableFilter();
-		HasValue<String> getExerciseTableFilter();
-		HasValue<TableSection> getCoverageTable();
 
 		//Permissions
 		void clearAllowedPermissions();
@@ -132,7 +124,6 @@ ViewPresenter {
 	protected Display view;
 	protected InsurancePolicyBroker broker;
 	protected InsuredObjectDataBroker insuredObjectBroker;
-	protected String currentInsuredObjectFilterId, currentExerciseFilterId;
 	protected boolean bound = false;
 
 	public InsurancePolicySearchOperationViewPresenter(Display view){
@@ -326,20 +317,6 @@ ViewPresenter {
 				}
 			}
 		});
-		view.getInsuredObjectTableFilter().addValueChangeHandler(new ValueChangeHandler<String>() {
-
-			@Override
-			public void onValueChange(ValueChangeEvent<String> event) {
-				onTableFiltersChanged();
-			}
-		});
-		view.getExerciseTableFilter().addValueChangeHandler(new ValueChangeHandler<String>() {
-
-			@Override
-			public void onValueChange(ValueChangeEvent<String> event) {
-				onTableFiltersChanged();
-			}
-		});
 		view.getContactsList().addSelectionChangedEventHandler(new SelectionChangedEventHandler() {
 
 			@Override
@@ -490,9 +467,6 @@ ViewPresenter {
 			showScratchPadPolicy(policyId);
 		}else{
 
-			this.currentExerciseFilterId = null;
-			this.currentInsuredObjectFilterId = null;
-
 			for(ValueSelectable<InsurancePolicyStub> entry : view.getList().getAll()){
 				InsurancePolicyStub listPolicy = entry.getValue();
 				if(listPolicy.id.equalsIgnoreCase(policyId)){
@@ -532,19 +506,6 @@ ViewPresenter {
 					view.setSaveModeEnabled(false);
 					view.getForm().setReadOnly(true);
 					view.getForm().setValue(response);
-
-					broker.getPage(response.id, view.getInsuredObjectTableFilter().getValue(), view.getExerciseTableFilter().getValue(), new ResponseHandler<InsurancePolicy.TableSection>() {
-
-						@Override
-						public void onResponse(TableSection response) {
-							view.getCoverageTable().setValue(response);
-						}
-
-						@Override
-						public void onError(Collection<ResponseError> errors) {
-							onGetPageFailed();
-						}
-					});
 				}
 
 				@Override
@@ -604,19 +565,7 @@ ViewPresenter {
 
 				@Override
 				public void onResponse(InsurancePolicy response) {
-					broker.saveCoverageDetailsPage(policy.id, currentInsuredObjectFilterId, currentExerciseFilterId, view.getCoverageTable().getValue(), new ResponseHandler<TableSection>(){
-
-						@Override
-						public void onResponse(TableSection response) {
-							handler.onResponse(null);
-						}
-
-						@Override
-						public void onError(Collection<ResponseError> errors) {
-							handler.onError(new String[]{});
-						}
-
-					});
+					handler.onResponse(null);
 				}
 
 				@Override
@@ -795,55 +744,6 @@ ViewPresenter {
 		});
 	}
 
-	private void onTableFiltersChanged(){
-		final String policyId = view.getForm().getValue().id;
-		final String objectFilterId = view.getInsuredObjectTableFilter().getValue();
-		final String exerciseFilterId =  view.getExerciseTableFilter().getValue();
-
-		if(broker.isTemp(policyId)){
-			broker.saveCoverageDetailsPage(policyId, currentInsuredObjectFilterId, currentExerciseFilterId, view.getCoverageTable().getValue(), new ResponseHandler<InsurancePolicy.TableSection>() {
-
-				@Override
-				public void onResponse(TableSection response) {
-					broker.getPage(policyId, objectFilterId, exerciseFilterId, new ResponseHandler<InsurancePolicy.TableSection>() {
-
-						@Override
-						public void onResponse(TableSection response) {
-							view.getCoverageTable().setValue(response);
-							currentInsuredObjectFilterId = objectFilterId;
-							currentExerciseFilterId = exerciseFilterId;
-						}
-
-						@Override
-						public void onError(Collection<ResponseError> errors) {
-							onGetPageFailed();
-						}
-					});
-				}
-
-				@Override
-				public void onError(Collection<ResponseError> errors) {
-					onSavePolicyFailed();
-				}
-			});
-		}else{
-			broker.getPage(policyId, objectFilterId, exerciseFilterId, new ResponseHandler<InsurancePolicy.TableSection>() {
-
-				@Override
-				public void onResponse(TableSection response) {
-					view.getCoverageTable().setValue(response);
-					currentInsuredObjectFilterId = objectFilterId;
-					currentExerciseFilterId = exerciseFilterId;
-				}
-
-				@Override
-				public void onError(Collection<ResponseError> errors) {
-					onGetPageFailed();
-				}
-			});
-		}
-	}
-
 	private void onValidationSuccess(){
 		EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "A apólice foi validada com sucesso"), TYPE.TRAY_NOTIFICATION));
 	}
@@ -995,12 +895,6 @@ ViewPresenter {
 				onResponse(null);
 			}
 		});
-	}
-
-	private void onGetPageFailed(){
-		view.getInsuredObjectTableFilter().setValue(currentInsuredObjectFilterId, false);
-		view.getExerciseTableFilter().setValue(currentExerciseFilterId, false);
-		EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não é possível apresentar a página na tabela de coberturas"), TYPE.ALERT_NOTIFICATION));
 	}
 
 	private void onSavePolicySuccess(){
