@@ -24,6 +24,6 @@ public class TestSpecialPrint
 			}
 		};
 
-		Services.reportService.RunVerb("P:4E8020BB-CD95-4AD6-A5F1-A021013A6B02", callback );
+		Services.reportService.RunVerb("P:24D03787-D22E-4861-B2EA-A046011B3CE2", callback );
 	}
 }
