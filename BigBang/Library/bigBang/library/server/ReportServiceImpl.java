@@ -320,7 +320,7 @@ public class ReportServiceImpl
 		}
 
 		lstrBuffer = new StringBuilder();
-		lstrBuffer.append("<table class=\"items\" width=\"575\" border=\"0\" cellspacing=\"0\" cellpadding=\"0\" ")
+		lstrBuffer.append("<table class=\"items\" bgcolor=\"white\" width=\"575\" border=\"0\" cellspacing=\"0\" cellpadding=\"0\" ")
 				.append("style=\"border:1px solid #3f6d9d;\"> <tr style=\"height:35px;background:#8bb4de; font-weight:bold;\"> ")
 				.append("<td>&nbsp;Impressão de Documentos</td> <td>&nbsp</td> </tr> ");	
 
