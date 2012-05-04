@@ -324,26 +324,26 @@ public class ReportServiceImpl
 				.append("style=\"border:1px solid #3f6d9d;\"> <tr style=\"height:35px;background:#8bb4de; font-weight:bold;\"> ")
 				.append("<td>&nbsp;Impressão de Documentos</td> <td>&nbsp</td> </tr> ");	
 
-		lstrBuffer.append("<tr style=\"height:30px; border-bottom:1px solid #3f6d9d;\"> ")
-				.append("<td style=\"padding-left:5px; border-right:1px solid #3f6d9d;border-bottom:1px solid #3f6d9d;\">Tipo de Documento</td> ")
+		lstrBuffer.append("<tr style=\"height:30px;border-bottom:1px solid #3f6d9d;\"> ")
+				.append("<td style=\"padding-left:5px;border-right:1px solid #3f6d9d;border-bottom:1px solid #3f6d9d;\">Tipo de Documento</td> ")
 				.append("<td style=\"padding-left:5px;border-bottom:1px solid #3f6d9d;\">")
 				.append(lobjSet.getTemplate().getLabel())
 				.append("</td> </tr> ");
 
-		lstrBuffer.append("<tr style=\"height:30px; border-bottom:1px solid #3f6d9d;\"> ")
-				.append("<td style=\"padding-left:5px; border-right:1px solid #3f6d9d;border-bottom:1px solid #3f6d9d;\">Nº de Documentos</td> ")
+		lstrBuffer.append("<tr style=\"height:30px;border-bottom:1px solid #3f6d9d;\"> ")
+				.append("<td style=\"padding-left:5px;border-right:1px solid #3f6d9d;border-bottom:1px solid #3f6d9d;\">Nº de Documentos</td> ")
 				.append("<td style=\"padding-left:5px;border-bottom:1px solid #3f6d9d;\">")
 				.append(llngCount)
 				.append("</td> </tr>");
 
-		lstrBuffer.append("<tr style=\"height:30px; border-bottom:1px solid #3f6d9d;\"> ")
-				.append("<td style=\"padding-left:5px; border-right:1px solid #3f6d9d;\">Gerado em</td> ")
-				.append("<td style=\"padding-left:5px;\">")
+		lstrBuffer.append("<tr style=\"height:30px;border-bottom:1px solid #3f6d9d;\"> ")
+				.append("<td style=\"padding-left:5px;border-right:1px solid #3f6d9d;border-bottom:1px solid #3f6d9d;\">Gerado em</td> ")
+				.append("<td style=\"padding-left:5px;border-bottom:1px solid #3f6d9d;\">")
 				.append(((Timestamp)lobjSet.getAt(com.premiumminds.BigBang.Jewel.Objects.PrintSet.I.DATE)).toString().substring(0, 10))
 				.append("</td> </tr>");
 
 		lstrBuffer.append("<tr style=\"height:30px; border-bottom:1px solid #3f6d9d;\"> ")
-				.append("<td style=\"padding-left:5px; border-right:1px solid #3f6d9d;\">Gerado por</td> ")
+				.append("<td style=\"padding-left:5px;border-right:1px solid #3f6d9d;\">Gerado por</td> ")
 				.append("<td style=\"padding-left:5px;\">")
 				.append(lobjSet.getUser().getDisplayName())
 				.append("</td> </tr> </table>");
