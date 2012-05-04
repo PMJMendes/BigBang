@@ -31,7 +31,7 @@ public class PrintSetReportPanel extends List<PrintSet> {
 				VerticalPanel rightContainer = new VerticalPanel();
 				rightContainer.add(date);
 				rightContainer.add(printDate);
-				rightContainer.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_RIGHT);
+				rightContainer.setCellHorizontalAlignment(date, HasHorizontalAlignment.ALIGN_RIGHT);
 				rightContainer.setVerticalAlignment(HasVerticalAlignment.ALIGN_MIDDLE);
 
 				rightContainer.setSize("100%", "100%");
