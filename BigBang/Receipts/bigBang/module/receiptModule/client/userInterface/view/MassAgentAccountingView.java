@@ -231,11 +231,11 @@ public class MassAgentAccountingView extends View implements MassAgentAccounting
 			}
 		};
 		
-		applyPaymentNoticeCreationForm.addSection("Prestações de Contas a Enviar");
+		applyPaymentNoticeCreationForm.addSection("Retrocessões a Enviar");
 		
 		
 		VerticalPanel selectedListWrapper = new VerticalPanel();
-		selectedListWrapper.add(new ListHeader("Enviar Prestações de Contas"));
+		selectedListWrapper.add(new ListHeader("Enviar Retrocessões"));
 		selectedListWrapper.setSize("100%", "100%");
 		applyPaymentNoticeCreationForm.addWidget(sendClearWrapper);
 		selectedListWrapper.add(applyPaymentNoticeCreationForm.getNonScrollableContent());

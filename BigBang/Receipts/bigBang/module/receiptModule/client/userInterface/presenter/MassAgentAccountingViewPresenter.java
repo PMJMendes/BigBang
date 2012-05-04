@@ -30,6 +30,7 @@ import bigBang.library.client.event.CheckedSelectionChangedEventHandler;
 import bigBang.library.client.event.NewNotificationEvent;
 import bigBang.library.client.event.SelectionChangedEvent;
 import bigBang.library.client.event.SelectionChangedEventHandler;
+import bigBang.library.client.history.NavigationHistoryManager;
 import bigBang.library.client.userInterface.presenter.ViewPresenter;
 
 
@@ -287,11 +288,12 @@ public class MassAgentAccountingViewPresenter implements ViewPresenter{
 	}
 
 	protected void onAgentAccountingSuccess(){
-		EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "As Prestações de Contas foram Enviadas com Sucesso"), TYPE.TRAY_NOTIFICATION));
+		EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "As Retrocessões foram Enviadas com Sucesso"), TYPE.TRAY_NOTIFICATION));
+		NavigationHistoryManager.getInstance().reload();
 	}
 	
 	protected void onAgentAccountingFailed(){
-		EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não foi possível Enviar as Prestações de Contas"), TYPE.ALERT_NOTIFICATION));
+		EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não foi possível Enviar Retrocessões"), TYPE.ALERT_NOTIFICATION));
 	}
 
 }
