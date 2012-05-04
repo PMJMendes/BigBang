@@ -9,7 +9,6 @@ public class PrintSet
 
 	public String id;
 	public String date;
-	public String user;
+	public String userName;
 	public String printDate;
-	public String userName = "Muda-me";
 }
