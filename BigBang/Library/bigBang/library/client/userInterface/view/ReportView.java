@@ -218,6 +218,7 @@ public class ReportView extends View implements ReportViewPresenter.Display {
 		currentPanel.add(newB);
 		
 		newB.getElement().getStyle().setMarginTop(10, Unit.PX);
+		newB.getElement().getStyle().setMarginRight(5, Unit.PX);
 		newB.getElement().getStyle().setMarginBottom(50, Unit.PX);
 
 		return newB;

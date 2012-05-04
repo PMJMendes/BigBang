@@ -1,5 +1,6 @@
 package bigBang.library.client.userInterface.reports;
 
+import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.HasVerticalAlignment;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.VerticalPanel;
@@ -30,6 +31,7 @@ public class PrintSetReportPanel extends List<PrintSet> {
 				VerticalPanel rightContainer = new VerticalPanel();
 				rightContainer.add(date);
 				rightContainer.add(printDate);
+				rightContainer.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_RIGHT);
 				rightContainer.setVerticalAlignment(HasVerticalAlignment.ALIGN_MIDDLE);
 
 				rightContainer.setSize("100%", "100%");
