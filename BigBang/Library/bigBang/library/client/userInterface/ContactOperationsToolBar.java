@@ -6,6 +6,7 @@ import com.google.gwt.user.client.ui.MenuItem;
 public abstract class ContactOperationsToolBar extends BigBangOperationsToolBar{
 
 	private MenuItem deleteItem;
+	private MenuItem createSubContact;
 
 	public ContactOperationsToolBar(){
 		
@@ -18,23 +19,26 @@ public abstract class ContactOperationsToolBar extends BigBangOperationsToolBar{
 			}
 		});
 		
-		showItem(BigBangOperationsToolBar.SUB_MENU.EDIT, true);
-		showItem(SUB_MENU.ADMIN, true);
-		addItem(SUB_MENU.ADMIN, deleteItem);
-		showItem(SUB_MENU.CREATE, true);
-		addItem(SUB_MENU.CREATE, new MenuItem("Sub Contacto", new Command() {
+		createSubContact = new MenuItem("Sub Contact", new Command() {
 
 			@Override
 			public void execute() {
 				onCreateSubContact();
 			}
-		}));
+		});
+		
+		showItem(BigBangOperationsToolBar.SUB_MENU.EDIT, true);
+		showItem(SUB_MENU.ADMIN, true);
+		addItem(SUB_MENU.ADMIN, deleteItem);
+		showItem(SUB_MENU.CREATE, true);
+		addItem(SUB_MENU.CREATE, createSubContact);
 	}
 	
 	
 	public void allowEdit(boolean b){
 		
 		createMenuItem.setEnabled(b);
+		createSubContact.setEnabled(b);
 		editCancelMenuItem.setEnabled(b);
 		adminMenuItem.setEnabled(b);
 		
