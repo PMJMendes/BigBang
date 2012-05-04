@@ -1,6 +1,8 @@
 package bigBang.library.client.userInterface.view;
 
 
+import com.google.gwt.dom.client.Style.Display;
+import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.Button;
@@ -34,14 +36,13 @@ public class ReportView extends View implements ReportViewPresenter.Display {
 	protected ActionInvokedEventHandler<Action> handler;
 	protected ParamReportPanel paramPanel;
 	protected VerticalPanel sectionsContainer;
+	protected FlowPanel currentPanel;
 	private View panel;
-	private Button generateReport;
 
 	public ReportView(){
 		SplitLayoutPanel wrapper = new SplitLayoutPanel();
 		initWidget(wrapper);
 		wrapper.setSize("100%", "100%");
-		generateReport = new Button();
 		navigationPanel = new NavigationPanel("Relatórios");
 		navigationPanel.setSize("100%", "100%");
 		wrapper.addWest(navigationPanel, 400);
@@ -49,6 +50,7 @@ public class ReportView extends View implements ReportViewPresenter.Display {
 		VerticalPanel sectionsWrapper = new VerticalPanel();
 		sectionsWrapper.setSize("100%", "100%");
 		sectionsWrapper.setStyleName("emptyContainer");
+		
 		wrapper.add(sectionsWrapper);
 
 		ListHeader sectionsHeader = new ListHeader("Relatório");
@@ -56,6 +58,7 @@ public class ReportView extends View implements ReportViewPresenter.Display {
 
 		sectionsContainer = new VerticalPanel();
 		sectionsContainer.setWidth("100%");
+		sectionsContainer.getElement().getStyle().setPadding(10, Unit.PX);
 
 		ScrollPanel scrollPanel = new ScrollPanel();
 		scrollPanel.setSize("100%", "100%");
@@ -129,17 +132,6 @@ public class ReportView extends View implements ReportViewPresenter.Display {
 			navigationPanel.setHomeWidget(panel);
 		}
 
-		generateReport = new Button("Gerar Relatório");
-		generateReport.setEnabled(false);
-		generateReport.addClickHandler(new ClickHandler() {
-
-			@Override
-			public void onClick(ClickEvent event) {
-				fireAction(Action.GENERATE_REPORT);
-			}
-		});
-		navigationPanel.navBar.setRightWidget(generateReport);
-
 		((PrintSetReportPanel)panel).addSelectionChangedEventHandler(new SelectionChangedEventHandler() {
 
 			@Override
@@ -155,10 +147,6 @@ public class ReportView extends View implements ReportViewPresenter.Display {
 		return (PrintSetReportPanel)panel;
 	}
 	
-	@Override
-	public void setGenerateReportButtonEnabled(boolean b){
-		generateReport.setEnabled(b);
-	}
 
 	@Override
 	public void createAndGoToReportTransactions(TransactionSet[] transactionSets) {
@@ -171,18 +159,8 @@ public class ReportView extends View implements ReportViewPresenter.Display {
 		}else{
 			navigationPanel.setHomeWidget(panel);
 		}
-		generateReport = new Button("Gerar Relatório");
-		generateReport.setEnabled(false);
-		generateReport.addClickHandler(new ClickHandler() {
-
-			@Override
-			public void onClick(ClickEvent event) {
-				fireAction(Action.GENERATE_REPORT);
-			}
-		});
-		navigationPanel.navBar.setRightWidget(generateReport);
-
-		((PrintSetReportPanel)panel).addSelectionChangedEventHandler(new SelectionChangedEventHandler() {
+	
+		((TransactionSetReportPanel)panel).addSelectionChangedEventHandler(new SelectionChangedEventHandler() {
 
 			@Override
 			public void onSelectionChanged(SelectionChangedEvent event) {
@@ -218,7 +196,8 @@ public class ReportView extends View implements ReportViewPresenter.Display {
 
 	@Override
 	public void addReportSection(Section section) {
-		FlowPanel panel = new FlowPanel();
+		FlowPanel panel = new FlowPanel(); 
+		currentPanel = panel;
 		panel.setWidth("100%");
 		panel.getElement().setInnerHTML(section.htmlContent);
 		sectionsContainer.add(panel);
@@ -230,9 +209,17 @@ public class ReportView extends View implements ReportViewPresenter.Display {
 			navigationPanel.navigateToFirst();
 		}
 	}
-
+	
 	@Override
-	public void showButton(boolean b) {
-		generateReport.setVisible(b);
+	public Button addVerb(String title){
+		Button newB = new Button(title);
+		newB.setWidth("120px");
+		currentPanel.getElement().getStyle().setDisplay(Display.INLINE);
+		currentPanel.add(newB);
+		
+		newB.getElement().getStyle().setMarginTop(10, Unit.PX);
+		newB.getElement().getStyle().setMarginBottom(50, Unit.PX);
+
+		return newB;
 	}
 }

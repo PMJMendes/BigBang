@@ -1,8 +1,11 @@
 package bigBang.library.client.userInterface.presenter;
 
+import java.util.HashMap;
+
 import bigBang.definitions.shared.PrintSet;
 import bigBang.definitions.shared.Report;
 import bigBang.definitions.shared.Report.Section;
+import bigBang.definitions.shared.Report.Section.Verb;
 import bigBang.definitions.shared.ReportItem;
 import bigBang.definitions.shared.ReportParam;
 import bigBang.definitions.shared.TransactionSet;
@@ -24,6 +27,10 @@ import bigBang.library.client.userInterface.NavigationPanel;
 import bigBang.library.interfaces.ReportService;
 import bigBang.library.interfaces.ReportServiceAsync;
 
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.HasWidgets;
 import com.google.gwt.user.client.ui.UIObject;
 import com.google.gwt.user.client.ui.Widget;
@@ -50,9 +57,8 @@ public class ReportViewPresenter implements ViewPresenter {
 		void addReportSection(Section section);
 		void goHomeAndClear();
 		HasValueSelectables<PrintSet> getPrintSetPanel();
-		void setGenerateReportButtonEnabled(boolean b);
-		void showButton(boolean b);
 		NavigationPanel getNavigationPanel();
+		Button addVerb(String title);
 	}
 
 	protected boolean bound;
@@ -60,10 +66,13 @@ public class ReportViewPresenter implements ViewPresenter {
 	protected Display view;
 	protected String processTypeId;
 	protected ReportItem currentItem;
+	protected ClickHandler handler;
+	protected HashMap<Button, Verb> buttonMap;
 
 	public ReportViewPresenter(Display view){
 		setView((UIObject)view);
 		service = ReportService.Util.getInstance();
+		buttonMap = new HashMap<Button, Report.Section.Verb>();
 	}
 
 	@Override
@@ -116,21 +125,50 @@ public class ReportViewPresenter implements ViewPresenter {
 			
 			@Override
 			public void onNavigationEvent(NavigationRequestEvent event) {
-				view.showButton(false);
+				return;
 			}
 		});
 
+		handler = new ClickHandler() {
+			
+			@Override
+			public void onClick(ClickEvent event) {
+				final Button temp = (Button) event.getSource();
+				temp.setText("A processar");
+				temp.setEnabled(false);
+				
+				service.RunVerb(buttonMap.get(temp).argument, new AsyncCallback<Void>() {
+					
+					@Override
+					public void onSuccess(Void result) {
+						EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Operação executada com sucesso!"), TYPE.TRAY_NOTIFICATION));
+						temp.setText(buttonMap.get(temp).label);
+					}
+					
+					@Override
+					public void onFailure(Throwable caught) {
+						EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não foi possível executar a operação."), TYPE.ALERT_NOTIFICATION));
+						temp.setText(buttonMap.get(temp).label);
+						temp.setEnabled(true);
+					}
+				});				
+			}
+		};
+		
 		this.bound = true;
 	}
 
 	protected void onTransactionSetSelectionChanged() {
-		view.setGenerateReportButtonEnabled(!(view.getSelectedTransactionSet() == null));
+		//TODO
 		
 	}
 
 	protected void onPrintSetSelectionChanged() {
-		view.setGenerateReportButtonEnabled(!view.getPrintSetPanel().getSelected().isEmpty());
 
+		if(!view.getPrintSetPanel().getSelected().isEmpty()){
+			onGenerateReport();
+		}
+		
 	}
 
 	protected void clearView() {
@@ -168,13 +206,11 @@ public class ReportViewPresenter implements ViewPresenter {
 					switch(item.type) {
 					case CATEGORY:
 						showCategory(item);
-						view.showButton(false);
 						break;
 					case PARAM:
 						showParamReport(item);
 						break;
 					case PRINTSET:
-						view.showButton(true);
 						showPrintSetReport(item);
 						break;
 					case TRANSACTIONSET:
@@ -326,9 +362,14 @@ public class ReportViewPresenter implements ViewPresenter {
 
 	protected void showReport(Report report){
 		view.clearReportSections();
-
+		
 		for(Section section : report.sections) {
 			view.addReportSection(section);
+			for(Verb verb : section.verbs){
+				Button but = view.addVerb(verb.label);
+				buttonMap.put(but, verb);
+				but.addClickHandler(handler);
+			}
 		}
 	}
 

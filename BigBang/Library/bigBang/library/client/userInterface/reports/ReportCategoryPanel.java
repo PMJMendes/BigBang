@@ -53,6 +53,12 @@ public class ReportCategoryPanel extends FilterableList<ReportItem> {
 	public ReportCategoryPanel(){
 		showFilterField(false);
 	}
+	
+	@Override
+	protected void onAttach() {
+		super.onAttach();
+		this.clearSelection();
+	}
 
 	public void setReportItems(ReportItem[] items) {
 		clear();

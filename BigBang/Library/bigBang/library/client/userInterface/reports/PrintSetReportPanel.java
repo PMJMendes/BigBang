@@ -81,7 +81,7 @@ public class PrintSetReportPanel extends List<PrintSet> {
 	public PrintSet getSelectedPrintSet(){
 
 		if(!this.getSelected().isEmpty()){
-			return (PrintSet) this.getSelected().toArray()[0];
+			return (PrintSet)((Entry) this.getSelected().toArray()[0]).getValue();
 		}
 		return null;
 	}
