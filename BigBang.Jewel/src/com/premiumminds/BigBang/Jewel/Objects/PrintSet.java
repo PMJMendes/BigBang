@@ -84,6 +84,16 @@ public class PrintSet
     	return mrefTemplate.getLabel() + " @ " + ((Timestamp)getAt(0)).toString().substring(0, 17) + " (" + mrefUser.getDisplayName() + ")";
     }
 
+    public Template getTemplate()
+    {
+    	return mrefTemplate;
+    }
+
+    public User getUser()
+    {
+    	return mrefUser;
+    }
+
     public PrintSetDocument[] getCurrentDocs()
     	throws BigBangJewelException
     {

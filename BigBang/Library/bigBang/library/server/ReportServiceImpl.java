@@ -23,6 +23,7 @@ import com.premiumminds.BigBang.Jewel.Constants;
 import com.premiumminds.BigBang.Jewel.Objects.InsurerAccountingSet;
 import com.premiumminds.BigBang.Jewel.Objects.MediatorAccountingSet;
 import com.premiumminds.BigBang.Jewel.Objects.ReportDef;
+import com.premiumminds.BigBang.Jewel.SysObjects.PrintConnector;
 
 public class ReportServiceImpl
 	extends EngineImplementor
@@ -296,12 +297,65 @@ public class ReportServiceImpl
 		return null;
 	}
 
-	@Override
 	public Report generatePrintSetReport(String itemId, String printSetId)
 		throws SessionExpiredException, BigBangException
 	{
-		// TODO Auto-generated method stub
-		return null;
+		com.premiumminds.BigBang.Jewel.Objects.PrintSet lobjSet;
+		int llngCount;
+		StringBuilder lstrBuffer;
+		Report lobjResult;
+
+		if ( Engine.getCurrentUser() == null )
+			throw new SessionExpiredException();
+
+		try
+		{
+			lobjSet = com.premiumminds.BigBang.Jewel.Objects.PrintSet.GetInstance(Engine.getCurrentNameSpace(),
+					UUID.fromString(printSetId));
+			llngCount = lobjSet.getCurrentDocs().length;
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangException(e.getMessage(), e);
+		}
+
+		lstrBuffer = new StringBuilder();
+		lstrBuffer.append("<table class=\"items\" width=\"575\" border=\"0\" cellspacing=\"0\" cellpadding=\"0\" ")
+				.append("style=\"border:1px solid #3f6d9d;\"> <tr style=\"height:35px;background:#8bb4de; font-weight:bold;\"> ")
+				.append("<td>&nbsp;Impressão de Documentos</td> <td>&nbsp</td> </tr> ");	
+
+		lstrBuffer.append("<tr style=\"height:30px; border-bottom:1px solid #3f6d9d;\"> ")
+				.append("<td style=\"padding-left:5px; border-right:1px solid #3f6d9d;border-bottom:1px solid #3f6d9d;\">Tipo de Documento</td> ")
+				.append("<td style=\"padding-left:5px;border-bottom:1px solid #3f6d9d;\">")
+				.append(lobjSet.getTemplate().getLabel())
+				.append("</td> </tr> ");
+
+		lstrBuffer.append("<tr style=\"height:30px; border-bottom:1px solid #3f6d9d;\"> ")
+				.append("<td style=\"padding-left:5px; border-right:1px solid #3f6d9d;border-bottom:1px solid #3f6d9d;\">Nº de Documentos</td> ")
+				.append("<td style=\"padding-left:5px;border-bottom:1px solid #3f6d9d;\">")
+				.append(llngCount)
+				.append("</td> </tr>");
+
+		lstrBuffer.append("<tr style=\"height:30px; border-bottom:1px solid #3f6d9d;\"> ")
+				.append("<td style=\"padding-left:5px; border-right:1px solid #3f6d9d;\">Gerado em</td> ")
+				.append("<td style=\"padding-left:5px;\">")
+				.append(((Timestamp)lobjSet.getAt(com.premiumminds.BigBang.Jewel.Objects.PrintSet.I.DATE)).toString().substring(0, 10))
+				.append("</td> </tr>");
+
+		lstrBuffer.append("<tr style=\"height:30px; border-bottom:1px solid #3f6d9d;\"> ")
+				.append("<td style=\"padding-left:5px; border-right:1px solid #3f6d9d;\">Gerado por</td> ")
+				.append("<td style=\"padding-left:5px;\">")
+				.append(lobjSet.getUser().getDisplayName())
+				.append("</td> </tr> </table>");
+
+		lobjResult = new Report();
+		lobjResult.sections = new Report.Section[] {new Report.Section()};
+		lobjResult.sections[0].htmlContent = lstrBuffer.toString();
+		lobjResult.sections[0].verbs = new Report.Section.Verb[] {new Report.Section.Verb()};
+		lobjResult.sections[0].verbs[0].label = "Imprimir";
+		lobjResult.sections[0].verbs[0].argument = "P:" + printSetId;
+
+		return lobjResult;
 	}
 
 	@Override
@@ -312,11 +366,31 @@ public class ReportServiceImpl
 		return null;
 	}
 
-	@Override
 	public void RunVerb(String argument)
 		throws SessionExpiredException, BigBangException
 	{
-		// TODO Auto-generated method stub
+		String[] larrAux;
+		com.premiumminds.BigBang.Jewel.Objects.PrintSet lobjSet;
+
+		if ( Engine.getCurrentUser() == null )
+			throw new SessionExpiredException();
+
+		larrAux = argument.split(":");
+
+		if ( "P".equals(larrAux[0]) )
+		{
+			try
+			{
+				lobjSet = com.premiumminds.BigBang.Jewel.Objects.PrintSet.GetInstance(Engine.getCurrentNameSpace(),
+						UUID.fromString(larrAux[1]));
+				PrintConnector.printSet(lobjSet);
+			}
+			catch (Throwable e)
+			{
+				throw new BigBangException(e.getMessage(), e);
+			}
+			return;
+		}
 	}
 
 	private static ReportItem toClient(com.premiumminds.BigBang.Jewel.Objects.ReportDef pobjDef)
@@ -339,6 +413,7 @@ public class ReportServiceImpl
 		lidAux = (UUID)pobjParam.getAt(com.premiumminds.BigBang.Jewel.Objects.ReportParam.I.REFERENCETO);
 
 		lobjResult = new ReportParam();
+		lobjResult.id = pobjParam.getKey().toString();
 		lobjResult.label = pobjParam.getLabel();
 		lobjResult.type = GetParamTypeByID((UUID)pobjParam.getAt(com.premiumminds.BigBang.Jewel.Objects.ReportParam.I.TYPE));
 		lobjResult.unitsLabel = (String)pobjParam.getAt(com.premiumminds.BigBang.Jewel.Objects.ReportParam.I.UNITS);
@@ -355,8 +430,8 @@ public class ReportServiceImpl
 		lobjResult.id = pobjSet.getKey().toString();
 		lobjResult.date = ((Timestamp)pobjSet.getAt(com.premiumminds.BigBang.Jewel.Objects.PrintSet.I.DATE)).toString().substring(0, 10);
 		lobjResult.user = ((UUID)pobjSet.getAt(com.premiumminds.BigBang.Jewel.Objects.PrintSet.I.USER)).toString();
-		Object printDate = pobjSet.getAt(com.premiumminds.BigBang.Jewel.Objects.PrintSet.I.PRINTEDON);
-		lobjResult.printDate = printDate == null ? null : ((Timestamp)printDate).toString().substring(0, 10);
+		lobjResult.printDate = ( pobjSet.getAt(com.premiumminds.BigBang.Jewel.Objects.PrintSet.I.PRINTEDON) == null ?
+				null : ((Timestamp)pobjSet.getAt(com.premiumminds.BigBang.Jewel.Objects.PrintSet.I.PRINTEDON)).toString().substring(0, 10) );
 
 		return lobjResult;
 	}

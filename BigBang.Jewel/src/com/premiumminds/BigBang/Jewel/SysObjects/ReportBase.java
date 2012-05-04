@@ -25,6 +25,17 @@ import Jewel.Engine.SysObjects.FileXfer;
 
 import com.premiumminds.BigBang.Jewel.BigBangJewelException;
 import com.premiumminds.BigBang.Jewel.Objects.Template;
+import com.sun.star.container.XIndexAccess;
+import com.sun.star.table.XCell;
+import com.sun.star.table.XCellRange;
+import com.sun.star.table.XTableRows;
+import com.sun.star.text.XText;
+import com.sun.star.text.XTextDocument;
+import com.sun.star.text.XTextTable;
+import com.sun.star.text.XTextTablesSupplier;
+import com.sun.star.uno.UnoRuntime;
+import com.sun.star.util.XReplaceDescriptor;
+import com.sun.star.util.XReplaceable;
 
 public abstract class ReportBase
 {
@@ -42,6 +53,84 @@ Este código assume bué coisas:
 	{
 		Template lobjTemplate;
 		FileXfer lobjFile;
+
+		lobjTemplate = Template.GetInstance(Engine.getCurrentNameSpace(), GetTemplateID());
+		lobjFile = lobjTemplate.getFile();
+
+		if ( "application/vnd.oasis.opendocument.text".equals(lobjFile.getContentType()) )
+			return GenerateAsODT(lobjFile, parrContents, parrTables);
+
+		if ( "application/vnd.openxmlformats-officedocument.wordprocessingml.document".equals(lobjFile.getContentType()) )
+			return GenerateAsDocX(lobjFile, parrContents, parrTables);
+
+		throw new BigBangJewelException("Unrecognized template format.");
+	}
+
+	private FileXfer GenerateAsODT(FileXfer lobjFile, HashMap<String, String> parrContents, String[][][] parrTables)
+		throws BigBangJewelException
+	{
+		XTextDocument lobjDoc;
+		XIndexAccess larrTables;
+		XTextTable lobjTable;
+		XTableRows larrRows;
+		XCellRange larrCells;
+		XCell lobjCell;
+		XText lobjText;
+		XReplaceable lobjReplacer;
+		XReplaceDescriptor lobjDescriptor;
+		int i, j, k;
+
+		lobjDoc = OOConnector.getDocFromBytes(lobjFile.getData());
+		try
+		{
+			if ( parrTables != null )
+			{
+				larrTables = UnoRuntime.queryInterface(XIndexAccess.class,
+						UnoRuntime.queryInterface(XTextTablesSupplier.class, lobjDoc).getTextTables());
+	
+				for ( i = 0; (i < parrTables.length) && (i < larrTables.getCount()); i++ )
+				{
+					lobjTable = UnoRuntime.queryInterface(XTextTable.class, larrTables.getByIndex(i));
+					larrRows = lobjTable.getRows();
+					if ( parrTables[i].length >= larrRows.getCount() )
+						larrRows.insertByIndex(larrRows.getCount(), parrTables[i].length - larrRows.getCount() + 1);
+					larrCells = UnoRuntime.queryInterface(XCellRange.class, lobjTable);
+					for ( j = 0; j < parrTables[i].length; j++ )
+					{
+						for ( k = 0; k < parrTables[i][j].length; k++ )
+						{
+							lobjCell = larrCells.getCellByPosition(k, j + 1);
+							lobjText = UnoRuntime.queryInterface(XText.class, lobjCell);
+							lobjText.setString(parrTables[i][j][k]);
+						}
+					}
+				}
+			}
+
+			if ( parrContents != null )
+			{
+				lobjReplacer = UnoRuntime.queryInterface(XReplaceable.class, lobjDoc);
+				lobjDescriptor = lobjReplacer.createReplaceDescriptor();
+
+				for ( String lstrKey : parrContents.keySet() )
+				{
+					lobjDescriptor.setSearchString("{{" + lstrKey + "}}");
+					lobjDescriptor.setReplaceString(parrContents.get(lstrKey));
+					lobjReplacer.replaceAll(lobjDescriptor);
+				}
+			}
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangJewelException(e.getMessage(), e);
+		}
+
+		return OOConnector.getFileFromDoc(lobjDoc, lobjFile.getFileName());
+	}
+
+	private FileXfer GenerateAsDocX(FileXfer pobjFile, HashMap<String, String> parrContents, String[][][] parrTables)
+		throws BigBangJewelException
+	{
 		WordprocessingMLPackage lobjDoc;
 		MainDocumentPart lobjMain;
 		List<java.lang.Object> larrTexts;
@@ -62,9 +151,7 @@ Este código assume bué coisas:
 
 		try
 		{
-			lobjTemplate = Template.GetInstance(Engine.getCurrentNameSpace(), GetTemplateID());
-			lobjFile = lobjTemplate.getFile();
-			lobjDoc =  (WordprocessingMLPackage)(new LoadFromZipNG()).get(new ByteArrayInputStream(lobjFile.getData()));
+			lobjDoc =  (WordprocessingMLPackage)(new LoadFromZipNG()).get(new ByteArrayInputStream(pobjFile.getData()));
 			lobjMain = lobjDoc.getMainDocumentPart();
 
 			if ( parrTables != null )
@@ -122,14 +209,10 @@ Este código assume bué coisas:
 
 			lobjOut = new ByteArrayOutputStream();
 			(new SaveToZipFile(lobjDoc)).save(lobjOut);
-//			lobjDoc.setFontMapper(new IdentityPlusMapper());
-//			(new Conversion(lobjDoc)).output(lobjOut, null);
 
 			larrBytes = lobjOut.toByteArray();
-			lobjResult = new FileXfer(larrBytes.length, lobjFile.getContentType(), lobjFile.getFileName(),
+			lobjResult = new FileXfer(larrBytes.length, pobjFile.getContentType(), pobjFile.getFileName(),
 					new ByteArrayInputStream(larrBytes));
-//			lobjResult = new FileXfer(larrBytes.length, "application/pdf", lobjFile.getFileName().replaceFirst("\\.docx", ".pdf"),
-//					new ByteArrayInputStream(larrBytes));
 		}
 		catch (Throwable e)
 		{
