@@ -19,7 +19,7 @@ public abstract class ContactOperationsToolBar extends BigBangOperationsToolBar{
 			}
 		});
 		
-		createSubContact = new MenuItem("Sub Contact", new Command() {
+		createSubContact = new MenuItem("Sub Contacto", new Command() {
 
 			@Override
 			public void execute() {
@@ -38,7 +38,6 @@ public abstract class ContactOperationsToolBar extends BigBangOperationsToolBar{
 	public void allowEdit(boolean b){
 		
 		createMenuItem.setEnabled(b);
-		createSubContact.setEnabled(b);
 		editCancelMenuItem.setEnabled(b);
 		adminMenuItem.setEnabled(b);
 		

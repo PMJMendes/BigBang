@@ -339,7 +339,6 @@ public class ContactViewPresenter implements ViewPresenter, ContactsBrokerClient
 							contactId = response.id;
 							view.setSaveMode(false);
 							view.setEditable(false);
-							view.setEditable(false);
 						}
 
 						@Override
