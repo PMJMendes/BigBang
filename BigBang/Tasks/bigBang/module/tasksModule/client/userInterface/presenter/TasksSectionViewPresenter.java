@@ -84,15 +84,21 @@ public class TasksSectionViewPresenter implements ViewPresenter {
 			public void onParameters(HasParameters parameters) {
 				String section = parameters.getParameter("section");
 				section = section == null ? new String() : section;
-				
-				if(section.equalsIgnoreCase("tasks")){
-					String taskId = parameters.getParameter("taskid");
-					taskId = taskId == null ? new String() : taskId;
-					if(taskId.isEmpty()){
-						currentTask = null;
-						clearView();
-					}else{
-						showTaskWithId(taskId, parameters);
+
+				if(!parameters.isStackParameter("display")){
+					NavigationHistoryItem item = new NavigationHistoryItem();
+					item.setStackParameter("display");
+					NavigationHistoryManager.getInstance().go(item);
+				}else{
+					if(section.equalsIgnoreCase("tasks")){
+						String taskId = parameters.getParameter("taskid");
+						taskId = taskId == null ? new String() : taskId;
+						if(taskId.isEmpty()){
+							currentTask = null;
+							clearView();
+						}else{
+							showTaskWithId(taskId, parameters);
+						}
 					}
 				}
 			}
@@ -180,10 +186,10 @@ public class TasksSectionViewPresenter implements ViewPresenter {
 			}
 		});
 	}
-	
+
 	private void operationWasExecuted(String operationId, String objectId){
 		if(currentTask != null && currentTask.objectIds[0].equalsIgnoreCase(objectId)){
-			for(int i = 0; i < currentTask.objectIds.length; i++) {
+			for(int i = 0; i < currentTask.operationIds.length; i++) {
 				if(currentTask.operationIds[i].equalsIgnoreCase(operationId)){
 					view.removeTaskListEntry(currentTask.id);
 					NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
@@ -201,7 +207,7 @@ public class TasksSectionViewPresenter implements ViewPresenter {
 		item.removeParameter("taskid");
 		NavigationHistoryManager.getInstance().go(item);
 	}
-	
+
 	private void onGetScreenFailed(){
 		EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não é possível apresentar o item de agenda, neste momento"), TYPE.ALERT_NOTIFICATION));
 		NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
