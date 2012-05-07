@@ -26,6 +26,8 @@ import bigBang.library.interfaces.TransferManagerService;
 import bigBang.library.interfaces.TransferManagerServiceAsync;
 import bigBang.library.interfaces.TypifiedTextService;
 import bigBang.library.interfaces.TypifiedTextServiceAsync;
+import bigBang.library.interfaces.ZipCodeService;
+import bigBang.library.interfaces.ZipCodeServiceAsync;
 import bigBang.module.casualtyModule.interfaces.CasualtyService;
 import bigBang.module.casualtyModule.interfaces.CasualtyServiceAsync;
 import bigBang.module.casualtyModule.interfaces.SubCasualtyService;
@@ -99,6 +101,8 @@ public class Services
 			GWT.create(TypifiedTextService.class);
 	public static final ReportServiceAsync reportService =
 			GWT.create(ReportService.class);
+	public static final ZipCodeServiceAsync zipCodeService =
+			GWT.create(ZipCodeService.class);
 	public static final TasksServiceAsync tasksService =
 			GWT.create(TasksService.class);
 	public static final CoveragesServiceAsync coveragesService =

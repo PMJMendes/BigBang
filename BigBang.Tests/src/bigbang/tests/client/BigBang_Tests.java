@@ -35,7 +35,8 @@ public class BigBang_Tests
 //		TestSpecialGetPermissions.DoTest();
 //		TestSpecialGetGlobalPermissions.DoTest();
 //		TestSpecialGetExchangeItems.DoTest();
-
+//		TestSpecialZipCodeGet.DoTest();
+//
 //		TestReportGetPrintSet.DoTest();
 //		TestReportVerb.DoTest();
 //
