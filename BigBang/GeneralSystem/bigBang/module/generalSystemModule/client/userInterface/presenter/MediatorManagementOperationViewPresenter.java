@@ -6,6 +6,8 @@ import bigBang.definitions.client.dataAccess.MediatorBroker;
 import bigBang.definitions.client.response.ResponseError;
 import bigBang.definitions.client.response.ResponseHandler;
 import bigBang.definitions.shared.BigBangConstants;
+import bigBang.definitions.shared.Contact;
+import bigBang.definitions.shared.Document;
 import bigBang.definitions.shared.Mediator;
 import bigBang.library.client.EventBus;
 import bigBang.library.client.HasEditableValue;
@@ -49,7 +51,9 @@ public class MediatorManagementOperationViewPresenter implements ViewPresenter {
 		//List
 		HasValueSelectables<Mediator> getList();
 		void removeFromList(ValueSelectable<Mediator> selectable);
-
+		HasValueSelectables<Contact> getContactsList();
+		HasValueSelectables<Document> getDocumentsList();
+		
 		//Form
 		HasEditableValue<Mediator> getForm();
 		boolean isFormValid();
@@ -173,6 +177,49 @@ public class MediatorManagementOperationViewPresenter implements ViewPresenter {
 				}
 			}
 		});
+		
+		view.getContactsList().addSelectionChangedEventHandler(new SelectionChangedEventHandler() {
+
+			@Override
+			public void onSelectionChanged(SelectionChangedEvent event) {
+				@SuppressWarnings("unchecked")
+				ValueSelectable<Contact> selected = (ValueSelectable<Contact>) event.getFirstSelected();
+				Contact item = selected == null ? null : selected.getValue();
+				String itemId = item == null ? null : item.id;
+				itemId = itemId == null ? new String() : itemId;
+
+				if(!itemId.isEmpty()){
+					NavigationHistoryItem navItem = NavigationHistoryManager.getInstance().getCurrentState();
+					navItem.setParameter("show", "contactmanagement");
+					navItem.setParameter("ownerid", view.getForm().getValue().id);
+					navItem.setParameter("contactid", itemId);
+					navItem.setParameter("ownertypeid", BigBangConstants.EntityIds.CLIENT);
+					NavigationHistoryManager.getInstance().go(navItem);
+				}
+			}
+		});
+		view.getDocumentsList().addSelectionChangedEventHandler(new SelectionChangedEventHandler() {
+
+			@Override
+			public void onSelectionChanged(SelectionChangedEvent event) {
+				@SuppressWarnings("unchecked")
+				ValueSelectable<Document> selected = (ValueSelectable<Document>) event.getFirstSelected();
+				Document item = selected == null ? null : selected.getValue();
+				String itemId = item == null ? null : item.id;
+				itemId = itemId == null ? new String() : itemId;
+
+				if(!itemId.isEmpty()){
+					NavigationHistoryItem navItem = NavigationHistoryManager.getInstance().getCurrentState();
+					navItem.setParameter("show", "documentmanagement");
+					navItem.setParameter("ownerid", item.ownerId);
+					navItem.setParameter("documentid", itemId);
+					navItem.setParameter("ownertypeid", BigBangConstants.EntityIds.CLIENT);
+					NavigationHistoryManager.getInstance().go(navItem);
+				}
+			}
+		});
+		
+		bound = true;
 	}
 	
 	private void setup(){

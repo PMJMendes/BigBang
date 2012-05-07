@@ -20,8 +20,8 @@ public class InsuranceAgencyChildrenPanel extends View {
 	
 	protected InsuranceAgency agency;
 	
-	protected ContactsList contactsList;
-	protected DocumentsList documentsList;
+	public ContactsList contactsList;
+	public DocumentsList documentsList;
 	
 	public InsuranceAgencyChildrenPanel(){
 		StackPanel wrapper = new StackPanel();
@@ -53,6 +53,8 @@ public class InsuranceAgencyChildrenPanel extends View {
 		this.contactsList.allowCreation(allow);
 		this.documentsList.setOwner(agencyId);	
 		this.documentsList.setOwnerType(BigBangConstants.EntityIds.INSURANCE_AGENCY);
+		this.documentsList.allowCreation(allow);
+
 	}
 
 	protected InsuranceAgencyDataBrokerClient getBrokerClient(){

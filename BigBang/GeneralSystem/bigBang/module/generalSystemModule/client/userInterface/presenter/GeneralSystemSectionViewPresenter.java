@@ -43,6 +43,7 @@ public class GeneralSystemSectionViewPresenter implements ViewPresenter {
 	private Display view;
 	private ViewPresenterController controller;
 	private ViewPresenterController overlayController;
+	private boolean bound;
 
 	public GeneralSystemSectionViewPresenter(Display view) {
 		this.setView((UIObject)view);
@@ -67,6 +68,9 @@ public class GeneralSystemSectionViewPresenter implements ViewPresenter {
 	}
 
 	private void bind() {
+		if(bound){
+			return;
+		}
 		this.view.registerActionHandler(new ActionInvokedEventHandler<GeneralSystemSectionViewPresenter.Action>() {
 
 			@Override
@@ -124,6 +128,8 @@ public class GeneralSystemSectionViewPresenter implements ViewPresenter {
 				NavigationHistoryManager.getInstance().go(item);
 			}
 		});
+		
+		bound = true;
 	}
 
 	private void initializeController(){

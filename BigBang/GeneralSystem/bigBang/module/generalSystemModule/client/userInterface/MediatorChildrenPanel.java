@@ -20,8 +20,8 @@ public class MediatorChildrenPanel extends View {
 	
 	protected Mediator mediator;
 	
-	protected ContactsList contactsList;
-	protected DocumentsList documentsList;
+	public ContactsList contactsList;
+	public DocumentsList documentsList;
 	
 	public MediatorChildrenPanel(){
 		StackPanel wrapper = new StackPanel();
@@ -53,6 +53,7 @@ public class MediatorChildrenPanel extends View {
 		this.contactsList.allowCreation(allow);
 		this.documentsList.setOwner(agencyId);	
 		this.documentsList.setOwnerType(BigBangConstants.EntityIds.MEDIATOR);
+		this.documentsList.allowCreation(allow);
 	}
 
 	protected MediatorDataBrokerClient getBrokerClient(){

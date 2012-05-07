@@ -2,6 +2,8 @@ package bigBang.module.generalSystemModule.client.userInterface.view;
 
 import org.gwt.mosaic.ui.client.ToolButton;
 
+import bigBang.definitions.shared.Contact;
+import bigBang.definitions.shared.Document;
 import bigBang.definitions.shared.InsuranceAgency;
 import bigBang.library.client.HasEditableValue;
 import bigBang.library.client.HasValueSelectables;
@@ -181,6 +183,16 @@ public class InsuranceAgencyManagementOperationView extends View implements Insu
 	@Override
 	public void allowDelete(boolean allow) {
 		this.toolbar.allowDelete(allow);
+	}
+	
+	@Override
+	public HasValueSelectables<Contact> getContactsList() {
+		return this.childrenPanel.contactsList;
+	}
+	
+	@Override
+	public HasValueSelectables<Document> getDocumentsList() {
+		return this.childrenPanel.documentsList;
 	}
 
 }

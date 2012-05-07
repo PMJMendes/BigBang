@@ -173,6 +173,8 @@ public class ClientGroupManagementOperationViewPresenter implements ViewPresente
 				}
 			}
 		});
+		
+		bound = true;
 	}
 
 	private void setup(){

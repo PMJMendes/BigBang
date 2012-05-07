@@ -172,6 +172,8 @@ public class CostCenterManagementOperationViewPresenter implements ViewPresenter
 				}
 			}
 		});
+		
+		bound = true;
 	}
 
 	private void setup(){

@@ -173,6 +173,8 @@ public class UserManagementOperationViewPresenter implements ViewPresenter {
 				}
 			}
 		});
+		
+		bound = true;
 	}
 
 	private void setup(){
