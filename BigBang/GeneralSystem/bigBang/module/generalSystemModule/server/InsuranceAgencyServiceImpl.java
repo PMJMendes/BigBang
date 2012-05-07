@@ -62,7 +62,7 @@ public class InsuranceAgencyServiceImpl
 
         try
         {
-	        lrsCompanies = Entity.GetInstance(lidCompanies).SelectAll(ldb);
+	        lrsCompanies = Entity.GetInstance(lidCompanies).SelectAllSort(ldb, new int[] {0});
 		}
 		catch (Throwable e)
 		{

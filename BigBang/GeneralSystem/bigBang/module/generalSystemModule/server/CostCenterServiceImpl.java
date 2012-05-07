@@ -62,7 +62,8 @@ public class CostCenterServiceImpl
 
         try
         {
-	        lrsCenters = Entity.GetInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), Constants.ObjID_CostCenter)).SelectAll(ldb);
+	        lrsCenters = Entity.GetInstance(Engine.FindEntity(Engine.getCurrentNameSpace(),
+	        		Constants.ObjID_CostCenter)).SelectAllSort(ldb, new int[] {1});
 		}
 		catch (Throwable e)
 		{

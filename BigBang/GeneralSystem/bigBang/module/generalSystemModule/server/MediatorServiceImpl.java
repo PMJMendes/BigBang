@@ -64,7 +64,7 @@ public class MediatorServiceImpl
 
         try
         {
-	        lrsMediators = Entity.GetInstance(lidMediators).SelectAll(ldb);
+	        lrsMediators = Entity.GetInstance(lidMediators).SelectAllSort(ldb, new int[] {0});
 		}
 		catch (Throwable e)
 		{

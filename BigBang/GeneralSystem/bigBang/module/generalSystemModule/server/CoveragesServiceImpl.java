@@ -58,7 +58,7 @@ public class CoveragesServiceImpl
 
         try
         {
-	        lrsLines = lrefLines.SelectAll(ldb);
+	        lrsLines = lrefLines.SelectAllSort(ldb, new int[] {1, 0});
 		}
 		catch (Throwable e)
 		{

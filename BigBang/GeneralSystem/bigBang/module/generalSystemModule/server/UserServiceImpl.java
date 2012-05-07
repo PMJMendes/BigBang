@@ -56,7 +56,7 @@ public class UserServiceImpl
 
         try
         {
-	        lrsUsers = Entity.GetInstance(lidUsers).SelectAll(ldb);
+	        lrsUsers = Entity.GetInstance(lidUsers).SelectAllSort(ldb, new int[] {0});
 		}
 		catch (Throwable e)
 		{

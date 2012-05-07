@@ -50,7 +50,7 @@ public class ClientGroupServiceImpl
 
         try
         {
-	        lrsGroups = lrefGroups.SelectAll(ldb);
+	        lrsGroups = lrefGroups.SelectAllSort(ldb, new int[] {0});
 		}
 		catch (Throwable e)
 		{
