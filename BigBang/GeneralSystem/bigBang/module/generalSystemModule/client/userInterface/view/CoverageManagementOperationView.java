@@ -66,6 +66,10 @@ public class CoverageManagementOperationView extends View implements CoverageMan
 		this.lineList.setReadOnly(readOnly);
 		this.subLineList.setReadOnly(readOnly);
 		this.coverageList.setReadOnly(readOnly);
+		
+		this.lineList.getToolbar().setEditionAvailable(!readOnly);
+		this.subLineList.getToolBar().setEditionAvailable(!readOnly);
+		this.coverageList.getToolBar().setEditionAvailable(!readOnly);
 	}
 
 	@Override

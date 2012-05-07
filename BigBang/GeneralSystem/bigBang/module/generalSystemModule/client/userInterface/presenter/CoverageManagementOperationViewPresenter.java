@@ -98,7 +98,7 @@ public class CoverageManagementOperationViewPresenter implements ViewPresenter {
 	@Override
 	public void setParameters(HasParameters parameterHolder) {
 
-		view.setReadOnly(PermissionChecker.hasPermission(SessionGeneralSystem.getInstance(), BigBangConstants.OperationIds.GeneralSystemProcess.MANAGE_LINES));
+		view.setReadOnly(!PermissionChecker.hasPermission(SessionGeneralSystem.getInstance(), BigBangConstants.OperationIds.GeneralSystemProcess.MANAGE_LINES));
 		lineId = parameterHolder.getParameter("lineid");
 		subLineId = parameterHolder.getParameter("sublineid");
 		coverageId = parameterHolder.getParameter("coverageid");
