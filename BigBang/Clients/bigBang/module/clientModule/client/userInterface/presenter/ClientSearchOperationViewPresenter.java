@@ -34,6 +34,7 @@ import bigBang.library.client.history.NavigationHistoryItem;
 import bigBang.library.client.history.NavigationHistoryManager;
 import bigBang.library.client.userInterface.presenter.ViewPresenter;
 import bigBang.library.client.userInterface.view.View;
+import bigBang.module.generalSystemModule.shared.SessionGeneralSystem;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.HasWidgets;
@@ -380,6 +381,8 @@ public class ClientSearchOperationViewPresenter implements ViewPresenter {
 		this.view.getPolicyList().clearSelection();
 		this.view.getSubProcessesList().clearSelection();
 		this.view.getHistoryList().clearSelection();
+		
+		view.allowCreate(PermissionChecker.hasPermission(SessionGeneralSystem.getInstance(), BigBangConstants.OperationIds.GeneralSystemProcess.CREATE_CLIENT));
 	}
 
 	private void setupNewClient(){
@@ -450,7 +453,6 @@ public class ClientSearchOperationViewPresenter implements ViewPresenter {
 
 				view.allowEdit(PermissionChecker.hasPermission(response, BigBangConstants.OperationIds.ClientProcess.UPDATE_CLIENT));
 				view.allowDelete(PermissionChecker.hasPermission(response, BigBangConstants.OperationIds.ClientProcess.DELETE_CLIENT));
-				view.allowCreate(PermissionChecker.hasPermission(response, BigBangConstants.OperationIds.GeneralSystemProcess.CREATE_CLIENT));
 				view.allowRequestInfoOrDocument(PermissionChecker.hasPermission(response, BigBangConstants.OperationIds.ClientProcess.CREATE_INFO_REQUEST));
 				view.allowManagerTransfer(PermissionChecker.hasPermission(response, BigBangConstants.OperationIds.ClientProcess.CREATE_MANAGER_TRANSFER));
 				view.allowClientMerge(PermissionChecker.hasPermission(response, BigBangConstants.OperationIds.ClientProcess.MERGE_CLIENT));
