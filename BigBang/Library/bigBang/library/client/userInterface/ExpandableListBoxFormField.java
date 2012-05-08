@@ -244,10 +244,10 @@ TypifiedListClient {
 	@Override
 	protected void onDetach() {
 		super.onDetach();
-//		String listId = this.getListId();
-//		if(typifiedListBroker.isClientRegistered(listId, ExpandableListBoxFormField.this)){
-//			typifiedListBroker.unregisterClient(listId, ExpandableListBoxFormField.this);
-//		}
+		String listId = this.getListId();
+		if(typifiedListBroker.isClientRegistered(listId, ExpandableListBoxFormField.this)){
+			typifiedListBroker.unregisterClient(listId, ExpandableListBoxFormField.this);
+		}
 	}
 
 	public String getListId() {

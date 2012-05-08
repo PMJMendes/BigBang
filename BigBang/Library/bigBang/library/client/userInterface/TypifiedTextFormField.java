@@ -40,7 +40,7 @@ public class TypifiedTextFormField extends FormField<TypifiedText> implements Ty
 			public void onValueChange(ValueChangeEvent<String> event) {
 
 				String id = event.getValue();
-				if(id.length() == 0){
+				if(id == null || id.length() == 0){
 					clear();
 					return;
 				}
@@ -80,7 +80,7 @@ public class TypifiedTextFormField extends FormField<TypifiedText> implements Ty
 	}
 
 	public void setTypifiedTexts(String tag){
-		if(this.tag != null){
+		if(this.tag != null && this.tag.length() > 0){
 			broker.unregisterClient(this.tag, this);
 		}
 		tag = tag != null && tag.isEmpty() ? null : "@" + tag;
@@ -100,10 +100,15 @@ public class TypifiedTextFormField extends FormField<TypifiedText> implements Ty
 				}
 			});
 		}
+		else{
+			labels.setListId(null, null);
+		}
 	}
 	
 	@Override
 	public void setValue(TypifiedText value, boolean fireEvents) {
+		
+		this.labels.setValue(value.label);
 		this.subject.setValue(value.subject);
 		this.textBody.setValue(value.text);
 		if(fireEvents)
@@ -120,6 +125,7 @@ public class TypifiedTextFormField extends FormField<TypifiedText> implements Ty
 
 	@Override
 	public void clear() {
+		labels.clear();
 		subject.clear();
 		textBody.clear();
 	}
