@@ -1,5 +1,7 @@
 package com.premiumminds.BigBang.Jewel.SysObjects;
 
+import java.awt.geom.AffineTransform;
+import java.awt.image.AffineTransformOp;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.UUID;
@@ -258,7 +260,10 @@ public class DocuShareConnector
 		DSContentElement[] larrAux;
 		PDDocument lobjDocument;
 		PDPage lobjPage;
+		int llngRot;
 		BufferedImage lobjImage;
+		AffineTransform lobjXForm;
+		AffineTransformOp lobjOp;
 
 		lrefSession = GetSession();
 		if ( lrefSession == null )
@@ -288,6 +293,7 @@ public class DocuShareConnector
 				throw e1;
 			}
 			lobjPage = (PDPage)lobjDocument.getDocumentCatalog().getAllPages().get(0);
+			llngRot = lobjPage.findRotation();
 			try
 			{
 				lobjImage = lobjPage.convertToImage(BufferedImage.TYPE_INT_ARGB, 200);
@@ -298,6 +304,16 @@ public class DocuShareConnector
 				throw e1;
 			}
 			lobjDocument.close();
+
+			if ( llngRot != 0 )
+			{
+				lobjXForm = new AffineTransform();
+				lobjXForm.translate(0.5*lobjImage.getHeight(), 0.5*lobjImage.getWidth());
+				lobjXForm.quadrantRotate(llngRot/90);
+				lobjXForm.translate(-0.5*lobjImage.getWidth(), -0.5*lobjImage.getHeight());
+				lobjOp = new AffineTransformOp(lobjXForm, AffineTransformOp.TYPE_NEAREST_NEIGHBOR);
+				lobjImage = lobjOp.filter(lobjImage, null);
+			}
 		}
 		catch (Throwable e)
 		{
