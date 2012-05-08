@@ -113,7 +113,7 @@ public class DocumentViewPresenter implements ViewPresenter, DocumentsBrokerClie
 		else{
 			broker.registerClient(this, ownerId);
 		}	
-		if(documentId == null){
+		if(documentId.equalsIgnoreCase("new")){
 
 			if(hasPermissions){
 				Document doc = new Document();
@@ -212,11 +212,12 @@ public class DocumentViewPresenter implements ViewPresenter, DocumentsBrokerClie
 					view.hasFile(true);
 					break;
 				}
-
 				}
 			}
 
 		});
+
+		bound = true;
 	}
 	private void downloadFile() {
 

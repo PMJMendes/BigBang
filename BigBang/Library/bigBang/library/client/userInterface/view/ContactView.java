@@ -78,10 +78,10 @@ public class ContactView extends View implements ContactViewPresenter.Display{
 
 			type.setValue(contactinfo.typeId);
 			infoValue.setValue(contactinfo.value);
-			
+
 			remove = new Button("X");
 			remove.addClickHandler(new ClickHandler() {
-				
+
 				@Override
 				public void onClick(ClickEvent event) {
 					fireEvent(new DeleteRequestEvent(getValue()));
@@ -92,7 +92,7 @@ public class ContactView extends View implements ContactViewPresenter.Display{
 			this.setRightWidget(remove);
 			super.setValue(contactinfo);
 		}
-		
+
 
 		public void setEditable(boolean editable){
 
@@ -108,18 +108,18 @@ public class ContactView extends View implements ContactViewPresenter.Display{
 
 		@Override
 		public ContactInfo getValue() {
-			
+
 			return value;
-			
+
 		}
 	}
 
 	public ContactView(){
-		
-		
+
+
 		wrapper = new SplitLayoutPanel();
 		initWidget(wrapper);
-		
+
 		wrapperLeft = new VerticalPanel();
 		//TOOLBAR
 		toolbar = new ContactOperationsToolBar() {
@@ -138,17 +138,17 @@ public class ContactView extends View implements ContactViewPresenter.Display{
 			public void onCancelRequest() {
 				fireAction(Action.CANCEL);
 			}
-			
+
 			@Override
 			public void onDelete(){
 				fireAction(Action.DELETE);
 			}
-			
+
 			@Override
 			public void onCreateSubContact(){
 				fireAction(Action.CREATE_CHILD_CONTACT);
 			}
-			
+
 		};
 
 		name = new TextBoxFormField("Nome");
@@ -158,7 +158,7 @@ public class ContactView extends View implements ContactViewPresenter.Display{
 		address = new AddressFormField();
 
 		address.setWidth("400px");
-		
+
 		HorizontalPanel horz = new HorizontalPanel();
 		horz.add(type);
 		horz.add(name);
@@ -186,14 +186,14 @@ public class ContactView extends View implements ContactViewPresenter.Display{
 		wrapper.add(wrapperRight);
 		wrapper.setSize("660px", "500px");
 	}
-	
+
 	@Override
 	protected void onAttach() {
 		super.onAttach();
 		if(contact != null)
 			fireAction(Action.ATTACHED);
 	}
-	
+
 	@Override
 	protected void initializeView() {
 		return;
@@ -211,7 +211,7 @@ public class ContactView extends View implements ContactViewPresenter.Display{
 			this.address.setValue(null);
 			return;
 		}
-		
+
 		this.contact = contact;
 		this.name.setValue(contact.name);
 		this.type.setValue(contact.typeId);
@@ -232,7 +232,7 @@ public class ContactView extends View implements ContactViewPresenter.Display{
 
 	}
 
-	
+
 	protected void fireAction(Action action){
 		if(this.actionHandler != null) {
 			actionHandler.onActionInvoked(new ActionInvokedEvent<Action>(action));
@@ -258,15 +258,15 @@ public class ContactView extends View implements ContactViewPresenter.Display{
 
 			temp = (ContactEntry) contactIL.get(i);
 			temp.setEditable(editable);
-			
+
 		}
 	}
 
 	@Override
 	public List<ContactInfo> getContactInfoList() {
-		
+
 		return contactIL;
-		
+
 	}
 
 	@Override
@@ -276,45 +276,48 @@ public class ContactView extends View implements ContactViewPresenter.Display{
 
 	@Override
 	public Contact getContact() {
-		
+
 		Contact newContact = new Contact();
 		if(this.contact != null){
 			newContact = this.contact;
 		}
-		
+
 		newContact.address = address.getValue();
 		newContact.name = name.getValue();
 		newContact.typeId = type.getValue();
-		
-		newContact.info = new ContactInfo[contactIL.size()-1];
+
 		for(int i = 0; i<contactIL.size()-1; i++){
-			
-			if(((ContactEntry) contactIL.get(i)).type.getValue() != null &&  ((ContactEntry) contactIL.get(i)).infoValue.getValue() != null){
-				newContact.info[i] = new ContactInfo();
-				newContact.info[i].typeId = ((ContactEntry) contactIL.get(i)).type.getValue();
-				newContact.info[i].value = ((ContactEntry) contactIL.get(i)).infoValue.getValue();
-			}
-			else{
+
+			if(((ContactEntry) contactIL.get(i)).type.getValue() == null && ((ContactEntry) contactIL.get(i)).infoValue.getValue() == null){
 				contactIL.remove(i);
 				i--;
 			}
-			
 		}
-		
+
+		newContact.info = new ContactInfo[contactIL.size()-1];
+		for(int i = 0; i<contactIL.size()-1; i++){
+
+			newContact.info[i] = new ContactInfo();
+			newContact.info[i].typeId = ((ContactEntry) contactIL.get(i)).type.getValue();
+			newContact.info[i].value = ((ContactEntry) contactIL.get(i)).infoValue.getValue();
+		}
+
+
+
 		return newContact;
 	}
 
 	public Contact getInfo() {
 		return this.contact;
 	}
- 
+
 	@Override
 	public void registerDeleteHandler(
 			DeleteRequestEventHandler deleteRequestEventHandler) {
 		this.deleteHandler = deleteRequestEventHandler;
-		
+
 	}
-	
+
 	@Override
 	public ContactOperationsToolBar getToolbar(){
 		return toolbar;
@@ -323,10 +326,10 @@ public class ContactView extends View implements ContactViewPresenter.Display{
 	public void setSaveMode(boolean b) {
 		toolbar.setSaveModeEnabled(b);
 	}
-	
+
 	@Override
 	public void setSubContacts(Contact[] contacts) {
-	
+
 		subContacts.clear();
 		NavigationListEntry<Contact> temp;
 		Label tempLabel;
@@ -337,16 +340,16 @@ public class ContactView extends View implements ContactViewPresenter.Display{
 			subContacts.add(temp);
 		}
 	}
-	
+
 	@Override
 	public List<Contact> getSubContactList(){
-		
+
 		return subContacts;
 	}
 
 	@Override
 	public void addSubContact(Contact contact) {
-		
+
 		NavigationListEntry<Contact> temp;
 		temp = new NavigationListEntry<Contact>(contact);
 		Label tempLabel;
@@ -356,9 +359,9 @@ public class ContactView extends View implements ContactViewPresenter.Display{
 		for(int i = 0; i<subContacts.size(); i++){
 			System.out.println(subContacts.get(i).getValue().name);
 		}
-		 
+
 	}
-	
+
 
 
 }
