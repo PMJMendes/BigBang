@@ -352,6 +352,7 @@ public class SerialReceiptCreationViewPresenter implements ViewPresenter{
 				}
 				else if(response.size() == 1){
 					getReceipt(((ReceiptStub)response.toArray()[0]).id);
+					view.enableNewReceipt(true);
 				}
 				else{
 					view.enablePolicy(true);
