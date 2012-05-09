@@ -36,7 +36,7 @@ public class InfoOrDocumentRequestForm extends FormView<InfoOrDocumentRequest> {
 	public InfoOrDocumentRequestForm(){
 		addSection("Detalhes do Pedido");
 
-		requestType = new ExpandableListBoxFormField(BigBangConstants.TypifiedListIds.REQUEST_TYPE, "Tipo de Documento");
+		requestType = new ExpandableListBoxFormField(BigBangConstants.TypifiedListIds.REQUEST_TYPE, "Tipo de Pedido");
 		text = new TypifiedTextFormField();
 		to = new ListBoxFormField("Destinatário");
 		to.setFieldWidth("400px");
