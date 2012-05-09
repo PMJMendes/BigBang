@@ -1,6 +1,7 @@
 package bigBang.module.generalSystemModule.interfaces;
 
 import bigBang.definitions.shared.CostCenter;
+import bigBang.definitions.shared.User;
 import bigBang.library.shared.BigBangException;
 import bigBang.library.shared.SessionExpiredException;
 
@@ -29,6 +30,7 @@ public interface CostCenterService
 	}
 	
 	public CostCenter[] getCostCenterList() throws SessionExpiredException, BigBangException;
+	public User[] getCostCenterUsers(String costCenterId) throws SessionExpiredException, BigBangException;
 	public CostCenter createCostCenter(CostCenter costCenter) throws SessionExpiredException, BigBangException;
 	public CostCenter saveCostCenter(CostCenter costCenter) throws SessionExpiredException, BigBangException;
 	public void deleteCostCenter(String id) throws SessionExpiredException, BigBangException;
