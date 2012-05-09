@@ -364,6 +364,7 @@ public class ContactViewPresenter implements ViewPresenter, ContactsBrokerClient
 			}
 		});
 
+		bound = true;
 	}
 
 
