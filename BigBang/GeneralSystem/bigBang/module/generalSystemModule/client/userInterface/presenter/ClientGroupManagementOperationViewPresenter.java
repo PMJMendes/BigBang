@@ -168,6 +168,9 @@ public class ClientGroupManagementOperationViewPresenter implements ViewPresente
 						NavigationHistoryManager.getInstance().reload();
 					}
 					break;
+				case REFRESH:
+					onRefresh();
+					break;
 				default:
 					break;
 				}
@@ -335,6 +338,11 @@ public class ClientGroupManagementOperationViewPresenter implements ViewPresente
 		}
 	}	
 
+	private void onRefresh(){
+		clientGroupBroker.requireDataRefresh();
+		NavigationHistoryManager.getInstance().reload();
+	}
+	
 	private void onGetClientGroupFailed(){
 		EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "De momento não foi possível obter o Grupo de Clientes seleccionado"), TYPE.ALERT_NOTIFICATION));
 		NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();

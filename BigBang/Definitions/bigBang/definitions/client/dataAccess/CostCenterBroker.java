@@ -1,7 +1,10 @@
 package bigBang.definitions.client.dataAccess;
 
+import java.util.Collection;
+
 import bigBang.definitions.client.response.ResponseHandler;
 import bigBang.definitions.shared.CostCenter;
+import bigBang.definitions.shared.User;
 
 /**
  * The interface for a Cost Center DataBroker
@@ -41,5 +44,8 @@ public interface CostCenterBroker extends DataBrokerInterface<CostCenter> {
 	 * @param handler The handler to be notified on response
 	 */
 	public void removeCostCenter(String costCenterId, ResponseHandler<CostCenter> handler);
+
+	public void getCostCenterMembers(String ownerId,
+			ResponseHandler<Collection<User>> responseHandler);
 
 }

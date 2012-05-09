@@ -154,14 +154,21 @@ public class FilterableList<T> extends SortableList<T> {
 	 */
 	protected boolean filterOutListEntry(ListEntry<T> entry) {
 		String text = entry.getText().toUpperCase();
+		text = deAccent(text);
 		String title = entry.getTitle().toUpperCase();
+		title = deAccent(title);
+		
 		String token = textBoxFilter.getValue().toUpperCase();
+		token = deAccent(token);
+		
+		
 		
 		boolean matches = ((text != null && text.contains(token)) || (title != null && title.contains(token)));
 		
 		if(entry.metaData != null) {
 			for(String meta : entry.metaData){
-				matches |= (meta != null && meta.toUpperCase().contains(token));
+				String deacMeta = deAccent(meta);
+				matches |= (deacMeta != null && deacMeta.toUpperCase().contains(token));
 			}
 		}
 		
@@ -236,5 +243,9 @@ public class FilterableList<T> extends SortableList<T> {
 	 */
 	public void setLiveSearch(boolean liveSearch){
 		this.liveSearch = liveSearch;
+	}
+	
+	public String deAccent(String str) {
+		return str;
 	}
 }

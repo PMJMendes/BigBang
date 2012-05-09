@@ -28,7 +28,7 @@ public class InsuranceAgencyForm extends FormView<InsuranceAgency> {
 		acronym = new TextBoxFormField("Sigla", new InsuranceAgencyFormValidator.AcronymValidator());
 		ISPNumber = new TextBoxFormField("Número do ISP", new InsuranceAgencyFormValidator.ISPNumberValidator());
 		taxNumber = new TextBoxFormField("NIF/NIPC", new InsuranceAgencyFormValidator.TaxNumberValidator());
-		NIB = new TextBoxFormField("NIP", new InsuranceAgencyFormValidator.NIBValidator());
+		NIB = new TextBoxFormField("NIB", new InsuranceAgencyFormValidator.NIBValidator());
 		address = new AddressFormField(new InsuranceAgencyFormValidator.AddressValidator());
 
 		addSection("Informação Geral");

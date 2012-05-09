@@ -31,6 +31,7 @@ import com.google.gwt.i18n.client.DateTimeFormat;
 public class ClientFormView extends FormView<Client> implements ClientProcessDataBrokerClient {
 
 	private TextBoxFormField name;
+	private TextBoxFormField number;
 	private TextBoxFormField taxNumber;
 	private AddressFormField address;
 	private ExpandableListBoxFormField group;
@@ -59,6 +60,8 @@ public class ClientFormView extends FormView<Client> implements ClientProcessDat
 
 		name = new TextBoxFormField("Nome", new ClientFormValidator.ClientNameValidator());
 		name.setFieldWidth("600px");
+		number = new TextBoxFormField("Número");
+		number.setEditable(false);
 		taxNumber = new TextBoxFormField("Nº Contribuinte", new ClientFormValidator.TaxNumberValidator());
 		taxNumber.setFieldWidth("100px");
 		address = new AddressFormField();
@@ -92,15 +95,18 @@ public class ClientFormView extends FormView<Client> implements ClientProcessDat
 		addFormField(name);
 
 		addFormFieldGroup(new FormField<?>[]{
-				clientManager,
+				number,
+				clientManager
+		}, true);
+		addFormFieldGroup(new FormField<?>[]{
 				mediator,
+				profile
 		}, true);
 		addFormFieldGroup(new FormField<?>[]{
-				profile,
-				group
+				group,
+				taxNumber
 		}, true);
 		addFormFieldGroup(new FormField<?>[]{
-				taxNumber,
 				NIB
 		}, true);
 
@@ -226,7 +232,7 @@ public class ClientFormView extends FormView<Client> implements ClientProcessDat
 		});
 
 		this.setValue(new Client());
-
+		setForEdit();
 	}
 
 	public void setIndividualMode(){
@@ -280,6 +286,7 @@ public class ClientFormView extends FormView<Client> implements ClientProcessDat
 			return;			
 		}
 		name.setValue(info.name);
+		number.setValue(info.clientNumber);
 		taxNumber.setValue(info.taxNumber);
 		address.setValue(info.address);
 		group.setValue(info.groupId);
@@ -315,6 +322,15 @@ public class ClientFormView extends FormView<Client> implements ClientProcessDat
 		otherClientType.setValue(info.subtypeId);
 	}
 
+	public void setForCreate(){
+//		this.clientManager.setEditable(true); //TODO
+	}
+	
+	public void setForEdit(){
+		this.clientManager.setEditable(false);
+	}
+	
+	
 	@Override
 	public void setDataVersionNumber(String dataElementId, int number) {
 		if(dataElementId.equalsIgnoreCase(BigBangConstants.EntityIds.CLIENT))
@@ -341,6 +357,14 @@ public class ClientFormView extends FormView<Client> implements ClientProcessDat
 	@Override
 	public void removeClient(String clientId) {
 		this.setValue(null);
+	}
+	
+	@Override
+	public void setReadOnly(boolean readOnly) {
+		super.setReadOnly(readOnly);
+		if(!readOnly){
+			this.name.focus();
+		}
 	}
 
 }

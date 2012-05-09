@@ -12,14 +12,19 @@ import com.google.gwt.dom.client.Style.Cursor;
 import com.google.gwt.dom.client.Style.FontWeight;
 import com.google.gwt.dom.client.Style.Overflow;
 import com.google.gwt.dom.client.Style.Unit;
+import com.google.gwt.event.dom.client.BlurEvent;
+import com.google.gwt.event.dom.client.BlurHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.dom.client.FocusEvent;
+import com.google.gwt.event.dom.client.FocusHandler;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.user.client.Event;
 import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.google.gwt.user.client.ui.CheckBox;
+import com.google.gwt.user.client.ui.FocusPanel;
 import com.google.gwt.user.client.ui.HasVerticalAlignment;
 import com.google.gwt.user.client.ui.HasWidgets;
 import com.google.gwt.user.client.ui.HorizontalPanel;
@@ -39,6 +44,7 @@ public class ListEntry<T> extends View implements ValueSelectable<T>, HasMetaDat
 	
 	//protected final String defaultBackgroundImageUrl = ""; //images/listBackground1Even.png";
 	protected final String selectedBackgroundImageUrl = "images/listBackground1Selected.png";
+	protected final String selectedBlurBackgroundImageUrl = "images/listBackground1SelectedBlur.png";
 	//protected final String hoverBackgroundImageUrl = "images/listBackground1Hover.png";
 	
 	protected Image backgroundImage;
@@ -133,6 +139,29 @@ public class ListEntry<T> extends View implements ValueSelectable<T>, HasMetaDat
 			}
 		}, ClickEvent.getType());
 		
+		FocusPanel focusPanel = new FocusPanel();
+		focusPanel.setSize("100%", "100%");
+		panel.add(focusPanel, 0, 0);
+
+		focusPanel.addFocusHandler(new FocusHandler() {
+			
+			@Override
+			public void onFocus(FocusEvent event) {
+				if(isSelected()) {
+					setSelectedFocus();
+				}
+			}
+		});
+		focusPanel.addBlurHandler(new BlurHandler() {
+			
+			@Override
+			public void onBlur(BlurEvent event) {
+				if(isSelected()) {
+					setSelectedBlur();
+				}
+			}
+		});
+		
 		disableTextSelection(true);
 		setDragHandle(this);
 		setValue(value);
@@ -185,7 +214,7 @@ public class ListEntry<T> extends View implements ValueSelectable<T>, HasMetaDat
 		
 		boolean initSelected = this.isSelected;
 		if(selected){
-			backgroundImage.setUrl(selectedBackgroundImageUrl);
+			setSelectedFocus();
 			backgroundImage.setVisible(true);
 			this.addStyleName("listItem-selected");
 			this.removeStyleName("listItemEven");
@@ -369,4 +398,12 @@ public class ListEntry<T> extends View implements ValueSelectable<T>, HasMetaDat
 		this.dragHandle = w;
 	}
 
+	protected void setSelectedFocus(){
+		backgroundImage.setUrl(selectedBackgroundImageUrl);
+	}
+	
+	protected void setSelectedBlur(){
+		backgroundImage.setUrl(selectedBlurBackgroundImageUrl);
+	}
+	
 }

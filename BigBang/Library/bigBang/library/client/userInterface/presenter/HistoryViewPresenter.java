@@ -25,6 +25,7 @@ import bigBang.library.client.event.SelectionChangedEventHandler;
 import bigBang.library.client.history.NavigationHistoryItem;
 import bigBang.library.client.history.NavigationHistoryManager;
 import bigBang.library.client.userInterface.view.View;
+import bigBang.module.generalSystemModule.shared.SessionGeneralSystem;
 
 import com.google.gwt.user.client.ui.HasValue;
 import com.google.gwt.user.client.ui.HasWidgets;
@@ -35,7 +36,7 @@ public class HistoryViewPresenter implements ViewPresenter {
 
 	public static enum Action {
 		REVERT_OPERATION,
-		NAVIGATE_TO_AUXILIARY_PROCESS
+		NAVIGATE_TO_AUXILIARY_PROCESS, GO_BACK
 	}
 
 	public interface Display {
@@ -44,7 +45,8 @@ public class HistoryViewPresenter implements ViewPresenter {
 		void setObjectId(String objectId);
 		void selectItem(String id);
 		void refreshList();
-
+		void showBackButton(boolean show);
+		
 		//FORM
 		HasValue<HistoryItem> getForm();
 
@@ -100,6 +102,7 @@ public class HistoryViewPresenter implements ViewPresenter {
 				view.allowUndo(false);
 			}
 		}
+		view.showBackButton(objectId != null && SessionGeneralSystem.getInstance().id != null && !objectId.equalsIgnoreCase(SessionGeneralSystem.getInstance().id));
 	}
 
 	private void bind() {
@@ -115,6 +118,9 @@ public class HistoryViewPresenter implements ViewPresenter {
 					break;
 				case NAVIGATE_TO_AUXILIARY_PROCESS:
 					onNavigateToAuxiliaryProcess();
+					break;
+				case GO_BACK:
+					onGoBack();
 					break;
 				}
 			}
@@ -148,6 +154,7 @@ public class HistoryViewPresenter implements ViewPresenter {
 		view.setObjectId(null);
 		view.allowUndo(false);
 		view.allowNavigateToAuxiliaryProcess(false);
+		view.showBackButton(false);
 	}
 
 	private void showHistory(String objectId){
@@ -253,6 +260,14 @@ public class HistoryViewPresenter implements ViewPresenter {
 				return;
 			}
 		}
+	}
+	
+	private void onGoBack(){
+		NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
+		item.removeParameter("historyitemid");
+		item.removeParameter("historyownerid");
+		item.popFromStackParameter("display");
+		NavigationHistoryManager.getInstance().go(item);
 	}
 	
 	private void navigateToSubCasualty(String auxObjectId) {

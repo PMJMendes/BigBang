@@ -96,6 +96,7 @@ public class ClientSearchOperationViewPresenter implements ViewPresenter {
 		//General
 		void registerActionInvokedHandler(ActionInvokedEventHandler<Action> handler);
 		void prepareNewClient(Client client);
+		void setForCreation(boolean forCreation);
 
 		Widget asWidget();
 	}
@@ -396,6 +397,7 @@ public class ClientSearchOperationViewPresenter implements ViewPresenter {
 			client.managerId = Session.getUserId();
 			view.getList().clearSelection();
 			view.prepareNewClient(client);
+			view.setForCreation(true);
 
 			//permissions
 			view.clearAllowedPermissions();
@@ -419,6 +421,7 @@ public class ClientSearchOperationViewPresenter implements ViewPresenter {
 					break;
 				}
 			}
+			view.setForCreation(false);
 			view.clearAllowedPermissions();
 			view.getForm().setValue(null);
 			view.getForm().setReadOnly(true);

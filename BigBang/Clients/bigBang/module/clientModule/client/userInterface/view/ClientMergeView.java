@@ -143,6 +143,8 @@ public class ClientMergeView extends View implements ClientMergeViewPresenter.Di
 
 		formOriginal.setReadOnly(true);
 		formReceptor.setReadOnly(true);
+		
+		searchPanel.doSearch();
 	}
 	
 	@Override

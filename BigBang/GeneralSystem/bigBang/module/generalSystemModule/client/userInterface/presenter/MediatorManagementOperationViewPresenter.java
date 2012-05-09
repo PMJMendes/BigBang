@@ -172,6 +172,9 @@ public class MediatorManagementOperationViewPresenter implements ViewPresenter {
 						NavigationHistoryManager.getInstance().reload();
 					}
 					break;
+				case REFRESH:
+					onRefresh();
+					break;
 				default:
 					break;
 				}
@@ -380,6 +383,10 @@ public class MediatorManagementOperationViewPresenter implements ViewPresenter {
 			});
 		}
 	}	
+	
+	private void onRefresh(){
+		NavigationHistoryManager.getInstance().reload();
+	}
 
 	private void onGetMediatorFailed(){
 		EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "De momento não foi possível obter o mediador seleccionado"), TYPE.ALERT_NOTIFICATION));

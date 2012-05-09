@@ -18,7 +18,7 @@ public class HistoryItemForm extends FormView<HistoryItem> {
 		
 		addSection("Informação da Operação");
 		addWidget(beforeDescription);
-		addSection("Desfazer");
+		addSection("Reverter");
 		addWidget(afterDescription);
 		
 		clearInfo();

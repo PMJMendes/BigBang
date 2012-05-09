@@ -335,6 +335,15 @@ public class ClientSearchOperationView extends View implements ClientSearchOpera
 	public HasValueSelectables<CasualtyStub> getCasualtyList() {
 		return this.childrenPanel.casualtiesList;
 	}
+
+	@Override
+	public void setForCreation(boolean forCreation) {
+		if(forCreation) {
+			form.setForCreate();
+		}else{
+			form.setForEdit();
+		}
+	}
 	
 	/*## CHILDREN LISTS END ##*/
 	

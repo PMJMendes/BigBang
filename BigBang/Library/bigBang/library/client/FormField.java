@@ -11,6 +11,7 @@ import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.user.client.ui.HasValue;
 import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.UIObject;
 import com.google.gwt.user.client.ui.Widget;
 
 public abstract class FormField<T> extends View implements HasValue<T>, Validatable {
@@ -134,6 +135,12 @@ public abstract class FormField<T> extends View implements HasValue<T>, Validata
 	
 	public void setLabelText(String labelText){
 		this.label.setText(labelText);
+	}
+	
+	public void focus(){
+		if(this.field != null && (this.field instanceof UIObject)) {
+			((UIObject) this.field).getElement().focus();
+		}
 	}
 	
 	public abstract void setLabelWidth(String width);

@@ -171,6 +171,9 @@ public class InsuranceAgencyManagementOperationViewPresenter implements ViewPres
 						NavigationHistoryManager.getInstance().reload();
 					}
 					break;
+				case REFRESH:
+					onRefresh();
+					break;
 				default:
 					break;
 				}
@@ -379,6 +382,11 @@ public class InsuranceAgencyManagementOperationViewPresenter implements ViewPres
 		}
 	}	
 
+	private void onRefresh(){
+		insuranceAgencyBroker.requireDataRefresh();
+		NavigationHistoryManager.getInstance().reload();
+	}
+	
 	private void onGetInsuranceAgencyFailed(){
 		EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "De momento não foi possível obter a seguradora seleccionada"), TYPE.ALERT_NOTIFICATION));
 		NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();

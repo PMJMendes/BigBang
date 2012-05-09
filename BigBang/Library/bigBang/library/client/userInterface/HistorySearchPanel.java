@@ -47,10 +47,11 @@ public class HistorySearchPanel extends SearchPanel<HistoryItemStub>  implements
 	protected int dataVersion;
 	protected String itemIdToSelect = null;
 	protected FiltersPanel filtersPanel;
+	protected ListHeader header;
 
 	public HistorySearchPanel(){
 		super(((HistoryBroker)DataBrokerManager.Util.getInstance().getBroker(BigBangConstants.EntityIds.HISTORY)).getSearchBroker());
-		ListHeader header = new ListHeader();
+		this.header = new ListHeader();
 		header.setText("Histórico");
 		setHeaderWidget(header);
 		
@@ -199,6 +200,10 @@ public class HistorySearchPanel extends SearchPanel<HistoryItemStub>  implements
 		if(id != null){
 			selectItem(id);
 		}
+	}
+
+	public ListHeader getHeader() {
+		return this.header;
 	}
 
 }

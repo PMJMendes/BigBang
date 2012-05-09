@@ -25,8 +25,12 @@ import com.google.gwt.dom.client.Style.FontStyle;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.DoubleClickEvent;
 import com.google.gwt.event.dom.client.DoubleClickHandler;
+import com.google.gwt.event.dom.client.KeyCodes;
+import com.google.gwt.event.dom.client.KeyDownEvent;
+import com.google.gwt.event.dom.client.KeyDownHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.user.client.ui.AbsolutePanel;
+import com.google.gwt.user.client.ui.FocusPanel;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.HasVerticalAlignment;
 import com.google.gwt.user.client.ui.HasWidgets;
@@ -99,7 +103,10 @@ public class List<T> extends View implements HasValueSelectables<T>, java.util.L
 		VerticalPanel listWrapper = new VerticalPanel();
 		listWrapper.setSize("100%", "100%");
 		this.listPanel = new VerticalPanel();
-		listWrapper.add(this.listPanel);
+		FocusPanel focusPanel = new FocusPanel();
+		focusPanel.setSize("100%", "100%");
+		focusPanel.add(this.listPanel);
+		listWrapper.add(focusPanel);
 		scrollPanel.add(listWrapper);
 		this.listPanel.setSize("100%", "100%");
 		this.listPanel.setStyleName("emptyContainer");
@@ -143,9 +150,9 @@ public class List<T> extends View implements HasValueSelectables<T>, java.util.L
 					onCellDoubleClicked((ListEntry<T>) event.getSource());
 			}
 		};
-		
+
 		cellCheckedHandler = new CheckedStateChangedEventHandler() {
-			
+
 			@Override
 			public void onCheckedStateChanged(CheckedStateChangedEvent event) {
 				if(entries.contains(event.getSource()))
@@ -160,6 +167,23 @@ public class List<T> extends View implements HasValueSelectables<T>, java.util.L
 				selectableStateChanged((Selectable) event.getSource());
 			}
 		};
+		focusPanel.addKeyDownHandler(new KeyDownHandler() {
+
+			@Override
+			public void onKeyDown(KeyDownEvent event) {
+				event.preventDefault();
+				event.stopPropagation();
+
+				switch(event.getNativeKeyCode()){
+				case KeyCodes.KEY_UP:
+					selectPrevious();
+					break;
+				case KeyCodes.KEY_DOWN:
+					selectNext();
+					break;
+				}
+			}
+		});
 
 		clear();
 	}
@@ -198,17 +222,19 @@ public class List<T> extends View implements HasValueSelectables<T>, java.util.L
 	 * If no entries are selected, the first available entry is selected.
 	 */
 	public void selectNext() {
-		if (this.entries.isEmpty())
-			return;
-
-		int size = this.entries.size();
-		int selectedIndex = 0;
-		for(int i = 0; i < size; i++){
-			if(entries.get(i).isSelected())
-				selectedIndex = i;
+		if (!this.entries.isEmpty()){
+			Collection<ValueSelectable<T>> selected = getSelected();
+			
+			if(selected == null) {
+				get(0).setSelected(true, true);
+			}else{
+				ValueSelectable<T> entry = selected.iterator().next();
+				int index = indexOf(entry);
+				if(index < size() - 1){
+					get(index + 1).setSelected(true, true);
+				}
+			}
 		}
-		if (size >= selectedIndex)
-			entries.get(selectedIndex).setSelected(true, true);
 	}
 
 	/**
@@ -216,19 +242,19 @@ public class List<T> extends View implements HasValueSelectables<T>, java.util.L
 	 * If no entries are selected, the last available entry is selected.
 	 */
 	public void selectPrevious() {
-		if (this.entries.isEmpty())
-			return;
-
-		int size = this.entries.size();
-		int selectedIndex = 0;
-		for(int i = 0; i < size; i++){
-			if(entries.get(i).isSelected()){
-				selectedIndex = i;
-				break;
+		if (!this.entries.isEmpty()){
+			Collection<ValueSelectable<T>> selected = getSelected();
+			
+			if(selected == null) {
+				get(0).setSelected(true, true);
+			}else{
+				ValueSelectable<T> entry = selected.iterator().next();
+				int index = indexOf(entry);
+				if(index > 0){
+					get(index - 1).setSelected(true, true);
+				}
 			}
 		}
-		if (size > 0)
-			entries.get(selectedIndex).setSelected(true, true);
 	}
 
 	/**
@@ -306,9 +332,9 @@ public class List<T> extends View implements HasValueSelectables<T>, java.util.L
 	protected void onSizeChanged() {
 	}
 
-	
+
 	//Checkable functions
-	
+
 	/**
 	 * Sets whether or not the list entries have checkable capabilities.
 	 * @param checkable If true, the list entries acquire checkable capabilities.
@@ -328,13 +354,13 @@ public class List<T> extends View implements HasValueSelectables<T>, java.util.L
 		}
 		return result;
 	}
-	
+
 	@Override
 	public HandlerRegistration addCheckedSelectionChangedEventHandler(
 			CheckedSelectionChangedEventHandler handler) {
 		return addHandler(handler, CheckedSelectionChangedEvent.TYPE);
 	}
-	
+
 	protected void checkedSelectionChanged(Checkable c){
 		fireEvent(new CheckedSelectionChangedEvent(getChecked(), c));
 	}
@@ -349,7 +375,7 @@ public class List<T> extends View implements HasValueSelectables<T>, java.util.L
 				}
 			}
 		}
-		
+
 		UIObject sourceElem = (UIObject) source;
 		if(sourceElem.getAbsoluteTop() < this.scrollPanel.getAbsoluteTop()
 				|| sourceElem.getAbsoluteTop() > (this.scrollPanel.getAbsoluteTop() + this.scrollPanel.getOffsetHeight() - sourceElem.getOffsetHeight())){
@@ -590,7 +616,7 @@ public class List<T> extends View implements HasValueSelectables<T>, java.util.L
 				((ListEntry<?>)e).removeFromParent();
 		}
 		onSizeChanged();
-		return result;
+					return result;
 	}
 
 	@Override
@@ -647,7 +673,7 @@ public class List<T> extends View implements HasValueSelectables<T>, java.util.L
 
 	public void makeCellsDraggable(boolean draggable) {
 		dragController.unregisterDropControllers();
-		
+
 		if(draggable) {
 			for(ListEntry<T> e : this.entries) {
 				dragController.makeDraggable(e);
@@ -656,7 +682,7 @@ public class List<T> extends View implements HasValueSelectables<T>, java.util.L
 
 		this.draggable = draggable;
 	}
-	
+
 	public void showLoading(boolean show){
 		if(show){
 			if(this.loadingWidget == null) {

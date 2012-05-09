@@ -49,7 +49,7 @@ public class TaskSearchPanel extends SearchPanel<TaskStub> implements TasksDataB
 			Resources r = GWT.create(Resources.class);
 			TaskStub t = (TaskStub) info;
 			setTitle(t.description);
-			setText(t.dueDate.substring(0, 10));
+			setText("Data limite : " + t.dueDate.substring(0, 10));
 			statusIndicator.setVisible(true);
 			this.getElement().getStyle().setBackgroundColor(this.defaultBGColor);
 			switch(t.status){

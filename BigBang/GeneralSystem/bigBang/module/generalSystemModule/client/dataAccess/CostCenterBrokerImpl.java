@@ -1,5 +1,6 @@
 package bigBang.module.generalSystemModule.client.dataAccess;
 
+import java.util.ArrayList;
 import java.util.Collection;
 
 import bigBang.definitions.client.dataAccess.CostCenterBroker;
@@ -10,6 +11,7 @@ import bigBang.definitions.client.response.ResponseError;
 import bigBang.definitions.client.response.ResponseHandler;
 import bigBang.definitions.shared.BigBangConstants;
 import bigBang.definitions.shared.CostCenter;
+import bigBang.definitions.shared.User;
 import bigBang.library.client.BigBangAsyncCallback;
 import bigBang.library.client.EventBus;
 import bigBang.library.client.event.OperationWasExecutedEvent;
@@ -244,6 +246,31 @@ public class CostCenterBrokerImpl extends DataBroker<CostCenter> implements Cost
 			@Override
 			public void onError(Collection<ResponseError> errors) {
 				return;
+			}
+		});
+	}
+
+	@Override
+	public void getCostCenterMembers(String ownerId,
+			final ResponseHandler<Collection<User>> responseHandler) {
+
+		service.getCostCenterUsers(ownerId, new BigBangAsyncCallback<User[]>() {
+
+			@Override
+			public void onResponseSuccess(User[] result) {
+				ArrayList<User> users = new ArrayList<User>();
+				for(User user : result) {
+					users.add(user);
+				}
+				responseHandler.onResponse(users);
+			}
+			
+			@Override
+			public void onResponseFailure(Throwable caught) {
+				responseHandler.onError(new String[]{
+					new String("Could not get the cost center members")	
+				});
+				super.onResponseFailure(caught);
 			}
 		});
 	}

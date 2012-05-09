@@ -168,6 +168,9 @@ public class UserManagementOperationViewPresenter implements ViewPresenter {
 						NavigationHistoryManager.getInstance().reload();
 					}
 					break;
+				case REFRESH:
+					onRefresh();
+					break;
 				default:
 					break;
 				}
@@ -337,6 +340,11 @@ public class UserManagementOperationViewPresenter implements ViewPresenter {
 		}
 	}	
 
+	protected void onRefresh(){
+		userBroker.requireDataRefresh();
+		NavigationHistoryManager.getInstance().reload();
+	}
+	
 	private void onGetUserFailed(){
 		EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "De momento não foi possível obter o utilizador seleccionado"), TYPE.ALERT_NOTIFICATION));
 		NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();

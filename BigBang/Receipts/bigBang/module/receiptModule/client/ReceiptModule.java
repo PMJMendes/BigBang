@@ -149,7 +149,7 @@ public class ReceiptModule implements Module {
 				return presenter;
 			}
 		});
-		ViewPresenterFactory.getInstance().registerViewPresenterInstantiator("MASS_PAYMENT_NOTICE_CREATION", new ViewPresenterInstantiator(){
+		ViewPresenterFactory.getInstance().registerViewPresenterInstantiator("MASS_CREATE_PAYMENT_NOTICE", new ViewPresenterInstantiator(){
 			@Override
 			public ViewPresenter getInstance() {
 				MassCreatePaymentNoticeView view = (MassCreatePaymentNoticeView) GWT.create(MassCreatePaymentNoticeView.class);

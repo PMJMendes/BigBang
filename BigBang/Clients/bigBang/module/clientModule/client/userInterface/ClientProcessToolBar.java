@@ -30,6 +30,15 @@ public abstract class ClientProcessToolBar extends BigBangOperationsToolBar {
 	public ClientProcessToolBar(){
 
 		//CREATE
+		quoteRequestItem = new MenuItem("Consulta de Mercado", new Command() {
+
+			@Override
+			public void execute() {
+				onCreateQuoteRequest();
+			}
+		});
+		addItem(SUB_MENU.CREATE,quoteRequestItem);
+		
 		createPolicyItem =  new MenuItem("Apólice", new Command() {
 
 			@Override
@@ -38,6 +47,15 @@ public abstract class ClientProcessToolBar extends BigBangOperationsToolBar {
 			}
 		});
 		addItem(SUB_MENU.CREATE, createPolicyItem);
+
+		casualtyItem = new MenuItem("Sinistro", new Command() {
+
+			@Override
+			public void execute() {
+				onCreateCasualty();
+			}
+		});
+		addItem(SUB_MENU.CREATE, casualtyItem);
 		
 		riskAnalysisItem = new MenuItem("Análise de Risco", new Command() {
 
@@ -48,24 +66,6 @@ public abstract class ClientProcessToolBar extends BigBangOperationsToolBar {
 		});
 		addItem(SUB_MENU.CREATE, riskAnalysisItem);
 		
-		quoteRequestItem = new MenuItem("Consulta de Mercado", new Command() {
-
-			@Override
-			public void execute() {
-				onCreateQuoteRequest();
-			}
-		});
-		addItem(SUB_MENU.CREATE,quoteRequestItem);
-		
-		casualtyItem = new MenuItem("Sinistro", new Command() {
-
-			@Override
-			public void execute() {
-				onCreateCasualty();
-			}
-		});
-		addItem(SUB_MENU.CREATE, casualtyItem);
-
 
 		//EXECUTE
 		clientMergeItem = new MenuItem("Fundir com Cliente", new Command() {
@@ -97,8 +97,7 @@ public abstract class ClientProcessToolBar extends BigBangOperationsToolBar {
 		});
 		addItem(SUB_MENU.REQUESTS, infoRequestItem);
 		
-		adminSubMenu.addSeparator();
-		
+		//ADMIN
 		this.deleteItem = new MenuItem("Eliminar", new Command() {
 
 			@Override

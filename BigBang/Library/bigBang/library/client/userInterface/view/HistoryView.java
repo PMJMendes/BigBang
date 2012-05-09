@@ -14,6 +14,9 @@ import bigBang.library.client.userInterface.HistorySearchPanel;
 import bigBang.library.client.userInterface.presenter.HistoryViewPresenter;
 import bigBang.library.client.userInterface.presenter.HistoryViewPresenter.Action;
 
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.HasValue;
 import com.google.gwt.user.client.ui.SplitLayoutPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
@@ -33,7 +36,8 @@ public class HistoryView extends View implements HistoryViewPresenter.Display {
 	protected HistoryOperationsToolbar toolbar;
 	protected ActionInvokedEventHandler<Action> actionHandler;
 	protected Status status;
-
+	protected Button backButton;
+	
 	public HistoryView(){
 		SplitLayoutPanel wrapper = new SplitLayoutPanel();
 		initWidget(wrapper);
@@ -68,6 +72,15 @@ public class HistoryView extends View implements HistoryViewPresenter.Display {
 		wrapper.add(formWrapper);
 
 		this.status = Status.IDLE;
+		
+		this.backButton = new Button("Voltar", new ClickHandler() {
+			
+			@Override
+			public void onClick(ClickEvent event) {
+				actionHandler.onActionInvoked(new ActionInvokedEvent<HistoryViewPresenter.Action>(Action.GO_BACK));
+			}
+		});
+		this.list.getHeader().setLeftWidget(backButton);
 	}
 
 	@Override
@@ -125,6 +138,11 @@ public class HistoryView extends View implements HistoryViewPresenter.Display {
 	@Override
 	public void allowNavigateToAuxiliaryProcess(boolean allow) {
 		this.toolbar.allowNavigateToAuxiliaryProcess(allow);
+	}
+
+	@Override
+	public void showBackButton(boolean show) {
+		this.backButton.setVisible(show);
 	}
 
 }

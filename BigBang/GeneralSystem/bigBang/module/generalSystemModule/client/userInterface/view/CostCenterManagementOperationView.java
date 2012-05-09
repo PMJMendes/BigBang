@@ -3,12 +3,14 @@ package bigBang.module.generalSystemModule.client.userInterface.view;
 import org.gwt.mosaic.ui.client.ToolButton;
 
 import bigBang.definitions.shared.CostCenter;
+import bigBang.definitions.shared.User;
 import bigBang.library.client.HasEditableValue;
 import bigBang.library.client.HasValueSelectables;
 import bigBang.library.client.ValueSelectable;
 import bigBang.library.client.event.ActionInvokedEvent;
 import bigBang.library.client.event.ActionInvokedEventHandler;
 import bigBang.library.client.userInterface.view.View;
+import bigBang.module.generalSystemModule.client.userInterface.CostCenterChildrenPanel;
 import bigBang.module.generalSystemModule.client.userInterface.CostCenterList;
 import bigBang.module.generalSystemModule.client.userInterface.CostCenterListEntry;
 import bigBang.module.generalSystemModule.client.userInterface.CostCenterOperationsToolbar;
@@ -17,6 +19,8 @@ import bigBang.module.generalSystemModule.client.userInterface.presenter.CostCen
 
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.logical.shared.ValueChangeEvent;
+import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.user.client.ui.SplitLayoutPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
@@ -28,6 +32,7 @@ public class CostCenterManagementOperationView extends View implements CostCente
 	private CostCenterForm costCenterForm;
 	private ToolButton newButton;
 	private CostCenterOperationsToolbar toolbar;
+	private CostCenterChildrenPanel childrenPanel;
 	
 	protected ActionInvokedEventHandler<CostCenterManagementOperationViewPresenter.Action> actionHandler; 
 	
@@ -58,6 +63,10 @@ public class CostCenterManagementOperationView extends View implements CostCente
 		wrapper.addWest(costCenterList, LIST_WIDTH);
 		wrapper.setWidgetMinSize(costCenterList, LIST_WIDTH);
 
+		this.childrenPanel = new CostCenterChildrenPanel();
+		this.childrenPanel.setSize("100%", "100%");
+		wrapper.addEast(this.childrenPanel, 250);
+		
 		VerticalPanel previewWrapper = new VerticalPanel();
 		previewWrapper.setSize("100%", "100%");
 		
@@ -91,6 +100,14 @@ public class CostCenterManagementOperationView extends View implements CostCente
 		costCenterForm.setSize("100%", "100%");
 		previewWrapper.add(costCenterForm);
 		previewWrapper.setCellHeight(costCenterForm, "100%");
+		
+		costCenterForm.addValueChangeHandler(new ValueChangeHandler<CostCenter>() {
+			
+			@Override
+			public void onValueChange(ValueChangeEvent<CostCenter> event) {
+				childrenPanel.setCostCenter(event.getValue());
+			}
+		});
 		
 		wrapper.add(previewWrapper);
 	}
@@ -163,5 +180,10 @@ public class CostCenterManagementOperationView extends View implements CostCente
 	@Override
 	public void allowDelete(boolean allow) {
 		this.toolbar.allowDelete(allow);
+	}
+
+	@Override
+	public HasValueSelectables<User> getMembersList() {
+		return childrenPanel.membersList;
 	}
 }

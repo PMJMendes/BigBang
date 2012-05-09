@@ -27,7 +27,9 @@ public class ReceiptSectionViewPresenter implements ViewPresenter {
 		MASS_SEND_RECEIPT_TO_CLIENT,
 		MASS_INSURER_ACCOUNTING,
 		MASS_AGENT_ACCOUNTING,
-		REPORT, MASS_RETURN_TO_INSURER
+		REPORT,
+		MASS_RETURN_TO_INSURER,
+		MASS_CREATE_PAYMENT_NOTICE
 	}
 
 	public static interface Display {
@@ -100,6 +102,9 @@ public class ReceiptSectionViewPresenter implements ViewPresenter {
 					case MASS_AGENT_ACCOUNTING:
 						item.pushIntoStackParameter("display", "massagentaccounting");
 						break;
+					case MASS_CREATE_PAYMENT_NOTICE:
+						item.pushIntoStackParameter("display", "masscreatepaymentnotice");
+						break;
 					case MASS_INSURER_ACCOUNTING:
 						item.pushIntoStackParameter("display", "massinsureraccounting");
 						break;
@@ -147,6 +152,9 @@ public class ReceiptSectionViewPresenter implements ViewPresenter {
 					}else if(display.equalsIgnoreCase("serialreceiptcreation")){
 						view.selectOperation(SectionOperation.SERIAL_RECEIPT_CREATION);
 						present("SERIAL_RECEIPT_CREATION", parameters);
+					}else if(display.equalsIgnoreCase("masscreatepaymentnotice")){
+						view.selectOperation(SectionOperation.MASS_CREATE_PAYMENT_NOTICE);
+						present("MASS_CREATE_PAYMENT_NOTICE", parameters);
 					}else if(display.equalsIgnoreCase("serialmarkforpayment")){
 						present("SERIAL_RECEIPT_MARK_FOR_PAYMENT", parameters);
 						view.selectOperation(SectionOperation.SERIAL_RECEIPT_MARK_FOR_PAYMENT);

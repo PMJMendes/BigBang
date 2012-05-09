@@ -7,6 +7,7 @@ import bigBang.definitions.client.response.ResponseError;
 import bigBang.definitions.client.response.ResponseHandler;
 import bigBang.definitions.shared.BigBangConstants;
 import bigBang.definitions.shared.CostCenter;
+import bigBang.definitions.shared.User;
 import bigBang.library.client.EventBus;
 import bigBang.library.client.HasEditableValue;
 import bigBang.library.client.HasParameters;
@@ -56,6 +57,8 @@ public class CostCenterManagementOperationViewPresenter implements ViewPresenter
 		//General
 		void registerActionInvokedHandler(ActionInvokedEventHandler<Action> handler);
 		void prepareNewCostCenter(CostCenter costCenter);
+		
+		HasValueSelectables<User> getMembersList();
 
 		//PERMISSIONS
 		void clearAllowedPermissions();
@@ -167,8 +170,24 @@ public class CostCenterManagementOperationViewPresenter implements ViewPresenter
 						NavigationHistoryManager.getInstance().reload();
 					}
 					break;
+				case REFRESH:
+					onRefresh();
+					break;
 				default:
 					break;
+				}
+			}
+		});
+		
+		view.getMembersList().addSelectionChangedEventHandler(new SelectionChangedEventHandler() {
+			
+			@Override
+			public void onSelectionChanged(SelectionChangedEvent event) {
+				ValueSelectable<?> selected = (ValueSelectable<?>) event.getFirstSelected();
+				
+				if(selected != null) {
+					User user = (User) selected.getValue();
+					onMemberSelected(user);
 				}
 			}
 		});
@@ -334,6 +353,19 @@ public class CostCenterManagementOperationViewPresenter implements ViewPresenter
 		}
 	}	
 
+	private void onRefresh(){
+		costCenterBroker.requireDataRefresh();
+		NavigationHistoryManager.getInstance().reload();
+	}
+
+	private void onMemberSelected(User user) {
+		NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
+		item.setStackParameter("display");
+		item.pushIntoStackParameter("display", "user");
+		item.setParameter("userid", user.id);
+		NavigationHistoryManager.getInstance().go(item);
+	}
+	
 	private void onGetCostCenterFailed(){
 		EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "De momento não foi possível obter o Centro de Custo seleccionado"), TYPE.ALERT_NOTIFICATION));
 		NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
