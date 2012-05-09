@@ -77,6 +77,7 @@ public class ClientFormView extends FormView<Client> implements ClientProcessDat
 		profile = new ExpandableListBoxFormField(ModuleConstants.ListIDs.OperationalProfiles, "Perfil Operacional", new ClientFormValidator.ProfileValidator());
 		profile.allowEdition(false);
 		CAE = new ExpandableListBoxFormField(BigBangConstants.TypifiedListIds.CAEs, "CAE");
+		CAE.setFieldWidth("400px");
 		CAE.setPopupWidth("600px");
 		CAE.setReadOnly(true);
 		activityObservations = new TextBoxFormField("Observações sobre actividade");

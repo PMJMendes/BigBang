@@ -1,7 +1,5 @@
 package bigBang.library.client.userInterface;
 
-import org.apache.tools.ant.taskdefs.Zip;
-
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Cursor;
 import com.google.gwt.dom.client.Style.Unit;

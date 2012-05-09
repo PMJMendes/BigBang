@@ -67,6 +67,11 @@ public class ListEntry<T> extends View implements ValueSelectable<T>, HasMetaDat
 	public ListEntry(T value) {
 		AbsolutePanel panel = new AbsolutePanel();
 		initWidget(panel);
+		
+		FocusPanel focusPanel = new FocusPanel();
+		focusPanel.setSize("100%", "100%");
+		panel.add(focusPanel, 0, 0);
+		
 		this.widgetContainer = new SimplePanel();
 		((Widget)this.widgetContainer).setSize("100%", "100%");
 		panel.setSize("100%", "30px");
@@ -139,10 +144,6 @@ public class ListEntry<T> extends View implements ValueSelectable<T>, HasMetaDat
 			}
 		}, ClickEvent.getType());
 		
-		FocusPanel focusPanel = new FocusPanel();
-		focusPanel.setSize("100%", "100%");
-		panel.add(focusPanel, 0, 0);
-
 		focusPanel.addFocusHandler(new FocusHandler() {
 			
 			@Override

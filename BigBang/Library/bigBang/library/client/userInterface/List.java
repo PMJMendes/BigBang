@@ -172,7 +172,6 @@ public class List<T> extends View implements HasValueSelectables<T>, java.util.L
 			@Override
 			public void onKeyDown(KeyDownEvent event) {
 				event.preventDefault();
-				event.stopPropagation();
 
 				switch(event.getNativeKeyCode()){
 				case KeyCodes.KEY_UP:
