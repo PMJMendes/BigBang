@@ -224,7 +224,7 @@ public class ManageUsers
 
 					lobjAuxBase.setAt(0, marrModify[i].mstrFullName);
 					lobjAuxBase.setAt(1, marrModify[i].mstrUsername);
-					lobjAuxBase.setAt(2, marrModify[i].mobjPassword);
+//					lobjAuxBase.setAt(2, marrModify[i].mobjPassword); //JMMM: Alterar o user não deve alterar a password
 					lobjAuxBase.setAt(3, marrModify[i].midProfile);
 					lobjAuxBase.SaveToDb(pdb);
 
@@ -253,7 +253,9 @@ public class ManageUsers
 
 					marrDelete[i].mstrFullName = (String)lobjAuxBase.getAt(0);
 					marrDelete[i].mstrUsername = (String)lobjAuxBase.getAt(1);
-					marrDelete[i].mobjPassword = null;
+					marrDelete[i].mobjPassword = (lobjAuxBase.getAt(2) == null ? null :
+							(lobjAuxBase.getAt(2) instanceof Password ? (Password)lobjAuxBase.getAt(2) :
+							new Password((String)lobjAuxBase.getAt(2), false)));
 					marrDelete[i].midProfile = (UUID)lobjAuxBase.getAt(3);
 					marrDelete[i].mstrEmail = (String)lobjAuxOuter.getAt(1);
 					marrDelete[i].midCostCenter = (UUID)lobjAuxOuter.getAt(2);
@@ -460,7 +462,7 @@ public class ManageUsers
 
 					lobjAuxBase.setAt(0, marrModify[i].mobjPrevValues.mstrFullName);
 					lobjAuxBase.setAt(1, marrModify[i].mobjPrevValues.mstrUsername);
-					lobjAuxBase.setAt(2, marrModify[i].mobjPrevValues.mobjPassword);
+//					lobjAuxBase.setAt(2, marrModify[i].mobjPrevValues.mobjPassword); //JMMM: Alterar o user não deve alterar a password
 					lobjAuxBase.setAt(3, marrModify[i].mobjPrevValues.midProfile);
 					lobjAuxBase.SaveToDb(pdb);
 
