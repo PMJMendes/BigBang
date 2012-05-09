@@ -136,7 +136,7 @@ public class FileServiceImpl
 			return;
 
 		resp.setContentType(lbuffer.getContentType());
-		resp.addHeader("Content-Disposition", "attachment; filename=\"" + lbuffer.getFileName() + "\"");
+//		resp.addHeader("Content-Disposition", "attachment; filename=\"" + lbuffer.getFileName() + "\"");
 		resp.flushBuffer();
 		resp.getOutputStream().write(lbuffer.getData());
     }
