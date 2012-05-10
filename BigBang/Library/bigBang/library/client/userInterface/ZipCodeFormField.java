@@ -99,6 +99,11 @@ public class ZipCodeFormField extends FormField<ZipCode>{
 	@Override
 	public void setValue(ZipCode value) {
 		
+		if(value == null){
+			clear();
+			return;
+		}
+		
 		code.setValue(value.code);
 		city.setValue(value.city);
 		country.setValue(value.country);
@@ -127,6 +132,7 @@ public class ZipCodeFormField extends FormField<ZipCode>{
 		city.setValue("");
 		country.setValue("");
 		county.setValue("");
+		district.setValue("");
 		
 		
 	}
