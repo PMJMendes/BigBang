@@ -1,5 +1,7 @@
 package bigBang.library.client.userInterface;
 
+import java.util.Iterator;
+
 import bigBang.definitions.shared.BigBangConstants;
 import bigBang.definitions.shared.DocInfo;
 import bigBang.definitions.shared.DocuShareHandle;
@@ -379,14 +381,24 @@ public abstract class DocumentForm extends FormView<Document>{
 		newDoc.fileStorageId = fileStorageId;
 		newDoc.hasFile = hasFile;
 		newDoc.mimeType = mimeType;
-		newDoc.parameters = new DocInfo[details.size()-1];
-		int curr = details.size()-1;
-		for(ListEntry<DocInfo> temp : details){
-			if(curr == 0)
-				break;
-			newDoc.parameters[details.size()-1-curr] = temp.getValue();
-			curr--;
+
+		Iterator<ListEntry<DocInfo>> iterator = details.iterator();
+		ListEntry<DocInfo> temp;
+
+		while(iterator.hasNext()){
+			temp = iterator.next();
+			if(iterator.hasNext()){
+				if(temp.getValue().name == null && temp.getValue().value == null){
+					iterator.remove();
+				}
+			}
 		}
+
+		newDoc.parameters = new DocInfo[details.size()-1];
+		for(int i = 0; i<newDoc.parameters.length; i++){
+			newDoc.parameters[i] = details.get(i).getValue();
+		}
+
 		newDoc.source = docushareHandle;
 		newDoc.text = note.getValue();
 
@@ -512,9 +524,7 @@ public abstract class DocumentForm extends FormView<Document>{
 			fileButton.setEnabled(!readOnly);
 
 			for(int i = 0; i < details.size()-1; i++){
-				((DocumentDetailEntry) details.get(i)).info.setReadOnly(readOnly);
-				((DocumentDetailEntry) details.get(i)).infoValue.setReadOnly(readOnly);
-				((DocumentDetailEntry) details.get(i)).remove.setEnabled(!readOnly);
+				((DocumentDetailEntry) details.get(i)).setEditable(!readOnly);
 			}
 			details.get(details.size()-1).setVisible(!readOnly);
 		}
