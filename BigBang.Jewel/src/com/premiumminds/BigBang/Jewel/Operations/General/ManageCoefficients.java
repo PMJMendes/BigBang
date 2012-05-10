@@ -39,6 +39,8 @@ public class ManageCoefficients
 		public UUID midReferenceTo;
 		public int mlngColumn;
 		public boolean mbMandatory;
+		public String mstrTag;
+		public boolean mbVisible;
 		public TaxData mobjPrevValues;
 	}
 
@@ -365,16 +367,18 @@ public class ManageCoefficients
 			try
 			{
 				lobjAuxTax = Tax.GetInstance(Engine.getCurrentNameSpace(), (UUID)null);
-				lobjAuxTax.setAt(0, parrData[i].mstrName);
-				lobjAuxTax.setAt(1, parrData[i].midCoverage);
-				lobjAuxTax.setAt(2, parrData[i].midType);
-				lobjAuxTax.setAt(3, parrData[i].mstrUnits);
-				lobjAuxTax.setAt(4, parrData[i].mstrDefault);
-				lobjAuxTax.setAt(5, parrData[i].mbVariesByObject);
-				lobjAuxTax.setAt(6, parrData[i].mbVariesByExercise);
-				lobjAuxTax.setAt(7, parrData[i].midReferenceTo);
-				lobjAuxTax.setAt(8, parrData[i].mlngColumn);
-				lobjAuxTax.setAt(9, parrData[i].mbMandatory);
+				lobjAuxTax.setAt( 0, parrData[i].mstrName);
+				lobjAuxTax.setAt( 1, parrData[i].midCoverage);
+				lobjAuxTax.setAt( 2, parrData[i].midType);
+				lobjAuxTax.setAt( 3, parrData[i].mstrUnits);
+				lobjAuxTax.setAt( 4, parrData[i].mstrDefault);
+				lobjAuxTax.setAt( 5, parrData[i].mbVariesByObject);
+				lobjAuxTax.setAt( 6, parrData[i].mbVariesByExercise);
+				lobjAuxTax.setAt( 7, parrData[i].midReferenceTo);
+				lobjAuxTax.setAt( 8, parrData[i].mlngColumn);
+				lobjAuxTax.setAt( 9, parrData[i].mbMandatory);
+				lobjAuxTax.setAt(10, parrData[i].mstrTag);
+				lobjAuxTax.setAt(11, parrData[i].mbVisible);
 				lobjAuxTax.SaveToDb(pdb);
 			}
 			catch (Throwable e)
@@ -408,20 +412,24 @@ public class ManageCoefficients
 			parrData[i].mobjPrevValues.midReferenceTo = (UUID)lobjAuxTax.getAt(7);
 			parrData[i].mobjPrevValues.mlngColumn = (Integer)lobjAuxTax.getAt(8);
 			parrData[i].mobjPrevValues.mbMandatory = (Boolean)lobjAuxTax.getAt(9);
+			parrData[i].mobjPrevValues.mstrTag = (String)lobjAuxTax.getAt(10);
+			parrData[i].mobjPrevValues.mbVisible = (Boolean)lobjAuxTax.getAt(11);
 			parrData[i].mobjPrevValues.mobjPrevValues = null;
 
 			try
 			{
-				lobjAuxTax.setAt(0, parrData[i].mstrName);
-				lobjAuxTax.setAt(1, parrData[i].midCoverage);
-				lobjAuxTax.setAt(2, parrData[i].midType);
-				lobjAuxTax.setAt(3, parrData[i].mstrUnits);
-				lobjAuxTax.setAt(4, parrData[i].mstrDefault);
-				lobjAuxTax.setAt(5, parrData[i].mbVariesByObject);
-				lobjAuxTax.setAt(6, parrData[i].mbVariesByExercise);
-				lobjAuxTax.setAt(7, parrData[i].midReferenceTo);
-				lobjAuxTax.setAt(8, parrData[i].mlngColumn);
-				lobjAuxTax.setAt(9, parrData[i].mbMandatory);
+				lobjAuxTax.setAt( 0, parrData[i].mstrName);
+				lobjAuxTax.setAt( 1, parrData[i].midCoverage);
+				lobjAuxTax.setAt( 2, parrData[i].midType);
+				lobjAuxTax.setAt( 3, parrData[i].mstrUnits);
+				lobjAuxTax.setAt( 4, parrData[i].mstrDefault);
+				lobjAuxTax.setAt( 5, parrData[i].mbVariesByObject);
+				lobjAuxTax.setAt( 6, parrData[i].mbVariesByExercise);
+				lobjAuxTax.setAt( 7, parrData[i].midReferenceTo);
+				lobjAuxTax.setAt( 8, parrData[i].mlngColumn);
+				lobjAuxTax.setAt( 9, parrData[i].mbMandatory);
+				lobjAuxTax.setAt(10, parrData[i].mstrTag);
+				lobjAuxTax.setAt(11, parrData[i].mbVisible);
 				lobjAuxTax.SaveToDb(pdb);
 			}
 			catch (Throwable e)
@@ -461,6 +469,8 @@ public class ManageCoefficients
 			parrData[i].midReferenceTo = (UUID)lobjAuxTax.getAt(7);
 			parrData[i].mlngColumn = (Integer)lobjAuxTax.getAt(8);
 			parrData[i].mbMandatory = (Boolean)lobjAuxTax.getAt(9);
+			parrData[i].mstrTag = (String)lobjAuxTax.getAt(10);
+			parrData[i].mbVisible = (Boolean)lobjAuxTax.getAt(11);
 			parrData[i].mobjPrevValues = null;
 
 			try
@@ -515,16 +525,18 @@ public class ManageCoefficients
 
 			try
 			{
-				lobjAuxTax.setAt(0, parrData[i].mobjPrevValues.mstrName);
-				lobjAuxTax.setAt(1, parrData[i].mobjPrevValues.midCoverage);
-				lobjAuxTax.setAt(2, parrData[i].mobjPrevValues.midType);
-				lobjAuxTax.setAt(3, parrData[i].mobjPrevValues.mstrUnits);
-				lobjAuxTax.setAt(4, parrData[i].mobjPrevValues.mstrDefault);
-				lobjAuxTax.setAt(5, parrData[i].mobjPrevValues.mbVariesByObject);
-				lobjAuxTax.setAt(6, parrData[i].mobjPrevValues.mbVariesByExercise);
-				lobjAuxTax.setAt(7, parrData[i].mobjPrevValues.midReferenceTo);
-				lobjAuxTax.setAt(8, parrData[i].mobjPrevValues.mlngColumn);
-				lobjAuxTax.setAt(9, parrData[i].mobjPrevValues.mbMandatory);
+				lobjAuxTax.setAt( 0, parrData[i].mobjPrevValues.mstrName);
+				lobjAuxTax.setAt( 1, parrData[i].mobjPrevValues.midCoverage);
+				lobjAuxTax.setAt( 2, parrData[i].mobjPrevValues.midType);
+				lobjAuxTax.setAt( 3, parrData[i].mobjPrevValues.mstrUnits);
+				lobjAuxTax.setAt( 4, parrData[i].mobjPrevValues.mstrDefault);
+				lobjAuxTax.setAt( 5, parrData[i].mobjPrevValues.mbVariesByObject);
+				lobjAuxTax.setAt( 6, parrData[i].mobjPrevValues.mbVariesByExercise);
+				lobjAuxTax.setAt( 7, parrData[i].mobjPrevValues.midReferenceTo);
+				lobjAuxTax.setAt( 8, parrData[i].mobjPrevValues.mlngColumn);
+				lobjAuxTax.setAt( 9, parrData[i].mobjPrevValues.mbMandatory);
+				lobjAuxTax.setAt(10, parrData[i].mobjPrevValues.mstrTag);
+				lobjAuxTax.setAt(11, parrData[i].mobjPrevValues.mbVisible);
 				lobjAuxTax.SaveToDb(pdb);
 			}
 			catch (Throwable e)
@@ -545,16 +557,18 @@ public class ManageCoefficients
 			try
 			{
 				lobjAuxTax = Tax.GetInstance(Engine.getCurrentNameSpace(), (UUID)null);
-				lobjAuxTax.setAt(0, parrData[i].mstrName);
-				lobjAuxTax.setAt(1, parrData[i].midCoverage);
-				lobjAuxTax.setAt(2, parrData[i].midType);
-				lobjAuxTax.setAt(3, parrData[i].mstrUnits);
-				lobjAuxTax.setAt(4, parrData[i].mstrDefault);
-				lobjAuxTax.setAt(5, parrData[i].mbVariesByObject);
-				lobjAuxTax.setAt(6, parrData[i].mbVariesByExercise);
-				lobjAuxTax.setAt(7, parrData[i].midReferenceTo);
-				lobjAuxTax.setAt(8, parrData[i].mlngColumn);
-				lobjAuxTax.setAt(9, parrData[i].mbMandatory);
+				lobjAuxTax.setAt( 0, parrData[i].mstrName);
+				lobjAuxTax.setAt( 1, parrData[i].midCoverage);
+				lobjAuxTax.setAt( 2, parrData[i].midType);
+				lobjAuxTax.setAt( 3, parrData[i].mstrUnits);
+				lobjAuxTax.setAt( 4, parrData[i].mstrDefault);
+				lobjAuxTax.setAt( 5, parrData[i].mbVariesByObject);
+				lobjAuxTax.setAt( 6, parrData[i].mbVariesByExercise);
+				lobjAuxTax.setAt( 7, parrData[i].midReferenceTo);
+				lobjAuxTax.setAt( 8, parrData[i].mlngColumn);
+				lobjAuxTax.setAt( 9, parrData[i].mbMandatory);
+				lobjAuxTax.setAt(10, parrData[i].mstrTag);
+				lobjAuxTax.setAt(11, parrData[i].mbVisible);
 				lobjAuxTax.SaveToDb(pdb);
 				parrData[i].mid = lobjAuxTax.getKey();
 			}
@@ -638,6 +652,12 @@ public class ManageCoefficients
 		if ( pobjData.mbMandatory )
 		{
 			pstrString.append("Valor obrigatório.");
+			pstrString.append(pstrLineBreak);
+		}
+
+		if ( !pobjData.mbVisible )
+		{
+			pstrString.append("Valor escondido.");
 			pstrString.append(pstrLineBreak);
 		}
 

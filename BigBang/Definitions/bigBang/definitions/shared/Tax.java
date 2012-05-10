@@ -11,13 +11,15 @@ public class Tax
 	public String name;
 	public String coverageId;
 	public String fieldTypeId;
-	public String unitsLabel; // Novo!
-	public String defaultValue; // Default value
-	public boolean variesByObject; // Novo!
-	public boolean variesByExercise;  // Novo!
-	public String refersToEntityId;  // Novo!
-	public int columnOrder; // Novo!
-	public boolean mandatory; // Novo!
+	public String unitsLabel;
+	public String defaultValue;
+	public boolean variesByObject;
+	public boolean variesByExercise;
+	public String refersToEntityId;
+	public int columnOrder;
+	public boolean mandatory;
+	public String tag; //Novo!
+	public boolean visible; //Novo!
 
 	public Tax(){}
 	
@@ -33,5 +35,7 @@ public class Tax
 		this.refersToEntityId = original.refersToEntityId;
 		this.columnOrder = original.columnOrder;
 		this.mandatory = original.mandatory;
+		this.tag = original.tag;
+		this.visible = original.visible;
 	}
 }
