@@ -1,66 +1,110 @@
+delete from credite_egs.tblRequestAddresses;
 delete from credite_egs.tblDocInfo;
 delete from credite_egs.tblBBDocuments;
 delete from credite_egs.tblContactInfo;
 delete from credite_egs.tblContacts;
-
 delete from credite_egs.tblMgrXFerProcs;
 delete from credite_egs.tblMgrXFers;
-
-delete from credite_egs.tblRequestAddresses;
 delete from credite_egs.tblInfoRequests;
-
+delete from credite_egs.tblExternalRequests;
+delete from credite_egs.tblBBPrintSetDetails;
+delete from credite_egs.tblBBPrintSetDocuments;
+delete from credite_egs.tblBBPrintSets;
+delete from credite_egs.tblBBExpenses;
+delete from credite_egs.tblBBSubCasualtyItems;
+delete from credite_egs.tblBBSubCasualties;
+delete from credite_egs.tblBBCasualties;
+delete from credite_egs.tblSignatureRequests;
+delete from credite_egs.tblDASRequests;
+delete from credite_egs.tblMediatorAccountingDetails;
+delete from credite_egs.tblMediatorAccountingMaps;
+delete from credite_egs.tblMediatorAccountingSets;
+delete from credite_egs.tblInsurerAccountingDetails;
+delete from credite_egs.tblInsurerAccountingMaps;
+delete from credite_egs.tblInsurerAccountingSets;
+delete from credite_egs.tblDebitNotes;
 delete from credite_egs.tblBBReceipts;
+delete from credite_egs.tblBBNegotiations;
+delete from credite_egs.tblBBSubPolicyValues;
+delete from credite_egs.tblSubPolicyObjects;
+delete from credite_egs.tblBBSubPolicyCoverages;
+delete from credite_egs.tblBBSubPolicies;
+delete from credite_egs.tblPolicyCoInsurers;
 delete from credite_egs.tblBBPolicyValues;
 delete from credite_egs.tblExercises;
 delete from credite_egs.tblInsuredObjects;
 delete from credite_egs.tblBBPolicyCoverages;
 delete from credite_egs.tblBBPolicies;
+delete from credite_egs.tblQRValues;
+delete from credite_egs.tblQRCoverages;
+delete from credite_egs.tblQRSubLines;
+delete from credite_egs.tblQRObjects;
+delete from credite_egs.tblBBQuoteRequests;
 delete from credite_egs.tblBBClients;
 delete from credite_egs.tblBBGroups;
 delete from credite_egs.tblMediators;
 delete from credite_egs.tblCompanies;
 delete from credite_egs.tblProcGeneralSystem;
-
 delete from credite_egs.tblAgendaOperations;
 delete from credite_egs.tblAgendaProcesses;
 delete from credite_egs.tblAgendaItems;
-
 delete from credite_egs.tblPolicyValueItems;
-
 delete from credite_egs.tblPNLogs;
 delete from credite_egs.tblPNNodes;
 delete from credite_egs.tblPNSteps;
 delete from credite_egs.tblPNProcesses;
 
+delete from amartins.tblRequestAddresses;
 delete from amartins.tblDocInfo;
 delete from amartins.tblBBDocuments;
 delete from amartins.tblContactInfo;
 delete from amartins.tblContacts;
-
 delete from amartins.tblMgrXFerProcs;
 delete from amartins.tblMgrXFers;
-
-delete from amartins.tblRequestAddresses;
 delete from amartins.tblInfoRequests;
-
+delete from amartins.tblExternalRequests;
+delete from amartins.tblBBPrintSetDetails;
+delete from amartins.tblBBPrintSetDocuments;
+delete from amartins.tblBBPrintSets;
+delete from amartins.tblBBExpenses;
+delete from amartins.tblBBSubCasualtyItems;
+delete from amartins.tblBBSubCasualties;
+delete from amartins.tblBBCasualties;
+delete from amartins.tblSignatureRequests;
+delete from amartins.tblDASRequests;
+delete from amartins.tblMediatorAccountingDetails;
+delete from amartins.tblMediatorAccountingMaps;
+delete from amartins.tblMediatorAccountingSets;
+delete from amartins.tblInsurerAccountingDetails;
+delete from amartins.tblInsurerAccountingMaps;
+delete from amartins.tblInsurerAccountingSets;
+delete from amartins.tblDebitNotes;
 delete from amartins.tblBBReceipts;
+delete from amartins.tblBBNegotiations;
+delete from amartins.tblBBSubPolicyValues;
+delete from amartins.tblSubPolicyObjects;
+delete from amartins.tblBBSubPolicyCoverages;
+delete from amartins.tblBBSubPolicies;
+delete from amartins.tblPolicyCoInsurers;
 delete from amartins.tblBBPolicyValues;
 delete from amartins.tblExercises;
 delete from amartins.tblInsuredObjects;
 delete from amartins.tblBBPolicyCoverages;
 delete from amartins.tblBBPolicies;
+delete from amartins.tblQRValues;
+delete from amartins.tblQRCoverages;
+delete from amartins.tblQRSubLines;
+delete from amartins.tblQRObjects;
+delete from amartins.tblBBQuoteRequests;
 delete from amartins.tblBBClients;
 delete from amartins.tblBBGroups;
 delete from amartins.tblMediators;
 delete from amartins.tblCompanies;
 delete from amartins.tblProcGeneralSystem;
-
 delete from amartins.tblAgendaOperations;
 delete from amartins.tblAgendaProcesses;
 delete from amartins.tblAgendaItems;
-
 delete from amartins.tblPolicyValueItems;
-
 delete from amartins.tblPNLogs;
 delete from amartins.tblPNNodes;
 delete from amartins.tblPNSteps;
@@ -79,7 +123,13 @@ delete from bigbang.tblWorkspaces;
 /*delete from bigbang.tblProfiles;*/
 
 delete from bigbang.tblBanks;
-
+delete from bigbang.tblDeductibleTypes;
+delete from bigbang.tblDamageTypes;
+delete from bigbang.tblPolicyVoidingMotives;
+delete from bigbang.tblRequestCancelMotives;
+delete from bigbang.tblRequestTypes;
+delete from bigbang.tblTypifiedTexts;
+delete from bigbang.tblBBClientDeletion;
 delete from bigbang.tblBBClientSubTypes;
 delete from bigbang.tblBBClientTypes;
 delete from bigbang.tblBBCompanySizes;
@@ -87,7 +137,7 @@ delete from bigbang.tblBBSalesVolumes;
 delete from bigbang.tblCommissionProfiles;
 delete from bigbang.tblContactInfoType;
 delete from bigbang.tblContactTypes;
-/*delete from bigbang.tblDocTypes;*/
+delete from bigbang.tblDocTypes;
 delete from bigbang.tblMaritalStatuses;
 delete from bigbang.tblOpProfiles;
 delete from bigbang.tblProfessions;
@@ -119,12 +169,26 @@ insert into bigbang.tblContactTypes (PK, ContactType) values ('BA706479-AE31-4E6
 insert into bigbang.tblContactTypes (PK, ContactType) values ('04F6BC3C-0283-47F0-9670-9EEE013350D9', N'Geral');
 insert into bigbang.tblContactTypes (PK, ContactType) values ('CF3019C6-8A9C-495C-B9D0-9EEE01335BC6', N'Local');
 insert into bigbang.tblContactTypes (PK, ContactType) values ('88AF4A7C-DAB2-4E7F-B85D-9EEE01467E91', N'Tesouraria');
+insert into bigbang.tblContactTypes (PK, ContactType) values ('3FD740A3-CAD1-4C97-9FF7-A0210100A271', N'Avisos de Cobrança');
+insert into bigbang.tblContactTypes (PK, ContactType) values ('1607EEDB-C9C2-4E1A-B453-A03D00BEAB18', N'Pedidos de Reembolso');
 insert into bigbang.tblCommissionProfiles (PK, ProfileName) values ('F60BB994-3E08-47C2-9CC3-9EFC013D35BE', N'Sem Comissões');
 insert into bigbang.tblCommissionProfiles (PK, ProfileName) values ('CECC8014-200C-4C4F-9F47-9EFC01368139', N'Percentagem');
 insert into bigbang.tblCommissionProfiles (PK, ProfileName) values ('C5BE51A9-7E0F-4970-962A-9EFC0135E9E1', N'Angariação');
 insert into bigbang.tblCommissionProfiles (PK, ProfileName) values ('071CE678-956B-4D41-94DE-9EFC013688B5', N'Especial');
 insert into bigbang.tblCommissionProfiles (PK, ProfileName) values ('C7236BA7-73AD-40ED-B6DC-9EFC013691C8', N'Negociado');
-/*insert into bigbang.tblDocTypes (PK, DocType) values ('5ABB972E-9E7E-4733-9C1E-9F1300B4EB3A', N'Carta de Condução');*/
+insert into bigbang.tblDocTypes (PK, DocType) values ('5ABB972E-9E7E-4733-9C1E-9F1300B4EB3A', N'Carta de Condução');
+insert into bigbang.tblDocTypes (PK, DocType) values ('785739A7-648C-4B51-9610-9FF10128C5CE', N'Nota de Débito');
+insert into bigbang.tblDocTypes (PK, DocType) values ('041C081D-518F-4890-BEBF-A014011EFC8D', N'Recibo Digitalizado');
+insert into bigbang.tblDocTypes (PK, DocType) values ('1D69CC65-7BE8-493C-858E-A02100D78299', N'Aviso de Cobrança');
+insert into bigbang.tblDocTypes (PK, DocType) values ('EE2BD86C-D93D-40E2-BC32-A021011074AF', N'Imagem de Recibo Enviada');
+insert into bigbang.tblDocTypes (PK, DocType) values ('C47E392F-82E1-46D0-9F2A-A02300F4B244', N'Carta de Envio de Recibo');
+insert into bigbang.tblDocTypes (PK, DocType) values ('CBCC510A-7DE0-41DA-A8E5-A029011CACE4', N'Carta de Devolução de Recibo');
+insert into bigbang.tblDocTypes (PK, DocType) values ('18E61B06-BD30-4338-82B2-A02A00E88AF7', N'Carta de Envio de Pagamento');
+insert into bigbang.tblDocTypes (PK, DocType) values ('7D054350-6B89-4742-91E5-A02A01105D11', N'Carta de Pedido de Assinatura');
+insert into bigbang.tblDocTypes (PK, DocType) values ('9F722D93-12BF-4D33-92A3-A0300100FA21', N'Carta de Pedido de DAS');
+insert into bigbang.tblDocTypes (PK, DocType) values ('55825900-E20A-4519-BC4F-A03D00BF135A', N'Pedido de Reembolso');
+insert into bigbang.tblDocTypes (PK, DocType) values ('E95D510B-396E-49B0-9ECA-A03F00BF1CFE', N'Extracto de Despesas');
+insert into bigbang.tblDocTypes (PK, DocType) values ('B78E445E-E061-40DA-914D-A03F00BF2AB3', N'Carta de Devolução de Despesas');
 insert into bigbang.tblMaritalStatuses (PK, StatusText) values ('9ED463DB-ABC5-46EE-82A7-9F0300C6D631', N'Casado');
 insert into bigbang.tblMaritalStatuses (PK, StatusText) values ('BFB58864-4B91-4078-AF9F-9F0300C6E52D', N'Divorciado');
 insert into bigbang.tblMaritalStatuses (PK, StatusText) values ('BE742798-9D7F-4B23-BFBA-9F0300C6CFA5', N'Solteiro');
@@ -134,6 +198,9 @@ insert into bigbang.tblOpProfiles (PK, OpProfileName) values ('9F871430-9BBC-449
 insert into bigbang.tblOpProfiles (PK, OpProfileName) values ('51ED12A4-95A9-44B0-928D-A01500DC83EB', N'Simples');
 insert into bigbang.tblSex (PK, SexName) values ('77E22CFB-CA90-4918-B9B2-9F0300C39AE2', N'Feminino');
 insert into bigbang.tblSex (PK, SexName) values ('E86BA460-B499-4254-84F5-9F0300C3A256', N'Masculino');
+insert into bigbang.tblBBDeductibleTypes (PK, DdeductibleType) values ('7B1C87F7-F9A1-4671-94CD-A04D0117FD14', N'%');
+insert into bigbang.tblBBDeductibleTypes (PK, DdeductibleType) values ('5016B49D-5AC4-42C6-9CDA-A04D0117E74A', N'€');
+insert into bigbang.tblBBDeductibleTypes (PK, DdeductibleType) values ('B6D99438-A4BC-4247-A8AB-A04D011802D2', N'Dias');
 
 insert into bigbang.tblBanks (PK, BankName, BankCode)
 select CAST(CAST(NEWID() AS BINARY(10)) + CAST(GETDATE() AS BINARY(6)) AS UNIQUEIDENTIFIER) PK,
@@ -1268,11 +1335,11 @@ insert into bigbang.tblBBTaxes (PK, TaxName, FKCoverage, FKFieldType, Units, Def
 insert into bigbang.tblBBTaxes (PK, TaxName, FKCoverage, FKFieldType, Units, DefaultValue, BVariesByObject, BVariesByExercise, FKReferenceTo, ColumnOrder, BMandatory) values ('936EE010-6003-4312-94F1-9FE20120CE19', N'Lotação', '588362BA-A691-4FEF-A058-9F9100E6F9A3', '4D82EE91-0A9E-415E-9003-9F9601404007', NULL, NULL, 1, 0, NULL, -1, 1);
 insert into bigbang.tblBBTaxes (PK, TaxName, FKCoverage, FKFieldType, Units, DefaultValue, BVariesByObject, BVariesByExercise, FKReferenceTo, ColumnOrder, BMandatory) values ('5CA8327B-89C7-4DAB-ADFC-9FE20120E730', N'Âmbito Territorial', '588362BA-A691-4FEF-A058-9F9100E6F9A3', '49EB6448-E9E6-448A-82A0-9F9601404506', NULL, NULL, 1, 0, NULL, -1, 0);
 insert into bigbang.tblBBTaxes (PK, TaxName, FKCoverage, FKFieldType, Units, DefaultValue, BVariesByObject, BVariesByExercise, FKReferenceTo, ColumnOrder, BMandatory) values ('BCDA7B41-60E0-466E-BA8F-9FE20121EEED', N'Tipo de Contrato', '179F8846-B6C1-4906-A559-9F9100E6F9A3', 'C32C7BE9-FCEB-457E-8C3A-9F9601403AC1', NULL, NULL, 0, 0, NULL, -1, 1);
-insert into bigbang.tblBBTaxes (PK, TaxName, FKCoverage, FKFieldType, Units, DefaultValue, BVariesByObject, BVariesByExercise, FKReferenceTo, ColumnOrder, BMandatory) values ('3CB9D194-D8BF-45D8-BB55-9F9601729B4A', N'Capital Inicial', '179F8846-B6C1-4906-A559-9F9100E6F9A3', '4D82EE91-0A9E-415E-9003-9F9601404007', N'UC's ou €', NULL, 1, 0, NULL, -1, 1);
+insert into bigbang.tblBBTaxes (PK, TaxName, FKCoverage, FKFieldType, Units, DefaultValue, BVariesByObject, BVariesByExercise, FKReferenceTo, ColumnOrder, BMandatory) values ('3CB9D194-D8BF-45D8-BB55-9F9601729B4A', N'Capital Inicial', '179F8846-B6C1-4906-A559-9F9100E6F9A3', '4D82EE91-0A9E-415E-9003-9F9601404007', N'UC''s ou €', NULL, 1, 0, NULL, -1, 1);
 insert into bigbang.tblBBTaxes (PK, TaxName, FKCoverage, FKFieldType, Units, DefaultValue, BVariesByObject, BVariesByExercise, FKReferenceTo, ColumnOrder, BMandatory) values ('7E32325F-24AC-499B-83B6-9F960172AD4B', N'Duração', '179F8846-B6C1-4906-A559-9F9100E6F9A3', '4D82EE91-0A9E-415E-9003-9F9601404007', N'anos', NULL, 1, 0, NULL, -1, 1);
 insert into bigbang.tblBBTaxes (PK, TaxName, FKCoverage, FKFieldType, Units, DefaultValue, BVariesByObject, BVariesByExercise, FKReferenceTo, ColumnOrder, BMandatory) values ('913E456A-E25C-4DB9-BF77-9F960172797E', N'Valor Inicial da Unidade de Conta', '179F8846-B6C1-4906-A559-9F9100E6F9A3', '4D82EE91-0A9E-415E-9003-9F9601404007', N'€', NULL, 0, 0, NULL, -1, 1);
 insert into bigbang.tblBBTaxes (PK, TaxName, FKCoverage, FKFieldType, Units, DefaultValue, BVariesByObject, BVariesByExercise, FKReferenceTo, ColumnOrder, BMandatory) values ('1A9DCF3C-D9C4-47B9-BF7C-9FE201228DE3', N'Tipo de Contrato', 'AACCEAF3-0292-44D1-B734-9F9100E6F9A3', 'C32C7BE9-FCEB-457E-8C3A-9F9601403AC1', NULL, NULL, 0, 0, NULL, -1, 1);
-insert into bigbang.tblBBTaxes (PK, TaxName, FKCoverage, FKFieldType, Units, DefaultValue, BVariesByObject, BVariesByExercise, FKReferenceTo, ColumnOrder, BMandatory) values ('3F37C60E-1B48-476C-A085-9F960172E34D', N'Capital Inicial', 'AACCEAF3-0292-44D1-B734-9F9100E6F9A3', '4D82EE91-0A9E-415E-9003-9F9601404007', N'UC's ou €', NULL, 1, 0, NULL, -1, 1);
+insert into bigbang.tblBBTaxes (PK, TaxName, FKCoverage, FKFieldType, Units, DefaultValue, BVariesByObject, BVariesByExercise, FKReferenceTo, ColumnOrder, BMandatory) values ('3F37C60E-1B48-476C-A085-9F960172E34D', N'Capital Inicial', 'AACCEAF3-0292-44D1-B734-9F9100E6F9A3', '4D82EE91-0A9E-415E-9003-9F9601404007', N'UC''s ou €', NULL, 1, 0, NULL, -1, 1);
 insert into bigbang.tblBBTaxes (PK, TaxName, FKCoverage, FKFieldType, Units, DefaultValue, BVariesByObject, BVariesByExercise, FKReferenceTo, ColumnOrder, BMandatory) values ('2980918A-27B2-4FBD-A253-9F960172F3EC', N'Duração', 'AACCEAF3-0292-44D1-B734-9F9100E6F9A3', '4D82EE91-0A9E-415E-9003-9F9601404007', N'anos', NULL, 1, 0, NULL, -1, 1);
 insert into bigbang.tblBBTaxes (PK, TaxName, FKCoverage, FKFieldType, Units, DefaultValue, BVariesByObject, BVariesByExercise, FKReferenceTo, ColumnOrder, BMandatory) values ('36335D6A-42F6-456B-9FA5-9F960172D372', N'Valor Inicial da Unidade de Conta', 'AACCEAF3-0292-44D1-B734-9F9100E6F9A3', '4D82EE91-0A9E-415E-9003-9F9601404007', N'€', NULL, 0, 0, NULL, -1, 1);
 insert into bigbang.tblBBTaxes (PK, TaxName, FKCoverage, FKFieldType, Units, DefaultValue, BVariesByObject, BVariesByExercise, FKReferenceTo, ColumnOrder, BMandatory) values ('FA78FCD1-6E6C-470E-B6D2-9F9601732AA2', N'Duração do Pagamento do Prémio', '5F85E073-686C-4A98-AC36-9F9100E6F9A3', '4D82EE91-0A9E-415E-9003-9F9601404007', N'anos', NULL, 1, 0, NULL, -1, 1);
@@ -1284,11 +1351,11 @@ insert into bigbang.tblBBTaxes (PK, TaxName, FKCoverage, FKFieldType, Units, Def
 insert into bigbang.tblBBTaxes (PK, TaxName, FKCoverage, FKFieldType, Units, DefaultValue, BVariesByObject, BVariesByExercise, FKReferenceTo, ColumnOrder, BMandatory) values ('B4C6237C-448C-49FE-AAAB-9F960173D5E1', N'Quantidade de Títulos', 'F4CDAE65-6D51-46E0-A908-9F9100E6F9A3', '4D82EE91-0A9E-415E-9003-9F9601404007', NULL, NULL, 1, 0, NULL, -1, 1);
 insert into bigbang.tblBBTaxes (PK, TaxName, FKCoverage, FKFieldType, Units, DefaultValue, BVariesByObject, BVariesByExercise, FKReferenceTo, ColumnOrder, BMandatory) values ('196E7834-CF8B-4CE0-BA0C-9F960173C363', N'Valor Nominal do Título', 'F4CDAE65-6D51-46E0-A908-9F9100E6F9A3', '4D82EE91-0A9E-415E-9003-9F9601404007', N'€', NULL, 0, 0, NULL, -1, 1);
 insert into bigbang.tblBBTaxes (PK, TaxName, FKCoverage, FKFieldType, Units, DefaultValue, BVariesByObject, BVariesByExercise, FKReferenceTo, ColumnOrder, BMandatory) values ('D4CDDA0E-00A6-4CE9-A7DF-9FE20126065E', N'Tipo de Contrato', 'AB4D7468-A888-4987-8834-9F9100E6F9A3', 'C32C7BE9-FCEB-457E-8C3A-9F9601403AC1', NULL, NULL, 0, 0, NULL, -1, 1);
-insert into bigbang.tblBBTaxes (PK, TaxName, FKCoverage, FKFieldType, Units, DefaultValue, BVariesByObject, BVariesByExercise, FKReferenceTo, ColumnOrder, BMandatory) values ('7434A92A-2187-410E-8653-9F9601741C39', N'Capital Inicial', 'AB4D7468-A888-4987-8834-9F9100E6F9A3', '4D82EE91-0A9E-415E-9003-9F9601404007', N'UC's ou €', NULL, 1, 0, NULL, -1, 1);
+insert into bigbang.tblBBTaxes (PK, TaxName, FKCoverage, FKFieldType, Units, DefaultValue, BVariesByObject, BVariesByExercise, FKReferenceTo, ColumnOrder, BMandatory) values ('7434A92A-2187-410E-8653-9F9601741C39', N'Capital Inicial', 'AB4D7468-A888-4987-8834-9F9100E6F9A3', '4D82EE91-0A9E-415E-9003-9F9601404007', N'UC''s ou €', NULL, 1, 0, NULL, -1, 1);
 insert into bigbang.tblBBTaxes (PK, TaxName, FKCoverage, FKFieldType, Units, DefaultValue, BVariesByObject, BVariesByExercise, FKReferenceTo, ColumnOrder, BMandatory) values ('CEEC8D41-9EAF-4539-A810-9F96017432AB', N'Duração', 'AB4D7468-A888-4987-8834-9F9100E6F9A3', '4D82EE91-0A9E-415E-9003-9F9601404007', N'anos', NULL, 1, 0, NULL, -1, 1);
 insert into bigbang.tblBBTaxes (PK, TaxName, FKCoverage, FKFieldType, Units, DefaultValue, BVariesByObject, BVariesByExercise, FKReferenceTo, ColumnOrder, BMandatory) values ('DC153A10-FD3E-4882-B9EF-9F9601740A86', N'Valor Inicial da Unidade de Conta', 'AB4D7468-A888-4987-8834-9F9100E6F9A3', '4D82EE91-0A9E-415E-9003-9F9601404007', N'€', NULL, 0, 0, NULL, -1, 1);
 insert into bigbang.tblBBTaxes (PK, TaxName, FKCoverage, FKFieldType, Units, DefaultValue, BVariesByObject, BVariesByExercise, FKReferenceTo, ColumnOrder, BMandatory) values ('4271E12A-D276-4386-88EA-9FE2012748B6', N'Tipo de Contrato', '7D7361F6-C786-478F-A340-9F9100E6F9A3', 'C32C7BE9-FCEB-457E-8C3A-9F9601403AC1', NULL, NULL, 0, 0, NULL, -1, 1);
-insert into bigbang.tblBBTaxes (PK, TaxName, FKCoverage, FKFieldType, Units, DefaultValue, BVariesByObject, BVariesByExercise, FKReferenceTo, ColumnOrder, BMandatory) values ('804E4C26-8EAD-4BC4-B2C0-9F9601746408', N'Capital Inicial', '7D7361F6-C786-478F-A340-9F9100E6F9A3', '4D82EE91-0A9E-415E-9003-9F9601404007', N'UC's ou €', NULL, 1, 0, NULL, -1, 1);
+insert into bigbang.tblBBTaxes (PK, TaxName, FKCoverage, FKFieldType, Units, DefaultValue, BVariesByObject, BVariesByExercise, FKReferenceTo, ColumnOrder, BMandatory) values ('804E4C26-8EAD-4BC4-B2C0-9F9601746408', N'Capital Inicial', '7D7361F6-C786-478F-A340-9F9100E6F9A3', '4D82EE91-0A9E-415E-9003-9F9601404007', N'UC''s ou €', NULL, 1, 0, NULL, -1, 1);
 insert into bigbang.tblBBTaxes (PK, TaxName, FKCoverage, FKFieldType, Units, DefaultValue, BVariesByObject, BVariesByExercise, FKReferenceTo, ColumnOrder, BMandatory) values ('9EEDEB79-BDA6-4C6A-9B78-9F960174767C', N'Duração', '7D7361F6-C786-478F-A340-9F9100E6F9A3', '4D82EE91-0A9E-415E-9003-9F9601404007', N'anos', NULL, 1, 0, NULL, -1, 1);
 insert into bigbang.tblBBTaxes (PK, TaxName, FKCoverage, FKFieldType, Units, DefaultValue, BVariesByObject, BVariesByExercise, FKReferenceTo, ColumnOrder, BMandatory) values ('B7639D24-F074-4F89-99FF-9F9601745588', N'Valor Inicial da Unidade de Conta', '7D7361F6-C786-478F-A340-9F9100E6F9A3', '4D82EE91-0A9E-415E-9003-9F9601404007', N'€', NULL, 0, 0, NULL, -1, 1);
 insert into bigbang.tblBBTaxes (PK, TaxName, FKCoverage, FKFieldType, Units, DefaultValue, BVariesByObject, BVariesByExercise, FKReferenceTo, ColumnOrder, BMandatory) values ('6E0D0F26-C3E1-4723-9991-9F960174D4B4', N'Fraccionamento da Renda', 'C60C654D-39BA-4542-9E3F-9F9100E6F9A3', 'C32C7BE9-FCEB-457E-8C3A-9F9601403AC1', NULL, NULL, 1, 0, NULL, -1, 0);
