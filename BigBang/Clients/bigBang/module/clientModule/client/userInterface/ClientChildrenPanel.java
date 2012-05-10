@@ -47,12 +47,6 @@ public class ClientChildrenPanel extends View  {
 
 	protected void initializeView() {};
 
-	@Override
-	protected void onAttach() {
-		super.onAttach();
-		this.setClient(this.client);
-	}
-
 	public void setClient(Client client){
 		this.client = client;
 		
