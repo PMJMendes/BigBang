@@ -18,9 +18,9 @@ import com.google.gwt.event.logical.shared.ValueChangeHandler;
 public class TaxForm extends FormView<Tax> {
 
 	private ExpandableListBoxFormField type;
-	private TextBoxFormField name, unitsLabel, columnOrder;
+	private TextBoxFormField name, unitsLabel, columnOrder, tag;
 	private FormField<?> defaultValue;
-	private CheckBoxFormField variesByObject, variesByExercise, mandatory;
+	private CheckBoxFormField variesByObject, variesByExercise, mandatory, visible;
 	private ExpandableListBoxFormField refersToEntityId;
 
 	private Tax tax;
@@ -40,6 +40,9 @@ public class TaxForm extends FormView<Tax> {
 		variesByObject = new CheckBoxFormField("Varia por unidade de risco");
 		variesByExercise = new CheckBoxFormField("Varia por exercício");
 		mandatory = new CheckBoxFormField("Obrigatório");
+		visible = new CheckBoxFormField("Visível");
+		visible.setValue(true);
+		tag = new TextBoxFormField("Tag");
 		columnOrder = new TextBoxFormField("Índice da coluna");
 		columnOrder.setFieldWidth("100px");
 		defaultValue = new RadioButtonFormField("Valor por defeito");
@@ -56,11 +59,13 @@ public class TaxForm extends FormView<Tax> {
 		
 		addFormFieldGroup(new FormField<?>[]{
 				type,
-				refersToEntityId
+				refersToEntityId,
+				tag
 		}, true);
 		
 		addFormField(columnOrder, false);
 		addFormField(defaultValue, false);
+		addFormField(visible, false);
 		
 		type.addValueChangeHandler(new ValueChangeHandler<String>() {
 			
