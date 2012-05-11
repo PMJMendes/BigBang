@@ -21,7 +21,7 @@ public class InfoOrDocumentRequestReplyView extends View implements InfoOrDocume
 	public InfoOrDocumentRequestReplyView(){
 		VerticalPanel wrapper = new VerticalPanel();
 		initWidget(wrapper);
-		wrapper.setSize("800px", "600px");
+		wrapper.setSize("700px", "400px");
 		
 		toolbar = new BigBangOperationsToolBar(){
 
