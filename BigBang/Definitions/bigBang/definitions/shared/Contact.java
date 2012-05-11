@@ -13,6 +13,7 @@ public class Contact
 	public String ownerId;
 	public Address address;
 	public String typeId;
+	public String typeLabel;
 	public ContactInfo[] info;
 	public Contact[] subContacts;
 
