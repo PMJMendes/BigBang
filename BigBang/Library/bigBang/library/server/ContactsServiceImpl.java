@@ -409,7 +409,7 @@ public class ContactsServiceImpl
 		throws BigBangException
 	{
 		Contact lobjAux;
-		ObjectBase lobjZipCode;
+		ObjectBase lobjType, lobjZipCode;
 		com.premiumminds.BigBang.Jewel.Objects.ContactInfo[] larrInfo;
 		com.premiumminds.BigBang.Jewel.Objects.Contact[] larrSubs;
 		int i;
@@ -429,6 +429,8 @@ public class ContactsServiceImpl
 		{
 			try
 			{
+				lobjType = Engine.GetWorkInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), Constants.ObjID_ContactType),
+						(UUID)pobjContact.getAt(6));
 				lobjZipCode = Engine.GetWorkInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), ObjectGUIDs.O_PostalCode),
 						(UUID)pobjContact.getAt(5));
 			}
@@ -443,7 +445,17 @@ public class ContactsServiceImpl
 			lobjAux.address.zipCode.district = (String)lobjZipCode.getAt(3);
 			lobjAux.address.zipCode.country = (String)lobjZipCode.getAt(4);
 		}
-		lobjAux.typeId = ((UUID)pobjContact.getAt(6)).toString();
+		try
+		{
+			lobjType = Engine.GetWorkInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), Constants.ObjID_ContactType),
+					(UUID)pobjContact.getAt(6));
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangException(e.getMessage(), e);
+		}
+		lobjAux.typeId = lobjType.getKey().toString();
+		lobjAux.typeLabel = lobjType.getLabel();
 
 		if ( pbRecurse )
 		{
