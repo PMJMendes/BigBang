@@ -314,19 +314,30 @@ public class DocumentServiceImpl
 	private static Document fromServer(com.premiumminds.BigBang.Jewel.Objects.Document pobjDocument, boolean pbForList)
 		throws BigBangException
 	{
+		ObjectBase lobjType;
 		Document lobjAux;
 		com.premiumminds.BigBang.Jewel.Objects.DocInfo[] larrInfo;
 		int i;
 		FileXfer laux;
 		UUID lidAux;
 
+		try
+		{
+			lobjType = Engine.GetWorkInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), Constants.ObjID_DocType),
+					(UUID)pobjDocument.getAt(5));
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangException(e.getMessage(), e);
+		}
 		lobjAux = new Document();
 
 		lobjAux.id = pobjDocument.getKey().toString();
 		lobjAux.name = (String)pobjDocument.getAt(0);
 		lobjAux.ownerTypeId = ((UUID)pobjDocument.getAt(1)).toString();
 		lobjAux.ownerId = ((UUID)pobjDocument.getAt(2)).toString();
-		lobjAux.docTypeId = ((UUID)pobjDocument.getAt(3)).toString();
+		lobjAux.docTypeId = lobjType.getKey().toString();
+		lobjAux.docTypeLabel = lobjType.getLabel();
 		lobjAux.text = (String)pobjDocument.getAt(4);
 		if ( pbForList )
 		{
