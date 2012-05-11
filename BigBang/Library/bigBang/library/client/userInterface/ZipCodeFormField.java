@@ -3,6 +3,10 @@ package bigBang.library.client.userInterface;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Cursor;
 import com.google.gwt.dom.client.Style.Unit;
+import com.google.gwt.event.dom.client.BlurEvent;
+import com.google.gwt.event.dom.client.BlurHandler;
+import com.google.gwt.event.dom.client.FocusEvent;
+import com.google.gwt.event.dom.client.FocusHandler;
 import com.google.gwt.user.client.ui.Grid;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.Image;
@@ -10,8 +14,11 @@ import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.TextBox;
 
 import bigBang.definitions.shared.ZipCode;
+import bigBang.library.client.BigBangAsyncCallback;
 import bigBang.library.client.FormField;
 import bigBang.library.client.resources.Resources;
+import bigBang.library.interfaces.ZipCodeService;
+import bigBang.library.interfaces.ZipCodeServiceAsync;
 
 public class ZipCodeFormField extends FormField<ZipCode>{
 	
@@ -24,12 +31,14 @@ public class ZipCodeFormField extends FormField<ZipCode>{
 	protected Image expandImage;
 	private boolean readOnly;
 	private Grid wrapper;
-
+	private ZipCodeServiceAsync service;
 	
 	public ZipCodeFormField() {
 		
 		wrapper = new Grid(5,3);
 		initWidget(wrapper);
+		
+		service = ZipCodeService.Util.getInstance();
 		
 		code = new TextBox();
 		city = new TextBox();
@@ -65,6 +74,14 @@ public class ZipCodeFormField extends FormField<ZipCode>{
 		wrapper.setWidget(4, 1, country);
 		country.getElement().getStyle().setMargin(0, Unit.PX);
 		
+		code.addBlurHandler(new BlurHandler() {
+			
+			@Override
+			public void onBlur(BlurEvent event) {
+				searchForCode();
+			}
+		});
+		
 		
 //		city.addStyleName("readonly");
 //		county.addStyleName("readonly");
@@ -90,6 +107,26 @@ public class ZipCodeFormField extends FormField<ZipCode>{
 		
 	}
 	
+	protected void searchForCode() {
+		
+		service.getZipCode(code.getValue(), new BigBangAsyncCallback<ZipCode>() {
+
+			@Override
+			public void onResponseSuccess(ZipCode result) {
+				setValue(result);
+			}
+		
+			@Override
+			public void onResponseFailure(Throwable caught) {
+				super.onResponseFailure(caught);
+			}
+		
+		
+		});
+		
+		
+	}
+
 	@Override
 	protected void onAttach() {
 		super.onAttach();

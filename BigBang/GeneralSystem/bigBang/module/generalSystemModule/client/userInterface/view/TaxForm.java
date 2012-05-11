@@ -60,12 +60,13 @@ public class TaxForm extends FormView<Tax> {
 		addFormFieldGroup(new FormField<?>[]{
 				type,
 				refersToEntityId,
-				tag
+				tag, 
+				visible
 		}, true);
+		
 		
 		addFormField(columnOrder, false);
 		addFormField(defaultValue, false);
-		addFormField(visible, false);
 		
 		type.addValueChangeHandler(new ValueChangeHandler<String>() {
 			
