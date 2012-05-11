@@ -47,6 +47,7 @@ public class AutoCompleteTextListFormField extends FormField<Collection<String>>
 		item.setStyleName("token-input-input-token-facebook");
 		itemBox = new TextBox();
 		itemBox.getElement().setAttribute("style", "outline-color: -moz-use-text-color; outline-style: none; outline-width: medium;");
+		itemBox.setWidth("100%");
 		box = new SuggestBox(getSuggestions(), itemBox);
 		item.add(box);
 		list.add(item);

@@ -1,5 +1,6 @@
 package bigBang.library.client.userInterface.presenter;
 
+import bigBang.definitions.shared.BigBangConstants;
 import bigBang.definitions.shared.InfoOrDocumentRequest;
 import bigBang.definitions.shared.InfoOrDocumentRequest.Response;
 import bigBang.library.client.BigBangAsyncCallback;
@@ -11,6 +12,7 @@ import bigBang.library.client.Notification.TYPE;
 import bigBang.library.client.event.ActionInvokedEvent;
 import bigBang.library.client.event.ActionInvokedEventHandler;
 import bigBang.library.client.event.NewNotificationEvent;
+import bigBang.library.client.event.OperationWasExecutedEvent;
 import bigBang.library.client.history.NavigationHistoryItem;
 import bigBang.library.client.history.NavigationHistoryManager;
 import bigBang.library.interfaces.InfoOrDocumentRequestService;
@@ -100,6 +102,7 @@ public class InfoOrDocumentRequestReplyViewPresenter implements ViewPresenter {
 
 			@Override
 			public void onResponseSuccess(InfoOrDocumentRequest result) {
+				EventBus.getInstance().fireEvent(new OperationWasExecutedEvent(BigBangConstants.OperationIds.InfoOrDocumentRequest.RECEIVE_REPLY,  result.id));
 				onReplySuccess();
 			}
 			
