@@ -12,6 +12,7 @@ public class Document
 	public String ownerTypeId;
 	public String ownerId;
 	public String docTypeId;
+	public String docTypeLabel;
 	public String text;
 	public boolean hasFile;
 	public String mimeType;
