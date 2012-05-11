@@ -1,7 +1,11 @@
 package bigBang.module.generalSystemModule.client.userInterface;
 
+import java.util.Collection;
+
 import bigBang.definitions.client.dataAccess.CostCenterBroker;
 import bigBang.definitions.client.dataAccess.CostCenterDataBrokerClient;
+import bigBang.definitions.client.response.ResponseError;
+import bigBang.definitions.client.response.ResponseHandler;
 import bigBang.definitions.shared.BigBangConstants;
 import bigBang.definitions.shared.CostCenter;
 import bigBang.library.client.ValueSelectable;
@@ -19,7 +23,6 @@ public class CostCenterList extends FilterableList<CostCenter> implements CostCe
 	
 	public CostCenterList(){
 		super();
-		((CostCenterBroker)DataBrokerManager.Util.getInstance().getBroker(BigBangConstants.EntityIds.COST_CENTER)).registerClient(this);
 		
 		header = new ListHeader();
 		header.setText("Centros de Custo");
@@ -27,6 +30,9 @@ public class CostCenterList extends FilterableList<CostCenter> implements CostCe
 		header.showRefreshButton();
 		setHeaderWidget(header);
 		showFilterField(false);
+
+		costCenterBroker = (CostCenterBroker)DataBrokerManager.Util.getInstance().getBroker(BigBangConstants.EntityIds.COST_CENTER);
+		costCenterBroker.registerClient(this);
 		
 		onSizeChanged();
 	}
@@ -97,6 +103,24 @@ public class CostCenterList extends FilterableList<CostCenter> implements CostCe
 	 */
 	public HasClickHandlers getRefreshButton(){
 		return header.getRefreshButton();
+	}
+	
+	@Override
+	protected void onAttach() {
+		super.onAttach();
+		costCenterBroker.requireDataRefresh();
+		costCenterBroker.getCostCenters(new ResponseHandler<CostCenter[]>() {
+			
+			@Override
+			public void onResponse(CostCenter[] response) {
+				return;
+			}
+			
+			@Override
+			public void onError(Collection<ResponseError> errors) {
+				return;
+			}
+		});
 	}
 	
 }

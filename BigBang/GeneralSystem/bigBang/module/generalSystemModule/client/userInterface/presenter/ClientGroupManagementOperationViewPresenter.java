@@ -340,7 +340,18 @@ public class ClientGroupManagementOperationViewPresenter implements ViewPresente
 
 	private void onRefresh(){
 		clientGroupBroker.requireDataRefresh();
-		NavigationHistoryManager.getInstance().reload();
+		clientGroupBroker.getClientGroups(new ResponseHandler<ClientGroup[]>() {
+			
+			@Override
+			public void onResponse(ClientGroup[] response) {
+				return;
+			}
+			
+			@Override
+			public void onError(Collection<ResponseError> errors) {
+				return;
+			}
+		});
 	}
 	
 	private void onGetClientGroupFailed(){

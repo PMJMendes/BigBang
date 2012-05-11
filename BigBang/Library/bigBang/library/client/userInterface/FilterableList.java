@@ -34,7 +34,7 @@ import com.google.gwt.user.client.ui.Widget;
 public class FilterableList<T> extends SortableList<T> {
 
 	protected TextBox textBoxFilter;
-	protected HasWidgets filtersContainer;
+	protected DisclosurePanel filtersContainer;
 	protected HorizontalPanel searchFieldContainer;
 	protected Map<String, ListFilter<?>> filters;
 	protected boolean liveSearch = true;

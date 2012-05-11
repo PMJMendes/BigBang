@@ -342,7 +342,18 @@ public class UserManagementOperationViewPresenter implements ViewPresenter {
 
 	protected void onRefresh(){
 		userBroker.requireDataRefresh();
-		NavigationHistoryManager.getInstance().reload();
+		userBroker.getUsers(new ResponseHandler<User[]>() {
+			
+			@Override
+			public void onResponse(User[] response) {
+				return;
+			}
+			
+			@Override
+			public void onError(Collection<ResponseError> errors) {
+				return;
+			}
+		});
 	}
 	
 	private void onGetUserFailed(){

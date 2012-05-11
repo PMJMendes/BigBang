@@ -1,9 +1,13 @@
 package bigBang.module.generalSystemModule.client.userInterface;
 
+import java.util.Collection;
+
 import com.google.gwt.event.dom.client.HasClickHandlers;
 
 import bigBang.definitions.client.dataAccess.MediatorBroker;
 import bigBang.definitions.client.dataAccess.MediatorDataBrokerClient;
+import bigBang.definitions.client.response.ResponseError;
+import bigBang.definitions.client.response.ResponseHandler;
 import bigBang.definitions.shared.BigBangConstants;
 import bigBang.definitions.shared.Mediator;
 import bigBang.library.client.ValueSelectable;
@@ -14,6 +18,7 @@ import bigBang.library.client.userInterface.ListHeader;
 public class MediatorList extends FilterableList<Mediator> implements MediatorDataBrokerClient {
 
 	protected ListHeader header;
+	protected MediatorBroker broker;
 	protected int mediatorDataVersion;
 	
 	public MediatorList() {
@@ -26,7 +31,8 @@ public class MediatorList extends FilterableList<Mediator> implements MediatorDa
 		onSizeChanged();
 		showFilterField(false);
 		
-		((MediatorBroker)DataBrokerManager.Util.getInstance().getBroker(BigBangConstants.EntityIds.MEDIATOR)).registerClient(this);
+		broker = (MediatorBroker)DataBrokerManager.Util.getInstance().getBroker(BigBangConstants.EntityIds.MEDIATOR); 
+		broker.registerClient(this);
 	}
 	
 	@Override
@@ -97,6 +103,24 @@ public class MediatorList extends FilterableList<Mediator> implements MediatorDa
 				break;
 			}
 		}
+	}
+	
+	@Override
+	protected void onAttach() {
+		super.onAttach();
+		broker.requireDataRefresh();
+		broker.getMediators(new ResponseHandler<Mediator[]>() {
+			
+			@Override
+			public void onResponse(Mediator[] response) {
+				return;
+			}
+			
+			@Override
+			public void onError(Collection<ResponseError> errors) {
+				return;
+			}
+		});
 	}
 
 }

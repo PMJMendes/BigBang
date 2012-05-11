@@ -20,6 +20,7 @@ import com.google.gwt.event.dom.client.MouseWheelEvent;
 import com.google.gwt.event.dom.client.MouseWheelHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.user.client.DOM;
+import com.google.gwt.user.client.Element;
 import com.google.gwt.user.client.Event;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.Widget;
@@ -101,18 +102,18 @@ public abstract class View extends Composite implements RightClickable, HasAllMo
 	}
 
 	public void disableTextSelection(boolean disable){
-		//		disableTextSelectInternal(this.getElement(), disable);
+		disableTextSelectInternal(this.getElement(), disable);
 	}
 
-	//	private native static void disableTextSelectInternal(Element e, boolean disable)/*-{ 
-	//		  if (disable) { 
-	//		    e.ondrag = function () { return false; }; 
-	//		    e.onselectstart = function () { return false; }; 
-	//		  } else { 
-	//		    e.ondrag = null; 
-	//		    e.onselectstart = null; 
-	//		} 
-	//	}-*/;
+	private native static void disableTextSelectInternal(Element e, boolean disable)/*-{ 
+			  if (disable) { 
+			    e.ondrag = function () { return false; }; 
+			    e.onselectstart = function () { return false; }; 
+			  } else { 
+			    e.ondrag = null; 
+			    e.onselectstart = null; 
+			} 
+		}-*/;
 
 	public void showMessage(String message){
 		MessageBox.info("Informação", message);

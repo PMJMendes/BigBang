@@ -384,7 +384,18 @@ public class InsuranceAgencyManagementOperationViewPresenter implements ViewPres
 
 	private void onRefresh(){
 		insuranceAgencyBroker.requireDataRefresh();
-		NavigationHistoryManager.getInstance().reload();
+		insuranceAgencyBroker.getInsuranceAgencies(new ResponseHandler<InsuranceAgency[]>() {
+			
+			@Override
+			public void onResponse(InsuranceAgency[] response) {
+				return;
+			}
+			
+			@Override
+			public void onError(Collection<ResponseError> errors) {
+				return;
+			}
+		});
 	}
 	
 	private void onGetInsuranceAgencyFailed(){

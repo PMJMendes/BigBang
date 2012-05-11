@@ -20,6 +20,7 @@ import bigBang.library.client.history.NavigationHistoryManager;
 import bigBang.library.client.resources.Resources;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.dom.client.Style.FontStyle;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
@@ -34,13 +35,16 @@ public class ContactsList extends FilterableList<Contact> implements ContactsBro
 
 		public Entry(Contact value) {
 			super(value);
-			setHeight("25px");
+			setHeight("35px");
 			titleLabel.getElement().getStyle().setFontSize(11, Unit.PX);
+			textLabel.getElement().getStyle().setFontSize(9, Unit.PX);
+			textLabel.getElement().getStyle().setFontStyle(FontStyle.ITALIC);
 		}
 
 		public <I extends Object> void setInfo(I info) {
 			Contact c = (Contact) info;
 			this.setTitle(c.name);
+			this.setText(c.typeLabel);
 		};
 	}
 

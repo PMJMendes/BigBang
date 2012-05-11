@@ -385,7 +385,19 @@ public class MediatorManagementOperationViewPresenter implements ViewPresenter {
 	}	
 	
 	private void onRefresh(){
-		NavigationHistoryManager.getInstance().reload();
+		mediatorBroker.requireDataRefresh();
+		mediatorBroker.getMediators(new ResponseHandler<Mediator[]>() {
+			
+			@Override
+			public void onResponse(Mediator[] response) {
+				return;
+			}
+			
+			@Override
+			public void onError(Collection<ResponseError> errors) {
+				return;
+			}
+		});
 	}
 
 	private void onGetMediatorFailed(){

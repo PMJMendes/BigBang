@@ -377,9 +377,17 @@ public class List<T> extends View implements HasValueSelectables<T>, java.util.L
 		}
 
 		UIObject sourceElem = (UIObject) source;
-		if(sourceElem.getAbsoluteTop() < this.scrollPanel.getAbsoluteTop()
-				|| sourceElem.getAbsoluteTop() > (this.scrollPanel.getAbsoluteTop() + this.scrollPanel.getOffsetHeight() - sourceElem.getOffsetHeight())){
-			this.scrollPanel.ensureVisible((UIObject) source);
+		
+		int yPos = sourceElem.getAbsoluteTop();
+		int height = sourceElem.getOffsetHeight();
+		int scrollYPos = scrollPanel.getAbsoluteTop();
+		int scrollHeight = scrollPanel.getOffsetHeight();
+		
+		if(yPos < scrollYPos) {
+			scrollPanel.setVerticalScrollPosition(sourceElem.getElement().getOffsetTop());
+		}else if((yPos + height) > (scrollYPos + scrollHeight)) {
+			int top = sourceElem.getElement().getOffsetTop();
+			scrollPanel.setVerticalScrollPosition(top - scrollHeight + height);
 		}
 		selectionChangedEventFireBypass(new SelectionChangedEvent(this.getSelected()));
 	}

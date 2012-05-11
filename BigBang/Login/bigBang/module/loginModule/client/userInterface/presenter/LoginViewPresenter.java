@@ -45,6 +45,7 @@ public class LoginViewPresenter implements ViewPresenter {
 
 	private Display view;
 	private AuthenticationServiceAsync service;
+	private boolean bound = false;
 
 	public LoginViewPresenter(Display view){
 		service = AuthenticationService.Util.getInstance();
@@ -186,19 +187,8 @@ public class LoginViewPresenter implements ViewPresenter {
 	}
 
 	public void bind() {
-//		this.checkLogin("root", "Premium.", "CrediteEGS", new ResponseHandler<Boolean>() { //TODO IMPORTANT FJVC
-//
-//			@Override
-//			public void onResponse(Boolean response) {
-//				GWT.log("login success");
-//			}
-//
-//			@Override
-//			public void onError(Collection<ResponseError> errors) {
-//				GWT.log("login failure");
-//			}
-//		});
-
+		if(bound) {return;}
+		
 		view.getSubmitButton().addClickHandler(new ClickHandler() {
 
 			public void onClick(ClickEvent event) {
@@ -207,6 +197,8 @@ public class LoginViewPresenter implements ViewPresenter {
 		});
 		
 		//APPLICATION-WIDE
+		
+		bound = true;
 	}
 	
 	@Override

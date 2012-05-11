@@ -1,9 +1,13 @@
 package bigBang.module.generalSystemModule.client.userInterface;
 
+import java.util.Collection;
+
 import com.google.gwt.event.dom.client.HasClickHandlers;
 
 import bigBang.definitions.client.dataAccess.InsuranceAgencyBroker;
 import bigBang.definitions.client.dataAccess.InsuranceAgencyDataBrokerClient;
+import bigBang.definitions.client.response.ResponseError;
+import bigBang.definitions.client.response.ResponseHandler;
 import bigBang.definitions.shared.BigBangConstants;
 import bigBang.definitions.shared.InsuranceAgency;
 import bigBang.library.client.ValueSelectable;
@@ -14,6 +18,7 @@ import bigBang.library.client.userInterface.ListHeader;
 public class InsuranceAgencyList extends FilterableList<InsuranceAgency> implements InsuranceAgencyDataBrokerClient {
 
 	protected ListHeader header;
+	protected InsuranceAgencyBroker broker;
 	protected int insuranceAgencyDataVersion;
 	
 	public InsuranceAgencyList(){
@@ -45,7 +50,8 @@ public class InsuranceAgencyList extends FilterableList<InsuranceAgency> impleme
 		
 		setFooterText(text);
 		
-		((InsuranceAgencyBroker)DataBrokerManager.Util.getInstance().getBroker(BigBangConstants.EntityIds.INSURANCE_AGENCY)).registerClient(this);
+		broker = (InsuranceAgencyBroker)DataBrokerManager.Util.getInstance().getBroker(BigBangConstants.EntityIds.INSURANCE_AGENCY);
+		broker.registerClient(this);
 	}
 	
 	public HasClickHandlers getNewButton(){
@@ -102,6 +108,24 @@ public class InsuranceAgencyList extends FilterableList<InsuranceAgency> impleme
 				break;
 			}
 		}
+	}
+	
+	@Override
+	protected void onAttach() {
+		super.onAttach();
+		broker.requireDataRefresh();
+		broker.getInsuranceAgencies(new ResponseHandler<InsuranceAgency[]>() {
+			
+			@Override
+			public void onResponse(InsuranceAgency[] response) {
+				return;
+			}
+			
+			@Override
+			public void onError(Collection<ResponseError> errors) {
+				return;
+			}
+		});
 	}
 
 }

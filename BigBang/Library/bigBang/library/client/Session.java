@@ -48,4 +48,16 @@ public class Session {
 		return Session.isRoot;
 	}
 	
+	public static void invalidate(){
+		setUserId(null);
+		setUsername(null);
+		setDisplayName(null);
+		setDomain(null);
+		setIsRoot(false);
+	}
+	
+	public static boolean isValid(){
+		return Session.userId != null;
+	}
+	
 }

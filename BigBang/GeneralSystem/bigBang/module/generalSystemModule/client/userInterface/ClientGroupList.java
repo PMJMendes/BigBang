@@ -1,7 +1,11 @@
 package bigBang.module.generalSystemModule.client.userInterface;
 
+import java.util.Collection;
+
 import bigBang.definitions.client.dataAccess.ClientGroupBroker;
 import bigBang.definitions.client.dataAccess.ClientGroupDataBrokerClient;
+import bigBang.definitions.client.response.ResponseError;
+import bigBang.definitions.client.response.ResponseHandler;
 import bigBang.definitions.shared.BigBangConstants;
 import bigBang.definitions.shared.ClientGroup;
 import bigBang.library.client.ValueSelectable;
@@ -148,4 +152,22 @@ public class ClientGroupList extends FilterableList<ClientGroup> implements Clie
 		return header.getRefreshButton();
 	}
 
+	@Override
+	protected void onAttach() {
+		super.onAttach();
+		clientGroupBroker.requireDataRefresh();
+		clientGroupBroker.getClientGroups(new ResponseHandler<ClientGroup[]>() {
+			
+			@Override
+			public void onResponse(ClientGroup[] response) {
+				return;
+			}
+			
+			@Override
+			public void onError(Collection<ResponseError> errors) {
+				return;
+			}
+		});
+	}
+	
 }

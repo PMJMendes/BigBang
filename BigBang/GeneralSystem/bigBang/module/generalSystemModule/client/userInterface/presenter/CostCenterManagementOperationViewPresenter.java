@@ -355,7 +355,18 @@ public class CostCenterManagementOperationViewPresenter implements ViewPresenter
 
 	private void onRefresh(){
 		costCenterBroker.requireDataRefresh();
-		NavigationHistoryManager.getInstance().reload();
+		costCenterBroker.getCostCenters(new ResponseHandler<CostCenter[]>() {
+			
+			@Override
+			public void onResponse(CostCenter[] response) {
+				return;
+			}
+			
+			@Override
+			public void onError(Collection<ResponseError> errors) {
+				return;
+			}
+		});
 	}
 
 	private void onMemberSelected(User user) {
