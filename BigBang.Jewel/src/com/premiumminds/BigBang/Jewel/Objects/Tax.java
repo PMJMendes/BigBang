@@ -98,4 +98,9 @@ public class Tax
 	{
 		return (String)getAt(10);
 	}
+
+	public boolean IsVisible()
+	{
+		return (Boolean)getAt(11);
+	}
 }

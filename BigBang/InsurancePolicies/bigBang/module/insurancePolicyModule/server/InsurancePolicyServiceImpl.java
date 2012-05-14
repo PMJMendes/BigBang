@@ -269,6 +269,9 @@ public class InsurancePolicyServiceImpl
 					larrFields = new ArrayList<PadField>();
 					for ( j = 0; j < larrTaxes.length; j++ )
 					{
+						if ( !larrTaxes[j].IsVisible() )
+							continue;
+
 						lobjField = new PadField();
 						lobjField.midField = larrTaxes[j].getKey();
 						lobjField.mlngColIndex = larrTaxes[j].GetColumnOrder();
@@ -377,6 +380,9 @@ public class InsurancePolicyServiceImpl
 					larrFields = new ArrayList<PadField>();
 					for ( j = 0; j < larrTaxes.length; j++ )
 					{
+						if ( !larrTaxes[j].IsVisible() )
+							continue;
+
 						lobjField = new PadField();
 						lobjField.midField = larrTaxes[j].getKey();
 						lobjField.mlngColIndex = larrTaxes[j].GetColumnOrder();
@@ -415,6 +421,9 @@ public class InsurancePolicyServiceImpl
 					larrFields = new ArrayList<PadField>();
 					for ( j = 0; j < larrTaxes.length; j++ )
 					{
+						if ( !larrTaxes[j].IsVisible() )
+							continue;
+
 						lobjField = new PadField();
 						lobjField.midField = larrTaxes[j].getKey();
 						lobjField.mlngColIndex = larrTaxes[j].GetColumnOrder();
@@ -464,7 +473,7 @@ public class InsurancePolicyServiceImpl
 					lobjValue.mrefField = lmapFields.get(lobjValue.midField);
 					lobjValue.mlngObject = ( lobjValue.midObject == null ? -1 : lmapObjects.get(lobjValue.midObject) );
 					lobjValue.mlngExercise = ( lobjValue.midExercise == null ? -1 : lmapExercises.get(lobjValue.midExercise) );
-					lobjValue.mbDeleted = false;
+					lobjValue.mbDeleted = !larrAuxValues[i].GetTax().IsVisible();
 					marrValues.add(lobjValue);
 				}
 
@@ -2600,6 +2609,8 @@ public class InsurancePolicyServiceImpl
 			if ( (larrLocalValues[i].getAt(3) != null) || (larrLocalValues[i].getAt(4) != null) )
 				continue;
 			lobjTax = larrLocalValues[i].GetTax();
+			if ( !lobjTax.IsVisible() )
+				continue;
 //			if ( lobjTax.GetVariesByObject() || lobjTax.GetVariesByExercise() )
 //				throw new BigBangException("Inesperado: Valor variável marcado como invariante.");
 
@@ -2712,6 +2723,9 @@ public class InsurancePolicyServiceImpl
 					lobjColumnHeader.refersToId = ( larrTaxes[j].getAt(7) == null ? null : ((UUID)larrTaxes[j].getAt(7)).toString() );
 					larrOutColumns.add(lobjColumnHeader);
 				}
+
+				if ( !larrTaxes[j].IsVisible() )
+					continue;
 
 				if ( larrAuxFields.get(larrTaxes[j].getKey()) != null )
 					continue;
@@ -3015,7 +3029,8 @@ public class InsurancePolicyServiceImpl
 //				if ( lobjTax.GetVariesByObject() || lobjTax.GetVariesByExercise() )
 //					throw new BigBangException("Inesperado: Valor variável marcado como invariante.");
 
-				if ( lobjTax.GetCoverage().IsHeader() || (lobjTax.GetColumnOrder() < 0) )
+				if ( lobjTax.GetCoverage().IsHeader() || (lobjTax.GetColumnOrder() < 0) ||
+						!lobjTax.IsVisible() )
 					continue;
 
 				lobjField = new InsurancePolicy.TableSection.TableField();
@@ -3035,6 +3050,9 @@ public class InsurancePolicyServiceImpl
 				larrTaxes = larrCoverages[i].GetCurrentTaxes();
 				for ( j = 0; j < larrTaxes.length; j++ )
 				{
+					if ( (larrTaxes[j].GetColumnOrder() < 0) || !larrTaxes[j].IsVisible() )
+						continue;
+
 					if ( larrAuxFields.get(larrTaxes[j].getKey()) != null )
 						continue;
 
