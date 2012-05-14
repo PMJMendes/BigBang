@@ -47,7 +47,7 @@ public class TestObjectGet
 		};
 
 		parameter = new InsuredObjectSearchParameter();
-		parameter.policyId = "54FF52B3-076D-4E3E-B825-9FD000C6AF77";
+		parameter.policyId = "FFA24734-C5AC-4AD5-80A4-A05100CA1A78";
 
 		Services.policyObjectService.openSearch(new SearchParameter[] {parameter}, new SortParameter[] {}, 5, callback);
 	}
