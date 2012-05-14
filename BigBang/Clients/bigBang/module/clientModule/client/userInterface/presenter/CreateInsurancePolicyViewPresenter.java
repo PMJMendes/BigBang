@@ -152,6 +152,10 @@ public class CreateInsurancePolicyViewPresenter implements ViewPresenter {
 	}
 
 	private void clearView(){
+		InsurancePolicy policy = view.getInsurancePolicyForm().getValue();
+		if(policy != null) {
+			policyBroker.discardTemp(policy.id);
+		}
 		view.getClientForm().setValue(null);
 		view.getInsurancePolicyForm().setValue(null);
 		view.setSaveModeEnabled(true);

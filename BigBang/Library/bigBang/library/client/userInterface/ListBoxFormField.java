@@ -190,5 +190,11 @@ public class ListBoxFormField extends FormField<String> {
 			return false;
 		return true;
 	}
+	
+	@Override
+	public void setEditable(boolean editable) {
+		super.setEditable(editable);
+		((ListBox)this.field).setTabIndex(editable ? 0 : -1);
+	}
 
 }

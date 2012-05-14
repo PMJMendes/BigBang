@@ -200,4 +200,10 @@ public class TextAreaFormField extends FormField<String> {
 	public TextArea getNativeField(){
 		return (TextArea)this.field;
 	}
+	
+	@Override
+	public void setEditable(boolean editable) {
+		super.setEditable(editable);
+		((TextArea)this.field).setTabIndex(editable ? 0 : -1);
+	}
 }

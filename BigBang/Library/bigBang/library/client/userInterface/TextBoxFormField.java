@@ -153,4 +153,10 @@ public class TextBoxFormField extends FormField<String> {
 	public TextBox getNativeField(){
 		return (TextBox) field;
 	}
+	
+	@Override
+	public void setEditable(boolean editable) {
+		super.setEditable(editable);
+		((TextBox)this.field).getElement().setAttribute("TABINDEX", editable ? "" : "-1");
+	}
 }

@@ -23,8 +23,12 @@ import bigBang.library.client.userInterface.view.View;
 import com.allen_sauer.gwt.dnd.client.PickupDragController;
 import com.google.gwt.dom.client.Style.FontStyle;
 import com.google.gwt.dom.client.Style.Unit;
+import com.google.gwt.event.dom.client.BlurEvent;
+import com.google.gwt.event.dom.client.BlurHandler;
 import com.google.gwt.event.dom.client.DoubleClickEvent;
 import com.google.gwt.event.dom.client.DoubleClickHandler;
+import com.google.gwt.event.dom.client.FocusEvent;
+import com.google.gwt.event.dom.client.FocusHandler;
 import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.event.dom.client.KeyDownEvent;
 import com.google.gwt.event.dom.client.KeyDownHandler;
@@ -182,6 +186,26 @@ public class List<T> extends View implements HasValueSelectables<T>, java.util.L
 					event.preventDefault();
 					break;
 				}
+			}
+		});
+		focusPanel.addFocusHandler(new FocusHandler() {
+			
+			@Override
+			public void onFocus(FocusEvent event) {
+				Collection<ValueSelectable<T>> selected = getSelected();
+				for(ValueSelectable<T> entry : selected) {
+					((ListEntry<T>) entry).setSelectedFocus();
+				} 
+			}
+		});
+		focusPanel.addBlurHandler(new BlurHandler() {
+			
+			@Override
+			public void onBlur(BlurEvent event) {
+				Collection<ValueSelectable<T>> selected = getSelected();
+				for(ValueSelectable<T> entry : selected) {
+					((ListEntry<T>) entry).setSelectedBlur();
+				} 
 			}
 		});
 

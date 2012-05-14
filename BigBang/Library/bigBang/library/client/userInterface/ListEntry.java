@@ -68,10 +68,6 @@ public class ListEntry<T> extends View implements ValueSelectable<T>, HasMetaDat
 		AbsolutePanel panel = new AbsolutePanel();
 		initWidget(panel);
 		
-		FocusPanel focusPanel = new FocusPanel();
-		focusPanel.setSize("100%", "100%");
-		panel.add(focusPanel, 0, 0);
-		
 		this.widgetContainer = new SimplePanel();
 		((Widget)this.widgetContainer).setSize("100%", "100%");
 		panel.setSize("100%", "30px");
@@ -81,6 +77,10 @@ public class ListEntry<T> extends View implements ValueSelectable<T>, HasMetaDat
 		backgroundImage.setSize("100%", "100%");
 		
 		panel.add(backgroundImage, 0, 0);
+		
+		FocusPanel focusPanel = new FocusPanel();
+		focusPanel.setSize("100%", "100%");
+		panel.add(focusPanel, 0, 0);
 		
 		HorizontalPanel contentWrapper = new HorizontalPanel();
 		contentWrapper.setVerticalAlignment(HasVerticalAlignment.ALIGN_MIDDLE);
@@ -107,6 +107,7 @@ public class ListEntry<T> extends View implements ValueSelectable<T>, HasMetaDat
 		this.textLabel = new Label();
 		this.textLabel.getElement().getStyle().setFontWeight(FontWeight.BOLD);
 		this.textLabel.getElement().getStyle().setFontSize(11, Unit.PX);
+		
 		this.textLabel.getElement().getStyle().setProperty("textOverflow", "ellipsis");
 		this.textLabel.getElement().getStyle().setOverflowY(Overflow.HIDDEN);
 		this.textLabel.setWordWrap(false);
@@ -257,7 +258,7 @@ public class ListEntry<T> extends View implements ValueSelectable<T>, HasMetaDat
 	public String getTitle(){
 		return this.titleLabel.isVisible() ? this.titleLabel.getText() : null;
 	}
-	
+
 	public void setText(String text) {
 		this.textLabel.getElement().getStyle().setProperty("whiteSpace", "normal");
 		if(text == null){
@@ -399,11 +400,11 @@ public class ListEntry<T> extends View implements ValueSelectable<T>, HasMetaDat
 		this.dragHandle = w;
 	}
 
-	protected void setSelectedFocus(){
+	public void setSelectedFocus(){
 		backgroundImage.setUrl(selectedBackgroundImageUrl);
 	}
 	
-	protected void setSelectedBlur(){
+	public void setSelectedBlur(){
 		backgroundImage.setUrl(selectedBlurBackgroundImageUrl);
 	}
 	
