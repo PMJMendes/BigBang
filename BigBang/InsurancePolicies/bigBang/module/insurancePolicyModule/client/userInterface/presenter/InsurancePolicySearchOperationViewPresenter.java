@@ -231,8 +231,7 @@ ViewPresenter {
 					savePolicy(info);
 					break;
 				case DELETE:
-					item.pushIntoStackParameter("display", "delete");
-					NavigationHistoryManager.getInstance().go(item);
+					delete();
 					break;
 				case CREATE_RECEIPT:
 					item.pushIntoStackParameter("display", "createreceipt");
@@ -419,6 +418,26 @@ ViewPresenter {
 
 		//APPLICATION-WIDE EVENTS
 		this.bound = true;
+	}
+
+	protected void delete() {
+		
+		broker.removePolicy(view.getForm().getInfo().id, new ResponseHandler<String>() {
+			
+			@Override
+			public void onResponse(String response) {
+				EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "A apólice foi eliminada com sucesso"), TYPE.TRAY_NOTIFICATION));
+				NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
+				item.removeParameter("policyid");
+				NavigationHistoryManager.getInstance().go(item);
+			}
+			
+			@Override
+			public void onError(Collection<ResponseError> errors) {
+				EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não foi possível eliminar a apólice"), TYPE.ALERT_NOTIFICATION));
+			}
+		});
+		
 	}
 
 	private void checkStatus(String nextPolicyId){
