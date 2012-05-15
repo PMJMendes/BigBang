@@ -28,7 +28,7 @@ public class TaxForm extends FormView<Tax> {
 	private String coverageId;
 
 	public TaxForm() {
-		this.setSize("410px", "290px");
+		this.setSize("450px", "290px");
 		name = new TextBoxFormField("Designação", new TaxFormValidator.NameValidator());
 		name.setFieldWidth("360px");
 		unitsLabel = new TextBoxFormField("Unidade");
@@ -43,6 +43,7 @@ public class TaxForm extends FormView<Tax> {
 		visible = new CheckBoxFormField("Visível");
 		visible.setValue(true);
 		tag = new TextBoxFormField("Tag");
+		tag.setFieldWidth("360px");
 		columnOrder = new TextBoxFormField("Índice da coluna");
 		columnOrder.setFieldWidth("100px");
 		defaultValue = new RadioButtonFormField("Valor por defeito");
@@ -53,15 +54,15 @@ public class TaxForm extends FormView<Tax> {
 				unitsLabel,
 		}, false);
 		
-		addFormFieldGroup(new FormField<?>[]{variesByExercise}, true);
 		addFormFieldGroup(new FormField<?>[]{variesByObject}, true);
-		addFormField(mandatory, false);
+		addFormFieldGroup(new FormField<?>[]{visible}, false);
+		addFormFieldGroup(new FormField<?>[]{variesByExercise}, true);
+		addFormFieldGroup(new FormField<?>[]{mandatory}, false);
 		
 		addFormFieldGroup(new FormField<?>[]{
 				type,
 				refersToEntityId,
 				tag, 
-				visible
 		}, true);
 		
 		

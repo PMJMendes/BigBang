@@ -115,7 +115,7 @@ public class ZipCodeFormField extends FormField<ZipCode>{
 
 			@Override
 			public void onValueChange(ValueChangeEvent<ZipCode> event) {
-				if(event == null){
+				if(event.getValue() == null){
 					popup.hidePopup();
 				}
 				else{
