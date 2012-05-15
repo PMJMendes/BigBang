@@ -109,7 +109,7 @@ public class ExerciseViewPresenter implements ViewPresenter{
 					onEdit();
 					break;
 				case CANCEL_EDIT:
-					NavigationHistoryManager.Util.getInstance().reload();
+					onCancel();
 					break;
 				case DELETE:
 					onDelete();
@@ -120,6 +120,13 @@ public class ExerciseViewPresenter implements ViewPresenter{
 
 		//APPLICATION-WIDE EVENTS
 		bound = true;
+	}
+
+	protected void onCancel() {
+		NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
+		item.popFromStackParameter("display");
+		item.removeParameter("exerciseid");
+		NavigationHistoryManager.getInstance().go(item);
 	}
 
 	private void clearView(){

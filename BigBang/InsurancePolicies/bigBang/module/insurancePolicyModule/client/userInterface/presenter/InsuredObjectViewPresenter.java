@@ -109,7 +109,7 @@ public class InsuredObjectViewPresenter implements ViewPresenter {
 					onEdit();
 					break;
 				case CANCEL_EDIT:
-					NavigationHistoryManager.Util.getInstance().reload();
+					onCancel();
 					break;
 				case DELETE:
 					onDelete();
@@ -120,6 +120,14 @@ public class InsuredObjectViewPresenter implements ViewPresenter {
 
 		//APPLICATION-WIDE EVENTS
 		bound = true;
+	}
+
+	protected void onCancel() {
+		NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
+		item.popFromStackParameter("display");
+		item.removeParameter("objectid");
+		NavigationHistoryManager.getInstance().go(item);
+
 	}
 
 	private void clearView(){
