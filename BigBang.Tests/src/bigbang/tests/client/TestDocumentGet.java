@@ -26,6 +26,6 @@ public class TestDocumentGet
 			}
 		};
 
-		Services.documentService.getDocuments("AC94E50E-799F-499D-A4F7-9FB70020135F", callback);
+		Services.documentService.getDocuments("70E43C7F-249C-4127-811E-A05100C9E27B", callback);
 	}
 }
