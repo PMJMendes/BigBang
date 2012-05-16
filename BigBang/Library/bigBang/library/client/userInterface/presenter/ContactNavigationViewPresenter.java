@@ -72,8 +72,7 @@ public class ContactNavigationViewPresenter implements ViewPresenter{
 			public void onActionInvoked(ActionInvokedEvent<Action> action) {
 
 				switch (action.getAction()){
-				case REMOVE_OK:{
-
+				case CLOSE_POPUP:{
 					NavigationHistoryItem navig = NavigationHistoryManager.getInstance().getCurrentState();
 					navig.removeParameter("show");
 					navig.removeParameter("contactid");
@@ -85,7 +84,7 @@ public class ContactNavigationViewPresenter implements ViewPresenter{
 				}
 
 				case CREATE_CHILD_CONTACT:{
-					createShowChildContact(null,presenter.getView().getContact().id);
+					createShowChildContact("new",presenter.getView().getContact().id);
 					break;
 				}
 				case CANCEL:{
@@ -107,6 +106,7 @@ public class ContactNavigationViewPresenter implements ViewPresenter{
 					navig.removeParameter("ownerid");
 					navig.removeParameter("ownertypeid");
 					NavigationHistoryManager.getInstance().go(navig);
+					break;
 				}
 
 				}
@@ -135,17 +135,16 @@ public class ContactNavigationViewPresenter implements ViewPresenter{
 			public void onActionInvoked(ActionInvokedEvent<Action> action) {
 
 				switch (action.getAction()){
-				case REMOVE_OK:{
+				case CLOSE_POPUP:{
 					((NavigationPanel)view).navigateBack();
 					break;
 				}
 				case CREATE_CHILD_CONTACT:{
-					createShowChildContact(null, ((ContactViewPresenter) action.getSource()).getView().getContact().id);
-
+					createShowChildContact("new", ((ContactViewPresenter) action.getSource()).getView().getContact().id);
 					break;
 				}
 				case CANCEL: {
-					if (((ContactViewPresenter) action.getSource()).getView().getContact().id != null){
+					if ((((ContactViewPresenter) action.getSource()).getView().getContact().id != null) && !((ContactViewPresenter) action.getSource()).getView().getContact().id.equalsIgnoreCase("new")){
 						((ContactViewPresenter) action.getSource()).setParameters(((ContactViewPresenter) action.getSource()).getParameters());
 					}
 					else
@@ -160,6 +159,10 @@ public class ContactNavigationViewPresenter implements ViewPresenter{
 					break;
 				}
 				case ERROR_SHOWING_CONTACT:{
+					((NavigationPanel)view).navigateBack();
+					break;
+				}
+				case CONTACT_CREATED:{
 					((NavigationPanel)view).navigateBack();
 					break;
 				}

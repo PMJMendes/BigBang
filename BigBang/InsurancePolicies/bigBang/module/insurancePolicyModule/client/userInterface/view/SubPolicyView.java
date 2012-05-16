@@ -4,6 +4,7 @@ import bigBang.definitions.shared.BigBangProcess;
 import bigBang.definitions.shared.Contact;
 import bigBang.definitions.shared.Document;
 import bigBang.definitions.shared.ExerciseStub;
+import bigBang.definitions.shared.ExpenseStub;
 import bigBang.definitions.shared.HistoryItemStub;
 import bigBang.definitions.shared.InsurancePolicy;
 import bigBang.definitions.shared.InsuredObjectStub;
@@ -344,6 +345,11 @@ public class SubPolicyView extends View implements SubPolicyViewPresenter.Displa
 	@Override
 	public void allowCreateHealthExpense(boolean allow) {
 		this.toolbar.allowCreateHealthExpense(allow);
+	}
+
+	@Override
+	public HasValueSelectables<ExpenseStub> getExpensesList() {
+		return this.childrenPanel.expensesList;
 	}
 	
 }

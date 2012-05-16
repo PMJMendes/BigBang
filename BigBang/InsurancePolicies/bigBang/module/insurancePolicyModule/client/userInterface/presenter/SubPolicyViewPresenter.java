@@ -11,6 +11,7 @@ import bigBang.definitions.shared.BigBangProcess;
 import bigBang.definitions.shared.Contact;
 import bigBang.definitions.shared.Document;
 import bigBang.definitions.shared.ExerciseStub;
+import bigBang.definitions.shared.ExpenseStub;
 import bigBang.definitions.shared.HistoryItemStub;
 import bigBang.definitions.shared.InsurancePolicy;
 import bigBang.definitions.shared.InsuredObjectStub;
@@ -74,6 +75,7 @@ public class SubPolicyViewPresenter implements ViewPresenter {
 		HasValueSelectables<ReceiptStub> getReceiptsList();
 		HasValueSelectables<BigBangProcess> getSubProcessesList();
 		HasValueSelectables<HistoryItemStub> getHistoryList();
+		HasValueSelectables<ExpenseStub> getExpensesList();
 
 		void setSaveModeEnabled(boolean enabled);
 		void registerActionHandler(ActionInvokedEventHandler<Action> handler);
@@ -101,6 +103,7 @@ public class SubPolicyViewPresenter implements ViewPresenter {
 		void setTableSectionInfo(TableSection info);
 
 		Widget asWidget();
+
 	}
 
 	protected Display view;
@@ -267,6 +270,8 @@ public class SubPolicyViewPresenter implements ViewPresenter {
 					showHistory((HistoryItemStub) value);
 				}else if(source == view.getSubProcessesList()){
 					showSubProcess((BigBangProcess) value);
+				}else if(source == view.getExpensesList()){
+					showExpense((ExpenseStub) value);
 				}
 			}
 		};
@@ -277,8 +282,29 @@ public class SubPolicyViewPresenter implements ViewPresenter {
 		view.getExercisesList().addSelectionChangedEventHandler(selectionChangedHandler);
 		view.getReceiptsList().addSelectionChangedEventHandler(selectionChangedHandler);
 		view.getHistoryList().addSelectionChangedEventHandler(selectionChangedHandler);
+		view.getExpensesList().addSelectionChangedEventHandler(selectionChangedHandler);
 
 		bound = true;
+	}
+
+	protected void showExpense(final ExpenseStub value) {
+		saveWorkState(new ResponseHandler<Void>() {
+
+			@Override
+			public void onResponse(Void response) {
+				NavigationHistoryItem item = new NavigationHistoryItem();
+				item.setParameter("section", "expense");
+				item.setStackParameter("display");
+				item.pushIntoStackParameter("display", "search");
+				item.setParameter("expenseid", value.id);
+				NavigationHistoryManager.getInstance().go(item);
+			}
+
+			@Override
+			public void onError(Collection<ResponseError> errors) {
+				onResponse(null);
+			}
+		});
 	}
 
 	protected void onCreateExpense() {
@@ -808,7 +834,7 @@ public class SubPolicyViewPresenter implements ViewPresenter {
 	}
 
 	private void onExecuteDetailedCalculationsFailed(){
-		EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não foi executar os cálculos detalhados"), TYPE.ALERT_NOTIFICATION));
+		EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não foi possível executar os cálculos detalhados"), TYPE.ALERT_NOTIFICATION));
 	}
 	
 	private void onExecuteDetailedCalculationsSuccess(){

@@ -25,7 +25,6 @@ import com.google.gwt.dom.client.Style.FontStyle;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.event.logical.shared.AttachEvent;
 import com.google.gwt.user.client.ui.AbstractImagePrototype;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.VerticalPanel;
@@ -69,17 +68,17 @@ public class DocumentsList extends FilterableList<Document> implements Documents
 
 		broker = BigBangDocumentsBroker.Util.getInstance();
 
-		this.addAttachHandler(new AttachEvent.Handler() {
-
-			@Override
-			public void onAttachOrDetach(AttachEvent event) {
-				if(event.isAttached()) {
-					setOwner(ownerId);
-				}else{
-					discardOwner();
-				}
-			}
-		});
+//		this.addAttachHandler(new AttachEvent.Handler() {
+//
+//			@Override
+//			public void onAttachOrDetach(AttachEvent event) {
+//				if(event.isAttached()) {
+//					setOwner(ownerId);
+//				}else{
+//					discardOwner();
+//				}
+//			}
+//		});
 	}
 
 	protected void createNewDocument() {

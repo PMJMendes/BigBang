@@ -23,6 +23,8 @@ import bigBang.library.client.event.DeleteRequestEventHandler;
 import bigBang.library.client.event.NewNotificationEvent;
 import bigBang.library.client.event.SelectionChangedEvent;
 import bigBang.library.client.event.SelectionChangedEventHandler;
+import bigBang.library.client.history.NavigationHistoryItem;
+import bigBang.library.client.history.NavigationHistoryManager;
 import bigBang.library.client.userInterface.ContactOperationsToolBar;
 import bigBang.library.client.userInterface.List;
 import bigBang.library.client.userInterface.view.ContactView;
@@ -50,7 +52,7 @@ public class ContactViewPresenter implements ViewPresenter, ContactsBrokerClient
 		EDIT,
 		CANCEL, 
 		CREATE_CHILD_CONTACT,
-		ADD_NEW_DETAIL, DELETE, REMOVE_OK, CHILD_SELECTED, ERROR_SHOWING_CONTACT, ATTACHED
+		ADD_NEW_DETAIL, DELETE, CLOSE_POPUP, CHILD_SELECTED, ERROR_SHOWING_CONTACT, ATTACHED, CONTACT_CREATED
 	}
 
 	public ContactViewPresenter(Display view){
@@ -128,7 +130,7 @@ public class ContactViewPresenter implements ViewPresenter, ContactsBrokerClient
 		ownerId = parameterHolder.getParameter("ownerid");
 		contactId = parameterHolder.getParameter("contactid");
 		ownerTypeId= parameterHolder.getParameter("ownertypeid");
-		boolean hasPermissions = parameterHolder.getParameter("editpermission") != null;
+	//	boolean hasPermissions = parameterHolder.getParameter("editpermission") != null;
 
 		if(ownerId == null){
 			EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não é possível mostrar um contacto sem cliente associado."), TYPE.ALERT_NOTIFICATION));
@@ -140,24 +142,14 @@ public class ContactViewPresenter implements ViewPresenter, ContactsBrokerClient
 		else{
 			broker.registerClient(this, ownerId);
 
-			if(contactId == null){
+			if(contactId.equalsIgnoreCase("new")){
 
-				if(hasPermissions){
-					setContact(null);
-					view.getToolbar().allowEdit(true);
-				}
-				else{
-					EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não é possível criar o contacto."), TYPE.ALERT_NOTIFICATION));
-					view.getToolbar().lockAll();
-					view.setContact(null);
-					view.setEditable(false);
-				}
+				setContact(null);
+				view.getToolbar().allowEdit(true);
+				
 			}
 			else
 			{
-				if(!hasPermissions){
-					view.getToolbar().lockAll();
-				}
 				broker.refreshContactsForOwner(ownerId, new ResponseHandler<Void>() {
 
 					@Override
@@ -188,10 +180,6 @@ public class ContactViewPresenter implements ViewPresenter, ContactsBrokerClient
 					}
 				});
 			}
-		}
-
-		if(!hasPermissions){
-			view.getToolbar().allowEdit(false);
 		}
 	}
 
@@ -233,7 +221,7 @@ public class ContactViewPresenter implements ViewPresenter, ContactsBrokerClient
 				case ADD_NEW_DETAIL: 
 					addNewDetail();
 					break;
-					
+
 				case ATTACHED:
 					parameterHolder.setParameter("contactid", view.getContact().id);
 					setParameters(parameterHolder);
@@ -245,7 +233,17 @@ public class ContactViewPresenter implements ViewPresenter, ContactsBrokerClient
 					break;
 
 				case CANCEL:
-					fireAction(Action.CANCEL);
+					if(contactId.equalsIgnoreCase("new") && !ownerTypeId.equalsIgnoreCase(BigBangConstants.EntityIds.CONTACT)){
+						NavigationHistoryItem navig = NavigationHistoryManager.getInstance().getCurrentState();
+						navig.removeParameter("show");
+						navig.removeParameter("contactid");
+						navig.removeParameter("ownerid");
+						navig.removeParameter("ownertypeid");
+						NavigationHistoryManager.getInstance().go(navig);
+					}
+					else{
+						fireAction(Action.CANCEL);
+					}
 					break;
 
 				case EDIT: 
@@ -253,7 +251,7 @@ public class ContactViewPresenter implements ViewPresenter, ContactsBrokerClient
 					view.setSaveMode(true);
 					break;
 
-				case SAVE: 
+				case SAVE:
 					Contact temp = view.getContact();
 					createUpdateContact(temp);
 					break;
@@ -278,12 +276,12 @@ public class ContactViewPresenter implements ViewPresenter, ContactsBrokerClient
 
 			private void deleteContact(Contact contact) {
 
-				if(contactId != null){
+				if(!contactId.equalsIgnoreCase("new")){
 					broker.removeContact(contactId, new ResponseHandler<Void>() {
 
 						@Override
 						public void onResponse(Void response) {
-							fireAction(Action.REMOVE_OK);
+							fireAction(Action.CLOSE_POPUP);
 							EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Contacto eliminado com sucesso."), TYPE.TRAY_NOTIFICATION));
 						}
 
@@ -299,7 +297,7 @@ public class ContactViewPresenter implements ViewPresenter, ContactsBrokerClient
 
 				}
 				else
-					fireAction(Action.REMOVE_OK);
+					fireAction(Action.CLOSE_POPUP);
 			}
 
 			private void createUpdateContact(Contact temp) {
@@ -312,11 +310,21 @@ public class ContactViewPresenter implements ViewPresenter, ContactsBrokerClient
 
 						@Override
 						public void onResponse(Contact response) {
-							EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Contacto criado com sucesso."), TYPE.TRAY_NOTIFICATION));
-							ContactViewPresenter.this.setContact(response);
-							contactId = response.id;
-							view.setSaveMode(false);
-							view.setEditable(false);
+							if(ownerTypeId.equalsIgnoreCase(BigBangConstants.EntityIds.CONTACT)){
+								EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Contacto criado com sucesso."), TYPE.TRAY_NOTIFICATION));
+								ContactViewPresenter.this.setContact(response);
+								contactId = response.id;
+								view.setSaveMode(false);
+								view.setEditable(false);
+								fireAction(Action.CONTACT_CREATED);
+							}else{
+								NavigationHistoryItem navig = NavigationHistoryManager.getInstance().getCurrentState();
+								navig.removeParameter("show");
+								navig.removeParameter("contactid");
+								navig.removeParameter("ownerid");
+								navig.removeParameter("ownertypeid");
+								NavigationHistoryManager.getInstance().go(navig);
+							}
 						}
 
 						@Override
@@ -334,11 +342,22 @@ public class ContactViewPresenter implements ViewPresenter, ContactsBrokerClient
 
 						@Override
 						public void onResponse(Contact response) {
-							EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Contacto gravado com sucesso."), TYPE.TRAY_NOTIFICATION));
-							ContactViewPresenter.this.setContact(response);
-							contactId = response.id;
-							view.setSaveMode(false);
-							view.setEditable(false);
+							if(ownerTypeId.equalsIgnoreCase(BigBangConstants.EntityIds.CONTACT)){
+								EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Contacto gravado com sucesso."), TYPE.TRAY_NOTIFICATION));
+								ContactViewPresenter.this.setContact(response);
+								contactId = response.id;
+								view.setSaveMode(false);
+								view.setEditable(false);
+								fireAction(Action.CONTACT_CREATED);
+							}
+							else{
+								NavigationHistoryItem navig = NavigationHistoryManager.getInstance().getCurrentState();
+								navig.removeParameter("show");
+								navig.removeParameter("contactid");
+								navig.removeParameter("ownerid");
+								navig.removeParameter("ownertypeid");
+								NavigationHistoryManager.getInstance().go(navig);
+							}
 						}
 
 						@Override
@@ -360,7 +379,7 @@ public class ContactViewPresenter implements ViewPresenter, ContactsBrokerClient
 			@Override
 			public void onSelectionChanged(SelectionChangedEvent event) {
 				if (event.getSelected().size() > 0)
-						fireAction(Action.CHILD_SELECTED);
+					fireAction(Action.CHILD_SELECTED);
 			}
 		});
 
@@ -393,7 +412,7 @@ public class ContactViewPresenter implements ViewPresenter, ContactsBrokerClient
 		}
 
 	}
-	
+
 
 	public void addNewDetail() {
 

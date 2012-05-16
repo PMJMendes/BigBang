@@ -270,7 +270,9 @@ public class DocumentViewPresenter implements ViewPresenter, DocumentsBrokerClie
 				public void onResponse(Document response) {
 					
 					NavigationHistoryItem navig = NavigationHistoryManager.getInstance().getCurrentState();
-					navig.setParameter("documentid", response.id);
+					navig.removeParameter("documentid");
+					navig.removeParameter("ownertypeid");
+					navig.removeParameter("show");
 					NavigationHistoryManager.getInstance().go(navig);
 					EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Documento criado com sucesso."), TYPE.TRAY_NOTIFICATION));
 				}
@@ -290,7 +292,11 @@ public class DocumentViewPresenter implements ViewPresenter, DocumentsBrokerClie
 				@Override
 				public void onResponse(Document response) {
 					EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Documento gravado com sucesso."), TYPE.TRAY_NOTIFICATION));
-					NavigationHistoryManager.getInstance().reload();
+					NavigationHistoryItem navig = NavigationHistoryManager.getInstance().getCurrentState();
+					navig.removeParameter("documentid");
+					navig.removeParameter("ownertypeid");
+					navig.removeParameter("show");
+					NavigationHistoryManager.getInstance().go(navig);
 				}
 				
 				@Override
