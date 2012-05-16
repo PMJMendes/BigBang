@@ -35,7 +35,7 @@ public class DocumentsList extends FilterableList<Document> implements Documents
 
 		public Entry(Document value) {
 			super(value);
-			setHeight("25px");
+			setHeight("35px");
 			titleLabel.getElement().getStyle().setFontSize(11, Unit.PX);
 			textLabel.getElement().getStyle().setFontSize(11, Unit.PX);
 			titleLabel.getElement().getStyle().setFontStyle(FontStyle.ITALIC);
@@ -67,18 +67,6 @@ public class DocumentsList extends FilterableList<Document> implements Documents
 		showNewButton("Novo");
 
 		broker = BigBangDocumentsBroker.Util.getInstance();
-
-//		this.addAttachHandler(new AttachEvent.Handler() {
-//
-//			@Override
-//			public void onAttachOrDetach(AttachEvent event) {
-//				if(event.isAttached()) {
-//					setOwner(ownerId);
-//				}else{
-//					discardOwner();
-//				}
-//			}
-//		});
 	}
 
 	protected void createNewDocument() {

@@ -368,7 +368,7 @@ public abstract class InsurancePolicyForm extends FormView<InsurancePolicy> {
 
 					@Override
 					public void onResponse(Client response) {
-						InsurancePolicyForm.this.client.setValue(response.name + " (" + response.clientNumber + ")");
+						InsurancePolicyForm.this.client.setValue("#" + response.clientNumber + " - " + response.name);
 					}
 
 					@Override

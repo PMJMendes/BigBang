@@ -90,10 +90,13 @@ public class CreateInsurancePolicyViewPresenter implements ViewPresenter {
 
 		if(clientId == null || clientId.isEmpty()) {
 			onFailure();
-		}else if(tempPolicyId == null || tempPolicyId.isEmpty()){
+		}else if(tempPolicyId != null && tempPolicyId.equalsIgnoreCase("new")){
 			showCreatePolicy(clientId);
+		}else if(tempPolicyId != null && !tempPolicyId.isEmpty()){
+			showPolicy(clientId, tempPolicyId);
 		}else{
-			showPolicyInCreation(clientId, tempPolicyId);
+			clearView();
+			onFailure();
 		}
 	}
 
@@ -152,8 +155,8 @@ public class CreateInsurancePolicyViewPresenter implements ViewPresenter {
 	}
 
 	private void clearView(){
-		InsurancePolicy policy = view.getInsurancePolicyForm().getValue();
-		if(policy != null) {
+		InsurancePolicy policy = view.getInsurancePolicyForm().getInfo();
+		if(policy != null && policy.id != null && !policy.id.equalsIgnoreCase("new")) {
 			policyBroker.discardTemp(policy.id);
 		}
 		view.getClientForm().setValue(null);
@@ -215,18 +218,20 @@ public class CreateInsurancePolicyViewPresenter implements ViewPresenter {
 
 	private void onModalityChanged(){
 		InsurancePolicy changedPolicy = view.getInsurancePolicyForm().getInfo();
-		policyBroker.initPolicy(changedPolicy, new ResponseHandler<InsurancePolicy>() {
+//		InsurancePolicy valuePolicy = view.getInsurancePolicyForm().getValue();
+//		if(valuePolicy.subLineId == null) {
+			policyBroker.initPolicy(changedPolicy, new ResponseHandler<InsurancePolicy>() {
 
-			@Override
-			public void onResponse(InsurancePolicy response) {
-				view.getInsurancePolicyForm().setValue(response);
-			}
+				@Override
+				public void onResponse(InsurancePolicy response) {
+					view.getInsurancePolicyForm().setValue(response);
+				}
 
-			@Override
-			public void onError(Collection<ResponseError> errors) {
-				onFailure();
-			}
-		});
+				@Override
+				public void onError(Collection<ResponseError> errors) {
+					onFailure();
+				}
+			});
 	}
 
 	protected void saveWorkState(final ResponseHandler<Void> handler){
@@ -276,35 +281,39 @@ public class CreateInsurancePolicyViewPresenter implements ViewPresenter {
 		});
 	}
 
-	private void showPolicyInCreation(String ownerId, final String policyId){
-		clientBroker.getClient(ownerId, new ResponseHandler<Client>() {
+	private void showPolicy(String ownerId, final String policyId){
+		if(policyBroker.isTemp(policyId)) {
+			clientBroker.getClient(ownerId, new ResponseHandler<Client>() {
 
-			@Override
-			public void onResponse(final Client client) {
-				policyBroker.getPolicy(policyId, new ResponseHandler<InsurancePolicy>() {
+				@Override
+				public void onResponse(final Client client) {
+					policyBroker.getPolicy(policyId, new ResponseHandler<InsurancePolicy>() {
 
-					@Override
-					public void onResponse(InsurancePolicy policy) {
-						view.getClientForm().setValue(client);
-						policy.clientId = client.id;
-						policy.clientNumber = client.clientNumber;
-						policy.clientName = client.name;
-						policy.managerId = Session.getUserId();
-						view.getInsurancePolicyForm().setValue(policy);
-					}
+						@Override
+						public void onResponse(InsurancePolicy policy) {
+							view.getClientForm().setValue(client);
+							policy.clientId = client.id;
+							policy.clientNumber = client.clientNumber;
+							policy.clientName = client.name;
+							policy.managerId = Session.getUserId();
+							view.getInsurancePolicyForm().setValue(policy);
+						}
 
-					@Override
-					public void onError(Collection<ResponseError> errors) {
-						onFailure();
-					}
-				});
-			}
+						@Override
+						public void onError(Collection<ResponseError> errors) {
+							onFailure();
+						}
+					});
+				}
 
-			@Override
-			public void onError(Collection<ResponseError> errors) {
-				onFailure();
-			}
-		});
+				@Override
+				public void onError(Collection<ResponseError> errors) {
+					onFailure();
+				}
+			});
+		}else{
+			onFailure();
+		}
 	}
 
 	private void showObject(String objectId) {

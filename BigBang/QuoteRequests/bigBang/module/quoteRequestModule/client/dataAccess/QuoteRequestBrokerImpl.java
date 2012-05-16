@@ -681,8 +681,8 @@ public class QuoteRequestBrokerImpl extends DataBroker<QuoteRequest> implements	
 
 
 	@Override
-	public boolean isTemp(String policyId) {
-		return this.requestsInScratchPad.containsKey(policyId) || this.requestsInScratchPad.containsValue(policyId);
+	public boolean isTemp(String quoteRequestId) {
+		return this.requestsInScratchPad.containsKey(quoteRequestId) || this.requestsInScratchPad.containsValue(quoteRequestId);
 	}
 
 	@Override

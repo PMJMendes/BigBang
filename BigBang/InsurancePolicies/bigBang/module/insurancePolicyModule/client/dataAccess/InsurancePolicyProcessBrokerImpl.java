@@ -325,7 +325,7 @@ public class InsurancePolicyProcessBrokerImpl extends DataBroker<InsurancePolicy
 						InsurancePolicy policy = new InsurancePolicy();
 						RemapId remapId = result[0].remapIds[0];
 						policy.id = remapId.newId;
-						policiesInScratchPad.put("new", policy.id);
+						policiesInScratchPad.put(policy.id, policy.id);
 						handler.onResponse(policy);
 					}
 				}

@@ -210,6 +210,7 @@ public class ClientSearchOperationViewPresenter implements ViewPresenter {
 					break;
 				case CREATE_POLICY:
 					item.pushIntoStackParameter("display", "createpolicy");
+					item.setParameter("policyid", "new");
 					NavigationHistoryManager.getInstance().go(item);
 					break;
 				case CREATE_QUOTE_REQUEST:

@@ -139,7 +139,7 @@ public class QuoteRequestForm extends FormView<QuoteRequest> implements FiresAsy
 			}
 
 			number.setValue(info.processNumber);
-			client.setValue(info.clientName + " (" + info.clientNumber + ")");
+			client.setValue("#" + info.clientNumber + " - " + info.clientName);
 			status.setValue(info.isOpen ? "Aberta" : "Fechada");
 			manager.setValue(info.managerId);
 			inheritedMediator.setValue(info.inheritMediatorName);

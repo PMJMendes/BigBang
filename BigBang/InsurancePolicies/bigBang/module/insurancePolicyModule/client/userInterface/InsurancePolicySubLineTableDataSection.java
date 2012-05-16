@@ -10,6 +10,7 @@ import bigBang.definitions.client.response.ResponseError;
 import bigBang.definitions.client.response.ResponseHandler;
 import bigBang.definitions.shared.BigBangConstants;
 import bigBang.definitions.shared.InsurancePolicy;
+import bigBang.definitions.shared.InsurancePolicy.ColumnHeader;
 import bigBang.definitions.shared.InsurancePolicy.Coverage;
 import bigBang.definitions.shared.InsurancePolicy.TableSection;
 import bigBang.definitions.shared.InsurancePolicy.TableSection.TableField;
@@ -80,7 +81,9 @@ public class InsurancePolicySubLineTableDataSection extends FormViewSection {
 				realTableField.id = tableField.fieldId;
 				realTableField.value = tableField.value;
 
-				switch(policy.columns[tableField.columnIndex].type) {
+				ColumnHeader column = policy.columns[tableField.columnIndex];
+				
+				switch(column.type) {
 				case TEXT:
 					realTableField.type = Type.TEXT;
 					break;
@@ -98,6 +101,7 @@ public class InsurancePolicySubLineTableDataSection extends FormViewSection {
 					break;
 				case REFERENCE:
 					realTableField.type = Type.REFERENCE;
+					realTableField.reference = column.refersToId;
 					break;
 				}
 

@@ -62,6 +62,7 @@ public class ClientFormView extends FormView<Client> implements ClientProcessDat
 		name.setFieldWidth("600px");
 		number = new TextBoxFormField("Número");
 		number.setEditable(false);
+		number.setWidth("175px");
 		taxNumber = new TextBoxFormField("Nº Contribuinte", new ClientFormValidator.TaxNumberValidator());
 		taxNumber.setFieldWidth("100px");
 		address = new AddressFormField();

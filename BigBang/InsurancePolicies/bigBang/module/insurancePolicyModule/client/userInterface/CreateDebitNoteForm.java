@@ -12,6 +12,8 @@ public class CreateDebitNoteForm extends FormView<DebitNote> {
 	
 	public CreateDebitNoteForm(){
 		noteValue = new TextBoxFormField("Valor");
+		noteValue.setUnitsLabel("€");
+		noteValue.setFieldWidth("175px");
 		maturityDate = new DatePickerFormField("Data de Vencimento");
 		
 		addSection("Informação Geral");

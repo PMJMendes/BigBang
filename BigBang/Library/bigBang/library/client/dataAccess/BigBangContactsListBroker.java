@@ -49,7 +49,7 @@ public class BigBangContactsListBroker extends DataBroker<Contact> implements Co
 	@Override
 	public int incrementDataVersion(String ownerId) {
 		if(!clients.containsKey(ownerId)){
-			throw new RuntimeException("The contacts for the owner with id " + ownerId + " are not being managed by this broker.");
+			return -1;
 		}
 		int newDataVersion = new Integer(dataVersions.get(ownerId).intValue() + 1);
 		dataVersions.put(ownerId, newDataVersion);
@@ -68,7 +68,7 @@ public class BigBangContactsListBroker extends DataBroker<Contact> implements Co
 	@Override
 	public boolean checkClientDataVersions(String ownerId) {
 		if(!clients.containsKey(ownerId)){
-			throw new RuntimeException("The contacts for the owner with id " + ownerId + " are not being managed by this broker.");
+			return false;
 		}
 		for(ContactsBrokerClient c : clients.get(ownerId)) {
 			if(dataVersions.get(ownerId) != c.getContactsDataVersionNumber(ownerId)){
@@ -81,14 +81,14 @@ public class BigBangContactsListBroker extends DataBroker<Contact> implements Co
 	@Override
 	public int getCurrentDataVersion(String ownerId) {
 		if(!clients.containsKey(ownerId)){
-			throw new RuntimeException("The contacts for the owner with id " + ownerId + " are not being managed by this broker.");
+			return -1;
 		}
 		return dataVersions.get(ownerId);
 	}
 
 	@Override
 	public void registerClient(final ContactsBrokerClient client, final String ownerId) {
-		
+
 		if(!clients.containsKey(ownerId)){
 			List<ContactsBrokerClient> clientList = new ArrayList<ContactsBrokerClient>();
 			clients.put(ownerId, clientList);
@@ -115,7 +115,7 @@ public class BigBangContactsListBroker extends DataBroker<Contact> implements Co
 	@Override
 	public void unregisterClient(ContactsBrokerClient client, String ownerId) {
 		if(!clients.containsKey(ownerId)){
-			throw new RuntimeException("The contacts for the owner with id " + ownerId + " are not being managed by this broker.");
+			return;
 		}
 		List<ContactsBrokerClient> clientList = clients.get(ownerId);
 		clientList.remove(client);
@@ -139,7 +139,7 @@ public class BigBangContactsListBroker extends DataBroker<Contact> implements Co
 	@Override
 	public Collection<ContactsBrokerClient> getClients(String ownerId) {
 		if(!clients.containsKey(ownerId)){
-			throw new RuntimeException("The contacts for the owner with id " + ownerId + " are not being managed by this broker.");
+			return null;
 		}
 		return clients.get(ownerId);
 	}
@@ -154,14 +154,14 @@ public class BigBangContactsListBroker extends DataBroker<Contact> implements Co
 	@Override
 	public void requireDataRefresh(String ownerId) {
 		if(!clients.containsKey(ownerId)){
-			throw new RuntimeException("The contacts for the owner with id " + ownerId + " are not being managed by this broker.");
+			return;
 		}
 		dataRefreshRequirements.put(ownerId, true);
 	}
 
 	protected boolean requiresDataRefresh(String ownerId){
 		if(!dataRefreshRequirements.containsKey(ownerId)){
-			throw new RuntimeException("The contacts for the owner with id " + ownerId + " are not being managed by this broker.");
+			return false;
 		}
 		return this.dataRefreshRequirements.get(ownerId);
 	}
@@ -204,7 +204,7 @@ public class BigBangContactsListBroker extends DataBroker<Contact> implements Co
 	@Override
 	public void getContacts(final String ownerId, final ResponseHandler<List<Contact>> handler) {
 		if(!clients.containsKey(ownerId)){
-			throw new RuntimeException("The contacts for the owner with id " + ownerId + " are not being managed by this broker.");
+			return;
 		}
 		if(requiresDataRefresh(ownerId)){
 			service.getContacts(ownerId, new BigBangAsyncCallback<Contact[]>() {
@@ -338,10 +338,12 @@ public class BigBangContactsListBroker extends DataBroker<Contact> implements Co
 	 */
 	protected void updateClients(String ownerId) {
 		List<ContactsBrokerClient> clientList = clients.get(ownerId);
-		int currentVersion = dataVersions.get(ownerId);
-		for(ContactsBrokerClient c : clientList){
-			if(c.getContactsDataVersionNumber(ownerId) != currentVersion){
-				updateClient(ownerId, c);
+		if(dataVersions.containsKey(ownerId)) {
+			int currentVersion = dataVersions.get(ownerId);
+			for(ContactsBrokerClient c : clientList){
+				if(c.getContactsDataVersionNumber(ownerId) != currentVersion){
+					updateClient(ownerId, c);
+				}
 			}
 		}
 	}
