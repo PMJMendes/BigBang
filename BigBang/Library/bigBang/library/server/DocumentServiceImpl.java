@@ -324,7 +324,7 @@ public class DocumentServiceImpl
 		try
 		{
 			lobjType = Engine.GetWorkInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), Constants.ObjID_DocType),
-					(UUID)pobjDocument.getAt(5));
+					(UUID)pobjDocument.getAt(3));
 		}
 		catch (Throwable e)
 		{
