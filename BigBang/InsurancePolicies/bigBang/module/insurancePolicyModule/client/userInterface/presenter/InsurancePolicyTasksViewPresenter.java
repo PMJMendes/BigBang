@@ -28,27 +28,27 @@ public class InsurancePolicyTasksViewPresenter implements ViewPresenter, HasOper
 	public static enum Action {
 		VALIDATE
 	}
-	
+
 	public static interface Display {
 		HasValue<InsurancePolicy> getForm();
 		void registerActionHandler(ActionInvokedEventHandler<Action> handler);
-		
+
 		//PERMISSIONS
 		void clearAllowedPermissions();
 		void allowValidate(boolean allow);
-		
+
 		Widget asWidget();
 	}
-	
+
 	protected boolean bound = false;
 	protected InsurancePolicyBroker broker;
 	protected Display view;
-	
+
 	public InsurancePolicyTasksViewPresenter(Display view){
 		setView((UIObject) view);
 		this.broker = (InsurancePolicyBroker) DataBrokerManager.staticGetBroker(BigBangConstants.EntityIds.INSURANCE_POLICY); 
 	}
-	
+
 	@Override
 	public void setView(UIObject view) {
 		this.view = (Display) view;
@@ -64,16 +64,16 @@ public class InsurancePolicyTasksViewPresenter implements ViewPresenter, HasOper
 	@Override
 	public void setParameters(HasParameters parameterHolder) {
 		clearView();
-		
+
 		String policyId = parameterHolder.getParameter("id");
 		showPolicy(policyId);
 	}
-	
+
 	protected void bind(){
 		if(bound) {return;}
-		
+
 		view.registerActionHandler(new ActionInvokedEventHandler<InsurancePolicyTasksViewPresenter.Action>() {
-			
+
 			@Override
 			public void onActionInvoked(ActionInvokedEvent<Action> action) {
 				switch (action.getAction()) {
@@ -86,10 +86,10 @@ public class InsurancePolicyTasksViewPresenter implements ViewPresenter, HasOper
 				}
 			}
 		});
-		
+
 		bound = true;
 	}
-	
+
 	protected void clearView(){
 		view.getForm().setValue(null);
 		view.clearAllowedPermissions();
@@ -104,7 +104,7 @@ public class InsurancePolicyTasksViewPresenter implements ViewPresenter, HasOper
 			}
 		}
 	}
-	
+
 	protected void showPolicy(String policyId) {
 		broker.getPolicy(policyId, new ResponseHandler<InsurancePolicy>() {
 
@@ -119,9 +119,9 @@ public class InsurancePolicyTasksViewPresenter implements ViewPresenter, HasOper
 			}
 		});
 	}
-	
+
 	//OPERATION ACTIONS
-	
+
 	protected void onValidate(){
 		broker.validatePolicy(view.getForm().getValue().id, new ResponseHandler<Void>() {
 
@@ -132,9 +132,15 @@ public class InsurancePolicyTasksViewPresenter implements ViewPresenter, HasOper
 
 			@Override
 			public void onError(Collection<ResponseError> errors) {
-				EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não foi possível validar a Apólice"), TYPE.ALERT_NOTIFICATION));
+				for(ResponseError error : errors){
+					onValidationFailed(error.description.replaceAll("(\r\n|\n)", "<br />"));
+				}
 			}
 		});
+	}
+
+	private void onValidationFailed(String message){
+		EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "A apólice falhou a validação :<br><br>" + message), TYPE.ALERT_NOTIFICATION));
 	}
 
 }

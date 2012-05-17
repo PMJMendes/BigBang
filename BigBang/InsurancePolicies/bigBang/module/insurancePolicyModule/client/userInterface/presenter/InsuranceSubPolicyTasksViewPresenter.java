@@ -139,7 +139,7 @@ public class InsuranceSubPolicyTasksViewPresenter implements ViewPresenter, HasO
 		});
 	}
 
-	private void onValidationFailed(String message){
+	private void onValidationFailed(String message){ 
 		EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "A apólice adesão falhou a validação :<br><br>" + message), TYPE.ALERT_NOTIFICATION));
 	}
 }
