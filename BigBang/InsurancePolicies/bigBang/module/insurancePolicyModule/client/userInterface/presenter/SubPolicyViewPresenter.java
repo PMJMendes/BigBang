@@ -131,18 +131,20 @@ public class SubPolicyViewPresenter implements ViewPresenter {
 
 	@Override
 	public void setParameters(HasParameters parameterHolder) {
-		clearView();
 
 		String subPolicyId = parameterHolder.getParameter("subpolicyid");
 		subPolicyId = subPolicyId == null ? new String() : subPolicyId;
 		String parentPolicyId = parameterHolder.getParameter("policyid");
 		parentPolicyId = parentPolicyId == null ? new String() : parentPolicyId;
+		
+		
 
-		if(parentPolicyId .isEmpty()) {
+		if(parentPolicyId.isEmpty()) {
 			onGetParentFailed();
 		} else if(subPolicyId.isEmpty()) {
 			onGetSubPolicyFailed();
 		} else if(subPolicyId.equalsIgnoreCase("new")) {
+			clearView();
 			showCreateSubPolicy(parentPolicyId);
 		} else if(this.subPolicyBroker.isTemp(subPolicyId)) {
 			showScratchPadSubPolicy(parentPolicyId, subPolicyId);

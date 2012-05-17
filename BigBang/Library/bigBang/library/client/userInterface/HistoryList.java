@@ -57,7 +57,6 @@ public class HistoryList extends FilterableList<HistoryItemStub> implements Hist
 	
 	public void setOwner(String ownerId) {
 		discardOwner();
-		if(ownerId == null) {return;}
 		if(ownerId != null){
 //			this.broker.registerClient(this, ownerId);
 			
@@ -92,8 +91,9 @@ public class HistoryList extends FilterableList<HistoryItemStub> implements Hist
 					add(entry);
 				}
 			});
+			this.ownerId = ownerId;
 		}
-		this.ownerId = ownerId;
+		
 	}
 
 	public void discardOwner(){
