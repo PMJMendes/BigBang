@@ -132,9 +132,14 @@ public class InsuranceSubPolicyTasksViewPresenter implements ViewPresenter, HasO
 
 			@Override
 			public void onError(Collection<ResponseError> errors) {
-				EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não foi possível validar a Apólice Adesão"), TYPE.ALERT_NOTIFICATION));
+				for(ResponseError error : errors){
+					onValidationFailed(error.description.replaceAll("(\r\n|\n)", "<br />"));
+				}
 			}
 		});
 	}
 
+	private void onValidationFailed(String message){
+		EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "A apólice adesão falhou a validação :<br><br>" + message), TYPE.ALERT_NOTIFICATION));
+	}
 }
