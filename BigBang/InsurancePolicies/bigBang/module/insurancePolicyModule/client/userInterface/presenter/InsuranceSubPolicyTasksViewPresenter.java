@@ -99,7 +99,7 @@ public class InsuranceSubPolicyTasksViewPresenter implements ViewPresenter, HasO
 	public void setPermittedOperations(String[] operationIds) {
 		view.clearAllowedPermissions();
 		for(String opid : operationIds) {
-			if(opid.equalsIgnoreCase(BigBangConstants.OperationIds.InsurancePolicyProcess.VALIDATE_POLICY)) {
+			if(opid.equalsIgnoreCase(BigBangConstants.OperationIds.InsuranceSubPolicyProcess.VALIDATE)) {
 				view.allowValidate(true);
 			}
 		}
