@@ -145,7 +145,7 @@ insert into bigbang.tblProfessions (PK, ProfessionName)
 select CAST(CAST(NEWID() AS BINARY(10)) + CAST(GETDATE() AS BINARY(6)) AS UNIQUEIDENTIFIER) PK, * from
 (select distinct ltrim(rtrim(Profissao)) ProfessionName from amartins..empresa.cliente c
 left outer join bigbang.tblProfessions p on p.ProfessionName=ltrim(rtrim(c.Profissao)) COLLATE DATABASE_DEFAULT
-where p.PK is null and c.Profissao is not null and ltrim(rtrim(c.Profissao))<>'') z;
+where p.PK is null and c.Profissao is not null and ltrim(rtrim(c.Profissao))<>'' and c.Profissao not like 'DOMÉSTICA') z;
 
 insert into bigbang.tblCAE (PK, CAEText)
 select CAST(CAST(NEWID() AS BINARY(10)) + CAST(GETDATE() AS BINARY(6)) AS UNIQUEIDENTIFIER) PK, * from
