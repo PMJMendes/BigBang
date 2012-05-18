@@ -136,7 +136,7 @@ insert into amartins.tblBBPolicies (PK, PolicyNumber, FKProcess, FKCompany, FKSu
 PolicyNotes, FKMediator, BCaseStudy, FKStatus, Premium, DShareFolder, MigrationID)
 select CAST(CAST(NEWID() AS BINARY(10)) + CAST(GETDATE() AS BINARY(6)) AS UNIQUEIDENTIFIER) PK,
 s.apolice PolicyNumber, null FKProcess, c.PK FKCompany, 'CA6EC5CA-FF4E-4E2C-BCF9-9EE901189BE9' FKSubLine, s.datini BeginDate, d.PK FKDuration, f.PK FKFractioning,
-s.diainicio MaturityDay, s.mesinicio MaturityMonth, s.datfim EndDate, 'Empregadas Domesticas. ' + substring(isnull(s.observ), 1, 220) PolicyNotes, m.PK FKMediator, 0 BCaseStudy, case s.situacao
+s.diainicio MaturityDay, s.mesinicio MaturityMonth, s.datfim EndDate, 'Empregadas Domesticas. ' + substring(isnull(s.observ, ''), 1, 220) PolicyNotes, m.PK FKMediator, 0 BCaseStudy, case s.situacao
 when 'A' then '4F115B5C-0E23-444F-AA68-9F98012CA192' when 'U' then 'FCE79588-054B-458D-9515-9F98012CB80E' else '421E16B3-BE47-4D9C-9011-9F98012C945E' end FKStatus,
 round(case isnull(s.moeda, 1) when 2 then s.vpremio else s.vpremio/200.482 end, 2) Premium, s.DocuShare DShareFolder, s.MigrationID MigrationID
 from amartins..empresa.apolice s
@@ -382,7 +382,6 @@ inner join amartins..empresa.apolice s on s.MigrationID=p.MigrationID
 where p.FKSubLine='68ED97FA-B9F8-40F7-B470-9EE90118B2DB';
 
 set language portuguese;
-declare @atctr int;
 set @atctr = 1;
 while @atctr < 13
 begin
