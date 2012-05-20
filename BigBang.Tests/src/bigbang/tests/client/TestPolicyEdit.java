@@ -17,7 +17,7 @@ public class TestPolicyEdit
 
 	private static void DoStep1()
 	{
-		final String lstrPolicy = "01B7B31C-0EFF-4A93-84EE-A02000F26B1F";
+		final String lstrPolicy = "FFA24734-C5AC-4AD5-80A4-A05100CA1A78";
 
 		AsyncCallback<Remap[]> callback = new AsyncCallback<Remap[]> ()
 		{
