@@ -219,298 +219,261 @@ and p.FKSubLine='22FE8580-E680-4EC7-9ABB-9EE9011AA269';
 
 insert into amartins.tblBBPolicyValues (PK, Value, FKPolicy, FKField, FKObject, FKExercise)
 select CAST(CAST(NEWID() AS BINARY(10)) + CAST(GETDATE() AS BINARY(6)) AS UNIQUEIDENTIFIER) PK,
-s.risco1 Value, p.PK FKPolicy, t.PK FKField, o.PK FKObject, NULL FKExercise
+s.risco1 Value, p.PK FKPolicy, t.PK FKField, NULL FKObject, NULL FKExercise
 from amartins..empresa.apolice s
 inner join amartins.tblBBPolicies p on p.MigrationID=s.MigrationID
 inner join amartins.tblBBPolicyCoverages c on c.FKPolicy=p.PK
 inner join bigbang.tblBBTaxes t on t.FKCoverage=c.FKCoverage
-inner join amartins.tblInsuredObjects o on o.FKPolicy=p.PK
 where t.pk='A2AC5679-79C6-4064-8ADD-A04D01137574' and c.BPresent=1
 and p.FKSubLine='22FE8580-E680-4EC7-9ABB-9EE9011AA269';
 
 insert into amartins.tblBBPolicyValues (PK, Value, FKPolicy, FKField, FKObject, FKExercise)
 select CAST(CAST(NEWID() AS BINARY(10)) + CAST(GETDATE() AS BINARY(6)) AS UNIQUEIDENTIFIER) PK,
-s.risco3 Value, p.PK FKPolicy, t.PK FKField, o.PK FKObject, NULL FKExercise
+s.risco3 Value, p.PK FKPolicy, t.PK FKField, NULL FKObject, NULL FKExercise
 from amartins..empresa.apolice s
 inner join amartins.tblBBPolicies p on p.MigrationID=s.MigrationID
 inner join amartins.tblBBPolicyCoverages c on c.FKPolicy=p.PK
 inner join bigbang.tblBBTaxes t on t.FKCoverage=c.FKCoverage
-inner join amartins.tblInsuredObjects o on o.FKPolicy=p.PK
 where t.pk='EA4E7D77-F1CB-40BE-B624-A04D0113E065' and c.BPresent=1
 and p.FKSubLine='22FE8580-E680-4EC7-9ABB-9EE9011AA269';
 
 insert into amartins.tblBBPolicyValues (PK, Value, FKPolicy, FKField, FKObject, FKExercise)
 select CAST(CAST(NEWID() AS BINARY(10)) + CAST(GETDATE() AS BINARY(6)) AS UNIQUEIDENTIFIER) PK,
-s.risco4 Value, p.PK FKPolicy, t.PK FKField, o.PK FKObject, NULL FKExercise
+s.risco4 Value, p.PK FKPolicy, t.PK FKField, NULL FKObject, NULL FKExercise
 from amartins..empresa.apolice s
 inner join amartins.tblBBPolicies p on p.MigrationID=s.MigrationID
 inner join amartins.tblBBPolicyCoverages c on c.FKPolicy=p.PK
 inner join bigbang.tblBBTaxes t on t.FKCoverage=c.FKCoverage
-inner join amartins.tblInsuredObjects o on o.FKPolicy=p.PK
 where t.pk='1241F541-A91D-43F8-9192-A04D01189784' and c.BPresent=1
 and p.FKSubLine='22FE8580-E680-4EC7-9ABB-9EE9011AA269';
 
 insert into amartins.tblBBPolicyValues (PK, Value, FKPolicy, FKField, FKObject, FKExercise)
 select CAST(CAST(NEWID() AS BINARY(10)) + CAST(GETDATE() AS BINARY(6)) AS UNIQUEIDENTIFIER) PK,
-s.risco3 Value, p.PK FKPolicy, t.PK FKField, o.PK FKObject, NULL FKExercise
+s.risco3 Value, p.PK FKPolicy, t.PK FKField, NULL FKObject, NULL FKExercise
 from amartins..empresa.apolice s
 inner join amartins.tblBBPolicies p on p.MigrationID=s.MigrationID
 inner join amartins.tblBBPolicyCoverages c on c.FKPolicy=p.PK
 inner join bigbang.tblBBTaxes t on t.FKCoverage=c.FKCoverage
-inner join amartins.tblInsuredObjects o on o.FKPolicy=p.PK
 where t.pk='1AEE9D6E-163B-4DFF-9AEF-A04D01190D4A' and c.BPresent=1
 and p.FKSubLine='22FE8580-E680-4EC7-9ABB-9EE9011AA269';
 
 insert into amartins.tblBBPolicyValues (PK, Value, FKPolicy, FKField, FKObject, FKExercise)
 select CAST(CAST(NEWID() AS BINARY(10)) + CAST(GETDATE() AS BINARY(6)) AS UNIQUEIDENTIFIER) PK,
-NULL Value, p.PK FKPolicy, t.PK FKField, o.PK FKObject, NULL FKExercise
+NULL Value, p.PK FKPolicy, t.PK FKField, NULL FKObject, NULL FKExercise
 from amartins..empresa.apolice s
 inner join amartins.tblBBPolicies p on p.MigrationID=s.MigrationID
 inner join amartins.tblBBPolicyCoverages c on c.FKPolicy=p.PK
 inner join bigbang.tblBBTaxes t on t.FKCoverage=c.FKCoverage
-inner join amartins.tblInsuredObjects o on o.FKPolicy=p.PK
 where t.pk='C5065433-0FCE-4FD2-AD22-A04D011A0EDD' and c.BPresent=1
 and p.FKSubLine='22FE8580-E680-4EC7-9ABB-9EE9011AA269';
 
 insert into amartins.tblBBPolicyValues (PK, Value, FKPolicy, FKField, FKObject, FKExercise)
 select CAST(CAST(NEWID() AS BINARY(10)) + CAST(GETDATE() AS BINARY(6)) AS UNIQUEIDENTIFIER) PK,
-s.risco3 Value, p.PK FKPolicy, t.PK FKField, o.PK FKObject, NULL FKExercise
+s.risco3 Value, p.PK FKPolicy, t.PK FKField, NULL FKObject, NULL FKExercise
 from amartins..empresa.apolice s
 inner join amartins.tblBBPolicies p on p.MigrationID=s.MigrationID
 inner join amartins.tblBBPolicyCoverages c on c.FKPolicy=p.PK
 inner join bigbang.tblBBTaxes t on t.FKCoverage=c.FKCoverage
-inner join amartins.tblInsuredObjects o on o.FKPolicy=p.PK
 where t.pk='C07D4A69-C24F-453D-87DE-A04D011A8096' and c.BPresent=1
 and p.FKSubLine='22FE8580-E680-4EC7-9ABB-9EE9011AA269';
 
 insert into amartins.tblBBPolicyValues (PK, Value, FKPolicy, FKField, FKObject, FKExercise)
 select CAST(CAST(NEWID() AS BINARY(10)) + CAST(GETDATE() AS BINARY(6)) AS UNIQUEIDENTIFIER) PK,
-NULL Value, p.PK FKPolicy, t.PK FKField, o.PK FKObject, NULL FKExercise
+NULL Value, p.PK FKPolicy, t.PK FKField, NULL FKObject, NULL FKExercise
 from amartins..empresa.apolice s
 inner join amartins.tblBBPolicies p on p.MigrationID=s.MigrationID
 inner join amartins.tblBBPolicyCoverages c on c.FKPolicy=p.PK
 inner join bigbang.tblBBTaxes t on t.FKCoverage=c.FKCoverage
-inner join amartins.tblInsuredObjects o on o.FKPolicy=p.PK
 where t.pk='0CF4259C-A2CF-4C31-B695-A04D011ABEA5' and c.BPresent=1
 and p.FKSubLine='22FE8580-E680-4EC7-9ABB-9EE9011AA269';
 
 insert into amartins.tblBBPolicyValues (PK, Value, FKPolicy, FKField, FKObject, FKExercise)
 select CAST(CAST(NEWID() AS BINARY(10)) + CAST(GETDATE() AS BINARY(6)) AS UNIQUEIDENTIFIER) PK,
-s.risco3 Value, p.PK FKPolicy, t.PK FKField, o.PK FKObject, NULL FKExercise
+s.risco3 Value, p.PK FKPolicy, t.PK FKField, NULL FKObject, NULL FKExercise
 from amartins..empresa.apolice s
 inner join amartins.tblBBPolicies p on p.MigrationID=s.MigrationID
 inner join amartins.tblBBPolicyCoverages c on c.FKPolicy=p.PK
 inner join bigbang.tblBBTaxes t on t.FKCoverage=c.FKCoverage
-inner join amartins.tblInsuredObjects o on o.FKPolicy=p.PK
 where t.pk='3CFB418D-B4B8-4641-8B44-A04D011B1457' and c.BPresent=1
 and p.FKSubLine='22FE8580-E680-4EC7-9ABB-9EE9011AA269';
 
 insert into amartins.tblBBPolicyValues (PK, Value, FKPolicy, FKField, FKObject, FKExercise)
 select CAST(CAST(NEWID() AS BINARY(10)) + CAST(GETDATE() AS BINARY(6)) AS UNIQUEIDENTIFIER) PK,
-NULL Value, p.PK FKPolicy, t.PK FKField, o.PK FKObject, NULL FKExercise
+NULL Value, p.PK FKPolicy, t.PK FKField, NULL FKObject, NULL FKExercise
 from amartins..empresa.apolice s
 inner join amartins.tblBBPolicies p on p.MigrationID=s.MigrationID
 inner join amartins.tblBBPolicyCoverages c on c.FKPolicy=p.PK
 inner join bigbang.tblBBTaxes t on t.FKCoverage=c.FKCoverage
-inner join amartins.tblInsuredObjects o on o.FKPolicy=p.PK
 where t.pk='8BE96EE8-FC14-48E3-8A64-A04D011B4C78' and c.BPresent=1
 and p.FKSubLine='22FE8580-E680-4EC7-9ABB-9EE9011AA269';
 
 insert into amartins.tblBBPolicyValues (PK, Value, FKPolicy, FKField, FKObject, FKExercise)
 select CAST(CAST(NEWID() AS BINARY(10)) + CAST(GETDATE() AS BINARY(6)) AS UNIQUEIDENTIFIER) PK,
-s.risco3 Value, p.PK FKPolicy, t.PK FKField, o.PK FKObject, NULL FKExercise
+s.risco3 Value, p.PK FKPolicy, t.PK FKField, NULL FKObject, NULL FKExercise
 from amartins..empresa.apolice s
 inner join amartins.tblBBPolicies p on p.MigrationID=s.MigrationID
 inner join amartins.tblBBPolicyCoverages c on c.FKPolicy=p.PK
 inner join bigbang.tblBBTaxes t on t.FKCoverage=c.FKCoverage
-inner join amartins.tblInsuredObjects o on o.FKPolicy=p.PK
 where t.pk='C7CD8243-9F56-48D2-BF71-A04D011BFA09' and c.BPresent=1
 and p.FKSubLine='22FE8580-E680-4EC7-9ABB-9EE9011AA269';
 
 insert into amartins.tblBBPolicyValues (PK, Value, FKPolicy, FKField, FKObject, FKExercise)
 select CAST(CAST(NEWID() AS BINARY(10)) + CAST(GETDATE() AS BINARY(6)) AS UNIQUEIDENTIFIER) PK,
-NULL Value, p.PK FKPolicy, t.PK FKField, o.PK FKObject, NULL FKExercise
+NULL Value, p.PK FKPolicy, t.PK FKField, NULL FKObject, NULL FKExercise
 from amartins..empresa.apolice s
 inner join amartins.tblBBPolicies p on p.MigrationID=s.MigrationID
 inner join amartins.tblBBPolicyCoverages c on c.FKPolicy=p.PK
 inner join bigbang.tblBBTaxes t on t.FKCoverage=c.FKCoverage
-inner join amartins.tblInsuredObjects o on o.FKPolicy=p.PK
 where t.pk='72E7A6B1-D821-4A02-8C16-A04D011C399E' and c.BPresent=1
 and p.FKSubLine='22FE8580-E680-4EC7-9ABB-9EE9011AA269';
 
 insert into amartins.tblBBPolicyValues (PK, Value, FKPolicy, FKField, FKObject, FKExercise)
 select CAST(CAST(NEWID() AS BINARY(10)) + CAST(GETDATE() AS BINARY(6)) AS UNIQUEIDENTIFIER) PK,
-NULL Value, p.PK FKPolicy, t.PK FKField, o.PK FKObject, NULL FKExercise
+NULL Value, p.PK FKPolicy, t.PK FKField, NULL FKObject, NULL FKExercise
 from amartins..empresa.apolice s
 inner join amartins.tblBBPolicies p on p.MigrationID=s.MigrationID
 inner join amartins.tblBBPolicyCoverages c on c.FKPolicy=p.PK
 inner join bigbang.tblBBTaxes t on t.FKCoverage=c.FKCoverage
-inner join amartins.tblInsuredObjects o on o.FKPolicy=p.PK
 where t.pk='BE365567-55C5-4737-9CC6-A04D011C9FC4' and c.BPresent=1
 and p.FKSubLine='22FE8580-E680-4EC7-9ABB-9EE9011AA269';
 
 insert into amartins.tblBBPolicyValues (PK, Value, FKPolicy, FKField, FKObject, FKExercise)
 select CAST(CAST(NEWID() AS BINARY(10)) + CAST(GETDATE() AS BINARY(6)) AS UNIQUEIDENTIFIER) PK,
-NULL Value, p.PK FKPolicy, t.PK FKField, o.PK FKObject, NULL FKExercise
+NULL Value, p.PK FKPolicy, t.PK FKField, NULL FKObject, NULL FKExercise
 from amartins..empresa.apolice s
 inner join amartins.tblBBPolicies p on p.MigrationID=s.MigrationID
 inner join amartins.tblBBPolicyCoverages c on c.FKPolicy=p.PK
 inner join bigbang.tblBBTaxes t on t.FKCoverage=c.FKCoverage
-inner join amartins.tblInsuredObjects o on o.FKPolicy=p.PK
 where t.pk='44B886B9-0965-422C-9853-A04D011CE53A' and c.BPresent=1
 and p.FKSubLine='22FE8580-E680-4EC7-9ABB-9EE9011AA269';
 
 insert into amartins.tblBBPolicyValues (PK, Value, FKPolicy, FKField, FKObject, FKExercise)
 select CAST(CAST(NEWID() AS BINARY(10)) + CAST(GETDATE() AS BINARY(6)) AS UNIQUEIDENTIFIER) PK,
-NULL Value, p.PK FKPolicy, t.PK FKField, o.PK FKObject, NULL FKExercise
+NULL Value, p.PK FKPolicy, t.PK FKField, NULL FKObject, NULL FKExercise
 from amartins..empresa.apolice s
 inner join amartins.tblBBPolicies p on p.MigrationID=s.MigrationID
 inner join amartins.tblBBPolicyCoverages c on c.FKPolicy=p.PK
 inner join bigbang.tblBBTaxes t on t.FKCoverage=c.FKCoverage
-inner join amartins.tblInsuredObjects o on o.FKPolicy=p.PK
 where t.pk='7260A313-DA76-4F4F-A89D-A04D011E7929' and c.BPresent=1
 and p.FKSubLine='22FE8580-E680-4EC7-9ABB-9EE9011AA269';
 
 insert into amartins.tblBBPolicyValues (PK, Value, FKPolicy, FKField, FKObject, FKExercise)
 select CAST(CAST(NEWID() AS BINARY(10)) + CAST(GETDATE() AS BINARY(6)) AS UNIQUEIDENTIFIER) PK,
-NULL Value, p.PK FKPolicy, t.PK FKField, o.PK FKObject, NULL FKExercise
+NULL Value, p.PK FKPolicy, t.PK FKField, NULL FKObject, NULL FKExercise
 from amartins..empresa.apolice s
 inner join amartins.tblBBPolicies p on p.MigrationID=s.MigrationID
 inner join amartins.tblBBPolicyCoverages c on c.FKPolicy=p.PK
 inner join bigbang.tblBBTaxes t on t.FKCoverage=c.FKCoverage
-inner join amartins.tblInsuredObjects o on o.FKPolicy=p.PK
 where t.pk='DD62335B-1F17-486C-ABD9-A04D011ED586' and c.BPresent=1
 and p.FKSubLine='22FE8580-E680-4EC7-9ABB-9EE9011AA269';
 
 insert into amartins.tblBBPolicyValues (PK, Value, FKPolicy, FKField, FKObject, FKExercise)
 select CAST(CAST(NEWID() AS BINARY(10)) + CAST(GETDATE() AS BINARY(6)) AS UNIQUEIDENTIFIER) PK,
-NULL Value, p.PK FKPolicy, t.PK FKField, o.PK FKObject, NULL FKExercise
+NULL Value, p.PK FKPolicy, t.PK FKField, NULL FKObject, NULL FKExercise
 from amartins..empresa.apolice s
 inner join amartins.tblBBPolicies p on p.MigrationID=s.MigrationID
 inner join amartins.tblBBPolicyCoverages c on c.FKPolicy=p.PK
 inner join bigbang.tblBBTaxes t on t.FKCoverage=c.FKCoverage
-inner join amartins.tblInsuredObjects o on o.FKPolicy=p.PK
 where t.pk='C6001418-E56E-4A66-B320-A04D011F1A78' and c.BPresent=1
 and p.FKSubLine='22FE8580-E680-4EC7-9ABB-9EE9011AA269';
 
 insert into amartins.tblBBPolicyValues (PK, Value, FKPolicy, FKField, FKObject, FKExercise)
 select CAST(CAST(NEWID() AS BINARY(10)) + CAST(GETDATE() AS BINARY(6)) AS UNIQUEIDENTIFIER) PK,
-s.risco2 Value, p.PK FKPolicy, t.PK FKField, o.PK FKObject, NULL FKExercise
+s.risco2 Value, p.PK FKPolicy, t.PK FKField, NULL FKObject, NULL FKExercise
 from amartins..empresa.apolice s
 inner join amartins.tblBBPolicies p on p.MigrationID=s.MigrationID
 inner join amartins.tblBBPolicyCoverages c on c.FKPolicy=p.PK
 inner join bigbang.tblBBTaxes t on t.FKCoverage=c.FKCoverage
-inner join amartins.tblInsuredObjects o on o.FKPolicy=p.PK
 where t.pk='6FBAB11D-F9CE-4DD7-A17E-A04D01202423' and c.BPresent=1
 and p.FKSubLine='22FE8580-E680-4EC7-9ABB-9EE9011AA269';
 
 insert into amartins.tblBBPolicyValues (PK, Value, FKPolicy, FKField, FKObject, FKExercise)
 select CAST(CAST(NEWID() AS BINARY(10)) + CAST(GETDATE() AS BINARY(6)) AS UNIQUEIDENTIFIER) PK,
-'1' Value, p.PK FKPolicy, t.PK FKField, o.PK FKObject, NULL FKExercise
+NULL Value, p.PK FKPolicy, t.PK FKField, NULL FKObject, NULL FKExercise
 from amartins..empresa.apolice s
 inner join amartins.tblBBPolicies p on p.MigrationID=s.MigrationID
 inner join amartins.tblBBPolicyCoverages c on c.FKPolicy=p.PK
 inner join bigbang.tblBBTaxes t on t.FKCoverage=c.FKCoverage
-inner join amartins.tblInsuredObjects o on o.FKPolicy=p.PK
-where t.pk='C37FECB3-9A10-4D24-A4E2-A04D01205AB6' and c.BPresent=1
-and p.FKSubLine='22FE8580-E680-4EC7-9ABB-9EE9011AA269';
-
-insert into amartins.tblBBPolicyValues (PK, Value, FKPolicy, FKField, FKObject, FKExercise)
-select CAST(CAST(NEWID() AS BINARY(10)) + CAST(GETDATE() AS BINARY(6)) AS UNIQUEIDENTIFIER) PK,
-NULL Value, p.PK FKPolicy, t.PK FKField, o.PK FKObject, NULL FKExercise
-from amartins..empresa.apolice s
-inner join amartins.tblBBPolicies p on p.MigrationID=s.MigrationID
-inner join amartins.tblBBPolicyCoverages c on c.FKPolicy=p.PK
-inner join bigbang.tblBBTaxes t on t.FKCoverage=c.FKCoverage
-inner join amartins.tblInsuredObjects o on o.FKPolicy=p.PK
 where t.pk='A4FEA5AA-5746-4F04-B9FF-A04D01210C61' and c.BPresent=1
 and p.FKSubLine='22FE8580-E680-4EC7-9ABB-9EE9011AA269';
 
 insert into amartins.tblBBPolicyValues (PK, Value, FKPolicy, FKField, FKObject, FKExercise)
 select CAST(CAST(NEWID() AS BINARY(10)) + CAST(GETDATE() AS BINARY(6)) AS UNIQUEIDENTIFIER) PK,
-NULL Value, p.PK FKPolicy, t.PK FKField, o.PK FKObject, NULL FKExercise
+NULL Value, p.PK FKPolicy, t.PK FKField, NULL FKObject, NULL FKExercise
 from amartins..empresa.apolice s
 inner join amartins.tblBBPolicies p on p.MigrationID=s.MigrationID
 inner join amartins.tblBBPolicyCoverages c on c.FKPolicy=p.PK
 inner join bigbang.tblBBTaxes t on t.FKCoverage=c.FKCoverage
-inner join amartins.tblInsuredObjects o on o.FKPolicy=p.PK
 where t.pk='3D45C1A7-16B6-4ADB-BF72-A04D0121AB49' and c.BPresent=1
 and p.FKSubLine='22FE8580-E680-4EC7-9ABB-9EE9011AA269';
 
 insert into amartins.tblBBPolicyValues (PK, Value, FKPolicy, FKField, FKObject, FKExercise)
 select CAST(CAST(NEWID() AS BINARY(10)) + CAST(GETDATE() AS BINARY(6)) AS UNIQUEIDENTIFIER) PK,
-s.capital8 Value, p.PK FKPolicy, t.PK FKField, o.PK FKObject, NULL FKExercise
+s.capital8 Value, p.PK FKPolicy, t.PK FKField, NULL FKObject, NULL FKExercise
 from amartins..empresa.apolice s
 inner join amartins.tblBBPolicies p on p.MigrationID=s.MigrationID
 inner join amartins.tblBBPolicyCoverages c on c.FKPolicy=p.PK
 inner join bigbang.tblBBTaxes t on t.FKCoverage=c.FKCoverage
-inner join amartins.tblInsuredObjects o on o.FKPolicy=p.PK
 where t.pk='D75ABB7C-4CE6-43DC-8B84-A04D0121C640' and c.BPresent=1
 and p.FKSubLine='22FE8580-E680-4EC7-9ABB-9EE9011AA269';
 
 insert into amartins.tblBBPolicyValues (PK, Value, FKPolicy, FKField, FKObject, FKExercise)
 select CAST(CAST(NEWID() AS BINARY(10)) + CAST(GETDATE() AS BINARY(6)) AS UNIQUEIDENTIFIER) PK,
-NULL Value, p.PK FKPolicy, t.PK FKField, o.PK FKObject, NULL FKExercise
+NULL Value, p.PK FKPolicy, t.PK FKField, NULL FKObject, NULL FKExercise
 from amartins..empresa.apolice s
 inner join amartins.tblBBPolicies p on p.MigrationID=s.MigrationID
 inner join amartins.tblBBPolicyCoverages c on c.FKPolicy=p.PK
 inner join bigbang.tblBBTaxes t on t.FKCoverage=c.FKCoverage
-inner join amartins.tblInsuredObjects o on o.FKPolicy=p.PK
 where t.pk='A86862AD-6DC3-4034-8C29-A04D012215A9' and c.BPresent=1
 and p.FKSubLine='22FE8580-E680-4EC7-9ABB-9EE9011AA269';
 
 insert into amartins.tblBBPolicyValues (PK, Value, FKPolicy, FKField, FKObject, FKExercise)
 select CAST(CAST(NEWID() AS BINARY(10)) + CAST(GETDATE() AS BINARY(6)) AS UNIQUEIDENTIFIER) PK,
-NULL Value, p.PK FKPolicy, t.PK FKField, o.PK FKObject, NULL FKExercise
+NULL Value, p.PK FKPolicy, t.PK FKField, NULL FKObject, NULL FKExercise
 from amartins..empresa.apolice s
 inner join amartins.tblBBPolicies p on p.MigrationID=s.MigrationID
 inner join amartins.tblBBPolicyCoverages c on c.FKPolicy=p.PK
 inner join bigbang.tblBBTaxes t on t.FKCoverage=c.FKCoverage
-inner join amartins.tblInsuredObjects o on o.FKPolicy=p.PK
 where t.pk='112EA935-33A8-4F20-BA24-A04D01244BCF' and c.BPresent=1
 and p.FKSubLine='22FE8580-E680-4EC7-9ABB-9EE9011AA269';
 
 insert into amartins.tblBBPolicyValues (PK, Value, FKPolicy, FKField, FKObject, FKExercise)
 select CAST(CAST(NEWID() AS BINARY(10)) + CAST(GETDATE() AS BINARY(6)) AS UNIQUEIDENTIFIER) PK,
-NULL Value, p.PK FKPolicy, t.PK FKField, o.PK FKObject, NULL FKExercise
+NULL Value, p.PK FKPolicy, t.PK FKField, NULL FKObject, NULL FKExercise
 from amartins..empresa.apolice s
 inner join amartins.tblBBPolicies p on p.MigrationID=s.MigrationID
 inner join amartins.tblBBPolicyCoverages c on c.FKPolicy=p.PK
 inner join bigbang.tblBBTaxes t on t.FKCoverage=c.FKCoverage
-inner join amartins.tblInsuredObjects o on o.FKPolicy=p.PK
 where t.pk='4759ECD1-61CB-48E5-A139-A04D01247D09' and c.BPresent=1
 and p.FKSubLine='22FE8580-E680-4EC7-9ABB-9EE9011AA269';
 
 insert into amartins.tblBBPolicyValues (PK, Value, FKPolicy, FKField, FKObject, FKExercise)
 select CAST(CAST(NEWID() AS BINARY(10)) + CAST(GETDATE() AS BINARY(6)) AS UNIQUEIDENTIFIER) PK,
-s.risco9 Value, p.PK FKPolicy, t.PK FKField, o.PK FKObject, NULL FKExercise
+s.risco9 Value, p.PK FKPolicy, t.PK FKField, NULL FKObject, NULL FKExercise
 from amartins..empresa.apolice s
 inner join amartins.tblBBPolicies p on p.MigrationID=s.MigrationID
 inner join amartins.tblBBPolicyCoverages c on c.FKPolicy=p.PK
 inner join bigbang.tblBBTaxes t on t.FKCoverage=c.FKCoverage
-inner join amartins.tblInsuredObjects o on o.FKPolicy=p.PK
 where t.pk='A281CBFB-7317-4589-A612-A04D0124D40F' and c.BPresent=1
 and p.FKSubLine='22FE8580-E680-4EC7-9ABB-9EE9011AA269';
 
 insert into amartins.tblBBPolicyValues (PK, Value, FKPolicy, FKField, FKObject, FKExercise)
 select CAST(CAST(NEWID() AS BINARY(10)) + CAST(GETDATE() AS BINARY(6)) AS UNIQUEIDENTIFIER) PK,
-NULL Value, p.PK FKPolicy, t.PK FKField, o.PK FKObject, NULL FKExercise
+NULL Value, p.PK FKPolicy, t.PK FKField, NULL FKObject, NULL FKExercise
 from amartins..empresa.apolice s
 inner join amartins.tblBBPolicies p on p.MigrationID=s.MigrationID
 inner join amartins.tblBBPolicyCoverages c on c.FKPolicy=p.PK
 inner join bigbang.tblBBTaxes t on t.FKCoverage=c.FKCoverage
-inner join amartins.tblInsuredObjects o on o.FKPolicy=p.PK
 where t.pk='29FA35EB-9DCD-490F-BFC0-A04D012517E4' and c.BPresent=1
 and p.FKSubLine='22FE8580-E680-4EC7-9ABB-9EE9011AA269';
 
 insert into amartins.tblBBPolicyValues (PK, Value, FKPolicy, FKField, FKObject, FKExercise)
 select CAST(CAST(NEWID() AS BINARY(10)) + CAST(GETDATE() AS BINARY(6)) AS UNIQUEIDENTIFIER) PK,
-NULL Value, p.PK FKPolicy, t.PK FKField, o.PK FKObject, NULL FKExercise
+NULL Value, p.PK FKPolicy, t.PK FKField, NULL FKObject, NULL FKExercise
 from amartins..empresa.apolice s
 inner join amartins.tblBBPolicies p on p.MigrationID=s.MigrationID
 inner join amartins.tblBBPolicyCoverages c on c.FKPolicy=p.PK
 inner join bigbang.tblBBTaxes t on t.FKCoverage=c.FKCoverage
-inner join amartins.tblInsuredObjects o on o.FKPolicy=p.PK
 where t.pk='C0F93BC8-98AA-441D-8DCB-A04D012674A3' and c.BPresent=1
 and p.FKSubLine='22FE8580-E680-4EC7-9ABB-9EE9011AA269';
 
