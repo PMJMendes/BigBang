@@ -53,8 +53,6 @@ public class ForceValidatePolicy
 		try
 		{
 			lobjPolicy = (Policy)GetProcess().GetData();
-			lobjPolicy.setAt(13, Constants.StatusID_Valid);
-			lobjPolicy.SaveToDb(pdb);
 		}
 		catch (Throwable e)
 		{
