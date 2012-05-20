@@ -550,7 +550,7 @@ public class QuoteRequestServiceImpl
 			ArrayList<QuoteRequest.HeaderField> larrHeaders;
 			ArrayList<QuoteRequest.Coverage> larrAuxCoverages;
 			ArrayList<QuoteRequest.Coverage.Variability> larrVariability;
-			ArrayList<QuoteRequest.ColumnHeader> larrColumns;
+			Hashtable<Integer, QuoteRequest.ColumnHeader> larrColumns;
 			ArrayList<QuoteRequest.TableSection.TableField> larrTableFields;
 			ArrayList<QuoteRequest.ExtraField> larrExtraFields;
 			QuoteRequest.RequestSubLine lobjSubLine;
@@ -628,7 +628,7 @@ public class QuoteRequestServiceImpl
 				}
 				lobjSubLine.coverages = larrAuxCoverages.toArray(new QuoteRequest.Coverage[larrAuxCoverages.size()]);
 
-				larrColumns = new ArrayList<QuoteRequest.ColumnHeader>();
+				larrColumns = new Hashtable<Integer, QuoteRequest.ColumnHeader>();
 				for ( j = 0; j < marrSubLines.get(i).marrCoverages.size(); j++ )
 				{
 					if ( marrSubLines.get(i).marrCoverages.get(j).mbIsHeader )
@@ -638,6 +638,8 @@ public class QuoteRequestServiceImpl
 					{
 						if ( marrSubLines.get(i).marrCoverages.get(j).marrFields[k].mlngColIndex < 0 )
 							continue;
+						if ( larrColumns.containsKey(marrSubLines.get(i).marrCoverages.get(j).marrFields[k].mlngColIndex) )
+							continue;
 
 						lobjColumn = new QuoteRequest.ColumnHeader();
 						lobjColumn.label = marrSubLines.get(i).marrCoverages.get(j).marrFields[k].mstrLabel;
@@ -645,11 +647,13 @@ public class QuoteRequestServiceImpl
 						lobjColumn.unitsLabel = marrSubLines.get(i).marrCoverages.get(j).marrFields[k].mstrUnits;
 						lobjColumn.refersToId = ( marrSubLines.get(i).marrCoverages.get(j).marrFields[k].midRefersTo == null ? null :
 							marrSubLines.get(i).marrCoverages.get(j).marrFields[k].midRefersTo.toString() );
-						larrColumns.add(lobjColumn);
+						larrColumns.put(marrSubLines.get(i).marrCoverages.get(j).marrFields[k].mlngColIndex, lobjColumn);
 					}
 					break;
 				}
-				lobjSubLine.columns = larrColumns.toArray(new QuoteRequest.ColumnHeader[larrColumns.size()]);
+				lobjSubLine.columns = new QuoteRequest.ColumnHeader[larrColumns.size()];
+				for ( Integer ii: larrColumns.keySet() )
+					lobjSubLine.columns[ii] = larrColumns.get(ii);
 
 				if ( lobjSubLine.coverages.length == 0 )
 					lobjSubLine.tableData = new QuoteRequest.TableSection[0];
@@ -837,7 +841,7 @@ public class QuoteRequestServiceImpl
 			ArrayList<QuoteRequest.HeaderField> larrHeaders;
 			ArrayList<QuoteRequest.Coverage> larrAuxCoverages;
 			ArrayList<QuoteRequest.Coverage.Variability> larrVariability;
-			ArrayList<QuoteRequest.ColumnHeader> larrColumns;
+			Hashtable<Integer, QuoteRequest.ColumnHeader> larrColumns;
 			ArrayList<QuoteRequest.TableSection.TableField> larrTableFields;
 			ArrayList<QuoteRequest.ExtraField> larrExtraFields;
 			QuoteRequest.HeaderField lobjHeader;
@@ -902,7 +906,7 @@ public class QuoteRequestServiceImpl
 			}
 			pobjResult.coverages = larrAuxCoverages.toArray(new QuoteRequest.Coverage[larrAuxCoverages.size()]);
 
-			larrColumns = new ArrayList<QuoteRequest.ColumnHeader>();
+			larrColumns = new Hashtable<Integer, QuoteRequest.ColumnHeader>();
 			for ( i = 0; i < marrSubLines.get(plngSubLine).marrCoverages.size(); i++ )
 			{
 				if ( marrSubLines.get(plngSubLine).marrCoverages.get(i).mbIsHeader )
@@ -912,6 +916,8 @@ public class QuoteRequestServiceImpl
 				{
 					if ( marrSubLines.get(plngSubLine).marrCoverages.get(i).marrFields[j].mlngColIndex < 0 )
 						continue;
+					if ( larrColumns.contains(marrSubLines.get(plngSubLine).marrCoverages.get(i).marrFields[j].mlngColIndex) )
+						continue;
 
 					lobjColumn = new QuoteRequest.ColumnHeader();
 					lobjColumn.label = marrSubLines.get(plngSubLine).marrCoverages.get(i).marrFields[j].mstrLabel;
@@ -919,11 +925,13 @@ public class QuoteRequestServiceImpl
 					lobjColumn.unitsLabel = marrSubLines.get(plngSubLine).marrCoverages.get(i).marrFields[j].mstrUnits;
 					lobjColumn.refersToId = ( marrSubLines.get(plngSubLine).marrCoverages.get(i).marrFields[j].midRefersTo == null ? null :
 						marrSubLines.get(plngSubLine).marrCoverages.get(i).marrFields[j].midRefersTo.toString() );
-					larrColumns.add(lobjColumn);
+					larrColumns.put(marrSubLines.get(plngSubLine).marrCoverages.get(i).marrFields[j].mlngColIndex, lobjColumn);
 				}
 				break;
 			}
-			pobjResult.columns = larrColumns.toArray(new QuoteRequest.ColumnHeader[larrColumns.size()]);
+			pobjResult.columns = new QuoteRequest.ColumnHeader[larrColumns.size()];
+			for ( Integer ii: larrColumns.keySet() )
+				pobjResult.columns[ii] = larrColumns.get(ii);
 
 			if ( pobjResult.coverages.length == 0 )
 				pobjResult.tableData = new QuoteRequest.TableSection[0];
@@ -1922,7 +1930,7 @@ public class QuoteRequestServiceImpl
 		QuoteRequest.ExtraField lobjExtra;
 		Hashtable<UUID, Coverage> larrAuxCoverages;
 		ArrayList<QuoteRequest.Coverage> larrOutCoverages;
-		ArrayList<QuoteRequest.ColumnHeader> larrOutColumns;
+		Hashtable<Integer, QuoteRequest.ColumnHeader> larrOutColumns;
 		Coverage lobjCoverage;
 		Tax[] larrTaxes;
 		QuoteRequest.Coverage lobjAuxCoverage;
@@ -1930,7 +1938,6 @@ public class QuoteRequestServiceImpl
 		QuoteRequest.ColumnHeader lobjColumnHeader;
 		QuoteRequest.Coverage.Variability lobjVariability;
 		QuoteRequest.TableSection lobjSection;
-		boolean lbColDone;
 		int i, j, k;
 
 		try
@@ -2033,8 +2040,7 @@ public class QuoteRequestServiceImpl
 
 			larrAuxCoverages = new Hashtable<UUID, Coverage>();
 			larrOutCoverages = new ArrayList<QuoteRequest.Coverage>();
-			larrOutColumns = new ArrayList<QuoteRequest.ColumnHeader>();
-			lbColDone = false;
+			larrOutColumns = new Hashtable<Integer, QuoteRequest.ColumnHeader>();
 			for ( j = 0; j < larrLocalCoverages.length; j++ )
 			{
 				lobjCoverage = larrLocalCoverages[j].GetCoverage();
@@ -2061,7 +2067,7 @@ public class QuoteRequestServiceImpl
 					if ( larrTaxes[k].GetColumnOrder() < 0 )
 						continue;
 
-					if ( !lbColDone )
+					if ( !larrOutColumns.contains(larrTaxes[k].GetColumnOrder()) )
 					{
 						lobjColumnHeader = new QuoteRequest.ColumnHeader();
 						lobjColumnHeader.label = larrTaxes[k].getLabel();
@@ -2069,7 +2075,7 @@ public class QuoteRequestServiceImpl
 						lobjColumnHeader.unitsLabel = (String)larrTaxes[k].getAt(3);
 						lobjColumnHeader.refersToId = ( larrTaxes[k].getAt(7) == null ? null :
 								((UUID)larrTaxes[k].getAt(7)).toString() );
-						larrOutColumns.add(lobjColumnHeader);
+						larrOutColumns.put(larrTaxes[k].GetColumnOrder(), lobjColumnHeader);
 					}
 					lobjVariability = new QuoteRequest.Coverage.Variability();
 					lobjVariability.columnIndex = larrTaxes[k].GetColumnOrder();
@@ -2078,7 +2084,6 @@ public class QuoteRequestServiceImpl
 					larrVariability.add(lobjVariability);
 				}
 
-				lbColDone = true;
 				lobjAuxCoverage.variability = larrVariability.toArray(new QuoteRequest.Coverage.Variability[larrVariability.size()]);
 				larrOutCoverages.add(lobjAuxCoverage);
 				larrAuxCoverages.put(lobjCoverage.getKey(), lobjCoverage);
@@ -2097,7 +2102,8 @@ public class QuoteRequestServiceImpl
 
 				for ( k = 0; k < larrTaxes.length; k++ )
 				{
-					if ( !lbColDone && !larrCoverages[j].IsHeader() && larrTaxes[k].GetColumnOrder() >= 0 )
+					if ( !larrCoverages[j].IsHeader() && larrTaxes[k].GetColumnOrder() >= 0 &&
+							!larrOutColumns.contains(larrTaxes[k].GetColumnOrder()) )
 					{
 						lobjColumnHeader = new QuoteRequest.ColumnHeader();
 						lobjColumnHeader.label = larrTaxes[k].getLabel();
@@ -2105,7 +2111,7 @@ public class QuoteRequestServiceImpl
 						lobjColumnHeader.unitsLabel = (String)larrTaxes[k].getAt(3);
 						lobjColumnHeader.refersToId = ( larrTaxes[k].getAt(7) == null ? null :
 								((UUID)larrTaxes[k].getAt(7)).toString() );
-						larrOutColumns.add(lobjColumnHeader);
+						larrOutColumns.put(larrTaxes[k].GetColumnOrder(), lobjColumnHeader);
 					}
 
 					if ( larrAuxFields.get(larrTaxes[k].getKey()) != null )
@@ -2150,9 +2156,6 @@ public class QuoteRequestServiceImpl
 					larrAuxFields.put(larrTaxes[k].getKey(), larrTaxes[k]);
 				}
 
-				if ( !lbColDone && !larrCoverages[j].IsHeader() )
-					lbColDone = true;
-
 				if ( larrAuxCoverages.get(larrCoverages[j].getKey()) != null )
 					continue;
 
@@ -2188,7 +2191,9 @@ public class QuoteRequestServiceImpl
 
 			lobjResult.requestData[i].headerFields = larrOutHeaders.toArray(new QuoteRequest.HeaderField[larrOutHeaders.size()]);
 			lobjResult.requestData[i].coverages = larrOutCoverages.toArray(new QuoteRequest.Coverage[larrOutCoverages.size()]);
-			lobjResult.requestData[i].columns = larrOutColumns.toArray(new QuoteRequest.ColumnHeader[larrOutColumns.size()]);
+			lobjResult.requestData[i].columns = new QuoteRequest.ColumnHeader[larrOutColumns.size()];
+			for ( Integer ii: larrOutColumns.keySet() )
+				lobjResult.requestData[i].columns[ii] = larrOutColumns.get(ii);
 			lobjResult.requestData[i].tableData = new QuoteRequest.TableSection[] { lobjSection };
 			lobjResult.requestData[i].extraData = larrOutExtras.toArray(new QuoteRequest.ExtraField[larrOutExtras.size()]);
 

@@ -692,7 +692,7 @@ public class SubPolicyServiceImpl
 			ArrayList<SubPolicy.HeaderField> larrHeaders;
 			ArrayList<SubPolicy.Coverage> larrAuxCoverages;
 			ArrayList<SubPolicy.Coverage.Variability> larrVariability;
-			ArrayList<SubPolicy.ColumnHeader> larrColumns;
+			Hashtable<Integer, SubPolicy.ColumnHeader> larrColumns;
 			ArrayList<SubPolicy.TableSection.TableField> larrTableFields;
 			ArrayList<SubPolicy.ExtraField> larrExtraFields;
 			SubPolicy.HeaderField lobjHeader;
@@ -756,7 +756,7 @@ public class SubPolicyServiceImpl
 			}
 			pobjResult.coverages = larrAuxCoverages.toArray(new SubPolicy.Coverage[larrAuxCoverages.size()]);
 
-			larrColumns = new ArrayList<SubPolicy.ColumnHeader>();
+			larrColumns = new Hashtable<Integer, SubPolicy.ColumnHeader>();
 			for ( i = 0; i < marrCoverages.size(); i++ )
 			{
 				if ( marrCoverages.get(i).mbIsHeader )
@@ -766,6 +766,8 @@ public class SubPolicyServiceImpl
 				{
 					if ( marrCoverages.get(i).marrFields[j].mlngColIndex < 0 )
 						continue;
+					if ( larrColumns.containsKey(marrCoverages.get(i).marrFields[j].mlngColIndex) )
+						continue;
 
 					lobjColumn = new SubPolicy.ColumnHeader();
 					lobjColumn.label = marrCoverages.get(i).marrFields[j].mstrLabel;
@@ -773,11 +775,12 @@ public class SubPolicyServiceImpl
 					lobjColumn.unitsLabel = marrCoverages.get(i).marrFields[j].mstrUnits;
 					lobjColumn.refersToId = ( marrCoverages.get(i).marrFields[j].midRefersTo == null ? null :
 						marrCoverages.get(i).marrFields[j].midRefersTo.toString() );
-					larrColumns.add(lobjColumn);
+					larrColumns.put(marrCoverages.get(i).marrFields[j].mlngColIndex, lobjColumn);
 				}
-				break;
 			}
-			pobjResult.columns = larrColumns.toArray(new SubPolicy.ColumnHeader[larrColumns.size()]);
+			pobjResult.columns = new SubPolicy.ColumnHeader[larrColumns.size()];
+			for ( Integer ii: larrColumns.keySet() )
+				pobjResult.columns[ii] = larrColumns.get(ii);
 
 			if ( pobjResult.coverages.length * pobjResult.columns.length == 0 )
 				pobjResult.tableData = new SubPolicy.TableSection[0];
@@ -2127,7 +2130,7 @@ public class SubPolicyServiceImpl
 		SubPolicy.ExtraField lobjExtra;
 		Hashtable<UUID, Coverage> larrAuxCoverages;
 		ArrayList<SubPolicy.Coverage> larrOutCoverages;
-		ArrayList<SubPolicy.ColumnHeader> larrOutColumns;
+		Hashtable<Integer, SubPolicy.ColumnHeader> larrOutColumns;
 		Coverage lobjCoverage;
 		SubPolicy.ColumnHeader lobjColumnHeader;
 		Tax[] larrTaxes;
@@ -2135,7 +2138,6 @@ public class SubPolicyServiceImpl
 		ArrayList<SubPolicy.Coverage.Variability> larrVariability;
 		SubPolicy.Coverage.Variability lobjVariability;
 		SubPolicy.TableSection lobjSection;
-		boolean lbColDone;
 		int i, j;
 
 		try
@@ -2252,8 +2254,7 @@ public class SubPolicyServiceImpl
 
 		larrAuxCoverages = new Hashtable<UUID, Coverage>();
 		larrOutCoverages = new ArrayList<SubPolicy.Coverage>();
-		larrOutColumns = new ArrayList<SubPolicy.ColumnHeader>();
-		lbColDone = false;
+		larrOutColumns = new Hashtable<Integer, SubPolicy.ColumnHeader>();
 		for ( i = 0; i < larrLocalCoverages.length; i++ )
 		{
 			lobjCoverage = larrLocalCoverages[i].GetCoverage();
@@ -2280,14 +2281,14 @@ public class SubPolicyServiceImpl
 				if ( larrTaxes[j].GetColumnOrder() < 0 )
 					continue;
 
-				if ( !lbColDone )
+				if ( !larrOutColumns.containsKey(larrTaxes[j].GetColumnOrder()) )
 				{
 					lobjColumnHeader = new SubPolicy.ColumnHeader();
 					lobjColumnHeader.label = larrTaxes[j].getLabel();
 					lobjColumnHeader.type = InsurancePolicyServiceImpl.GetFieldTypeByID((UUID)larrTaxes[j].getAt(2));
 					lobjColumnHeader.unitsLabel = (String)larrTaxes[j].getAt(3);
 					lobjColumnHeader.refersToId = ( larrTaxes[j].getAt(7) == null ? null : ((UUID)larrTaxes[j].getAt(7)).toString() );
-					larrOutColumns.add(lobjColumnHeader);
+					larrOutColumns.put(larrTaxes[j].GetColumnOrder(), lobjColumnHeader);
 				}
 				lobjVariability = new SubPolicy.Coverage.Variability();
 				lobjVariability.columnIndex = larrTaxes[j].GetColumnOrder();
@@ -2296,7 +2297,6 @@ public class SubPolicyServiceImpl
 				larrVariability.add(lobjVariability);
 
 			}
-			lbColDone = true;
 			lobjAuxCoverage.variability = larrVariability.toArray(new SubPolicy.Coverage.Variability[larrVariability.size()]);
 			larrOutCoverages.add(lobjAuxCoverage);
 			larrAuxCoverages.put(lobjCoverage.getKey(), lobjCoverage);
@@ -2315,14 +2315,15 @@ public class SubPolicyServiceImpl
 
 			for ( j = 0; j < larrTaxes.length; j++ )
 			{
-				if ( !lbColDone && !larrCoverages[i].IsHeader() && larrTaxes[j].GetColumnOrder() >= 0 )
+				if ( !larrCoverages[i].IsHeader() && larrTaxes[j].GetColumnOrder() >= 0 &&
+						!larrOutColumns.containsKey(larrTaxes[j].GetColumnOrder()) )
 				{
 					lobjColumnHeader = new SubPolicy.ColumnHeader();
 					lobjColumnHeader.label = larrTaxes[j].getLabel();
 					lobjColumnHeader.type = InsurancePolicyServiceImpl.GetFieldTypeByID((UUID)larrTaxes[j].getAt(2));
 					lobjColumnHeader.unitsLabel = (String)larrTaxes[j].getAt(3);
 					lobjColumnHeader.refersToId = ( larrTaxes[j].getAt(7) == null ? null : ((UUID)larrTaxes[j].getAt(7)).toString() );
-					larrOutColumns.add(lobjColumnHeader);
+					larrOutColumns.put(larrTaxes[j].GetColumnOrder(), lobjColumnHeader);
 				}
 
 				if ( larrAuxFields.get(larrTaxes[j].getKey()) != null )
@@ -2366,9 +2367,6 @@ public class SubPolicyServiceImpl
 				larrAuxFields.put(larrTaxes[j].getKey(), larrTaxes[j]);
 			}
 
-			if ( !lbColDone && !larrCoverages[i].IsHeader() )
-				lbColDone = true;
-
 			if ( larrAuxCoverages.get(larrCoverages[i].getKey()) != null )
 				continue;
 
@@ -2404,7 +2402,9 @@ public class SubPolicyServiceImpl
 
 		lobjResult.headerFields = larrOutHeaders.toArray(new SubPolicy.HeaderField[larrOutHeaders.size()]);
 		lobjResult.coverages = larrOutCoverages.toArray(new SubPolicy.Coverage[larrOutCoverages.size()]);
-		lobjResult.columns = larrOutColumns.toArray(new SubPolicy.ColumnHeader[larrOutColumns.size()]);
+		lobjResult.columns = new SubPolicy.ColumnHeader[larrOutColumns.size()];
+		for ( Integer ii: larrOutColumns.keySet() )
+			lobjResult.columns[ii] = larrOutColumns.get(ii);
 		lobjResult.tableData = new SubPolicy.TableSection[] { lobjSection };
 		lobjResult.extraData = larrOutExtras.toArray(new SubPolicy.ExtraField[larrOutExtras.size()]);
 
