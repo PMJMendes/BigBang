@@ -77,7 +77,7 @@ from credegs..empresa.apolice s
 inner join credite_egs.tblBBPolicies p on p.MigrationID=s.MigrationID
 inner join credite_egs.tblBBPolicyCoverages c on c.FKPolicy=p.PK
 inner join bigbang.tblBBTaxes t on t.FKCoverage=c.FKCoverage
-where t.TaxName like '%tipo%franq%' c.BPresent=1
+where t.TaxName like '%tipo%franq%' and c.BPresent=1
 and p.FKSubLine='B3174C0F-DDF9-4466-A419-9EE90119ABDE';
 
 insert into credite_egs.tblBBPolicyValues (PK, Value, FKPolicy, FKField, FKObject, FKExercise)
@@ -112,7 +112,7 @@ inner join credite_egs.tblBBPolicies p on p.MigrationID=s.MigrationID
 inner join credite_egs.tblBBPolicyCoverages c on c.FKPolicy=p.PK
 inner join bigbang.tblBBTaxes t on t.FKCoverage=c.FKCoverage
 inner join credite_egs.tblInsuredObjects o on o.FKPolicy=p.PK
-where t.TaxName like 'franq%' c.BPresent=1
+where t.TaxName like 'franq%' and c.BPresent=1
 and p.FKSubLine='B3174C0F-DDF9-4466-A419-9EE90119ABDE';
 
 insert into credite_egs.tblBBPolicyValues (PK, Value, FKPolicy, FKField, FKObject, FKExercise)
@@ -124,7 +124,7 @@ inner join credite_egs.tblBBPolicyCoverages c on c.FKPolicy=p.PK
 inner join bigbang.tblBBTaxes t on t.FKCoverage=c.FKCoverage
 inner join credite_egs.tblExercises x on x.FKPolicy=p.PK
 inner join credite_egs.tblInsuredObjects o on o.FKPolicy=p.PK
-where t.TaxName like 'capital' c.BPresent=1
+where t.TaxName like 'capital' and c.BPresent=1
 and p.FKSubLine='B3174C0F-DDF9-4466-A419-9EE90119ABDE';
 
 /**  301 **/
@@ -206,7 +206,7 @@ from credegs..empresa.apolice s
 inner join credite_egs.tblBBPolicies p on p.MigrationID=s.MigrationID
 inner join credite_egs.tblBBPolicyCoverages c on c.FKPolicy=p.PK
 inner join bigbang.tblBBTaxes t on t.FKCoverage=c.FKCoverage
-where t.TaxName like '%tipo%franq%' c.BPresent=1
+where t.TaxName like '%tipo%franq%' and c.BPresent=1
 and p.FKSubLine='995699D1-1674-4B8E-B813-9EE90119A4F7';
 
 insert into credite_egs.tblBBPolicyValues (PK, Value, FKPolicy, FKField, FKObject, FKExercise)
@@ -257,7 +257,7 @@ inner join credite_egs.tblBBPolicies p on p.MigrationID=s.MigrationID
 inner join credite_egs.tblBBPolicyCoverages c on c.FKPolicy=p.PK
 inner join bigbang.tblBBTaxes t on t.FKCoverage=c.FKCoverage
 inner join credite_egs.tblInsuredObjects o on o.FKPolicy=p.PK
-where t.TaxName like 'franq%' c.BPresent=1
+where t.TaxName like 'franq%' and c.BPresent=1
 and p.FKSubLine='995699D1-1674-4B8E-B813-9EE90119A4F7';
 
 insert into credite_egs.tblBBPolicyValues (PK, Value, FKPolicy, FKField, FKObject, FKExercise)
@@ -278,5 +278,5 @@ inner join credite_egs.tblBBPolicyCoverages c on c.FKPolicy=p.PK
 inner join bigbang.tblBBTaxes t on t.FKCoverage=c.FKCoverage
 inner join credite_egs.tblExercises x on x.FKPolicy=p.PK
 inner join credite_egs.tblInsuredObjects o on o.FKPolicy=p.PK
-where t.TaxName like 'capital' c.BPresent=1
+where t.TaxName like 'capital' and c.BPresent=1
 and p.FKSubLine='995699D1-1674-4B8E-B813-9EE90119A4F7';
