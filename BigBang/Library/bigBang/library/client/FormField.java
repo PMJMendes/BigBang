@@ -1,5 +1,6 @@
 package bigBang.library.client;
 
+import bigBang.library.client.userInterface.NumericTextBoxFormField.NumericWrapper;
 import bigBang.library.client.userInterface.view.View;
 import bigBang.library.client.FieldValidator;
 
@@ -72,7 +73,7 @@ public abstract class FormField<T> extends View implements HasValue<T>, Validata
 	}
 
 	public void setFieldWidth(String width) {
-		((Widget)this.field).setWidth(width);
+		((NumericWrapper)field).getField().setWidth(width);
 	}
 	
 	public abstract void clear();
