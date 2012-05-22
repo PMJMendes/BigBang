@@ -390,10 +390,10 @@ public class CoverageManagementOperationViewPresenter implements ViewPresenter {
 
 						@Override
 						public void onResponse(Line response) {
-							((LineList)view.getLineList()).getForm().setValue(response);
 							((LineList)view.getLineList()).showForm(true);
 							((LineList)view.getLineList()).getForm().setReadOnly(true);
 							((LineList)view.getLineList()).getToolbar().setSaveModeEnabled(false);
+							((LineList)view.getLineList()).getForm().setValue(response);
 						}
 
 						@Override
@@ -419,11 +419,11 @@ public class CoverageManagementOperationViewPresenter implements ViewPresenter {
 
 						@Override
 						public void onResponse(SubLine response) {
-
-							((SubLineList)view.getSubLineList()).getForm().setValue(response);
 							((SubLineList)view.getSubLineList()).showForm(true);
 							((SubLineList)view.getSubLineList()).getForm().setReadOnly(true);
 							((SubLineList)view.getSubLineList()).getToolBar().setSaveModeEnabled(false);
+							((SubLineList)view.getSubLineList()).getForm().setValue(response);
+
 						}
 
 						@Override

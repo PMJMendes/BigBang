@@ -39,7 +39,7 @@ public class NumericTextBoxFormField extends FormField<Double>{
 
 				@Override
 				public void onKeyPress(KeyPressEvent event) {
-										
+
 					if(!Character.isDigit((char)event.getUnicodeCharCode()) && field.getValue().contains(LocaleInfo.getCurrentLocale().getNumberConstants().decimalSeparator()))
 						event.preventDefault();
 				}
@@ -49,14 +49,17 @@ public class NumericTextBoxFormField extends FormField<Double>{
 
 				@Override
 				public void onValueChange(ValueChangeEvent<String> event) {
-					try{
-						setValue(nf.parse(event.getValue()));
-						curr = event.getValue();
-					}catch(NumberFormatException e){
-						field.setValue(curr);
+					if(!event.getValue().isEmpty()){
+						try{
+							setValue(nf.parse(event.getValue()));
+							curr = event.getValue();
+						}catch(NumberFormatException e){
+							field.setValue(curr);
+						}
 					}
 				}
 			});
+
 
 			nf = NumberFormat.getDecimalFormat();
 		}

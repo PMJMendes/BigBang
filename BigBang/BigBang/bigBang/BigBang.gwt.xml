@@ -18,7 +18,7 @@
 	
 	<!-- Poruguese language, independent of country -->
 	<extend-property name="locale" values="pt"/>
-	<set-property-fallback name="locale" value="pt"/>
+	<set-property name="locale" value="pt" />
 
 	<!-- BigBang Application modules -->
 	<inherits name="com.google.gwt.http.HTTP"/>
