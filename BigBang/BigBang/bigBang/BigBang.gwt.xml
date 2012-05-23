@@ -15,9 +15,11 @@
 	
 	<!-- Properties -->
 	<set-property name="user.agent" value="safari"/>
+
 	
 	<!-- Poruguese language, independent of country -->
 	<extend-property name="locale" values="pt"/>
+	<set-property-fallback name="locale" value="pt"/>
 	<set-property name="locale" value="pt" />
 
 	<!-- BigBang Application modules -->
@@ -27,7 +29,7 @@
 	<inherits name="bigBang.definitions.BigBangDefinitions" />
 	<inherits name="bigBang.module.mainModule.MainModule" />
 	<inherits name="bigBang.module.loginModule.LoginModule" />
-
+	
 	<!-- Specify the app entry point class. -->
 	<entry-point class='bigBang.client.BigBang' />
 
