@@ -19,6 +19,7 @@ import com.google.gwt.user.client.ui.HasVerticalAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
+import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.user.client.ui.ValueBoxBase.TextAlignment;
 
 
@@ -87,9 +88,12 @@ public class NumericTextBoxFormField extends FormField<Double>{
 
 		@Override
 		public void setValue(Double value, boolean fireEvents) {
-
-			String formatted = nf.format(value);
-			field.setValue(formatted);
+			if(value == null) {
+				field.setValue(null);
+			}else{
+				String formatted = nf.format(value);
+				field.setValue(formatted);
+			}
 		}
 
 		public TextBox getField(){
@@ -184,7 +188,7 @@ public class NumericTextBoxFormField extends FormField<Double>{
 
 	@Override
 	public void setFieldWidth(String width) {
-		super.setFieldWidth(width);
+		((NumericWrapper)field).getField().setWidth(width);
 
 		if(width.equals("100%")){
 			this.wrapper.setWidth("100%");
@@ -195,6 +199,21 @@ public class NumericTextBoxFormField extends FormField<Double>{
 
 	public void setTextAligment(TextAlignment alignment){
 		((NumericWrapper)this.field).getField().setAlignment(alignment);
+	}
+
+	@Override
+	public void setInvalid(boolean invalid) {
+		Widget field = ((NumericWrapper)this.field).getField();
+		if(field != null){
+			if(invalid)
+				((Widget)field).addStyleName("invalidFormField");
+			else
+				((Widget)field).removeStyleName("invalidFormField");
+		}
+		FieldValidator<?> validator = this.validator;
+		String message =  validator == null ? null : validator.getErrorMessage();
+		this.errorMessageLabel.setText(message == null ? "Valor inválido" : message);
+		this.errorMessageLabel.setVisible(invalid);
 	}
 
 }
