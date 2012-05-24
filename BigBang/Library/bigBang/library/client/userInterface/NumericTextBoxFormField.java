@@ -41,7 +41,7 @@ public class NumericTextBoxFormField extends FormField<Double>{
 				@Override
 				public void onKeyPress(KeyPressEvent event) {					
 					
-					if(!Character.isDigit((char)event.getUnicodeCharCode())){
+					if(!(Character.isDigit((char)event.getUnicodeCharCode()) || event.getCharCode() == LocaleInfo.getCurrentLocale().getNumberConstants().groupingSeparator().charAt(0))){
 						if(!(!field.getValue().contains(LocaleInfo.getCurrentLocale().getNumberConstants().decimalSeparator()) && LocaleInfo.getCurrentLocale().getNumberConstants().decimalSeparator().charAt(0) == event.getCharCode())){
 							event.preventDefault();
 						}

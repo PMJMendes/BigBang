@@ -28,9 +28,10 @@ public class TaxForm extends FormView<Tax> {
 	private String coverageId;
 
 	public TaxForm() {
-		this.setSize("450px", "290px");
+		
 		name = new TextBoxFormField("Designação", new TaxFormValidator.NameValidator());
 		name.setFieldWidth("360px");
+		name.setLabelWidth("429px");
 		unitsLabel = new TextBoxFormField("Unidade");
 		unitsLabel.setFieldWidth("150px");
 		type = new ExpandableListBoxFormField(ModuleConstants.ListIDs.FieldTypes, "Tipo", new TaxFormValidator.UnitValidator());
@@ -54,20 +55,20 @@ public class TaxForm extends FormView<Tax> {
 				unitsLabel,
 		}, false);
 		
+		addFormFieldGroup(new FormField<?>[]{
+				type,
+				refersToEntityId,
+				tag, 
+		},false);
+		
 		addFormFieldGroup(new FormField<?>[]{variesByObject}, true);
 		addFormFieldGroup(new FormField<?>[]{visible}, false);
 		addFormFieldGroup(new FormField<?>[]{variesByExercise}, true);
 		addFormFieldGroup(new FormField<?>[]{mandatory}, false);
 		
-		addFormFieldGroup(new FormField<?>[]{
-				type,
-				refersToEntityId,
-				tag, 
-		}, true);
+		type.setLabelWidth("429px");
 		
-		
-		addFormField(columnOrder, false);
-		addFormField(defaultValue, false);
+		addFormFieldGroup(new FormField<?>[]{columnOrder}, true);
 		
 		type.addValueChangeHandler(new ValueChangeHandler<String>() {
 			
@@ -105,7 +106,7 @@ public class TaxForm extends FormView<Tax> {
 					defaultValue.setFieldWidth("150px");
 				}
 				
-				TaxForm.this.addFormField(defaultValue, false);
+				addFormFieldGroup(new FormField<?>[]{defaultValue}, false);
 				defaultValue.setReadOnly(readOnly);
 			}
 		}); 
@@ -185,8 +186,8 @@ public class TaxForm extends FormView<Tax> {
 			((TextBoxFormField)defaultValue).setValue(info.defaultValue);
 			defaultValue.setFieldWidth("150px");
 		}
-		addFormField(defaultValue, false);
-		defaultValue.setReadOnly(true);
+		addFormFieldGroup(new FormField<?>[]{defaultValue}, false);
+		defaultValue.setReadOnly(readOnly);
 
 	}
 	

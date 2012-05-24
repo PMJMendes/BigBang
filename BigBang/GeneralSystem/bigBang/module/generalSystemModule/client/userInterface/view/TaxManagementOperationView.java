@@ -26,7 +26,6 @@ import com.google.gwt.user.client.ui.HasValue;
 import com.google.gwt.user.client.ui.MenuItem;
 import com.google.gwt.user.client.ui.SplitLayoutPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
-import com.google.gwt.user.client.ui.Widget;
 
 public class TaxManagementOperationView extends View implements TaxManagementOperationViewPresenter.Display {
 
@@ -100,10 +99,6 @@ public class TaxManagementOperationView extends View implements TaxManagementOpe
 
 		this.form = new TaxForm();
 		this.popup = new PopupPanel();
-		popup.setSize("410px", "290px");
-		form.setSize("410px", "290px");
-		Widget formContent = form.getNonScrollableContent();
-		formContent.setSize("410px", "290px");
 
 		toolbar = new BigBangOperationsToolBar(){
 
@@ -142,13 +137,12 @@ public class TaxManagementOperationView extends View implements TaxManagementOpe
 		toolbar.showItem(SUB_MENU.ADMIN, true);
 
 		popupWrapper = new VerticalPanel();
+		popupWrapper.setSize("100%", "100%");
+		toolbar.setWidth("100%");
 		popupWrapper.add(toolbar);
-		popupWrapper.add(formContent);
-
+		popupWrapper.add(form.getNonScrollableContent());
+		popupWrapper.setCellHeight(form.getNonScrollableContent(),"100%");
 		popup.add(popupWrapper);
-		popup.setHeight("410px");
-		popup.setWidth("290px");
-
 
 
 		navPanel.setSize("100%", "100%");
