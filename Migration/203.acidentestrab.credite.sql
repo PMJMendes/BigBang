@@ -66,7 +66,7 @@ set language us_english;
 
 insert into credite_egs.tblBBPolicyValues (PK, Value, FKPolicy, FKField, FKObject, FKExercise)
 select CAST(CAST(NEWID() AS BINARY(10)) + CAST(GETDATE() AS BINARY(6)) AS UNIQUEIDENTIFIER) PK,
-isnull(cast(case s.taxa when 0 then null else s.taxa/POWER(10.0, ISNULL(s.pertaxa, 1)-1) end as nvarchar(250)), case s.texto2 when '' then null else s.texto2 end) Value,
+isnull(cast(cast(case s.taxa when 0 then null else s.taxa/POWER(10.0, ISNULL(s.pertaxa, 1)-1) end as float) as nvarchar(250)), case s.texto2 when '' then null else s.texto2 end) Value,
 p.PK FKPolicy, 'C24074CB-BDC2-45CC-BE49-9F9601419367' FKField, NULL FKObject, NULL FKExercise
 from credegs..empresa.apolice s
 inner join credite_egs.tblBBPolicies p on p.MigrationID=s.MigrationID
@@ -74,7 +74,7 @@ where p.FKSubLine='BEBB58B5-CD95-4872-B72F-9EE90118938F';
 
 insert into credite_egs.tblBBPolicyValues (PK, Value, FKPolicy, FKField, FKObject, FKExercise)
 select CAST(CAST(NEWID() AS BINARY(10)) + CAST(GETDATE() AS BINARY(6)) AS UNIQUEIDENTIFIER) PK,
-ISNULL(case s.vcapital when 0 then null else CAST(s.vcapital AS nvarchar(250)) end, case s.texto6 when '' then null else s.texto6 end) Value,
+isnull(case s.vcapital when 0 then null else cast(cast(s.vcapital as float) as nvarchar(250)) end, case s.texto6 when '' then null else s.texto6 end) Value,
 p.PK FKPolicy, t.PK FKField, NULL FKObject, NULL FKExercise
 from credegs..empresa.apolice s
 inner join credite_egs.tblBBPolicies p on p.MigrationID=s.MigrationID
@@ -196,7 +196,7 @@ where p.FKSubLine='CA6EC5CA-FF4E-4E2C-BCF9-9EE901189BE9';
 
 insert into credite_egs.tblBBPolicyValues (PK, Value, FKPolicy, FKField, FKObject, FKExercise)
 select CAST(CAST(NEWID() AS BINARY(10)) + CAST(GETDATE() AS BINARY(6)) AS UNIQUEIDENTIFIER) PK,
-isnull(cast(case s.taxa when 0 then null else s.taxa/POWER(10.0, ISNULL(s.pertaxa, 1)-1) end as nvarchar(250)), case s.texto3 when '' then null else s.texto3 end) Value,
+isnull(cast(cast(case s.taxa when 0 then null else s.taxa/POWER(10.0, ISNULL(s.pertaxa, 1)-1) end as float) as nvarchar(250)), case s.texto3 when '' then null else s.texto3 end) Value,
 p.PK FKPolicy, '2DCB0554-5B3A-42F8-93F2-9F9601470CC5' FKField, NULL FKObject, NULL FKExercise
 from credegs..empresa.apolice s
 inner join credite_egs.tblBBPolicies p on p.MigrationID=s.MigrationID
@@ -204,7 +204,7 @@ where s.ramo=101 and p.FKSubLine='CA6EC5CA-FF4E-4E2C-BCF9-9EE901189BE9';
 
 insert into credite_egs.tblBBPolicyValues (PK, Value, FKPolicy, FKField, FKObject, FKExercise)
 select CAST(CAST(NEWID() AS BINARY(10)) + CAST(GETDATE() AS BINARY(6)) AS UNIQUEIDENTIFIER) PK,
-isnull(cast(case s.taxa when 0 then null else s.taxa/POWER(10.0, ISNULL(s.pertaxa, 1)-1) end as nvarchar(250)), case s.texto4 when '' then null else s.texto4 end) Value,
+isnull(cast(cast(case s.taxa when 0 then null else s.taxa/POWER(10.0, ISNULL(s.pertaxa, 1)-1) end as float) as nvarchar(250)), case s.texto4 when '' then null else s.texto4 end) Value,
 p.PK FKPolicy, '2DCB0554-5B3A-42F8-93F2-9F9601470CC5' FKField, NULL FKObject, NULL FKExercise
 from credegs..empresa.apolice s
 inner join credite_egs.tblBBPolicies p on p.MigrationID=s.MigrationID
@@ -212,7 +212,7 @@ where s.ramo=104 and p.FKSubLine='CA6EC5CA-FF4E-4E2C-BCF9-9EE901189BE9';
 
 insert into credite_egs.tblBBPolicyValues (PK, Value, FKPolicy, FKField, FKObject, FKExercise)
 select CAST(CAST(NEWID() AS BINARY(10)) + CAST(GETDATE() AS BINARY(6)) AS UNIQUEIDENTIFIER) PK,
-ISNULL(case s.vcapital when 0 then null else CAST(s.vcapital AS nvarchar(250)) end, case s.texto2 when '' then null else s.texto2 end) Value,
+ISNULL(case s.vcapital when 0 then null else cast(cast(s.vcapital as float) as nvarchar(250)) end, case s.texto2 when '' then null else s.texto2 end) Value,
 p.PK FKPolicy, t.PK FKField, NULL FKObject, NULL FKExercise
 from credegs..empresa.apolice s
 inner join credite_egs.tblBBPolicies p on p.MigrationID=s.MigrationID
@@ -297,7 +297,7 @@ where p.FKSubLine='1ADF22B2-D2A1-41CB-8FC1-9EE90118A7AF';
 
 insert into credite_egs.tblBBPolicyValues (PK, Value, FKPolicy, FKField, FKObject, FKExercise)
 select CAST(CAST(NEWID() AS BINARY(10)) + CAST(GETDATE() AS BINARY(6)) AS UNIQUEIDENTIFIER) PK,
-ISNULL(case s.vcapital when 0 then null else CAST(s.vcapital AS nvarchar(250)) end, case s.texto2 when '' then null else s.texto2 end) Value,
+ISNULL(case s.vcapital when 0 then null else cast(cast(s.vcapital as float) as nvarchar(250)) end, case s.texto2 when '' then null else s.texto2 end) Value,
 p.PK FKPolicy, '1CBF1E55-C86B-4065-A16D-9F960147A76D' FKField, NULL FKObject, NULL FKExercise
 from credegs..empresa.apolice s
 inner join credite_egs.tblBBPolicies p on p.MigrationID=s.MigrationID
@@ -305,7 +305,7 @@ where p.FKSubLine='1ADF22B2-D2A1-41CB-8FC1-9EE90118A7AF';
 
 insert into credite_egs.tblBBPolicyValues (PK, Value, FKPolicy, FKField, FKObject, FKExercise)
 select CAST(CAST(NEWID() AS BINARY(10)) + CAST(GETDATE() AS BINARY(6)) AS UNIQUEIDENTIFIER) PK,
-isnull(cast(case s.taxa when 0 then null else s.taxa/POWER(10.0, ISNULL(s.pertaxa, 1)-1) end as nvarchar(250)), case s.texto4 when '' then null else s.texto4 end) Value,
+isnull(cast(cast(case s.taxa when 0 then null else s.taxa/POWER(10.0, ISNULL(s.pertaxa, 1)-1) end as float) as nvarchar(250)), case s.texto4 when '' then null else s.texto4 end) Value,
 p.PK FKPolicy, '4618A421-8105-4677-8D36-9F960147BC35' FKField, NULL FKObject, NULL FKExercise
 from credegs..empresa.apolice s
 inner join credite_egs.tblBBPolicies p on p.MigrationID=s.MigrationID
@@ -313,7 +313,7 @@ where p.FKSubLine='1ADF22B2-D2A1-41CB-8FC1-9EE90118A7AF';
 
 insert into credite_egs.tblBBPolicyValues (PK, Value, FKPolicy, FKField, FKObject, FKExercise)
 select CAST(CAST(NEWID() AS BINARY(10)) + CAST(GETDATE() AS BINARY(6)) AS UNIQUEIDENTIFIER) PK,
-ISNULL(case s.vcapital when 0 then null else CAST(s.vcapital AS nvarchar(250)) end, case s.texto2 when '' then null else s.texto2 end) Value,
+ISNULL(case s.vcapital when 0 then null else cast(cast(s.vcapital as float) as nvarchar(250)) end, case s.texto2 when '' then null else s.texto2 end) Value,
 p.PK FKPolicy, t.PK FKField, NULL FKObject, NULL FKExercise
 from credegs..empresa.apolice s
 inner join credite_egs.tblBBPolicies p on p.MigrationID=s.MigrationID
@@ -399,7 +399,7 @@ set language us_english;
 
 insert into credite_egs.tblBBPolicyValues (PK, Value, FKPolicy, FKField, FKObject, FKExercise)
 select CAST(CAST(NEWID() AS BINARY(10)) + CAST(GETDATE() AS BINARY(6)) AS UNIQUEIDENTIFIER) PK,
-isnull(cast(case s.taxa when 0 then null else s.taxa/POWER(10.0, ISNULL(s.pertaxa, 1)-1) end as nvarchar(250)), case s.texto2 when '' then null else s.texto2 end) Value,
+isnull(cast(cast(case s.taxa when 0 then null else s.taxa/POWER(10.0, ISNULL(s.pertaxa, 1)-1) end as float) as nvarchar(250)), case s.texto2 when '' then null else s.texto2 end) Value,
 p.PK FKPolicy, '1875AE3F-0CF7-4C08-A839-9F9601480889' FKField, NULL FKObject, NULL FKExercise
 from credegs..empresa.apolice s
 inner join credite_egs.tblBBPolicies p on p.MigrationID=s.MigrationID
@@ -407,7 +407,7 @@ where p.FKSubLine='68ED97FA-B9F8-40F7-B470-9EE90118B2DB';
 
 insert into credite_egs.tblBBPolicyValues (PK, Value, FKPolicy, FKField, FKObject, FKExercise)
 select CAST(CAST(NEWID() AS BINARY(10)) + CAST(GETDATE() AS BINARY(6)) AS UNIQUEIDENTIFIER) PK,
-ISNULL(case s.vcapital when 0 then null else CAST(s.vcapital AS nvarchar(250)) end, case s.texto6 when '' then null else s.texto6 end) Value,
+ISNULL(case s.vcapital when 0 then null else cast(cast(s.vcapital as float) as nvarchar(250)) end, case s.texto6 when '' then null else s.texto6 end) Value,
 p.PK FKPolicy, t.PK FKField, NULL FKObject, NULL FKExercise
 from credegs..empresa.apolice s
 inner join credite_egs.tblBBPolicies p on p.MigrationID=s.MigrationID
@@ -514,7 +514,7 @@ where p.FKSubLine='BB0E78F2-3817-45C6-94C7-9EE90118BA82';
 
 insert into credite_egs.tblBBPolicyValues (PK, Value, FKPolicy, FKField, FKObject, FKExercise)
 select CAST(CAST(NEWID() AS BINARY(10)) + CAST(GETDATE() AS BINARY(6)) AS UNIQUEIDENTIFIER) PK,
-isnull(cast(case s.taxa when 0 then null else s.taxa/POWER(10.0, ISNULL(s.pertaxa, 1)-1) end as nvarchar(250)), case s.texto3 when '' then null else s.texto3 end) Value,
+isnull(cast(cast(case s.taxa when 0 then null else s.taxa/POWER(10.0, ISNULL(s.pertaxa, 1)-1) end as float) as nvarchar(250)), case s.texto3 when '' then null else s.texto3 end) Value,
 p.PK FKPolicy, '04CEEE97-6D16-403B-9959-9F9601491D19' FKField, NULL FKObject, NULL FKExercise
 from credegs..empresa.apolice s
 inner join credite_egs.tblBBPolicies p on p.MigrationID=s.MigrationID
@@ -522,7 +522,7 @@ where p.FKSubLine='BB0E78F2-3817-45C6-94C7-9EE90118BA82';
 
 insert into credite_egs.tblBBPolicyValues (PK, Value, FKPolicy, FKField, FKObject, FKExercise)
 select CAST(CAST(NEWID() AS BINARY(10)) + CAST(GETDATE() AS BINARY(6)) AS UNIQUEIDENTIFIER) PK,
-ISNULL(case s.vcapital when 0 then null else CAST(s.vcapital AS nvarchar(250)) end, case s.texto2 when '' then null else s.texto2 end) Value,
+ISNULL(case s.vcapital when 0 then null else cast(cast(s.vcapital as float) as nvarchar(250)) end, case s.texto2 when '' then null else s.texto2 end) Value,
 p.PK FKPolicy, t.PK FKField, NULL FKObject, NULL FKExercise
 from credegs..empresa.apolice s
 inner join credite_egs.tblBBPolicies p on p.MigrationID=s.MigrationID
@@ -643,7 +643,7 @@ where p.FKSubLine='FE18F5ED-F87C-4595-B9AC-9EE90118D568';
 
 insert into credite_egs.tblBBPolicyValues (PK, Value, FKPolicy, FKField, FKObject, FKExercise)
 select CAST(CAST(NEWID() AS BINARY(10)) + CAST(GETDATE() AS BINARY(6)) AS UNIQUEIDENTIFIER) PK,
-ISNULL(case s.vcapital when 0 then null else CAST(s.vcapital AS nvarchar(250)) end, case s.texto2 when '' then null else s.texto2 end) Value,
+ISNULL(case s.vcapital when 0 then null else cast(cast(s.vcapital as float) as nvarchar(250)) end, case s.texto2 when '' then null else s.texto2 end) Value,
 p.PK FKPolicy, t.PK FKField, o.PK FKObject, NULL FKExercise
 from credegs..empresa.apolice s
 inner join credite_egs.tblBBPolicies p on p.MigrationID=s.MigrationID
@@ -748,7 +748,7 @@ where p.FKSubLine='34E19434-6106-4359-93FE-9EE90118CEE0';
 
 insert into credite_egs.tblBBPolicyValues (PK, Value, FKPolicy, FKField, FKObject, FKExercise)
 select CAST(CAST(NEWID() AS BINARY(10)) + CAST(GETDATE() AS BINARY(6)) AS UNIQUEIDENTIFIER) PK,
-ISNULL(case s.vcapital when 0 then null else CAST(s.vcapital AS nvarchar(250)) end, case s.texto2 when '' then null else s.texto2 end) Value,
+ISNULL(case s.vcapital when 0 then null else cast(cast(s.vcapital as float) as nvarchar(250)) end, case s.texto2 when '' then null else s.texto2 end) Value,
 p.PK FKPolicy, t.PK FKField, NULL FKObject, NULL FKExercise
 from credegs..empresa.apolice s
 inner join credite_egs.tblBBPolicies p on p.MigrationID=s.MigrationID
