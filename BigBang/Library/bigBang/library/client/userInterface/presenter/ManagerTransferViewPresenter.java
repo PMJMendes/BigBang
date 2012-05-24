@@ -277,8 +277,8 @@ public class ManagerTransferViewPresenter implements ViewPresenter, HasOperation
 	}
 	
 	private void onAcceptTransferSuccess(){
-		EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "A transferência foi aceite"), TYPE.TRAY_NOTIFICATION));
 		EventBus.getInstance().fireEvent(new OperationWasExecutedEvent(BigBangConstants.OperationIds.ManagerTransfer.ACCEPT_MANAGER_TRANSFER, this.transfer.id));
+		EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "A transferência foi aceite"), TYPE.TRAY_NOTIFICATION));
 	}
 	
 	private void onAcceptTransferFailed(){
@@ -286,8 +286,8 @@ public class ManagerTransferViewPresenter implements ViewPresenter, HasOperation
 	}
 	
 	private void onCancelTransferSuccess(){
-		EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "A Transferência de Gestor foi cancelada"), TYPE.TRAY_NOTIFICATION));
 		EventBus.getInstance().fireEvent(new OperationWasExecutedEvent(BigBangConstants.OperationIds.ManagerTransfer.CANCEL_MANAGER_TRANSFER, this.transfer.id));
+		EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "A Transferência de Gestor foi cancelada"), TYPE.TRAY_NOTIFICATION));
 	}
 	
 	private void onCancelTransferFailed(){

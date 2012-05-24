@@ -54,7 +54,7 @@ public class ReceiptForm extends FormView<Receipt> implements ReceiptDataBrokerC
 		salesPremium.setUnitsLabel("€");
 		salesPremium.setFieldWidth("100px");
 		salesPremium.setTextAligment(TextAlignment.RIGHT);
-		commission = new TextBoxFormField("Commissão");
+		commission = new TextBoxFormField("Comissão");
 		commission.setUnitsLabel("€");
 		commission.setFieldWidth("100px");
 		commission.setTextAligment(TextAlignment.RIGHT);
