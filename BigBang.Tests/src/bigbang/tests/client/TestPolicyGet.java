@@ -27,7 +27,7 @@ public class TestPolicyGet
 			}
 		};
 
-		Services.insurancePolicyService.getPolicy("FFA24734-C5AC-4AD5-80A4-A05100CA1A78", callback);
+		Services.insurancePolicyService.getPolicy("87c1b24d-daa1-42bc-864a-a058003c4dba", callback);
 	}
 
 	private static void DoStep2()
@@ -45,7 +45,7 @@ public class TestPolicyGet
 			}
 		};
 
-		Services.insurancePolicyService.getPage("FFA24734-C5AC-4AD5-80A4-A05100CA1A78",
-				"778D45D1-6D67-456A-863B-A05100CA24A9", null, callback);
+		Services.insurancePolicyService.getPage("87c1b24d-daa1-42bc-864a-a058003c4dba",
+				"070a6adc-48bc-428c-a785-a058003ca488", null, callback);
 	}
 }
