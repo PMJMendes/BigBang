@@ -9,19 +9,17 @@ import bigBang.library.client.userInterface.NavigationPanel;
 import bigBang.library.client.userInterface.presenter.ContactNavigationViewPresenter;
 
 public class ContactNavigationView extends NavigationPanel implements ContactNavigationViewPresenter.Display{
-	
+
 	public ContactNavigationView(){
-		
-		this.navBar.setText("Ficha de Contacto");
-		setSize("660px", "540px");
+		setSize("680px", "680px");
 	}
 
 	@Override
 	public void setHomeWidget(UIObject view) {
 		super.setHomeWidget((Widget) view);
-		
+
 	}
-	
+
 	@Override
 	public void navigateTo(Widget w){
 		super.navigateTo(w);
@@ -30,7 +28,7 @@ public class ContactNavigationView extends NavigationPanel implements ContactNav
 	@Override
 	public HasWidgets getNextContainer(){
 		SimplePanel panel = new SimplePanel();
-		panel.setSize("660px", "500px");
+		panel.setSize("680px", "680px");
 		return panel;
 	}
 

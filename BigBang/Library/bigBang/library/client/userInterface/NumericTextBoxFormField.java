@@ -39,10 +39,13 @@ public class NumericTextBoxFormField extends FormField<Double>{
 			field.addKeyPressHandler(new KeyPressHandler() {
 
 				@Override
-				public void onKeyPress(KeyPressEvent event) {
-
-					if(!Character.isDigit((char)event.getUnicodeCharCode()) && field.getValue().contains(LocaleInfo.getCurrentLocale().getNumberConstants().decimalSeparator()))
-						event.preventDefault();
+				public void onKeyPress(KeyPressEvent event) {					
+					
+					if(!Character.isDigit((char)event.getUnicodeCharCode())){
+						if(!(!field.getValue().contains(LocaleInfo.getCurrentLocale().getNumberConstants().decimalSeparator()) && LocaleInfo.getCurrentLocale().getNumberConstants().decimalSeparator().charAt(0) == event.getCharCode())){
+							event.preventDefault();
+						}
+					}
 				}
 			});
 

@@ -113,7 +113,7 @@ public class ClientFormView extends FormView<Client> implements ClientProcessDat
 		}, true);
 
 		addSection("Tipo de Cliente");
-
+		
 		clientType.addOption(ModuleConstants.ClientTypeIDs.Person, "Indivíduo");
 		clientType.addOption(ModuleConstants.ClientTypeIDs.Company, "Empresa");
 		clientType.addOption(ModuleConstants.ClientTypeIDs.Other, "Outro");
@@ -142,11 +142,13 @@ public class ClientFormView extends FormView<Client> implements ClientProcessDat
 				birthDate,
 				gender
 		}, true);
+		birthDate.setLabelWidth("205px");
 		addFormFieldGroup(new FormField<?>[]{
 				maritalStatus,
 				profession
 		}, true);
-
+		maritalStatus.setLabelWidth("205px");
+		
 		companySection = new FormViewSection("Informação Específica a Empresas");
 		addSection(companySection);
 		addFormFieldGroup(new FormField<?>[]{

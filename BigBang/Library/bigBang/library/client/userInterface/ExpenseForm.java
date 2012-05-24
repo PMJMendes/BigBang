@@ -109,7 +109,9 @@ public class ExpenseForm extends FormView<Expense>{
 			}
 		});
 
-		addFormField(value, false);
+		addFormFieldGroup(new FormField<?>[]{
+				value	
+		}, false);
 		addWidget(settlementPanel, false);
 
 

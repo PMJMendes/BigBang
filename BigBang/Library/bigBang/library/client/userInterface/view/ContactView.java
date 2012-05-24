@@ -1,126 +1,39 @@
 package bigBang.library.client.userInterface.view;
 
-import bigBang.definitions.shared.BigBangConstants;
 import bigBang.definitions.shared.Contact;
 import bigBang.definitions.shared.ContactInfo;
 import bigBang.library.client.event.ActionInvokedEvent;
 import bigBang.library.client.event.ActionInvokedEventHandler;
-import bigBang.library.client.event.DeleteRequestEvent;
-import bigBang.library.client.event.DeleteRequestEventHandler;
-import bigBang.library.client.userInterface.AddressFormField;
+import bigBang.library.client.userInterface.ContactForm;
+import bigBang.library.client.userInterface.ContactForm.ContactEntry;
 import bigBang.library.client.userInterface.ContactOperationsToolBar;
-import bigBang.library.client.userInterface.ExpandableListBoxFormField;
 import bigBang.library.client.userInterface.List;
 import bigBang.library.client.userInterface.ListEntry;
-import bigBang.library.client.userInterface.NavigationListEntry;
 import bigBang.library.client.userInterface.ListHeader;
-import bigBang.library.client.userInterface.TextBoxFormField;
+import bigBang.library.client.userInterface.NavigationListEntry;
 import bigBang.library.client.userInterface.presenter.ContactViewPresenter;
 import bigBang.library.client.userInterface.presenter.ContactViewPresenter.Action;
 
-import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.user.client.ui.Button;
-import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.SplitLayoutPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
 public class ContactView extends View implements ContactViewPresenter.Display{
 
-	private SplitLayoutPanel wrapper;
-	private VerticalPanel wrapperRight;
-	private VerticalPanel wrapperLeft;
-	private ActionInvokedEventHandler<Action> actionHandler;
-	private DeleteRequestEventHandler deleteHandler;
-	private TextBoxFormField name;
-	private ExpandableListBoxFormField type;
-	private AddressFormField address;
-	private List<ContactInfo> contactIL;
-	private Contact contact;
+
+	private ContactForm form;
 	private ContactOperationsToolBar toolbar;
+	private Contact contact;
+	private ActionInvokedEventHandler<Action> actionHandler;
 	private List<Contact> subContacts;
-
-	public class ContactEntry extends ListEntry<ContactInfo>{
-
-		protected ExpandableListBoxFormField type;
-		protected TextBoxFormField infoValue;
-		private Button remove;
-		public ContactEntry(ContactInfo contactinfo) {
-			super(contactinfo);
-		}
-
-		@Override
-		public void setValue(ContactInfo contactinfo) {
-
-			if(contactinfo == null){
-				Button add = new Button("Adicionar Detalhe");
-				add.addClickHandler(new ClickHandler() {
-
-					@Override
-					public void onClick(ClickEvent event) {
-						fireAction(Action.ADD_NEW_DETAIL);
-
-					}
-				});
-				add.setWidth("180px");
-				this.setLeftWidget(add);
-				super.setValue(contactinfo);
-				return;	
-
-			}
-
-			type = new ExpandableListBoxFormField(BigBangConstants.TypifiedListIds.CONTACT_DETAILS_TYPE, "");
-			type.setFieldWidth("100px");
-			infoValue = new TextBoxFormField();
-			infoValue.setFieldWidth("205px");
-			infoValue.setWidth("205px");
-
-			type.setValue(contactinfo.typeId);
-			infoValue.setValue(contactinfo.value);
-
-			remove = new Button("X");
-			remove.addClickHandler(new ClickHandler() {
-
-				@Override
-				public void onClick(ClickEvent event) {
-					fireEvent(new DeleteRequestEvent(getValue()));
-				}
-			});
-			this.setLeftWidget(type);
-			this.setWidget(infoValue);
-			this.setRightWidget(remove);
-			super.setValue(contactinfo);
-		}
-
-
-		public void setEditable(boolean editable){
-
-			if(type == null){
-				this.setVisible(editable);
-				return;
-			}
-			type.setReadOnly(!editable);
-			infoValue.setReadOnly(!editable);
-			remove.setVisible(editable);
-		}
-
-
-		@Override
-		public ContactInfo getValue() {
-
-			return value;
-
-		}
-	}
 
 	public ContactView(){
 
-
-		wrapper = new SplitLayoutPanel();
+		SplitLayoutPanel wrapper = new SplitLayoutPanel();
 		initWidget(wrapper);
+		wrapper.setSize("100%", "100%");
+		form = new ContactForm();
 
-		wrapperLeft = new VerticalPanel();
 		//TOOLBAR
 		toolbar = new ContactOperationsToolBar() {
 
@@ -150,41 +63,23 @@ public class ContactView extends View implements ContactViewPresenter.Display{
 			}
 
 		};
-
-		name = new TextBoxFormField("Nome");
-		name.setFieldWidth("200px");
-		type = new ExpandableListBoxFormField(BigBangConstants.TypifiedListIds.CONTACT_TYPE, "Tipo");
-		type.setFieldWidth("155px");
-		address = new AddressFormField();
-
-		address.setWidth("400px");
-
-		HorizontalPanel horz = new HorizontalPanel();
-		horz.add(type);
-		horz.add(name);
-		wrapperLeft.add(toolbar);
-		wrapperLeft.add(horz);
-		wrapperLeft.add(address);
-		ListHeader conts = new ListHeader("Detalhes");
-		wrapperLeft.add(conts);
-		contactIL = new List<ContactInfo>();
-		contactIL.setSelectableEntries(false);
-		contactIL.getScrollable().setHeight("188px");
-		wrapperLeft.setSize("100%", "100%");
-		wrapperLeft.add(contactIL.getScrollable());
-
-		wrapper.addWest(wrapperLeft, 410);
-		wrapper.setWidgetMinSize(wrapperLeft, 410);
-		wrapperRight = new VerticalPanel();
+		VerticalPanel wrapperRight  = new VerticalPanel();
 		subContacts = new List<Contact>();
 		ListHeader header = new ListHeader();
 		header.setText("Sub-Contactos");
+		wrapperRight.setSize("100%", "100%");
 		subContacts.setSize("100%","100%");
 		subContacts.setHeaderWidget(header);
 		wrapperRight.add(subContacts);
-		wrapperRight.setSize("100%", "100%");
-		wrapper.add(wrapperRight);
-		wrapper.setSize("660px", "500px");
+		toolbar.setWidth("100%");
+		VerticalPanel innerWrapper = new VerticalPanel();
+		innerWrapper.add(toolbar);
+		innerWrapper.add(form.getNonScrollableContent());
+		innerWrapper.setCellHeight(form.getNonScrollableContent(), "100%");
+		wrapper.addEast(wrapperRight, 235);
+		wrapper.setWidgetMinSize(wrapperRight, 235);
+		wrapper.add(innerWrapper);
+
 	}
 
 	@Override
@@ -192,6 +87,12 @@ public class ContactView extends View implements ContactViewPresenter.Display{
 		super.onAttach();
 		if(contact != null)
 			fireAction(Action.ATTACHED);
+	}
+
+	protected void fireAction(Action action){
+		if(this.actionHandler != null) {
+			actionHandler.onActionInvoked(new ActionInvokedEvent<Action>(action));
+		}
 	}
 
 	@Override
@@ -202,41 +103,9 @@ public class ContactView extends View implements ContactViewPresenter.Display{
 	@Override
 	public void setContact(Contact contact) {
 
-		contactIL.clear();
-
-		if(contact == null){
-			this.contact = new Contact();
-			this.name.setValue("");
-			this.type.setValue("");
-			this.address.setValue(null);
-			return;
-		}
-
+		form.setValue(contact);
 		this.contact = contact;
-		this.name.setValue(contact.name);
-		this.type.setValue(contact.typeId);
-		this.address.setValue(contact.address);
 
-
-	}
-
-	@Override
-	public void addContactInfo(ContactInfo contactinfo){
-
-
-		ContactEntry temp = new ContactEntry(contactinfo);
-		temp.setHeight("40px");
-		temp.addHandler(deleteHandler, DeleteRequestEvent.TYPE);
-		contactIL.add(temp);
-		contactIL.getScrollable().scrollToBottom();
-
-	}
-
-
-	protected void fireAction(Action action){
-		if(this.actionHandler != null) {
-			actionHandler.onActionInvoked(new ActionInvokedEvent<Action>(action));
-		}
 	}
 
 	@Override
@@ -248,74 +117,40 @@ public class ContactView extends View implements ContactViewPresenter.Display{
 	@Override
 	public void setEditable(boolean editable) {
 
-		this.name.setReadOnly(!editable);
-		this.type.setReadOnly(!editable);
-		this.type.setReadOnly(!editable);
-		this.address.setReadOnly(!editable);
-		int i;
-		ContactEntry temp;
-		for(i=0; i<contactIL.size(); i++){
-
-			temp = (ContactEntry) contactIL.get(i);
-			temp.setEditable(editable);
-
-		}
+		form.setEditable(editable);
 	}
 
 	@Override
 	public List<ContactInfo> getContactInfoList() {
 
-		return contactIL;
+		return form.getContactInfoList();
 
 	}
 
 	@Override
 	public ContactEntry initializeContactEntry() {
-		return new ContactEntry(new ContactInfo());
+		return form.initializeContactEntry();
 	}
 
 	@Override
 	public Contact getContact() {
 
-		Contact newContact = new Contact();
-		if(this.contact != null){
-			newContact = this.contact;
+		Contact newContact = form.getInfo();
+		newContact.subContacts = new Contact[getSubContactList().size()];
+
+		int curr = 0;
+
+		for(ListEntry<Contact> contact : getSubContactList()){
+			newContact.subContacts[curr] = contact.getValue();
+			curr++;
 		}
-
-		newContact.address = address.getValue();
-		newContact.name = name.getValue();
-		newContact.typeId = type.getValue();
-
-		for(int i = 0; i<contactIL.size()-1; i++){
-
-			if(((ContactEntry) contactIL.get(i)).type.getValue() == null && ((ContactEntry) contactIL.get(i)).infoValue.getValue() == null){
-				contactIL.remove(i);
-				i--;
-			}
-		}
-
-		newContact.info = new ContactInfo[contactIL.size()-1];
-		for(int i = 0; i<contactIL.size()-1; i++){
-
-			newContact.info[i] = new ContactInfo();
-			newContact.info[i].typeId = ((ContactEntry) contactIL.get(i)).type.getValue();
-			newContact.info[i].value = ((ContactEntry) contactIL.get(i)).infoValue.getValue();
-		}
-
-
 
 		return newContact;
 	}
 
+
 	public Contact getInfo() {
 		return this.contact;
-	}
-
-	@Override
-	public void registerDeleteHandler(
-			DeleteRequestEventHandler deleteRequestEventHandler) {
-		this.deleteHandler = deleteRequestEventHandler;
-
 	}
 
 	@Override
@@ -328,6 +163,11 @@ public class ContactView extends View implements ContactViewPresenter.Display{
 	}
 
 	@Override
+	public List<Contact> getSubContactList(){
+
+		return subContacts;
+	}
+
 	public void setSubContacts(Contact[] contacts) {
 
 		subContacts.clear();
@@ -341,13 +181,6 @@ public class ContactView extends View implements ContactViewPresenter.Display{
 		}
 	}
 
-	@Override
-	public List<Contact> getSubContactList(){
-
-		return subContacts;
-	}
-
-	@Override
 	public void addSubContact(Contact contact) {
 
 		NavigationListEntry<Contact> temp;
@@ -361,7 +194,4 @@ public class ContactView extends View implements ContactViewPresenter.Display{
 		}
 
 	}
-
-
-
 }

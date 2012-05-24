@@ -154,7 +154,6 @@ public abstract class DocumentForm extends FormView<Document>{
 	private Button add;
 	List<DocInfo> details;
 	DocInfo[] docInfo;
-	//private DeleteRequestEventHandler deleteHandler;
 	private boolean initialized = false;
 	protected String fileStorageId;
 	private boolean hasFile;

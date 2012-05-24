@@ -13,22 +13,20 @@ import bigBang.library.client.EventBus;
 import bigBang.library.client.HasParameters;
 import bigBang.library.client.Notification;
 import bigBang.library.client.Notification.TYPE;
-import bigBang.library.client.ValueSelectable;
 import bigBang.library.client.dataAccess.ContactsBroker;
 import bigBang.library.client.dataAccess.ContactsBrokerClient;
 import bigBang.library.client.dataAccess.DataBrokerManager;
 import bigBang.library.client.event.ActionInvokedEvent;
 import bigBang.library.client.event.ActionInvokedEventHandler;
-import bigBang.library.client.event.DeleteRequestEventHandler;
 import bigBang.library.client.event.NewNotificationEvent;
 import bigBang.library.client.event.SelectionChangedEvent;
 import bigBang.library.client.event.SelectionChangedEventHandler;
 import bigBang.library.client.history.NavigationHistoryItem;
 import bigBang.library.client.history.NavigationHistoryManager;
+import bigBang.library.client.userInterface.ContactForm.ContactEntry;
 import bigBang.library.client.userInterface.ContactOperationsToolBar;
 import bigBang.library.client.userInterface.List;
 import bigBang.library.client.userInterface.view.ContactView;
-import bigBang.library.client.userInterface.view.ContactView.ContactEntry;
 
 import com.google.gwt.user.client.ui.HasWidgets;
 import com.google.gwt.user.client.ui.UIObject;
@@ -52,7 +50,7 @@ public class ContactViewPresenter implements ViewPresenter, ContactsBrokerClient
 		EDIT,
 		CANCEL, 
 		CREATE_CHILD_CONTACT,
-		ADD_NEW_DETAIL, DELETE, CLOSE_POPUP, CHILD_SELECTED, ERROR_SHOWING_CONTACT, ATTACHED, CONTACT_CREATED
+		DELETE, CLOSE_POPUP, CHILD_SELECTED, ERROR_SHOWING_CONTACT, ATTACHED, CONTACT_CREATED
 	}
 
 	public ContactViewPresenter(Display view){
@@ -67,7 +65,6 @@ public class ContactViewPresenter implements ViewPresenter, ContactsBrokerClient
 
 
 		public void setContact(Contact contacto);
-		public void addContactInfo(ContactInfo info);
 		void registerActionHandler(ActionInvokedEventHandler<Action> handler);
 		Widget asWidget();  
 		public void setEditable(boolean b);
@@ -75,33 +72,19 @@ public class ContactViewPresenter implements ViewPresenter, ContactsBrokerClient
 		public ContactEntry initializeContactEntry();
 		public Contact getContact();
 		public void setSaveMode(boolean b);
-		public void registerDeleteHandler(
-				DeleteRequestEventHandler deleteRequestEventHandler);
 		ContactOperationsToolBar getToolbar();
-		void setSubContacts(Contact[] contacts);
 		List<Contact> getSubContactList();
-		public void addSubContact(Contact contact);
 	}
 
 	public void setContact(Contact contact){
 
 		if(contact == null){
-			view.addContactInfo(null);
 			view.setSaveMode(true);
 			view.setEditable(true);
 			return;
 		}
 		this.contact = contact;
 		view.setContact(contact);
-		view.setSubContacts(contact.subContacts);
-
-		for(int i = 0; i<contact.info.length; i++){
-
-
-			view.addContactInfo(contact.info[i]);
-
-		}
-		view.addContactInfo(null);
 		view.setEditable(false);
 	}
 
@@ -130,7 +113,7 @@ public class ContactViewPresenter implements ViewPresenter, ContactsBrokerClient
 		ownerId = parameterHolder.getParameter("ownerid");
 		contactId = parameterHolder.getParameter("contactid");
 		ownerTypeId= parameterHolder.getParameter("ownertypeid");
-	//	boolean hasPermissions = parameterHolder.getParameter("editpermission") != null;
+		//	boolean hasPermissions = parameterHolder.getParameter("editpermission") != null;
 
 		if(ownerId == null){
 			EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não é possível mostrar um contacto sem cliente associado."), TYPE.ALERT_NOTIFICATION));
@@ -146,7 +129,7 @@ public class ContactViewPresenter implements ViewPresenter, ContactsBrokerClient
 
 				setContact(null);
 				view.getToolbar().allowEdit(true);
-				
+
 			}
 			else
 			{
@@ -188,28 +171,6 @@ public class ContactViewPresenter implements ViewPresenter, ContactsBrokerClient
 			return;
 		}
 
-		view.registerDeleteHandler(new DeleteRequestEventHandler(){
-
-			@Override
-			public void onDeleteRequest(Object object) {
-
-				List<ContactInfo> list = view.getContactInfoList();
-
-				for(ValueSelectable<ContactInfo> cont: list){
-
-					if(cont.getValue() == object) {
-						list.remove(cont);
-						break;
-					}
-
-				}
-
-
-			}
-
-
-		});
-
 		view.registerActionHandler(new ActionInvokedEventHandler<Action>(){
 
 
@@ -217,10 +178,6 @@ public class ContactViewPresenter implements ViewPresenter, ContactsBrokerClient
 			public void onActionInvoked(ActionInvokedEvent<Action> action) {
 
 				switch(action.getAction()){
-
-				case ADD_NEW_DETAIL: 
-					addNewDetail();
-					break;
 
 				case ATTACHED:
 					parameterHolder.setParameter("contactid", view.getContact().id);
@@ -410,18 +367,6 @@ public class ContactViewPresenter implements ViewPresenter, ContactsBrokerClient
 		}else{
 			fireAction(Action.CREATE_CHILD_CONTACT);
 		}
-
-	}
-
-
-	public void addNewDetail() {
-
-		ContactEntry temp = view.initializeContactEntry();
-		temp.setHeight("40px");
-		view.getContactInfoList().remove(view.getContactInfoList().size()-1);
-		temp.setEditable(true);
-		view.addContactInfo(temp.getValue());
-		view.addContactInfo(null);
 
 	}
 

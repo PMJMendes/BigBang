@@ -81,14 +81,16 @@ public class ReceiptForm extends FormView<Receipt> implements ReceiptDataBrokerC
 		addFormField(client, false);
 		client.setEditable(false);
 		addFormField(policy, false);
+		addFormFieldGroup(new FormField<?>[]{
+				number,
+				mediator
+		}, true);
+		
 		policy.setEditable(false);
-
-		addFormField(number, true);
-		addFormField(type, true);
-
-		addFormField(manager, true);
-		addFormField(mediator, true);
-
+		addFormFieldGroup(new FormField<?>[]{
+				type,
+				manager
+		}, true);
 		addSection("Valores");
 		addFormField(totalPremium, true);
 		addFormField(salesPremium, true);

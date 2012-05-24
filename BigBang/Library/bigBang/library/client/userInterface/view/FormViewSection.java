@@ -104,6 +104,7 @@ public class FormViewSection extends View {
 	public void addFormFieldGroup(FormField<?>[] group, boolean inline){
 		VerticalPanel wrapper = new VerticalPanel();
 		wrapper.getElement().getStyle().setProperty("borderRight", "1px solid #BBB");
+		wrapper.setWidth("220px");
 		for(int i = 0; i < group.length; i++) {
 			group[i].setHeight(DEFAULT_FIELD_HEIGHT);
 			registerFormField(group[i]);
