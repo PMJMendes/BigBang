@@ -7,7 +7,6 @@ import bigBang.library.client.userInterface.FilterableList;
 import bigBang.library.client.userInterface.ListEntry;
 import bigBang.library.client.userInterface.presenter.ManagerTransferViewPresenter;
 import bigBang.library.client.userInterface.presenter.ManagerTransferViewPresenter.Action;
-import bigBang.library.client.userInterface.presenter.ManagerTransferViewPresenter.BarStatus;
 
 import com.google.gwt.user.client.ui.VerticalPanel;
 
@@ -48,11 +47,6 @@ public class ManagerTransferView extends View implements ManagerTransferViewPres
 	}
 
 	@Override
-	public void setToolBarState(BarStatus status) {
-		return;
-	}
-
-	@Override
 	public void clearList() {
 		this.list.clear();
 	}
@@ -69,6 +63,16 @@ public class ManagerTransferView extends View implements ManagerTransferViewPres
 
 	@Override
 	public void registerActionHandler(ActionInvokedEventHandler<Action> handler) {
+		return;
+	}
+
+	@Override
+	public void allowAccept(boolean allow) {
+		return;
+	}
+
+	@Override
+	public void allowCancel(boolean allow) {
 		return;
 	}
 

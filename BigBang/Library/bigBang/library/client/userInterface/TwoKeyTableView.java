@@ -211,7 +211,7 @@ public class TwoKeyTableView extends View {
 				}
 				if(i > 0 && j > 0){
 					FormField<String> formField = getFormField(table.getValue(rowHeaders[i-1], columnHeaders[j-1]));
-					formField.setFieldWidth("175px");
+					formField.setFieldWidth("100px");
 					grid.setWidget(i, j, formField);
 					grid.getCellFormatter().setHorizontalAlignment(i, j, HasHorizontalAlignment.ALIGN_LEFT);
 					Field field = getValue(rowHeaders[i-1], columnHeaders[j-1]);

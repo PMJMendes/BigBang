@@ -2,54 +2,55 @@ package bigBang.library.client.userInterface;
 
 
 import com.google.gwt.user.client.Command;
-import com.google.gwt.user.client.ui.MenuBar;
 import com.google.gwt.user.client.ui.MenuItem;
 
-public abstract class ManagerTransferToolBar extends MenuBar{
+public abstract class ManagerTransferToolBar extends BigBangOperationsToolBar {
 
-	protected final String ACCEPT_TEXT = "Aceitar Transferência";
-	protected final String REJECT_TEXT = "Rejeitar Transferência";
+	protected final String ACCEPT_TEXT = "Receber Processos";
 	protected final String CANCEL_TEXT = "Cancelar Transferência";
 	public MenuItem accept;
-	public MenuItem reject;
 	public MenuItem cancel;
-	private Command acceptC, rejectC, cancelC;
 
-	public ManagerTransferToolBar(boolean b) {
-		super(b);
-		createCommands();
-
-		this.accept = new BigBangMenuItem(ACCEPT_TEXT, acceptC);
-		this.reject = new BigBangMenuItem(REJECT_TEXT, rejectC);
-		this.cancel = new BigBangMenuItem(CANCEL_TEXT, cancelC);
-		this.addItem(this.accept);
-		this.addItem(this.reject);
-		this.addItem(this.cancel);
+	public ManagerTransferToolBar() {
+		hideAll();
+		
+		accept = new MenuItem(ACCEPT_TEXT, new Command() {
+			
+			@Override
+			public void execute() {
+				onAccept();
+			}
+		});
+		addItem(accept);
+		
+		cancel = new MenuItem(CANCEL_TEXT, new Command() {
+			
+			@Override
+			public void execute() {
+				onCancelRequest();
+			}
+		});
+		addItem(cancel);
 	}
 
-	private void createCommands(){
-		acceptC = new Command(){
-			public void execute(){
-				accept();
-			}
-
-		};
-		rejectC = new Command(){
-			public void execute(){
-				reject();
-			}
-		};
-		cancelC = new Command(){
-			public void execute(){
-				cancel();
-			}
-		};
+	@Override
+	public void onEditRequest() {
+		return;
 	}
 
-	public abstract void accept();
+	@Override
+	public void onSaveRequest() {
+		return;
+	}
 
-	public abstract void reject();
-
-	public abstract void cancel();
-
+	public abstract void onAccept();
+	
+	public void allowAccept(boolean allow) {
+		this.accept.setVisible(allow);
+	}
+	
+	public void allowCancel(boolean allow) {
+		this.cancel.setVisible(allow);
+	}
+	
 }

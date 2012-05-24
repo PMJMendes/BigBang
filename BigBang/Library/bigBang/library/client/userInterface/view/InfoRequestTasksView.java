@@ -6,6 +6,7 @@ import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
+import bigBang.definitions.shared.Contact;
 import bigBang.definitions.shared.InfoOrDocumentRequest;
 import bigBang.library.client.event.ActionInvokedEvent;
 import bigBang.library.client.event.ActionInvokedEventHandler;
@@ -118,6 +119,11 @@ public class InfoRequestTasksView extends View implements InfoRequestTasksViewPr
 				this.popupPanel = null;
 			}
 		}
+	}
+
+	@Override
+	public void setAvailableContacts(Contact[] contacts) {
+		this.form.setAvailableContacts(contacts);
 	}
 
 }

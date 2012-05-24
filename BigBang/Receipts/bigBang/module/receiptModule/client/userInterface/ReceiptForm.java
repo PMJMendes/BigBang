@@ -8,6 +8,7 @@ import bigBang.library.client.FormField;
 import bigBang.library.client.dataAccess.DataBrokerManager;
 import bigBang.library.client.userInterface.DatePickerFormField;
 import bigBang.library.client.userInterface.ExpandableListBoxFormField;
+import bigBang.library.client.userInterface.NumericTextBoxFormField;
 import bigBang.library.client.userInterface.TextAreaFormField;
 import bigBang.library.client.userInterface.TextBoxFormField;
 import bigBang.library.client.userInterface.view.FormView;
@@ -22,7 +23,7 @@ public class ReceiptForm extends FormView<Receipt> implements ReceiptDataBrokerC
 	protected TextBoxFormField client;
 	protected TextBoxFormField policy;
 	protected ExpandableListBoxFormField type;
-	protected TextBoxFormField totalPremium;
+	protected NumericTextBoxFormField totalPremium;
 	protected TextBoxFormField salesPremium;
 	protected TextBoxFormField commission;
 	protected TextBoxFormField retro;
@@ -45,7 +46,7 @@ public class ReceiptForm extends FormView<Receipt> implements ReceiptDataBrokerC
 		type.allowEdition(false);
 		client = new TextBoxFormField("Cliente");
 		policy = new TextBoxFormField("Apólice");
-		totalPremium = new TextBoxFormField("Prémio Total");
+		totalPremium = new NumericTextBoxFormField("Prémio Total");
 		totalPremium.setUnitsLabel("€");
 		totalPremium.setFieldWidth("100px");
 		totalPremium.setTextAligment(TextAlignment.RIGHT);

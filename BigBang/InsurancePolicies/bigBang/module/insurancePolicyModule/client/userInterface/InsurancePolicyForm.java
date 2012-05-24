@@ -14,6 +14,7 @@ import bigBang.library.client.userInterface.CheckBoxFormField;
 import bigBang.library.client.userInterface.DatePickerFormField;
 import bigBang.library.client.userInterface.ExpandableListBoxFormField;
 import bigBang.library.client.userInterface.ListBoxFormField;
+import bigBang.library.client.userInterface.NumericTextBoxFormField;
 import bigBang.library.client.userInterface.TextAreaFormField;
 import bigBang.library.client.userInterface.TextBoxFormField;
 import bigBang.library.client.userInterface.view.FormView;
@@ -42,7 +43,7 @@ public abstract class InsurancePolicyForm extends FormView<InsurancePolicy> {
 	protected DatePickerFormField endDate;
 	protected ExpandableListBoxFormField duration;
 	protected ExpandableListBoxFormField fractioning;
-	protected TextBoxFormField premium;
+	protected NumericTextBoxFormField premium;
 
 	protected FormViewSection coInsurersSection;
 
@@ -81,7 +82,7 @@ public abstract class InsurancePolicyForm extends FormView<InsurancePolicy> {
 		startDate = new DatePickerFormField("Data de Início");
 		endDate = new DatePickerFormField("Data de Fim");
 		fractioning = new ExpandableListBoxFormField(ModuleConstants.TypifiedListIds.FRACTIONING, "Fraccionamento");
-		premium = new TextBoxFormField("Prémio Comercial");
+		premium = new NumericTextBoxFormField("Prémio Comercial");
 		premium.setFieldWidth("175px");
 		caseStudy = new CheckBoxFormField("Case Study");
 

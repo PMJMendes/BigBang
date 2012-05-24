@@ -17,6 +17,6 @@ public class ExpenseStub
 	public String insuredObjectName;
 	public String coverageId; //Lista tipificada das coberturas da (sub)apólice
 	public String coverageName;
-	public String value; //Em €
+	public Double value; //Em €
 	public boolean isOpen;
 }

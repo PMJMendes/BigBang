@@ -12,8 +12,8 @@ import bigBang.library.client.HasOperationPermissions;
 import bigBang.library.client.HasParameters;
 import bigBang.library.client.HasValueSelectables;
 import bigBang.library.client.Notification;
+import bigBang.library.client.PermissionChecker;
 import bigBang.library.client.Notification.TYPE;
-import bigBang.library.client.Session;
 import bigBang.library.client.ValueSelectable;
 import bigBang.library.client.event.ActionInvokedEvent;
 import bigBang.library.client.event.ActionInvokedEventHandler;
@@ -36,25 +36,21 @@ public class ManagerTransferViewPresenter implements ViewPresenter, HasOperation
 
 	public static enum Action {
 		ACCEPT,
-		REJECT,
 		CANCEL
-	}
-	
-	public static enum BarStatus{
-		ACCEPT_REJECT, 
-		CANCEL, 
-		NONE
 	}
 
 	public interface Display{
 		HasValue<ManagerTransfer> getForm();
 		void setObjectType(String type);
-		void setToolBarState(BarStatus status);
 
 		HasValueSelectables<Object> getList();
 		void addToList(ListEntry<Object> selectable);
 		void clearList();
 
+		//PERMISSIONS
+		void allowAccept(boolean allow);
+		void allowCancel(boolean allow); 
+		
 		void registerActionHandler(ActionInvokedEventHandler<Action> handler);
 		Widget asWidget();
 	}
@@ -126,9 +122,6 @@ public class ManagerTransferViewPresenter implements ViewPresenter, HasOperation
 				case ACCEPT:
 					acceptTransfer();
 					break;
-				case REJECT:
-					rejectTransfer();
-					break;
 				case CANCEL:
 					cancelTransfer();
 					break;
@@ -141,7 +134,6 @@ public class ManagerTransferViewPresenter implements ViewPresenter, HasOperation
 	private void clearView() {
 		view.clearList();
 		view.getForm().setValue(null);
-		view.setToolBarState(BarStatus.NONE);
 	}
 
 	private void showTransfer(String transferId) {
@@ -156,18 +148,13 @@ public class ManagerTransferViewPresenter implements ViewPresenter, HasOperation
 
 	private void setManagerTransfer(ManagerTransfer transfer){
 		this.transfer = transfer;
+		
+		view.allowAccept(PermissionChecker.hasPermission(transfer, BigBangConstants.OperationIds.ManagerTransfer.ACCEPT_MANAGER_TRANSFER));
+		view.allowCancel(PermissionChecker.hasPermission(transfer, BigBangConstants.OperationIds.ManagerTransfer.CANCEL_MANAGER_TRANSFER));
+		
 		view.clearList();
 		view.getForm().setValue(this.transfer);
-		chooseToolBarState();
 		fillList();
-	}
-
-	private void chooseToolBarState() {
-		if(this.transfer.newManagerId.equalsIgnoreCase(Session.getUserId())){
-			view.setToolBarState(BarStatus.ACCEPT_REJECT);
-		}else{
-			view.setToolBarState(BarStatus.CANCEL);
-		}
 	}
 
 	private void fillList(){
@@ -229,22 +216,6 @@ public class ManagerTransferViewPresenter implements ViewPresenter, HasOperation
 			@Override
 			public void onResponseFailure(Throwable caught) {
 				onAcceptTransferFailed();
-				super.onResponseFailure(caught);
-			}
-		});
-	}
-	
-	private void rejectTransfer(){
-		managerTransferService.cancelTransfer(this.transfer.id, new BigBangAsyncCallback<ManagerTransfer>() {
-
-			@Override
-			public void onResponseSuccess(ManagerTransfer result) {
-				onRejectTransferSuccess();
-			}
-			
-			@Override
-			public void onResponseFailure(Throwable caught) {
-				onRejectTransferFailed();
 				super.onResponseFailure(caught);
 			}
 		});
@@ -312,15 +283,6 @@ public class ManagerTransferViewPresenter implements ViewPresenter, HasOperation
 	
 	private void onAcceptTransferFailed(){
 		EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não foi possível aceitar a Transferência de Gestor"), TYPE.ALERT_NOTIFICATION));
-	}
-	
-	private void onRejectTransferSuccess(){
-		EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "A Transferência de Gestor foi rejeitada"), TYPE.TRAY_NOTIFICATION));
-		EventBus.getInstance().fireEvent(new OperationWasExecutedEvent(BigBangConstants.OperationIds.ManagerTransfer.CANCEL_MANAGER_TRANSFER, this.transfer.id));
-	}
-	
-	private void onRejectTransferFailed(){
-		EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não foi possível rejeitar a Transferência de Gestor"), TYPE.ALERT_NOTIFICATION));
 	}
 	
 	private void onCancelTransferSuccess(){

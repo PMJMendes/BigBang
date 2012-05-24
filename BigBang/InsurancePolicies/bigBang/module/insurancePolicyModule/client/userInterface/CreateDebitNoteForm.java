@@ -2,16 +2,16 @@ package bigBang.module.insurancePolicyModule.client.userInterface;
 
 import bigBang.definitions.shared.DebitNote;
 import bigBang.library.client.userInterface.DatePickerFormField;
-import bigBang.library.client.userInterface.TextBoxFormField;
+import bigBang.library.client.userInterface.NumericTextBoxFormField;
 import bigBang.library.client.userInterface.view.FormView;
 
 public class CreateDebitNoteForm extends FormView<DebitNote> {
 
-	private TextBoxFormField noteValue;
+	private NumericTextBoxFormField noteValue;
 	private DatePickerFormField maturityDate;
 	
 	public CreateDebitNoteForm(){
-		noteValue = new TextBoxFormField("Valor");
+		noteValue = new NumericTextBoxFormField("Valor");
 		noteValue.setUnitsLabel("€");
 		noteValue.setFieldWidth("175px");
 		maturityDate = new DatePickerFormField("Data de Vencimento");

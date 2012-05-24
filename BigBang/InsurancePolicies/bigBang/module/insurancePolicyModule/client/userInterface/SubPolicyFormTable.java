@@ -193,7 +193,8 @@ public class SubPolicyFormTable extends View implements HasValue<TableSection> {
 		this.grid.setText(0, 1, "Nome");
 
 		for(int i = 0; i < columns.length; i++) {
-			this.grid.setText(0, DATA_COLUMN_OFFSET + i, columns[i].label + " (" + columns[i].unitsLabel + ")");
+			String unit = columns[i].unitsLabel;
+			this.grid.setText(0, DATA_COLUMN_OFFSET + i, columns[i].label + (unit == null ? "" : " (" + unit + ")"));
 			this.columnDefinitions[i] = columns[i];
 		}
 

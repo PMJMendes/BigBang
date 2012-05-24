@@ -13,7 +13,7 @@ public class Expense
 		private static final long serialVersionUID = 1L;
 
 		public String expenseId;
-		public String settlement; //Em €
+		public Double settlement; //Em €
 	}
 
 	public static class ReturnEx

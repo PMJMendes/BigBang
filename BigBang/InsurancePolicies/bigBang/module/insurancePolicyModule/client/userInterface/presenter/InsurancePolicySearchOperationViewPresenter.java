@@ -753,6 +753,10 @@ ViewPresenter {
 					item.pushIntoStackParameter("display", "viewinforequest");
 					item.setParameter("requestid", process.dataId);
 					NavigationHistoryManager.getInstance().go(item);
+				}else if(type.equalsIgnoreCase(BigBangConstants.EntityIds.MANAGER_TRANSFER)){
+					item.pushIntoStackParameter("display", "viewmanagertransfer");
+					item.setParameter("transferid", process.dataId);
+					NavigationHistoryManager.getInstance().go(item);
 				}
 			}
 

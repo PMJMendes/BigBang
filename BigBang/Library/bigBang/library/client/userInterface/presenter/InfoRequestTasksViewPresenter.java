@@ -1,6 +1,7 @@
 package bigBang.library.client.userInterface.presenter;
 
 import bigBang.definitions.shared.BigBangConstants;
+import bigBang.definitions.shared.Contact;
 import bigBang.definitions.shared.InfoOrDocumentRequest;
 import bigBang.library.client.BigBangAsyncCallback;
 import bigBang.library.client.HasOperationPermissions;
@@ -9,6 +10,7 @@ import bigBang.library.client.ViewPresenterController;
 import bigBang.library.client.event.ActionInvokedEvent;
 import bigBang.library.client.event.ActionInvokedEventHandler;
 import bigBang.library.client.history.NavigationHistoryItem;
+import bigBang.library.interfaces.ContactsService;
 import bigBang.library.interfaces.InfoOrDocumentRequestService;
 import bigBang.library.interfaces.InfoOrDocumentRequestServiceAsync;
 
@@ -34,6 +36,8 @@ public class InfoRequestTasksViewPresenter implements ViewPresenter, HasOperatio
 		void allowReceiveResponse(boolean allow);
 		void allowRepeat(boolean allow);
 		void allowCancel(boolean allow);
+		
+		void setAvailableContacts(Contact[] contacts);
 		
 		//PERMISSIONS
 		void clearAllowedPermissions();
@@ -122,8 +126,20 @@ public class InfoRequestTasksViewPresenter implements ViewPresenter, HasOperatio
 		service.getRequest(requestId, new BigBangAsyncCallback<InfoOrDocumentRequest>() {
 
 			@Override
-			public void onResponseSuccess(InfoOrDocumentRequest result) {
-				view.getForm().setValue(result);
+			public void onResponseSuccess(final InfoOrDocumentRequest request) {
+				ContactsService.Util.getInstance().getContacts(request.parentDataObjectId, new BigBangAsyncCallback<Contact[]>() {
+
+					@Override
+					public void onResponseSuccess(Contact[] result) {
+						view.setAvailableContacts(result);
+						view.getForm().setValue(request);
+					}
+					
+					@Override
+					public void onResponseFailure(Throwable caught) {
+						super.onResponseFailure(caught);
+					}
+				});
 			}
 			
 			@Override

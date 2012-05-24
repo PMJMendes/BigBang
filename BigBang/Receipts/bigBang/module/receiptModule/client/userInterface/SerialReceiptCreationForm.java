@@ -5,6 +5,7 @@ import bigBang.definitions.shared.BigBangConstants;
 import bigBang.library.client.FormField;
 import bigBang.library.client.userInterface.DatePickerFormField;
 import bigBang.library.client.userInterface.ExpandableListBoxFormField;
+import bigBang.library.client.userInterface.NumericTextBoxFormField;
 import bigBang.library.client.userInterface.TextAreaFormField;
 import bigBang.library.client.userInterface.TextBoxFormField;
 import bigBang.library.client.userInterface.view.FormView;
@@ -34,7 +35,7 @@ public abstract class SerialReceiptCreationForm extends FormView<ReceiptPolicyWr
 	private TextBoxFormField status;
 	private final static Label policyNumberProblem = new Label("A apólice pretendida não existe");
 	protected ExpandableListBoxFormField type;
-	protected TextBoxFormField totalPremium;
+	protected NumericTextBoxFormField totalPremium;
 	protected TextBoxFormField salesPremium;
 	protected TextBoxFormField commission;
 	protected TextBoxFormField retro;
@@ -164,7 +165,7 @@ public abstract class SerialReceiptCreationForm extends FormView<ReceiptPolicyWr
 
 		type = new ExpandableListBoxFormField(ModuleConstants.TypifiedListIds.RECEIPT_TYPE, "Tipo");
 		type.allowEdition(false);
-		totalPremium = new TextBoxFormField("Prémio Total");
+		totalPremium = new NumericTextBoxFormField("Prémio Total");
 		totalPremium.setUnitsLabel("€");
 		totalPremium.setFieldWidth("100px");
 		totalPremium.setTextAligment(TextAlignment.RIGHT);

@@ -57,6 +57,8 @@ public class InsurancePolicyOperationsViewPresenter implements ViewPresenter {
 					present("INSURANCE_POLICY_SEARCH", parameters);
 				}else if(display.equalsIgnoreCase("history")){
 					present("history", parameters);
+				}else if(display.equalsIgnoreCase("viewmanagertransfer")){
+					present("MANAGER_TRANSFER", parameters);
 				}else if(display.equalsIgnoreCase("createreceipt")){
 					present("INSURANCE_POLICY_CREATE_RECEIPT", parameters);
 				}else if(display.equalsIgnoreCase("viewinsuredobject")){

@@ -100,7 +100,7 @@ public class PolicyFormTable extends TwoKeyTableView {
 				}
 				if(i > 0 && j > 1){
 					FormField<String> formField = getFormField(table.getValue(rowHeaders[i-1], columnHeaders[j-2]));
-					formField.setFieldWidth("175px");
+					formField.setFieldWidth("100px");
 					grid.setWidget(i, j, formField);
 					grid.getCellFormatter().setHorizontalAlignment(i, j, HasHorizontalAlignment.ALIGN_LEFT);
 					Field field = table.getValue(rowHeaders[i-1], columnHeaders[j-2]);

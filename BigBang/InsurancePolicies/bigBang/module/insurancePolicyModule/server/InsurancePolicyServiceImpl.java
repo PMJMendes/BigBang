@@ -737,7 +737,7 @@ public class InsurancePolicyServiceImpl
 			lobjResult.mediatorId = ( mobjPolicy.midMediator == null ? null : mobjPolicy.midMediator.toString() );
 			lobjResult.caseStudy = ( mobjPolicy.mbCaseStudy == null ? false : mobjPolicy.mbCaseStudy );
 			lobjResult.statusId = ( mobjPolicy.midStatus == null ? null : mobjPolicy.midStatus.toString() );
-			lobjResult.premium = ( mobjPolicy.mdblPremium == null ? null : mobjPolicy.mdblPremium.toPlainString() );
+			lobjResult.premium = ( mobjPolicy.mdblPremium == null ? null : mobjPolicy.mdblPremium.doubleValue() );
 			lobjResult.docushare = mobjPolicy.mstrDocuShare;
 
 			larrCoInsurers = new ArrayList<InsurancePolicy.CoInsurer>();
@@ -2585,7 +2585,7 @@ public class InsurancePolicyServiceImpl
 			lobjResult.statusIcon = InsurancePolicyStub.PolicyStatus.OBSOLETE;
 			break;
 		}
-		lobjResult.premium = (lobjPolicy.getAt(14) == null ? null : ((BigDecimal)lobjPolicy.getAt(14)).toPlainString());
+		lobjResult.premium = (lobjPolicy.getAt(14) == null ? null : ((BigDecimal)lobjPolicy.getAt(14)).doubleValue());
 		lobjResult.docushare = (String)lobjPolicy.getAt(15);
 		lobjResult.managerId = lobjProc.GetManagerID().toString();
 

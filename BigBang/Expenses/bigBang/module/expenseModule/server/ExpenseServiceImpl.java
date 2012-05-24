@@ -126,7 +126,7 @@ public class ExpenseServiceImpl
 		lobjResult.insuredObjectName = ( lobjInsured == null ? null : lobjInsured.getLabel() );
 		lobjResult.coverageId = ( lobjPolCov == null ? null : lobjPolCov.getKey().toString() );
 		lobjResult.coverageName = ( lobjCoverage == null ? null : lobjCoverage.getLabel() );
-		lobjResult.value = ((BigDecimal)lobjExpense.getAt(7)).toPlainString();
+		lobjResult.value = ((BigDecimal)lobjExpense.getAt(7)).doubleValue();
 		lobjResult.isOpen =  lobjProcess.IsRunning();
 		lobjResult.categoryName = (lobjSubLine == null ? null : lobjSubLine.getLine().getCategory().getLabel());
 		lobjResult.lineName = (lobjSubLine == null ? null : lobjSubLine.getLine().getLabel());
@@ -1017,7 +1017,7 @@ public class ExpenseServiceImpl
 		lobjResult.insuredObjectName = ( lobjInsured == null ? null : lobjInsured.getLabel() );
 		lobjResult.coverageId = ( lobjPolCov == null ? null : lobjPolCov.getKey().toString() );
 		lobjResult.coverageName = ( lobjCoverage == null ? null : lobjCoverage.getLabel() );
-		lobjResult.value = ((BigDecimal)parrValues[7]).toPlainString();
+		lobjResult.value = ((BigDecimal)parrValues[7]).doubleValue();
 		lobjResult.isOpen =  lobjProcess.IsRunning();
 
 		return lobjResult;

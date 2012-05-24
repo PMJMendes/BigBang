@@ -84,6 +84,18 @@ h1 {
 	background-image: url("images/metalTexture1.png");
 }
 
+.dockPanelButton {
+	border: solid gray;
+	border-width: 3px 1px 1px 1px;
+	background-image: url("images/operationsToolbar.png") !important;
+}
+
+.dockPanelButtonSelected {
+	border: solid gray;
+	border-width: 3px 1px 1px 1px;
+	background-image: url("images/operationsToolbarSelected.png") !important;
+}
+
 .gwt-MenuItem-disabled{
 	color: #BBB !important;
 }

@@ -142,7 +142,7 @@ public class ReceiptServiceImpl
 		lobjResult.subLineName = lobjSubLine.getLabel();
 		lobjResult.typeId = lobjType.getKey().toString();
 		lobjResult.typeName = (String)lobjType.getAt(1);
-		lobjResult.totalPremium = ((BigDecimal)lobjReceipt.getAt(3)).toPlainString();
+		lobjResult.totalPremium = ((BigDecimal)lobjReceipt.getAt(3)).doubleValue();
 		lobjResult.maturityDate = (lobjReceipt.getAt(9) == null ? null :
 				((Timestamp)lobjReceipt.getAt(9)).toString().substring(0, 10));
 		lobjResult.description = (String)lobjReceipt.getAt(14);
@@ -296,7 +296,7 @@ public class ReceiptServiceImpl
             	lobjStub.subLineName = lobjSubLine.getLabel();
             	lobjStub.typeId = lobjType.getKey().toString();
             	lobjStub.typeName = (String)lobjType.getAt(1);
-            	lobjStub.totalPremium = ((BigDecimal)lobjReceipt.getAt(3)).toPlainString();
+            	lobjStub.totalPremium = ((BigDecimal)lobjReceipt.getAt(3)).doubleValue();
             	lobjStub.maturityDate = (lobjReceipt.getAt(9) == null ? null :
         				((Timestamp)lobjReceipt.getAt(9)).toString().substring(0, 10));
             	lobjStub.description = (String)lobjReceipt.getAt(14);
@@ -669,7 +669,7 @@ public class ReceiptServiceImpl
 				lobjNote = new DebitNote();
 				lobjNote.id = lobjAux.getKey().toString();
 				lobjNote.number = lobjAux.getLabel();
-				lobjNote.value = ( lobjAux.getAt(2) == null ? null : ((BigDecimal)lobjAux.getAt(2)).toPlainString() );
+				lobjNote.value = ( lobjAux.getAt(2) == null ? null : ((BigDecimal)lobjAux.getAt(2)).doubleValue() );
 				lobjNote.maturityDate = ( lobjAux.getAt(3) == null ? null : ((Timestamp)lobjAux.getAt(3)).toString().substring(0, 10) );
 				larrNotes.add(lobjNote);
 			}
@@ -701,7 +701,7 @@ public class ReceiptServiceImpl
 				lobjNote = new DebitNote();
 				lobjNote.id = lobjAux.getKey().toString();
 				lobjNote.number = lobjAux.getLabel();
-				lobjNote.value = ( lobjAux.getAt(2) == null ? null : ((BigDecimal)lobjAux.getAt(2)).toPlainString() );
+				lobjNote.value = ( lobjAux.getAt(2) == null ? null : ((BigDecimal)lobjAux.getAt(2)).doubleValue() );
 				lobjNote.maturityDate = ( lobjAux.getAt(3) == null ? null : ((Timestamp)lobjAux.getAt(3)).toString().substring(0, 10) );
 				larrNotes.add(lobjNote);
 			}
@@ -2186,7 +2186,7 @@ public class ReceiptServiceImpl
 		lobjResult.subLineName = (lobjSubLine == null ? null : lobjSubLine.getLabel());
 		lobjResult.typeId = ((UUID)parrValues[2]).toString();
 		lobjResult.typeName = (String)parrValues[3];
-		lobjResult.totalPremium = ((BigDecimal)parrValues[4]).toPlainString();
+		lobjResult.totalPremium = ((BigDecimal)parrValues[4]).doubleValue();
 		lobjResult.maturityDate = (parrValues[5] == null ? null : ((Timestamp)parrValues[5]).toString().substring(0, 10));
 		lobjResult.description = (String)parrValues[6];
 		lobjResult.processId = (lobjProcess == null ? null : lobjProcess.getKey().toString());

@@ -35,7 +35,7 @@ public class ExpenseForm extends FormView<Expense>{
 	private DatePickerFormField expenseDate;
 	private ExpandableListBoxFormField insuredObjectId;
 	private ExpandableListBoxFormField coverageId;
-	private TextBoxFormField value;
+	private NumericTextBoxFormField value;
 	private TextBoxFormField isOpen;
 	private TextBoxFormField referenceNumber;
 	private TextBoxFormField number;
@@ -61,7 +61,7 @@ public class ExpenseForm extends FormView<Expense>{
 		clientName = new TextBoxFormField("Cliente"); 
 		expenseDate = new DatePickerFormField("Data");
 		insuredObjectId = new ExpandableListBoxFormField("Unidade de Risco");
-		value = new TextBoxFormField("Valor");
+		value = new NumericTextBoxFormField("Valor");
 		value.setFieldWidth("175px");
 		value.setUnitsLabel("€");
 		isOpen = new TextBoxFormField("Estado");

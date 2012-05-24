@@ -9,6 +9,6 @@ public class DebitNote
 
 	public String id;
 	public String number; //Vai a null na criação
-	public String value;
+	public Double value;
 	public String maturityDate;
 }

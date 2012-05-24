@@ -22,7 +22,7 @@ public class InsurancePolicyCoverage implements Serializable {
 	public ValuePeriodicity valuePeriodicity;
 	public float value;
 	public String deductibleTypeId;
-	public String deductibleValue;
+	public Double deductibleValue;
 	public String deductibleNotes;
 	public String casualtyLimit;
 	public CasualtyLimitUnit casualtyLimitUnit;

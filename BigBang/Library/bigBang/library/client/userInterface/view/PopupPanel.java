@@ -26,6 +26,18 @@ public class PopupPanel extends View implements HasWidgets {
 		this.popup = new WindowPanel(title);
 		popup.setAnimationEnabled(true);
 		popup.getHeader().add(Caption.IMAGES.window().createImage());
+		
+//		panel.addAttachHandler(new AttachEvent.Handler() {
+//			
+//			@Override
+//			public void onAttachOrDetach(AttachEvent event) {
+//				if(event.isAttached()) {
+////					Element child = panel.getElement().getFirstChildElement();
+////					child.getStyle().setProperty("minHeight", child.getOffsetHeight());
+////					child.getStyle().setProperty("minWidth", child.getOffsetWidth());
+//				}
+//			}
+//		});
 	}
 	
 	@Override
@@ -45,8 +57,9 @@ public class PopupPanel extends View implements HasWidgets {
 		popup.setWidget(this);
 		if(this.showGlassPanel)
 			popup.showModal();
-		else
+		else{
 			popup.center();
+		}
 	}
 
 	public void hidePopup() {
