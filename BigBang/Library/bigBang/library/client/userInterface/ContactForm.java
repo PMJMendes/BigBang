@@ -110,8 +110,8 @@ public class ContactForm extends FormView<Contact> {
 		currentSection.setSize("100%", "200px");
 		contactIL = new List<ContactInfo>();
 		contactIL.setSelectableEntries(false);
-		contactIL.setSize("100%", "100%");
-		addWidget(contactIL);
+		contactIL.setSize("407px", "218px");
+		currentSection.setContent(contactIL);
 
 	}
 
@@ -142,6 +142,15 @@ public class ContactForm extends FormView<Contact> {
 
 		return newContact;
 
+	}
+	
+	@Override
+	public void setValue(Contact value) {
+		if(value == null){
+			setInfo(null);
+			return;
+		}
+		super.setValue(value);
 	}
 
 	@Override
@@ -177,7 +186,7 @@ public class ContactForm extends FormView<Contact> {
 		}
 		temp.setHeight("40px");
 		contactIL.add(temp);
-		contactIL.getScrollable().scrollToBottom();
+//		contactIL.getScrollable().scrollToBottom();
 
 	}
 

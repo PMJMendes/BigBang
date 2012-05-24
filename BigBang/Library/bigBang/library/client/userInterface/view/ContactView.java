@@ -68,16 +68,17 @@ public class ContactView extends View implements ContactViewPresenter.Display{
 		ListHeader header = new ListHeader();
 		header.setText("Sub-Contactos");
 		wrapperRight.setSize("100%", "100%");
-		subContacts.setSize("100%","100%");
+		subContacts.setHeight("100%");
 		subContacts.setHeaderWidget(header);
 		wrapperRight.add(subContacts);
+		wrapperRight.setCellHeight(subContacts, "600px");
 		toolbar.setWidth("100%");
 		VerticalPanel innerWrapper = new VerticalPanel();
 		innerWrapper.add(toolbar);
 		innerWrapper.add(form.getNonScrollableContent());
 		innerWrapper.setCellHeight(form.getNonScrollableContent(), "100%");
-		wrapper.addEast(wrapperRight, 235);
-		wrapper.setWidgetMinSize(wrapperRight, 235);
+		wrapper.addEast(wrapperRight, 255);
+		wrapper.setWidgetMinSize(wrapperRight, 255);
 		wrapper.add(innerWrapper);
 
 	}
@@ -104,6 +105,9 @@ public class ContactView extends View implements ContactViewPresenter.Display{
 	public void setContact(Contact contact) {
 
 		form.setValue(contact);
+		if(contact != null && contact.subContacts != null){
+			setSubContacts(contact.subContacts);
+		}
 		this.contact = contact;
 
 	}
