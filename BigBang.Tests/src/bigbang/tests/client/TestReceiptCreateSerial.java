@@ -34,7 +34,7 @@ public class TestReceiptCreateSerial
 		receipt.number = "QQ003";
 		receipt.policyId = "01B7B31C-0EFF-4A93-84EE-A02000F26B1F";
 		receipt.typeId = "6B91D626-4CAD-4F53-8FD6-9F900111C39F";
-		receipt.totalPremium = "153.42";
+		receipt.totalPremium = 153.42;
 		receipt.comissions = "13.2";
 		receipt.retrocessions = "0";
 		receipt.issueDate = "2011-11-30";

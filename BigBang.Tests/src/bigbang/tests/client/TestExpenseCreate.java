@@ -34,7 +34,7 @@ public class TestExpenseCreate
 		expense.expenseDate = "2012-04-01";
 		expense.insuredObjectId = null;
 		expense.coverageId = "F2FFD078-C85B-4F1A-93BB-9FFA00FE0E4F";
-		expense.value = "123.45";
+		expense.value = 123.45;
 		expense.settlement = null;
 		expense.isManual = false;
 		expense.notes = "Notas de rodapé...";

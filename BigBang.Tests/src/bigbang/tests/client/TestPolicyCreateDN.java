@@ -31,7 +31,7 @@ public class TestPolicyCreateDN
 		};
 
 		note = new DebitNote();
-		note.value = "123.54";
+		note.value = 123.54;
 		note.maturityDate = "2012-03-31";
 
 		Services.insurancePolicyService.createDebitNote(policy, note, callback);

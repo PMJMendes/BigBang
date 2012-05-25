@@ -31,7 +31,7 @@ public class TestReceiptCreate
 		receipt = new Receipt();
 		receipt.number = "E001";
 		receipt.typeId = "BFC1AE6D-53E8-41AF-84BE-9F900111D967";
-		receipt.totalPremium = "153.42";
+		receipt.totalPremium = 153.42;
 		receipt.comissions = "13.2";
 		receipt.retrocessions = "0";
 		receipt.issueDate = "2011-11-30";
