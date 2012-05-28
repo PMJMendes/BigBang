@@ -23,11 +23,12 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 
 public class DatePickerFormField extends FormField<Date> {
 
-	private static final String DEFAULT_FORMAT = "yyyy-MM-dd";
+	protected static final String DEFAULT_FORMAT = "yyyy-MM-dd";
 	private final String EMPTY_VALUE_PLACEHOLDER  = "-";
 
 	protected TextBox day, month, year;	
 	private boolean readonly;
+	protected Label secondSlash;
 	protected DateTimeFormat format;
 
 	public DatePickerFormField(){
@@ -44,7 +45,7 @@ public class DatePickerFormField extends FormField<Date> {
 
 	public DatePickerFormField(String label, String format, FieldValidator<Date> validator){
 		super();
-		
+		secondSlash = new Label("/");
 		VerticalPanel mainWrapper = new VerticalPanel();
 		initWidget(mainWrapper);
 
@@ -107,7 +108,7 @@ public class DatePickerFormField extends FormField<Date> {
 		wrapper.add(day);
 		wrapper.add(new Label("/"));
 		wrapper.add(month);
-		wrapper.add(new Label("/"));
+		wrapper.add(secondSlash);
 		wrapper.add(year);
 
 		wrapper.add(mandatoryIndicatorLabel);

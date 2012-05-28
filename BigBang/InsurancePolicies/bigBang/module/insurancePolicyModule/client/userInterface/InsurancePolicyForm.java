@@ -12,8 +12,8 @@ import bigBang.library.client.FormField;
 import bigBang.library.client.dataAccess.DataBrokerManager;
 import bigBang.library.client.userInterface.CheckBoxFormField;
 import bigBang.library.client.userInterface.DatePickerFormField;
+import bigBang.library.client.userInterface.DayMonthDatePickerFormField;
 import bigBang.library.client.userInterface.ExpandableListBoxFormField;
-import bigBang.library.client.userInterface.ListBoxFormField;
 import bigBang.library.client.userInterface.NumericTextBoxFormField;
 import bigBang.library.client.userInterface.TextAreaFormField;
 import bigBang.library.client.userInterface.TextBoxFormField;
@@ -37,8 +37,7 @@ public abstract class InsurancePolicyForm extends FormView<InsurancePolicy> {
 	protected ExpandableListBoxFormField subLine;
 	protected ExpandableListBoxFormField mediator;
 	protected TextBoxFormField policyStatus;
-	protected ListBoxFormField maturityDay;
-	protected ListBoxFormField maturityMonth;
+	protected DayMonthDatePickerFormField maturityDate;
 	protected DatePickerFormField startDate;
 	protected DatePickerFormField endDate;
 	protected ExpandableListBoxFormField duration;
@@ -76,9 +75,8 @@ public abstract class InsurancePolicyForm extends FormView<InsurancePolicy> {
 		line.allowEdition(false);
 		subLine = new ExpandableListBoxFormField("Modalidade");
 		subLine.allowEdition(false);
-		maturityDay = new ListBoxFormField("Dia de Vencimento");
+		maturityDate = new DayMonthDatePickerFormField("Dia / Mês de Vencimento");
 		duration = new ExpandableListBoxFormField(ModuleConstants.TypifiedListIds.DURATION, "Duração");
-		maturityMonth = new ListBoxFormField("Mês de Vencimento");
 		startDate = new DatePickerFormField("Data de Início");
 		endDate = new DatePickerFormField("Data de Fim");
 		fractioning = new ExpandableListBoxFormField(ModuleConstants.TypifiedListIds.FRACTIONING, "Fraccionamento");
@@ -96,23 +94,6 @@ public abstract class InsurancePolicyForm extends FormView<InsurancePolicy> {
 		policyStatus = new TextBoxFormField("Estado");
 		policyStatus.setFieldWidth("100%");
 		policyStatus.setEditable(false);
-
-		maturityMonth.addItem("Janeiro", "1");
-		maturityMonth.addItem("Fevereiro", "2");
-		maturityMonth.addItem("Março", "3");
-		maturityMonth.addItem("Abril", "4");
-		maturityMonth.addItem("Maio", "5");
-		maturityMonth.addItem("Junho", "6");
-		maturityMonth.addItem("Julho", "7");
-		maturityMonth.addItem("Agosto", "8");
-		maturityMonth.addItem("Setembro", "9");
-		maturityMonth.addItem("Outubro", "10");
-		maturityMonth.addItem("Novembro", "11");
-		maturityMonth.addItem("Dezembro", "12");
-
-		for(int i = 1; i <= 31; i++){
-			maturityDay.addItem(i+"", i+"");
-		}
 
 		addFormField(client, false);
 
@@ -137,8 +118,7 @@ public abstract class InsurancePolicyForm extends FormView<InsurancePolicy> {
 		FormField<?>[] group2 = new FormField<?>[]{
 				startDate,
 				endDate,
-				maturityDay,
-				maturityMonth
+				maturityDate
 		};
 		addFormFieldGroup(group2, true);
 
@@ -274,13 +254,16 @@ public abstract class InsurancePolicyForm extends FormView<InsurancePolicy> {
 			result.lineId = line.getValue();
 			result.subLineId = subLine.getValue();
 			result.mediatorId = mediator.getValue();
+			String[] maturity = maturityDate.getStringValue().split("-");
+			String maturityDay = maturity[0];
+			String maturityMonth = maturity[1];
 			try{
-				result.maturityDay = Integer.parseInt(maturityDay.getValue());
+				result.maturityDay = Integer.parseInt(maturityDay);
 			}catch(Exception e) {
 				result.maturityDay = -1;
 			}
 			try{
-				result.maturityMonth = Integer.parseInt(maturityMonth.getValue());
+				result.maturityMonth = Integer.parseInt(maturityMonth);
 			}catch(Exception e) {
 				result.maturityMonth = -1;
 			}
@@ -358,8 +341,11 @@ public abstract class InsurancePolicyForm extends FormView<InsurancePolicy> {
 			subLine.setValue(subLineId, false);
 
 			this.mediator.setValue(info.mediatorId);
-			this.maturityDay.setValue(info.maturityDay+"");
-			this.maturityMonth.setValue(info.maturityMonth+"");
+			try{
+				this.maturityDate.setValue(DateTimeFormat.getFormat("MM-dd").parse(info.maturityDay + "/" + info.maturityMonth));
+			
+			}catch (IllegalArgumentException e) {}
+			
 			this.duration.setValue(info.durationId);
 			this.fractioning.setValue(info.fractioningId);
 			this.premium.setValue(info.premium);
