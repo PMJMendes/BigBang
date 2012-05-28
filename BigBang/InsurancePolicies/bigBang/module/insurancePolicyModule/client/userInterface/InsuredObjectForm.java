@@ -154,7 +154,7 @@ public class InsuredObjectForm extends FormView<InsuredObject> {
 	protected ExpandableListBoxFormField personGender;
 	protected DatePickerFormField personBirthDate;
 	protected TextBoxFormField personClientNumber;
-	protected ExpandableListBoxFormField personInsurangeAgency; 
+	protected TextBoxFormField personCompanyNumber; 
 
 	//company fields
 	protected TextBoxFormField companyTaxNumber;
@@ -245,7 +245,7 @@ public class InsuredObjectForm extends FormView<InsuredObject> {
 		this.personGender = new ExpandableListBoxFormField(BigBangConstants.TypifiedListIds.GENDERS, "Sexo");
 		this.personBirthDate = new DatePickerFormField("Data de Nascimento");
 		this.personClientNumber = new TextBoxFormField("Número de Cliente Interno");
-		this.personInsurangeAgency = new ExpandableListBoxFormField(BigBangConstants.EntityIds.INSURANCE_AGENCY, "Seguradora");
+		this.personCompanyNumber = new TextBoxFormField("Número na Seguradora");
 
 		this.personSection.addFormFieldGroup(new FormField[]{
 				this.personTaxNumber,
@@ -254,7 +254,7 @@ public class InsuredObjectForm extends FormView<InsuredObject> {
 		}, true);
 		this.personSection.addFormFieldGroup(new FormField[]{
 				this.personClientNumber,
-				this.personInsurangeAgency
+				this.personCompanyNumber
 		}, true);
 		this.addSection(this.personSection);
 
@@ -393,7 +393,7 @@ public class InsuredObjectForm extends FormView<InsuredObject> {
 		result.genderId = personGender.getValue();
 		result.birthDate = personBirthDate.getStringValue();
 		result.clientNumberPerson = personClientNumber.getValue();
-		result.insuranceCompanyInternalIdPerson = personInsurangeAgency.getValue();
+		result.insuranceCompanyInternalIdPerson = personCompanyNumber.getValue();
 
 		//company fields
 		result.taxNumberCompany = companyTaxNumber.getValue();
@@ -505,7 +505,7 @@ public class InsuredObjectForm extends FormView<InsuredObject> {
 		personGender.setValue(info.genderId);
 		personBirthDate.setValue(info.birthDate);
 		personClientNumber.setValue(info.clientNumberPerson);
-		personInsurangeAgency.setValue(info.insuranceCompanyInternalIdPerson);
+		personCompanyNumber.setValue(info.insuranceCompanyInternalIdPerson);
 
 		//company fields
 		companyTaxNumber.setValue(info.taxNumberCompany);

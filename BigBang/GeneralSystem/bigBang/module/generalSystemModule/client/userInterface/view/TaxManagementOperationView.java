@@ -208,6 +208,8 @@ public class TaxManagementOperationView extends View implements TaxManagementOpe
 			ListEntry<Line> lineEntry = (line.subLines == null || line.subLines.length == 0)
 					? new ListEntry<Line>(line) : new NavigationListEntry<Line>(line);
 					lineEntry.setTitle(line.name);
+					lineEntry.setText(line.categoryName);
+					lineEntry.setHeight("40px");
 					this.lineList.add(lineEntry);
 					if(line.subLines == null || line.subLines.length == 0){
 						lineEntry.setSelectable(false);
