@@ -84,6 +84,7 @@ public abstract class InsurancePolicyForm extends FormView<InsurancePolicy> {
 		fractioning = new ExpandableListBoxFormField(ModuleConstants.TypifiedListIds.FRACTIONING, "Fraccionamento");
 		premium = new NumericTextBoxFormField("Prémio Comercial");
 		premium.setFieldWidth("175px");
+		premium.setUnitsLabel("€");
 		caseStudy = new CheckBoxFormField("Case Study");
 
 		//CO-INSURANCE

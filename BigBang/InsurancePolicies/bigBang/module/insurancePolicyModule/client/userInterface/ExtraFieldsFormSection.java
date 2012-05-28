@@ -14,7 +14,7 @@ public class ExtraFieldsFormSection extends FormViewSection {
 	protected Map<ExtraField, GenericFormField> policyFields;
 
 	public ExtraFieldsFormSection() {
-		super("Detalhes Extra");
+		super("Detalhes Adicionais");
 		policyFields = new HashMap<ExtraField, GenericFormField>();
 	}
 	

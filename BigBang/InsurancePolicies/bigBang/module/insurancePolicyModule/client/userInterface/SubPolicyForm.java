@@ -261,7 +261,7 @@ public class SubPolicyForm extends FormView<SubPolicy> {
 
 		addWidget(this.table);
 
-		this.extraFieldsSection = new FormViewSection("Informação Extra");
+		this.extraFieldsSection = new FormViewSection("Informação Adicional");
 		addSection(this.extraFieldsSection);
 
 		addSection("Notas");
