@@ -198,6 +198,8 @@ public class MailConnector
 					lmsg.addRecipient(Message.RecipientType.BCC, new InternetAddress(parrBCC[i]));
 			lmsg.setSubject(pstrSubject);
 			lmsg.setText(pstrBody, "UTF-8");
+			lmsg.addHeader("Content-Type", "text/html");
+			lmsg.addHeader("MIME-Version", "1.0");
 			lmsg.saveChanges();
 			lxport.sendMessage(lmsg, lmsg.getAllRecipients());
 			lxport.close();
