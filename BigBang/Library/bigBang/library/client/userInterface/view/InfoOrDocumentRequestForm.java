@@ -108,7 +108,7 @@ public class InfoOrDocumentRequestForm extends FormView<InfoOrDocumentRequest> {
 		request.message.internalBCCs = internalCCAddresses.getValue();
 		request.message.externalCCs = externalCCAddresses.getValue();
 		request.message.subject = requestText.subject;
-		request.message.text = requestText.text;
+		request.message.text = "<html><body>" + requestText.text + "</body></html>";
 		return request;
 	}
 

@@ -96,7 +96,7 @@ public class OutgoingMessageFormField extends FormField<OutgoingMessage>{
 		
 		message.forwardUserFullNames = forwardFN;
 		message.subject = text.getValue().subject;
-		message.text = text.getValue().text;
+		message.text = "<html><body>" + text.getValue().text + "</body></html>";
 		
 		return message;
 	}
