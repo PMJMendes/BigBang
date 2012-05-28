@@ -57,7 +57,7 @@ public class ExerciseForm extends FormView<Exercise> {
 					@Override
 					public boolean isValid(String value) {
 						try{
-							Integer.parseInt(value);
+							Double.parseDouble(value);
 						}catch(Exception e){
 							return false;
 						}
@@ -212,10 +212,10 @@ public class ExerciseForm extends FormView<Exercise> {
 
 	private VariableField[] getVariableFields(VariableField[] variables, TwoKeyTableView table, int ammountVar) {
 		Field[] fields = table.getAllValues();
-
+		
 		for(int i = 0; i < ammountVar; i++){
 			for(int j = 0; j<fields.length/ammountVar; j++){
-				variables[i].data[j].value = fields[(i*ammountVar)+j].value;
+				variables[i].data[j].value = table.getValue(variables[i].fieldId, objects[j].id).value;
 			}
 		}
 		return variables;
