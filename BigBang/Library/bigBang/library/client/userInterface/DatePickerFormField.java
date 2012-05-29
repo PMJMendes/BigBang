@@ -121,7 +121,8 @@ public class DatePickerFormField extends FormField<Date> {
 		String year = this.year.getValue();
 
 		try{
-			this.format.parse(year+"-"+month+"-"+day);
+			Date temp = this.format.parse(year+"-"+month+"-"+day);
+			ValueChangeEvent.fire(this, temp);
 		}catch(Exception e){
 			GWT.log("DATA INVALIDA");
 			return false;

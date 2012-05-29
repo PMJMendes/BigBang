@@ -1,6 +1,7 @@
 package bigBang.module.insurancePolicyModule.client.userInterface;
 
 import java.util.Collection;
+import java.util.Date;
 
 import bigBang.definitions.client.dataAccess.ClientProcessBroker;
 import bigBang.definitions.client.response.ResponseError;
@@ -220,6 +221,16 @@ public abstract class InsurancePolicyForm extends FormView<InsurancePolicy> {
 
 		clearValue();
 		setValue(this.value);
+		
+		startDate.addValueChangeHandler(new ValueChangeHandler<Date>() {
+			
+			@Override
+			public void onValueChange(ValueChangeEvent<Date> event) {
+				if(maturityDate.getValue() == null){
+					maturityDate.setValue(event.getValue());
+				}
+			}
+		});
 
 		setForNew();
 	}
