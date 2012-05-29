@@ -184,7 +184,7 @@ public class FiltersPanel extends View {
 
 	public void clearFilters(){
 		for(HasValue<?> v : this.filters.values()){
-			v.setValue(null);
+			v.setValue(null, true);
 		}
 	}
 

@@ -34,7 +34,7 @@ public class DayMonthDatePickerFormField extends DatePickerFormField{
 		try{
 			date = DateTimeFormat.getFormat("MM-dd").format(getValue());
 		}
-		catch(IllegalArgumentException e){}
+		catch(Exception e){}
 		
 		
 		return date;
