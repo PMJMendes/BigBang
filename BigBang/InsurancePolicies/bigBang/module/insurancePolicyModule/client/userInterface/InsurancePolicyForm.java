@@ -254,9 +254,13 @@ public abstract class InsurancePolicyForm extends FormView<InsurancePolicy> {
 			result.lineId = line.getValue();
 			result.subLineId = subLine.getValue();
 			result.mediatorId = mediator.getValue();
-			String[] maturity = maturityDate.getStringValue().split("-");
-			String maturityDay = maturity[0];
-			String maturityMonth = maturity[1];
+			String maturityDay = "";
+			String maturityMonth = "";
+			if(maturityDate.getStringValue() != null && !maturityDate.getStringValue().isEmpty()){
+				String[] maturity = maturityDate.getStringValue().split("-");
+				maturityDay = maturity[0];
+				maturityMonth = maturity[1];
+			}
 			try{
 				result.maturityDay = Integer.parseInt(maturityDay);
 			}catch(Exception e) {
@@ -343,9 +347,9 @@ public abstract class InsurancePolicyForm extends FormView<InsurancePolicy> {
 			this.mediator.setValue(info.mediatorId);
 			try{
 				this.maturityDate.setValue(DateTimeFormat.getFormat("MM-dd").parse(info.maturityDay + "/" + info.maturityMonth));
-			
+
 			}catch (IllegalArgumentException e) {}
-			
+
 			this.duration.setValue(info.durationId);
 			this.fractioning.setValue(info.fractioningId);
 			this.premium.setValue(info.premium);

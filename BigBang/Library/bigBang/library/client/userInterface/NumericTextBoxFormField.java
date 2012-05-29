@@ -80,8 +80,7 @@ public class NumericTextBoxFormField extends FormField<Double>{
 
 		@Override
 		public Double getValue(){
-
-			return nf.parse(field.getValue());
+			return (field.getValue() != null && !field.getValue().isEmpty()) ? nf.parse(field.getValue()) : null;
 		}
 
 		@Override
