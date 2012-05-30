@@ -189,8 +189,8 @@ public class ExpenseServiceImpl
 			lopMD.mobjData.midPolicyCoverage = null;
 			lopMD.mobjData.midSubPolicyCoverage = (expense.coverageId == null ? null : UUID.fromString(expense.coverageId));
 		}
-		lopMD.mobjData.mdblDamages = (expense.value == null ? null : new BigDecimal(expense.value));
-		lopMD.mobjData.mdblSettlement = (expense.settlement == null ? null : new BigDecimal(expense.settlement));
+		lopMD.mobjData.mdblDamages = (expense.value == null ? null : new BigDecimal(expense.value+""));
+		lopMD.mobjData.mdblSettlement = (expense.settlement == null ? null : new BigDecimal(expense.settlement+""));
 		lopMD.mobjData.mbIsManual = expense.isManual;
 		lopMD.mobjData.mstrNotes = expense.notes;
 		lopMD.mobjData.midManager = lobjProcess.GetManagerID();
@@ -266,7 +266,7 @@ public class ExpenseServiceImpl
 		}
 
 		lopRA = new ReceiveAcceptance(lobjExpense.GetProcessID());
-		lopRA.mdblSettlement = (acceptance.settlement == null ? null : new BigDecimal(acceptance.settlement));
+		lopRA.mdblSettlement = (acceptance.settlement == null ? null : new BigDecimal(acceptance.settlement+""));
 
 		try
 		{

@@ -98,7 +98,6 @@ public class DatePickerFormField extends FormField<Date> {
 			@Override
 			public void onBlur(BlurEvent event) {
 				validateDate();
-				ValueChangeEvent.fire(DatePickerFormField.this, DatePickerFormField.this.format.parse(year+"-"+month+"-"+day));
 			}
 		};
 		

@@ -190,7 +190,7 @@ public class SubPolicyServiceImpl
 			mobjSubPolicy.mdtEndDate = ( pobjSource.expirationDate == null ? null :
 					Timestamp.valueOf(pobjSource.expirationDate + " 00:00:00.0") );
 			mobjSubPolicy.mstrNotes = pobjSource.notes;
-			mobjSubPolicy.mdblPremium = ( pobjSource.premium == null ? null : new BigDecimal(pobjSource.premium) );
+			mobjSubPolicy.mdblPremium = ( pobjSource.premium == null ? null : new BigDecimal(pobjSource.premium+"") );
 
 			marrCoverages = new ArrayList<PadCoverage>();
 			marrObjects = new ArrayList<PadObject>();
@@ -1581,7 +1581,7 @@ public class SubPolicyServiceImpl
 			mobjSubPolicy.mdtEndDate = ( pobjSource.expirationDate == null ? null :
 					Timestamp.valueOf(pobjSource.expirationDate + " 00:00:00.0") );
 			mobjSubPolicy.mstrNotes = pobjSource.notes;
-			mobjSubPolicy.mdblPremium = ( pobjSource.premium == null ? null : new BigDecimal(pobjSource.premium) );
+			mobjSubPolicy.mdblPremium = ( pobjSource.premium == null ? null : new BigDecimal(pobjSource.premium+"") );
 
 			mobjSubPolicy.mbModified = true;
 
@@ -3176,8 +3176,8 @@ public class SubPolicyServiceImpl
 		lopCE.mobjData.midSubPolicyObject = (expense.insuredObjectId == null ? null : UUID.fromString(expense.insuredObjectId));
 		lopCE.mobjData.midPolicyCoverage = null;
 		lopCE.mobjData.midSubPolicyCoverage = (expense.coverageId == null ? null : UUID.fromString(expense.coverageId));
-		lopCE.mobjData.mdblDamages = new BigDecimal(expense.value);
-		lopCE.mobjData.mdblSettlement = (expense.settlement == null ? null : new BigDecimal(expense.settlement));
+		lopCE.mobjData.mdblDamages = new BigDecimal(expense.value+"");
+		lopCE.mobjData.mdblSettlement = (expense.settlement == null ? null : new BigDecimal(expense.settlement+""));
 		lopCE.mobjData.mbIsManual = expense.isManual;
 		lopCE.mobjData.mstrNotes = expense.notes;
 		lopCE.mobjData.midManager = null;

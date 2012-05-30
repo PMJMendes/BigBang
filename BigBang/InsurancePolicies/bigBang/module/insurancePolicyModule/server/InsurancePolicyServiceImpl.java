@@ -225,7 +225,7 @@ public class InsurancePolicyServiceImpl
 			mobjPolicy.mstrNotes = pobjSource.notes;
 			mobjPolicy.midMediator = ( pobjSource.mediatorId == null ? null : UUID.fromString(pobjSource.mediatorId) );
 			mobjPolicy.mbCaseStudy = pobjSource.caseStudy;
-			mobjPolicy.mdblPremium = ( pobjSource.premium == null ? null : new BigDecimal(pobjSource.premium) );
+			mobjPolicy.mdblPremium = ( pobjSource.premium == null ? null : new BigDecimal(pobjSource.premium+"") );
 
 			mbValid = false;
 
@@ -1694,7 +1694,7 @@ public class InsurancePolicyServiceImpl
 			mobjPolicy.mstrNotes = pobjSource.notes;
 			mobjPolicy.midMediator = ( pobjSource.mediatorId == null ? null : UUID.fromString(pobjSource.mediatorId) );
 			mobjPolicy.mbCaseStudy = pobjSource.caseStudy;
-			mobjPolicy.mdblPremium = ( pobjSource.premium == null ? null : new BigDecimal(pobjSource.premium) );
+			mobjPolicy.mdblPremium = ( pobjSource.premium == null ? null : new BigDecimal(pobjSource.premium+"") );
 
 			mobjPolicy.mbModified = true;
 
@@ -3640,7 +3640,7 @@ public class InsurancePolicyServiceImpl
 		lopCDN = new CreateDebitNote(lobjPolicy.GetProcessID());
 		lopCDN.mobjData = new DebitNoteData();
 		lopCDN.mobjData.midProcess = lobjPolicy.GetProcessID();
-		lopCDN.mobjData.mdblValue = new BigDecimal(note.value);
+		lopCDN.mobjData.mdblValue = new BigDecimal(note.value+"");
 		lopCDN.mobjData.mdtMaturity = Timestamp.valueOf(note.maturityDate + " 00:00:00.0");
 
 		try
@@ -3824,7 +3824,7 @@ public class InsurancePolicyServiceImpl
 		lopCE.mobjData.midSubPolicyObject = null;
 		lopCE.mobjData.midPolicyCoverage = (expense.coverageId == null ? null : UUID.fromString(expense.coverageId));
 		lopCE.mobjData.midSubPolicyCoverage = null;
-		lopCE.mobjData.mdblDamages = new BigDecimal(expense.value);
+		lopCE.mobjData.mdblDamages = new BigDecimal(expense.value+"");
 		lopCE.mobjData.mdblSettlement = (expense.settlement == null ? null : new BigDecimal(expense.settlement));
 		lopCE.mobjData.mbIsManual = expense.isManual;
 		lopCE.mobjData.mstrNotes = expense.notes;
