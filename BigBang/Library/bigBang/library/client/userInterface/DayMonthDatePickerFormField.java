@@ -45,11 +45,53 @@ public class DayMonthDatePickerFormField extends DatePickerFormField{
 		String day = this.day.getValue();
 		String month = this.month.getValue();
 		
-		if(day.equals("") || month.equals("")){
+		if(day.equals("") || month.equals("") || day.equals("-") || month.equals("-")){
 			return null;
 		}
 		
 		return DateTimeFormat.getFormat("MM-dd").parse(month+"-"+day);
+	}
+	
+	@Override
+	public void clear() {
+		if(this.readonly){
+			this.day.setValue("-");
+			this.month.setValue("-");
+		}else{
+			this.day.setValue("");
+			this.month.setValue("");
+		}
+	}
+	
+	@Override
+	public void setReadOnly(boolean readonly) {
+		if(!editable)
+			return;
+		if(readonly){
+			if(day.getValue().isEmpty()){
+				day.setValue(EMPTY_VALUE_PLACEHOLDER);
+			}
+			if(month.getValue().isEmpty()){
+				month.setValue(EMPTY_VALUE_PLACEHOLDER);
+			}
+		}else{
+			if(day.getValue().equalsIgnoreCase(EMPTY_VALUE_PLACEHOLDER)){
+				day.setValue("");
+			}
+			if(month.getValue().equalsIgnoreCase(EMPTY_VALUE_PLACEHOLDER)){
+				month.setValue("");
+			}
+		}
+		day.setReadOnly(readonly);
+		day.getElement().getStyle().setBorderColor(readonly ? "transparent" : "gray");
+		day.getElement().getStyle().setBackgroundColor(readonly ? "transparent" : "white");
+		
+		month.setReadOnly(readonly);
+		month.getElement().getStyle().setBorderColor(readonly ? "transparent" : "gray");
+		month.getElement().getStyle().setBackgroundColor(readonly ? "transparent" : "white");
+		
+		this.readonly = readonly;
+		mandatoryIndicatorLabel.setVisible(!readonly);
 	}
 
 }

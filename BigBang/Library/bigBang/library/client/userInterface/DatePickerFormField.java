@@ -24,10 +24,10 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 public class DatePickerFormField extends FormField<Date> {
 
 	protected static final String DEFAULT_FORMAT = "yyyy-MM-dd";
-	private final String EMPTY_VALUE_PLACEHOLDER  = "-";
+	protected final String EMPTY_VALUE_PLACEHOLDER  = "-";
 
 	protected TextBox day, month, year;	
-	private boolean readonly;
+	protected boolean readonly;
 	protected Label secondSlash;
 	protected DateTimeFormat format;
 
@@ -98,6 +98,7 @@ public class DatePickerFormField extends FormField<Date> {
 			@Override
 			public void onBlur(BlurEvent event) {
 				validateDate();
+				ValueChangeEvent.fire(DatePickerFormField.this, DatePickerFormField.this.format.parse(year+"-"+month+"-"+day));
 			}
 		};
 		
@@ -121,8 +122,7 @@ public class DatePickerFormField extends FormField<Date> {
 		String year = this.year.getValue();
 
 		try{
-			Date temp = this.format.parse(year+"-"+month+"-"+day);
-			ValueChangeEvent.fire(this, temp);
+			this.format.parse(year+"-"+month+"-"+day);
 		}catch(Exception e){
 			GWT.log("DATA INVALIDA");
 			return false;

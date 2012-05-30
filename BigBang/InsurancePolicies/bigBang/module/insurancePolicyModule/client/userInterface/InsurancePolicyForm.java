@@ -357,9 +357,11 @@ public abstract class InsurancePolicyForm extends FormView<InsurancePolicy> {
 
 			this.mediator.setValue(info.mediatorId);
 			try{
-				this.maturityDate.setValue(DateTimeFormat.getFormat("MM-dd").parse(info.maturityDay + "/" + info.maturityMonth));
+				this.maturityDate.setValue(DateTimeFormat.getFormat("MM-dd").parse(info.maturityDay + "-" + info.maturityMonth));
 
-			}catch (IllegalArgumentException e) {}
+			}catch (IllegalArgumentException e) {
+				maturityDate.clear();
+			}
 
 			this.duration.setValue(info.durationId);
 			this.fractioning.setValue(info.fractioningId);
@@ -384,10 +386,10 @@ public abstract class InsurancePolicyForm extends FormView<InsurancePolicy> {
 			this.notes.setValue(info.notes);
 
 			if(info.startDate != null)
-				startDate.setValue(DateTimeFormat.getFormat("yyyy-MM-dd").parse(info.startDate));
+				startDate.setValue(DateTimeFormat.getFormat("yyyy-MM-dd").parse(info.startDate), false);
 			if(info.expirationDate != null)
 				endDate.setValue(DateTimeFormat.getFormat("yyyy-MM-dd").parse(info.expirationDate));
-
+			
 			this.headerFieldsSection.setPolicyFields(info.headerFields);
 			this.tableSection.setInsurancePolicy(info);
 			this.extraFieldsSection.setPolicyFields(info.extraData);
