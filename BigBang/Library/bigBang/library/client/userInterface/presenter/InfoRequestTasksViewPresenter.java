@@ -127,7 +127,7 @@ public class InfoRequestTasksViewPresenter implements ViewPresenter, HasOperatio
 
 			@Override
 			public void onResponseSuccess(final InfoOrDocumentRequest request) {
-				ContactsService.Util.getInstance().getContacts(request.parentDataObjectId, new BigBangAsyncCallback<Contact[]>() {
+				ContactsService.Util.getInstance().getFlatEmails(request.parentDataObjectId, new BigBangAsyncCallback<Contact[]>() {
 
 					@Override
 					public void onResponseSuccess(Contact[] result) {
