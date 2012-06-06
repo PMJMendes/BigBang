@@ -34,5 +34,13 @@ public class ManagerTransferWithToolbarView extends ManagerTransferView implemen
 		this.actionHandler = handler;
 	}
 	
+	@Override
+	public void allowAccept(boolean allow) {
+		bar.allowAccept(allow);
+	}
 	
+	@Override
+	public void allowCancel(boolean allow) {
+		bar.allowCancel(allow);
+	}
 }

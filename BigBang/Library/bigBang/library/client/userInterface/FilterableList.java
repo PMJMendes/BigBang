@@ -47,7 +47,7 @@ public class FilterableList<T> extends SortableList<T> {
 
 		this.filters = new HashMap<String, ListFilter<?>>();
 		final Resources resources = GWT.create(Resources.class);		
-		
+
 		final VerticalPanel headerWrapper = new VerticalPanel();
 
 		SimplePanel newHeaderContainer = new SimplePanel();
@@ -60,7 +60,7 @@ public class FilterableList<T> extends SortableList<T> {
 		filterContainer.setAnimationEnabled(true);
 		filterContainer.setSize("100%", "100%");
 		filterContainer.getElement().getStyle().setProperty("borderTop", "1px solid gray");
-		
+
 		HorizontalPanel filterHeaderWrapper = new HorizontalPanel();
 		filterContainer.setHeader(filterHeaderWrapper);
 		filterHeaderWrapper.setSize("100%", "100%");
@@ -69,8 +69,8 @@ public class FilterableList<T> extends SortableList<T> {
 		filterHeaderWrapper.add(filterHeaderImage);
 		filterHeaderWrapper.setCellWidth(filterHeaderImage, "20px");
 		filterHeaderWrapper.add(new Label("Ordenação e Filtros"));
-		
-		
+
+
 		filterContainer.addCloseHandler(new CloseHandler<DisclosurePanel>() {
 
 			@Override
@@ -85,9 +85,9 @@ public class FilterableList<T> extends SortableList<T> {
 				filterHeaderImage.setResource(resources.arrowUp());
 			}
 		});
-		
+
 		filtersContainer = filterContainer;
-		
+
 		this.searchFieldContainer = new HorizontalPanel();
 		searchFieldContainer.setSize("100%", "100%");
 		searchFieldContainer.setSpacing(5);
@@ -102,29 +102,29 @@ public class FilterableList<T> extends SortableList<T> {
 					onFilterTextChanged(textBoxFilter.getValue());
 			}
 		});
-	
+
 		headerWrapper.add(searchFieldContainer);
 		headerWrapper.add(filterContainer);
 
 		filterContainer.addOpenHandler(new OpenHandler<DisclosurePanel>() {
-			
+
 			@Override
 			public void onOpen(OpenEvent<DisclosurePanel> event) {
 				if(((DisclosurePanel) filtersContainer).getContent().getOffsetHeight() > ((DisclosurePanel) filtersContainer).getOffsetHeight())
 					((DisclosurePanel) filtersContainer).getContent().setHeight(scrollPanel.getOffsetHeight() + "px");
 			}
 		});
-		
+
 		filterContainer.addCloseHandler(new CloseHandler<DisclosurePanel>() {
-			
+
 			@Override
 			public void onClose(CloseEvent<DisclosurePanel> event) {
 				headerWrapper.setCellHeight((Widget) filtersContainer, "auto");
 			}
 		});
-		
+
 		filterContainer.setContent(new SimplePanel());
-		
+
 		setHeaderWidget(headerWrapper);
 		headerContainer = newHeaderContainer;
 	}
@@ -137,7 +137,7 @@ public class FilterableList<T> extends SortableList<T> {
 			entry.setVisible(!filterOutListEntry(entry));
 		}
 	}
-	
+
 	/**
 	 * Invoked when the freetext filter value is changed
 	 * @param text the current freetext value
@@ -153,28 +153,25 @@ public class FilterableList<T> extends SortableList<T> {
 	 * @return true if the entry does not match the filters
 	 */
 	protected boolean filterOutListEntry(ListEntry<T> entry) {
-		String text = entry.getText().toUpperCase();
-		text = deAccent(text);
-		String title = entry.getTitle().toUpperCase();
-		title = deAccent(title);
-		
-		String token = textBoxFilter.getValue().toUpperCase();
-		token = deAccent(token);
-		
-		
-		
+		String text = normalize(entry.getText());
+		String title = normalize(entry.getTitle());
+
+		String token = normalize(textBoxFilter.getValue());
+
+
+
 		boolean matches = ((text != null && text.contains(token)) || (title != null && title.contains(token)));
-		
+
 		if(entry.metaData != null) {
 			for(String meta : entry.metaData){
-				String deacMeta = deAccent(meta);
+				String deacMeta = normalize(meta);
 				matches |= (deacMeta != null && deacMeta.toUpperCase().contains(token));
 			}
 		}
-		
+
 		return !matches;
 	}
-	
+
 	/**
 	 * Clears all the filters values for the current list
 	 */
@@ -185,7 +182,7 @@ public class FilterableList<T> extends SortableList<T> {
 		}
 		filterEntries();
 	}
-	
+
 	/**
 	 * shows or hides the text field
 	 * @param show if true, shows the text field
@@ -193,7 +190,7 @@ public class FilterableList<T> extends SortableList<T> {
 	public void showSearchField(boolean show) {
 		((UIObject) this.searchFieldContainer).setVisible(show);
 	}
-	
+
 	/**
 	 * shows or hides the filter disclosure panel
 	 * @param show if true, shows the filter disclosure panel
@@ -209,10 +206,10 @@ public class FilterableList<T> extends SortableList<T> {
 	protected HasWidgets getFiltersPanel(){
 		VerticalPanel panel = new VerticalPanel();
 		panel.setSize("100%", "100%");
-		
+
 		return panel;
 	}
-	
+
 	/**
 	 * Adds a filter to the list
 	 * @param filter the filter to add
@@ -220,7 +217,7 @@ public class FilterableList<T> extends SortableList<T> {
 	public void addFilter(ListFilter<?> filter) {
 		this.filters.put(filter.getName(), filter);
 	}
-	
+
 	/**
 	 * Removes a filter from the list
 	 * @param filter
@@ -228,7 +225,7 @@ public class FilterableList<T> extends SortableList<T> {
 	public void removeFilter(ListFilter<?> filter){
 		this.filters.remove(filter);
 	}
-	
+
 	/**
 	 * Gets a map with the filters
 	 * @return The map with the current list's filters
@@ -236,7 +233,7 @@ public class FilterableList<T> extends SortableList<T> {
 	public Map<String, ListFilter<?>> getFilters(){
 		return this.filters;
 	}
-	
+
 	/**
 	 * Sets whether or not the list is filtered in real time
 	 * @param liveSearch if true, live search is turned on
@@ -244,8 +241,35 @@ public class FilterableList<T> extends SortableList<T> {
 	public void setLiveSearch(boolean liveSearch){
 		this.liveSearch = liveSearch;
 	}
-	
-	public String deAccent(String str) {
-		return str;
+
+	private String normalize(String str) {
+		
+		str = str.toUpperCase();
+		
+		char[] array = str.toCharArray();
+		
+		for(int i = 0; i<array.length; i++){
+
+			if(array[i] >= 192 && array[i] <= 197){
+				array[i] = 'A';
+			}
+			else if(array[i] >= 200 && array[i] <= 203){
+				array[i] = 'E';
+			}
+			else if(array[i] >= 204 && array[i] <= 207){
+				array[i] = 'I';
+			}
+			else if(array[i] >= 210 && array[i] <= 214){
+				array[i] = 'O';
+			}
+			else if(array[i] >= 217 && array[i] <= 220){
+				array[i] = 'U';
+			}
+			else if(array[i] == 'Ç'){
+				array[i] = 'C';
+			}
+			
+		}
+		return new String(array);
 	}
 }
