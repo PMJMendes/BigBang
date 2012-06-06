@@ -283,6 +283,7 @@ public abstract class InsurancePolicyForm extends FormView<InsurancePolicy> {
 				result.maturityMonth = -1;
 			}
 			result.startDate = startDate.getValue() == null ? null : DateTimeFormat.getFormat("yyyy-MM-dd").format(startDate.getValue());
+			result.expirationDate = endDate.getValue() == null ? null :  DateTimeFormat.getFormat("yyyy-MM-dd").format(endDate.getValue());
 			result.durationId = duration.getValue();
 			result.fractioningId = fractioning.getValue();
 			result.premium = premium.getValue();
