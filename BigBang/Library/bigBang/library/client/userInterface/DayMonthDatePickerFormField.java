@@ -52,6 +52,14 @@ public class DayMonthDatePickerFormField extends DatePickerFormField{
 		return DateTimeFormat.getFormat("MM-dd").parse(month+"-"+day);
 	}
 	
+	public String getDay(){
+		return this.day.getValue();
+	}
+	
+	public String getMonth(){
+		return this.month.getValue();
+	}
+	
 	@Override
 	public void clear() {
 		if(this.readonly){

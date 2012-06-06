@@ -226,7 +226,7 @@ public abstract class InsurancePolicyForm extends FormView<InsurancePolicy> {
 			
 			@Override
 			public void onValueChange(ValueChangeEvent<Date> event) {
-				if(maturityDate.getValue() == null){
+				if(maturityDate.getDay().isEmpty() && maturityDate.getMonth().isEmpty()){
 					maturityDate.setValue(event.getValue());
 				}
 			}
