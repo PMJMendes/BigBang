@@ -226,6 +226,7 @@ public class InsurancePolicyServiceImpl
 			mobjPolicy.midMediator = ( pobjSource.mediatorId == null ? null : UUID.fromString(pobjSource.mediatorId) );
 			mobjPolicy.mbCaseStudy = pobjSource.caseStudy;
 			mobjPolicy.mdblPremium = ( pobjSource.premium == null ? null : new BigDecimal(pobjSource.premium+"") );
+			mobjPolicy.midStatus = Constants.StatusID_InProgress;
 
 			mbValid = false;
 
