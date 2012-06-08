@@ -775,6 +775,9 @@ public class InsurancePolicyServiceImpl
 					lobjSubLine = SubLine.GetInstance(Engine.getCurrentNameSpace(), mobjPolicy.midSubLine);
 					lobjResult.lineId = lobjSubLine.getLine().getKey().toString();
 					lobjResult.categoryId = lobjSubLine.getLine().getCategory().getKey().toString();
+					lobjResult.categoryName = lobjSubLine.getLine().getCategory().getLabel();
+					lobjResult.lineName = lobjSubLine.getLine().getLabel();
+					lobjResult.subLineName = lobjSubLine.getLabel();
 				}
 				catch (Throwable e)
 				{
