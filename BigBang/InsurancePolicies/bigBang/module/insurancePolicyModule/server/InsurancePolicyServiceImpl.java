@@ -883,7 +883,7 @@ public class InsurancePolicyServiceImpl
 			for ( Integer ii: larrColumns.keySet() )
 				pobjResult.columns[ii] = larrColumns.get(ii);
 
-			if ( pobjResult.coverages.length * pobjResult.columns.length == 0 )
+			if ( pobjResult.coverages.length + pobjResult.columns.length == 0 )
 				pobjResult.tableData = new InsurancePolicy.TableSection[0];
 			else
 			{
