@@ -1,141 +1,70 @@
 package bigBang.module.clientModule.client.userInterface.view;
 
-import bigBang.definitions.shared.Client;
-import bigBang.definitions.shared.ExerciseStub;
-import bigBang.definitions.shared.InsurancePolicy;
-import bigBang.definitions.shared.InsuredObjectStub;
-import bigBang.library.client.HasEditableValue;
-import bigBang.library.client.HasValueSelectables;
-import bigBang.library.client.event.ActionInvokedEvent;
-import bigBang.library.client.event.ActionInvokedEventHandler;
-import bigBang.library.client.userInterface.ListHeader;
-import bigBang.library.client.userInterface.view.View;
-import bigBang.module.clientModule.client.userInterface.NewInsurancePolicyChildrenPanel;
-import bigBang.module.clientModule.client.userInterface.NewInsurancePolicyOperationsToolbar;
-import bigBang.module.clientModule.client.userInterface.presenter.CreateInsurancePolicyViewPresenter;
-import bigBang.module.clientModule.client.userInterface.presenter.CreateInsurancePolicyViewPresenter.Action;
-import bigBang.module.insurancePolicyModule.client.userInterface.InsurancePolicyForm;
-
-import com.google.gwt.user.client.ui.SplitLayoutPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
-public class CreateInsurancePolicyView extends View implements CreateInsurancePolicyViewPresenter.Display {
+import bigBang.module.clientModule.client.userInterface.CreateInsurancePolicyForm;
+import bigBang.module.clientModule.client.userInterface.presenter.CreateInsurancePolicyViewPresenter;
+import bigBang.module.clientModule.client.userInterface.presenter.CreateInsurancePolicyViewPresenter.Action;
+import bigBang.module.insurancePolicyModule.client.userInterface.CreateInsurancePolicyToolbar;
+import bigBang.library.client.event.ActionInvokedEvent;
+import bigBang.library.client.event.ActionInvokedEventHandler;
+import bigBang.library.client.userInterface.view.View;
 
-	protected ClientFormView clientForm;
-	protected InsurancePolicyForm insurancePolicyForm;
-	protected NewInsurancePolicyChildrenPanel childrenPanel;	
-	protected ActionInvokedEventHandler<Action> actionHandler;
-	protected NewInsurancePolicyOperationsToolbar toolbar;
+public class CreateInsurancePolicyView extends View implements CreateInsurancePolicyViewPresenter.Display {
 	
-	public CreateInsurancePolicyView(){
-		SplitLayoutPanel wrapper = new SplitLayoutPanel();
+	private ActionInvokedEventHandler<Action> handler;
+	private CreateInsurancePolicyForm form;
+	
+	public CreateInsurancePolicyView() {
+		VerticalPanel wrapper = new VerticalPanel();
 		initWidget(wrapper);
-		wrapper.setSize("100%", "100%");
 		
-		VerticalPanel clientFormWrapper = new VerticalPanel();
-		wrapper.addWest(clientFormWrapper, 600);
-		clientFormWrapper.setSize("100%", "100%");
-		ListHeader clientHeader = new ListHeader("Cliente");
-		clientFormWrapper.add(clientHeader);
-		clientHeader.setHeight("30px");
-		clientForm = new ClientFormView();
-		clientFormWrapper.add(clientForm);
-		clientFormWrapper.setCellHeight(clientForm, "100%");
-		clientForm.setSize("100%", "100%");
-		clientForm.setReadOnly(true);
-		
-		toolbar = new NewInsurancePolicyOperationsToolbar() {
+		CreateInsurancePolicyToolbar toolbar = new CreateInsurancePolicyToolbar() {
 			
 			@Override
-			public void onSaveRequest() {
-				actionHandler.onActionInvoked(new ActionInvokedEvent<CreateInsurancePolicyViewPresenter.Action>(Action.SAVE));
+			public void onConfirm() {
+				handler.onActionInvoked(new ActionInvokedEvent<CreateInsurancePolicyViewPresenter.Action>(Action.CONFIRM));
 			}
 			
 			@Override
 			public void onCancelRequest() {
-				actionHandler.onActionInvoked(new ActionInvokedEvent<CreateInsurancePolicyViewPresenter.Action>(Action.CANCEL));
-			}
-			
-			@Override
-			public void onCreateObject() {
-				actionHandler.onActionInvoked(new ActionInvokedEvent<CreateInsurancePolicyViewPresenter.Action>(Action.CREATE_OBJECT));
-			}
-			
-			@Override
-			public void onCreateExercise() {
-				actionHandler.onActionInvoked(new ActionInvokedEvent<CreateInsurancePolicyViewPresenter.Action>(Action.CREATE_EXERCISE));
+				handler.onActionInvoked(new ActionInvokedEvent<CreateInsurancePolicyViewPresenter.Action>(Action.CANCEL));
 			}
 		};
-
-		VerticalPanel newPolicyWrapper = new VerticalPanel();
-		wrapper.add(newPolicyWrapper);
-		newPolicyWrapper.setSize("100%", "100%");
+		wrapper.add(toolbar);
 		
-		ListHeader insurancePolicyHeader = new ListHeader("Apólice");
-		newPolicyWrapper.add(insurancePolicyHeader);
-		insurancePolicyHeader.setHeight("30px");
-		
-		SplitLayoutPanel policyDataWrapper = new SplitLayoutPanel();
-		policyDataWrapper.setSize("100%", "100%");
-		newPolicyWrapper.add(policyDataWrapper);
-		newPolicyWrapper.setCellHeight(policyDataWrapper, "100%");
-		
-		VerticalPanel policyFormWrapper = new VerticalPanel();
-		policyFormWrapper.setSize("100%", "100%");
-		
-		this.childrenPanel = new NewInsurancePolicyChildrenPanel();
-		this.childrenPanel.setSize("100%", "100%");
-		
-		policyDataWrapper.addEast(this.childrenPanel, 250);
-		policyDataWrapper.add(policyFormWrapper);
-		
-		insurancePolicyForm = new InsurancePolicyForm() {
-			
-			@Override
-			public void onSubLineChanged(String subLineId) {
-				actionHandler.onActionInvoked(new ActionInvokedEvent<CreateInsurancePolicyViewPresenter.Action>(Action.MODALITY_CHANGED));
-			}
-		};
-		insurancePolicyForm.setSize("100%", "100%");
-		insurancePolicyForm.setReadOnly(false);
-		insurancePolicyForm.setForNew();
-
-		policyFormWrapper.add(toolbar);
-		policyFormWrapper.add(insurancePolicyForm);
-		policyFormWrapper.setCellHeight(insurancePolicyForm, "100%");
+		form = new CreateInsurancePolicyForm();
+		wrapper.add(form.getNonScrollableContent());
 	}
 	
 	@Override
-	protected void initializeView() {}
-
-	@Override
-	public HasEditableValue<Client> getClientForm() {
-		return this.clientForm;
+	protected void initializeView() {
+		return;
 	}
 
 	@Override
-	public HasEditableValue<InsurancePolicy> getInsurancePolicyForm() {
-		return this.insurancePolicyForm;
+	public String getCategory() {
+		return form.getCategory();
 	}
 
 	@Override
-	public void setActionHandler(ActionInvokedEventHandler<Action> handler) {
-		this.actionHandler = handler;
+	public String getLine() {
+		return form.getLine();
 	}
 
 	@Override
-	public HasValueSelectables<InsuredObjectStub> getInsuredObjectsList() {
-		return this.childrenPanel.insuredObjectsList;
+	public String getSubLine() {
+		return form.getSubLine();
 	}
 
 	@Override
-	public HasValueSelectables<ExerciseStub> getExercisesList() {
-		return this.childrenPanel.exercisesList;
+	public void clear() {
+		form.setValue(null);
 	}
 
 	@Override
-	public void setSaveModeEnabled(boolean enabled) {
-		this.toolbar.setSaveModeEnabled(enabled);
+	public void registerActionHandler(ActionInvokedEventHandler<Action> handler) {
+		this.handler = handler;
 	}
-	
+
 }

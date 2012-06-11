@@ -93,7 +93,7 @@ public class ContactsList extends FilterableList<Contact> implements ContactsBro
 
 	public void setOwner(String ownerId){
 		discardOwner();
-		if(ownerId != null){
+		if(ownerId != null && !ownerId.isEmpty()){
 			this.broker.registerClient(this, ownerId);
 			this.broker.refreshContactsForOwner(ownerId, new ResponseHandler<Void>() {
 

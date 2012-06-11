@@ -323,7 +323,7 @@ TypifiedListClient {
 		this.clearValues();
 		for (TipifiedListItem i : items) {
 			addItem(i);
-			exists |= i.id.equalsIgnoreCase(selectedItemId);
+			exists |= (selectedItemId != null && i.id.equalsIgnoreCase(selectedItemId));
 		}
 		if(exists){
 			setValue(selectedItemId, true);

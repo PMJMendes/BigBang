@@ -46,7 +46,7 @@ public class ReceiptSearchPanel extends SearchPanel<ReceiptStub> implements Rece
 		
 		public Entry(ReceiptStub value) {
 			super(value);
-			setHeight("65px");
+			setHeight("75px");
 		}
 		
 		@Override

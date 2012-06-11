@@ -42,10 +42,10 @@ public class InsurancePolicySearchPanel extends SearchPanel<InsurancePolicyStub>
 		protected Label clientLabel;
 		protected Label lineLabel;
 		protected Image statusIcon;
-		
+
 		public Entry(InsurancePolicyStub policy){
 			super(policy);
-			setHeight("55px");
+			setHeight("65px");
 			this.titleLabel.getElement().getStyle().setFontSize(11, Unit.PX);
 		}
 
@@ -62,38 +62,52 @@ public class InsurancePolicySearchPanel extends SearchPanel<InsurancePolicyStub>
 					lineLabel.getElement().getStyle().setFontSize(11, Unit.PX);
 					VerticalPanel container = new VerticalPanel();
 					container.setSize("100%", "100%");
-					
+
 					container.add(numberLabel);
 					container.add(lineLabel);
 					container.add(clientLabel);
-					
+
 					setWidget(container);
-					
+
 					statusIcon = new Image();
 					statusIcon.setTitle(value.statusText);
 					setRightWidget(statusIcon);
 				}
-				
-				numberLabel.setText("#" + value.number);
-				clientLabel.setText("#" + value.clientNumber + " - " + value.clientName);
-				lineLabel.setText(value.categoryName+" / "+value.lineName+" / "+value.subLineName);
+
+				numberLabel.setText(value.number == null ? "Nova Apólice" : "#" + value.number);
+				clientLabel.setText("#" + (value.clientNumber == null ? "" : value.clientNumber) + " - " + (value.clientName == null ? "" : value.clientName));
+				lineLabel.setText((value.categoryName == null ? "-" : value.categoryName)+
+						" / "+(value.lineName == null ? "-" : value.lineName)+" / "+(value.subLineName == null ? "-" : value.subLineName));
 				lineLabel.getElement().getStyle().setFontStyle(FontStyle.OBLIQUE);
 
 				Resources resources = GWT.create(Resources.class);
-				switch(value.statusIcon){
-				case OBSOLETE:
-					statusIcon.setResource(resources.inactivePolicyIcon());
-					break;
-				case PROVISIONAL:
+				if(value.statusIcon == null) {
 					statusIcon.setResource(resources.provisionalPolicyIcon());
-					break;
-				case VALID:
-					statusIcon.setResource(resources.activePolicyIcon());
-					break;
-				default:
-					return;
+				}else{
+					switch(value.statusIcon){
+					case OBSOLETE:
+						statusIcon.setResource(resources.inactivePolicyIcon());
+						break;
+					case PROVISIONAL:
+						statusIcon.setResource(resources.provisionalPolicyIcon());
+						break;
+					case VALID:
+						statusIcon.setResource(resources.activePolicyIcon());
+						break;
+					default:
+						return;
+					}
 				}
 				
+				setMetaData(new String[]{
+					value.number,
+					value.categoryName,
+					value.lineName,
+					value.subLineName,
+					value.clientNumber,
+					value.clientName
+				});
+
 				return;
 			}
 			throw new RuntimeException("The given policy was invalid (InsurancePolicySearchPanel.Entry)");
@@ -125,6 +139,7 @@ public class InsurancePolicySearchPanel extends SearchPanel<InsurancePolicyStub>
 	protected int insurancePolicyDataVersion = 0;
 	protected Map<String, InsurancePolicyStub> policiesToUpdate;
 	protected Map<String, Void> policiesToRemove;
+	protected InsurancePolicyStub newPolicy = null;
 
 	public InsurancePolicySearchPanel() {
 		super(((InsurancePolicyBroker)DataBrokerManager.Util.getInstance().getBroker(BigBangConstants.EntityIds.INSURANCE_POLICY)).getSearchBroker());
@@ -168,7 +183,7 @@ public class InsurancePolicySearchPanel extends SearchPanel<InsurancePolicyStub>
 			this.broker.disposeSearch(this.workspaceId);
 			this.workspaceId = null;
 		}
-		
+
 		this.policiesToRemove.clear();
 		this.policiesToUpdate.clear();
 
@@ -263,8 +278,36 @@ public class InsurancePolicySearchPanel extends SearchPanel<InsurancePolicyStub>
 
 	@Override
 	public void remapItemId(String oldId, String newId) {
-		// TODO Auto-generated method stub
-		
+		return;
+	}
+
+	public Entry setNewPolicy(InsurancePolicy policy){
+		discardNewPolicy();
+		Entry entry = null;
+		entry = new Entry(policy);
+		add(0, entry);
+		this.newPolicy = policy;
+		return entry;
+	}
+
+	public void discardNewPolicy(){
+		if(this.newPolicy != null) {
+			for(ValueSelectable<?> selectable : this) {
+				if(selectable.getValue() == this.newPolicy){
+					remove(selectable);
+					break;
+				}
+			}
+			this.newPolicy = null; 
+		}
+	}
+	
+	@Override
+	public void clear() {
+		super.clear();
+		if(this.newPolicy != null) {
+			addSearchResult(this.newPolicy);
+		}
 	}
 
 }

@@ -81,7 +81,7 @@ public class DocumentsList extends FilterableList<Document> implements Documents
 
 	public void setOwner(final String ownerId){
 		discardOwner();
-		if(ownerId != null){
+		if(ownerId != null && !ownerId.isEmpty()){
 			this.broker.registerClient(this, ownerId);
 			this.broker.getDocuments(ownerId, new ResponseHandler<Collection<Document>>() {
 

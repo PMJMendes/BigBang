@@ -915,4 +915,9 @@ public class InsurancePolicyProcessBrokerImpl extends DataBroker<InsurancePolicy
 		});
 	}
 
+	@Override
+	public boolean isNewPolicy(String policyId) {
+		return isTemp(policyId) && this.policiesInScratchPad.containsKey(policyId) && this.policiesInScratchPad.containsValue(policyId);
+	}
+
 }

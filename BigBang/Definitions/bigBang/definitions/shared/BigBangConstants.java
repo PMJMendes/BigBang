@@ -74,6 +74,12 @@ public class BigBangConstants {
 		public static final String POLICY_COVERAGE = "AE5F9DD7-2863-4C5B-AE0B-9F9C00229D02";
 		public static final String SUB_POLICY_COVERAGE = "53EF35E5-AACD-4916-A212-9FF800CEAA89";
 	}
+	
+	public static class TypifiedListValues {
+		public static class INSURANCE_POLICY_DURATION {
+			public static final String TEMPORARY = "e3f02152-ed63-44bb-9fd1-9f8101580339";
+		}
+	}
 
 	public static class OperationIds {
 

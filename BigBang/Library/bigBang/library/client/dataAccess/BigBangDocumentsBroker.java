@@ -5,6 +5,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import bigBang.definitions.client.dataAccess.DataBroker;
 import bigBang.definitions.client.dataAccess.DataBrokerClient;
@@ -28,15 +29,15 @@ public class BigBangDocumentsBroker extends DataBroker<Document> implements Docu
 			return instance;
 		}
 	}
-	
+
 	protected static final int NO_DATA_VERSION = 0;
-	
+
 	protected DocumentServiceAsync service;
 	private Map<String, List<Document>> documents;
 	private Map<String, Boolean> dataRefreshRequirements;
 	private Map<String, List<DocumentsBrokerClient>> clients;
 	private Map<String, Integer> dataVersions;
-	
+
 	public BigBangDocumentsBroker(){
 		this.service = DocumentService.Util.getInstance();
 		this.dataElementId = BigBangConstants.EntityIds.DOCUMENT;
@@ -45,7 +46,7 @@ public class BigBangDocumentsBroker extends DataBroker<Document> implements Docu
 		dataRefreshRequirements = new HashMap<String, Boolean>();
 		clients = new HashMap<String, List<DocumentsBrokerClient>>();
 	}
-	
+
 	@Override
 	public int incrementDataVersion(String ownerId) {
 		if(!clients.containsKey(ownerId)){
@@ -119,6 +120,7 @@ public class BigBangDocumentsBroker extends DataBroker<Document> implements Docu
 				unregisterClient(client, ownerId);
 			}
 		}
+		clean();
 	}
 
 	@Override
@@ -128,11 +130,18 @@ public class BigBangDocumentsBroker extends DataBroker<Document> implements Docu
 		}
 		List<DocumentsBrokerClient> clientList = clients.get(ownerId);
 		clientList.remove(client);
-		if(clientList.isEmpty()){
-			dataVersions.remove(ownerId);
-			documents.remove(ownerId);
-			dataRefreshRequirements.remove(ownerId);
-			clients.remove(ownerId);
+	}
+
+	protected void clean(){
+		Set<String> keys = this.clients.keySet();
+		for(String listId : keys) {
+			List<DocumentsBrokerClient> clientList = this.clients.get(listId);
+			if(clientList.isEmpty()){
+				dataVersions.remove(clientList);
+				documents.remove(clientList);
+				dataRefreshRequirements.remove(clientList);
+				clients.remove(clientList);
+			}
 		}
 	}
 
@@ -171,7 +180,7 @@ public class BigBangDocumentsBroker extends DataBroker<Document> implements Docu
 	protected boolean requiresDataRefresh(String ownerId){
 		return this.dataRefreshRequirements.get(ownerId);
 	}
-	
+
 	@Override
 	public void getDocuments(final String ownerId,
 			final ResponseHandler<Collection<Document>> handler) {
@@ -192,7 +201,7 @@ public class BigBangDocumentsBroker extends DataBroker<Document> implements Docu
 					updateClients(ownerId);
 					handler.onResponse(documentsList);
 				}
-				
+
 				@Override
 				public void onResponseFailure(Throwable caught) {
 					handler.onError(new String[]{
@@ -200,13 +209,13 @@ public class BigBangDocumentsBroker extends DataBroker<Document> implements Docu
 					});
 					super.onResponseFailure(caught);
 				}
-				
+
 			});
 		}else{
 			handler.onResponse(documents.get(ownerId));
 		}
 	}
-	
+
 	@Override
 	public void getDocument(final String ownerId, final String documentId,
 			final ResponseHandler<Document> handler) {
@@ -236,11 +245,11 @@ public class BigBangDocumentsBroker extends DataBroker<Document> implements Docu
 						public void onResponseSuccess(Document result) {
 							handler.onResponse(result);
 						}
-						
+
 						@Override
 						public void onResponseFailure(Throwable caught) {
 							handler.onError(new String[]{
-								new String("Could not get the document")	
+									new String("Could not get the document")	
 							});
 							super.onResponseFailure(caught);
 						}
@@ -256,7 +265,7 @@ public class BigBangDocumentsBroker extends DataBroker<Document> implements Docu
 			}
 		}
 	}
-	
+
 	@Override
 	public void createDocument(Document document, final ResponseHandler<Document> handler) {
 		service.createDocument(document, new BigBangAsyncCallback<Document>() {
@@ -269,19 +278,19 @@ public class BigBangDocumentsBroker extends DataBroker<Document> implements Docu
 				updateClients(result.ownerId);
 				handler.onResponse(result);
 			}
-			
+
 			@Override
 			public void onResponseFailure(Throwable caught) {
 				handler.onError(new String[]{
-					new String("Could not create the document")
+						new String("Could not create the document")
 				});
 				super.onResponseFailure(caught);
 			}
-			
+
 		});
 	}
 
-	
+
 	@Override
 	public void updateDocument(final Document document, final ResponseHandler<Document> handler) {
 		getDocument(document.ownerId, document.id, new ResponseHandler<Document>() {
@@ -302,7 +311,7 @@ public class BigBangDocumentsBroker extends DataBroker<Document> implements Docu
 								}
 							});
 						}
-						
+
 						List<Document> documentsList = documents.get(result.ownerId);
 						for(Document document : documentsList) {
 							if(document.id.equalsIgnoreCase(result.id)){
@@ -313,7 +322,7 @@ public class BigBangDocumentsBroker extends DataBroker<Document> implements Docu
 						updateClients(result.ownerId);
 						handler.onResponse(result);
 					}
-					
+
 					@Override
 					public void onResponseFailure(Throwable caught) {
 						handler.onError(new String[]{
@@ -327,12 +336,12 @@ public class BigBangDocumentsBroker extends DataBroker<Document> implements Docu
 			@Override
 			public void onError(Collection<ResponseError> errors) {
 				handler.onError(new String[]{
-					new String("Could not get the original document")	
+						new String("Could not get the original document")	
 				});
 			}
 		});
 	}
-	
+
 	@Override
 	public void deleteDocument(final String documentId, final ResponseHandler<Void> handler) {
 		service.deleteDocument(documentId, new BigBangAsyncCallback<Void>() {
@@ -355,7 +364,7 @@ public class BigBangDocumentsBroker extends DataBroker<Document> implements Docu
 				}
 				handler.onResponse(null);
 			}
-			
+
 			@Override
 			public void onResponseFailure(Throwable caught) {
 				handler.onError(new String[]{
@@ -363,10 +372,10 @@ public class BigBangDocumentsBroker extends DataBroker<Document> implements Docu
 				});
 				super.onResponseFailure(caught);
 			}
-			
+
 		});
 	}
-	
+
 	@Override
 	public void closeDocumentResource(String ownerId, String documentId, final ResponseHandler<Void> handler) {
 		getDocument(ownerId, documentId, new ResponseHandler<Document>() {
@@ -380,15 +389,15 @@ public class BigBangDocumentsBroker extends DataBroker<Document> implements Docu
 						public void onResponseSuccess(Void result) {
 							handler.onResponse(null);
 						}
-						
+
 						@Override
 						public void onResponseFailure(Throwable caught) {
 							handler.onError(new String[]{
-								new String("Could not close the document file resource")	
+									new String("Could not close the document file resource")	
 							});
 							super.onResponseFailure(caught);
 						}
-						
+
 					});
 				}else{
 					handler.onResponse(null);
@@ -398,12 +407,12 @@ public class BigBangDocumentsBroker extends DataBroker<Document> implements Docu
 			@Override
 			public void onError(Collection<ResponseError> errors) {
 				handler.onError(new String[]{
-					new String("Could not find the document locally")	
+						new String("Could not find the document locally")	
 				});
 			}
 		});
 	}
-	
+
 	/**
 	 * Updates the clients to the latest version of the info
 	 * @param ownerId The id of the owner
@@ -432,19 +441,19 @@ public class BigBangDocumentsBroker extends DataBroker<Document> implements Docu
 	@Override
 	public void notifyItemCreation(String itemId) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void notifyItemDeletion(String itemId) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void notifyItemUpdate(String itemId) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 }

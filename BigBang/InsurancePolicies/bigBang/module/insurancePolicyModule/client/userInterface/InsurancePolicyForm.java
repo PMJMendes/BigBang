@@ -33,9 +33,7 @@ public abstract class InsurancePolicyForm extends FormView<InsurancePolicy> {
 	protected TextBoxFormField number;
 	protected TextBoxFormField client;
 	protected ExpandableListBoxFormField insuranceAgency;
-	protected ExpandableListBoxFormField category;
-	protected ExpandableListBoxFormField line;
-	protected ExpandableListBoxFormField subLine;
+	protected TextBoxFormField categoryLineSubLine;
 	protected ExpandableListBoxFormField mediator;
 	protected TextBoxFormField policyStatus;
 	protected DayMonthDatePickerFormField maturityDate;
@@ -70,12 +68,8 @@ public abstract class InsurancePolicyForm extends FormView<InsurancePolicy> {
 		insuranceAgency.allowEdition(false);
 		mediator = new ExpandableListBoxFormField(BigBangConstants.EntityIds.MEDIATOR, "Mediador");
 		mediator.allowEdition(false);
-		category = new ExpandableListBoxFormField(BigBangConstants.EntityIds.CATEGORY, "Categoria");
-		category.allowEdition(false);
-		line = new ExpandableListBoxFormField("Ramo");
-		line.allowEdition(false);
-		subLine = new ExpandableListBoxFormField("Modalidade");
-		subLine.allowEdition(false);
+		categoryLineSubLine = new TextBoxFormField("Categoria / Ramo / Modalidade");
+		categoryLineSubLine.setEditable(false);
 		maturityDate = new DayMonthDatePickerFormField("Dia / Mês de Vencimento");
 		duration = new ExpandableListBoxFormField(ModuleConstants.TypifiedListIds.DURATION, "Duração");
 		startDate = new DatePickerFormField("Data de Início");
@@ -97,9 +91,7 @@ public abstract class InsurancePolicyForm extends FormView<InsurancePolicy> {
 		policyStatus.setEditable(false);
 
 		addFormField(client, false);
-
-		addFormField(number, true);
-		addFormField(insuranceAgency, false);
+		addFormField(categoryLineSubLine, false);
 
 		addFormFieldGroup(new FormField<?>[]{
 				number,
@@ -108,28 +100,19 @@ public abstract class InsurancePolicyForm extends FormView<InsurancePolicy> {
 				premium
 		}, true);
 
-		FormField<?>[] group1 = new FormField<?>[]{
+		addFormFieldGroup(new FormField<?>[]{
 				manager,
 				mediator,
 				fractioning,
 				duration
-		};
-		addFormFieldGroup(group1, true);
+		}, true);
 
-		FormField<?>[] group2 = new FormField<?>[]{
+		addFormFieldGroup(new FormField<?>[]{
 				startDate,
 				endDate,
-				maturityDate
-		};
-		addFormFieldGroup(group2, true);
-
-		FormField<?>[] group3 = new FormField<?>[]{
-				caseStudy,
-				category,
-				line,
-				subLine
-		};
-		addFormFieldGroup(group3, true);
+				maturityDate,
+				caseStudy
+		}, true);
 
 		//CO-INSURANCE
 
@@ -185,37 +168,6 @@ public abstract class InsurancePolicyForm extends FormView<InsurancePolicy> {
 		addSection("Notas");
 		addFormField(notes);
 
-		category.addValueChangeHandler(new ValueChangeHandler<String>() {
-
-			@Override
-			public void onValueChange(ValueChangeEvent<String> event) {
-				if(event.getValue() == null || event.getValue().isEmpty()){
-					line.setListId(null, null);
-				}else{
-					line.setListId(BigBangConstants.EntityIds.LINE+"/"+event.getValue(), null);
-				}
-			}
-		});
-		line.addValueChangeHandler(new ValueChangeHandler<String>() {
-
-			@Override
-			public void onValueChange(ValueChangeEvent<String> event) {
-				if(event.getValue() == null || event.getValue().isEmpty()){
-					subLine.setListId(null, null);
-				}else{
-					subLine.setListId(BigBangConstants.EntityIds.SUB_LINE+"/"+event.getValue(), null);
-				}
-			}
-		});
-		subLine.addValueChangeHandler(new ValueChangeHandler<String>() {
-
-			@Override
-			public void onValueChange(ValueChangeEvent<String> event) {
-				String value = event.getValue();
-				onSubLineChanged(value);
-			}
-		});
-
 		this.manager.setEditable(false);
 		this.client.setEditable(false);
 
@@ -226,8 +178,31 @@ public abstract class InsurancePolicyForm extends FormView<InsurancePolicy> {
 			
 			@Override
 			public void onValueChange(ValueChangeEvent<Date> event) {
+				if(maturityDate.getValue() == null){
+					maturityDate.setValue(event.getValue());
+				}
+			}
+		});
+		
+		startDate.addValueChangeHandler(new ValueChangeHandler<Date>() {
+			
+			@Override
+			public void onValueChange(ValueChangeEvent<Date> event) {
 				if(maturityDate.getDay().isEmpty() && maturityDate.getMonth().isEmpty()){
 					maturityDate.setValue(event.getValue());
+				}
+			}
+		});
+		
+		duration.addValueChangeHandler(new ValueChangeHandler<String>() {
+			
+			@Override
+			public void onValueChange(ValueChangeEvent<String> event) {
+				if(event.getValue().equalsIgnoreCase("e3f02152-ed63-44bb-9fd1-9f8101580339")){
+					maturityDate.clear();
+					maturityDate.setVisible(false);
+				}else{
+					maturityDate.setVisible(true);
 				}
 			}
 		});
@@ -252,17 +227,11 @@ public abstract class InsurancePolicyForm extends FormView<InsurancePolicy> {
 
 	public void setForEdit(){
 		this.manager.setEditable(false);
-		this.category.setEditable(false);
-		this.line.setEditable(false);
-		this.subLine.setEditable(false);
 		this.insuranceAgency.setEditable(false);
 	}
 
 	public void setForNew(){
 		this.manager.setEditable(true);
-		this.category.setEditable(true);
-		this.line.setEditable(true);
-		this.subLine.setEditable(true);
 		this.insuranceAgency.setEditable(true);
 	}
 
@@ -274,10 +243,6 @@ public abstract class InsurancePolicyForm extends FormView<InsurancePolicy> {
 			result.managerId = manager.getValue();
 			result.number = number.getValue();
 			result.insuranceAgencyId = insuranceAgency.getValue();
-			result.categoryId = category.getValue();
-			result.lineId = line.getValue();
-			result.subLineId = subLine.getValue();
-			result.mediatorId = mediator.getValue();
 			String maturityDay = "";
 			String maturityMonth = "";
 			if(maturityDate.getStringValue() != null && !maturityDate.getStringValue().isEmpty()){
@@ -339,35 +304,7 @@ public abstract class InsurancePolicyForm extends FormView<InsurancePolicy> {
 			this.number.setValue(info.number);
 			this.insuranceAgency.setValue(info.insuranceAgencyId);
 
-			this.category.setValue(info.categoryId, false);
-
-			String categoryId = info.categoryId == null ? "" : info.categoryId;
-			this.line.setListId(BigBangConstants.EntityIds.LINE+"/"+categoryId, new ResponseHandler<Void>() {
-
-				@Override
-				public void onResponse(Void response) {
-					return;
-				}
-
-				@Override
-				public void onError(Collection<ResponseError> errors) {}
-
-			});
-
-			String lineId = info.lineId == null ? "" : info.lineId;
-			line.setValue(lineId, false);
-			subLine.setListId(BigBangConstants.EntityIds.SUB_LINE+"/"+lineId, new ResponseHandler<Void>() {
-
-				@Override
-				public void onResponse(Void response) {
-					return;
-				}
-
-				@Override
-				public void onError(Collection<ResponseError> errors) {}
-			});
-			String subLineId = info.subLineId == null ? "" : info.subLineId;
-			subLine.setValue(subLineId, false);
+			this.categoryLineSubLine.setValue(info.categoryName + " / " + info.lineName + " / " + info.subLineName);
 
 			this.mediator.setValue(info.mediatorId);
 			try{
@@ -376,7 +313,7 @@ public abstract class InsurancePolicyForm extends FormView<InsurancePolicy> {
 			}catch (IllegalArgumentException e) {
 				maturityDate.clear();
 			}
-
+			
 			this.duration.setValue(info.durationId);
 			this.fractioning.setValue(info.fractioningId);
 			this.premium.setValue(info.premium);

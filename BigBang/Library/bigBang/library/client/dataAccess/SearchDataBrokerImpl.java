@@ -108,6 +108,13 @@ public class SearchDataBrokerImpl<T extends SearchResult> extends DataBroker<T> 
 	@Override
 	public void disposeSearch(String workspaceId) {
 		workspaces.remove(workspaceId);
+		service.closeSearch(workspaceId, new BigBangAsyncCallback<Void>() {
+
+			@Override
+			public void onResponseSuccess(Void result) {
+				return;
+			}
+		});
 	}
 
 	@Override

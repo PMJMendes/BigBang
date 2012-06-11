@@ -17,8 +17,10 @@ import bigBang.definitions.shared.InsurancePolicyStub;
 import bigBang.definitions.shared.InsuredObjectStub;
 import bigBang.library.client.HasEditableValue;
 import bigBang.library.client.HasValueSelectables;
+import bigBang.library.client.ValueSelectable;
 import bigBang.library.client.event.ActionInvokedEvent;
 import bigBang.library.client.event.ActionInvokedEventHandler;
+import bigBang.library.client.userInterface.ListHeader;
 import bigBang.library.client.userInterface.SlidePanel;
 import bigBang.library.client.userInterface.view.View;
 import bigBang.module.insurancePolicyModule.client.userInterface.InsurancePolicyChildrenPanel;
@@ -58,8 +60,17 @@ public class InsurancePolicySearchOperationView extends View implements Insuranc
 		mainContent = mainWrapper;
 		mainWrapper.setSize("100%", "100%");
 		
+		VerticalPanel searchPanelWrapper = new VerticalPanel();
+		searchPanelWrapper.setSize("100%", "100%");
+		
+		ListHeader searchPanelHeader = new ListHeader("Apólices");
+		searchPanelWrapper.add(searchPanelHeader);
+			
 		searchPanel = new InsurancePolicySearchPanel();
-		mainWrapper.addWest(searchPanel, SEARCH_PANEL_WIDTH);
+		searchPanelWrapper.add(searchPanel);
+		searchPanelWrapper.setCellHeight(searchPanel, "100%");
+
+		mainWrapper.addWest(searchPanelWrapper, SEARCH_PANEL_WIDTH);
 		
 		SplitLayoutPanel contentWrapper = new SplitLayoutPanel();
 		contentWrapper.setSize("100%", "100%");
@@ -455,5 +466,24 @@ public class InsurancePolicySearchOperationView extends View implements Insuranc
 	public void allowTransferToClient(boolean allow) {
 		toolbar.allowTransferToClient(allow);
 
+	}
+
+	@Override
+	public void setForNew(boolean newPolicy) {
+		if(newPolicy){
+			form.setForNew();
+		}else{
+			form.setForEdit();
+		}
+	}
+
+	@Override
+	public ValueSelectable<InsurancePolicyStub> addNewPolicyListEntry(InsurancePolicy policy) {
+		return searchPanel.setNewPolicy(policy);
+	}
+
+	@Override
+	public void removeNewPolicyEntry() {
+		searchPanel.discardNewPolicy();
 	}
 }

@@ -43,6 +43,10 @@ public class HasParameters {
 		}
 		return result;
 	}
+	
+	public boolean hasSetParameter(String parameterId) {
+		return this.parameters.containsKey(parameterId);
+	}
 
 	//PARAMETER STACKS
 

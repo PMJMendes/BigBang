@@ -71,6 +71,8 @@ ViewPresenter {
 	public interface Display {
 		//Listtype filter text
 		HasValueSelectables<InsurancePolicyStub> getList();
+		ValueSelectable<InsurancePolicyStub> addNewPolicyListEntry(InsurancePolicy policy);
+		void removeNewPolicyEntry();
 
 		//Form
 		HasEditableValue<InsurancePolicy> getForm();
@@ -117,6 +119,7 @@ ViewPresenter {
 		void registerActionInvokedHandler(ActionInvokedEventHandler<Action> handler);
 		void setSaveModeEnabled(boolean enabled);
 		void confirm(String message, ResponseHandler<Boolean> handler);
+		void setForNew(boolean newPolicy);
 
 		Widget asWidget();
 	}
@@ -207,23 +210,7 @@ ViewPresenter {
 					});
 					break;
 				case CANCEL_EDIT:
-					final String policyId = broker.getFinalMapping(view.getForm().getValue().id);
-					broker.closePolicyResource(view.getForm().getValue().id, new ResponseHandler<Void>() {
-
-						@Override
-						public void onResponse(Void response) {
-							NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
-							item.setParameter("policyid", policyId);
-							NavigationHistoryManager.getInstance().go(item);
-						}
-
-						@Override
-						public void onError(Collection<ResponseError> errors) {
-							broker.discardTemp(view.getForm().getValue().id);
-							onClosePolicyResourceFailed();
-							NavigationHistoryManager.getInstance().reload();
-						}
-					});
+					onCancelEdit();
 					break;
 				case SAVE:
 					InsurancePolicy info = view.getForm().getInfo();
@@ -421,9 +408,9 @@ ViewPresenter {
 	}
 
 	protected void delete() {
-		
+
 		broker.removePolicy(view.getForm().getInfo().id, new ResponseHandler<String>() {
-			
+
 			@Override
 			public void onResponse(String response) {
 				EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "A apólice foi eliminada com sucesso"), TYPE.TRAY_NOTIFICATION));
@@ -431,13 +418,13 @@ ViewPresenter {
 				item.removeParameter("policyid");
 				NavigationHistoryManager.getInstance().go(item);
 			}
-			
+
 			@Override
 			public void onError(Collection<ResponseError> errors) {
 				EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não foi possível eliminar a apólice"), TYPE.ALERT_NOTIFICATION));
 			}
 		});
-		
+
 	}
 
 	private void checkStatus(String nextPolicyId){
@@ -479,12 +466,14 @@ ViewPresenter {
 		view.getHistoryList().clearSelection();
 		view.getExercisesList().clearSelection();
 		view.getObjectsList().clearSelection();
+		clearNewPolicyPreparation();
 	}
 
 	private void showPolicy(String policyId){
 		if(broker.isTemp(policyId)){
 			showScratchPadPolicy(policyId);
 		}else{
+			view.setForNew(false);
 
 			for(ValueSelectable<InsurancePolicyStub> entry : view.getList().getAll()){
 				InsurancePolicyStub listPolicy = entry.getValue();
@@ -521,7 +510,7 @@ ViewPresenter {
 					view.allowCreateHealthExpense(PermissionChecker.hasPermission(response, BigBangConstants.OperationIds.InsurancePolicyProcess.CREATE_HEALTH_EXPENSE));
 					view.allowCreateRiskAnalisys(PermissionChecker.hasPermission(response, BigBangConstants.OperationIds.InsurancePolicyProcess.CREATE_RISK_ANALISYS));
 					view.allowTransferToClient(PermissionChecker.hasPermission(response, BigBangConstants.OperationIds.InsurancePolicyProcess.TRANSFER_TO_CLIENT));
-					
+
 					view.setSaveModeEnabled(false);
 					view.getForm().setReadOnly(true);
 					view.getForm().setValue(response);
@@ -538,10 +527,17 @@ ViewPresenter {
 
 	private void showScratchPadPolicy(final String policyId){
 		if(broker.isTemp(policyId)){
+			final boolean isNewPolicy = broker.isNewPolicy(policyId);
+			view.setForNew(isNewPolicy);
+
 			broker.getPolicy(policyId, new ResponseHandler<InsurancePolicy>() {
 
 				@Override
 				public void onResponse(InsurancePolicy response) {
+					if(isNewPolicy) {
+						prepareForNewPolicy(response);
+					}
+
 					view.clearAllowedPermissions();
 
 					view.allowEdit(true);
@@ -597,7 +593,6 @@ ViewPresenter {
 		}
 	}
 
-
 	private void savePolicy(final InsurancePolicy policy){
 		saveWorkState(new ResponseHandler<Void>() {
 
@@ -607,7 +602,7 @@ ViewPresenter {
 
 					@Override
 					public void onResponse(InsurancePolicy response) {
-						onSavePolicySuccess();
+						onSavePolicySuccess(response.id);
 					}
 
 					@Override
@@ -664,14 +659,14 @@ ViewPresenter {
 			onGetPolicyFailed();
 		}
 	}
-	
+
 	private void onRequestCompanyInfo(){
 		NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
 		item.pushIntoStackParameter("display", "companyinforequest");
 		item.setParameter("ownerid", view.getForm().getValue().id);
 		NavigationHistoryManager.getInstance().go(item);
 	}
-	
+
 	private void onRequestClientInfo(){
 		NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
 		item.pushIntoStackParameter("display", "clientinforequest");
@@ -860,7 +855,7 @@ ViewPresenter {
 			}
 		});
 	}
-	
+
 	private void showReceipt(final ReceiptStub receipt){
 		saveWorkState(new ResponseHandler<Void>() {
 
@@ -880,7 +875,7 @@ ViewPresenter {
 			}
 		});
 	}
-	
+
 	private void showExpense(final ExpenseStub expense){
 		saveWorkState(new ResponseHandler<Void>() {
 
@@ -920,15 +915,78 @@ ViewPresenter {
 		});
 	}
 
-	private void onSavePolicySuccess(){
+	private void onSavePolicySuccess(String policyId){
 		EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Apólice guardada com sucesso"), TYPE.TRAY_NOTIFICATION));
-		NavigationHistoryManager.getInstance().reload();
+
+		NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
+		item.setParameter("policyid", policyId);
+		NavigationHistoryManager.getInstance().go(item);
 	}
 
 	private void transferToClient(){
 		NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
 		item.setParameter("show", "transfertoclient");
 		NavigationHistoryManager.getInstance().go(item);
+	}
+
+	private void onCancelEdit(){
+		final InsurancePolicy policy = view.getForm().getValue();
+		final String policyId = broker.getFinalMapping(policy.id);
+		final boolean newPolicy = broker.isNewPolicy(policyId);
+
+		broker.closePolicyResource(policy.id, new ResponseHandler<Void>() {
+
+			@Override
+			public void onResponse(Void response) {
+				if(newPolicy) {
+					NavigationHistoryItem item = new NavigationHistoryItem();
+					item.setParameter("section", "client");
+					item.setStackParameter("display");
+					item.pushIntoStackParameter("display", "search");
+					item.setParameter("clientid", policy.clientId);
+					NavigationHistoryManager.getInstance().go(item);
+				}else{
+					NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
+					item.setParameter("policyid", policyId);
+					NavigationHistoryManager.getInstance().go(item);
+				}
+			}
+
+			@Override
+			public void onError(Collection<ResponseError> errors) {
+				broker.discardTemp(view.getForm().getValue().id);
+				onClosePolicyResourceFailed();
+				if(newPolicy){
+					NavigationHistoryItem item = new NavigationHistoryItem();
+					item.setParameter("section", "client");
+					item.setStackParameter("display");
+					item.pushIntoStackParameter("display", "search");
+					item.setParameter("clientid", policy.clientId);
+					NavigationHistoryManager.getInstance().go(item);
+				}else{
+					NavigationHistoryManager.getInstance().reload();
+				}
+			}
+		});
+	}
+
+	private void prepareForNewPolicy(InsurancePolicy policy){
+		for(ValueSelectable<InsurancePolicyStub> entry : view.getList().getAll()) {
+			if(entry.isSelected()){
+				entry.setSelected(false, false);
+			}
+		}
+		view.getForm().setValue(null);
+		ValueSelectable<InsurancePolicyStub> entry = view.addNewPolicyListEntry(policy);
+		entry.setSelected(true, false);
+	}
+
+	private void clearNewPolicyPreparation(){
+		InsurancePolicy policy = view.getForm().getValue();
+		String policyId = policy != null ? policy.id : null;
+		if(policyId != null && broker.isNewPolicy(policyId)){
+			view.removeNewPolicyEntry();
+		}
 	}
 
 }

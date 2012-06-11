@@ -202,6 +202,7 @@ public abstract class SearchPanel<T extends SearchResult> extends FilterableList
 					this.broker.searchOpenForOperation(this.operationId, parameters, sorts, this.pageSize, handler);
 				}
 			} else {
+				this.broker.disposeSearch(this.workspaceId);
 				ResponseHandler<Search<T>> handler = new ResponseHandler<Search<T>>() {
 
 					@Override

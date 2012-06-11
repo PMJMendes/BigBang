@@ -36,7 +36,6 @@ import bigBang.library.client.userInterface.presenter.ViewPresenter;
 import bigBang.library.client.userInterface.view.View;
 import bigBang.module.generalSystemModule.shared.SessionGeneralSystem;
 
-import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.HasWidgets;
 import com.google.gwt.user.client.ui.UIObject;
 import com.google.gwt.user.client.ui.Widget;
@@ -209,8 +208,7 @@ public class ClientSearchOperationViewPresenter implements ViewPresenter {
 					NavigationHistoryManager.getInstance().go(item);
 					break;
 				case CREATE_POLICY:
-					item.pushIntoStackParameter("display", "createpolicy");
-					item.setParameter("policyid", "new");
+					item.setParameter("show", "createpolicy");
 					NavigationHistoryManager.getInstance().go(item);
 					break;
 				case CREATE_QUOTE_REQUEST:
@@ -389,7 +387,8 @@ public class ClientSearchOperationViewPresenter implements ViewPresenter {
 
 	private void setupNewClient(){
 		clearNewClient();
-		boolean hasPermission = true; //TODO check permission
+		boolean hasPermission = PermissionChecker.hasPermission(SessionGeneralSystem.getInstance(), BigBangConstants.OperationIds.GeneralSystemProcess.CREATE_CLIENT);
+
 		if(hasPermission){
 			Client client = new Client();
 			client.id = new String("new");
@@ -409,7 +408,7 @@ public class ClientSearchOperationViewPresenter implements ViewPresenter {
 			view.getForm().setValue(client);
 			view.getForm().setReadOnly(false);
 		}else{
-			GWT.log("User does not have the required permissions");
+			onCreateClientFailed();
 		}
 	}
 
@@ -443,9 +442,10 @@ public class ClientSearchOperationViewPresenter implements ViewPresenter {
 	private void showClient(String id){
 		for(ValueSelectable<ClientStub> entry : view.getList().getAll()){
 			ClientStub listClient = entry.getValue();
-			if(listClient.id.equalsIgnoreCase(id) && !entry.isSelected()){
-				view.selectClient(id);
-				break;
+			if(listClient.id.equalsIgnoreCase(id)){
+				entry.setSelected(true, false);
+			}else{
+				entry.setSelected(false, false);
 			}
 		}		
 

@@ -29,7 +29,7 @@ public class DayMonthDatePickerFormField extends DatePickerFormField{
 	
 	@Override
 	public String getStringValue() {
-		String date = "";
+		String date = null;
 		
 		try{
 			date = DateTimeFormat.getFormat("MM-dd").format(getValue());

@@ -84,12 +84,13 @@ public class ManagerTransferViewPresenter implements ViewPresenter, HasOperation
 		String transferId = parameterHolder.getParameter("transferid");
 		transferId = transferId == null ? new String() : transferId;
 
+		clearView();
+		
 		if(!transferId.isEmpty()){
 			id = transferId;
 		}
 		
 		if(id.isEmpty()){
-			clearView();
 			onGetManagerTransferFailed();
 		}else{
 			showTransfer(id);
@@ -134,6 +135,8 @@ public class ManagerTransferViewPresenter implements ViewPresenter, HasOperation
 	private void clearView() {
 		view.clearList();
 		view.getForm().setValue(null);
+		view.allowAccept(false);
+		view.allowCancel(false);
 	}
 
 	private void showTransfer(String transferId) {

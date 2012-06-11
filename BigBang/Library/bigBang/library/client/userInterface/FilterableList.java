@@ -164,8 +164,10 @@ public class FilterableList<T> extends SortableList<T> {
 
 		if(entry.metaData != null) {
 			for(String meta : entry.metaData){
-				String deacMeta = normalize(meta);
-				matches |= (deacMeta != null && deacMeta.toUpperCase().contains(token));
+				if(meta != null) {
+					String deacMeta = normalize(meta);
+					matches |= (deacMeta != null && deacMeta.toUpperCase().contains(token));
+				}
 			}
 		}
 

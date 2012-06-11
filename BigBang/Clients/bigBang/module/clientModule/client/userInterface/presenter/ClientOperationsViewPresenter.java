@@ -55,8 +55,6 @@ public class ClientOperationsViewPresenter implements ViewPresenter {
 
 				if(display.equalsIgnoreCase("search")){
 					present("CLIENT_SEARCH", parameters);
-				}else if(display.equalsIgnoreCase("createpolicy")){
-					present("CLIENT_CREATE_INSURANCE_POLICY", parameters);
 				}else if(display.equalsIgnoreCase("merge")){
 					present("CLIENT_MERGE", parameters);
 				}else if(display.equalsIgnoreCase("managertransfer")){

@@ -42,7 +42,7 @@ public class NavigationHistoryManager implements HasValueChangeHandlers<Navigati
 
 	public NavigationHistoryItem getCurrentState() {
 		return new NavigationHistoryItem(History.getToken());
-	}
+	} 
 
 	@Override
 	public HandlerRegistration addValueChangeHandler(

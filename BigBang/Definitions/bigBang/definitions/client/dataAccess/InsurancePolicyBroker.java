@@ -77,5 +77,7 @@ public interface InsurancePolicyBroker extends DataBrokerInterface<InsurancePoli
 	public void createClientInfoRequest(InfoOrDocumentRequest request,
 			ResponseHandler<InfoOrDocumentRequest> responseHandler);
 
+	public boolean isNewPolicy(String policyId);
+
 	
 }

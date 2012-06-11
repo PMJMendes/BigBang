@@ -70,8 +70,10 @@ public class ClientSectionViewPresenter implements ViewPresenter {
 				switch(action.getAction()){
 				case ON_OVERLAY_CLOSED:
 					NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
-					item.removeParameter("show");
-					NavigationHistoryManager.getInstance().go(item);
+					if(item.hasSetParameter("show")){
+						item.removeParameter("show");
+						NavigationHistoryManager.getInstance().go(item);
+					}
 					break;
 				}
 			}
@@ -149,6 +151,9 @@ public class ClientSectionViewPresenter implements ViewPresenter {
 					view.showOverlayViewContainer(false);
 
 					//OVERLAY VIEWS
+				}else if(show.equalsIgnoreCase("createpolicy")){
+					present("CLIENT_CREATE_INSURANCE_POLICY", parameters);
+					view.showOverlayViewContainer(true);
 				}else if(show.equalsIgnoreCase("managertransfer")){
 					present("CLIENT_SINGLE_MANAGER_TRANSFER", parameters);
 					view.showOverlayViewContainer(true);

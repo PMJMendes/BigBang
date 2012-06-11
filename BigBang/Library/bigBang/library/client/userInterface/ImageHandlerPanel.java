@@ -72,6 +72,7 @@ public class ImageHandlerPanel extends View {
 			@Override
 			public void onMouseWheel(MouseWheelEvent event) {
 				event.preventDefault();
+				event.stopPropagation();
 				int upDown = event.getDeltaY() > 0 ? -1 : event.getDeltaY() < 0 ? 1 : 0;
 				double scale = 1 + (upDown * STEP_SCALE); 
 				int viewpointX = event.getRelativeX(image.getElement());
