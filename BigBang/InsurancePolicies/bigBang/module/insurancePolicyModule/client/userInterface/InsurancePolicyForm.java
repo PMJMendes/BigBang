@@ -198,7 +198,7 @@ public abstract class InsurancePolicyForm extends FormView<InsurancePolicy> {
 			
 			@Override
 			public void onValueChange(ValueChangeEvent<String> event) {
-				if(event.getValue().equalsIgnoreCase("e3f02152-ed63-44bb-9fd1-9f8101580339")){
+				if(event.getValue().equalsIgnoreCase(BigBangConstants.TypifiedListValues.INSURANCE_POLICY_DURATION.TEMPORARY)){
 					maturityDate.clear();
 					maturityDate.setVisible(false);
 				}else{
