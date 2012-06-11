@@ -314,7 +314,7 @@ public abstract class InsurancePolicyForm extends FormView<InsurancePolicy> {
 				maturityDate.clear();
 			}
 			
-			this.duration.setValue(info.durationId);
+			
 			this.fractioning.setValue(info.fractioningId);
 			this.premium.setValue(info.premium);
 
@@ -344,6 +344,8 @@ public abstract class InsurancePolicyForm extends FormView<InsurancePolicy> {
 			this.headerFieldsSection.setPolicyFields(info.headerFields);
 			this.tableSection.setInsurancePolicy(info);
 			this.extraFieldsSection.setPolicyFields(info.extraData);
+			
+			this.duration.setValue(info.durationId);
 		}
 	}
 
