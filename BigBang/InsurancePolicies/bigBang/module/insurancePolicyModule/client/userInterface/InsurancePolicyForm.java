@@ -173,9 +173,9 @@ public abstract class InsurancePolicyForm extends FormView<InsurancePolicy> {
 
 		clearValue();
 		setValue(this.value);
-		
+
 		startDate.addValueChangeHandler(new ValueChangeHandler<Date>() {
-			
+
 			@Override
 			public void onValueChange(ValueChangeEvent<Date> event) {
 				if(maturityDate.getValue() == null){
@@ -183,9 +183,9 @@ public abstract class InsurancePolicyForm extends FormView<InsurancePolicy> {
 				}
 			}
 		});
-		
+
 		startDate.addValueChangeHandler(new ValueChangeHandler<Date>() {
-			
+
 			@Override
 			public void onValueChange(ValueChangeEvent<Date> event) {
 				if(maturityDate.getDay().isEmpty() && maturityDate.getMonth().isEmpty()){
@@ -193,29 +193,17 @@ public abstract class InsurancePolicyForm extends FormView<InsurancePolicy> {
 				}
 			}
 		});
-		
+
 		duration.addValueChangeHandler(new ValueChangeHandler<String>() {
-			
+
 			@Override
 			public void onValueChange(ValueChangeEvent<String> event) {
 				if(event.getValue().equalsIgnoreCase(BigBangConstants.TypifiedListValues.INSURANCE_POLICY_DURATION.TEMPORARY)){
 					maturityDate.clear();
-					maturityDate.setReadOnly(true);
+					maturityDate.setEditable(false);
 				}else{
-					maturityDate.setReadOnly(false);
-				}
-			}
-		});
-		
-		duration.addValueChangeHandler(new ValueChangeHandler<String>() {
-			
-			@Override
-			public void onValueChange(ValueChangeEvent<String> event) {
-				if(event.getValue().equalsIgnoreCase("e3f02152-ed63-44bb-9fd1-9f8101580339")){
-					maturityDate.clear();
-					maturityDate.setReadOnly(true);
-				}else{
-					maturityDate.setReadOnly(false);
+					maturityDate.setEditable(true);
+					maturityDate.setReadOnly(isReadOnly());
 				}
 			}
 		});
@@ -278,6 +266,7 @@ public abstract class InsurancePolicyForm extends FormView<InsurancePolicy> {
 			result.headerFields = headerFieldsSection.getPolicyFields();
 			result.extraData = extraFieldsSection.getPolicyFields();
 			result.coverages = tableSection.getCoverages();
+			result.mediatorId = mediator.getValue();
 		}
 
 		return result;
@@ -313,8 +302,8 @@ public abstract class InsurancePolicyForm extends FormView<InsurancePolicy> {
 			}catch (IllegalArgumentException e) {
 				maturityDate.clear();
 			}
-			
-			
+
+
 			this.fractioning.setValue(info.fractioningId);
 			this.premium.setValue(info.premium);
 
@@ -340,11 +329,11 @@ public abstract class InsurancePolicyForm extends FormView<InsurancePolicy> {
 				startDate.setValue(DateTimeFormat.getFormat("yyyy-MM-dd").parse(info.startDate), false);
 			if(info.expirationDate != null)
 				endDate.setValue(DateTimeFormat.getFormat("yyyy-MM-dd").parse(info.expirationDate));
-			
+
 			this.headerFieldsSection.setPolicyFields(info.headerFields);
 			this.tableSection.setInsurancePolicy(info);
 			this.extraFieldsSection.setPolicyFields(info.extraData);
-			
+
 			this.duration.setValue(info.durationId);
 		}
 	}
