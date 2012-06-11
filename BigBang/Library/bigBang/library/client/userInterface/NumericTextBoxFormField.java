@@ -1,7 +1,5 @@
 package bigBang.library.client.userInterface;
 
-
-
 import bigBang.library.client.FieldValidator;
 import bigBang.library.client.FormField;
 
@@ -40,8 +38,12 @@ public class NumericTextBoxFormField extends FormField<Double>{
 
 				@Override
 				public void onKeyPress(KeyPressEvent event) {					
-					
-					if(!(Character.isDigit((char)event.getUnicodeCharCode()) || event.getCharCode() == LocaleInfo.getCurrentLocale().getNumberConstants().groupingSeparator().charAt(0))){
+
+					if(!Character.isDigit((char)event.getUnicodeCharCode())){
+						if(event.getCharCode() == 46 && !field.getValue().contains(LocaleInfo.getCurrentLocale().getNumberConstants().decimalSeparator())){
+							event.preventDefault();
+							field.setText(field.getValue() != null ? field.getValue()+LocaleInfo.getCurrentLocale().getNumberConstants().decimalSeparator() : LocaleInfo.getCurrentLocale().getNumberConstants().decimalSeparator());
+						}
 						if(!(!field.getValue().contains(LocaleInfo.getCurrentLocale().getNumberConstants().decimalSeparator()) && LocaleInfo.getCurrentLocale().getNumberConstants().decimalSeparator().charAt(0) == event.getCharCode())){
 							event.preventDefault();
 						}
@@ -96,6 +98,9 @@ public class NumericTextBoxFormField extends FormField<Double>{
 				String formatted = nf.format(value);
 				field.setValue(formatted);
 			}
+			if(fireEvents){
+				ValueChangeEvent.fire(this, value);
+			}
 		}
 
 		public TextBox getField(){
@@ -107,6 +112,10 @@ public class NumericTextBoxFormField extends FormField<Double>{
 
 	protected HorizontalPanel wrapper;
 	protected NumberFormat nf;
+
+	public NumberFormat getNumberFormat() {
+		return nf;
+	}
 
 	public NumericTextBoxFormField(String label, FieldValidator<Double> validator){
 		this();
@@ -216,6 +225,10 @@ public class NumericTextBoxFormField extends FormField<Double>{
 		String message =  validator == null ? null : validator.getErrorMessage();
 		this.errorMessageLabel.setText(message == null ? "Valor inválido" : message);
 		this.errorMessageLabel.setVisible(invalid);
+	}
+
+	public TextBox getTextBox() {
+		return ((NumericWrapper)field).getField();
 	}
 
 }

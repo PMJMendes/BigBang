@@ -245,7 +245,7 @@ public class InsurancePolicyServiceImpl
 					lobjCoInsurer = new PadCoInsurer();
 					lobjCoInsurer.midPolicy = mobjPolicy.mid;
 					lobjCoInsurer.midCompany = UUID.fromString(pobjSource.coInsurers[i].insuranceAgencyId);
-					lobjCoInsurer.mdblPercent = new BigDecimal(pobjSource.coInsurers[i].percent);
+					lobjCoInsurer.mdblPercent = new BigDecimal(pobjSource.coInsurers[i].percent+"");
 					marrCoInsurers.add(lobjCoInsurer);
 				}
 			}
@@ -748,7 +748,7 @@ public class InsurancePolicyServiceImpl
 					continue;
 				lobjCoInsurer = new InsurancePolicy.CoInsurer();
 				lobjCoInsurer.insuranceAgencyId = marrCoInsurers.get(i).midCompany.toString();
-				lobjCoInsurer.percent = marrCoInsurers.get(i).mdblPercent.toPlainString();
+				lobjCoInsurer.percent = marrCoInsurers.get(i).mdblPercent.doubleValue();
 				larrCoInsurers.add(lobjCoInsurer);
 			}
 			if ( larrCoInsurers.size() == 0 )
@@ -1717,13 +1717,13 @@ public class InsurancePolicyServiceImpl
 						lobjCoInsurer = new PadCoInsurer();
 						lobjCoInsurer.midPolicy = mobjPolicy.mid;
 						lobjCoInsurer.midCompany = lidCompany;
-						lobjCoInsurer.mdblPercent = new BigDecimal(pobjSource.coInsurers[i].percent);
+						lobjCoInsurer.mdblPercent = new BigDecimal(pobjSource.coInsurers[i].percent+"");
 						marrCoInsurers.add(lobjCoInsurer);
 					}
 					else
 					{
 						lobjCoInsurer = marrCoInsurers.get(j);
-						lobjCoInsurer.mdblPercent = new BigDecimal(pobjSource.coInsurers[i].percent);
+						lobjCoInsurer.mdblPercent = new BigDecimal(pobjSource.coInsurers[i].percent+"");
 						lobjCoInsurer.mbDeleted = false;
 					}
 					lmapCoInsurers.put(lidCompany, lobjCoInsurer);
@@ -2600,7 +2600,7 @@ public class InsurancePolicyServiceImpl
 			{
 				lobjResult.coInsurers[i] = new InsurancePolicy.CoInsurer();
 				lobjResult.coInsurers[i].insuranceAgencyId = ((UUID)larrCoInsurers[i].getAt(1)).toString();
-				lobjResult.coInsurers[i].percent = ((BigDecimal)larrCoInsurers[i].getAt(2)).toPlainString();
+				lobjResult.coInsurers[i].percent = ((BigDecimal)larrCoInsurers[i].getAt(2)).doubleValue();
 			}
 		}
 		else

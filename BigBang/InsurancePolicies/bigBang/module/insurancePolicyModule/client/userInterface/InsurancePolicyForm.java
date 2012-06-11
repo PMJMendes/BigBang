@@ -231,6 +231,19 @@ public abstract class InsurancePolicyForm extends FormView<InsurancePolicy> {
 				}
 			}
 		});
+		
+		duration.addValueChangeHandler(new ValueChangeHandler<String>() {
+			
+			@Override
+			public void onValueChange(ValueChangeEvent<String> event) {
+				if(event.getValue().equalsIgnoreCase("e3f02152-ed63-44bb-9fd1-9f8101580339")){
+					maturityDate.clear();
+					maturityDate.setVisible(false);
+				}else{
+					maturityDate.setVisible(true);
+				}
+			}
+		});
 
 		setForNew();
 	}

@@ -103,7 +103,7 @@ public class InsurancePolicy
 		private static final long serialVersionUID = 1L;
 	
 		public String insuranceAgencyId;
-		public String percent;
+		public Double percent;
 	}
 
 	public String managerId;

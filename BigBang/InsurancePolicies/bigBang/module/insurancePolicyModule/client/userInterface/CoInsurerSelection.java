@@ -11,7 +11,7 @@ import bigBang.library.client.event.NewNotificationEvent;
 import bigBang.library.client.userInterface.ExpandableListBoxFormField;
 import bigBang.library.client.userInterface.List;
 import bigBang.library.client.userInterface.ListEntry;
-import bigBang.library.client.userInterface.TextBoxFormField;
+import bigBang.library.client.userInterface.NumericTextBoxFormField;
 
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
@@ -32,7 +32,7 @@ public class CoInsurerSelection extends FormField<CoInsurer[]>{
 
 
 		protected ExpandableListBoxFormField agency;
-		protected TextBoxFormField infoValue;
+		protected NumericTextBoxFormField infoValue;
 		private Button remove;
 
 		public CoInsuranceListEntry(CoInsurer coInsuranceInfo) {
@@ -66,10 +66,10 @@ public class CoInsurerSelection extends FormField<CoInsurer[]>{
 			}
 
 			agency = new ExpandableListBoxFormField(BigBangConstants.EntityIds.INSURANCE_AGENCY, "");
-			agency.setFieldWidth("200px");
-			infoValue = new TextBoxFormField();
-			infoValue.setFieldWidth("25px");
-			infoValue.setWidth("35px");
+			agency.setFieldWidth("190px");
+			infoValue = new NumericTextBoxFormField();
+			infoValue.setFieldWidth("40px");
+			infoValue.setWidth("40px");
 			agency.setValue(coInsuranceAgencyInfo.insuranceAgencyId);
 			infoValue.setValue(coInsuranceAgencyInfo.percent);
 			infoValue.setUnitsLabel("%");
@@ -90,21 +90,21 @@ public class CoInsurerSelection extends FormField<CoInsurer[]>{
 		}
 
 
-		protected float getPercentage(){
+		protected Double getPercentage(){
 
 			try{
-				if(infoValue.getValue().length() > 0){
-					return Float.parseFloat(infoValue.getValue());
+				if(infoValue.getValue() > 0){
+					return infoValue.getValue();
 				}else
-					return 0;
+					return 0.0;
 			}catch (Exception e) {
-				return 0;
+				return 0.0;
 			}
 		}
 
-		protected void setPercentage(float percentage){
+		protected void setPercentage(double percentage){
 
-			value.percent = percentage+"";
+			value.percent = percentage;
 			infoValue.setValue(value.percent);
 
 			if(percentage >= 100 || percentage <= 0){
@@ -127,17 +127,15 @@ public class CoInsurerSelection extends FormField<CoInsurer[]>{
 		}
 		public void addPercentageValueChangeHandler() {
 
-			infoValue.addValueChangeHandler(new ValueChangeHandler<String>() {
+			infoValue.getTextBox().addValueChangeHandler(new ValueChangeHandler<String>() {
 
 				@Override
 				public void onValueChange(ValueChangeEvent<String> event) {
 
 					boolean error = false;
-					float percentage = 0;
 
 					try{
-						percentage = Float.parseFloat(event.getValue());
-						value.percent = event.getValue();
+						value.percent = infoValue.getValue();
 					}
 					catch(NumberFormatException e){
 						error = true;
@@ -145,10 +143,10 @@ public class CoInsurerSelection extends FormField<CoInsurer[]>{
 
 
 
-					if(percentage >= 100 || percentage <= 0 || error){
-						((TextBox)((TextBoxFormField)event.getSource()).getTextBox()).getElement().getStyle().setColor("red");
+					if(value.percent >= 100 || value.percent <= 0 || error){
+						infoValue.getTextBox().getElement().getStyle().setColor("red");
 					}else
-						((TextBox)((TextBoxFormField)event.getSource()).getTextBox()).getElement().getStyle().clearColor();
+						infoValue.getTextBox().getElement().getStyle().clearColor();
 
 					refreshPercentageValues();
 
@@ -199,7 +197,7 @@ public class CoInsurerSelection extends FormField<CoInsurer[]>{
 			if(!agency.isReadOnly()){
 				infoValue.setReadOnly(!b);
 				if(!b){
-					infoValue.setValue("");
+					infoValue.setValue(null);
 				}
 			}
 		}
@@ -211,7 +209,7 @@ public class CoInsurerSelection extends FormField<CoInsurer[]>{
 
 		CoInsurer coInsurer = new CoInsurer();
 		coInsurer.insuranceAgencyId = new String("");
-		coInsurer.percent = new String("0");
+		coInsurer.percent = 0.0;
 
 		CoInsuranceListEntry temp = new CoInsuranceListEntry(coInsurer);
 		coInsuranceAgencies.remove(coInsuranceAgencies.size()-1);
@@ -239,7 +237,7 @@ public class CoInsurerSelection extends FormField<CoInsurer[]>{
 
 		super();
 		initWidget(wrapper);
-		wrapper.setSize("340px", "200px");
+		wrapper.setSize("350px", "200px");
 		coInsuranceAgencies = new List<CoInsurer>();
 		coInsuranceAgencies.getScrollable().setSize("100%", "100%");
 		coInsuranceAgencies.setSelectableEntries(false);
@@ -344,7 +342,7 @@ public class CoInsurerSelection extends FormField<CoInsurer[]>{
 		}
 		
 		for(int i = 1; i<coInsuranceAgencies.size()-1; i++){
-			if(((CoInsuranceListEntry)coInsuranceAgencies.get(i)).getValue().insuranceAgencyId.isEmpty() || ((CoInsuranceListEntry)coInsuranceAgencies.get(i)).getValue().percent.isEmpty()){
+			if(((CoInsuranceListEntry)coInsuranceAgencies.get(i)).getValue().insuranceAgencyId.isEmpty() || ((CoInsuranceListEntry)coInsuranceAgencies.get(i)).getValue().percent == null){
 				coInsuranceAgencies.remove(i);
 				i--;
 			}
