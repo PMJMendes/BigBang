@@ -38,10 +38,11 @@ public class NumericTextBoxFormField extends FormField<Double>{
 				public void onKeyPress(KeyPressEvent event) {					
 
 					if(!Character.isDigit((char)event.getUnicodeCharCode())){
-						if(event.getCharCode() == 46 && !field.getValue().contains(LocaleInfo.getCurrentLocale().getNumberConstants().decimalSeparator())){
+						if((event.getCharCode() == LocaleInfo.getCurrentLocale().getNumberConstants().decimalSeparator().charAt(0) || event.getCharCode() == 46) && !field.getValue().contains(LocaleInfo.getCurrentLocale().getNumberConstants().decimalSeparator())){
 							event.preventDefault();
 							field.setText(field.getValue() != null ? field.getValue()+LocaleInfo.getCurrentLocale().getNumberConstants().decimalSeparator() : LocaleInfo.getCurrentLocale().getNumberConstants().decimalSeparator());
 						}
+						event.preventDefault();
 					}
 				}
 			});

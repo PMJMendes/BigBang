@@ -14,7 +14,7 @@ import bigBang.definitions.shared.SubCasualty.SubCasualtyItem;
 import bigBang.library.client.FormField;
 import bigBang.library.client.dataAccess.TypifiedListBroker;
 import bigBang.library.client.userInterface.ExpandableListBoxFormField;
-import bigBang.library.client.userInterface.TextBoxFormField;
+import bigBang.library.client.userInterface.NumericTextBoxFormField;
 import bigBang.library.client.userInterface.view.CollapsibleFormViewSection;
 import bigBang.module.insurancePolicyModule.client.dataAccess.PolicyTypifiedListBroker;
 import bigBang.module.insurancePolicyModule.client.dataAccess.SubPolicyTypifiedListBroker;
@@ -26,8 +26,8 @@ public class SubCasualtyItemSection extends CollapsibleFormViewSection {
 	protected ExpandableListBoxFormField insuredObject;
 	protected ExpandableListBoxFormField coverage;
 	protected ExpandableListBoxFormField damageType;
-	protected TextBoxFormField damages;
-	protected TextBoxFormField settlement;
+	protected NumericTextBoxFormField damages;
+	protected NumericTextBoxFormField settlement;
 	protected Button removeButton;
 
 	public SubCasualtyItemSection(SubCasualtyItem item, String referenceTypeId, String referenceId) {
@@ -37,10 +37,10 @@ public class SubCasualtyItemSection extends CollapsibleFormViewSection {
 		insuredObject = new ExpandableListBoxFormField("Unidade de Risco");
 		coverage = new ExpandableListBoxFormField("Cobertura");
 		damageType = new ExpandableListBoxFormField(BigBangConstants.TypifiedListIds.DAMAGE_TYPE, "Tipo de Dano");
-		damages = new TextBoxFormField("Valor dos Danos");
+		damages = new NumericTextBoxFormField("Valor dos Danos");
 		damages.setUnitsLabel("€");
 		damages.setFieldWidth("175px");
-		settlement = new TextBoxFormField("Valor Acordado");
+		settlement = new NumericTextBoxFormField("Valor Acordado");
 		settlement.setFieldWidth("175px");
 		settlement.setUnitsLabel("€");
 

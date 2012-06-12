@@ -16,8 +16,8 @@ public class SubCasualty
 		public String insuredObjectId; //Lista tipificada dos objectos de apólice *ou* de sub-apólice, filtrada pelo ID da respectiva
 		public String coverageId; //Lista tipificada das coberturas da (sub)apólice
 		public String damageTypeId; //Lista tipificada, campo obrigatório
-		public String damages; //Em €
-		public String settlement; //Em €
+		public Double damages; //Em €
+		public Double settlement; //Em €
 		public boolean isManual;
 
 		public boolean deleted;

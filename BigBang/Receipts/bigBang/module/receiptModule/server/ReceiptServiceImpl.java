@@ -163,10 +163,10 @@ public class ReceiptServiceImpl
 			break;
 		}
 		lobjResult.processId = lobjProc.getKey().toString();
-		lobjResult.salesPremium = (lobjReceipt.getAt(4) == null ? null : ((BigDecimal)lobjReceipt.getAt(4)).toPlainString());
-		lobjResult.comissions = ((BigDecimal)lobjReceipt.getAt(5)).toPlainString();
-		lobjResult.retrocessions = ((BigDecimal)lobjReceipt.getAt(6)).toPlainString();
-		lobjResult.FATValue = (lobjReceipt.getAt(7) == null ? null : ((BigDecimal)lobjReceipt.getAt(7)).toPlainString());
+		lobjResult.salesPremium = (lobjReceipt.getAt(4) == null ? null : ((BigDecimal)lobjReceipt.getAt(4)).doubleValue());
+		lobjResult.comissions = ((BigDecimal)lobjReceipt.getAt(5)).doubleValue();
+		lobjResult.retrocessions = ((BigDecimal)lobjReceipt.getAt(6)).doubleValue();
+		lobjResult.FATValue = (lobjReceipt.getAt(7) == null ? null : ((BigDecimal)lobjReceipt.getAt(7)).doubleValue());
 		lobjResult.issueDate = ((Timestamp)lobjReceipt.getAt(8)).toString().substring(0, 10);
 		lobjResult.endDate = (lobjReceipt.getAt(10) == null ? null :
 			((Timestamp)lobjReceipt.getAt(10)).toString().substring(0, 10));
@@ -368,14 +368,14 @@ public class ReceiptServiceImpl
 
 			lopMRD.mobjData.mstrNumber = receipt.number;
 			lopMRD.mobjData.midType = UUID.fromString(receipt.typeId);
-			lopMRD.mobjData.mdblTotal = new BigDecimal(receipt.totalPremium);
+			lopMRD.mobjData.mdblTotal = new BigDecimal(receipt.totalPremium+"");
 			lopMRD.mobjData.midType = UUID.fromString(receipt.typeId);
-			lopMRD.mobjData.mdblTotal = new BigDecimal(receipt.totalPremium);
-			lopMRD.mobjData.mdblCommercial = (receipt.salesPremium == null ? null : new BigDecimal(receipt.salesPremium));
-			lopMRD.mobjData.mdblCommissions = (receipt.comissions == null ? new BigDecimal(0) : new BigDecimal(receipt.comissions));
+			lopMRD.mobjData.mdblTotal = new BigDecimal(receipt.totalPremium+"");
+			lopMRD.mobjData.mdblCommercial = (receipt.salesPremium == null ? null : new BigDecimal(receipt.salesPremium+""));
+			lopMRD.mobjData.mdblCommissions = (receipt.comissions == null ? new BigDecimal(0) : new BigDecimal(receipt.comissions+""));
 			lopMRD.mobjData.mdblRetrocessions = (receipt.retrocessions == null ? new BigDecimal(0) :
-					new BigDecimal(receipt.retrocessions));
-			lopMRD.mobjData.mdblFAT = (receipt.FATValue == null ? null : new BigDecimal(receipt.FATValue));
+					new BigDecimal(receipt.retrocessions+""));
+			lopMRD.mobjData.mdblFAT = (receipt.FATValue == null ? null : new BigDecimal(receipt.FATValue+""));
 			lopMRD.mobjData.mdtIssue = Timestamp.valueOf(receipt.issueDate + " 00:00:00.0");
 			lopMRD.mobjData.mdtMaturity = (receipt.maturityDate == null ? null :
 					Timestamp.valueOf(receipt.maturityDate + " 00:00:00.0"));
@@ -1120,12 +1120,12 @@ public class ReceiptServiceImpl
 
 			lopCR.mobjData.mstrNumber = receipt.number;
 			lopCR.mobjData.midType = UUID.fromString(receipt.typeId);
-			lopCR.mobjData.mdblTotal = new BigDecimal(receipt.totalPremium);
-			lopCR.mobjData.mdblCommercial = (receipt.salesPremium == null ? null : new BigDecimal(receipt.salesPremium));
-			lopCR.mobjData.mdblCommissions = (receipt.comissions == null ? new BigDecimal(0) : new BigDecimal(receipt.comissions));
+			lopCR.mobjData.mdblTotal = new BigDecimal(receipt.totalPremium+"");
+			lopCR.mobjData.mdblCommercial = (receipt.salesPremium == null ? null : new BigDecimal(receipt.salesPremium+""));
+			lopCR.mobjData.mdblCommissions = (receipt.comissions == null ? new BigDecimal(0) : new BigDecimal(receipt.comissions+""));
 			lopCR.mobjData.mdblRetrocessions = (receipt.retrocessions == null ? new BigDecimal(0) :
-					new BigDecimal(receipt.retrocessions));
-			lopCR.mobjData.mdblFAT = (receipt.FATValue == null ? null : new BigDecimal(receipt.FATValue));
+					new BigDecimal(receipt.retrocessions+""));
+			lopCR.mobjData.mdblFAT = (receipt.FATValue == null ? null : new BigDecimal(receipt.FATValue+""));
 			lopCR.mobjData.mdtIssue = Timestamp.valueOf(receipt.issueDate + " 00:00:00.0");
 			lopCR.mobjData.mdtMaturity = (receipt.maturityDate == null ? null :
 					Timestamp.valueOf(receipt.maturityDate + " 00:00:00.0"));

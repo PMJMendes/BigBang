@@ -39,10 +39,10 @@ public class Receipt
 		public Payment[] payments;
 	}
 
-	public String salesPremium;
-	public String comissions;
-	public String retrocessions;
-	public String FATValue;
+	public Double salesPremium;
+	public Double comissions;
+	public Double retrocessions;
+	public Double FATValue;
 	public String issueDate;
 	public String endDate;
 	public String dueDate;

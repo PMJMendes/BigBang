@@ -123,9 +123,9 @@ public class SubCasualtyServiceImpl
 			}
 			lobjResult.items[i].damageTypeId = ( larrItems[i].getAt(SubCasualtyItem.I.TYPE) == null ? null :
 					((UUID)larrItems[i].getAt(SubCasualtyItem.I.TYPE)).toString() );
-			lobjResult.items[i].damages = ( ldblLocal == null ? null : ldblLocal.toPlainString() );
+			lobjResult.items[i].damages = ( ldblLocal == null ? null : ldblLocal.doubleValue());
 			lobjResult.items[i].settlement = ( larrItems[i].getAt(SubCasualtyItem.I.SETTLEMENT) == null ? null :
-					((BigDecimal)larrItems[i].getAt(SubCasualtyItem.I.SETTLEMENT)).toPlainString() );
+					((BigDecimal)larrItems[i].getAt(SubCasualtyItem.I.SETTLEMENT)).doubleValue() );
 
 			ldblTotal = ( ldblTotal == null ? ldblLocal : (ldblLocal == null ? ldblTotal : ldblTotal.add(ldblLocal)) );
 		}
@@ -199,9 +199,9 @@ public class SubCasualtyServiceImpl
 				lopMD.mobjData.marrItems[i].midType = ( subCasualty.items[i].damageTypeId == null ? null :
 						UUID.fromString(subCasualty.items[i].damageTypeId) );
 				lopMD.mobjData.marrItems[i].mdblDamages = ( subCasualty.items[i].damages == null ? null :
-						new BigDecimal(subCasualty.items[i].damages) );
+						new BigDecimal(subCasualty.items[i].damages+"") );
 				lopMD.mobjData.marrItems[i].mdblSettlement = ( subCasualty.items[i].settlement == null ? null :
-						new BigDecimal(subCasualty.items[i].settlement) );
+						new BigDecimal(subCasualty.items[i].settlement+"") );
 				lopMD.mobjData.marrItems[i].mbIsManual = subCasualty.items[i].isManual;
 
 				lopMD.mobjData.marrItems[i].mbNew = ( !subCasualty.items[i].deleted && (subCasualty.items[i].id == null) );

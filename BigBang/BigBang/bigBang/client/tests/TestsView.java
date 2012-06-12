@@ -22,7 +22,7 @@ public class TestsView extends View implements TestsViewPresenter.Display {
 			}
 		};
 		
-		field.setReadOnly(true);
+		field.setReadOnly(false);
 		initWidget(wrapper);
 		wrapper.setSize("100%", "100%");
 		wrapper.add(field);

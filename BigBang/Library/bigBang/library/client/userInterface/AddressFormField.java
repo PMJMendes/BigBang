@@ -63,8 +63,8 @@ public class AddressFormField extends FormField<Address> {
 	@Override
 	public void setReadOnly(boolean readOnly) {				
 		
-		street1.setReadOnly(readOnly);
-		street2.setReadOnly(readOnly);
+		street1.setEnabled(!readOnly);
+		street2.setEnabled(!readOnly);
 		zipCode.setReadOnly(readOnly);
 		
 		if(readOnly){
@@ -74,6 +74,11 @@ public class AddressFormField extends FormField<Address> {
 			street1.removeStyleName("readonly");
 			street2.removeStyleName("readonly");
 		}
+		
+		street1.getElement().getStyle().setBackgroundColor(readOnly ? "transparent" : "white");
+		street2.getElement().getStyle().setBackgroundColor(readOnly ? "transparent" : "white");
+		street1.getElement().getStyle().setBorderColor(readOnly ? "transparent" : "gray");
+		street2.getElement().getStyle().setBorderColor(readOnly ? "transparent" : "gray");
 	}
 
 	@Override

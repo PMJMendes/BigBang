@@ -95,6 +95,14 @@ public class ZipCodeFormField extends FormField<ZipCode>{
 		county.addStyleName("readonly");
 		district.addStyleName("readonly");
 		country.addStyleName("readonly");
+		city.getElement().getStyle().setBorderColor("transparent");
+		country.getElement().getStyle().setBorderColor("transparent");
+		district.getElement().getStyle().setBorderColor("transparent");
+		county.getElement().getStyle().setBorderColor("transparent");
+		city.getElement().getStyle().setBackgroundColor("transparent");
+		country.getElement().getStyle().setBackgroundColor("transparent");
+		county.getElement().getStyle().setBackgroundColor("transparent");
+		district.getElement().getStyle().setBackgroundColor("transparent");
 
 		code.setMaxLength(8);
 		code.setVisibleLength(8);
