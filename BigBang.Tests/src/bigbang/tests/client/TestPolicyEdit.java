@@ -113,7 +113,7 @@ public class TestPolicyEdit
 		{
 			for ( i = 0; i < testPolicy.coInsurers.length; i++ )
 			{
-				testPolicy.coInsurers[i].percent = Double.toString(50.0 - Double.parseDouble(testPolicy.coInsurers[i].percent));
+				testPolicy.coInsurers[i].percent = 50.0 - testPolicy.coInsurers[i].percent;
 			}
 		}
 
