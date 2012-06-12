@@ -44,9 +44,6 @@ public class NumericTextBoxFormField extends FormField<Double>{
 							event.preventDefault();
 							field.setText(field.getValue() != null ? field.getValue()+LocaleInfo.getCurrentLocale().getNumberConstants().decimalSeparator() : LocaleInfo.getCurrentLocale().getNumberConstants().decimalSeparator());
 						}
-						if(!(!field.getValue().contains(LocaleInfo.getCurrentLocale().getNumberConstants().decimalSeparator()) && LocaleInfo.getCurrentLocale().getNumberConstants().decimalSeparator().charAt(0) == event.getCharCode())){
-							event.preventDefault();
-						}
 					}
 				}
 			});
