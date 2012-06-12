@@ -87,10 +87,10 @@ public class ZipCodeFormField extends FormField<ZipCode>{
 		});
 
 
-		city.setReadOnly(true);
-		country.setReadOnly(true);
-		county.setReadOnly(true);
-		district.setReadOnly(true);
+		city.setEnabled(false);
+		country.setEnabled(false);
+		county.setEnabled(false);
+		district.setEnabled(false);
 		city.addStyleName("readonly");
 		county.addStyleName("readonly");
 		district.addStyleName("readonly");
@@ -202,25 +202,13 @@ public class ZipCodeFormField extends FormField<ZipCode>{
 		readOnly = readonly;
 
 		code.setReadOnly(readonly);
-		//		city.setReadOnly(readonly);
-		//		country.setReadOnly(readonly);
-		//		county.setReadOnly(readonly);
-		//		district.setReadOnly(readonly);
 		expandImage.setVisible(!readonly);
 
 		if(readonly){
 			code.addStyleName("readonly");
-			//			city.addStyleName("readonly");
-			//			county.addStyleName("readonly");
-			//			district.addStyleName("readonly");
-			//			country.addStyleName("readonly");
 		}
 		else{
 			code.removeStyleName("readonly");
-			//			city.removeStyleName("readonly");
-			//			county.removeStyleName("readonly");
-			//			district.removeStyleName("readonly");
-			//			country.removeStyleName("readonly");
 		}
 
 	}
