@@ -65,7 +65,9 @@ ViewPresenter {
 		CREATE_INFO_MANAGEMENT_PROCESS,
 		CREATE_SUB_POLICY, ISSUE_DEBIT_NOTE,
 		CREATE_NEGOTIATION, CREATE_EXPENSE,
-		CREATE_RISK_ANALISYS, TRANSFER_TO_CLIENT
+		CREATE_RISK_ANALISYS, TRANSFER_TO_CLIENT,
+
+		NEW_RESULTS
 	}
 
 	public interface Display {
@@ -296,10 +298,12 @@ ViewPresenter {
 				case VOID_POLICY:
 					onVoidPolicy();
 					break;
-				case TRANSFER_TO_CLIENT:{
+				case TRANSFER_TO_CLIENT:
 					transferToClient();
 					break;
-				}
+				case NEW_RESULTS:
+					onNewResults();
+					break;
 				}
 			}
 		});
@@ -534,10 +538,6 @@ ViewPresenter {
 
 				@Override
 				public void onResponse(InsurancePolicy response) {
-					if(isNewPolicy) {
-						prepareForNewPolicy(response);
-					}
-
 					view.clearAllowedPermissions();
 
 					view.allowEdit(true);
@@ -970,23 +970,34 @@ ViewPresenter {
 		});
 	}
 
-	private void prepareForNewPolicy(InsurancePolicy policy){
-		for(ValueSelectable<InsurancePolicyStub> entry : view.getList().getAll()) {
-			if(entry.isSelected()){
-				entry.setSelected(false, false);
-			}
-		}
-		view.getForm().setValue(null);
-		ValueSelectable<InsurancePolicyStub> entry = view.addNewPolicyListEntry(policy);
-		entry.setSelected(true, false);
+	private void clearNewPolicyPreparation(){
+//		InsurancePolicy policy = view.getForm().getValue(); TODO
+//		String policyId = policy != null ? policy.id : null;
+//		if(policyId != null && broker.isNewPolicy(policyId)){
+//			view.removeNewPolicyEntry();
+//		}
 	}
 
-	private void clearNewPolicyPreparation(){
-		InsurancePolicy policy = view.getForm().getValue();
-		String policyId = policy != null ? policy.id : null;
-		if(policyId != null && broker.isNewPolicy(policyId)){
-			view.removeNewPolicyEntry();
-		}
+	private void onNewResults(){
+//		InsurancePolicy policy = view.getForm().getValue(); TODO
+//
+//		if(policy != null && policy.id != null) {
+//
+//			boolean found = false;
+//			
+//			for(ValueSelectable<InsurancePolicyStub> entry : view.getList().getAll()) {
+//				if(policy.id.equalsIgnoreCase(entry.getValue().id)){
+//					entry.setSelected(true, false);
+//					found = true;
+//					break;
+//				}
+//			}
+//			
+//			if(!found) {
+////				view.addNewPolicyListEntry(policy);
+//			}
+//		}
+
 	}
 
 }

@@ -292,8 +292,8 @@ public class InsurancePolicySearchPanel extends SearchPanel<InsurancePolicyStub>
 
 	public void discardNewPolicy(){
 		if(this.newPolicy != null) {
-			for(ValueSelectable<?> selectable : this) {
-				if(selectable.getValue() == this.newPolicy){
+			for(ListEntry<InsurancePolicyStub> selectable : this) {
+				if(selectable.getValue().id.equalsIgnoreCase(newPolicy.id)){
 					remove(selectable);
 					break;
 				}

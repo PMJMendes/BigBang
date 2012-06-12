@@ -1,5 +1,7 @@
 package bigBang.module.insurancePolicyModule.client.userInterface.view;
 
+import java.util.Collection;
+
 import org.gwt.mosaic.ui.client.MessageBox;
 import org.gwt.mosaic.ui.client.MessageBox.ConfirmationCallback;
 
@@ -66,7 +68,13 @@ public class InsurancePolicySearchOperationView extends View implements Insuranc
 		ListHeader searchPanelHeader = new ListHeader("Apólices");
 		searchPanelWrapper.add(searchPanelHeader);
 			
-		searchPanel = new InsurancePolicySearchPanel();
+		searchPanel = new InsurancePolicySearchPanel(){
+			@Override
+			public void onResults(Collection<InsurancePolicyStub> results) {
+				super.onResults(results);
+				actionHandler.onActionInvoked(new ActionInvokedEvent<InsurancePolicySearchOperationViewPresenter.Action>(Action.NEW_RESULTS));
+			}
+		};
 		searchPanelWrapper.add(searchPanel);
 		searchPanelWrapper.setCellHeight(searchPanel, "100%");
 
@@ -234,7 +242,6 @@ public class InsurancePolicySearchOperationView extends View implements Insuranc
 		};
 		formWrapper.add(form);
 		form.setSize("100%", "100%");
-		form.setForEdit();
 
 		toolBarFormContainer.add(toolbar);
 		toolBarFormContainer.add(formWrapper);
