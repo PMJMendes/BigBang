@@ -27,13 +27,11 @@ public class NumericTextBoxFormField extends FormField<Double>{
 
 		protected TextBox field;
 		protected String curr = "";
-
 		private HandlerManager handlerManager;
 
 		public NumericWrapper() {
 			this.handlerManager = new HandlerManager(this);
 			field = new TextBox();
-
 			field.addKeyPressHandler(new KeyPressHandler() {
 
 				@Override
@@ -177,11 +175,12 @@ public class NumericTextBoxFormField extends FormField<Double>{
 		if(!editable){
 			return;
 		}
-		((NumericWrapper)field).getField().setReadOnly(readonly);
+		((NumericWrapper)field).getField().setEnabled(!readonly);
 		((NumericWrapper)field).getField().getElement().getStyle().setBorderColor(readonly ? "transparent" : "gray");
 		((NumericWrapper)field).getField().getElement().getStyle().setBackgroundColor(readonly ? "transparent" : "white");
 		mandatoryIndicatorLabel.setVisible(!readonly&& this.isMandatory());
-
+		
+	//	((NumericWrapper)field).getField().setTabIndex(readonly ? -1 : 0);
 	}
 
 	@Override

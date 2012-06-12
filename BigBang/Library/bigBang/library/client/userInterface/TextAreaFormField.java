@@ -109,10 +109,11 @@ public class TextAreaFormField extends FormField<String> {
 				}
 			}
 		}
-		field.setReadOnly(readOnly);
+		field.setEnabled(!readOnly);
 		field.getElement().getStyle().setBorderColor(readOnly ? "transparent" : "gray");
 		field.getElement().getStyle().setBackgroundColor(readOnly ? "transparent" : "white");
 		mandatoryIndicatorLabel.setVisible(!readOnly && this.isMandatory());
+		
 	}
 
 	public void setFieldHeight(String height){
@@ -204,6 +205,5 @@ public class TextAreaFormField extends FormField<String> {
 	@Override
 	public void setEditable(boolean editable) {
 		super.setEditable(editable);
-		((TextArea)this.field).setTabIndex(editable ? 0 : -1);
 	}
 }
