@@ -138,6 +138,10 @@ public class TwoKeyTableView extends View {
 				return ((FormField<String>)field).getValue();
 			}
 		}
+		@Override
+		public void focus() {
+			field.focus();
+		}
 	}
 
 	protected TwoKeyTable table; 

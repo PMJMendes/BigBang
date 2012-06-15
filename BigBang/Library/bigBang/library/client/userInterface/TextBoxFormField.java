@@ -67,9 +67,9 @@ public class TextBoxFormField extends FormField<String> {
 		wrapper.add(errorMessageLabel);
 
 		setFieldWidth("400px");
-		
+
 		this.field.addValueChangeHandler(new ValueChangeHandler<String>() {
-			
+
 			@Override
 			public void onValueChange(ValueChangeEvent<String> event) {
 				setValue(event.getValue(), true);
@@ -145,7 +145,7 @@ public class TextBoxFormField extends FormField<String> {
 	public void setTextAligment(TextAlignment alignment){
 		((TextBox)this.field).setAlignment(alignment);
 	}
-	
+
 	public HasValue<String> getTextBox(){
 		return field;
 	}
@@ -153,9 +153,14 @@ public class TextBoxFormField extends FormField<String> {
 	public TextBox getNativeField(){
 		return (TextBox) field;
 	}
-	
+
 	@Override
 	public void setEditable(boolean editable) {
 		super.setEditable(editable);
+	}
+
+	@Override
+	public void focus() {
+		((TextBox)field).setFocus(true);
 	}
 }

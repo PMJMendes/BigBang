@@ -302,5 +302,10 @@ public class DatePickerFormField extends FormField<Date> {
 	public boolean isReadOnly() {
 		return readonly;
 	}
+	
+	@Override
+	public void focus() {
+		day.setFocus(true);
+	}
 
 }

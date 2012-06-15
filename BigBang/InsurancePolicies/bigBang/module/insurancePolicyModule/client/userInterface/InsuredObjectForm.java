@@ -140,6 +140,11 @@ public class InsuredObjectForm extends FormView<InsuredObject> {
 		public String getValue() {
 			return this.field.getValue() == null ? null : this.field.getValue().toString();
 		}
+
+		@Override
+		public void focus() {
+			field.focus();
+		}
 	}
 
 	//common fields

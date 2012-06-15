@@ -230,5 +230,9 @@ public class ZipCodeFormField extends FormField<ZipCode>{
 	public void setLabelWidth(String width) {
 		wrapper.getColumnFormatter().setWidth(0, width);
 	}
+	@Override
+	public void focus() {
+		code.getElement().focus();
+	}
 
 }

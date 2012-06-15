@@ -132,4 +132,10 @@ public class OutgoingMessageFormField extends FormField<OutgoingMessage>{
 		forwardReply.setSuggestions(Arrays.asList(displayNames));
 	}
 
+	
+	@Override
+	public void focus() {
+		to.focus();
+	}
+	
 }

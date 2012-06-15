@@ -146,6 +146,12 @@ public class SubPolicyForm extends FormView<SubPolicy> {
 		public String getValue() {
 			return this.field.getValue() == null ? null : this.field.getValue().toString();
 		}
+
+
+		@Override
+		public void focus() {	
+			field.focus();
+		}
 	}
 
 	protected TextBoxFormField manager; //ro

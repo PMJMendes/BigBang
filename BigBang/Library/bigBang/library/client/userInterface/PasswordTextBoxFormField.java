@@ -80,6 +80,11 @@ public class PasswordTextBoxFormField extends FormField<String> {
 	public void clear() {
 		this.setValue("");
 	}
+	
+	@Override
+	public void focus() {
+		((PasswordTextBox)this.field).getElement().focus();
+	}
 
 }
 

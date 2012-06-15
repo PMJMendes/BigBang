@@ -243,6 +243,11 @@ public class IncomingMessageFormField extends FormField<IncomingMessage>{
 		return;
 
 	}
+	
+	@Override
+	public void focus() {
+		noteOrEmailRadioButton.focus();
+	}
 
 }
 

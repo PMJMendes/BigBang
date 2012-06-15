@@ -152,4 +152,16 @@ public class RadioButtonFormField extends FormField<String> {
 		this.errorMessageLabel.setVisible(invalid);
 	}
 
+	@Override
+	public void focus() {
+		if(!radioButtons.isEmpty()){
+			for(RadioButton r : this.radioButtons.keySet()) {
+				if(r.getValue()){
+					r.getElement().focus();
+					break;
+				}
+			}
+		}
+	}
+
 }

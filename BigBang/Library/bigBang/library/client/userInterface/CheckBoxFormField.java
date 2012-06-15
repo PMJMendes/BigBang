@@ -95,4 +95,9 @@ public class CheckBoxFormField extends FormField<Boolean> {
 		this.field.setValue(false);
 	}
 
+	@Override
+	public void focus() {
+		((UIObject)field).getElement().focus();
+	}
+
 }

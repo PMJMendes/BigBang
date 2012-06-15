@@ -228,4 +228,9 @@ public class NumericTextBoxFormField extends FormField<Double>{
 		return ((NumericWrapper)field).getField();
 	}
 
+	@Override
+	public void focus() {
+		getTextBox().setFocus(true);
+	}
+	
 }

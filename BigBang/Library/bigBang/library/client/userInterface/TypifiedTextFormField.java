@@ -104,17 +104,17 @@ public class TypifiedTextFormField extends FormField<TypifiedText> implements Ty
 			labels.setListId(null, null);
 		}
 	}
-	
+
 	@Override
 	public void setValue(TypifiedText value, boolean fireEvents) {
-		
+
 		this.labels.setValue(value.label);
 		this.subject.setValue(value.subject);
 		this.textBody.setValue(value.text);
 		if(fireEvents)
 			ValueChangeEvent.fire(this, value);
 	}
-	
+
 	@Override
 	public TypifiedText getValue() {
 		TypifiedText result = new TypifiedText();
@@ -135,7 +135,7 @@ public class TypifiedTextFormField extends FormField<TypifiedText> implements Ty
 		subject.setReadOnly(readonly);
 		textBody.setReadOnly(readonly);
 		labels.setReadOnly(readonly);
-		
+
 	}
 
 	@Override
@@ -180,5 +180,11 @@ public class TypifiedTextFormField extends FormField<TypifiedText> implements Ty
 	@Override
 	public void setTypifiedTextDataVersionNumber(int number) {
 		return;
+	}
+
+
+	@Override
+	public void focus() {
+		subject.focus();		
 	}
 }

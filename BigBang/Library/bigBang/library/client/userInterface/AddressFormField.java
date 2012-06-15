@@ -118,4 +118,10 @@ public class AddressFormField extends FormField<Address> {
 		zipCode.setLabelWidth(width);
 	}
 
+
+	@Override
+	public void focus() {
+		street1.setFocus(true);
+	}
+
 }

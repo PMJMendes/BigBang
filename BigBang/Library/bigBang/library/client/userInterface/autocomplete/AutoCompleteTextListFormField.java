@@ -190,4 +190,10 @@ public class AutoCompleteTextListFormField extends FormField<Collection<String>>
 
 	}
 
+
+	@Override
+	public void focus() {
+		itemBox.setFocus(true);
+	}
+
 }

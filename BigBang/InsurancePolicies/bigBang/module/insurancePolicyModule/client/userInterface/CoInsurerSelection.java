@@ -23,14 +23,10 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 
 public class CoInsurerSelection extends FormField<CoInsurer[]>{
 
-	public enum Action{
-		ADD_NEW_INSURANCE_AGENCY
-
-	}
-
 	public class CoInsuranceListEntry extends ListEntry<CoInsurer>{
 
-
+		protected Button add;
+		protected boolean isButton = false;
 		protected ExpandableListBoxFormField agency;
 		protected NumericTextBoxFormField infoValue;
 		private Button remove;
@@ -48,8 +44,11 @@ public class CoInsurerSelection extends FormField<CoInsurer[]>{
 		@Override
 		public void setValue(CoInsurer coInsuranceAgencyInfo) {
 
+			
+			
 			if(coInsuranceAgencyInfo == null){
-				Button add = new Button("Adicionar Co-Seguradora");
+				isButton = true;
+				add = new Button("Adicionar Co-Seguradora");
 				add.addClickHandler(new ClickHandler() {
 
 					@Override
@@ -202,6 +201,10 @@ public class CoInsurerSelection extends FormField<CoInsurer[]>{
 			}
 		}
 
+		public boolean isButton() {
+				return isButton;
+		}
+		
 	}
 
 	protected void addNewCoInsuranceAgency() {
@@ -385,6 +388,15 @@ public class CoInsurerSelection extends FormField<CoInsurer[]>{
 
 	public List<CoInsurer> getCoInsuranceAgenciesList() {
 		return coInsuranceAgencies;
+	}
+	
+	@Override
+	public void focus() {
+		if(!coInsuranceAgencies.isEmpty()){
+			if(((CoInsuranceListEntry) coInsuranceAgencies.get(coInsuranceAgencies.size()-1)).isButton()){
+				coInsuranceAgencies.get(coInsuranceAgencies.size()-1).getLeftWidget().getElement().focus();
+			}
+		}
 	}
 
 }

@@ -115,4 +115,9 @@ public class MultiSelectExpandableListFormField extends FormField<String[]> {
 		return false;
 	}
 
+	@Override
+	public void focus() {
+		textBox.setFocus(true);
+	}
+
 }

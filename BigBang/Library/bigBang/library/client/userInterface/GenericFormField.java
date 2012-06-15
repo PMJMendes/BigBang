@@ -265,4 +265,9 @@ public class GenericFormField extends FormField<String> {
 		myField.setLabelWidth(width);
 	}
 
+	@Override
+	public void focus() {
+		myField.getElement().focus();
+	}
+
 }

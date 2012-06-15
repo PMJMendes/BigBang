@@ -136,6 +136,11 @@ public class ExerciseForm extends FormView<Exercise> {
 			this.field.setLabelWidth(width);
 		}
 
+		@Override
+		public void focus() {
+			field.getElement().focus();
+		}
+
 	}
 	private String ownerId;
 	private String id;

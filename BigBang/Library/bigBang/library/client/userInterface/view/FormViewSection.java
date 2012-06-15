@@ -175,5 +175,14 @@ public class FormViewSection extends View {
 		}
 		this.readOnly = readOnly;
 	}
+	
+	public void focus(){
+		for(FormField<?> field : fields){
+			if(!field.isReadOnly()){
+				field.focus();
+				break;
+			}
+		}
+	}
 
 }

@@ -206,4 +206,9 @@ public class TextAreaFormField extends FormField<String> {
 	public void setEditable(boolean editable) {
 		super.setEditable(editable);
 	}
+	
+	@Override
+	public void focus() {
+		((TextArea)this.field).getElement().focus();
+	}
 }

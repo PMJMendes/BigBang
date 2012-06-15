@@ -15,6 +15,7 @@ public class OperationsToolBar extends MenuBar {
 		super(vertical);
 		setWidth("100%");
 		this.getElement().getStyle().setBackgroundImage("images/listHeaderBackground.png");
+		this.setFocusOnHoverEnabled(false);
 	}
 	
 	public List<MenuItem> getMenuItems(){

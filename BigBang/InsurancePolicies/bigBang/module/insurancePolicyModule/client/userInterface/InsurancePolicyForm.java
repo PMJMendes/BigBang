@@ -337,6 +337,7 @@ public abstract class InsurancePolicyForm extends FormView<InsurancePolicy> {
 			this.extraFieldsSection.setPolicyFields(info.extraData);
 
 			this.duration.setValue(info.durationId);
+			
 		}
 	}
 

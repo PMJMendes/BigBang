@@ -136,6 +136,11 @@ public class SubPolicyFormTable extends View implements HasValue<TableSection> {
 				return ((FormField<String>)this.field).getValue();
 			}
 		}
+
+		@Override
+		public void focus() {
+			field.focus();
+		}
 	}
 
 

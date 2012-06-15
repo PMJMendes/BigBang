@@ -59,6 +59,12 @@ public class ExpandableMultipleListBoxFormField extends FormField<String[]> {
 		// TODO Auto-generated method stub
 		
 	}
+
+	@Override
+	public void focus() {
+		// TODO Auto-generated method stub
+		
+	}
 	
 	/*protected Image expandImage;
 	protected TypifiedListManagementPanel list;

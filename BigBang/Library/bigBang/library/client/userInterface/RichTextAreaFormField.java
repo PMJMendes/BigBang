@@ -154,4 +154,9 @@ public class RichTextAreaFormField extends FormField<String> {
 		toolbar.setVisible(b);
 	}
 
+	@Override
+	public void focus() {
+		field.getElement().focus();
+	}
+
 }

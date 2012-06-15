@@ -197,4 +197,8 @@ public class ListBoxFormField extends FormField<String> {
 		((ListBox)this.field).setTabIndex(editable ? 0 : -1);
 	}
 
+	@Override
+	public void focus() {
+		listBox.getElement().focus();
+	}
 }

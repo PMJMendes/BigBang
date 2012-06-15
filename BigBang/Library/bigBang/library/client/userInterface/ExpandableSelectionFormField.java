@@ -168,4 +168,9 @@ public class ExpandableSelectionFormField extends FormField<String> {
 		this.valueDisplayName.setWidth(width);
 	}
 
+	@Override
+	public void focus() {
+		selectionPanel.getElement().focus();
+	}
+
 }
