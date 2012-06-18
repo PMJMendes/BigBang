@@ -280,14 +280,17 @@ public class DatePickerFormField extends FormField<Date> {
 			}
 		}
 		day.setEnabled(!readonly);
+		day.setReadOnly(readonly);
 		day.getElement().getStyle().setBorderColor(readonly ? "transparent" : "gray");
 		day.getElement().getStyle().setBackgroundColor(readonly ? "transparent" : "white");
 		
 		month.setEnabled(!readonly);
+		month.setReadOnly(readonly);
 		month.getElement().getStyle().setBorderColor(readonly ? "transparent" : "gray");
 		month.getElement().getStyle().setBackgroundColor(readonly ? "transparent" : "white");
 		
 		year.setEnabled(!readonly);
+		year.setReadOnly(readonly);
 		year.getElement().getStyle().setBorderColor(readonly ? "transparent" : "gray");
 		year.getElement().getStyle().setBackgroundColor(readonly ? "transparent" : "white");
 		

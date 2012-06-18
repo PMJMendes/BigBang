@@ -90,10 +90,12 @@ public class DayMonthDatePickerFormField extends DatePickerFormField{
 				month.setValue("");
 			}
 		}
+		day.setReadOnly(readonly);
 		day.setEnabled(!readonly);
 		day.getElement().getStyle().setBorderColor(readonly ? "transparent" : "gray");
 		day.getElement().getStyle().setBackgroundColor(readonly ? "transparent" : "white");
 		
+		month.setReadOnly(readonly);
 		month.setEnabled(!readonly);
 		month.getElement().getStyle().setBorderColor(readonly ? "transparent" : "gray");
 		month.getElement().getStyle().setBackgroundColor(readonly ? "transparent" : "white");

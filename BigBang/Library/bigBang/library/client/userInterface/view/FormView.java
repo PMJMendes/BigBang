@@ -6,6 +6,8 @@ import bigBang.library.client.FormField;
 import bigBang.library.client.HasEditableValue;
 import bigBang.library.client.Validatable;
 
+import com.google.gwt.core.client.Scheduler;
+import com.google.gwt.core.client.Scheduler.ScheduledCommand;
 import com.google.gwt.dom.client.Style.Float;
 import com.google.gwt.dom.client.Style.FontStyle;
 import com.google.gwt.dom.client.Style.FontWeight;
@@ -38,7 +40,7 @@ public abstract class FormView<T> extends View implements Validatable, HasEditab
 	protected ScrollPanel scrollWrapper;
 
 	private boolean isReadOnly;
-	
+
 	protected T value;
 	private boolean valueChangeHandlerInitialized;
 
@@ -48,7 +50,7 @@ public abstract class FormView<T> extends View implements Validatable, HasEditab
 		mainWrapper = new AbsolutePanel();
 		initWidget(mainWrapper);
 		mainWrapper.setSize("100%", "100%");
-		
+
 		ScrollPanel wrapper = new ScrollPanel();
 		this.scrollWrapper = wrapper;
 		wrapper.getElement().getStyle().setProperty("overflowX", "hidden");
@@ -60,26 +62,26 @@ public abstract class FormView<T> extends View implements Validatable, HasEditab
 		wrapper.setStyleName("formPanel");
 
 		mainWrapper.add(wrapper, 0, 0);
-		
+
 		topToolbar = new HorizontalPanel();
 		topToolbar.setSize("100%", "0px");
-		
+
 		topButtonWrapper = new HorizontalPanel();
 		topButtonWrapper.getElement().getStyle().setRight(20, Unit.PX);
 		topButtonWrapper.getElement().getStyle().setPosition(Position.ABSOLUTE);
 		topButtonWrapper.getElement().getStyle().setFloat(Float.RIGHT);
-	
+
 		//SimplePanel filler = new SimplePanel();
 		////filler.setSize("100%", "0px");
 		//topToolbar.add(filler);
 		//topToolbar.setCellWidth(filler, "100%");
 		//topToolbar.setCellHeight(filler, "0px");
 		topToolbar.add(topButtonWrapper);
-		
+
 		mainWrapper.add(topToolbar, 0, 0);
 		setReadOnly(true);
 	}
-	
+
 	@Override
 	protected void initializeView() {
 		return;
@@ -110,11 +112,11 @@ public abstract class FormView<T> extends View implements Validatable, HasEditab
 	public void addFormWideWidget(Widget w){
 		mainWrapper.add(w);
 	}
-	
+
 	public void addSubmitButton(Button submit){
 		addButton(submit);
 		submit.addClickHandler(new ClickHandler() {
-			
+
 			@Override
 			public void onClick(ClickEvent event) {
 				validate();
@@ -122,25 +124,25 @@ public abstract class FormView<T> extends View implements Validatable, HasEditab
 			}
 		});
 	}
-	
+
 	public void addButton(final Button button) {
 		button.setHeight("30px");
 		topButtonWrapper.add(button);
 	}
-	
+
 	public void addSection(String title){
 		this.currentSection = new FormViewSection(title);
 		this.panel.add(this.currentSection);
 		this.sections.add(this.currentSection);
 	}
-	
+
 	public void addSection(FormViewSection section){
 		this.currentSection = section;
 		this.panel.add(this.currentSection);
 		this.sections.add(this.currentSection);
 		//this.panel.setCellHeight(currentSection, minHeight);
 	}
-	
+
 	public void removeSection(FormViewSection section){
 		this.panel.remove(section);
 		int index = this.sections.indexOf(section) - 1;
@@ -162,11 +164,11 @@ public abstract class FormView<T> extends View implements Validatable, HasEditab
 	public void addWidget(Widget w) {
 		this.currentSection.addWidget(w);
 	}
-	
+
 	public void addWidget(Widget w, boolean inline) {
 		this.currentSection.addWidget(w, inline);
 	}
-	
+
 	//Disables all the input fields in the form
 	public void setReadOnly(boolean readOnly) {
 		this.isReadOnly = readOnly;
@@ -177,9 +179,18 @@ public abstract class FormView<T> extends View implements Validatable, HasEditab
 	}
 
 	private void focus() {
-		if(!isReadOnly && !sections.isEmpty()){
-			sections.get(0).focus();
-		}
+
+		Scheduler.get().scheduleDeferred(new ScheduledCommand() {
+
+			@Override
+			public void execute() {
+				if(!isReadOnly && !sections.isEmpty()){
+					sections.get(0).focus();
+				}
+
+			}
+		});
+
 	}
 
 	public boolean isReadOnly(){
@@ -210,56 +221,56 @@ public abstract class FormView<T> extends View implements Validatable, HasEditab
 	public void addFormField(FormField<?> field) {
 		currentSection.addFormField(field);
 	}
-	
+
 	public void addFormField(FormField<?> field, boolean inline) {
 		currentSection.addFormField(field, inline);
 	}
-	
+
 	public void addFormFieldGroup(FormField<?>[] group, boolean inline){
 		currentSection.addFormFieldGroup(group, inline);
 	}
-	
+
 	public void registerFormField(FormField<?> field) {
 		currentSection.registerFormField(field);
 	}
 
 	public Widget getNonScrollableContent(){
-//		final VerticalPanel wrapper = new VerticalPanel();
-//		wrapper.setSize("100%", "100%");
-//		
-//		final AbsolutePanel absolutePanel = new AbsolutePanel();
-//		absolutePanel.setSize("100%", "100%");
-//		absolutePanel.add(this.panel, 0, 0);
-//		absolutePanel.add(this.topToolbar, 0, 0);
-//
-//		wrapper.add(absolutePanel);
-//
-//		wrapper.addAttachHandler(new AttachEvent.Handler() {
-//			
-//			@Override
-//			public void onAttachOrDetach(AttachEvent event) {
-//				if(event.isAttached()){
-//					absolutePanel.addAttachHandler(new AttachEvent.Handler() {
-//						
-//						@Override
-//						public void onAttachOrDetach(AttachEvent event) {
-//							wrapper.setCellHeight(absolutePanel, panel.getOffsetHeight() + "px");
-//						}
-//					});
-//				}
-//			}
-//		});
-//
-//		return wrapper;
+		//		final VerticalPanel wrapper = new VerticalPanel();
+		//		wrapper.setSize("100%", "100%");
+		//		
+		//		final AbsolutePanel absolutePanel = new AbsolutePanel();
+		//		absolutePanel.setSize("100%", "100%");
+		//		absolutePanel.add(this.panel, 0, 0);
+		//		absolutePanel.add(this.topToolbar, 0, 0);
+		//
+		//		wrapper.add(absolutePanel);
+		//
+		//		wrapper.addAttachHandler(new AttachEvent.Handler() {
+		//			
+		//			@Override
+		//			public void onAttachOrDetach(AttachEvent event) {
+		//				if(event.isAttached()){
+		//					absolutePanel.addAttachHandler(new AttachEvent.Handler() {
+		//						
+		//						@Override
+		//						public void onAttachOrDetach(AttachEvent event) {
+		//							wrapper.setCellHeight(absolutePanel, panel.getOffsetHeight() + "px");
+		//						}
+		//					});
+		//				}
+		//			}
+		//		});
+		//
+		//		return wrapper;
 		return this.panel;
 	}
-	
+
 	@Override
 	public abstract T getInfo();
-	
+
 	@Override
 	public abstract void setInfo(T info);
-	
+
 	public void clearInfo() {
 		for(FormViewSection s : sections){
 			for(FormField<?> f : s.getFields()){
@@ -267,21 +278,21 @@ public abstract class FormView<T> extends View implements Validatable, HasEditab
 			}
 		}
 	}
-	
+
 	protected void clearValue(){
 		return;
 	}
-	
+
 	@Override
 	public void revert(){
 		this.setValue(this.value, false);
 	}
-	
+
 	@Override
 	public void commit(){
 		this.setValue(this.getInfo(), false);
 	}
-	
+
 
 	public HandlerRegistration addValueChangeHandler(
 			ValueChangeHandler<T> handler) {
@@ -302,31 +313,31 @@ public abstract class FormView<T> extends View implements Validatable, HasEditab
 
 	public void setValue(T value, boolean fireEvents) {
 		this.value = value;
-		
+
 		if(value == null){
 			clearInfo();
 			clearValue();
 		}else{
 			setInfo(value);
 		}
-		
+
 		if(fireEvents){
 			ValueChangeEvent.fire(this, value);
 		}
 	}
-	
+
 	public Widget getContentPanel(){
 		return this.panel;
 	}
-	
+
 	public void scrollToTop(){
 		this.scrollWrapper.scrollToTop();
 	}
-	
+
 	public void scrollToBottom(){
 		this.scrollWrapper.scrollToBottom();
 	}
-	
+
 	public void lock(boolean lock) {
 		setReadOnly(true);
 		topToolbar.setVisible(!lock);
