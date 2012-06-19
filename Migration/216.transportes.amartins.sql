@@ -164,7 +164,7 @@ inner join amartins.tblcompanies c on c.MigrationID=s.comseg
 inner join bigbang.tblDurationProfiles d on left(d.Duration, 1) COLLATE DATABASE_DEFAULT = s.duracao COLLATE DATABASE_DEFAULT
 inner join bigbang.tblFractioning f on left(f.Fractioning, 1) COLLATE DATABASE_DEFAULT = s.fpagamento COLLATE DATABASE_DEFAULT
 left outer join amartins.tblmediators m on m.MigrationID=s.MEDIAPOL
-where s.ramo in (502, 503, 504, 505)  and s.duracao='A' and s.datini>'2010-12-31'
+where s.ramo in (502, 503, 504, 505)  and s.duracao='T' and s.datini>'2010-12-31'
 and (s.situacao in ('P', 'N') or (s.situacao in ('A', 'U') and (s.datfim is null or s.datfim>'2009-12-31')))
 and s.cliente in (select MigrationID from amartins.tblBBClients);
 
