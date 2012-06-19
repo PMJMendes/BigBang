@@ -8,7 +8,6 @@ import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.ScrollPanel;
 
 import bigBang.definitions.shared.BigBangConstants;
-import bigBang.library.client.FieldValidator;
 import bigBang.library.client.FormField;
 import bigBang.library.client.userInterface.TwoKeyTable.Field;
 import bigBang.library.client.userInterface.TwoKeyTable.HeaderCell;
@@ -42,28 +41,7 @@ public class TwoKeyTableView extends View {
 					this.field = referenceListField;
 					break;
 				case NUMERIC:
-					this.field = new TextBoxFormField(new FieldValidator<String>() {
-
-						@Override
-						public boolean isValid(String value) {
-							try{
-								Integer.parseInt(value);
-							}catch(Exception e){
-								return false;
-							}
-							return true;
-						}
-
-						@Override
-						public boolean isMandatory() {
-							return false;
-						}
-
-						@Override
-						public String getErrorMessage() {
-							return "Apenas valores numéricos";
-						}
-					});
+					this.field = new NumericTextBoxFormField();
 					break;
 				case TEXT:
 					this.field = new TextBoxFormField();
@@ -122,7 +100,10 @@ public class TwoKeyTableView extends View {
 				return;
 			} else if(this.headerField.type == Type.DATE){
 				((DatePickerFormField) this.field).setValue(value);
-			}else{
+			}else if(this.headerField.type == Type.NUMERIC){
+				((NumericTextBoxFormField)this.field).setStringValue(value);
+			}
+			else{
 				((FormField<String>)this.field).setValue(value, fireEvents);
 			}
 		}
@@ -134,6 +115,8 @@ public class TwoKeyTableView extends View {
 				return null;
 			} else if(this.headerField.type == Type.DATE){	
 				return ((DatePickerFormField)field).getStringValue();
+			}else if(this.headerField.type == Type.NUMERIC){
+				return ((NumericTextBoxFormField)this.field).getStringValue();
 			}else{
 				return ((FormField<String>)field).getValue();
 			}

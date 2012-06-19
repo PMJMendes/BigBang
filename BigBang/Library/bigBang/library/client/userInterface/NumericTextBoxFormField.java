@@ -20,7 +20,6 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.user.client.ui.ValueBoxBase.TextAlignment;
 
-
 public class NumericTextBoxFormField extends FormField<Double>{
 
 	public class NumericWrapper implements HasValue<Double>{
@@ -51,7 +50,7 @@ public class NumericTextBoxFormField extends FormField<Double>{
 
 				@Override
 				public void onValueChange(ValueChangeEvent<String> event) {
-					if(!event.getValue().isEmpty()){
+					if(event.getValue() != null && !event.getValue().isEmpty()){
 						try{
 							setValue(nf.parse(event.getValue()));
 							curr = event.getValue();
@@ -78,7 +77,11 @@ public class NumericTextBoxFormField extends FormField<Double>{
 
 		@Override
 		public Double getValue(){
-			return (field.getValue() != null && !field.getValue().isEmpty()) ? nf.parse(field.getValue()) : null;
+			try{
+				return (field.getValue() != null && !field.getValue().isEmpty()) ? nf.parse(field.getValue()) : null;
+			}catch(NumberFormatException e){
+				return null;
+			}
 		}
 
 		@Override
@@ -181,7 +184,6 @@ public class NumericTextBoxFormField extends FormField<Double>{
 		((NumericWrapper)field).getField().getElement().getStyle().setBackgroundColor(readonly ? "transparent" : "white");
 		mandatoryIndicatorLabel.setVisible(!readonly&& this.isMandatory());
 		
-	//	((NumericWrapper)field).getField().setTabIndex(readonly ? -1 : 0);
 	}
 
 	@Override
@@ -231,6 +233,27 @@ public class NumericTextBoxFormField extends FormField<Double>{
 	@Override
 	public void focus() {
 		getTextBox().setFocus(true);
+	}
+	
+	public void setStringValue(String value){
+		try{
+			Double.parseDouble(value);
+			value = value.replace(".", LocaleInfo.getCurrentLocale().getNumberConstants().decimalSeparator());
+			getTextBox().setValue(value, true);
+		}catch(Exception e){
+			((NumericWrapper)field).curr = value;
+			getTextBox().setValue(value);
+		}
+		
+	}
+	
+	public String getStringValue(){
+		try{
+			return nf.parse(getTextBox().getValue())+"";
+		}catch (Exception e) {
+			return getTextBox().getValue();
+		}
+		
 	}
 	
 }
