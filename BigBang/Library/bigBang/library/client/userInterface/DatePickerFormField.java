@@ -214,6 +214,14 @@ public class DatePickerFormField extends FormField<Date> {
 			setValue(DateTimeFormat.getFormat(DEFAULT_FORMAT).parse(date));
 		}
 	}
+	
+	public void setValue(String date, boolean fireEvents){
+		if(date == null) {
+			setValue((Date) null);
+		}else{
+			setValue(DateTimeFormat.getFormat(DEFAULT_FORMAT).parse(date), fireEvents);
+		}
+	}
 
 	@Override
 	public Date getValue() {
