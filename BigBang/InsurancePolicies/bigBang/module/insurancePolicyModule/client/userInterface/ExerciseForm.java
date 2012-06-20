@@ -11,10 +11,10 @@ import bigBang.definitions.shared.Exercise.HeaderData.VariableField;
 import bigBang.definitions.shared.Exercise.HeaderData.VariableField.VariableValue;
 import bigBang.definitions.shared.Exercise.InsuredObject;
 import bigBang.definitions.shared.InsurancePolicy.FieldType;
-import bigBang.library.client.FieldValidator;
 import bigBang.library.client.FormField;
 import bigBang.library.client.userInterface.DatePickerFormField;
 import bigBang.library.client.userInterface.ExpandableListBoxFormField;
+import bigBang.library.client.userInterface.NumericTextBoxFormField;
 import bigBang.library.client.userInterface.RadioButtonFormField;
 import bigBang.library.client.userInterface.TextBoxFormField;
 import bigBang.library.client.userInterface.TwoKeyTable.Field;
@@ -52,28 +52,7 @@ public class ExerciseForm extends FormView<Exercise> {
 				field = referenceListField;
 				break;
 			case NUMERIC:
-				field = new TextBoxFormField(fixedFields.fieldName, new FieldValidator<String>() {
-
-					@Override
-					public boolean isValid(String value) {
-						try{
-							Double.parseDouble(value);
-						}catch(Exception e){
-							return false;
-						}
-						return true;
-					}
-
-					@Override
-					public boolean isMandatory() {
-						return false;
-					}
-
-					@Override
-					public String getErrorMessage() {
-						return "Apenas valores numéricos";
-					}
-				});
+				field = new NumericTextBoxFormField(fixedFields.fieldName);
 				break;
 			case TEXT:
 				field = new TextBoxFormField(fixedFields.fieldName);
@@ -100,6 +79,8 @@ public class ExerciseForm extends FormView<Exercise> {
 		public void setValue(String value){
 			if(headerField.type == FieldType.DATE){	
 				((DatePickerFormField)field).setValue(value);		//this.dynamicVariableHeaderDataTable.removeFromParent();
+			}else if(headerField.type == FieldType.NUMERIC){	
+				((NumericTextBoxFormField)field).setStringValue(value);		//this.dynamicVariableHeaderDataTable.removeFromParent();
 			}
 			else
 				((FormField<String>)field).setValue(value);
@@ -110,6 +91,8 @@ public class ExerciseForm extends FormView<Exercise> {
 		public String getValue() {
 			if(headerField.type == FieldType.DATE){	
 				return ((DatePickerFormField)field).getStringValue();
+			}else if(headerField.type == FieldType.NUMERIC){	
+				return ((NumericTextBoxFormField)field).getStringValue();
 			}
 			else{
 				return ((FormField<String>)field).getValue();
