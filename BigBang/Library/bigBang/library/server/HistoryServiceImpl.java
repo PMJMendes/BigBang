@@ -76,8 +76,8 @@ public class HistoryServiceImpl
 		}
 
 		lobjResult.timeStamp = lobjLog.GetTimestamp().toString();
-		lobjResult.shortDescription = lobjOp.ShortDesc();
-		lobjResult.description = lobjOp.LongDesc("<br />");
+		lobjResult.shortDescription = ( lobjOp == null ? "" : lobjOp.ShortDesc() );
+		lobjResult.description = ( lobjOp == null ? "(Informação não disponível.)" : lobjOp.LongDesc("<br />") );
 
 		if ( lobjResult.canUndo )
 			lobjResult.undoDescription = ((UndoableOperation)lobjOp).UndoDesc("<br />");
