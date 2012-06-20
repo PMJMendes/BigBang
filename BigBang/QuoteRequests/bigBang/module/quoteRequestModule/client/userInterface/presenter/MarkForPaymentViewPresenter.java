@@ -148,7 +148,7 @@ public class MarkForPaymentViewPresenter implements ViewPresenter {
 			@Override
 			public void onResponse(Receipt response) {
 				onMarkForPaymentSuccess();
-				if(!PermissionChecker.hasPermission(response, BigBangConstants.OperationIds.ReceiptProcess.CREATE_DAS_REQUEST)){
+				if(PermissionChecker.hasPermission(response, BigBangConstants.OperationIds.ReceiptProcess.CREATE_DAS_REQUEST)){
 					EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("Pagamento posterior à data limite", "Será necessária uma DAS"), TYPE.INFO_TRAY_NOTIFICATION));
 				}
 			}
