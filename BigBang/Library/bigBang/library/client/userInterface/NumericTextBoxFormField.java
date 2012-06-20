@@ -37,11 +37,22 @@ public class NumericTextBoxFormField extends FormField<Double>{
 				public void onKeyPress(KeyPressEvent event) {					
 
 					if(!Character.isDigit((char)event.getUnicodeCharCode())){
-						if((event.getCharCode() == LocaleInfo.getCurrentLocale().getNumberConstants().decimalSeparator().charAt(0) || event.getCharCode() == 46) && !field.getValue().contains(LocaleInfo.getCurrentLocale().getNumberConstants().decimalSeparator())){
-							event.preventDefault();
-							field.setText(field.getValue() != null ? field.getValue()+LocaleInfo.getCurrentLocale().getNumberConstants().decimalSeparator() : LocaleInfo.getCurrentLocale().getNumberConstants().decimalSeparator());
+						if(event.getUnicodeCharCode() == '-' && !field.getValue().contains("-") && field.getCursorPos() == 0){
+							return;
 						}
 						event.preventDefault();
+						if((event.getCharCode() == LocaleInfo.getCurrentLocale().getNumberConstants().decimalSeparator().charAt(0) || event.getCharCode() == 46) && !field.getValue().contains(LocaleInfo.getCurrentLocale().getNumberConstants().decimalSeparator())){
+							if(field.getValue() != null){
+								int curPos = field.getCursorPos();
+								String newS = field.getValue().substring(0,curPos)+LocaleInfo.getCurrentLocale().getNumberConstants().decimalSeparator()+field.getValue().substring(curPos,field.getValue().length());
+								field.setValue(newS);
+								field.setCursorPos(curPos+1);
+							}else{
+								field.setText(LocaleInfo.getCurrentLocale().getNumberConstants().decimalSeparator());
+							}
+
+						}
+
 					}
 				}
 			});
@@ -236,6 +247,7 @@ public class NumericTextBoxFormField extends FormField<Double>{
 	}
 
 	public void setStringValue(String value){
+		((NumericWrapper)field).curr = value;
 		getTextBox().setValue(value);
 	}
 
