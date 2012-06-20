@@ -41,14 +41,14 @@ public class TestSubCasualtyCreate
 		subCasualty.items[0].insuredObjectId = "C264CBDC-CEB3-4966-9363-A037011F9C0D";
 		subCasualty.items[0].coverageId = "23E2CC58-D2EE-4329-A687-A02000F26B2B";
 		subCasualty.items[0].damageTypeId = "FC2B4BB5-C210-4DC9-9CB0-A0370120AA98";
-		subCasualty.items[0].damages = "2054.45";
+		subCasualty.items[0].damages = 2054.45;
 		subCasualty.items[0].settlement = null;
 		subCasualty.items[0].isManual = false;
 		subCasualty.items[1] = new SubCasualty.SubCasualtyItem();
 		subCasualty.items[1].insuredObjectId = "B1A4B9BB-314B-4666-9636-A037011F9C0E";
 		subCasualty.items[1].coverageId = "23E2CC58-D2EE-4329-A687-A02000F26B2B";
 		subCasualty.items[1].damageTypeId = "FC2B4BB5-C210-4DC9-9CB0-A0370120AA98";
-		subCasualty.items[1].damages = "1854.45";
+		subCasualty.items[1].damages = 1854.45;
 		subCasualty.items[1].settlement = null;
 		subCasualty.items[1].isManual = false;
 
