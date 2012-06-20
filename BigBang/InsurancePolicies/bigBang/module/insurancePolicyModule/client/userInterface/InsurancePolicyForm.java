@@ -11,10 +11,12 @@ import bigBang.definitions.shared.Client;
 import bigBang.definitions.shared.InsurancePolicy;
 import bigBang.library.client.FormField;
 import bigBang.library.client.dataAccess.DataBrokerManager;
+import bigBang.library.client.history.NavigationHistoryItem;
 import bigBang.library.client.userInterface.CheckBoxFormField;
 import bigBang.library.client.userInterface.DatePickerFormField;
 import bigBang.library.client.userInterface.DayMonthDatePickerFormField;
 import bigBang.library.client.userInterface.ExpandableListBoxFormField;
+import bigBang.library.client.userInterface.NavigationFormField;
 import bigBang.library.client.userInterface.NumericTextBoxFormField;
 import bigBang.library.client.userInterface.TextAreaFormField;
 import bigBang.library.client.userInterface.TextBoxFormField;
@@ -31,7 +33,7 @@ public abstract class InsurancePolicyForm extends FormView<InsurancePolicy> {
 
 	protected ExpandableListBoxFormField manager;
 	protected TextBoxFormField number;
-	protected TextBoxFormField client;
+	protected NavigationFormField client;
 	protected ExpandableListBoxFormField insuranceAgency;
 	protected TextBoxFormField categoryLineSubLine;
 	protected ExpandableListBoxFormField mediator;
@@ -60,7 +62,7 @@ public abstract class InsurancePolicyForm extends FormView<InsurancePolicy> {
 
 		addSection("Apólice");
 		number  = new TextBoxFormField("Número");
-		client = new TextBoxFormField("Cliente");
+		client = new NavigationFormField("Cliente");
 		number.setFieldWidth("175px");
 		manager = new ExpandableListBoxFormField(BigBangConstants.EntityIds.USER, "Gestor");
 		manager.allowEdition(false);
@@ -315,7 +317,14 @@ public abstract class InsurancePolicyForm extends FormView<InsurancePolicy> {
 
 					@Override
 					public void onResponse(Client response) {
-						InsurancePolicyForm.this.client.setValue("#" + response.clientNumber + " - " + response.name);
+						NavigationHistoryItem item = new NavigationHistoryItem();
+						item.setParameter("section", "client");
+						item.setStackParameter("display");
+						item.pushIntoStackParameter("display", "search");
+						item.setParameter("clientid", response.id);
+						InsurancePolicyForm.this.client.setValue(item);
+						
+						InsurancePolicyForm.this.client.setValueName("#" + response.clientNumber + " - " + response.name);
 					}
 
 					@Override
@@ -337,7 +346,6 @@ public abstract class InsurancePolicyForm extends FormView<InsurancePolicy> {
 			this.extraFieldsSection.setPolicyFields(info.extraData);
 
 			this.duration.setValue(info.durationId);
-			
 		}
 	}
 

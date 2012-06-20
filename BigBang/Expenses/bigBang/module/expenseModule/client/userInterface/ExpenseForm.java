@@ -1,4 +1,4 @@
-package bigBang.library.client.userInterface;
+package bigBang.module.expenseModule.client.userInterface;
 
 import java.util.Collection;
 
@@ -20,6 +20,13 @@ import bigBang.library.client.Notification;
 import bigBang.library.client.Notification.TYPE;
 import bigBang.library.client.dataAccess.BigBangTypifiedListBroker;
 import bigBang.library.client.event.NewNotificationEvent;
+import bigBang.library.client.history.NavigationHistoryItem;
+import bigBang.library.client.userInterface.DatePickerFormField;
+import bigBang.library.client.userInterface.ExpandableListBoxFormField;
+import bigBang.library.client.userInterface.NavigationFormField;
+import bigBang.library.client.userInterface.NumericTextBoxFormField;
+import bigBang.library.client.userInterface.TextAreaFormField;
+import bigBang.library.client.userInterface.TextBoxFormField;
 import bigBang.library.client.userInterface.view.FormView;
 import bigBang.module.insurancePolicyModule.client.dataAccess.PolicyTypifiedListBroker;
 import bigBang.module.insurancePolicyModule.client.dataAccess.SubPolicyTypifiedListBroker;
@@ -31,13 +38,13 @@ public class ExpenseForm extends FormView<Expense>{
 	private Label settleLabel;
 	private Button settleButton;
 	private TextAreaFormField notes;
-	private TextBoxFormField clientName;
+	private NavigationFormField client;
 	private DatePickerFormField expenseDate;
 	private ExpandableListBoxFormField insuredObjectId;
 	private ExpandableListBoxFormField coverageId;
 	private NumericTextBoxFormField value;
 	private TextBoxFormField isOpen;
-	private TextBoxFormField referenceNumber;
+	private NavigationFormField reference;
 	private TextBoxFormField number;
 	private boolean initialized;
 	private boolean tempIsManual;
@@ -52,13 +59,12 @@ public class ExpenseForm extends FormView<Expense>{
 		settleButton.setHeight("22px");
 		settleLabel = new Label();
 		settleLabel.setText("Calculado Automaticamente");
-		referenceNumber = new TextBoxFormField("Apólice");
-		referenceNumber.setFieldWidth("400px");
+		reference = new NavigationFormField("Apólice");
 
 		number = new TextBoxFormField("Número");
 		number.setFieldWidth("175px");
 
-		clientName = new TextBoxFormField("Cliente"); 
+		client = new NavigationFormField("Cliente"); 
 		expenseDate = new DatePickerFormField("Data");
 		insuredObjectId = new ExpandableListBoxFormField("Unidade de Risco");
 		value = new NumericTextBoxFormField("Valor");
@@ -70,9 +76,8 @@ public class ExpenseForm extends FormView<Expense>{
 		coverageId = new ExpandableListBoxFormField("Cobertura");
 
 		addSection("Despesa de saúde");
-		clientName.setFieldWidth("400px");
-		addFormField(clientName, false);
-		addFormField(referenceNumber);
+		addFormField(client, false);
+		addFormField(reference);
 
 		addFormFieldGroup(new FormField<?>[]{
 				number,
@@ -120,8 +125,8 @@ public class ExpenseForm extends FormView<Expense>{
 		addFormField(notes);
 		notes.setFieldWidth("400px");
 
-		clientName.setEditable(false);
-		referenceNumber.setEditable(false);
+		client.setEditable(false);
+		reference.setEditable(false);
 		number.setEditable(false);
 		isOpen.setEditable(false);
 		manager.setEditable(false);
@@ -160,10 +165,25 @@ public class ExpenseForm extends FormView<Expense>{
 		number.setValue(info.number);
 
 		notes.setValue(info.notes);
-		clientName.setValue("#" + info.clientNumber + " - " + info.clientName);
+
+		NavigationHistoryItem clientItem = new NavigationHistoryItem();
+		clientItem.setParameter("section", "client");
+		clientItem.setStackParameter("display");
+		clientItem.pushIntoStackParameter("display", "search");
+		clientItem.setParameter("clientid", info.clientId);
+		client.setValue(clientItem);
+		client.setValueName("#" + info.clientNumber + " - " + info.clientName);
+		
 		expenseDate.setValue(info.expenseDate);
 
-		referenceNumber.setValue("#"+info.referenceNumber + " - " + info.categoryName + " / " + info.lineName + " / " + info.subLineName);
+
+		NavigationHistoryItem referenceItem = new NavigationHistoryItem();
+		referenceItem.setParameter("section", "insurancePolicy");
+		referenceItem.setStackParameter("display");
+		referenceItem.pushIntoStackParameter("display", "search");
+		referenceItem.setParameter("policyid", info.referenceId);
+		reference.setValue(referenceItem);
+		reference.setValueName("#"+info.referenceNumber + " - " + info.categoryName + " / " + info.lineName + " / " + info.subLineName);
 
 		String listId = info.referenceTypeId.equalsIgnoreCase(BigBangConstants.EntityIds.INSURANCE_POLICY) ? 
 				BigBangConstants.EntityIds.INSURANCE_POLICY_INSURED_OBJECT+"/"+info.referenceId 

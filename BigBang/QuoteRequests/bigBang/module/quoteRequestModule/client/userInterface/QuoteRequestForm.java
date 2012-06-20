@@ -16,8 +16,10 @@ import bigBang.library.client.HasParameters;
 import bigBang.library.client.event.AsyncRequest;
 import bigBang.library.client.event.AsyncRequestHandler;
 import bigBang.library.client.event.FiresAsyncRequests;
+import bigBang.library.client.history.NavigationHistoryItem;
 import bigBang.library.client.userInterface.CheckBoxFormField;
 import bigBang.library.client.userInterface.ExpandableListBoxFormField;
+import bigBang.library.client.userInterface.NavigationFormField;
 import bigBang.library.client.userInterface.TextAreaFormField;
 import bigBang.library.client.userInterface.TextBoxFormField;
 import bigBang.library.client.userInterface.view.FormView;
@@ -26,7 +28,7 @@ import bigBang.library.client.userInterface.view.FormViewSection;
 public class QuoteRequestForm extends FormView<QuoteRequest> implements FiresAsyncRequests {
 
 	protected TextBoxFormField number;
-	protected TextBoxFormField client;
+	protected NavigationFormField client;
 	protected TextBoxFormField status;
 	protected ExpandableListBoxFormField manager;
 	protected TextBoxFormField inheritedMediator;
@@ -43,7 +45,7 @@ public class QuoteRequestForm extends FormView<QuoteRequest> implements FiresAsy
 	public QuoteRequestForm(){
 		number = new TextBoxFormField("Número");
 		number.setFieldWidth("175px");
-		client = new TextBoxFormField("Cliente");
+		client = new NavigationFormField("Cliente");
 		client.setEditable(false);
 		status = new TextBoxFormField("Estado");
 		status.setFieldWidth("175px");
@@ -139,7 +141,15 @@ public class QuoteRequestForm extends FormView<QuoteRequest> implements FiresAsy
 			}
 
 			number.setValue(info.processNumber);
-			client.setValue("#" + info.clientNumber + " - " + info.clientName);
+			
+			NavigationHistoryItem item = new NavigationHistoryItem();
+			item.setParameter("section", "client");
+			item.setStackParameter("display");
+			item.pushIntoStackParameter("display", "search");
+			item.setParameter("clientid", info.clientId);
+			client.setValue(item);
+			client.setValueName("#" + info.clientNumber + " - " + info.clientName);
+			
 			status.setValue(info.isOpen ? "Aberta" : "Fechada");
 			manager.setValue(info.managerId);
 			inheritedMediator.setValue(info.inheritMediatorName);

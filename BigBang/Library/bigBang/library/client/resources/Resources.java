@@ -62,6 +62,9 @@ public interface Resources extends ClientBundle {
 	@Source("images/reportIcon.png")
 	ImageResource reportIcon();
 	
+	@Source("images/link.png")
+	ImageResource linkIcon();
+	
 
 	//CONTACTS
 	@Source("images/contactsIcon.png")

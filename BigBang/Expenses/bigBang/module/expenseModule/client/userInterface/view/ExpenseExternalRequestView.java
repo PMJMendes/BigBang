@@ -1,8 +1,8 @@
 package bigBang.module.expenseModule.client.userInterface.view;
 
 import bigBang.definitions.shared.Expense;
-import bigBang.library.client.userInterface.ExpenseForm;
 import bigBang.library.client.userInterface.view.ExternalRequestView;
+import bigBang.module.expenseModule.client.userInterface.ExpenseForm;
 
 public class ExpenseExternalRequestView extends ExternalRequestView<Expense>{
 

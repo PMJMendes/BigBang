@@ -9,6 +9,7 @@ import bigBang.definitions.shared.QuoteRequestObjectStub;
 import bigBang.definitions.shared.QuoteRequestStub;
 import bigBang.library.client.HasEditableValue;
 import bigBang.library.client.HasValueSelectables;
+import bigBang.library.client.ValueSelectable;
 import bigBang.library.client.event.ActionInvokedEvent;
 import bigBang.library.client.event.ActionInvokedEventHandler;
 import bigBang.library.client.event.FiresAsyncRequests;
@@ -171,6 +172,14 @@ public class QuoteRequestSearchOperationView extends View implements QuoteReques
 	@Override
 	public HasValueSelectables<QuoteRequestStub> getList() {
 		return searchPanel;
+	}
+	
+	@Override
+	public ValueSelectable<QuoteRequestStub> addQuoteRequestListEntry(
+			QuoteRequestStub quoteRequest) {
+		QuoteRequestSearchPanel.Entry entry = new QuoteRequestSearchPanel.Entry(quoteRequest);
+		searchPanel.add(0, entry);
+		return entry;
 	}
 
 	@Override

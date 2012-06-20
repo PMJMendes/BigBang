@@ -50,14 +50,17 @@ public class QuoteRequestSearchOperationViewPresenter implements ViewPresenter {
 		CLOSE,
 		CREATE_INSURED_OBJECT, CREATE_PERSON_INSURED_OBJECT, CREATE_COMPANY_INSURED_OBJECT, CREATE_EQUIPMENT_INSURED_OBJECT, CREATE_LOCATION_INSURED_OBJECT, CREATE_ANIMAL_INSURED_OBJECT,
 		CREATE_MANAGER_TRANSFER,
-		CREATE_INFO_OR_DOCUMENT_REQUEST
+		CREATE_INFO_OR_DOCUMENT_REQUEST,
+
+		ON_NEW_RESULTS
 	}
 
 	public interface Display {
 		HasValueSelectables<QuoteRequestStub> getList();
 		HasEditableValue<QuoteRequest> getForm();
 		FiresAsyncRequests getFormAsFiresAsyncRequests();
-
+		ValueSelectable<QuoteRequestStub> addQuoteRequestListEntry(QuoteRequestStub quoteRequest);
+		
 		//Permissions
 		void clearAllowedPermissions();
 		void allowEdit(boolean allow);
@@ -174,6 +177,9 @@ public class QuoteRequestSearchOperationViewPresenter implements ViewPresenter {
 					break;
 				case CREATE_INFO_OR_DOCUMENT_REQUEST:
 					onCreateInfoOrDocumentRequest();
+					break;
+				case ON_NEW_RESULTS:
+					onNewResults();
 					break;
 				default:
 					break;
@@ -298,14 +304,6 @@ public class QuoteRequestSearchOperationViewPresenter implements ViewPresenter {
 		if(broker.isTemp(quoteRequestId)){
 			showQuoteRequestInPad(quoteRequestId);
 		}else{
-			for(ValueSelectable<QuoteRequestStub> entry : view.getList().getAll()) {
-				QuoteRequestStub quoteRequest = entry.getValue();
-				if(quoteRequest.id.equalsIgnoreCase(quoteRequestId)){
-					entry.setSelected(true, false);
-				}else if(entry.isSelected()){
-					entry.setSelected(false, false);
-				}
-			}
 			broker.getQuoteRequest(quoteRequestId, new ResponseHandler<QuoteRequest>() {
 
 				@Override
@@ -323,6 +321,8 @@ public class QuoteRequestSearchOperationViewPresenter implements ViewPresenter {
 					view.allowCreateInfoorDocumentRequest(PermissionChecker.hasPermission(response, BigBangConstants.OperationIds.QuoteRequestProcess.CREATE_INFO_OR_DOCUMENT_REQUEST));
 
 					view.getForm().setValue(response);
+					
+					ensureListedAndSelected(response);
 				}
 
 				@Override
@@ -346,6 +346,8 @@ public class QuoteRequestSearchOperationViewPresenter implements ViewPresenter {
 				//TODO
 				view.getForm().setValue(response);
 				view.getForm().setReadOnly(false);
+				
+				ensureListedAndSelected(response);
 			}
 
 			@Override
@@ -494,6 +496,10 @@ public class QuoteRequestSearchOperationViewPresenter implements ViewPresenter {
 		navItem.setParameter("historyItemId", historyItemId);
 		NavigationHistoryManager.getInstance().go(navItem);
 	}
+	
+	private void onNewResults(){
+		//TODO
+	}
 
 	protected void onGetQuoteRequestFailed(){
 		saveWorkState();
@@ -519,6 +525,24 @@ public class QuoteRequestSearchOperationViewPresenter implements ViewPresenter {
 
 	protected void onGetSubLineDefinitionFailed(){
 		EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não é possível acrescentar a Modalidade à Consulta de Mercado"), TYPE.ALERT_NOTIFICATION));
+	}
+	
+	private void ensureListedAndSelected(QuoteRequest client) {
+		boolean found = false;
+		for(ValueSelectable<QuoteRequestStub> entry : view.getList().getAll()) {
+			QuoteRequestStub entryValue = entry.getValue();
+			if(entryValue.id.equalsIgnoreCase(client.id)) {
+				entry.setSelected(true, false);
+				found = true;
+			}else{
+				entry.setSelected(false, false);
+			}
+		}
+		
+		if(!found) {
+			ValueSelectable<QuoteRequestStub> newEntry = view.addQuoteRequestListEntry(client);
+			newEntry.setSelected(true, false);
+		}
 	}
 
 }

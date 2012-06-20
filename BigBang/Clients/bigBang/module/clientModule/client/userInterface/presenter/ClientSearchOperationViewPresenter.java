@@ -55,7 +55,9 @@ public class ClientSearchOperationViewPresenter implements ViewPresenter {
 		CREATE_CASUALTY,
 		MERGE_WITH_CLIENT,
 		TRANSFER_MANAGER,
-		REQUIRE_INFO_DOCUMENT
+		REQUIRE_INFO_DOCUMENT,
+		
+		ON_NEW_RESULTS
 	}
 
 	public interface Display {
@@ -63,6 +65,7 @@ public class ClientSearchOperationViewPresenter implements ViewPresenter {
 		HasValueSelectables<ClientStub> getList();
 		void removeFromList(ValueSelectable<ClientStub> selectable);
 		void selectClient(String clientId);
+		ValueSelectable<ClientStub> addClientListEntry(ClientStub client);
 
 		//Form
 		HasEditableValue<Client> getForm();
@@ -232,6 +235,9 @@ public class ClientSearchOperationViewPresenter implements ViewPresenter {
 				case TRANSFER_MANAGER:
 					item.setParameter("show", "managertransfer");
 					NavigationHistoryManager.getInstance().go(item);
+					break;
+				case ON_NEW_RESULTS:
+					onNewResults();
 					break;
 				}
 			}
@@ -440,15 +446,6 @@ public class ClientSearchOperationViewPresenter implements ViewPresenter {
 	}
 
 	private void showClient(String id){
-		for(ValueSelectable<ClientStub> entry : view.getList().getAll()){
-			ClientStub listClient = entry.getValue();
-			if(listClient.id.equalsIgnoreCase(id)){
-				entry.setSelected(true, false);
-			}else{
-				entry.setSelected(false, false);
-			}
-		}		
-
 		this.clientBroker.getClient(id, new ResponseHandler<Client>() {
 
 			@Override
@@ -468,6 +465,8 @@ public class ClientSearchOperationViewPresenter implements ViewPresenter {
 				view.setSaveModeEnabled(false);
 				view.getForm().setValue(response);
 				view.getForm().setReadOnly(true);
+				
+				ensureListedAndSelected(response);
 			}
 
 			@Override
@@ -513,6 +512,31 @@ public class ClientSearchOperationViewPresenter implements ViewPresenter {
 		});
 	}
 
+	private void onNewResults(){
+		Client client = view.getForm().getInfo();
+		if(client != null && client.id != null) {
+			ensureListedAndSelected(client);
+		}
+	}
+	
+	private void ensureListedAndSelected(Client client) {
+		boolean found = false;
+		for(ValueSelectable<ClientStub> entry : view.getList().getAll()) {
+			ClientStub entryValue = entry.getValue();
+			if(entryValue.id.equalsIgnoreCase(client.id)) {
+				entry.setSelected(true, false);
+				found = true;
+			}else{
+				entry.setSelected(false, false);
+			}
+		}
+		
+		if(!found) {
+			ValueSelectable<ClientStub> newEntry = view.addClientListEntry(client);
+			newEntry.setSelected(true, false);
+		}
+	}
+	
 	private void onGetClientFailed(){
 		EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "De momento não foi possível obter Cliente seleccionado"), TYPE.ALERT_NOTIFICATION));
 		NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();

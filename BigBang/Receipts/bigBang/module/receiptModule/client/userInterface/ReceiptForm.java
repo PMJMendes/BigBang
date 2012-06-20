@@ -6,8 +6,10 @@ import bigBang.definitions.shared.BigBangConstants;
 import bigBang.definitions.shared.Receipt;
 import bigBang.library.client.FormField;
 import bigBang.library.client.dataAccess.DataBrokerManager;
+import bigBang.library.client.history.NavigationHistoryItem;
 import bigBang.library.client.userInterface.DatePickerFormField;
 import bigBang.library.client.userInterface.ExpandableListBoxFormField;
+import bigBang.library.client.userInterface.NavigationFormField;
 import bigBang.library.client.userInterface.NumericTextBoxFormField;
 import bigBang.library.client.userInterface.TextAreaFormField;
 import bigBang.library.client.userInterface.TextBoxFormField;
@@ -20,8 +22,8 @@ import com.google.gwt.user.client.ui.ValueBoxBase.TextAlignment;
 public class ReceiptForm extends FormView<Receipt> implements ReceiptDataBrokerClient {
 
 	protected TextBoxFormField number;
-	protected TextBoxFormField client;
-	protected TextBoxFormField policy;
+	protected NavigationFormField client;
+	protected NavigationFormField policy;
 	protected ExpandableListBoxFormField type;
 	protected NumericTextBoxFormField totalPremium;
 	protected NumericTextBoxFormField salesPremium;
@@ -44,8 +46,8 @@ public class ReceiptForm extends FormView<Receipt> implements ReceiptDataBrokerC
 		number.setFieldWidth("200px");
 		type = new ExpandableListBoxFormField(ModuleConstants.TypifiedListIds.RECEIPT_TYPE, "Tipo");
 		type.allowEdition(false);
-		client = new TextBoxFormField("Cliente");
-		policy = new TextBoxFormField("Apólice");
+		client = new NavigationFormField("Cliente");
+		policy = new NavigationFormField("Apólice");
 		totalPremium = new NumericTextBoxFormField("Prémio Total");
 		totalPremium.setUnitsLabel("€");
 		totalPremium.setFieldWidth("100px");
@@ -156,12 +158,26 @@ public class ReceiptForm extends FormView<Receipt> implements ReceiptDataBrokerC
 		}
 
 		if(info.clientId != null){
-			client.setValue("#" + info.clientNumber + " - " + info.clientName);
+			NavigationHistoryItem item = new NavigationHistoryItem();
+			item.setParameter("section", "client");
+			item.setStackParameter("display");
+			item.pushIntoStackParameter("display", "search");
+			item.setParameter("clientid", info.clientId);
+			client.setValue(item);
+			
+			client.setValueName("#" + info.clientNumber + " - " + info.clientName);
 		}else{
 			client.clear();
 		}
 		if(info.policyId != null) {
-			policy.setValue("#" + info.policyNumber + " - " + info.categoryName + "/" + info.lineName + "/" + info.subLineName);
+			NavigationHistoryItem item = new NavigationHistoryItem();
+			item.setParameter("section", "insurancepolicy");
+			item.setStackParameter("display");
+			item.pushIntoStackParameter("display", "search");
+			item.setParameter("policyid", info.policyId);
+			policy.setValue(item);
+			
+			policy.setValueName("#" + info.policyNumber + " - " + info.categoryName + "/" + info.lineName + "/" + info.subLineName);
 		}else{
 			policy.clear();
 		}

@@ -72,7 +72,7 @@ public class InsurancePolicySearchOperationView extends View implements Insuranc
 			@Override
 			public void onResults(Collection<InsurancePolicyStub> results) {
 				super.onResults(results);
-				actionHandler.onActionInvoked(new ActionInvokedEvent<InsurancePolicySearchOperationViewPresenter.Action>(Action.NEW_RESULTS));
+				actionHandler.onActionInvoked(new ActionInvokedEvent<InsurancePolicySearchOperationViewPresenter.Action>(Action.ON_NEW_RESULTS));
 			}
 		};
 		searchPanelWrapper.add(searchPanel);
@@ -472,7 +472,6 @@ public class InsurancePolicySearchOperationView extends View implements Insuranc
 	@Override
 	public void allowTransferToClient(boolean allow) {
 		toolbar.allowTransferToClient(allow);
-
 	}
 
 	@Override
@@ -485,12 +484,9 @@ public class InsurancePolicySearchOperationView extends View implements Insuranc
 	}
 
 	@Override
-	public ValueSelectable<InsurancePolicyStub> addNewPolicyListEntry(InsurancePolicy policy) {
-		return searchPanel.setNewPolicy(policy);
+	public ValueSelectable<InsurancePolicyStub> addPolicyListEntry(
+			InsurancePolicy policy) {
+		return searchPanel.addEntry(policy);
 	}
 
-	@Override
-	public void removeNewPolicyEntry() {
-		searchPanel.discardNewPolicy();
-	}
 }

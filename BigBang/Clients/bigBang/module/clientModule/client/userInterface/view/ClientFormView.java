@@ -113,7 +113,7 @@ public class ClientFormView extends FormView<Client> implements ClientProcessDat
 		}, true);
 
 		addSection("Tipo de Cliente");
-		
+
 		clientType.addOption(ModuleConstants.ClientTypeIDs.Person, "Indivíduo");
 		clientType.addOption(ModuleConstants.ClientTypeIDs.Company, "Empresa");
 		clientType.addOption(ModuleConstants.ClientTypeIDs.Other, "Outro");
@@ -148,7 +148,7 @@ public class ClientFormView extends FormView<Client> implements ClientProcessDat
 				profession
 		}, true);
 		maritalStatus.setLabelWidth("205px");
-		
+
 		companySection = new FormViewSection("Informação Específica a Empresas");
 		addSection(companySection);
 		addFormFieldGroup(new FormField<?>[]{
@@ -261,24 +261,26 @@ public class ClientFormView extends FormView<Client> implements ClientProcessDat
 	public Client getInfo() {
 		Client result = getValue();
 
-		result.name = name.getValue();
-		result.taxNumber = taxNumber.getValue();
-		result.address = address.getValue();
-		result.groupId = group.getValue();
-		result.NIB = NIB.getValue();
-		result.mediatorId = mediator.getValue();
-		result.operationalProfileId = profile.getValue();
-		result.caeId = CAE.getValue();
-		result.activityNotes = activityObservations.getValue();
-		result.sizeId = numberOfWorkers.getValue();
-		result.revenueId = revenue.getValue();
-		result.birthDate = birthDate.getValue() == null ? null : DateTimeFormat.getFormat("yyyy-MM-dd").format(birthDate.getValue());
-		result.genderId = gender.getValue();
-		result.maritalStatusId = maritalStatus.getValue();
-		result.professionId = profession.getValue();
-		result.notes = notes.getValue();
-		result.typeId = clientType.getValue();
-		result.subtypeId = otherClientType.getValue();
+		if(value != null) {
+			result.name = name.getValue();
+			result.taxNumber = taxNumber.getValue();
+			result.address = address.getValue();
+			result.groupId = group.getValue();
+			result.NIB = NIB.getValue();
+			result.mediatorId = mediator.getValue();
+			result.operationalProfileId = profile.getValue();
+			result.caeId = CAE.getValue();
+			result.activityNotes = activityObservations.getValue();
+			result.sizeId = numberOfWorkers.getValue();
+			result.revenueId = revenue.getValue();
+			result.birthDate = birthDate.getValue() == null ? null : DateTimeFormat.getFormat("yyyy-MM-dd").format(birthDate.getValue());
+			result.genderId = gender.getValue();
+			result.maritalStatusId = maritalStatus.getValue();
+			result.professionId = profession.getValue();
+			result.notes = notes.getValue();
+			result.typeId = clientType.getValue();
+			result.subtypeId = otherClientType.getValue();
+		}
 
 		return result;
 	}
@@ -327,14 +329,14 @@ public class ClientFormView extends FormView<Client> implements ClientProcessDat
 	}
 
 	public void setForCreate(){
-//		this.clientManager.setEditable(true); //TODO
+		//		this.clientManager.setEditable(true); //TODO
 	}
-	
+
 	public void setForEdit(){
 		this.clientManager.setEditable(false);
 	}
-	
-	
+
+
 	@Override
 	public void setDataVersionNumber(String dataElementId, int number) {
 		if(dataElementId.equalsIgnoreCase(BigBangConstants.EntityIds.CLIENT))
@@ -362,7 +364,7 @@ public class ClientFormView extends FormView<Client> implements ClientProcessDat
 	public void removeClient(String clientId) {
 		this.setValue(null);
 	}
-	
+
 	@Override
 	public void setReadOnly(boolean readOnly) {
 		super.setReadOnly(readOnly);

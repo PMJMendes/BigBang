@@ -67,14 +67,13 @@ ViewPresenter {
 		CREATE_NEGOTIATION, CREATE_EXPENSE,
 		CREATE_RISK_ANALISYS, TRANSFER_TO_CLIENT,
 
-		NEW_RESULTS
+		ON_NEW_RESULTS
 	}
 
 	public interface Display {
 		//Listtype filter text
 		HasValueSelectables<InsurancePolicyStub> getList();
-		ValueSelectable<InsurancePolicyStub> addNewPolicyListEntry(InsurancePolicy policy);
-		void removeNewPolicyEntry();
+		ValueSelectable<InsurancePolicyStub> addPolicyListEntry(InsurancePolicy policy);
 
 		//Form
 		HasEditableValue<InsurancePolicy> getForm();
@@ -301,7 +300,7 @@ ViewPresenter {
 				case TRANSFER_TO_CLIENT:
 					transferToClient();
 					break;
-				case NEW_RESULTS:
+				case ON_NEW_RESULTS:
 					onNewResults();
 					break;
 				}
@@ -470,28 +469,27 @@ ViewPresenter {
 		view.getHistoryList().clearSelection();
 		view.getExercisesList().clearSelection();
 		view.getObjectsList().clearSelection();
-		clearNewPolicyPreparation();
 	}
 
-	private void showPolicy(String policyId){
+	private void showPolicy(final String policyId){
 		if(broker.isTemp(policyId)){
 			showScratchPadPolicy(policyId);
 		}else{
 			view.setForNew(false);
-
-			for(ValueSelectable<InsurancePolicyStub> entry : view.getList().getAll()){
-				InsurancePolicyStub listPolicy = entry.getValue();
-				if(listPolicy.id.equalsIgnoreCase(policyId)){
-					entry.setSelected(true, false);
-				}else if(entry.isSelected()){
-					entry.setSelected(false, false);
-				}
-			}
-
+			
 			this.broker.getPolicy(policyId, new ResponseHandler<InsurancePolicy>() {
 
 				@Override
 				public void onResponse(InsurancePolicy response) {
+					for(ValueSelectable<InsurancePolicyStub> entry : view.getList().getAll()) { //TODO
+						InsurancePolicyStub entryValue = entry.getValue();
+						if(entryValue.id.equalsIgnoreCase(response.id)) {
+							entry.setSelected(true, false);
+						}else{
+							entry.setSelected(false, false);
+						}
+					}
+					
 					view.allowEdit(PermissionChecker.hasPermission(response, BigBangConstants.OperationIds.InsurancePolicyProcess.UPDATE_POLICY));
 					view.allowDelete(PermissionChecker.hasPermission(response, BigBangConstants.OperationIds.InsurancePolicyProcess.DELETE_POLICY));
 					view.allowCreateExercise(PermissionChecker.hasPermission(response, BigBangConstants.OperationIds.InsurancePolicyProcess.CREATE_EXERCISE));
@@ -518,6 +516,8 @@ ViewPresenter {
 					view.setSaveModeEnabled(false);
 					view.getForm().setReadOnly(true);
 					view.getForm().setValue(response);
+					
+					ensureListedAndSelected(response);
 				}
 
 				@Override
@@ -533,11 +533,22 @@ ViewPresenter {
 		if(broker.isTemp(policyId)){
 			final boolean isNewPolicy = broker.isNewPolicy(policyId);
 			view.setForNew(isNewPolicy);
+			
+			view.setForNew(false);
 
 			broker.getPolicy(policyId, new ResponseHandler<InsurancePolicy>() {
 
 				@Override
 				public void onResponse(InsurancePolicy response) {
+					for(ValueSelectable<InsurancePolicyStub> entry : view.getList().getAll()) { //TODO
+						InsurancePolicyStub entryValue = entry.getValue();
+						if(entryValue.id.equalsIgnoreCase(response.id)) {
+							entry.setSelected(true, false);
+						}else{
+							entry.setSelected(false, false);
+						}
+					}
+
 					view.clearAllowedPermissions();
 
 					view.allowEdit(true);
@@ -549,6 +560,8 @@ ViewPresenter {
 					view.getForm().setValue(response);
 
 					view.getForm().setReadOnly(false);
+					
+					ensureListedAndSelected(response);
 				}
 
 				@Override
@@ -970,34 +983,30 @@ ViewPresenter {
 		});
 	}
 
-	private void clearNewPolicyPreparation(){
-//		InsurancePolicy policy = view.getForm().getValue(); TODO
-//		String policyId = policy != null ? policy.id : null;
-//		if(policyId != null && broker.isNewPolicy(policyId)){
-//			view.removeNewPolicyEntry();
-//		}
-	}
-
 	private void onNewResults(){
-//		InsurancePolicy policy = view.getForm().getValue(); TODO
-//
-//		if(policy != null && policy.id != null) {
-//
-//			boolean found = false;
-//			
-//			for(ValueSelectable<InsurancePolicyStub> entry : view.getList().getAll()) {
-//				if(policy.id.equalsIgnoreCase(entry.getValue().id)){
-//					entry.setSelected(true, false);
-//					found = true;
-//					break;
-//				}
-//			}
-//			
-//			if(!found) {
-////				view.addNewPolicyListEntry(policy);
-//			}
-//		}
+		InsurancePolicy policy = view.getForm().getValue();
 
+		if(policy != null && policy.id != null) {
+			ensureListedAndSelected(policy);
+		}
 	}
 
+	private void ensureListedAndSelected(InsurancePolicy policy) {
+//		boolean found = false; TODO
+//		for(ValueSelectable<InsurancePolicyStub> entry : view.getList().getAll()) {
+//			InsurancePolicyStub entryValue = entry.getValue();
+//			if(entryValue.id.equalsIgnoreCase(policy.id)) {
+//				entry.setSelected(true, false);
+//				found = true;
+//			}else{
+//				entry.setSelected(false, false);
+//			}
+//		}
+//		
+//		if(!found) {
+//			ValueSelectable<InsurancePolicyStub> newEntry = view.addPolicyListEntry(policy);
+//			newEntry.setSelected(true, false);
+//		}
+	}
+	
 }

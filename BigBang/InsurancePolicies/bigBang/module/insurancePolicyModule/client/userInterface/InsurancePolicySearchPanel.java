@@ -139,7 +139,6 @@ public class InsurancePolicySearchPanel extends SearchPanel<InsurancePolicyStub>
 	protected int insurancePolicyDataVersion = 0;
 	protected Map<String, InsurancePolicyStub> policiesToUpdate;
 	protected Map<String, Void> policiesToRemove;
-	protected InsurancePolicyStub newPolicy = null;
 
 	public InsurancePolicySearchPanel() {
 		super(((InsurancePolicyBroker)DataBrokerManager.Util.getInstance().getBroker(BigBangConstants.EntityIds.INSURANCE_POLICY)).getSearchBroker());
@@ -238,6 +237,12 @@ public class InsurancePolicySearchPanel extends SearchPanel<InsurancePolicyStub>
 			this.insurancePolicyDataVersion = number;
 		}
 	}
+	
+	public ValueSelectable<InsurancePolicyStub> addEntry(InsurancePolicyStub policy) {
+		Entry entry = new Entry(policy);
+		add(0, entry);
+		return entry;
+	}
 
 	@Override
 	public int getDataVersion(String dataElementId) {
@@ -280,34 +285,11 @@ public class InsurancePolicySearchPanel extends SearchPanel<InsurancePolicyStub>
 	public void remapItemId(String oldId, String newId) {
 		return;
 	}
-
-	public Entry setNewPolicy(InsurancePolicy policy){
-		discardNewPolicy();
-		Entry entry = null;
-		entry = new Entry(policy);
-		add(0, entry);
-		this.newPolicy = policy;
-		return entry;
-	}
-
-	public void discardNewPolicy(){
-		if(this.newPolicy != null) {
-			for(ListEntry<InsurancePolicyStub> selectable : this) {
-				if(selectable.getValue().id.equalsIgnoreCase(newPolicy.id)){
-					remove(selectable);
-					break;
-				}
-			}
-			this.newPolicy = null; 
-		}
-	}
 	
 	@Override
-	public void clear() {
-		super.clear();
-		if(this.newPolicy != null) {
-			addSearchResult(this.newPolicy);
-		}
+	protected void onAttach() {
+		super.onAttach();
+//		doSearch(); TODO
 	}
 
 }

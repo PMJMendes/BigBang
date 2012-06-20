@@ -1,5 +1,7 @@
 package bigBang.module.clientModule.client.userInterface.view;
 
+import java.util.Collection;
+
 import org.gwt.mosaic.ui.client.ToolButton;
 
 import bigBang.definitions.shared.BigBangProcess;
@@ -67,7 +69,13 @@ public class ClientSearchOperationView extends View implements ClientSearchOpera
 
 		searchPanelWrapper.add(header);
 
-		searchPanel = new ClientSearchPanel();
+		searchPanel = new ClientSearchPanel(){
+			@Override
+			public void onResults(Collection<ClientStub> results) {
+				super.onResults(results);
+				actionHandler.onActionInvoked(new ActionInvokedEvent<ClientSearchOperationViewPresenter.Action>(Action.ON_NEW_RESULTS));
+			}
+		};
 		searchPanel.setSize("100%", "100%");
 
 		searchPanelWrapper.add(searchPanel);
@@ -234,6 +242,13 @@ public class ClientSearchOperationView extends View implements ClientSearchOpera
 		this.form.scrollToTop();
 	}
 	
+	@Override
+	public ValueSelectable<ClientStub> addClientListEntry(ClientStub client) {
+		ClientSearchPanelListEntry entry = new ClientSearchPanelListEntry(client);
+		this.searchPanel.add(0, entry);
+		return entry;
+	}
+	
 	/*## PERMISSIONS START ##*/
 	
 	@Override
@@ -344,7 +359,7 @@ public class ClientSearchOperationView extends View implements ClientSearchOpera
 			form.setForEdit();
 		}
 	}
-	
+
 	/*## CHILDREN LISTS END ##*/
 	
 }

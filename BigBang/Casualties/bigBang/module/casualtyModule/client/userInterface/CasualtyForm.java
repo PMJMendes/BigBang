@@ -2,9 +2,11 @@ package bigBang.module.casualtyModule.client.userInterface;
 
 import bigBang.definitions.shared.BigBangConstants;
 import bigBang.definitions.shared.Casualty;
+import bigBang.library.client.history.NavigationHistoryItem;
 import bigBang.library.client.userInterface.CheckBoxFormField;
 import bigBang.library.client.userInterface.DatePickerFormField;
 import bigBang.library.client.userInterface.ExpandableListBoxFormField;
+import bigBang.library.client.userInterface.NavigationFormField;
 import bigBang.library.client.userInterface.TextAreaFormField;
 import bigBang.library.client.userInterface.TextBoxFormField;
 import bigBang.library.client.userInterface.view.FormView;
@@ -12,7 +14,7 @@ import bigBang.library.client.userInterface.view.FormView;
 public class CasualtyForm extends FormView<Casualty> {
 
 	protected TextBoxFormField number;
-	protected TextBoxFormField client;
+	protected NavigationFormField client;
 	protected DatePickerFormField date;
 	protected TextAreaFormField description;
 	protected ExpandableListBoxFormField manager;
@@ -23,7 +25,7 @@ public class CasualtyForm extends FormView<Casualty> {
 	public CasualtyForm(){
 		number = new TextBoxFormField("Número de Processo");
 		number.setEditable(false);
-		client = new TextBoxFormField("Cliente");
+		client = new NavigationFormField("Cliente");
 		client.setEditable(false);
 		date = new DatePickerFormField("Data");
 		description = new TextAreaFormField();
@@ -80,7 +82,15 @@ public class CasualtyForm extends FormView<Casualty> {
 			setInfo(new Casualty());
 		}else{
 			number.setValue(info.processNumber);
-			client.setValue("#" + info.clientNumber + " - " + info.clientName);
+		
+			NavigationHistoryItem item = new NavigationHistoryItem();
+			item.setParameter("section", "client");
+			item.setStackParameter("display");
+			item.pushIntoStackParameter("display", "search");
+			item.setParameter("clientid", info.clientId);
+			client.setValue(item);
+			client.setValueName("#" + info.clientNumber + " - " + info.clientName);
+			
 			date.setValue(info.casualtyDate);
 			notes.setValue(info.internalNotes);
 			description.setValue(info.description);
