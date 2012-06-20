@@ -183,7 +183,7 @@ public class NumericTextBoxFormField extends FormField<Double>{
 		((NumericWrapper)field).getField().getElement().getStyle().setBorderColor(readonly ? "transparent" : "gray");
 		((NumericWrapper)field).getField().getElement().getStyle().setBackgroundColor(readonly ? "transparent" : "white");
 		mandatoryIndicatorLabel.setVisible(!readonly&& this.isMandatory());
-		
+
 	}
 
 	@Override
@@ -234,26 +234,13 @@ public class NumericTextBoxFormField extends FormField<Double>{
 	public void focus() {
 		getTextBox().setFocus(true);
 	}
-	
+
 	public void setStringValue(String value){
-		try{
-			Double.parseDouble(value);
-			value = value.replace(".", LocaleInfo.getCurrentLocale().getNumberConstants().decimalSeparator());
-			getTextBox().setValue(value, true);
-		}catch(Exception e){
-			((NumericWrapper)field).curr = value;
-			getTextBox().setValue(value);
-		}
-		
+		getTextBox().setValue(value);
 	}
-	
+
 	public String getStringValue(){
-		try{
-			return nf.parse(getTextBox().getValue())+"";
-		}catch (Exception e) {
-			return getTextBox().getValue();
-		}
-		
+		return getTextBox().getValue();
 	}
-	
+
 }
