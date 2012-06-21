@@ -167,7 +167,7 @@ public class ReceiptServiceImpl
 		lobjResult.comissions = ((BigDecimal)lobjReceipt.getAt(5)).doubleValue();
 		lobjResult.retrocessions = ((BigDecimal)lobjReceipt.getAt(6)).doubleValue();
 		lobjResult.FATValue = (lobjReceipt.getAt(7) == null ? null : ((BigDecimal)lobjReceipt.getAt(7)).doubleValue());
-		lobjResult.issueDate = ((Timestamp)lobjReceipt.getAt(8)).toString().substring(0, 10);
+		lobjResult.issueDate = (lobjReceipt.getAt(8) == null ? null : ((Timestamp)lobjReceipt.getAt(8)).toString().substring(0, 10));
 		lobjResult.endDate = (lobjReceipt.getAt(10) == null ? null :
 			((Timestamp)lobjReceipt.getAt(10)).toString().substring(0, 10));
 		lobjResult.dueDate = (lobjReceipt.getAt(11) == null ? null :
