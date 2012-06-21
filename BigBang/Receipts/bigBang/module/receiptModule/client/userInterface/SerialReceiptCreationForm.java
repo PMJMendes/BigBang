@@ -173,7 +173,7 @@ public abstract class SerialReceiptCreationForm extends FormView<ReceiptPolicyWr
 		salesPremium.setUnitsLabel("€");
 		salesPremium.setFieldWidth("100px");
 		salesPremium.setTextAligment(TextAlignment.RIGHT);
-		commission = new NumericTextBoxFormField("Commissão");
+		commission = new NumericTextBoxFormField("Comissão");
 		commission.setUnitsLabel("€");
 		commission.setFieldWidth("100px");
 		commission.setTextAligment(TextAlignment.RIGHT);
