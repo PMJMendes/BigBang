@@ -27,7 +27,7 @@ public class NumericTextBoxFormField extends FormField<Double>{
 		protected TextBox field;
 		protected String curr = "";
 		private HandlerManager handlerManager;
-
+		
 		public NumericWrapper() {
 			this.handlerManager = new HandlerManager(this);
 			field = new TextBox();

@@ -77,10 +77,10 @@ public class PaymentsForm extends FormView<Payment[]> {
 			}
 		});
 		
-		section.paymentValue.addValueChangeHandler(new ValueChangeHandler<String>() {
+		section.paymentValue.addValueChangeHandler(new ValueChangeHandler<Double>() {
 			
 			@Override
-			public void onValueChange(ValueChangeEvent<String> event) {
+			public void onValueChange(ValueChangeEvent<Double> event) {
 				updateTotal();
 			}
 		});
@@ -131,7 +131,7 @@ public class PaymentsForm extends FormView<Payment[]> {
 			double paymentValue = 0;
 			
 			try{
-				paymentValue = payment.value == null || payment.value.isEmpty() ? 0 : new Double(payment.value);
+				paymentValue = payment.value == null ? 0 : payment.value;
 			}catch(Exception e) {
 				totalLabel.setValue("Inválido");
 				return;

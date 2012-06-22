@@ -28,7 +28,7 @@ public class Receipt
 			private static final long serialVersionUID = 1L;
 
 			public String paymentTypeId; // Obrigatorio
-			public String value; // Obrigatorio
+			public Double value; // Obrigatorio
 			public String bankId; // Só é útil para transferências e cheques, e mesmo assim, pode vir a null
 			public String chequeOrTransferNumber;  // Só é útil para transferências e cheques, e mesmo assim, pode vir a null
 			public String otherReceiptId; // Só é útil para conta corrente ou compensação 

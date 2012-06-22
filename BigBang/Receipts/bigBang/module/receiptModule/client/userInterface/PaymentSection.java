@@ -11,6 +11,7 @@ import bigBang.library.client.FormField;
 import bigBang.library.client.userInterface.CheckBoxFormField;
 import bigBang.library.client.userInterface.ExpandableListBoxFormField;
 import bigBang.library.client.userInterface.ExpandableSelectionFormField;
+import bigBang.library.client.userInterface.NumericTextBoxFormField;
 import bigBang.library.client.userInterface.TextBoxFormField;
 import bigBang.library.client.userInterface.view.FormViewSection;
 import bigBang.module.receiptModule.client.userInterface.presenter.ReceiptSelectionViewPresenter;
@@ -22,7 +23,7 @@ public class PaymentSection extends FormViewSection {
 	public Button removeButton;
 
 	protected ExpandableListBoxFormField type;
-	protected TextBoxFormField paymentValue;
+	protected NumericTextBoxFormField paymentValue;
 	protected ExpandableListBoxFormField bank;
 	protected TextBoxFormField chequeOrTransferNumber;
 	protected ExpandableSelectionFormField otherReceiptId;
@@ -32,7 +33,7 @@ public class PaymentSection extends FormViewSection {
 		super("Pagamento");
 
 		type = new ExpandableListBoxFormField(BigBangConstants.TypifiedListIds.RECEIPT_PAYMENT_TYPES, "Tipo de Pagamento");
-		paymentValue = new TextBoxFormField("Valor");
+		paymentValue = new NumericTextBoxFormField("Valor");
 		paymentValue.setFieldWidth("175px");
 		bank = new ExpandableListBoxFormField(BigBangConstants.TypifiedListIds.BANK, "Banco");
 		chequeOrTransferNumber = new TextBoxFormField("Número de Cheque ou Transferência");

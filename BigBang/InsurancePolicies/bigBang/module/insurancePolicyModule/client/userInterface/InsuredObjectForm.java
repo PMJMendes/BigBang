@@ -19,11 +19,11 @@ import bigBang.definitions.shared.InsuredObject.HeaderData;
 import bigBang.definitions.shared.InsuredObject.HeaderData.FixedField;
 import bigBang.definitions.shared.InsuredObject.HeaderData.VariableField;
 import bigBang.definitions.shared.InsuredObject.HeaderData.VariableField.VariableValue;
-import bigBang.library.client.FieldValidator;
 import bigBang.library.client.FormField;
 import bigBang.library.client.userInterface.AddressFormField;
 import bigBang.library.client.userInterface.DatePickerFormField;
 import bigBang.library.client.userInterface.ExpandableListBoxFormField;
+import bigBang.library.client.userInterface.NumericFormFieldWrapper;
 import bigBang.library.client.userInterface.RadioButtonFormField;
 import bigBang.library.client.userInterface.TextAreaFormField;
 import bigBang.library.client.userInterface.TextBoxFormField;
@@ -62,28 +62,7 @@ public class InsuredObjectForm extends FormView<InsuredObject> {
 				this.field = referenceListField;
 				break;
 			case NUMERIC:
-				this.field = new TextBoxFormField(field.fieldName, new FieldValidator<String>() {
-
-					@Override
-					public boolean isValid(String value) {
-						try{
-							Integer.parseInt(value);
-						}catch(Exception e){
-							return false;
-						}
-						return true;
-					}
-
-					@Override
-					public boolean isMandatory() {
-						return false;
-					}
-
-					@Override
-					public String getErrorMessage() {
-						return "Apenas valores numéricos";
-					}
-				});
+				this.field = new NumericFormFieldWrapper();
 				break;
 			case TEXT:
 				this.field = new TextBoxFormField(field.fieldName);

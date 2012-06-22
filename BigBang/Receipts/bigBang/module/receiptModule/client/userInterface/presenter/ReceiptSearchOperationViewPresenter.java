@@ -358,14 +358,14 @@ public class ReceiptSearchOperationViewPresenter implements ViewPresenter {
 
 			@Override
 			public void onResponse(Receipt response) {
-				EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Aviso de Cobrança enviado"), TYPE.TRAY_NOTIFICATION));
+				EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Aviso de cobrança enviado"), TYPE.TRAY_NOTIFICATION));
 				NavigationHistoryManager.getInstance().reload();
 
 			}
 
 			@Override
 			public void onError(Collection<ResponseError> errors) {
-				EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não foi possível criar nota de débito"), TYPE.ALERT_NOTIFICATION));
+				EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não foi possível enviar aviso de cobrança"), TYPE.ALERT_NOTIFICATION));
 				NavigationHistoryManager.getInstance().reload();
 			}
 		});

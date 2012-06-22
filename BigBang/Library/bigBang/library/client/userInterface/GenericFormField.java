@@ -46,7 +46,7 @@ public class GenericFormField extends FormField<String> {
 			myField = new ExpandableListBoxFormField("");
 			break;
 		case NUMBER:
-			myField = new TextBoxFormField();
+			myField = new NumericFormFieldWrapper();
 			break;
 		case DATE:
 			myField = new DatePickerFormField();
