@@ -38,6 +38,7 @@ public class BigBang_Tests
 //		TestSpecialZipCodeGet.DoTest();
 //
 //		TestReportGetPrintSet.DoTest();
+//		TestReportGetTransactionSet.DoTest();
 //		TestReportVerb.DoTest();
 //
 //		TestHistoryGet.DoTest();
