@@ -526,6 +526,7 @@ public abstract class DocumentForm extends FormView<Document>{
 				((DocumentDetailEntry) details.get(i)).setEditable(!readOnly);
 			}
 			details.get(details.size()-1).setVisible(!readOnly);
+			add.setVisible(!readOnly);
 		}
 
 		super.setReadOnly(readOnly);
