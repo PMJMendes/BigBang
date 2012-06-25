@@ -217,9 +217,7 @@ public class ReportServiceImpl
 
 		try
 		{
-			lrsObjects = lrefTransactions.SelectByMembers(ldb, new int[] {com.premiumminds.BigBang.Jewel.Objects.PrintSet.I.TEMPLATE},
-					new java.lang.Object[] {(UUID)lobjReport.getAt(ReportDef.I.TEMPLATE)},
-					new int[] {com.premiumminds.BigBang.Jewel.Objects.PrintSet.I.PRINTEDON});
+			lrsObjects = lrefTransactions.SelectAll(ldb);
 		}
 		catch (Throwable e)
 		{
