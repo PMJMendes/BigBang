@@ -9,6 +9,7 @@ public class ReceiptSearchParameter
 
 	public String companyId;
 	public String mediatorId;
+	public String managerId;
 	public String ownerId;
 	public String[] typeIds;
 	

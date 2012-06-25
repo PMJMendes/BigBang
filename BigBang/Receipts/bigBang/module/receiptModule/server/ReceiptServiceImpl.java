@@ -1794,6 +1794,11 @@ public class ReceiptServiceImpl
 			pstrBuffer.append(") [AuxSMPols] WHERE [:Company] = '").append(lParam.companyId).append("')))))");
 		}
 
+		if ( lParam.managerId != null )
+		{
+			pstrBuffer.append(" AND [:Process:Manager] = '").append(lParam.managerId).append("'");
+		}
+
 		if ( lParam.mediatorId != null )
 		{
 			pstrBuffer.append(" AND ([:Mediator] = '").append(lParam.mediatorId).append("'");

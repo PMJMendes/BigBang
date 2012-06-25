@@ -2,7 +2,9 @@ package com.premiumminds.BigBang.Jewel.Operations.Receipt;
 
 import java.util.UUID;
 
+import Jewel.Engine.Engine;
 import Jewel.Engine.DataAccess.SQLServer;
+import Jewel.Petri.Interfaces.IProcess;
 import Jewel.Petri.SysObjects.JewelPetriException;
 import Jewel.Petri.SysObjects.UndoableOperation;
 
@@ -14,6 +16,7 @@ public class TriggerAutoValidate
 	private static final long serialVersionUID = 1L;
 
 	private UUID midReceipt;
+	private UUID midPrevManager;
 
 	public TriggerAutoValidate(UUID pidProcess)
 	{
@@ -42,7 +45,14 @@ public class TriggerAutoValidate
 
 	protected void Run(SQLServer pdb) throws JewelPetriException
 	{
-		midReceipt = GetProcess().GetDataKey();
+		IProcess lobjProc;
+
+		lobjProc = GetProcess();
+
+		midReceipt = lobjProc.GetDataKey();
+		midPrevManager = lobjProc.GetManagerID();
+
+		lobjProc.SetManagerID(Engine.getCurrentUser(), pdb);
 	}
 
 	public String UndoDesc(String pstrLineBreak)
@@ -58,6 +68,7 @@ public class TriggerAutoValidate
 	protected void Undo(SQLServer pdb)
 		throws JewelPetriException
 	{
+		GetProcess().SetManagerID(midPrevManager, pdb);
 	}
 
 	public UndoSet[] GetSets()

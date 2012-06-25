@@ -1,12 +1,21 @@
 package com.premiumminds.BigBang.Jewel.Operations.Receipt;
 
+import java.sql.ResultSet;
+import java.sql.Timestamp;
+import java.util.Hashtable;
 import java.util.UUID;
 
+import Jewel.Engine.Engine;
 import Jewel.Engine.DataAccess.SQLServer;
+import Jewel.Engine.Implementation.Entity;
+import Jewel.Engine.Interfaces.IEntity;
+import Jewel.Engine.SysObjects.ObjectBase;
+import Jewel.Petri.Interfaces.IProcess;
 import Jewel.Petri.SysObjects.JewelPetriException;
 import Jewel.Petri.SysObjects.UndoableOperation;
 
 import com.premiumminds.BigBang.Jewel.Constants;
+import com.premiumminds.BigBang.Jewel.Objects.AgendaItem;
 
 public class ValidateReceipt
 	extends UndoableOperation
@@ -14,6 +23,8 @@ public class ValidateReceipt
 	private static final long serialVersionUID = 1L;
 
 	private UUID midReceipt;
+	private UUID midPrevManager;
+	private Timestamp mdtPrevLimit;
 
 	public ValidateReceipt(UUID pidProcess)
 	{
@@ -42,7 +53,48 @@ public class ValidateReceipt
 
 	protected void Run(SQLServer pdb) throws JewelPetriException
 	{
-		midReceipt = GetProcess().GetDataKey();
+		IProcess lobjProc;
+		Hashtable<UUID, AgendaItem> larrItems;
+		ResultSet lrs;
+		IEntity lrefAux;
+		ObjectBase lobjAgendaProc;
+
+		lobjProc = GetProcess();
+
+		midReceipt = lobjProc.GetDataKey();
+		midPrevManager = lobjProc.GetManagerID();
+
+		lobjProc.SetManagerID(Engine.getCurrentUser(), pdb);
+
+		mdtPrevLimit = null;
+		larrItems = new Hashtable<UUID, AgendaItem>();
+		lrs = null;
+		try
+		{
+			lrefAux = Entity.GetInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), Constants.ObjID_AgendaProcess));
+			lrs = lrefAux.SelectByMembers(pdb, new int[] {1}, new java.lang.Object[] {lobjProc.getKey()}, new int[0]);
+			while ( lrs.next() )
+			{
+				lobjAgendaProc = Engine.GetWorkInstance(lrefAux.getKey(), lrs);
+				larrItems.put((UUID)lobjAgendaProc.getAt(0),
+						AgendaItem.GetInstance(Engine.getCurrentNameSpace(), (UUID)lobjAgendaProc.getAt(0)));
+			}
+			lrs.close();
+			lrs = null;
+
+			for ( AgendaItem lobjItem: larrItems.values() )
+			{
+				if ( (mdtPrevLimit == null) || (mdtPrevLimit.getTime() > ((Timestamp)lobjItem.getAt(4)).getTime()) )
+					mdtPrevLimit = (Timestamp)lobjItem.getAt(4);
+				lobjItem.ClearData(pdb);
+				lobjItem.getDefinition().Delete(pdb, lobjItem.getKey());
+			}
+		}
+		catch (Throwable e)
+		{
+			if ( lrs != null ) try { lrs.close(); } catch (Throwable e1) {}
+			throw new JewelPetriException(e.getMessage(), e);
+		}
 	}
 
 	public String UndoDesc(String pstrLineBreak)
@@ -58,6 +110,33 @@ public class ValidateReceipt
 	protected void Undo(SQLServer pdb)
 		throws JewelPetriException
 	{
+		IProcess lobjProc;
+		AgendaItem lobjItem;
+		Timestamp ldtNow;
+
+		lobjProc = GetProcess();
+
+		ldtNow = new Timestamp(new java.util.Date().getTime());
+
+    	try
+    	{
+			lobjItem = AgendaItem.GetInstance(Engine.getCurrentNameSpace(), (UUID)null);
+			lobjItem.setAt(0, "Validação de Recibo");
+			lobjItem.setAt(1, lobjProc.GetManagerID());
+			lobjItem.setAt(2, Constants.ProcID_Receipt);
+			lobjItem.setAt(3, ldtNow);
+			lobjItem.setAt(4, mdtPrevLimit);
+			lobjItem.setAt(5, Constants.UrgID_Pending);
+			lobjItem.SaveToDb(pdb);
+			lobjItem.InitNew(new UUID[] {lobjProc.getKey()}, new UUID[] {Constants.OPID_Receipt_ValidateReceipt,
+					Constants.OPID_Receipt_SetReturnToInsurer}, pdb);
+    	}
+		catch (Throwable e)
+		{
+			throw new JewelPetriException(e.getMessage(), e);
+		}
+
+		lobjProc.SetManagerID(midPrevManager, pdb);
 	}
 
 	public UndoSet[] GetSets()

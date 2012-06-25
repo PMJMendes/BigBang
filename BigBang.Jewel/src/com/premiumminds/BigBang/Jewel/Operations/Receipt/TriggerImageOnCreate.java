@@ -1,15 +1,27 @@
 package com.premiumminds.BigBang.Jewel.Operations.Receipt;
 
+import java.sql.ResultSet;
+import java.sql.Timestamp;
+import java.util.Calendar;
+import java.util.Hashtable;
 import java.util.UUID;
 
+import Jewel.Engine.Engine;
 import Jewel.Engine.DataAccess.SQLServer;
+import Jewel.Engine.Implementation.Entity;
+import Jewel.Engine.Interfaces.IEntity;
+import Jewel.Engine.SysObjects.ObjectBase;
+import Jewel.Petri.Interfaces.IProcess;
 import Jewel.Petri.SysObjects.JewelPetriException;
 import Jewel.Petri.SysObjects.UndoableOperation;
 
 import com.premiumminds.BigBang.Jewel.Constants;
 import com.premiumminds.BigBang.Jewel.Data.DSBridgeData;
 import com.premiumminds.BigBang.Jewel.Data.DocumentData;
+import com.premiumminds.BigBang.Jewel.Objects.AgendaItem;
+import com.premiumminds.BigBang.Jewel.Objects.Client;
 import com.premiumminds.BigBang.Jewel.Objects.Receipt;
+import com.premiumminds.BigBang.Jewel.Objects.SubPolicy;
 import com.premiumminds.BigBang.Jewel.Operations.DocOps;
 
 public class TriggerImageOnCreate
@@ -20,6 +32,7 @@ public class TriggerImageOnCreate
 	public transient DSBridgeData mobjImage;
 	private UUID midReceipt;
 	private DocOps mobjDocOps;
+	private boolean mbWithAgenda;
 
 	public TriggerImageOnCreate(UUID pidProcess)
 	{
@@ -50,11 +63,19 @@ public class TriggerImageOnCreate
 		throws JewelPetriException
 	{
 		DocumentData lobjDoc;
+		IProcess lobjProc;
 		Receipt lobjReceipt;
+		Client lobjClient;
+		AgendaItem lobjItem;
+		Timestamp ldtAux;
+		Calendar ldtAux2;
 		boolean b;
 		TriggerAutoValidate lopTAV;
 
-		midReceipt = GetProcess().GetDataKey();
+		mbWithAgenda = false;
+
+		lobjProc = GetProcess();
+		midReceipt = lobjProc.GetDataKey();
 
 		lobjDoc = new DocumentData();
 		lobjDoc.mstrName = "Original";
@@ -73,8 +94,7 @@ public class TriggerImageOnCreate
 
 		mobjDocOps.RunSubOp(pdb, midReceipt);
 
-		lobjReceipt = (Receipt)GetProcess().GetData();
-
+		lobjReceipt = (Receipt)lobjProc.GetData();
 		try
 		{
 			b = lobjReceipt.canAutoValidate();
@@ -86,8 +106,42 @@ public class TriggerImageOnCreate
 
 		if ( b )
 		{
-			lopTAV = new TriggerAutoValidate(GetProcess().getKey());
+			lopTAV = new TriggerAutoValidate(lobjProc.getKey());
 			TriggerOp(lopTAV, pdb);
+		}
+		else
+		{
+	    	try
+	    	{
+				if ( Constants.ProcID_Policy.equals(lobjProc.GetParent().GetScriptID()) )
+					lobjClient = (Client)GetProcess().GetParent().GetData();
+				else
+					lobjClient = Client.GetInstance(lobjReceipt.getNameSpace(), (UUID)((SubPolicy)GetProcess().GetParent().GetData()).getAt(2));
+				if ( !Constants.ProfID_Simple.equals((UUID)lobjClient.getAt(9)) )
+				{
+					ldtAux = new Timestamp(new java.util.Date().getTime());
+			    	ldtAux2 = Calendar.getInstance();
+			    	ldtAux2.setTimeInMillis(ldtAux.getTime());
+			    	ldtAux2.add(Calendar.DAY_OF_MONTH, 7);
+
+					lobjItem = AgendaItem.GetInstance(Engine.getCurrentNameSpace(), (UUID)null);
+					lobjItem.setAt(0, "Validação de Recibo");
+					lobjItem.setAt(1, lobjProc.GetManagerID());
+					lobjItem.setAt(2, Constants.ProcID_Receipt);
+					lobjItem.setAt(3, ldtAux);
+					lobjItem.setAt(4, new Timestamp(ldtAux2.getTimeInMillis()));
+					lobjItem.setAt(5, Constants.UrgID_Pending);
+					lobjItem.SaveToDb(pdb);
+					lobjItem.InitNew(new UUID[] {lobjProc.getKey()}, new UUID[] {Constants.OPID_Receipt_ValidateReceipt,
+							Constants.OPID_Receipt_SetReturnToInsurer}, pdb);
+		    	}
+
+				mbWithAgenda = true;
+			}
+			catch (Throwable e)
+			{
+				throw new JewelPetriException(e.getMessage(), e);
+			}
 		}
 	}
 
@@ -104,6 +158,41 @@ public class TriggerImageOnCreate
 	protected void Undo(SQLServer pdb)
 		throws JewelPetriException
 	{
+		Hashtable<UUID, AgendaItem> larrItems;
+		ResultSet lrs;
+		IEntity lrefAux;
+		ObjectBase lobjAgendaProc;
+
+		if ( mbWithAgenda )
+		{
+			larrItems = new Hashtable<UUID, AgendaItem>();
+			lrs = null;
+			try
+			{
+				lrefAux = Entity.GetInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), Constants.ObjID_AgendaProcess));
+				lrs = lrefAux.SelectByMembers(pdb, new int[] {1}, new java.lang.Object[] {GetProcess().getKey()}, new int[0]);
+				while ( lrs.next() )
+				{
+					lobjAgendaProc = Engine.GetWorkInstance(lrefAux.getKey(), lrs);
+					larrItems.put((UUID)lobjAgendaProc.getAt(0),
+							AgendaItem.GetInstance(Engine.getCurrentNameSpace(), (UUID)lobjAgendaProc.getAt(0)));
+				}
+				lrs.close();
+				lrs = null;
+	
+				for ( AgendaItem lobjItem: larrItems.values() )
+				{
+					lobjItem.ClearData(pdb);
+					lobjItem.getDefinition().Delete(pdb, lobjItem.getKey());
+				}
+			}
+			catch (Throwable e)
+			{
+				if ( lrs != null ) try { lrs.close(); } catch (Throwable e1) {}
+				throw new JewelPetriException(e.getMessage(), e);
+			}
+		}
+
 		mobjDocOps.UndoSubOp(pdb, midReceipt);
 	}
 

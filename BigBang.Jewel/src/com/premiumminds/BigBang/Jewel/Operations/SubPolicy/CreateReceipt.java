@@ -13,10 +13,13 @@ import Jewel.Petri.SysObjects.Operation;
 
 import com.premiumminds.BigBang.Jewel.Constants;
 import com.premiumminds.BigBang.Jewel.Data.ReceiptData;
+import com.premiumminds.BigBang.Jewel.Objects.Client;
 import com.premiumminds.BigBang.Jewel.Objects.Receipt;
+import com.premiumminds.BigBang.Jewel.Objects.SubPolicy;
 import com.premiumminds.BigBang.Jewel.Operations.ContactOps;
 import com.premiumminds.BigBang.Jewel.Operations.DocOps;
 import com.premiumminds.BigBang.Jewel.Operations.Receipt.ExternForceReverse;
+import com.premiumminds.BigBang.Jewel.Operations.Receipt.ExternForceShortCircuit;
 
 public class CreateReceipt
 	extends Operation
@@ -72,6 +75,9 @@ public class CreateReceipt
 		Receipt lobjAux;
 		IScript lobjScript;
 		IProcess lobjProc; 
+		SubPolicy lobjSubP;
+		Client lobjClient;
+		ExternForceShortCircuit lopEFSC;
 		int i;
 
 		try
@@ -101,10 +107,19 @@ public class CreateReceipt
 			mobjData.mid = lobjAux.getKey();
 			mobjData.midProcess = lobjProc.getKey();
 			mobjData.mobjPrevValues = null;
+
+			lobjSubP = (SubPolicy)GetProcess().GetData();
+			lobjClient = Client.GetInstance(lobjSubP.getNameSpace(), (UUID)lobjSubP.getAt(2));
 		}
 		catch (Throwable e)
 		{
 			throw new JewelPetriException(e.getMessage(), e);
+		}
+
+		if ( Constants.ProfID_Simple.equals((UUID)lobjClient.getAt(9)) )
+		{
+			lopEFSC = new ExternForceShortCircuit(lobjProc.getKey());
+			TriggerOp(lopEFSC, pdb);
 		}
 
 		if ( lobjAux.isReverseCircuit() )
