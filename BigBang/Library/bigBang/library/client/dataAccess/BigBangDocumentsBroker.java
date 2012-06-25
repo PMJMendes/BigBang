@@ -120,7 +120,6 @@ public class BigBangDocumentsBroker extends DataBroker<Document> implements Docu
 				unregisterClient(client, ownerId);
 			}
 		}
-		clean();
 	}
 
 	@Override
@@ -137,10 +136,10 @@ public class BigBangDocumentsBroker extends DataBroker<Document> implements Docu
 		for(String listId : keys) {
 			List<DocumentsBrokerClient> clientList = this.clients.get(listId);
 			if(clientList.isEmpty()){
-				dataVersions.remove(clientList);
-				documents.remove(clientList);
-				dataRefreshRequirements.remove(clientList);
-				clients.remove(clientList);
+				dataVersions.remove(listId);
+				documents.remove(listId);
+				dataRefreshRequirements.remove(listId);
+				clients.remove(listId);
 			}
 		}
 	}

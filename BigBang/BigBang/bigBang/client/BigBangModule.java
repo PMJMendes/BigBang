@@ -200,8 +200,8 @@ public class BigBangModule implements Module {
 	public DataBroker<?>[] getBrokerImplementations() {
 		return new DataBroker<?>[]{
 				new HistoryBrokerImpl()	,
-				new BigBangContactsListBroker(),
-				new BigBangDocumentsBroker(),
+				(DataBroker<?>) BigBangContactsListBroker.Util.getInstance(),
+				(DataBroker<?>) BigBangDocumentsBroker.Util.getInstance(),
 				new SubProcessesBrokerImpl(),
 				new TypifiedTextBrokerImpl()
 		};
