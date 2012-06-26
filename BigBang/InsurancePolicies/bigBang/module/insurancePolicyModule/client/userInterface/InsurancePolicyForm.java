@@ -338,9 +338,14 @@ public abstract class InsurancePolicyForm extends FormView<InsurancePolicy> {
 
 			if(info.startDate != null)
 				startDate.setValue(DateTimeFormat.getFormat("yyyy-MM-dd").parse(info.startDate), false);
+			else
+				startDate.clear();
+			
 			if(info.expirationDate != null)
 				endDate.setValue(DateTimeFormat.getFormat("yyyy-MM-dd").parse(info.expirationDate));
-
+			else
+				endDate.clear();
+			
 			this.headerFieldsSection.setPolicyFields(info.headerFields);
 			this.tableSection.setInsurancePolicy(info);
 			this.extraFieldsSection.setPolicyFields(info.extraData);
