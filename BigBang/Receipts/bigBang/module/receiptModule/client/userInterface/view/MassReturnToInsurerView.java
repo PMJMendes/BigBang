@@ -112,7 +112,7 @@ public class MassReturnToInsurerView extends View implements MassReturnToInsurer
 				}
 			});
 
-			this.setOperationId(BigBangConstants.OperationIds.ReceiptProcess.CREATE_PAYMENT_NOTICE);
+			this.setOperationId(BigBangConstants.OperationIds.ReceiptProcess.RETURN_TO_AGENCY);
 			filtersContainer.clear();
 			filtersContainer.add(filtersPanel);
 			doSearch();

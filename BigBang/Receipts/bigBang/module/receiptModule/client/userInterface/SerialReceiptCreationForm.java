@@ -370,7 +370,6 @@ public abstract class SerialReceiptCreationForm extends FormView<ReceiptPolicyWr
 
 	public void setReceiptNumber(String id) {
 		receiptNumber.setValue(id);
-		
 	}
 
 	public void hideMarkAsEnable(boolean b) {

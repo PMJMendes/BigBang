@@ -519,6 +519,7 @@ public class SerialReceiptCreationViewPresenter implements ViewPresenter{
 					if(hasReceiptFile){
 						view.removeDocuShareItem(handle);
 						view.panelNavigateBack();
+						receiptPolicyWrapper = new ReceiptPolicyWrapper();
 					}
 					view.clear();
 				}

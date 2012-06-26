@@ -282,7 +282,7 @@ public class MassAgentAccountingViewPresenter implements ViewPresenter{
 
 			@Override
 			public void onError(Collection<ResponseError> errors) {
-				onResponse(false);
+				handler.onResponse(false);
 			}
 		});
 	}

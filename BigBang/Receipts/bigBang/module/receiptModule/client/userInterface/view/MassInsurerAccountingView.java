@@ -112,7 +112,7 @@ public class MassInsurerAccountingView extends View implements MassInsurerAccoun
 				}
 			});
 
-			this.setOperationId(BigBangConstants.OperationIds.ReceiptProcess.CREATE_PAYMENT_NOTICE);
+			this.setOperationId(BigBangConstants.OperationIds.ReceiptProcess.INSURER_ACCOUNTING);
 			filtersContainer.clear();
 			filtersContainer.add(filtersPanel);
 			doSearch();

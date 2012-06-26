@@ -112,7 +112,7 @@ public class MassAgentAccountingView extends View implements MassAgentAccounting
 				}
 			});
 
-			this.setOperationId(BigBangConstants.OperationIds.ReceiptProcess.CREATE_PAYMENT_NOTICE);
+			this.setOperationId(BigBangConstants.OperationIds.ReceiptProcess.AGENT_ACCOUNTING);
 			filtersContainer.clear();
 			filtersContainer.add(filtersPanel);
 			doSearch();

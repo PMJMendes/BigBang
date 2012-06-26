@@ -111,7 +111,7 @@ public class MassSendReceiptView extends View implements MassSendReceiptViewPres
 				}
 			});
 
-			this.setOperationId(BigBangConstants.OperationIds.ReceiptProcess.CREATE_PAYMENT_NOTICE);
+			this.setOperationId(BigBangConstants.OperationIds.ReceiptProcess.SEND_RECEIPT);
 			filtersContainer.clear();
 			filtersContainer.add(filtersPanel);
 			doSearch();
