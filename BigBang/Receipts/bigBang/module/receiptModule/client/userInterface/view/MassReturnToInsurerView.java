@@ -57,7 +57,7 @@ public class MassReturnToInsurerView extends View implements MassReturnToInsurer
 		PAYMENT_TO,
 		CATEGORY,
 		LINE,
-		SUB_LINE
+		SUB_LINE, AGENCY
 	}
 
 	protected static class SelectedReceiptsList extends SelectedProcessesList<ReceiptStub>{
@@ -92,6 +92,7 @@ public class MassReturnToInsurerView extends View implements MassReturnToInsurer
 			sortOptions.put(ReceiptSortParameter.SortableField.PAYMENT_DATE, "Data de Pagamento");
 
 			filtersPanel = new FiltersPanel(sortOptions);
+			filtersPanel.addTypifiedListField(Filters.AGENCY, BigBangConstants.EntityIds.INSURANCE_AGENCY, "Seguradora");
 			filtersPanel.addTypifiedListField(Filters.TYPES, ModuleConstants.TypifiedListIds.RECEIPT_TYPE, "Tipos");
 			filtersPanel.addDateField(Filters.EMITED_FROM, "Emitido de");
 			filtersPanel.addDateField(Filters.EMITED_TO, "Até");
@@ -111,10 +112,10 @@ public class MassReturnToInsurerView extends View implements MassReturnToInsurer
 				}
 			});
 
-			this.setOperationId(BigBangConstants.OperationIds.ReceiptProcess.RETURN_TO_AGENCY);
+			this.setOperationId(BigBangConstants.OperationIds.ReceiptProcess.CREATE_PAYMENT_NOTICE);
 			filtersContainer.clear();
 			filtersContainer.add(filtersPanel);
-			//doSearch();
+			doSearch();
 
 		}
 
@@ -137,6 +138,7 @@ public class MassReturnToInsurerView extends View implements MassReturnToInsurer
 			parameter.freeText = this.getFreeText();
 			String type = (String) filtersPanel.getFilterValue(Filters.TYPES);
 			parameter.typeIds = type == null ? new String[0] : new String[]{type};
+			parameter.companyId = (String) filtersPanel.getFilterValue(Filters.AGENCY);
 			parameter.emitedFrom = (String) filtersPanel.getFilterValue(Filters.EMITED_FROM);
 			parameter.emitedTo = (String) filtersPanel.getFilterValue(Filters.EMITED_TO);
 			parameter.maturityFrom = (String) filtersPanel.getFilterValue(Filters.MATURITY_FROM);
@@ -159,6 +161,7 @@ public class MassReturnToInsurerView extends View implements MassReturnToInsurer
 
 			doSearch(parameters, sorts);
 		}
+
 	}
 	
 	protected ActionInvokedEventHandler<Action> actionHandler;
