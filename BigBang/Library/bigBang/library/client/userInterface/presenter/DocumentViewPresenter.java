@@ -135,11 +135,9 @@ public class DocumentViewPresenter implements ViewPresenter, DocumentsBrokerClie
 			broker.getDocument(ownerId, documentId, new ResponseHandler<Document>() {
 				@Override
 				public void onResponse(Document response) {
-
 					view.getForm().setValue(response);
 					view.setEditable(false);
 					view.lockToolbar(false);
-
 				}
 
 				@Override
