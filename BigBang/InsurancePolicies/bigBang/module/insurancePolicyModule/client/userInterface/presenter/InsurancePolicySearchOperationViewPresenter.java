@@ -534,8 +534,6 @@ ViewPresenter {
 			final boolean isNewPolicy = broker.isNewPolicy(policyId);
 			view.setForNew(isNewPolicy);
 			
-			view.setForNew(false);
-
 			broker.getPolicy(policyId, new ResponseHandler<InsurancePolicy>() {
 
 				@Override
