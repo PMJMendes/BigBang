@@ -38,7 +38,7 @@ public class ReceiptForm extends FormView<Receipt> implements ReceiptDataBrokerC
 	protected ExpandableListBoxFormField mediator;
 	protected TextAreaFormField description;
 	protected TextAreaFormField notes;
-	
+
 	protected int dataVersion = 0;
 
 	public ReceiptForm(){
@@ -87,7 +87,7 @@ public class ReceiptForm extends FormView<Receipt> implements ReceiptDataBrokerC
 				number,
 				mediator
 		}, true);
-		
+
 		policy.setEditable(false);
 		addFormFieldGroup(new FormField<?>[]{
 				type,
@@ -109,19 +109,28 @@ public class ReceiptForm extends FormView<Receipt> implements ReceiptDataBrokerC
 				coverageStart,
 				coverageEnd
 		}, true);
-		
+
 		addSection("Descrição");
 		addFormField(description);
-		
+
 		addSection("Notas Internas");
 		addFormField(notes);
 
 		setValue(new Receipt());
-		
+
 		ReceiptDataBroker broker = ((ReceiptDataBroker) DataBrokerManager.Util.getInstance().getBroker(BigBangConstants.EntityIds.RECEIPT));
 		broker.registerClient(this);
 	}
-	
+
+	@Override
+	public void setReadOnly(boolean readOnly) {
+		super.setReadOnly(readOnly);
+		if(mediator != null && manager != null){
+			mediator.setReadOnly(true);
+			manager.setReadOnly(true);
+		}
+	}
+
 	@Override
 	protected void initializeView() {
 		return;
@@ -164,7 +173,7 @@ public class ReceiptForm extends FormView<Receipt> implements ReceiptDataBrokerC
 			item.pushIntoStackParameter("display", "search");
 			item.setParameter("clientid", info.clientId);
 			client.setValue(item);
-			
+
 			client.setValueName("#" + info.clientNumber + " - " + info.clientName);
 		}else{
 			client.clear();
@@ -176,7 +185,7 @@ public class ReceiptForm extends FormView<Receipt> implements ReceiptDataBrokerC
 			item.pushIntoStackParameter("display", "search");
 			item.setParameter("policyid", info.policyId);
 			policy.setValue(item);
-			
+
 			policy.setValueName("#" + info.policyNumber + " - " + info.categoryName + "/" + info.lineName + "/" + info.subLineName);
 		}else{
 			policy.clear();
@@ -203,7 +212,7 @@ public class ReceiptForm extends FormView<Receipt> implements ReceiptDataBrokerC
 		}else{dueDate.clear();}
 		mediator.setValue(info.mediatorId);
 		manager.setValue(info.managerId);
-		
+
 		notes.setValue(info.notes);
 		description.setValue(info.description);
 	}
