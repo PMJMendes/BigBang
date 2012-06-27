@@ -464,7 +464,8 @@ public class ReportServiceImpl
 			lobjResult.sections[i].htmlContent = lstrBuffer.toString();
 			lobjResult.sections[i].verbs = new Report.Section.Verb[] {new Report.Section.Verb()};
 			lobjResult.sections[i].verbs[0].label = "Saldar";
-			lobjResult.sections[i].verbs[0].argument = "S:" + larrMaps[i - 1].getKey().toString();
+			lobjResult.sections[i].verbs[0].argument = "S:" + lobjReport.getKey().toString() + ":" + lobjSet.getKey().toString() + ":" +
+					larrMaps[i - 1].getKey().toString();
 		}
 
 		return lobjResult;
@@ -474,7 +475,6 @@ public class ReportServiceImpl
 		throws SessionExpiredException, BigBangException
 	{
 		String[] larrAux;
-		com.premiumminds.BigBang.Jewel.Objects.PrintSet lobjSet;
 
 		if ( Engine.getCurrentUser() == null )
 			throw new SessionExpiredException();
@@ -483,16 +483,13 @@ public class ReportServiceImpl
 
 		if ( "P".equals(larrAux[0]) )
 		{
-			try
-			{
-				lobjSet = com.premiumminds.BigBang.Jewel.Objects.PrintSet.GetInstance(Engine.getCurrentNameSpace(),
-						UUID.fromString(larrAux[1]));
-				PrintConnector.printSet(lobjSet);
-			}
-			catch (Throwable e)
-			{
-				throw new BigBangException(e.getMessage(), e);
-			}
+			RunPrintVerb(larrAux);
+			return;
+		}
+
+		if ( "S".equals(larrAux[0]) )
+		{
+			RunSettleVerb(larrAux);
 			return;
 		}
 	}
@@ -589,5 +586,69 @@ public class ReportServiceImpl
 		if ( Constants.FieldID_Text.equals(pidFieldType) )
 			return ReportParam.ParamType.TEXT;
 		return null;
+	}
+
+	private static void RunPrintVerb(String[] parrArgs)
+		throws BigBangException
+	{
+		com.premiumminds.BigBang.Jewel.Objects.PrintSet lobjSet;
+
+		try
+		{
+			lobjSet = com.premiumminds.BigBang.Jewel.Objects.PrintSet.GetInstance(Engine.getCurrentNameSpace(),
+					UUID.fromString(parrArgs[1]));
+			PrintConnector.printSet(lobjSet);
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangException(e.getMessage(), e);
+		}
+	}
+
+	private static void RunSettleVerb(String[] parrArgs)
+		throws BigBangException
+	{
+		ReportDef lobjReport;
+		UUID lidTransactions;
+		TransactionSetBase lobjSet;
+		UUID lidMaps;
+		TransactionMapBase lobjMap;
+		MasterDB ldb;
+
+		try
+		{
+			lobjReport = ReportDef.GetInstance(Engine.getCurrentNameSpace(), UUID.fromString(parrArgs[1]));
+			lidTransactions = Engine.FindEntity(Engine.getCurrentNameSpace(), (UUID)lobjReport.getAt(ReportDef.I.TRANSACTIONTYPE));
+			lobjSet = (TransactionSetBase)Engine.GetWorkInstance(lidTransactions, UUID.fromString(parrArgs[2]));
+			lidMaps = Engine.FindEntity(Engine.getCurrentNameSpace(), lobjSet.getSubObjectType());
+			lobjMap = (TransactionMapBase)Engine.GetWorkInstance(lidMaps, UUID.fromString(parrArgs[3]));
+
+			lobjMap.setAt(TransactionMapBase.I.SETTLEDON, new Timestamp(new java.util.Date().getTime()));
+
+			ldb = new MasterDB();
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangException(e.getMessage(), e);
+		}
+
+		try
+		{
+			lobjMap.SaveToDb(ldb);
+		}
+		catch (Throwable e)
+		{
+			try { ldb.Disconnect(); } catch (Throwable e1) {}
+			throw new BigBangException(e.getMessage(), e);
+		}
+
+		try
+		{
+			ldb.Disconnect();
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangException(e.getMessage(), e);
+		}
 	}
 }
