@@ -23,8 +23,8 @@ public class PolicyData
 	public Timestamp mdtBeginDate;
 	public UUID midDuration;
 	public UUID midFractioning;
-	public int mlngMaturityDay;
-	public int mlngMaturityMonth;
+	public Integer mlngMaturityDay;
+	public Integer mlngMaturityMonth;
 	public Timestamp mdtEndDate;
 	public String mstrNotes;
 	public UUID midMediator;
