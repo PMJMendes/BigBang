@@ -1,8 +1,11 @@
 package com.premiumminds.BigBang.Jewel.SysObjects;
 
+import java.awt.print.PrinterJob;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.sql.Timestamp;
+
+import javax.print.PrintService;
 
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.docx4j.convert.out.pdf.viaXSLFO.Conversion;
@@ -10,6 +13,7 @@ import org.docx4j.fonts.IdentityPlusMapper;
 import org.docx4j.openpackaging.io.LoadFromZipNG;
 import org.docx4j.openpackaging.packages.WordprocessingMLPackage;
 
+import Jewel.Engine.Engine;
 import Jewel.Engine.DataAccess.MasterDB;
 import Jewel.Engine.SysObjects.FileXfer;
 
@@ -40,7 +44,7 @@ public class PrintConnector
 			lobjDoc = OOConnector.getDocFromBytes(pobjFile.getData());
 			lobjPDFFile = OOConnector.getPDFFromDoc(lobjDoc, pobjFile.getFileName());
 			lobjPDF = PDDocument.load(new ByteArrayInputStream(lobjPDFFile.getData()));
-			lobjPDF.silentPrint();
+			finalPrint(lobjPDF);
 
 //			lobjPrint = UnoRuntime.queryInterface(XPrintable.class, lobjDoc);
 //			larrProps = lobjPrint.getPrinter();
@@ -81,7 +85,7 @@ public class PrintConnector
 			lobjDoc.setFontMapper(new IdentityPlusMapper());
 			(new Conversion(lobjDoc)).output(lobjOut, null);
 			lobjPDF = PDDocument.load(new ByteArrayInputStream(lobjOut.toByteArray()));
-			lobjPDF.silentPrint();
+			finalPrint(lobjPDF);
 		}
 		catch (Throwable e)
 		{
@@ -97,7 +101,7 @@ public class PrintConnector
 		try
 		{
 			lobjPDF = PDDocument.load(new ByteArrayInputStream(pobjFile.getData()));
-			lobjPDF.silentPrint();
+			finalPrint(lobjPDF);
 		}
 		catch (Throwable e)
 		{
@@ -163,6 +167,31 @@ public class PrintConnector
 			{
 				throw new BigBangJewelException(e.getMessage(), e);
 			}
+		}
+	}
+
+	private static void finalPrint(PDDocument pdoc)
+		throws BigBangJewelException
+	{
+		PrinterJob lrefPJob;
+		PrintService[] larrServices;
+		int i;
+
+		try
+		{
+			lrefPJob = PrinterJob.getPrinterJob();
+			larrServices = PrinterJob.lookupPrintServices();
+			for ( i = 0; i < larrServices.length; i++ )
+			{
+				if ( larrServices[i].getName().indexOf((String)Engine.getUserData().get("Printer")) != -1)
+					lrefPJob.setPrintService(larrServices[i]);
+			}
+
+			pdoc.silentPrint(lrefPJob);
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangJewelException(e.getMessage(), e);
 		}
 	}
 }

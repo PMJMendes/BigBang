@@ -66,6 +66,8 @@ public class StaticFunctions
 			}
 			lrsParams.close();
 
+			Engine.getUserData().put("Printer", larrParams.get("PRINTER"));
+
 			lrs = Entity.GetInstance(Engine.FindEntity(pidNameSpace, Constants.ObjID_Decorations))
 					.SelectByMembers(ldb, new int[] {0}, new java.lang.Object[] {pidUser}, null);
 		    if (lrs.next())
