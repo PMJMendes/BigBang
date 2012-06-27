@@ -2,6 +2,7 @@ package bigBang.module.receiptModule.client.userInterface.view;
 
 import bigBang.module.receiptModule.client.userInterface.presenter.MassSendReceiptViewPresenter;
 import bigBang.module.receiptModule.client.userInterface.presenter.MassSendReceiptViewPresenter.Action;
+
 import java.util.Collection;
 import java.util.Map;
 import java.util.TreeMap;
@@ -56,7 +57,7 @@ public class MassSendReceiptView extends View implements MassSendReceiptViewPres
 		PAYMENT_TO,
 		CATEGORY,
 		LINE,
-		SUB_LINE, AGENCY
+		SUB_LINE, AGENCY, MANAGER, MEDIATOR
 	}
 
 	protected static class SelectedReceiptsList extends SelectedProcessesList<ReceiptStub>{
@@ -92,6 +93,8 @@ public class MassSendReceiptView extends View implements MassSendReceiptViewPres
 
 			filtersPanel = new FiltersPanel(sortOptions);
 			filtersPanel.addTypifiedListField(Filters.AGENCY, BigBangConstants.EntityIds.INSURANCE_AGENCY, "Seguradora");
+			filtersPanel.addTypifiedListField(Filters.MANAGER, BigBangConstants.EntityIds.USER, "Gestor");
+			filtersPanel.addTypifiedListField(Filters.MEDIATOR, BigBangConstants.EntityIds.MEDIATOR, "Mediador");
 			filtersPanel.addTypifiedListField(Filters.TYPES, ModuleConstants.TypifiedListIds.RECEIPT_TYPE, "Tipos");
 			filtersPanel.addDateField(Filters.EMITED_FROM, "Emitido de");
 			filtersPanel.addDateField(Filters.EMITED_TO, "Até");
@@ -138,6 +141,8 @@ public class MassSendReceiptView extends View implements MassSendReceiptViewPres
 			String type = (String) filtersPanel.getFilterValue(Filters.TYPES);
 			parameter.typeIds = type == null ? new String[0] : new String[]{type};
 			parameter.companyId = (String) filtersPanel.getFilterValue(Filters.AGENCY);
+			parameter.managerId = (String) filtersPanel.getFilterValue(Filters.MANAGER);
+			parameter.mediatorId = (String) filtersPanel.getFilterValue(Filters.MEDIATOR);
 			parameter.emitedFrom = (String) filtersPanel.getFilterValue(Filters.EMITED_FROM);
 			parameter.emitedTo = (String) filtersPanel.getFilterValue(Filters.EMITED_TO);
 			parameter.maturityFrom = (String) filtersPanel.getFilterValue(Filters.MATURITY_FROM);

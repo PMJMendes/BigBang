@@ -27,7 +27,7 @@ public class NumericTextBoxFormField extends FormField<Double>{
 		protected TextBox field;
 		protected String curr = "";
 		private HandlerManager handlerManager;
-		
+
 		public NumericWrapper() {
 			this.handlerManager = new HandlerManager(this);
 			field = new TextBox();
@@ -116,13 +116,12 @@ public class NumericTextBoxFormField extends FormField<Double>{
 		public TextBox getField(){
 			return field;
 		}
-
-
 	}
 
 	protected HorizontalPanel wrapper;
 	protected NumberFormat nf;
-
+	protected boolean showDecimal;
+	
 	public NumberFormat getNumberFormat() {
 		return nf;
 	}
@@ -195,6 +194,10 @@ public class NumericTextBoxFormField extends FormField<Double>{
 		((NumericWrapper)field).getField().getElement().getStyle().setBackgroundColor(readonly ? "transparent" : "white");
 		mandatoryIndicatorLabel.setVisible(!readonly&& this.isMandatory());
 
+	}
+	
+	public void showDecimal(boolean show){
+		showDecimal = show;
 	}
 
 	@Override
