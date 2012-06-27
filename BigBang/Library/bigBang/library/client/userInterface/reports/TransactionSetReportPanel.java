@@ -1,9 +1,12 @@
 package bigBang.library.client.userInterface.reports;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.dom.client.Style.Unit;
+import com.google.gwt.user.client.ui.HasVerticalAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.VerticalPanel;
 
 import bigBang.definitions.shared.TransactionSet;
 import bigBang.library.client.resources.Resources;
@@ -17,6 +20,7 @@ public class TransactionSetReportPanel extends List<TransactionSet> {
 	public static class Entry extends ListEntry<TransactionSet>{
 
 		protected Label date;
+		protected Label userName;
 		protected Image isComplete;
 		protected boolean initialized;
 		
@@ -27,21 +31,31 @@ public class TransactionSetReportPanel extends List<TransactionSet> {
 		
 		public <I extends Object> void setInfo(I info) {
 			if(!initialized){
+				userName = getFormatedLabel();
+				userName.getElement().getStyle().setFontSize(14, Unit.PX);
 				date = getFormatedLabel();
 				isComplete = new Image(resources.completeIcon());
+				VerticalPanel container = new VerticalPanel();
+				container.setSize("100%", "100%");
+				container.add(userName);
+				container.add(date);
+				container.setCellVerticalAlignment(userName, HasVerticalAlignment.ALIGN_TOP);
+				container.setCellVerticalAlignment(date, HasVerticalAlignment.ALIGN_BOTTOM);
+				setWidget(container);
 				
-				HorizontalPanel rightContainer = new HorizontalPanel();
-				rightContainer.add(date);
-				rightContainer.add(isComplete);
+				HorizontalPanel rightWrapper = new HorizontalPanel();
+				rightWrapper.add(isComplete);
+				rightWrapper.setHeight("100%");
+				rightWrapper.setCellVerticalAlignment(isComplete, HasVerticalAlignment.ALIGN_MIDDLE);
+				setRightWidget(rightWrapper);
+				
 				initialized = true;
 			}
 			
 			TransactionSet set = (TransactionSet) info;
-			
-			date.setText(set.date);
-			this.setText(set.userName);
 			isComplete.setVisible(set.isComplete);
-			
+			userName.setText(set.userName);
+			date.setText(set.date);
 			setSelected(this.isSelected(), false);
 		};
 	
@@ -75,7 +89,7 @@ public class TransactionSetReportPanel extends List<TransactionSet> {
 	public TransactionSet getSelectedTransactionSet(){
 		
 		if(!this.getSelected().isEmpty()){
-			return (TransactionSet) this.getSelected().toArray()[0];
+			return (TransactionSet)((Entry) this.getSelected().toArray()[0]).getValue();
 		}
 		return null;
 		

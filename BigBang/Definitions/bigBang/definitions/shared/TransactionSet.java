@@ -12,5 +12,5 @@ public class TransactionSet
 	public String user;
 	public boolean isComplete;
 
-	public String userName = "Muda-me";
+	public String userName;
 }

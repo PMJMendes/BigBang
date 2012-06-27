@@ -159,8 +159,9 @@ public class ReportViewPresenter implements ViewPresenter {
 	}
 
 	protected void onTransactionSetSelectionChanged() {
-		//TODO
-		
+		if(view.getSelectedTransactionSet() != null){
+			onGenerateReport();
+		}
 	}
 
 	protected void onPrintSetSelectionChanged() {
