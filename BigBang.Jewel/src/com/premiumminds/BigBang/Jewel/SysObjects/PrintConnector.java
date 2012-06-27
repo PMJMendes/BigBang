@@ -175,23 +175,34 @@ public class PrintConnector
 	{
 		PrinterJob lrefPJob;
 		PrintService[] larrServices;
+		boolean b;
 		int i;
 
 		try
 		{
 			lrefPJob = PrinterJob.getPrinterJob();
 			larrServices = PrinterJob.lookupPrintServices();
+
+			b = false;
 			for ( i = 0; i < larrServices.length; i++ )
 			{
 				if ( larrServices[i].getName().indexOf((String)Engine.getUserData().get("Printer")) != -1)
+				{
 					lrefPJob.setPrintService(larrServices[i]);
+					b = true;
+					break;
+				}
 			}
 
-			pdoc.silentPrint(lrefPJob);
+			if ( b )
+				pdoc.silentPrint(lrefPJob);
 		}
 		catch (Throwable e)
 		{
 			throw new BigBangJewelException(e.getMessage(), e);
 		}
+
+		if ( !b )
+			throw new BigBangJewelException("Impressora definida não encontrada.");
 	}
 }
