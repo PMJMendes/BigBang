@@ -4,13 +4,13 @@ import java.util.UUID;
 
 import Jewel.Engine.Engine;
 import Jewel.Engine.SysObjects.JewelEngineException;
-import Jewel.Engine.SysObjects.ObjectBase;
 
 import com.premiumminds.BigBang.Jewel.BigBangJewelException;
 import com.premiumminds.BigBang.Jewel.Constants;
+import com.premiumminds.BigBang.Jewel.SysObjects.TransactionDetailBase;
 
 public class MediatorAccountingDetail
-	extends ObjectBase
+	extends TransactionDetailBase
 {
     public static MediatorAccountingDetail GetInstance(UUID pidNameSpace, UUID pidKey)
 		throws BigBangJewelException

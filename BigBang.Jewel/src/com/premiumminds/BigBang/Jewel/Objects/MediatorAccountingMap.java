@@ -5,21 +5,14 @@ import java.util.UUID;
 
 import Jewel.Engine.Engine;
 import Jewel.Engine.SysObjects.JewelEngineException;
-import Jewel.Engine.SysObjects.ObjectBase;
 
 import com.premiumminds.BigBang.Jewel.BigBangJewelException;
 import com.premiumminds.BigBang.Jewel.Constants;
+import com.premiumminds.BigBang.Jewel.SysObjects.TransactionMapBase;
 
 public class MediatorAccountingMap
-	extends ObjectBase
+	extends TransactionMapBase
 {
-	public static class I
-	{
-		public static int SET       = 0;
-		public static int INSURER   = 1;
-		public static int SETTLEDON = 2;
-	}
-
     public static MediatorAccountingMap GetInstance(UUID pidNameSpace, UUID pidKey)
 		throws BigBangJewelException
 	{
@@ -52,8 +45,8 @@ public class MediatorAccountingMap
 	{
 	}
 
-	boolean isSettled()
+	public UUID getSubObjectType()
 	{
-		return (getAt(I.SETTLEDON) != null);
+		return Constants.ObjID_MediatorAccountingDetail;
 	}
 }

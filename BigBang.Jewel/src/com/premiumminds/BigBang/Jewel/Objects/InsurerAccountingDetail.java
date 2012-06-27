@@ -4,13 +4,13 @@ import java.util.UUID;
 
 import com.premiumminds.BigBang.Jewel.BigBangJewelException;
 import com.premiumminds.BigBang.Jewel.Constants;
+import com.premiumminds.BigBang.Jewel.SysObjects.TransactionDetailBase;
 
 import Jewel.Engine.Engine;
 import Jewel.Engine.SysObjects.JewelEngineException;
-import Jewel.Engine.SysObjects.ObjectBase;
 
 public class InsurerAccountingDetail
-	extends ObjectBase
+	extends TransactionDetailBase
 {
     public static InsurerAccountingDetail GetInstance(UUID pidNameSpace, UUID pidKey)
 		throws BigBangJewelException

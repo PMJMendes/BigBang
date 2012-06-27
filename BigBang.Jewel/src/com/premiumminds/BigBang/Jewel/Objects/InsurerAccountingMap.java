@@ -3,23 +3,16 @@ package com.premiumminds.BigBang.Jewel.Objects;
 import java.sql.ResultSet;
 import java.util.UUID;
 
-import com.premiumminds.BigBang.Jewel.BigBangJewelException;
-import com.premiumminds.BigBang.Jewel.Constants;
-
 import Jewel.Engine.Engine;
 import Jewel.Engine.SysObjects.JewelEngineException;
-import Jewel.Engine.SysObjects.ObjectBase;
+
+import com.premiumminds.BigBang.Jewel.BigBangJewelException;
+import com.premiumminds.BigBang.Jewel.Constants;
+import com.premiumminds.BigBang.Jewel.SysObjects.TransactionMapBase;
 
 public class InsurerAccountingMap
-	extends ObjectBase
+	extends TransactionMapBase
 {
-	public static class I
-	{
-		public static int SET       = 0;
-		public static int INSURER   = 1;
-		public static int SETTLEDON = 2;
-	}
-
     public static InsurerAccountingMap GetInstance(UUID pidNameSpace, UUID pidKey)
 		throws BigBangJewelException
 	{
@@ -51,8 +44,8 @@ public class InsurerAccountingMap
 	{
 	}
 
-	boolean isSettled()
+	public UUID getSubObjectType()
 	{
-		return (getAt(I.SETTLEDON) != null);
+		return Constants.ObjID_InsurerAccountingDetail;
 	}
 }
