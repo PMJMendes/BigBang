@@ -9,7 +9,6 @@ import Jewel.Engine.Engine;
 import Jewel.Engine.DataAccess.MasterDB;
 import Jewel.Engine.Implementation.Entity;
 import Jewel.Engine.Interfaces.IEntity;
-import Jewel.Engine.SysObjects.ObjectBase;
 import bigBang.definitions.shared.PrintSet;
 import bigBang.definitions.shared.Report;
 import bigBang.definitions.shared.ReportItem;
@@ -20,10 +19,10 @@ import bigBang.library.shared.BigBangException;
 import bigBang.library.shared.SessionExpiredException;
 
 import com.premiumminds.BigBang.Jewel.Constants;
-import com.premiumminds.BigBang.Jewel.Objects.InsurerAccountingSet;
-import com.premiumminds.BigBang.Jewel.Objects.MediatorAccountingSet;
 import com.premiumminds.BigBang.Jewel.Objects.ReportDef;
 import com.premiumminds.BigBang.Jewel.SysObjects.PrintConnector;
+import com.premiumminds.BigBang.Jewel.SysObjects.TransactionMapBase;
+import com.premiumminds.BigBang.Jewel.SysObjects.TransactionSetBase;
 
 public class ReportServiceImpl
 	extends EngineImplementor
@@ -228,7 +227,7 @@ public class ReportServiceImpl
 		try
 		{
 			while ( lrsObjects.next() )
-				larrAux.add(toClient(Engine.GetWorkInstance(lrefTransactions.getKey(), lrsObjects)));
+				larrAux.add(toClient((TransactionSetBase)Engine.GetWorkInstance(lrefTransactions.getKey(), lrsObjects)));
 		}
 		catch (Throwable e)
 		{
@@ -360,8 +359,110 @@ public class ReportServiceImpl
 	public Report generateTransactionSetReport(String itemId, String transactionSetId)
 		throws SessionExpiredException, BigBangException
 	{
-		// TODO Auto-generated method stub
-		return null;
+		ReportDef lobjReport;
+		UUID lidTransactions;
+		TransactionSetBase lobjSet;
+		TransactionMapBase[] larrMaps;
+		int llngCount, llngTotal;
+		StringBuilder lstrBuffer;
+		int i;
+		Report lobjResult;
+
+		try
+		{
+			lobjReport = ReportDef.GetInstance(Engine.getCurrentNameSpace(), UUID.fromString(itemId));
+			lidTransactions = Engine.FindEntity(Engine.getCurrentNameSpace(), (UUID)lobjReport.getAt(ReportDef.I.TRANSACTIONTYPE));
+			lobjSet = (TransactionSetBase)Engine.GetWorkInstance(lidTransactions, UUID.fromString(transactionSetId));
+			larrMaps = lobjSet.getCurrentMaps();
+			llngCount = larrMaps.length;
+			llngTotal = lobjSet.getTotalCount();
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangException(e.getMessage(), e);
+		}
+
+		lstrBuffer = new StringBuilder();
+		lstrBuffer.append("<table class=\"items\" bgcolor=\"white\" width=\"575\" border=\"0\" cellspacing=\"0\" cellpadding=\"0\" ")
+				.append("style=\"border:1px solid #3f6d9d;\"> <tr style=\"height:35px;background:#8bb4de; font-weight:bold;\"> ")
+				.append("<td>&nbsp;Gestão de Transacções</td> <td>&nbsp</td> </tr> ");	
+
+		lstrBuffer.append("<tr style=\"height:30px;border-bottom:1px solid #3f6d9d;\"> ")
+				.append("<td style=\"padding-left:5px;border-right:1px solid #3f6d9d;border-bottom:1px solid #3f6d9d;\">Tipo de Transacção</td> ")
+				.append("<td style=\"padding-left:5px;border-bottom:1px solid #3f6d9d;\">")
+				.append(lobjReport.getLabel())
+				.append("</td> </tr> ");
+
+		lstrBuffer.append("<tr style=\"height:30px;border-bottom:1px solid #3f6d9d;\"> ")
+				.append("<td style=\"padding-left:5px;border-right:1px solid #3f6d9d;border-bottom:1px solid #3f6d9d;\">Nº de Documentos</td> ")
+				.append("<td style=\"padding-left:5px;border-bottom:1px solid #3f6d9d;\">")
+				.append(llngCount)
+				.append("</td> </tr>");
+
+		lstrBuffer.append("<tr style=\"height:30px;border-bottom:1px solid #3f6d9d;\"> ")
+				.append("<td style=\"padding-left:5px;border-right:1px solid #3f6d9d;border-bottom:1px solid #3f6d9d;\">Total de Movimentos</td> ")
+				.append("<td style=\"padding-left:5px;border-bottom:1px solid #3f6d9d;\">")
+				.append(llngTotal)
+				.append("</td> </tr>");
+
+		lstrBuffer.append("<tr style=\"height:30px;border-bottom:1px solid #3f6d9d;\"> ")
+				.append("<td style=\"padding-left:5px;border-right:1px solid #3f6d9d;border-bottom:1px solid #3f6d9d;\">Gerado em</td> ")
+				.append("<td style=\"padding-left:5px;border-bottom:1px solid #3f6d9d;\">")
+				.append(((Timestamp)lobjSet.getAt(TransactionSetBase.I.DATE)).toString().substring(0, 10))
+				.append("</td> </tr>");
+
+		lstrBuffer.append("<tr style=\"height:30px; border-bottom:1px solid #3f6d9d;\"> ")
+				.append("<td style=\"padding-left:5px;border-right:1px solid #3f6d9d;\">Gerado por</td> ")
+				.append("<td style=\"padding-left:5px;\">")
+				.append(lobjSet.getUser().getDisplayName())
+				.append("</td> </tr> </table>");
+
+		lobjResult = new Report();
+		lobjResult.sections = new Report.Section[llngCount + 1];
+		lobjResult.sections[0] = new Report.Section();
+		lobjResult.sections[0].htmlContent = lstrBuffer.toString();
+		lobjResult.sections[0].verbs = new Report.Section.Verb[0];
+
+		for ( i = 1; i <= llngCount; i++ )
+		{
+			try
+			{
+				llngCount = larrMaps[i - 1].getCurrentDetails().length;
+			}
+			catch (Throwable e)
+			{
+				throw new BigBangException(e.getMessage(), e);
+			}
+
+			lstrBuffer = new StringBuilder();
+			lstrBuffer.append("<table class=\"items\" bgcolor=\"white\" width=\"575\" border=\"0\" cellspacing=\"0\" cellpadding=\"0\" ")
+					.append("style=\"border:1px solid #3f6d9d;\"> <tr style=\"height:35px;background:#8bb4de; font-weight:bold;\"> ")
+					.append("<td>&nbsp;Transacção n. ")
+					.append(i)
+					.append("</td> <td>&nbsp</td> </tr> ");	
+
+			lstrBuffer.append("<tr style=\"height:30px;border-bottom:1px solid #3f6d9d;\"> ")
+					.append("<td style=\"padding-left:5px;border-right:1px solid #3f6d9d;border-bottom:1px solid #3f6d9d;\">)")
+					.append(lobjSet.getOwnerHeader())
+					.append("(</td> ")
+					.append("<td style=\"padding-left:5px;border-bottom:1px solid #3f6d9d;\">")
+					.append(larrMaps[i - 1].getLabel())
+					.append("</td> </tr> ");
+
+			lstrBuffer.append("<tr style=\"height:30px;border-bottom:1px solid #3f6d9d;\"> ")
+					.append("<td style=\"padding-left:5px;border-right:1px solid #3f6d9d;border-bottom:1px solid #3f6d9d;\">Total de Movimentos</td> ")
+					.append("<td style=\"padding-left:5px;border-bottom:1px solid #3f6d9d;\">")
+					.append(llngCount)
+					.append("</td> </tr> </table>");
+
+			lobjResult.sections[i] = new Report.Section();
+			lobjResult.sections[i].htmlContent = lstrBuffer.toString();
+			lobjResult.sections[i].verbs = new Report.Section.Verb[] {new Report.Section.Verb()};
+			lobjResult.sections[i].verbs[0].label = "Saldar";
+			lobjResult.sections[i].verbs[0].argument = "S:" + larrMaps[i - 1].getKey().toString();
+		}
+
+		return lobjResult;
 	}
 
 	public void RunVerb(String argument)
@@ -434,39 +535,21 @@ public class ReportServiceImpl
 		return lobjResult;
 	}
 
-	private static TransactionSet toClient(ObjectBase pobjSet)
+	private static TransactionSet toClient(TransactionSetBase pobjSet)
 	{
 		TransactionSet lobjResult;
 
 		lobjResult = new TransactionSet();
 		lobjResult.id = pobjSet.getKey().toString();
-
-		if ( Constants.ObjID_InsurerAccountingSet.equals(pobjSet.getDefinition().getDefObject().getKey()) )
+		lobjResult.date = ((Timestamp)pobjSet.getAt(TransactionSetBase.I.DATE)).toString().substring(0, 10);
+		lobjResult.user = ((UUID)pobjSet.getAt(TransactionSetBase.I.USER)).toString();
+		try
 		{
-			lobjResult.date = ((Timestamp)pobjSet.getAt(InsurerAccountingSet.I.DATE)).toString().substring(0, 10);
-			lobjResult.user = ((UUID)pobjSet.getAt(InsurerAccountingSet.I.USER)).toString();
-			try
-			{
-				lobjResult.isComplete = ((InsurerAccountingSet)pobjSet).isComplete();
-			}
-			catch (Throwable e)
-			{
-				lobjResult.isComplete = false;
-			}
+			lobjResult.isComplete = pobjSet.isComplete();
 		}
-
-		if ( Constants.ObjID_MediatorAccountingSet.equals(pobjSet.getDefinition().getDefObject().getKey()) )
+		catch (Throwable e)
 		{
-			lobjResult.date = ((Timestamp)pobjSet.getAt(MediatorAccountingSet.I.DATE)).toString().substring(0, 10);
-			lobjResult.user = ((UUID)pobjSet.getAt(MediatorAccountingSet.I.USER)).toString();
-			try
-			{
-				lobjResult.isComplete = ((MediatorAccountingSet)pobjSet).isComplete();
-			}
-			catch (Throwable e)
-			{
-				lobjResult.isComplete = false;
-			}
+			lobjResult.isComplete = false;
 		}
 
 		return lobjResult;
