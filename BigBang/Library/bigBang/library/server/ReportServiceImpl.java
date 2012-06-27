@@ -8,6 +8,7 @@ import java.util.UUID;
 import Jewel.Engine.Engine;
 import Jewel.Engine.DataAccess.MasterDB;
 import Jewel.Engine.Implementation.Entity;
+import Jewel.Engine.Implementation.User;
 import Jewel.Engine.Interfaces.IEntity;
 import bigBang.definitions.shared.PrintSet;
 import bigBang.definitions.shared.Report;
@@ -546,6 +547,7 @@ public class ReportServiceImpl
 		try
 		{
 			lobjResult.isComplete = pobjSet.isComplete();
+			lobjResult.userName = User.GetInstance(pobjSet.getNameSpace(), (UUID)pobjSet.getAt(TransactionSetBase.I.USER)).getDisplayName();
 		}
 		catch (Throwable e)
 		{
