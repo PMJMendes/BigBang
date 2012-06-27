@@ -111,8 +111,8 @@ public class InsurancePolicy
 	public String startDate;
 	public String durationId;
 	public String fractioningId;
-	public int maturityDay;
-	public int maturityMonth; //1 to 12
+	public Integer maturityDay;
+	public Integer maturityMonth; //1 to 12
 	public String expirationDate;
 	public String notes;
 	public String mediatorId;
