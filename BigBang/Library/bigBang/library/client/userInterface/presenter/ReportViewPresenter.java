@@ -23,6 +23,7 @@ import bigBang.library.client.event.NavigationRequestEventHandler;
 import bigBang.library.client.event.NewNotificationEvent;
 import bigBang.library.client.event.SelectionChangedEvent;
 import bigBang.library.client.event.SelectionChangedEventHandler;
+import bigBang.library.client.event.NavigationRequestEvent.Navigation;
 import bigBang.library.client.userInterface.NavigationPanel;
 import bigBang.library.interfaces.ReportService;
 import bigBang.library.interfaces.ReportServiceAsync;
@@ -125,7 +126,9 @@ public class ReportViewPresenter implements ViewPresenter {
 			
 			@Override
 			public void onNavigationEvent(NavigationRequestEvent event) {
-				return;
+				if(event.getNavigationCommand().equals(Navigation.PREVIOUS)){
+					view.clearReportSections();
+				}
 			}
 		});
 
