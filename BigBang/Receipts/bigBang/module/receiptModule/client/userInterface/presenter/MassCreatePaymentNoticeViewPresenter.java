@@ -20,6 +20,7 @@ import bigBang.library.client.HasParameters;
 import bigBang.library.client.HasValueSelectables;
 import bigBang.library.client.Notification;
 import bigBang.library.client.Notification.TYPE;
+import bigBang.library.client.Session;
 import bigBang.library.client.ValueSelectable;
 import bigBang.library.client.dataAccess.DataBrokerManager;
 import bigBang.library.client.event.ActionInvokedEvent;
@@ -67,6 +68,8 @@ public class MassCreatePaymentNoticeViewPresenter implements ViewPresenter{
 		void registerActionHandler(
 				ActionInvokedEventHandler<Action> actionInvokedEventHandler);
 		void allowCreation(boolean b);
+		void setManagerFilterValue(String value);
+		void setFilterPanelOpen(boolean b);
 
 	}
 
@@ -218,6 +221,8 @@ public class MassCreatePaymentNoticeViewPresenter implements ViewPresenter{
 		clearView();
 		view.refreshMainLisT();
 		showMassCreatePaymentNoticeScreen();
+		view.setManagerFilterValue(Session.getUserId());
+		view.setFilterPanelOpen(true);
 	}
 
 

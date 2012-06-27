@@ -33,15 +33,15 @@ public class FiltersPanel extends View {
 	public FiltersPanel(Map<Enum<?>, String> sorts){
 		filters = new HashMap<Enum<?>, HasValue<?>>();
 		sortableOptions = sorts;
-		
+
 		VerticalPanel wrapper = new VerticalPanel();
-		
+
 		ScrollPanel mainWrapper = new ScrollPanel(wrapper);
 		initWidget(mainWrapper);
 
 		mainWrapper.setSize("100%", "100%");
 		mainWrapper.getElement().getStyle().setMarginBottom(10, Unit.PX);
-		
+
 		wrapper.setSize("100%", "100%");
 
 		clearFiltersButton = new Button("Limpar filtros");
@@ -98,12 +98,12 @@ public class FiltersPanel extends View {
 
 		wrapper.add(buttonsWrapper);
 	}
-		
+
 	@Override
 	protected void initializeView() {
 		return;
 	}
-	
+
 	public Enum<?> getSelectedSortableField(){
 		String strValue = this.sortListBox.getValue(this.sortListBox.getSelectedIndex());
 		for(Enum<?> key : sortableOptions.keySet()){
@@ -172,6 +172,22 @@ public class FiltersPanel extends View {
 			value = null;
 		}
 		return value;
+	}
+
+	public void setFilterValue(Enum<?> id, Object value){
+		HasValue<?> v = this.filters.get(id);
+			if(v instanceof TextBoxFormField)
+				((TextBoxFormField)v).setValue((String)value);
+			
+			else if(v instanceof DatePickerFormField)
+				((DatePickerFormField)v).setValue((String)value);
+			
+			else if(v instanceof ExpandableListBoxFormField)
+				((ExpandableListBoxFormField)v).setValue((String)value);
+			
+			else if(v instanceof CheckBoxFormField)
+				((CheckBoxFormField)v).setValue((Boolean)value);
+		
 	}
 
 	public SortOrder getSortingOrder(){

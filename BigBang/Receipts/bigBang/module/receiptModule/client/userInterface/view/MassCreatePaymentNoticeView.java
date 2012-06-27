@@ -57,7 +57,10 @@ public class MassCreatePaymentNoticeView extends View implements MassCreatePayme
 		PAYMENT_TO,
 		CATEGORY,
 		LINE,
-		SUB_LINE, AGENCY, MANAGER, MEDIATOR
+		SUB_LINE, 
+		AGENCY, 
+		MANAGER, 
+		MEDIATOR
 	}
 
 	protected static class SelectedReceiptsList extends SelectedProcessesList<ReceiptStub>{
@@ -164,6 +167,15 @@ public class MassCreatePaymentNoticeView extends View implements MassCreatePayme
 			};
 
 			doSearch(parameters, sorts);
+		}
+		
+		public void setManagerFilterValue(String value){
+			filtersPanel.setFilterValue(Filters.MANAGER, value);
+		}
+
+		public void setFilterOpen(boolean b) {
+			filtersContainer.setOpen(b);
+			
 		}
 
 	}
@@ -367,6 +379,16 @@ public class MassCreatePaymentNoticeView extends View implements MassCreatePayme
 	@Override
 	public void allowCreation(boolean b) {
 		createPNotice.setEnabled(b);
+	}
+	
+	@Override
+	public void setManagerFilterValue(String value){
+		searchPanel.setManagerFilterValue(value);
+	}
+
+	@Override
+	public void setFilterPanelOpen(boolean b) {
+		searchPanel.setFilterOpen(b);
 	}
 
 }
