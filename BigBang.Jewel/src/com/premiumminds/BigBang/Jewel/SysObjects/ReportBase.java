@@ -125,7 +125,8 @@ Este código assume bué coisas:
 			throw new BigBangJewelException(e.getMessage(), e);
 		}
 
-		return OOConnector.getFileFromDoc(lobjDoc, lobjFile.getFileName());
+//		return OOConnector.getFileFromDoc(lobjDoc, lobjFile.getFileName());
+		return OOConnector.getPDFFromDoc(lobjDoc, lobjFile.getFileName());
 	}
 
 	private FileXfer GenerateAsDocX(FileXfer pobjFile, HashMap<String, String> parrContents, String[][][] parrTables)

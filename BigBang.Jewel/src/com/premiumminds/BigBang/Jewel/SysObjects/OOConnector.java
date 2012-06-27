@@ -71,9 +71,11 @@ public class OOConnector
 		FileXfer lobjResult;
 
 		lobjOut = new OOOutputStream();
-		larrProps = new PropertyValue[] {new PropertyValue()};
+		larrProps = new PropertyValue[] {new PropertyValue(), new PropertyValue()};
 		larrProps[0].Name = "OutputStream";
 		larrProps[0].Value = lobjOut;
+		larrProps[1].Name = "FilterName";
+		larrProps[1].Value = "MS Word 2007 XML";
 
 		try
 		{
@@ -87,8 +89,10 @@ public class OOConnector
 	        	lobjClose.close();
 
 			larrBytes = lobjOut.toByteArray();
-			lobjResult = new FileXfer(larrBytes.length, "application/vnd.oasis.opendocument.text", pstrFileName,
-					new ByteArrayInputStream(larrBytes));
+			lobjResult = new FileXfer(larrBytes.length, "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+					pstrFileName.replaceAll(".odt", ".docx"), new ByteArrayInputStream(larrBytes));
+//			lobjResult = new FileXfer(larrBytes.length, "application/vnd.oasis.opendocument.text", pstrFileName,
+//					new ByteArrayInputStream(larrBytes));
 		}
 		catch (Throwable e)
 		{
@@ -127,7 +131,7 @@ public class OOConnector
 	        	lobjClose.close();
 
 			larrBytes = lobjOut.toByteArray();
-			lobjResult = new FileXfer(larrBytes.length, "application/pdf", pstrFileName + ".pdf",
+			lobjResult = new FileXfer(larrBytes.length, "application/pdf", pstrFileName.replaceAll(".odt", ".pdf"),
 					new ByteArrayInputStream(larrBytes));
 		}
 		catch (Throwable e)
