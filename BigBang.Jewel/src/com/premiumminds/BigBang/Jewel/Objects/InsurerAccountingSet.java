@@ -40,4 +40,9 @@ public class InsurerAccountingSet
 	{
 		return "Seguradora";
 	}
+
+	public UUID getOwnerObjectType()
+	{
+		return Constants.ObjID_Company;
+	}
 }

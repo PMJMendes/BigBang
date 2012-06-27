@@ -25,6 +25,7 @@ public abstract class TransactionSetBase
 
 	public abstract UUID getSubObjectType();
 	public abstract String getOwnerHeader();
+	public abstract UUID getOwnerObjectType();
 
 	public TransactionMapBase[] getCurrentMaps()
 		throws BigBangJewelException

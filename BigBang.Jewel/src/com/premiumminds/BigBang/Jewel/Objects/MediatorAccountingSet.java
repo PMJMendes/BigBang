@@ -39,4 +39,9 @@ public class MediatorAccountingSet
 	{
 		return "Agente";
 	}
+
+	public UUID getOwnerObjectType()
+	{
+		return Constants.ObjID_Mediator;
+	}
 }

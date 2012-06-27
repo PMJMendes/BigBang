@@ -365,8 +365,10 @@ public class ReportServiceImpl
 		TransactionSetBase lobjSet;
 		TransactionMapBase[] larrMaps;
 		int llngCount, llngTotal;
+		UUID lidOwners;
 		StringBuilder lstrBuffer;
 		int i;
+		String lstrOwner;
 		Report lobjResult;
 
 		try
@@ -377,6 +379,7 @@ public class ReportServiceImpl
 			larrMaps = lobjSet.getCurrentMaps();
 			llngCount = larrMaps.length;
 			llngTotal = lobjSet.getTotalCount();
+			lidOwners = Engine.FindEntity(lobjSet.getNameSpace(), lobjSet.getOwnerObjectType());
 		}
 		catch (Throwable e)
 		{
@@ -429,6 +432,7 @@ public class ReportServiceImpl
 			try
 			{
 				llngCount = larrMaps[i - 1].getCurrentDetails().length;
+				lstrOwner = Engine.GetWorkInstance(lidOwners, (UUID)larrMaps[i - 1].getAt(TransactionMapBase.I.OWNER)).getLabel();
 			}
 			catch (Throwable e)
 			{
@@ -443,11 +447,11 @@ public class ReportServiceImpl
 					.append("</td> <td>&nbsp</td> </tr> ");	
 
 			lstrBuffer.append("<tr style=\"height:30px;border-bottom:1px solid #3f6d9d;\"> ")
-					.append("<td style=\"padding-left:5px;border-right:1px solid #3f6d9d;border-bottom:1px solid #3f6d9d;\">)")
+					.append("<td style=\"padding-left:5px;border-right:1px solid #3f6d9d;border-bottom:1px solid #3f6d9d;\">")
 					.append(lobjSet.getOwnerHeader())
-					.append("(</td> ")
+					.append("</td> ")
 					.append("<td style=\"padding-left:5px;border-bottom:1px solid #3f6d9d;\">")
-					.append(larrMaps[i - 1].getLabel())
+					.append(lstrOwner)
 					.append("</td> </tr> ");
 
 			lstrBuffer.append("<tr style=\"height:30px;border-bottom:1px solid #3f6d9d;\"> ")
