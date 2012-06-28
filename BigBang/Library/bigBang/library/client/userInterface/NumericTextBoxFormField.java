@@ -251,11 +251,16 @@ public class NumericTextBoxFormField extends FormField<Double>{
 
 	public void setStringValue(String value){
 		((NumericWrapper)field).curr = value;
-		getTextBox().setValue(value);
+		getTextBox().setValue(value, true);
 	}
 
 	public String getStringValue(){
 		return getTextBox().getValue();
+	}
+
+	public void setStringValue(String value, boolean fireEvents) {
+		((NumericWrapper)field).curr = value;
+		getTextBox().setValue(value, fireEvents);
 	}
 
 }

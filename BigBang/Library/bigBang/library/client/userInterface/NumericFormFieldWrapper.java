@@ -42,8 +42,13 @@ public class NumericFormFieldWrapper extends FormField<String>{
 	}
 
 	@Override
+	public void setValue(String value, boolean fireEvents){
+		field.setStringValue(value, fireEvents);
+	}
+	
+	@Override
 	public void setValue(String value) {
-		field.setStringValue(value);
+		field.setStringValue(value, true);
 	}
 
 	@Override
@@ -65,5 +70,7 @@ public class NumericFormFieldWrapper extends FormField<String>{
 	public void setUnitsLabel(String label) {
 		field.setUnitsLabel(label);
 	}
+	
+	
 	
 }

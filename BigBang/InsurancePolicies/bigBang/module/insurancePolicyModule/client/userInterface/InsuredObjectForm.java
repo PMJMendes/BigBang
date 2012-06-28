@@ -62,7 +62,7 @@ public class InsuredObjectForm extends FormView<InsuredObject> {
 				this.field = referenceListField;
 				break;
 			case NUMERIC:
-				this.field = new NumericFormFieldWrapper();
+				this.field = new NumericFormFieldWrapper(field.fieldName);
 				break;
 			case TEXT:
 				this.field = new TextBoxFormField(field.fieldName);
@@ -524,8 +524,9 @@ public class InsuredObjectForm extends FormView<InsuredObject> {
 	}
 
 	protected void setDynamicHeaderData(Exercise[] exercises, HeaderData headerData){
-		if(headerData == null) {return;}
 		this.dynamicHeaderSection.clear();
+		clearDynamicFixedHeaderData();
+		if(headerData == null) {return;}
 		setDynamicFixedHeaderData(headerData.fixedFields);
 		setDynamicVariableHeaderData(exercises, headerData.variableFields);
 	}
@@ -730,8 +731,6 @@ public class InsuredObjectForm extends FormView<InsuredObject> {
 			s.unregisterAllFormFields();
 			s.removeFromParent();
 		}
-		this.coverageFixedFields.clear();
-		this.coverageTables.clear();
 	}
 
 	public void setForPolicyStatusNew(InsurancePolicyStub.PolicyStatus status){
