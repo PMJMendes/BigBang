@@ -114,9 +114,9 @@ public class TriggerImageOnCreate
 	    	try
 	    	{
 				if ( Constants.ProcID_Policy.equals(lobjProc.GetParent().GetScriptID()) )
-					lobjClient = (Client)GetProcess().GetParent().GetData();
+					lobjClient = (Client)lobjProc.GetParent().GetParent().GetData();
 				else
-					lobjClient = Client.GetInstance(lobjReceipt.getNameSpace(), (UUID)((SubPolicy)GetProcess().GetParent().GetData()).getAt(2));
+					lobjClient = Client.GetInstance(lobjReceipt.getNameSpace(), (UUID)((SubPolicy)lobjProc.GetParent().GetData()).getAt(2));
 				if ( !Constants.ProfID_Simple.equals((UUID)lobjClient.getAt(9)) )
 				{
 					ldtAux = new Timestamp(new java.util.Date().getTime());
