@@ -1,12 +1,14 @@
 package bigBang.module.casualtyModule.client.userInterface;
 
 import java.util.Collection;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.TreeMap;
 
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.i18n.client.DateTimeFormat;
 
 import bigBang.definitions.client.dataAccess.CasualtyDataBroker;
 import bigBang.definitions.client.dataAccess.CasualtyDataBrokerClient;
@@ -107,9 +109,10 @@ public class CasualtySearchPanel extends SearchPanel<CasualtyStub> implements Ca
 		CasualtySearchParameter p = new CasualtySearchParameter();
 
 		p.freeText = this.getFreeText();
-
-		p.dateFrom = (String) filtersPanel.getFilterValue(Filters.DATE_FROM);
-		p.dateTo = (String) filtersPanel.getFilterValue(Filters.DATE_TO);
+		Date dateF = (Date) filtersPanel.getFilterValue(Filters.DATE_FROM);
+		p.dateFrom = dateF == null ? null : DateTimeFormat.getFormat("yyyy-MM-dd").format(dateF);
+		Date dateT = (Date) filtersPanel.getFilterValue(Filters.DATE_TO);
+		p.dateTo = dateT == null ? null : DateTimeFormat.getFormat("yyyy-MM-dd").format(dateT);
 		p.managerId = (String) filtersPanel.getFilterValue(Filters.MANAGER);
 		p.caseStudy = (Boolean) filtersPanel.getFilterValue(Filters.CASE_STUDY);
 		p.includeClosed = (Boolean) filtersPanel.getFilterValue(Filters.INCLUDE_CLOSED);

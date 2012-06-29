@@ -1,11 +1,13 @@
 package bigBang.module.receiptModule.client.userInterface.view;
 
 import java.util.Collection;
+import java.util.Date;
 import java.util.Map;
 import java.util.TreeMap;
 
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.HasVerticalAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
@@ -143,12 +145,19 @@ public class MassReturnToInsurerView extends View implements MassReturnToInsurer
 			parameter.companyId = (String) filtersPanel.getFilterValue(Filters.AGENCY);
 			parameter.managerId = (String) filtersPanel.getFilterValue(Filters.MANAGER);
 			parameter.mediatorId = (String) filtersPanel.getFilterValue(Filters.MEDIATOR);
-			parameter.emitedFrom = (String) filtersPanel.getFilterValue(Filters.EMITED_FROM);
-			parameter.emitedTo = (String) filtersPanel.getFilterValue(Filters.EMITED_TO);
-			parameter.maturityFrom = (String) filtersPanel.getFilterValue(Filters.MATURITY_FROM);
-			parameter.maturityTo = (String) filtersPanel.getFilterValue(Filters.EMITED_TO);
-			parameter.paymentFrom = (String) filtersPanel.getFilterValue(Filters.PAYMENT_FROM);
-			parameter.paymentTo = (String) filtersPanel.getFilterValue(Filters.PAYMENT_TO);
+			Date emitedF = (Date) filtersPanel.getFilterValue(Filters.EMITED_FROM);
+			parameter.emitedFrom = emitedF == null ? null : DateTimeFormat.getFormat("yyyy-MM-dd").format(emitedF);
+			Date emitedT = (Date) filtersPanel.getFilterValue(Filters.EMITED_TO);
+			parameter.emitedTo = emitedT == null ? null : DateTimeFormat.getFormat("yyyy-MM-dd").format(emitedT);
+			Date maturityF = (Date) filtersPanel.getFilterValue(Filters.MATURITY_FROM);
+			parameter.maturityFrom = maturityF == null ? null : DateTimeFormat.getFormat("yyyy-MM-dd").format(maturityF);
+			Date maturityT = (Date) filtersPanel.getFilterValue(Filters.EMITED_TO);
+			parameter.maturityTo = maturityT == null ? null : DateTimeFormat.getFormat("yyyy-MM-dd").format(maturityT); 
+			Date paymentF =  (Date) filtersPanel.getFilterValue(Filters.PAYMENT_FROM);
+			parameter.paymentFrom = paymentF == null ? null : DateTimeFormat.getFormat("yyyy-MM-dd").format(paymentF);
+			Date paymentT = (Date) filtersPanel.getFilterValue(Filters.PAYMENT_TO);
+			parameter.paymentTo = paymentT == null ? null : DateTimeFormat.getFormat("yyyy-MM-dd").format(paymentT);
+			parameter.categoryId = (String) filtersPanel.getFilterValue(Filters.CATEGORY);
 			parameter.categoryId = (String) filtersPanel.getFilterValue(Filters.CATEGORY);
 			parameter.lineId = (String) filtersPanel.getFilterValue(Filters.LINE);
 			parameter.subLineId = (String) filtersPanel.getFilterValue(Filters.SUB_LINE);
