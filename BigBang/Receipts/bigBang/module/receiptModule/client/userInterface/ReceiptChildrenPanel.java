@@ -34,10 +34,11 @@ public class ReceiptChildrenPanel extends View{
 		subProcessesList = new SubProcessesList();
 		historyList = new HistoryList();
 		
+		wrapper.add(historyList, "Histórico");
 		wrapper.add(contactsList, "Contactos");
 		wrapper.add(documentsList, "Documentos");
 		wrapper.add(subProcessesList, "Sub-Processos");
-		wrapper.add(historyList, "Histórico");
+		
 		
 		receiptBrokerClient = getReceiptBrokerClient();
 		((ReceiptDataBroker)DataBrokerManager.Util.getInstance().getBroker(BigBangConstants.EntityIds.RECEIPT)).registerClient(receiptBrokerClient);
