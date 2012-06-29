@@ -10,7 +10,7 @@ import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.user.client.ui.Button;
 
 import bigBang.definitions.shared.Receipt.PaymentInfo.Payment;
-import bigBang.library.client.userInterface.TextBoxFormField;
+import bigBang.library.client.userInterface.NumericTextBoxFormField;
 import bigBang.library.client.userInterface.view.FormView;
 import bigBang.library.client.userInterface.view.FormViewSection;
 
@@ -19,15 +19,16 @@ public class PaymentsForm extends FormView<Payment[]> {
 	protected List<PaymentSection> sections;
 	protected FormViewSection addSection;
 	public Button confirmButton, newButton;
-	protected TextBoxFormField totalLabel;
+	protected NumericTextBoxFormField totalLabel;
 	
 	public PaymentsForm(){
 		sections = new ArrayList<PaymentSection>();
 
 		addSection("Marcar Cobrança");
 
-		totalLabel = new TextBoxFormField("Total");
+		totalLabel = new NumericTextBoxFormField("Total");
 		totalLabel.setFieldWidth("175px");
+		totalLabel.setUnitsLabel("€");
 		totalLabel.setEditable(false);
 		addWidget(totalLabel, true);
 		
@@ -128,19 +129,12 @@ public class PaymentsForm extends FormView<Payment[]> {
 		
 		for(PaymentSection section : sections) {
 			Payment payment = section.getPayment();
-			double paymentValue = 0;
-			
-			try{
-				paymentValue = payment.value == null ? 0 : payment.value;
-			}catch(Exception e) {
-				totalLabel.setValue("Inválido");
-				return;
+			if(payment.value != null){
+				total += payment.value;
 			}
-			
-			total += paymentValue;
 		}
 		
-		totalLabel.setValue(total + "€");
+		totalLabel.setValue(total);
 	}
 	
 	@Override

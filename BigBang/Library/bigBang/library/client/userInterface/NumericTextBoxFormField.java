@@ -65,6 +65,7 @@ public class NumericTextBoxFormField extends FormField<Double>{
 						try{
 							setValue(nf.parse(event.getValue()));
 							curr = event.getValue();
+							ValueChangeEvent.fire(NumericTextBoxFormField.this, nf.parse(curr));
 						}catch(NumberFormatException e){
 							field.setValue(curr);
 						}

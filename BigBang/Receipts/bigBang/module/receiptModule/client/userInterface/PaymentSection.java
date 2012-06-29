@@ -34,6 +34,7 @@ public class PaymentSection extends FormViewSection {
 
 		type = new ExpandableListBoxFormField(BigBangConstants.TypifiedListIds.RECEIPT_PAYMENT_TYPES, "Tipo de Pagamento");
 		paymentValue = new NumericTextBoxFormField("Valor");
+		paymentValue.setUnitsLabel("€");
 		paymentValue.setFieldWidth("175px");
 		bank = new ExpandableListBoxFormField(BigBangConstants.TypifiedListIds.BANK, "Banco");
 		chequeOrTransferNumber = new TextBoxFormField("Número de Cheque ou Transferência");
