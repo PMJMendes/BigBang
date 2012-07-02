@@ -298,6 +298,7 @@ public class SerialReceiptCreationViewPresenter implements ViewPresenter{
 
 	protected void newReceipt() {
 
+		receiptPolicyWrapper.receipt = null;
 		String tempReceiptNumber = view.getReceiptNumber();
 		view.clear();
 		view.setReceiptNumber(tempReceiptNumber);
