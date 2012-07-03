@@ -31,7 +31,7 @@ update amartins.tblPNNodes set NodeCount=0 where PK in
 from amartins.tblPNNodes n
 inner join amartins.tblPNProcesses p on p.PK=n.FKProcess
 inner join amartins.tblBBSubCasualties c on c.PK=p.FKData
-inner join amartins..empresa.sinistros x on x.ordem + 0.1 = c.CNumber
+inner join amartins..empresa.sinistros x on x.ordem + 0.1 = c.SCNumber
 where x.estado='F' and x.datafecho is not null
 and n.FKController='785FE2C4-A0F3-43BD-BD92-A036010C8872')
 
@@ -40,7 +40,7 @@ update amartins.tblPNNodes set NodeCount=1 where PK in
 from amartins.tblPNNodes n
 inner join amartins.tblPNProcesses p on p.PK=n.FKProcess
 inner join amartins.tblBBSubCasualties c on c.PK=p.FKData
-inner join amartins..empresa.sinistros x on x.ordem + 0.1 = c.CNumber
+inner join amartins..empresa.sinistros x on x.ordem + 0.1 = c.SCNumber
 where x.estado='F' and x.datafecho is not null
 and n.FKController='2C3830AC-29B3-4CE7-9345-A036010CBBF9')
 
@@ -51,7 +51,7 @@ update amartins.tblPNNodes set NodeCount=0 where PK in
 from amartins.tblPNNodes n
 inner join amartins.tblPNProcesses p on p.PK=n.FKProcess
 inner join amartins.tblBBSubCasualties c on c.PK=p.FKData
-inner join amartins..empresa.sinistros x on x.ordem + 0.1 = c.CNumber
+inner join amartins..empresa.sinistros x on x.ordem + 0.1 = c.SCNumber
 where x.dataparticipacao is not null
 and n.FKController='D518C62B-FB36-4D45-9257-A036010C5190')
 
@@ -60,6 +60,6 @@ update amartins.tblPNNodes set NodeCount=1 where PK in
 from amartins.tblPNNodes n
 inner join amartins.tblPNProcesses p on p.PK=n.FKProcess
 inner join amartins.tblBBSubCasualties c on c.PK=p.FKData
-inner join amartins..empresa.sinistros x on x.ordem + 0.1 = c.CNumber
+inner join amartins..empresa.sinistros x on x.ordem + 0.1 = c.SCNumber
 where x.dataparticipacao is not null
 and n.FKController='5FEBB5D4-0243-4AA5-B244-A036010C5E51')
