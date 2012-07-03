@@ -1,3 +1,11 @@
+/** Paragem de processos **/
+
+update credite_egs.tblPNProcesses set IsRunning=0
+from credite_egs.tblPNProcesses p
+inner join credite_egs.tblBBCasualties c on c.PK=p.FKData
+inner join credegs..empresa.sinistros x on x.ordem=c.CNumber
+where x.estado='F' and x.datafecho is not null;
+
 /** Fechados **/
 
 update credite_egs.tblPNNodes set NodeCount=0 where PK in
