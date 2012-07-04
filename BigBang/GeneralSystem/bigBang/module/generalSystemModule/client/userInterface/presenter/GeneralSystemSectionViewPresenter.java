@@ -145,7 +145,7 @@ public class GeneralSystemSectionViewPresenter implements ViewPresenter {
 					if(display.equalsIgnoreCase("history")){
 						view.selectOperation(SectionOperation.HISTORY);
 						parameters.setParameter("historyownerid", SessionGeneralSystem.getInstance().id);
-						present("HISTORY", parameters);
+						present("HISTORY", parameters, false);
 					}else if(display.equalsIgnoreCase("user")){
 						view.selectOperation(SectionOperation.USER);
 						present("GENERAL_SYSTEM_USER_MANAGEMENT", parameters);
