@@ -43,6 +43,8 @@ public class ExercisesList extends FilterableList<ExerciseStub> {
 	}
 
 	public void setOwner(String ownerId){
+
+		String tempOwner = ownerId == null ? null : new String(this.ownerId);
 		this.ownerId = ownerId;
 		if(ownerId == null) {
 			clear();
@@ -63,6 +65,8 @@ public class ExercisesList extends FilterableList<ExerciseStub> {
 						return;
 					}
 				});
+			}else if(!this.ownerId.equalsIgnoreCase(tempOwner)){
+				clear();
 			}
 		}
 	}

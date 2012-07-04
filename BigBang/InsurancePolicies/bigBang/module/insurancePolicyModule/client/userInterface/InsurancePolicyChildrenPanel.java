@@ -65,7 +65,7 @@ public class InsurancePolicyChildrenPanel extends View {
 		this.insurancePolicy = policy;
 		String policyId = policy == null ? null : policy.id;
 		
-		boolean allow = policy != null ? PermissionChecker.hasPermission(policy, BigBangConstants.OperationIds.InsurancePolicyProcess.UPDATE_POLICY) : false;
+		boolean allow = policy != null ? PermissionChecker.hasPermission(policy, BigBangConstants.OperationIds.InsurancePolicyProcess.UPDATE_POLICY) : false;		
 		this.contactsList.setOwner(policyId);
 		this.contactsList.setOwnerType(BigBangConstants.EntityIds.INSURANCE_POLICY);
 		this.contactsList.allowCreation(allow);
