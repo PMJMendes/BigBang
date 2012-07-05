@@ -63,8 +63,12 @@ public class ReceiptSearchPanel extends SearchPanel<ReceiptStub> implements Rece
 				lineLabel = getFormatedLabel();
 				this.lineLabel.getElement().getStyle().setFontSize(11, Unit.PX);
 				this.lineLabel.getElement().getStyle().setFontStyle(FontStyle.OBLIQUE);
+				lineLabel.getElement().getStyle().setProperty("whiteSpace", "");
+				lineLabel.setHeight("1.2em");
 				clientLabel = getFormatedLabel();
 				this.clientLabel.getElement().getStyle().setFontSize(10, Unit.PX);
+				clientLabel.getElement().getStyle().setProperty("whiteSpace", "");
+				clientLabel.setHeight("1.2em");
 				
 				VerticalPanel container = new VerticalPanel();
 				container.setSize("100%", "100%");

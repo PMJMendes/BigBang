@@ -31,12 +31,13 @@ public class CasualtySearchPanelListEntry extends ListEntry<CasualtyStub> {
 	public <I extends Object> void setInfo(I info) {
 		if(!initialized){
 			numberLabel = getFormatedLabel();
-			numberLabel.setWordWrap(false);
 			numberLabel.getElement().getStyle().setFontSize(14, Unit.PX);
+			numberLabel.setWordWrap(false);
 			dateLabel = getFormatedLabel();
 			clientLabel = getFormatedLabel();
 			this.clientLabel.getElement().getStyle().setFontSize(10, Unit.PX);
-
+			clientLabel.getElement().getStyle().setProperty("whiteSpace", "");
+			clientLabel.setHeight("1.2em");
 			HorizontalPanel leftContainer = new HorizontalPanel();
 			leftContainer.setSize("100%", "100%");
 			

@@ -67,11 +67,11 @@ public class ExpenseSearchPanel extends SearchPanel<ExpenseStub> implements Expe
 					clientLabel = getFormatedLabel();
 					clientLabel.getElement().getStyle().setFontSize(11, Unit.PX);
 					clientLabel.getElement().getStyle().setProperty("whiteSpace", "");
-					clientLabel.setHeight("1em");
+					clientLabel.setHeight("1.2em");
 					policyCoverageLabel = getFormatedLabel();
 					policyCoverageLabel.getElement().getStyle().setFontSize(11, Unit.PX);
 					policyCoverageLabel.getElement().getStyle().setProperty("whiteSpace", "");
-					policyCoverageLabel.setHeight("1em");
+					policyCoverageLabel.setHeight("1.2em");
 					objectLabel = getFormatedLabel();
 					objectLabel.getElement().getStyle().setFontSize(10, Unit.PX);
 					VerticalPanel container = new VerticalPanel();

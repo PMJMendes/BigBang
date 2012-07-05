@@ -47,8 +47,11 @@ public class ClientSearchPanelListEntry extends ListEntry<ClientStub> {
 	protected void initialize(){
 		this.numberLabel = getFormatedLabel();
 		this.numberLabel.getElement().getStyle().setFontSize(14, Unit.PX);
+		this.numberLabel.setWordWrap(false);
 		this.nameLabel = getFormatedLabel();
 		this.nameLabel.getElement().getStyle().setFontSize(11, Unit.PX);
+		this.nameLabel.getElement().getStyle().setProperty("whiteSpace", "");
+		this.nameLabel.setHeight("1.2em");
 		this.groupLabel = getFormatedLabel();
 		this.groupLabel.getElement().getStyle().setFontSize(11, Unit.PX);
 		

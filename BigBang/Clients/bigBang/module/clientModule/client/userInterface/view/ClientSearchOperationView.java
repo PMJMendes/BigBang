@@ -83,7 +83,7 @@ public class ClientSearchOperationView extends View implements ClientSearchOpera
 		searchPanelWrapper.setSize("100%", "100%");
 
 		wrapper.addWest(searchPanelWrapper, SEARCH_PANEL_WIDTH);
-		wrapper.setWidgetMinSize(searchPanelWrapper, SEARCH_PANEL_WIDTH);
+		//wrapper.setWidgetMinSize(searchPanelWrapper, SEARCH_PANEL_WIDTH);
 
 		SplitLayoutPanel contentWrapper = new SplitLayoutPanel();
 		contentWrapper.setSize("100%", "100%");

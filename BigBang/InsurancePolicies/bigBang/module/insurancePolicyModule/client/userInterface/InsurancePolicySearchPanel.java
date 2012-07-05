@@ -58,6 +58,8 @@ public class InsurancePolicySearchPanel extends SearchPanel<InsurancePolicyStub>
 					numberLabel.setWordWrap(false);
 					clientLabel = getFormatedLabel();
 					clientLabel.getElement().getStyle().setFontSize(11, Unit.PX);
+					clientLabel.getElement().getStyle().setProperty("whiteSpace", "");
+					clientLabel.setHeight("1.2em");
 					lineLabel = getFormatedLabel();
 					lineLabel.getElement().getStyle().setFontSize(11, Unit.PX);
 					VerticalPanel container = new VerticalPanel();
