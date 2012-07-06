@@ -2225,8 +2225,7 @@ public class ReceiptServiceImpl
 	{
 		ReceiptSearchParameter lParam;
 		String lstrAux;
-		IEntity lrefPolicies;
-		IEntity lrefClients;
+//		IEntity lrefPolicies;
 		boolean lbFound;
 		int i;
 
@@ -2246,32 +2245,31 @@ public class ReceiptServiceImpl
 				pstrBuffer.append(" + ");
 			lbFound = true;
 			pstrBuffer.append("CASE WHEN [:Number] LIKE N'%").append(lstrAux).append("%' THEN ")
-					.append("-PATINDEX(N'%").append(lstrAux).append("%', [:Number]) ELSE ");
-			pstrBuffer.append("CASE WHEN [:Process:Parent] IN (SELECT [:Process] FROM (");
-			try
-			{
-				lrefPolicies = Entity.GetInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), Constants.ObjID_Policy));
-				lrefClients = Entity.GetInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), Constants.ObjID_Client));
-				pstrBuffer.append(lrefPolicies.SQLForSelectSingle());
-			}
-			catch (Throwable e)
-			{
-				throw new BigBangException(e.getMessage(), e);
-			}
-			pstrBuffer.append(") [AuxPols] WHERE [:Number] LIKE N'%").append(lstrAux).append("%') THEN ")
-					.append("-100*PATINDEX(N'%").append(lstrAux).append("%', (SELECT [:Number] FROM (");
-			try
-			{
-				pstrBuffer.append(lrefPolicies.SQLForSelectSingle());
-			}
-			catch (Throwable e)
-			{
-				throw new BigBangException(e.getMessage(), e);
-			}
-			pstrBuffer.append(") [AuxPols] WHERE [:Process] = [Aux].[:Process:Parent])) ELSE ");
+					.append("-PATINDEX(N'%").append(lstrAux).append("%', [:Number]) ");
 
-//			//Retirado por complexidade
-//			pstrBuffer.append("CASE WHEN [:Process:Parent] IN (SELECT [:Process] FROM (");
+//			pstrBuffer.append("WHEN [:Process:Parent] IN (SELECT [:Process] FROM (");
+//			try
+//			{
+//				lrefPolicies = Entity.GetInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), Constants.ObjID_Policy));
+//				pstrBuffer.append(lrefPolicies.SQLForSelectSingle());
+//			}
+//			catch (Throwable e)
+//			{
+//				throw new BigBangException(e.getMessage(), e);
+//			}
+//			pstrBuffer.append(") [AuxPols] WHERE [:Number] LIKE N'%").append(lstrAux).append("%') THEN ")
+//					.append("-100*PATINDEX(N'%").append(lstrAux).append("%', (SELECT [:Number] FROM (");
+//			try
+//			{
+//				pstrBuffer.append(lrefPolicies.SQLForSelectSingle());
+//			}
+//			catch (Throwable e)
+//			{
+//				throw new BigBangException(e.getMessage(), e);
+//			}
+//			pstrBuffer.append(") [AuxPols] WHERE [:Process] = [Aux].[:Process:Parent])) ");
+//
+//			pstrBuffer.append("WHEN [:Process:Parent] IN (SELECT [:Process] FROM (");
 //			try
 //			{
 //				pstrBuffer.append(lrefPolicies.SQLForSelectMulti());
@@ -2280,17 +2278,8 @@ public class ReceiptServiceImpl
 //			{
 //				throw new BigBangException(e.getMessage(), e);
 //			}
-//			pstrBuffer.append(") [AuxPols] WHERE [:Process:Parent] IN (SELECT [:Process] FROM (");
-//			try
-//			{
-//				pstrBuffer.append(lrefClients.SQLForSelectSingle());
-//			}
-//			catch (Throwable e)
-//			{
-//				throw new BigBangException(e.getMessage(), e);
-//			}
-//			pstrBuffer.append(") [AuxClients] WHERE CAST([:Number] AS NVARCHAR(20)) LIKE N'%").append(lstrAux).append("%')) THEN ")
-//					.append("-10000*PATINDEX(N'%").append(lstrAux).append("%', CAST((SELECT [AuxClients].[:Number] FROM (");
+//			pstrBuffer.append(") [AuxPols] WHERE CAST([:Client:Number] AS NVARCHAR(20)) LIKE N'%").append(lstrAux).append("%') THEN ")
+//					.append("-10000*PATINDEX(N'%").append(lstrAux).append("%', CAST((SELECT [:Client:Number] FROM (");
 //			try
 //			{
 //				pstrBuffer.append(lrefPolicies.SQLForSelectMulti());
@@ -2299,118 +2288,93 @@ public class ReceiptServiceImpl
 //			{
 //				throw new BigBangException(e.getMessage(), e);
 //			}
-//			pstrBuffer.append(") [AuxPols], (");
+//			pstrBuffer.append(") [AuxPols] WHERE [AuxPols].[:Process] = [Aux].[:Process:Parent]) AS NVARCHAR(20))) ");
+//
+//			pstrBuffer.append("WHEN [:Process:Parent] IN (SELECT [:Process] FROM (");
 //			try
 //			{
-//				pstrBuffer.append(lrefClients.SQLForSelectSingle());
+//				pstrBuffer.append(lrefPolicies.SQLForSelectMulti());
 //			}
 //			catch (Throwable e)
 //			{
 //				throw new BigBangException(e.getMessage(), e);
 //			}
-//			pstrBuffer.append(") [AuxClients] WHERE [AuxPols].[:Process] = [Aux].[:Process:Parent] AND ")
-//					.append("[AuxClients].[:Process] = [AuxPols].[:Process:Parent]) AS NVARCHAR(20))) ELSE ");
+//			pstrBuffer.append(") [AuxPols] WHERE [:Client:Name] LIKE N'%").append(lstrAux).append("%') THEN ")
+//					.append("-1000000*PATINDEX(N'%").append(lstrAux).append("%', (SELECT [:Client:Name] FROM (");
+//			try
+//			{
+//				pstrBuffer.append(lrefPolicies.SQLForSelectMulti());
+//			}
+//			catch (Throwable e)
+//			{
+//				throw new BigBangException(e.getMessage(), e);
+//			}
+//			pstrBuffer.append(") [AuxPols] WHERE [AuxPols].[:Process] = [Aux].[:Process:Parent])) ");
+//
+//			pstrBuffer.append("WHEN [:Process:Parent] IN (SELECT [:Process] FROM (");
+//			try
+//			{
+//				pstrBuffer.append(lrefPolicies.SQLForSelectMulti());
+//			}
+//			catch (Throwable e)
+//			{
+//				throw new BigBangException(e.getMessage(), e);
+//			}
+//			pstrBuffer.append(") [AuxPols] WHERE [:SubLine:Name] LIKE N'%").append(lstrAux).append("%') THEN ")
+//					.append("-100000000*PATINDEX(N'%").append(lstrAux).append("%', (SELECT [:SubLine:Name] FROM (");
+//			try
+//			{
+//				pstrBuffer.append(lrefPolicies.SQLForSelectMulti());
+//			}
+//			catch (Throwable e)
+//			{
+//				throw new BigBangException(e.getMessage(), e);
+//			}
+//			pstrBuffer.append(") [AuxPols] WHERE [:Process] = [Aux].[:Process:Parent])) ");
+//
+//			pstrBuffer.append("WHEN [:Process:Parent] IN (SELECT [:Process] FROM (");
+//			try
+//			{
+//				pstrBuffer.append(lrefPolicies.SQLForSelectMulti());
+//			}
+//			catch (Throwable e)
+//			{
+//				throw new BigBangException(e.getMessage(), e);
+//			}
+//			pstrBuffer.append(") [AuxPols] WHERE [:SubLine:Line:Name] LIKE N'%").append(lstrAux).append("%') THEN ")
+//					.append("-10000000000*PATINDEX(N'%").append(lstrAux).append("%', (SELECT [:SubLine:Line:Name] FROM (");
+//			try
+//			{
+//				pstrBuffer.append(lrefPolicies.SQLForSelectMulti());
+//			}
+//			catch (Throwable e)
+//			{
+//				throw new BigBangException(e.getMessage(), e);
+//			}
+//			pstrBuffer.append(") [AuxPols] WHERE [:Process] = [Aux].[:Process:Parent])) ");
+//
+//			pstrBuffer.append("WHEN [:Process:Parent] IN (SELECT [:Process] FROM (");
+//			try
+//			{
+//				pstrBuffer.append(lrefPolicies.SQLForSelectMulti());
+//			}
+//			catch (Throwable e)
+//			{
+//				throw new BigBangException(e.getMessage(), e);
+//			}
+//			pstrBuffer.append(") [AuxPols] WHERE [:SubLine:Line:Category:Name] LIKE N'%").append(lstrAux).append("%') THEN ")
+//					.append("-1000000000000*PATINDEX(N'%").append(lstrAux).append("%', (SELECT [:SubLine:Line:Category:Name] FROM (");
+//			try
+//			{
+//				pstrBuffer.append(lrefPolicies.SQLForSelectMulti());
+//			}
+//			catch (Throwable e)
+//			{
+//				throw new BigBangException(e.getMessage(), e);
+//			}
+//			pstrBuffer.append(") [AuxPols] WHERE [:Process] = [Aux].[:Process:Parent])) ");
 
-			pstrBuffer.append("CASE WHEN [:Process:Parent] IN (SELECT [:Process] FROM (");
-			try
-			{
-				pstrBuffer.append(lrefPolicies.SQLForSelectMulti());
-			}
-			catch (Throwable e)
-			{
-				throw new BigBangException(e.getMessage(), e);
-			}
-			pstrBuffer.append(") [AuxPols] WHERE [:Process:Parent] IN (SELECT [:Process] FROM (");
-			try
-			{
-				pstrBuffer.append(lrefClients.SQLForSelectSingle());
-			}
-			catch (Throwable e)
-			{
-				throw new BigBangException(e.getMessage(), e);
-			}
-			pstrBuffer.append(") [AuxClients] WHERE [:Name] LIKE N'%").append(lstrAux).append("%')) THEN ")
-					.append("-1000000*PATINDEX(N'%").append(lstrAux).append("%', (SELECT [AuxClients].[:Name] FROM (");
-			try
-			{
-				pstrBuffer.append(lrefPolicies.SQLForSelectMulti());
-			}
-			catch (Throwable e)
-			{
-				throw new BigBangException(e.getMessage(), e);
-			}
-			pstrBuffer.append(") [AuxPols], (");
-			try
-			{
-				pstrBuffer.append(lrefClients.SQLForSelectSingle());
-			}
-			catch (Throwable e)
-			{
-				throw new BigBangException(e.getMessage(), e);
-			}
-			pstrBuffer.append(") [AuxClients] WHERE [AuxPols].[:Process] = [Aux].[:Process:Parent] AND ")
-					.append("[AuxClients].[:Process] = [AuxPols].[:Process:Parent])) ELSE ");
-			pstrBuffer.append("CASE WHEN [:Process:Parent] IN (SELECT [:Process] FROM (");
-			try
-			{
-				pstrBuffer.append(lrefPolicies.SQLForSelectMulti());
-			}
-			catch (Throwable e)
-			{
-				throw new BigBangException(e.getMessage(), e);
-			}
-			pstrBuffer.append(") [AuxPols] WHERE [:SubLine:Name] LIKE N'%").append(lstrAux).append("%') THEN ")
-					.append("-100000000*PATINDEX(N'%").append(lstrAux).append("%', (SELECT [:SubLine:Name] FROM (");
-			try
-			{
-				pstrBuffer.append(lrefPolicies.SQLForSelectMulti());
-			}
-			catch (Throwable e)
-			{
-				throw new BigBangException(e.getMessage(), e);
-			}
-			pstrBuffer.append(") [AuxPols] WHERE [:Process] = [Aux].[:Process:Parent])) ELSE ");
-			pstrBuffer.append("CASE WHEN [:Process:Parent] IN (SELECT [:Process] FROM (");
-			try
-			{
-				pstrBuffer.append(lrefPolicies.SQLForSelectMulti());
-			}
-			catch (Throwable e)
-			{
-				throw new BigBangException(e.getMessage(), e);
-			}
-			pstrBuffer.append(") [AuxPols] WHERE [:SubLine:Line:Name] LIKE N'%").append(lstrAux).append("%') THEN ")
-					.append("-10000000000*PATINDEX(N'%").append(lstrAux).append("%', (SELECT [:SubLine:Line:Name] FROM (");
-			try
-			{
-				pstrBuffer.append(lrefPolicies.SQLForSelectMulti());
-			}
-			catch (Throwable e)
-			{
-				throw new BigBangException(e.getMessage(), e);
-			}
-			pstrBuffer.append(") [AuxPols] WHERE [:Process] = [Aux].[:Process:Parent])) ELSE ");
-			pstrBuffer.append("CASE WHEN [:Process:Parent] IN (SELECT [:Process] FROM (");
-			try
-			{
-				pstrBuffer.append(lrefPolicies.SQLForSelectMulti());
-			}
-			catch (Throwable e)
-			{
-				throw new BigBangException(e.getMessage(), e);
-			}
-			pstrBuffer.append(") [AuxPols] WHERE [:SubLine:Line:Category:Name] LIKE N'%").append(lstrAux).append("%') THEN ")
-					.append("-1000000000000*PATINDEX(N'%").append(lstrAux).append("%', (SELECT [:SubLine:Line:Category:Name] FROM (");
-			try
-			{
-				pstrBuffer.append(lrefPolicies.SQLForSelectMulti());
-			}
-			catch (Throwable e)
-			{
-				throw new BigBangException(e.getMessage(), e);
-			}
-			pstrBuffer.append(") [AuxPols] WHERE [:Process] = [Aux].[:Process:Parent])) ELSE ");
-			pstrBuffer.append("0 END END END END END END"); // END"); O END a mais parte do trim por complexidade
+			pstrBuffer.append("ELSE 0 END"); // END"); O END a mais parte do trim por complexidade
 		}
 
 		return lbFound;

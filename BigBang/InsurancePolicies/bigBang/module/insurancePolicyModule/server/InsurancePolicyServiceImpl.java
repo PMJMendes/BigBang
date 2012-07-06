@@ -4134,7 +4134,7 @@ public class InsurancePolicyServiceImpl
 	{
 		return new String[] {"[:Number]", "[:Process]", "[:SubLine:Line:Category]", "[:SubLine:Line:Category:Name]",
 				"[:SubLine:Line]", "[:SubLine:Line:Name]", "[:SubLine]", "[:SubLine:Name]", "[:Case Study]", "[:Status]",
-				"[:Status:Status]", "[:Status:Level]"};
+				"[:Status:Status]", "[:Status:Level], [:Client], [:Client:Number], [:Client:Name]"};
 	}
 
 	protected boolean buildFilter(StringBuilder pstrBuffer, SearchParameter pParam)
@@ -4295,35 +4295,16 @@ public class InsurancePolicyServiceImpl
 
 	protected SearchResult buildResult(UUID pid, Object[] parrValues)
 	{
-		IProcess lobjProcess;
 		InsurancePolicyStub lobjResult;
-		Client lobjClient;
-
-		try
-		{
-			lobjProcess = PNProcess.GetInstance(Engine.getCurrentNameSpace(), (UUID)parrValues[1]);
-			try
-			{
-				lobjClient = (Client)lobjProcess.GetParent().GetData();
-			}
-			catch (Throwable e)
-			{
-				lobjClient = null;
-			}
-		}
-		catch (Throwable e)
-		{
-			lobjProcess = null;
-			lobjClient = null;
-		}
 
 		lobjResult = new InsurancePolicyStub();
 
 		lobjResult.id = pid.toString();
 		lobjResult.number = (String)parrValues[0];
-		lobjResult.clientId = (lobjClient == null ? null : lobjClient.getKey().toString());
-		lobjResult.clientNumber = (lobjClient == null ? "" : ((Integer)lobjClient.getAt(1)).toString());
-		lobjResult.clientName = (lobjClient == null ? "(Erro)" : lobjClient.getLabel());
+		lobjResult.processId = ((UUID)parrValues[1]).toString();
+		lobjResult.clientId = ((UUID)parrValues[12]).toString();
+		lobjResult.clientNumber = ((Integer)parrValues[13]).toString();
+		lobjResult.clientName = (String)parrValues[14];
 		lobjResult.categoryId = parrValues[2].toString();
 		lobjResult.categoryName = (String)parrValues[3];
 		lobjResult.lineId = parrValues[4].toString();
@@ -4347,7 +4328,6 @@ public class InsurancePolicyServiceImpl
 			lobjResult.statusIcon = InsurancePolicyStub.PolicyStatus.OBSOLETE;
 			break;
 		}
-		lobjResult.processId = (lobjProcess == null ? null : lobjProcess.getKey().toString());
 		return lobjResult;
 	}
 
@@ -4356,7 +4336,6 @@ public class InsurancePolicyServiceImpl
 	{
 		InsurancePolicySearchParameter lParam;
 		String lstrAux;
-		IEntity lrefClients;
 		boolean lbFound;
 		int i;
 
@@ -4376,56 +4355,18 @@ public class InsurancePolicyServiceImpl
 				pstrBuffer.append(" + ");
 			lbFound = true;
 			pstrBuffer.append("CASE WHEN [:Number] LIKE N'%").append(lstrAux).append("%' THEN ")
-					.append("-PATINDEX(N'%").append(lstrAux).append("%', [:Number]) ELSE ")
-					.append("CASE WHEN [:Process:Parent] IN (SELECT [:Process] FROM (");
-			try
-			{
-				lrefClients = Entity.GetInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), Constants.ObjID_Client));
-				pstrBuffer.append(lrefClients.SQLForSelectMulti());
-			}
-			catch (Throwable e)
-			{
-        		throw new BigBangException(e.getMessage(), e);
-			}
-			pstrBuffer.append(") [AuxClients] WHERE [:Name] LIKE N'%").append(lstrAux).append("%') THEN ")
-					.append("-1000*PATINDEX(N'%").append(lstrAux).append("%', (SELECT [:Name] FROM (");
-			try
-			{
-				pstrBuffer.append(lrefClients.SQLForSelectMulti());
-			}
-			catch (Throwable e)
-			{
-        		throw new BigBangException(e.getMessage(), e);
-			}
-			pstrBuffer.append(") [AuxClients] WHERE [:Process] = [Aux].[:Process:Parent])) ELSE ")
-					.append("CASE WHEN [:Process:Parent] IN (SELECT [:Process] FROM (");
-			try
-			{
-				lrefClients = Entity.GetInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), Constants.ObjID_Client));
-				pstrBuffer.append(lrefClients.SQLForSelectMulti());
-			}
-			catch (Throwable e)
-			{
-        		throw new BigBangException(e.getMessage(), e);
-			}
-			pstrBuffer.append(") [AuxClients] WHERE CAST([:Number] AS NVARCHAR(20)) LIKE N'%").append(lstrAux).append("%') THEN ")
-					.append("-1000000*PATINDEX(N'%").append(lstrAux).append("%', CAST((SELECT [:Number] FROM (");
-			try
-			{
-				pstrBuffer.append(lrefClients.SQLForSelectMulti());
-			}
-			catch (Throwable e)
-			{
-        		throw new BigBangException(e.getMessage(), e);
-			}
-			pstrBuffer.append(") [AuxClients] WHERE [:Process] = [Aux].[:Process:Parent]) AS NVARCHAR(20))) ELSE ")
-					.append("CASE WHEN [:SubLine:Name] LIKE N'%").append(lstrAux).append("%' THEN ")
-					.append("-1000000000*PATINDEX(N'%").append(lstrAux).append("%', [:SubLine:Name]) ELSE ")
-					.append("CASE WHEN [:SubLine:Line:Name] LIKE N'%").append(lstrAux).append("%' THEN ")
-					.append("-1000000000000*PATINDEX(N'%").append(lstrAux).append("%', [:SubLine:Line:Name]) ELSE ")
-					.append("CASE WHEN [:SubLine:Line:Category:Name] LIKE N'%").append(lstrAux).append("%' THEN ")
-					.append("-1000000000000000*PATINDEX(N'%").append(lstrAux).append("%', [:SubLine:Line:Category:Name]) ELSE ")
-					.append("0 END END END END END END");
+					.append("-PATINDEX(N'%").append(lstrAux).append("%', [:Number]) ")
+					.append("WHEN [:Client:Name] LIKE N'%").append(lstrAux).append("%' THEN ")
+					.append("-1000*PATINDEX(N'%").append(lstrAux).append("%', [:Client:Name]) ")
+					.append("WHEN CAST([:Client:Number] AS NVARCHAR(20)) LIKE N'%").append(lstrAux).append("%' THEN ")
+					.append("-1000000*PATINDEX(N'%").append(lstrAux).append("%', CAST([:Client:Number] AS NVARCHAR(20))) ")
+					.append("WHEN [:SubLine:Name] LIKE N'%").append(lstrAux).append("%' THEN ")
+					.append("-1000000000*PATINDEX(N'%").append(lstrAux).append("%', [:SubLine:Name]) ")
+					.append("WHEN [:SubLine:Line:Name] LIKE N'%").append(lstrAux).append("%' THEN ")
+					.append("-1000000000000*PATINDEX(N'%").append(lstrAux).append("%', [:SubLine:Line:Name]) ")
+					.append("WHEN [:SubLine:Line:Category:Name] LIKE N'%").append(lstrAux).append("%' THEN ")
+					.append("-1000000000000000*PATINDEX(N'%").append(lstrAux).append("%', [:SubLine:Line:Category:Name]) ")
+					.append("ELSE 0 END");
 		}
 
 		return lbFound;
