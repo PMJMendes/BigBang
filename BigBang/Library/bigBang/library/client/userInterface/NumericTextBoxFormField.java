@@ -23,10 +23,10 @@ import com.google.gwt.user.client.ui.ValueBoxBase.TextAlignment;
 public class NumericTextBoxFormField extends FormField<Double>{
 
 	public static final String DUMMY_VALUE = "-";
-	
+
 	public class NumericWrapper implements HasValue<Double>{
 
-		
+
 		protected TextBox field;
 		protected String curr = "";
 		private HandlerManager handlerManager;
@@ -101,11 +101,13 @@ public class NumericTextBoxFormField extends FormField<Double>{
 
 		@Override
 		public void setValue(Double value) {
+			hasDummyValue = false;
 			this.setValue(value, true);
 		}
 
 		@Override
 		public void setValue(Double value, boolean fireEvents) {
+			hasDummyValue = false;
 			if(value == null) {
 				field.setValue(null);
 			}else{
@@ -126,7 +128,7 @@ public class NumericTextBoxFormField extends FormField<Double>{
 	protected NumberFormat nf;
 	protected boolean showDecimal;
 	private boolean hasDummyValue;
-	
+
 	public NumberFormat getNumberFormat() {
 		return nf;
 	}
@@ -187,6 +189,9 @@ public class NumericTextBoxFormField extends FormField<Double>{
 	@Override
 	public void clear() {
 		((NumericWrapper)field).getField().setValue("");
+		((NumericWrapper)field).getField().setValue(((NumericWrapper)field).getField().isReadOnly() ? "-" : "");
+		if(((NumericWrapper)field).getField().isReadOnly())
+			hasDummyValue = true;
 	}
 
 	@Override
@@ -215,7 +220,7 @@ public class NumericTextBoxFormField extends FormField<Double>{
 		mandatoryIndicatorLabel.setVisible(!readonly&& this.isMandatory());
 
 	}
-	
+
 	public void showDecimal(boolean show){
 		showDecimal = show;
 	}
