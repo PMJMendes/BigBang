@@ -274,6 +274,7 @@ public class ExternDeletePolicy
 		try
 		{
 			lobjAux = Policy.GetInstance(Engine.getCurrentNameSpace(), (UUID)null);
+			mobjData.midClient = GetProcess().GetDataKey();
 			mobjData.ToObject(lobjAux);
 			lobjAux.SaveToDb(pdb);
 			mobjData.mid = lobjAux.getKey();

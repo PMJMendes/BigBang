@@ -2,19 +2,23 @@ package com.premiumminds.BigBang.Jewel.Operations.Policy;
 
 import java.util.UUID;
 
-import com.premiumminds.BigBang.Jewel.Constants;
-import com.premiumminds.BigBang.Jewel.Objects.Client;
-
+import Jewel.Engine.Engine;
 import Jewel.Engine.DataAccess.SQLServer;
+import Jewel.Engine.SysObjects.JewelEngineException;
 import Jewel.Petri.SysObjects.JewelPetriException;
 import Jewel.Petri.SysObjects.UndoableOperation;
+
+import com.premiumminds.BigBang.Jewel.Constants;
+import com.premiumminds.BigBang.Jewel.Objects.Client;
 
 public class TransferToClient
 	extends UndoableOperation
 {
 	private static final long serialVersionUID = 1L;
 
-	public UUID midNewProcess;
+	public UUID midNewClient;
+	private UUID midOldClient;
+	private UUID midNewProcess;
 	private UUID midOldProcess;
 	private String mstrNew;
 	private String mstrOld;
@@ -50,14 +54,25 @@ public class TransferToClient
 	{
 		Client lobjOld, lobjNew;
 
+		try
+		{
+			GetProcess().GetData().setAt(17, midNewClient);
+
+			lobjNew = Client.GetInstance(Engine.getCurrentNameSpace(), midNewClient);
+		}
+		catch (Throwable e)
+		{
+			throw new JewelPetriException(e.getMessage(), e);
+		}
+		midNewProcess = lobjNew.GetProcessID();
+		mstrNew = ((Integer)lobjNew.getAt(1)).toString() + " - " + lobjNew.getLabel();
+
 		midOldProcess = GetProcess().GetParent().getKey();
 		lobjOld = (Client)GetProcess().GetParent().GetData();
+		midOldClient = lobjOld.getKey();
 		mstrOld = ((Integer)lobjOld.getAt(1)).toString() + " - " + lobjOld.getLabel();
 
 		GetProcess().SetParentProcId(midNewProcess, pdb);
-
-		lobjNew = (Client)GetProcess().GetParent().GetData();
-		mstrNew = ((Integer)lobjNew.getAt(1)).toString() + " - " + lobjNew.getLabel();
 
 		midPolicy = GetProcess().GetDataKey();
 	}
@@ -75,6 +90,14 @@ public class TransferToClient
 	protected void Undo(SQLServer pdb)
 		throws JewelPetriException
 	{
+		try
+		{
+			GetProcess().GetData().setAt(17, midOldClient);
+		}
+		catch (JewelEngineException e)
+		{
+			throw new JewelPetriException(e.getMessage(), e);
+		}
 		GetProcess().SetParentProcId(midOldProcess, pdb);
 	}
 

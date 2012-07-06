@@ -404,7 +404,7 @@ public class ReportServiceImpl
 				.append("</td> </tr>");
 
 		lstrBuffer.append("<tr style=\"height:30px;border-bottom:1px solid #3f6d9d;\"> ")
-				.append("<td style=\"padding-left:5px;border-right:1px solid #3f6d9d;border-bottom:1px solid #3f6d9d;\">Total de Movimentos</td> ")
+				.append("<td style=\"padding-left:5px;border-right:1px solid #3f6d9d;border-bottom:1px solid #3f6d9d;\">Nº de Movimentos</td> ")
 				.append("<td style=\"padding-left:5px;border-bottom:1px solid #3f6d9d;\">")
 				.append(llngTotal)
 				.append("</td> </tr>");
@@ -455,7 +455,7 @@ public class ReportServiceImpl
 					.append("</td> </tr> ");
 
 			lstrBuffer.append("<tr style=\"height:30px;border-bottom:1px solid #3f6d9d;\"> ")
-					.append("<td style=\"padding-left:5px;border-right:1px solid #3f6d9d;border-bottom:1px solid #3f6d9d;\">Total de Movimentos</td> ")
+					.append("<td style=\"padding-left:5px;border-right:1px solid #3f6d9d;border-bottom:1px solid #3f6d9d;\">Nº de Movimentos</td> ")
 					.append("<td style=\"padding-left:5px;border-bottom:1px solid #3f6d9d;\">")
 					.append(llngCount)
 					.append("</td> </tr> </table>");

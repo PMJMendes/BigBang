@@ -3594,7 +3594,6 @@ public class InsurancePolicyServiceImpl
 	{
 		Policy lobjPolicy;
 		TransferToClient lopTTC;
-		Client lobjClient;
 
 		if ( Engine.getCurrentUser() == null )
 			throw new SessionExpiredException();
@@ -3602,7 +3601,6 @@ public class InsurancePolicyServiceImpl
 		try
 		{
 			lobjPolicy = Policy.GetInstance(Engine.getCurrentNameSpace(), UUID.fromString(policyId));
-			lobjClient = Client.GetInstance(Engine.getCurrentNameSpace(), UUID.fromString(newClientId));
 		}
 		catch (Throwable e)
 		{
@@ -3610,7 +3608,7 @@ public class InsurancePolicyServiceImpl
 		}
 
 		lopTTC = new TransferToClient(lobjPolicy.GetProcessID());
-		lopTTC.midNewProcess = lobjClient.GetProcessID();
+		lopTTC.midNewClient = UUID.fromString(newClientId);
 
 		try
 		{

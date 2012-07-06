@@ -16,7 +16,8 @@ public class PolicyData
 	private static final long serialVersionUID = 1L;
 
 	public UUID mid;
-	
+
+	public UUID midClient;
 	public String mstrNumber;
 	public UUID midCompany;
 	public UUID midSubLine;
@@ -49,6 +50,7 @@ public class PolicyData
 	public void Clone(PolicyData pobjSource)
 	{
 		mid = pobjSource.mid;
+		midClient = pobjSource.midClient;
 		mstrNumber = pobjSource.mstrNumber;
 		midCompany = pobjSource.midCompany;
 		midSubLine = pobjSource.midSubLine;
@@ -88,6 +90,8 @@ public class PolicyData
 		midStatus = (UUID)pobjSource.getAt(13);
 		mdblPremium = (BigDecimal)pobjSource.getAt(14);
 		mstrDocuShare = (String)pobjSource.getAt(15);
+//		unusedMigrationID = (Integer)pobjSource.getAt(16);
+		midClient = (UUID)pobjSource.getAt(17);
 	}
 
 	public void ToObject(ObjectBase pobjDest)
@@ -111,6 +115,8 @@ public class PolicyData
 			pobjDest.setAt(13, midStatus);
 			pobjDest.setAt(14, mdblPremium);
 //			pobjDest.setAt(15, mstrDocuShare); JMMM: Nunca gravar por cima disto
+//			pobjDest.setAt(16, unusedMigrationID); JMMM: Isto não é usado pela aplicação
+			pobjDest.setAt(17, midClient);
 		}
 		catch (Throwable e)
 		{
