@@ -3,13 +3,14 @@ package bigBang.library.client.userInterface.view;
 import bigBang.definitions.shared.BigBangConstants;
 import bigBang.definitions.shared.InfoOrDocumentRequest;
 import bigBang.library.client.userInterface.ExpandableSelectionFormField;
+import bigBang.library.client.userInterface.NumericTextBoxFormField;
 import bigBang.library.client.userInterface.RichTextAreaFormField;
 import bigBang.library.client.userInterface.TextBoxFormField;
 
 public class ViewInfoOrDocumentRequestForm extends
 		FormView<InfoOrDocumentRequest> {
 
-	private TextBoxFormField replyLimit;
+	private NumericTextBoxFormField replyLimit;
 	private ExpandableSelectionFormField type;
 	private TextBoxFormField subject;
 	private RichTextAreaFormField text;
@@ -18,7 +19,7 @@ public class ViewInfoOrDocumentRequestForm extends
 	private TextBoxFormField externalCCs;
 	
 	public ViewInfoOrDocumentRequestForm(){
-		replyLimit = new TextBoxFormField("Prazo de Resposta (dias)");
+		replyLimit = new NumericTextBoxFormField("Prazo de Resposta (dias)");
 		replyLimit.setFieldWidth("72px");
 		type = new ExpandableSelectionFormField(BigBangConstants.TypifiedListIds.REQUEST_TYPE, "Tipo de Pedido");
 		subject = new TextBoxFormField("Assunto");
@@ -51,7 +52,7 @@ public class ViewInfoOrDocumentRequestForm extends
 		if(info == null) {
 			clearInfo();
 		}else{
-			replyLimit.setValue(info.replylimit+"");
+			replyLimit.setValue(info.replylimit == null ? null : (double)info.replylimit);
 			type.setValue(info.requestTypeId);
 			subject.setValue(info.message.subject);
 			text.setValue(info.message.text);

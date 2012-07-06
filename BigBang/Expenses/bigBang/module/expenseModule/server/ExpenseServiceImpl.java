@@ -132,7 +132,7 @@ public class ExpenseServiceImpl
 		lobjResult.lineName = (lobjSubLine == null ? null : lobjSubLine.getLine().getLabel());
 		lobjResult.subLineName = (lobjSubLine == null ? null : lobjSubLine.getLabel());
 		lobjResult.managerId = lobjProcess.GetManagerID().toString();
-		lobjResult.settlement = ( lobjExpense.getAt(8) == null ? null : ((BigDecimal)lobjExpense.getAt(8)).toPlainString() );
+		lobjResult.settlement = ( lobjExpense.getAt(8) == null ? null : ((BigDecimal)lobjExpense.getAt(8)).doubleValue() );
 		lobjResult.isManual = (Boolean)lobjExpense.getAt(9);
 		lobjResult.notes = (String)lobjExpense.getAt(10);
 

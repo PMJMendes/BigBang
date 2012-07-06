@@ -106,7 +106,7 @@ public class ExternalRequestContinuationViewPresenter implements ViewPresenter {
 	}
 	
 	protected void onConfirm(){
-		final Incoming incoming = view.getForm().getValue();
+		final Incoming incoming = view.getForm().getInfo();
 		service.receiveAdditional(incoming, new BigBangAsyncCallback<ExternalInfoRequest>() {
 
 			@Override

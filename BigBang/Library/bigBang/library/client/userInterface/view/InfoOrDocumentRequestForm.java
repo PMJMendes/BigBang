@@ -16,6 +16,7 @@ import bigBang.definitions.shared.User;
 import bigBang.library.client.dataAccess.DataBrokerManager;
 import bigBang.library.client.userInterface.ExpandableListBoxFormField;
 import bigBang.library.client.userInterface.ListBoxFormField;
+import bigBang.library.client.userInterface.NumericTextBoxFormField;
 import bigBang.library.client.userInterface.TextBoxFormField;
 import bigBang.library.client.userInterface.TypifiedTextFormField;
 import bigBang.library.client.userInterface.autocomplete.AutoCompleteTextListFormField;
@@ -28,7 +29,7 @@ public class InfoOrDocumentRequestForm extends FormView<InfoOrDocumentRequest> {
 	protected ExpandableListBoxFormField requestType;
 	protected TypifiedTextFormField text;
 	protected ListBoxFormField to;
-	protected TextBoxFormField replyLimit;
+	protected NumericTextBoxFormField replyLimit;
 	protected AutoCompleteTextListFormField forwardReply;
 	protected TextBoxFormField internalCCAddresses;
 	protected TextBoxFormField externalCCAddresses;
@@ -40,7 +41,7 @@ public class InfoOrDocumentRequestForm extends FormView<InfoOrDocumentRequest> {
 		text = new TypifiedTextFormField();
 		to = new ListBoxFormField("Destinatário");
 		to.setFieldWidth("400px");
-		replyLimit = new TextBoxFormField("Prazo de Resposta (dias)");
+		replyLimit = new NumericTextBoxFormField("Prazo de Resposta (dias)");
 		replyLimit.setFieldWidth("70px");
 		forwardReply = new AutoCompleteTextListFormField("Forward/Reply");
 		internalCCAddresses = new TextBoxFormField("BCC (interno) Endereços separados por ';'");
@@ -89,12 +90,7 @@ public class InfoOrDocumentRequestForm extends FormView<InfoOrDocumentRequest> {
 		request.requestTypeId = requestType.getValue();
 		TypifiedText requestText = text.getValue();
 		request.message.toContactInfoId = to.getValue();
-		String limit = replyLimit.getValue();
-		try{
-			request.replylimit = limit == null ? null : new Integer(limit);
-		}catch(NumberFormatException e){
-			request.replylimit = null;
-		}
+		request.replylimit = replyLimit.getValue().intValue();
 		
 		Collection<String> selectedUsers = this.forwardReply.getValue();
 		String[] users = new String[selectedUsers.size()];
@@ -124,7 +120,7 @@ public class InfoOrDocumentRequestForm extends FormView<InfoOrDocumentRequest> {
 		requestText.subject = info.message.subject;
 		requestText.text = info.message.text;
 		text.setValue(requestText);
-		replyLimit.setValue(info.replylimit == null ? null : info.replylimit.toString());
+		replyLimit.setValue(info.replylimit == null ? null : (double)info.replylimit);
 		
 		List<String> users = new ArrayList<String>();
 		int nUsers = info.message.forwardUserFullNames == null ? 0 : info.message.forwardUserFullNames.length;

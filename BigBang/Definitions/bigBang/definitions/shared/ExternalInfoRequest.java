@@ -13,7 +13,7 @@ public class ExternalInfoRequest
 		
 		public String requestId;
 		public IncomingMessage message;
-		public int replylimit;
+		public Integer replylimit;
 
 		public Incoming()
 		{
@@ -30,7 +30,7 @@ public class ExternalInfoRequest
 		public String requestId;
 		public OutgoingMessage message;
 		public boolean isFinal;
-		public int replylimit;
+		public Integer replylimit;
 
 		public Outgoing()
 		{
@@ -54,7 +54,7 @@ public class ExternalInfoRequest
 	public String parentDataTypeId;
 	public String subject;
 	public IncomingMessage message;
-	public int replylimit;
+	public Integer replylimit;
 	public String originalFrom;
 
 	public ExternalInfoRequest()

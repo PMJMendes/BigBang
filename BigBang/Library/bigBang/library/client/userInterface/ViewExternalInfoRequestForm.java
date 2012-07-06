@@ -7,13 +7,13 @@ public class ViewExternalInfoRequestForm extends FormView<ExternalInfoRequest> {
 
 	private TextBoxFormField subject;
 	private TextBoxFormField from;
-	private TextBoxFormField replyLimit;
+	private NumericTextBoxFormField replyLimit;
 	private RichTextAreaFormField body;
 	
 	public ViewExternalInfoRequestForm(){
 		subject = new TextBoxFormField("Assunto");
 		from = new TextBoxFormField("De");
-		replyLimit = new TextBoxFormField("Prazo de Resposta (dias)");
+		replyLimit = new NumericTextBoxFormField("Prazo de Resposta (dias)");
 		replyLimit.setFieldWidth("72px");
 		body = new RichTextAreaFormField();
 		body.showToolbar(false);
@@ -34,13 +34,7 @@ public class ViewExternalInfoRequestForm extends FormView<ExternalInfoRequest> {
 		ExternalInfoRequest result = getValue();
 		if(result != null) {
 			result.subject = subject.getValue();
-			int limit = -1;
-			try{
-				limit = Integer.parseInt(replyLimit.getValue());
-			}catch (NumberFormatException e) {
-				//
-			}
-			result.replylimit = limit;
+			result.replylimit = replyLimit.getValue().intValue();
 			result.originalFrom = from.getValue();
 		}
 		return result;
@@ -53,7 +47,7 @@ public class ViewExternalInfoRequestForm extends FormView<ExternalInfoRequest> {
 		} else {
 			subject.setValue(info.subject);
 			from.setValue(info.originalFrom);
-			replyLimit.setValue(info.replylimit + "");
+			replyLimit.setValue(info.replylimit == null ? null : (double)info.replylimit);
 			body.setValue(info.message.notes);
 		}
 	}

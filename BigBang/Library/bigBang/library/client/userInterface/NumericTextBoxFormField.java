@@ -22,8 +22,11 @@ import com.google.gwt.user.client.ui.ValueBoxBase.TextAlignment;
 
 public class NumericTextBoxFormField extends FormField<Double>{
 
+	public static final String DUMMY_VALUE = "-";
+	
 	public class NumericWrapper implements HasValue<Double>{
 
+		
 		protected TextBox field;
 		protected String curr = "";
 		private HandlerManager handlerManager;
@@ -122,6 +125,7 @@ public class NumericTextBoxFormField extends FormField<Double>{
 	protected HorizontalPanel wrapper;
 	protected NumberFormat nf;
 	protected boolean showDecimal;
+	private boolean hasDummyValue;
 	
 	public NumberFormat getNumberFormat() {
 		return nf;
@@ -190,9 +194,24 @@ public class NumericTextBoxFormField extends FormField<Double>{
 		if(!editable){
 			return;
 		}
-		((NumericWrapper)field).getField().setEnabled(!readonly);
-		((NumericWrapper)field).getField().getElement().getStyle().setBorderColor(readonly ? "transparent" : "gray");
-		((NumericWrapper)field).getField().getElement().getStyle().setBackgroundColor(readonly ? "transparent" : "white");
+		TextBox field = ((TextBox)getTextBox());
+		if(field.isReadOnly() != readonly){
+			if(readonly){
+				if(field.getValue().equals("")){
+					field.setValue(DUMMY_VALUE);
+					hasDummyValue = true;
+				}
+			}else{
+				if(hasDummyValue){
+					field.setValue("");
+					hasDummyValue = false;
+				}
+			}
+		}
+		((NumericWrapper)this.field).getField().setEnabled(!readonly);
+		((NumericWrapper)this.field).getField().setReadOnly(readonly);
+		((NumericWrapper)this.field).getField().getElement().getStyle().setBorderColor(readonly ? "transparent" : "gray");
+		((NumericWrapper)this.field).getField().getElement().getStyle().setBackgroundColor(readonly ? "transparent" : "white");
 		mandatoryIndicatorLabel.setVisible(!readonly&& this.isMandatory());
 
 	}
@@ -256,7 +275,11 @@ public class NumericTextBoxFormField extends FormField<Double>{
 	}
 
 	public String getStringValue(){
-		return getTextBox().getValue();
+		String value = getTextBox().getValue();
+		if((value != null && value.isEmpty()) || (value != null && value.equals(DUMMY_VALUE))){
+			value = null;
+		}
+		return value;
 	}
 
 	public void setStringValue(String value, boolean fireEvents) {

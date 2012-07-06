@@ -29,7 +29,7 @@ public class Expense
 	public String lineName;
 	public String subLineName;
 	public String managerId;
-	public String settlement; //Em €
+	public Double settlement; //Em €
 	public boolean isManual;
 	public String notes;
 }

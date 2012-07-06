@@ -109,6 +109,7 @@ public class TextAreaFormField extends FormField<String> {
 				}
 			}
 		}
+		field.setReadOnly(readOnly);
 		field.setEnabled(!readOnly);
 		field.getElement().getStyle().setBorderColor(readOnly ? "transparent" : "gray");
 		field.getElement().getStyle().setBackgroundColor(readOnly ? "transparent" : "white");
@@ -129,7 +130,7 @@ public class TextAreaFormField extends FormField<String> {
 	@Override
 	public String getValue() {
 		String value = super.getValue();
-		if(value != null && value.isEmpty()){
+		if(value != null && value.isEmpty()|| (value != null && value.equals("-"))){
 			value = null;
 		}
 		return value;

@@ -7,34 +7,28 @@ import bigBang.library.client.userInterface.view.FormView;
 public class ExternalRequestReplyForm extends FormView<Outgoing> {
 
 	protected CheckBoxFormField isFinal;
-	protected TextBoxFormField replyLimit;
+	protected NumericTextBoxFormField replyLimit;
 	protected OutgoingMessageFormField message;
-	
+
 	public ExternalRequestReplyForm(){
 		isFinal = new CheckBoxFormField("Finalizar Pedido");
-		replyLimit = new TextBoxFormField("Prazo de Resposta (dias)");
+		replyLimit = new NumericTextBoxFormField("Prazo de Resposta (dias)");
 		replyLimit.setFieldWidth("72px");
 		message = new OutgoingMessageFormField();
-		
+
 		addSection("Detalhes da Resposta");
 		addFormField(replyLimit, true);
 		addFormField(isFinal, false);
 		addFormField(message);
 	}
-	
-	
+
+
 	@Override
 	public Outgoing getInfo() {
 		Outgoing result = getValue();
 		if(result != null) {
 			result.isFinal = isFinal.getValue();
-			int limit = -1;
-			try{
-				limit = Integer.parseInt(replyLimit.getValue());
-			}catch (Exception e) {
-				//
-			}
-			result.replylimit = limit;
+			result.replylimit = replyLimit.getValue().intValue();
 			result.message = message.getValue();
 		}
 		return result;
@@ -46,15 +40,15 @@ public class ExternalRequestReplyForm extends FormView<Outgoing> {
 			clearInfo();
 		}else{
 			isFinal.setValue(info.isFinal);
-			replyLimit.setValue(info.replylimit + "");
+			replyLimit.setValue(info.replylimit == null ? null : (double)info.replylimit);
 			message.setValue(info.message);
 		}
 	}
-	
+
 	public void setAvailableContacts(Contact[] contacts){
-		 message.setAvailableContacts(contacts);
+		message.setAvailableContacts(contacts);
 	}
-	
+
 	public void setUserList(String[] usernames) {
 		message.setUserList(usernames);
 	}

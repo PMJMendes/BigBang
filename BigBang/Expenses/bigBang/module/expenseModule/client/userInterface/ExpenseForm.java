@@ -34,7 +34,7 @@ import bigBang.module.insurancePolicyModule.client.dataAccess.SubPolicyTypifiedL
 public class ExpenseForm extends FormView<Expense>{
 
 	private ExpandableListBoxFormField manager;
-	private TextBoxFormField settlement;
+	private NumericTextBoxFormField settlement;
 	private Label settleLabel;
 	private Button settleButton;
 	private TextAreaFormField notes;
@@ -52,7 +52,7 @@ public class ExpenseForm extends FormView<Expense>{
 	public ExpenseForm() {
 
 		manager = new ExpandableListBoxFormField(BigBangConstants.EntityIds.USER, "Gestor");
-		settlement = new TextBoxFormField("Indemnização");
+		settlement = new NumericTextBoxFormField("Indemnização");
 		settlement.setUnitsLabel("€");
 		settlement.setFieldWidth("175px");
 		settleButton = new Button("Substituir");

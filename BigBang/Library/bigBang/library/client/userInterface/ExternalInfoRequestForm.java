@@ -6,7 +6,7 @@ import bigBang.library.client.userInterface.view.FormView;
 public class ExternalInfoRequestForm extends FormView<ExternalInfoRequest>{
 
 	TextBoxFormField requestSubject = new TextBoxFormField("Assunto do pedido");
-	TextBoxFormField replyLimit = new TextBoxFormField("Número de dias");
+	NumericTextBoxFormField replyLimit = new NumericTextBoxFormField("Número de dias");
 	IncomingMessageFormField messageFormField = new IncomingMessageFormField();
 
 
@@ -26,11 +26,7 @@ public class ExternalInfoRequestForm extends FormView<ExternalInfoRequest>{
 
 		ExternalInfoRequest request = value;
 		request.message = messageFormField.getValue();
-		try{
-			request.replylimit = Integer.parseInt(replyLimit.getValue());}
-		catch(NumberFormatException e){
-			request.replylimit = -1;
-		}
+		request.replylimit = replyLimit.getValue().intValue();
 
 		request.subject = requestSubject.getValue();
 
@@ -43,7 +39,7 @@ public class ExternalInfoRequestForm extends FormView<ExternalInfoRequest>{
 
 		requestSubject.setValue(info.subject);
 		messageFormField.setValue(info.message);
-		replyLimit.setValue(info.replylimit+"");
+		replyLimit.setValue(info.replylimit == null ? null : (double)info.replylimit);
 	}
 
 	@Override
