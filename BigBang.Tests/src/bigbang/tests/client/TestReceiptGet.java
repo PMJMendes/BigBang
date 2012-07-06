@@ -50,7 +50,7 @@ public class TestReceiptGet
 		};
 
 		parameter = new ReceiptSearchParameter();
-		parameter.freeText = "Soromenho";
+		parameter.freeText = "1";
 		sorts = new ReceiptSortParameter();
 		sorts.field = ReceiptSortParameter.SortableField.RELEVANCE;
 		sorts.order = SortOrder.ASC;
