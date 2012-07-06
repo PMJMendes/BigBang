@@ -289,3 +289,6 @@ inner join bigbang.tblUser2 u on u.MigrationID=c.GESTORCLI;
 
 update credite_egs.tblBBClients set FKProcess=p.PK
 from credite_egs.tblBBClients c inner join credite_egs.tblPNProcesses p on p.FKData=c.PK;
+
+ALTER TABLE [credite_egs].[tblBBPolicies]
+ALTER COLUMN [FKClient] [uniqueidentifier] NULL;

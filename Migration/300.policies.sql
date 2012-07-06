@@ -41,6 +41,9 @@ inner join credite_egs.tblPNProcesses g on g.PK=p.FKProcess
 inner join credite_egs.tblPNProcesses h on h.PK=g.FKParent
 inner join credite_egs.tblBBClients c on c.PK=h.FKData;
 
+ALTER TABLE [credite_egs].[tblBBPolicies]
+ALTER COLUMN [FKClient] [uniqueidentifier] NOT NULL;
+
 
 
 insert into amartins.tblPolicyCoInsurers (PK, FKPolicy, FKCompany, [Percent])
@@ -85,3 +88,6 @@ from amartins.tblBBPolicies p
 inner join amartins.tblPNProcesses g on g.PK=p.FKProcess
 inner join amartins.tblPNProcesses h on h.PK=g.FKParent
 inner join amartins.tblBBClients c on c.PK=h.FKData;
+
+ALTER TABLE [amartins].[tblBBPolicies]
+ALTER COLUMN [FKClient] [uniqueidentifier] NOT NULL;
