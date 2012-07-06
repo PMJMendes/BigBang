@@ -35,6 +35,12 @@ where ss.ramo in (10708, 10710);
 update credite_egs.tblBBSubPolicies set FKProcess=p.PK
 from credite_egs.tblBBSubPolicies c inner join credite_egs.tblPNProcesses p on p.FKData=c.PK;
 
+update credite_egs.tblBBPolicies set FKClient=c.PK
+from credite_egs.tblBBPolicies p
+inner join credite_egs.tblPNProcesses g on g.PK=p.FKProcess
+inner join credite_egs.tblPNProcesses h on h.PK=g.FKParent
+inner join credite_egs.tblBBClients c on c.PK=h.FKData;
+
 
 
 insert into amartins.tblPolicyCoInsurers (PK, FKPolicy, FKCompany, [Percent])
@@ -73,3 +79,9 @@ where ss.ramo in (10708, 10710);
 
 update amartins.tblBBSubPolicies set FKProcess=p.PK
 from amartins.tblBBSubPolicies c inner join amartins.tblPNProcesses p on p.FKData=c.PK;
+
+update amartins.tblBBPolicies set FKClient=c.PK
+from amartins.tblBBPolicies p
+inner join amartins.tblPNProcesses g on g.PK=p.FKProcess
+inner join amartins.tblPNProcesses h on h.PK=g.FKParent
+inner join amartins.tblBBClients c on c.PK=h.FKData;
