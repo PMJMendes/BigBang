@@ -1696,6 +1696,7 @@ public class InsurancePolicyServiceImpl
 			mobjPolicy.mdtEndDate = ( pobjSource.expirationDate == null ? null :
 					Timestamp.valueOf(pobjSource.expirationDate + " 00:00:00.0") );
 			mobjPolicy.mstrNotes = pobjSource.notes;
+			mobjPolicy.midManager = ( pobjSource.managerId == null ? null : UUID.fromString(pobjSource.managerId) );
 			mobjPolicy.midMediator = ( pobjSource.mediatorId == null ? null : UUID.fromString(pobjSource.mediatorId) );
 			mobjPolicy.mbCaseStudy = pobjSource.caseStudy;
 			mobjPolicy.mdblPremium = ( pobjSource.premium == null ? null : new BigDecimal(pobjSource.premium+"") );

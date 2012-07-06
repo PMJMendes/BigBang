@@ -173,6 +173,7 @@ public class PrintConnector
 	private static void finalPrint(PDDocument pdoc)
 		throws BigBangJewelException
 	{
+		String lstrPrinter;
 		PrinterJob lrefPJob;
 		PrintService[] larrServices;
 		boolean b;
@@ -180,13 +181,15 @@ public class PrintConnector
 
 		try
 		{
+			lstrPrinter = (String)Engine.getUserData().get("Printer");
+
 			lrefPJob = PrinterJob.getPrinterJob();
 			larrServices = PrinterJob.lookupPrintServices();
 
 			b = false;
 			for ( i = 0; i < larrServices.length; i++ )
 			{
-				if ( larrServices[i].getName().indexOf((String)Engine.getUserData().get("Printer")) != -1)
+				if ( larrServices[i].getName().indexOf(lstrPrinter) != -1)
 				{
 					lrefPJob.setPrintService(larrServices[i]);
 					b = true;
@@ -203,6 +206,6 @@ public class PrintConnector
 		}
 
 		if ( !b )
-			throw new BigBangJewelException("Impressora definida não encontrada.");
+			throw new BigBangJewelException("Impressora definida (" + lstrPrinter + ") não encontrada.");
 	}
 }
