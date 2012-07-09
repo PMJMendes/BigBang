@@ -26,6 +26,6 @@ public class TestHistoryUndo
 			}
 		};
 
-		Services.historyService.undo("680BFBF4-69C2-4211-965A-A03C0118B4C7", callback);
+		Services.historyService.undo("B3EB4FAA-6447-4AC4-BD99-A08900CDE1FE", callback);
 	}
 }

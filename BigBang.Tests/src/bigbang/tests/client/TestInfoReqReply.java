@@ -29,8 +29,8 @@ public class TestInfoReqReply
 			}
 		};
 
-		Services.exchangeService.getAttachment("AAMkADg1OTUzYzcxLTVmZjQtNDU3Zi04Nzg3LWYwODFhMDE5MzlkNQBGAAAAAABr2ZTbJcmoQYK7SlFUwi1VBwCtSKTbKCtrR6MYTzZmb/1MAAADRQAbAAAjNXAn+Af6QrQHRLqsAzc5ABMoVdUQAAA=",
-				"AAMkADg1OTUzYzcxLTVmZjQtNDU3Zi04Nzg3LWYwODFhMDE5MzlkNQBGAAAAAABr2ZTbJcmoQYK7SlFUwi1VBwCtSKTbKCtrR6MYTzZmb/1MAAADRQAbAAAjNXAn+Af6QrQHRLqsAzc5ABMoVdUQAAABEgAQAABKS+HqJCtLjEYxuUTRIZg=",
+		Services.exchangeService.getAttachment("AAMkADg1OTUzYzcxLTVmZjQtNDU3Zi04Nzg3LWYwODFhMDE5MzlkNQBGAAAAAABr2ZTbJcmoQYK7SlFUwi1VBwCtSKTbKCtrR6MYTzZmb/1MAAADRQAbAACtSKTbKCtrR6MYTzZmb/1MAAADRWwGAAA=",
+				"AAMkADg1OTUzYzcxLTVmZjQtNDU3Zi04Nzg3LWYwODFhMDE5MzlkNQBGAAAAAABr2ZTbJcmoQYK7SlFUwi1VBwCtSKTbKCtrR6MYTzZmb/1MAAADRQAbAACtSKTbKCtrR6MYTzZmb/1MAAADRWwGAAABEgAQAABKS+HqJCtLjEYxuUTRIZg=",
 				callback);
 	}
 
@@ -52,8 +52,8 @@ public class TestInfoReqReply
 		};
 
 		response = new Response();
-		response.requestId = "AD5EEEE7-E646-4F9D-9E41-9FE80137FC19";
-		response.message.emailId = "AAMkADg1OTUzYzcxLTVmZjQtNDU3Zi04Nzg3LWYwODFhMDE5MzlkNQBGAAAAAABr2ZTbJcmoQYK7SlFUwi1VBwCtSKTbKCtrR6MYTzZmb/1MAAADRQAbAAAjNXAn+Af6QrQHRLqsAzc5ABMoVdUQAAA=";
+		response.requestId = "B875C2A6-ADD6-47C4-A7CD-A08900CDE072";
+		response.message.emailId = "AAMkADg1OTUzYzcxLTVmZjQtNDU3Zi04Nzg3LWYwODFhMDE5MzlkNQBGAAAAAABr2ZTbJcmoQYK7SlFUwi1VBwCtSKTbKCtrR6MYTzZmb/1MAAADRQAbAACtSKTbKCtrR6MYTzZmb/1MAAADRWwGAAA=";
 		response.message.upgrades = new IncomingMessage.AttachmentUpgrade[] {new IncomingMessage.AttachmentUpgrade()};
 		response.message.upgrades[0].name = "Teste";
 		response.message.upgrades[0].docTypeId = "5ABB972E-9E7E-4733-9C1E-9F1300B4EB3A";
