@@ -431,7 +431,7 @@ public class ReportServiceImpl
 		{
 			try
 			{
-				llngCount = larrMaps[i - 1].getCurrentDetails().length;
+				llngTotal = larrMaps[i - 1].getCurrentDetails().length;
 				lstrOwner = Engine.GetWorkInstance(lidOwners, (UUID)larrMaps[i - 1].getAt(TransactionMapBase.I.OWNER)).getLabel();
 			}
 			catch (Throwable e)
@@ -457,15 +457,21 @@ public class ReportServiceImpl
 			lstrBuffer.append("<tr style=\"height:30px;border-bottom:1px solid #3f6d9d;\"> ")
 					.append("<td style=\"padding-left:5px;border-right:1px solid #3f6d9d;border-bottom:1px solid #3f6d9d;\">Nº de Movimentos</td> ")
 					.append("<td style=\"padding-left:5px;border-bottom:1px solid #3f6d9d;\">")
-					.append(llngCount)
+					.append(llngTotal)
 					.append("</td> </tr> </table>");
 
 			lobjResult.sections[i] = new Report.Section();
 			lobjResult.sections[i].htmlContent = lstrBuffer.toString();
-			lobjResult.sections[i].verbs = new Report.Section.Verb[] {new Report.Section.Verb()};
-			lobjResult.sections[i].verbs[0].label = "Saldar";
-			lobjResult.sections[i].verbs[0].argument = "S:" + lobjReport.getKey().toString() + ":" + lobjSet.getKey().toString() + ":" +
-					larrMaps[i - 1].getKey().toString();
+
+			if ( larrMaps[i - 1].isSettled() )
+				lobjResult.sections[i].verbs = new Report.Section.Verb[0];
+			else
+			{
+				lobjResult.sections[i].verbs = new Report.Section.Verb[] {new Report.Section.Verb()};
+				lobjResult.sections[i].verbs[0].label = "Saldar";
+				lobjResult.sections[i].verbs[0].argument = "S:" + lobjReport.getKey().toString() + ":" + lobjSet.getKey().toString() + ":" +
+						larrMaps[i - 1].getKey().toString();
+			}
 		}
 
 		return lobjResult;
