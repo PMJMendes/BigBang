@@ -9,13 +9,12 @@ import javax.mail.Transport;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 
-import microsoft.exchange.webservices.data.EmailMessageSchema;
+import microsoft.exchange.webservices.data.BasePropertySet;
 import microsoft.exchange.webservices.data.ExchangeService;
 import microsoft.exchange.webservices.data.Folder;
 import microsoft.exchange.webservices.data.FolderView;
 import microsoft.exchange.webservices.data.Item;
 import microsoft.exchange.webservices.data.ItemId;
-import microsoft.exchange.webservices.data.ItemSchema;
 import microsoft.exchange.webservices.data.ItemView;
 import microsoft.exchange.webservices.data.PropertySet;
 import microsoft.exchange.webservices.data.WellKnownFolderName;
@@ -238,9 +237,10 @@ public class MailConnector
 	{
 		try
 		{
-			return Item.bind(GetService(), new ItemId(pstrUniqueID), new PropertySet(ItemSchema.Id, ItemSchema.Subject,
+			return Item.bind(GetService(), new ItemId(pstrUniqueID), new PropertySet(BasePropertySet.FirstClassProperties/*,
+					ItemSchema.Id, ItemSchema.Subject,
 					ItemSchema.Body, EmailMessageSchema.From, ItemSchema.DateTimeSent, ItemSchema.Attachments,
-					ItemSchema.MimeContent));
+					ItemSchema.MimeContent*/));
 		}
 		catch (Exception e)
 		{
