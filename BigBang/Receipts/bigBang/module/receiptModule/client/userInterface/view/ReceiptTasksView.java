@@ -41,6 +41,16 @@ public class ReceiptTasksView extends View implements ReceiptTasksViewPresenter.
 			public void onMarkDASUnnecessary() {
 				handler.onActionInvoked(new ActionInvokedEvent<ReceiptTasksViewPresenter.Action>(Action.MARK_DAS_UNNECESSARY));
 			}
+
+			@Override
+			public void onValidate() {
+				handler.onActionInvoked(new ActionInvokedEvent<ReceiptTasksViewPresenter.Action>(Action.VALIDATE));
+			}
+
+			@Override
+			public void onSetForReturn() {
+				handler.onActionInvoked(new ActionInvokedEvent<ReceiptTasksViewPresenter.Action>(Action.SET_FOR_RETURN));
+			}
 		};
 		wrapper.add(toolbar);
 		
@@ -110,6 +120,18 @@ public class ReceiptTasksView extends View implements ReceiptTasksViewPresenter.
 				this.popupPanel = null;
 			}
 		}
+	}
+
+	@Override
+	public void allowValidate(boolean b) {
+		toolbar.allowValidate(b);
+		
+	}
+
+	@Override
+	public void allowSetForReturn(boolean b) {
+		toolbar.allowSetForReturn(b);
+		
 	}
 
 }

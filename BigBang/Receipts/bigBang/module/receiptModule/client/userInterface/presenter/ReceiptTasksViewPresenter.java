@@ -30,7 +30,7 @@ public class ReceiptTasksViewPresenter implements ViewPresenter,
 
 	public static enum Action {
 		CREATE_DAS_REQUEST,
-		MARK_DAS_UNNECESSARY
+		MARK_DAS_UNNECESSARY, VALIDATE, SET_FOR_RETURN
 	}
 	
 	public static interface Display {
@@ -46,6 +46,8 @@ public class ReceiptTasksViewPresenter implements ViewPresenter,
 		void clearAllowedPermissions();
 		
 		Widget asWidget();
+		void allowValidate(boolean b);
+		void allowSetForReturn(boolean b);
 	}
 	
 	protected boolean bound = false;
@@ -93,6 +95,12 @@ public class ReceiptTasksViewPresenter implements ViewPresenter,
 				case MARK_DAS_UNNECESSARY:
 					onMarkDASUnnecessary();
 					break;
+				case SET_FOR_RETURN:
+					onSetForReturn();
+					break;
+				case VALIDATE:
+					onValidate();
+					break;
 				default:
 					break;
 				}
@@ -102,6 +110,28 @@ public class ReceiptTasksViewPresenter implements ViewPresenter,
 		bound = true;
 	}
 	
+	protected void onValidate() {
+		broker.validateReceipt(view.getForm().getValue().id, new ResponseHandler<Receipt>() {
+			
+			@Override
+			public void onResponse(Receipt response) {
+				EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Recibo validado com sucesso."), TYPE.TRAY_NOTIFICATION));
+			}
+			
+			@Override
+			public void onError(Collection<ResponseError> errors) {
+				EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não foi possível validar o recibo"), TYPE.ALERT_NOTIFICATION));
+			}
+		});
+	}
+
+	protected void onSetForReturn() {
+		HasParameters parameters = new HasParameters();
+		parameters.setParameter("receiptid", view.getForm().getValue().id);
+		parameters.setParameter("show", "returnreceipt");
+		this.overlayController.onParameters(parameters);
+	}
+
 	protected void clearView(){
 		view.getForm().setValue(null);
 		view.clearAllowedPermissions();
@@ -116,6 +146,10 @@ public class ReceiptTasksViewPresenter implements ViewPresenter,
 				view.allowCreateDASRequest(true);
 			}else if(opid.equalsIgnoreCase(BigBangConstants.OperationIds.ReceiptProcess.SET_DAS_NOT_NECESSARY)) {
 				view.allowMarkDASUnnecessary(true);
+			}else if(opid.equalsIgnoreCase(BigBangConstants.OperationIds.ReceiptProcess.VALIDATE)){
+				view.allowValidate(true);
+			}else if(opid.equalsIgnoreCase(BigBangConstants.OperationIds.ReceiptProcess.SET_FOR_RETURN)){
+				view.allowSetForReturn(true);
 			}
 		}
 	}
@@ -174,6 +208,9 @@ public class ReceiptTasksViewPresenter implements ViewPresenter,
 				//OVERLAY VIEWS
 				}else if(show.equalsIgnoreCase("createdasrequest")){
 					present("CREATE_DAS_REQUEST", parameters);
+					view.showOverlayViewContainer(true);
+				}else if(show.equalsIgnoreCase("returnreceipt")){
+					present("RECEIPT_RETURN", parameters);
 					view.showOverlayViewContainer(true);
 				}
 			}
