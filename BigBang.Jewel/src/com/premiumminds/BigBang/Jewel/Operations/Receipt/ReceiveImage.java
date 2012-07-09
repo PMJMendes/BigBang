@@ -114,7 +114,7 @@ public class ReceiveImage
 	    	try
 	    	{
 				if ( Constants.ProcID_Policy.equals(lobjProc.GetParent().GetScriptID()) )
-					lobjClient = (Client)lobjProc.GetParent().GetParent().GetParent().GetData();
+					lobjClient = (Client)lobjProc.GetParent().GetParent().GetData();
 				else
 					lobjClient = Client.GetInstance(lobjReceipt.getNameSpace(), (UUID)((SubPolicy)lobjProc.GetParent().GetData()).getAt(2));
 				if ( !Constants.ProfID_Simple.equals((UUID)lobjClient.getAt(9)) )
