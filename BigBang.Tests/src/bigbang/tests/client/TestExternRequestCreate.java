@@ -29,14 +29,14 @@ public class TestExternRequestCreate
 		};
 
 		request = new ExternalInfoRequest();
-		request.parentDataObjectId = "8C85AB5C-9C90-404D-B1F3-A03C0116BCD9";
-		request.parentDataTypeId = "D5FD2D1B-59FB-4171-961A-A02E0121C81B";
+		request.parentDataObjectId = "EB3E2719-E7B2-4BB1-A39E-A08400432A03";
+		request.parentDataTypeId = "09963260-CDB1-4207-B856-A03800B8AFC8";
 		request.subject = "Questão sobre 'A Tua'";
-		request.message.emailId = null;
+		request.message.emailId = "AAMkADdmNDVhMDgyLWQzNDItNDRjNy04Mjk5LWY2YjgwZjA0YTAwOABGAAAAAADy5wo1GEKBQ7mf4MGQSeS5BwCo4XVv2UW6RZN0o9Yy+qctAClNyBCCAADDZpLTOBZZQoBQCyW3yamgAClNHAwDAAA=";
 		request.message.notes = "Qual é, meu?";
 		request.message.upgrades = null;
 		request.replylimit = 14;
 
-		Services.subCasualtyService.createExternalRequest(request, callback);
+		Services.expenseService.createExternalRequest(request, callback);
 	}
 }
