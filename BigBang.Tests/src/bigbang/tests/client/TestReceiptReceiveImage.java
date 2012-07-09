@@ -30,9 +30,9 @@ public class TestReceiptReceiveImage
 		};
 
 		source = new DocuShareHandle();
-		source.handle = "Document-456132";
+		source.handle = "Document-467769";
 		source.locationHandle = null;
 
-		Services.receiptService.receiveImage("D8A120C8-810A-4A7B-9FC3-A02D010E8584", source, callback);
+		Services.receiptService.receiveImage("065C7B88-BFF0-47A0-BFCC-A08900EA532A", source, callback);
 	}
 }

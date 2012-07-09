@@ -50,7 +50,7 @@ public class TestReceiptGet
 		};
 
 		parameter = new ReceiptSearchParameter();
-		parameter.freeText = "1";
+		parameter.freeText = "erro";
 		sorts = new ReceiptSortParameter();
 		sorts.field = ReceiptSortParameter.SortableField.RELEVANCE;
 		sorts.order = SortOrder.ASC;
