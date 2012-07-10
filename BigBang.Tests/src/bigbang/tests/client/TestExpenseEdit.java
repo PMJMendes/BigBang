@@ -44,7 +44,7 @@ public class TestExpenseEdit
 			}
 		};
 
-		expense.settlement = "120";
+		expense.settlement = 120.0;
 		expense.isManual = true;
 
 		Services.expenseService.editExpense(expense, callback);
