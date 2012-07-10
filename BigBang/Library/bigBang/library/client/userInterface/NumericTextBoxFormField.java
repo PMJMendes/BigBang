@@ -76,7 +76,7 @@ public class NumericTextBoxFormField extends FormField<Double>{
 				}
 			});
 
-
+			
 			nf = NumberFormat.getDecimalFormat();
 		}
 		@Override

@@ -20,7 +20,7 @@ public class ReceiptReturnView extends View implements ReceiptReturnViewPresente
 	public ReceiptReturnView(){
 		VerticalPanel wrapper = new VerticalPanel();
 		initWidget(wrapper);
-		wrapper.setSize("690px", "560px");
+		wrapper.setSize("100%", "100%");
 		
 		form = new ReceiptReturnForm();
 		
@@ -39,8 +39,8 @@ public class ReceiptReturnView extends View implements ReceiptReturnViewPresente
 		};
 		toolbar.setHeight("21px");
 		wrapper.add(toolbar);
-		wrapper.add(form);
-		wrapper.setCellHeight(form, "100%");
+		wrapper.add(form.getNonScrollableContent());
+		wrapper.setCellHeight(form.getNonScrollableContent(), "100%");
 		
 	}
 

@@ -10,6 +10,7 @@ public class ModuleConstants
 		public static final String ClientSubtypes      = "1907DB1B-6F75-4715-A210-9EE600B9D072";
 		public static final String CompanySizes        = "5E489662-2AAF-4348-95E0-9EE600C4A71F";
 		public static final String CLIENT_DELETION_MOTIVES = "103F49C3-1D27-40C5-9B8E-9F50011952D7";
+		public static final String RECEIPT_RETURN_MOTIVES = "D6298E98-6FBD-47E9-9D4D-A08A0102DF87";
 	}
 
 	public class ClientTypeIDs
