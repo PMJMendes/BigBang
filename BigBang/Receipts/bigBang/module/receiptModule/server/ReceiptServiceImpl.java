@@ -530,8 +530,9 @@ public class ReceiptServiceImpl
 		}
 
 		lopSRTI = new SetReturnToInsurer(lobjReceipt.GetProcessID());
-		lopSRTI.mstrSubject = message.subject;
-		lopSRTI.mstrText = message.text;
+		lopSRTI.midMotive = UUID.fromString(message.motiveId);
+//		lopSRTI.mstrSubject = message.subject;
+//		lopSRTI.mstrText = message.text;
 
 		try
 		{

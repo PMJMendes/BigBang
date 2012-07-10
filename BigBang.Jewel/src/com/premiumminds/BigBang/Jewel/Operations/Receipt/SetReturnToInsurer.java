@@ -23,9 +23,9 @@ public class SetReturnToInsurer
 {
 	private static final long serialVersionUID = 1L;
 
-	public String mstrSubject;
-	public String mstrText;
+	public UUID midMotive;
 	private UUID midReceipt;
+	private String mstrMotive;
 	private Timestamp mdtPrevLimit;
 	private boolean mbWithAgenda;
 
@@ -46,7 +46,7 @@ public class SetReturnToInsurer
 
 	public String LongDesc(String pstrLineBreak)
 	{
-		return "O recibo foi marcado para devolução pelo seguinte motivo:" + pstrLineBreak + mstrSubject + pstrLineBreak + mstrText;
+		return "O recibo foi marcado para devolução pelo seguinte motivo:" + pstrLineBreak + mstrMotive;
 	}
 
 	public UUID GetExternalProcess()
@@ -58,7 +58,7 @@ public class SetReturnToInsurer
 		throws JewelPetriException
 	{
 		IProcess lobjProc;
-		String lstrText;
+		ObjectBase lobjMotive;
 		Receipt lobjReceipt;
 		Hashtable<UUID, AgendaItem> larrItems;
 		ResultSet lrs;
@@ -68,27 +68,13 @@ public class SetReturnToInsurer
 		lobjProc = GetProcess();
 		midReceipt = lobjProc.GetDataKey();
 
-		if ( mstrSubject != null )
-		{
-			if ( mstrText != null )
-				lstrText = (mstrSubject + " | " + mstrText);
-			else
-				lstrText = mstrSubject;
-		}
-		else
-		{
-			if ( mstrText != null )
-				lstrText = mstrText;
-			else
-				lstrText = null;
-		}
-		if ( (lstrText != null) && (lstrText.length() > 250) )
-			lstrText = lstrText.substring(0, 250);
-
 		try
 		{
+			lobjMotive = Engine.GetWorkInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), Constants.ObjID_ReceiptReturnMotives),
+					midMotive);
+
 			lobjReceipt = Receipt.GetInstance(Engine.getCurrentNameSpace(), midReceipt);
-			lobjReceipt.setAt(15, lstrText);
+			lobjReceipt.setAt(15, lobjMotive.getLabel());
 			lobjReceipt.SaveToDb(pdb);
 		}
 		catch (Throwable e)

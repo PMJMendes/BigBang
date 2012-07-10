@@ -46,9 +46,10 @@ public class ReceiptReturnForm extends FormView<ReturnMessage>{
 		if(!send.getValue()){
 			return newMessage;
 		}
-		
-		newMessage.subject = message.getValue().subject;
-		newMessage.text = message.getValue().text;
+
+		newMessage.motiveId = null; //TODO: Pôr aqui o ID do motivo (JMMM)
+//		newMessage.subject = message.getValue().subject;
+//		newMessage.text = message.getValue().text;
 		
 		return newMessage;
 	}

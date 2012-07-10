@@ -13,8 +13,9 @@ public class Receipt
 		private static final long serialVersionUID = 1L;
 
 		public String receiptId;
-		public String subject; //Subject e text vêm do typified texts
-		public String text;
+		public String motiveId;
+//		public String subject; //Subject e text vêm do typified texts
+//		public String text;
 	}
 
 	public static class PaymentInfo
