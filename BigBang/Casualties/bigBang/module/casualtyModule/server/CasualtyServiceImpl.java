@@ -577,12 +577,12 @@ public class CasualtyServiceImpl
 
 		if ( lParam.dateFrom != null )
 		{
-			pstrBuffer.append(" AND [:Date of Birth] >= '").append(lParam.dateFrom).append("'");
+			pstrBuffer.append(" AND [:Date] >= '").append(lParam.dateFrom).append("'");
 		}
 
 		if ( lParam.dateTo != null )
 		{
-			pstrBuffer.append(" AND [:Date of Birth] < '");
+			pstrBuffer.append(" AND [:Date] < '");
         	ldtAux = Calendar.getInstance();
         	ldtAux.setTimeInMillis(Timestamp.valueOf(lParam.dateTo + " 00:00:00.0").getTime());
         	ldtAux.add(Calendar.DAY_OF_MONTH, 1);
