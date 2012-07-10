@@ -30,8 +30,7 @@ public class TestReceiptSetReturn
 
 		message = new Receipt.ReturnMessage();
 		message.receiptId = "FEEB7760-CCCD-485E-B242-A0160114A216";
-		message.subject = "Dados Incompletos";
-		message.text = "Falta dizer a côr do carro...";
+		message.motiveId = null; //TODO: Pôr aqui um motivo de teste
 
 		Services.receiptService.setForReturn(message, callback);
 	}
