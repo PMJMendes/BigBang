@@ -90,6 +90,11 @@ public class BigBang_Tests
 //		TestUserEdit.DoTest();
 //		TestUserDelete.DoTest();
 //
+//		TestTaxGet.DoTest();
+//		TestTaxCreate.DoTest();
+//		TestTaxEdit.DoTest();
+//		TestTaxDelete.DoTest();
+//
 //		TestClientGet.DoTest();
 //		TestClientCreate.DoTest();
 //		TestClientEdit.DoTest();
