@@ -423,6 +423,7 @@ public class ClientSearchOperationViewPresenter implements ViewPresenter {
 			for(ValueSelectable<ClientStub> selected : view.getList().getAll()){
 				ClientStub client = selected.getValue();
 				if(client == null || client.id.equalsIgnoreCase("new")){
+					selected.setSelected(false, false);
 					view.removeFromList(selected);
 					break;
 				}
