@@ -506,7 +506,7 @@ public class CoveragesServiceImpl
 			lopMT.marrModify = BuildTaxArray(lopMT, larrAux);
 
 			lopMT.marrCreate = null;
-			lopMT.marrModify = null;
+			lopMT.marrDelete = null;
 
 			lopMT.Execute();
 		}
