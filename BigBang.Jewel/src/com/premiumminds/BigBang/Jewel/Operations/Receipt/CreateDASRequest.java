@@ -1,12 +1,17 @@
 package com.premiumminds.BigBang.Jewel.Operations.Receipt;
 
+import java.sql.ResultSet;
 import java.sql.Timestamp;
 import java.util.Calendar;
+import java.util.Hashtable;
 import java.util.UUID;
 
 import Jewel.Engine.Engine;
 import Jewel.Engine.DataAccess.SQLServer;
+import Jewel.Engine.Implementation.Entity;
+import Jewel.Engine.Interfaces.IEntity;
 import Jewel.Engine.SysObjects.FileXfer;
+import Jewel.Engine.SysObjects.ObjectBase;
 import Jewel.Petri.Interfaces.IProcess;
 import Jewel.Petri.Interfaces.IScript;
 import Jewel.Petri.Objects.PNScript;
@@ -72,6 +77,10 @@ public class CreateDASRequest
 	protected void Run(SQLServer pdb)
 		throws JewelPetriException
 	{
+		Hashtable<UUID, AgendaItem> larrItems;
+		ResultSet lrs;
+		IEntity lrefAux;
+		ObjectBase lobjAgendaProc;
 		Timestamp ldtNow;
 		Calendar ldtAux;
 		Timestamp ldtLimit;
@@ -84,6 +93,33 @@ public class CreateDASRequest
 		AgendaItem lobjItem;
 		UUID lidSet;
 		UUID lidSetDocument;
+
+		larrItems = new Hashtable<UUID, AgendaItem>();
+		lrs = null;
+		try
+		{
+			lrefAux = Entity.GetInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), Constants.ObjID_AgendaProcess));
+			lrs = lrefAux.SelectByMembers(pdb, new int[] {1}, new java.lang.Object[] {GetProcess().getKey()}, new int[0]);
+			while ( lrs.next() )
+			{
+				lobjAgendaProc = Engine.GetWorkInstance(lrefAux.getKey(), lrs);
+				larrItems.put((UUID)lobjAgendaProc.getAt(0),
+						AgendaItem.GetInstance(Engine.getCurrentNameSpace(), (UUID)lobjAgendaProc.getAt(0)));
+			}
+			lrs.close();
+			lrs = null;
+
+			for ( AgendaItem lobjAgItem: larrItems.values() )
+			{
+				lobjAgItem.ClearData(pdb);
+				lobjAgItem.getDefinition().Delete(pdb, lobjAgItem.getKey());
+			}
+		}
+		catch (Throwable e)
+		{
+			if ( lrs != null ) try { lrs.close(); } catch (Throwable e1) {}
+			throw new JewelPetriException(e.getMessage(), e);
+		}
 
 		ldtNow = new Timestamp(new java.util.Date().getTime());
     	ldtAux = Calendar.getInstance();
