@@ -179,7 +179,7 @@ public class CreateDASRequest
 			lobjItem.setAt(2, Constants.ProcID_DASRequest);
 			lobjItem.setAt(3, ldtNow);
 			lobjItem.setAt(4, ldtLimit);
-			lobjItem.setAt(5, Constants.UrgID_Valid);
+			lobjItem.setAt(5, Constants.UrgID_Pending);
 			lobjItem.SaveToDb(pdb);
 			lobjItem.InitNew(new UUID[] {lobjProc.getKey()}, new UUID[] {Constants.OPID_DASRequest_ReceiveReply,
 					Constants.OPID_DASRequest_RepeatRequest, Constants.OPID_DASRequest_CancelRequest}, pdb);
