@@ -55,6 +55,7 @@ public class DASRequestServiceImpl
 		lobjResult.replylimit = (int)((((Timestamp)lobjRequest.getAt(1)).getTime() -
 				(new Timestamp(new java.util.Date().getTime())).getTime()) / 86400000L);
 		lobjResult.receiptId = lidReceipt.toString();
+		lobjResult.receiptAux = ReceiptServiceImpl.sGetReceipt(lidReceipt);
 
 //		larrUsers = new ArrayList<String>();
 //		larrInfos = new ArrayList<String>();

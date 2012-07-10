@@ -32,6 +32,7 @@ public class DASRequest
 
 	public String receiptId;
 	public int replylimit;
+	public Receipt receiptAux;
 	public OutgoingMessage message; // ATENÇÃO: Por enquanto, isto não é para usar!
 
 	public DASRequest()
