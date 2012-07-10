@@ -226,18 +226,14 @@ ViewPresenter {
 					NavigationHistoryManager.getInstance().go(item);
 					break;
 				case CREATE_EXERCISE:
-					item.pushIntoStackParameter("display", "viewexercise");
-					item.setParameter("exerciseid", "new");
-					NavigationHistoryManager.getInstance().go(item);
+					createExercise();
 					break;
 				case INCLUDE_INSURED_OBJECT:
 					item.pushIntoStackParameter("display", "includeinsuredobject");
 					NavigationHistoryManager.getInstance().go(item);
 					break;
 				case CREATE_INSURED_OBJECT:
-					item.pushIntoStackParameter("display", "viewinsuredobject");
-					item.setParameter("objectid", "new");
-					NavigationHistoryManager.getInstance().go(item);
+					createInsuredObject();
 					break;
 				case CREATE_INSURED_OBJECT_FROM_CLIENT:
 					item.pushIntoStackParameter("display", "createinsuredobjectfromclient");
@@ -410,6 +406,45 @@ ViewPresenter {
 		this.bound = true;
 	}
 
+	protected void createInsuredObject() {
+		saveWorkState(new ResponseHandler<Void>() {
+
+			@Override
+			public void onResponse(Void response) {
+				NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
+				item.pushIntoStackParameter("display", "viewinsuredobject");
+				item.setParameter("objectid", "new");
+				NavigationHistoryManager.getInstance().go(item);
+			}
+
+			@Override
+			public void onError(Collection<ResponseError> errors) {
+				EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não é possível criar unidades de risco."), TYPE.ALERT_NOTIFICATION));
+			}
+		});
+	}
+
+	protected void createExercise() {
+
+		saveWorkState(new ResponseHandler<Void>() {
+
+			@Override
+			public void onResponse(Void response) {
+				NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
+				item.pushIntoStackParameter("display", "viewexercise");
+				item.setParameter("exerciseid", "new");
+				NavigationHistoryManager.getInstance().go(item);
+			}
+
+			@Override
+			public void onError(Collection<ResponseError> errors) {
+				EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não é possível criar exercícios."), TYPE.ALERT_NOTIFICATION));
+			}
+		});
+
+
+	}
+
 	protected void delete() {
 
 		broker.removePolicy(view.getForm().getInfo().id, new ResponseHandler<String>() {
@@ -476,7 +511,7 @@ ViewPresenter {
 			showScratchPadPolicy(policyId);
 		}else{
 			view.setForNew(false);
-			
+
 			this.broker.getPolicy(policyId, new ResponseHandler<InsurancePolicy>() {
 
 				@Override
@@ -489,7 +524,7 @@ ViewPresenter {
 							entry.setSelected(false, false);
 						}
 					}
-					
+
 					view.allowEdit(PermissionChecker.hasPermission(response, BigBangConstants.OperationIds.InsurancePolicyProcess.UPDATE_POLICY));
 					view.allowDelete(PermissionChecker.hasPermission(response, BigBangConstants.OperationIds.InsurancePolicyProcess.DELETE_POLICY));
 					view.allowCreateExercise(PermissionChecker.hasPermission(response, BigBangConstants.OperationIds.InsurancePolicyProcess.CREATE_EXERCISE));
@@ -516,7 +551,7 @@ ViewPresenter {
 					view.setSaveModeEnabled(false);
 					view.getForm().setReadOnly(true);
 					view.getForm().setValue(response);
-					
+
 					ensureListedAndSelected(response);
 				}
 
@@ -533,7 +568,7 @@ ViewPresenter {
 		if(broker.isTemp(policyId)){
 			final boolean isNewPolicy = broker.isNewPolicy(policyId);
 			view.setForNew(isNewPolicy);
-			
+
 			broker.getPolicy(policyId, new ResponseHandler<InsurancePolicy>() {
 
 				@Override
@@ -558,7 +593,7 @@ ViewPresenter {
 					view.getForm().setValue(response);
 
 					view.getForm().setReadOnly(false);
-					
+
 					ensureListedAndSelected(response);
 				}
 
@@ -990,21 +1025,21 @@ ViewPresenter {
 	}
 
 	private void ensureListedAndSelected(InsurancePolicy policy) {
-//		boolean found = false; TODO
-//		for(ValueSelectable<InsurancePolicyStub> entry : view.getList().getAll()) {
-//			InsurancePolicyStub entryValue = entry.getValue();
-//			if(entryValue.id.equalsIgnoreCase(policy.id)) {
-//				entry.setSelected(true, false);
-//				found = true;
-//			}else{
-//				entry.setSelected(false, false);
-//			}
-//		}
-//		
-//		if(!found) {
-//			ValueSelectable<InsurancePolicyStub> newEntry = view.addPolicyListEntry(policy);
-//			newEntry.setSelected(true, false);
-//		}
+		//		boolean found = false; TODO
+		//		for(ValueSelectable<InsurancePolicyStub> entry : view.getList().getAll()) {
+		//			InsurancePolicyStub entryValue = entry.getValue();
+		//			if(entryValue.id.equalsIgnoreCase(policy.id)) {
+		//				entry.setSelected(true, false);
+		//				found = true;
+		//			}else{
+		//				entry.setSelected(false, false);
+		//			}
+		//		}
+		//		
+		//		if(!found) {
+		//			ValueSelectable<InsurancePolicyStub> newEntry = view.addPolicyListEntry(policy);
+		//			newEntry.setSelected(true, false);
+		//		}
 	}
-	
+
 }
