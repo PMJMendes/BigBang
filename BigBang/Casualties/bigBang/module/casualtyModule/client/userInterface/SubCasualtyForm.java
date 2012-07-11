@@ -9,9 +9,16 @@ import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 
+import bigBang.definitions.client.dataAccess.InsurancePolicyBroker;
+import bigBang.definitions.client.dataAccess.InsuranceSubPolicyBroker;
+import bigBang.definitions.client.response.ResponseError;
+import bigBang.definitions.client.response.ResponseHandler;
 import bigBang.definitions.shared.BigBangConstants;
+import bigBang.definitions.shared.InsurancePolicy;
 import bigBang.definitions.shared.SubCasualty;
 import bigBang.definitions.shared.SubCasualty.SubCasualtyItem;
+import bigBang.definitions.shared.SubPolicy;
+import bigBang.library.client.dataAccess.DataBrokerManager;
 import bigBang.library.client.userInterface.CheckBoxFormField;
 import bigBang.library.client.userInterface.ExpandableSelectionFormField;
 import bigBang.library.client.userInterface.ListBoxFormField;
@@ -29,6 +36,7 @@ public class SubCasualtyForm extends FormView<SubCasualty> {
 	protected TextBoxFormField number;
 	protected ListBoxFormField referenceType;
 	protected ExpandableSelectionFormField policyReference, subPolicyReference;
+	protected TextBoxFormField referenceDetails;
 	protected TextBoxFormField insurerProcessNumber;
 	protected CheckBoxFormField hasJudicial;
 	protected TextBoxFormField status;
@@ -58,6 +66,9 @@ public class SubCasualtyForm extends FormView<SubCasualty> {
 		subPolicySelectionPanel.go();
 		subPolicyReference = new ExpandableSelectionFormField(BigBangConstants.EntityIds.INSURANCE_SUB_POLICY, "", subPolicySelectionPanel);
 
+		referenceDetails = new TextBoxFormField();
+		referenceDetails.setEditable(false);
+		
 		insurerProcessNumber = new TextBoxFormField("Número de Processo na Seguradora");
 		insurerProcessNumber.setFieldWidth("175px");
 		status = new TextBoxFormField("Estado");
@@ -71,6 +82,8 @@ public class SubCasualtyForm extends FormView<SubCasualty> {
 		addFormField(referenceType, true);
 		addFormField(policyReference, true);
 		addFormField(subPolicyReference, true);
+		
+		addFormField(referenceDetails, false);
 
 		referenceType.addValueChangeHandler(new ValueChangeHandler<String>() {
 
@@ -85,6 +98,7 @@ public class SubCasualtyForm extends FormView<SubCasualty> {
 					policyReference.setVisible(false);
 					subPolicyReference.setVisible(true);
 				}
+				referenceDetails.clear();
 			}
 		});
 
@@ -161,14 +175,48 @@ public class SubCasualtyForm extends FormView<SubCasualty> {
 				referenceType.setValue(null, true);
 				policyReference.setValue(null);
 				subPolicyReference.setValue(null);
+				
+				//clear reference details TODO
+				referenceDetails.clear();
 			}else if(info.referenceTypeId.equalsIgnoreCase(BigBangConstants.EntityIds.INSURANCE_POLICY)) {
 				referenceType.setValue(BigBangConstants.EntityIds.INSURANCE_POLICY, true);
 				policyReference.setValue(info.referenceId);
 				subPolicyReference.setValue(null);
+				
+				//Show details for policy
+				InsurancePolicyBroker policyBroker = (InsurancePolicyBroker) DataBrokerManager.staticGetBroker(BigBangConstants.EntityIds.INSURANCE_POLICY);
+				policyBroker.getPolicy(info.referenceId, new ResponseHandler<InsurancePolicy>() {
+					
+					@Override
+					public void onResponse(InsurancePolicy response) {
+						referenceDetails.setValue(response.categoryName + " / " + response.lineName + " / " + response.subLineName);
+					}
+					
+					@Override
+					public void onError(Collection<ResponseError> errors) {
+						referenceDetails.setValue("<não disponível>");
+					}
+				});
+				
 			}else if(info.referenceTypeId.equalsIgnoreCase(BigBangConstants.EntityIds.INSURANCE_SUB_POLICY)){
 				referenceType.setValue(BigBangConstants.EntityIds.INSURANCE_SUB_POLICY, true);
 				policyReference.setValue(null);
 				subPolicyReference.setValue(info.referenceId);
+				
+				//Show details for sub policy
+				InsuranceSubPolicyBroker subPolicyBroker = (InsuranceSubPolicyBroker) DataBrokerManager.staticGetBroker(BigBangConstants.EntityIds.INSURANCE_POLICY);
+				subPolicyBroker.getSubPolicy(info.referenceId, new ResponseHandler<SubPolicy>() {
+
+					@Override
+					public void onResponse(SubPolicy response) {
+						referenceDetails.setValue(response.inheritCategoryName + " / " + response.inheritLineName + " / " + response.inheritSubLineName);
+					}
+
+					@Override
+					public void onError(Collection<ResponseError> errors) {
+						referenceDetails.setValue("<não disponível>");
+					}
+				});
 			}
 			insurerProcessNumber.setValue(info.insurerProcessNumber);
 			status.setValue(info.isOpen ? "Aberto" : "Fechado");

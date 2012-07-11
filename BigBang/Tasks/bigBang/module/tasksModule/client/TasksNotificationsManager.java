@@ -119,14 +119,13 @@ public class TasksNotificationsManager extends Timer implements TasksDataBrokerC
 					}
 				}
 				TasksNotificationsManager.this.lastTimestamp = lastTimestamp;
-				broker.getSearchBroker().disposeSearch(response.getWorkspaceId());
 			}
 
 			@Override
 			public void onError(Collection<ResponseError> errors) {
 				GWT.log("Could not get new task notifications");
 			}
-		});
+		}, true);
 	}
 	
 	public boolean isRunning(){

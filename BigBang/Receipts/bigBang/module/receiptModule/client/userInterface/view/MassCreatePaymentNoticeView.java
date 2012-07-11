@@ -183,7 +183,7 @@ public class MassCreatePaymentNoticeView extends View implements MassCreatePayme
 		}
 
 		public void setFilterOpen(boolean b) {
-			filtersContainer.setOpen(b);
+			filterDropContainer.setOpen(b);
 			
 		}
 

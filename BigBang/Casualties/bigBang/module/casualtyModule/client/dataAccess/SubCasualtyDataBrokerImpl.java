@@ -190,7 +190,6 @@ implements SubCasualtyDataBroker{
 			@Override
 			public void onResponse(Search<SubCasualtyStub> response) {
 				responseHandler.onResponse(response.getResults());
-				getSearchBroker().disposeSearch(response.getWorkspaceId());
 			}
 
 			@Override
@@ -199,7 +198,7 @@ implements SubCasualtyDataBroker{
 						new String("Could not get the sub casualties for the given owner")	
 				});
 			}
-		});
+		}, true);
 	}
 
 	@Override

@@ -34,7 +34,9 @@ import com.google.gwt.user.client.ui.Widget;
 public class FilterableList<T> extends SortableList<T> {
 
 	protected TextBox textBoxFilter;
-	protected DisclosurePanel filtersContainer;
+	protected SimplePanel filtersContainer;
+	protected DisclosurePanel filterDropContainer;
+	
 	protected HorizontalPanel searchFieldContainer;
 	protected Map<String, ListFilter<?>> filters;
 	protected boolean liveSearch = true;
@@ -55,14 +57,14 @@ public class FilterableList<T> extends SortableList<T> {
 		headerWrapper.setWidth("100%");
 		headerWrapper.add(newHeaderContainer);
 
-		DisclosurePanel filterContainer = (DisclosurePanel) GWT.create(DisclosurePanel.class);
-		filterContainer.getElement().getStyle().setBackgroundColor("#DDD");
-		filterContainer.setAnimationEnabled(true);
-		filterContainer.setSize("100%", "100%");
-		filterContainer.getElement().getStyle().setProperty("borderTop", "1px solid gray");
+		this.filterDropContainer = (DisclosurePanel) GWT.create(DisclosurePanel.class);
+		filterDropContainer.getElement().getStyle().setBackgroundColor("#DDD");
+		filterDropContainer.setAnimationEnabled(true);
+		filterDropContainer.setSize("auto", "100%");
+		filterDropContainer.getElement().getStyle().setProperty("borderTop", "1px solid gray");
 
 		HorizontalPanel filterHeaderWrapper = new HorizontalPanel();
-		filterContainer.setHeader(filterHeaderWrapper);
+		filterDropContainer.setHeader(filterHeaderWrapper);
 		filterHeaderWrapper.setSize("100%", "100%");
 		final Image filterHeaderImage = new Image(resources.arrowDown());
 		filterHeaderImage.getElement().getStyle().setMarginLeft(5, Unit.PX);
@@ -71,22 +73,26 @@ public class FilterableList<T> extends SortableList<T> {
 		filterHeaderWrapper.add(new Label("Ordenação e Filtros"));
 
 
-		filterContainer.addCloseHandler(new CloseHandler<DisclosurePanel>() {
+		filterDropContainer.addCloseHandler(new CloseHandler<DisclosurePanel>() {
 
 			@Override
 			public void onClose(CloseEvent<DisclosurePanel> event) {
 				filterHeaderImage.setResource(resources.arrowDown());
+				headerWrapper.setCellHeight((Widget) filtersContainer, "auto");
 			}
 		});
-		filterContainer.addOpenHandler(new OpenHandler<DisclosurePanel>() {
+		filterDropContainer.addOpenHandler(new OpenHandler<DisclosurePanel>() {
 
 			@Override
 			public void onOpen(OpenEvent<DisclosurePanel> event) {
 				filterHeaderImage.setResource(resources.arrowUp());
+				filtersContainer.getElement().getStyle().setProperty("maxHeight", scrollPanelWrapper.getOffsetHeight()+"px");
+				GWT.log(filtersContainer.getOffsetHeight() +" - " + scrollPanelWrapper.getOffsetHeight());
+//				if(filtersContainer.getOffsetHeight() > scrollPanelWrapper.getOffsetHeight()) {
+//					filtersContainer.setHeight(scrollPanelWrapper.getOffsetHeight() + "px");
+//				}
 			}
 		});
-
-		filtersContainer = filterContainer;
 
 		this.searchFieldContainer = new HorizontalPanel();
 		searchFieldContainer.setSize("100%", "100%");
@@ -104,26 +110,11 @@ public class FilterableList<T> extends SortableList<T> {
 		});
 
 		headerWrapper.add(searchFieldContainer);
-		headerWrapper.add(filterContainer);
+		headerWrapper.add(filterDropContainer);
 
-		filterContainer.addOpenHandler(new OpenHandler<DisclosurePanel>() {
-
-			@Override
-			public void onOpen(OpenEvent<DisclosurePanel> event) {
-				if(((DisclosurePanel) filtersContainer).getContent().getOffsetHeight() > ((DisclosurePanel) filtersContainer).getOffsetHeight())
-					((DisclosurePanel) filtersContainer).getContent().setHeight(scrollPanel.getOffsetHeight() + "px");
-			}
-		});
-
-		filterContainer.addCloseHandler(new CloseHandler<DisclosurePanel>() {
-
-			@Override
-			public void onClose(CloseEvent<DisclosurePanel> event) {
-				headerWrapper.setCellHeight((Widget) filtersContainer, "auto");
-			}
-		});
-
-		filterContainer.setContent(new SimplePanel());
+		filtersContainer = new SimplePanel();
+		filtersContainer.setSize("100%", "100%");
+		filterDropContainer.setContent(filtersContainer);
 
 		setHeaderWidget(headerWrapper);
 		headerContainer = newHeaderContainer;

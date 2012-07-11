@@ -129,7 +129,7 @@ public class QuoteRequestSectionViewPresenter implements ViewPresenter {
 						present("REPORTS", parameters);
 					}else {
 						view.selectOperation(SectionOperation.OPERATIONS);
-						present("QUOTE_REQUEST_OPERATIONS", parameters);
+						present("QUOTE_REQUEST_OPERATIONS", parameters, true);
 					}
 				}
 				QuoteRequestSectionViewPresenter.this.overlayController.onParameters(parameters);

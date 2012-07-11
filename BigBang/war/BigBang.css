@@ -35,6 +35,11 @@ h1 {
 	margin: 0px;
 }
 
+.gwt-DisclosurePanel .content {
+ 	width: auto;
+ 	overflow-y: visible;
+}
+
 /** Most GWT widgets already have a style name defined */
 
 .gwt-TabBar {

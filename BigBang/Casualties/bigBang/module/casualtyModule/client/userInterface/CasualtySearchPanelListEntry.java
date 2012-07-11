@@ -24,7 +24,7 @@ public class CasualtySearchPanelListEntry extends ListEntry<CasualtyStub> {
 
 	public CasualtySearchPanelListEntry(CasualtyStub value) {
 		super(value);
-		setHeight("40px");
+		setHeight("50px");
 	}
 
 	@Override

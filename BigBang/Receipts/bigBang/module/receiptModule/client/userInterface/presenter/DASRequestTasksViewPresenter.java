@@ -13,6 +13,7 @@ import bigBang.definitions.client.response.ResponseHandler;
 import bigBang.definitions.shared.BigBangConstants;
 import bigBang.definitions.shared.DASRequest;
 import bigBang.definitions.shared.DASRequest.Response;
+import bigBang.definitions.shared.Receipt;
 import bigBang.library.client.EventBus;
 import bigBang.library.client.HasOperationPermissions;
 import bigBang.library.client.HasParameters;
@@ -36,6 +37,7 @@ public class DASRequestTasksViewPresenter implements ViewPresenter, HasOperation
 	
 	public static interface Display {
 		HasValue<DASRequest> getForm();
+		HasValue<Receipt> getReceiptForm();
 		void registerActionHandler(ActionInvokedEventHandler<Action> handler);
 		
 		HasWidgets getOverlayViewContainer();
@@ -109,6 +111,7 @@ public class DASRequestTasksViewPresenter implements ViewPresenter, HasOperation
 	
 	protected void clearView(){
 		view.getForm().setValue(null);
+		view.getReceiptForm().setValue(null);
 		view.clearAllowedPermissions();
 		overlayController.onParameters(new HasParameters());
 	}
@@ -133,6 +136,7 @@ public class DASRequestTasksViewPresenter implements ViewPresenter, HasOperation
 			@Override
 			public void onResponse(DASRequest response) {
 				view.getForm().setValue(response);
+				view.getReceiptForm().setValue(response.receiptAux);
 			}
 
 			@Override

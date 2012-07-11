@@ -208,7 +208,7 @@ public class MassReturnToInsurerView extends View implements MassReturnToInsurer
 		searchPanelWrapper.add(selectAllButton);
 		wrapper.addWest(searchPanelWrapper, 400);
 
-		returnReceipts = new Button("Devolver recibos");
+		returnReceipts = new Button("Criar Devoluçoes");
 
 		HorizontalPanel sendClearWrapper = new HorizontalPanel();
 		sendClearWrapper.setVerticalAlignment(HasVerticalAlignment.ALIGN_MIDDLE);
@@ -237,11 +237,11 @@ public class MassReturnToInsurerView extends View implements MassReturnToInsurer
 			}
 		};
 		
-		applyPaymentNoticeCreationForm.addSection("Devolver recibos");
+		applyPaymentNoticeCreationForm.addSection("Recibos a Devolver");
 		
 		
 		VerticalPanel selectedListWrapper = new VerticalPanel();
-		selectedListWrapper.add(new ListHeader("Devolver recibos"));
+		selectedListWrapper.add(new ListHeader("Devoluçao de Recibos"));
 		selectedListWrapper.setSize("100%", "100%");
 		applyPaymentNoticeCreationForm.addWidget(sendClearWrapper);
 		selectedListWrapper.add(applyPaymentNoticeCreationForm.getNonScrollableContent());

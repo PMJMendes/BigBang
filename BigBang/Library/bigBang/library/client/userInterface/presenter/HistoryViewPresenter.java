@@ -9,7 +9,9 @@ import bigBang.definitions.client.response.ResponseHandler;
 import bigBang.definitions.shared.BigBangConstants;
 import bigBang.definitions.shared.HistoryItem;
 import bigBang.definitions.shared.HistoryItemStub;
+import bigBang.definitions.shared.InfoOrDocumentRequest;
 import bigBang.definitions.shared.Negotiation;
+import bigBang.library.client.BigBangAsyncCallback;
 import bigBang.library.client.EventBus;
 import bigBang.library.client.HasParameters;
 import bigBang.library.client.HasValueSelectables;
@@ -25,6 +27,8 @@ import bigBang.library.client.event.SelectionChangedEventHandler;
 import bigBang.library.client.history.NavigationHistoryItem;
 import bigBang.library.client.history.NavigationHistoryManager;
 import bigBang.library.client.userInterface.view.View;
+import bigBang.library.interfaces.InfoOrDocumentRequestService;
+import bigBang.library.interfaces.InfoOrDocumentRequestServiceAsync;
 import bigBang.module.generalSystemModule.shared.SessionGeneralSystem;
 
 import com.google.gwt.user.client.ui.HasValue;
@@ -62,12 +66,10 @@ public class HistoryViewPresenter implements ViewPresenter {
 
 	private Display view;
 	protected HistoryBroker historyBroker;
-	protected NegotiationBroker negBroker;
 	private boolean bound = false;
 
 	public HistoryViewPresenter(Display view) {
 		this.historyBroker = (HistoryBroker) DataBrokerManager.staticGetBroker(BigBangConstants.EntityIds.HISTORY);
-		negBroker = (NegotiationBroker) DataBrokerManager.staticGetBroker(BigBangConstants.EntityIds.NEGOTIATION);
 		setView((View) view);
 	}
 
@@ -91,8 +93,10 @@ public class HistoryViewPresenter implements ViewPresenter {
 		String itemId = parameterHolder.getParameter("historyitemid");
 		itemId = itemId == null ? new String() : itemId;
 
+		clearView();
+
 		if(objectId.isEmpty()){
-			clearView();
+			view.setObjectId(null);
 		}else{
 			showHistory(objectId);
 			if(!itemId.isEmpty()){
@@ -255,6 +259,9 @@ public class HistoryViewPresenter implements ViewPresenter {
 			}else if(auxObjectType.equalsIgnoreCase(BigBangConstants.EntityIds.SUB_CASUALTY)){
 				navigateToSubCasualty(auxObjectId);
 				
+			}else if(auxObjectType.equalsIgnoreCase(BigBangConstants.EntityIds.INFO_REQUEST)){
+				navigateToInfoRequest(auxObjectId);
+				
 			}else{
 				onNavigateToAuxiliaryProcessFailed();
 				return;
@@ -301,6 +308,8 @@ public class HistoryViewPresenter implements ViewPresenter {
 		final NavigationHistoryItem navigationItem = new NavigationHistoryItem();
 		navigationItem.setStackParameter("display");
 
+		NegotiationBroker negBroker = (NegotiationBroker) DataBrokerManager.staticGetBroker(BigBangConstants.EntityIds.NEGOTIATION);
+
 		negBroker.getNegotiation(auxObjectId, new ResponseHandler<Negotiation>() {
 			
 			@Override
@@ -322,9 +331,6 @@ public class HistoryViewPresenter implements ViewPresenter {
 				onNavigateToAuxiliaryProcessFailed();
 			}
 		});
-		
-		
-		
 	}
 
 	private void navigateToRiskAnalysis(String auxObjectId) {
@@ -397,6 +403,23 @@ public class HistoryViewPresenter implements ViewPresenter {
 		navigationItem.pushIntoStackParameter("display", "search");
 		navigationItem.setParameter("clientid", auxObjectId);
 		NavigationHistoryManager.getInstance().go(navigationItem);
+	}
+	
+	private void navigateToInfoRequest(String auxObjectId) {
+		InfoOrDocumentRequestServiceAsync service = InfoOrDocumentRequestService.Util.getInstance();
+		service.getRequest(auxObjectId, new BigBangAsyncCallback<InfoOrDocumentRequest>() {
+
+			@Override
+			public void onResponseSuccess(InfoOrDocumentRequest result) {
+//				r
+			}
+			
+			@Override
+			public void onResponseFailure(Throwable caught) {
+				onNavigateToAuxiliaryProcessFailed();
+				super.onResponseFailure(caught);
+			}
+		});
 	}
 
 	private void onRevertOperationSuccess(){

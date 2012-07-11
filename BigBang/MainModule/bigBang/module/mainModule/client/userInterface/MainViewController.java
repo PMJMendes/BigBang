@@ -31,37 +31,37 @@ public class MainViewController extends ViewPresenterController {
 
 		if(section.equalsIgnoreCase("tasks")){
 			mainViewPresenter.setParameters(historyItem);
-			present("TASKS_SECTION", historyItem);
+			present("TASKS_SECTION", historyItem, true);
 		}else if(section.equalsIgnoreCase("generalsystem")){
 			mainViewPresenter.setParameters(historyItem);
-			present("GENERAL_SYSTEM_SECTION", historyItem);
+			present("GENERAL_SYSTEM_SECTION", historyItem, true);
 		}else if(section.equalsIgnoreCase("client")){
 			mainViewPresenter.setParameters(historyItem);
-			present("CLIENT_SECTION", historyItem);
+			present("CLIENT_SECTION", historyItem, true);
 		}else if(section.equalsIgnoreCase("insurancepolicy")){
 			mainViewPresenter.setParameters(historyItem);
-			present("INSURANCE_POLICY_SECTION", historyItem);
+			present("INSURANCE_POLICY_SECTION", historyItem, true);
 		}else if(section.equalsIgnoreCase("receipt")){
 			mainViewPresenter.setParameters(historyItem);
-			present("RECEIPT_SECTION", historyItem);
+			present("RECEIPT_SECTION", historyItem, true);
 		}else if(section.equalsIgnoreCase("casualty")){
 			mainViewPresenter.setParameters(historyItem);
-			present("CASUALTY_SECTION", historyItem);
+			present("CASUALTY_SECTION", historyItem, true);
 		}else if(section.equalsIgnoreCase("quoterequest")){
 			mainViewPresenter.setParameters(historyItem);
-			present("QUOTE_REQUEST_SECTION", historyItem);
+			present("QUOTE_REQUEST_SECTION", historyItem, true);
 		}else if(section.equalsIgnoreCase("complaint")){
 			mainViewPresenter.setParameters(historyItem);
-			present("COMPLAINT_SECTION", historyItem);
+			present("COMPLAINT_SECTION", historyItem, true);
 		}else if(section.equalsIgnoreCase("expense")){
 			mainViewPresenter.setParameters(historyItem);
-			present("EXPENSE_SECTION", historyItem);
+			present("EXPENSE_SECTION", historyItem, true);
 		}else if(section.equalsIgnoreCase("riskanalisys")){
 			mainViewPresenter.setParameters(historyItem);
-			present("RISK_ANALISYS_SECTION", historyItem);
+			present("RISK_ANALISYS_SECTION", historyItem, true);
 		}else if(section.equalsIgnoreCase("tests")){
 			mainViewPresenter.setParameters(historyItem);
-			present("TESTS_SECTION", historyItem);
+			present("TESTS_SECTION", historyItem, true);
 		}else if(section.equalsIgnoreCase("backoffice")){
 			new Jewel_Web().onModuleLoad();
 		}else{

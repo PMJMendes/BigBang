@@ -130,7 +130,7 @@ public class InsurancePolicySectionViewPresenter implements ViewPresenter{
 						present("REPORTS", parameters);
 					}else {
 						view.selectOperation(SectionOperation.OPERATIONS);
-						present("INSURANCE_POLICY_OPERATIONS", parameters);
+						present("INSURANCE_POLICY_OPERATIONS", parameters, true);
 					}
 				}
 				InsurancePolicySectionViewPresenter.this.overlayController.onParameters(parameters);

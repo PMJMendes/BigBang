@@ -229,7 +229,7 @@ public abstract class SearchPanel<T extends SearchResult> extends FilterableList
 			GWT.log(e.getMessage());
 		}
 
-		this.filtersContainer.setOpen(false);
+		this.filterDropContainer.setOpen(false);
 	}
 
 	/**

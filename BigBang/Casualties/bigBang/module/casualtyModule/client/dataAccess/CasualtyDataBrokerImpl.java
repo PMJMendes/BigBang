@@ -183,7 +183,6 @@ CasualtyDataBroker {
 			@Override
 			public void onResponse(Search<CasualtyStub> response) {
 				responseHandler.onResponse(response.getResults());
-				getSearchBroker().disposeSearch(response.getWorkspaceId());
 			}
 
 			@Override
@@ -192,7 +191,7 @@ CasualtyDataBroker {
 						new String("Could not get the casualties for client")
 				});
 			}
-		});
+		}, true);
 	}
 
 	@Override

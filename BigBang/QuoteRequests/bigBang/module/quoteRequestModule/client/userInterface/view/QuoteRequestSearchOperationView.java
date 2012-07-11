@@ -13,6 +13,7 @@ import bigBang.library.client.ValueSelectable;
 import bigBang.library.client.event.ActionInvokedEvent;
 import bigBang.library.client.event.ActionInvokedEventHandler;
 import bigBang.library.client.event.FiresAsyncRequests;
+import bigBang.library.client.userInterface.ListHeader;
 import bigBang.library.client.userInterface.view.View;
 import bigBang.module.quoteRequestModule.client.userInterface.QuoteRequestChildrenPanel;
 import bigBang.module.quoteRequestModule.client.userInterface.QuoteRequestForm;
@@ -41,8 +42,17 @@ public class QuoteRequestSearchOperationView extends View implements QuoteReques
 		initWidget(wrapper);
 		wrapper.setSize("100%", "100%");
 
+		VerticalPanel searchPanelWrapper = new VerticalPanel();
+		searchPanelWrapper.setSize("100%", "100%");
+		
+		ListHeader header = new ListHeader("Consultas de Mercado");
+		searchPanelWrapper.add(header);
+		
 		searchPanel = new QuoteRequestSearchPanel();
-		wrapper.addWest(searchPanel, 400);
+		searchPanelWrapper.add(searchPanel);
+		searchPanelWrapper.setCellHeight(searchPanel, "100%");
+		
+		wrapper.addWest(searchPanelWrapper, 400);
 
 		SplitLayoutPanel quoteRequestWrapper = new SplitLayoutPanel();
 		quoteRequestWrapper.setSize("100%", "100%");

@@ -134,7 +134,7 @@ public class ClientSectionViewPresenter implements ViewPresenter {
 						present("REPORTS", parameters);
 					}else {
 						view.selectOperation(SectionOperation.OPERATIONS);
-						present("CLIENT_OPERATIONS", parameters);
+						present("CLIENT_OPERATIONS", parameters, true);
 					}
 				}
 				ClientSectionViewPresenter.this.overlayController.onParameters(parameters);

@@ -213,7 +213,7 @@ public class MassInsurerAccountingView extends View implements MassInsurerAccoun
 		searchPanelWrapper.add(selectAllButton);
 		wrapper.addWest(searchPanelWrapper, 400);
 
-		createPNotice = new Button("Enviar");
+		createPNotice = new Button("Confirmar");
 
 		HorizontalPanel sendClearWrapper = new HorizontalPanel();
 		sendClearWrapper.setVerticalAlignment(HasVerticalAlignment.ALIGN_MIDDLE);
@@ -242,11 +242,11 @@ public class MassInsurerAccountingView extends View implements MassInsurerAccoun
 			}
 		};
 		
-		applyPaymentNoticeCreationForm.addSection("Prestações de Contas a Enviar");
+		applyPaymentNoticeCreationForm.addSection("Prestações de Contas a Criar");
 		
 		
 		VerticalPanel selectedListWrapper = new VerticalPanel();
-		selectedListWrapper.add(new ListHeader("Enviar Prestações de Contas"));
+		selectedListWrapper.add(new ListHeader("Criar Prestações de Contas"));
 		selectedListWrapper.setSize("100%", "100%");
 		applyPaymentNoticeCreationForm.addWidget(sendClearWrapper);
 		selectedListWrapper.add(applyPaymentNoticeCreationForm.getNonScrollableContent());

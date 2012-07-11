@@ -772,7 +772,7 @@ implements InsuranceSubPolicyBroker {
 						new String("Could not get the subpolicies")
 				});
 			}
-		});
+		}, true);
 	}
 
 	@Override

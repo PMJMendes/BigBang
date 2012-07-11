@@ -46,7 +46,7 @@ public class QuoteRequestSearchPanel extends SearchPanel<QuoteRequestStub> imple
 		
 		public Entry(QuoteRequestStub quoteRequest){
 			super(quoteRequest);
-			setHeight("40px");
+			setHeight("50px");
 			this.titleLabel.getElement().getStyle().setFontSize(11, Unit.PX);
 		}
 

@@ -16,6 +16,7 @@ import bigBang.library.client.HasEditableValue;
 import bigBang.library.client.HasValueSelectables;
 import bigBang.library.client.event.ActionInvokedEvent;
 import bigBang.library.client.event.ActionInvokedEventHandler;
+import bigBang.library.client.userInterface.ListHeader;
 import bigBang.library.client.userInterface.view.View;
 import bigBang.module.casualtyModule.client.userInterface.CasualtyChildrenPanel;
 import bigBang.module.casualtyModule.client.userInterface.CasualtyForm;
@@ -40,8 +41,17 @@ public class CasualtySearchOperationView extends View implements CasualtySearchO
 		initWidget(mainWrapper);		
 		mainWrapper.setSize("100%", "100%");
 		
-		this.searchPanel = new CasualtySearchPanel();
-		mainWrapper.addWest(this.searchPanel, SEARCH_PANEL_WIDTH);
+		VerticalPanel searchPanelWrapper = new VerticalPanel();
+		searchPanelWrapper.setSize("100%", "100%");
+		
+		ListHeader header = new ListHeader("Sinistros");
+		searchPanelWrapper.add(header);
+		
+		searchPanel = new CasualtySearchPanel();
+		searchPanelWrapper.add(searchPanel);
+		searchPanelWrapper.setCellHeight(searchPanel, "100%");
+		
+		mainWrapper.addWest(searchPanelWrapper, SEARCH_PANEL_WIDTH);
 		
 		VerticalPanel formWrapper = new VerticalPanel();
 		formWrapper.setSize("100%", "100%");

@@ -5,6 +5,7 @@ import bigBang.definitions.shared.BigBangConstants;
 import bigBang.library.client.FormField;
 import bigBang.library.client.userInterface.DatePickerFormField;
 import bigBang.library.client.userInterface.ExpandableListBoxFormField;
+import bigBang.library.client.userInterface.ExpandableSelectionFormField;
 import bigBang.library.client.userInterface.NumericTextBoxFormField;
 import bigBang.library.client.userInterface.TextAreaFormField;
 import bigBang.library.client.userInterface.TextBoxFormField;
@@ -44,8 +45,8 @@ public abstract class SerialReceiptCreationForm extends FormView<ReceiptPolicyWr
 	protected DatePickerFormField coverageStart;
 	protected DatePickerFormField coverageEnd;
 	protected DatePickerFormField dueDate;
-	protected ExpandableListBoxFormField manager; 
-	protected ExpandableListBoxFormField mediator;
+	protected ExpandableSelectionFormField manager; 
+	protected ExpandableSelectionFormField mediator;
 	protected TextAreaFormField description;
 	protected TextAreaFormField notes;
 	
@@ -189,10 +190,10 @@ public abstract class SerialReceiptCreationForm extends FormView<ReceiptPolicyWr
 		coverageStart = new DatePickerFormField("Vigência");
 		coverageEnd = new DatePickerFormField("Até");
 		dueDate = new DatePickerFormField("Limite de Pagamento");
-		mediator = new ExpandableListBoxFormField(BigBangConstants.EntityIds.MEDIATOR, "Mediador");
-		mediator.allowEdition(false);
-		manager = new ExpandableListBoxFormField(BigBangConstants.EntityIds.USER, "Gestor");
-		manager.allowEdition(false);
+		mediator = new ExpandableSelectionFormField(BigBangConstants.EntityIds.MEDIATOR, "Mediador");
+		mediator.setEditable(false);
+		manager = new ExpandableSelectionFormField(BigBangConstants.EntityIds.USER, "Gestor");
+		manager.setEditable(false);
 		description = new TextAreaFormField();
 		notes = new TextAreaFormField();
 

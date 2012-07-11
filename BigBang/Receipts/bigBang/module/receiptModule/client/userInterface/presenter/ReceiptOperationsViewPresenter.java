@@ -54,7 +54,7 @@ public class ReceiptOperationsViewPresenter implements ViewPresenter {
 				display = display == null ? new String() : display;
 
 				if(display.equalsIgnoreCase("search")){
-					present("RECEIPT_SEARCH", parameters);
+					present("RECEIPT_SEARCH", parameters, true);
 				}else if(display.equalsIgnoreCase("markforpayment")){
 					present("RECEIPT_MARK_FOR_PAYMENT", parameters);
 				}else if(display.equalsIgnoreCase("history")){

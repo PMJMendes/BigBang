@@ -49,7 +49,7 @@ public class ExpenseOperationsViewPresenter implements ViewPresenter {
 				display = display == null ? new String() : display;
 
 				if(display.equalsIgnoreCase("search")){
-					present("EXPENSE_SEARCH", parameters);
+					present("EXPENSE_SEARCH", parameters, true);
 				}else if(display.equalsIgnoreCase("history")){
 					present("HISTORY", parameters);
 				}else if(display.equalsIgnoreCase("inforequest")){

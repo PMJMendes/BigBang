@@ -213,7 +213,7 @@ public class MassSendReceiptView extends View implements MassSendReceiptViewPres
 		searchPanelWrapper.add(selectAllButton);
 		wrapper.addWest(searchPanelWrapper, 400);
 
-		createPNotice = new Button("Enviar");
+		createPNotice = new Button("Confirmar");
 
 		HorizontalPanel sendClearWrapper = new HorizontalPanel();
 		sendClearWrapper.setVerticalAlignment(HasVerticalAlignment.ALIGN_MIDDLE);
@@ -246,7 +246,7 @@ public class MassSendReceiptView extends View implements MassSendReceiptViewPres
 		
 		
 		VerticalPanel selectedListWrapper = new VerticalPanel();
-		selectedListWrapper.add(new ListHeader("Enviar Recibos"));
+		selectedListWrapper.add(new ListHeader("Marcaçao para Envio"));
 		selectedListWrapper.setSize("100%", "100%");
 		applyPaymentNoticeCreationForm.addWidget(sendClearWrapper);
 		selectedListWrapper.add(applyPaymentNoticeCreationForm.getNonScrollableContent());

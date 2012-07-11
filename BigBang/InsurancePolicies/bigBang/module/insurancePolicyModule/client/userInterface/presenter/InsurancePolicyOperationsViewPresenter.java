@@ -54,7 +54,7 @@ public class InsurancePolicyOperationsViewPresenter implements ViewPresenter {
 				display = display == null ? new String() : display;
 
 				if(display.equalsIgnoreCase("search")){
-					present("INSURANCE_POLICY_SEARCH", parameters);
+					present("INSURANCE_POLICY_SEARCH", parameters, true);
 				}else if(display.equalsIgnoreCase("history")){
 					present("history", parameters);
 				}else if(display.equalsIgnoreCase("viewmanagertransfer")){

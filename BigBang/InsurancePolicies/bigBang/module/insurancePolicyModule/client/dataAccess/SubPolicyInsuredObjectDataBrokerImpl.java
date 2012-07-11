@@ -295,7 +295,7 @@ implements InsuredObjectDataBroker {
 						new String("Could not get the resquested process insured objects")	
 				});
 			}
-		});
+		}, true);
 	}
 
 

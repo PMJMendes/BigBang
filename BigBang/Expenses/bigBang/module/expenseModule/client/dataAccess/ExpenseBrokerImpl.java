@@ -49,7 +49,6 @@ public class ExpenseBrokerImpl extends DataBroker<Expense> implements ExpenseDat
 	@Override
 	public void requireDataRefresh() {
 		this.refreshRequired = true;
-
 	}
 
 	@Override
@@ -498,13 +497,6 @@ public class ExpenseBrokerImpl extends DataBroker<Expense> implements ExpenseDat
 			@Override
 			public void onResponse(Search<ExpenseStub> response) {
 				handler.onResponse(response.getResults());
-				service.closeSearch(response.getWorkspaceId(), new BigBangAsyncCallback<Void>() {
-
-					@Override
-					public void onResponseSuccess(Void result) {
-						return;
-					}
-				});
 			}
 
 			@Override
@@ -513,7 +505,7 @@ public class ExpenseBrokerImpl extends DataBroker<Expense> implements ExpenseDat
 						new String("Could not get the expenses for the given owner id")
 				});
 			}
-		});
+		}, true);
 	}
 
 }

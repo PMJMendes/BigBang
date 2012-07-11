@@ -355,7 +355,7 @@ implements ExerciseDataBroker, SubPolicyExerciseDataBroker {
 							new String("Could not get the resquested process exercises")	
 					});
 				}
-			});
+			}, true);
 		}
 	}
 

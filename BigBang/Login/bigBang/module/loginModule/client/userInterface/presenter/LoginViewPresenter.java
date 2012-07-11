@@ -146,7 +146,7 @@ public class LoginViewPresenter implements ViewPresenter {
 				}
 			}
 
-			public void onFailure(Throwable caught) {
+			public void onResponseFailure(Throwable caught) {
 				onLoginFailed();
 			}
 		});
@@ -167,7 +167,7 @@ public class LoginViewPresenter implements ViewPresenter {
 				onLoginSuccess();
 			}
 
-			public void onFailure(Throwable caught) {
+			public void onResponseFailure(Throwable caught) {
 				onLoginFailed();
 			}
 		});

@@ -77,7 +77,6 @@ public class HistoryList extends FilterableList<HistoryItemStub> implements Hist
 				@Override
 				public void onResponse(Search<HistoryItemStub> response) {
 					HistoryList.this.clear();
-					broker.getSearchBroker().disposeSearch(response.getWorkspaceId());
 					for(HistoryItemStub s : response.getResults()) {
 						addEntry(s);
  					}
@@ -90,7 +89,7 @@ public class HistoryList extends FilterableList<HistoryItemStub> implements Hist
 					entry.setSelectable(false);
 					add(entry);
 				}
-			});
+			}, true);
 			this.ownerId = ownerId;
 		}
 		

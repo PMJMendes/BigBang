@@ -132,7 +132,7 @@ public class CasualtySectionViewPresenter implements ViewPresenter {
 						present("REPORTS", parameters);
 					}else{
 						view.selectOperation(SectionOperation.OPERATIONS);
-						present("CASUALTY_OPERATIONS", parameters);
+						present("CASUALTY_OPERATIONS", parameters, true);
 					}
 				}
 				CasualtySectionViewPresenter.this.overlayController.onParameters(parameters);

@@ -8,17 +8,21 @@ import com.google.gwt.user.client.ui.Widget;
 
 import bigBang.module.receiptModule.client.userInterface.DASRequestForm;
 import bigBang.module.receiptModule.client.userInterface.DASRequestTasksOperationsToolbar;
+import bigBang.module.receiptModule.client.userInterface.ReceiptForm;
 import bigBang.module.receiptModule.client.userInterface.presenter.DASRequestTasksViewPresenter;
 import bigBang.module.receiptModule.client.userInterface.presenter.DASRequestTasksViewPresenter.Action;
 import bigBang.definitions.shared.DASRequest;
+import bigBang.definitions.shared.Receipt;
 import bigBang.library.client.event.ActionInvokedEvent;
 import bigBang.library.client.event.ActionInvokedEventHandler;
+import bigBang.library.client.userInterface.ListHeader;
 import bigBang.library.client.userInterface.view.PopupPanel;
 import bigBang.library.client.userInterface.view.View;
 
 public class DASRequestTasksView extends View implements DASRequestTasksViewPresenter.Display {
 
 	protected DASRequestForm form;
+	protected ReceiptForm receiptForm;
 	protected DASRequestTasksOperationsToolbar toolbar;
 	protected ActionInvokedEventHandler<Action> handler;
 	
@@ -52,8 +56,16 @@ public class DASRequestTasksView extends View implements DASRequestTasksViewPres
 		form = new DASRequestForm();
 		form.setReadOnly(true);
 		form.setSize("100%", "100%");
-		wrapper.add(form);
-		wrapper.setCellHeight(form, "100%");
+		wrapper.add(form.getNonScrollableContent());
+		
+		wrapper.add(new ListHeader("Recibo"));
+		
+		this.receiptForm = new ReceiptForm();
+		this.receiptForm.setReadOnly(true);
+		this.receiptForm.setSize("100%", "100%");
+		wrapper.add(this.receiptForm);
+		
+		wrapper.setCellHeight(this.receiptForm, "100%");
 		
 		this.overlayContainer = new SimplePanel();
 	}
@@ -120,6 +132,11 @@ public class DASRequestTasksView extends View implements DASRequestTasksViewPres
 				this.popupPanel = null;
 			}
 		}
+	}
+
+	@Override
+	public HasValue<Receipt> getReceiptForm() {
+		return this.receiptForm;
 	}
 
 }

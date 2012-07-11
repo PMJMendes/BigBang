@@ -278,7 +278,7 @@ public class InsurancePolicyProcessBrokerImpl extends DataBroker<InsurancePolicy
 						new String("Could not get the client policies")	
 				});
 			}
-		});
+		}, true);
 	}
 
 	@Override

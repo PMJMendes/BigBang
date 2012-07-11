@@ -219,9 +219,9 @@ public class MassCreatePaymentNoticeViewPresenter implements ViewPresenter{
 	@Override
 	public void setParameters(HasParameters parameterHolder) {
 		clearView();
-		view.refreshMainLisT();
 		showMassCreatePaymentNoticeScreen();
 		view.setManagerFilterValue(Session.getUserId());
+		view.refreshMainLisT();
 		view.setFilterPanelOpen(true);
 	}
 

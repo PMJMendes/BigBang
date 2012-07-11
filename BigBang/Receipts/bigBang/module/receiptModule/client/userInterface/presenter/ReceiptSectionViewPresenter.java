@@ -148,7 +148,7 @@ public class ReceiptSectionViewPresenter implements ViewPresenter {
 
 					if(display.equalsIgnoreCase("search")){
 						view.selectOperation(SectionOperation.OPERATIONS);
-						present("RECEIPT_OPERATIONS", parameters);
+						present("RECEIPT_OPERATIONS", parameters, true);
 					}else if(display.equalsIgnoreCase("serialreceiptcreation")){
 						view.selectOperation(SectionOperation.SERIAL_RECEIPT_CREATION);
 						present("SERIAL_RECEIPT_CREATION", parameters);
@@ -176,7 +176,7 @@ public class ReceiptSectionViewPresenter implements ViewPresenter {
 						present("REPORTS", parameters);
 					}
 					else{
-						present("RECEIPT_OPERATIONS", parameters);
+						present("RECEIPT_OPERATIONS", parameters, true);
 					}
 				}
 				ReceiptSectionViewPresenter.this.overlayController.onParameters(parameters);

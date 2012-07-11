@@ -147,7 +147,7 @@ public class ExpenseSectionViewPresenter implements ViewPresenter {
 						present("REPORTS", parameters);
 					}else{
 						view.selectOperation(SectionOperation.OPERATIONS);
-						present("EXPENSE_OPERATIONS", parameters);
+						present("EXPENSE_OPERATIONS", parameters, true);
 					}
 				}
 				ExpenseSectionViewPresenter.this.overlayController.onParameters(parameters);

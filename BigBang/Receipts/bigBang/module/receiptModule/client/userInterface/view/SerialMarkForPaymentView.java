@@ -41,7 +41,6 @@ public class SerialMarkForPaymentView extends View implements SerialMarkForPayme
 		wrapper.addWest(listWrapper, 400);
 
 		ListHeader listHeader = new ListHeader("Recibos");
-		listHeader.setHeight("30px");
 		
 		listWrapper.add(listHeader);
 
@@ -55,7 +54,6 @@ public class SerialMarkForPaymentView extends View implements SerialMarkForPayme
 		wrapper.addEast(paymentsWrapper, 650);
 
 		ListHeader paymentsHeader = new ListHeader("Cobranças");
-		paymentsHeader.setHeight("30px");
 		paymentsWrapper.add(paymentsHeader);
 
 		ClickHandler clickHandler = new ClickHandler() {
@@ -84,7 +82,6 @@ public class SerialMarkForPaymentView extends View implements SerialMarkForPayme
 		wrapper.add(receiptWrapper);
 
 		ListHeader receiptHeader = new ListHeader("Recibo");
-		receiptHeader.setHeight("30px");
 		receiptWrapper.add(receiptHeader);
 
 		form = new ReceiptForm();

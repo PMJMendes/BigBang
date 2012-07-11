@@ -83,8 +83,6 @@ TypifiedListClient {
 		expandImage = new Image(r.listExpandIcon());
 		expandImage.getElement().getStyle().setCursor(Cursor.POINTER);
 
-
-
 		if(type == ManagementPanelType.TYPIFIED_LIST){
 
 			final PopupPanel popup = new PopupPanel(true, "Listagem");
@@ -228,7 +226,7 @@ TypifiedListClient {
 			currentListId = null;
 			clearValues();
 			managementPanel.setListId(null);
-			
+
 		}
 	}
 
@@ -280,18 +278,17 @@ TypifiedListClient {
 		if (value == null)
 			strValue = "";
 
-		if(isDifferentValue(value)){
-			super.setValue(strValue, false);
-			if(fireEvents)
-				ValueChangeEvent.fire(this, value);
-			selectedValueId = value;
-		}
+		super.setValue(strValue, false);
+		if(fireEvents)
+			ValueChangeEvent.fire(this, value);
+		selectedValueId = value;
 	}
 
 	@Override
 	public void clear() {
 		if(managementPanel != null){
 			managementPanel.getList().clearSelection();
+			managementPanel.setListId(null);
 		}
 		super.clear();
 	}
@@ -368,7 +365,7 @@ TypifiedListClient {
 		ArrayList<ValueSelectable<TipifiedListItem>> result = new ArrayList<ValueSelectable<TipifiedListItem>>(this.managementPanel.getList());
 		return result;
 	}
-	
+
 	/**
 	 *  
 	 */

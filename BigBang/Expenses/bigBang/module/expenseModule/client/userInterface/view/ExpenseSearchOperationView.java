@@ -14,6 +14,7 @@ import bigBang.library.client.HasEditableValue;
 import bigBang.library.client.HasValueSelectables;
 import bigBang.library.client.event.ActionInvokedEvent;
 import bigBang.library.client.event.ActionInvokedEventHandler;
+import bigBang.library.client.userInterface.ListHeader;
 import bigBang.library.client.userInterface.view.View;
 import bigBang.module.expenseModule.client.userInterface.ExpenseChildrenPanel;
 import bigBang.module.expenseModule.client.userInterface.ExpenseForm;
@@ -37,9 +38,18 @@ public class ExpenseSearchOperationView extends View implements ExpenseSearchOpe
 		initWidget(mainWrapper);
 		mainWrapper.setSize("100%", "100%");
 
+		VerticalPanel searchPanelWrapper = new VerticalPanel();
+		searchPanelWrapper.setSize("100%", "100%");
+		
+		ListHeader header = new ListHeader("Despesas de Saude");
+		searchPanelWrapper.add(header);
+		
 		searchPanel = new ExpenseSearchPanel();
-		mainWrapper.addWest(searchPanel, SEARCH_PANEL_WIDTH);
-
+		searchPanelWrapper.add(searchPanel);
+		searchPanelWrapper.setCellHeight(searchPanel, "100%");
+		
+		mainWrapper.addWest(searchPanelWrapper, SEARCH_PANEL_WIDTH);
+		
 		VerticalPanel formWrapper = new VerticalPanel();
 		formWrapper.setSize("100%", "100%");
 

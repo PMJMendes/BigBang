@@ -213,7 +213,7 @@ public class MassAgentAccountingView extends View implements MassAgentAccounting
 		searchPanelWrapper.add(selectAllButton);
 		wrapper.addWest(searchPanelWrapper, 400);
 
-		createPNotice = new Button("Enviar");
+		createPNotice = new Button("Confirmar");
 
 		HorizontalPanel sendClearWrapper = new HorizontalPanel();
 		sendClearWrapper.setVerticalAlignment(HasVerticalAlignment.ALIGN_MIDDLE);
@@ -242,11 +242,11 @@ public class MassAgentAccountingView extends View implements MassAgentAccounting
 			}
 		};
 		
-		applyPaymentNoticeCreationForm.addSection("Retrocessões a Enviar");
+		applyPaymentNoticeCreationForm.addSection("Retrocessões a Criar");
 		
 		
 		VerticalPanel selectedListWrapper = new VerticalPanel();
-		selectedListWrapper.add(new ListHeader("Enviar Retrocessões"));
+		selectedListWrapper.add(new ListHeader("Criar Retrocessões"));
 		selectedListWrapper.setSize("100%", "100%");
 		applyPaymentNoticeCreationForm.addWidget(sendClearWrapper);
 		selectedListWrapper.add(applyPaymentNoticeCreationForm.getNonScrollableContent());

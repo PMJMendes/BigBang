@@ -49,7 +49,7 @@ public class QuoteRequestOperationsViewPresenter implements ViewPresenter {
 				display = display == null ? new String() : display;
 
 				if(display.equalsIgnoreCase("search")){
-					present("QUOTE_REQUEST_SEARCH", parameters);
+					present("QUOTE_REQUEST_SEARCH", parameters, true);
 				}else if(display.equalsIgnoreCase("viewinsuredobject")){
 					present("QUOTE_REQUEST_INSURED_OBJECT", parameters);
 				}else if(display.equalsIgnoreCase("inforequest")){

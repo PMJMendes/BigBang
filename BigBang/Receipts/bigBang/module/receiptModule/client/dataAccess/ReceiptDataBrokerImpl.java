@@ -221,7 +221,7 @@ public class ReceiptDataBrokerImpl extends DataBroker<Receipt> implements Receip
 						new String("Could not get the receipts for the owner id")
 				});
 			}
-		});
+		}, true);
 
 	}
 

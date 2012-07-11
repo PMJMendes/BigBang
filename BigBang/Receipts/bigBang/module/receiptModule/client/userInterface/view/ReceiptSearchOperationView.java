@@ -9,6 +9,7 @@ import bigBang.library.client.HasEditableValue;
 import bigBang.library.client.HasValueSelectables;
 import bigBang.library.client.event.ActionInvokedEvent;
 import bigBang.library.client.event.ActionInvokedEventHandler;
+import bigBang.library.client.userInterface.ListHeader;
 import bigBang.library.client.userInterface.view.View;
 import bigBang.module.receiptModule.client.userInterface.ReceiptChildrenPanel;
 import bigBang.module.receiptModule.client.userInterface.ReceiptForm;
@@ -38,8 +39,17 @@ public class ReceiptSearchOperationView extends View implements ReceiptSearchOpe
 		initWidget(mainWrapper);
 		mainWrapper.setSize("100%", "100%");
 
-		this.searchPanel = new ReceiptSearchPanel();
-		mainWrapper.addWest(this.searchPanel, SEARCH_PANEL_WIDTH);
+		VerticalPanel searchPanelWrapper = new VerticalPanel();
+		searchPanelWrapper.setSize("100%", "100%");
+		
+		ListHeader header = new ListHeader("Recibos");
+		searchPanelWrapper.add(header);
+		
+		searchPanel = new ReceiptSearchPanel();
+		searchPanelWrapper.add(searchPanel);
+		searchPanelWrapper.setCellHeight(searchPanel, "100%");
+		
+		mainWrapper.addWest(searchPanelWrapper, SEARCH_PANEL_WIDTH);
 
 		VerticalPanel formWrapper = new VerticalPanel();
 		formWrapper.setSize("100%", "100%");

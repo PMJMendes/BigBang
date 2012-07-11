@@ -54,7 +54,7 @@ public class CasualtyOperationsViewPresenter implements ViewPresenter {
 				display = display == null ? new String() : display;
 
 				if(display.equalsIgnoreCase("search")){
-					present("CASUALTY_SEARCH", parameters);
+					present("CASUALTY_SEARCH", parameters, true);
 				}else if(display.equalsIgnoreCase("subcasualty")){
 					present("SUB_CASUALTY_VIEW", parameters);
 				}else if(display.equalsIgnoreCase("history")){

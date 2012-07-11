@@ -58,7 +58,7 @@ public class ReceiptSelectionView extends View implements ReceiptSelectionViewPr
 		buttonsWrapper.add(confirmButton);
 		buttonsWrapper.add(cancelButton);
 		
-		ListHeader header = new ListHeader("Apólice Principal");
+		ListHeader header = new ListHeader("Recibo");
 		header.setRightWidget(buttonsWrapper);
 
 		form = new ReceiptForm();
@@ -71,7 +71,7 @@ public class ReceiptSelectionView extends View implements ReceiptSelectionViewPr
 
 		VerticalPanel listWrapper = new VerticalPanel();
 		listWrapper.setSize("100%", "100%");
-		listWrapper.add(new ListHeader("Lista de Apólices"));
+		listWrapper.add(new ListHeader("Lista de Recibos"));
 		listWrapper.add(list);
 		listWrapper.setCellHeight(list, "100%");
 		
