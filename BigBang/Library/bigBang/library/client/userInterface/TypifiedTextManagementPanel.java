@@ -43,6 +43,13 @@ public class TypifiedTextManagementPanel extends View implements TypifiedTextCli
 
 		private MenuItem delete;
 
+		@Override
+		public void lockAll() {
+			adminMenuItem.setEnabled(false);
+			saveMenuItem.setEnabled(false);
+			editCancelMenuItem.setEnabled(false);
+		}
+
 		public TypifiedTextOperationsToolbar(){
 			super();
 			delete = new MenuItem("Eliminar", new Command() {
@@ -51,6 +58,8 @@ public class TypifiedTextManagementPanel extends View implements TypifiedTextCli
 				public void execute() {
 					onDeleteRequest();
 				}
+
+
 
 			});
 
@@ -62,7 +71,7 @@ public class TypifiedTextManagementPanel extends View implements TypifiedTextCli
 			this.setHeight("21px");
 			this.setWidth("100%");
 			this.adminSubMenu.getElement().getStyle().setZIndex(12000);
-
+			lockAll();
 
 		}
 
@@ -101,6 +110,7 @@ public class TypifiedTextManagementPanel extends View implements TypifiedTextCli
 	private boolean inNewTypifiedText = false;
 	private TipifiedListItem selectedItem = new TipifiedListItem();
 	private TypifiedTextOperationsToolbar toolbar;
+	private boolean firstTime = true;
 
 	public TypifiedTextManagementPanel(final String listId, String listDescription) {
 
@@ -178,21 +188,22 @@ public class TypifiedTextManagementPanel extends View implements TypifiedTextCli
 			@Override
 			public void onSelectionChanged(SelectionChangedEvent event) {
 
-
 				for(ListEntry<TipifiedListItem> item : list){
 					if(item.isSelected){
+
 						textBroker.getText(tag, item.value.id, new ResponseHandler<TypifiedText>() {
 
 							@Override
 							public void onResponse(TypifiedText response) {
+
 								label.setValue(response.label);
 								subject.setValue(response.subject);
 								textBody.setValue(response.text);
+								toolbar.setEditionAvailable(true);
 							}
 
 							@Override
 							public void onError(Collection<ResponseError> errors) {
-								System.out.println(errors.iterator().next().description);
 								EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não foi possível mostrar o texto pedido."), TYPE.ALERT_NOTIFICATION));
 
 							}
@@ -203,7 +214,6 @@ public class TypifiedTextManagementPanel extends View implements TypifiedTextCli
 
 				if(inNewTypifiedText){
 					allowEdition(true);
-					inNewTypifiedText = false;
 				}
 				else{
 					allowEdition(false);
@@ -262,6 +272,10 @@ public class TypifiedTextManagementPanel extends View implements TypifiedTextCli
 
 		TipifiedListItem item = list.getSelected().iterator().next().getValue();
 
+		if(inNewTypifiedText){
+			deleteItem();
+			return;
+		}
 		textBroker.getText(tag, item.id, new ResponseHandler<TypifiedText>() {
 
 			@Override
@@ -275,7 +289,7 @@ public class TypifiedTextManagementPanel extends View implements TypifiedTextCli
 
 			@Override
 			public void onError(Collection<ResponseError> errors) {
-				EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não foi possível guardar o modelo seleccionado."), TYPE.ALERT_NOTIFICATION));
+				EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não foi possível cancelar as alterações."), TYPE.ALERT_NOTIFICATION));
 			}
 		});
 
@@ -285,12 +299,11 @@ public class TypifiedTextManagementPanel extends View implements TypifiedTextCli
 
 	protected void saveItem() {
 
-
 		if(list.getSelected().size() < 1)
 			return;
 
 		TipifiedListItem item = list.getSelected().iterator().next().getValue();
-
+		selectedItem = item;
 		textBroker.getText(tag, item.id, new ResponseHandler<TypifiedText>() {
 
 			@Override
@@ -307,6 +320,7 @@ public class TypifiedTextManagementPanel extends View implements TypifiedTextCli
 					public void onResponse(TypifiedText response) {
 						EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Modelo guardado."), TYPE.TRAY_NOTIFICATION));
 						TypifiedTextManagementPanel.this.allowEdition(false);
+						inNewTypifiedText = false;
 					}
 
 					@Override
@@ -331,8 +345,6 @@ public class TypifiedTextManagementPanel extends View implements TypifiedTextCli
 
 		final TypifiedListEntry toDelete = (TypifiedListEntry) list.getSelected().iterator().next();
 
-		System.out.println(toDelete.getValue().id);
-
 		textBroker.removeText(tag, toDelete.getValue().id, new ResponseHandler<TypifiedText>() {
 
 			@Override
@@ -340,7 +352,10 @@ public class TypifiedTextManagementPanel extends View implements TypifiedTextCli
 				label.setValue("");
 				subject.setValue("");
 				textBody.setValue("");
-				EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Modelo eliminado."), TYPE.TRAY_NOTIFICATION));
+				if(!inNewTypifiedText){
+					EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Modelo eliminado."), TYPE.TRAY_NOTIFICATION));
+					inNewTypifiedText = false;
+				}
 				TypifiedTextManagementPanel.this.allowEdition(false);
 			}
 
@@ -359,7 +374,6 @@ public class TypifiedTextManagementPanel extends View implements TypifiedTextCli
 		subject.setValue("");
 		label.setValue("Novo Modelo");
 		textBody.setValue("");
-
 		createNewText();
 
 	}
@@ -371,12 +385,13 @@ public class TypifiedTextManagementPanel extends View implements TypifiedTextCli
 		newT.subject = subject.getValue();
 		newT.tag = tag;
 		newT.text = textBody.getValue();
+		inNewTypifiedText = true;
 
 		textBroker.createText(tag, newT, new ResponseHandler<TypifiedText>() {
 
 			@Override
 			public void onResponse(TypifiedText response) {
-
+				return;
 			}
 
 			@Override
@@ -386,7 +401,6 @@ public class TypifiedTextManagementPanel extends View implements TypifiedTextCli
 
 			}
 		});
-
 
 	}
 
@@ -466,13 +480,21 @@ public class TypifiedTextManagementPanel extends View implements TypifiedTextCli
 
 	@Override
 	public void setListId(final String listId) {
-		if(listId != null) {
-			listBroker.unregisterClient(this.listId, this);
-			String[] splitted = listId.split("/");
-			setTag(splitted[1]);
+		if(listId == null){
+			return;
 		}
+
+		listBroker.unregisterClient(this.listId, this);
+		String[] splitted = listId.split("/");
+		setTag(splitted[1]);
 		this.listId = listId;
 		list.clear();
+
+		if(firstTime ){
+			listBroker.registerClient(TypifiedTextManagementPanel.this.listId, TypifiedTextManagementPanel.this);
+			listBroker.getListItems(TypifiedTextManagementPanel.this.listId);
+			firstTime = false;
+		}
 
 		if(this.attachHandlerRegistration == null){
 			this.attachHandlerRegistration = this.addAttachHandler(new AttachEvent.Handler() {
@@ -483,6 +505,10 @@ public class TypifiedTextManagementPanel extends View implements TypifiedTextCli
 						listBroker.registerClient(TypifiedTextManagementPanel.this.listId, TypifiedTextManagementPanel.this);
 						listBroker.getListItems(TypifiedTextManagementPanel.this.listId);
 					}else{
+						toolbar.lockAll();
+						subject.setValue("");
+						label.setValue("");
+						textBody.setValue("");
 						listBroker.unregisterClient(TypifiedTextManagementPanel.this.listId, TypifiedTextManagementPanel.this);
 					}
 				}
@@ -531,7 +557,6 @@ public class TypifiedTextManagementPanel extends View implements TypifiedTextCli
 					entry.setSelected(true, true);
 					selectedItem.id = "";
 					selectedItem.value = "";
-					this.allowEdition(true);
 				}
 				for(ValueSelectable<TipifiedListItem> s : selected){
 					if(entry.getValue().id.equalsIgnoreCase(s.getValue().id)){

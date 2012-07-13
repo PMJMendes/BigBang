@@ -25,7 +25,7 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 public class TypifiedTextFormField extends FormField<TypifiedText> implements TypifiedTextClient{
 
 	private TypifiedTextBroker broker;
-	private ExpandableListBoxFormField labels = new ExpandableListBoxFormField(null,"Etiqueta", ManagementPanelType.TYPIFIED_TEXT);
+	private ExpandableListBoxFormField labels;
 	private TextBoxFormField subject = new TextBoxFormField("Assunto");
 	private RichTextAreaFormField textBody = new RichTextAreaFormField();
 	private VerticalPanel wrapper = new VerticalPanel();
@@ -34,6 +34,7 @@ public class TypifiedTextFormField extends FormField<TypifiedText> implements Ty
 
 	public TypifiedTextFormField(){
 
+		labels  = new ExpandableListBoxFormField(null,"Etiqueta", ManagementPanelType.TYPIFIED_TEXT);
 		broker = (TypifiedTextBroker)DataBrokerManager.staticGetBroker(BigBangConstants.TypifiedListIds.TYPIFIED_TEXT);
 		labels.addValueChangeHandler(new ValueChangeHandler<String>() {
 
