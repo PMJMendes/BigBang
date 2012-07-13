@@ -680,7 +680,7 @@ public class SubPolicyServiceImpl
 				lobjResult.statusIcon = SubPolicyStub.PolicyStatus.OBSOLETE;
 				break;
 			}
-			lobjResult.premium = ( mobjSubPolicy.mdblPremium == null ? null : mobjSubPolicy.mdblPremium.toPlainString() );
+			lobjResult.premium = ( mobjSubPolicy.mdblPremium == null ? null : mobjSubPolicy.mdblPremium.doubleValue() );
 			lobjResult.docushare = mobjSubPolicy.mstrDocuShare;
 
 			return lobjResult;
@@ -2202,7 +2202,7 @@ public class SubPolicyServiceImpl
 			lobjResult.statusIcon = SubPolicyStub.PolicyStatus.OBSOLETE;
 			break;
 		}
-		lobjResult.premium = (lobjSubPolicy.getAt(8) == null ? null : ((BigDecimal)lobjSubPolicy.getAt(8)).toPlainString());
+		lobjResult.premium = (lobjSubPolicy.getAt(8) == null ? null : ((BigDecimal)lobjSubPolicy.getAt(8)).doubleValue());
 		lobjResult.docushare = (String)lobjSubPolicy.getAt(9);
 		lobjResult.managerId = lobjUser.getKey().toString();
 		lobjResult.managerName = lobjUser.getDisplayName();

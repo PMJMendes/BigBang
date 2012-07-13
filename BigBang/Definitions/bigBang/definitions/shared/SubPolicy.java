@@ -96,7 +96,7 @@ public class SubPolicy
 	public String notes;
 	public String inheritMediatorId;
 	public String inheritMediatorName;
-	public String premium; // Numérico com duas casas decimais: prémio comercial.
+	public Double premium; // Numérico com duas casas decimais: prémio comercial.
 	public String docushare;
 
 	public Contact[] contacts;
