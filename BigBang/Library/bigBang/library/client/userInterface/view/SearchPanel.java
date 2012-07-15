@@ -127,6 +127,8 @@ public abstract class SearchPanel<T extends SearchResult> extends FilterableList
 		textFieldOldParent.removeFromParent();
 		
 		this.setHeaderWidget(headerWidgetWrapper);
+		
+		this.textBoxFilter.setFocus(true);
 	}
 	
 	/**

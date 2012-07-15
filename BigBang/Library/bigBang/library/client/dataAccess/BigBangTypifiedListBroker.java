@@ -175,8 +175,11 @@ public class BigBangTypifiedListBroker implements TypifiedListBroker {
 
 	@Override
 	public List<TipifiedListItem> getListItems(String listId) {
-		if(!this.lists.containsKey(listId))
-			throw new RuntimeException("There if no list registered with id \"" + listId + "\"");
+		
+		if(listId == null || !this.lists.containsKey(listId)){
+			GWT.log("There if no list registered with id \"" + listId + "\"");
+			return new ArrayList<TipifiedListItem>();
+		}
 		return this.lists.get(listId);
 	}
 

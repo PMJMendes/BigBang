@@ -288,7 +288,7 @@ TypifiedListClient {
 	public void clear() {
 		if(managementPanel != null){
 			managementPanel.getList().clearSelection();
-			managementPanel.setListId(null);
+//			managementPanel.setListId(null);
 		}
 		super.clear();
 	}

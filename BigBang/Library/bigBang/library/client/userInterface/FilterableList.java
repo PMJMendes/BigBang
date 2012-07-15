@@ -60,7 +60,7 @@ public class FilterableList<T> extends SortableList<T> {
 		this.filterDropContainer = (DisclosurePanel) GWT.create(DisclosurePanel.class);
 		filterDropContainer.getElement().getStyle().setBackgroundColor("#DDD");
 		filterDropContainer.setAnimationEnabled(true);
-		filterDropContainer.setSize("auto", "100%");
+		filterDropContainer.setSize("100%", "100%");
 		filterDropContainer.getElement().getStyle().setProperty("borderTop", "1px solid gray");
 
 		HorizontalPanel filterHeaderWrapper = new HorizontalPanel();
@@ -88,9 +88,9 @@ public class FilterableList<T> extends SortableList<T> {
 				filterHeaderImage.setResource(resources.arrowUp());
 				filtersContainer.getElement().getStyle().setProperty("maxHeight", scrollPanelWrapper.getOffsetHeight()+"px");
 				GWT.log(filtersContainer.getOffsetHeight() +" - " + scrollPanelWrapper.getOffsetHeight());
-//				if(filtersContainer.getOffsetHeight() > scrollPanelWrapper.getOffsetHeight()) {
-//					filtersContainer.setHeight(scrollPanelWrapper.getOffsetHeight() + "px");
-//				}
+				if(filtersContainer.getOffsetHeight() > scrollPanelWrapper.getOffsetHeight()) {
+					filtersContainer.setHeight(scrollPanelWrapper.getOffsetHeight() + "px");
+				}
 			}
 		});
 
@@ -113,7 +113,6 @@ public class FilterableList<T> extends SortableList<T> {
 		headerWrapper.add(filterDropContainer);
 
 		filtersContainer = new SimplePanel();
-		filtersContainer.setSize("100%", "100%");
 		filterDropContainer.setContent(filtersContainer);
 
 		setHeaderWidget(headerWrapper);
@@ -189,7 +188,7 @@ public class FilterableList<T> extends SortableList<T> {
 	 * @param show if true, shows the filter disclosure panel
 	 */
 	public void showFilterField(boolean show) {
-		((UIObject) this.filtersContainer).setVisible(show);
+		((UIObject) this.filterDropContainer).setVisible(show);
 	}
 
 	/**

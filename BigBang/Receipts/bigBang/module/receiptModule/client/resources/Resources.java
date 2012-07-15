@@ -8,7 +8,7 @@ public interface Resources extends ClientBundle {
 	@Source("images/searchIcon1.png")
 	ImageResource searchIcon();
 
-	@Source("images/managerIcon2.png")
+	@Source("images/managerIcon.png")
 	ImageResource managerIcon();
 	
 	@Source("images/receipt.png")
@@ -20,7 +20,7 @@ public interface Resources extends ClientBundle {
 	@Source("images/sendReceipt.png")
 	ImageResource sendReceiptIcon();
 	
-	@Source("images/accountability2.png")
+	@Source("images/accountability.png")
 	ImageResource accountabilityIcon();
 
 	@Source("images/return.png")

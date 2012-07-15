@@ -180,6 +180,7 @@ public class TypifiedListManagementPanel extends FilterableList<TipifiedListItem
 		if(this.listId != null) {
 			listBroker.unregisterClient(this.listId, this);
 		}
+
 		this.listId = listId;
 		editable = listId != null && !listId.equals("");
 		this.clear();
@@ -338,7 +339,7 @@ public class TypifiedListManagementPanel extends FilterableList<TipifiedListItem
 	@Override
 	public void setTag(String tag) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
@@ -354,5 +355,5 @@ public class TypifiedListManagementPanel extends FilterableList<TipifiedListItem
 		}
 		this.listBroker = broker;
 	}
-	
+
 }
