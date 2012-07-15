@@ -218,7 +218,7 @@ public abstract class DetailedBase
 		{
 			try
 			{
-				new BigDecimal(pobjValue.GetValue());
+				new BigDecimal(pobjValue.GetValue().replaceAll("\\.", "").replaceAll(",", "."));
 			}
 			catch (NumberFormatException e)
 			{
@@ -279,6 +279,7 @@ public abstract class DetailedBase
 		UUID lidExercise;
 
 		pstrBuilder.append("O campo '").append(pobjValue.GetTax().getLabel()).append("' ");
+		pstrBuilder.append("da cobertura '").append(pobjValue.GetTax().GetCoverage().getLabel()).append("' ");
 		if ( (lidObject = pobjValue.GetObjectID()) != null )
 		{
 			pstrBuilder.append("do objecto seguro '");
@@ -415,7 +416,7 @@ public abstract class DetailedBase
 		{
 			try
 			{
-				new BigDecimal(pobjValue.GetValue());
+				new BigDecimal(pobjValue.GetValue().replaceAll("\\.", "").replaceAll(",", "."));
 			}
 			catch (NumberFormatException e)
 			{
