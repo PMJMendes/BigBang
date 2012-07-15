@@ -5,7 +5,8 @@ PolicyNotes, FKMediator, BCaseStudy, FKStatus, Premium, DShareFolder, MigrationI
 select CAST(CAST(NEWID() AS BINARY(10)) + CAST(GETDATE() AS BINARY(6)) AS UNIQUEIDENTIFIER) PK,
 s.apolice PolicyNumber, null FKProcess, c.PK FKCompany, '6A2A5C28-6866-463C-9B6A-9F34015284C4' FKSubLine, s.datini BeginDate, d.PK FKDuration, f.PK FKFractioning,
 s.diainicio MaturityDay, s.mesinicio MaturityMonth, s.datfim EndDate, substring(s.observ, 1, 250) PolicyNotes, m.PK FKMediator, 0 BCaseStudy, case s.situacao
-when 'A' then '4F115B5C-0E23-444F-AA68-9F98012CA192' when 'U' then 'FCE79588-054B-458D-9515-9F98012CB80E' else '421E16B3-BE47-4D9C-9011-9F98012C945E' end FKStatus,
+when 'P' then '6489D7DF-A090-40B9-BD5E-9F98012C8BED' when 'A' then '4F115B5C-0E23-444F-AA68-9F98012CA192'
+when 'U' then 'FCE79588-054B-458D-9515-9F98012CB80E' else '421E16B3-BE47-4D9C-9011-9F98012C945E' end FKStatus,
 round(case isnull(s.moeda, 1) when 2 then s.vpremio else s.vpremio/200.482 end, 2) Premium, s.DocuShare DShareFolder, s.MigrationID MigrationID
 from amartins..empresa.apolice s
 inner join amartins.tblcompanies c on c.MigrationID=s.comseg
@@ -209,7 +210,8 @@ PolicyNotes, FKMediator, BCaseStudy, FKStatus, Premium, DShareFolder, MigrationI
 select CAST(CAST(NEWID() AS BINARY(10)) + CAST(GETDATE() AS BINARY(6)) AS UNIQUEIDENTIFIER) PK,
 s.apolice PolicyNumber, null FKProcess, c.PK FKCompany, 'D36F47AB-0D5A-425D-8FD4-9EE9011A6837' FKSubLine, s.datini BeginDate, d.PK FKDuration, f.PK FKFractioning,
 s.diainicio MaturityDay, s.mesinicio MaturityMonth, s.datfim EndDate, substring(s.observ, 1, 250) PolicyNotes, m.PK FKMediator, 0 BCaseStudy, case s.situacao
-when 'A' then '4F115B5C-0E23-444F-AA68-9F98012CA192' when 'U' then 'FCE79588-054B-458D-9515-9F98012CB80E' else '421E16B3-BE47-4D9C-9011-9F98012C945E' end FKStatus,
+when 'P' then '6489D7DF-A090-40B9-BD5E-9F98012C8BED' when 'A' then '4F115B5C-0E23-444F-AA68-9F98012CA192'
+when 'U' then 'FCE79588-054B-458D-9515-9F98012CB80E' else '421E16B3-BE47-4D9C-9011-9F98012C945E' end FKStatus,
 round(case isnull(s.moeda, 1) when 2 then s.vpremio else s.vpremio/200.482 end, 2) Premium, s.DocuShare DShareFolder, s.MigrationID MigrationID
 from amartins..empresa.apolice s
 inner join amartins.tblcompanies c on c.MigrationID=s.comseg
@@ -650,7 +652,8 @@ PolicyNotes, FKMediator, BCaseStudy, FKStatus, Premium, DShareFolder, MigrationI
 select CAST(CAST(NEWID() AS BINARY(10)) + CAST(GETDATE() AS BINARY(6)) AS UNIQUEIDENTIFIER) PK,
 s.apolice PolicyNumber, null FKProcess, c.PK FKCompany, '691EF827-EF46-4C49-A828-9F92015826D8' FKSubLine, s.datini BeginDate, d.PK FKDuration, f.PK FKFractioning,
 s.diainicio MaturityDay, s.mesinicio MaturityMonth, s.datfim EndDate, substring(s.observ, 1, 250) PolicyNotes, m.PK FKMediator, 0 BCaseStudy, case s.situacao
-when 'A' then '4F115B5C-0E23-444F-AA68-9F98012CA192' when 'U' then 'FCE79588-054B-458D-9515-9F98012CB80E' else '421E16B3-BE47-4D9C-9011-9F98012C945E' end FKStatus,
+when 'P' then '6489D7DF-A090-40B9-BD5E-9F98012C8BED' when 'A' then '4F115B5C-0E23-444F-AA68-9F98012CA192'
+when 'U' then 'FCE79588-054B-458D-9515-9F98012CB80E' else '421E16B3-BE47-4D9C-9011-9F98012C945E' end FKStatus,
 round(case isnull(s.moeda, 1) when 2 then s.vpremio else s.vpremio/200.482 end, 2) Premium, s.DocuShare DShareFolder, s.MigrationID MigrationID
 from amartins..empresa.apolice s
 inner join amartins.tblcompanies c on c.MigrationID=s.comseg
