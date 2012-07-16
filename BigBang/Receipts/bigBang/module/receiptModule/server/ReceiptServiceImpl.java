@@ -41,6 +41,7 @@ import com.premiumminds.BigBang.Jewel.Data.DSBridgeData;
 import com.premiumminds.BigBang.Jewel.Data.PaymentData;
 import com.premiumminds.BigBang.Jewel.Data.ReceiptData;
 import com.premiumminds.BigBang.Jewel.Objects.Client;
+import com.premiumminds.BigBang.Jewel.Objects.Company;
 import com.premiumminds.BigBang.Jewel.Objects.Line;
 import com.premiumminds.BigBang.Jewel.Objects.Mediator;
 import com.premiumminds.BigBang.Jewel.Objects.Policy;
@@ -82,6 +83,7 @@ public class ReceiptServiceImpl
 		IProcess lobjProc;
 		Policy lobjPolicy;
 		SubPolicy lobjSubPolicy;
+		Company lobjCompany;
 		Client lobjClient;
 		Mediator lobjMed;
 		SubLine lobjSubLine;
@@ -109,6 +111,7 @@ public class ReceiptServiceImpl
 				lobjPolicy = (Policy)lobjProc.GetParent().GetParent().GetData();;
 				lobjClient = Client.GetInstance(Engine.getCurrentNameSpace(), (UUID)lobjSubPolicy.getAt(2));
 			}
+			lobjCompany = lobjPolicy.GetCompany();
 			lobjMed = Mediator.GetInstance(Engine.getCurrentNameSpace(),
 					(lobjPolicy.getAt(11) == null ?  (UUID)lobjClient.getAt(8) : (UUID)lobjPolicy.getAt(11)) );
 			lobjSubLine = lobjPolicy.GetSubLine();
@@ -132,6 +135,8 @@ public class ReceiptServiceImpl
 		lobjResult.clientId = lobjClient.getKey().toString();
 		lobjResult.clientNumber = ((Integer)lobjClient.getAt(1)).toString();
 		lobjResult.clientName = lobjClient.getLabel();
+		lobjResult.insurerId = lobjCompany.getKey().toString();
+		lobjResult.insurerName = lobjCompany.getLabel();
 		lobjResult.policyId = ( lobjSubPolicy == null ? lobjPolicy.getKey().toString() : lobjSubPolicy.getKey().toString() );
 		lobjResult.policyNumber = ( lobjSubPolicy == null ? lobjPolicy.getLabel() : lobjSubPolicy.getLabel() );
 		lobjResult.categoryId = lobjCategory.getKey().toString();
@@ -2090,6 +2095,7 @@ public class ReceiptServiceImpl
 		IProcess lobjProcess;
 		Policy lobjPolicy;
 		SubPolicy lobjSubPolicy;
+		Company lobjCompany;
 		Client lobjClient;
 		ObjectBase lobjSubLine, lobjLine, lobjCategory, lobjStatus;
 		ReceiptStub lobjResult;
@@ -2111,6 +2117,7 @@ public class ReceiptServiceImpl
 					lobjPolicy = (Policy)lobjProcess.GetParent().GetParent().GetData();
 					lobjClient = Client.GetInstance(Engine.getCurrentNameSpace(), (UUID)lobjSubPolicy.getAt(2));
 				}
+				lobjCompany = lobjPolicy.GetCompany();
 				try
 				{
 					lobjSubLine = Engine.GetWorkInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), Constants.ObjID_SubLine),
@@ -2146,6 +2153,7 @@ public class ReceiptServiceImpl
 			{
 				lobjPolicy = null;
 				lobjSubPolicy = null;
+				lobjCompany = null;
 				lobjClient = null;
 				lobjSubLine = null;
 				lobjLine = null;
@@ -2157,6 +2165,7 @@ public class ReceiptServiceImpl
 			lobjProcess = null;
 			lobjPolicy = null;
 			lobjSubPolicy = null;
+			lobjCompany = null;
 			lobjSubLine = null;
 			lobjLine = null;
 			lobjCategory = null;
@@ -2180,6 +2189,8 @@ public class ReceiptServiceImpl
 		lobjResult.clientId = (lobjClient == null ? null : lobjClient.getKey().toString());
 		lobjResult.clientNumber = (lobjClient == null ? "" : ((Integer)lobjClient.getAt(1)).toString());
 		lobjResult.clientName = (lobjClient == null ? "(Erro)" : lobjClient.getLabel());
+		lobjResult.insurerId = (lobjCompany == null ? null : lobjCompany.getKey().toString());
+		lobjResult.insurerName = (lobjCompany == null ? "(Erro)" : lobjCompany.getLabel());
 		lobjResult.policyId = (lobjSubPolicy == null ? (lobjPolicy == null ? null : lobjPolicy.getKey().toString()) :
 				lobjSubPolicy.getKey().toString());
 		lobjResult.policyNumber = (lobjSubPolicy == null ? (lobjPolicy == null ? "(Erro)" : lobjPolicy.getLabel()) :
