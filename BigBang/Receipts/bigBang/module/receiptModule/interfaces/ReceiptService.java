@@ -3,6 +3,7 @@ package bigBang.module.receiptModule.interfaces;
 import bigBang.definitions.shared.DASRequest;
 import bigBang.definitions.shared.DebitNote;
 import bigBang.definitions.shared.DocuShareHandle;
+import bigBang.definitions.shared.InsurerAccountingExtra;
 import bigBang.definitions.shared.Receipt;
 import bigBang.definitions.shared.SignatureRequest;
 import bigBang.library.interfaces.ExactItemSubService;
@@ -65,7 +66,7 @@ public interface ReceiptService
 	public void massCreatePaymentNotice(String[] receiptIds) throws SessionExpiredException, BigBangException;
 	public void massSendReceipt(String[] receiptIds) throws SessionExpiredException, BigBangException;
 	public void massSendPayment(String[] receiptIds) throws SessionExpiredException, BigBangException;
-	public void massInsurerAccounting(String[] receiptIds) throws SessionExpiredException, BigBangException;
+	public void massInsurerAccounting(String[] receiptIds, InsurerAccountingExtra[] extraInfo) throws SessionExpiredException, BigBangException;
 	public void massMediatorAccounting(String[] receiptIds) throws SessionExpiredException, BigBangException;
 	public void massReturnToInsurer(String[] receiptIds) throws SessionExpiredException, BigBangException;
 }

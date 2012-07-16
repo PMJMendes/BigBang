@@ -3,6 +3,7 @@ package bigBang.module.receiptModule.interfaces;
 import bigBang.definitions.shared.DASRequest;
 import bigBang.definitions.shared.DebitNote;
 import bigBang.definitions.shared.DocuShareHandle;
+import bigBang.definitions.shared.InsurerAccountingExtra;
 import bigBang.definitions.shared.Receipt;
 import bigBang.definitions.shared.SignatureRequest;
 import bigBang.library.interfaces.ExactItemSubServiceAsync;
@@ -37,7 +38,7 @@ public interface ReceiptServiceAsync
 	void massCreatePaymentNotice(String[] receiptIds, AsyncCallback<Void> callback);
 	void massSendReceipt(String[] receiptIds, AsyncCallback<Void> callback);
 	void massSendPayment(String[] receiptIds, AsyncCallback<Void> callback);
-	void massInsurerAccounting(String[] receiptIds, AsyncCallback<Void> callback);
+	void massInsurerAccounting(String[] receiptIds, InsurerAccountingExtra[] extraInfo, AsyncCallback<Void> callback);
 	void massMediatorAccounting(String[] receiptIds, AsyncCallback<Void> callback);
 	void massReturnToInsurer(String[] receiptIds, AsyncCallback<Void> callback);
 }

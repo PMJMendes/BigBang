@@ -16,6 +16,7 @@ import bigBang.definitions.shared.BigBangConstants;
 import bigBang.definitions.shared.DASRequest;
 import bigBang.definitions.shared.DebitNote;
 import bigBang.definitions.shared.DocuShareHandle;
+import bigBang.definitions.shared.InsurerAccountingExtra;
 import bigBang.definitions.shared.Receipt;
 import bigBang.definitions.shared.Receipt.PaymentInfo;
 import bigBang.definitions.shared.Receipt.ReturnMessage;
@@ -692,7 +693,7 @@ public class ReceiptDataBrokerImpl extends DataBroker<Receipt> implements Receip
 
 	@Override
 	public void insurerAccounting(final String[] receiptIds, final ResponseHandler<Void> handler) {
-		service.massInsurerAccounting(receiptIds, new BigBangAsyncCallback<Void>() {
+		service.massInsurerAccounting(receiptIds, new InsurerAccountingExtra[0], new BigBangAsyncCallback<Void>() { //TODO Implementar extra info (JMMM)
 
 			@Override
 			public void onResponseSuccess(Void result) {
