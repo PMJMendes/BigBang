@@ -97,7 +97,6 @@ public class CreateClient
 
 			mobjData.mid = lobjAux.getKey();
 			mobjData.midProcess = lobjProc.getKey();
-			mobjData.midManager = lobjProc.GetManagerID();
 			mobjData.mobjPrevValues = null;
 		}
 		catch (Throwable e)
