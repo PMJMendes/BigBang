@@ -17,6 +17,8 @@ public class ReceiptStub
 	public String clientId;
 	public String clientNumber;
 	public String clientName;
+	public String insurerId;
+	public String insurerName;
 	public String policyId;
 	public String policyNumber;
 	public String categoryId;
