@@ -41,7 +41,7 @@ public class InfoOrDocumentRequestForm extends FormView<InfoOrDocumentRequest> {
 		text = new TypifiedTextFormField();
 		to = new ListBoxFormField("Destinatário");
 		to.setFieldWidth("400px");
-		replyLimit = new NumericTextBoxFormField("Prazo de Resposta (dias)");
+		replyLimit = new NumericTextBoxFormField("Prazo de Resposta (dias)", false);
 		replyLimit.setFieldWidth("70px");
 		forwardReply = new AutoCompleteTextListFormField("Forward/Reply");
 		internalCCAddresses = new TextBoxFormField("BCC (interno) Endereços separados por ';'");

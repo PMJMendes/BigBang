@@ -52,7 +52,7 @@ public class ExerciseForm extends FormView<Exercise> {
 				field = referenceListField;
 				break;
 			case NUMERIC:
-				field = new NumericTextBoxFormField(fixedFields.fieldName);
+				field = new NumericTextBoxFormField(fixedFields.fieldName, false);
 				break;
 			case TEXT:
 				field = new TextBoxFormField(fixedFields.fieldName);

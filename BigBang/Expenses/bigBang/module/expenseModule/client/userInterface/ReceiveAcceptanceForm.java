@@ -12,7 +12,7 @@ public class ReceiveAcceptanceForm extends FormView<Acceptance>{
 		
 		addSection("Aceitação");
 		
-		value = new NumericTextBoxFormField("Indemnização");
+		value = new NumericTextBoxFormField("Indemnização", true);
 		
 		value.setFieldWidth("175px");
 		value.setUnitsLabel("€");

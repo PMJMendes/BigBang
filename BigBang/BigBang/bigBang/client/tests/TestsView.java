@@ -15,7 +15,7 @@ public class TestsView extends View implements TestsViewPresenter.Display {
 		
 		text = new TypifiedTextFormField();
 		text.setReadOnly(false);
-		text.setTypifiedTexts("TESTS");
+		text.setTypifiedTexts("TEST");
 		initWidget(wrapper);
 		wrapper.setSize("100%", "100%");
 		wrapper.add(text);

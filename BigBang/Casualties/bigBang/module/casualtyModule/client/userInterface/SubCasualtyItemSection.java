@@ -37,10 +37,10 @@ public class SubCasualtyItemSection extends CollapsibleFormViewSection {
 		insuredObject = new ExpandableListBoxFormField("Unidade de Risco");
 		coverage = new ExpandableListBoxFormField("Cobertura");
 		damageType = new ExpandableListBoxFormField(BigBangConstants.TypifiedListIds.DAMAGE_TYPE, "Tipo de Dano");
-		damages = new NumericTextBoxFormField("Valor dos Danos");
+		damages = new NumericTextBoxFormField("Valor dos Danos", true);
 		damages.setUnitsLabel("€");
 		damages.setFieldWidth("175px");
-		settlement = new NumericTextBoxFormField("Valor Acordado");
+		settlement = new NumericTextBoxFormField("Valor Acordado", true);
 		settlement.setFieldWidth("175px");
 		settlement.setUnitsLabel("€");
 

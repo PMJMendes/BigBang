@@ -216,7 +216,7 @@ public class SubPolicyForm extends FormView<SubPolicy> {
 		startDate = new DatePickerFormField("Data de Início");
 		endDate = new DatePickerFormField("Data de Fim");
 		fractioning = new ExpandableListBoxFormField(ModuleConstants.TypifiedListIds.FRACTIONING, "Fraccionamento");
-		premium = new NumericTextBoxFormField("Prémio Comercial");
+		premium = new NumericTextBoxFormField("Prémio Comercial", true);
 		premium.setFieldWidth("175px");
 		
 		notes = new TextAreaFormField();

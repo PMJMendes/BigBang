@@ -77,7 +77,7 @@ public abstract class InsurancePolicyForm extends FormView<InsurancePolicy> {
 		startDate = new DatePickerFormField("Data de Início");
 		endDate = new DatePickerFormField("Data de Fim");
 		fractioning = new ExpandableListBoxFormField(ModuleConstants.TypifiedListIds.FRACTIONING, "Fraccionamento");
-		premium = new NumericTextBoxFormField("Prémio Comercial");
+		premium = new NumericTextBoxFormField("Prémio Comercial", true);
 		premium.setFieldWidth("175px");
 		premium.setUnitsLabel("€");
 		caseStudy = new CheckBoxFormField("Case Study");

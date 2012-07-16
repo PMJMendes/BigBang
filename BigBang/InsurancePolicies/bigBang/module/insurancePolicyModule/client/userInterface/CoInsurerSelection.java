@@ -66,7 +66,7 @@ public class CoInsurerSelection extends FormField<CoInsurer[]>{
 
 			agency = new ExpandableListBoxFormField(BigBangConstants.EntityIds.INSURANCE_AGENCY, "");
 			agency.setFieldWidth("190px");
-			infoValue = new NumericTextBoxFormField();
+			infoValue = new NumericTextBoxFormField(false);
 			infoValue.setFieldWidth("40px");
 			infoValue.setWidth("40px");
 			agency.setValue(coInsuranceAgencyInfo.insuranceAgencyId);

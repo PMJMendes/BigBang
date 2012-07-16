@@ -166,23 +166,23 @@ public abstract class SerialReceiptCreationForm extends FormView<ReceiptPolicyWr
 
 		type = new ExpandableListBoxFormField(ModuleConstants.TypifiedListIds.RECEIPT_TYPE, "Tipo");
 		type.allowEdition(false);
-		totalPremium = new NumericTextBoxFormField("Prémio Total");
+		totalPremium = new NumericTextBoxFormField("Prémio Total", true);
 		totalPremium.setUnitsLabel("€");
 		totalPremium.setFieldWidth("100px");
 		totalPremium.setTextAligment(TextAlignment.RIGHT);
-		salesPremium = new  NumericTextBoxFormField("Prémio Comercial");
+		salesPremium = new  NumericTextBoxFormField("Prémio Comercial", true);
 		salesPremium.setUnitsLabel("€");
 		salesPremium.setFieldWidth("100px");
 		salesPremium.setTextAligment(TextAlignment.RIGHT);
-		commission = new NumericTextBoxFormField("Comissão");
+		commission = new NumericTextBoxFormField("Comissão", true);
 		commission.setUnitsLabel("€");
 		commission.setFieldWidth("100px");
 		commission.setTextAligment(TextAlignment.RIGHT);
-		retro = new NumericTextBoxFormField("Retrocessões");
+		retro = new NumericTextBoxFormField("Retrocessões", true);
 		retro.setUnitsLabel("€");
 		retro.setFieldWidth("100px");
 		retro.setTextAligment(TextAlignment.RIGHT);
-		fat = new NumericTextBoxFormField("FAT");
+		fat = new NumericTextBoxFormField("FAT", true);
 		fat.setFieldWidth("100px");
 		fat.setUnitsLabel("€");
 		fat.setTextAligment(TextAlignment.RIGHT);

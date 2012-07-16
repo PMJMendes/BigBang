@@ -76,8 +76,6 @@ public class NumericTextBoxFormField extends FormField<Double>{
 				}
 			});
 
-			
-			nf = NumberFormat.getDecimalFormat();
 		}
 		@Override
 		public HandlerRegistration addValueChangeHandler(
@@ -133,19 +131,19 @@ public class NumericTextBoxFormField extends FormField<Double>{
 		return nf;
 	}
 
-	public NumericTextBoxFormField(String label, FieldValidator<Double> validator){
-		this();
+	public NumericTextBoxFormField(String label, FieldValidator<Double> validator, boolean isMoney){
+		this(isMoney);
 		setLabel(label);
 		setValidator(validator);
 	}
 
-	public NumericTextBoxFormField(FieldValidator<Double> validator){
-		this();
+	public NumericTextBoxFormField(FieldValidator<Double> validator, boolean isMoney){
+		this(isMoney);
 		setValidator(validator);
 	}
 
-	public NumericTextBoxFormField(String label){
-		this();
+	public NumericTextBoxFormField(String label, boolean isMoney){
+		this(isMoney);
 		setLabel(label);
 	}
 
@@ -158,9 +156,9 @@ public class NumericTextBoxFormField extends FormField<Double>{
 	}
 
 
-	public NumericTextBoxFormField(){
+	public NumericTextBoxFormField(boolean isMoney){
 		super();
-
+		this.isMoney(isMoney);
 		VerticalPanel mainWrapper = new VerticalPanel();
 		initWidget(mainWrapper);
 
@@ -170,7 +168,6 @@ public class NumericTextBoxFormField extends FormField<Double>{
 		wrapper.setVerticalAlignment(HasVerticalAlignment.ALIGN_MIDDLE);
 		this.field = new NumericWrapper();
 		setTextAligment(TextAlignment.RIGHT);
-		nf = NumberFormat.getDecimalFormat();
 		wrapper.add(((NumericWrapper)field).getField());
 		wrapper.setCellWidth(((NumericWrapper)field).getField(), "100%");
 		wrapper.add(unitsLabel);
@@ -181,8 +178,13 @@ public class NumericTextBoxFormField extends FormField<Double>{
 
 	}
 
-	public void setNumberFormat(NumberFormat nf){
-		this.nf = nf;
+	public void isMoney(boolean isMoney){
+		if(isMoney){
+			nf = NumberFormat.getFormat("#,##0.00");
+		}
+		else{
+			nf = NumberFormat.getDecimalFormat();
+		}
 	}
 
 

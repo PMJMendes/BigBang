@@ -9,7 +9,7 @@ public class ExternalRequestContinuationForm extends FormView<Incoming> {
 	protected IncomingMessageFormField message;
 
 	public ExternalRequestContinuationForm(){
-		replyLimit = new NumericTextBoxFormField("Prazo de Resposta (dias)");
+		replyLimit = new NumericTextBoxFormField("Prazo de Resposta (dias)", false);
 		message = new IncomingMessageFormField();
 
 		addSection("Detalhes da Continuação do Pedido de Informação");

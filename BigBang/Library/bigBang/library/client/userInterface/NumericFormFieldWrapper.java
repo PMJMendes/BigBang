@@ -8,7 +8,7 @@ public class NumericFormFieldWrapper extends FormField<String>{
 
 	public NumericFormFieldWrapper(String title) {
 		super();
-		field = new NumericTextBoxFormField(title);
+		field = new NumericTextBoxFormField(title, false);
 		initWidget(field);
 	}
 

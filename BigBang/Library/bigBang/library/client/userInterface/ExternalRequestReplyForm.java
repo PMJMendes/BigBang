@@ -12,7 +12,7 @@ public class ExternalRequestReplyForm extends FormView<Outgoing> {
 
 	public ExternalRequestReplyForm(){
 		isFinal = new CheckBoxFormField("Finalizar Pedido");
-		replyLimit = new NumericTextBoxFormField("Prazo de Resposta (dias)");
+		replyLimit = new NumericTextBoxFormField("Prazo de Resposta (dias)", false);
 		replyLimit.setFieldWidth("72px");
 		message = new OutgoingMessageFormField();
 

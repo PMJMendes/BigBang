@@ -41,7 +41,7 @@ public class TwoKeyTableView extends View {
 					this.field = referenceListField;
 					break;
 				case NUMERIC:
-					this.field = new NumericTextBoxFormField();
+					this.field = new NumericTextBoxFormField(false);
 					break;
 				case TEXT:
 					this.field = new TextBoxFormField();

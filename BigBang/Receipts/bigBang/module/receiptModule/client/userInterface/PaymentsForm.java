@@ -26,7 +26,7 @@ public class PaymentsForm extends FormView<Payment[]> {
 
 		addSection("Marcar Cobrança");
 
-		totalLabel = new NumericTextBoxFormField("Total");
+		totalLabel = new NumericTextBoxFormField("Total", true);
 		totalLabel.setFieldWidth("175px");
 		totalLabel.setUnitsLabel("€");
 		totalLabel.setEditable(false);

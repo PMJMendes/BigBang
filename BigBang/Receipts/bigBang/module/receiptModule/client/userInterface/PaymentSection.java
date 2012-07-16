@@ -33,7 +33,7 @@ public class PaymentSection extends FormViewSection {
 		super("Pagamento");
 
 		type = new ExpandableListBoxFormField(BigBangConstants.TypifiedListIds.RECEIPT_PAYMENT_TYPES, "Tipo de Pagamento");
-		paymentValue = new NumericTextBoxFormField("Valor");
+		paymentValue = new NumericTextBoxFormField("Valor", true);
 		paymentValue.setUnitsLabel("€");
 		paymentValue.setFieldWidth("175px");
 		bank = new ExpandableListBoxFormField(BigBangConstants.TypifiedListIds.BANK, "Banco");

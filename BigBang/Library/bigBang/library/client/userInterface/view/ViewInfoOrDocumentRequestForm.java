@@ -19,7 +19,7 @@ public class ViewInfoOrDocumentRequestForm extends
 	private TextBoxFormField externalCCs;
 	
 	public ViewInfoOrDocumentRequestForm(){
-		replyLimit = new NumericTextBoxFormField("Prazo de Resposta (dias)");
+		replyLimit = new NumericTextBoxFormField("Prazo de Resposta (dias)", false);
 		replyLimit.setFieldWidth("72px");
 		type = new ExpandableSelectionFormField(BigBangConstants.TypifiedListIds.REQUEST_TYPE, "Tipo de Pedido");
 		subject = new TextBoxFormField("Assunto");

@@ -13,7 +13,7 @@ public class ViewExternalInfoRequestForm extends FormView<ExternalInfoRequest> {
 	public ViewExternalInfoRequestForm(){
 		subject = new TextBoxFormField("Assunto");
 		from = new TextBoxFormField("De");
-		replyLimit = new NumericTextBoxFormField("Prazo de Resposta (dias)");
+		replyLimit = new NumericTextBoxFormField("Prazo de Resposta (dias)", false);
 		replyLimit.setFieldWidth("72px");
 		body = new RichTextAreaFormField();
 		body.showToolbar(false);

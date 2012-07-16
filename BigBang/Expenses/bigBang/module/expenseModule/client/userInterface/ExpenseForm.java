@@ -52,7 +52,7 @@ public class ExpenseForm extends FormView<Expense>{
 	public ExpenseForm() {
 
 		manager = new ExpandableListBoxFormField(BigBangConstants.EntityIds.USER, "Gestor");
-		settlement = new NumericTextBoxFormField("Indemnização");
+		settlement = new NumericTextBoxFormField("Indemnização", true);
 		settlement.setUnitsLabel("€");
 		settlement.setFieldWidth("175px");
 		settleButton = new Button("Substituir");
@@ -67,7 +67,7 @@ public class ExpenseForm extends FormView<Expense>{
 		client = new NavigationFormField("Cliente"); 
 		expenseDate = new DatePickerFormField("Data");
 		insuredObjectId = new ExpandableListBoxFormField("Unidade de Risco");
-		value = new NumericTextBoxFormField("Valor");
+		value = new NumericTextBoxFormField("Valor", true);
 		value.setFieldWidth("175px");
 		value.setUnitsLabel("€");
 		isOpen = new TextBoxFormField("Estado");

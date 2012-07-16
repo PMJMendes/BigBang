@@ -6,7 +6,7 @@ import bigBang.library.client.userInterface.view.FormView;
 public class ExternalInfoRequestForm extends FormView<ExternalInfoRequest>{
 
 	TextBoxFormField requestSubject = new TextBoxFormField("Assunto do pedido");
-	NumericTextBoxFormField replyLimit = new NumericTextBoxFormField("Número de dias");
+	NumericTextBoxFormField replyLimit = new NumericTextBoxFormField("Número de dias", false);
 	IncomingMessageFormField messageFormField = new IncomingMessageFormField();
 
 
