@@ -1,5 +1,6 @@
 package com.premiumminds.BigBang.Jewel.Operations.Receipt;
 
+import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.util.UUID;
 
@@ -21,6 +22,8 @@ public class InsurerAccounting
 	public UUID midSet;
 	public UUID midMap;
 	public UUID midDetail;
+	public String mstrExtraText;
+	public BigDecimal mdblExtraValue;
 	private UUID midInsurer;
 //	private OutgoingMessageData mobjMessage;
 
@@ -57,7 +60,7 @@ public class InsurerAccounting
 		throws JewelPetriException
 	{
 		InsurerAccountingSet lobjSet;
-		InsurerAccountingMap lobjSetClient;
+		InsurerAccountingMap lobjMap;
 		InsurerAccountingDetail lobjSetReceipt;
 
 		if ( Constants.ProcID_Policy.equals(GetProcess().GetParent().GetScriptID()) )
@@ -78,12 +81,14 @@ public class InsurerAccounting
 
 			if ( midMap == null )
 			{
-				lobjSetClient = InsurerAccountingMap.GetInstance(Engine.getCurrentNameSpace(), (UUID)null);
-				lobjSetClient.setAt(0, midSet);
-				lobjSetClient.setAt(1, midInsurer);
-				lobjSetClient.setAt(2, (Timestamp)null);
-				lobjSetClient.SaveToDb(pdb);
-				midMap = lobjSetClient.getKey();
+				lobjMap = InsurerAccountingMap.GetInstance(Engine.getCurrentNameSpace(), (UUID)null);
+				lobjMap.setAt(0, midSet);
+				lobjMap.setAt(1, midInsurer);
+				lobjMap.setAt(2, (Timestamp)null);
+				lobjMap.setAt(3, mstrExtraText);
+				lobjMap.setAt(4, mdblExtraValue);
+				lobjMap.SaveToDb(pdb);
+				midMap = lobjMap.getKey();
 			}
 
 			lobjSetReceipt = InsurerAccountingDetail.GetInstance(Engine.getCurrentNameSpace(), null);

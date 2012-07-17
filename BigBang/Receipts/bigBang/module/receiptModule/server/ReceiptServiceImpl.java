@@ -1477,6 +1477,7 @@ public class ReceiptServiceImpl
 					{
 						lstrExtraText = extraInfo[i].text;
 						ldblExtraValue = new BigDecimal(extraInfo[i].value);
+						break;
 					}
 				}
 			}
