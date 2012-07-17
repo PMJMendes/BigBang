@@ -19,6 +19,7 @@ import Jewel.Petri.Objects.PNProcess;
 import bigBang.definitions.shared.DASRequest;
 import bigBang.definitions.shared.DebitNote;
 import bigBang.definitions.shared.DocuShareHandle;
+import bigBang.definitions.shared.InsurerAccountingExtra;
 import bigBang.definitions.shared.Receipt;
 import bigBang.definitions.shared.ReceiptStub;
 import bigBang.definitions.shared.SearchParameter;
@@ -1418,7 +1419,7 @@ public class ReceiptServiceImpl
 		}
 	}
 
-	public void massInsurerAccounting(String[] receiptIds)
+	public void massInsurerAccounting(String[] receiptIds, InsurerAccountingExtra[] extraInfo)
 		throws SessionExpiredException, BigBangException
 	{
 		Hashtable<UUID, ArrayList<UUID>> larrReceipts;
@@ -1429,6 +1430,8 @@ public class ReceiptServiceImpl
 		UUID[] larrFinal;
 		UUID lidSet;
 		UUID lidMap;
+		String lstrExtraText;
+		BigDecimal ldblExtraValue;
 		InsurerAccounting lopIA;
 		int i;
 
@@ -1464,6 +1467,19 @@ public class ReceiptServiceImpl
 		lidSet = null;
 		for(UUID lidI : larrReceipts.keySet())
 		{
+			lstrExtraText = null;
+			ldblExtraValue = null;
+			if ( extraInfo != null )
+			{
+				for ( i = 0; i < extraInfo.length; i++ )
+				{
+					if ( lidI.equals(UUID.fromString(extraInfo[i].insurerId)) )
+					{
+						lstrExtraText = extraInfo[i].text;
+						ldblExtraValue = new BigDecimal(extraInfo[i].value);
+					}
+				}
+			}
 			lidMap = null;
 			larrByInsurer = larrReceipts.get(lidI);
 			larrFinal = larrByInsurer.toArray(new UUID[larrByInsurer.size()]);
@@ -1476,6 +1492,8 @@ public class ReceiptServiceImpl
 					lopIA = new InsurerAccounting(lobjReceipt.GetProcessID());
 					lopIA.midSet = lidSet;
 					lopIA.midMap = lidMap;
+					lopIA.mstrExtraText = lstrExtraText;
+					lopIA.mdblExtraValue = ldblExtraValue;
 
 					lopIA.Execute();
 
