@@ -382,7 +382,7 @@ public class ReceiptServiceImpl
 			lopMRD.mobjData.mdblRetrocessions = (receipt.retrocessions == null ? new BigDecimal(0) :
 					new BigDecimal(receipt.retrocessions+""));
 			lopMRD.mobjData.mdblFAT = (receipt.FATValue == null ? null : new BigDecimal(receipt.FATValue+""));
-			lopMRD.mobjData.mdtIssue = Timestamp.valueOf(receipt.issueDate + " 00:00:00.0");
+			lopMRD.mobjData.mdtIssue = (receipt.issueDate == null ? null : Timestamp.valueOf(receipt.issueDate + " 00:00:00.0"));
 			lopMRD.mobjData.mdtMaturity = (receipt.maturityDate == null ? null :
 					Timestamp.valueOf(receipt.maturityDate + " 00:00:00.0"));
 			lopMRD.mobjData.mdtEnd = (receipt.endDate == null ? null : Timestamp.valueOf(receipt.endDate + " 00:00:00.0"));
