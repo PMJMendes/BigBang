@@ -410,7 +410,7 @@ public class ClientSearchOperationViewPresenter implements ViewPresenter {
 			view.allowDelete(true);
 			view.allowEdit(true);
 			view.setSaveModeEnabled(true);
-
+			
 			view.getForm().setValue(client);
 			view.getForm().setReadOnly(false);
 		}else{

@@ -190,12 +190,20 @@ public class NumericTextBoxFormField extends FormField<Double>{
 
 	@Override
 	public void clear() {
-		((NumericWrapper)field).getField().setValue("");
 		((NumericWrapper)field).getField().setValue(((NumericWrapper)field).getField().isReadOnly() ? "-" : "");
 		if(((NumericWrapper)field).getField().isReadOnly())
 			hasDummyValue = true;
 	}
 
+	@Override
+	public void setValue(Double value) {	
+		if(value == null){
+			clear();
+			return;
+		}
+		super.setValue(value);
+	}
+	
 	@Override
 	public void setReadOnly(boolean readonly) {
 		if(!editable){
@@ -205,12 +213,12 @@ public class NumericTextBoxFormField extends FormField<Double>{
 		if(field.isReadOnly() != readonly){
 			if(readonly){
 				if(field.getValue().equals("")){
-					field.setValue(DUMMY_VALUE);
+					field.setValue(DUMMY_VALUE, false);
 					hasDummyValue = true;
 				}
 			}else{
 				if(hasDummyValue){
-					field.setValue("");
+					field.setValue("", false);
 					hasDummyValue = false;
 				}
 			}

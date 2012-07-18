@@ -37,7 +37,7 @@ public class ClientFormView extends FormView<Client> implements ClientProcessDat
 	private ExpandableListBoxFormField group;
 	private TextBoxFormField NIB;
 	private ExpandableListBoxFormField mediator;
-	private TextBoxFormField clientManager;
+	private ExpandableListBoxFormField clientManager;
 	private ExpandableListBoxFormField profile;
 	private ExpandableListBoxFormField CAE;
 	private TextBoxFormField activityObservations;
@@ -72,9 +72,7 @@ public class ClientFormView extends FormView<Client> implements ClientProcessDat
 		NIB.setFieldWidth("200px");
 		mediator = new ExpandableListBoxFormField(BigBangConstants.EntityIds.MEDIATOR, "Mediador", new ClientFormValidator.MediatorValidator());
 		mediator.allowEdition(false);
-		clientManager = new TextBoxFormField("Gestor de Cliente");
-		clientManager.setFieldWidth("100px");
-		clientManager.setEditable(false);
+		clientManager = new ExpandableListBoxFormField(BigBangConstants.EntityIds.USER, "Gestor de Cliente");
 		profile = new ExpandableListBoxFormField(ModuleConstants.ListIDs.OperationalProfiles, "Perfil Operacional", new ClientFormValidator.ProfileValidator());
 		profile.allowEdition(false);
 		CAE = new ExpandableListBoxFormField(BigBangConstants.TypifiedListIds.CAEs, "CAE");
@@ -268,6 +266,7 @@ public class ClientFormView extends FormView<Client> implements ClientProcessDat
 			result.groupId = group.getValue();
 			result.NIB = NIB.getValue();
 			result.mediatorId = mediator.getValue();
+			result.managerId = clientManager.getValue();
 			result.operationalProfileId = profile.getValue();
 			result.caeId = CAE.getValue();
 			result.activityNotes = activityObservations.getValue();
@@ -298,18 +297,7 @@ public class ClientFormView extends FormView<Client> implements ClientProcessDat
 		group.setValue(info.groupId);
 		NIB.setValue(info.NIB);
 		mediator.setValue(info.mediatorId);
-		if(info.managerId == null){
-			clientManager.clear();
-		}else if(info.managerId != null){
-
-			List<TipifiedListItem> items = BigBangTypifiedListBroker.Util.getInstance().getListItems(BigBangConstants.EntityIds.USER);
-			for(TipifiedListItem i : items){
-				if(i.id.equalsIgnoreCase(info.managerId)){
-					clientManager.setValue(i.value);
-					break;
-				}
-			}
-		}
+		clientManager.setValue(info.managerId);
 		profile.setValue(info.operationalProfileId);
 		CAE.setValue(info.caeId);
 		activityObservations.setValue(info.activityNotes);
@@ -329,7 +317,8 @@ public class ClientFormView extends FormView<Client> implements ClientProcessDat
 	}
 
 	public void setForCreate(){
-		//		this.clientManager.setEditable(true); //TODO
+		this.clientManager.setEditable(true);
+		this.clientManager.setReadOnly(false);
 	}
 
 	public void setForEdit(){
