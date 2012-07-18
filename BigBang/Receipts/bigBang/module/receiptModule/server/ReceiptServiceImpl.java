@@ -2215,7 +2215,7 @@ public class ReceiptServiceImpl
 		lobjResult.clientNumber = (lobjClient == null ? "" : ((Integer)lobjClient.getAt(1)).toString());
 		lobjResult.clientName = (lobjClient == null ? "(Erro)" : lobjClient.getLabel());
 		lobjResult.insurerId = (lobjCompany == null ? null : lobjCompany.getKey().toString());
-		lobjResult.insurerName = (lobjCompany == null ? "(Erro)" : lobjCompany.getLabel());
+		lobjResult.insurerName = (lobjCompany == null ? "(Erro)" : (String)lobjCompany.getAt(1));
 		lobjResult.policyId = (lobjSubPolicy == null ? (lobjPolicy == null ? null : lobjPolicy.getKey().toString()) :
 				lobjSubPolicy.getKey().toString());
 		lobjResult.policyNumber = (lobjSubPolicy == null ? (lobjPolicy == null ? "(Erro)" : lobjPolicy.getLabel()) :
