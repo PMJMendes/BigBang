@@ -45,7 +45,6 @@ public class Receipt
 	public Double retrocessions;
 	public Double FATValue;
 	public String issueDate;
-	public String endDate;
 	public String dueDate;
 	public String mediatorId;
 	public String notes;

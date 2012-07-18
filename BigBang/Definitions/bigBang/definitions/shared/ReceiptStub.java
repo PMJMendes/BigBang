@@ -31,6 +31,7 @@ public class ReceiptStub
 	public String typeName;
 	public Double totalPremium;
 	public String maturityDate;
+	public String endDate;
 	public String description;
 	public String statusId;
 	public String statusText;

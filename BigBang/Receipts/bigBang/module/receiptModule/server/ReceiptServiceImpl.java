@@ -137,7 +137,7 @@ public class ReceiptServiceImpl
 		lobjResult.clientNumber = ((Integer)lobjClient.getAt(1)).toString();
 		lobjResult.clientName = lobjClient.getLabel();
 		lobjResult.insurerId = lobjCompany.getKey().toString();
-		lobjResult.insurerName = lobjCompany.getLabel();
+		lobjResult.insurerName = (String)lobjCompany.getAt(1);
 		lobjResult.policyId = ( lobjSubPolicy == null ? lobjPolicy.getKey().toString() : lobjSubPolicy.getKey().toString() );
 		lobjResult.policyNumber = ( lobjSubPolicy == null ? lobjPolicy.getLabel() : lobjSubPolicy.getLabel() );
 		lobjResult.categoryId = lobjCategory.getKey().toString();
@@ -151,6 +151,8 @@ public class ReceiptServiceImpl
 		lobjResult.totalPremium = ((BigDecimal)lobjReceipt.getAt(3)).doubleValue();
 		lobjResult.maturityDate = (lobjReceipt.getAt(9) == null ? null :
 				((Timestamp)lobjReceipt.getAt(9)).toString().substring(0, 10));
+		lobjResult.endDate = (lobjReceipt.getAt(10) == null ? null :
+				((Timestamp)lobjReceipt.getAt(10)).toString().substring(0, 10));
 		lobjResult.description = (String)lobjReceipt.getAt(14);
 		lobjResult.statusId = lobjStatus.getKey().toString();
 		lobjResult.statusText= lobjStatus.getLabel();
@@ -174,10 +176,8 @@ public class ReceiptServiceImpl
 		lobjResult.retrocessions = ((BigDecimal)lobjReceipt.getAt(6)).doubleValue();
 		lobjResult.FATValue = (lobjReceipt.getAt(7) == null ? null : ((BigDecimal)lobjReceipt.getAt(7)).doubleValue());
 		lobjResult.issueDate = (lobjReceipt.getAt(8) == null ? null : ((Timestamp)lobjReceipt.getAt(8)).toString().substring(0, 10));
-		lobjResult.endDate = (lobjReceipt.getAt(10) == null ? null :
-			((Timestamp)lobjReceipt.getAt(10)).toString().substring(0, 10));
 		lobjResult.dueDate = (lobjReceipt.getAt(11) == null ? null :
-			((Timestamp)lobjReceipt.getAt(11)).toString().substring(0, 10));
+				((Timestamp)lobjReceipt.getAt(11)).toString().substring(0, 10));
 		lobjResult.mediatorId = (lobjReceipt.getAt(12) == null ? null : ((UUID)lobjReceipt.getAt(12)).toString());
 		lobjResult.inheritMediatorId = lobjMed.getKey().toString();
 		lobjResult.inheritMediatorName = lobjMed.getLabel();
@@ -217,6 +217,7 @@ public class ReceiptServiceImpl
 		IStep lobjStep;
 		Policy lobjPolicy;
 		SubPolicy lobjSubPolicy;
+		Company lobjCompany;
 		Client lobjClient;
 		SubLine lobjSubLine;
 		Line lobjLine;
@@ -276,6 +277,7 @@ public class ReceiptServiceImpl
     				lobjPolicy = (Policy)lobjProc.GetParent().GetParent().GetData();;
     				lobjClient = Client.GetInstance(Engine.getCurrentNameSpace(), (UUID)lobjSubPolicy.getAt(2));
     			}
+    			lobjCompany = lobjPolicy.GetCompany();
     			lobjSubLine = lobjPolicy.GetSubLine();
     			lobjLine = lobjSubLine.getLine();
     			lobjCategory = lobjLine.getCategory();
@@ -292,6 +294,8 @@ public class ReceiptServiceImpl
             	lobjStub.clientId = lobjClient.getKey().toString();
             	lobjStub.clientNumber = ((Integer)lobjClient.getAt(1)).toString();
             	lobjStub.clientName = lobjClient.getLabel();
+            	lobjStub.insurerId = lobjCompany.getKey().toString();
+            	lobjStub.insurerName = (String)lobjCompany.getAt(1);
             	lobjStub.policyId = ( lobjSubPolicy == null ? lobjPolicy.getKey().toString() : lobjSubPolicy.getKey().toString() );
             	lobjStub.policyNumber = ( lobjSubPolicy == null ? lobjPolicy.getLabel() : lobjSubPolicy.getLabel() );
             	lobjStub.categoryId = lobjCategory.getKey().toString();
@@ -305,6 +309,8 @@ public class ReceiptServiceImpl
             	lobjStub.totalPremium = ((BigDecimal)lobjReceipt.getAt(3)).doubleValue();
             	lobjStub.maturityDate = (lobjReceipt.getAt(9) == null ? null :
         				((Timestamp)lobjReceipt.getAt(9)).toString().substring(0, 10));
+            	lobjStub.endDate = (lobjReceipt.getAt(10) == null ? null :
+    					((Timestamp)lobjReceipt.getAt(10)).toString().substring(0, 10));
             	lobjStub.description = (String)lobjReceipt.getAt(14);
             	lobjStub.statusId = lobjStatus.getKey().toString();
             	lobjStub.statusText= lobjStatus.getLabel();
@@ -1680,7 +1686,7 @@ public class ReceiptServiceImpl
 	protected String[] getColumns()
 	{
 		return new String[] {"[:Number]", "[:Process]", "[:Type]", "[:Type:Indicator]", "[:Total Premium]", "[:Maturity Date]",
-				"[:Description]"};
+				"[:Maturity Date]", "[:Description]"};
 	}
 
 	protected boolean buildFilter(StringBuilder pstrBuffer, SearchParameter pParam)
@@ -2224,7 +2230,8 @@ public class ReceiptServiceImpl
 		lobjResult.typeName = (String)parrValues[3];
 		lobjResult.totalPremium = ((BigDecimal)parrValues[4]).doubleValue();
 		lobjResult.maturityDate = (parrValues[5] == null ? null : ((Timestamp)parrValues[5]).toString().substring(0, 10));
-		lobjResult.description = (String)parrValues[6];
+		lobjResult.endDate = (parrValues[6] == null ? null : ((Timestamp)parrValues[6]).toString().substring(0, 10));
+		lobjResult.description = (String)parrValues[7];
 		lobjResult.processId = (lobjProcess == null ? null : lobjProcess.getKey().toString());
 		lobjResult.statusId = (lobjStatus == null ? null : lobjStatus.getKey().toString());
 		lobjResult.statusText= (lobjStatus == null ? null : lobjStatus.getLabel());
