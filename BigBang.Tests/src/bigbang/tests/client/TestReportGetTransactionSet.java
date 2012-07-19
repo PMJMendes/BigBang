@@ -1,6 +1,6 @@
 package bigbang.tests.client;
 
-import bigBang.definitions.shared.TransactionSet;
+import bigBang.definitions.shared.Report;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
@@ -13,19 +13,19 @@ public class TestReportGetTransactionSet
 
 	private static void DoStep1()
 	{
-		AsyncCallback<TransactionSet[]> callback = new AsyncCallback<TransactionSet[]>()
+		AsyncCallback<Report> callback = new AsyncCallback<Report>()
 		{
 			public void onFailure(Throwable caught)
 			{
 				return;
 			}
 
-			public void onSuccess(TransactionSet[] result)
+			public void onSuccess(Report result)
 			{
 				return;
 			}
 		};
 
-		Services.reportService.getTransactionSets("2FF04A44-2D5A-4686-B8B6-A0320126ABA5", callback);
+		Services.reportService.generateTransactionSetReport("2FF04A44-2D5A-4686-B8B6-A0320126ABA5", "9A119C30-65FF-4B1C-AFC3-A09201102470", callback);
 	}
 }
