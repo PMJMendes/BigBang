@@ -4,7 +4,11 @@ import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.UUID;
 
+import org.apache.ecs.html.TR;
+import org.apache.ecs.html.Table;
+
 import Jewel.Engine.Engine;
+import Jewel.Engine.Constants.TypeDefGUIDs;
 import Jewel.Engine.DataAccess.MasterDB;
 import Jewel.Engine.Implementation.Entity;
 import Jewel.Engine.Implementation.User;
@@ -23,9 +27,10 @@ public abstract class TransactionSetBase
 		public static int USER = 1;
 	}
 
+	public abstract String getTitle();
 	public abstract UUID getSubObjectType();
-	public abstract String getOwnerHeader();
-	public abstract UUID getOwnerObjectType();
+
+	protected TransactionMapBase[] marrMaps;
 
 	public TransactionMapBase[] getCurrentMaps()
 		throws BigBangJewelException
@@ -89,21 +94,30 @@ public abstract class TransactionSetBase
 			throw new BigBangJewelException(e.getMessage(), e);
 		}
 
-		return larrAux.toArray(new TransactionMapBase[larrAux.size()]);
+		marrMaps = larrAux.toArray(new TransactionMapBase[larrAux.size()]);
+
+		return marrMaps;
+	}
+
+	public int getCount()
+		throws BigBangJewelException
+	{
+		getMaps();
+
+		return marrMaps.length;
 	}
 
 	public int getTotalCount()
 		throws BigBangJewelException
 	{
-		TransactionMapBase[] larrAux;
         int llngTotal;
 		int i;
 
-		larrAux = getCurrentMaps();
+		getMaps();
 
 		llngTotal = 0;
-		for ( i = 0; i < larrAux.length; i++ )
-			llngTotal += larrAux[i].getCurrentDetails().length;
+		for ( i = 0; i < marrMaps.length; i++ )
+			llngTotal += marrMaps[i].getCurrentDetails().length;
 
 		return llngTotal;
 	}
@@ -141,4 +155,55 @@ public abstract class TransactionSetBase
     		return null;
 		}
     }
+
+	public Table buildHeaderSection()
+		throws BigBangJewelException
+	{
+		Table ltbl;
+		TR[] larrRows;
+
+		getMaps();
+
+		larrRows = new TR[6];
+
+		larrRows[0] = ReportBuilder.constructDualHeaderRowCell("Gestão de Transacções");
+
+		larrRows[1] = ReportBuilder.constructDualRow("Tipo de Transacção", getTitle(), TypeDefGUIDs.T_String);
+
+		larrRows[2] = ReportBuilder.constructDualRow("Nº de Transacções", marrMaps.length, TypeDefGUIDs.T_Integer);
+
+		larrRows[3] = ReportBuilder.constructDualRow("Nº de Recibos", getTotalCount(), TypeDefGUIDs.T_Integer);
+
+		larrRows[4] = ReportBuilder.constructDualRow("Gerado em", getAt(I.DATE), TypeDefGUIDs.T_Date);
+
+		larrRows[5] = ReportBuilder.constructDualRow("Gerado por", getUser().getDisplayName(), TypeDefGUIDs.T_String);
+
+		ltbl = ReportBuilder.buildTable(larrRows);
+		ReportBuilder.styleTable(ltbl, false);
+
+		return ltbl;
+	}
+
+	public Table buildDataSection(int plngNumber)
+		throws BigBangJewelException
+	{
+		Table ltbl;
+		TR[] larrRows;
+
+		getMaps();
+
+		larrRows = marrMaps[plngNumber - 1].buildTable(plngNumber);
+
+		ltbl = ReportBuilder.buildTable(larrRows);
+		ReportBuilder.styleTable(ltbl, false);
+
+		return ltbl;
+	}
+
+	protected void getMaps()
+		throws BigBangJewelException
+	{
+		if ( marrMaps == null )
+			getCurrentMaps();
+	}
 }

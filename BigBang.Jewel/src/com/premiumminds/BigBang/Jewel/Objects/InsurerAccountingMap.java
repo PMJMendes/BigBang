@@ -1,18 +1,33 @@
 package com.premiumminds.BigBang.Jewel.Objects;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.sql.ResultSet;
+import java.util.Arrays;
 import java.util.UUID;
 
+import org.apache.ecs.html.TD;
+import org.apache.ecs.html.TR;
+
 import Jewel.Engine.Engine;
+import Jewel.Engine.Constants.TypeDefGUIDs;
 import Jewel.Engine.SysObjects.JewelEngineException;
 
 import com.premiumminds.BigBang.Jewel.BigBangJewelException;
 import com.premiumminds.BigBang.Jewel.Constants;
+import com.premiumminds.BigBang.Jewel.SysObjects.ReportBuilder;
 import com.premiumminds.BigBang.Jewel.SysObjects.TransactionMapBase;
 
 public class InsurerAccountingMap
 	extends TransactionMapBase
 {
+	public static class I
+		extends TransactionMapBase.I
+	{
+		public static int EXTRATEXT  = 3;
+		public static int EXTRAVALUE = 4;
+	}
+
     public static InsurerAccountingMap GetInstance(UUID pidNameSpace, UUID pidKey)
 		throws BigBangJewelException
 	{
@@ -47,5 +62,116 @@ public class InsurerAccountingMap
 	public UUID getSubObjectType()
 	{
 		return Constants.ObjID_InsurerAccountingDetail;
+	}
+
+	public TR[] buildTable(int plngNumber)
+		throws BigBangJewelException
+	{
+		TR[] larrAux;
+		TR[] larrRows;
+		int l, i;
+
+		larrAux = super.buildTable(plngNumber);
+		l = larrAux.length;
+
+		larrRows = new TR[larrAux.length + 11];
+		larrRows[0] = larrAux[0];
+
+		larrRows[1] = ReportBuilder.constructDualRow("Seguradora",
+				Company.GetInstance(getNameSpace(), (UUID)getAt(TransactionMapBase.I.OWNER)).getLabel(), TypeDefGUIDs.T_String);
+
+		for ( i = 1; i < l; i++ )
+			larrRows[i + 1] = larrAux[i];
+
+		larrAux = buildExtraRows();
+
+		for ( i = l + 1; i < larrRows.length; i++ )
+			larrRows[i] = larrAux[i - l - 1];
+
+		return larrRows;
+	}
+
+	protected TD[] buildInnerHeaderRow()
+	{
+		TD[] larrAux;
+		TD[] larrCells;
+		int i;
+
+		larrAux = super.buildInnerHeaderRow();
+		i = larrAux.length;
+
+		larrCells = Arrays.copyOf(larrAux, i + 1);
+
+		larrCells[i] = ReportBuilder.buildHeaderCell("Comissão");
+		ReportBuilder.styleCell(larrCells[i], false, true);
+
+		return larrCells;
+	}
+
+	private TR[] buildExtraRows()
+		throws BigBangJewelException
+	{
+		String lstrExtraText;
+		BigDecimal ldblExtraValue;
+		BigDecimal ldblTotalPremiums, ldblDirectPremiums, ldblPayablePremiums;
+		BigDecimal ldblTotalComms, ldblLifeComms, ldblTaxableComms;
+		BigDecimal ldblPreTax, ldblTax, ldblTotal;
+		int i;
+
+		if ( (getAt(I.EXTRATEXT) == null) || (getAt(I.EXTRAVALUE) == null) )
+		{
+			lstrExtraText = "-";
+			ldblExtraValue = new BigDecimal(0.0);
+		}
+		else
+		{
+			lstrExtraText = (String)getAt(I.EXTRATEXT);
+			ldblExtraValue = (BigDecimal)getAt(I.EXTRAVALUE);
+		}
+
+		getDetails();
+
+		ldblTotalPremiums = new BigDecimal(0.0);
+		ldblDirectPremiums = new BigDecimal(0.0);
+		ldblTotalComms = new BigDecimal(0.0);
+		ldblLifeComms = new BigDecimal(0.0);
+		for ( i = 0; i < marrDetails.length; i++ )
+		{
+			ldblTotalPremiums = ldblTotalPremiums.add(((InsurerAccountingDetail)marrDetails[i]).getPremium());
+			ldblDirectPremiums = ldblDirectPremiums.add(((InsurerAccountingDetail)marrDetails[i]).getDirectPremium());
+			ldblTotalComms = ldblTotalComms.add(((InsurerAccountingDetail)marrDetails[i]).getCommissions());
+			ldblLifeComms = ldblLifeComms.add(((InsurerAccountingDetail)marrDetails[i]).getLifeComms());
+		}
+		ldblPayablePremiums = ldblTotalPremiums.subtract(ldblDirectPremiums);
+		ldblTaxableComms = ldblTotalComms.subtract(ldblLifeComms);
+		ldblPreTax = ldblPayablePremiums.subtract(ldblTotalComms).add(ldblExtraValue);
+		ldblTax = ldblTaxableComms.multiply((new BigDecimal(2.0/102.0))).setScale(2, RoundingMode.HALF_UP);
+		ldblTotal = ldblPreTax.add(ldblTax);
+
+		TR[] larrRows;
+
+		larrRows = new TR[10];
+
+		larrRows[0] = ReportBuilder.constructDualRow("Total de Prémios", ldblTotalPremiums, TypeDefGUIDs.T_Decimal);
+
+		larrRows[1] = ReportBuilder.constructDualRow("Pagamentos Directos", ldblDirectPremiums, TypeDefGUIDs.T_Decimal);
+
+		larrRows[2] = ReportBuilder.constructDualRow("Prémios a Entregar", ldblPayablePremiums, TypeDefGUIDs.T_Decimal);
+
+		larrRows[3] = ReportBuilder.constructDualRow("Total de Comissões", ldblTotalComms, TypeDefGUIDs.T_Decimal);
+
+		larrRows[4] = ReportBuilder.constructDualRow("Comissões Vida", ldblLifeComms, TypeDefGUIDs.T_Decimal);
+
+		larrRows[5] = ReportBuilder.constructDualRow("Comissões não Vida", ldblTaxableComms, TypeDefGUIDs.T_Decimal);
+
+		larrRows[6] = ReportBuilder.constructDualRow(lstrExtraText, ldblExtraValue, TypeDefGUIDs.T_Decimal);
+
+		larrRows[7] = ReportBuilder.constructDualRow("Saldo Bruto", ldblPreTax, TypeDefGUIDs.T_Decimal);
+
+		larrRows[8] = ReportBuilder.constructDualRow("Imposto de Selo", ldblTax, TypeDefGUIDs.T_Decimal);
+
+		larrRows[9] = ReportBuilder.constructDualRow("Saldo Total", ldblTotal, TypeDefGUIDs.T_Decimal);
+
+		return larrRows;
 	}
 }

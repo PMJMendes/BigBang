@@ -5,6 +5,8 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.UUID;
 
+import org.apache.ecs.GenericElement;
+
 import Jewel.Engine.Engine;
 import Jewel.Engine.DataAccess.MasterDB;
 import Jewel.Engine.Implementation.Entity;
@@ -299,8 +301,7 @@ public class ReportServiceImpl
 		throws SessionExpiredException, BigBangException
 	{
 		com.premiumminds.BigBang.Jewel.Objects.PrintSet lobjSet;
-		int llngCount;
-		StringBuilder lstrBuffer;
+		GenericElement lobjBuffer;
 		Report lobjResult;
 
 		if ( Engine.getCurrentUser() == null )
@@ -310,45 +311,17 @@ public class ReportServiceImpl
 		{
 			lobjSet = com.premiumminds.BigBang.Jewel.Objects.PrintSet.GetInstance(Engine.getCurrentNameSpace(),
 					UUID.fromString(printSetId));
-			llngCount = lobjSet.getCurrentDocs().length;
+
+			lobjBuffer = lobjSet.buildReportTable();
 		}
 		catch (Throwable e)
 		{
 			throw new BigBangException(e.getMessage(), e);
 		}
 
-		lstrBuffer = new StringBuilder();
-		lstrBuffer.append("<table class=\"items\" bgcolor=\"white\" width=\"575\" border=\"0\" cellspacing=\"0\" cellpadding=\"0\" ")
-				.append("style=\"border:1px solid #3f6d9d;\"> <tr style=\"height:35px;background:#8bb4de; font-weight:bold;\"> ")
-				.append("<td>&nbsp;Impressão de Documentos</td> <td>&nbsp</td> </tr> ");	
-
-		lstrBuffer.append("<tr style=\"height:30px;border-bottom:1px solid #3f6d9d;\"> ")
-				.append("<td style=\"padding-left:5px;border-right:1px solid #3f6d9d;border-bottom:1px solid #3f6d9d;\">Tipo de Documento</td> ")
-				.append("<td style=\"padding-left:5px;border-bottom:1px solid #3f6d9d;\">")
-				.append(lobjSet.getTemplate().getLabel())
-				.append("</td> </tr> ");
-
-		lstrBuffer.append("<tr style=\"height:30px;border-bottom:1px solid #3f6d9d;\"> ")
-				.append("<td style=\"padding-left:5px;border-right:1px solid #3f6d9d;border-bottom:1px solid #3f6d9d;\">Nº de Documentos</td> ")
-				.append("<td style=\"padding-left:5px;border-bottom:1px solid #3f6d9d;\">")
-				.append(llngCount)
-				.append("</td> </tr>");
-
-		lstrBuffer.append("<tr style=\"height:30px;border-bottom:1px solid #3f6d9d;\"> ")
-				.append("<td style=\"padding-left:5px;border-right:1px solid #3f6d9d;border-bottom:1px solid #3f6d9d;\">Gerado em</td> ")
-				.append("<td style=\"padding-left:5px;border-bottom:1px solid #3f6d9d;\">")
-				.append(((Timestamp)lobjSet.getAt(com.premiumminds.BigBang.Jewel.Objects.PrintSet.I.DATE)).toString().substring(0, 10))
-				.append("</td> </tr>");
-
-		lstrBuffer.append("<tr style=\"height:30px; border-bottom:1px solid #3f6d9d;\"> ")
-				.append("<td style=\"padding-left:5px;border-right:1px solid #3f6d9d;\">Gerado por</td> ")
-				.append("<td style=\"padding-left:5px;\">")
-				.append(lobjSet.getUser().getDisplayName())
-				.append("</td> </tr> </table>");
-
 		lobjResult = new Report();
 		lobjResult.sections = new Report.Section[] {new Report.Section()};
-		lobjResult.sections[0].htmlContent = lstrBuffer.toString();
+		lobjResult.sections[0].htmlContent = lobjBuffer.toString();
 		lobjResult.sections[0].verbs = new Report.Section.Verb[] {new Report.Section.Verb()};
 		lobjResult.sections[0].verbs[0].label = "Imprimir";
 		lobjResult.sections[0].verbs[0].argument = "P:" + printSetId;
@@ -356,7 +329,6 @@ public class ReportServiceImpl
 		return lobjResult;
 	}
 
-	@Override
 	public Report generateTransactionSetReport(String itemId, String transactionSetId)
 		throws SessionExpiredException, BigBangException
 	{
@@ -364,11 +336,9 @@ public class ReportServiceImpl
 		UUID lidTransactions;
 		TransactionSetBase lobjSet;
 		TransactionMapBase[] larrMaps;
-		int llngCount, llngTotal;
-		UUID lidOwners;
-		StringBuilder lstrBuffer;
+		int llngCount;
+		GenericElement lobjBuffer;
 		int i;
-		String lstrOwner;
 		Report lobjResult;
 
 		try
@@ -378,90 +348,33 @@ public class ReportServiceImpl
 			lobjSet = (TransactionSetBase)Engine.GetWorkInstance(lidTransactions, UUID.fromString(transactionSetId));
 			larrMaps = lobjSet.getCurrentMaps();
 			llngCount = larrMaps.length;
-			llngTotal = lobjSet.getTotalCount();
-			lidOwners = Engine.FindEntity(lobjSet.getNameSpace(), lobjSet.getOwnerObjectType());
+
+			lobjBuffer = lobjSet.buildHeaderSection();
 		}
 		catch (Throwable e)
 		{
 			throw new BigBangException(e.getMessage(), e);
 		}
 
-		lstrBuffer = new StringBuilder();
-		lstrBuffer.append("<table class=\"items\" bgcolor=\"white\" width=\"575\" border=\"0\" cellspacing=\"0\" cellpadding=\"0\" ")
-				.append("style=\"border:1px solid #3f6d9d;\"> <tr style=\"height:35px;background:#8bb4de; font-weight:bold;\"> ")
-				.append("<td>&nbsp;Gestão de Transacções</td> <td>&nbsp</td> </tr> ");	
-
-		lstrBuffer.append("<tr style=\"height:30px;border-bottom:1px solid #3f6d9d;\"> ")
-				.append("<td style=\"padding-left:5px;border-right:1px solid #3f6d9d;border-bottom:1px solid #3f6d9d;\">Tipo de Transacção</td> ")
-				.append("<td style=\"padding-left:5px;border-bottom:1px solid #3f6d9d;\">")
-				.append(lobjReport.getLabel())
-				.append("</td> </tr> ");
-
-		lstrBuffer.append("<tr style=\"height:30px;border-bottom:1px solid #3f6d9d;\"> ")
-				.append("<td style=\"padding-left:5px;border-right:1px solid #3f6d9d;border-bottom:1px solid #3f6d9d;\">Nº de Documentos</td> ")
-				.append("<td style=\"padding-left:5px;border-bottom:1px solid #3f6d9d;\">")
-				.append(llngCount)
-				.append("</td> </tr>");
-
-		lstrBuffer.append("<tr style=\"height:30px;border-bottom:1px solid #3f6d9d;\"> ")
-				.append("<td style=\"padding-left:5px;border-right:1px solid #3f6d9d;border-bottom:1px solid #3f6d9d;\">Nº de Movimentos</td> ")
-				.append("<td style=\"padding-left:5px;border-bottom:1px solid #3f6d9d;\">")
-				.append(llngTotal)
-				.append("</td> </tr>");
-
-		lstrBuffer.append("<tr style=\"height:30px;border-bottom:1px solid #3f6d9d;\"> ")
-				.append("<td style=\"padding-left:5px;border-right:1px solid #3f6d9d;border-bottom:1px solid #3f6d9d;\">Gerado em</td> ")
-				.append("<td style=\"padding-left:5px;border-bottom:1px solid #3f6d9d;\">")
-				.append(((Timestamp)lobjSet.getAt(TransactionSetBase.I.DATE)).toString().substring(0, 10))
-				.append("</td> </tr>");
-
-		lstrBuffer.append("<tr style=\"height:30px; border-bottom:1px solid #3f6d9d;\"> ")
-				.append("<td style=\"padding-left:5px;border-right:1px solid #3f6d9d;\">Gerado por</td> ")
-				.append("<td style=\"padding-left:5px;\">")
-				.append(lobjSet.getUser().getDisplayName())
-				.append("</td> </tr> </table>");
-
 		lobjResult = new Report();
 		lobjResult.sections = new Report.Section[llngCount + 1];
 		lobjResult.sections[0] = new Report.Section();
-		lobjResult.sections[0].htmlContent = lstrBuffer.toString();
+		lobjResult.sections[0].htmlContent = lobjBuffer.toString();
 		lobjResult.sections[0].verbs = new Report.Section.Verb[0];
 
 		for ( i = 1; i <= llngCount; i++ )
 		{
 			try
 			{
-				llngTotal = larrMaps[i - 1].getCurrentDetails().length;
-				lstrOwner = Engine.GetWorkInstance(lidOwners, (UUID)larrMaps[i - 1].getAt(TransactionMapBase.I.OWNER)).getLabel();
+				lobjBuffer = lobjSet.buildDataSection(i);
 			}
 			catch (Throwable e)
 			{
 				throw new BigBangException(e.getMessage(), e);
 			}
 
-			lstrBuffer = new StringBuilder();
-			lstrBuffer.append("<table class=\"items\" bgcolor=\"white\" width=\"575\" border=\"0\" cellspacing=\"0\" cellpadding=\"0\" ")
-					.append("style=\"border:1px solid #3f6d9d;\"> <tr style=\"height:35px;background:#8bb4de; font-weight:bold;\"> ")
-					.append("<td>&nbsp;Transacção n. ")
-					.append(i)
-					.append("</td> <td>&nbsp</td> </tr> ");	
-
-			lstrBuffer.append("<tr style=\"height:30px;border-bottom:1px solid #3f6d9d;\"> ")
-					.append("<td style=\"padding-left:5px;border-right:1px solid #3f6d9d;border-bottom:1px solid #3f6d9d;\">")
-					.append(lobjSet.getOwnerHeader())
-					.append("</td> ")
-					.append("<td style=\"padding-left:5px;border-bottom:1px solid #3f6d9d;\">")
-					.append(lstrOwner)
-					.append("</td> </tr> ");
-
-			lstrBuffer.append("<tr style=\"height:30px;border-bottom:1px solid #3f6d9d;\"> ")
-					.append("<td style=\"padding-left:5px;border-right:1px solid #3f6d9d;border-bottom:1px solid #3f6d9d;\">Nº de Movimentos</td> ")
-					.append("<td style=\"padding-left:5px;border-bottom:1px solid #3f6d9d;\">")
-					.append(llngTotal)
-					.append("</td> </tr> </table>");
-
 			lobjResult.sections[i] = new Report.Section();
-			lobjResult.sections[i].htmlContent = lstrBuffer.toString();
+			lobjResult.sections[i].htmlContent = lobjBuffer.toString();
 
 			if ( larrMaps[i - 1].isSettled() )
 				lobjResult.sections[i].verbs = new Report.Section.Verb[0];
@@ -469,8 +382,8 @@ public class ReportServiceImpl
 			{
 				lobjResult.sections[i].verbs = new Report.Section.Verb[] {new Report.Section.Verb()};
 				lobjResult.sections[i].verbs[0].label = "Saldar";
-				lobjResult.sections[i].verbs[0].argument = "S:" + lobjReport.getKey().toString() + ":" + lobjSet.getKey().toString() + ":" +
-						larrMaps[i - 1].getKey().toString();
+				lobjResult.sections[i].verbs[0].argument = "S:" + lobjReport.getKey().toString() + ":" +
+						lobjSet.getKey().toString() + ":" + larrMaps[i - 1].getKey().toString();
 			}
 		}
 

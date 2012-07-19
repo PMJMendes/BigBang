@@ -30,18 +30,13 @@ public class MediatorAccountingSet
 	{
 	}
 
+	public String getTitle()
+	{
+		return "Retrocessões";
+	}
+
 	public UUID getSubObjectType()
 	{
 		return Constants.ObjID_MediatorAccountingMap;
-	}
-
-	public String getOwnerHeader()
-	{
-		return "Agente";
-	}
-
-	public UUID getOwnerObjectType()
-	{
-		return Constants.ObjID_Mediator;
 	}
 }

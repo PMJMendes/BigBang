@@ -12,7 +12,6 @@ import com.premiumminds.BigBang.Jewel.SysObjects.TransactionSetBase;
 public class InsurerAccountingSet
 	extends TransactionSetBase
 {
-
     public static InsurerAccountingSet GetInstance(UUID pidNameSpace, UUID pidKey)
 		throws BigBangJewelException
 	{
@@ -31,18 +30,13 @@ public class InsurerAccountingSet
 	{
 	}
 
+	public String getTitle()
+	{
+		return "Prestações de Contas";
+	}
+
 	public UUID getSubObjectType()
 	{
 		return Constants.ObjID_InsurerAccountingMap;
-	}
-
-	public String getOwnerHeader()
-	{
-		return "Seguradora";
-	}
-
-	public UUID getOwnerObjectType()
-	{
-		return Constants.ObjID_Company;
 	}
 }

@@ -9,6 +9,7 @@ import Jewel.Engine.DataAccess.MasterDB;
 import Jewel.Engine.Implementation.Entity;
 import Jewel.Engine.Interfaces.IEntity;
 import Jewel.Engine.SysObjects.JewelEngineException;
+import Jewel.Petri.Interfaces.ILog;
 import Jewel.Petri.Interfaces.IProcess;
 import Jewel.Petri.Objects.PNProcess;
 import Jewel.Petri.SysObjects.ProcessData;
@@ -19,6 +20,27 @@ import com.premiumminds.BigBang.Jewel.Constants;
 public class Receipt
 	extends ProcessData
 {
+	public static class I
+	{
+		public static int NUMBER            =  0;
+		public static int TYPE              =  1;
+		public static int PROCESS           =  2;
+		public static int TOTALPREMIUM      =  3;
+		public static int COMMERCIALPREMIUM =  4;
+		public static int COMMISSIONS       =  5;
+		public static int RETROCESSIONS     =  6;
+		public static int FAT               =  7;
+		public static int ISSUEDATE         =  8;
+		public static int MATURITYDATE      =  9;
+		public static int ENDDATE           = 10;
+		public static int DUEDATE           = 11;
+		public static int MEDIATOR          = 12;
+		public static int NOTES             = 13;
+		public static int DESCRIPTION       = 14;
+		public static int RETURNTEXT        = 15;
+		public static int MIGRATIONID       = 16;
+	}
+
     public static Receipt GetInstance(UUID pidNameSpace, UUID pidKey)
 		throws BigBangJewelException
 	{
@@ -45,6 +67,8 @@ public class Receipt
 		}
 	}
 
+    private IProcess lrefProcess;
+
 	public void Initialize()
 		throws JewelEngineException
 	{
@@ -58,6 +82,27 @@ public class Receipt
 	public void SetProcessID(UUID pidProcess)
 	{
 		internalSetAt(2, pidProcess);
+	}
+
+	public IProcess getProcess()
+		throws BigBangJewelException
+	{
+		if ( GetProcessID() == null )
+			return null;
+
+		if ( lrefProcess == null )
+		{
+			try
+			{
+				lrefProcess = PNProcess.GetInstance(getNameSpace(), GetProcessID());
+			}
+			catch (Throwable e)
+			{
+				throw new BigBangJewelException(e.getMessage(), e);
+			}
+		}
+
+		return lrefProcess;
 	}
 
     public Contact[] GetCurrentContacts()
@@ -256,5 +301,90 @@ public class Receipt
     		return true;
 
     	return false;
+    }
+
+    public String getReceiptType()
+    	throws BigBangJewelException
+    {
+    	try
+    	{
+			return (String)Engine.GetWorkInstance(Engine.FindEntity(getNameSpace(), Constants.ObjID_ReceiptType), (UUID)getAt(1)).getAt(1);
+		}
+    	catch (Throwable e)
+    	{
+    		throw new BigBangJewelException(e.getMessage(), e);
+		}
+    }
+
+    public Policy getDirectPolicy()
+    	throws BigBangJewelException
+    {
+    	IProcess lobjProcess;
+
+    	try
+    	{
+			lobjProcess = getProcess().GetParent();
+
+	    	if ( Constants.ProcID_Policy.equals(lobjProcess.GetScriptID()) )
+	    		return (Policy)lobjProcess.GetData();
+		}
+    	catch (BigBangJewelException e)
+    	{
+    		throw e;
+		}
+    	catch (Throwable e)
+    	{
+    		throw new BigBangJewelException(e.getMessage(), e);
+		}
+
+    	return null;
+    }
+
+    public Policy getAbsolutePolicy()
+    	throws BigBangJewelException
+    {
+    	IProcess lobjProcess;
+
+    	try
+    	{
+			lobjProcess = getProcess().GetParent();
+
+	    	if ( Constants.ProcID_Policy.equals(lobjProcess.GetScriptID()) )
+	    		return (Policy)lobjProcess.GetData();
+
+	    	return (Policy)lobjProcess.GetParent().GetData();
+		}
+    	catch (BigBangJewelException e)
+    	{
+    		throw e;
+		}
+    	catch (Throwable e)
+    	{
+    		throw new BigBangJewelException(e.getMessage(), e);
+		}
+    }
+
+    public ILog getPaymentLog()
+    	throws BigBangJewelException
+    {
+    	UUID lidOp;
+
+    	if ( isReverseCircuit() )
+    		lidOp = Constants.OPID_Receipt_SendPayment;
+    	else
+    		lidOp = Constants.OPID_Receipt_Payment;
+
+    	try
+    	{
+			return getProcess().GetLiveLog(lidOp);
+		}
+    	catch (BigBangJewelException e)
+    	{
+    		throw e;
+		}
+    	catch (Throwable e)
+    	{
+    		throw new BigBangJewelException(e.getMessage(), e);
+		}
     }
 }

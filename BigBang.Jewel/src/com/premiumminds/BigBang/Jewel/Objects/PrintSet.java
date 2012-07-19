@@ -5,7 +5,11 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.UUID;
 
+import org.apache.ecs.html.TR;
+import org.apache.ecs.html.Table;
+
 import Jewel.Engine.Engine;
+import Jewel.Engine.Constants.TypeDefGUIDs;
 import Jewel.Engine.DataAccess.MasterDB;
 import Jewel.Engine.Implementation.Entity;
 import Jewel.Engine.Implementation.User;
@@ -15,6 +19,7 @@ import Jewel.Engine.SysObjects.ObjectBase;
 
 import com.premiumminds.BigBang.Jewel.BigBangJewelException;
 import com.premiumminds.BigBang.Jewel.Constants;
+import com.premiumminds.BigBang.Jewel.SysObjects.ReportBuilder;
 
 public class PrintSet
 	extends ObjectBase
@@ -163,5 +168,31 @@ public class PrintSet
 		}
 
 		return larrAux.toArray(new PrintSetDocument[larrAux.size()]);
+    }
+
+    public Table buildReportTable()
+    	throws BigBangJewelException
+    {
+    	Table ltbl;
+    	TR[] larrRows;
+
+		larrRows = new TR[6];
+
+		larrRows[0] = ReportBuilder.constructDualHeaderRowCell("Impressão de Documentos");
+
+		larrRows[1] = ReportBuilder.constructDualRow("Tipo de Documento", getTemplate().getLabel(), TypeDefGUIDs.T_String);
+
+		larrRows[2] = ReportBuilder.constructDualRow("Nº de Documentos", getCurrentDocs().length, TypeDefGUIDs.T_Integer);
+
+		larrRows[3] = ReportBuilder.constructDualRow("Gerado em", getAt(I.DATE), TypeDefGUIDs.T_Date);
+
+		larrRows[4] = ReportBuilder.constructDualRow("Gerado por", getUser().getDisplayName(), TypeDefGUIDs.T_String);
+
+		larrRows[5] = ReportBuilder.constructDualRow("Impresso em", getAt(I.PRINTEDON), TypeDefGUIDs.T_Date);
+
+		ltbl = ReportBuilder.buildTable(larrRows);
+		ReportBuilder.styleTable(ltbl, false);
+
+		return ltbl;
     }
 }
