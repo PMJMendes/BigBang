@@ -392,6 +392,7 @@ public class MassCreatePaymentNoticeView extends View implements MassCreatePayme
 	@Override
 	public void setManagerFilterValue(String value){
 		searchPanel.setManagerFilterValue(value);
+		searchPanel.doSearch();
 	}
 
 	@Override
