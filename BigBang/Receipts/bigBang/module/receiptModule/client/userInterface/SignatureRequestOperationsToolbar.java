@@ -34,7 +34,7 @@ public abstract class SignatureRequestOperationsToolbar extends BigBangOperation
 		addItem(repeatItem);
 		addSeparator();
 
-		cancelItem = new MenuItem("Cancelar", new Command() {
+		cancelItem = new MenuItem("Cancelar Pedido", new Command() {
 
 			@Override
 			public void execute() {

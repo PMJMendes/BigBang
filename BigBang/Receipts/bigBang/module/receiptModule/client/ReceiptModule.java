@@ -30,6 +30,7 @@ import bigBang.module.receiptModule.client.userInterface.presenter.ReceiptSearch
 import bigBang.module.receiptModule.client.userInterface.presenter.ReceiptSectionViewPresenter;
 import bigBang.module.receiptModule.client.userInterface.presenter.ReceiptTasksViewPresenter;
 import bigBang.module.receiptModule.client.userInterface.presenter.ReceiptTransferToPolicyViewPresenter;
+import bigBang.module.receiptModule.client.userInterface.presenter.RepeatDASRequestViewPresenter;
 import bigBang.module.receiptModule.client.userInterface.presenter.SerialMarkForPaymentViewPresenter;
 import bigBang.module.receiptModule.client.userInterface.presenter.SerialReceiptCreationViewPresenter;
 import bigBang.module.receiptModule.client.userInterface.presenter.SignatureRequestTasksViewPresenter;
@@ -53,6 +54,7 @@ import bigBang.module.receiptModule.client.userInterface.view.ReceiptSearchOpera
 import bigBang.module.receiptModule.client.userInterface.view.ReceiptSectionView;
 import bigBang.module.receiptModule.client.userInterface.view.ReceiptTasksView;
 import bigBang.module.receiptModule.client.userInterface.view.ReceiptTransferToPolicyView;
+import bigBang.module.receiptModule.client.userInterface.view.RepeatDASRequestView;
 import bigBang.module.receiptModule.client.userInterface.view.SerialMarkForPaymentView;
 import bigBang.module.receiptModule.client.userInterface.view.SerialReceiptCreationView;
 import bigBang.module.receiptModule.client.userInterface.view.SignatureRequestTasksView;
@@ -250,6 +252,14 @@ public class ReceiptModule implements Module {
 			public ViewPresenter getInstance() {
 				CreateDASRequestView view = (CreateDASRequestView) GWT.create(CreateDASRequestView.class);
 				CreateDASRequestViewPresenter presenter = new CreateDASRequestViewPresenter(view);
+				return presenter;
+			}
+		});
+		ViewPresenterFactory.getInstance().registerViewPresenterInstantiator("REPEAT_DAS_REQUEST", new ViewPresenterInstantiator(){
+			@Override
+			public ViewPresenter getInstance() {
+				RepeatDASRequestView view = (RepeatDASRequestView) GWT.create(RepeatDASRequestView.class);
+				RepeatDASRequestViewPresenter presenter = new RepeatDASRequestViewPresenter(view);
 				return presenter;
 			}
 		});

@@ -167,18 +167,10 @@ public class DASRequestTasksViewPresenter implements ViewPresenter, HasOperation
 	}
 	
 	protected void onRepeat(){
-		broker.repeatRequest(view.getForm().getValue(), new ResponseHandler<DASRequest>() {
-
-			@Override
-			public void onResponse(DASRequest response) {
-				onRepeatSuccess();
-			}
-
-			@Override
-			public void onError(Collection<ResponseError> errors) {
-				onRepeatFailed();
-			}
-		});
+		HasParameters parameters = new HasParameters();
+		parameters.setParameter("dasrequestid", view.getForm().getValue().id);
+		parameters.setParameter("show", "repeatdasrequest");
+		this.overlayController.onParameters(parameters);
 	}
 	
 	protected void onCancel(){
@@ -198,10 +190,12 @@ public class DASRequestTasksViewPresenter implements ViewPresenter, HasOperation
 
 				if(show.isEmpty()){
 					view.showOverlayViewContainer(false);
-
 				//OVERLAY VIEWS
 				}else if(show.equalsIgnoreCase("canceldasrequest")){
 					present("CANCEL_DAS_REQUEST", parameters);
+					view.showOverlayViewContainer(true);
+				}else if(show.equals("repeatdasrequest")){
+					present("REPEAT_DAS_REQUEST", parameters);
 					view.showOverlayViewContainer(true);
 				}
 			}

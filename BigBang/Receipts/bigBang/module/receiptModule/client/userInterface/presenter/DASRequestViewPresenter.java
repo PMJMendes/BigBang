@@ -157,18 +157,9 @@ public class DASRequestViewPresenter implements ViewPresenter{
 	}
 
 	protected void repeatReceiveRequest() {
-		broker.repeatRequest(view.getForm().getInfo(), new ResponseHandler<DASRequest>() {
-
-			@Override
-			public void onResponse(DASRequest response) {
-				EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Pedido de Declaração de Ausência de Sinistro reenviado."), TYPE.TRAY_NOTIFICATION));
-			}
-
-			@Override
-			public void onError(Collection<ResponseError> errors) {
-				EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Erro ao repetir o pedido de Declaração de Ausência de Sinistro."), TYPE.ALERT_NOTIFICATION));
-			}
-		});
+		NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
+		item.setParameter("show", "repeatdasrequest");
+		NavigationHistoryManager.getInstance().go(item);
 	}
 
 	@Override

@@ -30,7 +30,7 @@ public abstract class DASRequestTasksOperationsToolbar extends BigBangOperations
 		});
 		addItem(repeat);
 		
-		cancel = new MenuItem("Cancelar", new Command() {
+		cancel = new MenuItem("Cancelar Pedido", new Command() {
 			
 			@Override
 			public void execute() {
