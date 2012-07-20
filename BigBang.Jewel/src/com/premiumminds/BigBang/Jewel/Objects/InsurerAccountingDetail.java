@@ -97,6 +97,12 @@ public class InsurerAccountingDetail
 		return ldblResult;
 	}
 
+	public BigDecimal getPayablePremium()
+		throws BigBangJewelException
+	{
+		return getPremium().subtract(getDirectPremium());
+	}
+
 	public BigDecimal getCommissions()
 		throws BigBangJewelException
 	{
@@ -114,5 +120,11 @@ public class InsurerAccountingDetail
 			return getCommissions();
 
 		return new BigDecimal(0.0);
+	}
+
+	public BigDecimal getTaxableComms()
+		throws BigBangJewelException
+	{
+		return getCommissions().subtract(getLifeComms());
 	}
 }

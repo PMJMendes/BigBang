@@ -116,6 +116,9 @@ public abstract class TransactionMapBase
 	public void Settle(SQLServer pdb)
 		throws BigBangJewelException
 	{
+		if ( getAt(I.SETTLEDON) != null )
+			throw new BigBangJewelException("Esta transacção já foi saldada.");
+
 		try
 		{
 			setAt(I.SETTLEDON, new Timestamp(new java.util.Date().getTime()));

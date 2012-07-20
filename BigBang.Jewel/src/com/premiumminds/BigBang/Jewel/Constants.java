@@ -15,6 +15,7 @@ public class Constants
 	public static final UUID ObjID_PrintSet                 = UUID.fromString("FEBF3C68-0891-4B4D-AD90-A021010A219F");
 	public static final UUID ObjID_PrintSetDocument         = UUID.fromString("526FDF76-E1D2-4FA8-B048-A021010ADF38");
 	public static final UUID ObjID_PrintSetDetail           = UUID.fromString("6780283B-97E8-4ED3-B4BF-A021010B98C2");
+	public static final UUID ObjID_InsurerReceipt           = UUID.fromString("180DA3B9-FFA2-4A0E-BEBB-A094010EF654");
 
 	// Agenda Objects
 	public static final UUID ObjID_AgendaItem               = UUID.fromString("F850E623-E686-4575-A2D8-9F640128FCD7");
@@ -593,6 +594,7 @@ public class Constants
 	public static final UUID TID_ExpenseMap          = UUID.fromString("19601CD2-9C7D-48E1-AA75-A03D00CD6E31");
 	public static final UUID TID_ExpenseNotice       = UUID.fromString("E2C31990-C896-479C-8DA6-A03F00BD8B3A");
 	public static final UUID TID_ExpenseReturn       = UUID.fromString("660446FF-8D1D-492C-AF06-A03F00BE1817");
+	public static final UUID TID_InsurerAccounting   = UUID.fromString("501A9331-3FAB-478F-A682-A0270124E6B3");
 
 	// Contact Types
 	public static final UUID CtTypeID_ReceiptReturn = UUID.fromString("BA706479-AE31-4E69-A7F0-9EEE01336CA4");
@@ -613,6 +615,7 @@ public class Constants
 	public static final UUID DocID_ExpenseRequest         = UUID.fromString("55825900-E20A-4519-BC4F-A03D00BF135A");
 	public static final UUID DocID_ExpenseNotice          = UUID.fromString("E95D510B-396E-49B0-9ECA-A03F00BF1CFE");
 	public static final UUID DocID_ExpenseReturn          = UUID.fromString("B78E445E-E061-40DA-914D-A03F00BF2AB3");
+	public static final UUID DocID_InsurerReceipt         = UUID.fromString("CF2849F7-7967-4CCD-8731-A09400D4310C");
 
 	// Report Types
 	public static final UUID RTypeID_Parameter   = UUID.fromString("EFF85260-CB13-4599-8EFD-A032010C4AED");
