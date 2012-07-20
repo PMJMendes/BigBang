@@ -1,6 +1,7 @@
 package com.premiumminds.BigBang.Jewel.SysObjects;
 
 import java.sql.ResultSet;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.UUID;
 
@@ -11,6 +12,7 @@ import org.apache.ecs.html.Table;
 import Jewel.Engine.Engine;
 import Jewel.Engine.Constants.TypeDefGUIDs;
 import Jewel.Engine.DataAccess.MasterDB;
+import Jewel.Engine.DataAccess.SQLServer;
 import Jewel.Engine.Implementation.Entity;
 import Jewel.Engine.Interfaces.IEntity;
 import Jewel.Engine.SysObjects.ObjectBase;
@@ -109,6 +111,20 @@ public abstract class TransactionMapBase
 	public boolean isSettled()
 	{
 		return (getAt(I.SETTLEDON) != null);
+	}
+
+	public void Settle(SQLServer pdb)
+		throws BigBangJewelException
+	{
+		try
+		{
+			setAt(I.SETTLEDON, new Timestamp(new java.util.Date().getTime()));
+			SaveToDb(pdb);
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangJewelException(e.getMessage(), e);
+		}
 	}
 
 	public TR[] buildTable(int plngNumber)
