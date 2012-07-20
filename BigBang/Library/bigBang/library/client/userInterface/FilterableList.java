@@ -105,10 +105,18 @@ public class FilterableList<T> extends SortableList<T> {
 
 			@Override
 			public void onOpen(OpenEvent<DisclosurePanel> event) {
+				boolean hasSize = scrollPanel.getOffsetHeight() > 0;
 				filterHeaderImage.setResource(resources.arrowUp());
-				filtersContainer.getElement().getStyle().setProperty("maxHeight", scrollPanelWrapper.getOffsetHeight()+"px");
-				if(filtersContainer.getOffsetHeight() > scrollPanelWrapper.getOffsetHeight()) {
+				if(hasSize){
+					filtersContainer.getElement().getStyle().setProperty("maxHeight", scrollPanelWrapper.getOffsetHeight()+"px");
+				}else{
+					filtersContainer.getElement().getStyle().setProperty("maxHeight", "580px");
+				}
+				
+				if(filtersContainer.getOffsetHeight() > scrollPanelWrapper.getOffsetHeight() && hasSize) {
 					filtersContainer.setHeight(scrollPanelWrapper.getOffsetHeight() + "px");
+				}else{
+					filtersContainer.setHeight("580px");
 				}
 			}
 		});

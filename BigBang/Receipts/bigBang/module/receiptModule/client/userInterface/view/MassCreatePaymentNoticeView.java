@@ -123,7 +123,6 @@ public class MassCreatePaymentNoticeView extends View implements MassCreatePayme
 			filtersContainer.clear();
 
 			filtersContainer.add(filtersPanel);
-			//setFilterOpen(true);
 
 		}
 

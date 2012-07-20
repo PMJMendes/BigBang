@@ -222,6 +222,7 @@ public class MassCreatePaymentNoticeViewPresenter implements ViewPresenter{
 		clearView();
 		showMassCreatePaymentNoticeScreen();
 		view.setManagerFilterValue(Session.getUserId());
+		view.setFilterPanelOpen(true);
 	}
 
 
