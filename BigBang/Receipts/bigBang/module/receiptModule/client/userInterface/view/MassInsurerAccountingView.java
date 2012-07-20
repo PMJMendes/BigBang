@@ -21,6 +21,7 @@ import bigBang.definitions.client.dataAccess.SearchDataBroker;
 import bigBang.definitions.client.response.ResponseError;
 import bigBang.definitions.client.response.ResponseHandler;
 import bigBang.definitions.shared.BigBangConstants;
+import bigBang.definitions.shared.InsurerAccountingExtra;
 import bigBang.definitions.shared.Receipt;
 import bigBang.definitions.shared.ReceiptStub;
 import bigBang.definitions.shared.SearchParameter;
@@ -40,6 +41,7 @@ import bigBang.library.client.userInterface.SelectedProcessesList;
 import bigBang.library.client.userInterface.view.FormView;
 import bigBang.library.client.userInterface.view.View;
 import bigBang.module.receiptModule.client.dataAccess.ReceiptSearchDataBroker;
+import bigBang.module.receiptModule.client.userInterface.InsurerAccountingExtraForm;
 import bigBang.module.receiptModule.client.userInterface.ReceiptForm;
 import bigBang.module.receiptModule.client.userInterface.ReceiptSearchPanel;
 import bigBang.module.receiptModule.shared.ModuleConstants;
@@ -185,6 +187,7 @@ public class MassInsurerAccountingView extends View implements MassInsurerAccoun
 	protected CheckableReceiptsSearchPanel searchPanel;
 	protected SelectedReceiptsList selectedReceipts;
 	protected ReceiptForm receiptForm;
+	protected InsurerAccountingExtraForm insurerAccountingExtraForm;
 	protected BigBangOperationsToolBar toolbar;
 	protected Button createPNotice, clearButton;
 
@@ -255,6 +258,7 @@ public class MassInsurerAccountingView extends View implements MassInsurerAccoun
 		clearButton = new Button("Limpar");
 		sendClearWrapper.add(clearButton);
 		sendClearWrapper.setSpacing(5);
+		
 		clearButton.addClickHandler(new ClickHandler() {
 
 			@Override
@@ -262,6 +266,11 @@ public class MassInsurerAccountingView extends View implements MassInsurerAccoun
 				actionHandler.onActionInvoked(new ActionInvokedEvent<Action>(Action.CLEAR));
 			}
 		});
+
+		insurerAccountingExtraForm = new InsurerAccountingExtraForm();
+		insurerAccountingExtraForm.getNonScrollableContent().setWidth("100%");
+		selectedListWrapper.add(insurerAccountingExtraForm.getNonScrollableContent());
+		
 		selectedReceipts = new SelectedReceiptsList();
 		
 		selectedListWrapper.add(selectedReceipts);
@@ -380,6 +389,11 @@ public class MassInsurerAccountingView extends View implements MassInsurerAccoun
 		createPNotice.setEnabled(b);
 		clearButton.setEnabled(b);
 		searchPanel.setCheckable(b);
+	}
+
+	@Override
+	public HasEditableValue<InsurerAccountingExtra> getInsurerAccountingextraForm() {
+		return this.insurerAccountingExtraForm;
 	}
 
 }

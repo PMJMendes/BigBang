@@ -9,6 +9,10 @@ import bigBang.definitions.client.response.ResponseHandler;
 import bigBang.definitions.shared.SearchParameter;
 import bigBang.definitions.shared.SearchResult;
 import bigBang.definitions.shared.SortParameter;
+import bigBang.library.client.EventBus;
+import bigBang.library.client.Notification;
+import bigBang.library.client.Notification.TYPE;
+import bigBang.library.client.event.NewNotificationEvent;
 import bigBang.library.client.userInterface.FilterableList;
 import bigBang.library.client.userInterface.ListEntry;
 import bigBang.library.client.userInterface.ListHeader;
@@ -196,7 +200,9 @@ public abstract class SearchPanel<T extends SearchResult> extends FilterableList
 					}
 
 					@Override
-					public void onError(Collection<ResponseError> errors) {}
+					public void onError(Collection<ResponseError> errors) {
+						onGenericError();
+					}
 				};
 				if(this.operationId == null){
 					this.broker.search(parameters, sorts, this.pageSize, handler);
@@ -219,7 +225,9 @@ public abstract class SearchPanel<T extends SearchResult> extends FilterableList
 					}
 
 					@Override
-					public void onError(Collection<ResponseError> errors) {}
+					public void onError(Collection<ResponseError> errors) {
+						onGenericError();
+					}
 				};
 				if(this.operationId == null){
 					this.broker.search(parameters, sorts, this.pageSize, handler);
@@ -264,6 +272,7 @@ public abstract class SearchPanel<T extends SearchResult> extends FilterableList
 			@Override
 			public void onError(Collection<ResponseError> errors) {
 				requestedNextPage = false;
+				onGenericError();
 			}
 		});
 	}
@@ -335,4 +344,8 @@ public abstract class SearchPanel<T extends SearchResult> extends FilterableList
 	 */
 	public abstract void onResults(Collection<T> results);
 
+	protected void onGenericError() {
+		EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não foi possível completar a pesquisa"), TYPE.ALERT_NOTIFICATION));
+	}
+	
 }

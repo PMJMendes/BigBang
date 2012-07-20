@@ -181,10 +181,12 @@ public class ListEntry<T> extends View implements ValueSelectable<T>, HasMetaDat
 		result.getElement().getStyle().setFontSize(11, Unit.PX);
 		result.getElement().getStyle().setProperty("textOverflow", "ellipsis");
 		result.getElement().getStyle().setOverflowY(Overflow.HIDDEN);
+		result.getElement().getStyle().clearProperty("whiteSpace");
+		result.setHeight("1.2em");
 		result.setWordWrap(false);
 		return result;
 	}
-	
+
 	public <I extends Object> void setInfo(I info){}
 	
 	public T getValue() {

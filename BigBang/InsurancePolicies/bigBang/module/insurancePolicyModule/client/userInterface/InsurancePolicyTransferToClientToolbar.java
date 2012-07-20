@@ -1,4 +1,4 @@
-package bigBang.module.generalSystemModule.client.userInterface;
+package bigBang.module.insurancePolicyModule.client.userInterface;
 
 import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.ui.MenuItem;

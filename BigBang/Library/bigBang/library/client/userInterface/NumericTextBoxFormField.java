@@ -158,7 +158,7 @@ public class NumericTextBoxFormField extends FormField<Double>{
 
 	public NumericTextBoxFormField(boolean isMoney){
 		super();
-		this.isMoney(isMoney);
+		this.setAsMoney(isMoney);
 		VerticalPanel mainWrapper = new VerticalPanel();
 		initWidget(mainWrapper);
 
@@ -178,7 +178,7 @@ public class NumericTextBoxFormField extends FormField<Double>{
 
 	}
 
-	public void isMoney(boolean isMoney){
+	public void setAsMoney(boolean isMoney){
 		if(isMoney){
 			nf = NumberFormat.getFormat("#,##0.00");
 		}

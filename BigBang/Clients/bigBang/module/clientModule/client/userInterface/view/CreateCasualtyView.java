@@ -66,6 +66,7 @@ public class CreateCasualtyView extends View implements CreateCasualtyViewPresen
 		casualtyWrapper.add(toolbar);
 		
 		form = new CasualtyForm();
+		form.setForCreate();
 		form.setSize("100%", "100%");
 		casualtyWrapper.add(form);
 		casualtyWrapper.setCellHeight(form, "100%");

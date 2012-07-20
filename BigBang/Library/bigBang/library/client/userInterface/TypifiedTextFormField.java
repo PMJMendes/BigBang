@@ -34,7 +34,7 @@ public class TypifiedTextFormField extends FormField<TypifiedText> implements Ty
 
 	public TypifiedTextFormField(){
 
-		labels  = new ExpandableListBoxFormField(null,"Etiqueta", ManagementPanelType.TYPIFIED_TEXT);
+		labels  = new ExpandableListBoxFormField(null,"Modelo", ManagementPanelType.TYPIFIED_TEXT);
 		broker = (TypifiedTextBroker)DataBrokerManager.staticGetBroker(BigBangConstants.TypifiedListIds.TYPIFIED_TEXT);
 		labels.addValueChangeHandler(new ValueChangeHandler<String>() {
 

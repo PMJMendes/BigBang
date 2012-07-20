@@ -278,17 +278,19 @@ TypifiedListClient {
 		if (value == null)
 			strValue = "";
 
-		super.setValue(strValue, false);
-		if(fireEvents)
-			ValueChangeEvent.fire(this, value);
-		selectedValueId = value;
+		if(isDifferentValue(strValue)){
+			super.setValue(strValue, false);
+			if(fireEvents)
+				ValueChangeEvent.fire(this, value);
+			selectedValueId = value;
+		}
 	}
 
 	@Override
 	public void clear() {
 		if(managementPanel != null){
 			managementPanel.getList().clearSelection();
-//			managementPanel.setListId(null);
+			//			managementPanel.setListId(null);
 		}
 		super.clear();
 	}
@@ -341,7 +343,7 @@ TypifiedListClient {
 	@Override
 	public void addItem(TipifiedListItem item) {
 		super.addItem(item.value, item.id);
-		if(selectedValueId != null && item.id.equalsIgnoreCase(selectedValueId)){
+		if(selectedValueId != null && item != null && item.id != null && item.id.equalsIgnoreCase(selectedValueId)){
 			setValue(item.id, false);
 		}
 	}

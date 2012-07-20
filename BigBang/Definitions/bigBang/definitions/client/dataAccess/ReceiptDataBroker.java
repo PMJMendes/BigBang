@@ -6,6 +6,7 @@ import bigBang.definitions.client.response.ResponseHandler;
 import bigBang.definitions.shared.DASRequest;
 import bigBang.definitions.shared.DebitNote;
 import bigBang.definitions.shared.DocuShareHandle;
+import bigBang.definitions.shared.InsurerAccountingExtra;
 import bigBang.definitions.shared.Receipt;
 import bigBang.definitions.shared.Receipt.PaymentInfo;
 import bigBang.definitions.shared.Receipt.ReturnMessage;
@@ -58,7 +59,7 @@ public interface ReceiptDataBroker extends DataBrokerInterface<Receipt> {
 
 	void insurerAccounting(String receiptId, ResponseHandler<Void> handler);
 
-	void insurerAccounting(String[] receiptIds, ResponseHandler<Void> handler);
+	void insurerAccounting(String[] receiptIds, InsurerAccountingExtra[] extras, ResponseHandler<Void> handler);
 
 	void agentAccounting(String receiptId, ResponseHandler<Void> handler);
 

@@ -35,7 +35,7 @@ public class InfoOrDocumentRequestForm extends FormView<InfoOrDocumentRequest> {
 	protected TextBoxFormField externalCCAddresses;
 
 	public InfoOrDocumentRequestForm(){
-		addSection("Detalhes do Pedido");
+		addSection("Detalhes do Processo de Pedido de Informação");
 
 		requestType = new ExpandableListBoxFormField(BigBangConstants.TypifiedListIds.REQUEST_TYPE, "Tipo de Pedido");
 		text = new TypifiedTextFormField();
@@ -43,14 +43,16 @@ public class InfoOrDocumentRequestForm extends FormView<InfoOrDocumentRequest> {
 		to.setFieldWidth("400px");
 		replyLimit = new NumericTextBoxFormField("Prazo de Resposta (dias)", false);
 		replyLimit.setFieldWidth("70px");
-		forwardReply = new AutoCompleteTextListFormField("Forward/Reply");
-		internalCCAddresses = new TextBoxFormField("BCC (interno) Endereços separados por ';'");
-		externalCCAddresses = new TextBoxFormField("CC (externo) Endereços separados por ';'");
+		forwardReply = new AutoCompleteTextListFormField("Utilizadores a envolver no processo");
+		internalCCAddresses = new TextBoxFormField("BCC Endereços separados por ';'");
+		externalCCAddresses = new TextBoxFormField("CC Endereços separados por ';'");
 
 		addFormField(requestType, true);
 		addFormField(replyLimit);
-		addFormField(to);
 		addFormField(forwardReply);
+		
+		addSection("Detalhes da Mensagem a Enviar");
+		addFormField(to);
 		addFormField(internalCCAddresses);
 		addFormField(externalCCAddresses);
 		addFormField(text);

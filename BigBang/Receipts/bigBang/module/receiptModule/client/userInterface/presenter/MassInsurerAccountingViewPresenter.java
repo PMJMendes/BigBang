@@ -10,6 +10,7 @@ import bigBang.definitions.client.dataAccess.ReceiptDataBroker;
 import bigBang.definitions.client.response.ResponseError;
 import bigBang.definitions.client.response.ResponseHandler;
 import bigBang.definitions.shared.BigBangConstants;
+import bigBang.definitions.shared.InsurerAccountingExtra;
 import bigBang.definitions.shared.Receipt;
 import bigBang.definitions.shared.ReceiptStub;
 import bigBang.library.client.Checkable;
@@ -52,7 +53,8 @@ public class MassInsurerAccountingViewPresenter implements ViewPresenter{
 		void removeReceiptFromAccountingList(String id);
 		HasCheckables getCheckableSelectedList();
 		HasEditableValue<Receipt> getReceiptForm();
-
+		HasEditableValue<InsurerAccountingExtra> getInsurerAccountingextraForm();
+		
 		HasValueSelectables<ReceiptStub> getMainList();
 		HasValueSelectables<ReceiptStub> getSelectedList();
 		HasCheckables getCheckableMainList();
@@ -102,7 +104,9 @@ public class MassInsurerAccountingViewPresenter implements ViewPresenter{
 					view.removeAllReceiptsFromAccountingList();
 					break;
 				case SEND_INSURER_ACCOUNTING:
-					sendInsurerAccounting(view.getSelectedList().getAll());
+					if(validate()){
+						sendInsurerAccounting(view.getSelectedList().getAll());
+					}
 					break;
 				case SELECT_ALL:
 					view.markAllForCheck();
@@ -247,6 +251,7 @@ public class MassInsurerAccountingViewPresenter implements ViewPresenter{
 		view.getMainList().clearSelection();
 		view.removeAllReceiptsFromAccountingList();
 		view.getReceiptForm().setValue(null);
+		view.getInsurerAccountingextraForm().setValue(null);
 	}
 
 	public void sendInsurerAccounting(Collection<ValueSelectable<ReceiptStub>> collection){
@@ -258,7 +263,11 @@ public class MassInsurerAccountingViewPresenter implements ViewPresenter{
 			i++;
 		}
 
-		broker.insurerAccounting(receiptIds, new ResponseHandler<Void>() {
+		InsurerAccountingExtra[] extras = new InsurerAccountingExtra[]{
+			view.getInsurerAccountingextraForm().getValue(), 
+		};
+		
+		broker.insurerAccounting(receiptIds, extras, new ResponseHandler<Void>() {
 
 			@Override
 			public void onResponse(Void response) {
@@ -272,6 +281,30 @@ public class MassInsurerAccountingViewPresenter implements ViewPresenter{
 		});
 	}
 
+	protected boolean validate(){
+		Collection<ValueSelectable<ReceiptStub>> selected = view.getSelectedList().getAll();
+		
+		InsurerAccountingExtra extra = view.getInsurerAccountingextraForm().getInfo();
+		
+		if(extra != null && (extra.value != null || extra.text != null)) {
+			String insurerId = null;
+			
+			for(ValueSelectable<ReceiptStub> entry : selected) {
+				if(insurerId == null) {
+					insurerId = entry.getValue().insurerId;
+				}
+				
+				if(!insurerId.equalsIgnoreCase(entry.getValue().insurerId)) {
+					showValidationError("Não pode preencher dados extra para recibos de várias seguradoras.");
+					return false;
+				}
+			}
+			
+		}
+		
+		return true;
+	}
+	
 	protected void checkUserPermission(final ResponseHandler<Boolean> handler) {
 		PermissionChecker.hasGeneralPermission(BigBangConstants.EntityIds.RECEIPT, BigBangConstants.OperationIds.ReceiptProcess.INSURER_ACCOUNTING, new ResponseHandler<Boolean>() {
 
@@ -294,6 +327,10 @@ public class MassInsurerAccountingViewPresenter implements ViewPresenter{
 	
 	protected void onInsurerAccountingFailed(){
 		EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não foi possível Enviar as Prestações de Contas"), TYPE.ALERT_NOTIFICATION));
+	}
+	
+	protected void showValidationError(String message){
+		EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("Erro de validação", message), TYPE.ALERT_NOTIFICATION));
 	}
 
 }

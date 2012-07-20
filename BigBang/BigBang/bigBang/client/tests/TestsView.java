@@ -12,14 +12,14 @@ public class TestsView extends View implements TestsViewPresenter.Display {
 	protected TypifiedTextFormField text;
 	
 	public TestsView(){
+		initWidget(wrapper);
+		wrapper.setSize("100%", "100%");
 		
 		text = new TypifiedTextFormField();
 		text.setReadOnly(false);
 		text.setTypifiedTexts("TEST");
-		initWidget(wrapper);
-		wrapper.setSize("100%", "100%");
+	
 		wrapper.add(text);
-		
 	}
 
 	@Override

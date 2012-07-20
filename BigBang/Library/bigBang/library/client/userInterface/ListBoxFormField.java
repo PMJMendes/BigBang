@@ -138,9 +138,7 @@ public class ListBoxFormField extends FormField<String> {
 
 	@Override
 	public String getValue(){
-		if(value == null)
-			value = new String();
-		return value.isEmpty() ? null : value;
+		return value == null ? null : value.isEmpty() ? null : value;
 	}
 
 

@@ -60,6 +60,8 @@ public class ReceiptSearchPanel extends SearchPanel<ReceiptStub> implements Rece
 				maturityDateLabel = getFormatedLabel();
 				this.policyNumberLabel = getFormatedLabel();
 				this.policyNumberLabel.getElement().getStyle().setFontSize(11, Unit.PX);
+				this.policyNumberLabel.getElement().getStyle().setProperty("whiteSpace", "");
+				this.policyNumberLabel.setHeight("1.2em");
 				lineLabel = getFormatedLabel();
 				this.lineLabel.getElement().getStyle().setFontSize(11, Unit.PX);
 				this.lineLabel.getElement().getStyle().setFontStyle(FontStyle.OBLIQUE);

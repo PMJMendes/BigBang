@@ -15,7 +15,7 @@ import bigBang.library.client.userInterface.ListHeader;
 import bigBang.library.client.userInterface.view.View;
 import bigBang.module.clientModule.client.userInterface.ClientSearchPanel;
 import bigBang.module.clientModule.client.userInterface.view.ClientFormView;
-import bigBang.module.generalSystemModule.client.userInterface.InsurancePolicyTransferToClientToolbar;
+import bigBang.module.insurancePolicyModule.client.userInterface.InsurancePolicyTransferToClientToolbar;
 import bigBang.module.insurancePolicyModule.client.userInterface.presenter.InsurancePolicyTransferToClientViewPresenter;
 import bigBang.module.insurancePolicyModule.client.userInterface.presenter.InsurancePolicyTransferToClientViewPresenter.Action;
 

@@ -9,19 +9,23 @@ import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 
+import bigBang.definitions.client.dataAccess.CasualtyDataBroker;
 import bigBang.definitions.client.dataAccess.InsurancePolicyBroker;
 import bigBang.definitions.client.dataAccess.InsuranceSubPolicyBroker;
 import bigBang.definitions.client.response.ResponseError;
 import bigBang.definitions.client.response.ResponseHandler;
 import bigBang.definitions.shared.BigBangConstants;
+import bigBang.definitions.shared.Casualty;
 import bigBang.definitions.shared.InsurancePolicy;
 import bigBang.definitions.shared.SubCasualty;
 import bigBang.definitions.shared.SubCasualty.SubCasualtyItem;
 import bigBang.definitions.shared.SubPolicy;
 import bigBang.library.client.dataAccess.DataBrokerManager;
+import bigBang.library.client.history.NavigationHistoryItem;
 import bigBang.library.client.userInterface.CheckBoxFormField;
 import bigBang.library.client.userInterface.ExpandableSelectionFormField;
 import bigBang.library.client.userInterface.ListBoxFormField;
+import bigBang.library.client.userInterface.NavigationFormField;
 import bigBang.library.client.userInterface.TextAreaFormField;
 import bigBang.library.client.userInterface.TextBoxFormField;
 import bigBang.library.client.userInterface.presenter.InsurancePolicySelectionViewPresenter;
@@ -41,6 +45,7 @@ public class SubCasualtyForm extends FormView<SubCasualty> {
 	protected CheckBoxFormField hasJudicial;
 	protected TextBoxFormField status;
 	protected TextAreaFormField notes, internalNotes;
+	protected NavigationFormField casualty;
 
 	protected FormViewSection notesSection, internalNotesSection;
 
@@ -48,6 +53,8 @@ public class SubCasualtyForm extends FormView<SubCasualty> {
 	protected NewSubCasualtyItemSection newItemSection;
 
 	public SubCasualtyForm(){
+		casualty = new NavigationFormField("Sinistro");
+		
 		number = new TextBoxFormField("Número");
 		number.setFieldWidth("175px");
 		number.setEditable(false);
@@ -79,6 +86,8 @@ public class SubCasualtyForm extends FormView<SubCasualty> {
 		hasJudicial = new CheckBoxFormField("Tem processo Judicial");
 
 		addSection("Informação Geral");
+		addFormField(casualty, false);
+		
 		addFormField(referenceType, true);
 		addFormField(policyReference, true);
 		addFormField(subPolicyReference, true);
@@ -169,6 +178,32 @@ public class SubCasualtyForm extends FormView<SubCasualty> {
 	@Override
 	public void setInfo(SubCasualty info) {
 		if(info != null) {
+			if(info.casualtyId != null){
+				NavigationHistoryItem navigationItem = new NavigationHistoryItem();
+				navigationItem.setStackParameter("display");
+				navigationItem.setParameter("section", "casualty");
+				navigationItem.pushIntoStackParameter("display", "search");
+				navigationItem.setParameter("casualtyid", info.casualtyId);
+				casualty.setValue(navigationItem);
+				
+				CasualtyDataBroker casualtyBroker = (CasualtyDataBroker) DataBrokerManager.staticGetBroker(BigBangConstants.EntityIds.CASUALTY);
+				casualtyBroker.getCasualty(info.casualtyId, new ResponseHandler<Casualty>() {
+
+					@Override
+					public void onResponse(Casualty response) {
+						casualty.setValueName("#" + response.processNumber + " - " + response.clientName);
+					}
+
+					@Override
+					public void onError(Collection<ResponseError> errors) {
+						return;
+					}
+				});
+			}else{
+				casualty.setValue(null);
+				casualty.setValueName(null);
+			}
+			
 			number.setValue(info.number);
 			referenceType.setValue(info.referenceTypeId, true);
 			if(info.referenceTypeId == null) {

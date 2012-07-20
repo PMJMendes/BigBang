@@ -8,7 +8,6 @@ import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.ScrollPanel;
-import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.SplitLayoutPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
@@ -203,12 +202,7 @@ public class ReportView extends View implements ReportViewPresenter.Display {
 		panel.getElement().setInnerHTML(section.htmlContent);
 		sectionsContainer.add(panel);
 		
-		currentPanel.getElement().getStyle().setDisplay(Display.INLINE);
-		
-		SimplePanel filler = new SimplePanel();
-		filler.setSize("0px", "50px");
-		
-		currentPanel.add(filler);
+		currentPanel.getElement().getStyle().setMarginBottom(50, Unit.PX);
 	}
 
 	@Override
@@ -222,6 +216,7 @@ public class ReportView extends View implements ReportViewPresenter.Display {
 	public Button addVerb(String title){
 		Button newB = new Button(title);
 		newB.setWidth("120px");
+		currentPanel.getElement().getStyle().setMarginBottom(0, Unit.PX);
 		currentPanel.getElement().getStyle().setDisplay(Display.INLINE);
 		currentPanel.add(newB);
 		

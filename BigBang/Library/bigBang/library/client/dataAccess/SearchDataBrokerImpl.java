@@ -34,7 +34,7 @@ public class SearchDataBrokerImpl<T extends SearchResult> extends DataBroker<T> 
 			final ResponseHandler<Search<T>> handler) {
 		search(parameters, sorts, size, handler, false);
 	}
-	
+
 	@Override
 	public void search(final SearchParameter[] parameters, final SortParameter[] sorts, int size,
 			final ResponseHandler<Search<T>> handler, final boolean autoClose) {
@@ -46,21 +46,29 @@ public class SearchDataBrokerImpl<T extends SearchResult> extends DataBroker<T> 
 				Collection<T> resultsCollection = new ArrayList<T>();
 				for(int i = 0; i < result.results.length; i++)
 					resultsCollection.add((T) result.results[i]);
-				Search<T> search = new Search<T>(autoClose ? result.workspaceId : null,
-												result.totalCount, 0, result.results.length, 
-												parameters, sorts, resultsCollection);
-				
+				Search<T> search = new Search<T>(!autoClose ? result.workspaceId : null,
+						result.totalCount, 0, result.results.length, 
+						parameters, sorts, resultsCollection);
+
 				if(autoClose) {
-					workspaces.put(result.workspaceId, search);
-				}else{
 					disposeSearch(result.workspaceId);
+				}else{
+					workspaces.put(result.workspaceId, search);
 				}
 
 				handler.onResponse(search);
 			}
+			
+			@Override
+			public void onResponseFailure(Throwable caught) {
+				handler.onError(new String[]{
+						"Could not perform search"
+				});
+				super.onResponseFailure(caught);
+			}
 		});
 	}
-	
+
 	@Override
 	public void searchOpenForOperation(String operationId,
 			final SearchParameter[] parameters, final SortParameter[] sorts, int size,
@@ -77,29 +85,17 @@ public class SearchDataBrokerImpl<T extends SearchResult> extends DataBroker<T> 
 				workspaces.put(result.workspaceId, search);
 				handler.onResponse(search);
 			}
+			
+			@Override
+			public void onResponseFailure(Throwable caught) {
+				handler.onError(new String[]{
+						"Could not perform search"
+				});
+				super.onResponseFailure(caught);
+			}
 		});
 	}
 
-	@Override
-	public void search(final String workspaceId, final SearchParameter[] parameters, final SortParameter[] sorts,
-			final int size, final ResponseHandler<Search<T>> handler) {
-		if(workspaces.containsKey(workspaceId)){
-			this.service.search(workspaceId, parameters, sorts, size, new BigBangAsyncCallback<NewSearchResult>() {
-
-				@SuppressWarnings("unchecked")
-				@Override
-				public void onResponseSuccess(NewSearchResult result) {
-					Collection<T> resultsCollection = new ArrayList<T>();
-					for(int i = 0; i < result.results.length; i++)
-						resultsCollection.add((T) result.results[i]);
-					Search<T> search = new Search<T>(result.workspaceId, result.totalCount, 0, result.results.length, parameters, sorts, resultsCollection);
-					workspaces.put(workspaceId, search);
-					handler.onResponse(search);
-				}
-			});
-		}
-	}
-	
 	@Override
 	public void getResults(final String workspaceId, final int offset, int count,
 			final ResponseHandler<Search<T>> handler) {
@@ -116,6 +112,14 @@ public class SearchDataBrokerImpl<T extends SearchResult> extends DataBroker<T> 
 				workspaces.put(workspaceId, search);
 				handler.onResponse(search);
 			}
+			
+			@Override
+			public void onResponseFailure(Throwable caught) {
+				handler.onError(new String[]{
+						"Could not perform search"
+				});
+				super.onResponseFailure(caught);
+			}
 		});
 	}
 
@@ -128,6 +132,7 @@ public class SearchDataBrokerImpl<T extends SearchResult> extends DataBroker<T> 
 			public void onResponseSuccess(Void result) {
 				return;
 			}
+			
 		});
 	}
 

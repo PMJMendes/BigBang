@@ -64,7 +64,7 @@ public abstract class InsurancePolicyForm extends FormView<InsurancePolicy> {
 		number  = new TextBoxFormField("Número");
 		client = new NavigationFormField("Cliente");
 		number.setFieldWidth("175px");
-		manager = new ExpandableListBoxFormField(BigBangConstants.EntityIds.USER, "Gestor");
+		manager = new ExpandableListBoxFormField(BigBangConstants.EntityIds.USER, "Gestor de Apólice");
 		manager.allowEdition(false);
 		insuranceAgency = new ExpandableListBoxFormField(BigBangConstants.EntityIds.INSURANCE_AGENCY, "Seguradora");
 		insuranceAgency.allowEdition(false);

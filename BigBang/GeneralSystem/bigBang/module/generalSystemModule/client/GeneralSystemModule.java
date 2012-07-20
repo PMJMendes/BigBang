@@ -9,6 +9,7 @@ import bigBang.library.client.ViewPresenterFactory;
 import bigBang.library.client.ViewPresenterInstantiator;
 import bigBang.library.client.event.LoginSuccessEvent;
 import bigBang.library.client.event.LoginSuccessEventHandler;
+import bigBang.library.client.history.NavigationHistoryManager;
 import bigBang.library.client.userInterface.presenter.ViewPresenter;
 import bigBang.module.generalSystemModule.client.dataAccess.ClientGroupBrokerImpl;
 import bigBang.module.generalSystemModule.client.dataAccess.CostCenterBrokerImpl;
@@ -139,6 +140,7 @@ public class GeneralSystemModule implements Module {
 					@Override
 					public void onResponseSuccess(GeneralSystem result) {
 						SessionGeneralSystem.setGeneralSystem(result);
+						NavigationHistoryManager.getInstance().reload();
 					}
 				});
 			}
