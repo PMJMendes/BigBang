@@ -542,8 +542,6 @@ public class ReportServiceImpl
 			lidMaps = Engine.FindEntity(Engine.getCurrentNameSpace(), lobjSet.getSubObjectType());
 			lobjMap = (TransactionMapBase)Engine.GetWorkInstance(lidMaps, UUID.fromString(parrArgs[3]));
 
-			lobjMap.setAt(TransactionMapBase.I.SETTLEDON, new Timestamp(new java.util.Date().getTime()));
-
 			ldb = new MasterDB();
 		}
 		catch (Throwable e)
@@ -553,7 +551,28 @@ public class ReportServiceImpl
 
 		try
 		{
-			lobjMap.SaveToDb(ldb);
+			ldb.BeginTrans();
+		}
+		catch (Throwable e)
+		{
+			try { ldb.Disconnect(); } catch (Throwable e1) {}
+			throw new BigBangException(e.getMessage(), e);
+		}
+
+		try
+		{
+			lobjMap.Settle(ldb);
+		}
+		catch (Throwable e)
+		{
+			try { ldb.Rollback(); } catch (Throwable e1) {}
+			try { ldb.Disconnect(); } catch (Throwable e1) {}
+			throw new BigBangException(e.getMessage(), e);
+		}
+
+		try
+		{
+			ldb.Commit();
 		}
 		catch (Throwable e)
 		{
