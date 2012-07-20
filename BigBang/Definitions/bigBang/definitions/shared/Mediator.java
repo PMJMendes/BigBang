@@ -6,16 +6,32 @@ public class Mediator
 	implements Serializable
 {
 	private static final long serialVersionUID = 1L;
-	
+
+	public static class Percentage
+		implements Serializable
+	{
+		private static final long serialVersionUID = 1L;
+
+		public String categoryId;
+		public String categoryName;
+		public String lineId;
+		public String lineName;
+		public String subLineId;
+		public String subLineName;
+		public Double percent;
+	}
+
 	public String id;
 	public String name;
 	public String ISPNumber;
 	public String taxNumber;
 	public String NIB;
 	public CommissionProfile comissionProfile;
+	public Double basePercent; // Novo!
 	public Address address;
 	public Contact[] contacts;
 	public Document[] documents;
+	public Percentage[] dealPercentages; // Novo!
 
 	public Mediator()
 	{

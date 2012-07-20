@@ -10,9 +10,12 @@ public class SubLine
 	public String id;
 	public String name;
 	public String lineId;
-	public String objectTypeId; // Novo!
-	public String exercisePeriodId; // Novo!
-	public Coverage[] coverages;
+	public String objectTypeId;
+	public String exercisePeriodId;
+	public Double commissionPercent; // Novo!
+	public String description; // Novo!
+	public Boolean isLife; // Novo!
+	public Coverage[] coverages; // Novo!
 
 	public SubLine()
 	{
