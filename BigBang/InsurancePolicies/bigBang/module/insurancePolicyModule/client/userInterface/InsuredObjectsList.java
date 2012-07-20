@@ -45,8 +45,13 @@ public class InsuredObjectsList extends FilterableList<InsuredObjectStub> {
 
 	public void setOwner(String ownerId){
 
-		String tempOwner = ownerId == null ? null : new String(this.ownerId);
+		String tempOwner = null;
+		
+		if(this.ownerId != null){
+			tempOwner = ownerId == null ? null : new String(this.ownerId);
+		}
 		this.ownerId = ownerId;
+		
 		if(ownerId == null) {
 			clear();
 		}else{
