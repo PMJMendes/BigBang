@@ -98,7 +98,6 @@ public class RepeatDASRequestViewPresenter implements ViewPresenter{
 			public void onResponse(DASRequest response) {
 				NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
 				item.removeParameter("show");
-				item.removeParameter("dasrequestid");
 				NavigationHistoryManager.getInstance().go(item);
 				EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Repetição do Pedido de Declaração de Ausência de Sinistro enviada."), TYPE.TRAY_NOTIFICATION));
 			}
