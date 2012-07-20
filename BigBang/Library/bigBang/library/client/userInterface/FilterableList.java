@@ -87,7 +87,6 @@ public class FilterableList<T> extends SortableList<T> {
 			public void onOpen(OpenEvent<DisclosurePanel> event) {
 				filterHeaderImage.setResource(resources.arrowUp());
 				filtersContainer.getElement().getStyle().setProperty("maxHeight", scrollPanelWrapper.getOffsetHeight()+"px");
-				GWT.log(filtersContainer.getOffsetHeight() +" - " + scrollPanelWrapper.getOffsetHeight());
 				if(filtersContainer.getOffsetHeight() > scrollPanelWrapper.getOffsetHeight()) {
 					filtersContainer.setHeight(scrollPanelWrapper.getOffsetHeight() + "px");
 				}
