@@ -214,6 +214,7 @@ public class MassCreatePaymentNoticeViewPresenter implements ViewPresenter{
 		});
 
 		bound = true;
+		
 	}
 
 	@Override
@@ -221,8 +222,6 @@ public class MassCreatePaymentNoticeViewPresenter implements ViewPresenter{
 		clearView();
 		showMassCreatePaymentNoticeScreen();
 		view.setManagerFilterValue(Session.getUserId());
-		view.refreshMainLisT();
-		view.setFilterPanelOpen(true);
 	}
 
 
@@ -254,10 +253,9 @@ public class MassCreatePaymentNoticeViewPresenter implements ViewPresenter{
 	}
 
 	private void clearView() {
-		//		view.getMainList().clearSelection();
 		view.removeAllReceiptsFromCreateNotice();
 		view.getReceiptForm().setValue(null);
-
+		
 	}
 
 	public void createPaymentNotices(Collection<ValueSelectable<ReceiptStub>> collection){

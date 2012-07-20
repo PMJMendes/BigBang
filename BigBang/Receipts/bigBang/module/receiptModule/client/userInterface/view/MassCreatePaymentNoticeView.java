@@ -110,8 +110,8 @@ public class MassCreatePaymentNoticeView extends View implements MassCreatePayme
 			filtersPanel.addTypifiedListField(Filters.CATEGORY, BigBangConstants.EntityIds.CATEGORY, "Categoria");
 			filtersPanel.addTypifiedListField(Filters.LINE, BigBangConstants.EntityIds.LINE, "Ramo", Filters.CATEGORY);
 			filtersPanel.addTypifiedListField(Filters.SUB_LINE, BigBangConstants.EntityIds.SUB_LINE, "Modalidade", Filters.LINE);
-
 			filtersPanel.getApplyButton().addClickHandler(new ClickHandler() {
+
 
 				@Override
 				public void onClick(ClickEvent event) {
@@ -121,8 +121,9 @@ public class MassCreatePaymentNoticeView extends View implements MassCreatePayme
 
 			this.setOperationId(BigBangConstants.OperationIds.ReceiptProcess.CREATE_PAYMENT_NOTICE);
 			filtersContainer.clear();
+
 			filtersContainer.add(filtersPanel);
-			doSearch();
+			//setFilterOpen(true);
 
 		}
 
@@ -177,16 +178,15 @@ public class MassCreatePaymentNoticeView extends View implements MassCreatePayme
 
 			doSearch(parameters, sorts);
 		}
-		
+
+
 		public void setManagerFilterValue(String value){
 			filtersPanel.setFilterValue(Filters.MANAGER, value);
 		}
 
 		public void setFilterOpen(boolean b) {
 			filterDropContainer.setOpen(b);
-			
 		}
-
 	}
 
 	@Override
@@ -253,10 +253,10 @@ public class MassCreatePaymentNoticeView extends View implements MassCreatePayme
 				return null;
 			}
 		};
-		
+
 		applyPaymentNoticeCreationForm.addSection("Criar Avisos de Cobrança");
-		
-		
+
+
 		VerticalPanel selectedListWrapper = new VerticalPanel();
 		selectedListWrapper.add(new ListHeader("Criar Avisos de Cobrança"));
 		selectedListWrapper.setSize("100%", "100%");
@@ -275,7 +275,7 @@ public class MassCreatePaymentNoticeView extends View implements MassCreatePayme
 			}
 		});
 		selectedReceipts = new SelectedReceiptsList();
-		
+
 		selectedListWrapper.add(selectedReceipts);
 		selectedListWrapper.setCellHeight(selectedReceipts, "100%");
 		wrapper.addEast(selectedListWrapper, 400);
@@ -287,7 +287,6 @@ public class MassCreatePaymentNoticeView extends View implements MassCreatePayme
 		receiptWrapper.add(receiptForm);
 		receiptWrapper.setCellHeight(receiptForm,"100%");
 		wrapper.add(receiptWrapper);
-
 	}
 
 	@Override 
@@ -342,7 +341,7 @@ public class MassCreatePaymentNoticeView extends View implements MassCreatePayme
 		if(searchPanel.getWorkspaceId() != null){
 			SearchDataBroker<ReceiptStub> broker = this.searchPanel.getSearchBroker();
 			broker.getResults(searchPanel.getWorkspaceId(), 0, -1, new ResponseHandler<Search<ReceiptStub>>() {
-				
+
 				@Override
 				public void onResponse(Search<ReceiptStub> response) {
 					Collection <ReceiptStub> results = response.getResults();
@@ -353,7 +352,7 @@ public class MassCreatePaymentNoticeView extends View implements MassCreatePayme
 						}
 					}
 				}
-				
+
 				@Override
 				public void onError(Collection<ResponseError> errors) {
 					return;
@@ -389,7 +388,7 @@ public class MassCreatePaymentNoticeView extends View implements MassCreatePayme
 	public void allowCreation(boolean b) {
 		createPNotice.setEnabled(b);
 	}
-	
+
 	@Override
 	public void setManagerFilterValue(String value){
 		searchPanel.setManagerFilterValue(value);
@@ -399,5 +398,6 @@ public class MassCreatePaymentNoticeView extends View implements MassCreatePayme
 	public void setFilterPanelOpen(boolean b) {
 		searchPanel.setFilterOpen(b);
 	}
+
 
 }
