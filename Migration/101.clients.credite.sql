@@ -292,3 +292,10 @@ from credite_egs.tblBBClients c inner join credite_egs.tblPNProcesses p on p.FKD
 
 ALTER TABLE [credite_egs].[tblBBPolicies]
 ALTER COLUMN [FKClient] [uniqueidentifier] NULL;
+
+insert into credite_egs.tblBBInsurerReceipts (PK, RecNumber, FKCompany, Value, Tax, RecDate)
+select CAST(CAST(NEWID() AS BINARY(10)) + CAST(GETDATE() AS BINARY(6)) AS UNIQUEIDENTIFIER) PK,
+CAST(f.ano AS VARCHAR(4)) + '/' + substring('0000' + CAST(f.numero AS VARCHAR(5)), len('0000' + CAST(f.numero AS VARCHAR(5)))-3, 4) RecNumber,
+c.PK FKCompany, f.valor Value, f.impselo Tax, datarec RecDate
+from credegs..empresa.facturas f
+inner join credite_egs.tblCompanies c on c.MigrationID=f.fkcomseg;

@@ -1,3 +1,4 @@
+delete from credite_egs.tblBBInsurerReceipts;
 delete from credite_egs.tblRequestAddresses;
 delete from credite_egs.tblDocInfo;
 delete from credite_egs.tblBBDocuments;
@@ -54,6 +55,7 @@ delete from credite_egs.tblPNNodes;
 delete from credite_egs.tblPNSteps;
 delete from credite_egs.tblPNProcesses;
 
+delete from amartins.tblBBInsurerReceipts;
 delete from amartins.tblRequestAddresses;
 delete from amartins.tblDocInfo;
 delete from amartins.tblBBDocuments;
