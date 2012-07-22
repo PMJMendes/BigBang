@@ -9,6 +9,7 @@ import Jewel.Engine.DataAccess.SQLServer;
 import Jewel.Petri.SysObjects.JewelPetriException;
 import Jewel.Petri.SysObjects.UndoableOperation;
 
+import com.premiumminds.BigBang.Jewel.BigBangJewelException;
 import com.premiumminds.BigBang.Jewel.Constants;
 import com.premiumminds.BigBang.Jewel.Objects.InsurerAccountingDetail;
 import com.premiumminds.BigBang.Jewel.Objects.InsurerAccountingMap;
@@ -117,13 +118,20 @@ public class InsurerAccounting
 	protected void Undo(SQLServer pdb)
 		throws JewelPetriException
 	{
+		InsurerAccountingMap lobjSetMap;
 		InsurerAccountingDetail lobjSetReceipt;
 
 		try
 		{
+			lobjSetMap = InsurerAccountingMap.GetInstance(Engine.getCurrentNameSpace(), midMap);
+			if ( lobjSetMap.isSettled() )
+				throw new BigBangJewelException("Não pode reverter a prestação de contas depois de saldar a transacção.");
+
 			lobjSetReceipt = InsurerAccountingDetail.GetInstance(Engine.getCurrentNameSpace(), midDetail);
 			lobjSetReceipt.setAt(2, true);
 			lobjSetReceipt.SaveToDb(pdb);
+
+			lobjSetMap.clearDetails();
 		}
 		catch (Throwable e)
 		{

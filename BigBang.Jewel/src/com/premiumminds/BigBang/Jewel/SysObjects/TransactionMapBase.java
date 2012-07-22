@@ -55,8 +55,8 @@ public abstract class TransactionMapBase
 
 		try
 		{
-			lrsObjects = lrefObjects.SelectByMembers(ldb, new int[] {TransactionDetailBase.I.OWNER}, new java.lang.Object[] {getKey()},
-					new int[] {TransactionDetailBase.I.VOIDED});
+			lrsObjects = lrefObjects.SelectByMembers(ldb, new int[] {TransactionDetailBase.I.OWNER, TransactionDetailBase.I.VOIDED},
+					new java.lang.Object[] {getKey(), false}, null);
 		}
 		catch (Throwable e)
 		{
@@ -98,6 +98,11 @@ public abstract class TransactionMapBase
 		marrDetails = larrAux.toArray(new TransactionDetailBase[larrAux.size()]);
 
 		return marrDetails;
+	}
+
+	public void clearDetails()
+	{
+		marrDetails = null;
 	}
 
 	public int getCount()

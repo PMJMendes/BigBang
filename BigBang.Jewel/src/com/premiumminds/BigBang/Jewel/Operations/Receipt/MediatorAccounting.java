@@ -8,6 +8,7 @@ import Jewel.Engine.DataAccess.SQLServer;
 import Jewel.Petri.SysObjects.JewelPetriException;
 import Jewel.Petri.SysObjects.UndoableOperation;
 
+import com.premiumminds.BigBang.Jewel.BigBangJewelException;
 import com.premiumminds.BigBang.Jewel.Constants;
 import com.premiumminds.BigBang.Jewel.Objects.MediatorAccountingDetail;
 import com.premiumminds.BigBang.Jewel.Objects.MediatorAccountingMap;
@@ -124,13 +125,20 @@ public class MediatorAccounting
 	protected void Undo(SQLServer pdb)
 		throws JewelPetriException
 	{
+		MediatorAccountingMap lobjSetMap;
 		MediatorAccountingDetail lobjSetReceipt;
 
 		try
 		{
+			lobjSetMap = MediatorAccountingMap.GetInstance(Engine.getCurrentNameSpace(), midMap);
+			if ( lobjSetMap.isSettled() )
+				throw new BigBangJewelException("Não pode reverter a prestação de contas depois de saldar a transacção.");
+
 			lobjSetReceipt = MediatorAccountingDetail.GetInstance(Engine.getCurrentNameSpace(), midDetail);
 			lobjSetReceipt.setAt(2, true);
 			lobjSetReceipt.SaveToDb(pdb);
+
+			lobjSetMap.clearDetails();
 		}
 		catch (Throwable e)
 		{
