@@ -202,7 +202,7 @@ public class DASRequestTasksViewPresenter implements ViewPresenter, HasOperation
 
 			@Override
 			protected void onNavigationHistoryEvent(NavigationHistoryItem historyItem) {
-				return;
+				view.showOverlayViewContainer(false);
 			}
 		};
 	}
