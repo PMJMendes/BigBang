@@ -17,6 +17,20 @@ import com.premiumminds.BigBang.Jewel.Constants;
 public class Mediator
 	extends ObjectBase
 {
+	public static class I
+	{
+		public static int NAME         = 0;
+		public static int ISPNUMBER    = 1;
+		public static int FISCALNUMBER = 2;
+		public static int BANKINGID    = 3;
+		public static int PROFILE      = 4;
+		public static int ADDRESS1     = 5;
+		public static int ADDRESS2     = 6;
+		public static int ZIPCODE      = 7;
+		public static int MIGRATIONID  = 8;
+		public static int PERCENT      = 9;
+	}
+
     public static Mediator GetInstance(UUID pidNameSpace, UUID pidKey)
 		throws BigBangJewelException
 	{
@@ -204,5 +218,76 @@ public class Mediator
 		}
 
 		return larrAux.toArray(new Document[larrAux.size()]);
+    }
+
+    public MediatorDeal[] GetCurrentDeals()
+        throws BigBangJewelException
+    {
+		ArrayList<MediatorDeal> larrAux;
+		IEntity lrefDocuments;
+        MasterDB ldb;
+        ResultSet lrsDocuments;
+
+		larrAux = new ArrayList<MediatorDeal>();
+
+		try
+		{
+			lrefDocuments = Entity.GetInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), Constants.ObjID_MediatorDeal)); 
+			ldb = new MasterDB();
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangJewelException(e.getMessage(), e);
+		}
+
+		try
+		{
+			lrsDocuments = lrefDocuments.SelectByMembers(ldb, new int[] {MediatorDeal.I.MEDIATOR},
+					new java.lang.Object[] {getKey()}, null);
+		}
+		catch (Throwable e)
+		{
+			try { ldb.Disconnect(); } catch (Throwable e1) {}
+			throw new BigBangJewelException(e.getMessage(), e);
+		}
+
+		try
+		{
+			while ( lrsDocuments.next() )
+				larrAux.add(MediatorDeal.GetInstance(getNameSpace(), lrsDocuments));
+		}
+		catch (BigBangJewelException e)
+		{
+			try { lrsDocuments.close(); } catch (Throwable e1) {}
+			try { ldb.Disconnect(); } catch (Throwable e1) {}
+			throw e;
+		}
+		catch (Throwable e)
+		{
+			try { lrsDocuments.close(); } catch (Throwable e1) {}
+			try { ldb.Disconnect(); } catch (Throwable e1) {}
+			throw new BigBangJewelException(e.getMessage(), e);
+		}
+
+		try
+		{
+			lrsDocuments.close();
+		}
+		catch (Throwable e)
+		{
+			try { ldb.Disconnect(); } catch (Throwable e1) {}
+			throw new BigBangJewelException(e.getMessage(), e);
+		}
+
+		try
+		{
+			ldb.Disconnect();
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangJewelException(e.getMessage(), e);
+		}
+
+		return larrAux.toArray(new MediatorDeal[larrAux.size()]);
     }
 }

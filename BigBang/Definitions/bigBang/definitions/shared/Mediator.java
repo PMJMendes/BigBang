@@ -23,11 +23,13 @@ public class Mediator
 	public Mediator()
 	{
 		comissionProfile = new CommissionProfile();
-		contacts = new Contact[0];
 		dealPercents = new HashMap<String, Double>();
+		contacts = new Contact[0];
+		documents = new Document[0];
 	}
 
-	public Mediator(Mediator original){
+	public Mediator(Mediator original)
+	{
 		this.id = original.id;
 		this.name = original.name;
 		this.ISPNumber = original.ISPNumber;

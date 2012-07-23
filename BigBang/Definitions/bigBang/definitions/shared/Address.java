@@ -11,7 +11,8 @@ public class Address
 	public String street2;
 	public ZipCode zipCode;
 
-	public Address(){
+	public Address()
+	{
 		street1 = street2 = null;
 		zipCode = new ZipCode();
 	}

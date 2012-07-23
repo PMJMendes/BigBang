@@ -2,22 +2,25 @@ package com.premiumminds.BigBang.Jewel.Operations.General;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.UUID;
 
 import Jewel.Engine.Engine;
-import Jewel.Engine.Constants.ObjectGUIDs;
 import Jewel.Engine.DataAccess.SQLServer;
 import Jewel.Engine.Implementation.Entity;
-import Jewel.Engine.SysObjects.ObjectBase;
 import Jewel.Petri.SysObjects.JewelPetriException;
 import Jewel.Petri.SysObjects.UndoableOperation;
 
+import com.premiumminds.BigBang.Jewel.BigBangJewelException;
 import com.premiumminds.BigBang.Jewel.Constants;
 import com.premiumminds.BigBang.Jewel.Data.ContactData;
 import com.premiumminds.BigBang.Jewel.Data.DocumentData;
+import com.premiumminds.BigBang.Jewel.Data.MediatorData;
+import com.premiumminds.BigBang.Jewel.Data.MediatorDealData;
 import com.premiumminds.BigBang.Jewel.Objects.Contact;
 import com.premiumminds.BigBang.Jewel.Objects.Document;
 import com.premiumminds.BigBang.Jewel.Objects.Mediator;
+import com.premiumminds.BigBang.Jewel.Objects.MediatorDeal;
 import com.premiumminds.BigBang.Jewel.Operations.ContactOps;
 import com.premiumminds.BigBang.Jewel.Operations.DocOps;
 
@@ -26,28 +29,22 @@ public class ManageMediators
 {
 	private static final long serialVersionUID = 1L;
 
-	public class MediatorData
+	public static class MediatorOpData
 		implements Serializable
 	{
 		private static final long serialVersionUID = 1L;
 
-		public UUID mid;
-		public String mstrName;
-		public String mstrISPNumber;
-		public String mstrFiscalNumber;
-		public String mstrBankID;
-		public UUID midProfile;
-		public String mstrAddress1;
-		public String mstrAddress2;
-		public UUID midZipCode;
+		public MediatorData mobjMainValues;
+		public MediatorDealData[] marrDataCreate;
+		public MediatorDealData[] marrDataModify;
+		public MediatorDealData[] marrDataDelete;
 		public ContactOps mobjContactOps;
 		public DocOps mobjDocOps;
-		public MediatorData mobjPrevValues;
 	}
 
-	public MediatorData[] marrCreate;
-	public MediatorData[] marrModify;
-	public MediatorData[] marrDelete;
+	public MediatorOpData[] marrCreate;
+	public MediatorOpData[] marrModify;
+	public MediatorOpData[] marrDelete;
 	public ContactOps mobjContactOps;
 	public DocOps mobjDocOps;
 
@@ -79,7 +76,7 @@ public class ManageMediators
 			{
 				lstrResult.append("Foi criado 1 mediador:");
 				lstrResult.append(pstrLineBreak);
-				Describe(lstrResult, marrCreate[0], pstrLineBreak);
+				marrCreate[0].mobjMainValues.Describe(lstrResult, pstrLineBreak);
 				if ( marrCreate[0].mobjContactOps != null )
 					marrCreate[0].mobjContactOps.LongDesc(lstrResult, pstrLineBreak);
 				if ( marrCreate[0].mobjDocOps != null )
@@ -97,7 +94,7 @@ public class ManageMediators
 					lstrResult.append(i + 1);
 					lstrResult.append(":");
 					lstrResult.append(pstrLineBreak);
-					Describe(lstrResult, marrCreate[i], pstrLineBreak);
+					marrCreate[i].mobjMainValues.Describe(lstrResult, pstrLineBreak);
 					if ( marrCreate[i].mobjContactOps != null )
 						marrCreate[i].mobjContactOps.LongDesc(lstrResult, pstrLineBreak);
 					if ( marrCreate[i].mobjDocOps != null )
@@ -112,7 +109,7 @@ public class ManageMediators
 			{
 				lstrResult.append("Foi modificado 1 mediador:");
 				lstrResult.append(pstrLineBreak);
-				Describe(lstrResult, marrModify[0], pstrLineBreak);
+				marrModify[0].mobjMainValues.Describe(lstrResult, pstrLineBreak);
 			}
 			else
 			{
@@ -126,7 +123,7 @@ public class ManageMediators
 					lstrResult.append(i + 1);
 					lstrResult.append(":");
 					lstrResult.append(pstrLineBreak);
-					Describe(lstrResult, marrModify[i], pstrLineBreak);
+					marrModify[i].mobjMainValues.Describe(lstrResult, pstrLineBreak);
 				}
 			}
 		}
@@ -137,7 +134,7 @@ public class ManageMediators
 			{
 				lstrResult.append("Foi apagado 1 mediador:");
 				lstrResult.append(pstrLineBreak);
-				Describe(lstrResult, marrDelete[0], pstrLineBreak);
+				marrDelete[0].mobjMainValues.Describe(lstrResult, pstrLineBreak);
 				if ( marrDelete[0].mobjContactOps != null )
 					marrDelete[0].mobjContactOps.LongDesc(lstrResult, pstrLineBreak);
 				if ( marrDelete[0].mobjDocOps != null )
@@ -155,7 +152,7 @@ public class ManageMediators
 					lstrResult.append(i + 1);
 					lstrResult.append(":");
 					lstrResult.append(pstrLineBreak);
-					Describe(lstrResult, marrDelete[i], pstrLineBreak);
+					marrDelete[i].mobjMainValues.Describe(lstrResult, pstrLineBreak);
 					if ( marrDelete[i].mobjContactOps != null )
 						marrDelete[i].mobjContactOps.LongDesc(lstrResult, pstrLineBreak);
 					if ( marrDelete[i].mobjDocOps != null )
@@ -190,114 +187,20 @@ public class ManageMediators
 		throws JewelPetriException
 	{
 		int i;
-		Mediator lobjAux;
-		Entity lrefMediators;
-		Contact[] larrContacts;
-		Document[] larrDocs;
-		int j;
 
 		try
 		{
 			if ( marrCreate != null )
-			{
 				for ( i = 0; i < marrCreate.length; i++ )
-				{
-					lobjAux = Mediator.GetInstance(Engine.getCurrentNameSpace(), (UUID)null);
-					lobjAux.setAt(0, marrCreate[i].mstrName);
-					lobjAux.setAt(1, marrCreate[i].mstrISPNumber);
-					lobjAux.setAt(2, marrCreate[i].mstrFiscalNumber);
-					lobjAux.setAt(3, marrCreate[i].mstrBankID);
-					lobjAux.setAt(4, marrCreate[i].midProfile);
-					lobjAux.setAt(5, marrCreate[i].mstrAddress1);
-					lobjAux.setAt(6, marrCreate[i].mstrAddress2);
-					lobjAux.setAt(7, marrCreate[i].midZipCode);
-					lobjAux.SaveToDb(pdb);
-					if ( marrCreate[i].mobjContactOps != null )
-						marrCreate[i].mobjContactOps.RunSubOp(pdb, lobjAux.getKey());
-					if ( marrCreate[i].mobjDocOps != null )
-						marrCreate[i].mobjDocOps.RunSubOp(pdb, lobjAux.getKey());
-					marrCreate[i].mid = lobjAux.getKey();
-					marrCreate[i].mobjPrevValues = null;
-				}
-			}
+					CreateMediator(pdb, marrCreate[i]);
 
 			if ( marrModify != null )
-			{
 				for ( i = 0; i < marrModify.length; i++ )
-				{
-					lobjAux = Mediator.GetInstance(Engine.getCurrentNameSpace(), marrModify[i].mid);
-					marrModify[i].mobjPrevValues = new MediatorData();
-					marrModify[i].mobjPrevValues.mid = lobjAux.getKey();
-					marrModify[i].mobjPrevValues.mstrName = (String)lobjAux.getAt(0);
-					marrModify[i].mobjPrevValues.mstrISPNumber = (String)lobjAux.getAt(1);
-					marrModify[i].mobjPrevValues.mstrFiscalNumber = (String)lobjAux.getAt(2);
-					marrModify[i].mobjPrevValues.mstrBankID = (String)lobjAux.getAt(3);
-					marrModify[i].mobjPrevValues.midProfile = (UUID)lobjAux.getAt(4);
-					marrModify[i].mobjPrevValues.mstrAddress1 = (String)lobjAux.getAt(5);
-					marrModify[i].mobjPrevValues.mstrAddress2 = (String)lobjAux.getAt(6);
-					marrModify[i].mobjPrevValues.midZipCode = (UUID)lobjAux.getAt(7);
-					marrModify[i].mobjContactOps = null;
-					marrModify[i].mobjPrevValues.mobjPrevValues = null;
-					lobjAux.setAt(0, marrModify[i].mstrName);
-					lobjAux.setAt(1, marrModify[i].mstrISPNumber);
-					lobjAux.setAt(2, marrModify[i].mstrFiscalNumber);
-					lobjAux.setAt(3, marrModify[i].mstrBankID);
-					lobjAux.setAt(4, marrModify[i].midProfile);
-					lobjAux.setAt(5, marrModify[i].mstrAddress1);
-					lobjAux.setAt(6, marrModify[i].mstrAddress2);
-					lobjAux.setAt(7, marrModify[i].midZipCode);
-					lobjAux.SaveToDb(pdb);
-				}
-			}
+					ModifyMediator(pdb, marrModify[i]);
 
 			if ( marrDelete != null )
-			{
-				lrefMediators = Entity.GetInstance(Engine.FindEntity(Engine.getCurrentNameSpace(),
-						Constants.ObjID_Mediator));
-
 				for ( i = 0; i < marrDelete.length; i++ )
-				{
-					lobjAux = Mediator.GetInstance(Engine.getCurrentNameSpace(), marrDelete[i].mid);
-					marrDelete[i].mstrName = (String)lobjAux.getAt(0);
-					marrDelete[i].mstrISPNumber = (String)lobjAux.getAt(1);
-					marrDelete[i].mstrFiscalNumber = (String)lobjAux.getAt(2);
-					marrDelete[i].mstrBankID = (String)lobjAux.getAt(3);
-					marrDelete[i].midProfile = (UUID)lobjAux.getAt(4);
-					marrDelete[i].mstrAddress1 = (String)lobjAux.getAt(5);
-					marrDelete[i].mstrAddress2 = (String)lobjAux.getAt(6);
-					marrDelete[i].midZipCode = (UUID)lobjAux.getAt(7);
-					larrContacts = lobjAux.GetCurrentContacts();
-					if ( (larrContacts == null) || (larrContacts.length == 0) )
-						marrDelete[i].mobjContactOps = null;
-					else
-					{
-						marrDelete[i].mobjContactOps = new ContactOps();
-						marrDelete[i].mobjContactOps.marrDelete = new ContactData[larrContacts.length];
-						for ( j = 0; j < larrContacts.length; j++ )
-						{
-							marrDelete[i].mobjContactOps.marrDelete[j] = new ContactData();
-							marrDelete[i].mobjContactOps.marrDelete[j].mid = larrContacts[j].getKey();
-						}
-						marrDelete[i].mobjContactOps.RunSubOp(pdb, null);
-					}
-					larrDocs = lobjAux.GetCurrentDocs();
-					if ( (larrDocs == null) || (larrDocs.length == 0) )
-						marrDelete[i].mobjDocOps = null;
-					else
-					{
-						marrDelete[i].mobjDocOps = new DocOps();
-						marrDelete[i].mobjDocOps.marrDelete = new DocumentData[larrDocs.length];
-						for ( j = 0; j < larrDocs.length; j++ )
-						{
-							marrDelete[i].mobjDocOps.marrDelete[j] = new DocumentData();
-							marrDelete[i].mobjDocOps.marrDelete[j].mid = larrDocs[j].getKey();
-						}
-						marrDelete[i].mobjDocOps.RunSubOp(pdb, null);
-					}
-					marrDelete[i].mobjPrevValues = null;
-					lrefMediators.Delete(pdb, marrDelete[i].mid);
-				}
-			}
+					DeleteMediator(pdb, marrDelete[i]);
 
 			if ( mobjContactOps != null )
 				mobjContactOps.RunSubOp(pdb, null);
@@ -332,7 +235,7 @@ public class ManageMediators
 			lstrResult.append("Serão repostos os valores anteriores:");
 			lstrResult.append(pstrLineBreak);
 			if ( marrModify.length == 1 )
-				Describe(lstrResult, marrModify[0].mobjPrevValues, pstrLineBreak);
+				marrModify[0].mobjMainValues.mobjPrevValues.Describe(lstrResult, pstrLineBreak);
 			else
 			{
 				for ( i = 0; i < marrModify.length; i++ )
@@ -341,7 +244,7 @@ public class ManageMediators
 					lstrResult.append(i + 1);
 					lstrResult.append(":");
 					lstrResult.append(pstrLineBreak);
-					Describe(lstrResult, marrModify[i].mobjPrevValues, pstrLineBreak);
+					marrModify[i].mobjMainValues.mobjPrevValues.Describe(lstrResult, pstrLineBreak);
 				}
 			}
 		}
@@ -377,7 +280,7 @@ public class ManageMediators
 			{
 				lstrResult.append("Foi apagado 1 mediador:");
 				lstrResult.append(pstrLineBreak);
-				Describe(lstrResult, marrCreate[0], pstrLineBreak);
+				marrCreate[0].mobjMainValues.Describe(lstrResult, pstrLineBreak);
 				if ( marrCreate[0].mobjContactOps != null )
 					marrCreate[0].mobjContactOps.LongDesc(lstrResult, pstrLineBreak);
 				if ( marrCreate[0].mobjDocOps != null )
@@ -395,7 +298,7 @@ public class ManageMediators
 					lstrResult.append(i + 1);
 					lstrResult.append(":");
 					lstrResult.append(pstrLineBreak);
-					Describe(lstrResult, marrCreate[i], pstrLineBreak);
+					marrCreate[i].mobjMainValues.Describe(lstrResult, pstrLineBreak);
 					if ( marrCreate[i].mobjContactOps != null )
 						marrCreate[i].mobjContactOps.LongDesc(lstrResult, pstrLineBreak);
 					if ( marrCreate[i].mobjDocOps != null )
@@ -410,7 +313,7 @@ public class ManageMediators
 			{
 				lstrResult.append("Foram repostos os valores de 1 mediador:");
 				lstrResult.append(pstrLineBreak);
-				Describe(lstrResult, marrModify[0].mobjPrevValues, pstrLineBreak);
+				marrModify[0].mobjMainValues.mobjPrevValues.Describe(lstrResult, pstrLineBreak);
 			}
 			else
 			{
@@ -424,7 +327,7 @@ public class ManageMediators
 					lstrResult.append(i + 1);
 					lstrResult.append(":");
 					lstrResult.append(pstrLineBreak);
-					Describe(lstrResult, marrModify[i].mobjPrevValues, pstrLineBreak);
+					marrModify[i].mobjMainValues.mobjPrevValues.Describe(lstrResult, pstrLineBreak);
 				}
 			}
 		}
@@ -435,7 +338,7 @@ public class ManageMediators
 			{
 				lstrResult.append("Foi reposto 1 mediador:");
 				lstrResult.append(pstrLineBreak);
-				Describe(lstrResult, marrDelete[0], pstrLineBreak);
+				marrDelete[0].mobjMainValues.Describe(lstrResult, pstrLineBreak);
 				if ( marrDelete[0].mobjContactOps != null )
 					marrDelete[0].mobjContactOps.LongDesc(lstrResult, pstrLineBreak);
 				if ( marrDelete[0].mobjDocOps != null )
@@ -453,7 +356,7 @@ public class ManageMediators
 					lstrResult.append(i + 1);
 					lstrResult.append(":");
 					lstrResult.append(pstrLineBreak);
-					Describe(lstrResult, marrDelete[i], pstrLineBreak);
+					marrDelete[i].mobjMainValues.Describe(lstrResult, pstrLineBreak);
 					if ( marrDelete[i].mobjContactOps != null )
 						marrDelete[i].mobjContactOps.LongDesc(lstrResult, pstrLineBreak);
 					if ( marrDelete[i].mobjDocOps != null )
@@ -482,63 +385,20 @@ public class ManageMediators
 	protected void Undo(SQLServer pdb) throws JewelPetriException
 	{
 		int i;
-		Mediator lobjAux;
-		Entity lrefMediators;
 
 		try
 		{
 			if ( marrCreate != null )
-			{
-				lrefMediators = Entity.GetInstance(Engine.FindEntity(Engine.getCurrentNameSpace(),
-						Constants.ObjID_Mediator));
-
 				for ( i = 0; i < marrCreate.length; i++ )
-				{
-					if ( marrCreate[i].mobjContactOps != null )
-						marrCreate[i].mobjContactOps.UndoSubOp(pdb, null);
-					if ( marrCreate[i].mobjDocOps != null )
-						marrCreate[i].mobjDocOps.UndoSubOp(pdb, null);
-					lrefMediators.Delete(pdb, marrCreate[i].mid);
-				}
-			}
+					UndoCreateMediator(pdb, marrCreate[i]);
 
 			if ( marrModify != null )
-			{
 				for ( i = 0; i < marrModify.length; i++ )
-				{
-					lobjAux = Mediator.GetInstance(Engine.getCurrentNameSpace(), marrModify[i].mid);
-					lobjAux.setAt(0, marrModify[i].mobjPrevValues.mstrName);
-					lobjAux.setAt(1, marrModify[i].mobjPrevValues.mstrISPNumber);
-					lobjAux.setAt(2, marrModify[i].mobjPrevValues.mstrFiscalNumber);
-					lobjAux.setAt(3, marrModify[i].mobjPrevValues.mstrBankID);
-					lobjAux.setAt(4, marrModify[i].mobjPrevValues.midProfile);
-					lobjAux.setAt(5, marrModify[i].mobjPrevValues.mstrAddress1);
-					lobjAux.setAt(6, marrModify[i].mobjPrevValues.mstrAddress2);
-					lobjAux.setAt(7, marrModify[i].mobjPrevValues.midZipCode);
-					lobjAux.SaveToDb(pdb);
-				}
-			}
+					UndoModifyMediator(pdb, marrModify[i]);
 
 			if ( marrDelete != null )
-			{
 				for ( i = 0; i < marrDelete.length; i++ )
-				{
-					lobjAux = Mediator.GetInstance(Engine.getCurrentNameSpace(), (UUID)null);
-					lobjAux.setAt(0, marrCreate[i].mstrName);
-					lobjAux.setAt(1, marrCreate[i].mstrISPNumber);
-					lobjAux.setAt(2, marrCreate[i].mstrFiscalNumber);
-					lobjAux.setAt(3, marrCreate[i].mstrBankID);
-					lobjAux.setAt(4, marrCreate[i].midProfile);
-					lobjAux.setAt(5, marrCreate[i].mstrAddress1);
-					lobjAux.setAt(6, marrCreate[i].mstrAddress2);
-					lobjAux.setAt(7, marrCreate[i].midZipCode);
-					lobjAux.SaveToDb(pdb);
-					if ( marrCreate[i].mobjContactOps != null )
-						marrCreate[i].mobjContactOps.UndoSubOp(pdb, lobjAux.getKey());
-					if ( marrCreate[i].mobjDocOps != null )
-						marrCreate[i].mobjDocOps.UndoSubOp(pdb, lobjAux.getKey());
-				}
-			}
+					UndoDeleteMediator(pdb, marrDelete[i]);
 
 			if ( mobjContactOps != null )
 				mobjContactOps.UndoSubOp(pdb, null);
@@ -588,13 +448,13 @@ public class ManageMediators
 			larrResult[i].marrCreated = new UUID[llngDeletes];
 
 			for ( j = 0; j < llngCreates; j ++ )
-				larrResult[i].marrDeleted[j] = marrCreate[j].mid;
+				larrResult[i].marrDeleted[j] = marrCreate[j].mobjMainValues.mid;
 
 			for ( j = 0; j < llngModifies; j ++ )
-				larrResult[i].marrChanged[j] = marrModify[j].mid;
+				larrResult[i].marrChanged[j] = marrModify[j].mobjMainValues.mid;
 
 			for ( j = 0; j < llngDeletes; j ++ )
-				larrResult[i].marrCreated[j] = marrDelete[j].mid;
+				larrResult[i].marrCreated[j] = marrDelete[j].mobjMainValues.mid;
 
 			i++;
 		}
@@ -612,6 +472,428 @@ public class ManageMediators
 		}
 
 		return larrResult;
+	}
+
+	private void CreateMediator(SQLServer pdb, MediatorOpData pobjData)
+		throws BigBangJewelException
+	{
+		Mediator lobjAux;
+		int i;
+
+		try
+		{
+			lobjAux = Mediator.GetInstance(Engine.getCurrentNameSpace(), (UUID)null);
+			pobjData.mobjMainValues.ToObject(lobjAux);
+			lobjAux.SaveToDb(pdb);
+
+			pobjData.marrDataModify = null;
+			pobjData.marrDataDelete = null;
+			if ( (pobjData.mobjMainValues.marrDeals == null) || (pobjData.mobjMainValues.marrDeals.length == 0) )
+				pobjData.marrDataCreate = null;
+			else
+			{
+				pobjData.marrDataCreate = new MediatorDealData[pobjData.mobjMainValues.marrDeals.length];
+
+				for ( i = 0; i < pobjData.marrDataCreate.length; i++ )
+				{
+					pobjData.marrDataCreate[i] = pobjData.mobjMainValues.marrDeals[i];
+					pobjData.marrDataCreate[i].midMediator = lobjAux.getKey();
+				}
+			}
+			RunDataOps(pdb, pobjData);
+
+			if ( pobjData.mobjContactOps != null )
+				pobjData.mobjContactOps.RunSubOp(pdb, lobjAux.getKey());
+
+			if ( pobjData.mobjDocOps != null )
+				pobjData.mobjDocOps.RunSubOp(pdb, lobjAux.getKey());
+
+			pobjData.mobjMainValues.mid = lobjAux.getKey();
+			pobjData.mobjMainValues.mobjPrevValues = null;
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangJewelException(e.getMessage(), e);
+		}
+	}
+
+	private void ModifyMediator(SQLServer pdb, MediatorOpData pobjData)
+		throws BigBangJewelException
+	{
+		Mediator lobjAux;
+		MediatorDeal[] larrCurrent;
+		HashMap<UUID, MediatorDealData> larrDeals;
+		ArrayList<MediatorDealData> larrCreate;
+		ArrayList<MediatorDealData> larrModify;
+		ArrayList<MediatorDealData> larrDelete;
+		MediatorDealData lobjData;
+		int i;
+
+		try
+		{
+			lobjAux = Mediator.GetInstance(Engine.getCurrentNameSpace(), pobjData.mobjMainValues.mid);
+			pobjData.mobjMainValues.mobjPrevValues = new MediatorData();
+			pobjData.mobjMainValues.FromObject(lobjAux);
+			pobjData.mobjContactOps = null;
+			pobjData.mobjDocOps = null;
+			pobjData.mobjMainValues.mobjPrevValues.mobjPrevValues = null;
+			pobjData.mobjMainValues.ToObject(lobjAux);
+			lobjAux.SaveToDb(pdb);
+
+			larrCurrent = lobjAux.GetCurrentDeals();
+			if ( pobjData.mobjMainValues.marrDeals == null )
+			{
+				pobjData.marrDataCreate = null;
+				pobjData.marrDataModify = null;
+				if ( (larrCurrent == null) || (larrCurrent.length == 0) )
+					pobjData.marrDataDelete = null;
+				else
+				{
+					pobjData.marrDataDelete = new MediatorDealData[larrCurrent.length];
+					for ( i = 0; i < larrCurrent.length; i++ )
+					{
+						pobjData.marrDataDelete[i] = new MediatorDealData();
+						pobjData.marrDataDelete[i].mid = larrCurrent[i].getKey();
+					}
+				}
+			}
+			else
+			{
+				larrDeals = new HashMap<UUID, MediatorDealData>();
+				larrCreate = new ArrayList<MediatorDealData>();
+				larrModify = new ArrayList<MediatorDealData>();
+				larrDelete = new ArrayList<MediatorDealData>();
+
+				for ( i = 0; i < larrCurrent.length; i++ )
+				{
+					lobjData = new MediatorDealData();
+					lobjData.FromObject(larrCurrent[i]);
+					larrDeals.put(lobjData.midSubLine, lobjData);
+				}
+
+				for ( i = 0; i < pobjData.mobjMainValues.marrDeals.length; i++ )
+				{
+					lobjData = larrDeals.get(pobjData.mobjMainValues.marrDeals[i].midSubLine);
+
+					if ( lobjData == null )
+					{
+						pobjData.mobjMainValues.marrDeals[i].midMediator = lobjAux.getKey();
+						larrCreate.add(pobjData.mobjMainValues.marrDeals[i]);
+					}
+					else
+					{
+						if ( !lobjData.mdblPercent.equals(pobjData.mobjMainValues.marrDeals[i].mdblPercent) )
+							larrModify.add(pobjData.mobjMainValues.marrDeals[i]);
+						larrDeals.put(pobjData.mobjMainValues.marrDeals[i].midSubLine, null);
+					}
+				}
+
+				for ( UUID lid: larrDeals.keySet() )
+				{
+					lobjData = larrDeals.get(lid);
+					if ( lobjData != null )
+						larrDelete.add(lobjData);
+				}
+
+				if ( larrCreate.size() == 0 )
+					pobjData.marrDataCreate = null;
+				else
+					pobjData.marrDataCreate = larrCreate.toArray(new MediatorDealData[larrCreate.size()]);
+				if ( larrModify.size() == 0 )
+					pobjData.marrDataModify = null;
+				else
+					pobjData.marrDataModify = larrModify.toArray(new MediatorDealData[larrModify.size()]);
+				if ( larrDelete.size() == 0 )
+					pobjData.marrDataDelete = null;
+				else
+					pobjData.marrDataDelete = larrDelete.toArray(new MediatorDealData[larrDelete.size()]);
+			}
+			RunDataOps(pdb, pobjData);
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangJewelException(e.getMessage(), e);
+		}
+	}
+
+	private void DeleteMediator(SQLServer pdb, MediatorOpData pobjData)
+		throws BigBangJewelException
+	{
+		Mediator lobjAux;
+		MediatorDeal[] larrDeals;
+		Contact[] larrContacts;
+		Document[] larrDocs;
+		int i;
+
+		try
+		{
+			lobjAux = Mediator.GetInstance(Engine.getCurrentNameSpace(), pobjData.mobjMainValues.mid);
+			pobjData.mobjMainValues.FromObject(lobjAux);
+
+			pobjData.marrDataCreate = null;
+			pobjData.marrDataModify = null;
+			larrDeals = lobjAux.GetCurrentDeals();
+			if ( (larrDeals == null) || (larrDeals.length == 0) )
+				pobjData.marrDataDelete = null;
+			else
+			{
+				pobjData.marrDataDelete = new MediatorDealData[larrDeals.length];
+				for ( i = 0; i < larrDeals.length; i++ )
+				{
+					pobjData.marrDataDelete[i] = new MediatorDealData();
+					pobjData.marrDataDelete[i].mid = larrDeals[i].getKey();
+				}
+			}
+			RunDataOps(pdb, pobjData);
+
+			larrContacts = lobjAux.GetCurrentContacts();
+			if ( (larrContacts == null) || (larrContacts.length == 0) )
+				pobjData.mobjContactOps = null;
+			else
+			{
+				pobjData.mobjContactOps = new ContactOps();
+				pobjData.mobjContactOps.marrDelete = new ContactData[larrContacts.length];
+				for ( i = 0; i < larrContacts.length; i++ )
+				{
+					pobjData.mobjContactOps.marrDelete[i] = new ContactData();
+					pobjData.mobjContactOps.marrDelete[i].mid = larrContacts[i].getKey();
+				}
+				pobjData.mobjContactOps.RunSubOp(pdb, null);
+			}
+
+			larrDocs = lobjAux.GetCurrentDocs();
+			if ( (larrDocs == null) || (larrDocs.length == 0) )
+				pobjData.mobjDocOps = null;
+			else
+			{
+				pobjData.mobjDocOps = new DocOps();
+				pobjData.mobjDocOps.marrDelete = new DocumentData[larrDocs.length];
+				for ( i = 0; i < larrDocs.length; i++ )
+				{
+					pobjData.mobjDocOps.marrDelete[i] = new DocumentData();
+					pobjData.mobjDocOps.marrDelete[i].mid = larrDocs[i].getKey();
+				}
+				pobjData.mobjDocOps.RunSubOp(pdb, null);
+			}
+
+			pobjData.mobjMainValues.mobjPrevValues = null;
+			lobjAux.getDefinition().Delete(pdb, pobjData.mobjMainValues.mid);
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangJewelException(e.getMessage(), e);
+		}
+	}
+
+	private void UndoCreateMediator(SQLServer pdb, MediatorOpData pobjData)
+		throws BigBangJewelException
+	{
+		try
+		{
+			if ( pobjData.mobjContactOps != null )
+				pobjData.mobjContactOps.UndoSubOp(pdb, null);
+
+			if ( pobjData.mobjDocOps != null )
+				pobjData.mobjDocOps.UndoSubOp(pdb, null);
+
+			UndoDataOps(pdb, pobjData);
+
+			Entity.GetInstance(Engine.FindEntity(Engine.getCurrentNameSpace(),
+					Constants.ObjID_Mediator)).Delete(pdb, pobjData.mobjMainValues.mid);
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangJewelException(e.getMessage(), e);
+		}
+	}
+
+	private void UndoModifyMediator(SQLServer pdb, MediatorOpData pobjData)
+		throws BigBangJewelException
+	{
+		Mediator lobjAux;
+
+		try
+		{
+			lobjAux = Mediator.GetInstance(Engine.getCurrentNameSpace(), pobjData.mobjMainValues.mid);
+			pobjData.mobjMainValues.mobjPrevValues.ToObject(lobjAux);
+			lobjAux.SaveToDb(pdb);
+
+			UndoDataOps(pdb, pobjData);
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangJewelException(e.getMessage(), e);
+		}
+	}
+
+	private void UndoDeleteMediator(SQLServer pdb, MediatorOpData pobjData)
+		throws BigBangJewelException
+	{
+		Mediator lobjAux;
+		int i;
+
+		try
+		{
+			lobjAux = Mediator.GetInstance(Engine.getCurrentNameSpace(), (UUID)null);
+			pobjData.mobjMainValues.ToObject(lobjAux);
+			lobjAux.SaveToDb(pdb);
+
+			if ( pobjData.marrDataDelete != null )
+				for ( i = 0; i < pobjData.marrDataDelete.length; i++ )
+					pobjData.marrDataDelete[i].midMediator = lobjAux.getKey();
+			UndoDataOps(pdb, pobjData);
+
+			if ( pobjData.mobjContactOps != null )
+				pobjData.mobjContactOps.UndoSubOp(pdb, lobjAux.getKey());
+
+			if ( pobjData.mobjDocOps != null )
+				pobjData.mobjDocOps.UndoSubOp(pdb, lobjAux.getKey());
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangJewelException(e.getMessage(), e);
+		}
+	}
+
+	private void RunDataOps(SQLServer pdb, MediatorOpData pobjData)
+		throws BigBangJewelException
+	{
+		int i;
+
+		if ( pobjData.marrDataCreate != null )
+			for ( i = 0; i < pobjData.marrDataCreate.length; i++ )
+				CreateDeal(pdb, pobjData.marrDataCreate[i]);
+
+		if ( pobjData.marrDataModify != null )
+			for ( i = 0; i < pobjData.marrDataModify.length; i++ )
+				ModifyDeal(pdb, pobjData.marrDataModify[i]);
+
+		if ( pobjData.marrDataDelete != null )
+			for ( i = 0; i < pobjData.marrDataDelete.length; i++ )
+				DeleteDeal(pdb, pobjData.marrDataDelete[i]);
+	}
+
+	private void UndoDataOps(SQLServer pdb, MediatorOpData pobjData)
+		throws BigBangJewelException
+	{
+		int i;
+
+		if ( pobjData.marrDataCreate != null )
+			for ( i = 0; i < pobjData.marrDataCreate.length; i++ )
+				UndoCreateDeal(pdb, pobjData.marrDataCreate[i]);
+
+		if ( pobjData.marrDataModify != null )
+			for ( i = 0; i < pobjData.marrDataModify.length; i++ )
+				UndoModifyDeal(pdb, pobjData.marrDataModify[i]);
+
+		if ( pobjData.marrDataDelete != null )
+			for ( i = 0; i < pobjData.marrDataDelete.length; i++ )
+				UndoDeleteDeal(pdb, pobjData.marrDataDelete[i]);
+	}
+
+	private void CreateDeal(SQLServer pdb, MediatorDealData pobjData)
+		throws BigBangJewelException
+	{
+		MediatorDeal lobjAux;
+
+		try
+		{
+			lobjAux = MediatorDeal.GetInstance(Engine.getCurrentNameSpace(), (UUID)null);
+			pobjData.ToObject(lobjAux);
+			lobjAux.SaveToDb(pdb);
+			pobjData.mid = lobjAux.getKey();
+			pobjData.mobjPrevValues = null;
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangJewelException(e.getMessage(), e);
+		}
+	}
+
+	private void ModifyDeal(SQLServer pdb, MediatorDealData pobjData)
+		throws BigBangJewelException
+	{
+		MediatorDeal lobjAux;
+
+		try
+		{
+			lobjAux = MediatorDeal.GetInstance(Engine.getCurrentNameSpace(), pobjData.mid);
+			pobjData.mobjPrevValues = new MediatorDealData();
+			pobjData.FromObject(lobjAux);
+			pobjData.mobjPrevValues.mobjPrevValues = null;
+			pobjData.ToObject(lobjAux);
+			lobjAux.SaveToDb(pdb);
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangJewelException(e.getMessage(), e);
+		}
+	}
+
+	private void DeleteDeal(SQLServer pdb, MediatorDealData pobjData)
+		throws BigBangJewelException
+	{
+		MediatorDeal lobjAux;
+
+		try
+		{
+			lobjAux = MediatorDeal.GetInstance(Engine.getCurrentNameSpace(), pobjData.mid);
+			pobjData.FromObject(lobjAux);
+			pobjData.mobjPrevValues = null;
+			lobjAux.getDefinition().Delete(pdb, pobjData.mid);
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangJewelException(e.getMessage(), e);
+		}
+	}
+
+	private void UndoCreateDeal(SQLServer pdb, MediatorDealData pobjData)
+		throws BigBangJewelException
+	{
+		try
+		{
+			Entity.GetInstance(Engine.FindEntity(Engine.getCurrentNameSpace(),
+					Constants.ObjID_MediatorDeal)).Delete(pdb, pobjData.mid);
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangJewelException(e.getMessage(), e);
+		}
+	}
+
+	private void UndoModifyDeal(SQLServer pdb, MediatorDealData pobjData)
+		throws BigBangJewelException
+	{
+		MediatorDeal lobjAux;
+
+		try
+		{
+			lobjAux = MediatorDeal.GetInstance(Engine.getCurrentNameSpace(), pobjData.mid);
+			pobjData.mobjPrevValues.ToObject(lobjAux);
+			lobjAux.SaveToDb(pdb);
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangJewelException(e.getMessage(), e);
+		}
+	}
+
+	private void UndoDeleteDeal(SQLServer pdb, MediatorDealData pobjData)
+		throws BigBangJewelException
+	{
+		MediatorDeal lobjAux;
+
+		try
+		{
+			lobjAux = MediatorDeal.GetInstance(Engine.getCurrentNameSpace(), (UUID)null);
+			pobjData.ToObject(lobjAux);
+			lobjAux.SaveToDb(pdb);
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangJewelException(e.getMessage(), e);
+		}
 	}
 
 	private UndoSet GetContactSet()
@@ -854,62 +1136,5 @@ public class ManageMediators
 		}
 
 		return lobjResult;
-	}
-
-	private void Describe(StringBuilder pstrString, MediatorData pobjData, String pstrLineBreak)
-	{
-		ObjectBase lobjProfile;
-		ObjectBase lobjZipCode;
-
-		pstrString.append("Nome: ");
-		pstrString.append(pobjData.mstrName);
-		pstrString.append(pstrLineBreak);
-		pstrString.append("Número no ISP: ");
-		pstrString.append(pobjData.mstrISPNumber);
-		pstrString.append(pstrLineBreak);
-		pstrString.append("NIFC: ");
-		pstrString.append(pobjData.mstrFiscalNumber);
-		pstrString.append(pstrLineBreak);
-		pstrString.append("NIB: ");
-		pstrString.append(pobjData.mstrBankID);
-		pstrString.append(pstrLineBreak);
-		pstrString.append("Perfil de Comissionamento: ");
-
-		try
-		{
-			lobjProfile = Engine.GetWorkInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), Constants.ObjID_CommProfile), pobjData.midProfile);
-			pstrString.append((String)lobjProfile.getAt(0));
-		}
-		catch (Throwable e)
-		{
-			pstrString.append("(Erro a obter o perfil de comissionamento.)");
-		}
-		pstrString.append(pstrLineBreak);
-
-		pstrString.append("Morada:");
-		pstrString.append(pstrLineBreak);
-		pstrString.append("- ");
-		pstrString.append(pobjData.mstrAddress1);
-		pstrString.append(pstrLineBreak);
-		pstrString.append("- ");
-		pstrString.append(pobjData.mstrAddress2);
-		pstrString.append(pstrLineBreak);
-		pstrString.append("- ");
-
-		try
-		{
-			lobjZipCode = Engine.GetWorkInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), ObjectGUIDs.O_PostalCode), pobjData.midZipCode);
-			pstrString.append((String)lobjZipCode.getAt(0));
-			pstrString.append(" ");
-			pstrString.append((String)lobjZipCode.getAt(1));
-			pstrString.append(pstrLineBreak);
-			pstrString.append("- ");
-        	pstrString.append((String)lobjZipCode.getAt(4));
-		}
-		catch (Throwable e)
-		{
-			pstrString.append("(Erro a obter o código postal.)");
-		}
-		pstrString.append(pstrLineBreak);
 	}
 }
