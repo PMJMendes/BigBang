@@ -24,8 +24,9 @@ public class Mediator
 	{
 		comissionProfile = new CommissionProfile();
 		contacts = new Contact[0];
+		dealPercents = new Map<String, Double>();
 	}
-	
+
 	public Mediator(Mediator original){
 		this.id = original.id;
 		this.name = original.name;
