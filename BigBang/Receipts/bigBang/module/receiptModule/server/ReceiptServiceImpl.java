@@ -1686,7 +1686,7 @@ public class ReceiptServiceImpl
 	protected String[] getColumns()
 	{
 		return new String[] {"[:Number]", "[:Process]", "[:Type]", "[:Type:Indicator]", "[:Total Premium]", "[:Maturity Date]",
-				"[:Maturity Date]", "[:Description]"};
+				"[:End Date]", "[:Description]"};
 	}
 
 	protected boolean buildFilter(StringBuilder pstrBuffer, SearchParameter pParam)
