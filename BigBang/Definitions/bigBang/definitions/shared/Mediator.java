@@ -1,7 +1,7 @@
 package bigBang.definitions.shared;
 
 import java.io.Serializable;
-import java.util.Map;
+import java.util.HashMap;
 
 public class Mediator
 	implements Serializable
@@ -16,7 +16,7 @@ public class Mediator
 	public CommissionProfile comissionProfile;
 	public Double basePercent; // Novo!
 	public Address address;
-	public Map<String, Double> dealPercents; // Novo!
+	public HashMap<String, Double> dealPercents; // Novo!
 	public Contact[] contacts;
 	public Document[] documents;
 
@@ -24,7 +24,7 @@ public class Mediator
 	{
 		comissionProfile = new CommissionProfile();
 		contacts = new Contact[0];
-		dealPercents = new Map<String, Double>();
+		dealPercents = new HashMap<String, Double>();
 	}
 
 	public Mediator(Mediator original){
