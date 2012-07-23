@@ -529,6 +529,13 @@ public class Constants
 	public static final UUID UsageID_BCC     = UUID.fromString("04708D74-AA0A-4A22-9E6F-9FE8010B21F0");
 	public static final UUID UsageID_ReplyTo = UUID.fromString("70AE501E-B15D-418F-9A39-9FE8010B2842");
 
+	// Mediator Commission Profiles
+	public static final UUID MCPID_None       = UUID.fromString("F60BB994-3E08-47C2-9CC3-9EFC013D35BE");	
+	public static final UUID MCPID_Issuing    = UUID.fromString("C5BE51A9-7E0F-4970-962A-9EFC0135E9E1");
+	public static final UUID MCPID_Percentage = UUID.fromString("CECC8014-200C-4C4F-9F47-9EFC01368139");
+	public static final UUID MCPID_Negociated = UUID.fromString("C7236BA7-73AD-40ED-B6DC-9EFC013691C8");
+	public static final UUID MCPID_Special    = UUID.fromString("071CE678-956B-4D41-94DE-9EFC013688B5");
+
 	// Client Types 
 	public static final UUID TypeID_Individual = UUID.fromString("462096E4-68A2-408A-963A-9EE600C9556A");
 	public static final UUID TypeID_Company    = UUID.fromString("C5B4F500-BB57-4BFD-8248-9EE600C95ABA");
