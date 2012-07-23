@@ -1,25 +1,12 @@
 package bigBang.definitions.shared;
 
 import java.io.Serializable;
+import java.util.Map;
 
 public class Mediator
 	implements Serializable
 {
 	private static final long serialVersionUID = 1L;
-
-	public static class Percentage
-		implements Serializable
-	{
-		private static final long serialVersionUID = 1L;
-
-		public String categoryId;
-		public String categoryName;
-		public String lineId;
-		public String lineName;
-		public String subLineId;
-		public String subLineName;
-		public Double percent;
-	}
 
 	public String id;
 	public String name;
@@ -29,9 +16,9 @@ public class Mediator
 	public CommissionProfile comissionProfile;
 	public Double basePercent; // Novo!
 	public Address address;
+	public Map<String, Double> dealPercents; // Novo!
 	public Contact[] contacts;
 	public Document[] documents;
-	public Percentage[] dealPercentages; // Novo!
 
 	public Mediator()
 	{
@@ -46,7 +33,9 @@ public class Mediator
 		this.taxNumber = original.taxNumber;
 		this.NIB = original.NIB;
 		this.comissionProfile = original.comissionProfile;
+		this.basePercent = original.basePercent;
 		this.address = original.address;
+		this.dealPercents = original.dealPercents;
 		this.contacts = original.contacts;
 		this.documents = original.documents;
 	}
