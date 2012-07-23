@@ -132,7 +132,7 @@ public class ReceiptSearchPanel extends SearchPanel<ReceiptStub> implements Rece
 			this.premiumLabel.setTitle("Prémio total");
 			this.maturityDateLabel.setText(r.maturityDate == null ? "" : r.maturityDate);
 			this.maturityDateLabel.setTitle("Data de Vigência");
-			this.endDateLabel.setText(r.endDate == null ? "" : "a " + r.endDate);
+			this.endDateLabel.setText(r.endDate == null ? "" : r.endDate);
 			this.endDateLabel.setTitle("Data de Fim");
 			initialized = true;
 			setSelected(this.isSelected(), false);
