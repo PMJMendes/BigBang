@@ -38,6 +38,8 @@ public class ExternForceReverse
 			for ( i = 3; i < 8; i++ )
 				if ( lobjReceipt.getAt(i) != null )
 					lobjReceipt.setAt(i, ((BigDecimal)lobjReceipt.getAt(i)).abs().negate());
+			if ( lobjReceipt.getAt(17) != null )
+				lobjReceipt.setAt(17, ((BigDecimal)lobjReceipt.getAt(17)).abs().negate());
 			lobjReceipt.SaveToDb(pdb);
 		}
 		catch (Throwable e)

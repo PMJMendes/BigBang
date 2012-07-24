@@ -92,6 +92,8 @@ public class CreateReceipt
 			for ( i = 3; i < 8; i++ )
 				if ( lobjAux.getAt(i) != null )
 					lobjAux.setAt(i, ((BigDecimal)lobjAux.getAt(i)).abs());
+			if ( lobjAux.getAt(17) != null )
+				lobjAux.setAt(17, ((BigDecimal)lobjAux.getAt(17)).abs());
 			lobjAux.SaveToDb(pdb);
 
 			if ( mobjContactOps != null )

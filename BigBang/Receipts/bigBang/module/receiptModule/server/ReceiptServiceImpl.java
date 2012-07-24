@@ -176,6 +176,7 @@ public class ReceiptServiceImpl
 		lobjResult.retrocessions = ((BigDecimal)lobjReceipt.getAt(6)).doubleValue();
 		lobjResult.FATValue = (lobjReceipt.getAt(7) == null ? null : ((BigDecimal)lobjReceipt.getAt(7)).doubleValue());
 		lobjResult.bonusMalus = (lobjReceipt.getAt(17) == null ? null : ((BigDecimal)lobjReceipt.getAt(17)).doubleValue());
+		lobjResult.isMalus = (Boolean)lobjReceipt.getAt(18);
 		lobjResult.issueDate = (lobjReceipt.getAt(8) == null ? null : ((Timestamp)lobjReceipt.getAt(8)).toString().substring(0, 10));
 		lobjResult.dueDate = (lobjReceipt.getAt(11) == null ? null :
 				((Timestamp)lobjReceipt.getAt(11)).toString().substring(0, 10));
@@ -390,6 +391,7 @@ public class ReceiptServiceImpl
 					new BigDecimal(receipt.retrocessions+""));
 			lopMRD.mobjData.mdblFAT = (receipt.FATValue == null ? null : new BigDecimal(receipt.FATValue + ""));
 			lopMRD.mobjData.mdblBonusMalus = (receipt.bonusMalus == null ? null : new BigDecimal(receipt.bonusMalus + ""));
+			lopMRD.mobjData.mbIsMalus = receipt.isMalus;
 			lopMRD.mobjData.mdtIssue = (receipt.issueDate == null ? null : Timestamp.valueOf(receipt.issueDate + " 00:00:00.0"));
 			lopMRD.mobjData.mdtMaturity = (receipt.maturityDate == null ? null :
 					Timestamp.valueOf(receipt.maturityDate + " 00:00:00.0"));
@@ -1142,6 +1144,7 @@ public class ReceiptServiceImpl
 					new BigDecimal(receipt.retrocessions+""));
 			lopCR.mobjData.mdblFAT = (receipt.FATValue == null ? null : new BigDecimal(receipt.FATValue+""));
 			lopCR.mobjData.mdblBonusMalus = (receipt.bonusMalus == null ? null : new BigDecimal(receipt.bonusMalus + ""));
+			lopCR.mobjData.mbIsMalus = receipt.isMalus;
 			lopCR.mobjData.mdtIssue = Timestamp.valueOf(receipt.issueDate + " 00:00:00.0");
 			lopCR.mobjData.mdtMaturity = (receipt.maturityDate == null ? null :
 					Timestamp.valueOf(receipt.maturityDate + " 00:00:00.0"));
