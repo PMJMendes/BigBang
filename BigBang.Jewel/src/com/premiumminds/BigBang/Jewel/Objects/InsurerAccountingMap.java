@@ -31,8 +31,10 @@ public class InsurerAccountingMap
 	public static class I
 		extends TransactionMapBase.I
 	{
-		public static int EXTRATEXT  = 3;
-		public static int EXTRAVALUE = 4;
+		public static int EXTRATEXT    = 3;
+		public static int EXTRAVALUE   = 4;
+		public static int ISCOMMISSION = 5;
+		public static int HASTAX       = 6;
 	}
 
     public static InsurerAccountingMap GetInstance(UUID pidNameSpace, UUID pidKey)
@@ -145,23 +147,36 @@ public class InsurerAccountingMap
 		BigDecimal ldblPreTax, ldblTax, ldblTotal;
 		int i;
 
+		ldblTotalPremiums = new BigDecimal(0.0);
+		ldblDirectPremiums = new BigDecimal(0.0);
+
 		if ( (getAt(I.EXTRATEXT) == null) || (getAt(I.EXTRAVALUE) == null) )
 		{
 			lstrExtraText = "-";
 			ldblExtraValue = new BigDecimal(0.0);
+			ldblTotalComms = new BigDecimal(0.0);
+			ldblLifeComms = new BigDecimal(0.0);
 		}
 		else
 		{
 			lstrExtraText = (String)getAt(I.EXTRATEXT);
 			ldblExtraValue = (BigDecimal)getAt(I.EXTRAVALUE);
+			if ( (getAt(I.ISCOMMISSION) == null)  || !((Boolean)getAt(I.ISCOMMISSION)) )
+			{
+				ldblTotalComms = new BigDecimal(0.0);
+				ldblLifeComms = new BigDecimal(0.0);
+			}
+			else
+			{
+				ldblTotalComms = ldblExtraValue;
+				if ( (getAt(I.HASTAX) == null) || !((Boolean)getAt(I.HASTAX)) )
+					ldblLifeComms = ldblExtraValue;
+				else
+					ldblLifeComms = new BigDecimal(0.0);
+			}
 		}
 
 		getDetails();
-
-		ldblTotalPremiums = new BigDecimal(0.0);
-		ldblDirectPremiums = new BigDecimal(0.0);
-		ldblTotalComms = new BigDecimal(0.0);
-		ldblLifeComms = new BigDecimal(0.0);
 		for ( i = 0; i < marrDetails.length; i++ )
 		{
 			ldblTotalPremiums = ldblTotalPremiums.add(((InsurerAccountingDetail)marrDetails[i]).getPremium());
@@ -169,6 +184,7 @@ public class InsurerAccountingMap
 			ldblTotalComms = ldblTotalComms.add(((InsurerAccountingDetail)marrDetails[i]).getCommissions());
 			ldblLifeComms = ldblLifeComms.add(((InsurerAccountingDetail)marrDetails[i]).getLifeComms());
 		}
+
 		ldblPayablePremiums = ldblTotalPremiums.subtract(ldblDirectPremiums);
 		ldblTaxableComms = ldblTotalComms.subtract(ldblLifeComms);
 		ldblPreTax = ldblPayablePremiums.subtract(ldblTotalComms).add(ldblExtraValue);

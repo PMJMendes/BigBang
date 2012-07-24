@@ -1438,6 +1438,8 @@ public class ReceiptServiceImpl
 		UUID lidMap;
 		String lstrExtraText;
 		BigDecimal ldblExtraValue;
+		Boolean lbIsCommissions;
+		Boolean lbHasTax;
 		InsurerAccounting lopIA;
 		int i;
 
@@ -1475,6 +1477,8 @@ public class ReceiptServiceImpl
 		{
 			lstrExtraText = null;
 			ldblExtraValue = null;
+			lbIsCommissions = null;
+			lbHasTax = null;
 			if ( extraInfo != null )
 			{
 				for ( i = 0; i < extraInfo.length; i++ )
@@ -1483,6 +1487,8 @@ public class ReceiptServiceImpl
 					{
 						lstrExtraText = extraInfo[i].text;
 						ldblExtraValue = new BigDecimal(extraInfo[i].value);
+						lbIsCommissions = extraInfo[i].isCommsissions;
+						lbHasTax = extraInfo[i].hasTax;
 						break;
 					}
 				}
@@ -1501,6 +1507,8 @@ public class ReceiptServiceImpl
 					lopIA.midMap = lidMap;
 					lopIA.mstrExtraText = lstrExtraText;
 					lopIA.mdblExtraValue = ldblExtraValue;
+					lopIA.mbIsCommissions = lbIsCommissions;
+					lopIA.mbHasTax = lbHasTax;
 
 					lopIA.Execute();
 

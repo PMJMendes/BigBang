@@ -25,6 +25,8 @@ public class InsurerAccounting
 	public UUID midDetail;
 	public String mstrExtraText;
 	public BigDecimal mdblExtraValue;
+	public Boolean mbIsCommissions;
+	public Boolean mbHasTax;
 	private UUID midInsurer;
 //	private OutgoingMessageData mobjMessage;
 
@@ -83,11 +85,13 @@ public class InsurerAccounting
 			if ( midMap == null )
 			{
 				lobjMap = InsurerAccountingMap.GetInstance(Engine.getCurrentNameSpace(), (UUID)null);
-				lobjMap.setAt(0, midSet);
-				lobjMap.setAt(1, midInsurer);
-				lobjMap.setAt(2, (Timestamp)null);
-				lobjMap.setAt(3, mstrExtraText);
-				lobjMap.setAt(4, mdblExtraValue);
+				lobjMap.setAt(InsurerAccountingMap.I.SET, midSet);
+				lobjMap.setAt(InsurerAccountingMap.I.OWNER, midInsurer);
+				lobjMap.setAt(InsurerAccountingMap.I.SETTLEDON, (Timestamp)null);
+				lobjMap.setAt(InsurerAccountingMap.I.EXTRATEXT, mstrExtraText);
+				lobjMap.setAt(InsurerAccountingMap.I.EXTRAVALUE, mdblExtraValue);
+				lobjMap.setAt(InsurerAccountingMap.I.ISCOMMISSION, mbIsCommissions);
+				lobjMap.setAt(InsurerAccountingMap.I.HASTAX, mbHasTax);
 				lobjMap.SaveToDb(pdb);
 				midMap = lobjMap.getKey();
 			}
