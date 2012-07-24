@@ -693,7 +693,7 @@ public class ReceiptDataBrokerImpl extends DataBroker<Receipt> implements Receip
 
 	@Override
 	public void insurerAccounting(final String[] receiptIds, InsurerAccountingExtra[] extras, final ResponseHandler<Void> handler) {
-		service.massInsurerAccounting(receiptIds, new InsurerAccountingExtra[0], new BigBangAsyncCallback<Void>() {
+		service.massInsurerAccounting(receiptIds, extras, new BigBangAsyncCallback<Void>() {
 
 			@Override
 			public void onResponseSuccess(Void result) {

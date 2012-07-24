@@ -1,6 +1,10 @@
 package bigBang.module.receiptModule.client.userInterface;
 
+import com.google.gwt.event.logical.shared.ValueChangeEvent;
+import com.google.gwt.event.logical.shared.ValueChangeHandler;
+
 import bigBang.definitions.shared.InsurerAccountingExtra;
+import bigBang.library.client.userInterface.CheckBoxFormField;
 import bigBang.library.client.userInterface.NumericTextBoxFormField;
 import bigBang.library.client.userInterface.TextBoxFormField;
 import bigBang.library.client.userInterface.view.FormView;
@@ -10,6 +14,7 @@ public class InsurerAccountingExtraForm extends
 
 	protected NumericTextBoxFormField value;
 	protected TextBoxFormField description;
+	protected CheckBoxFormField isCommission, isTax;
 	
 	public InsurerAccountingExtraForm(){
 		addSection("Informação Extra");
@@ -18,9 +23,22 @@ public class InsurerAccountingExtraForm extends
 		value.setUnitsLabel("€");
 		description = new TextBoxFormField("Descrição");
 		description.setFieldWidth("350px");
+		isCommission = new CheckBoxFormField("Comissão");
+		isTax = new CheckBoxFormField("Imposto de Selo");
 		
 		addFormField(value);
 		addFormField(description);
+		addFormField(isCommission, true);
+		addFormField(isTax, true);
+		
+		isCommission.addValueChangeHandler(new ValueChangeHandler<Boolean>() {
+			
+			@Override
+			public void onValueChange(ValueChangeEvent<Boolean> event) {
+				isTax.setVisible(event.getValue() != null && event.getValue());
+			}
+		});
+		isCommission.setValue(false, true);
 	}
 	
 
@@ -34,6 +52,8 @@ public class InsurerAccountingExtraForm extends
 		
 		result.text = description.getValue();
 		result.value = value.getValue();
+		result.hasTax = isTax.getValue();
+		result.isCommissions = isCommission.getValue();
 		
 		return result;
 	}
@@ -45,6 +65,8 @@ public class InsurerAccountingExtraForm extends
 		}else{
 			value.setValue(info.value);
 			description.setValue(info.text);
+			isTax.setValue(info.hasTax);
+			isCommission.setValue(info.isCommissions, true);
 		}
 	}
 

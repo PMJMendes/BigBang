@@ -53,7 +53,7 @@ public class MassInsurerAccountingViewPresenter implements ViewPresenter{
 		void removeReceiptFromAccountingList(String id);
 		HasCheckables getCheckableSelectedList();
 		HasEditableValue<Receipt> getReceiptForm();
-		HasEditableValue<InsurerAccountingExtra> getInsurerAccountingextraForm();
+		HasEditableValue<InsurerAccountingExtra> getInsurerAccountingExtraForm();
 		
 		HasValueSelectables<ReceiptStub> getMainList();
 		HasValueSelectables<ReceiptStub> getSelectedList();
@@ -251,21 +251,38 @@ public class MassInsurerAccountingViewPresenter implements ViewPresenter{
 		view.getMainList().clearSelection();
 		view.removeAllReceiptsFromAccountingList();
 		view.getReceiptForm().setValue(null);
-		view.getInsurerAccountingextraForm().setValue(null);
+		view.getInsurerAccountingExtraForm().setValue(null);
 	}
 
 	public void sendInsurerAccounting(Collection<ValueSelectable<ReceiptStub>> collection){
 		String[] receiptIds = new String[collection.size()];
 
+		String insurerId = new String();
 		int i = 0;
 		for(ValueSelectable<ReceiptStub> r : collection){
-			receiptIds[i] = r.getValue().id;
+			ReceiptStub receipt = r.getValue();
+			receiptIds[i] = receipt.id;
+			
+			if(insurerId != null){
+				if(insurerId.isEmpty()){
+					insurerId = receipt.insurerId;
+				}else if(!insurerId.equalsIgnoreCase(receipt.id)){
+					insurerId = null;
+				}
+			}
+			
 			i++;
 		}
+		
+		InsurerAccountingExtra[] extras = null;
 
-		InsurerAccountingExtra[] extras = new InsurerAccountingExtra[]{
-			view.getInsurerAccountingextraForm().getValue(), 
-		};
+		if(insurerId != null) {
+			InsurerAccountingExtra extra = view.getInsurerAccountingExtraForm().getInfo();
+			extra.insurerId = insurerId;
+			extras = new InsurerAccountingExtra[]{
+				extra
+			};
+		}
 		
 		broker.insurerAccounting(receiptIds, extras, new ResponseHandler<Void>() {
 
@@ -284,7 +301,7 @@ public class MassInsurerAccountingViewPresenter implements ViewPresenter{
 	protected boolean validate(){
 		Collection<ValueSelectable<ReceiptStub>> selected = view.getSelectedList().getAll();
 		
-		InsurerAccountingExtra extra = view.getInsurerAccountingextraForm().getInfo();
+		InsurerAccountingExtra extra = view.getInsurerAccountingExtraForm().getInfo();
 		
 		if(extra != null && (extra.value != null || extra.text != null)) {
 			String insurerId = null;

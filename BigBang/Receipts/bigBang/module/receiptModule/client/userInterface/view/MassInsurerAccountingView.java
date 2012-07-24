@@ -392,7 +392,7 @@ public class MassInsurerAccountingView extends View implements MassInsurerAccoun
 	}
 
 	@Override
-	public HasEditableValue<InsurerAccountingExtra> getInsurerAccountingextraForm() {
+	public HasEditableValue<InsurerAccountingExtra> getInsurerAccountingExtraForm() {
 		return this.insurerAccountingExtraForm;
 	}
 
