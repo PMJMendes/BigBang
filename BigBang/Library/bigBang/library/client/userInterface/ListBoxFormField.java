@@ -15,9 +15,12 @@ import com.google.gwt.user.client.ui.Widget;
 
 public class ListBoxFormField extends FormField<String> {
 
+	protected static final String DEFAULT_EMPTY_VALUE_STRING = "-";
+	
 	protected ListBox listBox;
 	protected HorizontalPanel wrapper;
 
+	protected String emptyValueString = DEFAULT_EMPTY_VALUE_STRING;
 	protected String value;
 
 	public ListBoxFormField(String label,FieldValidator<String> validator){
@@ -158,12 +161,12 @@ public class ListBoxFormField extends FormField<String> {
 				if(isDifferentValue(itemValue)){
 					this.listBox.setSelectedIndex(i);
 					this.value = value;
-					if(fireEvents)
-						ValueChangeEvent.fire(this, value);
 				}
 				break;
 			}
 		}
+		if(fireEvents)
+			ValueChangeEvent.fire(this, value);
 	}
 
 	@Override
@@ -173,7 +176,7 @@ public class ListBoxFormField extends FormField<String> {
 
 	public void clearValues() {
 		this.listBox.clear();
-		this.addItem("-", new String());
+		this.addItem(this.emptyValueString, new String());
 		clear();
 	}
 
@@ -198,5 +201,17 @@ public class ListBoxFormField extends FormField<String> {
 	@Override
 	public void focus() {
 		listBox.getElement().focus();
+	}
+	
+	public void setEmptyValueString(String s) {
+		this.emptyValueString = s;
+		
+		for(int i = 0; i < this.listBox.getItemCount(); i++) {
+			String itemValue = this.listBox.getValue(i);
+			if(itemValue == null || itemValue.isEmpty()){
+				this.listBox.setItemText(i, s);
+				break;
+			}
+		}
 	}
 }

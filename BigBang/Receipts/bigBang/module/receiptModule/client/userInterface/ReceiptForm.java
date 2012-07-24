@@ -10,6 +10,7 @@ import bigBang.library.client.history.NavigationHistoryItem;
 import bigBang.library.client.userInterface.DatePickerFormField;
 import bigBang.library.client.userInterface.ExpandableListBoxFormField;
 import bigBang.library.client.userInterface.ExpandableSelectionFormField;
+import bigBang.library.client.userInterface.ListBoxFormField;
 import bigBang.library.client.userInterface.NavigationFormField;
 import bigBang.library.client.userInterface.NumericTextBoxFormField;
 import bigBang.library.client.userInterface.TextAreaFormField;
@@ -17,6 +18,8 @@ import bigBang.library.client.userInterface.TextBoxFormField;
 import bigBang.library.client.userInterface.view.FormView;
 import bigBang.module.receiptModule.shared.ModuleConstants;
 
+import com.google.gwt.event.logical.shared.ValueChangeEvent;
+import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.user.client.ui.ValueBoxBase.TextAlignment;
 
@@ -39,7 +42,8 @@ public class ReceiptForm extends FormView<Receipt> implements ReceiptDataBrokerC
 	protected ExpandableSelectionFormField mediator;
 	protected TextAreaFormField description;
 	protected TextAreaFormField notes;
-	protected NumericTextBoxFormField bonus;
+	protected ListBoxFormField bonusMalusOption;
+	protected NumericTextBoxFormField bonusMalusValue;
 
 	protected int dataVersion = 0;
 
@@ -70,9 +74,16 @@ public class ReceiptForm extends FormView<Receipt> implements ReceiptDataBrokerC
 		fat.setFieldWidth("100px");
 		fat.setUnitsLabel("€");
 		fat.setTextAligment(TextAlignment.RIGHT);
-		bonus = new NumericTextBoxFormField("Bonus/Malus", true);
-		bonus.setFieldWidth("100px");
-		bonus.setUnitsLabel("€");
+		
+		bonusMalusOption = new ListBoxFormField("Bonus/Malus");
+		bonusMalusOption.setFieldWidth("100%");
+		bonusMalusOption.setEmptyValueString("Nenhum");
+		bonusMalusOption.addItem("Bonus", "Bonus");
+		bonusMalusOption.addItem("Malus", "Malus");
+		
+		bonusMalusValue = new NumericTextBoxFormField("Valor", true);
+		bonusMalusValue.setFieldWidth("100px");
+		bonusMalusValue.setUnitsLabel("€");
 		issueDate = new DatePickerFormField("Data de Emissão");
 		coverageStart = new DatePickerFormField("Vigência");
 		coverageEnd = new DatePickerFormField("Até");
@@ -103,8 +114,9 @@ public class ReceiptForm extends FormView<Receipt> implements ReceiptDataBrokerC
 		addFormField(salesPremium, true);
 		addFormField(commission, true);
 		addFormField(retro, true);
-		addFormField(fat, true);
-		addFormField(bonus, true);
+		addFormField(fat, false);
+		addFormField(bonusMalusOption, true);
+		addFormField(bonusMalusValue, true);
 
 		addSection("Datas");
 		addFormFieldGroup(new FormField<?>[]{
@@ -122,6 +134,15 @@ public class ReceiptForm extends FormView<Receipt> implements ReceiptDataBrokerC
 		addSection("Notas Internas");
 		addFormField(notes);
 
+		bonusMalusOption.addValueChangeHandler(new ValueChangeHandler<String>() {
+			
+			@Override
+			public void onValueChange(ValueChangeEvent<String> event) {
+				bonusMalusValue.setEditable(event.getValue() != null && !event.getValue().isEmpty());
+				bonusMalusValue.setReadOnly(isReadOnly());
+			}
+		});
+		
 		setValue(new Receipt());
 
 		ReceiptDataBroker broker = ((ReceiptDataBroker) DataBrokerManager.Util.getInstance().getBroker(BigBangConstants.EntityIds.RECEIPT));
@@ -153,7 +174,8 @@ public class ReceiptForm extends FormView<Receipt> implements ReceiptDataBrokerC
 		result.comissions = commission.getValue();
 		result.retrocessions = retro.getValue();
 		result.FATValue = fat.getValue();
-		result.bonusMalus = bonus.getValue();
+		result.isMalus = bonusMalusOption.getValue() != null && bonusMalusOption.getValue().equalsIgnoreCase("Malus");
+		result.bonusMalus = bonusMalusValue.getValue();
 		result.issueDate = issueDate.getValue() == null ? null : DateTimeFormat.getFormat("yyyy-MM-dd").format(issueDate.getValue());
 		result.maturityDate = coverageStart.getValue() == null ? null : DateTimeFormat.getFormat("yyyy-MM-dd").format(coverageStart.getValue());
 		result.endDate = coverageEnd.getValue() == null ? null : DateTimeFormat.getFormat("yyyy-MM-dd").format(coverageEnd.getValue());
@@ -205,7 +227,8 @@ public class ReceiptForm extends FormView<Receipt> implements ReceiptDataBrokerC
 		commission.setValue(info.comissions);
 		retro.setValue(info.retrocessions);
 		fat.setValue(info.FATValue);
-		bonus.setValue(info.bonusMalus);
+		bonusMalusOption.setValue(info.isMalus == null ? null : info.isMalus ? "Malus" : "Bonus", true);
+		bonusMalusValue.setValue(info.bonusMalus);
 		if(info.issueDate != null){
 			issueDate.setValue(DateTimeFormat.getFormat("yyyy-MM-dd").parse(info.issueDate));
 		}else{issueDate.clear();}
