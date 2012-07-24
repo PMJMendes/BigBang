@@ -24,6 +24,7 @@ public class ReceiptData
 	public BigDecimal mdblCommissions;
 	public BigDecimal mdblRetrocessions;
 	public BigDecimal mdblFAT;
+	public BigDecimal mdblBonusMalus;
 	public Timestamp mdtIssue;
 	public Timestamp mdtMaturity;
 	public Timestamp mdtEnd;
@@ -56,6 +57,7 @@ public class ReceiptData
 		midMediator = (UUID)pobjSource.getAt(12);
 		mstrNotes = (String)pobjSource.getAt(13);
 		mstrDescription = (String)pobjSource.getAt(14);
+		mdblBonusMalus = (BigDecimal)pobjSource.getAt(17);
 	}
 
 	public void ToObject(ObjectBase pobjDest)
@@ -78,6 +80,7 @@ public class ReceiptData
 			pobjDest.setAt(12, midMediator);
 			pobjDest.setAt(13, mstrNotes);
 			pobjDest.setAt(14, mstrDescription);
+			pobjDest.setAt(17, mdblBonusMalus);
 		}
 		catch (Throwable e)
 		{
@@ -123,6 +126,13 @@ public class ReceiptData
 		{
 			pstrBuilder.append("FAT: ");
 			pstrBuilder.append(mdblFAT.toPlainString());
+			pstrBuilder.append(pstrLineBreak);
+		}
+
+		if ( mdblBonusMalus != null )
+		{
+			pstrBuilder.append("Bonus/Malus: ");
+			pstrBuilder.append(mdblBonusMalus.toPlainString());
 			pstrBuilder.append(pstrLineBreak);
 		}
 

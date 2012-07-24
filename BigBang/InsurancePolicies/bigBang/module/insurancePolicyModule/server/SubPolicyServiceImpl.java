@@ -3105,6 +3105,7 @@ public class SubPolicyServiceImpl
 			lopCR.mobjData.mdblRetrocessions = (receipt.retrocessions == null ? new BigDecimal(0) :
 					new BigDecimal(receipt.retrocessions));
 			lopCR.mobjData.mdblFAT = (receipt.FATValue == null ? null : new BigDecimal(receipt.FATValue));
+			lopCR.mobjData.mdblBonusMalus = (receipt.bonusMalus == null ? null : new BigDecimal(receipt.bonusMalus));
 			lopCR.mobjData.mdtIssue = Timestamp.valueOf(receipt.issueDate + " 00:00:00.0");
 			lopCR.mobjData.mdtMaturity = (receipt.maturityDate == null ? null :
 					Timestamp.valueOf(receipt.maturityDate + " 00:00:00.0"));
