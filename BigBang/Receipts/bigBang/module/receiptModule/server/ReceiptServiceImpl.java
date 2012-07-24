@@ -1487,7 +1487,7 @@ public class ReceiptServiceImpl
 					{
 						lstrExtraText = extraInfo[i].text;
 						ldblExtraValue = new BigDecimal(extraInfo[i].value);
-						lbIsCommissions = extraInfo[i].isCommsissions;
+						lbIsCommissions = extraInfo[i].isCommissions;
 						lbHasTax = extraInfo[i].hasTax;
 						break;
 					}
