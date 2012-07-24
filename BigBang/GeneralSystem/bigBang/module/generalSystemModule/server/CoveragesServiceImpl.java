@@ -1,5 +1,6 @@
 package bigBang.module.generalSystemModule.server;
 
+import java.math.BigDecimal;
 import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.UUID;
@@ -576,6 +577,9 @@ public class CoveragesServiceImpl
 			larrResult[i].lineId = ((UUID)larrSubLines[i].getAt(1)).toString();
 			larrResult[i].objectTypeId = ((UUID)larrSubLines[i].getAt(2)).toString();
 			larrResult[i].exercisePeriodId = ((UUID)larrSubLines[i].getAt(3)).toString();
+			larrResult[i].commissionPercent = (larrSubLines[i].getAt(5) == null ? null : ((BigDecimal)larrSubLines[i].getAt(5)).doubleValue());
+			larrResult[i].isLife = (Boolean)larrSubLines[i].getAt(6);
+			larrResult[i].description = (String)larrSubLines[i].getAt(7);
 			larrResult[i].coverages = getCoveragesForSubLine(larrSubLines[i]);
 		}
 
@@ -665,7 +669,7 @@ public class CoveragesServiceImpl
 		larrResult = new ManageLines.LineData[parrLines.length];
 		for ( i = 0; i < parrLines.length; i++ )
 		{
-			larrResult[i] = prefOp.new LineData();
+			larrResult[i] = new ManageLines.LineData();
 			larrResult[i].mid = (parrLines[i].id == null ? null : UUID.fromString(parrLines[i].id));
 			larrResult[i].mstrName = parrLines[i].name;
 			larrResult[i].midCategory = (parrLines[i].categoryId == null ? null : UUID.fromString(parrLines[i].categoryId));
@@ -686,7 +690,7 @@ public class CoveragesServiceImpl
 		larrResult = new ManageLines.SubLineData[parrSubLines.length];
 		for ( i = 0; i < parrSubLines.length; i++ )
 		{
-			larrResult[i] = prefOp.new SubLineData();
+			larrResult[i] = new ManageLines.SubLineData();
 			larrResult[i].mid = (parrSubLines[i].id == null ? null : UUID.fromString(parrSubLines[i].id));
 			larrResult[i].mstrName = parrSubLines[i].name;
 			larrResult[i].midLine = pidParent;
@@ -694,6 +698,10 @@ public class CoveragesServiceImpl
 					UUID.fromString(parrSubLines[i].objectTypeId));
 			larrResult[i].midExercisePeriod = (parrSubLines[i].exercisePeriodId == null ? null :
 					UUID.fromString(parrSubLines[i].exercisePeriodId));
+			larrResult[i].mdblPercent = (parrSubLines[i].commissionPercent == null ? null :
+					new BigDecimal(parrSubLines[i].commissionPercent));
+			larrResult[i].mbIsLife = parrSubLines[i].isLife;
+			larrResult[i].mstrDescription = parrSubLines[i].description;
 			larrResult[i].marrCoverages = (pbRecurse && parrSubLines[i].coverages != null ?
 					BuildCoverageArray(prefOp, parrSubLines[i].coverages, larrResult[i].mid) : null);
 			larrResult[i].mobjPrevValues = null;
@@ -710,7 +718,7 @@ public class CoveragesServiceImpl
 		larrResult = new ManageLines.CoverageData[parrCoverages.length];
 		for ( i = 0; i < parrCoverages.length; i++ )
 		{
-			larrResult[i] = prefOp.new CoverageData();
+			larrResult[i] = new ManageLines.CoverageData();
 			larrResult[i].mid = (parrCoverages[i].id == null ? null : UUID.fromString(parrCoverages[i].id));
 			larrResult[i].mstrName = parrCoverages[i].name;
 			larrResult[i].midSubLine = pidParent;

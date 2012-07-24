@@ -1,6 +1,7 @@
 package com.premiumminds.BigBang.Jewel.Operations.General;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.UUID;
 
 import Jewel.Engine.Engine;
@@ -21,7 +22,7 @@ public class ManageLines
 {
 	private static final long serialVersionUID = 1L;
 
-	public class LineData
+	public static class LineData
 		implements Serializable
 	{
 		private static final long serialVersionUID = 1L;
@@ -33,7 +34,7 @@ public class ManageLines
 		public LineData mobjPrevValues;
 	}
 
-	public class SubLineData
+	public static class SubLineData
 		implements Serializable
 	{
 		private static final long serialVersionUID = 1L;
@@ -43,11 +44,14 @@ public class ManageLines
 		public UUID midLine;
 		public UUID midObjectType;
 		public UUID midExercisePeriod;
+		public BigDecimal mdblPercent;
+		public Boolean mbIsLife;
+		public String mstrDescription;
 		public CoverageData[] marrCoverages;
 		public SubLineData mobjPrevValues;
 	}
 
-	public class CoverageData
+	public static class CoverageData
 		implements Serializable
 	{
 		private static final long serialVersionUID = 1L;
@@ -911,6 +915,9 @@ public class ManageLines
 				lobjAuxSubLine.setAt(1, parrData[i].midLine);
 				lobjAuxSubLine.setAt(2, parrData[i].midObjectType);
 				lobjAuxSubLine.setAt(3, parrData[i].midExercisePeriod);
+				lobjAuxSubLine.setAt(5, parrData[i].mdblPercent);
+				lobjAuxSubLine.setAt(6, parrData[i].mbIsLife);
+				lobjAuxSubLine.setAt(7, parrData[i].mstrDescription);
 				lobjAuxSubLine.SaveToDb(pdb);
 			}
 			catch (Throwable e)
@@ -1000,6 +1007,9 @@ public class ManageLines
 			parrData[i].mobjPrevValues.midLine = (UUID)lobjAuxSubLine.getAt(1);
 			parrData[i].mobjPrevValues.midObjectType = (UUID)lobjAuxSubLine.getAt(2);
 			parrData[i].mobjPrevValues.midExercisePeriod = (UUID)lobjAuxSubLine.getAt(3);
+			parrData[i].mobjPrevValues.mdblPercent = (BigDecimal)lobjAuxSubLine.getAt(5);
+			parrData[i].mobjPrevValues.mbIsLife = (Boolean)lobjAuxSubLine.getAt(6);
+			parrData[i].mobjPrevValues.mstrDescription = (String)lobjAuxSubLine.getAt(7);
 			parrData[i].mobjPrevValues.marrCoverages = null;
 			parrData[i].mobjPrevValues.mobjPrevValues = null;
 
@@ -1009,6 +1019,9 @@ public class ManageLines
 				lobjAuxSubLine.setAt(1, parrData[i].midLine);
 				lobjAuxSubLine.setAt(2, parrData[i].midObjectType);
 				lobjAuxSubLine.setAt(3, parrData[i].midExercisePeriod);
+				lobjAuxSubLine.setAt(5, parrData[i].mdblPercent);
+				lobjAuxSubLine.setAt(6, parrData[i].mbIsLife);
+				lobjAuxSubLine.setAt(7, parrData[i].mstrDescription);
 				lobjAuxSubLine.SaveToDb(pdb);
 			}
 			catch (Throwable e)
@@ -1126,6 +1139,9 @@ public class ManageLines
 			parrData[i].midLine = (UUID)lobjAuxSubLine.getAt(1);
 			parrData[i].midObjectType = (UUID)lobjAuxSubLine.getAt(2);
 			parrData[i].midExercisePeriod = (UUID)lobjAuxSubLine.getAt(3);
+			parrData[i].mdblPercent = (BigDecimal)lobjAuxSubLine.getAt(5);
+			parrData[i].mbIsLife = (Boolean)lobjAuxSubLine.getAt(6);
+			parrData[i].mstrDescription = (String)lobjAuxSubLine.getAt(7);
 			parrData[i].mobjPrevValues = null;
 			larrCoverages = lobjAuxSubLine.GetCurrentCoverages();
 			if ( larrCoverages == null )
@@ -1321,6 +1337,9 @@ public class ManageLines
 				lobjAuxSubLine.setAt(1, parrData[i].mobjPrevValues.midLine);
 				lobjAuxSubLine.setAt(2, parrData[i].mobjPrevValues.midObjectType);
 				lobjAuxSubLine.setAt(3, parrData[i].mobjPrevValues.midExercisePeriod);
+				lobjAuxSubLine.setAt(5, parrData[i].mobjPrevValues.mdblPercent);
+				lobjAuxSubLine.setAt(6, parrData[i].mobjPrevValues.mbIsLife);
+				lobjAuxSubLine.setAt(7, parrData[i].mobjPrevValues.mstrDescription);
 				lobjAuxSubLine.SaveToDb(pdb);
 			}
 			catch (Throwable e)
@@ -1650,7 +1669,17 @@ public class ManageLines
 		pstrString.append(pstrPrefix);
 		pstrString.append(" ");
 		pstrString.append(pobjData.mstrName);
+		if ( (pobjData.mbIsLife != null) && ((Boolean)pobjData.mbIsLife) )
+			pstrString.append(" (Vida)");
 		pstrString.append(pstrLineBreak);
+
+		if ( pobjData.mstrDescription != null )
+		{
+			pstrString.append(pstrPrefix);
+			pstrString.append(" Descrita como: ");
+			pstrString.append(pobjData.mstrDescription);
+			pstrString.append(pstrLineBreak);
+		}
 
 		pstrString.append(pstrPrefix);
 		pstrString.append(" Tipo de Objecto Seguro: ");
@@ -1678,6 +1707,11 @@ public class ManageLines
 		{
 			pstrString.append("(Erro a obter o período do exercício.)");
 		}
+		pstrString.append(pstrLineBreak);
+
+		pstrString.append(pstrPrefix);
+		pstrString.append(" Comissão de Angariação: ");
+		pstrString.append(pobjData.mdblPercent.toPlainString());
 		pstrString.append(pstrLineBreak);
 
 		if ( pbRecurse && (pobjData.marrCoverages != null) && (pobjData.marrCoverages.length > 0) )
