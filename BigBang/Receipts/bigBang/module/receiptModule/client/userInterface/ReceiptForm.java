@@ -193,7 +193,7 @@ public class ReceiptForm extends FormView<Receipt> implements ReceiptDataBrokerC
 			item.setParameter("policyid", info.policyId);
 			policy.setValue(item);
 
-			policy.setValueName("#" + info.policyNumber + " - " + info.categoryName + "/" + info.lineName + "/" + info.subLineName);
+			policy.setValueName("#" + info.policyNumber + " - " + info.categoryName + " / " + info.lineName + " / " + info.subLineName + " (" + info.insurerName + ")");
 		}else{
 			policy.clear();
 		}
