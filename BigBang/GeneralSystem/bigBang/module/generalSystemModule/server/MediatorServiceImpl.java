@@ -291,18 +291,18 @@ public class MediatorServiceImpl
 
 			if ( (mediator.dealPercents != null ) && (mediator.dealPercents.size() > 0) )
 			{
-				lopMM.marrCreate[0].mobjMainValues.marrDeals = new MediatorDealData[mediator.dealPercents.size()];
+				lopMM.marrModify[0].mobjMainValues.marrDeals = new MediatorDealData[mediator.dealPercents.size()];
 				i = 0;
 				for ( String str: mediator.dealPercents.keySet() )
 				{
-					lopMM.marrCreate[0].mobjMainValues.marrDeals[i] = new MediatorDealData();
-					lopMM.marrCreate[0].mobjMainValues.marrDeals[i].midSubLine = UUID.fromString(str);
-					lopMM.marrCreate[0].mobjMainValues.marrDeals[i].mdblPercent = new BigDecimal(mediator.dealPercents.get(str));
+					lopMM.marrModify[0].mobjMainValues.marrDeals[i] = new MediatorDealData();
+					lopMM.marrModify[0].mobjMainValues.marrDeals[i].midSubLine = UUID.fromString(str);
+					lopMM.marrModify[0].mobjMainValues.marrDeals[i].mdblPercent = new BigDecimal(mediator.dealPercents.get(str));
 					i++;
 				}
 			}
 			else
-				lopMM.marrCreate[0].mobjMainValues.marrDeals = null;
+				lopMM.marrModify[0].mobjMainValues.marrDeals = null;
 
 			lopMM.marrCreate = null;
 			lopMM.marrDelete = null;
