@@ -1,6 +1,8 @@
 package bigBang.module.generalSystemModule.client.dataAccess;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 import bigBang.definitions.client.dataAccess.CoverageBroker;
 import bigBang.definitions.client.dataAccess.CoverageDataBrokerClient;
@@ -9,12 +11,16 @@ import bigBang.definitions.client.dataAccess.DataBrokerClient;
 import bigBang.definitions.client.response.ResponseError;
 import bigBang.definitions.client.response.ResponseHandler;
 import bigBang.definitions.shared.BigBangConstants;
+import bigBang.definitions.shared.Category;
 import bigBang.definitions.shared.Coverage;
 import bigBang.definitions.shared.Line;
 import bigBang.definitions.shared.SubLine;
 import bigBang.definitions.shared.Tax;
+import bigBang.definitions.shared.TipifiedListItem;
 import bigBang.library.client.BigBangAsyncCallback;
 import bigBang.library.client.EventBus;
+import bigBang.library.client.dataAccess.BigBangTypifiedListBroker;
+import bigBang.library.client.dataAccess.TypifiedListBroker;
 import bigBang.library.client.event.OperationWasExecutedEvent;
 import bigBang.module.generalSystemModule.interfaces.CoveragesService;
 import bigBang.module.generalSystemModule.interfaces.CoveragesServiceAsync;
@@ -44,6 +50,68 @@ CoverageBroker {
 
 	}
 
+	@Override
+	public void getCategories(final ResponseHandler<Category[]> handler) {
+		TypifiedListBroker broker = BigBangTypifiedListBroker.Util.getInstance();
+		broker.getListItems(BigBangConstants.EntityIds.CATEGORY, new ResponseHandler<Collection<TipifiedListItem>>() {
+			
+			@Override
+			public void onResponse(Collection<TipifiedListItem> response) {
+				Category[] categories = new Category[response.size()];
+				
+				int i = 0;
+				for(TipifiedListItem item : response) {
+					Category cat = new Category();
+					cat.id = item.id;
+					cat.name = item.value;
+					categories[i] = cat;
+					i++;
+				}
+				
+				handler.onResponse(categories);
+			}
+			
+			@Override
+			public void onError(Collection<ResponseError> errors) {
+				handler.onError(new String[]{
+						"Could not get the categories"
+				});
+			}
+		});
+	}
+	
+	@Override
+	public void getLinesForCategory(final String categoryId,
+			final ResponseHandler<Line[]> handler) {
+		
+		getLines(new ResponseHandler<Line[]>() {
+			
+			@Override
+			public void onResponse(Line[] response) {
+				List<Line> linesList = new ArrayList<Line>();
+				for(Line line : response) {
+					if(line.categoryId.equalsIgnoreCase(categoryId)) {
+						linesList.add(line);
+					}
+				}
+				
+				Line[] result = new Line[linesList.size()];
+				for(int i = 0; i < result.length; i++) {
+					result[i] = linesList.get(i);
+				}
+				
+				handler.onResponse(result);
+			}
+			
+			@Override
+			public void onError(Collection<ResponseError> errors) {
+				handler.onError(new String[]{
+						"Could not get the requested lines"
+				});
+			}
+		});
+	}
+	
 	@Override
 	public void getLines(final ResponseHandler<Line[]> handler) {
 		if(needsRefresh()){

@@ -1,6 +1,7 @@
 package bigBang.definitions.client.dataAccess;
 
 import bigBang.definitions.client.response.ResponseHandler;
+import bigBang.definitions.shared.Category;
 import bigBang.definitions.shared.Coverage;
 import bigBang.definitions.shared.Line;
 import bigBang.definitions.shared.SubLine;
@@ -8,7 +9,13 @@ import bigBang.definitions.shared.Tax;
 
 public interface CoverageBroker extends DataBrokerInterface<Line> {
 
+	//CATEGORIES
+	
+	public void getCategories(ResponseHandler<Category[]> handler);
+	
 	//LINES
+	
+	public void getLinesForCategory(String categoryId, ResponseHandler<Line[]> handler);
 	
 	/**
 	 * Fetches all available Lines

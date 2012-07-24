@@ -140,6 +140,7 @@ public abstract class FormView<T> extends View implements Validatable, HasEditab
 		this.currentSection = section;
 		this.panel.add(this.currentSection);
 		this.sections.add(this.currentSection);
+		section.setReadOnly(this.isReadOnly);
 		//this.panel.setCellHeight(currentSection, minHeight);
 	}
 

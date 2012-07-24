@@ -2,6 +2,8 @@ package bigBang.module.generalSystemModule.client.userInterface.view;
 
 import bigBang.definitions.shared.SubLine;
 import bigBang.library.client.userInterface.ExpandableListBoxFormField;
+import bigBang.library.client.userInterface.NumericTextBoxFormField;
+import bigBang.library.client.userInterface.RadioButtonFormField;
 import bigBang.library.client.userInterface.TextBoxFormField;
 import bigBang.library.client.userInterface.view.FormView;
 import bigBang.module.generalSystemModule.shared.ModuleConstants;
@@ -10,6 +12,9 @@ public class SubLineForm extends FormView<SubLine> {
 
 	private TextBoxFormField name;
 	private ExpandableListBoxFormField type, periodType;
+	private NumericTextBoxFormField percentage;
+	private RadioButtonFormField isLife;
+	private TextBoxFormField description;
 	private SubLine subLine;
 	
 	
@@ -20,10 +25,18 @@ public class SubLineForm extends FormView<SubLine> {
 		type.allowEdition(false);
 		periodType = new ExpandableListBoxFormField(ModuleConstants.ListIDs.ExercisePeriod, "Tipo de período");
 		periodType.allowEdition(false);
-		addFormField(name);
-		addFormField(type);
-		addFormField(periodType);
-		
+		percentage = new NumericTextBoxFormField("Angariação", false);
+		percentage.setUnitsLabel("%");
+		isLife = new RadioButtonFormField("Vida");
+		isLife.addOption("1", "Sim");
+		isLife.addOption("0", "Não");
+		description = new TextBoxFormField("Descrição");
+		addFormField(name, false);
+		addFormField(description, false);
+		addFormField(type, true);
+		addFormField(periodType, true);
+		addFormField(percentage, true);
+		addFormField(isLife, true);
 	}
 	
 	@Override
@@ -33,6 +46,10 @@ public class SubLineForm extends FormView<SubLine> {
 		subLine.name = name.getValue();
 		subLine.objectTypeId = type.getValue();
 		subLine.exercisePeriodId = periodType.getValue();
+		subLine.description = description.getValue();
+		subLine.commissionPercent = percentage.getValue();
+		String isLifeValue = isLife.getValue();
+		subLine.isLife = isLifeValue == null ? null : isLifeValue.equalsIgnoreCase("1") ? true : false;
 		return subLine;
 	}
 
@@ -42,6 +59,9 @@ public class SubLineForm extends FormView<SubLine> {
 		this.name.setValue(info.name);
 		this.type.setValue(info.objectTypeId);
 		this.periodType.setValue(info.exercisePeriodId);
+		this.description.setValue(info.description);
+		this.isLife.setValue(info.isLife == null ? null : info.isLife ? "1" : "0");
+		this.percentage.setValue(info.commissionPercent);
 	}
 
 	@Override

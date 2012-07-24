@@ -79,6 +79,11 @@ public class BigBangConstants {
 		public static class INSURANCE_POLICY_DURATION {
 			public static final String TEMPORARY = "e3f02152-ed63-44bb-9fd1-9f8101580339";
 		}
+		
+		public static class MEDIATOR_COMMISSIONING_PROFILE {
+			public static final String PERCENTAGE = "CECC8014-200C-4C4F-9F47-9EFC01368139";
+			public static final String NEGOTIATED = "C7236BA7-73AD-40ED-B6DC-9EFC013691C8";
+		}
 	}
 
 	public static class OperationIds {
