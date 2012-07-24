@@ -111,6 +111,9 @@ public class CreateReceipt
 			mobjData.mid = lobjAux.getKey();
 			mobjData.midProcess = lobjProc.getKey();
 			mobjData.mobjPrevValues = null;
+
+			if ( lobjAux.doCalcRetrocession() )
+				lobjAux.SaveToDb(pdb);
 		}
 		catch (Throwable e)
 		{

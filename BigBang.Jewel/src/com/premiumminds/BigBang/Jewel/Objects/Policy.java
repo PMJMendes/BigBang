@@ -692,19 +692,24 @@ public class Policy
 		}
     }
 
+    public Mediator getMediator()
+    	throws BigBangJewelException
+    {
+    	if ( getAt(11) == null )
+    		return GetClient().getMediator();
+
+    	return Mediator.GetInstance(getNameSpace(), (UUID)getAt(11));
+    }
+
     public DetailedBase GetDetailedObject()
     	throws BigBangJewelException
     {
-    	return SubLine.GetInstance(getNameSpace(), (UUID)getAt(3)).GetDetailedObject(this, null);
+    	return GetSubLine().GetDetailedObject(this, null);
     }
 
     public DetailedBase GetDetailedObject(SubPolicy pobjSubPolicy)
     	throws BigBangJewelException
     {
-    	DetailedBase lobjDetailed;
-
-    	lobjDetailed = SubLine.GetInstance(getNameSpace(), (UUID)getAt(3)).GetDetailedObject(this, pobjSubPolicy);
-
-    	return lobjDetailed;
+    	return GetSubLine().GetDetailedObject(this, pobjSubPolicy);
     }
 }

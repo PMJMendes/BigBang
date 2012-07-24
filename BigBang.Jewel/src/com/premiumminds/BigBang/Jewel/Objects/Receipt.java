@@ -1,5 +1,7 @@
 package com.premiumminds.BigBang.Jewel.Objects;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.UUID;
@@ -16,6 +18,7 @@ import Jewel.Petri.SysObjects.ProcessData;
 
 import com.premiumminds.BigBang.Jewel.BigBangJewelException;
 import com.premiumminds.BigBang.Jewel.Constants;
+import com.premiumminds.BigBang.Jewel.SysObjects.MediatorBase;
 
 public class Receipt
 	extends ProcessData
@@ -364,6 +367,15 @@ public class Receipt
 		}
     }
 
+    public Mediator getMediator()
+    	throws BigBangJewelException
+    {
+    	if ( getAt(12) == null )
+    		return getAbsolutePolicy().getMediator();
+
+    	return Mediator.GetInstance(getNameSpace(), (UUID)getAt(12));
+    }
+
     public ILog getPaymentLog()
     	throws BigBangJewelException
     {
@@ -386,5 +398,152 @@ public class Receipt
     	{
     		throw new BigBangJewelException(e.getMessage(), e);
 		}
+    }
+
+    public boolean doCalcRetrocession()
+    	throws BigBangJewelException
+    {
+    	Mediator lobjMed;
+    	UUID lidProfile;
+    	BigDecimal ldblPercent;
+    	MediatorBase lobjCalc;
+    	BigDecimal ldblResult;
+
+    	lobjMed = getMediator();
+    	lidProfile = lobjMed.getProfile();
+
+    	if ( Constants.MCPID_None.equals(lidProfile) )
+    	{
+    		try
+    		{
+				setAt(6, new BigDecimal(0.0));
+			}
+    		catch (Throwable e)
+    		{
+    			throw new BigBangJewelException(e.getMessage(), e);
+			}
+    		return true;
+    	}
+
+		if ( Constants.MCPID_Issuing.equals(lidProfile) )
+		{
+			ldblPercent = getAbsolutePolicy().GetSubLine().getPercent();
+	    	if ( (ldblPercent == null) || (getAt(4) == null) )
+			{
+	    		try
+	    		{
+					setAt(6, null);
+				}
+	    		catch (Throwable e)
+	    		{
+	    			throw new BigBangJewelException(e.getMessage(), e);
+				}
+				return false;
+			}
+    		try
+    		{
+    			setAt(6, ldblPercent.abs().multiply((BigDecimal)getAt(4)).setScale(2, RoundingMode.HALF_UP));
+			}
+    		catch (Throwable e)
+    		{
+    			throw new BigBangJewelException(e.getMessage(), e);
+			}
+			return true;
+		}
+
+		if ( Constants.MCPID_Percentage.equals(lidProfile) )
+		{
+			ldblPercent = lobjMed.getPercent();
+			if ( (ldblPercent == null) || (getAt(5) == null) )
+			{
+	    		try
+	    		{
+					setAt(6, null);
+				}
+	    		catch (Throwable e)
+	    		{
+	    			throw new BigBangJewelException(e.getMessage(), e);
+				}
+				return false;
+			}
+    		try
+    		{
+    			setAt(6, ldblPercent.abs().multiply((BigDecimal)getAt(5)).setScale(2, RoundingMode.HALF_UP));
+			}
+    		catch (Throwable e)
+    		{
+    			throw new BigBangJewelException(e.getMessage(), e);
+			}
+			return true;
+		}
+
+		if ( Constants.MCPID_Negotiated.equals(lidProfile) )
+		{
+			ldblPercent = lobjMed.GetCurrentDealFor(getAbsolutePolicy().GetSubLine().getKey());
+			if ( ldblPercent == null )
+				ldblPercent = getAbsolutePolicy().GetSubLine().getPercent();
+	    	if ( (ldblPercent == null) || (getAt(4) == null) )
+			{
+	    		try
+	    		{
+					setAt(6, null);
+				}
+	    		catch (Throwable e)
+	    		{
+	    			throw new BigBangJewelException(e.getMessage(), e);
+				}
+				return false;
+			}
+    		try
+    		{
+    			setAt(6, ldblPercent.abs().multiply((BigDecimal)getAt(4)).setScale(2, RoundingMode.HALF_UP));
+			}
+    		catch (Throwable e)
+    		{
+    			throw new BigBangJewelException(e.getMessage(), e);
+			}
+			return true;
+		}
+
+		if ( Constants.MCPID_Special.equals(lidProfile) )
+		{
+			lobjCalc = lobjMed.GetDetailedObject(this);
+			if ( lobjCalc == null )
+			{
+	    		try
+	    		{
+					setAt(6, null);
+				}
+	    		catch (Throwable e)
+	    		{
+	    			throw new BigBangJewelException(e.getMessage(), e);
+				}
+				return false;
+			}
+			ldblResult = lobjCalc.getResult();
+			if ( ldblResult == null )
+			{
+	    		try
+	    		{
+					setAt(6, null);
+				}
+	    		catch (Throwable e)
+	    		{
+	    			throw new BigBangJewelException(e.getMessage(), e);
+				}
+				return false;
+			}
+    		try
+    		{
+    			setAt(6, ldblResult.abs());
+			}
+    		catch (Throwable e)
+    		{
+    			throw new BigBangJewelException(e.getMessage(), e);
+			}
+			return true;
+		}
+
+		throw new BigBangJewelException("Perfil de comissionamento desconhecido.");
     }
 }

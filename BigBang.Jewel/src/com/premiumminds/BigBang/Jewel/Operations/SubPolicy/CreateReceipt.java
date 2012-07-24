@@ -112,6 +112,9 @@ public class CreateReceipt
 
 			lobjSubP = (SubPolicy)GetProcess().GetData();
 			lobjClient = Client.GetInstance(lobjSubP.getNameSpace(), (UUID)lobjSubP.getAt(2));
+
+			if ( lobjAux.doCalcRetrocession() )
+				lobjAux.SaveToDb(pdb);
 		}
 		catch (Throwable e)
 		{

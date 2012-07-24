@@ -202,4 +202,10 @@ public class Client
 
 		return larrAux.toArray(new Document[larrAux.size()]);
     }
+
+    public Mediator getMediator()
+    	throws BigBangJewelException
+    {
+    	return Mediator.GetInstance(getNameSpace(), (UUID)getAt(8));
+    }
 }

@@ -1,6 +1,7 @@
 package com.premiumminds.BigBang.Jewel.Objects;
 
 import java.lang.reflect.Constructor;
+import java.math.BigDecimal;
 import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.UUID;
@@ -166,5 +167,10 @@ public class SubLine
 		{
 			throw new BigBangJewelException(e.getMessage(), e);
 		}
+    }
+
+    public BigDecimal getPercent()
+    {
+    	return (BigDecimal)getAt(5);
     }
 }
