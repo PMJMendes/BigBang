@@ -11,4 +11,5 @@ public class InsurerAccountingExtra
 	public String text;
 	public Double value;
 	public Boolean isCommsissions;
+	public Boolean hasTax;
 }
