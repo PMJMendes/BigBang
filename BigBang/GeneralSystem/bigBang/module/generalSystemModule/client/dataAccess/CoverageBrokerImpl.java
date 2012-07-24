@@ -61,10 +61,9 @@ CoverageBroker {
 				
 				int i = 0;
 				for(TipifiedListItem item : response) {
-					Category cat = new Category();
-					cat.id = item.id;
-					cat.name = item.value;
-					categories[i] = cat;
+					categories[i] = new Category();
+					categories[i].id = item.id;
+					categories[i].value = item.value;
 					i++;
 				}
 				

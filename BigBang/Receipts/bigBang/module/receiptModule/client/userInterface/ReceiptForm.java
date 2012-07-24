@@ -39,6 +39,7 @@ public class ReceiptForm extends FormView<Receipt> implements ReceiptDataBrokerC
 	protected ExpandableSelectionFormField mediator;
 	protected TextAreaFormField description;
 	protected TextAreaFormField notes;
+	protected NumericTextBoxFormField bonus;
 
 	protected int dataVersion = 0;
 
@@ -69,6 +70,9 @@ public class ReceiptForm extends FormView<Receipt> implements ReceiptDataBrokerC
 		fat.setFieldWidth("100px");
 		fat.setUnitsLabel("€");
 		fat.setTextAligment(TextAlignment.RIGHT);
+		bonus = new NumericTextBoxFormField("Bonus/Malus", true);
+		bonus.setFieldWidth("100px");
+		bonus.setUnitsLabel("€");
 		issueDate = new DatePickerFormField("Data de Emissão");
 		coverageStart = new DatePickerFormField("Vigência");
 		coverageEnd = new DatePickerFormField("Até");
@@ -100,6 +104,7 @@ public class ReceiptForm extends FormView<Receipt> implements ReceiptDataBrokerC
 		addFormField(commission, true);
 		addFormField(retro, true);
 		addFormField(fat, true);
+		addFormField(bonus, true);
 
 		addSection("Datas");
 		addFormFieldGroup(new FormField<?>[]{
@@ -148,6 +153,7 @@ public class ReceiptForm extends FormView<Receipt> implements ReceiptDataBrokerC
 		result.comissions = commission.getValue();
 		result.retrocessions = retro.getValue();
 		result.FATValue = fat.getValue();
+		result.bonusMalus = bonus.getValue();
 		result.issueDate = issueDate.getValue() == null ? null : DateTimeFormat.getFormat("yyyy-MM-dd").format(issueDate.getValue());
 		result.maturityDate = coverageStart.getValue() == null ? null : DateTimeFormat.getFormat("yyyy-MM-dd").format(coverageStart.getValue());
 		result.endDate = coverageEnd.getValue() == null ? null : DateTimeFormat.getFormat("yyyy-MM-dd").format(coverageEnd.getValue());
@@ -199,6 +205,7 @@ public class ReceiptForm extends FormView<Receipt> implements ReceiptDataBrokerC
 		commission.setValue(info.comissions);
 		retro.setValue(info.retrocessions);
 		fat.setValue(info.FATValue);
+		bonus.setValue(info.bonusMalus);
 		if(info.issueDate != null){
 			issueDate.setValue(DateTimeFormat.getFormat("yyyy-MM-dd").parse(info.issueDate));
 		}else{issueDate.clear();}

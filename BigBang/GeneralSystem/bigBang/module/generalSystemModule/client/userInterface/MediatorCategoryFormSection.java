@@ -34,7 +34,7 @@ public class MediatorCategoryFormSection extends CollapsibleFormViewSection {
 	}
 
 	public void setCategory(Category category) {
-		this.setHeaderText(category.name);
+		this.setHeaderText(category.value);
 		broker.getLinesForCategory(category.id, new ResponseHandler<Line[]>() {
 			
 			@Override
