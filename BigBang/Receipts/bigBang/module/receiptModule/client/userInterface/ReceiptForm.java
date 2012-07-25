@@ -140,6 +140,7 @@ public class ReceiptForm extends FormView<Receipt> implements ReceiptDataBrokerC
 			public void onValueChange(ValueChangeEvent<String> event) {
 				bonusMalusValue.setEditable(event.getValue() != null && !event.getValue().isEmpty());
 				bonusMalusValue.setReadOnly(isReadOnly());
+				bonusMalusValue.setValue(null);
 			}
 		});
 		
