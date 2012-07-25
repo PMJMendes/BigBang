@@ -25,7 +25,7 @@ public class UserForm extends FormView<User> {
 		name = new TextBoxFormField("Nome", new UserFormValidator.NameValidator());
 		username = new TextBoxFormField("Nome de Utilizador", new UserFormValidator.UsernameValidator());
 		password = new PasswordTextBoxFormField("Palavra-passe", new UserFormValidator.PasswordValidator());
-		email = new TextBoxFormField("E-mail", new UserFormValidator.EmailValidator());
+		email = new TextBoxFormField("E-mail");
 		role = new ExpandableListBoxFormField(BigBangConstants.EntityIds.USER_PROFILE, "Perfil", new UserFormValidator.UserProfileValidator());
 		costCenter = new ExpandableListBoxFormField(BigBangConstants.EntityIds.COST_CENTER, "Centro de Custo", new UserFormValidator.UserCostCenterValidator());
 

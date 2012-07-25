@@ -62,10 +62,12 @@ public class CasualtyForm extends FormView<Casualty> {
 	
 	public void setForCreate(){
 		manager.setEditable(true);
+		manager.setReadOnly(isReadOnly());
 	}
 	
 	public void setForEdit(){
 		manager.setEditable(false);
+		manager.setReadOnly(isReadOnly());
 	}
 
 	@Override

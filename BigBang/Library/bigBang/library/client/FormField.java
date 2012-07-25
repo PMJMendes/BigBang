@@ -107,6 +107,26 @@ public abstract class FormField<T> extends View implements HasValue<T>, Validata
 		return this.validator.getErrorMessage();
 	}
 
+	public void setMandatory(final boolean mandatory) {
+		setValidator(new FieldValidator<T>() {
+
+			@Override
+			public boolean isValid(T value) {
+				return true;
+			}
+
+			@Override
+			public String getErrorMessage() {
+				return "";
+			}
+
+			@Override
+			public boolean isMandatory() {
+				return mandatory;
+			}
+		});
+	}
+	
 	public boolean isMandatory(){
 		return this.validator == null ? false : this.validator.isMandatory();
 	}

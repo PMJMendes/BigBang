@@ -57,8 +57,6 @@ public abstract class DocumentForm extends FormView<Document>{
 
 		@Override
 		public void setValue(DocInfo docInfo) {
-
-
 			if(docInfo == null){
 				this.setLeftWidget(add);
 				super.setValue(docInfo);
@@ -165,7 +163,9 @@ public abstract class DocumentForm extends FormView<Document>{
 
 		addSection("Informação Geral");
 		name = new TextBoxFormField("Nome");
+		name.setMandatory(true);
 		docType = new ExpandableListBoxFormField(BigBangConstants.TypifiedListIds.DOCUMENT_TYPE, "Tipo");
+		docType.setMandatory(true);
 		name.setWidth("390px");
 		name.setFieldWidth("390px");
 		addFormField(name);

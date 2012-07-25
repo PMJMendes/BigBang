@@ -18,10 +18,13 @@ public class CreateInsurancePolicyForm extends FormView<Void> {
 		addSection("Criação de Apólice");
 		
 		category = new ExpandableListBoxFormField(BigBangConstants.EntityIds.CATEGORY, "Categoria");
+		category.setMandatory(true);
 		category.allowEdition(false);
 		line = new ExpandableListBoxFormField("Ramo");
+		line.setMandatory(true);
 		line.allowEdition(false);
 		subLine = new ExpandableListBoxFormField("Modalidade");
+		subLine.setMandatory(true);
 		subLine.allowEdition(false);
 		
 		FormField<?>[] group = new FormField<?>[]{

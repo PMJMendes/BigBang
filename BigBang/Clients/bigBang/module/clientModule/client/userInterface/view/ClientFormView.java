@@ -58,12 +58,13 @@ public class ClientFormView extends FormView<Client> implements ClientProcessDat
 	public ClientFormView() {
 		super();
 
-		name = new TextBoxFormField("Nome", new ClientFormValidator.ClientNameValidator());
+		name = new TextBoxFormField("Nome");
+		name.setMandatory(true);
 		name.setFieldWidth("600px");
 		number = new TextBoxFormField("Número");
 		number.setEditable(false);
 		number.setFieldWidth("175px");
-		taxNumber = new TextBoxFormField("Nº Contribuinte", new ClientFormValidator.TaxNumberValidator());
+		taxNumber = new TextBoxFormField("Nº Contribuinte");
 		taxNumber.setFieldWidth("100px");
 		address = new AddressFormField();
 		group = new ExpandableListBoxFormField(BigBangConstants.EntityIds.CLIENT_GROUP, "Grupo", new ClientFormValidator.ClientGroupValidator());
@@ -71,9 +72,11 @@ public class ClientFormView extends FormView<Client> implements ClientProcessDat
 		NIB = new TextBoxFormField("NIB", new ClientFormValidator.NIBValidator());
 		NIB.setFieldWidth("200px");
 		mediator = new ExpandableListBoxFormField(BigBangConstants.EntityIds.MEDIATOR, "Mediador", new ClientFormValidator.MediatorValidator());
+		mediator.setMandatory(true);
 		mediator.allowEdition(false);
 		clientManager = new ExpandableListBoxFormField(BigBangConstants.EntityIds.USER, "Gestor de Cliente");
 		profile = new ExpandableListBoxFormField(ModuleConstants.ListIDs.OperationalProfiles, "Perfil Operacional", new ClientFormValidator.ProfileValidator());
+		profile.setMandatory(true);
 		profile.allowEdition(false);
 		CAE = new ExpandableListBoxFormField(BigBangConstants.TypifiedListIds.CAEs, "CAE");
 		CAE.setFieldWidth("400px");
@@ -89,6 +92,7 @@ public class ClientFormView extends FormView<Client> implements ClientProcessDat
 		otherClientType = new ExpandableListBoxFormField(ModuleConstants.ListIDs.ClientSubtypes, "Tipo");
 		notes = new TextAreaFormField();
 		clientType = new RadioButtonFormField();
+		clientType.setMandatory(true);
 
 		addSection("Informação Geral");
 

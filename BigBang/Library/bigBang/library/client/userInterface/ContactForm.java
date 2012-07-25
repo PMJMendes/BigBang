@@ -97,8 +97,10 @@ public class ContactForm extends FormView<Contact> {
 		addSection("Informação Geral");
 
 		name = new TextBoxFormField("Nome"); 
+		name.setMandatory(true);
 		name.setFieldWidth("200px");
 		type = new ExpandableListBoxFormField(BigBangConstants.TypifiedListIds.CONTACT_TYPE, "Tipo");
+		type.setMandatory(true);
 		type.setFieldWidth("155px");
 		addFormField(name);
 		addFormField(type);
