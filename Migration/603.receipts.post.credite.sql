@@ -1,3 +1,24 @@
+/** Mediador directo **/
+
+update credite_egs.tblPNNodes set NodeCount=0 where PK in
+(select n.PK
+from credite_egs.tblPNNodes n
+inner join credite_egs.tblPNProcesses p on p.PK=n.FKProcess
+inner join credite_egs.tblBBReceipts r on r.PK=p.FKData
+where r.PK in
+(select r.PK from credite_egs.tblBBReceipts r
+inner join credite_egs.tblPNProcesses p1 on p1.PK=r.FKProcess
+inner join credite_egs.tblPNProcesses p2 on p2.PK=p1.FKParent
+inner join credite_egs.tblPNProcesses p3 on p3.PK=p2.FKParent,
+credite_egs.tblBBPolicies p
+inner join credite_egs.tblBBClients c on c.PK=p.FKClient,
+credite_egs.tblMediators m
+where (p.PK=p2.FKData or p.PK=p3.FKData)
+and (m.PK=r.FKMediator or (r.FKMediator is null and m.PK=p.FKMediator) or
+(r.FKMediator is null and p.FKMediator is null and m.PK=c.FKMediator))
+and m.MediatorName='(Directo)')
+and n.FKController='2FE06BB6-4858-473A-B15B-A01300D76C71')
+
 /** Perfil simples (AMartins) **/
 
 update credite_egs.tblPNNodes set NodeCount=0 where PK in
