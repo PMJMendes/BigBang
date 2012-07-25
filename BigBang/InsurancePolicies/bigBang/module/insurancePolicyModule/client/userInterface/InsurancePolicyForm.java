@@ -44,6 +44,7 @@ public abstract class InsurancePolicyForm extends FormView<InsurancePolicy> {
 	protected ExpandableListBoxFormField duration;
 	protected ExpandableListBoxFormField fractioning;
 	protected NumericTextBoxFormField premium;
+	protected NumericTextBoxFormField agentPercentage;
 
 	protected FormViewSection coInsurersSection;
 
@@ -80,6 +81,8 @@ public abstract class InsurancePolicyForm extends FormView<InsurancePolicy> {
 		premium = new NumericTextBoxFormField("Prémio Comercial", true);
 		premium.setFieldWidth("175px");
 		premium.setUnitsLabel("€");
+		agentPercentage = new NumericTextBoxFormField("Comissão", false);
+		agentPercentage.setUnitsLabel("%");
 		caseStudy = new CheckBoxFormField("Case Study");
 
 		//CO-INSURANCE
@@ -113,13 +116,14 @@ public abstract class InsurancePolicyForm extends FormView<InsurancePolicy> {
 				startDate,
 				endDate,
 				maturityDate,
-				caseStudy
+				agentPercentage
 		}, true);
 
 		//CO-INSURANCE
 
 		FormField<?>[] group4 = new FormField<?>[]{
-				coInsurance
+				coInsurance,
+				caseStudy
 		};
 
 		addFormFieldGroup(group4, true);
@@ -257,6 +261,7 @@ public abstract class InsurancePolicyForm extends FormView<InsurancePolicy> {
 			result.durationId = duration.getValue();
 			result.fractioningId = fractioning.getValue();
 			result.premium = premium.getValue();
+			result.agentPercentage = agentPercentage.getValue();
 			result.caseStudy = caseStudy.getValue();
 			result.notes = notes.getValue();
 
@@ -310,6 +315,7 @@ public abstract class InsurancePolicyForm extends FormView<InsurancePolicy> {
 
 			this.fractioning.setValue(info.fractioningId);
 			this.premium.setValue(info.premium);
+			this.agentPercentage.setValue(info.agentPercentage);
 
 			if(info.clientId != null) {
 				ClientProcessBroker clientBroker = ((ClientProcessBroker) DataBrokerManager.Util.getInstance().getBroker(BigBangConstants.EntityIds.CLIENT));
