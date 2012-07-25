@@ -286,15 +286,6 @@ TypifiedListClient {
 		}
 	}
 
-	@Override
-	public void clear() {
-		if(managementPanel != null){
-			managementPanel.getList().clearSelection();
-			//			managementPanel.setListId(null);
-		}
-		super.clear();
-	}
-
 	public void setPopupWidth(String width) {
 		managementPanel.asWidget().setWidth(width);
 	}

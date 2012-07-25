@@ -84,14 +84,14 @@ public class TypifiedTextBrokerImpl extends DataBroker<TypifiedText> implements 
 
 	@Override
 	public void unregisterClient(TypifiedTextClient client) {
-		
+
 		for(String tag : clients.keySet()){
 			List<TypifiedTextClient> clientList = clients.get(tag);
 			if(clientList.contains(client)){
 				unregisterClient(tag, client);
 			}
 		}
-		
+
 	}
 
 	@Override
@@ -215,15 +215,17 @@ public class TypifiedTextBrokerImpl extends DataBroker<TypifiedText> implements 
 			public void onResponseSuccess(Void result) {
 				for(Collection<TypifiedText> collection: texts.values()){
 					for(TypifiedText text : collection){
-						collection.remove(text);
-						incrementDataVersion(tag);
-						updateListClients(tag);
-						for(TypifiedTextClient client : clients.get(tag)){
-							client.removeText(text);
-							client.setTypifiedTextDataVersionNumber(getCurrentDataVersion());
+						if(text.id.equalsIgnoreCase(textId)){
+							collection.remove(text);
+							incrementDataVersion(tag);
+							updateListClients(tag);
+							for(TypifiedTextClient client : clients.get(tag)){
+								client.removeText(text);
+								client.setTypifiedTextDataVersionNumber(getCurrentDataVersion());
+							}
+							handler.onResponse(null);
+							return;
 						}
-						handler.onResponse(null);
-						return;
 					}
 				}
 				handler.onResponse(null);
@@ -305,6 +307,9 @@ public class TypifiedTextBrokerImpl extends DataBroker<TypifiedText> implements 
 	@Override
 	public void getText(String tag, String textId,
 			ResponseHandler<TypifiedText> handler) {
+		if(requiresDataRefresh(tag)){
+
+		}
 		List<TypifiedText> listTexts = texts.get(tag);
 
 		for(TypifiedText txt : listTexts){
@@ -350,7 +355,7 @@ public class TypifiedTextBrokerImpl extends DataBroker<TypifiedText> implements 
 						incrementDataVersion(tag);
 						updateListClients(result.tag);
 						handler.onResponse(result);
-						
+
 						for(TypifiedTextClient client : clients.get(tag)){
 							client.updateText(result);
 						}
@@ -369,7 +374,7 @@ public class TypifiedTextBrokerImpl extends DataBroker<TypifiedText> implements 
 			public void onError(Collection<ResponseError> errors) {
 				handler.onError(new String[]{
 						new String("Could not get the original document")	
-					});
+				});
 			}
 
 		});
