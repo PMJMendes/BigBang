@@ -10,9 +10,11 @@ import Jewel.Petri.SysObjects.UndoableOperation;
 
 import com.premiumminds.BigBang.Jewel.BigBangJewelException;
 import com.premiumminds.BigBang.Jewel.Constants;
+import com.premiumminds.BigBang.Jewel.Objects.Mediator;
 import com.premiumminds.BigBang.Jewel.Objects.MediatorAccountingDetail;
 import com.premiumminds.BigBang.Jewel.Objects.MediatorAccountingMap;
 import com.premiumminds.BigBang.Jewel.Objects.MediatorAccountingSet;
+import com.premiumminds.BigBang.Jewel.Objects.Receipt;
 
 public class MediatorAccounting
 	extends UndoableOperation
@@ -57,29 +59,18 @@ public class MediatorAccounting
 	protected void Run(SQLServer pdb)
 		throws JewelPetriException
 	{
+		Receipt lobjReceipt;
+		Mediator lobjMediator;
 		MediatorAccountingSet lobjSet;
-		MediatorAccountingMap lobjSetClient;
-		MediatorAccountingDetail lobjSetReceipt;
+		MediatorAccountingMap lobjMap;
+		MediatorAccountingDetail lobjDetail;
 
-		midMediator = (UUID)GetProcess().GetData().getAt(12);
-		if ( midMediator == null )
-		{
-			if ( Constants.ProcID_Policy.equals(GetProcess().GetParent().GetScriptID()) )
-			{
-				midMediator = (UUID)GetProcess().GetParent().GetData().getAt(11);
-				if ( midMediator == null )
-					midMediator = (UUID)GetProcess().GetParent().GetParent().GetData().getAt(8);
-			}
-			else
-			{
-				midMediator = (UUID)GetProcess().GetParent().GetParent().GetData().getAt(11);
-				if ( midMediator == null )
-					midMediator = (UUID)GetProcess().GetParent().GetParent().GetParent().GetData().getAt(8);
-			}
-		}
-
+		lobjReceipt = (Receipt)GetProcess().GetData();
 		try
 		{
+			lobjMediator = lobjReceipt.getMediator();
+			midMediator = lobjMediator.getKey();
+
 			if ( midSet == null )
 			{
 				lobjSet = MediatorAccountingSet.GetInstance(Engine.getCurrentNameSpace(), null);
@@ -91,20 +82,23 @@ public class MediatorAccounting
 
 			if ( midMap == null )
 			{
-				lobjSetClient = MediatorAccountingMap.GetInstance(Engine.getCurrentNameSpace(), (UUID)null);
-				lobjSetClient.setAt(0, midSet);
-				lobjSetClient.setAt(1, midMediator);
-				lobjSetClient.setAt(2, (Timestamp)null);
-				lobjSetClient.SaveToDb(pdb);
-				midMap = lobjSetClient.getKey();
+				lobjMap = MediatorAccountingMap.GetInstance(Engine.getCurrentNameSpace(), (UUID)null);
+				lobjMap.setAt(0, midSet);
+				lobjMap.setAt(1, midMediator);
+				lobjMap.setAt(2, (Timestamp)null);
+				lobjMap.SaveToDb(pdb);
+				midMap = lobjMap.getKey();
 			}
 
-			lobjSetReceipt = MediatorAccountingDetail.GetInstance(Engine.getCurrentNameSpace(), null);
-			lobjSetReceipt.setAt(0, midMap);
-			lobjSetReceipt.setAt(1, GetProcess().GetDataKey());
-			lobjSetReceipt.setAt(2, false);
-			lobjSetReceipt.SaveToDb(pdb);
-			midDetail = lobjSetReceipt.getKey();
+			lobjDetail = MediatorAccountingDetail.GetInstance(Engine.getCurrentNameSpace(), null);
+			lobjDetail.setAt(0, midMap);
+			lobjDetail.setAt(1, GetProcess().GetDataKey());
+			lobjDetail.setAt(2, false);
+			lobjDetail.SaveToDb(pdb);
+			midDetail = lobjDetail.getKey();
+
+			if ( lobjReceipt.doCalcRetrocession() )
+				lobjReceipt.SaveToDb(pdb);
 		}
 		catch (Throwable e)
 		{

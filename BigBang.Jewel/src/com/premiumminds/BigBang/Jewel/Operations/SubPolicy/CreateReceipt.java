@@ -18,6 +18,7 @@ import com.premiumminds.BigBang.Jewel.Objects.Receipt;
 import com.premiumminds.BigBang.Jewel.Objects.SubPolicy;
 import com.premiumminds.BigBang.Jewel.Operations.ContactOps;
 import com.premiumminds.BigBang.Jewel.Operations.DocOps;
+import com.premiumminds.BigBang.Jewel.Operations.Receipt.ExternBlockDirectRetrocession;
 import com.premiumminds.BigBang.Jewel.Operations.Receipt.ExternForceReverse;
 import com.premiumminds.BigBang.Jewel.Operations.Receipt.ExternForceShortCircuit;
 
@@ -113,7 +114,9 @@ public class CreateReceipt
 			lobjSubP = (SubPolicy)GetProcess().GetData();
 			lobjClient = Client.GetInstance(lobjSubP.getNameSpace(), (UUID)lobjSubP.getAt(2));
 
-			if ( lobjAux.doCalcRetrocession() )
+			if ( "(Directo)".equals(lobjAux.getMediator().getLabel()) )
+				TriggerOp(new ExternBlockDirectRetrocession(lobjProc.getKey()), pdb);
+			else if ( lobjAux.doCalcRetrocession() )
 				lobjAux.SaveToDb(pdb);
 		}
 		catch (Throwable e)

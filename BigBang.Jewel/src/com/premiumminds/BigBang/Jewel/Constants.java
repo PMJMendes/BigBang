@@ -398,6 +398,7 @@ public class Constants
 	public static final UUID OPID_Receipt_ReturnToInsurer                = UUID.fromString("A34C65D4-0B2A-4083-BB16-A01300D3D013");
 	public static final UUID OPID_Receipt_DeleteReceipt                  = UUID.fromString("994D421F-E414-41EF-8D02-9F8A00EEE620");
 	public static final UUID OPID_Receipt_ExternResumeReceipt            = UUID.fromString("FFD66FBD-5C98-4134-9B6C-A01300CEE472");
+	public static final UUID OPID_Receipt_ExternBlockDirectRetrocession  = UUID.fromString("50AF21D9-8DE1-4038-A380-A099010257A4");
 
 	//Casualty Operations
 	public static final UUID OPID_Casualty_AutoProcessVents              = UUID.fromString("4DB7EF2A-DB71-4BF4-810B-A02E00FA9F94");
@@ -603,6 +604,7 @@ public class Constants
 	public static final UUID TID_ExpenseNotice       = UUID.fromString("E2C31990-C896-479C-8DA6-A03F00BD8B3A");
 	public static final UUID TID_ExpenseReturn       = UUID.fromString("660446FF-8D1D-492C-AF06-A03F00BE1817");
 	public static final UUID TID_InsurerAccounting   = UUID.fromString("501A9331-3FAB-478F-A682-A0270124E6B3");
+	public static final UUID TID_MediatorAccounting  = UUID.fromString("E9A0F1C0-AE70-49AD-887E-A0990128BB1E");
 
 	// Contact Types
 	public static final UUID CtTypeID_ReceiptReturn = UUID.fromString("BA706479-AE31-4E69-A7F0-9EEE01336CA4");
@@ -624,6 +626,7 @@ public class Constants
 	public static final UUID DocID_ExpenseNotice          = UUID.fromString("E95D510B-396E-49B0-9ECA-A03F00BF1CFE");
 	public static final UUID DocID_ExpenseReturn          = UUID.fromString("B78E445E-E061-40DA-914D-A03F00BF2AB3");
 	public static final UUID DocID_InsurerReceipt         = UUID.fromString("CF2849F7-7967-4CCD-8731-A09400D4310C");
+	public static final UUID DocID_MediatorPayment        = UUID.fromString("F6663F27-83B8-40DE-AB00-A0990123C856");
 
 	// Report Types
 	public static final UUID RTypeID_Parameter   = UUID.fromString("EFF85260-CB13-4599-8EFD-A032010C4AED");

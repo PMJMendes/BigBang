@@ -103,7 +103,7 @@ public class InsurerAccountingMap
 		larrAux = super.buildTable(plngNumber);
 		l = larrAux.length;
 
-		larrRows = new TR[larrAux.length + 11];
+		larrRows = new TR[l + 11];
 		larrRows[0] = larrAux[0];
 
 		larrRows[1] = ReportBuilder.constructDualRow("Seguradora",

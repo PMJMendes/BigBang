@@ -1,5 +1,6 @@
 package com.premiumminds.BigBang.Jewel.Objects;
 
+import java.math.BigDecimal;
 import java.sql.ResultSet;
 import java.util.Arrays;
 import java.util.UUID;
@@ -9,10 +10,17 @@ import org.apache.ecs.html.TR;
 
 import Jewel.Engine.Engine;
 import Jewel.Engine.Constants.TypeDefGUIDs;
+import Jewel.Engine.DataAccess.SQLServer;
+import Jewel.Engine.SysObjects.FileXfer;
 import Jewel.Engine.SysObjects.JewelEngineException;
 
 import com.premiumminds.BigBang.Jewel.BigBangJewelException;
 import com.premiumminds.BigBang.Jewel.Constants;
+import com.premiumminds.BigBang.Jewel.Data.DocInfoData;
+import com.premiumminds.BigBang.Jewel.Data.DocumentData;
+import com.premiumminds.BigBang.Jewel.Operations.DocOps;
+import com.premiumminds.BigBang.Jewel.Operations.General.ManageMediators;
+import com.premiumminds.BigBang.Jewel.Reports.MediatorAccountingReport;
 import com.premiumminds.BigBang.Jewel.SysObjects.ReportBuilder;
 import com.premiumminds.BigBang.Jewel.SysObjects.TransactionMapBase;
 
@@ -56,26 +64,24 @@ public class MediatorAccountingMap
 		return Constants.ObjID_MediatorAccountingDetail;
 	}
 
-	public void appendPreHTML(StringBuilder pstrBuffer)
+	public void Settle(SQLServer pdb)
 		throws BigBangJewelException
 	{
-	}
+		ManageMediators lopMM;
 
-	public void appendMidHTML(StringBuilder pstrBuffer)
-		throws BigBangJewelException
-	{
-		pstrBuffer.append("<td style=\"white-space:nowrap;padding-left:5px;border-left:1px solid #3f6d9d;border-bottom:1px solid #3f6d9d;\">")
-				.append("Comissão")
-				.append("</td> ");
+		super.Settle(pdb);
 
-		pstrBuffer.append("<td style=\"white-space:nowrap;padding-left:5px;border-left:1px solid #3f6d9d;border-bottom:1px solid #3f6d9d;\">")
-				.append("Retrocessão")
-				.append("</td> ");
-	}
+		lopMM = new ManageMediators(GeneralSystem.GetAnyInstance(Engine.getCurrentNameSpace()).GetProcessID());
+		lopMM.mobjDocOps = generateDocOp(pdb);
 
-	public void appendPostHTML(StringBuilder pstrBuffer)
-		throws BigBangJewelException
-	{
+		try
+		{
+			lopMM.Execute(pdb);
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangJewelException(e.getMessage(), e);
+		}
 	}
 
 	public TR[] buildTable(int plngNumber)
@@ -83,11 +89,12 @@ public class MediatorAccountingMap
 	{
 		TR[] larrAux;
 		TR[] larrRows;
-		int i;
+		int l, i;
 
 		larrAux = super.buildTable(plngNumber);
+		l = larrAux.length;
 
-		larrRows = new TR[larrAux.length + 1];
+		larrRows = new TR[larrAux.length + 2];
 		larrRows[0] = larrAux[0];
 
 		larrRows[1] = ReportBuilder.constructDualRow("Agente",
@@ -95,6 +102,11 @@ public class MediatorAccountingMap
 
 		for ( i = 1; i < larrAux.length; i++ )
 			larrRows[i + 1] = larrAux[i];
+
+		larrAux = buildExtraRows();
+
+		for ( i = l + 1; i < larrRows.length; i++ )
+			larrRows[i] = larrAux[i - l - 1];
 
 		return larrRows;
 	}
@@ -113,9 +125,71 @@ public class MediatorAccountingMap
 		larrCells[i] = ReportBuilder.buildHeaderCell("Comissão");
 		ReportBuilder.styleCell(larrCells[i], false, true);
 
-		larrCells[i] = ReportBuilder.buildHeaderCell("Retrocessão");
-		ReportBuilder.styleCell(larrCells[i], false, true);
+		larrCells[i + 1] = ReportBuilder.buildHeaderCell("Retrocessão");
+		ReportBuilder.styleCell(larrCells[i + 1], false, true);
 
 		return larrCells;
+	}
+
+	private TR[] buildExtraRows()
+		throws BigBangJewelException
+	{
+		BigDecimal ldblTotal;
+		int i;
+
+		ldblTotal = new BigDecimal(0.0);
+
+		getDetails();
+		for ( i = 0; i < marrDetails.length; i++ )
+		{
+			ldblTotal = ldblTotal.add(((MediatorAccountingDetail)marrDetails[i]).getRetrocession());
+		}
+
+		TR[] larrRows;
+
+		larrRows = new TR[1];
+
+		larrRows[0] = ReportBuilder.constructDualRow("Total de Retrocessões", ldblTotal, TypeDefGUIDs.T_Decimal);
+
+		return larrRows;
+	}
+
+	private DocOps generateDocOp(SQLServer pdb)
+		throws BigBangJewelException
+	{
+		MediatorAccountingReport lrepMA;
+		FileXfer lobjFile;
+		DocumentData lobjDoc;
+		DocOps lobjResult;
+
+		lrepMA = new MediatorAccountingReport();
+		lrepMA.midMap = getKey();
+		lobjFile = lrepMA.Generate();
+
+		lobjDoc = new DocumentData();
+		lobjDoc.mstrName = "Retrocessão";
+		lobjDoc.midOwnerType = Constants.ObjID_Mediator;
+		lobjDoc.midOwnerId = (UUID)getAt(TransactionMapBase.I.OWNER);
+		lobjDoc.midDocType = Constants.DocID_MediatorPayment;
+		lobjDoc.mstrText = null;
+		lobjDoc.mobjFile = lobjFile.GetVarData();
+		lobjDoc.marrInfo = new DocInfoData[4];
+		lobjDoc.marrInfo[0] = new DocInfoData();
+		lobjDoc.marrInfo[0].mstrType = "Número de Recibos";
+		lobjDoc.marrInfo[0].mstrValue = Integer.toString(lrepMA.mlngCount);
+		lobjDoc.marrInfo[1] = new DocInfoData();
+		lobjDoc.marrInfo[1].mstrType = "Total de Prémios";
+		lobjDoc.marrInfo[1].mstrValue = String.format("%,.2f", lrepMA.mdblTotalPremiums);
+		lobjDoc.marrInfo[2] = new DocInfoData();
+		lobjDoc.marrInfo[2].mstrType = "Total de Comissões";
+		lobjDoc.marrInfo[2].mstrValue = String.format("%,.2f", lrepMA.mdblTotalComms);
+		lobjDoc.marrInfo[3] = new DocInfoData();
+		lobjDoc.marrInfo[3].mstrType = "Total de Retrocessões";
+		lobjDoc.marrInfo[3].mstrValue = String.format("%,.2f", lrepMA.mdblTotalRetros);
+
+		lobjResult = new DocOps();
+		lobjResult.marrCreate = new DocumentData[]{lobjDoc};
+
+		return lobjResult;
 	}
 }

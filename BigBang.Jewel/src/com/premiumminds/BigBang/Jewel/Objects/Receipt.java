@@ -403,78 +403,77 @@ public class Receipt
     public boolean doCalcRetrocession()
     	throws BigBangJewelException
     {
+    	BigDecimal ldblResult;
+
+    	ldblResult = internalCalcRetrocession();
+
+    	if ( ldblResult == null )
+    		return false;
+
+		try
+		{
+			setAt(6, ldblResult);
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangJewelException(e.getMessage(), e);
+		}
+
+		return true;
+    }
+
+    private BigDecimal internalCalcRetrocession()
+    	throws BigBangJewelException
+    {
     	Mediator lobjMed;
     	UUID lidProfile;
-    	BigDecimal ldblPercent;
     	MediatorBase lobjCalc;
-    	BigDecimal ldblResult;
+    	BigDecimal ldblPercent;
+    	BigDecimal ldblBase;
+    	boolean lbFound;
 
     	lobjMed = getMediator();
     	lidProfile = lobjMed.getProfile();
 
+		if ( Constants.MCPID_Special.equals(lidProfile) )
+		{
+			lobjCalc = lobjMed.GetDetailedObject(this);
+
+			if ( lobjCalc == null )
+				return null;
+
+			return lobjCalc.getResult();
+		}
+
+    	if ( getAt(I.RETROCESSIONS) != null )
+    		return null;
+
     	if ( Constants.MCPID_None.equals(lidProfile) )
-    	{
-    		try
-    		{
-				setAt(6, new BigDecimal(0.0));
-			}
-    		catch (Throwable e)
-    		{
-    			throw new BigBangJewelException(e.getMessage(), e);
-			}
-    		return true;
-    	}
+			return new BigDecimal(0.00);
+
+		ldblPercent = null;
+		ldblBase = null;
+		lbFound = false;
 
 		if ( Constants.MCPID_Issuing.equals(lidProfile) )
 		{
 			ldblPercent = getAbsolutePolicy().GetSubLine().getPercent();
-	    	if ( (ldblPercent == null) || (getAt(4) == null) )
+			ldblBase = (BigDecimal)getAt(4);
+			if ( (ldblBase != null) && (getAt(17) != null) )
 			{
-	    		try
-	    		{
-					setAt(6, null);
-				}
-	    		catch (Throwable e)
-	    		{
-	    			throw new BigBangJewelException(e.getMessage(), e);
-				}
-				return false;
+				if ( (getAt(18) == null) || !((Boolean)getAt(18)) )
+					ldblBase = ldblBase.subtract((BigDecimal)getAt(17));
+				else
+					ldblBase = ldblBase.add((BigDecimal)getAt(17));
 			}
-    		try
-    		{
-    			setAt(6, ldblPercent.abs().multiply((BigDecimal)getAt(4)).setScale(2, RoundingMode.HALF_UP));
-			}
-    		catch (Throwable e)
-    		{
-    			throw new BigBangJewelException(e.getMessage(), e);
-			}
-			return true;
+			lbFound = true;
 		}
 
 		if ( Constants.MCPID_Percentage.equals(lidProfile) )
 		{
 			ldblPercent = lobjMed.getPercent();
-			if ( (ldblPercent == null) || (getAt(5) == null) )
-			{
-	    		try
-	    		{
-					setAt(6, null);
-				}
-	    		catch (Throwable e)
-	    		{
-	    			throw new BigBangJewelException(e.getMessage(), e);
-				}
-				return false;
-			}
-    		try
-    		{
-    			setAt(6, ldblPercent.abs().multiply((BigDecimal)getAt(5)).setScale(2, RoundingMode.HALF_UP));
-			}
-    		catch (Throwable e)
-    		{
-    			throw new BigBangJewelException(e.getMessage(), e);
-			}
-			return true;
+			ldblBase = (BigDecimal)getAt(5);
+			lbFound = true;
 		}
 
 		if ( Constants.MCPID_Negotiated.equals(lidProfile) )
@@ -482,68 +481,23 @@ public class Receipt
 			ldblPercent = lobjMed.GetCurrentDealFor(getAbsolutePolicy().GetSubLine().getKey());
 			if ( ldblPercent == null )
 				ldblPercent = getAbsolutePolicy().GetSubLine().getPercent();
-	    	if ( (ldblPercent == null) || (getAt(4) == null) )
+			ldblBase = (BigDecimal)getAt(4);
+			if ( (ldblBase != null) && (getAt(17) != null) )
 			{
-	    		try
-	    		{
-					setAt(6, null);
-				}
-	    		catch (Throwable e)
-	    		{
-	    			throw new BigBangJewelException(e.getMessage(), e);
-				}
-				return false;
+				if ( (getAt(18) == null) || !((Boolean)getAt(18)) )
+					ldblBase = ldblBase.subtract((BigDecimal)getAt(17));
+				else
+					ldblBase = ldblBase.add((BigDecimal)getAt(17));
 			}
-    		try
-    		{
-    			setAt(6, ldblPercent.abs().multiply((BigDecimal)getAt(4)).setScale(2, RoundingMode.HALF_UP));
-			}
-    		catch (Throwable e)
-    		{
-    			throw new BigBangJewelException(e.getMessage(), e);
-			}
-			return true;
+			lbFound = true;
 		}
 
-		if ( Constants.MCPID_Special.equals(lidProfile) )
-		{
-			lobjCalc = lobjMed.GetDetailedObject(this);
-			if ( lobjCalc == null )
-			{
-	    		try
-	    		{
-					setAt(6, null);
-				}
-	    		catch (Throwable e)
-	    		{
-	    			throw new BigBangJewelException(e.getMessage(), e);
-				}
-				return false;
-			}
-			ldblResult = lobjCalc.getResult();
-			if ( ldblResult == null )
-			{
-	    		try
-	    		{
-					setAt(6, null);
-				}
-	    		catch (Throwable e)
-	    		{
-	    			throw new BigBangJewelException(e.getMessage(), e);
-				}
-				return false;
-			}
-    		try
-    		{
-    			setAt(6, ldblResult.abs());
-			}
-    		catch (Throwable e)
-    		{
-    			throw new BigBangJewelException(e.getMessage(), e);
-			}
-			return true;
-		}
+		if ( !lbFound )
+			throw new BigBangJewelException("Perfil de comissionamento desconhecido.");
 
-		throw new BigBangJewelException("Perfil de comissionamento desconhecido.");
+    	if ( (ldblPercent == null) || (ldblBase == null) )
+    		return null;
+
+		return ldblPercent.abs().multiply(ldblBase).setScale(2, RoundingMode.HALF_UP);
     }
 }

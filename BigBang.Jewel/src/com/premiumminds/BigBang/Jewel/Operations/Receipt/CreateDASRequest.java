@@ -137,7 +137,7 @@ public class CreateDASRequest
 			generateDocOp(GetProcess().GetDataKey());
 
 			lobjSet = PrintSet.GetInstance(Engine.getCurrentNameSpace(), (UUID)null);
-			lobjSet.setAt(0, Constants.TID_PaymentNotice);
+			lobjSet.setAt(0, Constants.TID_DASRequest);
 			lobjSet.setAt(1, new Timestamp(new java.util.Date().getTime()));
 			lobjSet.setAt(2, Engine.getCurrentUser());
 			lobjSet.setAt(3, (Timestamp)null);

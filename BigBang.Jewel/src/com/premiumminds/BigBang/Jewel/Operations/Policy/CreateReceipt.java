@@ -18,6 +18,7 @@ import com.premiumminds.BigBang.Jewel.Objects.Client;
 import com.premiumminds.BigBang.Jewel.Objects.Receipt;
 import com.premiumminds.BigBang.Jewel.Operations.ContactOps;
 import com.premiumminds.BigBang.Jewel.Operations.DocOps;
+import com.premiumminds.BigBang.Jewel.Operations.Receipt.ExternBlockDirectRetrocession;
 import com.premiumminds.BigBang.Jewel.Operations.Receipt.ExternForceReverse;
 import com.premiumminds.BigBang.Jewel.Operations.Receipt.ExternForceShortCircuit;
 import com.premiumminds.BigBang.Jewel.Operations.Receipt.TriggerImageOnCreate;
@@ -112,7 +113,9 @@ public class CreateReceipt
 			mobjData.midProcess = lobjProc.getKey();
 			mobjData.mobjPrevValues = null;
 
-			if ( lobjAux.doCalcRetrocession() )
+			if ( "(Directo)".equals(lobjAux.getMediator().getLabel()) )
+				TriggerOp(new ExternBlockDirectRetrocession(lobjProc.getKey()), pdb);
+			else if ( lobjAux.doCalcRetrocession() )
 				lobjAux.SaveToDb(pdb);
 		}
 		catch (Throwable e)

@@ -1,5 +1,6 @@
 package com.premiumminds.BigBang.Jewel.Objects;
 
+import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.UUID;
 
@@ -58,5 +59,23 @@ public class MediatorAccountingDetail
 		ReportBuilder.styleCell(larrCells[i + 1], true, true);
 
 		return larrCells;
+	}
+
+	public BigDecimal getPremium()
+		throws BigBangJewelException
+	{
+		return (BigDecimal)getReceipt().getAt(Receipt.I.TOTALPREMIUM);
+	}
+
+	public BigDecimal getCommission()
+		throws BigBangJewelException
+	{
+		return (BigDecimal)getReceipt().getAt(Receipt.I.COMMISSIONS);
+	}
+
+	public BigDecimal getRetrocession()
+		throws BigBangJewelException
+	{
+		return (BigDecimal)getReceipt().getAt(Receipt.I.RETROCESSIONS);
 	}
 }

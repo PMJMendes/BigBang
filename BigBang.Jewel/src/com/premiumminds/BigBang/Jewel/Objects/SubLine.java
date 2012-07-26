@@ -173,4 +173,12 @@ public class SubLine
     {
     	return (BigDecimal)getAt(5);
     }
+
+    public String getDescription()
+    {
+    	if ( getAt(7) == null )
+    		return getLine().getCategory().getLabel();
+
+    	return (String)getAt(7);
+    }
 }
