@@ -11,6 +11,8 @@ import Jewel.Engine.Implementation.Entity;
 import Jewel.Engine.Implementation.User;
 import Jewel.Engine.Interfaces.IEntity;
 import Jewel.Engine.SysObjects.JewelEngineException;
+import Jewel.Petri.Objects.PNScript;
+import Jewel.Petri.SysObjects.JewelPetriException;
 import Jewel.Petri.SysObjects.ProcessData;
 
 import com.premiumminds.BigBang.Jewel.BigBangJewelException;
@@ -19,6 +21,14 @@ import com.premiumminds.BigBang.Jewel.Constants;
 public class MgrXFer
 	extends ProcessData
 {
+	public static class I
+	{
+		public static int PROCESS         = 0;
+		public static int NEWMANAGER      = 1;
+//		public static int OUTEROBJECTTYPE = 2;
+		public static int SCRIPT          = 3;
+	}
+
     public static MgrXFer GetInstance(UUID pidNameSpace, UUID pidKey)
 		throws BigBangJewelException
 	{
@@ -84,6 +94,39 @@ public class MgrXFer
     	return lobjUser.getDisplayName();
     }
 
+	public UUID GetProcessID()
+	{
+		return (UUID)getAt(I.PROCESS);
+	}
+
+	public void SetProcessID(UUID pidProcess)
+	{
+		internalSetAt(I.PROCESS, pidProcess);
+	}
+
+	public UUID GetNewManagerID()
+	{
+		return (UUID)getAt(I.NEWMANAGER);
+	}
+
+	public UUID GetOuterScript()
+	{
+		return (UUID)getAt(I.SCRIPT);
+	}
+
+	public UUID GetOuterObjectType()
+		throws BigBangJewelException
+	{
+		try
+		{
+			return PNScript.GetInstance(getNameSpace(), GetOuterScript()).GetDataType();
+		}
+		catch (JewelPetriException e)
+		{
+			throw new BigBangJewelException(e.getMessage(), e);
+		}
+	}
+
 	public UUID[] GetProcessIDs()
 	{
 		UUID[] larrResult;
@@ -91,16 +134,51 @@ public class MgrXFer
 
 		larrResult = new UUID[marrProcessHolders.length];
 		for ( i = 0; i < larrResult.length; i++ )
-			larrResult[i] = (UUID) marrProcessHolders[i].getAt(1);
+			larrResult[i] = (UUID) marrProcessHolders[i].getProcess();
 
 		return larrResult;
+	}
+
+	public UUID[] GetUndoableProcessIDs()
+	{
+		ArrayList<UUID> larrResult;
+		int i;
+
+		larrResult = new ArrayList<UUID>();
+		for ( i = 0; i < marrProcessHolders.length; i++ )
+			if ( marrProcessHolders[i].getCanUndo() )
+				larrResult.add((UUID) marrProcessHolders[i].getProcess());
+
+		return larrResult.toArray(new UUID[larrResult.size()]);
+	}
+
+	public void SetUndone(UUID pidProcess, SQLServer pdb)
+		throws BigBangJewelException
+	{
+		int i;
+
+		for ( i = 0; i < marrProcessHolders.length; i++ )
+		{
+			if ( marrProcessHolders[i].getProcess().equals(pidProcess) )
+			{
+				try
+				{
+					marrProcessHolders[i].setAt(MgrXFerProcHolder.I.ISUNDONE, true);
+					marrProcessHolders[i].SaveToDb(pdb);
+				}
+				catch (Throwable e)
+				{
+					throw new BigBangJewelException(e.getMessage(), e);
+				}
+				break;
+			}
+		}
 	}
 
 	public void InitNew(UUID[] parrProcIDs, SQLServer pdb)
 		throws BigBangJewelException
 	{
 		ArrayList<MgrXFerProcHolder> larrAux;
-		UUID lidAux;
 		int i;
 		MgrXFerProcHolder lobjAux;
 
@@ -115,13 +193,12 @@ public class MgrXFer
 
 		try
 		{
-			lidAux = Engine.FindEntity(Engine.getCurrentNameSpace(), Constants.ObjID_MgrXFerProc);
-
 			for ( i = 0; i < parrProcIDs.length; i++ )
 			{
-				lobjAux = (MgrXFerProcHolder)Engine.GetWorkInstance(lidAux, (UUID)null);
-				lobjAux.setAt(0, getKey());
-				lobjAux.setAt(1, parrProcIDs[i]);
+				lobjAux = MgrXFerProcHolder.GetInstance(Engine.getCurrentNameSpace(), (UUID)null);
+				lobjAux.setAt(MgrXFerProcHolder.I.OWNER, getKey());
+				lobjAux.setAt(MgrXFerProcHolder.I.PROCESS, parrProcIDs[i]);
+				lobjAux.setAt(MgrXFerProcHolder.I.ISUNDONE, false);
 				lobjAux.SaveToDb(pdb);
 
 				larrAux.add(lobjAux);
@@ -135,67 +212,27 @@ public class MgrXFer
 		marrProcessHolders = larrAux.toArray(new MgrXFerProcHolder[larrAux.size()]);
 	}
 
-	public void ClearData(SQLServer pdb)
-		throws BigBangJewelException
-	{
-		IEntity lrefAux;
-		int i;
-
-		if ( getKey() == null )
-			throw new BigBangJewelException("Erro: Não pode limpar os dados de uma transferência nova antes de gravar.");
-
-		try
-		{
-			lrefAux = Entity.GetInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), Constants.ObjID_MgrXFerProc));
-			for ( i = 0; i < marrProcessHolders.length; i++ )
-				lrefAux.Delete(pdb, marrProcessHolders[i].getKey());
-		}
-		catch (Throwable e)
-		{
-			marrProcessHolders = null;
-			throw new BigBangJewelException(e.getMessage(), e);
-		}
-
-		marrProcessHolders = new MgrXFerProcHolder[0];
-	}
-
-	public UUID GetProcessID()
-	{
-		return (UUID)getAt(0);
-	}
-
-	public void SetProcessID(UUID pidProcess)
-	{
-		internalSetAt(0, pidProcess);
-	}
-
-	public UUID GetOldManagerID()
-	{
-		return (UUID)getAt(1);
-	}
-
-	public UUID GetNewManagerID()
-	{
-		return (UUID)getAt(2);
-	}
-
-	public String GetTag()
-	{
-		return (String)getAt(3);
-	}
-
-	public UUID GetRequestingUser()
-	{
-		return (UUID)getAt(4);
-	}
-
-	public boolean IsMassTransfer()
-	{
-		return (Boolean)getAt(5);
-	}
-
-	public UUID GetOuterObjectType()
-	{
-		return (UUID)getAt(6);
-	}
+//	public void ClearData(SQLServer pdb)
+//		throws BigBangJewelException
+//	{
+//		IEntity lrefAux;
+//		int i;
+//
+//		if ( getKey() == null )
+//			throw new BigBangJewelException("Erro: Não pode limpar os dados de uma transferência nova antes de gravar.");
+//
+//		try
+//		{
+//			lrefAux = Entity.GetInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), Constants.ObjID_MgrXFerProc));
+//			for ( i = 0; i < marrProcessHolders.length; i++ )
+//				lrefAux.Delete(pdb, marrProcessHolders[i].getKey());
+//		}
+//		catch (Throwable e)
+//		{
+//			marrProcessHolders = null;
+//			throw new BigBangJewelException(e.getMessage(), e);
+//		}
+//
+//		marrProcessHolders = new MgrXFerProcHolder[0];
+//	}
 }

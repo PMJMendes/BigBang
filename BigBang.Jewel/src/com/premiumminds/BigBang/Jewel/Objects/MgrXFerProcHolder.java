@@ -13,6 +13,13 @@ import Jewel.Engine.SysObjects.ObjectBase;
 public class MgrXFerProcHolder
 	extends ObjectBase
 {
+	public static class I
+	{
+		public static int OWNER    = 0;
+		public static int PROCESS  = 1;
+		public static int ISUNDONE = 2;
+	}
+
     public static MgrXFerProcHolder GetInstance(UUID pidNameSpace, UUID pidKey)
 		throws BigBangJewelException
 	{
@@ -62,5 +69,15 @@ public class MgrXFerProcHolder
 		}
 
 		return mrefOwner;
+	}
+
+	public boolean getCanUndo()
+	{
+		return !(Boolean)getAt(I.ISUNDONE);
+	}
+
+	public UUID getProcess()
+	{
+		return (UUID)getAt(I.PROCESS);
 	}
 }

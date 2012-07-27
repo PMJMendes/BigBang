@@ -1,12 +1,18 @@
 package bigBang.library.server;
 
 import java.sql.Timestamp;
+import java.util.Calendar;
 import java.util.UUID;
 
 import Jewel.Engine.Engine;
+import Jewel.Engine.DataAccess.MasterDB;
+import Jewel.Engine.DataAccess.SQLServer;
 import Jewel.Engine.SysObjects.ObjectBase;
 import Jewel.Petri.Interfaces.IProcess;
+import Jewel.Petri.Interfaces.IScript;
 import Jewel.Petri.Objects.PNProcess;
+import Jewel.Petri.Objects.PNScript;
+import Jewel.Petri.SysObjects.ProcessData;
 import bigBang.definitions.shared.CasualtyStub;
 import bigBang.definitions.shared.ClientStub;
 import bigBang.definitions.shared.InsurancePolicyStub;
@@ -28,8 +34,6 @@ import com.premiumminds.BigBang.Jewel.Objects.MgrXFer;
 import com.premiumminds.BigBang.Jewel.Objects.Policy;
 import com.premiumminds.BigBang.Jewel.Objects.QuoteRequest;
 import com.premiumminds.BigBang.Jewel.Objects.SubLine;
-import com.premiumminds.BigBang.Jewel.Operations.MgrXFer.AcceptXFer;
-import com.premiumminds.BigBang.Jewel.Operations.MgrXFer.CancelXFer;
 
 public class TransferManagerServiceImpl
 	extends EngineImplementor
@@ -37,7 +41,277 @@ public class TransferManagerServiceImpl
 {
 	private static final long serialVersionUID = 1L;
 
-	public static SearchResult sBuildStub(UUID pidType, UUID pidKey)
+	public static ManagerTransfer sGetTransfer(UUID pidTransfer)
+		throws BigBangException
+	{
+		MgrXFer lobjXFer;
+		ManagerTransfer lobjResult;
+		UUID[] larrProcesses;
+		int i;
+		IProcess lobjProcess;
+
+		try
+		{
+			lobjXFer = MgrXFer.GetInstance(Engine.getCurrentNameSpace(), pidTransfer);
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangException(e.getMessage(), e);
+		}
+
+		lobjResult = new ManagerTransfer();
+
+		lobjResult.id = lobjXFer.getKey().toString();
+		lobjResult.newManagerId = lobjXFer.GetNewManagerID().toString();
+		try
+		{
+			lobjResult.objectTypeId = lobjXFer.GetOuterObjectType().toString();
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangException(e.getMessage(), e);
+		}
+		lobjResult.processId = lobjXFer.GetProcessID().toString();
+
+		larrProcesses = lobjXFer.GetProcessIDs();
+		lobjResult.dataObjectIds = new String[larrProcesses.length];
+		lobjResult.objectStubs = new SearchResult[larrProcesses.length];
+		for ( i = 0; i < larrProcesses.length; i++ )
+		{
+			try
+			{
+				lobjProcess = PNProcess.GetInstance(Engine.getCurrentNameSpace(), larrProcesses[i]);
+				lobjResult.objectStubs[i] = BuildStub(lobjXFer.GetOuterObjectType(), lobjProcess.GetDataKey());
+			}
+			catch (Throwable e)
+			{
+				throw new BigBangException(e.getMessage(), e);
+			}
+			lobjResult.dataObjectIds[i] = lobjProcess.GetDataKey().toString();
+		}
+
+		lobjResult.permissions = BigBangPermissionServiceImpl.sGetProcessPermissions(lobjXFer.GetProcessID());
+
+		return lobjResult;
+	}
+
+	public static ManagerTransfer sCreateMassTransfer(ManagerTransfer transfer, UUID pidScript)
+		throws BigBangException
+	{
+		Timestamp ldtAux;
+		Calendar ldtAux2;
+		UUID lidManager;
+		UUID lidEntity;
+		SQLServer ldb;
+		MgrXFer lobjXFer;
+		UUID [] larrProcessIDs;
+		ProcessData lobjTarget;
+		int i;
+		IScript lobjScript;
+
+		ldtAux = new Timestamp(new java.util.Date().getTime());
+    	ldtAux2 = Calendar.getInstance();
+    	ldtAux2.setTimeInMillis(ldtAux.getTime());
+    	ldtAux2.add(Calendar.DAY_OF_MONTH, 7);
+
+    	if ( transfer.newManagerId == null )
+    		throw new BigBangException("Erro: Novo gestor não indicado.");
+    	lidManager = UUID.fromString(transfer.newManagerId);
+
+		try
+		{
+			lidEntity = Engine.FindEntity(Engine.getCurrentNameSpace(), UUID.fromString(transfer.objectTypeId));
+			ldb = new MasterDB();
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangException(e.getMessage(), e);
+		}
+
+		try
+		{
+			ldb.BeginTrans();
+		}
+		catch (Throwable e)
+		{
+			try { ldb.Disconnect(); } catch (Throwable e1) {}
+			throw new BigBangException(e.getMessage(), e);
+		}
+
+		lobjXFer = null;
+		larrProcessIDs = new UUID[transfer.dataObjectIds.length];
+		try
+		{
+			for ( i = 0 ; i < larrProcessIDs.length; i++ )
+			{
+				lobjTarget = (ProcessData)Engine.GetWorkInstance(lidEntity, UUID.fromString(transfer.dataObjectIds[i]));
+				larrProcessIDs[i] = lobjTarget.GetProcessID();
+			}
+
+			lobjXFer = MgrXFer.GetInstance(Engine.getCurrentNameSpace(), (UUID)null);
+			lobjXFer.setAt(MgrXFer.I.NEWMANAGER, lidManager);
+			lobjXFer.setAt(MgrXFer.I.SCRIPT, pidScript);
+			lobjXFer.SaveToDb(ldb);
+			lobjXFer.InitNew(larrProcessIDs, ldb);
+
+			lobjScript = PNScript.GetInstance(Engine.getCurrentNameSpace(), Constants.ProcID_MgrXFer);
+			lobjScript.CreateInstance(Engine.getCurrentNameSpace(), lobjXFer.getKey(), null, null, ldb);
+		}
+		catch (Throwable e)
+		{
+			try { ldb.Rollback(); } catch (Throwable e1) {}
+			try { ldb.Disconnect(); } catch (Throwable e1) {}
+			throw new BigBangException(e.getMessage(), e);
+		}
+
+		try
+		{
+			ldb.Commit();
+		}
+		catch (Throwable e)
+		{
+			try { ldb.Disconnect(); } catch (Throwable e1) {}
+			throw new BigBangException(e.getMessage(), e);
+		}
+
+		try
+		{
+			ldb.Disconnect();
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangException(e.getMessage(), e);
+		}
+
+		return sGetTransfer(lobjXFer.getKey());
+	}
+
+	public ManagerTransfer getTransfer(String transferId)
+		throws SessionExpiredException, BigBangException
+	{
+		if ( Engine.getCurrentUser() == null )
+			throw new SessionExpiredException();
+
+		return sGetTransfer(UUID.fromString(transferId));
+	}
+
+	public ManagerTransfer acceptTransfer(String transferId)
+		throws SessionExpiredException, BigBangException
+	{
+//		MgrXFer lobjXFer;
+//		UUID lidProc;
+//		ExecXFer lobjAX;
+//		UUID[] larrProcs;
+//		ManagerTransfer lobjResult;
+//		int i;
+
+		if ( Engine.getCurrentUser() == null )
+			throw new SessionExpiredException();
+
+		throw new BigBangException("Deprecated.");
+
+//		try
+//		{
+//			lobjXFer = MgrXFer.GetInstance(Engine.getCurrentNameSpace(), UUID.fromString(transferId));
+//			lidProc = lobjXFer.GetProcessID();
+//
+//			lobjAX = new ExecXFer(lidProc);
+//			lobjAX.Execute();
+//		}
+//		catch (Throwable e)
+//		{
+//			throw new BigBangException(e.getMessage(), e);
+//		}
+//
+//		if ( lobjXFer.IsMassTransfer() )
+//			larrProcs = lobjXFer.GetProcessIDs();
+//		else
+//			larrProcs = new UUID[] {lobjAX.midParentProc};
+//
+//		lobjResult = new ManagerTransfer();
+//		lobjResult.id = lobjXFer.getKey().toString();
+//		lobjResult.managedProcessIds = new String[larrProcs.length];
+//		lobjResult.dataObjectIds = new String[larrProcs.length];
+//		for ( i = 0; i < larrProcs.length; i++ )
+//		{
+//			lobjResult.managedProcessIds[i] = larrProcs[i].toString();
+//			try
+//			{
+//				lobjResult.dataObjectIds[i] = PNProcess.GetInstance(Engine.getCurrentNameSpace(),
+//							larrProcs[i]).GetData().getKey().toString();
+//			}
+//			catch (Throwable e)
+//			{
+//				lobjResult.dataObjectIds[i] = null;
+//			}
+//		}
+//		lobjResult.objectTypeId = lobjXFer.GetOuterObjectType().toString();
+//		lobjResult.newManagerId = lobjXFer.GetNewManagerID().toString();
+//		lobjResult.processId = lidProc.toString();
+//		lobjResult.status = ManagerTransfer.Status.ACCEPTED;
+//
+//		return lobjResult;
+	}
+
+	public ManagerTransfer cancelTransfer(String transferId)
+		throws SessionExpiredException, BigBangException
+	{
+//		MgrXFer lobjXFer;
+//		UUID lidProc;
+//		CancelXFer lobjCX;
+//		UUID[] larrProcs;
+//		ManagerTransfer lobjResult;
+//		int i;
+
+		if ( Engine.getCurrentUser() == null )
+			throw new SessionExpiredException();
+
+		throw new BigBangException("Deprecated.");
+
+//		try
+//		{
+//			lobjXFer = MgrXFer.GetInstance(Engine.getCurrentNameSpace(), UUID.fromString(transferId));
+//			lidProc = lobjXFer.GetProcessID();
+//
+//			lobjCX = new CancelXFer(lidProc);
+//			lobjCX.Execute();
+//		}
+//		catch (Throwable e)
+//		{
+//			throw new BigBangException(e.getMessage(), e);
+//		}
+//
+//		if ( lobjXFer.IsMassTransfer() )
+//			larrProcs = lobjXFer.GetProcessIDs();
+//		else
+//			larrProcs = new UUID[] {lobjCX.midParentProc};
+//
+//		lobjResult = new ManagerTransfer();
+//		lobjResult.id = lobjXFer.getKey().toString();
+//		lobjResult.managedProcessIds = new String[larrProcs.length];
+//		lobjResult.dataObjectIds = new String[larrProcs.length];
+//		for ( i = 0; i < larrProcs.length; i++ )
+//		{
+//			lobjResult.managedProcessIds[i] = larrProcs[i].toString();
+//			try
+//			{
+//				lobjResult.dataObjectIds[i] = PNProcess.GetInstance(Engine.getCurrentNameSpace(),
+//							larrProcs[i]).GetData().getKey().toString();
+//			}
+//			catch (Throwable e)
+//			{
+//				lobjResult.dataObjectIds[i] = null;
+//			}
+//		}
+//		lobjResult.objectTypeId = lobjXFer.GetOuterObjectType().toString();
+//		lobjResult.newManagerId = lobjXFer.GetNewManagerID().toString();
+//		lobjResult.processId = lidProc.toString();
+//		lobjResult.status = ManagerTransfer.Status.CANCELED;
+//
+//		return lobjResult;
+	}
+
+	private static SearchResult BuildStub(UUID pidType, UUID pidKey)
 		throws BigBangException
 	{
 		ObjectBase lobjAux;
@@ -64,190 +338,6 @@ public class TransferManagerServiceImpl
 			return BuildCasualtyStub((Casualty)lobjAux);
 
 		throw new BigBangException("Erro: Objecto não suporta transferências de gestor.");
-	}
-
-	public ManagerTransfer getTransfer(String transferId)
-		throws SessionExpiredException, BigBangException
-	{
-		MgrXFer lobjXFer;
-		ManagerTransfer lobjResult;
-		UUID[] larrProcesses;
-		int i;
-		IProcess lobjProcess;
-
-		if ( Engine.getCurrentUser() == null )
-			throw new SessionExpiredException();
-
-		try
-		{
-			lobjXFer = MgrXFer.GetInstance(Engine.getCurrentNameSpace(), UUID.fromString(transferId));
-		}
-		catch (Throwable e)
-		{
-			throw new BigBangException(e.getMessage(), e);
-		}
-
-		lobjResult = new ManagerTransfer();
-
-		lobjResult.id = lobjXFer.getKey().toString();
-//		lobjResult.directTransfer;
-//		lobjResult.status;
-		lobjResult.objectTypeId = lobjXFer.GetOuterObjectType().toString();
-		lobjResult.newManagerId = lobjXFer.GetNewManagerID().toString();
-		lobjResult.isMassTransfer = lobjXFer.IsMassTransfer();
-		lobjResult.processId = lobjXFer.GetProcessID().toString();
-
-		if ( lobjResult.isMassTransfer )
-		{
-			larrProcesses = lobjXFer.GetProcessIDs();
-			lobjResult.managedProcessIds = new String[larrProcesses.length];
-			lobjResult.dataObjectIds = new String[larrProcesses.length];
-			lobjResult.objectStubs = new SearchResult[larrProcesses.length];
-			for ( i = 0; i < larrProcesses.length; i++ )
-			{
-				lobjResult.managedProcessIds[i] = larrProcesses[i].toString();
-				try
-				{
-					lobjProcess = PNProcess.GetInstance(Engine.getCurrentNameSpace(), larrProcesses[i]);
-				}
-				catch (Throwable e)
-				{
-					throw new BigBangException(e.getMessage(), e);
-				}
-				lobjResult.dataObjectIds[i] = lobjProcess.GetDataKey().toString();
-				lobjResult.objectStubs[i] = sBuildStub(lobjXFer.GetOuterObjectType(), lobjProcess.GetDataKey());
-			}
-		}
-		else
-		{
-			try
-			{
-				lobjProcess = PNProcess.GetInstance(Engine.getCurrentNameSpace(), lobjXFer.GetProcessID()).GetParent();
-			}
-			catch (Throwable e)
-			{
-				throw new BigBangException(e.getMessage(), e);
-			}
-			lobjResult.managedProcessIds = new String[] {lobjProcess.getKey().toString()};
-			lobjResult.dataObjectIds = new String[] {lobjProcess.GetDataKey().toString()};
-			lobjResult.objectStubs = new SearchResult[] {sBuildStub(lobjXFer.GetOuterObjectType(), lobjProcess.GetDataKey())};
-		}
-
-		lobjResult.permissions = BigBangPermissionServiceImpl.sGetProcessPermissions(lobjXFer.GetProcessID());
-
-		return lobjResult;
-	}
-
-	public ManagerTransfer acceptTransfer(String transferId)
-		throws SessionExpiredException, BigBangException
-	{
-		MgrXFer lobjXFer;
-		UUID lidProc;
-		AcceptXFer lobjAX;
-		UUID[] larrProcs;
-		ManagerTransfer lobjResult;
-		int i;
-
-		if ( Engine.getCurrentUser() == null )
-			throw new SessionExpiredException();
-
-		try
-		{
-			lobjXFer = MgrXFer.GetInstance(Engine.getCurrentNameSpace(), UUID.fromString(transferId));
-			lidProc = lobjXFer.GetProcessID();
-
-			lobjAX = new AcceptXFer(lidProc);
-			lobjAX.Execute();
-		}
-		catch (Throwable e)
-		{
-			throw new BigBangException(e.getMessage(), e);
-		}
-
-		if ( lobjXFer.IsMassTransfer() )
-			larrProcs = lobjXFer.GetProcessIDs();
-		else
-			larrProcs = new UUID[] {lobjAX.midParentProc};
-
-		lobjResult = new ManagerTransfer();
-		lobjResult.id = lobjXFer.getKey().toString();
-		lobjResult.managedProcessIds = new String[larrProcs.length];
-		lobjResult.dataObjectIds = new String[larrProcs.length];
-		for ( i = 0; i < larrProcs.length; i++ )
-		{
-			lobjResult.managedProcessIds[i] = larrProcs[i].toString();
-			try
-			{
-				lobjResult.dataObjectIds[i] = PNProcess.GetInstance(Engine.getCurrentNameSpace(),
-							larrProcs[i]).GetData().getKey().toString();
-			}
-			catch (Throwable e)
-			{
-				lobjResult.dataObjectIds[i] = null;
-			}
-		}
-		lobjResult.objectTypeId = lobjXFer.GetOuterObjectType().toString();
-		lobjResult.newManagerId = lobjXFer.GetNewManagerID().toString();
-		lobjResult.processId = lidProc.toString();
-		lobjResult.status = ManagerTransfer.Status.ACCEPTED;
-
-		return lobjResult;
-	}
-
-	public ManagerTransfer cancelTransfer(String transferId)
-		throws SessionExpiredException, BigBangException
-	{
-		MgrXFer lobjXFer;
-		UUID lidProc;
-		CancelXFer lobjCX;
-		UUID[] larrProcs;
-		ManagerTransfer lobjResult;
-		int i;
-
-		if ( Engine.getCurrentUser() == null )
-			throw new SessionExpiredException();
-
-		try
-		{
-			lobjXFer = MgrXFer.GetInstance(Engine.getCurrentNameSpace(), UUID.fromString(transferId));
-			lidProc = lobjXFer.GetProcessID();
-
-			lobjCX = new CancelXFer(lidProc);
-			lobjCX.Execute();
-		}
-		catch (Throwable e)
-		{
-			throw new BigBangException(e.getMessage(), e);
-		}
-
-		if ( lobjXFer.IsMassTransfer() )
-			larrProcs = lobjXFer.GetProcessIDs();
-		else
-			larrProcs = new UUID[] {lobjCX.midParentProc};
-
-		lobjResult = new ManagerTransfer();
-		lobjResult.id = lobjXFer.getKey().toString();
-		lobjResult.managedProcessIds = new String[larrProcs.length];
-		lobjResult.dataObjectIds = new String[larrProcs.length];
-		for ( i = 0; i < larrProcs.length; i++ )
-		{
-			lobjResult.managedProcessIds[i] = larrProcs[i].toString();
-			try
-			{
-				lobjResult.dataObjectIds[i] = PNProcess.GetInstance(Engine.getCurrentNameSpace(),
-							larrProcs[i]).GetData().getKey().toString();
-			}
-			catch (Throwable e)
-			{
-				lobjResult.dataObjectIds[i] = null;
-			}
-		}
-		lobjResult.objectTypeId = lobjXFer.GetOuterObjectType().toString();
-		lobjResult.newManagerId = lobjXFer.GetNewManagerID().toString();
-		lobjResult.processId = lidProc.toString();
-		lobjResult.status = ManagerTransfer.Status.CANCELED;
-
-		return lobjResult;
 	}
 
 	private static ClientStub BuildClientStub(Client pobjClient)

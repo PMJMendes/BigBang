@@ -1,4 +1,4 @@
-package com.premiumminds.BigBang.Jewel.Operations.MgrXFer;
+package com.premiumminds.BigBang.Jewel.Operations.Policy;
 
 import java.util.UUID;
 
@@ -6,23 +6,23 @@ import Jewel.Petri.SysObjects.UndoOperation;
 
 import com.premiumminds.BigBang.Jewel.Constants;
 
-public class UndoCancelXFer
+public class UndoExecMgrXFer
 	extends UndoOperation
 {
 	private static final long serialVersionUID = 1L;
 
-	public UndoCancelXFer(UUID pidProcess)
+	public UndoExecMgrXFer(UUID pidProcess)
 	{
 		super(pidProcess);
 	}
 
 	protected UUID OpID()
 	{
-		return Constants.OPID_MgrXFer_UndoCancelXFer;
+		return Constants.OPID_Policy_UndoExecMgrXFer;
 	}
 
 	public String ShortDesc()
 	{
-		return "Desfazer Cancelamento da Transferência";
+		return "Desfazer Transferência de Gestor";
 	}
 }

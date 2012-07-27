@@ -2,24 +2,22 @@ package com.premiumminds.BigBang.Jewel.Operations.Policy;
 
 import java.util.UUID;
 
-import Jewel.Petri.SysObjects.Operation;
-
 import com.premiumminds.BigBang.Jewel.Constants;
-import com.premiumminds.BigBang.Jewel.Operations.MgrXFer.CreateMgrXfrBase;
+import com.premiumminds.BigBang.Jewel.Operations.MgrXFer.ExecMgrXFerBase;
 
-public class CreateMgrXFer
-	extends CreateMgrXfrBase
+public class ExecMgrXFer
+	extends ExecMgrXFerBase
 {
 	private static final long serialVersionUID = 1L;
 
-	public CreateMgrXFer(UUID pidProcess)
+	public ExecMgrXFer(UUID pidProcess)
 	{
 		super(pidProcess);
 	}
 
 	protected UUID OpID()
 	{
-		return Constants.OPID_Policy_CreateMgrXFer;
+		return Constants.OPID_Policy_ExecMgrXFer;
 	}
 
 	public String getObjName()
@@ -30,11 +28,6 @@ public class CreateMgrXFer
 	public String getArticle()
 	{
 		return "a";
-	}
-
-	public Operation getTriggeredOp(UUID pidProcess)
-	{
-		return new TriggerAllowUndoMgrXFer(pidProcess);
 	}
 
 	public UUID getSafeObjType()
