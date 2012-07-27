@@ -53,6 +53,7 @@ public class ExpenseForm extends FormView<Expense>{
 
 		manager = new ExpandableListBoxFormField(BigBangConstants.EntityIds.USER, "Gestor");
 		settlement = new NumericTextBoxFormField("Indemnização", true);
+		settlement.setMandatory(true);
 		settlement.setUnitsLabel("€");
 		settlement.setFieldWidth("175px");
 		settleButton = new Button("Substituir");
@@ -66,14 +67,18 @@ public class ExpenseForm extends FormView<Expense>{
 
 		client = new NavigationFormField("Cliente"); 
 		expenseDate = new DatePickerFormField("Data");
+		expenseDate.setMandatory(true);
 		insuredObjectId = new ExpandableListBoxFormField("Unidade de Risco");
+		insuredObjectId.setMandatory(true);
 		value = new NumericTextBoxFormField("Valor", true);
+		value.setMandatory(true);
 		value.setFieldWidth("175px");
 		value.setUnitsLabel("€");
 		isOpen = new TextBoxFormField("Estado");
 		isOpen.setFieldWidth("175px");
 
 		coverageId = new ExpandableListBoxFormField("Cobertura");
+		coverageId.setMandatory(true);
 
 		addSection("Despesa de saúde");
 		addFormField(client, false);
@@ -93,8 +98,6 @@ public class ExpenseForm extends FormView<Expense>{
 				coverageId,
 				expenseDate,	
 		}, false);
-
-
 
 		HorizontalPanel settlementPanel = new HorizontalPanel();
 		VerticalPanel settlementVerticalPanel = new VerticalPanel();

@@ -61,17 +61,20 @@ public class SubCasualtyForm extends FormView<SubCasualty> {
 		referenceType = new ListBoxFormField("");
 		referenceType.addItem("Apólice nº", BigBangConstants.EntityIds.INSURANCE_POLICY);
 		referenceType.addItem("Apólice Adesão nº", BigBangConstants.EntityIds.INSURANCE_SUB_POLICY);
+		referenceType.setMandatory(true);
 		referenceType.removeItem(0); //Removes the empty value
 
 		//POLICY REFERENCE
 		InsurancePolicySelectionViewPresenter policySelectionPanel = new InsurancePolicySelectionViewPresenter((InsurancePolicySelectionView) GWT.create(InsurancePolicySelectionView.class));
 		policySelectionPanel.go();
 		policyReference = new ExpandableSelectionFormField(BigBangConstants.EntityIds.INSURANCE_POLICY, "", policySelectionPanel);
-
+		policyReference.setMandatory(true);
+		
 		//SUB POLICY REFERENCE
 		InsuranceSubPolicySelectionViewPresenter subPolicySelectionPanel = new InsuranceSubPolicySelectionViewPresenter((InsuranceSubPolicySelectionView) GWT.create(InsuranceSubPolicySelectionView.class));
 		subPolicySelectionPanel.go();
 		subPolicyReference = new ExpandableSelectionFormField(BigBangConstants.EntityIds.INSURANCE_SUB_POLICY, "", subPolicySelectionPanel);
+		subPolicyReference.setMandatory(true);
 
 		referenceDetails = new TextBoxFormField();
 		referenceDetails.setEditable(false);

@@ -1,7 +1,9 @@
 package bigBang.module.generalSystemModule.client.userInterface.view;
 
 import bigBang.definitions.shared.Coverage;
+import bigBang.library.client.FormField;
 import bigBang.library.client.userInterface.CheckBoxFormField;
+import bigBang.library.client.userInterface.NumericTextBoxFormField;
 import bigBang.library.client.userInterface.TextBoxFormField;
 import bigBang.library.client.userInterface.view.FormView;
 
@@ -10,6 +12,7 @@ public class CoverageForm extends FormView<Coverage> {
 	private TextBoxFormField name;
 	private CheckBoxFormField isMandatory;
 	private CheckBoxFormField isHeader;
+	private NumericTextBoxFormField order;
 	
 	private Coverage coverage;
 	
@@ -19,11 +22,16 @@ public class CoverageForm extends FormView<Coverage> {
 		name = new TextBoxFormField("Nome");
 		isMandatory = new CheckBoxFormField("Obrigatória");
 		isHeader = new CheckBoxFormField("Cabeçalho");
+		order = new NumericTextBoxFormField("Índice", false);
 		
-		addFormField(name);
-		addFormField(isMandatory);
-		addFormField(isHeader);
-		
+		addFormField(name, false);
+		addFormFieldGroup(new FormField[]{
+				isMandatory,
+				isHeader
+		}, true);
+		addFormFieldGroup(new FormField[]{
+				order
+		}, true);
 	}
 	
 	@Override
@@ -33,6 +41,9 @@ public class CoverageForm extends FormView<Coverage> {
 		coverage.name = name.getValue();
 		coverage.isMandatory = isMandatory.getValue();
 		coverage.isHeader = isHeader.getValue();
+		
+		Double orderValue = order.getValue();
+		coverage.order = orderValue == null ? null : orderValue.intValue();
 		return coverage;
 	}
 
@@ -42,6 +53,7 @@ public class CoverageForm extends FormView<Coverage> {
 		this.name.setValue(info.name);
 		this.isHeader.setValue(info.isHeader);
 		this.isMandatory.setValue(info.isMandatory);
+		this.order.setValue(info.order == null ? null : info.order.doubleValue());
 	}
 
 	@Override

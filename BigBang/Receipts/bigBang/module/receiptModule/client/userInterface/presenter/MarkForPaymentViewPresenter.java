@@ -1,4 +1,4 @@
-package bigBang.module.quoteRequestModule.client.userInterface.presenter;
+package bigBang.module.receiptModule.client.userInterface.presenter;
 
 import java.util.Collection;
 

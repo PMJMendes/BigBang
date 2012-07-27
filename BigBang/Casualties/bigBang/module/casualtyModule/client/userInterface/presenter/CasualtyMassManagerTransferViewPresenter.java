@@ -62,7 +62,7 @@ MassManagerTransferViewPresenter<CasualtyStub, Casualty> implements ViewPresente
 
 	protected void bind() {
 		super.bind();
-		this.view.setOperationFilter(BigBangConstants.OperationIds.ClientProcess.CREATE_MANAGER_TRANSFER);
+		this.view.setOperationFilter(BigBangConstants.OperationIds.CasualtyProcess.CREATE_MANAGER_TRANSFER);
 		this.view.refreshMainList();
 		this.view.getMainList().addSelectionChangedEventHandler(new SelectionChangedEventHandler() {
 

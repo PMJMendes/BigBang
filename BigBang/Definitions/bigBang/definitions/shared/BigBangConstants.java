@@ -125,7 +125,6 @@ public class BigBangConstants {
 		}
 		
 		public static class ManagerTransfer{
-			public static final String CREATE_MANAGER_TRANSFER = "C75EEC27-780C-4C0C-9FD7-9F090142CB10";
 			public static final String CANCEL_MANAGER_TRANSFER = "C8FCD8FD-B616-4252-942F-9F650155B3BC";
 			public static final String ACCEPT_MANAGER_TRANSFER = "8B3AB41F-76F6-4311-8600-9F65014CF682";
 		}

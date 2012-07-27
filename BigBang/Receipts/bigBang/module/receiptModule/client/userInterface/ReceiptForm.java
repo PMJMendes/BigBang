@@ -49,6 +49,7 @@ public class ReceiptForm extends FormView<Receipt> implements ReceiptDataBrokerC
 
 	public ReceiptForm(){
 		number = new TextBoxFormField("Número");
+		number.setMandatory(true);
 		number.setFieldWidth("200px");
 		type = new ExpandableListBoxFormField(ModuleConstants.TypifiedListIds.RECEIPT_TYPE, "Tipo");
 		type.allowEdition(false);

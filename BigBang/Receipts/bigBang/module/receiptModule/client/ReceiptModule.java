@@ -8,7 +8,6 @@ import bigBang.library.client.ViewPresenterInstantiator;
 import bigBang.library.client.userInterface.presenter.InsurancePolicySelectionViewPresenter;
 import bigBang.library.client.userInterface.presenter.ViewPresenter;
 import bigBang.library.client.userInterface.view.InsurancePolicySelectionView;
-import bigBang.module.quoteRequestModule.client.userInterface.presenter.MarkForPaymentViewPresenter;
 import bigBang.module.receiptModule.client.dataAccess.DASRequestBrokerImpl;
 import bigBang.module.receiptModule.client.dataAccess.ReceiptDataBrokerImpl;
 import bigBang.module.receiptModule.client.dataAccess.SignatureRequestBrokerImpl;
@@ -16,6 +15,7 @@ import bigBang.module.receiptModule.client.userInterface.presenter.CancelDASRequ
 import bigBang.module.receiptModule.client.userInterface.presenter.CreateDASRequestViewPresenter;
 import bigBang.module.receiptModule.client.userInterface.presenter.DASRequestTasksViewPresenter;
 import bigBang.module.receiptModule.client.userInterface.presenter.DASRequestViewPresenter;
+import bigBang.module.receiptModule.client.userInterface.presenter.MarkForPaymentViewPresenter;
 import bigBang.module.receiptModule.client.userInterface.presenter.MassAgentAccountingViewPresenter;
 import bigBang.module.receiptModule.client.userInterface.presenter.CancelSignatureRequestViewPresenter;
 import bigBang.module.receiptModule.client.userInterface.presenter.CreateSignatureRequestViewPresenter;

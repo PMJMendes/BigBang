@@ -2,14 +2,15 @@ package bigBang.module.receiptModule.client.userInterface.view;
 
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.HasValue;
 import com.google.gwt.user.client.ui.SplitLayoutPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
-import bigBang.module.quoteRequestModule.client.userInterface.presenter.MarkForPaymentViewPresenter;
-import bigBang.module.quoteRequestModule.client.userInterface.presenter.MarkForPaymentViewPresenter.Action;
 import bigBang.module.receiptModule.client.userInterface.PaymentsForm;
 import bigBang.module.receiptModule.client.userInterface.ReceiptForm;
+import bigBang.module.receiptModule.client.userInterface.presenter.MarkForPaymentViewPresenter;
+import bigBang.module.receiptModule.client.userInterface.presenter.MarkForPaymentViewPresenter.Action;
 import bigBang.definitions.shared.Receipt;
 import bigBang.definitions.shared.Receipt.PaymentInfo.Payment;
 import bigBang.library.client.HasEditableValue;
@@ -23,6 +24,7 @@ public class MarkForPaymentView extends View implements MarkForPaymentViewPresen
 	protected ReceiptForm form;
 	protected ActionInvokedEventHandler<Action> actionHandler;
 	protected PaymentsForm paymentsForm;
+	protected Button backButton;
 
 	public MarkForPaymentView(){
 		SplitLayoutPanel wrapper = new SplitLayoutPanel();
@@ -36,7 +38,7 @@ public class MarkForPaymentView extends View implements MarkForPaymentViewPresen
 		ListHeader paymentsHeader = new ListHeader("Cobranças");
 		paymentsHeader.setHeight("30px");
 		paymentsWrapper.add(paymentsHeader);
-
+		
 		ClickHandler clickHandler = new ClickHandler() {
 
 			@Override
@@ -66,6 +68,17 @@ public class MarkForPaymentView extends View implements MarkForPaymentViewPresen
 		receiptHeader.setHeight("30px");
 		receiptWrapper.add(receiptHeader);
 
+		backButton = new Button("Voltar");
+		receiptHeader.setLeftWidget(backButton);
+		
+		backButton.addClickHandler(new ClickHandler() {
+			
+			@Override
+			public void onClick(ClickEvent event) {
+				actionHandler.onActionInvoked(new ActionInvokedEvent<MarkForPaymentViewPresenter.Action>(Action.CANCEL));
+			}
+		});
+		
 		form = new ReceiptForm();
 		form.setSize("100%", "100%");
 		form.setReadOnly(true);

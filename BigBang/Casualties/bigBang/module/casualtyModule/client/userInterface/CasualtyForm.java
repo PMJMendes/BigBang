@@ -28,6 +28,7 @@ public class CasualtyForm extends FormView<Casualty> {
 		client = new NavigationFormField("Cliente");
 		client.setEditable(false);
 		date = new DatePickerFormField("Data");
+		date.setMandatory(true);
 		description = new TextAreaFormField();
 		description.setFieldWidth("600px");
 		description.setFieldHeight("250px");

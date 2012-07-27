@@ -14,6 +14,8 @@ public class Coverage
 	public boolean isHeader; // Novo!
 	public Tax[] taxes;
 
+	public Integer order;
+
 	public Coverage()
 	{
 		taxes = new Tax[0];

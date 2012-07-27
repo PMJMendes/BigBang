@@ -52,9 +52,6 @@ public class CheckBoxFormField extends FormField<Boolean> {
 		});
 		((UIObject) this.field).getElement().getStyle().setMargin(0, Unit.PX);
 		wrapper.add((Widget) this.field);
-		wrapper.add(unitsLabel);
-		wrapper.add(mandatoryIndicatorLabel);
-		wrapper.add(errorMessageLabel);
 	}
 
 	protected void setLabel(String label) {

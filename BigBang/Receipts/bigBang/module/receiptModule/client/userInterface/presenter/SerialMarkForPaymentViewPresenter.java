@@ -12,7 +12,6 @@ import bigBang.library.client.event.SelectionChangedEvent;
 import bigBang.library.client.event.SelectionChangedEventHandler;
 import bigBang.library.client.history.NavigationHistoryItem;
 import bigBang.library.client.history.NavigationHistoryManager;
-import bigBang.module.quoteRequestModule.client.userInterface.presenter.MarkForPaymentViewPresenter;
 
 public class SerialMarkForPaymentViewPresenter extends
 		MarkForPaymentViewPresenter {

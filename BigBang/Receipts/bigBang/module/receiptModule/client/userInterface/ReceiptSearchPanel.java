@@ -49,12 +49,11 @@ public class ReceiptSearchPanel extends SearchPanel<ReceiptStub> implements Rece
 		protected boolean initialized;
 		private NumberFormat nf;
 
-		
 		public Entry(ReceiptStub value) {
 			super(value);
-			setHeight("75px");
+			setHeight("85px");
 		}
-		
+
 		@Override
 		public <I extends Object> void setInfo(I info) {
 			if(!initialized){
