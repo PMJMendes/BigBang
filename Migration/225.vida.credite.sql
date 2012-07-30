@@ -303,16 +303,6 @@ from credegs..empresa.apolice s
 inner join credite_egs.tblBBPolicies p on p.MigrationID=s.MigrationID
 inner join credite_egs.tblBBPolicyCoverages c on c.FKPolicy=p.PK
 inner join bigbang.tblBBTaxes t on t.FKCoverage=c.FKCoverage
-where t.pk='A2E497BC-6EAB-439D-B190-A06E00E6BF68' and c.BPresent=1
-and p.FKSubLine='1ACC21FA-7CC0-4AF5-A22D-A06E00E37DCE';
-
-insert into credite_egs.tblBBPolicyValues (PK, Value, FKPolicy, FKField, FKObject, FKExercise)
-select CAST(CAST(NEWID() AS BINARY(10)) + CAST(GETDATE() AS BINARY(6)) AS UNIQUEIDENTIFIER) PK,
-NULL Value, p.PK FKPolicy, t.PK FKField, NULL FKObject, NULL FKExercise
-from credegs..empresa.apolice s
-inner join credite_egs.tblBBPolicies p on p.MigrationID=s.MigrationID
-inner join credite_egs.tblBBPolicyCoverages c on c.FKPolicy=p.PK
-inner join bigbang.tblBBTaxes t on t.FKCoverage=c.FKCoverage
 where t.pk='25356B45-54CC-44DF-9D0A-A06E00E6BF68' and c.BPresent=1
 and p.FKSubLine='1ACC21FA-7CC0-4AF5-A22D-A06E00E37DCE';
 
@@ -461,16 +451,6 @@ from credegs..empresa.apolice s
 inner join credite_egs.tblBBPolicies p on p.MigrationID=s.MigrationID
 inner join credite_egs.tblBBPolicyCoverages c on c.FKPolicy=p.PK
 inner join bigbang.tblBBTaxes t on t.FKCoverage=c.FKCoverage
-where t.pk='7A9EFD7F-E5EE-40D3-9D0D-A06800D586A1' and c.BPresent=1
-and p.FKSubLine='50DD38B3-31F0-423F-BE88-A06E00D22C8C';
-
-insert into credite_egs.tblBBPolicyValues (PK, Value, FKPolicy, FKField, FKObject, FKExercise)
-select CAST(CAST(NEWID() AS BINARY(10)) + CAST(GETDATE() AS BINARY(6)) AS UNIQUEIDENTIFIER) PK,
-NULL Value, p.PK FKPolicy, t.PK FKField, NULL FKObject, NULL FKExercise
-from credegs..empresa.apolice s
-inner join credite_egs.tblBBPolicies p on p.MigrationID=s.MigrationID
-inner join credite_egs.tblBBPolicyCoverages c on c.FKPolicy=p.PK
-inner join bigbang.tblBBTaxes t on t.FKCoverage=c.FKCoverage
 where t.pk='E0BDF884-0709-44F3-8934-A06800D61119' and c.BPresent=1
 and p.FKSubLine='50DD38B3-31F0-423F-BE88-A06E00D22C8C';
 
@@ -605,16 +585,6 @@ NULL Value, p.PK FKPolicy, 'C3563291-7658-4B53-BF5F-9F9601751EBB' FKField, NULL 
 from credegs..empresa.apolice s
 inner join credite_egs.tblBBPolicies p on p.MigrationID=s.MigrationID
 where p.FKSubLine='BB944A23-9634-4FB4-BCC9-A06E00D223FE';
-
-insert into credite_egs.tblBBPolicyValues (PK, Value, FKPolicy, FKField, FKObject, FKExercise)
-select CAST(CAST(NEWID() AS BINARY(10)) + CAST(GETDATE() AS BINARY(6)) AS UNIQUEIDENTIFIER) PK,
-NULL Value, p.PK FKPolicy, t.PK FKField, NULL FKObject, NULL FKExercise
-from credegs..empresa.apolice s
-inner join credite_egs.tblBBPolicies p on p.MigrationID=s.MigrationID
-inner join credite_egs.tblBBPolicyCoverages c on c.FKPolicy=p.PK
-inner join bigbang.tblBBTaxes t on t.FKCoverage=c.FKCoverage
-where t.pk='9CB98F4A-1A2D-49E5-B5E4-A06800DA5860' and c.BPresent=1
-and p.FKSubLine='BB944A23-9634-4FB4-BCC9-A06E00D223FE';
 
 insert into credite_egs.tblBBPolicyValues (PK, Value, FKPolicy, FKField, FKObject, FKExercise)
 select CAST(CAST(NEWID() AS BINARY(10)) + CAST(GETDATE() AS BINARY(6)) AS UNIQUEIDENTIFIER) PK,

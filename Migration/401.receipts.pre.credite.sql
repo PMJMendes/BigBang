@@ -10,6 +10,10 @@ inner join credegs..empresa.apolice s on s.cliente=r.cliente and s.apolice=r.apo
 where (r.datarec>'2010-12-31' or r.datavenc>'2010-12-31')
 and (s.MigrationID in (select MigrationID from credite_egs.tblBBPolicies) or s.MigrationID in (select MigrationID from credite_egs.tblBBSubPolicies));
 
+update credite_egs.tblBBReceipts
+set FKReceiptType='91E07F5F-56BA-4A65-9659-9F900111DF95'
+where FKReceiptType='382ABABA-5A0A-4E88-B5D1-A09E00EE2006';
+
 insert into credite_egs.tblPNProcesses (PK, FKScript, FKData, FKManager, FKParent, IsRunning)
 select CAST(CAST(NEWID() AS BINARY(10)) + CAST(GETDATE() AS BINARY(6)) AS UNIQUEIDENTIFIER) PK,
 '62D0A72A-525E-450C-9917-9F8A00EB38AC' FKScript, r.PK FKData, k.FKManager FKManager,

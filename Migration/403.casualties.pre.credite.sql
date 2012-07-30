@@ -1,6 +1,6 @@
 insert into credite_egs.tblBBCasualties (PK, CNumber, FKProcess, CasualtyDate, Description, Notes, BCaseStudy)
 select CAST(CAST(NEWID() AS BINARY(10)) + CAST(GETDATE() AS BINARY(6)) AS UNIQUEIDENTIFIER) PK,
-s.ordem CNumber, NULL FKProcess, s.datasinistro CausaltyDate, substring(s.observ, 1, 250) Description, substring(s.obsint, 1, 250) Notes, 0 BCaseStudy
+s.ordem CNumber, NULL FKProcess, s.datasinistro CausaltyDate, s.sinistrado Description, substring(s.observ, 1, 250) Notes, 0 BCaseStudy
 from credegs..empresa.sinistros s
 where (s.ordem>=20110000 or s.datasinistro>'2010-12-31' or s.dataparticipacao>'2010-12-31' or s.datafecho>'2010-12-31' or s.estado='A' or s.estado is NULL)
 and s.cliente in (select MigrationID from credite_egs.tblBBClients)
