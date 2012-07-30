@@ -2707,7 +2707,7 @@ public class SubPolicyServiceImpl
 			if ( Constants.ObjID_PolicyExercise.equals(UUID.fromString(listId)) )
 				return GetScratchPadStorage().get(UUID.fromString(filterId)).GetExercises();
 
-			if ( Constants.ObjID_PolicyCoverage.equals(UUID.fromString(listId)) )
+			if ( Constants.ObjID_SubPolicyCoverage.equals(UUID.fromString(listId)) )
 			{
 				lobjSubPolicy = com.premiumminds.BigBang.Jewel.Objects.SubPolicy.GetInstance(Engine.getCurrentNameSpace(),
 						UUID.fromString(filterId));
