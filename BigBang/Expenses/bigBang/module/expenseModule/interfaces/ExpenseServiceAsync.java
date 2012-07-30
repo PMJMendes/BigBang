@@ -2,6 +2,7 @@ package bigBang.module.expenseModule.interfaces;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
+import bigBang.definitions.shared.DocuShareHandle;
 import bigBang.definitions.shared.Expense;
 import bigBang.definitions.shared.Expense.Acceptance;
 import bigBang.definitions.shared.Expense.ReturnEx;
@@ -21,6 +22,7 @@ public interface ExpenseServiceAsync extends SearchServiceAsync
 	void createInfoRequest(InfoOrDocumentRequest request, AsyncCallback<InfoOrDocumentRequest> callback);
 	void createExternalRequest(ExternalInfoRequest request, AsyncCallback<ExternalInfoRequest> callback);
 	void deleteExpense(String expenseId, String reason, AsyncCallback<Void> callback);
+	void serialCreateExpense(Expense expense, DocuShareHandle source, AsyncCallback<Expense> callback);
 	void massSendNotification(String[] expenseIds, AsyncCallback<Void> callback);
 	void massNotifyClient(String[] expenseIds, AsyncCallback<Void> callback);
 	void massReturnToClient(String[] expenseIds, AsyncCallback<Void> callback);

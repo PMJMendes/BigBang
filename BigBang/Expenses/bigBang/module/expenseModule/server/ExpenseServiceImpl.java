@@ -13,6 +13,7 @@ import Jewel.Engine.Interfaces.IEntity;
 import Jewel.Engine.SysObjects.ObjectBase;
 import Jewel.Petri.Interfaces.IProcess;
 import Jewel.Petri.Objects.PNProcess;
+import bigBang.definitions.shared.DocuShareHandle;
 import bigBang.definitions.shared.Expense;
 import bigBang.definitions.shared.Expense.Acceptance;
 import bigBang.definitions.shared.Expense.ReturnEx;
@@ -479,6 +480,12 @@ public class ExpenseServiceImpl
 		{
 			throw new BigBangException(e.getMessage(), e);
 		}
+	}
+
+	public Expense serialCreateExpense(Expense expense, DocuShareHandle source)
+		throws SessionExpiredException, BigBangException
+	{
+		return null;
 	}
 
 	public void massSendNotification(String[] expenseIds)
