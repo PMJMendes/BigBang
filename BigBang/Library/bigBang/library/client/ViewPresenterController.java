@@ -56,7 +56,7 @@ public abstract class ViewPresenterController {
 	}
 
 	protected ViewPresenter present(String presenterId, HasParameters parameters){
-		return this.present(presenterId, parameters, this.container, true);
+		return this.present(presenterId, parameters, this.container, false);
 	}
 
 	protected ViewPresenter present(String presenterId, HasParameters parameters, boolean keepState){

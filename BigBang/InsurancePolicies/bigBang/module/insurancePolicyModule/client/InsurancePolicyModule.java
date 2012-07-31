@@ -1,9 +1,13 @@
 package bigBang.module.insurancePolicyModule.client;
 
 import bigBang.definitions.client.dataAccess.DataBroker;
+import bigBang.definitions.shared.BigBangConstants;
+import bigBang.library.client.ExpandableSelectionManagementPanelInstantiator;
 import bigBang.library.client.Module;
 import bigBang.library.client.ViewPresenterFactory;
 import bigBang.library.client.ViewPresenterInstantiator;
+import bigBang.library.client.userInterface.ExpandableSelectionFormFieldPanel;
+import bigBang.library.client.userInterface.MutableSelectionFormFieldFactory;
 import bigBang.library.client.userInterface.presenter.InsurancePolicySelectionViewPresenter;
 import bigBang.library.client.userInterface.presenter.ViewPresenter;
 import bigBang.library.client.userInterface.view.InsurancePolicySelectionView;
@@ -385,6 +389,19 @@ public class InsurancePolicyModule implements Module {
 				return presenter;
 			}
 		});
+		
+		//EXPANDABLE PANELS
+		MutableSelectionFormFieldFactory.registerPanelInstantiator(BigBangConstants.EntityIds.INSURANCE_POLICY, new ExpandableSelectionManagementPanelInstantiator() {
+			
+			@Override
+			public ExpandableSelectionFormFieldPanel getInstance() {
+				InsurancePolicySelectionView view = (InsurancePolicySelectionView) GWT.create(InsurancePolicySelectionView.class);
+				InsurancePolicySelectionViewPresenter presenter = new InsurancePolicySelectionViewPresenter(view);
+				presenter.go();
+				return presenter;
+			}
+		});
+		
 	} 
 	
 	public boolean isInitialized() {

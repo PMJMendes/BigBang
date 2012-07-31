@@ -3,9 +3,12 @@ package bigBang.library.client.userInterface;
 import com.google.gwt.user.client.ui.Widget;
 
 import bigBang.definitions.shared.TipifiedListItem;
+import bigBang.library.client.HasParameters;
 import bigBang.library.client.dataAccess.TypifiedListBroker;
 
 public interface  TypifiedManagementPanel {
+	
+	void setParameters(HasParameters parameters);
 
 	String getListId();
 

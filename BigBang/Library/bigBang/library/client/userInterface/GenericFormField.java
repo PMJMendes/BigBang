@@ -1,17 +1,17 @@
 package bigBang.library.client.userInterface;
 
-import java.util.Collection;
 import java.util.Date;
 
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.user.client.ui.HasValue;
+import com.google.gwt.user.client.ui.Panel;
+import com.google.gwt.user.client.ui.SimplePanel;
 
-import bigBang.definitions.client.response.ResponseError;
-import bigBang.definitions.client.response.ResponseHandler;
 import bigBang.library.client.FieldValidator;
 import bigBang.library.client.FormField;
+import bigBang.library.client.HasParameters;
 
 public class GenericFormField extends FormField<String> {
 
@@ -27,6 +27,7 @@ public class GenericFormField extends FormField<String> {
 
 	protected FormField<?> myField;
 	protected TYPE myType = TYPE.TEXT;
+	protected Panel wrapper;
 
 	public GenericFormField(TYPE type){
 		super();
@@ -40,10 +41,10 @@ public class GenericFormField extends FormField<String> {
 			myField = new TextAreaFormField();
 			break;
 		case REFERENCE:
-			myField = new ExpandableListBoxFormField("");
+			myField = MutableSelectionFormFieldFactory.getFormField(null, null);
 			break;
 		case LIST:
-			myField = new ExpandableListBoxFormField("");
+			myField = MutableSelectionFormFieldFactory.getFormField(null, null);
 			break;
 		case NUMBER:
 			myField = new NumericFormFieldWrapper();
@@ -56,7 +57,10 @@ public class GenericFormField extends FormField<String> {
 			break;
 		}
 		
-		initWidget(this.myField);
+		wrapper = new SimplePanel();
+		wrapper.add(myField);
+		
+		initWidget(wrapper);
 	}
 
 	@Override
@@ -194,19 +198,10 @@ public class GenericFormField extends FormField<String> {
 	}
 
 	public void setListId(String listId){
-		ExpandableListBoxFormField myList = (ExpandableListBoxFormField) this.myField;
-		myList.setListId(listId, new ResponseHandler<Void>() {
-			
-			@Override
-			public void onResponse(Void response) {
-				return;
-			}
-			
-			@Override
-			public void onError(Collection<ResponseError> errors) {
-				return;
-			}
-		});
+		FormField<String> field = MutableSelectionFormFieldFactory.getFormField(listId, new HasParameters());
+		this.wrapper.clear();
+		this.wrapper.add(field);
+		myField = field;
 	}
 	
 	public void setLabel(String labelText){

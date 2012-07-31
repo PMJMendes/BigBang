@@ -53,7 +53,6 @@ public class ExtraFieldsFormSection extends FormViewSection {
 					break;
 				}
 
-				
 				if(coverageId == null || !coverageId.equalsIgnoreCase(field.coverageId)){
 					coverageId = field.coverageId;
 					Label coverageDesig = new Label();

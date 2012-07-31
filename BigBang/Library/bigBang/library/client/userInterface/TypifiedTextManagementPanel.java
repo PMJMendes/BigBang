@@ -12,6 +12,7 @@ import bigBang.definitions.shared.BigBangConstants;
 import bigBang.definitions.shared.TipifiedListItem;
 import bigBang.definitions.shared.TypifiedText;
 import bigBang.library.client.EventBus;
+import bigBang.library.client.HasParameters;
 import bigBang.library.client.Notification;
 import bigBang.library.client.Notification.TYPE;
 import bigBang.library.client.ValueSelectable;
@@ -613,6 +614,11 @@ public class TypifiedTextManagementPanel extends View implements TypifiedTextCli
 			this.listBroker.unregisterClient(getListId(), this);
 		}
 		this.listBroker = broker;
+	}
+
+	@Override
+	public void setParameters(HasParameters parameters) {
+		return;
 	}
 
 }

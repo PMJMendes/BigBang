@@ -5,6 +5,7 @@ import java.util.Collection;
 import bigBang.definitions.client.response.ResponseError;
 import bigBang.definitions.client.response.ResponseHandler;
 import bigBang.definitions.shared.TipifiedListItem;
+import bigBang.library.client.HasParameters;
 import bigBang.library.client.ValueSelectable;
 import bigBang.library.client.dataAccess.BigBangTypifiedListBroker;
 import bigBang.library.client.dataAccess.TypifiedListBroker;
@@ -338,13 +339,11 @@ public class TypifiedListManagementPanel extends FilterableList<TipifiedListItem
 
 	@Override
 	public void setTag(String tag) {
-		// TODO Auto-generated method stub
-
+		return;
 	}
 
 	@Override
 	public String getTag() {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
@@ -354,6 +353,11 @@ public class TypifiedListManagementPanel extends FilterableList<TipifiedListItem
 			this.listBroker.unregisterClient(getListId(), this);
 		}
 		this.listBroker = broker;
+	}
+
+	@Override
+	public void setParameters(HasParameters parameters) {
+		return;
 	}
 
 }

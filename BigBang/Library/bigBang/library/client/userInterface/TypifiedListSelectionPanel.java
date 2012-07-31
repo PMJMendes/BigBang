@@ -14,6 +14,7 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 import bigBang.definitions.client.response.ResponseError;
 import bigBang.definitions.client.response.ResponseHandler;
 import bigBang.definitions.shared.TipifiedListItem;
+import bigBang.library.client.HasParameters;
 import bigBang.library.client.ValueSelectable;
 import bigBang.library.client.dataAccess.BigBangTypifiedListBroker;
 import bigBang.library.client.dataAccess.TypifiedListBroker;
@@ -161,6 +162,11 @@ public class TypifiedListSelectionPanel extends
 	public HandlerRegistration addValueChangeHandler(
 			ValueChangeHandler<String> handler) {
 		return addHandler(handler, ValueChangeEvent.getType());
+	}
+
+	@Override
+	public void setParameters(HasParameters parameters) {
+		return;
 	}
 	
 }
