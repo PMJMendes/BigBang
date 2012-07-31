@@ -3,7 +3,11 @@ package bigBang.module.insurancePolicyModule.client.userInterface;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.google.gwt.dom.client.Style.FontWeight;
+import com.google.gwt.user.client.ui.Label;
+
 import bigBang.definitions.shared.BigBangConstants;
+import bigBang.definitions.shared.InsurancePolicy.Coverage;
 import bigBang.definitions.shared.InsurancePolicy.ExtraField;
 import bigBang.library.client.userInterface.GenericFormField;
 import bigBang.library.client.userInterface.GenericFormField.TYPE;
@@ -18,9 +22,11 @@ public class ExtraFieldsFormSection extends FormViewSection {
 		policyFields = new HashMap<ExtraField, GenericFormField>();
 	}
 	
-	public void setPolicyFields(ExtraField[] fields) {
+	public void setPolicyFields(ExtraField[] fields, Coverage[] coverages) {
 		clearFields();
 		if(fields != null) {
+			String coverageId = null;
+			
 			for(ExtraField field : fields) {
 				GenericFormField formField = null;
 
@@ -47,6 +53,26 @@ public class ExtraFieldsFormSection extends FormViewSection {
 					break;
 				}
 
+				
+				if(coverageId == null || !coverageId.equalsIgnoreCase(field.coverageId)){
+					coverageId = field.coverageId;
+					Label coverageDesig = new Label();
+
+					String coverageName = null;
+					for(Coverage coverage : coverages) {
+						if(coverage.coverageId.equalsIgnoreCase(field.coverageId)) {
+							coverageName = coverage.coverageName;
+							break;
+						}
+					}
+					
+					coverageDesig.setText(coverageName);
+					coverageDesig.getElement().getStyle().setFontWeight(FontWeight.BOLD);
+					coverageDesig.getElement().getStyle().setProperty("clear", "both");
+					
+					addWidget(coverageDesig, false);
+				}
+				
 				formField.setFieldWidth("175px");
 				formField.setUnitsLabel(field.unitsLabel);
 				formField.setValue(field.value);
@@ -62,7 +88,7 @@ public class ExtraFieldsFormSection extends FormViewSection {
 
 	public ExtraField[] getPolicyFields() {
 		ExtraField[] result = new ExtraField[this.policyFields.size()];
-		
+
 		int i = 0;
 		for(ExtraField field : policyFields.keySet()) {
 			GenericFormField formField = this.policyFields.get(field);
@@ -78,6 +104,7 @@ public class ExtraFieldsFormSection extends FormViewSection {
 			unregisterFormField(field);
 		}
 		this.policyFields.clear();
+		this.clear();
 	}
 
 }

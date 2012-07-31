@@ -358,7 +358,7 @@ public abstract class InsurancePolicyForm extends FormView<InsurancePolicy> {
 			
 			this.headerFieldsSection.setPolicyFields(info.headerFields);
 			this.tableSection.setInsurancePolicy(info);
-			this.extraFieldsSection.setPolicyFields(info.extraData);
+			this.extraFieldsSection.setPolicyFields(info.extraData, info.coverages);
 
 			this.duration.setValue(info.durationId);
 		}
@@ -374,7 +374,7 @@ public abstract class InsurancePolicyForm extends FormView<InsurancePolicy> {
 	public void clearInfo() {
 		super.clearInfo();
 		this.tableSection.setInsurancePolicy(null);
-		this.extraFieldsSection.setPolicyFields(null);
+		this.extraFieldsSection.setPolicyFields(null, null);
 		this.headerFieldsSection.setPolicyFields(null);
 	}
 
