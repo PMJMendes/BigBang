@@ -25,8 +25,7 @@ public class MgrXFer
 	{
 		public static int PROCESS         = 0;
 		public static int NEWMANAGER      = 1;
-//		public static int OUTEROBJECTTYPE = 2;
-		public static int SCRIPT          = 3;
+		public static int SCRIPT          = 2;
 	}
 
     public static MgrXFer GetInstance(UUID pidNameSpace, UUID pidKey)
