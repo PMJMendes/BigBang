@@ -533,10 +533,10 @@ public class ManageMediators
 		{
 			lobjAux = Mediator.GetInstance(Engine.getCurrentNameSpace(), pobjData.mobjMainValues.mid);
 			pobjData.mobjMainValues.mobjPrevValues = new MediatorData();
-			pobjData.mobjMainValues.FromObject(lobjAux);
+			pobjData.mobjMainValues.mobjPrevValues.FromObject(lobjAux);
+			pobjData.mobjMainValues.mobjPrevValues.mobjPrevValues = null;
 			pobjData.mobjContactOps = null;
 			pobjData.mobjDocOps = null;
-			pobjData.mobjMainValues.mobjPrevValues.mobjPrevValues = null;
 			pobjData.mobjMainValues.ToObject(lobjAux);
 			lobjAux.SaveToDb(pdb);
 
@@ -819,7 +819,7 @@ public class ManageMediators
 		{
 			lobjAux = MediatorDeal.GetInstance(Engine.getCurrentNameSpace(), pobjData.mid);
 			pobjData.mobjPrevValues = new MediatorDealData();
-			pobjData.FromObject(lobjAux);
+			pobjData.mobjPrevValues.FromObject(lobjAux);
 			pobjData.mobjPrevValues.mobjPrevValues = null;
 			pobjData.ToObject(lobjAux);
 			lobjAux.SaveToDb(pdb);
