@@ -6,7 +6,6 @@ public class Client
 	private static final long serialVersionUID = 1L;
 
 	public String groupId;
-	public String taxNumber;
 	public Address address;
 	public String NIB;
 	public String typeId;

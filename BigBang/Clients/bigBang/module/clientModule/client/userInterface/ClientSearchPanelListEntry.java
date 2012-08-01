@@ -11,6 +11,7 @@ public class ClientSearchPanelListEntry extends ListEntry<ClientStub> {
 
 	protected Label numberLabel;
 	protected Label nameLabel;
+	protected Label taxNumberLabel;
 	protected Label groupLabel;
 	
 	protected boolean initialized = false;
@@ -30,6 +31,7 @@ public class ClientSearchPanelListEntry extends ListEntry<ClientStub> {
 		if(value.id != null){
 			numberLabel.setText("#" + value.clientNumber);
 			nameLabel.setText(value.name);
+			taxNumberLabel.setText(value.taxNumber == null ? "-" : value.taxNumber);
 			groupLabel.setText(value.groupName == null ? "-" : value.groupName);
 			setMetaData(new String[]{
 				value.name,
@@ -52,6 +54,11 @@ public class ClientSearchPanelListEntry extends ListEntry<ClientStub> {
 		this.nameLabel.getElement().getStyle().setFontSize(11, Unit.PX);
 		this.nameLabel.getElement().getStyle().setProperty("whiteSpace", "");
 		this.nameLabel.setHeight("1.2em");
+		this.taxNumberLabel = getFormatedLabel();
+		this.taxNumberLabel.getElement().getStyle().setFontSize(11, Unit.PX);
+		this.taxNumberLabel.getElement().getStyle().setProperty("whiteSpace", "");
+		this.taxNumberLabel.setHeight("1.2em");
+		
 		this.groupLabel = getFormatedLabel();
 		this.groupLabel.getElement().getStyle().setFontSize(11, Unit.PX);
 		
@@ -60,6 +67,8 @@ public class ClientSearchPanelListEntry extends ListEntry<ClientStub> {
 		container.add(this.numberLabel);
 		container.add(this.nameLabel);
 		container.add(this.groupLabel);
+		container.add(this.taxNumberLabel);
+
 		this.setWidget(container);
 		this.initialized = true;
 	}
@@ -70,8 +79,10 @@ public class ClientSearchPanelListEntry extends ListEntry<ClientStub> {
 		if(!this.initialized){return;}
 		if(selected){
 			this.groupLabel.getElement().getStyle().setColor("white");
+			this.taxNumberLabel.getElement().getStyle().setColor("white");
 		}else{
 			this.groupLabel.getElement().getStyle().setColor("gray");
+			this.taxNumberLabel.getElement().getStyle().setColor("gray");
 		}
 	}
 	

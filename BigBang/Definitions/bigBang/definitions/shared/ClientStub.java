@@ -8,6 +8,7 @@ public class ClientStub
 	public String name;
 	public String clientNumber;
 	public String groupName;
+	public String taxNumber;
 
 	public ClientStub(){}
 	
@@ -16,6 +17,7 @@ public class ClientStub
 		this.name = original.id;
 		this.clientNumber = original.clientNumber;
 		this.groupName = original.groupName;
+		this.taxNumber = original.taxNumber;
 	}
 	
 }
