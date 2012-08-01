@@ -177,7 +177,7 @@ public class SubCasualtyTasksViewPresenter implements ViewPresenter, HasOperatio
 
 			@Override
 			protected void onNavigationHistoryEvent(NavigationHistoryItem historyItem) {
-				return;
+				view.showOverlayViewContainer(false);
 			}
 		};
 	}
