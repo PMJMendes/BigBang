@@ -46,7 +46,7 @@ public class ClientMassManagerTransferView extends MassManagerTransferView<Clien
 			sortOptions.put(ClientSortParameter.SortableField.NUMBER, "Número");
 
 			filtersPanel = new FiltersPanel(sortOptions);
-			filtersPanel.addTypifiedListField(Filters.MANAGER, BigBangConstants.EntityIds.USER, "Gestor");
+			filtersPanel.addTypifiedListField(Filters.MANAGER, BigBangConstants.EntityIds.USER, "Gestor do Cliente");
 			filtersPanel.addTypifiedListField(Filters.COST_CENTER, BigBangConstants.EntityIds.COST_CENTER, "Centro de Custo");
 			filtersPanel.addTypifiedListField(Filters.MEDIATOR, BigBangConstants.EntityIds.MEDIATOR, "Mediador");
 

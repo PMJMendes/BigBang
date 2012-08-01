@@ -51,7 +51,7 @@ public class ExpenseForm extends FormView<Expense>{
 
 	public ExpenseForm() {
 
-		manager = new ExpandableListBoxFormField(BigBangConstants.EntityIds.USER, "Gestor");
+		manager = new ExpandableListBoxFormField(BigBangConstants.EntityIds.USER, "Gestor da Despesa");
 		settlement = new NumericTextBoxFormField("Indemnização", true);
 		settlement.setMandatory(true);
 		settlement.setUnitsLabel("€");

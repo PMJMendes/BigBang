@@ -192,7 +192,7 @@ public abstract class SerialReceiptCreationForm extends FormView<ReceiptPolicyWr
 		dueDate = new DatePickerFormField("Limite de Pagamento");
 		mediator = new ExpandableSelectionFormField(BigBangConstants.EntityIds.MEDIATOR, "Mediador");
 		mediator.setEditable(false);
-		manager = new ExpandableSelectionFormField(BigBangConstants.EntityIds.USER, "Gestor");
+		manager = new ExpandableSelectionFormField(BigBangConstants.EntityIds.USER, "Gestor do Recibo");
 		manager.setEditable(false);
 		description = new TextAreaFormField();
 		notes = new TextAreaFormField();

@@ -195,7 +195,7 @@ public class SubPolicyForm extends FormView<SubPolicy> {
 		((SubPolicyClientSelectionViewPresenter)clientSelectionPanel).go();
 		client = new ExpandableSelectionFormField(BigBangConstants.EntityIds.CLIENT, "Cliente Aderente", clientSelectionPanel); //TODO
 		client.setFieldWidth("547px");
-		manager = new TextBoxFormField("Gestor");
+		manager = new TextBoxFormField("Gestor da Apólice Adesão");
 		manager.setEditable(false);
 		manager.setFieldWidth("175px");
 		insuranceAgency = new TextBoxFormField("Seguradora");

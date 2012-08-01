@@ -146,7 +146,7 @@ public abstract class SerialExpenseCreationForm extends FormView <ExpensePolicyW
 
 		addSection("Despesa de Saúde");
 
-		manager = new ExpandableListBoxFormField(BigBangConstants.EntityIds.USER, "Gestor");
+		manager = new ExpandableListBoxFormField(BigBangConstants.EntityIds.USER, "Gestor da Despesa");
 		settlement = new NumericTextBoxFormField("Indemnização", true);
 		settlement.setUnitsLabel("€");
 		settlement.setFieldWidth("175px");
