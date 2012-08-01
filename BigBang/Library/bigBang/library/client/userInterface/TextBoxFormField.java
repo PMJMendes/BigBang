@@ -117,8 +117,14 @@ public class TextBoxFormField extends FormField<String> {
 
 	@Override
 	public void setValue(String value, boolean fireEvents) {
-		hasDummyValue = false;
-		super.setValue(value, fireEvents);
+		if((value == null || value.isEmpty()) && isReadOnly()){
+			field.setValue("-");
+			hasDummyValue = true;
+		}
+		else {
+			hasDummyValue = false;
+			super.setValue(value, fireEvents);
+		}
 	}
 
 	@Override
