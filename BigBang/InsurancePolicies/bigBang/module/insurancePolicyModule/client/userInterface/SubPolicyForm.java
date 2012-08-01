@@ -195,7 +195,7 @@ public class SubPolicyForm extends FormView<SubPolicy> {
 		((SubPolicyClientSelectionViewPresenter)clientSelectionPanel).go();
 		client = new ExpandableSelectionFormField(BigBangConstants.EntityIds.CLIENT, "Cliente Aderente", clientSelectionPanel); //TODO
 		client.setFieldWidth("547px");
-		manager = new TextBoxFormField("Gestor da Apólice Adesão");
+		manager = new TextBoxFormField("Gestor de Apólice Adesão");
 		manager.setEditable(false);
 		manager.setFieldWidth("175px");
 		insuranceAgency = new TextBoxFormField("Seguradora");
@@ -216,7 +216,7 @@ public class SubPolicyForm extends FormView<SubPolicy> {
 		startDate = new DatePickerFormField("Data de Início");
 		endDate = new DatePickerFormField("Data de Fim");
 		fractioning = new ExpandableListBoxFormField(ModuleConstants.TypifiedListIds.FRACTIONING, "Fraccionamento");
-		premium = new NumericTextBoxFormField("Prémio Comercial", true);
+		premium = new NumericTextBoxFormField("Prémio Comercial Anual", true);
 		premium.setFieldWidth("175px");
 		
 		notes = new TextAreaFormField();

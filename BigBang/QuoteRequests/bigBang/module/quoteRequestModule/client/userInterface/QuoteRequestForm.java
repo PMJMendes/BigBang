@@ -50,7 +50,7 @@ public class QuoteRequestForm extends FormView<QuoteRequest> implements FiresAsy
 		status = new TextBoxFormField("Estado");
 		status.setFieldWidth("175px");
 		status.setEditable(false);
-		manager = new ExpandableListBoxFormField(BigBangConstants.EntityIds.USER, "Gestor da Consulta");
+		manager = new ExpandableListBoxFormField(BigBangConstants.EntityIds.USER, "Gestor de Consulta");
 		manager.allowEdition(false);
 		inheritedMediator = new TextBoxFormField("Mediador do Cliente");
 		inheritedMediator.setEditable(false);

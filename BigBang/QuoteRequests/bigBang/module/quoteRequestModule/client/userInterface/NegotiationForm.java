@@ -22,7 +22,7 @@ public class NegotiationForm extends FormView<Negotiation>{
 		
 		company = new ExpandableListBoxFormField(BigBangConstants.EntityIds.INSURANCE_AGENCY, "Seguradora");
 		company.allowEdition(false);
-		manager = new ExpandableListBoxFormField(BigBangConstants.EntityIds.USER, "Gestor da Negociação");
+		manager = new ExpandableListBoxFormField(BigBangConstants.EntityIds.USER, "Gestor de Negociação");
 		manager.allowEdition(false);
 		endDate = new DatePickerFormField("Data Limite");
 		notes = new TextAreaFormField("Notas");

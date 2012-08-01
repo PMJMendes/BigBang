@@ -82,7 +82,7 @@ public abstract class InsurancePolicyForm extends FormView<InsurancePolicy> {
 		endDate = new DatePickerFormField("Data de Fim");
 		fractioning = new ExpandableListBoxFormField(ModuleConstants.TypifiedListIds.FRACTIONING, "Fraccionamento");
 		fractioning.setMandatory(true);
-		premium = new NumericTextBoxFormField("Prémio Comercial", true);
+		premium = new NumericTextBoxFormField("Prémio Comercial Anual", true);
 		premium.setFieldWidth("175px");
 		premium.setUnitsLabel("€");
 		agentPercentage = new NumericTextBoxFormField("Comissão", false);

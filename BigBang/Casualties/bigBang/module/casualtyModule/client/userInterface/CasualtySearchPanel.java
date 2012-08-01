@@ -52,14 +52,14 @@ public class CasualtySearchPanel extends SearchPanel<CasualtyStub> implements Ca
 		sortOptions.put(CasualtySortParameter.SortableField.RELEVANCE, "Relevância");
 		sortOptions.put(CasualtySortParameter.SortableField.NUMBER, "Número");
 		sortOptions.put(CasualtySortParameter.SortableField.DATE, "Data");
-		sortOptions.put(CasualtySortParameter.SortableField.MANAGER, "Gestor do Sinistro");
+		sortOptions.put(CasualtySortParameter.SortableField.MANAGER, "Gestor de Sinistro");
 		sortOptions.put(CasualtySortParameter.SortableField.CLIENT_NUMBER, "Número de Cliente");
 		sortOptions.put(CasualtySortParameter.SortableField.CLIENT_NAME, "Nome de Cliente");
 		
 		filtersPanel = new FiltersPanel(sortOptions);
 		filtersPanel.addDateField(Filters.DATE_FROM, "Ocorrido de");
 		filtersPanel.addDateField(Filters.DATE_TO, "Ocorrido até");
-		filtersPanel.addTypifiedListField(Filters.MANAGER, BigBangConstants.EntityIds.USER, "Gestor do Sinistro");
+		filtersPanel.addTypifiedListField(Filters.MANAGER, BigBangConstants.EntityIds.USER, "Gestor de Sinistro");
 		filtersPanel.addCheckBoxField(Filters.CASE_STUDY, "Apenas Case Study");
 		filtersPanel.addCheckBoxField(Filters.INCLUDE_CLOSED, "Incluir Encerrados");
 

@@ -198,7 +198,7 @@ public class ReceiptSearchPanel extends SearchPanel<ReceiptStub> implements Rece
 
 		filtersPanel = new FiltersPanel(sortOptions);
 		filtersPanel.addTypifiedListField(Filters.AGENCY, BigBangConstants.EntityIds.INSURANCE_AGENCY, "Seguradora");
-		filtersPanel.addTypifiedListField(Filters.MANAGER, BigBangConstants.EntityIds.USER, "Gestor do Recibo");
+		filtersPanel.addTypifiedListField(Filters.MANAGER, BigBangConstants.EntityIds.USER, "Gestor de Recibo");
 		filtersPanel.addTypifiedListField(Filters.MEDIATOR, BigBangConstants.EntityIds.MEDIATOR, "Mediador");
 		filtersPanel.addTypifiedListField(Filters.TYPES, ModuleConstants.TypifiedListIds.RECEIPT_TYPE, "Tipos");
 		filtersPanel.addDateField(Filters.EMITED_FROM, "Emitido de");
