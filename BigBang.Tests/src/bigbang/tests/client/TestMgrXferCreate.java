@@ -29,9 +29,10 @@ public class TestMgrXferCreate
 		};
 
 		transfer = new ManagerTransfer();
-		transfer.dataObjectIds = new String[] {"8F474C7D-DE85-4BEC-8139-9FB70020135F"};
-		transfer.newManagerId = "CA20CE5A-C6A8-4820-81B4-9FB700200FB4";
+		transfer.dataObjectIds = new String[] {"32794C5A-BA2C-473E-803E-A08F0141D472", "0ADC7578-ED26-486B-8068-A08F0141D472",
+				"E9DA642F-BC9D-413D-810E-A08F0141D472", "9A0EC7C7-8059-40C9-8309-A08F0141D472"};
+		transfer.newManagerId = "3365E127-5A77-451E-BFD7-A08F01419BA9";
 
-		Services.clientService.createManagerTransfer(transfer, callback);
+		Services.clientService.massCreateManagerTransfer(transfer, callback);
 	}
 }
