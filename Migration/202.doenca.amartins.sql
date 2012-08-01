@@ -121,13 +121,19 @@ where s.ramo=708 and ss.ramo=10708;
 
 insert into amartins.tblPolicyValueItems (PK, ItemValue, FKTaxAsSubList)
 select CAST(CAST(NEWID() AS BINARY(10)) + CAST(GETDATE() AS BINARY(6)) AS UNIQUEIDENTIFIER) PK,
-x.v ItemValue, '2A4C2D81-ED02-48AD-B6DD-9FE200CA630F' FKTaxAsSubList
-from (select distinct case ltrim(rtrim(isnull(texto2, ''))) when '' then null else
-case left(texto2, 1) when 'T' then 'Titular' when 'C' then 'Cônjuge' else
-case when texto2 in ('Filha', 'Filho') then 'Filho Menor' else 'Filho Maior' end end end v
-from amartins..empresa.objectos where ramo=10708) x
-where x.v is not null and x.v not in
-(select ItemValue from amartins.tblPolicyValueItems where FKTaxAsSubList='2A4C2D81-ED02-48AD-B6DD-9FE200CA630F');
+'Titular' ItemValue, '2A4C2D81-ED02-48AD-B6DD-9FE200CA630F' FKTaxAsSubList;
+
+insert into amartins.tblPolicyValueItems (PK, ItemValue, FKTaxAsSubList)
+select CAST(CAST(NEWID() AS BINARY(10)) + CAST(GETDATE() AS BINARY(6)) AS UNIQUEIDENTIFIER) PK,
+'Cônjuge' ItemValue, '2A4C2D81-ED02-48AD-B6DD-9FE200CA630F' FKTaxAsSubList;
+
+insert into amartins.tblPolicyValueItems (PK, ItemValue, FKTaxAsSubList)
+select CAST(CAST(NEWID() AS BINARY(10)) + CAST(GETDATE() AS BINARY(6)) AS UNIQUEIDENTIFIER) PK,
+'Filho Menor' ItemValue, '2A4C2D81-ED02-48AD-B6DD-9FE200CA630F' FKTaxAsSubList;
+
+insert into amartins.tblPolicyValueItems (PK, ItemValue, FKTaxAsSubList)
+select CAST(CAST(NEWID() AS BINARY(10)) + CAST(GETDATE() AS BINARY(6)) AS UNIQUEIDENTIFIER) PK,
+'Filho Maior' ItemValue, '2A4C2D81-ED02-48AD-B6DD-9FE200CA630F' FKTaxAsSubList;
 
 insert into amartins.tblSubPolicyObjects (PK, ObjName, FKSubPolicy, FKObjType, Address1, Address2, FKZipCode, InclusionDate, ExclusionDate, FiscalNumberI, FKSex,
 DateOfBirth, ClientNumberI, InsurerIDI, MigrationAux)
@@ -1703,7 +1709,7 @@ and s.ramo=718 and ss.ramo=10708;
 insert into amartins.tblBBPolicies (PK, PolicyNumber, FKProcess, FKCompany, FKSubLine, BeginDate, FKDuration, FKFractioning, MaturityDay, MaturityMonth, EndDate,
 PolicyNotes, FKMediator, BCaseStudy, FKStatus, Premium, DShareFolder, MigrationID)
 select CAST(CAST(NEWID() AS BINARY(10)) + CAST(GETDATE() AS BINARY(6)) AS UNIQUEIDENTIFIER) PK,
-s.apolice PolicyNumber, null FKProcess, c.PK FKCompany, 'BB50ACAA-F557-4249-934F-9F340151D334' FKSubLine, s.datini BeginDate, d.PK FKDuration, f.PK FKFractioning,
+s.apolice PolicyNumber, null FKProcess, c.PK FKCompany, 'F990606F-0AB6-4EE8-BFDA-9F340151B327' FKSubLine, s.datini BeginDate, d.PK FKDuration, f.PK FKFractioning,
 s.diainicio MaturityDay, s.mesinicio MaturityMonth, s.datfim EndDate, substring(s.observ, 1, 250) PolicyNotes, m.PK FKMediator, 0 BCaseStudy, case s.situacao
 when 'P' then '6489D7DF-A090-40B9-BD5E-9F98012C8BED' when 'A' then '4F115B5C-0E23-444F-AA68-9F98012CA192'
 when 'U' then 'FCE79588-054B-458D-9515-9F98012CB80E' else '421E16B3-BE47-4D9C-9011-9F98012C945E' end FKStatus,
@@ -1721,7 +1727,7 @@ select CAST(CAST(NEWID() AS BINARY(10)) + CAST(GETDATE() AS BINARY(6)) AS UNIQUE
 p.PK FKPolicy, '538A5E80-E43D-42AC-A303-9F9100FC960C' FKCoverage, 1 BPresent
 from amartins.tblBBPolicies p
 inner join amartins..empresa.apolice s on s.MigrationID=p.MigrationID
-where p.FKSubLine='BB50ACAA-F557-4249-934F-9F340151D334';
+where p.FKSubLine='F990606F-0AB6-4EE8-BFDA-9F340151B327';
 
 insert into amartins.tblBBPolicyCoverages (PK, FKPolicy, FKCoverage, BPresent)
 select CAST(CAST(NEWID() AS BINARY(10)) + CAST(GETDATE() AS BINARY(6)) AS UNIQUEIDENTIFIER) PK,
@@ -1729,14 +1735,14 @@ p.PK FKPolicy, '9076D1C2-90E6-49B6-820B-9F9100FCA321' FKCoverage,
 case when (upper(left(ltrim(isnull(s.risco2, '')), 1)) in ('', '-')) then 0 else 1 end BPresent
 from amartins.tblBBPolicies p
 inner join amartins..empresa.apolice s on s.MigrationID=p.MigrationID
-where p.FKSubLine='BB50ACAA-F557-4249-934F-9F340151D334';
+where p.FKSubLine='F990606F-0AB6-4EE8-BFDA-9F340151B327';
 
 insert into amartins.tblBBPolicyCoverages (PK, FKPolicy, FKCoverage, BPresent)
 select CAST(CAST(NEWID() AS BINARY(10)) + CAST(GETDATE() AS BINARY(6)) AS UNIQUEIDENTIFIER) PK,
 p.PK FKPolicy, 'E47ABFD8-2C44-4130-B3EA-9F9100FCC990' FKCoverage, 0 BPresent
 from amartins.tblBBPolicies p
 inner join amartins..empresa.apolice s on s.MigrationID=p.MigrationID
-where p.FKSubLine='BB50ACAA-F557-4249-934F-9F340151D334';
+where p.FKSubLine='F990606F-0AB6-4EE8-BFDA-9F340151B327';
 
 insert into amartins.tblBBPolicyCoverages (PK, FKPolicy, FKCoverage, BPresent)
 select CAST(CAST(NEWID() AS BINARY(10)) + CAST(GETDATE() AS BINARY(6)) AS UNIQUEIDENTIFIER) PK,
@@ -1744,14 +1750,14 @@ p.PK FKPolicy, 'F006A858-4377-4979-94B3-9F9100FCAB24' FKCoverage,
 case when (upper(left(ltrim(isnull(s.risco4, '')), 1)) in ('', '-')) then 0 else 1 end BPresent
 from amartins.tblBBPolicies p
 inner join amartins..empresa.apolice s on s.MigrationID=p.MigrationID
-where p.FKSubLine='BB50ACAA-F557-4249-934F-9F340151D334';
+where p.FKSubLine='F990606F-0AB6-4EE8-BFDA-9F340151B327';
 
 insert into amartins.tblBBPolicyCoverages (PK, FKPolicy, FKCoverage, BPresent)
 select CAST(CAST(NEWID() AS BINARY(10)) + CAST(GETDATE() AS BINARY(6)) AS UNIQUEIDENTIFIER) PK,
 p.PK FKPolicy, '128DBA1E-73B2-4ACE-8327-9F9100FCDAE9' FKCoverage, 0 BPresent
 from amartins.tblBBPolicies p
 inner join amartins..empresa.apolice s on s.MigrationID=p.MigrationID
-where p.FKSubLine='BB50ACAA-F557-4249-934F-9F340151D334';
+where p.FKSubLine='F990606F-0AB6-4EE8-BFDA-9F340151B327';
 
 insert into amartins.tblBBPolicyCoverages (PK, FKPolicy, FKCoverage, BPresent)
 select CAST(CAST(NEWID() AS BINARY(10)) + CAST(GETDATE() AS BINARY(6)) AS UNIQUEIDENTIFIER) PK,
@@ -1759,14 +1765,14 @@ p.PK FKPolicy, '1D9EE6CD-F646-4D82-8F64-9F9100FCB22C' FKCoverage,
 case when (upper(left(ltrim(isnull(s.risco5, '')), 1)) in ('', '-')) then 0 else 1 end BPresent
 from amartins.tblBBPolicies p
 inner join amartins..empresa.apolice s on s.MigrationID=p.MigrationID
-where p.FKSubLine='BB50ACAA-F557-4249-934F-9F340151D334';
+where p.FKSubLine='F990606F-0AB6-4EE8-BFDA-9F340151B327';
 
 insert into amartins.tblBBPolicyCoverages (PK, FKPolicy, FKCoverage, BPresent)
 select CAST(CAST(NEWID() AS BINARY(10)) + CAST(GETDATE() AS BINARY(6)) AS UNIQUEIDENTIFIER) PK,
 p.PK FKPolicy, 'CC2471E4-7EDF-4290-B670-9F9100FCEBA7' FKCoverage, 0 BPresent
 from amartins.tblBBPolicies p
 inner join amartins..empresa.apolice s on s.MigrationID=p.MigrationID
-where p.FKSubLine='BB50ACAA-F557-4249-934F-9F340151D334';
+where p.FKSubLine='F990606F-0AB6-4EE8-BFDA-9F340151B327';
 
 insert into amartins.tblBBPolicyCoverages (PK, FKPolicy, FKCoverage, BPresent)
 select CAST(CAST(NEWID() AS BINARY(10)) + CAST(GETDATE() AS BINARY(6)) AS UNIQUEIDENTIFIER) PK,
@@ -1774,7 +1780,7 @@ p.PK FKPolicy, '29B4953D-F07E-4F2E-AA90-9F9100FC9BB3' FKCoverage,
 case when (upper(left(ltrim(isnull(s.risco6, '')+isnull(s.risco7, '')), 1)) in ('', '-')) then 0 else 1 end BPresent
 from amartins.tblBBPolicies p
 inner join amartins..empresa.apolice s on s.MigrationID=p.MigrationID
-where p.FKSubLine='BB50ACAA-F557-4249-934F-9F340151D334';
+where p.FKSubLine='F990606F-0AB6-4EE8-BFDA-9F340151B327';
 
 insert into amartins.tblBBPolicyCoverages (PK, FKPolicy, FKCoverage, BPresent)
 select CAST(CAST(NEWID() AS BINARY(10)) + CAST(GETDATE() AS BINARY(6)) AS UNIQUEIDENTIFIER) PK,
@@ -1782,21 +1788,21 @@ p.PK FKPolicy, '64772CFA-55E7-4BE5-826D-9F9100FCB8CC' FKCoverage,
 case when (upper(left(ltrim(isnull(s.risco3, '')), 1)) in ('', '-')) then 0 else 1 end BPresent
 from amartins.tblBBPolicies p
 inner join amartins..empresa.apolice s on s.MigrationID=p.MigrationID
-where p.FKSubLine='BB50ACAA-F557-4249-934F-9F340151D334';
+where p.FKSubLine='F990606F-0AB6-4EE8-BFDA-9F340151B327';
 
 insert into amartins.tblBBPolicyCoverages (PK, FKPolicy, FKCoverage, BPresent)
 select CAST(CAST(NEWID() AS BINARY(10)) + CAST(GETDATE() AS BINARY(6)) AS UNIQUEIDENTIFIER) PK,
 p.PK FKPolicy, '70D081FD-BE0E-45F3-ABB6-9F9100FCC19E' FKCoverage, 1 BPresent
 from amartins.tblBBPolicies p
 inner join amartins..empresa.apolice s on s.MigrationID=p.MigrationID
-where p.FKSubLine='BB50ACAA-F557-4249-934F-9F340151D334';
+where p.FKSubLine='F990606F-0AB6-4EE8-BFDA-9F340151B327';
 
 insert into amartins.tblBBPolicyCoverages (PK, FKPolicy, FKCoverage, BPresent)
 select CAST(CAST(NEWID() AS BINARY(10)) + CAST(GETDATE() AS BINARY(6)) AS UNIQUEIDENTIFIER) PK,
 p.PK FKPolicy, '4CF5D75F-503E-4A9C-A899-9F9100FCD259' FKCoverage, 0 BPresent
 from amartins.tblBBPolicies p
 inner join amartins..empresa.apolice s on s.MigrationID=p.MigrationID
-where p.FKSubLine='BB50ACAA-F557-4249-934F-9F340151D334';
+where p.FKSubLine='F990606F-0AB6-4EE8-BFDA-9F340151B327';
 
 insert into amartins.tblBBSubPolicies (PK, SubPolicyNumber, FKProcess, FKClient, BeginDate, EndDate, FKFractioning, SubPolicyNotes, FKStatus, Premium, DShareFolder, MigrationID)
 select CAST(CAST(NEWID() AS BINARY(10)) + CAST(GETDATE() AS BINARY(6)) AS UNIQUEIDENTIFIER) PK,
@@ -1821,13 +1827,19 @@ where s.ramo=728 and ss.ramo=10708;
 
 insert into amartins.tblPolicyValueItems (PK, ItemValue, FKTaxAsSubList)
 select CAST(CAST(NEWID() AS BINARY(10)) + CAST(GETDATE() AS BINARY(6)) AS UNIQUEIDENTIFIER) PK,
-x.v ItemValue, '0DFB3CA1-DC45-419E-B3DE-9FE200F5DBDD' FKTaxAsSubList
-from (select distinct case ltrim(rtrim(isnull(texto2, ''))) when '' then null else
-case left(texto2, 1) when 'T' then 'Titular' when 'C' then 'Cônjuge' else
-case when texto2 in ('Filha', 'Filho') then 'Filho Menor' else 'Filho Maior' end end end v
-from amartins..empresa.objectos where ramo=10708) x
-where x.v is not null and x.v not in
-(select ItemValue from amartins.tblPolicyValueItems where FKTaxAsSubList='0DFB3CA1-DC45-419E-B3DE-9FE200F5DBDD');
+'Titular' ItemValue, '0DFB3CA1-DC45-419E-B3DE-9FE200F5DBDD' FKTaxAsSubList;
+
+insert into amartins.tblPolicyValueItems (PK, ItemValue, FKTaxAsSubList)
+select CAST(CAST(NEWID() AS BINARY(10)) + CAST(GETDATE() AS BINARY(6)) AS UNIQUEIDENTIFIER) PK,
+'Cônjuge' ItemValue, '0DFB3CA1-DC45-419E-B3DE-9FE200F5DBDD' FKTaxAsSubList;
+
+insert into amartins.tblPolicyValueItems (PK, ItemValue, FKTaxAsSubList)
+select CAST(CAST(NEWID() AS BINARY(10)) + CAST(GETDATE() AS BINARY(6)) AS UNIQUEIDENTIFIER) PK,
+'Filho Menor' ItemValue, '0DFB3CA1-DC45-419E-B3DE-9FE200F5DBDD' FKTaxAsSubList;
+
+insert into amartins.tblPolicyValueItems (PK, ItemValue, FKTaxAsSubList)
+select CAST(CAST(NEWID() AS BINARY(10)) + CAST(GETDATE() AS BINARY(6)) AS UNIQUEIDENTIFIER) PK,
+'Filho Maior' ItemValue, '0DFB3CA1-DC45-419E-B3DE-9FE200F5DBDD' FKTaxAsSubList;
 
 insert into amartins.tblSubPolicyObjects (PK, ObjName, FKSubPolicy, FKObjType, Address1, Address2, FKZipCode, InclusionDate, ExclusionDate, FiscalNumberI, FKSex,
 DateOfBirth, ClientNumberI, InsurerIDI, MigrationAux)
@@ -2038,7 +2050,7 @@ group by p.PK, v.FKField) zz on zz.FKPolicy=p.PK,
 bigbang.tblBBTaxes t
 where t.PK in ('A1A36173-CF8E-4084-B0E2-9FE200F64CB1', '1D303F55-13AB-4371-8E97-9FE200F66993', '65E94A73-99A9-41BC-A32F-9FE200F68633', 'EC8F7D75-DE0E-466F-9F29-9FE200F69FC6')
 and (t.PK=zz.FKField or zz.FKField is NULL)
-and p.FKSubLine='BB50ACAA-F557-4249-934F-9F340151D334';
+and p.FKSubLine='F990606F-0AB6-4EE8-BFDA-9F340151B327';
 
 insert into amartins.tblBBPolicyValues (PK, Value, FKPolicy, FKField, FKObject, FKExercise)
 select CAST(CAST(NEWID() AS BINARY(10)) + CAST(GETDATE() AS BINARY(6)) AS UNIQUEIDENTIFIER) PK,
@@ -2056,14 +2068,14 @@ group by p.PK, v.FKField) zz on zz.FKPolicy=p.PK,
 bigbang.tblBBTaxes t
 where t.PK in ('5F1CD0AD-D797-48B3-9F44-9F9601582245', 'C7270847-253B-4168-94B0-9F9601583E07', 'A2DD65FD-BBBD-464B-A025-9FE200F5BC71', '933F52F3-B5E6-423E-BA9B-9F9601585865')
 and (t.PK=zz.FKField or zz.FKField is NULL)
-and p.FKSubLine='BB50ACAA-F557-4249-934F-9F340151D334';
+and p.FKSubLine='F990606F-0AB6-4EE8-BFDA-9F340151B327';
 
 insert into amartins.tblBBPolicyValues (PK, Value, FKPolicy, FKField, FKObject, FKExercise)
 select CAST(CAST(NEWID() AS BINARY(10)) + CAST(GETDATE() AS BINARY(6)) AS UNIQUEIDENTIFIER) PK,
 NULL Value, p.PK FKPolicy, '5C7861EC-55B1-46DD-9157-9FE200F6B9FB' FKField, NULL FKObject, NULL FKExercise
 from amartins..empresa.apolice s
 inner join amartins.tblBBPolicies p on p.MigrationID=s.MigrationID
-where p.FKSubLine='BB50ACAA-F557-4249-934F-9F340151D334';
+where p.FKSubLine='F990606F-0AB6-4EE8-BFDA-9F340151B327';
 
 insert into amartins.tblBBPolicyValues (PK, Value, FKPolicy, FKField, FKObject, FKExercise)
 select CAST(CAST(NEWID() AS BINARY(10)) + CAST(GETDATE() AS BINARY(6)) AS UNIQUEIDENTIFIER) PK,
@@ -2073,7 +2085,7 @@ inner join amartins.tblBBPolicies p on p.MigrationID=s.MigrationID
 inner join amartins.tblBBPolicyCoverages c on c.FKPolicy=p.PK
 inner join bigbang.tblBBTaxes t on t.FKCoverage=c.FKCoverage
 where t.pk='08118119-3873-469E-A94C-A05B01240F6E' and c.BPresent=1
-and p.FKSubLine='BB50ACAA-F557-4249-934F-9F340151D334';
+and p.FKSubLine='F990606F-0AB6-4EE8-BFDA-9F340151B327';
 
 insert into amartins.tblBBPolicyValues (PK, Value, FKPolicy, FKField, FKObject, FKExercise)
 select CAST(CAST(NEWID() AS BINARY(10)) + CAST(GETDATE() AS BINARY(6)) AS UNIQUEIDENTIFIER) PK,
@@ -2083,7 +2095,7 @@ inner join amartins.tblBBPolicies p on p.MigrationID=s.MigrationID
 inner join amartins.tblBBPolicyCoverages c on c.FKPolicy=p.PK
 inner join bigbang.tblBBTaxes t on t.FKCoverage=c.FKCoverage
 where t.pk='618D6670-E16F-4ADC-B3C4-A05B01240F6E' and c.BPresent=1
-and p.FKSubLine='BB50ACAA-F557-4249-934F-9F340151D334';
+and p.FKSubLine='F990606F-0AB6-4EE8-BFDA-9F340151B327';
 
 insert into amartins.tblBBPolicyValues (PK, Value, FKPolicy, FKField, FKObject, FKExercise)
 select CAST(CAST(NEWID() AS BINARY(10)) + CAST(GETDATE() AS BINARY(6)) AS UNIQUEIDENTIFIER) PK,
@@ -2093,7 +2105,7 @@ inner join amartins.tblBBPolicies p on p.MigrationID=s.MigrationID
 inner join amartins.tblBBPolicyCoverages c on c.FKPolicy=p.PK
 inner join bigbang.tblBBTaxes t on t.FKCoverage=c.FKCoverage
 where t.pk='FA37ACBD-F8FC-4901-A184-A05B01240F6E' and c.BPresent=1
-and p.FKSubLine='BB50ACAA-F557-4249-934F-9F340151D334';
+and p.FKSubLine='F990606F-0AB6-4EE8-BFDA-9F340151B327';
 
 insert into amartins.tblBBPolicyValues (PK, Value, FKPolicy, FKField, FKObject, FKExercise)
 select CAST(CAST(NEWID() AS BINARY(10)) + CAST(GETDATE() AS BINARY(6)) AS UNIQUEIDENTIFIER) PK,
@@ -2103,7 +2115,7 @@ inner join amartins.tblBBPolicies p on p.MigrationID=s.MigrationID
 inner join amartins.tblBBPolicyCoverages c on c.FKPolicy=p.PK
 inner join bigbang.tblBBTaxes t on t.FKCoverage=c.FKCoverage
 where t.pk='49BBC49C-54F4-4871-92E9-A05B01240F6E' and c.BPresent=1
-and p.FKSubLine='BB50ACAA-F557-4249-934F-9F340151D334';
+and p.FKSubLine='F990606F-0AB6-4EE8-BFDA-9F340151B327';
 
 insert into amartins.tblBBPolicyValues (PK, Value, FKPolicy, FKField, FKObject, FKExercise)
 select CAST(CAST(NEWID() AS BINARY(10)) + CAST(GETDATE() AS BINARY(6)) AS UNIQUEIDENTIFIER) PK,
@@ -2113,7 +2125,7 @@ inner join amartins.tblBBPolicies p on p.MigrationID=s.MigrationID
 inner join amartins.tblBBPolicyCoverages c on c.FKPolicy=p.PK
 inner join bigbang.tblBBTaxes t on t.FKCoverage=c.FKCoverage
 where t.pk='CB31BA11-C025-47BE-9CFD-A05B01240F6E' and c.BPresent=1
-and p.FKSubLine='BB50ACAA-F557-4249-934F-9F340151D334';
+and p.FKSubLine='F990606F-0AB6-4EE8-BFDA-9F340151B327';
 
 insert into amartins.tblBBPolicyValues (PK, Value, FKPolicy, FKField, FKObject, FKExercise)
 select CAST(CAST(NEWID() AS BINARY(10)) + CAST(GETDATE() AS BINARY(6)) AS UNIQUEIDENTIFIER) PK,
@@ -2123,7 +2135,7 @@ inner join amartins.tblBBPolicies p on p.MigrationID=s.MigrationID
 inner join amartins.tblBBPolicyCoverages c on c.FKPolicy=p.PK
 inner join bigbang.tblBBTaxes t on t.FKCoverage=c.FKCoverage
 where t.pk='5824EA36-48E2-4F2F-B79B-A06000E4816C' and c.BPresent=1
-and p.FKSubLine='BB50ACAA-F557-4249-934F-9F340151D334';
+and p.FKSubLine='F990606F-0AB6-4EE8-BFDA-9F340151B327';
 
 insert into amartins.tblBBPolicyValues (PK, Value, FKPolicy, FKField, FKObject, FKExercise)
 select CAST(CAST(NEWID() AS BINARY(10)) + CAST(GETDATE() AS BINARY(6)) AS UNIQUEIDENTIFIER) PK,
@@ -2133,7 +2145,7 @@ inner join amartins.tblBBPolicies p on p.MigrationID=s.MigrationID
 inner join amartins.tblBBPolicyCoverages c on c.FKPolicy=p.PK
 inner join bigbang.tblBBTaxes t on t.FKCoverage=c.FKCoverage
 where t.pk='15591DA8-9C38-4110-B99E-A05B01240F6E' and c.BPresent=1
-and p.FKSubLine='BB50ACAA-F557-4249-934F-9F340151D334';
+and p.FKSubLine='F990606F-0AB6-4EE8-BFDA-9F340151B327';
 
 insert into amartins.tblBBPolicyValues (PK, Value, FKPolicy, FKField, FKObject, FKExercise)
 select CAST(CAST(NEWID() AS BINARY(10)) + CAST(GETDATE() AS BINARY(6)) AS UNIQUEIDENTIFIER) PK,
@@ -2143,7 +2155,7 @@ inner join amartins.tblBBPolicies p on p.MigrationID=s.MigrationID
 inner join amartins.tblBBPolicyCoverages c on c.FKPolicy=p.PK
 inner join bigbang.tblBBTaxes t on t.FKCoverage=c.FKCoverage
 where t.pk='8C72BD57-0D5C-4ADB-8A05-A05B01240F6E' and c.BPresent=1
-and p.FKSubLine='BB50ACAA-F557-4249-934F-9F340151D334';
+and p.FKSubLine='F990606F-0AB6-4EE8-BFDA-9F340151B327';
 
 insert into amartins.tblBBPolicyValues (PK, Value, FKPolicy, FKField, FKObject, FKExercise)
 select CAST(CAST(NEWID() AS BINARY(10)) + CAST(GETDATE() AS BINARY(6)) AS UNIQUEIDENTIFIER) PK,
@@ -2153,7 +2165,7 @@ inner join amartins.tblBBPolicies p on p.MigrationID=s.MigrationID
 inner join amartins.tblBBPolicyCoverages c on c.FKPolicy=p.PK
 inner join bigbang.tblBBTaxes t on t.FKCoverage=c.FKCoverage
 where t.pk='10C7940A-B60F-4D56-B349-A05B01240F6E' and c.BPresent=1
-and p.FKSubLine='BB50ACAA-F557-4249-934F-9F340151D334';
+and p.FKSubLine='F990606F-0AB6-4EE8-BFDA-9F340151B327';
 
 insert into amartins.tblBBPolicyValues (PK, Value, FKPolicy, FKField, FKObject, FKExercise)
 select CAST(CAST(NEWID() AS BINARY(10)) + CAST(GETDATE() AS BINARY(6)) AS UNIQUEIDENTIFIER) PK,
@@ -2163,7 +2175,7 @@ inner join amartins.tblBBPolicies p on p.MigrationID=s.MigrationID
 inner join amartins.tblBBPolicyCoverages c on c.FKPolicy=p.PK
 inner join bigbang.tblBBTaxes t on t.FKCoverage=c.FKCoverage
 where t.pk='F817BF03-E71B-441A-A0C1-A05B01240F6E' and c.BPresent=1
-and p.FKSubLine='BB50ACAA-F557-4249-934F-9F340151D334';
+and p.FKSubLine='F990606F-0AB6-4EE8-BFDA-9F340151B327';
 
 insert into amartins.tblBBPolicyValues (PK, Value, FKPolicy, FKField, FKObject, FKExercise)
 select CAST(CAST(NEWID() AS BINARY(10)) + CAST(GETDATE() AS BINARY(6)) AS UNIQUEIDENTIFIER) PK,
@@ -2173,7 +2185,7 @@ inner join amartins.tblBBPolicies p on p.MigrationID=s.MigrationID
 inner join amartins.tblBBPolicyCoverages c on c.FKPolicy=p.PK
 inner join bigbang.tblBBTaxes t on t.FKCoverage=c.FKCoverage
 where t.pk='67C5E0D1-37C6-4619-8BEC-A05B01240F6E' and c.BPresent=1
-and p.FKSubLine='BB50ACAA-F557-4249-934F-9F340151D334';
+and p.FKSubLine='F990606F-0AB6-4EE8-BFDA-9F340151B327';
 
 insert into amartins.tblBBPolicyValues (PK, Value, FKPolicy, FKField, FKObject, FKExercise)
 select CAST(CAST(NEWID() AS BINARY(10)) + CAST(GETDATE() AS BINARY(6)) AS UNIQUEIDENTIFIER) PK,
@@ -2183,7 +2195,7 @@ inner join amartins.tblBBPolicies p on p.MigrationID=s.MigrationID
 inner join amartins.tblBBPolicyCoverages c on c.FKPolicy=p.PK
 inner join bigbang.tblBBTaxes t on t.FKCoverage=c.FKCoverage
 where t.pk='22E3BEEE-A52B-432D-A442-A05B01240F6E' and c.BPresent=1
-and p.FKSubLine='BB50ACAA-F557-4249-934F-9F340151D334';
+and p.FKSubLine='F990606F-0AB6-4EE8-BFDA-9F340151B327';
 
 insert into amartins.tblBBPolicyValues (PK, Value, FKPolicy, FKField, FKObject, FKExercise)
 select CAST(CAST(NEWID() AS BINARY(10)) + CAST(GETDATE() AS BINARY(6)) AS UNIQUEIDENTIFIER) PK,
@@ -2193,7 +2205,7 @@ inner join amartins.tblBBPolicies p on p.MigrationID=s.MigrationID
 inner join amartins.tblBBPolicyCoverages c on c.FKPolicy=p.PK
 inner join bigbang.tblBBTaxes t on t.FKCoverage=c.FKCoverage
 where t.pk='CF436AFF-8C31-42B3-808B-A05B01240F6E' and c.BPresent=1
-and p.FKSubLine='BB50ACAA-F557-4249-934F-9F340151D334';
+and p.FKSubLine='F990606F-0AB6-4EE8-BFDA-9F340151B327';
 
 insert into amartins.tblBBPolicyValues (PK, Value, FKPolicy, FKField, FKObject, FKExercise)
 select CAST(CAST(NEWID() AS BINARY(10)) + CAST(GETDATE() AS BINARY(6)) AS UNIQUEIDENTIFIER) PK,
@@ -2203,7 +2215,7 @@ inner join amartins.tblBBPolicies p on p.MigrationID=s.MigrationID
 inner join amartins.tblBBPolicyCoverages c on c.FKPolicy=p.PK
 inner join bigbang.tblBBTaxes t on t.FKCoverage=c.FKCoverage
 where t.pk='65F46FA5-22E2-4F60-BA01-A05B01240F6E' and c.BPresent=1
-and p.FKSubLine='BB50ACAA-F557-4249-934F-9F340151D334';
+and p.FKSubLine='F990606F-0AB6-4EE8-BFDA-9F340151B327';
 
 insert into amartins.tblBBPolicyValues (PK, Value, FKPolicy, FKField, FKObject, FKExercise)
 select CAST(CAST(NEWID() AS BINARY(10)) + CAST(GETDATE() AS BINARY(6)) AS UNIQUEIDENTIFIER) PK,
@@ -2213,7 +2225,7 @@ inner join amartins.tblBBPolicies p on p.MigrationID=s.MigrationID
 inner join amartins.tblBBPolicyCoverages c on c.FKPolicy=p.PK
 inner join bigbang.tblBBTaxes t on t.FKCoverage=c.FKCoverage
 where t.pk='4FF7DD7F-AB8B-4046-888C-A06000E4816C' and c.BPresent=1
-and p.FKSubLine='BB50ACAA-F557-4249-934F-9F340151D334';
+and p.FKSubLine='F990606F-0AB6-4EE8-BFDA-9F340151B327';
 
 insert into amartins.tblBBPolicyValues (PK, Value, FKPolicy, FKField, FKObject, FKExercise)
 select CAST(CAST(NEWID() AS BINARY(10)) + CAST(GETDATE() AS BINARY(6)) AS UNIQUEIDENTIFIER) PK,
@@ -2223,7 +2235,7 @@ inner join amartins.tblBBPolicies p on p.MigrationID=s.MigrationID
 inner join amartins.tblBBPolicyCoverages c on c.FKPolicy=p.PK
 inner join bigbang.tblBBTaxes t on t.FKCoverage=c.FKCoverage
 where t.pk='C8520B7D-589E-47AD-A6C2-A05B01240F6E' and c.BPresent=1
-and p.FKSubLine='BB50ACAA-F557-4249-934F-9F340151D334';
+and p.FKSubLine='F990606F-0AB6-4EE8-BFDA-9F340151B327';
 
 insert into amartins.tblBBPolicyValues (PK, Value, FKPolicy, FKField, FKObject, FKExercise)
 select CAST(CAST(NEWID() AS BINARY(10)) + CAST(GETDATE() AS BINARY(6)) AS UNIQUEIDENTIFIER) PK,
@@ -2233,7 +2245,7 @@ inner join amartins.tblBBPolicies p on p.MigrationID=s.MigrationID
 inner join amartins.tblBBPolicyCoverages c on c.FKPolicy=p.PK
 inner join bigbang.tblBBTaxes t on t.FKCoverage=c.FKCoverage
 where t.pk='2F2FC261-E602-44E6-BAF2-A05B01240F6E' and c.BPresent=1
-and p.FKSubLine='BB50ACAA-F557-4249-934F-9F340151D334';
+and p.FKSubLine='F990606F-0AB6-4EE8-BFDA-9F340151B327';
 
 insert into amartins.tblBBPolicyValues (PK, Value, FKPolicy, FKField, FKObject, FKExercise)
 select CAST(CAST(NEWID() AS BINARY(10)) + CAST(GETDATE() AS BINARY(6)) AS UNIQUEIDENTIFIER) PK,
@@ -2243,7 +2255,7 @@ inner join amartins.tblBBPolicies p on p.MigrationID=s.MigrationID
 inner join amartins.tblBBPolicyCoverages c on c.FKPolicy=p.PK
 inner join bigbang.tblBBTaxes t on t.FKCoverage=c.FKCoverage
 where t.pk='64612F0E-B9FC-4D0B-8178-A06000E4816C' and c.BPresent=1
-and p.FKSubLine='BB50ACAA-F557-4249-934F-9F340151D334';
+and p.FKSubLine='F990606F-0AB6-4EE8-BFDA-9F340151B327';
 
 insert into amartins.tblBBPolicyValues (PK, Value, FKPolicy, FKField, FKObject, FKExercise)
 select CAST(CAST(NEWID() AS BINARY(10)) + CAST(GETDATE() AS BINARY(6)) AS UNIQUEIDENTIFIER) PK,
@@ -2253,7 +2265,7 @@ inner join amartins.tblBBPolicies p on p.MigrationID=s.MigrationID
 inner join amartins.tblBBPolicyCoverages c on c.FKPolicy=p.PK
 inner join bigbang.tblBBTaxes t on t.FKCoverage=c.FKCoverage
 where t.pk='C2FF0086-BC9B-45EA-80E7-A05B01240F6E' and c.BPresent=1
-and p.FKSubLine='BB50ACAA-F557-4249-934F-9F340151D334';
+and p.FKSubLine='F990606F-0AB6-4EE8-BFDA-9F340151B327';
 
 insert into amartins.tblBBPolicyValues (PK, Value, FKPolicy, FKField, FKObject, FKExercise)
 select CAST(CAST(NEWID() AS BINARY(10)) + CAST(GETDATE() AS BINARY(6)) AS UNIQUEIDENTIFIER) PK,
@@ -2263,7 +2275,7 @@ inner join amartins.tblBBPolicies p on p.MigrationID=s.MigrationID
 inner join amartins.tblBBPolicyCoverages c on c.FKPolicy=p.PK
 inner join bigbang.tblBBTaxes t on t.FKCoverage=c.FKCoverage
 where t.pk='F7A4B98A-720A-4298-9AE3-A05B01240F6E' and c.BPresent=1
-and p.FKSubLine='BB50ACAA-F557-4249-934F-9F340151D334';
+and p.FKSubLine='F990606F-0AB6-4EE8-BFDA-9F340151B327';
 
 insert into amartins.tblBBPolicyValues (PK, Value, FKPolicy, FKField, FKObject, FKExercise)
 select CAST(CAST(NEWID() AS BINARY(10)) + CAST(GETDATE() AS BINARY(6)) AS UNIQUEIDENTIFIER) PK,
@@ -2273,7 +2285,7 @@ inner join amartins.tblBBPolicies p on p.MigrationID=s.MigrationID
 inner join amartins.tblBBPolicyCoverages c on c.FKPolicy=p.PK
 inner join bigbang.tblBBTaxes t on t.FKCoverage=c.FKCoverage
 where t.pk='C9D7AF47-77CD-447D-9BCF-A05B01240F6E' and c.BPresent=1
-and p.FKSubLine='BB50ACAA-F557-4249-934F-9F340151D334';
+and p.FKSubLine='F990606F-0AB6-4EE8-BFDA-9F340151B327';
 
 insert into amartins.tblBBPolicyValues (PK, Value, FKPolicy, FKField, FKObject, FKExercise)
 select CAST(CAST(NEWID() AS BINARY(10)) + CAST(GETDATE() AS BINARY(6)) AS UNIQUEIDENTIFIER) PK,
@@ -2283,7 +2295,7 @@ inner join amartins.tblBBPolicies p on p.MigrationID=s.MigrationID
 inner join amartins.tblBBPolicyCoverages c on c.FKPolicy=p.PK
 inner join bigbang.tblBBTaxes t on t.FKCoverage=c.FKCoverage
 where t.pk='7F844818-3C97-4938-9DB3-A05B01240F6E' and c.BPresent=1
-and p.FKSubLine='BB50ACAA-F557-4249-934F-9F340151D334';
+and p.FKSubLine='F990606F-0AB6-4EE8-BFDA-9F340151B327';
 
 insert into amartins.tblBBPolicyValues (PK, Value, FKPolicy, FKField, FKObject, FKExercise)
 select CAST(CAST(NEWID() AS BINARY(10)) + CAST(GETDATE() AS BINARY(6)) AS UNIQUEIDENTIFIER) PK,
@@ -2293,7 +2305,7 @@ inner join amartins.tblBBPolicies p on p.MigrationID=s.MigrationID
 inner join amartins.tblBBPolicyCoverages c on c.FKPolicy=p.PK
 inner join bigbang.tblBBTaxes t on t.FKCoverage=c.FKCoverage
 where t.pk='F54B5788-9C26-4756-AFB8-A06000E4816C' and c.BPresent=1
-and p.FKSubLine='BB50ACAA-F557-4249-934F-9F340151D334';
+and p.FKSubLine='F990606F-0AB6-4EE8-BFDA-9F340151B327';
 
 insert into amartins.tblBBPolicyValues (PK, Value, FKPolicy, FKField, FKObject, FKExercise)
 select CAST(CAST(NEWID() AS BINARY(10)) + CAST(GETDATE() AS BINARY(6)) AS UNIQUEIDENTIFIER) PK,
@@ -2303,7 +2315,7 @@ inner join amartins.tblBBPolicies p on p.MigrationID=s.MigrationID
 inner join amartins.tblBBPolicyCoverages c on c.FKPolicy=p.PK
 inner join bigbang.tblBBTaxes t on t.FKCoverage=c.FKCoverage
 where t.pk='BCBCDF9F-2F0E-4423-BEF5-A05B01240F6E' and c.BPresent=1
-and p.FKSubLine='BB50ACAA-F557-4249-934F-9F340151D334';
+and p.FKSubLine='F990606F-0AB6-4EE8-BFDA-9F340151B327';
 
 insert into amartins.tblBBPolicyValues (PK, Value, FKPolicy, FKField, FKObject, FKExercise)
 select CAST(CAST(NEWID() AS BINARY(10)) + CAST(GETDATE() AS BINARY(6)) AS UNIQUEIDENTIFIER) PK,
@@ -2313,7 +2325,7 @@ inner join amartins.tblBBPolicies p on p.MigrationID=s.MigrationID
 inner join amartins.tblBBPolicyCoverages c on c.FKPolicy=p.PK
 inner join bigbang.tblBBTaxes t on t.FKCoverage=c.FKCoverage
 where t.pk='21D143DB-4692-4F5E-BD52-A05B01240F6E' and c.BPresent=1
-and p.FKSubLine='BB50ACAA-F557-4249-934F-9F340151D334';
+and p.FKSubLine='F990606F-0AB6-4EE8-BFDA-9F340151B327';
 
 insert into amartins.tblBBPolicyValues (PK, Value, FKPolicy, FKField, FKObject, FKExercise)
 select CAST(CAST(NEWID() AS BINARY(10)) + CAST(GETDATE() AS BINARY(6)) AS UNIQUEIDENTIFIER) PK,
@@ -2323,7 +2335,7 @@ inner join amartins.tblBBPolicies p on p.MigrationID=s.MigrationID
 inner join amartins.tblBBPolicyCoverages c on c.FKPolicy=p.PK
 inner join bigbang.tblBBTaxes t on t.FKCoverage=c.FKCoverage
 where t.pk='AB785CB4-39B3-46D9-A2E2-A05B01240F6E' and c.BPresent=1
-and p.FKSubLine='BB50ACAA-F557-4249-934F-9F340151D334';
+and p.FKSubLine='F990606F-0AB6-4EE8-BFDA-9F340151B327';
 
 insert into amartins.tblBBPolicyValues (PK, Value, FKPolicy, FKField, FKObject, FKExercise)
 select CAST(CAST(NEWID() AS BINARY(10)) + CAST(GETDATE() AS BINARY(6)) AS UNIQUEIDENTIFIER) PK,
@@ -2333,7 +2345,7 @@ inner join amartins.tblBBPolicies p on p.MigrationID=s.MigrationID
 inner join amartins.tblBBPolicyCoverages c on c.FKPolicy=p.PK
 inner join bigbang.tblBBTaxes t on t.FKCoverage=c.FKCoverage
 where t.pk='AEC47A7F-9C71-4236-BBA5-A06000E4816C' and c.BPresent=1
-and p.FKSubLine='BB50ACAA-F557-4249-934F-9F340151D334';
+and p.FKSubLine='F990606F-0AB6-4EE8-BFDA-9F340151B327';
 
 insert into amartins.tblBBPolicyValues (PK, Value, FKPolicy, FKField, FKObject, FKExercise)
 select CAST(CAST(NEWID() AS BINARY(10)) + CAST(GETDATE() AS BINARY(6)) AS UNIQUEIDENTIFIER) PK,
@@ -2343,7 +2355,7 @@ inner join amartins.tblBBPolicies p on p.MigrationID=s.MigrationID
 inner join amartins.tblBBPolicyCoverages c on c.FKPolicy=p.PK
 inner join bigbang.tblBBTaxes t on t.FKCoverage=c.FKCoverage
 where t.pk='CE927157-74E5-4760-B929-A05B01240F6E' and c.BPresent=1
-and p.FKSubLine='BB50ACAA-F557-4249-934F-9F340151D334';
+and p.FKSubLine='F990606F-0AB6-4EE8-BFDA-9F340151B327';
 
 insert into amartins.tblBBPolicyValues (PK, Value, FKPolicy, FKField, FKObject, FKExercise)
 select CAST(CAST(NEWID() AS BINARY(10)) + CAST(GETDATE() AS BINARY(6)) AS UNIQUEIDENTIFIER) PK,
@@ -2353,7 +2365,7 @@ inner join amartins.tblBBPolicies p on p.MigrationID=s.MigrationID
 inner join amartins.tblBBPolicyCoverages c on c.FKPolicy=p.PK
 inner join bigbang.tblBBTaxes t on t.FKCoverage=c.FKCoverage
 where t.pk='7E3C7361-0955-4106-962E-A05B01240F6E' and c.BPresent=1
-and p.FKSubLine='BB50ACAA-F557-4249-934F-9F340151D334';
+and p.FKSubLine='F990606F-0AB6-4EE8-BFDA-9F340151B327';
 
 insert into amartins.tblBBPolicyValues (PK, Value, FKPolicy, FKField, FKObject, FKExercise)
 select CAST(CAST(NEWID() AS BINARY(10)) + CAST(GETDATE() AS BINARY(6)) AS UNIQUEIDENTIFIER) PK,
@@ -2363,7 +2375,7 @@ inner join amartins.tblBBPolicies p on p.MigrationID=s.MigrationID
 inner join amartins.tblBBPolicyCoverages c on c.FKPolicy=p.PK
 inner join bigbang.tblBBTaxes t on t.FKCoverage=c.FKCoverage
 where t.pk='37A8BA31-8EBF-4D1F-B21E-A05B01240F6E' and c.BPresent=1
-and p.FKSubLine='BB50ACAA-F557-4249-934F-9F340151D334';
+and p.FKSubLine='F990606F-0AB6-4EE8-BFDA-9F340151B327';
 
 insert into amartins.tblBBPolicyValues (PK, Value, FKPolicy, FKField, FKObject, FKExercise)
 select CAST(CAST(NEWID() AS BINARY(10)) + CAST(GETDATE() AS BINARY(6)) AS UNIQUEIDENTIFIER) PK,
@@ -2373,7 +2385,7 @@ inner join amartins.tblBBPolicies p on p.MigrationID=s.MigrationID
 inner join amartins.tblBBPolicyCoverages c on c.FKPolicy=p.PK
 inner join bigbang.tblBBTaxes t on t.FKCoverage=c.FKCoverage
 where t.pk='D7FCF0CC-8B78-4755-9B88-A05B01240F6E' and c.BPresent=1
-and p.FKSubLine='BB50ACAA-F557-4249-934F-9F340151D334';
+and p.FKSubLine='F990606F-0AB6-4EE8-BFDA-9F340151B327';
 
 insert into amartins.tblBBPolicyValues (PK, Value, FKPolicy, FKField, FKObject, FKExercise)
 select CAST(CAST(NEWID() AS BINARY(10)) + CAST(GETDATE() AS BINARY(6)) AS UNIQUEIDENTIFIER) PK,
@@ -2383,7 +2395,7 @@ inner join amartins.tblBBPolicies p on p.MigrationID=s.MigrationID
 inner join amartins.tblBBPolicyCoverages c on c.FKPolicy=p.PK
 inner join bigbang.tblBBTaxes t on t.FKCoverage=c.FKCoverage
 where t.pk='F7BD138D-5AF4-44BC-97A9-A05B01240F6E' and c.BPresent=1
-and p.FKSubLine='BB50ACAA-F557-4249-934F-9F340151D334';
+and p.FKSubLine='F990606F-0AB6-4EE8-BFDA-9F340151B327';
 
 insert into amartins.tblBBPolicyValues (PK, Value, FKPolicy, FKField, FKObject, FKExercise)
 select CAST(CAST(NEWID() AS BINARY(10)) + CAST(GETDATE() AS BINARY(6)) AS UNIQUEIDENTIFIER) PK,
@@ -2393,7 +2405,7 @@ inner join amartins.tblBBPolicies p on p.MigrationID=s.MigrationID
 inner join amartins.tblBBPolicyCoverages c on c.FKPolicy=p.PK
 inner join bigbang.tblBBTaxes t on t.FKCoverage=c.FKCoverage
 where t.pk='D24AC1AF-A15F-43D9-8AF3-A05B01240F6E' and c.BPresent=1
-and p.FKSubLine='BB50ACAA-F557-4249-934F-9F340151D334';
+and p.FKSubLine='F990606F-0AB6-4EE8-BFDA-9F340151B327';
 
 insert into amartins.tblBBPolicyValues (PK, Value, FKPolicy, FKField, FKObject, FKExercise)
 select CAST(CAST(NEWID() AS BINARY(10)) + CAST(GETDATE() AS BINARY(6)) AS UNIQUEIDENTIFIER) PK,
@@ -2403,7 +2415,7 @@ inner join amartins.tblBBPolicies p on p.MigrationID=s.MigrationID
 inner join amartins.tblBBPolicyCoverages c on c.FKPolicy=p.PK
 inner join bigbang.tblBBTaxes t on t.FKCoverage=c.FKCoverage
 where t.pk='632AAA50-265A-4103-ABCE-A06000E4816C' and c.BPresent=1
-and p.FKSubLine='BB50ACAA-F557-4249-934F-9F340151D334';
+and p.FKSubLine='F990606F-0AB6-4EE8-BFDA-9F340151B327';
 
 insert into amartins.tblBBPolicyValues (PK, Value, FKPolicy, FKField, FKObject, FKExercise)
 select CAST(CAST(NEWID() AS BINARY(10)) + CAST(GETDATE() AS BINARY(6)) AS UNIQUEIDENTIFIER) PK,
@@ -2413,7 +2425,7 @@ inner join amartins.tblBBPolicies p on p.MigrationID=s.MigrationID
 inner join amartins.tblBBPolicyCoverages c on c.FKPolicy=p.PK
 inner join bigbang.tblBBTaxes t on t.FKCoverage=c.FKCoverage
 where t.pk='E355FC60-70B7-4C1E-8A94-A05B01240F6E' and c.BPresent=1
-and p.FKSubLine='BB50ACAA-F557-4249-934F-9F340151D334';
+and p.FKSubLine='F990606F-0AB6-4EE8-BFDA-9F340151B327';
 
 insert into amartins.tblBBPolicyValues (PK, Value, FKPolicy, FKField, FKObject, FKExercise)
 select CAST(CAST(NEWID() AS BINARY(10)) + CAST(GETDATE() AS BINARY(6)) AS UNIQUEIDENTIFIER) PK,
@@ -2423,7 +2435,7 @@ inner join amartins.tblBBPolicies p on p.MigrationID=s.MigrationID
 inner join amartins.tblBBPolicyCoverages c on c.FKPolicy=p.PK
 inner join bigbang.tblBBTaxes t on t.FKCoverage=c.FKCoverage
 where t.pk='5588CF2A-578C-4443-9689-A05B01240F6E' and c.BPresent=1
-and p.FKSubLine='BB50ACAA-F557-4249-934F-9F340151D334';
+and p.FKSubLine='F990606F-0AB6-4EE8-BFDA-9F340151B327';
 
 insert into amartins.tblBBPolicyValues (PK, Value, FKPolicy, FKField, FKObject, FKExercise)
 select CAST(CAST(NEWID() AS BINARY(10)) + CAST(GETDATE() AS BINARY(6)) AS UNIQUEIDENTIFIER) PK,
@@ -2433,7 +2445,7 @@ inner join amartins.tblBBPolicies p on p.MigrationID=s.MigrationID
 inner join amartins.tblBBPolicyCoverages c on c.FKPolicy=p.PK
 inner join bigbang.tblBBTaxes t on t.FKCoverage=c.FKCoverage
 where t.pk='62774383-7375-47ED-A556-A05B01240F6E' and c.BPresent=1
-and p.FKSubLine='BB50ACAA-F557-4249-934F-9F340151D334';
+and p.FKSubLine='F990606F-0AB6-4EE8-BFDA-9F340151B327';
 
 insert into amartins.tblBBPolicyValues (PK, Value, FKPolicy, FKField, FKObject, FKExercise)
 select CAST(CAST(NEWID() AS BINARY(10)) + CAST(GETDATE() AS BINARY(6)) AS UNIQUEIDENTIFIER) PK,
@@ -2443,7 +2455,7 @@ inner join amartins.tblBBPolicies p on p.MigrationID=s.MigrationID
 inner join amartins.tblBBPolicyCoverages c on c.FKPolicy=p.PK
 inner join bigbang.tblBBTaxes t on t.FKCoverage=c.FKCoverage
 where t.pk='1C6BF13E-8DF8-4D03-BBC4-A05B01240F6E' and c.BPresent=1
-and p.FKSubLine='BB50ACAA-F557-4249-934F-9F340151D334';
+and p.FKSubLine='F990606F-0AB6-4EE8-BFDA-9F340151B327';
 
 insert into amartins.tblBBPolicyValues (PK, Value, FKPolicy, FKField, FKObject, FKExercise)
 select CAST(CAST(NEWID() AS BINARY(10)) + CAST(GETDATE() AS BINARY(6)) AS UNIQUEIDENTIFIER) PK,
@@ -2453,7 +2465,7 @@ inner join amartins.tblBBPolicies p on p.MigrationID=s.MigrationID
 inner join amartins.tblBBPolicyCoverages c on c.FKPolicy=p.PK
 inner join bigbang.tblBBTaxes t on t.FKCoverage=c.FKCoverage
 where t.pk='CD4D68FE-D3B2-4CB2-83AE-A06000E4816C' and c.BPresent=1
-and p.FKSubLine='BB50ACAA-F557-4249-934F-9F340151D334';
+and p.FKSubLine='F990606F-0AB6-4EE8-BFDA-9F340151B327';
 
 insert into amartins.tblBBPolicyValues (PK, Value, FKPolicy, FKField, FKObject, FKExercise)
 select CAST(CAST(NEWID() AS BINARY(10)) + CAST(GETDATE() AS BINARY(6)) AS UNIQUEIDENTIFIER) PK,
@@ -2463,7 +2475,7 @@ inner join amartins.tblBBPolicies p on p.MigrationID=s.MigrationID
 inner join amartins.tblBBPolicyCoverages c on c.FKPolicy=p.PK
 inner join bigbang.tblBBTaxes t on t.FKCoverage=c.FKCoverage
 where t.pk='FC5C9886-C8C9-4EF6-9411-A05B01240F6E' and c.BPresent=1
-and p.FKSubLine='BB50ACAA-F557-4249-934F-9F340151D334';
+and p.FKSubLine='F990606F-0AB6-4EE8-BFDA-9F340151B327';
 
 insert into amartins.tblBBPolicyValues (PK, Value, FKPolicy, FKField, FKObject, FKExercise)
 select CAST(CAST(NEWID() AS BINARY(10)) + CAST(GETDATE() AS BINARY(6)) AS UNIQUEIDENTIFIER) PK,
@@ -2473,7 +2485,7 @@ inner join amartins.tblBBPolicies p on p.MigrationID=s.MigrationID
 inner join amartins.tblBBPolicyCoverages c on c.FKPolicy=p.PK
 inner join bigbang.tblBBTaxes t on t.FKCoverage=c.FKCoverage
 where t.pk='809DA8BD-66C7-4B8A-A8A0-A05B01240F6E' and c.BPresent=1
-and p.FKSubLine='BB50ACAA-F557-4249-934F-9F340151D334';
+and p.FKSubLine='F990606F-0AB6-4EE8-BFDA-9F340151B327';
 
 insert into amartins.tblBBPolicyValues (PK, Value, FKPolicy, FKField, FKObject, FKExercise)
 select CAST(CAST(NEWID() AS BINARY(10)) + CAST(GETDATE() AS BINARY(6)) AS UNIQUEIDENTIFIER) PK,
@@ -2483,7 +2495,7 @@ inner join amartins.tblBBPolicies p on p.MigrationID=s.MigrationID
 inner join amartins.tblBBPolicyCoverages c on c.FKPolicy=p.PK
 inner join bigbang.tblBBTaxes t on t.FKCoverage=c.FKCoverage
 where t.pk='8DA0ACA8-63AC-444C-BEE9-A05B01240F6E' and c.BPresent=1
-and p.FKSubLine='BB50ACAA-F557-4249-934F-9F340151D334';
+and p.FKSubLine='F990606F-0AB6-4EE8-BFDA-9F340151B327';
 
 insert into amartins.tblBBPolicyValues (PK, Value, FKPolicy, FKField, FKObject, FKExercise)
 select CAST(CAST(NEWID() AS BINARY(10)) + CAST(GETDATE() AS BINARY(6)) AS UNIQUEIDENTIFIER) PK,
@@ -2493,7 +2505,7 @@ inner join amartins.tblBBPolicies p on p.MigrationID=s.MigrationID
 inner join amartins.tblBBPolicyCoverages c on c.FKPolicy=p.PK
 inner join bigbang.tblBBTaxes t on t.FKCoverage=c.FKCoverage
 where t.pk='66785A9A-2D4C-49F6-A666-A05B01240F6E' and c.BPresent=1
-and p.FKSubLine='BB50ACAA-F557-4249-934F-9F340151D334';
+and p.FKSubLine='F990606F-0AB6-4EE8-BFDA-9F340151B327';
 
 insert into amartins.tblBBPolicyValues (PK, Value, FKPolicy, FKField, FKObject, FKExercise)
 select CAST(CAST(NEWID() AS BINARY(10)) + CAST(GETDATE() AS BINARY(6)) AS UNIQUEIDENTIFIER) PK,
@@ -2503,7 +2515,7 @@ inner join amartins.tblBBPolicies p on p.MigrationID=s.MigrationID
 inner join amartins.tblBBPolicyCoverages c on c.FKPolicy=p.PK
 inner join bigbang.tblBBTaxes t on t.FKCoverage=c.FKCoverage
 where t.pk='971ADBBE-7F7E-42D3-A3F9-A05B01240F6E' and c.BPresent=1
-and p.FKSubLine='BB50ACAA-F557-4249-934F-9F340151D334';
+and p.FKSubLine='F990606F-0AB6-4EE8-BFDA-9F340151B327';
 
 insert into amartins.tblBBPolicyValues (PK, Value, FKPolicy, FKField, FKObject, FKExercise)
 select CAST(CAST(NEWID() AS BINARY(10)) + CAST(GETDATE() AS BINARY(6)) AS UNIQUEIDENTIFIER) PK,
@@ -2513,7 +2525,7 @@ inner join amartins.tblBBPolicies p on p.MigrationID=s.MigrationID
 inner join amartins.tblBBPolicyCoverages c on c.FKPolicy=p.PK
 inner join bigbang.tblBBTaxes t on t.FKCoverage=c.FKCoverage
 where t.pk='3EAC6F0F-A992-483D-895E-A05B01240F6E' and c.BPresent=1
-and p.FKSubLine='BB50ACAA-F557-4249-934F-9F340151D334';
+and p.FKSubLine='F990606F-0AB6-4EE8-BFDA-9F340151B327';
 
 insert into amartins.tblBBPolicyValues (PK, Value, FKPolicy, FKField, FKObject, FKExercise)
 select CAST(CAST(NEWID() AS BINARY(10)) + CAST(GETDATE() AS BINARY(6)) AS UNIQUEIDENTIFIER) PK,
@@ -2523,7 +2535,7 @@ inner join amartins.tblBBPolicies p on p.MigrationID=s.MigrationID
 inner join amartins.tblBBPolicyCoverages c on c.FKPolicy=p.PK
 inner join bigbang.tblBBTaxes t on t.FKCoverage=c.FKCoverage
 where t.pk='1396490A-F884-46D8-BDDE-A06000E4816C' and c.BPresent=1
-and p.FKSubLine='BB50ACAA-F557-4249-934F-9F340151D334';
+and p.FKSubLine='F990606F-0AB6-4EE8-BFDA-9F340151B327';
 
 insert into amartins.tblBBPolicyValues (PK, Value, FKPolicy, FKField, FKObject, FKExercise)
 select CAST(CAST(NEWID() AS BINARY(10)) + CAST(GETDATE() AS BINARY(6)) AS UNIQUEIDENTIFIER) PK,
@@ -2533,7 +2545,7 @@ inner join amartins.tblBBPolicies p on p.MigrationID=s.MigrationID
 inner join amartins.tblBBPolicyCoverages c on c.FKPolicy=p.PK
 inner join bigbang.tblBBTaxes t on t.FKCoverage=c.FKCoverage
 where t.pk='C568EB7D-4F0F-4275-95EC-A05B01240F6E' and c.BPresent=1
-and p.FKSubLine='BB50ACAA-F557-4249-934F-9F340151D334';
+and p.FKSubLine='F990606F-0AB6-4EE8-BFDA-9F340151B327';
 
 insert into amartins.tblBBSubPolicyValues (PK, Value, FKSubPolicy, FKField, FKObject, FKExercise)
 select CAST(CAST(NEWID() AS BINARY(10)) + CAST(GETDATE() AS BINARY(6)) AS UNIQUEIDENTIFIER) PK,
@@ -2676,18 +2688,20 @@ inner join amartins.tblBBPolicyCoverages z on z.FKPolicy=p.PK
 where s.ramo=710 and ss.ramo=10710;
 
 insert into amartins.tblPolicyValueItems (PK, ItemValue, FKTaxAsSubList)
-select * from
-(select CAST(CAST(NEWID() AS BINARY(10)) + CAST(GETDATE() AS BINARY(6)) AS UNIQUEIDENTIFIER) PK,
-x.v ItemValue, '2F143086-7F99-4C04-B124-9FE200F7625B' FKTaxAsSubList
-from (select distinct case ltrim(rtrim(isnull(texto2, ''))) when '' then null else
-case left(texto2, 1) when 'T' then 'Titular' when 'C' then 'Cônjuge' when 'E' then 'Cônjuge' when 'M' then 'Cônjuge' else
-case when texto2 in ('Filha', 'Filho') then 'Filho Menor' else 'Filho Maior' end end end v
-from amartins..empresa.objectos where ramo=10710) x
-union all
 select CAST(CAST(NEWID() AS BINARY(10)) + CAST(GETDATE() AS BINARY(6)) AS UNIQUEIDENTIFIER) PK,
-'Filho Maior' ItemValue, '2F143086-7F99-4C04-B124-9FE200F7625B' FKTaxAsSubList) a
-where a.ItemValue is not null and a.ItemValue not in
-(select ItemValue from amartins.tblPolicyValueItems where FKTaxAsSubList='2F143086-7F99-4C04-B124-9FE200F7625B');
+'Titular' ItemValue, '2F143086-7F99-4C04-B124-9FE200F7625B' FKTaxAsSubList;
+
+insert into amartins.tblPolicyValueItems (PK, ItemValue, FKTaxAsSubList)
+select CAST(CAST(NEWID() AS BINARY(10)) + CAST(GETDATE() AS BINARY(6)) AS UNIQUEIDENTIFIER) PK,
+'Cônjuge' ItemValue, '2F143086-7F99-4C04-B124-9FE200F7625B' FKTaxAsSubList;
+
+insert into amartins.tblPolicyValueItems (PK, ItemValue, FKTaxAsSubList)
+select CAST(CAST(NEWID() AS BINARY(10)) + CAST(GETDATE() AS BINARY(6)) AS UNIQUEIDENTIFIER) PK,
+'Filho Menor' ItemValue, '2F143086-7F99-4C04-B124-9FE200F7625B' FKTaxAsSubList;
+
+insert into amartins.tblPolicyValueItems (PK, ItemValue, FKTaxAsSubList)
+select CAST(CAST(NEWID() AS BINARY(10)) + CAST(GETDATE() AS BINARY(6)) AS UNIQUEIDENTIFIER) PK,
+'Filho Maior' ItemValue, '2F143086-7F99-4C04-B124-9FE200F7625B' FKTaxAsSubList;
 
 set language portuguese;
 insert into amartins.tblSubPolicyObjects (PK, ObjName, FKSubPolicy, FKObjType, Address1, Address2, FKZipCode, InclusionDate, ExclusionDate, FiscalNumberI, FKSex,
@@ -3556,6 +3570,22 @@ from amartins.tblBBPolicies p
 inner join amartins..empresa.apolice s on s.MigrationID=p.MigrationID
 where p.FKSubLine='D2ACD7C9-C5A6-42A8-9E11-9EE9011987D0';
 
+insert into amartins.tblPolicyValueItems (PK, ItemValue, FKTaxAsSubList)
+select CAST(CAST(NEWID() AS BINARY(10)) + CAST(GETDATE() AS BINARY(6)) AS UNIQUEIDENTIFIER) PK,
+'Titular' ItemValue, '114DFA0B-6CE2-447E-8357-9FE200F8CE83' FKTaxAsSubList;
+
+insert into amartins.tblPolicyValueItems (PK, ItemValue, FKTaxAsSubList)
+select CAST(CAST(NEWID() AS BINARY(10)) + CAST(GETDATE() AS BINARY(6)) AS UNIQUEIDENTIFIER) PK,
+'Cônjuge' ItemValue, '114DFA0B-6CE2-447E-8357-9FE200F8CE83' FKTaxAsSubList;
+
+insert into amartins.tblPolicyValueItems (PK, ItemValue, FKTaxAsSubList)
+select CAST(CAST(NEWID() AS BINARY(10)) + CAST(GETDATE() AS BINARY(6)) AS UNIQUEIDENTIFIER) PK,
+'Filho Menor' ItemValue, '114DFA0B-6CE2-447E-8357-9FE200F8CE83' FKTaxAsSubList;
+
+insert into amartins.tblPolicyValueItems (PK, ItemValue, FKTaxAsSubList)
+select CAST(CAST(NEWID() AS BINARY(10)) + CAST(GETDATE() AS BINARY(6)) AS UNIQUEIDENTIFIER) PK,
+'Filho Maior' ItemValue, '114DFA0B-6CE2-447E-8357-9FE200F8CE83' FKTaxAsSubList;
+
 insert into amartins.tblBBPolicyValues (PK, Value, FKPolicy, FKField, FKObject, FKExercise)
 select CAST(CAST(NEWID() AS BINARY(10)) + CAST(GETDATE() AS BINARY(6)) AS UNIQUEIDENTIFIER) PK,
 s.texto2 Value, p.PK FKPolicy, 'A9DB3E35-014B-4227-AF33-9FE200F9008F' FKField, NULL FKObject, NULL FKExercise
@@ -4188,6 +4218,22 @@ p.PK FKPolicy, '5BE8E894-40B6-454D-AEE9-9F9100FE570C' FKCoverage, 0 BPresent
 from amartins.tblBBPolicies p
 inner join amartins..empresa.apolice s on s.MigrationID=p.MigrationID
 where p.FKSubLine='CD456E4C-1ED7-4819-AB22-9EE901198248';
+
+insert into amartins.tblPolicyValueItems (PK, ItemValue, FKTaxAsSubList)
+select CAST(CAST(NEWID() AS BINARY(10)) + CAST(GETDATE() AS BINARY(6)) AS UNIQUEIDENTIFIER) PK,
+'Titular' ItemValue, 'DB9548CE-2426-4499-A8E5-9FE200FA4EE4' FKTaxAsSubList;
+
+insert into amartins.tblPolicyValueItems (PK, ItemValue, FKTaxAsSubList)
+select CAST(CAST(NEWID() AS BINARY(10)) + CAST(GETDATE() AS BINARY(6)) AS UNIQUEIDENTIFIER) PK,
+'Cônjuge' ItemValue, 'DB9548CE-2426-4499-A8E5-9FE200FA4EE4' FKTaxAsSubList;
+
+insert into amartins.tblPolicyValueItems (PK, ItemValue, FKTaxAsSubList)
+select CAST(CAST(NEWID() AS BINARY(10)) + CAST(GETDATE() AS BINARY(6)) AS UNIQUEIDENTIFIER) PK,
+'Filho Menor' ItemValue, 'DB9548CE-2426-4499-A8E5-9FE200FA4EE4' FKTaxAsSubList;
+
+insert into amartins.tblPolicyValueItems (PK, ItemValue, FKTaxAsSubList)
+select CAST(CAST(NEWID() AS BINARY(10)) + CAST(GETDATE() AS BINARY(6)) AS UNIQUEIDENTIFIER) PK,
+'Filho Maior' ItemValue, 'DB9548CE-2426-4499-A8E5-9FE200FA4EE4' FKTaxAsSubList;
 
 insert into amartins.tblBBPolicyValues (PK, Value, FKPolicy, FKField, FKObject, FKExercise)
 select CAST(CAST(NEWID() AS BINARY(10)) + CAST(GETDATE() AS BINARY(6)) AS UNIQUEIDENTIFIER) PK,
@@ -4822,6 +4868,22 @@ from amartins.tblBBPolicies p
 inner join amartins..empresa.apolice s on s.MigrationID=p.MigrationID
 where p.FKSubLine='C8E5724B-4BD2-4AAF-ADAE-9EE901197B82';
 
+insert into amartins.tblPolicyValueItems (PK, ItemValue, FKTaxAsSubList)
+select CAST(CAST(NEWID() AS BINARY(10)) + CAST(GETDATE() AS BINARY(6)) AS UNIQUEIDENTIFIER) PK,
+'Titular' ItemValue, 'C68B1A09-BC3C-4749-ABD2-9FE200FBB3E2' FKTaxAsSubList;
+
+insert into amartins.tblPolicyValueItems (PK, ItemValue, FKTaxAsSubList)
+select CAST(CAST(NEWID() AS BINARY(10)) + CAST(GETDATE() AS BINARY(6)) AS UNIQUEIDENTIFIER) PK,
+'Cônjuge' ItemValue, 'C68B1A09-BC3C-4749-ABD2-9FE200FBB3E2' FKTaxAsSubList;
+
+insert into amartins.tblPolicyValueItems (PK, ItemValue, FKTaxAsSubList)
+select CAST(CAST(NEWID() AS BINARY(10)) + CAST(GETDATE() AS BINARY(6)) AS UNIQUEIDENTIFIER) PK,
+'Filho Menor' ItemValue, 'C68B1A09-BC3C-4749-ABD2-9FE200FBB3E2' FKTaxAsSubList;
+
+insert into amartins.tblPolicyValueItems (PK, ItemValue, FKTaxAsSubList)
+select CAST(CAST(NEWID() AS BINARY(10)) + CAST(GETDATE() AS BINARY(6)) AS UNIQUEIDENTIFIER) PK,
+'Filho Maior' ItemValue, 'C68B1A09-BC3C-4749-ABD2-9FE200FBB3E2' FKTaxAsSubList;
+
 insert into amartins.tblBBPolicyValues (PK, Value, FKPolicy, FKField, FKObject, FKExercise)
 select CAST(CAST(NEWID() AS BINARY(10)) + CAST(GETDATE() AS BINARY(6)) AS UNIQUEIDENTIFIER) PK,
 s.texto2 Value, p.PK FKPolicy, 'A5E004F1-3D6E-4E7A-BFBA-9FE200FBF2FC' FKField, NULL FKObject, NULL FKExercise
@@ -5455,6 +5517,22 @@ from amartins.tblBBPolicies p
 inner join amartins..empresa.apolice s on s.MigrationID=p.MigrationID
 where p.FKSubLine='1B70989B-1D54-408E-BDF7-9EE90119749F';
 
+insert into amartins.tblPolicyValueItems (PK, ItemValue, FKTaxAsSubList)
+select CAST(CAST(NEWID() AS BINARY(10)) + CAST(GETDATE() AS BINARY(6)) AS UNIQUEIDENTIFIER) PK,
+'Titular' ItemValue, '725FD92F-5498-42AE-958D-9F96015A6527' FKTaxAsSubList;
+
+insert into amartins.tblPolicyValueItems (PK, ItemValue, FKTaxAsSubList)
+select CAST(CAST(NEWID() AS BINARY(10)) + CAST(GETDATE() AS BINARY(6)) AS UNIQUEIDENTIFIER) PK,
+'Cônjuge' ItemValue, '725FD92F-5498-42AE-958D-9F96015A6527' FKTaxAsSubList;
+
+insert into amartins.tblPolicyValueItems (PK, ItemValue, FKTaxAsSubList)
+select CAST(CAST(NEWID() AS BINARY(10)) + CAST(GETDATE() AS BINARY(6)) AS UNIQUEIDENTIFIER) PK,
+'Filho Menor' ItemValue, '725FD92F-5498-42AE-958D-9F96015A6527' FKTaxAsSubList;
+
+insert into amartins.tblPolicyValueItems (PK, ItemValue, FKTaxAsSubList)
+select CAST(CAST(NEWID() AS BINARY(10)) + CAST(GETDATE() AS BINARY(6)) AS UNIQUEIDENTIFIER) PK,
+'Filho Maior' ItemValue, '725FD92F-5498-42AE-958D-9F96015A6527' FKTaxAsSubList;
+
 insert into amartins.tblBBPolicyValues (PK, Value, FKPolicy, FKField, FKObject, FKExercise)
 select CAST(CAST(NEWID() AS BINARY(10)) + CAST(GETDATE() AS BINARY(6)) AS UNIQUEIDENTIFIER) PK,
 NULL Value, p.PK FKPolicy, 'EC2A5ECB-8C9E-4AEC-82FD-9F96015A2A0D' FKField, NULL FKObject, NULL FKExercise
@@ -6059,6 +6137,22 @@ from amartins.tblBBPolicies p
 inner join amartins..empresa.apolice s on s.MigrationID=p.MigrationID
 where p.FKSubLine='422AE9F5-03DE-4AE2-830F-9EE901196F1C';
 
+insert into amartins.tblPolicyValueItems (PK, ItemValue, FKTaxAsSubList)
+select CAST(CAST(NEWID() AS BINARY(10)) + CAST(GETDATE() AS BINARY(6)) AS UNIQUEIDENTIFIER) PK,
+'Titular' ItemValue, '81F3906F-951F-4AD0-96AB-9F96015B882D' FKTaxAsSubList;
+
+insert into amartins.tblPolicyValueItems (PK, ItemValue, FKTaxAsSubList)
+select CAST(CAST(NEWID() AS BINARY(10)) + CAST(GETDATE() AS BINARY(6)) AS UNIQUEIDENTIFIER) PK,
+'Cônjuge' ItemValue, '81F3906F-951F-4AD0-96AB-9F96015B882D' FKTaxAsSubList;
+
+insert into amartins.tblPolicyValueItems (PK, ItemValue, FKTaxAsSubList)
+select CAST(CAST(NEWID() AS BINARY(10)) + CAST(GETDATE() AS BINARY(6)) AS UNIQUEIDENTIFIER) PK,
+'Filho Menor' ItemValue, '81F3906F-951F-4AD0-96AB-9F96015B882D' FKTaxAsSubList;
+
+insert into amartins.tblPolicyValueItems (PK, ItemValue, FKTaxAsSubList)
+select CAST(CAST(NEWID() AS BINARY(10)) + CAST(GETDATE() AS BINARY(6)) AS UNIQUEIDENTIFIER) PK,
+'Filho Maior' ItemValue, '81F3906F-951F-4AD0-96AB-9F96015B882D' FKTaxAsSubList;
+
 insert into amartins.tblBBPolicyValues (PK, Value, FKPolicy, FKField, FKObject, FKExercise)
 select CAST(CAST(NEWID() AS BINARY(10)) + CAST(GETDATE() AS BINARY(6)) AS UNIQUEIDENTIFIER) PK,
 NULL Value, p.PK FKPolicy, '0427F6EA-B3FA-4A6A-9B03-9F96015B3BC5' FKField, NULL FKObject, NULL FKExercise
@@ -6662,6 +6756,22 @@ p.PK FKPolicy, '906A8E1C-BA36-496A-8EEC-9F9100FFD6FC' FKCoverage, 0 BPresent
 from amartins.tblBBPolicies p
 inner join amartins..empresa.apolice s on s.MigrationID=p.MigrationID
 where p.FKSubLine='2F2BFF64-61AF-4CE3-8F74-9EE90119687C';
+
+insert into amartins.tblPolicyValueItems (PK, ItemValue, FKTaxAsSubList)
+select CAST(CAST(NEWID() AS BINARY(10)) + CAST(GETDATE() AS BINARY(6)) AS UNIQUEIDENTIFIER) PK,
+'Titular' ItemValue, '8E625AF1-4926-4065-A2FC-9F96015C07DD' FKTaxAsSubList;
+
+insert into amartins.tblPolicyValueItems (PK, ItemValue, FKTaxAsSubList)
+select CAST(CAST(NEWID() AS BINARY(10)) + CAST(GETDATE() AS BINARY(6)) AS UNIQUEIDENTIFIER) PK,
+'Cônjuge' ItemValue, '8E625AF1-4926-4065-A2FC-9F96015C07DD' FKTaxAsSubList;
+
+insert into amartins.tblPolicyValueItems (PK, ItemValue, FKTaxAsSubList)
+select CAST(CAST(NEWID() AS BINARY(10)) + CAST(GETDATE() AS BINARY(6)) AS UNIQUEIDENTIFIER) PK,
+'Filho Menor' ItemValue, '8E625AF1-4926-4065-A2FC-9F96015C07DD' FKTaxAsSubList;
+
+insert into amartins.tblPolicyValueItems (PK, ItemValue, FKTaxAsSubList)
+select CAST(CAST(NEWID() AS BINARY(10)) + CAST(GETDATE() AS BINARY(6)) AS UNIQUEIDENTIFIER) PK,
+'Filho Maior' ItemValue, '8E625AF1-4926-4065-A2FC-9F96015C07DD' FKTaxAsSubList;
 
 insert into amartins.tblBBPolicyValues (PK, Value, FKPolicy, FKField, FKObject, FKExercise)
 select CAST(CAST(NEWID() AS BINARY(10)) + CAST(GETDATE() AS BINARY(6)) AS UNIQUEIDENTIFIER) PK,

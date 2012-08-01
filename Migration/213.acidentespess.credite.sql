@@ -1094,6 +1094,18 @@ p.PK FKPolicy, 'DBDB405F-B318-4A6E-881A-9F9100EFD5AA' FKCoverage, 0 BPresent
 from credite_egs.tblBBPolicies p
 where p.FKSubLine='8572FE00-D359-437A-8359-9EE901194A05';
 
+insert into credite_egs.tblPolicyValueItems (PK, ItemValue, FKTaxAsSubList)
+select CAST(CAST(NEWID() AS BINARY(10)) + CAST(GETDATE() AS BINARY(6)) AS UNIQUEIDENTIFIER) PK,
+'Profissionais' ItemValue, '5D0AC8DE-79F5-456F-B77A-9F96014EF6C9' FKTaxAsSubList;
+
+insert into credite_egs.tblPolicyValueItems (PK, ItemValue, FKTaxAsSubList)
+select CAST(CAST(NEWID() AS BINARY(10)) + CAST(GETDATE() AS BINARY(6)) AS UNIQUEIDENTIFIER) PK,
+'Extra-Profissionais' ItemValue, '5D0AC8DE-79F5-456F-B77A-9F96014EF6C9' FKTaxAsSubList;
+
+insert into credite_egs.tblPolicyValueItems (PK, ItemValue, FKTaxAsSubList)
+select CAST(CAST(NEWID() AS BINARY(10)) + CAST(GETDATE() AS BINARY(6)) AS UNIQUEIDENTIFIER) PK,
+'Profissionais e Extra-Profissionais' ItemValue, '5D0AC8DE-79F5-456F-B77A-9F96014EF6C9' FKTaxAsSubList;
+
 insert into credite_egs.tblBBPolicyValues (PK, Value, FKPolicy, FKField, FKObject, FKExercise)
 select CAST(CAST(NEWID() AS BINARY(10)) + CAST(GETDATE() AS BINARY(6)) AS UNIQUEIDENTIFIER) PK,
 NULL Value, p.PK FKPolicy, '26F7DA80-E53E-456D-B4EE-9FE200BF9656' FKField, NULL FKObject, NULL FKExercise
@@ -1227,6 +1239,10 @@ select CAST(CAST(NEWID() AS BINARY(10)) + CAST(GETDATE() AS BINARY(6)) AS UNIQUE
 insert into credite_egs.tblPolicyValueItems (PK, ItemValue, FKTaxAsSubList)
 select CAST(CAST(NEWID() AS BINARY(10)) + CAST(GETDATE() AS BINARY(6)) AS UNIQUEIDENTIFIER) PK,
 'Extra-Profissionais' ItemValue, '2C3DAFAD-4CC8-4628-9D8F-9F96014F442D' FKTaxAsSubList;
+
+insert into credite_egs.tblPolicyValueItems (PK, ItemValue, FKTaxAsSubList)
+select CAST(CAST(NEWID() AS BINARY(10)) + CAST(GETDATE() AS BINARY(6)) AS UNIQUEIDENTIFIER) PK,
+'Profissionais e Extra-Profissionais' ItemValue, '2C3DAFAD-4CC8-4628-9D8F-9F96014F442D' FKTaxAsSubList;
 
 insert into bigbang.tblProfessions(PK, ProfessionName)
 select CAST(CAST(NEWID() AS BINARY(10)) + CAST(GETDATE() AS BINARY(6)) AS UNIQUEIDENTIFIER) PK,
