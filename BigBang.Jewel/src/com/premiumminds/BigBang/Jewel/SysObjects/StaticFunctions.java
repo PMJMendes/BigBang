@@ -34,6 +34,7 @@ public class StaticFunctions
 		String lstrUser;
 		String lstrPwd;
 		String lstrEmail;
+		String lstrPrinter;
 		UserDecoration lobjDeco;
 		Hashtable<String, String> larrParams;
 		UUID lidParams;
@@ -66,8 +67,6 @@ public class StaticFunctions
 			}
 			lrsParams.close();
 
-			Engine.getUserData().put("Printer", larrParams.get("PRINTER"));
-
 			lrs = Entity.GetInstance(Engine.FindEntity(pidNameSpace, Constants.ObjID_Decorations))
 					.SelectByMembers(ldb, new int[] {0}, new java.lang.Object[] {pidUser}, null);
 		    if (lrs.next())
@@ -86,6 +85,13 @@ public class StaticFunctions
 
 		if ( lobjDeco == null )
 			return;
+		
+		lstrPrinter = (String)lobjDeco.getAt(4);
+		if(lstrPrinter != null)
+		{
+			Engine.getUserData().put("Printer", lstrPrinter);
+		}
+		
 		lstrEmail = (String)lobjDeco.getAt(1);
 
 		try

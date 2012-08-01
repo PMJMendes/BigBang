@@ -36,6 +36,7 @@ public class ManageUsers
 		public UUID midProfile;
 		public String mstrEmail;
 		public UUID midCostCenter;
+		public String mstrDefaultPrinter;
 		public UserData mobjPrevValues;
 	}
 
@@ -183,6 +184,7 @@ public class ManageUsers
 					lobjAuxOuter.setAt(0, lobjAuxBase.getKey());
 					lobjAuxOuter.setAt(1, marrCreate[i].mstrEmail);
 					lobjAuxOuter.setAt(2, marrCreate[i].midCostCenter);
+					lobjAuxOuter.setAt(4, marrCreate[i].mstrDefaultPrinter);
 					lobjAuxOuter.SaveToDb(pdb);
 
 					marrCreate[i].mid = lobjAuxBase.getKey();
@@ -220,6 +222,7 @@ public class ManageUsers
 					marrModify[i].mobjPrevValues.midProfile = (UUID)lobjAuxBase.getAt(3);
 					marrModify[i].mobjPrevValues.mstrEmail = (String)lobjAuxOuter.getAt(1);
 					marrModify[i].mobjPrevValues.midCostCenter = (UUID)lobjAuxOuter.getAt(2);
+					marrModify[i].mobjPrevValues.mstrDefaultPrinter = (String)lobjAuxOuter.getAt(4);
 					marrModify[i].mobjPrevValues.mobjPrevValues = null;
 
 					lobjAuxBase.setAt(0, marrModify[i].mstrFullName);
@@ -230,6 +233,7 @@ public class ManageUsers
 
 					lobjAuxOuter.setAt(1, marrModify[i].mstrEmail);
 					lobjAuxOuter.setAt(2, marrModify[i].midCostCenter);
+					lobjAuxOuter.setAt(4, marrModify[i].mstrDefaultPrinter);
 					lobjAuxOuter.SaveToDb(pdb);
 				}
 			}
@@ -259,6 +263,7 @@ public class ManageUsers
 					marrDelete[i].midProfile = (UUID)lobjAuxBase.getAt(3);
 					marrDelete[i].mstrEmail = (String)lobjAuxOuter.getAt(1);
 					marrDelete[i].midCostCenter = (UUID)lobjAuxOuter.getAt(2);
+					marrDelete[i].mstrDefaultPrinter = (String)lobjAuxOuter.getAt(4);
 					marrDelete[i].mobjPrevValues = null;
 
 					lrefDecorations.Delete(pdb, lobjAuxOuter.getKey());
@@ -573,6 +578,11 @@ public class ManageUsers
 		{
 			pstrString.append("(Erro a obter o centro de custo.)");
 		}
+
+		pstrString.append(pstrLineBreak);
+		pstrString.append("Impressora pré-definida: ");
+		pstrString.append(pobjData.mstrDefaultPrinter);
+		
 		pstrString.append(pstrLineBreak);
 	}
 }

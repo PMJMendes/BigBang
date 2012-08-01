@@ -15,6 +15,7 @@ public class User
 	public UserProfile profile;
 	public String costCenterId;
 	public String email;
+	public String defaultPrinter;
 
 	public User() {};
 
@@ -28,5 +29,6 @@ public class User
 		this.profile = original.profile;
 		this.costCenterId = original.costCenterId;
 		this.email = original.email;
+		this.defaultPrinter = original.defaultPrinter;
 	}
 }

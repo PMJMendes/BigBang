@@ -1,10 +1,12 @@
 package bigBang.module.generalSystemModule.client.userInterface.view;
 
 import bigBang.definitions.shared.BigBangConstants;
+import bigBang.definitions.shared.BigBangConstants.Printers;
 import bigBang.definitions.shared.CostCenter;
 import bigBang.definitions.shared.User;
 import bigBang.definitions.shared.UserProfile;
 import bigBang.library.client.userInterface.ExpandableListBoxFormField;
+import bigBang.library.client.userInterface.ListBoxFormField;
 import bigBang.library.client.userInterface.PasswordTextBoxFormField;
 import bigBang.library.client.userInterface.TextBoxFormField;
 import bigBang.library.client.userInterface.view.FormView;
@@ -18,6 +20,7 @@ public class UserForm extends FormView<User> {
 	private ExpandableListBoxFormField role;
 	private PasswordTextBoxFormField password;
 	private ExpandableListBoxFormField costCenter;
+	private ListBoxFormField printers;
 	
 	public UserForm(){
 		super();
@@ -28,7 +31,12 @@ public class UserForm extends FormView<User> {
 		email = new TextBoxFormField("E-mail");
 		role = new ExpandableListBoxFormField(BigBangConstants.EntityIds.USER_PROFILE, "Perfil", new UserFormValidator.UserProfileValidator());
 		costCenter = new ExpandableListBoxFormField(BigBangConstants.EntityIds.COST_CENTER, "Centro de Custo", new UserFormValidator.UserCostCenterValidator());
-
+		printers = new ListBoxFormField("Impressora pré-definida");
+		
+		for(String printerName : Printers.KNOWN) {
+			printers.addItem(printerName, printerName);
+		}
+		
 		role.allowEdition(false);
 		costCenter.allowEdition(false);		
 		
@@ -38,6 +46,7 @@ public class UserForm extends FormView<User> {
 		addFormField(email);
 		addFormField(role);
 		addFormField(costCenter);
+		addFormField(printers);
 
 		showPasswordField(false);
 		
@@ -92,6 +101,7 @@ public class UserForm extends FormView<User> {
 		info.profile.id = this.role.getValue();
 		info.profile.name = this.role.getSelectedItemText();
 		info.costCenterId = this.costCenter.getValue();
+		info.defaultPrinter = this.printers.getValue();
 		return info;
 	}
 
@@ -130,6 +140,11 @@ public class UserForm extends FormView<User> {
 			costCenter.clear();
 		else
 			this.costCenter.setValue(user.costCenterId);
+		
+		if(user.defaultPrinter == null)
+			this.printers.clear();
+		else
+			this.printers.setValue(user.defaultPrinter);
 	}
 	
 }
