@@ -9,10 +9,10 @@ public class SubCasualtyRejectCloseForm extends FormView<String> {
 	
 	public SubCasualtyRejectCloseForm(){
 		reason = new TextAreaFormField("Motivo");
-		
 		addSection("Rejeição de Encerramento de Sub-Sinistro");
-		
+		reason.getNativeField().setSize("450px", "100px");
 		addFormField(reason);
+		
 	}
 	
 	@Override
