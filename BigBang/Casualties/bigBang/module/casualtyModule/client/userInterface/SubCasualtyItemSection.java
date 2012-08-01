@@ -6,12 +6,17 @@ import com.google.gwt.event.dom.client.HasClickHandlers;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.SimplePanel;
 
+import bigBang.definitions.client.dataAccess.InsurancePolicyBroker;
+import bigBang.definitions.client.dataAccess.InsuranceSubPolicyBroker;
 import bigBang.definitions.client.response.ResponseError;
 import bigBang.definitions.client.response.ResponseHandler;
 import bigBang.definitions.shared.BigBangConstants;
+import bigBang.definitions.shared.InsurancePolicy;
 import bigBang.definitions.shared.SubCasualty;
 import bigBang.definitions.shared.SubCasualty.SubCasualtyItem;
+import bigBang.definitions.shared.SubPolicy;
 import bigBang.library.client.FormField;
+import bigBang.library.client.dataAccess.DataBrokerManager;
 import bigBang.library.client.dataAccess.TypifiedListBroker;
 import bigBang.library.client.userInterface.ExpandableListBoxFormField;
 import bigBang.library.client.userInterface.NumericTextBoxFormField;
@@ -36,7 +41,7 @@ public class SubCasualtyItemSection extends CollapsibleFormViewSection {
 
 		insuredObject = new ExpandableListBoxFormField("Unidade de Risco");
 		coverage = new ExpandableListBoxFormField("Cobertura");
-		damageType = new ExpandableListBoxFormField(BigBangConstants.TypifiedListIds.DAMAGE_TYPE, "Tipo de Dano");
+		damageType = new ExpandableListBoxFormField(null, "Tipo de Dano");
 		damages = new NumericTextBoxFormField("Valor dos Danos", true);
 		damages.setUnitsLabel("€");
 		damages.setFieldWidth("175px");
@@ -58,13 +63,13 @@ public class SubCasualtyItemSection extends CollapsibleFormViewSection {
 		SimplePanel buttonWrapper = new SimplePanel();
 		buttonWrapper.add(removeButton);
 		buttonWrapper.setWidth("100%");
-		
+
 		addWidget(buttonWrapper, false);
 
 		setItem(item, referenceTypeId, referenceId);
 	}
 
-	public void setItem(SubCasualtyItem item, String referenceTypeId, String referenceId){
+	public void setItem(final SubCasualtyItem item, String referenceTypeId, String referenceId){
 		this.currentItem = item;
 		if(item != null) {
 			this.headerLabel.setText("Detalhe");
@@ -73,29 +78,29 @@ public class SubCasualtyItemSection extends CollapsibleFormViewSection {
 
 			insuredObject.setValue(item.insuredObjectId);
 			coverage.setTypifiedDataBroker((TypifiedListBroker) (referenceTypeId.equalsIgnoreCase(BigBangConstants.EntityIds.INSURANCE_POLICY) ?
-																			PolicyTypifiedListBroker.Util.getInstance() :
-																			SubPolicyTypifiedListBroker.Util.getInstance()));
+					PolicyTypifiedListBroker.Util.getInstance() :
+						SubPolicyTypifiedListBroker.Util.getInstance()));
 			coverage.setListId((referenceTypeId.equalsIgnoreCase(BigBangConstants.EntityIds.INSURANCE_POLICY) ?
-												BigBangConstants.TypifiedListIds.POLICY_COVERAGE :
-												BigBangConstants.TypifiedListIds.SUB_POLICY_COVERAGE)+"/"+referenceId, new ResponseHandler<Void>() {
-													
-													@Override
-													public void onResponse(Void response) {
-														return;
-													}
-													
-													@Override
-													public void onError(Collection<ResponseError> errors) {
-														return;
-													}
-												});
+					BigBangConstants.TypifiedListIds.POLICY_COVERAGE :
+						BigBangConstants.TypifiedListIds.SUB_POLICY_COVERAGE)+"/"+referenceId, new ResponseHandler<Void>() {
+
+				@Override
+				public void onResponse(Void response) {
+					return;
+				}
+
+				@Override
+				public void onError(Collection<ResponseError> errors) {
+					return;
+				}
+			});
 			coverage.setValue(item.coverageId);
 			damageType.setValue(item.damageTypeId);
 			damages.setValue(item.damages);
 			settlement.setValue(item.settlement);
 		}
 	}
-	
+
 	public void setReference(String referenceTypeId, String referenceId){
 		if(referenceId != null) {
 			if(referenceTypeId.equalsIgnoreCase(BigBangConstants.EntityIds.INSURANCE_POLICY)) {
@@ -118,6 +123,32 @@ public class SubCasualtyItemSection extends CollapsibleFormViewSection {
 						return;
 					}
 
+					@Override
+					public void onError(Collection<ResponseError> errors) {
+						return;
+					}
+				});
+				
+				InsurancePolicyBroker policyBroker = (InsurancePolicyBroker) DataBrokerManager.staticGetBroker(BigBangConstants.EntityIds.INSURANCE_POLICY);
+				policyBroker.getPolicy(referenceId, new ResponseHandler<InsurancePolicy>() {
+					
+					@Override
+					public void onResponse(InsurancePolicy response) {
+						damageType.setListId(BigBangConstants.TypifiedListIds.DAMAGE_TYPE + "/" + response.subLineId, new ResponseHandler<Void>() {
+
+							@Override
+							public void onResponse(Void response) {
+								return;
+							}
+
+							@Override
+							public void onError(Collection<ResponseError> errors) {
+								return;
+							}
+						});
+
+					}
+					
 					@Override
 					public void onError(Collection<ResponseError> errors) {
 						return;
@@ -148,15 +179,41 @@ public class SubCasualtyItemSection extends CollapsibleFormViewSection {
 						return;
 					}
 				});
+				
+				InsuranceSubPolicyBroker subPolicyBroker = (InsuranceSubPolicyBroker) DataBrokerManager.staticGetBroker(BigBangConstants.EntityIds.INSURANCE_SUB_POLICY);
+				subPolicyBroker.getSubPolicy(referenceId, new ResponseHandler<SubPolicy>() {
+					
+					@Override
+					public void onResponse(SubPolicy response) {
+						damageType.setListId(BigBangConstants.TypifiedListIds.DAMAGE_TYPE + "/" + response.inheritSubLineId, new ResponseHandler<Void>() {
+
+							@Override
+							public void onResponse(Void response) {
+								return;
+							}
+
+							@Override
+							public void onError(Collection<ResponseError> errors) {
+								return;
+							}
+						});
+
+					}
+					
+					@Override
+					public void onError(Collection<ResponseError> errors) {
+						return;
+					}
+				});
 			}
 		}else{
 			insuredObject.setListId("", new ResponseHandler<Void>() {
-				
+
 				@Override
 				public void onResponse(Void response) {
 					return;
 				}
-				
+
 				@Override
 				public void onError(Collection<ResponseError> errors) {
 					return;
@@ -169,6 +226,18 @@ public class SubCasualtyItemSection extends CollapsibleFormViewSection {
 					return;
 				}
 
+				@Override
+				public void onError(Collection<ResponseError> errors) {
+					return;
+				}
+			});
+			damageType.setListId("", new ResponseHandler<Void>() {
+				
+				@Override
+				public void onResponse(Void response) {
+					return;
+				}
+				
 				@Override
 				public void onError(Collection<ResponseError> errors) {
 					return;
@@ -194,7 +263,7 @@ public class SubCasualtyItemSection extends CollapsibleFormViewSection {
 	public HasClickHandlers getRemoveButton() {
 		return removeButton;
 	}
-	
+
 	@Override
 	public void setReadOnly(boolean readOnly) {
 		super.setReadOnly(readOnly);

@@ -158,6 +158,32 @@ public class ReceiptDataBrokerImpl extends DataBroker<Receipt> implements Receip
 			}
 		});
 	}
+	
+	@Override
+	public void updateAndValidateReceipt(final Receipt receipt,
+			final ResponseHandler<Receipt> handler) {
+		this.service.editAndValidateReceipt(receipt, new BigBangAsyncCallback<Receipt>() {
+
+			@Override
+			public void onResponseSuccess(Receipt result) {
+				cache.add(receipt.id, receipt);
+				incrementDataVersion();
+				for(DataBrokerClient<Receipt> bc : getClients()){
+					((ReceiptDataBrokerClient) bc).updateReceipt(result);
+					((ReceiptDataBrokerClient) bc).setDataVersionNumber(BigBangConstants.EntityIds.RECEIPT, getCurrentDataVersion());
+				}
+				EventBus.getInstance().fireEvent(new OperationWasExecutedEvent(BigBangConstants.OperationIds.ReceiptProcess.UPDATE_RECEIPT, result.id));
+				EventBus.getInstance().fireEvent(new OperationWasExecutedEvent(BigBangConstants.OperationIds.ReceiptProcess.VALIDATE, result.id));
+				handler.onResponse(result);
+			}
+
+			@Override
+			public void onResponseFailure(Throwable caught) {
+				handler.onError(new String[0]);
+				super.onResponseFailure(caught);
+			}
+		});
+	}
 
 	@Override
 	public void removeReceipt(final String id, final ResponseHandler<String> handler) {

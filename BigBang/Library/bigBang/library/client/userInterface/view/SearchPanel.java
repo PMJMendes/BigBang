@@ -211,11 +211,13 @@ public abstract class SearchPanel<T extends SearchResult> extends FilterableList
 				}
 			} else {
 				this.broker.disposeSearch(this.workspaceId);
+				this.workspaceId = null;
 				ResponseHandler<Search<T>> handler = new ResponseHandler<Search<T>>() {
 
 					@Override
 					public void onResponse(Search<T> result) {
 						clear();
+						SearchPanel.this.workspaceId = result.getWorkspaceId();
 						scrollPanel.scrollToTop();
 						requestedNextPage = false;
 						nextResultIndex = result.getResults().size();

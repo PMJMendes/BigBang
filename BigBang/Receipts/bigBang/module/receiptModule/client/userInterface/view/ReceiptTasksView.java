@@ -1,6 +1,5 @@
 package bigBang.module.receiptModule.client.userInterface.view;
 
-import com.google.gwt.user.client.ui.HasValue;
 import com.google.gwt.user.client.ui.HasWidgets;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
@@ -11,6 +10,7 @@ import bigBang.module.receiptModule.client.userInterface.ReceiptTasksOperationsT
 import bigBang.module.receiptModule.client.userInterface.presenter.ReceiptTasksViewPresenter;
 import bigBang.module.receiptModule.client.userInterface.presenter.ReceiptTasksViewPresenter.Action;
 import bigBang.definitions.shared.Receipt;
+import bigBang.library.client.HasEditableValue;
 import bigBang.library.client.event.ActionInvokedEvent;
 import bigBang.library.client.event.ActionInvokedEventHandler;
 import bigBang.library.client.userInterface.view.PopupPanel;
@@ -69,7 +69,7 @@ public class ReceiptTasksView extends View implements ReceiptTasksViewPresenter.
 	}
 
 	@Override
-	public HasValue<Receipt> getForm() {
+	public HasEditableValue<Receipt> getForm() {
 		return form;
 	}
 

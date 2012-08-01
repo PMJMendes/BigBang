@@ -18,6 +18,8 @@ public interface ReceiptDataBroker extends DataBrokerInterface<Receipt> {
 	public void getReceipt(String id, ResponseHandler<Receipt> handler);
 
 	public void updateReceipt(Receipt receipt, ResponseHandler<Receipt> handler);
+	
+	public void updateAndValidateReceipt(Receipt receipt, ResponseHandler<Receipt> handler);
 
 	public void removeReceipt(String id, ResponseHandler<String> handler);
 

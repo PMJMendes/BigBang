@@ -44,14 +44,13 @@ public class ReceiptSearchPanel extends SearchPanel<ReceiptStub> implements Rece
 		protected Label lineLabel;
 		protected Label premiumLabel;
 		protected Label maturityDateLabel;
-		protected Label endDateLabel;
 		protected Label descriptionLabel;
 		protected boolean initialized;
 		private NumberFormat nf;
 
 		public Entry(ReceiptStub value) {
 			super(value);
-			setHeight("85px");
+			setHeight("80px");
 		}
 
 		@Override
@@ -96,10 +95,7 @@ public class ReceiptSearchPanel extends SearchPanel<ReceiptStub> implements Rece
 
 				maturityDateLabel = getFormatedLabel();
 				rightContainer.add(maturityDateLabel);
-				rightContainer.setCellVerticalAlignment(maturityDateLabel, HasVerticalAlignment.ALIGN_BOTTOM);
-				endDateLabel = getFormatedLabel();
-				rightContainer.add(endDateLabel);
-				rightContainer.setCellVerticalAlignment(endDateLabel, HasVerticalAlignment.ALIGN_TOP);
+				rightContainer.setCellVerticalAlignment(maturityDateLabel, HasVerticalAlignment.ALIGN_TOP);
 
 				premiumLabel = getFormatedLabel();
 				this.premiumLabel.getElement().getStyle().setFontSize(12, Unit.PX);
@@ -129,10 +125,8 @@ public class ReceiptSearchPanel extends SearchPanel<ReceiptStub> implements Rece
 			
 			this.premiumLabel.setText(nf.format(r.totalPremium)+"€");
 			this.premiumLabel.setTitle("Prémio total");
-			this.maturityDateLabel.setText(r.maturityDate == null ? "" : r.maturityDate);
-			this.maturityDateLabel.setTitle("Data de Vigência");
-			this.endDateLabel.setText(r.endDate == null ? "" : r.endDate);
-			this.endDateLabel.setTitle("Data de Fim");
+			this.maturityDateLabel.setText((r.maturityDate == null ? "" : r.maturityDate) + " / " + (r.endDate == null ? "" : r.endDate));
+			this.maturityDateLabel.setTitle("Vigência");
 			initialized = true;
 			setSelected(this.isSelected(), false);
 			
@@ -149,14 +143,11 @@ public class ReceiptSearchPanel extends SearchPanel<ReceiptStub> implements Rece
 				this.lineLabel.getElement().getStyle().setColor("white");
 				this.policyNumberLabel.getElement().getStyle().setColor("white");
 				this.clientLabel.getElement().getStyle().setColor("white");
-				this.endDateLabel.getElement().getStyle().setColor("white");
 			}else{
 				this.maturityDateLabel.getElement().getStyle().setColor("#0066FF");
 				this.clientLabel.getElement().getStyle().setColor("#0066FF");
 				this.lineLabel.getElement().getStyle().setColor("gray");
 				this.policyNumberLabel.getElement().getStyle().setColor("gray");
-				this.endDateLabel.getElement().getStyle().setColor("#0066FF");
-
 			}
 		}
 	}

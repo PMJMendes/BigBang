@@ -2,7 +2,6 @@ package bigBang.module.receiptModule.client.userInterface.presenter;
 
 import java.util.Collection;
 
-import com.google.gwt.user.client.ui.HasValue;
 import com.google.gwt.user.client.ui.HasWidgets;
 import com.google.gwt.user.client.ui.UIObject;
 import com.google.gwt.user.client.ui.Widget;
@@ -13,6 +12,7 @@ import bigBang.definitions.client.response.ResponseHandler;
 import bigBang.definitions.shared.BigBangConstants;
 import bigBang.definitions.shared.Receipt;
 import bigBang.library.client.EventBus;
+import bigBang.library.client.HasEditableValue;
 import bigBang.library.client.HasOperationPermissions;
 import bigBang.library.client.HasParameters;
 import bigBang.library.client.Notification;
@@ -34,7 +34,7 @@ public class ReceiptTasksViewPresenter implements ViewPresenter,
 	}
 	
 	public static interface Display {
-		HasValue<Receipt> getForm();
+		HasEditableValue<Receipt> getForm();
 		void registerActionHandler(ActionInvokedEventHandler<Action> handler);
 		
 		HasWidgets getOverlayViewContainer();
@@ -111,16 +111,16 @@ public class ReceiptTasksViewPresenter implements ViewPresenter,
 	}
 	
 	protected void onValidate() {
-		broker.validateReceipt(view.getForm().getValue().id, new ResponseHandler<Receipt>() {
+		broker.updateAndValidateReceipt(view.getForm().getInfo(), new ResponseHandler<Receipt>() {
 			
 			@Override
 			public void onResponse(Receipt response) {
-				EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Recibo validado com sucesso."), TYPE.TRAY_NOTIFICATION));
+				EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Recibo guardado e validado com sucesso."), TYPE.TRAY_NOTIFICATION));
 			}
 			
 			@Override
 			public void onError(Collection<ResponseError> errors) {
-				EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não foi possível validar o recibo"), TYPE.ALERT_NOTIFICATION));
+				EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não foi possível guardar/validar o recibo"), TYPE.ALERT_NOTIFICATION));
 			}
 		});
 	}
@@ -134,6 +134,7 @@ public class ReceiptTasksViewPresenter implements ViewPresenter,
 
 	protected void clearView(){
 		view.getForm().setValue(null);
+		view.getForm().setReadOnly(true);
 		view.clearAllowedPermissions();
 		overlayController.onParameters(new HasParameters());
 	}
@@ -148,6 +149,7 @@ public class ReceiptTasksViewPresenter implements ViewPresenter,
 				view.allowMarkDASUnnecessary(true);
 			}else if(opid.equalsIgnoreCase(BigBangConstants.OperationIds.ReceiptProcess.VALIDATE)){
 				view.allowValidate(true);
+				view.getForm().setReadOnly(false);
 			}else if(opid.equalsIgnoreCase(BigBangConstants.OperationIds.ReceiptProcess.SET_FOR_RETURN)){
 				view.allowSetForReturn(true);
 			}

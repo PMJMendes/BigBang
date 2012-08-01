@@ -6,6 +6,7 @@ import bigBang.library.client.FormField;
 import bigBang.library.client.userInterface.DatePickerFormField;
 import bigBang.library.client.userInterface.ExpandableListBoxFormField;
 import bigBang.library.client.userInterface.ExpandableSelectionFormField;
+import bigBang.library.client.userInterface.ListBoxFormField;
 import bigBang.library.client.userInterface.NumericTextBoxFormField;
 import bigBang.library.client.userInterface.TextAreaFormField;
 import bigBang.library.client.userInterface.TextBoxFormField;
@@ -18,6 +19,8 @@ import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.event.dom.client.KeyUpEvent;
 import com.google.gwt.event.dom.client.KeyUpHandler;
+import com.google.gwt.event.logical.shared.ValueChangeEvent;
+import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.HasVerticalAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
@@ -49,22 +52,24 @@ public abstract class SerialReceiptCreationForm extends FormView<ReceiptPolicyWr
 	protected ExpandableSelectionFormField mediator;
 	protected TextAreaFormField description;
 	protected TextAreaFormField notes;
-	
+	protected ListBoxFormField bonusMalusOption;
+	protected NumericTextBoxFormField bonusMalusValue;
+
 	Button verifyReceiptNumber;
 	Button verifyPolicyNumber;
 	private Button markAsInvalid;
 	private Button newReceiptButton;
-	
-	
+
+
 	public SerialReceiptCreationForm(){
-		
+
 		addSection("Número do recibo");
 		receiptNumber = new TextBoxFormField("Número do recibo"); 
-		
+
 		receiptNumber.setFieldWidth("175px");
-		
+
 		receiptNumber.getNativeField().addKeyUpHandler(new KeyUpHandler() {
-			
+
 			@Override
 			public void onKeyUp(KeyUpEvent event) {
 				if(event.getNativeKeyCode() == KeyCodes.KEY_ENTER){
@@ -75,43 +80,43 @@ public abstract class SerialReceiptCreationForm extends FormView<ReceiptPolicyWr
 				}
 			}
 		});
-		
+
 		addFormField(receiptNumber, true);
 		verifyReceiptNumber = new Button("Verificar");
 		verifyReceiptNumber.addClickHandler(new ClickHandler() {
-			
+
 			@Override
 			public void onClick(ClickEvent event) {
 				onClickVerifyReceiptNumber();
 			}
 		});
-		
+
 		newReceiptButton = new Button("Novo Recibo");
 
 		HorizontalPanel newPanel = new HorizontalPanel();
 		newPanel.setVerticalAlignment(HasVerticalAlignment.ALIGN_MIDDLE);
 		newPanel.add(verifyReceiptNumber);
 		newPanel.add(newReceiptButton);
-		
+
 		newReceiptButton.addClickHandler(new ClickHandler() {
-			
+
 			@Override
 			public void onClick(ClickEvent event) {
 				onClickNewReceipt();			
 			}
 		});
-		
+
 		newPanel.setSpacing(5);
 		newPanel.setHeight("55px");
-		
+
 		addWidget(newPanel);
-		
+
 		addSection("Apólice");
 		policyNumber = new TextBoxFormField("Número da apólice");
 		policyNumber.setFieldWidth("175px");
-		
+
 		policyNumber.getNativeField().addKeyUpHandler(new KeyUpHandler() {
-			
+
 			@Override
 			public void onKeyUp(KeyUpEvent event) {
 				if(event.getNativeKeyCode() == KeyCodes.KEY_ENTER){
@@ -122,14 +127,14 @@ public abstract class SerialReceiptCreationForm extends FormView<ReceiptPolicyWr
 				}
 			}
 		});
-		
+
 		addFormField(policyNumber, true);
 		HorizontalPanel buttonPanel = new HorizontalPanel();
 		buttonPanel.setVerticalAlignment(HasVerticalAlignment.ALIGN_MIDDLE);
 		verifyPolicyNumber = new Button("Verificar");
 		buttonPanel.add(verifyPolicyNumber);
 		verifyPolicyNumber.addClickHandler(new ClickHandler() {
-			
+
 			@Override
 			public void onClick(ClickEvent event) {
 				onClickVerifyPolicyNumber();
@@ -140,7 +145,7 @@ public abstract class SerialReceiptCreationForm extends FormView<ReceiptPolicyWr
 		buttonPanel.setHeight("55px");
 		buttonPanel.add(markAsInvalid);
 		markAsInvalid.addClickHandler(new ClickHandler() {
-			
+
 			@Override
 			public void onClick(ClickEvent event) {
 				onClickMarkAsInvalid();
@@ -161,7 +166,7 @@ public abstract class SerialReceiptCreationForm extends FormView<ReceiptPolicyWr
 		addFormField(insurer, false);
 		addFormField(client, true);
 		addFormField(status, false);
-		
+
 		addSection("Recibo");
 
 		type = new ExpandableListBoxFormField(ModuleConstants.TypifiedListIds.RECEIPT_TYPE, "Tipo");
@@ -192,10 +197,20 @@ public abstract class SerialReceiptCreationForm extends FormView<ReceiptPolicyWr
 		dueDate = new DatePickerFormField("Limite de Pagamento");
 		mediator = new ExpandableSelectionFormField(BigBangConstants.EntityIds.MEDIATOR, "Mediador");
 		mediator.setEditable(false);
-		manager = new ExpandableSelectionFormField(BigBangConstants.EntityIds.USER, "Gestor de Recibo");
+		manager = new ExpandableSelectionFormField(BigBangConstants.EntityIds.USER, "Gestor");
 		manager.setEditable(false);
 		description = new TextAreaFormField();
 		notes = new TextAreaFormField();
+
+		bonusMalusOption = new ListBoxFormField("Bonus/Malus");
+		bonusMalusOption.setFieldWidth("100%");
+		bonusMalusOption.setEmptyValueString("Nenhum");
+		bonusMalusOption.addItem("Bonus", "Bonus");
+		bonusMalusOption.addItem("Malus", "Malus");
+		
+		bonusMalusValue = new NumericTextBoxFormField("Valor", true);
+		bonusMalusValue.setFieldWidth("100px");
+		bonusMalusValue.setUnitsLabel("€");
 
 		addFormField(type, true);
 
@@ -207,7 +222,10 @@ public abstract class SerialReceiptCreationForm extends FormView<ReceiptPolicyWr
 		addFormField(salesPremium, true);
 		addFormField(commission, true);
 		addFormField(retro, true);
-		addFormField(fat, true);
+		addFormField(fat, false);
+		
+		addFormField(bonusMalusOption, true);
+		addFormField(bonusMalusValue, true);
 
 		addSection("Datas");
 		addFormFieldGroup(new FormField<?>[]{
@@ -218,10 +236,10 @@ public abstract class SerialReceiptCreationForm extends FormView<ReceiptPolicyWr
 				coverageStart,
 				coverageEnd
 		}, true);
-		
+
 		addSection("Descrição");
 		addFormField(description);
-		
+
 		addSection("Notas Internas");
 		addFormField(notes);
 		setReceiptNumberReadOnly(true);
@@ -230,13 +248,22 @@ public abstract class SerialReceiptCreationForm extends FormView<ReceiptPolicyWr
 		setReceiptReadOnly(true);		
 		enableMarkAsInvalid(false);
 		newReceiptButton.setEnabled(false);
-		
+
+		bonusMalusOption.addValueChangeHandler(new ValueChangeHandler<String>() {
+
+			@Override
+			public void onValueChange(ValueChangeEvent<String> event) {
+				bonusMalusValue.setEditable(event.getValue() != null && !event.getValue().isEmpty());
+				bonusMalusValue.setReadOnly(bonusMalusOption.isReadOnly());
+				bonusMalusValue.setValue(null);
+			}
+		});
 	}
-	
+
 	protected boolean isEditKey(int nativeKeyCode) {
-		
+
 		switch(nativeKeyCode){
-		
+
 		case KeyCodes.KEY_DOWN:
 		case KeyCodes.KEY_UP:
 		case KeyCodes.KEY_LEFT:
@@ -261,16 +288,16 @@ public abstract class SerialReceiptCreationForm extends FormView<ReceiptPolicyWr
 	protected abstract void onClickMarkAsInvalid();
 
 	protected abstract void onClickVerifyPolicyNumber() ;
-	
+
 	protected abstract void onClickVerifyReceiptNumber();
-	
+
 	protected abstract void onEnterKeyReceiptNumber();
-	
+
 	protected abstract void onEnterKeyPolicyNumber();
 
 	@Override
 	public void setInfo(ReceiptPolicyWrapper info) {
-		
+
 		receiptNumber.setValue(info.receipt.number);
 		policyNumber.setValue(info.policy.number);
 		client.setValue("#"+info.policy.clientNumber+"-"+info.policy.clientName);
@@ -291,12 +318,13 @@ public abstract class SerialReceiptCreationForm extends FormView<ReceiptPolicyWr
 		dueDate.setValue(info.receipt.dueDate);
 		description.setValue(info.receipt.description);
 		notes.setValue(info.receipt.notes);
-		
+		bonusMalusOption.setValue(info.receipt.isMalus == null ? null : info.receipt.isMalus ? "Malus" : "Bonus", true);
+		bonusMalusValue.setValue(info.receipt.bonusMalus);
 	}
 
 	@Override
 	public ReceiptPolicyWrapper getInfo() {
-		
+
 		ReceiptPolicyWrapper newWrapper = value;
 		newWrapper.receipt.typeId = type.getValue();
 		newWrapper.receipt.managerId = manager.getValue();
@@ -313,36 +341,37 @@ public abstract class SerialReceiptCreationForm extends FormView<ReceiptPolicyWr
 		newWrapper.receipt.description = description.getValue();
 		newWrapper.receipt.notes = notes.getValue();
 		newWrapper.receipt.policyId = newWrapper.policy.id;
-		
-		
+		newWrapper.receipt.isMalus = bonusMalusOption.getValue() != null && bonusMalusOption.getValue().equalsIgnoreCase("Malus");
+		newWrapper.receipt.bonusMalus = bonusMalusValue.getValue();
+
 		return newWrapper;
 	}
-	
+
 	public void newReceiptEnabled(boolean enabled){
 		newReceiptButton.setEnabled(enabled);
 	}
-	
+
 	public void setReceiptNumberReadOnly(boolean readOnly){
 		receiptNumber.setReadOnly(readOnly);
 		verifyReceiptNumber.setEnabled(!readOnly);
 	}
-	
+
 	public void setPolicyNumberReadOnly(boolean readOnly){
 		policyNumber.setReadOnly(readOnly);
 		verifyPolicyNumber.setEnabled(!readOnly);
 	}
-	
+
 	public void setPolicyReadOnly(boolean readOnly){
 		categoryLineSubline.setReadOnly(readOnly);
 		insurer.setReadOnly(readOnly);
 		client.setReadOnly(readOnly);
 		status.setReadOnly(readOnly);
 	}
-	
+
 	public void enableMarkAsInvalid(boolean enabled){
 		markAsInvalid.setEnabled(enabled);
 	}
-	
+
 	public void setReceiptReadOnly(boolean readonly){
 		type.setReadOnly(readonly);
 		totalPremium.setReadOnly(readonly);
@@ -356,7 +385,9 @@ public abstract class SerialReceiptCreationForm extends FormView<ReceiptPolicyWr
 		issueDate.setReadOnly(readonly);
 		description.setReadOnly(readonly);
 		notes.setReadOnly(readonly);
-		
+		bonusMalusOption.setReadOnly(readonly);
+		bonusMalusValue.setReadOnly(readonly);
+
 		if(!readonly){
 			type.focus();
 		}
@@ -364,7 +395,7 @@ public abstract class SerialReceiptCreationForm extends FormView<ReceiptPolicyWr
 
 	public String getReceiptNumber() {
 		return receiptNumber.getValue();
-		
+
 	}
 
 	public void setReceiptNumber(String id) {
@@ -372,15 +403,15 @@ public abstract class SerialReceiptCreationForm extends FormView<ReceiptPolicyWr
 	}
 
 	public void hideMarkAsEnable(boolean b) {
-		
+
 		markAsInvalid.setVisible(!b);
-		
+
 	}
 
 	public void enablePolicy(boolean b) {
 		policyNumber.setReadOnly(!b);
 		verifyPolicyNumber.setEnabled(b);
-		
+
 		if(b){
 			policyNumber.focus();
 		}
@@ -388,7 +419,7 @@ public abstract class SerialReceiptCreationForm extends FormView<ReceiptPolicyWr
 
 	public void setFocusOnPolicy() {
 		policyNumber.getNativeField().setFocus(true);
-		
+
 	}
 
 	public void setFocusOnReceipt() {
@@ -400,7 +431,7 @@ public abstract class SerialReceiptCreationForm extends FormView<ReceiptPolicyWr
 		insurer.clear();
 		client.clear();
 		status.clear();
-		
+
 	}
 
 	public void setPolicyNumber(String policyNumber2) {
@@ -419,7 +450,7 @@ public abstract class SerialReceiptCreationForm extends FormView<ReceiptPolicyWr
 			policyNumber.getNativeField().getElement().getStyle().setColor("BLACK");
 
 		}
-		
+
 	}
 
 	public void showLabel(boolean b) {

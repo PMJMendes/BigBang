@@ -376,39 +376,11 @@ public class ReceiptServiceImpl
 		try
 		{
 			lopMRD = new ManageData(UUID.fromString(receipt.processId));
-			lopMRD.mobjData = new ReceiptData();
-
-			lopMRD.mobjData.mid = UUID.fromString(receipt.id);
-
-			lopMRD.mobjData.mstrNumber = receipt.number;
-			lopMRD.mobjData.midType = UUID.fromString(receipt.typeId);
-			lopMRD.mobjData.mdblTotal = new BigDecimal(receipt.totalPremium+"");
-			lopMRD.mobjData.midType = UUID.fromString(receipt.typeId);
-			lopMRD.mobjData.mdblTotal = new BigDecimal(receipt.totalPremium+"");
-			lopMRD.mobjData.mdblCommercial = (receipt.salesPremium == null ? null : new BigDecimal(receipt.salesPremium + ""));
-			lopMRD.mobjData.mdblCommissions = (receipt.comissions == null ? new BigDecimal(0) : new BigDecimal(receipt.comissions + ""));
-			lopMRD.mobjData.mdblRetrocessions = (receipt.retrocessions == null ? new BigDecimal(0) :
-					new BigDecimal(receipt.retrocessions+""));
-			lopMRD.mobjData.mdblFAT = (receipt.FATValue == null ? null : new BigDecimal(receipt.FATValue + ""));
-			lopMRD.mobjData.mdblBonusMalus = (receipt.bonusMalus == null ? null : new BigDecimal(receipt.bonusMalus + ""));
-			lopMRD.mobjData.mbIsMalus = receipt.isMalus;
-			lopMRD.mobjData.mdtIssue = (receipt.issueDate == null ? null : Timestamp.valueOf(receipt.issueDate + " 00:00:00.0"));
-			lopMRD.mobjData.mdtMaturity = (receipt.maturityDate == null ? null :
-					Timestamp.valueOf(receipt.maturityDate + " 00:00:00.0"));
-			lopMRD.mobjData.mdtEnd = (receipt.endDate == null ? null : Timestamp.valueOf(receipt.endDate + " 00:00:00.0"));
-			lopMRD.mobjData.mdtDue = (receipt.dueDate == null ? null : Timestamp.valueOf(receipt.dueDate + " 00:00:00.0"));
-			lopMRD.mobjData.midMediator = ( receipt.mediatorId == null ? null : UUID.fromString(receipt.mediatorId) );
-			lopMRD.mobjData.mstrNotes = receipt.notes;
-			lopMRD.mobjData.mstrDescription = receipt.description;
-			lopMRD.mobjData.midProcess = UUID.fromString(receipt.processId);
-
-			lopMRD.mobjData.midManager = null;
-
-			lopMRD.mobjData.mobjPrevValues = null;
+			lopMRD.mobjData = toServerData(receipt);
 
 			lopMRD.mobjContactOps = null;
 			lopMRD.mobjDocOps = null;
-
+			
 			lopMRD.Execute();
 		}
 		catch (Throwable e)
@@ -419,6 +391,44 @@ public class ReceiptServiceImpl
 		return sGetReceipt(UUID.fromString(receipt.id));
 	}
 
+	@Override
+	public Receipt editAndValidateReceipt(Receipt receipt)
+			throws SessionExpiredException, BigBangException {
+		com.premiumminds.BigBang.Jewel.Objects.Receipt lobjReceipt;
+		ValidateReceipt lopVR;
+		ManageData lopMRD;
+		ReceiptData receiptData;
+
+		if ( Engine.getCurrentUser() == null )
+			throw new SessionExpiredException();
+
+		try
+		{
+			//Edition
+			lopMRD = new ManageData(UUID.fromString(receipt.processId));
+			receiptData = toServerData(receipt);
+			lopMRD.mobjData = receiptData;
+
+			lopMRD.mobjContactOps = null;
+			lopMRD.mobjDocOps = null;
+			
+			lopMRD.Execute();
+			
+			//Validation
+			lobjReceipt = com.premiumminds.BigBang.Jewel.Objects.Receipt.GetInstance(Engine.getCurrentNameSpace(),
+					UUID.fromString(receipt.id));
+			lopVR = new ValidateReceipt(lobjReceipt.GetProcessID());
+			
+			lopVR.Execute();
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangException(e.getMessage(), e);
+		}
+
+		return sGetReceipt(lobjReceipt.getKey());
+	}
+	
 	public Receipt receiveImage(String receiptId, DocuShareHandle source)
 		throws SessionExpiredException, BigBangException
 	{
@@ -2464,5 +2474,39 @@ public class ReceiptServiceImpl
 		}
 
 		return Constants.StatusID_New;
+	}
+	
+	private ReceiptData toServerData(Receipt receipt) {
+		ReceiptData result = new ReceiptData();
+
+		result.mid = UUID.fromString(receipt.id);
+
+		result.mstrNumber = receipt.number;
+		result.midType = UUID.fromString(receipt.typeId);
+		result.mdblTotal = new BigDecimal(receipt.totalPremium+"");
+		result.midType = UUID.fromString(receipt.typeId);
+		result.mdblTotal = new BigDecimal(receipt.totalPremium+"");
+		result.mdblCommercial = (receipt.salesPremium == null ? null : new BigDecimal(receipt.salesPremium + ""));
+		result.mdblCommissions = (receipt.comissions == null ? new BigDecimal(0) : new BigDecimal(receipt.comissions + ""));
+		result.mdblRetrocessions = (receipt.retrocessions == null ? new BigDecimal(0) :
+				new BigDecimal(receipt.retrocessions+""));
+		result.mdblFAT = (receipt.FATValue == null ? null : new BigDecimal(receipt.FATValue + ""));
+		result.mdblBonusMalus = (receipt.bonusMalus == null ? null : new BigDecimal(receipt.bonusMalus + ""));
+		result.mbIsMalus = receipt.isMalus;
+		result.mdtIssue = (receipt.issueDate == null ? null : Timestamp.valueOf(receipt.issueDate + " 00:00:00.0"));
+		result.mdtMaturity = (receipt.maturityDate == null ? null :
+				Timestamp.valueOf(receipt.maturityDate + " 00:00:00.0"));
+		result.mdtEnd = (receipt.endDate == null ? null : Timestamp.valueOf(receipt.endDate + " 00:00:00.0"));
+		result.mdtDue = (receipt.dueDate == null ? null : Timestamp.valueOf(receipt.dueDate + " 00:00:00.0"));
+		result.midMediator = ( receipt.mediatorId == null ? null : UUID.fromString(receipt.mediatorId) );
+		result.mstrNotes = receipt.notes;
+		result.mstrDescription = receipt.description;
+		result.midProcess = UUID.fromString(receipt.processId);
+
+		result.midManager = null;
+
+		result.mobjPrevValues = null;
+		
+		return result;
 	}
 }
