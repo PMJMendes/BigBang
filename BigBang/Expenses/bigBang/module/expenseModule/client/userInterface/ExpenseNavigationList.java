@@ -1,12 +1,12 @@
-package bigBang.module.receiptModule.client.userInterface;
+package bigBang.module.expenseModule.client.userInterface;
 
 import bigBang.library.client.userInterface.DocumentNavigationList;
 
-public class ReceiptNavigationList extends DocumentNavigationList{
+public class ExpenseNavigationList extends DocumentNavigationList{
 	
-	final String FILTER = "recibos-";
+	final String FILTER = "saude-";
 	
-	public ReceiptNavigationList(){
+	public ExpenseNavigationList(){
 		super();
 		this.showFilterField(false);
 		this.showSearchField(false);
@@ -17,7 +17,7 @@ public class ReceiptNavigationList extends DocumentNavigationList{
 	public void applyFilter(String filter){
 		onFilterTextChanged(filter);
 	}
-	
+
 	@Override
 	protected void onSizeChanged() {
 		this.applyFilter(FILTER);

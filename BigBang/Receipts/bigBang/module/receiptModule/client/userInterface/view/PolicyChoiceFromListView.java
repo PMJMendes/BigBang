@@ -53,7 +53,7 @@ public class PolicyChoiceFromListView extends View implements PolicyChoiceFromLi
 			}
 		};
 		
-		markReceipt = new Button("Saltar Recibo");
+		markReceipt = new Button("Saltar");
 		
 		markReceipt.addClickHandler(new ClickHandler() {
 			

@@ -108,4 +108,9 @@ public class InsuranceSubPolicySelectionView extends View implements InsuranceSu
 		list.doSearch();
 	}
 
+	@Override
+	public void setOwnerId(String ownerId) {
+		list.setOwner(ownerId);
+	}
+
 }

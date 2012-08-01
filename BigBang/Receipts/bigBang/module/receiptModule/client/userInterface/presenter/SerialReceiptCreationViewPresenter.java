@@ -178,7 +178,7 @@ public class SerialReceiptCreationViewPresenter implements ViewPresenter{
 			}
 
 			@Override
-			protected void onMarkReceipt() {
+			protected void onMark() {
 				SerialReceiptCreationViewPresenter.this.onMarkReceipt();
 			}
 

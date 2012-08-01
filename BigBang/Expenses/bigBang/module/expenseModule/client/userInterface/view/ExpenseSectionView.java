@@ -64,6 +64,7 @@ public class ExpenseSectionView extends View implements ExpenseSectionViewPresen
 		Resources r = GWT.create(Resources.class);
 		
 		addDockItem("Pesquisa", r.searchIcon(), SectionOperation.OPERATIONS);
+		addDockItem("Criação em Série", r.massCreationIcon(), SectionOperation.SERIAL_EXPENSE_CREATION);
 		addDockItem("Participações à Seguradora", r.notifyInsurer(), SectionOperation.MASS_PARTICIPATE_TO_INSURER);
 		addDockItem("Notificação dos Clientes", r.notifyClient(), SectionOperation.MASS_NOTIFY_RESULTS_CLIENT);
 		addDockItem("Devolução aos Clientes", r.returnToClient(), SectionOperation.MASS_RETURN_TO_CLIENT);

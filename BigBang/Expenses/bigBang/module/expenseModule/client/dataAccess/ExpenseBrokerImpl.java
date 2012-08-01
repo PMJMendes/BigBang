@@ -11,6 +11,7 @@ import bigBang.definitions.client.dataAccess.SearchDataBroker;
 import bigBang.definitions.client.response.ResponseError;
 import bigBang.definitions.client.response.ResponseHandler;
 import bigBang.definitions.shared.BigBangConstants;
+import bigBang.definitions.shared.DocuShareHandle;
 import bigBang.definitions.shared.Expense;
 import bigBang.definitions.shared.Expense.Acceptance;
 import bigBang.definitions.shared.Expense.ReturnEx;
@@ -506,6 +507,35 @@ public class ExpenseBrokerImpl extends DataBroker<Expense> implements ExpenseDat
 				});
 			}
 		}, true);
+	}
+
+
+	@Override
+	public void serialCreateExpense(Expense expense, DocuShareHandle handle,
+			final ResponseHandler<Expense> responseHandler) {
+		service.serialCreateExpense(expense, handle, new BigBangAsyncCallback<Expense>() {
+
+			@Override
+			public void onResponseSuccess(Expense result) {
+				cache.add(result.id, result);
+				incrementDataVersion();
+				for(DataBrokerClient<Expense> bc : getClients()){
+					((ExpenseDataBrokerClient) bc).updateExpense(result);
+					((ExpenseDataBrokerClient)bc).setDataVersionNumber(BigBangConstants.EntityIds.EXPENSE, getCurrentDataVersion());
+				}
+				responseHandler.onResponse(result);
+			}
+			
+			@Override
+			public void onResponseFailure(Throwable caught) {
+				responseHandler.onError(new String[]{
+						new String("Could not save expense (SerialCreateExpense)")
+				});
+				super.onResponseFailure(caught);
+			}
+		
+		});
+		
 	}
 
 }

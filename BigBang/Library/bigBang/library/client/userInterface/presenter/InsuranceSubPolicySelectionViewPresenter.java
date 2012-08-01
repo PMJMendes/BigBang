@@ -42,6 +42,7 @@ public class InsuranceSubPolicySelectionViewPresenter extends ExpandableSelectio
 		void registerActionHandler(ActionInvokedEventHandler<Action> handler);
 		Widget asWidget();
 		void setOperationId(String operationId);
+		void setOwnerId(String ownerId);
 	}
 
 	private Display view;
@@ -74,6 +75,10 @@ public class InsuranceSubPolicySelectionViewPresenter extends ExpandableSelectio
 	@Override
 	public void setParameters(HasParameters parameterHolder) {
 		// TODO Auto-generated method stub
+		String ownerId = parameterHolder.getParameter("ownerid");
+		if(ownerId != null && !ownerId.isEmpty()){
+			view.setOwnerId(ownerId);
+		}
 		clearView();
 	}
 
@@ -160,21 +165,30 @@ public class InsuranceSubPolicySelectionViewPresenter extends ExpandableSelectio
 
 	@Override
 	public void setValue(String value, final boolean fireEvents) {
-		this.subPolicyBroker.getSubPolicy(value, new ResponseHandler<SubPolicy>() {
+		if(value != null){
+			this.subPolicyBroker.getSubPolicy(value, new ResponseHandler<SubPolicy>() {
 
-			@Override
-			public void onResponse(SubPolicy response) {
-				view.getForm().setValue(response);
-				if(fireEvents) {
-					ValueChangeEvent.fire(InsuranceSubPolicySelectionViewPresenter.this, response.id);
+				@Override
+				public void onResponse(SubPolicy response) {
+					view.getForm().setValue(response);
+					if(fireEvents) {
+						ValueChangeEvent.fire(InsuranceSubPolicySelectionViewPresenter.this, response.id);
+					}
 				}
-			}
 
-			@Override
-			public void onError(Collection<ResponseError> errors) {
-				onResponse(null);
+				@Override
+				public void onError(Collection<ResponseError> errors) {
+					onResponse(null);
+				}
+			});
+		}
+		
+		else{
+			view.getForm().setValue(null);
+			if(fireEvents) {
+				ValueChangeEvent.fire(InsuranceSubPolicySelectionViewPresenter.this, null);
 			}
-		});
+		}
 	}
 
 	@Override

@@ -3,6 +3,7 @@ package bigBang.definitions.client.dataAccess;
 import java.util.Collection;
 
 import bigBang.definitions.client.response.ResponseHandler;
+import bigBang.definitions.shared.DocuShareHandle;
 import bigBang.definitions.shared.Expense;
 import bigBang.definitions.shared.Expense.Acceptance;
 import bigBang.definitions.shared.Expense.ReturnEx;
@@ -46,5 +47,8 @@ public interface ExpenseDataBroker extends DataBrokerInterface<Expense>{
 			ResponseHandler<Void> responseHandler);
 
 	void getExpensesForOwner(String ownerId, ResponseHandler<Collection<ExpenseStub>> handler);
+
+	void serialCreateExpense(Expense expense, DocuShareHandle handle,
+			ResponseHandler<Expense> responseHandler);
 	
 }

@@ -18,6 +18,7 @@ import bigBang.module.expenseModule.client.userInterface.presenter.MassParticipa
 import bigBang.module.expenseModule.client.userInterface.presenter.MassReturnToClientViewPresenter;
 import bigBang.module.expenseModule.client.userInterface.presenter.ReceiveAcceptanceViewPresenter;
 import bigBang.module.expenseModule.client.userInterface.presenter.ReceiveReturnViewPresenter;
+import bigBang.module.expenseModule.client.userInterface.presenter.SerialExpenseCreationViewPresenter;
 import bigBang.module.expenseModule.client.userInterface.presenter.ViewExpenseInfoRequestViewPresenter;
 import bigBang.module.expenseModule.client.userInterface.presenter.ViewExternalInfoRequestViewPresenter;
 import bigBang.module.expenseModule.client.userInterface.view.ExpenseDeleteView;
@@ -31,6 +32,7 @@ import bigBang.module.expenseModule.client.userInterface.view.MassParticipateToI
 import bigBang.module.expenseModule.client.userInterface.view.MassReturnToClientView;
 import bigBang.module.expenseModule.client.userInterface.view.ReceiveAcceptanceView;
 import bigBang.module.expenseModule.client.userInterface.view.ReceiveReturnView;
+import bigBang.module.expenseModule.client.userInterface.view.SerialExpenseCreationView;
 import bigBang.module.expenseModule.client.userInterface.view.ViewExpenseInfoRequestView;
 import bigBang.module.expenseModule.client.userInterface.view.ViewExternalInfoRequestView;
 
@@ -75,6 +77,14 @@ public class ExpenseModule implements Module {
 				ExpenseSearchOperationView expenseSearchOperationView = (ExpenseSearchOperationView) GWT.create(ExpenseSearchOperationView.class);
 				ExpenseSearchOperationViewPresenter expenseSearchOperationViewPresenter = new ExpenseSearchOperationViewPresenter(expenseSearchOperationView);
 				return expenseSearchOperationViewPresenter;
+			}
+		});
+		ViewPresenterFactory.getInstance().registerViewPresenterInstantiator("SERIAL_EXPENSE_CREATION", new ViewPresenterInstantiator(){
+			@Override
+			public ViewPresenter getInstance() {
+				SerialExpenseCreationView view = (SerialExpenseCreationView) GWT.create(SerialExpenseCreationView.class);
+				SerialExpenseCreationViewPresenter presenter = new SerialExpenseCreationViewPresenter(view);
+				return presenter;
 			}
 		});
 		ViewPresenterFactory.getInstance().registerViewPresenterInstantiator("MASS_PARTICIPATE_TO_INSURER", new ViewPresenterInstantiator() {

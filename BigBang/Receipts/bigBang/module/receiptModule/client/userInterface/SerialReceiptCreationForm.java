@@ -345,8 +345,6 @@ public abstract class SerialReceiptCreationForm extends FormView<ReceiptPolicyWr
 	
 	public void setReceiptReadOnly(boolean readonly){
 		type.setReadOnly(readonly);
-		//manager.setReadOnly(readonly);
-		//mediator.setReadOnly(readonly);
 		totalPremium.setReadOnly(readonly);
 		salesPremium.setReadOnly(readonly);
 		commission.setReadOnly(readonly);

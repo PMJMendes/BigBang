@@ -86,7 +86,7 @@ public abstract class PolicyChoiceFromListViewPresenter implements ViewPresenter
 				
 				switch(action.getAction()){
 				case MARK_RECEIPT:
-					onMarkReceipt();
+					onMark();
 					break;
 				case CANCEL:
 					onCancel();
@@ -125,7 +125,7 @@ public abstract class PolicyChoiceFromListViewPresenter implements ViewPresenter
 	}
 
 	protected abstract void onCancel();
-	protected abstract void onMarkReceipt();
+	protected abstract void onMark();
 
 	@Override
 	public void setParameters(HasParameters parameterHolder) {

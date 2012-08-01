@@ -177,8 +177,7 @@ public class SubPoliciesList extends FilterableList<SubPolicyStub>  implements I
 
 	@Override
 	public void remapItemId(String oldId, String newId) {
-		// TODO Auto-generated method stub
-
+		return;
 	}
 
 }

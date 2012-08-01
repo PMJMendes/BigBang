@@ -23,7 +23,7 @@ public class ExpenseSectionViewPresenter implements ViewPresenter {
 	public static enum SectionOperation {
 		OPERATIONS,
 		MASS_PARTICIPATE_TO_INSURER, MASS_NOTIFY_RESULTS_CLIENT, MASS_RETURN_TO_CLIENT,
-		REPORT
+		REPORT, SERIAL_EXPENSE_CREATION
 	}
 
 	public static interface Display {
@@ -105,6 +105,9 @@ public class ExpenseSectionViewPresenter implements ViewPresenter {
 					case REPORT:
 						item.pushIntoStackParameter("display", "report");
 						break;
+					case SERIAL_EXPENSE_CREATION:
+						item.pushIntoStackParameter("display", "serialexpensecreation");
+						break;
 					}
 					
 					
@@ -135,6 +138,9 @@ public class ExpenseSectionViewPresenter implements ViewPresenter {
 					if(display.equalsIgnoreCase("massparticipatetoinsurer")){
 						view.selectOperation(SectionOperation.MASS_PARTICIPATE_TO_INSURER);
 						present("MASS_PARTICIPATE_TO_INSURER", parameters);
+					}else if(display.equalsIgnoreCase("serialexpensecreation")){
+						view.selectOperation(SectionOperation.SERIAL_EXPENSE_CREATION);
+						present("SERIAL_EXPENSE_CREATION", parameters);
 					}else if(display.equalsIgnoreCase("massnotifyresultsclient")){
 						view.selectOperation(SectionOperation.MASS_NOTIFY_RESULTS_CLIENT);
 						present("MASS_NOTIFY_RESULTS_CLIENT", parameters);
