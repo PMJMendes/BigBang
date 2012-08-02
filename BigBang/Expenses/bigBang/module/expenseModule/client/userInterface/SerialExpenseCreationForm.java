@@ -67,6 +67,7 @@ public abstract class SerialExpenseCreationForm extends FormView <ExpensePolicyW
 		addSection("Número da apólice");
 		policyNumber = new TextBoxFormField("Número da apólice");
 		policyNumber.setFieldWidth("175px");
+		policyNumber.setMandatory(true);
 		policyNumber.getNativeField().addKeyUpHandler(new KeyUpHandler() {
 
 			@Override
@@ -127,7 +128,7 @@ public abstract class SerialExpenseCreationForm extends FormView <ExpensePolicyW
 		});
 
 		subscriber = new TextBoxFormField("Beneficiário");
-
+		
 		noSubPolicy = new CheckBoxFormField("Sem apólice adesão (usar apólice principal)");
 
 		noSubPolicy.addValueChangeHandler(new ValueChangeHandler<Boolean>() {
@@ -146,20 +147,26 @@ public abstract class SerialExpenseCreationForm extends FormView <ExpensePolicyW
 		addSection("Despesa de Saúde");
 
 		manager = new ExpandableListBoxFormField(BigBangConstants.EntityIds.USER, "Gestor de Despesa");
+		manager.setMandatory(true);
+
 		settlement = new NumericTextBoxFormField("Indemnização", true);
 		settlement.setUnitsLabel("€");
 		settlement.setFieldWidth("175px");
+		settlement.setMandatory(true);
 		settleButton = new Button("Substituir");
 		settleButton.setHeight("22px");
 		settleLabel = new Label();
 		settleLabel.setText("Calculado Automaticamente");
 
 		expenseDate = new DatePickerFormField("Data");
+		expenseDate.setMandatory(true);
 		insuredObjectId = new ExpandableListBoxFormField("Unidade de Risco");
+		insuredObjectId.setMandatory(true);
 		expenseValue = new NumericTextBoxFormField("Valor", true);
 		expenseValue.setFieldWidth("175px");
 		expenseValue.setUnitsLabel("€");
-
+		expenseValue.setMandatory(true);
+		
 		coverageId = new ExpandableListBoxFormField("Cobertura");
 
 		addFormFieldGroup(new FormField<?>[]{
