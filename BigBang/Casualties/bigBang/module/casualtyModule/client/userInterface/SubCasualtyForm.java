@@ -8,6 +8,8 @@ import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
+import com.google.gwt.user.client.ui.HasVerticalAlignment;
+import com.google.gwt.user.client.ui.HorizontalPanel;
 
 import bigBang.definitions.client.dataAccess.CasualtyDataBroker;
 import bigBang.definitions.client.dataAccess.InsurancePolicyBroker;
@@ -64,6 +66,8 @@ public class SubCasualtyForm extends FormView<SubCasualty> {
 		referenceType.setMandatory(true);
 		referenceType.removeItem(0); //Removes the empty value
 
+		HorizontalPanel referenceWrapper = new HorizontalPanel();
+		
 		//POLICY REFERENCE
 		InsurancePolicySelectionViewPresenter policySelectionPanel = new InsurancePolicySelectionViewPresenter((InsurancePolicySelectionView) GWT.create(InsurancePolicySelectionView.class));
 		policySelectionPanel.go();
@@ -91,12 +95,23 @@ public class SubCasualtyForm extends FormView<SubCasualty> {
 		addSection("Informação Geral");
 		addFormField(casualty, false);
 		
-		addFormField(referenceType, true);
-		addFormField(policyReference, true);
-		addFormField(subPolicyReference, true);
+		referenceWrapper.add(referenceType);
+		referenceWrapper.add(policyReference);
+		referenceWrapper.add(subPolicyReference);
+		referenceWrapper.add(referenceDetails);
+		referenceWrapper.setCellVerticalAlignment(referenceType, HasVerticalAlignment.ALIGN_MIDDLE);
+		referenceWrapper.setCellVerticalAlignment(policyReference, HasVerticalAlignment.ALIGN_MIDDLE);
+		referenceWrapper.setCellVerticalAlignment(subPolicyReference, HasVerticalAlignment.ALIGN_MIDDLE);
+		referenceWrapper.setCellVerticalAlignment(referenceDetails, HasVerticalAlignment.ALIGN_MIDDLE);
+		referenceWrapper.setHeight("45px");
 		
-		addFormField(referenceDetails, false);
-
+		registerFormField(referenceType);
+		registerFormField(policyReference);
+		registerFormField(subPolicyReference);
+		registerFormField(referenceDetails);
+		
+		addWidget(referenceWrapper);
+		
 		referenceType.addValueChangeHandler(new ValueChangeHandler<String>() {
 
 			@Override
@@ -113,11 +128,11 @@ public class SubCasualtyForm extends FormView<SubCasualty> {
 				referenceDetails.clear();
 			}
 		});
-
+		
 		addFormField(number, true);
 		addFormField(insurerProcessNumber, true);
 		addFormField(status, true);
-		addFormField(hasJudicial);
+		addFormField(hasJudicial, false);
 
 		this.subCasualtyItemSections = new ArrayList<SubCasualtyItemSection>();
 

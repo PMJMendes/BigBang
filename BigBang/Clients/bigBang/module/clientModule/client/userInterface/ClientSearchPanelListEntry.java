@@ -31,7 +31,7 @@ public class ClientSearchPanelListEntry extends ListEntry<ClientStub> {
 		if(value.id != null){
 			numberLabel.setText("#" + value.clientNumber);
 			nameLabel.setText(value.name);
-			taxNumberLabel.setText(value.taxNumber == null ? "-" : value.taxNumber);
+			taxNumberLabel.setText(value.taxNumber == null ? "-" : "NIF #"+value.taxNumber);
 			groupLabel.setText(value.groupName == null ? "-" : value.groupName);
 			setMetaData(new String[]{
 				value.name,
@@ -66,8 +66,8 @@ public class ClientSearchPanelListEntry extends ListEntry<ClientStub> {
 		container.setSize("100%", "100%");
 		container.add(this.numberLabel);
 		container.add(this.nameLabel);
-		container.add(this.groupLabel);
 		container.add(this.taxNumberLabel);
+		container.add(this.groupLabel);
 
 		this.setWidget(container);
 		this.initialized = true;
@@ -79,10 +79,8 @@ public class ClientSearchPanelListEntry extends ListEntry<ClientStub> {
 		if(!this.initialized){return;}
 		if(selected){
 			this.groupLabel.getElement().getStyle().setColor("white");
-			this.taxNumberLabel.getElement().getStyle().setColor("white");
 		}else{
 			this.groupLabel.getElement().getStyle().setColor("gray");
-			this.taxNumberLabel.getElement().getStyle().setColor("gray");
 		}
 	}
 	
