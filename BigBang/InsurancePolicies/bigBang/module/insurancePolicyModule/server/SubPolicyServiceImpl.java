@@ -662,6 +662,7 @@ public class SubPolicyServiceImpl
 			lobjResult.inheritMediatorName = lobjMed.getLabel();
 			lobjResult.inheritCategoryName = lobjPolicy.GetSubLine().getLine().getCategory().getLabel();
 			lobjResult.inheritLineName = lobjPolicy.GetSubLine().getLine().getLabel();
+			lobjResult.inheritSubLineId = lobjPolicy.GetSubLine().getKey().toString();
 			lobjResult.inheritSubLineName = lobjPolicy.GetSubLine().getLabel();
 			lobjResult.inheritCompanyName = lobjCompany.getLabel();
 			lobjResult.statusId = lobjStatus.getKey().toString();
@@ -2184,6 +2185,7 @@ public class SubPolicyServiceImpl
 		lobjResult.inheritMediatorName = lobjMed.getLabel();
 		lobjResult.inheritCategoryName = lobjMainPolicy.GetSubLine().getLine().getCategory().getLabel();
 		lobjResult.inheritLineName = lobjMainPolicy.GetSubLine().getLine().getLabel();
+		lobjResult.inheritSubLineId = lobjMainPolicy.GetSubLine().getKey().toString();
 		lobjResult.inheritSubLineName = lobjMainPolicy.GetSubLine().getLabel();
 		lobjResult.inheritCompanyName = lobjCompany.getLabel();
 		lobjResult.statusId = lobjStatus.getKey().toString();
