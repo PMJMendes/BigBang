@@ -277,11 +277,4 @@ public class BigBangConstants {
 			"AMartins"
 		};
 	}
-
-	//PRINTERS TODO IMPORTANT
-	public static class Printers {
-		public static final String[] KNOWN = new String[] {
-			"HP LaserJet P4014/P4015 PCL6"
-		};
-	}
 }

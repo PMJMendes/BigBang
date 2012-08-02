@@ -134,6 +134,7 @@ public class InsurancePolicySearchPanel extends SearchPanel<InsurancePolicyStub>
 		INSURANCE_AGENCY,
 		MEDIATOR,
 		MANAGER,
+		INSURED_OBJECT,
 		CASE_STUDY
 	}
 	protected FiltersPanel filtersPanel;
@@ -161,6 +162,7 @@ public class InsurancePolicySearchPanel extends SearchPanel<InsurancePolicyStub>
 		filtersPanel.addTypifiedListField(Filters.CATEGORY, BigBangConstants.EntityIds.CATEGORY, "Categoria");
 		filtersPanel.addTypifiedListField(Filters.LINE, BigBangConstants.EntityIds.LINE, "Ramo", Filters.CATEGORY);
 		filtersPanel.addTypifiedListField(Filters.SUBLINE, BigBangConstants.EntityIds.SUB_LINE, "Modalidade", Filters.LINE);
+		filtersPanel.addTextField(Filters.INSURED_OBJECT, "Unidade de Risco");
 		filtersPanel.addCheckBoxField(Filters.CASE_STUDY, "Apenas Case Study");
 
 		filtersPanel.getApplyButton().addClickHandler(new ClickHandler() {
@@ -196,6 +198,7 @@ public class InsurancePolicySearchPanel extends SearchPanel<InsurancePolicyStub>
 		parameter.categoryId = (String) filtersPanel.getFilterValue(Filters.CATEGORY);
 		parameter.lineId = (String) filtersPanel.getFilterValue(Filters.LINE);
 		parameter.subLineId = (String) filtersPanel.getFilterValue(Filters.SUBLINE);
+		parameter.insuredObject = (String) filtersPanel.getFilterValue(Filters.INSURED_OBJECT);
 		boolean caseStudy = (Boolean) filtersPanel.getFilterValue(Filters.CASE_STUDY);
 		parameter.caseStudy = caseStudy ? true : null;
 

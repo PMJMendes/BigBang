@@ -51,6 +51,7 @@ public class InsurancePolicyMassManagerTransferView extends
 			filtersPanel.addTypifiedListField(Filters.CATEGORY, BigBangConstants.EntityIds.CATEGORY, "Categoria");
 			filtersPanel.addTypifiedListField(Filters.LINE, BigBangConstants.EntityIds.LINE, "Ramo", Filters.CATEGORY);
 			filtersPanel.addTypifiedListField(Filters.SUBLINE, BigBangConstants.EntityIds.SUB_LINE, "Modalidade", Filters.LINE);
+			filtersPanel.addTextField(Filters.INSURED_OBJECT, "Unidade de Risco");
 			filtersPanel.addCheckBoxField(Filters.CASE_STUDY, "Apenas Case Study");
 
 			filtersPanel.getApplyButton().addClickHandler(new ClickHandler() {

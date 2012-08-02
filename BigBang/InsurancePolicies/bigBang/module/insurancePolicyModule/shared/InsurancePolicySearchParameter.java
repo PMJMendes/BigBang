@@ -14,5 +14,7 @@ public class InsurancePolicySearchParameter
 	public String insuranceAgencyId;
 	public String mediatorId;
 	public String managerId;
+	public String insuredObject;
 	public Boolean caseStudy;
+	
 }

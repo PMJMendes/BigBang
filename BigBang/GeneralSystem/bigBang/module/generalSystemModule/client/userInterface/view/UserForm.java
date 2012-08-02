@@ -1,15 +1,16 @@
 package bigBang.module.generalSystemModule.client.userInterface.view;
 
 import bigBang.definitions.shared.BigBangConstants;
-import bigBang.definitions.shared.BigBangConstants.Printers;
 import bigBang.definitions.shared.CostCenter;
 import bigBang.definitions.shared.User;
 import bigBang.definitions.shared.UserProfile;
+import bigBang.library.client.BigBangAsyncCallback;
 import bigBang.library.client.userInterface.ExpandableListBoxFormField;
 import bigBang.library.client.userInterface.ListBoxFormField;
 import bigBang.library.client.userInterface.PasswordTextBoxFormField;
 import bigBang.library.client.userInterface.TextBoxFormField;
 import bigBang.library.client.userInterface.view.FormView;
+import bigBang.library.interfaces.PrintService;
 import bigBang.module.generalSystemModule.shared.formValidator.UserFormValidator;
 
 public class UserForm extends FormView<User> {
@@ -22,6 +23,8 @@ public class UserForm extends FormView<User> {
 	private ExpandableListBoxFormField costCenter;
 	private ListBoxFormField printers;
 	
+	private boolean printersInitialized = false;
+	
 	public UserForm(){
 		super();
 		addSection("Informação Geral");
@@ -32,10 +35,6 @@ public class UserForm extends FormView<User> {
 		role = new ExpandableListBoxFormField(BigBangConstants.EntityIds.USER_PROFILE, "Perfil", new UserFormValidator.UserProfileValidator());
 		costCenter = new ExpandableListBoxFormField(BigBangConstants.EntityIds.COST_CENTER, "Centro de Custo", new UserFormValidator.UserCostCenterValidator());
 		printers = new ListBoxFormField("Impressora pré-definida");
-		
-		for(String printerName : Printers.KNOWN) {
-			printers.addItem(printerName, printerName);
-		}
 		
 		role.allowEdition(false);
 		costCenter.allowEdition(false);		
@@ -106,7 +105,7 @@ public class UserForm extends FormView<User> {
 	}
 
 	@Override
-	public void setInfo(User user) {
+	public void setInfo(final User user) {
 		if(user == null){
 			clearInfo();
 			return;
@@ -143,8 +142,23 @@ public class UserForm extends FormView<User> {
 		
 		if(user.defaultPrinter == null)
 			this.printers.clear();
-		else
-			this.printers.setValue(user.defaultPrinter);
+		else {
+			if(printersInitialized){
+				this.printers.setValue(user.defaultPrinter);
+			}else{
+				PrintService.Util.getInstance().getAvailablePrinterNames(new BigBangAsyncCallback<String[]>() {
+
+					@Override
+					public void onResponseSuccess(String[] result) {
+						for(String printer : result) {
+							printers.addItem(printer, printer);
+						}
+						printers.setValue(user.defaultPrinter);
+						printersInitialized = true;
+					}
+				});
+			}
+		}
 	}
 	
 }
