@@ -36,7 +36,6 @@ import bigBang.library.client.userInterface.TextBoxFormField;
 import bigBang.library.client.userInterface.presenter.InsuranceSubPolicySelectionViewPresenter;
 import bigBang.library.client.userInterface.view.FormView;
 import bigBang.library.client.userInterface.view.InsuranceSubPolicySelectionView;
-import bigBang.module.expenseModule.shared.ExpensePolicyWrapper;
 import bigBang.module.insurancePolicyModule.client.dataAccess.PolicyTypifiedListBroker;
 import bigBang.module.insurancePolicyModule.client.dataAccess.SubPolicyTypifiedListBroker;
 

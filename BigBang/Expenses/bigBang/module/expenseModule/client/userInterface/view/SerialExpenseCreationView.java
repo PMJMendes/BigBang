@@ -13,11 +13,11 @@ import bigBang.library.client.userInterface.ListHeader;
 import bigBang.library.client.userInterface.view.View;
 import bigBang.library.shared.DocuShareItem;
 import bigBang.module.expenseModule.client.userInterface.ExpenseImagePanel;
+import bigBang.module.expenseModule.client.userInterface.ExpensePolicyWrapper;
 import bigBang.module.expenseModule.client.userInterface.SerialExpenseCreationForm;
 import bigBang.module.expenseModule.client.userInterface.SerialExpenseCreationToolbar;
 import bigBang.module.expenseModule.client.userInterface.presenter.SerialExpenseCreationViewPresenter;
 import bigBang.module.expenseModule.client.userInterface.presenter.SerialExpenseCreationViewPresenter.Action;
-import bigBang.module.expenseModule.shared.ExpensePolicyWrapper;
 
 
 public class SerialExpenseCreationView extends View implements SerialExpenseCreationViewPresenter.Display{

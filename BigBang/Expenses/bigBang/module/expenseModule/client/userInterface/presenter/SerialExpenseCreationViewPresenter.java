@@ -35,7 +35,7 @@ import bigBang.library.client.userInterface.ImageHandlerPanel;
 import bigBang.library.client.userInterface.presenter.ViewPresenter;
 import bigBang.library.client.userInterface.view.PopupPanel;
 import bigBang.library.shared.DocuShareItem;
-import bigBang.module.expenseModule.shared.ExpensePolicyWrapper;
+import bigBang.module.expenseModule.client.userInterface.ExpensePolicyWrapper;
 import bigBang.module.receiptModule.client.userInterface.presenter.PolicyChoiceFromListViewPresenter;
 import bigBang.module.receiptModule.client.userInterface.view.PolicyChoiceFromListView;
 

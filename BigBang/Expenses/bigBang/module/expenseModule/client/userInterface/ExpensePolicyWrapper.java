@@ -1,4 +1,4 @@
-package bigBang.module.expenseModule.shared;
+package bigBang.module.expenseModule.client.userInterface;
 
 import bigBang.definitions.shared.Expense;
 import bigBang.definitions.shared.InsurancePolicy;
