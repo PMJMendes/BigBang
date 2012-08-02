@@ -257,7 +257,7 @@ public class SubCasualtyForm extends FormView<SubCasualty> {
 				subPolicyReference.setValue(info.referenceId);
 				
 				//Show details for sub policy
-				InsuranceSubPolicyBroker subPolicyBroker = (InsuranceSubPolicyBroker) DataBrokerManager.staticGetBroker(BigBangConstants.EntityIds.INSURANCE_POLICY);
+				InsuranceSubPolicyBroker subPolicyBroker = (InsuranceSubPolicyBroker) DataBrokerManager.staticGetBroker(BigBangConstants.EntityIds.INSURANCE_SUB_POLICY);
 				subPolicyBroker.getSubPolicy(info.referenceId, new ResponseHandler<SubPolicy>() {
 
 					@Override

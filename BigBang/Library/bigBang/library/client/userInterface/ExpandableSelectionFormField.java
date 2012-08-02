@@ -151,6 +151,7 @@ public class ExpandableSelectionFormField extends FormField<String> {
 		this.valueDisplayName.getElement().getStyle().setProperty("border", readonly ? "" : "1px gray dotted");
 		this.expandImage.setVisible(!readonly);
 		this.valueDisplayName.getElement().getStyle().setCursor(readonly ? Cursor.AUTO : Cursor.POINTER);
+		mandatoryIndicatorLabel.setVisible(!readOnly && this.isMandatory());
 	}
 
 	@Override
