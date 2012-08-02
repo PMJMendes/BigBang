@@ -549,7 +549,7 @@ public class ClientServiceImpl
 
 	protected String[] getColumns()
 	{
-		return new String[] {"[:Name]", "[:Number]", "[:Group:Name]", "[:Process]"};
+		return new String[] {"[:Name]", "[:Number]", "[:Group:Name]", "[:Process]", "[:Fiscal Number]"};
 	}
 
 	protected boolean buildFilter(StringBuilder pstrBuffer, SearchParameter pParam)
@@ -730,6 +730,7 @@ public class ClientServiceImpl
 		lobjResult.clientNumber = parrValues[1].toString();
 		lobjResult.groupName = (parrValues[2] == null ? null : parrValues[2].toString());
 		lobjResult.processId = parrValues[3].toString();
+		lobjResult.taxNumber = (String)parrValues[4];
 
 		return lobjResult;
 	}
