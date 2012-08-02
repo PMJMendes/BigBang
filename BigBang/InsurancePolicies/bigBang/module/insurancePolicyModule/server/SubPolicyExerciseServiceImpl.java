@@ -161,7 +161,11 @@ public class SubPolicyExerciseServiceImpl
 			public int compare(SubPolicyCoverage o1, SubPolicyCoverage o2)
 			{
 				if ( o1.GetCoverage().IsMandatory() == o2.GetCoverage().IsMandatory() )
-					return o1.GetCoverage().getLabel().compareTo(o2.GetCoverage().getLabel());
+				{
+					if ( o1.GetCoverage().GetOrder() == o2.GetCoverage().GetOrder() )
+						return o1.GetCoverage().getLabel().compareTo(o2.GetCoverage().getLabel());
+					return o1.GetCoverage().GetOrder() - o2.GetCoverage().GetOrder();
+				}
 				if ( o1.GetCoverage().IsMandatory() )
 					return -1;
 				return 1;
@@ -198,11 +202,19 @@ public class SubPolicyExerciseServiceImpl
 			{
 				public int compare(Exercise.CoverageData.FixedField o1, Exercise.CoverageData.FixedField o2)
 				{
-					if ( (o1.type == o2.type) && (o1.refersToId == o1.refersToId) )
-						return o1.fieldName.compareTo(o2.fieldName);
-					if ( o1.type == o2.type )
-						return o1.refersToId.compareTo(o2.refersToId);
-					return o1.type.compareTo(o2.type);
+					if ( o1.columnIndex == o2.columnIndex )
+					{
+						if ( o1.type == o2.type )
+						{
+							if ( o1.refersToId == o1.refersToId )
+								return o1.fieldName.compareTo(o2.fieldName);
+							return o1.refersToId.compareTo(o2.refersToId);
+						}
+						return o1.type.compareTo(o2.type);
+					}
+					if ( (o1.columnIndex < 0) || (o2.columnIndex < 0) )
+						return o2.columnIndex - o1.columnIndex;
+					return o1.columnIndex - o2.columnIndex;
 				}
 			});
 
@@ -243,11 +255,19 @@ public class SubPolicyExerciseServiceImpl
 			{
 				public int compare(Exercise.CoverageData.VariableField o1, Exercise.CoverageData.VariableField o2)
 				{
-					if ( (o1.type == o2.type) && (o1.refersToId == o1.refersToId) )
-						return o1.fieldName.compareTo(o2.fieldName);
-					if ( o1.type == o2.type )
-						return o1.refersToId.compareTo(o2.refersToId);
-					return o1.type.compareTo(o2.type);
+					if ( o1.columnIndex == o2.columnIndex )
+					{
+						if ( o1.type == o2.type )
+						{
+							if ( o1.refersToId == o1.refersToId )
+								return o1.fieldName.compareTo(o2.fieldName);
+							return o1.refersToId.compareTo(o2.refersToId);
+						}
+						return o1.type.compareTo(o2.type);
+					}
+					if ( (o1.columnIndex < 0) || (o2.columnIndex < 0) )
+						return o2.columnIndex - o1.columnIndex;
+					return o1.columnIndex - o2.columnIndex;
 				}
 			});
 			for ( j = 0; j < lobjResult.coverageData[i].variableFields.length; j++ )
@@ -283,11 +303,19 @@ public class SubPolicyExerciseServiceImpl
 			{
 				public int compare(Exercise.CoverageData.FixedField o1, Exercise.CoverageData.FixedField o2)
 				{
-					if ( (o1.type == o2.type) && (o1.refersToId == o1.refersToId) )
-						return o1.fieldName.compareTo(o2.fieldName);
-					if ( o1.type == o2.type )
-						return o1.refersToId.compareTo(o2.refersToId);
-					return o1.type.compareTo(o2.type);
+					if ( o1.columnIndex == o2.columnIndex )
+					{
+						if ( o1.type == o2.type )
+						{
+							if ( o1.refersToId == o1.refersToId )
+								return o1.fieldName.compareTo(o2.fieldName);
+							return o1.refersToId.compareTo(o2.refersToId);
+						}
+						return o1.type.compareTo(o2.type);
+					}
+					if ( (o1.columnIndex < 0) || (o2.columnIndex < 0) )
+						return o2.columnIndex - o1.columnIndex;
+					return o1.columnIndex - o2.columnIndex;
 				}
 			});
 
@@ -328,11 +356,19 @@ public class SubPolicyExerciseServiceImpl
 			{
 				public int compare(Exercise.CoverageData.VariableField o1, Exercise.CoverageData.VariableField o2)
 				{
-					if ( (o1.type == o2.type) && (o1.refersToId == o1.refersToId) )
-						return o1.fieldName.compareTo(o2.fieldName);
-					if ( o1.type == o2.type )
-						return o1.refersToId.compareTo(o2.refersToId);
-					return o1.type.compareTo(o2.type);
+					if ( o1.columnIndex == o2.columnIndex )
+					{
+						if ( o1.type == o2.type )
+						{
+							if ( o1.refersToId == o1.refersToId )
+								return o1.fieldName.compareTo(o2.fieldName);
+							return o1.refersToId.compareTo(o2.refersToId);
+						}
+						return o1.type.compareTo(o2.type);
+					}
+					if ( (o1.columnIndex < 0) || (o2.columnIndex < 0) )
+						return o2.columnIndex - o1.columnIndex;
+					return o1.columnIndex - o2.columnIndex;
 				}
 			});
 			for ( j = 0; j < lobjResult.headerData.variableFields.length; j++ )

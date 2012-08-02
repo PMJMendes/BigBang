@@ -72,6 +72,11 @@ public class Coverage
 		return (String)getAt(4);
 	}
 
+	public int GetOrder()
+	{
+		return ( getAt(5) == null ? 0 : (Integer)getAt(5) );
+	}
+
     public Tax[] GetCurrentTaxes()
     	throws BigBangJewelException
     {

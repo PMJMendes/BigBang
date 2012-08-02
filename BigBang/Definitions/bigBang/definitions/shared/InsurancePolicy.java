@@ -26,6 +26,7 @@ public class InsurancePolicy
 		public FieldType type;
 		public String unitsLabel;
 		public String refersToId;
+		public int order; // JMMM: Variável auxiliar para ordenação. Ignorar no Client Side
 //		public boolean variesByObject; <- Not needed. Should always be false.
 //		public boolean variesByExercise; <- Not needed. Should always be false.
 
@@ -49,6 +50,7 @@ public class InsurancePolicy
 		public String coverageId;
 		public String coverageName;
 		public boolean mandatory;
+		public int order; // JMMM: Variável auxiliar para ordenação. Ignorar no Client Side
 		public Boolean presentInPolicy;
 		public Variability[] variability;
 	}
