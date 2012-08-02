@@ -254,6 +254,11 @@ public class MassSendReceiptViewPresenter implements ViewPresenter{
 	public void sendReceipts(Collection<ValueSelectable<ReceiptStub>> collection){
 		String[] receiptIds = new String[collection.size()];
 
+		if(receiptIds.length == 0){
+			EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Nenhum recibo seleccionado"), TYPE.ALERT_NOTIFICATION));				
+			return;
+		}
+		
 		int i = 0;
 		for(ValueSelectable<ReceiptStub> r : collection){
 			receiptIds[i] = r.getValue().id;

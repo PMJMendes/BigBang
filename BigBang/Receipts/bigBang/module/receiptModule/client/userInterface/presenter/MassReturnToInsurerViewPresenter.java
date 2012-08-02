@@ -262,6 +262,11 @@ public class MassReturnToInsurerViewPresenter implements ViewPresenter{
 			Collection<ValueSelectable<ReceiptStub>> selected) {
 		String [] receiptIds = new String[selected.size()];
 		
+		if(receiptIds.length == 0){
+			EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Nenhum recibo seleccionado"), TYPE.ALERT_NOTIFICATION));				
+			return;
+		}
+		
 		int i = 0;
 		
 		for(ValueSelectable<ReceiptStub> r : selected){

@@ -197,6 +197,12 @@ public class MassParticipateToInsurerViewPresenter implements ViewPresenter {
 			Collection<ValueSelectable<ExpenseStub>> all) {
 
 		String[] toParticipate = new String[all.size()];
+		
+		if(toParticipate.length == 0){
+			EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Nenhuma despesa seleccionada"), TYPE.ALERT_NOTIFICATION));				
+			return;
+		}
+		
 		int counter = 0;
 
 		for(ValueSelectable<ExpenseStub> stub: all){

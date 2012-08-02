@@ -196,6 +196,12 @@ public class MassNotifyResultsClientViewPresenter implements ViewPresenter{
 			Collection<ValueSelectable<ExpenseStub>> all) {
 
 			String[] toNotify = new String[all.size()];
+
+			if(toNotify.length == 0){
+				EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Nenhuma despesa seleccionada"), TYPE.ALERT_NOTIFICATION));				
+				return;
+			}
+			
 			int counter = 0;
 
 			for(ValueSelectable<ExpenseStub> stub: all){

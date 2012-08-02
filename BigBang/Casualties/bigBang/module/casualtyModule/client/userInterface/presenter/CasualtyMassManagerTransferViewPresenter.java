@@ -39,6 +39,11 @@ MassManagerTransferViewPresenter<CasualtyStub, Casualty> implements ViewPresente
 
 		String[] processIds = new String[affectedProcesses.size()];
 
+		if(processIds.length == 0){
+			EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Nenhum sinistro seleccionado"), TYPE.ALERT_NOTIFICATION));				
+			return;
+		}
+		
 		int i = 0;
 		for(CasualtyStub c : affectedProcesses){
 			processIds[i] = c.id;

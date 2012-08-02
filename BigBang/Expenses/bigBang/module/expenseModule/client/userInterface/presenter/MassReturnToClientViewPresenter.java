@@ -196,6 +196,12 @@ public class MassReturnToClientViewPresenter implements ViewPresenter{
 			Collection<ValueSelectable<ExpenseStub>> all) {
 
 			String[] toReturn = new String[all.size()];
+
+			if(toReturn.length == 0){
+				EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Nenhuma despesa seleccionada"), TYPE.ALERT_NOTIFICATION));				
+				return;
+			}
+			
 			int counter = 0;
 
 			for(ValueSelectable<ExpenseStub> stub: all){

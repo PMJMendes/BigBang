@@ -257,6 +257,11 @@ public class MassInsurerAccountingViewPresenter implements ViewPresenter{
 	public void sendInsurerAccounting(Collection<ValueSelectable<ReceiptStub>> collection){
 		String[] receiptIds = new String[collection.size()];
 
+		if(receiptIds.length == 0){
+			EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Nenhum recibo seleccionado"), TYPE.ALERT_NOTIFICATION));				
+			return;
+		}
+		
 		String insurerId = new String();
 		int i = 0;
 		for(ValueSelectable<ReceiptStub> r : collection){
@@ -338,12 +343,12 @@ public class MassInsurerAccountingViewPresenter implements ViewPresenter{
 	}
 
 	protected void onInsurerAccountingSuccess(){
-		EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "As Prestações de Contas foram Enviadas com Sucesso"), TYPE.TRAY_NOTIFICATION));
+		EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "As Prestações de Contas foram enviadas com sucesso"), TYPE.TRAY_NOTIFICATION));
 		NavigationHistoryManager.getInstance().reload();
 	}
 	
 	protected void onInsurerAccountingFailed(){
-		EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não foi possível Enviar as Prestações de Contas"), TYPE.ALERT_NOTIFICATION));
+		EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não foi possível enviar as Prestações de Contas"), TYPE.ALERT_NOTIFICATION));
 	}
 	
 	protected void showValidationError(String message){

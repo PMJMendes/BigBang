@@ -36,6 +36,11 @@ public class QuoteRequestMassManagerTransferViewPresenter extends MassManagerTra
 
 		String[] processIds = new String[affectedProcesses.size()];
 
+		if(processIds.length == 0){
+			EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Nenhuma consulta de mercado seleccionada"), TYPE.ALERT_NOTIFICATION));				
+			return;
+		}
+		
 		int i = 0;
 		for(QuoteRequestStub c : affectedProcesses){
 			processIds[i] = c.id;

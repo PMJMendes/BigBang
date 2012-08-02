@@ -37,6 +37,11 @@ ViewPresenter {
 			Collection<InsurancePolicyStub> affectedProcesses) {
 		String[] processIds = new String[affectedProcesses.size()];
 
+		if(processIds.length == 0){
+			EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Nenhuma apólice seleccionada"), TYPE.ALERT_NOTIFICATION));				
+			return;
+		}
+		
 		int i = 0;
 		for(InsurancePolicyStub p : affectedProcesses){
 			processIds[i] = p.id;

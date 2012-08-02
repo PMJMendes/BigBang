@@ -36,6 +36,11 @@ public class ClientMassManagerTransferViewPresenter extends MassManagerTransferV
 
 		String[] processIds = new String[affectedProcesses.size()];
 		
+		if(processIds.length == 0){
+			EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Nenhum cliente seleccionado"), TYPE.ALERT_NOTIFICATION));				
+			return;
+		}
+		
 		int i = 0;
 		for(ClientStub c : affectedProcesses){
 			processIds[i] = c.id;
