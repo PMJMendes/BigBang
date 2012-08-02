@@ -218,6 +218,7 @@ public class SubPolicyForm extends FormView<SubPolicy> {
 		fractioning = new ExpandableListBoxFormField(ModuleConstants.TypifiedListIds.FRACTIONING, "Fraccionamento");
 		premium = new NumericTextBoxFormField("Prémio Comercial Anual", true);
 		premium.setFieldWidth("175px");
+		premium.setUnitsLabel("€");
 		
 		notes = new TextAreaFormField();
 		notes.setSize("100%", "200px");
