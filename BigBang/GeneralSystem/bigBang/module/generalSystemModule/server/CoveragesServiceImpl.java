@@ -614,6 +614,7 @@ public class CoveragesServiceImpl
 			larrResult[i].subLineId = ((UUID)larrCoverages[i].getAt(1)).toString();
 			larrResult[i].isMandatory = (Boolean)larrCoverages[i].getAt(2);
 			larrResult[i].isHeader = (Boolean)larrCoverages[i].getAt(3);
+			larrResult[i].order = (Integer)larrCoverages[i].getAt(5);
 			larrResult[i].taxes = getTaxesForCoverage(larrCoverages[i]);
 		}
 
@@ -724,6 +725,7 @@ public class CoveragesServiceImpl
 			larrResult[i].midSubLine = pidParent;
 			larrResult[i].mbMandatory = parrCoverages[i].isMandatory;
 			larrResult[i].mbHeader = parrCoverages[i].isHeader;
+			larrResult[i].mlngOrder = parrCoverages[i].order;
 			larrResult[i].mobjPrevValues = null;
 		}
 

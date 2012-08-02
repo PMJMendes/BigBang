@@ -10,11 +10,10 @@ public class Coverage
 	public String id;
 	public String name;
 	public String subLineId;
-	public boolean isMandatory; // Novo!
-	public boolean isHeader; // Novo!
-	public Tax[] taxes;
-
+	public boolean isMandatory;
+	public boolean isHeader;
 	public Integer order;
+	public Tax[] taxes;
 
 	public Coverage()
 	{

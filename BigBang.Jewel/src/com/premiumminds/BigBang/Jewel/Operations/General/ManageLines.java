@@ -61,6 +61,8 @@ public class ManageLines
 		public UUID midSubLine;
 		public boolean mbMandatory;
 		public boolean mbHeader;
+		public String mstrTag;
+		public Integer mlngOrder;
 		public CoverageData mobjPrevValues;
 	}
 
@@ -951,6 +953,7 @@ public class ManageLines
 				lobjAuxCoverage.setAt(1, parrData[i].midSubLine);
 				lobjAuxCoverage.setAt(2, parrData[i].mbMandatory);
 				lobjAuxCoverage.setAt(3, parrData[i].mbHeader);
+				lobjAuxCoverage.setAt(5, parrData[i].mlngOrder);
 				lobjAuxCoverage.SaveToDb(pdb);
 			}
 			catch (Throwable e)
@@ -1046,6 +1049,7 @@ public class ManageLines
 			parrData[i].mobjPrevValues.midSubLine = (UUID)lobjAuxCoverage.getAt(1);
 			parrData[i].mobjPrevValues.mbMandatory = (Boolean)lobjAuxCoverage.getAt(2);
 			parrData[i].mobjPrevValues.mbHeader = (Boolean)lobjAuxCoverage.getAt(3);
+			parrData[i].mobjPrevValues.mlngOrder = (Integer)lobjAuxCoverage.getAt(5);
 			parrData[i].mobjPrevValues.mobjPrevValues = null;
 
 			try
@@ -1054,6 +1058,7 @@ public class ManageLines
 				lobjAuxCoverage.setAt(1, parrData[i].midSubLine);
 				lobjAuxCoverage.setAt(2, parrData[i].mbMandatory);
 				lobjAuxCoverage.setAt(3, parrData[i].mbHeader);
+				lobjAuxCoverage.setAt(5, parrData[i].mlngOrder);
 				lobjAuxCoverage.SaveToDb(pdb);
 			}
 			catch (Throwable e)
@@ -1192,6 +1197,8 @@ public class ManageLines
 			parrData[i].midSubLine = (UUID)lobjAuxCoverage.getAt(1);
 			parrData[i].mbMandatory = (Boolean)lobjAuxCoverage.getAt(2);
 			parrData[i].mbHeader = (Boolean)lobjAuxCoverage.getAt(3);
+			parrData[i].mstrTag = (String)lobjAuxCoverage.getAt(4);
+			parrData[i].mlngOrder = (Integer)lobjAuxCoverage.getAt(5);
 			parrData[i].mobjPrevValues = null;
 
 			try
@@ -1365,6 +1372,7 @@ public class ManageLines
 				lobjAuxCoverage.setAt(1, parrData[i].mobjPrevValues.midSubLine);
 				lobjAuxCoverage.setAt(2, parrData[i].mobjPrevValues.mbMandatory);
 				lobjAuxCoverage.setAt(3, parrData[i].mobjPrevValues.mbHeader);
+				lobjAuxCoverage.setAt(5, parrData[i].mobjPrevValues.mlngOrder);
 				lobjAuxCoverage.SaveToDb(pdb);
 			}
 			catch (Throwable e)
@@ -1449,6 +1457,8 @@ public class ManageLines
 				lobjAuxCoverage.setAt(1, parrData[i].midSubLine);
 				lobjAuxCoverage.setAt(2, parrData[i].mbMandatory);
 				lobjAuxCoverage.setAt(3, parrData[i].mbHeader);
+				lobjAuxCoverage.setAt(4, parrData[i].mstrTag);
+				lobjAuxCoverage.setAt(5, parrData[i].mlngOrder);
 				lobjAuxCoverage.SaveToDb(pdb);
 				parrData[i].mid = lobjAuxCoverage.getKey();
 			}
@@ -1760,6 +1770,11 @@ public class ManageLines
 		pstrString.append(pstrPrefix);
 		pstrString.append(" ");
 		pstrString.append(pobjData.mstrName);
+		pstrString.append(pstrLineBreak);
+
+		pstrString.append(pstrPrefix);
+		pstrString.append(" Ordenação: ");
+		pstrString.append(pobjData.mlngOrder);
 		pstrString.append(pstrLineBreak);
 
 		if ( pobjData.mbHeader )
