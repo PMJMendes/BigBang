@@ -612,6 +612,7 @@ public class Constants
 	public static final UUID DocID_PaymentCoverLetter     = UUID.fromString("18E61B06-BD30-4338-82B2-A02A00E88AF7");
 	public static final UUID DocID_SignatureRequestLetter = UUID.fromString("7D054350-6B89-4742-91E5-A02A01105D11");
 	public static final UUID DocID_DASRequestLetter       = UUID.fromString("9F722D93-12BF-4D33-92A3-A0300100FA21");
+	public static final UUID DocID_ExpenseScan            = UUID.fromString("DD17A31E-CF99-40B1-8529-A0A100D41EC1");
 	public static final UUID DocID_ExpenseRequest         = UUID.fromString("55825900-E20A-4519-BC4F-A03D00BF135A");
 	public static final UUID DocID_ExpenseNotice          = UUID.fromString("E95D510B-396E-49B0-9ECA-A03F00BF1CFE");
 	public static final UUID DocID_ExpenseReturn          = UUID.fromString("B78E445E-E061-40DA-914D-A03F00BF2AB3");

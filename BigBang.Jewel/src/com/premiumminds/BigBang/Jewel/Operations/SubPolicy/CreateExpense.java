@@ -18,6 +18,7 @@ import Jewel.Petri.SysObjects.Operation;
 import com.premiumminds.BigBang.Jewel.BigBangJewelException;
 import com.premiumminds.BigBang.Jewel.Constants;
 import com.premiumminds.BigBang.Jewel.Data.DSBridgeData;
+import com.premiumminds.BigBang.Jewel.Data.DocumentData;
 import com.premiumminds.BigBang.Jewel.Data.ExpenseData;
 import com.premiumminds.BigBang.Jewel.Objects.Expense;
 import com.premiumminds.BigBang.Jewel.Operations.ContactOps;
@@ -77,7 +78,8 @@ public class CreateExpense
 	{
 		Expense lobjAux;
 		IScript lobjScript;
-		IProcess lobjProc; 
+		IProcess lobjProc;
+		DocumentData lobjDoc;
 
 		try
 		{
@@ -89,6 +91,24 @@ public class CreateExpense
 			lobjAux = Expense.GetInstance(Engine.getCurrentNameSpace(), (UUID)null);
 			mobjData.ToObject(lobjAux);
 			lobjAux.SaveToDb(pdb);
+
+			if ( mobjImage != null )
+			{
+				lobjDoc = new DocumentData();
+				lobjDoc.mstrName = "Original";
+				lobjDoc.midOwnerType = Constants.ObjID_Receipt;
+				lobjDoc.midOwnerId = null;
+				lobjDoc.midDocType = Constants.DocID_ExpenseScan;
+				lobjDoc.mstrText = null;
+				lobjDoc.mobjDSBridge = new DSBridgeData();
+				lobjDoc.mobjDSBridge.mstrDSHandle = mobjImage.mstrDSHandle;
+				lobjDoc.mobjDSBridge.mstrDSLoc = mobjImage.mstrDSLoc;
+				lobjDoc.mobjDSBridge.mstrDSTitle = null;
+				lobjDoc.mobjDSBridge.mbDelete = true;
+
+				mobjDocOps = new DocOps();
+				mobjDocOps.marrCreate = new DocumentData[] {lobjDoc};
+			}
 
 			if ( mobjContactOps != null )
 				mobjContactOps.RunSubOp(pdb, lobjAux.getKey());

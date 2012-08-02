@@ -13,6 +13,8 @@ import Jewel.Engine.Interfaces.IEntity;
 import Jewel.Engine.SysObjects.ObjectBase;
 import Jewel.Petri.Interfaces.IProcess;
 import Jewel.Petri.Objects.PNProcess;
+import Jewel.Petri.SysObjects.Operation;
+import Jewel.Petri.SysObjects.ProcessData;
 import bigBang.definitions.shared.DocuShareHandle;
 import bigBang.definitions.shared.Expense;
 import bigBang.definitions.shared.Expense.Acceptance;
@@ -35,6 +37,7 @@ import bigBang.module.expenseModule.shared.ExpenseSearchParameter;
 import bigBang.module.expenseModule.shared.ExpenseSortParameter;
 
 import com.premiumminds.BigBang.Jewel.Constants;
+import com.premiumminds.BigBang.Jewel.Data.DSBridgeData;
 import com.premiumminds.BigBang.Jewel.Data.ExpenseData;
 import com.premiumminds.BigBang.Jewel.Objects.Client;
 import com.premiumminds.BigBang.Jewel.Objects.Coverage;
@@ -42,6 +45,7 @@ import com.premiumminds.BigBang.Jewel.Objects.Policy;
 import com.premiumminds.BigBang.Jewel.Objects.PolicyCoverage;
 import com.premiumminds.BigBang.Jewel.Objects.PolicyObject;
 import com.premiumminds.BigBang.Jewel.Objects.SubLine;
+import com.premiumminds.BigBang.Jewel.Objects.SubPolicy;
 import com.premiumminds.BigBang.Jewel.Objects.SubPolicyCoverage;
 import com.premiumminds.BigBang.Jewel.Objects.SubPolicyObject;
 import com.premiumminds.BigBang.Jewel.Operations.DocOps;
@@ -485,7 +489,85 @@ public class ExpenseServiceImpl
 	public Expense serialCreateExpense(Expense expense, DocuShareHandle source)
 		throws SessionExpiredException, BigBangException
 	{
-		return null;
+		ExpenseData lobjData;
+		DSBridgeData lobjImage;
+		ProcessData lobjParent;
+		com.premiumminds.BigBang.Jewel.Operations.Policy.CreateExpense lopPCE;
+		com.premiumminds.BigBang.Jewel.Operations.SubPolicy.CreateExpense lopSPCE;
+		Operation lop;
+
+		if ( Engine.getCurrentUser() == null )
+			throw new SessionExpiredException();
+
+		lobjData = new ExpenseData();
+		lobjData.mid = null;
+		lobjData.mstrNumber = null;
+		lobjData.mdtDate = Timestamp.valueOf(expense.expenseDate + " 00:00:00.0");
+		lobjData.midPolicyObject = (expense.insuredObjectId == null ? null : UUID.fromString(expense.insuredObjectId));
+		lobjData.midSubPolicyObject = null;
+		lobjData.midPolicyCoverage = (expense.coverageId == null ? null : UUID.fromString(expense.coverageId));
+		lobjData.midSubPolicyCoverage = null;
+		lobjData.mdblDamages = new BigDecimal(expense.value+"");
+		lobjData.mdblSettlement = (expense.settlement == null ? null : new BigDecimal(expense.settlement));
+		lobjData.mbIsManual = expense.isManual;
+		lobjData.mstrNotes = expense.notes;
+		lobjData.midManager = null;
+		lobjData.midProcess = null;
+		lobjData.mobjPrevValues = null;
+
+		if ( source != null )
+		{
+			lobjImage = new DSBridgeData();
+			lobjImage.mstrDSHandle = source.handle;
+			lobjImage.mstrDSLoc = source.locationHandle;
+			lobjImage.mstrDSTitle = null;
+			lobjImage.mbDelete = true;
+		}
+		else
+			lobjImage = null;
+
+		try
+		{
+			if ( Constants.ObjID_Policy.equals(UUID.fromString(expense.referenceTypeId)) )
+			{
+				lobjParent = Policy.GetInstance(Engine.getCurrentNameSpace(), UUID.fromString(expense.referenceId));
+				lopPCE = new com.premiumminds.BigBang.Jewel.Operations.Policy.CreateExpense(lobjParent.GetProcessID());
+				lopPCE.mobjData = lobjData;
+				lopPCE.mobjImage = lobjImage;
+				lopPCE.mobjContactOps = null;
+				lopPCE.mobjDocOps = null;
+				lop = lopPCE;
+			}
+			else
+			{
+				lobjParent = SubPolicy.GetInstance(Engine.getCurrentNameSpace(), UUID.fromString(expense.referenceId));
+				lopSPCE = new com.premiumminds.BigBang.Jewel.Operations.SubPolicy.CreateExpense(lobjParent.GetProcessID());
+				lopSPCE.mobjData = lobjData;
+				lopSPCE.mobjImage = lobjImage;
+				lopSPCE.mobjContactOps = null;
+				lopSPCE.mobjDocOps = null;
+				lop = lopSPCE;
+			}
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangException(e.getMessage(), e);
+		}
+
+
+		try
+		{
+			lop.Execute();
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangException(e.getMessage(), e);
+		}
+
+		if ( Constants.ObjID_Policy.equals(UUID.fromString(expense.referenceTypeId)) )
+			return ExpenseServiceImpl.sGetExpense(((com.premiumminds.BigBang.Jewel.Operations.Policy.CreateExpense)lop).mobjData.mid);
+		else
+			return ExpenseServiceImpl.sGetExpense(((com.premiumminds.BigBang.Jewel.Operations.SubPolicy.CreateExpense)lop).mobjData.mid);
 	}
 
 	public void massSendNotification(String[] expenseIds)
