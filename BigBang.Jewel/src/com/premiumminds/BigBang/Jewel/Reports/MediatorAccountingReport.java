@@ -114,15 +114,14 @@ public class MediatorAccountingReport
 				throw new BigBangJewelException(e.getMessage(), e);
 			}
 
-			larrTables[i] = new String[8];
+			larrTables[i] = new String[7];
 			larrTables[i][0] = lobjClient.getLabel();
 			larrTables[i][1] = lobjReceipt.getLabel();
 			larrTables[i][2] = lobjReceipt.getReceiptType();
 			larrTables[i][3] = (lobjSubPolicy == null ? lobjPolicy.getLabel() : lobjSubPolicy.getLabel());
 			larrTables[i][4] = lobjPolicy.GetSubLine().getDescription();
 			larrTables[i][5] = String.format("%,.2f", lobjDetail.getPremium());
-			larrTables[i][6] = String.format("%,.2f", lobjDetail.getCommission());
-			larrTables[i][7] = String.format("%,.2f", lobjDetail.getRetrocession());
+			larrTables[i][6] = String.format("%,.2f", lobjDetail.getRetrocession());
 
 			mlngCount++;
 			mdblTotalPremiums = mdblTotalPremiums.add(lobjDetail.getPremium());
