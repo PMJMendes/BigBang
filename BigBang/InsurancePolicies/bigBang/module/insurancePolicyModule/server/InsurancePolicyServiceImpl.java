@@ -221,6 +221,7 @@ public class InsurancePolicyServiceImpl
 			mobjPolicy.mbCaseStudy = pobjSource.caseStudy;
 			mobjPolicy.mdblPremium = ( pobjSource.premium == null ? null : new BigDecimal(pobjSource.premium+"") );
 			mobjPolicy.mdblRetrocession = ( pobjSource.agentPercentage == null ? null : new BigDecimal(pobjSource.agentPercentage+"") );
+			mobjPolicy.midProfile = ( pobjSource.operationalProfileId == null ? null : UUID.fromString(pobjSource.operationalProfileId) );
 			mobjPolicy.midStatus = Constants.StatusID_InProgress;
 
 			mbValid = false;
@@ -738,6 +739,7 @@ public class InsurancePolicyServiceImpl
 			lobjResult.statusId = ( mobjPolicy.midStatus == null ? null : mobjPolicy.midStatus.toString() );
 			lobjResult.premium = ( mobjPolicy.mdblPremium == null ? null : mobjPolicy.mdblPremium.doubleValue() );
 			lobjResult.agentPercentage = ( mobjPolicy.mdblRetrocession == null ? null : mobjPolicy.mdblRetrocession.doubleValue() );
+			lobjResult.operationalProfileId = ( mobjPolicy.midProfile == null ? null : mobjPolicy.midProfile.toString() );
 			lobjResult.docushare = mobjPolicy.mstrDocuShare;
 
 			larrCoInsurers = new ArrayList<InsurancePolicy.CoInsurer>();
@@ -1795,6 +1797,7 @@ public class InsurancePolicyServiceImpl
 			mobjPolicy.mbCaseStudy = pobjSource.caseStudy;
 			mobjPolicy.mdblPremium = ( pobjSource.premium == null ? null : new BigDecimal(pobjSource.premium+"") );
 			mobjPolicy.mdblRetrocession = ( pobjSource.agentPercentage == null ? null : new BigDecimal(pobjSource.agentPercentage+"") );
+			mobjPolicy.midProfile = ( pobjSource.operationalProfileId == null ? null : UUID.fromString(pobjSource.operationalProfileId) );
 
 			mobjPolicy.mbModified = true;
 
@@ -2687,6 +2690,7 @@ public class InsurancePolicyServiceImpl
 		}
 		lobjResult.premium = (lobjPolicy.getAt(14) == null ? null : ((BigDecimal)lobjPolicy.getAt(14)).doubleValue());
 		lobjResult.agentPercentage = (lobjPolicy.getAt(18) == null ? null : ((BigDecimal)lobjPolicy.getAt(18)).doubleValue());
+		lobjResult.operationalProfileId = (lobjPolicy.getAt(19) == null ? null : ((UUID)lobjPolicy.getAt(19)).toString());
 		lobjResult.docushare = (String)lobjPolicy.getAt(15);
 		lobjResult.managerId = lobjProc.GetManagerID().toString();
 

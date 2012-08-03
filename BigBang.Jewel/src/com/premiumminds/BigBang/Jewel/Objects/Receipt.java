@@ -269,24 +269,31 @@ public class Receipt
     public boolean canAutoValidate()
     	throws BigBangJewelException
     {
+    	UUID lidProfile;
     	IProcess lobjProcess;
     	Client lobjClient;
 
-    	try
+    	lidProfile = (UUID)getAbsolutePolicy().getAt(19);
+
+    	if ( lidProfile == null )
     	{
-			lobjProcess = PNProcess.GetInstance(Engine.getCurrentNameSpace(), GetProcessID());
+	    	try
+	    	{
+				lobjProcess = PNProcess.GetInstance(Engine.getCurrentNameSpace(), GetProcessID());
+	
+		    	if ( Constants.ProcID_SubPolicy.equals(lobjProcess.GetParent().GetScriptID()) )
+		    		lobjClient = Client.GetInstance(getNameSpace(), (UUID)((SubPolicy)lobjProcess.GetParent().GetData()).getAt(2));
+		    	else
+		    		lobjClient = (Client)lobjProcess.GetParent().GetParent().GetData();
+			}
+			catch (Throwable e)
+			{
+				throw new BigBangJewelException(e.getMessage(), e);
+			}
+	    	lidProfile = (UUID)lobjClient.getAt(9);
+    	}
 
-	    	if ( lobjProcess.GetParent().GetData() instanceof SubPolicy )
-	    		return false;
-
-	    	lobjClient = (Client)lobjProcess.GetParent().GetParent().GetData();
-		}
-		catch (Throwable e)
-		{
-			throw new BigBangJewelException(e.getMessage(), e);
-		}
-
-    	if ( Constants.ProfID_VIP.equals((UUID)lobjClient.getAt(9)) )
+    	if ( Constants.ProfID_VIP.equals(lidProfile) )
     		return false;
 
     	if ( Constants.RecType_Continuing.equals(getAt(1)) )

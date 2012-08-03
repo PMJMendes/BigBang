@@ -34,6 +34,7 @@ public class PolicyData
 	public BigDecimal mdblPremium;
 	public String mstrDocuShare;
 	public BigDecimal mdblRetrocession;
+	public UUID midProfile;
 
 	public UUID midManager;
 	public UUID midProcess;
@@ -70,6 +71,7 @@ public class PolicyData
 		mdblPremium = pobjSource.mdblPremium;
 		mstrDocuShare = pobjSource.mstrDocuShare;
 		mdblRetrocession = pobjSource.mdblRetrocession;
+		midProfile = pobjSource.midProfile;
 	}
 
 	public void FromObject(ObjectBase pobjSource)
@@ -95,6 +97,7 @@ public class PolicyData
 //		unusedMigrationID = (Integer)pobjSource.getAt(16);
 		midClient = (UUID)pobjSource.getAt(17);
 		mdblRetrocession = (BigDecimal)pobjSource.getAt(18);
+		midProfile = (UUID)pobjSource.getAt(19);
 	}
 
 	public void ToObject(ObjectBase pobjDest)
@@ -121,6 +124,7 @@ public class PolicyData
 //			pobjDest.setAt(16, unusedMigrationID); JMMM: Isto não é usado pela aplicação
 			pobjDest.setAt(17, midClient);
 			pobjDest.setAt(18, mdblRetrocession);
+			pobjDest.setAt(19, midProfile);
 		}
 		catch (Throwable e)
 		{
@@ -192,6 +196,22 @@ public class PolicyData
 			catch (Throwable e)
 			{
 				pstrBuilder.append("(Erro a obter o mediador.)");
+			}
+			pstrBuilder.append(pstrLineBreak);
+		}
+
+		if ( midProfile != null )
+		{
+			pstrBuilder.append("Perfil Operacional: ");
+			try
+			{
+				lobjAux = Engine.GetWorkInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), Constants.ObjID_OpProfile),
+						midProfile);
+				pstrBuilder.append((String)lobjAux.getAt(0));
+			}
+			catch (Throwable e)
+			{
+				pstrBuilder.append("(Erro a obter o perfil operacional da apólice.)");
 			}
 			pstrBuilder.append(pstrLineBreak);
 		}
