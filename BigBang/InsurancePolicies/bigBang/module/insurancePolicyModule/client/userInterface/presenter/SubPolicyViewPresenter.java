@@ -46,60 +46,72 @@ import com.google.gwt.user.client.ui.Widget;
 public class SubPolicyViewPresenter implements ViewPresenter {
 
 	public static enum Action {
-		EDIT,
-		CANCEL_EDIT,
-		SAVE,
-		INCLUDE_INSURED_OBJECT,
-		CREATE_INSURED_OBJECT,
-		INCLUDE_INSURED_OBJECT_FROM_CLIENT,
-		CREATE_INSURED_OBJECT_FROM_CLIENT,
-		EXCLUDE_INSURED_OBJECT,
-		PERFORM_CALCULATIONS,
-		VALIDATE,
-		TRANSFER_TO_POLICY,
-		CREATE_INFO_OR_DOCUMENT_REQUEST,
-		CREATE_RECEIPT,
-		VOID,
-		DELETE, 
-		CREATE_EXPENSE
+		EDIT, CANCEL_EDIT, SAVE, INCLUDE_INSURED_OBJECT, CREATE_INSURED_OBJECT, INCLUDE_INSURED_OBJECT_FROM_CLIENT, CREATE_INSURED_OBJECT_FROM_CLIENT, EXCLUDE_INSURED_OBJECT, PERFORM_CALCULATIONS, VALIDATE, TRANSFER_TO_POLICY, CREATE_INFO_OR_DOCUMENT_REQUEST, CREATE_RECEIPT, VOID, DELETE, CREATE_EXPENSE
 	}
 
 	public static interface Display {
 		HasEditableValue<SubPolicy> getForm();
+
 		HasValue<InsurancePolicy> getParentPolicyForm();
 
 		HasValueSelectables<Contact> getContactsList();
+
 		HasValueSelectables<Document> getDocumentsList();
+
 		HasValueSelectables<ExerciseStub> getExercisesList();
+
 		HasValueSelectables<InsuredObjectStub> getInsuredObjectsList();
+
 		HasValueSelectables<ReceiptStub> getReceiptsList();
+
 		HasValueSelectables<BigBangProcess> getSubProcessesList();
+
 		HasValueSelectables<HistoryItemStub> getHistoryList();
+
 		HasValueSelectables<ExpenseStub> getExpensesList();
 
 		void setSaveModeEnabled(boolean enabled);
+
 		void registerActionHandler(ActionInvokedEventHandler<Action> handler);
 
-		//PERMISSIONS
+		// PERMISSIONS
 		void clearAllowedPermissions();
+
 		void allowEdit(boolean allow);
+
 		void allowIncludeInsuredObject(boolean allow);
+
 		void allowCreateInsuredObject(boolean allow);
+
 		void allowIncludeInsuredObjectFromClient(boolean allow);
+
 		void allowCreateInsuredObjectFromClient(boolean allow);
+
 		void allowExcludeInsuredObject(boolean allow);
+
 		void allowPerformCalculations(boolean allow);
+
 		void allowValidate(boolean allow);
+
 		void allowTransferToPolicy(boolean allow);
+
 		void allowCreateInfoOrDocumentRequest(boolean allow);
+
 		void allowCreateReceipt(boolean allow);
+
 		void allowVoid(boolean allow);
+
 		void allowDelete(boolean allow);
+
 		void allowCreateHealthExpense(boolean allow);
-		//Table
+
+		// Table
 		HasValue<String> getInsuredObjectFilter();
+
 		HasValue<String> getExerciseFilter();
+
 		TableSection getCurrentTableSectionInfo();
+
 		void setTableSectionInfo(TableSection info);
 
 		Widget asWidget();
@@ -112,9 +124,11 @@ public class SubPolicyViewPresenter implements ViewPresenter {
 	protected boolean bound = false;
 
 	public SubPolicyViewPresenter(Display view) {
-		this.subPolicyBroker = (InsuranceSubPolicyBroker) DataBrokerManager.staticGetBroker(BigBangConstants.EntityIds.INSURANCE_SUB_POLICY);
-		this.policyBroker = (InsurancePolicyBroker) DataBrokerManager.staticGetBroker(BigBangConstants.EntityIds.INSURANCE_POLICY);
-		setView((UIObject)view);
+		this.subPolicyBroker = (InsuranceSubPolicyBroker) DataBrokerManager
+				.staticGetBroker(BigBangConstants.EntityIds.INSURANCE_SUB_POLICY);
+		this.policyBroker = (InsurancePolicyBroker) DataBrokerManager
+				.staticGetBroker(BigBangConstants.EntityIds.INSURANCE_POLICY);
+		setView((UIObject) view);
 	}
 
 	@Override
@@ -136,31 +150,31 @@ public class SubPolicyViewPresenter implements ViewPresenter {
 		subPolicyId = subPolicyId == null ? new String() : subPolicyId;
 		String parentPolicyId = parameterHolder.getParameter("policyid");
 		parentPolicyId = parentPolicyId == null ? new String() : parentPolicyId;
-		
-		
 
-		if(parentPolicyId.isEmpty()) {
+		if (parentPolicyId.isEmpty()) {
 			onGetParentFailed();
-		} else if(subPolicyId.isEmpty()) {
+		} else if (subPolicyId.isEmpty()) {
 			onGetSubPolicyFailed();
-		} else if(subPolicyId.equalsIgnoreCase("new")) {
+		} else if (subPolicyId.equalsIgnoreCase("new")) {
 			clearView();
 			showCreateSubPolicy(parentPolicyId);
-		} else if(this.subPolicyBroker.isTemp(subPolicyId)) {
+		} else if (this.subPolicyBroker.isTemp(subPolicyId)) {
 			showScratchPadSubPolicy(parentPolicyId, subPolicyId);
-		}else {
+		} else {
 			showSubPolicy(parentPolicyId, subPolicyId);
 		}
 	}
 
-	private void bind(){
-		if(bound){return;}
+	private void bind() {
+		if (bound) {
+			return;
+		}
 
 		view.registerActionHandler(new ActionInvokedEventHandler<SubPolicyViewPresenter.Action>() {
 
 			@Override
 			public void onActionInvoked(ActionInvokedEvent<Action> action) {
-				switch(action.getAction()){
+				switch (action.getAction()) {
 				case EDIT:
 					onEdit();
 					break;
@@ -180,16 +194,16 @@ public class SubPolicyViewPresenter implements ViewPresenter {
 					onCreateInsuredObject();
 					break;
 				case CREATE_INSURED_OBJECT_FROM_CLIENT:
-					//TODO
+					// TODO
 					break;
 				case INCLUDE_INSURED_OBJECT:
-					//TODO
+					// TODO
 					break;
 				case INCLUDE_INSURED_OBJECT_FROM_CLIENT:
-					//TODO
+					// TODO
 					break;
 				case EXCLUDE_INSURED_OBJECT:
-					//TODO
+					// TODO
 					break;
 				case VALIDATE:
 					onValidate();
@@ -214,25 +228,29 @@ public class SubPolicyViewPresenter implements ViewPresenter {
 		});
 
 		ValueChangeHandler<String> filterChangedHandler = new ValueChangeHandler<String>() {
-			
+
 			@Override
 			public void onValueChange(ValueChangeEvent<String> event) {
 				saveWorkState(new ResponseHandler<Void>() {
 
 					@Override
 					public void onResponse(Void response) {
-						subPolicyBroker.getPage(view.getForm().getInfo().id, view.getInsuredObjectFilter().getValue(), view.getExerciseFilter().getValue(), new ResponseHandler<SubPolicy.TableSection>() {
-							
-							@Override
-							public void onResponse(TableSection response) {
-								view.setTableSectionInfo(response);
-							}
-							
-							@Override
-							public void onError(Collection<ResponseError> errors) {
-								return;
-							}
-						});
+						subPolicyBroker.getPage(view.getForm().getInfo().id,
+								view.getInsuredObjectFilter().getValue(), view
+										.getExerciseFilter().getValue(),
+								new ResponseHandler<SubPolicy.TableSection>() {
+
+									@Override
+									public void onResponse(TableSection response) {
+										view.setTableSectionInfo(response);
+									}
+
+									@Override
+									public void onError(
+											Collection<ResponseError> errors) {
+										return;
+									}
+								});
 					}
 
 					@Override
@@ -243,48 +261,57 @@ public class SubPolicyViewPresenter implements ViewPresenter {
 			}
 		};
 		view.getExerciseFilter().addValueChangeHandler(filterChangedHandler);
-		view.getInsuredObjectFilter().addValueChangeHandler(filterChangedHandler);
-		
+		view.getInsuredObjectFilter().addValueChangeHandler(
+				filterChangedHandler);
+
 		SelectionChangedEventHandler selectionChangedHandler = new SelectionChangedEventHandler() {
 
 			@Override
 			public void onSelectionChanged(SelectionChangedEvent event) {
 				Object source = event.getSource();
-				ValueSelectable<?> selectable = (ValueSelectable<?>) event.getFirstSelected();
+				ValueSelectable<?> selectable = (ValueSelectable<?>) event
+						.getFirstSelected();
 
-				if(selectable == null) {
+				if (selectable == null) {
 					return;
 				}
 
 				Object value = selectable.getValue();
 
-				if(source == view.getContactsList()){
+				if (source == view.getContactsList()) {
 					showContact((Contact) value);
-				}else if(source == view.getDocumentsList()){
+				} else if (source == view.getDocumentsList()) {
 					showDocument((Document) value);
-				}else if(source == view.getInsuredObjectsList()){
+				} else if (source == view.getInsuredObjectsList()) {
 					showInsuredObject((InsuredObjectStub) value);
-				}else if(source == view.getExercisesList()){
+				} else if (source == view.getExercisesList()) {
 					showExercise((ExerciseStub) value);
-				}else if(source == view.getReceiptsList()){
+				} else if (source == view.getReceiptsList()) {
 					showReceipt((ReceiptStub) value);
-				}else if(source == view.getHistoryList()){
+				} else if (source == view.getHistoryList()) {
 					showHistory((HistoryItemStub) value);
-				}else if(source == view.getSubProcessesList()){
+				} else if (source == view.getSubProcessesList()) {
 					showSubProcess((BigBangProcess) value);
-				}else if(source == view.getExpensesList()){
+				} else if (source == view.getExpensesList()) {
 					showExpense((ExpenseStub) value);
 				}
 			}
 		};
-		
-		view.getContactsList().addSelectionChangedEventHandler(selectionChangedHandler);
-		view.getDocumentsList().addSelectionChangedEventHandler(selectionChangedHandler);
-		view.getInsuredObjectsList().addSelectionChangedEventHandler(selectionChangedHandler);
-		view.getExercisesList().addSelectionChangedEventHandler(selectionChangedHandler);
-		view.getReceiptsList().addSelectionChangedEventHandler(selectionChangedHandler);
-		view.getHistoryList().addSelectionChangedEventHandler(selectionChangedHandler);
-		view.getExpensesList().addSelectionChangedEventHandler(selectionChangedHandler);
+
+		view.getContactsList().addSelectionChangedEventHandler(
+				selectionChangedHandler);
+		view.getDocumentsList().addSelectionChangedEventHandler(
+				selectionChangedHandler);
+		view.getInsuredObjectsList().addSelectionChangedEventHandler(
+				selectionChangedHandler);
+		view.getExercisesList().addSelectionChangedEventHandler(
+				selectionChangedHandler);
+		view.getReceiptsList().addSelectionChangedEventHandler(
+				selectionChangedHandler);
+		view.getHistoryList().addSelectionChangedEventHandler(
+				selectionChangedHandler);
+		view.getExpensesList().addSelectionChangedEventHandler(
+				selectionChangedHandler);
 
 		bound = true;
 	}
@@ -310,112 +337,153 @@ public class SubPolicyViewPresenter implements ViewPresenter {
 	}
 
 	protected void onCreateExpense() {
-		NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
+		NavigationHistoryItem item = NavigationHistoryManager.getInstance()
+				.getCurrentState();
 		item.pushIntoStackParameter("display", "createexpensesubpolicy");
 		item.setParameter("objectid", "new");
 		NavigationHistoryManager.getInstance().go(item);
 	}
 
-	private void clearView(){
+	private void clearView() {
 		view.getForm().setValue(null);
 	}
 
-	protected void showCreateSubPolicy(final String parentPolicyId){
+	protected void showCreateSubPolicy(final String parentPolicyId) {
 		this.showParentPolicy(parentPolicyId);
-		this.subPolicyBroker.openSubPolicyResource(null, new ResponseHandler<SubPolicy>() {
-
-			@Override
-			public void onResponse(SubPolicy subPolicy) {
-				subPolicy.mainPolicyId = parentPolicyId;
-				subPolicyBroker.getSubPolicyDefinition(subPolicy, new ResponseHandler<SubPolicy>() {
-
+		this.subPolicyBroker.openSubPolicyResource(null,
+				new ResponseHandler<SubPolicy>() {
 					@Override
-					public void onResponse(SubPolicy initializedSubPolicy) {
-						view.getForm().setValue(initializedSubPolicy);
-						view.setSaveModeEnabled(true);
-						view.getForm().setReadOnly(false);
+					public void onResponse(SubPolicy subPolicy) {
+						subPolicy.mainPolicyId = parentPolicyId;
+						subPolicyBroker.getSubPolicyDefinition(subPolicy,
+								new ResponseHandler<SubPolicy>() {
+
+									@Override
+									public void onResponse(
+											SubPolicy initializedSubPolicy) {
+										view.getForm().setValue(
+												initializedSubPolicy);
+										view.setSaveModeEnabled(true);
+										view.getForm().setReadOnly(false);
+										
+									}
+
+									@Override
+									public void onError(
+											Collection<ResponseError> errors) {
+										onCreateSubPolicyFailed();
+									}
+								});
 					}
 
 					@Override
 					public void onError(Collection<ResponseError> errors) {
-						onCreateSubPolicyFailed();						
+						onCreateSubPolicyFailed();
 					}
 				});
-			}
-
-			@Override
-			public void onError(Collection<ResponseError> errors) {
-				onCreateSubPolicyFailed();
-			}
-		});
 	}
 
-	protected void showSubPolicy(String parentPolicyId, String subPolicyId){
+	protected void showSubPolicy(String parentPolicyId, String subPolicyId) {
 		this.showParentPolicy(parentPolicyId);
-		if(this.subPolicyBroker.isTemp(subPolicyId)){
+		if (this.subPolicyBroker.isTemp(subPolicyId)) {
 			showScratchPadSubPolicy(parentPolicyId, subPolicyId);
-		}else{
-			this.subPolicyBroker.getSubPolicy(subPolicyId, new ResponseHandler<SubPolicy>() {
+		} else {
+			this.subPolicyBroker.getSubPolicy(subPolicyId,
+					new ResponseHandler<SubPolicy>() {
 
-				@Override
-				public void onResponse(SubPolicy response) {
-					view.clearAllowedPermissions();
+						@Override
+						public void onResponse(SubPolicy response) {
+							view.clearAllowedPermissions();
 
-					view.allowDelete(PermissionChecker.hasPermission(response, BigBangConstants.OperationIds.InsuranceSubPolicyProcess.DELETE_SUB_POLICY));
-					view.allowCreateInsuredObject(subPolicyBroker.isTemp(response.id));
-					view.allowEdit(subPolicyBroker.isTemp(response.id) || PermissionChecker.hasPermission(response, BigBangConstants.OperationIds.InsuranceSubPolicyProcess.EDIT_SUB_POLICY));
-					view.allowPerformCalculations(PermissionChecker.hasPermission(response, BigBangConstants.OperationIds.InsuranceSubPolicyProcess.PERFORM_CALCULATIONS));
-					view.allowValidate(PermissionChecker.hasPermission(response, BigBangConstants.OperationIds.InsuranceSubPolicyProcess.VALIDATE));
-					view.allowTransferToPolicy(PermissionChecker.hasPermission(response, BigBangConstants.OperationIds.InsuranceSubPolicyProcess.TRANSFER_TO_POLICY));
-					view.allowCreateInfoOrDocumentRequest(PermissionChecker.hasPermission(response, BigBangConstants.OperationIds.InsuranceSubPolicyProcess.CREATE_INFO_OR_DOCUMENT_REQUEST));
-					view.allowCreateReceipt(PermissionChecker.hasPermission(response, BigBangConstants.OperationIds.InsuranceSubPolicyProcess.CREATE_RECEIPT));
-					view.allowVoid(PermissionChecker.hasPermission(response, BigBangConstants.OperationIds.InsuranceSubPolicyProcess.VOID));
-					view.allowCreateHealthExpense(PermissionChecker.hasPermission(response, BigBangConstants.OperationIds.InsuranceSubPolicyProcess.CREATE_EXPENSE));
-					view.getForm().setReadOnly(true);
-					view.setSaveModeEnabled(false);
-					view.getForm().setValue(response);
-				}
+							view.allowDelete(PermissionChecker
+									.hasPermission(
+											response,
+											BigBangConstants.OperationIds.InsuranceSubPolicyProcess.DELETE_SUB_POLICY));
+							view.allowCreateInsuredObject(subPolicyBroker
+									.isTemp(response.id));
+							view.allowEdit(subPolicyBroker.isTemp(response.id)
+									|| PermissionChecker
+											.hasPermission(
+													response,
+													BigBangConstants.OperationIds.InsuranceSubPolicyProcess.EDIT_SUB_POLICY));
+							view.allowPerformCalculations(PermissionChecker
+									.hasPermission(
+											response,
+											BigBangConstants.OperationIds.InsuranceSubPolicyProcess.PERFORM_CALCULATIONS));
+							view.allowValidate(PermissionChecker
+									.hasPermission(
+											response,
+											BigBangConstants.OperationIds.InsuranceSubPolicyProcess.VALIDATE));
+							view.allowTransferToPolicy(PermissionChecker
+									.hasPermission(
+											response,
+											BigBangConstants.OperationIds.InsuranceSubPolicyProcess.TRANSFER_TO_POLICY));
+							view.allowCreateInfoOrDocumentRequest(PermissionChecker
+									.hasPermission(
+											response,
+											BigBangConstants.OperationIds.InsuranceSubPolicyProcess.CREATE_INFO_OR_DOCUMENT_REQUEST));
+							view.allowCreateReceipt(PermissionChecker
+									.hasPermission(
+											response,
+											BigBangConstants.OperationIds.InsuranceSubPolicyProcess.CREATE_RECEIPT));
+							view.allowVoid(PermissionChecker
+									.hasPermission(
+											response,
+											BigBangConstants.OperationIds.InsuranceSubPolicyProcess.VOID));
+							view.allowCreateHealthExpense(PermissionChecker
+									.hasPermission(
+											response,
+											BigBangConstants.OperationIds.InsuranceSubPolicyProcess.CREATE_EXPENSE));
+							view.getForm().setReadOnly(true);
+							view.setSaveModeEnabled(false);
+							view.getForm().setValue(response);
+						}
 
-				@Override
-				public void onError(Collection<ResponseError> errors) {
-					onGetSubPolicyFailed();
-				}
-			});
+						@Override
+						public void onError(Collection<ResponseError> errors) {
+							onGetSubPolicyFailed();
+						}
+					});
 		}
 	}
 
-	protected void showScratchPadSubPolicy(String parentPolicyId, String subPolicyId){
-		if(subPolicyBroker.isTemp(subPolicyId)){
+	protected void showScratchPadSubPolicy(String parentPolicyId,
+			String subPolicyId) {
+		if (subPolicyBroker.isTemp(subPolicyId)) {
 			this.showParentPolicy(parentPolicyId);
-			this.subPolicyBroker.getSubPolicy(subPolicyId, new ResponseHandler<SubPolicy>() {
+			this.subPolicyBroker.getSubPolicy(subPolicyId,
+					new ResponseHandler<SubPolicy>() {
 
-				@Override
-				public void onResponse(SubPolicy response) {
-					view.clearAllowedPermissions();
+						@Override
+						public void onResponse(SubPolicy response) {
+							view.clearAllowedPermissions();
 
-					view.allowEdit(true);
-					view.setSaveModeEnabled(true);
-					view.allowDelete(PermissionChecker.hasPermission(response, BigBangConstants.OperationIds.InsuranceSubPolicyProcess.DELETE_SUB_POLICY));
-					view.allowCreateInsuredObject(true);
+							view.allowEdit(true);
+							view.setSaveModeEnabled(true);
+							view.allowDelete(PermissionChecker
+									.hasPermission(
+											response,
+											BigBangConstants.OperationIds.InsuranceSubPolicyProcess.DELETE_SUB_POLICY));
+							view.allowCreateInsuredObject(true);
 
-					view.getForm().setReadOnly(false);
-					view.getForm().setValue(response);
-				}
+							view.getForm().setReadOnly(false);
+							view.getForm().setValue(response);
+						}
 
-				@Override
-				public void onError(Collection<ResponseError> errors) {
-					onGetSubPolicyFailed();
-				}
-			});
-		}else{
+						@Override
+						public void onError(Collection<ResponseError> errors) {
+							onGetSubPolicyFailed();
+						}
+					});
+		} else {
 			showSubPolicy(parentPolicyId, subPolicyId);
 		}
 	}
 
-	protected void onEdit(){
+	protected void onEdit() {
 		final SubPolicy subPolicy = view.getForm().getValue();
-		if(subPolicy != null) {
-			if(!subPolicyBroker.isTemp(subPolicy.id)){
+		if (subPolicy != null) {
+			if (!subPolicyBroker.isTemp(subPolicy.id)) {
 				makeTemp(subPolicy, new ResponseHandler<Void>() {
 
 					@Override
@@ -428,35 +496,41 @@ public class SubPolicyViewPresenter implements ViewPresenter {
 						onGetSubPolicyFailed();
 					}
 				});
-			}else{
+			} else {
 				NavigationHistoryManager.getInstance().reload();
 			}
-		};
+		}
+		;
 	}
 
-	protected void onSave(){
+	protected void onSave() {
 		final SubPolicy subPolicy = view.getForm().getInfo();
 
-		if(subPolicyBroker.isTemp(subPolicy.id)){
+		if (subPolicyBroker.isTemp(subPolicy.id)) {
 			saveWorkState(new ResponseHandler<Void>() {
 
 				@Override
 				public void onResponse(Void response) {
-					subPolicyBroker.commitSubPolicy(subPolicy, new ResponseHandler<SubPolicy>() {
+					subPolicyBroker.commitSubPolicy(subPolicy,
+							new ResponseHandler<SubPolicy>() {
 
-						@Override
-						public void onResponse(SubPolicy response) {
-							onSaveSubPolicySuccess();
-							NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
-							item.setParameter("subpolicyid", response.id);
-							NavigationHistoryManager.getInstance().go(item);
-						}
+								@Override
+								public void onResponse(SubPolicy response) {
+									onSaveSubPolicySuccess();
+									NavigationHistoryItem item = NavigationHistoryManager
+											.getInstance().getCurrentState();
+									item.setParameter("subpolicyid",
+											response.id);
+									NavigationHistoryManager.getInstance().go(
+											item);
+								}
 
-						@Override
-						public void onError(Collection<ResponseError> errors) {
-							onSaveSubPolicyError();
-						}
-					});
+								@Override
+								public void onError(
+										Collection<ResponseError> errors) {
+									onSaveSubPolicyError();
+								}
+							});
 				}
 
 				@Override
@@ -464,15 +538,15 @@ public class SubPolicyViewPresenter implements ViewPresenter {
 					onSaveSubPolicyError();
 				}
 			});
-		}else{
+		} else {
 			makeTemp(subPolicy, new ResponseHandler<Void>() {
 
 				@Override
 				public void onResponse(Void response) {
-					if(subPolicyBroker.isTemp(subPolicy.id)){
+					if (subPolicyBroker.isTemp(subPolicy.id)) {
 						onSave();
-					}else{
-						onError(new String[]{});
+					} else {
+						onError(new String[] {});
 					}
 				}
 
@@ -484,136 +558,177 @@ public class SubPolicyViewPresenter implements ViewPresenter {
 		}
 	}
 
-	protected void onCancel(){
+	protected void onCancel() {
 		final SubPolicy subPolicy = view.getForm().getValue();
 
-		if(subPolicy != null && subPolicyBroker.isTemp(subPolicy.id)){
-			subPolicyBroker.closeSubPolicyResource(subPolicy.id, new ResponseHandler<Void>() {
-
-				@Override
-				public void onResponse(Void response) {
-					subPolicyBroker.getSubPolicy(subPolicy.id, new ResponseHandler<SubPolicy>() {
+		if (subPolicy != null && subPolicyBroker.isTemp(subPolicy.id)) {
+			subPolicyBroker.closeSubPolicyResource(subPolicy.id,
+					new ResponseHandler<Void>() {
 
 						@Override
-						public void onResponse(SubPolicy response) {
-							NavigationHistoryManager.getInstance().reload();
+						public void onResponse(Void response) {
+							subPolicyBroker.getSubPolicy(subPolicy.id,
+									new ResponseHandler<SubPolicy>() {
+
+										@Override
+										public void onResponse(
+												SubPolicy response) {
+											NavigationHistoryManager
+													.getInstance().reload();
+										}
+
+										@Override
+										public void onError(
+												Collection<ResponseError> errors) {
+											NavigationHistoryItem item = NavigationHistoryManager
+													.getInstance()
+													.getCurrentState();
+											item.removeParameter("subpolicyid");
+											item.popFromStackParameter("display");
+											NavigationHistoryManager
+													.getInstance().go(item);
+										}
+									});
+
 						}
 
 						@Override
 						public void onError(Collection<ResponseError> errors) {
-							NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
+							NavigationHistoryItem item = NavigationHistoryManager
+									.getInstance().getCurrentState();
 							item.removeParameter("subpolicyid");
 							item.popFromStackParameter("display");
 							NavigationHistoryManager.getInstance().go(item);
 						}
 					});
-
-				}
-
-				@Override
-				public void onError(Collection<ResponseError> errors) {
-					NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
-					item.removeParameter("subpolicyid");
-					item.popFromStackParameter("display");
-					NavigationHistoryManager.getInstance().go(item);
-				}
-			});
 		}
 	}
-	
-	protected void saveWorkState(final ResponseHandler<Void> handler){
+
+	protected void saveWorkState(final ResponseHandler<Void> handler) {
 		SubPolicy subPolicy = view.getForm().getInfo();
 		String subPolicyId = subPolicy == null ? null : subPolicy.id;
 
-		if(subPolicyId != null && subPolicyBroker.isTemp(subPolicyId)){
-			subPolicyBroker.updateSubPolicy(subPolicy, new ResponseHandler<SubPolicy>() {
-
-				@Override
-				public void onResponse(SubPolicy response) {
-					String objectId = view.getInsuredObjectFilter().getValue();
-					String exerciseId = view.getExerciseFilter().getValue();
-					TableSection page = view.getCurrentTableSectionInfo();
-					subPolicyBroker.saveCoverageDetailsPage(response.id, objectId, exerciseId, page, new ResponseHandler<SubPolicy.TableSection>() {
+		if (subPolicyId != null && subPolicyBroker.isTemp(subPolicyId)) {
+			subPolicyBroker.updateSubPolicy(subPolicy,
+					new ResponseHandler<SubPolicy>() {
 
 						@Override
-						public void onResponse(TableSection response) {
-							handler.onResponse(null);
+						public void onResponse(SubPolicy response) {
+							String objectId = view.getInsuredObjectFilter()
+									.getValue();
+							String exerciseId = view.getExerciseFilter()
+									.getValue();
+							TableSection page = view
+									.getCurrentTableSectionInfo();
+							subPolicyBroker
+									.saveCoverageDetailsPage(
+											response.id,
+											objectId,
+											exerciseId,
+											page,
+											new ResponseHandler<SubPolicy.TableSection>() {
+
+												@Override
+												public void onResponse(
+														TableSection response) {
+													handler.onResponse(null);
+												}
+
+												@Override
+												public void onError(
+														Collection<ResponseError> errors) {
+													handler.onError(new String[] { new String(
+															"Could not save the current table page") });
+												}
+											});
 						}
 
 						@Override
 						public void onError(Collection<ResponseError> errors) {
-							handler.onError(new String[]{
-									new String("Could not save the current table page")
-							});
+							handler.onError(new String[] { new String(
+									"Could not temporarily save the sub policy") });
 						}
 					});
-				}
-
-				@Override
-				public void onError(Collection<ResponseError> errors) {
-					handler.onError(new String[]{
-							new String("Could not temporarily save the sub policy")
-					});
-				}
-			});
-		}else{
+		} else {
 			handler.onResponse(null);
 		}
 	}
 
-	protected void onDelete(){
-		NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
+	protected void onDelete() {
+		NavigationHistoryItem item = NavigationHistoryManager.getInstance()
+				.getCurrentState();
 		item.setParameter("show", "deletesubpolicy");
 		NavigationHistoryManager.getInstance().go(item);
 	}
 
-	protected void makeTemp(SubPolicy subPolicy, final ResponseHandler<Void> handler){
-		subPolicyBroker.openSubPolicyResource(subPolicy.id, new ResponseHandler<SubPolicy>() {
+	protected void makeTemp(SubPolicy subPolicy,
+			final ResponseHandler<Void> handler) {
+		subPolicyBroker.openSubPolicyResource(subPolicy.id,
+				new ResponseHandler<SubPolicy>() {
 
-			@Override
-			public void onResponse(SubPolicy response) {
-				handler.onResponse(null);
-			}
+					@Override
+					public void onResponse(SubPolicy response) {
+						handler.onResponse(null);
+					}
 
-			@Override
-			public void onError(Collection<ResponseError> errors) {
-				handler.onError(errors);
-			}
-		});
+					@Override
+					public void onError(Collection<ResponseError> errors) {
+						handler.onError(errors);
+					}
+				});
 	}
 
-	protected void onCreateInsuredObject(){
-		NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
-		item.pushIntoStackParameter("display", "viewsubpolicyobject");
-		item.setParameter("objectid", "new");
-		NavigationHistoryManager.getInstance().go(item);
-	}
-
-	protected void showParentPolicy(String parentPolicyId){
-		if(parentPolicyId == null){
-			onGetParentFailed();
-		}else{
-			this.policyBroker.getPolicy(parentPolicyId, new ResponseHandler<InsurancePolicy>() {
-
-				@Override
-				public void onResponse(InsurancePolicy response) {
-					view.getParentPolicyForm().setValue(response);
-				}
-
-				@Override
-				public void onError(Collection<ResponseError> errors) {
-					onGetParentFailed();
-				}
-			});
-		}
-	}
-
-	protected void showContact(final Contact contact){
+	protected void onCreateInsuredObject() {
 		saveWorkState(new ResponseHandler<Void>() {
 
 			@Override
 			public void onResponse(Void response) {
-				NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
+				NavigationHistoryItem item = NavigationHistoryManager
+						.getInstance().getCurrentState();
+				item.setParameter("subpolicyid", view.getForm().getValue().id);
+				item.pushIntoStackParameter("display", "viewsubpolicyobject");
+				item.setParameter("objectid", "new");
+				NavigationHistoryManager.getInstance().go(item);
+			}
+
+			@Override
+			public void onError(Collection<ResponseError> errors) {
+				EventBus.getInstance().fireEvent(
+						new NewNotificationEvent(new Notification("",
+								"Não é possível criar unidades de risco."),
+								TYPE.ALERT_NOTIFICATION));
+			}
+		});
+
+	}
+
+	protected void showParentPolicy(String parentPolicyId) {
+		if (parentPolicyId == null) {
+			onGetParentFailed();
+		} else {
+			this.policyBroker.getPolicy(parentPolicyId,
+					new ResponseHandler<InsurancePolicy>() {
+
+						@Override
+						public void onResponse(InsurancePolicy response) {
+							view.getParentPolicyForm().setValue(response);
+						}
+
+						@Override
+						public void onError(Collection<ResponseError> errors) {
+							onGetParentFailed();
+						}
+					});
+		}
+	}
+
+	protected void showContact(final Contact contact) {
+		saveWorkState(new ResponseHandler<Void>() {
+
+			@Override
+			public void onResponse(Void response) {
+				NavigationHistoryItem item = NavigationHistoryManager
+						.getInstance().getCurrentState();
 				item.setParameter("show", "contactmanagement");
 				item.setParameter("ownerid", contact.ownerId);
 				item.setParameter("contactownertypeid", contact.ownerTypeId);
@@ -629,12 +744,13 @@ public class SubPolicyViewPresenter implements ViewPresenter {
 		});
 	}
 
-	protected void showDocument(final Document document){
+	protected void showDocument(final Document document) {
 		saveWorkState(new ResponseHandler<Void>() {
 
 			@Override
 			public void onResponse(Void response) {
-				NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
+				NavigationHistoryItem item = NavigationHistoryManager
+						.getInstance().getCurrentState();
 				item.setParameter("show", "documentmanagement");
 				item.setParameter("ownerid", document.ownerId);
 				item.setParameter("documentownertypeid", document.ownerTypeId);
@@ -650,12 +766,13 @@ public class SubPolicyViewPresenter implements ViewPresenter {
 		});
 	}
 
-	protected void showInsuredObject(final InsuredObjectStub insuredObject){
+	protected void showInsuredObject(final InsuredObjectStub insuredObject) {
 		saveWorkState(new ResponseHandler<Void>() {
 
 			@Override
 			public void onResponse(Void response) {
-				NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
+				NavigationHistoryItem item = NavigationHistoryManager
+						.getInstance().getCurrentState();
 				item.pushIntoStackParameter("display", "viewsubpolicyobject");
 				item.setParameter("objectid", insuredObject.id);
 				NavigationHistoryManager.getInstance().go(item);
@@ -669,12 +786,13 @@ public class SubPolicyViewPresenter implements ViewPresenter {
 
 	}
 
-	protected void showExercise(final ExerciseStub exercise){
+	protected void showExercise(final ExerciseStub exercise) {
 		saveWorkState(new ResponseHandler<Void>() {
 
 			@Override
 			public void onResponse(Void response) {
-				NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
+				NavigationHistoryItem item = NavigationHistoryManager
+						.getInstance().getCurrentState();
 				item.pushIntoStackParameter("display", "viewsubpolicyexercise");
 				item.setParameter("exerciseid", exercise.id);
 				NavigationHistoryManager.getInstance().go(item);
@@ -687,7 +805,7 @@ public class SubPolicyViewPresenter implements ViewPresenter {
 		});
 
 	}
-	
+
 	protected void showReceipt(final ReceiptStub receiptItem) {
 		saveWorkState(new ResponseHandler<Void>() {
 
@@ -707,14 +825,15 @@ public class SubPolicyViewPresenter implements ViewPresenter {
 			}
 		});
 	}
-	
-	protected void showSubProcess(final BigBangProcess process){
+
+	protected void showSubProcess(final BigBangProcess process) {
 		saveWorkState(new ResponseHandler<Void>() {
 
 			@Override
 			public void onResponse(Void response) {
 				NavigationHistoryItem item = new NavigationHistoryItem();
-				if(process.dataTypeId.equalsIgnoreCase(BigBangConstants.EntityIds.INFO_REQUEST)) {
+				if (process.dataTypeId
+						.equalsIgnoreCase(BigBangConstants.EntityIds.INFO_REQUEST)) {
 					item.pushIntoStackParameter("display", "viewinforequest");
 					item.setParameter("requestid", process.dataId);
 				}
@@ -733,9 +852,11 @@ public class SubPolicyViewPresenter implements ViewPresenter {
 
 			@Override
 			public void onResponse(Void response) {
-				NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
+				NavigationHistoryItem item = NavigationHistoryManager
+						.getInstance().getCurrentState();
 				item.pushIntoStackParameter("display", "history");
-				item.setParameter("historyownerid", view.getForm().getValue().id);
+				item.setParameter("historyownerid",
+						view.getForm().getValue().id);
 				item.setParameter("historyitemid", historyItem.id);
 				NavigationHistoryManager.getInstance().go(item);
 			}
@@ -746,115 +867,151 @@ public class SubPolicyViewPresenter implements ViewPresenter {
 			}
 		});
 	}
-	
+
 	private void onCreateInfoOrDocumentRequest() {
-		NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
+		NavigationHistoryItem item = NavigationHistoryManager.getInstance()
+				.getCurrentState();
 		item.pushIntoStackParameter("display", "subpolicyinforequest");
 		item.setParameter("ownerid", view.getForm().getValue().id);
-		item.setParameter("ownertypeid", BigBangConstants.EntityIds.INSURANCE_SUB_POLICY);
+		item.setParameter("ownertypeid",
+				BigBangConstants.EntityIds.INSURANCE_SUB_POLICY);
 		NavigationHistoryManager.getInstance().go(item);
 	}
 
 	private void onTransferToPolicy() {
-		NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
+		NavigationHistoryItem item = NavigationHistoryManager.getInstance()
+				.getCurrentState();
 		item.setParameter("show", "subpolicytransfertopolicy");
 		NavigationHistoryManager.getInstance().go(item);
 	}
 
 	private void onCreateReceipt() {
-		NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
+		NavigationHistoryItem item = NavigationHistoryManager.getInstance()
+				.getCurrentState();
 		item.pushIntoStackParameter("display", "subpolicycreatereceipt");
 		NavigationHistoryManager.getInstance().go(item);
 	}
 
 	private void onPerformCalculations() {
-		subPolicyBroker.executeDetailedCalculations(view.getForm().getValue().id, new ResponseHandler<SubPolicy>() {
+		subPolicyBroker.executeDetailedCalculations(
+				view.getForm().getValue().id, new ResponseHandler<SubPolicy>() {
 
-			@Override
-			public void onResponse(SubPolicy response) {
-				onExecuteDetailedCalculationsSuccess();
-			}
+					@Override
+					public void onResponse(SubPolicy response) {
+						onExecuteDetailedCalculationsSuccess();
+					}
 
-			@Override
-			public void onError(Collection<ResponseError> errors) {
-				onExecuteDetailedCalculationsFailed();
-			}
-		});
+					@Override
+					public void onError(Collection<ResponseError> errors) {
+						onExecuteDetailedCalculationsFailed();
+					}
+				});
 	}
 
 	private void onValidate() {
-		subPolicyBroker.validateSubPolicy(view.getForm().getValue().id, new ResponseHandler<Void>() {
+		subPolicyBroker.validateSubPolicy(view.getForm().getValue().id,
+				new ResponseHandler<Void>() {
 
-			@Override
-			public void onResponse(Void response) {
-				onValidateSuccess();
-			}
+					@Override
+					public void onResponse(Void response) {
+						onValidateSuccess();
+					}
 
-			@Override
-			public void onError(Collection<ResponseError> errors) {
-				onValidateFailed(errors);
-			}
-		});
+					@Override
+					public void onError(Collection<ResponseError> errors) {
+						onValidateFailed(errors);
+					}
+				});
 	}
 
 	private void onVoid() {
-		NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
+		NavigationHistoryItem item = NavigationHistoryManager.getInstance()
+				.getCurrentState();
 		item.setParameter("show", "voidsubpolicy");
 		NavigationHistoryManager.getInstance().go(item);
 	}
 
-	private void onGetParentFailed(){
-		EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não foi possível obter a Apólice Principal"), TYPE.ALERT_NOTIFICATION));
-		NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
+	private void onGetParentFailed() {
+		EventBus.getInstance().fireEvent(
+				new NewNotificationEvent(new Notification("",
+						"Não foi possível obter a Apólice Principal"),
+						TYPE.ALERT_NOTIFICATION));
+		NavigationHistoryItem item = NavigationHistoryManager.getInstance()
+				.getCurrentState();
 		item.removeParameter("subpolicyid");
 		item.popFromStackParameter("display");
 		NavigationHistoryManager.getInstance().go(item);
 	}
 
-	private void onGetSubPolicyFailed(){
-		EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não foi possível obter a Apólice Adesão"), TYPE.ALERT_NOTIFICATION));
-		NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
+	private void onGetSubPolicyFailed() {
+		EventBus.getInstance().fireEvent(
+				new NewNotificationEvent(new Notification("",
+						"Não foi possível obter a Apólice Adesão"),
+						TYPE.ALERT_NOTIFICATION));
+		NavigationHistoryItem item = NavigationHistoryManager.getInstance()
+				.getCurrentState();
 		item.removeParameter("subpolicyid");
 		item.popFromStackParameter("display");
 		NavigationHistoryManager.getInstance().go(item);
 	}
 
-	private void onCreateSubPolicyFailed(){
-		EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não foi possível criar a Apólice Adesão"), TYPE.ALERT_NOTIFICATION));
-		NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
+	private void onCreateSubPolicyFailed() {
+		EventBus.getInstance().fireEvent(
+				new NewNotificationEvent(new Notification("",
+						"Não foi possível criar a Apólice Adesão"),
+						TYPE.ALERT_NOTIFICATION));
+		NavigationHistoryItem item = NavigationHistoryManager.getInstance()
+				.getCurrentState();
 		item.removeParameter("subpolicyid");
 		item.popFromStackParameter("display");
 		NavigationHistoryManager.getInstance().go(item);
 	}
 
-	private void onSaveSubPolicySuccess(){
-		EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "A Apólice Adesão foi guardada com sucesso"), TYPE.TRAY_NOTIFICATION));
+	private void onSaveSubPolicySuccess() {
+		EventBus.getInstance().fireEvent(
+				new NewNotificationEvent(new Notification("",
+						"A Apólice Adesão foi guardada com sucesso"),
+						TYPE.TRAY_NOTIFICATION));
 	}
 
-	private void onSaveSubPolicyError(){
-		EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não foi possível guardar a Apólice Adesão"), TYPE.ALERT_NOTIFICATION));
+	private void onSaveSubPolicyError() {
+		EventBus.getInstance().fireEvent(
+				new NewNotificationEvent(new Notification("",
+						"Não foi possível guardar a Apólice Adesão"),
+						TYPE.ALERT_NOTIFICATION));
 	}
 
-	private void onExecuteDetailedCalculationsFailed(){
-		EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não foi possível executar os cálculos detalhados"), TYPE.ALERT_NOTIFICATION));
+	private void onExecuteDetailedCalculationsFailed() {
+		EventBus.getInstance().fireEvent(
+				new NewNotificationEvent(new Notification("",
+						"Não foi possível executar os cálculos detalhados"),
+						TYPE.ALERT_NOTIFICATION));
 	}
-	
-	private void onExecuteDetailedCalculationsSuccess(){
-		EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Os cálculos detalhados foram executados com sucesso"), TYPE.TRAY_NOTIFICATION));
+
+	private void onExecuteDetailedCalculationsSuccess() {
+		EventBus.getInstance().fireEvent(
+				new NewNotificationEvent(new Notification("",
+						"Os cálculos detalhados foram executados com sucesso"),
+						TYPE.TRAY_NOTIFICATION));
 		NavigationHistoryManager.getInstance().reload();
 	}
-	
-	private void onValidateFailed(Collection<ResponseError> errors){
+
+	private void onValidateFailed(Collection<ResponseError> errors) {
 		StringBuilder message = new StringBuilder("A validação falhou:");
-		for(ResponseError error : errors){
+		for (ResponseError error : errors) {
 			message.append(error.description.replaceAll("(\r\n|\n)", "<br />"));
 		}
-		EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", message.toString()), TYPE.ALERT_NOTIFICATION));
+		EventBus.getInstance().fireEvent(
+				new NewNotificationEvent(new Notification("", message
+						.toString()), TYPE.ALERT_NOTIFICATION));
 	}
-	
-	private void onValidateSuccess(){
-		EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "A Apólice Adesão foi validada com sucesso"), TYPE.TRAY_NOTIFICATION));
+
+	private void onValidateSuccess() {
+		EventBus.getInstance().fireEvent(
+				new NewNotificationEvent(new Notification("",
+						"A Apólice Adesão foi validada com sucesso"),
+						TYPE.TRAY_NOTIFICATION));
 		NavigationHistoryManager.getInstance().reload();
 	}
-	
+
 }
