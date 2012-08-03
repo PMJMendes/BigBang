@@ -6,14 +6,18 @@ select 'insert into bigbang.tblBBLines (PK, LineName, FKCategory) values (''' + 
 from bigbang.tblBBLines l inner join bigbang.tblLineCategories k on k.PK=l.FKCategory
 order by k.LineCatName, l.LineName;
 
-select 'insert into bigbang.tblBBSubLines (PK, SubLineName, FKLine, FKObjectType, FKPeriodType, CalcClass) values (''' + CAST(s.PK AS VARCHAR(36)) + ''', N''' + s.SubLineName + ''', ''' +
-CAST(s.FKLine AS VARCHAR(36)) + ''', ''' + CAST(s.FKObjectType AS VARCHAR(36)) + ''', ''' + CAST(s.FKPeriodType AS VARCHAR(36)) + ''', ' + ISNULL('N''' + s.CalcClass + '''', 'NULL') + ');'
+select 'insert into bigbang.tblBBSubLines (PK, SubLineName, FKLine, FKObjectType, FKPeriodType, CalcClass, DefaultPercent, BIsLife, Description) values (''' +
+CAST(s.PK AS VARCHAR(36)) + ''', N''' + s.SubLineName + ''', ''' + CAST(s.FKLine AS VARCHAR(36)) + ''', ''' + CAST(s.FKObjectType AS VARCHAR(36)) + ''', ''' +
+CAST(s.FKPeriodType AS VARCHAR(36)) + ''', ' + ISNULL('N''' + s.CalcClass + '''', 'NULL') + ', ' + ISNULL(CAST(s.DefaultPercent AS VARCHAR), 'NULL') + ', ' +
+CAST(s.BIsLife AS VARCHAR(1)) + ', ' + ISNULL('N''' + s.Description + '''', 'NULL') + ');'
 from bigbang.tblBBSubLines s inner join bigbang.tblBBLines l on l.PK=s.FKLine inner join bigbang.tblLineCategories k on k.PK=l.FKCategory
 order by k.LineCatName, l.LineName, s.SubLineName;
 
-select 'insert into bigbang.tblBBCoverages (PK, CoverageName, FKSubLine, BMandatory, BHeader, Tag) values (''' + CAST(c.PK AS VARCHAR(36)) + ''', N''' + c.CoverageName + ''', ''' +
-CAST(c.FKSubLine AS VARCHAR(36)) + ''', ' + CAST(c.BMandatory AS VARCHAR(1)) + ', ' + CAST(c.BHeader AS VARCHAR(1)) + ', ' + ISNULL('N''' + c.Tag + '''', 'NULL') + ');'
-from bigbang.tblBBCoverages c inner join bigbang.tblBBSubLines s on s.PK=c.FKSubLine inner join bigbang.tblBBLines l on l.PK=s.FKLine inner join bigbang.tblLineCategories k on k.PK=l.FKCategory
+select 'insert into bigbang.tblBBCoverages (PK, CoverageName, FKSubLine, BMandatory, BHeader, Tag, COrder) values (''' + CAST(c.PK AS VARCHAR(36)) + ''', N''' +
+c.CoverageName + ''', ''' + CAST(c.FKSubLine AS VARCHAR(36)) + ''', ' + CAST(c.BMandatory AS VARCHAR(1)) + ', ' + CAST(c.BHeader AS VARCHAR(1)) + ', ' +
+ISNULL('N''' +c.Tag + '''', 'NULL') + ', ' + ISNULL(CAST(c.COrder AS VARCHAR), 'NULL') + ');'
+from bigbang.tblBBCoverages c inner join bigbang.tblBBSubLines s on s.PK=c.FKSubLine inner join bigbang.tblBBLines l on l.PK=s.FKLine
+inner join bigbang.tblLineCategories k on k.PK=l.FKCategory
 order by k.LineCatName, l.LineName, s.SubLineName, c.BHeader desc, c.BMandatory desc, c.CoverageName;
 
 select 'insert into bigbang.tblBBTaxes (PK, TaxName, FKCoverage, FKFieldType, Units, DefaultValue, BVariesByObject, BVariesByExercise, FKReferenceTo, ColumnOrder, BMandatory, Tag, BVisible) values (''' +
