@@ -2,18 +2,25 @@ package bigBang.library.server;
 
 import java.awt.print.PrinterJob;
 
+import Jewel.Engine.Engine;
 import bigBang.library.interfaces.PrintService;
 import bigBang.library.shared.BigBangException;
 import bigBang.library.shared.SessionExpiredException;
 
-public class PrintServiceImpl extends EngineImplementor implements PrintService {
-
+public class PrintServiceImpl
+	extends EngineImplementor
+	implements PrintService
+{
 	private static final long serialVersionUID = 1L;
 
-	@Override
-	public String[] getAvailablePrinterNames() throws SessionExpiredException, BigBangException {
+	public String[] getAvailablePrinterNames()
+		throws SessionExpiredException, BigBangException
+	{
 		javax.print.PrintService[] larrServices;
 		String[] larrResult;
+
+		if ( Engine.getCurrentUser() == null )
+			throw new SessionExpiredException();
 
 		try 
 		{
@@ -31,8 +38,7 @@ public class PrintServiceImpl extends EngineImplementor implements PrintService 
 		{
 			throw new BigBangException(e.getMessage(), e);
 		}
-		
+
 		return larrResult;
 	}
-
 }
