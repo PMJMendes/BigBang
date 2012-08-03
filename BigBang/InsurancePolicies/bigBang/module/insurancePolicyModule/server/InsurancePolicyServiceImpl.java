@@ -4095,7 +4095,7 @@ public class InsurancePolicyServiceImpl
 	{
 		InsurancePolicySearchParameter lParam;
 		String lstrAux;
-		IEntity lrefClients;
+		IEntity lrefClients, lrefObjects;
 
 		if ( !(pParam instanceof InsurancePolicySearchParameter) )
 			return false;
@@ -4163,6 +4163,33 @@ public class InsurancePolicyServiceImpl
 		if ( lParam.managerId != null )
 		{
 			pstrBuffer.append(" AND [:Process:Manager] = '").append(lParam.managerId).append("'");
+		}
+
+		if ( lParam.insuredObject != null )
+		{
+			lstrAux = lParam.insuredObject.trim().replace("'", "''").replace(" ", "%");
+			pstrBuffer.append(" AND ([PK] IN (SELECT [:Policy] FROM (");
+			try
+			{
+				lrefObjects = Entity.GetInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), Constants.ObjID_PolicyObject));
+				pstrBuffer.append(lrefObjects.SQLForSelectSingle());
+			}
+			catch (Throwable e)
+			{
+        		throw new BigBangException(e.getMessage(), e);
+			}
+			pstrBuffer.append(") [AuxObj1] WHERE [:Name] LIKE N'%").append(lstrAux).append("%')");
+			pstrBuffer.append(" OR [:Process] IN (SELECT [:Sub Policy:Process:Parent] FROM (");
+			try
+			{
+				lrefObjects = Entity.GetInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), Constants.ObjID_SubPolicyObject));
+				pstrBuffer.append(lrefObjects.SQLForSelectMulti());
+			}
+			catch (Throwable e)
+			{
+        		throw new BigBangException(e.getMessage(), e);
+			}
+			pstrBuffer.append(") [AuxObj2] WHERE [:Name] LIKE N'%").append(lstrAux).append("%'))");
 		}
 
 		if ( (lParam.caseStudy != null) && lParam.caseStudy )
