@@ -30,12 +30,14 @@ public class SubPoliciesList extends FilterableList<SubPolicyStub>  implements I
 		protected Image statusIcon;
 
 		public Entry(SubPolicyStub subPolicy){
+			
 			super(subPolicy);
 			setHeight("55px");
 			this.titleLabel.getElement().getStyle().setFontSize(11, Unit.PX);
 		}
 
 		public <I extends Object> void setInfo(I info) {
+			
 			SubPolicyStub value = (SubPolicyStub)info;
 			if(value.id != null){
 				if(numberLabel == null) {
@@ -65,6 +67,15 @@ public class SubPoliciesList extends FilterableList<SubPolicyStub>  implements I
 				lineLabel.setText(value.inheritCategoryName+" / "+value.inheritLineName+" / "+value.inheritSubLineName);
 				lineLabel.getElement().getStyle().setFontStyle(FontStyle.OBLIQUE);
 
+				setMetaData(new String[]{
+						value.number,
+						value.inheritCategoryName,
+						value.inheritLineName,
+						value.inheritSubLineName,
+						value.clientNumber,
+						value.clientName
+					});
+				
 				Resources resources = GWT.create(Resources.class);
 				switch(value.statusIcon){
 				case OBSOLETE:
@@ -83,16 +94,7 @@ public class SubPoliciesList extends FilterableList<SubPolicyStub>  implements I
 				return;
 			}
 			
-			setMetaData(new String[]{
-					value.number,
-					value.inheritCategoryName,
-					value.inheritLineName,
-					value.inheritSubLineName,
-					value.clientNumber,
-					value.clientName
-				});
 		};
-
 		@Override
 		public void setSelected(boolean selected, boolean b) {
 			super.setSelected(selected, b);
@@ -103,6 +105,9 @@ public class SubPoliciesList extends FilterableList<SubPolicyStub>  implements I
 				this.clientLabel.getElement().getStyle().setColor("gray");
 			}
 		}
+		
+		
+		
 	}
 
 	protected InsuranceSubPolicyBroker subPolicyBroker;
