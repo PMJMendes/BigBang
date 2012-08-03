@@ -130,6 +130,16 @@ public class ReceiptSearchPanel extends SearchPanel<ReceiptStub> implements Rece
 			initialized = true;
 			setSelected(this.isSelected(), false);
 			
+			setMetaData(new String[]{
+					value.number,
+					value.policyNumber,
+					value.categoryName,
+					value.lineName,
+					value.subLineName,
+					value.description,
+					value.clientNumber,
+					value.clientName
+				});
 		};
 
 		@Override

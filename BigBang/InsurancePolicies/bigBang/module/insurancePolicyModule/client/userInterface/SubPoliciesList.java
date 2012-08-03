@@ -82,6 +82,15 @@ public class SubPoliciesList extends FilterableList<SubPolicyStub>  implements I
 
 				return;
 			}
+			
+			setMetaData(new String[]{
+					value.number,
+					value.inheritCategoryName,
+					value.inheritLineName,
+					value.inheritSubLineName,
+					value.clientNumber,
+					value.clientName
+				});
 		};
 
 		@Override

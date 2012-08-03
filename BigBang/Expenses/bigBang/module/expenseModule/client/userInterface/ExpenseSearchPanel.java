@@ -122,6 +122,13 @@ public class ExpenseSearchPanel extends SearchPanel<ExpenseStub> implements Expe
 				valueLabel.setText(value.value + "€");
 			}
 
+			setMetaData(new String[]{
+					value.number,
+					value.referenceNumber,
+					value.coverageName,
+					value.clientNumber,
+					value.clientName
+				});
 
 		}
 
@@ -147,6 +154,8 @@ public class ExpenseSearchPanel extends SearchPanel<ExpenseStub> implements Expe
 				}
 			}
 		}
+		
+		
 
 	}
 
