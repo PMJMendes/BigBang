@@ -75,7 +75,7 @@ public class ClientFormView extends FormView<Client> implements ClientProcessDat
 		mediator.setMandatory(true);
 		mediator.allowEdition(false);
 		clientManager = new ExpandableListBoxFormField(BigBangConstants.EntityIds.USER, "Gestor de Cliente");
-		profile = new ExpandableListBoxFormField(ModuleConstants.ListIDs.OperationalProfiles, "Perfil Operacional", new ClientFormValidator.ProfileValidator());
+		profile = new ExpandableListBoxFormField(BigBangConstants.TypifiedListIds.OPERATIONAL_PROFILES, "Perfil Operacional", new ClientFormValidator.ProfileValidator());
 		profile.setMandatory(true);
 		profile.allowEdition(false);
 		CAE = new ExpandableListBoxFormField(BigBangConstants.TypifiedListIds.CAEs, "CAE");

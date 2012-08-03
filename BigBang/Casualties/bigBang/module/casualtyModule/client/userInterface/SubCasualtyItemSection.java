@@ -33,6 +33,9 @@ public class SubCasualtyItemSection extends CollapsibleFormViewSection {
 	protected ExpandableListBoxFormField damageType;
 	protected NumericTextBoxFormField damages;
 	protected NumericTextBoxFormField settlement;
+	protected NumericTextBoxFormField itemValue;
+	protected NumericTextBoxFormField franchise;
+	
 	protected Button removeButton;
 
 	public SubCasualtyItemSection(SubCasualtyItem item, String referenceTypeId, String referenceId) {
@@ -48,14 +51,20 @@ public class SubCasualtyItemSection extends CollapsibleFormViewSection {
 		settlement = new NumericTextBoxFormField("Valor Acordado", true);
 		settlement.setFieldWidth("175px");
 		settlement.setUnitsLabel("€");
+		itemValue = new NumericTextBoxFormField("Capital", true);
+		itemValue.setUnitsLabel("€");
+		franchise = new NumericTextBoxFormField("Franquia", true);
+		franchise.setUnitsLabel("€");
 
 		addFormFieldGroup(new FormField<?>[]{
 				insuredObject,
-				coverage
+				coverage,
+				damageType
 		}, true);
 
 		addFormFieldGroup(new FormField<?>[]{
-				damageType,
+				itemValue,
+				franchise,
 				damages,
 				settlement
 		}, false);
@@ -98,6 +107,8 @@ public class SubCasualtyItemSection extends CollapsibleFormViewSection {
 			damageType.setValue(item.damageTypeId);
 			damages.setValue(item.damages);
 			settlement.setValue(item.settlement);
+			franchise.setValue(item.franchise);
+			itemValue.setValue(item.value);
 		}
 	}
 
@@ -255,6 +266,8 @@ public class SubCasualtyItemSection extends CollapsibleFormViewSection {
 			result.damageTypeId = damageType.getValue();
 			result.damages = damages.getValue();
 			result.settlement = settlement.getValue();
+			result.franchise = franchise.getValue();
+			result.value = itemValue.getValue();
 		}
 
 		return result;

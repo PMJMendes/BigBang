@@ -45,7 +45,8 @@ public abstract class InsurancePolicyForm extends FormView<InsurancePolicy> {
 	protected ExpandableListBoxFormField fractioning;
 	protected NumericTextBoxFormField premium;
 	protected NumericTextBoxFormField agentPercentage;
-
+	protected ExpandableListBoxFormField operationalProfile;
+	
 	protected FormViewSection coInsurersSection;
 
 	protected InsurancePolicySubLineTableDataSection tableSection;
@@ -66,11 +67,13 @@ public abstract class InsurancePolicyForm extends FormView<InsurancePolicy> {
 		client = new NavigationFormField("Cliente");
 		number.setFieldWidth("175px");
 		manager = new ExpandableListBoxFormField(BigBangConstants.EntityIds.USER, "Gestor de Apólice");
+		manager.setEmptyValueString("O mesmo do Cliente");
 		manager.allowEdition(false);
 		insuranceAgency = new ExpandableListBoxFormField(BigBangConstants.EntityIds.INSURANCE_AGENCY, "Seguradora");
 		insuranceAgency.allowEdition(false);
 		insuranceAgency.setMandatory(true);
 		mediator = new ExpandableListBoxFormField(BigBangConstants.EntityIds.MEDIATOR, "Mediador");
+		mediator.setEmptyValueString("O mesmo do Cliente");
 		mediator.allowEdition(false);
 		categoryLineSubLine = new TextBoxFormField("Categoria / Ramo / Modalidade");
 		categoryLineSubLine.setEditable(false);
@@ -87,6 +90,9 @@ public abstract class InsurancePolicyForm extends FormView<InsurancePolicy> {
 		premium.setUnitsLabel("€");
 		agentPercentage = new NumericTextBoxFormField("Comissão", false);
 		agentPercentage.setUnitsLabel("%");
+		operationalProfile = new ExpandableListBoxFormField(BigBangConstants.TypifiedListIds.OPERATIONAL_PROFILES, "Perfil Operational");
+		operationalProfile.setEditable(false);
+		operationalProfile.setEmptyValueString("O mesmo do Cliente");
 		caseStudy = new CheckBoxFormField("Case Study");
 
 		//CO-INSURANCE
@@ -112,20 +118,21 @@ public abstract class InsurancePolicyForm extends FormView<InsurancePolicy> {
 		addFormFieldGroup(new FormField<?>[]{
 				manager,
 				mediator,
+				operationalProfile,
 				fractioning,
-				duration
 		}, true);
 
 		addFormFieldGroup(new FormField<?>[]{
+				duration,
 				startDate,
 				endDate,
 				maturityDate,
-				agentPercentage
 		}, true);
 
 		//CO-INSURANCE
 
 		FormField<?>[] group4 = new FormField<?>[]{
+				agentPercentage,
 				coInsurance,
 				caseStudy
 		};
@@ -212,9 +219,11 @@ public abstract class InsurancePolicyForm extends FormView<InsurancePolicy> {
 					if(event.getValue().equalsIgnoreCase(BigBangConstants.TypifiedListValues.INSURANCE_POLICY_DURATION.TEMPORARY)){
 						maturityDate.clear();
 						maturityDate.setEditable(false);
+						endDate.setMandatory(true);
 					}else{
 						maturityDate.setEditable(true);
 						maturityDate.setReadOnly(isReadOnly());
+						endDate.setMandatory(false);
 					}
 				}
 			}
@@ -267,6 +276,7 @@ public abstract class InsurancePolicyForm extends FormView<InsurancePolicy> {
 			result.premium = premium.getValue();
 			result.agentPercentage = agentPercentage.getValue();
 			result.caseStudy = caseStudy.getValue();
+			result.operationalProfileId = operationalProfile.getValue();
 			result.notes = notes.getValue();
 
 			if(coInsurance.getValue()){
@@ -344,6 +354,7 @@ public abstract class InsurancePolicyForm extends FormView<InsurancePolicy> {
 
 			this.policyStatus.setValue(info.statusText);
 			this.caseStudy.setValue(info.caseStudy);
+			this.operationalProfile.setValue(info.operationalProfileId);
 			this.notes.setValue(info.notes);
 
 			if(info.startDate != null)

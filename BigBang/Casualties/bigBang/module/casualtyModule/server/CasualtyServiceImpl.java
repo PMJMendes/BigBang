@@ -17,6 +17,7 @@ import bigBang.definitions.shared.InfoOrDocumentRequest;
 import bigBang.definitions.shared.ManagerTransfer;
 import bigBang.definitions.shared.SearchParameter;
 import bigBang.definitions.shared.SearchResult;
+import bigBang.definitions.shared.SortOrder;
 import bigBang.definitions.shared.SortParameter;
 import bigBang.definitions.shared.SubCasualty;
 import bigBang.library.server.BigBangPermissionServiceImpl;
@@ -493,6 +494,12 @@ public class CasualtyServiceImpl
 
 		if ( lParam.field == CasualtySortParameter.SortableField.MANAGER )
 			pstrBuffer.append("[:Process:Manager]");
+		
+		if ( lParam.order == SortOrder.ASC )
+			pstrBuffer.append(" ASC");
+
+		if ( lParam.order == SortOrder.DESC )
+			pstrBuffer.append(" DESC");
 
 		return true;
 	}

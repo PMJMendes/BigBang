@@ -42,7 +42,7 @@ public class SubCasualtyForm extends FormView<SubCasualty> {
 	protected TextBoxFormField number;
 	protected ListBoxFormField referenceType;
 	protected ExpandableSelectionFormField policyReference, subPolicyReference;
-	protected TextBoxFormField referenceDetails;
+	protected NavigationFormField referenceDetails;
 	protected TextBoxFormField insurerProcessNumber;
 	protected CheckBoxFormField hasJudicial;
 	protected TextBoxFormField status;
@@ -80,7 +80,7 @@ public class SubCasualtyForm extends FormView<SubCasualty> {
 		subPolicyReference = new ExpandableSelectionFormField(BigBangConstants.EntityIds.INSURANCE_SUB_POLICY, "", subPolicySelectionPanel);
 		subPolicyReference.setMandatory(true);
 
-		referenceDetails = new TextBoxFormField();
+		referenceDetails = new NavigationFormField("");
 		referenceDetails.setEditable(false);
 		
 		insurerProcessNumber = new TextBoxFormField("Número de Processo na Seguradora");
@@ -169,7 +169,7 @@ public class SubCasualtyForm extends FormView<SubCasualty> {
 		};
 		referenceType.addValueChangeHandler(changeHandler);
 		policyReference.addValueChangeHandler(changeHandler);
-		subPolicySelectionPanel.addValueChangeHandler(changeHandler);
+		subPolicyReference.addValueChangeHandler(changeHandler);
 		
 		subPolicyReference.setVisible(false);
 		referenceType.setValue(BigBangConstants.EntityIds.INSURANCE_POLICY, true);
@@ -246,12 +246,20 @@ public class SubCasualtyForm extends FormView<SubCasualty> {
 					
 					@Override
 					public void onResponse(InsurancePolicy response) {
-						referenceDetails.setValue(response.categoryName + " / " + response.lineName + " / " + response.subLineName);
+						NavigationHistoryItem item = new NavigationHistoryItem();
+						item.setParameter("section", "insurancepolicy");
+						item.setStackParameter("display");
+						item.pushIntoStackParameter("display", "search");
+						item.setParameter("policyid", response.id);
+						
+						referenceDetails.setValue(item);
+						referenceDetails.setValueName(response.categoryName + " / " + response.lineName + " / " + response.subLineName);
 					}
 					
 					@Override
 					public void onError(Collection<ResponseError> errors) {
-						referenceDetails.setValue("<não disponível>");
+						referenceDetails.setValue(null);
+						referenceDetails.setValueName("<não disponível>");
 					}
 				});
 				
@@ -266,12 +274,20 @@ public class SubCasualtyForm extends FormView<SubCasualty> {
 
 					@Override
 					public void onResponse(SubPolicy response) {
-						referenceDetails.setValue(response.inheritCategoryName + " / " + response.inheritLineName + " / " + response.inheritSubLineName);
+						NavigationHistoryItem item = new NavigationHistoryItem();
+						item.setParameter("section", "insurancepolicy");
+						item.setStackParameter("display");
+						item.pushIntoStackParameter("display", "subpolicy");
+						item.setParameter("subpolicyid", response.id);
+						
+						referenceDetails.setValue(item);
+						referenceDetails.setValueName(response.inheritCategoryName + " / " + response.inheritLineName + " / " + response.inheritSubLineName);
 					}
 
 					@Override
 					public void onError(Collection<ResponseError> errors) {
-						referenceDetails.setValue("<não disponível>");
+						referenceDetails.setValue(null);
+						referenceDetails.setValueName("<não disponível>");
 					}
 				});
 			}

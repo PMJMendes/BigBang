@@ -73,6 +73,7 @@ public class BigBangConstants {
 		public static final String DAMAGE_TYPE = "6D2B02AF-A092-475F-85C7-A035012321FE";
 		public static final String POLICY_COVERAGE = "AE5F9DD7-2863-4C5B-AE0B-9F9C00229D02";
 		public static final String SUB_POLICY_COVERAGE = "53EF35E5-AACD-4916-A212-9FF800CEAA89";
+		public static final String OPERATIONAL_PROFILES = "11921769-CDF3-447A-8E6B-9ECA01761BAA";
 	}
 	
 	public static class TypifiedListValues {
