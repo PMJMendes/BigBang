@@ -91,7 +91,6 @@ public abstract class InsurancePolicyForm extends FormView<InsurancePolicy> {
 		agentPercentage = new NumericTextBoxFormField("Comissão", false);
 		agentPercentage.setUnitsLabel("%");
 		operationalProfile = new ExpandableListBoxFormField(BigBangConstants.TypifiedListIds.OPERATIONAL_PROFILES, "Perfil Operational");
-		operationalProfile.setEditable(false);
 		operationalProfile.setEmptyValueString("O mesmo do Cliente");
 		caseStudy = new CheckBoxFormField("Case Study");
 
