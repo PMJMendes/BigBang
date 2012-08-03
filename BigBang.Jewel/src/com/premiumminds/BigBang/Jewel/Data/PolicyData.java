@@ -33,6 +33,7 @@ public class PolicyData
 	public UUID midStatus;
 	public BigDecimal mdblPremium;
 	public String mstrDocuShare;
+	public BigDecimal mdblRetrocession;
 
 	public UUID midManager;
 	public UUID midProcess;
@@ -68,6 +69,7 @@ public class PolicyData
 		midStatus = pobjSource.midStatus;
 		mdblPremium = pobjSource.mdblPremium;
 		mstrDocuShare = pobjSource.mstrDocuShare;
+		mdblRetrocession = pobjSource.mdblRetrocession;
 	}
 
 	public void FromObject(ObjectBase pobjSource)
@@ -92,6 +94,7 @@ public class PolicyData
 		mstrDocuShare = (String)pobjSource.getAt(15);
 //		unusedMigrationID = (Integer)pobjSource.getAt(16);
 		midClient = (UUID)pobjSource.getAt(17);
+		mdblRetrocession = (BigDecimal)pobjSource.getAt(18);
 	}
 
 	public void ToObject(ObjectBase pobjDest)
@@ -117,6 +120,7 @@ public class PolicyData
 //			pobjDest.setAt(15, mstrDocuShare); JMMM: Nunca gravar por cima disto
 //			pobjDest.setAt(16, unusedMigrationID); JMMM: Isto não é usado pela aplicação
 			pobjDest.setAt(17, midClient);
+			pobjDest.setAt(18, mdblRetrocession);
 		}
 		catch (Throwable e)
 		{
@@ -238,6 +242,13 @@ public class PolicyData
 			pstrBuilder.append(mdblPremium);
 		else
 			pstrBuilder.append("(não definido)");
+		pstrBuilder.append(pstrLineBreak);
+
+		pstrBuilder.append("Percentagem de Retrocessão: ");
+		if ( mdblRetrocession != null )
+			pstrBuilder.append(mdblRetrocession);
+		else
+			pstrBuilder.append("(não definida)");
 		pstrBuilder.append(pstrLineBreak);
 
 		pstrBuilder.append("Observações: ");

@@ -1,5 +1,6 @@
 package com.premiumminds.BigBang.Jewel.Objects;
 
+import java.math.BigDecimal;
 import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.UUID;
@@ -699,6 +700,11 @@ public class Policy
     		return GetClient().getMediator();
 
     	return Mediator.GetInstance(getNameSpace(), (UUID)getAt(11));
+    }
+
+    public BigDecimal getPercentOverride()
+    {
+    	return (BigDecimal)getAt(18);
     }
 
     public DetailedBase GetDetailedObject()

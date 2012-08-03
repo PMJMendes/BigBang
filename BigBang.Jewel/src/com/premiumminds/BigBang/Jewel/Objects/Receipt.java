@@ -471,7 +471,9 @@ public class Receipt
 
 		if ( Constants.MCPID_Percentage.equals(lidProfile) )
 		{
-			ldblPercent = lobjMed.getPercent();
+			ldblPercent = getAbsolutePolicy().getPercentOverride();
+			if ( ldblPercent == null )
+				ldblPercent = lobjMed.getPercent();
 			ldblBase = (BigDecimal)getAt(5);
 			lbFound = true;
 		}
