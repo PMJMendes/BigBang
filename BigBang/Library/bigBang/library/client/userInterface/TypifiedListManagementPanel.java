@@ -225,6 +225,7 @@ public class TypifiedListManagementPanel extends FilterableList<TipifiedListItem
 		this.editModeEnabled = enabled;
 		this.editButton.setText(enabled ? "Cancelar" : "Editar");
 		showSearchField(!enabled);
+		this.valueTextBox.setText("");
 		this.toolBar.setVisible(enabled);
 		for(ListEntry<TipifiedListItem> e : entries) {
 			((TypifiedListEntry) e).deleteButton.setVisible(enabled);
