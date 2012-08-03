@@ -18,7 +18,7 @@ public class SubCasualty
 		public String damageTypeId; //Lista tipificada, campo obrigatório
 		public Double damages; //Em €
 		public Double settlement; //Em €
-		public Double franchise;
+		public Double deductible;
 		public Double value;
 		public boolean isManual;
 
