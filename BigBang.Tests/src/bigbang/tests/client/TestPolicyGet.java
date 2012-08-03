@@ -51,7 +51,7 @@ public class TestPolicyGet
 		};
 
 		parameter = new InsurancePolicySearchParameter();
-		parameter.freeText = "1";
+		parameter.insuredObject = "31-54-QT";
 		sorts = new InsurancePolicySortParameter();
 		sorts.field = InsurancePolicySortParameter.SortableField.RELEVANCE;
 		sorts.order = SortOrder.ASC;
