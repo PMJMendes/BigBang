@@ -41,6 +41,9 @@ insert into bigbang.tblDocTypes (PK, DocType) values ('9F722D93-12BF-4D33-92A3-A
 insert into bigbang.tblDocTypes (PK, DocType) values ('55825900-E20A-4519-BC4F-A03D00BF135A', N'Pedido de Reembolso');
 insert into bigbang.tblDocTypes (PK, DocType) values ('E95D510B-396E-49B0-9ECA-A03F00BF1CFE', N'Extracto de Despesas');
 insert into bigbang.tblDocTypes (PK, DocType) values ('B78E445E-E061-40DA-914D-A03F00BF2AB3', N'Carta de Devolução de Despesas');
+insert into bigbang.tblDocTypes (PK, DocType) values ('CF2849F7-7967-4CCD-8731-A09400D4310C', N'Recibo de Comissões');
+insert into bigbang.tblDocTypes (PK, DocType) values ('F6663F27-83B8-40DE-AB00-A0990123C856', N'Relatório de Retrocessão');
+insert into bigbang.tblDocTypes (PK, DocType) values ('DD17A31E-CF99-40B1-8529-A0A100D41EC1', N'Despesa Digitalizada');
 insert into bigbang.tblMaritalStatuses (PK, StatusText) values ('9ED463DB-ABC5-46EE-82A7-9F0300C6D631', N'Casado');
 insert into bigbang.tblMaritalStatuses (PK, StatusText) values ('BFB58864-4B91-4078-AF9F-9F0300C6E52D', N'Divorciado');
 insert into bigbang.tblMaritalStatuses (PK, StatusText) values ('BE742798-9D7F-4B23-BFBA-9F0300C6CFA5', N'Solteiro');
@@ -48,11 +51,14 @@ insert into bigbang.tblMaritalStatuses (PK, StatusText) values ('DB379F5C-9343-4
 insert into bigbang.tblOpProfiles (PK, OpProfileName) values ('63114D11-6087-4EFE-9A7E-9EE600BE52DA', N'VIP');
 insert into bigbang.tblOpProfiles (PK, OpProfileName) values ('9F871430-9BBC-449F-B125-9EE600BE5A9A', N'Normal');
 insert into bigbang.tblOpProfiles (PK, OpProfileName) values ('51ED12A4-95A9-44B0-928D-A01500DC83EB', N'Simples');
+insert into bigbang.tblOpProfiles (PK, OpProfileName) values ('8641B5C6-CABE-4260-AD70-A0A2010A028F', N'Externo');
 insert into bigbang.tblSex (PK, SexName) values ('77E22CFB-CA90-4918-B9B2-9F0300C39AE2', N'Feminino');
 insert into bigbang.tblSex (PK, SexName) values ('E86BA460-B499-4254-84F5-9F0300C3A256', N'Masculino');
 insert into bigbang.tblBBDeductibleTypes (PK, DeductibleType) values ('7B1C87F7-F9A1-4671-94CD-A04D0117FD14', N'%');
 insert into bigbang.tblBBDeductibleTypes (PK, DeductibleType) values ('5016B49D-5AC4-42C6-9CDA-A04D0117E74A', N'€');
 insert into bigbang.tblBBDeductibleTypes (PK, DeductibleType) values ('B6D99438-A4BC-4247-A8AB-A04D011802D2', N'Dias');
+insert into bigbang.tblBBDeductibleTypes (PK, DeductibleType) values ('B2388B42-396E-49F0-94D4-A09900FBDDFB', N'Sem Franquia');
+insert into bigbang.tblBBDeductibleTypes (PK, DeductibleType) values ('F00DE853-B51A-40F9-AD1A-A09900FBED57', N'Várias');
 
 insert into bigbang.tblBanks (PK, BankName, BankCode)
 select CAST(CAST(NEWID() AS BINARY(10)) + CAST(GETDATE() AS BINARY(6)) AS UNIQUEIDENTIFIER) PK,
