@@ -22,6 +22,7 @@ import bigBang.definitions.shared.InsurancePolicy;
 import bigBang.definitions.shared.SubCasualty;
 import bigBang.definitions.shared.SubCasualty.SubCasualtyItem;
 import bigBang.definitions.shared.SubPolicy;
+import bigBang.library.client.HasParameters;
 import bigBang.library.client.dataAccess.DataBrokerManager;
 import bigBang.library.client.history.NavigationHistoryItem;
 import bigBang.library.client.userInterface.CheckBoxFormField;
@@ -370,6 +371,11 @@ public class SubCasualtyForm extends FormView<SubCasualty> {
 		addSection(newItemSection);
 		addSection(notesSection);
 		addSection(internalNotesSection);
+	}
+	
+	public void setPanelParameters(HasParameters parameters){
+		policyReference.setParameters(parameters);
+		//subPolicyReference.setParameters(parameters);
 	}
 
 }

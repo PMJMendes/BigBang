@@ -36,12 +36,13 @@ public class InsurancePolicySelectionViewPresenter extends ExpandableSelectionFo
 	public static interface Display {
 		HasValueSelectables<InsurancePolicyStub> getList();
 		HasEditableValue<InsurancePolicy> getForm();
-
+		
 		void allowConfirm(boolean allow);
 
 		void registerActionHandler(ActionInvokedEventHandler<Action> handler);
 		Widget asWidget();
 		void setOperationId(String operationId);
+		void setOwnerId(String ownerId);
 	}
 
 	private Display view;
@@ -73,7 +74,10 @@ public class InsurancePolicySelectionViewPresenter extends ExpandableSelectionFo
 
 	@Override
 	public void setParameters(HasParameters parameterHolder) {
-		// TODO Auto-generated method stub
+		String ownerId = parameterHolder.getParameter("ownerid");
+		if(ownerId != null && !ownerId.isEmpty()){
+			view.setOwnerId(ownerId);
+		}
 		clearView();
 	}
 

@@ -297,4 +297,15 @@ public class InsurancePolicySearchPanel extends SearchPanel<InsurancePolicyStub>
 //		doSearch(); TODO
 	}
 
+	public void setOwner(String ownerId) {
+		InsurancePolicySearchParameter parameter = new InsurancePolicySearchParameter();
+		
+		parameter.ownerId = ownerId;
+		
+		SearchParameter[] parameters = new SearchParameter[]{parameter};
+		
+		doSearch(parameters, null);
+		
+	}
+
 }

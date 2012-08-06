@@ -70,6 +70,7 @@ public class SubCasualtyViewPresenter implements ViewPresenter {
 		void allowInsurerInfoRequest(boolean hasPermission);
 		HasValueSelectables<Contact> getContactsList();
 		HasValueSelectables<Document> getDocumentsList();
+		void setReferenceParameters(HasParameters parameterHolder);
 	}
 
 
@@ -97,7 +98,7 @@ public class SubCasualtyViewPresenter implements ViewPresenter {
 	@Override
 	public void setParameters(HasParameters parameterHolder) {
 		clearView();
-
+		view.setReferenceParameters(parameterHolder);
 		String subCasualtyId = parameterHolder.getParameter("subcasualtyid");
 		String casualtyId = parameterHolder.getParameter("casualtyid");
 

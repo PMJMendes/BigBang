@@ -113,5 +113,9 @@ public class InsurancePolicySelectionView extends View implements InsurancePolic
 		list.setOperationId(operationId);
 		list.doSearch();
 	}
+	
+	@Override public void setOwnerId(String ownerId){
+		list.setOwner(ownerId);
+	}
 
 }

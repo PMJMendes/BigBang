@@ -74,7 +74,6 @@ public class InsuranceSubPolicySelectionViewPresenter extends ExpandableSelectio
 
 	@Override
 	public void setParameters(HasParameters parameterHolder) {
-		// TODO Auto-generated method stub
 		String ownerId = parameterHolder.getParameter("ownerid");
 		if(ownerId != null && !ownerId.isEmpty()){
 			view.setOwnerId(ownerId);

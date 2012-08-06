@@ -17,6 +17,7 @@ import bigBang.definitions.client.response.ResponseError;
 import bigBang.definitions.client.response.ResponseHandler;
 import bigBang.definitions.shared.TipifiedListItem;
 import bigBang.library.client.FormField;
+import bigBang.library.client.HasParameters;
 import bigBang.library.client.dataAccess.BigBangTypifiedListBroker;
 import bigBang.library.client.dataAccess.TypifiedListBroker;
 import bigBang.library.client.resources.Resources;
@@ -138,6 +139,8 @@ public class ExpandableSelectionFormField extends FormField<String> {
 			});
 		}
 	}
+	
+	
 
 	@Override
 	public void clear() {
@@ -172,6 +175,10 @@ public class ExpandableSelectionFormField extends FormField<String> {
 	@Override
 	public void focus() {
 		selectionPanel.getElement().focus();
+	}
+	
+	public void setParameters(HasParameters parameters){
+		this.selectionPanel.setParameters(parameters);
 	}
 
 }

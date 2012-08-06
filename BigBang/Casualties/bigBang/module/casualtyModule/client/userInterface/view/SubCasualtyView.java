@@ -19,6 +19,7 @@ import bigBang.definitions.shared.Document;
 import bigBang.definitions.shared.HistoryItemStub;
 import bigBang.definitions.shared.SubCasualty;
 import bigBang.library.client.HasEditableValue;
+import bigBang.library.client.HasParameters;
 import bigBang.library.client.HasValueSelectables;
 import bigBang.library.client.event.ActionInvokedEvent;
 import bigBang.library.client.event.ActionInvokedEventHandler;
@@ -212,5 +213,10 @@ public class SubCasualtyView extends View implements SubCasualtyViewPresenter.Di
 	@Override
 	public HasValueSelectables<Document> getDocumentsList() {
 		return childrenPanel.documentsList;
+	}
+
+	@Override
+	public void setReferenceParameters(HasParameters parameterHolder) {
+		form.setPanelParameters(parameterHolder);
 	}
 }

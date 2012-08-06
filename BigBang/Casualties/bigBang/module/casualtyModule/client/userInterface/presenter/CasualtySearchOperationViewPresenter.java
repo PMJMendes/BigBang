@@ -300,6 +300,7 @@ public class CasualtySearchOperationViewPresenter implements ViewPresenter {
 	protected void onCreateSubCasualty(){
 		NavigationHistoryItem navItem = NavigationHistoryManager.getInstance().getCurrentState();
 		navItem.pushIntoStackParameter("display", "subcasualty");
+		navItem.setParameter("ownerid", view.getForm().getValue().clientId);
 		navItem.setParameter("subcasualtyid", "new");
 		NavigationHistoryManager.getInstance().go(navItem);
 	}
@@ -313,6 +314,7 @@ public class CasualtySearchOperationViewPresenter implements ViewPresenter {
 	protected void showSubCasualty(String id){
 		NavigationHistoryItem navItem = NavigationHistoryManager.getInstance().getCurrentState();
 		navItem.pushIntoStackParameter("display", "subcasualty");
+		navItem.pushIntoStackParameter("ownerid", view.getForm().getValue().clientId);
 		navItem.setParameter("subcasualtyid", id);
 		NavigationHistoryManager.getInstance().go(navItem);
 	}
