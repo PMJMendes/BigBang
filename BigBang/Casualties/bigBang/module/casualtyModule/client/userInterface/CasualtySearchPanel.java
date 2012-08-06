@@ -33,7 +33,8 @@ public class CasualtySearchPanel extends SearchPanel<CasualtyStub> implements Ca
 		DATE_TO,
 		CASE_STUDY,
 		MANAGER,
-		INCLUDE_CLOSED
+		INCLUDE_CLOSED,
+		INSURED_OBJECT
 	} 
 
 	protected int casualtyDataVersionNumber;
@@ -60,6 +61,7 @@ public class CasualtySearchPanel extends SearchPanel<CasualtyStub> implements Ca
 		filtersPanel.addDateField(Filters.DATE_FROM, "Ocorrido de");
 		filtersPanel.addDateField(Filters.DATE_TO, "Ocorrido até");
 		filtersPanel.addTypifiedListField(Filters.MANAGER, BigBangConstants.EntityIds.USER, "Gestor de Sinistro");
+		filtersPanel.addTextField(Filters.INSURED_OBJECT, "Unidade de Risco");
 		filtersPanel.addCheckBoxField(Filters.CASE_STUDY, "Apenas Case Study");
 		filtersPanel.addCheckBoxField(Filters.INCLUDE_CLOSED, "Incluir Encerrados");
 
