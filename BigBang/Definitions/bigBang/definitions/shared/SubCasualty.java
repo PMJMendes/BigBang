@@ -26,6 +26,8 @@ public class SubCasualty
 
 	}
 
+	public String insuredObjectId; //Lista tipificada dos objectos de apólice *ou* de sub-apólice, filtrada pelo ID da respectiva
+	public String insuredObjectName;
 	public SubCasualtyItem[] items; //Zero ou mais items
 	public boolean hasJudicial;
 	public String text;

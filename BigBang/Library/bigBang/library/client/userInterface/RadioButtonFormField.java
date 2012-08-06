@@ -10,13 +10,14 @@ import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.user.client.ui.HasVerticalAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
+import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.RadioButton;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
 public class RadioButtonFormField extends FormField<String> {
 
 	protected HorizontalPanel wrapper;
-	protected HorizontalPanel radioWrapper;
+	protected Panel radioWrapper;
 	protected Map<RadioButton, String> radioButtons;
 	protected String id;
 	protected ValueChangeHandler<Boolean> valueChangedHandler;
@@ -38,6 +39,10 @@ public class RadioButtonFormField extends FormField<String> {
 	}
 
 	public RadioButtonFormField(){
+		this(false);
+	}
+	
+	public RadioButtonFormField(boolean isVertical){
 		super();
 		this.id = Math.random()+"";
 		
@@ -48,8 +53,13 @@ public class RadioButtonFormField extends FormField<String> {
 		radioButtons = new HashMap<RadioButton, String>();
 		wrapper = new HorizontalPanel();
 		mainWrapper.add(wrapper);
-		wrapper.setVerticalAlignment(HasVerticalAlignment.ALIGN_MIDDLE);		
-		radioWrapper = new HorizontalPanel();
+		wrapper.setVerticalAlignment(HasVerticalAlignment.ALIGN_MIDDLE);	
+		if(isVertical){
+			radioWrapper = new VerticalPanel();
+		}
+		else{
+			radioWrapper = new HorizontalPanel();
+		}
 		wrapper.add(radioWrapper);
 		wrapper.add(mandatoryIndicatorLabel);
 		wrapper.add(errorMessageLabel);
