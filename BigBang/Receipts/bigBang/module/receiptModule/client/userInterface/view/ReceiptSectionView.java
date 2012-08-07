@@ -72,6 +72,7 @@ public class ReceiptSectionView extends View implements ReceiptSectionViewPresen
 		addDockItem("Envio dos Recibos", r.sendReceiptIcon(), SectionOperation.MASS_SEND_RECEIPT_TO_CLIENT);
 		addDockItem("Devoluções à Seguradora", r.returnIcon(), SectionOperation.MASS_RETURN_TO_INSURER);
 		addDockItem("Relatórios", r.reportIcon(), SectionOperation.REPORT);
+		addDockItem("Importações / Outros", r.generalTasksIcon(), SectionOperation.GENERAL_TASKS);
 	}
 
 	protected void addDockItem(String text, ImageResource icon, final ReceiptSectionViewPresenter.SectionOperation action){

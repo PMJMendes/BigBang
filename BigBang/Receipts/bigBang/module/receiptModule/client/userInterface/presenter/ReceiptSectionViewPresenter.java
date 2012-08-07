@@ -29,7 +29,8 @@ public class ReceiptSectionViewPresenter implements ViewPresenter {
 		MASS_AGENT_ACCOUNTING,
 		REPORT,
 		MASS_RETURN_TO_INSURER,
-		MASS_CREATE_PAYMENT_NOTICE
+		MASS_CREATE_PAYMENT_NOTICE,
+		GENERAL_TASKS
 	}
 
 	public static interface Display {
@@ -123,6 +124,9 @@ public class ReceiptSectionViewPresenter implements ViewPresenter {
 					case REPORT:
 						item.pushIntoStackParameter("display", "report");
 						break;
+					case GENERAL_TASKS:
+						item.pushIntoStackParameter("display", "generaltasks");
+						break;
 					}
 				}
 
@@ -174,6 +178,9 @@ public class ReceiptSectionViewPresenter implements ViewPresenter {
 						view.selectOperation(SectionOperation.REPORT);
 						parameters.setParameter("processtypeid", BigBangConstants.EntityIds.RECEIPT);
 						present("REPORTS", parameters);
+					}else if(display.equalsIgnoreCase("generaltasks")){
+						view.selectOperation(SectionOperation.GENERAL_TASKS);
+						present("RECEIPT_GENERAL_TASKS", parameters);
 					}
 					else{
 						present("RECEIPT_OPERATIONS", parameters, true);

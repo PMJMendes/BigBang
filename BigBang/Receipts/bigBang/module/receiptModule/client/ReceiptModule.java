@@ -15,6 +15,7 @@ import bigBang.module.receiptModule.client.userInterface.presenter.CancelDASRequ
 import bigBang.module.receiptModule.client.userInterface.presenter.CreateDASRequestViewPresenter;
 import bigBang.module.receiptModule.client.userInterface.presenter.DASRequestTasksViewPresenter;
 import bigBang.module.receiptModule.client.userInterface.presenter.DASRequestViewPresenter;
+import bigBang.module.receiptModule.client.userInterface.presenter.GeneralTasksViewPresenter;
 import bigBang.module.receiptModule.client.userInterface.presenter.MarkForPaymentViewPresenter;
 import bigBang.module.receiptModule.client.userInterface.presenter.MassAgentAccountingViewPresenter;
 import bigBang.module.receiptModule.client.userInterface.presenter.CancelSignatureRequestViewPresenter;
@@ -43,6 +44,7 @@ import bigBang.module.receiptModule.client.userInterface.view.CreateDASRequestVi
 import bigBang.module.receiptModule.client.userInterface.view.CreateSignatureRequestView;
 import bigBang.module.receiptModule.client.userInterface.view.DASRequestTasksView;
 import bigBang.module.receiptModule.client.userInterface.view.DASRequestView;
+import bigBang.module.receiptModule.client.userInterface.view.GeneralTasksView;
 import bigBang.module.receiptModule.client.userInterface.view.MassCreatePaymentNoticeView;
 import bigBang.module.receiptModule.client.userInterface.view.MassInsurerAccountingView;
 import bigBang.module.receiptModule.client.userInterface.view.MassSendReceiptView;
@@ -284,6 +286,15 @@ public class ReceiptModule implements Module {
 			public ViewPresenter getInstance() {
 				ReceiptTasksView view = (ReceiptTasksView) GWT.create(ReceiptTasksView.class);
 				ViewPresenter presenter = new ReceiptTasksViewPresenter(view);
+				return presenter;
+			}
+		});
+		ViewPresenterFactory.getInstance().registerViewPresenterInstantiator("RECEIPT_GENERAL_TASKS", new ViewPresenterInstantiator(){
+			@Override
+			public ViewPresenter getInstance() {
+				GeneralTasksView view = GWT.create(GeneralTasksView.class);
+				GeneralTasksViewPresenter presenter = new GeneralTasksViewPresenter();
+				presenter.setView(view);
 				return presenter;
 			}
 		});

@@ -1,5 +1,6 @@
 package bigBang.client.tests;
 
+import bigBang.library.client.userInterface.FileImportFormViewSection;
 import bigBang.library.client.userInterface.TypifiedTextFormField;
 import bigBang.library.client.userInterface.view.View;
 
@@ -13,13 +14,11 @@ public class TestsView extends View implements TestsViewPresenter.Display {
 	
 	public TestsView(){
 		initWidget(wrapper);
-		wrapper.setSize("100%", "100%");
+		wrapper.setSize("100%", "auto");
 		
-		text = new TypifiedTextFormField();
-		text.setReadOnly(false);
-		text.setTypifiedTexts("TEST");
-	
-		wrapper.add(text);
+		FileImportFormViewSection section = new FileImportFormViewSection("", "Receipt");
+		
+		wrapper.add(section);
 	}
 
 	@Override
