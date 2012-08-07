@@ -37,7 +37,7 @@ public class BigBang_Tests
 //		TestSpecialGetExchangeItems.DoTest();
 //		TestSpecialGetExchangeSingleItem.DoTest();
 //		TestSpecialZipCodeGet.DoTest();
-		TestSpecialFileProcessing.DoTest();
+//		TestSpecialFileProcessing.DoTest();
 //
 //		TestReportGetPrintSet.DoTest();
 //		TestReportPrintSet.DoTest();
