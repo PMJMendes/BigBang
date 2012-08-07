@@ -16,6 +16,7 @@ public class Constants
 	public static final UUID ObjID_PrintSetDocument         = UUID.fromString("526FDF76-E1D2-4FA8-B048-A021010ADF38");
 	public static final UUID ObjID_PrintSetDetail           = UUID.fromString("6780283B-97E8-4ED3-B4BF-A021010B98C2");
 	public static final UUID ObjID_InsurerReceipt           = UUID.fromString("180DA3B9-FFA2-4A0E-BEBB-A094010EF654");
+	public static final UUID ObjID_FileProcesser            = UUID.fromString("648CB5A9-3ABB-4995-B5FA-A0A600EDF739");
 
 	// Agenda Objects
 	public static final UUID ObjID_AgendaItem               = UUID.fromString("F850E623-E686-4575-A2D8-9F640128FCD7");

@@ -22,12 +22,17 @@ import Jewel.Engine.Constants.ObjectGUIDs;
 import Jewel.Engine.DataAccess.MasterDB;
 import Jewel.Engine.Implementation.Entity;
 import Jewel.Engine.Implementation.FileSpec;
+import Jewel.Engine.SysObjects.FileData;
 import Jewel.Engine.SysObjects.FileXfer;
 import Jewel.Engine.SysObjects.ObjectBase;
 import bigBang.definitions.shared.TipifiedListItem;
 import bigBang.library.interfaces.FileService;
 import bigBang.library.shared.BigBangException;
 import bigBang.library.shared.SessionExpiredException;
+
+import com.premiumminds.BigBang.Jewel.BigBangJewelException;
+import com.premiumminds.BigBang.Jewel.Constants;
+import com.premiumminds.BigBang.Jewel.Objects.FileProcesser;
 
 public class FileServiceImpl
 	extends EngineImplementor
@@ -235,6 +240,39 @@ public class FileServiceImpl
 	public void process(String formatId, String storageId)
 		 throws SessionExpiredException, BigBangException
 	{
+		FileSpec lobjSpec;
+		FileData lobjData;
+		FileProcesser lobjProc;
+
+		if ( Engine.getCurrentUser() == null )
+			throw new SessionExpiredException();
+
+		try
+		{
+			lobjSpec = FileSpec.GetInstance(Engine.getCurrentNameSpace(), UUID.fromString(formatId));
+			lobjData = lobjSpec.ParseFile(GetFileXferStorage().get(UUID.fromString(storageId)));
+			lobjProc = GetProcesserForFormat(lobjSpec.getKey());
+		}
+		catch (Throwable e)
+		{
+			try { Discard(storageId); } catch (Throwable e1) {}
+			throw new BigBangException(e.getMessage(), e);
+		}
+
+		if ( lobjProc == null )
+			throw new BigBangException("Erro: Não existe processador para esse formato.");
+
+		try
+		{
+			lobjProc.Process(lobjData);
+		}
+		catch (BigBangJewelException e)
+		{
+			try { Discard(storageId); } catch (Throwable e1) {}
+			throw new BigBangException(e.getMessage(), e);
+		}
+
+		Discard(storageId);
 	}
 
 	public void Discard(String pstrID)
@@ -266,5 +304,69 @@ public class FileServiceImpl
 
 		for ( i = 0; i < parrIDs.length; i++ )
 			Discard(parrIDs[i]);
+	}
+
+	private FileProcesser GetProcesserForFormat(UUID pidFormat)
+		throws BigBangException
+	{
+		Entity lrefProcessers;
+        MasterDB ldb;
+        ResultSet lrsProcessers;
+        FileProcesser lobjProc;
+
+		lobjProc = null;
+
+		try
+		{
+			lrefProcessers = Entity.GetInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), Constants.ObjID_FileProcesser));
+			ldb = new MasterDB();
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangException(e.getMessage(), e);
+		}
+
+        try
+        {
+	        lrsProcessers = lrefProcessers.SelectByMembers(ldb, new int[] {0}, new java.lang.Object[] {pidFormat}, null);
+		}
+		catch (Throwable e)
+		{
+			try { ldb.Disconnect(); } catch (Throwable e1) {}
+			throw new BigBangException(e.getMessage(), e);
+		}
+
+		try
+		{
+	        if (lrsProcessers.next())
+	        	lobjProc = FileProcesser.GetInstance(Engine.getCurrentNameSpace(), lrsProcessers);
+        }
+        catch (Throwable e)
+        {
+			try { lrsProcessers.close(); } catch (Throwable e1) {}
+			try { ldb.Disconnect(); } catch (Throwable e1) {}
+        	throw new BigBangException(e.getMessage(), e);
+        }
+
+        try
+        {
+        	lrsProcessers.close();
+        }
+		catch (Throwable e)
+		{
+			try { ldb.Disconnect(); } catch (Throwable e1) {}
+			throw new BigBangException(e.getMessage(), e);
+		}
+
+		try
+		{
+			ldb.Disconnect();
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangException(e.getMessage(), e);
+		}
+
+		return lobjProc;
 	}
 }
