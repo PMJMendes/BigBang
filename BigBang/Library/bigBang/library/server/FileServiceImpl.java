@@ -201,7 +201,7 @@ public class FileServiceImpl
 		{
 	        while (lrsFormats.next())
 	        {
-	        	lobjFormat = Engine.GetWorkInstance(Engine.getCurrentNameSpace(), lrsFormats);
+	        	lobjFormat = Engine.GetWorkInstance(lrefFormats.getKey(), lrsFormats);
 	        	lobjAux = new TipifiedListItem();
 	        	lobjAux.id = lobjFormat.getKey().toString();
 	        	lobjAux.value = lobjFormat.getLabel();
