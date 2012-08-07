@@ -238,7 +238,7 @@ public abstract class ExecMgrXFerBase
 	{
 		UndoSet[] larrResult;
 
-		larrResult = new UndoSet[1];
+		larrResult = new UndoSet[] {new UndoSet()};
 		larrResult[0].midType = getSafeObjType();
 		larrResult[0].marrDeleted = new UUID[0];
 		larrResult[0].marrChanged = new UUID[1];
