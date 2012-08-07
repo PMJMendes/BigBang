@@ -1,5 +1,7 @@
 package bigbang.tests.client;
 
+import bigBang.definitions.shared.TipifiedListItem;
+
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
@@ -14,6 +16,7 @@ import com.google.gwt.user.client.ui.FormPanel.SubmitCompleteHandler;
 
 public class TestSpecialFileProcessing
 {
+	private static String gstrFormatID;
 	private static FormPanel gfrmMain;
 	private static FileUpload gfupMain;
 	private static Button gbtnOk;
@@ -24,6 +27,28 @@ public class TestSpecialFileProcessing
 	}
 
 	private static void DoStep1()
+	{
+		AsyncCallback<TipifiedListItem[]> callback = new AsyncCallback<TipifiedListItem[]>()
+		{
+			public void onFailure(Throwable caught)
+			{
+				return;
+			}
+
+			public void onSuccess(TipifiedListItem[] result)
+			{
+				if ( (result == null ) || (result.length == 0) )
+					return;
+
+				gstrFormatID = result[0].id;
+				DoStep2();
+			}
+		};
+
+		Services.fileService.getListItemsFilter("5514358C-2FCF-4769-981F-3C11BB25BA76", "recibo", callback);
+	}
+
+	private static void DoStep2()
 	{
 		VerticalPanel lvert;
 
@@ -67,12 +92,12 @@ public class TestSpecialFileProcessing
 				if ( lstrResults.startsWith("!") )
 					return;
 
-				DoStep2(lstrResults.split("!", 2)[0]);
+				DoStep3(lstrResults.split("!", 2)[0]);
 			}
 		});
 	}
 
-	private static void DoStep2(String pstrFileID)
+	private static void DoStep3(String pstrFileID)
 	{
 		AsyncCallback<Void> callback = new AsyncCallback<Void>()
 		{
@@ -87,6 +112,6 @@ public class TestSpecialFileProcessing
 			}
 		};
 
-		Services.fileService.process("29631C89-6783-4EBA-A214-A0A600B8AFFA", pstrFileID, callback);
+		Services.fileService.process(gstrFormatID, pstrFileID, callback);
 	}
 }
