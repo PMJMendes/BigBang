@@ -26,6 +26,10 @@ public interface FileService
 		}
 	}
 
+	String[] getFormats(String typeQualifier) throws SessionExpiredException, BigBangException;
+
+	void process(String formatId, String storageId);
+
 	void Discard(String pstrID) throws SessionExpiredException, BigBangException;
 	void Discard(String[] parrIDs) throws SessionExpiredException, BigBangException;
 }

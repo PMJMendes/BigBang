@@ -142,6 +142,16 @@ public class FileServiceImpl
 		resp.getOutputStream().write(lbuffer.getData());
     }
 
+	public String[] getFormats(String typeQualifier)
+		throws SessionExpiredException, BigBangException
+	{
+		return null;
+	}
+
+	public void process(String formatId, String storageId)
+	{
+	}
+
 	public void Discard(String pstrID)
 		throws SessionExpiredException, BigBangException 
 	{
