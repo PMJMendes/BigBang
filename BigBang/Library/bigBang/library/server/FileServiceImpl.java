@@ -21,6 +21,7 @@ import Jewel.Engine.Engine;
 import Jewel.Engine.Constants.ObjectGUIDs;
 import Jewel.Engine.DataAccess.MasterDB;
 import Jewel.Engine.Implementation.Entity;
+import Jewel.Engine.Implementation.FileSpec;
 import Jewel.Engine.SysObjects.FileXfer;
 import Jewel.Engine.SysObjects.ObjectBase;
 import bigBang.definitions.shared.TipifiedListItem;
@@ -232,6 +233,7 @@ public class FileServiceImpl
 	}
 
 	public void process(String formatId, String storageId)
+		 throws SessionExpiredException, BigBangException
 	{
 	}
 

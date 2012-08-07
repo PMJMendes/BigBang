@@ -26,7 +26,7 @@ public interface FileService
 		}
 	}
 
-	void process(String formatId, String storageId);
+	void process(String formatId, String storageId) throws SessionExpiredException, BigBangException;
 
 	void Discard(String pstrID) throws SessionExpiredException, BigBangException;
 	void Discard(String[] parrIDs) throws SessionExpiredException, BigBangException;
