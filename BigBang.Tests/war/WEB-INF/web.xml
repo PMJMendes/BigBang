@@ -23,6 +23,9 @@
 	<listener>
 		<listener-class>bigbang.tests.server.Global</listener-class>
 	</listener>
+	<listener>
+		<listener-class>org.apache.commons.fileupload.servlet.FileCleanerCleanup</listener-class>
+	</listener>
     <listener>
     	<listener-class>bigbang.tests.server.ContextLog4jListener</listener-class>
     </listener>
