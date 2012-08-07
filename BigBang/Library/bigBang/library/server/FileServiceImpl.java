@@ -1,6 +1,7 @@
 package bigBang.library.server;
 
 import java.io.*;
+import java.sql.ResultSet;
 import java.util.*;
 
 import javax.servlet.*;
@@ -10,11 +11,17 @@ import org.apache.commons.fileupload.*;
 import org.apache.commons.fileupload.disk.*;
 import org.apache.commons.fileupload.servlet.*;
 
+import com.premiumminds.BigBang.Jewel.Constants;
+
+import bigBang.definitions.shared.Line;
 import bigBang.library.interfaces.FileService;
 import bigBang.library.shared.BigBangException;
 import bigBang.library.shared.SessionExpiredException;
 
 import Jewel.Engine.Engine;
+import Jewel.Engine.Constants.ObjectGUIDs;
+import Jewel.Engine.DataAccess.MasterDB;
+import Jewel.Engine.Implementation.Entity;
 import Jewel.Engine.SysObjects.*;
 
 public class FileServiceImpl
@@ -145,7 +152,72 @@ public class FileServiceImpl
 	public String[] getFormats(String typeQualifier)
 		throws SessionExpiredException, BigBangException
 	{
-		return null;
+		ArrayList<String> larrAux;
+		Entity lrefFormats;
+        MasterDB ldb;
+        ResultSet lrsFormats;
+		ObjectBase lobjFormat;
+
+		if ( Engine.getCurrentUser() == null )
+			throw new SessionExpiredException();
+
+		larrAux = new ArrayList<String>();
+
+		try
+		{
+			lrefFormats = Entity.GetInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), ObjectGUIDs.O_FileSpec));
+			ldb = new MasterDB();
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangException(e.getMessage(), e);
+		}
+
+        try
+        {
+	        lrsFormats = lrefFormats.SelectByMembers(ldb, new int[] {0}, new java.lang.Object[] {typeQualifier}, new int[] {0});
+		}
+		catch (Throwable e)
+		{
+			try { ldb.Disconnect(); } catch (Throwable e1) {}
+			throw new BigBangException(e.getMessage(), e);
+		}
+
+		try
+		{
+	        while (lrsFormats.next())
+	        {
+	        	lobjFormat = Engine.GetWorkInstance(Engine.getCurrentNameSpace(), lrsFormats);
+	        	larrAux.add(lobjFormat.getKey().toString());
+	        }
+        }
+        catch (Throwable e)
+        {
+			try { lrsFormats.close(); } catch (Throwable e1) {}
+			try { ldb.Disconnect(); } catch (Throwable e1) {}
+        	throw new BigBangException(e.getMessage(), e);
+        }
+
+        try
+        {
+        	lrsFormats.close();
+        }
+		catch (Throwable e)
+		{
+			try { ldb.Disconnect(); } catch (Throwable e1) {}
+			throw new BigBangException(e.getMessage(), e);
+		}
+
+		try
+		{
+			ldb.Disconnect();
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangException(e.getMessage(), e);
+		}
+
+		return larrAux.toArray(new String[larrAux.size()]);
 	}
 
 	public void process(String formatId, String storageId)
