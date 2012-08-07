@@ -9,7 +9,7 @@ import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 
 @RemoteServiceRelativePath("bbfile")
 public interface FileService
-	extends RemoteService
+	extends RemoteService, DependentItemSubService
 {
 	public static final String GET_PREFIX = "bbfile?fileref=";
 	
@@ -25,8 +25,6 @@ public interface FileService
 			return instance;
 		}
 	}
-
-	String[] getFormats(String typeQualifier) throws SessionExpiredException, BigBangException;
 
 	void process(String formatId, String storageId);
 

@@ -1,28 +1,32 @@
 package bigBang.library.server;
 
-import java.io.*;
+import java.io.IOException;
 import java.sql.ResultSet;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Hashtable;
+import java.util.List;
+import java.util.UUID;
 
-import javax.servlet.*;
-import javax.servlet.http.*;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
-import org.apache.commons.fileupload.*;
-import org.apache.commons.fileupload.disk.*;
-import org.apache.commons.fileupload.servlet.*;
-
-import com.premiumminds.BigBang.Jewel.Constants;
-
-import bigBang.definitions.shared.Line;
-import bigBang.library.interfaces.FileService;
-import bigBang.library.shared.BigBangException;
-import bigBang.library.shared.SessionExpiredException;
+import org.apache.commons.fileupload.FileItem;
+import org.apache.commons.fileupload.FileUploadException;
+import org.apache.commons.fileupload.disk.DiskFileItemFactory;
+import org.apache.commons.fileupload.servlet.FileCleanerCleanup;
+import org.apache.commons.fileupload.servlet.ServletFileUpload;
 
 import Jewel.Engine.Engine;
 import Jewel.Engine.Constants.ObjectGUIDs;
 import Jewel.Engine.DataAccess.MasterDB;
 import Jewel.Engine.Implementation.Entity;
-import Jewel.Engine.SysObjects.*;
+import Jewel.Engine.SysObjects.FileXfer;
+import Jewel.Engine.SysObjects.ObjectBase;
+import bigBang.definitions.shared.TipifiedListItem;
+import bigBang.library.interfaces.FileService;
+import bigBang.library.shared.BigBangException;
+import bigBang.library.shared.SessionExpiredException;
 
 public class FileServiceImpl
 	extends EngineImplementor
@@ -149,19 +153,23 @@ public class FileServiceImpl
 		resp.getOutputStream().write(lbuffer.getData());
     }
 
-	public String[] getFormats(String typeQualifier)
+	public TipifiedListItem[] getListItemsFilter(String listId, String filterId)
 		throws SessionExpiredException, BigBangException
 	{
-		ArrayList<String> larrAux;
+		ArrayList<TipifiedListItem> larrAux;
 		Entity lrefFormats;
         MasterDB ldb;
         ResultSet lrsFormats;
 		ObjectBase lobjFormat;
+		TipifiedListItem lobjAux;
 
 		if ( Engine.getCurrentUser() == null )
 			throw new SessionExpiredException();
 
-		larrAux = new ArrayList<String>();
+		if ( !ObjectGUIDs.O_FileSpec.equals(UUID.fromString(listId)) )
+			throw new BigBangException("Erro: Lista inválida para o espaço de trabalho.");
+
+		larrAux = new ArrayList<TipifiedListItem>();
 
 		try
 		{
@@ -175,7 +183,7 @@ public class FileServiceImpl
 
         try
         {
-	        lrsFormats = lrefFormats.SelectByMembers(ldb, new int[] {0}, new java.lang.Object[] {typeQualifier}, new int[] {0});
+	        lrsFormats = lrefFormats.SelectByMembers(ldb, new int[] {0}, new java.lang.Object[] {filterId}, new int[] {0});
 		}
 		catch (Throwable e)
 		{
@@ -188,7 +196,10 @@ public class FileServiceImpl
 	        while (lrsFormats.next())
 	        {
 	        	lobjFormat = Engine.GetWorkInstance(Engine.getCurrentNameSpace(), lrsFormats);
-	        	larrAux.add(lobjFormat.getKey().toString());
+	        	lobjAux = new TipifiedListItem();
+	        	lobjAux.id = lobjFormat.getKey().toString();
+	        	lobjAux.value = lobjFormat.getLabel();
+	        	larrAux.add(lobjAux);
 	        }
         }
         catch (Throwable e)
@@ -217,7 +228,7 @@ public class FileServiceImpl
 			throw new BigBangException(e.getMessage(), e);
 		}
 
-		return larrAux.toArray(new String[larrAux.size()]);
+		return larrAux.toArray(new TipifiedListItem[larrAux.size()]);
 	}
 
 	public void process(String formatId, String storageId)
