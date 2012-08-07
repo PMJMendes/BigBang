@@ -51,7 +51,7 @@ public class RiskAnalisysOperationsViewPresenter implements ViewPresenter {
 				if(display.equalsIgnoreCase("search")){
 					present("RISK_ANALISYS_SEARCH", parameters);
 				}else if(display.equalsIgnoreCase("riskanalisyshistory")){
-					present("HISTORY", parameters);
+					present("HISTORY", parameters, true);
 				}else{
 					goToDefault();
 				}

@@ -57,7 +57,7 @@ public class QuoteRequestOperationsViewPresenter implements ViewPresenter {
 				}else if(display.equalsIgnoreCase("viewinforequest")){
 					present("QUOTE_REQUEST_VIEW_INFO_OR_DOCUMENT_REQUEST", parameters);
 				}else if(display.equalsIgnoreCase("history")){
-					present("HISTORY", parameters);
+					present("HISTORY", parameters, true);
 				} else {
 					goToDefault();
 				}

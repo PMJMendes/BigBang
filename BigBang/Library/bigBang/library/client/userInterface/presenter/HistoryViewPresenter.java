@@ -67,7 +67,7 @@ public class HistoryViewPresenter implements ViewPresenter {
 	private Display view;
 	protected HistoryBroker historyBroker;
 	private boolean bound = false;
-
+	
 	public HistoryViewPresenter(Display view) {
 		this.historyBroker = (HistoryBroker) DataBrokerManager.staticGetBroker(BigBangConstants.EntityIds.HISTORY);
 		setView((View) view);
@@ -88,12 +88,12 @@ public class HistoryViewPresenter implements ViewPresenter {
 
 	@Override
 	public void setParameters(HasParameters parameterHolder) {
+		
 		String objectId = parameterHolder.getParameter("historyownerid");
 		objectId = objectId == null ? new String() : objectId;
+
 		String itemId = parameterHolder.getParameter("historyitemid");
 		itemId = itemId == null ? new String() : itemId;
-
-		clearView();
 
 		if(objectId.isEmpty()){
 			view.setObjectId(null);
@@ -104,6 +104,7 @@ public class HistoryViewPresenter implements ViewPresenter {
 			}else{
 				view.allowNavigateToAuxiliaryProcess(false);
 				view.allowUndo(false);
+				view.getForm().setValue(null);
 			}
 		}
 		view.showBackButton(objectId != null && SessionGeneralSystem.getInstance().id != null && !objectId.equalsIgnoreCase(SessionGeneralSystem.getInstance().id));
@@ -151,14 +152,6 @@ public class HistoryViewPresenter implements ViewPresenter {
 		//APPLICATION-WIDE EVENTS
 
 		bound = true;
-	}
-
-	private void clearView(){
-		view.getForm().setValue(null);
-		view.setObjectId(null);
-		view.allowUndo(false);
-		view.allowNavigateToAuxiliaryProcess(false);
-		view.showBackButton(false);
 	}
 
 	private void showHistory(String objectId){

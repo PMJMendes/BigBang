@@ -72,7 +72,7 @@ public class RiskAnalisysSectionViewPresenter implements ViewPresenter {
 
 					//MASS OPERATIONS
 					if(display.equalsIgnoreCase("history")){
-						present("HISTORY", parameters);
+						present("HISTORY", parameters, true);
 					}else if(display.equalsIgnoreCase("massmanagertransfer")){
 						present("MANAGER_TRANSFER", parameters);
 					}else{
