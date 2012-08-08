@@ -225,7 +225,6 @@ public class NumericTextBoxFormField extends FormField<Double>{
 		}
 		((NumericWrapper)this.field).getField().setEnabled(!readonly);
 		((NumericWrapper)this.field).getField().setReadOnly(readonly);
-		((NumericWrapper)this.field).getField().getElement().getStyle().setBorderColor(readonly ? "transparent" : "gray");
 		((NumericWrapper)this.field).getField().getElement().getStyle().setBackgroundColor(readonly ? "transparent" : "white");
 		mandatoryIndicatorLabel.setVisible(!readonly&& this.isMandatory());
 
