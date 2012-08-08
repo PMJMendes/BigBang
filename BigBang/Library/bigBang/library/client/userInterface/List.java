@@ -32,6 +32,8 @@ import com.google.gwt.event.dom.client.FocusHandler;
 import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.event.dom.client.KeyDownEvent;
 import com.google.gwt.event.dom.client.KeyDownHandler;
+import com.google.gwt.event.dom.client.KeyUpEvent;
+import com.google.gwt.event.dom.client.KeyUpHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.google.gwt.user.client.ui.FocusPanel;
@@ -168,7 +170,7 @@ public class List<T> extends View implements HasValueSelectables<T>, java.util.L
 
 			@Override
 			public void onSelectedStateChanged(SelectedStateChangedEvent event) {
-				selectableStateChanged((Selectable) event.getSource());
+				selectableStateChanged((Selectable) event.getSource(), true);
 			}
 		};
 		focusPanel.addKeyDownHandler(new KeyDownHandler() {
@@ -178,30 +180,41 @@ public class List<T> extends View implements HasValueSelectables<T>, java.util.L
 
 				switch(event.getNativeKeyCode()){
 				case KeyCodes.KEY_UP:
-					selectPrevious();
+					selectPrevious(false);
 					event.preventDefault();
 					break;
 				case KeyCodes.KEY_DOWN:
-					selectNext();
+					selectNext(false);
 					event.preventDefault();
 					break;
 				}
 			}
 		});
+		focusPanel.addKeyUpHandler(new KeyUpHandler() {
+
+			@Override
+			public void onKeyUp(KeyUpEvent event) {
+				if(event.getNativeKeyCode() == KeyCodes.KEY_UP || event.getNativeKeyCode() == KeyCodes.KEY_DOWN){
+					fireCurrentSelection();
+					event.preventDefault();
+				}
+			}
+		});
 		focusPanel.addFocusHandler(new FocusHandler() {
-			
+
 			@Override
 			public void onFocus(FocusEvent event) {
 				Collection<ValueSelectable<T>> selected = getSelected();
 				for(ValueSelectable<T> entry : selected) {
 					((ListEntry<T>) entry).setSelectedFocus();
-				} 
+				}
 			}
 		});
 		focusPanel.addBlurHandler(new BlurHandler() {
-			
+
 			@Override
 			public void onBlur(BlurEvent event) {
+				fireCurrentSelection();
 				Collection<ValueSelectable<T>> selected = getSelected();
 				for(ValueSelectable<T> entry : selected) {
 					((ListEntry<T>) entry).setSelectedBlur();
@@ -245,17 +258,26 @@ public class List<T> extends View implements HasValueSelectables<T>, java.util.L
 	 * Selects the entry following the currently selected one.
 	 * If no entries are selected, the first available entry is selected.
 	 */
-	public void selectNext() {
+	public void selectNext(boolean fireEvents) {
 		if (!this.entries.isEmpty()){
 			Collection<ValueSelectable<T>> selected = getSelected();
-			
-			if(selected == null) {
-				get(0).setSelected(true, true);
+
+			if(selected == null || selected.isEmpty()) {
+				ValueSelectable<T> selectedEntry = get(0);
+				if(!fireEvents){
+					selectableStateChanged(selectedEntry, false);
+				}
+				selectedEntry.setSelected(true, fireEvents);
 			}else{
 				ValueSelectable<T> entry = selected.iterator().next();
 				int index = indexOf(entry);
 				if(index < size() - 1){
-					get(index + 1).setSelected(true, true);
+					entry.setSelected(false, false);
+					ValueSelectable<T> selectedEntry = get(index + 1);
+					if(!fireEvents) {
+						selectableStateChanged(selectedEntry, false);
+					}
+					selectedEntry.setSelected(true, fireEvents);
 				}
 			}
 		}
@@ -265,18 +287,37 @@ public class List<T> extends View implements HasValueSelectables<T>, java.util.L
 	 * Selects the entry previous to the currently selected entry.
 	 * If no entries are selected, the last available entry is selected.
 	 */
-	public void selectPrevious() {
+	public void selectPrevious(boolean fireEvents) {
 		if (!this.entries.isEmpty()){
 			Collection<ValueSelectable<T>> selected = getSelected();
-			
-			if(selected == null) {
-				get(0).setSelected(true, true);
+
+			if(selected == null || selected.isEmpty()) {
+				ValueSelectable<T> selectedEntry = get(0);
+				if(!fireEvents) {
+					selectableStateChanged(selectedEntry, false);
+				}
+				selectedEntry.setSelected(true, fireEvents);
 			}else{
 				ValueSelectable<T> entry = selected.iterator().next();
 				int index = indexOf(entry);
 				if(index > 0){
-					get(index - 1).setSelected(true, true);
+					entry.setSelected(false, false);
+					ValueSelectable<T> selectedEntry = get(index - 1);
+					if(!fireEvents) {
+						selectableStateChanged(selectedEntry, false);
+					}
+					selectedEntry.setSelected(true, fireEvents);
 				}
+			}
+		}
+	}
+
+	public void fireCurrentSelection(){
+		if (!this.entries.isEmpty()){
+			Collection<ValueSelectable<T>> selected = getSelected();
+
+			for(ValueSelectable<T> entry : selected) {
+				entry.setSelected(true, true);
 			}
 		}
 	}
@@ -389,7 +430,7 @@ public class List<T> extends View implements HasValueSelectables<T>, java.util.L
 		fireEvent(new CheckedSelectionChangedEvent(getChecked(), c));
 	}
 
-	protected void selectableStateChanged(Selectable source) {
+	protected void selectableStateChanged(Selectable source, boolean fireEvent) {
 		if(multipleSelection){
 			//TODO throw
 		}else{
@@ -401,19 +442,21 @@ public class List<T> extends View implements HasValueSelectables<T>, java.util.L
 		}
 
 		UIObject sourceElem = (UIObject) source;
-		
+
 		int yPos = sourceElem.getAbsoluteTop();
 		int height = sourceElem.getOffsetHeight();
 		int scrollYPos = scrollPanel.getAbsoluteTop();
 		int scrollHeight = scrollPanel.getOffsetHeight();
-		
+
 		if(yPos < scrollYPos) {
 			scrollPanel.setVerticalScrollPosition(sourceElem.getElement().getOffsetTop());
 		}else if((yPos + height) > (scrollYPos + scrollHeight)) {
 			int top = sourceElem.getElement().getOffsetTop();
 			scrollPanel.setVerticalScrollPosition(top - scrollHeight + height);
 		}
-		selectionChangedEventFireBypass(new SelectionChangedEvent(this.getSelected()));
+		if(fireEvent) {
+			selectionChangedEventFireBypass(new SelectionChangedEvent(this.getSelected()));
+		}
 	}
 
 	//HasSelectables Methods
@@ -422,8 +465,9 @@ public class List<T> extends View implements HasValueSelectables<T>, java.util.L
 	public Collection<ValueSelectable<T>> getSelected() {
 		Collection<ValueSelectable<T>> result = new ArrayList<ValueSelectable<T>>();
 		for(ListEntry<T> s : this.entries) {
-			if(s.isSelected())
+			if(s.isSelected()){
 				result.add(s);
+			}
 		}		
 		return result;
 	}
@@ -634,7 +678,7 @@ public class List<T> extends View implements HasValueSelectables<T>, java.util.L
 	public ListEntry<T> remove(int index) {
 		ListEntry<T> result = this.entries.remove(index);
 		if(result.isSelected())
-			selectNext();
+			selectNext(true);
 		result.removeFromParent();
 		onSizeChanged();
 		return result;
@@ -648,7 +692,7 @@ public class List<T> extends View implements HasValueSelectables<T>, java.util.L
 				((ListEntry<?>)e).removeFromParent();
 		}
 		onSizeChanged();
-					return result;
+		return result;
 	}
 
 	@Override

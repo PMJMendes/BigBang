@@ -216,7 +216,6 @@ public class ListEntry<T> extends View implements ValueSelectable<T>, HasMetaDat
 		if(selected && !this.selectable)
 			return;
 		
-		boolean initSelected = this.isSelected;
 		if(selected){
 			setSelectedFocus();
 			backgroundImage.setVisible(true);
@@ -229,7 +228,7 @@ public class ListEntry<T> extends View implements ValueSelectable<T>, HasMetaDat
 			this.addStyleName("listItemEven");
 			this.isSelected = false;
 		}
-		if(initSelected != selected && fireEvents)
+		if(fireEvents)
 			fireEvent(new SelectedStateChangedEvent(this.isSelected));
 	}
 	
