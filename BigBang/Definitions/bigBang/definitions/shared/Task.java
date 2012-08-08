@@ -6,6 +6,7 @@ public class Task
 	private static final long serialVersionUID = 1L;
 
 	public String longDesc;
+	public String params;
 
 	public String processTypeId;
 	public String objectTypeId;
