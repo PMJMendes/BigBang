@@ -48,13 +48,13 @@ public class AddressFormField extends FormField<Address> {
 		
 		Label street = new Label("Rua:");
 		street.setStyleName("bigBangFormFieldLabel");
-		street.setWidth("78px");
+		street.setWidth("79px");
 		streetWrapper.getColumnFormatter().setWidth(1, "100%");
 		streetWrapper.setWidget(0, 0, street);
 		streetWrapper.getCellFormatter().setHorizontalAlignment(0, 0, HasHorizontalAlignment.ALIGN_RIGHT);
 		streetWrapper.setWidget(0, 1, street1);
 		streetWrapper.setWidget(1, 1, street2);
-		streetWrapper.getCellFormatter().setWidth(0, 0, "78px");
+		streetWrapper.getCellFormatter().setWidth(0, 0, "79px");
 		
 		wrapper.add(streetWrapper);
 		wrapper.add(zipCode);
