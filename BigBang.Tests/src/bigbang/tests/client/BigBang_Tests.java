@@ -42,6 +42,7 @@ public class BigBang_Tests
 //		TestReportGetPrintSet.DoTest();
 //		TestReportPrintSet.DoTest();
 //		TestReportGetTransactionSet.DoTest();
+//		TestReportGetParam.DoTest();
 //		TestReportSettleTransaction.DoTest();
 //		TestReportVerb.DoTest();
 //
