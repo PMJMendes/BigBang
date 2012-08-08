@@ -110,7 +110,6 @@ public class TextBoxFormField extends FormField<String> {
 		}
 		field.setReadOnly(readOnly);
 		field.setEnabled(!readOnly);
-		field.getElement().getStyle().setBorderColor(readOnly ? "transparent" : "gray");
 		field.getElement().getStyle().setBackgroundColor(readOnly ? "transparent" : "white");
 		mandatoryIndicatorLabel.setVisible(!readOnly&& this.isMandatory());
 	}

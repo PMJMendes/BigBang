@@ -56,23 +56,28 @@ public class ZipCodeFormField extends FormField<ZipCode>{
 
 		wrapper.setWidget(0, 0, new Label("Código postal:"));
 		wrapper.getCellFormatter().setHorizontalAlignment(0, 0, HasHorizontalAlignment.ALIGN_RIGHT);
+		wrapper.getCellFormatter().setStyleName(0, 0, "bigBangFormFieldLabel");
 		wrapper.setWidget(0, 1, code);
 		wrapper.setWidget(0, 2, expandImage);
 
 		wrapper.setWidget(1, 0, new Label("Localidade:"));
 		wrapper.getCellFormatter().setHorizontalAlignment(1, 0, HasHorizontalAlignment.ALIGN_RIGHT);
+		wrapper.getCellFormatter().setStyleName(1, 0, "bigBangFormFieldLabel");
 		wrapper.setWidget(1, 1, city);
 
 		wrapper.setWidget(2, 0, new Label("Concelho:"));
 		wrapper.getCellFormatter().setHorizontalAlignment(2, 0, HasHorizontalAlignment.ALIGN_RIGHT);
+		wrapper.getCellFormatter().setStyleName(2, 0, "bigBangFormFieldLabel");
 		wrapper.setWidget(2, 1, county);
 
 		wrapper.setWidget(3, 0, new Label("Distrito:"));
 		wrapper.getCellFormatter().setHorizontalAlignment(3, 0, HasHorizontalAlignment.ALIGN_RIGHT);
+		wrapper.getCellFormatter().setStyleName(3, 0, "bigBangFormFieldLabel");
 		wrapper.setWidget(3, 1, district);
 
 		wrapper.setWidget(4, 0, new Label("País:"));
 		wrapper.getCellFormatter().setHorizontalAlignment(4, 0, HasHorizontalAlignment.ALIGN_RIGHT);
+		wrapper.getCellFormatter().setStyleName(4, 0, "bigBangFormFieldLabel");
 		wrapper.setWidget(4, 1, country);
 		country.getElement().getStyle().setMargin(0, Unit.PX);
 
@@ -91,10 +96,11 @@ public class ZipCodeFormField extends FormField<ZipCode>{
 		country.setEnabled(false);
 		county.setEnabled(false);
 		district.setEnabled(false);
-		city.addStyleName("readonly");
-		county.addStyleName("readonly");
-		district.addStyleName("readonly");
-		country.addStyleName("readonly");
+		city.addStyleName("gwt-TextBox-readonly");
+		county.addStyleName("gwt-TextBox-readonly");
+		district.addStyleName("gwt-TextBox-readonly");
+		country.addStyleName("gwt-TextBox-readonly");
+		code.getElement().getStyle().setBackgroundColor("transparent");
 		city.getElement().getStyle().setBorderColor("transparent");
 		country.getElement().getStyle().setBorderColor("transparent");
 		district.getElement().getStyle().setBorderColor("transparent");
@@ -103,7 +109,8 @@ public class ZipCodeFormField extends FormField<ZipCode>{
 		country.getElement().getStyle().setBackgroundColor("transparent");
 		county.getElement().getStyle().setBackgroundColor("transparent");
 		district.getElement().getStyle().setBackgroundColor("transparent");
-
+		code.getElement().getStyle().setBackgroundColor("transparent");
+		
 		code.setMaxLength(8);
 		code.setVisibleLength(8);
 
@@ -212,12 +219,7 @@ public class ZipCodeFormField extends FormField<ZipCode>{
 		code.setReadOnly(readonly);
 		expandImage.setVisible(!readonly);
 
-		if(readonly){
-			code.addStyleName("readonly");
-		}
-		else{
-			code.removeStyleName("readonly");
-		}
+		code.getElement().getStyle().setBorderColor(readOnly ? "transparent" : "gray");
 
 	}
 
