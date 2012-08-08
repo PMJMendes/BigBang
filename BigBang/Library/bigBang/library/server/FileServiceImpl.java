@@ -21,8 +21,6 @@ import Jewel.Engine.Engine;
 import Jewel.Engine.Constants.ObjectGUIDs;
 import Jewel.Engine.DataAccess.MasterDB;
 import Jewel.Engine.Implementation.Entity;
-import Jewel.Engine.Implementation.FileSpec;
-import Jewel.Engine.SysObjects.FileData;
 import Jewel.Engine.SysObjects.FileXfer;
 import Jewel.Engine.SysObjects.ObjectBase;
 import bigBang.definitions.shared.TipifiedListItem;
@@ -31,7 +29,6 @@ import bigBang.library.shared.BigBangException;
 import bigBang.library.shared.SessionExpiredException;
 
 import com.premiumminds.BigBang.Jewel.BigBangJewelException;
-import com.premiumminds.BigBang.Jewel.Constants;
 import com.premiumminds.BigBang.Jewel.Objects.FileProcesser;
 
 public class FileServiceImpl
@@ -65,7 +62,7 @@ public class FileServiceImpl
 
     	if ( req.getMethod().equals("POST") && ServletFileUpload.isMultipartContent(req) )
     	{
-			grefSession.theSession.set(req.getSession());
+			setSession(req.getSession());
 			try
 			{
 				overridePost(req, resp);
@@ -80,7 +77,7 @@ public class FileServiceImpl
 			}
 			finally
 			{
-				grefSession.theSession.set(null);
+				clearSession();
 			}
     	}
     	else
@@ -240,18 +237,17 @@ public class FileServiceImpl
 	public void process(String formatId, String storageId)
 		 throws SessionExpiredException, BigBangException
 	{
-		FileSpec lobjSpec;
-		FileData lobjData;
+		UUID lidFormat;
 		FileProcesser lobjProc;
 
 		if ( Engine.getCurrentUser() == null )
 			throw new SessionExpiredException();
 
+		lidFormat = UUID.fromString(formatId);
+
 		try
 		{
-			lobjSpec = FileSpec.GetInstance(Engine.getCurrentNameSpace(), UUID.fromString(formatId));
-			lobjData = lobjSpec.ParseFile(GetFileXferStorage().get(UUID.fromString(storageId)));
-			lobjProc = GetProcesserForFormat(lobjSpec.getKey());
+			lobjProc = FileProcesser.GetProcesserForFormat(lidFormat);
 		}
 		catch (Throwable e)
 		{
@@ -264,7 +260,7 @@ public class FileServiceImpl
 
 		try
 		{
-			lobjProc.Process(lobjData);
+			lobjProc.Process(GetFileXferStorage().get(UUID.fromString(storageId)), lidFormat);
 		}
 		catch (BigBangJewelException e)
 		{
@@ -304,69 +300,5 @@ public class FileServiceImpl
 
 		for ( i = 0; i < parrIDs.length; i++ )
 			Discard(parrIDs[i]);
-	}
-
-	private FileProcesser GetProcesserForFormat(UUID pidFormat)
-		throws BigBangException
-	{
-		Entity lrefProcessers;
-        MasterDB ldb;
-        ResultSet lrsProcessers;
-        FileProcesser lobjProc;
-
-		lobjProc = null;
-
-		try
-		{
-			lrefProcessers = Entity.GetInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), Constants.ObjID_FileProcesser));
-			ldb = new MasterDB();
-		}
-		catch (Throwable e)
-		{
-			throw new BigBangException(e.getMessage(), e);
-		}
-
-        try
-        {
-	        lrsProcessers = lrefProcessers.SelectByMembers(ldb, new int[] {0}, new java.lang.Object[] {pidFormat}, null);
-		}
-		catch (Throwable e)
-		{
-			try { ldb.Disconnect(); } catch (Throwable e1) {}
-			throw new BigBangException(e.getMessage(), e);
-		}
-
-		try
-		{
-	        if (lrsProcessers.next())
-	        	lobjProc = FileProcesser.GetInstance(Engine.getCurrentNameSpace(), lrsProcessers);
-        }
-        catch (Throwable e)
-        {
-			try { lrsProcessers.close(); } catch (Throwable e1) {}
-			try { ldb.Disconnect(); } catch (Throwable e1) {}
-        	throw new BigBangException(e.getMessage(), e);
-        }
-
-        try
-        {
-        	lrsProcessers.close();
-        }
-		catch (Throwable e)
-		{
-			try { ldb.Disconnect(); } catch (Throwable e1) {}
-			throw new BigBangException(e.getMessage(), e);
-		}
-
-		try
-		{
-			ldb.Disconnect();
-		}
-		catch (Throwable e)
-		{
-			throw new BigBangException(e.getMessage(), e);
-		}
-
-		return lobjProc;
 	}
 }

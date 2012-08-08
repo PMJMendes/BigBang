@@ -5,7 +5,11 @@ import java.sql.ResultSet;
 import java.util.UUID;
 
 import Jewel.Engine.Engine;
+import Jewel.Engine.DataAccess.MasterDB;
+import Jewel.Engine.Implementation.Entity;
+import Jewel.Engine.Implementation.FileSpec;
 import Jewel.Engine.SysObjects.FileData;
+import Jewel.Engine.SysObjects.FileXfer;
 import Jewel.Engine.SysObjects.JewelEngineException;
 import Jewel.Engine.SysObjects.ObjectBase;
 
@@ -42,19 +46,81 @@ public class FileProcesser
 		}
 	}
 
-	FileIOBase mobjProcesser;
+	public static FileProcesser GetProcesserForFormat(UUID pidFormat)
+		throws BigBangJewelException
+	{
+		Entity lrefProcessers;
+        MasterDB ldb;
+        ResultSet lrsProcessers;
+        FileProcesser lobjProc;
+
+		lobjProc = null;
+
+		try
+		{
+			lrefProcessers = Entity.GetInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), Constants.ObjID_FileProcesser));
+			ldb = new MasterDB();
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangJewelException(e.getMessage(), e);
+		}
+
+        try
+        {
+	        lrsProcessers = lrefProcessers.SelectByMembers(ldb, new int[] {0}, new java.lang.Object[] {pidFormat}, null);
+		}
+		catch (Throwable e)
+		{
+			try { ldb.Disconnect(); } catch (Throwable e1) {}
+			throw new BigBangJewelException(e.getMessage(), e);
+		}
+
+		try
+		{
+	        if (lrsProcessers.next())
+	        	lobjProc = FileProcesser.GetInstance(Engine.getCurrentNameSpace(), lrsProcessers);
+        }
+        catch (Throwable e)
+        {
+			try { lrsProcessers.close(); } catch (Throwable e1) {}
+			try { ldb.Disconnect(); } catch (Throwable e1) {}
+        	throw new BigBangJewelException(e.getMessage(), e);
+        }
+
+        try
+        {
+        	lrsProcessers.close();
+        }
+		catch (Throwable e)
+		{
+			try { ldb.Disconnect(); } catch (Throwable e1) {}
+			throw new BigBangJewelException(e.getMessage(), e);
+		}
+
+		try
+		{
+			ldb.Disconnect();
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangJewelException(e.getMessage(), e);
+		}
+
+		return lobjProc;
+	}
+
+    Constructor<?> mrefConst;
 
 	public void Initialize()
 		throws JewelEngineException
 	{
 	    Class<?> lrefClass;
-	    Constructor<?> lrefConst;
 
 		try
 		{
 			lrefClass = Class.forName(((String)getAt(1)).replaceAll("MADDS", "Jewel"));
-			lrefConst = lrefClass.getConstructor(new Class<?>[] {});
-			mobjProcesser = (FileIOBase)lrefConst.newInstance();
+			mrefConst = lrefClass.getConstructor(new Class<?>[] {});
 		}
 		catch (Throwable e)
 		{
@@ -62,12 +128,33 @@ public class FileProcesser
 		}
 	}
 
-	public void Process(FileData pobjData)
+	public void Process(FileXfer pobjFile, UUID pidFormat)
 		throws BigBangJewelException
 	{
-		if ( mobjProcesser == null )
+		FileSpec lobjSpec;
+		FileData lobjData;
+		FileIOBase lobjProcesser;
+
+		if ( mrefConst == null )
 			throw new BigBangJewelException("Erro inesperado a inicializar o processador de ficheiros.");
 
-		mobjProcesser.Parse(pobjData);
+		try
+		{
+			lobjSpec = FileSpec.GetInstance(Engine.getCurrentNameSpace(), pidFormat);
+			lobjData = lobjSpec.ParseFile(pobjFile);
+			lobjProcesser = (FileIOBase)mrefConst.newInstance();
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangJewelException(e.getMessage(), e);
+		}
+
+//		lobjProcesser.midUser = Engine.getCurrentUser();
+//		lobjProcesser.midNameSpace = Engine.getCurrentNameSpace();
+		lobjProcesser.mstrFileName = pobjFile.getFileName();
+		lobjProcesser.midFormat = pidFormat;
+		lobjProcesser.mobjData = lobjData;
+
+		Engine.getThread(lobjProcesser).start();
 	}
 }

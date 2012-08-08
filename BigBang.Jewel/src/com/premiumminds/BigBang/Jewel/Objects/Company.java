@@ -43,6 +43,73 @@ public class Company
 		}
 	}
 
+	public static UUID FindCompanyu(UUID pidNameSpace, String pstrCode)
+		throws BigBangJewelException
+	{
+		IEntity lrefCompanies;
+        MasterDB ldb;
+        ResultSet lrsCompanies;
+		Company lobjResult;
+
+		lobjResult = null;
+
+		try
+		{
+			lrefCompanies = Entity.GetInstance(Engine.FindEntity(pidNameSpace, Constants.ObjID_Company));
+			ldb = new MasterDB();
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangJewelException(e.getMessage(), e);
+		}
+
+        try
+        {
+        	lrsCompanies = lrefCompanies.SelectByMembers(ldb, new int[] {1}, new java.lang.Object[] {"!" + pstrCode}, new int[0]);
+		}
+		catch (Throwable e)
+		{
+			try { ldb.Disconnect(); } catch (Throwable e1) {}
+			throw new BigBangJewelException(e.getMessage(), e);
+		}
+
+		try
+		{
+	        if (lrsCompanies.next())
+	        	lobjResult = GetInstance(Engine.getCurrentNameSpace(), lrsCompanies);
+        }
+        catch (Throwable e)
+        {
+			try { lrsCompanies.close(); } catch (Throwable e2) {}
+			try { ldb.Disconnect(); } catch (Throwable e1) {}
+        	throw new BigBangJewelException(e.getMessage(), e);
+        }
+
+        try
+        {
+        	lrsCompanies.close();
+        }
+		catch (Throwable e)
+		{
+			try { ldb.Disconnect(); } catch (Throwable e1) {}
+			throw new BigBangJewelException(e.getMessage(), e);
+		}
+
+		try
+		{
+			ldb.Disconnect();
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangJewelException(e.getMessage(), e);
+		}
+
+		if ( lobjResult == null )
+			return null;
+
+		return lobjResult.getKey();
+	}
+
 	public void Initialize()
 		throws JewelEngineException
 	{

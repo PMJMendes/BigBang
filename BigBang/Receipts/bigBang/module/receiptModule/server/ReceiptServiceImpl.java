@@ -1150,8 +1150,7 @@ public class ReceiptServiceImpl
 			lopCR.mobjData.mdblTotal = new BigDecimal(receipt.totalPremium+"");
 			lopCR.mobjData.mdblCommercial = (receipt.salesPremium == null ? null : new BigDecimal(receipt.salesPremium+""));
 			lopCR.mobjData.mdblCommissions = (receipt.comissions == null ? new BigDecimal(0) : new BigDecimal(receipt.comissions+""));
-			lopCR.mobjData.mdblRetrocessions = (receipt.retrocessions == null ? new BigDecimal(0) :
-					new BigDecimal(receipt.retrocessions+""));
+			lopCR.mobjData.mdblRetrocessions = (receipt.retrocessions == null ? null : new BigDecimal(receipt.retrocessions+""));
 			lopCR.mobjData.mdblFAT = (receipt.FATValue == null ? null : new BigDecimal(receipt.FATValue+""));
 			lopCR.mobjData.mdblBonusMalus = (receipt.bonusMalus == null ? null : new BigDecimal(receipt.bonusMalus + ""));
 			lopCR.mobjData.mbIsMalus = receipt.isMalus;
@@ -2488,8 +2487,7 @@ public class ReceiptServiceImpl
 		result.mdblTotal = new BigDecimal(receipt.totalPremium+"");
 		result.mdblCommercial = (receipt.salesPremium == null ? null : new BigDecimal(receipt.salesPremium + ""));
 		result.mdblCommissions = (receipt.comissions == null ? new BigDecimal(0) : new BigDecimal(receipt.comissions + ""));
-		result.mdblRetrocessions = (receipt.retrocessions == null ? new BigDecimal(0) :
-				new BigDecimal(receipt.retrocessions+""));
+		result.mdblRetrocessions = (receipt.retrocessions == null ? null : new BigDecimal(receipt.retrocessions+""));
 		result.mdblFAT = (receipt.FATValue == null ? null : new BigDecimal(receipt.FATValue + ""));
 		result.mdblBonusMalus = (receipt.bonusMalus == null ? null : new BigDecimal(receipt.bonusMalus + ""));
 		result.mbIsMalus = receipt.isMalus;
