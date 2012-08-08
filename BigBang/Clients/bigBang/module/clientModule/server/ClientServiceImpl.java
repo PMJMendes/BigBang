@@ -572,7 +572,7 @@ public class ClientServiceImpl
 			lstrAux = lParam.freeText.trim().replace("'", "''").replace(" ", "%");
 			pstrBuffer.append(" AND ([:Name] LIKE N'%").append(lstrAux).append("%'")
 					.append(" OR CAST([:Number] AS NVARCHAR(20)) LIKE N'%").append(lstrAux).append("%'")
-					.append(" OR [:Fiscal Number] LIKE N'%").append(lstrAux).append("%')")
+					.append(" OR [:Fiscal Number] LIKE N'%").append(lstrAux).append("%'")
 					.append(" OR [:Group:Name] LIKE N'%").append(lstrAux).append("%')");
 		}
 
