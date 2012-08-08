@@ -28,6 +28,7 @@ public abstract class FormField<T> extends View implements HasValue<T>, Validata
 	@Override
 	protected void initializeView() {
 		this.label = new Label();
+		label.setStyleName("bigBangFormFieldLabel");
 		errorMessageLabel = new Label();
 		errorMessageLabel.getElement().getStyle().setMarginLeft(5, Unit.PX);
 		errorMessageLabel.getElement().getStyle().setColor("#F00");
