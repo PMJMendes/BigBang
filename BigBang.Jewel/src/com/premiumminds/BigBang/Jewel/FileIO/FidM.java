@@ -239,7 +239,7 @@ public class FidM
 		Policy lobjResult;
 		int llngFound;
 
-		midCompany = Company.FindCompanyu(Engine.getCurrentNameSpace(), "MCO");
+		midCompany = Company.FindCompany(Engine.getCurrentNameSpace(), "MCO");
 		if ( midCompany == null )
 			throw new BigBangJewelException("Inesperado: Fidelidade-Mundial não encontrada.");
 

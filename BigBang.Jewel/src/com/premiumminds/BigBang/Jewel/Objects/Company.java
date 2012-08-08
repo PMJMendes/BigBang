@@ -43,7 +43,7 @@ public class Company
 		}
 	}
 
-	public static UUID FindCompanyu(UUID pidNameSpace, String pstrCode)
+	public static UUID FindCompany(UUID pidNameSpace, String pstrCode)
 		throws BigBangJewelException
 	{
 		IEntity lrefCompanies;

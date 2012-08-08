@@ -6,6 +6,8 @@ import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.UUID;
 
+import org.apache.ecs.GenericElement;
+
 import Jewel.Engine.Engine;
 import Jewel.Engine.DataAccess.MasterDB;
 import Jewel.Engine.Implementation.Entity;
@@ -509,4 +511,16 @@ public class Receipt
 
 		return ldblPercent.abs().multiply(ldblBase).setScale(2, RoundingMode.HALF_UP);
     }
+
+	public static GenericElement[] printImportReport(String[] parrParams)
+		throws BigBangJewelException
+	{
+		FileImportSession lobjSession;
+
+		if ( (parrParams == null) || (parrParams.length < 2) )
+			throw new BigBangJewelException("Erro: Número de parâmetros inválido.");
+
+		lobjSession = FileImportSession.GetInstance(Engine.getCurrentNameSpace(), UUID.fromString(parrParams[1]));
+		return lobjSession.printReport(parrParams);
+	}
 }

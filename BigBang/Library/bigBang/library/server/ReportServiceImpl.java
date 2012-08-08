@@ -1,5 +1,6 @@
 package bigBang.library.server;
 
+import java.lang.reflect.Method;
 import java.sql.ResultSet;
 import java.sql.Timestamp;
 import java.util.ArrayList;
@@ -289,12 +290,39 @@ public class ReportServiceImpl
 		return larrResult;
 	}
 
-	@Override
 	public Report generateParamReport(String itemId, String[] paramValues)
 		throws SessionExpiredException, BigBangException
 	{
-		// TODO Auto-generated method stub
-		return null;
+		ReportDef lobjReport;
+		Report lobjResult;
+		Method lrefMethod;
+		GenericElement[] larrBuffer;
+		int i;
+
+		if ( Engine.getCurrentUser() == null )
+			throw new SessionExpiredException();
+
+		try
+		{
+			lobjReport = ReportDef.GetInstance(Engine.getCurrentNameSpace(), UUID.fromString(itemId));
+			lrefMethod = lobjReport.getMethod();
+			larrBuffer = (GenericElement[])lrefMethod.invoke(null, new java.lang.Object[] {paramValues});
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangException(e.getMessage(), e);
+		}
+
+		lobjResult = new Report();
+		lobjResult.sections = new Report.Section[larrBuffer.length];
+		for ( i = 0; i < larrBuffer.length; i++ )
+		{
+			lobjResult.sections[i] = new Report.Section();
+			lobjResult.sections[i].htmlContent = larrBuffer[i].toString();
+			lobjResult.sections[i].verbs = new Report.Section.Verb[0];
+		}
+
+		return lobjResult;
 	}
 
 	public Report generatePrintSetReport(String itemId, String printSetId)

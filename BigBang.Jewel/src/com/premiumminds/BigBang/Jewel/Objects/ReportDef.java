@@ -1,5 +1,6 @@
 package com.premiumminds.BigBang.Jewel.Objects;
 
+import java.lang.reflect.Method;
 import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.UUID;
@@ -10,6 +11,7 @@ import com.premiumminds.BigBang.Jewel.Constants;
 import Jewel.Engine.Engine;
 import Jewel.Engine.DataAccess.MasterDB;
 import Jewel.Engine.Implementation.Entity;
+import Jewel.Engine.Implementation.Object;
 import Jewel.Engine.Interfaces.IEntity;
 import Jewel.Engine.SysObjects.JewelEngineException;
 import Jewel.Engine.SysObjects.ObjectBase;
@@ -199,5 +201,38 @@ public class ReportDef
 		}
 
 		return larrAux.toArray(new ReportParam[larrAux.size()]);
+    }
+
+    public Class<?> getReportClass()
+    	throws BigBangJewelException
+    {
+    	Object lobjObject;
+
+    	try
+    	{
+			lobjObject = Object.GetInstance((UUID)getAt(2));
+		}
+    	catch (Throwable e)
+    	{
+    		throw new BigBangJewelException(e.getMessage(), e);
+		}
+
+		return lobjObject.getClassType();
+    }
+
+    public Method getMethod()
+    	throws BigBangJewelException
+    {
+    	Class<?> lrefClass;
+
+    	lrefClass = getReportClass();
+    	try
+    	{
+			return lrefClass.getMethod((String)getAt(6), new Class<?>[] {String[].class});
+		}
+    	catch (Throwable e)
+    	{
+    		throw new BigBangJewelException(e.getMessage(), e);
+		}
     }
 }
