@@ -14,6 +14,11 @@ h1 {
 	text-align: center;
 }
 
+.bigBangFormFieldLabel{
+	font-size: 11px;
+	font-weight: bold;	
+}
+
 .gwt-MenuBarPopup{
 	z-index: 12000;
 }
