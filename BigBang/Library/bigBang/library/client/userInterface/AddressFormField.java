@@ -47,13 +47,14 @@ public class AddressFormField extends FormField<Address> {
 		street2.setWidth("100%");
 		
 		Label street = new Label("Rua:");
-		street.setWidth("83px");
+		street.setStyleName("bigBangFormFieldLabel");
+		street.setWidth("78px");
 		streetWrapper.getColumnFormatter().setWidth(1, "100%");
 		streetWrapper.setWidget(0, 0, street);
 		streetWrapper.getCellFormatter().setHorizontalAlignment(0, 0, HasHorizontalAlignment.ALIGN_RIGHT);
 		streetWrapper.setWidget(0, 1, street1);
 		streetWrapper.setWidget(1, 1, street2);
-		streetWrapper.getCellFormatter().setWidth(0, 0, "83px");
+		streetWrapper.getCellFormatter().setWidth(0, 0, "78px");
 		
 		wrapper.add(streetWrapper);
 		wrapper.add(zipCode);
@@ -68,11 +69,11 @@ public class AddressFormField extends FormField<Address> {
 		zipCode.setReadOnly(readOnly);
 		
 		if(readOnly){
-			street1.addStyleName("readonly");
-			street2.addStyleName("readonly");
+			street1.addStyleName("gwt-TextBox-readonly");
+			street2.addStyleName("gwt-TextBox-readonly");
 		}else{
-			street1.removeStyleName("readonly");
-			street2.removeStyleName("readonly");
+			street1.removeStyleName("gwt-TextBox-readonly");
+			street2.removeStyleName("gwt-TextBox-readonly");
 		}
 		
 		street1.getElement().getStyle().setBackgroundColor(readOnly ? "transparent" : "white");
