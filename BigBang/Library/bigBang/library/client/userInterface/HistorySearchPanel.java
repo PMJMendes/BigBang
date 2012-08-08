@@ -162,8 +162,9 @@ public class HistorySearchPanel extends SearchPanel<HistoryItemStub>  implements
 	public void selectItem(String id){
 		for(ListEntry<HistoryItemStub> i : this){
 			if(i.getValue().id.equalsIgnoreCase(id)){
-				i.setSelected(true, true);
-				break;
+				i.setSelected(true, false);
+			}else{
+				i.setSelected(false,false);
 			}
 		}
 
