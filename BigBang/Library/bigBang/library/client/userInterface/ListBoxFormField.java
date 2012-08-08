@@ -49,6 +49,7 @@ public class ListBoxFormField extends FormField<String> {
 		initWidget(mainWrapper);
 
 		this.label = new Label();
+		label.setStyleName("bigBangFormFieldLabel");
 		mainWrapper.add(this.label);
 		wrapper = new HorizontalPanel();
 		mainWrapper.add(wrapper);
