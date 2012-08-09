@@ -271,7 +271,7 @@ public class MassInsurerAccountingViewPresenter implements ViewPresenter{
 			if(insurerId != null){
 				if(insurerId.isEmpty()){
 					insurerId = receipt.insurerId;
-				}else if(!insurerId.equalsIgnoreCase(receipt.id)){
+				}else if(!insurerId.equalsIgnoreCase(receipt.insurerId)){
 					insurerId = null;
 				}
 			}
@@ -287,20 +287,22 @@ public class MassInsurerAccountingViewPresenter implements ViewPresenter{
 			extras = new InsurerAccountingExtra[]{
 				extra
 			};
+			
+			broker.insurerAccounting(receiptIds, extras, new ResponseHandler<Void>() {
+
+				@Override
+				public void onResponse(Void response) {
+					onInsurerAccountingSuccess();
+				}
+
+				@Override
+				public void onError(Collection<ResponseError> errors) {
+					onInsurerAccountingFailed();
+				}
+			});
+		}else{
+			onInsurerAccountingFailed();
 		}
-		
-		broker.insurerAccounting(receiptIds, extras, new ResponseHandler<Void>() {
-
-			@Override
-			public void onResponse(Void response) {
-				onInsurerAccountingSuccess();
-			}
-
-			@Override
-			public void onError(Collection<ResponseError> errors) {
-				onInsurerAccountingFailed();
-			}
-		});
 	}
 
 	protected boolean validate(){

@@ -177,7 +177,6 @@ public class List<T> extends View implements HasValueSelectables<T>, java.util.L
 
 			@Override
 			public void onKeyDown(KeyDownEvent event) {
-
 				switch(event.getNativeKeyCode()){
 				case KeyCodes.KEY_UP:
 					selectPrevious(false);
@@ -185,6 +184,10 @@ public class List<T> extends View implements HasValueSelectables<T>, java.util.L
 					break;
 				case KeyCodes.KEY_DOWN:
 					selectNext(false);
+					event.preventDefault();
+					break;
+				case 32:
+					toggleCheckCurrentEntry();
 					event.preventDefault();
 					break;
 				}
@@ -418,6 +421,14 @@ public class List<T> extends View implements HasValueSelectables<T>, java.util.L
 				result.add(e);
 		}
 		return result;
+	}
+
+	protected void toggleCheckCurrentEntry(){
+		Collection<ValueSelectable<T>> selected = getSelected();
+		for(ValueSelectable<T> c : selected) {
+			ListEntry<T> entry = (ListEntry<T>) c; 
+			entry.setChecked(!entry.isChecked());
+		}
 	}
 
 	@Override
