@@ -312,6 +312,7 @@ public class SubPolicyViewPresenter implements ViewPresenter {
 				selectionChangedHandler);
 		view.getExpensesList().addSelectionChangedEventHandler(
 				selectionChangedHandler);
+		view.getSubProcessesList().addSelectionChangedEventHandler(selectionChangedHandler);
 
 		bound = true;
 	}
@@ -831,10 +832,10 @@ public class SubPolicyViewPresenter implements ViewPresenter {
 
 			@Override
 			public void onResponse(Void response) {
-				NavigationHistoryItem item = new NavigationHistoryItem();
+				NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
 				if (process.dataTypeId
 						.equalsIgnoreCase(BigBangConstants.EntityIds.INFO_REQUEST)) {
-					item.pushIntoStackParameter("display", "viewinforequest");
+					item.pushIntoStackParameter("display", "viewsubpolicyinforequest");
 					item.setParameter("requestid", process.dataId);
 				}
 				NavigationHistoryManager.getInstance().go(item);

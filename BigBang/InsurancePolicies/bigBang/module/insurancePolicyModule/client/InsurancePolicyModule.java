@@ -45,6 +45,7 @@ import bigBang.module.insurancePolicyModule.client.userInterface.presenter.SubPo
 import bigBang.module.insurancePolicyModule.client.userInterface.presenter.SubPolicyViewPresenter;
 import bigBang.module.insurancePolicyModule.client.userInterface.presenter.SubPolicyVoidViewPresenter;
 import bigBang.module.insurancePolicyModule.client.userInterface.presenter.ViewInsurancePolicyInfoRequestViewPresenter;
+import bigBang.module.insurancePolicyModule.client.userInterface.presenter.ViewSubPolicyInfoRequestViewPresenter;
 import bigBang.module.insurancePolicyModule.client.userInterface.view.CreateDebitNoteView;
 import bigBang.module.insurancePolicyModule.client.userInterface.view.CreateExpenseSubPolicyView;
 import bigBang.module.insurancePolicyModule.client.userInterface.view.CreateExpenseView;
@@ -73,6 +74,7 @@ import bigBang.module.insurancePolicyModule.client.userInterface.view.SubPolicyT
 import bigBang.module.insurancePolicyModule.client.userInterface.view.SubPolicyView;
 import bigBang.module.insurancePolicyModule.client.userInterface.view.SubPolicyVoidView;
 import bigBang.module.insurancePolicyModule.client.userInterface.view.ViewInsurancePolicyInfoRequestView;
+import bigBang.module.insurancePolicyModule.client.userInterface.view.ViewSubPolicyInfoRequestView;
 import bigBang.module.quoteRequestModule.client.userInterface.presenter.NegotiationDeleteViewPresenter;
 import bigBang.module.quoteRequestModule.client.userInterface.presenter.NegotiationExternalRequestViewPresenter;
 import bigBang.module.quoteRequestModule.client.userInterface.presenter.NegotiationResponseViewPresenter;
@@ -386,6 +388,15 @@ public class InsurancePolicyModule implements Module {
 			public ViewPresenter getInstance() {
 				ViewInsurancePolicyInfoRequestView view = (ViewInsurancePolicyInfoRequestView) GWT.create(ViewInsurancePolicyInfoRequestView.class);
 				ViewInsurancePolicyInfoRequestViewPresenter presenter = new ViewInsurancePolicyInfoRequestViewPresenter(view);
+				return presenter;
+			}
+		});
+		ViewPresenterFactory.getInstance().registerViewPresenterInstantiator("VIEW_SUB_POLICY_INFO_REQUEST", new ViewPresenterInstantiator() {
+
+			@Override
+			public ViewPresenter getInstance() {
+				ViewSubPolicyInfoRequestView view = (ViewSubPolicyInfoRequestView) GWT.create(ViewSubPolicyInfoRequestView.class);
+				ViewSubPolicyInfoRequestViewPresenter presenter = new ViewSubPolicyInfoRequestViewPresenter(view);
 				return presenter;
 			}
 		});

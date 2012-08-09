@@ -93,6 +93,8 @@ public class InsurancePolicyOperationsViewPresenter implements ViewPresenter {
 					present("INSURANCE_POLICY_CREATE_CLIENT_INFO_REQUEST", parameters);
 				}else if(display.equalsIgnoreCase("viewinforequest")){
 					present("VIEW_INSURANCE_POLICY_INFO_REQUEST", parameters);
+				}else if(display.equalsIgnoreCase("viewsubpolicyinforequest")){
+					present("VIEW_SUB_POLICY_INFO_REQUEST", parameters);
 				}else{
 					goToDefault();
 				}

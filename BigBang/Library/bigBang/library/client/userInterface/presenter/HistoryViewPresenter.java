@@ -3,7 +3,9 @@ package bigBang.library.client.userInterface.presenter;
 import java.util.Collection;
 
 import bigBang.definitions.client.dataAccess.HistoryBroker;
+import bigBang.definitions.client.dataAccess.InsuranceSubPolicyBroker;
 import bigBang.definitions.client.dataAccess.NegotiationBroker;
+import bigBang.definitions.client.dataAccess.SubCasualtyDataBroker;
 import bigBang.definitions.client.response.ResponseError;
 import bigBang.definitions.client.response.ResponseHandler;
 import bigBang.definitions.shared.BigBangConstants;
@@ -11,6 +13,8 @@ import bigBang.definitions.shared.HistoryItem;
 import bigBang.definitions.shared.HistoryItemStub;
 import bigBang.definitions.shared.InfoOrDocumentRequest;
 import bigBang.definitions.shared.Negotiation;
+import bigBang.definitions.shared.SubCasualty;
+import bigBang.definitions.shared.SubPolicy;
 import bigBang.library.client.BigBangAsyncCallback;
 import bigBang.library.client.EventBus;
 import bigBang.library.client.HasParameters;
@@ -210,9 +214,12 @@ public class HistoryViewPresenter implements ViewPresenter {
 
 	private void onNavigateToAuxiliaryProcess(){
 		HistoryItem historyItem = view.getForm().getValue();
+		NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
+		
+		String ownerId = item.getParameter("historyownerid");
 		String auxObjectType = historyItem.otherObjectTypeId;
 		String auxObjectId = historyItem.otherObjectId;
-
+		
 		if(auxObjectType == null || auxObjectId == null){
 			onNavigateToAuxiliaryProcess();
 		}else{
@@ -250,18 +257,32 @@ public class HistoryViewPresenter implements ViewPresenter {
 				navigateToDASRequest(auxObjectId);
 				
 			}else if(auxObjectType.equalsIgnoreCase(BigBangConstants.EntityIds.SUB_CASUALTY)){
-				navigateToSubCasualty(auxObjectId);
+				navigateToSubCasualty(auxObjectId, ownerId);
 				
 			}else if(auxObjectType.equalsIgnoreCase(BigBangConstants.EntityIds.INFO_REQUEST)){
-				navigateToInfoRequest(auxObjectId);
+				navigateToInfoRequest(auxObjectId, ownerId);
 				
-			}else{
+			}else if(auxObjectType.equalsIgnoreCase(BigBangConstants.EntityIds.INSURANCE_SUB_POLICY)){
+				navigateToSubPolicy(auxObjectId, ownerId);
+			}
+			else {
 				onNavigateToAuxiliaryProcessFailed();
 				return;
 			}
 		}
 	}
 	
+	private void navigateToSubPolicy(String auxObjectId, String ownerId) {
+		NavigationHistoryItem navigationItem = new NavigationHistoryItem();
+		navigationItem.setStackParameter("display");
+		navigationItem.setParameter("section","insurancepolicy");
+		navigationItem.pushIntoStackParameter("display", "search");
+		navigationItem.pushIntoStackParameter("display", "subpolicy");
+		navigationItem.setParameter("policyid", ownerId);
+		navigationItem.setParameter("subpolicyid", auxObjectId);
+		NavigationHistoryManager.getInstance().go(navigationItem);
+	}
+
 	private void onGoBack(){
 		NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
 		item.removeParameter("historyitemid");
@@ -270,13 +291,15 @@ public class HistoryViewPresenter implements ViewPresenter {
 		NavigationHistoryManager.getInstance().go(item);
 	}
 	
-	private void navigateToSubCasualty(String auxObjectId) {
+	private void navigateToSubCasualty(String auxObjectId, String ownerId) {
 		NavigationHistoryItem navigationItem = new NavigationHistoryItem();
 		navigationItem.setStackParameter("display");
-		navigationItem.setParameter("section", "casualty");
+		navigationItem.setParameter("section","casualty");
 		navigationItem.pushIntoStackParameter("display", "search");
-		navigationItem.setParameter("casualtyid", auxObjectId);
-		NavigationHistoryManager.getInstance().go(navigationItem);		
+		navigationItem.pushIntoStackParameter("display", "subcasualty");
+		navigationItem.setParameter("casualtyid", ownerId);
+		navigationItem.setParameter("subcasualtyid", auxObjectId);
+		NavigationHistoryManager.getInstance().go(navigationItem);
 	}
 
 	private void navigateToDASRequest(String auxObjectId) {
@@ -398,13 +421,85 @@ public class HistoryViewPresenter implements ViewPresenter {
 		NavigationHistoryManager.getInstance().go(navigationItem);
 	}
 	
-	private void navigateToInfoRequest(String auxObjectId) {
+	private void navigateToInfoRequest(String auxObjectId, final String ownerId) {
 		InfoOrDocumentRequestServiceAsync service = InfoOrDocumentRequestService.Util.getInstance();
 		service.getRequest(auxObjectId, new BigBangAsyncCallback<InfoOrDocumentRequest>() {
 
 			@Override
 			public void onResponseSuccess(InfoOrDocumentRequest result) {
-//				r
+				
+				final NavigationHistoryItem navigationItem = new NavigationHistoryItem();
+				navigationItem.setStackParameter("display");
+				navigationItem.pushIntoStackParameter("display", "search");
+				navigationItem.pushIntoStackParameter("display", "viewinforequest");
+				navigationItem.setParameter("requestid", result.id);
+
+				if(result.parentDataTypeId.equalsIgnoreCase(BigBangConstants.EntityIds.EXPENSE)){					
+					navigationItem.setParameter("section", "expense");
+					navigationItem.setParameter("expenseid", ownerId);
+					NavigationHistoryManager.getInstance().go(navigationItem);
+				}else if(result.parentDataTypeId.equalsIgnoreCase(BigBangConstants.EntityIds.CLIENT)){
+					navigationItem.setParameter("section", "client");
+					navigationItem.setParameter("clientid", ownerId);
+					NavigationHistoryManager.getInstance().go(navigationItem);
+				}else if(result.parentDataTypeId.equalsIgnoreCase(BigBangConstants.EntityIds.INSURANCE_POLICY)){
+					navigationItem.setParameter("section", "insurancepolicy");
+					navigationItem.setParameter("policyid", ownerId);
+					NavigationHistoryManager.getInstance().go(navigationItem);
+				}else if(result.parentDataTypeId.equalsIgnoreCase(BigBangConstants.EntityIds.INSURANCE_SUB_POLICY)){
+					
+					InsuranceSubPolicyBroker broker = (InsuranceSubPolicyBroker) DataBrokerManager.staticGetBroker(BigBangConstants.EntityIds.INSURANCE_SUB_POLICY);
+					broker.getSubPolicy(ownerId, new ResponseHandler<SubPolicy>() {
+						
+						@Override
+						public void onResponse(SubPolicy response) {
+							navigationItem.setParameter("section", "insurancepolicy");
+							navigationItem.setParameter("policyid", response.mainPolicyId);
+							navigationItem.popFromStackParameter("display");
+							navigationItem.pushIntoStackParameter("display", "subpolicy");
+							navigationItem.pushIntoStackParameter("display", "viewsubpolicyinforequest");
+							navigationItem.setParameter("subpolicyid", response.id);
+							NavigationHistoryManager.getInstance().go(navigationItem);
+						}
+						
+						@Override
+						public void onError(Collection<ResponseError> errors) {
+							onNavigateToAuxiliaryProcessFailed();
+						}
+					});
+					
+				}else if(result.parentDataTypeId.equalsIgnoreCase(BigBangConstants.EntityIds.CASUALTY)){
+					navigationItem.setParameter("section", "casualty" );
+					navigationItem.setParameter("casualtyid", ownerId);
+					NavigationHistoryManager.getInstance().go(navigationItem);
+					
+				}else if(result.parentDataTypeId.equalsIgnoreCase(BigBangConstants.EntityIds.SUB_CASUALTY)){
+					
+					SubCasualtyDataBroker broker = (SubCasualtyDataBroker) DataBrokerManager.staticGetBroker(BigBangConstants.EntityIds.SUB_CASUALTY);
+					broker.getSubCasualty(ownerId, new ResponseHandler<SubCasualty>() {
+						
+						@Override
+						public void onResponse(SubCasualty response) {
+							navigationItem.setParameter("section", "casualty");
+							navigationItem.setParameter("casualtyid", response.casualtyId);
+							navigationItem.popFromStackParameter("display");
+							navigationItem.pushIntoStackParameter("display", "subcasualty");
+							navigationItem.pushIntoStackParameter("display", "viewsubcasualtyinforequest");
+							navigationItem.setParameter("subcasualtyid", response.id);
+							NavigationHistoryManager.getInstance().go(navigationItem);
+						}
+						
+						@Override
+						public void onError(Collection<ResponseError> errors) {
+							onNavigateToAuxiliaryProcessFailed();
+						}
+					});
+					
+					
+				}else {
+					return;
+				}
+				
 			}
 			
 			@Override

@@ -2,11 +2,11 @@ package bigBang.module.insurancePolicyModule.client.userInterface.presenter;
 
 import java.util.Collection;
 
-import bigBang.definitions.client.dataAccess.InsurancePolicyBroker;
+import bigBang.definitions.client.dataAccess.InsuranceSubPolicyBroker;
 import bigBang.definitions.client.response.ResponseError;
 import bigBang.definitions.client.response.ResponseHandler;
 import bigBang.definitions.shared.BigBangConstants;
-import bigBang.definitions.shared.InsurancePolicy;
+import bigBang.definitions.shared.SubPolicy;
 import bigBang.library.client.EventBus;
 import bigBang.library.client.Notification;
 import bigBang.library.client.Notification.TYPE;
@@ -16,22 +16,22 @@ import bigBang.library.client.history.NavigationHistoryItem;
 import bigBang.library.client.history.NavigationHistoryManager;
 import bigBang.library.client.userInterface.presenter.ViewInfoOrDocumentRequestViewPresenter;
 
-public class ViewInsurancePolicyInfoRequestViewPresenter extends ViewInfoOrDocumentRequestViewPresenter<InsurancePolicy>{
+public class ViewSubPolicyInfoRequestViewPresenter extends ViewInfoOrDocumentRequestViewPresenter<SubPolicy>{
 
-	private InsurancePolicyBroker broker;
+	private InsuranceSubPolicyBroker broker;
 	
-	public ViewInsurancePolicyInfoRequestViewPresenter(Display<InsurancePolicy> view){
+	public ViewSubPolicyInfoRequestViewPresenter(
+			bigBang.library.client.userInterface.presenter.ViewInfoOrDocumentRequestViewPresenter.Display<SubPolicy> view) {
 		super(view);
-		broker = (InsurancePolicyBroker) DataBrokerManager.staticGetBroker(BigBangConstants.EntityIds.INSURANCE_POLICY);
-		
+		broker = (InsuranceSubPolicyBroker) DataBrokerManager.staticGetBroker(BigBangConstants.EntityIds.INSURANCE_SUB_POLICY);
 	}
 
 	@Override
 	protected void showParent(String parentId) {
-		broker.getPolicy(parentId, new ResponseHandler<InsurancePolicy>() {
+		broker.getSubPolicy(parentId, new ResponseHandler<SubPolicy>() {
 			
 			@Override
-			public void onResponse(InsurancePolicy response) {
+			public void onResponse(SubPolicy response) {
 				view.getParentForm().setValue(response);
 			}
 			
@@ -63,12 +63,12 @@ public class ViewInsurancePolicyInfoRequestViewPresenter extends ViewInfoOrDocum
 	@Override
 	protected void onRepeatSuccess() {
 		EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "O Pedido de Informação foi Repetido com Sucesso"), TYPE.TRAY_NOTIFICATION));
-		NavigationHistoryManager.getInstance().reload();
+		NavigationHistoryManager.getInstance().reload();		
 	}
 
 	@Override
 	protected void onRepeatFailed() {
-		EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não foi possível Repetir o Pedido de Informação"), TYPE.ALERT_NOTIFICATION));
+		EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não foi possível Repetir o Pedido de Informação"), TYPE.ALERT_NOTIFICATION));		
 	}
-	
+
 }

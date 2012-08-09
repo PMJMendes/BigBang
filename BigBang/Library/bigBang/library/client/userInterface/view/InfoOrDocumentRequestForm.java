@@ -92,8 +92,11 @@ public class InfoOrDocumentRequestForm extends FormView<InfoOrDocumentRequest> {
 		request.requestTypeId = requestType.getValue();
 		TypifiedText requestText = text.getValue();
 		request.message.toContactInfoId = to.getValue();
+		try{
 		request.replylimit = replyLimit.getValue().intValue();
-		
+		}catch(Exception e){
+			request.replylimit = null;
+		}
 		Collection<String> selectedUsers = this.forwardReply.getValue();
 		String[] users = new String[selectedUsers.size()];
 		int i = 0;

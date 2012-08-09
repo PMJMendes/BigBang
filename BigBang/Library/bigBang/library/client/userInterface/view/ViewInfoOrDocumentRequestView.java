@@ -34,7 +34,7 @@ public abstract class ViewInfoOrDocumentRequestView<T extends ProcessBase> exten
 		VerticalPanel ownerFormWrapper = new VerticalPanel();
 		ownerFormWrapper.setSize("100%", "100%");
 				
-		ListHeader ownerFormHeader = new ListHeader("Cliente");
+		ListHeader ownerFormHeader = new ListHeader("Ficha do Processo");
 		ownerFormHeader.setHeight("30px");
 		ownerFormWrapper.add(ownerFormHeader);
 		
