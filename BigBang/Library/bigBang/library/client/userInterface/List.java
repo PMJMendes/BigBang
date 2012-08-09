@@ -214,7 +214,7 @@ public class List<T> extends View implements HasValueSelectables<T>, java.util.L
 
 			@Override
 			public void onBlur(BlurEvent event) {
-				fireCurrentSelection();
+//				fireCurrentSelection(); //TODO apenas quando existe uma tecla ainda premida
 				Collection<ValueSelectable<T>> selected = getSelected();
 				for(ValueSelectable<T> entry : selected) {
 					((ListEntry<T>) entry).setSelectedBlur();
