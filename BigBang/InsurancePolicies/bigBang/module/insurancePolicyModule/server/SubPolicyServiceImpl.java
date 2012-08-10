@@ -2693,7 +2693,7 @@ public class SubPolicyServiceImpl
 			throw new BigBangException("Erro: Não pode inicializar uma apólice adesão sem abrir o espaço de trabalho.");
 
 		if ( subPolicy.mainPolicyId == null )
-			throw new BigBangException("Erro: Não pode inicializar uma apólice adesão antes de preencher a a apólice-mãe.");
+			throw new BigBangException("Erro: Não pode inicializar uma apólice adesão antes de preencher a apólice-mãe.");
 
 		lobjPad = GetScratchPadStorage().get(UUID.fromString(subPolicy.id));
 		lobjPad.InitNew(subPolicy);

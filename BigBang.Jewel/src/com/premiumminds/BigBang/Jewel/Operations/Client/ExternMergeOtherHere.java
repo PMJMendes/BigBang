@@ -1,5 +1,6 @@
 package com.premiumminds.BigBang.Jewel.Operations.Client;
 
+import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.UUID;
 
@@ -22,6 +23,8 @@ import com.premiumminds.BigBang.Jewel.Objects.Contact;
 import com.premiumminds.BigBang.Jewel.Objects.ContactInfo;
 import com.premiumminds.BigBang.Jewel.Objects.DocInfo;
 import com.premiumminds.BigBang.Jewel.Objects.Document;
+import com.premiumminds.BigBang.Jewel.Objects.Policy;
+import com.premiumminds.BigBang.Jewel.Objects.SubPolicy;
 import com.premiumminds.BigBang.Jewel.Operations.ContactOps;
 import com.premiumminds.BigBang.Jewel.Operations.DocOps;
 
@@ -35,6 +38,7 @@ public class ExternMergeOtherHere
 	private ContactOps mobjContactOps;
 	private DocOps mobjDocOps;
 	private UUID[] marrSubProcIDs;
+	private UUID[] marrSubPolicyIDs;
 	private UUID midNewClient;
 	private UUID midNewProcess;
 
@@ -81,7 +85,7 @@ public class ExternMergeOtherHere
 	protected void Run(SQLServer pdb)
 		throws JewelPetriException
 	{
-		Entity lrefClients;
+		Entity lrefClients, lrefSubPolicies;
 		Client lobjAux;
 		Contact[] larrContacts;
 		ContactInfo[] larrCInfo;
@@ -89,6 +93,10 @@ public class ExternMergeOtherHere
 		DocInfo[] larrDInfo;
 		PNProcess lobjProcess;
 		IProcess[] larrSubProcs;
+		Policy lobjPol;
+		ResultSet lrsSubPolicies;
+		ArrayList<SubPolicy> larrSubPs;
+		SubPolicy lobjSubPol;
 		int i, j;
 
 		try
@@ -96,8 +104,7 @@ public class ExternMergeOtherHere
 			midNewClient = GetProcess().GetData().getKey();
 			midNewProcess = GetProcess().getKey();
 
-			lrefClients = Entity.GetInstance(Engine.FindEntity(Engine.getCurrentNameSpace(),
-					Constants.ObjID_Client));
+			lrefClients = Entity.GetInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), Constants.ObjID_Client));
 
 			lobjAux = Client.GetInstance(Engine.getCurrentNameSpace(), midClientSource);
 			mobjSource = new ClientData();
@@ -116,11 +123,38 @@ public class ExternMergeOtherHere
 				{
 					marrSubProcIDs[i] = larrSubProcs[i].getKey();
 					larrSubProcs[i].SetParentProcId(midNewProcess, pdb);
+
+					if ( Constants.ProcID_Policy.equals(larrSubProcs[i].GetScriptID()) )
+					{
+						lobjPol = (Policy)larrSubProcs[i].GetData();
+						lobjPol.setAt(17, midNewClient);
+						lobjPol.SaveToDb(pdb);
+					}
 				}
 			}
 
-			lobjProcess.Stop(pdb);
-			lobjProcess.SetDataObjectID(null, pdb);
+			larrSubPs = new ArrayList<SubPolicy>();
+			lrefSubPolicies = Entity.GetInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), Constants.ObjID_SubPolicy));
+			lrsSubPolicies = lrefSubPolicies.SelectByMembers(pdb, new int[] {2}, new java.lang.Object[] {midClientSource}, null);
+			try
+			{
+				while ( lrsSubPolicies.next() )
+					larrSubPs.add(SubPolicy.GetInstance(Engine.getCurrentNameSpace(), lrsSubPolicies));
+			}
+			catch (Throwable e)
+			{
+				try { lrsSubPolicies.close(); } catch (Throwable e1) {}
+				throw e;
+			}
+			lrsSubPolicies.close();
+			marrSubPolicyIDs = new UUID[larrSubPs.size()];
+			for ( i = 0; i < larrSubPs.size(); i++ )
+			{
+				lobjSubPol = larrSubPs.get(i);
+				lobjSubPol.setAt(2, midNewClient);
+				lobjSubPol.SaveToDb(pdb);
+				marrSubPolicyIDs[i] = lobjSubPol.getKey();
+			}
 
 			larrContacts = lobjAux.GetCurrentContacts();
 			if ( (larrContacts == null) || (larrContacts.length == 0) )
@@ -178,6 +212,9 @@ public class ExternMergeOtherHere
 				mobjDocOps.RunSubOp(pdb, null);
 			}
 
+			lobjProcess.Stop(pdb);
+			lobjProcess.SetDataObjectID(null, pdb);
+
 			lrefClients.Delete(pdb, mobjSource.mid);
 		}
 		catch (Throwable e)
@@ -217,6 +254,8 @@ public class ExternMergeOtherHere
 		Client lobjAux;
 		PNProcess lobjProcess;
 		PNProcess lobjSubProcAux;
+		Policy lobjPol;
+		SubPolicy lobjSubPolicyAux;
 		int i;
 		ExternResumeClient lopERC;
 
@@ -245,12 +284,29 @@ public class ExternMergeOtherHere
 				mobjDocOps.UndoSubOp(pdb, lobjAux.getKey());
 			}
 
+			if ( marrSubPolicyIDs != null )
+			{
+				for ( i = 0; i < marrSubPolicyIDs.length; i++ )
+				{
+					lobjSubPolicyAux = SubPolicy.GetInstance(Engine.getCurrentNameSpace(), marrSubPolicyIDs[i]);
+					lobjSubPolicyAux.setAt(2, lobjAux.getKey());
+					lobjSubPolicyAux.SaveToDb(pdb);
+				}
+			}
+
 			if ( marrSubProcIDs != null )
 			{
 				for ( i = 0; i < marrSubProcIDs.length; i++ )
 				{
 					lobjSubProcAux = PNProcess.GetInstance(Engine.getCurrentNameSpace(), marrSubProcIDs[i]);
 					lobjSubProcAux.SetParentProcId(lobjProcess.getKey(), pdb);
+
+					if ( Constants.ProcID_Policy.equals(lobjSubProcAux.GetScriptID()) )
+					{
+						lobjPol = (Policy)lobjSubProcAux.GetData();
+						lobjPol.setAt(17, lobjAux.getKey());
+						lobjPol.SaveToDb(pdb);
+					}
 				}
 			}
 		}
