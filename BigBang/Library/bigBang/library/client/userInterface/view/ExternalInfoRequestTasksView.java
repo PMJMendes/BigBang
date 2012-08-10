@@ -45,6 +45,11 @@ public class ExternalInfoRequestTasksView extends View implements ExternalInfoRe
 			public void onClose() {
 				handler.onActionInvoked(new ActionInvokedEvent<Action>(Action.CLOSE));
 			}
+
+			@Override
+			protected void onGoToRequest() {
+				handler.onActionInvoked(new ActionInvokedEvent<Action>(Action.GO_TO_PROCESS));
+			}
 			
 		};
 		wrapper.add(toolbar);
@@ -76,6 +81,7 @@ public class ExternalInfoRequestTasksView extends View implements ExternalInfoRe
 	@Override
 	public void clearAllowedPermissions() {
 		toolbar.hideAll();
+		toolbar.setGoToProcessVisible();
 	}
 
 	@Override
