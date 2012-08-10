@@ -28,6 +28,8 @@ public class FidM
 	extends FileIOBase
 {
 	public static final UUID ObjID_TypeTranslator = UUID.fromString("71A31B02-2FB6-465B-B33E-A0A700F04940");
+	public static final UUID RDef_Imports = UUID.fromString("8D11763D-4B0B-44EF-8779-A0A701270881");
+	public static final UUID FormatID_FidM = UUID.fromString("29631C89-6783-4EBA-A214-A0A600B8AFFA");
 
 	public static class Fields
 	{
@@ -119,6 +121,16 @@ public class FidM
 				try { ldb.Disconnect(); } catch (SQLException e1) {}
 				throw new BigBangJewelException(e.getMessage(), e);
 			}
+		}
+
+		try
+		{
+			createReport(ldb, "Importação Fidelidade-Mundial", RDef_Imports, FormatID_FidM.toString() + "|" + midSession.toString());
+		}
+		catch (BigBangJewelException e)
+		{
+			try { ldb.Disconnect(); } catch (SQLException e1) {}
+			throw e;
 		}
 
 		try
