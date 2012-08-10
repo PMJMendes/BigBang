@@ -105,6 +105,7 @@ public class BigBang_Tests
 //		TestClientGet.DoTest();
 //		TestClientCreate.DoTest();
 //		TestClientEdit.DoTest();
+//		TestClientMerge.DoTest();
 //		TestClientDelete.DoTest();
 //
 //		TestQuoteRequestGet.DoTest();

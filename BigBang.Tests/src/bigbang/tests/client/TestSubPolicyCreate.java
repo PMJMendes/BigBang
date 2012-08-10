@@ -73,7 +73,7 @@ public class TestSubPolicyCreate
 
 		newPolicy = new SubPolicy();
 		newPolicy.id = gstrPad;
-		newPolicy.mainPolicyId = "026CDFCF-17EB-41B6-ABEE-9FFA00FE0E40";
+		newPolicy.mainPolicyId = "614B49EE-D650-485F-803E-A0A3013E486C";
 
 		Services.subPolicyService.initSubPolicyInPad(newPolicy, callback);
 	}
