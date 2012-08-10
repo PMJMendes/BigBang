@@ -49,14 +49,14 @@ public class ParamReportPanel extends View {
 				fields[i] = new DatePickerFormField(parameters[i].label);
 				break;
 			case LIST:
-				fields[i] = new ExpandableListBoxFormField(parameters[i].label,   BigBangConstants.TypifiedListIds.FIELD_VALUES+"/"+parameters[i].id);
+				fields[i] = new ExpandableListBoxFormField(BigBangConstants.TypifiedListIds.FIELD_VALUES+"/"+parameters[i].id, parameters[i].label);
 				break;
 			case NUMERIC:
 				fields[i] = new TextBoxFormField(parameters[i].label);
 				fields[i].setFieldWidth("150px");
 				break;
 			case REFERENCE:
-				fields[i] = new ExpandableListBoxFormField(parameters[i].label, parameters[i].refersToId);
+				fields[i] = new ExpandableListBoxFormField(parameters[i].refersToId, parameters[i].label);
 				break;
 			case TEXT:
 				fields[i] = new TextBoxFormField(parameters[i].label);
