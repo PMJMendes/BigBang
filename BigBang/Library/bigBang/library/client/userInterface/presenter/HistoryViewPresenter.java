@@ -3,19 +3,11 @@ package bigBang.library.client.userInterface.presenter;
 import java.util.Collection;
 
 import bigBang.definitions.client.dataAccess.HistoryBroker;
-import bigBang.definitions.client.dataAccess.InsuranceSubPolicyBroker;
-import bigBang.definitions.client.dataAccess.NegotiationBroker;
-import bigBang.definitions.client.dataAccess.SubCasualtyDataBroker;
 import bigBang.definitions.client.response.ResponseError;
 import bigBang.definitions.client.response.ResponseHandler;
 import bigBang.definitions.shared.BigBangConstants;
 import bigBang.definitions.shared.HistoryItem;
 import bigBang.definitions.shared.HistoryItemStub;
-import bigBang.definitions.shared.InfoOrDocumentRequest;
-import bigBang.definitions.shared.Negotiation;
-import bigBang.definitions.shared.SubCasualty;
-import bigBang.definitions.shared.SubPolicy;
-import bigBang.library.client.BigBangAsyncCallback;
 import bigBang.library.client.EventBus;
 import bigBang.library.client.HasParameters;
 import bigBang.library.client.HasValueSelectables;
@@ -31,8 +23,6 @@ import bigBang.library.client.event.SelectionChangedEventHandler;
 import bigBang.library.client.history.NavigationHistoryItem;
 import bigBang.library.client.history.NavigationHistoryManager;
 import bigBang.library.client.userInterface.view.View;
-import bigBang.library.interfaces.InfoOrDocumentRequestService;
-import bigBang.library.interfaces.InfoOrDocumentRequestServiceAsync;
 import bigBang.module.generalSystemModule.shared.SessionGeneralSystem;
 
 import com.google.gwt.user.client.ui.HasValue;
@@ -214,73 +204,11 @@ public class HistoryViewPresenter implements ViewPresenter {
 
 	private void onNavigateToAuxiliaryProcess(){
 		HistoryItem historyItem = view.getForm().getValue();
-		NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
 		
-		String ownerId = item.getParameter("historyownerid");
 		String auxObjectType = historyItem.otherObjectTypeId;
 		String auxObjectId = historyItem.otherObjectId;
 		
-		if(auxObjectType == null || auxObjectId == null){
-			onNavigateToAuxiliaryProcess();
-		}else{
-			if(auxObjectType.equalsIgnoreCase(BigBangConstants.EntityIds.CLIENT)){
-				navigateToClient(auxObjectId);
-				
-			}else if(auxObjectType.equalsIgnoreCase(BigBangConstants.EntityIds.INSURANCE_POLICY)){
-				navigateToInsurancePolicy(auxObjectId);
-				
-			}else if(auxObjectType.equalsIgnoreCase(BigBangConstants.EntityIds.RECEIPT)){
-				navigateToReceipt(auxObjectId);
-	
-			}else if(auxObjectType.equalsIgnoreCase(BigBangConstants.EntityIds.CASUALTY)){
-				navigateToCasualty(auxObjectId);
-
-			}else if(auxObjectType.equalsIgnoreCase(BigBangConstants.EntityIds.QUOTE_REQUEST)){
-				navigateToQuoteRequest(auxObjectId);
-
-			}else if(auxObjectType.equalsIgnoreCase(BigBangConstants.EntityIds.COMPLAINT)){
-				navigateToComplaint(auxObjectId);
-
-			}else if(auxObjectType.equalsIgnoreCase(BigBangConstants.EntityIds.EXPENSE)){
-				navigateToExpense(auxObjectId);
-
-			}else if(auxObjectType.equalsIgnoreCase(BigBangConstants.EntityIds.RISK_ANALISYS)){
-				navigateToRiskAnalysis(auxObjectId);
-
-			}else if(auxObjectType.equalsIgnoreCase(BigBangConstants.EntityIds.NEGOTIATION)){
-				navigateToNegotiation(auxObjectId);
-				
-			}else if(auxObjectType.equalsIgnoreCase(BigBangConstants.EntityIds.SIGNATURE_REQUEST)){
-				navigateToSignatureRequest(auxObjectId);
-				
-			}else if(auxObjectType.equalsIgnoreCase(BigBangConstants.EntityIds.DAS_REQUEST)){
-				navigateToDASRequest(auxObjectId);
-				
-			}else if(auxObjectType.equalsIgnoreCase(BigBangConstants.EntityIds.SUB_CASUALTY)){
-				navigateToSubCasualty(auxObjectId, ownerId);
-				
-			}else if(auxObjectType.equalsIgnoreCase(BigBangConstants.EntityIds.INFO_REQUEST)){
-				navigateToInfoRequest(auxObjectId, ownerId);
-				
-			}else if(auxObjectType.equalsIgnoreCase(BigBangConstants.EntityIds.INSURANCE_SUB_POLICY)){
-				navigateToSubPolicy(auxObjectId, ownerId);
-			}
-			else {
-				onNavigateToAuxiliaryProcessFailed();
-				return;
-			}
-		}
-	}
-	
-	private void navigateToSubPolicy(String auxObjectId, String ownerId) {
-		NavigationHistoryItem navigationItem = new NavigationHistoryItem();
-		navigationItem.setStackParameter("display");
-		navigationItem.setParameter("section","insurancepolicy");
-		navigationItem.pushIntoStackParameter("display", "search");
-		navigationItem.pushIntoStackParameter("display", "subpolicy");
-		navigationItem.setParameter("policyid", ownerId);
-		navigationItem.setParameter("subpolicyid", auxObjectId);
-		NavigationHistoryManager.getInstance().go(navigationItem);
+		NavigationHistoryManager.getInstance().NavigateToProcess(auxObjectType, auxObjectId);
 	}
 
 	private void onGoBack(){
@@ -291,235 +219,12 @@ public class HistoryViewPresenter implements ViewPresenter {
 		NavigationHistoryManager.getInstance().go(item);
 	}
 	
-	private void navigateToSubCasualty(String auxObjectId, String ownerId) {
-		NavigationHistoryItem navigationItem = new NavigationHistoryItem();
-		navigationItem.setStackParameter("display");
-		navigationItem.setParameter("section","casualty");
-		navigationItem.pushIntoStackParameter("display", "search");
-		navigationItem.pushIntoStackParameter("display", "subcasualty");
-		navigationItem.setParameter("casualtyid", ownerId);
-		navigationItem.setParameter("subcasualtyid", auxObjectId);
-		NavigationHistoryManager.getInstance().go(navigationItem);
-	}
-
-	private void navigateToDASRequest(String auxObjectId) {
-		NavigationHistoryItem navigationItem = new NavigationHistoryItem();
-		navigationItem.setStackParameter("display");
-		navigationItem.setParameter("section", "receipt");
-		navigationItem.pushIntoStackParameter("display", "dasrequest");
-		navigationItem.setParameter("dasrequestid", auxObjectId);
-		NavigationHistoryManager.getInstance().go(navigationItem);		
-	}
-
-	private void navigateToSignatureRequest(String auxObjectId) {
-		NavigationHistoryItem navigationItem = new NavigationHistoryItem();
-		navigationItem.setStackParameter("display");
-		navigationItem.setParameter("section", "receipt");
-		navigationItem.pushIntoStackParameter("display", "signaturerequest");
-		navigationItem.setParameter("signaturerequestid", auxObjectId);
-		NavigationHistoryManager.getInstance().go(navigationItem);		
-	}
-
-	private void navigateToNegotiation(final String auxObjectId) {
-		final NavigationHistoryItem navigationItem = new NavigationHistoryItem();
-		navigationItem.setStackParameter("display");
-
-		NegotiationBroker negBroker = (NegotiationBroker) DataBrokerManager.staticGetBroker(BigBangConstants.EntityIds.NEGOTIATION);
-
-		negBroker.getNegotiation(auxObjectId, new ResponseHandler<Negotiation>() {
-			
-			@Override
-			public void onResponse(Negotiation response) {
-				if(response.ownerTypeId.equalsIgnoreCase(BigBangConstants.EntityIds.INSURANCE_POLICY)){
-					navigationItem.setParameter("section", "insurancepolicy");
-				}
-				else{
-					navigationItem.setParameter("section", "quoterequest");
-				}
-				navigationItem.pushIntoStackParameter("display", "negotiation");
-				navigationItem.setParameter("ownertypeid", response.ownerTypeId);
-				navigationItem.setParameter("negotiationid", auxObjectId);
-				NavigationHistoryManager.getInstance().go(navigationItem);
-			}
-			
-			@Override
-			public void onError(Collection<ResponseError> errors) {
-				onNavigateToAuxiliaryProcessFailed();
-			}
-		});
-	}
-
-	private void navigateToRiskAnalysis(String auxObjectId) {
-		NavigationHistoryItem navigationItem = new NavigationHistoryItem();
-		navigationItem.setStackParameter("display");
-		navigationItem.setParameter("section", "riskanalisys");
-		navigationItem.pushIntoStackParameter("display", "search");
-		navigationItem.setParameter("riskanalisysid", auxObjectId);
-		NavigationHistoryManager.getInstance().go(navigationItem);
-	}
-
-	private void navigateToExpense(String auxObjectId) {
-		NavigationHistoryItem navigationItem = new NavigationHistoryItem();
-		navigationItem.setStackParameter("display");
-		navigationItem.setParameter("section", "expense");
-		navigationItem.pushIntoStackParameter("display", "search");
-		navigationItem.setParameter("expenseid", auxObjectId);
-		NavigationHistoryManager.getInstance().go(navigationItem);
-	}
-
-	private void navigateToComplaint(String auxObjectId) {
-		NavigationHistoryItem navigationItem = new NavigationHistoryItem();
-		navigationItem.setStackParameter("display");
-		navigationItem.setParameter("section", "complaint");
-		navigationItem.pushIntoStackParameter("display", "search");
-		navigationItem.setParameter("complaintid", auxObjectId);
-		NavigationHistoryManager.getInstance().go(navigationItem);		
-	}
-
-	private void navigateToQuoteRequest(String auxObjectId) {
-		NavigationHistoryItem navigationItem = new NavigationHistoryItem();
-		navigationItem.setStackParameter("display");
-		navigationItem.setParameter("section", "quoterequest");
-		navigationItem.pushIntoStackParameter("display", "search");
-		navigationItem.setParameter("quoterequestid", auxObjectId);
-		NavigationHistoryManager.getInstance().go(navigationItem);		
-	}
-
-	private void navigateToCasualty(String auxObjectId) {
-		NavigationHistoryItem navigationItem = new NavigationHistoryItem();
-		navigationItem.setStackParameter("display");
-		navigationItem.setParameter("section", "casualty");
-		navigationItem.pushIntoStackParameter("display", "search");
-		navigationItem.setParameter("casualtyid", auxObjectId);
-		NavigationHistoryManager.getInstance().go(navigationItem);
-	}
-
-	private void navigateToReceipt(String auxObjectId) {
-		NavigationHistoryItem navigationItem = new NavigationHistoryItem();
-		navigationItem.setStackParameter("display");
-		navigationItem.setParameter("section", "receipt");
-		navigationItem.pushIntoStackParameter("display", "search");
-		navigationItem.setParameter("receiptid", auxObjectId);
-		NavigationHistoryManager.getInstance().go(navigationItem);		
-	}
-
-	private void navigateToInsurancePolicy(String auxObjectId) {
-		NavigationHistoryItem navigationItem = new NavigationHistoryItem();
-		navigationItem.setStackParameter("display");
-		navigationItem.setParameter("section", "insurancepolicy");
-		navigationItem.pushIntoStackParameter("display", "search");
-		navigationItem.setParameter("policyid", auxObjectId);
-		NavigationHistoryManager.getInstance().go(navigationItem);		
-	}
-
-	private void navigateToClient(String auxObjectId) {
-		NavigationHistoryItem navigationItem = new NavigationHistoryItem();
-		navigationItem.setStackParameter("display");
-		navigationItem.setParameter("section", "client");
-		navigationItem.pushIntoStackParameter("display", "search");
-		navigationItem.setParameter("clientid", auxObjectId);
-		NavigationHistoryManager.getInstance().go(navigationItem);
-	}
-	
-	private void navigateToInfoRequest(String auxObjectId, final String ownerId) {
-		InfoOrDocumentRequestServiceAsync service = InfoOrDocumentRequestService.Util.getInstance();
-		service.getRequest(auxObjectId, new BigBangAsyncCallback<InfoOrDocumentRequest>() {
-
-			@Override
-			public void onResponseSuccess(InfoOrDocumentRequest result) {
-				
-				final NavigationHistoryItem navigationItem = new NavigationHistoryItem();
-				navigationItem.setStackParameter("display");
-				navigationItem.pushIntoStackParameter("display", "search");
-				navigationItem.pushIntoStackParameter("display", "viewinforequest");
-				navigationItem.setParameter("requestid", result.id);
-
-				if(result.parentDataTypeId.equalsIgnoreCase(BigBangConstants.EntityIds.EXPENSE)){					
-					navigationItem.setParameter("section", "expense");
-					navigationItem.setParameter("expenseid", ownerId);
-					NavigationHistoryManager.getInstance().go(navigationItem);
-				}else if(result.parentDataTypeId.equalsIgnoreCase(BigBangConstants.EntityIds.CLIENT)){
-					navigationItem.setParameter("section", "client");
-					navigationItem.setParameter("clientid", ownerId);
-					NavigationHistoryManager.getInstance().go(navigationItem);
-				}else if(result.parentDataTypeId.equalsIgnoreCase(BigBangConstants.EntityIds.INSURANCE_POLICY)){
-					navigationItem.setParameter("section", "insurancepolicy");
-					navigationItem.setParameter("policyid", ownerId);
-					NavigationHistoryManager.getInstance().go(navigationItem);
-				}else if(result.parentDataTypeId.equalsIgnoreCase(BigBangConstants.EntityIds.INSURANCE_SUB_POLICY)){
-					
-					InsuranceSubPolicyBroker broker = (InsuranceSubPolicyBroker) DataBrokerManager.staticGetBroker(BigBangConstants.EntityIds.INSURANCE_SUB_POLICY);
-					broker.getSubPolicy(ownerId, new ResponseHandler<SubPolicy>() {
-						
-						@Override
-						public void onResponse(SubPolicy response) {
-							navigationItem.setParameter("section", "insurancepolicy");
-							navigationItem.setParameter("policyid", response.mainPolicyId);
-							navigationItem.popFromStackParameter("display");
-							navigationItem.pushIntoStackParameter("display", "subpolicy");
-							navigationItem.pushIntoStackParameter("display", "viewsubpolicyinforequest");
-							navigationItem.setParameter("subpolicyid", response.id);
-							NavigationHistoryManager.getInstance().go(navigationItem);
-						}
-						
-						@Override
-						public void onError(Collection<ResponseError> errors) {
-							onNavigateToAuxiliaryProcessFailed();
-						}
-					});
-					
-				}else if(result.parentDataTypeId.equalsIgnoreCase(BigBangConstants.EntityIds.CASUALTY)){
-					navigationItem.setParameter("section", "casualty" );
-					navigationItem.setParameter("casualtyid", ownerId);
-					NavigationHistoryManager.getInstance().go(navigationItem);
-					
-				}else if(result.parentDataTypeId.equalsIgnoreCase(BigBangConstants.EntityIds.SUB_CASUALTY)){
-					
-					SubCasualtyDataBroker broker = (SubCasualtyDataBroker) DataBrokerManager.staticGetBroker(BigBangConstants.EntityIds.SUB_CASUALTY);
-					broker.getSubCasualty(ownerId, new ResponseHandler<SubCasualty>() {
-						
-						@Override
-						public void onResponse(SubCasualty response) {
-							navigationItem.setParameter("section", "casualty");
-							navigationItem.setParameter("casualtyid", response.casualtyId);
-							navigationItem.popFromStackParameter("display");
-							navigationItem.pushIntoStackParameter("display", "subcasualty");
-							navigationItem.pushIntoStackParameter("display", "viewsubcasualtyinforequest");
-							navigationItem.setParameter("subcasualtyid", response.id);
-							NavigationHistoryManager.getInstance().go(navigationItem);
-						}
-						
-						@Override
-						public void onError(Collection<ResponseError> errors) {
-							onNavigateToAuxiliaryProcessFailed();
-						}
-					});
-					
-					
-				}else {
-					return;
-				}
-				
-			}
-			
-			@Override
-			public void onResponseFailure(Throwable caught) {
-				onNavigateToAuxiliaryProcessFailed();
-				super.onResponseFailure(caught);
-			}
-		});
-	}
-
 	private void onRevertOperationSuccess(){
 		EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "A operação foi revertida com sucesso"), TYPE.TRAY_NOTIFICATION));
 	}
 
 	private void onShowHistoryFailed(){
 		EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não é possível apresentar o histórico, neste momento."), TYPE.ALERT_NOTIFICATION));
-	}
-
-	private void onNavigateToAuxiliaryProcessFailed(){
-		EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não é possível navegar até ao processo auxiliar"), TYPE.ALERT_NOTIFICATION));
 	}
 	
 	private void onRevertOperationFailed(){

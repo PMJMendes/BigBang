@@ -23,7 +23,8 @@ public class ExternalInfoRequestTasksViewPresenter implements ViewPresenter,
 	public static enum Action {
 		SEND_RESPONSE,
 		CONTINUE,
-		CLOSE
+		CLOSE, 
+		GO_TO_PROCESS
 	}
 	
 	public static interface Display {
