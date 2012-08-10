@@ -21,12 +21,14 @@ import bigBang.library.client.dataAccess.DataBrokerManager;
 import bigBang.library.client.event.ActionInvokedEvent;
 import bigBang.library.client.event.ActionInvokedEventHandler;
 import bigBang.library.client.event.NewNotificationEvent;
+import bigBang.library.client.history.NavigationHistoryManager;
 import bigBang.library.client.userInterface.presenter.ViewPresenter;
 
 public class InsuranceSubPolicyTasksViewPresenter implements ViewPresenter, HasOperationPermissions {
 
 	public static enum Action {
-		VALIDATE
+		VALIDATE,
+		GO_TO_PROCESS
 	}
 	
 	public static interface Display {
@@ -80,7 +82,9 @@ public class InsuranceSubPolicyTasksViewPresenter implements ViewPresenter, HasO
 				case VALIDATE:
 					onValidate();
 					break;
-
+				case GO_TO_PROCESS:
+					NavigationHistoryManager.getInstance().NavigateToProcess(BigBangConstants.EntityIds.INSURANCE_SUB_POLICY, view.getForm().getValue().id);
+					break;
 				default:
 					break;
 				}

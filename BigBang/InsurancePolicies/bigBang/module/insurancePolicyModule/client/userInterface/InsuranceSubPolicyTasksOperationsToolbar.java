@@ -6,23 +6,35 @@ import com.google.gwt.user.client.ui.MenuItem;
 import bigBang.library.client.userInterface.BigBangOperationsToolBar;
 
 public abstract class InsuranceSubPolicyTasksOperationsToolbar extends
-		BigBangOperationsToolBar {
+BigBangOperationsToolBar {
 
 	protected MenuItem validate;
+	private MenuItem goToProcess;
 
 	protected InsuranceSubPolicyTasksOperationsToolbar(){
 		hideAll();
-		
+
 		validate = new MenuItem("Validar", new Command() {
-			
+
 			@Override
 			public void execute() {
 				onValidate();
 			}
 		});
 		addItem(validate);
+
+		goToProcess = new MenuItem("Navegar para Apólice Adesão", new Command() {
+
+			@Override
+			public void execute() {
+				onGoToProcess();
+			}
+		});
+		addItem(goToProcess);
 	}
-	
+
+	protected abstract void onGoToProcess();
+
 	@Override
 	public void onEditRequest() {
 		return;
@@ -39,9 +51,13 @@ public abstract class InsuranceSubPolicyTasksOperationsToolbar extends
 	}
 
 	public abstract void onValidate();
-	
+
 	public void allowValidate(boolean allow){
 		validate.setVisible(allow);
 	}
-	
+
+	public void setGoToProcessVisible() {
+		goToProcess.setVisible(true);		
+	}
+
 }

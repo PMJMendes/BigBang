@@ -29,6 +29,11 @@ public class InsuranceSubPolicyTasksView extends View implements InsuranceSubPol
 			public void onValidate() {
 				handler.onActionInvoked(new ActionInvokedEvent<Action>(Action.VALIDATE));
 			}
+
+			@Override
+			protected void onGoToProcess() {
+				handler.onActionInvoked(new ActionInvokedEvent<InsuranceSubPolicyTasksViewPresenter.Action>(Action.GO_TO_PROCESS));
+			}
 		};
 		wrapper.add(toolbar);
 		
@@ -57,6 +62,7 @@ public class InsuranceSubPolicyTasksView extends View implements InsuranceSubPol
 	@Override
 	public void clearAllowedPermissions() {
 		toolbar.hideAll();
+		toolbar.setGoToProcessVisible();
 	}
 
 	@Override

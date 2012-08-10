@@ -6,42 +6,57 @@ import com.google.gwt.user.client.ui.MenuItem;
 import bigBang.library.client.userInterface.BigBangOperationsToolBar;
 
 public abstract class InsurancePolicyTasksOperationsToolbar extends
-		BigBangOperationsToolBar {
+BigBangOperationsToolBar {
 
 	protected MenuItem validate;
+	private MenuItem goToProcess;
 
 	protected InsurancePolicyTasksOperationsToolbar(){
 		hideAll();
-		
+
 		validate = new MenuItem("Validar", new Command() {
-			
+
 			@Override
 			public void execute() {
 				onValidate();
 			}
 		});
 		addItem(validate);
-	}
-	
-	@Override
-	public void onEditRequest() {
-		return;
+		goToProcess = new MenuItem("Navegar para Apólice", new Command() {
+
+			@Override
+			public void execute() {
+				onGoToProcess();
+			}
+		});
+		addItem(goToProcess);
 	}
 
-	@Override
-	public void onSaveRequest() {
-		return;
-	}
+	protected abstract void onGoToProcess();
 
-	@Override
-	public void onCancelRequest() {
-		return;
-	}
+@Override
+public void onEditRequest() {
+	return;
+}
 
-	public abstract void onValidate();
-	
-	public void allowValidate(boolean allow){
-		validate.setVisible(allow);
-	}
-	
+@Override
+public void onSaveRequest() {
+	return;
+}
+
+@Override
+public void onCancelRequest() {
+	return;
+}
+
+public abstract void onValidate();
+
+public void allowValidate(boolean allow){
+	validate.setVisible(allow);
+}
+
+public void setGoToProcessVisible() {
+goToProcess.setVisible(true);	
+}
+
 }
