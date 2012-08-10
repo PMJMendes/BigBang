@@ -12,6 +12,7 @@ public class CasualtySearchParameter
 	public Boolean caseStudy;
 	public String managerId;
 	public String ownerId;
+	public String insuredObject;
 
 	public boolean includeClosed;
 }
