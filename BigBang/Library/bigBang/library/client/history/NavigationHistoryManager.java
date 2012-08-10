@@ -2,6 +2,10 @@ package bigBang.library.client.history;
 
 import java.util.Collection;
 
+import bigBang.definitions.client.response.ResponseError;
+import bigBang.definitions.client.response.ResponseHandler;
+import bigBang.library.client.ProcessNavigationMapper;
+
 import com.google.gwt.event.logical.shared.HasValueChangeHandlers;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
@@ -24,6 +28,7 @@ public class NavigationHistoryManager implements HasValueChangeHandlers<Navigati
 	}
 
 	private HandlerManager handlerManager;
+	private ProcessNavigationMapper mapper;
 
 	private NavigationHistoryManager(){
 		this.handlerManager = new HandlerManager(this);
@@ -63,7 +68,7 @@ public class NavigationHistoryManager implements HasValueChangeHandlers<Navigati
 			History.newItem(item.getToken(), true);
 		}
 	}
-
+	
 	public void reload(){
 		History.fireCurrentHistoryState();
 	}
@@ -85,6 +90,27 @@ public class NavigationHistoryManager implements HasValueChangeHandlers<Navigati
 			}
 		}
 		return true;
+	}
+	
+	public void setProcessMapper(ProcessNavigationMapper mapper) {
+		this.mapper = mapper;
+	}
+	
+	public void NavigateToProcess(String typeId, String instanceId) {
+		if(this.mapper != null) {
+			this.mapper.getProcessNavigationItem(typeId, instanceId, new ResponseHandler<NavigationHistoryItem>() {
+				
+				@Override
+				public void onResponse(NavigationHistoryItem response) {
+					go(response);
+				}
+				
+				@Override
+				public void onError(Collection<ResponseError> errors) {
+					return;
+				}
+			});
+		}
 	}
 
 }

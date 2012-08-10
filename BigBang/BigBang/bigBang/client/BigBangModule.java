@@ -13,6 +13,7 @@ import bigBang.library.client.dataAccess.BigBangDocumentsBroker;
 import bigBang.library.client.dataAccess.HistoryBrokerImpl;
 import bigBang.library.client.dataAccess.SubProcessesBrokerImpl;
 import bigBang.library.client.dataAccess.TypifiedTextBrokerImpl;
+import bigBang.library.client.history.NavigationHistoryManager;
 import bigBang.library.client.userInterface.presenter.CancelInfoOrDocumentRequestViewPresenter;
 import bigBang.library.client.userInterface.presenter.ContactNavigationViewPresenter;
 import bigBang.library.client.userInterface.presenter.ContactViewPresenter;
@@ -49,6 +50,7 @@ public class BigBangModule implements Module {
 
 	@Override
 	public void initialize() {
+		NavigationHistoryManager.Util.getInstance().setProcessMapper(new BigBangProcessNavigationMapper());
 		registerViewPresenters();
 		initialized = true;
 	}
