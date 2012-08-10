@@ -58,7 +58,6 @@ public class TestSubCasualtyEdit
 		larrItems[1].settlement = 450.0;
 		larrItems[1].isManual = true;
 		larrItems[2] = new SubCasualty.SubCasualtyItem();
-		larrItems[2].insuredObjectId = "C264CBDC-CEB3-4966-9363-A037011F9C0D";
 		larrItems[2].coverageId = "23E2CC58-D2EE-4329-A687-A02000F26B2B";
 		larrItems[2].damageTypeId = "FC2B4BB5-C210-4DC9-9CB0-A0370120AA98";
 		larrItems[2].damages = 600.0;
