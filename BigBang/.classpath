@@ -15,7 +15,7 @@
 	<classpathentry excluding="**/.svn/" kind="src" path="Casualties"/>
 	<classpathentry excluding="**/.svn/" kind="src" path="Expenses"/>
 	<classpathentry excluding="**/.svn/" kind="src" path="Complaints"/>
-	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/jre7"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="con" path="com.google.gwt.eclipse.core.GWT_CONTAINER"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/BigBang.Jewel"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/Jewel.Petri"/>
