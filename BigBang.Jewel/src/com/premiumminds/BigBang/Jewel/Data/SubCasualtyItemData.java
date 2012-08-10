@@ -9,10 +9,8 @@ import Jewel.Engine.SysObjects.ObjectBase;
 import com.premiumminds.BigBang.Jewel.BigBangJewelException;
 import com.premiumminds.BigBang.Jewel.Constants;
 import com.premiumminds.BigBang.Jewel.Objects.PolicyCoverage;
-import com.premiumminds.BigBang.Jewel.Objects.PolicyObject;
 import com.premiumminds.BigBang.Jewel.Objects.SubCasualtyItem;
 import com.premiumminds.BigBang.Jewel.Objects.SubPolicyCoverage;
-import com.premiumminds.BigBang.Jewel.Objects.SubPolicyObject;
 
 public class SubCasualtyItemData
 	implements DataBridge
@@ -22,8 +20,6 @@ public class SubCasualtyItemData
 	public UUID mid;
 
 	public UUID midSubCasualty;
-	public UUID midPolicyObject;
-	public UUID midSubPolicyObject;
 	public UUID midPolicyCoverage;
 	public UUID midSubPolicyCoverage;
 	public UUID midType;
@@ -41,8 +37,6 @@ public class SubCasualtyItemData
 		mid = pobjSource.getKey();
 
 		midSubCasualty       =       (UUID) pobjSource.getAt(SubCasualtyItem.I.SUBCASUALTY);
-		midPolicyObject      =       (UUID) pobjSource.getAt(SubCasualtyItem.I.POLICYOBJECT);
-		midSubPolicyObject   =       (UUID) pobjSource.getAt(SubCasualtyItem.I.SUBPOLICYOBJECT);
 		midPolicyCoverage    =       (UUID) pobjSource.getAt(SubCasualtyItem.I.POLICYCOVERAGE);
 		midSubPolicyCoverage =       (UUID) pobjSource.getAt(SubCasualtyItem.I.SUBOPOLICYCOVERAGE);
 		midType              =       (UUID) pobjSource.getAt(SubCasualtyItem.I.TYPE);
@@ -57,8 +51,6 @@ public class SubCasualtyItemData
 		try
 		{
 			pobjDest.setAt(SubCasualtyItem.I.SUBCASUALTY,        midSubCasualty);
-			pobjDest.setAt(SubCasualtyItem.I.POLICYOBJECT,       midPolicyObject);
-			pobjDest.setAt(SubCasualtyItem.I.SUBPOLICYOBJECT,    midSubPolicyObject);
 			pobjDest.setAt(SubCasualtyItem.I.POLICYCOVERAGE,     midPolicyCoverage);
 			pobjDest.setAt(SubCasualtyItem.I.SUBOPOLICYCOVERAGE, midSubPolicyCoverage);
 			pobjDest.setAt(SubCasualtyItem.I.TYPE,               midType);
@@ -74,41 +66,9 @@ public class SubCasualtyItemData
 
 	public void Describe(StringBuilder pstrBuilder, String pstrLineBreak)
 	{
-		PolicyObject lobjPObj;
-		SubPolicyObject lobjSPObj;
 		PolicyCoverage lobjPCov;
 		SubPolicyCoverage lobjSPCov;
 		ObjectBase lobjType;
-
-		if ( midPolicyObject != null )
-		{
-			pstrBuilder.append("Objecto seguro: ");
-			try
-			{
-				lobjPObj = PolicyObject.GetInstance(Engine.getCurrentNameSpace(), midPolicyObject);
-				pstrBuilder.append(lobjPObj.getLabel());
-			}
-			catch (Throwable e)
-			{
-				pstrBuilder.append("(Erro a obter o nome do objecto seguro.)");
-			}
-			pstrBuilder.append(pstrLineBreak);
-		}
-
-		if ( midSubPolicyObject != null )
-		{
-			pstrBuilder.append("Objecto seguro: ");
-			try
-			{
-				lobjSPObj = SubPolicyObject.GetInstance(Engine.getCurrentNameSpace(), midSubPolicyObject);
-				pstrBuilder.append(lobjSPObj.getLabel());
-			}
-			catch (Throwable e)
-			{
-				pstrBuilder.append("(Erro a obter o nome do objecto seguro.)");
-			}
-			pstrBuilder.append(pstrLineBreak);
-		}
 
 		if ( midPolicyCoverage != null )
 		{

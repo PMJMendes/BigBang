@@ -13,7 +13,6 @@ public class SubCasualty
 		private static final long serialVersionUID = 1L;
 
 		public String id; //Campo auxiliar para ajudar os serviços, manter inalterado
-		public String insuredObjectId; //Lista tipificada dos objectos de apólice *ou* de sub-apólice, filtrada pelo ID da respectiva
 		public String coverageId; //Lista tipificada das coberturas da (sub)apólice
 		public String damageTypeId; //Lista tipificada, campo obrigatório
 		public Double damages; //Em €

@@ -230,6 +230,11 @@ public class CasualtyServiceImpl
 		lopCSC.mobjData.mstrDescription = subCasualty.text;
 		lopCSC.mobjData.mstrNotes = subCasualty.internalNotes;
 		lopCSC.mobjData.mbHasJudicial = subCasualty.hasJudicial;
+		lopCSC.mobjData.midPolicyObject = ( subCasualty.insuredObjectId == null ? null :
+				(lbPolicy ? UUID.fromString(subCasualty.insuredObjectId) : null) );
+		lopCSC.mobjData.midSubPolicyObject = ( subCasualty.insuredObjectId == null ? null :
+				(lbPolicy ? null : UUID.fromString(subCasualty.insuredObjectId)) );
+		lopCSC.mobjData.mstrGenericObject = subCasualty.insuredObjectName;
 
 		if ( subCasualty.items != null )
 		{
@@ -237,10 +242,6 @@ public class CasualtyServiceImpl
 			for ( i = 0; i < lopCSC.mobjData.marrItems.length; i++ )
 			{
 				lopCSC.mobjData.marrItems[i] = new SubCasualtyItemData();
-				lopCSC.mobjData.marrItems[i].midPolicyObject = ( subCasualty.items[i].insuredObjectId == null ? null :
-						(lbPolicy ? UUID.fromString(subCasualty.items[i].insuredObjectId) : null) );
-				lopCSC.mobjData.marrItems[i].midSubPolicyObject = ( subCasualty.items[i].insuredObjectId == null ? null :
-						(lbPolicy ? null : UUID.fromString(subCasualty.items[i].insuredObjectId)) );
 				lopCSC.mobjData.marrItems[i].midPolicyCoverage = ( subCasualty.items[i].coverageId == null ? null :
 						(lbPolicy ? UUID.fromString(subCasualty.items[i].coverageId) : null) );
 				lopCSC.mobjData.marrItems[i].midSubPolicyCoverage = ( subCasualty.items[i].coverageId == null ? null :

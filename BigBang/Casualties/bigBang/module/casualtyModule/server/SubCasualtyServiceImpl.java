@@ -98,6 +98,13 @@ public class SubCasualtyServiceImpl
 		lobjResult.hasJudicial = (Boolean)lobjSubCasualty.getAt(com.premiumminds.BigBang.Jewel.Objects.SubCasualty.I.HASJUDICIAL);
 		lobjResult.text = (String)lobjSubCasualty.getAt(com.premiumminds.BigBang.Jewel.Objects.SubCasualty.I.DESCRIPTION);
 		lobjResult.internalNotes = (String)lobjSubCasualty.getAt(com.premiumminds.BigBang.Jewel.Objects.SubCasualty.I.NOTES);
+		if ( Constants.ObjID_Policy.equals(lobjOwner.getDefinition().getDefObject().getKey()) )
+			lobjResult.insuredObjectId = ( lobjSubCasualty.getAt(com.premiumminds.BigBang.Jewel.Objects.SubCasualty.I.POLICYOBJECT) == null ?
+					null : ((UUID)lobjSubCasualty.getAt(com.premiumminds.BigBang.Jewel.Objects.SubCasualty.I.POLICYOBJECT)).toString() );
+		else
+			lobjResult.insuredObjectId = ( lobjSubCasualty.getAt(com.premiumminds.BigBang.Jewel.Objects.SubCasualty.I.SUBPOLICYOBJECT) == null ?
+					null : ((UUID)lobjSubCasualty.getAt(com.premiumminds.BigBang.Jewel.Objects.SubCasualty.I.SUBPOLICYOBJECT)).toString() );
+		lobjResult.insuredObjectName = (String)lobjSubCasualty.getAt(com.premiumminds.BigBang.Jewel.Objects.SubCasualty.I.GENERICOBJECT);
 
 		ldblTotal = null;
 		lobjResult.items = new SubCasualty.SubCasualtyItem[larrItems.length];
@@ -108,19 +115,11 @@ public class SubCasualtyServiceImpl
 			lobjResult.items[i] = new SubCasualty.SubCasualtyItem();
 			lobjResult.items[i].id = larrItems[i].getKey().toString();
 			if ( Constants.ObjID_Policy.equals(lobjOwner.getDefinition().getDefObject().getKey()) )
-			{
-				lobjResult.items[i].insuredObjectId = ( larrItems[i].getAt(SubCasualtyItem.I.POLICYOBJECT) == null ? null :
-						((UUID)larrItems[i].getAt(SubCasualtyItem.I.POLICYOBJECT)).toString() );
 				lobjResult.items[i].coverageId = ( larrItems[i].getAt(SubCasualtyItem.I.POLICYCOVERAGE) == null ? null :
 						((UUID)larrItems[i].getAt(SubCasualtyItem.I.POLICYCOVERAGE)).toString() );
-			}
 			else
-			{
-				lobjResult.items[i].insuredObjectId = ( larrItems[i].getAt(SubCasualtyItem.I.SUBPOLICYOBJECT) == null ? null :
-						((UUID)larrItems[i].getAt(SubCasualtyItem.I.SUBPOLICYOBJECT)).toString() );
 				lobjResult.items[i].coverageId = ( larrItems[i].getAt(SubCasualtyItem.I.SUBOPOLICYCOVERAGE) == null ? null :
 						((UUID)larrItems[i].getAt(SubCasualtyItem.I.SUBOPOLICYCOVERAGE)).toString() );
-			}
 			lobjResult.items[i].damageTypeId = ( larrItems[i].getAt(SubCasualtyItem.I.TYPE) == null ? null :
 					((UUID)larrItems[i].getAt(SubCasualtyItem.I.TYPE)).toString() );
 			lobjResult.items[i].damages = ( ldblLocal == null ? null : ldblLocal.doubleValue());
@@ -179,6 +178,11 @@ public class SubCasualtyServiceImpl
 		lopMD.mobjData.mstrDescription = subCasualty.text;
 		lopMD.mobjData.mstrNotes = subCasualty.internalNotes;
 		lopMD.mobjData.mbHasJudicial = subCasualty.hasJudicial;
+		lopMD.mobjData.midPolicyObject = ( subCasualty.insuredObjectId == null ? null :
+				(lbPolicy ? UUID.fromString(subCasualty.insuredObjectId) : null) );
+		lopMD.mobjData.midSubPolicyObject = ( subCasualty.insuredObjectId == null ? null :
+				(lbPolicy ? null : UUID.fromString(subCasualty.insuredObjectId)) );
+		lopMD.mobjData.mstrGenericObject = subCasualty.insuredObjectName;
 
 		if ( subCasualty.items != null )
 		{
@@ -188,10 +192,6 @@ public class SubCasualtyServiceImpl
 				lopMD.mobjData.marrItems[i] = new SubCasualtyItemData();
 				lopMD.mobjData.marrItems[i].mid = ( subCasualty.items[i].id == null ? null : UUID.fromString(subCasualty.items[i].id) );
 				lopMD.mobjData.marrItems[i].midSubCasualty = lopMD.mobjData.mid;
-				lopMD.mobjData.marrItems[i].midPolicyObject = ( subCasualty.items[i].insuredObjectId == null ? null :
-						(lbPolicy ? UUID.fromString(subCasualty.items[i].insuredObjectId) : null) );
-				lopMD.mobjData.marrItems[i].midSubPolicyObject = ( subCasualty.items[i].insuredObjectId == null ? null :
-						(lbPolicy ? null : UUID.fromString(subCasualty.items[i].insuredObjectId)) );
 				lopMD.mobjData.marrItems[i].midPolicyCoverage = ( subCasualty.items[i].coverageId == null ? null :
 						(lbPolicy ? UUID.fromString(subCasualty.items[i].coverageId) : null) );
 				lopMD.mobjData.marrItems[i].midSubPolicyCoverage = ( subCasualty.items[i].coverageId == null ? null :
