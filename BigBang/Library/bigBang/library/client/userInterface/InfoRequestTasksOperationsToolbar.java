@@ -5,7 +5,7 @@ import com.google.gwt.user.client.ui.MenuItem;
 
 public abstract class InfoRequestTasksOperationsToolbar extends BigBangOperationsToolBar {
 
-	protected MenuItem receiveResponse, repeat, cancel;
+	protected MenuItem receiveResponse, repeat, cancel, goToProcess;
 	
 	public InfoRequestTasksOperationsToolbar(){
 		hideAll();
@@ -36,7 +36,18 @@ public abstract class InfoRequestTasksOperationsToolbar extends BigBangOperation
 			}
 		});
 		addItem(cancel);
+		
+		goToProcess = new MenuItem("Navegar para Pedido de Informação", new Command() {
+			
+			@Override
+			public void execute() {
+				onGoToProcess();
+			}
+		});
+		addItem(goToProcess);
 	}
+	
+	protected abstract void onGoToProcess();
 	
 	@Override
 	public void onEditRequest() {
@@ -62,5 +73,9 @@ public abstract class InfoRequestTasksOperationsToolbar extends BigBangOperation
 	
 	public void allowCancel(boolean allow) {
 		cancel.setVisible(allow);
+	}
+
+	public void setGoToProcessVisible() {
+		goToProcess.setVisible(true);
 	}
 }

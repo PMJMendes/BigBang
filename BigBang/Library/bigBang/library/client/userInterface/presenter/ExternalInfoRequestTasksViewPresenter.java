@@ -14,6 +14,7 @@ import bigBang.library.client.ViewPresenterController;
 import bigBang.library.client.event.ActionInvokedEvent;
 import bigBang.library.client.event.ActionInvokedEventHandler;
 import bigBang.library.client.history.NavigationHistoryItem;
+import bigBang.library.client.history.NavigationHistoryManager;
 import bigBang.library.interfaces.ExternRequestService;
 import bigBang.library.interfaces.ExternRequestServiceAsync;
 
@@ -90,6 +91,9 @@ public class ExternalInfoRequestTasksViewPresenter implements ViewPresenter,
 					break;
 				case CLOSE:
 					onClose();
+					break;
+				case GO_TO_PROCESS:
+					NavigationHistoryManager.getInstance().NavigateToProcess(BigBangConstants.EntityIds.EXTERNAL_INFO_REQUEST, view.getForm().getValue().id);
 					break;
 				default:
 					break;

@@ -300,7 +300,7 @@ public class DatePickerFormField extends FormField<Date> {
 		year.getElement().getStyle().setBackgroundColor(readonly ? "transparent" : "white");
 		
 		this.readonly = readonly;
-		mandatoryIndicatorLabel.setVisible(!readonly);
+		mandatoryIndicatorLabel.setVisible(!readonly && isMandatory());
 	}
 
 	@Override

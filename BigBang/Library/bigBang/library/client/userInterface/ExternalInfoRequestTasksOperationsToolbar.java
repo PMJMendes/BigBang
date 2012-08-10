@@ -6,7 +6,7 @@ import com.google.gwt.user.client.ui.MenuItem;
 public abstract class ExternalInfoRequestTasksOperationsToolbar extends
 		BigBangOperationsToolBar {
 
-	protected MenuItem sendResponse, continueRequest, close;
+	protected MenuItem sendResponse, continueRequest, close, goToExternalInfo;
 	
 	public ExternalInfoRequestTasksOperationsToolbar(){
 		hideAll();
@@ -37,8 +37,19 @@ public abstract class ExternalInfoRequestTasksOperationsToolbar extends
 			}
 		});
 		addItem(close);
+		
+		goToExternalInfo = new MenuItem("Navegar para Pedido Externo", new Command() {
+			
+			@Override
+			public void execute() {
+				onGoToRequest();
+			}
+		});
+		addItem(goToExternalInfo);
 	}
 	
+	protected abstract void onGoToRequest();
+
 	@Override
 	public void onEditRequest() {
 		return;
@@ -70,6 +81,10 @@ public abstract class ExternalInfoRequestTasksOperationsToolbar extends
 	
 	public void allowClose(boolean allow) {
 		close.setVisible(allow);
+	}
+
+	public void setGoToProcessVisible() {
+		goToExternalInfo.setVisible(true);
 	}
 
 }
