@@ -368,7 +368,7 @@ public class CasualtyServiceImpl
 	{
 		CasualtySearchParameter lParam;
 		String lstrAux;
-		IEntity lrefClients;
+		IEntity lrefClients, lrefSubCasualties, lrefPolicies, lrefSubPolicies, lrefPolObjects, lrefSubPolObjects;
         Calendar ldtAux;
 
 		if ( !(pParam instanceof CasualtySearchParameter) )
@@ -396,7 +396,40 @@ public class CasualtyServiceImpl
 				throw new BigBangException(e.getMessage(), e);
 			}
 			pstrBuffer.append(") [AuxClients] WHERE [:Name] LIKE N'%").append(lstrAux).append("%'")
-					.append(" OR CAST([:Number] AS NVARCHAR(20)) LIKE N'%").append(lstrAux).append("%'))");
+					.append(" OR CAST([:Number] AS NVARCHAR(20)) LIKE N'%").append(lstrAux).append("%')");
+			pstrBuffer.append(" OR [:Process] IN (SELECT [:Process:Parent] FROM (");
+			try
+			{
+				lrefSubCasualties = Entity.GetInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), Constants.ObjID_SubCasualty));
+				pstrBuffer.append(lrefSubCasualties.SQLForSelectMulti());
+			}
+			catch (Throwable e)
+			{
+				throw new BigBangException(e.getMessage(), e);
+			}
+			pstrBuffer.append(") [AuxSubCasualties] WHERE ([:Insurer Process] LIKE '%").append(lstrAux).append("%'")
+					.append(" OR [:Policy] IN (SELECT [PK] FROM (");
+			try
+			{
+				lrefPolicies = Entity.GetInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), Constants.ObjID_Policy));
+				pstrBuffer.append(lrefPolicies.SQLForSelectSingle());
+			}
+			catch (Throwable e)
+			{
+				throw new BigBangException(e.getMessage(), e);
+			}
+			pstrBuffer.append(") [AuxPolicies] WHERE [:Number] LIKE '%").append(lstrAux).append("%')")
+					.append(" OR [:Sub Policy] IN (SELECT [PK] FROM (");
+			try
+			{
+				lrefSubPolicies = Entity.GetInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), Constants.ObjID_SubPolicy));
+				pstrBuffer.append(lrefSubPolicies.SQLForSelectSingle());
+			}
+			catch (Throwable e)
+			{
+				throw new BigBangException(e.getMessage(), e);
+			}
+			pstrBuffer.append(") [AuxSubPolicies] WHERE [:Number] LIKE '%").append(lstrAux).append("%'))))");
 		}
 
 		if ( lParam.dateFrom != null )
@@ -436,6 +469,44 @@ public class CasualtyServiceImpl
         		throw new BigBangException(e.getMessage(), e);
 			}
 			pstrBuffer.append(") [AuxOwner] WHERE [:Process:Data] = '").append(lParam.ownerId).append("')");
+		}
+
+		if ( lParam.insuredObject != null )
+		{
+			lstrAux = lParam.insuredObject.trim().replace("'", "''").replace(" ", "%");
+			pstrBuffer.append(" AND ([:Process] IN (SELECT [:Process:Parent] FROM (");
+			try
+			{
+				lrefSubCasualties = Entity.GetInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), Constants.ObjID_SubCasualty));
+				pstrBuffer.append(lrefSubCasualties.SQLForSelectMulti());
+			}
+			catch (Throwable e)
+			{
+				throw new BigBangException(e.getMessage(), e);
+			}
+			pstrBuffer.append(") [AuxSubCasualties] WHERE ([:Generic Object] LIKE '%").append(lstrAux).append("%'")
+					.append(" OR [:Policy Object] IN (SELECT [PK] FROM (");
+			try
+			{
+				lrefPolObjects = Entity.GetInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), Constants.ObjID_PolicyObject));
+				pstrBuffer.append(lrefPolObjects.SQLForSelectSingle());
+			}
+			catch (Throwable e)
+			{
+				throw new BigBangException(e.getMessage(), e);
+			}
+			pstrBuffer.append(") [AuxPolObjects] WHERE [:Name] LIKE '%").append(lstrAux).append("%')")
+					.append(" OR [:Sub Policy Object] IN (SELECT [PK] FROM (");
+			try
+			{
+				lrefSubPolObjects = Entity.GetInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), Constants.ObjID_SubPolicyObject));
+				pstrBuffer.append(lrefSubPolObjects.SQLForSelectSingle());
+			}
+			catch (Throwable e)
+			{
+				throw new BigBangException(e.getMessage(), e);
+			}
+			pstrBuffer.append(") [AuxSubPolObjects] WHERE [:Name] LIKE '%").append(lstrAux).append("%'))))");
 		}
 
 		return true;
