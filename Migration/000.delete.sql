@@ -1,3 +1,6 @@
+delete from credite_egs.tblBBFileImportDetails;
+delete from credite_egs.tblBBFileImportSessions;
+delete from credite_egs.tblMediatorDeals;
 delete from credite_egs.tblBBInsurerReceipts;
 delete from credite_egs.tblRequestAddresses;
 delete from credite_egs.tblDocInfo;
@@ -55,6 +58,9 @@ delete from credite_egs.tblPNNodes;
 delete from credite_egs.tblPNSteps;
 delete from credite_egs.tblPNProcesses;
 
+delete from amartins.tblBBFileImportDetails;
+delete from amartins.tblBBFileImportSessions;
+delete from amartins.tblMediatorDeals;
 delete from amartins.tblBBInsurerReceipts;
 delete from amartins.tblRequestAddresses;
 delete from amartins.tblDocInfo;
