@@ -257,7 +257,7 @@ public class FileImportSession
 		ReportBuilder.styleRow(larrRows[0], true);
 
 		ltbl = ReportBuilder.buildTable(larrRows);
-		ReportBuilder.styleTable(ltbl, true);
+		ReportBuilder.styleTable(ltbl, false);
 
 		return ltbl;
     }
