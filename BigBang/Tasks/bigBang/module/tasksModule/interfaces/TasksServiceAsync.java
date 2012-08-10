@@ -10,5 +10,6 @@ public interface TasksServiceAsync
 {
 	void getTask(String taskId, AsyncCallback<Task> callback);
 	void dismissTask(String taskId, AsyncCallback<Void> callback);
+	void reassignTask(String taskId, String userId, AsyncCallback<Void> callback);
 	void getPendingTasksCount(AsyncCallback<Integer> callback);
 }

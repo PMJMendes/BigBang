@@ -196,6 +196,46 @@ public class TasksServiceImpl
 		}
 	}
 
+	public void reassignTask(String taskId, String userId)
+		throws SessionExpiredException, BigBangException
+	{
+		AgendaItem lobjAgenda;
+		MasterDB ldb;
+
+		if ( Engine.getCurrentUser() == null )
+			throw new SessionExpiredException();
+
+		try
+		{
+			lobjAgenda = AgendaItem.GetInstance(Engine.getCurrentNameSpace(), UUID.fromString(taskId));
+			lobjAgenda.setAt(1, UUID.fromString(userId));
+			ldb = new MasterDB();
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangException(e.getMessage(), e);
+		}
+
+		try
+		{
+			lobjAgenda.SaveToDb(ldb);
+		}
+		catch (Throwable e)
+		{
+			try { ldb.Disconnect(); } catch (Throwable e1) {}
+			throw new BigBangException(e.getMessage(), e);
+		}
+
+		try
+		{
+			ldb.Disconnect();
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangException(e.getMessage(), e);
+		}
+	}
+
 	public int getPendingTasksCount()
 		throws SessionExpiredException, BigBangException
 	{
