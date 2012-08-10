@@ -44,6 +44,11 @@ public class InfoRequestTasksView extends View implements InfoRequestTasksViewPr
 			public void onCancelRequest() {
 				handler.onActionInvoked(new ActionInvokedEvent<InfoRequestTasksViewPresenter.Action>(Action.CANCEL));
 			}
+
+			@Override
+			protected void onGoToProcess() {
+				handler.onActionInvoked(new ActionInvokedEvent<InfoRequestTasksViewPresenter.Action>(Action.GO_TO_PROCESS));
+			}
 			
 		};
 		wrapper.add(toolbar);
@@ -75,6 +80,7 @@ public class InfoRequestTasksView extends View implements InfoRequestTasksViewPr
 	@Override
 	public void clearAllowedPermissions() {
 		toolbar.hideAll();
+		toolbar.setGoToProcessVisible();
 	}
 
 	@Override
