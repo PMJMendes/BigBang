@@ -453,6 +453,7 @@ public class SerialReceiptCreationViewPresenter implements ViewPresenter{
 
 				} else {
 					EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não é possível criar Recibos para a Apólice Especificada"), TYPE.ALERT_NOTIFICATION));
+					view.enableMarkReceipt(true);
 				}
 
 			}
@@ -460,6 +461,7 @@ public class SerialReceiptCreationViewPresenter implements ViewPresenter{
 			@Override
 			public void onError(Collection<ResponseError> errors) {
 				EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não foi possível obter a apólice."), TYPE.ALERT_NOTIFICATION));
+				view.enableMarkReceipt(true);
 			}
 		});
 
@@ -494,7 +496,6 @@ public class SerialReceiptCreationViewPresenter implements ViewPresenter{
 			@Override
 			public void onError(Collection<ResponseError> errors) {
 				EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não foi possível obter as apólices."), TYPE.ALERT_NOTIFICATION));				
-
 			}
 		});
 
