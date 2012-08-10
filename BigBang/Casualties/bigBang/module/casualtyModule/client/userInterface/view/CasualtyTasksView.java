@@ -29,6 +29,11 @@ public class CasualtyTasksView extends View implements CasualtyTasksViewPresente
 			public void onClose() {
 				handler.onActionInvoked(new ActionInvokedEvent<Action>(Action.CLOSE));
 			}
+
+			@Override
+			protected void onGoToProcess() {
+				handler.onActionInvoked(new ActionInvokedEvent<CasualtyTasksViewPresenter.Action>(Action.GO_TO_PROCESS));
+			}
 		};
 		wrapper.add(toolbar);
 		
@@ -57,6 +62,8 @@ public class CasualtyTasksView extends View implements CasualtyTasksViewPresente
 	@Override
 	public void clearAllowedPermissions() {
 		toolbar.hideAll();
+		toolbar.setGoToProcessVisible();
+
 	}
 
 	@Override

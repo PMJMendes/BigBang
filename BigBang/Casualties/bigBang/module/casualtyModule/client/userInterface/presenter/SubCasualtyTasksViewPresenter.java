@@ -23,13 +23,15 @@ import bigBang.library.client.event.ActionInvokedEvent;
 import bigBang.library.client.event.ActionInvokedEventHandler;
 import bigBang.library.client.event.NewNotificationEvent;
 import bigBang.library.client.history.NavigationHistoryItem;
+import bigBang.library.client.history.NavigationHistoryManager;
 import bigBang.library.client.userInterface.presenter.ViewPresenter;
 
 public class SubCasualtyTasksViewPresenter implements ViewPresenter, HasOperationPermissions {
 
 	public static enum Action {
 		CLOSE,
-		REJECT_CLOSE
+		REJECT_CLOSE,
+		GO_TO_PROCESS
 	}
 	
 	public static interface Display {
@@ -91,6 +93,9 @@ public class SubCasualtyTasksViewPresenter implements ViewPresenter, HasOperatio
 					break;
 				case REJECT_CLOSE:
 					onRejectClose();
+				case GO_TO_PROCESS:
+					NavigationHistoryManager.getInstance().NavigateToProcess(BigBangConstants.EntityIds.SUB_CASUALTY, view.getForm().getValue().id);
+					break;
 				default:
 					break;
 				}

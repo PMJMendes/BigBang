@@ -9,6 +9,7 @@ public abstract class CasualtyTasksOperationsToolbar extends
 		BigBangOperationsToolBar {
 
 	protected MenuItem close;
+	private MenuItem goToProcess;
 
 	protected CasualtyTasksOperationsToolbar(){
 		hideAll();
@@ -21,7 +22,19 @@ public abstract class CasualtyTasksOperationsToolbar extends
 			}
 		});
 		addItem(close);
+		
+		goToProcess = new MenuItem("Navegar até Sinistro", new Command() {
+			
+			@Override
+			public void execute() {
+				onGoToProcess();
+			}
+		});
+		addItem(goToProcess);
 	}
+	
+	protected abstract void onGoToProcess();
+	
 	
 	@Override
 	public void onEditRequest() {
@@ -42,6 +55,10 @@ public abstract class CasualtyTasksOperationsToolbar extends
 	
 	public void allowClose(boolean allow){
 		close.setVisible(allow);
+	}
+
+	public void setGoToProcessVisible() {
+		goToProcess.setVisible(true);
 	}
 	
 }

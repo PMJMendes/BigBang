@@ -23,6 +23,7 @@ import bigBang.library.client.event.ActionInvokedEvent;
 import bigBang.library.client.event.ActionInvokedEventHandler;
 import bigBang.library.client.event.NewNotificationEvent;
 import bigBang.library.client.history.NavigationHistoryItem;
+import bigBang.library.client.history.NavigationHistoryManager;
 import bigBang.library.client.userInterface.presenter.ViewPresenter;
 
 public class ReceiptTasksViewPresenter implements ViewPresenter,
@@ -30,7 +31,7 @@ public class ReceiptTasksViewPresenter implements ViewPresenter,
 
 	public static enum Action {
 		CREATE_DAS_REQUEST,
-		MARK_DAS_UNNECESSARY, VALIDATE, SET_FOR_RETURN
+		MARK_DAS_UNNECESSARY, VALIDATE, SET_FOR_RETURN, GO_TO_PROCESS
 	}
 	
 	public static interface Display {
@@ -101,6 +102,8 @@ public class ReceiptTasksViewPresenter implements ViewPresenter,
 				case VALIDATE:
 					onValidate();
 					break;
+				case GO_TO_PROCESS:
+					NavigationHistoryManager.getInstance().NavigateToProcess(BigBangConstants.EntityIds.RECEIPT, view.getForm().getValue().id);
 				default:
 					break;
 				}

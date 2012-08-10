@@ -8,6 +8,7 @@ import bigBang.library.client.userInterface.BigBangOperationsToolBar;
 public abstract class ReceiptTasksOperationsToolbar extends BigBangOperationsToolBar{
 
 	protected MenuItem createDAS, markUnnecessary, validate, setForReturn;
+	private MenuItem goToProcess;
 
 	public ReceiptTasksOperationsToolbar(){
 		hideAll();
@@ -48,7 +49,17 @@ public abstract class ReceiptTasksOperationsToolbar extends BigBangOperationsToo
 		});
 
 		addItem(setForReturn);
+		goToProcess = new MenuItem("Navegar para Recibo", new Command() {
+
+			@Override
+			public void execute() {
+				onGoToProcess();
+			}
+		});
+		addItem(goToProcess);
 	}
+
+	protected abstract void onGoToProcess();
 
 	@Override
 	public void onEditRequest() {
@@ -88,6 +99,10 @@ public abstract class ReceiptTasksOperationsToolbar extends BigBangOperationsToo
 	public void allowSetForReturn(boolean b) {
 		setForReturn.setVisible(b);
 
+	}
+
+	public void setGoToProcessVisible() {
+		goToProcess.setVisible(true);		
 	}
 
 }

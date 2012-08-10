@@ -51,6 +51,11 @@ public class ReceiptTasksView extends View implements ReceiptTasksViewPresenter.
 			public void onSetForReturn() {
 				handler.onActionInvoked(new ActionInvokedEvent<ReceiptTasksViewPresenter.Action>(Action.SET_FOR_RETURN));
 			}
+
+			@Override
+			protected void onGoToProcess() {
+				handler.onActionInvoked(new ActionInvokedEvent<ReceiptTasksViewPresenter.Action>(Action.GO_TO_PROCESS));
+			}
 		};
 		wrapper.add(toolbar);
 		
@@ -81,6 +86,7 @@ public class ReceiptTasksView extends View implements ReceiptTasksViewPresenter.
 	@Override
 	public void clearAllowedPermissions() {
 		toolbar.hideAll();
+		toolbar.setGoToProcessVisible();
 	}
 
 	@Override

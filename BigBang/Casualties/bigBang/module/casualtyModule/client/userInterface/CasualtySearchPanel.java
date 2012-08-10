@@ -118,7 +118,7 @@ public class CasualtySearchPanel extends SearchPanel<CasualtyStub> implements Ca
 		p.managerId = (String) filtersPanel.getFilterValue(Filters.MANAGER);
 		p.caseStudy = (Boolean) filtersPanel.getFilterValue(Filters.CASE_STUDY);
 		p.includeClosed = (Boolean) filtersPanel.getFilterValue(Filters.INCLUDE_CLOSED);
-		
+		p.insuredObject = (String) filtersPanel.getFilterValue(Filters.INSURED_OBJECT);
 		parameters[0] = p;
 
 		SortParameter[] sorts = new SortParameter[]{

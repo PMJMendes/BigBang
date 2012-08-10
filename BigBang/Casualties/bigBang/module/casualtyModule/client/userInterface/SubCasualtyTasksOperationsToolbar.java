@@ -1,5 +1,7 @@
 package bigBang.module.casualtyModule.client.userInterface;
 
+import org.gwt.mosaic.ui.client.ToolBar;
+
 import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.ui.MenuItem;
 
@@ -8,6 +10,7 @@ import bigBang.library.client.userInterface.BigBangOperationsToolBar;
 public abstract class SubCasualtyTasksOperationsToolbar extends BigBangOperationsToolBar {
 
 	protected MenuItem close, rejectClose;
+	private MenuItem goToProcess;
 	
 	public SubCasualtyTasksOperationsToolbar(){
 		hideAll();
@@ -29,8 +32,19 @@ public abstract class SubCasualtyTasksOperationsToolbar extends BigBangOperation
 			}
 		});
 		addItem(rejectClose);
+		
+		goToProcess = new MenuItem("Navegar até Sub-Sinistro", new Command() {
+			
+			@Override
+			public void execute() {
+				onGoToProcess();
+			}
+		});
+		addItem(goToProcess);
 	}
 	
+	protected abstract void onGoToProcess();
+
 	@Override
 	public void onEditRequest() {
 		return;
@@ -56,6 +70,10 @@ public abstract class SubCasualtyTasksOperationsToolbar extends BigBangOperation
 	
 	public void allowRejectClose(boolean allow) {
 		rejectClose.setVisible(allow);
+	}
+
+	public void setGoToProcessVisible() {
+		goToProcess.setVisible(true);		
 	}
 
 }

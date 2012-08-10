@@ -25,6 +25,7 @@ import bigBang.library.client.event.ActionInvokedEvent;
 import bigBang.library.client.event.ActionInvokedEventHandler;
 import bigBang.library.client.event.NewNotificationEvent;
 import bigBang.library.client.history.NavigationHistoryItem;
+import bigBang.library.client.history.NavigationHistoryManager;
 import bigBang.library.client.userInterface.presenter.ViewPresenter;
 
 public class DASRequestTasksViewPresenter implements ViewPresenter, HasOperationPermissions {
@@ -32,7 +33,8 @@ public class DASRequestTasksViewPresenter implements ViewPresenter, HasOperation
 	public static enum Action {
 		RECEIVE_RESPONSE,
 		REPEAT,
-		CANCEL
+		CANCEL,
+		GO_TO_PROCESS
 	}
 	
 	public static interface Display {
@@ -99,6 +101,9 @@ public class DASRequestTasksViewPresenter implements ViewPresenter, HasOperation
 					break;
 				case CANCEL:
 					onCancel();
+					break;
+				case GO_TO_PROCESS:
+					NavigationHistoryManager.getInstance().NavigateToProcess(BigBangConstants.EntityIds.DAS_REQUEST, view.getForm().getValue().id);
 					break;
 				default:
 					break;

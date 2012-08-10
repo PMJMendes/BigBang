@@ -21,12 +21,14 @@ import bigBang.library.client.dataAccess.DataBrokerManager;
 import bigBang.library.client.event.ActionInvokedEvent;
 import bigBang.library.client.event.ActionInvokedEventHandler;
 import bigBang.library.client.event.NewNotificationEvent;
+import bigBang.library.client.history.NavigationHistoryManager;
 import bigBang.library.client.userInterface.presenter.ViewPresenter;
 
 public class CasualtyTasksViewPresenter implements ViewPresenter, HasOperationPermissions {
 
 	public static enum Action {
-		CLOSE
+		CLOSE,
+		GO_TO_PROCESS
 	}
 	
 	public static interface Display {
@@ -80,7 +82,9 @@ public class CasualtyTasksViewPresenter implements ViewPresenter, HasOperationPe
 				case CLOSE:
 					onClose();
 					break;
-
+				case GO_TO_PROCESS:
+					NavigationHistoryManager.getInstance().NavigateToProcess(BigBangConstants.EntityIds.CASUALTY, view.getForm().getValue().id);
+					break;
 				default:
 					break;
 				}

@@ -50,6 +50,11 @@ public class DASRequestTasksView extends View implements DASRequestTasksViewPres
 			public void onCancelRequest(){
 				handler.onActionInvoked(new ActionInvokedEvent<Action>(Action.CANCEL));
 			}
+
+			@Override
+			protected void onGoToProcess() {
+				handler.onActionInvoked(new ActionInvokedEvent<DASRequestTasksViewPresenter.Action>(Action.GO_TO_PROCESS));
+			}
 		};
 		wrapper.add(toolbar);
 		
@@ -88,6 +93,8 @@ public class DASRequestTasksView extends View implements DASRequestTasksViewPres
 	@Override
 	public void clearAllowedPermissions() {
 		toolbar.hideAll();
+		toolbar.setGoToProcessVisible();
+
 	}
 
 	@Override

@@ -41,6 +41,11 @@ public class SubCasualtyTasksView extends View implements SubCasualtyTasksViewPr
 			public void onRejectClose() {
 				handler.onActionInvoked(new ActionInvokedEvent<Action>(Action.REJECT_CLOSE));
 			}
+
+			@Override
+			protected void onGoToProcess() {
+				handler.onActionInvoked(new ActionInvokedEvent<SubCasualtyTasksViewPresenter.Action>(Action.GO_TO_PROCESS));
+			}
 		};
 		wrapper.add(toolbar);
 		
@@ -71,6 +76,7 @@ public class SubCasualtyTasksView extends View implements SubCasualtyTasksViewPr
 	@Override
 	public void clearAllowedPermissions() {
 		toolbar.hideAll();
+		toolbar.setGoToProcessVisible();
 	}
 
 	@Override

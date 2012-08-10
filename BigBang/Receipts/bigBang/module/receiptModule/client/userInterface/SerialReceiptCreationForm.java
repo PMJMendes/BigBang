@@ -258,6 +258,9 @@ public abstract class SerialReceiptCreationForm extends FormView<ReceiptPolicyWr
 				bonusMalusValue.setValue(null);
 			}
 		});
+		
+		type.setMandatory(true);
+		totalPremium.setMandatory(true);
 	}
 
 	protected boolean isEditKey(int nativeKeyCode) {
