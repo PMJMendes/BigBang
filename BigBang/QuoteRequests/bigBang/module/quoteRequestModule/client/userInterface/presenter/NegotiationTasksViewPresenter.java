@@ -23,6 +23,7 @@ import bigBang.library.client.event.ActionInvokedEvent;
 import bigBang.library.client.event.ActionInvokedEventHandler;
 import bigBang.library.client.event.NewNotificationEvent;
 import bigBang.library.client.history.NavigationHistoryItem;
+import bigBang.library.client.history.NavigationHistoryManager;
 import bigBang.library.client.userInterface.presenter.ViewPresenter;
 
 public class NegotiationTasksViewPresenter implements ViewPresenter,
@@ -32,7 +33,8 @@ public class NegotiationTasksViewPresenter implements ViewPresenter,
 		GRANT,
 		CANCEL,
 		RECEIVE_QUOTE,
-		REPEAT_QUOTE_REQUEST
+		REPEAT_QUOTE_REQUEST,
+		GO_TO_PROCESS
 	}
 	
 	public static interface Display {
@@ -102,6 +104,9 @@ public class NegotiationTasksViewPresenter implements ViewPresenter,
 					break;
 				case REPEAT_QUOTE_REQUEST:
 					onRepeatQuoteRequest();
+					break;
+				case GO_TO_PROCESS:
+					NavigationHistoryManager.getInstance().NavigateToProcess(BigBangConstants.EntityIds.NEGOTIATION, view.getForm().getValue().id);
 					break;
 				default:
 					break;

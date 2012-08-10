@@ -8,6 +8,7 @@ import bigBang.library.client.userInterface.BigBangOperationsToolBar;
 public abstract class NegotiationTasksOperationsToolbar extends BigBangOperationsToolBar {
 
 	protected MenuItem grant, cancel, receiveResponse, repeat;
+	private MenuItem goToProcess;
 	
 	public NegotiationTasksOperationsToolbar(){
 		hideAll();
@@ -47,7 +48,18 @@ public abstract class NegotiationTasksOperationsToolbar extends BigBangOperation
 			}
 		});
 		addItem(repeat);
+		
+		goToProcess = new MenuItem("Navegar para Negociação", new Command() {
+			
+			@Override
+			public void execute() {
+				onGoToProcess();
+			}
+		});
+		addItem(goToProcess);
 	}
+	
+	protected abstract void onGoToProcess();
 	
 	@Override
 	public void onEditRequest() {
@@ -82,6 +94,10 @@ public abstract class NegotiationTasksOperationsToolbar extends BigBangOperation
 	
 	public void allowReceiveResponse(boolean allow) {
 		receiveResponse.setVisible(allow);
+	}
+
+	public void setGoToProcessVisible() {
+		goToProcess.setVisible(true);
 	}
 	
 }

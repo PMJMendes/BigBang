@@ -52,6 +52,11 @@ public class NegotiationTasksView extends View implements NegotiationTasksViewPr
 			public void onReceiveResponse() {
 				handler.onActionInvoked(new ActionInvokedEvent<NegotiationTasksViewPresenter.Action>(Action.RECEIVE_QUOTE));
 			}
+
+			@Override
+			protected void onGoToProcess() {
+				handler.onActionInvoked(new ActionInvokedEvent<NegotiationTasksViewPresenter.Action>(Action.GO_TO_PROCESS));
+			}
 			
 		};
 		wrapper.add(toolbar);
@@ -83,6 +88,7 @@ public class NegotiationTasksView extends View implements NegotiationTasksViewPr
 	@Override
 	public void clearAllowedPermissions() {
 		toolbar.hideAll();
+		toolbar.setGoToProcessVisible();
 	}
 
 	@Override
