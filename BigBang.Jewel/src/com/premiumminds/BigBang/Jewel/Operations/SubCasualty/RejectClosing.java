@@ -124,6 +124,16 @@ public class RejectClosing
 			lobjItem.setAt(6, "O processo foi rejeitado pelo seguinte motivo: " + mstrReason + ".");
 			lobjItem.SaveToDb(pdb);
 			lobjItem.InitNew(new UUID[] {GetProcess().getKey()}, new UUID[] {}, pdb);
+
+			lobjItem = AgendaItem.GetInstance(Engine.getCurrentNameSpace(), (UUID)null);
+			lobjItem.setAt(0, "Sub-Sinistro: Marcação de Revisão e Fecho");
+			lobjItem.setAt(1, GetProcess().GetManagerID());
+			lobjItem.setAt(2, Constants.ProcID_SubCasualty);
+			lobjItem.setAt(3, ldtAux);
+			lobjItem.setAt(4, new Timestamp(ldtAux2.getTimeInMillis()));
+			lobjItem.setAt(5, Constants.UrgID_Pending);
+			lobjItem.SaveToDb(pdb);
+			lobjItem.InitNew(new UUID[] {GetProcess().getKey()}, new UUID[] {Constants.OPID_SubCasualty_MarkForClosing}, pdb);
 		}
 		catch (Throwable e)
 		{

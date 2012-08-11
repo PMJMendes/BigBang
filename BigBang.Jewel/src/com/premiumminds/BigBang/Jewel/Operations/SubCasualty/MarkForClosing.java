@@ -57,20 +57,57 @@ public class MarkForClosing
 	protected void Run(SQLServer pdb)
 		throws JewelPetriException
 	{
+		Hashtable<UUID, AgendaItem> larrItems;
+		ResultSet lrs;
+		IEntity lrefAux;
+		ObjectBase lobjAgendaProc;
 		AgendaItem lobjItem;
 		Timestamp ldtAux;
 		Calendar ldtAux2;
 		Timestamp ldtFinal;
 		SubCasualty lobjSubCasualty;
 
-		if ( midReviewer.equals(Engine.getCurrentUser()) )
-			throw new JewelPetriException("Erro: Não se pode indicar a si próprio para rever o seu próprio processo.");
+//		if ( midReviewer.equals(Engine.getCurrentUser()) )
+//			throw new JewelPetriException("Erro: Não se pode indicar a si próprio para rever o seu próprio processo.");
 
 		ldtAux = new Timestamp(new java.util.Date().getTime());
     	ldtAux2 = Calendar.getInstance();
     	ldtAux2.setTimeInMillis(ldtAux.getTime());
     	ldtAux2.add(Calendar.DAY_OF_MONTH, 7);
     	ldtFinal = new Timestamp(ldtAux2.getTimeInMillis());
+
+		larrItems = new Hashtable<UUID, AgendaItem>();
+		lrs = null;
+		try
+		{
+			lrefAux = Entity.GetInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), Constants.ObjID_AgendaProcess));
+			lrs = lrefAux.SelectByMembers(pdb, new int[] {1}, new java.lang.Object[] {GetProcess().getKey()}, new int[0]);
+			while ( lrs.next() )
+			{
+				lobjAgendaProc = Engine.GetWorkInstance(lrefAux.getKey(), lrs);
+				larrItems.put((UUID)lobjAgendaProc.getAt(0),
+						AgendaItem.GetInstance(Engine.getCurrentNameSpace(), (UUID)lobjAgendaProc.getAt(0)));
+			}
+			lrs.close();
+		}
+		catch (Throwable e)
+		{
+			if ( lrs != null ) try { lrs.close(); } catch (Throwable e1) {}
+			throw new JewelPetriException(e.getMessage(), e);
+		}
+
+		try
+		{
+			for ( AgendaItem lobjAg: larrItems.values() )
+			{
+				lobjAg.ClearData(pdb);
+				lobjAg.getDefinition().Delete(pdb, lobjAg.getKey());
+			}
+		}
+		catch (Throwable e)
+		{
+			throw new JewelPetriException(e.getMessage(), e);
+		}
 
 		try
 		{
