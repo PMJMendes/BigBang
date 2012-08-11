@@ -253,6 +253,10 @@ public class CasualtyServiceImpl
 				lopCSC.mobjData.marrItems[i].mdblSettlement = ( subCasualty.items[i].settlement == null ? null :
 						new BigDecimal(subCasualty.items[i].settlement) );
 				lopCSC.mobjData.marrItems[i].mbIsManual = subCasualty.items[i].isManual;
+				lopCSC.mobjData.marrItems[i].mdblCapital = ( subCasualty.items[i].value == null ? null :
+						new BigDecimal(subCasualty.items[i].value) );
+				lopCSC.mobjData.marrItems[i].mdblDeductible = ( subCasualty.items[i].deductible == null ? null :
+						new BigDecimal(subCasualty.items[i].deductible) );
 
 				lopCSC.mobjData.marrItems[i].mbNew = !subCasualty.items[i].deleted;
 				lopCSC.mobjData.marrItems[i].mbDeleted = subCasualty.items[i].deleted;

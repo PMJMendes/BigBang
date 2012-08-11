@@ -26,6 +26,8 @@ public class SubCasualtyItemData
 	public BigDecimal mdblDamages;
 	public BigDecimal mdblSettlement;
 	public boolean mbIsManual;
+	public BigDecimal mdblCapital;
+	public BigDecimal mdblDeductible;
 
 	public boolean mbNew;
 	public boolean mbDeleted;
@@ -36,13 +38,15 @@ public class SubCasualtyItemData
 	{
 		mid = pobjSource.getKey();
 
-		midSubCasualty       =       (UUID) pobjSource.getAt(SubCasualtyItem.I.SUBCASUALTY);
-		midPolicyCoverage    =       (UUID) pobjSource.getAt(SubCasualtyItem.I.POLICYCOVERAGE);
-		midSubPolicyCoverage =       (UUID) pobjSource.getAt(SubCasualtyItem.I.SUBOPOLICYCOVERAGE);
-		midType              =       (UUID) pobjSource.getAt(SubCasualtyItem.I.TYPE);
-		mdblDamages          = (BigDecimal) pobjSource.getAt(SubCasualtyItem.I.DAMAGES);
-		mdblSettlement       = (BigDecimal) pobjSource.getAt(SubCasualtyItem.I.SETTLEMENT);
-		mbIsManual           =    (Boolean) pobjSource.getAt(SubCasualtyItem.I.MANUAL);
+		midSubCasualty       =       (UUID)pobjSource.getAt(SubCasualtyItem.I.SUBCASUALTY);
+		midPolicyCoverage    =       (UUID)pobjSource.getAt(SubCasualtyItem.I.POLICYCOVERAGE);
+		midSubPolicyCoverage =       (UUID)pobjSource.getAt(SubCasualtyItem.I.SUBOPOLICYCOVERAGE);
+		midType              =       (UUID)pobjSource.getAt(SubCasualtyItem.I.TYPE);
+		mdblDamages          = (BigDecimal)pobjSource.getAt(SubCasualtyItem.I.DAMAGES);
+		mdblSettlement       = (BigDecimal)pobjSource.getAt(SubCasualtyItem.I.SETTLEMENT);
+		mbIsManual           =    (Boolean)pobjSource.getAt(SubCasualtyItem.I.MANUAL);
+		mdblCapital          = (BigDecimal)pobjSource.getAt(SubCasualtyItem.I.CAPITAL);
+		mdblDeductible       = (BigDecimal)pobjSource.getAt(SubCasualtyItem.I.DEDUCTIBLE);
 	}
 
 	public void ToObject(ObjectBase pobjDest)
@@ -57,6 +61,8 @@ public class SubCasualtyItemData
 			pobjDest.setAt(SubCasualtyItem.I.DAMAGES,            mdblDamages);
 			pobjDest.setAt(SubCasualtyItem.I.SETTLEMENT,         mdblSettlement);
 			pobjDest.setAt(SubCasualtyItem.I.MANUAL,             mbIsManual);
+			pobjDest.setAt(SubCasualtyItem.I.CAPITAL,            mdblCapital);
+			pobjDest.setAt(SubCasualtyItem.I.DEDUCTIBLE,         mdblDeductible);
 		}
 		catch (Throwable e)
 		{
@@ -115,6 +121,20 @@ public class SubCasualtyItemData
 		}
 		else
 			pstrBuilder.append("Não indicado.");
+		pstrBuilder.append(pstrLineBreak);
+
+		pstrBuilder.append("Capital segurado: ");
+		if ( mdblDamages != null )
+			pstrBuilder.append(mdblCapital);
+		else
+			pstrBuilder.append("Não indicado.");
+		pstrBuilder.append(pstrLineBreak);
+
+		pstrBuilder.append("Franquia esperada: ");
+		if ( mdblDamages != null )
+			pstrBuilder.append(mdblDeductible);
+		else
+			pstrBuilder.append("Não indicada.");
 		pstrBuilder.append(pstrLineBreak);
 
 		pstrBuilder.append("Valor dos danos: ");

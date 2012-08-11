@@ -22,6 +22,8 @@ public class SubCasualtyItem
 		public static int DAMAGES            = 4;
 		public static int SETTLEMENT         = 5;
 		public static int MANUAL             = 6;
+		public static int CAPITAL            = 7;
+		public static int DEDUCTIBLE         = 8;
 	}
 
     public static SubCasualtyItem GetInstance(UUID pidNameSpace, UUID pidKey)
