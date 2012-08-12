@@ -109,6 +109,9 @@ public class CreatePolicy
 
 		try
 		{
+			if ( Constants.DurID_Temporary.equals(mobjData.midDuration) && (mobjData.mdtEndDate == null) )
+				throw new BigBangJewelException("Erro: Numa apólice temporária, tem que especificar a data de fim.");
+
 			if ( mobjData.mstrNumber == null )
 				mobjData.mstrNumber = GetTmpPolicyNumber();
 			if ( mobjData.midManager == null )
