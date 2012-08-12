@@ -558,6 +558,10 @@ public class Constants
 	public static final UUID FieldID_Reference = UUID.fromString("9F626929-A5F7-4CAF-AAB3-9F96014A8A9F");
 	public static final UUID FieldID_Text      = UUID.fromString("49EB6448-E9E6-448A-82A0-9F9601404506");
 
+	// Policy Duration Codes
+	public static final UUID DurID_Temporary = UUID.fromString("E3F02152-ED63-44BB-9FD1-9F8101580339");
+	public static final UUID DurID_Ongoing   = UUID.fromString("FFF15F7F-EB59-40D4-8E86-9F810157FD24");
+
 	// Policy Status Codes
 	public static final UUID StatusID_InProgress = UUID.fromString("6489D7DF-A090-40B9-BD5E-9F98012C8BED");
 	public static final UUID StatusID_Valid      = UUID.fromString("421E16B3-BE47-4D9C-9011-9F98012C945E");
