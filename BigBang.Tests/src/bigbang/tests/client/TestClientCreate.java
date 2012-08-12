@@ -32,7 +32,7 @@ public class TestClientCreate
 		client.name = "Gumbercindo";
 		client.typeId = "4098CF7A-B5EE-4C3F-973F-9EE600C961AA";
 		client.subtypeId = "5C7A0424-126B-467B-977A-9EE600CC13A4";
-		client.mediatorId = "419BCD65-8960-4329-A968-9FA8011115E2";
+		client.mediatorId = "B8FDD1D1-45EF-4587-B747-A0A301243632";
 		client.operationalProfileId = "9F871430-9BBC-449F-B125-9EE600BE5A9A";
 
 		Services.clientService.createClient(client, callback);
