@@ -28,9 +28,9 @@ public class OutgoingMessageFormField extends FormField<OutgoingMessage>{
 
 		to = new ListBoxFormField("Destinatário");
 		to.setFieldWidth("400px");
-		forwardReply = new AutoCompleteTextListFormField("Forward/Reply");
-		internalCCAddresses = new TextBoxFormField("BCC (interno) Endereços separados por ';'");
-		externalCCAddresses = new TextBoxFormField("CC (externo) Endereços separados por ';'");
+		forwardReply = new AutoCompleteTextListFormField("Utilizadores a envolver no processo");
+		internalCCAddresses = new TextBoxFormField("BCC Endereços separados por ';'");
+		externalCCAddresses = new TextBoxFormField("CC Endereços separados por ';'");
 		text = new TypifiedTextFormField();
 		text.setTypifiedTexts("OUTGOING_MESSAGE");
 		text.setHeight("300px");

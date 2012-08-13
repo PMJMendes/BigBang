@@ -89,8 +89,6 @@ public class BigBangProcessNavigationMapper implements ProcessNavigationMapper {
 				final NavigationHistoryItem navigationItem = new NavigationHistoryItem();
 				navigationItem.setStackParameter("display");
 				navigationItem.pushIntoStackParameter("display", "search");
-				navigationItem.pushIntoStackParameter("display", "negotiation");
-				navigationItem.pushIntoStackParameter("display", "viewnegotiationexternalrequest");
 				navigationItem.setParameter("externalrequestid", result.id);
 				
 				if(result.parentDataTypeId.equalsIgnoreCase(BigBangConstants.EntityIds.NEGOTIATION)){
@@ -107,6 +105,8 @@ public class BigBangProcessNavigationMapper implements ProcessNavigationMapper {
 								navigationItem.setParameter("section", "quoterequest");
 								navigationItem.setParameter("quoterequestid", response.ownerId);
 							}
+							navigationItem.pushIntoStackParameter("display", "negotiation");
+							navigationItem.pushIntoStackParameter("display", "viewnegotiationexternalrequest");
 							navigationItem.setParameter("negotiationid", response.id);
 							handler.onResponse(navigationItem);
 						}
@@ -118,6 +118,40 @@ public class BigBangProcessNavigationMapper implements ProcessNavigationMapper {
 					});
 					
 				}
+				
+				else if(result.parentDataTypeId.equalsIgnoreCase(BigBangConstants.EntityIds.EXPENSE)){
+					
+					navigationItem.setParameter("section", "expense");
+					navigationItem.pushIntoStackParameter("display", "viewexternalrequest");
+					navigationItem.setParameter("expenseid", result.parentDataObjectId);
+					handler.onResponse(navigationItem);
+					
+				}
+				else if(result.parentDataTypeId.equalsIgnoreCase(BigBangConstants.EntityIds.SUB_CASUALTY)){
+					
+					subCasualtyBroker.getSubCasualty(result.parentDataObjectId, new ResponseHandler<SubCasualty>() {
+						
+						@Override
+						public void onResponse(SubCasualty response) {
+							navigationItem.setParameter("section", "casualty");
+							navigationItem.pushIntoStackParameter("display", "subcasualty");
+							navigationItem.pushIntoStackParameter("display", "viewsubcasualtyexternalrequest");
+							navigationItem.setParameter("subcasualtyid", response.id);
+							navigationItem.setParameter("casualtyid", response.casualtyId);
+							handler.onResponse(navigationItem);
+						}
+						
+						@Override
+						public void onError(Collection<ResponseError> errors) {
+							EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não é possível navegar até ao processo auxiliar"), TYPE.ALERT_NOTIFICATION));						}
+					});
+					
+				}
+			}
+			@Override
+			public void onResponseFailure(Throwable caught) {
+				EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não é possível navegar até ao processo auxiliar"), TYPE.ALERT_NOTIFICATION));
+				super.onResponseFailure(caught);
 			}
 		});
 	}
@@ -204,6 +238,7 @@ public class BigBangProcessNavigationMapper implements ProcessNavigationMapper {
 			
 			@Override
 			public void onResponseFailure(Throwable caught) {
+				EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não é possível navegar até ao processo auxiliar"), TYPE.ALERT_NOTIFICATION));
 				super.onResponseFailure(caught);
 			}
 		});		
@@ -374,6 +409,7 @@ public class BigBangProcessNavigationMapper implements ProcessNavigationMapper {
 				}
 				navigationItem.pushIntoStackParameter("display", "negotiation");
 				navigationItem.setParameter("ownertypeid", response.ownerTypeId);
+				navigationItem.setParameter("policyid", response.ownerId);
 				navigationItem.setParameter("negotiationid", instanceId);
 				handler.onResponse(navigationItem);
 			}

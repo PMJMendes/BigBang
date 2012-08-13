@@ -71,6 +71,7 @@ public abstract class SubCasualtyOperationsToolbar extends BigBangOperationsTool
 				onExternalInfoRequest();
 			}
 		});
+		addItem(SUB_MENU.REQUESTS, externalInfoRequesT);
 	}
 
 	protected abstract void onInsurerInfoRequest();
