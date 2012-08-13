@@ -49,9 +49,9 @@ public class SubCasualtyItemSection extends CollapsibleFormViewSection {
 		settlement = new NumericTextBoxFormField("Valor Acordado", true);
 		settlement.setFieldWidth("175px");
 		settlement.setUnitsLabel("€");
-		itemValue = new NumericTextBoxFormField("Capital", true);
+		itemValue = new NumericTextBoxFormField("Capital Segurado", true);
 		itemValue.setUnitsLabel("€");
-		deductible = new NumericTextBoxFormField("Franquia", true);
+		deductible = new NumericTextBoxFormField("Franquia Esperada", true);
 
 		addFormFieldGroup(new FormField<?>[]{
 				coverage,
