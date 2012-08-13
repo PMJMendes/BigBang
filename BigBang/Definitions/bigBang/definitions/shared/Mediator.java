@@ -15,9 +15,10 @@ public class Mediator
 	public String taxNumber;
 	public String NIB;
 	public CommissionProfile comissionProfile;
-	public Double basePercent; // Novo!
+	public Double basePercent;
+	public boolean hasRetention; // Novo!
 	public Address address;
-	public Map<String, Double> dealPercents; // Novo!
+	public Map<String, Double> dealPercents;
 	public Contact[] contacts;
 	public Document[] documents;
 
