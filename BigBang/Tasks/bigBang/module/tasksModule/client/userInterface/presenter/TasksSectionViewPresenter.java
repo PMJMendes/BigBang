@@ -29,12 +29,17 @@ import bigBang.module.tasksModule.client.TasksViewPresenterMapper;
 import bigBang.module.tasksModule.client.dataAccess.TasksBroker;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.dom.client.HasClickHandlers;
 import com.google.gwt.user.client.ui.HasWidgets;
 import com.google.gwt.user.client.ui.UIObject;
 import com.google.gwt.user.client.ui.Widget;
 
 public class TasksSectionViewPresenter implements ViewPresenter {
 
+	
+	
 	public interface Display {
 		HasValueSelectables<TaskStub> getTaskList();
 		HasWidgets getOperationViewContainer();
@@ -46,6 +51,10 @@ public class TasksSectionViewPresenter implements ViewPresenter {
 
 		void clear();
 		void setScreenDescription(String description);
+		void setSendToUserVisible(boolean b);
+		HasClickHandlers getSendTaskButton();
+		String getSelectedUserId();
+		
 	}
 
 	private Display view;
@@ -111,12 +120,14 @@ public class TasksSectionViewPresenter implements ViewPresenter {
 						currentTask = response;
 						if(response.status == Status.COMPLETED){
 							view.setScreenDescription("Notificação");
+							view.setSendToUserVisible(false);
 							present("TASKS_DISMISS", parameters, true);
 						}else{
 							String presenterId = getViewPresenterIdForTask(response);
 							if(presenterId == null){
 								onGetScreenFailed();
 							}else {
+								view.setSendToUserVisible(true);
 								view.setScreenDescription(response.description);
 								parameters.setParameter("id", response.objectIds[0]);
 								ViewPresenter presenter = present(presenterId, parameters, true);
@@ -138,6 +149,7 @@ public class TasksSectionViewPresenter implements ViewPresenter {
 			}
 
 			private void clearView(){
+				view.setSendToUserVisible(false);
 				Collection<ValueSelectable<TaskStub>> selected = view.getTaskList().getSelected();
 				if(!selected.isEmpty()){
 					view.getTaskList().clearSelection();
@@ -185,6 +197,35 @@ public class TasksSectionViewPresenter implements ViewPresenter {
 				operationWasExecuted(operationId, processId);
 			}
 		});
+		
+		view.getSendTaskButton().addClickHandler(new ClickHandler() {
+			
+			@Override
+			public void onClick(ClickEvent event) {
+				sendTaskToNewUser();
+			}
+		});
+	}
+
+	protected void sendTaskToNewUser() {
+		
+		broker.reassignTask(currentTask.id, view.getSelectedUserId(), new ResponseHandler<Void>() {
+			
+			@Override
+			public void onResponse(Void response) {
+				EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Tarefa enviada para outro utilizador"), TYPE.TRAY_NOTIFICATION));
+				view.removeTaskListEntry(currentTask.id);
+				NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
+				item.removeParameter("taskid");
+				NavigationHistoryManager.getInstance().go(item);
+			}
+			
+			@Override
+			public void onError(Collection<ResponseError> errors) {
+				EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não foi possível enviar a tarefa para outro utilizador"), TYPE.ALERT_NOTIFICATION));
+			}
+		});
+		
 	}
 
 	private void operationWasExecuted(String operationId, String objectId){
@@ -214,5 +255,7 @@ public class TasksSectionViewPresenter implements ViewPresenter {
 		item.removeParameter("taskid");
 		NavigationHistoryManager.getInstance().go(item);
 	}
+	
+	
 
 }

@@ -1,7 +1,6 @@
 package bigBang.module.tasksModule.client.dataAccess;
 
 import java.util.Collection;
-
 import bigBang.definitions.client.dataAccess.DataBroker;
 import bigBang.definitions.client.dataAccess.DataBrokerClient;
 import bigBang.definitions.client.dataAccess.SearchDataBroker;
@@ -130,6 +129,27 @@ public class TasksBrokerImpl extends DataBroker<Task> implements TasksBroker {
 				super.onResponseFailure(caught);
 			}
 		});
+	}
+
+	@Override
+	public void reassignTask(String taskId, String userId,
+			final ResponseHandler<Void> handler) {
+		this.service.reassignTask(taskId, userId, new BigBangAsyncCallback<Void>() {
+			
+			@Override
+			public void onResponseSuccess(Void result) {
+				handler.onResponse(null);
+			}
+			
+			@Override
+			public void onResponseFailure(Throwable caught) {
+				handler.onError(new String[]{
+						new String("Could not reassign the task")	
+				});
+				super.onResponseFailure(caught);
+			}
+		});
+		
 	}
 
 }
