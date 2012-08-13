@@ -114,6 +114,7 @@ public class MediatorData
 		if ( (mbHasRetention != null) && mbHasRetention )
 		{
 			pstrBuilder.append("Com retenção na fonte.");
+			pstrBuilder.append(pstrLineBreak);
 		}
 
 		pstrBuilder.append("Morada:");

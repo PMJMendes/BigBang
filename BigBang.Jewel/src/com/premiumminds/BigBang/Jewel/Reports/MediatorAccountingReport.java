@@ -1,6 +1,7 @@
 package com.premiumminds.BigBang.Jewel.Reports;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.sql.Timestamp;
 import java.util.HashMap;
 import java.util.UUID;
@@ -33,6 +34,8 @@ public class MediatorAccountingReport
 	public BigDecimal mdblTotalPremiums;
 	public BigDecimal mdblTotalComms;
 	public BigDecimal mdblTotalRetros;
+	public BigDecimal mdblRetention;
+	public BigDecimal mdblNet;
 
 	protected UUID GetTemplateID()
 	{
@@ -127,6 +130,25 @@ public class MediatorAccountingReport
 			mdblTotalPremiums = mdblTotalPremiums.add(lobjDetail.getPremium());
 			mdblTotalComms = mdblTotalComms.add(lobjDetail.getCommission());
 			mdblTotalRetros = mdblTotalRetros.add(lobjDetail.getRetrocession());
+		}
+
+		if ( lobjMediator.getHasRetention() )
+		{
+			mdblRetention = mdblTotalRetros.multiply(new BigDecimal(0.215)).setScale(2, RoundingMode.HALF_UP);
+			mdblNet = mdblTotalRetros.subtract(mdblRetention);
+			larrParams.put("TaxText", "Retenção na Fonte:");
+			larrParams.put("TaxValue", String.format("%,.2f", mdblRetention));
+			larrParams.put("NetText", "Total Líquido:");
+			larrParams.put("NetValue", String.format("%,.2f", mdblNet));
+		}
+		else
+		{
+			mdblRetention = new BigDecimal(0.0);
+			mdblNet = mdblTotalRetros;
+			larrParams.put("TaxText", "");
+			larrParams.put("TaxValue", "");
+			larrParams.put("NetText", "");
+			larrParams.put("NetValue", "");
 		}
 
 		larrParams.put("Count", "" + mlngCount);

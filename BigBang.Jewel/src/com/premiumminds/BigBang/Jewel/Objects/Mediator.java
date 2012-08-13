@@ -309,6 +309,11 @@ public class Mediator
     	return (BigDecimal)getAt(I.PERCENT);
     }
 
+    public boolean getHasRetention()
+    {
+    	return (Boolean)getAt(I.HASRETENTION);
+    }
+
     public BigDecimal GetCurrentDealFor(UUID pidSubLine)
         throws BigBangJewelException
     {
