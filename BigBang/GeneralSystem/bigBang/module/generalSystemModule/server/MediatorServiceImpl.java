@@ -96,6 +96,7 @@ public class MediatorServiceImpl
 	        	lobjTmp.comissionProfile.value = lobjProfile.getLabel();
 	        	lobjTmp.basePercent = (lobjAux.getAt(com.premiumminds.BigBang.Jewel.Objects.Mediator.I.PERCENT) == null ? null :
 	        			((BigDecimal)lobjAux.getAt(com.premiumminds.BigBang.Jewel.Objects.Mediator.I.PERCENT)).doubleValue());
+	        	lobjTmp.hasRetention = (Boolean)lobjAux.getAt(com.premiumminds.BigBang.Jewel.Objects.Mediator.I.HASRETENTION);
 	        	lobjTmp.address = new Address();
 	        	lobjTmp.address.street1 = (String)lobjAux.getAt(com.premiumminds.BigBang.Jewel.Objects.Mediator.I.ADDRESS1);
 	        	lobjTmp.address.street2 = (String)lobjAux.getAt(com.premiumminds.BigBang.Jewel.Objects.Mediator.I.ADDRESS2);
@@ -175,6 +176,7 @@ public class MediatorServiceImpl
 				lopMM.marrCreate[0].mobjMainValues.midProfile = null;
 			lopMM.marrCreate[0].mobjMainValues.mdblPercent = (mediator.basePercent == null ? null :
 					new BigDecimal(mediator.basePercent));
+			lopMM.marrCreate[0].mobjMainValues.mbHasRetention = mediator.hasRetention;
 			if ( mediator.address != null )
 			{
 				lopMM.marrCreate[0].mobjMainValues.mstrAddress1 = mediator.address.street1;
@@ -271,6 +273,7 @@ public class MediatorServiceImpl
 				lopMM.marrModify[0].mobjMainValues.midProfile = null;
 			lopMM.marrModify[0].mobjMainValues.mdblPercent = (mediator.basePercent == null ? null :
 				new BigDecimal(mediator.basePercent));
+			lopMM.marrModify[0].mobjMainValues.mbHasRetention = mediator.hasRetention;
 			if ( mediator.address != null )
 			{
 				lopMM.marrModify[0].mobjMainValues.mstrAddress1 = mediator.address.street1;
