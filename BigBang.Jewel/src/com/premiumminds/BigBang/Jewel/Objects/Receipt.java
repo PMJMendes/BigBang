@@ -509,7 +509,7 @@ public class Receipt
     	if ( (ldblPercent == null) || (ldblBase == null) )
     		return null;
 
-		return ldblPercent.abs().multiply(ldblBase).setScale(2, RoundingMode.HALF_UP);
+		return ldblPercent.abs().multiply(ldblBase).divide(new BigDecimal(100.00)).setScale(2, RoundingMode.HALF_UP);
     }
 
 	public static GenericElement[] printImportReport(String[] parrParams)
