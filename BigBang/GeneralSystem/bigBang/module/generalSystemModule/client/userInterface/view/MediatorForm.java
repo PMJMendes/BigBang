@@ -17,6 +17,7 @@ import bigBang.definitions.shared.CommissionProfile;
 import bigBang.definitions.shared.Mediator;
 import bigBang.library.client.dataAccess.DataBrokerManager;
 import bigBang.library.client.userInterface.AddressFormField;
+import bigBang.library.client.userInterface.CheckBoxFormField;
 import bigBang.library.client.userInterface.ExpandableListBoxFormField;
 import bigBang.library.client.userInterface.NumericTextBoxFormField;
 import bigBang.library.client.userInterface.TextBoxFormField;
@@ -33,6 +34,7 @@ public class MediatorForm extends FormView<Mediator> {
 	private ExpandableListBoxFormField comissionProfile;
 	private NumericTextBoxFormField commissionPercentage;
 	private AddressFormField address;
+	private CheckBoxFormField hasRetention;
 	private TextBoxFormField NIB;
 	
 	private Collection<MediatorCategoryFormSection> categorySections;
@@ -49,6 +51,7 @@ public class MediatorForm extends FormView<Mediator> {
 		commissionPercentage = new NumericTextBoxFormField("Comissão", false);
 		commissionPercentage.setUnitsLabel("%");
 		NIB = new TextBoxFormField("NIB/IBAN", new MediatorFormValidator.NIBValidator());
+		hasRetention = new CheckBoxFormField("Retenção na Fonte");
 		
 		addFormField(name);
 		addFormField(taxNumber);
@@ -56,7 +59,7 @@ public class MediatorForm extends FormView<Mediator> {
 		addFormField(ISPNumber);
 		addFormField(comissionProfile, true);
 		addFormField(commissionPercentage, true);
-		
+		addFormField(hasRetention, true);
 		
 		addSection("Morada");
 		
@@ -92,6 +95,7 @@ public class MediatorForm extends FormView<Mediator> {
 		info.address = address.getValue();
 		info.NIB = NIB.getValue();
 		info.basePercent = commissionPercentage.getValue();
+		info.hasRetention = this.hasRetention.getValue();
 		
 		Map<String, Double> values = new HashMap<String, Double>();
 		for(MediatorCategoryFormSection section : categorySections) {
@@ -115,6 +119,7 @@ public class MediatorForm extends FormView<Mediator> {
 		commissionPercentage.setValue(info.basePercent);
 		address.setValue(info.address);
 		NIB.setValue(info.NIB);
+		hasRetention.setValue(info.hasRetention);
 		
 		setCommissioningProfile(info.comissionProfile.id, info.dealPercents);
 	}
