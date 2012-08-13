@@ -3,6 +3,7 @@ package com.premiumminds.BigBang.Jewel.Objects;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.sql.ResultSet;
+import java.sql.Timestamp;
 import java.util.Arrays;
 import java.util.UUID;
 
@@ -145,10 +146,12 @@ public class InsurerAccountingMap
 		BigDecimal ldblTotalPremiums, ldblDirectPremiums, ldblPayablePremiums;
 		BigDecimal ldblTotalComms, ldblLifeComms, ldblTaxableComms;
 		BigDecimal ldblPreTax, ldblTax, ldblTotal;
+		boolean lbSubtract;
 		int i;
 
 		ldblTotalPremiums = new BigDecimal(0.0);
 		ldblDirectPremiums = new BigDecimal(0.0);
+		lbSubtract = false;
 
 		if ( (getAt(I.EXTRATEXT) == null) || (getAt(I.EXTRAVALUE) == null) )
 		{
@@ -163,6 +166,7 @@ public class InsurerAccountingMap
 			ldblExtraValue = (BigDecimal)getAt(I.EXTRAVALUE);
 			if ( (getAt(I.ISCOMMISSION) == null)  || !((Boolean)getAt(I.ISCOMMISSION)) )
 			{
+				lbSubtract = true;
 				ldblTotalComms = new BigDecimal(0.0);
 				ldblLifeComms = new BigDecimal(0.0);
 			}
@@ -187,7 +191,9 @@ public class InsurerAccountingMap
 
 		ldblPayablePremiums = ldblTotalPremiums.subtract(ldblDirectPremiums);
 		ldblTaxableComms = ldblTotalComms.subtract(ldblLifeComms);
-		ldblPreTax = ldblPayablePremiums.subtract(ldblTotalComms).add(ldblExtraValue);
+		ldblPreTax = ldblPayablePremiums.subtract(ldblTotalComms);
+		if ( lbSubtract )
+			ldblPreTax = ldblPreTax.subtract(ldblExtraValue);
 		ldblTax = ldblTaxableComms.multiply((new BigDecimal(2.0/102.0))).setScale(2, RoundingMode.HALF_UP);
 		ldblTotal = ldblPreTax.add(ldblTax);
 
@@ -197,15 +203,15 @@ public class InsurerAccountingMap
 
 		larrRows[0] = ReportBuilder.constructDualRow("Total de Prémios", ldblTotalPremiums, TypeDefGUIDs.T_Decimal);
 
-		larrRows[1] = ReportBuilder.constructDualRow("Pagamentos Directos", ldblDirectPremiums, TypeDefGUIDs.T_Decimal);
+		larrRows[1] = ReportBuilder.constructDualRow(" Dos quais, pagamentos directos", ldblDirectPremiums, TypeDefGUIDs.T_Decimal);
 
-		larrRows[2] = ReportBuilder.constructDualRow("Prémios a Entregar", ldblPayablePremiums, TypeDefGUIDs.T_Decimal);
+		larrRows[2] = ReportBuilder.constructDualRow(" E, prémios a entregar", ldblPayablePremiums, TypeDefGUIDs.T_Decimal);
 
 		larrRows[3] = ReportBuilder.constructDualRow("Total de Comissões", ldblTotalComms, TypeDefGUIDs.T_Decimal);
 
-		larrRows[4] = ReportBuilder.constructDualRow("Comissões Vida", ldblLifeComms, TypeDefGUIDs.T_Decimal);
+		larrRows[4] = ReportBuilder.constructDualRow(" Das quais, comissões vida", ldblLifeComms, TypeDefGUIDs.T_Decimal);
 
-		larrRows[5] = ReportBuilder.constructDualRow("Comissões não Vida", ldblTaxableComms, TypeDefGUIDs.T_Decimal);
+		larrRows[5] = ReportBuilder.constructDualRow(" E, comissões não vida", ldblTaxableComms, TypeDefGUIDs.T_Decimal);
 
 		larrRows[6] = ReportBuilder.constructDualRow(lstrExtraText, ldblExtraValue, TypeDefGUIDs.T_Decimal);
 
@@ -239,7 +245,7 @@ public class InsurerAccountingMap
 		}
 
 		lobjDoc = new DocumentData();
-		lobjDoc.mstrName = "Prestação de Contas";
+		lobjDoc.mstrName = new Timestamp(new java.util.Date().getTime()).toString();
 		lobjDoc.midOwnerType = Constants.ObjID_Company;
 		lobjDoc.midOwnerId = (UUID)getAt(TransactionMapBase.I.OWNER);
 		lobjDoc.midDocType = Constants.DocID_InsurerReceipt;

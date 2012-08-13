@@ -27,6 +27,8 @@ public class MediatorData
 	public String mstrAddress2;
 	public UUID midZipCode;
 	public BigDecimal mdblPercent;
+	public String mstrCalcClass;
+	public Boolean mbHasRetention;
 	public MediatorDealData[] marrDeals;
 
 	public MediatorData mobjPrevValues;
@@ -44,6 +46,8 @@ public class MediatorData
 		mstrAddress2 = (String)pobjSource.getAt(Mediator.I.ADDRESS2);
 		midZipCode = (UUID)pobjSource.getAt(Mediator.I.ZIPCODE);
 		mdblPercent = (BigDecimal)pobjSource.getAt(Mediator.I.PERCENT);
+		mstrCalcClass = (String)pobjSource.getAt(Mediator.I.CALCCLASS);
+		mbHasRetention = (Boolean)pobjSource.getAt(Mediator.I.HASRETENTION);
 	}
 
 	public void ToObject(ObjectBase pobjDest)
@@ -60,6 +64,8 @@ public class MediatorData
 			pobjDest.setAt(Mediator.I.ADDRESS2, mstrAddress2);
 			pobjDest.setAt(Mediator.I.ZIPCODE, midZipCode);
 			pobjDest.setAt(Mediator.I.PERCENT, mdblPercent);
+			pobjDest.setAt(Mediator.I.CALCCLASS, mstrCalcClass);
+			pobjDest.setAt(Mediator.I.HASRETENTION, mbHasRetention);
 		}
 		catch (Throwable e)
 		{
@@ -85,8 +91,8 @@ public class MediatorData
 		pstrBuilder.append("NIB: ");
 		pstrBuilder.append(mstrBankID);
 		pstrBuilder.append(pstrLineBreak);
-		pstrBuilder.append("Perfil de Comissionamento: ");
 
+		pstrBuilder.append("Perfil de Comissionamento: ");
 		try
 		{
 			lobjProfile = Engine.GetWorkInstance(Engine.FindEntity(Engine.getCurrentNameSpace(), Constants.ObjID_CommProfile), midProfile);
@@ -97,6 +103,18 @@ public class MediatorData
 			pstrBuilder.append("(Erro a obter o perfil de comissionamento.)");
 		}
 		pstrBuilder.append(pstrLineBreak);
+
+		if ( mdblPercent != null )
+		{
+			pstrBuilder.append("Percentagem de Retrocessão: ");
+			pstrBuilder.append(mdblPercent);
+			pstrBuilder.append(pstrLineBreak);
+		}
+
+		if ( (mbHasRetention != null) && mbHasRetention )
+		{
+			pstrBuilder.append("Com retenção na fonte.");
+		}
 
 		pstrBuilder.append("Morada:");
 		pstrBuilder.append(pstrLineBreak);

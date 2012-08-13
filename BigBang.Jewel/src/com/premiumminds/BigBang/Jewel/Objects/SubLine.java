@@ -174,6 +174,11 @@ public class SubLine
     	return (BigDecimal)getAt(5);
     }
 
+    public boolean getIsLife()
+    {
+    	return (Boolean)getAt(6);
+    }
+
     public String getDescription()
     {
     	if ( getAt(7) == null )

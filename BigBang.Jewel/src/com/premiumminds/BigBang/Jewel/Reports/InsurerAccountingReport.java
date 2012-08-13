@@ -69,10 +69,23 @@ public class InsurerAccountingReport
 		Policy lobjPolicy;
 		SubPolicy lobjSubPolicy;
 		InsurerReceipt lobjRec;
+		BigDecimal ldblTotalPremiums, ldblDirectPremiums, ldblLifeComms;
+		boolean lbSubtract;
 		int i;
 
 		lobjMap = InsurerAccountingMap.GetInstance(Engine.getCurrentNameSpace(), midMap);
 		larrDetails = lobjMap.getCurrentDetails();
+
+		mlngCount = 0;
+		mdblPayables = new BigDecimal(0.0);
+		mdblTaxableComms = new BigDecimal(0);
+		mdblPreTax = new BigDecimal(0);
+		mdblTax = new BigDecimal(0);
+		mdblTotal = new BigDecimal(0);
+
+		ldblTotalPremiums = new BigDecimal(0.0);
+		ldblDirectPremiums = new BigDecimal(0.0);
+		lbSubtract = false;
 
 		mstrExtraText = (String)lobjMap.getAt(InsurerAccountingMap.I.EXTRATEXT);
 		mdblExtraValue = (BigDecimal)lobjMap.getAt(InsurerAccountingMap.I.EXTRAVALUE);
@@ -81,7 +94,30 @@ public class InsurerAccountingReport
 		if ( "".equals(mstrExtraText) )
 			mstrExtraText = null;
 		if ( mstrExtraText == null )
+		{
 			mdblExtraValue = new BigDecimal(0.0);
+			mdblTotalComms = new BigDecimal(0.0);
+			ldblLifeComms = new BigDecimal(0.0);
+		}
+		else
+		{
+			mstrExtraText = (String)lobjMap.getAt(InsurerAccountingMap.I.EXTRATEXT);
+			mdblExtraValue = (BigDecimal)lobjMap.getAt(InsurerAccountingMap.I.EXTRAVALUE);
+			if ( (lobjMap.getAt(InsurerAccountingMap.I.ISCOMMISSION) == null)  || !((Boolean)lobjMap.getAt(InsurerAccountingMap.I.ISCOMMISSION)) )
+			{
+				lbSubtract = true;
+				mdblTotalComms = new BigDecimal(0.0);
+				ldblLifeComms = new BigDecimal(0.0);
+			}
+			else
+			{
+				mdblTotalComms = mdblExtraValue;
+				if ( (lobjMap.getAt(InsurerAccountingMap.I.HASTAX) == null) || !((Boolean)lobjMap.getAt(InsurerAccountingMap.I.HASTAX)) )
+					ldblLifeComms = mdblExtraValue;
+				else
+					ldblLifeComms = new BigDecimal(0.0);
+			}
+		}
 
 		lobjInsurer = Company.GetInstance(Engine.getCurrentNameSpace(), (UUID)lobjMap.getAt(TransactionMapBase.I.OWNER));
 		if ( lobjInsurer.getAt(8) == null )
@@ -109,13 +145,6 @@ public class InsurerAccountingReport
 		larrParams.put("Date", ldtAux.toString().substring(0, 10));
 
 		larrTables = new String[larrDetails.length][];
-		mlngCount = 0;
-		mdblPayables = new BigDecimal(0);
-		mdblTotalComms = new BigDecimal(0);
-		mdblTaxableComms = new BigDecimal(0);
-		mdblPreTax = new BigDecimal(0);
-		mdblTax = new BigDecimal(0);
-		mdblTotal = new BigDecimal(0);
 		for ( i = 0; i < larrDetails.length; i++ )
 		{
 			lobjDetail = (InsurerAccountingDetail)larrDetails[i];
@@ -148,11 +177,17 @@ public class InsurerAccountingReport
 			larrTables[i][5] = String.format("%,.2f", lobjDetail.getCommissions());
 
 			mlngCount++;
-			mdblPayables = mdblPayables.add(lobjDetail.getPayablePremium());
+			ldblTotalPremiums = ldblTotalPremiums.add(lobjDetail.getPremium());
+			ldblDirectPremiums = ldblDirectPremiums.add(lobjDetail.getDirectPremium());
 			mdblTotalComms = mdblTotalComms.add(lobjDetail.getCommissions());
-			mdblTaxableComms = mdblTaxableComms.add(lobjDetail.getTaxableComms());
+			ldblLifeComms = ldblLifeComms.add(lobjDetail.getLifeComms());
 		}
-		mdblPreTax = mdblPayables.subtract(mdblTotalComms).add(mdblExtraValue);
+
+		mdblPayables = ldblTotalPremiums.subtract(ldblDirectPremiums);
+		mdblTaxableComms = mdblTotalComms.subtract(ldblLifeComms);
+		mdblPreTax = mdblPayables.subtract(mdblTotalComms);
+		if ( lbSubtract )
+			mdblPreTax = mdblPreTax.subtract(mdblExtraValue);
 		mdblTax = mdblTaxableComms.multiply((new BigDecimal(2.0/102.0))).setScale(2, RoundingMode.HALF_UP);
 		mdblTotal = mdblPreTax.add(mdblTax);
 
@@ -179,6 +214,7 @@ public class InsurerAccountingReport
 		larrParams.put("TaxableComms", String.format("%,.2f", mdblTaxableComms));
 		larrParams.put("Tax", String.format("%,.2f", mdblTax));
 		larrParams.put("Total", String.format("%,.2f", mdblTotal));
+		larrParams.put("Movement", (mdblTotal.signum() < 0 ? "receber da Seguradora" : "transferir para a Seguradora" ));
 
 		larrParams.put("RecNumber", lobjRec.getLabel());
 		larrParams.put("NIF", (lobjInsurer.getAt(4) == null ? "-" : (String)lobjInsurer.getAt(4)));

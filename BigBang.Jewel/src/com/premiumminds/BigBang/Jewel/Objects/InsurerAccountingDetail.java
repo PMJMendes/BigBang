@@ -112,19 +112,19 @@ public class InsurerAccountingDetail
 	public BigDecimal getLifeComms()
 		throws BigBangJewelException
 	{
-		Category lobjCat;
+		SubLine lobjSubLine;
 
-		lobjCat = getReceipt().getAbsolutePolicy().GetSubLine().getLine().getCategory();
+		lobjSubLine = getReceipt().getAbsolutePolicy().GetSubLine();
 
-		if ( "Vida".equals(lobjCat.getLabel()) || "Fundo de Pensões".equals(lobjCat.getLabel()) )
-			return getCommissions();
+		if ( lobjSubLine.getIsLife() )
+			return new BigDecimal(0.0);
 
-		return new BigDecimal(0.0);
+		return getCommissions();
 	}
 
-	public BigDecimal getTaxableComms()
-		throws BigBangJewelException
-	{
-		return getCommissions().subtract(getLifeComms());
-	}
+//	public BigDecimal getTaxableComms()
+//		throws BigBangJewelException
+//	{
+//		return getCommissions().subtract(getLifeComms());
+//	}
 }

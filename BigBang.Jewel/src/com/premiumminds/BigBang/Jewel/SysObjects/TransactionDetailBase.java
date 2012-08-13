@@ -10,6 +10,7 @@ import Jewel.Engine.SysObjects.ObjectBase;
 import Jewel.Petri.Interfaces.ILog;
 
 import com.premiumminds.BigBang.Jewel.BigBangJewelException;
+import com.premiumminds.BigBang.Jewel.Constants;
 import com.premiumminds.BigBang.Jewel.Objects.Category;
 import com.premiumminds.BigBang.Jewel.Objects.Policy;
 import com.premiumminds.BigBang.Jewel.Objects.Receipt;
@@ -56,7 +57,8 @@ public abstract class TransactionDetailBase
 			{
 				try
 				{
-					lstrAux.append(Engine.GetWorkInstance(getNameSpace(), lobjPayment.marrData[i].midPaymentType).getAt(1));
+					lstrAux.append(Engine.GetWorkInstance(Engine.FindEntity(getNameSpace(), Constants.ObjID_PaymentType),
+							lobjPayment.marrData[i].midPaymentType).getAt(1));
 				}
 				catch (Throwable e)
 				{

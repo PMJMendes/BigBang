@@ -33,6 +33,7 @@ public class Mediator
 		public static int MIGRATIONID  =  8;
 		public static int PERCENT      =  9;
 		public static int CALCCLASS    = 10;
+		public static int HASRETENTION = 11;
 	}
 
     public static Mediator GetInstance(UUID pidNameSpace, UUID pidKey)
