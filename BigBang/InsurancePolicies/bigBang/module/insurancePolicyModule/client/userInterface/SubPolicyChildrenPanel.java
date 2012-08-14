@@ -54,7 +54,7 @@ public class SubPolicyChildrenPanel extends View {
 	public void setSubPolicy(SubPolicy subPolicy){
 		this.subPolicy = subPolicy;
 		String subPolicyId = subPolicy == null ? null : subPolicy.id;
-		
+
 		boolean allow = subPolicy != null ? PermissionChecker.hasPermission(subPolicy, BigBangConstants.OperationIds.InsuranceSubPolicyProcess.EDIT_SUB_POLICY) : false;
 		this.contactsList.setOwner(subPolicyId);
 		this.contactsList.setOwnerType(BigBangConstants.EntityIds.INSURANCE_SUB_POLICY);

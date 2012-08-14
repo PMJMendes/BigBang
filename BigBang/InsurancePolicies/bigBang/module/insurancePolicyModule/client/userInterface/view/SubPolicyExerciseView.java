@@ -8,6 +8,8 @@ import bigBang.module.insurancePolicyModule.client.userInterface.ExerciseForm;
 import bigBang.module.insurancePolicyModule.client.userInterface.SubPolicyForm;
 import bigBang.module.insurancePolicyModule.client.userInterface.presenter.SubPolicyExerciseViewPresenter;
 
+import com.google.gwt.event.dom.client.HasClickHandlers;
+import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.SplitLayoutPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
@@ -15,6 +17,7 @@ public class SubPolicyExerciseView extends View implements SubPolicyExerciseView
 
 	private ExerciseForm exerciseForm;
 	private SubPolicyForm subPolicyForm;
+	private Button back;
 	
 	public SubPolicyExerciseView(){
 		
@@ -29,6 +32,10 @@ public class SubPolicyExerciseView extends View implements SubPolicyExerciseView
 		insurancePolicyFormWrapper.setSize("100%", "100%");
 				
 		ListHeader insurancePolicyFormHeader = new ListHeader("Apólice Adesão");
+		back = new Button("Voltar");
+		
+		insurancePolicyFormHeader.setRightWidget(back);
+		
 		insurancePolicyFormHeader.setHeight("30px");
 		insurancePolicyFormWrapper.add(insurancePolicyFormHeader);
 		
@@ -55,6 +62,11 @@ public class SubPolicyExerciseView extends View implements SubPolicyExerciseView
 	@Override
 	protected void initializeView() {
 		return;
+	}
+	
+	@Override
+	public HasClickHandlers getBackButton(){
+		return back;
 	}
 	
 	@Override

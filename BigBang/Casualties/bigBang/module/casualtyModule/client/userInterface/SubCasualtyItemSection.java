@@ -61,9 +61,14 @@ public class SubCasualtyItemSection extends CollapsibleFormViewSection {
 		addFormFieldGroup(new FormField<?>[]{
 				itemValue,
 				deductible,
+		}, true);
+		
+		
+		addFormFieldGroup(new FormField<?>[]{
 				damages,
 				settlement
 		}, false);
+		
 
 		SimplePanel buttonWrapper = new SimplePanel();
 		buttonWrapper.add(removeButton);

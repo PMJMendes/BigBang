@@ -5,6 +5,8 @@ import java.util.Collection;
 import bigBang.definitions.client.dataAccess.ExerciseDataBroker;
 import bigBang.definitions.client.dataAccess.ExerciseDataBrokerClient;
 import bigBang.definitions.client.dataAccess.InsurancePolicyBroker;
+import bigBang.definitions.client.dataAccess.InsuranceSubPolicyBroker;
+import bigBang.definitions.client.dataAccess.SubPolicyExerciseDataBrokerClient;
 import bigBang.definitions.client.response.ResponseError;
 import bigBang.definitions.client.response.ResponseHandler;
 import bigBang.definitions.shared.BigBangConstants;
@@ -29,16 +31,21 @@ public class ExercisesList extends FilterableList<ExerciseStub> {
 	}
 
 	protected InsurancePolicyBroker insurancePolicyBroker;
+	protected InsuranceSubPolicyBroker insuranceSubPolicyBroker;
 	protected ExerciseDataBrokerClient exerciseBrokerClient;
+	protected SubPolicyExerciseDataBrokerClient subPolicyExerciseBrokerClient;
 	protected ExerciseDataBroker exerciseBroker;
 
 	protected String ownerId;
 
 	public ExercisesList(){
 		this.exerciseBrokerClient = getExerciseBrokerClient();
+		this.subPolicyExerciseBrokerClient = getSubPolicyExerciseBrokerClient();
 		this.insurancePolicyBroker = (InsurancePolicyBroker) DataBrokerManager.Util.getInstance().getBroker(BigBangConstants.EntityIds.INSURANCE_POLICY);
+		this.insuranceSubPolicyBroker = (InsuranceSubPolicyBroker) DataBrokerManager.Util.getInstance().getBroker(BigBangConstants.EntityIds.INSURANCE_SUB_POLICY);
 		this.exerciseBroker = (ExerciseDataBroker) DataBrokerManager.Util.getInstance().getBroker(BigBangConstants.EntityIds.POLICY_EXERCISE);
 		this.exerciseBroker.registerClient(this.exerciseBrokerClient);
+		this.exerciseBroker.registerClient(this.subPolicyExerciseBrokerClient);
 		showFilterField(false);
 	}
 
@@ -133,6 +140,58 @@ public class ExercisesList extends FilterableList<ExerciseStub> {
 		};
 	}
 
+
+	protected SubPolicyExerciseDataBrokerClient getSubPolicyExerciseBrokerClient(){
+		return new SubPolicyExerciseDataBrokerClient() {
+
+			protected int version;
+
+			@Override
+			public void setDataVersionNumber(String dataElementId, int number) {
+				version = number;
+			}
+
+			@Override
+			public int getDataVersion(String dataElementId) {
+				return version;
+			}
+
+			@Override
+			public void updateExercise(String subPolicyId, Exercise exercise) {
+				for(ValueSelectable<ExerciseStub> vs : ExercisesList.this){
+					ExerciseStub e = vs.getValue();
+					if(e.id.equalsIgnoreCase(exercise.id)){
+						vs.setValue(exercise);
+						break;
+					}
+				}
+			}
+
+			@Override
+			public void removeExercise(String id) {
+				for(ValueSelectable<ExerciseStub> vs : ExercisesList.this) {
+					ExerciseStub e = vs.getValue();
+					if(e.id.equalsIgnoreCase(id)){
+						ExercisesList.this.remove(vs);
+						break;
+					}
+				}
+			}
+
+			@Override
+			public void addExercise(String ownerId, Exercise exercise) {
+				String exerciseOwnerId = ownerId;
+				String currentOwnerId = insuranceSubPolicyBroker.getFinalMapping(ExercisesList.this.ownerId);
+
+				if(exercise != null && exerciseOwnerId != null && ownerId != null && exerciseOwnerId.equalsIgnoreCase(currentOwnerId)){
+					ExercisesList.this.addEntry(exercise);
+				}
+			}
+
+		};
+	}
+
+	
 	@Override
 	protected void onAttach() {
 		clearSelection();

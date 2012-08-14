@@ -20,6 +20,9 @@ import bigBang.library.client.history.NavigationHistoryItem;
 import bigBang.library.client.history.NavigationHistoryManager;
 import bigBang.library.client.userInterface.presenter.ViewPresenter;
 
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.dom.client.HasClickHandlers;
 import com.google.gwt.user.client.ui.HasWidgets;
 import com.google.gwt.user.client.ui.UIObject;
 import com.google.gwt.user.client.ui.Widget;
@@ -31,6 +34,7 @@ public class SubPolicyExerciseViewPresenter implements ViewPresenter {
 		HasEditableValue<SubPolicy> getSubPolicyForm();
 
 		Widget asWidget();
+		HasClickHandlers getBackButton();
 	}
 
 	protected Display view;
@@ -51,8 +55,28 @@ public class SubPolicyExerciseViewPresenter implements ViewPresenter {
 
 	@Override
 	public void go(HasWidgets container) {
+		bind();
 		container.clear();
 		container.add(this.view.asWidget());
+	}
+
+	private void bind() {
+		if(bound){
+			return;
+		}
+		
+		view.getBackButton().addClickHandler(new ClickHandler() {
+			
+			@Override
+			public void onClick(ClickEvent event) {
+				NavigationHistoryItem item = NavigationHistoryManager.getInstance().getCurrentState();
+				item.popFromStackParameter("display");
+				item.removeParameter("exerciseid");
+				NavigationHistoryManager.getInstance().go(item);
+			}
+		});
+		
+		bound = true;
 	}
 
 	@Override
@@ -68,9 +92,28 @@ public class SubPolicyExerciseViewPresenter implements ViewPresenter {
 		}else if(exerciseId.isEmpty()){
 			clearView();
 			onGetExerciseFailed();
-		}else{
+		}else if(subPolicyBroker.isTemp(ownerId)){
+			showScratchPadExercise(exerciseId, ownerId);
+		}
+		else{
 			showExercise(exerciseId, ownerId);
 		}
+	}
+
+	private void showScratchPadExercise(String exerciseId, String parentId){
+		subPolicyBroker.getExerciseInPad(exerciseId, new ResponseHandler<Exercise>() {
+			
+			@Override
+			public void onResponse(Exercise response) {
+				view.getExerciseForm().setValue(response);
+			}
+			
+			@Override
+			public void onError(Collection<ResponseError> errors) {
+				onGetExerciseFailed();
+			}
+		});
+		showParentSubPolicy(parentId);
 	}
 
 	private void clearView(){
@@ -93,20 +136,21 @@ public class SubPolicyExerciseViewPresenter implements ViewPresenter {
 		});
 		showParentSubPolicy(parentId);
 	}
-	
+
 	private void showParentSubPolicy(String subPolicyId){
 		subPolicyBroker.getSubPolicy(subPolicyId, new ResponseHandler<SubPolicy>() {
-			
+
 			@Override
 			public void onResponse(SubPolicy response) {
 				view.getSubPolicyForm().setValue(response);				
 			}
-			
+
 			@Override
 			public void onError(Collection<ResponseError> errors) {
 				onGetOwnerFailed();				
 			}
 		});
+		
 	}
 
 	private void onGetOwnerFailed(){

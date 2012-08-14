@@ -18,6 +18,7 @@ import bigBang.definitions.client.dataAccess.SearchDataBroker;
 import bigBang.definitions.client.response.ResponseError;
 import bigBang.definitions.client.response.ResponseHandler;
 import bigBang.definitions.shared.BigBangConstants;
+import bigBang.definitions.shared.Exercise;
 import bigBang.definitions.shared.Expense;
 import bigBang.definitions.shared.InfoOrDocumentRequest;
 import bigBang.definitions.shared.InsuredObject;
@@ -851,6 +852,27 @@ implements InsuranceSubPolicyBroker {
 						new String("Could not create the new Expense")	
 				});
 				super.onResponseFailure(caught);
+			}
+		});
+	}
+
+	@Override
+	public void getExerciseInPad(String exerciseId,
+			final ResponseHandler<Exercise> handler) {
+
+		service.getExerciseInPad(exerciseId, new BigBangAsyncCallback<Exercise>() {
+
+			@Override
+			public void onResponseSuccess(Exercise result) {
+				handler.onResponse(result);
+			}
+		
+			@Override
+			public void onResponseFailure(Throwable caught) {
+				super.onResponseFailure(caught);
+				handler.onError(new String[]{
+						new String("Could not get the requested exercise")
+				});
 			}
 		});
 	}

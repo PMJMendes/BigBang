@@ -1,5 +1,6 @@
 package bigBang.module.insurancePolicyModule.client.dataAccess;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
@@ -21,6 +22,7 @@ import bigBang.definitions.shared.ExerciseStub;
 import bigBang.definitions.shared.SearchParameter;
 import bigBang.definitions.shared.SortOrder;
 import bigBang.definitions.shared.SortParameter;
+import bigBang.definitions.shared.TipifiedListItem;
 import bigBang.library.client.BigBangAsyncCallback;
 import bigBang.library.client.dataAccess.DataBrokerManager;
 import bigBang.library.client.dataAccess.SubPolicyExerciseDataBroker;
@@ -307,8 +309,10 @@ implements ExerciseDataBroker, SubPolicyExerciseDataBroker {
 			public void onResponseSuccess(Exercise result) {
 				incrementDataVersion();
 				for(DataBrokerClient<Exercise> client : clients) {
-					((SubPolicyExerciseDataBrokerClient)client).updateExercise(subPolicyId, result);
-					((SubPolicyExerciseDataBrokerClient)client).setDataVersionNumber(getDataElementId(), getCurrentDataVersion());
+					if(client instanceof SubPolicyExerciseDataBrokerClient){
+						((SubPolicyExerciseDataBrokerClient)client).updateExercise(subPolicyId, result);
+						((SubPolicyExerciseDataBrokerClient)client).setDataVersionNumber(getDataElementId(), getCurrentDataVersion());
+					}
 				}
 				handler.onResponse(result);
 			}
@@ -327,9 +331,32 @@ implements ExerciseDataBroker, SubPolicyExerciseDataBroker {
 	public void getSubPolicyExercises(String subPolicyId,
 			final ResponseHandler<Collection<ExerciseStub>> handler) {
 		ExerciseSearchParameter parameter= new ExerciseSearchParameter();
-		
+
 		if(getSubPolicyBroker().isTemp(subPolicyId)){
-			//TODO
+			SubPolicyTypifiedListBroker subPolicyListBroker = SubPolicyTypifiedListBroker.Util.getInstance();
+			subPolicyListBroker.getListItems(BigBangConstants.EntityIds.INSURANCE_POLICY_EXERCISES+"/"+subPolicyBroker.getEffectiveId(subPolicyId), new ResponseHandler<Collection<TipifiedListItem>>() {
+
+				@Override
+				public void onResponse(Collection<TipifiedListItem> response) {
+					ArrayList<ExerciseStub> stubs = new ArrayList<ExerciseStub>();
+					for(TipifiedListItem item : response){
+						ExerciseStub temp = new ExerciseStub();
+						temp.label = item.value;
+						temp.id = item.id;
+						stubs.add(temp);
+					}
+
+					handler.onResponse(stubs);
+
+				}
+
+				@Override
+				public void onError(Collection<ResponseError> errors) {	
+					handler.onError(new String[]{
+							new String("Could not get the subpolicy exercises on creation")	
+					});
+				}
+			});
 		}else{		
 			parameter.policyId = subPolicyId;
 			SearchParameter[] parameters = new SearchParameter[]{

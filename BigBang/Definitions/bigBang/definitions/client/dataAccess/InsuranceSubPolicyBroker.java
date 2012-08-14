@@ -3,6 +3,7 @@ package bigBang.definitions.client.dataAccess;
 import java.util.Collection;
 
 import bigBang.definitions.client.response.ResponseHandler;
+import bigBang.definitions.shared.Exercise;
 import bigBang.definitions.shared.Expense;
 import bigBang.definitions.shared.InfoOrDocumentRequest;
 import bigBang.definitions.shared.InsuredObject;
@@ -72,4 +73,5 @@ public interface InsuranceSubPolicyBroker extends
 
 	void createExpense(Expense expense, ResponseHandler<Expense> handler);
 
+	void getExerciseInPad(String exerciseId, ResponseHandler<Exercise> handler);
 }
