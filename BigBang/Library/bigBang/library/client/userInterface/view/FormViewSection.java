@@ -9,13 +9,15 @@ import com.google.gwt.dom.client.Style.Float;
 import com.google.gwt.dom.client.Style.FontWeight;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.user.client.ui.FlowPanel;
+import com.google.gwt.user.client.ui.FocusPanel;
+import com.google.gwt.user.client.ui.Focusable;
 import com.google.gwt.user.client.ui.HasVerticalAlignment;
 import com.google.gwt.user.client.ui.HasWidgets;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
-public class FormViewSection extends View {
+public class FormViewSection extends View implements Focusable {
 
 	protected static final String DEFAULT_FIELD_HEIGHT = "45px";
 	
@@ -25,11 +27,17 @@ public class FormViewSection extends View {
 	protected HasWidgets currentContainer;
 	protected Widget header;
 	protected boolean readOnly = false;
+	protected FocusPanel mainWrapper;
 
 	public FormViewSection(String title){
 		fields = new ArrayList<FormField<?>>();
+		
+		FocusPanel mainWrapper = new FocusPanel();
+		mainWrapper.setSize("100%", "100%");
+		initWidget(mainWrapper);
+		
 		VerticalPanel wrapper = new VerticalPanel();
-		initWidget(wrapper);
+		mainWrapper.add(wrapper);
 		wrapper.setSize("100%", "100%");
 		wrapper.getElement().getStyle().setMarginBottom(5, Unit.PX);
 
@@ -49,6 +57,8 @@ public class FormViewSection extends View {
 		currentContainer = new FlowPanel();
 		content.add((Widget) currentContainer);
 		((Widget)content).getElement().getStyle().setProperty("minHeight", "50px");
+		
+//		mainWrapper.add
 	}
 	
 	@Override
@@ -183,6 +193,26 @@ public class FormViewSection extends View {
 				break;
 			}
 		}
+	}
+
+	@Override
+	public int getTabIndex() {
+		return 0;
+	}
+
+	@Override
+	public void setAccessKey(char key) {
+		this.mainWrapper.setAccessKey(key);
+	}
+
+	@Override
+	public void setFocus(boolean focused) {
+		this.mainWrapper.setFocus(focused);
+	}
+
+	@Override
+	public void setTabIndex(int index) {
+		this.mainWrapper.setTabIndex(index);
 	}
 
 }

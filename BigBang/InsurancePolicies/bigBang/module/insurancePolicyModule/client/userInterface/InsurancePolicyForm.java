@@ -175,7 +175,19 @@ public abstract class InsurancePolicyForm extends FormView<InsurancePolicy> {
 		this.headerFieldsSection = new HeaderFieldsFormSection();
 		addSection(headerFieldsSection);
 
-		this.tableSection = new InsurancePolicySubLineTableDataSection();
+		this.tableSection = new InsurancePolicySubLineTableDataSection() {
+
+			@Override
+			protected void onCoverageEnabled(String coverageId) {
+				extraFieldsSection.enableCoverageFields(coverageId);
+			}
+
+			@Override
+			protected void onCoverageDisabled(String coverageId) {
+				extraFieldsSection.disableCoverageFields(coverageId);
+			}
+			
+		};
 		addSection(tableSection);
 
 		this.extraFieldsSection = new ExtraFieldsFormSection();

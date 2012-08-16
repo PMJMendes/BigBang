@@ -17,7 +17,7 @@ import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.HasValue;
 
-public class PolicyFormTable extends TwoKeyTableView {
+public abstract class PolicyFormTable extends TwoKeyTableView {
 
 	protected Coverage[] coverages;
 	protected Map<HasValue<String>, String> coverageRadioButtons;
@@ -159,6 +159,7 @@ public class PolicyFormTable extends TwoKeyTableView {
 				}
 			}
 		}
+		onCoverageEnabled(coverageId);
 	}
 
 	protected void disableCoverage(String coverageId) {
@@ -170,6 +171,7 @@ public class PolicyFormTable extends TwoKeyTableView {
 				}
 			}
 		}
+		onCoverageDisabled(coverageId);
 	}
 
 	public Coverage[] getCoverages(){
@@ -185,5 +187,11 @@ public class PolicyFormTable extends TwoKeyTableView {
 		}
 		return this.coverages;
 	}
+	
+	public abstract void onCoverageEnabled(String coverageId);
+	
+	public abstract void onCoverageDisabled(String coverageId);
+
+	
 
 }

@@ -106,4 +106,25 @@ public class ExtraFieldsFormSection extends FormViewSection {
 		this.clear();
 	}
 
+	public void disableCoverageFields(String coverageId) {
+		for(ExtraField field : policyFields.keySet()) {
+			if(field.coverageId.equalsIgnoreCase(coverageId)){
+				GenericFormField formField = this.policyFields.get(field);
+				formField.clear();
+				formField.setEditable(false);
+			}
+		}
+	}
+
+	public void enableCoverageFields(String coverageId) {
+		for(ExtraField field : policyFields.keySet()) {
+			if(field.coverageId.equalsIgnoreCase(coverageId)){
+				GenericFormField formField = this.policyFields.get(field);
+				formField.setValue(field.value);
+				formField.setEditable(true);
+				formField.setReadOnly(this.readOnly);
+			}
+		}
+	}
+
 }

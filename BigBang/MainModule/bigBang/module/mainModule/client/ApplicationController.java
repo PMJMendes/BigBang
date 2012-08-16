@@ -40,13 +40,13 @@ public class ApplicationController {
 	}
 
 	public void go() {
-		RootPanel.get().setSize("100%", Window.getClientHeight()+"px");
+		RootPanel.get().setSize(Window.getClientWidth() + "px", Window.getClientHeight()+"px");
 		RootPanel.get().getElement().getStyle().setOverflow(Overflow.HIDDEN);
 		Window.addResizeHandler(new ResizeHandler() {
 			
 			@Override
 			public void onResize(ResizeEvent event) {
-				RootPanel.get().setSize("100%", Window.getClientHeight()+"px");
+				RootPanel.get().setSize(Window.getClientWidth() + "px", Window.getClientHeight()+"px");
 			}
 		});
 		this.mainContainer = RootPanel.get();

@@ -17,6 +17,9 @@ import bigBang.module.receiptModule.shared.ReceiptPolicyWrapper;
 
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.dom.client.FocusEvent;
+import com.google.gwt.event.dom.client.FocusHandler;
+import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.HasVerticalAlignment;
 import com.google.gwt.user.client.ui.SplitLayoutPanel;
@@ -130,8 +133,9 @@ public class SerialReceiptCreationView extends View implements SerialReceiptCrea
 				actionHandler.onActionInvoked(new ActionInvokedEvent<SerialReceiptCreationViewPresenter.Action>(Action.CHANGED_POLICY_NUMBER));
 				
 			}
-
+			
 		};
+		
 		right.add(rightHeader);
 		rightHeader.setSize("100%", "21px");
 		right.add(toolbar);
@@ -141,6 +145,15 @@ public class SerialReceiptCreationView extends View implements SerialReceiptCrea
 		toolbar.setEnabled(false);
 		form.setReadOnly(true);
 
+		receiptPanel.addFocusHandler(new FocusHandler() {
+			
+			@Override
+			public void onFocus(FocusEvent event) {
+				event.preventDefault();
+				form.restoreFocus();
+			}
+		});
+		
 		wrapper.add(right);
 	}
 

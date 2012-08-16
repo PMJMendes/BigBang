@@ -82,7 +82,7 @@ public class TasksSectionView extends View implements TasksSectionViewPresenter.
 		});
 
 		sendTask = new Button("Enviar Tarefa");
-		users = new ExpandableListBoxFormField(BigBangConstants.EntityIds.USER, "Utilizadores");
+		users = new ExpandableListBoxFormField(BigBangConstants.EntityIds.USER, "");
 
 		HorizontalPanel panel = new HorizontalPanel();
 

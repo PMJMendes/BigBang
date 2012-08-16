@@ -23,7 +23,7 @@ import bigBang.library.client.userInterface.TwoKeyTable.Type;
 import bigBang.library.client.userInterface.view.FormViewSection;
 import bigBang.module.insurancePolicyModule.client.dataAccess.PolicyTypifiedListBroker;
 
-public class InsurancePolicySubLineTableDataSection extends FormViewSection {
+public abstract class InsurancePolicySubLineTableDataSection extends FormViewSection {
 
 	protected InsurancePolicy policy;
 
@@ -64,13 +64,29 @@ public class InsurancePolicySubLineTableDataSection extends FormViewSection {
 			}
 
 			Coverage[] coverageHeaders = policy.coverages;
-			this.table = new PolicyFormTable();
+			this.table = new PolicyFormTable() {
+
+				@Override
+				public void onCoverageEnabled(String coverageId) {
+					InsurancePolicySubLineTableDataSection.this.onCoverageEnabled(coverageId);
+				}
+
+				@Override
+				public void onCoverageDisabled(String coverageId) {
+					InsurancePolicySubLineTableDataSection.this.onCoverageDisabled(coverageId);
+				}
+				
+			};
 			addWidget(this.table);
 
 			this.table.setHeaders(coverageHeaders, policy.columns);
 			setTableData(tableSection);
 		}
 	}
+
+	protected abstract void onCoverageEnabled(String coverageId);
+	
+	protected abstract void onCoverageDisabled(String coverageId);
 
 	public void setTableData(TableSection tableSection){
 		if(tableSection == null) {
@@ -293,5 +309,7 @@ public class InsurancePolicySubLineTableDataSection extends FormViewSection {
 			});
 		}
 	}
+	
+	
 
 }

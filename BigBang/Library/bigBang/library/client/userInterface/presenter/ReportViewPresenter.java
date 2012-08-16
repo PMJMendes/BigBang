@@ -1,6 +1,7 @@
 package bigBang.library.client.userInterface.presenter;
 
 import java.util.HashMap;
+import java.util.Map;
 
 import bigBang.definitions.shared.PrintSet;
 import bigBang.definitions.shared.Report;
@@ -68,7 +69,7 @@ public class ReportViewPresenter implements ViewPresenter {
 	protected String processTypeId;
 	protected ReportItem currentItem;
 	protected ClickHandler handler;
-	protected HashMap<Button, Verb> buttonMap;
+	protected Map<Button, Verb> buttonMap;
 
 	public ReportViewPresenter(Display view){
 		setView((UIObject)view);

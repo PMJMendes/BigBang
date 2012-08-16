@@ -1,5 +1,7 @@
 package bigBang.library.client.userInterface;
 
+import bigBang.library.client.userInterface.view.View;
+
 import com.google.gwt.dom.client.Style.Cursor;
 import com.google.gwt.event.dom.client.DragStartEvent;
 import com.google.gwt.event.dom.client.DragStartHandler;
@@ -9,24 +11,28 @@ import com.google.gwt.event.dom.client.MouseDownEvent;
 import com.google.gwt.event.dom.client.MouseDownHandler;
 import com.google.gwt.event.dom.client.MouseMoveEvent;
 import com.google.gwt.event.dom.client.MouseMoveHandler;
-import com.google.gwt.event.dom.client.MouseUpEvent;
-import com.google.gwt.event.dom.client.MouseUpHandler;
 import com.google.gwt.event.dom.client.MouseWheelEvent;
 import com.google.gwt.event.dom.client.MouseWheelHandler;
+import com.google.gwt.user.client.DOM;
+import com.google.gwt.user.client.Event;
+import com.google.gwt.user.client.EventListener;
 import com.google.gwt.user.client.ui.AbsolutePanel;
+import com.google.gwt.user.client.ui.FocusPanel;
+import com.google.gwt.user.client.ui.Focusable;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.HasVerticalAlignment;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
+import com.google.gwt.user.client.ui.Widget;
 
-import bigBang.library.client.userInterface.view.View;
-
-public class ImageHandlerPanel extends View {
+public class ImageHandlerPanel extends View implements Focusable {
 
 	protected final double STEP_SCALE = 0.1;
 	
+	protected FocusPanel focusPanel;
 	protected ScrollPanel viewport;
 	protected AbsolutePanel cover;
 	protected Image image;
@@ -36,8 +42,12 @@ public class ImageHandlerPanel extends View {
 	protected int dragY;
 
 	public ImageHandlerPanel(){
+		focusPanel = new FocusPanel();
+		initWidget(focusPanel);
+		focusPanel.setSize("100%", "100%");
+		
 		AbsolutePanel wrapper = new AbsolutePanel();
-		initWidget(wrapper);
+		focusPanel.add(wrapper);
 
 		wrapper.setSize("100%", "100");
 		
@@ -96,13 +106,17 @@ public class ImageHandlerPanel extends View {
 				dragY = event.getRelativeY(image.getElement());
 			}
 		});
-		image.addMouseUpHandler(new MouseUpHandler() {
+		Widget rootWidget = RootPanel.get().asWidget();
+		DOM.sinkEvents(rootWidget.getElement(), Event.MOUSEEVENTS);
+		DOM.setEventListener(rootWidget.getElement(), new EventListener() {
 			
 			@Override
-			public void onMouseUp(MouseUpEvent event) {
-				dragMode = false;
-				dragX = 0;
-				dragY = 0;
+			public void onBrowserEvent(Event event) {
+				if(event.getTypeInt() == Event.ONMOUSEUP) {
+					dragMode = false;
+					dragX = 0;
+					dragY = 0;
+				}
 			}
 		});
 		image.addMouseMoveHandler(new MouseMoveHandler() {
@@ -268,5 +282,25 @@ public class ImageHandlerPanel extends View {
 	
 	public Image getImage(){
 		return image;
+	}
+
+	@Override
+	public int getTabIndex() {
+		return this.focusPanel.getTabIndex();
+	}
+
+	@Override
+	public void setAccessKey(char key) {
+		this.focusPanel.setAccessKey(key);
+	}
+
+	@Override
+	public void setFocus(boolean focused) {
+		this.focusPanel.setFocus(focused);
+	}
+
+	@Override
+	public void setTabIndex(int index) {
+		this.focusPanel.setTabIndex(index);
 	}
 }

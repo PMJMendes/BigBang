@@ -50,7 +50,8 @@ public class BigBangConstants {
 		public static final String QUOTE_REQUEST_INSURED_OBJECT = "B594AB7F-573F-4401-A369-A00500F9D2D8";
 		public static final String SIGNATURE_REQUEST = "A864FABC-8DCE-4D97-9A50-A02A00F7CBB5";
 		public static final String DAS_REQUEST = "F7137CCF-744D-4BD8-918A-A03000F0F182";
-		
+		public static final String GENERAL_SYSTEM = "628F5DA6-434F-46A8-9C88-9EB1008A689A";
+
 	}
 
 	public static class TypifiedListIds {
@@ -268,6 +269,12 @@ public class BigBangConstants {
 			public static final String CLOSE_PROCESS = "0EEB387C-661F-4FB0-8675-A03800C5DE73";
 		}
 		
+	}
+	
+	public static class ReportType {
+		public static final String PARAMETER   = "EFF85260-CB13-4599-8EFD-A032010C4AED";
+		public static final String PRINT_SET = "F3B52F31-9C2F-4AD3-B566-A032010C5077";
+		public static final String TRANSACTION = "3108E23A-45C2-4F1C-983E-A032010C566E";
 	}
 
 	//Session related constants

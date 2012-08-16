@@ -21,16 +21,21 @@ import bigBang.library.interfaces.FileServiceAsync;
 import bigBang.library.shared.DocuShareItem;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.event.dom.client.BlurHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.dom.client.FocusHandler;
+import com.google.gwt.event.dom.client.HasAllFocusHandlers;
 import com.google.gwt.event.logical.shared.AttachEvent;
+import com.google.gwt.event.shared.HandlerRegistration;
+import com.google.gwt.user.client.ui.FocusPanel;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.HasVerticalAlignment;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
-public class ReceiptImagePanel extends View {
+public class ReceiptImagePanel extends View implements HasAllFocusHandlers {
 
 	protected Image imagePanel;
 	DocuShareItem currentItem;
@@ -38,6 +43,7 @@ public class ReceiptImagePanel extends View {
 	protected DocuShareServiceAsync service;
 	protected FileServiceAsync fileService;
 	protected SelectionChangedEventHandler selectionHandler;
+	protected FocusPanel focusWrapper;
 
 	public ReceiptImagePanel(){
 		this.service = DocuShareService.Util.getInstance();
@@ -45,8 +51,12 @@ public class ReceiptImagePanel extends View {
 
 		currentItem = new DocuShareItem();
 
+		focusWrapper = new FocusPanel();
+		focusWrapper.setSize("100%", "100%");
+		initWidget(focusWrapper);
+		
 		VerticalPanel wrapper = new VerticalPanel();
-		initWidget(wrapper);
+		focusWrapper.add(wrapper);
 		wrapper.setSize("100%", "100%");
 
 		navigationPanel = new NavigationPanel();
@@ -255,4 +265,14 @@ public class ReceiptImagePanel extends View {
 
 	}
 
+	@Override
+	public HandlerRegistration addFocusHandler(FocusHandler handler) {
+		return focusWrapper.addFocusHandler(handler);
+	}
+
+	@Override
+	public HandlerRegistration addBlurHandler(BlurHandler handler) {
+		return focusWrapper.addBlurHandler(handler);
+	}
+	
 }

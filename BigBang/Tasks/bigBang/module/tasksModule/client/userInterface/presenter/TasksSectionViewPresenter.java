@@ -38,8 +38,8 @@ import com.google.gwt.user.client.ui.Widget;
 
 public class TasksSectionViewPresenter implements ViewPresenter {
 
-	
-	
+
+
 	public interface Display {
 		HasValueSelectables<TaskStub> getTaskList();
 		HasWidgets getOperationViewContainer();
@@ -54,7 +54,7 @@ public class TasksSectionViewPresenter implements ViewPresenter {
 		void setSendToUserVisible(boolean b);
 		HasClickHandlers getSendTaskButton();
 		String getSelectedUserId();
-		
+
 	}
 
 	private Display view;
@@ -121,7 +121,11 @@ public class TasksSectionViewPresenter implements ViewPresenter {
 						if(response.status == Status.COMPLETED){
 							view.setScreenDescription("Notificação");
 							view.setSendToUserVisible(false);
-							present("TASKS_DISMISS", parameters, true);
+							if(response.objectTypeId != null && response.objectTypeId.equalsIgnoreCase(BigBangConstants.EntityIds.GENERAL_SYSTEM)){
+								present("REPORT_TASKS", parameters, false);
+							}else{
+								present("TASKS_DISMISS", parameters, true);
+							}
 						}else{
 							String presenterId = getViewPresenterIdForTask(response);
 							if(presenterId == null){
@@ -197,9 +201,9 @@ public class TasksSectionViewPresenter implements ViewPresenter {
 				operationWasExecuted(operationId, processId);
 			}
 		});
-		
+
 		view.getSendTaskButton().addClickHandler(new ClickHandler() {
-			
+
 			@Override
 			public void onClick(ClickEvent event) {
 				sendTaskToNewUser();
@@ -208,9 +212,9 @@ public class TasksSectionViewPresenter implements ViewPresenter {
 	}
 
 	protected void sendTaskToNewUser() {
-		
+
 		broker.reassignTask(currentTask.id, view.getSelectedUserId(), new ResponseHandler<Void>() {
-			
+
 			@Override
 			public void onResponse(Void response) {
 				EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Tarefa enviada para outro utilizador"), TYPE.TRAY_NOTIFICATION));
@@ -219,13 +223,13 @@ public class TasksSectionViewPresenter implements ViewPresenter {
 				item.removeParameter("taskid");
 				NavigationHistoryManager.getInstance().go(item);
 			}
-			
+
 			@Override
 			public void onError(Collection<ResponseError> errors) {
 				EventBus.getInstance().fireEvent(new NewNotificationEvent(new Notification("", "Não foi possível enviar a tarefa para outro utilizador"), TYPE.ALERT_NOTIFICATION));
 			}
 		});
-		
+
 	}
 
 	private void operationWasExecuted(String operationId, String objectId){
@@ -255,7 +259,7 @@ public class TasksSectionViewPresenter implements ViewPresenter {
 		item.removeParameter("taskid");
 		NavigationHistoryManager.getInstance().go(item);
 	}
-	
-	
+
+
 
 }

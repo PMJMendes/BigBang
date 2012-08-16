@@ -16,6 +16,8 @@ import bigBang.module.receiptModule.shared.ReceiptPolicyWrapper;
 
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.dom.client.FocusEvent;
+import com.google.gwt.event.dom.client.FocusHandler;
 import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.event.dom.client.KeyUpEvent;
 import com.google.gwt.event.dom.client.KeyUpHandler;
@@ -55,12 +57,13 @@ public abstract class SerialReceiptCreationForm extends FormView<ReceiptPolicyWr
 	protected ListBoxFormField bonusMalusOption;
 	protected NumericTextBoxFormField bonusMalusValue;
 
+	protected FormField<?> lastFocusedField;
+	
 	Button verifyReceiptNumber;
 	Button verifyPolicyNumber;
 	private Button markAsInvalid;
 	private Button newReceiptButton;
-
-
+	
 	public SerialReceiptCreationForm(){
 
 		addSection("Número do recibo");
@@ -258,6 +261,19 @@ public abstract class SerialReceiptCreationForm extends FormView<ReceiptPolicyWr
 				bonusMalusValue.setValue(null);
 			}
 		});
+		
+		FocusHandler focusHandler = new FocusHandler() {
+			
+			@Override
+			public void onFocus(FocusEvent event) {
+				
+			}
+		};
+		
+		
+		
+		
+		
 		
 		type.setMandatory(true);
 		totalPremium.setMandatory(true);
@@ -458,6 +474,10 @@ public abstract class SerialReceiptCreationForm extends FormView<ReceiptPolicyWr
 
 	public void showLabel(boolean b) {
 		policyNumberProblem.setVisible(b);
+	}
+	
+	public void restoreFocus(){
+		this.lastFocusedField.focus();
 	}
 
 }

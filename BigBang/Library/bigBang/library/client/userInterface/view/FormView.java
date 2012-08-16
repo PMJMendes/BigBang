@@ -13,8 +13,11 @@ import com.google.gwt.dom.client.Style.FontStyle;
 import com.google.gwt.dom.client.Style.FontWeight;
 import com.google.gwt.dom.client.Style.Position;
 import com.google.gwt.dom.client.Style.Unit;
+import com.google.gwt.event.dom.client.BlurHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.dom.client.FocusHandler;
+import com.google.gwt.event.dom.client.HasAllFocusHandlers;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
@@ -28,7 +31,7 @@ import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
-public abstract class FormView<T> extends View implements Validatable, HasEditableValue<T> {
+public abstract class FormView<T> extends View implements Validatable, HasEditableValue<T>, HasAllFocusHandlers {
 
 	protected AbsolutePanel mainWrapper;
 	protected VerticalPanel panel;
@@ -343,5 +346,18 @@ public abstract class FormView<T> extends View implements Validatable, HasEditab
 		setReadOnly(true);
 		topToolbar.setVisible(!lock);
 	}
+
+	@Override
+	public HandlerRegistration addFocusHandler(FocusHandler handler) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public HandlerRegistration addBlurHandler(BlurHandler handler) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	
 }
 

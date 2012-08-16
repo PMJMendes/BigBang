@@ -27,6 +27,7 @@ import bigBang.library.client.userInterface.presenter.InfoOrDocumentRequestReply
 import bigBang.library.client.userInterface.presenter.InfoRequestTasksViewPresenter;
 import bigBang.library.client.userInterface.presenter.ManagerTransferViewPresenter;
 import bigBang.library.client.userInterface.presenter.HistoryViewPresenter;
+import bigBang.library.client.userInterface.presenter.ReportTasksViewPresenter;
 import bigBang.library.client.userInterface.presenter.ReportViewPresenter;
 import bigBang.library.client.userInterface.presenter.ViewPresenter;
 import bigBang.library.client.userInterface.view.CancelInfoOrDocumentRequestView;
@@ -42,6 +43,7 @@ import bigBang.library.client.userInterface.view.InfoOrDocumentRequestReplyView;
 import bigBang.library.client.userInterface.view.InfoRequestTasksView;
 import bigBang.library.client.userInterface.view.ManagerTransferWithToolbarView;
 import bigBang.library.client.userInterface.view.HistoryView;
+import bigBang.library.client.userInterface.view.ReportTasksView;
 import bigBang.library.client.userInterface.view.ReportView;
 
 public class BigBangModule implements Module {
@@ -193,6 +195,15 @@ public class BigBangModule implements Module {
 			public ViewPresenter getInstance() {
 				ExternalInfoRequestTasksView view = (ExternalInfoRequestTasksView) GWT.create(ExternalInfoRequestTasksView.class);
 				ViewPresenter presenter = new ExternalInfoRequestTasksViewPresenter(view);
+				return presenter;
+			}
+		});
+		ViewPresenterFactory.getInstance().registerViewPresenterInstantiator("REPORT_TASKS", new ViewPresenterInstantiator() {
+
+			@Override
+			public ViewPresenter getInstance() {
+				ReportTasksView view = (ReportTasksView) GWT.create(ReportTasksView.class);
+				ReportTasksViewPresenter presenter = new ReportTasksViewPresenter(view);
 				return presenter;
 			}
 		});
