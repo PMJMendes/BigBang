@@ -73,7 +73,7 @@ public class TestPolicyCreate
 
 		newPolicy = new InsurancePolicy();
 		newPolicy.id = gstrPad;
-		newPolicy.subLineId = "34E19434-6106-4359-93FE-9EE90118CEE0";
+		newPolicy.subLineId = "BEBB58B5-CD95-4872-B72F-9EE90118938F";
 
 		Services.insurancePolicyService.initPolicyInPad(newPolicy, callback);
 	}
