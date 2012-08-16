@@ -550,6 +550,12 @@ public class Constants
 	public static final UUID ObjTypeID_Site      = UUID.fromString("CD709854-DB59-424B-904A-9F9501403847");
 	public static final UUID ObjTypeID_Animal    = UUID.fromString("7A9A0E31-668A-4113-A03E-9F9501403E6E");
 
+	// ExercisePeriods
+	public static final UUID ExID_None     = UUID.fromString("0E99E224-9778-408B-829C-9F9601245A83");
+	public static final UUID ExID_Year     = UUID.fromString("8A81B8E7-B267-4674-ABCA-9F960124622B");
+	public static final UUID ExID_Month    = UUID.fromString("1DC4E820-CAAC-4FE2-A650-9F9601246815");
+	public static final UUID ExID_Variable = UUID.fromString("C393E3A8-CEBB-425D-8CAE-9F9601246E83");
+
 	// Policy Field Types
 	public static final UUID FieldID_Boolean   = UUID.fromString("361A1B4D-56A7-496C-A2CA-9F960154D6CA");
 	public static final UUID FieldID_Date      = UUID.fromString("426A1A8F-9F00-4A82-AA15-9F960156611B");

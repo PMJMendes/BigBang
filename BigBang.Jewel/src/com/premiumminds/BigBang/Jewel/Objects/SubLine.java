@@ -67,6 +67,11 @@ public class SubLine
     	return (UUID)getAt(2);
     }
 
+    public UUID getExerciseType()
+    {
+    	return (UUID)getAt(3);
+    }
+
     public Line getLine()
     {
     	if ( mrefLine == null )

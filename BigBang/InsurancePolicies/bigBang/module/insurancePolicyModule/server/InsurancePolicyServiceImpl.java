@@ -192,10 +192,12 @@ public class InsurancePolicyServiceImpl
 			throws BigBangException
 		{
 			PadCoInsurer lobjCoInsurer;
+			SubLine lobjSubLine;
 			com.premiumminds.BigBang.Jewel.Objects.Coverage[] larrAuxCoverages;
 			PadCoverage lobjCoverage;
 			Tax[] larrTaxes;
 			ArrayList<PadField> larrFields;
+			PadExercise lobjExercise;
 			PadField lobjField;
 			PadValue lobjValue;
 			int i, j;
@@ -248,7 +250,17 @@ public class InsurancePolicyServiceImpl
 
 			try
 			{
-				larrAuxCoverages = SubLine.GetInstance(Engine.getCurrentNameSpace(), mobjPolicy.midSubLine).GetCurrentCoverages();
+				lobjSubLine = SubLine.GetInstance(Engine.getCurrentNameSpace(), mobjPolicy.midSubLine);
+
+				lobjExercise = null;
+				if ( !Constants.ExID_None.equals(lobjSubLine.getExerciseType()) )
+				{
+					lobjExercise = new PadExercise();
+					lobjExercise.mstrLabel = "Inicial";
+					marrExercises.add(lobjExercise);
+				}
+
+				larrAuxCoverages = lobjSubLine.GetCurrentCoverages();
 				for ( i = 0 ; i < larrAuxCoverages.length; i++ )
 				{
 					lobjCoverage = new PadCoverage();
@@ -282,8 +294,9 @@ public class InsurancePolicyServiceImpl
 						lobjField.mbVariesByExercise = larrTaxes[j].GetVariesByExercise();
 						larrFields.add(lobjField);
 
-						if ( lobjField.mbVariesByObject || lobjField.mbVariesByExercise )
+						if ( lobjField.mbVariesByObject || (lobjField.mbVariesByExercise && (lobjExercise == null)) )
 							continue;
+
 						lobjValue = new PadValue();
 						lobjValue.mid = null;
 						lobjValue.mstrValue = (String)larrTaxes[j].getAt(4);
@@ -294,7 +307,7 @@ public class InsurancePolicyServiceImpl
 						lobjValue.mrefCoverage = lobjCoverage;
 						lobjValue.mrefField = lobjField;
 						lobjValue.mlngObject = -1;
-						lobjValue.mlngExercise = -1;
+						lobjValue.mlngExercise = ( lobjField.mbVariesByExercise ? 0 : -1 );
 						lobjValue.mbDeleted = false;
 						marrValues.add(lobjValue);
 					}
@@ -2151,7 +2164,8 @@ public class InsurancePolicyServiceImpl
 		public int CreateNewExercise()
 			throws BigBangException, CorruptedPadException
 		{
-			PadExercise lobjObject;
+			PadExercise lobjExercise;
+			int llngIndex;
 			PadValue lobjValue;
 			int i, j, k;
 
@@ -2161,12 +2175,12 @@ public class InsurancePolicyServiceImpl
 //			if ( !Constants.StatusID_InProgress.equals(mobjPolicy.midStatus) )
 //				throw new BigBangException("Erro: Operação não suportada para apólices já validadas.");
 
-			lobjObject = new PadExercise();
+			lobjExercise = new PadExercise();
 
 			mbValid = false;
 
-			int llngIndex = marrExercises.size();
-			marrExercises.add(lobjObject);
+			llngIndex = marrExercises.size();
+			marrExercises.add(lobjExercise);
 			for ( i = 0; i < marrCoverages.size(); i++ )
 			{
 				for ( j = 0; j < marrCoverages.get(i).marrFields.length; j++ )
