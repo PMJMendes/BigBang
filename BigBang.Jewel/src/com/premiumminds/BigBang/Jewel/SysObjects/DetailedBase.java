@@ -174,6 +174,9 @@ public abstract class DetailedBase
 			throw new BigBangJewelException(e.getMessage(), e);
 		}
 
+		if ( pobjPolicy.getLabel().charAt(0) == '-' )
+			pstrBuilder.append("O número de apólice é provisório.");
+
 		larrTrueCoverages = new Hashtable<UUID, UUID>();
 		for ( i = 0; i < larrCoverages.length; i++ )
 		{
