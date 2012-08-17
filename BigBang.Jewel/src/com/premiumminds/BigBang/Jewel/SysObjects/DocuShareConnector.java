@@ -252,7 +252,54 @@ public class DocuShareConnector
 		return lobjFile;
 	}
 
-	public static BufferedImage getItemAsImage(String pstrItem)
+	public static int getItemPageCount(String pstrItem)
+		throws BigBangJewelException
+	{
+		DSSession lrefSession;
+		DSDocument lobjAux;
+		DSContentElement[] larrAux;
+		PDDocument lobjDocument;
+		int llngResult;
+
+		lrefSession = GetSession();
+		if ( lrefSession == null )
+			return -1;
+
+		try
+		{
+			lobjAux = (DSDocument)lrefSession.getObject(new DSHandle(pstrItem));
+			larrAux = lobjAux.getContentElements();
+			larrAux[0].open();
+			try
+			{
+				lobjDocument = PDDocument.load(larrAux[0]);
+			}
+			catch (Throwable e1)
+			{
+				try { larrAux[0].close(); } catch (Throwable e2) {}
+				throw e1;
+			}
+			try
+			{
+				larrAux[0].close();
+			}
+			catch (Throwable e1)
+			{
+				try { lobjDocument.close(); } catch (Throwable e2) {}
+				throw e1;
+			}
+			llngResult = lobjDocument.getDocumentCatalog().getAllPages().size();
+			lobjDocument.close();
+		}
+		catch (Throwable e)
+		{
+			throw new BigBangJewelException(e.getMessage(), e);
+		}
+
+		return llngResult;
+	}
+
+	public static BufferedImage getItemAsImage(String pstrItem, int plngPage)
 		throws BigBangJewelException
 	{
 		DSSession lrefSession;
@@ -292,7 +339,7 @@ public class DocuShareConnector
 				try { lobjDocument.close(); } catch (Throwable e2) {}
 				throw e1;
 			}
-			lobjPage = (PDPage)lobjDocument.getDocumentCatalog().getAllPages().get(0);
+			lobjPage = (PDPage)lobjDocument.getDocumentCatalog().getAllPages().get(plngPage);
 			llngRot = lobjPage.findRotation();
 			try
 			{
