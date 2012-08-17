@@ -44,6 +44,7 @@ insert into bigbang.tblDocTypes (PK, DocType) values ('B78E445E-E061-40DA-914D-A
 insert into bigbang.tblDocTypes (PK, DocType) values ('CF2849F7-7967-4CCD-8731-A09400D4310C', N'Recibo de Comissões');
 insert into bigbang.tblDocTypes (PK, DocType) values ('F6663F27-83B8-40DE-AB00-A0990123C856', N'Relatório de Retrocessão');
 insert into bigbang.tblDocTypes (PK, DocType) values ('DD17A31E-CF99-40B1-8529-A0A100D41EC1', N'Despesa Digitalizada');
+insert into bigbang.tblDocTypes (PK, DocType) values ('73C2A8D9-C1A9-4E4C-ACC6-A0B0010A59F7', N'Carta de Devolução de Pagamento');
 insert into bigbang.tblMaritalStatuses (PK, StatusText) values ('9ED463DB-ABC5-46EE-82A7-9F0300C6D631', N'Casado');
 insert into bigbang.tblMaritalStatuses (PK, StatusText) values ('BFB58864-4B91-4078-AF9F-9F0300C6E52D', N'Divorciado');
 insert into bigbang.tblMaritalStatuses (PK, StatusText) values ('BE742798-9D7F-4B23-BFBA-9F0300C6CFA5', N'Solteiro');

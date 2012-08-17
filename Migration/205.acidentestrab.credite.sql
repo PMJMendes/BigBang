@@ -48,26 +48,30 @@ from credite_egs.tblBBPolicies p
 inner join credegs..empresa.apolice s on s.MigrationID=p.MigrationID
 where p.FKSubLine='BEBB58B5-CD95-4872-B72F-9EE90118938F';
 
-set language portuguese;
-declare @atctr int;
-set @atctr = 1;
-while @atctr < 13
-begin
-	insert into credite_egs.tblExercises (PK, ExName, FKPolicy, StartDate, EndDate)
-	select  CAST(CAST(NEWID() AS BINARY(10)) + CAST(GETDATE() AS BINARY(6)) AS UNIQUEIDENTIFIER) PK,
-	upper(left(datename(Month, convert(datetime, '01/' + right('00' + cast(@atctr as varchar), 2) + '/2012')), 1)) +
-	lower(substring(datename(Month, convert(datetime, '01/' + right('00' + cast(@atctr as varchar), 2) + '/2012')), 2, 100)) + ' de 2012' ExName,
-	p.PK FKPolicy, convert(datetime, '01/' + right('00' + cast(@atctr as varchar), 2) + '/2012') StartDate,
-	dateadd(day, -1, dateadd(month, 1, convert(datetime, '01/' + right('00' + cast(@atctr as varchar), 2) + '/2012'))) EndDate
-	from credite_egs.tblBBPolicies p
-	where p.FKSubLine='BEBB58B5-CD95-4872-B72F-9EE90118938F';
-	set @atctr = @atctr + 1;
-end;
-set language us_english;
+insert into credite_egs.tblExercises (PK, ExName, FKPolicy, StartDate, EndDate)
+select  CAST(CAST(NEWID() AS BINARY(10)) + CAST(GETDATE() AS BINARY(6)) AS UNIQUEIDENTIFIER) PK,
+'2012' ExName, p.PK FKPolicy,
+case when '2012-01-01' > p.BeginDate then '2012-01-01' else p.BeginDate end StartDate,
+case when '2012-12-31' < isnull(p.EndDate, '2013-01-01') then '2012-12-31' else p.EndDate end EndDate
+from credite_egs.tblBBPolicies p
+where (p.EndDate is null or p.EndDate > '2011-12-31')
+and p.FKSubLine='BEBB58B5-CD95-4872-B72F-9EE90118938F';
+
+insert into credite_egs.tblPolicyValueItems (PK, ItemValue, FKTaxAsSubList)
+select CAST(CAST(NEWID() AS BINARY(10)) + CAST(GETDATE() AS BINARY(6)) AS UNIQUEIDENTIFIER) PK,
+'12' ItemValue, '7F234FF5-3367-4F2C-A75A-A0AF00C10698' FKTaxAsSubList;
+
+insert into credite_egs.tblPolicyValueItems (PK, ItemValue, FKTaxAsSubList)
+select CAST(CAST(NEWID() AS BINARY(10)) + CAST(GETDATE() AS BINARY(6)) AS UNIQUEIDENTIFIER) PK,
+'12.75' ItemValue, '7F234FF5-3367-4F2C-A75A-A0AF00C10698' FKTaxAsSubList;
+
+insert into credite_egs.tblPolicyValueItems (PK, ItemValue, FKTaxAsSubList)
+select CAST(CAST(NEWID() AS BINARY(10)) + CAST(GETDATE() AS BINARY(6)) AS UNIQUEIDENTIFIER) PK,
+'13.5' ItemValue, '7F234FF5-3367-4F2C-A75A-A0AF00C10698' FKTaxAsSubList;
 
 insert into credite_egs.tblBBPolicyValues (PK, Value, FKPolicy, FKField, FKObject, FKExercise)
 select CAST(CAST(NEWID() AS BINARY(10)) + CAST(GETDATE() AS BINARY(6)) AS UNIQUEIDENTIFIER) PK,
-isnull(cast(cast(case s.taxa when 0 then null else s.taxa/POWER(10.0, ISNULL(s.pertaxa, 1)-1) end as float) as nvarchar(250)), case s.texto2 when '' then null else s.texto2 end) Value,
+isnull(cast(cast(case s.taxa when 0 then null else s.taxa/POWER(10.0, 2-ISNULL(s.pertaxa, 1)) end as float) as nvarchar(250)), case s.texto2 when '' then null else s.texto2 end) Value,
 p.PK FKPolicy, 'C24074CB-BDC2-45CC-BE49-9F9601419367' FKField, NULL FKObject, NULL FKExercise
 from credegs..empresa.apolice s
 inner join credite_egs.tblBBPolicies p on p.MigrationID=s.MigrationID
@@ -75,12 +79,21 @@ where p.FKSubLine='BEBB58B5-CD95-4872-B72F-9EE90118938F';
 
 insert into credite_egs.tblBBPolicyValues (PK, Value, FKPolicy, FKField, FKObject, FKExercise)
 select CAST(CAST(NEWID() AS BINARY(10)) + CAST(GETDATE() AS BINARY(6)) AS UNIQUEIDENTIFIER) PK,
-isnull(case s.vcapital when 0 then null else cast(cast(s.vcapital as float) as nvarchar(250)) end, case s.texto6 when '' then null else s.texto6 end) Value,
-p.PK FKPolicy, t.PK FKField, NULL FKObject, NULL FKExercise
+NULL Value, p.PK FKPolicy, 'E9A3F14D-34D3-4228-BE13-9F960141A724' FKField, NULL FKObject, x.PK FKExercise
 from credegs..empresa.apolice s
 inner join credite_egs.tblBBPolicies p on p.MigrationID=s.MigrationID
-inner join credite_egs.tblBBPolicyCoverages c on c.FKPolicy=p.PK
+inner join credite_egs.tblExercises x on x.FKPolicy=p.PK
+where p.FKSubLine='BEBB58B5-CD95-4872-B72F-9EE90118938F';
+
+insert into credite_egs.tblBBPolicyValues (PK, Value, FKPolicy, FKField, FKObject, FKExercise)
+select CAST(CAST(NEWID() AS BINARY(10)) + CAST(GETDATE() AS BINARY(6)) AS UNIQUEIDENTIFIER) PK,
+isnull(case s.vcapital when 0 then null else cast(s.vcapital as nvarchar(250)) end, case s.texto6 when '' then null else s.texto6 end) Value,
+p.PK FKPolicy, t.PK FKField, NULL FKObject, x.PK FKExercise
+from credegs..empresa.apolice s
+inner join credite_egs.tblBBPolicies p on p.MigrationID=s.MigrationID
+inner join amartins.tblBBPolicyCoverages c on c.FKPolicy=p.PK
 inner join bigbang.tblBBTaxes t on t.FKCoverage=c.FKCoverage
+inner join credite_egs.tblExercises x on x.FKPolicy=p.PK
 where t.pk='7149A17D-B9CC-4089-BDE9-A05300BF3B86' and c.BPresent=1
 and p.FKSubLine='BEBB58B5-CD95-4872-B72F-9EE90118938F';
 
@@ -92,28 +105,6 @@ inner join credite_egs.tblBBPolicies p on p.MigrationID=s.MigrationID
 inner join credite_egs.tblBBPolicyCoverages c on c.FKPolicy=p.PK
 inner join bigbang.tblBBTaxes t on t.FKCoverage=c.FKCoverage
 where t.pk='4DD89432-397E-4A42-82A2-A05300BF54CD' and c.BPresent=1
-and p.FKSubLine='BEBB58B5-CD95-4872-B72F-9EE90118938F';
-
-insert into credite_egs.tblBBPolicyValues (PK, Value, FKPolicy, FKField, FKObject, FKExercise)
-select CAST(CAST(NEWID() AS BINARY(10)) + CAST(GETDATE() AS BINARY(6)) AS UNIQUEIDENTIFIER) PK,
-'0' Value, p.PK FKPolicy, t.PK FKField, NULL FKObject, x.PK FKExercise
-from credegs..empresa.apolice s
-inner join credite_egs.tblBBPolicies p on p.MigrationID=s.MigrationID
-inner join credite_egs.tblBBPolicyCoverages c on c.FKPolicy=p.PK
-inner join bigbang.tblBBTaxes t on t.FKCoverage=c.FKCoverage
-inner join credite_egs.tblExercises x on x.FKPolicy=p.PK
-where t.pk='3D94F083-5852-4FFC-B949-9F9601417E42' and c.BPresent=1
-and p.FKSubLine='BEBB58B5-CD95-4872-B72F-9EE90118938F';
-
-insert into credite_egs.tblBBPolicyValues (PK, Value, FKPolicy, FKField, FKObject, FKExercise)
-select CAST(CAST(NEWID() AS BINARY(10)) + CAST(GETDATE() AS BINARY(6)) AS UNIQUEIDENTIFIER) PK,
-'0' Value, p.PK FKPolicy, t.PK FKField, NULL FKObject, x.PK FKExercise
-from credegs..empresa.apolice s
-inner join credite_egs.tblBBPolicies p on p.MigrationID=s.MigrationID
-inner join credite_egs.tblBBPolicyCoverages c on c.FKPolicy=p.PK
-inner join bigbang.tblBBTaxes t on t.FKCoverage=c.FKCoverage
-inner join credite_egs.tblExercises x on x.FKPolicy=p.PK
-where t.pk='E9A3F14D-34D3-4228-BE13-9F960141A724' and c.BPresent=1
 and p.FKSubLine='BEBB58B5-CD95-4872-B72F-9EE90118938F';
 
 /**  101 e 104 **/
